@@ -670,7 +670,6 @@ module occa
   end interface occaDeviceWrapStream
 
   ! ---[ Memory ]-----------------------
-
   interface occaMemoryGetMappedPointer
      function occaMemoryGetMappedPointer_fc(mem) result(ptr)
        use occaFTypes_m
@@ -755,6 +754,15 @@ module occa
      module procedure occaAsyncCopyMemToPtrAuto_real8
      module procedure occaAsyncCopyMemToPtrAuto_char
   end interface occaAsyncCopyMemToPtr
+
+  interface occaMemorySwap
+     subroutine occaMemorySwap_fc(memoryA, memoryB)
+       use occaFTypes_m
+       implicit none
+       type(occaMemory), intent(inout) :: memoryA
+       type(occaMemory), intent(inout) :: memoryB
+     end subroutine occaMemorySwap_fc
+  end interface occaMemorySwap
 
   interface occaMemoryFree
      subroutine occaMemoryFree_fc(memory)

@@ -62,8 +62,8 @@ OCCA_START_EXTERN_C
 typedef void* occaDevice;
 typedef void* occaKernel;
 
-typedef struct occaType_t*         occaMemory;
-typedef struct occaType_t*         occaType;
+typedef struct occaTypePtr_t*      occaMemory;
+typedef struct occaTypePtr_t*      occaType;
 typedef struct occaArgumentList_t* occaArgumentList;
 
 typedef void* occaStream;
@@ -165,6 +165,8 @@ OCCA_LFUNC occaKernel OCCA_RFUNC occaBuildKernelFromBinary(const char *filename,
 //  |=================================
 
 //  |---[ Memory ]--------------------
+OCCA_LFUNC void OCCA_RFUNC occaMemorySwap(occaMemory a, occaMemory b);
+
 OCCA_LFUNC occaMemory OCCA_RFUNC occaWrapMemory(void *handle_,
                                                 const uintptr_t bytes);
 

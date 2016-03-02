@@ -2,7 +2,7 @@
       occa::kernel kernel_((occa::kernel_v*) kernel);
       kernel_.clearArgumentList();
       
-      occaType_t *args[1] = {(occaType_t*) arg0};
+      occaType_t *args[1] = {((occaType) arg0)->ptr};
       
       for(int i = 0; i < 1; ++i){
         occaType_t &arg = *(args[i]);
@@ -30,7 +30,7 @@
       occa::kernel kernel_((occa::kernel_v*) kernel);
       kernel_.clearArgumentList();
       
-      occaType_t *args[2] = {(occaType_t*) arg0, (occaType_t*) arg1};
+      occaType_t *args[2] = {((occaType) arg0)->ptr, ((occaType) arg1)->ptr};
       
       for(int i = 0; i < 2; ++i){
         occaType_t &arg = *(args[i]);
@@ -58,7 +58,7 @@
       occa::kernel kernel_((occa::kernel_v*) kernel);
       kernel_.clearArgumentList();
       
-      occaType_t *args[3] = {(occaType_t*) arg0, (occaType_t*) arg1, (occaType_t*) arg2};
+      occaType_t *args[3] = {((occaType) arg0)->ptr, ((occaType) arg1)->ptr, ((occaType) arg2)->ptr};
       
       for(int i = 0; i < 3; ++i){
         occaType_t &arg = *(args[i]);
@@ -87,7 +87,7 @@
       occa::kernel kernel_((occa::kernel_v*) kernel);
       kernel_.clearArgumentList();
       
-      occaType_t *args[4] = {(occaType_t*) arg0, (occaType_t*) arg1, (occaType_t*) arg2, (occaType_t*) arg3};
+      occaType_t *args[4] = {((occaType) arg0)->ptr, ((occaType) arg1)->ptr, ((occaType) arg2)->ptr, ((occaType) arg3)->ptr};
       
       for(int i = 0; i < 4; ++i){
         occaType_t &arg = *(args[i]);
@@ -116,7 +116,7 @@
       occa::kernel kernel_((occa::kernel_v*) kernel);
       kernel_.clearArgumentList();
       
-      occaType_t *args[5] = {(occaType_t*) arg0, (occaType_t*) arg1, (occaType_t*) arg2, (occaType_t*) arg3, (occaType_t*) arg4};
+      occaType_t *args[5] = {((occaType) arg0)->ptr, ((occaType) arg1)->ptr, ((occaType) arg2)->ptr, ((occaType) arg3)->ptr, ((occaType) arg4)->ptr};
       
       for(int i = 0; i < 5; ++i){
         occaType_t &arg = *(args[i]);
@@ -145,7 +145,7 @@
       occa::kernel kernel_((occa::kernel_v*) kernel);
       kernel_.clearArgumentList();
       
-      occaType_t *args[6] = {(occaType_t*) arg0, (occaType_t*) arg1, (occaType_t*) arg2, (occaType_t*) arg3, (occaType_t*) arg4, (occaType_t*) arg5};
+      occaType_t *args[6] = {((occaType) arg0)->ptr, ((occaType) arg1)->ptr, ((occaType) arg2)->ptr, ((occaType) arg3)->ptr, ((occaType) arg4)->ptr, ((occaType) arg5)->ptr};
       
       for(int i = 0; i < 6; ++i){
         occaType_t &arg = *(args[i]);
@@ -175,7 +175,7 @@
       occa::kernel kernel_((occa::kernel_v*) kernel);
       kernel_.clearArgumentList();
       
-      occaType_t *args[7] = {(occaType_t*) arg0, (occaType_t*) arg1, (occaType_t*) arg2, (occaType_t*) arg3, (occaType_t*) arg4, (occaType_t*) arg5, (occaType_t*) arg6};
+      occaType_t *args[7] = {((occaType) arg0)->ptr, ((occaType) arg1)->ptr, ((occaType) arg2)->ptr, ((occaType) arg3)->ptr, ((occaType) arg4)->ptr, ((occaType) arg5)->ptr, ((occaType) arg6)->ptr};
       
       for(int i = 0; i < 7; ++i){
         occaType_t &arg = *(args[i]);
@@ -205,7 +205,7 @@
       occa::kernel kernel_((occa::kernel_v*) kernel);
       kernel_.clearArgumentList();
       
-      occaType_t *args[8] = {(occaType_t*) arg0, (occaType_t*) arg1, (occaType_t*) arg2, (occaType_t*) arg3, (occaType_t*) arg4, (occaType_t*) arg5, (occaType_t*) arg6, (occaType_t*) arg7};
+      occaType_t *args[8] = {((occaType) arg0)->ptr, ((occaType) arg1)->ptr, ((occaType) arg2)->ptr, ((occaType) arg3)->ptr, ((occaType) arg4)->ptr, ((occaType) arg5)->ptr, ((occaType) arg6)->ptr, ((occaType) arg7)->ptr};
       
       for(int i = 0; i < 8; ++i){
         occaType_t &arg = *(args[i]);
@@ -235,7 +235,7 @@
       occa::kernel kernel_((occa::kernel_v*) kernel);
       kernel_.clearArgumentList();
       
-      occaType_t *args[9] = {(occaType_t*) arg0, (occaType_t*) arg1, (occaType_t*) arg2, (occaType_t*) arg3, (occaType_t*) arg4, (occaType_t*) arg5, (occaType_t*) arg6, (occaType_t*) arg7, (occaType_t*) arg8};
+      occaType_t *args[9] = {((occaType) arg0)->ptr, ((occaType) arg1)->ptr, ((occaType) arg2)->ptr, ((occaType) arg3)->ptr, ((occaType) arg4)->ptr, ((occaType) arg5)->ptr, ((occaType) arg6)->ptr, ((occaType) arg7)->ptr, ((occaType) arg8)->ptr};
       
       for(int i = 0; i < 9; ++i){
         occaType_t &arg = *(args[i]);
@@ -266,7 +266,7 @@
       occa::kernel kernel_((occa::kernel_v*) kernel);
       kernel_.clearArgumentList();
       
-      occaType_t *args[10] = {(occaType_t*) arg0, (occaType_t*) arg1, (occaType_t*) arg2, (occaType_t*) arg3, (occaType_t*) arg4, (occaType_t*) arg5, (occaType_t*) arg6, (occaType_t*) arg7, (occaType_t*) arg8, (occaType_t*) arg9};
+      occaType_t *args[10] = {((occaType) arg0)->ptr, ((occaType) arg1)->ptr, ((occaType) arg2)->ptr, ((occaType) arg3)->ptr, ((occaType) arg4)->ptr, ((occaType) arg5)->ptr, ((occaType) arg6)->ptr, ((occaType) arg7)->ptr, ((occaType) arg8)->ptr, ((occaType) arg9)->ptr};
       
       for(int i = 0; i < 10; ++i){
         occaType_t &arg = *(args[i]);
@@ -297,7 +297,7 @@
       occa::kernel kernel_((occa::kernel_v*) kernel);
       kernel_.clearArgumentList();
       
-      occaType_t *args[11] = {(occaType_t*) arg0, (occaType_t*) arg1, (occaType_t*) arg2, (occaType_t*) arg3, (occaType_t*) arg4, (occaType_t*) arg5, (occaType_t*) arg6, (occaType_t*) arg7, (occaType_t*) arg8, (occaType_t*) arg9, (occaType_t*) arg10};
+      occaType_t *args[11] = {((occaType) arg0)->ptr, ((occaType) arg1)->ptr, ((occaType) arg2)->ptr, ((occaType) arg3)->ptr, ((occaType) arg4)->ptr, ((occaType) arg5)->ptr, ((occaType) arg6)->ptr, ((occaType) arg7)->ptr, ((occaType) arg8)->ptr, ((occaType) arg9)->ptr, ((occaType) arg10)->ptr};
       
       for(int i = 0; i < 11; ++i){
         occaType_t &arg = *(args[i]);
@@ -328,7 +328,7 @@
       occa::kernel kernel_((occa::kernel_v*) kernel);
       kernel_.clearArgumentList();
       
-      occaType_t *args[12] = {(occaType_t*) arg0, (occaType_t*) arg1, (occaType_t*) arg2, (occaType_t*) arg3, (occaType_t*) arg4, (occaType_t*) arg5, (occaType_t*) arg6, (occaType_t*) arg7, (occaType_t*) arg8, (occaType_t*) arg9, (occaType_t*) arg10, (occaType_t*) arg11};
+      occaType_t *args[12] = {((occaType) arg0)->ptr, ((occaType) arg1)->ptr, ((occaType) arg2)->ptr, ((occaType) arg3)->ptr, ((occaType) arg4)->ptr, ((occaType) arg5)->ptr, ((occaType) arg6)->ptr, ((occaType) arg7)->ptr, ((occaType) arg8)->ptr, ((occaType) arg9)->ptr, ((occaType) arg10)->ptr, ((occaType) arg11)->ptr};
       
       for(int i = 0; i < 12; ++i){
         occaType_t &arg = *(args[i]);
@@ -360,7 +360,7 @@
       occa::kernel kernel_((occa::kernel_v*) kernel);
       kernel_.clearArgumentList();
       
-      occaType_t *args[13] = {(occaType_t*) arg0, (occaType_t*) arg1, (occaType_t*) arg2, (occaType_t*) arg3, (occaType_t*) arg4, (occaType_t*) arg5, (occaType_t*) arg6, (occaType_t*) arg7, (occaType_t*) arg8, (occaType_t*) arg9, (occaType_t*) arg10, (occaType_t*) arg11, (occaType_t*) arg12};
+      occaType_t *args[13] = {((occaType) arg0)->ptr, ((occaType) arg1)->ptr, ((occaType) arg2)->ptr, ((occaType) arg3)->ptr, ((occaType) arg4)->ptr, ((occaType) arg5)->ptr, ((occaType) arg6)->ptr, ((occaType) arg7)->ptr, ((occaType) arg8)->ptr, ((occaType) arg9)->ptr, ((occaType) arg10)->ptr, ((occaType) arg11)->ptr, ((occaType) arg12)->ptr};
       
       for(int i = 0; i < 13; ++i){
         occaType_t &arg = *(args[i]);
@@ -392,7 +392,7 @@
       occa::kernel kernel_((occa::kernel_v*) kernel);
       kernel_.clearArgumentList();
       
-      occaType_t *args[14] = {(occaType_t*) arg0, (occaType_t*) arg1, (occaType_t*) arg2, (occaType_t*) arg3, (occaType_t*) arg4, (occaType_t*) arg5, (occaType_t*) arg6, (occaType_t*) arg7, (occaType_t*) arg8, (occaType_t*) arg9, (occaType_t*) arg10, (occaType_t*) arg11, (occaType_t*) arg12, (occaType_t*) arg13};
+      occaType_t *args[14] = {((occaType) arg0)->ptr, ((occaType) arg1)->ptr, ((occaType) arg2)->ptr, ((occaType) arg3)->ptr, ((occaType) arg4)->ptr, ((occaType) arg5)->ptr, ((occaType) arg6)->ptr, ((occaType) arg7)->ptr, ((occaType) arg8)->ptr, ((occaType) arg9)->ptr, ((occaType) arg10)->ptr, ((occaType) arg11)->ptr, ((occaType) arg12)->ptr, ((occaType) arg13)->ptr};
       
       for(int i = 0; i < 14; ++i){
         occaType_t &arg = *(args[i]);
@@ -424,7 +424,7 @@
       occa::kernel kernel_((occa::kernel_v*) kernel);
       kernel_.clearArgumentList();
       
-      occaType_t *args[15] = {(occaType_t*) arg0, (occaType_t*) arg1, (occaType_t*) arg2, (occaType_t*) arg3, (occaType_t*) arg4, (occaType_t*) arg5, (occaType_t*) arg6, (occaType_t*) arg7, (occaType_t*) arg8, (occaType_t*) arg9, (occaType_t*) arg10, (occaType_t*) arg11, (occaType_t*) arg12, (occaType_t*) arg13, (occaType_t*) arg14};
+      occaType_t *args[15] = {((occaType) arg0)->ptr, ((occaType) arg1)->ptr, ((occaType) arg2)->ptr, ((occaType) arg3)->ptr, ((occaType) arg4)->ptr, ((occaType) arg5)->ptr, ((occaType) arg6)->ptr, ((occaType) arg7)->ptr, ((occaType) arg8)->ptr, ((occaType) arg9)->ptr, ((occaType) arg10)->ptr, ((occaType) arg11)->ptr, ((occaType) arg12)->ptr, ((occaType) arg13)->ptr, ((occaType) arg14)->ptr};
       
       for(int i = 0; i < 15; ++i){
         occaType_t &arg = *(args[i]);
@@ -457,7 +457,7 @@
       occa::kernel kernel_((occa::kernel_v*) kernel);
       kernel_.clearArgumentList();
       
-      occaType_t *args[16] = {(occaType_t*) arg0, (occaType_t*) arg1, (occaType_t*) arg2, (occaType_t*) arg3, (occaType_t*) arg4, (occaType_t*) arg5, (occaType_t*) arg6, (occaType_t*) arg7, (occaType_t*) arg8, (occaType_t*) arg9, (occaType_t*) arg10, (occaType_t*) arg11, (occaType_t*) arg12, (occaType_t*) arg13, (occaType_t*) arg14, (occaType_t*) arg15};
+      occaType_t *args[16] = {((occaType) arg0)->ptr, ((occaType) arg1)->ptr, ((occaType) arg2)->ptr, ((occaType) arg3)->ptr, ((occaType) arg4)->ptr, ((occaType) arg5)->ptr, ((occaType) arg6)->ptr, ((occaType) arg7)->ptr, ((occaType) arg8)->ptr, ((occaType) arg9)->ptr, ((occaType) arg10)->ptr, ((occaType) arg11)->ptr, ((occaType) arg12)->ptr, ((occaType) arg13)->ptr, ((occaType) arg14)->ptr, ((occaType) arg15)->ptr};
       
       for(int i = 0; i < 16; ++i){
         occaType_t &arg = *(args[i]);
@@ -490,7 +490,7 @@
       occa::kernel kernel_((occa::kernel_v*) kernel);
       kernel_.clearArgumentList();
       
-      occaType_t *args[17] = {(occaType_t*) arg0, (occaType_t*) arg1, (occaType_t*) arg2, (occaType_t*) arg3, (occaType_t*) arg4, (occaType_t*) arg5, (occaType_t*) arg6, (occaType_t*) arg7, (occaType_t*) arg8, (occaType_t*) arg9, (occaType_t*) arg10, (occaType_t*) arg11, (occaType_t*) arg12, (occaType_t*) arg13, (occaType_t*) arg14, (occaType_t*) arg15, (occaType_t*) arg16};
+      occaType_t *args[17] = {((occaType) arg0)->ptr, ((occaType) arg1)->ptr, ((occaType) arg2)->ptr, ((occaType) arg3)->ptr, ((occaType) arg4)->ptr, ((occaType) arg5)->ptr, ((occaType) arg6)->ptr, ((occaType) arg7)->ptr, ((occaType) arg8)->ptr, ((occaType) arg9)->ptr, ((occaType) arg10)->ptr, ((occaType) arg11)->ptr, ((occaType) arg12)->ptr, ((occaType) arg13)->ptr, ((occaType) arg14)->ptr, ((occaType) arg15)->ptr, ((occaType) arg16)->ptr};
       
       for(int i = 0; i < 17; ++i){
         occaType_t &arg = *(args[i]);
@@ -523,7 +523,7 @@
       occa::kernel kernel_((occa::kernel_v*) kernel);
       kernel_.clearArgumentList();
       
-      occaType_t *args[18] = {(occaType_t*) arg0, (occaType_t*) arg1, (occaType_t*) arg2, (occaType_t*) arg3, (occaType_t*) arg4, (occaType_t*) arg5, (occaType_t*) arg6, (occaType_t*) arg7, (occaType_t*) arg8, (occaType_t*) arg9, (occaType_t*) arg10, (occaType_t*) arg11, (occaType_t*) arg12, (occaType_t*) arg13, (occaType_t*) arg14, (occaType_t*) arg15, (occaType_t*) arg16, (occaType_t*) arg17};
+      occaType_t *args[18] = {((occaType) arg0)->ptr, ((occaType) arg1)->ptr, ((occaType) arg2)->ptr, ((occaType) arg3)->ptr, ((occaType) arg4)->ptr, ((occaType) arg5)->ptr, ((occaType) arg6)->ptr, ((occaType) arg7)->ptr, ((occaType) arg8)->ptr, ((occaType) arg9)->ptr, ((occaType) arg10)->ptr, ((occaType) arg11)->ptr, ((occaType) arg12)->ptr, ((occaType) arg13)->ptr, ((occaType) arg14)->ptr, ((occaType) arg15)->ptr, ((occaType) arg16)->ptr, ((occaType) arg17)->ptr};
       
       for(int i = 0; i < 18; ++i){
         occaType_t &arg = *(args[i]);
@@ -557,7 +557,7 @@
       occa::kernel kernel_((occa::kernel_v*) kernel);
       kernel_.clearArgumentList();
       
-      occaType_t *args[19] = {(occaType_t*) arg0, (occaType_t*) arg1, (occaType_t*) arg2, (occaType_t*) arg3, (occaType_t*) arg4, (occaType_t*) arg5, (occaType_t*) arg6, (occaType_t*) arg7, (occaType_t*) arg8, (occaType_t*) arg9, (occaType_t*) arg10, (occaType_t*) arg11, (occaType_t*) arg12, (occaType_t*) arg13, (occaType_t*) arg14, (occaType_t*) arg15, (occaType_t*) arg16, (occaType_t*) arg17, (occaType_t*) arg18};
+      occaType_t *args[19] = {((occaType) arg0)->ptr, ((occaType) arg1)->ptr, ((occaType) arg2)->ptr, ((occaType) arg3)->ptr, ((occaType) arg4)->ptr, ((occaType) arg5)->ptr, ((occaType) arg6)->ptr, ((occaType) arg7)->ptr, ((occaType) arg8)->ptr, ((occaType) arg9)->ptr, ((occaType) arg10)->ptr, ((occaType) arg11)->ptr, ((occaType) arg12)->ptr, ((occaType) arg13)->ptr, ((occaType) arg14)->ptr, ((occaType) arg15)->ptr, ((occaType) arg16)->ptr, ((occaType) arg17)->ptr, ((occaType) arg18)->ptr};
       
       for(int i = 0; i < 19; ++i){
         occaType_t &arg = *(args[i]);
@@ -591,7 +591,7 @@
       occa::kernel kernel_((occa::kernel_v*) kernel);
       kernel_.clearArgumentList();
       
-      occaType_t *args[20] = {(occaType_t*) arg0, (occaType_t*) arg1, (occaType_t*) arg2, (occaType_t*) arg3, (occaType_t*) arg4, (occaType_t*) arg5, (occaType_t*) arg6, (occaType_t*) arg7, (occaType_t*) arg8, (occaType_t*) arg9, (occaType_t*) arg10, (occaType_t*) arg11, (occaType_t*) arg12, (occaType_t*) arg13, (occaType_t*) arg14, (occaType_t*) arg15, (occaType_t*) arg16, (occaType_t*) arg17, (occaType_t*) arg18, (occaType_t*) arg19};
+      occaType_t *args[20] = {((occaType) arg0)->ptr, ((occaType) arg1)->ptr, ((occaType) arg2)->ptr, ((occaType) arg3)->ptr, ((occaType) arg4)->ptr, ((occaType) arg5)->ptr, ((occaType) arg6)->ptr, ((occaType) arg7)->ptr, ((occaType) arg8)->ptr, ((occaType) arg9)->ptr, ((occaType) arg10)->ptr, ((occaType) arg11)->ptr, ((occaType) arg12)->ptr, ((occaType) arg13)->ptr, ((occaType) arg14)->ptr, ((occaType) arg15)->ptr, ((occaType) arg16)->ptr, ((occaType) arg17)->ptr, ((occaType) arg18)->ptr, ((occaType) arg19)->ptr};
       
       for(int i = 0; i < 20; ++i){
         occaType_t &arg = *(args[i]);
@@ -625,7 +625,7 @@
       occa::kernel kernel_((occa::kernel_v*) kernel);
       kernel_.clearArgumentList();
       
-      occaType_t *args[21] = {(occaType_t*) arg0, (occaType_t*) arg1, (occaType_t*) arg2, (occaType_t*) arg3, (occaType_t*) arg4, (occaType_t*) arg5, (occaType_t*) arg6, (occaType_t*) arg7, (occaType_t*) arg8, (occaType_t*) arg9, (occaType_t*) arg10, (occaType_t*) arg11, (occaType_t*) arg12, (occaType_t*) arg13, (occaType_t*) arg14, (occaType_t*) arg15, (occaType_t*) arg16, (occaType_t*) arg17, (occaType_t*) arg18, (occaType_t*) arg19, (occaType_t*) arg20};
+      occaType_t *args[21] = {((occaType) arg0)->ptr, ((occaType) arg1)->ptr, ((occaType) arg2)->ptr, ((occaType) arg3)->ptr, ((occaType) arg4)->ptr, ((occaType) arg5)->ptr, ((occaType) arg6)->ptr, ((occaType) arg7)->ptr, ((occaType) arg8)->ptr, ((occaType) arg9)->ptr, ((occaType) arg10)->ptr, ((occaType) arg11)->ptr, ((occaType) arg12)->ptr, ((occaType) arg13)->ptr, ((occaType) arg14)->ptr, ((occaType) arg15)->ptr, ((occaType) arg16)->ptr, ((occaType) arg17)->ptr, ((occaType) arg18)->ptr, ((occaType) arg19)->ptr, ((occaType) arg20)->ptr};
       
       for(int i = 0; i < 21; ++i){
         occaType_t &arg = *(args[i]);
@@ -660,7 +660,7 @@
       occa::kernel kernel_((occa::kernel_v*) kernel);
       kernel_.clearArgumentList();
       
-      occaType_t *args[22] = {(occaType_t*) arg0, (occaType_t*) arg1, (occaType_t*) arg2, (occaType_t*) arg3, (occaType_t*) arg4, (occaType_t*) arg5, (occaType_t*) arg6, (occaType_t*) arg7, (occaType_t*) arg8, (occaType_t*) arg9, (occaType_t*) arg10, (occaType_t*) arg11, (occaType_t*) arg12, (occaType_t*) arg13, (occaType_t*) arg14, (occaType_t*) arg15, (occaType_t*) arg16, (occaType_t*) arg17, (occaType_t*) arg18, (occaType_t*) arg19, (occaType_t*) arg20, (occaType_t*) arg21};
+      occaType_t *args[22] = {((occaType) arg0)->ptr, ((occaType) arg1)->ptr, ((occaType) arg2)->ptr, ((occaType) arg3)->ptr, ((occaType) arg4)->ptr, ((occaType) arg5)->ptr, ((occaType) arg6)->ptr, ((occaType) arg7)->ptr, ((occaType) arg8)->ptr, ((occaType) arg9)->ptr, ((occaType) arg10)->ptr, ((occaType) arg11)->ptr, ((occaType) arg12)->ptr, ((occaType) arg13)->ptr, ((occaType) arg14)->ptr, ((occaType) arg15)->ptr, ((occaType) arg16)->ptr, ((occaType) arg17)->ptr, ((occaType) arg18)->ptr, ((occaType) arg19)->ptr, ((occaType) arg20)->ptr, ((occaType) arg21)->ptr};
       
       for(int i = 0; i < 22; ++i){
         occaType_t &arg = *(args[i]);
@@ -695,7 +695,7 @@
       occa::kernel kernel_((occa::kernel_v*) kernel);
       kernel_.clearArgumentList();
       
-      occaType_t *args[23] = {(occaType_t*) arg0, (occaType_t*) arg1, (occaType_t*) arg2, (occaType_t*) arg3, (occaType_t*) arg4, (occaType_t*) arg5, (occaType_t*) arg6, (occaType_t*) arg7, (occaType_t*) arg8, (occaType_t*) arg9, (occaType_t*) arg10, (occaType_t*) arg11, (occaType_t*) arg12, (occaType_t*) arg13, (occaType_t*) arg14, (occaType_t*) arg15, (occaType_t*) arg16, (occaType_t*) arg17, (occaType_t*) arg18, (occaType_t*) arg19, (occaType_t*) arg20, (occaType_t*) arg21, (occaType_t*) arg22};
+      occaType_t *args[23] = {((occaType) arg0)->ptr, ((occaType) arg1)->ptr, ((occaType) arg2)->ptr, ((occaType) arg3)->ptr, ((occaType) arg4)->ptr, ((occaType) arg5)->ptr, ((occaType) arg6)->ptr, ((occaType) arg7)->ptr, ((occaType) arg8)->ptr, ((occaType) arg9)->ptr, ((occaType) arg10)->ptr, ((occaType) arg11)->ptr, ((occaType) arg12)->ptr, ((occaType) arg13)->ptr, ((occaType) arg14)->ptr, ((occaType) arg15)->ptr, ((occaType) arg16)->ptr, ((occaType) arg17)->ptr, ((occaType) arg18)->ptr, ((occaType) arg19)->ptr, ((occaType) arg20)->ptr, ((occaType) arg21)->ptr, ((occaType) arg22)->ptr};
       
       for(int i = 0; i < 23; ++i){
         occaType_t &arg = *(args[i]);
@@ -730,7 +730,7 @@
       occa::kernel kernel_((occa::kernel_v*) kernel);
       kernel_.clearArgumentList();
       
-      occaType_t *args[24] = {(occaType_t*) arg0, (occaType_t*) arg1, (occaType_t*) arg2, (occaType_t*) arg3, (occaType_t*) arg4, (occaType_t*) arg5, (occaType_t*) arg6, (occaType_t*) arg7, (occaType_t*) arg8, (occaType_t*) arg9, (occaType_t*) arg10, (occaType_t*) arg11, (occaType_t*) arg12, (occaType_t*) arg13, (occaType_t*) arg14, (occaType_t*) arg15, (occaType_t*) arg16, (occaType_t*) arg17, (occaType_t*) arg18, (occaType_t*) arg19, (occaType_t*) arg20, (occaType_t*) arg21, (occaType_t*) arg22, (occaType_t*) arg23};
+      occaType_t *args[24] = {((occaType) arg0)->ptr, ((occaType) arg1)->ptr, ((occaType) arg2)->ptr, ((occaType) arg3)->ptr, ((occaType) arg4)->ptr, ((occaType) arg5)->ptr, ((occaType) arg6)->ptr, ((occaType) arg7)->ptr, ((occaType) arg8)->ptr, ((occaType) arg9)->ptr, ((occaType) arg10)->ptr, ((occaType) arg11)->ptr, ((occaType) arg12)->ptr, ((occaType) arg13)->ptr, ((occaType) arg14)->ptr, ((occaType) arg15)->ptr, ((occaType) arg16)->ptr, ((occaType) arg17)->ptr, ((occaType) arg18)->ptr, ((occaType) arg19)->ptr, ((occaType) arg20)->ptr, ((occaType) arg21)->ptr, ((occaType) arg22)->ptr, ((occaType) arg23)->ptr};
       
       for(int i = 0; i < 24; ++i){
         occaType_t &arg = *(args[i]);
@@ -766,7 +766,7 @@
       occa::kernel kernel_((occa::kernel_v*) kernel);
       kernel_.clearArgumentList();
       
-      occaType_t *args[25] = {(occaType_t*) arg0, (occaType_t*) arg1, (occaType_t*) arg2, (occaType_t*) arg3, (occaType_t*) arg4, (occaType_t*) arg5, (occaType_t*) arg6, (occaType_t*) arg7, (occaType_t*) arg8, (occaType_t*) arg9, (occaType_t*) arg10, (occaType_t*) arg11, (occaType_t*) arg12, (occaType_t*) arg13, (occaType_t*) arg14, (occaType_t*) arg15, (occaType_t*) arg16, (occaType_t*) arg17, (occaType_t*) arg18, (occaType_t*) arg19, (occaType_t*) arg20, (occaType_t*) arg21, (occaType_t*) arg22, (occaType_t*) arg23, (occaType_t*) arg24};
+      occaType_t *args[25] = {((occaType) arg0)->ptr, ((occaType) arg1)->ptr, ((occaType) arg2)->ptr, ((occaType) arg3)->ptr, ((occaType) arg4)->ptr, ((occaType) arg5)->ptr, ((occaType) arg6)->ptr, ((occaType) arg7)->ptr, ((occaType) arg8)->ptr, ((occaType) arg9)->ptr, ((occaType) arg10)->ptr, ((occaType) arg11)->ptr, ((occaType) arg12)->ptr, ((occaType) arg13)->ptr, ((occaType) arg14)->ptr, ((occaType) arg15)->ptr, ((occaType) arg16)->ptr, ((occaType) arg17)->ptr, ((occaType) arg18)->ptr, ((occaType) arg19)->ptr, ((occaType) arg20)->ptr, ((occaType) arg21)->ptr, ((occaType) arg22)->ptr, ((occaType) arg23)->ptr, ((occaType) arg24)->ptr};
       
       for(int i = 0; i < 25; ++i){
         occaType_t &arg = *(args[i]);
@@ -802,7 +802,7 @@
       occa::kernel kernel_((occa::kernel_v*) kernel);
       kernel_.clearArgumentList();
       
-      occaType_t *args[26] = {(occaType_t*) arg0, (occaType_t*) arg1, (occaType_t*) arg2, (occaType_t*) arg3, (occaType_t*) arg4, (occaType_t*) arg5, (occaType_t*) arg6, (occaType_t*) arg7, (occaType_t*) arg8, (occaType_t*) arg9, (occaType_t*) arg10, (occaType_t*) arg11, (occaType_t*) arg12, (occaType_t*) arg13, (occaType_t*) arg14, (occaType_t*) arg15, (occaType_t*) arg16, (occaType_t*) arg17, (occaType_t*) arg18, (occaType_t*) arg19, (occaType_t*) arg20, (occaType_t*) arg21, (occaType_t*) arg22, (occaType_t*) arg23, (occaType_t*) arg24, (occaType_t*) arg25};
+      occaType_t *args[26] = {((occaType) arg0)->ptr, ((occaType) arg1)->ptr, ((occaType) arg2)->ptr, ((occaType) arg3)->ptr, ((occaType) arg4)->ptr, ((occaType) arg5)->ptr, ((occaType) arg6)->ptr, ((occaType) arg7)->ptr, ((occaType) arg8)->ptr, ((occaType) arg9)->ptr, ((occaType) arg10)->ptr, ((occaType) arg11)->ptr, ((occaType) arg12)->ptr, ((occaType) arg13)->ptr, ((occaType) arg14)->ptr, ((occaType) arg15)->ptr, ((occaType) arg16)->ptr, ((occaType) arg17)->ptr, ((occaType) arg18)->ptr, ((occaType) arg19)->ptr, ((occaType) arg20)->ptr, ((occaType) arg21)->ptr, ((occaType) arg22)->ptr, ((occaType) arg23)->ptr, ((occaType) arg24)->ptr, ((occaType) arg25)->ptr};
       
       for(int i = 0; i < 26; ++i){
         occaType_t &arg = *(args[i]);
@@ -838,7 +838,7 @@
       occa::kernel kernel_((occa::kernel_v*) kernel);
       kernel_.clearArgumentList();
       
-      occaType_t *args[27] = {(occaType_t*) arg0, (occaType_t*) arg1, (occaType_t*) arg2, (occaType_t*) arg3, (occaType_t*) arg4, (occaType_t*) arg5, (occaType_t*) arg6, (occaType_t*) arg7, (occaType_t*) arg8, (occaType_t*) arg9, (occaType_t*) arg10, (occaType_t*) arg11, (occaType_t*) arg12, (occaType_t*) arg13, (occaType_t*) arg14, (occaType_t*) arg15, (occaType_t*) arg16, (occaType_t*) arg17, (occaType_t*) arg18, (occaType_t*) arg19, (occaType_t*) arg20, (occaType_t*) arg21, (occaType_t*) arg22, (occaType_t*) arg23, (occaType_t*) arg24, (occaType_t*) arg25, (occaType_t*) arg26};
+      occaType_t *args[27] = {((occaType) arg0)->ptr, ((occaType) arg1)->ptr, ((occaType) arg2)->ptr, ((occaType) arg3)->ptr, ((occaType) arg4)->ptr, ((occaType) arg5)->ptr, ((occaType) arg6)->ptr, ((occaType) arg7)->ptr, ((occaType) arg8)->ptr, ((occaType) arg9)->ptr, ((occaType) arg10)->ptr, ((occaType) arg11)->ptr, ((occaType) arg12)->ptr, ((occaType) arg13)->ptr, ((occaType) arg14)->ptr, ((occaType) arg15)->ptr, ((occaType) arg16)->ptr, ((occaType) arg17)->ptr, ((occaType) arg18)->ptr, ((occaType) arg19)->ptr, ((occaType) arg20)->ptr, ((occaType) arg21)->ptr, ((occaType) arg22)->ptr, ((occaType) arg23)->ptr, ((occaType) arg24)->ptr, ((occaType) arg25)->ptr, ((occaType) arg26)->ptr};
       
       for(int i = 0; i < 27; ++i){
         occaType_t &arg = *(args[i]);
@@ -875,7 +875,7 @@
       occa::kernel kernel_((occa::kernel_v*) kernel);
       kernel_.clearArgumentList();
       
-      occaType_t *args[28] = {(occaType_t*) arg0, (occaType_t*) arg1, (occaType_t*) arg2, (occaType_t*) arg3, (occaType_t*) arg4, (occaType_t*) arg5, (occaType_t*) arg6, (occaType_t*) arg7, (occaType_t*) arg8, (occaType_t*) arg9, (occaType_t*) arg10, (occaType_t*) arg11, (occaType_t*) arg12, (occaType_t*) arg13, (occaType_t*) arg14, (occaType_t*) arg15, (occaType_t*) arg16, (occaType_t*) arg17, (occaType_t*) arg18, (occaType_t*) arg19, (occaType_t*) arg20, (occaType_t*) arg21, (occaType_t*) arg22, (occaType_t*) arg23, (occaType_t*) arg24, (occaType_t*) arg25, (occaType_t*) arg26, (occaType_t*) arg27};
+      occaType_t *args[28] = {((occaType) arg0)->ptr, ((occaType) arg1)->ptr, ((occaType) arg2)->ptr, ((occaType) arg3)->ptr, ((occaType) arg4)->ptr, ((occaType) arg5)->ptr, ((occaType) arg6)->ptr, ((occaType) arg7)->ptr, ((occaType) arg8)->ptr, ((occaType) arg9)->ptr, ((occaType) arg10)->ptr, ((occaType) arg11)->ptr, ((occaType) arg12)->ptr, ((occaType) arg13)->ptr, ((occaType) arg14)->ptr, ((occaType) arg15)->ptr, ((occaType) arg16)->ptr, ((occaType) arg17)->ptr, ((occaType) arg18)->ptr, ((occaType) arg19)->ptr, ((occaType) arg20)->ptr, ((occaType) arg21)->ptr, ((occaType) arg22)->ptr, ((occaType) arg23)->ptr, ((occaType) arg24)->ptr, ((occaType) arg25)->ptr, ((occaType) arg26)->ptr, ((occaType) arg27)->ptr};
       
       for(int i = 0; i < 28; ++i){
         occaType_t &arg = *(args[i]);
@@ -912,7 +912,7 @@
       occa::kernel kernel_((occa::kernel_v*) kernel);
       kernel_.clearArgumentList();
       
-      occaType_t *args[29] = {(occaType_t*) arg0, (occaType_t*) arg1, (occaType_t*) arg2, (occaType_t*) arg3, (occaType_t*) arg4, (occaType_t*) arg5, (occaType_t*) arg6, (occaType_t*) arg7, (occaType_t*) arg8, (occaType_t*) arg9, (occaType_t*) arg10, (occaType_t*) arg11, (occaType_t*) arg12, (occaType_t*) arg13, (occaType_t*) arg14, (occaType_t*) arg15, (occaType_t*) arg16, (occaType_t*) arg17, (occaType_t*) arg18, (occaType_t*) arg19, (occaType_t*) arg20, (occaType_t*) arg21, (occaType_t*) arg22, (occaType_t*) arg23, (occaType_t*) arg24, (occaType_t*) arg25, (occaType_t*) arg26, (occaType_t*) arg27, (occaType_t*) arg28};
+      occaType_t *args[29] = {((occaType) arg0)->ptr, ((occaType) arg1)->ptr, ((occaType) arg2)->ptr, ((occaType) arg3)->ptr, ((occaType) arg4)->ptr, ((occaType) arg5)->ptr, ((occaType) arg6)->ptr, ((occaType) arg7)->ptr, ((occaType) arg8)->ptr, ((occaType) arg9)->ptr, ((occaType) arg10)->ptr, ((occaType) arg11)->ptr, ((occaType) arg12)->ptr, ((occaType) arg13)->ptr, ((occaType) arg14)->ptr, ((occaType) arg15)->ptr, ((occaType) arg16)->ptr, ((occaType) arg17)->ptr, ((occaType) arg18)->ptr, ((occaType) arg19)->ptr, ((occaType) arg20)->ptr, ((occaType) arg21)->ptr, ((occaType) arg22)->ptr, ((occaType) arg23)->ptr, ((occaType) arg24)->ptr, ((occaType) arg25)->ptr, ((occaType) arg26)->ptr, ((occaType) arg27)->ptr, ((occaType) arg28)->ptr};
       
       for(int i = 0; i < 29; ++i){
         occaType_t &arg = *(args[i]);
@@ -949,7 +949,7 @@
       occa::kernel kernel_((occa::kernel_v*) kernel);
       kernel_.clearArgumentList();
       
-      occaType_t *args[30] = {(occaType_t*) arg0, (occaType_t*) arg1, (occaType_t*) arg2, (occaType_t*) arg3, (occaType_t*) arg4, (occaType_t*) arg5, (occaType_t*) arg6, (occaType_t*) arg7, (occaType_t*) arg8, (occaType_t*) arg9, (occaType_t*) arg10, (occaType_t*) arg11, (occaType_t*) arg12, (occaType_t*) arg13, (occaType_t*) arg14, (occaType_t*) arg15, (occaType_t*) arg16, (occaType_t*) arg17, (occaType_t*) arg18, (occaType_t*) arg19, (occaType_t*) arg20, (occaType_t*) arg21, (occaType_t*) arg22, (occaType_t*) arg23, (occaType_t*) arg24, (occaType_t*) arg25, (occaType_t*) arg26, (occaType_t*) arg27, (occaType_t*) arg28, (occaType_t*) arg29};
+      occaType_t *args[30] = {((occaType) arg0)->ptr, ((occaType) arg1)->ptr, ((occaType) arg2)->ptr, ((occaType) arg3)->ptr, ((occaType) arg4)->ptr, ((occaType) arg5)->ptr, ((occaType) arg6)->ptr, ((occaType) arg7)->ptr, ((occaType) arg8)->ptr, ((occaType) arg9)->ptr, ((occaType) arg10)->ptr, ((occaType) arg11)->ptr, ((occaType) arg12)->ptr, ((occaType) arg13)->ptr, ((occaType) arg14)->ptr, ((occaType) arg15)->ptr, ((occaType) arg16)->ptr, ((occaType) arg17)->ptr, ((occaType) arg18)->ptr, ((occaType) arg19)->ptr, ((occaType) arg20)->ptr, ((occaType) arg21)->ptr, ((occaType) arg22)->ptr, ((occaType) arg23)->ptr, ((occaType) arg24)->ptr, ((occaType) arg25)->ptr, ((occaType) arg26)->ptr, ((occaType) arg27)->ptr, ((occaType) arg28)->ptr, ((occaType) arg29)->ptr};
       
       for(int i = 0; i < 30; ++i){
         occaType_t &arg = *(args[i]);
@@ -987,7 +987,7 @@
       occa::kernel kernel_((occa::kernel_v*) kernel);
       kernel_.clearArgumentList();
       
-      occaType_t *args[31] = {(occaType_t*) arg0, (occaType_t*) arg1, (occaType_t*) arg2, (occaType_t*) arg3, (occaType_t*) arg4, (occaType_t*) arg5, (occaType_t*) arg6, (occaType_t*) arg7, (occaType_t*) arg8, (occaType_t*) arg9, (occaType_t*) arg10, (occaType_t*) arg11, (occaType_t*) arg12, (occaType_t*) arg13, (occaType_t*) arg14, (occaType_t*) arg15, (occaType_t*) arg16, (occaType_t*) arg17, (occaType_t*) arg18, (occaType_t*) arg19, (occaType_t*) arg20, (occaType_t*) arg21, (occaType_t*) arg22, (occaType_t*) arg23, (occaType_t*) arg24, (occaType_t*) arg25, (occaType_t*) arg26, (occaType_t*) arg27, (occaType_t*) arg28, (occaType_t*) arg29, (occaType_t*) arg30};
+      occaType_t *args[31] = {((occaType) arg0)->ptr, ((occaType) arg1)->ptr, ((occaType) arg2)->ptr, ((occaType) arg3)->ptr, ((occaType) arg4)->ptr, ((occaType) arg5)->ptr, ((occaType) arg6)->ptr, ((occaType) arg7)->ptr, ((occaType) arg8)->ptr, ((occaType) arg9)->ptr, ((occaType) arg10)->ptr, ((occaType) arg11)->ptr, ((occaType) arg12)->ptr, ((occaType) arg13)->ptr, ((occaType) arg14)->ptr, ((occaType) arg15)->ptr, ((occaType) arg16)->ptr, ((occaType) arg17)->ptr, ((occaType) arg18)->ptr, ((occaType) arg19)->ptr, ((occaType) arg20)->ptr, ((occaType) arg21)->ptr, ((occaType) arg22)->ptr, ((occaType) arg23)->ptr, ((occaType) arg24)->ptr, ((occaType) arg25)->ptr, ((occaType) arg26)->ptr, ((occaType) arg27)->ptr, ((occaType) arg28)->ptr, ((occaType) arg29)->ptr, ((occaType) arg30)->ptr};
       
       for(int i = 0; i < 31; ++i){
         occaType_t &arg = *(args[i]);
@@ -1025,7 +1025,7 @@
       occa::kernel kernel_((occa::kernel_v*) kernel);
       kernel_.clearArgumentList();
       
-      occaType_t *args[32] = {(occaType_t*) arg0, (occaType_t*) arg1, (occaType_t*) arg2, (occaType_t*) arg3, (occaType_t*) arg4, (occaType_t*) arg5, (occaType_t*) arg6, (occaType_t*) arg7, (occaType_t*) arg8, (occaType_t*) arg9, (occaType_t*) arg10, (occaType_t*) arg11, (occaType_t*) arg12, (occaType_t*) arg13, (occaType_t*) arg14, (occaType_t*) arg15, (occaType_t*) arg16, (occaType_t*) arg17, (occaType_t*) arg18, (occaType_t*) arg19, (occaType_t*) arg20, (occaType_t*) arg21, (occaType_t*) arg22, (occaType_t*) arg23, (occaType_t*) arg24, (occaType_t*) arg25, (occaType_t*) arg26, (occaType_t*) arg27, (occaType_t*) arg28, (occaType_t*) arg29, (occaType_t*) arg30, (occaType_t*) arg31};
+      occaType_t *args[32] = {((occaType) arg0)->ptr, ((occaType) arg1)->ptr, ((occaType) arg2)->ptr, ((occaType) arg3)->ptr, ((occaType) arg4)->ptr, ((occaType) arg5)->ptr, ((occaType) arg6)->ptr, ((occaType) arg7)->ptr, ((occaType) arg8)->ptr, ((occaType) arg9)->ptr, ((occaType) arg10)->ptr, ((occaType) arg11)->ptr, ((occaType) arg12)->ptr, ((occaType) arg13)->ptr, ((occaType) arg14)->ptr, ((occaType) arg15)->ptr, ((occaType) arg16)->ptr, ((occaType) arg17)->ptr, ((occaType) arg18)->ptr, ((occaType) arg19)->ptr, ((occaType) arg20)->ptr, ((occaType) arg21)->ptr, ((occaType) arg22)->ptr, ((occaType) arg23)->ptr, ((occaType) arg24)->ptr, ((occaType) arg25)->ptr, ((occaType) arg26)->ptr, ((occaType) arg27)->ptr, ((occaType) arg28)->ptr, ((occaType) arg29)->ptr, ((occaType) arg30)->ptr, ((occaType) arg31)->ptr};
       
       for(int i = 0; i < 32; ++i){
         occaType_t &arg = *(args[i]);
@@ -1063,7 +1063,7 @@
       occa::kernel kernel_((occa::kernel_v*) kernel);
       kernel_.clearArgumentList();
       
-      occaType_t *args[33] = {(occaType_t*) arg0, (occaType_t*) arg1, (occaType_t*) arg2, (occaType_t*) arg3, (occaType_t*) arg4, (occaType_t*) arg5, (occaType_t*) arg6, (occaType_t*) arg7, (occaType_t*) arg8, (occaType_t*) arg9, (occaType_t*) arg10, (occaType_t*) arg11, (occaType_t*) arg12, (occaType_t*) arg13, (occaType_t*) arg14, (occaType_t*) arg15, (occaType_t*) arg16, (occaType_t*) arg17, (occaType_t*) arg18, (occaType_t*) arg19, (occaType_t*) arg20, (occaType_t*) arg21, (occaType_t*) arg22, (occaType_t*) arg23, (occaType_t*) arg24, (occaType_t*) arg25, (occaType_t*) arg26, (occaType_t*) arg27, (occaType_t*) arg28, (occaType_t*) arg29, (occaType_t*) arg30, (occaType_t*) arg31, (occaType_t*) arg32};
+      occaType_t *args[33] = {((occaType) arg0)->ptr, ((occaType) arg1)->ptr, ((occaType) arg2)->ptr, ((occaType) arg3)->ptr, ((occaType) arg4)->ptr, ((occaType) arg5)->ptr, ((occaType) arg6)->ptr, ((occaType) arg7)->ptr, ((occaType) arg8)->ptr, ((occaType) arg9)->ptr, ((occaType) arg10)->ptr, ((occaType) arg11)->ptr, ((occaType) arg12)->ptr, ((occaType) arg13)->ptr, ((occaType) arg14)->ptr, ((occaType) arg15)->ptr, ((occaType) arg16)->ptr, ((occaType) arg17)->ptr, ((occaType) arg18)->ptr, ((occaType) arg19)->ptr, ((occaType) arg20)->ptr, ((occaType) arg21)->ptr, ((occaType) arg22)->ptr, ((occaType) arg23)->ptr, ((occaType) arg24)->ptr, ((occaType) arg25)->ptr, ((occaType) arg26)->ptr, ((occaType) arg27)->ptr, ((occaType) arg28)->ptr, ((occaType) arg29)->ptr, ((occaType) arg30)->ptr, ((occaType) arg31)->ptr, ((occaType) arg32)->ptr};
       
       for(int i = 0; i < 33; ++i){
         occaType_t &arg = *(args[i]);
@@ -1102,7 +1102,7 @@
       occa::kernel kernel_((occa::kernel_v*) kernel);
       kernel_.clearArgumentList();
       
-      occaType_t *args[34] = {(occaType_t*) arg0, (occaType_t*) arg1, (occaType_t*) arg2, (occaType_t*) arg3, (occaType_t*) arg4, (occaType_t*) arg5, (occaType_t*) arg6, (occaType_t*) arg7, (occaType_t*) arg8, (occaType_t*) arg9, (occaType_t*) arg10, (occaType_t*) arg11, (occaType_t*) arg12, (occaType_t*) arg13, (occaType_t*) arg14, (occaType_t*) arg15, (occaType_t*) arg16, (occaType_t*) arg17, (occaType_t*) arg18, (occaType_t*) arg19, (occaType_t*) arg20, (occaType_t*) arg21, (occaType_t*) arg22, (occaType_t*) arg23, (occaType_t*) arg24, (occaType_t*) arg25, (occaType_t*) arg26, (occaType_t*) arg27, (occaType_t*) arg28, (occaType_t*) arg29, (occaType_t*) arg30, (occaType_t*) arg31, (occaType_t*) arg32, (occaType_t*) arg33};
+      occaType_t *args[34] = {((occaType) arg0)->ptr, ((occaType) arg1)->ptr, ((occaType) arg2)->ptr, ((occaType) arg3)->ptr, ((occaType) arg4)->ptr, ((occaType) arg5)->ptr, ((occaType) arg6)->ptr, ((occaType) arg7)->ptr, ((occaType) arg8)->ptr, ((occaType) arg9)->ptr, ((occaType) arg10)->ptr, ((occaType) arg11)->ptr, ((occaType) arg12)->ptr, ((occaType) arg13)->ptr, ((occaType) arg14)->ptr, ((occaType) arg15)->ptr, ((occaType) arg16)->ptr, ((occaType) arg17)->ptr, ((occaType) arg18)->ptr, ((occaType) arg19)->ptr, ((occaType) arg20)->ptr, ((occaType) arg21)->ptr, ((occaType) arg22)->ptr, ((occaType) arg23)->ptr, ((occaType) arg24)->ptr, ((occaType) arg25)->ptr, ((occaType) arg26)->ptr, ((occaType) arg27)->ptr, ((occaType) arg28)->ptr, ((occaType) arg29)->ptr, ((occaType) arg30)->ptr, ((occaType) arg31)->ptr, ((occaType) arg32)->ptr, ((occaType) arg33)->ptr};
       
       for(int i = 0; i < 34; ++i){
         occaType_t &arg = *(args[i]);
@@ -1141,7 +1141,7 @@
       occa::kernel kernel_((occa::kernel_v*) kernel);
       kernel_.clearArgumentList();
       
-      occaType_t *args[35] = {(occaType_t*) arg0, (occaType_t*) arg1, (occaType_t*) arg2, (occaType_t*) arg3, (occaType_t*) arg4, (occaType_t*) arg5, (occaType_t*) arg6, (occaType_t*) arg7, (occaType_t*) arg8, (occaType_t*) arg9, (occaType_t*) arg10, (occaType_t*) arg11, (occaType_t*) arg12, (occaType_t*) arg13, (occaType_t*) arg14, (occaType_t*) arg15, (occaType_t*) arg16, (occaType_t*) arg17, (occaType_t*) arg18, (occaType_t*) arg19, (occaType_t*) arg20, (occaType_t*) arg21, (occaType_t*) arg22, (occaType_t*) arg23, (occaType_t*) arg24, (occaType_t*) arg25, (occaType_t*) arg26, (occaType_t*) arg27, (occaType_t*) arg28, (occaType_t*) arg29, (occaType_t*) arg30, (occaType_t*) arg31, (occaType_t*) arg32, (occaType_t*) arg33, (occaType_t*) arg34};
+      occaType_t *args[35] = {((occaType) arg0)->ptr, ((occaType) arg1)->ptr, ((occaType) arg2)->ptr, ((occaType) arg3)->ptr, ((occaType) arg4)->ptr, ((occaType) arg5)->ptr, ((occaType) arg6)->ptr, ((occaType) arg7)->ptr, ((occaType) arg8)->ptr, ((occaType) arg9)->ptr, ((occaType) arg10)->ptr, ((occaType) arg11)->ptr, ((occaType) arg12)->ptr, ((occaType) arg13)->ptr, ((occaType) arg14)->ptr, ((occaType) arg15)->ptr, ((occaType) arg16)->ptr, ((occaType) arg17)->ptr, ((occaType) arg18)->ptr, ((occaType) arg19)->ptr, ((occaType) arg20)->ptr, ((occaType) arg21)->ptr, ((occaType) arg22)->ptr, ((occaType) arg23)->ptr, ((occaType) arg24)->ptr, ((occaType) arg25)->ptr, ((occaType) arg26)->ptr, ((occaType) arg27)->ptr, ((occaType) arg28)->ptr, ((occaType) arg29)->ptr, ((occaType) arg30)->ptr, ((occaType) arg31)->ptr, ((occaType) arg32)->ptr, ((occaType) arg33)->ptr, ((occaType) arg34)->ptr};
       
       for(int i = 0; i < 35; ++i){
         occaType_t &arg = *(args[i]);
@@ -1180,7 +1180,7 @@
       occa::kernel kernel_((occa::kernel_v*) kernel);
       kernel_.clearArgumentList();
       
-      occaType_t *args[36] = {(occaType_t*) arg0, (occaType_t*) arg1, (occaType_t*) arg2, (occaType_t*) arg3, (occaType_t*) arg4, (occaType_t*) arg5, (occaType_t*) arg6, (occaType_t*) arg7, (occaType_t*) arg8, (occaType_t*) arg9, (occaType_t*) arg10, (occaType_t*) arg11, (occaType_t*) arg12, (occaType_t*) arg13, (occaType_t*) arg14, (occaType_t*) arg15, (occaType_t*) arg16, (occaType_t*) arg17, (occaType_t*) arg18, (occaType_t*) arg19, (occaType_t*) arg20, (occaType_t*) arg21, (occaType_t*) arg22, (occaType_t*) arg23, (occaType_t*) arg24, (occaType_t*) arg25, (occaType_t*) arg26, (occaType_t*) arg27, (occaType_t*) arg28, (occaType_t*) arg29, (occaType_t*) arg30, (occaType_t*) arg31, (occaType_t*) arg32, (occaType_t*) arg33, (occaType_t*) arg34, (occaType_t*) arg35};
+      occaType_t *args[36] = {((occaType) arg0)->ptr, ((occaType) arg1)->ptr, ((occaType) arg2)->ptr, ((occaType) arg3)->ptr, ((occaType) arg4)->ptr, ((occaType) arg5)->ptr, ((occaType) arg6)->ptr, ((occaType) arg7)->ptr, ((occaType) arg8)->ptr, ((occaType) arg9)->ptr, ((occaType) arg10)->ptr, ((occaType) arg11)->ptr, ((occaType) arg12)->ptr, ((occaType) arg13)->ptr, ((occaType) arg14)->ptr, ((occaType) arg15)->ptr, ((occaType) arg16)->ptr, ((occaType) arg17)->ptr, ((occaType) arg18)->ptr, ((occaType) arg19)->ptr, ((occaType) arg20)->ptr, ((occaType) arg21)->ptr, ((occaType) arg22)->ptr, ((occaType) arg23)->ptr, ((occaType) arg24)->ptr, ((occaType) arg25)->ptr, ((occaType) arg26)->ptr, ((occaType) arg27)->ptr, ((occaType) arg28)->ptr, ((occaType) arg29)->ptr, ((occaType) arg30)->ptr, ((occaType) arg31)->ptr, ((occaType) arg32)->ptr, ((occaType) arg33)->ptr, ((occaType) arg34)->ptr, ((occaType) arg35)->ptr};
       
       for(int i = 0; i < 36; ++i){
         occaType_t &arg = *(args[i]);
@@ -1220,7 +1220,7 @@
       occa::kernel kernel_((occa::kernel_v*) kernel);
       kernel_.clearArgumentList();
       
-      occaType_t *args[37] = {(occaType_t*) arg0, (occaType_t*) arg1, (occaType_t*) arg2, (occaType_t*) arg3, (occaType_t*) arg4, (occaType_t*) arg5, (occaType_t*) arg6, (occaType_t*) arg7, (occaType_t*) arg8, (occaType_t*) arg9, (occaType_t*) arg10, (occaType_t*) arg11, (occaType_t*) arg12, (occaType_t*) arg13, (occaType_t*) arg14, (occaType_t*) arg15, (occaType_t*) arg16, (occaType_t*) arg17, (occaType_t*) arg18, (occaType_t*) arg19, (occaType_t*) arg20, (occaType_t*) arg21, (occaType_t*) arg22, (occaType_t*) arg23, (occaType_t*) arg24, (occaType_t*) arg25, (occaType_t*) arg26, (occaType_t*) arg27, (occaType_t*) arg28, (occaType_t*) arg29, (occaType_t*) arg30, (occaType_t*) arg31, (occaType_t*) arg32, (occaType_t*) arg33, (occaType_t*) arg34, (occaType_t*) arg35, (occaType_t*) arg36};
+      occaType_t *args[37] = {((occaType) arg0)->ptr, ((occaType) arg1)->ptr, ((occaType) arg2)->ptr, ((occaType) arg3)->ptr, ((occaType) arg4)->ptr, ((occaType) arg5)->ptr, ((occaType) arg6)->ptr, ((occaType) arg7)->ptr, ((occaType) arg8)->ptr, ((occaType) arg9)->ptr, ((occaType) arg10)->ptr, ((occaType) arg11)->ptr, ((occaType) arg12)->ptr, ((occaType) arg13)->ptr, ((occaType) arg14)->ptr, ((occaType) arg15)->ptr, ((occaType) arg16)->ptr, ((occaType) arg17)->ptr, ((occaType) arg18)->ptr, ((occaType) arg19)->ptr, ((occaType) arg20)->ptr, ((occaType) arg21)->ptr, ((occaType) arg22)->ptr, ((occaType) arg23)->ptr, ((occaType) arg24)->ptr, ((occaType) arg25)->ptr, ((occaType) arg26)->ptr, ((occaType) arg27)->ptr, ((occaType) arg28)->ptr, ((occaType) arg29)->ptr, ((occaType) arg30)->ptr, ((occaType) arg31)->ptr, ((occaType) arg32)->ptr, ((occaType) arg33)->ptr, ((occaType) arg34)->ptr, ((occaType) arg35)->ptr, ((occaType) arg36)->ptr};
       
       for(int i = 0; i < 37; ++i){
         occaType_t &arg = *(args[i]);
@@ -1260,7 +1260,7 @@
       occa::kernel kernel_((occa::kernel_v*) kernel);
       kernel_.clearArgumentList();
       
-      occaType_t *args[38] = {(occaType_t*) arg0, (occaType_t*) arg1, (occaType_t*) arg2, (occaType_t*) arg3, (occaType_t*) arg4, (occaType_t*) arg5, (occaType_t*) arg6, (occaType_t*) arg7, (occaType_t*) arg8, (occaType_t*) arg9, (occaType_t*) arg10, (occaType_t*) arg11, (occaType_t*) arg12, (occaType_t*) arg13, (occaType_t*) arg14, (occaType_t*) arg15, (occaType_t*) arg16, (occaType_t*) arg17, (occaType_t*) arg18, (occaType_t*) arg19, (occaType_t*) arg20, (occaType_t*) arg21, (occaType_t*) arg22, (occaType_t*) arg23, (occaType_t*) arg24, (occaType_t*) arg25, (occaType_t*) arg26, (occaType_t*) arg27, (occaType_t*) arg28, (occaType_t*) arg29, (occaType_t*) arg30, (occaType_t*) arg31, (occaType_t*) arg32, (occaType_t*) arg33, (occaType_t*) arg34, (occaType_t*) arg35, (occaType_t*) arg36, (occaType_t*) arg37};
+      occaType_t *args[38] = {((occaType) arg0)->ptr, ((occaType) arg1)->ptr, ((occaType) arg2)->ptr, ((occaType) arg3)->ptr, ((occaType) arg4)->ptr, ((occaType) arg5)->ptr, ((occaType) arg6)->ptr, ((occaType) arg7)->ptr, ((occaType) arg8)->ptr, ((occaType) arg9)->ptr, ((occaType) arg10)->ptr, ((occaType) arg11)->ptr, ((occaType) arg12)->ptr, ((occaType) arg13)->ptr, ((occaType) arg14)->ptr, ((occaType) arg15)->ptr, ((occaType) arg16)->ptr, ((occaType) arg17)->ptr, ((occaType) arg18)->ptr, ((occaType) arg19)->ptr, ((occaType) arg20)->ptr, ((occaType) arg21)->ptr, ((occaType) arg22)->ptr, ((occaType) arg23)->ptr, ((occaType) arg24)->ptr, ((occaType) arg25)->ptr, ((occaType) arg26)->ptr, ((occaType) arg27)->ptr, ((occaType) arg28)->ptr, ((occaType) arg29)->ptr, ((occaType) arg30)->ptr, ((occaType) arg31)->ptr, ((occaType) arg32)->ptr, ((occaType) arg33)->ptr, ((occaType) arg34)->ptr, ((occaType) arg35)->ptr, ((occaType) arg36)->ptr, ((occaType) arg37)->ptr};
       
       for(int i = 0; i < 38; ++i){
         occaType_t &arg = *(args[i]);
@@ -1300,7 +1300,7 @@
       occa::kernel kernel_((occa::kernel_v*) kernel);
       kernel_.clearArgumentList();
       
-      occaType_t *args[39] = {(occaType_t*) arg0, (occaType_t*) arg1, (occaType_t*) arg2, (occaType_t*) arg3, (occaType_t*) arg4, (occaType_t*) arg5, (occaType_t*) arg6, (occaType_t*) arg7, (occaType_t*) arg8, (occaType_t*) arg9, (occaType_t*) arg10, (occaType_t*) arg11, (occaType_t*) arg12, (occaType_t*) arg13, (occaType_t*) arg14, (occaType_t*) arg15, (occaType_t*) arg16, (occaType_t*) arg17, (occaType_t*) arg18, (occaType_t*) arg19, (occaType_t*) arg20, (occaType_t*) arg21, (occaType_t*) arg22, (occaType_t*) arg23, (occaType_t*) arg24, (occaType_t*) arg25, (occaType_t*) arg26, (occaType_t*) arg27, (occaType_t*) arg28, (occaType_t*) arg29, (occaType_t*) arg30, (occaType_t*) arg31, (occaType_t*) arg32, (occaType_t*) arg33, (occaType_t*) arg34, (occaType_t*) arg35, (occaType_t*) arg36, (occaType_t*) arg37, (occaType_t*) arg38};
+      occaType_t *args[39] = {((occaType) arg0)->ptr, ((occaType) arg1)->ptr, ((occaType) arg2)->ptr, ((occaType) arg3)->ptr, ((occaType) arg4)->ptr, ((occaType) arg5)->ptr, ((occaType) arg6)->ptr, ((occaType) arg7)->ptr, ((occaType) arg8)->ptr, ((occaType) arg9)->ptr, ((occaType) arg10)->ptr, ((occaType) arg11)->ptr, ((occaType) arg12)->ptr, ((occaType) arg13)->ptr, ((occaType) arg14)->ptr, ((occaType) arg15)->ptr, ((occaType) arg16)->ptr, ((occaType) arg17)->ptr, ((occaType) arg18)->ptr, ((occaType) arg19)->ptr, ((occaType) arg20)->ptr, ((occaType) arg21)->ptr, ((occaType) arg22)->ptr, ((occaType) arg23)->ptr, ((occaType) arg24)->ptr, ((occaType) arg25)->ptr, ((occaType) arg26)->ptr, ((occaType) arg27)->ptr, ((occaType) arg28)->ptr, ((occaType) arg29)->ptr, ((occaType) arg30)->ptr, ((occaType) arg31)->ptr, ((occaType) arg32)->ptr, ((occaType) arg33)->ptr, ((occaType) arg34)->ptr, ((occaType) arg35)->ptr, ((occaType) arg36)->ptr, ((occaType) arg37)->ptr, ((occaType) arg38)->ptr};
       
       for(int i = 0; i < 39; ++i){
         occaType_t &arg = *(args[i]);
@@ -1341,7 +1341,7 @@
       occa::kernel kernel_((occa::kernel_v*) kernel);
       kernel_.clearArgumentList();
       
-      occaType_t *args[40] = {(occaType_t*) arg0, (occaType_t*) arg1, (occaType_t*) arg2, (occaType_t*) arg3, (occaType_t*) arg4, (occaType_t*) arg5, (occaType_t*) arg6, (occaType_t*) arg7, (occaType_t*) arg8, (occaType_t*) arg9, (occaType_t*) arg10, (occaType_t*) arg11, (occaType_t*) arg12, (occaType_t*) arg13, (occaType_t*) arg14, (occaType_t*) arg15, (occaType_t*) arg16, (occaType_t*) arg17, (occaType_t*) arg18, (occaType_t*) arg19, (occaType_t*) arg20, (occaType_t*) arg21, (occaType_t*) arg22, (occaType_t*) arg23, (occaType_t*) arg24, (occaType_t*) arg25, (occaType_t*) arg26, (occaType_t*) arg27, (occaType_t*) arg28, (occaType_t*) arg29, (occaType_t*) arg30, (occaType_t*) arg31, (occaType_t*) arg32, (occaType_t*) arg33, (occaType_t*) arg34, (occaType_t*) arg35, (occaType_t*) arg36, (occaType_t*) arg37, (occaType_t*) arg38, (occaType_t*) arg39};
+      occaType_t *args[40] = {((occaType) arg0)->ptr, ((occaType) arg1)->ptr, ((occaType) arg2)->ptr, ((occaType) arg3)->ptr, ((occaType) arg4)->ptr, ((occaType) arg5)->ptr, ((occaType) arg6)->ptr, ((occaType) arg7)->ptr, ((occaType) arg8)->ptr, ((occaType) arg9)->ptr, ((occaType) arg10)->ptr, ((occaType) arg11)->ptr, ((occaType) arg12)->ptr, ((occaType) arg13)->ptr, ((occaType) arg14)->ptr, ((occaType) arg15)->ptr, ((occaType) arg16)->ptr, ((occaType) arg17)->ptr, ((occaType) arg18)->ptr, ((occaType) arg19)->ptr, ((occaType) arg20)->ptr, ((occaType) arg21)->ptr, ((occaType) arg22)->ptr, ((occaType) arg23)->ptr, ((occaType) arg24)->ptr, ((occaType) arg25)->ptr, ((occaType) arg26)->ptr, ((occaType) arg27)->ptr, ((occaType) arg28)->ptr, ((occaType) arg29)->ptr, ((occaType) arg30)->ptr, ((occaType) arg31)->ptr, ((occaType) arg32)->ptr, ((occaType) arg33)->ptr, ((occaType) arg34)->ptr, ((occaType) arg35)->ptr, ((occaType) arg36)->ptr, ((occaType) arg37)->ptr, ((occaType) arg38)->ptr, ((occaType) arg39)->ptr};
       
       for(int i = 0; i < 40; ++i){
         occaType_t &arg = *(args[i]);
@@ -1382,7 +1382,7 @@
       occa::kernel kernel_((occa::kernel_v*) kernel);
       kernel_.clearArgumentList();
       
-      occaType_t *args[41] = {(occaType_t*) arg0, (occaType_t*) arg1, (occaType_t*) arg2, (occaType_t*) arg3, (occaType_t*) arg4, (occaType_t*) arg5, (occaType_t*) arg6, (occaType_t*) arg7, (occaType_t*) arg8, (occaType_t*) arg9, (occaType_t*) arg10, (occaType_t*) arg11, (occaType_t*) arg12, (occaType_t*) arg13, (occaType_t*) arg14, (occaType_t*) arg15, (occaType_t*) arg16, (occaType_t*) arg17, (occaType_t*) arg18, (occaType_t*) arg19, (occaType_t*) arg20, (occaType_t*) arg21, (occaType_t*) arg22, (occaType_t*) arg23, (occaType_t*) arg24, (occaType_t*) arg25, (occaType_t*) arg26, (occaType_t*) arg27, (occaType_t*) arg28, (occaType_t*) arg29, (occaType_t*) arg30, (occaType_t*) arg31, (occaType_t*) arg32, (occaType_t*) arg33, (occaType_t*) arg34, (occaType_t*) arg35, (occaType_t*) arg36, (occaType_t*) arg37, (occaType_t*) arg38, (occaType_t*) arg39, (occaType_t*) arg40};
+      occaType_t *args[41] = {((occaType) arg0)->ptr, ((occaType) arg1)->ptr, ((occaType) arg2)->ptr, ((occaType) arg3)->ptr, ((occaType) arg4)->ptr, ((occaType) arg5)->ptr, ((occaType) arg6)->ptr, ((occaType) arg7)->ptr, ((occaType) arg8)->ptr, ((occaType) arg9)->ptr, ((occaType) arg10)->ptr, ((occaType) arg11)->ptr, ((occaType) arg12)->ptr, ((occaType) arg13)->ptr, ((occaType) arg14)->ptr, ((occaType) arg15)->ptr, ((occaType) arg16)->ptr, ((occaType) arg17)->ptr, ((occaType) arg18)->ptr, ((occaType) arg19)->ptr, ((occaType) arg20)->ptr, ((occaType) arg21)->ptr, ((occaType) arg22)->ptr, ((occaType) arg23)->ptr, ((occaType) arg24)->ptr, ((occaType) arg25)->ptr, ((occaType) arg26)->ptr, ((occaType) arg27)->ptr, ((occaType) arg28)->ptr, ((occaType) arg29)->ptr, ((occaType) arg30)->ptr, ((occaType) arg31)->ptr, ((occaType) arg32)->ptr, ((occaType) arg33)->ptr, ((occaType) arg34)->ptr, ((occaType) arg35)->ptr, ((occaType) arg36)->ptr, ((occaType) arg37)->ptr, ((occaType) arg38)->ptr, ((occaType) arg39)->ptr, ((occaType) arg40)->ptr};
       
       for(int i = 0; i < 41; ++i){
         occaType_t &arg = *(args[i]);
@@ -1423,7 +1423,7 @@
       occa::kernel kernel_((occa::kernel_v*) kernel);
       kernel_.clearArgumentList();
       
-      occaType_t *args[42] = {(occaType_t*) arg0, (occaType_t*) arg1, (occaType_t*) arg2, (occaType_t*) arg3, (occaType_t*) arg4, (occaType_t*) arg5, (occaType_t*) arg6, (occaType_t*) arg7, (occaType_t*) arg8, (occaType_t*) arg9, (occaType_t*) arg10, (occaType_t*) arg11, (occaType_t*) arg12, (occaType_t*) arg13, (occaType_t*) arg14, (occaType_t*) arg15, (occaType_t*) arg16, (occaType_t*) arg17, (occaType_t*) arg18, (occaType_t*) arg19, (occaType_t*) arg20, (occaType_t*) arg21, (occaType_t*) arg22, (occaType_t*) arg23, (occaType_t*) arg24, (occaType_t*) arg25, (occaType_t*) arg26, (occaType_t*) arg27, (occaType_t*) arg28, (occaType_t*) arg29, (occaType_t*) arg30, (occaType_t*) arg31, (occaType_t*) arg32, (occaType_t*) arg33, (occaType_t*) arg34, (occaType_t*) arg35, (occaType_t*) arg36, (occaType_t*) arg37, (occaType_t*) arg38, (occaType_t*) arg39, (occaType_t*) arg40, (occaType_t*) arg41};
+      occaType_t *args[42] = {((occaType) arg0)->ptr, ((occaType) arg1)->ptr, ((occaType) arg2)->ptr, ((occaType) arg3)->ptr, ((occaType) arg4)->ptr, ((occaType) arg5)->ptr, ((occaType) arg6)->ptr, ((occaType) arg7)->ptr, ((occaType) arg8)->ptr, ((occaType) arg9)->ptr, ((occaType) arg10)->ptr, ((occaType) arg11)->ptr, ((occaType) arg12)->ptr, ((occaType) arg13)->ptr, ((occaType) arg14)->ptr, ((occaType) arg15)->ptr, ((occaType) arg16)->ptr, ((occaType) arg17)->ptr, ((occaType) arg18)->ptr, ((occaType) arg19)->ptr, ((occaType) arg20)->ptr, ((occaType) arg21)->ptr, ((occaType) arg22)->ptr, ((occaType) arg23)->ptr, ((occaType) arg24)->ptr, ((occaType) arg25)->ptr, ((occaType) arg26)->ptr, ((occaType) arg27)->ptr, ((occaType) arg28)->ptr, ((occaType) arg29)->ptr, ((occaType) arg30)->ptr, ((occaType) arg31)->ptr, ((occaType) arg32)->ptr, ((occaType) arg33)->ptr, ((occaType) arg34)->ptr, ((occaType) arg35)->ptr, ((occaType) arg36)->ptr, ((occaType) arg37)->ptr, ((occaType) arg38)->ptr, ((occaType) arg39)->ptr, ((occaType) arg40)->ptr, ((occaType) arg41)->ptr};
       
       for(int i = 0; i < 42; ++i){
         occaType_t &arg = *(args[i]);
@@ -1465,7 +1465,7 @@
       occa::kernel kernel_((occa::kernel_v*) kernel);
       kernel_.clearArgumentList();
       
-      occaType_t *args[43] = {(occaType_t*) arg0, (occaType_t*) arg1, (occaType_t*) arg2, (occaType_t*) arg3, (occaType_t*) arg4, (occaType_t*) arg5, (occaType_t*) arg6, (occaType_t*) arg7, (occaType_t*) arg8, (occaType_t*) arg9, (occaType_t*) arg10, (occaType_t*) arg11, (occaType_t*) arg12, (occaType_t*) arg13, (occaType_t*) arg14, (occaType_t*) arg15, (occaType_t*) arg16, (occaType_t*) arg17, (occaType_t*) arg18, (occaType_t*) arg19, (occaType_t*) arg20, (occaType_t*) arg21, (occaType_t*) arg22, (occaType_t*) arg23, (occaType_t*) arg24, (occaType_t*) arg25, (occaType_t*) arg26, (occaType_t*) arg27, (occaType_t*) arg28, (occaType_t*) arg29, (occaType_t*) arg30, (occaType_t*) arg31, (occaType_t*) arg32, (occaType_t*) arg33, (occaType_t*) arg34, (occaType_t*) arg35, (occaType_t*) arg36, (occaType_t*) arg37, (occaType_t*) arg38, (occaType_t*) arg39, (occaType_t*) arg40, (occaType_t*) arg41, (occaType_t*) arg42};
+      occaType_t *args[43] = {((occaType) arg0)->ptr, ((occaType) arg1)->ptr, ((occaType) arg2)->ptr, ((occaType) arg3)->ptr, ((occaType) arg4)->ptr, ((occaType) arg5)->ptr, ((occaType) arg6)->ptr, ((occaType) arg7)->ptr, ((occaType) arg8)->ptr, ((occaType) arg9)->ptr, ((occaType) arg10)->ptr, ((occaType) arg11)->ptr, ((occaType) arg12)->ptr, ((occaType) arg13)->ptr, ((occaType) arg14)->ptr, ((occaType) arg15)->ptr, ((occaType) arg16)->ptr, ((occaType) arg17)->ptr, ((occaType) arg18)->ptr, ((occaType) arg19)->ptr, ((occaType) arg20)->ptr, ((occaType) arg21)->ptr, ((occaType) arg22)->ptr, ((occaType) arg23)->ptr, ((occaType) arg24)->ptr, ((occaType) arg25)->ptr, ((occaType) arg26)->ptr, ((occaType) arg27)->ptr, ((occaType) arg28)->ptr, ((occaType) arg29)->ptr, ((occaType) arg30)->ptr, ((occaType) arg31)->ptr, ((occaType) arg32)->ptr, ((occaType) arg33)->ptr, ((occaType) arg34)->ptr, ((occaType) arg35)->ptr, ((occaType) arg36)->ptr, ((occaType) arg37)->ptr, ((occaType) arg38)->ptr, ((occaType) arg39)->ptr, ((occaType) arg40)->ptr, ((occaType) arg41)->ptr, ((occaType) arg42)->ptr};
       
       for(int i = 0; i < 43; ++i){
         occaType_t &arg = *(args[i]);
@@ -1507,7 +1507,7 @@
       occa::kernel kernel_((occa::kernel_v*) kernel);
       kernel_.clearArgumentList();
       
-      occaType_t *args[44] = {(occaType_t*) arg0, (occaType_t*) arg1, (occaType_t*) arg2, (occaType_t*) arg3, (occaType_t*) arg4, (occaType_t*) arg5, (occaType_t*) arg6, (occaType_t*) arg7, (occaType_t*) arg8, (occaType_t*) arg9, (occaType_t*) arg10, (occaType_t*) arg11, (occaType_t*) arg12, (occaType_t*) arg13, (occaType_t*) arg14, (occaType_t*) arg15, (occaType_t*) arg16, (occaType_t*) arg17, (occaType_t*) arg18, (occaType_t*) arg19, (occaType_t*) arg20, (occaType_t*) arg21, (occaType_t*) arg22, (occaType_t*) arg23, (occaType_t*) arg24, (occaType_t*) arg25, (occaType_t*) arg26, (occaType_t*) arg27, (occaType_t*) arg28, (occaType_t*) arg29, (occaType_t*) arg30, (occaType_t*) arg31, (occaType_t*) arg32, (occaType_t*) arg33, (occaType_t*) arg34, (occaType_t*) arg35, (occaType_t*) arg36, (occaType_t*) arg37, (occaType_t*) arg38, (occaType_t*) arg39, (occaType_t*) arg40, (occaType_t*) arg41, (occaType_t*) arg42, (occaType_t*) arg43};
+      occaType_t *args[44] = {((occaType) arg0)->ptr, ((occaType) arg1)->ptr, ((occaType) arg2)->ptr, ((occaType) arg3)->ptr, ((occaType) arg4)->ptr, ((occaType) arg5)->ptr, ((occaType) arg6)->ptr, ((occaType) arg7)->ptr, ((occaType) arg8)->ptr, ((occaType) arg9)->ptr, ((occaType) arg10)->ptr, ((occaType) arg11)->ptr, ((occaType) arg12)->ptr, ((occaType) arg13)->ptr, ((occaType) arg14)->ptr, ((occaType) arg15)->ptr, ((occaType) arg16)->ptr, ((occaType) arg17)->ptr, ((occaType) arg18)->ptr, ((occaType) arg19)->ptr, ((occaType) arg20)->ptr, ((occaType) arg21)->ptr, ((occaType) arg22)->ptr, ((occaType) arg23)->ptr, ((occaType) arg24)->ptr, ((occaType) arg25)->ptr, ((occaType) arg26)->ptr, ((occaType) arg27)->ptr, ((occaType) arg28)->ptr, ((occaType) arg29)->ptr, ((occaType) arg30)->ptr, ((occaType) arg31)->ptr, ((occaType) arg32)->ptr, ((occaType) arg33)->ptr, ((occaType) arg34)->ptr, ((occaType) arg35)->ptr, ((occaType) arg36)->ptr, ((occaType) arg37)->ptr, ((occaType) arg38)->ptr, ((occaType) arg39)->ptr, ((occaType) arg40)->ptr, ((occaType) arg41)->ptr, ((occaType) arg42)->ptr, ((occaType) arg43)->ptr};
       
       for(int i = 0; i < 44; ++i){
         occaType_t &arg = *(args[i]);
@@ -1549,7 +1549,7 @@
       occa::kernel kernel_((occa::kernel_v*) kernel);
       kernel_.clearArgumentList();
       
-      occaType_t *args[45] = {(occaType_t*) arg0, (occaType_t*) arg1, (occaType_t*) arg2, (occaType_t*) arg3, (occaType_t*) arg4, (occaType_t*) arg5, (occaType_t*) arg6, (occaType_t*) arg7, (occaType_t*) arg8, (occaType_t*) arg9, (occaType_t*) arg10, (occaType_t*) arg11, (occaType_t*) arg12, (occaType_t*) arg13, (occaType_t*) arg14, (occaType_t*) arg15, (occaType_t*) arg16, (occaType_t*) arg17, (occaType_t*) arg18, (occaType_t*) arg19, (occaType_t*) arg20, (occaType_t*) arg21, (occaType_t*) arg22, (occaType_t*) arg23, (occaType_t*) arg24, (occaType_t*) arg25, (occaType_t*) arg26, (occaType_t*) arg27, (occaType_t*) arg28, (occaType_t*) arg29, (occaType_t*) arg30, (occaType_t*) arg31, (occaType_t*) arg32, (occaType_t*) arg33, (occaType_t*) arg34, (occaType_t*) arg35, (occaType_t*) arg36, (occaType_t*) arg37, (occaType_t*) arg38, (occaType_t*) arg39, (occaType_t*) arg40, (occaType_t*) arg41, (occaType_t*) arg42, (occaType_t*) arg43, (occaType_t*) arg44};
+      occaType_t *args[45] = {((occaType) arg0)->ptr, ((occaType) arg1)->ptr, ((occaType) arg2)->ptr, ((occaType) arg3)->ptr, ((occaType) arg4)->ptr, ((occaType) arg5)->ptr, ((occaType) arg6)->ptr, ((occaType) arg7)->ptr, ((occaType) arg8)->ptr, ((occaType) arg9)->ptr, ((occaType) arg10)->ptr, ((occaType) arg11)->ptr, ((occaType) arg12)->ptr, ((occaType) arg13)->ptr, ((occaType) arg14)->ptr, ((occaType) arg15)->ptr, ((occaType) arg16)->ptr, ((occaType) arg17)->ptr, ((occaType) arg18)->ptr, ((occaType) arg19)->ptr, ((occaType) arg20)->ptr, ((occaType) arg21)->ptr, ((occaType) arg22)->ptr, ((occaType) arg23)->ptr, ((occaType) arg24)->ptr, ((occaType) arg25)->ptr, ((occaType) arg26)->ptr, ((occaType) arg27)->ptr, ((occaType) arg28)->ptr, ((occaType) arg29)->ptr, ((occaType) arg30)->ptr, ((occaType) arg31)->ptr, ((occaType) arg32)->ptr, ((occaType) arg33)->ptr, ((occaType) arg34)->ptr, ((occaType) arg35)->ptr, ((occaType) arg36)->ptr, ((occaType) arg37)->ptr, ((occaType) arg38)->ptr, ((occaType) arg39)->ptr, ((occaType) arg40)->ptr, ((occaType) arg41)->ptr, ((occaType) arg42)->ptr, ((occaType) arg43)->ptr, ((occaType) arg44)->ptr};
       
       for(int i = 0; i < 45; ++i){
         occaType_t &arg = *(args[i]);
@@ -1592,7 +1592,7 @@
       occa::kernel kernel_((occa::kernel_v*) kernel);
       kernel_.clearArgumentList();
       
-      occaType_t *args[46] = {(occaType_t*) arg0, (occaType_t*) arg1, (occaType_t*) arg2, (occaType_t*) arg3, (occaType_t*) arg4, (occaType_t*) arg5, (occaType_t*) arg6, (occaType_t*) arg7, (occaType_t*) arg8, (occaType_t*) arg9, (occaType_t*) arg10, (occaType_t*) arg11, (occaType_t*) arg12, (occaType_t*) arg13, (occaType_t*) arg14, (occaType_t*) arg15, (occaType_t*) arg16, (occaType_t*) arg17, (occaType_t*) arg18, (occaType_t*) arg19, (occaType_t*) arg20, (occaType_t*) arg21, (occaType_t*) arg22, (occaType_t*) arg23, (occaType_t*) arg24, (occaType_t*) arg25, (occaType_t*) arg26, (occaType_t*) arg27, (occaType_t*) arg28, (occaType_t*) arg29, (occaType_t*) arg30, (occaType_t*) arg31, (occaType_t*) arg32, (occaType_t*) arg33, (occaType_t*) arg34, (occaType_t*) arg35, (occaType_t*) arg36, (occaType_t*) arg37, (occaType_t*) arg38, (occaType_t*) arg39, (occaType_t*) arg40, (occaType_t*) arg41, (occaType_t*) arg42, (occaType_t*) arg43, (occaType_t*) arg44, (occaType_t*) arg45};
+      occaType_t *args[46] = {((occaType) arg0)->ptr, ((occaType) arg1)->ptr, ((occaType) arg2)->ptr, ((occaType) arg3)->ptr, ((occaType) arg4)->ptr, ((occaType) arg5)->ptr, ((occaType) arg6)->ptr, ((occaType) arg7)->ptr, ((occaType) arg8)->ptr, ((occaType) arg9)->ptr, ((occaType) arg10)->ptr, ((occaType) arg11)->ptr, ((occaType) arg12)->ptr, ((occaType) arg13)->ptr, ((occaType) arg14)->ptr, ((occaType) arg15)->ptr, ((occaType) arg16)->ptr, ((occaType) arg17)->ptr, ((occaType) arg18)->ptr, ((occaType) arg19)->ptr, ((occaType) arg20)->ptr, ((occaType) arg21)->ptr, ((occaType) arg22)->ptr, ((occaType) arg23)->ptr, ((occaType) arg24)->ptr, ((occaType) arg25)->ptr, ((occaType) arg26)->ptr, ((occaType) arg27)->ptr, ((occaType) arg28)->ptr, ((occaType) arg29)->ptr, ((occaType) arg30)->ptr, ((occaType) arg31)->ptr, ((occaType) arg32)->ptr, ((occaType) arg33)->ptr, ((occaType) arg34)->ptr, ((occaType) arg35)->ptr, ((occaType) arg36)->ptr, ((occaType) arg37)->ptr, ((occaType) arg38)->ptr, ((occaType) arg39)->ptr, ((occaType) arg40)->ptr, ((occaType) arg41)->ptr, ((occaType) arg42)->ptr, ((occaType) arg43)->ptr, ((occaType) arg44)->ptr, ((occaType) arg45)->ptr};
       
       for(int i = 0; i < 46; ++i){
         occaType_t &arg = *(args[i]);
@@ -1635,7 +1635,7 @@
       occa::kernel kernel_((occa::kernel_v*) kernel);
       kernel_.clearArgumentList();
       
-      occaType_t *args[47] = {(occaType_t*) arg0, (occaType_t*) arg1, (occaType_t*) arg2, (occaType_t*) arg3, (occaType_t*) arg4, (occaType_t*) arg5, (occaType_t*) arg6, (occaType_t*) arg7, (occaType_t*) arg8, (occaType_t*) arg9, (occaType_t*) arg10, (occaType_t*) arg11, (occaType_t*) arg12, (occaType_t*) arg13, (occaType_t*) arg14, (occaType_t*) arg15, (occaType_t*) arg16, (occaType_t*) arg17, (occaType_t*) arg18, (occaType_t*) arg19, (occaType_t*) arg20, (occaType_t*) arg21, (occaType_t*) arg22, (occaType_t*) arg23, (occaType_t*) arg24, (occaType_t*) arg25, (occaType_t*) arg26, (occaType_t*) arg27, (occaType_t*) arg28, (occaType_t*) arg29, (occaType_t*) arg30, (occaType_t*) arg31, (occaType_t*) arg32, (occaType_t*) arg33, (occaType_t*) arg34, (occaType_t*) arg35, (occaType_t*) arg36, (occaType_t*) arg37, (occaType_t*) arg38, (occaType_t*) arg39, (occaType_t*) arg40, (occaType_t*) arg41, (occaType_t*) arg42, (occaType_t*) arg43, (occaType_t*) arg44, (occaType_t*) arg45, (occaType_t*) arg46};
+      occaType_t *args[47] = {((occaType) arg0)->ptr, ((occaType) arg1)->ptr, ((occaType) arg2)->ptr, ((occaType) arg3)->ptr, ((occaType) arg4)->ptr, ((occaType) arg5)->ptr, ((occaType) arg6)->ptr, ((occaType) arg7)->ptr, ((occaType) arg8)->ptr, ((occaType) arg9)->ptr, ((occaType) arg10)->ptr, ((occaType) arg11)->ptr, ((occaType) arg12)->ptr, ((occaType) arg13)->ptr, ((occaType) arg14)->ptr, ((occaType) arg15)->ptr, ((occaType) arg16)->ptr, ((occaType) arg17)->ptr, ((occaType) arg18)->ptr, ((occaType) arg19)->ptr, ((occaType) arg20)->ptr, ((occaType) arg21)->ptr, ((occaType) arg22)->ptr, ((occaType) arg23)->ptr, ((occaType) arg24)->ptr, ((occaType) arg25)->ptr, ((occaType) arg26)->ptr, ((occaType) arg27)->ptr, ((occaType) arg28)->ptr, ((occaType) arg29)->ptr, ((occaType) arg30)->ptr, ((occaType) arg31)->ptr, ((occaType) arg32)->ptr, ((occaType) arg33)->ptr, ((occaType) arg34)->ptr, ((occaType) arg35)->ptr, ((occaType) arg36)->ptr, ((occaType) arg37)->ptr, ((occaType) arg38)->ptr, ((occaType) arg39)->ptr, ((occaType) arg40)->ptr, ((occaType) arg41)->ptr, ((occaType) arg42)->ptr, ((occaType) arg43)->ptr, ((occaType) arg44)->ptr, ((occaType) arg45)->ptr, ((occaType) arg46)->ptr};
       
       for(int i = 0; i < 47; ++i){
         occaType_t &arg = *(args[i]);
@@ -1678,7 +1678,7 @@
       occa::kernel kernel_((occa::kernel_v*) kernel);
       kernel_.clearArgumentList();
       
-      occaType_t *args[48] = {(occaType_t*) arg0, (occaType_t*) arg1, (occaType_t*) arg2, (occaType_t*) arg3, (occaType_t*) arg4, (occaType_t*) arg5, (occaType_t*) arg6, (occaType_t*) arg7, (occaType_t*) arg8, (occaType_t*) arg9, (occaType_t*) arg10, (occaType_t*) arg11, (occaType_t*) arg12, (occaType_t*) arg13, (occaType_t*) arg14, (occaType_t*) arg15, (occaType_t*) arg16, (occaType_t*) arg17, (occaType_t*) arg18, (occaType_t*) arg19, (occaType_t*) arg20, (occaType_t*) arg21, (occaType_t*) arg22, (occaType_t*) arg23, (occaType_t*) arg24, (occaType_t*) arg25, (occaType_t*) arg26, (occaType_t*) arg27, (occaType_t*) arg28, (occaType_t*) arg29, (occaType_t*) arg30, (occaType_t*) arg31, (occaType_t*) arg32, (occaType_t*) arg33, (occaType_t*) arg34, (occaType_t*) arg35, (occaType_t*) arg36, (occaType_t*) arg37, (occaType_t*) arg38, (occaType_t*) arg39, (occaType_t*) arg40, (occaType_t*) arg41, (occaType_t*) arg42, (occaType_t*) arg43, (occaType_t*) arg44, (occaType_t*) arg45, (occaType_t*) arg46, (occaType_t*) arg47};
+      occaType_t *args[48] = {((occaType) arg0)->ptr, ((occaType) arg1)->ptr, ((occaType) arg2)->ptr, ((occaType) arg3)->ptr, ((occaType) arg4)->ptr, ((occaType) arg5)->ptr, ((occaType) arg6)->ptr, ((occaType) arg7)->ptr, ((occaType) arg8)->ptr, ((occaType) arg9)->ptr, ((occaType) arg10)->ptr, ((occaType) arg11)->ptr, ((occaType) arg12)->ptr, ((occaType) arg13)->ptr, ((occaType) arg14)->ptr, ((occaType) arg15)->ptr, ((occaType) arg16)->ptr, ((occaType) arg17)->ptr, ((occaType) arg18)->ptr, ((occaType) arg19)->ptr, ((occaType) arg20)->ptr, ((occaType) arg21)->ptr, ((occaType) arg22)->ptr, ((occaType) arg23)->ptr, ((occaType) arg24)->ptr, ((occaType) arg25)->ptr, ((occaType) arg26)->ptr, ((occaType) arg27)->ptr, ((occaType) arg28)->ptr, ((occaType) arg29)->ptr, ((occaType) arg30)->ptr, ((occaType) arg31)->ptr, ((occaType) arg32)->ptr, ((occaType) arg33)->ptr, ((occaType) arg34)->ptr, ((occaType) arg35)->ptr, ((occaType) arg36)->ptr, ((occaType) arg37)->ptr, ((occaType) arg38)->ptr, ((occaType) arg39)->ptr, ((occaType) arg40)->ptr, ((occaType) arg41)->ptr, ((occaType) arg42)->ptr, ((occaType) arg43)->ptr, ((occaType) arg44)->ptr, ((occaType) arg45)->ptr, ((occaType) arg46)->ptr, ((occaType) arg47)->ptr};
       
       for(int i = 0; i < 48; ++i){
         occaType_t &arg = *(args[i]);
@@ -1722,7 +1722,7 @@
       occa::kernel kernel_((occa::kernel_v*) kernel);
       kernel_.clearArgumentList();
       
-      occaType_t *args[49] = {(occaType_t*) arg0, (occaType_t*) arg1, (occaType_t*) arg2, (occaType_t*) arg3, (occaType_t*) arg4, (occaType_t*) arg5, (occaType_t*) arg6, (occaType_t*) arg7, (occaType_t*) arg8, (occaType_t*) arg9, (occaType_t*) arg10, (occaType_t*) arg11, (occaType_t*) arg12, (occaType_t*) arg13, (occaType_t*) arg14, (occaType_t*) arg15, (occaType_t*) arg16, (occaType_t*) arg17, (occaType_t*) arg18, (occaType_t*) arg19, (occaType_t*) arg20, (occaType_t*) arg21, (occaType_t*) arg22, (occaType_t*) arg23, (occaType_t*) arg24, (occaType_t*) arg25, (occaType_t*) arg26, (occaType_t*) arg27, (occaType_t*) arg28, (occaType_t*) arg29, (occaType_t*) arg30, (occaType_t*) arg31, (occaType_t*) arg32, (occaType_t*) arg33, (occaType_t*) arg34, (occaType_t*) arg35, (occaType_t*) arg36, (occaType_t*) arg37, (occaType_t*) arg38, (occaType_t*) arg39, (occaType_t*) arg40, (occaType_t*) arg41, (occaType_t*) arg42, (occaType_t*) arg43, (occaType_t*) arg44, (occaType_t*) arg45, (occaType_t*) arg46, (occaType_t*) arg47, (occaType_t*) arg48};
+      occaType_t *args[49] = {((occaType) arg0)->ptr, ((occaType) arg1)->ptr, ((occaType) arg2)->ptr, ((occaType) arg3)->ptr, ((occaType) arg4)->ptr, ((occaType) arg5)->ptr, ((occaType) arg6)->ptr, ((occaType) arg7)->ptr, ((occaType) arg8)->ptr, ((occaType) arg9)->ptr, ((occaType) arg10)->ptr, ((occaType) arg11)->ptr, ((occaType) arg12)->ptr, ((occaType) arg13)->ptr, ((occaType) arg14)->ptr, ((occaType) arg15)->ptr, ((occaType) arg16)->ptr, ((occaType) arg17)->ptr, ((occaType) arg18)->ptr, ((occaType) arg19)->ptr, ((occaType) arg20)->ptr, ((occaType) arg21)->ptr, ((occaType) arg22)->ptr, ((occaType) arg23)->ptr, ((occaType) arg24)->ptr, ((occaType) arg25)->ptr, ((occaType) arg26)->ptr, ((occaType) arg27)->ptr, ((occaType) arg28)->ptr, ((occaType) arg29)->ptr, ((occaType) arg30)->ptr, ((occaType) arg31)->ptr, ((occaType) arg32)->ptr, ((occaType) arg33)->ptr, ((occaType) arg34)->ptr, ((occaType) arg35)->ptr, ((occaType) arg36)->ptr, ((occaType) arg37)->ptr, ((occaType) arg38)->ptr, ((occaType) arg39)->ptr, ((occaType) arg40)->ptr, ((occaType) arg41)->ptr, ((occaType) arg42)->ptr, ((occaType) arg43)->ptr, ((occaType) arg44)->ptr, ((occaType) arg45)->ptr, ((occaType) arg46)->ptr, ((occaType) arg47)->ptr, ((occaType) arg48)->ptr};
       
       for(int i = 0; i < 49; ++i){
         occaType_t &arg = *(args[i]);
@@ -1766,7 +1766,7 @@
       occa::kernel kernel_((occa::kernel_v*) kernel);
       kernel_.clearArgumentList();
       
-      occaType_t *args[50] = {(occaType_t*) arg0, (occaType_t*) arg1, (occaType_t*) arg2, (occaType_t*) arg3, (occaType_t*) arg4, (occaType_t*) arg5, (occaType_t*) arg6, (occaType_t*) arg7, (occaType_t*) arg8, (occaType_t*) arg9, (occaType_t*) arg10, (occaType_t*) arg11, (occaType_t*) arg12, (occaType_t*) arg13, (occaType_t*) arg14, (occaType_t*) arg15, (occaType_t*) arg16, (occaType_t*) arg17, (occaType_t*) arg18, (occaType_t*) arg19, (occaType_t*) arg20, (occaType_t*) arg21, (occaType_t*) arg22, (occaType_t*) arg23, (occaType_t*) arg24, (occaType_t*) arg25, (occaType_t*) arg26, (occaType_t*) arg27, (occaType_t*) arg28, (occaType_t*) arg29, (occaType_t*) arg30, (occaType_t*) arg31, (occaType_t*) arg32, (occaType_t*) arg33, (occaType_t*) arg34, (occaType_t*) arg35, (occaType_t*) arg36, (occaType_t*) arg37, (occaType_t*) arg38, (occaType_t*) arg39, (occaType_t*) arg40, (occaType_t*) arg41, (occaType_t*) arg42, (occaType_t*) arg43, (occaType_t*) arg44, (occaType_t*) arg45, (occaType_t*) arg46, (occaType_t*) arg47, (occaType_t*) arg48, (occaType_t*) arg49};
+      occaType_t *args[50] = {((occaType) arg0)->ptr, ((occaType) arg1)->ptr, ((occaType) arg2)->ptr, ((occaType) arg3)->ptr, ((occaType) arg4)->ptr, ((occaType) arg5)->ptr, ((occaType) arg6)->ptr, ((occaType) arg7)->ptr, ((occaType) arg8)->ptr, ((occaType) arg9)->ptr, ((occaType) arg10)->ptr, ((occaType) arg11)->ptr, ((occaType) arg12)->ptr, ((occaType) arg13)->ptr, ((occaType) arg14)->ptr, ((occaType) arg15)->ptr, ((occaType) arg16)->ptr, ((occaType) arg17)->ptr, ((occaType) arg18)->ptr, ((occaType) arg19)->ptr, ((occaType) arg20)->ptr, ((occaType) arg21)->ptr, ((occaType) arg22)->ptr, ((occaType) arg23)->ptr, ((occaType) arg24)->ptr, ((occaType) arg25)->ptr, ((occaType) arg26)->ptr, ((occaType) arg27)->ptr, ((occaType) arg28)->ptr, ((occaType) arg29)->ptr, ((occaType) arg30)->ptr, ((occaType) arg31)->ptr, ((occaType) arg32)->ptr, ((occaType) arg33)->ptr, ((occaType) arg34)->ptr, ((occaType) arg35)->ptr, ((occaType) arg36)->ptr, ((occaType) arg37)->ptr, ((occaType) arg38)->ptr, ((occaType) arg39)->ptr, ((occaType) arg40)->ptr, ((occaType) arg41)->ptr, ((occaType) arg42)->ptr, ((occaType) arg43)->ptr, ((occaType) arg44)->ptr, ((occaType) arg45)->ptr, ((occaType) arg46)->ptr, ((occaType) arg47)->ptr, ((occaType) arg48)->ptr, ((occaType) arg49)->ptr};
       
       for(int i = 0; i < 50; ++i){
         occaType_t &arg = *(args[i]);

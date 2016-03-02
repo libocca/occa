@@ -893,9 +893,7 @@ class memory:
         try:
             if handle_ is not None and \
                isNotAnInteger(handle_):
-
                 raise ValueError('1st argument to [occa.memory.__init__] (if given) must be a memory handle')
-
         except ValueError as e:
             print(e)
             sys.exit()

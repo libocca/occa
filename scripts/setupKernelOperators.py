@@ -24,66 +24,66 @@ def nlc(n, N):
     return ret;
 
 def runFunctionFromArguments(N):
-    return 'switch(argc){\n' + '\n'.join([runFunctionFromArgument(n + 1) for n in xrange(N)]) + '}'
+    return 'switch(argc){\n' + '\n'.join([runFunctionFromArgument(n + 1) for n in range(N)]) + '}'
 
 def runFunctionFromArgument(N):
     return '  case ' + str(N) + """:
-    f(occaKernelInfoArgs, occaInnerId0, occaInnerId1, occaInnerId2, """ + ', '.join(['args[{0}]'.format(n) for n in xrange(N)]) + """); break;"""
+    f(occaKernelInfoArgs, occaInnerId0, occaInnerId1, occaInnerId2, """ + ', '.join(['args[{0}]'.format(n) for n in range(N)]) + """); break;"""
 
 def runKernelFromArguments(N):
-    return 'switch(argc){\n' + '\n'.join([runKernelFromArgument(n + 1) for n in xrange(N)]) + '}'
+    return 'switch(argc){\n' + '\n'.join([runKernelFromArgument(n + 1) for n in range(N)]) + '}'
 
 def runKernelFromArgument(N):
     return '  case ' + str(N) + """:
   if(kHandle->nestedKernelCount == 0){
-    (*kHandle)(""" + ', '.join(['args[{0}]'.format(n) for n in xrange(N)]) + """);
+    (*kHandle)(""" + ', '.join(['args[{0}]'.format(n) for n in range(N)]) + """);
   }""" + (("""
   else{
-    (*kHandle)(kHandle->nestedKernels, """ + ', '.join(['args[{0}]'.format(n) for n in xrange(N)]) + """);
+    (*kHandle)(kHandle->nestedKernels, """ + ', '.join(['args[{0}]'.format(n) for n in range(N)]) + """);
   }""") if (N < maxN) else '') + """
   break;"""
 
 def virtualOperatorDeclarations(N):
-    return '\n\n'.join([virtualOperatorDeclaration(n + 1) for n in xrange(N)])
+    return '\n\n'.join([virtualOperatorDeclaration(n + 1) for n in range(N)])
 
 def virtualOperatorDeclaration(N):
-    return '    virtual void operator () ({0}) = 0;'.format( ' '.join(['const kernelArg &arg' + str(n) + vnlc(n, N) for n in xrange(N)]) )
+    return '    virtual void operator () ({0}) = 0;'.format( ' '.join(['const kernelArg &arg' + str(n) + vnlc(n, N) for n in range(N)]) )
 
 def operatorDeclarations(mode, N):
-    return '\n\n'.join([operatorDeclaration(mode, n + 1) for n in xrange(N)])
+    return '\n\n'.join([operatorDeclaration(mode, n + 1) for n in range(N)])
 
 def operatorDeclaration(mode, N):
     if mode == 'Base':
-        ret = '    void operator () ({0});'.format( ' '.join(['const kernelArg &arg' + str(n) + nlc(n, N) for n in xrange(N)]) )
+        ret = '    void operator () ({0});'.format( ' '.join(['const kernelArg &arg' + str(n) + nlc(n, N) for n in range(N)]) )
     else:
         ret = '    template <>\n'\
-              + '    void kernel_t<{0}>::operator () ({1});'.format(mode, ' '.join(['const kernelArg &arg' + str(n) + nlc(n, N) for n in xrange(N)]) )
+              + '    void kernel_t<{0}>::operator () ({1});'.format(mode, ' '.join(['const kernelArg &arg' + str(n) + nlc(n, N) for n in range(N)]) )
 
     return ret
 
 def operatorDefinitions(mode, N):
-    return '\n\n'.join([operatorDefinition(mode, n + 1) for n in xrange(N)])
+    return '\n\n'.join([operatorDefinition(mode, n + 1) for n in range(N)])
 
 def operatorDefinition(mode, N):
     if mode == 'Base':
-        return """  void kernel::operator() (""" + ' '.join(['const kernelArg &arg' + str(n) + nlc(n, N) for n in xrange(N)]) + """){
-    """ + '\n    '.join(['arg' + str(n) + '.setupForKernelCall(kHandle->metaInfo.argIsConst(' + str(n) + '));' for n in xrange(N)]) + """
+        return """  void kernel::operator() (""" + ' '.join(['const kernelArg &arg' + str(n) + nlc(n, N) for n in range(N)]) + """){
+    """ + '\n    '.join(['arg' + str(n) + '.setupForKernelCall(kHandle->metaInfo.argIsConst(' + str(n) + '));' for n in range(N)]) + """
 
     if(kHandle->nestedKernelCount == 0){
-      (*kHandle)(""" + ' '.join(['arg' + str(n) + nlc(n, N) for n in xrange(N)]) + """);
+      (*kHandle)(""" + ' '.join(['arg' + str(n) + nlc(n, N) for n in range(N)]) + """);
     }
     else{""" + (("""
-      (*kHandle)(kHandle->nestedKernels, """ + ' '.join(['arg' + str(n) + nlc(n, N) for n in xrange(N)]) + """);""") \
+      (*kHandle)(kHandle->nestedKernels, """ + ' '.join(['arg' + str(n) + nlc(n, N) for n in range(N)]) + """);""") \
                 if (N < maxN) else '') + """
     }
   }
 
-  void kernelDatabase::operator() (""" + ' '.join(['const kernelArg &arg' + str(n) + nlc(n, N) for n in xrange(N)]) + """){/*
+  void kernelDatabase::operator() (""" + ' '.join(['const kernelArg &arg' + str(n) + nlc(n, N) for n in range(N)]) + """){/*
     occa::device_v *launchDevice = NULL;
 
     if(arg0.dHandle) launchDevice = const_cast<occa::device_v*>(arg0.dHandle);
-    """ + '    '.join([('else if(arg' + str(n + 1) + '.dHandle) launchDevice = const_cast<occa::device_v*>(arg' + str(n + 1) + '.dHandle);\n') for n in xrange(N - 1)]) + """
-    (*this)[launchDevice](""" + ' '.join(['arg' + str(n) + nlc(n, N) for n in xrange(N)]) + """);*/
+    """ + '    '.join([('else if(arg' + str(n + 1) + '.dHandle) launchDevice = const_cast<occa::device_v*>(arg' + str(n + 1) + '.dHandle);\n') for n in range(N - 1)]) + """
+    (*this)[launchDevice](""" + ' '.join(['arg' + str(n) + nlc(n, N) for n in range(N)]) + """);*/
   }"""
     else:
         header = operatorDefinitionHeader(mode, N)
@@ -91,13 +91,13 @@ def operatorDefinition(mode, N):
 
 def operatorDefinitionHeader(mode, N):
     return """  template <>
-  void kernel_t<{0}>::operator () ({1}){{""".format(mode, ' '.join(['const kernelArg &arg' + str(n) + nlc(n, N) for n in xrange(N)]))
+  void kernel_t<{0}>::operator () ({1}){{""".format(mode, ' '.join(['const kernelArg &arg' + str(n) + nlc(n, N) for n in range(N)]))
 
 def pthreadOperatorDefinition(N):
     return """
     PthreadsKernelData_t &data_ = *((PthreadsKernelData_t*) data);
 
-    kernelArg args[""" + str(N) + """] = {""" + ' '.join(['arg' + str(n) + nlc(n, N) for n in xrange(N)]) + """};
+    kernelArg args[""" + str(N) + """] = {""" + ' '.join(['arg' + str(n) + nlc(n, N) for n in range(N)]) + """};
 
     pthreads::runFromArguments(data_, dims, inner, outer, """ + str(N) + """, args);"""
 
@@ -116,7 +116,7 @@ def serialOperatorDefinition(N):
 
     int argc = 0;
 
-    const kernelArg *args[""" + str(N) + """] = {""" + ' '.join(['&arg' + str(n) + nlc(n, N) for n in xrange(N)]) + """};
+    const kernelArg *args[""" + str(N) + """] = {""" + ' '.join(['&arg' + str(n) + nlc(n, N) for n in range(N)]) + """};
 
     for(int i = 0; i < """ + str(N) + """; ++i){
       for(int j = 0; j < args[i]->argc; ++j){
@@ -146,7 +146,7 @@ def ompOperatorDefinition(N):
 
     int argc = 0;
 
-    const kernelArg *args[""" + str(N) + """] = {""" + ' '.join(['&arg' + str(n) + nlc(n, N) for n in xrange(N)]) + """};
+    const kernelArg *args[""" + str(N) + """] = {""" + ' '.join(['&arg' + str(n) + nlc(n, N) for n in range(N)]) + """};
 
     for(int i = 0; i < """ + str(N) + """; ++i){
       for(int j = 0; j < args[i]->argc; ++j){
@@ -173,7 +173,7 @@ def clOperatorDefinition(N):
     const kernelArg *args[""" + str(N) + """] = {""" + (', '.join((('\n                                 ' + (' ' if (10 <= N) else ''))
                                                                    if (n and ((n % 5) == 0))
                                                                    else '')
-                                                                  + "&arg{0}".format(n) for n in xrange(N))) + """};
+                                                                  + "&arg{0}".format(n) for n in range(N))) + """};
 
     OCCA_CL_CHECK("Kernel (" + metaInfo.name + ") : Setting Kernel Argument [0]",
                   clSetKernelArg(kernel_, argc++, sizeof(void*), NULL));
@@ -205,7 +205,7 @@ def cudaOperatorDefinition(N):
     const kernelArg *args[""" + str(N) + """] = {""" + (', '.join((('\n                                 ' + (' ' if (10 <= N) else ''))
                                                                    if (n and ((n % 5) == 0))
                                                                    else '')
-                                                                  + "&arg{0}".format(n) for n in xrange(N))) + """};
+                                                                  + "&arg{0}".format(n) for n in range(N))) + """};
 
     data_.vArgs[argc++] = &occaKernelInfoArgs;
 
@@ -257,7 +257,7 @@ def coiOperatorDefinition(N):
       typePtr[typePos++] = (int) ((0 << 31) + hostPos);
       ::memcpy(&(data_.hostArgv[hostPos]), &(arg{0}.arg), arg{0}.size);
       hostPos += arg{0}.size;
-    }}""".format(n) for n in xrange(N)]) + """
+    }}""".format(n) for n in range(N)]) + """
 
     coiStream &stream = *((coiStream*) dHandle->currentStream);
 
@@ -275,18 +275,18 @@ def coiOperatorDefinition(N):
                            &(stream.lastEvent));"""
 
 def cOperatorDeclarations(N):
-    return '\n\n'.join([cOperatorDeclaration(n + 1) for n in xrange(N)])
+    return '\n\n'.join([cOperatorDeclaration(n + 1) for n in range(N)])
 
 def cOperatorDeclaration(N):
-    return '    OCCA_LFUNC void OCCA_RFUNC occaKernelRun{0}(occaKernel kernel, {1});\n'.format(N, ' '.join(['void *arg' + str(n) + nlc(n, N) for n in xrange(N)]) )
+    return '    OCCA_LFUNC void OCCA_RFUNC occaKernelRun{0}(occaKernel kernel, {1});\n'.format(N, ' '.join(['void *arg' + str(n) + nlc(n, N) for n in range(N)]) )
 
 def cOperatorDefinitions(N):
-    return '\n\n'.join([cOperatorDefinition(n + 1) for n in xrange(N)])
+    return '\n\n'.join([cOperatorDefinition(n + 1) for n in range(N)])
 
 def cOperatorDefinition(N):
-    argsContent = ', '.join('(occaType_t*) arg' + str(n) for n in xrange(N))
+    argsContent = ', '.join('((occaType) arg{})->ptr'.format(n) for n in range(N))
 
-    return ('    void OCCA_RFUNC occaKernelRun{0}(occaKernel kernel, {1}){{\n'.format(N, ' '.join(['void *arg' + str(n) + nlc(n, N) for n in xrange(N)]) ) + \
+    return ('    void OCCA_RFUNC occaKernelRun{0}(occaKernel kernel, {1}){{\n'.format(N, ' '.join(['void *arg' + str(n) + nlc(n, N) for n in range(N)]) ) + \
             '      occa::kernel kernel_((occa::kernel_v*) kernel);\n'             + \
             '      kernel_.clearArgumentList();\n'                                + \
             '      \n'                                                            + \
@@ -313,12 +313,12 @@ def cOperatorDefinition(N):
             '      kernel_.runFromArguments();\n'                                 + \
             '    }\n');
 
+# Removed COI
 operatorModeDefinition = { 'Serial'   : serialOperatorDefinition,
                            'OpenMP'   : ompOperatorDefinition,
                            'OpenCL'   : clOperatorDefinition,
                            'CUDA'     : cudaOperatorDefinition,
-                           'Pthreads' : pthreadOperatorDefinition,
-                           'COI'      : coiOperatorDefinition }
+                           'Pthreads' : pthreadOperatorDefinition}
 
 occaDir = ENV['OCCA_DIR']
 

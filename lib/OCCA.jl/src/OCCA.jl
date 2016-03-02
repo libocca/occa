@@ -24,36 +24,28 @@ type Device
 
     function Device()
         ret = new()
-
         ret.handle = C_NULL
-
         return ret
     end
 
     function Device(handle_::Ptr{Void})
         ret = new()
-
         ret.handle = handle_
-
         return ret
     end
 
     function Device(infos::String)
         ret = Device()
-
         ret.handle = ccall(@libCall(:occaCreateDevice),
                            Ptr{Void},
                            (Ptr{Uint8},),
                            bytestring(infos))
-
         return ret
     end
 
     function Device(d::Device)
         ret = new()
-
         ret.handle = d.handle
-
         return ret
     end
 end
@@ -63,25 +55,19 @@ type Stream
 
     function Stream()
         ret = new()
-
         ret.handle = C_NULL
-
         return ret
     end
 
     function Stream(handle_::Ptr{Void})
         ret = new()
-
         ret.handle = handle_
-
         return ret
     end
 
     function Stream(s::Stream)
         ret = new()
-
         ret.handle = s.handle
-
         return ret
     end
 end
@@ -171,25 +157,19 @@ type Memory
 
     function Memory()
         ret = new()
-
         ret.handle = C_NULL
-
         return ret
     end
 
     function Memory(handle_::Ptr{Void})
         ret = new()
-
         ret.handle = handle_
-
         return ret
     end
 
     function Memory(m::Memory)
         ret = new()
-
         ret.handle = m.handle
-
         return ret
     end
 end
@@ -303,25 +283,19 @@ type Kernel
 
     function Kernel()
         ret = new()
-
         ret.handle = C_NULL
-
         return ret
     end
 
     function Kernel(handle_::Ptr{Void})
         ret = new()
-
         ret.handle = handle_
-
         return ret
     end
 
     function Kernel(k::Kernel)
         ret = new()
-
         ret.handle = k.handle
-
         return ret
     end
 end
@@ -350,25 +324,19 @@ type KernelInfo
 
     function KernelInfo()
         ret = new()
-
         ret.handle = C_NULL
-
         return ret
     end
 
     function KernelInfo(handle_::Ptr{Void})
         ret = new()
-
         ret.handle = handle_
-
         return ret
     end
 
     function KernelInfo(kInfo::KernelInfo)
         ret = new()
-
         ret.handle = kInfo.handle
-
         return ret
     end
 end
@@ -663,6 +631,12 @@ end
 #|=======================================
 
 #|---[ Memory ]--------------------------
+function swap!(a::Memory, b::Memory)
+    local tmp = a.handle
+    a.handle  = b.handle
+    b.handle  = tmp
+end
+
 function free!(m::Memory)
     if m.handle == C_NULL
         return

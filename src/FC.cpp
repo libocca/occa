@@ -916,6 +916,10 @@ void OCCAASYNCCOPYMEMTOPTRAUTO_FC(void *dest, occaMemory *src){
   occaAsyncCopyMemToPtr(dest, *src, occaAutoSize, occaNoOffset);
 }
 
+void OCCAMEMORYSWAP_FC(occaMemory *memoryA, occaMemory *memoryB){
+  occaMemorySwap(*memoryA, *memoryB);
+}
+
 void OCCAMEMORYFREE_FC(occaMemory *memory){
   occaMemoryFree(*memory);
 }
