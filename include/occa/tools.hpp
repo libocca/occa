@@ -153,14 +153,12 @@ namespace occa {
 
     std::string getFilename(const std::string &filename);
 
-    void absolutePathVec(const std::string &dir_,
+    void absolutePathVec(const std::string &path_,
                          stringVector_t &pathVec);
 
-    inline stringVector_t absolutePathVec(const std::string &dir){
+    inline stringVector_t absolutePathVec(const std::string &path){
       stringVector_t pathVec;
-
-      absolutePathVec(dir, pathVec);
-
+      absolutePathVec(path, pathVec);
       return pathVec;
     }
   }

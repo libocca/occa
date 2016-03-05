@@ -604,16 +604,16 @@ namespace occa {
       return ret;
     }
 
-    void absolutePathVec(const std::string &dir_,
+    void absolutePathVec(const std::string &path_,
                          stringVector_t &pathVec) {
 
-      std::string dir = expandEnvVariables(dir_);
-      strip(dir);
+      std::string path = expandEnvVariables(path_);
+      strip(path);
 
-      const int chars = (int) dir.size();
-      const char *c   = dir.c_str();
+      const int chars = (int) path.size();
+      const char *c   = path.c_str();
 
-      bool foundIt = false;
+      bool foundDir = false;
 
       if (chars == 0)
         return;
@@ -627,7 +627,7 @@ namespace occa {
         if (c[1] == '\0')
           return;
 
-        foundIt = true;
+        foundDir = true;
         c += 2;
       }
       // OCCA path
@@ -641,28 +641,27 @@ namespace occa {
           pathVec.push_back("libraries");
           pathVec.push_back(std::string(c0, c - c0));
 
-          foundIt = true;
+          foundDir = true;
           ++c;
         }
       }
 
       // Relative path
-      if ((!foundIt) &&
+      if ((!foundDir) &&
          (c[0] != '/')) {
 
         stringVector_t::iterator it = env::OCCA_INCLUDE_PATH.begin();
 
         while(it != env::OCCA_INCLUDE_PATH.end()) {
-          if (sys::fileExists(*it + dir)) {
+          if (it->size() && sys::fileExists(*it + path)) {
             absolutePathVec(*it, pathVec);
-
-            foundIt = true;
+            foundDir = true;
+            break;
           }
-
           ++it;
         }
 
-        if (!foundIt)
+        if (!foundDir)
           absolutePathVec(env::PWD, pathVec);
       }
 
@@ -673,7 +672,6 @@ namespace occa {
         }
 
         const char *c0 = c;
-
         skipTo(c, '/');
 
         pathVec.push_back(std::string(c0, c - c0));
