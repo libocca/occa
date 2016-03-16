@@ -22,7 +22,7 @@ namespace occa {
       while(true){
         // Fence local data (incase of out-of-socket updates)
 #if (OCCA_OS & (LINUX_OS | OSX_OS))
-        __asm__ __volatile__ ("lfence");
+        OCCA_LFENCE;
 #else
         __faststorefence(); // NBN: x64 only?
 #endif
@@ -44,7 +44,7 @@ namespace occa {
 
           while((*data.pendingJobs) % data.count){
 #if (OCCA_OS & (LINUX_OS | OSX_OS))
-            __asm__ __volatile__ ("lfence");
+            OCCA_LFENCE;
 #else
             __faststorefence(); // NBN: x64 only?
 #endif
@@ -967,7 +967,7 @@ namespace occa {
     // Fence local data (incase of out-of-socket updates)
     while(data_.pendingJobs){
 #if (OCCA_OS & (LINUX_OS | OSX_OS))
-      __asm__ __volatile__ ("lfence");
+      OCCA_LFENCE;
 #else
       __faststorefence(); // NBN: x64 only?
 #endif

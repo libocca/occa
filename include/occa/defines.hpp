@@ -62,6 +62,12 @@
 #  define OCCA_INLINE __forceinline
 #endif
 
+#if defined __arm__
+#  define OCCA_ARM 1
+#else
+#  define OCCA_ARM 0
+#endif
+
 #if defined(__x86_64__) || defined(_M_X64) // 64 Bit
 #  define OCCA_64_BIT 1
 #  define OCCA_32_BIT 0
@@ -71,6 +77,12 @@
 #elif defined(__ia64) || defined(__itanium__) || defined(_A_IA64) // Itanium
 #  define OCCA_64_BIT 1
 #  define OCCA_32_BIT 0
+#endif
+
+#if OCCA_ARM
+#  define OCCA_LFENCE __asm__ __volatile__ ("dmb")
+#else
+#  define OCCA_LFENCE __asm__ __volatile__ ("lfence")
 #endif
 
 //---[ Checks and Info ]----------------

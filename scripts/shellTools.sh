@@ -224,9 +224,16 @@ function resolveRelativePath {
 }
 
 function manualReadlink {
-    pushd `dirname $1` > /dev/null
-    SCRIPTPATH=`pwd -P`
-    popd > /dev/null
+    if [[ $(command -v readlink) == "" ]]; then
+        pushd `dirname $1` > /dev/null
+        SCRIPTPATH=`pwd -P`
+        popd > /dev/null
+    else
+        case "$(uname)" in
+            Darwin) readlink    $1;;
+            *)      readlink -f $1;;
+        esac
+    fi
 }
 
 function manualWhich {
