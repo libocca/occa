@@ -33,11 +33,14 @@ sources = $(wildcard $(sPath)/*.cpp)
 
 objects = $(subst $(sPath)/,$(oPath)/,$(sources:.cpp=.o))
 
-main: $(objects) $(headers) main.cpp
+main: $(oPath) $(objects) $(headers) main.cpp
 	$(compiler) $(compilerFlags) -o main $(flags) $(objects) main.cpp $(paths) $(links)
 
 $(oPath)/%.o:$(sPath)/%.cpp $(wildcard $(subst $(sPath)/,$(iPath)/,$(<:.cpp=.hpp))) $(wildcard $(subst $(sPath)/,$(iPath)/,$(<:.cpp=.tpp)))
 	$(compiler) $(compilerFlags) -o $@ $(flags) -c $(paths) $<
+
+$(oPath):
+	mkdir -p $(oPath)
 
 clean:
 	rm -f $(oPath)/*;
