@@ -16,11 +16,12 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 
+#include "occa/defines.hpp"
+
 #if OCCA_SSE
 #  include <xmmintrin.h>
 #endif
 
-#include "occa/defines.hpp"
 #include "occa/tools.hpp"
 #include "occa/uva.hpp"
 
@@ -45,13 +46,6 @@
 
 #if (OCCA_CUDA_ENABLED)
 #  include <cuda.h>
-#endif
-
-#if (OCCA_HSA_ENABLED)
-#  if   (OCCA_OS & LINUX_OS)
-#  elif (OCCA_OS & OSX_OS)
-#  else
-#  endif
 #endif
 
 namespace occa {
