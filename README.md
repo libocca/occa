@@ -70,20 +70,20 @@ where `<occa>` is the OCCA directory
 ### Status
 * Linux and OSX are fully supported
 * Windows is partially supported
-..* Code is up-to-date for windows
-..* Missing compilation project/scripts
-..* Visual Studio project is out of date
+  * Code is up-to-date for windows
+  * Missing compilation project/scripts
+  * Visual Studio project is out of date
 
 * OKL Status:
-..* Supports most of C (send bugs =))
-..* Preprocessor is missing variadic functions
+  * Supports most of C (send bugs =))
+  * Preprocessor is missing variadic functions
 
 * OFL Status:
-..* Obsolete for now
-..* Version 0.1 supports a subset of Fortran:
-...* integer, real, character, logical, double precision
-...* function, subroutine
-...* DO, WHILE, IF, IF ELSE, ELSE
+  * Obsolete for now
+  * Version 0.1 supports a subset of Fortran:
+   * integer, real, character, logical, double precision
+   * function, subroutine
+   * DO, WHILE, IF, IF ELSE, ELSE
 
 ### Useful environment variables:
 | Environment Variable       | Description                                         |
