@@ -48,6 +48,9 @@
 #  define __PRETTY_FUNCTION__ __FUNCTION__
 #endif
 
+#define OCCA_STRINGIFY2(macro) #macro
+#define OCCA_STRINGIFY(macro) OCCA_STRINGIFY2(macro)
+
 #ifdef __cplusplus
 #  define OCCA_START_EXTERN_C extern "C" {
 #  define OCCA_END_EXTERN_C   }

@@ -19,5 +19,5 @@ $(oPath)/%.o:$(sPath)/%.cpp $(wildcard $(subst $(sPath)/,$(iPath)/,$(<:.cpp=.hpp
 
 clean:
 	rm -f $(oPath)/*;
-	rm -f ${PROJ_DIR}/${PROJ_DIR}/main
+	rm -f ${PROJ_DIR}/main
 #=================================================

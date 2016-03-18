@@ -6,7 +6,7 @@ include $(OCCA_DIR)/scripts/makefile
 
 #---[ WORKING PATHS ]-----------------------------
 ifeq ($(usingWinux),0)
-  compilerFlags  += $(picFlag)
+  compilerFlags  += $(picFlag) -DOCCA_COMPILED_DIR="$(OCCA_DIR)"
   fCompilerFlags += $(picFlag)
 else
   sharedFlag += $(picFlag)
