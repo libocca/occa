@@ -81,9 +81,9 @@ where `<occa>` is the OCCA directory
 * OFL Status:
   * Obsolete for now
   * Version 0.1 supports a subset of Fortran:
-   * integer, real, character, logical, double precision
-   * function, subroutine
-   * DO, WHILE, IF, IF ELSE, ELSE
+    * integer, real, character, logical, double precision
+    * function, subroutine
+    * DO, WHILE, IF, IF ELSE, ELSE
 
 ### Useful environment variables:
 | Environment Variable       | Description                                         |
