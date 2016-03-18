@@ -1,9 +1,9 @@
+PROJ_DIR:=$(dir $(abspath $(lastword $(MAKEFILE_LIST))))
 ifndef OCCA_DIR
-ERROR:
-	@echo "Error, environment variable [OCCA_DIR] is not set"
+  include $(PROJ_DIR)/../../../scripts/makefile
+else
+  include ${OCCA_DIR}/scripts/makefile
 endif
-
-include ${OCCA_DIR}/scripts/makefile
 
 #---[ COMPILATION ]-------------------------------
 headers = $(wildcard $(iPath)/*.hpp) $(wildcard $(iPath)/*.tpp)
@@ -11,15 +11,9 @@ sources = $(wildcard $(sPath)/*.cpp)
 
 objects  = $(subst $(sPath)/,$(oPath)/,$(sources:.cpp=.o))
 
-executables = main
+executables = ${PROJ_DIR}/main
 
-ifdef OCCA_FORTRAN_ENABLED
-ifeq ($(OCCA_FORTRAN_ENABLED), 1)
-	executables += main_f90
-endif
-endif
-
-main: $(objects) $(headers) main.cpp
+${PROJ_DIR}/main: $(objects) $(headers) ${PROJ_DIR}/main.cpp
 	$(compiler) $(compilerFlags) -o main $(flags) $(objects) main.cpp $(paths) $(links)
 
 
@@ -28,6 +22,5 @@ $(oPath)/%.o:$(sPath)/%.cpp $(wildcard $(subst $(sPath)/,$(iPath)/,$(<:.cpp=.hpp
 
 clean:
 	rm -f $(oPath)/*;
-	rm -f main_c
-	rm -f main;
+	rm -f ${PROJ_DIR}/main
 #=================================================

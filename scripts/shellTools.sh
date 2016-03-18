@@ -1,5 +1,7 @@
 #!/bin/bash
 
+OCCA_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
 #---[ Library Information ]-------------
 function uniqueAddToPath {
     local path=$1
@@ -433,8 +435,8 @@ function compilerSupportsOpenMP {
     local vendor=$(compilerVendor $compiler)
     local ompFlag=$(compilerOpenMPFlags $compiler)
 
-    local filename=$OCCA_DIR/scripts/ompTest.cpp
-    local binary=$OCCA_DIR/scripts/ompTest
+    local filename=${OCCA_DIR}/scripts/ompTest.cpp
+    local binary=${OCCA_DIR}/scripts/ompTest
 
     # Test compilation
     $compiler $ompFlag $filename -o $binary > /dev/null 2>&1
@@ -501,15 +503,4 @@ function getCPUINFOField {
 #=======================================
 
 #---[ Setup Obj Dir ]-------------------
-function occaMkdir {
-    if [ ! -d $OCCA_DIR/$1 ]; then
-        mkdir $OCCA_DIR/$1
-    fi
-}
-
-function setupObjDir {
-    occaMkdir obj
-    occaMkdir obj/parser
-    occaMkdir obj/python
-}
 #=======================================

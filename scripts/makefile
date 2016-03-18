@@ -1,9 +1,17 @@
 #---[ Paths ]-------------------------------------
-bPath = bin
-lPath = lib
-oPath = obj
-sPath = src
-iPath = include
+ifdef OCCA_DIR
+  OCCA_DIR:=${OCCA_DIR}
+endif
+
+ifeq ($(strip $(OCCA_DIR)),)
+  OCCA_DIR:=$(abspath $(dir $(abspath $(lastword $(MAKEFILE_LIST))))/..)
+endif
+
+bPath = $(PROJ_DIR)/bin
+lPath = $(PROJ_DIR)/lib
+oPath = $(PROJ_DIR)/obj
+sPath = $(PROJ_DIR)/src
+iPath = $(PROJ_DIR)/include
 #=================================================
 
 
@@ -114,7 +122,7 @@ links = $(LDFLAGS)
 
 
 #---[ Paths/Flags/Links ]-------------------------
-paths = -I${OCCA_DIR}/lib -I${OCCA_DIR}/include -L${OCCA_DIR}/lib
+paths = -I$(OCCA_DIR)/lib -I$(OCCA_DIR)/include -L$(OCCA_DIR)/lib
 paths += $(foreach path, $(subst :, ,$(OCCA_INCLUDE_PATH)), -I$(path))
 paths += $(foreach path, $(subst :, ,$(OCCA_LIBRARY_PATH)), -L$(path))
 
@@ -134,21 +142,21 @@ ifeq (,$(findstring bash,$(SHELL)))
   endif
 endif
 
-libraryFlagsFor = $(shell . ${OCCA_DIR}/scripts/shellTools.sh; libraryFlags $1)
-includeFlagsFor = $(shell . ${OCCA_DIR}/scripts/shellTools.sh; headerFlags  $1)
+libraryFlagsFor = $(shell . $(OCCA_DIR)/scripts/shellTools.sh; libraryFlags $1)
+includeFlagsFor = $(shell . $(OCCA_DIR)/scripts/shellTools.sh; headerFlags  $1)
 
-compilerReleaseFlags = $(shell . ${OCCA_DIR}/scripts/shellTools.sh; compilerReleaseFlags $(compiler))
-compilerDebugFlags   = $(shell . ${OCCA_DIR}/scripts/shellTools.sh; compilerDebugFlags   $(compiler))
-compilerPicFlag      = $(shell . ${OCCA_DIR}/scripts/shellTools.sh; compilerPicFlag      $(compiler))
-compilerSharedFlag   = $(shell . ${OCCA_DIR}/scripts/shellTools.sh; compilerSharedFlag   $(compiler))
+compilerReleaseFlags = $(shell . $(OCCA_DIR)/scripts/shellTools.sh; compilerReleaseFlags $(compiler))
+compilerDebugFlags   = $(shell . $(OCCA_DIR)/scripts/shellTools.sh; compilerDebugFlags   $(compiler))
+compilerPicFlag      = $(shell . $(OCCA_DIR)/scripts/shellTools.sh; compilerPicFlag      $(compiler))
+compilerSharedFlag   = $(shell . $(OCCA_DIR)/scripts/shellTools.sh; compilerSharedFlag   $(compiler))
 
-fCompilerModuleDirFlag = $(shell . ${OCCA_DIR}/scripts/shellTools.sh; fCompilerModuleDirFlag $(fCompiler))
+fCompilerModuleDirFlag = $(shell . $(OCCA_DIR)/scripts/shellTools.sh; fCompilerModuleDirFlag $(fCompiler))
 
-compilerSupportsOpenMP = $(shell . ${OCCA_DIR}/scripts/shellTools.sh; compilerSupportsOpenMP $(compiler))
-compilerOpenMPFlags    = $(shell . ${OCCA_DIR}/scripts/shellTools.sh; compilerOpenMPFlags    $(compiler))
+compilerSupportsOpenMP = $(shell . $(OCCA_DIR)/scripts/shellTools.sh; compilerSupportsOpenMP $(compiler))
+compilerOpenMPFlags    = $(shell . $(OCCA_DIR)/scripts/shellTools.sh; compilerOpenMPFlags    $(compiler))
 
-fCompilerSupportsOpenMP = $(shell . ${OCCA_DIR}/scripts/shellTools.sh; compilerSupportsOpenMP $(fCompiler))
-fCompilerOpenMPFlags    = $(shell . ${OCCA_DIR}/scripts/shellTools.sh; compilerOpenMPFlags    $(fCompiler))
+fCompilerSupportsOpenMP = $(shell . $(OCCA_DIR)/scripts/shellTools.sh; compilerSupportsOpenMP $(fCompiler))
+fCompilerOpenMPFlags    = $(shell . $(OCCA_DIR)/scripts/shellTools.sh; compilerOpenMPFlags    $(fCompiler))
 #=================================================
 
 

@@ -1,15 +1,15 @@
+PROJ_DIR:=$(dir $(abspath $(lastword $(MAKEFILE_LIST))))
 ifndef OCCA_DIR
-ERROR:
-	@echo "Error, environment variable [OCCA_DIR] is not set"
+  include $(PROJ_DIR)/../../../scripts/makefile
+else
+  include ${OCCA_DIR}/scripts/makefile
 endif
 
-include ${OCCA_DIR}/scripts/makefile
-
 #---[ COMPILATION ]-------------------------------
-main: main.cpp
-	$(compiler) $(compilerFlags) -o main $(flags) $(objects) main.cpp $(paths) $(links)
+${PROJ_DIR}/main: ${PROJ_DIR}/main.cpp
+	$(compiler) $(compilerFlags) -o ${PROJ_DIR}/main $(flags) $(objects) ${PROJ_DIR}/main.cpp $(paths) $(links)
 
 clean:
 	rm -f $(oPath)/*;
-	rm -f main
+	rm -f ${PROJ_DIR}/main
 #=================================================
