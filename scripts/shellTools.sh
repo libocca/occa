@@ -1,6 +1,6 @@
 #!/bin/bash
 
-OCCA_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+OCCA_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")"/.. && pwd)"
 
 #---[ Library Information ]-------------
 function uniqueAddToPath {
@@ -500,7 +500,4 @@ function getCPUINFOField {
 
     echo ""
 }
-#=======================================
-
-#---[ Setup Obj Dir ]-------------------
 #=======================================
