@@ -203,8 +203,6 @@ endif
 openmpEnabled = 0
 openclEnabled = 0
 cudaEnabled   = 0
-hsaEnabled    = 0
-coiEnabled    = 0
 
 ifdef OCCA_OPENMP_ENABLED
   openmpEnabled  = $(OCCA_OPENMP_ENABLED)
@@ -281,54 +279,6 @@ else
   endif
 endif
 
-# ifdef OCCA_HSA_ENABLED
-#   hsaEnabled = $(OCCA_HSA_ENABLED)
-
-#   ifeq ($(hsaEnabled), 1)
-#     ifeq ($(usingLinux),1)
-#       links += -lhsa                              # ?
-#     endif
-#   endif
-# else
-#   hsaIncFlags = $(call includeFlagsFor,hsa.h)     # ?
-
-#   ifneq (,$(hsaIncFlags))
-
-#     ifeq ($(usingLinux),1)
-#       hsaLibFlags = $(call libraryFlagsFor,hsa)   # ?
-#     endif
-
-#     ifneq (,$(hsaLibFlags))
-#       hsaEnabled = 1
-#       paths += $(hsaIncFlags)
-#       links += $(hsaLibFlags)
-#     endif
-#   endif
-# endif
-
-ifdef OCCA_COI_ENABLED
-  coiEnabled = $(OCCA_COI_ENABLED)
-
-  ifeq ($(coiEnabled), 1)
-    ifeq ($(usingLinux),1)
-      links += -lcoi_host
-    endif
-  endif
-else
-  # ifeq ($(usingLinux),1)
-  #   coiLibFlags = $(call libraryFlagsFor,coi_host)
-  #   ifneq (,$(coiLibFlags))
-
-  #     coiIncFlags = $(call includeFlagsFor,intel-coi/source/COIProcess_source.h)
-  #     ifneq (,$(coiIncFlags))
-  #       coiEnabled = 1
-  #       paths += $(coiIncFlags)
-  #       links += $(coiLibFlags)
-  #     endif
-  #   endif
-  # endif
-endif
-
 ifeq ($(debugEnabled), 1)
   cfFlags += $(debugFlags)
   cfFlags += -DOCCA_DEBUG_ENABLED=1
@@ -348,8 +298,6 @@ fFlags += -DOCCA_OPENMP_ENABLED=$(fOpenmpEnabled)
 
 cfFlags += -DOCCA_OPENCL_ENABLED=$(openclEnabled)
 cfFlags += -DOCCA_CUDA_ENABLED=$(cudaEnabled)
-cfFlags += -DOCCA_HSA_ENABLED=$(hsaEnabled)
-cfFlags += -DOCCA_COI_ENABLED=$(coiEnabled)
 
 ifdef COMPILING_WITH_JULIA
   cfFlags += -DOCCA_COMPILED_FOR_JULIA=1
