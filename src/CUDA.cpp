@@ -18,28 +18,22 @@ namespace occa {
 
     int getDeviceCount(){
       int deviceCount;
-
       OCCA_CUDA_CHECK("Finding Number of Devices",
                       cuDeviceGetCount(&deviceCount));
-
       return deviceCount;
     }
 
     CUdevice getDevice(const int id){
       CUdevice device;
-
       OCCA_CUDA_CHECK("Getting CUdevice",
                       cuDeviceGet(&device, id));
-
       return device;
     }
 
     uintptr_t getDeviceMemorySize(CUdevice device){
       size_t bytes;
-
       OCCA_CUDA_CHECK("Finding available memory on device",
                       cuDeviceTotalMem(&bytes, device));
-
       return bytes;
     }
 
@@ -47,14 +41,11 @@ namespace occa {
       std::stringstream ss;
 
       cuda::init();
-
       int deviceCount = cuda::getDeviceCount();
-
       if(deviceCount == 0)
         return "";
 
       char deviceName[1024];
-
       OCCA_CUDA_CHECK("Getting Device Name",
                       cuDeviceGetName(deviceName, 1024, 0));
 
@@ -320,7 +311,6 @@ namespace occa {
     name = functionName;
 
     OCCA_EXTRACT_DATA(CUDA, Kernel);
-
     kernelInfo info = info_;
 
     dHandle->addOccaHeadersToInfo(info);
@@ -1200,6 +1190,9 @@ namespace occa {
                                                  const kernelInfo &info_){
     OCCA_EXTRACT_DATA(CUDA, Device);
 
+    OCCA_CUDA_CHECK("Device: Setting Context",
+                    cuCtxSetCurrent(data_.context));
+
     kernel_v *k = new kernel_t<CUDA>;
 
     k->dHandle = this;
@@ -1337,11 +1330,16 @@ namespace occa {
   template <>
   memory_v* device_t<CUDA>::malloc(const uintptr_t bytes,
                                    void *src){
+    OCCA_EXTRACT_DATA(CUDA, Device);
+
     memory_v *mem = new memory_t<CUDA>;
 
     mem->dHandle = this;
     mem->handle  = new CUdeviceptr*;
     mem->size    = bytes;
+
+    OCCA_CUDA_CHECK("Device: Setting Context",
+                    cuCtxSetCurrent(data_.context));
 
     OCCA_CUDA_CHECK("Device: malloc",
                     cuMemAlloc((CUdeviceptr*) mem->handle, bytes));
@@ -1356,6 +1354,7 @@ namespace occa {
   memory_v* device_t<CUDA>::textureAlloc(const int dim, const occa::dim &dims,
                                          void *src,
                                          occa::formatType type, const int permissions){
+    OCCA_EXTRACT_DATA(CUDA, Device);
 
     memory_v *mem = new memory_t<CUDA>;
 
@@ -1386,6 +1385,9 @@ namespace occa {
     arrayDesc.Height      = (dim == 1) ? 0 : dims.y;
     arrayDesc.Format      = *((CUarray_format*) type.format<CUDA>());
     arrayDesc.NumChannels = type.count();
+
+    OCCA_CUDA_CHECK("Device: Setting Context",
+                    cuCtxSetCurrent(data_.context));
 
     OCCA_CUDA_CHECK("Device: Creating Array",
                     cuArrayCreate(&array, (CUDA_ARRAY_DESCRIPTOR*) &arrayDesc) );
@@ -1423,6 +1425,7 @@ namespace occa {
   template <>
   memory_v* device_t<CUDA>::mappedAlloc(const uintptr_t bytes,
                                         void *src){
+    OCCA_EXTRACT_DATA(CUDA, Device);
 
     memory_v *mem = new memory_t<CUDA>;
 
@@ -1431,6 +1434,9 @@ namespace occa {
     mem->size     = bytes;
 
     mem->memInfo |= memFlag::isMapped;
+
+    OCCA_CUDA_CHECK("Device: Setting Context",
+                    cuCtxSetCurrent(data_.context));
 
     OCCA_CUDA_CHECK("Device: malloc host",
                     cuMemAllocHost((void**) &(mem->mappedPtr), bytes));
