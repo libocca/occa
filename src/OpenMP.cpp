@@ -654,6 +654,8 @@ namespace occa {
 
   template <>
   void device_t<OpenMP>::setup(argInfoMap &aim){
+    properties = aim;
+
     // Generate an OpenMP library dependency (so it doesn't crash when dlclose())
     omp_get_num_threads();
 

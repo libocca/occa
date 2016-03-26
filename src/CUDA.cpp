@@ -988,6 +988,7 @@ namespace occa {
   template <>
   void device_t<CUDA>::setup(argInfoMap &aim){
     cuda::init();
+    properties = aim;
 
     data = new CUDADeviceData_t;
 

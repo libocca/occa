@@ -182,6 +182,15 @@ namespace occa {
     parserNS::expNode::freeFlatHandle(csvFlatRoot);
   }
 
+  argInfoMap::argInfoMap(argInfoMap &aim) {
+    *this = aim;
+  }
+
+  argInfoMap& argInfoMap::operator = (argInfoMap &aim) {
+    iMap = aim.iMap;
+    return *this;
+  }
+
   std::ostream& operator << (std::ostream &out, const argInfoMap &m) {
     std::map<std::string,std::string>::const_iterator it = m.iMap.begin();
 

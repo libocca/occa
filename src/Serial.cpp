@@ -1111,6 +1111,8 @@ namespace occa {
 
   template <>
   void device_t<Serial>::setup(argInfoMap &aim){
+    properties = aim;
+
     data = new SerialDeviceData_t;
 
     OCCA_EXTRACT_DATA(Serial, Device);

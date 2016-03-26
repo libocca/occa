@@ -1166,6 +1166,8 @@ namespace occa {
 
   template <>
   void device_t<OpenCL>::setup(argInfoMap &aim){
+    properties = aim;
+
     data = new OpenCLDeviceData_t;
 
     OCCA_EXTRACT_DATA(OpenCL, Device);

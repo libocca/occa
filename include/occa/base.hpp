@@ -232,8 +232,9 @@ namespace occa {
     std::map<std::string, std::string> iMap;
 
     argInfoMap();
-
     argInfoMap(const std::string &infos);
+    argInfoMap(argInfoMap &aim);
+    argInfoMap& operator = (argInfoMap &aim);
 
     inline bool has(const std::string &info) {
       return (iMap.find(info) != iMap.end());
@@ -1145,6 +1146,7 @@ namespace occa {
 
   private:
     std::string strMode;
+    argInfoMap properties;
 
     int modelID_, id_;
 
@@ -1455,6 +1457,18 @@ namespace occa {
 
     int modeID();
     const std::string& mode();
+
+    template <class TM>
+    TM getProperty(const std::string &prop) {
+      if (dHandle->properties.has(prop)) {
+        std::stringstream ss;
+        TM t;
+        ss << dHandle->properties.get(prop);
+        ss >> t;
+        return t;
+      }
+      return TM();
+    }
 
     void setCompiler(const std::string &compiler_);
     void setCompilerEnvScript(const std::string &compilerEnvScript_);

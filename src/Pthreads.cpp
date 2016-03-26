@@ -698,6 +698,8 @@ namespace occa {
 
   template <>
   void device_t<Pthreads>::setup(argInfoMap &aim){
+    properties = aim;
+
     data = new PthreadsDeviceData_t;
 
     OCCA_EXTRACT_DATA(Pthreads, Device);
