@@ -274,6 +274,37 @@ def coiOperatorDefinition(N):
                            0,
                            &(stream.lastEvent));"""
 
+
+# TW: needs to be adapted for HSA args stuff
+def hsaOperatorDefinition(N):
+    return """
+    HSAKernelData_t &data_ = *((HSAKernelData_t*) data);
+    HSAfunction function_    = data_.function;
+
+    int occaKernelInfoArgs = 0;
+    int argc = 0;
+
+    const kernelArg *args[""" + str(N) + """] = {""" + (', '.join((('\n                                 ' + (' ' if (10 <= N) else ''))
+                                                                   if (n and ((n % 5) == 0))
+                                                                   else '')
+                                                                  + "&arg{0}".format(n) for n in range(N))) + """};
+
+    data_.vArgs[argc++] = &occaKernelInfoArgs;
+
+    for(int i = 0; i < """ + str(N) + """; ++i){
+      for(int j = 0; j < args[i]->argc; ++j){
+        data_.vArgs[argc++] = args[i]->args[j].ptr();
+      }
+    }
+
+    OCCA_HSA_CHECK("Launching Kernel",
+                    hsaLaunchKernel(function_,
+                                   outer.x, outer.y, outer.z,
+                                   inner.x, inner.y, inner.z,
+                                   0, *((HSAstream*) dHandle->currentStream),
+                                   data_.vArgs, 0));"""
+
+
 def cOperatorDeclarations(N):
     return '\n\n'.join([cOperatorDeclaration(n + 1) for n in range(N)])
 

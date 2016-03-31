@@ -11,6 +11,7 @@ namespace occa {
       if(initialized)
         return;
 
+      // 1) make sure that HSA is initialized
       OCCA_HSA_CHECK("Initializing HSA",
                      hsa_init());
 

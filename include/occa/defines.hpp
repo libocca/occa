@@ -358,14 +358,13 @@
 #endif
 //======================================
 
-
 //---[ HSA ]----------------------------
 #if OCCA_CHECK_ENABLED
 #  define OCCA_HSA_CHECK( _str , _statement ) OCCA_HSA_CHECK2( _str , _statement , __FILE__ , __LINE__ )
 #  define OCCA_HSA_CHECK2( _str , _statement , file , line )            \
   do {                                                                  \
     hsa_status_t _error = _statement;                                   \
-    if(_error){                                                         \
+    if(_error != HSA_STATUS_SUCCESS){					\
       std::cout << "Error\n"                                            \
                 << "    File    : " << file << '\n'                     \
                 << "    Line    : " << line << '\n'                     \
