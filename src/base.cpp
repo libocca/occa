@@ -851,7 +851,7 @@ namespace occa {
                                srcMem,
 
                                bytes,
-                               (CUstream) srcHandle->dHandle->currentStream);
+                               *((CUstream*) srcHandle->dHandle->currentStream));
 #endif
       }
     }
@@ -914,7 +914,7 @@ namespace occa {
                                srcMem,
 
                                bytes,
-                               (CUstream) srcHandle->dHandle->currentStream);
+                               *((CUstream*) srcHandle->dHandle->currentStream));
 #endif
       }
     }
@@ -977,7 +977,7 @@ namespace occa {
                                     srcMem,
 
                                     bytes,
-                                    (CUstream) srcHandle->dHandle->currentStream);
+                                    *((CUstream*) srcHandle->dHandle->currentStream));
 #endif
       }
     }
@@ -1040,7 +1040,7 @@ namespace occa {
                                     srcMem,
 
                                     bytes,
-                                    (CUstream) srcHandle->dHandle->currentStream);
+                                    *((CUstream*) srcHandle->dHandle->currentStream));
 #endif
       }
     }
