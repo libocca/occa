@@ -140,6 +140,7 @@ namespace occa {
           (sig == SIGQUIT)) {
 
         clearLocks();
+        ::exit(sig);
       }
     }
 
