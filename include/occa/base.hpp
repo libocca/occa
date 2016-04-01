@@ -7,7 +7,6 @@
 // #include <fstream>
 
 // #include <string.h>
-// #include <stdint.h>
 // #include <stdio.h>
 // #include <fcntl.h>
 
@@ -25,6 +24,8 @@
 #include <iostream>
 #include <vector>
 #include <map>
+
+#include <stdint.h>
 
 #include "occa/defines.hpp"
 

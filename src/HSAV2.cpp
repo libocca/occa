@@ -631,21 +631,6 @@ namespace occa {
     // get agent (device)
     hsa_iterate_agents(get_kernel_agent, &kernel_agent);
 
-    // find maximum number of queue items
-    uint32_t queue_size = 0;
-    hsa_status_t err = hsa_agent_get_info(agent, HSA_AGENT_INFO_QUEUE_MAX_SIZE, &queue_size);
-
-    // need to add HSA_CHECK
-    hsa_queue_create(kernel_agent, queue_size, HSA_QUEUE_TYPE_SINGLE, NULL, NULL, UINT32_MAX, UINT32_MAX, &queue);
-
-    // find region on agent
-    /*
-     * Find a memory region that supports kernel arguments.
-     */
-    kernarg_region.handle=(uint64_t)-1;
-    hsa_agent_iterate_regions(agent, get_kernarg_memory_region, &kernarg_region);
-    err = (kernarg_region.handle == (uint64_t)-1) ? HSA_STATUS_ERROR : HSA_STATUS_SUCCESS;
-    check(Finding a kernarg memory region, err);
 
 
   }
@@ -776,20 +761,36 @@ namespace occa {
 
   template <>
   stream_t device_t<HSA>::createStream(){
-    CUstream *retStream = new CUstream;
 
-    OCCA_HSA_CHECK("Device: createStream",
-                    cuStreamCreate(retStream, CU_STREAM_DEFAULT));
+    // treat hsa queue as a stream (mimics opencl)
+    hsa_queue_t queue;
 
-    return retStream;
+    // find maximum number of queue items
+    uint32_t queue_size = 0;
+    hsa_status_t err = hsa_agent_get_info(agent, HSA_AGENT_INFO_QUEUE_MAX_SIZE, &queue_size);
+    
+    // need to add HSA_CHECK
+    hsa_queue_create(kernel_agent, queue_size, HSA_QUEUE_TYPE_SINGLE, NULL, NULL, UINT32_MAX, UINT32_MAX, &queue);
+    
+    // find region on agent
+    /*
+     * Find a memory region that supports kernel arguments.
+     */
+    kernarg_region.handle=(uint64_t)-1;
+    hsa_agent_iterate_regions(agent, get_kernarg_memory_region, &kernarg_region);
+    err = (kernarg_region.handle == (uint64_t)-1) ? HSA_STATUS_ERROR : HSA_STATUS_SUCCESS;
+    check(Finding a kernarg memory region, err);
+
+    return &queue;
   }
 
   template <>
   void device_t<HSA>::freeStream(stream_t s){
-    OCCA_HSA_CHECK("Device: freeStream",
-                    cuStreamDestroy( *((CUstream*) s) ));
 
-    delete (CUstream*) s;
+    OCCA_HSA_CHECK("Device: freeStream", 
+		   hsa_queue_destroy(kernel_agent));
+
+    //     delete (hsa_queue) s; ??
   }
 
   template <>
