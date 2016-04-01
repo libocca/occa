@@ -18,6 +18,7 @@
 #if   (OCCA_OS & LINUX_OS)
 #  include <sys/time.h>
 #  include <unistd.h>
+#  include <signal.h>
 #  include <sys/types.h>
 #  include <sys/dir.h>
 #elif (OCCA_OS & OSX_OS)
@@ -28,6 +29,7 @@
 #    include <mach/clock.h>
 #    include <mach/mach.h>
 #  endif
+#  include <signal.h>
 #  include <sys/types.h>
 #  include <sys/dir.h>
 #else
@@ -42,6 +44,8 @@
 namespace occa {
   class kernelInfo;
 
+  extern strToBoolMap_t fileLocks;
+
   //---[ Helper Info ]----------------
   namespace env {
     extern bool isInitialized;
@@ -54,9 +58,10 @@ namespace occa {
     extern stringVector_t OCCA_INCLUDE_PATH;
 
     void initialize();
-
     void initCachePath();
     void initIncludePath();
+
+    void signalExit(int sig);
 
     std::string var(const std::string &var);
 
@@ -69,12 +74,8 @@ namespace occa {
     }
 
     class envInitializer_t {
-    public:
-      inline envInitializer_t(){
-        env::initialize();
-      }
+    public: envInitializer_t();
     };
-
     extern envInitializer_t envInitializer;
   }
 
@@ -216,10 +217,12 @@ namespace occa {
                    const std::string &content);
 
   std::string getFileLock(const std::string &filename, const int n);
+  void clearLocks();
 
   bool haveHash(const std::string &hash, const int depth = 0);
   void waitForHash(const std::string &hash, const int depth = 0);
   void releaseHash(const std::string &hash, const int depth = 0);
+  void releaseHashLock(const std::string &lockDir);
 
   bool fileNeedsParser(const std::string &filename);
 
@@ -231,19 +234,16 @@ namespace occa {
 
   std::string removeSlashes(const std::string &str);
 
-  char* getCachedOccaFile(const std::string &filename);
-  char* getCachedDefines(const std::string &filename);
-  char* getCachedScript(const std::string &filename);
-
-  char* getVectorDefines();
-  char* getSerialDefines();
-  char* getOpenMPDefines();
-  char* getOpenCLDefines();
-  char* getCUDADefines();
-  char* getHSADefines();
-  char* getPthreadsDefines();
-
   void setupOccaHeaders(const kernelInfo &info);
+
+  void cacheFile(const std::string &filename,
+                 std::string source,
+                 const std::string &hash);
+
+  void cacheFile(const std::string &filename,
+                 const char *source,
+                 const std::string &hash,
+                 const bool deleteSource = true);
 
   void createSourceFileFrom(const std::string &filename,
                             const std::string &hashDir,

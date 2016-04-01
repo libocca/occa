@@ -251,19 +251,16 @@ namespace occa {
     const std::string hashDir    = hashDirFor(filename, hash);
     const std::string sourceFile = hashDir + kc::sourceFile;
     const std::string binaryFile = hashDir + fixBinaryName(kc::binaryFile);
+    bool foundBinary = true;
 
-    if(!haveHash(hash, 0)){
+    if (!haveHash(hash, 0))
       waitForHash(hash, 0);
-
-      if(verboseCompilation_f)
-        std::cout << "Found cached binary of [" << compressFilename(filename) << "] in [" << compressFilename(binaryFile) << "]\n";
-
-      return buildFromBinary(binaryFile, functionName);
-    }
-
-    if(sys::fileExists(binaryFile)){
+    else if (sys::fileExists(binaryFile))
       releaseHash(hash, 0);
+    else
+      foundBinary = false;
 
+    if (foundBinary) {
       if(verboseCompilation_f)
         std::cout << "Found cached binary of [" << compressFilename(filename) << "] in [" << compressFilename(binaryFile) << "]\n";
 

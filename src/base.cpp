@@ -1890,22 +1890,29 @@ namespace occa {
   }
 
   //   ---[ Device Functions ]----------
-  device_t<Serial> hostHandle;
+  device currentDevice;
 
-  device host(&hostHandle);
-  device currentDevice = host;
+  device getCurrentDevice() {
+    if (currentDevice.getDHandle() == NULL) {
+      currentDevice = host();
+    }
+    return currentDevice;
+  }
+
+  device host() {
+    static device _host;
+    if (_host.getDHandle() == NULL) {
+      _host = device(new device_t<Serial>());
+    }
+    return _host;
+  }
 
   void setDevice(device d) {
     currentDevice = d;
   }
 
   void setDevice(const std::string &infos) {
-    device newDevice(infos);
-    currentDevice = newDevice;
-  }
-
-  device getCurrentDevice() {
-    return currentDevice;
+    currentDevice = device(infos);
   }
 
   mutex_t deviceListMutex;
@@ -2295,7 +2302,7 @@ namespace occa {
       OCCA_CHECK(false,
                  "OCCA was not compiled with [CUDA] enabled");
 
-      return occa::host;
+      return occa::host();
 #endif
     }
   }

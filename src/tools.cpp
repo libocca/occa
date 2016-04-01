@@ -6,6 +6,8 @@
 #include "occa/parser/parser.hpp"
 
 namespace occa {
+  strToBoolMap_t fileLocks;
+
   //---[ Helper Info ]----------------
   namespace env {
     bool isInitialized = false;
@@ -20,6 +22,11 @@ namespace occa {
     void initialize() {
       if (isInitialized)
         return;
+
+      ::signal(SIGTERM, env::signalExit);
+      ::signal(SIGKILL, env::signalExit);
+      ::signal(SIGINT , env::signalExit);
+      ::signal(SIGQUIT, env::signalExit);
 
       // Standard environment variables
 #if (OCCA_OS & (LINUX_OS | OSX_OS))
@@ -126,6 +133,16 @@ namespace occa {
       tmpOIP.swap(env::OCCA_INCLUDE_PATH);
     }
 
+    void signalExit(int sig) {
+      if ((sig == SIGTERM) ||
+          (sig == SIGKILL) ||
+          (sig == SIGINT ) ||
+          (sig == SIGQUIT)) {
+
+        clearLocks();
+      }
+    }
+
     std::string var(const std::string &varName) {
       char *c_varName = getenv(varName.c_str());
 
@@ -135,6 +152,9 @@ namespace occa {
       return "";
     }
 
+    envInitializer_t::envInitializer_t() {
+      env::initialize();
+    }
     envInitializer_t envInitializer;
   }
 
@@ -960,6 +980,15 @@ namespace occa {
     return ret;
   }
 
+  void clearLocks() {
+    strToBoolMapIterator it = fileLocks.begin();
+    while (it != fileLocks.end()) {
+      releaseHash(it->first);
+      ++it;
+    }
+    fileLocks.clear();
+  }
+
   bool haveHash(const std::string &hash, const int depth) {
     std::string lockDir = getFileLock(hash, depth);
 
@@ -969,6 +998,8 @@ namespace occa {
 
     if (mkdirStatus && (errno == EEXIST))
       return false;
+
+    fileLocks[lockDir] = true;
 
     return true;
   }
@@ -984,7 +1015,12 @@ namespace occa {
   }
 
   void releaseHash(const std::string &hash, const int depth) {
-    sys::rmdir( getFileLock(hash, depth) );
+    releaseHashLock(getFileLock(hash, depth));
+  }
+
+  void releaseHashLock(const std::string &lockDir) {
+    sys::rmdir(lockDir);
+    fileLocks.erase(lockDir);
   }
 
   bool fileNeedsParser(const std::string &filename) {
@@ -1057,83 +1093,47 @@ namespace occa {
     return ret;
   }
 
-  char* getCachedOccaFile(const std::string &filename) {
-    static std::map<std::string, char*> sourceMap;
-
-    char *&source = sourceMap[filename];
-
-    if (source == NULL)
-      source = cReadFile(env::OCCA_DIR + "/" + filename);
-
-    return source;
-  }
-
-  char* getCachedDefines(const std::string &filename) {
-    return getCachedOccaFile("include/occa/defines/" + filename);
-  }
-
-  char* getCachedScript(const std::string &filename) {
-    return getCachedOccaFile("scripts/" + filename);
-  }
-
-  char* getVectorDefines() {
-    return getCachedDefines("vector.hpp");
-  }
-
-  char* getSerialDefines() {
-    return getCachedDefines("Serial.hpp");
-  }
-
-  char* getOpenMPDefines() {
-    return getCachedDefines("OpenMP.hpp");
-  }
-
-  char* getOpenCLDefines() {
-    return getCachedDefines("OpenCL.hpp");
-  }
-
-  char* getCUDADefines() {
-    return getCachedDefines("CUDA.hpp");
-  }
-
-  char* getHSADefines() {
-    return getCachedDefines("HSA.hpp");
-  }
-
-  char* getPthreadsDefines() {
-    return getCachedDefines("Pthreads.hpp");
+  std::string getOccaScriptFile(const std::string &filename) {
+    return readFile(env::OCCA_DIR + "/scripts/" + filename);
   }
 
   void setupOccaHeaders(const kernelInfo &info) {
-    std::string primitivesFile = sys::getFilename("[occa]/primitives.hpp");
-    std::string headerFile     = info.getModeHeaderFilename();
+    cacheFile(sys::getFilename("[occa]/primitives.hpp"),
+              readFile(env::OCCA_DIR + "/include/occa/defines/vector.hpp"),
+              "vectorDefines");
 
-    if (!sys::fileExists(primitivesFile)) {
-      sys::mkpath(getFileDirectory(primitivesFile));
+    std::string mode = modeToStr(info.mode);
+    cacheFile(info.getModeHeaderFilename(),
+              readFile(env::OCCA_DIR + "/include/occa/defines/" + mode + ".hpp"),
+              mode + "Defines");
+  }
 
-      std::ofstream fs2;
-      fs2.open(primitivesFile.c_str());
+  void cacheFile(const std::string &filename,
+                 std::string source,
+                 const std::string &hash) {
 
-      fs2 << getVectorDefines();
+    cacheFile(filename, source.c_str(), hash, false);
+  }
 
-      fs2.close();
+  void cacheFile(const std::string &filename,
+                 const char *source,
+                 const std::string &hash,
+                 const bool deleteSource) {
+    if(!haveHash(hash)){
+      waitForHash(hash);
+    } else {
+      if (!sys::fileExists(filename)) {
+        sys::mkpath(getFileDirectory(filename));
+
+        std::ofstream fs2;
+        fs2.open(filename.c_str());
+        fs2 << source;
+        fs2.close();
+      }
+      releaseHash(hash);
     }
-
-    if (!sys::fileExists(headerFile)) {
-      sys::mkpath(getFileDirectory(headerFile));
-
-      std::ofstream fs2;
-      fs2.open(headerFile.c_str());
-
-      if (info.mode & Serial)   fs2 << getSerialDefines();
-      if (info.mode & OpenMP)   fs2 << getOpenMPDefines();
-      if (info.mode & OpenCL)   fs2 << getOpenCLDefines();
-      if (info.mode & CUDA)     fs2 << getCUDADefines();
-      // if (info.mode & HSA)      fs2 << getHSADefines();
-      if (info.mode & Pthreads) fs2 << getPthreadsDefines();
-
-      fs2.close();
-    }
+    if (deleteSource)
+      delete [] source;
   }
 
   void createSourceFileFrom(const std::string &filename,

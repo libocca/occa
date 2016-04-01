@@ -1576,15 +1576,12 @@ namespace occa {
   };
 
   //   ---[ Device Functions ]----------
-  extern device_t<Serial> hostHandle;
-
-  extern device host;
   extern device currentDevice;
+  device getCurrentDevice();
 
+  device host();
   void setDevice(device d);
   void setDevice(const std::string &infos);
-
-  device getCurrentDevice();
 
   extern mutex_t deviceListMutex;
   extern std::vector<device> deviceList;
@@ -1856,7 +1853,7 @@ namespace occa {
 
     std::string salt() const;
 
-    std::string getModeHeaderFilename() const ;
+    std::string getModeHeaderFilename() const;
 
     static bool isAnOccaDefine(const std::string &name);
 

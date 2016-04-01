@@ -44,69 +44,51 @@ namespace occa {
                              const std::string &compiler){
 
 #if (OCCA_OS & (LINUX_OS | OSX_OS))
-      const std::string safeCompiler = removeSlashes(compiler);
-      const std::string cacheDir     = env::OCCA_CACHE_DIR;
+      std::stringstream ss;
+      std::string flag = omp::notSupported;
 
-      const std::string hash         = "ompTest";
-      const std::string testDir      = (cacheDir + "testing/compiler/");
-      const std::string testFilename = (testDir  + "ompTest.cpp");
-      const std::string infoFilename = (testDir  + "ompTestFor_" + safeCompiler);
+      const std::string safeCompiler = removeSlashes(compiler);
+      const std::string &hash = safeCompiler;
+
+      const std::string testFilename   = sys::getFilename("[occa]/testing/ompTest.cpp");
+      const std::string binaryFilename = sys::getFilename("[occa]/testing/omp_" + safeCompiler);
+      const std::string infoFilename   = sys::getFilename("[occa]/testing/ompInfo_" + safeCompiler);
+
+      cacheFile(testFilename,
+                readFile(env::OCCA_DIR + "/scripts/ompTest.cpp"),
+                "ompTest");
 
       if(!haveHash(hash)){
         waitForHash(hash);
-      }
-      else{
-        if(!sys::fileExists(testFilename)){
-          std::string testContent = ("#include <omp.h>\n"
-                                     "\n"
-                                     "int main(int argc, char **argv){\n"
-                                     "#ifdef _OPENMP\n"
-                                     "  return 0;\n"
-                                     "#else\n"
-                                     "  return 1;\n"
-                                     "#endif\n"
-                                     "}");
-
-          writeToFile(testFilename, testContent);
-        }
-
-        const std::string binaryFilename = (testDir +  "ompBinaryFor_" + safeCompiler);
-
+      } else {
         if(!sys::fileExists(infoFilename)){
-          std::string flag = baseCompilerFlag(vendor_);
-          int compileError = 1;
+          flag = baseCompilerFlag(vendor_);
+          ss << compiler
+             << ' '
+             << flag
+             << ' '
+             << testFilename
+             << " -o "
+             << binaryFilename
+             << " > /dev/null 2>&1";
 
-          std::string sCommand;
-
-          if(flag != omp::notSupported){
-            sCommand += compiler;
-            sCommand += ' ';
-            sCommand += flag;
-            sCommand += ' ';
-            sCommand += testFilename;
-            sCommand += " -o ";
-            sCommand += binaryFilename;
-            sCommand += " > /dev/null 2>&1";
-
-            compileError = system(sCommand.c_str());
-          }
+          const int compileError = system(ss.str().c_str());
 
           if(compileError)
             flag = omp::notSupported;
 
-          writeToFile(infoFilename, flag);
-
+          writeToFile(infoFilename, flag)
           releaseHash(hash);
 
           return flag;
         }
-        else {
-          releaseHash(hash);
-        }
+        releaseHash(hash);
       }
 
-      return readFile(infoFilename);
+      ss << readFile(infoFilename);
+      ss >> flag;
 
+      return flag;
 #elif (OCCA_OS == WINDOWS_OS)
       return "/openmp"; // VS Compilers support OpenMP
 #endif
@@ -220,19 +202,16 @@ namespace occa {
     const std::string hashDir    = hashDirFor(filename, hash);
     const std::string sourceFile = hashDir + kc::sourceFile;
     const std::string binaryFile = hashDir + fixBinaryName(kc::binaryFile);
+    bool foundBinary = true;
 
-    if(!haveHash(hash, 0)){
+    if (!haveHash(hash, 0))
       waitForHash(hash, 0);
-
-      if(verboseCompilation_f)
-        std::cout << "Found cached binary of [" << compressFilename(filename) << "] in [" << compressFilename(binaryFile) << "]\n";
-
-      return buildFromBinary(binaryFile, functionName);
-    }
-
-    if(sys::fileExists(binaryFile)){
+    else if (sys::fileExists(binaryFile))
       releaseHash(hash, 0);
+    else
+      foundBinary = false;
 
+    if (foundBinary) {
       if(verboseCompilation_f)
         std::cout << "Found cached binary of [" << compressFilename(filename) << "] in [" << compressFilename(binaryFile) << "]\n";
 

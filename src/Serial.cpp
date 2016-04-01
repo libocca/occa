@@ -5,7 +5,7 @@ namespace occa {
   namespace cpu {
     std::string getFieldFrom(const std::string &command,
                              const std::string &field){
-#if (OCCA_OS & LINUX_OS)
+#if (OCCA_OS & LINUX)
       std::string shellToolsFile = sys::getFilename("[occa]/scripts/shellTools.sh");
 
       if(!sys::fileExists(shellToolsFile)){
@@ -312,98 +312,23 @@ namespace occa {
 
     int compilerVendor(const std::string &compiler){
 #if (OCCA_OS & (LINUX_OS | OSX_OS))
-      if((compiler.find("gcc") != std::string::npos) ||
-         (compiler.find("g++") != std::string::npos)){
-
-        return cpu::vendor::GNU;
-      }
-      else if((compiler.find("clang")   != std::string::npos) ||
-              (compiler.find("clang++") != std::string::npos)){
-
-        return cpu::vendor::LLVM;
-      }
-      else if((compiler.find("icc")  != std::string::npos) ||
-              (compiler.find("icpc") != std::string::npos)){
-
-        return cpu::vendor::Intel;
-      }
-      else if(compiler.find("pathCC") != std::string::npos){
-        return cpu::vendor::Pathscale;
-      }
-      else if((compiler.find("xlc")   != std::string::npos) ||
-              (compiler.find("xlc++") != std::string::npos)){
-
-        return cpu::vendor::IBM;
-      }
-      else if((compiler.find("pgcc")  != std::string::npos) ||
-              (compiler.find("pgc++") != std::string::npos)){
-
-        return cpu::vendor::PGI;
-      }
-      else if(compiler.find("aCC") != std::string::npos){
-        return cpu::vendor::HP;
-      }
-      else if((compiler.find("cc") != std::string::npos) ||
-              (compiler.find("CC") != std::string::npos)){
-
-        return cpu::vendor::Cray;
-      }
-
-      // Find the compiler manually
       std::stringstream ss;
       int vendor_ = cpu::vendor::notFound;
 
       const std::string safeCompiler = removeSlashes(compiler);
-      const std::string cacheDir     = env::OCCA_CACHE_DIR;
+      const std::string &hash = safeCompiler;
 
-      const std::string hash         = "vendorTest";
-      const std::string testDir      = (cacheDir + "testing/compiler/");
-      const std::string testFilename = (testDir  + "vendorTest.cpp");
-      const std::string infoFilename = (testDir  + "vendorTestFor_" + safeCompiler);
+      const std::string testFilename   = sys::getFilename("[occa]/testing/compilerVendorTest.cpp");
+      const std::string binaryFilename = sys::getFilename("[occa]/testing/compilerVendor_" + safeCompiler);
+      const std::string infoFilename   = sys::getFilename("[occa]/testing/compilerVendorInfo_" + safeCompiler);
+
+      cacheFile(testFilename,
+                readFile(env::OCCA_DIR + "/scripts/compilerVendorTest.cpp"),
+                "compilerVendorTest");
 
       if(!haveHash(hash)){
         waitForHash(hash);
-      }
-      else{
-        if(!sys::fileExists(testFilename)){
-          ss << "int main(int argc, char **argv){\n"
-             << "#if defined(__clang__)\n"
-             << "  return " << cpu::vendor::b_LLVM << ";\n"
-             << "\n"
-             << "#elif defined(__ICC) || defined(__INTEL_COMPILER)\n"
-             << "  return " << cpu::vendor::b_Intel << ";\n"
-             << "\n"
-             << "#elif defined(__GNUC__) || defined(__GNUG__)\n"
-             << "  return " << cpu::vendor::b_GNU << ";\n"
-             << "\n"
-             << "#elif defined(__HP_cc) || defined(__HP_aCC)\n"
-             << "  return " << cpu::vendor::b_HP << ";\n"
-             << "\n"
-             << "#elif defined(__IBMC__) || defined(__IBMCPP__)\n"
-             << "  return " << cpu::vendor::b_IBM << ";\n"
-             << "\n"
-             << "#elif defined(__PGI)\n"
-             << "  return " << cpu::vendor::b_PGI << ";\n"
-             << "\n"
-             << "#elif defined(_CRAYC)\n"
-             << "  return " << cpu::vendor::b_Cray << ";\n"
-             << "\n"
-             << "#elif defined(__PATHSCALE__) || defined(__PATHCC__)\n"
-             << "  return " << cpu::vendor::b_Pathscale << ";\n"
-             << "#endif\n"
-             << "\n"
-             << "  // Missing\n"
-             << "  return " << cpu::vendor::b_max << ";\n"
-             << "}\n";
-
-          sys::mkpath(testDir);
-
-          writeToFile(testFilename, ss.str());
-          ss.str("");
-        }
-
-        const std::string binaryFilename = (testDir +  "vendorBinaryFor_" + safeCompiler);
-
+      } else {
         if(!sys::fileExists(infoFilename)){
           ss << compiler
              << ' '
@@ -426,14 +351,11 @@ namespace occa {
           ss << vendor_;
 
           writeToFile(infoFilename, ss.str());
-
           releaseHash(hash);
 
           return vendor_;
         }
-        else {
-          releaseHash(hash);
-        }
+        releaseHash(hash);
       }
 
       ss << readFile(infoFilename);
@@ -450,8 +372,6 @@ namespace occa {
         return cpu::vendor::VisualStudio;
       }
 #endif
-
-      return cpu::vendor::notFound;
     }
 
     std::string compilerSharedBinaryFlags(const std::string &compiler){
@@ -689,19 +609,16 @@ namespace occa {
     const std::string hashDir    = hashDirFor(filename, hash);
     const std::string sourceFile = hashDir + kc::sourceFile;
     const std::string binaryFile = hashDir + fixBinaryName(kc::binaryFile);
+    bool foundBinary = true;
 
-    if(!haveHash(hash, 0)){
+    if (!haveHash(hash, 0))
       waitForHash(hash, 0);
-
-      if(verboseCompilation_f)
-        std::cout << "Found cached binary of [" << compressFilename(filename) << "] in [" << compressFilename(binaryFile) << "]\n";
-
-      return buildFromBinary(binaryFile, functionName);
-    }
-
-    if(sys::fileExists(binaryFile)){
+    else if (sys::fileExists(binaryFile))
       releaseHash(hash, 0);
+    else
+      foundBinary = false;
 
+    if (foundBinary) {
       if(verboseCompilation_f)
         std::cout << "Found cached binary of [" << compressFilename(filename) << "] in [" << compressFilename(binaryFile) << "]\n";
 
@@ -1070,9 +987,7 @@ namespace occa {
     strMode = "Serial";
 
     data = NULL;
-
     uvaEnabled_ = false;
-
     bytesAllocated = 0;
 
     getEnvironmentVariables();

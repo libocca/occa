@@ -14,6 +14,7 @@ web2/
 # for now
 benchmarks/
 scripts/occaBenchmark.cpp
+scripts/compilerVendorTest
 
 *.pyc
 /examples/addVectors/ispc/tasksys.cpp

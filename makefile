@@ -57,8 +57,6 @@ ifdef OCCA_LIBPYTHON_DIR
   endif
 endif
 
-.SUFFIXES:
-
 all: objdirs $(outputs)
 
 objdirs: $(oPath) $(oPath)/parser $(oPath)/python

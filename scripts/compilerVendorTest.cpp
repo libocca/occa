@@ -7,6 +7,7 @@
 #define OCCA_HP_VENDOR           6
 #define OCCA_VISUALSTUDIO_VENDOR 7
 #define OCCA_CRAY_VENDOR         8
+#define OCCA_NOT_FOUND           9
 
 int main(int argc, char **argv){
 #if defined(__clang__)
@@ -35,9 +36,8 @@ int main(int argc, char **argv){
 
 #elif defined(_MSC_VER)
   return OCCA_VISUALSTUDIO_VENDOR;
+
+#else
+  return OCCA_NOT_FOUND
 #endif
-
-  // Missing
-
-  return 9;
 }

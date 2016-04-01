@@ -116,6 +116,10 @@ namespace occa {
   typedef strToStrMap_t::iterator                           strToStrMapIterator;
   typedef strToStrMap_t::const_iterator                     cStrToStrMapIterator;
 
+  typedef std::map<std::string, bool>                       strToBoolMap_t;
+  typedef strToBoolMap_t::iterator                          strToBoolMapIterator;
+  typedef strToBoolMap_t::const_iterator                    cStrToBoolMapIterator;
+
   typedef std::map<std::string,parserNS::attribute_t*>      attributeMap_t;
   typedef attributeMap_t::iterator                          attributeMapIterator;
   typedef attributeMap_t::const_iterator                    cAttributeMapIterator;
