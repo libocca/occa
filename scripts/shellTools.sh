@@ -301,36 +301,12 @@ function unaliasCommand {
     command echo $1
 }
 
-function mpiCompilerVendor {
-    local mpiCompiler=$1
-    local compiler
-
-    # gcc, clang
-    compiler=$($mpiCompiler --chichamanga 2>&1 > /dev/null | command grep -m 1 error | command sed 's/\([^:]*\):.*/\1/g')
-
-    if [ ! -z $compiler ]; then command echo $compiler; return; fi
-
-    # intel
-    compiler=$($mpiCompiler --chichamanga 2>&1 > /dev/null | command grep -m 1 "command not found" | command sed 's/[^:]*:[^:]*:[ \t]*\([^:]*\):.*/\1/g')
-
-    if [ ! -z $compiler ]; then command echo $compiler; return; fi
-
-    command echo ""
-}
-
 function compilerName {
     local chosenCompiler=$1
     local realCompiler=$(realCommand $chosenCompiler)
     local unaliasedCompiler=$(unaliasCommand $realCompiler)
     local strippedCompiler=$(stripPath $unaliasedCompiler)
-    local compiler
-
-    case $strippedCompiler in
-        mpi*) compiler=$(mpiCompilerVendor $strippedCompiler) ;;
-        *)    compiler=$strippedCompiler                      ;;
-    esac
-
-    command echo $compiler
+    command echo $strippedCompiler
 }
 
 function compilerVendor {
