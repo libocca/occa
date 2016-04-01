@@ -2287,7 +2287,7 @@ namespace occa {
       OCCA_CHECK(false,
                  "OCCA was not compiled with [OpenCL] enabled");
 
-      return occa::host;
+      return occa::host();
 #endif
     }
   }
