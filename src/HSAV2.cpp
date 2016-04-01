@@ -197,8 +197,10 @@ namespace occa {
     OCCA_EXTRACT_DATA(HSA, Kernel);
     kernelInfo info = info_;
 
+    // TW: prepend headers to the kernel source code file
     dHandle->addOccaHeadersToInfo(info);
 
+    // TW: create hash for kernel source code file
     const std::string hash = getFileContentHash(filename,
                                                 dHandle->getInfoSalt(info));
 
@@ -206,13 +208,15 @@ namespace occa {
     const std::string sourceFile    = hashDir + kc::sourceFile;
     const std::string binaryFile    = hashDir + fixBinaryName(kc::binaryFile);
     const std::string ptxBinaryFile = hashDir + "ptxBinary.o";
-
+    
+    // TW: check for hash
     if(!haveHash(hash, 0)){
       waitForHash(hash, 0);
 
       if(verboseCompilation_f)
         std::cout << "Found cached binary of [" << compressFilename(filename) << "] in [" << compressFilename(binaryFile) << "]\n";
 
+      // TW: build kernel from binary
       return buildFromBinary(binaryFile, functionName);
     }
 
@@ -226,6 +230,8 @@ namespace occa {
     }
 
     createSourceFileFrom(filename, hashDir, info);
+
+    // TW: this autosets some compiler flags for runtime CUDA kernel compilation
 
     std::string archSM = "";
 
@@ -243,6 +249,7 @@ namespace occa {
       archSM = archSM_.str();
     }
 
+    // TW: this specifies the system command for compilation of kernels
     std::stringstream command;
 
     if(verboseCompilation_f)
@@ -265,6 +272,7 @@ namespace occa {
     if(verboseCompilation_f)
       std::cout << sCommand << '\n';
 
+    // TW: this does the compilation step
     const int compileError = system(sCommand.c_str());
 
     if(compileError){
@@ -505,7 +513,8 @@ namespace occa {
 
   template <>
   void memory_t<HSA>::free(){
-    cuMemFree(*((CUdeviceptr*) handle));
+    //    cuMemFree(*((CUdeviceptr*) handle));
+    hsa_memory_free((HSAdeviceptr*) handle);
     
     if(!isAWrapper())
       delete (CUdeviceptr*) handle;
@@ -1006,6 +1015,7 @@ namespace occa {
     delete (HSADeviceData_t*) data;
   }
 
+  // TW: how do/can we find the SIMD width for an HSA device
   template <>
   int device_t<HSA>::simdWidth(){
     if(simdWidth_)
