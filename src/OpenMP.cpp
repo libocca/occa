@@ -77,7 +77,7 @@ namespace occa {
           if(compileError)
             flag = omp::notSupported;
 
-          writeToFile(infoFilename, flag)
+          writeToFile(infoFilename, flag);
           releaseHash(hash);
 
           return flag;
