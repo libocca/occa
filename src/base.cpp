@@ -1,10 +1,89 @@
-#include "occa.hpp"
+#include "occa/base.hpp"
+#include "occa/library.hpp"
 #include "occa/parser/parser.hpp"
+
+#include "occa/Serial.hpp"
+#include "occa/OpenCL.hpp"
+#include "occa/CUDA.hpp"
 
 // Use events for timing!
 
 namespace occa {
-  //---[ Globals & Flags ]------------
+  //---[ Typedefs ]-------------------------------
+  std::string deviceType(int type) {
+    if(type & CPU)     return "CPU";
+    if(type & GPU)     return "GPU";
+    if(type & FPGA)    return "FPGA";
+    if(type & XeonPhi) return "Xeon Phi";
+
+    return "N/A";
+  }
+
+  std::string vendor(int type) {
+    if(type & Intel)  return "Intel";
+    if(type & AMD)    return "AMD";
+    if(type & NVIDIA) return "NVIDIA";
+    if(type & Altera) return "Altera";
+
+    return "N/A";
+  }
+  //==============================================
+
+  //---[ Mode ]-----------------------------------
+  std::string modeToStr(const occa::mode &m) {
+    if(m & Serial)   return "Serial";
+    if(m & OpenMP)   return "OpenMP";
+    if(m & OpenCL)   return "OpenCL";
+    if(m & CUDA)     return "CUDA";
+    if(m & HSA)      return "HSA";
+    if(m & Pthreads) return "Pthreads";
+
+    OCCA_CHECK(false, "Mode [" << m << "] is not valid");
+
+    return "No mode";
+  }
+
+  mode strToMode(const std::string &str) {
+    const std::string upStr = upString(str);
+
+    if(upStr == "SERIAL")   return Serial;
+    if(upStr == "OPENMP")   return OpenMP;
+    if(upStr == "OPENCL")   return OpenCL;
+    if(upStr == "CUDA")     return CUDA;
+    if(upStr == "HSA")      return HSA;
+    if(upStr == "PTHREADS") return Pthreads;
+
+    OCCA_CHECK(false, "Mode [" << str << "] is not valid");
+
+    return Serial;
+  }
+
+  std::string modes(int info, int preferredMode) {
+    std::string ret = "";
+    int info_ = info;
+    int count = 0;
+
+    if(preferredMode != 0) {
+      ret = "[" + modeToStr(preferredMode) + "]";
+      info_ &= ~preferredMode;
+      ++count;
+    }
+
+    if(info_ & Serial)   ret += std::string(count++ ? ", " : "") + "Serial";
+    if(info_ & OpenMP)   ret += std::string(count++ ? ", " : "") + "OpenMP";
+    if(info_ & OpenCL)   ret += std::string(count++ ? ", " : "") + "OpenCL";
+    if(info_ & CUDA)     ret += std::string(count++ ? ", " : "") + "CUDA";
+    if(info_ & HSA)      ret += std::string(count++ ? ", " : "") + "HSA";
+    if(info_ & Pthreads) ret += std::string(count++ ? ", " : "") + "Pthreads";
+
+    if(count)
+      return ret;
+    else
+      return "N/A";
+  }
+  //==============================================
+
+  //---[ Globals & Flags ]------------------------
   const int parserVersion = 100;
 
   kernelInfo defaultKernelInfo;
@@ -63,9 +142,262 @@ namespace occa {
     return false;
 #endif
   }
-  //==================================
+  //==============================================
 
-  //---[ Helper Classes ]-------------
+  //---[ Helper Classes ]-------------------------
+  bool argInfoMap::has(const std::string &info) {
+    return (iMap.find(info) != iMap.end());
+  }
+
+  void argInfoMap::remove(const std::string &info) {
+    std::map<std::string, std::string>::iterator it = iMap.find(info);
+
+    if(it != iMap.end())
+      iMap.erase(it);
+  }
+
+  template <>
+  void argInfoMap::set(const std::string &info, const std::string &value) {
+    iMap[info] = value;
+  }
+
+  std::string argInfoMap::get(const std::string &info) {
+    std::map<std::string,std::string>::iterator it = iMap.find(info);
+
+    if(it != iMap.end())
+      return it->second;
+
+    return "";
+  }
+
+  int argInfoMap::iGet(const std::string &info) {
+    std::map<std::string,std::string>::iterator it = iMap.find(info);
+
+    if(it != iMap.end())
+      return atoi((it->second).c_str());
+
+    return 0;
+  }
+
+  void argInfoMap::iGets(const std::string &info, std::vector<int> &entries) {
+    std::map<std::string,std::string>::iterator it = iMap.find(info);
+
+    if(it == iMap.end())
+      return;
+
+    const char *c = (it->second).c_str();
+
+    while(*c != '\0') {
+      skipWhitespace(c);
+
+      if(isANumber(c)) {
+        entries.push_back(atoi(c));
+        skipNumber(c);
+      }
+      else
+        ++c;
+    }
+  }
+
+  dim::dim() :
+    x(1),
+    y(1),
+    z(1) {}
+
+  dim::dim(uintptr_t x_) :
+    x(x_),
+    y(1),
+    z(1) {}
+
+  dim::dim(uintptr_t x_, uintptr_t y_) :
+    x(x_),
+    y(y_),
+    z(1) {}
+
+  dim::dim(uintptr_t x_, uintptr_t y_, uintptr_t z_) :
+    x(x_),
+    y(y_),
+    z(z_) {}
+
+  dim::dim(const dim &d) :
+    x(d.x),
+    y(d.y),
+    z(d.z) {}
+
+  dim& dim::operator = (const dim &d) {
+    x = d.x;
+    y = d.y;
+    z = d.z;
+
+    return *this;
+  }
+
+  dim dim::operator + (const dim &d) {
+    return dim(x + d.x,
+               y + d.y,
+               z + d.z);
+  }
+
+  dim dim::operator - (const dim &d) {
+    return dim(x - d.x,
+               y - d.y,
+               z - d.z);
+  }
+
+  dim dim::operator * (const dim &d) {
+    return dim(x * d.x,
+               y * d.y,
+               z * d.z);
+  }
+
+  dim dim::operator / (const dim &d) {
+    return dim(x / d.x,
+               y / d.y,
+               z / d.z);
+  }
+
+  bool dim::hasNegativeEntries() {
+    return ((x & (1 << (sizeof(uintptr_t) - 1))) ||
+            (y & (1 << (sizeof(uintptr_t) - 1))) ||
+            (z & (1 << (sizeof(uintptr_t) - 1))));
+  }
+
+  uintptr_t& dim::operator [] (int i) {
+    switch(i) {
+    case 0 : return x;
+    case 1 : return y;
+    default: return z;
+    }
+  }
+
+  uintptr_t dim::operator [] (int i) const {
+    switch(i) {
+    case 0 : return x;
+    case 1 : return y;
+    default: return z;
+    }
+  }
+
+  kernelArg_t::kernelArg_t() {
+    dHandle = NULL;
+    mHandle = NULL;
+
+    ::memset(&data, 0, sizeof(data));
+    size = 0;
+    info = kArgInfo::none;
+  }
+
+  kernelArg_t::kernelArg_t(const kernelArg_t &k) {
+    *this = k;
+  }
+
+  kernelArg_t& kernelArg_t::operator = (const kernelArg_t &k) {
+    dHandle = k.dHandle;
+    mHandle = k.mHandle;
+
+    ::memcpy(&data, &(k.data), sizeof(data));
+    size = k.size;
+    info = k.info;
+
+    return *this;
+  }
+
+  kernelArg_t::~kernelArg_t() {}
+
+  void* kernelArg_t::ptr() const {
+    return ((info & kArgInfo::usePointer) ? data.void_ : (void*) &data);
+  }
+
+  kernelArg::kernelArg() {
+    argc = 0;
+  }
+
+  kernelArg::~kernelArg() {}
+
+  kernelArg::kernelArg(kernelArg_t &arg_) {
+    argc = 1;
+
+    args[0] = arg_;
+  }
+
+  kernelArg::kernelArg(const kernelArg &k) {
+    argc = k.argc;
+
+    args[0] = k.args[0];
+    args[1] = k.args[1];
+  }
+
+  kernelArg& kernelArg::operator = (const kernelArg &k) {
+    argc = k.argc;
+
+    args[0] = k.args[0];
+    args[1] = k.args[1];
+
+    return *this;
+  }
+
+  template <> kernelArg::kernelArg(const int &arg_) {
+    argc = 1; args[0].data.int_ = arg_; args[0].size = sizeof(int);
+  }
+  template <> kernelArg::kernelArg(const char &arg_) {
+    argc = 1; args[0].data.char_ = arg_; args[0].size = sizeof(char);
+  }
+  template <> kernelArg::kernelArg(const short &arg_) {
+    argc = 1; args[0].data.short_ = arg_; args[0].size = sizeof(short);
+  }
+  template <> kernelArg::kernelArg(const long &arg_) {
+    argc = 1; args[0].data.long_ = arg_; args[0].size = sizeof(long);
+  }
+
+  template <> kernelArg::kernelArg(const unsigned int &arg_) {
+    argc = 1; args[0].data.uint_ = arg_; args[0].size = sizeof(unsigned int);
+  }
+  template <> kernelArg::kernelArg(const unsigned char &arg_) {
+    argc = 1; args[0].data.uchar_ = arg_; args[0].size = sizeof(unsigned char);
+  }
+  template <> kernelArg::kernelArg(const unsigned short &arg_) {
+    argc = 1; args[0].data.ushort_ = arg_; args[0].size = sizeof(unsigned short);
+  }
+
+  template <> kernelArg::kernelArg(const float &arg_) {
+    argc = 1; args[0].data.float_ = arg_; args[0].size = sizeof(float);
+  }
+  template <> kernelArg::kernelArg(const double &arg_) {
+    argc = 1; args[0].data.double_ = arg_; args[0].size = sizeof(double);
+  }
+
+#if OCCA_64_BIT
+  // 32 bit: uintptr_t == unsigned int
+  template <> kernelArg::kernelArg(const uintptr_t &arg_) {
+    argc = 1; args[0].data.uintptr_t_ = arg_; args[0].size = sizeof(uintptr_t);
+  }
+#endif
+
+  occa::device kernelArg::getDevice() const {
+    return occa::device(args[0].dHandle);
+  }
+
+  void kernelArg::setupForKernelCall(const bool isConst) const {
+    occa::memory_v *mHandle = args[0].mHandle;
+
+    if(mHandle                      &&
+       mHandle->isManaged()         &&
+       !mHandle->leftInDevice()     &&
+       mHandle->dHandle->fakesUva() &&
+       mHandle->dHandle->hasUvaEnabled()) {
+
+      if(!mHandle->inDevice()) {
+        mHandle->copyFrom(mHandle->uvaPtr);
+        mHandle->memInfo |= uvaFlag::inDevice;
+      }
+
+      if(!isConst && !mHandle->isDirty()) {
+        uvaDirtyMemory.push_back(mHandle);
+        mHandle->memInfo |= uvaFlag::isDirty;
+      }
+    }
+  }
+
   const int uint8FormatIndex  = 0;
   const int uint16FormatIndex = 1;
   const int uint32FormatIndex = 2;
@@ -139,7 +471,7 @@ namespace occa {
   const occa::formatType floatx2Format(floatFormatIndex, 2);
   const occa::formatType floatx4Format(floatFormatIndex, 4);
 
-  //---[ Arg Info Map ]-------
+  //  |---[ Arg Info Map ]------------------------
   argInfoMap::argInfoMap() {}
 
   argInfoMap::argInfoMap(const std::string &infos) {
@@ -202,7 +534,7 @@ namespace occa {
     return out;
   }
 
-  //---[ Kernel Info ]--------
+  //  |---[ Kernel Info ]-------------------------
   kernelInfo::kernelInfo() :
     mode(NoMode),
     header(""),
@@ -337,7 +669,7 @@ namespace occa {
 
     if(value2[value2.size() - 1] != '\n')
       value2 += '\n';
-    //==============
+    //  |=========================================
 
     ss << "#define " << macro << " " << value2 << '\n';
 
@@ -370,7 +702,7 @@ namespace occa {
     header = ss.str() + header;
   }
 
-  //---[ Device Info ]--------
+  //  |---[ Device Info ]-------------------------
   deviceInfo::deviceInfo() {}
 
   deviceInfo::deviceInfo(const deviceInfo &dInfo) :
@@ -391,10 +723,9 @@ namespace occa {
     infos += '=';
     infos += value;
   }
-  //==========================
-  //==================================
+  //==============================================
 
-  //---[ Kernel ]---------------------
+  //---[ Kernel ]---------------------------------
   kernel::kernel() :
     kHandle(NULL) {}
 
@@ -406,43 +737,41 @@ namespace occa {
 
   kernel& kernel::operator = (const kernel &k) {
     kHandle = k.kHandle;
-
     return *this;
+  }
+
+  void kernel::checkIfInitialized() const {
+    OCCA_CHECK(kHandle != NULL,
+               "Kernel is not initialized");
   }
 
   void* kernel::getKernelHandle() {
     checkIfInitialized();
-
     return kHandle->getKernelHandle();
   }
 
   void* kernel::getProgramHandle() {
     checkIfInitialized();
-
     return kHandle->getProgramHandle();
   }
 
   kernel_v* kernel::getKHandle() {
     checkIfInitialized();
-
     return kHandle;
   }
 
   const std::string& kernel::mode() {
     checkIfInitialized();
-
     return kHandle->strMode;
   }
 
   const std::string& kernel::name() {
     checkIfInitialized();
-
     return kHandle->name;
   }
 
   occa::device kernel::getDevice() {
     checkIfInitialized();
-
     return occa::device(kHandle->dHandle);
   }
 
@@ -470,7 +799,6 @@ namespace occa {
 
   uintptr_t kernel::maximumInnerDimSize() {
     checkIfInitialized();
-
     return kHandle->maximumInnerDimSize();
   }
 
@@ -485,7 +813,6 @@ namespace occa {
 
   void kernel::clearArgumentList() {
     checkIfInitialized();
-
     kHandle->argumentCount = 0;
   }
 
@@ -605,10 +932,38 @@ namespace occa {
   void kernelDatabase::loadKernelFromLibrary(device_v *d) {
     addKernel(d, library::loadKernel(d, kernelName));
   }
-  //==================================
+  //==============================================
 
 
-  //---[ Memory ]---------------------
+  //---[ Memory ]---------------------------------
+  bool memory_v::isATexture() const {
+    return (memInfo & memFlag::isATexture);
+  }
+
+  bool memory_v::isManaged() const {
+    return (memInfo & memFlag::isManaged);
+  }
+
+  bool memory_v::isMapped() const {
+    return (memInfo & memFlag::isMapped);
+  }
+
+  bool memory_v::isAWrapper() const {
+    return (memInfo & memFlag::isAWrapper);
+  }
+
+  bool memory_v::inDevice() const {
+    return (memInfo & uvaFlag::inDevice);
+  }
+
+  bool memory_v::leftInDevice() const {
+    return (memInfo & uvaFlag::leftInDevice);
+  }
+
+  bool memory_v::isDirty() const {
+    return (memInfo & uvaFlag::isDirty);
+  }
+
   memory::memory() :
     mHandle(NULL) {}
 
@@ -640,26 +995,61 @@ namespace occa {
 
   memory& memory::operator = (const memory &m) {
     mHandle = m.mHandle;
-
     return *this;
+  }
+
+  void memory::checkIfInitialized() const {
+    OCCA_CHECK(mHandle != NULL,
+               "Memory is not initialized");
   }
 
   memory_v* memory::getMHandle() {
     checkIfInitialized();
-
     return mHandle;
   }
 
   device_v* memory::getDHandle() {
     checkIfInitialized();
-
     return mHandle->dHandle;
   }
 
   const std::string& memory::mode() {
     checkIfInitialized();
-
     return mHandle->strMode;
+  }
+
+  uintptr_t memory::bytes() const {
+    if(mHandle == NULL)
+      return 0;
+    return mHandle->size;
+  }
+
+  bool memory::isATexture() const {
+    return (mHandle->memInfo & memFlag::isATexture);
+  }
+
+  bool memory::isManaged() const {
+    return (mHandle->memInfo & memFlag::isManaged);
+  }
+
+  bool memory::isMapped() const {
+    return (mHandle->memInfo & memFlag::isMapped);
+  }
+
+  bool memory::isAWrapper() const {
+    return (mHandle->memInfo & memFlag::isAWrapper);
+  }
+
+  bool memory::inDevice() const {
+    return (mHandle->memInfo & uvaFlag::inDevice);
+  }
+
+  bool memory::leftInDevice() const {
+    return (mHandle->memInfo & uvaFlag::leftInDevice);
+  }
+
+  bool memory::isDirty() const {
+    return (mHandle->memInfo & uvaFlag::isDirty);
   }
 
   void* memory::textureArg1() const {
@@ -677,25 +1067,21 @@ namespace occa {
 
   void* memory::textureArg2() const {
     checkIfInitialized();
-
     return (void*) ((mHandle->textureInfo).arg);
   }
 
   void* memory::getMappedPointer() {
     checkIfInitialized();
-
     return mHandle->mappedPtr;
   }
 
   void* memory::getMemoryHandle() {
     checkIfInitialized();
-
     return mHandle->getMemoryHandle();
   }
 
   void* memory::getTextureHandle() {
     checkIfInitialized();
-
     return mHandle->getTextureHandle();
   }
 
@@ -727,9 +1113,7 @@ namespace occa {
 
   void memory::manage() {
     checkIfInitialized();
-
     placeInUva();
-
     mHandle->memInfo |= memFlag::isManaged;
   }
 
@@ -767,20 +1151,17 @@ namespace occa {
 
   bool memory::uvaIsDirty() {
     checkIfInitialized();
-
     return (mHandle && mHandle->isDirty());
   }
 
   void memory::uvaMarkDirty() {
     checkIfInitialized();
-
     if(mHandle != NULL)
       mHandle->memInfo |= uvaFlag::isDirty;
   }
 
   void memory::uvaMarkClean() {
     checkIfInitialized();
-
     if(mHandle != NULL)
       mHandle->memInfo &= ~uvaFlag::isDirty;
   }
@@ -789,7 +1170,6 @@ namespace occa {
                         const uintptr_t bytes,
                         const uintptr_t offset) {
     checkIfInitialized();
-
     mHandle->copyFrom(src, bytes, offset);
   }
 
@@ -861,7 +1241,6 @@ namespace occa {
                       const uintptr_t bytes,
                       const uintptr_t offset) {
     checkIfInitialized();
-
     mHandle->copyTo(dest, bytes, offset);
   }
 
@@ -924,7 +1303,6 @@ namespace occa {
                              const uintptr_t bytes,
                              const uintptr_t offset) {
     checkIfInitialized();
-
     mHandle->asyncCopyFrom(src, bytes, offset);
   }
 
@@ -987,7 +1365,6 @@ namespace occa {
                            const uintptr_t bytes,
                            const uintptr_t offset) {
     checkIfInitialized();
-
     mHandle->asyncCopyTo(dest, bytes, offset);
   }
 
@@ -1193,10 +1570,10 @@ namespace occa {
     delete mHandle;
     mHandle = NULL;
   }
-  //==================================
+  //==============================================
 
 
-  //---[ Device ]---------------------
+  //---[ Device ]---------------------------------
   void stream::free() {
     if(dHandle == NULL)
       return;
@@ -1367,92 +1744,77 @@ namespace occa {
 
   uintptr_t device::memorySize() const {
     checkIfInitialized();
-
     return dHandle->memorySize();
   }
 
   uintptr_t device::memoryAllocated() const {
     checkIfInitialized();
-
     return dHandle->bytesAllocated;
   }
 
   // Old name for [memoryAllocated()]
   uintptr_t device::bytesAllocated() const {
     checkIfInitialized();
-
     return dHandle->bytesAllocated;
   }
 
   deviceIdentifier device::getIdentifier() const {
     checkIfInitialized();
-
     return dHandle->getIdentifier();
   }
 
   void device::setCompiler(const std::string &compiler_) {
     checkIfInitialized();
-
     dHandle->setCompiler(compiler_);
   }
 
   void device::setCompilerEnvScript(const std::string &compilerEnvScript_) {
     checkIfInitialized();
-
     dHandle->setCompilerEnvScript(compilerEnvScript_);
   }
 
   void device::setCompilerFlags(const std::string &compilerFlags_) {
     checkIfInitialized();
-
     dHandle->setCompilerFlags(compilerFlags_);
   }
 
   std::string& device::getCompiler() {
     checkIfInitialized();
-
     return dHandle->compiler;
   }
 
   std::string& device::getCompilerEnvScript() {
     checkIfInitialized();
-
     return dHandle->compilerEnvScript;
   }
 
   std::string& device::getCompilerFlags() {
     checkIfInitialized();
-
     return dHandle->compilerFlags;
   }
 
   int device::modelID() {
     checkIfInitialized();
-
     return dHandle->modelID_;
   }
 
   int device::id() {
     checkIfInitialized();
-
     return dHandle->id_;
   }
 
   int device::modeID() {
     checkIfInitialized();
-
     return dHandle->mode();
   }
 
   const std::string& device::mode() {
     checkIfInitialized();
-
     return dHandle->strMode;
   }
 
   void device::flush() {
     checkIfInitialized();
-
     dHandle->flush();
   }
 
@@ -1481,7 +1843,6 @@ namespace occa {
 
   void device::waitFor(streamTag tag) {
     checkIfInitialized();
-
     dHandle->waitFor(tag);
   }
 
@@ -1497,31 +1858,26 @@ namespace occa {
 
   stream device::getStream() {
     checkIfInitialized();
-
     return stream(dHandle, dHandle->currentStream);
   }
 
   void device::setStream(stream s) {
     checkIfInitialized();
-
     dHandle->currentStream = s.handle;
   }
 
   stream device::wrapStream(void *handle_) {
     checkIfInitialized();
-
     return stream(dHandle, dHandle->wrapStream(handle_));
   }
 
   streamTag device::tagStream() {
     checkIfInitialized();
-
     return dHandle->tagStream();
   }
 
   double device::timeBetween(const streamTag &startTag, const streamTag &endTag) {
     checkIfInitialized();
-
     return dHandle->timeBetween(startTag, endTag);
   }
 
@@ -1701,9 +2057,7 @@ namespace occa {
     checkIfInitialized();
 
     kernel ker;
-
-    ker.kHandle          = dHandle->buildKernelFromBinary(filename,
-                                                          functionName);
+    ker.kHandle = dHandle->buildKernelFromBinary(filename, functionName);
     ker.kHandle->dHandle = dHandle;
 
     return ker;
@@ -1713,7 +2067,6 @@ namespace occa {
                                     const std::string &functionName,
                                     const kernelInfo &info_) {
     checkIfInitialized();
-
     dHandle->cacheKernelInLibrary(filename,
                                   functionName,
                                   info_);
@@ -1724,9 +2077,7 @@ namespace occa {
     checkIfInitialized();
 
     kernel ker;
-
-    ker.kHandle          = dHandle->loadKernelFromLibrary(cache,
-                                                          functionName);
+    ker.kHandle = dHandle->loadKernelFromLibrary(cache, functionName);
     ker.kHandle->dHandle = dHandle;
 
     return ker;
@@ -1737,7 +2088,6 @@ namespace occa {
     checkIfInitialized();
 
     memory mem;
-
     mem.mHandle = dHandle->wrapMemory(handle_, bytes);
     mem.mHandle->dHandle = dHandle;
 
@@ -1747,9 +2097,7 @@ namespace occa {
   void device::wrapManagedMemory(void *handle_,
                                  const uintptr_t bytes) {
     checkIfInitialized();
-
     memory mem = wrapMemory(handle_, bytes);
-
     mem.manage();
   }
 
@@ -1763,7 +2111,6 @@ namespace occa {
                << "only 1D or 2D are supported at the moment");
 
     memory mem;
-
     mem.mHandle = dHandle->wrapTexture(handle_,
                                        dim, dims,
                                        type, permissions);
@@ -1776,9 +2123,7 @@ namespace occa {
                                   const int dim, const occa::dim &dims,
                                   occa::formatType type, const int permissions) {
     checkIfInitialized();
-
     memory mem = wrapTexture(handle_, dim, dims, type, permissions);
-
     mem.manage();
   }
 
@@ -1787,7 +2132,6 @@ namespace occa {
     checkIfInitialized();
 
     memory mem;
-
     mem.mHandle          = dHandle->malloc(bytes, src);
     mem.mHandle->dHandle = dHandle;
 
@@ -1801,7 +2145,6 @@ namespace occa {
     checkIfInitialized();
 
     memory mem = malloc(bytes, src);
-
     mem.manage();
 
     return mem.mHandle->uvaPtr;
@@ -2273,7 +2616,7 @@ namespace occa {
 
     return 0;
   }
-  //==================================
+  //==============================================
 
   namespace cl {
     occa::device wrapDevice(void *platformIDPtr,

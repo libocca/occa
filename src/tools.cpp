@@ -1,3 +1,4 @@
+#include <fstream>
 #include <cstddef>
 
 #include "occa/tools.hpp"
