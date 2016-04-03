@@ -874,32 +874,33 @@ void OCCA_RFUNC occaArgumentListAddArg(occaArgumentList list,
 }
 
 // Note the _
-//   Macro that is called > API function that is never seen
+// [occaKernelRun] is reserved for a variadic macro which is more user-friendly
 void OCCA_RFUNC occaKernelRun_(occaKernel kernel,
                                occaArgumentList list) {
 
-  occa::kernel kernel_((occa::kernel_v*) kernel);
   occaArgumentList_t &list_ = *((occaArgumentList_t*) list);
+  occaKernelRunN(kernel, list_.argc, list_.argv);
+}
 
+void OCCA_RFUNC occaKernelRunN(occaKernel kernel, const int argc, occaType_t **args){
+  occa::kernel kernel_((occa::kernel_v*) kernel);
   kernel_.clearArgumentList();
 
-  for(int i = 0; i < list_.argc; ++i) {
-    occaType_t &arg = *list_.argv[i];
+  for(int i = 0; i < argc; ++i){
+    occaType_t &arg = *(args[i]);
+    void *argPtr = arg.value.data.void_;
 
-    if(arg.type == OCCA_TYPE_MEMORY) {
-      occa::memory memory_((occa::memory_v*) arg.value.data.void_);
-
+    if(arg.type == OCCA_TYPE_MEMORY){
+      occa::memory memory_((occa::memory_v*) argPtr);
       kernel_.addArgument(i, occa::kernelArg(memory_));
     }
-    else if(arg.type == OCCA_TYPE_PTR) {
-      // Calls UVA
-      occa::memory memory_((void*) arg.value.data.void_);
-
+    else if(arg.type == OCCA_TYPE_PTR){
+      occa::memory memory_((void*) argPtr);
       kernel_.addArgument(i, occa::kernelArg(memory_));
     }
     else {
       kernel_.addArgument(i, occa::kernelArg(arg.value));
-      delete list_.argv[i];
+      delete (occaType_t*) args[i];
     }
   }
 

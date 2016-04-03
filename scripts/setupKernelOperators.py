@@ -39,45 +39,23 @@ def operatorDefinition(N):
   }}""".format(N)
 
 
-def cOperatorDeclarations(N):
-    return '\n\n'.join(cOperatorDeclaration(n + 1) for n in range(N))
+def cKernelDeclarations(N):
+    return '\n\n'.join(cKernelDeclaration(n + 1) for n in range(N))
 
-def cOperatorDeclaration(N):
-    return '    OCCA_LFUNC void OCCA_RFUNC occaKernelRun{0}(occaKernel kernel, {1});\n'.format(N, ' '.join('void *arg' + str(n) + nlc(n, N) for n in range(N)) )
+def cKernelDeclaration(N):
+    return 'OCCA_LFUNC void OCCA_RFUNC occaKernelRun{0}(occaKernel kernel, {1});'.format(N, ' '.join('void *arg' + str(n) + nlc(n, N) for n in range(N)) )
 
 
-def cOperatorDefinitions(N):
-    return '\n\n'.join(cOperatorDefinition(n + 1) for n in range(N))
+def cKernelDefinitions(N):
+    return '\n\n'.join(cKernelDefinition(n + 1) for n in range(N))
 
-def cOperatorDefinition(N):
+def cKernelDefinition(N):
     argsContent = ', '.join('((occaType) arg{})->ptr'.format(n) for n in range(N))
 
-    return ('    void OCCA_RFUNC occaKernelRun{0}(occaKernel kernel, {1}){{\n'.format(N, ' '.join('void *arg' + str(n) + nlc(n, N) for n in range(N)) ) + \
-            '      occa::kernel kernel_((occa::kernel_v*) kernel);\n'             + \
-            '      kernel_.clearArgumentList();\n'                                + \
-            '      \n'                                                            + \
-            '      occaType_t *args[' + str(N) + '] = {' + argsContent + '};\n'   + \
-            '      \n'                                                            + \
-            '      for(int i = 0; i < ' + str(N) + '; ++i){\n'                    + \
-            '        occaType_t &arg = *(args[i]);\n'                             + \
-            '        void *argPtr    = arg.value.data.void_;\n'                   + \
-            '      \n'                                                            + \
-            '        if(arg.type == OCCA_TYPE_MEMORY){\n'                         + \
-            '          occa::memory memory_((occa::memory_v*) argPtr);\n'         + \
-            '          kernel_.addArgument(i, occa::kernelArg(memory_));\n'       + \
-            '        }\n'                                                         + \
-            '        else if(arg.type == OCCA_TYPE_PTR){\n'                       + \
-            '          occa::memory memory_((void*) argPtr);\n'                   + \
-            '          kernel_.addArgument(i, occa::kernelArg(memory_));\n'       + \
-            '        }\n'                                                         + \
-            '        else {\n'                                                    + \
-            '          kernel_.addArgument(i, occa::kernelArg(arg.value));\n'     + \
-            '          delete (occaType_t*) args[i];\n'                           + \
-            '        }\n'                                                         + \
-            '      }\n'                                                           + \
-            '      \n'                                                            + \
-            '      kernel_.runFromArguments();\n'                                 + \
-            '    }\n');
+    return ('void OCCA_RFUNC occaKernelRun{0}(occaKernel kernel, {1}){{\n'.format(N, ' '.join('void *arg' + str(n) + nlc(n, N) for n in range(N)) ) + """
+  occaType_t *args[{0}] = {{ {1} }};
+  occaKernelRunN(kernel, {0}, args);
+}}""".format(N, argsContent))
 
 occadir = osp.abspath(osp.join(osp.dirname(__file__), ".."))
 
@@ -88,5 +66,5 @@ def gen_file(filename, content):
 gen_file('/src/operators/runFunctionFromArguments.cpp' , runFunctionFromArguments(maxN))
 gen_file('/include/occa/operators/declarations.hpp'    , operatorDeclarations(maxN))
 gen_file('/src/operators/definitions.cpp'              , operatorDefinitions(maxN))
-gen_file('/include/occa/operators/cKernelOperators.hpp', cOperatorDeclarations(maxN))
-gen_file('/src/operators/cKernelOperators.cpp'         , cOperatorDefinitions(maxN))
+gen_file('/include/occa/operators/cKernelOperators.hpp', cKernelDeclarations(maxN))
+gen_file('/src/operators/cKernelOperators.cpp'         , cKernelDefinitions(maxN))

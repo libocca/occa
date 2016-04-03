@@ -851,7 +851,7 @@ namespace occa {
       kHandle->arguments.reserve(argPos + 1);
     }
 
-    kHandle->arguments[argPos] = arg;
+    kHandle->arguments.insert(kHandle->arguments.begin() + argPos, arg);
   }
 
   void kernel::runFromArguments() {

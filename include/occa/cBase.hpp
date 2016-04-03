@@ -1,6 +1,7 @@
 #ifndef OCCA_CBASE_HEADER
 #define OCCA_CBASE_HEADER
 
+#include "stdint.h"
 #include "stdlib.h"
 
 #if OCCA_OPENCL_ENABLED
@@ -65,6 +66,8 @@ typedef void* occaKernel;
 typedef struct occaTypePtr_t*      occaMemory;
 typedef struct occaTypePtr_t*      occaType;
 typedef struct occaArgumentList_t* occaArgumentList;
+
+struct occaType_t;
 
 typedef void* occaStream;
 
@@ -317,6 +320,9 @@ OCCA_LFUNC void OCCA_RFUNC occaArgumentListAddArg(occaArgumentList list,
 
 OCCA_LFUNC void OCCA_RFUNC occaKernelRun_(occaKernel kernel,
                                           occaArgumentList list);
+
+OCCA_LFUNC void OCCA_RFUNC occaKernelRunN(occaKernel kernel,
+                                          const int argc, occaType_t **args);
 
 #include "operators/cKernelOperators.hpp"
 
