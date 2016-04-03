@@ -294,7 +294,11 @@ namespace occa {
 
   inline double atod(const char *c){
     double ret;
+#if (OCCA_OS & (LINUX_OS | OSX_OS))
     sscanf(c, "%lf", &ret);
+#else 
+	sscanf_s(c, "%lf", &ret);
+#endif
     return ret;
   }
 

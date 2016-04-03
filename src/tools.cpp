@@ -47,7 +47,11 @@ namespace occa {
       OCCA_DIR = env::var("OCCA_DIR");
 #ifdef OCCA_COMPILED_DIR
       if (OCCA_DIR.size() == 0) {
+#  if (OCCA_OS & (LINUX_OS | OSX_OS))
         OCCA_DIR = OCCA_STRINGIFY(OCCA_COMPILED_DIR);
+#  else
+		OCCA_DIR = OCCA_COMPILED_DIR;
+#  endif
       }
 #endif
 
