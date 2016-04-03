@@ -29,10 +29,8 @@ namespace occa {
 
         if( *(data.pendingJobs) ){
           pthread_mutex_lock(data.kernelMutex);
-
           PthreadKernelInfo_t &pkInfo = *(data.pKernelInfo->front());
           data.pKernelInfo->pop();
-
           pthread_mutex_unlock(data.kernelMutex);
 
           run(pkInfo);
@@ -54,39 +52,6 @@ namespace occa {
       }
 
       return NULL;
-    }
-
-    void runFromArguments(PthreadsKernelData_t &data,
-                          const int dims,
-                          occa::dim &inner,
-                          occa::dim &outer,
-                          const int argc,
-                          const kernelArg *args){
-
-      const int pThreadCount = data.pThreadCount;
-
-      for(int p = 0; p < pThreadCount; ++p){
-        // Allocated individually since each thread frees their
-        //   own custom arg
-        PthreadKernelInfo_t &pArgs = *(new PthreadKernelInfo_t);
-
-        pArgs.rank  = p;
-        pArgs.count = pThreadCount;
-
-        pArgs.kernelHandle = data.handle;
-
-        pArgs.dims  = dims;
-        pArgs.inner = inner;
-        pArgs.outer = outer;
-
-        pthread_mutex_lock(data.kernelMutex);
-        data.pKernelInfo[p]->push(&pArgs);
-        pthread_mutex_unlock(data.kernelMutex);
-      }
-
-      pthread_mutex_lock(data.pendingJobsMutex);
-      *(data.pendingJobs) += data.pThreadCount;
-      pthread_mutex_unlock(data.pendingJobsMutex);
     }
 
     void run(PthreadKernelInfo_t &pkInfo){
@@ -112,34 +77,22 @@ namespace occa {
 
       int occaKernelArgs[12];
 
-      occaKernelArgs[0]  = outer.z;
-      occaKernelArgs[1]  = outer.y;
-      occaKernelArgs[2]  = outer.x;
-      occaKernelArgs[3]  = inner.z;
-      occaKernelArgs[4]  = inner.y;
-      occaKernelArgs[5]  = inner.x;
-      occaKernelArgs[6]  = start.z;
-      occaKernelArgs[7]  = end.z;
-      occaKernelArgs[8]  = start.y;
-      occaKernelArgs[9]  = end.y;
-      occaKernelArgs[10] = start.x;
-      occaKernelArgs[11] = end.x;
+      occaKernelArgs[0]  = outer.z; occaKernelArgs[3]  = inner.z;
+      occaKernelArgs[1]  = outer.y; occaKernelArgs[4]  = inner.y;
+      occaKernelArgs[2]  = outer.x; occaKernelArgs[5]  = inner.x;
+
+      occaKernelArgs[6]  = start.z; occaKernelArgs[7]  = end.z;
+      occaKernelArgs[8]  = start.y; occaKernelArgs[9]  = end.y;
+      occaKernelArgs[10] = start.x; occaKernelArgs[11] = end.x;
 
       int occaInnerId0 = 0, occaInnerId1 = 0, occaInnerId2 = 0;
-
-      int argc_ = 0;
-
-      for(int i = 0; i < pkInfo.argc; ++i){
-        for(int j = 0; j < pkInfo.args[i].argc; ++j){
-          pkInfo.vArgs[argc_++] = pkInfo.args[i].args[j].ptr();
-        }
-      }
 
       cpu::runFunction(tmpKernel,
                        occaKernelArgs,
                        occaInnerId0, occaInnerId1, occaInnerId2,
-                       argc_, pkInfo.vArgs);
+                       pkInfo.argc, pkInfo.args);
 
+      delete [] pkInfo.args;
       delete &pkInfo;
     }
   }
@@ -156,29 +109,11 @@ namespace occa {
     dims  = 1;
     inner = occa::dim(1,1,1);
     outer = occa::dim(1,1,1);
-
-    nestedKernelCount = 0;
   }
 
   template <>
   kernel_t<Pthreads>::kernel_t(const kernel_t<Pthreads> &k){
-    data    = k.data;
-    dHandle = k.dHandle;
-
-    metaInfo = k.metaInfo;
-
-    dims  = k.dims;
-    inner = k.inner;
-    outer = k.outer;
-
-    nestedKernelCount = k.nestedKernelCount;
-
-    if(nestedKernelCount){
-      nestedKernels = new kernel[nestedKernelCount];
-
-      for(int i = 0; i < nestedKernelCount; ++i)
-        nestedKernels[i] = k.nestedKernels[i];
-    }
+    *this = k;
   }
 
   template <>
@@ -192,14 +127,7 @@ namespace occa {
     inner = k.inner;
     outer = k.outer;
 
-    nestedKernelCount = k.nestedKernelCount;
-
-    if(nestedKernelCount){
-      nestedKernels = new kernel[nestedKernelCount];
-
-      for(int i = 0; i < nestedKernelCount; ++i)
-        nestedKernels[i] = k.nestedKernels[i];
-    }
+    nestedKernels = k.nestedKernels;
 
     return *this;
   }
@@ -385,6 +313,45 @@ namespace occa {
   int kernel_t<Pthreads>::preferredDimSize(){
     preferredDimSize_ = OCCA_SIMD_WIDTH;
     return OCCA_SIMD_WIDTH;
+  }
+
+  template <>
+  void kernel_t<Pthreads>::runFromArguments(const int kArgc, const kernelArg *kArgs){
+    OCCA_EXTRACT_DATA(Pthreads, Kernel);
+
+    const int pThreadCount = data_.pThreadCount;
+
+    for(int p = 0; p < pThreadCount; ++p){
+      // Allocated individually since each thread frees their
+      //   own custom arg
+      PthreadKernelInfo_t &pArgs = *(new PthreadKernelInfo_t);
+
+      pArgs.rank  = p;
+      pArgs.count = pThreadCount;
+
+      pArgs.kernelHandle = data_.handle;
+
+      pArgs.dims  = dims;
+      pArgs.inner = inner;
+      pArgs.outer = outer;
+
+      int argc = 0;
+      pArgs.argc = kernelArg::argumentCount(kArgc, kArgs);
+      pArgs.args = new void*[pArgs.argc];
+      for(int i = 0; i < pArgs.argc; ++i){
+        for(int j = 0; j < kArgs[i].argc; ++j){
+          pArgs.args[argc++] = kArgs[i].args[j].ptr();
+        }
+      }
+
+      pthread_mutex_lock(data_.kernelMutex);
+      data_.pKernelInfo[p]->push(&pArgs);
+      pthread_mutex_unlock(data_.kernelMutex);
+    }
+
+    pthread_mutex_lock(data_.pendingJobsMutex);
+    *(data_.pendingJobs) += data_.pThreadCount;
+    pthread_mutex_unlock(data_.pendingJobsMutex);
   }
 
   template <>
@@ -662,11 +629,7 @@ namespace occa {
 
   template <>
   device_t<Pthreads>::device_t(const device_t<Pthreads> &d){
-    data           = d.data;
-    bytesAllocated = d.bytesAllocated;
-
-    compiler      = d.compiler;
-    compilerFlags = d.compilerFlags;
+    *this = d;
   }
 
   template <>
@@ -1208,6 +1171,4 @@ namespace occa {
     return OCCA_SIMD_WIDTH;
   }
   //==================================
-
-#include "operators/PthreadsKernelOperators.cpp"
 }

@@ -83,6 +83,9 @@ namespace occa {
   int kernel_t<OpenMP>::preferredDimSize();
 
   template <>
+  void kernel_t<OpenMP>::runFromArguments(const int kArgc, const kernelArg *kArgs){
+
+  template <>
   void kernel_t<OpenMP>::free();
   //==================================
 

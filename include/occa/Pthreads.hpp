@@ -49,7 +49,6 @@ namespace occa {
     handleFunction_t handle;
 
     int pThreadCount;
-
     int *pendingJobs;
 
     std::queue<PthreadKernelInfo_t*> *pKernelInfo[50];
@@ -68,7 +67,6 @@ namespace occa {
     pthread_mutex_t *pendingJobsMutex, *kernelMutex;
   };
 
-  // [-] Hard-coded for now
   struct PthreadKernelInfo_t {
     int rank, count;
 
@@ -78,8 +76,7 @@ namespace occa {
     occa::dim inner, outer;
 
     int argc;
-    occa::kernelArg args[OCCA_MAX_ARGS];
-    void *vArgs[2*OCCA_MAX_ARGS];
+    void **args;
   };
 
   static const int compact = (1 << 10);
@@ -91,14 +88,6 @@ namespace occa {
   //---[ Helper Functions ]-------------
   namespace pthreads {
     void* limbo(void *args);
-
-    void runFromArguments(PthreadsKernelData_t &data,
-                          const int dims,
-                          occa::dim &inner,
-                          occa::dim &outer,
-                          const int argc,
-                          const kernelArg_t *args);
-
     void run(PthreadKernelInfo_t &pArgs);
   }
   //====================================
@@ -147,6 +136,12 @@ namespace occa {
 
   template <>
   int kernel_t<Pthreads>::preferredDimSize();
+
+  template <>
+  void kernel_t<Pthreads>::runFromArguments(const int kArgc, const kernelArg *kArgs);
+
+  template <>
+  void kernel_t<Pthreads>::free();
   //====================================
 
 
@@ -334,8 +329,6 @@ namespace occa {
   template <>
   int device_t<Pthreads>::simdWidth();
   //====================================
-
-#include "occa/operators/PthreadsKernelOperators.hpp"
 }
 
 #endif

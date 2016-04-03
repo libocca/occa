@@ -147,6 +147,9 @@ namespace occa {
   int kernel_t<Serial>::preferredDimSize();
 
   template <>
+  void kernel_t<Serial>::runFromArguments(const int kArgc, const kernelArg *kArgs);
+
+  template <>
   void kernel_t<Serial>::free();
   //==================================
 
@@ -335,9 +338,6 @@ namespace occa {
   template <>
   int device_t<Serial>::simdWidth();
   //==================================
-
-#include "occa/operators/SerialKernelOperators.hpp"
-
 }
 
 #endif

@@ -281,6 +281,8 @@ namespace occa {
     occa::device getDevice() const;
 
     void setupForKernelCall(const bool isConst) const;
+
+    static int argumentCount(const int argc, const kernelArg *args);
   };
 
   template <> kernelArg::kernelArg(const int &arg_);
@@ -396,11 +398,8 @@ namespace occa {
     int dims;
     dim inner, outer;
 
-    int nestedKernelCount;
-    kernel *nestedKernels;
-
-    int argumentCount;
-    kernelArg_t arguments[OCCA_MAX_ARGS];
+    std::vector<kernel> nestedKernels;
+    std::vector<kernelArg> arguments;
 
   public:
     virtual occa::mode mode() = 0;
@@ -422,10 +421,16 @@ namespace occa {
     virtual kernel_v* loadFromLibrary(const char *cache,
                                       const std::string &functionName) = 0;
 
+    kernel* nestedKernelsPtr();
+    int nestedKernelCount();
+
+    kernelArg* argumentsPtr();
+    int argumentCount();
+
     virtual uintptr_t maximumInnerDimSize() = 0;
     virtual int preferredDimSize() = 0;
 
-#include "occa/operators/virtualDeclarations.hpp"
+    virtual void runFromArguments(const int kArgc, const kernelArg *kArgs) = 0;
 
     virtual void free() = 0;
   };
@@ -465,7 +470,7 @@ namespace occa {
     uintptr_t maximumInnerDimSize();
     int preferredDimSize();
 
-#include "occa/operators/declarations.hpp"
+    void runFromArguments(const int kArgc, const kernelArg *kArgs);
 
     void free();
   };
@@ -540,7 +545,7 @@ namespace occa {
     kernel& operator [] (device d);
     kernel& operator [] (device_v *d);
 
-#include "occa/operators/declarations.hpp"
+    // #include "occa/operators/declarations.hpp"
   };
   //==============================================
 

@@ -398,6 +398,14 @@ namespace occa {
     }
   }
 
+  int kernelArg::argumentCount(const int kArgc, const kernelArg *kArgs) {
+    int argc = 0;
+    for(int i = 0; i < kArgc; ++i){
+      argc += kArgs[i].argc;
+    }
+    return argc;
+  }
+
   const int uint8FormatIndex  = 0;
   const int uint16FormatIndex = 1;
   const int uint32FormatIndex = 2;
@@ -726,6 +734,22 @@ namespace occa {
   //==============================================
 
   //---[ Kernel ]---------------------------------
+  kernel* kernel_v::nestedKernelsPtr() {
+    return &(nestedKernels[0]);
+  }
+
+  int kernel_v::nestedKernelCount() {
+    return (int) nestedKernels.size();
+  }
+
+  kernelArg* kernel_v::argumentsPtr() {
+    return &(arguments[0]);
+  }
+
+  int kernel_v::argumentCount() {
+    return (int) arguments.size();
+  }
+
   kernel::kernel() :
     kHandle(NULL) {}
 
@@ -786,14 +810,13 @@ namespace occa {
     for(int i = dims; i < 3; ++i)
       inner[i] = outer[i] = 1;
 
-    if(kHandle->nestedKernelCount == 0) {
+    if (kHandle->nestedKernelCount()) {
+      for(int k = 0; k < kHandle->nestedKernelCount(); ++k)
+        kHandle->nestedKernels[k].setWorkingDims(dims, inner, outer);
+    } else {
       kHandle->dims  = dims;
       kHandle->inner = inner;
       kHandle->outer = outer;
-    }
-    else{
-      for(int k = 0; k < kHandle->nestedKernelCount; ++k)
-        kHandle->nestedKernels[k].setWorkingDims(dims, inner, outer);
     }
   }
 
@@ -805,7 +828,7 @@ namespace occa {
   int kernel::preferredDimSize() {
     checkIfInitialized();
 
-    if(0 < kHandle->nestedKernelCount)
+    if(kHandle->nestedKernelCount())
       return 0;
 
     return kHandle->preferredDimSize();
@@ -813,32 +836,38 @@ namespace occa {
 
   void kernel::clearArgumentList() {
     checkIfInitialized();
-    kHandle->argumentCount = 0;
+    kHandle->arguments.clear();
   }
 
   void kernel::addArgument(const int argPos,
                            const kernelArg &arg) {
     checkIfInitialized();
 
-    if(kHandle->argumentCount < (argPos + arg.argc)) {
-      OCCA_CHECK((argPos + arg.argc) < OCCA_MAX_ARGS,
+    if(kHandle->argumentCount() <= argPos) {
+      OCCA_CHECK(argPos < OCCA_MAX_ARGS,
                  "Kernels can only have at most [" << OCCA_MAX_ARGS << "] arguments,"
-                 << " [" << (argPos + arg.argc) << "] arguments were set");
+                 << " [" << argPos << "] arguments were set");
 
-      kHandle->argumentCount = (argPos + arg.argc);
+      kHandle->arguments.reserve(argPos + 1);
     }
 
-    for(int i = 0; i < arg.argc; ++i)
-      kHandle->arguments[argPos + i] = arg.args[i];
+    kHandle->arguments[argPos] = arg;
   }
 
   void kernel::runFromArguments() {
     checkIfInitialized();
 
-    const int argc    = kHandle->argumentCount;
-    kernelArg_t *args = kHandle->arguments;
+    // Add nestedKernels
+    if (kHandle->nestedKernelCount())
+      kHandle->arguments.insert(kHandle->arguments.begin(),
+                                kHandle->nestedKernelsPtr());
 
-#include "operators/runKernelFromArguments.cpp"
+    kHandle->runFromArguments(kHandle->argumentCount(),
+                              kHandle->argumentsPtr());
+
+    // Remove nestedKernels
+    if (kHandle->nestedKernelCount())
+      kHandle->arguments.erase(kHandle->arguments.begin());
   }
 
 #include "operators/definitions.cpp"
@@ -846,12 +875,9 @@ namespace occa {
   void kernel::free() {
     checkIfInitialized();
 
-    if(0 < kHandle->nestedKernelCount) {
-      for(int k = 0; k < kHandle->nestedKernelCount; ++k)
+    if(kHandle->nestedKernelCount()) {
+      for(int k = 0; k < kHandle->nestedKernelCount(); ++k)
         kHandle->nestedKernels[k].free();
-
-      delete [] kHandle->nestedKernels;
-      kHandle->nestedKernels = NULL;
     }
 
     kHandle->free();
@@ -2007,12 +2033,10 @@ namespace occa {
       info.addDefine("OCCA_LAUNCH_KERNEL", 1);
 
       k->buildFromSource(parsedFile, functionName, info);
+      k->nestedKernels.clear();
 
-      k->nestedKernelCount = k->metaInfo.nestedKernels;
-
-      if(k->nestedKernelCount) {
+      if (k->metaInfo.nestedKernels) {
         std::stringstream ss;
-        k->nestedKernels = new kernel[k->nestedKernelCount];
 
         const int vc_f = verboseCompilation_f;
 
@@ -2023,8 +2047,7 @@ namespace occa {
 
           ss.str("");
 
-          kernel &sKer = k->nestedKernels[ki];
-
+          kernel sKer;
           sKer.kHandle = dHandle->buildKernelFromSource(parsedFile,
                                                         sKerName,
                                                         info_);
@@ -2033,6 +2056,7 @@ namespace occa {
           sKer.kHandle->metaInfo.name          = sKerName;
           sKer.kHandle->metaInfo.nestedKernels = 0;
           sKer.kHandle->metaInfo.removeArg(0); // remove nestedKernels **
+          k->nestedKernels.push_back(sKer);
 
           // Only show compilation the first time
           if(ki == 0)

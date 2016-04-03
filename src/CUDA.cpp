@@ -229,33 +229,13 @@ namespace occa {
     inner = occa::dim(1,1,1);
     outer = occa::dim(1,1,1);
 
-    nestedKernelCount = 0;
-
     maximumInnerDimSize_ = 0;
     preferredDimSize_    = 0;
   }
 
   template <>
   kernel_t<CUDA>::kernel_t(const kernel_t<CUDA> &k){
-    data    = k.data;
-    dHandle = k.dHandle;
-
-    metaInfo = k.metaInfo;
-
-    dims  = k.dims;
-    inner = k.inner;
-    outer = k.outer;
-
-    nestedKernelCount = k.nestedKernelCount;
-
-    if(0 < nestedKernelCount){
-      nestedKernels = new kernel[nestedKernelCount];
-
-      for(int i = 0; i < nestedKernelCount; ++i)
-        nestedKernels[i] = k.nestedKernels[i];
-    }
-
-    preferredDimSize_ = k.preferredDimSize_;
+    *this = k;
   }
 
   template <>
@@ -269,14 +249,9 @@ namespace occa {
     inner = k.inner;
     outer = k.outer;
 
-    nestedKernelCount = k.nestedKernelCount;
+    nestedKernels = k.nestedKernels;
 
-    if(0 < nestedKernelCount){
-      nestedKernels = new kernel[nestedKernelCount];
-
-      for(int i = 0; i < nestedKernelCount; ++i)
-        nestedKernels[i] = k.nestedKernels[i];
-    }
+    preferredDimSize_ = k.preferredDimSize_;
 
     return *this;
   }
@@ -490,7 +465,30 @@ namespace occa {
     return 32;
   }
 
-#include "operators/CUDAKernelOperators.cpp"
+  template <>
+  void kernel_t<CUDA>::runFromArguments(const int kArgc, const kernelArg *kArgs){
+    CUDAKernelData_t &data_ = *((CUDAKernelData_t*) data);
+    CUfunction function_ = data_.function;
+
+    int occaKernelInfoArgs = 0;
+    int argc = 0;
+
+    data_.vArgs = new void*[1 + kernelArg::argumentCount(kArgc, kArgs)];
+    data_.vArgs[argc++] = &occaKernelInfoArgs;
+    for(int i = 0; i < kArgc; ++i) {
+      for(int j = 0; j < kArgs[i].argc; ++j){
+        data_.vArgs[argc++] = args[i].args[j].ptr();
+      }
+    }
+
+    OCCA_CUDA_CHECK("Launching Kernel",
+                    cuLaunchKernel(function_,
+                                   outer.x, outer.y, outer.z,
+                                   inner.x, inner.y, inner.z,
+                                   0, *((CUstream*) dHandle->currentStream),
+                                   data_.vArgs, 0));
+    delete [] data_.vArgs;
+  }
 
   template <>
   void kernel_t<CUDA>::free(){

@@ -513,30 +513,11 @@ namespace occa {
     dims  = 1;
     inner = occa::dim(1,1,1);
     outer = occa::dim(1,1,1);
-
-    nestedKernelCount = 0;
-    nestedKernels     = NULL;
   }
 
   template <>
   kernel_t<Serial>::kernel_t(const kernel_t<Serial> &k){
-    data    = k.data;
-    dHandle = k.dHandle;
-
-    metaInfo = k.metaInfo;
-
-    dims  = k.dims;
-    inner = k.inner;
-    outer = k.outer;
-
-    nestedKernelCount = k.nestedKernelCount;
-
-    if(0 < nestedKernelCount){
-      nestedKernels = new kernel[nestedKernelCount];
-
-      for(int i = 0; i < nestedKernelCount; ++i)
-        nestedKernels[i] = k.nestedKernels[i];
-    }
+    *this = k;
   }
 
   template <>
@@ -550,14 +531,7 @@ namespace occa {
     inner = k.inner;
     outer = k.outer;
 
-    nestedKernelCount = k.nestedKernelCount;
-
-    if(0 < nestedKernelCount){
-      nestedKernels = new kernel[nestedKernelCount];
-
-      for(int i = 0; i < nestedKernelCount; ++i)
-        nestedKernels[i] = k.nestedKernels[i];
-    }
+    nestedKernels = k.nestedKernels;
 
     return *this;
   }
@@ -723,7 +697,30 @@ namespace occa {
     return OCCA_SIMD_WIDTH;
   }
 
-#include "operators/SerialKernelOperators.cpp"
+  template <>
+  void kernel_t<Serial>::runFromArguments(const int kArgc, const kernelArg *kArgs){
+    SerialKernelData_t &data_ = *((SerialKernelData_t*) data);
+    handleFunction_t tmpKernel = (handleFunction_t) data_.handle;
+    int occaKernelArgs[6];
+
+    occaKernelArgs[0] = outer.z; occaKernelArgs[3] = inner.z;
+    occaKernelArgs[1] = outer.y; occaKernelArgs[4] = inner.y;
+    occaKernelArgs[2] = outer.x; occaKernelArgs[5] = inner.x;
+
+    int argc = 0;
+    for(int i = 0; i < kArgc; ++i){
+      for(int j = 0; j < kArgs[i].argc; ++j){
+        data_.vArgs[argc++] = kArgs[i].args[j].ptr();
+      }
+    }
+
+    int occaInnerId0 = 0, occaInnerId1 = 0, occaInnerId2 = 0;
+
+    cpu::runFunction(tmpKernel,
+                     occaKernelArgs,
+                     occaInnerId0, occaInnerId1, occaInnerId2,
+                     argc, data_.vArgs);
+  }
 
   template <>
   void kernel_t<Serial>::free(){

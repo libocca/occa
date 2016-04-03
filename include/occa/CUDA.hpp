@@ -17,7 +17,7 @@ namespace occa {
     CUmodule   module;
     CUfunction function;
 
-    void *vArgs[2*OCCA_MAX_ARGS];
+    void **vArgs;
   };
 
   struct CUDADeviceData_t {
@@ -132,6 +132,9 @@ namespace occa {
 
   template <>
   int kernel_t<CUDA>::preferredDimSize();
+
+  template <>
+  void kernel_t<CUDA>::runFromArguments(const int kArgc, const kernelArg *kArgs);
 
   template <>
   void kernel_t<CUDA>::free();
@@ -322,8 +325,6 @@ namespace occa {
   template <>
   int device_t<CUDA>::simdWidth();
   //==================================
-
-#include "occa/operators/CUDAKernelOperators.hpp"
 
   //---[ Error Handling ]-------------
   std::string cudaError(const CUresult errorCode);

@@ -530,34 +530,13 @@ namespace occa {
     inner = occa::dim(1,1,1);
     outer = occa::dim(1,1,1);
 
-    nestedKernelCount = 0;
-
     maximumInnerDimSize_ = 0;
     preferredDimSize_    = 0;
   }
 
   template <>
   kernel_t<OpenCL>::kernel_t(const kernel_t<OpenCL> &k){
-    data    = k.data;
-    dHandle = k.dHandle;
-
-    metaInfo = k.metaInfo;
-
-    dims  = k.dims;
-    inner = k.inner;
-    outer = k.outer;
-
-    nestedKernelCount = k.nestedKernelCount;
-
-    if(0 < nestedKernelCount){
-      nestedKernels = new kernel[nestedKernelCount];
-
-      for(int i = 0; i < nestedKernelCount; ++i)
-        nestedKernels[i] = k.nestedKernels[i];
-    }
-
-    maximumInnerDimSize_ = k.maximumInnerDimSize_;
-    preferredDimSize_    = k.preferredDimSize_;
+    *this = k;
   }
 
   template <>
@@ -571,17 +550,7 @@ namespace occa {
     inner = k.inner;
     outer = k.outer;
 
-    nestedKernelCount = k.nestedKernelCount;
-
-    if(0 < nestedKernelCount){
-      nestedKernels = new kernel[nestedKernelCount];
-
-      for(int i = 0; i < nestedKernelCount; ++i)
-        nestedKernels[i] = k.nestedKernels[i];
-    }
-
-    maximumInnerDimSize_ = k.maximumInnerDimSize_;
-    preferredDimSize_    = k.preferredDimSize_;
+    nestedKernels = k.nestedKernels;
 
     return *this;
   }
@@ -733,7 +702,33 @@ namespace occa {
     return preferredDimSize_;
   }
 
-#include "operators/OpenCLKernelOperators.cpp"
+  template <>
+  void kernel_t<OpenCL>::runFromArguments(const int kArgc, const kernelArg *kArgs){
+    OpenCLKernelData_t &data_ = *((OpenCLKernelData_t*) data);
+    cl_kernel kernel_ = data_.kernel;
+
+    occa::dim fullOuter = outer*inner;
+
+    int argc = 0;
+    OCCA_CL_CHECK("Kernel (" + metaInfo.name + ") : Setting Kernel Argument [0]",
+                  clSetKernelArg(kernel_, argc++, sizeof(void*), NULL));
+
+    for(int i = 0; i < kArgc; ++i){
+      for(int j = 0; j < kArgs[i].argc; ++j){
+        OCCA_CL_CHECK("Kernel (" + metaInfo.name + ") : Setting Kernel Argument [" << (i + 1) << "]",
+                      clSetKernelArg(kernel_, argc++, kArgs[i].args[j].size, kArgs[i].args[j].ptr()));
+      }
+    }
+
+    OCCA_CL_CHECK("Kernel (" + metaInfo.name + ") : Kernel Run",
+                  clEnqueueNDRangeKernel(*((cl_command_queue*) dHandle->currentStream),
+                                         kernel_,
+                                         (cl_int) dims,
+                                         NULL,
+                                         (uintptr_t*) &fullOuter,
+                                         (uintptr_t*) &inner,
+                                         0, NULL, NULL));
+  }
 
   template <>
   void kernel_t<OpenCL>::free(){
@@ -1129,10 +1124,7 @@ namespace occa {
 
   template <>
   device_t<OpenCL>::device_t(const device_t<OpenCL> &d){
-    data           = d.data;
-    bytesAllocated = d.bytesAllocated;
-
-    compilerFlags = d.compilerFlags;
+    *this = d;
   }
 
   template <>

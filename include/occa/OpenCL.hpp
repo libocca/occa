@@ -141,6 +141,9 @@ namespace occa {
   int kernel_t<OpenCL>::preferredDimSize();
 
   template <>
+  void kernel_t<OpenCL>::runFromArguments(const int kArgc, const kernelArg *kArgs);
+
+  template <>
   void kernel_t<OpenCL>::free();
   //==================================
 
@@ -329,8 +332,6 @@ namespace occa {
   template <>
   int device_t<OpenCL>::simdWidth();
   //==================================
-
-#include "occa/operators/OpenCLKernelOperators.hpp"
 
   //---[ Error Handling ]-------------
   std::string openclError(int e);
