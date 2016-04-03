@@ -1,6 +1,6 @@
 .gitattributes
 
-obj/
+*.obj
 y
 
 main

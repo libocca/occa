@@ -1,3 +1,5 @@
+#include "occa/defines.hpp"
+
 #if OCCA_OPENMP_ENABLED
 #  ifndef OCCA_OPENMP_HEADER
 #  define OCCA_OPENMP_HEADER

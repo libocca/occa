@@ -1,3 +1,5 @@
+#include "occa/defines.hpp"
+
 #if OCCA_OPENMP_ENABLED
 
 #include "occa/Serial.hpp"
