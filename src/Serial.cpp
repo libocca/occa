@@ -68,7 +68,7 @@ namespace occa {
       char buffer[MAX_COMPUTERNAME_LENGTH + 1];
       int bytes;
 
-      GetComputerName((LPWSTR) buffer, (LPDWORD) &bytes);
+      GetComputerName((LPSTR) buffer, (LPDWORD) &bytes);
 
       return std::string(buffer, bytes);
 #endif

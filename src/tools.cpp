@@ -25,9 +25,11 @@ namespace occa {
         return;
 
       ::signal(SIGTERM, env::signalExit);
-      ::signal(SIGKILL, env::signalExit);
       ::signal(SIGINT , env::signalExit);
+#if (OCCA_OS & (LINUX_OS | OSX_OS))
+      ::signal(SIGKILL, env::signalExit);
       ::signal(SIGQUIT, env::signalExit);
+#endif
 
       // Standard environment variables
 #if (OCCA_OS & (LINUX_OS | OSX_OS))
@@ -135,14 +137,8 @@ namespace occa {
     }
 
     void signalExit(int sig) {
-      if ((sig == SIGTERM) ||
-          (sig == SIGKILL) ||
-          (sig == SIGINT ) ||
-          (sig == SIGQUIT)) {
-
-        clearLocks();
-        ::exit(sig);
-      }
+      clearLocks();
+      ::exit(sig);
     }
 
     std::string var(const std::string &varName) {
@@ -470,20 +466,7 @@ namespace occa {
     }
 
     int call(const std::string &cmdline) {
-      FILE *fp = popen(cmdline.c_str(), "r");
-      return pclose(fp);
-    }
-
-    int call(const std::string &cmdline, std::string &output) {
-      FILE *fp = popen(cmdline.c_str(), "r");
-
-      size_t lineBytes = 512;
-      char lineBuffer[512];
-
-      while(fgets(lineBuffer, lineBytes, fp))
-        output += lineBuffer;
-
-      return pclose(fp);
+	  return system(cmdline.c_str());
     }
 
     std::string expandEnvVariables(const std::string &str) {
@@ -1424,20 +1407,21 @@ namespace occa {
   std::string stringifyBytes(uintptr_t bytes) {
     if (0 < bytes) {
       std::stringstream ss;
-      uintptr_t big1 = 1;
+	  uint64_t bigBytes = bytes;
+      uint64_t big1 = 1;
 
-      if (bytes < (big1 << 10))
-        ss << bytes << " bytes";
-      else if (bytes < (big1 << 20))
-        ss << (bytes >> 10) << " KB";
-      else if (bytes < (big1 << 30))
-        ss << (bytes >> 20) << " MB";
-      else if (bytes < (big1 << 40))
-        ss << (bytes >> 30) << " GB";
-      else if (bytes < (big1 << 50))
-        ss << (bytes >> 40) << " TB";
+      if (bigBytes < (big1 << 10))
+        ss << bigBytes << " bytes";
+      else if (bigBytes < (big1 << 20))
+        ss << (bigBytes >> 10) << " KB";
+      else if (bigBytes < (big1 << 30))
+        ss << (bigBytes >> 20) << " MB";
+      else if (bigBytes < (big1 << 40))
+        ss << (bigBytes >> 30) << " GB";
+      else if (bigBytes < (big1 << 50))
+        ss << (bigBytes >> 40) << " TB";
       else
-        ss << bytes << " bytes";
+        ss << bigBytes << " bytes";
 
       return ss.str();
     }

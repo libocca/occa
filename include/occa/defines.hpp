@@ -20,6 +20,7 @@
 #ifndef OCCA_USING_VS
 #  ifdef _MSC_VER
 #    define OCCA_USING_VS 1
+#    define OCCA_OS WINDOWS_OS
 #  else
 #    define OCCA_USING_VS 0
 #  endif
@@ -41,7 +42,7 @@
 
 #if OCCA_USING_VS
 #  define OCCA_VS_VERSION _MSC_VER
-#  include "vs/defines.hpp"
+#  include "occa/defines/visualStudio.hpp"
 #endif
 
 #ifndef __PRETTY_FUNCTION__
@@ -61,7 +62,7 @@
 
 #if   (OCCA_OS == LINUX_OS) || (OCCA_OS == OSX_OS)
 #  define OCCA_INLINE inline __attribute__ ((always_inline))
-#elif (OCCA_OS == WIN_OS)
+#elif (OCCA_OS == WINDOWS_OS)
 #  define OCCA_INLINE __forceinline
 #endif
 

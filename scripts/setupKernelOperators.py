@@ -1,5 +1,7 @@
 import os.path as osp
 
+occadir = osp.abspath(osp.join(osp.dirname(__file__), ".."))
+
 maxN = 50
 nSpacing = 3
 
@@ -56,8 +58,6 @@ def cKernelDefinition(N):
   occaType_t *args[{0}] = {{ {1} }};
   occaKernelRunN(kernel, {0}, args);
 }}""".format(N, argsContent))
-
-occadir = osp.abspath(osp.join(osp.dirname(__file__), ".."))
 
 def gen_file(filename, content):
     with open(occadir + filename, 'w') as f:

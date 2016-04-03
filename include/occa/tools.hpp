@@ -9,6 +9,7 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <string.h>
+#include <signal.h>
 #include <errno.h>
 #include <assert.h>
 
@@ -18,7 +19,6 @@
 #if   (OCCA_OS & LINUX_OS)
 #  include <sys/time.h>
 #  include <unistd.h>
-#  include <signal.h>
 #  include <sys/types.h>
 #  include <sys/dir.h>
 #elif (OCCA_OS & OSX_OS)
@@ -29,7 +29,6 @@
 #    include <mach/clock.h>
 #    include <mach/mach.h>
 #  endif
-#  include <signal.h>
 #  include <sys/types.h>
 #  include <sys/dir.h>
 #else

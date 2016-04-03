@@ -19,6 +19,5 @@
 #  define OCCA_DEBUG_ENABLED   0
 #endif
 //======================================
-
 #  endif
 #endif

@@ -95,7 +95,7 @@
 #define occaPointer
 #define occaVariable &
 
-#ifndef MC_CL_EXE
+#if (OCCA_OS & (LINUX_OS | OSX_OS))
 #  define occaRestrict __restrict__
 #  define occaVolatile volatile
 #  define occaAligned  __attribute__ ((aligned (OCCA_MEM_BYTE_ALIGN)))
@@ -119,7 +119,7 @@
 #define occaFunctionInfoArg const int * occaRestrict occaKernelArgs, int occaInnerId0, int occaInnerId1, int occaInnerId2
 #define occaFunctionInfo                             occaKernelArgs,     occaInnerId0,     occaInnerId1,     occaInnerId2
 // - - - - - - - - - - - - - - - - - - - - - - - -
-#ifndef MC_CL_EXE
+#if (OCCA_OS & (LINUX_OS | OSX_OS))
 #  define occaKernel extern "C"
 #else
 // branch for Microsoft cl.exe - compiler: each symbol that a dll (shared object) should export must be decorated with __declspec(dllexport)
@@ -129,7 +129,7 @@
 #define occaFunction
 #define occaDeviceFunction
 
-#ifndef MC_CL_EXE
+#if (OCCA_OS & (LINUX_OS | OSX_OS))
 #  define OCCA_PRAGMA(STR) _Pragma(STR)
 #else
 #  define OCCA_PRAGMA(STR) __pragma(STR)
