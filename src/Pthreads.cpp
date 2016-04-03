@@ -21,11 +21,7 @@ namespace occa {
 
       while(true){
         // Fence local data (incase of out-of-socket updates)
-#if (OCCA_OS & (LINUX_OS | OSX_OS))
         OCCA_LFENCE;
-#else
-        __faststorefence(); // NBN: x64 only?
-#endif
 
         if( *(data.pendingJobs) ){
           data.kernelMutex->lock();
@@ -41,11 +37,7 @@ namespace occa {
           data.pendingJobsMutex->unlock();
 
           while((*data.pendingJobs) % data.count){
-#if (OCCA_OS & (LINUX_OS | OSX_OS))
             OCCA_LFENCE;
-#else
-            __faststorefence(); // NBN: x64 only?
-#endif
           }
           //==============================
         }
@@ -761,7 +753,7 @@ namespace occa {
 #if (OCCA_OS & (LINUX_OS | OSX_OS))
       pthread_create(&data_.tid[p], NULL, pthreads::limbo, args);
 #else
-      CreateThread(NULL, 0, pthreads::limbo, args, 0, &data_.tid[p]);
+      CreateThread(NULL, 0, (LPTHREAD_START_ROUTINE) pthreads::limbo, args, 0, &data_.tid[p]);
 #endif
     }
   }
@@ -926,11 +918,7 @@ namespace occa {
 
     // Fence local data (incase of out-of-socket updates)
     while(data_.pendingJobs){
-#if (OCCA_OS & (LINUX_OS | OSX_OS))
       OCCA_LFENCE;
-#else
-      __faststorefence(); // NBN: x64 only?
-#endif
     }
   }
 

@@ -86,7 +86,11 @@
 #if OCCA_ARM
 #  define OCCA_LFENCE __asm__ __volatile__ ("dmb")
 #else
-#  define OCCA_LFENCE __asm__ __volatile__ ("lfence")
+#  if (OCCA_OS & (LINUX_OS | OSX_OS))
+#    define OCCA_LFENCE __asm__ __volatile__ ("lfence")
+#  else
+#    define OCCA_LFENCE MemoryBarrier()
+#  endif
 #endif
 
 //---[ Checks and Info ]----------------

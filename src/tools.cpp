@@ -647,7 +647,7 @@ namespace occa {
         ret += '/';
 #else
         // Don't want leading slash on absolute path
-        if (d > 0)
+        if (dir > 0)
           ret += '/';
 #endif
         ret += path[dir];

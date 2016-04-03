@@ -1,3 +1,5 @@
+.gitattributes
+
 obj/
 y
 
@@ -15,6 +17,12 @@ web2/
 benchmarks/
 scripts/occaBenchmark.cpp
 scripts/compilerVendorTest
+
+# Visual Studio
+editorTools/visualStudio/*
+!editorTools/visualStudio/occa.sln
+!editorTools/visualStudio/occa.vcxproj
+!editorTools/visualStudio/occa.vcxproj.filters
 
 *.pyc
 /examples/addVectors/ispc/tasksys.cpp

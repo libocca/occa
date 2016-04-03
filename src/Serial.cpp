@@ -651,7 +651,7 @@ namespace occa {
             << " /I"  << clInc
 #  endif
             << ' '    << sourceFile
-            << " /link " << occaLib <<
+            << " /link " << occaLib 
 #  if OCCA_CUDA_ENABLED
             << " /link"  << cuLib
 #  endif

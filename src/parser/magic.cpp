@@ -2030,7 +2030,7 @@ namespace occa {
       }
 
       statementNode *sn = s.statementStart;
-      statementNode *calculateSN;
+      statementNode *calculateSN = NULL;
 
       while(sn){
         statement &s2 = *(sn->value);

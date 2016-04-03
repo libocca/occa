@@ -76,7 +76,7 @@
       <SDLCheck>true</SDLCheck>
       <AdditionalIncludeDirectories>$(SolutionDir)\..\..\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <ObjectFileName>%(IntDir)/%(RelativeDir)/</ObjectFileName>
-      <DisableSpecificWarnings>4244;4800;4804;4018</DisableSpecificWarnings>
+      <DisableSpecificWarnings>4244;4800;4804;4018;4146</DisableSpecificWarnings>
       <PreprocessorDefinitions>_MBCS;%(PreprocessorDefinitions);_CRT_SECURE_NO_WARNINGS</PreprocessorDefinitions>
     </ClCompile>
   </ItemDefinitionGroup>
@@ -87,7 +87,7 @@
       <SDLCheck>true</SDLCheck>
       <AdditionalIncludeDirectories>$(SolutionDir)\..\..\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <ObjectFileName>%(IntDir)/%(RelativeDir)/</ObjectFileName>
-      <DisableSpecificWarnings>4244;4800;4804;4018</DisableSpecificWarnings>
+      <DisableSpecificWarnings>4244;4800;4804;4018;4146</DisableSpecificWarnings>
       <PreprocessorDefinitions>_MBCS;%(PreprocessorDefinitions);_CRT_SECURE_NO_WARNINGS</PreprocessorDefinitions>
     </ClCompile>
   </ItemDefinitionGroup>
@@ -100,7 +100,7 @@
       <SDLCheck>true</SDLCheck>
       <AdditionalIncludeDirectories>$(SolutionDir)\..\..\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <ObjectFileName>%(IntDir)/%(RelativeDir)/</ObjectFileName>
-      <DisableSpecificWarnings>4244;4800;4804;4018</DisableSpecificWarnings>
+      <DisableSpecificWarnings>4244;4800;4804;4018;4146</DisableSpecificWarnings>
       <PreprocessorDefinitions>_MBCS;%(PreprocessorDefinitions);_CRT_SECURE_NO_WARNINGS</PreprocessorDefinitions>
     </ClCompile>
     <Link>
@@ -117,7 +117,7 @@
       <SDLCheck>true</SDLCheck>
       <AdditionalIncludeDirectories>$(SolutionDir)\..\..\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <ObjectFileName>%(IntDir)/%(RelativeDir)/</ObjectFileName>
-      <DisableSpecificWarnings>4244;4800;4804;4018</DisableSpecificWarnings>
+      <DisableSpecificWarnings>4244;4800;4804;4018;4146</DisableSpecificWarnings>
       <PreprocessorDefinitions>_MBCS;%(PreprocessorDefinitions);_CRT_SECURE_NO_WARNINGS</PreprocessorDefinitions>
     </ClCompile>
     <Link>
