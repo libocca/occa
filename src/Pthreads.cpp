@@ -28,17 +28,17 @@ namespace occa {
 #endif
 
         if( *(data.pendingJobs) ){
-          pthread_mutex_lock(data.kernelMutex);
+          data.kernelMutex->lock();
           PthreadKernelInfo_t &pkInfo = *(data.pKernelInfo->front());
           data.pKernelInfo->pop();
-          pthread_mutex_unlock(data.kernelMutex);
+          data.kernelMutex->unlock();
 
           run(pkInfo);
 
           //---[ Barrier ]----------------
-          pthread_mutex_lock(data.pendingJobsMutex);
+          data.pendingJobsMutex->lock();
           --( *(data.pendingJobs) );
-          pthread_mutex_unlock(data.pendingJobsMutex);
+          data.pendingJobsMutex->unlock();
 
           while((*data.pendingJobs) % data.count){
 #if (OCCA_OS & (LINUX_OS | OSX_OS))
@@ -344,14 +344,14 @@ namespace occa {
         }
       }
 
-      pthread_mutex_lock(data_.kernelMutex);
+      data_.kernelMutex->lock();
       data_.pKernelInfo[p]->push(&pArgs);
-      pthread_mutex_unlock(data_.kernelMutex);
+      data_.kernelMutex->unlock();
     }
 
-    pthread_mutex_lock(data_.pendingJobsMutex);
+    data_.pendingJobsMutex->lock();
     *(data_.pendingJobs) += data_.pThreadCount;
-    pthread_mutex_unlock(data_.pendingJobsMutex);
+    data_.pendingJobsMutex->unlock();
   }
 
   template <>
@@ -737,12 +737,6 @@ namespace occa {
       }
     }
 
-    int error = pthread_mutex_init(&(data_.pendingJobsMutex), NULL);
-    OCCA_CHECK(error == 0, "Error initializing mutex");
-
-    error = pthread_mutex_init(&(data_.kernelMutex), NULL);
-    OCCA_CHECK(error == 0, "Error initializing mutex");
-
     for(int p = 0; p < data_.pThreadCount; ++p){
       PthreadWorkerData_t *args = new PthreadWorkerData_t;
 
@@ -764,7 +758,11 @@ namespace occa {
 
       args->pKernelInfo = &(data_.pKernelInfo[p]);
 
+#if (OCCA_OS & (LINUX_OS | OSX_OS))
       pthread_create(&data_.tid[p], NULL, pthreads::limbo, args);
+#else
+      CreateThread(NULL, 0, pthreads::limbo, args, 0, &data_.tid[p]);
+#endif
     }
   }
 
@@ -1159,8 +1157,8 @@ namespace occa {
 
     OCCA_EXTRACT_DATA(Pthreads, Device);
 
-    pthread_mutex_destroy( &(data_.pendingJobsMutex) );
-    pthread_mutex_destroy( &(data_.kernelMutex) );
+    data_.pendingJobsMutex.free();
+    data_.kernelMutex.free();
 
     delete (PthreadsDeviceData_t*) data;
   }

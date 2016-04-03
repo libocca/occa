@@ -8,7 +8,6 @@
 #  include <pthread.h>
 #  include <dlfcn.h>
 #else
-// #  include "vs/pthread.hpp"
 #  include <intrin.h>
 #endif
 
@@ -36,13 +35,17 @@ namespace occa {
     int pThreadCount;
     int schedule;
 
+#if (OCCA_OS & (LINUX_OS | OSX_OS))
     pthread_t tid[50];
+#else
+    DWORD tid[50];
+#endif
 
     int pendingJobs;
 
     std::queue<PthreadKernelInfo_t*> pKernelInfo[50];
 
-    pthread_mutex_t pendingJobsMutex, kernelMutex;
+    mutex_t pendingJobsMutex, kernelMutex;
   };
 
   struct PthreadsKernelData_t {
@@ -54,7 +57,7 @@ namespace occa {
 
     std::queue<PthreadKernelInfo_t*> *pKernelInfo[50];
 
-    pthread_mutex_t *pendingJobsMutex, *kernelMutex;
+    mutex_t *pendingJobsMutex, *kernelMutex;
   };
 
   struct PthreadWorkerData_t {
@@ -65,7 +68,7 @@ namespace occa {
 
     std::queue<PthreadKernelInfo_t*> *pKernelInfo;
 
-    pthread_mutex_t *pendingJobsMutex, *kernelMutex;
+    mutex_t *pendingJobsMutex, *kernelMutex;
   };
 
   struct PthreadKernelInfo_t {
