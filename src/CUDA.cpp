@@ -343,10 +343,11 @@ namespace occa {
 
     command << dHandle->compiler
             << " -I."
-            << " -I"  << env::OCCA_DIR << "/include"
+            << " -I"  << env::OCCA_DIR << "include"
+            << " -D OCCA_OS=WINDOWS_OS -D _MSC_VER=1800"
             << ' '          << dHandle->compilerFlags
             << archSM
-            << " -Xptxas -v,-dlcm=cg,-abi=no"
+            << " -Xptxas -v,-dlcm=cg"
             << ' '          << info.flags
             << " -x cu -c " << sourceFile
             << " -o "       << ptxBinaryFile;
@@ -369,7 +370,8 @@ namespace occa {
     command << dHandle->compiler
             << " -o "       << binaryFile
             << " -ptx -I."
-            << " -I"  << env::OCCA_DIR << "/include"
+            << " -I"  << env::OCCA_DIR << "include"
+            << " -D OCCA_OS=WINDOWS_OS -D _MSC_VER=1800"
             << ' '          << dHandle->compilerFlags
             << archSM
             << ' '          << info.flags

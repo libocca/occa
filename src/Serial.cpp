@@ -147,9 +147,9 @@ namespace occa {
 #elif (OCCA_OS == WINDOWS_OS)
       std::stringstream ss;
       DWORD cache = 0;
+      int bytes = 0;
 
       PSYSTEM_LOGICAL_PROCESSOR_INFORMATION buffer = NULL;
-      int bytes;
 
       GetLogicalProcessorInformation(buffer, (LPDWORD) &bytes);
 
@@ -165,19 +165,21 @@ namespace occa {
 
       PSYSTEM_LOGICAL_PROCESSOR_INFORMATION pos = buffer;
       int off = 0;
+      int sk = sizeof(PSYSTEM_LOGICAL_PROCESSOR_INFORMATION);
 
-      while((off + sizeof(PSYSTEM_LOGICAL_PROCESSOR_INFORMATION)) <= bytes){
+      while ((off + sk) <= bytes) {
         switch(pos->Relationship){
         case RelationCache:{
           CACHE_DESCRIPTOR info = pos->Cache;
 
-          if (info.Level == level)
+          if (info.Level == level) {
             cache = info.Size;
+            break;
+          }
         }
         }
-
-        if(cache)
-          break;
+        ++pos;
+        off += sk;
       }
 
       cpu::free(buffer);
@@ -619,19 +621,44 @@ namespace occa {
             << std::endl;
 #else
 #  if (OCCA_DEBUG_ENABLED)
-    std::string occaLib = env::OCCA_DIR + "\\lib\\libocca_d.lib ";
+    const std::string occaLib = env::OCCA_DIR + "/lib/libocca_d.lib ";
 #  else
-    std::string occaLib = env::OCCA_DIR + "\\lib\\libocca.lib ";
+    const std::string occaLib = env::OCCA_DIR + "/lib/libocca.lib ";
 #  endif
-    std::string ptLib   = env::OCCA_DIR + "\\lib\\pthreadVC2.lib ";
+
+#  if OCCA_CUDA_ENABLED
+    const std::string cupath = getenv("CUDA_PATH");
+    const std::string cuInc  = cupath + "\\include";
+    const std::string cuLib  = cupath + "\\lib\\x64\\cuda.lib ";
+#  endif
+#  if OCCA_OPENCL_ENABLED
+    const std::string clpath = getenv("OPENCL_PATH");
+    const std::string clLib  = cpath + "\\lib\\x64\\OpenCL.lib ";
+#  endif
 
     command << dHandle->compiler
             << " /D MC_CL_EXE"
+            << " /D OCCA_OS=WINDOWS_OS"
+            << " /EHsc"
+            << " /wd4244 /wd4800 /wd4804 /wd4018"
             << ' '    << dHandle->compilerFlags
             << ' '    << info.flags
-            << " /I"  << env::OCCA_DIR << "\\include"
+            << " /I"  << env::OCCA_DIR << "/include"
+#  if OCCA_CUDA_ENABLED
+            << " /I"  << cuInc
+#  endif
+#  if OCCA_OPENCL_ENABLED
+            << " /I"  << clInc
+#  endif
             << ' '    << sourceFile
-            << " /link " << occaLib << ptLib << " /OUT:" << binaryFile
+            << " /link " << occaLib <<
+#  if OCCA_CUDA_ENABLED
+            << " /link"  << cuLib
+#  endif
+#  if OCCA_OPENCL_ENABLED
+            << " /link"  << clLib
+#  endif
+            << " /OUT:" << binaryFile
             << std::endl;
 #endif
 

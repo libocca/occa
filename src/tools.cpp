@@ -120,7 +120,11 @@ namespace occa {
 
       while(cStart[0] != '\0') {
         cEnd = cStart;
+#if (OCCA_OS & (LINUX_OS | OSX_OS))
         skipTo(cEnd, ':');
+#else
+        skipTo(cEnd, ';');
+#endif
 
         if (0 < (cEnd - cStart)) {
           std::string newPath(cStart, cEnd - cStart);
@@ -466,7 +470,33 @@ namespace occa {
     }
 
     int call(const std::string &cmdline) {
-	  return system(cmdline.c_str());
+#if (OCCA_OS & (LINUX_OS | OSX_OS))
+      FILE *fp = popen(cmdline.c_str(), "r");
+      return pclose(fp);
+#else
+      FILE *fp = _popen(cmdline.c_str(), "r");
+      return _pclose(fp);
+#endif
+    }
+
+    int call(const std::string &cmdline, std::string &output) {
+#if (OCCA_OS & (LINUX_OS | OSX_OS))
+      FILE *fp = popen(cmdline.c_str(), "r");
+#else
+      FILE *fp = _popen(cmdline.c_str(), "r");
+#endif
+
+      size_t lineBytes = 512;
+      char lineBuffer[512];
+
+      while(fgets(lineBuffer, lineBytes, fp))
+        output += lineBuffer;
+
+#if (OCCA_OS & (LINUX_OS | OSX_OS))
+      return pclose(fp);
+#else
+      return _pclose(fp);
+#endif
     }
 
     std::string expandEnvVariables(const std::string &str) {
@@ -528,7 +558,18 @@ namespace occa {
 
     void mkpath(const std::string &dir) {
       stringVector_t path;
+
+#if (OCCA_OS & (LINUX_OS | OSX_OS))
       sys::absolutePathVec(dir, path);
+#else
+      // NBN: handle e.g. D:\my\path
+      // [TODO] Need to make this work for relative paths
+      std::string dir2 = dir;
+      std::string::iterator itA = dir2.begin();
+      itA += 4;
+      std::replace(itA, dir2.end(), '\\', '/');
+      sys::absolutePathVec(dir2, path);
+#endif
 
       const int dirCount = (int) path.size();
       int makeFrom = -1;
@@ -536,16 +577,16 @@ namespace occa {
       if (dirCount == 0)
         return;
 
-#if (OCCA_OS & (LINUX_OS | OSX_OS))
-      const char slash = '/';
-#else
-      const char slash = '\\';
-#endif
-
       std::string sPath;
 
       for(int d = 0; d < dirCount; ++d) {
-        sPath += slash;
+#if (OCCA_OS & (LINUX_OS | OSX_OS))
+        sPath += '/';
+#else
+        // Don't want leading slash on absolute path
+        if (d > 0)
+          sPath += '/';
+#endif
         sPath += path[d];
 
         if (!dirExists(sPath)) {
@@ -558,7 +599,7 @@ namespace occa {
         sys::mkdir(sPath);
 
         for(int d = (makeFrom + 1); d < dirCount; ++d) {
-          sPath += slash;
+          sPath += '/';
           sPath += path[d];
 
           sys::mkdir(sPath);
@@ -601,14 +642,14 @@ namespace occa {
       if (dirCount == 0)
         return "";
 
-#if (OCCA_OS & (LINUX_OS | OSX_OS))
-      const char slash = '/';
-#else
-      const char slash = '\\';
-#endif
-
       for(int dir = 0; dir < dirCount; ++dir) {
-        ret += slash;
+#if (OCCA_OS & (LINUX_OS | OSX_OS))
+        ret += '/';
+#else
+        // Don't want leading slash on absolute path
+        if (d > 0)
+          ret += '/';
+#endif
         ret += path[dir];
       }
 
@@ -641,6 +682,18 @@ namespace occa {
         foundDir = true;
         c += 2;
       }
+#if (OCCA_OS == WINDOWS_OS)
+      else if(c[1] == ':'){
+
+        const char *c0 = c;
+        c += 3;
+        skipTo(c, '/');
+        pathVec.push_back(std::string(c0, c - c0));
+
+        foundDir = true;
+        ++c;
+      }
+#endif
       // OCCA path
       else if (c[0] == '[') {
         const char *c0 = (c + 1);
@@ -861,8 +914,7 @@ namespace occa {
         lastSlash = i;
 #else
     for(int i = 0; i < chars; ++i)
-      if ((c[i] == '/') ||
-         (c[i] == '\\'))
+      if ((c[i] == '/') || (c[i] == '\\'))
         lastSlash = i;
 #endif
 

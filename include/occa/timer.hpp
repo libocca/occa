@@ -42,6 +42,10 @@ namespace occa {
 
     void initTimer(const occa::device &deviceHandle);
 
+    // NBN: allow toggle from menu
+    inline void setKernelProfiling(bool b) { profileKernels = b; }
+    inline void setApplicationProfiling(bool b) { profileApplication = b; }
+
     std::stack<std::string> keyStack;
     std::stack<double> timeStack;
 

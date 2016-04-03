@@ -1528,10 +1528,15 @@ namespace occa {
         }
 
         else if(lLeaf.info & expType::unknown){
-          if(!sInfo->hasTypeInScope(lLeaf.value))
-            leaf.info = (opQ & ~expType::qualifier);
-          else
-            leaf.info = (opQ & ~expType::operator_);
+          if (sInfo) {
+            if(!sInfo->hasTypeInScope(lLeaf.value))
+              leaf.info = (opQ & ~expType::qualifier);
+            else
+              leaf.info = (opQ & ~expType::operator_);
+          }
+          else {
+            std::cout << "sInfo is NULL\n";
+          }
         }
 
         else if((lLeaf.value == ",") &&

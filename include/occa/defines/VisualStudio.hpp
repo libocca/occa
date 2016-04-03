@@ -10,6 +10,7 @@
 //======================================
 
 //---[ Build Config ]-------------------
+#define OCCA_MPI_ENABLED       1
 #define OCCA_CHECK_ENABLED     1
 #define OCCA_GL_ENABLED        1
 
