@@ -158,6 +158,14 @@ namespace occa {
       return "";
     }
 
+    void endDirWithSlash(std::string &dir){
+      if((0 < dir.size()) &&
+         (dir[dir.size() - 1] != '/')){
+
+        dir += '/';
+      }
+    }
+
     envInitializer_t::envInitializer_t() {
       env::initialize();
     }
@@ -165,314 +173,6 @@ namespace occa {
   }
 
   namespace sys {
-    dirTree_t::dirTree_t() :
-      info(dirType::none),
-      name(),
-
-      dirCount(0),
-      nestedDirCount(0),
-      dirs(NULL),
-
-      nestedDirNames(NULL) {}
-
-    dirTree_t::dirTree_t(const dirTree_t &dt) :
-      info(dt.info),
-      name(dt.name),
-
-      dirCount(dt.dirCount),
-      nestedDirCount(dt.nestedDirCount),
-      dirs(dt.dirs),
-
-      nestedDirNames(dt.nestedDirNames) {}
-
-    dirTree_t& dirTree_t::operator = (const dirTree_t &dt) {
-      info = dt.info;
-      name = dt.name;
-
-      dirCount       = dt.dirCount;
-      nestedDirCount = dt.nestedDirCount;
-      dirs           = dt.dirs;
-
-      nestedDirNames = dt.nestedDirNames;
-
-      return *this;
-    }
-
-    dirTree_t::dirTree_t(const std::string &dir) :
-      info(dirType::none),
-      name(),
-
-      dirCount(0),
-      nestedDirCount(0),
-      dirs(NULL),
-
-      nestedDirNames(NULL) {
-
-      load(dir);
-    }
-
-    void dirTree_t::load(const std::string &dir_) {
-      std::string dir = expandEnvVariables(dir_);
-      strip(dir);
-      dir = getFilename(dir);
-
-      stringVector_t path;
-      sys::absolutePathVec(dir, path);
-
-      // Root directory doesn't have a name
-      info = dirType::dir;
-      name = "";
-
-      load("/", path, 0);
-
-      if (dirCount == 0)
-        return;
-
-      nestedDirNames = new std::string[nestedDirCount];
-
-      setNestedDirNames(nestedDirNames, 0);
-    }
-
-    bool dirTree_t::load(const std::string &base,
-                         stringVector_t &path,
-                         const int pathPos) {
-
-      // Return values (for readability)
-      const bool somethingFound = true;
-      const bool nothingFound   = false;
-
-      // We reached the end
-      if (((int) path.size()) <= pathPos) {
-        nestedDirCount = 1;
-        return somethingFound;
-      }
-
-      const std::string nextDir = path[pathPos];
-      const char *c_nextDir     = nextDir.c_str();
-
-      // Simple file traversal
-      if (!hasWildcard(c_nextDir)) {
-        std::string nextBase = base;
-        nextBase += path[pathPos];
-        nextBase += '/';
-
-        if (!fileExists(nextBase))
-          return nothingFound;
-
-        dirCount = 1;
-        dirs     = new dirTree_t[1];
-
-        // Temporary info
-        dirs[0].info = dirType::dir;
-        dirs[0].name = path[pathPos];
-
-        const bool dirsCheck = dirs[0].load(nextBase,
-                                            path,
-                                            pathPos + 1);
-
-        if (dirsCheck == nothingFound) {
-          free();
-          return nothingFound;
-        }
-
-        nestedDirCount = dirs[0].nestedDirCount;
-
-        return somethingFound;
-      }
-
-#if (OCCA_OS & (LINUX_OS | OSX_OS))
-      DIR *DIR_ = opendir(base.c_str());
-
-      if (DIR_ == NULL)
-        return nothingFound;
-
-      std::vector<dirTree_t> vDirs;
-
-      dirent *dirent_;
-
-      while(true) {
-        dirent_ = readdir(DIR_);
-
-        if (dirent_ == NULL)
-          break;
-
-        const char *c_dirName = dirent_->d_name;
-
-        if (matches(c_nextDir, c_dirName)) {
-          std::string nextBase = base;
-          nextBase += c_dirName;
-          nextBase += '/';
-
-          vDirs.push_back(dirTree_t());
-          dirTree_t &vDir = vDirs.back();
-
-          const bool dirsCheck = vDir.load(nextBase,
-                                           path,
-                                           pathPos + 1);
-
-          if (dirsCheck == nothingFound) {
-            vDir.free();
-            vDirs.pop_back();
-          }
-          else {
-            // Temporary info
-            vDir.info = dirType::dir;
-            vDir.name = c_dirName;
-          }
-        }
-      }
-
-      closedir(DIR_);
-
-      if (vDirs.size() == 0)
-        return nothingFound;
-
-      dirCount = (int) vDirs.size();
-      dirs     = new dirTree_t[dirCount];
-
-      for(int i = 0; i < dirCount; ++i) {
-        dirs[i] = vDirs[i];
-        nestedDirCount += dirs[i].nestedDirCount;
-      }
-#else
-      OCCA_CHECK(false,
-                 "dirTree_t wildcard traversal is not supported yet in Windows");
-#endif
-
-      return somethingFound;
-    }
-
-    void dirTree_t::free() {
-      info = dirType::none;
-
-      if (0 < dirCount) {
-        for(int i = 0; i < dirCount; ++i)
-          dirs[i].free();
-
-        dirCount = 0;
-
-        delete [] dirs;
-        dirs = NULL;
-      }
-    }
-
-    void dirTree_t::setNestedDirNames(std::string *fdn,
-                                      int fdnPos) {
-      // Empty
-      if (info == dirType::none)
-        return;
-
-      // Last dir
-      if (dirCount == 0) {
-        fdn[fdnPos] += name;
-
-        if (info & dirType::dir)
-          fdn[fdnPos] += '/';
-
-        return;
-      }
-
-      for(int i = 0; i < nestedDirCount; ++i) {
-        fdn[fdnPos + i] += name;
-        fdn[fdnPos + i] += '/';
-      }
-
-      for(int i = 0; i < dirCount; ++i) {
-        dirs[i].setNestedDirNames(fdn, fdnPos);
-        fdnPos += dirs[i].nestedDirCount;
-      }
-    }
-
-    void dirTree_t::printOnString(std::string &str,
-                                  const char delimiter) {
-      // Empty
-      if (info == dirType::none)
-        return;
-
-      for(int i = 0; i < nestedDirCount; ++i) {
-        if (0 < i)
-          str += delimiter;
-
-        str += nestedDirNames[i];
-      }
-    }
-
-    bool dirTree_t::hasWildcard(const char *c) {
-      const char *c0 = c;
-
-      while(*c != '\0') {
-        if (((c[0] == '*') || (c[0] == '?')) &&
-           ((c0 == c) || (c[-1] != '\\'))) {
-
-          return true;
-        }
-
-        ++c;
-      }
-
-      return false;
-    }
-
-    bool dirTree_t::matches(const char *search,
-                            const char *c) {
-
-      const int sSize = (int) strlen(search);
-      const int cSize = (int) strlen(c);
-
-      if ((cSize == 0) || (sSize == 0))
-        return false;
-
-      // Hidden files only show up when [.] is explicitly used
-      if ((c[0]      == '.') &&
-         (search[0] != '.')) {
-
-        return false;
-      }
-
-      const int entries = ((sSize + 1) * (cSize + 1));
-
-      // Create lookup table + initialize to false
-      bool *found_ = new bool[entries];
-      ::memset(found_, 0, entries * sizeof(bool));
-
-      // \0 matches \0
-      found_[entries - 1] = true;
-
-      for(int sp = (sSize - 1); 0 <= sp; --sp) {
-        bool *found0 = found_ + ((sp + 0) * (cSize + 1));
-        bool *found1 = found_ + ((sp + 1) * (cSize + 1));
-
-        // Wildcard with 1 or X characters
-        const bool wc1 = ((search[sp] == '?') &&
-                          ((sp == 0) || search[sp - 1] != '\\'));
-        const bool wcX = ((search[sp] == '*') &&
-                          ((sp == 0) || search[sp - 1] != '\\'));
-
-        for(int cp = (cSize - 1); 0 <= cp; --cp) {
-
-          if ((search[sp] == c[cp]) || wc1) {
-            found0[cp] = found1[cp + 1];
-          }
-          else if (wcX) {
-            // [  ,+1]: Wildcard matched next char, wildcard still applies
-            // [+1,  ]: Alive because of wildcard , wildcard still applies
-            // [+1,+1]: Alive because of next char, wildcard starts
-            found0[cp] = (found0[cp + 1] ||
-                          found1[cp + 0] ||
-                          found1[cp + 1]);
-          }
-
-        }
-      }
-
-      // One match found it's way to the first char
-      const bool foundMatch = found_[0];
-
-      delete [] found_;
-
-      return foundMatch;
-    }
-
     int call(const std::string &cmdline) {
 #if (OCCA_OS & (LINUX_OS | OSX_OS))
       FILE *fp = popen(cmdline.c_str(), "r");
@@ -747,6 +447,12 @@ namespace occa {
         if (c[0] != '\0')
           ++c;
       }
+    }
+
+    stringVector_t absolutePathVec(const std::string &path){
+      stringVector_t pathVec;
+      absolutePathVec(path, pathVec);
+      return pathVec;
     }
   }
 
@@ -1460,6 +1166,32 @@ namespace occa {
     return ret;
   }
 
+  uintptr_t atoi(const std::string &str){
+    return occa::atoi((const char*) str.c_str());
+  }
+
+  double atof(const char *c){
+    return ::atof(c);
+  }
+
+  double atof(const std::string &str){
+    return ::atof(str.c_str());
+  }
+
+  double atod(const char *c){
+    double ret;
+#if (OCCA_OS & (LINUX_OS | OSX_OS))
+    sscanf(c, "%lf", &ret);
+#else
+    sscanf_s(c, "%lf", &ret);
+#endif
+    return ret;
+  }
+
+  double atod(const std::string &str){
+    return occa::atod(str.c_str());
+  }
+
   std::string stringifyBytes(uintptr_t bytes) {
     if (0 < bytes) {
       std::stringstream ss;
@@ -1483,6 +1215,38 @@ namespace occa {
     }
 
     return "";
+  }
+  //==============================================
+
+
+  //---[ Misc Functions ]-------------------------
+  int maxBase2Bit(const int value){
+    if(value <= 0)
+      return 0;
+
+    const int maxBits = 8 * sizeof(value);
+
+    for(int i = 0; i < maxBits; ++i){
+      if(value <= (1 << i))
+        return i;
+    }
+
+    return 0;
+  }
+
+  int maxBase2(const int value){
+    return (1 << maxBase2Bit(value));
+  }
+
+  uintptr_t ptrDiff(void *start, void *end){
+    if(start < end)
+      return (uintptr_t) (((char*) end) - ((char*) start));
+
+    return (uintptr_t) (((char*) start) - ((char*) end));
+  }
+
+  void* ptrOff(void *ptr, uintptr_t offset){
+    return (void*) (((char*) ptr) + offset);
   }
   //==============================================
 }

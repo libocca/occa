@@ -64,13 +64,7 @@ namespace occa {
 
     std::string var(const std::string &var);
 
-    inline void endDirWithSlash(std::string &dir){
-      if((0 < dir.size()) &&
-         (dir[dir.size() - 1] != '/')){
-
-        dir += '/';
-      }
-    }
+    void endDirWithSlash(std::string &dir);
 
     class envInitializer_t {
     public: envInitializer_t();
@@ -79,65 +73,6 @@ namespace occa {
   }
 
   namespace sys {
-    namespace dirType {
-      static const int none    = 0;
-      static const int dir     = (1 << 0);
-      static const int file    = (1 << 1);
-      static const int symlink = (1 << 2);
-      static const int hidden  = (1 << 3);
-    }
-
-    class dirTree_t {
-    public:
-      int info;
-      std::string name;
-
-      int dirCount, nestedDirCount;
-      dirTree_t *dirs;
-
-      // Store file names in [root]
-      std::string *nestedDirNames;
-
-      dirTree_t();
-
-      dirTree_t(const dirTree_t &dt);
-      dirTree_t& operator = (const dirTree_t &dt);
-
-      dirTree_t(const std::string &dir);
-
-      void load(const std::string &dir_);
-
-      bool load(const std::string &base,
-                stringVector_t &path,
-                const int pathPos);
-
-      void free();
-
-      inline int fileCount(){
-        return nestedDirCount;
-      }
-
-      inline std::string& filename(int i){
-        return nestedDirNames[i];
-      }
-
-      void setNestedDirNames(std::string *fdn,
-                             int fdnPos);
-
-      void printOnString(std::string &str,
-                         const char delimiter);
-
-      inline std::string toString(const char delimiter = '\n'){
-        std::string ret;
-        printOnString(ret, delimiter);
-        return ret;
-      }
-
-      bool hasWildcard(const char *c);
-      bool matches(const char *search,
-                   const char *c);
-    };
-
     int call(const std::string &cmdline);
     int call(const std::string &cmdline, std::string &output);
 
@@ -156,11 +91,7 @@ namespace occa {
     void absolutePathVec(const std::string &path_,
                          stringVector_t &pathVec);
 
-    inline stringVector_t absolutePathVec(const std::string &path){
-      stringVector_t pathVec;
-      absolutePathVec(path, pathVec);
-      return pathVec;
-    }
+    stringVector_t absolutePathVec(const std::string &path);
   }
 
   // Kernel Caching
@@ -279,66 +210,24 @@ namespace occa {
   //---[ String Functions ]-----------------------
   uintptr_t atoi(const char *c);
   uintptr_t atoiBase2(const char *c);
+  uintptr_t atoi(const std::string &str);
 
-  inline uintptr_t atoi(const std::string &str){
-    return occa::atoi((const char*) str.c_str());
-  }
+  double atof(const char *c);
+  double atof(const std::string &str);
 
-  inline double atof(const char *c){
-    return ::atof(c);
-  }
-
-  inline double atof(const std::string &str){
-    return ::atof(str.c_str());
-  }
-
-  inline double atod(const char *c){
-    double ret;
-#if (OCCA_OS & (LINUX_OS | OSX_OS))
-    sscanf(c, "%lf", &ret);
-#else 
-	sscanf_s(c, "%lf", &ret);
-#endif
-    return ret;
-  }
-
-  inline double atod(const std::string &str){
-    return occa::atod(str.c_str());
-  }
+  double atod(const char *c);
+  double atod(const std::string &str);
 
   std::string stringifyBytes(uintptr_t bytes);
   //==============================================
 
 
   //---[ Misc Functions ]-------------------------
-  inline int maxBase2Bit(const int value){
-    if(value <= 0)
-      return 0;
+  int maxBase2Bit(const int value);
+  int maxBase2(const int value);
 
-    const int maxBits = 8 * sizeof(value);
-
-    for(int i = 0; i < maxBits; ++i){
-      if(value <= (1 << i))
-        return i;
-    }
-
-    return 0;
-  }
-
-  inline int maxBase2(const int value){
-    return (1 << maxBase2Bit(value));
-  }
-
-  inline uintptr_t ptrDiff(void *start, void *end){
-    if(start < end)
-      return (uintptr_t) (((char*) end) - ((char*) start));
-
-    return (uintptr_t) (((char*) start) - ((char*) end));
-  }
-
-  inline void* ptrOff(void *ptr, uintptr_t offset){
-    return (void*) (((char*) ptr) + offset);
-  }
+  uintptr_t ptrDiff(void *start, void *end);
+  void* ptrOff(void *ptr, uintptr_t offset);
   //==============================================
 
   template <class TM>

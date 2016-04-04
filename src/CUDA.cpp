@@ -479,7 +479,7 @@ namespace occa {
     data_.vArgs[argc++] = &occaKernelInfoArgs;
     for(int i = 0; i < kArgc; ++i) {
       for(int j = 0; j < kArgs[i].argc; ++j){
-        data_.vArgs[argc++] = args[i].args[j].ptr();
+        data_.vArgs[argc++] = kArgs[i].args[j].ptr();
       }
     }
 
