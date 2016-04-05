@@ -1,7 +1,20 @@
+#ifndef OCCA_C_PYTHON_HEADER
+#define OCCA_C_PYTHON_HEADER
+
 #define NPY_NO_DEPRECATED_API NPY_1_7_API_VERSION
+
+#include "occa/defines.hpp"
+
+OCCA_START_EXTERN_C
 
 #include "Python.h"
 #include "numpy/arrayobject.h"
+
+#if PY_MAJOR_VERSION >= 3
+#  define OCCA_PY 3
+#else
+#  define OCCA_PY 2
+#endif
 
 #include "occa_c.h"
 
@@ -325,7 +338,20 @@ static PyMethodDef _C_occaMethods[] = {
   //====================================
 };
 
-void init_C_occa(){
+#if OCCA_PY == 3
+static struct PyModuleDef _occaModule = { PyModuleDef_HEAD_INIT, "occa", NULL, -1, _C_occaMethods };
+
+PyMODINIT_FUNC init_C_occa(){
+  import_array();
+  return PyModule_Create(&_occaModule);
+}
+#else
+PyMODINIT_FUNC init_C_occa(){
   (void) Py_InitModule("_C_occa", _C_occaMethods);
   import_array();
 }
+#endif
+
+OCCA_END_EXTERN_C
+
+#endif

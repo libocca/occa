@@ -1,5 +1,13 @@
 #include "occa/python/_C_occa.h"
 
+OCCA_START_EXTERN_C
+
+#if OCCA_PY == 3
+#  define STR_TO_PYOBJECT(charPtr) PyUnicode_FromString(charPtr)
+#else
+#  define STR_TO_PYOBJECT(charPtr) PyString_FromString(charPtr)
+#endif
+
 //---[ Globals & Flags ]----------------
 static PyObject* py_occaSetVerboseCompilation(PyObject *self, PyObject *args){
   int value;
@@ -22,7 +30,7 @@ static PyObject* py_occaPtr(PyObject *self, PyObject *args){
 
   occaType type = occaPtr(ptr);
 
-  return PyLong_FromVoidPtr(type);
+  return PyLong_FromVoidPtr(type->ptr);
 }
 
 static PyObject* py_occaBool(PyObject *self, PyObject *args){
@@ -212,17 +220,17 @@ static PyObject* py_occaSetCompilerFlags(PyObject *self, PyObject *args){
 
 static PyObject* py_occaGetCompiler(PyObject *self, PyObject *args){
   const char *compiler = occaGetCompiler();
-  return PyString_FromString(compiler);
+  return STR_TO_PYOBJECT(compiler);
 }
 
 static PyObject* py_occaGetCompilerEnvScript(PyObject *self, PyObject *args){
   const char *compilerEnvScript = occaGetCompilerEnvScript();
-  return PyString_FromString(compilerEnvScript);
+  return STR_TO_PYOBJECT(compilerEnvScript);
 }
 
 static PyObject* py_occaGetCompilerFlags(PyObject *self, PyObject *args){
   const char *compilerFlags = occaGetCompilerFlags();
-  return PyString_FromString(compilerFlags);
+  return STR_TO_PYOBJECT(compilerFlags);
 }
 
 static PyObject* py_occaFlush(PyObject *self, PyObject *args){
@@ -354,12 +362,9 @@ static PyObject* py_occaWrapManagedMemory(PyObject *self, PyObject *args){
 
   const size_t bytes = (entries * typeSize);
 
-  int nd         = 1;
-  npy_intp *dims = (npy_intp*) malloc(1*sizeof(npy_intp));
-  dims[0]        = entries;
-  void *data     = occaWrapManagedMemory(handle, bytes);
+  occaWrapManagedMemory(handle, bytes);
 
-  return PyArray_SimpleNewFromData(nd, dims, typenum, data);
+  return Py_None;
 }
 
 static PyObject* py_occaMalloc(PyObject *self, PyObject *args){
@@ -453,7 +458,7 @@ static PyObject* py_occaDeviceMode(PyObject *self, PyObject *args){
 
   mode = occaDeviceMode(device);
 
-  return PyString_FromString(mode);
+  return STR_TO_PYOBJECT(mode);
 }
 
 static PyObject* py_occaDeviceSetCompiler(PyObject *self, PyObject *args){
@@ -501,7 +506,7 @@ static PyObject* py_occaDeviceGetCompiler(PyObject *self, PyObject *args){
 
   compiler = occaDeviceGetCompiler(device);
 
-  return PyString_FromString(compiler);
+  return STR_TO_PYOBJECT(compiler);
 }
 
 static PyObject* py_occaDeviceGetCompilerEnvScript(PyObject *self, PyObject *args){
@@ -513,7 +518,7 @@ static PyObject* py_occaDeviceGetCompilerEnvScript(PyObject *self, PyObject *arg
 
   compilerEnvScript = occaDeviceGetCompilerEnvScript(device);
 
-  return PyString_FromString(compilerEnvScript);
+  return STR_TO_PYOBJECT(compilerEnvScript);
 }
 
 static PyObject* py_occaDeviceGetCompilerFlags(PyObject *self, PyObject *args){
@@ -525,7 +530,7 @@ static PyObject* py_occaDeviceGetCompilerFlags(PyObject *self, PyObject *args){
 
   compilerFlags = occaDeviceGetCompilerFlags(device);
 
-  return PyString_FromString(compilerFlags);
+  return STR_TO_PYOBJECT(compilerFlags);
 }
 
 static PyObject* py_occaDeviceBytesAllocated(PyObject *self, PyObject *args){
@@ -566,7 +571,6 @@ static PyObject* py_occaDeviceBuildKernelFromSource(PyObject *self, PyObject *ar
 }
 
 static PyObject* py_occaDeviceBuildKernelFromString(PyObject *self, PyObject *args){
-  occaDevice device;
   const char *filename, *functionName, *language;
   occaKernelInfo *kInfo;
   occaKernel kernel;
@@ -689,8 +693,6 @@ static PyObject* py_occaDeviceCreateStream(PyObject *self, PyObject *args){
   if(!PyArg_ParseTuple(args, "n", &device))
     return NULL;
 
-  occaStream stream = occaDeviceCreateStream(device);
-
   return PyLong_FromVoidPtr(device);
 }
 
@@ -762,7 +764,7 @@ static PyObject* py_occaKernelMode(PyObject *self, PyObject *args){
 
   mode = occaKernelMode(kernel);
 
-  return PyString_FromString(mode);
+  return STR_TO_PYOBJECT(mode);
 }
 
 static PyObject* py_occaKernelName(PyObject *self, PyObject *args){
@@ -774,7 +776,7 @@ static PyObject* py_occaKernelName(PyObject *self, PyObject *args){
 
   name = occaKernelName(kernel);
 
-  return PyString_FromString(name);
+  return STR_TO_PYOBJECT(name);
 }
 
 static PyObject* py_occaKernelGetDevice(PyObject *self, PyObject *args){
@@ -905,7 +907,7 @@ static PyObject* py_occaMemoryMode(PyObject *self, PyObject *args){
 
   mode = occaMemoryMode(memory);
 
-  return PyString_FromString(mode);
+  return STR_TO_PYOBJECT(mode);
 }
 
 static PyObject* py_occaMemoryGetMemoryHandle(PyObject *self, PyObject *args){
@@ -1052,3 +1054,5 @@ static PyObject* py_occaMemoryFree(PyObject *self, PyObject *args){
   return Py_None;
 }
 //======================================
+
+OCCA_END_EXTERN_C

@@ -17,7 +17,8 @@ endif
 paths := $(filter-out -L$(OCCA_DIR)/lib,$(paths))
 links := $(filter-out -locca,$(links))
 
-iPath := $(iPath)/occa
+incPath := $(iPath)
+iPath   := $(iPath)/occa
 #=================================================
 
 #---[ COMPILATION ]-------------------------------
@@ -44,14 +45,7 @@ ifdef OCCA_LIBPYTHON_DIR
     ifdef OCCA_PYTHON_DIR
       ifdef OCCA_NUMPY_DIR
         outputs += $(lPath)/_C_occa.so
-
-        pyFlags = -I${OCCA_PYTHON_DIR}/ -I${OCCA_NUMPY_DIR} -L${OCCA_LIBPYTHON_DIR}
-
-        ifeq ($(usingLinux),1)
-          pyFlags += -l${OCCA_LIBPYTHON}
-        else ifeq ($(usingOSX),1)
-          pyFlags += -framework Python
-        endif
+        pyFlags = -I${OCCA_PYTHON_DIR}/ -I${OCCA_NUMPY_DIR} -L${OCCA_LIBPYTHON_DIR} -l${OCCA_LIBPYTHON}
       endif
     endif
   endif
@@ -88,9 +82,8 @@ $(oPath)/fTypes.o:$(sPath)/fTypes.f90
 $(oPath)/fBase.o:$(sPath)/fBase.f90 $(sPath)/fTypes.f90 $(oPath)/fTypes.o
 	$(fCompiler) $(fCompilerFlags) $(fModDirFlag) $(lPath) -o $@ $(fFlags) -c $<
 
-$(lPath)/_C_occa.so: $(lPath)/libocca.so $(iPath)/python/_C_occa.h $(sPath)/occa/python/_C_occa.c
-	clang -shared -fPIC $(sPath)/occa/python/_C_occa.c -o $(lPath)/_C_occa.so \
-	-I$(OCCA_DIR)/include/ -I$(OCCA_DIR)/include/occa/python -L$(OCCA_DIR)/lib $(pyFlags) -locca
+$(lPath)/_C_occa.so: $(lPath)/libocca.so $(iPath)/python/_C_occa.h $(sPath)/python/_C_occa.c
+	gcc $(compilerFlags) $(sharedFlag) $(sPath)/python/_C_occa.c -o $@ -I$(incPath) -I$(iPath)/python -L$(lPath) $(pyFlags) -locca
 
 $(bPath)/occa:$(OCCA_DIR)/scripts/occa.cpp $(lPath)/libocca.so
 	$(compiler) $(compilerFlags) -o $(bPath)/occa $(flags) $(OCCA_DIR)/scripts/occa.cpp $(paths) $(links) -L$(OCCA_DIR)/lib -locca

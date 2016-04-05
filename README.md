@@ -24,17 +24,25 @@ You should see:
    src
    lib
 
-To compile libocca.so, type:
+To compile `libocca.so`, type:
 
 ```
 make
 ```
 
-To compile the Fortran library, setup the `OCCA_FORTRAN_ENABLED` environment variable
+To compile the Fortran library, setup the `OCCA_FORTRAN_ENABLED` environment variable before compiling
 
 ```
 export OCCA_FORTRAN_ENABLED="1"
 ```
+
+Python 2 and 3 bindings are available with OCCA.
+If you wish to setup the occa Python module, rather than using `make`, compile both `libocca.so` and the module with
+
+```
+python make.py
+```
+
 
 ### Examples
 

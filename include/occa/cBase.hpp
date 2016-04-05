@@ -63,6 +63,10 @@ OCCA_START_EXTERN_C
 typedef void* occaDevice;
 typedef void* occaKernel;
 
+struct occaTypePtr_t {
+  struct occaType_t *ptr;
+};
+
 typedef struct occaTypePtr_t*      occaMemory;
 typedef struct occaTypePtr_t*      occaType;
 typedef struct occaArgumentList_t* occaArgumentList;
@@ -322,7 +326,7 @@ OCCA_LFUNC void OCCA_RFUNC occaKernelRun_(occaKernel kernel,
                                           occaArgumentList list);
 
 OCCA_LFUNC void OCCA_RFUNC occaKernelRunN(occaKernel kernel,
-                                          const int argc, occaType_t **args);
+                                          const int argc, struct occaType_t **args);
 
 #include "operators/cKernelOperators.hpp"
 
