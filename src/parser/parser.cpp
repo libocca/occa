@@ -572,6 +572,7 @@ namespace occa {
 
         if (wordIsAMacro) {
           macroInfo &info = *info_;
+          foundMacro = true;
 
           if (!info.isAFunction) {
             newLine += info.parts[0];

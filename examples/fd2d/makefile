@@ -23,6 +23,8 @@ sources = $(wildcard $(sPath)/*.cpp)
 
 objects = $(subst $(sPath)/,$(oPath)/,$(sources:.cpp=.o))
 
+flags += -I$(PROJ_DIR)/include
+
 ${PROJ_DIR}/main: $(objects) $(headers) ${PROJ_DIR}/main.cpp
 	$(compiler) $(compilerFlags) -o ${PROJ_DIR}/main $(flags) $(objects) ${PROJ_DIR}/main.cpp $(paths) $(links)
 
