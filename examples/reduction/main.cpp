@@ -2,7 +2,7 @@
 
 #include "occa.hpp"
 
-int main(int argc, char **argv){
+int main(int argc, char **argv) {
   int entries = 10000; // Not divisible
   int p_Nred = 256;
   int reducedEntries = (entries + p_Nred - 1)/p_Nred;
@@ -12,12 +12,12 @@ int main(int argc, char **argv){
 
   float trueRed = 0;
 
-  for(int i = 0; i < entries; ++i){
+  for (int i = 0; i < entries; ++i) {
     a[i]     = 1;
     trueRed += a[i];
   }
 
-  for(int i = 0; i < reducedEntries; ++i)
+  for (int i = 0; i < reducedEntries; ++i)
     aRed[i] = 0;
 
   occa::device device;
@@ -55,10 +55,10 @@ int main(int argc, char **argv){
 
   o_aRed.copyTo(aRed);
 
-  for(int i = 1; i < reducedEntries; ++i)
+  for (int i = 1; i < reducedEntries; ++i)
     aRed[0] += aRed[i];
 
-  if(aRed[0] != trueRed){
+  if (aRed[0] != trueRed) {
     std::cout << "aRed[0] = " << aRed[0] << '\n'
               << "trueRed = " << trueRed << '\n';
 

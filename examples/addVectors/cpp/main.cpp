@@ -2,7 +2,7 @@
 
 #include "occa.hpp"
 
-int main(int argc, char **argv){
+int main(int argc, char **argv) {
   occa::printAvailableDevices();
 
   int entries = 5;
@@ -11,7 +11,7 @@ int main(int argc, char **argv){
   float *b  = new float[entries];
   float *ab = new float[entries];
 
-  for(int i = 0; i < entries; ++i){
+  for (int i = 0; i < entries; ++i) {
     a[i]  = i;
     b[i]  = 1 - i;
     ab[i] = 0;
@@ -23,32 +23,10 @@ int main(int argc, char **argv){
 
   //---[ Device setup with string flags ]-------------------
   device.setup("mode = Serial");
-  // device.setup("mode = OpenMP  , schedule = compact, chunk = 10");
-  // device.setup("mode = OpenCL  , platformID = 0, deviceID = 1");
-  // device.setup("mode = CUDA    , deviceID = 0");
-  // device.setup("mode = Pthreads, threadCount = 4, schedule = compact, pinnedCores = [0, 0, 1, 1]");
-  // device.setup("mode = COI     , deviceID = 0");
-  //========================================================
-
-  //---[ Device setup with Python-like arguments ]----------
-  //    device.setup("OpenMP",
-  //                 occa::schedule = "compact",
-  //                 occa::chunk    = 10);
-  //
-  //    device.setup("OpenCL",
-  //                 occa::platformID = 0,
-  //                 occa::deviceID   = 0);
-  //
-  //    device.setup("CUDA",
-  //                 occa::deviceID = 0);
-  //
-  //    device.setup("Pthreads",
-  //                 occa::threadCount = 4,
-  //                 occa::schedule    = "compact",
-  //                 occa::pinnedCores = "[0, 0, 1, 1]");
-  //
-  //    device.setup("COI",
-  //                 occa::deviceID = 0);
+  // device.setup("mode = OpenMP , schedule = compact, chunk = 10");
+  // device.setup("mode = OpenCL , platformID = 0, deviceID = 1");
+  // device.setup("mode = CUDA   , deviceID = 0");
+  // device.setup("mode = Threads, threadCount = 4, schedule = compact, pinnedCores = [0, 0, 1, 1]");
   //========================================================
 
   o_a  = device.malloc(entries*sizeof(float));
@@ -78,11 +56,11 @@ int main(int argc, char **argv){
 
   o_ab.copyTo(ab);
 
-  for(int i = 0; i < 5; ++i)
+  for (int i = 0; i < 5; ++i)
     std::cout << i << ": " << ab[i] << '\n';
 
-  for(int i = 0; i < entries; ++i){
-    if(ab[i] != (a[i] + b[i]))
+  for (int i = 0; i < entries; ++i) {
+    if (ab[i] != (a[i] + b[i]))
       throw 1;
   }
 

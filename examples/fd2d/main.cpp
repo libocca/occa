@@ -47,7 +47,7 @@ void update();
 void drawMesh();
 #endif
 
-int main(int argc, char **argv){
+int main(int argc, char **argv) {
 #if OCCA_GL_ENABLED
   vis.setup("OCL Visualizer", argc, argv);
   glRun();
@@ -59,7 +59,7 @@ int main(int argc, char **argv){
 }
 
 #if OCCA_GL_ENABLED
-void glRun(){
+void glRun() {
   setupMesh();
   setupSolver();
 
@@ -86,11 +86,11 @@ double totalFlops = 0;
 double totalBW    = 0;
 double totalNS    = 0;
 
-void run(){
+void run() {
   setupMesh();
   setupSolver();
 
-  for(int i = 0; i < 50; i++)
+  for (int i = 0; i < 50; i++)
     solve();
 
   std::ofstream avgFile("avg.dat");
@@ -101,7 +101,7 @@ void run(){
   exit(0);
 }
 
-void setupMesh(){
+void setupMesh() {
   setup.read("setuprc");
 
   setup.getArgs("DEVICE INFO", deviceInfo);
@@ -141,8 +141,8 @@ void setupMesh(){
 
   xyz.resize(2*width*height);
 
-  for(int h = 0; h < height; h++){
-    for(int w = 0; w < width; w++){
+  for (int h = 0; h < height; h++) {
+    for (int w = 0; w < width; w++) {
       xyz[2*(h*width + w) + 0] = (w - width/2)*dx;
       xyz[2*(h*width + w) + 1] = (h - height/2)*dx;
     }
@@ -153,9 +153,9 @@ void setupMesh(){
 }
 
 #if OCCA_GL_ENABLED
-void update(){
-  if( vis.keyIsPressed(' ') ){
-    if(!click){
+void update() {
+  if ( vis.keyIsPressed(' ') ) {
+    if (!click) {
       solve();
       click = 1;
     }
@@ -165,7 +165,7 @@ void update(){
 
   vis.placeViewport(0,0);
 
-  if(!vis.isPaused())
+  if (!vis.isPaused())
     solve();
 
   drawMesh();
@@ -177,7 +177,7 @@ const tFloat colorRange[18] = {1.0, 0.0, 0.0,
                               0.0, 1.0, 1.0,
                               0.0, 0.0, 1.0};
 
-void getColor(tFloat *ret, tFloat scale, tFloat value, tFloat min){
+void getColor(tFloat *ret, tFloat scale, tFloat value, tFloat min) {
   tFloat c = (value - min)*scale;
 
   int b = ((int) 5.0*c) - ((int) c/1.0);
@@ -189,7 +189,7 @@ void getColor(tFloat *ret, tFloat scale, tFloat value, tFloat min){
   ret[2] = colorRange[3*b+2] + ratio*(colorRange[3*(b+1)+2] - colorRange[3*b+2]);
 }
 
-void getGrayscale(tFloat *ret, tFloat scale, tFloat value, tFloat min){
+void getGrayscale(tFloat *ret, tFloat scale, tFloat value, tFloat min) {
   tFloat v = (maxU - value)*scale;
 
   ret[0] = v;
@@ -197,7 +197,7 @@ void getGrayscale(tFloat *ret, tFloat scale, tFloat value, tFloat min){
   ret[2] = v;
 }
 
-void drawMesh(){
+void drawMesh() {
   glBegin(GL_QUADS);
 
   tFloat color1[3];
@@ -207,13 +207,13 @@ void drawMesh(){
 
   tFloat ratio;
 
-  if(minU == maxU)
+  if (minU == maxU)
     ratio = 0;
   else
     ratio = 1.0/(maxU - minU);
 
-  for(int h = 0; h < (height-1); h++){
-    for(int w = 0; w < (width-1); w++){
+  for (int h = 0; h < (height-1); h++) {
+    for (int w = 0; w < (width-1); w++) {
 #if 0 // Matlab-like colors
       getColor(color1, ratio, u1[w     + (h)*width]    , minU);
       getColor(color2, ratio, u1[(w+1) + (h)*width]    , minU);
@@ -269,7 +269,7 @@ occa::device dev;
 occa::memory o_u1, o_u2, o_u3;
 occa::kernel fd2d;
 
-void setupSolver(){
+void setupSolver() {
   dev.setup(deviceInfo);
 
   o_u1 = dev.malloc(u1.size()*sizeof(tFloat), &(u1[0]));
@@ -294,7 +294,7 @@ void setupSolver(){
   fdInfo.addDefine("Bx"  , Bx);
   fdInfo.addDefine("By"  , By);
 
-  if(sizeof(tFloat) == sizeof(float))
+  if (sizeof(tFloat) == sizeof(float))
     fdInfo.addDefine("tFloat", "float");
   else
     fdInfo.addDefine("tFloat", "double");
@@ -305,19 +305,19 @@ void setupSolver(){
   fd2d.setWorkingDims(dims, inner, outer);
 }
 
-void solve(){
+void solve() {
   const int iterations = 20;
 
-  if(currentTime > 1){
+  if (currentTime > 1) {
     dt = -dt;
   }
-  if(currentTime < 0){
+  if (currentTime < 0) {
     dt = -dt;
   }
   occa::streamTag startTag;
   occa::streamTag endTag;
 
-  for(int i = 0; i < iterations; i++){
+  for (int i = 0; i < iterations; i++) {
     currentTime += dt;
 
     fd2d(o_u1, o_u2, o_u3, currentTime);

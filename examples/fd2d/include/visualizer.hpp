@@ -11,14 +11,14 @@
 
 #include "occa.hpp"
 
-#if   (OCCA_OS == LINUX_OS)
+#if   (OCCA_OS == OCCA_LINUX_OS)
 #  include <GL/glew.h>
 #  include <GL/gl.h>
 #  include <GL/glut.h>
-#elif (OCCA_OS == OSX_OS)
+#elif (OCCA_OS == OCCA_OSX_OS)
 #  include <OpenGL/gl.h>
 #  include <GLUT/glut.h>
-#elif (OCCA_OS == WINDOWS_OS)
+#elif (OCCA_OS == OCCA_WINDOWS_OS)
 #  include <gl/glut.h>
 #endif
 
@@ -195,12 +195,12 @@ public:
   void start();
 
   void render();
-  static void render_s(){
+  static void render_s() {
     staticVisualizer->render();
   }
 
   void resize(int, int);
-  static void resize_s(int w, int h){
+  static void resize_s(int w, int h) {
     staticVisualizer->resize(w, h);
   };
 
@@ -214,29 +214,29 @@ public:
 
   //--[ EVENT FUNCTIONS ]----------------------------------------------------
   void keyPress(unsigned char, int, int);
-  static void keyPress_s(unsigned char k, int x, int y){
+  static void keyPress_s(unsigned char k, int x, int y) {
     staticVisualizer->keyPress(k, x, y);
   };
 
   void keyRelease(unsigned char, int, int);
-  static void keyRelease_s(unsigned char k, int x, int y){
+  static void keyRelease_s(unsigned char k, int x, int y) {
     staticVisualizer->keyRelease(k, x, y);
   };
 
   void keyPressUpdate();
 
   void mousePress(int, int, int, int);
-  static void mousePress_s(int button, int state, int x, int y){
+  static void mousePress_s(int button, int state, int x, int y) {
     staticVisualizer->mousePress(button, state, x, y);
   };
 
   void mouseDrag(int, int);
-  static void mouseDrag_s(int x, int y){
+  static void mouseDrag_s(int x, int y) {
     staticVisualizer->mouseDrag(x, y);
   };
 
   void mouseMove(int, int);
-  static void mouseMove_s(int x, int y){
+  static void mouseMove_s(int x, int y) {
     staticVisualizer->mouseMove(x, y);
   };
 
@@ -287,8 +287,8 @@ public:
 
 
   //--[ KEY FUNCTIONS ]----------------------------------------------------
-  void voidEventFunction(int x, int y){};
-  void voidExternalFunction(){};
+  void voidEventFunction(int x, int y) {};
+  void voidExternalFunction() {};
 
   char keyIsPressed(char);
   char lastKeyPressed();

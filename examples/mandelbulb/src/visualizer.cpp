@@ -6,7 +6,7 @@ visualizer *visualizer::staticVisualizer;
 int visualizer::colorCount;
 GLfloat *visualizer::palette;
 
-viewport::viewport(){
+viewport::viewport() {
   light_f     = 0;
   wireframe_f = 0;
   hasCamera_f  = true;
@@ -24,36 +24,36 @@ viewport::viewport(){
   setCamera(1, 1, 1);
 }
 
-viewport::~viewport(){}
+viewport::~viewport() {}
 
-void viewport::place(){
+void viewport::place() {
   glViewport(vpWOffset, (height - vpHeight) - vpHOffset, vpWidth, vpHeight);
 
   glMatrixMode(GL_PROJECTION);
   glLoadIdentity();
 
-  if(hasCamera_f)
+  if (hasCamera_f)
     gluPerspective(fov, aspect, znear, zfar);
 
   glMatrixMode(GL_MODELVIEW);
   glLoadIdentity();
 
-  if(hasCamera_f)
+  if (hasCamera_f)
     placeCamera();
 
   drawBackground();
 
-  if(wireframe_f){
+  if (wireframe_f) {
     glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
   }
   else
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
-  if(light_f)
+  if (light_f)
     glLightfv(GL_LIGHT0, GL_POSITION, lightPos);
 }
 
-void viewport::drawBackground(){
+void viewport::drawBackground() {
   glMatrixMode(GL_PROJECTION);
   glPushMatrix();
   glLoadIdentity();
@@ -75,7 +75,7 @@ void viewport::drawBackground(){
   glEnd();
   glEnable(GL_DEPTH_TEST);
 
-  if(wireframe_f)
+  if (wireframe_f)
     glPolygonMode(GL_FRONT_AND_BACK, GL_LINES);
   else
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
@@ -86,13 +86,13 @@ void viewport::drawBackground(){
   glPopMatrix();
 }
 
-void viewport::setAspectInformation(GLfloat _fov, GLfloat _znear, GLfloat _zfar){
+void viewport::setAspectInformation(GLfloat _fov, GLfloat _znear, GLfloat _zfar) {
   fov   = _fov;
   znear = _znear;
   zfar  = _zfar;
 }
 
-void viewport::resize(GLfloat _vpWOffset, GLfloat _vpHOffset, GLfloat _vpWidth, GLfloat _vpHeight){
+void viewport::resize(GLfloat _vpWOffset, GLfloat _vpHOffset, GLfloat _vpWidth, GLfloat _vpHeight) {
   vpWOffset = _vpWOffset;
   vpHOffset = _vpHOffset;
 
@@ -102,7 +102,7 @@ void viewport::resize(GLfloat _vpWOffset, GLfloat _vpHOffset, GLfloat _vpWidth, 
   aspect = ((GLfloat) _vpWidth)/((GLfloat) _vpHeight);
 }
 
-void viewport::resize(int _width, int _height, GLfloat _vpWOffset, GLfloat _vpHOffset, GLfloat _vpWidth, GLfloat _vpHeight){
+void viewport::resize(int _width, int _height, GLfloat _vpWOffset, GLfloat _vpHOffset, GLfloat _vpWidth, GLfloat _vpHeight) {
   width  = _width;
   height = _height;
 
@@ -115,13 +115,13 @@ void viewport::resize(int _width, int _height, GLfloat _vpWOffset, GLfloat _vpHO
   aspect = ((GLfloat) _vpWidth)/((GLfloat) _vpHeight);
 }
 
-void viewport::placeCamera(){
+void viewport::placeCamera() {
   gluLookAt(eye[0], eye[1], eye[2],
             eye[0] + aim[0], eye[1] + aim[1], eye[2] + aim[2],
             up[0], up[1], up[2]);
 }
 
-void viewport::updateCamera(){
+void viewport::updateCamera() {
   phaseAngles();
 
   eye[0] = eyeOffset[0] + camRadius*cos(camTheta)*cos(camPhi);
@@ -147,23 +147,23 @@ void viewport::updateCamera(){
   updateSpeed();
 }
 
-void viewport::phaseAngles(){
+void viewport::phaseAngles() {
   int cycles;
 
   cycles = camPhi/OCCA_PI_2;
   camPhi -= cycles*OCCA_PI_2;
 
-  if(camPhi < 0)
+  if (camPhi < 0)
     camPhi += OCCA_PI_2;
 
   cycles = camTheta/OCCA_PI_2;
   camTheta -= cycles*OCCA_PI_2;
 
-  if(camTheta < 0)
+  if (camTheta < 0)
     camTheta += OCCA_PI_2;
 }
 
-void viewport::setCamera(GLfloat x, GLfloat y, GLfloat z){
+void viewport::setCamera(GLfloat x, GLfloat y, GLfloat z) {
   camRadius = sqrt(x*x + y*y + z*z);
 
   camPhi   = asin(z/camRadius);
@@ -172,10 +172,10 @@ void viewport::setCamera(GLfloat x, GLfloat y, GLfloat z){
   updateCamera();
 }
 
-void viewport::setLight(char f){
+void viewport::setLight(char f) {
   light_f = f;
 
-  if(light_f){
+  if (light_f) {
     glEnable(GL_LIGHTING);
     glEnable(GL_LIGHT0);
   }
@@ -183,10 +183,10 @@ void viewport::setLight(char f){
     glDisable(GL_LIGHTING);
 }
 
-void viewport::toggleLight(){
+void viewport::toggleLight() {
   light_f = !light_f;
 
-  if(light_f){
+  if (light_f) {
     glEnable(GL_LIGHTING);
     glEnable(GL_LIGHT0);
   }
@@ -194,11 +194,11 @@ void viewport::toggleLight(){
     glDisable(GL_LIGHTING);
 }
 
-void viewport::toggleWireframeMode(){
+void viewport::toggleWireframeMode() {
   wireframe_f = !wireframe_f;
 }
 
-GLint viewport::getPolyMode(){
+GLint viewport::getPolyMode() {
   GLint mode[2];
 
   // polyMode = (GLenum) mode;
@@ -209,19 +209,19 @@ GLint viewport::getPolyMode(){
   return mode[1];
 }
 
-void viewport::setBackground(GLfloat r, GLfloat g, GLfloat b){
+void viewport::setBackground(GLfloat r, GLfloat g, GLfloat b) {
   bgColor[0] = r;
   bgColor[1] = g;
   bgColor[2] = b;
 }
 
-void viewport::setBackground(int r, int g, int b){
+void viewport::setBackground(int r, int g, int b) {
   bgColor[0] = (float) r/255.0;
   bgColor[1] = (float) g/255.0;
   bgColor[2] = (float) b/255.0;
 }
 
-void viewport::leftClick(int x, int y){
+void viewport::leftClick(int x, int y) {
   dragX = x;
   dragY = y;
 
@@ -231,7 +231,7 @@ void viewport::leftClick(int x, int y){
   drag_f = 1;
 }
 
-void viewport::rightClick(int x, int y){
+void viewport::rightClick(int x, int y) {
   dragX = x;
   dragY = y;
 
@@ -242,25 +242,25 @@ void viewport::rightClick(int x, int y){
   drag_f = 0;
 }
 
-void viewport::move(int x, int y){
+void viewport::move(int x, int y) {
   int dx = (x - dragX);
   int dy = (y - dragY);
 
-  if(drag_f){
+  if (drag_f) {
     camPhi = oldCamPhi + dy*rotateSpeed;
 
     phaseAngles();
 
     int quad = oldCamPhi/OCCA_PI_H;
 
-    if( quad == 1 || quad == 2 )
+    if ( quad == 1 || quad == 2 )
       camTheta = oldCamTheta + dx*rotateSpeed;
     else
       camTheta = oldCamTheta - dx*rotateSpeed;
 
     updateCamera();
   }
-  else{
+  else {
     eyeOffset[0] = oldEyeOffset[0] + (dx*right[0] + dy*up[0])*panSpeed;
     eyeOffset[1] = oldEyeOffset[1] + (dx*right[1] + dy*up[1])*panSpeed;
     eyeOffset[2] = oldEyeOffset[2] + dy*up[2]*panSpeed;
@@ -271,81 +271,81 @@ void viewport::move(int x, int y){
   }
 }
 
-void viewport::updateSpeed(){
+void viewport::updateSpeed() {
   GLfloat speedFactor = 1.0/200.0;
 
   panSpeed  = camRadius*tan(fov)/vpWidth;
   zoomSpeed = speedFactor*camRadius;
 }
 
-void viewport::moveForward(){
+void viewport::moveForward() {
   camRadius -= zoomSpeed;
 
-  if(camRadius < minCamRadius)
+  if (camRadius < minCamRadius)
     camRadius = minCamRadius;
 
   updateCamera();
   updateSpeed();
 }
 
-void viewport::moveBackward(){
+void viewport::moveBackward() {
   camRadius += zoomSpeed;
 
   updateCamera();
   updateSpeed();
 }
 
-void viewport::moveLeft(){
+void viewport::moveLeft() {
   eyeOffset[0] -= zoomSpeed*right[0];
   eyeOffset[1] -= zoomSpeed*right[1];
 
   updateCamera();
 }
 
-void viewport::moveRight(){
+void viewport::moveRight() {
   eyeOffset[0] += zoomSpeed*right[0];
   eyeOffset[1] += zoomSpeed*right[1];
 
   updateCamera();
 }
 
-void viewport::rotateUp(){
+void viewport::rotateUp() {
   camPhi += rotateSpeed;
   updateCamera();
 }
 
-void viewport::rotateDown(){
+void viewport::rotateDown() {
   camPhi -= rotateSpeed;
   updateCamera();
 }
 
-void viewport::rotateLeft(){
+void viewport::rotateLeft() {
   camTheta += rotateSpeed;
   updateCamera();
 }
 
-void viewport::rotateRight(){
+void viewport::rotateRight() {
   camTheta -= rotateSpeed;
   updateCamera();
 }
 
-void viewport::setRotateSpeed(GLfloat rs){
+void viewport::setRotateSpeed(GLfloat rs) {
   rotateSpeed = rs;
 }
 
-visualizer::visualizer(){}
+visualizer::visualizer() {}
 
-visualizer::visualizer(string name, int inputWidth, int inputHeight){
+visualizer::visualizer(string name, int inputWidth, int inputHeight) {
   setup(name, inputWidth, inputHeight);
 }
 
-visualizer::visualizer(string name, int inputWidth, int inputHeight, int& argc, char **argv){
+visualizer::visualizer(string name, int inputWidth, int inputHeight, int& argc, char **argv) {
   setup(name, inputWidth, inputHeight, argc, argv);
 }
 
-visualizer::~visualizer(){}
+visualizer::~visualizer() {}
 
-void visualizer::setup(string name, int inputWidth, int inputHeight){
+void visualizer::setup(string name, int inputWidth, int inputHeight) {
   int argc     = 1;
   char arg[]   = "fake";
   char *argv[] = { arg , NULL };
@@ -353,20 +353,20 @@ void visualizer::setup(string name, int inputWidth, int inputHeight){
   setup(name, inputWidth, inputHeight, argc, argv);
 }
 
-void visualizer::setup(string name, int inputWidth, int inputHeight, int& argc, char **argv){
+void visualizer::setup(string name, int inputWidth, int inputHeight, int& argc, char **argv) {
   staticVisualizer = this;
 
   //--[ SETTINGS ]--------------------------------
   appName = name;
 
-  for(int i=0; i<256; i++){
+  for (int i=0; i<256; i++) {
     pressFunction[i]   = &visualizer::voidEventFunction;
     releaseFunction[i] = &visualizer::voidEventFunction;
 
     keyState[i] = 0;
   }
 
-  for(int i=0; i<7; i++){
+  for (int i=0; i<7; i++) {
     mouseFunction[i][0] = &visualizer::voidEventFunction;
     mouseFunction[i][1] = &visualizer::voidEventFunction;
 
@@ -418,7 +418,7 @@ void visualizer::setup(string name, int inputWidth, int inputHeight, int& argc, 
   initFunctions();
 }
 
-void visualizer::init(int& argc, char **argv){
+void visualizer::init(int& argc, char **argv) {
   glutInit(&argc, argv);
   glutInitDisplayMode(GLUT_RGB | GLUT_DOUBLE | GLUT_DEPTH);
 
@@ -449,7 +449,7 @@ void visualizer::init(int& argc, char **argv){
   glutPassiveMotionFunc(mouseMove_s);
 }
 
-void visualizer::initFunctions(){
+void visualizer::initFunctions() {
   pressFunction['q'] = &visualizer::exitFunction;
   pressFunction[27]  = &visualizer::exitFunction;
 
@@ -469,8 +469,8 @@ void visualizer::initFunctions(){
   mouseFunction[2][1] = &visualizer::rightClickUp;
 }
 
-void visualizer::start(){
-  if(!vpRowCount || !vpColCount){
+void visualizer::start() {
+  if (!vpRowCount || !vpColCount) {
     printf("Viewports not setup [ createViewports(int,int) ] .\nExiting Program.\n");
     throw 1;
   }
@@ -478,15 +478,15 @@ void visualizer::start(){
   glutMainLoop();
 }
 
-void visualizer::render(){
+void visualizer::render() {
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
   keyPressUpdate();
 
-  if(external_f)
+  if (external_f)
     externalFunction();
 
-  if(vpOutline_f)
+  if (vpOutline_f)
     drawViewportOutlines();
 
   glFlush();
@@ -494,15 +494,15 @@ void visualizer::render(){
   glutSwapBuffers();
 }
 
-void visualizer::resize(int w, int h){
-  for(int v=0; v<vpRowCount; v++)
+void visualizer::resize(int w, int h) {
+  for (int v=0; v<vpRowCount; v++)
     vpHeight[v+1] = vpHeight[v] + ( (float) (vpHeight[v+1] - vpHeight[v])*((float) h) )/((float) height);
 
-  for(int v=0; v<vpColCount; v++)
+  for (int v=0; v<vpColCount; v++)
     vpWidth[v+1] = vpWidth[v]  + ( (float) (vpWidth[v+1]  - vpWidth[v])*((float) w) )/((float) width);
 
-  for(int r=0; r<vpRowCount; r++)
-    for(int c=0; c<vpColCount; c++)
+  for (int r=0; r<vpRowCount; r++)
+    for (int c=0; c<vpColCount; c++)
       viewports[r][c].resize(w, h, vpWidth[c], vpHeight[r],
                              vpWidth[c+1]  - vpWidth[c],
                              vpHeight[r+1] - vpHeight[r]);
@@ -515,12 +515,12 @@ void visualizer::resize(int w, int h){
 
 
 //--[ EXTERNAL DATA ]----------------------------------------------------
-void visualizer::setFPS(float f){
+void visualizer::setFPS(float f) {
   fps    = f;
   fpsInv = 1.0/f;
 }
 
-void visualizer::setExternalFunction(functionPointer fp){
+void visualizer::setExternalFunction(functionPointer fp) {
   external_f = 1;
 
   externalFunction = fp;
@@ -529,35 +529,35 @@ void visualizer::setExternalFunction(functionPointer fp){
 
 
 //--[ EVENT FUNCTIONS ]----------------------------------------------------
-void visualizer::keyPress(unsigned char k, int x, int y){
+void visualizer::keyPress(unsigned char k, int x, int y) {
   lastKey_f = k;
 
   staticVisualizer->keyState[k] = 1;
   (staticVisualizer->*pressFunction[(int) k])(x, y);
 }
 
-void visualizer::keyRelease(unsigned char k, int x, int y){
+void visualizer::keyRelease(unsigned char k, int x, int y) {
   staticVisualizer->keyState[k] = 0;
   (staticVisualizer->*releaseFunction[(int) k])(x, y);
 }
 
-void visualizer::keyPressUpdate(){
-  if(keyState['-']) moveBackward(0,0);
-  if(keyState['_']) moveBackward(0,0);
-  if(keyState['=']) moveForward(0,0);
-  if(keyState['+']) moveForward(0,0);
+void visualizer::keyPressUpdate() {
+  if (keyState['-']) moveBackward(0,0);
+  if (keyState['_']) moveBackward(0,0);
+  if (keyState['=']) moveForward(0,0);
+  if (keyState['+']) moveForward(0,0);
 }
 
-void visualizer::mousePress(int button, int state, int x, int y){
+void visualizer::mousePress(int button, int state, int x, int y) {
   staticVisualizer->mouseState[button] = !state;
   (staticVisualizer->*mouseFunction[button][state])(x, y);
 }
 
-void visualizer::mouseDrag(int x, int y){
-  if(mouseState[0]){
+void visualizer::mouseDrag(int x, int y) {
+  if (mouseState[0]) {
     drag_f = 1;
 
-    if(vpRowDrag){
+    if (vpRowDrag) {
       int currentRow = vpRowDrag - 1;
 
       vpHeight[currentRow] = oldVPHeight + (y - my);
@@ -565,12 +565,12 @@ void visualizer::mouseDrag(int x, int y){
       int vpMax = vpHeight[currentRow+1] - 2*vpPadding;
       int vpMin = vpHeight[currentRow-1]   + 2*vpPadding;
 
-      if( vpHeight[currentRow] >= vpMax )
+      if ( vpHeight[currentRow] >= vpMax )
         vpHeight[currentRow] = vpMax;
-      else if( vpHeight[currentRow] <= vpMin )
+      else if ( vpHeight[currentRow] <= vpMin )
         vpHeight[currentRow] = vpMin;
 
-      for(int c=0; c<vpColCount; c++){
+      for (int c=0; c<vpColCount; c++) {
         viewports[currentRow-1][c].resize(vpWidth[c], vpHeight[currentRow-1],
                                           vpWidth[c+1] - vpWidth[c],
                                           vpHeight[currentRow] - vpHeight[currentRow-1]);
@@ -580,7 +580,7 @@ void visualizer::mouseDrag(int x, int y){
                                         vpHeight[currentRow+1] - vpHeight[currentRow]);
       }
     }
-    if(vpColDrag){
+    if (vpColDrag) {
       int currentCol = vpColDrag-1;
 
       vpWidth[currentCol] = oldVPWidth + (x - mx);
@@ -588,12 +588,12 @@ void visualizer::mouseDrag(int x, int y){
       int vpMax = vpWidth[currentCol+1] - 2*vpPadding;
       int vpMin = vpWidth[currentCol-1]   + 2*vpPadding;
 
-      if( vpWidth[currentCol] >= vpMax )
+      if ( vpWidth[currentCol] >= vpMax )
         vpWidth[currentCol] = vpMax;
-      else if( vpWidth[currentCol] <= vpMin )
+      else if ( vpWidth[currentCol] <= vpMin )
         vpWidth[currentCol] = vpMin;
 
-      for(int r=0; r<vpRowCount; r++){
+      for (int r=0; r<vpRowCount; r++) {
         viewports[r][currentCol-1].resize(vpWidth[currentCol-1], vpHeight[r],
                                           vpWidth[currentCol] - vpWidth[currentCol-1],
                                           vpHeight[r+1] - vpHeight[r]);
@@ -603,26 +603,26 @@ void visualizer::mouseDrag(int x, int y){
                                         vpHeight[r+1] - vpHeight[r]);
       }
     }
-    if(!(vpRowDrag || vpColDrag))
+    if (!(vpRowDrag || vpColDrag))
       viewports[rowVP][colVP].move(x, y);
   }
-  if(mouseState[2])
+  if (mouseState[2])
     viewports[rowVP][colVP].move(x, y);
 }
 
-void visualizer::mouseMove(int x, int y){
+void visualizer::mouseMove(int x, int y) {
   mx = x;
   my = y;
 
-  for(int v=0; v<vpRowCount; v++){
-    if( y <= vpHeight[v+1]){
+  for (int v=0; v<vpRowCount; v++) {
+    if ( y <= vpHeight[v+1]) {
       rowVP = v;
       break;
     }
   }
 
-  for(int v=0; v<vpColCount; v++){
-    if(x <= vpWidth[v+1]){
+  for (int v=0; v<vpColCount; v++) {
+    if (x <= vpWidth[v+1]) {
       colVP = v;
       break;
     }
@@ -630,42 +630,42 @@ void visualizer::mouseMove(int x, int y){
 
   setVPDrag(vpWidth , x, colVP, vpColCount, oldVPWidth , vpColDrag, GLUT_CURSOR_INHERIT, GLUT_CURSOR_LEFT_RIGHT);
 
-  if(!vpColDrag)
+  if (!vpColDrag)
     setVPDrag(vpHeight, y, rowVP, vpRowCount, oldVPHeight, vpRowDrag, GLUT_CURSOR_INHERIT, GLUT_CURSOR_UP_DOWN);
   else
     setVPDrag(vpHeight, y, rowVP, vpRowCount, oldVPHeight, vpRowDrag, GLUT_CURSOR_LEFT_RIGHT, GLUT_CURSOR_CROSSHAIR);
 }
 
-void visualizer::setVPDrag(int* vpOffset, int xy, int currentVP, int vpCount, int &oldOffset, int &drag, int defaultCursor, int cursor){
-  if( (vpOffset[currentVP] - vpPadding) <= xy && xy <= (vpOffset[currentVP] + vpPadding) ){
+void visualizer::setVPDrag(int* vpOffset, int xy, int currentVP, int vpCount, int &oldOffset, int &drag, int defaultCursor, int cursor) {
+  if ( (vpOffset[currentVP] - vpPadding) <= xy && xy <= (vpOffset[currentVP] + vpPadding) ) {
     glutSetCursor(cursor);
     oldOffset = vpOffset[currentVP];
 
     // Don't drag the left/top side of the window
     drag = ( currentVP % vpCount ) ? (currentVP + 1) : 0;
   }
-  else if( (vpOffset[currentVP+1] - vpPadding) <= xy && xy <= (vpOffset[currentVP+1] + vpPadding) ){
+  else if ( (vpOffset[currentVP+1] - vpPadding) <= xy && xy <= (vpOffset[currentVP+1] + vpPadding) ) {
     glutSetCursor(cursor);
     oldOffset = vpOffset[currentVP+1];
 
     // Don't drag the right/bottom side of the window
     drag = (currentVP < (vpCount-1)) ? (currentVP + 2) : 0;
   }
-  else{
+  else {
     glutSetCursor(defaultCursor);
     drag = 0;
   }
 }
 
-int visualizer::getVP(){
+int visualizer::getVP() {
   return ( vpColCount*rowVP + colVP );
 }
 //=========================================================================
 
 
 //--[ CAMERA FUNCTIONS ]---------------------------------------------------
-void visualizer::createViewports(int rCount, int cCount){
-  if(rCount <= 0 || cCount <= 0){
+void visualizer::createViewports(int rCount, int cCount) {
+  if (rCount <= 0 || cCount <= 0) {
     printf("Number of viewports [ %d , %d ] is not acceptable.\nExiting Program.\n", rCount, cCount);
     throw 1;
   }
@@ -679,18 +679,18 @@ void visualizer::createViewports(int rCount, int cCount){
   vpWidth  = new int[rCount+1];
   vpHeight = new int[cCount+1];
 
-  for(int v=0; v<=cCount; v++)
+  for (int v=0; v<=cCount; v++)
     vpWidth[v]  = v*dw;
 
-  for(int v=0; v<=rCount; v++)
+  for (int v=0; v<=rCount; v++)
     vpHeight[v] = v*dh;
 
   viewports = new viewport*[vpRowCount];
-  for(int v=0; v<vpRowCount; v++)
+  for (int v=0; v<vpRowCount; v++)
     viewports[v] = new viewport[vpColCount];
 
-  for(int r=0; r<rCount; r++){
-    for(int c=0; c<cCount; c++){
+  for (int r=0; r<rCount; r++) {
+    for (int c=0; c<cCount; c++) {
       viewports[r][c].setAspectInformation(fov, znear, zfar);
       viewports[r][c].resize(width, height,
                              vpWidth[c], vpHeight[r],
@@ -709,7 +709,7 @@ void visualizer::createViewports(int rCount, int cCount){
 }
 
 
-void visualizer::fitBox(int r, int c, GLfloat x1, GLfloat x2, GLfloat y1, GLfloat y2){
+void visualizer::fitBox(int r, int c, GLfloat x1, GLfloat x2, GLfloat y1, GLfloat y2) {
   GLfloat fov    = viewports[r][c].fov;
   GLfloat aspect = viewports[r][c].aspect;
 
@@ -723,48 +723,48 @@ void visualizer::fitBox(int r, int c, GLfloat x1, GLfloat x2, GLfloat y1, GLfloa
   viewports[r][c].setCamera(x,y,z);
 }
 
-void visualizer::fitBox(int r, int c, GLfloat x1, GLfloat x2, GLfloat y1, GLfloat y2, GLfloat z1, GLfloat z2){
+void visualizer::fitBox(int r, int c, GLfloat x1, GLfloat x2, GLfloat y1, GLfloat y2, GLfloat z1, GLfloat z2) {
   GLfloat* up    = viewports[r][c].up;
   GLfloat* right = viewports[r][c].right;
 }
 
-void visualizer::placeViewport(int r, int c){
+void visualizer::placeViewport(int r, int c) {
   viewports[r][c].place();
 }
 
-void visualizer::setCamera(int r, int c, GLfloat x, GLfloat y, GLfloat z){
+void visualizer::setCamera(int r, int c, GLfloat x, GLfloat y, GLfloat z) {
   viewports[r][c].setCamera(x,y,z);
 }
 
-void visualizer::setLight(int r, int c, char f){
+void visualizer::setLight(int r, int c, char f) {
   viewports[r][c].setLight(f);
 }
 
-void visualizer::toggleLight(int r, int c){
+void visualizer::toggleLight(int r, int c) {
   viewports[r][c].toggleLight();
 }
 
-void visualizer::setBackground(int r, int c, GLfloat red, GLfloat green, GLfloat blue){
+void visualizer::setBackground(int r, int c, GLfloat red, GLfloat green, GLfloat blue) {
   viewports[r][c].setBackground(red, green, blue);
 }
 
-void visualizer::setBackground(int r, int c, int red, int green, int blue){
+void visualizer::setBackground(int r, int c, int red, int green, int blue) {
   viewports[r][c].setBackground(red, green, blue);
 }
 
-void visualizer::drawBackground(int r, int c){
+void visualizer::drawBackground(int r, int c) {
   viewports[r][c].drawBackground();
 }
 
-void visualizer::placeCamera(int r, int c){
+void visualizer::placeCamera(int r, int c) {
   viewports[r][c].placeCamera();
 }
 
-void visualizer::updateCamera(int r, int c){
+void visualizer::updateCamera(int r, int c) {
   viewports[r][c].updateCamera();
 }
 
-void visualizer::drawBackground(){
+void visualizer::drawBackground() {
   glViewport(0, 0, width, height);
 
   gluLookAt(0, 0, 0,
@@ -787,18 +787,18 @@ void visualizer::drawBackground(){
   endHUD();
 }
 
-void visualizer::setOutlineColor(GLfloat r, GLfloat g, GLfloat b){
+void visualizer::setOutlineColor(GLfloat r, GLfloat g, GLfloat b) {
   setOutlineColor(r,g,b,1);
 }
 
-void visualizer::setOutlineColor(GLfloat r, GLfloat g, GLfloat b, GLfloat a){
+void visualizer::setOutlineColor(GLfloat r, GLfloat g, GLfloat b, GLfloat a) {
   vpOutlineColor[0] = r;
   vpOutlineColor[1] = g;
   vpOutlineColor[2] = b;
   vpOutlineColor[3] = a;
 }
 
-void visualizer::drawViewportOutlines(){
+void visualizer::drawViewportOutlines() {
   glViewport(0, 0, width, height);
 
   gluLookAt(0, 0, 0,
@@ -811,14 +811,14 @@ void visualizer::drawViewportOutlines(){
 
   glBegin(GL_QUADS);
 
-  for(int r=1; r<vpRowCount; r++){
+  for (int r=1; r<vpRowCount; r++) {
     glColor4f(color[0], color[1], color[2], color[3]); glVertex2f(0    , vpHeight[r] - vpOutlineSize);
     glColor4f(color[0], color[1], color[2], color[3]); glVertex2f(0    , vpHeight[r] + vpOutlineSize);
     glColor4f(color[0], color[1], color[2], color[3]); glVertex2f(width, vpHeight[r] + vpOutlineSize);
     glColor4f(color[0], color[1], color[2], color[3]); glVertex2f(width, vpHeight[r] - vpOutlineSize);
   }
 
-  for(int c=1; c<vpColCount; c++){
+  for (int c=1; c<vpColCount; c++) {
     glColor4f(color[0], color[1], color[2], color[3]); glVertex2f(vpWidth[c] - vpOutlineSize, 0);
     glColor4f(color[0], color[1], color[2], color[3]); glVertex2f(vpWidth[c] + vpOutlineSize, 0);
     glColor4f(color[0], color[1], color[2], color[3]); glVertex2f(vpWidth[c] + vpOutlineSize, height);
@@ -830,7 +830,7 @@ void visualizer::drawViewportOutlines(){
   endHUD();
 }
 
-void visualizer::startHUD(){
+void visualizer::startHUD() {
   glMatrixMode(GL_PROJECTION);
   glPushMatrix();
   glLoadIdentity();
@@ -842,7 +842,7 @@ void visualizer::startHUD(){
   glDisable(GL_DEPTH_TEST);
 }
 
-void visualizer::endHUD(){
+void visualizer::endHUD() {
   glEnable(GL_DEPTH_TEST);
 
   glMatrixMode(GL_PROJECTION);
@@ -854,7 +854,7 @@ void visualizer::endHUD(){
 
 
 //--[ MOUSE FUNCTIONS ]----------------------------------------------------
-void visualizer::getRayNormal(int x, int y, GLfloat *bgPos, GLfloat *normal){
+void visualizer::getRayNormal(int x, int y, GLfloat *bgPos, GLfloat *normal) {
   GLint viewport[4];
   GLdouble modelview[16], projection[16];
   GLdouble winX, winY;
@@ -871,11 +871,11 @@ void visualizer::getRayNormal(int x, int y, GLfloat *bgPos, GLfloat *normal){
   gluUnProject( winX, winY, 0, modelview, projection, viewport, bg2, bg2+1, bg2+2);
   gluUnProject( winX, winY, 1, modelview, projection, viewport, fg2, fg2+1, fg2+2);
 
-  for(int i=0; i<16; i++)
+  for (int i=0; i<16; i++)
     modelview[i] = 0.0;
-  for(int i=0; i<4; i++)
+  for (int i=0; i<4; i++)
     modelview[4*i+3] = 1.0;
-  for(int i=0; i<3; i++){
+  for (int i=0; i<3; i++) {
     modelview[i]   = bg2[i];
     modelview[4+i] = fg2[i];
   }
@@ -887,7 +887,7 @@ void visualizer::getRayNormal(int x, int y, GLfloat *bgPos, GLfloat *normal){
 
   glPopMatrix();
 
-  for(int i=0; i<3; i++){
+  for (int i=0; i<3; i++) {
     bgPos[i]  = modelview[i];
     normal[i] = modelview[4+i] - modelview[i];
     norm += normal[i]*normal[i];
@@ -895,92 +895,92 @@ void visualizer::getRayNormal(int x, int y, GLfloat *bgPos, GLfloat *normal){
 
   norm = 1.0/sqrt(norm);
 
-  for(int i=0; i<3; i++)
+  for (int i=0; i<3; i++)
     normal[i] *= norm;
 }
 
-void visualizer::leftClickDown(int x, int y){
+void visualizer::leftClickDown(int x, int y) {
   mx = x;
   my = y;
 
   viewports[rowVP][colVP].leftClick(x,y);
 }
 
-void visualizer::leftClickUp(int x, int y){
+void visualizer::leftClickUp(int x, int y) {
   drag_f = 0;
 }
 
-void visualizer::rightClickDown(int x, int y){
+void visualizer::rightClickDown(int x, int y) {
   mx = x;
   my = y;
 
   viewports[rowVP][colVP].rightClick(x,y);
 }
 
-void visualizer::rightClickUp(int x, int y){
+void visualizer::rightClickUp(int x, int y) {
   drag_f = 0;
 }
 //=========================================================================
 
 
 //--[ KEY FUNCTIONS ]----------------------------------------------------
-char visualizer::keyIsPressed(char c){
+char visualizer::keyIsPressed(char c) {
   return keyState[c];
 }
 
-char visualizer::lastKeyPressed(){
+char visualizer::lastKeyPressed() {
   return lastKey_f;
 }
 
-void visualizer::toggleWireframeMode(int x, int y){
+void visualizer::toggleWireframeMode(int x, int y) {
   viewports[rowVP][colVP].toggleWireframeMode();
 }
 
-void visualizer::exitFunction(int x, int y){
+void visualizer::exitFunction(int x, int y) {
   exit(1);
 }
 
-void visualizer::pause(int x, int y){
+void visualizer::pause(int x, int y) {
   pause_f = !pause_f;
 }
 
-char visualizer::isPaused(){
+char visualizer::isPaused() {
   return pause_f;
 }
 
-void visualizer::moveForward(int x, int y){
+void visualizer::moveForward(int x, int y) {
   viewports[rowVP][colVP].moveForward();
 }
 
-void visualizer::moveBackward(int x, int y){
+void visualizer::moveBackward(int x, int y) {
   viewports[rowVP][colVP].moveBackward();
 }
 
-void visualizer::moveLeft(int x, int y){
+void visualizer::moveLeft(int x, int y) {
   viewports[rowVP][colVP].moveLeft();
 }
 
-void visualizer::moveRight(int x, int y){
+void visualizer::moveRight(int x, int y) {
   viewports[rowVP][colVP].moveRight();
 }
 
-void visualizer::rotateUp(int x, int y){
+void visualizer::rotateUp(int x, int y) {
   viewports[rowVP][colVP].rotateUp();
 }
 
-void visualizer::rotateDown(int x, int y){
+void visualizer::rotateDown(int x, int y) {
   viewports[rowVP][colVP].rotateDown();
 }
 
-void visualizer::rotateLeft(int x, int y){
+void visualizer::rotateLeft(int x, int y) {
   viewports[rowVP][colVP].rotateLeft();
 }
 
-void visualizer::rotateRight(int x, int y){
+void visualizer::rotateRight(int x, int y) {
   viewports[rowVP][colVP].rotateRight();
 }
 
-void visualizer::setupColors(){
+void visualizer::setupColors() {
   colorCount = 14;
   palette = new GLfloat[3*colorCount];
 
@@ -1000,7 +1000,7 @@ void visualizer::setupColors(){
   palette[3*13 + 0] = (244/255.0); palette[3*13 + 1] = (164/255.0); palette[3*13 + 2] = ( 96/255.0);
 }
 
-void visualizer::paletteColor(int c, GLfloat alpha){
+void visualizer::paletteColor(int c, GLfloat alpha) {
   int off = 3*(c % colorCount);
 
   glColor4f(palette[off], palette[off+1], palette[off+2], alpha);

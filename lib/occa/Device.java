@@ -1,11 +1,5 @@
 package occa;
 
-import occa.Kernel;
-import occa.KernelInfo;
-import occa.Stream;
-import occa.StreamTag;
-import occa.Memory;
-
 public class Device {
   private long handle;
 
@@ -15,15 +9,15 @@ public class Device {
 
   public static final KernelInfo noKernelInfo = new KernelInfo();
 
-  public Device(){
+  public Device() {
     handle = 0;
   }
 
-  public Device(Device d){
+  public Device(Device d) {
     handle = d.handle;
   }
 
-  public Device(String[] infos){
+  public Device(String[] infos) {
     setup(infos);
   }
 
@@ -60,7 +54,7 @@ public class Device {
                                    KernelInfo info);
 
   public Kernel buildKernel(String[] str,
-                            String[] functionName){
+                            String[] functionName) {
 
     return buildKernel(str, functionName, noKernelInfo);
   }
@@ -71,21 +65,21 @@ public class Device {
                                              int language);
 
   public Kernel buildKernelFromString(String[] content,
-                                      String[] functionName){
+                                      String[] functionName) {
 
     return buildKernelFromString(content, functionName, noKernelInfo, usingOKL);
   }
 
   public Kernel buildKernelFromString(String[] content,
                                       String[] functionName,
-                                      KernelInfo info){
+                                      KernelInfo info) {
 
     return buildKernelFromString(content, functionName, info, usingOKL);
   }
 
   public Kernel buildKernelFromString(String[] content,
                                       String[] functionName,
-                                      int language){
+                                      int language) {
 
     return buildKernelFromString(content, functionName, noKernelInfo, language);
   }
@@ -95,7 +89,7 @@ public class Device {
                                              KernelInfo info);
 
   public Kernel buildKernelFromSource(String[] filename,
-                                      String[] functionName){
+                                      String[] functionName) {
 
     return buildKernelFromSource(filename, functionName, noKernelInfo);
   }
@@ -112,7 +106,7 @@ public class Device {
   public native <TM> Memory malloc(long bytes,
                                    TM[] src);
 
-  public Memory malloc(long bytes){
+  public Memory malloc(long bytes) {
 
     return malloc(bytes, new Object[0]);
   }
@@ -120,7 +114,7 @@ public class Device {
   public native <TM> TM[] managedAlloc(long bytes,
                                        TM[] src);
 
-  public <TM> TM[] managedAlloc(long bytes){
+  public <TM> TM[] managedAlloc(long bytes) {
     @SuppressWarnings("unchecked")
     TM[] src = (TM[]) new Object[0];
 
@@ -130,7 +124,7 @@ public class Device {
   public native <TM> Memory mappedAlloc(long bytes,
                                         TM[] src);
 
-  public Memory mappedAlloc(long bytes){
+  public Memory mappedAlloc(long bytes) {
 
     return mappedAlloc(bytes, new Object[0]);
   }
@@ -138,7 +132,7 @@ public class Device {
   public native <TM> TM[] managedMappedAlloc(long bytes,
                                               TM[] src);
 
-  public <TM> TM[] managedMappedAlloc(long bytes){
+  public <TM> TM[] managedMappedAlloc(long bytes) {
     @SuppressWarnings("unchecked")
     TM[] src = (TM[]) new Object[0];
 

@@ -47,7 +47,7 @@ tFloat castShadow(const tFloat3 rayLocation,
         return 0.0f;
 
       const tFloat kht = (k * h / t);
-      if(kht < ret)
+      if (kht < ret)
         ret = kht;
 
       t += h;
@@ -61,7 +61,7 @@ kernel void rayMarcher(char *rgba @arrayArg(dims = 3),
                        const tFloat3 viewDirectionY,
                        const tFloat3 viewDirectionX,
                        const tFloat3 nearFieldLocation,
-                       const tFloat3 eyeLocation){
+                       const tFloat3 eyeLocation) {
 
   for (int y = 0; y < HEIGHT; ++y; outer1) {
     const tFloat ny = y - (0.5 * HEIGHT);

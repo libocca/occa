@@ -2,7 +2,7 @@
 
 #include "occa.hpp"
 
-int main(int argc, char **argv){
+int main(int argc, char **argv) {
   int entries = 5;
 
   float *a  = new float[entries];
@@ -13,7 +13,7 @@ int main(int argc, char **argv){
   occa::kernel addVectors;
   occa::memory o_a, o_b, o_ab;
 
-  for(int i = 0; i < entries; ++i){
+  for (int i = 0; i < entries; ++i) {
     a[i]  = i;
     b[i]  = 1 - i;
     ab[i] = 0;
@@ -35,7 +35,7 @@ int main(int argc, char **argv){
 
   o_ab.copyTo(ab);
 
-  for(int i = 0; i < 5; ++i)
+  for (int i = 0; i < 5; ++i)
     std::cout << i << ": " << ab[i] << '\n';
 
   addVectors.free();

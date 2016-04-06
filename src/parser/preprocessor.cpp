@@ -1,5 +1,29 @@
+/* The MIT License (MIT)
+ *
+ * Copyright (c) 2014-2016 David Medina and Tim Warburton
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ */
+
 #include "occa/parser/preprocessor.hpp"
 #include "occa/parser/parser.hpp"
+#include "occa/tools/misc.hpp"
+#include "occa/tools/string.hpp"
 
 namespace occa {
   namespace parserNS {
@@ -9,11 +33,11 @@ namespace occa {
       type(type_) {}
 
     bool opHolder::operator < (const opHolder &h) const {
-      if(op < h.op)
+      if (op < h.op)
         return true;
-      else if(op > h.op)
+      else if (op > h.op)
         return false;
-      else if(type < h.type)
+      else if (type < h.type)
         return true;
 
       return false;
@@ -28,29 +52,29 @@ namespace occa {
 
 
     //---[ Type Holder ]----------------------------
-    typeHolder::typeHolder(){
+    typeHolder::typeHolder() {
       type        = noType;
       value.void_ = 0;
     }
 
-    typeHolder::typeHolder(const typeHolder &th){
+    typeHolder::typeHolder(const typeHolder &th) {
       type        = th.type;
       value.void_ = th.value.void_;
     }
 
-    typeHolder::typeHolder(const std::string &str){
+    typeHolder::typeHolder(const std::string &str) {
       load(str);
     }
 
-    typeHolder::typeHolder(const std::string &str, info_t type_){
-      if(type_ == noType){
+    typeHolder::typeHolder(const std::string &str, info_t type_) {
+      if (type_ == noType) {
         load(str);
         return;
       }
 
       type = type_;
 
-      switch(type){
+      switch(type) {
       case boolType      : value.bool_       = occa::atoi(str); break;
       case charType      : value.char_       = occa::atoi(str); break;
       case ushortType    : value.ushort_     = occa::atoi(str); break;
@@ -69,7 +93,7 @@ namespace occa {
       }
     }
 
-    void typeHolder::load(const char *&c){
+    void typeHolder::load(const char *&c) {
       bool negative  = false;
       bool unsigned_ = false;
       bool decimal   = false;
@@ -80,8 +104,8 @@ namespace occa {
 
       const char *c0 = c;
 
-      if((strcmp(c, "true")  == 0) ||
-         (strcmp(c, "false") == 0)){
+      if ((strcmp(c, "true")  == 0) ||
+         (strcmp(c, "false") == 0)) {
 
         type        = boolType;
         value.bool_ = (strcmp(c, "true") == 0);
@@ -89,7 +113,7 @@ namespace occa {
         ++c;
         return;
       }
-      else if(strcmp(c, "NULL")  == 0){
+      else if (strcmp(c, "NULL")  == 0) {
         type        = voidType;
         value.void_ = 0;
 
@@ -97,38 +121,38 @@ namespace occa {
         return;
       }
 
-      if((*c == '+') || (*c == '-')){
+      if ((*c == '+') || (*c == '-')) {
         negative = (*c == '-');
         ++c;
       }
 
-      if(*c == '0'){
+      if (*c == '0') {
         ++digits;
         ++c;
 
         const char C = upChar(*(c++));
 
-        if(C == 'X')
+        if (C == 'X')
           bits = 4;
-        else if(C == 'B')
+        else if (C == 'B')
           bits = 2;
-        else if(('0' <= C) && (C <= '9'))
+        else if (('0' <= C) && (C <= '9'))
           bits = 3;
         else
           --c;
       }
 
-      while(true){
+      while(true) {
         const char C = upChar(*c);
 
-        if(('0' <= *c) && (*c <= '9')){
+        if (('0' <= *c) && (*c <= '9')) {
           ++digits;
         }
-        else if((bits == 4) &&
-                ('A' <=  C) && ( C <= 'F')){
+        else if ((bits == 4) &&
+                ('A' <=  C) && ( C <= 'F')) {
           ++digits;
         }
-        else if(*c == '.')
+        else if (*c == '.')
           decimal = true;
         else
           break;
@@ -136,18 +160,18 @@ namespace occa {
         ++c;
       }
 
-      while(*c != '\0'){
+      while(*c != '\0') {
         const char C = upChar(*c);
 
-        if(C == 'L'){
+        if (C == 'L') {
           ++longs;
           ++c;
         }
-        else if(C == 'U'){
+        else if (C == 'U') {
           unsigned_ = true;
           ++c;
         }
-        else if(C == 'E'){
+        else if (C == 'E') {
           ++c;
 
           typeHolder exp;
@@ -158,7 +182,7 @@ namespace occa {
 
           break;
         }
-        else if(C == 'F'){
+        else if (C == 'F') {
           float_ = true;
           ++c;
         }
@@ -167,9 +191,9 @@ namespace occa {
       }
 
       // If there was something else or no number
-      if(((*c != '\0') &&
+      if (((*c != '\0') &&
           !charIsIn(*c, parserNS::cWordDelimiter)) ||
-         (digits == 0)){
+         (digits == 0)) {
 
         type = noType;
 
@@ -177,45 +201,45 @@ namespace occa {
         return;
       }
 
-      if(decimal || float_){
-        if(!float_){
+      if (decimal || float_) {
+        if (!float_) {
           type          = doubleType;
           value.double_ = occa::atod(std::string(c0, c - c0));
         }
-        else{
+        else {
           type         = floatType;
           value.float_ = occa::atof(std::string(c0, c - c0));
         }
       }
-      else{
-        if(longs == 0){
-          if(!unsigned_){
+      else {
+        if (longs == 0) {
+          if (!unsigned_) {
             type       = intType;
             value.int_ = occa::atoi(std::string(c0, c - c0));
           }
-          else{
+          else {
             type        = uintType;
             value.uint_ = occa::atoi(std::string(c0, c - c0));
           }
         }
-        else if(longs == 1){
-          if(!unsigned_){
+        else if (longs == 1) {
+          if (!unsigned_) {
             type        = longType;
             value.long_ = occa::atoi(std::string(c0, c - c0));
           }
-          else{
+          else {
             type         = ulongType;
             value.ulong_ = occa::atoi(std::string(c0, c - c0));
           }
         }
-        else{
+        else {
           type        = voidType;
           value.void_ = occa::atoi(std::string(c0, c - c0));
-          // if(!unsigned_){
+          // if (!unsigned_) {
           //   type            = longlongType;
           //   value.longlong_ = occa::atoi(std::string(c0, c - c0));
           // }
-          // else{
+          // else {
           //   type             = ulonglongType;
           //   value.ulonglong_ = occa::atoi(std::string(c0, c - c0));
           // }
@@ -226,174 +250,174 @@ namespace occa {
       ignoreResult(negative);
     }
 
-    void typeHolder::load(const std::string &str){
+    void typeHolder::load(const std::string &str) {
       const char *c = str.c_str();
       load(c);
     }
 
-    typeHolder::typeHolder(const bool bool__){
+    typeHolder::typeHolder(const bool bool__) {
       type        = boolType;
       value.bool_ = bool__;
     }
 
-    typeHolder::typeHolder(const char char__){
+    typeHolder::typeHolder(const char char__) {
       type        = charType;
       value.char_ = char__;
     }
 
-    typeHolder::typeHolder(const unsigned short ushort__){
+    typeHolder::typeHolder(const unsigned short ushort__) {
       type          = ushortType;
       value.ushort_ = ushort__;
     }
 
-    typeHolder::typeHolder(const short short__){
+    typeHolder::typeHolder(const short short__) {
       type         = shortType;
       value.short_ = short__;
     }
 
-    typeHolder::typeHolder(const unsigned int uint__){
+    typeHolder::typeHolder(const unsigned int uint__) {
       type        = uintType;
       value.uint_ = uint__;
     }
 
-    typeHolder::typeHolder(const int int__){
+    typeHolder::typeHolder(const int int__) {
       type       = intType;
       value.int_ = int__;
     }
 
-    typeHolder::typeHolder(const unsigned long ulong__){
+    typeHolder::typeHolder(const unsigned long ulong__) {
       type         = ulongType;
       value.ulong_ = ulong__;
     }
 
-    typeHolder::typeHolder(const long long__){
+    typeHolder::typeHolder(const long long__) {
       type        = longType;
       value.long_ = long__;
     }
 
-    // typeHolder::typeHolder(const unsigned long long ulonglong__){
+    // typeHolder::typeHolder(const unsigned long long ulonglong__) {
     //   type             = ulonglongType;
     //   value.ulonglong_ = ulonglong__;
     // }
 
-    // typeHolder::typeHolder(const long long longlong__){
+    // typeHolder::typeHolder(const long long longlong__) {
     //   type            = longlongType;
     //   value.longlong_ = longlong__;
     // }
 
-    typeHolder::typeHolder(const float float__){
+    typeHolder::typeHolder(const float float__) {
       type         = floatType;
       value.float_ = float__;
     }
 
-    typeHolder::typeHolder(const double double__){
+    typeHolder::typeHolder(const double double__) {
       type          = doubleType;
       value.double_ = double__;
     }
 
-    typeHolder& typeHolder::operator = (const typeHolder &th){
+    typeHolder& typeHolder::operator = (const typeHolder &th) {
       type        = th.type;
       value.void_ = th.value.void_;
 
       return *this;
     }
 
-    typeHolder& typeHolder::operator = (const std::string &str){
+    typeHolder& typeHolder::operator = (const std::string &str) {
       *this = typeHolder(str);
 
       return *this;
     }
 
-    typeHolder& typeHolder::operator = (const bool bool__){
+    typeHolder& typeHolder::operator = (const bool bool__) {
       type        = boolType;
       value.bool_ = bool__;
 
       return *this;
     }
 
-    typeHolder& typeHolder::operator = (const char char__){
+    typeHolder& typeHolder::operator = (const char char__) {
       type        = charType;
       value.char_ = char__;
 
       return *this;
     }
 
-    typeHolder& typeHolder::operator = (const unsigned short ushort__){
+    typeHolder& typeHolder::operator = (const unsigned short ushort__) {
       type          = ushortType;
       value.ushort_ = ushort__;
 
       return *this;
     }
 
-    typeHolder& typeHolder::operator = (const short short__){
+    typeHolder& typeHolder::operator = (const short short__) {
       type         = shortType;
       value.short_ = short__;
 
       return *this;
     }
 
-    typeHolder& typeHolder::operator = (const unsigned int uint__){
+    typeHolder& typeHolder::operator = (const unsigned int uint__) {
       type        = uintType;
       value.uint_ = uint__;
 
       return *this;
     }
 
-    typeHolder& typeHolder::operator = (const int int__){
+    typeHolder& typeHolder::operator = (const int int__) {
       type       = intType;
       value.int_ = int__;
 
       return *this;
     }
 
-    typeHolder& typeHolder::operator = (const unsigned long ulong__){
+    typeHolder& typeHolder::operator = (const unsigned long ulong__) {
       type         = ulongType;
       value.ulong_ = ulong__;
 
       return *this;
     }
 
-    typeHolder& typeHolder::operator = (const long long__){
+    typeHolder& typeHolder::operator = (const long long__) {
       type        = longType;
       value.long_ = long__;
 
       return *this;
     }
 
-    // typeHolder& typeHolder::operator = (const unsigned long long ulonglong__){
+    // typeHolder& typeHolder::operator = (const unsigned long long ulonglong__) {
     //   type             = ulonglongType;
     //   value.ulonglong_ = ulonglong__;
 
     //   return *this;
     // }
 
-    // typeHolder& typeHolder::operator = (const long long longlong__){
+    // typeHolder& typeHolder::operator = (const long long longlong__) {
     //   type            = longlongType;
     //   value.longlong_ = longlong__;
 
     //   return *this;
     // }
 
-    typeHolder& typeHolder::operator = (const float float__){
+    typeHolder& typeHolder::operator = (const float float__) {
       type         = floatType;
       value.float_ = float__;
 
       return *this;
     }
 
-    typeHolder& typeHolder::operator = (const double double__){
+    typeHolder& typeHolder::operator = (const double double__) {
       type          = doubleType;
       value.double_ = double__;
 
       return *this;
     }
 
-    std::string typeHolder::baseTypeStr(){
+    std::string typeHolder::baseTypeStr() {
       return typeToBaseTypeStr(type);
     }
 
-    std::string typeHolder::typeToBaseTypeStr(info_t type){
-      switch(type){
+    std::string typeHolder::typeToBaseTypeStr(info_t type) {
+      switch(type) {
       case boolType      : return std::string("bool");   break;
       case charType      : return std::string("char");   break;
       case ushortType    : return std::string("short");  break;
@@ -412,7 +436,7 @@ namespace occa {
     }
 
     bool typeHolder::isUnsigned() const {
-      switch(type){
+      switch(type) {
       case boolType      : return false; break;
       case charType      : return false; break;
       case ushortType    : return true;  break;
@@ -433,7 +457,7 @@ namespace occa {
     }
 
     bool typeHolder::isAnInt() const {
-      switch(type){
+      switch(type) {
       case boolType      : return true;  break;
       case charType      : return true;  break;
       case ushortType    : return true;  break;
@@ -454,7 +478,7 @@ namespace occa {
     }
 
     bool typeHolder::isALongInt() const {
-      switch(type){
+      switch(type) {
       case boolType      : return false; break;
       case charType      : return false; break;
       case ushortType    : return false; break;
@@ -475,7 +499,7 @@ namespace occa {
     }
 
     // bool typeHolder::isALongLongInt() const {
-    //   switch(type){
+    //   switch(type) {
     //   case boolType      : return false; break;
     //   case charType      : return false; break;
     //   case ushortType    : return false; break;
@@ -496,7 +520,7 @@ namespace occa {
     // }
 
     bool typeHolder::isAFloat() const {
-      switch(type){
+      switch(type) {
       case boolType      : return false; break;
       case charType      : return false; break;
       case ushortType    : return false; break;
@@ -517,7 +541,7 @@ namespace occa {
     }
 
     bool typeHolder::isADouble() const {
-      switch(type){
+      switch(type) {
       case boolType      : return false; break;
       case charType      : return false; break;
       case ushortType    : return false; break;
@@ -538,8 +562,8 @@ namespace occa {
     }
 
     //   ---[ Unary Operators ]-----------------
-    typeHolder typeHolder::operator ! (){
-      switch(type){
+    typeHolder typeHolder::operator ! () {
+      switch(type) {
       case boolType      : return typeHolder(!value.bool_);      break;
       case charType      : return typeHolder(!value.char_);      break;
       case ushortType    : return typeHolder(!value.ushort_);    break;
@@ -559,12 +583,12 @@ namespace occa {
       }
     }
 
-    typeHolder typeHolder::operator + (){
+    typeHolder typeHolder::operator + () {
       return *this;
     }
 
-    typeHolder typeHolder::operator - (){
-      switch(type){
+    typeHolder typeHolder::operator - () {
+      switch(type) {
       case boolType      : return typeHolder(-value.bool_);      break;
       case charType      : return typeHolder(-value.char_);      break;
       case ushortType    : return typeHolder(-value.ushort_);    break;
@@ -584,8 +608,8 @@ namespace occa {
       }
     }
 
-    typeHolder typeHolder::operator ~ (){
-      switch(type){
+    typeHolder typeHolder::operator ~ () {
+      switch(type) {
       case boolType      : return typeHolder(~value.bool_);                           break;
       case charType      : return typeHolder(~value.char_);                           break;
       case ushortType    : return typeHolder(~value.ushort_);                         break;
@@ -606,8 +630,8 @@ namespace occa {
       return typeHolder(0);
     }
 
-    typeHolder& typeHolder::operator ++ (){
-      switch(type){
+    typeHolder& typeHolder::operator ++ () {
+      switch(type) {
       case boolType      : value.bool_ = !value.bool_; break;
       case charType      : ++value.char_;              break;
       case ushortType    : ++value.ushort_;            break;
@@ -628,8 +652,8 @@ namespace occa {
       return *this;
     }
 
-    typeHolder& typeHolder::operator -- (){
-      switch(type){
+    typeHolder& typeHolder::operator -- () {
+      switch(type) {
       case boolType      : value.bool_ = !value.bool_; break;
       case charType      : --value.char_;              break;
       case ushortType    : --value.ushort_;            break;
@@ -650,8 +674,8 @@ namespace occa {
       return *this;
     }
 
-    typeHolder typeHolder::operator ++ (int){
-      switch(type){
+    typeHolder typeHolder::operator ++ (int) {
+      switch(type) {
       case boolType      : value.bool_ = !value.bool_; return typeHolder(!value.bool_); break;
       case charType      : return typeHolder(value.char_++);      break;
       case ushortType    : return typeHolder(value.ushort_++);    break;
@@ -671,8 +695,8 @@ namespace occa {
       }
     }
 
-    typeHolder typeHolder::operator -- (int){
-      switch(type){
+    typeHolder typeHolder::operator -- (int) {
+      switch(type) {
       case boolType      : value.bool_ = !value.bool_; return typeHolder(!value.bool_); break;
       case charType      : return typeHolder(value.char_--);      break;
       case ushortType    : return typeHolder(value.ushort_--);    break;
@@ -695,10 +719,10 @@ namespace occa {
 
 
     //   ---[ Boolean Operators ]---------------
-    bool typeHolder::operator < (const typeHolder &th){
+    bool typeHolder::operator < (const typeHolder &th) {
       const int maxType = typeHolder::maxType(*this, th);
 
-      switch(maxType){
+      switch(maxType) {
       case boolType      : return (bool) (to<bool>()               < th.to<bool>());               break;
       case charType      : return (bool) (to<char>()               < th.to<char>());               break;
       case ushortType    : return (bool) (to<unsigned short>()     < th.to<unsigned short>());     break;
@@ -718,10 +742,10 @@ namespace occa {
       }
     }
 
-    bool typeHolder::operator <= (const typeHolder &th){
+    bool typeHolder::operator <= (const typeHolder &th) {
       const int maxType = typeHolder::maxType(*this, th);
 
-      switch(maxType){
+      switch(maxType) {
       case boolType      : return (bool) (to<bool>()               <= th.to<bool>());               break;
       case charType      : return (bool) (to<char>()               <= th.to<char>());               break;
       case ushortType    : return (bool) (to<unsigned short>()     <= th.to<unsigned short>());     break;
@@ -741,10 +765,10 @@ namespace occa {
       }
     }
 
-    bool typeHolder::operator == (const typeHolder &th){
+    bool typeHolder::operator == (const typeHolder &th) {
       const int maxType = typeHolder::maxType(*this, th);
 
-      switch(maxType){
+      switch(maxType) {
       case boolType      : return (bool) (to<bool>()               == th.to<bool>());               break;
       case charType      : return (bool) (to<char>()               == th.to<char>());               break;
       case ushortType    : return (bool) (to<unsigned short>()     == th.to<unsigned short>());     break;
@@ -764,10 +788,10 @@ namespace occa {
       }
     }
 
-    bool typeHolder::operator != (const typeHolder &th){
+    bool typeHolder::operator != (const typeHolder &th) {
       const int maxType = typeHolder::maxType(*this, th);
 
-      switch(maxType){
+      switch(maxType) {
       case boolType      : return (bool) (to<bool>()               != th.to<bool>());               break;
       case charType      : return (bool) (to<char>()               != th.to<char>());               break;
       case ushortType    : return (bool) (to<unsigned short>()     != th.to<unsigned short>());     break;
@@ -787,10 +811,10 @@ namespace occa {
       }
     }
 
-    bool typeHolder::operator >= (const typeHolder &th){
+    bool typeHolder::operator >= (const typeHolder &th) {
       const int maxType = typeHolder::maxType(*this, th);
 
-      switch(maxType){
+      switch(maxType) {
       case boolType      : return (bool) (to<bool>()               >= th.to<bool>());               break;
       case charType      : return (bool) (to<char>()               >= th.to<char>());               break;
       case ushortType    : return (bool) (to<unsigned short>()     >= th.to<unsigned short>());     break;
@@ -810,10 +834,10 @@ namespace occa {
       }
     }
 
-    bool typeHolder::operator > (const typeHolder &th){
+    bool typeHolder::operator > (const typeHolder &th) {
       const int maxType = typeHolder::maxType(*this, th);
 
-      switch(maxType){
+      switch(maxType) {
       case boolType      : return (bool) (to<bool>()               > th.to<bool>());               break;
       case charType      : return (bool) (to<char>()               > th.to<char>());               break;
       case ushortType    : return (bool) (to<unsigned short>()     > th.to<unsigned short>());     break;
@@ -833,10 +857,10 @@ namespace occa {
       }
     }
 
-    bool typeHolder::operator && (const typeHolder &th){
+    bool typeHolder::operator && (const typeHolder &th) {
       const int maxType = typeHolder::maxType(*this, th);
 
-      switch(maxType){
+      switch(maxType) {
       case boolType      : return (bool) (to<bool>()               && th.to<bool>());               break;
       case charType      : return (bool) (to<char>()               && th.to<char>());               break;
       case ushortType    : return (bool) (to<unsigned short>()     && th.to<unsigned short>());     break;
@@ -856,10 +880,10 @@ namespace occa {
       }
     }
 
-    bool typeHolder::operator || (const typeHolder &th){
+    bool typeHolder::operator || (const typeHolder &th) {
       const int maxType = typeHolder::maxType(*this, th);
 
-      switch(maxType){
+      switch(maxType) {
       case boolType      : return (bool) (to<bool>()               || th.to<bool>());               break;
       case charType      : return (bool) (to<char>()               || th.to<char>());               break;
       case ushortType    : return (bool) (to<unsigned short>()     || th.to<unsigned short>());     break;
@@ -882,10 +906,10 @@ namespace occa {
 
 
     //   ---[ Binary Operators ]----------------
-    typeHolder typeHolder::operator * (const typeHolder &th){
+    typeHolder typeHolder::operator * (const typeHolder &th) {
       const int maxType = typeHolder::maxType(*this, th);
 
-      switch(maxType){
+      switch(maxType) {
       case boolType      : return typeHolder(to<bool>()               * th.to<bool>());               break;
       case charType      : return typeHolder(to<char>()               * th.to<char>());               break;
       case ushortType    : return typeHolder(to<unsigned short>()     * th.to<unsigned short>());     break;
@@ -906,10 +930,10 @@ namespace occa {
       return typeHolder(0);
     }
 
-    typeHolder typeHolder::operator + (const typeHolder &th){
+    typeHolder typeHolder::operator + (const typeHolder &th) {
       const int maxType = typeHolder::maxType(*this, th);
 
-      switch(maxType){
+      switch(maxType) {
       case boolType      : return typeHolder(to<bool>()               + th.to<bool>());               break;
       case charType      : return typeHolder(to<char>()               + th.to<char>());               break;
       case ushortType    : return typeHolder(to<unsigned short>()     + th.to<unsigned short>());     break;
@@ -930,10 +954,10 @@ namespace occa {
       return typeHolder(0);
     }
 
-    typeHolder typeHolder::operator - (const typeHolder &th){
+    typeHolder typeHolder::operator - (const typeHolder &th) {
       const int maxType = typeHolder::maxType(*this, th);
 
-      switch(maxType){
+      switch(maxType) {
       case boolType      : return typeHolder(to<bool>()               - th.to<bool>());               break;
       case charType      : return typeHolder(to<char>()               - th.to<char>());               break;
       case ushortType    : return typeHolder(to<unsigned short>()     - th.to<unsigned short>());     break;
@@ -954,10 +978,10 @@ namespace occa {
       return typeHolder(0);
     }
 
-    typeHolder typeHolder::operator / (const typeHolder &th){
+    typeHolder typeHolder::operator / (const typeHolder &th) {
       const int maxType = typeHolder::maxType(*this, th);
 
-      switch(maxType){
+      switch(maxType) {
       case boolType      : return typeHolder(to<bool>()               / th.to<bool>());               break;
       case charType      : return typeHolder(to<char>()               / th.to<char>());               break;
       case ushortType    : return typeHolder(to<unsigned short>()     / th.to<unsigned short>());     break;
@@ -977,10 +1001,10 @@ namespace occa {
 
       return typeHolder(0);
     }
-    typeHolder typeHolder::operator % (const typeHolder &th){
+    typeHolder typeHolder::operator % (const typeHolder &th) {
       const int maxType = typeHolder::maxType(*this, th);
 
-      switch(maxType){
+      switch(maxType) {
       case boolType      : return typeHolder(to<bool>()               % th.to<bool>());               break;
       case charType      : return typeHolder(to<char>()               % th.to<char>());               break;
       case ushortType    : return typeHolder(to<unsigned short>()     % th.to<unsigned short>());     break;
@@ -1001,10 +1025,10 @@ namespace occa {
       return typeHolder(0);
     }
 
-    typeHolder typeHolder::operator & (const typeHolder &th){
+    typeHolder typeHolder::operator & (const typeHolder &th) {
       const int maxType = typeHolder::maxType(*this, th);
 
-      switch(maxType){
+      switch(maxType) {
       case boolType      : return typeHolder(to<bool>()               & th.to<bool>());               break;
       case charType      : return typeHolder(to<char>()               & th.to<char>());               break;
       case ushortType    : return typeHolder(to<unsigned short>()     & th.to<unsigned short>());     break;
@@ -1025,10 +1049,10 @@ namespace occa {
       return typeHolder(0);
     }
 
-    typeHolder typeHolder::operator | (const typeHolder &th){
+    typeHolder typeHolder::operator | (const typeHolder &th) {
       const int maxType = typeHolder::maxType(*this, th);
 
-      switch(maxType){
+      switch(maxType) {
       case boolType      : return typeHolder(to<bool>()               | th.to<bool>());               break;
       case charType      : return typeHolder(to<char>()               | th.to<char>());               break;
       case ushortType    : return typeHolder(to<unsigned short>()     | th.to<unsigned short>());     break;
@@ -1049,10 +1073,10 @@ namespace occa {
       return typeHolder(0);
     }
 
-    typeHolder typeHolder::operator ^ (const typeHolder &th){
+    typeHolder typeHolder::operator ^ (const typeHolder &th) {
       const int maxType = typeHolder::maxType(*this, th);
 
-      switch(maxType){
+      switch(maxType) {
       case boolType      : return typeHolder(to<bool>()               ^ th.to<bool>());               break;
       case charType      : return typeHolder(to<char>()               ^ th.to<char>());               break;
       case ushortType    : return typeHolder(to<unsigned short>()     ^ th.to<unsigned short>());     break;
@@ -1073,10 +1097,10 @@ namespace occa {
       return typeHolder(0);
     }
 
-    typeHolder typeHolder::operator >> (const typeHolder &th){
+    typeHolder typeHolder::operator >> (const typeHolder &th) {
       const int maxType = typeHolder::maxType(*this, th);
 
-      switch(maxType){
+      switch(maxType) {
       case boolType      : return typeHolder(to<bool>()               >> th.to<bool>());               break;
       case charType      : return typeHolder(to<char>()               >> th.to<char>());               break;
       case ushortType    : return typeHolder(to<unsigned short>()     >> th.to<unsigned short>());     break;
@@ -1097,10 +1121,10 @@ namespace occa {
       return typeHolder(0);
     }
 
-    typeHolder typeHolder::operator << (const typeHolder &th){
+    typeHolder typeHolder::operator << (const typeHolder &th) {
       const int maxType = typeHolder::maxType(*this, th);
 
-      switch(maxType){
+      switch(maxType) {
       case boolType      : return typeHolder(to<bool>()               << th.to<bool>());               break;
       case charType      : return typeHolder(to<char>()               << th.to<char>());               break;
       case ushortType    : return typeHolder(to<unsigned short>()     << th.to<unsigned short>());     break;
@@ -1124,81 +1148,81 @@ namespace occa {
 
 
     //   ---[ Assignment Operators ]--------------
-    typeHolder typeHolder::operator *= (const typeHolder &th){
+    typeHolder typeHolder::operator *= (const typeHolder &th) {
       *this = (*this * th);
       return *this;
     }
 
-    typeHolder typeHolder::operator += (const typeHolder &th){
+    typeHolder typeHolder::operator += (const typeHolder &th) {
       *this = (*this + th);
       return *this;
     }
 
-    typeHolder typeHolder::operator -= (const typeHolder &th){
+    typeHolder typeHolder::operator -= (const typeHolder &th) {
       *this = (*this - th);
       return *this;
     }
 
-    typeHolder typeHolder::operator /= (const typeHolder &th){
+    typeHolder typeHolder::operator /= (const typeHolder &th) {
       *this = (*this / th);
       return *this;
     }
 
-    typeHolder typeHolder::operator %= (const typeHolder &th){
+    typeHolder typeHolder::operator %= (const typeHolder &th) {
       *this = (*this % th);
       return *this;
     }
 
-    typeHolder typeHolder::operator &= (const typeHolder &th){
+    typeHolder typeHolder::operator &= (const typeHolder &th) {
       *this = (*this & th);
       return *this;
     }
 
-    typeHolder typeHolder::operator |= (const typeHolder &th){
+    typeHolder typeHolder::operator |= (const typeHolder &th) {
       *this = (*this | th);
       return *this;
     }
 
-    typeHolder typeHolder::operator ^= (const typeHolder &th){
+    typeHolder typeHolder::operator ^= (const typeHolder &th) {
       *this = (*this ^ th);
       return *this;
     }
 
-    typeHolder typeHolder::operator >>= (const typeHolder &th){
+    typeHolder typeHolder::operator >>= (const typeHolder &th) {
       *this = (*this >> th);
       return *this;
     }
 
-    typeHolder typeHolder::operator <<= (const typeHolder &th){
+    typeHolder typeHolder::operator <<= (const typeHolder &th) {
       *this = (*this << th);
       return *this;
     }
     //   =======================================
 
-    void typeHolder::convertTo(info_t type_){
-      if(isAnInt()){
-        if(isUnsigned()){
-          // if(isALongLongInt())
+    void typeHolder::convertTo(info_t type_) {
+      if (isAnInt()) {
+        if (isUnsigned()) {
+          // if (isALongLongInt())
           //   convertFrom<unsigned long long>(type_);
-          if(isALongInt())
+          if (isALongInt())
             convertFrom<unsigned long>(type_);
           else
             convertFrom<unsigned int>(type_);
         }
-        else{
-          if(isALongInt())
+        else {
+          if (isALongInt())
             convertFrom<int>(type_);
           else
             convertFrom<int>(type_);
         }
       }
-      else if(isAFloat()){
-          if(isADouble())
+      else if (isAFloat()) {
+          if (isADouble())
             convertFrom<double>(type_);
           else
             convertFrom<float>(type_);
       }
-      else{
+      else {
         OCCA_CHECK(false,
                    "Value not set\n");
       }
@@ -1207,7 +1231,7 @@ namespace occa {
     typeHolder::operator std::string () const {
       std::string str;
 
-      switch(type){
+      switch(type) {
       case intType   : str = occa::toString(value.int_);    break;
       case boolType  : str = occa::toString(value.bool_);   break;
       case charType  : str = occa::toString(value.char_);   break;
@@ -1220,8 +1244,8 @@ namespace occa {
                    "Value not set\n");
       }
 
-      if((str.find("inf") != std::string::npos)||
-         (str.find("INF") != std::string::npos)){
+      if ((str.find("inf") != std::string::npos)||
+         (str.find("INF") != std::string::npos)) {
 
         return str;
       }
@@ -1229,57 +1253,57 @@ namespace occa {
       // double/float is auto-printed properly from
       //  occa::toString()
 
-      if(type == longType)
+      if (type == longType)
         str += 'L';
 
       return str;
     }
 
-    std::ostream& operator << (std::ostream &out, const typeHolder &th){
+    std::ostream& operator << (std::ostream &out, const typeHolder &th) {
       out << (std::string) th;
 
       return out;
     }
 
-    info_t typePrecedence(typeHolder &a, typeHolder &b){
+    info_t typePrecedence(typeHolder &a, typeHolder &b) {
       return ((a.type < b.type) ? b.type : a.type);
     }
 
-    typeHolder applyLOperator(std::string op, const std::string &a_){
+    typeHolder applyLOperator(std::string op, const std::string &a_) {
       typeHolder a(a_);
       return applyLOperator(op, a);
     }
 
-    typeHolder applyLOperator(std::string op, typeHolder &a){
+    typeHolder applyLOperator(std::string op, typeHolder &a) {
       typeHolder ret;
 
-      if(op == "!")
+      if (op == "!")
         ret = !a;
-      else if(op == "+")
+      else if (op == "+")
         ret = a;
-      else if(op == "-")
+      else if (op == "-")
         ret = -a;
-      else if(op == "~")
+      else if (op == "~")
         ret = ~a;
-      else if(op == "++")
+      else if (op == "++")
         ret = ++a;
-      else if(op == "--")
+      else if (op == "--")
         ret = --a;
 
       return ret;
     }
 
-    typeHolder applyROperator(const std::string &a_, std::string op){
+    typeHolder applyROperator(const std::string &a_, std::string op) {
       typeHolder a(a_);
       return applyROperator(a, op);
     }
 
-    typeHolder applyROperator(typeHolder &a, std::string op){
+    typeHolder applyROperator(typeHolder &a, std::string op) {
       typeHolder ret;
 
-      if(op == "++")
+      if (op == "++")
         ret = a++;
-      else if(op == "--")
+      else if (op == "--")
         ret = a--;
 
       return ret;
@@ -1287,7 +1311,7 @@ namespace occa {
 
     typeHolder applyLROperator(const std::string &a_,
                                std::string op,
-                               const std::string &b_){
+                               const std::string &b_) {
       typeHolder a(a_), b(b_);
 
       return applyLROperator(a, op, b);
@@ -1295,72 +1319,72 @@ namespace occa {
 
     typeHolder applyLROperator(typeHolder &a,
                                std::string op,
-                               typeHolder &b){
+                               typeHolder &b) {
 
       typeHolder ret;
 
-      if(op == "<")
+      if (op == "<")
         ret = (a < b);
-      else if(op == "<=")
+      else if (op == "<=")
         ret = (a <= b);
-      else if(op == "==")
+      else if (op == "==")
         ret = (a == b);
-      else if(op == "!=")
+      else if (op == "!=")
         ret = (a != b);
-      else if(op == ">=")
+      else if (op == ">=")
         ret = (a >= b);
-      else if(op == ">")
+      else if (op == ">")
         ret = (a > b);
 
-      else if(op == "&&")
+      else if (op == "&&")
         ret = (a && b);
-      else if(op == "||")
+      else if (op == "||")
         ret = (a || b);
 
-      else if(op == "*")
+      else if (op == "*")
         ret = (a * b);
-      else if(op == "+")
+      else if (op == "+")
         ret = (a + b);
-      else if(op == "-")
+      else if (op == "-")
         ret = (a - b);
-      else if(op == "/")
+      else if (op == "/")
         ret = (a / b);
-      else if(op == "%")
+      else if (op == "%")
         ret = (a % b);
 
-      else if(op == "&")
+      else if (op == "&")
         ret = (a & b);
-      else if(op == "|")
+      else if (op == "|")
         ret = (a | b);
-      else if(op == "^")
+      else if (op == "^")
         ret = (a ^ b);
 
-      else if(op == ">>")
+      else if (op == ">>")
         ret = (a >> b);
-      else if(op == "<<")
+      else if (op == "<<")
         ret = (a << b);
 
-      else if(op == "*=")
+      else if (op == "*=")
         ret = (a *= b);
-      else if(op == "+=")
+      else if (op == "+=")
         ret = (a += b);
-      else if(op == "-=")
+      else if (op == "-=")
         ret = (a -= b);
-      else if(op == "/=")
+      else if (op == "/=")
         ret = (a /= b);
-      else if(op == "%=")
+      else if (op == "%=")
         ret = (a %= b);
 
-      else if(op == "&=")
+      else if (op == "&=")
         ret = (a &= b);
-      else if(op == "|=")
+      else if (op == "|=")
         ret = (a |= b);
-      else if(op == "^=")
+      else if (op == "^=")
         ret = (a ^= b);
 
-      else if(op == ">>=")
+      else if (op == ">>=")
         ret = (a >>= b);
-      else if(op == "<<=")
+      else if (op == "<<=")
         ret = (a <<= b);
 
       return ret;
@@ -1369,7 +1393,7 @@ namespace occa {
     typeHolder applyLCROperator(const std::string &a_,
                                 std::string op,
                                 const std::string &b_,
-                                const std::string &c_){
+                                const std::string &c_) {
       typeHolder a(a_), b(b_), c(c_);
 
       return applyLCROperator(a, op, b, c);
@@ -1378,27 +1402,27 @@ namespace occa {
     typeHolder applyLCROperator(typeHolder &a,
                                 std::string op,
                                 typeHolder &b,
-                                typeHolder &c){
+                                typeHolder &c) {
 
-      if(a != typeHolder(0))
+      if (a != typeHolder(0))
         return b;
       else
         return c;
     }
 
-    typeHolder evaluateString(const std::string &str, parserBase *parser){
+    typeHolder evaluateString(const std::string &str, parserBase *parser) {
       return evaluateString(str.c_str(), parser);
     }
 
-    typeHolder evaluateString(const char *c, parserBase *parser){
+    typeHolder evaluateString(const char *c, parserBase *parser) {
       skipWhitespace(c);
 
-      if(*c == '\0')
+      if (*c == '\0')
         return typeHolder("false");
 
       expNode lineExpNode(c);
 
-      if(parser != NULL)
+      if (parser != NULL)
         parser->applyMacros(lineExpNode.value);
 
       strip(lineExpNode.value);
@@ -1409,9 +1433,9 @@ namespace occa {
       expNode &flatRoot = *(lineExpNode.makeFlatHandle());
 
       // Check if a variable snuck in
-      for(int i = 0; i < flatRoot.leafCount; ++i){
-        if( !(flatRoot[i].info & (expType::operator_ |
-                                  expType::presetValue)) ){
+      for (int i = 0; i < flatRoot.leafCount; ++i) {
+        if ( !(flatRoot[i].info & (expType::operator_ |
+                                  expType::presetValue)) ) {
 
           expNode::freeFlatHandle(flatRoot);
 
@@ -1424,34 +1448,34 @@ namespace occa {
       return evaluateExpression(lineExpNode);
     }
 
-    typeHolder evaluateExpression(expNode &expRoot){
-      if(expRoot.info & expType::presetValue)
+    typeHolder evaluateExpression(expNode &expRoot) {
+      if (expRoot.info & expType::presetValue)
         return typeHolder(expRoot.value);
 
-      if(expRoot.info & expType::C){
+      if (expRoot.info & expType::C) {
         return evaluateExpression(expRoot[0]);
       }
-      else if(expRoot.info & expType::L){
+      else if (expRoot.info & expType::L) {
         return applyLOperator(expRoot.value,
                               evaluateExpression(expRoot[0]));
       }
-      else if(expRoot.info & expType::R){
+      else if (expRoot.info & expType::R) {
         return applyROperator(evaluateExpression(expRoot[0]),
                               expRoot.value);
       }
-      else if(expRoot.info & expType::LR){
+      else if (expRoot.info & expType::LR) {
         return applyLROperator(evaluateExpression(expRoot[0]),
                                expRoot.value,
                                evaluateExpression(expRoot[1]));
       }
-      else if(expRoot.info & expType::LCR){
+      else if (expRoot.info & expType::LCR) {
         return applyLCROperator(evaluateExpression(expRoot[0]),
                                 expRoot.value,
                                 evaluateExpression(expRoot[1]),
                                 evaluateExpression(expRoot[2]));
       }
-      else if((expRoot.info == expType::root) &&
-              (0 < expRoot.leafCount)){
+      else if ((expRoot.info == expType::root) &&
+              (0 < expRoot.leafCount)) {
 
         return evaluateExpression(expRoot[0]);
       }
@@ -1482,7 +1506,7 @@ namespace occa {
           ( hasVarArgs && (argc  > inputArgc))) {
 
         std::cout << "Macro [" << name << "]:\n";
-        for(size_t i = 0; i < args.size(); ++i)
+        for (size_t i = 0; i < args.size(); ++i)
           std::cout << "    args[" << i << "] = " << args[i] << '\n';
 
         OCCA_CHECK(false,
@@ -1494,16 +1518,16 @@ namespace occa {
 
       std::string ret = parts[0];
 
-      for(int i = 0; i < subs; ++i){
+      for (int i = 0; i < subs; ++i) {
         const int argPos = argBetweenParts[i];
 
         if (argPos != VA_ARGS_POS) {
           ret += args[argPos];
         }
         else {
-          for(int j = argc; j < inputArgc; ++j) {
+          for (int j = argc; j < inputArgc; ++j) {
             ret += args[j];
-            if(j < (inputArgc - 1))
+            if (j < (inputArgc - 1))
               ret += ',';
           }
         }
@@ -1514,19 +1538,22 @@ namespace occa {
       return ret;
     }
 
-    std::ostream& operator << (std::ostream &out, const macroInfo &info){
+    std::ostream& operator << (std::ostream &out, const macroInfo &info) {
       const int subs = info.argBetweenParts.size();
 
-      out << info.name << ": " << info.parts[0];
+      out << info.name;
 
-      for(int i = 0; i < subs; ++i){
+      if (info.parts.size()) {
+        out << ": " << info.parts[0];
+      }
+      for (int i = 0; i < subs; ++i) {
         const int argPos = info.argBetweenParts[i];
-        if (argPos != macroInfo::VA_ARGS_POS)
+        if (argPos != macroInfo::VA_ARGS_POS) {
           out << "ARG" << argPos;
-        else
+        } else {
           out << "__VA_ARGS__";
-
-          out << info.parts[i + 1];
+        }
+        out << info.parts[i + 1];
       }
 
       return out;

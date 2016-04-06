@@ -1,33 +1,44 @@
+/* The MIT License (MIT)
+ *
+ * Copyright (c) 2014-2016 David Medina and Tim Warburton
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ */
+
+#ifndef OCCA_UVA_HEADER
+#define OCCA_UVA_HEADER
+
 #include <iostream>
 #include <vector>
 
 #include "occa/defines.hpp"
 
 namespace occa {
-  typedef int mode;
-
-  class kernel_v;
-  template <occa::mode> class kernel_t;
-  class kernel;
-
-  class memory_v;
-  template <occa::mode> class memory_t;
-  class memory;
-
-  class device_v;
-  template <occa::mode> class device_t;
   class device;
-
-  bool hasUvaEnabledByDefault();
-  void enableUvaByDefault();
-  void disableUvaByDefault();
+  class memory;
+  class memory_v;
 
   class ptrRange_t {
   public:
     char *start, *end;
 
     ptrRange_t();
-    ptrRange_t(void *ptr, const uintptr_t bytes = 0);
+    ptrRange_t(void *ptr, const udim_t bytes = 0);
     ptrRange_t(const ptrRange_t &r);
 
     ptrRange_t& operator =  (const ptrRange_t &r);
@@ -64,16 +75,16 @@ namespace occa {
   void startManaging(void *ptr);
   void stopManaging(void *ptr);
 
-  void syncToDevice(void *ptr, const uintptr_t bytes = 0);
-  void syncFromDevice(void *ptr, const uintptr_t bytes = 0);
+  void syncToDevice(void *ptr, const udim_t bytes = 0);
+  void syncFromDevice(void *ptr, const udim_t bytes = 0);
 
   void syncMemToDevice(occa::memory_v *mem,
-                       const uintptr_t bytes = 0,
-                       const uintptr_t offset = 0);
+                       const udim_t bytes = 0,
+                       const udim_t offset = 0);
 
   void syncMemFromDevice(occa::memory_v *mem,
-                         const uintptr_t bytes = 0,
-                         const uintptr_t offset = 0);
+                         const udim_t bytes = 0,
+                         const udim_t offset = 0);
 
   bool needsSync(void *ptr);
   void sync(void *ptr);
@@ -86,3 +97,5 @@ namespace occa {
 
   void free(void *ptr);
 }
+
+#endif

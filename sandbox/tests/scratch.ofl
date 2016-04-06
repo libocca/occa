@@ -1,8 +1,0 @@
-device, real(4) function addTwoNumbers1(a, b)
-  implicit none
-
-  real(4), intent(in) :: a, b
-
-  addTwoNumbers1 = a + b
-
-end function addTwoNumbers1

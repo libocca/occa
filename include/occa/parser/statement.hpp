@@ -1,3 +1,25 @@
+/* The MIT License (MIT)
+ *
+ * Copyright (c) 2014-2016 David Medina and Tim Warburton
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ */
+
 #ifndef OCCA_PARSER_STATEMENT_HEADER
 #define OCCA_PARSER_STATEMENT_HEADER
 
@@ -6,6 +28,7 @@
 #include "occa/parser/tools.hpp"
 #include "occa/parser/nodes.hpp"
 #include "occa/parser/types.hpp"
+#include "occa/tools/hash.hpp"
 
 namespace occa {
   namespace parserNS {
@@ -115,14 +138,15 @@ namespace occa {
 
       bool operator == (expNode &e);
 
-      fnvOutput_t hash();
+      hash_t hash();
       bool sameAs(expNode &e, const bool nestedSearch = true);
 
-      inline expNode& operator [] (const int i){
-        if(0 <= i)
+      inline expNode& operator [] (const int i) {
+        if (0 <= i) {
           return *leaves[i];
-        else
+        } else {
           return *leaves[leafCount + i];
+        }
       }
 
       expNode makeFloatingLeaf();
@@ -301,7 +325,7 @@ namespace occa {
       void removeNode(const int pos = -1);
 
       template <class TM>
-      TM& addInfoNode(){
+      TM& addInfoNode() {
         addNode(0);
 
         TM **tmLeaves = (TM**) leaves;
@@ -312,7 +336,7 @@ namespace occa {
       }
 
       template <class TM>
-      TM& addInfoNode(const info_t info_, const int pos_){
+      TM& addInfoNode(const info_t info_, const int pos_) {
         const int pos = ((0 <= pos_) ? pos_ : leafCount);
 
         addNode(info_, pos);
@@ -321,7 +345,7 @@ namespace occa {
       }
 
       template <class TM>
-      void putInfo(const info_t info_, TM &t){
+      void putInfo(const info_t info_, TM &t) {
         addNode(0);
         leaves[0] = (expNode*) &t;
 
@@ -329,7 +353,7 @@ namespace occa {
       }
 
       template <class TM>
-      void putInfo(const info_t info_, const int pos_, TM &t){
+      void putInfo(const info_t info_, const int pos_, TM &t) {
         const int pos = ((0 <= pos_) ? pos_ : leafCount);
 
         addNode(info_, pos);
@@ -337,12 +361,12 @@ namespace occa {
       }
 
       template <class TM>
-      TM& getInfo(){
+      TM& getInfo() {
         return *((TM*) leaves[0]);
       }
 
       template <class TM>
-      TM& getInfo(const int pos_){
+      TM& getInfo(const int pos_) {
         const int pos = ((0 <= pos_) ? pos_ : leafCount);
 
         TM **tmLeaves = (TM**) leaves[pos]->leaves;
@@ -352,12 +376,12 @@ namespace occa {
       }
 
       template <class TM>
-      void setInfo(TM &tm){
+      void setInfo(TM &tm) {
         leaves[0] = (expNode*) &tm;
       }
 
       template <class TM>
-      void setInfo(const int pos_, TM &tm){
+      void setInfo(const int pos_, TM &tm) {
         const int pos = ((0 <= pos_) ? pos_ : leafCount);
 
         TM **tmLeaves = (TM**) leaves[pos]->leaves;
@@ -451,7 +475,7 @@ namespace occa {
       static void printVec(expVector_t &v);
 
       inline std::string toString(const std::string &tab = "",
-                                  const info_t flags = expFlag::none){
+                                  const info_t flags = expFlag::none) {
         std::string ret;
         printOnString(ret, tab, flags);
         return ret;
@@ -847,13 +871,13 @@ namespace occa {
 
       void printSubsOnString(std::string &str);
 
-      inline std::string toString(const info_t flags = (statementFlag::printSubStatements)){
+      inline std::string toString(const info_t flags = (statementFlag::printSubStatements)) {
         std::string ret;
         printOnString(ret, flags);
         return ret;
       }
 
-      inline std::string onlyThisToString(){
+      inline std::string onlyThisToString() {
         std::string ret;
         printOnString(ret, (statementFlag::printEverything &
                             ~statementFlag::printSubStatements));

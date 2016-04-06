@@ -3,7 +3,7 @@ package occa;
 public class KernelInfo {
   long handle;
 
-  KernelInfo(){
+  KernelInfo() {
     handle = 0;
   }
 }

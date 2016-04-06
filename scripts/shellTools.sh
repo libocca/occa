@@ -1,4 +1,25 @@
-#!/bin/bash
+# The MIT License (MIT)
+# 
+# Copyright (c) 2014-2016 David Medina and Tim Warburton
+# 
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+# 
+# The above copyright notice and this permission notice shall be included in all
+# copies or substantial portions of the Software.
+# 
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+# SOFTWARE.
+
 
 OCCA_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")"/.. && pwd)"
 
@@ -79,11 +100,10 @@ function dirWithLibrary {
 
     local mergedLibPaths=""
 
+    mergedLibPaths=$mergedLibPaths:"/usr/local/cuda*/lib*"
     mergedLibPaths=$mergedLibPaths:$OCCA_LIBRARY_PATH
     mergedLibPaths=$mergedLibPaths:$LD_LIBRARY_PATH
     mergedLibPaths=$mergedLibPaths:$DYLD_LIBRARY_PATH
-    mergedLibPaths=$mergedLibPaths:"/usr/local/cuda*/lib*"
-    mergedLibPaths=$mergedLibPaths:"/usr/local/cuda*/lib*/stubs"
     mergedLibPaths=$mergedLibPaths:"/lib:/usr/lib:/usr/lib32:/usr/lib64:"
     mergedLibPaths=$mergedLibPaths:"/usr/lib/*-gnu/"
 
@@ -118,19 +138,18 @@ function dirWithHeader {
     local mergedPaths=""
     local mergedLibPaths=""
 
+    mergedPaths=$mergedPaths:"/usr/local/cuda*/include"
+    mergedPaths=$mergedPaths:"/Developer/NVIDIA/CUDA*/include"
     mergedPaths=$mergedPaths:$OCCA_INCLUDE_PATH
     mergedPaths=$mergedPaths:$CPLUS_INCLUDE_PATH
     mergedPaths=$mergedPaths:$C_INCLUDE_PATH
     mergedPaths=$mergedPaths:$INCLUDEPATH
-    mergedPaths=$mergedPaths:"/usr/local/cuda*/include"
-    mergedPaths=$mergedPaths:"/Developer/NVIDIA/CUDA*/include"
     mergedPaths=$mergedPaths:"/usr/include"
 
+    mergedLibPaths=$mergedLibPaths:"/usr/local/cuda*/lib*"
     mergedLibPaths=$mergedLibPaths:$OCCA_LIBRARY_PATH
     mergedLibPaths=$mergedLibPaths:$LD_LIBRARY_PATH
     mergedLibPaths=$mergedLibPaths:$DYLD_LIBRARY_PATH
-    mergedLibPaths=$mergedLibPaths:"/usr/local/cuda*/lib*"
-    mergedLibPaths=$mergedLibPaths:"/usr/local/cuda*/lib*/stubs"
     mergedLibPaths=$mergedLibPaths:"/lib:/usr/lib:/usr/lib32:/usr/lib64:"
     mergedLibPaths=$mergedLibPaths:"/usr/lib/*-gnu/"
 

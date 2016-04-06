@@ -1,26 +1,48 @@
+/* The MIT License (MIT)
+ *
+ * Copyright (c) 2014-2016 David Medina and Tim Warburton
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ */
+
 #ifndef OCCA_DEFINES_HEADER
 #define OCCA_DEFINES_HEADER
 
-#ifndef LINUX_OS
-#  define LINUX_OS 1
+#ifndef OCCA_LINUX_OS
+#  define OCCA_LINUX_OS 1
 #endif
 
-#ifndef OSX_OS
-#  define OSX_OS 2
+#ifndef OCCA_OSX_OS
+#  define OCCA_OSX_OS 2
 #endif
 
-#ifndef WINDOWS_OS
-#  define WINDOWS_OS 4
+#ifndef OCCA_WINDOWS_OS
+#  define OCCA_WINDOWS_OS 4
 #endif
 
-#ifndef WINUX_OS
-#  define WINUX_OS (LINUX_OS | WINDOWS_OS)
+#ifndef OCCA_WINUX_OS
+#  define OCCA_WINUX_OS (OCCA_LINUX_OS | OCCA_WINDOWS_OS)
 #endif
 
 #ifndef OCCA_USING_VS
 #  ifdef _MSC_VER
 #    define OCCA_USING_VS 1
-#    define OCCA_OS WINDOWS_OS
+#    define OCCA_OS OCCA_WINDOWS_OS
 #  else
 #    define OCCA_USING_VS 0
 #  endif
@@ -29,14 +51,14 @@
 #ifndef OCCA_OS
 #  if defined(WIN32) || defined(WIN64)
 #    if OCCA_USING_VS
-#      define OCCA_OS WINDOWS_OS
+#      define OCCA_OS OCCA_WINDOWS_OS
 #    else
-#      define OCCA_OS WINUX_OS
+#      define OCCA_OS OCCA_WINUX_OS
 #    endif
 #  elif __APPLE__
-#    define OCCA_OS OSX_OS
+#    define OCCA_OS OCCA_OSX_OS
 #  else
-#    define OCCA_OS LINUX_OS
+#    define OCCA_OS OCCA_LINUX_OS
 #  endif
 #endif
 
@@ -60,9 +82,9 @@
 #  define OCCA_END_EXTERN_C
 #endif
 
-#if   (OCCA_OS == LINUX_OS) || (OCCA_OS == OSX_OS)
+#if   (OCCA_OS == OCCA_LINUX_OS) || (OCCA_OS == OCCA_OSX_OS)
 #  define OCCA_INLINE inline __attribute__ ((always_inline))
-#elif (OCCA_OS == WINDOWS_OS)
+#elif (OCCA_OS == OCCA_WINDOWS_OS)
 #  define OCCA_INLINE __forceinline
 #endif
 
@@ -83,6 +105,16 @@
 #  define OCCA_32_BIT 0
 #endif
 
+#if OCCA_ARM
+#  define OCCA_LFENCE __asm__ __volatile__ ("dmb")
+#else
+#  if (OCCA_OS & (OCCA_LINUX_OS | OCCA_OSX_OS))
+#    define OCCA_LFENCE __asm__ __volatile__ ("lfence")
+#  else
+#    define OCCA_LFENCE MemoryBarrier()
+#  endif
+#endif
+
 //---[ Checks and Info ]----------------
 #ifndef OCCA_COMPILED_FOR_JULIA
 #  define OCCA_THROW abort()
@@ -92,8 +124,8 @@
 
 #define OCCA_EMPTY_FORCE_CHECK2( _expr , file , line , func )           \
   do {                                                                  \
-    intptr_t expr = (_expr);                                            \
-    if( !expr ){                                                        \
+    occa::dim_t expr = (_expr);                                         \
+    if (!expr) {                                                        \
       std::cout << '\n'                                                 \
                 << "---[ Error ]--------------------------------------------\n" \
                 << "    File     : " << file << '\n'                    \
@@ -106,8 +138,8 @@
 
 #define OCCA_FORCE_CHECK2( _expr , _msg , file , line , func )          \
   do {                                                                  \
-    intptr_t expr = (_expr);                                            \
-    if( !expr ){                                                        \
+    occa::dim_t expr = (_expr);                                         \
+    if (!expr) {                                                        \
       std::cout << '\n'                                                 \
                 << "---[ Error ]--------------------------------------------\n" \
                 << "    File     : " << file << '\n'                    \
@@ -286,25 +318,10 @@
 //======================================
 
 
-//---[ Base ]---------------------------
-#define OCCA_KERNEL_ARG_CONSTRUCTOR(TYPE)         \
-  template <>                                     \
-  inline kernelArg::kernelArg(const TYPE &arg_){  \
-    argc                 = 1;                     \
-    args[0].data.TYPE##_ = arg_;                  \
-    args[0].size         = sizeof(TYPE);          \
-  }
-
-#define OCCA_KERNEL_ARG_CONSTRUCTOR_ALIAS(TYPE, ALIAS)  \
-  template <>                                           \
-  inline kernelArg::kernelArg(const TYPE &arg_){        \
-    argc                  = 1;                          \
-    args[0].data.ALIAS##_ = arg_;                       \
-    args[0].size          = sizeof(TYPE);               \
-  }
-
-#define OCCA_EXTRACT_DATA(MODE, CLASS)                          \
-  MODE##CLASS##Data_t &data_ = *((MODE##CLASS##Data_t*) data);
+//---[ Constants ]----------------------
+#define OCCA_CONST_IR  (1 << 0)
+#define OCCA_CONST_OKL (1 << 1)
+#define OCCA_CONST_OFL (1 << 2)
 //======================================
 
 
@@ -314,14 +331,14 @@
 #  define OCCA_CL_CHECK2( _str , _statement , file , line )             \
   do {                                                                  \
     cl_int _error = _statement;                                         \
-    if(_error){                                                         \
+    if (_error) {                                                       \
       _error = _error < 0  ? _error : -_error;                          \
       _error = _error < 65 ? _error : 15;                               \
                                                                         \
       std::cout << "Error\n"                                            \
                 << "    File    : " << file << '\n'                     \
                 << "    Line    : " << line << '\n'                     \
-                << "    Error   : OpenCL Error [ " << _error << " ]: " << occa::openclError(_error) << '\n' \
+                << "    Error   : OpenCL Error [ " << _error << " ]: " << occa::opencl::error(_error) << '\n' \
                 << "    Message : " << _str << '\n';                    \
       OCCA_THROW;                                                       \
     }                                                                   \
@@ -339,11 +356,11 @@
 #  define OCCA_CUDA_CHECK2( _str , _statement , file , line )           \
   do {                                                                  \
     CUresult errorCode = _statement;                                    \
-    if(errorCode){                                                      \
+    if (errorCode) {                                                    \
       std::cout << "Error\n"                                            \
                 << "    File    : " << file << '\n'                     \
                 << "    Line    : " << line << '\n'                     \
-                << "    Error   : CUDA Error [ " << errorCode << " ]: " << occa::cudaError(errorCode) << '\n' \
+                << "    Error   : CUDA Error [ " << errorCode << " ]: " << occa::cuda::error(errorCode) << '\n' \
                 << "    Message : " << _str << '\n';                    \
       OCCA_THROW;                                                       \
     }                                                                   \
@@ -359,11 +376,11 @@
 #  define OCCA_HSA_CHECK2( _str , _statement , file , line )            \
   do {                                                                  \
     hsa_status_t _error = _statement;                                   \
-    if(_error != HSA_STATUS_SUCCESS){					\
+    if (_error != HSA_STATUS_SUCCESS) {                                 \
       std::cout << "Error\n"                                            \
                 << "    File    : " << file << '\n'                     \
                 << "    Line    : " << line << '\n'                     \
-                << "    Error   : HSA Error [ " << _error << " ]: " << occa::hsaError(_error) << '\n' \
+                << "    Error   : HSA Error [ " << _error << " ]: " << occa::hsa::error(_error) << '\n' \
                 << "    Message : " << _str << '\n';                    \
       OCCA_THROW;                                                       \
     }                                                                   \

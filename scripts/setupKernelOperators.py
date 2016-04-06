@@ -1,3 +1,25 @@
+# The MIT License (MIT)
+#
+# Copyright (c) 2014-2016 David Medina and Tim Warburton
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in all
+# copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+# SOFTWARE.
+
 import os.path as osp
 
 occadir = osp.abspath(osp.join(osp.dirname(__file__), ".."))
@@ -14,52 +36,65 @@ def nlc(n, N):
     return ret;
 
 def runFunctionFromArguments(N):
-    return 'switch(argc){\n' + '\n'.join(runFunctionFromArgument(n + 1) for n in range(N)) + '}'
+    return 'switch (argc) {{ \n{cases} }}'.format(
+        cases='\n'.join(runFunctionFromArgument(n + 1) for n in range(N)),
+    )
 
 def runFunctionFromArgument(N):
-    return '  case ' + str(N) + """:
-    f(occaKernelInfoArgs, occaInnerId0, occaInnerId1, occaInnerId2, """ + ', '.join('args[{0}]'.format(n) for n in range(N)) + """); break;"""
-
+    return """  case {N}:
+    f(occaKernelInfoArgs, occaInnerId0, occaInnerId1, occaInnerId2, {args}); break;""".format(
+        N=N,
+        args=', '.join('args[{0}]'.format(n) for n in range(N)),
+    )
 
 def operatorDeclarations(N):
     return '\n\n'.join(operatorDeclaration(n + 1) for n in range(N))
 
 def operatorDeclaration(N):
-    return '    void operator () ({0});'.format( ' '.join('const kernelArg &arg' + str(n) + nlc(n, N) for n in range(N)) )
+    return '    void operator () ({args});'.format(
+        args=' '.join('const kernelArg &arg' + str(n) + nlc(n, N) for n in range(N)),
+    )
 
 
 def operatorDefinitions(N):
     return '\n\n'.join(operatorDefinition(n + 1) for n in range(N))
 
 def operatorDefinition(N):
-    return """  void kernel::operator() (""" + ' '.join('const kernelArg &arg' + str(n) + nlc(n, N) for n in range(N)) + """){
-    kernelArg args[] = {""" + ', '.join('arg{}'.format(n) for n in range(N)) + """}};
+    return """  void kernel::operator() ({args}) {{
+    kernelArg args[] = {{ {argarray} }};
     kHandle->arguments.clear();
-    kHandle->arguments.reserve({0});
-    kHandle->arguments.insert(kHandle->arguments.begin(), args, args + {0});
+    kHandle->arguments.reserve({N});
+    kHandle->arguments.insert(kHandle->arguments.begin(), args, args + {N});
     runFromArguments();
-  }}""".format(N)
+  }}""".format(
+      N=N,
+      args=' '.join('const kernelArg &arg' + str(n) + nlc(n, N) for n in range(N)),
+      argarray=', '.join('arg{n}'.format(n=n) for n in range(N)),
+  )
 
 
 def cKernelDeclarations(N):
     return '\n\n'.join(cKernelDeclaration(n + 1) for n in range(N))
 
 def cKernelDeclaration(N):
-    return 'OCCA_LFUNC void OCCA_RFUNC occaKernelRun{0}(occaKernel kernel, {1});'.format(N, ' '.join('void *arg' + str(n) + nlc(n, N) for n in range(N)) )
-
+    return 'OCCA_LFUNC void OCCA_RFUNC occaKernelRun{N}(occaKernel kernel, {args});'.format(
+        N=N,
+        args=' '.join('occaType arg' + str(n) + nlc(n, N) for n in range(N)),
+    )
 
 def cKernelDefinitions(N):
     return '\n\n'.join(cKernelDefinition(n + 1) for n in range(N))
 
 def cKernelDefinition(N):
-    argsContent = ', '.join('((occaType) arg{})->ptr'.format(n) for n in range(N))
-    argsDelete = '\n  '.join('if(((occaType) arg{0})->ptr->type != OCCA_TYPE_MEMORY && ((occaType) arg{0})->ptr->type != OCCA_TYPE_PTR) delete ((occaType) arg{0});'.format(n) for n in range(N))
-
-    return ('void OCCA_RFUNC occaKernelRun{0}(occaKernel kernel, {1}){{\n'.format(N, ' '.join('void *arg' + str(n) + nlc(n, N) for n in range(N)) ) + """
-  occaType_t *args[{0}] = {{ {1} }};
-  {2};
-  occaKernelRunN(kernel, {0}, args);
-}}""".format(N, argsContent, argsDelete))
+    return """
+void OCCA_RFUNC occaKernelRun{N}(occaKernel kernel, {args}) {{
+  occaType args[{N}] = {{ {argarray} }};
+  occaKernelRunN(kernel, {N}, args);
+}}""".format(
+        N=N,
+        args=' '.join('occaType arg' + str(n) + nlc(n, N) for n in range(N)),
+        argarray=', '.join('arg{n}'.format(n=n) for n in range(N)),
+    )
 
 def gen_file(filename, content):
     with open(occadir + filename, 'w') as f:

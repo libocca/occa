@@ -53,7 +53,7 @@ __constant tFloat hat_t0 = 1.3523661426929/freq;
 
 tFloat hatWavelet(tFloat t);
 
-tFloat hatWavelet(tFloat t){
+tFloat hatWavelet(tFloat t) {
   const tFloat pift  = PI*freq*(t - hat_t0);
   const tFloat pift2 = pift*pift;
 
@@ -63,7 +63,7 @@ tFloat hatWavelet(tFloat t){
 __kernel void fd2d(__global       tFloat *u1,
                    __global const tFloat *u2,
                    __global const tFloat *u3,
-                   const tFloat currentTime){
+                   const tFloat currentTime) {
 
   __local tFloat Lu[By + 2*sr][Bx + 2*sr];
   tFloat r_u2, r_u3;
@@ -90,26 +90,26 @@ __kernel void fd2d(__global       tFloat *u1,
 
   Lu[ly][lx] = u2[nY1*w + nX1];
 
-  if(lx < 2*sr){
+  if (lx < 2*sr) {
     Lu[ly][lx + Bx] = u2[nY1*w + nX2];
 
-    if(ly < 2*sr)
+    if (ly < 2*sr)
       Lu[ly + By][lx + Bx] = u2[nY2*w + nX2];
   }
 
-  if(ly < 2*sr)
+  if (ly < 2*sr)
     Lu[ly + By][lx] = u2[nY2*w + nX1];
 
   barrier(CLK_LOCAL_MEM_FENCE);
 
   tFloat lap = 0.0;
 
-  for(int i = 0; i < (2*sr + 1); i++)
+  for (int i = 0; i < (2*sr + 1); i++)
     lap += xStencil[i]*Lu[ly + sr][lx + i] + xStencil[i]*Lu[ly + i][lx + sr];
 
   const tFloat u_n1 = (-tStencil[1]*r_u2 - tStencil[2]*r_u3 + lap)/tStencil[0];
 
-  if((tx == mX) && (ty == mY))
+  if ((tx == mX) && (ty == mY))
     u1[id] = u_n1 + hatWavelet(currentTime)/tStencil[0];
   else
     u1[id] = u_n1;

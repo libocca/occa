@@ -7,7 +7,7 @@
 
 ** Supported languages/standards
 
-   The first four lines of the makefile are:
+   The first four lines of the Makefile are:
 
        # Default variables
        enableOpenCL = 1
