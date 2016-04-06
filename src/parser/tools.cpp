@@ -1,6 +1,29 @@
+/* The MIT License (MIT)
+ *
+ * Copyright (c) 2014-2016 David Medina and Tim Warburton
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ */
+
 #include "occa/parser/preprocessor.hpp"
 #include "occa/parser/tools.hpp"
-#include "occa/tools.hpp"
+#include "occa/tools/env.hpp"
+#include "occa/tools/sys.hpp"
 
 namespace occa {
   //---[ Helper Functions ]-----------------------
@@ -18,7 +41,7 @@ namespace occa {
   }
 
   bool charIsIn(const char c, const char *delimiters) {
-    while((*delimiters) != '\0')
+    while ((*delimiters) != '\0')
       if (c == *(delimiters++))
         return true;
 
@@ -32,7 +55,7 @@ namespace occa {
     const char c0 = c[0];
     const char c1 = c[1];
 
-    while((*delimiters) != '\0') {
+    while ((*delimiters) != '\0') {
       if ((c0 == delimiters[0]) && (c1 == delimiters[1]))
         return true;
 
@@ -50,7 +73,7 @@ namespace occa {
     const char c1 = c[1];
     const char c2 = c[2];
 
-    while((*delimiters) != '\0') {
+    while ((*delimiters) != '\0') {
       if ((c0 == delimiters[0]) && (c1 == delimiters[1]) && (c2 == delimiters[2]))
         return true;
 
@@ -108,12 +131,12 @@ namespace occa {
   }
 
   void skipWhitespace(const char *&c) {
-    while(charIsIn(*c, parserNS::whitespace) && (*c != '\0'))
+    while (charIsIn(*c, parserNS::whitespace) && (*c != '\0'))
       ++c;
   }
 
   void skipToWhitespace(const char *&c) {
-    while(!charIsIn(*c, parserNS::whitespace) && (*c != '\0'))
+    while (!charIsIn(*c, parserNS::whitespace) && (*c != '\0'))
       ++c;
   }
 
@@ -217,7 +240,7 @@ namespace occa {
 
     const char match = *(c++);
 
-    while(*c != '\0') {
+    while (*c != '\0') {
       if (*c == nl)
         ++c;
       else if (*c == match) {
@@ -253,7 +276,7 @@ namespace occa {
       if (c[0] == '.') {
         const char *c2 = (c + 1);
 
-        while(*c2 != '.')
+        while (*c2 != '.')
           ++c2;
 
         return (c2 - c + 1);
@@ -266,7 +289,7 @@ namespace occa {
   }
 
   int skipWord(const char *&c, const int parsingLanguage_) {
-    while(!charIsIn(*c, parserNS::whitespace) && (*c != '\0')) {
+    while (!charIsIn(*c, parserNS::whitespace) && (*c != '\0')) {
       const int delimiterChars = isAWordDelimiter(c, parsingLanguage_);
 
       if (delimiterChars == 0)
@@ -348,7 +371,7 @@ namespace occa {
 
     bool breakNextLine = true;
 
-    while(*c != '\0') {
+    while (*c != '\0') {
       if (*c == '\0')
         break;
 
@@ -365,7 +388,7 @@ namespace occa {
       }
       else if (c[0] == '/') {
         if (c[1] == '/') {
-          while((*c != '\n') && (*c != '\0'))
+          while ((*c != '\n') && (*c != '\0'))
             ++c;
 
           return c;
@@ -373,7 +396,7 @@ namespace occa {
         else if (c[1] == '*') {
           c += 2;
 
-          while( !((c[0] == '*') && (c[1] == '/')) &&
+          while ( !((c[0] == '*') && (c[1] == '/')) &&
                  (*c != '\0') )
             ++c;
 
@@ -395,7 +418,7 @@ namespace occa {
 
     // Starting with [c] means line is a comment
     if (*c == 'c') {
-      while((*c != '\n') &&
+      while ((*c != '\n') &&
             (*c != '\0')) {
 
         ++c;
@@ -404,7 +427,7 @@ namespace occa {
       return c;
     }
 
-    while(*c != '\0') {
+    while (*c != '\0') {
       if (*c == '\0')
         break;
 
@@ -420,7 +443,7 @@ namespace occa {
         ++c;
       }
       else if (c[0] == '!') {
-        while((*c != '\n') && (*c != '\0'))
+        while ((*c != '\n') && (*c != '\0'))
           ++c;
 
         return c;
@@ -438,7 +461,7 @@ namespace occa {
     const char *c = str.c_str();
     size_t pos = 0;
 
-    while(*c != '\0') {
+    while (*c != '\0') {
       if (isWhitespace(*c)) {
         ret[pos++] = ' ';
 
@@ -464,8 +487,8 @@ namespace occa {
     const char *cLeft  = c;
     const char *cRight = c + (chars - 1);
 
-    while(charIsIn(*cLeft , parserNS::whitespace) && (cLeft <= cRight)) ++cLeft;
-    while(charIsIn(*cRight, parserNS::whitespace) && (cRight > cLeft)) --cRight;
+    while (charIsIn(*cLeft , parserNS::whitespace) && (cLeft <= cRight)) ++cLeft;
+    while (charIsIn(*cRight, parserNS::whitespace) && (cRight > cLeft)) --cRight;
 
     if (cLeft > cRight)
       return "";
@@ -474,7 +497,7 @@ namespace occa {
 
     const char *cMid = cLeft;
 
-    while(cMid < cRight) {
+    while (cMid < cRight) {
       if ((cMid[0] == nl) && isWhitespace(cMid[1])) {
         ret += strip(cLeft, cMid - cLeft);
         ret += ' ';
@@ -502,9 +525,7 @@ namespace occa {
   }
 
   char* cReadFile(const std::string &filename) {
-    // NBN: handle EOL chars on Windows
     FILE *fp = fopen(filename.c_str(), "r");
-
     OCCA_CHECK(fp != NULL,
                "Failed to open [" << filename << ']');
 
@@ -535,7 +556,7 @@ namespace occa {
 
     info_t status = parserNS::readingCode;
 
-    while(*cRight != '\0') {
+    while (*cRight != '\0') {
       if ((*cRight == '\0') || (*cRight == '\n'))
         break;
 
@@ -580,7 +601,7 @@ namespace occa {
 
     int status = parserNS::readingCode;
 
-    while(*cRight != '\0') {
+    while (*cRight != '\0') {
       if ((*cRight == '\0') || (*cRight == '\n'))
         break;
 
@@ -651,7 +672,7 @@ namespace occa {
 
     ++c;
 
-    while((*c != '\0') &&
+    while ((*c != '\0') &&
           (*c != pair)) {
       if (segmentPair(*c))
         skipPair(c);
@@ -666,7 +687,7 @@ namespace occa {
   int countDelimiters(const char *c, const char delimiter) {
     int count = 0;
 
-    while(*c != '\0') {
+    while (*c != '\0') {
       if (*c == delimiter)
         ++count;
 
@@ -676,25 +697,28 @@ namespace occa {
     return count;
   }
 
-  void skipTo(const char *&c, const char delimiter) {
-    while(*c != '\0') {
-      if (*c == delimiter)
+  void skipTo(const char *&c, const char delimiter, const bool checkEscape) {
+    while (*c != '\0') {
+      if (!(checkEscape && (*c == '\\')) &&
+          (*c == delimiter)) {
         return;
-
+      }
       ++c;
     }
   }
 
-  void skipTo(const char *&c, std::string delimiters) {
+  void skipTo(const char *&c, std::string delimiters, const bool checkEscape) {
     const size_t chars = delimiters.size();
     const char *d      = delimiters.c_str();
 
-    while(*c != '\0') {
-      for (size_t i = 0; i < chars; ++i) {
-        if (*c == d[i])
-          return;
+    while (*c != '\0') {
+      if (!(checkEscape && (*c == '\\'))) {
+        for (size_t i = 0; i < chars; ++i) {
+          if (*c == d[i]) {
+            return;
+          }
+        }
       }
-
       ++c;
     }
   }
@@ -703,19 +727,19 @@ namespace occa {
     const size_t chars = word.size();
     const char *d      = word.c_str();
 
-    while(*c != '\0') {
+    while (*c != '\0') {
       size_t i;
 
       for (i = 0; i < chars; ++i) {
         if ((c[i] == '\0') ||
            (c[i] == d[i])) {
-
           break;
         }
       }
 
-      if (i == chars)
+      if (i == chars) {
         return;
+      }
 
       ++c;
     }
@@ -725,17 +749,18 @@ namespace occa {
     const char *c0 = env::PATH.c_str();
     const char *c1 = c0;
 
-    while(*c1 != '\0') {
-      while((*c1 != ':') && (*c1 != '\0'))
+    while (*c1 != '\0') {
+      while ((*c1 != ':') && (*c1 != '\0'))
         ++c1;
 
       std::string fullFilename = std::string(c0, c1 - c0) + filename;
 
-      if (sys::fileExists(fullFilename))
+      if (sys::fileExists(fullFilename)) {
         return fullFilename;
-
-      if (*c1 != '\0')
+      }
+      if (*c1 != '\0') {
         c0 = ++c1;
+      }
     }
 
     return "";
@@ -762,32 +787,6 @@ namespace occa {
     }
 
     return ret.str();
-  }
-
-  //---[ Flag Holder ]----------------------------
-  bool flags_t::has(const std::string &flag) const {
-    return (flags.find(flag) != flags.end());
-  }
-
-  bool flags_t::hasSet(const std::string &flag, const std::string &value) const {
-    cStrToStrMapIterator it = flags.find(flag);
-    return (it != flags.end()) ? (it->second == value) : false;
-  }
-
-  bool flags_t::hasEnabled(const std::string &flag, bool defaultValue) const {
-    cStrToStrMapIterator it = flags.find(flag);
-
-    if (it == flags.end())
-      return defaultValue;
-
-    if (upStringCheck(it->second, "enabled") ||
-        upStringCheck(it->second, "yes")     ||
-        upStringCheck(it->second, "y")) {
-
-      return true;
-    }
-
-    return false;
   }
   //==============================================
 }

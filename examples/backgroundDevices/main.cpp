@@ -2,7 +2,7 @@
 
 #include "occa.hpp"
 
-int main(int argc, char **argv){
+int main(int argc, char **argv) {
   int entries = 5;
 
   // Other useful functions:
@@ -11,11 +11,11 @@ int main(int argc, char **argv){
   //   occa::device = occa::getCurrentDevice();
 
   // Use the default device (mode = Serial)
-  float *a  = (float*) occa::managedUvaAlloc(entries * sizeof(float));
-  float *b  = (float*) occa::managedUvaAlloc(entries * sizeof(float));
-  float *ab = (float*) occa::managedUvaAlloc(entries * sizeof(float));
+  float *a  = (float*) occa::managedAlloc(entries * sizeof(float));
+  float *b  = (float*) occa::managedAlloc(entries * sizeof(float));
+  float *ab = (float*) occa::managedAlloc(entries * sizeof(float));
 
-  for(int i = 0; i < entries; ++i){
+  for (int i = 0; i < entries; ++i) {
     a[i]  = i;
     b[i]  = 1 - i;
     ab[i] = 0;
@@ -37,11 +37,11 @@ int main(int argc, char **argv){
   //   making it safe to use them again
   occa::finish();
 
-  for(int i = 0; i < 5; ++i)
+  for (int i = 0; i < 5; ++i)
     std::cout << i << ": " << ab[i] << '\n';
 
-  for(int i = 0; i < entries; ++i){
-    if(ab[i] != (a[i] + b[i]))
+  for (int i = 0; i < entries; ++i) {
+    if (ab[i] != (a[i] + b[i]))
       throw 1;
   }
 

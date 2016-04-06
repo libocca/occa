@@ -48,20 +48,20 @@ public:
 template <>
 void setupAide::getArgs(string key, string &t);
 
-static inline std::string strip(const std::string &str){
+static inline std::string strip(const std::string &str) {
   const int chars = str.size();
   const char *c = str.c_str();
   int start, end;
 
-  for(start = 0; start < chars; ++start)
-    if((c[start] != ' ')  &&
+  for (start = 0; start < chars; ++start)
+    if ((c[start] != ' ')  &&
        (c[start] != '\t') &&
        (c[start] != '\n') &&
        (c[start] != '\r'))
       break;
 
-  for(end = (chars - 1); 0 <= end; --end)
-    if((c[end] != ' ')  &&
+  for (end = (chars - 1); 0 <= end; --end)
+    if ((c[end] != ' ')  &&
        (c[end] != '\t') &&
        (c[end] != '\n') &&
        (c[end] != '\r'))

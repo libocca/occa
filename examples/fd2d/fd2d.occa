@@ -49,7 +49,7 @@ occaConstant tFloat hat_t0 = 1.3523661426929/freq;
 
 occaDeviceFunction tFloat hatWavelet(tFloat t);
 
-occaDeviceFunction tFloat hatWavelet(tFloat t){
+occaDeviceFunction tFloat hatWavelet(tFloat t) {
   const tFloat pift  = PI*freq*(t - hat_t0);
   const tFloat pift2 = pift*pift;
 
@@ -60,7 +60,7 @@ occaKernel void fd2d(occaKernelInfoArg,
                      occaPointer tFloat *u1,
                      occaPointer tFloat *u2,
                      occaPointer tFloat *u3,
-                     const       tFloat  occaVariable currentTime){
+                     const       tFloat  occaVariable currentTime) {
   occaOuterFor1{
     occaOuterFor0{
       occaInnerFor1{
@@ -75,7 +75,7 @@ occaKernel void fd2d(occaKernelInfoArg,
 
           tFloat lap = 0.0;
 
-          for(int i = -sr; i <= sr; i++){
+          for (int i = -sr; i <= sr; i++) {
             const int nX = (tx + w + i) % w;
             const int nY = (ty + h + i) % h;
 
@@ -84,7 +84,7 @@ occaKernel void fd2d(occaKernelInfoArg,
 
           const tFloat u_n1 = (-tStencil[1]*r_u2 - tStencil[2]*r_u3 + lap)/tStencil[0];
 
-          if( (tx == mX) && (ty == mY) )
+          if ( (tx == mX) && (ty == mY) )
             u1[id] = u_n1 + hatWavelet(currentTime)/tStencil[0];
           else
             u1[id] = u_n1;

@@ -1,3 +1,25 @@
+/* The MIT License (MIT)
+ *
+ * Copyright (c) 2014-2016 David Medina and Tim Warburton
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ */
+
 #ifndef OCCA_CPU_DEFINES_HEADER
 #define OCCA_CPU_DEFINES_HEADER
 
@@ -61,15 +83,15 @@
 
 
 //---[ Loops ]------------------------------------
-#define occaOuterFor2 for(int occaOuterId2 = 0; occaOuterId2 < occaOuterDim2; ++occaOuterId2)
-#define occaOuterFor1 for(int occaOuterId1 = 0; occaOuterId1 < occaOuterDim1; ++occaOuterId1)
-#define occaOuterFor0 for(int occaOuterId0 = 0; occaOuterId0 < occaOuterDim0; ++occaOuterId0)
+#define occaOuterFor2 for (int occaOuterId2 = 0; occaOuterId2 < occaOuterDim2; ++occaOuterId2)
+#define occaOuterFor1 for (int occaOuterId1 = 0; occaOuterId1 < occaOuterDim1; ++occaOuterId1)
+#define occaOuterFor0 for (int occaOuterId0 = 0; occaOuterId0 < occaOuterDim0; ++occaOuterId0)
 
 #define occaOuterFor occaOuterFor2 occaOuterFor1 occaOuterFor0
 // - - - - - - - - - - - - - - - - - - - - - - - -
-#define occaInnerFor2 for(occaInnerId2 = 0; occaInnerId2 < occaInnerDim2; ++occaInnerId2)
-#define occaInnerFor1 for(occaInnerId1 = 0; occaInnerId1 < occaInnerDim1; ++occaInnerId1)
-#define occaInnerFor0 for(occaInnerId0 = 0; occaInnerId0 < occaInnerDim0; ++occaInnerId0)
+#define occaInnerFor2 for (occaInnerId2 = 0; occaInnerId2 < occaInnerDim2; ++occaInnerId2)
+#define occaInnerFor1 for (occaInnerId1 = 0; occaInnerId1 < occaInnerDim1; ++occaInnerId1)
+#define occaInnerFor0 for (occaInnerId0 = 0; occaInnerId0 < occaInnerDim0; ++occaInnerId0)
 #define occaInnerFor occaInnerFor2 occaInnerFor1 occaInnerFor0
 // - - - - - - - - - - - - - - - - - - - - - - - -
 #define occaGlobalFor0 occaOuterFor0 occaInnerFor0
@@ -95,7 +117,7 @@
 #define occaPointer
 #define occaVariable &
 
-#if (OCCA_OS & (LINUX_OS | OSX_OS))
+#if (OCCA_OS & (OCCA_LINUX_OS | OCCA_OSX_OS))
 #  define occaRestrict __restrict__
 #  define occaVolatile volatile
 #  define occaAligned  __attribute__ ((aligned (OCCA_MEM_BYTE_ALIGN)))
@@ -119,7 +141,7 @@
 #define occaFunctionInfoArg const int * occaRestrict occaKernelArgs, int occaInnerId0, int occaInnerId1, int occaInnerId2
 #define occaFunctionInfo                             occaKernelArgs,     occaInnerId0,     occaInnerId1,     occaInnerId2
 // - - - - - - - - - - - - - - - - - - - - - - - -
-#if (OCCA_OS & (LINUX_OS | OSX_OS))
+#if (OCCA_OS & (OCCA_LINUX_OS | OCCA_OSX_OS))
 #  define occaKernel extern "C"
 #else
 // branch for Microsoft cl.exe - compiler: each symbol that a dll (shared object) should export must be decorated with __declspec(dllexport)
@@ -129,7 +151,7 @@
 #define occaFunction
 #define occaDeviceFunction
 
-#if (OCCA_OS & (LINUX_OS | OSX_OS))
+#if (OCCA_OS & (OCCA_LINUX_OS | OCCA_OSX_OS))
 #  define OCCA_PRAGMA(STR) _Pragma(STR)
 #else
 #  define OCCA_PRAGMA(STR) __pragma(STR)
@@ -339,12 +361,20 @@ public:
     return (a.data[a.index()][0] + b);
   }
 
+  friend inline TM operator + (const occaPrivate_t &a, const occaPrivate_t &b) {
+    return (a.data[a.index()][0] + b.data[b.index()][0]);
+  }
+
   friend inline TM operator - (const TM &a, const occaPrivate_t &b) {
     return (a - b.data[b.index()][0]);
   }
 
   friend inline TM operator - (const occaPrivate_t &a, const TM &b) {
     return (a.data[a.index()][0] - b);
+  }
+
+  friend inline TM operator - (const occaPrivate_t &a, const occaPrivate_t &b) {
+    return (a.data[a.index()][0] - b.data[b.index()][0]);
   }
 
   friend inline TM operator * (const TM &a, const occaPrivate_t &b) {
@@ -355,12 +385,20 @@ public:
     return (a.data[a.index()][0] * b);
   }
 
+  friend inline TM operator * (const occaPrivate_t &a, const occaPrivate_t &b) {
+    return (a.data[a.index()][0] * b.data[b.index()][0]);
+  }
+
   friend inline TM operator / (const TM &a, const occaPrivate_t &b) {
     return (a / b.data[b.index()][0]);
   }
 
   friend inline TM operator / (const occaPrivate_t &a, const TM &b) {
     return (a.data[a.index()][0] / b);
+  }
+
+  friend inline TM operator / (const occaPrivate_t &a, const occaPrivate_t &b) {
+    return (a.data[a.index()][0] / b.data[b.index()][0]);
   }
 
   inline TM& operator ++ () {
@@ -395,7 +433,7 @@ struct occaTexture {
   void *data;
   int dim;
 
-  uintptr_t w, h, d;
+  occa::udim_t w, h, d;
 };
 
 #define occaReadOnly  const

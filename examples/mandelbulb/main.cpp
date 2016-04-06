@@ -157,8 +157,8 @@ void setupOCCA() {
 
   rgba.allocate(4, width, height);
 
-  for(int x = 0; x < width; ++x) {
-    for(int y = 0; y < height; ++y) {
+  for (int x = 0; x < width; ++x) {
+    for (int y = 0; y < height; ++y) {
       rgba(3,x,y) = 255;
     }
   }

@@ -1,36 +1,7 @@
 sudo    : false
-language: cpp
-
-compiler:
-  - gcc
-
-env:
-  global:
-    - OCCA_DIR=$TRAVIS_BUILD_DIR
-    - OMP_NUM_THREADS=4
-    - FC=gfortran-4.9
-    - OCCA_FORTRAN_ENABLED=1
-    - LD_LIBRARY_PATH=$OCCA_DIR/lib:$LD_LIBRARY_PATH
-
-addons:
-  apt:
-    sources:
-      - ubuntu-toolchain-r-test
-    packages:
-      - fglrx=2:8.960-0ubuntu1
-      - opencl-headers
-      - gcc-4.9
-      - g++-4.9
-      - gfortran-4.9
-
-before_script:
-  - export CXX=g++-4.9
-  - export CC=gcc-4.9
 
 script:
-  - echo '---[ Testing ]--------------------------'
-  - cd $OCCA_DIR
-  - make test
+  - echo 'Still refactoring'
 
 notifications:
   email:

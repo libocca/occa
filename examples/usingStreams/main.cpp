@@ -2,14 +2,14 @@
 
 #include "occa.hpp"
 
-int main(int argc, char **argv){
+int main(int argc, char **argv) {
   int entries = 8;
 
   float *a  = new float[entries];
   float *b  = new float[entries];
   float *ab = new float[entries];
 
-  for(int i = 0; i < entries; ++i){
+  for (int i = 0; i < entries; ++i) {
     a[i]  = i;
     b[i]  = 1 - i;
     ab[i] = 0;
@@ -45,7 +45,7 @@ int main(int argc, char **argv){
 
   o_ab.copyTo(ab);
 
-  for(int i = 0; i < entries; ++i)
+  for (int i = 0; i < entries; ++i)
     std::cout << i << ": " << ab[i] << '\n';
 
   delete [] a;

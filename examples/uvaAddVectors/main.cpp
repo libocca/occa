@@ -2,7 +2,7 @@
 
 #include "occa.hpp"
 
-int main(int argc, char **argv){
+int main(int argc, char **argv) {
   int entries = 5;
 
   // [U]nified [V]irtual [A]dressing is
@@ -10,7 +10,7 @@ int main(int argc, char **argv){
   // occa::enableUVAByDefault();
 
   occa::device device;
-  device.setup("mode = OpenCL, platformID = 0, deviceID = 1, UVA = enabled");
+  device.setup("mode = OpenCL, platformID = 0, deviceID = 0, UVA = enabled");
 
   // Allocate [managed] arrays that will
   //   automatically synchronize between
@@ -19,7 +19,7 @@ int main(int argc, char **argv){
   float *b  = (float*) device.managedAlloc(entries * sizeof(float));
   float *ab = (float*) device.managedAlloc(entries * sizeof(float));
 
-  for(int i = 0; i < entries; ++i){
+  for (int i = 0; i < entries; ++i) {
     a[i]  = i;
     b[i]  = 1 - i;
     ab[i] = 0;
@@ -46,12 +46,13 @@ int main(int argc, char **argv){
   //   making it safe to use them again
   device.finish();
 
-  for(int i = 0; i < 5; ++i)
+  for (int i = 0; i < 5; ++i) {
     std::cout << i << ": " << ab[i] << '\n';
-
-  for(int i = 0; i < entries; ++i){
-    if(ab[i] != (a[i] + b[i]))
+  }
+  for (int i = 0; i < entries; ++i) {
+    if (ab[i] != (a[i] + b[i])) {
       throw 1;
+    }
   }
 
   occa::free(a);

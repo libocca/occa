@@ -1,3 +1,25 @@
+/* The MIT License (MIT)
+ *
+ * Copyright (c) 2014-2016 David Medina and Tim Warburton
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ */
+
 #ifndef OCCA_PARSER_TYPES_HEADER
 #define OCCA_PARSER_TYPES_HEADER
 
@@ -5,7 +27,7 @@
 #include "occa/parser/nodes.hpp"
 
 namespace occa {
-  class parsedKernelInfo;
+  class kernelMetadata;
 
   namespace parserNS {
     class expNode;
@@ -30,7 +52,7 @@ namespace occa {
 
       scopeInfo();
 
-      inline bool isTheGlobalScope(){
+      inline bool isTheGlobalScope() {
         return (up == NULL);
       }
 
@@ -53,7 +75,7 @@ namespace occa {
 
       void printOnString(std::string &str);
 
-      inline std::string toString(){
+      inline std::string toString() {
         std::string ret;
         printOnString(ret);
         return ret;
@@ -65,7 +87,7 @@ namespace occa {
         return ret;
       }
 
-      friend inline std::ostream& operator << (std::ostream &out, scopeInfo &scope){
+      friend inline std::ostream& operator << (std::ostream &out, scopeInfo &scope) {
         out << (std::string) scope;
 
         return out;
@@ -107,7 +129,7 @@ namespace occa {
 
       operator std::string();
 
-      friend inline std::ostream& operator << (std::ostream &out, attribute_t &attr){
+      friend inline std::ostream& operator << (std::ostream &out, attribute_t &attr) {
         out << (std::string) attr;
 
         return out;
@@ -141,7 +163,7 @@ namespace occa {
       qualifierInfo(const qualifierInfo &q);
       qualifierInfo& operator = (const qualifierInfo &q);
 
-      inline std::string& operator [] (const int pos){
+      inline std::string& operator [] (const int pos) {
         return qualifiers[pos];
       }
 
@@ -149,7 +171,7 @@ namespace occa {
         return qualifiers[pos];
       }
 
-      inline int size(){
+      inline int size() {
         return qualifierCount;
       }
 
@@ -204,7 +226,7 @@ namespace occa {
       void printOnString(std::string &str,
                          varInfo *var = NULL);
 
-      inline std::string toString(){
+      inline std::string toString() {
         std::string ret;
         printOnString(ret);
         return ret;
@@ -216,7 +238,7 @@ namespace occa {
         return ret;
       }
 
-      friend inline std::ostream& operator << (std::ostream &out, qualifierInfo &type){
+      friend inline std::ostream& operator << (std::ostream &out, qualifierInfo &type) {
         out << (std::string) type;
 
         return out;
@@ -302,7 +324,7 @@ namespace occa {
       void printOnString(std::string &str,
                          const std::string &tab = "");
 
-      inline std::string toString(const std::string &tab = ""){
+      inline std::string toString(const std::string &tab = "") {
         std::string ret;
         printOnString(ret, tab);
         return ret;
@@ -314,7 +336,7 @@ namespace occa {
         return ret;
       }
 
-      friend inline std::ostream& operator << (std::ostream &out, typeInfo &type){
+      friend inline std::ostream& operator << (std::ostream &out, typeInfo &type) {
         out << (std::string) type;
 
         return out;
@@ -516,7 +538,7 @@ namespace occa {
       void printOnString(std::string &str,
                          const bool printType = true);
 
-      inline std::string toString(){
+      inline std::string toString() {
         std::string ret;
         printOnString(ret);
         return ret;
@@ -528,7 +550,7 @@ namespace occa {
         return ret;
       }
 
-      friend inline std::ostream& operator << (std::ostream &out, varInfo &var){
+      friend inline std::ostream& operator << (std::ostream &out, varInfo &var) {
         out << (std::string) var;
 
         return out;
@@ -597,7 +619,7 @@ namespace occa {
       kernelInfo(const kernelInfo &info);
       kernelInfo& operator = (const kernelInfo &info);
 
-      occa::parsedKernelInfo makeParsedKernelInfo();
+      occa::kernelMetadata metadata();
     };
     //==============================================
   }
@@ -605,22 +627,22 @@ namespace occa {
   //---[ Parsed Kernel Info ]---------------------
   typedef parserNS::argumentInfo argumentInfo;
 
-  class parsedKernelInfo {
+  class kernelMetadata {
   public:
     std::string name, baseName;
     int nestedKernels;
 
     std::vector<argumentInfo> argumentInfos;
 
-    parsedKernelInfo();
+    kernelMetadata();
 
-    parsedKernelInfo(const parsedKernelInfo & kInfo);
-    parsedKernelInfo& operator = (const parsedKernelInfo & kInfo);
+    kernelMetadata(const kernelMetadata & kInfo);
+    kernelMetadata& operator = (const kernelMetadata & kInfo);
 
     void removeArg(const int pos);
 
     inline bool argIsConst(const int pos) const {
-      if(((size_t) pos) < argumentInfos.size())
+      if (((size_t) pos) < argumentInfos.size())
         return argumentInfos[pos].isConst;
 
       return false;

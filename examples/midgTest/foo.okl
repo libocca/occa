@@ -15,7 +15,7 @@ void MaxwellsRHS3d(  int K,
                      float * __restrict__ f_resQ,
                      float * __restrict__ f_inQ,
                      float * __restrict__ f_outQ,
-                     float frka, float frkb, float fdt){
+                     float frka, float frkb, float fdt) {
 
   /* registers and temporary */
   register unsigned int k;
@@ -33,8 +33,8 @@ void MaxwellsRHS3d(  int K,
   float  f_DsT[p_Np][p_Np] __attribute__ ((__aligned__));
   float  f_DtT[p_Np][p_Np] __attribute__ ((__aligned__));
 
-  for(n=0;n<p_Np;++n){
-    for(m=0;m<p_Np;++m){
+  for (n=0;n<p_Np;++n) {
+    for (m=0;m<p_Np;++m) {
       f_DrT[m][n] = f_Dr[n*p_Np+m];
       f_DsT[m][n] = f_Ds[n*p_Np+m];
       f_DtT[m][n] = f_Dt[n*p_Np+m];
@@ -42,8 +42,8 @@ void MaxwellsRHS3d(  int K,
   }
 
   float LIFT_T[p_Nfaces*p_Nfp][p_Np] __attribute__ ((__aligned__));
-  for(n=0;n<p_Np;++n){
-    for(m=0;m<p_Nfaces*p_Nfp;++m){
+  for (n=0;n<p_Np;++n) {
+    for (m=0;m<p_Nfaces*p_Nfp;++m) {
       LIFT_T[m][n] = f_LIFT[n*p_Nfaces*p_Nfp+m];
     }
   }
@@ -57,7 +57,7 @@ void MaxwellsRHS3d(  int K,
   float rhsEy[p_Np] __attribute__ ((__aligned__));
   float rhsEz[p_Np] __attribute__ ((__aligned__));
 
-  for(k=0;k<K;++k){
+  for (k=0;k<K;++k) {
 
     /* NOTE: once k is known, all other indexing variables etc are derived */
 
@@ -71,7 +71,7 @@ void MaxwellsRHS3d(  int K,
     /* NOTE: buffer element k into local storage */
     const float * __restrict__ qpt = f_Q+p_Nfields*p_Np*k;
 
-    for(m=0;m<p_Np;++m){
+    for (m=0;m<p_Np;++m) {
       rhsHx[m] = 0;
       rhsHy[m] = 0;
       rhsHz[m] = 0;
@@ -80,7 +80,7 @@ void MaxwellsRHS3d(  int K,
       rhsEz[m] = 0;
     }
 
-    for(m=0;m<p_Np;++m){
+    for (m=0;m<p_Np;++m) {
 
       const float * __restrict__ qm = qpt + p_Nfields*m;
 
@@ -95,7 +95,7 @@ void MaxwellsRHS3d(  int K,
       const float * __restrict__ f_DsTm = f_DsT[m];
       const float * __restrict__ f_DtTm = f_DtT[m];
 
-      for(n=0;n<p_Np;++n){
+      for (n=0;n<p_Np;++n) {
 
         const float dr = f_DrTm[n];
         const float ds = f_DsTm[n];
@@ -116,7 +116,7 @@ void MaxwellsRHS3d(  int K,
     /* NOTE: index into geometric factors */
     int surfid=k*7*p_Nfp*p_Nfaces;
 
-    for(m=0;m<p_Nfp*p_Nfaces;++m){
+    for (m=0;m<p_Nfp*p_Nfaces;++m) {
       int   idM       = surfinfo[surfid++];
       int   idP       = surfinfo[surfid++];
       const float FSc = surfinfo[surfid++];
@@ -127,7 +127,7 @@ void MaxwellsRHS3d(  int K,
 
       float dHx, dHy, dHz, dEx, dEy, dEz;
 
-      if(true){//if(idP<0){
+      if (true) {//if (idP<0) {
         idP = p_Nfields*(-1-idP);
         dHx = FSc*(f_inQ[idP++]  -f_Q[idM++]);
         dHy = FSc*(f_inQ[idP++]  -f_Q[idM++]);
@@ -136,7 +136,7 @@ void MaxwellsRHS3d(  int K,
         dEy = FSc*(f_inQ[idP++]  -f_Q[idM++]);
         dEz = FSc*(f_inQ[idP]    -f_Q[idM]);
       }
-      else{
+      else {
         dHx = FSc*(    f_Q[idP++]  -f_Q[idM++]);
         dHy = FSc*(    f_Q[idP++]  -f_Q[idM++]);
         dHz = FSc*(    f_Q[idP++]  -f_Q[idM++]);
@@ -158,7 +158,7 @@ void MaxwellsRHS3d(  int K,
 
       const float * __restrict__ Lm = LIFT_T[m];
 
-      for(n=0;n<p_Np;++n){
+      for (n=0;n<p_Np;++n) {
         /* NOTE: hint for compiler (nvcc) to unroll */
         const float L = Lm[n];
 
@@ -178,10 +178,10 @@ void MaxwellsRHS3d(  int K,
     {
       int sk = 0;
 
-      for(n=0;n<p_Np*6;++n)
+      for (n=0;n<p_Np*6;++n)
         f_resQk[n] *= frka;
 
-      for(n=0;n<p_Np;++n) {
+      for (n=0;n<p_Np;++n) {
         f_resQk[sk] +=  fdt*rhsHx[n]; ++sk;
         f_resQk[sk] +=  fdt*rhsHy[n]; ++sk;
         f_resQk[sk] +=  fdt*rhsHz[n]; ++sk;
@@ -192,10 +192,10 @@ void MaxwellsRHS3d(  int K,
     }
   }
 
-  for(k=0;k<K;++k){
+  for (k=0;k<K;++k) {
     const int sk = k*p_Np*p_Nfields;
 
-    for(n=0;n<p_Np*p_Nfields;++n){
+    for (n=0;n<p_Np*p_Nfields;++n) {
       f_Q[sk+n] += frkb*f_resQ[sk+n];
     }
   }

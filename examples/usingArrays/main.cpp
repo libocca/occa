@@ -7,7 +7,7 @@ void printVector(occa::array<TM,TMi> &a);
 template <class TM, const int TMi>
 void printMatrix(occa::array<TM,TMi> &a);
 
-int main(int argc, char **argv){
+int main(int argc, char **argv) {
   // occa::setDevice("mode = OpenCL, platformID = 0, deviceID = 1, UVA = enabled");
   // occa::setDevice("mode = CUDA, deviceID = 0, UVA = enabled");
 
@@ -20,8 +20,8 @@ int main(int argc, char **argv){
   // b.setIdxOrder("AB", "BA");
   b.setIdxOrder(0,1);
 
-  for(int j = 0; j < (int) a.dim(1); ++j){
-    for(int i = 0; i < (int) a.dim(0); ++i){
+  for (int j = 0; j < (int) a.dim(1); ++j) {
+    for (int i = 0; i < (int) a.dim(0); ++i) {
       a(j,i) = 10*j + i;
       b(j,i) = 10*j + i;
     }
@@ -54,11 +54,11 @@ int main(int argc, char **argv){
 }
 
 template <class TM, const int TMi>
-void printVector(occa::array<TM,TMi> &a){
+void printVector(occa::array<TM,TMi> &a) {
   std::cout << '[';
 
-  for(int i = 0; i < (int) a.entries(); ++i){
-    if(i) std::cout << ", ";
+  for (int i = 0; i < (int) a.entries(); ++i) {
+    if (i) std::cout << ", ";
     std::cout << a[i];
   }
 
@@ -67,12 +67,12 @@ void printVector(occa::array<TM,TMi> &a){
 
 
 template <class TM, const int TMi>
-void printMatrix(occa::array<TM,TMi> &a){
-  for(int j = 0; j < (int) a.dim(1); ++j){
+void printMatrix(occa::array<TM,TMi> &a) {
+  for (int j = 0; j < (int) a.dim(1); ++j) {
     std::cout << "| ";
 
-    for(int i = 0; i < (int) a.dim(0); ++i){
-      if(i) std::cout << ' ';
+    for (int i = 0; i < (int) a.dim(0); ++i) {
+      if (i) std::cout << ' ';
       std::cout << a(j,i);
     }
 

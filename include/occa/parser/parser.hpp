@@ -1,3 +1,25 @@
+/* The MIT License (MIT)
+ *
+ * Copyright (c) 2014-2016 David Medina and Tim Warburton
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ */
+
 #ifndef OCCA_PARSER_HEADER
 #define OCCA_PARSER_HEADER
 
@@ -9,7 +31,7 @@
 #include "occa/parser/statement.hpp"
 #include "occa/parser/analyzer.hpp"
 #include "occa/parser/magic.hpp"
-#include "occa/tools.hpp"
+#include "occa/tools/properties.hpp"
 
 namespace occa {
   namespace parserNS {
@@ -28,7 +50,7 @@ namespace occa {
 
       int parsingLanguage;
 
-      flags_t parsingFlags;
+      occa::properties properties;
 
       macroMap_t macroMap;
       std::vector<macroInfo> macros;
@@ -51,20 +73,13 @@ namespace occa {
       parserBase();
       ~parserBase();
 
-      inline const std::string parseFile(const std::string &filename_,
-                                         const flags_t &flags_ = flags_t()){
-
-        return parseFile("", filename_, flags_);
-      }
-
-      const std::string parseFile(const std::string &header,
-                                  const std::string &filename,
-                                  const flags_t &flags_ = flags_t());
+      const std::string parseFile(const std::string &filename,
+                                  const occa::properties &properties_ = occa::properties());
 
       const std::string parseSource(const char *cRoot);
 
       //---[ Parser Warnings ]----------
-      void loadParserFlags(const flags_t &flags);
+      void loadParserFlags(const occa::properties &properties_);
 
       bool hasMagicEnabled();
       bool compilingForCPU();

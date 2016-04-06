@@ -1,4 +1,25 @@
-#!/usr/bin/env python3
+# The MIT License (MIT)
+# 
+# Copyright (c) 2014-2016 David Medina and Tim Warburton
+# 
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+# 
+# The above copyright notice and this permission notice shall be included in all
+# copies or substantial portions of the Software.
+# 
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+# SOFTWARE.
+
 from os import environ as ENV
 
 EDIT_WARNING = """/*
@@ -79,7 +100,7 @@ def define_typeN(type_, n):
              'public:\n'
 
     for i in range(n):
-        if(i < 4):
+        if (i < 4):
             define += '  union { ' + type_ + ' ' + varN(i) + ', ' + varL(i) + '; };\n'
         else:
             define += '  ' + type_ + ' ' + varN(i) + ';\n'
@@ -113,7 +134,7 @@ def define_typeN(type_, n):
 
     define += '\n'
     define += '#if (!defined(OCCA_IN_KERNEL) || (OCCA_USING_SERIAL || OCCA_USING_OPENMP || OCCA_USING_PTHREADS))\n'
-    define += 'inline std::ostream& operator << (std::ostream &out, const ' + typeN + '& a){\n'
+    define += 'inline std::ostream& operator << (std::ostream &out, const ' + typeN + '& a) {\n'
 
     l = ''; r = '';
 
@@ -142,9 +163,9 @@ def unary_op_def(type_, n, op):
     op2   = op + op
     ops = [op, op2, op2]
 
-    defines = ['occaFunction inline ' + typeN + ' operator '  + ops[0] + ' (const ' + typeN + ' &a){\n',
-               'occaFunction inline ' + typeN + ' operator '  + ops[1] + ' (' + typeN + ' &a, int){\n',
-               'occaFunction inline ' + typeN + '& operator ' + ops[2] + ' (' + typeN + ' &a){\n']
+    defines = ['occaFunction inline ' + typeN + ' operator '  + ops[0] + ' (const ' + typeN + ' &a) {\n',
+               'occaFunction inline ' + typeN + ' operator '  + ops[1] + ' (' + typeN + ' &a, int) {\n',
+               'occaFunction inline ' + typeN + '& operator ' + ops[2] + ' (' + typeN + ' &a) {\n']
 
     maxDefs = (1 if isFloat else 3)
 
@@ -196,11 +217,11 @@ def binary_op_def(type_, n, op):
     a = 'a.'
     b = 'b.'
 
-    defines = ['occaFunction inline ' + typeN + '  operator ' + op + '  (const ' + typeN + ' &a, const ' + typeN + ' &b){\n',
-               'occaFunction inline ' + typeN + '  operator ' + op + '  (const ' + type_ + ' &a, const ' + typeN + ' &b){\n',
-               'occaFunction inline ' + typeN + '  operator ' + op + '  (const ' + typeN + ' &a, const ' + type_ + ' &b){\n',
-               'occaFunction inline ' + typeN + '& operator ' + op + '= (      ' + typeN + ' &a, const ' + typeN + ' &b){\n',
-               'occaFunction inline ' + typeN + '& operator ' + op + '= (      ' + typeN + ' &a, const ' + type_ + ' &b){\n']
+    defines = ['occaFunction inline ' + typeN + '  operator ' + op + '  (const ' + typeN + ' &a, const ' + typeN + ' &b) {\n',
+               'occaFunction inline ' + typeN + '  operator ' + op + '  (const ' + type_ + ' &a, const ' + typeN + ' &b) {\n',
+               'occaFunction inline ' + typeN + '  operator ' + op + '  (const ' + typeN + ' &a, const ' + type_ + ' &b) {\n',
+               'occaFunction inline ' + typeN + '& operator ' + op + '= (      ' + typeN + ' &a, const ' + typeN + ' &b) {\n',
+               'occaFunction inline ' + typeN + '& operator ' + op + '= (      ' + typeN + ' &a, const ' + type_ + ' &b) {\n']
 
     aIsTypeN = [True, False, True , True, True ]
     bIsTypeN = [True, True , False, True, False]

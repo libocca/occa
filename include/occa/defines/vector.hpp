@@ -1,3 +1,25 @@
+/* The MIT License (MIT)
+ * 
+ * Copyright (c) 2014-2016 David Medina and Tim Warburton
+ * 
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ * 
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ */
+
 #ifndef OCCA_VECTOR_DEFINE_HEADER
 #define OCCA_VECTOR_DEFINE_HEADER
 /*
@@ -37,113 +59,113 @@ public:
     y(y_) {}
 };
 
-occaFunction inline bool2  operator +  (const bool2 &a, const bool2 &b){
+occaFunction inline bool2  operator +  (const bool2 &a, const bool2 &b) {
   return OCCA_BOOL2(a.x + b.x,
                     a.y + b.y);
 }
 
-occaFunction inline bool2  operator +  (const bool &a, const bool2 &b){
+occaFunction inline bool2  operator +  (const bool &a, const bool2 &b) {
   return OCCA_BOOL2(a + b.x,
                     a + b.y);
 }
 
-occaFunction inline bool2  operator +  (const bool2 &a, const bool &b){
+occaFunction inline bool2  operator +  (const bool2 &a, const bool &b) {
   return OCCA_BOOL2(a.x + b,
                     a.y + b);
 }
 
-occaFunction inline bool2& operator += (      bool2 &a, const bool2 &b){
+occaFunction inline bool2& operator += (      bool2 &a, const bool2 &b) {
   a.x += b.x;
   a.y += b.y;
   return a;
 }
 
-occaFunction inline bool2& operator += (      bool2 &a, const bool &b){
+occaFunction inline bool2& operator += (      bool2 &a, const bool &b) {
   a.x += b;
   a.y += b;
   return a;
 }
-occaFunction inline bool2  operator -  (const bool2 &a, const bool2 &b){
+occaFunction inline bool2  operator -  (const bool2 &a, const bool2 &b) {
   return OCCA_BOOL2(a.x - b.x,
                     a.y - b.y);
 }
 
-occaFunction inline bool2  operator -  (const bool &a, const bool2 &b){
+occaFunction inline bool2  operator -  (const bool &a, const bool2 &b) {
   return OCCA_BOOL2(a - b.x,
                     a - b.y);
 }
 
-occaFunction inline bool2  operator -  (const bool2 &a, const bool &b){
+occaFunction inline bool2  operator -  (const bool2 &a, const bool &b) {
   return OCCA_BOOL2(a.x - b,
                     a.y - b);
 }
 
-occaFunction inline bool2& operator -= (      bool2 &a, const bool2 &b){
+occaFunction inline bool2& operator -= (      bool2 &a, const bool2 &b) {
   a.x -= b.x;
   a.y -= b.y;
   return a;
 }
 
-occaFunction inline bool2& operator -= (      bool2 &a, const bool &b){
+occaFunction inline bool2& operator -= (      bool2 &a, const bool &b) {
   a.x -= b;
   a.y -= b;
   return a;
 }
-occaFunction inline bool2  operator *  (const bool2 &a, const bool2 &b){
+occaFunction inline bool2  operator *  (const bool2 &a, const bool2 &b) {
   return OCCA_BOOL2(a.x * b.x,
                     a.y * b.y);
 }
 
-occaFunction inline bool2  operator *  (const bool &a, const bool2 &b){
+occaFunction inline bool2  operator *  (const bool &a, const bool2 &b) {
   return OCCA_BOOL2(a * b.x,
                     a * b.y);
 }
 
-occaFunction inline bool2  operator *  (const bool2 &a, const bool &b){
+occaFunction inline bool2  operator *  (const bool2 &a, const bool &b) {
   return OCCA_BOOL2(a.x * b,
                     a.y * b);
 }
 
-occaFunction inline bool2& operator *= (      bool2 &a, const bool2 &b){
+occaFunction inline bool2& operator *= (      bool2 &a, const bool2 &b) {
   a.x *= b.x;
   a.y *= b.y;
   return a;
 }
 
-occaFunction inline bool2& operator *= (      bool2 &a, const bool &b){
+occaFunction inline bool2& operator *= (      bool2 &a, const bool &b) {
   a.x *= b;
   a.y *= b;
   return a;
 }
-occaFunction inline bool2  operator /  (const bool2 &a, const bool2 &b){
+occaFunction inline bool2  operator /  (const bool2 &a, const bool2 &b) {
   return OCCA_BOOL2(a.x / b.x,
                     a.y / b.y);
 }
 
-occaFunction inline bool2  operator /  (const bool &a, const bool2 &b){
+occaFunction inline bool2  operator /  (const bool &a, const bool2 &b) {
   return OCCA_BOOL2(a / b.x,
                     a / b.y);
 }
 
-occaFunction inline bool2  operator /  (const bool2 &a, const bool &b){
+occaFunction inline bool2  operator /  (const bool2 &a, const bool &b) {
   return OCCA_BOOL2(a.x / b,
                     a.y / b);
 }
 
-occaFunction inline bool2& operator /= (      bool2 &a, const bool2 &b){
+occaFunction inline bool2& operator /= (      bool2 &a, const bool2 &b) {
   a.x /= b.x;
   a.y /= b.y;
   return a;
 }
 
-occaFunction inline bool2& operator /= (      bool2 &a, const bool &b){
+occaFunction inline bool2& operator /= (      bool2 &a, const bool &b) {
   a.x /= b;
   a.y /= b;
   return a;
 }
 
 #if (!defined(OCCA_IN_KERNEL) || (OCCA_USING_SERIAL || OCCA_USING_OPENMP || OCCA_USING_PTHREADS))
-inline std::ostream& operator << (std::ostream &out, const bool2& a){
+inline std::ostream& operator << (std::ostream &out, const bool2& a) {
   out << "[" << (a.x ? "true" : "false") << ", "
              << (a.y ? "true" : "false")
       << "]\n";
@@ -201,28 +223,28 @@ public:
     w(w_) {}
 };
 
-occaFunction inline bool4  operator +  (const bool4 &a, const bool4 &b){
+occaFunction inline bool4  operator +  (const bool4 &a, const bool4 &b) {
   return OCCA_BOOL4(a.x + b.x,
                     a.y + b.y,
                     a.z + b.z,
                     a.w + b.w);
 }
 
-occaFunction inline bool4  operator +  (const bool &a, const bool4 &b){
+occaFunction inline bool4  operator +  (const bool &a, const bool4 &b) {
   return OCCA_BOOL4(a + b.x,
                     a + b.y,
                     a + b.z,
                     a + b.w);
 }
 
-occaFunction inline bool4  operator +  (const bool4 &a, const bool &b){
+occaFunction inline bool4  operator +  (const bool4 &a, const bool &b) {
   return OCCA_BOOL4(a.x + b,
                     a.y + b,
                     a.z + b,
                     a.w + b);
 }
 
-occaFunction inline bool4& operator += (      bool4 &a, const bool4 &b){
+occaFunction inline bool4& operator += (      bool4 &a, const bool4 &b) {
   a.x += b.x;
   a.y += b.y;
   a.z += b.z;
@@ -230,35 +252,35 @@ occaFunction inline bool4& operator += (      bool4 &a, const bool4 &b){
   return a;
 }
 
-occaFunction inline bool4& operator += (      bool4 &a, const bool &b){
+occaFunction inline bool4& operator += (      bool4 &a, const bool &b) {
   a.x += b;
   a.y += b;
   a.z += b;
   a.w += b;
   return a;
 }
-occaFunction inline bool4  operator -  (const bool4 &a, const bool4 &b){
+occaFunction inline bool4  operator -  (const bool4 &a, const bool4 &b) {
   return OCCA_BOOL4(a.x - b.x,
                     a.y - b.y,
                     a.z - b.z,
                     a.w - b.w);
 }
 
-occaFunction inline bool4  operator -  (const bool &a, const bool4 &b){
+occaFunction inline bool4  operator -  (const bool &a, const bool4 &b) {
   return OCCA_BOOL4(a - b.x,
                     a - b.y,
                     a - b.z,
                     a - b.w);
 }
 
-occaFunction inline bool4  operator -  (const bool4 &a, const bool &b){
+occaFunction inline bool4  operator -  (const bool4 &a, const bool &b) {
   return OCCA_BOOL4(a.x - b,
                     a.y - b,
                     a.z - b,
                     a.w - b);
 }
 
-occaFunction inline bool4& operator -= (      bool4 &a, const bool4 &b){
+occaFunction inline bool4& operator -= (      bool4 &a, const bool4 &b) {
   a.x -= b.x;
   a.y -= b.y;
   a.z -= b.z;
@@ -266,35 +288,35 @@ occaFunction inline bool4& operator -= (      bool4 &a, const bool4 &b){
   return a;
 }
 
-occaFunction inline bool4& operator -= (      bool4 &a, const bool &b){
+occaFunction inline bool4& operator -= (      bool4 &a, const bool &b) {
   a.x -= b;
   a.y -= b;
   a.z -= b;
   a.w -= b;
   return a;
 }
-occaFunction inline bool4  operator *  (const bool4 &a, const bool4 &b){
+occaFunction inline bool4  operator *  (const bool4 &a, const bool4 &b) {
   return OCCA_BOOL4(a.x * b.x,
                     a.y * b.y,
                     a.z * b.z,
                     a.w * b.w);
 }
 
-occaFunction inline bool4  operator *  (const bool &a, const bool4 &b){
+occaFunction inline bool4  operator *  (const bool &a, const bool4 &b) {
   return OCCA_BOOL4(a * b.x,
                     a * b.y,
                     a * b.z,
                     a * b.w);
 }
 
-occaFunction inline bool4  operator *  (const bool4 &a, const bool &b){
+occaFunction inline bool4  operator *  (const bool4 &a, const bool &b) {
   return OCCA_BOOL4(a.x * b,
                     a.y * b,
                     a.z * b,
                     a.w * b);
 }
 
-occaFunction inline bool4& operator *= (      bool4 &a, const bool4 &b){
+occaFunction inline bool4& operator *= (      bool4 &a, const bool4 &b) {
   a.x *= b.x;
   a.y *= b.y;
   a.z *= b.z;
@@ -302,35 +324,35 @@ occaFunction inline bool4& operator *= (      bool4 &a, const bool4 &b){
   return a;
 }
 
-occaFunction inline bool4& operator *= (      bool4 &a, const bool &b){
+occaFunction inline bool4& operator *= (      bool4 &a, const bool &b) {
   a.x *= b;
   a.y *= b;
   a.z *= b;
   a.w *= b;
   return a;
 }
-occaFunction inline bool4  operator /  (const bool4 &a, const bool4 &b){
+occaFunction inline bool4  operator /  (const bool4 &a, const bool4 &b) {
   return OCCA_BOOL4(a.x / b.x,
                     a.y / b.y,
                     a.z / b.z,
                     a.w / b.w);
 }
 
-occaFunction inline bool4  operator /  (const bool &a, const bool4 &b){
+occaFunction inline bool4  operator /  (const bool &a, const bool4 &b) {
   return OCCA_BOOL4(a / b.x,
                     a / b.y,
                     a / b.z,
                     a / b.w);
 }
 
-occaFunction inline bool4  operator /  (const bool4 &a, const bool &b){
+occaFunction inline bool4  operator /  (const bool4 &a, const bool &b) {
   return OCCA_BOOL4(a.x / b,
                     a.y / b,
                     a.z / b,
                     a.w / b);
 }
 
-occaFunction inline bool4& operator /= (      bool4 &a, const bool4 &b){
+occaFunction inline bool4& operator /= (      bool4 &a, const bool4 &b) {
   a.x /= b.x;
   a.y /= b.y;
   a.z /= b.z;
@@ -338,7 +360,7 @@ occaFunction inline bool4& operator /= (      bool4 &a, const bool4 &b){
   return a;
 }
 
-occaFunction inline bool4& operator /= (      bool4 &a, const bool &b){
+occaFunction inline bool4& operator /= (      bool4 &a, const bool &b) {
   a.x /= b;
   a.y /= b;
   a.z /= b;
@@ -347,7 +369,7 @@ occaFunction inline bool4& operator /= (      bool4 &a, const bool &b){
 }
 
 #if (!defined(OCCA_IN_KERNEL) || (OCCA_USING_SERIAL || OCCA_USING_OPENMP || OCCA_USING_PTHREADS))
-inline std::ostream& operator << (std::ostream &out, const bool4& a){
+inline std::ostream& operator << (std::ostream &out, const bool4& a) {
   out << "[" << (a.x ? "true" : "false") << ", "
              << (a.y ? "true" : "false") << ", "
              << (a.z ? "true" : "false") << ", "
@@ -501,7 +523,7 @@ public:
     s7(s7_) {}
 };
 
-occaFunction inline bool8  operator +  (const bool8 &a, const bool8 &b){
+occaFunction inline bool8  operator +  (const bool8 &a, const bool8 &b) {
   return OCCA_BOOL8(a.x + b.x,
                     a.y + b.y,
                     a.z + b.z,
@@ -512,7 +534,7 @@ occaFunction inline bool8  operator +  (const bool8 &a, const bool8 &b){
                     a.s7 + b.s7);
 }
 
-occaFunction inline bool8  operator +  (const bool &a, const bool8 &b){
+occaFunction inline bool8  operator +  (const bool &a, const bool8 &b) {
   return OCCA_BOOL8(a + b.x,
                     a + b.y,
                     a + b.z,
@@ -523,7 +545,7 @@ occaFunction inline bool8  operator +  (const bool &a, const bool8 &b){
                     a + b.s7);
 }
 
-occaFunction inline bool8  operator +  (const bool8 &a, const bool &b){
+occaFunction inline bool8  operator +  (const bool8 &a, const bool &b) {
   return OCCA_BOOL8(a.x + b,
                     a.y + b,
                     a.z + b,
@@ -534,7 +556,7 @@ occaFunction inline bool8  operator +  (const bool8 &a, const bool &b){
                     a.s7 + b);
 }
 
-occaFunction inline bool8& operator += (      bool8 &a, const bool8 &b){
+occaFunction inline bool8& operator += (      bool8 &a, const bool8 &b) {
   a.x += b.x;
   a.y += b.y;
   a.z += b.z;
@@ -546,7 +568,7 @@ occaFunction inline bool8& operator += (      bool8 &a, const bool8 &b){
   return a;
 }
 
-occaFunction inline bool8& operator += (      bool8 &a, const bool &b){
+occaFunction inline bool8& operator += (      bool8 &a, const bool &b) {
   a.x += b;
   a.y += b;
   a.z += b;
@@ -557,7 +579,7 @@ occaFunction inline bool8& operator += (      bool8 &a, const bool &b){
   a.s7 += b;
   return a;
 }
-occaFunction inline bool8  operator -  (const bool8 &a, const bool8 &b){
+occaFunction inline bool8  operator -  (const bool8 &a, const bool8 &b) {
   return OCCA_BOOL8(a.x - b.x,
                     a.y - b.y,
                     a.z - b.z,
@@ -568,7 +590,7 @@ occaFunction inline bool8  operator -  (const bool8 &a, const bool8 &b){
                     a.s7 - b.s7);
 }
 
-occaFunction inline bool8  operator -  (const bool &a, const bool8 &b){
+occaFunction inline bool8  operator -  (const bool &a, const bool8 &b) {
   return OCCA_BOOL8(a - b.x,
                     a - b.y,
                     a - b.z,
@@ -579,7 +601,7 @@ occaFunction inline bool8  operator -  (const bool &a, const bool8 &b){
                     a - b.s7);
 }
 
-occaFunction inline bool8  operator -  (const bool8 &a, const bool &b){
+occaFunction inline bool8  operator -  (const bool8 &a, const bool &b) {
   return OCCA_BOOL8(a.x - b,
                     a.y - b,
                     a.z - b,
@@ -590,7 +612,7 @@ occaFunction inline bool8  operator -  (const bool8 &a, const bool &b){
                     a.s7 - b);
 }
 
-occaFunction inline bool8& operator -= (      bool8 &a, const bool8 &b){
+occaFunction inline bool8& operator -= (      bool8 &a, const bool8 &b) {
   a.x -= b.x;
   a.y -= b.y;
   a.z -= b.z;
@@ -602,7 +624,7 @@ occaFunction inline bool8& operator -= (      bool8 &a, const bool8 &b){
   return a;
 }
 
-occaFunction inline bool8& operator -= (      bool8 &a, const bool &b){
+occaFunction inline bool8& operator -= (      bool8 &a, const bool &b) {
   a.x -= b;
   a.y -= b;
   a.z -= b;
@@ -613,7 +635,7 @@ occaFunction inline bool8& operator -= (      bool8 &a, const bool &b){
   a.s7 -= b;
   return a;
 }
-occaFunction inline bool8  operator *  (const bool8 &a, const bool8 &b){
+occaFunction inline bool8  operator *  (const bool8 &a, const bool8 &b) {
   return OCCA_BOOL8(a.x * b.x,
                     a.y * b.y,
                     a.z * b.z,
@@ -624,7 +646,7 @@ occaFunction inline bool8  operator *  (const bool8 &a, const bool8 &b){
                     a.s7 * b.s7);
 }
 
-occaFunction inline bool8  operator *  (const bool &a, const bool8 &b){
+occaFunction inline bool8  operator *  (const bool &a, const bool8 &b) {
   return OCCA_BOOL8(a * b.x,
                     a * b.y,
                     a * b.z,
@@ -635,7 +657,7 @@ occaFunction inline bool8  operator *  (const bool &a, const bool8 &b){
                     a * b.s7);
 }
 
-occaFunction inline bool8  operator *  (const bool8 &a, const bool &b){
+occaFunction inline bool8  operator *  (const bool8 &a, const bool &b) {
   return OCCA_BOOL8(a.x * b,
                     a.y * b,
                     a.z * b,
@@ -646,7 +668,7 @@ occaFunction inline bool8  operator *  (const bool8 &a, const bool &b){
                     a.s7 * b);
 }
 
-occaFunction inline bool8& operator *= (      bool8 &a, const bool8 &b){
+occaFunction inline bool8& operator *= (      bool8 &a, const bool8 &b) {
   a.x *= b.x;
   a.y *= b.y;
   a.z *= b.z;
@@ -658,7 +680,7 @@ occaFunction inline bool8& operator *= (      bool8 &a, const bool8 &b){
   return a;
 }
 
-occaFunction inline bool8& operator *= (      bool8 &a, const bool &b){
+occaFunction inline bool8& operator *= (      bool8 &a, const bool &b) {
   a.x *= b;
   a.y *= b;
   a.z *= b;
@@ -669,7 +691,7 @@ occaFunction inline bool8& operator *= (      bool8 &a, const bool &b){
   a.s7 *= b;
   return a;
 }
-occaFunction inline bool8  operator /  (const bool8 &a, const bool8 &b){
+occaFunction inline bool8  operator /  (const bool8 &a, const bool8 &b) {
   return OCCA_BOOL8(a.x / b.x,
                     a.y / b.y,
                     a.z / b.z,
@@ -680,7 +702,7 @@ occaFunction inline bool8  operator /  (const bool8 &a, const bool8 &b){
                     a.s7 / b.s7);
 }
 
-occaFunction inline bool8  operator /  (const bool &a, const bool8 &b){
+occaFunction inline bool8  operator /  (const bool &a, const bool8 &b) {
   return OCCA_BOOL8(a / b.x,
                     a / b.y,
                     a / b.z,
@@ -691,7 +713,7 @@ occaFunction inline bool8  operator /  (const bool &a, const bool8 &b){
                     a / b.s7);
 }
 
-occaFunction inline bool8  operator /  (const bool8 &a, const bool &b){
+occaFunction inline bool8  operator /  (const bool8 &a, const bool &b) {
   return OCCA_BOOL8(a.x / b,
                     a.y / b,
                     a.z / b,
@@ -702,7 +724,7 @@ occaFunction inline bool8  operator /  (const bool8 &a, const bool &b){
                     a.s7 / b);
 }
 
-occaFunction inline bool8& operator /= (      bool8 &a, const bool8 &b){
+occaFunction inline bool8& operator /= (      bool8 &a, const bool8 &b) {
   a.x /= b.x;
   a.y /= b.y;
   a.z /= b.z;
@@ -714,7 +736,7 @@ occaFunction inline bool8& operator /= (      bool8 &a, const bool8 &b){
   return a;
 }
 
-occaFunction inline bool8& operator /= (      bool8 &a, const bool &b){
+occaFunction inline bool8& operator /= (      bool8 &a, const bool &b) {
   a.x /= b;
   a.y /= b;
   a.z /= b;
@@ -727,7 +749,7 @@ occaFunction inline bool8& operator /= (      bool8 &a, const bool &b){
 }
 
 #if (!defined(OCCA_IN_KERNEL) || (OCCA_USING_SERIAL || OCCA_USING_OPENMP || OCCA_USING_PTHREADS))
-inline std::ostream& operator << (std::ostream &out, const bool8& a){
+inline std::ostream& operator << (std::ostream &out, const bool8& a) {
   out << "[" << (a.x ? "true" : "false") << ", "
              << (a.y ? "true" : "false") << ", "
              << (a.z ? "true" : "false") << ", "
@@ -1193,7 +1215,7 @@ public:
     s15(s15_) {}
 };
 
-occaFunction inline bool16  operator +  (const bool16 &a, const bool16 &b){
+occaFunction inline bool16  operator +  (const bool16 &a, const bool16 &b) {
   return OCCA_BOOL16(a.x + b.x,
                      a.y + b.y,
                      a.z + b.z,
@@ -1212,7 +1234,7 @@ occaFunction inline bool16  operator +  (const bool16 &a, const bool16 &b){
                      a.s15 + b.s15);
 }
 
-occaFunction inline bool16  operator +  (const bool &a, const bool16 &b){
+occaFunction inline bool16  operator +  (const bool &a, const bool16 &b) {
   return OCCA_BOOL16(a + b.x,
                      a + b.y,
                      a + b.z,
@@ -1231,7 +1253,7 @@ occaFunction inline bool16  operator +  (const bool &a, const bool16 &b){
                      a + b.s15);
 }
 
-occaFunction inline bool16  operator +  (const bool16 &a, const bool &b){
+occaFunction inline bool16  operator +  (const bool16 &a, const bool &b) {
   return OCCA_BOOL16(a.x + b,
                      a.y + b,
                      a.z + b,
@@ -1250,7 +1272,7 @@ occaFunction inline bool16  operator +  (const bool16 &a, const bool &b){
                      a.s15 + b);
 }
 
-occaFunction inline bool16& operator += (      bool16 &a, const bool16 &b){
+occaFunction inline bool16& operator += (      bool16 &a, const bool16 &b) {
   a.x += b.x;
   a.y += b.y;
   a.z += b.z;
@@ -1270,7 +1292,7 @@ occaFunction inline bool16& operator += (      bool16 &a, const bool16 &b){
   return a;
 }
 
-occaFunction inline bool16& operator += (      bool16 &a, const bool &b){
+occaFunction inline bool16& operator += (      bool16 &a, const bool &b) {
   a.x += b;
   a.y += b;
   a.z += b;
@@ -1289,7 +1311,7 @@ occaFunction inline bool16& operator += (      bool16 &a, const bool &b){
   a.s15 += b;
   return a;
 }
-occaFunction inline bool16  operator -  (const bool16 &a, const bool16 &b){
+occaFunction inline bool16  operator -  (const bool16 &a, const bool16 &b) {
   return OCCA_BOOL16(a.x - b.x,
                      a.y - b.y,
                      a.z - b.z,
@@ -1308,7 +1330,7 @@ occaFunction inline bool16  operator -  (const bool16 &a, const bool16 &b){
                      a.s15 - b.s15);
 }
 
-occaFunction inline bool16  operator -  (const bool &a, const bool16 &b){
+occaFunction inline bool16  operator -  (const bool &a, const bool16 &b) {
   return OCCA_BOOL16(a - b.x,
                      a - b.y,
                      a - b.z,
@@ -1327,7 +1349,7 @@ occaFunction inline bool16  operator -  (const bool &a, const bool16 &b){
                      a - b.s15);
 }
 
-occaFunction inline bool16  operator -  (const bool16 &a, const bool &b){
+occaFunction inline bool16  operator -  (const bool16 &a, const bool &b) {
   return OCCA_BOOL16(a.x - b,
                      a.y - b,
                      a.z - b,
@@ -1346,7 +1368,7 @@ occaFunction inline bool16  operator -  (const bool16 &a, const bool &b){
                      a.s15 - b);
 }
 
-occaFunction inline bool16& operator -= (      bool16 &a, const bool16 &b){
+occaFunction inline bool16& operator -= (      bool16 &a, const bool16 &b) {
   a.x -= b.x;
   a.y -= b.y;
   a.z -= b.z;
@@ -1366,7 +1388,7 @@ occaFunction inline bool16& operator -= (      bool16 &a, const bool16 &b){
   return a;
 }
 
-occaFunction inline bool16& operator -= (      bool16 &a, const bool &b){
+occaFunction inline bool16& operator -= (      bool16 &a, const bool &b) {
   a.x -= b;
   a.y -= b;
   a.z -= b;
@@ -1385,7 +1407,7 @@ occaFunction inline bool16& operator -= (      bool16 &a, const bool &b){
   a.s15 -= b;
   return a;
 }
-occaFunction inline bool16  operator *  (const bool16 &a, const bool16 &b){
+occaFunction inline bool16  operator *  (const bool16 &a, const bool16 &b) {
   return OCCA_BOOL16(a.x * b.x,
                      a.y * b.y,
                      a.z * b.z,
@@ -1404,7 +1426,7 @@ occaFunction inline bool16  operator *  (const bool16 &a, const bool16 &b){
                      a.s15 * b.s15);
 }
 
-occaFunction inline bool16  operator *  (const bool &a, const bool16 &b){
+occaFunction inline bool16  operator *  (const bool &a, const bool16 &b) {
   return OCCA_BOOL16(a * b.x,
                      a * b.y,
                      a * b.z,
@@ -1423,7 +1445,7 @@ occaFunction inline bool16  operator *  (const bool &a, const bool16 &b){
                      a * b.s15);
 }
 
-occaFunction inline bool16  operator *  (const bool16 &a, const bool &b){
+occaFunction inline bool16  operator *  (const bool16 &a, const bool &b) {
   return OCCA_BOOL16(a.x * b,
                      a.y * b,
                      a.z * b,
@@ -1442,7 +1464,7 @@ occaFunction inline bool16  operator *  (const bool16 &a, const bool &b){
                      a.s15 * b);
 }
 
-occaFunction inline bool16& operator *= (      bool16 &a, const bool16 &b){
+occaFunction inline bool16& operator *= (      bool16 &a, const bool16 &b) {
   a.x *= b.x;
   a.y *= b.y;
   a.z *= b.z;
@@ -1462,7 +1484,7 @@ occaFunction inline bool16& operator *= (      bool16 &a, const bool16 &b){
   return a;
 }
 
-occaFunction inline bool16& operator *= (      bool16 &a, const bool &b){
+occaFunction inline bool16& operator *= (      bool16 &a, const bool &b) {
   a.x *= b;
   a.y *= b;
   a.z *= b;
@@ -1481,7 +1503,7 @@ occaFunction inline bool16& operator *= (      bool16 &a, const bool &b){
   a.s15 *= b;
   return a;
 }
-occaFunction inline bool16  operator /  (const bool16 &a, const bool16 &b){
+occaFunction inline bool16  operator /  (const bool16 &a, const bool16 &b) {
   return OCCA_BOOL16(a.x / b.x,
                      a.y / b.y,
                      a.z / b.z,
@@ -1500,7 +1522,7 @@ occaFunction inline bool16  operator /  (const bool16 &a, const bool16 &b){
                      a.s15 / b.s15);
 }
 
-occaFunction inline bool16  operator /  (const bool &a, const bool16 &b){
+occaFunction inline bool16  operator /  (const bool &a, const bool16 &b) {
   return OCCA_BOOL16(a / b.x,
                      a / b.y,
                      a / b.z,
@@ -1519,7 +1541,7 @@ occaFunction inline bool16  operator /  (const bool &a, const bool16 &b){
                      a / b.s15);
 }
 
-occaFunction inline bool16  operator /  (const bool16 &a, const bool &b){
+occaFunction inline bool16  operator /  (const bool16 &a, const bool &b) {
   return OCCA_BOOL16(a.x / b,
                      a.y / b,
                      a.z / b,
@@ -1538,7 +1560,7 @@ occaFunction inline bool16  operator /  (const bool16 &a, const bool &b){
                      a.s15 / b);
 }
 
-occaFunction inline bool16& operator /= (      bool16 &a, const bool16 &b){
+occaFunction inline bool16& operator /= (      bool16 &a, const bool16 &b) {
   a.x /= b.x;
   a.y /= b.y;
   a.z /= b.z;
@@ -1558,7 +1580,7 @@ occaFunction inline bool16& operator /= (      bool16 &a, const bool16 &b){
   return a;
 }
 
-occaFunction inline bool16& operator /= (      bool16 &a, const bool &b){
+occaFunction inline bool16& operator /= (      bool16 &a, const bool &b) {
   a.x /= b;
   a.y /= b;
   a.z /= b;
@@ -1579,7 +1601,7 @@ occaFunction inline bool16& operator /= (      bool16 &a, const bool &b){
 }
 
 #if (!defined(OCCA_IN_KERNEL) || (OCCA_USING_SERIAL || OCCA_USING_OPENMP || OCCA_USING_PTHREADS))
-inline std::ostream& operator << (std::ostream &out, const bool16& a){
+inline std::ostream& operator << (std::ostream &out, const bool16& a) {
   out << "[" << (a.x ? "true" : "false") << ", "
              << (a.y ? "true" : "false") << ", "
              << (a.z ? "true" : "false") << ", "
@@ -1632,143 +1654,143 @@ public:
 };
 #endif
 
-occaFunction inline char2 operator + (const char2 &a){
+occaFunction inline char2 operator + (const char2 &a) {
   return OCCA_CHAR2(+a.x,
                     +a.y);
 }
 
-occaFunction inline char2 operator ++ (char2 &a, int){
+occaFunction inline char2 operator ++ (char2 &a, int) {
   return OCCA_CHAR2(a.x++,
                     a.y++);
 }
 
-occaFunction inline char2& operator ++ (char2 &a){
+occaFunction inline char2& operator ++ (char2 &a) {
   ++a.x;
   ++a.y;
   return a;
 }
-occaFunction inline char2 operator - (const char2 &a){
+occaFunction inline char2 operator - (const char2 &a) {
   return OCCA_CHAR2(-a.x,
                     -a.y);
 }
 
-occaFunction inline char2 operator -- (char2 &a, int){
+occaFunction inline char2 operator -- (char2 &a, int) {
   return OCCA_CHAR2(a.x--,
                     a.y--);
 }
 
-occaFunction inline char2& operator -- (char2 &a){
+occaFunction inline char2& operator -- (char2 &a) {
   --a.x;
   --a.y;
   return a;
 }
-occaFunction inline char2  operator +  (const char2 &a, const char2 &b){
+occaFunction inline char2  operator +  (const char2 &a, const char2 &b) {
   return OCCA_CHAR2(a.x + b.x,
                     a.y + b.y);
 }
 
-occaFunction inline char2  operator +  (const char &a, const char2 &b){
+occaFunction inline char2  operator +  (const char &a, const char2 &b) {
   return OCCA_CHAR2(a + b.x,
                     a + b.y);
 }
 
-occaFunction inline char2  operator +  (const char2 &a, const char &b){
+occaFunction inline char2  operator +  (const char2 &a, const char &b) {
   return OCCA_CHAR2(a.x + b,
                     a.y + b);
 }
 
-occaFunction inline char2& operator += (      char2 &a, const char2 &b){
+occaFunction inline char2& operator += (      char2 &a, const char2 &b) {
   a.x += b.x;
   a.y += b.y;
   return a;
 }
 
-occaFunction inline char2& operator += (      char2 &a, const char &b){
+occaFunction inline char2& operator += (      char2 &a, const char &b) {
   a.x += b;
   a.y += b;
   return a;
 }
-occaFunction inline char2  operator -  (const char2 &a, const char2 &b){
+occaFunction inline char2  operator -  (const char2 &a, const char2 &b) {
   return OCCA_CHAR2(a.x - b.x,
                     a.y - b.y);
 }
 
-occaFunction inline char2  operator -  (const char &a, const char2 &b){
+occaFunction inline char2  operator -  (const char &a, const char2 &b) {
   return OCCA_CHAR2(a - b.x,
                     a - b.y);
 }
 
-occaFunction inline char2  operator -  (const char2 &a, const char &b){
+occaFunction inline char2  operator -  (const char2 &a, const char &b) {
   return OCCA_CHAR2(a.x - b,
                     a.y - b);
 }
 
-occaFunction inline char2& operator -= (      char2 &a, const char2 &b){
+occaFunction inline char2& operator -= (      char2 &a, const char2 &b) {
   a.x -= b.x;
   a.y -= b.y;
   return a;
 }
 
-occaFunction inline char2& operator -= (      char2 &a, const char &b){
+occaFunction inline char2& operator -= (      char2 &a, const char &b) {
   a.x -= b;
   a.y -= b;
   return a;
 }
-occaFunction inline char2  operator *  (const char2 &a, const char2 &b){
+occaFunction inline char2  operator *  (const char2 &a, const char2 &b) {
   return OCCA_CHAR2(a.x * b.x,
                     a.y * b.y);
 }
 
-occaFunction inline char2  operator *  (const char &a, const char2 &b){
+occaFunction inline char2  operator *  (const char &a, const char2 &b) {
   return OCCA_CHAR2(a * b.x,
                     a * b.y);
 }
 
-occaFunction inline char2  operator *  (const char2 &a, const char &b){
+occaFunction inline char2  operator *  (const char2 &a, const char &b) {
   return OCCA_CHAR2(a.x * b,
                     a.y * b);
 }
 
-occaFunction inline char2& operator *= (      char2 &a, const char2 &b){
+occaFunction inline char2& operator *= (      char2 &a, const char2 &b) {
   a.x *= b.x;
   a.y *= b.y;
   return a;
 }
 
-occaFunction inline char2& operator *= (      char2 &a, const char &b){
+occaFunction inline char2& operator *= (      char2 &a, const char &b) {
   a.x *= b;
   a.y *= b;
   return a;
 }
-occaFunction inline char2  operator /  (const char2 &a, const char2 &b){
+occaFunction inline char2  operator /  (const char2 &a, const char2 &b) {
   return OCCA_CHAR2(a.x / b.x,
                     a.y / b.y);
 }
 
-occaFunction inline char2  operator /  (const char &a, const char2 &b){
+occaFunction inline char2  operator /  (const char &a, const char2 &b) {
   return OCCA_CHAR2(a / b.x,
                     a / b.y);
 }
 
-occaFunction inline char2  operator /  (const char2 &a, const char &b){
+occaFunction inline char2  operator /  (const char2 &a, const char &b) {
   return OCCA_CHAR2(a.x / b,
                     a.y / b);
 }
 
-occaFunction inline char2& operator /= (      char2 &a, const char2 &b){
+occaFunction inline char2& operator /= (      char2 &a, const char2 &b) {
   a.x /= b.x;
   a.y /= b.y;
   return a;
 }
 
-occaFunction inline char2& operator /= (      char2 &a, const char &b){
+occaFunction inline char2& operator /= (      char2 &a, const char &b) {
   a.x /= b;
   a.y /= b;
   return a;
 }
 
 #if (!defined(OCCA_IN_KERNEL) || (OCCA_USING_SERIAL || OCCA_USING_OPENMP || OCCA_USING_PTHREADS))
-inline std::ostream& operator << (std::ostream &out, const char2& a){
+inline std::ostream& operator << (std::ostream &out, const char2& a) {
   out << "[" << a.x << ", "
              << a.y
       << "]\n";
@@ -1832,70 +1854,70 @@ public:
 };
 #endif
 
-occaFunction inline char4 operator + (const char4 &a){
+occaFunction inline char4 operator + (const char4 &a) {
   return OCCA_CHAR4(+a.x,
                     +a.y,
                     +a.z,
                     +a.w);
 }
 
-occaFunction inline char4 operator ++ (char4 &a, int){
+occaFunction inline char4 operator ++ (char4 &a, int) {
   return OCCA_CHAR4(a.x++,
                     a.y++,
                     a.z++,
                     a.w++);
 }
 
-occaFunction inline char4& operator ++ (char4 &a){
+occaFunction inline char4& operator ++ (char4 &a) {
   ++a.x;
   ++a.y;
   ++a.z;
   ++a.w;
   return a;
 }
-occaFunction inline char4 operator - (const char4 &a){
+occaFunction inline char4 operator - (const char4 &a) {
   return OCCA_CHAR4(-a.x,
                     -a.y,
                     -a.z,
                     -a.w);
 }
 
-occaFunction inline char4 operator -- (char4 &a, int){
+occaFunction inline char4 operator -- (char4 &a, int) {
   return OCCA_CHAR4(a.x--,
                     a.y--,
                     a.z--,
                     a.w--);
 }
 
-occaFunction inline char4& operator -- (char4 &a){
+occaFunction inline char4& operator -- (char4 &a) {
   --a.x;
   --a.y;
   --a.z;
   --a.w;
   return a;
 }
-occaFunction inline char4  operator +  (const char4 &a, const char4 &b){
+occaFunction inline char4  operator +  (const char4 &a, const char4 &b) {
   return OCCA_CHAR4(a.x + b.x,
                     a.y + b.y,
                     a.z + b.z,
                     a.w + b.w);
 }
 
-occaFunction inline char4  operator +  (const char &a, const char4 &b){
+occaFunction inline char4  operator +  (const char &a, const char4 &b) {
   return OCCA_CHAR4(a + b.x,
                     a + b.y,
                     a + b.z,
                     a + b.w);
 }
 
-occaFunction inline char4  operator +  (const char4 &a, const char &b){
+occaFunction inline char4  operator +  (const char4 &a, const char &b) {
   return OCCA_CHAR4(a.x + b,
                     a.y + b,
                     a.z + b,
                     a.w + b);
 }
 
-occaFunction inline char4& operator += (      char4 &a, const char4 &b){
+occaFunction inline char4& operator += (      char4 &a, const char4 &b) {
   a.x += b.x;
   a.y += b.y;
   a.z += b.z;
@@ -1903,35 +1925,35 @@ occaFunction inline char4& operator += (      char4 &a, const char4 &b){
   return a;
 }
 
-occaFunction inline char4& operator += (      char4 &a, const char &b){
+occaFunction inline char4& operator += (      char4 &a, const char &b) {
   a.x += b;
   a.y += b;
   a.z += b;
   a.w += b;
   return a;
 }
-occaFunction inline char4  operator -  (const char4 &a, const char4 &b){
+occaFunction inline char4  operator -  (const char4 &a, const char4 &b) {
   return OCCA_CHAR4(a.x - b.x,
                     a.y - b.y,
                     a.z - b.z,
                     a.w - b.w);
 }
 
-occaFunction inline char4  operator -  (const char &a, const char4 &b){
+occaFunction inline char4  operator -  (const char &a, const char4 &b) {
   return OCCA_CHAR4(a - b.x,
                     a - b.y,
                     a - b.z,
                     a - b.w);
 }
 
-occaFunction inline char4  operator -  (const char4 &a, const char &b){
+occaFunction inline char4  operator -  (const char4 &a, const char &b) {
   return OCCA_CHAR4(a.x - b,
                     a.y - b,
                     a.z - b,
                     a.w - b);
 }
 
-occaFunction inline char4& operator -= (      char4 &a, const char4 &b){
+occaFunction inline char4& operator -= (      char4 &a, const char4 &b) {
   a.x -= b.x;
   a.y -= b.y;
   a.z -= b.z;
@@ -1939,35 +1961,35 @@ occaFunction inline char4& operator -= (      char4 &a, const char4 &b){
   return a;
 }
 
-occaFunction inline char4& operator -= (      char4 &a, const char &b){
+occaFunction inline char4& operator -= (      char4 &a, const char &b) {
   a.x -= b;
   a.y -= b;
   a.z -= b;
   a.w -= b;
   return a;
 }
-occaFunction inline char4  operator *  (const char4 &a, const char4 &b){
+occaFunction inline char4  operator *  (const char4 &a, const char4 &b) {
   return OCCA_CHAR4(a.x * b.x,
                     a.y * b.y,
                     a.z * b.z,
                     a.w * b.w);
 }
 
-occaFunction inline char4  operator *  (const char &a, const char4 &b){
+occaFunction inline char4  operator *  (const char &a, const char4 &b) {
   return OCCA_CHAR4(a * b.x,
                     a * b.y,
                     a * b.z,
                     a * b.w);
 }
 
-occaFunction inline char4  operator *  (const char4 &a, const char &b){
+occaFunction inline char4  operator *  (const char4 &a, const char &b) {
   return OCCA_CHAR4(a.x * b,
                     a.y * b,
                     a.z * b,
                     a.w * b);
 }
 
-occaFunction inline char4& operator *= (      char4 &a, const char4 &b){
+occaFunction inline char4& operator *= (      char4 &a, const char4 &b) {
   a.x *= b.x;
   a.y *= b.y;
   a.z *= b.z;
@@ -1975,35 +1997,35 @@ occaFunction inline char4& operator *= (      char4 &a, const char4 &b){
   return a;
 }
 
-occaFunction inline char4& operator *= (      char4 &a, const char &b){
+occaFunction inline char4& operator *= (      char4 &a, const char &b) {
   a.x *= b;
   a.y *= b;
   a.z *= b;
   a.w *= b;
   return a;
 }
-occaFunction inline char4  operator /  (const char4 &a, const char4 &b){
+occaFunction inline char4  operator /  (const char4 &a, const char4 &b) {
   return OCCA_CHAR4(a.x / b.x,
                     a.y / b.y,
                     a.z / b.z,
                     a.w / b.w);
 }
 
-occaFunction inline char4  operator /  (const char &a, const char4 &b){
+occaFunction inline char4  operator /  (const char &a, const char4 &b) {
   return OCCA_CHAR4(a / b.x,
                     a / b.y,
                     a / b.z,
                     a / b.w);
 }
 
-occaFunction inline char4  operator /  (const char4 &a, const char &b){
+occaFunction inline char4  operator /  (const char4 &a, const char &b) {
   return OCCA_CHAR4(a.x / b,
                     a.y / b,
                     a.z / b,
                     a.w / b);
 }
 
-occaFunction inline char4& operator /= (      char4 &a, const char4 &b){
+occaFunction inline char4& operator /= (      char4 &a, const char4 &b) {
   a.x /= b.x;
   a.y /= b.y;
   a.z /= b.z;
@@ -2011,7 +2033,7 @@ occaFunction inline char4& operator /= (      char4 &a, const char4 &b){
   return a;
 }
 
-occaFunction inline char4& operator /= (      char4 &a, const char &b){
+occaFunction inline char4& operator /= (      char4 &a, const char &b) {
   a.x /= b;
   a.y /= b;
   a.z /= b;
@@ -2020,7 +2042,7 @@ occaFunction inline char4& operator /= (      char4 &a, const char &b){
 }
 
 #if (!defined(OCCA_IN_KERNEL) || (OCCA_USING_SERIAL || OCCA_USING_OPENMP || OCCA_USING_PTHREADS))
-inline std::ostream& operator << (std::ostream &out, const char4& a){
+inline std::ostream& operator << (std::ostream &out, const char4& a) {
   out << "[" << a.x << ", "
              << a.y << ", "
              << a.z << ", "
@@ -2178,7 +2200,7 @@ public:
     s7(s7_) {}
 };
 
-occaFunction inline char8 operator + (const char8 &a){
+occaFunction inline char8 operator + (const char8 &a) {
   return OCCA_CHAR8(+a.x,
                     +a.y,
                     +a.z,
@@ -2189,7 +2211,7 @@ occaFunction inline char8 operator + (const char8 &a){
                     +a.s7);
 }
 
-occaFunction inline char8 operator ++ (char8 &a, int){
+occaFunction inline char8 operator ++ (char8 &a, int) {
   return OCCA_CHAR8(a.x++,
                     a.y++,
                     a.z++,
@@ -2200,7 +2222,7 @@ occaFunction inline char8 operator ++ (char8 &a, int){
                     a.s7++);
 }
 
-occaFunction inline char8& operator ++ (char8 &a){
+occaFunction inline char8& operator ++ (char8 &a) {
   ++a.x;
   ++a.y;
   ++a.z;
@@ -2211,7 +2233,7 @@ occaFunction inline char8& operator ++ (char8 &a){
   ++a.s7;
   return a;
 }
-occaFunction inline char8 operator - (const char8 &a){
+occaFunction inline char8 operator - (const char8 &a) {
   return OCCA_CHAR8(-a.x,
                     -a.y,
                     -a.z,
@@ -2222,7 +2244,7 @@ occaFunction inline char8 operator - (const char8 &a){
                     -a.s7);
 }
 
-occaFunction inline char8 operator -- (char8 &a, int){
+occaFunction inline char8 operator -- (char8 &a, int) {
   return OCCA_CHAR8(a.x--,
                     a.y--,
                     a.z--,
@@ -2233,7 +2255,7 @@ occaFunction inline char8 operator -- (char8 &a, int){
                     a.s7--);
 }
 
-occaFunction inline char8& operator -- (char8 &a){
+occaFunction inline char8& operator -- (char8 &a) {
   --a.x;
   --a.y;
   --a.z;
@@ -2244,7 +2266,7 @@ occaFunction inline char8& operator -- (char8 &a){
   --a.s7;
   return a;
 }
-occaFunction inline char8  operator +  (const char8 &a, const char8 &b){
+occaFunction inline char8  operator +  (const char8 &a, const char8 &b) {
   return OCCA_CHAR8(a.x + b.x,
                     a.y + b.y,
                     a.z + b.z,
@@ -2255,7 +2277,7 @@ occaFunction inline char8  operator +  (const char8 &a, const char8 &b){
                     a.s7 + b.s7);
 }
 
-occaFunction inline char8  operator +  (const char &a, const char8 &b){
+occaFunction inline char8  operator +  (const char &a, const char8 &b) {
   return OCCA_CHAR8(a + b.x,
                     a + b.y,
                     a + b.z,
@@ -2266,7 +2288,7 @@ occaFunction inline char8  operator +  (const char &a, const char8 &b){
                     a + b.s7);
 }
 
-occaFunction inline char8  operator +  (const char8 &a, const char &b){
+occaFunction inline char8  operator +  (const char8 &a, const char &b) {
   return OCCA_CHAR8(a.x + b,
                     a.y + b,
                     a.z + b,
@@ -2277,7 +2299,7 @@ occaFunction inline char8  operator +  (const char8 &a, const char &b){
                     a.s7 + b);
 }
 
-occaFunction inline char8& operator += (      char8 &a, const char8 &b){
+occaFunction inline char8& operator += (      char8 &a, const char8 &b) {
   a.x += b.x;
   a.y += b.y;
   a.z += b.z;
@@ -2289,7 +2311,7 @@ occaFunction inline char8& operator += (      char8 &a, const char8 &b){
   return a;
 }
 
-occaFunction inline char8& operator += (      char8 &a, const char &b){
+occaFunction inline char8& operator += (      char8 &a, const char &b) {
   a.x += b;
   a.y += b;
   a.z += b;
@@ -2300,7 +2322,7 @@ occaFunction inline char8& operator += (      char8 &a, const char &b){
   a.s7 += b;
   return a;
 }
-occaFunction inline char8  operator -  (const char8 &a, const char8 &b){
+occaFunction inline char8  operator -  (const char8 &a, const char8 &b) {
   return OCCA_CHAR8(a.x - b.x,
                     a.y - b.y,
                     a.z - b.z,
@@ -2311,7 +2333,7 @@ occaFunction inline char8  operator -  (const char8 &a, const char8 &b){
                     a.s7 - b.s7);
 }
 
-occaFunction inline char8  operator -  (const char &a, const char8 &b){
+occaFunction inline char8  operator -  (const char &a, const char8 &b) {
   return OCCA_CHAR8(a - b.x,
                     a - b.y,
                     a - b.z,
@@ -2322,7 +2344,7 @@ occaFunction inline char8  operator -  (const char &a, const char8 &b){
                     a - b.s7);
 }
 
-occaFunction inline char8  operator -  (const char8 &a, const char &b){
+occaFunction inline char8  operator -  (const char8 &a, const char &b) {
   return OCCA_CHAR8(a.x - b,
                     a.y - b,
                     a.z - b,
@@ -2333,7 +2355,7 @@ occaFunction inline char8  operator -  (const char8 &a, const char &b){
                     a.s7 - b);
 }
 
-occaFunction inline char8& operator -= (      char8 &a, const char8 &b){
+occaFunction inline char8& operator -= (      char8 &a, const char8 &b) {
   a.x -= b.x;
   a.y -= b.y;
   a.z -= b.z;
@@ -2345,7 +2367,7 @@ occaFunction inline char8& operator -= (      char8 &a, const char8 &b){
   return a;
 }
 
-occaFunction inline char8& operator -= (      char8 &a, const char &b){
+occaFunction inline char8& operator -= (      char8 &a, const char &b) {
   a.x -= b;
   a.y -= b;
   a.z -= b;
@@ -2356,7 +2378,7 @@ occaFunction inline char8& operator -= (      char8 &a, const char &b){
   a.s7 -= b;
   return a;
 }
-occaFunction inline char8  operator *  (const char8 &a, const char8 &b){
+occaFunction inline char8  operator *  (const char8 &a, const char8 &b) {
   return OCCA_CHAR8(a.x * b.x,
                     a.y * b.y,
                     a.z * b.z,
@@ -2367,7 +2389,7 @@ occaFunction inline char8  operator *  (const char8 &a, const char8 &b){
                     a.s7 * b.s7);
 }
 
-occaFunction inline char8  operator *  (const char &a, const char8 &b){
+occaFunction inline char8  operator *  (const char &a, const char8 &b) {
   return OCCA_CHAR8(a * b.x,
                     a * b.y,
                     a * b.z,
@@ -2378,7 +2400,7 @@ occaFunction inline char8  operator *  (const char &a, const char8 &b){
                     a * b.s7);
 }
 
-occaFunction inline char8  operator *  (const char8 &a, const char &b){
+occaFunction inline char8  operator *  (const char8 &a, const char &b) {
   return OCCA_CHAR8(a.x * b,
                     a.y * b,
                     a.z * b,
@@ -2389,7 +2411,7 @@ occaFunction inline char8  operator *  (const char8 &a, const char &b){
                     a.s7 * b);
 }
 
-occaFunction inline char8& operator *= (      char8 &a, const char8 &b){
+occaFunction inline char8& operator *= (      char8 &a, const char8 &b) {
   a.x *= b.x;
   a.y *= b.y;
   a.z *= b.z;
@@ -2401,7 +2423,7 @@ occaFunction inline char8& operator *= (      char8 &a, const char8 &b){
   return a;
 }
 
-occaFunction inline char8& operator *= (      char8 &a, const char &b){
+occaFunction inline char8& operator *= (      char8 &a, const char &b) {
   a.x *= b;
   a.y *= b;
   a.z *= b;
@@ -2412,7 +2434,7 @@ occaFunction inline char8& operator *= (      char8 &a, const char &b){
   a.s7 *= b;
   return a;
 }
-occaFunction inline char8  operator /  (const char8 &a, const char8 &b){
+occaFunction inline char8  operator /  (const char8 &a, const char8 &b) {
   return OCCA_CHAR8(a.x / b.x,
                     a.y / b.y,
                     a.z / b.z,
@@ -2423,7 +2445,7 @@ occaFunction inline char8  operator /  (const char8 &a, const char8 &b){
                     a.s7 / b.s7);
 }
 
-occaFunction inline char8  operator /  (const char &a, const char8 &b){
+occaFunction inline char8  operator /  (const char &a, const char8 &b) {
   return OCCA_CHAR8(a / b.x,
                     a / b.y,
                     a / b.z,
@@ -2434,7 +2456,7 @@ occaFunction inline char8  operator /  (const char &a, const char8 &b){
                     a / b.s7);
 }
 
-occaFunction inline char8  operator /  (const char8 &a, const char &b){
+occaFunction inline char8  operator /  (const char8 &a, const char &b) {
   return OCCA_CHAR8(a.x / b,
                     a.y / b,
                     a.z / b,
@@ -2445,7 +2467,7 @@ occaFunction inline char8  operator /  (const char8 &a, const char &b){
                     a.s7 / b);
 }
 
-occaFunction inline char8& operator /= (      char8 &a, const char8 &b){
+occaFunction inline char8& operator /= (      char8 &a, const char8 &b) {
   a.x /= b.x;
   a.y /= b.y;
   a.z /= b.z;
@@ -2457,7 +2479,7 @@ occaFunction inline char8& operator /= (      char8 &a, const char8 &b){
   return a;
 }
 
-occaFunction inline char8& operator /= (      char8 &a, const char &b){
+occaFunction inline char8& operator /= (      char8 &a, const char &b) {
   a.x /= b;
   a.y /= b;
   a.z /= b;
@@ -2470,7 +2492,7 @@ occaFunction inline char8& operator /= (      char8 &a, const char &b){
 }
 
 #if (!defined(OCCA_IN_KERNEL) || (OCCA_USING_SERIAL || OCCA_USING_OPENMP || OCCA_USING_PTHREADS))
-inline std::ostream& operator << (std::ostream &out, const char8& a){
+inline std::ostream& operator << (std::ostream &out, const char8& a) {
   out << "[" << a.x << ", "
              << a.y << ", "
              << a.z << ", "
@@ -2936,7 +2958,7 @@ public:
     s15(s15_) {}
 };
 
-occaFunction inline char16 operator + (const char16 &a){
+occaFunction inline char16 operator + (const char16 &a) {
   return OCCA_CHAR16(+a.x,
                      +a.y,
                      +a.z,
@@ -2955,7 +2977,7 @@ occaFunction inline char16 operator + (const char16 &a){
                      +a.s15);
 }
 
-occaFunction inline char16 operator ++ (char16 &a, int){
+occaFunction inline char16 operator ++ (char16 &a, int) {
   return OCCA_CHAR16(a.x++,
                      a.y++,
                      a.z++,
@@ -2974,7 +2996,7 @@ occaFunction inline char16 operator ++ (char16 &a, int){
                      a.s15++);
 }
 
-occaFunction inline char16& operator ++ (char16 &a){
+occaFunction inline char16& operator ++ (char16 &a) {
   ++a.x;
   ++a.y;
   ++a.z;
@@ -2993,7 +3015,7 @@ occaFunction inline char16& operator ++ (char16 &a){
   ++a.s15;
   return a;
 }
-occaFunction inline char16 operator - (const char16 &a){
+occaFunction inline char16 operator - (const char16 &a) {
   return OCCA_CHAR16(-a.x,
                      -a.y,
                      -a.z,
@@ -3012,7 +3034,7 @@ occaFunction inline char16 operator - (const char16 &a){
                      -a.s15);
 }
 
-occaFunction inline char16 operator -- (char16 &a, int){
+occaFunction inline char16 operator -- (char16 &a, int) {
   return OCCA_CHAR16(a.x--,
                      a.y--,
                      a.z--,
@@ -3031,7 +3053,7 @@ occaFunction inline char16 operator -- (char16 &a, int){
                      a.s15--);
 }
 
-occaFunction inline char16& operator -- (char16 &a){
+occaFunction inline char16& operator -- (char16 &a) {
   --a.x;
   --a.y;
   --a.z;
@@ -3050,7 +3072,7 @@ occaFunction inline char16& operator -- (char16 &a){
   --a.s15;
   return a;
 }
-occaFunction inline char16  operator +  (const char16 &a, const char16 &b){
+occaFunction inline char16  operator +  (const char16 &a, const char16 &b) {
   return OCCA_CHAR16(a.x + b.x,
                      a.y + b.y,
                      a.z + b.z,
@@ -3069,7 +3091,7 @@ occaFunction inline char16  operator +  (const char16 &a, const char16 &b){
                      a.s15 + b.s15);
 }
 
-occaFunction inline char16  operator +  (const char &a, const char16 &b){
+occaFunction inline char16  operator +  (const char &a, const char16 &b) {
   return OCCA_CHAR16(a + b.x,
                      a + b.y,
                      a + b.z,
@@ -3088,7 +3110,7 @@ occaFunction inline char16  operator +  (const char &a, const char16 &b){
                      a + b.s15);
 }
 
-occaFunction inline char16  operator +  (const char16 &a, const char &b){
+occaFunction inline char16  operator +  (const char16 &a, const char &b) {
   return OCCA_CHAR16(a.x + b,
                      a.y + b,
                      a.z + b,
@@ -3107,7 +3129,7 @@ occaFunction inline char16  operator +  (const char16 &a, const char &b){
                      a.s15 + b);
 }
 
-occaFunction inline char16& operator += (      char16 &a, const char16 &b){
+occaFunction inline char16& operator += (      char16 &a, const char16 &b) {
   a.x += b.x;
   a.y += b.y;
   a.z += b.z;
@@ -3127,7 +3149,7 @@ occaFunction inline char16& operator += (      char16 &a, const char16 &b){
   return a;
 }
 
-occaFunction inline char16& operator += (      char16 &a, const char &b){
+occaFunction inline char16& operator += (      char16 &a, const char &b) {
   a.x += b;
   a.y += b;
   a.z += b;
@@ -3146,7 +3168,7 @@ occaFunction inline char16& operator += (      char16 &a, const char &b){
   a.s15 += b;
   return a;
 }
-occaFunction inline char16  operator -  (const char16 &a, const char16 &b){
+occaFunction inline char16  operator -  (const char16 &a, const char16 &b) {
   return OCCA_CHAR16(a.x - b.x,
                      a.y - b.y,
                      a.z - b.z,
@@ -3165,7 +3187,7 @@ occaFunction inline char16  operator -  (const char16 &a, const char16 &b){
                      a.s15 - b.s15);
 }
 
-occaFunction inline char16  operator -  (const char &a, const char16 &b){
+occaFunction inline char16  operator -  (const char &a, const char16 &b) {
   return OCCA_CHAR16(a - b.x,
                      a - b.y,
                      a - b.z,
@@ -3184,7 +3206,7 @@ occaFunction inline char16  operator -  (const char &a, const char16 &b){
                      a - b.s15);
 }
 
-occaFunction inline char16  operator -  (const char16 &a, const char &b){
+occaFunction inline char16  operator -  (const char16 &a, const char &b) {
   return OCCA_CHAR16(a.x - b,
                      a.y - b,
                      a.z - b,
@@ -3203,7 +3225,7 @@ occaFunction inline char16  operator -  (const char16 &a, const char &b){
                      a.s15 - b);
 }
 
-occaFunction inline char16& operator -= (      char16 &a, const char16 &b){
+occaFunction inline char16& operator -= (      char16 &a, const char16 &b) {
   a.x -= b.x;
   a.y -= b.y;
   a.z -= b.z;
@@ -3223,7 +3245,7 @@ occaFunction inline char16& operator -= (      char16 &a, const char16 &b){
   return a;
 }
 
-occaFunction inline char16& operator -= (      char16 &a, const char &b){
+occaFunction inline char16& operator -= (      char16 &a, const char &b) {
   a.x -= b;
   a.y -= b;
   a.z -= b;
@@ -3242,7 +3264,7 @@ occaFunction inline char16& operator -= (      char16 &a, const char &b){
   a.s15 -= b;
   return a;
 }
-occaFunction inline char16  operator *  (const char16 &a, const char16 &b){
+occaFunction inline char16  operator *  (const char16 &a, const char16 &b) {
   return OCCA_CHAR16(a.x * b.x,
                      a.y * b.y,
                      a.z * b.z,
@@ -3261,7 +3283,7 @@ occaFunction inline char16  operator *  (const char16 &a, const char16 &b){
                      a.s15 * b.s15);
 }
 
-occaFunction inline char16  operator *  (const char &a, const char16 &b){
+occaFunction inline char16  operator *  (const char &a, const char16 &b) {
   return OCCA_CHAR16(a * b.x,
                      a * b.y,
                      a * b.z,
@@ -3280,7 +3302,7 @@ occaFunction inline char16  operator *  (const char &a, const char16 &b){
                      a * b.s15);
 }
 
-occaFunction inline char16  operator *  (const char16 &a, const char &b){
+occaFunction inline char16  operator *  (const char16 &a, const char &b) {
   return OCCA_CHAR16(a.x * b,
                      a.y * b,
                      a.z * b,
@@ -3299,7 +3321,7 @@ occaFunction inline char16  operator *  (const char16 &a, const char &b){
                      a.s15 * b);
 }
 
-occaFunction inline char16& operator *= (      char16 &a, const char16 &b){
+occaFunction inline char16& operator *= (      char16 &a, const char16 &b) {
   a.x *= b.x;
   a.y *= b.y;
   a.z *= b.z;
@@ -3319,7 +3341,7 @@ occaFunction inline char16& operator *= (      char16 &a, const char16 &b){
   return a;
 }
 
-occaFunction inline char16& operator *= (      char16 &a, const char &b){
+occaFunction inline char16& operator *= (      char16 &a, const char &b) {
   a.x *= b;
   a.y *= b;
   a.z *= b;
@@ -3338,7 +3360,7 @@ occaFunction inline char16& operator *= (      char16 &a, const char &b){
   a.s15 *= b;
   return a;
 }
-occaFunction inline char16  operator /  (const char16 &a, const char16 &b){
+occaFunction inline char16  operator /  (const char16 &a, const char16 &b) {
   return OCCA_CHAR16(a.x / b.x,
                      a.y / b.y,
                      a.z / b.z,
@@ -3357,7 +3379,7 @@ occaFunction inline char16  operator /  (const char16 &a, const char16 &b){
                      a.s15 / b.s15);
 }
 
-occaFunction inline char16  operator /  (const char &a, const char16 &b){
+occaFunction inline char16  operator /  (const char &a, const char16 &b) {
   return OCCA_CHAR16(a / b.x,
                      a / b.y,
                      a / b.z,
@@ -3376,7 +3398,7 @@ occaFunction inline char16  operator /  (const char &a, const char16 &b){
                      a / b.s15);
 }
 
-occaFunction inline char16  operator /  (const char16 &a, const char &b){
+occaFunction inline char16  operator /  (const char16 &a, const char &b) {
   return OCCA_CHAR16(a.x / b,
                      a.y / b,
                      a.z / b,
@@ -3395,7 +3417,7 @@ occaFunction inline char16  operator /  (const char16 &a, const char &b){
                      a.s15 / b);
 }
 
-occaFunction inline char16& operator /= (      char16 &a, const char16 &b){
+occaFunction inline char16& operator /= (      char16 &a, const char16 &b) {
   a.x /= b.x;
   a.y /= b.y;
   a.z /= b.z;
@@ -3415,7 +3437,7 @@ occaFunction inline char16& operator /= (      char16 &a, const char16 &b){
   return a;
 }
 
-occaFunction inline char16& operator /= (      char16 &a, const char &b){
+occaFunction inline char16& operator /= (      char16 &a, const char &b) {
   a.x /= b;
   a.y /= b;
   a.z /= b;
@@ -3436,7 +3458,7 @@ occaFunction inline char16& operator /= (      char16 &a, const char &b){
 }
 
 #if (!defined(OCCA_IN_KERNEL) || (OCCA_USING_SERIAL || OCCA_USING_OPENMP || OCCA_USING_PTHREADS))
-inline std::ostream& operator << (std::ostream &out, const char16& a){
+inline std::ostream& operator << (std::ostream &out, const char16& a) {
   out << "[" << a.x << ", "
              << a.y << ", "
              << a.z << ", "
@@ -3489,143 +3511,143 @@ public:
 };
 #endif
 
-occaFunction inline short2 operator + (const short2 &a){
+occaFunction inline short2 operator + (const short2 &a) {
   return OCCA_SHORT2(+a.x,
                      +a.y);
 }
 
-occaFunction inline short2 operator ++ (short2 &a, int){
+occaFunction inline short2 operator ++ (short2 &a, int) {
   return OCCA_SHORT2(a.x++,
                      a.y++);
 }
 
-occaFunction inline short2& operator ++ (short2 &a){
+occaFunction inline short2& operator ++ (short2 &a) {
   ++a.x;
   ++a.y;
   return a;
 }
-occaFunction inline short2 operator - (const short2 &a){
+occaFunction inline short2 operator - (const short2 &a) {
   return OCCA_SHORT2(-a.x,
                      -a.y);
 }
 
-occaFunction inline short2 operator -- (short2 &a, int){
+occaFunction inline short2 operator -- (short2 &a, int) {
   return OCCA_SHORT2(a.x--,
                      a.y--);
 }
 
-occaFunction inline short2& operator -- (short2 &a){
+occaFunction inline short2& operator -- (short2 &a) {
   --a.x;
   --a.y;
   return a;
 }
-occaFunction inline short2  operator +  (const short2 &a, const short2 &b){
+occaFunction inline short2  operator +  (const short2 &a, const short2 &b) {
   return OCCA_SHORT2(a.x + b.x,
                      a.y + b.y);
 }
 
-occaFunction inline short2  operator +  (const short &a, const short2 &b){
+occaFunction inline short2  operator +  (const short &a, const short2 &b) {
   return OCCA_SHORT2(a + b.x,
                      a + b.y);
 }
 
-occaFunction inline short2  operator +  (const short2 &a, const short &b){
+occaFunction inline short2  operator +  (const short2 &a, const short &b) {
   return OCCA_SHORT2(a.x + b,
                      a.y + b);
 }
 
-occaFunction inline short2& operator += (      short2 &a, const short2 &b){
+occaFunction inline short2& operator += (      short2 &a, const short2 &b) {
   a.x += b.x;
   a.y += b.y;
   return a;
 }
 
-occaFunction inline short2& operator += (      short2 &a, const short &b){
+occaFunction inline short2& operator += (      short2 &a, const short &b) {
   a.x += b;
   a.y += b;
   return a;
 }
-occaFunction inline short2  operator -  (const short2 &a, const short2 &b){
+occaFunction inline short2  operator -  (const short2 &a, const short2 &b) {
   return OCCA_SHORT2(a.x - b.x,
                      a.y - b.y);
 }
 
-occaFunction inline short2  operator -  (const short &a, const short2 &b){
+occaFunction inline short2  operator -  (const short &a, const short2 &b) {
   return OCCA_SHORT2(a - b.x,
                      a - b.y);
 }
 
-occaFunction inline short2  operator -  (const short2 &a, const short &b){
+occaFunction inline short2  operator -  (const short2 &a, const short &b) {
   return OCCA_SHORT2(a.x - b,
                      a.y - b);
 }
 
-occaFunction inline short2& operator -= (      short2 &a, const short2 &b){
+occaFunction inline short2& operator -= (      short2 &a, const short2 &b) {
   a.x -= b.x;
   a.y -= b.y;
   return a;
 }
 
-occaFunction inline short2& operator -= (      short2 &a, const short &b){
+occaFunction inline short2& operator -= (      short2 &a, const short &b) {
   a.x -= b;
   a.y -= b;
   return a;
 }
-occaFunction inline short2  operator *  (const short2 &a, const short2 &b){
+occaFunction inline short2  operator *  (const short2 &a, const short2 &b) {
   return OCCA_SHORT2(a.x * b.x,
                      a.y * b.y);
 }
 
-occaFunction inline short2  operator *  (const short &a, const short2 &b){
+occaFunction inline short2  operator *  (const short &a, const short2 &b) {
   return OCCA_SHORT2(a * b.x,
                      a * b.y);
 }
 
-occaFunction inline short2  operator *  (const short2 &a, const short &b){
+occaFunction inline short2  operator *  (const short2 &a, const short &b) {
   return OCCA_SHORT2(a.x * b,
                      a.y * b);
 }
 
-occaFunction inline short2& operator *= (      short2 &a, const short2 &b){
+occaFunction inline short2& operator *= (      short2 &a, const short2 &b) {
   a.x *= b.x;
   a.y *= b.y;
   return a;
 }
 
-occaFunction inline short2& operator *= (      short2 &a, const short &b){
+occaFunction inline short2& operator *= (      short2 &a, const short &b) {
   a.x *= b;
   a.y *= b;
   return a;
 }
-occaFunction inline short2  operator /  (const short2 &a, const short2 &b){
+occaFunction inline short2  operator /  (const short2 &a, const short2 &b) {
   return OCCA_SHORT2(a.x / b.x,
                      a.y / b.y);
 }
 
-occaFunction inline short2  operator /  (const short &a, const short2 &b){
+occaFunction inline short2  operator /  (const short &a, const short2 &b) {
   return OCCA_SHORT2(a / b.x,
                      a / b.y);
 }
 
-occaFunction inline short2  operator /  (const short2 &a, const short &b){
+occaFunction inline short2  operator /  (const short2 &a, const short &b) {
   return OCCA_SHORT2(a.x / b,
                      a.y / b);
 }
 
-occaFunction inline short2& operator /= (      short2 &a, const short2 &b){
+occaFunction inline short2& operator /= (      short2 &a, const short2 &b) {
   a.x /= b.x;
   a.y /= b.y;
   return a;
 }
 
-occaFunction inline short2& operator /= (      short2 &a, const short &b){
+occaFunction inline short2& operator /= (      short2 &a, const short &b) {
   a.x /= b;
   a.y /= b;
   return a;
 }
 
 #if (!defined(OCCA_IN_KERNEL) || (OCCA_USING_SERIAL || OCCA_USING_OPENMP || OCCA_USING_PTHREADS))
-inline std::ostream& operator << (std::ostream &out, const short2& a){
+inline std::ostream& operator << (std::ostream &out, const short2& a) {
   out << "[" << a.x << ", "
              << a.y
       << "]\n";
@@ -3689,70 +3711,70 @@ public:
 };
 #endif
 
-occaFunction inline short4 operator + (const short4 &a){
+occaFunction inline short4 operator + (const short4 &a) {
   return OCCA_SHORT4(+a.x,
                      +a.y,
                      +a.z,
                      +a.w);
 }
 
-occaFunction inline short4 operator ++ (short4 &a, int){
+occaFunction inline short4 operator ++ (short4 &a, int) {
   return OCCA_SHORT4(a.x++,
                      a.y++,
                      a.z++,
                      a.w++);
 }
 
-occaFunction inline short4& operator ++ (short4 &a){
+occaFunction inline short4& operator ++ (short4 &a) {
   ++a.x;
   ++a.y;
   ++a.z;
   ++a.w;
   return a;
 }
-occaFunction inline short4 operator - (const short4 &a){
+occaFunction inline short4 operator - (const short4 &a) {
   return OCCA_SHORT4(-a.x,
                      -a.y,
                      -a.z,
                      -a.w);
 }
 
-occaFunction inline short4 operator -- (short4 &a, int){
+occaFunction inline short4 operator -- (short4 &a, int) {
   return OCCA_SHORT4(a.x--,
                      a.y--,
                      a.z--,
                      a.w--);
 }
 
-occaFunction inline short4& operator -- (short4 &a){
+occaFunction inline short4& operator -- (short4 &a) {
   --a.x;
   --a.y;
   --a.z;
   --a.w;
   return a;
 }
-occaFunction inline short4  operator +  (const short4 &a, const short4 &b){
+occaFunction inline short4  operator +  (const short4 &a, const short4 &b) {
   return OCCA_SHORT4(a.x + b.x,
                      a.y + b.y,
                      a.z + b.z,
                      a.w + b.w);
 }
 
-occaFunction inline short4  operator +  (const short &a, const short4 &b){
+occaFunction inline short4  operator +  (const short &a, const short4 &b) {
   return OCCA_SHORT4(a + b.x,
                      a + b.y,
                      a + b.z,
                      a + b.w);
 }
 
-occaFunction inline short4  operator +  (const short4 &a, const short &b){
+occaFunction inline short4  operator +  (const short4 &a, const short &b) {
   return OCCA_SHORT4(a.x + b,
                      a.y + b,
                      a.z + b,
                      a.w + b);
 }
 
-occaFunction inline short4& operator += (      short4 &a, const short4 &b){
+occaFunction inline short4& operator += (      short4 &a, const short4 &b) {
   a.x += b.x;
   a.y += b.y;
   a.z += b.z;
@@ -3760,35 +3782,35 @@ occaFunction inline short4& operator += (      short4 &a, const short4 &b){
   return a;
 }
 
-occaFunction inline short4& operator += (      short4 &a, const short &b){
+occaFunction inline short4& operator += (      short4 &a, const short &b) {
   a.x += b;
   a.y += b;
   a.z += b;
   a.w += b;
   return a;
 }
-occaFunction inline short4  operator -  (const short4 &a, const short4 &b){
+occaFunction inline short4  operator -  (const short4 &a, const short4 &b) {
   return OCCA_SHORT4(a.x - b.x,
                      a.y - b.y,
                      a.z - b.z,
                      a.w - b.w);
 }
 
-occaFunction inline short4  operator -  (const short &a, const short4 &b){
+occaFunction inline short4  operator -  (const short &a, const short4 &b) {
   return OCCA_SHORT4(a - b.x,
                      a - b.y,
                      a - b.z,
                      a - b.w);
 }
 
-occaFunction inline short4  operator -  (const short4 &a, const short &b){
+occaFunction inline short4  operator -  (const short4 &a, const short &b) {
   return OCCA_SHORT4(a.x - b,
                      a.y - b,
                      a.z - b,
                      a.w - b);
 }
 
-occaFunction inline short4& operator -= (      short4 &a, const short4 &b){
+occaFunction inline short4& operator -= (      short4 &a, const short4 &b) {
   a.x -= b.x;
   a.y -= b.y;
   a.z -= b.z;
@@ -3796,35 +3818,35 @@ occaFunction inline short4& operator -= (      short4 &a, const short4 &b){
   return a;
 }
 
-occaFunction inline short4& operator -= (      short4 &a, const short &b){
+occaFunction inline short4& operator -= (      short4 &a, const short &b) {
   a.x -= b;
   a.y -= b;
   a.z -= b;
   a.w -= b;
   return a;
 }
-occaFunction inline short4  operator *  (const short4 &a, const short4 &b){
+occaFunction inline short4  operator *  (const short4 &a, const short4 &b) {
   return OCCA_SHORT4(a.x * b.x,
                      a.y * b.y,
                      a.z * b.z,
                      a.w * b.w);
 }
 
-occaFunction inline short4  operator *  (const short &a, const short4 &b){
+occaFunction inline short4  operator *  (const short &a, const short4 &b) {
   return OCCA_SHORT4(a * b.x,
                      a * b.y,
                      a * b.z,
                      a * b.w);
 }
 
-occaFunction inline short4  operator *  (const short4 &a, const short &b){
+occaFunction inline short4  operator *  (const short4 &a, const short &b) {
   return OCCA_SHORT4(a.x * b,
                      a.y * b,
                      a.z * b,
                      a.w * b);
 }
 
-occaFunction inline short4& operator *= (      short4 &a, const short4 &b){
+occaFunction inline short4& operator *= (      short4 &a, const short4 &b) {
   a.x *= b.x;
   a.y *= b.y;
   a.z *= b.z;
@@ -3832,35 +3854,35 @@ occaFunction inline short4& operator *= (      short4 &a, const short4 &b){
   return a;
 }
 
-occaFunction inline short4& operator *= (      short4 &a, const short &b){
+occaFunction inline short4& operator *= (      short4 &a, const short &b) {
   a.x *= b;
   a.y *= b;
   a.z *= b;
   a.w *= b;
   return a;
 }
-occaFunction inline short4  operator /  (const short4 &a, const short4 &b){
+occaFunction inline short4  operator /  (const short4 &a, const short4 &b) {
   return OCCA_SHORT4(a.x / b.x,
                      a.y / b.y,
                      a.z / b.z,
                      a.w / b.w);
 }
 
-occaFunction inline short4  operator /  (const short &a, const short4 &b){
+occaFunction inline short4  operator /  (const short &a, const short4 &b) {
   return OCCA_SHORT4(a / b.x,
                      a / b.y,
                      a / b.z,
                      a / b.w);
 }
 
-occaFunction inline short4  operator /  (const short4 &a, const short &b){
+occaFunction inline short4  operator /  (const short4 &a, const short &b) {
   return OCCA_SHORT4(a.x / b,
                      a.y / b,
                      a.z / b,
                      a.w / b);
 }
 
-occaFunction inline short4& operator /= (      short4 &a, const short4 &b){
+occaFunction inline short4& operator /= (      short4 &a, const short4 &b) {
   a.x /= b.x;
   a.y /= b.y;
   a.z /= b.z;
@@ -3868,7 +3890,7 @@ occaFunction inline short4& operator /= (      short4 &a, const short4 &b){
   return a;
 }
 
-occaFunction inline short4& operator /= (      short4 &a, const short &b){
+occaFunction inline short4& operator /= (      short4 &a, const short &b) {
   a.x /= b;
   a.y /= b;
   a.z /= b;
@@ -3877,7 +3899,7 @@ occaFunction inline short4& operator /= (      short4 &a, const short &b){
 }
 
 #if (!defined(OCCA_IN_KERNEL) || (OCCA_USING_SERIAL || OCCA_USING_OPENMP || OCCA_USING_PTHREADS))
-inline std::ostream& operator << (std::ostream &out, const short4& a){
+inline std::ostream& operator << (std::ostream &out, const short4& a) {
   out << "[" << a.x << ", "
              << a.y << ", "
              << a.z << ", "
@@ -4035,7 +4057,7 @@ public:
     s7(s7_) {}
 };
 
-occaFunction inline short8 operator + (const short8 &a){
+occaFunction inline short8 operator + (const short8 &a) {
   return OCCA_SHORT8(+a.x,
                      +a.y,
                      +a.z,
@@ -4046,7 +4068,7 @@ occaFunction inline short8 operator + (const short8 &a){
                      +a.s7);
 }
 
-occaFunction inline short8 operator ++ (short8 &a, int){
+occaFunction inline short8 operator ++ (short8 &a, int) {
   return OCCA_SHORT8(a.x++,
                      a.y++,
                      a.z++,
@@ -4057,7 +4079,7 @@ occaFunction inline short8 operator ++ (short8 &a, int){
                      a.s7++);
 }
 
-occaFunction inline short8& operator ++ (short8 &a){
+occaFunction inline short8& operator ++ (short8 &a) {
   ++a.x;
   ++a.y;
   ++a.z;
@@ -4068,7 +4090,7 @@ occaFunction inline short8& operator ++ (short8 &a){
   ++a.s7;
   return a;
 }
-occaFunction inline short8 operator - (const short8 &a){
+occaFunction inline short8 operator - (const short8 &a) {
   return OCCA_SHORT8(-a.x,
                      -a.y,
                      -a.z,
@@ -4079,7 +4101,7 @@ occaFunction inline short8 operator - (const short8 &a){
                      -a.s7);
 }
 
-occaFunction inline short8 operator -- (short8 &a, int){
+occaFunction inline short8 operator -- (short8 &a, int) {
   return OCCA_SHORT8(a.x--,
                      a.y--,
                      a.z--,
@@ -4090,7 +4112,7 @@ occaFunction inline short8 operator -- (short8 &a, int){
                      a.s7--);
 }
 
-occaFunction inline short8& operator -- (short8 &a){
+occaFunction inline short8& operator -- (short8 &a) {
   --a.x;
   --a.y;
   --a.z;
@@ -4101,7 +4123,7 @@ occaFunction inline short8& operator -- (short8 &a){
   --a.s7;
   return a;
 }
-occaFunction inline short8  operator +  (const short8 &a, const short8 &b){
+occaFunction inline short8  operator +  (const short8 &a, const short8 &b) {
   return OCCA_SHORT8(a.x + b.x,
                      a.y + b.y,
                      a.z + b.z,
@@ -4112,7 +4134,7 @@ occaFunction inline short8  operator +  (const short8 &a, const short8 &b){
                      a.s7 + b.s7);
 }
 
-occaFunction inline short8  operator +  (const short &a, const short8 &b){
+occaFunction inline short8  operator +  (const short &a, const short8 &b) {
   return OCCA_SHORT8(a + b.x,
                      a + b.y,
                      a + b.z,
@@ -4123,7 +4145,7 @@ occaFunction inline short8  operator +  (const short &a, const short8 &b){
                      a + b.s7);
 }
 
-occaFunction inline short8  operator +  (const short8 &a, const short &b){
+occaFunction inline short8  operator +  (const short8 &a, const short &b) {
   return OCCA_SHORT8(a.x + b,
                      a.y + b,
                      a.z + b,
@@ -4134,7 +4156,7 @@ occaFunction inline short8  operator +  (const short8 &a, const short &b){
                      a.s7 + b);
 }
 
-occaFunction inline short8& operator += (      short8 &a, const short8 &b){
+occaFunction inline short8& operator += (      short8 &a, const short8 &b) {
   a.x += b.x;
   a.y += b.y;
   a.z += b.z;
@@ -4146,7 +4168,7 @@ occaFunction inline short8& operator += (      short8 &a, const short8 &b){
   return a;
 }
 
-occaFunction inline short8& operator += (      short8 &a, const short &b){
+occaFunction inline short8& operator += (      short8 &a, const short &b) {
   a.x += b;
   a.y += b;
   a.z += b;
@@ -4157,7 +4179,7 @@ occaFunction inline short8& operator += (      short8 &a, const short &b){
   a.s7 += b;
   return a;
 }
-occaFunction inline short8  operator -  (const short8 &a, const short8 &b){
+occaFunction inline short8  operator -  (const short8 &a, const short8 &b) {
   return OCCA_SHORT8(a.x - b.x,
                      a.y - b.y,
                      a.z - b.z,
@@ -4168,7 +4190,7 @@ occaFunction inline short8  operator -  (const short8 &a, const short8 &b){
                      a.s7 - b.s7);
 }
 
-occaFunction inline short8  operator -  (const short &a, const short8 &b){
+occaFunction inline short8  operator -  (const short &a, const short8 &b) {
   return OCCA_SHORT8(a - b.x,
                      a - b.y,
                      a - b.z,
@@ -4179,7 +4201,7 @@ occaFunction inline short8  operator -  (const short &a, const short8 &b){
                      a - b.s7);
 }
 
-occaFunction inline short8  operator -  (const short8 &a, const short &b){
+occaFunction inline short8  operator -  (const short8 &a, const short &b) {
   return OCCA_SHORT8(a.x - b,
                      a.y - b,
                      a.z - b,
@@ -4190,7 +4212,7 @@ occaFunction inline short8  operator -  (const short8 &a, const short &b){
                      a.s7 - b);
 }
 
-occaFunction inline short8& operator -= (      short8 &a, const short8 &b){
+occaFunction inline short8& operator -= (      short8 &a, const short8 &b) {
   a.x -= b.x;
   a.y -= b.y;
   a.z -= b.z;
@@ -4202,7 +4224,7 @@ occaFunction inline short8& operator -= (      short8 &a, const short8 &b){
   return a;
 }
 
-occaFunction inline short8& operator -= (      short8 &a, const short &b){
+occaFunction inline short8& operator -= (      short8 &a, const short &b) {
   a.x -= b;
   a.y -= b;
   a.z -= b;
@@ -4213,7 +4235,7 @@ occaFunction inline short8& operator -= (      short8 &a, const short &b){
   a.s7 -= b;
   return a;
 }
-occaFunction inline short8  operator *  (const short8 &a, const short8 &b){
+occaFunction inline short8  operator *  (const short8 &a, const short8 &b) {
   return OCCA_SHORT8(a.x * b.x,
                      a.y * b.y,
                      a.z * b.z,
@@ -4224,7 +4246,7 @@ occaFunction inline short8  operator *  (const short8 &a, const short8 &b){
                      a.s7 * b.s7);
 }
 
-occaFunction inline short8  operator *  (const short &a, const short8 &b){
+occaFunction inline short8  operator *  (const short &a, const short8 &b) {
   return OCCA_SHORT8(a * b.x,
                      a * b.y,
                      a * b.z,
@@ -4235,7 +4257,7 @@ occaFunction inline short8  operator *  (const short &a, const short8 &b){
                      a * b.s7);
 }
 
-occaFunction inline short8  operator *  (const short8 &a, const short &b){
+occaFunction inline short8  operator *  (const short8 &a, const short &b) {
   return OCCA_SHORT8(a.x * b,
                      a.y * b,
                      a.z * b,
@@ -4246,7 +4268,7 @@ occaFunction inline short8  operator *  (const short8 &a, const short &b){
                      a.s7 * b);
 }
 
-occaFunction inline short8& operator *= (      short8 &a, const short8 &b){
+occaFunction inline short8& operator *= (      short8 &a, const short8 &b) {
   a.x *= b.x;
   a.y *= b.y;
   a.z *= b.z;
@@ -4258,7 +4280,7 @@ occaFunction inline short8& operator *= (      short8 &a, const short8 &b){
   return a;
 }
 
-occaFunction inline short8& operator *= (      short8 &a, const short &b){
+occaFunction inline short8& operator *= (      short8 &a, const short &b) {
   a.x *= b;
   a.y *= b;
   a.z *= b;
@@ -4269,7 +4291,7 @@ occaFunction inline short8& operator *= (      short8 &a, const short &b){
   a.s7 *= b;
   return a;
 }
-occaFunction inline short8  operator /  (const short8 &a, const short8 &b){
+occaFunction inline short8  operator /  (const short8 &a, const short8 &b) {
   return OCCA_SHORT8(a.x / b.x,
                      a.y / b.y,
                      a.z / b.z,
@@ -4280,7 +4302,7 @@ occaFunction inline short8  operator /  (const short8 &a, const short8 &b){
                      a.s7 / b.s7);
 }
 
-occaFunction inline short8  operator /  (const short &a, const short8 &b){
+occaFunction inline short8  operator /  (const short &a, const short8 &b) {
   return OCCA_SHORT8(a / b.x,
                      a / b.y,
                      a / b.z,
@@ -4291,7 +4313,7 @@ occaFunction inline short8  operator /  (const short &a, const short8 &b){
                      a / b.s7);
 }
 
-occaFunction inline short8  operator /  (const short8 &a, const short &b){
+occaFunction inline short8  operator /  (const short8 &a, const short &b) {
   return OCCA_SHORT8(a.x / b,
                      a.y / b,
                      a.z / b,
@@ -4302,7 +4324,7 @@ occaFunction inline short8  operator /  (const short8 &a, const short &b){
                      a.s7 / b);
 }
 
-occaFunction inline short8& operator /= (      short8 &a, const short8 &b){
+occaFunction inline short8& operator /= (      short8 &a, const short8 &b) {
   a.x /= b.x;
   a.y /= b.y;
   a.z /= b.z;
@@ -4314,7 +4336,7 @@ occaFunction inline short8& operator /= (      short8 &a, const short8 &b){
   return a;
 }
 
-occaFunction inline short8& operator /= (      short8 &a, const short &b){
+occaFunction inline short8& operator /= (      short8 &a, const short &b) {
   a.x /= b;
   a.y /= b;
   a.z /= b;
@@ -4327,7 +4349,7 @@ occaFunction inline short8& operator /= (      short8 &a, const short &b){
 }
 
 #if (!defined(OCCA_IN_KERNEL) || (OCCA_USING_SERIAL || OCCA_USING_OPENMP || OCCA_USING_PTHREADS))
-inline std::ostream& operator << (std::ostream &out, const short8& a){
+inline std::ostream& operator << (std::ostream &out, const short8& a) {
   out << "[" << a.x << ", "
              << a.y << ", "
              << a.z << ", "
@@ -4793,7 +4815,7 @@ public:
     s15(s15_) {}
 };
 
-occaFunction inline short16 operator + (const short16 &a){
+occaFunction inline short16 operator + (const short16 &a) {
   return OCCA_SHORT16(+a.x,
                       +a.y,
                       +a.z,
@@ -4812,7 +4834,7 @@ occaFunction inline short16 operator + (const short16 &a){
                       +a.s15);
 }
 
-occaFunction inline short16 operator ++ (short16 &a, int){
+occaFunction inline short16 operator ++ (short16 &a, int) {
   return OCCA_SHORT16(a.x++,
                       a.y++,
                       a.z++,
@@ -4831,7 +4853,7 @@ occaFunction inline short16 operator ++ (short16 &a, int){
                       a.s15++);
 }
 
-occaFunction inline short16& operator ++ (short16 &a){
+occaFunction inline short16& operator ++ (short16 &a) {
   ++a.x;
   ++a.y;
   ++a.z;
@@ -4850,7 +4872,7 @@ occaFunction inline short16& operator ++ (short16 &a){
   ++a.s15;
   return a;
 }
-occaFunction inline short16 operator - (const short16 &a){
+occaFunction inline short16 operator - (const short16 &a) {
   return OCCA_SHORT16(-a.x,
                       -a.y,
                       -a.z,
@@ -4869,7 +4891,7 @@ occaFunction inline short16 operator - (const short16 &a){
                       -a.s15);
 }
 
-occaFunction inline short16 operator -- (short16 &a, int){
+occaFunction inline short16 operator -- (short16 &a, int) {
   return OCCA_SHORT16(a.x--,
                       a.y--,
                       a.z--,
@@ -4888,7 +4910,7 @@ occaFunction inline short16 operator -- (short16 &a, int){
                       a.s15--);
 }
 
-occaFunction inline short16& operator -- (short16 &a){
+occaFunction inline short16& operator -- (short16 &a) {
   --a.x;
   --a.y;
   --a.z;
@@ -4907,7 +4929,7 @@ occaFunction inline short16& operator -- (short16 &a){
   --a.s15;
   return a;
 }
-occaFunction inline short16  operator +  (const short16 &a, const short16 &b){
+occaFunction inline short16  operator +  (const short16 &a, const short16 &b) {
   return OCCA_SHORT16(a.x + b.x,
                       a.y + b.y,
                       a.z + b.z,
@@ -4926,7 +4948,7 @@ occaFunction inline short16  operator +  (const short16 &a, const short16 &b){
                       a.s15 + b.s15);
 }
 
-occaFunction inline short16  operator +  (const short &a, const short16 &b){
+occaFunction inline short16  operator +  (const short &a, const short16 &b) {
   return OCCA_SHORT16(a + b.x,
                       a + b.y,
                       a + b.z,
@@ -4945,7 +4967,7 @@ occaFunction inline short16  operator +  (const short &a, const short16 &b){
                       a + b.s15);
 }
 
-occaFunction inline short16  operator +  (const short16 &a, const short &b){
+occaFunction inline short16  operator +  (const short16 &a, const short &b) {
   return OCCA_SHORT16(a.x + b,
                       a.y + b,
                       a.z + b,
@@ -4964,7 +4986,7 @@ occaFunction inline short16  operator +  (const short16 &a, const short &b){
                       a.s15 + b);
 }
 
-occaFunction inline short16& operator += (      short16 &a, const short16 &b){
+occaFunction inline short16& operator += (      short16 &a, const short16 &b) {
   a.x += b.x;
   a.y += b.y;
   a.z += b.z;
@@ -4984,7 +5006,7 @@ occaFunction inline short16& operator += (      short16 &a, const short16 &b){
   return a;
 }
 
-occaFunction inline short16& operator += (      short16 &a, const short &b){
+occaFunction inline short16& operator += (      short16 &a, const short &b) {
   a.x += b;
   a.y += b;
   a.z += b;
@@ -5003,7 +5025,7 @@ occaFunction inline short16& operator += (      short16 &a, const short &b){
   a.s15 += b;
   return a;
 }
-occaFunction inline short16  operator -  (const short16 &a, const short16 &b){
+occaFunction inline short16  operator -  (const short16 &a, const short16 &b) {
   return OCCA_SHORT16(a.x - b.x,
                       a.y - b.y,
                       a.z - b.z,
@@ -5022,7 +5044,7 @@ occaFunction inline short16  operator -  (const short16 &a, const short16 &b){
                       a.s15 - b.s15);
 }
 
-occaFunction inline short16  operator -  (const short &a, const short16 &b){
+occaFunction inline short16  operator -  (const short &a, const short16 &b) {
   return OCCA_SHORT16(a - b.x,
                       a - b.y,
                       a - b.z,
@@ -5041,7 +5063,7 @@ occaFunction inline short16  operator -  (const short &a, const short16 &b){
                       a - b.s15);
 }
 
-occaFunction inline short16  operator -  (const short16 &a, const short &b){
+occaFunction inline short16  operator -  (const short16 &a, const short &b) {
   return OCCA_SHORT16(a.x - b,
                       a.y - b,
                       a.z - b,
@@ -5060,7 +5082,7 @@ occaFunction inline short16  operator -  (const short16 &a, const short &b){
                       a.s15 - b);
 }
 
-occaFunction inline short16& operator -= (      short16 &a, const short16 &b){
+occaFunction inline short16& operator -= (      short16 &a, const short16 &b) {
   a.x -= b.x;
   a.y -= b.y;
   a.z -= b.z;
@@ -5080,7 +5102,7 @@ occaFunction inline short16& operator -= (      short16 &a, const short16 &b){
   return a;
 }
 
-occaFunction inline short16& operator -= (      short16 &a, const short &b){
+occaFunction inline short16& operator -= (      short16 &a, const short &b) {
   a.x -= b;
   a.y -= b;
   a.z -= b;
@@ -5099,7 +5121,7 @@ occaFunction inline short16& operator -= (      short16 &a, const short &b){
   a.s15 -= b;
   return a;
 }
-occaFunction inline short16  operator *  (const short16 &a, const short16 &b){
+occaFunction inline short16  operator *  (const short16 &a, const short16 &b) {
   return OCCA_SHORT16(a.x * b.x,
                       a.y * b.y,
                       a.z * b.z,
@@ -5118,7 +5140,7 @@ occaFunction inline short16  operator *  (const short16 &a, const short16 &b){
                       a.s15 * b.s15);
 }
 
-occaFunction inline short16  operator *  (const short &a, const short16 &b){
+occaFunction inline short16  operator *  (const short &a, const short16 &b) {
   return OCCA_SHORT16(a * b.x,
                       a * b.y,
                       a * b.z,
@@ -5137,7 +5159,7 @@ occaFunction inline short16  operator *  (const short &a, const short16 &b){
                       a * b.s15);
 }
 
-occaFunction inline short16  operator *  (const short16 &a, const short &b){
+occaFunction inline short16  operator *  (const short16 &a, const short &b) {
   return OCCA_SHORT16(a.x * b,
                       a.y * b,
                       a.z * b,
@@ -5156,7 +5178,7 @@ occaFunction inline short16  operator *  (const short16 &a, const short &b){
                       a.s15 * b);
 }
 
-occaFunction inline short16& operator *= (      short16 &a, const short16 &b){
+occaFunction inline short16& operator *= (      short16 &a, const short16 &b) {
   a.x *= b.x;
   a.y *= b.y;
   a.z *= b.z;
@@ -5176,7 +5198,7 @@ occaFunction inline short16& operator *= (      short16 &a, const short16 &b){
   return a;
 }
 
-occaFunction inline short16& operator *= (      short16 &a, const short &b){
+occaFunction inline short16& operator *= (      short16 &a, const short &b) {
   a.x *= b;
   a.y *= b;
   a.z *= b;
@@ -5195,7 +5217,7 @@ occaFunction inline short16& operator *= (      short16 &a, const short &b){
   a.s15 *= b;
   return a;
 }
-occaFunction inline short16  operator /  (const short16 &a, const short16 &b){
+occaFunction inline short16  operator /  (const short16 &a, const short16 &b) {
   return OCCA_SHORT16(a.x / b.x,
                       a.y / b.y,
                       a.z / b.z,
@@ -5214,7 +5236,7 @@ occaFunction inline short16  operator /  (const short16 &a, const short16 &b){
                       a.s15 / b.s15);
 }
 
-occaFunction inline short16  operator /  (const short &a, const short16 &b){
+occaFunction inline short16  operator /  (const short &a, const short16 &b) {
   return OCCA_SHORT16(a / b.x,
                       a / b.y,
                       a / b.z,
@@ -5233,7 +5255,7 @@ occaFunction inline short16  operator /  (const short &a, const short16 &b){
                       a / b.s15);
 }
 
-occaFunction inline short16  operator /  (const short16 &a, const short &b){
+occaFunction inline short16  operator /  (const short16 &a, const short &b) {
   return OCCA_SHORT16(a.x / b,
                       a.y / b,
                       a.z / b,
@@ -5252,7 +5274,7 @@ occaFunction inline short16  operator /  (const short16 &a, const short &b){
                       a.s15 / b);
 }
 
-occaFunction inline short16& operator /= (      short16 &a, const short16 &b){
+occaFunction inline short16& operator /= (      short16 &a, const short16 &b) {
   a.x /= b.x;
   a.y /= b.y;
   a.z /= b.z;
@@ -5272,7 +5294,7 @@ occaFunction inline short16& operator /= (      short16 &a, const short16 &b){
   return a;
 }
 
-occaFunction inline short16& operator /= (      short16 &a, const short &b){
+occaFunction inline short16& operator /= (      short16 &a, const short &b) {
   a.x /= b;
   a.y /= b;
   a.z /= b;
@@ -5293,7 +5315,7 @@ occaFunction inline short16& operator /= (      short16 &a, const short &b){
 }
 
 #if (!defined(OCCA_IN_KERNEL) || (OCCA_USING_SERIAL || OCCA_USING_OPENMP || OCCA_USING_PTHREADS))
-inline std::ostream& operator << (std::ostream &out, const short16& a){
+inline std::ostream& operator << (std::ostream &out, const short16& a) {
   out << "[" << a.x << ", "
              << a.y << ", "
              << a.z << ", "
@@ -5346,143 +5368,143 @@ public:
 };
 #endif
 
-occaFunction inline int2 operator + (const int2 &a){
+occaFunction inline int2 operator + (const int2 &a) {
   return OCCA_INT2(+a.x,
                    +a.y);
 }
 
-occaFunction inline int2 operator ++ (int2 &a, int){
+occaFunction inline int2 operator ++ (int2 &a, int) {
   return OCCA_INT2(a.x++,
                    a.y++);
 }
 
-occaFunction inline int2& operator ++ (int2 &a){
+occaFunction inline int2& operator ++ (int2 &a) {
   ++a.x;
   ++a.y;
   return a;
 }
-occaFunction inline int2 operator - (const int2 &a){
+occaFunction inline int2 operator - (const int2 &a) {
   return OCCA_INT2(-a.x,
                    -a.y);
 }
 
-occaFunction inline int2 operator -- (int2 &a, int){
+occaFunction inline int2 operator -- (int2 &a, int) {
   return OCCA_INT2(a.x--,
                    a.y--);
 }
 
-occaFunction inline int2& operator -- (int2 &a){
+occaFunction inline int2& operator -- (int2 &a) {
   --a.x;
   --a.y;
   return a;
 }
-occaFunction inline int2  operator +  (const int2 &a, const int2 &b){
+occaFunction inline int2  operator +  (const int2 &a, const int2 &b) {
   return OCCA_INT2(a.x + b.x,
                    a.y + b.y);
 }
 
-occaFunction inline int2  operator +  (const int &a, const int2 &b){
+occaFunction inline int2  operator +  (const int &a, const int2 &b) {
   return OCCA_INT2(a + b.x,
                    a + b.y);
 }
 
-occaFunction inline int2  operator +  (const int2 &a, const int &b){
+occaFunction inline int2  operator +  (const int2 &a, const int &b) {
   return OCCA_INT2(a.x + b,
                    a.y + b);
 }
 
-occaFunction inline int2& operator += (      int2 &a, const int2 &b){
+occaFunction inline int2& operator += (      int2 &a, const int2 &b) {
   a.x += b.x;
   a.y += b.y;
   return a;
 }
 
-occaFunction inline int2& operator += (      int2 &a, const int &b){
+occaFunction inline int2& operator += (      int2 &a, const int &b) {
   a.x += b;
   a.y += b;
   return a;
 }
-occaFunction inline int2  operator -  (const int2 &a, const int2 &b){
+occaFunction inline int2  operator -  (const int2 &a, const int2 &b) {
   return OCCA_INT2(a.x - b.x,
                    a.y - b.y);
 }
 
-occaFunction inline int2  operator -  (const int &a, const int2 &b){
+occaFunction inline int2  operator -  (const int &a, const int2 &b) {
   return OCCA_INT2(a - b.x,
                    a - b.y);
 }
 
-occaFunction inline int2  operator -  (const int2 &a, const int &b){
+occaFunction inline int2  operator -  (const int2 &a, const int &b) {
   return OCCA_INT2(a.x - b,
                    a.y - b);
 }
 
-occaFunction inline int2& operator -= (      int2 &a, const int2 &b){
+occaFunction inline int2& operator -= (      int2 &a, const int2 &b) {
   a.x -= b.x;
   a.y -= b.y;
   return a;
 }
 
-occaFunction inline int2& operator -= (      int2 &a, const int &b){
+occaFunction inline int2& operator -= (      int2 &a, const int &b) {
   a.x -= b;
   a.y -= b;
   return a;
 }
-occaFunction inline int2  operator *  (const int2 &a, const int2 &b){
+occaFunction inline int2  operator *  (const int2 &a, const int2 &b) {
   return OCCA_INT2(a.x * b.x,
                    a.y * b.y);
 }
 
-occaFunction inline int2  operator *  (const int &a, const int2 &b){
+occaFunction inline int2  operator *  (const int &a, const int2 &b) {
   return OCCA_INT2(a * b.x,
                    a * b.y);
 }
 
-occaFunction inline int2  operator *  (const int2 &a, const int &b){
+occaFunction inline int2  operator *  (const int2 &a, const int &b) {
   return OCCA_INT2(a.x * b,
                    a.y * b);
 }
 
-occaFunction inline int2& operator *= (      int2 &a, const int2 &b){
+occaFunction inline int2& operator *= (      int2 &a, const int2 &b) {
   a.x *= b.x;
   a.y *= b.y;
   return a;
 }
 
-occaFunction inline int2& operator *= (      int2 &a, const int &b){
+occaFunction inline int2& operator *= (      int2 &a, const int &b) {
   a.x *= b;
   a.y *= b;
   return a;
 }
-occaFunction inline int2  operator /  (const int2 &a, const int2 &b){
+occaFunction inline int2  operator /  (const int2 &a, const int2 &b) {
   return OCCA_INT2(a.x / b.x,
                    a.y / b.y);
 }
 
-occaFunction inline int2  operator /  (const int &a, const int2 &b){
+occaFunction inline int2  operator /  (const int &a, const int2 &b) {
   return OCCA_INT2(a / b.x,
                    a / b.y);
 }
 
-occaFunction inline int2  operator /  (const int2 &a, const int &b){
+occaFunction inline int2  operator /  (const int2 &a, const int &b) {
   return OCCA_INT2(a.x / b,
                    a.y / b);
 }
 
-occaFunction inline int2& operator /= (      int2 &a, const int2 &b){
+occaFunction inline int2& operator /= (      int2 &a, const int2 &b) {
   a.x /= b.x;
   a.y /= b.y;
   return a;
 }
 
-occaFunction inline int2& operator /= (      int2 &a, const int &b){
+occaFunction inline int2& operator /= (      int2 &a, const int &b) {
   a.x /= b;
   a.y /= b;
   return a;
 }
 
 #if (!defined(OCCA_IN_KERNEL) || (OCCA_USING_SERIAL || OCCA_USING_OPENMP || OCCA_USING_PTHREADS))
-inline std::ostream& operator << (std::ostream &out, const int2& a){
+inline std::ostream& operator << (std::ostream &out, const int2& a) {
   out << "[" << a.x << ", "
              << a.y
       << "]\n";
@@ -5546,70 +5568,70 @@ public:
 };
 #endif
 
-occaFunction inline int4 operator + (const int4 &a){
+occaFunction inline int4 operator + (const int4 &a) {
   return OCCA_INT4(+a.x,
                    +a.y,
                    +a.z,
                    +a.w);
 }
 
-occaFunction inline int4 operator ++ (int4 &a, int){
+occaFunction inline int4 operator ++ (int4 &a, int) {
   return OCCA_INT4(a.x++,
                    a.y++,
                    a.z++,
                    a.w++);
 }
 
-occaFunction inline int4& operator ++ (int4 &a){
+occaFunction inline int4& operator ++ (int4 &a) {
   ++a.x;
   ++a.y;
   ++a.z;
   ++a.w;
   return a;
 }
-occaFunction inline int4 operator - (const int4 &a){
+occaFunction inline int4 operator - (const int4 &a) {
   return OCCA_INT4(-a.x,
                    -a.y,
                    -a.z,
                    -a.w);
 }
 
-occaFunction inline int4 operator -- (int4 &a, int){
+occaFunction inline int4 operator -- (int4 &a, int) {
   return OCCA_INT4(a.x--,
                    a.y--,
                    a.z--,
                    a.w--);
 }
 
-occaFunction inline int4& operator -- (int4 &a){
+occaFunction inline int4& operator -- (int4 &a) {
   --a.x;
   --a.y;
   --a.z;
   --a.w;
   return a;
 }
-occaFunction inline int4  operator +  (const int4 &a, const int4 &b){
+occaFunction inline int4  operator +  (const int4 &a, const int4 &b) {
   return OCCA_INT4(a.x + b.x,
                    a.y + b.y,
                    a.z + b.z,
                    a.w + b.w);
 }
 
-occaFunction inline int4  operator +  (const int &a, const int4 &b){
+occaFunction inline int4  operator +  (const int &a, const int4 &b) {
   return OCCA_INT4(a + b.x,
                    a + b.y,
                    a + b.z,
                    a + b.w);
 }
 
-occaFunction inline int4  operator +  (const int4 &a, const int &b){
+occaFunction inline int4  operator +  (const int4 &a, const int &b) {
   return OCCA_INT4(a.x + b,
                    a.y + b,
                    a.z + b,
                    a.w + b);
 }
 
-occaFunction inline int4& operator += (      int4 &a, const int4 &b){
+occaFunction inline int4& operator += (      int4 &a, const int4 &b) {
   a.x += b.x;
   a.y += b.y;
   a.z += b.z;
@@ -5617,35 +5639,35 @@ occaFunction inline int4& operator += (      int4 &a, const int4 &b){
   return a;
 }
 
-occaFunction inline int4& operator += (      int4 &a, const int &b){
+occaFunction inline int4& operator += (      int4 &a, const int &b) {
   a.x += b;
   a.y += b;
   a.z += b;
   a.w += b;
   return a;
 }
-occaFunction inline int4  operator -  (const int4 &a, const int4 &b){
+occaFunction inline int4  operator -  (const int4 &a, const int4 &b) {
   return OCCA_INT4(a.x - b.x,
                    a.y - b.y,
                    a.z - b.z,
                    a.w - b.w);
 }
 
-occaFunction inline int4  operator -  (const int &a, const int4 &b){
+occaFunction inline int4  operator -  (const int &a, const int4 &b) {
   return OCCA_INT4(a - b.x,
                    a - b.y,
                    a - b.z,
                    a - b.w);
 }
 
-occaFunction inline int4  operator -  (const int4 &a, const int &b){
+occaFunction inline int4  operator -  (const int4 &a, const int &b) {
   return OCCA_INT4(a.x - b,
                    a.y - b,
                    a.z - b,
                    a.w - b);
 }
 
-occaFunction inline int4& operator -= (      int4 &a, const int4 &b){
+occaFunction inline int4& operator -= (      int4 &a, const int4 &b) {
   a.x -= b.x;
   a.y -= b.y;
   a.z -= b.z;
@@ -5653,35 +5675,35 @@ occaFunction inline int4& operator -= (      int4 &a, const int4 &b){
   return a;
 }
 
-occaFunction inline int4& operator -= (      int4 &a, const int &b){
+occaFunction inline int4& operator -= (      int4 &a, const int &b) {
   a.x -= b;
   a.y -= b;
   a.z -= b;
   a.w -= b;
   return a;
 }
-occaFunction inline int4  operator *  (const int4 &a, const int4 &b){
+occaFunction inline int4  operator *  (const int4 &a, const int4 &b) {
   return OCCA_INT4(a.x * b.x,
                    a.y * b.y,
                    a.z * b.z,
                    a.w * b.w);
 }
 
-occaFunction inline int4  operator *  (const int &a, const int4 &b){
+occaFunction inline int4  operator *  (const int &a, const int4 &b) {
   return OCCA_INT4(a * b.x,
                    a * b.y,
                    a * b.z,
                    a * b.w);
 }
 
-occaFunction inline int4  operator *  (const int4 &a, const int &b){
+occaFunction inline int4  operator *  (const int4 &a, const int &b) {
   return OCCA_INT4(a.x * b,
                    a.y * b,
                    a.z * b,
                    a.w * b);
 }
 
-occaFunction inline int4& operator *= (      int4 &a, const int4 &b){
+occaFunction inline int4& operator *= (      int4 &a, const int4 &b) {
   a.x *= b.x;
   a.y *= b.y;
   a.z *= b.z;
@@ -5689,35 +5711,35 @@ occaFunction inline int4& operator *= (      int4 &a, const int4 &b){
   return a;
 }
 
-occaFunction inline int4& operator *= (      int4 &a, const int &b){
+occaFunction inline int4& operator *= (      int4 &a, const int &b) {
   a.x *= b;
   a.y *= b;
   a.z *= b;
   a.w *= b;
   return a;
 }
-occaFunction inline int4  operator /  (const int4 &a, const int4 &b){
+occaFunction inline int4  operator /  (const int4 &a, const int4 &b) {
   return OCCA_INT4(a.x / b.x,
                    a.y / b.y,
                    a.z / b.z,
                    a.w / b.w);
 }
 
-occaFunction inline int4  operator /  (const int &a, const int4 &b){
+occaFunction inline int4  operator /  (const int &a, const int4 &b) {
   return OCCA_INT4(a / b.x,
                    a / b.y,
                    a / b.z,
                    a / b.w);
 }
 
-occaFunction inline int4  operator /  (const int4 &a, const int &b){
+occaFunction inline int4  operator /  (const int4 &a, const int &b) {
   return OCCA_INT4(a.x / b,
                    a.y / b,
                    a.z / b,
                    a.w / b);
 }
 
-occaFunction inline int4& operator /= (      int4 &a, const int4 &b){
+occaFunction inline int4& operator /= (      int4 &a, const int4 &b) {
   a.x /= b.x;
   a.y /= b.y;
   a.z /= b.z;
@@ -5725,7 +5747,7 @@ occaFunction inline int4& operator /= (      int4 &a, const int4 &b){
   return a;
 }
 
-occaFunction inline int4& operator /= (      int4 &a, const int &b){
+occaFunction inline int4& operator /= (      int4 &a, const int &b) {
   a.x /= b;
   a.y /= b;
   a.z /= b;
@@ -5734,7 +5756,7 @@ occaFunction inline int4& operator /= (      int4 &a, const int &b){
 }
 
 #if (!defined(OCCA_IN_KERNEL) || (OCCA_USING_SERIAL || OCCA_USING_OPENMP || OCCA_USING_PTHREADS))
-inline std::ostream& operator << (std::ostream &out, const int4& a){
+inline std::ostream& operator << (std::ostream &out, const int4& a) {
   out << "[" << a.x << ", "
              << a.y << ", "
              << a.z << ", "
@@ -5892,7 +5914,7 @@ public:
     s7(s7_) {}
 };
 
-occaFunction inline int8 operator + (const int8 &a){
+occaFunction inline int8 operator + (const int8 &a) {
   return OCCA_INT8(+a.x,
                    +a.y,
                    +a.z,
@@ -5903,7 +5925,7 @@ occaFunction inline int8 operator + (const int8 &a){
                    +a.s7);
 }
 
-occaFunction inline int8 operator ++ (int8 &a, int){
+occaFunction inline int8 operator ++ (int8 &a, int) {
   return OCCA_INT8(a.x++,
                    a.y++,
                    a.z++,
@@ -5914,7 +5936,7 @@ occaFunction inline int8 operator ++ (int8 &a, int){
                    a.s7++);
 }
 
-occaFunction inline int8& operator ++ (int8 &a){
+occaFunction inline int8& operator ++ (int8 &a) {
   ++a.x;
   ++a.y;
   ++a.z;
@@ -5925,7 +5947,7 @@ occaFunction inline int8& operator ++ (int8 &a){
   ++a.s7;
   return a;
 }
-occaFunction inline int8 operator - (const int8 &a){
+occaFunction inline int8 operator - (const int8 &a) {
   return OCCA_INT8(-a.x,
                    -a.y,
                    -a.z,
@@ -5936,7 +5958,7 @@ occaFunction inline int8 operator - (const int8 &a){
                    -a.s7);
 }
 
-occaFunction inline int8 operator -- (int8 &a, int){
+occaFunction inline int8 operator -- (int8 &a, int) {
   return OCCA_INT8(a.x--,
                    a.y--,
                    a.z--,
@@ -5947,7 +5969,7 @@ occaFunction inline int8 operator -- (int8 &a, int){
                    a.s7--);
 }
 
-occaFunction inline int8& operator -- (int8 &a){
+occaFunction inline int8& operator -- (int8 &a) {
   --a.x;
   --a.y;
   --a.z;
@@ -5958,7 +5980,7 @@ occaFunction inline int8& operator -- (int8 &a){
   --a.s7;
   return a;
 }
-occaFunction inline int8  operator +  (const int8 &a, const int8 &b){
+occaFunction inline int8  operator +  (const int8 &a, const int8 &b) {
   return OCCA_INT8(a.x + b.x,
                    a.y + b.y,
                    a.z + b.z,
@@ -5969,7 +5991,7 @@ occaFunction inline int8  operator +  (const int8 &a, const int8 &b){
                    a.s7 + b.s7);
 }
 
-occaFunction inline int8  operator +  (const int &a, const int8 &b){
+occaFunction inline int8  operator +  (const int &a, const int8 &b) {
   return OCCA_INT8(a + b.x,
                    a + b.y,
                    a + b.z,
@@ -5980,7 +6002,7 @@ occaFunction inline int8  operator +  (const int &a, const int8 &b){
                    a + b.s7);
 }
 
-occaFunction inline int8  operator +  (const int8 &a, const int &b){
+occaFunction inline int8  operator +  (const int8 &a, const int &b) {
   return OCCA_INT8(a.x + b,
                    a.y + b,
                    a.z + b,
@@ -5991,7 +6013,7 @@ occaFunction inline int8  operator +  (const int8 &a, const int &b){
                    a.s7 + b);
 }
 
-occaFunction inline int8& operator += (      int8 &a, const int8 &b){
+occaFunction inline int8& operator += (      int8 &a, const int8 &b) {
   a.x += b.x;
   a.y += b.y;
   a.z += b.z;
@@ -6003,7 +6025,7 @@ occaFunction inline int8& operator += (      int8 &a, const int8 &b){
   return a;
 }
 
-occaFunction inline int8& operator += (      int8 &a, const int &b){
+occaFunction inline int8& operator += (      int8 &a, const int &b) {
   a.x += b;
   a.y += b;
   a.z += b;
@@ -6014,7 +6036,7 @@ occaFunction inline int8& operator += (      int8 &a, const int &b){
   a.s7 += b;
   return a;
 }
-occaFunction inline int8  operator -  (const int8 &a, const int8 &b){
+occaFunction inline int8  operator -  (const int8 &a, const int8 &b) {
   return OCCA_INT8(a.x - b.x,
                    a.y - b.y,
                    a.z - b.z,
@@ -6025,7 +6047,7 @@ occaFunction inline int8  operator -  (const int8 &a, const int8 &b){
                    a.s7 - b.s7);
 }
 
-occaFunction inline int8  operator -  (const int &a, const int8 &b){
+occaFunction inline int8  operator -  (const int &a, const int8 &b) {
   return OCCA_INT8(a - b.x,
                    a - b.y,
                    a - b.z,
@@ -6036,7 +6058,7 @@ occaFunction inline int8  operator -  (const int &a, const int8 &b){
                    a - b.s7);
 }
 
-occaFunction inline int8  operator -  (const int8 &a, const int &b){
+occaFunction inline int8  operator -  (const int8 &a, const int &b) {
   return OCCA_INT8(a.x - b,
                    a.y - b,
                    a.z - b,
@@ -6047,7 +6069,7 @@ occaFunction inline int8  operator -  (const int8 &a, const int &b){
                    a.s7 - b);
 }
 
-occaFunction inline int8& operator -= (      int8 &a, const int8 &b){
+occaFunction inline int8& operator -= (      int8 &a, const int8 &b) {
   a.x -= b.x;
   a.y -= b.y;
   a.z -= b.z;
@@ -6059,7 +6081,7 @@ occaFunction inline int8& operator -= (      int8 &a, const int8 &b){
   return a;
 }
 
-occaFunction inline int8& operator -= (      int8 &a, const int &b){
+occaFunction inline int8& operator -= (      int8 &a, const int &b) {
   a.x -= b;
   a.y -= b;
   a.z -= b;
@@ -6070,7 +6092,7 @@ occaFunction inline int8& operator -= (      int8 &a, const int &b){
   a.s7 -= b;
   return a;
 }
-occaFunction inline int8  operator *  (const int8 &a, const int8 &b){
+occaFunction inline int8  operator *  (const int8 &a, const int8 &b) {
   return OCCA_INT8(a.x * b.x,
                    a.y * b.y,
                    a.z * b.z,
@@ -6081,7 +6103,7 @@ occaFunction inline int8  operator *  (const int8 &a, const int8 &b){
                    a.s7 * b.s7);
 }
 
-occaFunction inline int8  operator *  (const int &a, const int8 &b){
+occaFunction inline int8  operator *  (const int &a, const int8 &b) {
   return OCCA_INT8(a * b.x,
                    a * b.y,
                    a * b.z,
@@ -6092,7 +6114,7 @@ occaFunction inline int8  operator *  (const int &a, const int8 &b){
                    a * b.s7);
 }
 
-occaFunction inline int8  operator *  (const int8 &a, const int &b){
+occaFunction inline int8  operator *  (const int8 &a, const int &b) {
   return OCCA_INT8(a.x * b,
                    a.y * b,
                    a.z * b,
@@ -6103,7 +6125,7 @@ occaFunction inline int8  operator *  (const int8 &a, const int &b){
                    a.s7 * b);
 }
 
-occaFunction inline int8& operator *= (      int8 &a, const int8 &b){
+occaFunction inline int8& operator *= (      int8 &a, const int8 &b) {
   a.x *= b.x;
   a.y *= b.y;
   a.z *= b.z;
@@ -6115,7 +6137,7 @@ occaFunction inline int8& operator *= (      int8 &a, const int8 &b){
   return a;
 }
 
-occaFunction inline int8& operator *= (      int8 &a, const int &b){
+occaFunction inline int8& operator *= (      int8 &a, const int &b) {
   a.x *= b;
   a.y *= b;
   a.z *= b;
@@ -6126,7 +6148,7 @@ occaFunction inline int8& operator *= (      int8 &a, const int &b){
   a.s7 *= b;
   return a;
 }
-occaFunction inline int8  operator /  (const int8 &a, const int8 &b){
+occaFunction inline int8  operator /  (const int8 &a, const int8 &b) {
   return OCCA_INT8(a.x / b.x,
                    a.y / b.y,
                    a.z / b.z,
@@ -6137,7 +6159,7 @@ occaFunction inline int8  operator /  (const int8 &a, const int8 &b){
                    a.s7 / b.s7);
 }
 
-occaFunction inline int8  operator /  (const int &a, const int8 &b){
+occaFunction inline int8  operator /  (const int &a, const int8 &b) {
   return OCCA_INT8(a / b.x,
                    a / b.y,
                    a / b.z,
@@ -6148,7 +6170,7 @@ occaFunction inline int8  operator /  (const int &a, const int8 &b){
                    a / b.s7);
 }
 
-occaFunction inline int8  operator /  (const int8 &a, const int &b){
+occaFunction inline int8  operator /  (const int8 &a, const int &b) {
   return OCCA_INT8(a.x / b,
                    a.y / b,
                    a.z / b,
@@ -6159,7 +6181,7 @@ occaFunction inline int8  operator /  (const int8 &a, const int &b){
                    a.s7 / b);
 }
 
-occaFunction inline int8& operator /= (      int8 &a, const int8 &b){
+occaFunction inline int8& operator /= (      int8 &a, const int8 &b) {
   a.x /= b.x;
   a.y /= b.y;
   a.z /= b.z;
@@ -6171,7 +6193,7 @@ occaFunction inline int8& operator /= (      int8 &a, const int8 &b){
   return a;
 }
 
-occaFunction inline int8& operator /= (      int8 &a, const int &b){
+occaFunction inline int8& operator /= (      int8 &a, const int &b) {
   a.x /= b;
   a.y /= b;
   a.z /= b;
@@ -6184,7 +6206,7 @@ occaFunction inline int8& operator /= (      int8 &a, const int &b){
 }
 
 #if (!defined(OCCA_IN_KERNEL) || (OCCA_USING_SERIAL || OCCA_USING_OPENMP || OCCA_USING_PTHREADS))
-inline std::ostream& operator << (std::ostream &out, const int8& a){
+inline std::ostream& operator << (std::ostream &out, const int8& a) {
   out << "[" << a.x << ", "
              << a.y << ", "
              << a.z << ", "
@@ -6650,7 +6672,7 @@ public:
     s15(s15_) {}
 };
 
-occaFunction inline int16 operator + (const int16 &a){
+occaFunction inline int16 operator + (const int16 &a) {
   return OCCA_INT16(+a.x,
                     +a.y,
                     +a.z,
@@ -6669,7 +6691,7 @@ occaFunction inline int16 operator + (const int16 &a){
                     +a.s15);
 }
 
-occaFunction inline int16 operator ++ (int16 &a, int){
+occaFunction inline int16 operator ++ (int16 &a, int) {
   return OCCA_INT16(a.x++,
                     a.y++,
                     a.z++,
@@ -6688,7 +6710,7 @@ occaFunction inline int16 operator ++ (int16 &a, int){
                     a.s15++);
 }
 
-occaFunction inline int16& operator ++ (int16 &a){
+occaFunction inline int16& operator ++ (int16 &a) {
   ++a.x;
   ++a.y;
   ++a.z;
@@ -6707,7 +6729,7 @@ occaFunction inline int16& operator ++ (int16 &a){
   ++a.s15;
   return a;
 }
-occaFunction inline int16 operator - (const int16 &a){
+occaFunction inline int16 operator - (const int16 &a) {
   return OCCA_INT16(-a.x,
                     -a.y,
                     -a.z,
@@ -6726,7 +6748,7 @@ occaFunction inline int16 operator - (const int16 &a){
                     -a.s15);
 }
 
-occaFunction inline int16 operator -- (int16 &a, int){
+occaFunction inline int16 operator -- (int16 &a, int) {
   return OCCA_INT16(a.x--,
                     a.y--,
                     a.z--,
@@ -6745,7 +6767,7 @@ occaFunction inline int16 operator -- (int16 &a, int){
                     a.s15--);
 }
 
-occaFunction inline int16& operator -- (int16 &a){
+occaFunction inline int16& operator -- (int16 &a) {
   --a.x;
   --a.y;
   --a.z;
@@ -6764,7 +6786,7 @@ occaFunction inline int16& operator -- (int16 &a){
   --a.s15;
   return a;
 }
-occaFunction inline int16  operator +  (const int16 &a, const int16 &b){
+occaFunction inline int16  operator +  (const int16 &a, const int16 &b) {
   return OCCA_INT16(a.x + b.x,
                     a.y + b.y,
                     a.z + b.z,
@@ -6783,7 +6805,7 @@ occaFunction inline int16  operator +  (const int16 &a, const int16 &b){
                     a.s15 + b.s15);
 }
 
-occaFunction inline int16  operator +  (const int &a, const int16 &b){
+occaFunction inline int16  operator +  (const int &a, const int16 &b) {
   return OCCA_INT16(a + b.x,
                     a + b.y,
                     a + b.z,
@@ -6802,7 +6824,7 @@ occaFunction inline int16  operator +  (const int &a, const int16 &b){
                     a + b.s15);
 }
 
-occaFunction inline int16  operator +  (const int16 &a, const int &b){
+occaFunction inline int16  operator +  (const int16 &a, const int &b) {
   return OCCA_INT16(a.x + b,
                     a.y + b,
                     a.z + b,
@@ -6821,7 +6843,7 @@ occaFunction inline int16  operator +  (const int16 &a, const int &b){
                     a.s15 + b);
 }
 
-occaFunction inline int16& operator += (      int16 &a, const int16 &b){
+occaFunction inline int16& operator += (      int16 &a, const int16 &b) {
   a.x += b.x;
   a.y += b.y;
   a.z += b.z;
@@ -6841,7 +6863,7 @@ occaFunction inline int16& operator += (      int16 &a, const int16 &b){
   return a;
 }
 
-occaFunction inline int16& operator += (      int16 &a, const int &b){
+occaFunction inline int16& operator += (      int16 &a, const int &b) {
   a.x += b;
   a.y += b;
   a.z += b;
@@ -6860,7 +6882,7 @@ occaFunction inline int16& operator += (      int16 &a, const int &b){
   a.s15 += b;
   return a;
 }
-occaFunction inline int16  operator -  (const int16 &a, const int16 &b){
+occaFunction inline int16  operator -  (const int16 &a, const int16 &b) {
   return OCCA_INT16(a.x - b.x,
                     a.y - b.y,
                     a.z - b.z,
@@ -6879,7 +6901,7 @@ occaFunction inline int16  operator -  (const int16 &a, const int16 &b){
                     a.s15 - b.s15);
 }
 
-occaFunction inline int16  operator -  (const int &a, const int16 &b){
+occaFunction inline int16  operator -  (const int &a, const int16 &b) {
   return OCCA_INT16(a - b.x,
                     a - b.y,
                     a - b.z,
@@ -6898,7 +6920,7 @@ occaFunction inline int16  operator -  (const int &a, const int16 &b){
                     a - b.s15);
 }
 
-occaFunction inline int16  operator -  (const int16 &a, const int &b){
+occaFunction inline int16  operator -  (const int16 &a, const int &b) {
   return OCCA_INT16(a.x - b,
                     a.y - b,
                     a.z - b,
@@ -6917,7 +6939,7 @@ occaFunction inline int16  operator -  (const int16 &a, const int &b){
                     a.s15 - b);
 }
 
-occaFunction inline int16& operator -= (      int16 &a, const int16 &b){
+occaFunction inline int16& operator -= (      int16 &a, const int16 &b) {
   a.x -= b.x;
   a.y -= b.y;
   a.z -= b.z;
@@ -6937,7 +6959,7 @@ occaFunction inline int16& operator -= (      int16 &a, const int16 &b){
   return a;
 }
 
-occaFunction inline int16& operator -= (      int16 &a, const int &b){
+occaFunction inline int16& operator -= (      int16 &a, const int &b) {
   a.x -= b;
   a.y -= b;
   a.z -= b;
@@ -6956,7 +6978,7 @@ occaFunction inline int16& operator -= (      int16 &a, const int &b){
   a.s15 -= b;
   return a;
 }
-occaFunction inline int16  operator *  (const int16 &a, const int16 &b){
+occaFunction inline int16  operator *  (const int16 &a, const int16 &b) {
   return OCCA_INT16(a.x * b.x,
                     a.y * b.y,
                     a.z * b.z,
@@ -6975,7 +6997,7 @@ occaFunction inline int16  operator *  (const int16 &a, const int16 &b){
                     a.s15 * b.s15);
 }
 
-occaFunction inline int16  operator *  (const int &a, const int16 &b){
+occaFunction inline int16  operator *  (const int &a, const int16 &b) {
   return OCCA_INT16(a * b.x,
                     a * b.y,
                     a * b.z,
@@ -6994,7 +7016,7 @@ occaFunction inline int16  operator *  (const int &a, const int16 &b){
                     a * b.s15);
 }
 
-occaFunction inline int16  operator *  (const int16 &a, const int &b){
+occaFunction inline int16  operator *  (const int16 &a, const int &b) {
   return OCCA_INT16(a.x * b,
                     a.y * b,
                     a.z * b,
@@ -7013,7 +7035,7 @@ occaFunction inline int16  operator *  (const int16 &a, const int &b){
                     a.s15 * b);
 }
 
-occaFunction inline int16& operator *= (      int16 &a, const int16 &b){
+occaFunction inline int16& operator *= (      int16 &a, const int16 &b) {
   a.x *= b.x;
   a.y *= b.y;
   a.z *= b.z;
@@ -7033,7 +7055,7 @@ occaFunction inline int16& operator *= (      int16 &a, const int16 &b){
   return a;
 }
 
-occaFunction inline int16& operator *= (      int16 &a, const int &b){
+occaFunction inline int16& operator *= (      int16 &a, const int &b) {
   a.x *= b;
   a.y *= b;
   a.z *= b;
@@ -7052,7 +7074,7 @@ occaFunction inline int16& operator *= (      int16 &a, const int &b){
   a.s15 *= b;
   return a;
 }
-occaFunction inline int16  operator /  (const int16 &a, const int16 &b){
+occaFunction inline int16  operator /  (const int16 &a, const int16 &b) {
   return OCCA_INT16(a.x / b.x,
                     a.y / b.y,
                     a.z / b.z,
@@ -7071,7 +7093,7 @@ occaFunction inline int16  operator /  (const int16 &a, const int16 &b){
                     a.s15 / b.s15);
 }
 
-occaFunction inline int16  operator /  (const int &a, const int16 &b){
+occaFunction inline int16  operator /  (const int &a, const int16 &b) {
   return OCCA_INT16(a / b.x,
                     a / b.y,
                     a / b.z,
@@ -7090,7 +7112,7 @@ occaFunction inline int16  operator /  (const int &a, const int16 &b){
                     a / b.s15);
 }
 
-occaFunction inline int16  operator /  (const int16 &a, const int &b){
+occaFunction inline int16  operator /  (const int16 &a, const int &b) {
   return OCCA_INT16(a.x / b,
                     a.y / b,
                     a.z / b,
@@ -7109,7 +7131,7 @@ occaFunction inline int16  operator /  (const int16 &a, const int &b){
                     a.s15 / b);
 }
 
-occaFunction inline int16& operator /= (      int16 &a, const int16 &b){
+occaFunction inline int16& operator /= (      int16 &a, const int16 &b) {
   a.x /= b.x;
   a.y /= b.y;
   a.z /= b.z;
@@ -7129,7 +7151,7 @@ occaFunction inline int16& operator /= (      int16 &a, const int16 &b){
   return a;
 }
 
-occaFunction inline int16& operator /= (      int16 &a, const int &b){
+occaFunction inline int16& operator /= (      int16 &a, const int &b) {
   a.x /= b;
   a.y /= b;
   a.z /= b;
@@ -7150,7 +7172,7 @@ occaFunction inline int16& operator /= (      int16 &a, const int &b){
 }
 
 #if (!defined(OCCA_IN_KERNEL) || (OCCA_USING_SERIAL || OCCA_USING_OPENMP || OCCA_USING_PTHREADS))
-inline std::ostream& operator << (std::ostream &out, const int16& a){
+inline std::ostream& operator << (std::ostream &out, const int16& a) {
   out << "[" << a.x << ", "
              << a.y << ", "
              << a.z << ", "
@@ -7203,143 +7225,143 @@ public:
 };
 #endif
 
-occaFunction inline long2 operator + (const long2 &a){
+occaFunction inline long2 operator + (const long2 &a) {
   return OCCA_LONG2(+a.x,
                     +a.y);
 }
 
-occaFunction inline long2 operator ++ (long2 &a, int){
+occaFunction inline long2 operator ++ (long2 &a, int) {
   return OCCA_LONG2(a.x++,
                     a.y++);
 }
 
-occaFunction inline long2& operator ++ (long2 &a){
+occaFunction inline long2& operator ++ (long2 &a) {
   ++a.x;
   ++a.y;
   return a;
 }
-occaFunction inline long2 operator - (const long2 &a){
+occaFunction inline long2 operator - (const long2 &a) {
   return OCCA_LONG2(-a.x,
                     -a.y);
 }
 
-occaFunction inline long2 operator -- (long2 &a, int){
+occaFunction inline long2 operator -- (long2 &a, int) {
   return OCCA_LONG2(a.x--,
                     a.y--);
 }
 
-occaFunction inline long2& operator -- (long2 &a){
+occaFunction inline long2& operator -- (long2 &a) {
   --a.x;
   --a.y;
   return a;
 }
-occaFunction inline long2  operator +  (const long2 &a, const long2 &b){
+occaFunction inline long2  operator +  (const long2 &a, const long2 &b) {
   return OCCA_LONG2(a.x + b.x,
                     a.y + b.y);
 }
 
-occaFunction inline long2  operator +  (const long &a, const long2 &b){
+occaFunction inline long2  operator +  (const long &a, const long2 &b) {
   return OCCA_LONG2(a + b.x,
                     a + b.y);
 }
 
-occaFunction inline long2  operator +  (const long2 &a, const long &b){
+occaFunction inline long2  operator +  (const long2 &a, const long &b) {
   return OCCA_LONG2(a.x + b,
                     a.y + b);
 }
 
-occaFunction inline long2& operator += (      long2 &a, const long2 &b){
+occaFunction inline long2& operator += (      long2 &a, const long2 &b) {
   a.x += b.x;
   a.y += b.y;
   return a;
 }
 
-occaFunction inline long2& operator += (      long2 &a, const long &b){
+occaFunction inline long2& operator += (      long2 &a, const long &b) {
   a.x += b;
   a.y += b;
   return a;
 }
-occaFunction inline long2  operator -  (const long2 &a, const long2 &b){
+occaFunction inline long2  operator -  (const long2 &a, const long2 &b) {
   return OCCA_LONG2(a.x - b.x,
                     a.y - b.y);
 }
 
-occaFunction inline long2  operator -  (const long &a, const long2 &b){
+occaFunction inline long2  operator -  (const long &a, const long2 &b) {
   return OCCA_LONG2(a - b.x,
                     a - b.y);
 }
 
-occaFunction inline long2  operator -  (const long2 &a, const long &b){
+occaFunction inline long2  operator -  (const long2 &a, const long &b) {
   return OCCA_LONG2(a.x - b,
                     a.y - b);
 }
 
-occaFunction inline long2& operator -= (      long2 &a, const long2 &b){
+occaFunction inline long2& operator -= (      long2 &a, const long2 &b) {
   a.x -= b.x;
   a.y -= b.y;
   return a;
 }
 
-occaFunction inline long2& operator -= (      long2 &a, const long &b){
+occaFunction inline long2& operator -= (      long2 &a, const long &b) {
   a.x -= b;
   a.y -= b;
   return a;
 }
-occaFunction inline long2  operator *  (const long2 &a, const long2 &b){
+occaFunction inline long2  operator *  (const long2 &a, const long2 &b) {
   return OCCA_LONG2(a.x * b.x,
                     a.y * b.y);
 }
 
-occaFunction inline long2  operator *  (const long &a, const long2 &b){
+occaFunction inline long2  operator *  (const long &a, const long2 &b) {
   return OCCA_LONG2(a * b.x,
                     a * b.y);
 }
 
-occaFunction inline long2  operator *  (const long2 &a, const long &b){
+occaFunction inline long2  operator *  (const long2 &a, const long &b) {
   return OCCA_LONG2(a.x * b,
                     a.y * b);
 }
 
-occaFunction inline long2& operator *= (      long2 &a, const long2 &b){
+occaFunction inline long2& operator *= (      long2 &a, const long2 &b) {
   a.x *= b.x;
   a.y *= b.y;
   return a;
 }
 
-occaFunction inline long2& operator *= (      long2 &a, const long &b){
+occaFunction inline long2& operator *= (      long2 &a, const long &b) {
   a.x *= b;
   a.y *= b;
   return a;
 }
-occaFunction inline long2  operator /  (const long2 &a, const long2 &b){
+occaFunction inline long2  operator /  (const long2 &a, const long2 &b) {
   return OCCA_LONG2(a.x / b.x,
                     a.y / b.y);
 }
 
-occaFunction inline long2  operator /  (const long &a, const long2 &b){
+occaFunction inline long2  operator /  (const long &a, const long2 &b) {
   return OCCA_LONG2(a / b.x,
                     a / b.y);
 }
 
-occaFunction inline long2  operator /  (const long2 &a, const long &b){
+occaFunction inline long2  operator /  (const long2 &a, const long &b) {
   return OCCA_LONG2(a.x / b,
                     a.y / b);
 }
 
-occaFunction inline long2& operator /= (      long2 &a, const long2 &b){
+occaFunction inline long2& operator /= (      long2 &a, const long2 &b) {
   a.x /= b.x;
   a.y /= b.y;
   return a;
 }
 
-occaFunction inline long2& operator /= (      long2 &a, const long &b){
+occaFunction inline long2& operator /= (      long2 &a, const long &b) {
   a.x /= b;
   a.y /= b;
   return a;
 }
 
 #if (!defined(OCCA_IN_KERNEL) || (OCCA_USING_SERIAL || OCCA_USING_OPENMP || OCCA_USING_PTHREADS))
-inline std::ostream& operator << (std::ostream &out, const long2& a){
+inline std::ostream& operator << (std::ostream &out, const long2& a) {
   out << "[" << a.x << ", "
              << a.y
       << "]\n";
@@ -7403,70 +7425,70 @@ public:
 };
 #endif
 
-occaFunction inline long4 operator + (const long4 &a){
+occaFunction inline long4 operator + (const long4 &a) {
   return OCCA_LONG4(+a.x,
                     +a.y,
                     +a.z,
                     +a.w);
 }
 
-occaFunction inline long4 operator ++ (long4 &a, int){
+occaFunction inline long4 operator ++ (long4 &a, int) {
   return OCCA_LONG4(a.x++,
                     a.y++,
                     a.z++,
                     a.w++);
 }
 
-occaFunction inline long4& operator ++ (long4 &a){
+occaFunction inline long4& operator ++ (long4 &a) {
   ++a.x;
   ++a.y;
   ++a.z;
   ++a.w;
   return a;
 }
-occaFunction inline long4 operator - (const long4 &a){
+occaFunction inline long4 operator - (const long4 &a) {
   return OCCA_LONG4(-a.x,
                     -a.y,
                     -a.z,
                     -a.w);
 }
 
-occaFunction inline long4 operator -- (long4 &a, int){
+occaFunction inline long4 operator -- (long4 &a, int) {
   return OCCA_LONG4(a.x--,
                     a.y--,
                     a.z--,
                     a.w--);
 }
 
-occaFunction inline long4& operator -- (long4 &a){
+occaFunction inline long4& operator -- (long4 &a) {
   --a.x;
   --a.y;
   --a.z;
   --a.w;
   return a;
 }
-occaFunction inline long4  operator +  (const long4 &a, const long4 &b){
+occaFunction inline long4  operator +  (const long4 &a, const long4 &b) {
   return OCCA_LONG4(a.x + b.x,
                     a.y + b.y,
                     a.z + b.z,
                     a.w + b.w);
 }
 
-occaFunction inline long4  operator +  (const long &a, const long4 &b){
+occaFunction inline long4  operator +  (const long &a, const long4 &b) {
   return OCCA_LONG4(a + b.x,
                     a + b.y,
                     a + b.z,
                     a + b.w);
 }
 
-occaFunction inline long4  operator +  (const long4 &a, const long &b){
+occaFunction inline long4  operator +  (const long4 &a, const long &b) {
   return OCCA_LONG4(a.x + b,
                     a.y + b,
                     a.z + b,
                     a.w + b);
 }
 
-occaFunction inline long4& operator += (      long4 &a, const long4 &b){
+occaFunction inline long4& operator += (      long4 &a, const long4 &b) {
   a.x += b.x;
   a.y += b.y;
   a.z += b.z;
@@ -7474,35 +7496,35 @@ occaFunction inline long4& operator += (      long4 &a, const long4 &b){
   return a;
 }
 
-occaFunction inline long4& operator += (      long4 &a, const long &b){
+occaFunction inline long4& operator += (      long4 &a, const long &b) {
   a.x += b;
   a.y += b;
   a.z += b;
   a.w += b;
   return a;
 }
-occaFunction inline long4  operator -  (const long4 &a, const long4 &b){
+occaFunction inline long4  operator -  (const long4 &a, const long4 &b) {
   return OCCA_LONG4(a.x - b.x,
                     a.y - b.y,
                     a.z - b.z,
                     a.w - b.w);
 }
 
-occaFunction inline long4  operator -  (const long &a, const long4 &b){
+occaFunction inline long4  operator -  (const long &a, const long4 &b) {
   return OCCA_LONG4(a - b.x,
                     a - b.y,
                     a - b.z,
                     a - b.w);
 }
 
-occaFunction inline long4  operator -  (const long4 &a, const long &b){
+occaFunction inline long4  operator -  (const long4 &a, const long &b) {
   return OCCA_LONG4(a.x - b,
                     a.y - b,
                     a.z - b,
                     a.w - b);
 }
 
-occaFunction inline long4& operator -= (      long4 &a, const long4 &b){
+occaFunction inline long4& operator -= (      long4 &a, const long4 &b) {
   a.x -= b.x;
   a.y -= b.y;
   a.z -= b.z;
@@ -7510,35 +7532,35 @@ occaFunction inline long4& operator -= (      long4 &a, const long4 &b){
   return a;
 }
 
-occaFunction inline long4& operator -= (      long4 &a, const long &b){
+occaFunction inline long4& operator -= (      long4 &a, const long &b) {
   a.x -= b;
   a.y -= b;
   a.z -= b;
   a.w -= b;
   return a;
 }
-occaFunction inline long4  operator *  (const long4 &a, const long4 &b){
+occaFunction inline long4  operator *  (const long4 &a, const long4 &b) {
   return OCCA_LONG4(a.x * b.x,
                     a.y * b.y,
                     a.z * b.z,
                     a.w * b.w);
 }
 
-occaFunction inline long4  operator *  (const long &a, const long4 &b){
+occaFunction inline long4  operator *  (const long &a, const long4 &b) {
   return OCCA_LONG4(a * b.x,
                     a * b.y,
                     a * b.z,
                     a * b.w);
 }
 
-occaFunction inline long4  operator *  (const long4 &a, const long &b){
+occaFunction inline long4  operator *  (const long4 &a, const long &b) {
   return OCCA_LONG4(a.x * b,
                     a.y * b,
                     a.z * b,
                     a.w * b);
 }
 
-occaFunction inline long4& operator *= (      long4 &a, const long4 &b){
+occaFunction inline long4& operator *= (      long4 &a, const long4 &b) {
   a.x *= b.x;
   a.y *= b.y;
   a.z *= b.z;
@@ -7546,35 +7568,35 @@ occaFunction inline long4& operator *= (      long4 &a, const long4 &b){
   return a;
 }
 
-occaFunction inline long4& operator *= (      long4 &a, const long &b){
+occaFunction inline long4& operator *= (      long4 &a, const long &b) {
   a.x *= b;
   a.y *= b;
   a.z *= b;
   a.w *= b;
   return a;
 }
-occaFunction inline long4  operator /  (const long4 &a, const long4 &b){
+occaFunction inline long4  operator /  (const long4 &a, const long4 &b) {
   return OCCA_LONG4(a.x / b.x,
                     a.y / b.y,
                     a.z / b.z,
                     a.w / b.w);
 }
 
-occaFunction inline long4  operator /  (const long &a, const long4 &b){
+occaFunction inline long4  operator /  (const long &a, const long4 &b) {
   return OCCA_LONG4(a / b.x,
                     a / b.y,
                     a / b.z,
                     a / b.w);
 }
 
-occaFunction inline long4  operator /  (const long4 &a, const long &b){
+occaFunction inline long4  operator /  (const long4 &a, const long &b) {
   return OCCA_LONG4(a.x / b,
                     a.y / b,
                     a.z / b,
                     a.w / b);
 }
 
-occaFunction inline long4& operator /= (      long4 &a, const long4 &b){
+occaFunction inline long4& operator /= (      long4 &a, const long4 &b) {
   a.x /= b.x;
   a.y /= b.y;
   a.z /= b.z;
@@ -7582,7 +7604,7 @@ occaFunction inline long4& operator /= (      long4 &a, const long4 &b){
   return a;
 }
 
-occaFunction inline long4& operator /= (      long4 &a, const long &b){
+occaFunction inline long4& operator /= (      long4 &a, const long &b) {
   a.x /= b;
   a.y /= b;
   a.z /= b;
@@ -7591,7 +7613,7 @@ occaFunction inline long4& operator /= (      long4 &a, const long &b){
 }
 
 #if (!defined(OCCA_IN_KERNEL) || (OCCA_USING_SERIAL || OCCA_USING_OPENMP || OCCA_USING_PTHREADS))
-inline std::ostream& operator << (std::ostream &out, const long4& a){
+inline std::ostream& operator << (std::ostream &out, const long4& a) {
   out << "[" << a.x << ", "
              << a.y << ", "
              << a.z << ", "
@@ -7749,7 +7771,7 @@ public:
     s7(s7_) {}
 };
 
-occaFunction inline long8 operator + (const long8 &a){
+occaFunction inline long8 operator + (const long8 &a) {
   return OCCA_LONG8(+a.x,
                     +a.y,
                     +a.z,
@@ -7760,7 +7782,7 @@ occaFunction inline long8 operator + (const long8 &a){
                     +a.s7);
 }
 
-occaFunction inline long8 operator ++ (long8 &a, int){
+occaFunction inline long8 operator ++ (long8 &a, int) {
   return OCCA_LONG8(a.x++,
                     a.y++,
                     a.z++,
@@ -7771,7 +7793,7 @@ occaFunction inline long8 operator ++ (long8 &a, int){
                     a.s7++);
 }
 
-occaFunction inline long8& operator ++ (long8 &a){
+occaFunction inline long8& operator ++ (long8 &a) {
   ++a.x;
   ++a.y;
   ++a.z;
@@ -7782,7 +7804,7 @@ occaFunction inline long8& operator ++ (long8 &a){
   ++a.s7;
   return a;
 }
-occaFunction inline long8 operator - (const long8 &a){
+occaFunction inline long8 operator - (const long8 &a) {
   return OCCA_LONG8(-a.x,
                     -a.y,
                     -a.z,
@@ -7793,7 +7815,7 @@ occaFunction inline long8 operator - (const long8 &a){
                     -a.s7);
 }
 
-occaFunction inline long8 operator -- (long8 &a, int){
+occaFunction inline long8 operator -- (long8 &a, int) {
   return OCCA_LONG8(a.x--,
                     a.y--,
                     a.z--,
@@ -7804,7 +7826,7 @@ occaFunction inline long8 operator -- (long8 &a, int){
                     a.s7--);
 }
 
-occaFunction inline long8& operator -- (long8 &a){
+occaFunction inline long8& operator -- (long8 &a) {
   --a.x;
   --a.y;
   --a.z;
@@ -7815,7 +7837,7 @@ occaFunction inline long8& operator -- (long8 &a){
   --a.s7;
   return a;
 }
-occaFunction inline long8  operator +  (const long8 &a, const long8 &b){
+occaFunction inline long8  operator +  (const long8 &a, const long8 &b) {
   return OCCA_LONG8(a.x + b.x,
                     a.y + b.y,
                     a.z + b.z,
@@ -7826,7 +7848,7 @@ occaFunction inline long8  operator +  (const long8 &a, const long8 &b){
                     a.s7 + b.s7);
 }
 
-occaFunction inline long8  operator +  (const long &a, const long8 &b){
+occaFunction inline long8  operator +  (const long &a, const long8 &b) {
   return OCCA_LONG8(a + b.x,
                     a + b.y,
                     a + b.z,
@@ -7837,7 +7859,7 @@ occaFunction inline long8  operator +  (const long &a, const long8 &b){
                     a + b.s7);
 }
 
-occaFunction inline long8  operator +  (const long8 &a, const long &b){
+occaFunction inline long8  operator +  (const long8 &a, const long &b) {
   return OCCA_LONG8(a.x + b,
                     a.y + b,
                     a.z + b,
@@ -7848,7 +7870,7 @@ occaFunction inline long8  operator +  (const long8 &a, const long &b){
                     a.s7 + b);
 }
 
-occaFunction inline long8& operator += (      long8 &a, const long8 &b){
+occaFunction inline long8& operator += (      long8 &a, const long8 &b) {
   a.x += b.x;
   a.y += b.y;
   a.z += b.z;
@@ -7860,7 +7882,7 @@ occaFunction inline long8& operator += (      long8 &a, const long8 &b){
   return a;
 }
 
-occaFunction inline long8& operator += (      long8 &a, const long &b){
+occaFunction inline long8& operator += (      long8 &a, const long &b) {
   a.x += b;
   a.y += b;
   a.z += b;
@@ -7871,7 +7893,7 @@ occaFunction inline long8& operator += (      long8 &a, const long &b){
   a.s7 += b;
   return a;
 }
-occaFunction inline long8  operator -  (const long8 &a, const long8 &b){
+occaFunction inline long8  operator -  (const long8 &a, const long8 &b) {
   return OCCA_LONG8(a.x - b.x,
                     a.y - b.y,
                     a.z - b.z,
@@ -7882,7 +7904,7 @@ occaFunction inline long8  operator -  (const long8 &a, const long8 &b){
                     a.s7 - b.s7);
 }
 
-occaFunction inline long8  operator -  (const long &a, const long8 &b){
+occaFunction inline long8  operator -  (const long &a, const long8 &b) {
   return OCCA_LONG8(a - b.x,
                     a - b.y,
                     a - b.z,
@@ -7893,7 +7915,7 @@ occaFunction inline long8  operator -  (const long &a, const long8 &b){
                     a - b.s7);
 }
 
-occaFunction inline long8  operator -  (const long8 &a, const long &b){
+occaFunction inline long8  operator -  (const long8 &a, const long &b) {
   return OCCA_LONG8(a.x - b,
                     a.y - b,
                     a.z - b,
@@ -7904,7 +7926,7 @@ occaFunction inline long8  operator -  (const long8 &a, const long &b){
                     a.s7 - b);
 }
 
-occaFunction inline long8& operator -= (      long8 &a, const long8 &b){
+occaFunction inline long8& operator -= (      long8 &a, const long8 &b) {
   a.x -= b.x;
   a.y -= b.y;
   a.z -= b.z;
@@ -7916,7 +7938,7 @@ occaFunction inline long8& operator -= (      long8 &a, const long8 &b){
   return a;
 }
 
-occaFunction inline long8& operator -= (      long8 &a, const long &b){
+occaFunction inline long8& operator -= (      long8 &a, const long &b) {
   a.x -= b;
   a.y -= b;
   a.z -= b;
@@ -7927,7 +7949,7 @@ occaFunction inline long8& operator -= (      long8 &a, const long &b){
   a.s7 -= b;
   return a;
 }
-occaFunction inline long8  operator *  (const long8 &a, const long8 &b){
+occaFunction inline long8  operator *  (const long8 &a, const long8 &b) {
   return OCCA_LONG8(a.x * b.x,
                     a.y * b.y,
                     a.z * b.z,
@@ -7938,7 +7960,7 @@ occaFunction inline long8  operator *  (const long8 &a, const long8 &b){
                     a.s7 * b.s7);
 }
 
-occaFunction inline long8  operator *  (const long &a, const long8 &b){
+occaFunction inline long8  operator *  (const long &a, const long8 &b) {
   return OCCA_LONG8(a * b.x,
                     a * b.y,
                     a * b.z,
@@ -7949,7 +7971,7 @@ occaFunction inline long8  operator *  (const long &a, const long8 &b){
                     a * b.s7);
 }
 
-occaFunction inline long8  operator *  (const long8 &a, const long &b){
+occaFunction inline long8  operator *  (const long8 &a, const long &b) {
   return OCCA_LONG8(a.x * b,
                     a.y * b,
                     a.z * b,
@@ -7960,7 +7982,7 @@ occaFunction inline long8  operator *  (const long8 &a, const long &b){
                     a.s7 * b);
 }
 
-occaFunction inline long8& operator *= (      long8 &a, const long8 &b){
+occaFunction inline long8& operator *= (      long8 &a, const long8 &b) {
   a.x *= b.x;
   a.y *= b.y;
   a.z *= b.z;
@@ -7972,7 +7994,7 @@ occaFunction inline long8& operator *= (      long8 &a, const long8 &b){
   return a;
 }
 
-occaFunction inline long8& operator *= (      long8 &a, const long &b){
+occaFunction inline long8& operator *= (      long8 &a, const long &b) {
   a.x *= b;
   a.y *= b;
   a.z *= b;
@@ -7983,7 +8005,7 @@ occaFunction inline long8& operator *= (      long8 &a, const long &b){
   a.s7 *= b;
   return a;
 }
-occaFunction inline long8  operator /  (const long8 &a, const long8 &b){
+occaFunction inline long8  operator /  (const long8 &a, const long8 &b) {
   return OCCA_LONG8(a.x / b.x,
                     a.y / b.y,
                     a.z / b.z,
@@ -7994,7 +8016,7 @@ occaFunction inline long8  operator /  (const long8 &a, const long8 &b){
                     a.s7 / b.s7);
 }
 
-occaFunction inline long8  operator /  (const long &a, const long8 &b){
+occaFunction inline long8  operator /  (const long &a, const long8 &b) {
   return OCCA_LONG8(a / b.x,
                     a / b.y,
                     a / b.z,
@@ -8005,7 +8027,7 @@ occaFunction inline long8  operator /  (const long &a, const long8 &b){
                     a / b.s7);
 }
 
-occaFunction inline long8  operator /  (const long8 &a, const long &b){
+occaFunction inline long8  operator /  (const long8 &a, const long &b) {
   return OCCA_LONG8(a.x / b,
                     a.y / b,
                     a.z / b,
@@ -8016,7 +8038,7 @@ occaFunction inline long8  operator /  (const long8 &a, const long &b){
                     a.s7 / b);
 }
 
-occaFunction inline long8& operator /= (      long8 &a, const long8 &b){
+occaFunction inline long8& operator /= (      long8 &a, const long8 &b) {
   a.x /= b.x;
   a.y /= b.y;
   a.z /= b.z;
@@ -8028,7 +8050,7 @@ occaFunction inline long8& operator /= (      long8 &a, const long8 &b){
   return a;
 }
 
-occaFunction inline long8& operator /= (      long8 &a, const long &b){
+occaFunction inline long8& operator /= (      long8 &a, const long &b) {
   a.x /= b;
   a.y /= b;
   a.z /= b;
@@ -8041,7 +8063,7 @@ occaFunction inline long8& operator /= (      long8 &a, const long &b){
 }
 
 #if (!defined(OCCA_IN_KERNEL) || (OCCA_USING_SERIAL || OCCA_USING_OPENMP || OCCA_USING_PTHREADS))
-inline std::ostream& operator << (std::ostream &out, const long8& a){
+inline std::ostream& operator << (std::ostream &out, const long8& a) {
   out << "[" << a.x << ", "
              << a.y << ", "
              << a.z << ", "
@@ -8507,7 +8529,7 @@ public:
     s15(s15_) {}
 };
 
-occaFunction inline long16 operator + (const long16 &a){
+occaFunction inline long16 operator + (const long16 &a) {
   return OCCA_LONG16(+a.x,
                      +a.y,
                      +a.z,
@@ -8526,7 +8548,7 @@ occaFunction inline long16 operator + (const long16 &a){
                      +a.s15);
 }
 
-occaFunction inline long16 operator ++ (long16 &a, int){
+occaFunction inline long16 operator ++ (long16 &a, int) {
   return OCCA_LONG16(a.x++,
                      a.y++,
                      a.z++,
@@ -8545,7 +8567,7 @@ occaFunction inline long16 operator ++ (long16 &a, int){
                      a.s15++);
 }
 
-occaFunction inline long16& operator ++ (long16 &a){
+occaFunction inline long16& operator ++ (long16 &a) {
   ++a.x;
   ++a.y;
   ++a.z;
@@ -8564,7 +8586,7 @@ occaFunction inline long16& operator ++ (long16 &a){
   ++a.s15;
   return a;
 }
-occaFunction inline long16 operator - (const long16 &a){
+occaFunction inline long16 operator - (const long16 &a) {
   return OCCA_LONG16(-a.x,
                      -a.y,
                      -a.z,
@@ -8583,7 +8605,7 @@ occaFunction inline long16 operator - (const long16 &a){
                      -a.s15);
 }
 
-occaFunction inline long16 operator -- (long16 &a, int){
+occaFunction inline long16 operator -- (long16 &a, int) {
   return OCCA_LONG16(a.x--,
                      a.y--,
                      a.z--,
@@ -8602,7 +8624,7 @@ occaFunction inline long16 operator -- (long16 &a, int){
                      a.s15--);
 }
 
-occaFunction inline long16& operator -- (long16 &a){
+occaFunction inline long16& operator -- (long16 &a) {
   --a.x;
   --a.y;
   --a.z;
@@ -8621,7 +8643,7 @@ occaFunction inline long16& operator -- (long16 &a){
   --a.s15;
   return a;
 }
-occaFunction inline long16  operator +  (const long16 &a, const long16 &b){
+occaFunction inline long16  operator +  (const long16 &a, const long16 &b) {
   return OCCA_LONG16(a.x + b.x,
                      a.y + b.y,
                      a.z + b.z,
@@ -8640,7 +8662,7 @@ occaFunction inline long16  operator +  (const long16 &a, const long16 &b){
                      a.s15 + b.s15);
 }
 
-occaFunction inline long16  operator +  (const long &a, const long16 &b){
+occaFunction inline long16  operator +  (const long &a, const long16 &b) {
   return OCCA_LONG16(a + b.x,
                      a + b.y,
                      a + b.z,
@@ -8659,7 +8681,7 @@ occaFunction inline long16  operator +  (const long &a, const long16 &b){
                      a + b.s15);
 }
 
-occaFunction inline long16  operator +  (const long16 &a, const long &b){
+occaFunction inline long16  operator +  (const long16 &a, const long &b) {
   return OCCA_LONG16(a.x + b,
                      a.y + b,
                      a.z + b,
@@ -8678,7 +8700,7 @@ occaFunction inline long16  operator +  (const long16 &a, const long &b){
                      a.s15 + b);
 }
 
-occaFunction inline long16& operator += (      long16 &a, const long16 &b){
+occaFunction inline long16& operator += (      long16 &a, const long16 &b) {
   a.x += b.x;
   a.y += b.y;
   a.z += b.z;
@@ -8698,7 +8720,7 @@ occaFunction inline long16& operator += (      long16 &a, const long16 &b){
   return a;
 }
 
-occaFunction inline long16& operator += (      long16 &a, const long &b){
+occaFunction inline long16& operator += (      long16 &a, const long &b) {
   a.x += b;
   a.y += b;
   a.z += b;
@@ -8717,7 +8739,7 @@ occaFunction inline long16& operator += (      long16 &a, const long &b){
   a.s15 += b;
   return a;
 }
-occaFunction inline long16  operator -  (const long16 &a, const long16 &b){
+occaFunction inline long16  operator -  (const long16 &a, const long16 &b) {
   return OCCA_LONG16(a.x - b.x,
                      a.y - b.y,
                      a.z - b.z,
@@ -8736,7 +8758,7 @@ occaFunction inline long16  operator -  (const long16 &a, const long16 &b){
                      a.s15 - b.s15);
 }
 
-occaFunction inline long16  operator -  (const long &a, const long16 &b){
+occaFunction inline long16  operator -  (const long &a, const long16 &b) {
   return OCCA_LONG16(a - b.x,
                      a - b.y,
                      a - b.z,
@@ -8755,7 +8777,7 @@ occaFunction inline long16  operator -  (const long &a, const long16 &b){
                      a - b.s15);
 }
 
-occaFunction inline long16  operator -  (const long16 &a, const long &b){
+occaFunction inline long16  operator -  (const long16 &a, const long &b) {
   return OCCA_LONG16(a.x - b,
                      a.y - b,
                      a.z - b,
@@ -8774,7 +8796,7 @@ occaFunction inline long16  operator -  (const long16 &a, const long &b){
                      a.s15 - b);
 }
 
-occaFunction inline long16& operator -= (      long16 &a, const long16 &b){
+occaFunction inline long16& operator -= (      long16 &a, const long16 &b) {
   a.x -= b.x;
   a.y -= b.y;
   a.z -= b.z;
@@ -8794,7 +8816,7 @@ occaFunction inline long16& operator -= (      long16 &a, const long16 &b){
   return a;
 }
 
-occaFunction inline long16& operator -= (      long16 &a, const long &b){
+occaFunction inline long16& operator -= (      long16 &a, const long &b) {
   a.x -= b;
   a.y -= b;
   a.z -= b;
@@ -8813,7 +8835,7 @@ occaFunction inline long16& operator -= (      long16 &a, const long &b){
   a.s15 -= b;
   return a;
 }
-occaFunction inline long16  operator *  (const long16 &a, const long16 &b){
+occaFunction inline long16  operator *  (const long16 &a, const long16 &b) {
   return OCCA_LONG16(a.x * b.x,
                      a.y * b.y,
                      a.z * b.z,
@@ -8832,7 +8854,7 @@ occaFunction inline long16  operator *  (const long16 &a, const long16 &b){
                      a.s15 * b.s15);
 }
 
-occaFunction inline long16  operator *  (const long &a, const long16 &b){
+occaFunction inline long16  operator *  (const long &a, const long16 &b) {
   return OCCA_LONG16(a * b.x,
                      a * b.y,
                      a * b.z,
@@ -8851,7 +8873,7 @@ occaFunction inline long16  operator *  (const long &a, const long16 &b){
                      a * b.s15);
 }
 
-occaFunction inline long16  operator *  (const long16 &a, const long &b){
+occaFunction inline long16  operator *  (const long16 &a, const long &b) {
   return OCCA_LONG16(a.x * b,
                      a.y * b,
                      a.z * b,
@@ -8870,7 +8892,7 @@ occaFunction inline long16  operator *  (const long16 &a, const long &b){
                      a.s15 * b);
 }
 
-occaFunction inline long16& operator *= (      long16 &a, const long16 &b){
+occaFunction inline long16& operator *= (      long16 &a, const long16 &b) {
   a.x *= b.x;
   a.y *= b.y;
   a.z *= b.z;
@@ -8890,7 +8912,7 @@ occaFunction inline long16& operator *= (      long16 &a, const long16 &b){
   return a;
 }
 
-occaFunction inline long16& operator *= (      long16 &a, const long &b){
+occaFunction inline long16& operator *= (      long16 &a, const long &b) {
   a.x *= b;
   a.y *= b;
   a.z *= b;
@@ -8909,7 +8931,7 @@ occaFunction inline long16& operator *= (      long16 &a, const long &b){
   a.s15 *= b;
   return a;
 }
-occaFunction inline long16  operator /  (const long16 &a, const long16 &b){
+occaFunction inline long16  operator /  (const long16 &a, const long16 &b) {
   return OCCA_LONG16(a.x / b.x,
                      a.y / b.y,
                      a.z / b.z,
@@ -8928,7 +8950,7 @@ occaFunction inline long16  operator /  (const long16 &a, const long16 &b){
                      a.s15 / b.s15);
 }
 
-occaFunction inline long16  operator /  (const long &a, const long16 &b){
+occaFunction inline long16  operator /  (const long &a, const long16 &b) {
   return OCCA_LONG16(a / b.x,
                      a / b.y,
                      a / b.z,
@@ -8947,7 +8969,7 @@ occaFunction inline long16  operator /  (const long &a, const long16 &b){
                      a / b.s15);
 }
 
-occaFunction inline long16  operator /  (const long16 &a, const long &b){
+occaFunction inline long16  operator /  (const long16 &a, const long &b) {
   return OCCA_LONG16(a.x / b,
                      a.y / b,
                      a.z / b,
@@ -8966,7 +8988,7 @@ occaFunction inline long16  operator /  (const long16 &a, const long &b){
                      a.s15 / b);
 }
 
-occaFunction inline long16& operator /= (      long16 &a, const long16 &b){
+occaFunction inline long16& operator /= (      long16 &a, const long16 &b) {
   a.x /= b.x;
   a.y /= b.y;
   a.z /= b.z;
@@ -8986,7 +9008,7 @@ occaFunction inline long16& operator /= (      long16 &a, const long16 &b){
   return a;
 }
 
-occaFunction inline long16& operator /= (      long16 &a, const long &b){
+occaFunction inline long16& operator /= (      long16 &a, const long &b) {
   a.x /= b;
   a.y /= b;
   a.z /= b;
@@ -9007,7 +9029,7 @@ occaFunction inline long16& operator /= (      long16 &a, const long &b){
 }
 
 #if (!defined(OCCA_IN_KERNEL) || (OCCA_USING_SERIAL || OCCA_USING_OPENMP || OCCA_USING_PTHREADS))
-inline std::ostream& operator << (std::ostream &out, const long16& a){
+inline std::ostream& operator << (std::ostream &out, const long16& a) {
   out << "[" << a.x << ", "
              << a.y << ", "
              << a.z << ", "
@@ -9060,121 +9082,121 @@ public:
 };
 #endif
 
-occaFunction inline float2 operator + (const float2 &a){
+occaFunction inline float2 operator + (const float2 &a) {
   return OCCA_FLOAT2(+a.x,
                      +a.y);
 }
-occaFunction inline float2 operator - (const float2 &a){
+occaFunction inline float2 operator - (const float2 &a) {
   return OCCA_FLOAT2(-a.x,
                      -a.y);
 }
-occaFunction inline float2  operator +  (const float2 &a, const float2 &b){
+occaFunction inline float2  operator +  (const float2 &a, const float2 &b) {
   return OCCA_FLOAT2(a.x + b.x,
                      a.y + b.y);
 }
 
-occaFunction inline float2  operator +  (const float &a, const float2 &b){
+occaFunction inline float2  operator +  (const float &a, const float2 &b) {
   return OCCA_FLOAT2(a + b.x,
                      a + b.y);
 }
 
-occaFunction inline float2  operator +  (const float2 &a, const float &b){
+occaFunction inline float2  operator +  (const float2 &a, const float &b) {
   return OCCA_FLOAT2(a.x + b,
                      a.y + b);
 }
 
-occaFunction inline float2& operator += (      float2 &a, const float2 &b){
+occaFunction inline float2& operator += (      float2 &a, const float2 &b) {
   a.x += b.x;
   a.y += b.y;
   return a;
 }
 
-occaFunction inline float2& operator += (      float2 &a, const float &b){
+occaFunction inline float2& operator += (      float2 &a, const float &b) {
   a.x += b;
   a.y += b;
   return a;
 }
-occaFunction inline float2  operator -  (const float2 &a, const float2 &b){
+occaFunction inline float2  operator -  (const float2 &a, const float2 &b) {
   return OCCA_FLOAT2(a.x - b.x,
                      a.y - b.y);
 }
 
-occaFunction inline float2  operator -  (const float &a, const float2 &b){
+occaFunction inline float2  operator -  (const float &a, const float2 &b) {
   return OCCA_FLOAT2(a - b.x,
                      a - b.y);
 }
 
-occaFunction inline float2  operator -  (const float2 &a, const float &b){
+occaFunction inline float2  operator -  (const float2 &a, const float &b) {
   return OCCA_FLOAT2(a.x - b,
                      a.y - b);
 }
 
-occaFunction inline float2& operator -= (      float2 &a, const float2 &b){
+occaFunction inline float2& operator -= (      float2 &a, const float2 &b) {
   a.x -= b.x;
   a.y -= b.y;
   return a;
 }
 
-occaFunction inline float2& operator -= (      float2 &a, const float &b){
+occaFunction inline float2& operator -= (      float2 &a, const float &b) {
   a.x -= b;
   a.y -= b;
   return a;
 }
-occaFunction inline float2  operator *  (const float2 &a, const float2 &b){
+occaFunction inline float2  operator *  (const float2 &a, const float2 &b) {
   return OCCA_FLOAT2(a.x * b.x,
                      a.y * b.y);
 }
 
-occaFunction inline float2  operator *  (const float &a, const float2 &b){
+occaFunction inline float2  operator *  (const float &a, const float2 &b) {
   return OCCA_FLOAT2(a * b.x,
                      a * b.y);
 }
 
-occaFunction inline float2  operator *  (const float2 &a, const float &b){
+occaFunction inline float2  operator *  (const float2 &a, const float &b) {
   return OCCA_FLOAT2(a.x * b,
                      a.y * b);
 }
 
-occaFunction inline float2& operator *= (      float2 &a, const float2 &b){
+occaFunction inline float2& operator *= (      float2 &a, const float2 &b) {
   a.x *= b.x;
   a.y *= b.y;
   return a;
 }
 
-occaFunction inline float2& operator *= (      float2 &a, const float &b){
+occaFunction inline float2& operator *= (      float2 &a, const float &b) {
   a.x *= b;
   a.y *= b;
   return a;
 }
-occaFunction inline float2  operator /  (const float2 &a, const float2 &b){
+occaFunction inline float2  operator /  (const float2 &a, const float2 &b) {
   return OCCA_FLOAT2(a.x / b.x,
                      a.y / b.y);
 }
 
-occaFunction inline float2  operator /  (const float &a, const float2 &b){
+occaFunction inline float2  operator /  (const float &a, const float2 &b) {
   return OCCA_FLOAT2(a / b.x,
                      a / b.y);
 }
 
-occaFunction inline float2  operator /  (const float2 &a, const float &b){
+occaFunction inline float2  operator /  (const float2 &a, const float &b) {
   return OCCA_FLOAT2(a.x / b,
                      a.y / b);
 }
 
-occaFunction inline float2& operator /= (      float2 &a, const float2 &b){
+occaFunction inline float2& operator /= (      float2 &a, const float2 &b) {
   a.x /= b.x;
   a.y /= b.y;
   return a;
 }
 
-occaFunction inline float2& operator /= (      float2 &a, const float &b){
+occaFunction inline float2& operator /= (      float2 &a, const float &b) {
   a.x /= b;
   a.y /= b;
   return a;
 }
 
 #if (!defined(OCCA_IN_KERNEL) || (OCCA_USING_SERIAL || OCCA_USING_OPENMP || OCCA_USING_PTHREADS))
-inline std::ostream& operator << (std::ostream &out, const float2& a){
+inline std::ostream& operator << (std::ostream &out, const float2& a) {
   out << "[" << a.x << ", "
              << a.y
       << "]\n";
@@ -9238,40 +9260,40 @@ public:
 };
 #endif
 
-occaFunction inline float4 operator + (const float4 &a){
+occaFunction inline float4 operator + (const float4 &a) {
   return OCCA_FLOAT4(+a.x,
                      +a.y,
                      +a.z,
                      +a.w);
 }
-occaFunction inline float4 operator - (const float4 &a){
+occaFunction inline float4 operator - (const float4 &a) {
   return OCCA_FLOAT4(-a.x,
                      -a.y,
                      -a.z,
                      -a.w);
 }
-occaFunction inline float4  operator +  (const float4 &a, const float4 &b){
+occaFunction inline float4  operator +  (const float4 &a, const float4 &b) {
   return OCCA_FLOAT4(a.x + b.x,
                      a.y + b.y,
                      a.z + b.z,
                      a.w + b.w);
 }
 
-occaFunction inline float4  operator +  (const float &a, const float4 &b){
+occaFunction inline float4  operator +  (const float &a, const float4 &b) {
   return OCCA_FLOAT4(a + b.x,
                      a + b.y,
                      a + b.z,
                      a + b.w);
 }
 
-occaFunction inline float4  operator +  (const float4 &a, const float &b){
+occaFunction inline float4  operator +  (const float4 &a, const float &b) {
   return OCCA_FLOAT4(a.x + b,
                      a.y + b,
                      a.z + b,
                      a.w + b);
 }
 
-occaFunction inline float4& operator += (      float4 &a, const float4 &b){
+occaFunction inline float4& operator += (      float4 &a, const float4 &b) {
   a.x += b.x;
   a.y += b.y;
   a.z += b.z;
@@ -9279,35 +9301,35 @@ occaFunction inline float4& operator += (      float4 &a, const float4 &b){
   return a;
 }
 
-occaFunction inline float4& operator += (      float4 &a, const float &b){
+occaFunction inline float4& operator += (      float4 &a, const float &b) {
   a.x += b;
   a.y += b;
   a.z += b;
   a.w += b;
   return a;
 }
-occaFunction inline float4  operator -  (const float4 &a, const float4 &b){
+occaFunction inline float4  operator -  (const float4 &a, const float4 &b) {
   return OCCA_FLOAT4(a.x - b.x,
                      a.y - b.y,
                      a.z - b.z,
                      a.w - b.w);
 }
 
-occaFunction inline float4  operator -  (const float &a, const float4 &b){
+occaFunction inline float4  operator -  (const float &a, const float4 &b) {
   return OCCA_FLOAT4(a - b.x,
                      a - b.y,
                      a - b.z,
                      a - b.w);
 }
 
-occaFunction inline float4  operator -  (const float4 &a, const float &b){
+occaFunction inline float4  operator -  (const float4 &a, const float &b) {
   return OCCA_FLOAT4(a.x - b,
                      a.y - b,
                      a.z - b,
                      a.w - b);
 }
 
-occaFunction inline float4& operator -= (      float4 &a, const float4 &b){
+occaFunction inline float4& operator -= (      float4 &a, const float4 &b) {
   a.x -= b.x;
   a.y -= b.y;
   a.z -= b.z;
@@ -9315,35 +9337,35 @@ occaFunction inline float4& operator -= (      float4 &a, const float4 &b){
   return a;
 }
 
-occaFunction inline float4& operator -= (      float4 &a, const float &b){
+occaFunction inline float4& operator -= (      float4 &a, const float &b) {
   a.x -= b;
   a.y -= b;
   a.z -= b;
   a.w -= b;
   return a;
 }
-occaFunction inline float4  operator *  (const float4 &a, const float4 &b){
+occaFunction inline float4  operator *  (const float4 &a, const float4 &b) {
   return OCCA_FLOAT4(a.x * b.x,
                      a.y * b.y,
                      a.z * b.z,
                      a.w * b.w);
 }
 
-occaFunction inline float4  operator *  (const float &a, const float4 &b){
+occaFunction inline float4  operator *  (const float &a, const float4 &b) {
   return OCCA_FLOAT4(a * b.x,
                      a * b.y,
                      a * b.z,
                      a * b.w);
 }
 
-occaFunction inline float4  operator *  (const float4 &a, const float &b){
+occaFunction inline float4  operator *  (const float4 &a, const float &b) {
   return OCCA_FLOAT4(a.x * b,
                      a.y * b,
                      a.z * b,
                      a.w * b);
 }
 
-occaFunction inline float4& operator *= (      float4 &a, const float4 &b){
+occaFunction inline float4& operator *= (      float4 &a, const float4 &b) {
   a.x *= b.x;
   a.y *= b.y;
   a.z *= b.z;
@@ -9351,35 +9373,35 @@ occaFunction inline float4& operator *= (      float4 &a, const float4 &b){
   return a;
 }
 
-occaFunction inline float4& operator *= (      float4 &a, const float &b){
+occaFunction inline float4& operator *= (      float4 &a, const float &b) {
   a.x *= b;
   a.y *= b;
   a.z *= b;
   a.w *= b;
   return a;
 }
-occaFunction inline float4  operator /  (const float4 &a, const float4 &b){
+occaFunction inline float4  operator /  (const float4 &a, const float4 &b) {
   return OCCA_FLOAT4(a.x / b.x,
                      a.y / b.y,
                      a.z / b.z,
                      a.w / b.w);
 }
 
-occaFunction inline float4  operator /  (const float &a, const float4 &b){
+occaFunction inline float4  operator /  (const float &a, const float4 &b) {
   return OCCA_FLOAT4(a / b.x,
                      a / b.y,
                      a / b.z,
                      a / b.w);
 }
 
-occaFunction inline float4  operator /  (const float4 &a, const float &b){
+occaFunction inline float4  operator /  (const float4 &a, const float &b) {
   return OCCA_FLOAT4(a.x / b,
                      a.y / b,
                      a.z / b,
                      a.w / b);
 }
 
-occaFunction inline float4& operator /= (      float4 &a, const float4 &b){
+occaFunction inline float4& operator /= (      float4 &a, const float4 &b) {
   a.x /= b.x;
   a.y /= b.y;
   a.z /= b.z;
@@ -9387,7 +9409,7 @@ occaFunction inline float4& operator /= (      float4 &a, const float4 &b){
   return a;
 }
 
-occaFunction inline float4& operator /= (      float4 &a, const float &b){
+occaFunction inline float4& operator /= (      float4 &a, const float &b) {
   a.x /= b;
   a.y /= b;
   a.z /= b;
@@ -9396,7 +9418,7 @@ occaFunction inline float4& operator /= (      float4 &a, const float &b){
 }
 
 #if (!defined(OCCA_IN_KERNEL) || (OCCA_USING_SERIAL || OCCA_USING_OPENMP || OCCA_USING_PTHREADS))
-inline std::ostream& operator << (std::ostream &out, const float4& a){
+inline std::ostream& operator << (std::ostream &out, const float4& a) {
   out << "[" << a.x << ", "
              << a.y << ", "
              << a.z << ", "
@@ -9554,7 +9576,7 @@ public:
     s7(s7_) {}
 };
 
-occaFunction inline float8 operator + (const float8 &a){
+occaFunction inline float8 operator + (const float8 &a) {
   return OCCA_FLOAT8(+a.x,
                      +a.y,
                      +a.z,
@@ -9564,7 +9586,7 @@ occaFunction inline float8 operator + (const float8 &a){
                      +a.s6,
                      +a.s7);
 }
-occaFunction inline float8 operator - (const float8 &a){
+occaFunction inline float8 operator - (const float8 &a) {
   return OCCA_FLOAT8(-a.x,
                      -a.y,
                      -a.z,
@@ -9574,7 +9596,7 @@ occaFunction inline float8 operator - (const float8 &a){
                      -a.s6,
                      -a.s7);
 }
-occaFunction inline float8  operator +  (const float8 &a, const float8 &b){
+occaFunction inline float8  operator +  (const float8 &a, const float8 &b) {
   return OCCA_FLOAT8(a.x + b.x,
                      a.y + b.y,
                      a.z + b.z,
@@ -9585,7 +9607,7 @@ occaFunction inline float8  operator +  (const float8 &a, const float8 &b){
                      a.s7 + b.s7);
 }
 
-occaFunction inline float8  operator +  (const float &a, const float8 &b){
+occaFunction inline float8  operator +  (const float &a, const float8 &b) {
   return OCCA_FLOAT8(a + b.x,
                      a + b.y,
                      a + b.z,
@@ -9596,7 +9618,7 @@ occaFunction inline float8  operator +  (const float &a, const float8 &b){
                      a + b.s7);
 }
 
-occaFunction inline float8  operator +  (const float8 &a, const float &b){
+occaFunction inline float8  operator +  (const float8 &a, const float &b) {
   return OCCA_FLOAT8(a.x + b,
                      a.y + b,
                      a.z + b,
@@ -9607,7 +9629,7 @@ occaFunction inline float8  operator +  (const float8 &a, const float &b){
                      a.s7 + b);
 }
 
-occaFunction inline float8& operator += (      float8 &a, const float8 &b){
+occaFunction inline float8& operator += (      float8 &a, const float8 &b) {
   a.x += b.x;
   a.y += b.y;
   a.z += b.z;
@@ -9619,7 +9641,7 @@ occaFunction inline float8& operator += (      float8 &a, const float8 &b){
   return a;
 }
 
-occaFunction inline float8& operator += (      float8 &a, const float &b){
+occaFunction inline float8& operator += (      float8 &a, const float &b) {
   a.x += b;
   a.y += b;
   a.z += b;
@@ -9630,7 +9652,7 @@ occaFunction inline float8& operator += (      float8 &a, const float &b){
   a.s7 += b;
   return a;
 }
-occaFunction inline float8  operator -  (const float8 &a, const float8 &b){
+occaFunction inline float8  operator -  (const float8 &a, const float8 &b) {
   return OCCA_FLOAT8(a.x - b.x,
                      a.y - b.y,
                      a.z - b.z,
@@ -9641,7 +9663,7 @@ occaFunction inline float8  operator -  (const float8 &a, const float8 &b){
                      a.s7 - b.s7);
 }
 
-occaFunction inline float8  operator -  (const float &a, const float8 &b){
+occaFunction inline float8  operator -  (const float &a, const float8 &b) {
   return OCCA_FLOAT8(a - b.x,
                      a - b.y,
                      a - b.z,
@@ -9652,7 +9674,7 @@ occaFunction inline float8  operator -  (const float &a, const float8 &b){
                      a - b.s7);
 }
 
-occaFunction inline float8  operator -  (const float8 &a, const float &b){
+occaFunction inline float8  operator -  (const float8 &a, const float &b) {
   return OCCA_FLOAT8(a.x - b,
                      a.y - b,
                      a.z - b,
@@ -9663,7 +9685,7 @@ occaFunction inline float8  operator -  (const float8 &a, const float &b){
                      a.s7 - b);
 }
 
-occaFunction inline float8& operator -= (      float8 &a, const float8 &b){
+occaFunction inline float8& operator -= (      float8 &a, const float8 &b) {
   a.x -= b.x;
   a.y -= b.y;
   a.z -= b.z;
@@ -9675,7 +9697,7 @@ occaFunction inline float8& operator -= (      float8 &a, const float8 &b){
   return a;
 }
 
-occaFunction inline float8& operator -= (      float8 &a, const float &b){
+occaFunction inline float8& operator -= (      float8 &a, const float &b) {
   a.x -= b;
   a.y -= b;
   a.z -= b;
@@ -9686,7 +9708,7 @@ occaFunction inline float8& operator -= (      float8 &a, const float &b){
   a.s7 -= b;
   return a;
 }
-occaFunction inline float8  operator *  (const float8 &a, const float8 &b){
+occaFunction inline float8  operator *  (const float8 &a, const float8 &b) {
   return OCCA_FLOAT8(a.x * b.x,
                      a.y * b.y,
                      a.z * b.z,
@@ -9697,7 +9719,7 @@ occaFunction inline float8  operator *  (const float8 &a, const float8 &b){
                      a.s7 * b.s7);
 }
 
-occaFunction inline float8  operator *  (const float &a, const float8 &b){
+occaFunction inline float8  operator *  (const float &a, const float8 &b) {
   return OCCA_FLOAT8(a * b.x,
                      a * b.y,
                      a * b.z,
@@ -9708,7 +9730,7 @@ occaFunction inline float8  operator *  (const float &a, const float8 &b){
                      a * b.s7);
 }
 
-occaFunction inline float8  operator *  (const float8 &a, const float &b){
+occaFunction inline float8  operator *  (const float8 &a, const float &b) {
   return OCCA_FLOAT8(a.x * b,
                      a.y * b,
                      a.z * b,
@@ -9719,7 +9741,7 @@ occaFunction inline float8  operator *  (const float8 &a, const float &b){
                      a.s7 * b);
 }
 
-occaFunction inline float8& operator *= (      float8 &a, const float8 &b){
+occaFunction inline float8& operator *= (      float8 &a, const float8 &b) {
   a.x *= b.x;
   a.y *= b.y;
   a.z *= b.z;
@@ -9731,7 +9753,7 @@ occaFunction inline float8& operator *= (      float8 &a, const float8 &b){
   return a;
 }
 
-occaFunction inline float8& operator *= (      float8 &a, const float &b){
+occaFunction inline float8& operator *= (      float8 &a, const float &b) {
   a.x *= b;
   a.y *= b;
   a.z *= b;
@@ -9742,7 +9764,7 @@ occaFunction inline float8& operator *= (      float8 &a, const float &b){
   a.s7 *= b;
   return a;
 }
-occaFunction inline float8  operator /  (const float8 &a, const float8 &b){
+occaFunction inline float8  operator /  (const float8 &a, const float8 &b) {
   return OCCA_FLOAT8(a.x / b.x,
                      a.y / b.y,
                      a.z / b.z,
@@ -9753,7 +9775,7 @@ occaFunction inline float8  operator /  (const float8 &a, const float8 &b){
                      a.s7 / b.s7);
 }
 
-occaFunction inline float8  operator /  (const float &a, const float8 &b){
+occaFunction inline float8  operator /  (const float &a, const float8 &b) {
   return OCCA_FLOAT8(a / b.x,
                      a / b.y,
                      a / b.z,
@@ -9764,7 +9786,7 @@ occaFunction inline float8  operator /  (const float &a, const float8 &b){
                      a / b.s7);
 }
 
-occaFunction inline float8  operator /  (const float8 &a, const float &b){
+occaFunction inline float8  operator /  (const float8 &a, const float &b) {
   return OCCA_FLOAT8(a.x / b,
                      a.y / b,
                      a.z / b,
@@ -9775,7 +9797,7 @@ occaFunction inline float8  operator /  (const float8 &a, const float &b){
                      a.s7 / b);
 }
 
-occaFunction inline float8& operator /= (      float8 &a, const float8 &b){
+occaFunction inline float8& operator /= (      float8 &a, const float8 &b) {
   a.x /= b.x;
   a.y /= b.y;
   a.z /= b.z;
@@ -9787,7 +9809,7 @@ occaFunction inline float8& operator /= (      float8 &a, const float8 &b){
   return a;
 }
 
-occaFunction inline float8& operator /= (      float8 &a, const float &b){
+occaFunction inline float8& operator /= (      float8 &a, const float &b) {
   a.x /= b;
   a.y /= b;
   a.z /= b;
@@ -9800,7 +9822,7 @@ occaFunction inline float8& operator /= (      float8 &a, const float &b){
 }
 
 #if (!defined(OCCA_IN_KERNEL) || (OCCA_USING_SERIAL || OCCA_USING_OPENMP || OCCA_USING_PTHREADS))
-inline std::ostream& operator << (std::ostream &out, const float8& a){
+inline std::ostream& operator << (std::ostream &out, const float8& a) {
   out << "[" << a.x << ", "
              << a.y << ", "
              << a.z << ", "
@@ -10266,7 +10288,7 @@ public:
     s15(s15_) {}
 };
 
-occaFunction inline float16 operator + (const float16 &a){
+occaFunction inline float16 operator + (const float16 &a) {
   return OCCA_FLOAT16(+a.x,
                       +a.y,
                       +a.z,
@@ -10284,7 +10306,7 @@ occaFunction inline float16 operator + (const float16 &a){
                       +a.s14,
                       +a.s15);
 }
-occaFunction inline float16 operator - (const float16 &a){
+occaFunction inline float16 operator - (const float16 &a) {
   return OCCA_FLOAT16(-a.x,
                       -a.y,
                       -a.z,
@@ -10302,7 +10324,7 @@ occaFunction inline float16 operator - (const float16 &a){
                       -a.s14,
                       -a.s15);
 }
-occaFunction inline float16  operator +  (const float16 &a, const float16 &b){
+occaFunction inline float16  operator +  (const float16 &a, const float16 &b) {
   return OCCA_FLOAT16(a.x + b.x,
                       a.y + b.y,
                       a.z + b.z,
@@ -10321,7 +10343,7 @@ occaFunction inline float16  operator +  (const float16 &a, const float16 &b){
                       a.s15 + b.s15);
 }
 
-occaFunction inline float16  operator +  (const float &a, const float16 &b){
+occaFunction inline float16  operator +  (const float &a, const float16 &b) {
   return OCCA_FLOAT16(a + b.x,
                       a + b.y,
                       a + b.z,
@@ -10340,7 +10362,7 @@ occaFunction inline float16  operator +  (const float &a, const float16 &b){
                       a + b.s15);
 }
 
-occaFunction inline float16  operator +  (const float16 &a, const float &b){
+occaFunction inline float16  operator +  (const float16 &a, const float &b) {
   return OCCA_FLOAT16(a.x + b,
                       a.y + b,
                       a.z + b,
@@ -10359,7 +10381,7 @@ occaFunction inline float16  operator +  (const float16 &a, const float &b){
                       a.s15 + b);
 }
 
-occaFunction inline float16& operator += (      float16 &a, const float16 &b){
+occaFunction inline float16& operator += (      float16 &a, const float16 &b) {
   a.x += b.x;
   a.y += b.y;
   a.z += b.z;
@@ -10379,7 +10401,7 @@ occaFunction inline float16& operator += (      float16 &a, const float16 &b){
   return a;
 }
 
-occaFunction inline float16& operator += (      float16 &a, const float &b){
+occaFunction inline float16& operator += (      float16 &a, const float &b) {
   a.x += b;
   a.y += b;
   a.z += b;
@@ -10398,7 +10420,7 @@ occaFunction inline float16& operator += (      float16 &a, const float &b){
   a.s15 += b;
   return a;
 }
-occaFunction inline float16  operator -  (const float16 &a, const float16 &b){
+occaFunction inline float16  operator -  (const float16 &a, const float16 &b) {
   return OCCA_FLOAT16(a.x - b.x,
                       a.y - b.y,
                       a.z - b.z,
@@ -10417,7 +10439,7 @@ occaFunction inline float16  operator -  (const float16 &a, const float16 &b){
                       a.s15 - b.s15);
 }
 
-occaFunction inline float16  operator -  (const float &a, const float16 &b){
+occaFunction inline float16  operator -  (const float &a, const float16 &b) {
   return OCCA_FLOAT16(a - b.x,
                       a - b.y,
                       a - b.z,
@@ -10436,7 +10458,7 @@ occaFunction inline float16  operator -  (const float &a, const float16 &b){
                       a - b.s15);
 }
 
-occaFunction inline float16  operator -  (const float16 &a, const float &b){
+occaFunction inline float16  operator -  (const float16 &a, const float &b) {
   return OCCA_FLOAT16(a.x - b,
                       a.y - b,
                       a.z - b,
@@ -10455,7 +10477,7 @@ occaFunction inline float16  operator -  (const float16 &a, const float &b){
                       a.s15 - b);
 }
 
-occaFunction inline float16& operator -= (      float16 &a, const float16 &b){
+occaFunction inline float16& operator -= (      float16 &a, const float16 &b) {
   a.x -= b.x;
   a.y -= b.y;
   a.z -= b.z;
@@ -10475,7 +10497,7 @@ occaFunction inline float16& operator -= (      float16 &a, const float16 &b){
   return a;
 }
 
-occaFunction inline float16& operator -= (      float16 &a, const float &b){
+occaFunction inline float16& operator -= (      float16 &a, const float &b) {
   a.x -= b;
   a.y -= b;
   a.z -= b;
@@ -10494,7 +10516,7 @@ occaFunction inline float16& operator -= (      float16 &a, const float &b){
   a.s15 -= b;
   return a;
 }
-occaFunction inline float16  operator *  (const float16 &a, const float16 &b){
+occaFunction inline float16  operator *  (const float16 &a, const float16 &b) {
   return OCCA_FLOAT16(a.x * b.x,
                       a.y * b.y,
                       a.z * b.z,
@@ -10513,7 +10535,7 @@ occaFunction inline float16  operator *  (const float16 &a, const float16 &b){
                       a.s15 * b.s15);
 }
 
-occaFunction inline float16  operator *  (const float &a, const float16 &b){
+occaFunction inline float16  operator *  (const float &a, const float16 &b) {
   return OCCA_FLOAT16(a * b.x,
                       a * b.y,
                       a * b.z,
@@ -10532,7 +10554,7 @@ occaFunction inline float16  operator *  (const float &a, const float16 &b){
                       a * b.s15);
 }
 
-occaFunction inline float16  operator *  (const float16 &a, const float &b){
+occaFunction inline float16  operator *  (const float16 &a, const float &b) {
   return OCCA_FLOAT16(a.x * b,
                       a.y * b,
                       a.z * b,
@@ -10551,7 +10573,7 @@ occaFunction inline float16  operator *  (const float16 &a, const float &b){
                       a.s15 * b);
 }
 
-occaFunction inline float16& operator *= (      float16 &a, const float16 &b){
+occaFunction inline float16& operator *= (      float16 &a, const float16 &b) {
   a.x *= b.x;
   a.y *= b.y;
   a.z *= b.z;
@@ -10571,7 +10593,7 @@ occaFunction inline float16& operator *= (      float16 &a, const float16 &b){
   return a;
 }
 
-occaFunction inline float16& operator *= (      float16 &a, const float &b){
+occaFunction inline float16& operator *= (      float16 &a, const float &b) {
   a.x *= b;
   a.y *= b;
   a.z *= b;
@@ -10590,7 +10612,7 @@ occaFunction inline float16& operator *= (      float16 &a, const float &b){
   a.s15 *= b;
   return a;
 }
-occaFunction inline float16  operator /  (const float16 &a, const float16 &b){
+occaFunction inline float16  operator /  (const float16 &a, const float16 &b) {
   return OCCA_FLOAT16(a.x / b.x,
                       a.y / b.y,
                       a.z / b.z,
@@ -10609,7 +10631,7 @@ occaFunction inline float16  operator /  (const float16 &a, const float16 &b){
                       a.s15 / b.s15);
 }
 
-occaFunction inline float16  operator /  (const float &a, const float16 &b){
+occaFunction inline float16  operator /  (const float &a, const float16 &b) {
   return OCCA_FLOAT16(a / b.x,
                       a / b.y,
                       a / b.z,
@@ -10628,7 +10650,7 @@ occaFunction inline float16  operator /  (const float &a, const float16 &b){
                       a / b.s15);
 }
 
-occaFunction inline float16  operator /  (const float16 &a, const float &b){
+occaFunction inline float16  operator /  (const float16 &a, const float &b) {
   return OCCA_FLOAT16(a.x / b,
                       a.y / b,
                       a.z / b,
@@ -10647,7 +10669,7 @@ occaFunction inline float16  operator /  (const float16 &a, const float &b){
                       a.s15 / b);
 }
 
-occaFunction inline float16& operator /= (      float16 &a, const float16 &b){
+occaFunction inline float16& operator /= (      float16 &a, const float16 &b) {
   a.x /= b.x;
   a.y /= b.y;
   a.z /= b.z;
@@ -10667,7 +10689,7 @@ occaFunction inline float16& operator /= (      float16 &a, const float16 &b){
   return a;
 }
 
-occaFunction inline float16& operator /= (      float16 &a, const float &b){
+occaFunction inline float16& operator /= (      float16 &a, const float &b) {
   a.x /= b;
   a.y /= b;
   a.z /= b;
@@ -10688,7 +10710,7 @@ occaFunction inline float16& operator /= (      float16 &a, const float &b){
 }
 
 #if (!defined(OCCA_IN_KERNEL) || (OCCA_USING_SERIAL || OCCA_USING_OPENMP || OCCA_USING_PTHREADS))
-inline std::ostream& operator << (std::ostream &out, const float16& a){
+inline std::ostream& operator << (std::ostream &out, const float16& a) {
   out << "[" << a.x << ", "
              << a.y << ", "
              << a.z << ", "
@@ -10741,121 +10763,121 @@ public:
 };
 #endif
 
-occaFunction inline double2 operator + (const double2 &a){
+occaFunction inline double2 operator + (const double2 &a) {
   return OCCA_DOUBLE2(+a.x,
                       +a.y);
 }
-occaFunction inline double2 operator - (const double2 &a){
+occaFunction inline double2 operator - (const double2 &a) {
   return OCCA_DOUBLE2(-a.x,
                       -a.y);
 }
-occaFunction inline double2  operator +  (const double2 &a, const double2 &b){
+occaFunction inline double2  operator +  (const double2 &a, const double2 &b) {
   return OCCA_DOUBLE2(a.x + b.x,
                       a.y + b.y);
 }
 
-occaFunction inline double2  operator +  (const double &a, const double2 &b){
+occaFunction inline double2  operator +  (const double &a, const double2 &b) {
   return OCCA_DOUBLE2(a + b.x,
                       a + b.y);
 }
 
-occaFunction inline double2  operator +  (const double2 &a, const double &b){
+occaFunction inline double2  operator +  (const double2 &a, const double &b) {
   return OCCA_DOUBLE2(a.x + b,
                       a.y + b);
 }
 
-occaFunction inline double2& operator += (      double2 &a, const double2 &b){
+occaFunction inline double2& operator += (      double2 &a, const double2 &b) {
   a.x += b.x;
   a.y += b.y;
   return a;
 }
 
-occaFunction inline double2& operator += (      double2 &a, const double &b){
+occaFunction inline double2& operator += (      double2 &a, const double &b) {
   a.x += b;
   a.y += b;
   return a;
 }
-occaFunction inline double2  operator -  (const double2 &a, const double2 &b){
+occaFunction inline double2  operator -  (const double2 &a, const double2 &b) {
   return OCCA_DOUBLE2(a.x - b.x,
                       a.y - b.y);
 }
 
-occaFunction inline double2  operator -  (const double &a, const double2 &b){
+occaFunction inline double2  operator -  (const double &a, const double2 &b) {
   return OCCA_DOUBLE2(a - b.x,
                       a - b.y);
 }
 
-occaFunction inline double2  operator -  (const double2 &a, const double &b){
+occaFunction inline double2  operator -  (const double2 &a, const double &b) {
   return OCCA_DOUBLE2(a.x - b,
                       a.y - b);
 }
 
-occaFunction inline double2& operator -= (      double2 &a, const double2 &b){
+occaFunction inline double2& operator -= (      double2 &a, const double2 &b) {
   a.x -= b.x;
   a.y -= b.y;
   return a;
 }
 
-occaFunction inline double2& operator -= (      double2 &a, const double &b){
+occaFunction inline double2& operator -= (      double2 &a, const double &b) {
   a.x -= b;
   a.y -= b;
   return a;
 }
-occaFunction inline double2  operator *  (const double2 &a, const double2 &b){
+occaFunction inline double2  operator *  (const double2 &a, const double2 &b) {
   return OCCA_DOUBLE2(a.x * b.x,
                       a.y * b.y);
 }
 
-occaFunction inline double2  operator *  (const double &a, const double2 &b){
+occaFunction inline double2  operator *  (const double &a, const double2 &b) {
   return OCCA_DOUBLE2(a * b.x,
                       a * b.y);
 }
 
-occaFunction inline double2  operator *  (const double2 &a, const double &b){
+occaFunction inline double2  operator *  (const double2 &a, const double &b) {
   return OCCA_DOUBLE2(a.x * b,
                       a.y * b);
 }
 
-occaFunction inline double2& operator *= (      double2 &a, const double2 &b){
+occaFunction inline double2& operator *= (      double2 &a, const double2 &b) {
   a.x *= b.x;
   a.y *= b.y;
   return a;
 }
 
-occaFunction inline double2& operator *= (      double2 &a, const double &b){
+occaFunction inline double2& operator *= (      double2 &a, const double &b) {
   a.x *= b;
   a.y *= b;
   return a;
 }
-occaFunction inline double2  operator /  (const double2 &a, const double2 &b){
+occaFunction inline double2  operator /  (const double2 &a, const double2 &b) {
   return OCCA_DOUBLE2(a.x / b.x,
                       a.y / b.y);
 }
 
-occaFunction inline double2  operator /  (const double &a, const double2 &b){
+occaFunction inline double2  operator /  (const double &a, const double2 &b) {
   return OCCA_DOUBLE2(a / b.x,
                       a / b.y);
 }
 
-occaFunction inline double2  operator /  (const double2 &a, const double &b){
+occaFunction inline double2  operator /  (const double2 &a, const double &b) {
   return OCCA_DOUBLE2(a.x / b,
                       a.y / b);
 }
 
-occaFunction inline double2& operator /= (      double2 &a, const double2 &b){
+occaFunction inline double2& operator /= (      double2 &a, const double2 &b) {
   a.x /= b.x;
   a.y /= b.y;
   return a;
 }
 
-occaFunction inline double2& operator /= (      double2 &a, const double &b){
+occaFunction inline double2& operator /= (      double2 &a, const double &b) {
   a.x /= b;
   a.y /= b;
   return a;
 }
 
 #if (!defined(OCCA_IN_KERNEL) || (OCCA_USING_SERIAL || OCCA_USING_OPENMP || OCCA_USING_PTHREADS))
-inline std::ostream& operator << (std::ostream &out, const double2& a){
+inline std::ostream& operator << (std::ostream &out, const double2& a) {
   out << "[" << a.x << ", "
              << a.y
       << "]\n";
@@ -10919,40 +10941,40 @@ public:
 };
 #endif
 
-occaFunction inline double4 operator + (const double4 &a){
+occaFunction inline double4 operator + (const double4 &a) {
   return OCCA_DOUBLE4(+a.x,
                       +a.y,
                       +a.z,
                       +a.w);
 }
-occaFunction inline double4 operator - (const double4 &a){
+occaFunction inline double4 operator - (const double4 &a) {
   return OCCA_DOUBLE4(-a.x,
                       -a.y,
                       -a.z,
                       -a.w);
 }
-occaFunction inline double4  operator +  (const double4 &a, const double4 &b){
+occaFunction inline double4  operator +  (const double4 &a, const double4 &b) {
   return OCCA_DOUBLE4(a.x + b.x,
                       a.y + b.y,
                       a.z + b.z,
                       a.w + b.w);
 }
 
-occaFunction inline double4  operator +  (const double &a, const double4 &b){
+occaFunction inline double4  operator +  (const double &a, const double4 &b) {
   return OCCA_DOUBLE4(a + b.x,
                       a + b.y,
                       a + b.z,
                       a + b.w);
 }
 
-occaFunction inline double4  operator +  (const double4 &a, const double &b){
+occaFunction inline double4  operator +  (const double4 &a, const double &b) {
   return OCCA_DOUBLE4(a.x + b,
                       a.y + b,
                       a.z + b,
                       a.w + b);
 }
 
-occaFunction inline double4& operator += (      double4 &a, const double4 &b){
+occaFunction inline double4& operator += (      double4 &a, const double4 &b) {
   a.x += b.x;
   a.y += b.y;
   a.z += b.z;
@@ -10960,35 +10982,35 @@ occaFunction inline double4& operator += (      double4 &a, const double4 &b){
   return a;
 }
 
-occaFunction inline double4& operator += (      double4 &a, const double &b){
+occaFunction inline double4& operator += (      double4 &a, const double &b) {
   a.x += b;
   a.y += b;
   a.z += b;
   a.w += b;
   return a;
 }
-occaFunction inline double4  operator -  (const double4 &a, const double4 &b){
+occaFunction inline double4  operator -  (const double4 &a, const double4 &b) {
   return OCCA_DOUBLE4(a.x - b.x,
                       a.y - b.y,
                       a.z - b.z,
                       a.w - b.w);
 }
 
-occaFunction inline double4  operator -  (const double &a, const double4 &b){
+occaFunction inline double4  operator -  (const double &a, const double4 &b) {
   return OCCA_DOUBLE4(a - b.x,
                       a - b.y,
                       a - b.z,
                       a - b.w);
 }
 
-occaFunction inline double4  operator -  (const double4 &a, const double &b){
+occaFunction inline double4  operator -  (const double4 &a, const double &b) {
   return OCCA_DOUBLE4(a.x - b,
                       a.y - b,
                       a.z - b,
                       a.w - b);
 }
 
-occaFunction inline double4& operator -= (      double4 &a, const double4 &b){
+occaFunction inline double4& operator -= (      double4 &a, const double4 &b) {
   a.x -= b.x;
   a.y -= b.y;
   a.z -= b.z;
@@ -10996,35 +11018,35 @@ occaFunction inline double4& operator -= (      double4 &a, const double4 &b){
   return a;
 }
 
-occaFunction inline double4& operator -= (      double4 &a, const double &b){
+occaFunction inline double4& operator -= (      double4 &a, const double &b) {
   a.x -= b;
   a.y -= b;
   a.z -= b;
   a.w -= b;
   return a;
 }
-occaFunction inline double4  operator *  (const double4 &a, const double4 &b){
+occaFunction inline double4  operator *  (const double4 &a, const double4 &b) {
   return OCCA_DOUBLE4(a.x * b.x,
                       a.y * b.y,
                       a.z * b.z,
                       a.w * b.w);
 }
 
-occaFunction inline double4  operator *  (const double &a, const double4 &b){
+occaFunction inline double4  operator *  (const double &a, const double4 &b) {
   return OCCA_DOUBLE4(a * b.x,
                       a * b.y,
                       a * b.z,
                       a * b.w);
 }
 
-occaFunction inline double4  operator *  (const double4 &a, const double &b){
+occaFunction inline double4  operator *  (const double4 &a, const double &b) {
   return OCCA_DOUBLE4(a.x * b,
                       a.y * b,
                       a.z * b,
                       a.w * b);
 }
 
-occaFunction inline double4& operator *= (      double4 &a, const double4 &b){
+occaFunction inline double4& operator *= (      double4 &a, const double4 &b) {
   a.x *= b.x;
   a.y *= b.y;
   a.z *= b.z;
@@ -11032,35 +11054,35 @@ occaFunction inline double4& operator *= (      double4 &a, const double4 &b){
   return a;
 }
 
-occaFunction inline double4& operator *= (      double4 &a, const double &b){
+occaFunction inline double4& operator *= (      double4 &a, const double &b) {
   a.x *= b;
   a.y *= b;
   a.z *= b;
   a.w *= b;
   return a;
 }
-occaFunction inline double4  operator /  (const double4 &a, const double4 &b){
+occaFunction inline double4  operator /  (const double4 &a, const double4 &b) {
   return OCCA_DOUBLE4(a.x / b.x,
                       a.y / b.y,
                       a.z / b.z,
                       a.w / b.w);
 }
 
-occaFunction inline double4  operator /  (const double &a, const double4 &b){
+occaFunction inline double4  operator /  (const double &a, const double4 &b) {
   return OCCA_DOUBLE4(a / b.x,
                       a / b.y,
                       a / b.z,
                       a / b.w);
 }
 
-occaFunction inline double4  operator /  (const double4 &a, const double &b){
+occaFunction inline double4  operator /  (const double4 &a, const double &b) {
   return OCCA_DOUBLE4(a.x / b,
                       a.y / b,
                       a.z / b,
                       a.w / b);
 }
 
-occaFunction inline double4& operator /= (      double4 &a, const double4 &b){
+occaFunction inline double4& operator /= (      double4 &a, const double4 &b) {
   a.x /= b.x;
   a.y /= b.y;
   a.z /= b.z;
@@ -11068,7 +11090,7 @@ occaFunction inline double4& operator /= (      double4 &a, const double4 &b){
   return a;
 }
 
-occaFunction inline double4& operator /= (      double4 &a, const double &b){
+occaFunction inline double4& operator /= (      double4 &a, const double &b) {
   a.x /= b;
   a.y /= b;
   a.z /= b;
@@ -11077,7 +11099,7 @@ occaFunction inline double4& operator /= (      double4 &a, const double &b){
 }
 
 #if (!defined(OCCA_IN_KERNEL) || (OCCA_USING_SERIAL || OCCA_USING_OPENMP || OCCA_USING_PTHREADS))
-inline std::ostream& operator << (std::ostream &out, const double4& a){
+inline std::ostream& operator << (std::ostream &out, const double4& a) {
   out << "[" << a.x << ", "
              << a.y << ", "
              << a.z << ", "
@@ -11235,7 +11257,7 @@ public:
     s7(s7_) {}
 };
 
-occaFunction inline double8 operator + (const double8 &a){
+occaFunction inline double8 operator + (const double8 &a) {
   return OCCA_DOUBLE8(+a.x,
                       +a.y,
                       +a.z,
@@ -11245,7 +11267,7 @@ occaFunction inline double8 operator + (const double8 &a){
                       +a.s6,
                       +a.s7);
 }
-occaFunction inline double8 operator - (const double8 &a){
+occaFunction inline double8 operator - (const double8 &a) {
   return OCCA_DOUBLE8(-a.x,
                       -a.y,
                       -a.z,
@@ -11255,7 +11277,7 @@ occaFunction inline double8 operator - (const double8 &a){
                       -a.s6,
                       -a.s7);
 }
-occaFunction inline double8  operator +  (const double8 &a, const double8 &b){
+occaFunction inline double8  operator +  (const double8 &a, const double8 &b) {
   return OCCA_DOUBLE8(a.x + b.x,
                       a.y + b.y,
                       a.z + b.z,
@@ -11266,7 +11288,7 @@ occaFunction inline double8  operator +  (const double8 &a, const double8 &b){
                       a.s7 + b.s7);
 }
 
-occaFunction inline double8  operator +  (const double &a, const double8 &b){
+occaFunction inline double8  operator +  (const double &a, const double8 &b) {
   return OCCA_DOUBLE8(a + b.x,
                       a + b.y,
                       a + b.z,
@@ -11277,7 +11299,7 @@ occaFunction inline double8  operator +  (const double &a, const double8 &b){
                       a + b.s7);
 }
 
-occaFunction inline double8  operator +  (const double8 &a, const double &b){
+occaFunction inline double8  operator +  (const double8 &a, const double &b) {
   return OCCA_DOUBLE8(a.x + b,
                       a.y + b,
                       a.z + b,
@@ -11288,7 +11310,7 @@ occaFunction inline double8  operator +  (const double8 &a, const double &b){
                       a.s7 + b);
 }
 
-occaFunction inline double8& operator += (      double8 &a, const double8 &b){
+occaFunction inline double8& operator += (      double8 &a, const double8 &b) {
   a.x += b.x;
   a.y += b.y;
   a.z += b.z;
@@ -11300,7 +11322,7 @@ occaFunction inline double8& operator += (      double8 &a, const double8 &b){
   return a;
 }
 
-occaFunction inline double8& operator += (      double8 &a, const double &b){
+occaFunction inline double8& operator += (      double8 &a, const double &b) {
   a.x += b;
   a.y += b;
   a.z += b;
@@ -11311,7 +11333,7 @@ occaFunction inline double8& operator += (      double8 &a, const double &b){
   a.s7 += b;
   return a;
 }
-occaFunction inline double8  operator -  (const double8 &a, const double8 &b){
+occaFunction inline double8  operator -  (const double8 &a, const double8 &b) {
   return OCCA_DOUBLE8(a.x - b.x,
                       a.y - b.y,
                       a.z - b.z,
@@ -11322,7 +11344,7 @@ occaFunction inline double8  operator -  (const double8 &a, const double8 &b){
                       a.s7 - b.s7);
 }
 
-occaFunction inline double8  operator -  (const double &a, const double8 &b){
+occaFunction inline double8  operator -  (const double &a, const double8 &b) {
   return OCCA_DOUBLE8(a - b.x,
                       a - b.y,
                       a - b.z,
@@ -11333,7 +11355,7 @@ occaFunction inline double8  operator -  (const double &a, const double8 &b){
                       a - b.s7);
 }
 
-occaFunction inline double8  operator -  (const double8 &a, const double &b){
+occaFunction inline double8  operator -  (const double8 &a, const double &b) {
   return OCCA_DOUBLE8(a.x - b,
                       a.y - b,
                       a.z - b,
@@ -11344,7 +11366,7 @@ occaFunction inline double8  operator -  (const double8 &a, const double &b){
                       a.s7 - b);
 }
 
-occaFunction inline double8& operator -= (      double8 &a, const double8 &b){
+occaFunction inline double8& operator -= (      double8 &a, const double8 &b) {
   a.x -= b.x;
   a.y -= b.y;
   a.z -= b.z;
@@ -11356,7 +11378,7 @@ occaFunction inline double8& operator -= (      double8 &a, const double8 &b){
   return a;
 }
 
-occaFunction inline double8& operator -= (      double8 &a, const double &b){
+occaFunction inline double8& operator -= (      double8 &a, const double &b) {
   a.x -= b;
   a.y -= b;
   a.z -= b;
@@ -11367,7 +11389,7 @@ occaFunction inline double8& operator -= (      double8 &a, const double &b){
   a.s7 -= b;
   return a;
 }
-occaFunction inline double8  operator *  (const double8 &a, const double8 &b){
+occaFunction inline double8  operator *  (const double8 &a, const double8 &b) {
   return OCCA_DOUBLE8(a.x * b.x,
                       a.y * b.y,
                       a.z * b.z,
@@ -11378,7 +11400,7 @@ occaFunction inline double8  operator *  (const double8 &a, const double8 &b){
                       a.s7 * b.s7);
 }
 
-occaFunction inline double8  operator *  (const double &a, const double8 &b){
+occaFunction inline double8  operator *  (const double &a, const double8 &b) {
   return OCCA_DOUBLE8(a * b.x,
                       a * b.y,
                       a * b.z,
@@ -11389,7 +11411,7 @@ occaFunction inline double8  operator *  (const double &a, const double8 &b){
                       a * b.s7);
 }
 
-occaFunction inline double8  operator *  (const double8 &a, const double &b){
+occaFunction inline double8  operator *  (const double8 &a, const double &b) {
   return OCCA_DOUBLE8(a.x * b,
                       a.y * b,
                       a.z * b,
@@ -11400,7 +11422,7 @@ occaFunction inline double8  operator *  (const double8 &a, const double &b){
                       a.s7 * b);
 }
 
-occaFunction inline double8& operator *= (      double8 &a, const double8 &b){
+occaFunction inline double8& operator *= (      double8 &a, const double8 &b) {
   a.x *= b.x;
   a.y *= b.y;
   a.z *= b.z;
@@ -11412,7 +11434,7 @@ occaFunction inline double8& operator *= (      double8 &a, const double8 &b){
   return a;
 }
 
-occaFunction inline double8& operator *= (      double8 &a, const double &b){
+occaFunction inline double8& operator *= (      double8 &a, const double &b) {
   a.x *= b;
   a.y *= b;
   a.z *= b;
@@ -11423,7 +11445,7 @@ occaFunction inline double8& operator *= (      double8 &a, const double &b){
   a.s7 *= b;
   return a;
 }
-occaFunction inline double8  operator /  (const double8 &a, const double8 &b){
+occaFunction inline double8  operator /  (const double8 &a, const double8 &b) {
   return OCCA_DOUBLE8(a.x / b.x,
                       a.y / b.y,
                       a.z / b.z,
@@ -11434,7 +11456,7 @@ occaFunction inline double8  operator /  (const double8 &a, const double8 &b){
                       a.s7 / b.s7);
 }
 
-occaFunction inline double8  operator /  (const double &a, const double8 &b){
+occaFunction inline double8  operator /  (const double &a, const double8 &b) {
   return OCCA_DOUBLE8(a / b.x,
                       a / b.y,
                       a / b.z,
@@ -11445,7 +11467,7 @@ occaFunction inline double8  operator /  (const double &a, const double8 &b){
                       a / b.s7);
 }
 
-occaFunction inline double8  operator /  (const double8 &a, const double &b){
+occaFunction inline double8  operator /  (const double8 &a, const double &b) {
   return OCCA_DOUBLE8(a.x / b,
                       a.y / b,
                       a.z / b,
@@ -11456,7 +11478,7 @@ occaFunction inline double8  operator /  (const double8 &a, const double &b){
                       a.s7 / b);
 }
 
-occaFunction inline double8& operator /= (      double8 &a, const double8 &b){
+occaFunction inline double8& operator /= (      double8 &a, const double8 &b) {
   a.x /= b.x;
   a.y /= b.y;
   a.z /= b.z;
@@ -11468,7 +11490,7 @@ occaFunction inline double8& operator /= (      double8 &a, const double8 &b){
   return a;
 }
 
-occaFunction inline double8& operator /= (      double8 &a, const double &b){
+occaFunction inline double8& operator /= (      double8 &a, const double &b) {
   a.x /= b;
   a.y /= b;
   a.z /= b;
@@ -11481,7 +11503,7 @@ occaFunction inline double8& operator /= (      double8 &a, const double &b){
 }
 
 #if (!defined(OCCA_IN_KERNEL) || (OCCA_USING_SERIAL || OCCA_USING_OPENMP || OCCA_USING_PTHREADS))
-inline std::ostream& operator << (std::ostream &out, const double8& a){
+inline std::ostream& operator << (std::ostream &out, const double8& a) {
   out << "[" << a.x << ", "
              << a.y << ", "
              << a.z << ", "
@@ -11947,7 +11969,7 @@ public:
     s15(s15_) {}
 };
 
-occaFunction inline double16 operator + (const double16 &a){
+occaFunction inline double16 operator + (const double16 &a) {
   return OCCA_DOUBLE16(+a.x,
                        +a.y,
                        +a.z,
@@ -11965,7 +11987,7 @@ occaFunction inline double16 operator + (const double16 &a){
                        +a.s14,
                        +a.s15);
 }
-occaFunction inline double16 operator - (const double16 &a){
+occaFunction inline double16 operator - (const double16 &a) {
   return OCCA_DOUBLE16(-a.x,
                        -a.y,
                        -a.z,
@@ -11983,7 +12005,7 @@ occaFunction inline double16 operator - (const double16 &a){
                        -a.s14,
                        -a.s15);
 }
-occaFunction inline double16  operator +  (const double16 &a, const double16 &b){
+occaFunction inline double16  operator +  (const double16 &a, const double16 &b) {
   return OCCA_DOUBLE16(a.x + b.x,
                        a.y + b.y,
                        a.z + b.z,
@@ -12002,7 +12024,7 @@ occaFunction inline double16  operator +  (const double16 &a, const double16 &b)
                        a.s15 + b.s15);
 }
 
-occaFunction inline double16  operator +  (const double &a, const double16 &b){
+occaFunction inline double16  operator +  (const double &a, const double16 &b) {
   return OCCA_DOUBLE16(a + b.x,
                        a + b.y,
                        a + b.z,
@@ -12021,7 +12043,7 @@ occaFunction inline double16  operator +  (const double &a, const double16 &b){
                        a + b.s15);
 }
 
-occaFunction inline double16  operator +  (const double16 &a, const double &b){
+occaFunction inline double16  operator +  (const double16 &a, const double &b) {
   return OCCA_DOUBLE16(a.x + b,
                        a.y + b,
                        a.z + b,
@@ -12040,7 +12062,7 @@ occaFunction inline double16  operator +  (const double16 &a, const double &b){
                        a.s15 + b);
 }
 
-occaFunction inline double16& operator += (      double16 &a, const double16 &b){
+occaFunction inline double16& operator += (      double16 &a, const double16 &b) {
   a.x += b.x;
   a.y += b.y;
   a.z += b.z;
@@ -12060,7 +12082,7 @@ occaFunction inline double16& operator += (      double16 &a, const double16 &b)
   return a;
 }
 
-occaFunction inline double16& operator += (      double16 &a, const double &b){
+occaFunction inline double16& operator += (      double16 &a, const double &b) {
   a.x += b;
   a.y += b;
   a.z += b;
@@ -12079,7 +12101,7 @@ occaFunction inline double16& operator += (      double16 &a, const double &b){
   a.s15 += b;
   return a;
 }
-occaFunction inline double16  operator -  (const double16 &a, const double16 &b){
+occaFunction inline double16  operator -  (const double16 &a, const double16 &b) {
   return OCCA_DOUBLE16(a.x - b.x,
                        a.y - b.y,
                        a.z - b.z,
@@ -12098,7 +12120,7 @@ occaFunction inline double16  operator -  (const double16 &a, const double16 &b)
                        a.s15 - b.s15);
 }
 
-occaFunction inline double16  operator -  (const double &a, const double16 &b){
+occaFunction inline double16  operator -  (const double &a, const double16 &b) {
   return OCCA_DOUBLE16(a - b.x,
                        a - b.y,
                        a - b.z,
@@ -12117,7 +12139,7 @@ occaFunction inline double16  operator -  (const double &a, const double16 &b){
                        a - b.s15);
 }
 
-occaFunction inline double16  operator -  (const double16 &a, const double &b){
+occaFunction inline double16  operator -  (const double16 &a, const double &b) {
   return OCCA_DOUBLE16(a.x - b,
                        a.y - b,
                        a.z - b,
@@ -12136,7 +12158,7 @@ occaFunction inline double16  operator -  (const double16 &a, const double &b){
                        a.s15 - b);
 }
 
-occaFunction inline double16& operator -= (      double16 &a, const double16 &b){
+occaFunction inline double16& operator -= (      double16 &a, const double16 &b) {
   a.x -= b.x;
   a.y -= b.y;
   a.z -= b.z;
@@ -12156,7 +12178,7 @@ occaFunction inline double16& operator -= (      double16 &a, const double16 &b)
   return a;
 }
 
-occaFunction inline double16& operator -= (      double16 &a, const double &b){
+occaFunction inline double16& operator -= (      double16 &a, const double &b) {
   a.x -= b;
   a.y -= b;
   a.z -= b;
@@ -12175,7 +12197,7 @@ occaFunction inline double16& operator -= (      double16 &a, const double &b){
   a.s15 -= b;
   return a;
 }
-occaFunction inline double16  operator *  (const double16 &a, const double16 &b){
+occaFunction inline double16  operator *  (const double16 &a, const double16 &b) {
   return OCCA_DOUBLE16(a.x * b.x,
                        a.y * b.y,
                        a.z * b.z,
@@ -12194,7 +12216,7 @@ occaFunction inline double16  operator *  (const double16 &a, const double16 &b)
                        a.s15 * b.s15);
 }
 
-occaFunction inline double16  operator *  (const double &a, const double16 &b){
+occaFunction inline double16  operator *  (const double &a, const double16 &b) {
   return OCCA_DOUBLE16(a * b.x,
                        a * b.y,
                        a * b.z,
@@ -12213,7 +12235,7 @@ occaFunction inline double16  operator *  (const double &a, const double16 &b){
                        a * b.s15);
 }
 
-occaFunction inline double16  operator *  (const double16 &a, const double &b){
+occaFunction inline double16  operator *  (const double16 &a, const double &b) {
   return OCCA_DOUBLE16(a.x * b,
                        a.y * b,
                        a.z * b,
@@ -12232,7 +12254,7 @@ occaFunction inline double16  operator *  (const double16 &a, const double &b){
                        a.s15 * b);
 }
 
-occaFunction inline double16& operator *= (      double16 &a, const double16 &b){
+occaFunction inline double16& operator *= (      double16 &a, const double16 &b) {
   a.x *= b.x;
   a.y *= b.y;
   a.z *= b.z;
@@ -12252,7 +12274,7 @@ occaFunction inline double16& operator *= (      double16 &a, const double16 &b)
   return a;
 }
 
-occaFunction inline double16& operator *= (      double16 &a, const double &b){
+occaFunction inline double16& operator *= (      double16 &a, const double &b) {
   a.x *= b;
   a.y *= b;
   a.z *= b;
@@ -12271,7 +12293,7 @@ occaFunction inline double16& operator *= (      double16 &a, const double &b){
   a.s15 *= b;
   return a;
 }
-occaFunction inline double16  operator /  (const double16 &a, const double16 &b){
+occaFunction inline double16  operator /  (const double16 &a, const double16 &b) {
   return OCCA_DOUBLE16(a.x / b.x,
                        a.y / b.y,
                        a.z / b.z,
@@ -12290,7 +12312,7 @@ occaFunction inline double16  operator /  (const double16 &a, const double16 &b)
                        a.s15 / b.s15);
 }
 
-occaFunction inline double16  operator /  (const double &a, const double16 &b){
+occaFunction inline double16  operator /  (const double &a, const double16 &b) {
   return OCCA_DOUBLE16(a / b.x,
                        a / b.y,
                        a / b.z,
@@ -12309,7 +12331,7 @@ occaFunction inline double16  operator /  (const double &a, const double16 &b){
                        a / b.s15);
 }
 
-occaFunction inline double16  operator /  (const double16 &a, const double &b){
+occaFunction inline double16  operator /  (const double16 &a, const double &b) {
   return OCCA_DOUBLE16(a.x / b,
                        a.y / b,
                        a.z / b,
@@ -12328,7 +12350,7 @@ occaFunction inline double16  operator /  (const double16 &a, const double &b){
                        a.s15 / b);
 }
 
-occaFunction inline double16& operator /= (      double16 &a, const double16 &b){
+occaFunction inline double16& operator /= (      double16 &a, const double16 &b) {
   a.x /= b.x;
   a.y /= b.y;
   a.z /= b.z;
@@ -12348,7 +12370,7 @@ occaFunction inline double16& operator /= (      double16 &a, const double16 &b)
   return a;
 }
 
-occaFunction inline double16& operator /= (      double16 &a, const double &b){
+occaFunction inline double16& operator /= (      double16 &a, const double &b) {
   a.x /= b;
   a.y /= b;
   a.z /= b;
@@ -12369,7 +12391,7 @@ occaFunction inline double16& operator /= (      double16 &a, const double &b){
 }
 
 #if (!defined(OCCA_IN_KERNEL) || (OCCA_USING_SERIAL || OCCA_USING_OPENMP || OCCA_USING_PTHREADS))
-inline std::ostream& operator << (std::ostream &out, const double16& a){
+inline std::ostream& operator << (std::ostream &out, const double16& a) {
   out << "[" << a.x << ", "
              << a.y << ", "
              << a.z << ", "

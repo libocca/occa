@@ -3,7 +3,7 @@
 
 #include "occa_c.h"
 
-int main(int argc, char **argv){
+int main(int argc, char **argv) {
   occaPrintAvailableDevices();
 
   int entries = 5;
@@ -13,7 +13,7 @@ int main(int argc, char **argv){
   float *b  = (float*) malloc(entries*sizeof(float));
   float *ab = (float*) malloc(entries*sizeof(float));
 
-  for(i = 0; i < entries; ++i){
+  for (i = 0; i < entries; ++i) {
     a[i]  = i;
     b[i]  = 1 - i;
     ab[i] = 0;
@@ -65,11 +65,11 @@ int main(int argc, char **argv){
 
   occaCopyMemToPtr(ab, o_ab, occaAutoSize, occaNoOffset);
 
-  for(i = 0; i < 5; ++i)
+  for (i = 0; i < 5; ++i)
     printf("%d = %f\n", i, ab[i]);
 
-  for(i = 0; i < entries; ++i){
-    if(ab[i] != (a[i] + b[i]))
+  for (i = 0; i < entries; ++i) {
+    if (ab[i] != (a[i] + b[i]))
       exit(1);
   }
 

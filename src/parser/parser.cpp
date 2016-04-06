@@ -1,4 +1,30 @@
+/* The MIT License (MIT)
+ *
+ * Copyright (c) 2014-2016 David Medina and Tim Warburton
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ */
+
 #include "occa/parser/parser.hpp"
+#include "occa/tools/env.hpp"
+#include "occa/tools/io.hpp"
+#include "occa/tools/string.hpp"
+#include "occa/tools/sys.hpp"
 
 namespace occa {
   namespace parserNS {
@@ -42,29 +68,30 @@ namespace occa {
       }
     }
 
-    const std::string parserBase::parseFile(const std::string &header,
-                                            const std::string &filename_,
-                                            const flags_t &flags_) {
+    const std::string parserBase::parseFile(const std::string &filename_,
+                                            const occa::properties &properties_) {
 
       filename = filename_;
 
-      loadParserFlags(flags_);
+      loadParserFlags(properties_);
 
       //---[ Language ]-------
-      if (parsingFlags.hasSet("language", "Fortran"))
+      if (properties["language"] == "OFL") {
         parsingLanguage = parserInfo::parsingFortran;
-      else
+      } else {
         parsingLanguage = parserInfo::parsingC;
+      }
 
       pushLanguage(parsingLanguage);
 
       //---[ Mode ]-----------
-      OCCA_CHECK(parsingFlags.has("mode"),
+      OCCA_CHECK(properties.has("mode"),
                  "Compilation mode must be passed to the parser");
 
       //---[ Magic ]----------
-      std::string content = header;
-      content += readFile(filename);
+      std::string content = properties["headers"];
+      content += io::read(filename);
+      content += properties["footer"];
 
       return parseSource(content.c_str());
     }
@@ -124,17 +151,18 @@ namespace occa {
     }
 
     //---[ Parser Warnings ]------------
-    void parserBase::loadParserFlags(const flags_t &flags) {
-      parsingFlags = flags;
+    void parserBase::loadParserFlags(const occa::properties &properties_) {
+      properties = properties_;
 
-      _hasMagicEnabled = flags.has("magic");
-      _compilingForCPU = ((flags["mode"] == "Serial")   ||
-                          (flags["mode"] == "Pthreads") ||
-                          (flags["mode"] == "OpenMP"));
+      const std::string &mode = properties["mode"];
+      _hasMagicEnabled = properties.get<bool>("magic", false);
+      _compilingForCPU = ((mode == "Serial")   ||
+                          (mode == "Pthreads") ||
+                          (mode == "OpenMP"));
 
-      _warnForMissingBarriers      = flags.hasEnabled("warn-for-missing-barriers"    , true);
-      _warnForConditionalBarriers  = flags.hasEnabled("warn-for-conditional-barriers", true);
-      _insertBarriersAutomatically = flags.hasEnabled("automate-add-barriers"        , true);
+      _warnForMissingBarriers      = properties.get<bool>("warn-for-missing-barriers"    , false);
+      _warnForConditionalBarriers  = properties.get<bool>("warn-for-conditional-barriers", false);
+      _insertBarriersAutomatically = properties.get<bool>("automate-add-barriers"        , true);
     }
 
     bool parserBase::hasMagicEnabled() {
@@ -231,8 +259,9 @@ namespace occa {
       skipWhitespace(c);
       info.reset();
 
-      if (*c == '\0')
+      if (*c == '\0') {
         return;
+      }
 
       if ((*c != '(') || hasWhitespace) {
         const size_t chars = strlen(c);
@@ -261,7 +290,7 @@ namespace occa {
         if (macroArgName.size()) {
           OCCA_CHECK(!info.hasVarArgs,
                      "Macro [" << info.name << "] has arguments after variadic ... argument");
-          if(macroArgName != "...") {
+          if (macroArgName != "...") {
             macroArgMap[macroArgName] = (info.argc++);
           }
           else {
@@ -446,7 +475,7 @@ namespace occa {
 
           std::string includeFile = getMacroIncludeFile(c);
 
-          includeFile = sys::getFilename(includeFile);
+          includeFile = io::filename(includeFile);
 
           if (includeFile == "")
             return (state);
@@ -546,7 +575,7 @@ namespace occa {
               macroInfo &info = macros[it->second];
               word += info.parts[0];
             }
-            else{
+            else {
               word += word2;
             }
           }
@@ -577,7 +606,7 @@ namespace occa {
           if (!info.isAFunction) {
             newLine += info.parts[0];
           }
-          else{
+          else {
             std::vector<std::string> args;
 
             cStart = c + 1;
@@ -598,7 +627,7 @@ namespace occa {
                 args.push_back( strip(cStart, c - cStart) );
                 cStart = ++c; // Skip the [,]
               }
-              else{
+              else {
                 if (segmentPair(*c))
                   skipPair(c);
                 else if (isAString(c))
@@ -616,7 +645,7 @@ namespace occa {
             newLine += info.applyArgs(args);
           }
         }
-        else{
+        else {
           newLine += word;
         }
 
@@ -675,7 +704,7 @@ namespace occa {
               currentState = doNothing;
           }
         }
-        else{
+        else {
           if (!(currentState & ignoring))
             applyMacros(line);
           else
@@ -864,7 +893,7 @@ namespace occa {
 
             globalScope->addType(type);
           }
-          else{
+          else {
             ss << "struct " << baseType[t] << parts[n] << " {\n";
 
             for (int n2 = 0; n2 < parts[n]; ++n2) {
@@ -1063,7 +1092,7 @@ namespace occa {
            << opSign
            << " (" << occaIdName << " * (" << opStride << ")) " << setupAttr << ";";
       }
-      else{
+      else {
         ss << setupExp;
 
         ss << ' ' << opSign << ' ' << occaIdName << ' ' << setupAttr << ';';
@@ -1438,7 +1467,7 @@ namespace occa {
             occaLoop.addAttribute("@(occaTag = outer,"
                                   " occaNest = " + nestStr + ")");
           }
-          else{
+          else {
             // innerCount includes itself
             const int innerCount = (findOccaLoops(occaLoop).size() - 1);
             std::string nestStr = occa::toString(innerCount);
@@ -2019,7 +2048,7 @@ namespace occa {
         else if (lastLoop == NULL) {
           lastLoop = statementPos;
         }
-        else{
+        else {
           statementNode *firstLoop = lastLoop;
           statementNode *snPos     = firstLoop->right;
           lastLoop = statementPos;
@@ -2101,7 +2130,7 @@ namespace occa {
           if (!argVar.hasQualifier("occaPointer"))
             argVar.addQualifier("occaPointer", 0);
         }
-        else{
+        else {
           if (!argVar.hasQualifier("occaConst"))
             argVar.addQualifier("occaConst");
 
@@ -2212,7 +2241,7 @@ namespace occa {
             snTail = snTail->push(&s2);
           }
         }
-        else{
+        else {
           if (statementIsOccaInnerFor(s2))
             isAppending = true;
 
@@ -2274,7 +2303,7 @@ namespace occa {
 
         newRoot.leafCount = varsKept;
       }
-      else{
+      else {
         newRoot.free();
       }
       //================================
@@ -3694,7 +3723,7 @@ namespace occa {
             cNode->lastNode().value = (std::string) th;
             cNode->lastNode().info  = expType::firstPass | expType::presetValue;
           }
-          else{ //---------------------------------------------------------[ 3 ]
+          else { //---------------------------------------------------------[ 3 ]
             const int delimiterChars = isAWordDelimiter(cLeft, parsingLanguage_);
 
             cNode->addNode();
@@ -3743,7 +3772,7 @@ namespace occa {
                 if (charStartsSection(lastExpNode.value[0])) {
                   cNode = &(cNode->lastNode());
                 }
-                else{
+                else {
                   cNode->removeNode(-1);
                   cNode = cNode->up;
                 }
@@ -3756,7 +3785,7 @@ namespace occa {
 
               cLeft += delimiterChars;
             } //=========================================================[ 3.1 ]
-            else{ //-----------------------------------------------------[ 3.2 ]
+            else { //-----------------------------------------------------[ 3.2 ]
               skipWord(cRight, parsingLanguage_);
 
               std::string str(cLeft, (cRight - cLeft));
@@ -3770,7 +3799,7 @@ namespace occa {
                 if (it != keywordType->end())
                   str = upStr;
               }
-              else{
+              else {
                 it = keywordType->find(str);
               }
 
@@ -3778,7 +3807,7 @@ namespace occa {
 
               if (it == keywordType->end())
                 lastExpNode.info = expType::firstPass | expType::unknown;
-              else{
+              else {
                 lastExpNode.info = it->second;
 
                 if (parsingC) {
@@ -3786,7 +3815,7 @@ namespace occa {
                     mergeLastTwoNodes(*cNode);
                   }
                 }
-                else{
+                else {
                   if (checkLastTwoNodes(*cNode, "else", "if"   , parsingLanguage_) ||
                      checkLastTwoNodes(*cNode, "do"  , "while", parsingLanguage_)) {
 
@@ -4570,7 +4599,7 @@ namespace occa {
         iter  = iterVar.name;
         start = *(node1.getVariableInitNode(0));
       }
-      else{
+      else {
         iter  = node1[0][0].getVarInfo().name;
         start = node1[0][1].getVarInfo().name;
       }
@@ -4589,7 +4618,7 @@ namespace occa {
         else
           bound = (std::string) node2[0][0];
       }
-      else{
+      else {
         std::string iter, start;
         getLoopNode1Info(iter, start);
 
@@ -4617,7 +4646,7 @@ namespace occa {
       if ((strideOp == "++") || (strideOp == "--")) {
         stride = "1";
       }
-      else{
+      else {
         if (node3[0][0].getVarInfo().name == iter)
           stride = (std::string) node3[0][1];
         else

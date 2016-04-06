@@ -1,3 +1,25 @@
+/* The MIT License (MIT)
+ *
+ * Copyright (c) 2014-2016 David Medina and Tim Warburton
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ */
+
 namespace occa {
   namespace parserNS {
     //---[ Node ]-----------------------------------
@@ -28,7 +50,7 @@ namespace occa {
       value(n.value) {}
 
     template <class TM>
-    node<TM>& node<TM>::operator = (const node<TM> &n){
+    node<TM>& node<TM>::operator = (const node<TM> &n) {
       left  = n.left;
       right = n.right;
       up    = n.up;
@@ -40,21 +62,21 @@ namespace occa {
     }
 
     template <class TM>
-    node<TM>* node<TM>::pop(){
-      if(left != NULL)
+    node<TM>* node<TM>::pop() {
+      if (left != NULL)
         left->right = right;
 
-      if(right != NULL)
+      if (right != NULL)
         right->left = left;
 
-      if(up && (up->down == this))
+      if (up && (up->down == this))
         up->down = right;
 
       return this;
     }
 
     template<class TM>
-    node<TM>* node<TM>::push(node<TM> *n){
+    node<TM>* node<TM>::push(node<TM> *n) {
       // Copy up
       n->up = up;
 
@@ -65,7 +87,7 @@ namespace occa {
       right->left  = this;
       right->right = rr;
 
-      if(rr)
+      if (rr)
         rr->left = right;
 
       return right;
@@ -73,7 +95,7 @@ namespace occa {
 
     template<class TM>
     node<TM>* node<TM>::push(node<TM> *nStart,
-                             node<TM> *nEnd){
+                             node<TM> *nEnd) {
       node *rr = right;
 
       right = nStart;
@@ -81,13 +103,13 @@ namespace occa {
       right->left  = this;
       nEnd->right  = rr;
 
-      if(rr)
+      if (rr)
         rr->left = nEnd;
 
       // Copy up
       rr = nStart;
 
-      while(rr != nEnd){
+      while(rr != nEnd) {
         rr->up = up;
         rr = rr->right;
       }
@@ -96,33 +118,32 @@ namespace occa {
     }
 
     template <class TM>
-    node<TM>* node<TM>::push(const TM &t){
+    node<TM>* node<TM>::push(const TM &t) {
       return push(new node(t));
     }
 
     template <class TM>
-    node<TM>* node<TM>::pushDown(node<TM> *n){
+    node<TM>* node<TM>::pushDown(node<TM> *n) {
       n->up = this;
       down  = n;
       return n;
     }
 
     template<class TM>
-    node<TM>* node<TM>::pushDown(const TM &t){
+    node<TM>* node<TM>::pushDown(const TM &t) {
       return pushDown(new node(t));
     }
 
     template<class TM>
-    void node<TM>::print(const std::string &tab){
+    void node<TM>::print(const std::string &tab) {
       node *nodePos = this;
 
-      while(nodePos){
+      while(nodePos) {
         printf("--------------------------------------------\n");
 
-        if(down == NULL){
+        if (down == NULL) {
           std::cout << tab << "[" << (std::string) *nodePos << "]\n";
-        }
-        else{
+        } else {
           std::cout << tab << "  " << "[" << (std::string) *nodePos << "]\n";
           down->print(tab + "  ");
         }
@@ -134,16 +155,15 @@ namespace occa {
     }
 
     template <class TM>
-    void node<TM>::printPtr(const std::string &tab){
+    void node<TM>::printPtr(const std::string &tab) {
       node *nodePos = this;
 
-      while(nodePos){
+      while(nodePos) {
         printf("--------------------------------------------\n");
 
-        if(down == NULL){
+        if (down == NULL) {
           std::cout << tab << "[" << (std::string) *(nodePos->value) << "]\n";
-        }
-        else{
+        } else {
           std::cout << tab << "  " << "[" << (std::string) *(nodePos->value) << "]\n";
           down->print(tab + "  ");
         }
@@ -155,7 +175,7 @@ namespace occa {
     }
 
     template <class TM>
-    void popAndGoRight(node<TM> *&n){
+    void popAndGoRight(node<TM> *&n) {
       node<TM> *right = n->right;
 
       delete n->pop();
@@ -164,7 +184,7 @@ namespace occa {
     }
 
     template <class TM>
-    void popAndGoLeft(node<TM> *&n){
+    void popAndGoLeft(node<TM> *&n) {
       node<TM> *left = n->left;
 
       delete n->pop();
@@ -173,8 +193,8 @@ namespace occa {
     }
 
     template <class TM>
-    node<TM>* firstNode(node<TM> *n){
-      if((n == NULL) ||
+    node<TM>* firstNode(node<TM> *n) {
+      if ((n == NULL) ||
          (n->left == NULL))
         return n;
 
@@ -187,8 +207,8 @@ namespace occa {
     }
 
     template <class TM>
-    node<TM>* lastNode(node<TM> *n){
-      if((n == NULL) ||
+    node<TM>* lastNode(node<TM> *n) {
+      if ((n == NULL) ||
          (n->right == NULL))
         return n;
 
@@ -201,10 +221,10 @@ namespace occa {
     }
 
     template <class TM>
-    int length(node<TM> *n){
+    int length(node<TM> *n) {
       int l = 0;
 
-      while(n){
+      while(n) {
         ++l;
         n = n->right;
       }

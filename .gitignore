@@ -1,5 +1,7 @@
 .gitattributes
 
+bin
+
 *.obj
 y
 
@@ -26,3 +28,5 @@ editorTools/visualStudio/*
 
 *.pyc
 /examples/addVectors/ispc/tasksys.cpp
+
+sandbox/
