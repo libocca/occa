@@ -344,8 +344,10 @@ namespace occa {
     command << dHandle->compiler
             << " -I."
             << " -I"  << env::OCCA_DIR << "include"
-            << " -D OCCA_OS=WINDOWS_OS -D _MSC_VER=1800"
             << ' '          << dHandle->compilerFlags
+#  if (OCCA_OS == WINDOWS_OS)
+            << " -D OCCA_OS=WINDOWS_OS -D _MSC_VER=1800"
+#  endif
             << archSM
             << " -Xptxas -v,-dlcm=cg"
             << ' '          << info.flags
@@ -357,11 +359,11 @@ namespace occa {
     if(verboseCompilation_f)
       std::cout << "Compiling [" << functionName << "]\n" << ptxCommand << "\n";
 
-#if (OCCA_OS & (LINUX_OS | OSX_OS))
+#  if (OCCA_OS & (LINUX_OS | OSX_OS))
     ignoreResult( system(ptxCommand.c_str()) );
-#else
+#  else
     ignoreResult( system(("\"" +  ptxCommand + "\"").c_str()) );
-#endif
+#  endif
 #endif
 
     //---[ Compiling Command ]----------
@@ -371,7 +373,9 @@ namespace occa {
             << " -o "       << binaryFile
             << " -ptx -I."
             << " -I"  << env::OCCA_DIR << "include"
+#  if (OCCA_OS == WINDOWS_OS)
             << " -D OCCA_OS=WINDOWS_OS -D _MSC_VER=1800"
+#  endif
             << ' '          << dHandle->compilerFlags
             << archSM
             << ' '          << info.flags
