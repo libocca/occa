@@ -1,6 +1,6 @@
 PROJ_DIR:=$(dir $(abspath $(lastword $(MAKEFILE_LIST))))
 ifndef OCCA_DIR
-  include $(PROJ_DIR)/../../../scripts/makefile
+  include $(PROJ_DIR)/../../scripts/makefile
 else
   include ${OCCA_DIR}/scripts/makefile
 endif
