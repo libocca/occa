@@ -1093,14 +1093,12 @@ namespace occa {
   void memory_t<OpenCL>::free(){
     clReleaseMemObject(*((cl_mem*) handle));
 
-    if(!isAWrapper())
-      delete (cl_mem*) handle;
+    delete (cl_mem*) handle;
 
     if(isATexture()){
       clReleaseSampler( *((cl_sampler*) textureInfo.arg) );
 
-      if(!isAWrapper())
-        delete (cl_sampler*) textureInfo.arg;
+      delete (cl_sampler*) textureInfo.arg;
     }
 
     size = 0;
@@ -1482,9 +1480,8 @@ namespace occa {
 
     mem->dHandle = this;
     mem->size    = bytes;
-    mem->handle  = handle_;
-
-    mem->memInfo |= memFlag::isAWrapper;
+    mem->handle  = new cl_mem;
+    ::memcpy(mem->handle, handle_, sizeof(cl_mem));
 
     return mem;
   }
@@ -1504,7 +1501,8 @@ namespace occa {
 
     mem->dHandle = this;
     mem->size    = (dims.x * dims.y) * type.bytes();
-    mem->handle  = handle_;
+    mem->handle  = new cl_mem;
+    ::memcpy(mem->handle, handle_, sizeof(cl_mem));
 
     mem->memInfo |= (memFlag::isATexture |
                      memFlag::isAWrapper);
