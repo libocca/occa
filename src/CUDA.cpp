@@ -1308,7 +1308,8 @@ namespace occa {
 
     mem->dHandle = this;
     mem->size    = bytes;
-    mem->handle  = (CUdeviceptr*) handle_;
+    mem->handle  = new CUdeviceptr;
+    ::memcpy(mem->handle, handle_, sizeof(CUdeviceptr));
 
     mem->memInfo |= memFlag::isAWrapper;
 
@@ -1323,7 +1324,8 @@ namespace occa {
 
     mem->dHandle = this;
     mem->size    = ((dim == 1) ? dims.x : (dims.x * dims.y)) * type.bytes();
-    mem->handle  = handle_;
+    mem->handle  = new CUdeviceptr;
+    ::memcpy(mem->handle, handle_, sizeof(CUdeviceptr));
 
     mem->memInfo |= (memFlag::isATexture |
                      memFlag::isAWrapper);
@@ -1347,7 +1349,7 @@ namespace occa {
     memory_v *mem = new memory_t<CUDA>;
 
     mem->dHandle = this;
-    mem->handle  = new CUdeviceptr*;
+    mem->handle  = new CUdeviceptr;
     mem->size    = bytes;
 
     OCCA_CUDA_CHECK("Device: Setting Context",
@@ -1442,7 +1444,7 @@ namespace occa {
     memory_v *mem = new memory_t<CUDA>;
 
     mem->dHandle  = this;
-    mem->handle   = new CUdeviceptr*;
+    mem->handle   = new CUdeviceptr;
     mem->size     = bytes;
 
     mem->memInfo |= memFlag::isMapped;
