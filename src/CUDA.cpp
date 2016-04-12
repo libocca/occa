@@ -919,9 +919,7 @@ namespace occa {
   void memory_t<CUDA>::free(){
     if(!isATexture()){
       cuMemFree(*((CUdeviceptr*) handle));
-
-      if(!isAWrapper())
-        delete (CUdeviceptr*) handle;
+      delete (CUdeviceptr*) handle;
     }
     else{
       CUarray &array        = ((CUDATextureData_t*) handle)->array;
@@ -930,10 +928,8 @@ namespace occa {
       cuArrayDestroy(array);
       cuSurfObjectDestroy(surface);
 
-      if(!isAWrapper()){
-        delete (CUDATextureData_t*) handle;
-        delete (CUaddress_mode*)    textureInfo.arg;
-      }
+      delete (CUDATextureData_t*) handle;
+      delete (CUaddress_mode*)    textureInfo.arg;
     }
 
     size = 0;
@@ -1308,7 +1304,8 @@ namespace occa {
 
     mem->dHandle = this;
     mem->size    = bytes;
-    mem->handle  = (CUdeviceptr*) handle_;
+    mem->handle  = new CUdeviceptr;
+    ::memcpy(mem->handle, handle_, sizeof(CUdeviceptr));
 
     mem->memInfo |= memFlag::isAWrapper;
 
@@ -1323,7 +1320,8 @@ namespace occa {
 
     mem->dHandle = this;
     mem->size    = ((dim == 1) ? dims.x : (dims.x * dims.y)) * type.bytes();
-    mem->handle  = handle_;
+    mem->handle  = new CUdeviceptr;
+    ::memcpy(mem->handle, handle_, sizeof(CUdeviceptr));
 
     mem->memInfo |= (memFlag::isATexture |
                      memFlag::isAWrapper);
@@ -1347,7 +1345,7 @@ namespace occa {
     memory_v *mem = new memory_t<CUDA>;
 
     mem->dHandle = this;
-    mem->handle  = new CUdeviceptr*;
+    mem->handle  = new CUdeviceptr;
     mem->size    = bytes;
 
     OCCA_CUDA_CHECK("Device: Setting Context",
@@ -1442,7 +1440,7 @@ namespace occa {
     memory_v *mem = new memory_t<CUDA>;
 
     mem->dHandle  = this;
-    mem->handle   = new CUdeviceptr*;
+    mem->handle   = new CUdeviceptr;
     mem->size     = bytes;
 
     mem->memInfo |= memFlag::isMapped;
