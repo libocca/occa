@@ -919,9 +919,7 @@ namespace occa {
   void memory_t<CUDA>::free(){
     if(!isATexture()){
       cuMemFree(*((CUdeviceptr*) handle));
-
-      if(!isAWrapper())
-        delete (CUdeviceptr*) handle;
+      delete (CUdeviceptr*) handle;
     }
     else{
       CUarray &array        = ((CUDATextureData_t*) handle)->array;
@@ -930,10 +928,8 @@ namespace occa {
       cuArrayDestroy(array);
       cuSurfObjectDestroy(surface);
 
-      if(!isAWrapper()){
-        delete (CUDATextureData_t*) handle;
-        delete (CUaddress_mode*)    textureInfo.arg;
-      }
+      delete (CUDATextureData_t*) handle;
+      delete (CUaddress_mode*)    textureInfo.arg;
     }
 
     size = 0;
