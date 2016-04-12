@@ -47,9 +47,9 @@ int main(int argc, char **argv){
     ab[i] = 0;
   }
 
-  o_a  = device.wrapMemory(&cu_a , entries*sizeof(float));
-  o_b  = device.wrapMemory(&cu_b , entries*sizeof(float));
-  o_ab = device.wrapMemory(&cu_ab, entries*sizeof(float));
+  o_a  = device.wrapMemory(cu_a , entries*sizeof(float));
+  o_b  = device.wrapMemory(cu_b , entries*sizeof(float));
+  o_ab = device.wrapMemory(cu_ab, entries*sizeof(float));
 
   addVectors = device.buildKernelFromSource("addVectors.okl",
                                             "addVectors");
