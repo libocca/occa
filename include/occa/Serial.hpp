@@ -70,6 +70,34 @@ namespace occa {
     std::string getFieldFrom(const std::string &command,
                              const std::string &field);
 
+    ///
+    /// Filter output lines from a shell command to extract
+    /// a field/property value (string). Any whitespace
+    /// surrounding the value is clipped. The first match
+    /// is returned (the filter scan terminates).
+    ///
+    /// The returned string is the <value> in this line-match
+    /// pattern:
+    ///
+    ///    ^[WS]*<field>[WS]*<delim>[WS]*<value>[WS]*$
+    ///
+    ///
+    /// If no match is found, the empty string "" is returned.
+    ///
+    std::string getField(const std::string &shell_cmd,
+			 const std::string &field,
+			 bool ignoreCase = false,
+			 char delimiter = ':');
+
+    ///
+    /// Get value for CPU info field.
+    ///
+    /// This is essentially only valid for Linux, which
+    /// has /proc/cpuinfo.
+    ///
+    std::string getCPUINFOField(const std::string &field,
+				bool ignoreCase = false);
+
     std::string getProcessorName();
     int getCoreCount();
     int getProcessorFrequency();
@@ -218,7 +246,13 @@ namespace occa {
   void memory_t<Serial>::mappedFree();
 
   template <>
+  void memory_t<Serial>::mappedDetach();
+
+  template <>
   void memory_t<Serial>::free();
+
+  template <>
+  void memory_t<Serial>::detach();
   //==================================
 
 
