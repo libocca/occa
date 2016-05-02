@@ -573,6 +573,14 @@ namespace occa {
   }
 
   template <>
+  void memory_t<OpenMP>::mappedDetach(){
+    handle    = NULL;
+    mappedPtr = NULL;
+
+    size = 0;
+  }
+
+  template <>
   void memory_t<OpenMP>::free(){
     if(isATexture()){
       cpu::free(textureInfo.arg);
@@ -580,6 +588,19 @@ namespace occa {
     }
     else{
       cpu::free(handle);
+      handle = NULL;
+    }
+
+    size = 0;
+  }
+
+  template <>
+  void memory_t<OpenMP>::detach(){
+    if(isATexture()){
+      cpu::free(textureInfo.arg);
+      textureInfo.arg = NULL;
+    }
+    else{
       handle = NULL;
     }
 

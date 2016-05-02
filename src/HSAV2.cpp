@@ -512,12 +512,29 @@ namespace occa {
   }
 
   template <>
+  void memory_t<HSA>::mappedDetach(){
+    if(isMapped()){
+      delete (CUdeviceptr*) handle;
+
+      size = 0;
+    }
+  }
+
+  template <>
   void memory_t<HSA>::free(){
     //    cuMemFree(*((CUdeviceptr*) handle));
     hsa_memory_free((HSAdeviceptr*) handle);
     
-    if(!isAWrapper())
-      delete (CUdeviceptr*) handle;
+    delete (CUdeviceptr*) handle;
+    handle = NULL;
+
+    size = 0;
+  }
+
+  template <>
+  void memory_t<HSA>::detach(){
+    delete (CUdeviceptr*) handle;
+    handle = NULL;
 
     size = 0;
   }

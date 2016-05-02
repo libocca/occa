@@ -213,7 +213,13 @@ namespace occa {
   void memory_t<Pthreads>::mappedFree();
 
   template <>
+  void memory_t<Pthreads>::mappedDetach();
+
+  template <>
   void memory_t<Pthreads>::free();
+
+  template <>
+  void memory_t<Pthreads>::detach();
   //====================================
 
 

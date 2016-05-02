@@ -588,6 +588,14 @@ namespace occa {
   }
 
   template <>
+  void memory_t<Pthreads>::mappedDetach(){
+    handle    = NULL;
+    mappedPtr = NULL;
+
+    size = 0;
+  }
+
+  template <>
   void memory_t<Pthreads>::free(){
     if(isATexture()){
       cpu::free(textureInfo.arg);
@@ -595,6 +603,18 @@ namespace occa {
     }
     else{
       cpu::free(handle);
+      handle = NULL;
+    }
+
+    size = 0;
+  }
+
+  template <>
+  void memory_t<Pthreads>::detach(){
+    if(isATexture()){
+      textureInfo.arg = NULL;
+    }
+    else{
       handle = NULL;
     }
 

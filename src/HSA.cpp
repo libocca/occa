@@ -116,10 +116,10 @@ namespace occa {
   memory_t<HSA>::~memory_t(){}
 
   template <>
-  void* memory_t<HSA>::getMemoryHandle(){}
+  void* memory_t<HSA>::getMemoryHandle(){ return NULL; }
 
   template <>
-  void* memory_t<HSA>::getTextureHandle(){}
+  void* memory_t<HSA>::getTextureHandle(){ return NULL; }
 
   template <>
   void memory_t<HSA>::copyFrom(const void *src,
@@ -169,7 +169,13 @@ namespace occa {
   void memory_t<HSA>::mappedFree(){}
 
   template <>
+  void memory_t<HSA>::mappedDetach(){}
+
+  template <>
   void memory_t<HSA>::free(){}
+
+  template <>
+  void memory_t<HSA>::detach(){}
   //==================================
 
 

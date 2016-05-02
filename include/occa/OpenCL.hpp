@@ -212,7 +212,13 @@ namespace occa {
   void memory_t<OpenCL>::mappedFree();
 
   template <>
+  void memory_t<OpenCL>::mappedDetach();
+
+  template <>
   void memory_t<OpenCL>::free();
+
+  template <>
+  void memory_t<OpenCL>::detach();
   //==================================
 
 

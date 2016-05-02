@@ -205,7 +205,13 @@ namespace occa {
   void memory_t<CUDA>::mappedFree();
 
   template <>
+  void memory_t<CUDA>::mappedDetach();
+
+  template <>
   void memory_t<CUDA>::free();
+
+  template <>
+  void memory_t<CUDA>::detach();
   //==================================
 
 
