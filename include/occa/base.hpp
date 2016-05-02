@@ -684,7 +684,11 @@ namespace occa {
 
     virtual void mappedFree() = 0;
 
+    virtual void mappedDetach() = 0;
+
     virtual void free() = 0;
+
+    virtual void detach() = 0;
 
     //---[ Friend Functions ]---------------------
 
@@ -776,7 +780,11 @@ namespace occa {
 
     void mappedFree();
 
+    void mappedDetach();
+
     void free();
+
+    void detach();
   };
 
 
@@ -818,6 +826,21 @@ namespace occa {
     void* textureArg2() const;
 
     void* getMappedPointer();
+
+    ///
+    /// Get the memory handle.
+    ///
+    /// The memory handle is a pointer that resides in host local
+    /// memory that is used to access the device memory encapsulated
+    /// by this memory object.
+    ///
+    /// What it points to depends on the OCCA device associated with
+    /// this memory object. For example, if the device is OpenCL,
+    /// then the handle is a pointer to a cl_mem. If the device is
+    /// CUDA, then the handle is a pointer to a CUdeviceptr. If the
+    /// device is Serial, OpenMP, or threads, then the handle is a
+    /// direct memory pointer to a byte(s) in host local memory.
+    ///
     void* getMemoryHandle();
     void* getTextureHandle();
 
@@ -867,7 +890,17 @@ namespace occa {
                      const uintptr_t destOffset = 0,
                      const uintptr_t srcOffset = 0);
 
+    ///
+    /// Free the memory object including its encapsulated device
+    /// memory.
+    ///
     void free();
+
+    ///
+    /// Free the memory object without freeing its encapsulated
+    /// device memory.
+    ///
+    void detach();
   };
 
 
@@ -1476,6 +1509,8 @@ namespace occa {
   void free(stream s);
   void free(kernel k);
   void free(memory m);
+
+  void detach(memory m);
   //   =================================
 
   //---[ KernelArg ]------------------------------
