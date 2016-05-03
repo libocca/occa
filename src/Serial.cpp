@@ -86,25 +86,41 @@ namespace occa {
       while(fgets(buffer,bufferSize,fp)) {
 	// find line that matches "^[WS}*field[WS]*:"
 	str = buffer;
-	while(*str && isspace(*str)) ++str;
-	if (!*str) continue;
+	while(*str && isspace(*str)) {
+	  ++str;
+	}
+	if (!*str) {
+	  continue;
+	}
 	if (ignoreCase ?
 	    strncasecmp(str,field_str,field_len) :
-	    strncmp(str,field_str,field_len)) continue;
+	    strncmp(str,field_str,field_len)) {
+	  continue;
+	}
 	ptr = str + field_len;
-	while(*ptr && isspace(*ptr)) ++ptr;
-	if (*ptr != delimiter) continue;
+	while(*ptr && isspace(*ptr)) {
+	  ++ptr;
+	}
+	if (*ptr != delimiter) {
+	  continue;
+	}
 
 	// line found, now get value after clipping surrounding
 	// whitespace, per "[WS]*value[WS]*$"
 	++ptr;
-	while(*ptr && isspace(*ptr)) ++ptr;
+	while(*ptr && isspace(*ptr)) {
+	  ++ptr;
+	}
 	str = ptr;
 	// clip trailing whitespace
 	if (*str) {
-	  while(*ptr) ++ptr;
+	  while(*ptr) {
+	    ++ptr;
+	  }
 	  --ptr;  // now points to last char in string
-	  while(ptr != str  &&  isspace(*ptr)) *ptr-- = '\0';
+	  while(ptr != str  &&  isspace(*ptr)) {
+	    *ptr-- = '\0';
+	  }
 	}
 
 	// done
