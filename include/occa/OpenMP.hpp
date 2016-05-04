@@ -156,7 +156,13 @@ namespace occa {
   void memory_t<OpenMP>::mappedFree();
 
   template <>
+  void memory_t<OpenMP>::mappedDetach();
+
+  template <>
   void memory_t<OpenMP>::free();
+
+  template <>
+  void memory_t<OpenMP>::detach();
   //==================================
 
 

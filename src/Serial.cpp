@@ -1,14 +1,20 @@
 #include "occa/Serial.hpp"
 
+#include <fstream>
+
+#include <strings.h>
+
 namespace occa {
   //---[ Helper Functions ]-----------
   namespace cpu {
     std::string getFieldFrom(const std::string &command,
                              const std::string &field){
-#if (OCCA_OS & LINUX)
+#if (OCCA_OS & LINUX_OS)
       std::string shellToolsFile = sys::getFilename("[occa]/scripts/shellTools.sh");
 
       if(!sys::fileExists(shellToolsFile)){
+	// TODO: enable this when getCachedScript() is defined!!!
+#if 0
         sys::mkpath(getFileDirectory(shellToolsFile));
 
         std::ofstream fs2;
@@ -17,6 +23,9 @@ namespace occa {
         fs2 << getCachedScript("shellTools.sh");
 
         fs2.close();
+#else
+	return "";
+#endif
       }
 
       std::stringstream ss;
@@ -52,9 +61,96 @@ namespace occa {
 #endif
     }
 
+    std::string getField(const std::string &shell_cmd,
+			 const std::string &field,
+			 bool ignoreCase,
+			 char delimiter){
+      // popen(), fgets(). strncasecmp() and isspace() are
+      // all available on Linux, BSD/OSX, CygWin and MinGW,
+      // assuming we're not compiling __STRICT_ANSI__
+#if (OCCA_OS & (LINUX_OS | WINUX_OS | OSX_OS))
+      FILE *fp;
+      fp = popen(shell_cmd.c_str(), "r");
+
+      const int bufferSize = 4096;
+      char *buffer = new char[bufferSize];
+
+      int field_len = field.size();
+
+      const char *field_str = field.c_str();
+      char *ptr;
+      char *str;
+
+      std::string ret = "";
+
+      while(fgets(buffer,bufferSize,fp)) {
+	// find line that matches "^[WS}*field[WS]*:"
+	str = buffer;
+	while(*str && isspace(*str)) {
+	  ++str;
+	}
+	if (!*str) {
+	  continue;
+	}
+	if (ignoreCase ?
+	    strncasecmp(str,field_str,field_len) :
+	    strncmp(str,field_str,field_len)) {
+	  continue;
+	}
+	ptr = str + field_len;
+	while(*ptr && isspace(*ptr)) {
+	  ++ptr;
+	}
+	if (*ptr != delimiter) {
+	  continue;
+	}
+
+	// line found, now get value after clipping surrounding
+	// whitespace, per "[WS]*value[WS]*$"
+	++ptr;
+	while(*ptr && isspace(*ptr)) {
+	  ++ptr;
+	}
+	str = ptr;
+	// clip trailing whitespace
+	if (*str) {
+	  while(*ptr) {
+	    ++ptr;
+	  }
+	  --ptr;  // now points to last char in string
+	  while(ptr != str  &&  isspace(*ptr)) {
+	    *ptr-- = '\0';
+	  }
+	}
+
+	// done
+	ret = str;
+	break;
+      }
+
+      pclose(fp);
+
+      delete [] buffer;
+     
+      return ret;
+#else
+      return "";
+#endif
+    }
+
+    std::string getCPUINFOField(const std::string &field,
+				bool ignoreCase){
+#if (OCCA_OS & LINUX_OS)
+      return getField("cat /proc/cpuinfo", field, ignoreCase, ':');
+#else
+      return "";
+#endif
+    }
+
     std::string getProcessorName(){
 #if   (OCCA_OS & LINUX_OS)
-      return getFieldFrom("getCPUINFOField", "model name");
+//    return getFieldFrom("getCPUINFOField", "model name");
+      return getCPUINFOField("model name");
 #elif (OCCA_OS == OSX_OS)
       size_t bufferSize = 100;
       char buffer[100];
@@ -89,7 +185,8 @@ namespace occa {
       std::stringstream ss;
       int freq;
 
-      ss << getFieldFrom("getCPUINFOField", "cpu MHz");
+//    ss << getFieldFrom("getCPUINFOField", "cpu MHz");
+      ss << getCPUINFOField("cpu MHz");
 
       ss >> freq;
 
@@ -123,7 +220,8 @@ namespace occa {
 
       field << " cache";
 
-      return getFieldFrom("getLSCPUField", field.str());
+//    return getFieldFrom("getLSCPUField", field.str());
+      return getField("lscpu", field.str(), false, ':');
 #elif (OCCA_OS == OSX_OS)
       std::stringstream ss;
       ss << "hw.l" << level;
@@ -990,6 +1088,14 @@ namespace occa {
   }
 
   template <>
+  void memory_t<Serial>::mappedDetach(){
+    handle    = NULL;
+    mappedPtr = NULL;
+
+    size = 0;
+  }
+
+  template <>
   void memory_t<Serial>::free(){
     if(isATexture()){
       cpu::free(textureInfo.arg);
@@ -997,6 +1103,18 @@ namespace occa {
     }
     else{
       cpu::free(handle);
+      handle = NULL;
+    }
+
+    size = 0;
+  }
+
+  template <>
+  void memory_t<Serial>::detach(){
+    if(isATexture()){
+      textureInfo.arg = NULL;
+    }
+    else{
       handle = NULL;
     }
 

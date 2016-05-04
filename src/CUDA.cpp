@@ -916,11 +916,20 @@ namespace occa {
   }
 
   template <>
+  void memory_t<CUDA>::mappedDetach(){
+    if(isMapped()){
+      delete (CUdeviceptr*) handle;
+
+      size = 0;
+    }
+  }
+
+  template <>
   void memory_t<CUDA>::free(){
     if(!isATexture()){
       cuMemFree(*((CUdeviceptr*) handle));
       delete (CUdeviceptr*) handle;
-    }
+   }
     else{
       CUarray &array        = ((CUDATextureData_t*) handle)->array;
       CUsurfObject &surface = ((CUDATextureData_t*) handle)->surface;
@@ -930,7 +939,26 @@ namespace occa {
 
       delete (CUDATextureData_t*) handle;
       delete (CUaddress_mode*)    textureInfo.arg;
+      textureInfo.arg = NULL;
     }
+
+    handle = NULL;
+
+    size = 0;
+  }
+
+  template <>
+  void memory_t<CUDA>::detach(){
+    if(!isATexture()){
+      delete (CUdeviceptr*) handle;
+    }
+    else{
+      delete (CUDATextureData_t*) handle;
+      delete (CUaddress_mode*)    textureInfo.arg;
+      textureInfo.arg = NULL;
+    }
+
+    handle = NULL;
 
     size = 0;
   }

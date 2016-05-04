@@ -1052,6 +1052,12 @@ void OCCA_RFUNC occaMemoryFree(occaMemory memory) {
   memory_.free();
   delete memory;
 }
+
+void OCCA_RFUNC occaMemoryDetach(occaMemory memory) {
+  occa::memory memory_ = occa::_typeToMemory(memory);
+  memory_.detach();
+  delete memory;
+}
 //====================================
 
 OCCA_END_EXTERN_C

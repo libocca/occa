@@ -161,7 +161,13 @@ namespace occa {
   void memory_t<HSA>::mappedFree();
 
   template <>
+  void memory_t<HSA>::mappedDetach();
+
+  template <>
   void memory_t<HSA>::free();
+
+  template <>
+  void memory_t<HSA>::detach();
   //==================================
 
 

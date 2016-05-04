@@ -1581,7 +1581,8 @@ namespace occa {
       // CPU case where memory is shared
       if(mHandle->uvaPtr != mHandle->handle) {
         uvaMap.erase(mHandle->handle);
-        mHandle->dHandle->uvaMap.erase(mHandle->uvaPtr);
+//        mHandle->dHandle->uvaMap.erase(mHandle->uvaPtr);
+        mHandle->dHandle->uvaMap.erase(mHandle->handle);
 
         ::free(mHandle->uvaPtr);
         mHandle->uvaPtr = NULL;
@@ -1592,6 +1593,34 @@ namespace occa {
       mHandle->free();
     else
       mHandle->mappedFree();
+
+    delete mHandle;
+    mHandle = NULL;
+  }
+
+  void memory::detach() {
+    checkIfInitialized();
+
+    mHandle->dHandle->bytesAllocated -= (mHandle->size);
+
+    if(mHandle->uvaPtr) {
+      uvaMap.erase(mHandle->uvaPtr);
+      mHandle->dHandle->uvaMap.erase(mHandle->uvaPtr);
+
+      // CPU case where memory is shared
+      if(mHandle->uvaPtr != mHandle->handle) {
+        uvaMap.erase(mHandle->handle);
+        mHandle->dHandle->uvaMap.erase(mHandle->handle);
+
+        ::free(mHandle->uvaPtr);
+        mHandle->uvaPtr = NULL;
+      }
+    }
+
+    if(!mHandle->isMapped())
+      mHandle->detach();
+    else
+      mHandle->mappedDetach();
 
     delete mHandle;
     mHandle = NULL;
@@ -2522,6 +2551,10 @@ namespace occa {
 
   void free(memory m) {
     m.free();
+  }
+
+  void detach(memory m) {
+    m.detach();
   }
   //   =================================
 
