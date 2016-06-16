@@ -290,6 +290,20 @@ namespace occa {
 
     dHandle->addOccaHeadersToInfo(info);
 
+    // Add arch to info (for hash purposes)
+    if((dHandle->compilerFlags.find("-arch=sm_") == std::string::npos) &&
+       (            info.flags.find("-arch=sm_") == std::string::npos)){
+
+      std::stringstream ss;
+      int major, minor;
+
+      OCCA_CUDA_CHECK("Kernel (" + functionName + ") : Getting CUDA Device Arch",
+                      cuDeviceComputeCapability(&major, &minor, data_.device) );
+
+      ss << " -arch=sm_" << major << minor << ' ';
+      info.flags += ss.str();
+    }
+
     const std::string hash = getFileContentHash(filename,
                                                 dHandle->getInfoSalt(info));
 
@@ -315,22 +329,6 @@ namespace occa {
 
     createSourceFileFrom(filename, hashDir, info);
 
-    std::string archSM = "";
-
-    if((dHandle->compilerFlags.find("-arch=sm_") == std::string::npos) &&
-       (            info.flags.find("-arch=sm_") == std::string::npos)){
-
-      std::stringstream archSM_;
-
-      int major, minor;
-      OCCA_CUDA_CHECK("Kernel (" + functionName + ") : Getting CUDA Device Arch",
-                      cuDeviceComputeCapability(&major, &minor, data_.device) );
-
-      archSM_ << " -arch=sm_" << major << minor << ' ';
-
-      archSM = archSM_.str();
-    }
-
     std::stringstream command;
 
     if(verboseCompilation_f)
@@ -348,7 +346,6 @@ namespace occa {
 #  if (OCCA_OS == WINDOWS_OS)
             << " -D OCCA_OS=WINDOWS_OS -D _MSC_VER=1800"
 #  endif
-            << archSM
             << " -Xptxas -v,-dlcm=cg"
             << ' '          << info.flags
             << " -x cu -c " << sourceFile
@@ -377,7 +374,6 @@ namespace occa {
             << " -D OCCA_OS=WINDOWS_OS -D _MSC_VER=1800"
 #  endif
             << ' '          << dHandle->compilerFlags
-            << archSM
             << ' '          << info.flags
             << " -x cu "    << sourceFile;
 
