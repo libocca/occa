@@ -1236,8 +1236,8 @@ namespace occa {
         CUDADeviceData_t &destDevData =
           *((CUDADeviceData_t*) destHandle->dHandle->data);
 
-        CUdeviceptr srcMem  = *(((CUdeviceptr*) srcHandle->handle)  + srcOffset);
-        CUdeviceptr destMem = *(((CUdeviceptr*) destHandle->handle) + destOffset);
+        CUdeviceptr srcMem  = *((CUdeviceptr*) srcHandle->handle)  + srcOffset;
+        CUdeviceptr destMem = *((CUdeviceptr*) destHandle->handle) + destOffset;
 
         if(!srcDevData.p2pEnabled)
           cuda::enablePeerToPeer(srcDevData.context);
@@ -1307,8 +1307,8 @@ namespace occa {
         CUDADeviceData_t &destDevData =
           *((CUDADeviceData_t*) destHandle->dHandle->data);
 
-        CUdeviceptr srcMem  = *(((CUdeviceptr*) srcHandle->handle)  + srcOffset);
-        CUdeviceptr destMem = *(((CUdeviceptr*) destHandle->handle) + destOffset);
+        CUdeviceptr srcMem  = *((CUdeviceptr*) srcHandle->handle)  + srcOffset;
+        CUdeviceptr destMem = *((CUdeviceptr*) destHandle->handle) + destOffset;
 
         cuda::peerToPeerMemcpy(destDevData.device,
                                destDevData.context,
