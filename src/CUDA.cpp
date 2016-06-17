@@ -291,6 +291,20 @@ namespace occa {
     dHandle->addOccaHeadersToInfo(info);
     dHandle->addArchSMToInfo(info);
 
+    // Add arch to info (for hash purposes)
+    if((dHandle->compilerFlags.find("-arch=sm_") == std::string::npos) &&
+       (            info.flags.find("-arch=sm_") == std::string::npos)){
+
+      std::stringstream ss;
+      int major, minor;
+
+      OCCA_CUDA_CHECK("Kernel (" + functionName + ") : Getting CUDA Device Arch",
+                      cuDeviceComputeCapability(&major, &minor, data_.device) );
+
+      ss << " -arch=sm_" << major << minor << ' ';
+      info.flags += ss.str();
+    }
+
     const std::string hash = getFileContentHash(filename,
                                                 dHandle->getInfoSalt(info));
 
