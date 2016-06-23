@@ -1050,12 +1050,14 @@ void OCCA_RFUNC occaAsyncCopyMemToPtr(void *dest, occaMemory src,
 void OCCA_RFUNC occaMemoryFree(occaMemory memory) {
   occa::memory memory_ = occa::_typeToMemory(memory);
   memory_.free();
+  delete memory->ptr;
   delete memory;
 }
 
 void OCCA_RFUNC occaMemoryDetach(occaMemory memory) {
   occa::memory memory_ = occa::_typeToMemory(memory);
   memory_.detach();
+  delete memory->ptr;
   delete memory;
 }
 //====================================
