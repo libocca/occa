@@ -451,6 +451,7 @@ void OCCA_RFUNC occaDeviceInfoAppendType(occaDeviceInfo info,
 
   occa::deviceInfo &info_ = *((occa::deviceInfo*) info);
   info_.append(key, occa::typeToStr(value));
+  delete value->ptr;
   delete value;
 }
 
@@ -878,6 +879,7 @@ void OCCA_RFUNC occaKernelInfoAddDefine(occaKernelInfo info,
 
   info_.addDefine(macro, occa::typeToStr(value));
 
+  delete value->ptr;
   delete value;
 }
 
