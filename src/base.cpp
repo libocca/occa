@@ -2010,11 +2010,8 @@ namespace occa {
     else
       sourceFilename += "stringSource.occa";
 
-    if(!haveHash(hash, 1)) {
+    if(!haveHash(hash, 1))
       waitForHash(hash, 1);
-      return buildKernelFromBinary(hashDir + dHandle->fixBinaryName(kc::binaryFile),
-                                   functionName);
-    }
 
     writeToFile(sourceFilename, content);
 
