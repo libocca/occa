@@ -451,6 +451,7 @@ void OCCA_RFUNC occaDeviceInfoAppendType(occaDeviceInfo info,
 
   occa::deviceInfo &info_ = *((occa::deviceInfo*) info);
   info_.append(key, occa::typeToStr(value));
+  delete value->ptr;
   delete value;
 }
 
@@ -878,6 +879,7 @@ void OCCA_RFUNC occaKernelInfoAddDefine(occaKernelInfo info,
 
   info_.addDefine(macro, occa::typeToStr(value));
 
+  delete value->ptr;
   delete value;
 }
 
@@ -887,6 +889,15 @@ void OCCA_RFUNC occaKernelInfoAddInclude(occaKernelInfo info,
   occa::kernelInfo &info_ = *((occa::kernelInfo*) info);
 
   info_.addInclude(filename);
+}
+
+void OCCA_RFUNC occaKernelInfoAddParserFlag(occaKernelInfo info,
+                                            const char *flag,
+                                            const char *value) {
+
+  occa::kernelInfo &info_ = *((occa::kernelInfo*) info);
+
+  info_.addParserFlag(flag, value);
 }
 
 void OCCA_RFUNC occaKernelInfoFree(occaKernelInfo info) {
@@ -1050,12 +1061,14 @@ void OCCA_RFUNC occaAsyncCopyMemToPtr(void *dest, occaMemory src,
 void OCCA_RFUNC occaMemoryFree(occaMemory memory) {
   occa::memory memory_ = occa::_typeToMemory(memory);
   memory_.free();
+  delete memory->ptr;
   delete memory;
 }
 
 void OCCA_RFUNC occaMemoryDetach(occaMemory memory) {
   occa::memory memory_ = occa::_typeToMemory(memory);
   memory_.detach();
+  delete memory->ptr;
   delete memory;
 }
 //====================================

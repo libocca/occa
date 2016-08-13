@@ -53,11 +53,13 @@ def cKernelDefinitions(N):
 
 def cKernelDefinition(N):
     argsContent = ', '.join('((occaType) arg{})->ptr'.format(n) for n in range(N))
+    argsDelete = '\n  '.join('if(((occaType) arg{0})->ptr->type != OCCA_TYPE_MEMORY && ((occaType) arg{0})->ptr->type != OCCA_TYPE_PTR) delete ((occaType) arg{0});'.format(n) for n in range(N))
 
     return ('void OCCA_RFUNC occaKernelRun{0}(occaKernel kernel, {1}){{\n'.format(N, ' '.join('void *arg' + str(n) + nlc(n, N) for n in range(N)) ) + """
   occaType_t *args[{0}] = {{ {1} }};
+  {2};
   occaKernelRunN(kernel, {0}, args);
-}}""".format(N, argsContent))
+}}""".format(N, argsContent, argsDelete))
 
 def gen_file(filename, content):
     with open(occadir + filename, 'w') as f:

@@ -794,6 +794,16 @@ namespace occa {
     return kHandle->name;
   }
 
+  const std::string& kernel::sourceFilename() {
+    checkIfInitialized();
+    return kHandle->sourceFilename;
+  }
+
+  const std::string& kernel::binaryFilename() {
+    checkIfInitialized();
+    return kHandle->binaryFilename;
+  }
+
   occa::device kernel::getDevice() {
     checkIfInitialized();
     return occa::device(kHandle->dHandle);
@@ -1991,26 +2001,24 @@ namespace occa {
 
     const std::string hashDir = hashDirFor("", hash);
 
-    std::string stringSourceFile = hashDir;
+    std::string sourceFilename = hashDir;
 
     if(language & occa::usingOKL)
-      stringSourceFile += "stringSource.okl";
+      sourceFilename += "stringSource.okl";
     else if(language & occa::usingOFL)
-      stringSourceFile += "stringSource.ofl";
+      sourceFilename += "stringSource.ofl";
     else
-      stringSourceFile += "stringSource.occa";
+      sourceFilename += "stringSource.occa";
 
     if(!haveHash(hash, 1)) {
       waitForHash(hash, 1);
-
-      return buildKernelFromBinary(hashDir +
-                                   dHandle->fixBinaryName(kc::binaryFile),
+      return buildKernelFromBinary(hashDir + dHandle->fixBinaryName(kc::binaryFile),
                                    functionName);
     }
 
-    writeToFile(stringSourceFile, content);
+    writeToFile(sourceFilename, content);
 
-    kernel k = buildKernelFromSource(stringSourceFile,
+    kernel k = buildKernelFromSource(sourceFilename,
                                      functionName,
                                      info_);
 
@@ -2024,8 +2032,8 @@ namespace occa {
                                        const kernelInfo &info_) {
     checkIfInitialized();
 
-    const std::string realFilename = sys::getFilename(filename);
-    const bool usingParser         = fileNeedsParser(filename);
+    const std::string sourceFilename = sys::getFilename(filename);
+    const bool usingParser = fileNeedsParser(filename);
 
     kernel ker;
 
@@ -2046,14 +2054,14 @@ namespace occa {
       k->dHandle = new device_t<Serial>;
 #endif
 
-      const std::string hash = getFileContentHash(realFilename,
+      const std::string hash = getFileContentHash(sourceFilename,
                                                   dHandle->getInfoSalt(info_));
 
-      const std::string hashDir    = hashDirFor(realFilename, hash);
+      const std::string hashDir    = hashDirFor(sourceFilename, hash);
       const std::string parsedFile = hashDir + "parsedSource.occa";
 
       k->metaInfo = parseFileForFunction(mode(),
-                                         realFilename,
+                                         sourceFilename,
                                          parsedFile,
                                          functionName,
                                          info_);
@@ -2096,7 +2104,7 @@ namespace occa {
       }
     }
     else{
-      k = dHandle->buildKernelFromSource(realFilename,
+      k = dHandle->buildKernelFromSource(sourceFilename,
                                          functionName,
                                          info_);
       k->dHandle = dHandle;

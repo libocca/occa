@@ -341,6 +341,10 @@ OCCA_LFUNC void OCCA_RFUNC occaKernelInfoAddDefine(occaKernelInfo info,
 OCCA_LFUNC void OCCA_RFUNC occaKernelInfoAddInclude(occaKernelInfo info,
                                                     const char *filename);
 
+OCCA_LFUNC void OCCA_RFUNC occaKernelInfoAddParserFlag(occaKernelInfo info,
+                                                       const char *flag,
+                                                       const char *value);
+
 OCCA_LFUNC void OCCA_RFUNC occaKernelInfoFree(occaKernelInfo info);
 //====================================
 

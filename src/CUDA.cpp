@@ -221,6 +221,9 @@ namespace occa {
   template <>
   kernel_t<CUDA>::kernel_t(){
     strMode = "CUDA";
+    name = "";
+    sourceFilename = "";
+    binaryFilename = "";
 
     data    = NULL;
     dHandle = NULL;
@@ -291,27 +294,42 @@ namespace occa {
     dHandle->addOccaHeadersToInfo(info);
     dHandle->addArchSMToInfo(info);
 
+    // Add arch to info (for hash purposes)
+    if((dHandle->compilerFlags.find("-arch=sm_") == std::string::npos) &&
+       (            info.flags.find("-arch=sm_") == std::string::npos)){
+
+      std::stringstream ss;
+      int major, minor;
+
+      OCCA_CUDA_CHECK("Kernel (" + functionName + ") : Getting CUDA Device Arch",
+                      cuDeviceComputeCapability(&major, &minor, data_.device) );
+
+      ss << " -arch=sm_" << major << minor << ' ';
+      info.flags += ss.str();
+    }
+
     const std::string hash = getFileContentHash(filename,
                                                 dHandle->getInfoSalt(info));
 
-    const std::string hashDir       = hashDirFor(filename, hash);
-    const std::string sourceFile    = hashDir + kc::sourceFile;
-    const std::string binaryFile    = hashDir + fixBinaryName(kc::binaryFile);
+    const std::string hashDir = hashDirFor(filename, hash);
     const std::string ptxBinaryFile = hashDir + "ptxBinary.o";
     bool foundBinary = true;
 
+    sourceFilename = hashDir + kc::sourceFile;
+    binaryFilename = hashDir + fixBinaryName(kc::binaryFile);
+
     if (!haveHash(hash, 0))
       waitForHash(hash, 0);
-    else if (sys::fileExists(binaryFile))
+    else if (sys::fileExists(binaryFilename))
       releaseHash(hash, 0);
     else
       foundBinary = false;
 
     if (foundBinary) {
       if(verboseCompilation_f)
-        std::cout << "Found cached binary of [" << compressFilename(filename) << "] in [" << compressFilename(binaryFile) << "]\n";
+        std::cout << "Found cached binary of [" << compressFilename(filename) << "] in [" << compressFilename(binaryFilename) << "]\n";
 
-      return buildFromBinary(binaryFile, functionName);
+      return buildFromBinary(binaryFilename, functionName);
     }
 
     createSourceFileFrom(filename, hashDir, info);
@@ -335,7 +353,7 @@ namespace occa {
 #  endif
             << " -Xptxas -v,-dlcm=cg"
             << ' '          << info.flags
-            << " -x cu -c " << sourceFile
+            << " -x cu -c " << sourceFilename
             << " -o "       << ptxBinaryFile;
 
     const std::string &ptxCommand = command.str();
@@ -354,7 +372,7 @@ namespace occa {
     command.str("");
 
     command << dHandle->compiler
-            << " -o "       << binaryFile
+            << " -o "       << binaryFilename
             << " -ptx -I."
             << " -I"  << env::OCCA_DIR << "include"
 #  if (OCCA_OS == WINDOWS_OS)
@@ -362,7 +380,7 @@ namespace occa {
 #  endif
             << ' '          << dHandle->compilerFlags
             << ' '          << info.flags
-            << " -x cu "    << sourceFile;
+            << " -x cu "    << sourceFilename;
 
     const std::string &sCommand = command.str();
 
@@ -377,7 +395,7 @@ namespace occa {
     }
 
     const CUresult moduleLoadError = cuModuleLoad(&data_.module,
-                                                  binaryFile.c_str());
+                                                  binaryFilename.c_str());
 
     if(moduleLoadError)
       releaseHash(hash, 0);
@@ -405,6 +423,7 @@ namespace occa {
                                                  const std::string &functionName){
 
     name = functionName;
+    binaryFilename = filename;
 
     OCCA_EXTRACT_DATA(CUDA, Kernel);
 

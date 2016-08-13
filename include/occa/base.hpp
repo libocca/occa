@@ -389,6 +389,7 @@ namespace occa {
     occa::device_v *dHandle;
 
     std::string name;
+    std::string sourceFilename, binaryFilename;
 
     parsedKernelInfo metaInfo;
 
@@ -497,6 +498,8 @@ namespace occa {
 
     const std::string& mode();
     const std::string& name();
+    const std::string& sourceFilename();
+    const std::string& binaryFilename();
 
     occa::device getDevice();
 
