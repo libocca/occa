@@ -43,6 +43,19 @@ int main(int argc, char **argv){
   addVectors = occaDeviceBuildKernel(device,
                                      "addVectors.okl", "addVectors",
                                      info);
+  const char* knl_str = " \n"
+    "kernel void addVectors(const int entries, \n"
+    "                       const float *a, \n"
+    "                       const float *b, \n"
+    "                       float *ab){ \n"
+    " \n"
+    "  for(int i = 0; i < entries; ++i; tile(16)){ \n"
+    "    if(i < entries) \n"
+    "      ab[i] = a[i] + b[i]; \n"
+    "  } \n"
+    "}";
+  addVectors =
+    occaDeviceBuildKernelFromString(device, knl_str, "addVectors", occaNoKernelInfo, (1 << 0));
 
   /* addVectors = occaBuildKernelFromSource(device, */
   /*                                        "addVectors.occa", "addVectors", */
