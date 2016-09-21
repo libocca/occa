@@ -10,7 +10,7 @@ int main(int argc, char **argv){
   // occa::enableUVAByDefault();
 
   occa::device device;
-  device.setup("mode = OpenCL, platformID = 0, deviceID = 1, UVA = enabled");
+  device.setup("mode = OpenCL, platformID = 0, deviceID = 0, UVA = enabled");
 
   // Allocate [managed] arrays that will
   //   automatically synchronize between
@@ -50,8 +50,9 @@ int main(int argc, char **argv){
     std::cout << i << ": " << ab[i] << '\n';
 
   for(int i = 0; i < entries; ++i){
-    if(ab[i] != (a[i] + b[i]))
+    if(ab[i] != (a[i] + b[i])) {
       throw 1;
+    }
   }
 
   occa::free(a);

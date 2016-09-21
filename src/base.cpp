@@ -867,10 +867,16 @@ namespace occa {
   void kernel::runFromArguments() {
     checkIfInitialized();
 
+    for (int i = 0; i < (int) kHandle->arguments.size(); ++i) {
+      const bool argIsConst = kHandle->metaInfo.argIsConst(i);
+      kHandle->arguments[i].setupForKernelCall(argIsConst);
+    }
+
     // Add nestedKernels
-    if (kHandle->nestedKernelCount())
+    if (kHandle->nestedKernelCount()) {
       kHandle->arguments.insert(kHandle->arguments.begin(),
                                 kHandle->nestedKernelsPtr());
+    }
 
     kHandle->runFromArguments(kHandle->argumentCount(),
                               kHandle->argumentsPtr());
@@ -1885,10 +1891,8 @@ namespace occa {
 
   void device::finish() {
     checkIfInitialized();
-
     if(dHandle->fakesUva()) {
       const size_t dirtyEntries = uvaDirtyMemory.size();
-
       if(dirtyEntries) {
         for(size_t i = 0; i < dirtyEntries; ++i) {
           occa::memory_v *mem = uvaDirtyMemory[i];
@@ -1898,7 +1902,6 @@ namespace occa {
           mem->memInfo &= ~uvaFlag::inDevice;
           mem->memInfo &= ~uvaFlag::isDirty;
         }
-
         uvaDirtyMemory.clear();
       }
     }
