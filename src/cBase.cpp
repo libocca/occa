@@ -891,6 +891,14 @@ void OCCA_RFUNC occaKernelInfoAddInclude(occaKernelInfo info,
   info_.addInclude(filename);
 }
 
+void OCCA_RFUNC occaKernelInfoAddIncludeDefine(occaKernelInfo info,
+                                               const char *filename) {
+
+  occa::kernelInfo &info_ = *((occa::kernelInfo*) info);
+
+  info_.addIncludeDefine(filename);
+}
+
 void OCCA_RFUNC occaKernelInfoAddParserFlag(occaKernelInfo info,
                                             const char *flag,
                                             const char *value) {
