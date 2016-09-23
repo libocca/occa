@@ -292,7 +292,6 @@ namespace occa {
     kernelInfo info = info_;
 
     dHandle->addOccaHeadersToInfo(info);
-    dHandle->addArchSMToInfo(info);
 
     // Add arch to info (for hash purposes)
     if((dHandle->compilerFlags.find("-arch=sm_") == std::string::npos) &&
@@ -1038,24 +1037,6 @@ namespace occa {
   template <>
   void device_t<CUDA>::addOccaHeadersToInfo(kernelInfo &info_){
     info_.mode = CUDA;
-  }
-
-  template <>
-  void device_t<CUDA>::addArchSMToInfo(kernelInfo &info_) {
-    OCCA_EXTRACT_DATA(CUDA, Device);
-
-    if((compilerFlags.find("-arch=sm_") == std::string::npos) &&
-       (   info.flags.find("-arch=sm_") == std::string::npos)){
-
-      std::stringstream ss;
-      int major, minor;
-
-      OCCA_CUDA_CHECK("Kernel (" + functionName + ") : Getting CUDA Device Arch",
-                      cuDeviceComputeCapability(&major, &minor, data_.device) );
-
-      ss << " -arch=sm_" << major << minor << ' ';
-      info.flags += ss.str();
-    }
   }
 
   template <>
