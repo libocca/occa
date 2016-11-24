@@ -1588,7 +1588,8 @@ namespace occa {
   void memory::free() {
     checkIfInitialized();
 
-    mHandle->dHandle->bytesAllocated -= (mHandle->size);
+    if(!mHandle->isMapped())
+      mHandle->dHandle->bytesAllocated -= (mHandle->size);
 
     if(mHandle->uvaPtr) {
       uvaMap.erase(mHandle->uvaPtr);
@@ -1617,7 +1618,8 @@ namespace occa {
   void memory::detach() {
     checkIfInitialized();
 
-    mHandle->dHandle->bytesAllocated -= (mHandle->size);
+    if(!mHandle->isMapped())
+      mHandle->dHandle->bytesAllocated -= (mHandle->size);
 
     if(mHandle->uvaPtr) {
       uvaMap.erase(mHandle->uvaPtr);
@@ -2259,8 +2261,6 @@ namespace occa {
 
     mem.mHandle          = dHandle->mappedAlloc(bytes, src);
     mem.mHandle->dHandle = dHandle;
-
-    dHandle->bytesAllocated += bytes;
 
     return mem;
   }
