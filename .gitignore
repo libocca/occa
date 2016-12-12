@@ -1,6 +1,7 @@
 .gitattributes
 
 /bin
+/obj
 /include/occa/defines/compiledDefines.hpp
 /scripts/compilerVendorTest
 .compiledDefinesChanged
