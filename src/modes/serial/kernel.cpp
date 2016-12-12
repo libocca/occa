@@ -47,9 +47,9 @@ namespace occa {
       return NULL;
     }
 
-    void kernel::buildFromSource(const std::string &filename,
-                                 const std::string &functionName,
-                                 const occa::properties &props) {
+    void kernel::build(const std::string &filename,
+                       const std::string &functionName,
+                       const occa::properties &props) {
 
       const occa::properties allProps = properties + props;
       name = functionName;

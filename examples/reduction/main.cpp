@@ -34,13 +34,13 @@ int main(int argc, char **argv) {
   reductionInfo.addDefine("p_Nred", p_Nred);
 
 #if 1
-  reduction = device.buildKernelFromSource("reduction.okl",
-                                           "reduction",
-                                           reductionInfo);
+  reduction = device.buildKernel("reduction.okl",
+                                 "reduction",
+                                 reductionInfo);
 #else
-  reduction = device.buildKernelFromSource("reduction.cu",
-                                           "reduction",
-                                           reductionInfo);
+  reduction = device.buildKernel("reduction.cu",
+                                 "reduction",
+                                 reductionInfo);
 
   size_t dims     = 1;
   occa::dim inner(p_Nred);

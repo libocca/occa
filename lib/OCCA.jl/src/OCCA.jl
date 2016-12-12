@@ -341,7 +341,7 @@ type KernelInfo
     end
 end
 
-function build_kernel(filename::String, functionName::String, kInfo::KernelInfo; from = :auto)
+function build_kernel(filename::String, functionName::String, kInfo::KernelInfo; from = :source)
     return build_kernel(filename, functionName, kInfo.handle, from=from)
 end
 
@@ -349,16 +349,9 @@ function build_kernel(filename::String, functionName::String; from = :auto)
     return build_kernel(filename, functionName, C_NULL, from=from)
 end
 
-function build_kernel(filename::String, functionName::String, kInfo::Ptr{Void}; from = :auto)
-    if from == :auto
+function build_kernel(filename::String, functionName::String, kInfo::Ptr{Void}; from = :source)
+    if from == :source
         return Kernel(ccall(@libCall(:occaBuildKernel),
-                            Ptr{Void},
-                            (Ptr{Uint8}, Ptr{Uint8}, Ptr{Void},),
-                            bytestring(filename),
-                            bytestring(functionName),
-                            kInfo))
-    elseif from == :source
-        return Kernel(ccall(@libCall(:occaBuildKernelFromSource),
                             Ptr{Void},
                             (Ptr{Uint8}, Ptr{Uint8}, Ptr{Void},),
                             bytestring(filename),
@@ -480,7 +473,7 @@ function build_kernel(d::Device, filename::String, functionName::String, kInfo::
                             bytestring(functionName),
                             kInfo))
     elseif from == :source
-        return Kernel(ccall(@libCall(:occaDeviceBuildKernelFromSource),
+        return Kernel(ccall(@libCall(:occaDeviceBuildKernel),
                             Ptr{Void},
                             (Ptr{Void}, Ptr{Uint8}, Ptr{Uint8}, Ptr{Void},),
                             d.handle,

@@ -34,12 +34,12 @@ int main(int argc, char **argv) {
   o_ab = device.malloc(entries*sizeof(float));
 
   // OKL: OCCA Kernel Language
-  addVectors = device.buildKernelFromSource("addVectors.okl",
-                                            "addVectors");
+  addVectors = device.buildKernel("addVectors.okl",
+                                  "addVectors");
 
   // OFL: OCCA Fortran Language
-  // addVectors = device.buildKernelFromSource("addVectors.ofl",
-  //                                           "addVectors");
+  // addVectors = device.buildKernel("addVectors.ofl",
+  //                                 "addVectors");
 
   //---[ Don't need to set these up when using OKL/OFL ]----
   // int dims = 1;

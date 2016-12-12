@@ -1,17 +1,17 @@
 /* The MIT License (MIT)
- * 
+ *
  * Copyright (c) 2014-2016 David Medina and Tim Warburton
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be included in all
  * copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -131,8 +131,6 @@
 //  |---[ Kernel Functions ]------------
 #define OCCABUILDKERNEL                                    OCCA_F2C_GLOBAL_(occabuildkernel_fc,  \
                                                                             OCCABUILDKERNEL_FC)
-#define OCCABUILDKERNELFROMSOURCE                          OCCA_F2C_GLOBAL_(occabuildkernelfromsource_fc, \
-                                                                            OCCABUILDKERNELFROMSOURCE_FC)
 #define OCCABUILDKERNELFROMSTRING                          OCCA_F2C_GLOBAL_(occabuildkernelfromstring_fc, \
                                                                             OCCABUILDKERNELFROMSTRING_FC)
 #define OCCABUILDKERNELFROMBINARY                          OCCA_F2C_GLOBAL_(occabuildkernelfrombinary_fc, \
@@ -182,10 +180,6 @@
                                                                             OCCADEVICEBUILDKERNEL_FC)
 #define  OCCADEVICEBUILDKERNELNOKERNELINFO_FC              OCCA_F2C_GLOBAL_(occadevicebuildkernelnokernelinfo_fc,\
                                                                             OCCADEVICEBUILDKERNELNOKERNELINFO_FC)
-#define  OCCADEVICEBUILDKERNELFROMSOURCE_FC                OCCA_F2C_GLOBAL_(occadevicebuildkernelfromsource_fc,\
-                                                                            OCCADEVICEBUILDKERNELFROMSOURCE_FC)
-#define  OCCADEVICEBUILDKERNELFROMSOURCENOKERNELINFO_FC    OCCA_F2C_GLOBAL_(occadevicebuildkernelfromsourcenokernelinfo_fc,\
-                                                                            OCCADEVICEBUILDKERNELFROMSOURCENOKERNELINFO_FC)
 #define  OCCADEVICEBUILDKERNELFROMSTRING_FC                OCCA_F2C_GLOBAL_(occadevicebuildkernelfromstring_fc,\
                                                                             OCCADEVICEBUILDKERNELFROMSTRING_FC)
 #define  OCCADEVICEBUILDKERNELFROMSTRINGNOKERNELINFO_FC    OCCA_F2C_GLOBAL_(occadevicebuildkernelfromstringnokernelinfo_fc,\

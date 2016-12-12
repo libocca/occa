@@ -140,13 +140,9 @@ OCCA_LFUNC occaStreamTag OCCA_RFUNC occaTagStream();
 //  |===================================
 
 //  |---[ Kernel ]----------------------
-OCCA_LFUNC occaKernel OCCA_RFUNC occaBuildKernel(const char *str,
+OCCA_LFUNC occaKernel OCCA_RFUNC occaBuildKernel(const char *filename,
                                                  const char *functionName,
                                                  const occaKernelInfo info);
-
-OCCA_LFUNC occaKernel OCCA_RFUNC occaBuildKernelFromSource(const char *filename,
-                                                           const char *functionName,
-                                                           const occaKernelInfo info);
 
 OCCA_LFUNC occaKernel OCCA_RFUNC occaBuildKernelFromString(const char *str,
                                                            const char *functionName,
@@ -186,14 +182,9 @@ OCCA_LFUNC occaUDim_t OCCA_RFUNC occaDeviceMemoryAllocated(occaDevice device);
 OCCA_LFUNC occaUDim_t OCCA_RFUNC occaDeviceBytesAllocated(occaDevice device);
 
 OCCA_LFUNC occaKernel OCCA_RFUNC occaDeviceBuildKernel(occaDevice device,
-                                                       const char *str,
+                                                       const char *filename,
                                                        const char *functionName,
                                                        const occaKernelInfo info);
-
-OCCA_LFUNC occaKernel OCCA_RFUNC occaDeviceBuildKernelFromSource(occaDevice device,
-                                                                 const char *filename,
-                                                                 const char *functionName,
-                                                                 const occaKernelInfo info);
 
 OCCA_LFUNC occaKernel OCCA_RFUNC occaDeviceBuildKernelFromString(occaDevice device,
                                                                  const char *str,

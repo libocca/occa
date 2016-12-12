@@ -223,16 +223,79 @@ namespace occa {
   //  |=================================
 
   //  |---[ Kernel ]--------------------
-  kernel device::buildKernel(const std::string &str,
+  kernel device::buildKernel(const std::string &filename,
                              const std::string &functionName,
                              const occa::properties &props) {
     checkIfInitialized();
 
-    if (sys::fileExists(str, flags::checkCacheDir)) {
-      return buildKernelFromSource(str, functionName, props);
+    occa::properties allProps = properties() + props;
+
+    const std::string realFilename = io::filename(filename);
+    const bool usingParser         = io::fileNeedsParser(filename);
+
+    kernel ker;
+
+    kernel_v *&k = ker.kHandle;
+
+    if (usingParser) {
+      k          = newModeKernel(occa::properties("mode = Serial"));
+      k->dHandle = newModeDevice(occa::properties("mode = Serial"));
+
+      hash_t hash = occa::hashFile(realFilename);
+      hash ^= props.hash();
+
+      const std::string hashDir    = io::hashDir(realFilename, hash);
+      const std::string parsedFile = hashDir + "parsedSource.occa";
+      k->metadata = io::parseFileForFunction(mode(),
+                                             realFilename,
+                                             parsedFile,
+                                             functionName,
+                                             props);
+
+      kernelInfo info(props);
+      info.addDefine("OCCA_LAUNCH_KERNEL", 1);
+
+      k->build(parsedFile,
+               functionName,
+               k->dHandle->properties + info);
+      k->nestedKernels.clear();
+
+      if (k->metadata.nestedKernels) {
+        std::stringstream ss;
+
+        const bool vc_f = settings.get("verboseCompilation", true);
+
+        for (int ki = 0; ki < k->metadata.nestedKernels; ++ki) {
+          ss << ki;
+
+          const std::string sKerName = k->metadata.baseName + ss.str();
+          ss.str("");
+
+          kernel sKer;
+          sKer.kHandle = dHandle->buildKernel(parsedFile, sKerName, allProps);
+
+          sKer.kHandle->metadata               = k->metadata;
+          sKer.kHandle->metadata.name          = sKerName;
+          sKer.kHandle->metadata.nestedKernels = 0;
+          sKer.kHandle->metadata.removeArg(0); // remove nestedKernels **
+          k->nestedKernels.push_back(sKer);
+
+          // Only show compilation the first time
+          if (ki == 0) {
+            settings.set<bool>("verboseCompilation", false);
+          }
+        }
+
+        settings.set<bool>("verboseCompilation", vc_f);
+      }
     } else {
-      return buildKernelFromString(str, functionName, props);
+      k = dHandle->buildKernel(realFilename,
+                               functionName,
+                               allProps);
+      k->dHandle = dHandle;
     }
+
+    return ker;
   }
 
   kernel device::buildKernelFromString(const std::string &content,
@@ -268,88 +331,13 @@ namespace occa {
 
     io::write(stringSourceFile, content);
 
-    kernel k = buildKernelFromSource(stringSourceFile,
-                                     functionName,
-                                     allProps);
+    kernel k = buildKernel(stringSourceFile,
+                           functionName,
+                           allProps);
 
     io::releaseHash(hash, hashTag);
 
     return k;
-  }
-
-  kernel device::buildKernelFromSource(const std::string &filename,
-                                       const std::string &functionName,
-                                       const occa::properties &props) {
-    checkIfInitialized();
-
-    occa::properties allProps = properties() + props;
-
-    const std::string realFilename = io::filename(filename);
-    const bool usingParser         = io::fileNeedsParser(filename);
-
-    kernel ker;
-
-    kernel_v *&k = ker.kHandle;
-
-    if (usingParser) {
-      k          = newModeKernel(occa::properties("mode = Serial"));
-      k->dHandle = newModeDevice(occa::properties("mode = Serial"));
-
-      hash_t hash = occa::hashFile(realFilename);
-      hash ^= props.hash();
-
-      const std::string hashDir    = io::hashDir(realFilename, hash);
-      const std::string parsedFile = hashDir + "parsedSource.occa";
-      k->metadata = io::parseFileForFunction(mode(),
-                                             realFilename,
-                                             parsedFile,
-                                             functionName,
-                                             props);
-
-      kernelInfo info(props);
-      info.addDefine("OCCA_LAUNCH_KERNEL", 1);
-
-      k->buildFromSource(parsedFile,
-                         functionName,
-                         k->dHandle->properties + info);
-      k->nestedKernels.clear();
-
-      if (k->metadata.nestedKernels) {
-        std::stringstream ss;
-
-        const bool vc_f = settings.get("verboseCompilation", true);
-
-        for (int ki = 0; ki < k->metadata.nestedKernels; ++ki) {
-          ss << ki;
-
-          const std::string sKerName = k->metadata.baseName + ss.str();
-          ss.str("");
-
-          kernel sKer;
-          sKer.kHandle = dHandle->buildKernelFromSource(parsedFile, sKerName, allProps);
-
-          sKer.kHandle->metadata               = k->metadata;
-          sKer.kHandle->metadata.name          = sKerName;
-          sKer.kHandle->metadata.nestedKernels = 0;
-          sKer.kHandle->metadata.removeArg(0); // remove nestedKernels **
-          k->nestedKernels.push_back(sKer);
-
-          // Only show compilation the first time
-          if (ki == 0) {
-            settings.set<bool>("verboseCompilation", false);
-          }
-        }
-
-        settings.set<bool>("verboseCompilation", vc_f);
-      }
-    } else {
-      k = dHandle->buildKernelFromSource(realFilename,
-                                         functionName,
-                                         allProps);
-      k->dHandle = dHandle;
-    }
-
-    return ker;
   }
 
   kernel device::buildKernelFromBinary(const std::string &filename,

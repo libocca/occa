@@ -44,31 +44,9 @@ namespace occa {
   extern properties settings;
   //====================================
 
-
-  //---[ Memory ]-----------------------
-  void memcpy(void *dest, const void *src,
-              const dim_t bytes,
-              const properties &props = properties());
-
-  void memcpy(memory dest, const void *src,
-              const dim_t bytes = -1,
-              const dim_t offset = 0,
-              const properties &props = properties());
-
-  void memcpy(void *dest, memory src,
-              const dim_t bytes = -1,
-              const dim_t offset = 0,
-              const properties &props = properties());
-
-  void memcpy(memory dest, memory src,
-              const dim_t bytes = -1,
-              const dim_t destOffset = 0,
-              const dim_t srcOffset = 0,
-              const properties &props = properties());
-
   //---[ Device Functions ]-------------
-  extern device currentDevice;
-  device getCurrentDevice();
+  extern device currentDevice_;
+  device currentDevice();
 
   device host();
   void setDevice(device d);
@@ -93,15 +71,11 @@ namespace occa {
   //====================================
 
   //---[ Kernel Functions ]-------------
-  kernel buildKernel(const std::string &str,
+  kernel buildKernel(const std::string &filename,
                      const std::string &functionName,
                      const properties &props = occa::properties());
 
   kernel buildKernelFromString(const std::string &content,
-                               const std::string &functionName,
-                               const properties &props = occa::properties());
-
-  kernel buildKernelFromSource(const std::string &filename,
                                const std::string &functionName,
                                const properties &props = occa::properties());
 
@@ -121,6 +95,26 @@ namespace occa {
   occa::memory wrapMemory(void *handle_,
                           const dim_t bytes,
                           const occa::properties &props = occa::properties());
+
+  void memcpy(void *dest, const void *src,
+              const dim_t bytes,
+              const properties &props = properties());
+
+  void memcpy(memory dest, const void *src,
+              const dim_t bytes = -1,
+              const dim_t offset = 0,
+              const properties &props = properties());
+
+  void memcpy(void *dest, memory src,
+              const dim_t bytes = -1,
+              const dim_t offset = 0,
+              const properties &props = properties());
+
+  void memcpy(memory dest, memory src,
+              const dim_t bytes = -1,
+              const dim_t destOffset = 0,
+              const dim_t srcOffset = 0,
+              const properties &props = properties());
   //====================================
 
   //---[ Free Functions ]---------------

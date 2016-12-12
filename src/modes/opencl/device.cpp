@@ -186,9 +186,9 @@ namespace occa {
     //  |===============================
 
     //  |---[ Kernel ]------------------
-    kernel_v* device::buildKernelFromSource(const std::string &filename,
-                                            const std::string &functionName,
-                                            const occa::properties &props) {
+    kernel_v* device::buildKernel(const std::string &filename,
+                                  const std::string &functionName,
+                                  const occa::properties &props) {
       opencl::kernel *k = new opencl::kernel(props);
 
       k->dHandle = this;
@@ -200,7 +200,7 @@ namespace occa {
       k->clDeviceID   = clDeviceID;
       k->clContext    = clContext;
 
-      k->buildFromSource(filename, functionName, props);
+      k->build(filename, functionName, props);
 
       return k;
     }

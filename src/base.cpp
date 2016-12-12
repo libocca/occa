@@ -31,6 +31,139 @@ namespace occa {
 
 
   //---[ Memory ]-----------------------
+  //====================================
+
+
+  //---[ Device Functions ]-------------
+  device currentDevice_;
+  device currentDevice() {
+    if (currentDevice_.getDHandle() == NULL) {
+      currentDevice_ = host();
+    }
+    return currentDevice_;
+  }
+
+  device host() {
+    static device _host;
+    if (_host.getDHandle() == NULL) {
+      _host = occa::device(newModeDevice(occa::properties("mode = Serial")));
+    }
+    return _host;
+  }
+
+  void setDevice(device d) {
+    currentDevice_ = d;
+  }
+
+  void setDevice(const std::string &props) {
+    currentDevice_ = device(props);
+  }
+
+  void setDevice(const properties &props) {
+    currentDevice_ = device(props);
+  }
+
+  std::vector<device>& getDeviceList() {
+    static std::vector<device> deviceList;
+    static mutex_t mutex;
+
+    mutex.lock();
+    if (deviceList.size() == 0) {
+      strToModeMapIterator it = modeMap().begin();
+      while (it != modeMap().end()) {
+        device_v* dHandle = it->second->newDevice();
+        dHandle->appendAvailableDevices(deviceList);
+        freeModeDevice(dHandle);
+        ++it;
+      }
+    }
+    mutex.unlock();
+
+    return deviceList;
+  }
+
+  properties& deviceProperties() {
+    return currentDevice().properties();
+  }
+
+  void flush() {
+    currentDevice().flush();
+  }
+
+  void finish() {
+    currentDevice().finish();
+  }
+
+  void waitFor(streamTag tag) {
+    currentDevice().waitFor(tag);
+  }
+
+  stream createStream() {
+    return currentDevice().createStream();
+  }
+
+  stream getStream() {
+    return currentDevice().getStream();
+  }
+
+  void setStream(stream s) {
+    currentDevice().setStream(s);
+  }
+
+  stream wrapStream(void *handle_) {
+    return currentDevice().wrapStream(handle_);
+  }
+
+  streamTag tagStream() {
+    return currentDevice().tagStream();
+  }
+
+  //---[ Kernel Functions ]-------------
+  kernel buildKernel(const std::string &filename,
+                     const std::string &functionName,
+                     const properties &props) {
+
+    return currentDevice().buildKernel(filename,
+                                       functionName,
+                                       props);
+  }
+
+  kernel buildKernelFromString(const std::string &content,
+                               const std::string &functionName,
+                               const properties &props) {
+
+    return currentDevice().buildKernelFromString(content, functionName, props);
+  }
+
+  kernel buildKernelFromBinary(const std::string &filename,
+                               const std::string &functionName) {
+
+    return currentDevice().buildKernelFromBinary(filename,
+                                                    functionName);
+  }
+
+  //---[ Memory Functions ]-------------
+  occa::memory malloc(const dim_t bytes,
+                      void *src,
+                      const properties &props) {
+
+    return currentDevice().malloc(bytes, src, props);
+  }
+
+  void* managedAlloc(const dim_t bytes,
+                     void *src,
+                     const properties &props) {
+
+    return currentDevice().managedAlloc(bytes, src, props);
+  }
+
+  occa::memory wrapMemory(void *handle_,
+                          const dim_t bytes,
+                          const occa::properties &props) {
+
+    return currentDevice().wrapMemory(handle_, bytes, props);
+  }
+
   void memcpy(void *dest, const void *src,
               const dim_t bytes,
               const properties &props) {
@@ -87,155 +220,13 @@ namespace occa {
   }
   //====================================
 
-
-  //---[ Device Functions ]-------------
-  device currentDevice;
-
-  device getCurrentDevice() {
-    if (currentDevice.getDHandle() == NULL) {
-      currentDevice = host();
-    }
-    return currentDevice;
-  }
-
-  device host() {
-    static device _host;
-    if (_host.getDHandle() == NULL) {
-      _host = occa::device(newModeDevice(occa::properties("mode = Serial")));
-    }
-    return _host;
-  }
-
-  void setDevice(device d) {
-    currentDevice = d;
-  }
-
-  void setDevice(const std::string &props) {
-    currentDevice = device(props);
-  }
-
-  void setDevice(const properties &props) {
-    currentDevice = device(props);
-  }
-
-  std::vector<device>& getDeviceList() {
-    static std::vector<device> deviceList;
-    static mutex_t mutex;
-
-    mutex.lock();
-    if (deviceList.size() == 0) {
-      strToModeMapIterator it = modeMap().begin();
-      while (it != modeMap().end()) {
-        device_v* dHandle = it->second->newDevice();
-        dHandle->appendAvailableDevices(deviceList);
-        freeModeDevice(dHandle);
-        ++it;
-      }
-    }
-    mutex.unlock();
-
-    return deviceList;
-  }
-
-  properties& deviceProperties() {
-    return getCurrentDevice().properties();
-  }
-
-  void flush() {
-    getCurrentDevice().flush();
-  }
-
-  void finish() {
-    getCurrentDevice().finish();
-  }
-
-  void waitFor(streamTag tag) {
-    getCurrentDevice().waitFor(tag);
-  }
-
-  stream createStream() {
-    return getCurrentDevice().createStream();
-  }
-
-  stream getStream() {
-    return getCurrentDevice().getStream();
-  }
-
-  void setStream(stream s) {
-    getCurrentDevice().setStream(s);
-  }
-
-  stream wrapStream(void *handle_) {
-    return getCurrentDevice().wrapStream(handle_);
-  }
-
-  streamTag tagStream() {
-    return getCurrentDevice().tagStream();
-  }
-
-  //---[ Kernel Functions ]-------------
-  kernel buildKernel(const std::string &str,
-                     const std::string &functionName,
-                     const properties &props) {
-
-    return getCurrentDevice().buildKernel(str,
-                                          functionName,
-                                          props);
-  }
-
-  kernel buildKernelFromString(const std::string &content,
-                               const std::string &functionName,
-                               const properties &props) {
-
-    return getCurrentDevice().buildKernelFromString(content, functionName, props);
-  }
-
-  kernel buildKernelFromSource(const std::string &filename,
-                               const std::string &functionName,
-                               const properties &props) {
-
-    return getCurrentDevice().buildKernelFromSource(filename,
-                                                    functionName,
-                                                    props);
-  }
-
-  kernel buildKernelFromBinary(const std::string &filename,
-                               const std::string &functionName) {
-
-    return getCurrentDevice().buildKernelFromBinary(filename,
-                                                    functionName);
-  }
-
-  //---[ Memory Functions ]-------------
-  occa::memory malloc(const dim_t bytes,
-                      void *src,
-                      const properties &props) {
-
-    return getCurrentDevice().malloc(bytes, src, props);
-  }
-
-  void* managedAlloc(const dim_t bytes,
-                     void *src,
-                     const properties &props) {
-
-    return getCurrentDevice().managedAlloc(bytes, src, props);
-  }
-
-  occa::memory wrapMemory(void *handle_,
-                          const dim_t bytes,
-                          const occa::properties &props) {
-
-    return getCurrentDevice().wrapMemory(handle_, bytes, props);
-  }
-  //====================================
-
   //---[ Free Functions ]---------------
   void free(device d) {
     d.free();
   }
 
   void free(stream s) {
-    getCurrentDevice().freeStream(s);
+    currentDevice().freeStream(s);
   }
 
   void free(kernel k) {

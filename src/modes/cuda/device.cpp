@@ -259,9 +259,9 @@ namespace occa {
       return (double) (1.0e-3 * (double) msTimeTaken);
     }
 
-    kernel_v* device::buildKernelFromSource(const std::string &filename,
-                                            const std::string &functionName,
-                                            const kernelInfo &info_) {
+    kernel_v* device::buildKernel(const std::string &filename,
+                                  const std::string &functionName,
+                                  const kernelInfo &info_) {
       OCCA_EXTRACT_DATA(CUDA, Device);
 
       OCCA_CUDA_CHECK("Device: Setting Context",
@@ -277,7 +277,7 @@ namespace occa {
       kData_.device  = data_.device;
       kData_.context = data_.context;
 
-      k->buildFromSource(filename, functionName, info_);
+      k->build(filename, functionName, info_);
 
       return k;
     }
@@ -305,7 +305,7 @@ namespace occa {
                                       const kernelInfo &info_) {
 #if 0
       //---[ Creating shared library ]----
-      kernel tmpK = occa::device(this).buildKernelFromSource(filename, functionName, info_);
+      kernel tmpK = occa::device(this).buildKernel(filename, functionName, info_);
       tmpK.free();
 
       kernelInfo info = info_;
