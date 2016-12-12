@@ -8,7 +8,7 @@ int main(int argc, char **argv) {
   // Other useful functions:
   //   occa::setDevice("mode = OpenMP")
   //   occa::setDevice("mode = OpenCL, platformID = 0, deviceID = 1, UVA = enabled");
-  //   occa::device = occa::getCurrentDevice();
+  //   occa::device = occa::currentDevice();
 
   // Use the default device (mode = Serial)
   float *a  = (float*) occa::managedAlloc(entries * sizeof(float));
@@ -52,7 +52,7 @@ int main(int argc, char **argv) {
   occa::free(addVectors);
 
   // The user can also free the device
-  occa::free(occa::getCurrentDevice());
+  occa::free(occa::currentDevice());
 
   return 0;
 }

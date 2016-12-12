@@ -249,11 +249,11 @@ JNIEXPORT jobject JNICALL Java_occa_Device_buildKernelFromString(JNIEnv *env,
   JOCCA_RELEASE_STRING(functionName);
 }
 
-JNIEXPORT jobject JNICALL Java_occa_Device_buildKernelFromSource(JNIEnv *env,
-                                                                 jobject this_,
-                                                                 jobjectArray filename_,
-                                                                 jobjectArray functionName_,
-                                                                 jobject info) {
+JNIEXPORT jobject JNICALL Java_occa_Device_buildKernel(JNIEnv *env,
+                                                       jobject this_,
+                                                       jobjectArray filename_,
+                                                       jobjectArray functionName_,
+                                                       jobject info) {
   JOCCA_EXTRACT_CLASSES();
 
   occaDevice device = (occaDevice) JOCCA_GET_DEVICE(this_);

@@ -150,12 +150,12 @@ namespace occa {
       return (endTag.tagTime - startTag.tagTime);
     }
 
-    kernel_v* device::buildKernelFromSource(const std::string &filename,
-                                            const std::string &functionName,
-                                            const occa::properties &props) {
+    kernel_v* device::buildKernel(const std::string &filename,
+                                  const std::string &functionName,
+                                  const occa::properties &props) {
       kernel *k = new kernel();
       k->dHandle = this;
-      k->buildFromSource(filename, functionName, props);
+      k->build(filename, functionName, props);
       return k;
     }
 

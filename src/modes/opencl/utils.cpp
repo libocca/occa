@@ -284,13 +284,13 @@ namespace occa {
       return ss.str();
     }
 
-    void buildKernelFromSource(info_t &info_,
-                               const char *content,
-                               const size_t contentBytes,
-                               const std::string &functionName,
-                               const std::string &flags,
-                               hash_t hash,
-                               const std::string &sourceFile) {
+    void buildKernel(info_t &info_,
+                     const char *content,
+                     const size_t contentBytes,
+                     const std::string &functionName,
+                     const std::string &flags,
+                     hash_t hash,
+                     const std::string &sourceFile) {
       cl_int error;
 
       info_.clProgram = clCreateProgramWithSource(info_.clContext, 1,

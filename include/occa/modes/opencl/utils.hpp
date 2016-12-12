@@ -88,13 +88,13 @@ namespace occa {
 
     std::string getDeviceListInfo();
 
-    void buildKernelFromSource(info_t &info_,
-                               const char *content,
-                               const size_t contentBytes,
-                               const std::string &functionName,
-                               const std::string &flags = "",
-                               hash_t hash = hash_t(),
-                               const std::string &sourceFile = "");
+    void buildKernel(info_t &info_,
+                     const char *content,
+                     const size_t contentBytes,
+                     const std::string &functionName,
+                     const std::string &flags = "",
+                     hash_t hash = hash_t(),
+                     const std::string &sourceFile = "");
 
     void buildKernelFromBinary(info_t &info_,
                                const unsigned char *content,

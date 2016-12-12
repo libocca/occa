@@ -73,7 +73,6 @@ static PyObject* py_occaWrapStream(PyObject *self, PyObject *args);
 
 //  |---[ Kernel ]----------------------
 static PyObject* py_occaBuildKernel(PyObject *self, PyObject *args);
-static PyObject* py_occaBuildKernelFromSource(PyObject *self, PyObject *args);
 static PyObject* py_occaBuildKernelFromString(PyObject *self, PyObject *args);
 static PyObject* py_occaBuildKernelFromBinary(PyObject *self, PyObject *args);
 //  |===================================
@@ -108,7 +107,6 @@ static PyObject* py_occaDeviceGetCompilerFlags(PyObject *self, PyObject *args);
 static PyObject* py_occaDeviceBytesAllocated(PyObject *self, PyObject *args);
 
 static PyObject* py_occaDeviceBuildKernel(PyObject *self, PyObject *args);
-static PyObject* py_occaDeviceBuildKernelFromSource(PyObject *self, PyObject *args);
 static PyObject* py_occaDeviceBuildKernelFromString(PyObject *self, PyObject *args);
 static PyObject* py_occaDeviceBuildKernelFromBinary(PyObject *self, PyObject *args);
 
@@ -234,7 +232,6 @@ static PyMethodDef _C_occaMethods[] = {
 
   //  |---[ Kernel ]--------------------
   {"buildKernel"          , py_occaBuildKernel          , METH_VARARGS},
-  {"buildKernelFromSource", py_occaBuildKernelFromSource, METH_VARARGS},
   {"buildKernelFromString", py_occaBuildKernelFromString, METH_VARARGS},
   {"buildKernelFromBinary", py_occaBuildKernelFromBinary, METH_VARARGS},
   //  |=================================
@@ -269,7 +266,6 @@ static PyMethodDef _C_occaMethods[] = {
   {"deviceBytesAllocated", py_occaDeviceBytesAllocated, METH_VARARGS},
 
   {"deviceBuildKernel"          , py_occaDeviceBuildKernel          , METH_VARARGS},
-  {"deviceBuildKernelFromSource", py_occaDeviceBuildKernelFromSource, METH_VARARGS},
   {"deviceBuildKernelFromString", py_occaDeviceBuildKernelFromString, METH_VARARGS},
   {"deviceBuildKernelFromBinary", py_occaDeviceBuildKernelFromBinary, METH_VARARGS},
 

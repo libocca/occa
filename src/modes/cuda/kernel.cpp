@@ -78,9 +78,9 @@ namespace occa {
       return data_.module;
     }
 
-    kernel* kernel::buildFromSource(const std::string &filename,
-                                                    const std::string &functionName,
-                                                    const kernelInfo &info_) {
+    kernel* kernel::build(const std::string &filename,
+                          const std::string &functionName,
+                          const kernelInfo &info_) {
 
       name = functionName;
 

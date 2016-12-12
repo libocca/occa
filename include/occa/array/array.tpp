@@ -108,7 +108,7 @@ namespace occa {
 
   template <class TM, const int idxType>
   array<TM,idxType> array<TM,idxType>::cloneOnCurrentDevice(const int copyOn) {
-    return cloneOn(occa::getCurrentDevice(), copyOn);
+    return cloneOn(occa::currentDevice(), copyOn);
   }
 
   template <class TM, const int idxType>
@@ -125,7 +125,7 @@ namespace occa {
   template <class TM, const int idxType>
   template <class TM2, const int idxType2>
   array<TM2,idxType2> array<TM,idxType>::cloneOnCurrentDevice(const int copyOn) {
-    return cloneOn<TM2>(occa::getCurrentDevice(), copyOn);
+    return cloneOn<TM2>(occa::currentDevice(), copyOn);
   }
 
   template <class TM, const int idxType>
@@ -303,40 +303,40 @@ namespace occa {
 
   template <class TM, const int idxType>
   void array<TM,idxType>::allocate(const udim_t d0) {
-    allocate(occa::getCurrentDevice(),
+    allocate(occa::currentDevice(),
              d0);
   }
 
   template <class TM, const int idxType>
   void array<TM,idxType>::allocate(const udim_t d0, const udim_t d1) {
-    allocate(occa::getCurrentDevice(),
+    allocate(occa::currentDevice(),
              d0, d1);
   }
 
   template <class TM, const int idxType>
   void array<TM,idxType>::allocate(const udim_t d0, const udim_t d1, const udim_t d2) {
-    allocate(occa::getCurrentDevice(),
+    allocate(occa::currentDevice(),
              d0, d1, d2);
   }
 
   template <class TM, const int idxType>
   void array<TM,idxType>::allocate(const udim_t d0, const udim_t d1, const udim_t d2,
                                    const udim_t d3) {
-    allocate(occa::getCurrentDevice(),
+    allocate(occa::currentDevice(),
              d0, d1, d2, d3);
   }
 
   template <class TM, const int idxType>
   void array<TM,idxType>::allocate(const udim_t d0, const udim_t d1, const udim_t d2,
                                    const udim_t d3, const udim_t d4) {
-    allocate(occa::getCurrentDevice(),
+    allocate(occa::currentDevice(),
              d0, d1, d2, d3, d4);
   }
 
   template <class TM, const int idxType>
   void array<TM,idxType>::allocate(const udim_t d0, const udim_t d1, const udim_t d2,
                                    const udim_t d3, const udim_t d4, const udim_t d5) {
-    allocate(occa::getCurrentDevice(),
+    allocate(occa::currentDevice(),
              d0, d1, d2, d3, d4, d5);
   }
 

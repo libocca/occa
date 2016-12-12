@@ -60,9 +60,9 @@ namespace occa {
       return NULL;
     }
 
-    void kernel::buildFromSource(const std::string &filename,
-                                 const std::string &functionName,
-                                 const occa::properties &props) {
+    void kernel::build(const std::string &filename,
+                       const std::string &functionName,
+                       const occa::properties &props) {
 
       const occa::properties allProps = properties + props;
       name = functionName;
@@ -107,11 +107,11 @@ namespace occa {
 
       std::string cFunction = io::read(sourceFile);
       info_t clInfo = makeCLInfo();
-      opencl::buildKernelFromSource(clInfo,
-                                    cFunction.c_str(), cFunction.size(),
-                                    functionName,
-                                    allProps["compilerFlags"],
-                                    hash, sourceFile);
+      opencl::buildKernel(clInfo,
+                          cFunction.c_str(), cFunction.size(),
+                          functionName,
+                          allProps["compilerFlags"],
+                          hash, sourceFile);
       clProgram = clInfo.clProgram;
       clKernel  = clInfo.clKernel;
 

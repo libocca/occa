@@ -74,8 +74,8 @@ def setDevice(arg):
     elif varIsOfClass(arg, device):
         _C_occa.setDevice(arg.handle)
 
-def getCurrentDevice():
-    return device(_C_occa.getCurrentDevice())
+def currentDevice():
+    return device(_C_occa.currentDevice())
 
 def setCompiler(compiler):
     #---[ Arg Testing ]-------
@@ -165,10 +165,10 @@ def wrapStream(handle):
 #  |====================================
 
 #  |---[ Kernel ]-----------------------
-def buildKernel(str_, functionName, kInfo = 0):
+def buildKernel(filename, functionName, kInfo = 0):
     #---[ Arg Testing ]-------
     try:
-        if isNotAString(str_):
+        if isNotAString(filename):
             raise ValueError('1st argument to [occa.buildKernel] must be a string')
         elif isNotAString(functionName):
             raise ValueError('2nd argument to [occa.buildKernel] must be a string')
@@ -181,25 +181,7 @@ def buildKernel(str_, functionName, kInfo = 0):
     #=========================
 
     kInfo_ = (0 if (kInfo == 0) else kInfo.handle)
-    return kernel(_C_occa.buildKernel(str_, functionName, kInfo_))
-
-def buildKernelFromSource(filename, functionName, kInfo = 0):
-    #---[ Arg Testing ]-------
-    try:
-        if isNotAString(filename):
-            raise ValueError('1st argument to [occa.buildKernelFromSource] must be a string')
-        elif isNotAString(functionName):
-            raise ValueError('2nd argument to [occa.buildKernelFromSource] must be a string')
-        elif (kInfo != 0) and (varNotIsOfClass(kInfo, kernelInfo)):
-            raise ValueError('3rd argument to [occa.buildKernelFromSource] (if given) must be an [occa.kernelInfo]')
-
-    except ValueError as e:
-        print(e)
-        sys.exit()
-    #=========================
-
-    kInfo_ = (0 if (kInfo == 0) else kInfo.handle)
-    return kernel(_C_occa.buildKernelFromSource(filename, functionName, kInfo_))
+    return kernel(_C_occa.buildKernel(filename, functionName, kInfo_))
 
 def buildKernelFromString(source, functionName, kInfo = 0, language = "OKL"):
     #---[ Arg Testing ]-------
@@ -235,42 +217,6 @@ def buildKernelFromBinary(binary, functionName):
     #=========================
 
     return kernel(_C_occa.buildKernelFromBinary(binary, functionName))
-
-def buildKernelFromLoopy(filename, functionName, kInfo = 0):
-    #---[ Arg Testing ]-------
-    try:
-        if isNotAString(filename):
-            raise ValueError('1st argument to [occa.buildKernelFromSource] must be a string')
-        elif isNotAString(functionName):
-            raise ValueError('2nd argument to [occa.buildKernelFromSource] must be a string')
-        elif (kInfo != 0) and (varNotIsOfClass(kInfo, kernelInfo)):
-            raise ValueError('3rd argument to [occa.buildKernelFromSource] (if given) must be an [occa.kernelInfo]')
-
-    except ValueError as e:
-        print(e)
-        sys.exit()
-    #=========================
-
-    kInfo_ = (0 if (kInfo == 0) else kInfo.handle)
-    return kernel(_C_occa.buildKernelFromLoopy(filename, functionName, kInfo_))
-
-def buildKernelFromFloopy(filename, functionName, kInfo = 0):
-    #---[ Arg Testing ]-------
-    try:
-        if isNotAString(filename):
-            raise ValueError('1st argument to [occa.buildKernelFromSource] must be a string')
-        elif isNotAString(functionName):
-            raise ValueError('2nd argument to [occa.buildKernelFromSource] must be a string')
-        elif (kInfo != 0) and (varNotIsOfClass(kInfo, kernelInfo)):
-            raise ValueError('3rd argument to [occa.buildKernelFromSource] (if given) must be an [occa.kernelInfo]')
-
-    except ValueError as e:
-        print(e)
-        sys.exit()
-    #=========================
-
-    kInfo_ = (0 if (kInfo == 0) else kInfo.handle)
-    return kernel(_C_occa.buildKernelFromFloopy(filename, functionName, kInfo_))
 #  |====================================
 
 #  |---[ Memory ]-----------------------
@@ -516,10 +462,10 @@ class device:
     def bytesAllocated(self):
         return _C_occa.bytesAllocated(self.handle)
 
-    def buildKernel(self, str_, functionName, kInfo = 0):
+    def buildKernel(self, filename, functionName, kInfo = 0):
         #---[ Arg Testing ]-------
         try:
-            if isNotAString(str_):
+            if isNotAString(filename):
                 raise ValueError('1st argument to [occa.device.buildKernel] must be a string')
             elif isNotAString(functionName):
                 raise ValueError('2nd argument to [occa.device.buildKernel] must be a string')
@@ -532,25 +478,7 @@ class device:
         #=========================
 
         kInfo_ = (0 if (kInfo == 0) else kInfo.handle)
-        return kernel(_C_occa.deviceBuildKernel(self.handle, str_, functionName, kInfo_))
-
-    def buildKernelFromSource(self, filename, functionName, kInfo = 0):
-        #---[ Arg Testing ]-------
-        try:
-            if isNotAString(filename):
-                raise ValueError('1st argument to [occa.device.buildKernelFromSource] must be a string')
-            elif isNotAString(functionName):
-                raise ValueError('2nd argument to [occa.device.buildKernelFromSource] must be a string')
-            elif (kInfo != 0) and (varNotIsOfClass(kInfo, kernelInfo)):
-                raise ValueError('3rd argument to [occa.device.buildKernelFromSource] (if given) must be an [occa.kernelInfo]')
-
-        except ValueError as e:
-            print(e)
-            sys.exit()
-        #=========================
-
-        kInfo_ = (0 if (kInfo == 0) else kInfo.handle)
-        return kernel(_C_occa.deviceBuildKernelFromSource(self.handle, filename, functionName, kInfo_))
+        return kernel(_C_occa.deviceBuildKernel(self.handle, filename, functionName, kInfo_))
 
     def buildKernelFromString(self, source, functionName, kInfo = 0):
         #---[ Arg Testing ]-------
@@ -586,42 +514,6 @@ class device:
         #=========================
 
         return kernel(_C_occa.deviceBuildKernelFromBinary(self.handle, binary, functionName))
-
-    def buildKernelFromLoopy(self, filename, functionName, kInfo = 0):
-        #---[ Arg Testing ]-------
-        try:
-            if isNotAString(filename):
-                raise ValueError('1st argument to [occa.device.buildKernelFromSource] must be a string')
-            elif isNotAString(functionName):
-                raise ValueError('2nd argument to [occa.device.buildKernelFromSource] must be a string')
-            elif (kInfo != 0) and (varNotIsOfClass(kInfo, kernelInfo)):
-                raise ValueError('3rd argument to [occa.device.buildKernelFromSource] (if given) must be an [occa.kernelInfo]')
-
-        except ValueError as e:
-            print(e)
-            sys.exit()
-        #=========================
-
-        kInfo_ = (0 if (kInfo == 0) else kInfo.handle)
-        return kernel(_C_occa.deviceBuildKernelFromLoopy(self.handle, filename, functionName, kInfo_))
-
-    def buildKernelFromFloopy(self, filename, functionName, kInfo = 0):
-        #---[ Arg Testing ]-------
-        try:
-            if isNotAString(filename):
-                raise ValueError('1st argument to [occa.device.buildKernelFromSource] must be a string')
-            elif isNotAString(functionName):
-                raise ValueError('2nd argument to [occa.device.buildKernelFromSource] must be a string')
-            elif (kInfo != 0) and (varNotIsOfClass(kInfo, kernelInfo)):
-                raise ValueError('3rd argument to [occa.device.buildKernelFromSource] (if given) must be an [occa.kernelInfo]')
-
-        except ValueError as e:
-            print(e)
-            sys.exit()
-        #=========================
-
-        kInfo_ = (0 if (kInfo == 0) else kInfo.handle)
-        return kernel(_C_occa.deviceBuildKernelFromFloopy(self.handle, filename, functionName, kInfo_))
 
     def malloc(self, type_, entries):
         #---[ Arg Testing ]-------

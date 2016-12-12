@@ -179,7 +179,7 @@ static PyObject* py_occaSetDeviceFromInfo(PyObject *self, PyObject *args) {
 }
 
 static PyObject* py_occaGetCurrentDevice(PyObject *self, PyObject *args) {
-  occaDevice device = occaGetCurrentDevice();
+  occaDevice device = occaCurrentDevice();
 
   return PyLong_FromVoidPtr(device);
 }
@@ -282,25 +282,13 @@ static PyObject* py_occaWrapStream(PyObject *self, PyObject *args) {
 
 //  |---[ Kernel ]----------------------
 static PyObject* py_occaBuildKernel(PyObject *self, PyObject *args) {
-  const char *str, *functionName;
-  occaKernelInfo *kInfo;
-
-  if (!PyArg_ParseTuple(args, "ssn", &str, &functionName, &kInfo)) {
-    return NULL;
-  }
-  occaKernel kernel = occaBuildKernel(str, functionName, kInfo);
-
-  return PyLong_FromVoidPtr(kernel);
-}
-
-static PyObject* py_occaBuildKernelFromSource(PyObject *self, PyObject *args) {
   const char *filename, *functionName;
   occaKernelInfo *kInfo;
 
   if (!PyArg_ParseTuple(args, "ssn", &filename, &functionName, &kInfo)) {
     return NULL;
   }
-  occaKernel kernel = occaBuildKernelFromSource(filename, functionName, kInfo);
+  occaKernel kernel = occaBuildKernel(filename, functionName, kInfo);
 
   return PyLong_FromVoidPtr(kernel);
 }
@@ -546,26 +534,13 @@ static PyObject* py_occaDeviceBytesAllocated(PyObject *self, PyObject *args) {
 
 static PyObject* py_occaDeviceBuildKernel(PyObject *self, PyObject *args) {
   occaDevice device;
-  const char *str, *functionName;
-  occaKernelInfo *kInfo;
-
-  if (!PyArg_ParseTuple(args, "nssn", &device, &str, &functionName, &kInfo)) {
-    return NULL;
-  }
-  occaKernel kernel = occaDeviceBuildKernel(device, str, functionName, kInfo);
-
-  return PyLong_FromVoidPtr(kernel);
-}
-
-static PyObject* py_occaDeviceBuildKernelFromSource(PyObject *self, PyObject *args) {
-  occaDevice device;
   const char *filename, *functionName;
   occaKernelInfo *kInfo;
 
   if (!PyArg_ParseTuple(args, "nssn", &device, &filename, &functionName, &kInfo)) {
     return NULL;
   }
-  occaKernel kernel = occaDeviceBuildKernelFromSource(device, filename, functionName, kInfo);
+  occaKernel kernel = occaDeviceBuildKernel(device, filename, functionName, kInfo);
 
   return PyLong_FromVoidPtr(kernel);
 }

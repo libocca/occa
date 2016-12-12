@@ -44,9 +44,9 @@ namespace occa {
 
       std::string binaryName(const std::string &filename);
 
-      void buildFromSource(const std::string &filename,
-                           const std::string &functionName,
-                           const occa::properties &props);
+      void build(const std::string &filename,
+                 const std::string &functionName,
+                 const occa::properties &props);
 
       void buildFromBinary(const std::string &filename,
                            const std::string &functionName);

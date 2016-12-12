@@ -44,9 +44,9 @@ int main(int argc, char **argv) {
                                      "addVectors.okl", "addVectors",
                                      info);
 
-  /* addVectors = occaBuildKernelFromSource(device, */
-  /*                                        "addVectors.occa", "addVectors", */
-  /*                                        occaNoKernelInfo); */
+  /* addVectors = occaBuildKernel(device, */
+  /*                              "addVectors.occa", "addVectors", */
+  /*                              occaNoKernelInfo); */
 
   int dims = 1;
   occaDim itemsPerGroup, groups;

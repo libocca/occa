@@ -58,8 +58,8 @@ int main(int argc, char **argv) {
   o_b  = device.wrapMemory(&cl_b , entries*sizeof(float));
   o_ab = device.wrapMemory(&cl_ab, entries*sizeof(float));
 
-  addVectors = device.buildKernelFromSource("addVectors.okl",
-                                            "addVectors");
+  addVectors = device.buildKernel("addVectors.okl",
+                                  "addVectors");
 
   o_a.copyFrom(a);
   o_b.copyFrom(b);

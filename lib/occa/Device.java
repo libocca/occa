@@ -84,14 +84,14 @@ public class Device {
     return buildKernelFromString(content, functionName, noKernelInfo, language);
   }
 
-  public native Kernel buildKernelFromSource(String[] filename,
-                                             String[] functionName,
-                                             KernelInfo info);
+  public native Kernel buildKernel(String[] filename,
+                                   String[] functionName,
+                                   KernelInfo info);
 
-  public Kernel buildKernelFromSource(String[] filename,
-                                      String[] functionName) {
+  public Kernel buildKernel(String[] filename,
+                            String[] functionName) {
 
-    return buildKernelFromSource(filename, functionName, noKernelInfo);
+    return buildKernel(filename, functionName, noKernelInfo);
   }
 
   public native Kernel buildKernelFromBinary(String[] filename,
