@@ -88,7 +88,7 @@ namespace occa {
 
   //---[ Memory ]-----------------------
   void memcpy(void *dest, const void *src,
-              const udim_t bytes,
+              const dim_t bytes,
               const properties &props) {
 
     ptrRangeMap_t::iterator srcIt  = uvaMap.find(const_cast<void*>(src));
@@ -118,25 +118,25 @@ namespace occa {
   }
 
   void memcpy(memory dest, const void *src,
-              const udim_t bytes,
-              const udim_t offset,
+              const dim_t bytes,
+              const dim_t offset,
               const properties &props) {
 
     dest.copyFrom(src, bytes, offset, props);
   }
 
   void memcpy(void *dest, memory src,
-              const udim_t bytes,
-              const udim_t offset,
+              const dim_t bytes,
+              const dim_t offset,
               const properties &props) {
 
     src.copyTo(dest, bytes, offset, props);
   }
 
   void memcpy(memory dest, memory src,
-              const udim_t bytes,
-              const udim_t destOffset,
-              const udim_t srcOffset,
+              const dim_t bytes,
+              const dim_t destOffset,
+              const dim_t srcOffset,
               const properties &props) {
 
     dest.copyFrom(src, bytes, destOffset, srcOffset, props);
@@ -263,14 +263,14 @@ namespace occa {
   }
 
   //---[ Memory Functions ]-------------
-  occa::memory malloc(const udim_t bytes,
+  occa::memory malloc(const dim_t bytes,
                       void *src,
                       const properties &props) {
 
     return getCurrentDevice().malloc(bytes, src, props);
   }
 
-  void* managedAlloc(const udim_t bytes,
+  void* managedAlloc(const dim_t bytes,
                      void *src,
                      const properties &props) {
 
@@ -278,7 +278,7 @@ namespace occa {
   }
 
   occa::memory wrapMemory(void *handle_,
-                          const udim_t bytes,
+                          const dim_t bytes,
                           const occa::properties &props) {
 
     return getCurrentDevice().wrapMemory(handle_, bytes, props);

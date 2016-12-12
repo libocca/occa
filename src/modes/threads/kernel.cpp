@@ -30,7 +30,7 @@ namespace occa {
     kernel::kernel(const occa::properties &properties_) :
       serial::kernel(properties_) {
 
-      threads = properties.get<int>("threads", sys::getCoreCount());
+      threads = properties.get("threads", sys::getCoreCount());
     }
 
     kernel::~kernel() {}

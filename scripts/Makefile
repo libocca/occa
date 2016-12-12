@@ -71,8 +71,6 @@ usingOSX     = 0
 usingWinux   = 0
 usingWindows = 0
 
-osFlags += -D OCCA_LINUX_OS=$(OCCA_LINUX_OS) -D OCCA_OSX_OS=$(OCCA_OSX_OS) -D OCCA_WINDOWS_OS=$(OCCA_WINDOWS_OS) -D OCCA_WINUX_OS=$(OCCA_WINUX_OS)
-
 UNAME = $(shell uname)
 
 ifeq ($(UNAME),Linux)
@@ -195,27 +193,31 @@ fModDirFlag  = $(call fCompilerModuleDirFlag)
 
 
 #---[ Flags and Libraries ]-----------------------
+OCCA_USING_VS := 0
+
 ifeq ($(usingLinux),1)
 
   ifeq ($(usingWinux),0)
-    osFlags += -D OCCA_OS=OCCA_LINUX_OS
+    OCCA_OS := OCCA_LINUX_OS
   else
-    osFlags += -D OCCA_OS=OCCA_WINUX_OS
+    OCCA_OS := OCCA_WINUX_OS
   endif
 
   links += -lm -lrt -ldl
 
 else ifeq ($(usingOSX),1)
 
-  osFlags += -D OCCA_OS=OCCA_OSX_OS -Wno-deprecated-declarations
+	OCCA_OS := OCCA_OSX_OS
+  osFlags += -Wno-deprecated-declarations
   links += -framework accelerate -framework CoreServices
 
 else ifeq ($(usingWindows),1)
 
   ifeq ($(usingWinux),0)
-    osFlags += -D OCCA_OS=OCCA_WINDOWS_OS -D OCCA_USING_VS=1
+    OCCA_OS := OCCA_WINDOWS_OS
+	  OCCA_USING_VS := 1
   else
-    osFlags += -D OCCA_OS=OCCA_WINDOWS_OS -D OCCA_USING_VS=0
+    OCCA_OS := OCCA_WINDOWS_OS
   endif
 
   links +=
@@ -305,28 +307,23 @@ else
 endif
 
 ifeq ($(debugEnabled), 1)
+  OCCA_DEBUG_ENABLED := 1
   cfFlags += $(debugFlags)
-  cfFlags += -DOCCA_DEBUG_ENABLED=1
 else
+  OCCA_DEBUG_ENABLED := 0
   cfFlags += $(releaseFlags)
-  cfFlags += -DOCCA_DEBUG_ENABLED=0 -DNDEBUG=1 -DOCCA_SHOW_WARNINGS=0
+  cfFlags += -DNDEBUG=1
 endif
 
 ifeq ($(checkEnabled), 1)
-  cfFlags += -DOCCA_CHECK_ENABLED=1
+  OCCA_CHECK_ENABLED := 1
 else
-  cfFlags += -DOCCA_CHECK_ENABLED=0
+  OCCA_CHECK_ENABLED := 0
 endif
 
-flags  += -DOCCA_OPENMP_ENABLED=$(openmpEnabled)
-fFlags += -DOCCA_OPENMP_ENABLED=$(fOpenmpEnabled)
-
-cfFlags += -DOCCA_OPENCL_ENABLED=$(openclEnabled)
-cfFlags += -DOCCA_CUDA_ENABLED=$(cudaEnabled)
-
-ifdef COMPILING_WITH_JULIA
-  cfFlags += -DOCCA_COMPILED_FOR_JULIA=1
-endif
+OCCA_OPENMP_ENABLED := $(openmpEnabled)
+OCCA_OPENCL_ENABLED := $(openclEnabled)
+OCCA_CUDA_ENABLED   := $(cudaEnabled)
 
 flags  += $(cfFlags) $(osFlags)
 fFlags += $(cfFlags) $(osFlags)

@@ -112,23 +112,23 @@ namespace occa {
 
   //---[ Memory ]-----------------------
   void memcpy(void *dest, const void *src,
-              const udim_t bytes,
+              const dim_t bytes,
               const properties &props = properties());
 
   void memcpy(memory dest, const void *src,
-              const udim_t bytes = 0,
-              const udim_t offset = 0,
+              const dim_t bytes = -1,
+              const dim_t offset = 0,
               const properties &props = properties());
 
   void memcpy(void *dest, memory src,
-              const udim_t bytes = 0,
-              const udim_t offset = 0,
+              const dim_t bytes = -1,
+              const dim_t offset = 0,
               const properties &props = properties());
 
   void memcpy(memory dest, memory src,
-              const udim_t bytes = 0,
-              const udim_t destOffset = 0,
-              const udim_t srcOffset = 0,
+              const dim_t bytes = -1,
+              const dim_t destOffset = 0,
+              const dim_t srcOffset = 0,
               const properties &props = properties());
 
   //---[ Device Functions ]-------------
@@ -175,16 +175,16 @@ namespace occa {
   //====================================
 
   //---[ Memory Functions ]-------------
-  occa::memory malloc(const udim_t bytes,
+  occa::memory malloc(const dim_t bytes,
                       void *src = NULL,
                       const properties &props = occa::properties());
 
-  void* managedAlloc(const udim_t bytes,
+  void* managedAlloc(const dim_t bytes,
                      void *src = NULL,
                      const properties &props = occa::properties());
 
   occa::memory wrapMemory(void *handle_,
-                          const udim_t bytes,
+                          const dim_t bytes,
                           const occa::properties &props = occa::properties());
   //====================================
 

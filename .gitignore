@@ -1,32 +1,20 @@
 .gitattributes
 
-bin
+/bin
+/include/occa/defines/compiledDefines.hpp
+/scripts/compilerVendorTest
+.compiledDefinesChanged
 
 *.obj
-y
-
+*.pyc
 main
 
-notes.org
-
-web/
-web2/
-
+# Debug
 .DS_Store
 *.dSYM
-
-# for now
-benchmarks/
-scripts/occaBenchmark.cpp
-scripts/compilerVendorTest
 
 # Visual Studio
 editorTools/visualStudio/*
 !editorTools/visualStudio/occa.sln
 !editorTools/visualStudio/occa.vcxproj
 !editorTools/visualStudio/occa.vcxproj.filters
-
-*.pyc
-/examples/addVectors/ispc/tasksys.cpp
-
-sandbox/

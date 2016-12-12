@@ -28,6 +28,8 @@
 #include <map>
 #include <cstdint>
 
+#include "occa/defines.hpp"
+
 namespace occa {
   typedef int64_t dim_t;
   typedef uint64_t udim_t;

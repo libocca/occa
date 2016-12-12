@@ -25,6 +25,7 @@
 
 #include <iomanip>
 
+#include "occa/defines.hpp"
 #include "occa/parser/defines.hpp"
 
 namespace occa {

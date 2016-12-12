@@ -20,6 +20,8 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  */
 
+#include "occa/defines.hpp"
+
 #if OCCA_OPENCL_ENABLED
 #  ifndef OCCA_OPENCL_MEMORY_HEADER
 #  define OCCA_OPENCL_MEMORY_HEADER
@@ -45,17 +47,17 @@ namespace occa {
       kernelArg makeKernelArg() const;
 
       void copyTo(void *dest,
-                  const udim_t bytes = 0,
+                  const udim_t bytes,
                   const udim_t destOffset = 0,
                   const occa::properties &props = occa::properties());
 
       void copyFrom(const void *src,
-                    const udim_t bytes = 0,
+                    const udim_t bytes,
                     const udim_t offset = 0,
                     const occa::properties &props = occa::properties());
 
       void copyFrom(const memory_v *src,
-                    const udim_t bytes = 0,
+                    const udim_t bytes,
                     const udim_t destOffset = 0,
                     const udim_t srcOffset = 0,
                     const occa::properties &props = occa::properties());

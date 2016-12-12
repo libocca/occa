@@ -23,6 +23,7 @@
 #ifndef OCCA_ARRAY_HEADER
 #define OCCA_ARRAY_HEADER
 
+#include "occa/defines.hpp"
 #include "occa/base.hpp"
 #include "occa/tools/misc.hpp"
 

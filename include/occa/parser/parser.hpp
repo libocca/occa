@@ -23,6 +23,7 @@
 #ifndef OCCA_PARSER_HEADER
 #define OCCA_PARSER_HEADER
 
+#include "occa/defines.hpp"
 #include "occa/parser/defines.hpp"
 #include "occa/parser/preprocessor.hpp"
 #include "occa/parser/tools.hpp"

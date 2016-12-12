@@ -20,6 +20,8 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  */
 
+#include "occa/defines.hpp"
+
 namespace occa {
   namespace parserNS {
     //---[ Node ]-----------------------------------

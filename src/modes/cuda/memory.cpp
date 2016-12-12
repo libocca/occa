@@ -20,6 +20,8 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  */
 
+#include "occa/defines.hpp"
+
 #if OCCA_CUDA_ENABLED
 
 #include "occa/CUDA.hpp"
@@ -81,21 +83,15 @@ namespace occa {
     }
 
     void memory::copyFrom(const void *src,
-                                  const udim_t bytes,
-                                  const udim_t offset) {
-      const udim_t bytes_ = (bytes == 0) ? size : bytes;
-
-      OCCA_CHECK((bytes_ + offset) <= size,
-                 "Memory has size [" << size << "],"
-                 << "trying to access [ " << offset << " , " << (offset + bytes_) << " ]");
-
+                          const udim_t bytes,
+                          const udim_t offset) {
       if (!isATexture()) {
         OCCA_CUDA_CHECK("Memory: Copy From",
-                        cuMemcpyHtoD(*((CUdeviceptr*) handle) + offset, src, bytes_) );
+                        cuMemcpyHtoD(*((CUdeviceptr*) handle) + offset, src, bytes) );
       } else {
         if (textureInfo.dim == 1) {
           OCCA_CUDA_CHECK("Texture Memory: Copy From",
-                          cuMemcpyHtoA(((CUDATextureData_t*) handle)->array, offset, src, bytes_) );
+                          cuMemcpyHtoA(((CUDATextureData_t*) handle)->array, offset, src, bytes) );
         } else {
           CUDA_MEMCPY2D info;
 
@@ -111,7 +107,7 @@ namespace occa {
           info.dstArray      = ((CUDATextureData_t*) handle)->array;
 
           info.WidthInBytes = textureInfo.w * textureInfo.bytesInEntry;
-          info.Height       = (bytes_ / info.WidthInBytes);
+          info.Height       = (bytes / info.WidthInBytes);
 
           cuMemcpy2D(&info);
 
@@ -121,19 +117,9 @@ namespace occa {
     }
 
     void memory::copyFrom(const memory_v *src,
-                                  const udim_t bytes,
-                                  const udim_t destOffset,
-                                  const udim_t srcOffset) {
-      const udim_t bytes_ = (bytes == 0) ? size : bytes;
-
-      OCCA_CHECK((bytes_ + destOffset) <= size,
-                 "Memory has size [" << size << "],"
-                 << "trying to access [ " << destOffset << " , " << (destOffset + bytes_) << " ]");
-
-      OCCA_CHECK((bytes_ + srcOffset) <= src->size,
-                 "Source has size [" << src->size << "],"
-                 << "trying to access [ " << srcOffset << " , " << (srcOffset + bytes_) << " ]");
-
+                          const udim_t bytes,
+                          const udim_t destOffset,
+                          const udim_t srcOffset) {
       void *dstPtr, *srcPtr;
 
       if (!isATexture()) {
@@ -151,44 +137,38 @@ namespace occa {
           OCCA_CUDA_CHECK("Memory: Copy From [Memory -> Memory]",
                           cuMemcpyDtoD(*((CUdeviceptr*) dstPtr) + destOffset,
                                        *((CUdeviceptr*) srcPtr) + srcOffset,
-                                       bytes_) );
+                                       bytes) );
         } else {
           OCCA_CUDA_CHECK("Memory: Copy From [Texture -> Memory]",
                           cuMemcpyAtoD(*((CUdeviceptr*) dstPtr) + destOffset,
                                        (CUarray) srcPtr         , srcOffset,
-                                       bytes_) );
+                                       bytes) );
         }
       } else {
         if (!src->isATexture()) {
           OCCA_CUDA_CHECK("Memory: Copy From [Memory -> Texture]",
                           cuMemcpyDtoA((CUarray) dstPtr         , destOffset,
                                        *((CUdeviceptr*) srcPtr) + srcOffset,
-                                       bytes_) );
+                                       bytes) );
         } else {
           OCCA_CUDA_CHECK("Memory: Copy From [Texture -> Texture]",
                           cuMemcpyAtoA((CUarray) dstPtr, destOffset,
                                        (CUarray) srcPtr, srcOffset,
-                                       bytes_) );
+                                       bytes) );
         }
       }
     }
 
     void memory::copyTo(void *dest,
-                                const udim_t bytes,
-                                const udim_t offset) {
-      const udim_t bytes_ = (bytes == 0) ? size : bytes;
-
-      OCCA_CHECK((bytes_ + offset) <= size,
-                 "Memory has size [" << size << "],"
-                 << "trying to access [ " << offset << " , " << (offset + bytes_) << " ]");
-
+                        const udim_t bytes,
+                        const udim_t offset) {
       if (!isATexture()) {
         OCCA_CUDA_CHECK("Memory: Copy To",
-                        cuMemcpyDtoH(dest, *((CUdeviceptr*) handle) + offset, bytes_) );
+                        cuMemcpyDtoH(dest, *((CUdeviceptr*) handle) + offset, bytes) );
       } else {
         if (textureInfo.dim == 1) {
           OCCA_CUDA_CHECK("Texture Memory: Copy To",
-                          cuMemcpyAtoH(dest, ((CUDATextureData_t*) handle)->array, offset, bytes_) );
+                          cuMemcpyAtoH(dest, ((CUDATextureData_t*) handle)->array, offset, bytes) );
         } else {
           CUDA_MEMCPY2D info;
 
@@ -204,7 +184,7 @@ namespace occa {
           info.dstPitch      = 0;
 
           info.WidthInBytes = textureInfo.w * textureInfo.bytesInEntry;
-          info.Height       = (bytes_ / info.WidthInBytes);
+          info.Height       = (bytes / info.WidthInBytes);
 
           cuMemcpy2D(&info);
 
@@ -214,19 +194,9 @@ namespace occa {
     }
 
     void memory::copyTo(memory_v *dest,
-                                const udim_t bytes,
-                                const udim_t destOffset,
-                                const udim_t srcOffset) {
-      const udim_t bytes_ = (bytes == 0) ? size : bytes;
-
-      OCCA_CHECK((bytes_ + srcOffset) <= size,
-                 "Memory has size [" << size << "],"
-                 << "trying to access [ " << srcOffset << " , " << (srcOffset + bytes_) << " ]");
-
-      OCCA_CHECK((bytes_ + destOffset) <= dest->size,
-                 "Destination has size [" << dest->size << "],"
-                 << "trying to access [ " << destOffset << " , " << (destOffset + bytes_) << " ]");
-
+                        const udim_t bytes,
+                        const udim_t destOffset,
+                        const udim_t srcOffset) {
       void *dstPtr, *srcPtr;
 
       if (!isATexture()) {
@@ -244,62 +214,47 @@ namespace occa {
           OCCA_CUDA_CHECK("Memory: Copy To [Memory -> Memory]",
                           cuMemcpyDtoD(*((CUdeviceptr*) dstPtr) + destOffset,
                                        *((CUdeviceptr*) srcPtr) + srcOffset,
-                                       bytes_) );
+                                       bytes) );
         } else {
           OCCA_CUDA_CHECK("Memory: Copy To [Memory -> Texture]",
                           cuMemcpyDtoA((CUarray) dstPtr         , destOffset,
                                        *((CUdeviceptr*) srcPtr) + srcOffset,
-                                       bytes_) );
+                                       bytes) );
         }
       } else {
         if (dest->isATexture()) {
           OCCA_CUDA_CHECK("Memory: Copy To [Texture -> Memory]",
                           cuMemcpyAtoD(*((CUdeviceptr*) dstPtr) + destOffset,
                                        (CUarray) srcPtr         , srcOffset,
-                                       bytes_) );
+                                       bytes) );
         } else {
           OCCA_CUDA_CHECK("Memory: Copy To [Texture -> Texture]",
                           cuMemcpyAtoA((CUarray) dstPtr, destOffset,
                                        (CUarray) srcPtr, srcOffset,
-                                       bytes_) );
+                                       bytes) );
         }
       }
     }
 
     void memory::asyncCopyFrom(const void *src,
-                                       const udim_t bytes,
-                                       const udim_t offset) {
+                               const udim_t bytes,
+                               const udim_t offset) {
       const CUstream &stream = *((CUstream*) dHandle->currentStream);
-      const udim_t bytes_ = (bytes == 0) ? size : bytes;
-
-      OCCA_CHECK((bytes_ + offset) <= size,
-                 "Memory has size [" << size << "],"
-                 << "trying to access [ " << offset << " , " << (offset + bytes_) << " ]");
 
       if (!isATexture()) {
         OCCA_CUDA_CHECK("Memory: Asynchronous Copy From",
-                        cuMemcpyHtoDAsync(*((CUdeviceptr*) handle) + offset, src, bytes_, stream) );
+                        cuMemcpyHtoDAsync(*((CUdeviceptr*) handle) + offset, src, bytes, stream) );
       } else {
         OCCA_CUDA_CHECK("Texture Memory: Asynchronous Copy From",
-                        cuMemcpyHtoAAsync(((CUDATextureData_t*) handle)->array, offset, src, bytes_, stream) );
+                        cuMemcpyHtoAAsync(((CUDATextureData_t*) handle)->array, offset, src, bytes, stream) );
       }
     }
 
     void memory::asyncCopyFrom(const memory_v *src,
-                                       const udim_t bytes,
-                                       const udim_t destOffset,
-                                       const udim_t srcOffset) {
+                               const udim_t bytes,
+                               const udim_t destOffset,
+                               const udim_t srcOffset) {
       const CUstream &stream = *((CUstream*) dHandle->currentStream);
-      const udim_t bytes_ = (bytes == 0) ? size : bytes;
-
-      OCCA_CHECK((bytes_ + destOffset) <= size,
-                 "Memory has size [" << size << "],"
-                 << "trying to access [ " << destOffset << " , " << (destOffset + bytes_) << " ]");
-
-      OCCA_CHECK((bytes_ + srcOffset) <= src->size,
-                 "Source has size [" << src->size << "],"
-                 << "trying to access [ " << srcOffset << " , " << (srcOffset + bytes_) << " ]");
-
       void *dstPtr, *srcPtr;
 
       if (!isATexture()) {
@@ -317,62 +272,47 @@ namespace occa {
           OCCA_CUDA_CHECK("Memory: Asynchronous Copy From [Memory -> Memory]",
                           cuMemcpyDtoDAsync(*((CUdeviceptr*) dstPtr) + destOffset,
                                             *((CUdeviceptr*) srcPtr) + srcOffset,
-                                            bytes_, stream) );
+                                            bytes, stream) );
         } else {
           OCCA_CUDA_CHECK("Memory: Asynchronous Copy From [Texture -> Memory]",
                           cuMemcpyAtoD(*((CUdeviceptr*) dstPtr) + destOffset,
                                        (CUarray) srcPtr         , srcOffset,
-                                       bytes_) );
+                                       bytes) );
         }
       } else {
         if (src->isATexture()) {
           OCCA_CUDA_CHECK("Memory: Asynchronous Copy From [Memory -> Texture]",
                           cuMemcpyDtoA((CUarray) dstPtr         , destOffset,
                                        *((CUdeviceptr*) srcPtr) + srcOffset,
-                                       bytes_) );
+                                       bytes) );
         } else {
           OCCA_CUDA_CHECK("Memory: Asynchronous Copy From [Texture -> Texture]",
                           cuMemcpyAtoA((CUarray) dstPtr, destOffset,
                                        (CUarray) srcPtr, srcOffset,
-                                       bytes_) );
+                                       bytes) );
         }
       }
     }
 
     void memory::asyncCopyTo(void *dest,
-                                     const udim_t bytes,
-                                     const udim_t offset) {
+                             const udim_t bytes,
+                             const udim_t offset) {
       const CUstream &stream = *((CUstream*) dHandle->currentStream);
-      const udim_t bytes_ = (bytes == 0) ? size : bytes;
-
-      OCCA_CHECK((bytes_ + offset) <= size,
-                 "Memory has size [" << size << "],"
-                 << "trying to access [ " << offset << " , " << (offset + bytes_) << " ]");
 
       if (!isATexture()) {
         OCCA_CUDA_CHECK("Memory: Asynchronous Copy To",
-                        cuMemcpyDtoHAsync(dest, *((CUdeviceptr*) handle) + offset, bytes_, stream) );
+                        cuMemcpyDtoHAsync(dest, *((CUdeviceptr*) handle) + offset, bytes, stream) );
       } else {
         OCCA_CUDA_CHECK("Texture Memory: Asynchronous Copy To",
-                        cuMemcpyAtoHAsync(dest,((CUDATextureData_t*) handle)->array, offset, bytes_, stream) );
+                        cuMemcpyAtoHAsync(dest,((CUDATextureData_t*) handle)->array, offset, bytes, stream) );
       }
     }
 
     void memory::asyncCopyTo(memory_v *dest,
-                                     const udim_t bytes,
-                                     const udim_t destOffset,
-                                     const udim_t srcOffset) {
+                             const udim_t bytes,
+                             const udim_t destOffset,
+                             const udim_t srcOffset) {
       const CUstream &stream = *((CUstream*) dHandle->currentStream);
-      const udim_t bytes_ = (bytes == 0) ? size : bytes;
-
-      OCCA_CHECK((bytes_ + srcOffset) <= size,
-                 "Memory has size [" << size << "],"
-                 << "trying to access [ " << srcOffset << " , " << (srcOffset + bytes_) << " ]");
-
-      OCCA_CHECK((bytes_ + destOffset) <= dest->size,
-                 "Destination has size [" << dest->size << "],"
-                 << "trying to access [ " << destOffset << " , " << (destOffset + bytes_) << " ]");
-
       void *dstPtr, *srcPtr;
 
       if (!isATexture()) {
@@ -390,24 +330,24 @@ namespace occa {
           OCCA_CUDA_CHECK("Memory: Asynchronous Copy To [Memory -> Memory]",
                           cuMemcpyDtoDAsync(*((CUdeviceptr*) dstPtr) + destOffset,
                                             *((CUdeviceptr*) srcPtr) + srcOffset,
-                                            bytes_, stream) );
+                                            bytes, stream) );
         } else {
           OCCA_CUDA_CHECK("Memory: Asynchronous Copy To [Memory -> Texture]",
                           cuMemcpyDtoA((CUarray) dstPtr         , destOffset,
                                        *((CUdeviceptr*) srcPtr) + srcOffset,
-                                       bytes_) );
+                                       bytes) );
         }
       } else {
         if (dest->isATexture()) {
           OCCA_CUDA_CHECK("Memory: Asynchronous Copy To [Texture -> Memory]",
                           cuMemcpyAtoD(*((CUdeviceptr*) dstPtr) + destOffset,
                                        (CUarray) srcPtr         , srcOffset,
-                                       bytes_) );
+                                       bytes) );
         } else {
           OCCA_CUDA_CHECK("Memory: Asynchronous Copy To [Texture -> Texture]",
                           cuMemcpyAtoA((CUarray) dstPtr, destOffset,
                                        (CUarray) srcPtr, srcOffset,
-                                       bytes_) );
+                                       bytes) );
         }
       }
     }

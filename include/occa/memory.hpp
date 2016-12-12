@@ -71,17 +71,17 @@ namespace occa {
     virtual kernelArg makeKernelArg() const = 0;
 
     virtual void copyTo(void *dest,
-                        const udim_t bytes = 0,
+                        const udim_t bytes = -1,
                         const udim_t offset = 0,
                         const occa::properties &props = occa::properties()) = 0;
 
     virtual void copyFrom(const void *src,
-                          const udim_t bytes = 0,
+                          const udim_t bytes = -1,
                           const udim_t offset = 0,
                           const occa::properties &props = occa::properties()) = 0;
 
     virtual void copyFrom(const memory_v *src,
-                          const udim_t bytes = 0,
+                          const udim_t bytes = -1,
                           const udim_t destOffset = 0,
                           const udim_t srcOffset = 0,
                           const occa::properties &props = occa::properties()) = 0;
@@ -92,22 +92,22 @@ namespace occa {
 
     //---[ Friend Functions ]-----------
     friend void memcpy(void *dest, void *src,
-                       const udim_t bytes,
+                       const dim_t bytes,
                        const occa::properties &props);
 
     friend void startManaging(void *ptr);
     friend void stopManaging(void *ptr);
 
-    friend void syncToDevice(void *ptr, const udim_t bytes);
-    friend void syncFromDevice(void *ptr, const udim_t bytes);
+    friend void syncToDevice(void *ptr, const dim_t bytes);
+    friend void syncFromDevice(void *ptr, const dim_t bytes);
 
     friend void syncMemToDevice(occa::memory_v *mem,
-                                const udim_t bytes,
-                                const udim_t offset);
+                                const dim_t bytes,
+                                const dim_t offset);
 
     friend void syncMemFromDevice(occa::memory_v *mem,
-                                  const udim_t bytes,
-                                  const udim_t offset);
+                                  const dim_t bytes,
+                                  const dim_t offset);
   };
   //====================================
 
@@ -149,33 +149,33 @@ namespace occa {
 
     void manage();
 
-    void syncToDevice(const udim_t bytes, const udim_t offset);
-    void syncFromDevice(const udim_t bytes, const udim_t offset);
+    void syncToDevice(const dim_t bytes, const dim_t offset);
+    void syncFromDevice(const dim_t bytes, const dim_t offset);
 
     bool uvaIsDirty();
     void uvaMarkDirty();
     void uvaMarkClean();
 
     void copyFrom(const void *src,
-                  const udim_t bytes = 0,
-                  const udim_t offset = 0,
+                  const dim_t bytes = -1,
+                  const dim_t offset = 0,
                   const occa::properties &props = occa::properties());
 
     void copyFrom(const memory src,
-                  const udim_t bytes = 0,
-                  const udim_t destOffset = 0,
-                  const udim_t srcOffset = 0,
+                  const dim_t bytes = -1,
+                  const dim_t destOffset = 0,
+                  const dim_t srcOffset = 0,
                   const occa::properties &props = occa::properties());
 
     void copyTo(void *dest,
-                const udim_t bytes = 0,
-                const udim_t offset = 0,
+                const dim_t bytes = -1,
+                const dim_t offset = 0,
                 const occa::properties &props = occa::properties());
 
     void copyTo(const memory dest,
-                const udim_t bytes = 0,
-                const udim_t destOffset = 0,
-                const udim_t srcOffset = 0,
+                const dim_t bytes = -1,
+                const dim_t destOffset = 0,
+                const dim_t srcOffset = 0,
                 const occa::properties &props = occa::properties());
 
     void free();

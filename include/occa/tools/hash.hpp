@@ -25,6 +25,8 @@
 
 #include <iostream>
 
+#include "occa/defines.hpp"
+
 namespace occa {
   // Uses FNV hashing
   class hash_t {

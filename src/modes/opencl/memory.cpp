@@ -20,6 +20,8 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  */
 
+#include "occa/defines.hpp"
+
 #if OCCA_OPENCL_ENABLED
 
 #include "occa/modes/opencl/memory.hpp"
@@ -51,18 +53,12 @@ namespace occa {
                           const udim_t offset,
                           const occa::properties &props) {
       cl_command_queue &stream = *((cl_command_queue*) dHandle->currentStream);
-
-      const udim_t bytes_ = (bytes == 0) ? size : bytes;
       const bool async = props.get("async", false);
-
-      OCCA_CHECK((bytes_ + offset) <= size,
-                 "Memory has size [" << size << "],"
-                 << "trying to access [ " << offset << " , " << (offset + bytes_) << " ]");
 
       OCCA_CL_CHECK("Memory: " << (async ? "Async " : "") << "Copy From",
                     clEnqueueWriteBuffer(stream, *((cl_mem*) handle),
                                          async ? CL_FALSE : CL_TRUE,
-                                         offset, bytes_, src,
+                                         offset, bytes, src,
                                          0, NULL, NULL));
     }
 
@@ -72,24 +68,14 @@ namespace occa {
                           const udim_t srcOffset,
                           const occa::properties &props) {
       cl_command_queue &stream = *((cl_command_queue*) dHandle->currentStream);
-
-      const udim_t bytes_ = (bytes == 0) ? size : bytes;
       const bool async = props.get("async", false);
-
-      OCCA_CHECK((bytes_ + destOffset) <= size,
-                 "Memory has size [" << size << "],"
-                 << "trying to access [ " << destOffset << " , " << (destOffset + bytes_) << " ]");
-
-      OCCA_CHECK((bytes_ + srcOffset) <= src->size,
-                 "Source has size [" << src->size << "],"
-                 << "trying to access [ " << srcOffset << " , " << (srcOffset + bytes_) << " ]");
 
       OCCA_CL_CHECK("Memory: " << (async ? "Async " : "") << "Copy From",
                     clEnqueueCopyBuffer(stream,
                                         *((cl_mem*) src->handle),
                                         *((cl_mem*) handle),
                                         srcOffset, destOffset,
-                                        bytes_,
+                                        bytes,
                                         0, NULL, NULL));
     }
 
@@ -99,18 +85,12 @@ namespace occa {
                         const occa::properties &props) {
 
       const cl_command_queue &stream = *((cl_command_queue*) dHandle->currentStream);
-
-      const udim_t bytes_ = (bytes == 0) ? size : bytes;
       const bool async = props.get("async", false);
-
-      OCCA_CHECK((bytes_ + offset) <= size,
-                 "Memory has size [" << size << "],"
-                 << "trying to access [ " << offset << " , " << (offset + bytes_) << " ]");
 
       OCCA_CL_CHECK("Memory: " << (async ? "Async " : "") << "Copy To",
                     clEnqueueReadBuffer(stream, *((cl_mem*) handle),
                                         async ? CL_FALSE : CL_TRUE,
-                                        offset, bytes_, dest,
+                                        offset, bytes, dest,
                                         0, NULL, NULL));
     }
 
@@ -124,7 +104,6 @@ namespace occa {
                                               mappedPtr,
                                               0, NULL, NULL));
       }
-
       // Free mapped-host pointer
       OCCA_CL_CHECK("Mapped Free: clReleaseMemObject",
                     clReleaseMemObject(*((cl_mem*) handle)));

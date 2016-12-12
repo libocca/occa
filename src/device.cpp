@@ -149,7 +149,7 @@ namespace occa {
         for (size_t i = 0; i < dirtyEntries; ++i) {
           occa::memory_v *mem = uvaDirtyMemory[i];
 
-          mem->copyTo(mem->uvaPtr, 0, 0, occa::properties("async = true"));
+          mem->copyTo(mem->uvaPtr, -1, 0, occa::properties("async = 1"));
 
           mem->memInfo &= ~uvaFlag::inDevice;
           mem->memInfo &= ~uvaFlag::isDirty;
@@ -316,7 +316,7 @@ namespace occa {
       if (k->metadata.nestedKernels) {
         std::stringstream ss;
 
-        const bool vc_f = settings.get<bool>("verboseCompilation");
+        const bool vc_f = settings.get("verboseCompilation", true);
 
         for (int ki = 0; ki < k->metadata.nestedKernels; ++ki) {
           ss << ki;
@@ -364,10 +364,13 @@ namespace occa {
   //  |=================================
 
   //  |---[ Memory ]--------------------
-  memory device::malloc(const udim_t bytes,
+  memory device::malloc(const dim_t bytes,
                         void *src,
                         const occa::properties &props) {
     checkIfInitialized();
+
+    OCCA_CHECK(bytes >= 0,
+               "Trying to allocate negative bytes (" << bytes << ")");
 
     memory mem;
     mem.mHandle          = dHandle->malloc(bytes, src, props);
@@ -378,10 +381,13 @@ namespace occa {
     return mem;
   }
 
-  void* device::managedAlloc(const udim_t bytes,
+  void* device::managedAlloc(const dim_t bytes,
                              void *src,
                              const occa::properties &props) {
     checkIfInitialized();
+
+    OCCA_CHECK(bytes >= 0,
+               "Trying to allocate negative bytes (" << bytes << ")");
 
     memory mem = malloc(bytes, src, props);
     mem.manage();
@@ -390,9 +396,12 @@ namespace occa {
   }
 
   occa::memory device::wrapMemory(void *handle_,
-                                  const udim_t bytes,
+                                  const dim_t bytes,
                                   const occa::properties &props) {
     checkIfInitialized();
+
+    OCCA_CHECK(bytes >= 0,
+               "Trying to wrap memory with negative bytes (" << bytes << ")");
 
     memory mem;
     mem.mHandle          = dHandle->wrapMemory(handle_, bytes, props);

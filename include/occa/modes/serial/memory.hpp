@@ -23,6 +23,7 @@
 #ifndef OCCA_SERIAL_MEMORY_HEADER
 #define OCCA_SERIAL_MEMORY_HEADER
 
+#include "occa/defines.hpp"
 #include "occa/memory.hpp"
 
 namespace occa {
@@ -38,18 +39,18 @@ namespace occa {
       void copyTo(void *dest,
                   const udim_t bytes,
                   const udim_t destOffset,
-                  const occa::properties &props = occa::properties());
+                  const occa::properties &props);
 
       void copyFrom(const void *src,
                     const udim_t bytes,
                     const udim_t offset,
-                    const occa::properties &props = occa::properties());
+                    const occa::properties &props);
 
       void copyFrom(const memory_v *src,
                     const udim_t bytes,
                     const udim_t destOffset,
                     const udim_t srcOffset,
-                    const occa::properties &props = occa::properties());
+                    const occa::properties &props);
 
       void free();
       void detach();

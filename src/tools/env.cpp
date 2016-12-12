@@ -89,11 +89,10 @@ namespace occa {
 #  if (OCCA_OS & (OCCA_LINUX_OS | OCCA_OSX_OS))
         OCCA_DIR = OCCA_STRINGIFY(OCCA_COMPILED_DIR);
 #  else
-		OCCA_DIR = OCCA_COMPILED_DIR;
+        OCCA_DIR = OCCA_COMPILED_DIR;
 #  endif
       }
 #endif
-
       OCCA_CHECK(0 < OCCA_DIR.size(),
                  "Environment variable [OCCA_DIR] is not set");
 

@@ -20,6 +20,8 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  */
 
+#include "occa/defines.hpp"
+
 #if (OCCA_OS & OCCA_LINUX_OS)
 #  include <unistd.h>
 #  include <sys/types.h>

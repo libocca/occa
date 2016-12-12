@@ -9,8 +9,7 @@ int main(int argc, char **argv) {
   //   disabled by default
   // occa::enableUVAByDefault();
 
-  occa::device device;
-  device.setup("mode = OpenCL, platformID = 0, deviceID = 0, UVA = enabled");
+  occa::device device("mode = OpenCL, platformID = 0, deviceID = 0, UVA = enabled");
 
   // Allocate [managed] arrays that will
   //   automatically synchronize between
@@ -25,13 +24,8 @@ int main(int argc, char **argv) {
     ab[i] = 0;
   }
 
-  occa::kernelInfo kInfo;
-
-  kInfo.addDefine("P", 10);
-
   occa::kernel addVectors = device.buildKernel("addVectors.okl",
-                                               "addVectors",
-                                               kInfo);
+                                               "addVectors");
 
   // Arrays a, b, and ab are now resident
   //   on [device]

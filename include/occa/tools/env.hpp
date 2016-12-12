@@ -23,6 +23,7 @@
 #ifndef OCCA_TOOLS_ENV_HEADER
 #define OCCA_TOOLS_ENV_HEADER
 
+#include "occa/defines.hpp"
 #include "occa/types.hpp"
 
 namespace occa {
