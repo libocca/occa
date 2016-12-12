@@ -52,7 +52,7 @@ namespace occa {
 
       uvaEnabled_    = d.uvaEnabled_;
       uvaMap         = d.uvaMap;
-      uvaDirtyMemory = d.uvaDirtyMemory;
+      uvaStaleMemory = d.uvaStaleMemory;
 
       compiler      = d.compiler;
       compilerFlags = d.compilerFlags;

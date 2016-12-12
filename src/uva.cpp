@@ -29,7 +29,7 @@
 
 namespace occa {
   ptrRangeMap_t uvaMap;
-  memoryVector_t uvaDirtyMemory;
+  memoryVector_t uvaStaleMemory;
 
   ptrRange_t::ptrRange_t() :
     start(NULL),
@@ -174,7 +174,7 @@ namespace occa {
     if (mem == NULL)
       return false;
 
-    return mem->isDirty();
+    return mem->isStale();
   }
 
   void sync(void *ptr) {
@@ -191,10 +191,10 @@ namespace occa {
   }
 
   void dontSync(void *ptr) {
-    removeFromDirtyMap(ptr);
+    removeFromStaleMap(ptr);
   }
 
-  void removeFromDirtyMap(void *ptr) {
+  void removeFromStaleMap(void *ptr) {
     ptrRangeMap_t::iterator it = uvaMap.find(ptr);
 
     if (it == uvaMap.end())
@@ -202,21 +202,21 @@ namespace occa {
 
     memory m(it->second);
 
-    if (!m.uvaIsDirty())
+    if (!m.uvaIsStale())
       return;
 
-    removeFromDirtyMap(m.getMHandle());
+    removeFromStaleMap(m.getMHandle());
   }
 
-  void removeFromDirtyMap(memory_v *mem) {
+  void removeFromStaleMap(memory_v *mem) {
     occa::memory m(mem);
 
-    const size_t dirtyEntries = uvaDirtyMemory.size();
+    const size_t staleEntries = uvaStaleMemory.size();
 
-    for (size_t i = 0; i < dirtyEntries; ++i) {
-      if (uvaDirtyMemory[i] == mem) {
-        m.uvaMarkClean();
-        uvaDirtyMemory.erase(uvaDirtyMemory.begin() + i);
+    for (size_t i = 0; i < staleEntries; ++i) {
+      if (uvaStaleMemory[i] == mem) {
+        m.uvaMarkFresh();
+        uvaStaleMemory.erase(uvaStaleMemory.begin() + i);
 
         break;
       }

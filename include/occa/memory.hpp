@@ -39,7 +39,7 @@ namespace occa {
     static const int isManaged    = (1 << 0);
     static const int inDevice     = (1 << 1);
     static const int leftInDevice = (1 << 2);
-    static const int isDirty      = (1 << 3);
+    static const int isStale      = (1 << 3);
   }
 
   //---[ memory_v ]---------------------
@@ -60,7 +60,7 @@ namespace occa {
     bool isManaged() const;
     bool inDevice() const;
     bool leftInDevice() const;
-    bool isDirty() const;
+    bool isStale() const;
 
     void* uvaHandle();
 
@@ -143,7 +143,7 @@ namespace occa {
     bool isManaged() const;
     bool inDevice() const;
     bool leftInDevice() const;
-    bool isDirty() const;
+    bool isStale() const;
 
     void* getHandle(const occa::properties &props = occa::properties());
 
@@ -152,9 +152,9 @@ namespace occa {
     void syncToDevice(const dim_t bytes, const dim_t offset);
     void syncFromDevice(const dim_t bytes, const dim_t offset);
 
-    bool uvaIsDirty();
-    void uvaMarkDirty();
-    void uvaMarkClean();
+    bool uvaIsStale();
+    void uvaMarkStale();
+    void uvaMarkFresh();
 
     void copyFrom(const void *src,
                   const dim_t bytes = -1,
