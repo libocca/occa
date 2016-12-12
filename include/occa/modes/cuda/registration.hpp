@@ -26,6 +26,7 @@
 #  ifndef OCCA_CUDA_REGISTRATION_HEADER
 #  define OCCA_CUDA_REGISTRATION_HEADER
 
+#include "occa/mode.hpp"
 #include "occa/modes/cuda/device.hpp"
 #include "occa/modes/cuda/kernel.hpp"
 #include "occa/modes/cuda/memory.hpp"

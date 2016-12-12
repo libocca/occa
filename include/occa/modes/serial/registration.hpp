@@ -24,6 +24,7 @@
 #define OCCA_SERIAL_REGISTRATION_HEADER
 
 #include "occa/defines.hpp"
+#include "occa/mode.hpp"
 #include "occa/modes/serial/device.hpp"
 #include "occa/modes/serial/kernel.hpp"
 #include "occa/modes/serial/memory.hpp"
