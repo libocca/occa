@@ -48,7 +48,7 @@ namespace occa {
 
     bool uvaEnabled_;
     ptrRangeMap_t uvaMap;
-    memoryVector_t uvaDirtyMemory;
+    memoryVector_t uvaStaleMemory;
 
     stream_t currentStream;
     std::vector<stream_t> streams;

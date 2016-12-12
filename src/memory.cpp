@@ -65,8 +65,8 @@ namespace occa {
     return (memInfo & uvaFlag::leftInDevice);
   }
 
-  bool memory_v::isDirty() const {
-    return (memInfo & uvaFlag::isDirty);
+  bool memory_v::isStale() const {
+    return (memInfo & uvaFlag::isStale);
   }
 
   void* memory_v::uvaHandle() {
@@ -154,8 +154,8 @@ namespace occa {
     return (mHandle->memInfo & uvaFlag::leftInDevice);
   }
 
-  bool memory::isDirty() const {
-    return (mHandle->memInfo & uvaFlag::isDirty);
+  bool memory::isStale() const {
+    return (mHandle->memInfo & uvaFlag::isStale);
   }
 
   void* memory::getHandle(const occa::properties &props) {
@@ -206,9 +206,9 @@ namespace occa {
       copyTo(mHandle->uvaPtr, bytes_, offset);
 
       mHandle->memInfo |=  uvaFlag::inDevice;
-      mHandle->memInfo &= ~uvaFlag::isDirty;
+      mHandle->memInfo &= ~uvaFlag::isStale;
 
-      removeFromDirtyMap(mHandle);
+      removeFromStaleMap(mHandle);
     }
   }
 
@@ -231,28 +231,28 @@ namespace occa {
       copyFrom(mHandle->uvaPtr, bytes_, offset);
 
       mHandle->memInfo &= ~uvaFlag::inDevice;
-      mHandle->memInfo &= ~uvaFlag::isDirty;
+      mHandle->memInfo &= ~uvaFlag::isStale;
 
-      removeFromDirtyMap(mHandle);
+      removeFromStaleMap(mHandle);
     }
   }
 
-  bool memory::uvaIsDirty() {
+  bool memory::uvaIsStale() {
     checkIfInitialized();
-    return (mHandle && mHandle->isDirty());
+    return (mHandle && mHandle->isStale());
   }
 
-  void memory::uvaMarkDirty() {
+  void memory::uvaMarkStale() {
     checkIfInitialized();
     if (mHandle != NULL) {
-      mHandle->memInfo |= uvaFlag::isDirty;
+      mHandle->memInfo |= uvaFlag::isStale;
     }
   }
 
-  void memory::uvaMarkClean() {
+  void memory::uvaMarkFresh() {
     checkIfInitialized();
     if (mHandle != NULL) {
-      mHandle->memInfo &= ~uvaFlag::isDirty;
+      mHandle->memInfo &= ~uvaFlag::isStale;
     }
   }
 

@@ -47,7 +47,7 @@ namespace occa {
 
     uvaEnabled_    = m.uvaEnabled_;
     uvaMap         = m.uvaMap;
-    uvaDirtyMemory = m.uvaDirtyMemory;
+    uvaStaleMemory = m.uvaStaleMemory;
 
     currentStream = m.currentStream;
     streams       = m.streams;
@@ -144,19 +144,19 @@ namespace occa {
     checkIfInitialized();
 
     if (dHandle->fakesUva()) {
-      const size_t dirtyEntries = uvaDirtyMemory.size();
+      const size_t staleEntries = uvaStaleMemory.size();
 
-      if (dirtyEntries) {
-        for (size_t i = 0; i < dirtyEntries; ++i) {
-          occa::memory_v *mem = uvaDirtyMemory[i];
+      if (staleEntries) {
+        for (size_t i = 0; i < staleEntries; ++i) {
+          occa::memory_v *mem = uvaStaleMemory[i];
 
           mem->copyTo(mem->uvaPtr, -1, 0, occa::properties("async = 1"));
 
           mem->memInfo &= ~uvaFlag::inDevice;
-          mem->memInfo &= ~uvaFlag::isDirty;
+          mem->memInfo &= ~uvaFlag::isStale;
         }
 
-        uvaDirtyMemory.clear();
+        uvaStaleMemory.clear();
       }
     }
 

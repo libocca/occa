@@ -174,9 +174,9 @@ namespace occa {
         mHandle->copyFrom(mHandle->uvaPtr);
         mHandle->memInfo |= uvaFlag::inDevice;
       }
-      if (!isConst && !mHandle->isDirty()) {
-        uvaDirtyMemory.push_back(mHandle);
-        mHandle->memInfo |= uvaFlag::isDirty;
+      if (!isConst && !mHandle->isStale()) {
+        uvaStaleMemory.push_back(mHandle);
+        mHandle->memInfo |= uvaFlag::isStale;
       }
     }
   }

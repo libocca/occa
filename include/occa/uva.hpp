@@ -52,7 +52,7 @@ namespace occa {
   typedef std::vector<occa::memory_v*>          memoryVector_t;
 
   extern ptrRangeMap_t uvaMap;
-  extern memoryVector_t uvaDirtyMemory;
+  extern memoryVector_t uvaStaleMemory;
 
   class uvaPtrInfo_t {
   private:
@@ -90,8 +90,8 @@ namespace occa {
   void sync(void *ptr);
   void dontSync(void *ptr);
 
-  void removeFromDirtyMap(void *ptr);
-  void removeFromDirtyMap(memory_v *mem);
+  void removeFromStaleMap(void *ptr);
+  void removeFromStaleMap(memory_v *mem);
 
   void setupMagicFor(void *ptr);
 
