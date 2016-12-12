@@ -26,6 +26,7 @@
 #  ifndef OCCA_OPENMP_REGISTRATION_HEADER
 #  define OCCA_OPENMP_REGISTRATION_HEADER
 
+#include "occa/mode.hpp"
 #include "occa/modes/openmp/device.hpp"
 #include "occa/modes/openmp/kernel.hpp"
 #include "occa/modes/serial/memory.hpp"

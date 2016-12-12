@@ -24,6 +24,7 @@
 #define OCCA_THREADS_REGISTRATION_HEADER
 
 #include "occa/defines.hpp"
+#include "occa/mode.hpp"
 #include "occa/modes/threads/device.hpp"
 #include "occa/modes/threads/kernel.hpp"
 #include "occa/modes/serial/memory.hpp"

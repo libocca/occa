@@ -26,6 +26,7 @@
 #  ifndef OCCA_OPENCL_REGISTRATION_HEADER
 #  define OCCA_OPENCL_REGISTRATION_HEADER
 
+#include "occa/mode.hpp"
 #include "occa/modes/opencl/device.hpp"
 #include "occa/modes/opencl/kernel.hpp"
 #include "occa/modes/opencl/memory.hpp"

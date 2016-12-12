@@ -21,68 +21,12 @@
  */
 
 #include "occa/base.hpp"
+#include "occa/mode.hpp"
 #include "occa/tools/sys.hpp"
 
 namespace occa {
-
   //---[ Globals & Flags ]--------------
   properties settings;
-  //====================================
-
-
-  //---[ Registration ]-----------------
-  strToModeMap_t& modeMap() {
-    static strToModeMap_t modeMap_;
-    return modeMap_;
-  }
-
-  bool modeIsEnabled(const std::string &mode) {
-    return (modeMap().find(mode) != modeMap().end());
-  }
-
-  mode_v* getMode(const occa::properties &props) {
-    if (!props.has("mode")) {
-      std::cout << "No OCCA mode given, defaulting to [Serial] mode\n";
-      return getMode("Serial");
-    }
-    return getMode(props["mode"]);
-  }
-
-  mode_v* getMode(const std::string &mode) {
-    if (!modeIsEnabled(mode)) {
-      std::cout << "OCCA mode [" << mode << "] is not enabled, defaulting to [Serial] mode\n";
-      return modeMap()["Serial"];
-    }
-    return modeMap()[mode];
-  }
-
-  device_v* newModeDevice(const occa::properties &props) {
-    return getMode(props)->newDevice(props);
-  }
-
-  kernel_v* newModeKernel(const occa::properties &props) {
-    return getMode(props)->newKernel(props);
-  }
-
-  memory_v* newModeMemory(const occa::properties &props) {
-    return getMode(props)->newMemory(props);
-  }
-
-  void freeModeDevice(device_v *dHandle) {
-    delete dHandle;
-  }
-
-  void freeModeKernel(kernel_v *kHandle) {
-    delete kHandle;
-  }
-
-  void freeModeMemory(memory_v *mHandle) {
-    delete mHandle;
-  }
-
-  std::string& mode_v::name() {
-    return modeName;
-  }
   //====================================
 
 

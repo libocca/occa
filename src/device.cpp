@@ -22,6 +22,7 @@
 
 #include "occa/device.hpp"
 #include "occa/base.hpp"
+#include "occa/mode.hpp"
 #include "occa/tools/sys.hpp"
 #include "occa/tools/io.hpp"
 #include "occa/parser/parser.hpp"
