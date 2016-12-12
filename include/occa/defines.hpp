@@ -23,21 +23,7 @@
 #ifndef OCCA_DEFINES_HEADER
 #define OCCA_DEFINES_HEADER
 
-#ifndef OCCA_LINUX_OS
-#  define OCCA_LINUX_OS 1
-#endif
-
-#ifndef OCCA_OSX_OS
-#  define OCCA_OSX_OS 2
-#endif
-
-#ifndef OCCA_WINDOWS_OS
-#  define OCCA_WINDOWS_OS 4
-#endif
-
-#ifndef OCCA_WINUX_OS
-#  define OCCA_WINUX_OS (OCCA_LINUX_OS | OCCA_WINDOWS_OS)
-#endif
+#include "occa/defines/compiledDefines.hpp"
 
 #ifndef OCCA_USING_VS
 #  ifdef _MSC_VER

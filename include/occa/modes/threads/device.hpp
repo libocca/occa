@@ -23,6 +23,7 @@
 #ifndef OCCA_THREADS_DEVICE_HEADER
 #define OCCA_THREADS_DEVICE_HEADER
 
+#include "occa/defines.hpp"
 #include "occa/modes/serial/device.hpp"
 #include "occa/modes/threads/headers.hpp"
 #include "occa/modes/threads/utils.hpp"

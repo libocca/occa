@@ -56,9 +56,9 @@ int main(int argc, char **argv) {
 
   o_ab.copyTo(ab);
 
-  for (int i = 0; i < 5; ++i)
+  for (int i = 0; i < 5; ++i) {
     std::cout << i << ": " << ab[i] << '\n';
-
+  }
   for (int i = 0; i < entries; ++i) {
     if (ab[i] != (a[i] + b[i]))
       throw 1;

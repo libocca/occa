@@ -187,12 +187,21 @@ namespace occa {
     mHandle->memInfo |= uvaFlag::isManaged;
   }
 
-  void memory::syncToDevice(const udim_t bytes,
-                            const udim_t offset) {
+  void memory::syncToDevice(const dim_t bytes,
+                            const dim_t offset) {
     checkIfInitialized();
 
+    udim_t bytes_ = ((bytes == -1) ? mHandle->size : bytes);
+
+    OCCA_CHECK(bytes >= -1,
+               "Trying to allocate negative bytes (" << bytes << ")");
+    OCCA_CHECK(offset >= 0,
+               "Cannot have a negative offset (" << offset << ")");
+
     if (mHandle->dHandle->fakesUva()) {
-      udim_t bytes_ = ((bytes == 0) ? mHandle->size : bytes);
+      OCCA_CHECK((bytes_ + offset) <= mHandle->size,
+                 "Memory has size [" << mHandle->size << "],"
+                 << "trying to access [ " << offset << " , " << (offset + bytes_) << " ]");
 
       copyTo(mHandle->uvaPtr, bytes_, offset);
 
@@ -203,12 +212,21 @@ namespace occa {
     }
   }
 
-  void memory::syncFromDevice(const udim_t bytes,
-                              const udim_t offset) {
+  void memory::syncFromDevice(const dim_t bytes,
+                              const dim_t offset) {
     checkIfInitialized();
 
+    udim_t bytes_ = ((bytes == 0) ? mHandle->size : bytes);
+
+    OCCA_CHECK(bytes >= -1,
+               "Trying to allocate negative bytes (" << bytes << ")");
+    OCCA_CHECK(offset >= 0,
+               "Cannot have a negative offset (" << offset << ")");
+
     if (mHandle->dHandle->fakesUva()) {
-      udim_t bytes_ = ((bytes == 0) ? mHandle->size : bytes);
+      OCCA_CHECK((bytes_ + offset) <= mHandle->size,
+                 "Memory has size [" << mHandle->size << "],"
+                 << "trying to access [ " << offset << " , " << (offset + bytes_) << " ]");
 
       copyFrom(mHandle->uvaPtr, bytes_, offset);
 
@@ -239,37 +257,91 @@ namespace occa {
   }
 
   void memory::copyFrom(const void *src,
-                        const udim_t bytes,
-                        const udim_t offset,
+                        const dim_t bytes,
+                        const dim_t offset,
                         const occa::properties &props) {
     checkIfInitialized();
-    mHandle->copyFrom(src, bytes, offset, props);
+
+    udim_t bytes_ = ((bytes == -1) ? mHandle->size : bytes);
+
+    OCCA_CHECK(bytes >= -1,
+               "Trying to allocate negative bytes (" << bytes << ")");
+    OCCA_CHECK(offset >= 0,
+               "Cannot have a negative offset (" << offset << ")");
+    OCCA_CHECK((bytes_ + offset) <= mHandle->size,
+               "Destination memory has size [" << mHandle->size << "],"
+               << "trying to access [ " << offset << " , " << (offset + bytes_) << " ]");
+
+    mHandle->copyFrom(src, bytes_, offset, props);
   }
 
   void memory::copyFrom(const memory src,
-                        const udim_t bytes,
-                        const udim_t destOffset,
-                        const udim_t srcOffset,
+                        const dim_t bytes,
+                        const dim_t destOffset,
+                        const dim_t srcOffset,
                         const occa::properties &props) {
     checkIfInitialized();
-    mHandle->copyFrom(src.mHandle, bytes, destOffset, srcOffset, props);
+
+    udim_t bytes_ = ((bytes == -1) ? mHandle->size : bytes);
+
+    OCCA_CHECK(bytes >= -1,
+               "Trying to allocate negative bytes (" << bytes << ")");
+    OCCA_CHECK(destOffset >= 0,
+               "Cannot have a negative offset (" << destOffset << ")");
+    OCCA_CHECK(srcOffset >= 0,
+               "Cannot have a negative offset (" << srcOffset << ")");
+    OCCA_CHECK((bytes_ + srcOffset) <= src.mHandle->size,
+               "Source memory has size [" << src.mHandle->size << "],"
+               << "trying to access [ " << srcOffset << " , " << (srcOffset + bytes_) << " ]");
+    OCCA_CHECK((bytes_ + destOffset) <= mHandle->size,
+               "Destination memory has size [" << mHandle->size << "],"
+               << "trying to access [ " << destOffset << " , " << (destOffset + bytes_) << " ]");
+
+    mHandle->copyFrom(src.mHandle, bytes_, destOffset, srcOffset, props);
   }
 
   void memory::copyTo(void *dest,
-                      const udim_t bytes,
-                      const udim_t offset,
+                      const dim_t bytes,
+                      const dim_t offset,
                       const occa::properties &props) {
     checkIfInitialized();
-    mHandle->copyTo(dest, bytes, offset, props);
+
+    udim_t bytes_ = ((bytes == -1) ? mHandle->size : bytes);
+
+    OCCA_CHECK(bytes >= -1,
+               "Trying to allocate negative bytes (" << bytes << ")");
+    OCCA_CHECK(offset >= 0,
+               "Cannot have a negative offset (" << offset << ")");
+    OCCA_CHECK((bytes_ + offset) <= mHandle->size,
+               "Source memory has size [" << mHandle->size << "],"
+               << "trying to access [ " << offset << " , " << (offset + bytes_) << " ]");
+
+    mHandle->copyTo(dest, bytes_, offset, props);
   }
 
   void memory::copyTo(memory dest,
-                      const udim_t bytes,
-                      const udim_t destOffset,
-                      const udim_t srcOffset,
+                      const dim_t bytes,
+                      const dim_t destOffset,
+                      const dim_t srcOffset,
                       const occa::properties &props) {
     checkIfInitialized();
-    dest.mHandle->copyFrom(mHandle, bytes, destOffset, srcOffset, props);
+
+    udim_t bytes_ = ((bytes == -1) ? mHandle->size : bytes);
+
+    OCCA_CHECK(bytes >= -1,
+               "Trying to allocate negative bytes (" << bytes << ")");
+    OCCA_CHECK(destOffset >= 0,
+               "Cannot have a negative offset (" << destOffset << ")");
+    OCCA_CHECK(srcOffset >= 0,
+               "Cannot have a negative offset (" << srcOffset << ")");
+    OCCA_CHECK((bytes_ + srcOffset) <= mHandle->size,
+               "Source memory has size [" << mHandle->size << "],"
+               << "trying to access [ " << srcOffset << " , " << (srcOffset + bytes_) << " ]");
+    OCCA_CHECK((bytes_ + destOffset) <= dest.mHandle->size,
+               "Destination memory has size [" << dest.mHandle->size << "],"
+               << "trying to access [ " << destOffset << " , " << (destOffset + bytes_) << " ]");
+
+    dest.mHandle->copyFrom(mHandle, bytes_, destOffset, srcOffset, props);
   }
 
   void memory::free() {

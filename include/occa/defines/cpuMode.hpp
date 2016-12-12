@@ -29,6 +29,7 @@
 #include <cstdio>
 #include <cmath>
 
+#include "occa/defines.hpp"
 #include "occa/base.hpp"
 
 //---[ Defines ]----------------------------------

@@ -20,8 +20,9 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  */
 
-#if OCCA_OPENMP_ENABLED
+#include "occa/defines.hpp"
 
+#if OCCA_OPENMP_ENABLED
 
 namespace occa {
   namespace openmp {

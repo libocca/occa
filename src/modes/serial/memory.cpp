@@ -47,35 +47,20 @@ namespace occa {
                         const udim_t bytes,
                         const udim_t offset,
                         const occa::properties &props) {
-      dHandle->finish();
-
-      const udim_t bytes_ = (bytes == 0) ? size : bytes;
-
-      OCCA_CHECK((bytes_ + offset) <= size,
-                 "Memory has size [" << size << "],"
-                 << "trying to access [ " << offset << " , " << (offset + bytes_) << " ]");
-
       const void *srcPtr = ((char*) handle) + offset;
 
-      ::memcpy(dest, srcPtr, bytes_);
+      ::memcpy(dest, srcPtr, bytes);
     }
 
     void memory::copyFrom(const void *src,
                           const udim_t bytes,
                           const udim_t offset,
                           const occa::properties &props) {
-      dHandle->finish();
-
-      const udim_t bytes_ = (bytes == 0) ? size : bytes;
-
-      OCCA_CHECK((bytes_ + offset) <= size,
-                 "Memory has size [" << size << "],"
-                 << "trying to access [ " << offset << " , " << (offset + bytes_) << " ]");
 
       void *destPtr      = ((char*) handle) + offset;
       const void *srcPtr = src;
 
-      ::memcpy(destPtr, srcPtr, bytes_);
+      ::memcpy(destPtr, srcPtr, bytes);
     }
 
     void memory::copyFrom(const memory_v *src,
@@ -83,22 +68,11 @@ namespace occa {
                           const udim_t destOffset,
                           const udim_t srcOffset,
                           const occa::properties &props) {
-      dHandle->finish();
-
-      const udim_t bytes_ = (bytes == 0) ? size : bytes;
-
-      OCCA_CHECK((bytes_ + destOffset) <= size,
-                 "Memory has size [" << size << "],"
-                 << "trying to access [ " << destOffset << " , " << (destOffset + bytes_) << " ]");
-
-      OCCA_CHECK((bytes_ + srcOffset) <= src->size,
-                 "Source has size [" << src->size << "],"
-                 << "trying to access [ " << srcOffset << " , " << (srcOffset + bytes_) << " ]");
 
       void *destPtr      = ((char*) handle)      + destOffset;
       const void *srcPtr = ((char*) src->handle) + srcOffset;
 
-      ::memcpy(destPtr, srcPtr, bytes_);
+      ::memcpy(destPtr, srcPtr, bytes);
     }
 
     void memory::free() {

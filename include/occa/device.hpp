@@ -27,7 +27,6 @@
 #include <sstream>
 
 #include "occa/defines.hpp"
-
 #include "occa/parser/tools.hpp"
 #include "occa/uva.hpp"
 #include "occa/kernel.hpp"
@@ -174,16 +173,16 @@ namespace occa {
     //  |===============================
 
     //  |---[ Memory ]------------------
-    occa::memory malloc(const udim_t bytes,
+    occa::memory malloc(const dim_t bytes,
                         void *src = NULL,
                         const occa::properties &props = occa::properties());
 
-    void* managedAlloc(const udim_t bytes,
+    void* managedAlloc(const dim_t bytes,
                        void *src = NULL,
                        const occa::properties &props = occa::properties());
 
     occa::memory wrapMemory(void *handle_,
-                            const udim_t bytes,
+                            const dim_t bytes,
                             const occa::properties &props = occa::properties());
     //  |===============================
 

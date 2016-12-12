@@ -29,7 +29,7 @@ include $(OCCA_DIR)/scripts/Makefile
 
 #---[ WORKING PATHS ]-----------------------------
 ifeq ($(usingWinux),0)
-  compilerFlags  += $(picFlag) -DOCCA_COMPILED_DIR="$(OCCA_DIR)"
+  compilerFlags  += $(picFlag)
   fCompilerFlags += $(picFlag)
 else
   sharedFlag += $(picFlag)
@@ -76,42 +76,74 @@ outputs = $(libPath)/libocca.so $(binPath)/occa
 
 
 #---[ COMPILE LIBRARY ]---------------------------
+# Setup compiled defines and force rebuild if defines changed
+NEW_COMPILED_DEFINES     := $(OCCA_DIR)/include/occa/defines/compiledDefines.hpp
+OLD_COMPILED_DEFINES     := $(OCCA_DIR)/.old_compiledDefines
+COMPILED_DEFINES_CHANGED := $(OCCA_DIR)/.compiledDefinesChanged
+
+MAKE_COMPILED_DEFINES := $(shell touch "$(NEW_COMPILED_DEFINES)")
+MAKE_COMPILED_DEFINES := $(shell cp "$(NEW_COMPILED_DEFINES)" "$(OLD_COMPILED_DEFINES)")
+MAKE_COMPILED_DEFINES := $(shell cp "$(OCCA_DIR)/scripts/compiledDefinesTemplate.hpp" "$(NEW_COMPILED_DEFINES)")
+MAKE_COMPILED_DEFINES := $(shell sed -i "s,@@OCCA_OS@@,$(OCCA_OS),g;\
+                                         s,@@OCCA_USING_VS@@,$(OCCA_USING_VS),g;\
+                                         s,@@OCCA_COMPILED_DIR@@,\"$(OCCA_DIR)\",g;\
+                                         s,@@OCCA_DEBUG_ENABLED@@,$(OCCA_DEBUG_ENABLED),g;\
+                                         s,@@OCCA_CHECK_ENABLED@@,$(OCCA_CHECK_ENABLED),g;\
+                                         s,@@OCCA_OPENMP_ENABLED@@,$(OCCA_OPENMP_ENABLED),g;\
+                                         s,@@OCCA_OPENCL_ENABLED@@,$(OCCA_OPENCL_ENABLED),g;\
+                                         s,@@OCCA_CUDA_ENABLED@@,$(OCCA_CUDA_ENABLED),g" "$(NEW_COMPILED_DEFINES)")
+MAKE_COMPILED_DEFINES := $(shell [ -n "$(shell diff -q $(OLD_COMPILED_DEFINES) $(NEW_COMPILED_DEFINES))" ] && touch "$(COMPILED_DEFINES_CHANGED)")
+MAKE_COMPILED_DEFINES := $(shell rm $(OLD_COMPILED_DEFINES))
+
 all: $(objects) $(outputs)
+	@echo -e ""
+	@echo -e "---[ Compiled With ]--------------------------------------------------------"
+	@echo -e "    OCCA_OS             : $(OCCA_OS)"
+	@echo -e "    OCCA_USING_VS       : $(OCCA_USING_VS)"
+	@echo -e "    OCCA_COMPILED_DIR   : \"$(OCCA_DIR)\"\n"
+	@echo -e "    OCCA_DEBUG_ENABLED  : $(OCCA_DEBUG_ENABLED)"
+	@echo -e "    OCCA_CHECK_ENABLED  : $(OCCA_CHECK_ENABLED)\n"
+	@echo -e "    OCCA_OPENMP_ENABLED : $(OCCA_OPENMP_ENABLED)"
+	@echo -e "    OCCA_OPENCL_ENABLED : $(OCCA_OPENCL_ENABLED)"
+	@echo -e "    OCCA_CUDA_ENABLED   : $(OCCA_CUDA_ENABLED)"
+	@echo -e "============================================================================"
+
+$(COMPILED_DEFINES_CHANGED):
 #=================================================
 
 
 #---[ PYTHON ]------------------------------------
-python: $(libPath)/_C_occa.so
+python: $(libPath)/_C_occa.so $(COMPILED_DEFINES_CHANGED)
 	python $(OCCA_DIR)/scripts/make.py compile
 #=================================================
 
 
 #---[ BUILDS ]------------------------------------
 #  ---[ libocca ]-------------
-$(libPath)/libocca.so:$(objects) $(headers)
+$(libPath)/libocca.so:$(objects) $(headers) $(COMPILED_DEFINES_CHANGED)
 	$(compiler) $(compilerFlags) $(sharedFlag) -o $(libPath)/libocca.so $(flags) $(objects) $(paths) $(filter-out -locca, $(links))
 
-$(binPath)/occa:$(OCCA_DIR)/scripts/occa.cpp $(libPath)/libocca.so
+$(binPath)/occa:$(OCCA_DIR)/scripts/occa.cpp $(libPath)/libocca.so $(COMPILED_DEFINES_CHANGED)
 	@mkdir -p $(binPath)
 	$(compiler) $(compilerFlags) -o $(binPath)/occa $(flags) $(OCCA_DIR)/scripts/occa.cpp $(paths) $(links) -L$(OCCA_DIR)/lib -locca
 #  ===========================
 
 #  ---[ C++ ]-----------------
-$(OCCA_DIR)/obj/%.o:$(OCCA_DIR)/src/%.cpp $(OCCA_DIR)/include/occa/%.hpp $(OCCA_DIR)/include/occa/%.tpp
+$(OCCA_DIR)/obj/%.o:$(OCCA_DIR)/src/%.cpp $(OCCA_DIR)/include/occa/%.hpp $(OCCA_DIR)/include/occa/%.tpp $(COMPILED_DEFINES_CHANGED)
 	@mkdir -p $(abspath $(dir $@))
 	$(compiler) $(compilerFlags) -o $@ $(flags) -c $(paths) $<
 
-$(OCCA_DIR)/obj/%.o:$(OCCA_DIR)/src/%.cpp $(OCCA_DIR)/include/occa/%.hpp
+$(OCCA_DIR)/obj/%.o:$(OCCA_DIR)/src/%.cpp $(OCCA_DIR)/include/occa/%.hpp $(COMPILED_DEFINES_CHANGED)
 	@mkdir -p $(abspath $(dir $@))
 	$(compiler) $(compilerFlags) -o $@ $(flags) -c $(paths) $<
 
-$(OCCA_DIR)/obj/%.o:$(OCCA_DIR)/src/%.cpp
+$(OCCA_DIR)/obj/%.o:$(OCCA_DIR)/src/%.cpp $(COMPILED_DEFINES_CHANGED)
 	@mkdir -p $(abspath $(dir $@))
 	$(compiler) $(compilerFlags) -o $@ $(flags) -c $(paths) $<
 #  ===========================
 
 #  ---[ Fortran ]-------------
-$(OCCA_DIR)/obj/%.o:$(OCCA_DIR)/src/%.f90
+$(OCCA_DIR)/obj/%.o:$(OCCA_DIR)/src/%.f90 $(COMPILED_DEFINES_CHANGED)
 	@mkdir -p $(abspath $(dir $@))
 	$(fCompiler) $(fCompilerFlags) $(fModDirFlag) $(libPath) -o $@ $(fFlags) -c $<
 #  ===========================
@@ -119,7 +151,7 @@ $(OCCA_DIR)/obj/%.o:$(OCCA_DIR)/src/%.f90
 #  ---[ Python ]-------------
 pyflags = -I${OCCA_PYTHON_DIR}/ -I${OCCA_NUMPY_DIR} -L${OCCA_LIBPYTHON_DIR} -l${OCCA_LIBPYTHON}
 
-$(libPath)/_C_occa.so: $(libPath)/libocca.so $(incPath)/occa/lang/python/_C_occa.h $(incPath)/occa/lang/python/_C_occa.h
+$(libPath)/_C_occa.so: $(libPath)/libocca.so $(incPath)/occa/lang/python/_C_occa.h $(incPath)/occa/lang/python/_C_occa.h $(COMPILED_DEFINES_CHANGED)
 	gcc $(compilerFlags) $(sharedFlag) $(srcPath)/python/_C_occa.c -o $@ -I$(incPath) -I$(incPath)/occa/python -L$(libPath) $(pyFlags) -locca
 #  ===========================
 #=================================================

@@ -20,6 +20,8 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  */
 
+#include "occa/defines.hpp"
+
 #if OCCA_OPENCL_ENABLED
 
 #include "occa/modes/opencl/kernel.hpp"
@@ -82,7 +84,7 @@ namespace occa {
       }
 
       if (foundBinary) {
-        if (settings.get<bool>("verboseCompilation")) {
+        if (settings.get("verboseCompilation", true)) {
           std::cout << "Found cached binary of [" << io::shortname(filename)
                     << "] in [" << io::shortname(binaryFile) << "]\n";
         }

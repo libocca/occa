@@ -27,6 +27,7 @@
 #include <iomanip>
 #include <sstream>
 
+#include "occa/defines.hpp"
 #include "occa/types.hpp"
 
 namespace occa {

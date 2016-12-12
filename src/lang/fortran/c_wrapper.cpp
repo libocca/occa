@@ -31,7 +31,6 @@
 #include <stdio.h>
 
 #include "occa/lang/fortran/defines.hpp"
-#include "occa/defines.hpp"
 #include "occa/lang/c/c_wrapper.hpp"
 #include "occa/base.hpp"
 

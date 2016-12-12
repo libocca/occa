@@ -24,6 +24,8 @@
 #define OCCA_TOOLS_IO_HEADER
 
 #include <iostream>
+
+#include "occa/defines.hpp"
 #include "occa/types.hpp"
 #include "occa/tools/hash.hpp"
 #include "occa/tools/properties.hpp"

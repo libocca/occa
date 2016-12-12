@@ -155,14 +155,14 @@ namespace occa {
       properties = properties_;
 
       const std::string &mode = properties["mode"];
-      _hasMagicEnabled = properties.get<bool>("magic", false);
+      _hasMagicEnabled = properties.get("magic", false);
       _compilingForCPU = ((mode == "Serial")   ||
                           (mode == "Pthreads") ||
                           (mode == "OpenMP"));
 
-      _warnForMissingBarriers      = properties.get<bool>("warn-for-missing-barriers"    , false);
-      _warnForConditionalBarriers  = properties.get<bool>("warn-for-conditional-barriers", false);
-      _insertBarriersAutomatically = properties.get<bool>("automate-add-barriers"        , true);
+      _warnForMissingBarriers      = properties.get("warn-for-missing-barriers"    , false);
+      _warnForConditionalBarriers  = properties.get("warn-for-conditional-barriers", false);
+      _insertBarriersAutomatically = properties.get("automate-add-barriers"        , true);
     }
 
     bool parserBase::hasMagicEnabled() {

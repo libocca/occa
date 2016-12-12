@@ -20,6 +20,8 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  */
 
+#include "occa/defines.hpp"
+
 #if OCCA_OPENCL_ENABLED
 
 #include "occa/modes/opencl/device.hpp"
@@ -273,7 +275,7 @@ namespace occa {
       OCCA_CL_CHECK("Device: clCreateBuffer", error);
 
       if (src != NULL){
-        mem->copyFrom(src);
+        mem->copyFrom(src, mem->size);
       }
 
       // Map memory to read/write

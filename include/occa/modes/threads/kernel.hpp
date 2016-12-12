@@ -23,6 +23,7 @@
 #ifndef OCCA_THREADS_KERNEL_HEADER
 #define OCCA_THREADS_KERNEL_HEADER
 
+#include "occa/defines.hpp"
 #include "occa/modes/threads/headers.hpp"
 #include "occa/modes/serial/kernel.hpp"
 

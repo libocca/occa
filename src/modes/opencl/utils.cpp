@@ -20,6 +20,8 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  */
 
+#include "occa/defines.hpp"
+
 #if OCCA_OPENCL_ENABLED
 
 #include "occa/modes/opencl/utils.hpp"
@@ -300,7 +302,7 @@ namespace occa {
       if (error && hash.initialized) {
         io::releaseHash(hash, hashTag);
       }
-      if (settings.get<bool>("verboseCompilation")) {
+      if (settings.get("verboseCompilation", true)) {
         if (hash.initialized) {
           std::cout << "OpenCL compiling " << functionName
                     << " from [" << sourceFile << "]";
@@ -354,7 +356,7 @@ namespace occa {
       }
       OCCA_CL_CHECK("Kernel (" + functionName + "): Creating Kernel", error);
 
-      if (settings.get<bool>("verboseCompilation")) {
+      if (settings.get("verboseCompilation", true)) {
         if (sourceFile.size()) {
           std::cout << "OpenCL compiled " << functionName << " from [" << sourceFile << "]";
 
