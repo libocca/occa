@@ -1,5 +1,6 @@
-<a name="OCCA"></a>
-## OCCA [![Build Status](https://travis-ci.org/libocca/occa.svg?branch=master)](https://travis-ci.org/libocca/occa)
+<a href="http://libocca.org" target="_blank">![OCCA](http://libocca.org/images/logo/blueOccaLogo.png "OCCA")</a>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+[![Build Status](https://travis-ci.org/libocca/occa.svg?branch=master)](https://travis-ci.org/libocca/occa)
 
 OCCA is an open-source (MIT license) library used to program current multi-core/many-core architectures.
 Devices (such as CPUs, GPUs, Intel's Xeon Phi, FPGAs, etc) are abstracted using an offload-model for application development and programming for the devices is done through a C-based (OKL) or Fortran-based kernel language (OFL).
@@ -8,7 +9,7 @@ OCCA gives developers the ability to target devices at run-time by using run-tim
 <a name="Taiga"></a>
 ## Taiga
 
-We are using <a href="https://tree.taiga.io/project/dsm5-occa/kanban">Taiga</a> to schedule and manage our tasks.
+We are using <a href="https://tree.taiga.io/project/dsm5-occa/backlog">Taiga</a> to schedule and manage our tasks.
 
 To submit an issue, please follow <a href="https://tree.taiga.io/project/dsm5-occa/issues?page=1">this link</a>
 
@@ -40,7 +41,7 @@ Python 2 and 3 bindings are available with OCCA.
 If you wish to setup the occa Python module, rather than using `make`, compile both `libocca.so` and the module with
 
 ```
-python make.py
+python scripts/make.py
 ```
 
 
@@ -96,7 +97,7 @@ where `<occa>` is the OCCA directory
 ### Useful environment variables:
 | Environment Variable       | Description                                         |
 |----------------------------|-----------------------------------------------------|
-| OCCA_CACHE_DIR             | Sets directory where kernels are cached (Default: ${HOME}/._occa |
+| OCCA_CACHE_DIR             | Sets directory where kernels are cached (Default: ${HOME}/.occa |
 | OCCA_INCLUDE_PATH          | Adds directories to find headers |
 | OCCA_LIBRARY_PATH          | Adds directories to find libraries |
 | OCCA_CXX                   | C++ compiler used for libocca.so and run-time compilation |
