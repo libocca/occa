@@ -38,17 +38,9 @@ namespace occa {
   mode_v* getMode(const occa::properties &props) {
     if (!props.has("mode")) {
       std::cout << "No OCCA mode given, defaulting to [Serial] mode\n";
-      return getMode("Serial");
-    }
-    return getMode(props["mode"]);
-  }
-
-  mode_v* getMode(const std::string &mode) {
-    if (!modeIsEnabled(mode)) {
-      std::cout << "OCCA mode [" << mode << "] is not enabled, defaulting to [Serial] mode\n";
       return modeMap()["Serial"];
     }
-    return modeMap()[mode];
+    return modeMap()[props["mode"]];
   }
 
   device_v* newModeDevice(const occa::properties &props) {

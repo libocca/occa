@@ -29,6 +29,23 @@ namespace occa {
     holder(holder_) {}
 
   properties::properties(const std::string &props_) {
+    initFromString(props_);
+  }
+
+  properties::properties(const char *props_) {
+    initFromString(props_);
+  }
+
+  properties::properties(const properties &p) {
+    *this = p;
+  }
+
+  properties& properties::operator = (const properties &p) {
+    props = p.props;
+    return *this;
+  }
+
+  void properties::initFromString(const std::string &props_) {
     if (props_.size() == 0)
       return;
 
@@ -48,15 +65,6 @@ namespace occa {
     }
 
     parserNS::expNode::freeFlatHandle(csvFlatRoot);
-  }
-
-  properties::properties(const properties &p) {
-    *this = p;
-  }
-
-  properties& properties::operator = (const properties &p) {
-    props = p.props;
-    return *this;
   }
 
   bool properties::has(const std::string &prop) const {

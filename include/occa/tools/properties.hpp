@@ -48,9 +48,12 @@ namespace occa {
   public:
     properties(hasProperties *holder_ = NULL);
     properties(const std::string &props_);
+    properties(const char *props_);
 
     properties(const properties &p);
     properties& operator = (const properties &p);
+
+    void initFromString(const std::string &props_);
 
     bool has(const std::string &prop) const;
 

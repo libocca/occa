@@ -55,10 +55,6 @@ namespace occa {
     currentDevice_ = d;
   }
 
-  void setDevice(const std::string &props) {
-    currentDevice_ = device(props);
-  }
-
   void setDevice(const properties &props) {
     currentDevice_ = device(props);
   }
@@ -130,16 +126,16 @@ namespace occa {
 
   kernel buildKernelFromString(const std::string &content,
                                const std::string &functionName,
-                               const properties &props) {
+                               const occa::properties &props) {
 
     return currentDevice().buildKernelFromString(content, functionName, props);
   }
 
   kernel buildKernelFromBinary(const std::string &filename,
-                               const std::string &functionName) {
+                               const std::string &functionName,
+                               const occa::properties &props) {
 
-    return currentDevice().buildKernelFromBinary(filename,
-                                                    functionName);
+    return currentDevice().buildKernelFromBinary(filename, functionName, props);
   }
 
   //---[ Memory Functions ]-------------

@@ -59,7 +59,8 @@ namespace occa {
                  const occa::properties &props);
 
       void buildFromBinary(const std::string &filename,
-                           const std::string &functionName);
+                           const std::string &functionName,
+                           const occa::properties &props);
 
       int maxDims();
       dim maxOuterDims();

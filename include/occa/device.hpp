@@ -90,7 +90,8 @@ namespace occa {
                                   const occa::properties &props) = 0;
 
     virtual kernel_v* buildKernelFromBinary(const std::string &filename,
-                                            const std::string &functionName) = 0;
+                                            const std::string &functionName,
+                                            const occa::properties &props) = 0;
     //  |===============================
 
     //  |---[ Memory ]------------------
@@ -118,7 +119,6 @@ namespace occa {
     device(device_v *dHandle_);
 
     device(const occa::properties &props);
-    device(const std::string &props);
 
     device(const occa::device &d);
     device& operator = (const occa::device &d);
@@ -132,7 +132,7 @@ namespace occa {
     device_v* getDHandle();
 
     void setup(const occa::properties &props);
-    void setup(const std::string &props);
+    // void setup(const std::string &props);
 
     udim_t memorySize() const;
     udim_t memoryAllocated() const;
@@ -165,7 +165,8 @@ namespace occa {
                                        const occa::properties &props = occa::properties());
 
     occa::kernel buildKernelFromBinary(const std::string &filename,
-                                       const std::string &functionName);
+                                       const std::string &functionName,
+                                       const occa::properties &props = occa::properties());
     //  |===============================
 
     //  |---[ Memory ]------------------
