@@ -20,116 +20,52 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  */
 
+#include "occa/defines.hpp"
+
 #if OCCA_CUDA_ENABLED
 #  ifndef OCCA_CUDA_MEMORY_HEADER
 #  define OCCA_CUDA_MEMORY_HEADER
 
-#include "occa/defines.hpp"
-#include "occa/memory.hpp"
-
 #include <cuda.h>
+
+#include "occa/memory.hpp"
 
 namespace occa {
   namespace cuda {
+    class device;
+
     class memory : public occa::memory_v {
+      friend class cuda::device;
+
+    private:
+      void *mappedPtr;
+
     public:
-      memory();
-      memory(const memory &m);
-      memory& operator = (const memory &m);
+      memory(const occa::properties &properties_ = occa::properties());
       ~memory();
 
-      void* getMemoryHandle();
+      void* getHandle(const occa::properties &properties_);
       kernelArg makeKernelArg() const;
-
-      void copyFrom(const void *src,
-                    const udim_t bytes,
-                    const udim_t offset,
-                    const bool async);
-
-      void copyFrom(const memory_v *src,
-                    const udim_t bytes,
-                    const udim_t destOffset,
-                    const udim_t srcOffset,
-                    const bool async);
 
       void copyTo(void *dest,
                   const udim_t bytes,
-                  const udim_t destOffset,
-                  const bool async);
+                  const udim_t destOffset = 0,
+                  const occa::properties &props = occa::properties());
 
-      void copyTo(memory_v *dest,
-                  const udim_t bytes,
-                  const udim_t srcOffset,
-                  const udim_t offset,
-                  const bool async);
+      void copyFrom(const void *src,
+                    const udim_t bytes,
+                    const udim_t offset = 0,
+                    const occa::properties &props = occa::properties());
+
+      void copyFrom(const memory_v *src,
+                    const udim_t bytes,
+                    const udim_t destOffset = 0,
+                    const udim_t srcOffset = 0,
+                    const occa::properties &props = occa::properties());
 
       void free();
       void detach();
     };
-  };
-
-    struct CUDADeviceData_t {
-      CUdevice  device;
-      CUcontext context;
-      bool p2pEnabled;
-    };
-
-    struct CUDATextureData_t {
-      CUarray array;
-      CUsurfObject surface;
-    };
-    //==================================
-
-
-    memory_t<CUDA>::memory_t();
-
-    memory_t<CUDA>::memory_t(const memory_t &m);
-
-    memory_t<CUDA>& memory_t<CUDA>::operator = (const memory_t &m);
-
-    void* memory_t<CUDA>::getMemoryHandle();
-
-    void* memory_t<CUDA>::getTextureHandle();
-
-    void memory_t<CUDA>::copyFrom(const void *src,
-                                  const udim_t bytes,
-                                  const udim_t offset);
-
-    void memory_t<CUDA>::copyFrom(const memory_v *src,
-                                  const udim_t bytes,
-                                  const udim_t destOffset,
-                                  const udim_t srcOffset);
-
-    void memory_t<CUDA>::copyTo(void *dest,
-                                const udim_t bytes,
-                                const udim_t offset);
-
-    void memory_t<CUDA>::copyTo(memory_v *dest,
-                                const udim_t bytes,
-                                const udim_t destOffset,
-                                const udim_t srcOffset);
-
-    void memory_t<CUDA>::asyncCopyFrom(const void *src,
-                                       const udim_t bytes,
-                                       const udim_t offset);
-
-    void memory_t<CUDA>::asyncCopyFrom(const memory_v *src,
-                                       const udim_t bytes,
-                                       const udim_t destOffset,
-                                       const udim_t srcOffset);
-
-    void memory_t<CUDA>::asyncCopyTo(void *dest,
-                                     const udim_t bytes,
-                                     const udim_t offset);
-
-    void memory_t<CUDA>::asyncCopyTo(memory_v *dest,
-                                     const udim_t bytes,
-                                     const udim_t destOffset,
-                                     const udim_t srcOffset);
-
-    void memory_t<CUDA>::mappedFree();
-
-    void memory_t<CUDA>::free();
   }
 }
 

@@ -77,11 +77,11 @@ namespace occa {
     virtual stream_t createStream() = 0;
     virtual void freeStream(stream_t s) = 0;
 
-    virtual stream_t wrapStream(void *handle_) = 0;
-
     virtual streamTag tagStream() = 0;
     virtual void waitFor(streamTag tag) = 0;
     virtual double timeBetween(const streamTag &startTag, const streamTag &endTag) = 0;
+
+    virtual stream_t wrapStream(void *handle_) = 0;
     //  |===============================
 
     //  |---[ Kernel ]------------------

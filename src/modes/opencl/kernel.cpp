@@ -26,6 +26,7 @@
 
 #include "occa/modes/opencl/kernel.hpp"
 #include "occa/modes/opencl/device.hpp"
+#include "occa/modes/opencl/utils.hpp"
 #include "occa/tools/env.hpp"
 #include "occa/tools/io.hpp"
 #include "occa/tools/sys.hpp"
@@ -56,7 +57,6 @@ namespace occa {
       if (type == "program") {
         return clProgram;
       }
-
       return NULL;
     }
 
@@ -131,7 +131,7 @@ namespace occa {
                                     (const unsigned char*) cFile.c_str(),
                                     cFile.size(),
                                     functionName,
-                                    ((opencl::device*) dHandle)->compilerFlags);
+                                    ((opencl::device*) dHandle)->properties["compilerFlags"]);
       clProgram = clInfo.clProgram;
       clKernel  = clInfo.clKernel;
     }

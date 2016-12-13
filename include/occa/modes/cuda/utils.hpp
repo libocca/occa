@@ -26,22 +26,20 @@
 #  ifndef OCCA_CUDA_UTILS_HEADER
 #  define OCCA_CUDA_UTILS_HEADER
 
+#include <cuda.h>
+
+#include "occa/device.hpp"
+
 namespace occa {
   namespace cuda {
-    extern bool isInitialized;
-
     void init();
 
     int getDeviceCount();
-
     CUdevice getDevice(const int id);
-
     udim_t getDeviceMemorySize(CUdevice device);
-
     std::string getDeviceListInfo();
 
     void enablePeerToPeer(CUcontext context);
-
     void checkPeerToPeer(CUdevice destDevice,
                          CUdevice srcDevice);
 
@@ -74,20 +72,15 @@ namespace occa {
                           CUstream usingStream,
                           const bool isAsync);
 
-    occa::device wrapDevice(CUdevice device, CUcontext context);
+    occa::device wrapDevice(CUdevice device,
+                            CUcontext context,
+                            const occa::properties &props);
 
-    CUevent& event(streamTag tag);
+    CUevent& event(streamTag &tag);
+    const CUevent& event(const streamTag &tag);
 
     std::string error(const CUresult errorCode);
   }
-
-  extern const CUarray_format cudaFormats[8];
-
-  template <>
-  void* formatType::format<occa::CUDA>() const;
-
-  extern const int CUDA_ADDRESS_NONE;
-  extern const int CUDA_ADDRESS_CLAMP;
 }
 
 #  endif

@@ -32,26 +32,18 @@
 namespace occa {
   namespace cuda {
     class device : public occa::device_v {
-    private:
-      int vendor;
-      std::string compiler, compilerFlags, compilerEnvScript;
-
     public:
-      device();
-      device(const device &k);
-      device& operator = (const device &k);
+      int archMajorVersion, archMinorVersion;
+      bool p2pEnabled;
+
+      CUdevice  handle;
+      CUcontext context;
+
+      device(const occa::properties &properties_ = occa::properties());
       ~device();
       void free();
 
-      void* getContextHandle();
-
-      void setup(argInfoMap &aim);
-
-      void addOccaHeadersToInfo(kernelInfo &info_);
-
-      std::string getInfoSalt(const kernelInfo &info_);
-
-      void getEnvironmentVariables();
+      void* getHandle(const occa::properties &props);
 
       void appendAvailableDevices(std::vector<occa::device> &dList);
 
@@ -74,21 +66,23 @@ namespace occa {
       //  |---[ Kernel ]----------------
       kernel_v* buildKernel(const std::string &filename,
                             const std::string &functionName,
-                            const kernelInfo &info_);
+                            const occa::properties &props);
 
       kernel_v* buildKernelFromBinary(const std::string &filename,
                                       const std::string &functionName);
       //  |=============================
 
-      //  |---[ Kernel ]----------------
-      memory_v* wrapMemory(void *handle_,
-                           const udim_t bytes);
-
+      //  |---[ Memory ]----------------
       memory_v* malloc(const udim_t bytes,
-                       void *src);
+                       void *src,
+                       const occa::properties &props);
 
       memory_v* mappedAlloc(const udim_t bytes,
                             void *src);
+
+      memory_v* wrapMemory(void *handle_,
+                           const udim_t bytes,
+                           const occa::properties &props);
 
       udim_t memorySize();
       //  |=============================

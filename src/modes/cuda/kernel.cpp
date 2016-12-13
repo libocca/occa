@@ -25,139 +25,114 @@
 #if OCCA_CUDA_ENABLED
 
 #include "occa/modes/cuda/kernel.hpp"
+#include "occa/modes/cuda/device.hpp"
+#include "occa/modes/cuda/utils.hpp"
+#include "occa/tools/env.hpp"
+#include "occa/tools/io.hpp"
+#include "occa/tools/misc.hpp"
+#include "occa/tools/sys.hpp"
 #include "occa/base.hpp"
 
 namespace occa {
   namespace cuda {
-    kernel::kernel() {
-      strMode = "CUDA";
-
-      data    = NULL;
-      dHandle = NULL;
-
-      dims  = 1;
-      inner = occa::dim(1,1,1);
-      outer = occa::dim(1,1,1);
-
-      maximumInnerDimSize_ = 0;
-      preferredDimSize_    = 0;
-    }
-
-    kernel::kernel(const kernel &k) {
-      *this = k;
-    }
-
-    kernel& kernel::operator = (const kernel &k) {
-      data    = k.data;
-      dHandle = k.dHandle;
-
-      metaInfo = k.metaInfo;
-
-      dims  = k.dims;
-      inner = k.inner;
-      outer = k.outer;
-
-      nestedKernels = k.nestedKernels;
-
-      preferredDimSize_ = k.preferredDimSize_;
-
-      return *this;
-    }
+    kernel::kernel(const occa::properties &properties_) :
+      occa::kernel_v(properties_) {}
 
     kernel::~kernel() {}
 
-    void* kernel::getKernelHandle() {
-      OCCA_EXTRACT_DATA(CUDA, Kernel);
+    void* kernel::getHandle(const occa::properties &props) {
+      const std::string type = props["type"];
 
-      return data_.function;
+      if (type == "kernel") {
+        return handle;
+      }
+      if (type == "module") {
+        return module;
+      }
+      return NULL;
     }
 
-    void* kernel::getProgramHandle() {
-      OCCA_EXTRACT_DATA(CUDA, Kernel);
+    void kernel::build(const std::string &filename,
+                       const std::string &functionName,
+                       const occa::properties &props) {
 
-      return data_.module;
-    }
-
-    kernel* kernel::build(const std::string &filename,
-                          const std::string &functionName,
-                          const kernelInfo &info_) {
-
+      occa::properties allProps = properties + props;
       name = functionName;
 
-      OCCA_EXTRACT_DATA(CUDA, Kernel);
-      kernelInfo info = info_;
-
-      dHandle->addOccaHeadersToInfo(info);
-
-      // Add arch to info (for hash purposes)
-      if ((dHandle->compilerFlags.find("-arch=sm_") == std::string::npos) &&
-         (            info.flags.find("-arch=sm_") == std::string::npos)) {
-
+      if (allProps["compilerFlags"].find("-arch=sm_") == std::string::npos) {
+        const int major = ((cuda::device*) dHandle)->archMajorVersion;
+        const int minor = ((cuda::device*) dHandle)->archMinorVersion;
         std::stringstream ss;
-        int major, minor;
-
-        OCCA_CUDA_CHECK("Kernel (" + functionName + ") : Getting CUDA Device Arch",
-                        cuDeviceComputeCapability(&major, &minor, data_.device) );
-
         ss << " -arch=sm_" << major << minor << ' ';
-        info.flags += ss.str();
+        allProps["compilerFlags"] += ss.str();
       }
 
-      const std::string hash = getFileContentHash(filename,
-                                                  dHandle->getInfoSalt(info));
+      hash_t hash = occa::hashFile(filename);
+      hash ^= allProps.hash();
 
-      const std::string hashDir = hashDir(filename, hash);
-      const std::string hashTag = "cuda-kernel";
-
-      const std::string sourceFile    = hashDir + kc::sourceFile;
-      const std::string binaryFile    = hashDir + binaryName(kc::binaryFile);
-      const std::string ptxBinaryFile = hashDir + "ptxBinary.o";
+      const std::string sourceFile    = getSourceFilename(filename, hash);
+      const std::string binaryFile    = getBinaryFilename(filename, hash);
+      const std::string ptxBinaryFile = io::hashDir(filename, hash) + "ptxBinary.o";
       bool foundBinary = true;
 
-      if (!haveHash(hash, hashTag)) {
-        waitForHash(hash, hashTag);
+      const std::string hashTag = "cuda-kernel";
+      if (!io::haveHash(hash, hashTag)) {
+        io::waitForHash(hash, hashTag);
       } else if (sys::fileExists(binaryFile)) {
-        releaseHash(hash, hashTag);
+        io::releaseHash(hash, hashTag);
       } else {
         foundBinary = false;
       }
 
       if (foundBinary) {
-        if (verboseCompilation_f) {
-          std::cout << "Found cached binary of [" << io::shortname(filename) << "] in [" << io::shortname(binaryFile) << "]\n";
+        if (settings.get("verboseCompilation", true)) {
+          std::cout << "Found cached binary of [" << io::shortname(filename)
+                    << "] in [" << io::shortname(binaryFile) << "]\n";
         }
         return buildFromBinary(binaryFile, functionName);
       }
 
-      createSourceFileFrom(filename, hashDir, info);
+      const std::string kernelDefines =
+        io::cacheFile(env::OCCA_DIR + "/include/occa/modes/cuda/kernelDefines.hpp",
+                      "cudaKernelDefines.hpp");
+      const std::string vectorDefines =
+        io::cacheFile(env::OCCA_DIR + "/include/occa/defines/vector.hpp",
+                      "vectorDefines.hpp");
 
-      std::stringstream command;
+      std::stringstream ss;
+      ss << "#include \"" << kernelDefines << "\"\n"
+         << "#include \"" << vectorDefines << "\"\n"
+         << allProps["headers"];
 
-      if (verboseCompilation_f) {
+      const std::string cachedSourceFile = io::cacheFile(filename,
+                                                         kc::sourceFile,
+                                                         hash,
+                                                         ss.str(),
+                                                         allProps["footer"]);
+
+      if (settings.get("verboseCompilation", true)) {
         std::cout << "Compiling [" << functionName << "]\n";
       }
 
-#if 0
       //---[ PTX Check Command ]----------
-      if (dHandle->compilerEnvScript.size()) {
-        command << dHandle->compilerEnvScript << " && ";
+      std::stringstream command;
+      if (allProps.has("compilerEnvScript")) {
+        command << allProps["compilerEnvScript"] << " && ";
       }
 
-      command << dHandle->compiler
-              << " -I."
-              << " -I"  << env::OCCA_DIR << "include"
-#  if (OCCA_OS == OCCA_WINDOWS_OS)
-              << " -D OCCA_OS=OCCA_WINDOWS_OS -D _MSC_VER=1800"
-#  endif
-              << ' '          << dHandle->compilerFlags
+      command << allProps["compiler"]
+              << ' '          << allProps["compilerFlags"]
               << " -Xptxas -v,-dlcm=cg"
-              << ' '          << info.flags
-              << " -x cu -c " << sourceFile
+#if (OCCA_OS == OCCA_WINDOWS_OS)
+              << " -D OCCA_OS=OCCA_WINDOWS_OS -D _MSC_VER=1800"
+#endif
+              << " -I"        << env::OCCA_DIR << "include"
+              << " -L"        << env::OCCA_DIR << "lib -locca"
+              << " -x cu -c " << cachedSourceFile
               << " -o "       << ptxBinaryFile;
 
       const std::string &ptxCommand = command.str();
-
-      if (verboseCompilation_f) {
+      if (settings.get("verboseCompilation", true)) {
         std::cout << "Compiling [" << functionName << "]\n" << ptxCommand << "\n";
       }
 
@@ -166,143 +141,121 @@ namespace occa {
 #else
       ignoreResult( system(("\"" +  ptxCommand + "\"").c_str()) );
 #endif
-#endif
 
       //---[ Compiling Command ]----------
       command.str("");
-
-      command << dHandle->compiler
-              << " -o "       << binaryFile
-              << " -ptx -I."
-              << " -I"  << env::OCCA_DIR << "include"
-#  if (OCCA_OS == OCCA_WINDOWS_OS)
+      command << allProps["compiler"]
+              << ' '       << allProps["compilerFlags"]
+              << " -ptx"
+#if (OCCA_OS == OCCA_WINDOWS_OS)
               << " -D OCCA_OS=OCCA_WINDOWS_OS -D _MSC_VER=1800"
-#  endif
-              << ' '          << dHandle->compilerFlags
-              << archSM
-              << ' '          << info.flags
-              << " -x cu "    << sourceFile;
+#endif
+              << " -I"        << env::OCCA_DIR << "include"
+              << " -L"        << env::OCCA_DIR << "lib -locca"
+              << " -x cu " << cachedSourceFile
+              << " -o "    << binaryFile;
 
       const std::string &sCommand = command.str();
-
-      if (verboseCompilation_f) {
+      if (settings.get("verboseCompilation", true)) {
         std::cout << sCommand << '\n';
       }
 
       const int compileError = system(sCommand.c_str());
 
       if (compileError) {
-        releaseHash(hash, hashTag);
-        OCCA_CHECK(false, "Compilation error");
+        io::releaseHash(hash, hashTag);
+        OCCA_CHECK(false,
+                   "Compilation error");
       }
 
-      const CUresult moduleLoadError = cuModuleLoad(&data_.module,
+      const CUresult moduleLoadError = cuModuleLoad(&module,
                                                     binaryFile.c_str());
 
       if (moduleLoadError) {
-        releaseHash(hash, hashTag);
+        io::releaseHash(hash, hashTag);
       }
 
-      OCCA_CUDA_CHECK("Kernel (" + functionName + ") : Loading Module",
+      OCCA_CUDA_CHECK("Kernel (" + name + ") : Loading Module",
                       moduleLoadError);
 
-      const CUresult moduleGetFunctionError = cuModuleGetFunction(&data_.function,
-                                                                  data_.module,
-                                                                  functionName.c_str());
+      const CUresult moduleGetFunctionError = cuModuleGetFunction(&handle,
+                                                                  module,
+                                                                  name.c_str());
 
       if (moduleGetFunctionError) {
-        releaseHash(hash, hashTag);
+        io::releaseHash(hash, hashTag);
       }
 
-      OCCA_CUDA_CHECK("Kernel (" + functionName + ") : Loading Function",
+      OCCA_CUDA_CHECK("Kernel (" + name + ") : Loading Function",
                       moduleGetFunctionError);
 
-      releaseHash(hash, hashTag);
-
-      return this;
+      io::releaseHash(hash, hashTag);
     }
 
-    kernel* kernel::buildFromBinary(const std::string &filename,
-                                                    const std::string &functionName) {
+    void kernel::buildFromBinary(const std::string &filename,
+                                 const std::string &functionName) {
 
       name = functionName;
 
-      OCCA_EXTRACT_DATA(CUDA, Kernel);
-
       OCCA_CUDA_CHECK("Kernel (" + functionName + ") : Loading Module",
-                      cuModuleLoad(&data_.module, filename.c_str()));
+                      cuModuleLoad(&module, filename.c_str()));
 
       OCCA_CUDA_CHECK("Kernel (" + functionName + ") : Loading Function",
-                      cuModuleGetFunction(&data_.function, data_.module, functionName.c_str()));
-
-      return this;
+                      cuModuleGetFunction(&handle, module, functionName.c_str()));
     }
 
-    kernel* kernel::loadFromLibrary(const char *cache,
-                                                    const std::string &functionName) {
-      OCCA_EXTRACT_DATA(CUDA, Kernel);
-
-      OCCA_CUDA_CHECK("Kernel (" + functionName + ") : Loading Module",
-                      cuModuleLoadData(&data_.module, cache));
-
-      OCCA_CUDA_CHECK("Kernel (" + functionName + ") : Loading Function",
-                      cuModuleGetFunction(&data_.function, data_.module, functionName.c_str()));
-
-      return this;
+    int kernel::maxDims() {
+      return 3;
     }
 
-    udim_t kernel::maximumInnerDimSize() {
-      if (maximumInnerDimSize_)
-        return maximumInnerDimSize_;
-
-      OCCA_EXTRACT_DATA(CUDA, Kernel);
-
-      int maxSize;
-
-      OCCA_CUDA_CHECK("Kernel: Getting Maximum Inner-Dim Size",
-                      cuFuncGetAttribute(&maxSize, CU_FUNC_ATTRIBUTE_MAX_THREADS_PER_BLOCK, data_.function));
-
-      maximumInnerDimSize_ = (udim_t) maxSize;
-
-      return maximumInnerDimSize_;
+    dim kernel::maxOuterDims() {
+      return dim(-1, -1, -1);
     }
 
-    int kernel::preferredDimSize() {
-      preferredDimSize_ = 32;
-      return 32;
+    dim kernel::maxInnerDims() {
+      static dim innerDims(0);
+      if (innerDims.x == 0) {
+        int maxSize;
+        OCCA_CUDA_CHECK("Kernel: Getting Maximum Inner-Dim Size",
+                        cuFuncGetAttribute(&maxSize,
+                                           CU_FUNC_ATTRIBUTE_MAX_THREADS_PER_BLOCK,
+                                           handle));
+
+        innerDims.x = maxSize;
+      }
+      return innerDims;
     }
 
     void kernel::runFromArguments(const int kArgc, const kernelArg *kArgs) {
-      CUDAKernelData_t &data_ = *((CUDAKernelData_t*) data);
-      CUfunction function_ = data_.function;
-
       int occaKernelInfoArgs = 0;
       int argc = 0;
 
-      data_.vArgs = new void*[1 + kernelArg::argumentCount(kArgc, kArgs)];
-      data_.vArgs[argc++] = &occaKernelInfoArgs;
+      void **vArgs = new void*[1 + kernelArg::argumentCount(kArgc, kArgs)];
+      vArgs[argc++] = &occaKernelInfoArgs;
+
       for (int i = 0; i < kArgc; ++i) {
-        for (int j = 0; j < kArgs[i].argc; ++j) {
-          data_.vArgs[argc++] = kArgs[i].args[j].ptr();
+        const kernelArg_t &arg = kArgs[i].arg;
+        const dim_t extraArgCount = kArgs[i].extraArgs.size();
+        const kernelArg_t *extraArgs = extraArgCount ? &(kArgs[i].extraArgs[0]) : NULL;
+
+        vArgs[argc++] = arg.ptr();
+        for (int j = 0; j < extraArgCount; ++j) {
+          vArgs[argc++] = extraArgs[j].ptr();
         }
       }
 
       OCCA_CUDA_CHECK("Launching Kernel",
-                      cuLaunchKernel(function_,
+                      cuLaunchKernel(handle,
                                      outer.x, outer.y, outer.z,
                                      inner.x, inner.y, inner.z,
                                      0, *((CUstream*) dHandle->currentStream),
-                                     data_.vArgs, 0));
-      delete [] data_.vArgs;
+                                     vArgs, 0));
+      delete [] vArgs;
     }
 
     void kernel::free() {
-      OCCA_EXTRACT_DATA(CUDA, Kernel);
-
       OCCA_CUDA_CHECK("Kernel (" + name + ") : Unloading Module",
-                      cuModuleUnload(data_.module));
-
-      delete (CUDAKernelData_t*) this->data;
+                      cuModuleUnload(module));
     }
   }
 }

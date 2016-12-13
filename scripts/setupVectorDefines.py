@@ -1,17 +1,17 @@
 # The MIT License (MIT)
-# 
+#
 # Copyright (c) 2014-2016 David Medina and Tim Warburton
-# 
+#
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
 # in the Software without restriction, including without limitation the rights
 # to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
 # copies of the Software, and to permit persons to whom the Software is
 # furnished to do so, subject to the following conditions:
-# 
+#
 # The above copyright notice and this permission notice shall be included in all
 # copies or substantial portions of the Software.
-# 
+#
 # THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 # IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 # FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -21,6 +21,9 @@
 # SOFTWARE.
 
 from os import environ as ENV
+import os.path as osp
+
+occadir = osp.abspath(osp.join(osp.dirname(__file__), ".."))
 
 EDIT_WARNING = """/*
 -------------[ DO NOT EDIT ]-------------
@@ -309,13 +312,13 @@ def define_vector_functions():
     dot       = ''
     clamp     = ''
     cross     = """
-OCCA_INLINE float3 cross(const float3 &a, const float3 &b) {
+occaFunction inline float3 cross(const float3 &a, const float3 &b) {
   return OCCA_FLOAT3(a.z*b.y - b.z*a.y,
                      a.x*b.z - b.x*a.z,
                      a.y*b.x - b.y*a.x);
 }
 
-OCCA_INLINE double3 cross(const double3 &a, const double3 &b) {
+occaFunction inline double3 cross(const double3 &a, const double3 &b) {
   return OCCA_DOUBLE3(a.z*b.y - b.z*a.y,
                      a.x*b.z - b.x*a.z,
                      a.y*b.x - b.y*a.x);
@@ -323,7 +326,7 @@ OCCA_INLINE double3 cross(const double3 &a, const double3 &b) {
 
     for type_ in [t for t in types if t != 'bool']:
         clamp += """
-OCCA_INLINE {type_} clamp(const {type_} val, const {type_} min, const {type_} max) {{
+occaFunction inline {type_} clamp(const {type_} val, const {type_} min, const {type_} max) {{
   return (val < min) ? min : ((max < val) ? max : val);
 }}\n""".format(type_=type_)
 
@@ -337,23 +340,23 @@ OCCA_INLINE {type_} clamp(const {type_} val, const {type_} min, const {type_} ma
             clamp_func     = ','.join(["clamp(v.{0},min,max)".format(varL(i)) for i in range(n)])
 
             length += """
-OCCA_INLINE {type_} length(const {typeN} &v) {{
+occaFunction inline {type_} length(const {typeN} &v) {{
   return sqrt({func});
 }}\n""".format(type_=type_,typeN=typeN,func=length_func)
 
             normalize += """
-OCCA_INLINE {typeN} normalize(const {typeN} &v) {{
+occaFunction inline {typeN} normalize(const {typeN} &v) {{
   const {type_} invNorm = (1.0 / length(v));
   return OCCA_{TYPEN}({func});
 }}\n""".format(type_=type_,typeN=typeN,TYPEN=TYPEN,func=normalize_func)
 
             dot += """
-OCCA_INLINE {type_} dot(const {typeN} &a, const {typeN} &b) {{
+occaFunction inline {type_} dot(const {typeN} &a, const {typeN} &b) {{
   return ({func});
 }}\n""".format(type_=type_,typeN=typeN,func=dot_func)
 
             clamp += """
-OCCA_INLINE {typeN} clamp(const {typeN} &v, const {type_} min, const {type_} max) {{
+occaFunction inline {typeN} clamp(const {typeN} &v, const {type_} min, const {type_} max) {{
   return OCCA_{TYPEN}({func});
 }}\n""".format(type_=type_,typeN=typeN,TYPEN=TYPEN,func=clamp_func)
 
@@ -498,25 +501,6 @@ struct vdouble4 {
 };
 """
 
-def intrinsic_functions():
-    import vfloatOperators as vo
-
-    contents = ''
-
-    for function in vo.get_functions():
-        contents += vo.make_function(function)
-
-    return contents
-
-def intrinsic_contents():
-    return (intrinsic_headers() +
-            '\n'                +
-            intrinsic_macros()  +
-            '\n'                +
-            vfloat_defines()    +
-            '\n'                +
-            intrinsic_functions())
-
 def gen_file_contents():
     return ('#ifndef OCCA_VECTOR_DEFINE_HEADER\n' +
             '#define OCCA_VECTOR_DEFINE_HEADER\n' +
@@ -524,11 +508,7 @@ def gen_file_contents():
             define_all_types()        +
             '\n'                      +
             define_vector_functions() +
-            '\n'                      +
-            intrinsic_contents()      +
-            '#endif\n')
+            '\n#endif\n')
 
-occa_dir = ENV['OCCA_DIR']
-
-with open(occa_dir + '/include/occa/defines/vector.hpp', 'w') as f:
+with open(occadir + '/include/occa/defines/vector.hpp', 'w') as f:
     f.write(gen_file_contents())

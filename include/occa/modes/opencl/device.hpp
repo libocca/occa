@@ -39,13 +39,9 @@ namespace occa {
       cl_device_id clDeviceID;
       cl_context clContext;
 
-      std::string compilerFlags;
-
       device(const occa::properties &properties_ = occa::properties());
       ~device();
       void free();
-
-      void getEnvironmentVariables();
 
       void* getHandle(const occa::properties &props);
 
@@ -60,11 +56,11 @@ namespace occa {
       stream_t createStream();
       void freeStream(stream_t s);
 
-      stream_t wrapStream(void *handle_);
-
       streamTag tagStream();
       void waitFor(streamTag tag);
       double timeBetween(const streamTag &startTag, const streamTag &endTag);
+
+      stream_t wrapStream(void *handle_);
       //  |=============================
 
       //  |---[ Kernel ]----------------
