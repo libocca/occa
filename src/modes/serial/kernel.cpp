@@ -77,9 +77,14 @@ namespace occa {
         return buildFromBinary(binaryFile, functionName);
       }
 
-      const std::string kernelDefines =
-        io::cacheFile(env::OCCA_DIR + "/include/occa/modes/serial/kernelDefines.hpp",
-                      "serialKernelDefines.hpp");
+      std::string kernelDefines;
+      if (properties.has("occa::kernelDefines")) {
+        kernelDefines = properties["occa::kernelDefines"];
+      } else {
+        kernelDefines = io::cacheFile(env::OCCA_DIR + "/include/occa/modes/serial/kernelDefines.hpp",
+                                      "serialKernelDefines.hpp");
+      }
+
       const std::string vectorDefines =
         io::cacheFile(env::OCCA_DIR + "/include/occa/defines/vector.hpp",
                       "vectorDefines.hpp");

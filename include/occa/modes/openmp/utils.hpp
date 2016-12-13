@@ -27,7 +27,7 @@
 #  define OCCA_OPENMP_UTILS_HEADER
 
 namespace occa {
-  namespace omp {
+  namespace openmp {
     extern std::string notSupported;
 
     std::string baseCompilerFlag(const int vendor_);

@@ -26,14 +26,17 @@
 #  ifndef OCCA_OPENMP_DEVICE_HEADER
 #  define OCCA_OPENMP_DEVICE_HEADER
 
-#include "occa/devices.hpp"
+#include "occa/modes/serial/device.hpp"
 
 namespace occa {
   namespace openmp {
     class device : public serial::device {
     public:
       device(const occa::properties &properties_);
-      void addOccaHeadersToInfo(kernelInfo &info_);
+
+      kernel_v* buildKernel(const std::string &filename,
+                            const std::string &functionName,
+                            const occa::properties &props);
     };
   }
 }

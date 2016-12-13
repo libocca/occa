@@ -24,10 +24,12 @@
 
 #if OCCA_OPENMP_ENABLED
 
-#include "occa/Serial.hpp"
-#include "occa/OpenMP.hpp"
-
 #include <omp.h>
+
+#include "occa/modes/serial/device.hpp"
+#include "occa/modes/openmp/device.hpp"
+#include "occa/modes/openmp/kernel.hpp"
+#include "occa/modes/openmp/utils.hpp"
 
 namespace occa {
   namespace openmp {
@@ -36,17 +38,26 @@ namespace occa {
       // Generate an OpenMP library dependency (so it doesn't crash when dlclose())
       omp_get_num_threads();
 
-      getEnvironmentVariables();
+      const std::string openmpFlag = openmp::compilerFlag(properties.get<int>("vendor"),
+                                                          properties["compiler"]);
 
-      vendor         = sys::compilerVendor(compiler);
-      ompFlag        = omp::compilerFlag(vendor, compiler);
-      supportsOpenMP = (data_.OpenMPFlag != omp::notSupported);
-
-      sys::addSharedBinaryFlagsTo(vendor, compilerFlags);
+      if (openmpFlag != openmp::notSupported) {
+        std::string &compilerFlags = properties["compilerFlags"];
+        compilerFlags += ' ';
+        compilerFlags += openmpFlag;
+      } else {
+        std::cout << "Compiler [" << properties["compiler"]
+                  << "] does not support OpenMP, defaulting to [Serial] mode\n";
+      }
     }
 
-    // [REFACTOR]
-    void device::addOccaHeadersToInfo(kernelInfo &info_) {
+    kernel_v* device::buildKernel(const std::string &filename,
+                                  const std::string &functionName,
+                                  const occa::properties &props) {
+      kernel *k = new kernel();
+      k->dHandle = this;
+      k->build(filename, functionName, props);
+      return k;
     }
   }
 }

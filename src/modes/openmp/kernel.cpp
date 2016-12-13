@@ -27,11 +27,18 @@
 #include <omp.h>
 
 #include "occa/modes/openmp/kernel.hpp"
-#include "occa/base.hpp"
+#include "occa/tools/env.hpp"
+#include "occa/tools/io.hpp"
 
 namespace occa {
   namespace openmp {
-    kernel::kernel() : serial::kernel() {}
+    kernel::kernel(const occa::properties &properties_) :
+      serial::kernel(properties_) {
+
+      properties["occa::kernelDefines"] =
+        io::cacheFile(env::OCCA_DIR + "/include/occa/modes/openmp/kernelDefines.hpp",
+                      "openmpKernelDefines.hpp");
+    }
   }
 }
 
