@@ -81,6 +81,13 @@ namespace occa {
   double atod(const char *c);
   double atod(const std::string &str);
 
+
+  char uppercase(const char c);
+  char lowercase(const char c);
+
+  std::string uppercase(const std::string &str);
+  std::string lowercase(const std::string &str);
+
   std::string stringifyBytes(udim_t bytes);
 
   strVector_t split(const std::string &s, const char delimeter);

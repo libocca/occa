@@ -71,17 +71,17 @@ namespace occa {
     virtual kernelArg makeKernelArg() const = 0;
 
     virtual void copyTo(void *dest,
-                        const udim_t bytes = -1,
+                        const udim_t bytes,
                         const udim_t offset = 0,
                         const occa::properties &props = occa::properties()) = 0;
 
     virtual void copyFrom(const void *src,
-                          const udim_t bytes = -1,
+                          const udim_t bytes,
                           const udim_t offset = 0,
                           const occa::properties &props = occa::properties()) = 0;
 
     virtual void copyFrom(const memory_v *src,
-                          const udim_t bytes = -1,
+                          const udim_t bytes,
                           const udim_t destOffset = 0,
                           const udim_t srcOffset = 0,
                           const occa::properties &props = occa::properties()) = 0;

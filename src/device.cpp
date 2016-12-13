@@ -35,7 +35,7 @@ namespace occa {
     mode = properties_["mode"];
     properties = properties_;
 
-    uvaEnabled_ = (properties["uva"] == "enabled");
+    uvaEnabled_ = this->properties.iMatch("uva", "enabled");
     currentStream = NULL;
     bytesAllocated = 0;
   }
@@ -100,7 +100,7 @@ namespace occa {
 
   void device::setup(const occa::properties &props) {
     dHandle = occa::newModeDevice(props);
-    dHandle->uvaEnabled_ = (props["uva"] == "ENABLED");
+    dHandle->uvaEnabled_ = dHandle->properties.iMatch("uva", "enabled");
 
     stream newStream = createStream();
     dHandle->currentStream = newStream.handle;
@@ -145,17 +145,15 @@ namespace occa {
 
     if (dHandle->fakesUva()) {
       const size_t staleEntries = uvaStaleMemory.size();
+      for (size_t i = 0; i < staleEntries; ++i) {
+        occa::memory_v *mem = uvaStaleMemory[i];
 
+        mem->copyTo(mem->uvaPtr, mem->size, 0, occa::properties("async = 1"));
+
+        mem->memInfo &= ~uvaFlag::inDevice;
+        mem->memInfo &= ~uvaFlag::isStale;
+      }
       if (staleEntries) {
-        for (size_t i = 0; i < staleEntries; ++i) {
-          occa::memory_v *mem = uvaStaleMemory[i];
-
-          mem->copyTo(mem->uvaPtr, -1, 0, occa::properties("async = 1"));
-
-          mem->memInfo &= ~uvaFlag::inDevice;
-          mem->memInfo &= ~uvaFlag::isStale;
-        }
-
         uvaStaleMemory.clear();
       }
     }

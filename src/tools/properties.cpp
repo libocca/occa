@@ -97,6 +97,18 @@ namespace occa {
     props.erase(it);
   }
 
+  bool properties::iMatch(const std::string &prop, const std::string &value) const {
+    citer_t it = props.find(prop);
+    if (it == props.end()) {
+      return false;
+    }
+    return (lowercase(it->second) == lowercase(value));
+  }
+
+  void properties::setOnChangeFunc(hasProperties &holder_) {
+    holder = &holder_;
+  }
+
   void properties::onChange(properties::Op op,
                             const std::string &prop,
                             const std::string &oldValue,

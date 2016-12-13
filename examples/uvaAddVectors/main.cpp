@@ -9,7 +9,7 @@ int main(int argc, char **argv) {
   //   disabled by default
   // occa::enableUVAByDefault();
 
-  occa::device device("mode = OpenCL, platformID = 0, deviceID = 0, UVA = enabled");
+  occa::device device("mode = OpenCL, platformID = 0, deviceID = 0, uva = enabled");
 
   // Allocate [managed] arrays that will
   //   automatically synchronize between

@@ -97,8 +97,9 @@ namespace occa {
 
     void remove(const std::string &prop);
 
-    void setOnChangeFunc(hasProperties &holder_);
+    bool iMatch(const std::string &prop, const std::string &value) const;
 
+    void setOnChangeFunc(hasProperties &holder_);
     void onChange(properties::Op op,
                   const std::string &prop,
                   const std::string &oldValue,
