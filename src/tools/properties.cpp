@@ -120,13 +120,13 @@ namespace occa {
 
   hash_t properties::hash() const {
     citer_t it = props.begin();
-    hash_t hash;
+    hash_t hash_;
     while (it != props.end()) {
-      hash ^= occa::hash(it->first);
-      hash ^= occa::hash(it->second);
+      hash_ ^= occa::hash(it->first);
+      hash_ ^= occa::hash(it->second);
       ++it;
     }
-    return hash;
+    return hash_;
   }
 
   std::string properties::toString() const {

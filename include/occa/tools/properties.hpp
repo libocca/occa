@@ -91,6 +91,7 @@ namespace occa {
       if (!has(prop)) {
         set(prop, t);
       }
+      return *this;
     }
 
     properties operator + (const properties &props) const;

@@ -532,8 +532,8 @@ namespace occa {
       // sortIndices();
     }
 
-    void valueInfo_t::load(varInfo &var) {
-      value.load(var);
+    void valueInfo_t::load(varInfo &var_) {
+      value.load(var_);
     }
 
     void valueInfo_t::load(const std::string &s) {
@@ -850,7 +850,7 @@ namespace occa {
       return -1;
     }
 
-    int valueInfo_t::hasStride(atomInfo_t &stride) {
+    int valueInfo_t::hasStride(atomInfo_t &stride_) {
       for (int i = 0; i < indices; ++i) {
         // if (strides[i] == stride) // [<>]
         //   return true;
