@@ -1,7 +1,7 @@
-#[DEVICE INFO] "mode = Serial, UVA = enabled"
-#[DEVICE INFO] "mode = OpenMP, UVA = enabled"
-[DEVICE INFO] "mode = OpenCL, platformID = 0, deviceID = 1, UVA = enabled"
-#[DEVICE INFO] "mode = CUDA, deviceID = 0, UVA = enabled"
+#[DEVICE INFO] "mode = Serial, uva = enabled"
+#[DEVICE INFO] "mode = OpenMP, uva = enabled"
+[DEVICE INFO] "mode = OpenCL, platformID = 0, deviceID = 1, uva = enabled"
+#[DEVICE INFO] "mode = CUDA, deviceID = 0, uva = enabled"
 
 [SHAPE FUNCTION] mandelbulb
 #[SHAPE FUNCTION] sphere

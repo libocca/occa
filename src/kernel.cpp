@@ -171,7 +171,7 @@ namespace occa {
         mHandle->dHandle->hasUvaEnabled()) {
 
       if (!mHandle->inDevice()) {
-        mHandle->copyFrom(mHandle->uvaPtr);
+        mHandle->copyFrom(mHandle->uvaPtr, mHandle->size);
         mHandle->memInfo |= uvaFlag::inDevice;
       }
       if (!isConst && !mHandle->isStale()) {
@@ -397,11 +397,18 @@ namespace occa {
   void kernel::runFromArguments() {
     checkIfInitialized();
 
+    const int argc = (int) kHandle->arguments.size();
+    for (int i = 0; i < argc; ++i) {
+      const bool argIsConst = kHandle->metadata.argIsConst(i);
+      kHandle->arguments[i].setupForKernelCall(argIsConst);
+    }
+
     // Add nestedKernels
     if (kHandle->nestedKernelCount()) {
       kHandle->arguments.insert(kHandle->arguments.begin(),
                                 kHandle->nestedKernelsPtr());
     }
+
     kHandle->runFromArguments(kHandle->argumentCount(),
                               kHandle->argumentsPtr());
 

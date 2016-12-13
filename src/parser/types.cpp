@@ -2684,7 +2684,6 @@ namespace occa {
       kInfo.baseName = baseName;
 
       kInfo.nestedKernels = nestedKernels.size();
-
       kInfo.argumentInfos = argumentInfos;
 
       return kInfo;
