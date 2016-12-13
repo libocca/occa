@@ -43,7 +43,6 @@ namespace occa {
   bool modeIsEnabled(const std::string &mode);
 
   mode_v* getMode(const occa::properties &props);
-  mode_v* getMode(const std::string &mode);
 
   device_v* newModeDevice(const occa::properties &props = occa::properties());
   kernel_v* newModeKernel(const occa::properties &props = occa::properties());

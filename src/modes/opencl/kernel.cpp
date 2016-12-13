@@ -88,7 +88,7 @@ namespace occa {
           std::cout << "Found cached binary of [" << io::shortname(filename)
                     << "] in [" << io::shortname(binaryFile) << "]\n";
         }
-        return buildFromBinary(binaryFile, functionName);
+        return buildFromBinary(binaryFile, functionName, props);
       }
 
       const std::string kernelDefines =
@@ -121,7 +121,8 @@ namespace occa {
     }
 
     void kernel::buildFromBinary(const std::string &filename,
-                                 const std::string &functionName) {
+                                 const std::string &functionName,
+                                 const occa::properties &props) {
 
       name = functionName;
 

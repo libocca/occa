@@ -204,7 +204,8 @@ namespace occa {
                        const occa::properties &props) = 0;
 
     virtual void buildFromBinary(const std::string &filename,
-                                 const std::string &functionName) = 0;
+                                 const std::string &functionName,
+                                 const occa::properties &props) = 0;
 
     virtual int maxDims() = 0;
     virtual dim maxOuterDims() = 0;

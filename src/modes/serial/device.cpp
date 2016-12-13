@@ -160,10 +160,11 @@ namespace occa {
     }
 
     kernel_v* device::buildKernelFromBinary(const std::string &filename,
-                                            const std::string &functionName) {
+                                            const std::string &functionName,
+                                            const occa::properties &props) {
       kernel *k = new kernel();
       k->dHandle = this;
-      k->buildFromBinary(filename, functionName);
+      k->buildFromBinary(filename, functionName, props);
       return k;
     }
 

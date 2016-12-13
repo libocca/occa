@@ -203,7 +203,8 @@ namespace occa {
     }
 
     kernel_v* device::buildKernelFromBinary(const std::string &filename,
-                                            const std::string &functionName) {
+                                            const std::string &functionName,
+                                            const occa::properties &props) {
       opencl::kernel *k = new opencl::kernel();
 
       k->dHandle = this;
@@ -215,7 +216,7 @@ namespace occa {
       k->clDeviceID   = clDeviceID;
       k->clContext    = clContext;
 
-      k->buildFromBinary(filename, functionName);
+      k->buildFromBinary(filename, functionName, props);
 
       return k;
     }

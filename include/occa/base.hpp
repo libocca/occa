@@ -50,7 +50,6 @@ namespace occa {
 
   device host();
   void setDevice(device d);
-  void setDevice(const std::string &props);
   void setDevice(const properties &props);
 
   std::vector<device>& getDeviceList();
@@ -80,7 +79,8 @@ namespace occa {
                                const properties &props = occa::properties());
 
   kernel buildKernelFromBinary(const std::string &filename,
-                               const std::string &functionName);
+                               const std::string &functionName,
+                               const properties &props = occa::properties());
   //====================================
 
   //---[ Memory Functions ]-------------

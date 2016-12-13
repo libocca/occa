@@ -72,10 +72,6 @@ namespace occa {
     setup(props);
   }
 
-  device::device(const std::string &props) {
-    setup(occa::properties(props));
-  }
-
   device::device(const device &d) :
     dHandle(d.dHandle) {}
 
@@ -104,10 +100,6 @@ namespace occa {
 
     stream newStream = createStream();
     dHandle->currentStream = newStream.handle;
-  }
-
-  void device::setup(const std::string &props) {
-    setup(occa::properties(props));
   }
 
   occa::properties& device::properties() {
@@ -322,9 +314,9 @@ namespace occa {
     if (!io::haveHash(hash, hashTag)) {
       io::waitForHash(hash, hashTag);
 
-      // [REFACTOR] fix binary name
       return buildKernelFromBinary(hashDir + kc::binaryFile,
-                                   functionName);
+                                   functionName,
+                                   props);
     }
 
     io::write(stringSourceFile, content);
@@ -339,11 +331,12 @@ namespace occa {
   }
 
   kernel device::buildKernelFromBinary(const std::string &filename,
-                                       const std::string &functionName) {
+                                       const std::string &functionName,
+                                       const occa::properties &props) {
     checkIfInitialized();
 
     kernel ker;
-    ker.kHandle = dHandle->buildKernelFromBinary(filename, functionName);
+    ker.kHandle = dHandle->buildKernelFromBinary(filename, functionName, props);
     ker.kHandle->dHandle = dHandle;
 
     return ker;
