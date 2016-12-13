@@ -24,20 +24,20 @@
 
 #if OCCA_CUDA_ENABLED
 
-#include "occa/CUDA.hpp"
+#include "occa/device.hpp"
+#include "occa/tools/string.hpp"
+#include "occa/modes/cuda/device.hpp"
+#include "occa/modes/cuda/utils.hpp"
 
 namespace occa {
   //---[ Helper Functions ]-----------
   namespace cuda {
-    bool isInitialized = false;
-
     void init() {
-      if (isInitialized) {
-        return;
+      static bool isInitialized = false;
+      if (!isInitialized) {
+        cuInit(0);
+        isInitialized = true;
       }
-      cuInit(0);
-
-      isInitialized = true;
     }
 
     int getDeviceCount() {
@@ -197,31 +197,25 @@ namespace occa {
 #endif
     }
 
-    occa::device wrapDevice(CUdevice device, CUcontext context) {
-      occa::device dev;
-      device_t<CUDA> &dHandle   = *(new device_t<CUDA>());
-      CUDADeviceData_t &devData = *(new CUDADeviceData_t);
+    occa::device wrapDevice(CUdevice device,
+                            CUcontext context,
+                            const occa::properties &props) {
+      cuda::device &cdev = *(new cuda::device(props));
+      cdev.handle     = device;
+      cdev.context    = context;
+      cdev.p2pEnabled = false;
 
-      dev.dHandle = &dHandle;
+      cdev.currentStream = cdev.createStream();
 
-      //---[ Setup ]----------
-      dHandle.data = &devData;
-
-      devData.device     = device;
-      devData.context    = context;
-      devData.p2pEnabled = false;
-      //======================
-
-      dHandle.modelID_ = library::deviceModelID(dHandle.getIdentifier());
-      dHandle.id_      = library::genDeviceID();
-
-      dHandle.currentStream = dHandle.createStream();
-
-      return dev;
+      return occa::device(&cdev);
     }
 
-    CUevent& event(streamTag tag) {
+    CUevent& event(streamTag &tag) {
       return (CUevent&) tag.handle;
+    }
+
+    const CUevent& event(const streamTag &tag) {
+      return (const CUevent&) tag.handle;
     }
 
     std::string error(const CUresult errorCode) {
@@ -279,23 +273,6 @@ namespace occa {
       };
     }
   }
-
-  const CUarray_format cudaFormats[8] = {CU_AD_FORMAT_UNSIGNED_INT8,
-                                         CU_AD_FORMAT_UNSIGNED_INT16,
-                                         CU_AD_FORMAT_UNSIGNED_INT32,
-                                         CU_AD_FORMAT_SIGNED_INT8,
-                                         CU_AD_FORMAT_SIGNED_INT16,
-                                         CU_AD_FORMAT_SIGNED_INT32,
-                                         CU_AD_FORMAT_HALF,
-                                         CU_AD_FORMAT_FLOAT};
-
-  template <>
-  void* formatType::format<occa::CUDA>() const {
-    return ((void*) &(cudaFormats[format_]));
-  }
-
-  const int CUDA_ADDRESS_NONE  = 0; // cudaBoundaryModeNone
-  const int CUDA_ADDRESS_CLAMP = 1; // cudaBoundaryModeClamp
 }
 
 #endif

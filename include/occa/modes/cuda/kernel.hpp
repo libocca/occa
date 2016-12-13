@@ -20,38 +20,40 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  */
 
+#include "occa/defines.hpp"
+
 #if OCCA_CUDA_ENABLED
 #  ifndef OCCA_CUDA_KERNEL_HEADER
 #  define OCCA_CUDA_KERNEL_HEADER
 
-#include "occa/defines.hpp"
-#include "occa/kernel.hpp"
-
 #include <cuda.h>
+
+#include "occa/kernel.hpp"
 
 namespace occa {
   namespace cuda {
+    class device;
+
     class kernel : public occa::kernel_v {
+      friend class device;
+
     private:
       CUdevice   device;
       CUcontext  context;
       CUmodule   module;
-      CUfunction function;
+      CUfunction handle;
 
       void *vArgs[2*OCCA_MAX_ARGS];
 
     public:
-      kernel();
-      kernel(const kernel &k);
-      kernel& operator = (const kernel &k);
+      kernel(const occa::properties &properties_ = occa::properties());
       ~kernel();
 
-      void* getKernelHandle();
-      void* getProgramHandle();
+      void* getHandle(const occa::properties &props);
 
       void build(const std::string &filename,
                  const std::string &functionName,
-                 const kernelInfo &info_);
+                 const occa::properties &props);
 
       void buildFromBinary(const std::string &filename,
                            const std::string &functionName);

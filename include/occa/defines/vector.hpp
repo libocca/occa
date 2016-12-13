@@ -1,25 +1,3 @@
-/* The MIT License (MIT)
- *
- * Copyright (c) 2014-2016 David Medina and Tim Warburton
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- */
-
 #ifndef OCCA_VECTOR_DEFINE_HEADER
 #define OCCA_VECTOR_DEFINE_HEADER
 /*
@@ -31,7 +9,6 @@
 #if (!defined(OCCA_IN_KERNEL) || (!OCCA_USING_OPENCL))
 #  include <iostream>
 #  include <cmath>
-
 #  include "occa/defines.hpp"
 
 #  ifndef OCCA_IN_KERNEL
@@ -46,16 +23,16 @@ public:
   union { bool s0, x; };
   union { bool s1, y; };
 
-  inline occaFunction bool2() :
+  inline occaFunction bool2() : 
     x(0),
     y(0) {}
 
-  inline occaFunction bool2(const bool &x_) :
+  inline occaFunction bool2(const bool &x_) : 
     x(x_),
     y(0) {}
 
   inline occaFunction bool2(const bool &x_,
-                            const bool &y_) :
+                            const bool &y_) : 
     x(x_),
     y(y_) {}
 };
@@ -187,20 +164,20 @@ public:
   union { bool s2, z; };
   union { bool s3, w; };
 
-  inline occaFunction bool4() :
+  inline occaFunction bool4() : 
     x(0),
     y(0),
     z(0),
     w(0) {}
 
-  inline occaFunction bool4(const bool &x_) :
+  inline occaFunction bool4(const bool &x_) : 
     x(x_),
     y(0),
     z(0),
     w(0) {}
 
   inline occaFunction bool4(const bool &x_,
-                            const bool &y_) :
+                            const bool &y_) : 
     x(x_),
     y(y_),
     z(0),
@@ -208,7 +185,7 @@ public:
 
   inline occaFunction bool4(const bool &x_,
                             const bool &y_,
-                            const bool &z_) :
+                            const bool &z_) : 
     x(x_),
     y(y_),
     z(z_),
@@ -217,7 +194,7 @@ public:
   inline occaFunction bool4(const bool &x_,
                             const bool &y_,
                             const bool &z_,
-                            const bool &w_) :
+                            const bool &w_) : 
     x(x_),
     y(y_),
     z(z_),
@@ -405,7 +382,7 @@ public:
   bool s6;
   bool s7;
 
-  inline occaFunction bool8() :
+  inline occaFunction bool8() : 
     x(0),
     y(0),
     z(0),
@@ -415,7 +392,7 @@ public:
     s6(0),
     s7(0) {}
 
-  inline occaFunction bool8(const bool &x_) :
+  inline occaFunction bool8(const bool &x_) : 
     x(x_),
     y(0),
     z(0),
@@ -426,7 +403,7 @@ public:
     s7(0) {}
 
   inline occaFunction bool8(const bool &x_,
-                            const bool &y_) :
+                            const bool &y_) : 
     x(x_),
     y(y_),
     z(0),
@@ -438,7 +415,7 @@ public:
 
   inline occaFunction bool8(const bool &x_,
                             const bool &y_,
-                            const bool &z_) :
+                            const bool &z_) : 
     x(x_),
     y(y_),
     z(z_),
@@ -451,7 +428,7 @@ public:
   inline occaFunction bool8(const bool &x_,
                             const bool &y_,
                             const bool &z_,
-                            const bool &w_) :
+                            const bool &w_) : 
     x(x_),
     y(y_),
     z(z_),
@@ -465,7 +442,7 @@ public:
                             const bool &y_,
                             const bool &z_,
                             const bool &w_,
-                            const bool &s4_) :
+                            const bool &s4_) : 
     x(x_),
     y(y_),
     z(z_),
@@ -480,7 +457,7 @@ public:
                             const bool &z_,
                             const bool &w_,
                             const bool &s4_,
-                            const bool &s5_) :
+                            const bool &s5_) : 
     x(x_),
     y(y_),
     z(z_),
@@ -496,7 +473,7 @@ public:
                             const bool &w_,
                             const bool &s4_,
                             const bool &s5_,
-                            const bool &s6_) :
+                            const bool &s6_) : 
     x(x_),
     y(y_),
     z(z_),
@@ -513,7 +490,7 @@ public:
                             const bool &s4_,
                             const bool &s5_,
                             const bool &s6_,
-                            const bool &s7_) :
+                            const bool &s7_) : 
     x(x_),
     y(y_),
     z(z_),
@@ -789,7 +766,7 @@ public:
   bool s14;
   bool s15;
 
-  inline occaFunction bool16() :
+  inline occaFunction bool16() : 
     x(0),
     y(0),
     z(0),
@@ -807,7 +784,7 @@ public:
     s14(0),
     s15(0) {}
 
-  inline occaFunction bool16(const bool &x_) :
+  inline occaFunction bool16(const bool &x_) : 
     x(x_),
     y(0),
     z(0),
@@ -826,7 +803,7 @@ public:
     s15(0) {}
 
   inline occaFunction bool16(const bool &x_,
-                             const bool &y_) :
+                             const bool &y_) : 
     x(x_),
     y(y_),
     z(0),
@@ -846,7 +823,7 @@ public:
 
   inline occaFunction bool16(const bool &x_,
                              const bool &y_,
-                             const bool &z_) :
+                             const bool &z_) : 
     x(x_),
     y(y_),
     z(z_),
@@ -867,7 +844,7 @@ public:
   inline occaFunction bool16(const bool &x_,
                              const bool &y_,
                              const bool &z_,
-                             const bool &w_) :
+                             const bool &w_) : 
     x(x_),
     y(y_),
     z(z_),
@@ -889,7 +866,7 @@ public:
                              const bool &y_,
                              const bool &z_,
                              const bool &w_,
-                             const bool &s4_) :
+                             const bool &s4_) : 
     x(x_),
     y(y_),
     z(z_),
@@ -912,7 +889,7 @@ public:
                              const bool &z_,
                              const bool &w_,
                              const bool &s4_,
-                             const bool &s5_) :
+                             const bool &s5_) : 
     x(x_),
     y(y_),
     z(z_),
@@ -936,7 +913,7 @@ public:
                              const bool &w_,
                              const bool &s4_,
                              const bool &s5_,
-                             const bool &s6_) :
+                             const bool &s6_) : 
     x(x_),
     y(y_),
     z(z_),
@@ -961,7 +938,7 @@ public:
                              const bool &s4_,
                              const bool &s5_,
                              const bool &s6_,
-                             const bool &s7_) :
+                             const bool &s7_) : 
     x(x_),
     y(y_),
     z(z_),
@@ -987,7 +964,7 @@ public:
                              const bool &s5_,
                              const bool &s6_,
                              const bool &s7_,
-                             const bool &s8_) :
+                             const bool &s8_) : 
     x(x_),
     y(y_),
     z(z_),
@@ -1014,7 +991,7 @@ public:
                              const bool &s6_,
                              const bool &s7_,
                              const bool &s8_,
-                             const bool &s9_) :
+                             const bool &s9_) : 
     x(x_),
     y(y_),
     z(z_),
@@ -1042,7 +1019,7 @@ public:
                              const bool &s7_,
                              const bool &s8_,
                              const bool &s9_,
-                             const bool &s10_) :
+                             const bool &s10_) : 
     x(x_),
     y(y_),
     z(z_),
@@ -1071,7 +1048,7 @@ public:
                              const bool &s8_,
                              const bool &s9_,
                              const bool &s10_,
-                             const bool &s11_) :
+                             const bool &s11_) : 
     x(x_),
     y(y_),
     z(z_),
@@ -1101,7 +1078,7 @@ public:
                              const bool &s9_,
                              const bool &s10_,
                              const bool &s11_,
-                             const bool &s12_) :
+                             const bool &s12_) : 
     x(x_),
     y(y_),
     z(z_),
@@ -1132,7 +1109,7 @@ public:
                              const bool &s10_,
                              const bool &s11_,
                              const bool &s12_,
-                             const bool &s13_) :
+                             const bool &s13_) : 
     x(x_),
     y(y_),
     z(z_),
@@ -1164,7 +1141,7 @@ public:
                              const bool &s11_,
                              const bool &s12_,
                              const bool &s13_,
-                             const bool &s14_) :
+                             const bool &s14_) : 
     x(x_),
     y(y_),
     z(z_),
@@ -1197,7 +1174,7 @@ public:
                              const bool &s12_,
                              const bool &s13_,
                              const bool &s14_,
-                             const bool &s15_) :
+                             const bool &s15_) : 
     x(x_),
     y(y_),
     z(z_),
@@ -1640,16 +1617,16 @@ public:
   union { char s0, x; };
   union { char s1, y; };
 
-  inline occaFunction char2() :
+  inline occaFunction char2() : 
     x(0),
     y(0) {}
 
-  inline occaFunction char2(const char &x_) :
+  inline occaFunction char2(const char &x_) : 
     x(x_),
     y(0) {}
 
   inline occaFunction char2(const char &x_,
-                            const char &y_) :
+                            const char &y_) : 
     x(x_),
     y(y_) {}
 };
@@ -1817,20 +1794,20 @@ public:
   union { char s2, z; };
   union { char s3, w; };
 
-  inline occaFunction char4() :
+  inline occaFunction char4() : 
     x(0),
     y(0),
     z(0),
     w(0) {}
 
-  inline occaFunction char4(const char &x_) :
+  inline occaFunction char4(const char &x_) : 
     x(x_),
     y(0),
     z(0),
     w(0) {}
 
   inline occaFunction char4(const char &x_,
-                            const char &y_) :
+                            const char &y_) : 
     x(x_),
     y(y_),
     z(0),
@@ -1838,7 +1815,7 @@ public:
 
   inline occaFunction char4(const char &x_,
                             const char &y_,
-                            const char &z_) :
+                            const char &z_) : 
     x(x_),
     y(y_),
     z(z_),
@@ -1847,7 +1824,7 @@ public:
   inline occaFunction char4(const char &x_,
                             const char &y_,
                             const char &z_,
-                            const char &w_) :
+                            const char &w_) : 
     x(x_),
     y(y_),
     z(z_),
@@ -2082,7 +2059,7 @@ public:
   char s6;
   char s7;
 
-  inline occaFunction char8() :
+  inline occaFunction char8() : 
     x(0),
     y(0),
     z(0),
@@ -2092,7 +2069,7 @@ public:
     s6(0),
     s7(0) {}
 
-  inline occaFunction char8(const char &x_) :
+  inline occaFunction char8(const char &x_) : 
     x(x_),
     y(0),
     z(0),
@@ -2103,7 +2080,7 @@ public:
     s7(0) {}
 
   inline occaFunction char8(const char &x_,
-                            const char &y_) :
+                            const char &y_) : 
     x(x_),
     y(y_),
     z(0),
@@ -2115,7 +2092,7 @@ public:
 
   inline occaFunction char8(const char &x_,
                             const char &y_,
-                            const char &z_) :
+                            const char &z_) : 
     x(x_),
     y(y_),
     z(z_),
@@ -2128,7 +2105,7 @@ public:
   inline occaFunction char8(const char &x_,
                             const char &y_,
                             const char &z_,
-                            const char &w_) :
+                            const char &w_) : 
     x(x_),
     y(y_),
     z(z_),
@@ -2142,7 +2119,7 @@ public:
                             const char &y_,
                             const char &z_,
                             const char &w_,
-                            const char &s4_) :
+                            const char &s4_) : 
     x(x_),
     y(y_),
     z(z_),
@@ -2157,7 +2134,7 @@ public:
                             const char &z_,
                             const char &w_,
                             const char &s4_,
-                            const char &s5_) :
+                            const char &s5_) : 
     x(x_),
     y(y_),
     z(z_),
@@ -2173,7 +2150,7 @@ public:
                             const char &w_,
                             const char &s4_,
                             const char &s5_,
-                            const char &s6_) :
+                            const char &s6_) : 
     x(x_),
     y(y_),
     z(z_),
@@ -2190,7 +2167,7 @@ public:
                             const char &s4_,
                             const char &s5_,
                             const char &s6_,
-                            const char &s7_) :
+                            const char &s7_) : 
     x(x_),
     y(y_),
     z(z_),
@@ -2532,7 +2509,7 @@ public:
   char s14;
   char s15;
 
-  inline occaFunction char16() :
+  inline occaFunction char16() : 
     x(0),
     y(0),
     z(0),
@@ -2550,7 +2527,7 @@ public:
     s14(0),
     s15(0) {}
 
-  inline occaFunction char16(const char &x_) :
+  inline occaFunction char16(const char &x_) : 
     x(x_),
     y(0),
     z(0),
@@ -2569,7 +2546,7 @@ public:
     s15(0) {}
 
   inline occaFunction char16(const char &x_,
-                             const char &y_) :
+                             const char &y_) : 
     x(x_),
     y(y_),
     z(0),
@@ -2589,7 +2566,7 @@ public:
 
   inline occaFunction char16(const char &x_,
                              const char &y_,
-                             const char &z_) :
+                             const char &z_) : 
     x(x_),
     y(y_),
     z(z_),
@@ -2610,7 +2587,7 @@ public:
   inline occaFunction char16(const char &x_,
                              const char &y_,
                              const char &z_,
-                             const char &w_) :
+                             const char &w_) : 
     x(x_),
     y(y_),
     z(z_),
@@ -2632,7 +2609,7 @@ public:
                              const char &y_,
                              const char &z_,
                              const char &w_,
-                             const char &s4_) :
+                             const char &s4_) : 
     x(x_),
     y(y_),
     z(z_),
@@ -2655,7 +2632,7 @@ public:
                              const char &z_,
                              const char &w_,
                              const char &s4_,
-                             const char &s5_) :
+                             const char &s5_) : 
     x(x_),
     y(y_),
     z(z_),
@@ -2679,7 +2656,7 @@ public:
                              const char &w_,
                              const char &s4_,
                              const char &s5_,
-                             const char &s6_) :
+                             const char &s6_) : 
     x(x_),
     y(y_),
     z(z_),
@@ -2704,7 +2681,7 @@ public:
                              const char &s4_,
                              const char &s5_,
                              const char &s6_,
-                             const char &s7_) :
+                             const char &s7_) : 
     x(x_),
     y(y_),
     z(z_),
@@ -2730,7 +2707,7 @@ public:
                              const char &s5_,
                              const char &s6_,
                              const char &s7_,
-                             const char &s8_) :
+                             const char &s8_) : 
     x(x_),
     y(y_),
     z(z_),
@@ -2757,7 +2734,7 @@ public:
                              const char &s6_,
                              const char &s7_,
                              const char &s8_,
-                             const char &s9_) :
+                             const char &s9_) : 
     x(x_),
     y(y_),
     z(z_),
@@ -2785,7 +2762,7 @@ public:
                              const char &s7_,
                              const char &s8_,
                              const char &s9_,
-                             const char &s10_) :
+                             const char &s10_) : 
     x(x_),
     y(y_),
     z(z_),
@@ -2814,7 +2791,7 @@ public:
                              const char &s8_,
                              const char &s9_,
                              const char &s10_,
-                             const char &s11_) :
+                             const char &s11_) : 
     x(x_),
     y(y_),
     z(z_),
@@ -2844,7 +2821,7 @@ public:
                              const char &s9_,
                              const char &s10_,
                              const char &s11_,
-                             const char &s12_) :
+                             const char &s12_) : 
     x(x_),
     y(y_),
     z(z_),
@@ -2875,7 +2852,7 @@ public:
                              const char &s10_,
                              const char &s11_,
                              const char &s12_,
-                             const char &s13_) :
+                             const char &s13_) : 
     x(x_),
     y(y_),
     z(z_),
@@ -2907,7 +2884,7 @@ public:
                              const char &s11_,
                              const char &s12_,
                              const char &s13_,
-                             const char &s14_) :
+                             const char &s14_) : 
     x(x_),
     y(y_),
     z(z_),
@@ -2940,7 +2917,7 @@ public:
                              const char &s12_,
                              const char &s13_,
                              const char &s14_,
-                             const char &s15_) :
+                             const char &s15_) : 
     x(x_),
     y(y_),
     z(z_),
@@ -3497,16 +3474,16 @@ public:
   union { short s0, x; };
   union { short s1, y; };
 
-  inline occaFunction short2() :
+  inline occaFunction short2() : 
     x(0),
     y(0) {}
 
-  inline occaFunction short2(const short &x_) :
+  inline occaFunction short2(const short &x_) : 
     x(x_),
     y(0) {}
 
   inline occaFunction short2(const short &x_,
-                             const short &y_) :
+                             const short &y_) : 
     x(x_),
     y(y_) {}
 };
@@ -3674,20 +3651,20 @@ public:
   union { short s2, z; };
   union { short s3, w; };
 
-  inline occaFunction short4() :
+  inline occaFunction short4() : 
     x(0),
     y(0),
     z(0),
     w(0) {}
 
-  inline occaFunction short4(const short &x_) :
+  inline occaFunction short4(const short &x_) : 
     x(x_),
     y(0),
     z(0),
     w(0) {}
 
   inline occaFunction short4(const short &x_,
-                             const short &y_) :
+                             const short &y_) : 
     x(x_),
     y(y_),
     z(0),
@@ -3695,7 +3672,7 @@ public:
 
   inline occaFunction short4(const short &x_,
                              const short &y_,
-                             const short &z_) :
+                             const short &z_) : 
     x(x_),
     y(y_),
     z(z_),
@@ -3704,7 +3681,7 @@ public:
   inline occaFunction short4(const short &x_,
                              const short &y_,
                              const short &z_,
-                             const short &w_) :
+                             const short &w_) : 
     x(x_),
     y(y_),
     z(z_),
@@ -3939,7 +3916,7 @@ public:
   short s6;
   short s7;
 
-  inline occaFunction short8() :
+  inline occaFunction short8() : 
     x(0),
     y(0),
     z(0),
@@ -3949,7 +3926,7 @@ public:
     s6(0),
     s7(0) {}
 
-  inline occaFunction short8(const short &x_) :
+  inline occaFunction short8(const short &x_) : 
     x(x_),
     y(0),
     z(0),
@@ -3960,7 +3937,7 @@ public:
     s7(0) {}
 
   inline occaFunction short8(const short &x_,
-                             const short &y_) :
+                             const short &y_) : 
     x(x_),
     y(y_),
     z(0),
@@ -3972,7 +3949,7 @@ public:
 
   inline occaFunction short8(const short &x_,
                              const short &y_,
-                             const short &z_) :
+                             const short &z_) : 
     x(x_),
     y(y_),
     z(z_),
@@ -3985,7 +3962,7 @@ public:
   inline occaFunction short8(const short &x_,
                              const short &y_,
                              const short &z_,
-                             const short &w_) :
+                             const short &w_) : 
     x(x_),
     y(y_),
     z(z_),
@@ -3999,7 +3976,7 @@ public:
                              const short &y_,
                              const short &z_,
                              const short &w_,
-                             const short &s4_) :
+                             const short &s4_) : 
     x(x_),
     y(y_),
     z(z_),
@@ -4014,7 +3991,7 @@ public:
                              const short &z_,
                              const short &w_,
                              const short &s4_,
-                             const short &s5_) :
+                             const short &s5_) : 
     x(x_),
     y(y_),
     z(z_),
@@ -4030,7 +4007,7 @@ public:
                              const short &w_,
                              const short &s4_,
                              const short &s5_,
-                             const short &s6_) :
+                             const short &s6_) : 
     x(x_),
     y(y_),
     z(z_),
@@ -4047,7 +4024,7 @@ public:
                              const short &s4_,
                              const short &s5_,
                              const short &s6_,
-                             const short &s7_) :
+                             const short &s7_) : 
     x(x_),
     y(y_),
     z(z_),
@@ -4389,7 +4366,7 @@ public:
   short s14;
   short s15;
 
-  inline occaFunction short16() :
+  inline occaFunction short16() : 
     x(0),
     y(0),
     z(0),
@@ -4407,7 +4384,7 @@ public:
     s14(0),
     s15(0) {}
 
-  inline occaFunction short16(const short &x_) :
+  inline occaFunction short16(const short &x_) : 
     x(x_),
     y(0),
     z(0),
@@ -4426,7 +4403,7 @@ public:
     s15(0) {}
 
   inline occaFunction short16(const short &x_,
-                              const short &y_) :
+                              const short &y_) : 
     x(x_),
     y(y_),
     z(0),
@@ -4446,7 +4423,7 @@ public:
 
   inline occaFunction short16(const short &x_,
                               const short &y_,
-                              const short &z_) :
+                              const short &z_) : 
     x(x_),
     y(y_),
     z(z_),
@@ -4467,7 +4444,7 @@ public:
   inline occaFunction short16(const short &x_,
                               const short &y_,
                               const short &z_,
-                              const short &w_) :
+                              const short &w_) : 
     x(x_),
     y(y_),
     z(z_),
@@ -4489,7 +4466,7 @@ public:
                               const short &y_,
                               const short &z_,
                               const short &w_,
-                              const short &s4_) :
+                              const short &s4_) : 
     x(x_),
     y(y_),
     z(z_),
@@ -4512,7 +4489,7 @@ public:
                               const short &z_,
                               const short &w_,
                               const short &s4_,
-                              const short &s5_) :
+                              const short &s5_) : 
     x(x_),
     y(y_),
     z(z_),
@@ -4536,7 +4513,7 @@ public:
                               const short &w_,
                               const short &s4_,
                               const short &s5_,
-                              const short &s6_) :
+                              const short &s6_) : 
     x(x_),
     y(y_),
     z(z_),
@@ -4561,7 +4538,7 @@ public:
                               const short &s4_,
                               const short &s5_,
                               const short &s6_,
-                              const short &s7_) :
+                              const short &s7_) : 
     x(x_),
     y(y_),
     z(z_),
@@ -4587,7 +4564,7 @@ public:
                               const short &s5_,
                               const short &s6_,
                               const short &s7_,
-                              const short &s8_) :
+                              const short &s8_) : 
     x(x_),
     y(y_),
     z(z_),
@@ -4614,7 +4591,7 @@ public:
                               const short &s6_,
                               const short &s7_,
                               const short &s8_,
-                              const short &s9_) :
+                              const short &s9_) : 
     x(x_),
     y(y_),
     z(z_),
@@ -4642,7 +4619,7 @@ public:
                               const short &s7_,
                               const short &s8_,
                               const short &s9_,
-                              const short &s10_) :
+                              const short &s10_) : 
     x(x_),
     y(y_),
     z(z_),
@@ -4671,7 +4648,7 @@ public:
                               const short &s8_,
                               const short &s9_,
                               const short &s10_,
-                              const short &s11_) :
+                              const short &s11_) : 
     x(x_),
     y(y_),
     z(z_),
@@ -4701,7 +4678,7 @@ public:
                               const short &s9_,
                               const short &s10_,
                               const short &s11_,
-                              const short &s12_) :
+                              const short &s12_) : 
     x(x_),
     y(y_),
     z(z_),
@@ -4732,7 +4709,7 @@ public:
                               const short &s10_,
                               const short &s11_,
                               const short &s12_,
-                              const short &s13_) :
+                              const short &s13_) : 
     x(x_),
     y(y_),
     z(z_),
@@ -4764,7 +4741,7 @@ public:
                               const short &s11_,
                               const short &s12_,
                               const short &s13_,
-                              const short &s14_) :
+                              const short &s14_) : 
     x(x_),
     y(y_),
     z(z_),
@@ -4797,7 +4774,7 @@ public:
                               const short &s12_,
                               const short &s13_,
                               const short &s14_,
-                              const short &s15_) :
+                              const short &s15_) : 
     x(x_),
     y(y_),
     z(z_),
@@ -5354,16 +5331,16 @@ public:
   union { int s0, x; };
   union { int s1, y; };
 
-  inline occaFunction int2() :
+  inline occaFunction int2() : 
     x(0),
     y(0) {}
 
-  inline occaFunction int2(const int &x_) :
+  inline occaFunction int2(const int &x_) : 
     x(x_),
     y(0) {}
 
   inline occaFunction int2(const int &x_,
-                           const int &y_) :
+                           const int &y_) : 
     x(x_),
     y(y_) {}
 };
@@ -5531,20 +5508,20 @@ public:
   union { int s2, z; };
   union { int s3, w; };
 
-  inline occaFunction int4() :
+  inline occaFunction int4() : 
     x(0),
     y(0),
     z(0),
     w(0) {}
 
-  inline occaFunction int4(const int &x_) :
+  inline occaFunction int4(const int &x_) : 
     x(x_),
     y(0),
     z(0),
     w(0) {}
 
   inline occaFunction int4(const int &x_,
-                           const int &y_) :
+                           const int &y_) : 
     x(x_),
     y(y_),
     z(0),
@@ -5552,7 +5529,7 @@ public:
 
   inline occaFunction int4(const int &x_,
                            const int &y_,
-                           const int &z_) :
+                           const int &z_) : 
     x(x_),
     y(y_),
     z(z_),
@@ -5561,7 +5538,7 @@ public:
   inline occaFunction int4(const int &x_,
                            const int &y_,
                            const int &z_,
-                           const int &w_) :
+                           const int &w_) : 
     x(x_),
     y(y_),
     z(z_),
@@ -5796,7 +5773,7 @@ public:
   int s6;
   int s7;
 
-  inline occaFunction int8() :
+  inline occaFunction int8() : 
     x(0),
     y(0),
     z(0),
@@ -5806,7 +5783,7 @@ public:
     s6(0),
     s7(0) {}
 
-  inline occaFunction int8(const int &x_) :
+  inline occaFunction int8(const int &x_) : 
     x(x_),
     y(0),
     z(0),
@@ -5817,7 +5794,7 @@ public:
     s7(0) {}
 
   inline occaFunction int8(const int &x_,
-                           const int &y_) :
+                           const int &y_) : 
     x(x_),
     y(y_),
     z(0),
@@ -5829,7 +5806,7 @@ public:
 
   inline occaFunction int8(const int &x_,
                            const int &y_,
-                           const int &z_) :
+                           const int &z_) : 
     x(x_),
     y(y_),
     z(z_),
@@ -5842,7 +5819,7 @@ public:
   inline occaFunction int8(const int &x_,
                            const int &y_,
                            const int &z_,
-                           const int &w_) :
+                           const int &w_) : 
     x(x_),
     y(y_),
     z(z_),
@@ -5856,7 +5833,7 @@ public:
                            const int &y_,
                            const int &z_,
                            const int &w_,
-                           const int &s4_) :
+                           const int &s4_) : 
     x(x_),
     y(y_),
     z(z_),
@@ -5871,7 +5848,7 @@ public:
                            const int &z_,
                            const int &w_,
                            const int &s4_,
-                           const int &s5_) :
+                           const int &s5_) : 
     x(x_),
     y(y_),
     z(z_),
@@ -5887,7 +5864,7 @@ public:
                            const int &w_,
                            const int &s4_,
                            const int &s5_,
-                           const int &s6_) :
+                           const int &s6_) : 
     x(x_),
     y(y_),
     z(z_),
@@ -5904,7 +5881,7 @@ public:
                            const int &s4_,
                            const int &s5_,
                            const int &s6_,
-                           const int &s7_) :
+                           const int &s7_) : 
     x(x_),
     y(y_),
     z(z_),
@@ -6246,7 +6223,7 @@ public:
   int s14;
   int s15;
 
-  inline occaFunction int16() :
+  inline occaFunction int16() : 
     x(0),
     y(0),
     z(0),
@@ -6264,7 +6241,7 @@ public:
     s14(0),
     s15(0) {}
 
-  inline occaFunction int16(const int &x_) :
+  inline occaFunction int16(const int &x_) : 
     x(x_),
     y(0),
     z(0),
@@ -6283,7 +6260,7 @@ public:
     s15(0) {}
 
   inline occaFunction int16(const int &x_,
-                            const int &y_) :
+                            const int &y_) : 
     x(x_),
     y(y_),
     z(0),
@@ -6303,7 +6280,7 @@ public:
 
   inline occaFunction int16(const int &x_,
                             const int &y_,
-                            const int &z_) :
+                            const int &z_) : 
     x(x_),
     y(y_),
     z(z_),
@@ -6324,7 +6301,7 @@ public:
   inline occaFunction int16(const int &x_,
                             const int &y_,
                             const int &z_,
-                            const int &w_) :
+                            const int &w_) : 
     x(x_),
     y(y_),
     z(z_),
@@ -6346,7 +6323,7 @@ public:
                             const int &y_,
                             const int &z_,
                             const int &w_,
-                            const int &s4_) :
+                            const int &s4_) : 
     x(x_),
     y(y_),
     z(z_),
@@ -6369,7 +6346,7 @@ public:
                             const int &z_,
                             const int &w_,
                             const int &s4_,
-                            const int &s5_) :
+                            const int &s5_) : 
     x(x_),
     y(y_),
     z(z_),
@@ -6393,7 +6370,7 @@ public:
                             const int &w_,
                             const int &s4_,
                             const int &s5_,
-                            const int &s6_) :
+                            const int &s6_) : 
     x(x_),
     y(y_),
     z(z_),
@@ -6418,7 +6395,7 @@ public:
                             const int &s4_,
                             const int &s5_,
                             const int &s6_,
-                            const int &s7_) :
+                            const int &s7_) : 
     x(x_),
     y(y_),
     z(z_),
@@ -6444,7 +6421,7 @@ public:
                             const int &s5_,
                             const int &s6_,
                             const int &s7_,
-                            const int &s8_) :
+                            const int &s8_) : 
     x(x_),
     y(y_),
     z(z_),
@@ -6471,7 +6448,7 @@ public:
                             const int &s6_,
                             const int &s7_,
                             const int &s8_,
-                            const int &s9_) :
+                            const int &s9_) : 
     x(x_),
     y(y_),
     z(z_),
@@ -6499,7 +6476,7 @@ public:
                             const int &s7_,
                             const int &s8_,
                             const int &s9_,
-                            const int &s10_) :
+                            const int &s10_) : 
     x(x_),
     y(y_),
     z(z_),
@@ -6528,7 +6505,7 @@ public:
                             const int &s8_,
                             const int &s9_,
                             const int &s10_,
-                            const int &s11_) :
+                            const int &s11_) : 
     x(x_),
     y(y_),
     z(z_),
@@ -6558,7 +6535,7 @@ public:
                             const int &s9_,
                             const int &s10_,
                             const int &s11_,
-                            const int &s12_) :
+                            const int &s12_) : 
     x(x_),
     y(y_),
     z(z_),
@@ -6589,7 +6566,7 @@ public:
                             const int &s10_,
                             const int &s11_,
                             const int &s12_,
-                            const int &s13_) :
+                            const int &s13_) : 
     x(x_),
     y(y_),
     z(z_),
@@ -6621,7 +6598,7 @@ public:
                             const int &s11_,
                             const int &s12_,
                             const int &s13_,
-                            const int &s14_) :
+                            const int &s14_) : 
     x(x_),
     y(y_),
     z(z_),
@@ -6654,7 +6631,7 @@ public:
                             const int &s12_,
                             const int &s13_,
                             const int &s14_,
-                            const int &s15_) :
+                            const int &s15_) : 
     x(x_),
     y(y_),
     z(z_),
@@ -7211,16 +7188,16 @@ public:
   union { long s0, x; };
   union { long s1, y; };
 
-  inline occaFunction long2() :
+  inline occaFunction long2() : 
     x(0),
     y(0) {}
 
-  inline occaFunction long2(const long &x_) :
+  inline occaFunction long2(const long &x_) : 
     x(x_),
     y(0) {}
 
   inline occaFunction long2(const long &x_,
-                            const long &y_) :
+                            const long &y_) : 
     x(x_),
     y(y_) {}
 };
@@ -7388,20 +7365,20 @@ public:
   union { long s2, z; };
   union { long s3, w; };
 
-  inline occaFunction long4() :
+  inline occaFunction long4() : 
     x(0),
     y(0),
     z(0),
     w(0) {}
 
-  inline occaFunction long4(const long &x_) :
+  inline occaFunction long4(const long &x_) : 
     x(x_),
     y(0),
     z(0),
     w(0) {}
 
   inline occaFunction long4(const long &x_,
-                            const long &y_) :
+                            const long &y_) : 
     x(x_),
     y(y_),
     z(0),
@@ -7409,7 +7386,7 @@ public:
 
   inline occaFunction long4(const long &x_,
                             const long &y_,
-                            const long &z_) :
+                            const long &z_) : 
     x(x_),
     y(y_),
     z(z_),
@@ -7418,7 +7395,7 @@ public:
   inline occaFunction long4(const long &x_,
                             const long &y_,
                             const long &z_,
-                            const long &w_) :
+                            const long &w_) : 
     x(x_),
     y(y_),
     z(z_),
@@ -7653,7 +7630,7 @@ public:
   long s6;
   long s7;
 
-  inline occaFunction long8() :
+  inline occaFunction long8() : 
     x(0),
     y(0),
     z(0),
@@ -7663,7 +7640,7 @@ public:
     s6(0),
     s7(0) {}
 
-  inline occaFunction long8(const long &x_) :
+  inline occaFunction long8(const long &x_) : 
     x(x_),
     y(0),
     z(0),
@@ -7674,7 +7651,7 @@ public:
     s7(0) {}
 
   inline occaFunction long8(const long &x_,
-                            const long &y_) :
+                            const long &y_) : 
     x(x_),
     y(y_),
     z(0),
@@ -7686,7 +7663,7 @@ public:
 
   inline occaFunction long8(const long &x_,
                             const long &y_,
-                            const long &z_) :
+                            const long &z_) : 
     x(x_),
     y(y_),
     z(z_),
@@ -7699,7 +7676,7 @@ public:
   inline occaFunction long8(const long &x_,
                             const long &y_,
                             const long &z_,
-                            const long &w_) :
+                            const long &w_) : 
     x(x_),
     y(y_),
     z(z_),
@@ -7713,7 +7690,7 @@ public:
                             const long &y_,
                             const long &z_,
                             const long &w_,
-                            const long &s4_) :
+                            const long &s4_) : 
     x(x_),
     y(y_),
     z(z_),
@@ -7728,7 +7705,7 @@ public:
                             const long &z_,
                             const long &w_,
                             const long &s4_,
-                            const long &s5_) :
+                            const long &s5_) : 
     x(x_),
     y(y_),
     z(z_),
@@ -7744,7 +7721,7 @@ public:
                             const long &w_,
                             const long &s4_,
                             const long &s5_,
-                            const long &s6_) :
+                            const long &s6_) : 
     x(x_),
     y(y_),
     z(z_),
@@ -7761,7 +7738,7 @@ public:
                             const long &s4_,
                             const long &s5_,
                             const long &s6_,
-                            const long &s7_) :
+                            const long &s7_) : 
     x(x_),
     y(y_),
     z(z_),
@@ -8103,7 +8080,7 @@ public:
   long s14;
   long s15;
 
-  inline occaFunction long16() :
+  inline occaFunction long16() : 
     x(0),
     y(0),
     z(0),
@@ -8121,7 +8098,7 @@ public:
     s14(0),
     s15(0) {}
 
-  inline occaFunction long16(const long &x_) :
+  inline occaFunction long16(const long &x_) : 
     x(x_),
     y(0),
     z(0),
@@ -8140,7 +8117,7 @@ public:
     s15(0) {}
 
   inline occaFunction long16(const long &x_,
-                             const long &y_) :
+                             const long &y_) : 
     x(x_),
     y(y_),
     z(0),
@@ -8160,7 +8137,7 @@ public:
 
   inline occaFunction long16(const long &x_,
                              const long &y_,
-                             const long &z_) :
+                             const long &z_) : 
     x(x_),
     y(y_),
     z(z_),
@@ -8181,7 +8158,7 @@ public:
   inline occaFunction long16(const long &x_,
                              const long &y_,
                              const long &z_,
-                             const long &w_) :
+                             const long &w_) : 
     x(x_),
     y(y_),
     z(z_),
@@ -8203,7 +8180,7 @@ public:
                              const long &y_,
                              const long &z_,
                              const long &w_,
-                             const long &s4_) :
+                             const long &s4_) : 
     x(x_),
     y(y_),
     z(z_),
@@ -8226,7 +8203,7 @@ public:
                              const long &z_,
                              const long &w_,
                              const long &s4_,
-                             const long &s5_) :
+                             const long &s5_) : 
     x(x_),
     y(y_),
     z(z_),
@@ -8250,7 +8227,7 @@ public:
                              const long &w_,
                              const long &s4_,
                              const long &s5_,
-                             const long &s6_) :
+                             const long &s6_) : 
     x(x_),
     y(y_),
     z(z_),
@@ -8275,7 +8252,7 @@ public:
                              const long &s4_,
                              const long &s5_,
                              const long &s6_,
-                             const long &s7_) :
+                             const long &s7_) : 
     x(x_),
     y(y_),
     z(z_),
@@ -8301,7 +8278,7 @@ public:
                              const long &s5_,
                              const long &s6_,
                              const long &s7_,
-                             const long &s8_) :
+                             const long &s8_) : 
     x(x_),
     y(y_),
     z(z_),
@@ -8328,7 +8305,7 @@ public:
                              const long &s6_,
                              const long &s7_,
                              const long &s8_,
-                             const long &s9_) :
+                             const long &s9_) : 
     x(x_),
     y(y_),
     z(z_),
@@ -8356,7 +8333,7 @@ public:
                              const long &s7_,
                              const long &s8_,
                              const long &s9_,
-                             const long &s10_) :
+                             const long &s10_) : 
     x(x_),
     y(y_),
     z(z_),
@@ -8385,7 +8362,7 @@ public:
                              const long &s8_,
                              const long &s9_,
                              const long &s10_,
-                             const long &s11_) :
+                             const long &s11_) : 
     x(x_),
     y(y_),
     z(z_),
@@ -8415,7 +8392,7 @@ public:
                              const long &s9_,
                              const long &s10_,
                              const long &s11_,
-                             const long &s12_) :
+                             const long &s12_) : 
     x(x_),
     y(y_),
     z(z_),
@@ -8446,7 +8423,7 @@ public:
                              const long &s10_,
                              const long &s11_,
                              const long &s12_,
-                             const long &s13_) :
+                             const long &s13_) : 
     x(x_),
     y(y_),
     z(z_),
@@ -8478,7 +8455,7 @@ public:
                              const long &s11_,
                              const long &s12_,
                              const long &s13_,
-                             const long &s14_) :
+                             const long &s14_) : 
     x(x_),
     y(y_),
     z(z_),
@@ -8511,7 +8488,7 @@ public:
                              const long &s12_,
                              const long &s13_,
                              const long &s14_,
-                             const long &s15_) :
+                             const long &s15_) : 
     x(x_),
     y(y_),
     z(z_),
@@ -9068,16 +9045,16 @@ public:
   union { float s0, x; };
   union { float s1, y; };
 
-  inline occaFunction float2() :
+  inline occaFunction float2() : 
     x(0),
     y(0) {}
 
-  inline occaFunction float2(const float &x_) :
+  inline occaFunction float2(const float &x_) : 
     x(x_),
     y(0) {}
 
   inline occaFunction float2(const float &x_,
-                             const float &y_) :
+                             const float &y_) : 
     x(x_),
     y(y_) {}
 };
@@ -9223,20 +9200,20 @@ public:
   union { float s2, z; };
   union { float s3, w; };
 
-  inline occaFunction float4() :
+  inline occaFunction float4() : 
     x(0),
     y(0),
     z(0),
     w(0) {}
 
-  inline occaFunction float4(const float &x_) :
+  inline occaFunction float4(const float &x_) : 
     x(x_),
     y(0),
     z(0),
     w(0) {}
 
   inline occaFunction float4(const float &x_,
-                             const float &y_) :
+                             const float &y_) : 
     x(x_),
     y(y_),
     z(0),
@@ -9244,7 +9221,7 @@ public:
 
   inline occaFunction float4(const float &x_,
                              const float &y_,
-                             const float &z_) :
+                             const float &z_) : 
     x(x_),
     y(y_),
     z(z_),
@@ -9253,7 +9230,7 @@ public:
   inline occaFunction float4(const float &x_,
                              const float &y_,
                              const float &z_,
-                             const float &w_) :
+                             const float &w_) : 
     x(x_),
     y(y_),
     z(z_),
@@ -9458,7 +9435,7 @@ public:
   float s6;
   float s7;
 
-  inline occaFunction float8() :
+  inline occaFunction float8() : 
     x(0),
     y(0),
     z(0),
@@ -9468,7 +9445,7 @@ public:
     s6(0),
     s7(0) {}
 
-  inline occaFunction float8(const float &x_) :
+  inline occaFunction float8(const float &x_) : 
     x(x_),
     y(0),
     z(0),
@@ -9479,7 +9456,7 @@ public:
     s7(0) {}
 
   inline occaFunction float8(const float &x_,
-                             const float &y_) :
+                             const float &y_) : 
     x(x_),
     y(y_),
     z(0),
@@ -9491,7 +9468,7 @@ public:
 
   inline occaFunction float8(const float &x_,
                              const float &y_,
-                             const float &z_) :
+                             const float &z_) : 
     x(x_),
     y(y_),
     z(z_),
@@ -9504,7 +9481,7 @@ public:
   inline occaFunction float8(const float &x_,
                              const float &y_,
                              const float &z_,
-                             const float &w_) :
+                             const float &w_) : 
     x(x_),
     y(y_),
     z(z_),
@@ -9518,7 +9495,7 @@ public:
                              const float &y_,
                              const float &z_,
                              const float &w_,
-                             const float &s4_) :
+                             const float &s4_) : 
     x(x_),
     y(y_),
     z(z_),
@@ -9533,7 +9510,7 @@ public:
                              const float &z_,
                              const float &w_,
                              const float &s4_,
-                             const float &s5_) :
+                             const float &s5_) : 
     x(x_),
     y(y_),
     z(z_),
@@ -9549,7 +9526,7 @@ public:
                              const float &w_,
                              const float &s4_,
                              const float &s5_,
-                             const float &s6_) :
+                             const float &s6_) : 
     x(x_),
     y(y_),
     z(z_),
@@ -9566,7 +9543,7 @@ public:
                              const float &s4_,
                              const float &s5_,
                              const float &s6_,
-                             const float &s7_) :
+                             const float &s7_) : 
     x(x_),
     y(y_),
     z(z_),
@@ -9862,7 +9839,7 @@ public:
   float s14;
   float s15;
 
-  inline occaFunction float16() :
+  inline occaFunction float16() : 
     x(0),
     y(0),
     z(0),
@@ -9880,7 +9857,7 @@ public:
     s14(0),
     s15(0) {}
 
-  inline occaFunction float16(const float &x_) :
+  inline occaFunction float16(const float &x_) : 
     x(x_),
     y(0),
     z(0),
@@ -9899,7 +9876,7 @@ public:
     s15(0) {}
 
   inline occaFunction float16(const float &x_,
-                              const float &y_) :
+                              const float &y_) : 
     x(x_),
     y(y_),
     z(0),
@@ -9919,7 +9896,7 @@ public:
 
   inline occaFunction float16(const float &x_,
                               const float &y_,
-                              const float &z_) :
+                              const float &z_) : 
     x(x_),
     y(y_),
     z(z_),
@@ -9940,7 +9917,7 @@ public:
   inline occaFunction float16(const float &x_,
                               const float &y_,
                               const float &z_,
-                              const float &w_) :
+                              const float &w_) : 
     x(x_),
     y(y_),
     z(z_),
@@ -9962,7 +9939,7 @@ public:
                               const float &y_,
                               const float &z_,
                               const float &w_,
-                              const float &s4_) :
+                              const float &s4_) : 
     x(x_),
     y(y_),
     z(z_),
@@ -9985,7 +9962,7 @@ public:
                               const float &z_,
                               const float &w_,
                               const float &s4_,
-                              const float &s5_) :
+                              const float &s5_) : 
     x(x_),
     y(y_),
     z(z_),
@@ -10009,7 +9986,7 @@ public:
                               const float &w_,
                               const float &s4_,
                               const float &s5_,
-                              const float &s6_) :
+                              const float &s6_) : 
     x(x_),
     y(y_),
     z(z_),
@@ -10034,7 +10011,7 @@ public:
                               const float &s4_,
                               const float &s5_,
                               const float &s6_,
-                              const float &s7_) :
+                              const float &s7_) : 
     x(x_),
     y(y_),
     z(z_),
@@ -10060,7 +10037,7 @@ public:
                               const float &s5_,
                               const float &s6_,
                               const float &s7_,
-                              const float &s8_) :
+                              const float &s8_) : 
     x(x_),
     y(y_),
     z(z_),
@@ -10087,7 +10064,7 @@ public:
                               const float &s6_,
                               const float &s7_,
                               const float &s8_,
-                              const float &s9_) :
+                              const float &s9_) : 
     x(x_),
     y(y_),
     z(z_),
@@ -10115,7 +10092,7 @@ public:
                               const float &s7_,
                               const float &s8_,
                               const float &s9_,
-                              const float &s10_) :
+                              const float &s10_) : 
     x(x_),
     y(y_),
     z(z_),
@@ -10144,7 +10121,7 @@ public:
                               const float &s8_,
                               const float &s9_,
                               const float &s10_,
-                              const float &s11_) :
+                              const float &s11_) : 
     x(x_),
     y(y_),
     z(z_),
@@ -10174,7 +10151,7 @@ public:
                               const float &s9_,
                               const float &s10_,
                               const float &s11_,
-                              const float &s12_) :
+                              const float &s12_) : 
     x(x_),
     y(y_),
     z(z_),
@@ -10205,7 +10182,7 @@ public:
                               const float &s10_,
                               const float &s11_,
                               const float &s12_,
-                              const float &s13_) :
+                              const float &s13_) : 
     x(x_),
     y(y_),
     z(z_),
@@ -10237,7 +10214,7 @@ public:
                               const float &s11_,
                               const float &s12_,
                               const float &s13_,
-                              const float &s14_) :
+                              const float &s14_) : 
     x(x_),
     y(y_),
     z(z_),
@@ -10270,7 +10247,7 @@ public:
                               const float &s12_,
                               const float &s13_,
                               const float &s14_,
-                              const float &s15_) :
+                              const float &s15_) : 
     x(x_),
     y(y_),
     z(z_),
@@ -10749,16 +10726,16 @@ public:
   union { double s0, x; };
   union { double s1, y; };
 
-  inline occaFunction double2() :
+  inline occaFunction double2() : 
     x(0),
     y(0) {}
 
-  inline occaFunction double2(const double &x_) :
+  inline occaFunction double2(const double &x_) : 
     x(x_),
     y(0) {}
 
   inline occaFunction double2(const double &x_,
-                              const double &y_) :
+                              const double &y_) : 
     x(x_),
     y(y_) {}
 };
@@ -10904,20 +10881,20 @@ public:
   union { double s2, z; };
   union { double s3, w; };
 
-  inline occaFunction double4() :
+  inline occaFunction double4() : 
     x(0),
     y(0),
     z(0),
     w(0) {}
 
-  inline occaFunction double4(const double &x_) :
+  inline occaFunction double4(const double &x_) : 
     x(x_),
     y(0),
     z(0),
     w(0) {}
 
   inline occaFunction double4(const double &x_,
-                              const double &y_) :
+                              const double &y_) : 
     x(x_),
     y(y_),
     z(0),
@@ -10925,7 +10902,7 @@ public:
 
   inline occaFunction double4(const double &x_,
                               const double &y_,
-                              const double &z_) :
+                              const double &z_) : 
     x(x_),
     y(y_),
     z(z_),
@@ -10934,7 +10911,7 @@ public:
   inline occaFunction double4(const double &x_,
                               const double &y_,
                               const double &z_,
-                              const double &w_) :
+                              const double &w_) : 
     x(x_),
     y(y_),
     z(z_),
@@ -11139,7 +11116,7 @@ public:
   double s6;
   double s7;
 
-  inline occaFunction double8() :
+  inline occaFunction double8() : 
     x(0),
     y(0),
     z(0),
@@ -11149,7 +11126,7 @@ public:
     s6(0),
     s7(0) {}
 
-  inline occaFunction double8(const double &x_) :
+  inline occaFunction double8(const double &x_) : 
     x(x_),
     y(0),
     z(0),
@@ -11160,7 +11137,7 @@ public:
     s7(0) {}
 
   inline occaFunction double8(const double &x_,
-                              const double &y_) :
+                              const double &y_) : 
     x(x_),
     y(y_),
     z(0),
@@ -11172,7 +11149,7 @@ public:
 
   inline occaFunction double8(const double &x_,
                               const double &y_,
-                              const double &z_) :
+                              const double &z_) : 
     x(x_),
     y(y_),
     z(z_),
@@ -11185,7 +11162,7 @@ public:
   inline occaFunction double8(const double &x_,
                               const double &y_,
                               const double &z_,
-                              const double &w_) :
+                              const double &w_) : 
     x(x_),
     y(y_),
     z(z_),
@@ -11199,7 +11176,7 @@ public:
                               const double &y_,
                               const double &z_,
                               const double &w_,
-                              const double &s4_) :
+                              const double &s4_) : 
     x(x_),
     y(y_),
     z(z_),
@@ -11214,7 +11191,7 @@ public:
                               const double &z_,
                               const double &w_,
                               const double &s4_,
-                              const double &s5_) :
+                              const double &s5_) : 
     x(x_),
     y(y_),
     z(z_),
@@ -11230,7 +11207,7 @@ public:
                               const double &w_,
                               const double &s4_,
                               const double &s5_,
-                              const double &s6_) :
+                              const double &s6_) : 
     x(x_),
     y(y_),
     z(z_),
@@ -11247,7 +11224,7 @@ public:
                               const double &s4_,
                               const double &s5_,
                               const double &s6_,
-                              const double &s7_) :
+                              const double &s7_) : 
     x(x_),
     y(y_),
     z(z_),
@@ -11543,7 +11520,7 @@ public:
   double s14;
   double s15;
 
-  inline occaFunction double16() :
+  inline occaFunction double16() : 
     x(0),
     y(0),
     z(0),
@@ -11561,7 +11538,7 @@ public:
     s14(0),
     s15(0) {}
 
-  inline occaFunction double16(const double &x_) :
+  inline occaFunction double16(const double &x_) : 
     x(x_),
     y(0),
     z(0),
@@ -11580,7 +11557,7 @@ public:
     s15(0) {}
 
   inline occaFunction double16(const double &x_,
-                               const double &y_) :
+                               const double &y_) : 
     x(x_),
     y(y_),
     z(0),
@@ -11600,7 +11577,7 @@ public:
 
   inline occaFunction double16(const double &x_,
                                const double &y_,
-                               const double &z_) :
+                               const double &z_) : 
     x(x_),
     y(y_),
     z(z_),
@@ -11621,7 +11598,7 @@ public:
   inline occaFunction double16(const double &x_,
                                const double &y_,
                                const double &z_,
-                               const double &w_) :
+                               const double &w_) : 
     x(x_),
     y(y_),
     z(z_),
@@ -11643,7 +11620,7 @@ public:
                                const double &y_,
                                const double &z_,
                                const double &w_,
-                               const double &s4_) :
+                               const double &s4_) : 
     x(x_),
     y(y_),
     z(z_),
@@ -11666,7 +11643,7 @@ public:
                                const double &z_,
                                const double &w_,
                                const double &s4_,
-                               const double &s5_) :
+                               const double &s5_) : 
     x(x_),
     y(y_),
     z(z_),
@@ -11690,7 +11667,7 @@ public:
                                const double &w_,
                                const double &s4_,
                                const double &s5_,
-                               const double &s6_) :
+                               const double &s6_) : 
     x(x_),
     y(y_),
     z(z_),
@@ -11715,7 +11692,7 @@ public:
                                const double &s4_,
                                const double &s5_,
                                const double &s6_,
-                               const double &s7_) :
+                               const double &s7_) : 
     x(x_),
     y(y_),
     z(z_),
@@ -11741,7 +11718,7 @@ public:
                                const double &s5_,
                                const double &s6_,
                                const double &s7_,
-                               const double &s8_) :
+                               const double &s8_) : 
     x(x_),
     y(y_),
     z(z_),
@@ -11768,7 +11745,7 @@ public:
                                const double &s6_,
                                const double &s7_,
                                const double &s8_,
-                               const double &s9_) :
+                               const double &s9_) : 
     x(x_),
     y(y_),
     z(z_),
@@ -11796,7 +11773,7 @@ public:
                                const double &s7_,
                                const double &s8_,
                                const double &s9_,
-                               const double &s10_) :
+                               const double &s10_) : 
     x(x_),
     y(y_),
     z(z_),
@@ -11825,7 +11802,7 @@ public:
                                const double &s8_,
                                const double &s9_,
                                const double &s10_,
-                               const double &s11_) :
+                               const double &s11_) : 
     x(x_),
     y(y_),
     z(z_),
@@ -11855,7 +11832,7 @@ public:
                                const double &s9_,
                                const double &s10_,
                                const double &s11_,
-                               const double &s12_) :
+                               const double &s12_) : 
     x(x_),
     y(y_),
     z(z_),
@@ -11886,7 +11863,7 @@ public:
                                const double &s10_,
                                const double &s11_,
                                const double &s12_,
-                               const double &s13_) :
+                               const double &s13_) : 
     x(x_),
     y(y_),
     z(z_),
@@ -11918,7 +11895,7 @@ public:
                                const double &s11_,
                                const double &s12_,
                                const double &s13_,
-                               const double &s14_) :
+                               const double &s14_) : 
     x(x_),
     y(y_),
     z(z_),
@@ -11951,7 +11928,7 @@ public:
                                const double &s12_,
                                const double &s13_,
                                const double &s14_,
-                               const double &s15_) :
+                               const double &s15_) : 
     x(x_),
     y(y_),
     z(z_),
@@ -12467,445 +12444,445 @@ inline std::ostream& operator << (std::ostream &out, const double16& a) {
 namespace occa {
 #  endif
 
-OCCA_INLINE char length(const char2 &v) {
+occaFunction inline char length(const char2 &v) {
   return sqrt(v.x*v.x+v.y*v.y);
 }
 
-OCCA_INLINE char length(const char4 &v) {
+occaFunction inline char length(const char4 &v) {
   return sqrt(v.x*v.x+v.y*v.y+v.z*v.z+v.w*v.w);
 }
 
-OCCA_INLINE char length(const char8 &v) {
+occaFunction inline char length(const char8 &v) {
   return sqrt(v.x*v.x+v.y*v.y+v.z*v.z+v.w*v.w+v.s4*v.s4+v.s5*v.s5+v.s6*v.s6+v.s7*v.s7);
 }
 
-OCCA_INLINE char length(const char16 &v) {
+occaFunction inline char length(const char16 &v) {
   return sqrt(v.x*v.x+v.y*v.y+v.z*v.z+v.w*v.w+v.s4*v.s4+v.s5*v.s5+v.s6*v.s6+v.s7*v.s7+v.s8*v.s8+v.s9*v.s9+v.s10*v.s10+v.s11*v.s11+v.s12*v.s12+v.s13*v.s13+v.s14*v.s14+v.s15*v.s15);
 }
 
-OCCA_INLINE short length(const short2 &v) {
+occaFunction inline short length(const short2 &v) {
   return sqrt(v.x*v.x+v.y*v.y);
 }
 
-OCCA_INLINE short length(const short4 &v) {
+occaFunction inline short length(const short4 &v) {
   return sqrt(v.x*v.x+v.y*v.y+v.z*v.z+v.w*v.w);
 }
 
-OCCA_INLINE short length(const short8 &v) {
+occaFunction inline short length(const short8 &v) {
   return sqrt(v.x*v.x+v.y*v.y+v.z*v.z+v.w*v.w+v.s4*v.s4+v.s5*v.s5+v.s6*v.s6+v.s7*v.s7);
 }
 
-OCCA_INLINE short length(const short16 &v) {
+occaFunction inline short length(const short16 &v) {
   return sqrt(v.x*v.x+v.y*v.y+v.z*v.z+v.w*v.w+v.s4*v.s4+v.s5*v.s5+v.s6*v.s6+v.s7*v.s7+v.s8*v.s8+v.s9*v.s9+v.s10*v.s10+v.s11*v.s11+v.s12*v.s12+v.s13*v.s13+v.s14*v.s14+v.s15*v.s15);
 }
 
-OCCA_INLINE int length(const int2 &v) {
+occaFunction inline int length(const int2 &v) {
   return sqrt(v.x*v.x+v.y*v.y);
 }
 
-OCCA_INLINE int length(const int4 &v) {
+occaFunction inline int length(const int4 &v) {
   return sqrt(v.x*v.x+v.y*v.y+v.z*v.z+v.w*v.w);
 }
 
-OCCA_INLINE int length(const int8 &v) {
+occaFunction inline int length(const int8 &v) {
   return sqrt(v.x*v.x+v.y*v.y+v.z*v.z+v.w*v.w+v.s4*v.s4+v.s5*v.s5+v.s6*v.s6+v.s7*v.s7);
 }
 
-OCCA_INLINE int length(const int16 &v) {
+occaFunction inline int length(const int16 &v) {
   return sqrt(v.x*v.x+v.y*v.y+v.z*v.z+v.w*v.w+v.s4*v.s4+v.s5*v.s5+v.s6*v.s6+v.s7*v.s7+v.s8*v.s8+v.s9*v.s9+v.s10*v.s10+v.s11*v.s11+v.s12*v.s12+v.s13*v.s13+v.s14*v.s14+v.s15*v.s15);
 }
 
-OCCA_INLINE long length(const long2 &v) {
+occaFunction inline long length(const long2 &v) {
   return sqrt(v.x*v.x+v.y*v.y);
 }
 
-OCCA_INLINE long length(const long4 &v) {
+occaFunction inline long length(const long4 &v) {
   return sqrt(v.x*v.x+v.y*v.y+v.z*v.z+v.w*v.w);
 }
 
-OCCA_INLINE long length(const long8 &v) {
+occaFunction inline long length(const long8 &v) {
   return sqrt(v.x*v.x+v.y*v.y+v.z*v.z+v.w*v.w+v.s4*v.s4+v.s5*v.s5+v.s6*v.s6+v.s7*v.s7);
 }
 
-OCCA_INLINE long length(const long16 &v) {
+occaFunction inline long length(const long16 &v) {
   return sqrt(v.x*v.x+v.y*v.y+v.z*v.z+v.w*v.w+v.s4*v.s4+v.s5*v.s5+v.s6*v.s6+v.s7*v.s7+v.s8*v.s8+v.s9*v.s9+v.s10*v.s10+v.s11*v.s11+v.s12*v.s12+v.s13*v.s13+v.s14*v.s14+v.s15*v.s15);
 }
 
-OCCA_INLINE float length(const float2 &v) {
+occaFunction inline float length(const float2 &v) {
   return sqrt(v.x*v.x+v.y*v.y);
 }
 
-OCCA_INLINE float length(const float4 &v) {
+occaFunction inline float length(const float4 &v) {
   return sqrt(v.x*v.x+v.y*v.y+v.z*v.z+v.w*v.w);
 }
 
-OCCA_INLINE float length(const float8 &v) {
+occaFunction inline float length(const float8 &v) {
   return sqrt(v.x*v.x+v.y*v.y+v.z*v.z+v.w*v.w+v.s4*v.s4+v.s5*v.s5+v.s6*v.s6+v.s7*v.s7);
 }
 
-OCCA_INLINE float length(const float16 &v) {
+occaFunction inline float length(const float16 &v) {
   return sqrt(v.x*v.x+v.y*v.y+v.z*v.z+v.w*v.w+v.s4*v.s4+v.s5*v.s5+v.s6*v.s6+v.s7*v.s7+v.s8*v.s8+v.s9*v.s9+v.s10*v.s10+v.s11*v.s11+v.s12*v.s12+v.s13*v.s13+v.s14*v.s14+v.s15*v.s15);
 }
 
-OCCA_INLINE double length(const double2 &v) {
+occaFunction inline double length(const double2 &v) {
   return sqrt(v.x*v.x+v.y*v.y);
 }
 
-OCCA_INLINE double length(const double4 &v) {
+occaFunction inline double length(const double4 &v) {
   return sqrt(v.x*v.x+v.y*v.y+v.z*v.z+v.w*v.w);
 }
 
-OCCA_INLINE double length(const double8 &v) {
+occaFunction inline double length(const double8 &v) {
   return sqrt(v.x*v.x+v.y*v.y+v.z*v.z+v.w*v.w+v.s4*v.s4+v.s5*v.s5+v.s6*v.s6+v.s7*v.s7);
 }
 
-OCCA_INLINE double length(const double16 &v) {
+occaFunction inline double length(const double16 &v) {
   return sqrt(v.x*v.x+v.y*v.y+v.z*v.z+v.w*v.w+v.s4*v.s4+v.s5*v.s5+v.s6*v.s6+v.s7*v.s7+v.s8*v.s8+v.s9*v.s9+v.s10*v.s10+v.s11*v.s11+v.s12*v.s12+v.s13*v.s13+v.s14*v.s14+v.s15*v.s15);
 }
 
-OCCA_INLINE char2 normalize(const char2 &v) {
+occaFunction inline char2 normalize(const char2 &v) {
   const char invNorm = (1.0 / length(v));
   return OCCA_CHAR2(invNorm*v.x,invNorm*v.y);
 }
 
-OCCA_INLINE char4 normalize(const char4 &v) {
+occaFunction inline char4 normalize(const char4 &v) {
   const char invNorm = (1.0 / length(v));
   return OCCA_CHAR4(invNorm*v.x,invNorm*v.y,invNorm*v.z,invNorm*v.w);
 }
 
-OCCA_INLINE char8 normalize(const char8 &v) {
+occaFunction inline char8 normalize(const char8 &v) {
   const char invNorm = (1.0 / length(v));
   return OCCA_CHAR8(invNorm*v.x,invNorm*v.y,invNorm*v.z,invNorm*v.w,invNorm*v.s4,invNorm*v.s5,invNorm*v.s6,invNorm*v.s7);
 }
 
-OCCA_INLINE char16 normalize(const char16 &v) {
+occaFunction inline char16 normalize(const char16 &v) {
   const char invNorm = (1.0 / length(v));
   return OCCA_CHAR16(invNorm*v.x,invNorm*v.y,invNorm*v.z,invNorm*v.w,invNorm*v.s4,invNorm*v.s5,invNorm*v.s6,invNorm*v.s7,invNorm*v.s8,invNorm*v.s9,invNorm*v.s10,invNorm*v.s11,invNorm*v.s12,invNorm*v.s13,invNorm*v.s14,invNorm*v.s15);
 }
 
-OCCA_INLINE short2 normalize(const short2 &v) {
+occaFunction inline short2 normalize(const short2 &v) {
   const short invNorm = (1.0 / length(v));
   return OCCA_SHORT2(invNorm*v.x,invNorm*v.y);
 }
 
-OCCA_INLINE short4 normalize(const short4 &v) {
+occaFunction inline short4 normalize(const short4 &v) {
   const short invNorm = (1.0 / length(v));
   return OCCA_SHORT4(invNorm*v.x,invNorm*v.y,invNorm*v.z,invNorm*v.w);
 }
 
-OCCA_INLINE short8 normalize(const short8 &v) {
+occaFunction inline short8 normalize(const short8 &v) {
   const short invNorm = (1.0 / length(v));
   return OCCA_SHORT8(invNorm*v.x,invNorm*v.y,invNorm*v.z,invNorm*v.w,invNorm*v.s4,invNorm*v.s5,invNorm*v.s6,invNorm*v.s7);
 }
 
-OCCA_INLINE short16 normalize(const short16 &v) {
+occaFunction inline short16 normalize(const short16 &v) {
   const short invNorm = (1.0 / length(v));
   return OCCA_SHORT16(invNorm*v.x,invNorm*v.y,invNorm*v.z,invNorm*v.w,invNorm*v.s4,invNorm*v.s5,invNorm*v.s6,invNorm*v.s7,invNorm*v.s8,invNorm*v.s9,invNorm*v.s10,invNorm*v.s11,invNorm*v.s12,invNorm*v.s13,invNorm*v.s14,invNorm*v.s15);
 }
 
-OCCA_INLINE int2 normalize(const int2 &v) {
+occaFunction inline int2 normalize(const int2 &v) {
   const int invNorm = (1.0 / length(v));
   return OCCA_INT2(invNorm*v.x,invNorm*v.y);
 }
 
-OCCA_INLINE int4 normalize(const int4 &v) {
+occaFunction inline int4 normalize(const int4 &v) {
   const int invNorm = (1.0 / length(v));
   return OCCA_INT4(invNorm*v.x,invNorm*v.y,invNorm*v.z,invNorm*v.w);
 }
 
-OCCA_INLINE int8 normalize(const int8 &v) {
+occaFunction inline int8 normalize(const int8 &v) {
   const int invNorm = (1.0 / length(v));
   return OCCA_INT8(invNorm*v.x,invNorm*v.y,invNorm*v.z,invNorm*v.w,invNorm*v.s4,invNorm*v.s5,invNorm*v.s6,invNorm*v.s7);
 }
 
-OCCA_INLINE int16 normalize(const int16 &v) {
+occaFunction inline int16 normalize(const int16 &v) {
   const int invNorm = (1.0 / length(v));
   return OCCA_INT16(invNorm*v.x,invNorm*v.y,invNorm*v.z,invNorm*v.w,invNorm*v.s4,invNorm*v.s5,invNorm*v.s6,invNorm*v.s7,invNorm*v.s8,invNorm*v.s9,invNorm*v.s10,invNorm*v.s11,invNorm*v.s12,invNorm*v.s13,invNorm*v.s14,invNorm*v.s15);
 }
 
-OCCA_INLINE long2 normalize(const long2 &v) {
+occaFunction inline long2 normalize(const long2 &v) {
   const long invNorm = (1.0 / length(v));
   return OCCA_LONG2(invNorm*v.x,invNorm*v.y);
 }
 
-OCCA_INLINE long4 normalize(const long4 &v) {
+occaFunction inline long4 normalize(const long4 &v) {
   const long invNorm = (1.0 / length(v));
   return OCCA_LONG4(invNorm*v.x,invNorm*v.y,invNorm*v.z,invNorm*v.w);
 }
 
-OCCA_INLINE long8 normalize(const long8 &v) {
+occaFunction inline long8 normalize(const long8 &v) {
   const long invNorm = (1.0 / length(v));
   return OCCA_LONG8(invNorm*v.x,invNorm*v.y,invNorm*v.z,invNorm*v.w,invNorm*v.s4,invNorm*v.s5,invNorm*v.s6,invNorm*v.s7);
 }
 
-OCCA_INLINE long16 normalize(const long16 &v) {
+occaFunction inline long16 normalize(const long16 &v) {
   const long invNorm = (1.0 / length(v));
   return OCCA_LONG16(invNorm*v.x,invNorm*v.y,invNorm*v.z,invNorm*v.w,invNorm*v.s4,invNorm*v.s5,invNorm*v.s6,invNorm*v.s7,invNorm*v.s8,invNorm*v.s9,invNorm*v.s10,invNorm*v.s11,invNorm*v.s12,invNorm*v.s13,invNorm*v.s14,invNorm*v.s15);
 }
 
-OCCA_INLINE float2 normalize(const float2 &v) {
+occaFunction inline float2 normalize(const float2 &v) {
   const float invNorm = (1.0 / length(v));
   return OCCA_FLOAT2(invNorm*v.x,invNorm*v.y);
 }
 
-OCCA_INLINE float4 normalize(const float4 &v) {
+occaFunction inline float4 normalize(const float4 &v) {
   const float invNorm = (1.0 / length(v));
   return OCCA_FLOAT4(invNorm*v.x,invNorm*v.y,invNorm*v.z,invNorm*v.w);
 }
 
-OCCA_INLINE float8 normalize(const float8 &v) {
+occaFunction inline float8 normalize(const float8 &v) {
   const float invNorm = (1.0 / length(v));
   return OCCA_FLOAT8(invNorm*v.x,invNorm*v.y,invNorm*v.z,invNorm*v.w,invNorm*v.s4,invNorm*v.s5,invNorm*v.s6,invNorm*v.s7);
 }
 
-OCCA_INLINE float16 normalize(const float16 &v) {
+occaFunction inline float16 normalize(const float16 &v) {
   const float invNorm = (1.0 / length(v));
   return OCCA_FLOAT16(invNorm*v.x,invNorm*v.y,invNorm*v.z,invNorm*v.w,invNorm*v.s4,invNorm*v.s5,invNorm*v.s6,invNorm*v.s7,invNorm*v.s8,invNorm*v.s9,invNorm*v.s10,invNorm*v.s11,invNorm*v.s12,invNorm*v.s13,invNorm*v.s14,invNorm*v.s15);
 }
 
-OCCA_INLINE double2 normalize(const double2 &v) {
+occaFunction inline double2 normalize(const double2 &v) {
   const double invNorm = (1.0 / length(v));
   return OCCA_DOUBLE2(invNorm*v.x,invNorm*v.y);
 }
 
-OCCA_INLINE double4 normalize(const double4 &v) {
+occaFunction inline double4 normalize(const double4 &v) {
   const double invNorm = (1.0 / length(v));
   return OCCA_DOUBLE4(invNorm*v.x,invNorm*v.y,invNorm*v.z,invNorm*v.w);
 }
 
-OCCA_INLINE double8 normalize(const double8 &v) {
+occaFunction inline double8 normalize(const double8 &v) {
   const double invNorm = (1.0 / length(v));
   return OCCA_DOUBLE8(invNorm*v.x,invNorm*v.y,invNorm*v.z,invNorm*v.w,invNorm*v.s4,invNorm*v.s5,invNorm*v.s6,invNorm*v.s7);
 }
 
-OCCA_INLINE double16 normalize(const double16 &v) {
+occaFunction inline double16 normalize(const double16 &v) {
   const double invNorm = (1.0 / length(v));
   return OCCA_DOUBLE16(invNorm*v.x,invNorm*v.y,invNorm*v.z,invNorm*v.w,invNorm*v.s4,invNorm*v.s5,invNorm*v.s6,invNorm*v.s7,invNorm*v.s8,invNorm*v.s9,invNorm*v.s10,invNorm*v.s11,invNorm*v.s12,invNorm*v.s13,invNorm*v.s14,invNorm*v.s15);
 }
 
-OCCA_INLINE char dot(const char2 &a, const char2 &b) {
+occaFunction inline char dot(const char2 &a, const char2 &b) {
   return (a.x*b.x+a.y*b.y);
 }
 
-OCCA_INLINE char dot(const char4 &a, const char4 &b) {
+occaFunction inline char dot(const char4 &a, const char4 &b) {
   return (a.x*b.x+a.y*b.y+a.z*b.z+a.w*b.w);
 }
 
-OCCA_INLINE char dot(const char8 &a, const char8 &b) {
+occaFunction inline char dot(const char8 &a, const char8 &b) {
   return (a.x*b.x+a.y*b.y+a.z*b.z+a.w*b.w+a.s4*b.s4+a.s5*b.s5+a.s6*b.s6+a.s7*b.s7);
 }
 
-OCCA_INLINE char dot(const char16 &a, const char16 &b) {
+occaFunction inline char dot(const char16 &a, const char16 &b) {
   return (a.x*b.x+a.y*b.y+a.z*b.z+a.w*b.w+a.s4*b.s4+a.s5*b.s5+a.s6*b.s6+a.s7*b.s7+a.s8*b.s8+a.s9*b.s9+a.s10*b.s10+a.s11*b.s11+a.s12*b.s12+a.s13*b.s13+a.s14*b.s14+a.s15*b.s15);
 }
 
-OCCA_INLINE short dot(const short2 &a, const short2 &b) {
+occaFunction inline short dot(const short2 &a, const short2 &b) {
   return (a.x*b.x+a.y*b.y);
 }
 
-OCCA_INLINE short dot(const short4 &a, const short4 &b) {
+occaFunction inline short dot(const short4 &a, const short4 &b) {
   return (a.x*b.x+a.y*b.y+a.z*b.z+a.w*b.w);
 }
 
-OCCA_INLINE short dot(const short8 &a, const short8 &b) {
+occaFunction inline short dot(const short8 &a, const short8 &b) {
   return (a.x*b.x+a.y*b.y+a.z*b.z+a.w*b.w+a.s4*b.s4+a.s5*b.s5+a.s6*b.s6+a.s7*b.s7);
 }
 
-OCCA_INLINE short dot(const short16 &a, const short16 &b) {
+occaFunction inline short dot(const short16 &a, const short16 &b) {
   return (a.x*b.x+a.y*b.y+a.z*b.z+a.w*b.w+a.s4*b.s4+a.s5*b.s5+a.s6*b.s6+a.s7*b.s7+a.s8*b.s8+a.s9*b.s9+a.s10*b.s10+a.s11*b.s11+a.s12*b.s12+a.s13*b.s13+a.s14*b.s14+a.s15*b.s15);
 }
 
-OCCA_INLINE int dot(const int2 &a, const int2 &b) {
+occaFunction inline int dot(const int2 &a, const int2 &b) {
   return (a.x*b.x+a.y*b.y);
 }
 
-OCCA_INLINE int dot(const int4 &a, const int4 &b) {
+occaFunction inline int dot(const int4 &a, const int4 &b) {
   return (a.x*b.x+a.y*b.y+a.z*b.z+a.w*b.w);
 }
 
-OCCA_INLINE int dot(const int8 &a, const int8 &b) {
+occaFunction inline int dot(const int8 &a, const int8 &b) {
   return (a.x*b.x+a.y*b.y+a.z*b.z+a.w*b.w+a.s4*b.s4+a.s5*b.s5+a.s6*b.s6+a.s7*b.s7);
 }
 
-OCCA_INLINE int dot(const int16 &a, const int16 &b) {
+occaFunction inline int dot(const int16 &a, const int16 &b) {
   return (a.x*b.x+a.y*b.y+a.z*b.z+a.w*b.w+a.s4*b.s4+a.s5*b.s5+a.s6*b.s6+a.s7*b.s7+a.s8*b.s8+a.s9*b.s9+a.s10*b.s10+a.s11*b.s11+a.s12*b.s12+a.s13*b.s13+a.s14*b.s14+a.s15*b.s15);
 }
 
-OCCA_INLINE long dot(const long2 &a, const long2 &b) {
+occaFunction inline long dot(const long2 &a, const long2 &b) {
   return (a.x*b.x+a.y*b.y);
 }
 
-OCCA_INLINE long dot(const long4 &a, const long4 &b) {
+occaFunction inline long dot(const long4 &a, const long4 &b) {
   return (a.x*b.x+a.y*b.y+a.z*b.z+a.w*b.w);
 }
 
-OCCA_INLINE long dot(const long8 &a, const long8 &b) {
+occaFunction inline long dot(const long8 &a, const long8 &b) {
   return (a.x*b.x+a.y*b.y+a.z*b.z+a.w*b.w+a.s4*b.s4+a.s5*b.s5+a.s6*b.s6+a.s7*b.s7);
 }
 
-OCCA_INLINE long dot(const long16 &a, const long16 &b) {
+occaFunction inline long dot(const long16 &a, const long16 &b) {
   return (a.x*b.x+a.y*b.y+a.z*b.z+a.w*b.w+a.s4*b.s4+a.s5*b.s5+a.s6*b.s6+a.s7*b.s7+a.s8*b.s8+a.s9*b.s9+a.s10*b.s10+a.s11*b.s11+a.s12*b.s12+a.s13*b.s13+a.s14*b.s14+a.s15*b.s15);
 }
 
-OCCA_INLINE float dot(const float2 &a, const float2 &b) {
+occaFunction inline float dot(const float2 &a, const float2 &b) {
   return (a.x*b.x+a.y*b.y);
 }
 
-OCCA_INLINE float dot(const float4 &a, const float4 &b) {
+occaFunction inline float dot(const float4 &a, const float4 &b) {
   return (a.x*b.x+a.y*b.y+a.z*b.z+a.w*b.w);
 }
 
-OCCA_INLINE float dot(const float8 &a, const float8 &b) {
+occaFunction inline float dot(const float8 &a, const float8 &b) {
   return (a.x*b.x+a.y*b.y+a.z*b.z+a.w*b.w+a.s4*b.s4+a.s5*b.s5+a.s6*b.s6+a.s7*b.s7);
 }
 
-OCCA_INLINE float dot(const float16 &a, const float16 &b) {
+occaFunction inline float dot(const float16 &a, const float16 &b) {
   return (a.x*b.x+a.y*b.y+a.z*b.z+a.w*b.w+a.s4*b.s4+a.s5*b.s5+a.s6*b.s6+a.s7*b.s7+a.s8*b.s8+a.s9*b.s9+a.s10*b.s10+a.s11*b.s11+a.s12*b.s12+a.s13*b.s13+a.s14*b.s14+a.s15*b.s15);
 }
 
-OCCA_INLINE double dot(const double2 &a, const double2 &b) {
+occaFunction inline double dot(const double2 &a, const double2 &b) {
   return (a.x*b.x+a.y*b.y);
 }
 
-OCCA_INLINE double dot(const double4 &a, const double4 &b) {
+occaFunction inline double dot(const double4 &a, const double4 &b) {
   return (a.x*b.x+a.y*b.y+a.z*b.z+a.w*b.w);
 }
 
-OCCA_INLINE double dot(const double8 &a, const double8 &b) {
+occaFunction inline double dot(const double8 &a, const double8 &b) {
   return (a.x*b.x+a.y*b.y+a.z*b.z+a.w*b.w+a.s4*b.s4+a.s5*b.s5+a.s6*b.s6+a.s7*b.s7);
 }
 
-OCCA_INLINE double dot(const double16 &a, const double16 &b) {
+occaFunction inline double dot(const double16 &a, const double16 &b) {
   return (a.x*b.x+a.y*b.y+a.z*b.z+a.w*b.w+a.s4*b.s4+a.s5*b.s5+a.s6*b.s6+a.s7*b.s7+a.s8*b.s8+a.s9*b.s9+a.s10*b.s10+a.s11*b.s11+a.s12*b.s12+a.s13*b.s13+a.s14*b.s14+a.s15*b.s15);
 }
 
-OCCA_INLINE char clamp(const char val, const char min, const char max) {
+occaFunction inline char clamp(const char val, const char min, const char max) {
   return (val < min) ? min : ((max < val) ? max : val);
 }
 
-OCCA_INLINE char2 clamp(const char2 &v, const char min, const char max) {
+occaFunction inline char2 clamp(const char2 &v, const char min, const char max) {
   return OCCA_CHAR2(clamp(v.x,min,max),clamp(v.y,min,max));
 }
 
-OCCA_INLINE char4 clamp(const char4 &v, const char min, const char max) {
+occaFunction inline char4 clamp(const char4 &v, const char min, const char max) {
   return OCCA_CHAR4(clamp(v.x,min,max),clamp(v.y,min,max),clamp(v.z,min,max),clamp(v.w,min,max));
 }
 
-OCCA_INLINE char8 clamp(const char8 &v, const char min, const char max) {
+occaFunction inline char8 clamp(const char8 &v, const char min, const char max) {
   return OCCA_CHAR8(clamp(v.x,min,max),clamp(v.y,min,max),clamp(v.z,min,max),clamp(v.w,min,max),clamp(v.s4,min,max),clamp(v.s5,min,max),clamp(v.s6,min,max),clamp(v.s7,min,max));
 }
 
-OCCA_INLINE char16 clamp(const char16 &v, const char min, const char max) {
+occaFunction inline char16 clamp(const char16 &v, const char min, const char max) {
   return OCCA_CHAR16(clamp(v.x,min,max),clamp(v.y,min,max),clamp(v.z,min,max),clamp(v.w,min,max),clamp(v.s4,min,max),clamp(v.s5,min,max),clamp(v.s6,min,max),clamp(v.s7,min,max),clamp(v.s8,min,max),clamp(v.s9,min,max),clamp(v.s10,min,max),clamp(v.s11,min,max),clamp(v.s12,min,max),clamp(v.s13,min,max),clamp(v.s14,min,max),clamp(v.s15,min,max));
 }
 
-OCCA_INLINE short clamp(const short val, const short min, const short max) {
+occaFunction inline short clamp(const short val, const short min, const short max) {
   return (val < min) ? min : ((max < val) ? max : val);
 }
 
-OCCA_INLINE short2 clamp(const short2 &v, const short min, const short max) {
+occaFunction inline short2 clamp(const short2 &v, const short min, const short max) {
   return OCCA_SHORT2(clamp(v.x,min,max),clamp(v.y,min,max));
 }
 
-OCCA_INLINE short4 clamp(const short4 &v, const short min, const short max) {
+occaFunction inline short4 clamp(const short4 &v, const short min, const short max) {
   return OCCA_SHORT4(clamp(v.x,min,max),clamp(v.y,min,max),clamp(v.z,min,max),clamp(v.w,min,max));
 }
 
-OCCA_INLINE short8 clamp(const short8 &v, const short min, const short max) {
+occaFunction inline short8 clamp(const short8 &v, const short min, const short max) {
   return OCCA_SHORT8(clamp(v.x,min,max),clamp(v.y,min,max),clamp(v.z,min,max),clamp(v.w,min,max),clamp(v.s4,min,max),clamp(v.s5,min,max),clamp(v.s6,min,max),clamp(v.s7,min,max));
 }
 
-OCCA_INLINE short16 clamp(const short16 &v, const short min, const short max) {
+occaFunction inline short16 clamp(const short16 &v, const short min, const short max) {
   return OCCA_SHORT16(clamp(v.x,min,max),clamp(v.y,min,max),clamp(v.z,min,max),clamp(v.w,min,max),clamp(v.s4,min,max),clamp(v.s5,min,max),clamp(v.s6,min,max),clamp(v.s7,min,max),clamp(v.s8,min,max),clamp(v.s9,min,max),clamp(v.s10,min,max),clamp(v.s11,min,max),clamp(v.s12,min,max),clamp(v.s13,min,max),clamp(v.s14,min,max),clamp(v.s15,min,max));
 }
 
-OCCA_INLINE int clamp(const int val, const int min, const int max) {
+occaFunction inline int clamp(const int val, const int min, const int max) {
   return (val < min) ? min : ((max < val) ? max : val);
 }
 
-OCCA_INLINE int2 clamp(const int2 &v, const int min, const int max) {
+occaFunction inline int2 clamp(const int2 &v, const int min, const int max) {
   return OCCA_INT2(clamp(v.x,min,max),clamp(v.y,min,max));
 }
 
-OCCA_INLINE int4 clamp(const int4 &v, const int min, const int max) {
+occaFunction inline int4 clamp(const int4 &v, const int min, const int max) {
   return OCCA_INT4(clamp(v.x,min,max),clamp(v.y,min,max),clamp(v.z,min,max),clamp(v.w,min,max));
 }
 
-OCCA_INLINE int8 clamp(const int8 &v, const int min, const int max) {
+occaFunction inline int8 clamp(const int8 &v, const int min, const int max) {
   return OCCA_INT8(clamp(v.x,min,max),clamp(v.y,min,max),clamp(v.z,min,max),clamp(v.w,min,max),clamp(v.s4,min,max),clamp(v.s5,min,max),clamp(v.s6,min,max),clamp(v.s7,min,max));
 }
 
-OCCA_INLINE int16 clamp(const int16 &v, const int min, const int max) {
+occaFunction inline int16 clamp(const int16 &v, const int min, const int max) {
   return OCCA_INT16(clamp(v.x,min,max),clamp(v.y,min,max),clamp(v.z,min,max),clamp(v.w,min,max),clamp(v.s4,min,max),clamp(v.s5,min,max),clamp(v.s6,min,max),clamp(v.s7,min,max),clamp(v.s8,min,max),clamp(v.s9,min,max),clamp(v.s10,min,max),clamp(v.s11,min,max),clamp(v.s12,min,max),clamp(v.s13,min,max),clamp(v.s14,min,max),clamp(v.s15,min,max));
 }
 
-OCCA_INLINE long clamp(const long val, const long min, const long max) {
+occaFunction inline long clamp(const long val, const long min, const long max) {
   return (val < min) ? min : ((max < val) ? max : val);
 }
 
-OCCA_INLINE long2 clamp(const long2 &v, const long min, const long max) {
+occaFunction inline long2 clamp(const long2 &v, const long min, const long max) {
   return OCCA_LONG2(clamp(v.x,min,max),clamp(v.y,min,max));
 }
 
-OCCA_INLINE long4 clamp(const long4 &v, const long min, const long max) {
+occaFunction inline long4 clamp(const long4 &v, const long min, const long max) {
   return OCCA_LONG4(clamp(v.x,min,max),clamp(v.y,min,max),clamp(v.z,min,max),clamp(v.w,min,max));
 }
 
-OCCA_INLINE long8 clamp(const long8 &v, const long min, const long max) {
+occaFunction inline long8 clamp(const long8 &v, const long min, const long max) {
   return OCCA_LONG8(clamp(v.x,min,max),clamp(v.y,min,max),clamp(v.z,min,max),clamp(v.w,min,max),clamp(v.s4,min,max),clamp(v.s5,min,max),clamp(v.s6,min,max),clamp(v.s7,min,max));
 }
 
-OCCA_INLINE long16 clamp(const long16 &v, const long min, const long max) {
+occaFunction inline long16 clamp(const long16 &v, const long min, const long max) {
   return OCCA_LONG16(clamp(v.x,min,max),clamp(v.y,min,max),clamp(v.z,min,max),clamp(v.w,min,max),clamp(v.s4,min,max),clamp(v.s5,min,max),clamp(v.s6,min,max),clamp(v.s7,min,max),clamp(v.s8,min,max),clamp(v.s9,min,max),clamp(v.s10,min,max),clamp(v.s11,min,max),clamp(v.s12,min,max),clamp(v.s13,min,max),clamp(v.s14,min,max),clamp(v.s15,min,max));
 }
 
-OCCA_INLINE float clamp(const float val, const float min, const float max) {
+occaFunction inline float clamp(const float val, const float min, const float max) {
   return (val < min) ? min : ((max < val) ? max : val);
 }
 
-OCCA_INLINE float2 clamp(const float2 &v, const float min, const float max) {
+occaFunction inline float2 clamp(const float2 &v, const float min, const float max) {
   return OCCA_FLOAT2(clamp(v.x,min,max),clamp(v.y,min,max));
 }
 
-OCCA_INLINE float4 clamp(const float4 &v, const float min, const float max) {
+occaFunction inline float4 clamp(const float4 &v, const float min, const float max) {
   return OCCA_FLOAT4(clamp(v.x,min,max),clamp(v.y,min,max),clamp(v.z,min,max),clamp(v.w,min,max));
 }
 
-OCCA_INLINE float8 clamp(const float8 &v, const float min, const float max) {
+occaFunction inline float8 clamp(const float8 &v, const float min, const float max) {
   return OCCA_FLOAT8(clamp(v.x,min,max),clamp(v.y,min,max),clamp(v.z,min,max),clamp(v.w,min,max),clamp(v.s4,min,max),clamp(v.s5,min,max),clamp(v.s6,min,max),clamp(v.s7,min,max));
 }
 
-OCCA_INLINE float16 clamp(const float16 &v, const float min, const float max) {
+occaFunction inline float16 clamp(const float16 &v, const float min, const float max) {
   return OCCA_FLOAT16(clamp(v.x,min,max),clamp(v.y,min,max),clamp(v.z,min,max),clamp(v.w,min,max),clamp(v.s4,min,max),clamp(v.s5,min,max),clamp(v.s6,min,max),clamp(v.s7,min,max),clamp(v.s8,min,max),clamp(v.s9,min,max),clamp(v.s10,min,max),clamp(v.s11,min,max),clamp(v.s12,min,max),clamp(v.s13,min,max),clamp(v.s14,min,max),clamp(v.s15,min,max));
 }
 
-OCCA_INLINE double clamp(const double val, const double min, const double max) {
+occaFunction inline double clamp(const double val, const double min, const double max) {
   return (val < min) ? min : ((max < val) ? max : val);
 }
 
-OCCA_INLINE double2 clamp(const double2 &v, const double min, const double max) {
+occaFunction inline double2 clamp(const double2 &v, const double min, const double max) {
   return OCCA_DOUBLE2(clamp(v.x,min,max),clamp(v.y,min,max));
 }
 
-OCCA_INLINE double4 clamp(const double4 &v, const double min, const double max) {
+occaFunction inline double4 clamp(const double4 &v, const double min, const double max) {
   return OCCA_DOUBLE4(clamp(v.x,min,max),clamp(v.y,min,max),clamp(v.z,min,max),clamp(v.w,min,max));
 }
 
-OCCA_INLINE double8 clamp(const double8 &v, const double min, const double max) {
+occaFunction inline double8 clamp(const double8 &v, const double min, const double max) {
   return OCCA_DOUBLE8(clamp(v.x,min,max),clamp(v.y,min,max),clamp(v.z,min,max),clamp(v.w,min,max),clamp(v.s4,min,max),clamp(v.s5,min,max),clamp(v.s6,min,max),clamp(v.s7,min,max));
 }
 
-OCCA_INLINE double16 clamp(const double16 &v, const double min, const double max) {
+occaFunction inline double16 clamp(const double16 &v, const double min, const double max) {
   return OCCA_DOUBLE16(clamp(v.x,min,max),clamp(v.y,min,max),clamp(v.z,min,max),clamp(v.w,min,max),clamp(v.s4,min,max),clamp(v.s5,min,max),clamp(v.s6,min,max),clamp(v.s7,min,max),clamp(v.s8,min,max),clamp(v.s9,min,max),clamp(v.s10,min,max),clamp(v.s11,min,max),clamp(v.s12,min,max),clamp(v.s13,min,max),clamp(v.s14,min,max),clamp(v.s15,min,max));
 }
 
-OCCA_INLINE float3 cross(const float3 &a, const float3 &b) {
+occaFunction inline float3 cross(const float3 &a, const float3 &b) {
   return OCCA_FLOAT3(a.z*b.y - b.z*a.y,
                      a.x*b.z - b.x*a.z,
                      a.y*b.x - b.y*a.x);
 }
 
-OCCA_INLINE double3 cross(const double3 &a, const double3 &b) {
+occaFunction inline double3 cross(const double3 &a, const double3 &b) {
   return OCCA_DOUBLE3(a.z*b.y - b.z*a.y,
                      a.x*b.z - b.x*a.z,
                      a.y*b.x - b.y*a.x);
@@ -12915,151 +12892,4 @@ OCCA_INLINE double3 cross(const double3 &a, const double3 &b) {
 }
 #  endif
 #endif
-
-#if OCCA_MMX
-#  include <mmintrin.h>
-#endif
-
-#if OCCA_SSE
-#  include <xmmintrin.h>
-#endif
-
-#if OCCA_SSE2
-#  include <emmintrin.h>
-#endif
-
-#if OCCA_SSE3
-#  include <pmmintrin.h>
-#endif
-
-#if OCCA_SSSE3
-#  include <tmmintrin.h>
-#endif
-
-#if OCCA_SSE4_1
-#  include <smmintrin.h>
-#endif
-
-#if OCCA_SSE4_2
-#  include <nmmintrin.h>
-#endif
-
-#if OCCA_AVX
-#  include <immintrin.h>
-#endif
-
-
-#if OCCA_USING_CPU && (OCCA_COMPILED_WITH & OCCA_INTEL_COMPILER)
-#  define OCCA_CPU_SIMD_WIDTH OCCA_SIMD_WIDTH
-#else
-#  define OCCA_CPU_SIMD_WIDTH 0
-#endif
-
-#if 4 <= OCCA_CPU_SIMD_WIDTH
-#  define occaLoadF4(DEST, SRC)   *((_m128*)&DEST) = __mm_load_ps((float*)&SRC)
-#  define occaStoreF4(DEST, SRC)  _mm_store_ps((float*)&DEST, *((_m128*)&SRC)
-#  define occaAddF4(V12, V1, V2)  *((_m128*)&V12) = __mm_add_ps(*((_m128*)&V1), *((_m128*)&V2))
-#  define occaMultF4(V12, V1, V2) *((_m128*)&V12) = __mm_mul_ps(*((_m128*)&V1), *((_m128*)&V2))
-#else
-#  define occaLoadF4(DEST, SRC)   DEST = SRC
-#  define occaStoreF4(DEST, SRC)  DEST = SRC
-#  define occaAddF4(V12, V1, V2)  V12 = (V1 + V2)
-#  define occaMultF4(V12, V1, V2) V12 = (V1 * V2)
-#endif
-
-#if 8 <= OCCA_CPU_SIMD_WIDTH
-#  define occaLoadF8(DEST, SRC)   *((_m256*)&DEST) = __mm256_load_ps((float*)&SRC)
-#  define occaStoreF8(DEST, SRC)  _mm256_store_ps((float*)&DEST, *((_m256*)&SRC)
-#  define occaAddF8(V12, V1, V2)  *((_m256*)&V12) = __mm256_add_ps(*((_m256*)&V1), *((_m256*)&V2))
-#  define occaMultF8(V12, V1, V2) *((_m256*)&V12) = __mm256_mul_ps(*((_m256*)&V1), *((_m256*)&V2))
-#else
-#  define occaLoadF8(DEST, SRC)   DEST = SRC
-#  define occaStoreF8(DEST, SRC)  DEST = SRC
-#  define occaAddF8(V12, V1, V2)  V12 = (V1 + V2)
-#  define occaMultF8(V12, V1, V2) V12 = (V1 * V2)
-#endif
-
-
-struct vfloat2 {
-#if OCCA_MMX
-  union {
-    __m64 reg;
-    float vec[2];
-  };
-#else
-  float vec[2];
-#endif
-};
-
-struct vfloat4 {
-#if OCCA_SSE
-  union {
-    __m128 reg;
-    float vec[4];
-  };
-#else
-  float vec[4];
-#endif
-};
-
-struct vfloat8 {
-#if OCCA_AVX
-  union {
-    __m256 reg;
-    float vec[4];
-  };
-#else
-  float vec[4];
-#endif
-};
-
-struct vdouble2 {
-#if OCCA_SSE2
-  union {
-    __m128d reg;
-    double vec[2];
-  };
-#else
-  double vec[2];
-#endif
-};
-
-struct vdouble4 {
-#if OCCA_AVX
-  union {
-    __m256d reg;
-    double vec[4];
-  };
-#else
-  double vec[4];
-#endif
-};
-
-#if OCCA_USING_CPU
-#if OCCA_SSE
-inline vfloat4 & operator += (vfloat4 & a, vfloat4 & b) {
-#if OCCA_SSE
-
-    a.reg = _mm_add_ps(a.reg, b.reg);
-    return a;
-#else
-#endif
-}
-#endif
-#endif
-
-#if OCCA_USING_CPU
-#if OCCA_SSE
-inline vfloat4 operator + (vfloat4 & a, vfloat4 & b) {
-#if OCCA_SSE
-
-    vfloat4 ret;
-    ret.reg = _mm_add_ps(a.reg, b.reg);
-    return ret;
-#else
-#endif
-}
-#endif
-#endif
-
 #endif

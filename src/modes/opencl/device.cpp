@@ -37,7 +37,6 @@ namespace occa {
       occa::device_v(properties_) {
 
       cl_int error;
-
       OCCA_CHECK(properties.has("platformID"),
                  "[OpenCL] device not given [platformID]");
 
@@ -53,17 +52,8 @@ namespace occa {
       clContext = clCreateContext(NULL, 1, &clDeviceID, NULL, NULL, &error);
       OCCA_CL_CHECK("Device: Creating Context", error);
 
-      getEnvironmentVariables();
-    }
+      std::string compilerFlags;
 
-    device::~device() {}
-
-    void device::free() {
-      OCCA_CL_CHECK("Device: Freeing Context",
-                    clReleaseContext(clContext) );
-    }
-
-    void device::getEnvironmentVariables() {
       if (properties.has("compilerFlags")) {
         compilerFlags = properties["compilerFlags"];
       } else if (env::var("OCCA_OPENCL_COMPILER_FLAGS").size()) {
@@ -77,6 +67,13 @@ namespace occa {
       }
 
       properties["compilerFlags"] = compilerFlags;
+    }
+
+    device::~device() {}
+
+    void device::free() {
+      OCCA_CL_CHECK("Device: Freeing Context",
+                    clReleaseContext(clContext) );
     }
 
     void* device::getHandle(const occa::properties &props) {
@@ -133,10 +130,6 @@ namespace occa {
       delete (cl_command_queue*) s;
     }
 
-    stream_t device::wrapStream(void *handle_) {
-      return handle_;
-    }
-
     streamTag device::tagStream() {
       cl_command_queue &stream = *((cl_command_queue*) currentStream);
 
@@ -183,6 +176,10 @@ namespace occa {
 
       return (double) (1.0e-9 * (double)(end - start));
     }
+
+    stream_t device::wrapStream(void *handle_) {
+      return handle_;
+    }
     //  |===============================
 
     //  |---[ Kernel ]------------------
@@ -219,6 +216,7 @@ namespace occa {
       k->clContext    = clContext;
 
       k->buildFromBinary(filename, functionName);
+
       return k;
     }
     //  |===============================
@@ -228,13 +226,13 @@ namespace occa {
                              void *src,
                              const occa::properties &props) {
 
-      if (props["type"] == "mapped") {
+      if (props.get<bool>("mapped")) {
         return mappedAlloc(bytes, src);
       }
 
-      opencl::memory *mem = new opencl::memory();
       cl_int error;
 
+      opencl::memory *mem = new opencl::memory();
       mem->dHandle = this;
       mem->handle  = new cl_mem;
       mem->size    = bytes;
@@ -257,11 +255,10 @@ namespace occa {
     memory_v* device::mappedAlloc(const udim_t bytes,
                                   void *src) {
 
-      cl_command_queue &stream = *((cl_command_queue*) currentStream);
-
-      opencl::memory *mem = new opencl::memory;
       cl_int error;
 
+      cl_command_queue &stream = *((cl_command_queue*) currentStream);
+      opencl::memory *mem = new opencl::memory;
       mem->dHandle  = this;
       mem->handle   = new cl_mem;
       mem->size     = bytes;
@@ -298,10 +295,10 @@ namespace occa {
     memory_v* device::wrapMemory(void *handle_,
                                  const udim_t bytes,
                                  const occa::properties &props) {
-      opencl::memory *mem = new opencl::memory();
-      mem->dHandle = this;
-      mem->size    = bytes;
-      mem->handle  = new cl_mem;
+      opencl::memory *mem = new opencl::memory;
+      mem->dHandle  = this;
+      mem->handle   = new cl_mem;
+      mem->size     = bytes;
       ::memcpy(mem->handle, handle_, sizeof(cl_mem));
       return mem;
     }
