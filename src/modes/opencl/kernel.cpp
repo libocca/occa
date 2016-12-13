@@ -137,8 +137,8 @@ namespace occa {
     }
 
     int kernel::maxDims() {
-      static cl_uint dims = 0;
-      if (dims == 0) {
+      static cl_uint dims_ = 0;
+      if (dims_ == 0) {
         size_t bytes;
         OCCA_CL_CHECK("Kernel: Max Dims",
                       clGetDeviceInfo(clDeviceID,
@@ -147,16 +147,16 @@ namespace occa {
         OCCA_CL_CHECK("Kernel: Max Dims",
                       clGetDeviceInfo(clDeviceID,
                                       CL_DEVICE_MAX_WORK_ITEM_DIMENSIONS,
-                                      bytes, &dims, NULL));
+                                      bytes, &dims_, NULL));
       }
-      return (int) dims;
+      return (int) dims_;
     }
 
     dim kernel::maxOuterDims() {
       static occa::dim outerDims(0);
       if (outerDims.x == 0) {
-        int dims = maxDims();
-        size_t *od = new size_t[dims];
+        int dims_ = maxDims();
+        size_t *od = new size_t[dims_];
         size_t bytes;
         OCCA_CL_CHECK("Kernel: Max Outer Dims",
                       clGetDeviceInfo(clDeviceID,
@@ -166,7 +166,7 @@ namespace occa {
                       clGetDeviceInfo(clDeviceID,
                                       CL_DEVICE_MAX_WORK_ITEM_SIZES,
                                       bytes, &od, NULL));
-        for (int i = 0; i < dims; ++i) {
+        for (int i = 0; i < dims_; ++i) {
           outerDims[i] = od[i];
         }
         delete [] od;
@@ -177,7 +177,7 @@ namespace occa {
     dim kernel::maxInnerDims() {
       static occa::dim innerDims(0);
       if (innerDims.x == 0) {
-        size_t dims;
+        size_t dims_;
         size_t bytes;
         OCCA_CL_CHECK("Kernel: Max Inner Dims",
                       clGetKernelWorkGroupInfo(clKernel,
@@ -188,8 +188,8 @@ namespace occa {
                       clGetKernelWorkGroupInfo(clKernel,
                                                clDeviceID,
                                                CL_KERNEL_WORK_GROUP_SIZE,
-                                               bytes, &dims, NULL));
-        innerDims.x = dims;
+                                               bytes, &dims_, NULL));
+        innerDims.x = dims_;
       }
       return innerDims;
     }

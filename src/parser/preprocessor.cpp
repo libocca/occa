@@ -720,9 +720,9 @@ namespace occa {
 
     //   ---[ Boolean Operators ]---------------
     bool typeHolder::operator < (const typeHolder &th) {
-      const int maxType = typeHolder::maxType(*this, th);
+      const int mtype = typeHolder::maxType(*this, th);
 
-      switch(maxType) {
+      switch(mtype) {
       case boolType      : return (bool) (to<bool>()               < th.to<bool>());               break;
       case charType      : return (bool) (to<char>()               < th.to<char>());               break;
       case ushortType    : return (bool) (to<unsigned short>()     < th.to<unsigned short>());     break;
@@ -743,9 +743,9 @@ namespace occa {
     }
 
     bool typeHolder::operator <= (const typeHolder &th) {
-      const int maxType = typeHolder::maxType(*this, th);
+      const int mtype = typeHolder::maxType(*this, th);
 
-      switch(maxType) {
+      switch(mtype) {
       case boolType      : return (bool) (to<bool>()               <= th.to<bool>());               break;
       case charType      : return (bool) (to<char>()               <= th.to<char>());               break;
       case ushortType    : return (bool) (to<unsigned short>()     <= th.to<unsigned short>());     break;
@@ -766,9 +766,9 @@ namespace occa {
     }
 
     bool typeHolder::operator == (const typeHolder &th) {
-      const int maxType = typeHolder::maxType(*this, th);
+      const int mtype = typeHolder::maxType(*this, th);
 
-      switch(maxType) {
+      switch(mtype) {
       case boolType      : return (bool) (to<bool>()               == th.to<bool>());               break;
       case charType      : return (bool) (to<char>()               == th.to<char>());               break;
       case ushortType    : return (bool) (to<unsigned short>()     == th.to<unsigned short>());     break;
@@ -789,9 +789,9 @@ namespace occa {
     }
 
     bool typeHolder::operator != (const typeHolder &th) {
-      const int maxType = typeHolder::maxType(*this, th);
+      const int mtype = typeHolder::maxType(*this, th);
 
-      switch(maxType) {
+      switch(mtype) {
       case boolType      : return (bool) (to<bool>()               != th.to<bool>());               break;
       case charType      : return (bool) (to<char>()               != th.to<char>());               break;
       case ushortType    : return (bool) (to<unsigned short>()     != th.to<unsigned short>());     break;
@@ -812,9 +812,9 @@ namespace occa {
     }
 
     bool typeHolder::operator >= (const typeHolder &th) {
-      const int maxType = typeHolder::maxType(*this, th);
+      const int mtype = typeHolder::maxType(*this, th);
 
-      switch(maxType) {
+      switch(mtype) {
       case boolType      : return (bool) (to<bool>()               >= th.to<bool>());               break;
       case charType      : return (bool) (to<char>()               >= th.to<char>());               break;
       case ushortType    : return (bool) (to<unsigned short>()     >= th.to<unsigned short>());     break;
@@ -835,9 +835,9 @@ namespace occa {
     }
 
     bool typeHolder::operator > (const typeHolder &th) {
-      const int maxType = typeHolder::maxType(*this, th);
+      const int mtype = typeHolder::maxType(*this, th);
 
-      switch(maxType) {
+      switch(mtype) {
       case boolType      : return (bool) (to<bool>()               > th.to<bool>());               break;
       case charType      : return (bool) (to<char>()               > th.to<char>());               break;
       case ushortType    : return (bool) (to<unsigned short>()     > th.to<unsigned short>());     break;
@@ -858,9 +858,9 @@ namespace occa {
     }
 
     bool typeHolder::operator && (const typeHolder &th) {
-      const int maxType = typeHolder::maxType(*this, th);
+      const int mtype = typeHolder::maxType(*this, th);
 
-      switch(maxType) {
+      switch(mtype) {
       case boolType      : return (bool) (to<bool>()               && th.to<bool>());               break;
       case charType      : return (bool) (to<char>()               && th.to<char>());               break;
       case ushortType    : return (bool) (to<unsigned short>()     && th.to<unsigned short>());     break;
@@ -881,9 +881,9 @@ namespace occa {
     }
 
     bool typeHolder::operator || (const typeHolder &th) {
-      const int maxType = typeHolder::maxType(*this, th);
+      const int mtype = typeHolder::maxType(*this, th);
 
-      switch(maxType) {
+      switch(mtype) {
       case boolType      : return (bool) (to<bool>()               || th.to<bool>());               break;
       case charType      : return (bool) (to<char>()               || th.to<char>());               break;
       case ushortType    : return (bool) (to<unsigned short>()     || th.to<unsigned short>());     break;
@@ -907,9 +907,9 @@ namespace occa {
 
     //   ---[ Binary Operators ]----------------
     typeHolder typeHolder::operator * (const typeHolder &th) {
-      const int maxType = typeHolder::maxType(*this, th);
+      const int mtype = typeHolder::maxType(*this, th);
 
-      switch(maxType) {
+      switch(mtype) {
       case boolType      : return typeHolder(to<bool>()               * th.to<bool>());               break;
       case charType      : return typeHolder(to<char>()               * th.to<char>());               break;
       case ushortType    : return typeHolder(to<unsigned short>()     * th.to<unsigned short>());     break;
@@ -931,9 +931,9 @@ namespace occa {
     }
 
     typeHolder typeHolder::operator + (const typeHolder &th) {
-      const int maxType = typeHolder::maxType(*this, th);
+      const int mtype = typeHolder::maxType(*this, th);
 
-      switch(maxType) {
+      switch(mtype) {
       case boolType      : return typeHolder(to<bool>()               + th.to<bool>());               break;
       case charType      : return typeHolder(to<char>()               + th.to<char>());               break;
       case ushortType    : return typeHolder(to<unsigned short>()     + th.to<unsigned short>());     break;
@@ -955,9 +955,9 @@ namespace occa {
     }
 
     typeHolder typeHolder::operator - (const typeHolder &th) {
-      const int maxType = typeHolder::maxType(*this, th);
+      const int mtype = typeHolder::maxType(*this, th);
 
-      switch(maxType) {
+      switch(mtype) {
       case boolType      : return typeHolder(to<bool>()               - th.to<bool>());               break;
       case charType      : return typeHolder(to<char>()               - th.to<char>());               break;
       case ushortType    : return typeHolder(to<unsigned short>()     - th.to<unsigned short>());     break;
@@ -979,9 +979,9 @@ namespace occa {
     }
 
     typeHolder typeHolder::operator / (const typeHolder &th) {
-      const int maxType = typeHolder::maxType(*this, th);
+      const int mtype = typeHolder::maxType(*this, th);
 
-      switch(maxType) {
+      switch(mtype) {
       case boolType      : return typeHolder(to<bool>()               / th.to<bool>());               break;
       case charType      : return typeHolder(to<char>()               / th.to<char>());               break;
       case ushortType    : return typeHolder(to<unsigned short>()     / th.to<unsigned short>());     break;
@@ -1002,9 +1002,9 @@ namespace occa {
       return typeHolder(0);
     }
     typeHolder typeHolder::operator % (const typeHolder &th) {
-      const int maxType = typeHolder::maxType(*this, th);
+      const int mtype = typeHolder::maxType(*this, th);
 
-      switch(maxType) {
+      switch(mtype) {
       case boolType      : return typeHolder(to<bool>()               % th.to<bool>());               break;
       case charType      : return typeHolder(to<char>()               % th.to<char>());               break;
       case ushortType    : return typeHolder(to<unsigned short>()     % th.to<unsigned short>());     break;
@@ -1026,9 +1026,9 @@ namespace occa {
     }
 
     typeHolder typeHolder::operator & (const typeHolder &th) {
-      const int maxType = typeHolder::maxType(*this, th);
+      const int mtype = typeHolder::maxType(*this, th);
 
-      switch(maxType) {
+      switch(mtype) {
       case boolType      : return typeHolder(to<bool>()               & th.to<bool>());               break;
       case charType      : return typeHolder(to<char>()               & th.to<char>());               break;
       case ushortType    : return typeHolder(to<unsigned short>()     & th.to<unsigned short>());     break;
@@ -1050,9 +1050,9 @@ namespace occa {
     }
 
     typeHolder typeHolder::operator | (const typeHolder &th) {
-      const int maxType = typeHolder::maxType(*this, th);
+      const int mtype = typeHolder::maxType(*this, th);
 
-      switch(maxType) {
+      switch(mtype) {
       case boolType      : return typeHolder(to<bool>()               | th.to<bool>());               break;
       case charType      : return typeHolder(to<char>()               | th.to<char>());               break;
       case ushortType    : return typeHolder(to<unsigned short>()     | th.to<unsigned short>());     break;
@@ -1074,9 +1074,9 @@ namespace occa {
     }
 
     typeHolder typeHolder::operator ^ (const typeHolder &th) {
-      const int maxType = typeHolder::maxType(*this, th);
+      const int mtype = typeHolder::maxType(*this, th);
 
-      switch(maxType) {
+      switch(mtype) {
       case boolType      : return typeHolder(to<bool>()               ^ th.to<bool>());               break;
       case charType      : return typeHolder(to<char>()               ^ th.to<char>());               break;
       case ushortType    : return typeHolder(to<unsigned short>()     ^ th.to<unsigned short>());     break;
@@ -1098,9 +1098,9 @@ namespace occa {
     }
 
     typeHolder typeHolder::operator >> (const typeHolder &th) {
-      const int maxType = typeHolder::maxType(*this, th);
+      const int mtype = typeHolder::maxType(*this, th);
 
-      switch(maxType) {
+      switch(mtype) {
       case boolType      : return typeHolder(to<bool>()               >> th.to<bool>());               break;
       case charType      : return typeHolder(to<char>()               >> th.to<char>());               break;
       case ushortType    : return typeHolder(to<unsigned short>()     >> th.to<unsigned short>());     break;
@@ -1122,9 +1122,9 @@ namespace occa {
     }
 
     typeHolder typeHolder::operator << (const typeHolder &th) {
-      const int maxType = typeHolder::maxType(*this, th);
+      const int mtype = typeHolder::maxType(*this, th);
 
-      switch(maxType) {
+      switch(mtype) {
       case boolType      : return typeHolder(to<bool>()               << th.to<bool>());               break;
       case charType      : return typeHolder(to<char>()               << th.to<char>());               break;
       case ushortType    : return typeHolder(to<unsigned short>()     << th.to<unsigned short>());     break;

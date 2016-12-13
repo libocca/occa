@@ -447,8 +447,12 @@ namespace occa {
       delete [] binary;
     }
 
-    cl_event& event(streamTag tag) {
-      return (cl_event&) tag.handle;
+    cl_event& event(streamTag &tag) {
+      return (cl_event&) (tag.handle);
+    }
+
+    const cl_event& event(const streamTag &tag) {
+      return (const cl_event&) (tag.handle);
     }
 
     std::string error(int e) {

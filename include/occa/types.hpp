@@ -26,7 +26,7 @@
 #include <iostream>
 #include <vector>
 #include <map>
-#include <cstdint>
+#include <stdint.h>
 
 #include "occa/defines.hpp"
 

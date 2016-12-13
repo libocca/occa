@@ -111,7 +111,8 @@ namespace occa {
                             cl_device_id deviceID,
                             cl_context context);
 
-    cl_event& event(streamTag tag);
+    cl_event& event(streamTag &tag);
+    const cl_event& event(const streamTag &tag);
 
     std::string error(int e);
   }

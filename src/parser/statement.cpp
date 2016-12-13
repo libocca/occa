@@ -111,12 +111,12 @@ namespace occa {
       if (info & expType::hasInfo)
         return occa::hash(leaves[0]);
 
-      hash_t hash = occa::hash(value);
+      hash_t hash_ = occa::hash(value);
 
-      for (int i = 0; i < leafCount; ++i)
-        hash ^= leaves[i]->hash();
-
-      return hash;
+      for (int i = 0; i < leafCount; ++i) {
+        hash_ ^= leaves[i]->hash();
+      }
+      return hash_;
     }
 
     bool expNode::sameAs(expNode &e, const bool nestedSearch) {

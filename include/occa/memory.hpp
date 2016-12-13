@@ -138,7 +138,7 @@ namespace occa {
 
     const std::string& mode();
 
-    udim_t bytes() const;
+    udim_t size() const;
 
     bool isManaged() const;
     bool inDevice() const;
@@ -180,7 +180,7 @@ namespace occa {
 
     void free();
     void detach();
-    void deleteRefs(const bool free = false);
+    void deleteRefs(const bool freeMemory = false);
   };
   //====================================
 }

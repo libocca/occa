@@ -135,7 +135,7 @@ namespace occa {
     return device(mHandle->dHandle).mode();
   }
 
-  udim_t memory::bytes() const {
+  udim_t memory::size() const {
     if (mHandle == NULL) {
       return 0;
     }
@@ -352,7 +352,7 @@ namespace occa {
     deleteRefs(false);
   }
 
-  void memory::deleteRefs(const bool free) {
+  void memory::deleteRefs(const bool freeMemory) {
     checkIfInitialized();
 
     mHandle->dHandle->bytesAllocated -= (mHandle->size);
@@ -371,7 +371,7 @@ namespace occa {
       }
     }
 
-    if (free) {
+    if (freeMemory) {
       mHandle->free();
     } else {
       mHandle->detach();

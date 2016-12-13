@@ -23,10 +23,12 @@
 #include "occa/defines.hpp"
 
 #if   (OCCA_OS & OCCA_LINUX_OS)
+#  include <unistd.h>
 #  include <sys/time.h>
 #  include <sys/sysctl.h>
-#  include <unistd.h>
+#  include <sys/sysinfo.h>
 #  include <dlfcn.h>
+#  include <errno.h>
 #elif (OCCA_OS & OCCA_OSX_OS)
 #  include <mach/mach_host.h>
 #  include <sys/sysctl.h>

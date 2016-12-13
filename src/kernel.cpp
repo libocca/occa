@@ -197,8 +197,8 @@ namespace occa {
   kernelInfo::kernelInfo() :
     occa::properties() {}
 
-  kernelInfo::kernelInfo(const properties &props) :
-    occa::properties(props) {}
+  kernelInfo::kernelInfo(const properties &props_) :
+    occa::properties(props_) {}
 
   bool kernelInfo::isAnOccaDefine(const std::string &name) {
     return ((name == "occaInnerDim0") ||

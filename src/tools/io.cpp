@@ -24,6 +24,7 @@
 
 #if (OCCA_OS & OCCA_LINUX_OS)
 #  include <unistd.h>
+#  include <errno.h>
 #  include <sys/types.h>
 #  include <sys/dir.h>
 #elif (OCCA_OS & OCCA_OSX_OS)
