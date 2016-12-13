@@ -24,13 +24,19 @@
 
 #if OCCA_OPENMP_ENABLED
 
+#include <iostream>
+
+#include "occa/tools/env.hpp"
+#include "occa/tools/io.hpp"
+#include "occa/tools/sys.hpp"
+
 namespace occa {
   namespace openmp {
     std::string notSupported = "N/A";
 
     std::string baseCompilerFlag(const int vendor_) {
       if (vendor_ & (sys::vendor::GNU |
-                    sys::vendor::LLVM)) {
+                     sys::vendor::LLVM)) {
 
         return "-fopenmp";
       } else if (vendor_ & (sys::vendor::Intel |
@@ -49,31 +55,31 @@ namespace occa {
         return "";
       }
 
-      return omp::notSupported;
+      return openmp::notSupported;
     }
 
     std::string compilerFlag(const int vendor_,
                              const std::string &compiler) {
 
 #if (OCCA_OS & (OCCA_LINUX_OS | OCCA_OSX_OS))
-      const std::string safeCompiler = removeSlashes(compiler);
-      std::string flag = omp::notSupported;
+      const std::string safeCompiler = io::removeSlashes(compiler);
+      std::string flag = openmp::notSupported;
       std::stringstream ss;
 
-      const std::string ompTest = env::OCCA_DIR + "/scripts/ompTest.cpp";
-      hash_t hash = occa::hashFile(ompTest);
+      const std::string openmpTest = env::OCCA_DIR + "/scripts/openmpTest.cpp";
+      hash_t hash = occa::hashFile(openmpTest);
       hash ^= occa::hash(vendor_);
       hash ^= occa::hash(compiler);
 
-      const std::string srcFilename = io::cacheFile(ompTest, "ompTest.cpp", hash);
+      const std::string srcFilename = io::cacheFile(openmpTest, "openmpTest.cpp", hash);
       const std::string binaryFilename = io::dirname(srcFilename) + "binary";
       const std::string outFilename = io::dirname(srcFilename) + "output";
 
       const std::string hashTag = "openmp-compiler";
-      if (!haveHash(hash, hashTag)) {
-        waitForHash(hash, hashTag);
+      if (!io::haveHash(hash, hashTag)) {
+        io::waitForHash(hash, hashTag);
       } else {
-        if (!sys::fileExists(infoFilename)) {
+        if (!sys::fileExists(outFilename)) {
           flag = baseCompilerFlag(vendor_);
           ss << compiler
              << ' '    << flag
@@ -84,15 +90,15 @@ namespace occa {
           const int compileError = system(ss.str().c_str());
 
           if (compileError) {
-            flag = omp::notSupported;
+            flag = openmp::notSupported;
           }
 
           io::write(outFilename, flag);
-          releaseHash(hash, hashTag);
+          io::releaseHash(hash, hashTag);
 
           return flag;
         }
-        releaseHash(hash, hashTag);
+        io::releaseHash(hash, hashTag);
       }
 
       ss << io::read(outFilename);

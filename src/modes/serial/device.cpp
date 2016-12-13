@@ -102,7 +102,7 @@ namespace occa {
 #endif
       }
 
-      properties["vendor"] = vendor;
+      properties.set("vendor", vendor);
       sys::addSharedBinaryFlagsTo(vendor, compilerFlags);
 
       properties["compiler"]          = compiler;
