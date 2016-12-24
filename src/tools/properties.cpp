@@ -25,6 +25,7 @@
 
 namespace occa {
   //---[ properties ]-------------------
+  void *properties::_NULL = NULL;
   properties::properties(hasProperties *holder_) :
     holder(holder_) {}
 
@@ -65,6 +66,10 @@ namespace occa {
     }
 
     parserNS::expNode::freeFlatHandle(csvFlatRoot);
+  }
+
+  udim_t properties::size() {
+    return props.size();
   }
 
   bool properties::has(const std::string &prop) const {

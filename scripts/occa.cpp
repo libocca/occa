@@ -283,7 +283,7 @@ void runEnv() {
 }
 
 void runInfo() {
-  occa::printAvailableDevices();
+  occa::printModeDescriptions();
 }
 
 void runUpdate(const int argc, std::string *args) {

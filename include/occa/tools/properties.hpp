@@ -42,6 +42,7 @@ namespace occa {
     typedef cStrToStrMapIterator citer_t;
 
   protected:
+    static void *_NULL;
     strToStrMap_t props;
     hasProperties *holder;
 
@@ -55,6 +56,8 @@ namespace occa {
 
     void initFromString(const std::string &props_);
 
+    udim_t size();
+
     bool has(const std::string &prop) const;
 
     std::string& operator [] (const std::string &prop);
@@ -67,6 +70,11 @@ namespace occa {
         return fromString<TM>(it->second);
       }
       return default_;
+    }
+
+    template <class TM*>
+    TM* get(const std::string &prop, const TM *&default_ = (const TM*&) _NULL) const {
+      return (TM*) get<uintptr_t>(prop, (uintptr_t) default_);
     }
 
     std::string get(const std::string &prop, const std::string &default_ = "") const;
@@ -87,6 +95,11 @@ namespace occa {
         onChange(Set, prop, "", newValue);
       }
       return *this;
+    }
+
+    template <class TM*>
+    properties& set(const std::string &prop, const TM* &t) {
+      return set<uintptr_t>(prop, (uintptr_t) t);
     }
 
     template <class TM>

@@ -254,36 +254,6 @@ namespace occa {
       return getDeviceMemorySize(clDID);
     }
 
-    std::string getDeviceListInfo() {
-      std::stringstream ss;
-
-      int platformCount = getPlatformCount();
-
-      for (int pID = 0; pID < platformCount; ++pID) {
-        int deviceCount = getDeviceCountInPlatform(pID);
-
-        for (int dID = 0; dID < deviceCount; ++dID) {
-          udim_t bytes      = getDeviceMemorySize(pID, dID);
-          std::string bytesStr = stringifyBytes(bytes);
-
-          if (pID || dID) {
-            ss << "              |-----------------------+------------------------------------------\n"
-               << "              |  Device Name          | " << deviceName(pID, dID) << '\n';
-          } else {
-            ss << "    OpenCL    |  Device Name          | " << deviceName(pID, dID) << '\n';
-          }
-
-          ss << "              |  Driver Vendor        | " << info::vendor(deviceVendor(pID,dID)) << '\n'
-             << "              |  Platform ID          | " << pID      << '\n'
-             << "              |  Device ID            | " << dID      << '\n'
-             << "              |  Memory               | " << bytesStr << '\n';
-        }
-      }
-
-
-      return ss.str();
-    }
-
     void buildKernel(info_t &info_,
                      const char *content,
                      const size_t contentBytes,

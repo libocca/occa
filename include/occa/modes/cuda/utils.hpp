@@ -37,7 +37,6 @@ namespace occa {
     int getDeviceCount();
     CUdevice getDevice(const int id);
     udim_t getDeviceMemorySize(CUdevice device);
-    std::string getDeviceListInfo();
 
     void enablePeerToPeer(CUcontext context);
     void checkPeerToPeer(CUdevice destDevice,

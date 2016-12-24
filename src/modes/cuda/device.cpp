@@ -35,7 +35,6 @@ namespace occa {
   namespace cuda {
     device::device(const occa::properties &properties_) :
       occa::device_v(properties_) {
-      cuda::init();
 
       OCCA_CHECK(properties.has("deviceID"),
                  "[OpenCL] device not given [deviceID]");
@@ -93,19 +92,6 @@ namespace occa {
         return (void*) context;
       }
       return (void*) (uintptr_t) handle;
-    }
-
-    void device::appendAvailableDevices(std::vector<occa::device> &dList) {
-      cuda::init();
-
-      int deviceCount = cuda::getDeviceCount();
-      std::stringstream ss;
-
-      for (int i = 0; i < deviceCount; ++i) {
-        ss.str("");
-        ss << "mode = CUDA, " << " deviceID = " << i;
-        dList.push_back(occa::device(ss.str()));
-      }
     }
 
     void device::flush() {}

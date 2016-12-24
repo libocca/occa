@@ -32,7 +32,18 @@
 
 namespace occa {
   namespace threads {
-    extern occa::mode<threads::device, threads::kernel, serial::memory> mode;
+    class modeInfo : public modeInfo_v {
+    public:
+      modeInfo();
+
+      void init();
+      occa::properties& getProperties();
+    };
+
+    extern occa::mode<threads::modeInfo,
+                      threads::device,
+                      threads::kernel,
+                      serial::memory> mode;
   }
 }
 

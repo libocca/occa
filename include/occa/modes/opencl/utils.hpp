@@ -86,8 +86,6 @@ namespace occa {
     udim_t getDeviceMemorySize(cl_device_id dID);
     udim_t getDeviceMemorySize(int pID, int dID);
 
-    std::string getDeviceListInfo();
-
     void buildKernel(info_t &info_,
                      const char *content,
                      const size_t contentBytes,

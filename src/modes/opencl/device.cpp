@@ -83,20 +83,6 @@ namespace occa {
       return NULL;
     }
 
-    void device::appendAvailableDevices(std::vector<occa::device> &dList) {
-      std::stringstream ss;
-
-      int platformCount = occa::opencl::getPlatformCount();
-      for (int p = 0; p < platformCount; ++p) {
-        int deviceCount = occa::opencl::getDeviceCountInPlatform(p);
-        for (int d = 0; d < deviceCount; ++d) {
-          ss.str("");
-          ss << "mode = OpenCL, platformID = " << p << " deviceID = " << d;
-          dList.push_back(occa::device(ss.str()));
-        }
-      }
-    }
-
     void device::flush() {
       OCCA_CL_CHECK("Device: Flush",
                     clFlush(*((cl_command_queue*) currentStream)));

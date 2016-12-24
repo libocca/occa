@@ -30,11 +30,24 @@
 #include "occa/modes/opencl/device.hpp"
 #include "occa/modes/opencl/kernel.hpp"
 #include "occa/modes/opencl/memory.hpp"
+#include "occa/tools/styling.hpp"
 #include "occa/base.hpp"
 
 namespace occa {
   namespace opencl {
-    extern occa::mode<opencl::device, opencl::kernel, opencl::memory> mode;
+    class modeInfo : public modeInfo_v {
+    public:
+      modeInfo();
+
+      void init();
+      styling::section& getDescription();
+      occa::properties& getProperties();
+    };
+
+    extern occa::mode<opencl::modeInfo,
+                      opencl::device,
+                      opencl::kernel,
+                      opencl::memory> mode;
   }
 }
 
