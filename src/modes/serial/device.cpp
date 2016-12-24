@@ -116,10 +116,6 @@ namespace occa {
       return NULL;
     }
 
-    void device::appendAvailableDevices(std::vector<occa::device> &dList) {
-      dList.push_back(occa::device(this));
-    }
-
     void device::flush() {}
 
     void device::finish() {}

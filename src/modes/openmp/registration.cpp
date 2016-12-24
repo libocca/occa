@@ -28,7 +28,23 @@
 
 namespace occa {
   namespace openmp {
-    occa::mode<openmp::device, openmp::kernel, serial::memory> mode("OpenMP");
+    modeInfo::modeInfo() {}
+
+    void modeInfo::init() {}
+
+    void modeInfo::setupProperties() {
+      occa::properties &props = getProperties();
+    }
+
+    occa::properties& modeInfo::getProperties() {
+      static occa::properties properties;
+      return properties;
+    }
+
+    occa::mode<openmp::modeInfo,
+               openmp::device,
+               openmp::kernel,
+               serial::memory> mode("OpenMP");
   }
 }
 

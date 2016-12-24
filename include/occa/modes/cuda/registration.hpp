@@ -30,11 +30,24 @@
 #include "occa/modes/cuda/device.hpp"
 #include "occa/modes/cuda/kernel.hpp"
 #include "occa/modes/cuda/memory.hpp"
+#include "occa/tools/styling.hpp"
 #include "occa/base.hpp"
 
 namespace occa {
   namespace cuda {
-    extern occa::mode<cuda::device, cuda::kernel, cuda::memory> mode;
+    class modeInfo : public modeInfo_v {
+    public:
+      modeInfo();
+
+      void init();
+      styling::section& getDescription();
+      occa::properties& getProperties();
+    };
+
+    extern occa::mode<cuda::modeInfo,
+                      cuda::device,
+                      cuda::kernel,
+                      cuda::memory> mode;
   }
 }
 

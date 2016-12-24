@@ -28,11 +28,24 @@
 #include "occa/modes/serial/device.hpp"
 #include "occa/modes/serial/kernel.hpp"
 #include "occa/modes/serial/memory.hpp"
+#include "occa/tools/styling.hpp"
 #include "occa/base.hpp"
 
 namespace occa {
   namespace serial {
-    extern occa::mode<serial::device, serial::kernel, serial::memory> mode;
+    class modeInfo : public modeInfo_v {
+    public:
+      modeInfo();
+
+      void init();
+      styling::section& getDescription();
+      occa::properties& getProperties();
+    };
+
+    extern occa::mode<serial::modeInfo,
+                      serial::device,
+                      serial::kernel,
+                      serial::memory> mode;
   }
 }
 

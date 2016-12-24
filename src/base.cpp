@@ -59,25 +59,6 @@ namespace occa {
     currentDevice_ = device(props);
   }
 
-  std::vector<device>& getDeviceList() {
-    static std::vector<device> deviceList;
-    static mutex_t mutex;
-
-    mutex.lock();
-    if (deviceList.size() == 0) {
-      strToModeMapIterator it = modeMap().begin();
-      while (it != modeMap().end()) {
-        device_v* dHandle = it->second->newDevice();
-        dHandle->appendAvailableDevices(deviceList);
-        freeModeDevice(dHandle);
-        ++it;
-      }
-    }
-    mutex.unlock();
-
-    return deviceList;
-  }
-
   properties& deviceProperties() {
     return currentDevice().properties();
   }
@@ -234,8 +215,23 @@ namespace occa {
   }
   //====================================
 
-  // [REFORMAT]
-  void printAvailableDevices() {
+  void printModeDescriptions() {
+    strToModeMap_t &modes = modeMap();
+    strToModeMapIterator it = modes.begin();
+    styling::table table;
+    int serialIdx = 0;
+    int idx = 0;
+    while (it != modes.end()) {
+      if (it->first == "Serial") {
+        serialIdx = idx;
+      }
+      table.add(it->second->getDescription());
+      ++it;
+      ++idx;
+    }
+    styling::section serialSection = table.sections[serialIdx];
+    table.sections[serialIdx] = table.sections[0];
+    table.sections[0] = serialSection;
+    std::cout << table.toString();
   }
-  //====================================
 }

@@ -102,13 +102,6 @@ namespace occa {
 
     device::~device() {}
 
-    void device::appendAvailableDevices(std::vector<occa::device> &dList) {
-      std::stringstream ss;
-      ss << "mode = Threads, threads = " << sys::getCoreCount()
-         << ", schedule = compact";
-      dList.push_back(occa::device(ss.str()));
-    }
-
     void device::flush() {}
 
     void device::finish() {

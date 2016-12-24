@@ -28,7 +28,44 @@
 
 namespace occa {
   namespace opencl {
-    occa::mode<opencl::device, opencl::kernel, opencl::memory> mode("OpenCL");
+    modeInfo::modeInfo() {}
+
+    void modeInfo::init() {}
+
+    styling::section& modeInfo::getDescription() {
+      static styling::section section("OpenCL");
+      if (section.size() == 0) {
+        int platformCount = getPlatformCount();
+        for (int pID = 0; pID < platformCount; ++pID) {
+          int deviceCount = getDeviceCountInPlatform(pID);
+          for (int dID = 0; dID < deviceCount; ++dID) {
+            udim_t bytes         = getDeviceMemorySize(pID, dID);
+            std::string bytesStr = stringifyBytes(bytes);
+
+            section
+              .add("Device Name"  , deviceName(pID, dID))
+              .add("Driver Vendor", info::vendor(deviceVendor(pID,dID)))
+              .add("Platform ID"  , toString(pID))
+              .add("Device ID"    , toString(dID))
+              .add("Memory"       , bytesStr)
+              .addDivider();
+          }
+        }
+        // Remove last divider
+        section.groups.pop_back();
+      }
+      return section;
+    }
+
+    occa::properties& modeInfo::getProperties() {
+      static occa::properties properties;
+      return properties;
+    }
+
+    occa::mode<opencl::modeInfo,
+               opencl::device,
+               opencl::kernel,
+               opencl::memory> mode("OpenCL");
   }
 }
 

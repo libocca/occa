@@ -51,8 +51,6 @@ namespace occa {
       device(const occa::properties &properties_ = occa::properties());
       ~device();
 
-      void appendAvailableDevices(std::vector<occa::device> &dList);
-
       void flush();
       void finish();
 

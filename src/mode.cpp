@@ -67,6 +67,13 @@ namespace occa {
     delete mHandle;
   }
 
+  modeInfo_v::modeInfo_v() {}
+
+  styling::section& modeInfo_v::getDescription() {
+    static styling::section section;
+    return section;
+  }
+
   std::string& mode_v::name() {
     return modeName;
   }

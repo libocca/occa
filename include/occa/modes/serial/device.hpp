@@ -36,8 +36,6 @@ namespace occa {
 
       void* getHandle(const occa::properties &props);
 
-      void appendAvailableDevices(std::vector<occa::device> &dList);
-
       void flush();
       void finish();
 

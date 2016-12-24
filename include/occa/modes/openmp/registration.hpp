@@ -34,7 +34,19 @@
 
 namespace occa {
   namespace openmp {
-    extern occa::mode<openmp::device, openmp::kernel, serial::memory> mode;
+    class modeInfo : public modeInfo_v {
+    public:
+      modeInfo();
+
+      void init();
+      void setupProperties();
+      occa::properties& getProperties();
+    };
+
+    extern occa::mode<openmp::modeInfo,
+                      openmp::device,
+                      openmp::kernel,
+                      serial::memory> mode;
   }
 }
 

@@ -93,8 +93,6 @@ namespace occa {
     udim_t installedRAM();
     udim_t availableRAM();
 
-    std::string getDeviceListInfo();
-
     int compilerVendor(const std::string &compiler);
 
     std::string compilerSharedBinaryFlags(const std::string &compiler);

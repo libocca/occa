@@ -61,42 +61,6 @@ namespace occa {
       return bytes;
     }
 
-    std::string getDeviceListInfo() {
-      std::stringstream ss;
-
-      cuda::init();
-      int deviceCount = cuda::getDeviceCount();
-      if (deviceCount == 0) {
-        return "";
-      }
-      char deviceName[1024];
-      OCCA_CUDA_CHECK("Getting Device Name",
-                      cuDeviceGetName(deviceName, 1024, 0));
-
-      udim_t bytes      = getDeviceMemorySize(getDevice(0));
-      std::string bytesStr = stringifyBytes(bytes);
-
-      // << "==============o=======================o==========================================\n";
-      ss << "     CUDA     |  Device ID            | 0 "                                  << '\n'
-         << "              |  Device Name          | " << deviceName                      << '\n'
-         << "              |  Memory               | " << bytesStr                        << '\n';
-
-      for (int i = 1; i < deviceCount; ++i) {
-        bytes    = getDeviceMemorySize(getDevice(i));
-        bytesStr = stringifyBytes(bytes);
-
-        OCCA_CUDA_CHECK("Getting Device Name",
-                        cuDeviceGetName(deviceName, 1024, i));
-
-        ss << "              |-----------------------+------------------------------------------\n"
-           << "              |  Device ID            | " << i                                << '\n'
-           << "              |  Device Name          | " << deviceName                       << '\n'
-           << "              |  Memory               | " << bytesStr                         << '\n';
-      }
-
-      return ss.str();
-    }
-
     void enablePeerToPeer(CUcontext context) {
 #if CUDA_VERSION >= 4000
       OCCA_CUDA_CHECK("Enabling Peer-to-Peer",

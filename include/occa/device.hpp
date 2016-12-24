@@ -66,8 +66,6 @@ namespace occa {
 
     virtual void* getHandle(const occa::properties &props) = 0;
 
-    virtual void appendAvailableDevices(std::vector<occa::device> &dList) = 0;
-
     virtual void flush()  = 0;
     virtual void finish() = 0;
 

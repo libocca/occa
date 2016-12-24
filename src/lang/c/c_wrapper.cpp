@@ -471,8 +471,8 @@ occaMemory OCCA_RFUNC occaWrapMemory(void *handle_,
 
 
 //---[ Device ]-------------------------
-void OCCA_RFUNC occaPrintAvailableDevices() {
-  occa::printAvailableDevices();
+void OCCA_RFUNC occaPrintModeDescriptions() {
+  occa::printModeDescriptions();
 }
 
 occaDevice OCCA_RFUNC occaCreateDevice(occaObject info) {

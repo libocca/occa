@@ -25,10 +25,49 @@
 #if OCCA_CUDA_ENABLED
 
 #include "occa/modes/cuda/registration.hpp"
+#include "occa/modes/cuda/utils.hpp"
 
 namespace occa {
   namespace cuda {
-    occa::mode<cuda::device, cuda::kernel, cuda::memory> mode("CUDA");
+    modeInfo::modeInfo() {}
+
+    void modeInfo::init() {
+
+      styling::section& modeInfo::getDescription() {
+        static styling::section section("CUDA");
+        if (section.size() == 0) {
+          char deviceName[1024];
+          int deviceCount = cuda::getDeviceCount();
+          for (int i = 0; i < deviceCount; ++i) {
+            const udim_t bytes         = getDeviceMemorySize(getDevice(i));
+            const std::string bytesStr = stringifyBytes(bytes);
+
+            OCCA_CUDA_CHECK("Getting Device Name",
+                            cuDeviceGetName(deviceName, 1024, i));
+
+            section
+              .add("Device ID"  ,  toString(i))
+              .add("Device Name",  deviceName)
+              .add("Memory"     ,  bytesStr)
+              .addDivider();
+          }
+          // Remove last divider
+          section.groups.pop_back();
+        }
+        return section;
+      }
+      cuda::init();
+    }
+
+    occa::properties& modeInfo::getProperties() {
+      static occa::properties properties;
+      return properties;
+    }
+
+    occa::mode<cuda::modeInfo,
+               cuda::device,
+               cuda::kernel,
+               cuda::memory> mode("CUDA");
   }
 }
 

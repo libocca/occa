@@ -52,8 +52,6 @@ namespace occa {
   void setDevice(device d);
   void setDevice(const properties &props);
 
-  std::vector<device>& getDeviceList();
-
   properties& deviceProperties();
 
   void flush();
@@ -124,7 +122,7 @@ namespace occa {
   void free(memory m);
   //====================================
 
-  void printAvailableDevices();
+  void printModeDescriptions();
 }
 
 #endif
