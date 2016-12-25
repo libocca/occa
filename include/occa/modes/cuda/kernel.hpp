@@ -43,8 +43,6 @@ namespace occa {
       CUmodule   module;
       CUfunction handle;
 
-      void *vArgs[2*OCCA_MAX_ARGS];
-
     public:
       kernel(const occa::properties &properties_ = occa::properties());
       ~kernel();
