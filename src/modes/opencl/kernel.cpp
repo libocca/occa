@@ -142,13 +142,13 @@ namespace occa {
       if (dims_ == 0) {
         size_t bytes;
         OCCA_OPENCL_ERROR("Kernel: Max Dims",
-                      clGetDeviceInfo(clDeviceID,
-                                      CL_DEVICE_MAX_WORK_ITEM_DIMENSIONS,
-                                      0, NULL, &bytes));
+                          clGetDeviceInfo(clDeviceID,
+                                          CL_DEVICE_MAX_WORK_ITEM_DIMENSIONS,
+                                          0, NULL, &bytes));
         OCCA_OPENCL_ERROR("Kernel: Max Dims",
-                      clGetDeviceInfo(clDeviceID,
-                                      CL_DEVICE_MAX_WORK_ITEM_DIMENSIONS,
-                                      bytes, &dims_, NULL));
+                          clGetDeviceInfo(clDeviceID,
+                                          CL_DEVICE_MAX_WORK_ITEM_DIMENSIONS,
+                                          bytes, &dims_, NULL));
       }
       return (int) dims_;
     }
@@ -160,13 +160,13 @@ namespace occa {
         size_t *od = new size_t[dims_];
         size_t bytes;
         OCCA_OPENCL_ERROR("Kernel: Max Outer Dims",
-                      clGetDeviceInfo(clDeviceID,
-                                      CL_DEVICE_MAX_WORK_ITEM_SIZES,
-                                      0, NULL, &bytes));
+                          clGetDeviceInfo(clDeviceID,
+                                          CL_DEVICE_MAX_WORK_ITEM_SIZES,
+                                          0, NULL, &bytes));
         OCCA_OPENCL_ERROR("Kernel: Max Outer Dims",
-                      clGetDeviceInfo(clDeviceID,
-                                      CL_DEVICE_MAX_WORK_ITEM_SIZES,
-                                      bytes, &od, NULL));
+                          clGetDeviceInfo(clDeviceID,
+                                          CL_DEVICE_MAX_WORK_ITEM_SIZES,
+                                          bytes, &od, NULL));
         for (int i = 0; i < dims_; ++i) {
           outerDims[i] = od[i];
         }
@@ -181,15 +181,15 @@ namespace occa {
         size_t dims_;
         size_t bytes;
         OCCA_OPENCL_ERROR("Kernel: Max Inner Dims",
-                      clGetKernelWorkGroupInfo(clKernel,
-                                               clDeviceID,
-                                               CL_KERNEL_WORK_GROUP_SIZE,
-                                               0, NULL, &bytes));
+                          clGetKernelWorkGroupInfo(clKernel,
+                                                   clDeviceID,
+                                                   CL_KERNEL_WORK_GROUP_SIZE,
+                                                   0, NULL, &bytes));
         OCCA_OPENCL_ERROR("Kernel: Max Inner Dims",
-                      clGetKernelWorkGroupInfo(clKernel,
-                                               clDeviceID,
-                                               CL_KERNEL_WORK_GROUP_SIZE,
-                                               bytes, &dims_, NULL));
+                          clGetKernelWorkGroupInfo(clKernel,
+                                                   clDeviceID,
+                                                   CL_KERNEL_WORK_GROUP_SIZE,
+                                                   bytes, &dims_, NULL));
         innerDims.x = dims_;
       }
       return innerDims;
@@ -203,7 +203,7 @@ namespace occa {
 
       int argc = 0;
       OCCA_OPENCL_ERROR("Kernel (" + metadata.name + ") : Setting Kernel Argument [0]",
-                    clSetKernelArg(clKernel, argc++, sizeof(void*), NULL));
+                        clSetKernelArg(clKernel, argc++, sizeof(void*), NULL));
 
       for (int i = 0; i < kArgc; ++i) {
         const kernelArg_t &arg = kArgs[i].arg;
@@ -211,27 +211,27 @@ namespace occa {
         const kernelArg_t *extraArgs = extraArgCount ? &(kArgs[i].extraArgs[0]) : NULL;
 
         OCCA_OPENCL_ERROR("Kernel (" + metadata.name + ") : Setting Kernel Argument [" << (i + 1) << "]",
-                      clSetKernelArg(clKernel, argc++, arg.size, arg.ptr()));
+                          clSetKernelArg(clKernel, argc++, arg.size, arg.ptr()));
 
         for (int j = 0; j < extraArgCount; ++j) {
           OCCA_OPENCL_ERROR("Kernel (" + metadata.name + ") : Setting Kernel Argument [" << (i + 1) << "]",
-                        clSetKernelArg(clKernel, argc++, extraArgs[j].size, extraArgs[j].ptr()));
+                            clSetKernelArg(clKernel, argc++, extraArgs[j].size, extraArgs[j].ptr()));
         }
       }
 
       OCCA_OPENCL_ERROR("Kernel (" + metadata.name + ") : Kernel Run",
-                    clEnqueueNDRangeKernel(*((cl_command_queue*) dHandle->currentStream),
-                                           clKernel,
-                                           (cl_int) dims,
-                                           NULL,
-                                           (size_t*) &fullOuter_,
-                                           (size_t*) &inner_,
-                                           0, NULL, NULL));
+                        clEnqueueNDRangeKernel(*((cl_command_queue*) dHandle->currentStream),
+                                               clKernel,
+                                               (cl_int) dims,
+                                               NULL,
+                                               (size_t*) &fullOuter_,
+                                               (size_t*) &inner_,
+                                               0, NULL, NULL));
     }
 
     void kernel::free() {
       OCCA_OPENCL_ERROR("Kernel: Free",
-                    clReleaseKernel(clKernel));
+                        clReleaseKernel(clKernel));
     }
   }
 }

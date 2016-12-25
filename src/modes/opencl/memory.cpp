@@ -57,10 +57,10 @@ namespace occa {
       const bool async = props.get("async", false);
 
       OCCA_OPENCL_ERROR("Memory: " << (async ? "Async " : "") << "Copy From",
-                    clEnqueueWriteBuffer(stream, *((cl_mem*) handle),
-                                         async ? CL_FALSE : CL_TRUE,
-                                         offset, bytes, src,
-                                         0, NULL, NULL));
+                        clEnqueueWriteBuffer(stream, *((cl_mem*) handle),
+                                             async ? CL_FALSE : CL_TRUE,
+                                             offset, bytes, src,
+                                             0, NULL, NULL));
     }
 
     void memory::copyFrom(const memory_v *src,
@@ -72,12 +72,12 @@ namespace occa {
       const bool async = props.get("async", false);
 
       OCCA_OPENCL_ERROR("Memory: " << (async ? "Async " : "") << "Copy From",
-                    clEnqueueCopyBuffer(stream,
-                                        *((cl_mem*) src->handle),
-                                        *((cl_mem*) handle),
-                                        srcOffset, destOffset,
-                                        bytes,
-                                        0, NULL, NULL));
+                        clEnqueueCopyBuffer(stream,
+                                            *((cl_mem*) src->handle),
+                                            *((cl_mem*) handle),
+                                            srcOffset, destOffset,
+                                            bytes,
+                                            0, NULL, NULL));
     }
 
     void memory::copyTo(void *dest,
@@ -89,10 +89,10 @@ namespace occa {
       const bool async = props.get("async", false);
 
       OCCA_OPENCL_ERROR("Memory: " << (async ? "Async " : "") << "Copy To",
-                    clEnqueueReadBuffer(stream, *((cl_mem*) handle),
-                                        async ? CL_FALSE : CL_TRUE,
-                                        offset, bytes, dest,
-                                        0, NULL, NULL));
+                        clEnqueueReadBuffer(stream, *((cl_mem*) handle),
+                                            async ? CL_FALSE : CL_TRUE,
+                                            offset, bytes, dest,
+                                            0, NULL, NULL));
     }
 
     void memory::free() {
@@ -100,14 +100,14 @@ namespace occa {
         cl_command_queue &stream = *((cl_command_queue*) dHandle->currentStream);
 
         OCCA_OPENCL_ERROR("Mapped Free: clEnqueueUnmapMemObject",
-                      clEnqueueUnmapMemObject(stream,
-                                              *((cl_mem*) handle),
-                                              mappedPtr,
-                                              0, NULL, NULL));
+                          clEnqueueUnmapMemObject(stream,
+                                                  *((cl_mem*) handle),
+                                                  mappedPtr,
+                                                  0, NULL, NULL));
       }
       // Free mapped-host pointer
       OCCA_OPENCL_ERROR("Mapped Free: clReleaseMemObject",
-                    clReleaseMemObject(*((cl_mem*) handle)));
+                        clReleaseMemObject(*((cl_mem*) handle)));
       delete (cl_mem*) handle;
 
       handle = NULL;
