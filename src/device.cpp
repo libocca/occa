@@ -127,11 +127,6 @@ namespace occa {
     return dHandle->mode;
   }
 
-  void device::flush() {
-    checkIfInitialized();
-    dHandle->flush();
-  }
-
   void device::finish() {
     checkIfInitialized();
 

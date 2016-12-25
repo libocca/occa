@@ -83,11 +83,6 @@ namespace occa {
       return NULL;
     }
 
-    void device::flush() {
-      OCCA_CL_CHECK("Device: Flush",
-                    clFlush(*((cl_command_queue*) currentStream)));
-    }
-
     void device::finish() {
       OCCA_CL_CHECK("Device: Finish",
                     clFinish(*((cl_command_queue*) currentStream)));

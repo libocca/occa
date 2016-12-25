@@ -19,16 +19,16 @@ flags += -D tFloat=float
 
 #---[ COMPILATION ]-------------------------------
 headers = $(wildcard $(incPath)/*.hpp) $(wildcard $(incPath)/*.tpp)
-sources = $(wildcard $(sPath)/*.cpp)
+sources = $(wildcard $(srcPath)/*.cpp)
 
-objects = $(subst $(sPath)/,$(objPath)/,$(sources:.cpp=.o))
+objects = $(subst $(srcPath)/,$(objPath)/,$(sources:.cpp=.o))
 
 flags += -I$(PROJ_DIR)/include
 
 ${PROJ_DIR}/main: $(objects) $(headers) ${PROJ_DIR}/main.cpp
 	$(compiler) $(compilerFlags) -o ${PROJ_DIR}/main $(flags) $(objects) ${PROJ_DIR}/main.cpp $(paths) $(links)
 
-$(objPath)/%.o:$(sPath)/%.cpp $(wildcard $(subst $(sPath)/,$(incPath)/,$(<:.cpp=.hpp))) $(wildcard $(subst $(sPath)/,$(incPath)/,$(<:.cpp=.tpp)))
+$(objPath)/%.o:$(srcPath)/%.cpp $(wildcard $(subst $(srcPath)/,$(incPath)/,$(<:.cpp=.hpp))) $(wildcard $(subst $(srcPath)/,$(incPath)/,$(<:.cpp=.tpp)))
 	$(compiler) $(compilerFlags) -o $@ $(flags) -c $(paths) $<
 
 clean:

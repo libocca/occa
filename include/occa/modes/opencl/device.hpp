@@ -45,7 +45,6 @@ namespace occa {
 
       void* getHandle(const occa::properties &props);
 
-      void flush();
       void finish();
 
       bool fakesUva();
