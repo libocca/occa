@@ -258,6 +258,7 @@ namespace occa {
 
       return (stat(filename.c_str(), &statInfo) == 0);
     }
+    //==================================
 
     //---[ Processor Info ]-------------
     std::string getFieldFrom(const std::string &command,
@@ -357,8 +358,8 @@ namespace occa {
 
       int error = sysctlbyname("hw.cpufrequency", &frequency, &size, NULL, 0);
 
-      OCCA_CHECK(error != ENOMEM,
-                 "Error getting CPU Frequency.\n");
+      OCCA_ERROR("Error getting CPU Frequency.\n",
+                 error != ENOMEM);
 
       return frequency/1.0e6;
 #elif (OCCA_OS == OCCA_WINDOWS_OS)
@@ -397,8 +398,8 @@ namespace occa {
 
       int error = sysctlbyname(field.c_str(), &cache, &size, NULL, 0);
 
-      OCCA_CHECK(error != ENOMEM,
-                 "Error getting L" << level << " Cache Size.\n");
+      OCCA_ERROR("Error getting L" << level << " Cache Size.\n",
+                 error != ENOMEM);
 
       return stringifyBytes(cache);
 #elif (OCCA_OS == OCCA_WINDOWS_OS)
@@ -410,15 +411,15 @@ namespace occa {
 
       GetLogicalProcessorInformation(buffer, (LPDWORD) &bytes);
 
-      OCCA_CHECK((GetLastError() == ERROR_INSUFFICIENT_BUFFER),
-                 "[GetLogicalProcessorInformation] Failed");
+      OCCA_ERROR("[GetLogicalProcessorInformation] Failed",
+                 (GetLastError() == ERROR_INSUFFICIENT_BUFFER));
 
       buffer = (PSYSTEM_LOGICAL_PROCESSOR_INFORMATION) sys::malloc(bytes);
 
       bool passed = GetLogicalProcessorInformation(buffer, (LPDWORD) &bytes);
 
-      OCCA_CHECK(passed,
-                 "[GetLogicalProcessorInformation] Failed");
+      OCCA_ERROR("[GetLogicalProcessorInformation] Failed",
+                 passed);
 
       PSYSTEM_LOGICAL_PROCESSOR_INFORMATION pos = buffer;
       int off = 0;
@@ -636,8 +637,8 @@ namespace occa {
       if ((dlHandle == NULL) && hash.initialized) {
         io::releaseHash(hash, hashTag);
 
-        OCCA_CHECK(false,
-                   "Error loading binary [" << io::shortname(filename) << "] with dlopen");
+        OCCA_ERROR("Error loading binary [" << io::shortname(filename) << "] with dlopen",
+                   false);
       }
 #else
       void *dlHandle = LoadLibraryA(filename.c_str());
@@ -645,8 +646,8 @@ namespace occa {
       if ((dlHandle == NULL) && hash.initialized) {
         io::releaseHash(hash, hashTag);
 
-        OCCA_CHECK(dlHandle != NULL,
-                   "Error loading dll [" << io::shortname(filename) << "] (WIN32 error: " << GetLastError() << ")");
+        OCCA_ERROR("Error loading dll [" << io::shortname(filename) << "] (WIN32 error: " << GetLastError() << ")",
+                   dlHandle != NULL);
       }
 #endif
 
@@ -666,16 +667,16 @@ namespace occa {
       if (((dlError = dlerror()) != NULL) && hash.initialized) {
         io::releaseHash(hash, hashTag);
 
-        OCCA_CHECK(false,
-                   "Error loading symbol from binary with dlsym (DL Error: " << dlError << ")");
+        OCCA_ERROR("Error loading symbol from binary with dlsym (DL Error: " << dlError << ")",
+                   false);
       }
 #else
       void *sym = GetProcAddress((HMODULE) dlHandle, functionName.c_str());
 
       if ((sym == NULL) && hash.initialized) {
 
-        OCCA_CHECK(false,
-                   "Error loading symbol from binary with GetProcAddress");
+        OCCA_ERROR("Error loading symbol from binary with GetProcAddress",
+                   false);
       }
 #endif
 
@@ -703,12 +704,53 @@ namespace occa {
     }
   }
 
+  void _message(const std::string &title,
+                const bool exitInFailure,
+                const std::string &filename,
+                const std::string &function,
+                const int line,
+                const std::string &message) {
+
+    std::string header = "---[ " + title + " ]";
+    header += std::string('-', 60 - header.size());
+
+    std::cout << '\n'
+              << header << '\n'
+              << "    File     : " << filename << '\n'
+              << "    Function : " << function << '\n'
+              << "    Line     : " << line     << '\n';
+    if (message.size()) {
+      std::cout << "    Message  : " << message << '\n';
+    }
+    std::cout << std::string('=', 60) << '\n';
+
+    if (exitInFailure) {
+      exit(1);
+    }
+  }
+
+  void warn(const std::string &filename,
+            const std::string &function,
+            const int line,
+            const std::string &message) {
+    _message("Warning", false,
+             filename, function, line, message);
+  }
+
+  void error(const std::string &filename,
+             const std::string &function,
+             const int line,
+             const std::string &message) {
+    _message("Error", true,
+             filename, function, line, message);
+  }
+
   mutex_t::mutex_t() {
 #if (OCCA_OS & (OCCA_LINUX_OS | OCCA_OSX_OS))
     int error = pthread_mutex_init(&mutexHandle, NULL);
 
-    OCCA_CHECK(error == 0,
-               "Error initializing mutex");
+    OCCA_ERROR("Error initializing mutex",
+               error == 0);
 #else
     mutexHandle = CreateMutex(NULL, FALSE, NULL);
 #endif
@@ -718,8 +760,8 @@ namespace occa {
 #if (OCCA_OS & (OCCA_LINUX_OS | OCCA_OSX_OS))
     int error = pthread_mutex_destroy(&mutexHandle);
 
-    OCCA_CHECK(error == 0,
-               "Error freeing mutex");
+    OCCA_ERROR("Error freeing mutex",
+               error == 0);
 #else
     CloseHandle(mutexHandle);
 #endif

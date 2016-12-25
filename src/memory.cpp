@@ -109,8 +109,8 @@ namespace occa {
   }
 
   void memory::checkIfInitialized() const {
-    OCCA_CHECK(mHandle != NULL,
-               "Memory is not initialized");
+    OCCA_ERROR("Memory is not initialized",
+               mHandle != NULL);
   }
 
   memory_v* memory::getMHandle() {
@@ -193,15 +193,15 @@ namespace occa {
 
     udim_t bytes_ = ((bytes == -1) ? mHandle->size : bytes);
 
-    OCCA_CHECK(bytes >= -1,
-               "Trying to allocate negative bytes (" << bytes << ")");
-    OCCA_CHECK(offset >= 0,
-               "Cannot have a negative offset (" << offset << ")");
+    OCCA_ERROR("Trying to allocate negative bytes (" << bytes << ")",
+               bytes >= -1);
+    OCCA_ERROR("Cannot have a negative offset (" << offset << ")",
+               offset >= 0);
 
     if (mHandle->dHandle->fakesUva()) {
-      OCCA_CHECK((bytes_ + offset) <= mHandle->size,
-                 "Memory has size [" << mHandle->size << "],"
-                 << "trying to access [ " << offset << " , " << (offset + bytes_) << " ]");
+      OCCA_ERROR("Memory has size [" << mHandle->size << "],"
+                 << "trying to access [ " << offset << " , " << (offset + bytes_) << " ]",
+                 (bytes_ + offset) <= mHandle->size);
 
       copyTo(mHandle->uvaPtr, bytes_, offset);
 
@@ -218,15 +218,15 @@ namespace occa {
 
     udim_t bytes_ = ((bytes == 0) ? mHandle->size : bytes);
 
-    OCCA_CHECK(bytes >= -1,
-               "Trying to allocate negative bytes (" << bytes << ")");
-    OCCA_CHECK(offset >= 0,
-               "Cannot have a negative offset (" << offset << ")");
+    OCCA_ERROR("Trying to allocate negative bytes (" << bytes << ")",
+               bytes >= -1);
+    OCCA_ERROR("Cannot have a negative offset (" << offset << ")",
+               offset >= 0);
 
     if (mHandle->dHandle->fakesUva()) {
-      OCCA_CHECK((bytes_ + offset) <= mHandle->size,
-                 "Memory has size [" << mHandle->size << "],"
-                 << "trying to access [ " << offset << " , " << (offset + bytes_) << " ]");
+      OCCA_ERROR("Memory has size [" << mHandle->size << "],"
+                 << "trying to access [ " << offset << " , " << (offset + bytes_) << " ]",
+                 (bytes_ + offset) <= mHandle->size);
 
       copyFrom(mHandle->uvaPtr, bytes_, offset);
 
@@ -264,13 +264,13 @@ namespace occa {
 
     udim_t bytes_ = ((bytes == -1) ? mHandle->size : bytes);
 
-    OCCA_CHECK(bytes >= -1,
-               "Trying to allocate negative bytes (" << bytes << ")");
-    OCCA_CHECK(offset >= 0,
-               "Cannot have a negative offset (" << offset << ")");
-    OCCA_CHECK((bytes_ + offset) <= mHandle->size,
-               "Destination memory has size [" << mHandle->size << "],"
-               << "trying to access [ " << offset << " , " << (offset + bytes_) << " ]");
+    OCCA_ERROR("Trying to allocate negative bytes (" << bytes << ")",
+               bytes >= -1);
+    OCCA_ERROR("Cannot have a negative offset (" << offset << ")",
+               offset >= 0);
+    OCCA_ERROR("Destination memory has size [" << mHandle->size << "],"
+               << "trying to access [ " << offset << " , " << (offset + bytes_) << " ]",
+               (bytes_ + offset) <= mHandle->size);
 
     mHandle->copyFrom(src, bytes_, offset, props);
   }
@@ -284,18 +284,18 @@ namespace occa {
 
     udim_t bytes_ = ((bytes == -1) ? mHandle->size : bytes);
 
-    OCCA_CHECK(bytes >= -1,
-               "Trying to allocate negative bytes (" << bytes << ")");
-    OCCA_CHECK(destOffset >= 0,
-               "Cannot have a negative offset (" << destOffset << ")");
-    OCCA_CHECK(srcOffset >= 0,
-               "Cannot have a negative offset (" << srcOffset << ")");
-    OCCA_CHECK((bytes_ + srcOffset) <= src.mHandle->size,
-               "Source memory has size [" << src.mHandle->size << "],"
-               << "trying to access [ " << srcOffset << " , " << (srcOffset + bytes_) << " ]");
-    OCCA_CHECK((bytes_ + destOffset) <= mHandle->size,
-               "Destination memory has size [" << mHandle->size << "],"
-               << "trying to access [ " << destOffset << " , " << (destOffset + bytes_) << " ]");
+    OCCA_ERROR("Trying to allocate negative bytes (" << bytes << ")",
+               bytes >= -1);
+    OCCA_ERROR("Cannot have a negative offset (" << destOffset << ")",
+               destOffset >= 0);
+    OCCA_ERROR("Cannot have a negative offset (" << srcOffset << ")",
+               srcOffset >= 0);
+    OCCA_ERROR("Source memory has size [" << src.mHandle->size << "],"
+               << "trying to access [ " << srcOffset << " , " << (srcOffset + bytes_) << " ]",
+               (bytes_ + srcOffset) <= src.mHandle->size);
+    OCCA_ERROR("Destination memory has size [" << mHandle->size << "],"
+               << "trying to access [ " << destOffset << " , " << (destOffset + bytes_) << " ]",
+               (bytes_ + destOffset) <= mHandle->size);
 
     mHandle->copyFrom(src.mHandle, bytes_, destOffset, srcOffset, props);
   }
@@ -308,13 +308,13 @@ namespace occa {
 
     udim_t bytes_ = ((bytes == -1) ? mHandle->size : bytes);
 
-    OCCA_CHECK(bytes >= -1,
-               "Trying to allocate negative bytes (" << bytes << ")");
-    OCCA_CHECK(offset >= 0,
-               "Cannot have a negative offset (" << offset << ")");
-    OCCA_CHECK((bytes_ + offset) <= mHandle->size,
-               "Source memory has size [" << mHandle->size << "],"
-               << "trying to access [ " << offset << " , " << (offset + bytes_) << " ]");
+    OCCA_ERROR("Trying to allocate negative bytes (" << bytes << ")",
+               bytes >= -1);
+    OCCA_ERROR("Cannot have a negative offset (" << offset << ")",
+               offset >= 0);
+    OCCA_ERROR("Source memory has size [" << mHandle->size << "],"
+               << "trying to access [ " << offset << " , " << (offset + bytes_) << " ]",
+               (bytes_ + offset) <= mHandle->size);
 
     mHandle->copyTo(dest, bytes_, offset, props);
   }
@@ -328,18 +328,18 @@ namespace occa {
 
     udim_t bytes_ = ((bytes == -1) ? mHandle->size : bytes);
 
-    OCCA_CHECK(bytes >= -1,
-               "Trying to allocate negative bytes (" << bytes << ")");
-    OCCA_CHECK(destOffset >= 0,
-               "Cannot have a negative offset (" << destOffset << ")");
-    OCCA_CHECK(srcOffset >= 0,
-               "Cannot have a negative offset (" << srcOffset << ")");
-    OCCA_CHECK((bytes_ + srcOffset) <= mHandle->size,
-               "Source memory has size [" << mHandle->size << "],"
-               << "trying to access [ " << srcOffset << " , " << (srcOffset + bytes_) << " ]");
-    OCCA_CHECK((bytes_ + destOffset) <= dest.mHandle->size,
-               "Destination memory has size [" << dest.mHandle->size << "],"
-               << "trying to access [ " << destOffset << " , " << (destOffset + bytes_) << " ]");
+    OCCA_ERROR("Trying to allocate negative bytes (" << bytes << ")",
+               bytes >= -1);
+    OCCA_ERROR("Cannot have a negative offset (" << destOffset << ")",
+               destOffset >= 0);
+    OCCA_ERROR("Cannot have a negative offset (" << srcOffset << ")",
+               srcOffset >= 0);
+    OCCA_ERROR("Source memory has size [" << mHandle->size << "],"
+               << "trying to access [ " << srcOffset << " , " << (srcOffset + bytes_) << " ]",
+               (bytes_ + srcOffset) <= mHandle->size);
+    OCCA_ERROR("Destination memory has size [" << dest.mHandle->size << "],"
+               << "trying to access [ " << destOffset << " , " << (destOffset + bytes_) << " ]",
+               (bytes_ + destOffset) <= dest.mHandle->size);
 
     dest.mHandle->copyFrom(mHandle, bytes_, destOffset, srcOffset, props);
   }

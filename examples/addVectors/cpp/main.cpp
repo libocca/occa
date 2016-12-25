@@ -3,7 +3,7 @@
 #include "occa.hpp"
 
 int main(int argc, char **argv) {
-  occa::printAvailableDevices();
+  occa::printModeInfo();
 
   int entries = 5;
 

@@ -32,8 +32,6 @@
 //======================================
 
 //---[ Build Config ]-------------------
-#define OCCA_CHECK_ENABLED     1
-
 #ifdef _DEBUG
 #  define OCCA_DEBUG_ENABLED   1
 #else

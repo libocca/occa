@@ -124,6 +124,23 @@ namespace occa {
     //==================================
   }
 
+  void _message(const std::string &title,
+                const bool exitInFailure,
+                const std::string &filename,
+                const std::string &function,
+                const int line,
+                const std::string &message);
+
+  void warn(const std::string &filename,
+            const std::string &function,
+            const int line,
+            const std::string &message);
+
+  void error(const std::string &filename,
+             const std::string &function,
+             const int line,
+             const std::string &message);
+
   class mutex_t {
   public:
 #if (OCCA_OS & (OCCA_LINUX_OS | OCCA_OSX_OS))

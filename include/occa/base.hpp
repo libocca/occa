@@ -121,7 +121,7 @@ namespace occa {
   void free(memory m);
   //====================================
 
-  void printModeDescriptions();
+  void printModeInfo();
 }
 
 #endif

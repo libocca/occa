@@ -266,8 +266,8 @@ namespace occa {
 
         // [-] Doesn't support GCC's twisted [Labels as Values]
         if (firstValue == "goto") {
-          OCCA_CHECK(1 < leafCount,
-                     "Goto check [" << toString() << "] needs label");
+          OCCA_ERROR("Goto check [" << toString() << "] needs label",
+                     1 < leafCount);
 
           info  = expType::goto_;
           value = allExp[expStart + 1];
@@ -834,8 +834,8 @@ namespace occa {
 
           varInfo *argVar = sInfo->hasVariableInScope(var.name);
 
-          OCCA_CHECK(argVar != NULL,
-                     "Error: variable [" << var << "] is not a function argument");
+          OCCA_ERROR("Error: variable [" << var << "] is not a function argument",
+                     argVar != NULL);
 
           *(argVar) = var;
         }
@@ -914,9 +914,9 @@ namespace occa {
           info |= expType::hasSemicolon;
         }
         else {
-          OCCA_CHECK(false,
-                     "Function [" << (leaves[0]->value) << "] is not defined in ["
-                     << toString() << "]");
+          OCCA_ERROR("Function [" << (leaves[0]->value) << "] is not defined in ["
+                     << toString() << "]",
+                     false);
         }
 
         return;
@@ -959,8 +959,8 @@ namespace occa {
               (sInfo->info == smntType::elseIfStatement) ||
               (sInfo->info == smntType::whileStatement)) {
 
-        OCCA_CHECK(leafCount != 0,
-                   "No expression in if-statement: " << *this << '\n');
+        OCCA_ERROR("No expression in if-statement: " << *this << '\n',
+                   leafCount != 0);
 
         leaves[0]       = leaves[1];
         leaves[0]->info = expType::root;
@@ -992,8 +992,8 @@ namespace occa {
 
       int statementCount = 1 + typeInfo::delimiterCount(*this, ",");
 
-      OCCA_CHECK((2 <= statementCount) && (statementCount <= 4),
-                 "Error: Wrong [DO] format [" << *this << "]");
+      OCCA_ERROR("Error: Wrong [DO] format [" << *this << "]",
+                 (2 <= statementCount) && (statementCount <= 4));
 
       int pos[5];
 
@@ -1004,8 +1004,8 @@ namespace occa {
       for (int i = 0; i < statementCount; ++i) {
         pos[i + 1] = typeInfo::nextDelimiter(*this, pos[i], ",") + 1;
 
-        OCCA_CHECK(pos[i] != (pos[i + 1] + 1),
-                   "Error: No expression given in [" << *this << "]");
+        OCCA_ERROR("Error: No expression given in [" << *this << "]",
+                   pos[i] != (pos[i + 1] + 1));
       }
 
       // Check if last expressiong is an OCCA tag
@@ -1034,9 +1034,9 @@ namespace occa {
       const std::string &iter = leaves[1]->value;
       varInfo *var = sInfo->hasVariableInScope(iter);
 
-      OCCA_CHECK(var != NULL,
-                 "Error: Iterator [" << iter
-                 << "] is not defined before [" << *this << "]");
+      OCCA_ERROR("Error: Iterator [" << iter
+                 << "] is not defined before [" << *this << "]",
+                 var != NULL);
 
       // Fortran iterations are not modified
       std::vector<std::string> doNames;
@@ -1063,12 +1063,12 @@ namespace occa {
       const std::string exp0Str = exp0.toString();
       const std::string exp1Str = exp1.toString();
 
-      OCCA_CHECK(exp0Str.size() != 0,
-                 "Error, missing 1st statement in the [DO]: "
-                 << toString() << '\n');
-      OCCA_CHECK(exp1Str.size() != 0,
-                 "Error, missing 2nd statement in the [DO]: "
-                 << toString() << '\n');
+      OCCA_ERROR("Error, missing 1st statement in the [DO]: "
+                 << toString() << '\n',
+                 exp0Str.size() != 0);
+      OCCA_ERROR("Error, missing 2nd statement in the [DO]: "
+                 << toString() << '\n',
+                 exp1Str.size() != 0);
 
       const std::string decl0 = "const int " + doStart + " = " + exp0Str;
       const std::string decl1 = "const int " + doEnd   + " = " + exp1Str;
@@ -1085,8 +1085,8 @@ namespace occa {
 
         const std::string decl2 = "const int " + doStride + " = " + exp2Str;
 
-        OCCA_CHECK(exp2Str.size() != 0,
-                   "Error, missing 3rd statement in the [DO]: " << toString() << '\n');
+        OCCA_ERROR("Error, missing 3rd statement in the [DO]: " << toString() << '\n',
+                   exp2Str.size() != 0);
 
         sInfo->up->addStatementFromSource(decl2);
 
@@ -1746,11 +1746,11 @@ namespace occa {
           expNode &csvFlatRoot = *(arrNode.makeCsvFlatHandle());
           expVector_t indices;
 
-          OCCA_CHECK(dims != 0,
-                     "Variable use [" << toString() << "] cannot be used without the @(dim(...)) attribute");
+          OCCA_ERROR("Variable use [" << toString() << "] cannot be used without the @(dim(...)) attribute",
+                     dims != 0);
 
-          OCCA_CHECK(dims == csvFlatRoot.leafCount,
-                     "Variable use [" << toString() << "] has different index count of its attribute [" << var.dimAttr << "]");
+          OCCA_ERROR("Variable use [" << toString() << "] has different index count of its attribute [" << var.dimAttr << "]",
+                     dims == csvFlatRoot.leafCount);
 
           leaf.value = "[";
 
@@ -2062,10 +2062,10 @@ namespace occa {
                 var.stackPointersUsed = var.stackPointerCount;
 
                 // [+] Print [var] Fortran-style
-                OCCA_CHECK(false,
-                           "Incorrect dimensions on variable ["
+                OCCA_ERROR("Incorrect dimensions on variable ["
                            << var << "], in statement ["
-                           << *(leaf.up) << "]");
+                           << *(leaf.up) << "]",
+                           false);
               }
 
               expVector_t indices;
@@ -2928,8 +2928,8 @@ namespace occa {
             if ((thType1 & noType) ||
                (thType2 & noType)) {
 
-              OCCA_CHECK(false,
-                         "Oops, not implemented yet");
+              OCCA_ERROR("Oops, not implemented yet",
+                         false);
             }
             else {
               return sInfo->parser.thVarInfo((thType1 < thType2) ?
@@ -2968,8 +2968,8 @@ namespace occa {
           return value == qualifier;
       }
       else if (info & expType::variable) {
-        OCCA_CHECK(false,
-                   "Oops, forgot to check this");
+        OCCA_ERROR("Oops, forgot to check this",
+                   false);
       }
 
       return false;
@@ -3505,8 +3505,8 @@ namespace occa {
       }
 
       case (expType::variable):{
-        OCCA_CHECK(false,
-                   "Oops, forgot to check this");
+        OCCA_ERROR("Oops, forgot to check this",
+                   false);
 
         break;
       }
@@ -4198,9 +4198,9 @@ namespace occa {
           return smntType::switchStatement;
       }
 
-      OCCA_CHECK(false,
-                 "You found the [Waldo 2] error in:\n"
-                 << allExp.toString("  "));
+      OCCA_ERROR("You found the [Waldo 2] error in:\n"
+                 << allExp.toString("  "),
+                 false);
 
       return 0;
     }
@@ -4231,8 +4231,8 @@ namespace occa {
           break;
         }
         else {
-          OCCA_CHECK(false,
-                     "Wrong namespace format");
+          OCCA_ERROR("Wrong namespace format",
+                     false);
         }
       }
 
@@ -4364,8 +4364,8 @@ namespace occa {
 
           const int tileDim = attr.argCount;
 
-          OCCA_CHECK((1 <= tileDim) && (tileDim <= 3),
-                     "tile() attribute can only supports 1, 2, or 3D transformations");
+          OCCA_ERROR("tile() attribute can only supports 1, 2, or 3D transformations",
+                     (1 <= tileDim) && (tileDim <= 3));
 
           std::stringstream ss;
 
@@ -4561,8 +4561,8 @@ namespace occa {
       newStatement->expRoot.loadFromNode(allExp, expPos, parsingLanguage);
       const int st = newStatement->info;
 
-      OCCA_CHECK((st & smntType::invalidStatement) == 0,
-                 "Not a valid statement");
+      OCCA_ERROR("Not a valid statement",
+                 (st & smntType::invalidStatement) == 0);
 
       if (st & smntType::skipStatement) {
         skipAfterStatement(allExp, expPos);
@@ -4829,8 +4829,8 @@ namespace occa {
             newStatement = makeSubStatement();
             newStatement->expRoot.loadFromNode(allExp, expPos, parsingLanguage);
 
-            OCCA_CHECK((st & smntType::invalidStatement) == 0,
-                       "Not a valid statement");
+            OCCA_ERROR("Not a valid statement",
+                       (st & smntType::invalidStatement) == 0);
 
             addStatement(newStatement);
 
@@ -5074,9 +5074,9 @@ namespace occa {
       if (st)
         return st;
 
-      OCCA_CHECK(false,
-                 "You found the [Waldo 3] error in:\n"
-                 << expRoot.toString("  "));
+      OCCA_ERROR("You found the [Waldo 3] error in:\n"
+                 << expRoot.toString("  "),
+                 false);
 
       return 0;
     }
@@ -5530,11 +5530,11 @@ namespace occa {
 
       varInfo *scopeVar = scope->hasLocalVariable(var.name);
 
-      OCCA_CHECK(scopeVar == NULL,
-                 "Variable [" << var.name << "] defined in:\n"
+      OCCA_ERROR("Variable [" << var.name << "] defined in:\n"
                  << *origin
                  << "is already defined in:\n"
-                 << *this);
+                 << *this,
+                 scopeVar == NULL);
     }
 
     varInfo& statement::addVariable(varInfo &var,
@@ -5934,7 +5934,7 @@ namespace occa {
         return NULL;
       }
 
-      OCCA_CHECK(false, "Not added yet");
+      OCCA_ERROR(false, "Not added yet");
 
       return NULL;
     }
@@ -5961,7 +5961,7 @@ namespace occa {
         return getFunctionVar()->name;
       }
 
-      OCCA_CHECK(false, "Not added yet");
+      OCCA_ERROR(false, "Not added yet");
 
       return "";
     }
@@ -5972,7 +5972,7 @@ namespace occa {
         return;
       }
 
-      OCCA_CHECK(false, "Not added yet");
+      OCCA_ERROR(false, "Not added yet");
     }
 
     bool statement::functionHasQualifier(const std::string &qName) {
@@ -5980,7 +5980,7 @@ namespace occa {
         return getFunctionVar()->hasQualifier(qName);
       }
 
-      OCCA_CHECK(false, "Not added yet");
+      OCCA_ERROR(false, "Not added yet");
 
       return false;
     }

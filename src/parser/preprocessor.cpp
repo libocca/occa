@@ -88,8 +88,8 @@ namespace occa {
       case floatType     : value.float_      = occa::atof(str); break;
       case doubleType    : value.double_     = occa::atod(str); break;
       default:
-        OCCA_CHECK(false,
-                   "Value not set\n");
+        OCCA_ERROR("Value not set\n",
+                   false);
       }
     }
 
@@ -450,8 +450,8 @@ namespace occa {
       case floatType     : return false; break;
       case doubleType    : return false; break;
       default:
-        OCCA_CHECK(false,
-                   "Value not set\n");
+        OCCA_ERROR("Value not set\n",
+                   false);
         return false;
       }
     }
@@ -471,8 +471,8 @@ namespace occa {
       case floatType     : return false; break;
       case doubleType    : return false; break;
       default:
-        OCCA_CHECK(false,
-                   "Value not set\n");
+        OCCA_ERROR("Value not set\n",
+                   false);
         return false;
       }
     }
@@ -492,8 +492,8 @@ namespace occa {
       case floatType     : return false; break;
       case doubleType    : return false; break;
       default:
-        OCCA_CHECK(false,
-                   "Value not set\n");
+        OCCA_ERROR("Value not set\n",
+                   false);
         return false;
       }
     }
@@ -513,7 +513,7 @@ namespace occa {
     //   case floatType     : return false; break;
     //   case doubleType    : return false; break;
     //   default:
-    //     OCCA_CHECK(false,
+    //     OCCA_ERROR(false,
     //                "Value not set\n");
     //     return false;
     //   }
@@ -534,8 +534,8 @@ namespace occa {
       case floatType     : return true;  break;
       case doubleType    : return true;  break;
       default:
-        OCCA_CHECK(false,
-                   "Value not set\n");
+        OCCA_ERROR("Value not set\n",
+                   false);
         return false;
       }
     }
@@ -555,8 +555,8 @@ namespace occa {
       case floatType     : return false; break;
       case doubleType    : return true;  break;
       default:
-        OCCA_CHECK(false,
-                   "Value not set\n");
+        OCCA_ERROR("Value not set\n",
+                   false);
         return false;
       }
     }
@@ -577,8 +577,8 @@ namespace occa {
       case floatType     : return typeHolder(!value.float_);     break;
       case doubleType    : return typeHolder(!value.double_);    break;
       default:
-        OCCA_CHECK(false,
-                   "Value not set\n");
+        OCCA_ERROR("Value not set\n",
+                   false);
         return typeHolder(0);
       }
     }
@@ -602,8 +602,8 @@ namespace occa {
       case floatType     : return typeHolder(-value.float_);     break;
       case doubleType    : return typeHolder(-value.double_);    break;
       default:
-        OCCA_CHECK(false,
-                   "Value not set\n");
+        OCCA_ERROR("Value not set\n",
+                   false);
         return typeHolder(0);
       }
     }
@@ -620,11 +620,11 @@ namespace occa {
       case longType      : return typeHolder(~value.long_);                           break;
       // case ulonglongType : return typeHolder(~value.ulonglong_);                      break;
       // case longlongType  : return typeHolder(~value.longlong_);                       break;
-      case floatType     : OCCA_CHECK(false, "Can't apply [~] operator to a float");  break;
-      case doubleType    : OCCA_CHECK(false, "Can't apply [~] operator to a double"); break;
+      case floatType     : OCCA_ERROR(false, "Can't apply [~] operator to a float");  break;
+      case doubleType    : OCCA_ERROR(false, "Can't apply [~] operator to a double"); break;
       default:
-        OCCA_CHECK(false,
-                   "Value not set\n");
+        OCCA_ERROR("Value not set\n",
+                   false);
       }
 
       return typeHolder(0);
@@ -645,8 +645,8 @@ namespace occa {
       case floatType     : ++value.float_;             break;
       case doubleType    : ++value.double_;            break;
       default:
-        OCCA_CHECK(false,
-                   "Value not set\n");
+        OCCA_ERROR("Value not set\n",
+                   false);
       }
 
       return *this;
@@ -667,8 +667,8 @@ namespace occa {
       case floatType     : --value.float_;             break;
       case doubleType    : --value.double_;            break;
       default:
-        OCCA_CHECK(false,
-                   "Value not set\n");
+        OCCA_ERROR("Value not set\n",
+                   false);
       }
 
       return *this;
@@ -689,8 +689,8 @@ namespace occa {
       case floatType     : return typeHolder(value.float_++);     break;
       case doubleType    : return typeHolder(value.double_++);    break;
       default:
-        OCCA_CHECK(false,
-                   "Value not set\n");
+        OCCA_ERROR("Value not set\n",
+                   false);
         return typeHolder(0);
       }
     }
@@ -710,8 +710,8 @@ namespace occa {
       case floatType     : return typeHolder(value.float_--);     break;
       case doubleType    : return typeHolder(value.double_--);    break;
       default:
-        OCCA_CHECK(false,
-                   "Value not set\n");
+        OCCA_ERROR("Value not set\n",
+                   false);
         return typeHolder(0);
       }
     }
@@ -736,8 +736,8 @@ namespace occa {
       case floatType     : return (bool) (to<float>()              < th.to<float>());              break;
       case doubleType    : return (bool) (to<double>()             < th.to<double>());             break;
       default:
-        OCCA_CHECK(false,
-                   "Value not set\n");
+        OCCA_ERROR("Value not set\n",
+                   false);
         return false;
       }
     }
@@ -759,8 +759,8 @@ namespace occa {
       case floatType     : return (bool) (to<float>()              <= th.to<float>());              break;
       case doubleType    : return (bool) (to<double>()             <= th.to<double>());             break;
       default:
-        OCCA_CHECK(false,
-                   "Value not set\n");
+        OCCA_ERROR("Value not set\n",
+                   false);
         return false;
       }
     }
@@ -782,8 +782,8 @@ namespace occa {
       case floatType     : return (bool) (to<float>()              == th.to<float>());              break;
       case doubleType    : return (bool) (to<double>()             == th.to<double>());             break;
       default:
-        OCCA_CHECK(false,
-                   "Value not set\n");
+        OCCA_ERROR("Value not set\n",
+                   false);
         return false;
       }
     }
@@ -805,8 +805,8 @@ namespace occa {
       case floatType     : return (bool) (to<float>()              != th.to<float>());              break;
       case doubleType    : return (bool) (to<double>()             != th.to<double>());             break;
       default:
-        OCCA_CHECK(false,
-                   "Value not set\n");
+        OCCA_ERROR("Value not set\n",
+                   false);
         return false;
       }
     }
@@ -828,8 +828,8 @@ namespace occa {
       case floatType     : return (bool) (to<float>()              >= th.to<float>());              break;
       case doubleType    : return (bool) (to<double>()             >= th.to<double>());             break;
       default:
-        OCCA_CHECK(false,
-                   "Value not set\n");
+        OCCA_ERROR("Value not set\n",
+                   false);
         return false;
       }
     }
@@ -851,8 +851,8 @@ namespace occa {
       case floatType     : return (bool) (to<float>()              > th.to<float>());              break;
       case doubleType    : return (bool) (to<double>()             > th.to<double>());             break;
       default:
-        OCCA_CHECK(false,
-                   "Value not set\n");
+        OCCA_ERROR("Value not set\n",
+                   false);
         return false;
       }
     }
@@ -874,8 +874,8 @@ namespace occa {
       case floatType     : return (bool) (to<float>()              && th.to<float>());              break;
       case doubleType    : return (bool) (to<double>()             && th.to<double>());             break;
       default:
-        OCCA_CHECK(false,
-                   "Value not set\n");
+        OCCA_ERROR("Value not set\n",
+                   false);
         return false;
       }
     }
@@ -897,8 +897,8 @@ namespace occa {
       case floatType     : return (bool) (to<float>()              || th.to<float>());              break;
       case doubleType    : return (bool) (to<double>()             || th.to<double>());             break;
       default:
-        OCCA_CHECK(false,
-                   "Value not set\n");
+        OCCA_ERROR("Value not set\n",
+                   false);
         return false;
       }
     }
@@ -923,8 +923,8 @@ namespace occa {
       case floatType     : return typeHolder(to<float>()              * th.to<float>());              break;
       case doubleType    : return typeHolder(to<double>()             * th.to<double>());             break;
       default:
-        OCCA_CHECK(false,
-                   "Value not set\n");
+        OCCA_ERROR("Value not set\n",
+                   false);
       }
 
       return typeHolder(0);
@@ -947,8 +947,8 @@ namespace occa {
       case floatType     : return typeHolder(to<float>()              + th.to<float>());              break;
       case doubleType    : return typeHolder(to<double>()             + th.to<double>());             break;
       default:
-        OCCA_CHECK(false,
-                   "Value not set\n");
+        OCCA_ERROR("Value not set\n",
+                   false);
       }
 
       return typeHolder(0);
@@ -971,8 +971,8 @@ namespace occa {
       case floatType     : return typeHolder(to<float>()              - th.to<float>());              break;
       case doubleType    : return typeHolder(to<double>()             - th.to<double>());             break;
       default:
-        OCCA_CHECK(false,
-                   "Value not set\n");
+        OCCA_ERROR("Value not set\n",
+                   false);
       }
 
       return typeHolder(0);
@@ -995,8 +995,8 @@ namespace occa {
       case floatType     : return typeHolder(to<float>()              / th.to<float>());              break;
       case doubleType    : return typeHolder(to<double>()             / th.to<double>());             break;
       default:
-        OCCA_CHECK(false,
-                   "Value not set\n");
+        OCCA_ERROR("Value not set\n",
+                   false);
       }
 
       return typeHolder(0);
@@ -1015,11 +1015,11 @@ namespace occa {
       case longType      : return typeHolder(to<long>()               % th.to<long>());               break;
       // case ulonglongType : return typeHolder(to<unsigned long long>() % th.to<unsigned long long>()); break;
       // case longlongType  : return typeHolder(to<long long>()          % th.to<long long>());          break;
-      case floatType     : OCCA_CHECK(false, "Can't apply [%] operator to a float");                  break;
-      case doubleType    : OCCA_CHECK(false, "Can't apply [%] operator to a double");                 break;
+      case floatType     : OCCA_ERROR(false, "Can't apply [%] operator to a float");                  break;
+      case doubleType    : OCCA_ERROR(false, "Can't apply [%] operator to a double");                 break;
       default:
-        OCCA_CHECK(false,
-                   "Value not set\n");
+        OCCA_ERROR("Value not set\n",
+                   false);
       }
 
       return typeHolder(0);
@@ -1039,11 +1039,11 @@ namespace occa {
       case longType      : return typeHolder(to<long>()               & th.to<long>());               break;
       // case ulonglongType : return typeHolder(to<unsigned long long>() & th.to<unsigned long long>()); break;
       // case longlongType  : return typeHolder(to<long long>()          & th.to<long long>());          break;
-      case floatType     : OCCA_CHECK(false, "Can't apply [&] operator to a float");                  break;
-      case doubleType    : OCCA_CHECK(false, "Can't apply [&] operator to a double");                 break;
+      case floatType     : OCCA_ERROR(false, "Can't apply [&] operator to a float");                  break;
+      case doubleType    : OCCA_ERROR(false, "Can't apply [&] operator to a double");                 break;
       default:
-        OCCA_CHECK(false,
-                   "Value not set\n");
+        OCCA_ERROR("Value not set\n",
+                   false);
       }
 
       return typeHolder(0);
@@ -1063,11 +1063,11 @@ namespace occa {
       case longType      : return typeHolder(to<long>()               | th.to<long>());               break;
       // case ulonglongType : return typeHolder(to<unsigned long long>() | th.to<unsigned long long>()); break;
       // case longlongType  : return typeHolder(to<long long>()          | th.to<long long>());          break;
-      case floatType     : OCCA_CHECK(false, "Can't apply [|] operator to a float");                  break;
-      case doubleType    : OCCA_CHECK(false, "Can't apply [|] operator to a double");                 break;
+      case floatType     : OCCA_ERROR(false, "Can't apply [|] operator to a float");                  break;
+      case doubleType    : OCCA_ERROR(false, "Can't apply [|] operator to a double");                 break;
       default:
-        OCCA_CHECK(false,
-                   "Value not set\n");
+        OCCA_ERROR("Value not set\n",
+                   false);
       }
 
       return typeHolder(0);
@@ -1087,11 +1087,11 @@ namespace occa {
       case longType      : return typeHolder(to<long>()               ^ th.to<long>());               break;
       // case ulonglongType : return typeHolder(to<unsigned long long>() ^ th.to<unsigned long long>()); break;
       // case longlongType  : return typeHolder(to<long long>()          ^ th.to<long long>());          break;
-      case floatType     : OCCA_CHECK(false, "Can't apply [^] operator to a float");                  break;
-      case doubleType    : OCCA_CHECK(false, "Can't apply [^] operator to a double");                 break;
+      case floatType     : OCCA_ERROR(false, "Can't apply [^] operator to a float");                  break;
+      case doubleType    : OCCA_ERROR(false, "Can't apply [^] operator to a double");                 break;
       default:
-        OCCA_CHECK(false,
-                   "Value not set\n");
+        OCCA_ERROR("Value not set\n",
+                   false);
       }
 
       return typeHolder(0);
@@ -1111,11 +1111,11 @@ namespace occa {
       case longType      : return typeHolder(to<long>()               >> th.to<long>());               break;
       // case ulonglongType : return typeHolder(to<unsigned long long>() >> th.to<unsigned long long>()); break;
       // case longlongType  : return typeHolder(to<long long>()          >> th.to<long long>());          break;
-      case floatType     : OCCA_CHECK(false, "Can't apply [>>] operator to a float");                  break;
-      case doubleType    : OCCA_CHECK(false, "Can't apply [>>] operator to a double");                 break;
+      case floatType     : OCCA_ERROR(false, "Can't apply [>>] operator to a float");                  break;
+      case doubleType    : OCCA_ERROR(false, "Can't apply [>>] operator to a double");                 break;
       default:
-        OCCA_CHECK(false,
-                   "Value not set\n");
+        OCCA_ERROR("Value not set\n",
+                   false);
       }
 
       return typeHolder(0);
@@ -1135,11 +1135,11 @@ namespace occa {
       case longType      : return typeHolder(to<long>()               << th.to<long>());               break;
       // case ulonglongType : return typeHolder(to<unsigned long long>() << th.to<unsigned long long>()); break;
       // case longlongType  : return typeHolder(to<long long>()          << th.to<long long>());          break;
-      case floatType     : OCCA_CHECK(false, "Can't apply [<<] operator to a float");                  break;
-      case doubleType    : OCCA_CHECK(false, "Can't apply [<<] operator to a double");                 break;
+      case floatType     : OCCA_ERROR(false, "Can't apply [<<] operator to a float");                  break;
+      case doubleType    : OCCA_ERROR(false, "Can't apply [<<] operator to a double");                 break;
       default:
-        OCCA_CHECK(false,
-                   "Value not set\n");
+        OCCA_ERROR("Value not set\n",
+                   false);
       }
 
       return typeHolder(0);
@@ -1223,8 +1223,8 @@ namespace occa {
             convertFrom<float>(type_);
       }
       else {
-        OCCA_CHECK(false,
-                   "Value not set\n");
+        OCCA_ERROR("Value not set\n",
+                   false);
       }
     }
 
@@ -1240,8 +1240,8 @@ namespace occa {
       case floatType : str = occa::toString(value.float_);  break;
       case doubleType: str = occa::toString(value.double_); break;
       default:
-        OCCA_CHECK(false,
-                   "Value not set\n");
+        OCCA_ERROR("Value not set\n",
+                   false);
       }
 
       if ((str.find("inf") != std::string::npos)||
@@ -1509,9 +1509,9 @@ namespace occa {
         for (size_t i = 0; i < args.size(); ++i)
           std::cout << "    args[" << i << "] = " << args[i] << '\n';
 
-        OCCA_CHECK(false,
-                   "Macro [" << name << "] uses [" << argc << (hasVarArgs ? " + ..." : "")
-                   << "] argument(s) ([" << args.size() << "] provided)");
+        OCCA_ERROR("Macro [" << name << "] uses [" << argc << (hasVarArgs ? " + ..." : "")
+                   << "] argument(s) ([" << args.size() << "] provided)",
+                   false);
       }
 
       const int subs = argBetweenParts.size();

@@ -304,8 +304,8 @@ namespace occa {
   }
 
   void kernel::checkIfInitialized() const {
-    OCCA_CHECK(kHandle != NULL,
-               "Kernel is not initialized");
+    OCCA_ERROR("Kernel is not initialized",
+               kHandle != NULL);
   }
 
   void* kernel::getHandle(const occa::properties &props) {
@@ -384,9 +384,9 @@ namespace occa {
     checkIfInitialized();
 
     if (kHandle->argumentCount() <= argPos) {
-      OCCA_CHECK(argPos < OCCA_MAX_ARGS,
-                 "Kernels can only have at most [" << OCCA_MAX_ARGS << "] arguments,"
-                 << " [" << argPos << "] arguments were set");
+      OCCA_ERROR("Kernels can only have at most [" << OCCA_MAX_ARGS << "] arguments,"
+                 << " [" << argPos << "] arguments were set",
+                 argPos < OCCA_MAX_ARGS);
 
       kHandle->arguments.reserve(argPos + 1);
     }

@@ -94,8 +94,8 @@ namespace occa {
       }
       return str;
     } else {
-      OCCA_CHECK(false,
-                 "Only occa::array<TM, occa::useIdxOrder> can use setIdxOrder()");
+      OCCA_ERROR("Only occa::array<TM, occa::useIdxOrder> can use setIdxOrder()"
+                 false);
     }
     return "";
   }
@@ -153,11 +153,11 @@ namespace occa {
     case 6: allocate(d[0], d[1], d[2], d[3], d[4], d[5]); break;
     default:
       if (dim <= 0) {
-        OCCA_CHECK(false,
-                   "Number of dimensions must be [1-6]");
+        OCCA_ERROR("Number of dimensions must be [1-6]"
+                   false);
       } else {
-        OCCA_CHECK(false,
-                   "occa::array can only take up to 6 dimensions");
+        OCCA_ERROR("occa::array can only take up to 6 dimensions"
+                   false);
       }
     }
   }
@@ -213,11 +213,11 @@ namespace occa {
     case 6: allocate(device_, d[0], d[1], d[2], d[3], d[4], d[5]); break;
     default:
       if (dim <= 0) {
-        OCCA_CHECK(false,
-                   "Number of dimensions must be [1-6]");
+        OCCA_ERROR("Number of dimensions must be [1-6]"
+                   false);
       } else {
-        OCCA_CHECK(false,
-                   "occa::array can only take up to 6 dimensions");
+        OCCA_ERROR("occa::array can only take up to 6 dimensions"
+                   false);
       }
     }
   }
@@ -292,11 +292,11 @@ namespace occa {
     case 6: allocate(d[0], d[1], d[2], d[3], d[4], d[5]); break;
     default:
       if (dim <= 0) {
-        OCCA_CHECK(false,
-                   "Number of dimensions must be [1-6]");
+        OCCA_ERROR("Number of dimensions must be [1-6]"
+                   false);
       } else {
-        OCCA_CHECK(false,
-                   "occa::array can only take up to 6 dimensions");
+        OCCA_ERROR("occa::array can only take up to 6 dimensions"
+                   false);
       }
     }
   }
@@ -352,11 +352,11 @@ namespace occa {
     case 6: allocate(device_, d[0], d[1], d[2], d[3], d[4], d[5]); break;
     default:
       if (dim <= 0) {
-        OCCA_CHECK(false,
-                   "Number of dimensions must be [1-6]");
+        OCCA_ERROR("Number of dimensions must be [1-6]"
+                   false);
       } else {
-        OCCA_CHECK(false,
-                   "occa::array can only take up to 6 dimensions");
+        OCCA_ERROR("occa::array can only take up to 6 dimensions"
+                   false);
       }
     }
   }
@@ -424,11 +424,11 @@ namespace occa {
     case 6: reshape(d[0], d[1], d[2], d[3], d[4], d[5]); break;
     default:
       if (dim <= 0) {
-        OCCA_CHECK(false,
-                   "Number of dimensions must be [1-6]");
+        OCCA_ERROR("Number of dimensions must be [1-6]"
+                   false);
       } else {
-        OCCA_CHECK(false,
-                   "occa::array can only take up to 6 dimensions");
+        OCCA_ERROR("occa::array can only take up to 6 dimensions"
+                   false);
       }
     }
   }
@@ -516,16 +516,16 @@ namespace occa {
       case 6: setIdxOrder(o[0], o[1], o[2], o[3], o[4], o[5]); break;
       default:
         if (dim <= 0) {
-          OCCA_CHECK(false,
-                     "Number of dimensions must be [1-6]");
+          OCCA_ERROR("Number of dimensions must be [1-6]"
+                     false);
         } else {
-          OCCA_CHECK(false,
-                     "occa::array can only take up to 6 dimensions");
+          OCCA_ERROR("occa::array can only take up to 6 dimensions"
+                     false);
         }
       }
     } else {
-      OCCA_CHECK(false,
-                 "Only occa::array<TM, occa::useIdxOrder> can use setIdxOrder()");
+      OCCA_ERROR("Only occa::array<TM, occa::useIdxOrder> can use setIdxOrder()"
+                 false);
     }
   }
 
@@ -536,9 +536,9 @@ namespace occa {
     const int dim = (int) default_.size();
     int o[6];
 
-    OCCA_CHECK((dim == ((int) given.size())) &&
-               (1 <= dim) && (dim <= 6),
-               "occa::array::setIdxOrder(default, given) must have matching sized strings of size [1-6]");
+    OCCA_ERROR("occa::array::setIdxOrder(default, given) must have matching sized strings of size [1-6]",
+               (dim == ((int) given.size())) &&
+               (1 <= dim) && (dim <= 6));
 
     for (int j = 0; j < dim; ++j) {
       o[j] = -1;
@@ -551,8 +551,8 @@ namespace occa {
         const int i = (dim - i_ - 1);
 
         if (C == given[i_]) {
-          OCCA_CHECK(o[j] == -1,
-                     "occa::array::setIdxOrder(default, given) must have strings with unique characters");
+          OCCA_ERROR("occa::array::setIdxOrder(default, given) must have strings with unique characters",
+                     o[j] == -1);
 
           o[j] = i;
           break;
@@ -564,17 +564,17 @@ namespace occa {
   template <class TM, const int idxType>
   void array<TM,idxType>::setIdxOrder(const int o0, const int o1) {
     if (idxType == occa::useIdxOrder) {
-      OCCA_CHECK((0 <= o0) && (o0 <= 1) &&
-                 (0 <= o1) && (o1 <= 1),
-                 "occa::array::setIdxOrder("
+      OCCA_ERROR("occa::array::setIdxOrder("
                  << o1 << ','
-                 << o0 << ") has index out of bounds");
+                 << o0 << ") has index out of bounds",
+                 (0 <= o0) && (o0 <= 1) &&
+                 (0 <= o1) && (o1 <= 1));
 
       sOrder_[0] = o0; sOrder_[1] = o1; sOrder_[2] =  2;
       sOrder_[3] =  3; sOrder_[4] =  4; sOrder_[5] =  5;
       updateFS(2);
     } else {
-      OCCA_CHECK(false,
+      OCCA_ERROR(false,
                  "Only occa::array<TM, occa::useIdxOrder> can use setIdxOrder()");
     }
   }
@@ -582,20 +582,20 @@ namespace occa {
   template <class TM, const int idxType>
   void array<TM,idxType>::setIdxOrder(const int o0, const int o1, const int o2) {
     if (idxType == occa::useIdxOrder) {
-      OCCA_CHECK((0 <= o0) && (o0 <= 1) &&
-                 (0 <= o1) && (o1 <= 1) &&
-                 (0 <= o2) && (o2 <= 1),
-                 "occa::array::setIdxOrder("
+      OCCA_ERROR("occa::array::setIdxOrder("
                  << o0 << ','
                  << o1 << ','
-                 << o2 << ") has index out of bounds");
+                 << o2 << ") has index out of bounds",
+                 (0 <= o0) && (o0 <= 1) &&
+                 (0 <= o1) && (o1 <= 1) &&
+                 (0 <= o2) && (o2 <= 1));
 
       sOrder_[0] = o0; sOrder_[1] = o1; sOrder_[2] = o2;
       sOrder_[3] =  3; sOrder_[4] =  4; sOrder_[5] =  5;
       updateFS(3);
     } else {
-      OCCA_CHECK(false,
-                 "Only occa::array<TM, occa::useIdxOrder> can use setIdxOrder()");
+      OCCA_ERROR("Only occa::array<TM, occa::useIdxOrder> can use setIdxOrder()"
+                 false);
     }
   }
 
@@ -604,22 +604,22 @@ namespace occa {
                                       const int o3) {
 
     if (idxType == occa::useIdxOrder) {
-      OCCA_CHECK((0 <= o0) && (o0 <= 1) &&
-                 (0 <= o1) && (o1 <= 1) &&
-                 (0 <= o2) && (o2 <= 1) &&
-                 (0 <= o3) && (o3 <= 1),
-                 "occa::array::setIdxOrder("
+      OCCA_ERROR("occa::array::setIdxOrder("
                  << o0 << ','
                  << o1 << ','
                  << o2 << ','
-                 << o3 << ") has index out of bounds");
+                 << o3 << ") has index out of bounds",
+                 (0 <= o0) && (o0 <= 1) &&
+                 (0 <= o1) && (o1 <= 1) &&
+                 (0 <= o2) && (o2 <= 1) &&
+                 (0 <= o3) && (o3 <= 1));
 
       sOrder_[0] = o0; sOrder_[1] = o1; sOrder_[2] = o2;
       sOrder_[3] = o3; sOrder_[4] =  4; sOrder_[5] =  5;
       updateFS(4);
     } else {
-      OCCA_CHECK(false,
-                 "Only occa::array<TM, occa::useIdxOrder> can use setIdxOrder()");
+      OCCA_ERROR("Only occa::array<TM, occa::useIdxOrder> can use setIdxOrder()"
+                 false);
     }
   }
 
@@ -627,24 +627,24 @@ namespace occa {
   void array<TM,idxType>::setIdxOrder(const int o0, const int o1, const int o2,
                                       const int o3, const int o4) {
     if (idxType == occa::useIdxOrder) {
-      OCCA_CHECK((0 <= o0) && (o0 <= 1) &&
-                 (0 <= o1) && (o1 <= 1) &&
-                 (0 <= o2) && (o2 <= 1) &&
-                 (0 <= o3) && (o3 <= 1) &&
-                 (0 <= o4) && (o4 <= 1),
-                 "occa::array::setIdxOrder("
+      OCCA_ERROR("occa::array::setIdxOrder("
                  << o0 << ','
                  << o1 << ','
                  << o2 << ','
                  << o3 << ','
-                 << o4 << ") has index out of bounds");
+                 << o4 << ") has index out of bounds",
+                 (0 <= o0) && (o0 <= 1) &&
+                 (0 <= o1) && (o1 <= 1) &&
+                 (0 <= o2) && (o2 <= 1) &&
+                 (0 <= o3) && (o3 <= 1) &&
+                 (0 <= o4) && (o4 <= 1));
 
       sOrder_[0] = o0; sOrder_[1] = o1; sOrder_[2] = o2;
       sOrder_[3] = o3; sOrder_[4] = o4; sOrder_[5] =  5;
       updateFS(5);
     } else {
-      OCCA_CHECK(false,
-                 "Only occa::array<TM, occa::useIdxOrder> can use setIdxOrder()");
+      OCCA_ERROR("Only occa::array<TM, occa::useIdxOrder> can use setIdxOrder()"
+                 false);
     }
   }
 
@@ -652,26 +652,26 @@ namespace occa {
   void array<TM,idxType>::setIdxOrder(const int o0, const int o1, const int o2,
                                       const int o3, const int o4, const int o5) {
     if (idxType == occa::useIdxOrder) {
-      OCCA_CHECK((0 <= o0) && (o0 <= 1) &&
-                 (0 <= o1) && (o1 <= 1) &&
-                 (0 <= o2) && (o2 <= 1) &&
-                 (0 <= o3) && (o3 <= 1) &&
-                 (0 <= o4) && (o4 <= 1) &&
-                 (0 <= o5) && (o5 <= 1),
-                 "occa::array::setIdxOrder("
+      OCCA_ERROR("occa::array::setIdxOrder("
                  << o0 << ','
                  << o1 << ','
                  << o2 << ','
                  << o3 << ','
                  << o4 << ','
-                 << o5 << ") has index out of bounds");
+                 << o5 << ") has index out of bounds",
+                 (0 <= o0) && (o0 <= 1) &&
+                 (0 <= o1) && (o1 <= 1) &&
+                 (0 <= o2) && (o2 <= 1) &&
+                 (0 <= o3) && (o3 <= 1) &&
+                 (0 <= o4) && (o4 <= 1) &&
+                 (0 <= o5) && (o5 <= 1));
 
       sOrder_[0] = o0; sOrder_[1] = o1; sOrder_[2] = o2;
       sOrder_[3] = o3; sOrder_[4] = o4; sOrder_[5] = o5;
       updateFS(6);
     } else {
-      OCCA_CHECK(false,
-                 "Only occa::array<TM, occa::useIdxOrder> can use setIdxOrder()");
+      OCCA_ERROR("Only occa::array<TM, occa::useIdxOrder> can use setIdxOrder()"
+                 false);
     }
   }
 

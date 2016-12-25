@@ -27,6 +27,7 @@
 #include "occa/modes/opencl/memory.hpp"
 #include "occa/modes/opencl/device.hpp"
 #include "occa/modes/opencl/utils.hpp"
+#include "occa/tools/sys.hpp"
 
 namespace occa {
   namespace opencl {
@@ -55,7 +56,7 @@ namespace occa {
       cl_command_queue &stream = *((cl_command_queue*) dHandle->currentStream);
       const bool async = props.get("async", false);
 
-      OCCA_CL_CHECK("Memory: " << (async ? "Async " : "") << "Copy From",
+      OCCA_OPENCL_ERROR("Memory: " << (async ? "Async " : "") << "Copy From",
                     clEnqueueWriteBuffer(stream, *((cl_mem*) handle),
                                          async ? CL_FALSE : CL_TRUE,
                                          offset, bytes, src,
@@ -70,7 +71,7 @@ namespace occa {
       cl_command_queue &stream = *((cl_command_queue*) dHandle->currentStream);
       const bool async = props.get("async", false);
 
-      OCCA_CL_CHECK("Memory: " << (async ? "Async " : "") << "Copy From",
+      OCCA_OPENCL_ERROR("Memory: " << (async ? "Async " : "") << "Copy From",
                     clEnqueueCopyBuffer(stream,
                                         *((cl_mem*) src->handle),
                                         *((cl_mem*) handle),
@@ -87,7 +88,7 @@ namespace occa {
       const cl_command_queue &stream = *((cl_command_queue*) dHandle->currentStream);
       const bool async = props.get("async", false);
 
-      OCCA_CL_CHECK("Memory: " << (async ? "Async " : "") << "Copy To",
+      OCCA_OPENCL_ERROR("Memory: " << (async ? "Async " : "") << "Copy To",
                     clEnqueueReadBuffer(stream, *((cl_mem*) handle),
                                         async ? CL_FALSE : CL_TRUE,
                                         offset, bytes, dest,
@@ -98,14 +99,14 @@ namespace occa {
       if (mappedPtr != NULL) {
         cl_command_queue &stream = *((cl_command_queue*) dHandle->currentStream);
 
-        OCCA_CL_CHECK("Mapped Free: clEnqueueUnmapMemObject",
+        OCCA_OPENCL_ERROR("Mapped Free: clEnqueueUnmapMemObject",
                       clEnqueueUnmapMemObject(stream,
                                               *((cl_mem*) handle),
                                               mappedPtr,
                                               0, NULL, NULL));
       }
       // Free mapped-host pointer
-      OCCA_CL_CHECK("Mapped Free: clReleaseMemObject",
+      OCCA_OPENCL_ERROR("Mapped Free: clReleaseMemObject",
                     clReleaseMemObject(*((cl_mem*) handle)));
       delete (cl_mem*) handle;
 

@@ -56,12 +56,12 @@ namespace occa {
       const bool async = props.get("async", false);
 
       if (async) {
-        OCCA_CUDA_CHECK("Memory: Copy From",
+        OCCA_CUDA_ERROR("Memory: Copy From",
                         cuMemcpyHtoD(*((CUdeviceptr*) handle) + offset,
                                      src,
                                      bytes) );
       } else {
-        OCCA_CUDA_CHECK("Memory: Async Copy From",
+        OCCA_CUDA_ERROR("Memory: Async Copy From",
                         cuMemcpyHtoDAsync(*((CUdeviceptr*) handle) + offset,
                                           src,
                                           bytes,
@@ -78,12 +78,12 @@ namespace occa {
       const bool async = props.get("async", false);
 
       if (async) {
-        OCCA_CUDA_CHECK("Memory: Copy From",
+        OCCA_CUDA_ERROR("Memory: Copy From",
                         cuMemcpyDtoD(*((CUdeviceptr*) handle) + destOffset,
                                      *((CUdeviceptr*) src->handle) + srcOffset,
                                      bytes) );
       } else {
-        OCCA_CUDA_CHECK("Memory: Async Copy From",
+        OCCA_CUDA_ERROR("Memory: Async Copy From",
                         cuMemcpyDtoDAsync(*((CUdeviceptr*) handle) + destOffset,
                                           *((CUdeviceptr*) src->handle) + srcOffset,
                                           bytes,
@@ -99,12 +99,12 @@ namespace occa {
       const bool async = props.get("async", false);
 
       if (async) {
-        OCCA_CUDA_CHECK("Memory: Copy From",
+        OCCA_CUDA_ERROR("Memory: Copy From",
                         cuMemcpyDtoH(dest,
                                      *((CUdeviceptr*) handle) + offset,
                                      bytes) );
       } else {
-        OCCA_CUDA_CHECK("Memory: Async Copy From",
+        OCCA_CUDA_ERROR("Memory: Async Copy From",
                         cuMemcpyDtoHAsync(dest,
                                           *((CUdeviceptr*) handle) + offset,
                                           bytes,
@@ -114,7 +114,7 @@ namespace occa {
 
     void memory::free() {
       if (mappedPtr != NULL) {
-        OCCA_CUDA_CHECK("Device: mappedFree()",
+        OCCA_CUDA_ERROR("Device: mappedFree()",
                         cuMemFreeHost(mappedPtr));
       } else {
         cuMemFree(*((CUdeviceptr*) handle));

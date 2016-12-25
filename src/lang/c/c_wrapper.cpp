@@ -21,6 +21,7 @@
  */
 
 #include "occa/base.hpp"
+#include "occa/tools/sys.hpp"
 
 #define OCCA_C_EXPORTS
 
@@ -99,6 +100,8 @@ struct occaArgumentList_t {
 //---[ Globals & Flags ]----------------
 const occaObject nullObject = occa::c::newObject(NULL);
 const occaObject occaDefault = nullObject;
+const occaUDim_t occaAllBytes = -1;
+const void *occaEmptyProperties = (void*) new occa::properties();
 
 void OCCA_RFUNC occaSetVerboseCompilation(const int value) {
   occa::settings.set<bool>("verboseCompilation", value);
@@ -118,9 +121,9 @@ namespace occa {
       return ot;
     }
 
-    template <class T>
+    template <class TM>
     inline void free(const occaObject &t) {
-      delete (T*) t.ptr->obj;
+      delete (TM*) t.ptr->obj;
       delete t.ptr;
     }
 
@@ -139,19 +142,19 @@ namespace occa {
       case float_  : occa::c::free<float>(t); break;
       case double_ : occa::c::free<double>(t); break;
 
-      case string_ : occa::c::free<std::string>(t); break;
+      case string_ : occa::c::free<const char*>(t); break;
       default: break;
       }
     }
 
-    template <class T>
-    inline T& from(const occaObject &t) {
-      return *((T*) t.ptr->obj);
+    template <class TM>
+    inline TM& from(const occaObject &t) {
+      return *((TM*) t.ptr->obj);
     }
 
-    template <class T*>
-    inline T* from(const occaObject &t) {
-      return (T*) t.ptr->obj;
+    template <class TM>
+    inline TM* fromPtr(const occaObject &t) {
+      return (TM*) t.ptr->obj;
     }
 
     inline bool sameObject(const occaObject &a, const occaObject &b) {
@@ -166,27 +169,30 @@ namespace occa {
       return t.ptr->type;
     }
 
-    inline occa::kernelArg_t& getKernelArg(occaType &t) {
+    inline occa::kernelArg_t& getKernelArg(const occaType &t) {
       return occa::c::from<occa::kernelArg_t>(t);
     }
 
     inline occa::device getDevice(const occaDevice &device) {
-      return occa::device(occa::c::from<occa::device_v*>(device));
+      return occa::device(occa::c::fromPtr<occa::device_v>(device));
     }
 
     inline occa::kernel getKernel(const occaKernel &kernel) {
-      return occa::kernel(occa::c::from<occa::kernel_v*>(kernel));
+      return occa::kernel(occa::c::fromPtr<occa::kernel_v>(kernel));
     }
 
     inline occa::memory getMemory(const occaMemory &memory) {
-      return occa::memory(occa::c::from<occa::memory_v*>(memory));
+      return occa::memory((memory_v*) getKernelArg(memory).data.void_);
     }
 
     inline occa::properties &getProperties(const occaProperties &properties) {
-      return occa::c::from<occa::properties>(properties);
+      if (isDefault(properties)) {
+        return *((occa::properties*) occaEmptyProperties);
+      }
+      return occa::c::getProperties(properties);
     }
 
-    inline occaType createOccaType(void *ptr, size_t bytes, occa::c::type type) {
+    inline occaType createOccaType(const void *ptr, size_t bytes, occa::c::type type) {
       occaType ot = occa::c::newType(type);
       occa::kernelArg_t &kArg = occa::c::getKernelArg(ot);
       if ((type == ptr_) || (type == struct_) || (type == string_)) {
@@ -321,7 +327,7 @@ occaType OCCA_RFUNC occaStruct(void *value, occaUDim_t bytes) {
 }
 
 occaType OCCA_RFUNC occaString(const char *value) {
-  return occa::c::createOccaType(const_cast<char**>(&value),
+  return occa::c::createOccaType(&value,
                                  sizeof(value),
                                  occa::c::string_);
 }
@@ -398,7 +404,7 @@ occaKernel OCCA_RFUNC occaBuildKernel(const char *filename,
     kernel = occa::buildKernel(filename, functionName, info_);
   }
 
-  return newObject(&kernel, occa::c::kernel_);
+  return newObject(kernel.getKHandle(), occa::c::kernel_);
 }
 
 occaKernel OCCA_RFUNC occaBuildKernelFromString(const char *str,
@@ -413,14 +419,14 @@ occaKernel OCCA_RFUNC occaBuildKernelFromString(const char *str,
     kernel = occa::buildKernelFromString(str, functionName, info_);
   }
 
-  return newObject(&kernel, occa::c::kernel_);
+  return newObject(kernel.getKHandle(), occa::c::kernel_);
 }
 
 occaKernel OCCA_RFUNC occaBuildKernelFromBinary(const char *filename,
                                                 const char *functionName) {
 
   occa::kernel kernel = occa::buildKernelFromBinary(filename, functionName);
-  return newObject(&kernel, occa::c::kernel_);
+  return newObject(kernel.getKHandle(), occa::c::kernel_);
 }
 //  |===================================
 
@@ -434,8 +440,7 @@ void OCCA_RFUNC occaMemorySwap(occaMemory a, occaMemory b) {
 occaMemory OCCA_RFUNC occaMalloc(const occaUDim_t bytes,
                                  void *src,
                                  occaProperties props) {
-
-  occa::properties &props_ = occa::c::from<occa::properties>(props);
+  occa::properties &props_ = occa::c::getProperties(props);
   occa::memory memory_ = occa::malloc(bytes, src, props_);
 
   occaMemory memory = occa::c::newType(occa::c::memory_);
@@ -447,7 +452,7 @@ void* OCCA_RFUNC occaManagedAlloc(const occaUDim_t bytes,
                                   void *src,
                                   occaProperties props) {
 
-  occa::properties &props_ = occa::c::from<occa::properties>(props);
+  occa::properties &props_ = occa::c::getProperties(props);
   return occa::managedAlloc(bytes, src, props_);
 }
 
@@ -455,7 +460,7 @@ occaMemory OCCA_RFUNC occaWrapMemory(void *handle_,
                                      const occaUDim_t bytes,
                                      occaProperties props) {
 
-  occa::properties &props_ = occa::c::from<occa::properties>(props);
+  occa::properties &props_ = occa::c::getProperties(props);
   occa::memory memory_ = occa::wrapMemory(handle_, bytes, props_);
 
   occaMemory memory = occa::c::newType(occa::c::memory_);
@@ -467,16 +472,17 @@ occaMemory OCCA_RFUNC occaWrapMemory(void *handle_,
 
 
 //---[ Device ]-------------------------
-void OCCA_RFUNC occaPrintModeDescriptions() {
-  occa::printModeDescriptions();
+void OCCA_RFUNC occaPrintModeInfo() {
+  occa::printModeInfo();
 }
 
 occaDevice OCCA_RFUNC occaCreateDevice(occaObject info) {
   occa::device device;
   if (info.ptr->type == occa::c::string_) {
-    device = occa::device(occa::c::from<const char*>(info));
+    device = occa::device((const char*) occa::c::getKernelArg(info).data.void_);
+    occa::c::free<const char*>(info);
   } else if (info.ptr->type == occa::c::properties_) {
-    device = occa::device(occa::c::from<occa::properties>(info));
+    device = occa::device(occa::c::getProperties(info));
   }
   return newObject(device.getDHandle(), occa::c::device_);
 }
@@ -510,7 +516,7 @@ occaKernel OCCA_RFUNC occaDeviceBuildKernel(occaDevice device,
     kernel = device_.buildKernel(filename, functionName, info_);
   }
 
-  return newObject(&kernel, occa::c::kernel_);
+  return newObject(kernel.getKHandle(), occa::c::kernel_);
 }
 
 occaKernel OCCA_RFUNC occaDeviceBuildKernelFromString(occaDevice device,
@@ -527,7 +533,7 @@ occaKernel OCCA_RFUNC occaDeviceBuildKernelFromString(occaDevice device,
     kernel = device_.buildKernelFromString(str, functionName, info_);
   }
 
-  return newObject(&kernel, occa::c::kernel_);
+  return newObject(kernel.getKHandle(), occa::c::kernel_);
 }
 
 occaKernel OCCA_RFUNC occaDeviceBuildKernelFromBinary(occaDevice device,
@@ -535,7 +541,7 @@ occaKernel OCCA_RFUNC occaDeviceBuildKernelFromBinary(occaDevice device,
                                                       const char *functionName) {
   occa::device device_ = occa::c::getDevice(device);
   occa::kernel kernel = device_.buildKernelFromBinary(filename, functionName);
-  return newObject(&kernel, occa::c::kernel_);
+  return newObject(kernel.getKHandle(), occa::c::kernel_);
 }
 
 occaMemory OCCA_RFUNC occaDeviceMalloc(occaDevice device,
@@ -721,9 +727,9 @@ void OCCA_RFUNC occaArgumentListAddArg(occaArgumentList list,
 
   occaArgumentList_t &list_ = occa::c::from<occaArgumentList_t>(list);
   if (list_.argc < (argPos + 1)) {
-    OCCA_CHECK(argPos < OCCA_MAX_ARGS,
-               "Kernels can only have at most [" << OCCA_MAX_ARGS << "] arguments,"
-               << " [" << argPos << "] arguments were set");
+    OCCA_ERROR("Kernels can only have at most [" << OCCA_MAX_ARGS << "] arguments,"
+               << " [" << argPos << "] arguments were set",
+               argPos < OCCA_MAX_ARGS);
 
     list_.argc = (argPos + 1);
   }

@@ -21,6 +21,7 @@
  */
 
 #include "occa/tools/string.hpp"
+#include "occa/tools/sys.hpp"
 #include "occa/parser/tools.hpp"
 
 namespace occa {
@@ -184,10 +185,10 @@ namespace occa {
       if (('0' <= *c) && (*c <= '9')) {
         const char digitValue = *(c++) - '0';
 
-        OCCA_CHECK(digitValue < maxDigitValue,
-                   "Number [" << std::string(c0, c - c0)
+        OCCA_ERROR("Number [" << std::string(c0, c - c0)
                    << "...] must contain digits in the [0,"
-                   << maxDigitChar << "] range");
+                   << maxDigitChar << "] range",
+                   digitValue < maxDigitValue);
 
         ret <<= bits;
         ret += digitValue;
@@ -198,10 +199,10 @@ namespace occa {
           const char digitValue = 10 + (C - 'A');
           ++c;
 
-          OCCA_CHECK(digitValue < maxDigitValue,
-                     "Number [" << std::string(c0, c - c0)
+          OCCA_ERROR("Number [" << std::string(c0, c - c0)
                      << "...] must contain digits in the [0,"
-                     << maxDigitChar << "] range");
+                     << maxDigitChar << "] range",
+                     digitValue < maxDigitValue);
 
           ret <<= bits;
           ret += digitValue;

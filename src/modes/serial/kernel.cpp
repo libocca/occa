@@ -149,7 +149,7 @@ namespace occa {
 
       if (compileError) {
         io::releaseHash(hash, hashTag);
-        OCCA_CHECK(false, "Compilation error");
+        OCCA_ERROR("Compilation error", error);
       }
 
       dlHandle = sys::dlopen(binaryFile, hash, hashTag);

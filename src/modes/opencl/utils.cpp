@@ -26,6 +26,7 @@
 
 #include "occa/modes/opencl/utils.hpp"
 #include "occa/tools/io.hpp"
+#include "occa/tools/sys.hpp"
 #include "occa/base.hpp"
 
 namespace occa {
@@ -64,7 +65,7 @@ namespace occa {
     int getPlatformCount() {
       cl_uint platformCount;
 
-      OCCA_CL_CHECK("OpenCL: Get Platform ID Count",
+      OCCA_OPENCL_ERROR("OpenCL: Get Platform ID Count",
                     clGetPlatformIDs(0, NULL, &platformCount));
 
       return platformCount;
@@ -73,7 +74,7 @@ namespace occa {
     cl_platform_id platformID(int pID) {
       cl_platform_id *platforms = new cl_platform_id[pID + 1];
 
-      OCCA_CL_CHECK("OpenCL: Get Platform ID",
+      OCCA_OPENCL_ERROR("OpenCL: Get Platform ID",
                     clGetPlatformIDs(pID + 1, platforms, NULL));
 
       cl_platform_id ret = platforms[pID];
@@ -98,7 +99,7 @@ namespace occa {
 
       cl_platform_id clPID = platformID(pID);
 
-      OCCA_CL_CHECK("OpenCL: Get Device ID Count",
+      OCCA_OPENCL_ERROR("OpenCL: Get Device ID Count",
                     clGetDeviceIDs(clPID,
                                    deviceType(type),
                                    0, NULL, &dCount));
@@ -111,7 +112,7 @@ namespace occa {
 
       cl_platform_id clPID = platformID(pID);
 
-      OCCA_CL_CHECK("OpenCL: Get Device ID Count",
+      OCCA_OPENCL_ERROR("OpenCL: Get Device ID Count",
                     clGetDeviceIDs(clPID,
                                    deviceType(type),
                                    dID + 1, devices, NULL));
@@ -127,7 +128,7 @@ namespace occa {
                               cl_device_info clInfo) {
       size_t bytes;
 
-      OCCA_CL_CHECK("OpenCL: Getting Device String Info",
+      OCCA_OPENCL_ERROR("OpenCL: Getting Device String Info",
                     clGetDeviceInfo(clDID,
                                     clInfo,
                                     0, NULL, &bytes));
@@ -135,7 +136,7 @@ namespace occa {
       char *buffer  = new char[bytes + 1];
       buffer[bytes] = '\0';
 
-      OCCA_CL_CHECK("OpenCL: Getting Device String Info",
+      OCCA_OPENCL_ERROR("OpenCL: Getting Device String Info",
                     clGetDeviceInfo(clDID,
                                     clInfo,
                                     bytes, buffer, NULL));
@@ -188,7 +189,7 @@ namespace occa {
 
       cl_device_type clDeviceType;
 
-      OCCA_CL_CHECK("OpenCL: Get Device Type",
+      OCCA_OPENCL_ERROR("OpenCL: Get Device Type",
                     clGetDeviceInfo(clDID,
                                     CL_DEVICE_TYPE,
                                     sizeof(clDeviceType), &clDeviceType, NULL));
@@ -229,7 +230,7 @@ namespace occa {
       cl_device_id clDID = deviceID(pID, dID);
       cl_uint ret;
 
-      OCCA_CL_CHECK("OpenCL: Get Device Core Count",
+      OCCA_OPENCL_ERROR("OpenCL: Get Device Core Count",
                     clGetDeviceInfo(clDID,
                                     CL_DEVICE_MAX_COMPUTE_UNITS,
                                     sizeof(ret), &ret, NULL));
@@ -240,7 +241,7 @@ namespace occa {
     udim_t getDeviceMemorySize(cl_device_id dID) {
       cl_ulong ret;
 
-      OCCA_CL_CHECK("OpenCL: Get Device Available Memory",
+      OCCA_OPENCL_ERROR("OpenCL: Get Device Available Memory",
                     clGetDeviceInfo(dID,
                                     CL_DEVICE_GLOBAL_MEM_SIZE,
                                     sizeof(ret), &ret, NULL));
@@ -286,7 +287,7 @@ namespace occa {
         }
       }
 
-      OCCA_CL_CHECK("Kernel (" + functionName + ") : Constructing Program", error);
+      OCCA_OPENCL_ERROR("Kernel (" + functionName + ") : Constructing Program", error);
 
       error = clBuildProgram(info_.clProgram,
                              1, &info_.clDeviceID,
@@ -304,7 +305,7 @@ namespace occa {
           log = new char[logSize+1];
 
           logError = clGetProgramBuildInfo(info_.clProgram, info_.clDeviceID, CL_PROGRAM_BUILD_LOG, logSize, log, NULL);
-          OCCA_CL_CHECK("Kernel (" + functionName + ") : Building Program", logError);
+          OCCA_OPENCL_ERROR("Kernel (" + functionName + ") : Building Program", logError);
           log[logSize] = '\0';
 
           printf("Kernel (%s): Build Log\n%s", functionName.c_str(), log);
@@ -317,14 +318,14 @@ namespace occa {
         }
       }
 
-      OCCA_CL_CHECK("Kernel (" + functionName + ") : Building Program", error);
+      OCCA_OPENCL_ERROR("Kernel (" + functionName + ") : Building Program", error);
 
       info_.clKernel = clCreateKernel(info_.clProgram, functionName.c_str(), &error);
 
       if (error && hash.initialized) {
         io::releaseHash(hash, hashTag);
       }
-      OCCA_CL_CHECK("Kernel (" + functionName + "): Creating Kernel", error);
+      OCCA_OPENCL_ERROR("Kernel (" + functionName + "): Creating Kernel", error);
 
       if (settings.get("verboseCompilation", true)) {
         if (sourceFile.size()) {
@@ -352,8 +353,8 @@ namespace occa {
                                                   (const unsigned char**) &content,
                                                   &binaryError, &error);
 
-      OCCA_CL_CHECK("Kernel (" + functionName + ") : Constructing Program", binaryError);
-      OCCA_CL_CHECK("Kernel (" + functionName + ") : Constructing Program", error);
+      OCCA_OPENCL_ERROR("Kernel (" + functionName + ") : Constructing Program", binaryError);
+      OCCA_OPENCL_ERROR("Kernel (" + functionName + ") : Constructing Program", error);
 
       error = clBuildProgram(info_.clProgram,
                              1, &info_.clDeviceID,
@@ -371,7 +372,7 @@ namespace occa {
           log = new char[logSize+1];
 
           logError = clGetProgramBuildInfo(info_.clProgram, info_.clDeviceID, CL_PROGRAM_BUILD_LOG, logSize, log, NULL);
-          OCCA_CL_CHECK("Kernel (" + functionName + ") : Building Program", logError);
+          OCCA_OPENCL_ERROR("Kernel (" + functionName + ") : Building Program", logError);
           log[logSize] = '\0';
 
           printf("Kernel (%s): Build Log\n%s", functionName.c_str(), log);
@@ -380,10 +381,10 @@ namespace occa {
         }
       }
 
-      OCCA_CL_CHECK("Kernel (" + functionName + ") : Building Program", error);
+      OCCA_OPENCL_ERROR("Kernel (" + functionName + ") : Building Program", error);
 
       info_.clKernel = clCreateKernel(info_.clProgram, functionName.c_str(), &error);
-      OCCA_CL_CHECK("Kernel (" + functionName + "): Creating Kernel", error);
+      OCCA_OPENCL_ERROR("Kernel (" + functionName + "): Creating Kernel", error);
     }
 
     void saveProgramBinary(info_t &info_,
@@ -399,7 +400,7 @@ namespace occa {
       if (error && hash.initialized) {
         io::releaseHash(hash, hashTag);
       }
-      OCCA_CL_CHECK("saveProgramBinary: Getting Binary Sizes", error);
+      OCCA_OPENCL_ERROR("saveProgramBinary: Getting Binary Sizes", error);
 
       binary = new char[binarySize + 1];
 
@@ -408,7 +409,7 @@ namespace occa {
       if (error && hash.initialized) {
         io::releaseHash(hash, hashTag);
       }
-      OCCA_CL_CHECK("saveProgramBinary: Getting Binary", error);
+      OCCA_OPENCL_ERROR("saveProgramBinary: Getting Binary", error);
 
       FILE *fp = fopen(binaryFile.c_str(), "wb");
       fwrite(binary, 1, binarySize, fp);
@@ -425,8 +426,45 @@ namespace occa {
       return (const cl_event&) (tag.handle);
     }
 
-    std::string error(int e) {
-      switch(e) {
+    void warn(cl_int errorCode,
+              const std::string &filename,
+              const std::string &function,
+              const int line,
+              const std::string &message) {
+      if (!errorCode) {
+        return;
+      }
+      const cl_int clErrorCode = getErrorCode(errorCode);
+      std::stringstream ss;
+      ss << message << '\n'
+         << "    Error   : OpenCL Error [ " << clErrorCode << " ]: "
+         << occa::opencl::getErrorMessage(clErrorCode);
+      occa::warn(filename, function, line, ss.str());
+    }
+
+    void error(cl_int errorCode,
+               const std::string &filename,
+               const std::string &function,
+               const int line,
+               const std::string &message) {
+      if (!errorCode) {
+        return;
+      }
+      const cl_int clErrorCode = getErrorCode(errorCode);
+      std::stringstream ss;
+      ss << message << '\n'
+         << "    Error   : OpenCL Error [ " << clErrorCode << " ]: "
+         << occa::opencl::getErrorMessage(clErrorCode);
+      occa::error(filename, function, line, ss.str());
+    }
+
+    cl_int getErrorCode(cl_int errorCode) {
+      errorCode = errorCode < 0  ? errorCode : -errorCode;
+      return errorCode < 65 ? errorCode : 15;
+    }
+
+    std::string getErrorMessage(const cl_int errorCode) {
+      switch(errorCode) {
       case CL_SUCCESS:                                   return "CL_SUCCESS";
       case CL_DEVICE_NOT_FOUND:                          return "CL_DEVICE_NOT_FOUND";
       case CL_DEVICE_NOT_AVAILABLE:                      return "CL_DEVICE_NOT_AVAILABLE";

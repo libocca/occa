@@ -24,6 +24,7 @@
 #define OCCA_PARSER_PREPROCESSOR_HEADER
 
 #include "occa/defines.hpp"
+#include "occa/tools/sys.hpp"
 #include "occa/parser/defines.hpp"
 #include "occa/parser/tools.hpp"
 #include "occa/parser/nodes.hpp"
@@ -207,8 +208,8 @@ namespace occa {
         case floatType     : return (TM) value.float_;     break;
         case doubleType    : return (TM) value.double_;    break;
         default:
-          OCCA_CHECK(false,
-                     "Value not set\n");
+          OCCA_ERROR("Value not set\n",
+                     false);
           return 0;
         }
       }
@@ -231,8 +232,8 @@ namespace occa {
         case floatType     : value.float_      = (float)              oldValue; break;
         case doubleType    : value.double_     = (double)             oldValue; break;
         default:
-          OCCA_CHECK(false,
-                     "Value not set\n");
+          OCCA_ERROR("Value not set\n",
+                     false);
         }
       }
 
@@ -254,8 +255,8 @@ namespace occa {
         case floatType     : value.float_      = (float)               t; break;
         case doubleType    : value.double_     = (double)              t; break;
         default:
-          OCCA_CHECK(false,
-                     "Value not set\n");
+          OCCA_ERROR("Value not set\n",
+                     false);
         }
       }
 

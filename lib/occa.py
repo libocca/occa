@@ -377,8 +377,8 @@ def managedMappedAlloc(type_, entries):
 #=======================================
 
 #---[ Device ]--------------------------
-def printAvailableDevices():
-    _C_occa.printAvailableDevices()
+def printModeInfo():
+    _C_occa.printModeInfo()
 
 class device:
     def __init__(self, arg = 0):

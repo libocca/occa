@@ -93,8 +93,8 @@ namespace occa {
 #  endif
       }
 #endif
-      OCCA_CHECK(0 < OCCA_DIR.size(),
-                 "Environment variable [OCCA_DIR] is not set");
+      OCCA_ERROR("Environment variable [OCCA_DIR] is not set",
+                 0 < OCCA_DIR.size());
 
       initCachePath();
       initIncludePath();
@@ -138,9 +138,9 @@ namespace occa {
 
       const int chars = env::OCCA_CACHE_DIR.size();
 
-      OCCA_CHECK(0 < chars,
-                 "Path to the OCCA caching directory is not set properly, "
-                 "unset OCCA_CACHE_DIR to use default directory [~/.occa]");
+      OCCA_ERROR("Path to the OCCA caching directory is not set properly, "
+                 "unset OCCA_CACHE_DIR to use default directory [~/.occa]",
+                 0 < chars);
 
       env::OCCA_CACHE_DIR = io::filename(env::OCCA_CACHE_DIR);
 

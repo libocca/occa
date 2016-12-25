@@ -29,6 +29,7 @@
 #include "occa/modes/cuda/memory.hpp"
 #include "occa/modes/cuda/utils.hpp"
 #include "occa/tools/env.hpp"
+#include "occa/tools/sys.hpp"
 #include "occa/base.hpp"
 
 namespace occa {
@@ -36,15 +37,15 @@ namespace occa {
     device::device(const occa::properties &properties_) :
       occa::device_v(properties_) {
 
-      OCCA_CHECK(properties.has("deviceID"),
-                 "[OpenCL] device not given [deviceID]");
+      OCCA_ERROR("deviceID"),
+        "[OpenCL] device not given [deviceID]");
 
       const int deviceID = properties.get<int>("deviceID");
 
-      OCCA_CUDA_CHECK("Device: Creating Device",
+      OCCA_CUDA_ERROR("Device: Creating Device",
                       cuDeviceGet(&handle, deviceID));
 
-      OCCA_CUDA_CHECK("Device: Creating Context",
+      OCCA_CUDA_ERROR("Device: Creating Context",
                       cuCtxCreate(&context, CU_CTX_SCHED_AUTO, handle));
 
       p2pEnabled = false;
@@ -74,7 +75,7 @@ namespace occa {
       properties["compiler"]      = compiler;
       properties["compilerFlags"] = compilerFlags;
 
-      OCCA_CUDA_CHECK("Device: Getting CUDA Device Arch",
+      OCCA_CUDA_ERROR("Device: Getting CUDA Device Arch",
                       cuDeviceComputeCapability(&archMajorVersion,
                                                 &archMinorVersion,
                                                 handle) );
@@ -83,7 +84,7 @@ namespace occa {
     device::~device() {}
 
     void device::free() {
-      OCCA_CUDA_CHECK("Device: Freeing Context",
+      OCCA_CUDA_ERROR("Device: Freeing Context",
                       cuCtxDestroy(context) );
     }
 
@@ -95,7 +96,7 @@ namespace occa {
     }
 
     void device::finish() {
-      OCCA_CUDA_CHECK("Device: Finish",
+      OCCA_CUDA_ERROR("Device: Finish",
                       cuStreamSynchronize(*((CUstream*) currentStream)) );
     }
 
@@ -107,16 +108,16 @@ namespace occa {
     stream_t device::createStream() {
       CUstream *retStream = new CUstream;
 
-      OCCA_CUDA_CHECK("Device: Setting Context",
+      OCCA_CUDA_ERROR("Device: Setting Context",
                       cuCtxSetCurrent(context));
-      OCCA_CUDA_CHECK("Device: createStream",
+      OCCA_CUDA_ERROR("Device: createStream",
                       cuStreamCreate(retStream, CU_STREAM_DEFAULT));
 
       return retStream;
     }
 
     void device::freeStream(stream_t s) {
-      OCCA_CUDA_CHECK("Device: freeStream",
+      OCCA_CUDA_ERROR("Device: freeStream",
                       cuStreamDestroy( *((CUstream*) s) ));
       delete (CUstream*) s;
     }
@@ -124,27 +125,27 @@ namespace occa {
     streamTag device::tagStream() {
       streamTag ret;
 
-      OCCA_CUDA_CHECK("Device: Setting Context",
+      OCCA_CUDA_ERROR("Device: Setting Context",
                       cuCtxSetCurrent(context));
-      OCCA_CUDA_CHECK("Device: Tagging Stream (Creating Tag)",
+      OCCA_CUDA_ERROR("Device: Tagging Stream (Creating Tag)",
                       cuEventCreate(&cuda::event(ret), CU_EVENT_DEFAULT));
-      OCCA_CUDA_CHECK("Device: Tagging Stream",
+      OCCA_CUDA_ERROR("Device: Tagging Stream",
                       cuEventRecord(cuda::event(ret), 0));
 
       return ret;
     }
 
     void device::waitFor(streamTag tag) {
-      OCCA_CUDA_CHECK("Device: Waiting For Tag",
+      OCCA_CUDA_ERROR("Device: Waiting For Tag",
                       cuEventSynchronize(cuda::event(tag)));
     }
 
     double device::timeBetween(const streamTag &startTag, const streamTag &endTag) {
-      OCCA_CUDA_CHECK("Device: Waiting for endTag",
+      OCCA_CUDA_ERROR("Device: Waiting for endTag",
                       cuEventSynchronize(cuda::event(endTag)));
 
       float msTimeTaken;
-      OCCA_CUDA_CHECK("Device: Timing Between Tags",
+      OCCA_CUDA_ERROR("Device: Timing Between Tags",
                       cuEventElapsedTime(&msTimeTaken, cuda::event(startTag), cuda::event(endTag)));
 
       return (double) (1.0e-3 * (double) msTimeTaken);
@@ -197,10 +198,10 @@ namespace occa {
       mem->handle  = new CUdeviceptr;
       mem->size    = bytes;
 
-      OCCA_CUDA_CHECK("Device: Setting Context",
+      OCCA_CUDA_ERROR("Device: Setting Context",
                       cuCtxSetCurrent(context));
 
-      OCCA_CUDA_CHECK("Device: malloc",
+      OCCA_CUDA_ERROR("Device: malloc",
                       cuMemAlloc((CUdeviceptr*) mem->handle, bytes));
 
       if (src != NULL) {
@@ -217,11 +218,11 @@ namespace occa {
       mem->handle  = new CUdeviceptr;
       mem->size    = bytes;
 
-      OCCA_CUDA_CHECK("Device: Setting Context",
+      OCCA_CUDA_ERROR("Device: Setting Context",
                       cuCtxSetCurrent(context));
-      OCCA_CUDA_CHECK("Device: malloc host",
+      OCCA_CUDA_ERROR("Device: malloc host",
                       cuMemAllocHost((void**) &(mem->mappedPtr), bytes));
-      OCCA_CUDA_CHECK("Device: get device pointer from host",
+      OCCA_CUDA_ERROR("Device: get device pointer from host",
                       cuMemHostGetDevicePointer((CUdeviceptr*) mem->handle,
                                                 mem->mappedPtr,
                                                 0));
