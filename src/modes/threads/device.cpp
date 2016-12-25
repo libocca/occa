@@ -43,8 +43,7 @@ namespace occa {
       }
 
       if (properties.has("pinnedCores")) {
-        // [REFACTOR]
-        // pinnedCores = properties.getAll<int>("pinnedCores");
+        pinnedCores = properties.getList<int>("pinnedCores");
 
         if (pinnedCores.size() != (size_t) threads) {
           threads = (int) pinnedCores.size();

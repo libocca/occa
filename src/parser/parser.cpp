@@ -231,7 +231,7 @@ namespace occa {
         ++c;
       }
 
-      std::string iFilename = strip(cStart, c - cStart);
+      std::string iFilename = compressAllWhitespace(cStart, c - cStart);
       const int chars = iFilename.size();
 
       const bool skipFirst = ((iFilename[0] == '"') ||
@@ -266,7 +266,7 @@ namespace occa {
       if ((*c != '(') || hasWhitespace) {
         const size_t chars = strlen(c);
 
-        info.parts[0] = strip(c, chars);
+        info.parts[0] = compressAllWhitespace(c, chars);
         c += chars;
 
         return;
@@ -285,7 +285,7 @@ namespace occa {
         const char *cStart = c;
         skipTo(c, ",)");
 
-        const std::string macroArgName = strip(cStart, c - cStart);
+        const std::string macroArgName = compressAllWhitespace(cStart, c - cStart);
 
         if (macroArgName.size()) {
           OCCA_CHECK(!info.hasVarArgs,
@@ -624,7 +624,7 @@ namespace occa {
 
             while(c < cEnd) {
               if (*c == ',') {
-                args.push_back( strip(cStart, c - cStart) );
+                args.push_back( compressAllWhitespace(cStart, c - cStart) );
                 cStart = ++c; // Skip the [,]
               }
               else {
@@ -3607,7 +3607,7 @@ namespace occa {
       while(*c != '\0') {
         const char *cEnd = readLine(c, parsingLanguage_);
 
-        line += strip(c, cEnd - c, parsingLanguage_);
+        line += compressAllWhitespace(c, cEnd - c, parsingLanguage_);
         c = cEnd;
 
         // Line carrying over to next line
@@ -3629,7 +3629,7 @@ namespace occa {
           }
 
           status = stripComments(line, parsingLanguage_);
-          strip(line, parsingLanguage_);
+          compressAllWhitespace(line, parsingLanguage_);
 
           if (line.size() &&
              ((status != insideCommentBlock) ||

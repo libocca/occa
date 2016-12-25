@@ -24,6 +24,67 @@
 #include "occa/parser/tools.hpp"
 
 namespace occa {
+  std::string strip(const std::string &str) {
+    if (str.size() == 0) {
+      return str;
+    }
+    const char *c = str.c_str();
+    int start = 0;
+    int end = (int) (str.size() - 1);
+    while (c[start] != '\0' && isWhitespace(c[start])) {
+      ++start;
+    }
+    while (end && isWhitespace(c[end])) {
+      --end;
+    }
+    if (start >= end) {
+      return "";
+    }
+    return str.substr(start, end - start + 1);
+  }
+
+  std::string escape(const std::string &str, const char c, const char escapeChar) {
+    const int chars = (int) str.size();
+    const char *cstr = str.c_str();
+    std::string ret;
+    for (int i = 0; i < chars; ++i) {
+      if (cstr[i] == c) {
+        ret += escapeChar;
+      }
+      ret += cstr[i];
+    }
+    return ret;
+  }
+
+  std::string unescape(const std::string &str, const char c, const char escapeChar) {
+    std::string ret;
+    const int chars = (int) str.size();
+    const char *cstr = str.c_str();
+    for (int i = 0; i < chars; ++i) {
+      if (cstr[i] == escapeChar && cstr[i + 1] == c) {
+        continue;
+      }
+      ret += cstr[i];
+    }
+    return ret;
+  }
+
+  strVector_t split(const std::string &s, const char delimeter, const char escapeChar) {
+    strVector_t sv;
+    const char *c = s.c_str();
+
+    while (*c != '\0') {
+      const char *cStart = c;
+      skipTo(c, delimeter, escapeChar);
+      sv.push_back(std::string(cStart, c - cStart));
+      if (*c != '\0') {
+        ++c;
+      }
+    }
+
+    return sv;
+  }
+
   udim_t atoi(const char *c) {
     udim_t ret = 0;
 
@@ -237,21 +298,5 @@ namespace occa {
     }
 
     return "";
-  }
-
-  strVector_t split(const std::string &s, const char delimeter) {
-    strVector_t sv;
-    const char *c = s.c_str();
-
-    while (*c != '\0') {
-      const char *cStart = c;
-      skipTo(c, delimeter);
-      sv.push_back(std::string(cStart, c - cStart));
-      if (*c != '\0') {
-        ++c;
-      }
-    }
-
-    return sv;
   }
 }

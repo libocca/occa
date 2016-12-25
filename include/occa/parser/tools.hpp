@@ -104,10 +104,10 @@ namespace occa {
 
   std::string compressWhitespace(const std::string &str);
 
-  std::string strip(const char *c, const size_t chars,
-                    const int parsingLanguage_ = parserInfo::parsingC);
-  void strip(std::string &str,
-             const int parsingLanguage_ = parserInfo::parsingC);
+  std::string compressAllWhitespace(const char *c, const size_t chars,
+                                    const int parsingLanguage_ = parserInfo::parsingC);
+  void compressAllWhitespace(std::string &str,
+                             const int parsingLanguage_ = parserInfo::parsingC);
 
   char* cReadFile(const std::string &filename);
 
@@ -127,8 +127,8 @@ namespace occa {
 
   int countDelimiters(const char *c, const char delimiter);
 
-  void skipTo(const char *&c, const char delimiter, const bool checkEscape = false);
-  void skipTo(const char *&c, std::string delimiters, const bool checkEscape = false);
+  void skipTo(const char *&c, const char delimiter, const char escapeChar = 0);
+  void skipTo(const char *&c, std::string delimiters, const char escapeChar = 0);
   void skipToWord(const char *&c, std::string word);
 
   std::string findFileInPath(const std::string &filename);
