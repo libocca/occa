@@ -85,8 +85,8 @@ namespace occa {
       pushLanguage(parsingLanguage);
 
       //---[ Mode ]-----------
-      OCCA_CHECK(properties.has("mode"),
-                 "Compilation mode must be passed to the parser");
+      OCCA_ERROR("Compilation mode must be passed to the parser",
+                 properties.has("mode"));
 
       //---[ Magic ]----------
       std::string content = properties["headers"];
@@ -288,8 +288,8 @@ namespace occa {
         const std::string macroArgName = compressAllWhitespace(cStart, c - cStart);
 
         if (macroArgName.size()) {
-          OCCA_CHECK(!info.hasVarArgs,
-                     "Macro [" << info.name << "] has arguments after variadic ... argument");
+          OCCA_ERROR("Macro [" << info.name << "] has arguments after variadic ... argument",
+                     !info.hasVarArgs);
           if (macroArgName != "...") {
             macroArgMap[macroArgName] = (info.argc++);
           }
@@ -299,8 +299,8 @@ namespace occa {
           }
         }
         else {
-          OCCA_CHECK((*c == ')') && (info.argc == 0),
-                     "Macro [" << info.name << "] has an argument without a name");
+          OCCA_ERROR("Macro [" << info.name << "] has an argument without a name",
+                     (*c == ')') && (info.argc == 0));
         }
 
         if (*c == ')')
@@ -617,10 +617,10 @@ namespace occa {
             const char *cEnd = c;
             c = cStart;
 
-            OCCA_CHECK(*c != '\0',
-                       "Missing ')' in ["
+            OCCA_ERROR("Missing ')' in ["
                        << info.name
-                       << "(" << std::string(cStart, cEnd - cStart - 1) << ")]");
+                       << "(" << std::string(cStart, cEnd - cStart - 1) << ")]",
+                       *c != '\0');
 
             while(c < cEnd) {
               if (*c == ',') {
@@ -1525,15 +1525,15 @@ namespace occa {
       //  ---[ Tile Dim ]-------------
       const int tileDim = occaTagDim.argCount;
 
-      OCCA_CHECK((1 <= tileDim) && (tileDim <= 3),
-                 "Only 1D, 2D, and 3D tiling are supported:\n" << s.onlyThisToString());
+      OCCA_ERROR("Only 1D, 2D, and 3D tiling are supported:\n" << s.onlyThisToString(),
+                 (1 <= tileDim) && (tileDim <= 3));
 
       int varsInInit = ((initNode.info & expType::declaration) ?
                         initNode.getVariableCount()            :
                         initNode.getUpdatedVariableCount());
 
-      OCCA_CHECK(varsInInit == 1,
-                 "Only one iterator can be initialized:\n" << s.onlyThisToString());
+      OCCA_ERROR("Only one iterator can be initialized:\n" << s.onlyThisToString(),
+                 varsInInit == 1);
 
       expNode *varInitNode = ((initNode.info & expType::declaration) ?
                               initNode.getVariableInitNode(0)        :
@@ -1545,8 +1545,8 @@ namespace occa {
         csvInitValueNode_ = varInitNode->makeCsvFlatHandle();
       }
       else {
-        OCCA_CHECK(varInitNode->value == "{",
-                   "Iterator is not defined properly (e.g. int2 i = {0,0}):\n" << s.onlyThisToString());
+        OCCA_ERROR("Iterator is not defined properly (e.g. int2 i = {0,0}):\n" << s.onlyThisToString(),
+                   varInitNode->value == "{");
 
         csvInitValueNode_ = varInitNode->leaves[0]->makeCsvFlatHandle();
       }
@@ -1573,14 +1573,14 @@ namespace occa {
       else if (varTypeN == ("long"  + suffix)) varType = "long";
       else if (varTypeN == ("short" + suffix)) varType = "short";
 
-      OCCA_CHECK(0 < varType.size(),
-                 "Iterator [" << var << "] is not a proper type (e.g. int" << suffix << ')');
+      OCCA_ERROR("Iterator [" << var << "] is not a proper type (e.g. int" << suffix << ')',
+                 0 < varType.size());
 
       //  ---[ Proper check vars ]----
       int varsInCheck = csvCheckNode.leafCount;
 
-      OCCA_CHECK(varsInCheck == tileDim,
-                 "Only one variable can be checked:\n" << s.onlyThisToString());
+      OCCA_ERROR("Only one variable can be checked:\n" << s.onlyThisToString(),
+                 varsInCheck == tileDim);
 
       expNode **orderBuffer = new expNode*[csvCheckNode.leafCount];
       bool *checkIterOnLeft = new bool[csvCheckNode.leafCount];
@@ -1592,13 +1592,13 @@ namespace occa {
         expNode &check = csvCheckNode[dim];
         int dim2 = dim;
 
-        OCCA_CHECK((check.info == expType::LR) &&
+        OCCA_ERROR("Error on: " << s.onlyThisToString() << "\n\n"
+                   << "Check operator must be in [<=, <, >, >=]: " << check.toString(),
+                   (check.info == expType::LR) &&
                    ((check.value == "<=") ||
                     (check.value == "<" ) ||
                     (check.value == ">" ) ||
-                    (check.value == ">=")),
-                   "Error on: " << s.onlyThisToString() << "\n\n"
-                   << "Check operator must be in [<=, <, >, >=]: " << check.toString());
+                    (check.value == ">=")));
 
         int side;
 
@@ -1622,19 +1622,20 @@ namespace occa {
           }
         }
 
-        OCCA_CHECK(side < 2,
-                   "Error on: " << s.onlyThisToString() << "\n\n"
+        OCCA_ERROR("Error on: " << s.onlyThisToString() << "\n\n"
                    << "Variable checks must look like:\n"
                    "  X op Y where op can be [<=, <, >, >=]\n"
                    "  X or Y must be for-loop iterator\n"
-                   "  For 2D or 3D tiling: X.x < Y, X.y < Y, X.z < Y (order doesn't matter)");
+                   "  For 2D or 3D tiling: X.x < Y, X.y < Y, X.z < Y (order doesn't matter)",
+                   side < 2);
 
         orderBuffer[dim2] = &(csvCheckNode[dim]);
       }
 
       for (int dim = 0; dim < tileDim; ++dim) {
-        OCCA_CHECK(orderBuffer[dim] != NULL,
-                   var.name << '.' << (char) ('x' + dim) << " needs to be checked: " << s.onlyThisToString());
+        OCCA_ERROR(var.name << '.' << (char) ('x' + dim) << " needs to be checked: " << s.onlyThisToString(),
+                   orderBuffer[dim] != NULL);
+
 
         csvCheckNode.leaves[dim] = orderBuffer[dim];
         orderBuffer[dim]         = NULL;
@@ -1643,22 +1644,22 @@ namespace occa {
       //  ---[ Proper update vars ]---
       int varsInUpdate = csvUpdateNode.leafCount;
 
-      OCCA_CHECK(varsInUpdate == tileDim,
-                 "Only one variable can be updated:\n" << s.onlyThisToString());
+      OCCA_ERROR("Only one variable can be updated:\n" << s.onlyThisToString(),
+                 varsInUpdate == tileDim);
 
       for (int dim = 0; dim < tileDim; ++dim) {
         expNode &update = csvUpdateNode[dim];
         int dim2 = dim;
 
-        OCCA_CHECK((update.value == "++") ||
+        OCCA_ERROR("Update operator must be in [++, --, +=, -=]: " << update.toString(),
+                   (update.value == "++") ||
                    (update.value == "--") ||
                    (update.value == "+=") ||
-                   (update.value == "-="),
-                   "Update operator must be in [++, --, +=, -=]: " << update.toString());
+                   (update.value == "-="));
 
         if (1 < tileDim) {
-          OCCA_CHECK(update[0][0].value == var.name,
-                     "Iterator [" << var.name << "] is not updated, [" << update[0][0].value << "] is updated instead");
+          OCCA_ERROR("Iterator [" << var.name << "] is not updated, [" << update[0][0].value << "] is updated instead",
+                     update[0][0].value == var.name);
 
           dim2 = (update[0][1].value[0] - 'x');
         }
@@ -1667,8 +1668,8 @@ namespace occa {
       }
 
       for (int dim = 0; dim < tileDim; ++dim) {
-        OCCA_CHECK(orderBuffer[dim] != NULL,
-                   var.name << '.' << (char) ('x' + dim) << " needs to be updated: " << s.onlyThisToString());
+        OCCA_ERROR(var.name << '.' << (char) ('x' + dim) << " needs to be updated: " << s.onlyThisToString(),
+                   orderBuffer[dim] != NULL);
 
         csvUpdateNode.leaves[dim] = orderBuffer[dim];
       }
@@ -2000,8 +2001,8 @@ namespace occa {
 
         if (s2.info & smntType::ifStatement) {
           if (s2.hasStatementWithBarrier()) {
-            OCCA_CHECK(false,
-                       "Barriers are not allowed in conditional statements:\n" << s2);
+            OCCA_ERROR("Barriers are not allowed in conditional statements:\n" << s2,
+                       false);
           }
         }
         else
@@ -2332,9 +2333,9 @@ namespace occa {
           ss << ", ";
 
           // [-] Only supports 1D arrays
-          OCCA_CHECK(var.stackPointerCount < 2,
-                     "Only 1D exclusive arrays are supported:\n"
-                     << "exclusive " << s);
+          OCCA_ERROR("Only 1D exclusive arrays are supported:\n"
+                     << "exclusive " << s,
+                     var.stackPointerCount < 2);
 
           ss << var.stackExpRoots[0];
         }
@@ -2964,9 +2965,9 @@ namespace occa {
 
       attribute_t *occaNestAttr = s.hasAttribute("occaMaxNest_" + tag);
 
-      OCCA_CHECK((occaNestAttr != NULL) &&
-                 (occaNestAttr->valueStr() == tag),
-                 "Error, outer-most loop doesn't contain [" << tag << "] loops");
+      OCCA_ERROR("Error, outer-most loop doesn't contain [" << tag << "] loops",
+                 (occaNestAttr != NULL) &&
+                 (occaNestAttr->valueStr() == tag));
 
       const std::string tagStr = occaNestAttr->valueStr();
       return ::atoi(tagStr.c_str());
@@ -3505,12 +3506,12 @@ namespace occa {
       varInfo var;
 
       if (op == "(") {
-        OCCA_CHECK(false,
-                   "Cannot use () operator with void* (Example: 10(10))");
+        OCCA_ERROR("Cannot use () operator with void* (Example: 10(10))",
+                   false);
       }
       else if (op == "[") {
-        OCCA_CHECK(false,
-                   "Cannot use [] operator with void* (Example: 10[10])");
+        OCCA_ERROR("Cannot use [] operator with void* (Example: 10[10])",
+                   false);
       }
       else {
         typeHolder l, r;
@@ -4527,11 +4528,10 @@ namespace occa {
       expNode &node3   = *(sInfo->getForStatement(2));
 
       //---[ Node 1 Check ]---
-      OCCA_CHECK((node1.info == expType::declaration) &&
+      OCCA_ERROR("Wrong 1st statement for:\n  " << sInfo->expRoot,
+                 (node1.info == expType::declaration) &&
                  (node1.getVariableCount() == 1)      &&
-                 node1.variableHasInit(0),
-
-                 "Wrong 1st statement for:\n  " << sInfo->expRoot);
+                 node1.variableHasInit(0));
 
       varInfo &iterVar = node1.getVariableInfoNode(0)->getVarInfo();
 
@@ -4541,34 +4541,30 @@ namespace occa {
         iterVar.addQualifier("occaConst");
 
       //---[ Node 2 Check ]---
-      OCCA_CHECK((node2.leafCount == 1) &&
+      OCCA_ERROR("Wrong 2nd statement for:\n  " << sInfo->expRoot,
+                 (node2.leafCount == 1) &&
                  ((node2[0].value == "<=") ||
                   (node2[0].value == "<" ) ||
                   (node2[0].value == ">" ) ||
-                  (node2[0].value == ">=")),
-
-                 "Wrong 2nd statement for:\n  " << sInfo->expRoot);
+                  (node2[0].value == ">=")));
 
       if (parsingLanguage & parserInfo::parsingC) {
-        OCCA_CHECK((node2[0][0].value == iter) ||
-                   (node2[0][1].value == iter),
-
-                   "Wrong 2nd statement for:\n  " << sInfo->expRoot);
+        OCCA_ERROR("Wrong 2nd statement for:\n  " << sInfo->expRoot,
+                   (node2[0][0].value == iter) ||
+                   (node2[0][1].value == iter));
       }
 
       //---[ Node 3 Check ]---
-      OCCA_CHECK((node3.leafCount == 1) &&
+      OCCA_ERROR("Wrong 3rd statement for:\n  " << sInfo->expRoot,
+                 (node3.leafCount == 1) &&
                  ((node3[0].value == "++") ||
                   (node3[0].value == "--") ||
                   (node3[0].value == "+=") ||
-                  (node3[0].value == "-=")),
+                  (node3[0].value == "-=")));
 
-                 "Wrong 3rd statement for:\n  " << sInfo->expRoot);
-
-      OCCA_CHECK((node3[0][0].value == iter) ||
-                 (node3[0][1].value == iter),
-
-                 "Wrong 3rd statement for:\n  " << sInfo->expRoot);
+      OCCA_ERROR("Wrong 3rd statement for:\n  " << sInfo->expRoot,
+                 (node3[0][0].value == iter) ||
+                 (node3[0][1].value == iter));
     }
 
     // [-] Missing

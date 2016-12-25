@@ -81,7 +81,8 @@ namespace occa {
         } else if (sizeof(void*) == 8) {
           byteness = "amd64";
         } else {
-          OCCA_CHECK(false, "sizeof(void*) is not equal to 4 or 8");
+          OCCA_ERROR("sizeof(void*) is not equal to 4 or 8",
+                     false);
         }
 #  if   (OCCA_VS_VERSION == 1800)
         // MSVC++ 12.0 - Visual Studio 2013

@@ -211,7 +211,7 @@ namespace occa {
   }
   //====================================
 
-  void printModeDescriptions() {
+  void printModeInfo() {
     strToModeMap_t &modes = modeMap();
     strToModeMapIterator it = modes.begin();
     styling::table table;

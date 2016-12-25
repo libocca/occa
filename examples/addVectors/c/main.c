@@ -4,7 +4,7 @@
 #include "occa_c.h"
 
 int main(int argc, char **argv) {
-  occaPrintAvailableDevices();
+  occaPrintModeInfo();
 
   int entries = 5;
   int i;
@@ -31,11 +31,11 @@ int main(int argc, char **argv) {
   /* const char *deviceInfo = "mode = Pthreads, threadCount = 4, schedule = compact, pinnedCores = [0, 0, 1, 1]"; */
   /* const char *deviceInfo = "mode = COI     , deviceID = 0"; */
 
-  device = occaCreateDevice(deviceInfo);
+  device = occaCreateDevice(occaString(deviceInfo));
 
-  o_a  = occaDeviceMalloc(device, entries*sizeof(float), NULL);
-  o_b  = occaDeviceMalloc(device, entries*sizeof(float), NULL);
-  o_ab = occaDeviceMalloc(device, entries*sizeof(float), NULL);
+  o_a  = occaDeviceMalloc(device, entries*sizeof(float), NULL, occaDefault);
+  o_b  = occaDeviceMalloc(device, entries*sizeof(float), NULL, occaDefault);
+  o_ab = occaDeviceMalloc(device, entries*sizeof(float), NULL, occaDefault);
 
   occaKernelInfo info = occaCreateKernelInfo();
   occaKernelInfoAddDefine(info, "DIMENSION", occaInt(10));
@@ -44,30 +44,17 @@ int main(int argc, char **argv) {
                                      "addVectors.okl", "addVectors",
                                      info);
 
-  /* addVectors = occaBuildKernel(device, */
-  /*                              "addVectors.occa", "addVectors", */
-  /*                              occaNoKernelInfo); */
-
-  int dims = 1;
-  occaDim itemsPerGroup, groups;
-
-  itemsPerGroup.x = 2;
-  groups.x        = (entries + itemsPerGroup.x - 1)/itemsPerGroup.x;
-
-  occaKernelSetWorkingDims(addVectors,
-                           dims, itemsPerGroup, groups);
-
-  occaCopyPtrToMem(o_a, a, entries*sizeof(float), 0);
-  occaCopyPtrToMem(o_b, b, occaAutoSize, occaNoOffset);
+  occaCopyPtrToMem(o_a, a, entries*sizeof(float), 0, occaDefault);
+  occaCopyPtrToMem(o_b, b, occaAllBytes         , 0, occaDefault);
 
   occaKernelRun(addVectors,
-               occaInt(entries), o_a, o_b, o_ab);
+                occaInt(entries), o_a, o_b, o_ab);
 
-  occaCopyMemToPtr(ab, o_ab, occaAutoSize, occaNoOffset);
+  occaCopyMemToPtr(ab, o_ab, occaAllBytes, 0, occaDefault);
 
-  for (i = 0; i < 5; ++i)
+  for (i = 0; i < 5; ++i) {
     printf("%d = %f\n", i, ab[i]);
-
+  }
   for (i = 0; i < entries; ++i) {
     if (ab[i] != (a[i] + b[i]))
       exit(1);

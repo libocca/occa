@@ -82,8 +82,8 @@ namespace occa {
   }
 
   void device::checkIfInitialized() const {
-    OCCA_CHECK(dHandle != NULL,
-               "Device is not initialized");
+    OCCA_ERROR("Device is not initialized",
+               dHandle != NULL);
   }
 
   void* device::getHandle(const occa::properties &props) {
@@ -344,8 +344,8 @@ namespace occa {
                         const occa::properties &props) {
     checkIfInitialized();
 
-    OCCA_CHECK(bytes >= 0,
-               "Trying to allocate negative bytes (" << bytes << ")");
+    OCCA_ERROR("Trying to allocate negative bytes (" << bytes << ")",
+               bytes >= 0);
 
     memory mem;
     mem.mHandle          = dHandle->malloc(bytes, src, props);
@@ -361,8 +361,8 @@ namespace occa {
                              const occa::properties &props) {
     checkIfInitialized();
 
-    OCCA_CHECK(bytes >= 0,
-               "Trying to allocate negative bytes (" << bytes << ")");
+    OCCA_ERROR("Trying to allocate negative bytes (" << bytes << ")",
+               bytes >= 0);
 
     memory mem = malloc(bytes, src, props);
     mem.manage();
@@ -375,8 +375,8 @@ namespace occa {
                                   const occa::properties &props) {
     checkIfInitialized();
 
-    OCCA_CHECK(bytes >= 0,
-               "Trying to wrap memory with negative bytes (" << bytes << ")");
+    OCCA_ERROR("Trying to wrap memory with negative bytes (" << bytes << ")",
+               bytes >= 0);
 
     memory mem;
     mem.mHandle          = dHandle->wrapMemory(handle_, bytes, props);

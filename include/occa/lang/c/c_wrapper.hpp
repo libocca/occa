@@ -79,6 +79,8 @@ typedef enum {
 
 //---[ Globals & Flags ]----------------
 extern OCCA_LFUNC const occaObject occaDefault;
+extern OCCA_LFUNC const occaUDim_t occaAllBytes;
+extern OCCA_LFUNC const void *occaEmptyProperties;
 //======================================
 
 
@@ -170,7 +172,7 @@ OCCA_LFUNC occaMemory OCCA_RFUNC occaWrapMemory(void *handle_,
 
 
 //---[ Device ]-------------------------
-OCCA_LFUNC void OCCA_RFUNC occaPrintModeDescriptions();
+OCCA_LFUNC void OCCA_RFUNC occaPrintModeInfo();
 
 OCCA_LFUNC occaDevice OCCA_RFUNC occaCreateDevice(occaObject info);
 

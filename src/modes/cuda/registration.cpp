@@ -44,7 +44,7 @@ namespace occa {
           const udim_t bytes         = getDeviceMemorySize(getDevice(i));
           const std::string bytesStr = stringifyBytes(bytes);
 
-          OCCA_CUDA_CHECK("Getting Device Name",
+          OCCA_CUDA_ERROR("Getting Device Name",
                           cuDeviceGetName(deviceName, 1024, i));
 
           section

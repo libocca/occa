@@ -51,8 +51,8 @@ void OCCAINT32_FC(occaType *type, int32_t *value) {
   if (sizeof(int) == 4) {
     *type = occaInt(*value);
   } else {
-    OCCA_CHECK(false,
-               "Bad integer size");
+    OCCA_ERROR("Bad integer size",
+               false);
   }
 }
 
@@ -436,7 +436,8 @@ void OCCAARGUMENTLISTADDARGINT4_FC(occaArgumentList *list,
   if (sizeof(int) == 4) {
     occaArgumentListAddArg(*list, *argPos, occaInt(*v));
   } else {
-    OCCA_CHECK(false, "Bad integer size");
+    OCCA_ERROR("Bad integer size",
+               false);
   }
 }
 
@@ -755,7 +756,8 @@ void OCCAKERNELINFOADDDEFINEINT4_FC(occaKernelInfo *info,
   if (sizeof(int) == 4) {
     occaKernelInfoAddDefine(*info, macro_c, occaInt(*value));
   } else {
-    OCCA_CHECK(false, "Bad integer size");
+    OCCA_ERROR("Bad integer size",
+               false);
   }
 
   OCCA_F2C_FREE_STR(macro, macro_c);

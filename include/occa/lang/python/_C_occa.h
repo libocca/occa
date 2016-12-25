@@ -89,7 +89,7 @@ static PyObject* py_occaManagedMappedAlloc(PyObject *self, PyObject *args);
 //======================================
 
 //---[ Device ]-------------------------
-static PyObject* py_occaPrintAvailableDevices(PyObject *self, PyObject *args);
+static PyObject* py_occaPrintModeInfo(PyObject *self, PyObject *args);
 
 static PyObject* py_occaCreateDevice(PyObject *self, PyObject *args);
 
@@ -246,7 +246,7 @@ static PyMethodDef _C_occaMethods[] = {
   //====================================
 
   //---[ Device ]-----------------------
-  {"printAvailableDevices", py_occaPrintAvailableDevices, METH_VARARGS},
+  {"printModeInfo", py_occaPrintModeInfo, METH_VARARGS},
 
   {"createDevice", py_occaCreateDevice, METH_VARARGS},
 

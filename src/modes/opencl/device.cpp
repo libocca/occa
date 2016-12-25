@@ -29,6 +29,7 @@
 #include "occa/modes/opencl/memory.hpp"
 #include "occa/modes/opencl/utils.hpp"
 #include "occa/tools/env.hpp"
+#include "occa/tools/sys.hpp"
 #include "occa/base.hpp"
 
 namespace occa {
@@ -37,11 +38,12 @@ namespace occa {
       occa::device_v(properties_) {
 
       cl_int error;
-      OCCA_CHECK(properties.has("platformID"),
-                 "[OpenCL] device not given [platformID]");
+      OCCA_ERROR("[OpenCL] device not given [platformID]",
+                 properties.has("platformID"));
 
-      OCCA_CHECK(properties.has("deviceID"),
-                 "[OpenCL] device not given [deviceID]");
+
+      OCCA_ERROR("[OpenCL] device not given [deviceID]",
+                 properties.has("deviceID"));
 
       platformID = properties.get<int>("platformID");
       deviceID   = properties.get<int>("deviceID");
@@ -50,7 +52,7 @@ namespace occa {
       clDeviceID   = opencl::deviceID(platformID, deviceID);
 
       clContext = clCreateContext(NULL, 1, &clDeviceID, NULL, NULL, &error);
-      OCCA_CL_CHECK("Device: Creating Context", error);
+      OCCA_OPENCL_ERROR("Device: Creating Context", error);
 
       std::string compilerFlags;
 
@@ -72,7 +74,7 @@ namespace occa {
     device::~device() {}
 
     void device::free() {
-      OCCA_CL_CHECK("Device: Freeing Context",
+      OCCA_OPENCL_ERROR("Device: Freeing Context",
                     clReleaseContext(clContext) );
     }
 
@@ -84,7 +86,7 @@ namespace occa {
     }
 
     void device::finish() {
-      OCCA_CL_CHECK("Device: Finish",
+      OCCA_OPENCL_ERROR("Device: Finish",
                     clFinish(*((cl_command_queue*) currentStream)));
     }
 
@@ -99,13 +101,13 @@ namespace occa {
       cl_command_queue *retStream = new cl_command_queue;
 
       *retStream = clCreateCommandQueue(clContext, clDeviceID, CL_QUEUE_PROFILING_ENABLE, &error);
-      OCCA_CL_CHECK("Device: createStream", error);
+      OCCA_OPENCL_ERROR("Device: createStream", error);
 
       return retStream;
     }
 
     void device::freeStream(stream_t s) {
-      OCCA_CL_CHECK("Device: freeStream",
+      OCCA_OPENCL_ERROR("Device: freeStream",
                     clReleaseCommandQueue( *((cl_command_queue*) s) ));
 
       delete (cl_command_queue*) s;
@@ -117,10 +119,10 @@ namespace occa {
       streamTag ret;
 
 #ifdef CL_VERSION_1_2
-      OCCA_CL_CHECK("Device: Tagging Stream",
+      OCCA_OPENCL_ERROR("Device: Tagging Stream",
                     clEnqueueMarkerWithWaitList(stream, 0, NULL, &event(ret)));
 #else
-      OCCA_CL_CHECK("Device: Tagging Stream",
+      OCCA_OPENCL_ERROR("Device: Tagging Stream",
                     clEnqueueMarker(stream, &event(ret)));
 #endif
 
@@ -128,7 +130,7 @@ namespace occa {
     }
 
     void device::waitFor(streamTag tag) {
-      OCCA_CL_CHECK("Device: Waiting For Tag",
+      OCCA_OPENCL_ERROR("Device: Waiting For Tag",
                     clWaitForEvents(1, &event(tag)));
     }
 
@@ -137,22 +139,22 @@ namespace occa {
 
       finish();
 
-      OCCA_CL_CHECK ("Device: Time Between Tags (Start)",
+      OCCA_OPENCL_ERROR ("Device: Time Between Tags (Start)",
                      clGetEventProfilingInfo(event(startTag),
                                              CL_PROFILING_COMMAND_END,
                                              sizeof(cl_ulong),
                                              &start, NULL) );
 
-      OCCA_CL_CHECK ("Device: Time Between Tags (End)",
+      OCCA_OPENCL_ERROR ("Device: Time Between Tags (End)",
                      clGetEventProfilingInfo(event(endTag),
                                              CL_PROFILING_COMMAND_START,
                                              sizeof(cl_ulong),
                                              &end, NULL) );
 
-      OCCA_CL_CHECK("Device: Time Between Tags (Freeing start tag)",
+      OCCA_OPENCL_ERROR("Device: Time Between Tags (Freeing start tag)",
                     clReleaseEvent(event(startTag)));
 
-      OCCA_CL_CHECK("Device: Time Between Tags (Freeing end tag)",
+      OCCA_OPENCL_ERROR("Device: Time Between Tags (Freeing end tag)",
                     clReleaseEvent(event(endTag)));
 
       return (double) (1.0e-9 * (double)(end - start));
@@ -251,7 +253,7 @@ namespace occa {
                                                 bytes,
                                                 NULL, &error);
 
-      OCCA_CL_CHECK("Device: clCreateBuffer", error);
+      OCCA_OPENCL_ERROR("Device: clCreateBuffer", error);
 
       if (src != NULL){
         mem->copyFrom(src, mem->size);
@@ -266,7 +268,7 @@ namespace occa {
                                           0, NULL, NULL,
                                           &error);
 
-      OCCA_CL_CHECK("Device: clEnqueueMapBuffer", error);
+      OCCA_OPENCL_ERROR("Device: clEnqueueMapBuffer", error);
 
       // Sync memory mapping
       finish();

@@ -112,7 +112,20 @@ namespace occa {
     cl_event& event(streamTag &tag);
     const cl_event& event(const streamTag &tag);
 
-    std::string error(int e);
+    void warn(cl_int errorCode,
+              const std::string &filename,
+              const std::string &function,
+              const int line,
+              const std::string &message);
+
+    void error(cl_int errorCode,
+               const std::string &filename,
+               const std::string &function,
+               const int line,
+               const std::string &message);
+
+    int getErrorCode(int errorCode);
+    std::string getErrorMessage(const int errorCode);
   }
 }
 

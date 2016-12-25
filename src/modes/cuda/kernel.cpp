@@ -164,8 +164,8 @@ namespace occa {
 
       if (compileError) {
         io::releaseHash(hash, hashTag);
-        OCCA_CHECK(false,
-                   "Compilation error");
+        OCCA_ERROR("Compilation error",
+                   false);
       }
 
       const CUresult moduleLoadError = cuModuleLoad(&module,
@@ -175,7 +175,7 @@ namespace occa {
         io::releaseHash(hash, hashTag);
       }
 
-      OCCA_CUDA_CHECK("Kernel (" + name + ") : Loading Module",
+      OCCA_CUDA_ERROR("Kernel (" + name + ") : Loading Module",
                       moduleLoadError);
 
       const CUresult moduleGetFunctionError = cuModuleGetFunction(&handle,
@@ -186,7 +186,7 @@ namespace occa {
         io::releaseHash(hash, hashTag);
       }
 
-      OCCA_CUDA_CHECK("Kernel (" + name + ") : Loading Function",
+      OCCA_CUDA_ERROR("Kernel (" + name + ") : Loading Function",
                       moduleGetFunctionError);
 
       io::releaseHash(hash, hashTag);
@@ -197,10 +197,10 @@ namespace occa {
                                  const occa::properties &props) {
       name = functionName;
 
-      OCCA_CUDA_CHECK("Kernel (" + functionName + ") : Loading Module",
+      OCCA_CUDA_ERROR("Kernel (" + functionName + ") : Loading Module",
                       cuModuleLoad(&module, filename.c_str()));
 
-      OCCA_CUDA_CHECK("Kernel (" + functionName + ") : Loading Function",
+      OCCA_CUDA_ERROR("Kernel (" + functionName + ") : Loading Function",
                       cuModuleGetFunction(&handle, module, functionName.c_str()));
     }
 
@@ -216,7 +216,7 @@ namespace occa {
       static dim innerDims(0);
       if (innerDims.x == 0) {
         int maxSize;
-        OCCA_CUDA_CHECK("Kernel: Getting Maximum Inner-Dim Size",
+        OCCA_CUDA_ERROR("Kernel: Getting Maximum Inner-Dim Size",
                         cuFuncGetAttribute(&maxSize,
                                            CU_FUNC_ATTRIBUTE_MAX_THREADS_PER_BLOCK,
                                            handle));
@@ -244,7 +244,7 @@ namespace occa {
         }
       }
 
-      OCCA_CUDA_CHECK("Launching Kernel",
+      OCCA_CUDA_ERROR("Launching Kernel",
                       cuLaunchKernel(handle,
                                      outer.x, outer.y, outer.z,
                                      inner.x, inner.y, inner.z,
@@ -254,7 +254,7 @@ namespace occa {
     }
 
     void kernel::free() {
-      OCCA_CUDA_CHECK("Kernel (" + name + ") : Unloading Module",
+      OCCA_CUDA_ERROR("Kernel (" + name + ") : Unloading Module",
                       cuModuleUnload(module));
     }
   }

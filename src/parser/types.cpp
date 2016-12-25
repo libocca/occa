@@ -483,8 +483,8 @@ namespace occa {
     int qualifierInfo::loadFrom(expNode &expRoot,
                                 int leafPos) {
 
-      OCCA_CHECK(expRoot.sInfo != NULL,
-                 "Cannot load [qualifierInfo] without a statement");
+      OCCA_ERROR("Cannot load [qualifierInfo] without a statement",
+                 expRoot.sInfo != NULL);
 
       varInfo var;
 
@@ -495,8 +495,8 @@ namespace occa {
                                 expNode &expRoot,
                                 int leafPos) {
 
-      OCCA_CHECK(expRoot.sInfo != NULL,
-                 "Cannot load [qualifierInfo] without a statement");
+      OCCA_ERROR("Cannot load [qualifierInfo] without a statement",
+                 expRoot.sInfo != NULL);
 
       return loadFrom(*(expRoot.sInfo), var, expRoot, leafPos);
     }
@@ -699,10 +699,10 @@ namespace occa {
     }
 
     std::string& qualifierInfo::get(const int pos) {
-      OCCA_CHECK((0 <= pos) && (pos < qualifierCount),
-                 "There are only ["
+      OCCA_ERROR("There are only ["
                  << qualifierCount << "] qualifiers (asking for ["
-                 << pos << "])");
+                 << pos << "])",
+                 (0 <= pos) && (pos < qualifierCount));
 
       return qualifiers[pos];
     }
@@ -892,8 +892,8 @@ namespace occa {
                            int leafPos,
                            bool addTypeToScope) {
 
-      OCCA_CHECK(expRoot.sInfo != NULL,
-                 "Cannot load [typeInfo] without a statement");
+      OCCA_ERROR("Cannot load [typeInfo] without a statement",
+                 expRoot.sInfo != NULL);
 
       return loadFrom(*(expRoot.sInfo),
                       expRoot,
@@ -1412,8 +1412,8 @@ namespace occa {
                           int leafPos,
                           varInfo *varHasType) {
 
-      OCCA_CHECK(expRoot.sInfo != NULL,
-                 "Cannot load [varInfo] without a statement");
+      OCCA_ERROR("Cannot load [varInfo] without a statement",
+                 expRoot.sInfo != NULL);
 
       return loadFrom(*(expRoot.sInfo), expRoot, leafPos, varHasType);
     }
@@ -1446,8 +1446,8 @@ namespace occa {
         if (leafPos < expRoot.leafCount) {
           typeHolder th(expRoot[leafPos].value);
 
-          OCCA_CHECK(th.type != noType,
-                     "Bitfield is not known at compile-time");
+          OCCA_ERROR("Bitfield is not known at compile-time",
+                     th.type != noType);
 
           bitfieldSize = th.to<int>();
 
@@ -1703,8 +1703,8 @@ namespace occa {
       if ( !(info & varType::function) )
         return leafPos;
 
-      OCCA_CHECK(leafPos < expRoot.leafCount,
-                 "Missing arguments from function variable");
+      OCCA_ERROR("Missing arguments from function variable",
+                 leafPos < expRoot.leafCount);
 
       if (expRoot[leafPos].leafCount) {
         expNode &leaf = expRoot[leafPos];
@@ -1715,8 +1715,8 @@ namespace occa {
 
         for (int i = 0; i < argumentCount; ++i) {
           if (leaf[sLeafPos].value == "...") {
-            OCCA_CHECK(i == (argumentCount - 1),
-                       "Variadic argument [...] has to be the last argument");
+            OCCA_ERROR("Variadic argument [...] has to be the last argument",
+                       i == (argumentCount - 1));
 
             info |= varType::variadic;
 
@@ -1839,9 +1839,9 @@ namespace occa {
 
       attribute_t &attr = *(attr_);
 
-      OCCA_CHECK(attr.argCount == 1,
-                 "@arrayArg has only one argument:\n"
-                 "  dims = X");
+      OCCA_ERROR("@arrayArg has only one argument:\n"
+                 "  dims = X",
+                 attr.argCount == 1);
 
       expNode &dimsArg = attr[0];
 
@@ -1862,14 +1862,14 @@ namespace occa {
           isValid = false;
       }
 
-      OCCA_CHECK(isValid,
-                 "@arrayArg must have an argument:\n"
-                 "  dims = X, where X is known at compile-time\n");
+      OCCA_ERROR("@arrayArg must have an argument:\n"
+                 "  dims = X, where X is known at compile-time\n",
+                 isValid);
 
       const int dims = thDims.to<int>();
 
-      OCCA_CHECK((0 < dims) && (dims < 7),
-                 "@arrayArg only supports dims [1-6]");
+      OCCA_ERROR("@arrayArg only supports dims [1-6]",
+                 (0 < dims) && (dims < 7));
 
       // Add argument dims attribute
       std::string dimAttrStr = "@dim(";
@@ -1902,10 +1902,10 @@ namespace occa {
 
       attribute_t &idxOrderAttr = *(attr_);
 
-      OCCA_CHECK(idxOrderAttr.argCount == dimAttr.argCount,
-                 "Variable [" << *this << "] has attributes dim(...) and idxOrder(...)"
+      OCCA_ERROR("Variable [" << *this << "] has attributes dim(...) and idxOrder(...)"
                  " with different dimensions (dim: " << dimAttr.argCount
-                 << ", idx: " << idxOrderAttr.argCount << ')');
+                 << ", idx: " << idxOrderAttr.argCount << ')',
+                 idxOrderAttr.argCount == dimAttr.argCount);
 
       const int dims = dimAttr.argCount;
 
@@ -1939,24 +1939,24 @@ namespace occa {
         }
 
         if (!foundIdx) {
-          OCCA_CHECK(idxOrderAttr[i].valueIsKnown(),
-                     "Variable [" << *this << "] has the attribute [" << idxOrderAttr << "] with ordering not known at compile time");
+          OCCA_ERROR("Variable [" << *this << "] has the attribute [" << idxOrderAttr << "] with ordering not known at compile time",
+                     idxOrderAttr[i].valueIsKnown());
 
           th = idxOrderAttr[i].calculateValue();
 
-          OCCA_CHECK(!th.isAFloat(),
-                     "Variable [" << *this << "] has the attribute [" << idxOrderAttr << "] with a non-integer ordering");
+          OCCA_ERROR("Variable [" << *this << "] has the attribute [" << idxOrderAttr << "] with a non-integer ordering",
+                     !th.isAFloat());
         }
 
         const int idxOrder = th.to<int>();
 
         idxOrdering[idxOrder] = i;
 
-        OCCA_CHECK(idxFound[idxOrder] == false,
-                   "Variable [" << *this << "] has the attribute [" << idxOrderAttr << "] with a repeating index");
+        OCCA_ERROR("Variable [" << *this << "] has the attribute [" << idxOrderAttr << "] with a repeating index",
+                   idxFound[idxOrder] == false);
 
-        OCCA_CHECK((0 <= idxOrder) && (idxOrder < dims),
-                   "Variable [" << *this << "] has the attribute [" << idxOrderAttr << "] with an index [" << idxOrder << "] outside the range [0," << (dims - 1) << "]");
+        OCCA_ERROR("Variable [" << *this << "] has the attribute [" << idxOrderAttr << "] with an index [" << idxOrder << "] outside the range [0," << (dims - 1) << "]",
+                   (0 <= idxOrder) && (idxOrder < dims));
 
         idxFound[idxOrder] = true;
       }
@@ -1967,8 +1967,8 @@ namespace occa {
                                  int leafPos,
                                  varInfo *varHasType) {
 
-      OCCA_CHECK(expRoot.sInfo != NULL,
-                 "Cannot load [varInfo] without a statement");
+      OCCA_ERROR("Cannot load [varInfo] without a statement",
+                 expRoot.sInfo != NULL);
 
       return loadFromFortran(*(expRoot.sInfo), expRoot, leafPos, varHasType);
     }
@@ -2018,8 +2018,8 @@ namespace occa {
                                      int leafPos,
                                      varInfo *varHasType) {
 
-      OCCA_CHECK(expRoot.sInfo != NULL,
-                 "Cannot load [varInfo] without a statement");
+      OCCA_ERROR("Cannot load [varInfo] without a statement",
+                 expRoot.sInfo != NULL);
 
       return loadTypeFromFortran(*(expRoot.sInfo), expRoot, leafPos, varHasType);
     }
@@ -2131,8 +2131,8 @@ namespace occa {
             typeNode = "long long" + suffix;
           break;
         default:
-          OCCA_CHECK(false,
-                     "Error loading " << typeNode << "(" << bytes << ")");
+          OCCA_ERROR("Error loading " << typeNode << "(" << bytes << ")",
+                     false);
         };
       }
 
@@ -2623,13 +2623,13 @@ namespace occa {
         }
 
         // [-] Clean the error message
-        OCCA_CHECK(0 < nonAmbiguousCount,
-                   "Ambiguous Function");
+        OCCA_ERROR("Ambiguous Function",
+                   0 < nonAmbiguousCount);
       }
 
       // [-] Clean the error message
-      OCCA_CHECK(1 < nonAmbiguousCount,
-                 "Ambiguous Function");
+      OCCA_ERROR("Ambiguous Function",
+                 1 < nonAmbiguousCount);
 
       for (int i = 0; i < candidateCount; ++i) {
         if (!ambiguous[i])

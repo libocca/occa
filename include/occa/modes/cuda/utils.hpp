@@ -78,7 +78,19 @@ namespace occa {
     CUevent& event(streamTag &tag);
     const CUevent& event(const streamTag &tag);
 
-    std::string error(const CUresult errorCode);
+    void warn(CUresult errorCode,
+              const std::string &filename,
+              const std::string &function,
+              const int line,
+              const std::string &message);
+
+    void error(CUresult errorCode,
+               const std::string &filename,
+               const std::string &function,
+               const int line,
+               const std::string &message);
+
+    std::string getErrorMessage(const CUresult errorCode);
   }
 }
 

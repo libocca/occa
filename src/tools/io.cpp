@@ -265,8 +265,8 @@ namespace occa {
       std::string expFilename = io::filename(filename);
 
       FILE *fp = fopen(filename.c_str(), readingBinary ? "rb" : "r");
-      OCCA_CHECK(fp != 0,
-                 "Failed to open [" << io::shortname(filename) << "]");
+      OCCA_ERROR("Failed to open [" << io::shortname(filename) << "]",
+                 fp != 0);
 
       struct stat statbuf;
       stat(filename.c_str(), &statbuf);
@@ -290,8 +290,8 @@ namespace occa {
       sys::mkpath(dirname(filename));
 
       FILE *fp = fopen(filename.c_str(), "w");
-      OCCA_CHECK(fp != 0,
-                 "Failed to open [" << io::shortname(filename) << "]");
+      OCCA_ERROR("Failed to open [" << io::shortname(filename) << "]",
+                 fp != 0);
 
       fputs(content.c_str(), fp);
 
@@ -391,10 +391,10 @@ namespace occa {
         return (kIt->second)->metadata();
       }
 
-      OCCA_CHECK(false,
-                 "Could not find function ["
+      OCCA_ERROR("Could not find function ["
                  << functionName << "] in file ["
-                 << io::shortname(filename) << "]");
+                 << io::shortname(filename) << "]",
+                 false);
 
       return kernelMetadata();
     }

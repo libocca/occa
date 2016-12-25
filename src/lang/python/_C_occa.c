@@ -414,8 +414,8 @@ static PyObject* py_occaManagedMappedAlloc(PyObject *self, PyObject *args) {
 //======================================
 
 //---[ Device ]-------------------------
-static PyObject* py_occaPrintAvailableDevices(PyObject *self, PyObject *args) {
-  occaPrintAvailableDevices();
+static PyObject* py_occaPrintModeInfo(PyObject *self, PyObject *args) {
+  occaPrintModeInfo();
 
   return Py_None;
 }

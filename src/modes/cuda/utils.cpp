@@ -26,6 +26,7 @@
 
 #include "occa/device.hpp"
 #include "occa/tools/string.hpp"
+#include "occa/tools/sys.hpp"
 #include "occa/modes/cuda/device.hpp"
 #include "occa/modes/cuda/utils.hpp"
 
@@ -42,58 +43,58 @@ namespace occa {
 
     int getDeviceCount() {
       int deviceCount;
-      OCCA_CUDA_CHECK("Finding Number of Devices",
+      OCCA_CUDA_ERROR("Finding Number of Devices",
                       cuDeviceGetCount(&deviceCount));
       return deviceCount;
     }
 
     CUdevice getDevice(const int id) {
       CUdevice device;
-      OCCA_CUDA_CHECK("Getting CUdevice",
+      OCCA_CUDA_ERROR("Getting CUdevice",
                       cuDeviceGet(&device, id));
       return device;
     }
 
     udim_t getDeviceMemorySize(CUdevice device) {
       size_t bytes;
-      OCCA_CUDA_CHECK("Finding available memory on device",
+      OCCA_CUDA_ERROR("Finding available memory on device",
                       cuDeviceTotalMem(&bytes, device));
       return bytes;
     }
 
     void enablePeerToPeer(CUcontext context) {
 #if CUDA_VERSION >= 4000
-      OCCA_CUDA_CHECK("Enabling Peer-to-Peer",
+      OCCA_CUDA_ERROR("Enabling Peer-to-Peer",
                       cuCtxEnablePeerAccess(context, 0) );
 #else
-      OCCA_CHECK(false,
-                 "CUDA version ["
+      OCCA_ERROR("CUDA version ["
                  << ((int) (CUDA_VERSION / 1000))
                  << '.'
                  << ((int) ((CUDA_VERSION % 100) / 10))
-                 << "] does not support Peer-to-Peer");
+                 << "] does not support Peer-to-Peer",
+                 false);
 #endif
     }
 
     void checkPeerToPeer(CUdevice destDevice,
                          CUdevice srcDevice) {
 #if CUDA_VERSION >= 4000
-        int canAccessPeer;
+      int canAccessPeer;
 
-        OCCA_CUDA_CHECK("Checking Peer-to-Peer Connection",
-                        cuDeviceCanAccessPeer(&canAccessPeer,
-                                              destDevice,
-                                              srcDevice));
+      OCCA_CUDA_ERROR("Checking Peer-to-Peer Connection",
+                      cuDeviceCanAccessPeer(&canAccessPeer,
+                                            destDevice,
+                                            srcDevice));
 
-        OCCA_CHECK((canAccessPeer == 1),
-                   "Checking Peer-to-Peer Connection");
+      OCCA_ERROR("Checking Peer-to-Peer Connection",
+                 (canAccessPeer == 1));
 #else
-      OCCA_CHECK(false,
-                 "CUDA version ["
+      OCCA_ERROR("CUDA version ["
                  << ((int) (CUDA_VERSION / 1000))
                  << '.'
                  << ((int) ((CUDA_VERSION % 100) / 10))
-                 << "] does not support Peer-to-Peer");
+                 << "] does not support Peer-to-Peer",
+                 false);
 #endif
     }
 
@@ -140,24 +141,24 @@ namespace occa {
 
 #if CUDA_VERSION >= 4000
       if (!isAsync) {
-        OCCA_CUDA_CHECK("Peer-to-Peer Memory Copy",
+        OCCA_CUDA_ERROR("Peer-to-Peer Memory Copy",
                         cuMemcpyPeer(destMemory, destContext,
                                      srcMemory , srcContext ,
                                      bytes));
       } else {
-        OCCA_CUDA_CHECK("Peer-to-Peer Memory Copy",
+        OCCA_CUDA_ERROR("Peer-to-Peer Memory Copy",
                         cuMemcpyPeerAsync(destMemory, destContext,
                                           srcMemory , srcContext ,
                                           bytes,
                                           usingStream));
       }
 #else
-      OCCA_CHECK(false,
-                 "CUDA version ["
+      OCCA_ERROR("CUDA version ["
                  << ((int) (CUDA_VERSION / 1000))
                  << '.'
                  << ((int) ((CUDA_VERSION % 100) / 10))
-                 << "] does not support Peer-to-Peer");
+                 << "] does not support Peer-to-Peer",
+                 false);
 #endif
     }
 
@@ -182,7 +183,37 @@ namespace occa {
       return (const CUevent&) tag.handle;
     }
 
-    std::string error(const CUresult errorCode) {
+    void warn(CUresult errorCode,
+              const std::string &filename,
+              const std::string &function,
+              const int line,
+              const std::string &message) {
+      if (!errorCode) {
+        return;
+      }
+      std::stringstream ss;
+      ss << message << '\n'
+         << "    Error   : CUDA Error [ " << errorCode << " ]: "
+         << occa::cuda::getErrorMessage(errorCode);
+      occa::warn(filename, function, line, ss.str());
+    }
+
+    void error(CUresult errorCode,
+               const std::string &filename,
+               const std::string &function,
+               const int line,
+               const std::string &message) {
+      if (!errorCode) {
+        return;
+      }
+      std::stringstream ss;
+      ss << message << '\n'
+         << "    Error   : CUDA Error [ " << errorCode << " ]: "
+         << occa::cuda::getErrorMessage(errorCode);
+      occa::error(filename, function, line, ss.str());
+    }
+
+    std::string getErrorMessage(const CUresult errorCode) {
       switch(errorCode) {
       case CUDA_SUCCESS:                              return "CUDA_SUCCESS";
       case CUDA_ERROR_INVALID_VALUE:                  return "CUDA_ERROR_INVALID_VALUE";

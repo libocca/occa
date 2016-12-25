@@ -526,8 +526,8 @@ namespace occa {
 
   char* cReadFile(const std::string &filename) {
     FILE *fp = fopen(filename.c_str(), "r");
-    OCCA_CHECK(fp != NULL,
-               "Failed to open [" << filename << ']');
+    OCCA_ERROR("Failed to open [" << filename << ']',
+               fp != NULL);
 
     struct stat statbuf;
     stat(filename.c_str(), &statbuf);
