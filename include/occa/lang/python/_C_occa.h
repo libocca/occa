@@ -58,7 +58,6 @@ static PyObject* py_occaGetCompiler(PyObject *self, PyObject *args);
 static PyObject* py_occaGetCompilerEnvScript(PyObject *self, PyObject *args);
 static PyObject* py_occaGetCompilerFlags(PyObject *self, PyObject *args);
 
-static PyObject* py_occaFlush(PyObject *self, PyObject *args);
 static PyObject* py_occaFinish(PyObject *self, PyObject *args);
 
 // static PyObject* py_occaWaitFor(PyObject *self, PyObject *args);
@@ -116,7 +115,6 @@ static PyObject* py_occaDeviceManagedAlloc(PyObject *self, PyObject *args);
 static PyObject* py_occaDeviceMappedAlloc(PyObject *self, PyObject *args);
 static PyObject* py_occaDeviceManagedMappedAlloc(PyObject *self, PyObject *args);
 
-static PyObject* py_occaDeviceFlush(PyObject *self, PyObject *args);
 static PyObject* py_occaDeviceFinish(PyObject *self, PyObject *args);
 
 static PyObject* py_occaDeviceCreateStream(PyObject *self, PyObject *args);
@@ -217,7 +215,6 @@ static PyMethodDef _C_occaMethods[] = {
   {"getCompilerEnvScript", py_occaGetCompilerEnvScript, METH_VARARGS},
   {"getCompilerFlags"    , py_occaGetCompilerFlags    , METH_VARARGS},
 
-  {"flush" , py_occaFlush , METH_VARARGS},
   {"finish", py_occaFinish, METH_VARARGS},
 
   // {"waitFor", py_occaWaitFor, METH_VARARGS},
@@ -275,7 +272,6 @@ static PyMethodDef _C_occaMethods[] = {
   {"deviceMappedAlloc"       , py_occaDeviceMappedAlloc       , METH_VARARGS},
   {"deviceManagedMappedAlloc", py_occaDeviceManagedMappedAlloc, METH_VARARGS},
 
-  {"deviceFlush" , py_occaDeviceFlush , METH_VARARGS},
   {"deviceFinish", py_occaDeviceFinish, METH_VARARGS},
 
   {"deviceCreateStream", py_occaDeviceCreateStream, METH_VARARGS},

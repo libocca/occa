@@ -126,7 +126,6 @@ OCCA_LFUNC occaObject OCCA_RFUNC occaString(const char *str);
 OCCA_LFUNC void OCCA_RFUNC occaSetDevice(occaDevice device);
 OCCA_LFUNC void OCCA_RFUNC occaSetDeviceFromInfo(const char *infos);
 
-OCCA_LFUNC void OCCA_RFUNC occaFlush();
 OCCA_LFUNC void OCCA_RFUNC occaFinish();
 
 OCCA_LFUNC void OCCA_RFUNC occaWaitFor(occaStreamTag tag);
@@ -210,7 +209,6 @@ OCCA_LFUNC occaMemory OCCA_RFUNC occaDeviceWrapMemory(occaDevice device,
                                                       const occaUDim_t bytes,
                                                       occaProperties props);
 
-OCCA_LFUNC void OCCA_RFUNC occaDeviceFlush(occaDevice device);
 OCCA_LFUNC void OCCA_RFUNC occaDeviceFinish(occaDevice device);
 
 OCCA_LFUNC occaStream OCCA_RFUNC occaDeviceCreateStream(occaDevice device);

@@ -63,10 +63,6 @@ namespace occa {
     return currentDevice().properties();
   }
 
-  void flush() {
-    currentDevice().flush();
-  }
-
   void finish() {
     currentDevice().finish();
   }

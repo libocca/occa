@@ -101,8 +101,6 @@ namespace occa {
 
     device::~device() {}
 
-    void device::flush() {}
-
     void device::finish() {
       bool done = false;
       while (!done) {

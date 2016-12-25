@@ -345,10 +345,6 @@ occaDevice OCCA_RFUNC occaCurrentDevice() {
   return newObject(device.getDHandle(), occa::c::device_);
 }
 
-void OCCA_RFUNC occaFlush() {
-  occa::flush();
-}
-
 void OCCA_RFUNC occaFinish() {
   occa::finish();
 }
@@ -578,11 +574,6 @@ occaMemory OCCA_RFUNC occaDeviceWrapMemory(occaDevice device,
   occaMemory memory = occa::c::newType(occa::c::memory_);
   occa::c::getKernelArg(memory).data.void_ = memory_.getMHandle();
   return memory;
-}
-
-void OCCA_RFUNC occaDeviceFlush(occaDevice device) {
-  occa::device device_ = occa::c::getDevice(device);
-  device_.flush();
 }
 
 void OCCA_RFUNC occaDeviceFinish(occaDevice device) {

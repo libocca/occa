@@ -51,7 +51,6 @@ namespace occa {
       device(const occa::properties &properties_ = occa::properties());
       ~device();
 
-      void flush();
       void finish();
 
       //---[ Stream ]-------------------

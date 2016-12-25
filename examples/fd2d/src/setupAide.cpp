@@ -1,4 +1,5 @@
 #include "setupAide.hpp"
+#include "occa/tools/io.hpp"
 
 setupAide::setupAide() {}
 
@@ -19,7 +20,7 @@ void setupAide::read(string setupFile) {
   vector<string> data2;
   vector<string> keyword2;
 
-  string args = occa::readFile(setupFile);
+  string args = occa::io::read(setupFile);
 
   int size = args.length();
   string current = "";

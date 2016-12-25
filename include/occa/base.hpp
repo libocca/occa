@@ -54,7 +54,6 @@ namespace occa {
 
   properties& deviceProperties();
 
-  void flush();
   void finish();
 
   void waitFor(streamTag tag);

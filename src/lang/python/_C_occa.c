@@ -232,12 +232,6 @@ static PyObject* py_occaGetCompilerFlags(PyObject *self, PyObject *args) {
   return STR_TO_PYOBJECT(compilerFlags);
 }
 
-static PyObject* py_occaFlush(PyObject *self, PyObject *args) {
-  occaFlush();
-
-  return Py_None;
-}
-
 static PyObject* py_occaFinish(PyObject *self, PyObject *args) {
   occaFinish();
 
@@ -639,17 +633,6 @@ static PyObject* py_occaDeviceManagedMappedAlloc(PyObject *self, PyObject *args)
   void *data     = occaDeviceManagedMappedAlloc(device, bytes, NULL);
 
   return PyArray_SimpleNewFromData(nd, dims, typenum, data);
-}
-
-static PyObject* py_occaDeviceFlush(PyObject *self, PyObject *args) {
-  occaDevice device;
-
-  if (!PyArg_ParseTuple(args, "n", &device)) {
-    return NULL;
-  }
-  occaDeviceFlush(device);
-
-  return Py_None;
 }
 
 static PyObject* py_occaDeviceFinish(PyObject *self, PyObject *args) {

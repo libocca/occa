@@ -116,8 +116,6 @@ namespace occa {
       return NULL;
     }
 
-    void device::flush() {}
-
     void device::finish() {}
 
     bool device::fakesUva() {

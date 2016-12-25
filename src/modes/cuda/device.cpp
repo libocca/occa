@@ -94,8 +94,6 @@ namespace occa {
       return (void*) (uintptr_t) handle;
     }
 
-    void device::flush() {}
-
     void device::finish() {
       OCCA_CUDA_CHECK("Device: Finish",
                       cuStreamSynchronize(*((CUstream*) currentStream)) );
