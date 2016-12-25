@@ -52,8 +52,8 @@ namespace occa {
       udim_t size() const;
       fieldGroup& add(const std::string &field, const std::string &value = "");
 
-      int fieldWidth() const;
-      int valueWidth() const;
+      int getFieldWidth() const;
+      int getValueWidth() const;
     };
 
     class section {
@@ -67,8 +67,8 @@ namespace occa {
       section& add(const std::string &field, const std::string &value = "");
       section& addDivider();
 
-      int fieldWidth() const;
-      int valueWidth() const;
+      int getFieldWidth() const;
+      int getValueWidth() const;
 
       std::string toString(const int sectionWidth,
                            const int fieldWidth,

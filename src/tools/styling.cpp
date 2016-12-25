@@ -74,7 +74,7 @@ namespace occa {
       return *this;
     }
 
-    int fieldGroup::fieldWidth() const {
+    int fieldGroup::getFieldWidth() const {
       const int fieldCount = (int) fields.size();
       int maxWidth = 0;
       for (int i = 0; i < fieldCount; ++i) {
@@ -84,7 +84,7 @@ namespace occa {
       return maxWidth;
     }
 
-    int fieldGroup::valueWidth() const {
+    int fieldGroup::getValueWidth() const {
       const int fieldCount = (int) fields.size();
       int maxWidth = 0;
       for (int i = 0; i < fieldCount; ++i) {
@@ -123,20 +123,20 @@ namespace occa {
       return *this;
     }
 
-    int section::fieldWidth() const {
+    int section::getFieldWidth() const {
       const int groupCount = (int) groups.size();
       int fieldWidth = 0;
       for (int i = 0; i < groupCount; ++i) {
-        fieldWidth = std::max(fieldWidth, groups[i].fieldWidth());
+        fieldWidth = std::max(fieldWidth, groups[i].getFieldWidth());
       }
       return fieldWidth;
     }
 
-    int section::valueWidth() const {
+    int section::getValueWidth() const {
       const int groupCount = (int) groups.size();
       int valueWidth = 0;
       for (int i = 0; i < groupCount; ++i) {
-        valueWidth = std::max(valueWidth, groups[i].valueWidth());
+        valueWidth = std::max(valueWidth, groups[i].getValueWidth());
       }
       return valueWidth;
     }
@@ -209,8 +209,8 @@ namespace occa {
       for (int i = 0; i < sectionCount; ++i) {
         const section &iSection = sections[i];
         sectionWidth = std::max(sectionWidth, (int) iSection.name.size());
-        fieldWidth   = std::max(fieldWidth  , iSection.fieldWidth());
-        valueWidth   = std::max(valueWidth  , iSection.valueWidth());
+        fieldWidth   = std::max(fieldWidth  , iSection.getFieldWidth());
+        valueWidth   = std::max(valueWidth  , iSection.getValueWidth());
       }
 
       for (int i = 0; i < sectionCount; ++i) {
