@@ -32,10 +32,6 @@ namespace occa {
 
     void modeInfo::init() {}
 
-    void modeInfo::setupProperties() {
-      occa::properties &props = getProperties();
-    }
-
     occa::properties& modeInfo::getProperties() {
       static occa::properties properties;
       return properties;
