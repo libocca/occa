@@ -170,11 +170,11 @@ namespace occa {
 
       mem->dHandle = this;
       mem->size    = bytes;
+      mem->handle  = sys::malloc(bytes);
 
-      mem->handle = sys::malloc(bytes);
-
-      if (src != NULL)
+      if (src != NULL) {
         ::memcpy(mem->handle, src, bytes);
+      }
 
       return mem;
     }
