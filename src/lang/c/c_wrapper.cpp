@@ -127,6 +127,10 @@ namespace occa {
       delete t.ptr;
     }
 
+    inline void freePtr(const occaObject &t) {
+      delete t.ptr;
+    }
+
     template <>
     inline void free<void>(const occaObject &t) {
       switch(t.ptr->type) {
@@ -142,7 +146,7 @@ namespace occa {
       case float_  : occa::c::free<float>(t); break;
       case double_ : occa::c::free<double>(t); break;
 
-      case string_ : occa::c::free<const char*>(t); break;
+      case string_ : occa::c::freePtr(t); break;
       default: break;
       }
     }
@@ -480,7 +484,7 @@ occaDevice OCCA_RFUNC occaCreateDevice(occaObject info) {
   occa::device device;
   if (info.ptr->type == occa::c::string_) {
     device = occa::device((const char*) occa::c::getKernelArg(info).data.void_);
-    occa::c::free<const char*>(info);
+    occa::c::freePtr(info);
   } else if (info.ptr->type == occa::c::properties_) {
     device = occa::device(occa::c::getProperties(info));
   }
@@ -648,7 +652,7 @@ void OCCA_RFUNC occaStreamFree(occaStream stream) {
 
 void OCCA_RFUNC occaDeviceFree(occaDevice device) {
   occa::c::getDevice(device).free();
-  occa::c::free<occa::device>(device);
+  occa::c::freePtr(device);
 }
 //======================================
 
@@ -755,7 +759,7 @@ void OCCA_RFUNC occaKernelRunN(occaKernel kernel, const int argc, occaType *args
 
     if (args[i].ptr->type == occa::c::memory_) {
       occa::memory memory_((occa::memory_v*) argPtr);
-      kernel_.addArgument(i, occa::kernelArg(occa::c::memory_));
+      kernel_.addArgument(i, memory_);
     } else {
       kernel_.addArgument(i, occa::kernelArg(arg));
       delete args[i].ptr;
@@ -769,7 +773,7 @@ void OCCA_RFUNC occaKernelRunN(occaKernel kernel, const int argc, occaType *args
 
 void OCCA_RFUNC occaKernelFree(occaKernel kernel) {
   occa::c::getKernel(kernel).free();
-  occa::c::free<occa::kernel>(kernel);
+  occa::c::freePtr(kernel);
 }
 
 occaKernelInfo OCCA_RFUNC occaCreateKernelInfo() {
@@ -865,7 +869,7 @@ void OCCA_RFUNC occaCopyMemToPtr(void *dest, occaMemory src,
 
 void OCCA_RFUNC occaMemoryFree(occaMemory memory) {
   occa::c::getMemory(memory).free();
-  occa::c::free<occa::memory>(memory);
+  occa::c::freePtr(memory);
 }
 //======================================
 
