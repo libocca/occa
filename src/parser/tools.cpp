@@ -476,9 +476,9 @@ namespace occa {
     return ret;
   }
 
-  std::string strip(const char *c,
-                    const size_t chars,
-                    const int parsingLanguage_) {
+  std::string compressAllWhitespace(const char *c,
+                                    const size_t chars,
+                                    const int parsingLanguage_) {
     if (chars == 0)
       return "";
 
@@ -490,16 +490,16 @@ namespace occa {
     while (charIsIn(*cLeft , parserNS::whitespace) && (cLeft <= cRight)) ++cLeft;
     while (charIsIn(*cRight, parserNS::whitespace) && (cRight > cLeft)) --cRight;
 
-    if (cLeft > cRight)
+    if (cLeft > cRight) {
       return "";
-
+    }
     std::string ret = "";
 
     const char *cMid = cLeft;
 
     while (cMid < cRight) {
       if ((cMid[0] == nl) && isWhitespace(cMid[1])) {
-        ret += strip(cLeft, cMid - cLeft);
+        ret += compressAllWhitespace(cLeft, cMid - cLeft);
         ret += ' ';
 
         ++cMid;
@@ -510,18 +510,18 @@ namespace occa {
       ++cMid;
 
       if ((cMid >= cRight) && ret.size())
-        ret += strip(cLeft, (cMid - cLeft + 1));
+        ret += compressAllWhitespace(cLeft, (cMid - cLeft + 1));
     }
 
-    if (ret.size() == 0)
+    if (ret.size() == 0) {
       return compressWhitespace( std::string(cLeft, (cRight - cLeft + 1)) );
-
+    }
     return compressWhitespace(ret);
   }
 
-  void strip(std::string &str,
-             const int parsingLanguage_) {
-    str = strip(str.c_str(), str.size());
+  void compressAllWhitespace(std::string &str,
+                       const int parsingLanguage_) {
+    str = compressAllWhitespace(str.c_str(), str.size());
   }
 
   char* cReadFile(const std::string &filename) {
@@ -697,9 +697,9 @@ namespace occa {
     return count;
   }
 
-  void skipTo(const char *&c, const char delimiter, const bool checkEscape) {
+  void skipTo(const char *&c, const char delimiter, const char escapeChar) {
     while (*c != '\0') {
-      if (!(checkEscape && (*c == '\\')) &&
+      if (!(escapeChar && (*c == escapeChar)) &&
           (*c == delimiter)) {
         return;
       }
@@ -707,12 +707,12 @@ namespace occa {
     }
   }
 
-  void skipTo(const char *&c, std::string delimiters, const bool checkEscape) {
+  void skipTo(const char *&c, std::string delimiters, const char escapeChar) {
     const size_t chars = delimiters.size();
     const char *d      = delimiters.c_str();
 
     while (*c != '\0') {
-      if (!(checkEscape && (*c == '\\'))) {
+      if (!(escapeChar && (*c == escapeChar))) {
         for (size_t i = 0; i < chars; ++i) {
           if (*c == d[i]) {
             return;

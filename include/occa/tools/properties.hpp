@@ -67,7 +67,7 @@ namespace occa {
     TM get(const std::string &prop, const TM &default_ = TM()) const {
       citer_t it = props.find(prop);
       if (it != props.end()) {
-        return fromString<TM>(it->second);
+        return occa::fromString<TM>(it->second);
       }
       return default_;
     }
@@ -75,6 +75,15 @@ namespace occa {
     template <class TM*>
     TM* get(const std::string &prop, const TM *&default_ = (const TM*&) _NULL) const {
       return (TM*) get<uintptr_t>(prop, (uintptr_t) default_);
+    }
+
+    template <class TM>
+    std::vector<TM> getList(const std::string &prop, const std::vector<TM> &default_ = std::vector<TM>()) const {
+      citer_t it = props.find(prop);
+      if (it == props.end()) {
+        return default_;
+      }
+      return listFromString<TM>(it->second);
     }
 
     std::string get(const std::string &prop, const std::string &default_ = "") const;

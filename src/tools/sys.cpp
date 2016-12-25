@@ -581,7 +581,7 @@ namespace occa {
                      sys::vendor::Cray  |
                      sys::vendor::Pathscale)) {
 
-        return "-x c++ -fPIC -shared"; // [-] -x c++ for now
+        return "-x c++ -fPIC -shared";
       } else if (vendor_ & sys::vendor::HP) {
         return "+z -b";
       } else if (vendor_ & sys::vendor::VisualStudio) {

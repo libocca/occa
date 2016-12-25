@@ -1425,7 +1425,7 @@ namespace occa {
       if (parser != NULL)
         parser->applyMacros(lineExpNode.value);
 
-      strip(lineExpNode.value);
+      compressAllWhitespace(lineExpNode.value);
 
       labelCode(lineExpNode);
       lineExpNode.organizeNode();
