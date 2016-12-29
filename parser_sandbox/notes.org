@@ -1,0 +1,125 @@
+* Compiler Defines
+
+|---------------------------+---------------------------------+-----------------------------------|
+| Compiler                  | C macros                        | C++ macros                        |
+|---------------------------+---------------------------------+-----------------------------------|
+| Clang/LLVM                | clang -dM -E -x c /dev/null     | clang++ -dM -E -x c++ /dev/null   |
+| GNU GCC/G++               | gcc   -dM -E -x c /dev/null     | g++     -dM -E -x c++ /dev/null   |
+| Hewlett-Packard C/aC++    | cc    -dM -E -x c /dev/null     | aCC     -dM -E -x c++ /dev/null   |
+| IBM XL C/C++              | xlc   -qshowmacros -E /dev/null | xlc++   -qshowmacros -E /dev/null |
+| Intel ICC/ICPC            | icc   -dM -E -x c /dev/null     | icpc    -dM -E -x c++ /dev/null   |
+| Microsoft Visual Studio   | (none)                          | (none)                            |
+| Oracle Solaris Studio     | cc    -xdumpmacros -E /dev/null | CC      -xdumpmacros -E /dev/null |
+| Portland Group PGCC/PGCPP | pgcc  -dM -E                    | (none)                            |
+|---------------------------+---------------------------------+-----------------------------------|
+
+* Parser
+enum accessModifier_t
+  public
+  protected
+  private
+
+
+qualifiers_t
+  std::vector<std::string> qualifiers
+  has(std::string qualifier)
+  add(std::string qualifier)
+  remove(std::string qualifier)
+
+
+enum operatorType_t
+  leftUnary
+  rightUnary
+  binary
+  ternary
+
+
+operator_t
+  std::string symbol
+  operatorType_t operatorType
+
+
+std::vector<operator_t> operatorPrecendence
+
+
+type_t
+  static std::map<operator_t, function_t> operators
+  operators.add(left&, returnAddress)
+
+  hasOperator(std::string)
+  getOperator(std::string)
+
+
+namedType_t : type_t
+  std::string name
+
+int8_t : namedType_t
+int16_t: namedType_t
+int32_t: namedType_t
+int64_t: namedType_t
+
+uint8_t : namedType_t
+uint16_t: namedType_t
+uint32_t: namedType_t
+uint64_t: namedType_t
+
+typedef_t : namedType_t
+  qualifiers_t qualifiers
+  type_t *typedefing
+
+#                    * | pointer
+#            * const * |  -> pointer(const)
+#           ** const * |    -> pointer
+# const int ** const * |      -> int(const)
+pointer_t : type_t
+  type_t *basetype
+  operators.add(left*)
+  operators.add(->)
+  operators.add([])
+
+
+stackPointer_t : pointer_t
+  astNode size
+
+
+accessClass_t
+  class_t *class_
+  accessModifier_t accessModifier
+
+
+accessFunction_t
+  function_t *function
+  accessModifier_t accessModifier
+
+
+accessOperator_t
+  operator_t *operator_
+  accessModifier_t accessModifier
+
+
+class_t : namedType_t
+  std::vector<accessClass_t> extends
+  std::vector<accessFunction_t> functions
+  std::vector<accessOperators_t> operators
+
+  std::map<class_t*> classFriends
+  std::map<function_t*> functionFriends
+  std::map<operator_t*> operatorFriends
+
+
+variable
+  type_t type
+
+
+attribute
+  std::string name
+  properties props
+  void modify(statement)
+
+
+statement
+  scope
+    new types
+    new variables
+
+  getNamespace()
