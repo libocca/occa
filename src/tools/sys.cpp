@@ -23,16 +23,20 @@
 #include "occa/defines.hpp"
 
 #if   (OCCA_OS & OCCA_LINUX_OS)
-#  include <unistd.h>
+#  include <cxxabi.h>
+#  include <dlfcn.h>
+#  include <errno.h>
+#  include <execinfo.h>
 #  include <sys/time.h>
 #  include <sys/sysctl.h>
 #  include <sys/sysinfo.h>
-#  include <dlfcn.h>
-#  include <errno.h>
+#  include <unistd.h>
 #elif (OCCA_OS & OCCA_OSX_OS)
+#  include <cxxabi.h>
+#  include <dlfcn.h>
+#  include <execinfo.h>
 #  include <mach/mach_host.h>
 #  include <sys/sysctl.h>
-#  include <dlfcn.h>
 #  ifdef __clang__
 #    include <CoreServices/CoreServices.h>
 #    include <mach/mach_time.h>
@@ -47,12 +51,16 @@
 #  include <windows.h>
 #endif
 
+#include <iomanip>
+#include <sstream>
+
 #include <sys/types.h>
 #include <fcntl.h>
 
 #include "occa/tools/env.hpp"
 #include "occa/tools/hash.hpp"
 #include "occa/tools/io.hpp"
+#include "occa/tools/lex.hpp"
 #include "occa/tools/misc.hpp"
 #include "occa/tools/string.hpp"
 #include "occa/tools/sys.hpp"
@@ -702,6 +710,59 @@ namespace occa {
 
 #include "operators/runFunctionFromArguments.cpp"
     }
+
+    void printStacktrace(const int stackStart, const std::string indent) {
+#if (OCCA_OS & (OCCA_LINUX_OS | OCCA_OSX_OS))
+      static const int maxStackSize = 1024;
+      static void *stack[maxStackSize];
+      char **stackSymbols;
+      int stackSize = 0;
+
+      stackSize    = ::backtrace(stack, maxStackSize);
+      stackSymbols = ::backtrace_symbols(stack, stackSize);
+      for (int i = stackStart; i < stackSize; ++i) {
+        std::cout << indent << prettyStackSymbol(stackSymbols[i]) << '\n';
+      }
+      ::free(stackSymbols);
+#endif
+    }
+
+    std::string prettyStackSymbol(const char *c) {
+#if (OCCA_OS == OCCA_OSX_OS)
+      static size_t maxChars = 1024;
+      static char prettyBuffer[1024];
+      std::stringstream ss;
+      // Skip stack depth
+      lex::skipBetweenWhitespaces(c);
+      // Get origin
+      const char *originStart = c;
+      lex::skipToWhitespace(c);
+      std::string origin(originStart, (c - originStart));
+      // Skip address
+      lex::skipBetweenWhitespaces(c);
+      // Get function name
+      const char *functionStart = c;
+      lex::skipToWhitespace(c);
+      std::string function(functionStart, (c - functionStart));
+      // Skip the +
+      lex::skipBetweenWhitespaces(c);
+      // Get address offset
+      const char *offsetStart = c;
+      lex::skipToWhitespace(c);
+      std::string offset(offsetStart, (c - offsetStart));
+
+      int status;
+      const char *prettyFunction = abi::__cxa_demangle(function.c_str(),
+                                                       prettyBuffer,
+                                                       &maxChars,
+                                                       &status);
+
+      ss << std::left << std::setw(20) << origin
+         << std::left << std::setw(50) << (status ? function : prettyFunction);
+      return ss.str();
+#elif (OCCA_OS == OCCA_LINUX_OS)
+#endif
+    }
   }
 
   void _message(const std::string &title,
@@ -722,6 +783,8 @@ namespace occa {
     if (message.size()) {
       std::cout << "    Message  : " << message << '\n';
     }
+    std::cout << "    Stack    :\n";
+    sys::printStacktrace(3, "      ");
     std::cout << std::string(60, '=') << '\n';
 
     if (exitInFailure) {

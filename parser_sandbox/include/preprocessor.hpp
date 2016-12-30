@@ -7,8 +7,8 @@
 #include "occa/defines.hpp"
 #include "occa/types.hpp"
 #include "occa/tools/hash.hpp"
+#include "occa/tools/lex.hpp"
 
-#include "tools.hpp"
 #include "macro.hpp"
 
 #  if 0

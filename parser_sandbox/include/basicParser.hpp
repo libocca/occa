@@ -4,7 +4,7 @@
 #include <iostream>
 
 #include "occa/types.hpp"
-#include "tools.hpp"
+#include "occa/tools/lex.hpp"
 
 #  if 0
 namespace occa {
