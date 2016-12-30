@@ -116,6 +116,30 @@ namespace occa {
     return s;
   }
 
+  inline char uppercase(const char c) {
+    if (('a' <= c) && (c <= 'z')) {
+      return ((c + 'A') - 'a');
+    }
+    return c;
+  }
+
+  inline char lowercase(const char c) {
+    if (('A' <= c) && (c <= 'Z')) {
+      return ((c + 'a') - 'A');
+    }
+    return c;
+  }
+
+  std::string uppercase(const char *c, const int chars);
+  inline std::string uppercase(const std::string &s) {
+    return uppercase(s.c_str(), s.size());
+  }
+
+  std::string lowercase(const char *c, const int chars);
+  inline std::string lowercase(const std::string &s) {
+    return uppercase(s.c_str(), s.size());
+  }
+
   udim_t atoi(const char *c);
   udim_t atoiBase2(const char *c);
   udim_t atoi(const std::string &str);
@@ -125,12 +149,6 @@ namespace occa {
 
   double atod(const char *c);
   double atod(const std::string &str);
-
-  char uppercase(const char c);
-  char lowercase(const char c);
-
-  std::string uppercase(const std::string &str);
-  std::string lowercase(const std::string &str);
 
   std::string stringifyBytes(udim_t bytes);
 }

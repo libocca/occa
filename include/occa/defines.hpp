@@ -122,6 +122,9 @@
 #define OCCA_WARN2(expr, filename, function, line, message) OCCA_WARN3(expr, filename, function, line, message)
 #define OCCA_WARN(message, expr) OCCA_WARN2(expr, __FILE__, __PRETTY_FUNCTION__, __LINE__, message)
 
+#define OCCA_FORCE_ERROR(message) OCCA_ERROR(message, false)
+#define OCCA_FORCE_WARN(message)  OCCA_WARN(message, false)
+
 #define OCCA_DEFAULT_MEM_BYTE_ALIGN 32
 
 //---[ Compiler ]-------------

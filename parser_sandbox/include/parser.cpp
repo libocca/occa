@@ -1,8 +1,8 @@
+#ifndef OCCA_PARSER_PARSER_HEADER2
+#define OCCA_PARSER_PARSER_HEADER2
+
+#  if 0
 #include <stack>
-
-
-
-
 
 typedef std::vector<astNode*>           astNodeVector_t;
 typedef astNodeVector_t::iterator       astNodeVectorIterator;
@@ -141,3 +141,5 @@ void preprocessor_t::processLines(astNode &root) {
     ++it;
   }
 }
+#  endif
+#endif
