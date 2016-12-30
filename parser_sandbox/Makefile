@@ -6,12 +6,12 @@ else
 endif
 
 #---[ COMPILATION ]-------------------------------
-headers = $(wildcard $(incPath)/*.hpp) $(wildcard $(incPath)/*.tpp)
-sources = $(wildcard $(srcPath)/*.cpp)
-tests   = $(wildcard $(testPath)/test*.cpp)
+headers     = $(wildcard $(incPath)/*.hpp) $(wildcard $(incPath)/*.tpp)
+sources     = $(wildcard $(srcPath)/*.cpp)
+testSources = $(wildcard $(testPath)/test*.cpp)
 
-objects      = $(subst $(srcPath)/,$(objPath)/,$(sources:.cpp=.o))
-testBinaries = $(subst $(testPath)/,$(testPath)/bin/,$(tests:.cpp=))
+objects = $(subst $(srcPath)/,$(objPath)/,$(sources:.cpp=.o))
+tests   = $(subst $(testPath)/,$(testPath)/bin/,$(testSources:.cpp=))
 
 flags += -I$(incPath)
 
@@ -19,7 +19,7 @@ executables = ${PROJ_DIR}/main
 
 all: $(executables)
 
-${PROJ_DIR}/main: $(objects) $(headers) ${PROJ_DIR}/main.cpp $(testBinaries)
+${PROJ_DIR}/main: $(objects) $(headers) ${PROJ_DIR}/main.cpp $(tests)
 	$(compiler) $(compilerFlags) -o ${PROJ_DIR}/main $(flags) $(objects) ${PROJ_DIR}/main.cpp $(paths) $(links)
 
 $(objPath)/%.o:$(srcPath)/%.cpp $(wildcard $(subst $(srcPath)/,$(incPath)/,$(<:.cpp=.hpp))) $(wildcard $(subst $(srcPath)/,$(incPath)/,$(<:.cpp=.tpp)))
@@ -29,6 +29,12 @@ $(objPath)/%.o:$(srcPath)/%.cpp $(wildcard $(subst $(srcPath)/,$(incPath)/,$(<:.
 $(testPath)/bin/%:$(testPath)/%.cpp
 	@mkdir -p $(testPath)/bin
 	$(compiler) $(compilerFlags) -o $@ $(flags) $(objects) $< $(paths) $(links)
+
+test: $(tests)
+	@for test in $(tests); do \
+	    echo $$test; \
+	    $$test; \
+	done
 
 clean:
 	rm -f $(objPath)/*;
