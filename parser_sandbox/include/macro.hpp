@@ -1,3 +1,8 @@
+#ifndef OCCA_PARSER_MACRO_HEADER2
+#define OCCA_PARSER_MACRO_HEADER2
+
+#include <vector>
+
 class macro_t {
 public:
   std::string name;
@@ -9,3 +14,5 @@ public:
 
   int definedLine, undefinedLine;
 };
+
+#endif

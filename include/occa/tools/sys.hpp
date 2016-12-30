@@ -24,6 +24,7 @@
 #define OCCA_TOOLS_SYS_HEADER
 
 #include <iostream>
+#include <sstream>
 
 #include "occa/defines.hpp"
 #include "occa/types.hpp"

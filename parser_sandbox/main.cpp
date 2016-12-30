@@ -9,13 +9,12 @@
 #include "preprocessor.hpp"
 #endif
 
+#include "occa/tools/sys.hpp"
+
+#include "basicParser.hpp"
 #include "primitive.hpp"
 
 int main(int argc, char **argv) {
-  primitive a = "15.1230093402";
-  std::cout
-    << "a = " << a << '\n';
-
 #if 0
   std::string content = occa::io::read("cleanTest.c");
   const char *c = content.c_str();

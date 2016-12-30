@@ -32,11 +32,12 @@ ifeq ($(strip $(OCCA_DIR)),)
   OCCA_DIR := $(call rmSlash,$(abspath $(dir $(abspath $(lastword $(MAKEFILE_LIST))))/..))
 endif
 
-binPath = $(PROJ_DIR)/bin
-libPath = $(PROJ_DIR)/lib
-objPath = $(PROJ_DIR)/obj
-srcPath = $(PROJ_DIR)/src
-incPath = $(PROJ_DIR)/include
+binPath  = $(PROJ_DIR)/bin
+libPath  = $(PROJ_DIR)/lib
+objPath  = $(PROJ_DIR)/obj
+srcPath  = $(PROJ_DIR)/src
+incPath  = $(PROJ_DIR)/include
+testPath = $(PROJ_DIR)/tests
 #=================================================
 
 

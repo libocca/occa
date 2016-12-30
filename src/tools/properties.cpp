@@ -21,6 +21,7 @@
  */
 
 #include "occa/tools/properties.hpp"
+#include "occa/tools/string.hpp"
 #include "occa/parser/parser.hpp"
 
 namespace occa {

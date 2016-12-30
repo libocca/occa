@@ -7,9 +7,9 @@ endif
 
 #---[ COMPILATION ]-------------------------------
 headers = $(wildcard $(incPath)/*.hpp) $(wildcard $(incPath)/*.tpp)
-sources = $(wildcard $(sPath)/*.cpp)
+sources = $(wildcard $(srcPath)/*.cpp)
 
-objects = $(subst $(sPath)/,$(objPath)/,$(sources:.cpp=.o))
+objects = $(subst $(srcPath)/,$(objPath)/,$(sources:.cpp=.o))
 
 ${PROJ_DIR}/main_f90: ${PROJ_DIR}/main.f90
 	$(fCompiler) $(fCompilerFlags) -o ${PROJ_DIR}/main $(flags) $(objects) ${PROJ_DIR}/main.f90 $(paths) $(links)
