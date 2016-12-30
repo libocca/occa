@@ -27,11 +27,10 @@ namespace occa {
   public:
     trieNode_t root;
 
-    int nodeCount;
-    int baseNodeCount;
+    bool isFrozen;
+    int nodeCount, baseNodeCount;
     char *chars;
-    int *offsets;
-    int *leafCount;
+    int *offsets, *leafCount;
     bool *isLeaf;
 
     trie_t();
@@ -41,12 +40,18 @@ namespace occa {
 
     void freeze();
     int freeze(const trieNode_t &node, int offset);
+    void defrost();
 
     const char* get(const char *c) const;
-    bool has(const char c) const;
-    bool has(const char *c) const;
+    const char* trieGet(const char *c) const;
 
-    void print() const;
+    bool has(const char c) const;
+    bool trieHas(const char c) const;
+
+    bool has(const char *c) const;
+    bool has(const char *c, const int size) const;
+
+    void print();
   };
 }
 #endif
