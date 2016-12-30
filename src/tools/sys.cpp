@@ -712,7 +712,7 @@ namespace occa {
                 const std::string &message) {
 
     std::string header = "---[ " + title + " ]";
-    header += std::string('-', 60 - header.size());
+    header += std::string(60 - header.size(), '-');
 
     std::cout << '\n'
               << header << '\n'
@@ -722,7 +722,7 @@ namespace occa {
     if (message.size()) {
       std::cout << "    Message  : " << message << '\n';
     }
-    std::cout << std::string('=', 60) << '\n';
+    std::cout << std::string(60, '=') << '\n';
 
     if (exitInFailure) {
       throw 1;
