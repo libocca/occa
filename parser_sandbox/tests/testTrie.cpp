@@ -26,7 +26,7 @@ void testInsert(occa::trie_t &trie) {
 }
 
 void testSearch(occa::trie_t &trie) {
-  occa::testing::compare(trie.has("blue")   , true);
+  occa::testing::compare(trie.has("blue")   , false);
   occa::testing::compare(trie.has("boring") , true);
   occa::testing::compare(trie.has("glue")   , true);
   occa::testing::compare(trie.has("good")   , true);
