@@ -123,8 +123,8 @@ namespace occa {
                      int occaInnerId0, int occaInnerId1, int occaInnerId2,
                      int argc, void **args);
 
-    void printStacktrace(const int stackStart = 0, const std::string indent = "");
-    std::string prettyStackSymbol(const char *c);
+    void printStacktrace(const int frameStart = 0, const std::string indent = "");
+    std::string prettyStackSymbol(void *frame, const char *symbol);
     //==================================
   }
 

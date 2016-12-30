@@ -74,12 +74,10 @@ namespace occa {
   namespace sys {
     double currentTime() {
 #if (OCCA_OS & OCCA_LINUX_OS)
-
       timespec ct;
       clock_gettime(CLOCK_MONOTONIC, &ct);
 
       return (double) (ct.tv_sec + (1.0e-9 * ct.tv_nsec));
-
 #elif (OCCA_OS == OCCA_OSX_OS)
 #  ifdef __clang__
       uint64_t ct;
@@ -711,27 +709,29 @@ namespace occa {
 #include "operators/runFunctionFromArguments.cpp"
     }
 
-    void printStacktrace(const int stackStart, const std::string indent) {
+    void printStacktrace(const int frameStart, const std::string indent) {
 #if (OCCA_OS & (OCCA_LINUX_OS | OCCA_OSX_OS))
-      static const int maxStackSize = 1024;
-      static void *stack[maxStackSize];
-      char **stackSymbols;
-      int stackSize = 0;
+      static const int maxFrames = 1024;
+      static void *frames[maxFrames];
+      char **symbols;
+      int frameCount = 0;
 
-      stackSize    = ::backtrace(stack, maxStackSize);
-      stackSymbols = ::backtrace_symbols(stack, stackSize);
-      for (int i = stackStart; i < stackSize; ++i) {
-        std::cout << indent << prettyStackSymbol(stackSymbols[i]) << '\n';
+      frameCount    = ::backtrace(frames, maxFrames);
+      symbols = ::backtrace_symbols(frames, frameCount);
+      for (int i = frameStart; i < frameCount; ++i) {
+        std::cout << indent << prettyStackSymbol(frames[i], symbols[i]) << '\n';
       }
-      ::free(stackSymbols);
+      ::free(symbols);
 #endif
     }
 
-    std::string prettyStackSymbol(const char *c) {
-#if (OCCA_OS == OCCA_OSX_OS)
+    std::string prettyStackSymbol(void *frame, const char *symbol) {
       static size_t maxChars = 1024;
       static char prettyBuffer[1024];
       std::stringstream ss;
+
+#if (OCCA_OS == OCCA_OSX_OS)
+      const char *c = symbol;
       // Skip stack depth
       lex::skipBetweenWhitespaces(c);
       // Get origin
@@ -761,6 +761,32 @@ namespace occa {
          << std::left << std::setw(50) << (status ? function : prettyFunction);
       return ss.str();
 #elif (OCCA_OS == OCCA_LINUX_OS)
+      std::string function;
+
+      Dl_info frameInfo;
+      int status = dladdr(frame, &frameInfo);
+      const char *dl_name = frameInfo.dli_sname;
+
+      if (status && dl_name) {
+        const char *prettyFunction = abi::__cxa_demangle(dl_name,
+                                                         prettyBuffer,
+                                                         &maxChars,
+                                                         &status);
+        if (!status) {
+          function = std::string(prettyFunction);
+        }
+      }
+      if (function.size() == 0) {
+        const char *c = symbol;
+        // Get function name
+        lex::skipWhitespace(c);
+        const char *functionStart = c;
+        lex::skipToWhitespace(c);
+        function = std::string(functionStart, (c - functionStart));
+      }
+      return function;
+#else
+      return std::string(c);
 #endif
     }
   }
