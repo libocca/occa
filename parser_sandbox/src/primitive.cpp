@@ -1,3 +1,5 @@
+#include <cstring>
+
 #include "primitive.hpp"
 
 namespace occa {

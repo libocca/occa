@@ -4,8 +4,9 @@
 #include <iostream>
 #include <sstream>
 #include <iomanip>
-#include <cstdint>
-#include <cstdlib>
+
+#include <stdint.h>
+#include <stdlib.h>
 
 #include "occa/defines.hpp"
 #include "occa/tools/string.hpp"
