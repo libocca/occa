@@ -725,7 +725,7 @@ namespace occa {
     std::cout << std::string('=', 60) << '\n';
 
     if (exitInFailure) {
-      exit(1);
+      throw 1;
     }
   }
 
