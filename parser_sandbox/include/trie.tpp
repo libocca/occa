@@ -110,6 +110,11 @@ namespace occa {
   }
 
   template <class TM>
+  bool trie_t<TM>::empty() const {
+    return (root.leaves.size() == 0);
+  }
+
+  template <class TM>
   typename trie_t<TM>::result_t trie_t<TM>::getFirst(const char *c) const {
     if (!isFrozen) {
       return trieGetFirst(c);

@@ -23,6 +23,8 @@ namespace occa {
   typedef macroMap_t::iterator                 macroMapIterator;
   typedef macroMap_t::const_iterator           cMacroMapIterator;
 
+  typedef void (*processDefine_t)(const char *&c);
+
   class preprocessor_t {
   public:
     enum status_t {
@@ -44,6 +46,29 @@ namespace occa {
     const char *contentMark;
 
     std::stack<status_t> statusStack;
+
+    trie_t<processDefine_t>& getDefineTrie() {
+      static trie_t<processDefine_t> trie;
+      if (trie.empty()) {
+        trie.add("if"    , processIf);
+        trie.add("elif"  , processElif);
+        trie.add("else"  , processElse);
+        trie.add("ifdef" , processIfdef);
+        trie.add("ifndef", processIfndef);
+        trie.add("endif" , processEndif);
+
+        trie.add("define", processDefine);
+        trie.add("undef" , processUndef);
+
+        trie.add("error"  , processError);
+        trie.add("warning", processWarning);
+
+        trie.add("include", processInclude);
+        trie.add("pragma" , processPragma);
+        trie.add("line"   , processLine);
+      }
+      return trie;
+    }
 
     void clear() {
       macros.clear();
@@ -117,75 +142,14 @@ namespace occa {
       occa::skipWhitespace(c);
       const char *cStart = c;
       occa::skipToWhitespace(c);
-      const char *cEnd = c;
+      const std::string directive(cStart, c - cStart);
       skipTo(c, '\n');
-
-      switch (cEnd - cStart) {
-      case 2:
-        if (stringsAreEqual(cStart, (cEnd - cStart), "if")) {
-          addContent(cHash);
-          processIf(c);
-        }
-        break;
-      case 4:
-        if (stringsAreEqual(cStart, (cEnd - cStart), "else")) {
-          addContent(cHash);
-          processElse(c);
-        } else if (stringsAreEqual(cStart, (cEnd - cStart), "elif")) {
-          addContent(cHash);
-          processElif(c);
-        } else if (stringsAreEqual(cStart, (cEnd - cStart), "line")) {
-          processLine(c);
-        }
-        break;
-      case 5:
-        if (stringsAreEqual(cStart, (cEnd - cStart), "error")) {
-          processError(c);
-        } else if (stringsAreEqual(cStart, (cEnd - cStart), "ifdef")) {
-          addContent(cHash);
-          processIfdef(c);
-        } else if (stringsAreEqual(cStart, (cEnd - cStart), "endif")) {
-          addContent(cHash);
-          processEndif(c);
-        } else if (stringsAreEqual(cStart, (cEnd - cStart), "undef")) {
-          addContent(cHash);
-          processUndef(c);
-        }
-        break;
-      case 6:
-        if (stringsAreEqual(cStart, (cEnd - cStart), "define")) {
-          addContent(cHash);
-          processDefine(c);
-        } else if (stringsAreEqual(cStart, (cEnd - cStart), "ifndef")) {
-          addContent(cHash);
-          processIfndef(c);
-        } else if (stringsAreEqual(cStart, (cEnd - cStart), "pragma")) {
-          processPragma(c);
-        }
-        break;
-      case 7:
-        if (stringsAreEqual(cStart, (cEnd - cStart), "include")) {
-          addContent(cHash);
-          processInclude(c);
-        } else if (stringsAreEqual(cStart, (cEnd - cStart), "warning")) {
-          processWarning(c);
-        }
-        break;
-      }
     }
 
     void processIf(const char *&c) {
       status_t status = getStatus();
       if (status & ignoring) {
         statusStack.push(ignoringIf);
-        return;
-      }
-    }
-
-    void processElse(const char *&c) {
-      status_t status = getStatus();
-      if (status & ignoring) {
-        statusStack.push(ignoringAll);
         return;
       }
     }
@@ -198,42 +162,15 @@ namespace occa {
       }
     }
 
-    void processLine(const char *&c) {
+    void processElse(const char *&c) {
       status_t status = getStatus();
       if (status & ignoring) {
-        return;
-      }
-    }
-
-    void processError(const char *&c) {
-      status_t status = getStatus();
-      if (status & ignoring) {
+        statusStack.push(ignoringAll);
         return;
       }
     }
 
     void processIfdef(const char *&c) {
-      status_t status = getStatus();
-      if (status & ignoring) {
-        return;
-      }
-    }
-
-    void processEndif(const char *&c) {
-      status_t status = getStatus();
-      if (status & ignoring) {
-        return;
-      }
-    }
-
-    void processUndef(const char *&c) {
-      status_t status = getStatus();
-      if (status & ignoring) {
-        return;
-      }
-    }
-
-    void processDefine(const char *&c) {
       status_t status = getStatus();
       if (status & ignoring) {
         return;
@@ -247,7 +184,35 @@ namespace occa {
       }
     }
 
-    void processPragma(const char *&c) {
+    void processEndif(const char *&c) {
+      status_t status = getStatus();
+      if (status & ignoring) {
+        return;
+      }
+    }
+
+    void processDefine(const char *&c) {
+      status_t status = getStatus();
+      if (status & ignoring) {
+        return;
+      }
+    }
+
+    void processUndef(const char *&c) {
+      status_t status = getStatus();
+      if (status & ignoring) {
+        return;
+      }
+    }
+
+    void processError(const char *&c) {
+      status_t status = getStatus();
+      if (status & ignoring) {
+        return;
+      }
+    }
+
+    void processWarning(const char *&c) {
       status_t status = getStatus();
       if (status & ignoring) {
         return;
@@ -261,7 +226,14 @@ namespace occa {
       }
     }
 
-    void processWarning(const char *&c) {
+    void processPragma(const char *&c) {
+      status_t status = getStatus();
+      if (status & ignoring) {
+        return;
+      }
+    }
+
+    void processLine(const char *&c) {
       status_t status = getStatus();
       if (status & ignoring) {
         return;

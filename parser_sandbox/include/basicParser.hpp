@@ -166,7 +166,7 @@ namespace occa {
 
   const trie_t& getOperatorTrie() {
     static trie_t trie;
-    if (trie.baseNodeCount == 0) {
+    if (trie.empty()) {
       const precedenceVector_t &prec = getOperatorPrecendence();
       const int levels = (int) prec.size();
       for (int level = 0; level < levels; ++level) {
