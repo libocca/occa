@@ -47,8 +47,7 @@ namespace occa {
 
   template <class TM>
   void trie_t<TM>::add(const std::string &s, const TM &value) {
-    defrost();
-    root.add(s.c_str(), value);
+    add(s.c_str(), value);
   }
 
   template <class TM>
@@ -119,29 +118,38 @@ namespace occa {
     if (!isFrozen) {
       return trieGetFirst(c);
     }
-    const char *cStart = c;
+    const char * const cStart = c;
     int retLength = 0;
     int retValueIdx = -1;
 
     int offset = 0;
     int count = baseNodeCount;
-    while (count) {
+    while (true) {
       const char ci = *c;
+      int start = 0, end = (count - 1);
       bool found = false;
-      for (int i = 0; i < count; ++i) {
-        if (ci == chars[offset + i]) {
+      while (start <= end) {
+        // Faster than storing the value
+#define OCCA_TRIE_MID ((start + end) / 2)
+        const char cmid = chars[offset + OCCA_TRIE_MID];
+        if (ci < cmid) {
+          end = (OCCA_TRIE_MID - 1);
+        } else if (ci > cmid) {
+          start = (OCCA_TRIE_MID + 1);
+        } else {
           ++c;
-          if (0 <= valueIndices[offset]) {
+          if (0 <= valueIndices[offset + OCCA_TRIE_MID]) {
             retLength   = (c - cStart);
-            retValueIdx = valueIndices[offset];
+            retValueIdx = valueIndices[offset + OCCA_TRIE_MID];
           }
 
-          count  = leafCount[offset + i];
-          offset = offsets[offset + i];
+          count  = leafCount[offset + OCCA_TRIE_MID];
+          offset = offsets[offset + OCCA_TRIE_MID];
 
           found = true;
           break;
         }
+#undef OCCA_TRIE_MID
       }
       if (!found) {
         break;
@@ -210,17 +218,8 @@ namespace occa {
   bool trie_t<TM>::has(const char *c, const int size) const {
     OCCA_ERROR("Cannot search for a char* with size: " << size,
                0 < size);
-
-    const bool usedAlloca = (size < 1024);
-    char *c2 = usedAlloca ? ((char*) alloca(size + 1)) : (new char [size + 1]);
-    c2[size] = '\0';
-    ::memcpy(c2, c, size);
-
-    const bool has_ = has(c2);
-    if (!usedAlloca) {
-      delete [] c2;
-    }
-    return has_;
+    result_t result = get(c);
+    return (result.length == size);
   }
 
   template <class TM>
