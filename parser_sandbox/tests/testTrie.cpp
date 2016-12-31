@@ -2,6 +2,11 @@
 
 #include "trie.hpp"
 
+#include <time.h>
+#include <stdlib.h>
+#include "occa/tools/io.hpp"
+#include "occa/tools/lex.hpp"
+
 void testInsert(occa::trie_t<std::string> &trie);
 void testSearch(occa::trie_t<std::string> &trie);
 void testFrozenSearch(occa::trie_t<std::string> &trie);

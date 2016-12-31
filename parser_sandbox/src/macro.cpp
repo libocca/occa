@@ -182,7 +182,10 @@ namespace occa {
               str = str.substr(0, strChars - 1);
             }
           }
-          parts.push_back(str);
+          // Ignore strings only made with # or ##
+          if (str.size()) {
+            parts.push_back(str);
+          }
         }
         // Push back argument part
         parts.push_back(part);
@@ -289,8 +292,8 @@ namespace occa {
         }
       }
       // Separate inputs with spaces
-      if ((i < (partCount - 1))            &&
-          !(part.info & macroInfo::concat) &&
+      if ((i < (partCount - 1))                    &&
+          !(parts[i + 1].info & macroInfo::concat) &&
           (ret.size() != startRetSize)) {
         ret += ' ';
       }

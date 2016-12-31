@@ -38,8 +38,10 @@ void testFunctionMacros() {
                     macro.expand("4, 5, 6)"));
 
   macro.load("FOO(A, B) A##B");
-  OCCA_TEST_COMPARE(" 6 ",
+  OCCA_TEST_COMPARE(" 6",
                     macro.expand(", 6)"));
+  OCCA_TEST_COMPARE("07",
+                    macro.expand("0, 7)"));
 
   macro.load("FOO(A, ...) A __VA_ARGS__");
   OCCA_TEST_COMPARE("7 ",
@@ -48,9 +50,9 @@ void testFunctionMacros() {
                     macro.expand("8, 9, 10,)"));
 
   macro.load("FOO(...) (X, ##__VA_ARGS__)");
-  OCCA_TEST_COMPARE("(X,  11)",
+  OCCA_TEST_COMPARE("(X, 11 )",
                     macro.expand("11,)"));
-  OCCA_TEST_COMPARE("(X,  )",
+  OCCA_TEST_COMPARE("(X, )",
                     macro.expand(")"));
 
   macro.load("FOO(A) #A");
@@ -58,6 +60,6 @@ void testFunctionMacros() {
                     macro.expand("12)"));
 
   macro.load("FOO(A, B) #A##B");
-  OCCA_TEST_COMPARE("\"1\" 3",
+  OCCA_TEST_COMPARE("\"1\"3",
                     macro.expand("1, 3)"));
 }
