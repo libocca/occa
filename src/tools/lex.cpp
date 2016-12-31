@@ -24,7 +24,16 @@
 
 namespace occa {
   namespace lex {
-     const char whitespaceChars[] = " \t\r\n\v\f\0";
+    const char whitespaceChars[] = " \t\r\n\v\f\0";
+
+    bool charIsIn(const char c, const char *delimiters) {
+      while (*delimiters != '\0') {
+        if (c == *(delimiters++)) {
+          return true;
+        }
+      }
+      return false;
+    }
 
     void skipTo(const char *&c, const char delimiter) {
       while (*c != '\0') {
@@ -48,7 +57,37 @@ namespace occa {
       }
     }
 
-    void skipTo(const char *&c, const std::string &match) {
+    void skipTo(const char *&c, const char *delimiters) {
+      while (*c != '\0') {
+        if (charIsIn(*c, delimiters)) {
+          return;
+        }
+        ++c;
+      }
+    }
+
+    void skipTo(const char *&c, const char *delimiters, const char escapeChar) {
+      while (*c != '\0') {
+        if (*c == escapeChar) {
+          c += 2;
+          continue;
+        }
+        if (charIsIn(*c, delimiters)) {
+          return;
+        }
+        ++c;
+      }
+    }
+
+    void skipTo(const char *&c, const std::string &delimiters) {
+      skipTo(c, delimiters.c_str());
+    }
+
+    void skipTo(const char *&c, const std::string &delimiters, const char escapeChar) {
+      skipTo(c, delimiters.c_str(), escapeChar);
+    }
+
+    void skipToMatch(const char *&c, const std::string &match) {
       const size_t chars = match.size();
       const char *d      = match.c_str();
 
@@ -63,7 +102,7 @@ namespace occa {
       }
     }
 
-    void skipTo(const char *&c, const std::string &match, const char escapeChar) {
+    void skipToMatch(const char *&c, const std::string &match, const char escapeChar) {
       const size_t chars = match.size();
       const char *d      = match.c_str();
 
@@ -82,45 +121,36 @@ namespace occa {
       }
     }
 
-    void skipToDelimiter(const char *&c, const std::string &delimiters) {
-      const size_t chars = delimiters.size();
-      const char *d      = delimiters.c_str();
-
+    void skipFrom(const char *&c, const char *delimiters) {
       while (*c != '\0') {
-        for (size_t i = 0; i < chars; ++i) {
-          if (*c == d[i]) {
-            return;
-          }
+        if (charIsIn(*c, delimiters)) {
+          ++c;
+          continue;
         }
-        ++c;
+        return;
       }
     }
 
-    void skipToDelimiter(const char *&c, const std::string &delimiters, const char escapeChar) {
-      const size_t chars = delimiters.size();
-      const char *d      = delimiters.c_str();
-
+    void skipFrom(const char *&c, const char *delimiters, const char escapeChar) {
       while (*c != '\0') {
         if (*c == escapeChar) {
           c += 2;
           continue;
         }
-        for (size_t i = 0; i < chars; ++i) {
-          if (*c == d[i]) {
-            return;
-          }
+        if (charIsIn(*c, delimiters)) {
+          ++c;
+          continue;
         }
-        ++c;
+        return;
       }
     }
 
-    bool charIsIn(const char c, const char *delimiters) {
-      while (*delimiters != '\0') {
-        if (c == *(delimiters++)) {
-          return true;
-        }
-      }
-      return false;
+    void skipFrom(const char *&c, const std::string &delimiters) {
+      skipFrom(c, delimiters.c_str());
+    }
+
+    void skipFrom(const char *&c, const std::string &delimiters, const char escapeChar) {
+      skipFrom(c, delimiters.c_str(), escapeChar);
     }
 
     bool isWhitespace(const char c) {
@@ -128,17 +158,11 @@ namespace occa {
     }
 
     void skipWhitespace(const char *&c) {
-      while (charIsIn(*c, whitespaceChars) &&
-             (*c != '\0')) {
-        ++c;
-      }
+      skipFrom(c, whitespaceChars);
     }
 
     void skipToWhitespace(const char *&c) {
-      while (!charIsIn(*c, whitespaceChars) &&
-             (*c != '\0')) {
-        ++c;
-      }
+      skipTo(c, whitespaceChars);
     }
 
     void skipBetweenWhitespaces(const char *&c) {

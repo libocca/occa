@@ -1,21 +1,30 @@
+#include "occa/defines.hpp"
+#include "occa/tools/sys.hpp"
+
+#define OCCA_TEST_COMPARE(a, b) OCCA_ERROR("Comparison Failed", \
+                                           occa::test::compare(a, b));
+
 namespace occa {
-  namespace testing {
+  namespace test {
     template <class TM1, class TM2>
-    void compare(const TM1 &a, const TM2 &b) {
-      OCCA_ERROR("Comparing Failed",
-                 a == b);
+    bool compare(const TM1 &a, const TM2 &b) {
+      if (a != b) {
+        std::cerr << "a: " << a << '\n'
+                  << "b: " << b;
+      }
+      return (a == b);
     }
 
     template <>
-    void compare<float, float>(const float &a, const float &b);
+    bool compare<float, float>(const float &a, const float &b);
 
     template <>
-    void compare<double, float>(const double &a, const float &b);
+    bool compare<double, float>(const double &a, const float &b);
 
     template <>
-    void compare<float, double>(const float &a, const double &b);
+    bool compare<float, double>(const float &a, const double &b);
 
     template <>
-    void compare<double, double>(const double &a, const double &b);
+    bool compare<double, double>(const double &a, const double &b);
   }
 }

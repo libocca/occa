@@ -34,16 +34,32 @@ namespace occa {
   namespace lex {
     extern const char whitespaceChars[];
 
+    bool charIsIn(const char c, const char *delimiters);
+
     void skipTo(const char *&c, const char delimiter);
     void skipTo(const char *&c, const char delimiter, const char escapeChar);
 
-    void skipTo(const char *&c, const std::string &match);
-    void skipTo(const char *&c, const std::string &match, const char escapeChar);
+    void skipTo(const char *&c, const char *delimters);
+    void skipTo(const char *&c, const char *delimters, const char escapeChar);
+    void skipTo(const char *&c, const std::string &delimiters);
+    void skipTo(const char *&c, const std::string &delimiters, const char escapeChar);
 
-    void skipToDelimiter(const char *&c, const std::string &delimiters);
-    void skipToDelimiter(const char *&c, const std::string &delimiters, const char escapeChar);
+    void skipToMatch(const char *&c, const std::string &match);
+    void skipToMatch(const char *&c, const std::string &match, const char escapeChar);
 
-    bool charIsIn(const char c, const char *delimiters);
+    void skipFrom(const char *&c, const char *delimters);
+    void skipFrom(const char *&c, const char *delimters, const char escapeChar);
+    void skipFrom(const char *&c, const std::string &delimiters);
+    void skipFrom(const char *&c, const std::string &delimiters, const char escapeChar);
+
+    inline bool isADigit(const char c) {
+      return (('0' <= c) && (c <= '9'));
+    }
+
+    inline bool isAlpha(const char c) {
+      return ((('a' <= c) && (c <= 'z')) ||
+              (('A' <= c) && (c <= 'Z')));
+    }
 
     bool isWhitespace(const char c);
     void skipWhitespace(const char *&c);
