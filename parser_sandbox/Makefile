@@ -14,7 +14,6 @@ objects = $(subst $(srcPath)/,$(objPath)/,$(sources:.cpp=.o))
 tests   = $(subst $(testPath)/,$(testPath)/bin/,$(testSources:.cpp=))
 
 flags += -I$(incPath)
-compilerFlags += -rdynamic
 
 executables = ${PROJ_DIR}/main
 
