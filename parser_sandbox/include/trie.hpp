@@ -72,6 +72,8 @@ namespace occa {
     int freeze(const trieNode_t &node, int offset);
     void defrost();
 
+    bool empty() const;
+
     result_t getFirst(const char *c) const;
     result_t trieGetFirst(const char *c) const;
 
