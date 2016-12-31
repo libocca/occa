@@ -57,7 +57,7 @@ namespace occa {
     trieNode_t root;
     std::vector<TM> values;
 
-    bool isFrozen;
+    bool isFrozen, autoFreeze;
     int nodeCount, baseNodeCount;
     char *chars;
     int *offsets, *leafCount;

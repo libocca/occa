@@ -92,13 +92,12 @@ void testRefreeze(occa::trie_t<std::string> &trie) {
   OCCA_TEST_COMPARE(trie.has("red"), false);
 
   trie.add("red", "red");
-  trie.add("blue", "red");
   OCCA_TEST_COMPARE(trie.isFrozen, false);
   OCCA_TEST_COMPARE(trie.has("red"), true);
   OCCA_TEST_COMPARE(trie.get("red").value, "red");
-  OCCA_TEST_COMPARE(trie.get("blue").value, "red");
 
-  trie.freeze();
+  trie.autoFreeze = true;
+  trie.add("blue", "red");
   OCCA_TEST_COMPARE(trie.isFrozen, true);
   OCCA_TEST_COMPARE(trie.has("red"), true);
   OCCA_TEST_COMPARE(trie.get("red").value, "red");

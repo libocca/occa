@@ -43,6 +43,9 @@ namespace occa {
       values[valueIdx] = value;
     }
     root.add(c, valueIdx);
+    if (autoFreeze) {
+      freeze();
+    }
   }
 
   template <class TM>
