@@ -11,7 +11,6 @@
 
 #include "macro.hpp"
 
-#  if 0
 namespace occa {
   typedef std::vector<macro_t>                 macroVector_t;
 
@@ -241,5 +240,4 @@ namespace occa {
     }
   };
 }
-#  endif
 #endif
