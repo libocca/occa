@@ -5,6 +5,8 @@
 #include <vector>
 #include <map>
 
+#include <limits.h>
+
 namespace occa {
   class trieNode_t;
   typedef std::map<char, trieNode_t>    trieNodeMap_t;
@@ -21,6 +23,10 @@ namespace occa {
 
       result_t();
       result_t(const int length_, const int valueIdx);
+
+      bool success() const {
+        return (0 <= valueIdx);
+      }
     };
 
     int valueIdx;
@@ -33,8 +39,8 @@ namespace occa {
 
     int nodeCount() const;
     int getValueIdx(const char *c) const;
-    result_t get(const char *c) const;
     result_t get(const char *c, const int length) const;
+    result_t get(const char *c, const int cIdx, const int length) const;
   };
   //====================================
 
@@ -54,7 +60,8 @@ namespace occa {
                const int length_ = 0,
                const int valueIdx_ = -1);
 
-      const TM& value() const;
+      inline bool success() const;
+      inline const TM& value() const;
     };
     //==================================
 
@@ -79,13 +86,13 @@ namespace occa {
     int freeze(const trieNode_t &node, int offset);
     void defrost();
 
-    result_t getFirst(const char *c) const;
-    result_t trieGetFirst(const char *c) const;
+    result_t getFirst(const char *c, const int length = INT_MAX) const;
+    result_t trieGetFirst(const char *c, const int length) const;
     inline result_t getFirst(const std::string &s) const {
-      return getFirst(s.c_str());
+      return getFirst(s.c_str(), s.size());
     }
 
-    result_t get(const char *c) const;
+    result_t get(const char *c, const int length = INT_MAX) const;
     inline result_t get(const std::string &s) const {
       return get(s.c_str());
     }

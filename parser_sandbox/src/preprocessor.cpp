@@ -157,11 +157,11 @@ namespace occa {
     updatingSkipTo(c, delimiters);
     const char *cEnd = c;
 
-    directiveTrie_t::result_t result = directives.get(cStart);
+    directiveTrie_t::result_t result = directives.get(cStart, cEnd - cStart);
     OCCA_ERROR("Directive \""
                << std::string(cStart, cEnd - cStart)
                << "\" is not defined",
-               result.length == (cEnd - cStart));
+               0 <= result.valueIdx);
 
     // Parse #if[,def], #el[se,if], #endif even when ignored
     // For some reason the preprocessor honors ignored #if/#el/#endif stacks
@@ -258,8 +258,8 @@ namespace occa {
     const char *cEnd = c;
     updatingSkipTo(c, '\n', '\\');
 
-    macroTrie_t::result_t result = sourceMacros.get(cStart);
-    if (result.length == (cEnd - cStart)) {
+    macroTrie_t::result_t result = sourceMacros.get(cStart, cEnd - cStart);
+    if (0 <= result.valueIdx) {
       macro_t &macro = sourceMacros.values[result.valueIdx];
       macro.undefinedLine = thisLineNumber;
     } else {

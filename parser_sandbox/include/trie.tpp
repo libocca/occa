@@ -20,6 +20,11 @@ namespace occa {
     valueIdx(valueIdx_) {}
 
   template <class TM>
+  bool trie_t<TM>::result_t::success() const {
+    return (0 <= valueIdx);
+  }
+
+  template <class TM>
   const TM& trie_t<TM>::result_t::value() const {
     return trie->values[valueIdx];
   }
@@ -131,9 +136,9 @@ namespace occa {
   }
 
   template <class TM>
-  typename trie_t<TM>::result_t trie_t<TM>::getFirst(const char *c) const {
+  typename trie_t<TM>::result_t trie_t<TM>::getFirst(const char *c, const int length) const {
     if (!isFrozen) {
-      return trieGetFirst(c);
+      return trieGetFirst(c, length);
     }
     const char * const cStart = c;
     int retLength = 0;
@@ -141,7 +146,7 @@ namespace occa {
 
     int offset = 0;
     int count = baseNodeCount;
-    while (true) {
+    for (int i = 0; i < length; ++i) {
       const char ci = *c;
       int start = 0, end = (count - 1);
       bool found = false;
@@ -180,19 +185,19 @@ namespace occa {
   }
 
   template <class TM>
-  typename trie_t<TM>::result_t trie_t<TM>::trieGetFirst(const char *c) const {
-    trieNode_t::result_t result = root.get(c);
-
-    if (0 <= result.valueIdx) {
+  typename trie_t<TM>::result_t trie_t<TM>::trieGetFirst(const char *c, const int length) const {
+    trieNode_t::result_t result = root.get(c, length);
+    if (result.success()) {
       return result_t(this, result.length, result.valueIdx);
     }
     return result_t(this);
   }
 
   template <class TM>
-  typename trie_t<TM>::result_t trie_t<TM>::get(const char *c) const {
-    trie_t<TM>::result_t result = getFirst(c);
-    if (strlen(c) != (size_t) result.length) {
+  typename trie_t<TM>::result_t trie_t<TM>::get(const char *c, const int length) const {
+    const int length_ = (length == INT_MAX) ? strlen(c) : length;
+    trie_t<TM>::result_t result = getFirst(c, length_);
+    if (result.length != length_) {
       result.length = 0;
       result.valueIdx = -1;
     }
@@ -235,8 +240,7 @@ namespace occa {
   bool trie_t<TM>::has(const char *c, const int size) const {
     OCCA_ERROR("Cannot search for a char* with size: " << size,
                0 < size);
-    result_t result = get(c);
-    return (result.length == size);
+    return (get(c, size).success());
   }
 
   template <class TM>
