@@ -1,21 +1,27 @@
+#include "occa/tools/env.hpp"
 #include "occa/tools/testing.hpp"
 
 #include "preprocessor.hpp"
 
 void testIfElseDefines();
 void testErrorDefines();
+void testLineDefine();
 void testFunctionMacros();
 void testEval();
 
 int main(const int argc, const char **argv) {
+  testLineDefine();
+#if 0
   testIfElseDefines();
   testErrorDefines();
   testFunctionMacros();
   testEval();
+#endif
 }
 
+#if 0
 void testIfElseDefines() {
-  preprocessor_t preprocessor;
+  occa::preprocessor_t preprocessor;
   OCCA_TEST_COMPARE("",
                     preprocessor.process("#ifdef FOO\n"
                                          "1\n"
@@ -94,7 +100,7 @@ void testIfElseDefines() {
 }
 
 void testErrorDefines() {
-  preprocessor_t preprocessor;
+  occa::preprocessor_t preprocessor;
   preprocessor.props["exitOnError"] = false;
 
   preprocessor.process("#error \"Error\"\n");
@@ -103,9 +109,24 @@ void testErrorDefines() {
   preprocessor.process("#warning \"Warning\"\n");
   OCCA_TEST_COMPARE(1, preprocessor.warnings.size());
 }
+#endif
 
+void testLineDefine() {
+  occa::preprocessor_t preprocessor;
+  preprocessor.process("#line 10\n");
+  OCCA_TEST_COMPARE(preprocessor.lineNumber,
+                    11);
+
+  preprocessor.process("#line 20 \"foo\"\n");
+  OCCA_TEST_COMPARE(21,
+                    preprocessor.lineNumber);
+  OCCA_TEST_COMPARE(occa::env::PWD + "foo",
+                    preprocessor.filename);
+}
+
+#if 0
 void testFunctionMacros() {
-  preprocessor_t preprocessor;
+  occa::preprocessor_t preprocessor;
   preprocessor.props["exitOnError"] = false;
 
   preprocessor.process("#define FOO(A) A\n");
@@ -159,7 +180,7 @@ void testFunctionMacros() {
 }
 
 void testEval() {
-  preprocessor_t preprocessor;
+  occa::preprocessor_t preprocessor;
   preprocessor.props["exitOnError"] = false;
 
   // Types
@@ -226,3 +247,4 @@ void testEval() {
   OCCA_TEST_COMPARE(true, x != x);
   */
 }
+#endif

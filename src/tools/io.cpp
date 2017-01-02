@@ -108,6 +108,20 @@ namespace occa {
     }
     //  ================================
 
+    //  ---[ Header File Opener ]-------
+    headerFileOpener_t::headerFileOpener_t() {}
+
+    bool headerFileOpener_t::handles(const std::string &filename) {
+      return ((2 <= filename.size()) &&
+              (filename[0] == '"')   &&
+              (filename[filename.size() - 1] == '"'));
+    }
+
+    std::string headerFileOpener_t::expand(const std::string &filename) {
+      return filename.substr(1, filename.size() - 2);
+    }
+    //  ================================
+
     //  ---[ System Header File Opener ]---
     systemHeaderFileOpener_t::systemHeaderFileOpener_t() {}
 
@@ -118,10 +132,9 @@ namespace occa {
     }
 
     std::string systemHeaderFileOpener_t::expand(const std::string &filename) {
-      return filename;
+      return filename.substr(1, filename.size() - 2);
     }
     //  ================================
-
     //==================================
 
     const std::string& cachePath() {

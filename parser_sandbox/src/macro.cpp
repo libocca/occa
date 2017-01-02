@@ -13,6 +13,10 @@ namespace occa {
   macroPart_t::macroPart_t(const int info_) :
     info(info_) {}
 
+  macroPart_t::macroPart_t(const char *c) :
+    info(macroInfo::string),
+    str(c) {}
+
   macroPart_t::macroPart_t(const std::string &str_) :
     info(macroInfo::string),
     str(str_) {}
@@ -25,34 +29,27 @@ namespace occa {
     definedLine(-1),
     undefinedLine(-1) {}
 
+  macro_t::macro_t(char *c) :
+    definedLine(-1),
+    undefinedLine(-1) {
+
+    load(c);
+  }
+
   macro_t::macro_t(const char *c) :
     definedLine(-1),
     undefinedLine(-1) {
 
-    load(c, strlen(c));
+    std::string s(c);
+    load(&(s[0]));
   }
 
-  macro_t::macro_t(const char *c, const int chars) :
-    definedLine(-1),
-    undefinedLine(-1) {
-
-    load(c, chars);
+  void macro_t::load(const char *c) {
+    std::string s(c);
+    load(&(s[0]));
   }
 
-  macro_t::macro_t(const std::string &s) :
-    definedLine(-1),
-    undefinedLine(-1) {
-
-    load(s.c_str(), s.size());
-  }
-
-  void macro_t::load(const std::string &s) {
-    load(s.c_str(), s.size());
-  }
-
-  void macro_t::load(const char *c_, const int chars) {
-    std::string chunk(c_, chars);
-    const char *c = chunk.c_str();
+  void macro_t::load(char *c) {
     clear();
 
     lex::skipWhitespace(c);
@@ -61,12 +58,12 @@ namespace occa {
     }
     loadName(c);
     if (*c != '(') {
-      parts.push_back(chunk.substr(c - chunk.c_str()));
+      parts.push_back(c);
       return;
     }
     macroPartVector_t argNames;
     // Skip '('
-    loadArgs(++c, argNames);
+    loadArgs(c, argNames);
     argc = (int) argNames.size();
 
     // Check and remove ... from arguments
@@ -84,36 +81,43 @@ namespace occa {
     setParts(++c, argNames);
   }
 
-  void macro_t::loadName(const char *&c) {
+  void macro_t::loadName(char *&c) {
     static std::string delimiters;
     if (delimiters.size() == 0) {
       delimiters = lex::whitespaceChars;
       delimiters += '(';
     }
-    const char *nameStart = c;
+    char *nameStart = c;
     lex::skipTo(c, delimiters);
     name = std::string(nameStart, c - nameStart);
     lex::skipWhitespace(c);
   }
 
-  void macro_t::loadArgs(const char *&c, macroPartVector_t &argNames, const bool keepWhitespace) const {
-    static std::string delimiters(",)");
+  void macro_t::loadArgs(char *&c, macroPartVector_t &argNames, const bool keepWhitespace) const {
+    static std::string startDelimiters = std::string(lex::whitespaceChars) + "(";
+    static std::string endDelimiters(",)");
 
+    lex::skipTo(c, startDelimiters, '\\');
+    if (*c != '(') {
+      return;
+    }
+
+    ++c;
     lex::skipWhitespace(c);
-    const char *argsStart = c;
+    char *argsStart = c;
     lex::skipTo(c, ')');
-    const char *argsEnd = c;
+    char *argsEnd = c;
     OCCA_ERROR("Missing closing \")\"",
                *argsEnd == ')');
 
     c = argsStart;
     while(c < argsEnd) {
       c += (*c == ',');
-      const char *start = c;
+      char *start = c;
       lex::skipWhitespace(c);
-      const char *argStart = c;
-      lex::skipTo(c, delimiters);
-      const char *argEnd = c;
+      char *argStart = c;
+      lex::quotedSkipTo(c, endDelimiters);
+      char *argEnd = c;
 
       macroPart_t arg;
       arg.str = std::string(argStart, argEnd - argStart);
@@ -131,7 +135,7 @@ namespace occa {
     lex::skipWhitespace(c);
   }
 
-  void macro_t::setParts(const char *&c, macroPartVector_t &argNames) {
+  void macro_t::setParts(char *&c, macroPartVector_t &argNames) {
     static std::string delimiters;
     // Setup word delimeters [a-zA-Z0-9]
     if (delimiters.size() == 0) {
@@ -148,10 +152,10 @@ namespace occa {
     }
 
     lex::skipWhitespace(c);
-    const char *cStart = c;
+    char *cStart = c;
     while (*c != '\0') {
       lex::skipTo(c, delimiters);
-      const char *partStart = c;
+      char *partStart = c;
       lex::skipFrom(c, delimiters);
 
       const int partSize = (c - partStart);
@@ -220,33 +224,22 @@ namespace occa {
     undefinedLine = -1;
   }
 
-  std::string macro_t::expand() const {
+  std::string macro_t::expand(const char *c) const {
+    std::string s(c);
+    char *c2 = &(s[0]);
+    return expand(c2);
+  }
+
+  std::string macro_t::expand(char *&c) const {
     const int partCount = (int) parts.size();
     if (partCount == 0) {
       return "";
-    }
-    if (argc == 0) {
+    } else if ((argc == 0) && !hasVarArgs) {
       return parts[0].str;
     }
-    return expand(macroPartVector_t());
-  }
 
-  std::string macro_t::expand(const char *c, const int chars) const {
-    return expand(std::string(c, chars));
-  }
-
-  std::string macro_t::expand(const std::string &s) const {
-    const char *c = s.c_str();
     macroPartVector_t args;
     loadArgs(c, args, true);
-    return expand(args);
-  }
-
-  std::string macro_t::expand(const macroPartVector_t &args) const {
-    const int partCount = (int) parts.size();
-    if (partCount == 0) {
-      return "";
-    }
 
     const int inputArgc = (int) args.size();
     std::string ret;

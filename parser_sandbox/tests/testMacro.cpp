@@ -13,15 +13,15 @@ int main(const int argc, const char **argv) {
 void testPlainMacros() {
   occa::macro_t macro("A");
   OCCA_TEST_COMPARE(macro.name, "A");
-  OCCA_TEST_COMPARE(macro.expand(), "");
+  OCCA_TEST_COMPARE(macro.expand(""), "");
 
   macro.load("B 1 2 3");
   OCCA_TEST_COMPARE(macro.name, "B");
-  OCCA_TEST_COMPARE(macro.expand(), "1 2 3");
+  OCCA_TEST_COMPARE(macro.expand(""), "1 2 3");
 
   macro.load("");
   OCCA_TEST_COMPARE(macro.name, "");
-  OCCA_TEST_COMPARE(macro.expand(), "");
+  OCCA_TEST_COMPARE(macro.expand(""), "");
 }
 
 void testFunctionMacros() {
