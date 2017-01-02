@@ -62,9 +62,14 @@ namespace occa {
     }
 
     bool isWhitespace(const char c);
+
     void skipWhitespace(const char *&c);
+    void skipWhitespace(const char *&c, const char escapeChar);
+
     void skipToWhitespace(const char *&c);
+
     void skipBetweenWhitespaces(const char *&c);
+    void skipBetweenWhitespaces(const char *&c, const char escapeChar);
   }
 }
 #endif

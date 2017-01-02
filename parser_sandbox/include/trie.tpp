@@ -12,25 +12,41 @@ namespace occa {
   trie_t<TM>::result_t::result_t() {}
 
   template <class TM>
-  trie_t<TM>::result_t::result_t(const int length_, const TM &value_) :
+  trie_t<TM>::result_t::result_t(const trie_t<TM> *trie_,
+                                 const int length_,
+                                 const int valueIdx_) :
+    trie(trie_),
     length(length_),
-    value(value_) {}
+    valueIdx(valueIdx_) {}
 
   template <class TM>
-  trie_t<TM>::result_t::operator bool() {
-    return (length != 0);
+  const TM& trie_t<TM>::result_t::value() const {
+    return trie->values[valueIdx];
   }
   //  ==================================
 
   template <class TM>
   trie_t<TM>::trie_t() :
     isFrozen(false),
+    autoFreeze(true),
     nodeCount(0),
     baseNodeCount(0),
     chars(NULL),
     offsets(NULL),
     leafCount(NULL),
     valueIndices(NULL) {}
+
+  template <class TM>
+  void trie_t<TM>::clear() {
+    root.leaves.clear();
+    values.clear();
+    defrost();
+  }
+
+  template <class TM>
+  bool trie_t<TM>::isEmpty() const {
+    return (root.leaves.size() == 0);
+  }
 
   template <class TM>
   void trie_t<TM>::add(const char *c, const TM &value) {
@@ -97,6 +113,9 @@ namespace occa {
   template <class TM>
   void trie_t<TM>::defrost() {
     if (isFrozen) {
+      nodeCount     = 0;
+      baseNodeCount = 0;
+
       delete [] chars;
       delete [] offsets;
       delete [] leafCount;
@@ -109,11 +128,6 @@ namespace occa {
 
       isFrozen = false;
     }
-  }
-
-  template <class TM>
-  bool trie_t<TM>::empty() const {
-    return (root.leaves.size() == 0);
   }
 
   template <class TM>
@@ -160,9 +174,9 @@ namespace occa {
     }
 
     if (retLength) {
-      return result_t(retLength, values[retValueIdx]);
+      return result_t(this, retLength, retValueIdx);
     }
-    return result_t(0);
+    return result_t(this);
   }
 
   template <class TM>
@@ -170,9 +184,9 @@ namespace occa {
     trieNode_t::result_t result = root.get(c);
 
     if (0 <= result.valueIdx) {
-      return result_t(result.length, values[result.valueIdx]);
+      return result_t(this, result.length, result.valueIdx);
     }
-    return result_t(0);
+    return result_t(this);
   }
 
   template <class TM>
@@ -180,7 +194,7 @@ namespace occa {
     trie_t<TM>::result_t result = getFirst(c);
     if (strlen(c) != (size_t) result.length) {
       result.length = 0;
-      result.value  = TM();
+      result.valueIdx = -1;
     }
     return result;
   }

@@ -42,6 +42,7 @@ namespace occa {
   typedef strToModeMap_t::iterator      strToModeMapIterator;
 
   strToModeMap_t& modeMap();
+  void registerMode(mode_v* mode);
   bool modeIsEnabled(const std::string &mode);
 
   mode_v* getMode(const occa::properties &props);
@@ -83,7 +84,7 @@ namespace occa {
   public:
     mode(std::string modeName_) {
       modeName = modeName_;
-      modeMap()[modeName] = this;
+      registerMode(this);
       modeInfo_t().init();
     }
 

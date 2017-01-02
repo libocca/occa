@@ -46,7 +46,6 @@ namespace occa {
       initSettings();
       initSignalHandling();
       initEnvironment();
-      registerModes();
       registerFileOpeners();
 
       isInitialized = true;
@@ -180,12 +179,9 @@ namespace occa {
       tmpOIP.swap(env::OCCA_INCLUDE_PATH);
     }
 
-    void registerModes() {
-
-    }
-
     void registerFileOpeners() {
       io::fileOpener::add(new io::occaFileOpener_t());
+      io::fileOpener::add(new io::systemHeaderFileOpener_t());
     }
 
     std::string var(const std::string &varName) {
