@@ -181,6 +181,7 @@ namespace occa {
 
     void registerFileOpeners() {
       io::fileOpener::add(new io::occaFileOpener_t());
+      io::fileOpener::add(new io::headerFileOpener_t());
       io::fileOpener::add(new io::systemHeaderFileOpener_t());
     }
 

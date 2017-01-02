@@ -85,6 +85,15 @@ namespace occa {
     };
     //  ================================
 
+    //  ---[ Header File Opener ]-------
+    class headerFileOpener_t : public fileOpener {
+    public:
+      headerFileOpener_t();
+      bool handles(const std::string &filename);
+      std::string expand(const std::string &filename);
+    };
+    //  ================================
+
     //  ---[ System Header File Opener ]---
     class systemHeaderFileOpener_t : public fileOpener {
     public:

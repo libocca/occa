@@ -27,6 +27,7 @@ namespace occa {
     int argPos;
 
     macroPart_t(const int info_ = 0);
+    macroPart_t(const char *c);
     macroPart_t(const std::string &str_);
   };
   //====================================
@@ -44,21 +45,19 @@ namespace occa {
     int definedLine, undefinedLine;
 
     macro_t();
+    macro_t(char *c);
     macro_t(const char *c);
-    macro_t(const char *c, const int chars);
-    macro_t(const std::string &s);
 
-    void load(const std::string &s);
-    void load(const char *c, const int chars);
+    void load(char *c);
+    void load(const char *c);
 
-    void loadName(const char *&c);
-    void loadArgs(const char *&c, macroPartVector_t &argNames, const bool keepWhitespace = false) const;
-    void setParts(const char *&c, macroPartVector_t &argNames);
+    void loadName(char *&c);
+    void loadArgs(char *&c, macroPartVector_t &argNames, const bool keepWhitespace = false) const;
+    void setParts(char *&c, macroPartVector_t &argNames);
 
     void clear();
-    std::string expand() const;
-    std::string expand(const char *c, const int chars) const;
-    std::string expand(const std::string &s) const;
+    std::string expand(const char *c) const;
+    std::string expand(char *&c) const;
     std::string expand(const macroPartVector_t &args) const;
   };
 

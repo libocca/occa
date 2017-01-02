@@ -24,7 +24,13 @@
 
 namespace occa {
   namespace lex {
-    const char whitespaceChars[] = " \t\r\n\v\f\0";
+    const char whitespaceChars[] = " \t\r\n\v\f";
+    const char alphaChars[]    = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    const char numChars[]      = "0123456789";
+    const char alphanumChars[] = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+
+    const char quote1Delimiters[] = "\n'";
+    const char quote2Delimiters[] = "\n\"";
 
     bool charIsIn(const char c, const char *delimiters) {
       while (*delimiters != '\0') {
@@ -37,7 +43,7 @@ namespace occa {
 
     void skipTo(const char *&c, const char delimiter) {
       while (*c != '\0') {
-        if(*c == delimiter) {
+        if (*c == delimiter) {
           return;
         }
         ++c;
@@ -47,10 +53,10 @@ namespace occa {
     void skipTo(const char *&c, const char delimiter, const char escapeChar) {
       while (*c != '\0') {
         if (*c == escapeChar) {
-          c += 2;
+          c += 1 + (c[1] != '\0');
           continue;
         }
-        if(*c == delimiter) {
+        if (*c == delimiter) {
           return;
         }
         ++c;
@@ -69,7 +75,7 @@ namespace occa {
     void skipTo(const char *&c, const char *delimiters, const char escapeChar) {
       while (*c != '\0') {
         if (*c == escapeChar) {
-          c += 2;
+          c += 1 + (c[1] != '\0');
           continue;
         }
         if (charIsIn(*c, delimiters)) {
@@ -85,6 +91,53 @@ namespace occa {
 
     void skipTo(const char *&c, const std::string &delimiters, const char escapeChar) {
       skipTo(c, delimiters.c_str(), escapeChar);
+    }
+
+    void quotedSkipTo(const char *&c, const char delimiter) {
+      while (*c != '\0') {
+        if (*c == '\\') {
+          c += 1 + (c[1] != '\0');
+          continue;
+        }
+        if (*c == delimiter) {
+          return;
+        } else if (*c == '\'') {
+          ++c;
+          skipTo(c, quote1Delimiters, '\\');
+          c += (*c == '\'');
+        } else if (*c == '"') {
+          ++c;
+          skipTo(c, quote2Delimiters, '\\');
+          c += (*c == '"');
+        } else {
+          ++c;
+        }
+      }
+    }
+
+    void quotedSkipTo(const char *&c, const char *delimiters) {
+      while (*c != '\0') {
+        if (*c == '\\') {
+          c += 1 + (c[1] != '\0');
+          continue;
+        }
+        if (charIsIn(*c, delimiters)) {
+          return;
+        } else if (*c == '\'') {
+          ++c;
+          skipTo(c, quote1Delimiters, '\\');
+          c += (*c == '\'');
+        } else if (*c == '"') {
+          ++c;
+          skipTo(c, quote2Delimiters, '\\');
+          c += (*c == '"');
+        }
+        ++c;
+      }
+    }
+
+    void quotedSkipTo(const char *&c, const std::string &delimiters) {
+      quotedSkipTo(c, delimiters.c_str());
     }
 
     void skipToMatch(const char *&c, const std::string &match) {
@@ -108,7 +161,7 @@ namespace occa {
 
       while (*c != '\0') {
         if (*c == escapeChar) {
-          c += 2;
+          c += 1 + (c[1] != '\0');
           continue;
         }
         for (size_t i = 0; i < chars; ++i) {
@@ -134,7 +187,7 @@ namespace occa {
     void skipFrom(const char *&c, const char *delimiters, const char escapeChar) {
       while (*c != '\0') {
         if (*c == escapeChar) {
-          c += 2;
+          c += 1 + (c[1] != '\0');
           continue;
         }
         if (charIsIn(*c, delimiters)) {
@@ -179,6 +232,46 @@ namespace occa {
       skipWhitespace(c, escapeChar);
       skipToWhitespace(c);
       skipWhitespace(c, escapeChar);
+    }
+
+    void strip(const char *&start, const char *&end) {
+      if (end <= start) {
+        return;
+      }
+      while ((*start != '\0') &&
+             isWhitespace(*start)) {
+        ++start;
+      }
+      while ((start < end) &&
+             isWhitespace(*end)) {
+        --end;
+      }
+    }
+
+    void strip(const char *&start, const char *&end, const char escapeChar) {
+      if (end <= start) {
+        return;
+      }
+      while (*start != '\0') {
+        if (isWhitespace(*start)) {
+          ++start;
+        } else if ((*start == escapeChar) &&
+                   isWhitespace(start[1])) {
+          start += 2;
+        } else {
+          break;
+        }
+      }
+      while (start < end) {
+        if (isWhitespace(*end)) {
+          --end;
+        } else if ((*end == escapeChar) &&
+                   isWhitespace(end[1])) {
+          end -= 2;
+        } else {
+          break;
+        }
+      }
     }
   }
 }

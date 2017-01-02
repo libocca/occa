@@ -33,26 +33,95 @@
 namespace occa {
   namespace lex {
     extern const char whitespaceChars[];
+    extern const char alphaChars[];
+    extern const char numChars[];
+    extern const char alphanumChars[];
+
+    extern const char quote1Delimiters[];
+    extern const char quote2Delimiters[];
 
     bool charIsIn(const char c, const char *delimiters);
 
     void skipTo(const char *&c, const char delimiter);
     void skipTo(const char *&c, const char delimiter, const char escapeChar);
-
-    void skipTo(const char *&c, const char *delimters);
-    void skipTo(const char *&c, const char *delimters, const char escapeChar);
+    void skipTo(const char *&c, const char *delimiters);
+    void skipTo(const char *&c, const char *delimiters, const char escapeChar);
     void skipTo(const char *&c, const std::string &delimiters);
     void skipTo(const char *&c, const std::string &delimiters, const char escapeChar);
+
+    inline void skipTo(char *&c, const char delimiter) {
+      skipTo((const char *&) c, delimiter);
+    }
+
+    inline void skipTo(char *&c, const char delimiter, const char escapeChar) {
+      skipTo((const char *&) c, delimiter, escapeChar);
+    }
+
+    inline void skipTo(char *&c, const char *delimiters) {
+      skipTo((const char *&) c, delimiters);
+    }
+
+    inline void skipTo(char *&c, const char *delimiters, const char escapeChar) {
+      skipTo((const char *&) c, delimiters, escapeChar);
+    }
+
+    inline void skipTo(char *&c, const std::string &delimiters) {
+      skipTo((const char *&) c, delimiters);
+    }
+
+    inline void skipTo(char *&c, const std::string &delimiters, const char escapeChar) {
+      skipTo((const char *&) c, delimiters, escapeChar);
+    }
+
+    void quotedSkipTo(const char *&c, const char delimiter);
+    void quotedSkipTo(const char *&c, const char *delimiters);
+    void quotedSkipTo(const char *&c, const std::string &delimiters);
+
+    inline void quotedSkipTo(char *&c, const char delimiter) {
+      quotedSkipTo((const char *&) c, delimiter);
+    }
+
+    inline void quotedSkipTo(char *&c, const char *delimiters) {
+      quotedSkipTo((const char *&) c, delimiters);
+    }
+
+    inline void quotedSkipTo(char *&c, const std::string &delimiters) {
+      quotedSkipTo((const char *&) c, delimiters);
+    }
 
     void skipToMatch(const char *&c, const std::string &match);
     void skipToMatch(const char *&c, const std::string &match, const char escapeChar);
 
-    void skipFrom(const char *&c, const char *delimters);
-    void skipFrom(const char *&c, const char *delimters, const char escapeChar);
+    inline void skipToMatch(char *&c, const std::string &match) {
+      skipToMatch((const char *&) c, match);
+    }
+
+    inline void skipToMatch(char *&c, const std::string &match, const char escapeChar) {
+      skipToMatch((const char *&) c, match, escapeChar);
+    }
+
+    void skipFrom(const char *&c, const char *delimiters);
+    void skipFrom(const char *&c, const char *delimiters, const char escapeChar);
     void skipFrom(const char *&c, const std::string &delimiters);
     void skipFrom(const char *&c, const std::string &delimiters, const char escapeChar);
 
-    inline bool isADigit(const char c) {
+    inline void skipFrom(char *&c, const char *delimiters) {
+      skipFrom((const char *&) c, delimiters);
+    }
+
+    inline void skipFrom(char *&c, const char *delimiters, const char escapeChar) {
+      skipFrom((const char *&) c, delimiters, escapeChar);
+    }
+
+    inline void skipFrom(char *&c, const std::string &delimiters) {
+      skipFrom((const char *&) c, delimiters);
+    }
+
+    inline void skipFrom(char *&c, const std::string &delimiters, const char escapeChar) {
+      skipFrom((const char *&) c, delimiters, escapeChar);
+    }
+
+    inline bool isDigit(const char c) {
       return (('0' <= c) && (c <= '9'));
     }
 
@@ -66,10 +135,41 @@ namespace occa {
     void skipWhitespace(const char *&c);
     void skipWhitespace(const char *&c, const char escapeChar);
 
+    inline void skipWhitespace(char *&c) {
+      skipWhitespace((const char *&) c);
+    }
+
+    inline void skipWhitespace(char *&c, const char escapeChar) {
+      skipWhitespace((const char *&) c, escapeChar);
+    }
+
     void skipToWhitespace(const char *&c);
+
+    inline void skipToWhitespace(char *&c) {
+      skipToWhitespace((const char *&) c);
+    }
 
     void skipBetweenWhitespaces(const char *&c);
     void skipBetweenWhitespaces(const char *&c, const char escapeChar);
+
+    inline void skipBetweenWhitespaces(char *&c) {
+      skipBetweenWhitespaces((const char *&) c);
+    }
+
+    inline void skipBetweenWhitespaces(char *&c, const char escapeChar) {
+      skipBetweenWhitespaces((const char *&) c, escapeChar);
+    }
+
+    void strip(const char *&start, const char *&end);
+    void strip(const char *&start, const char *&end, const char escapeChar);
+
+    inline void strip(char *&start, char *&end) {
+      strip((const char *&) start, (const char *&) end);
+    }
+
+    inline void strip(char *&start, char *&end, const char escapeChar) {
+      strip((const char *&) start, (const char *&) end, escapeChar);
+    }
   }
 }
 #endif

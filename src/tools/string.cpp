@@ -20,29 +20,17 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  */
 
+#include "occa/tools/lex.hpp"
 #include "occa/tools/string.hpp"
 #include "occa/tools/sys.hpp"
 #include "occa/parser/tools.hpp"
 
 namespace occa {
   std::string strip(const std::string &str) {
-    if (str.size() == 0) {
-      return str;
-    }
-    const char *c = str.c_str();
-    int start = 0;
-    int end = (int) (str.size() - 1);
-    while ((c[start] != '\0') &&
-           isWhitespace(c[start])) {
-      ++start;
-    }
-    while (end && isWhitespace(c[end])) {
-      --end;
-    }
-    if (start > end) {
-      return "";
-    }
-    return str.substr(start, end - start + 1);
+    const char *start = str.c_str();
+    const char *end   = start + str.size();
+    lex::strip(start, end);
+    return std::string(start, end - start);
   }
 
   std::string escape(const std::string &str, const char c, const char escapeChar) {
