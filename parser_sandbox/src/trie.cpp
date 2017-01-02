@@ -36,24 +36,25 @@ namespace occa {
   }
 
   int trieNode_t::getValueIdx(const char *c) const {
-    result_t result = get(c);
-    return (strlen(c) == (size_t) result.length) ? result.valueIdx : -1;
-  }
-
-  trieNode_t::result_t trieNode_t::get(const char *c) const {
-    return get(c, 0);
+    const int length = (int) strlen(c);
+    result_t result = get(c, length);
+    return (result.length == length) ? result.valueIdx : -1;
   }
 
   trieNode_t::result_t trieNode_t::get(const char *c, const int length) const {
-    cTrieNodeMapIterator it = leaves.find(c[length]);
-    if (it != leaves.end()) {
-      result_t result = it->second.get(c, length + 1);
-      if ((result.valueIdx < 0) && (0 <= valueIdx)) {
-        return result_t(length + 1, valueIdx);
+    return get(c, 0, length);
+  }
+
+  trieNode_t::result_t trieNode_t::get(const char *c, const int cIdx, const int length) const {
+    cTrieNodeMapIterator it = leaves.find(c[cIdx]);
+    if ((cIdx < length) && (it != leaves.end())) {
+      result_t result = it->second.get(c, cIdx + 1, length);
+      if (!result.success() && (0 <= valueIdx)) {
+        return result_t(cIdx + 1, valueIdx);
       }
       return result;
     }
-    return result_t(length, valueIdx);
+    return result_t(cIdx, valueIdx);
   }
   //====================================
 }

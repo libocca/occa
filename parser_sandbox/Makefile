@@ -22,18 +22,22 @@ all: $(executables)
 ${PROJ_DIR}/main: $(objects) $(headers) ${PROJ_DIR}/main.cpp $(tests)
 	$(compiler) $(compilerFlags) -o ${PROJ_DIR}/main $(flags) $(objects) ${PROJ_DIR}/main.cpp $(paths) $(links)
 
-$(objPath)/%.o:$(srcPath)/%.cpp $(wildcard $(subst $(srcPath)/,$(incPath)/,$(<:.cpp=.hpp))) $(wildcard $(subst $(srcPath)/,$(incPath)/,$(<:.cpp=.tpp)))
+$(objPath)/%.o:$(srcPath)/%.cpp $(incPath)/%.hpp
 	@mkdir -p $(objPath)
 	$(compiler) $(compilerFlags) -o $@ $(flags) -c $(paths) $<
 
-$(testPath)/bin/%:$(testPath)/%.cpp
+$(objPath)/%.o:$(srcPath)/%.cpp $(incPath)/%.hpp $(incPath)/%.tpp
+	@mkdir -p $(objPath)
+	$(compiler) $(compilerFlags) -o $@ $(flags) -c $(paths) $<
+
+$(testPath)/bin/%:$(testPath)/%.cpp $(objects) $(headers)
 	@mkdir -p $(testPath)/bin
 	$(compiler) $(compilerFlags) -o $@ $(flags) $(objects) $< $(paths) $(links)
 
 test: $(tests)
 	@for test in $(tests); do \
-	    echo $$test; \
-	    $$test; \
+	    echo $$test;          \
+	    $$test;               \
 	done
 
 clean:
