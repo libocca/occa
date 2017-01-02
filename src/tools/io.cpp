@@ -108,6 +108,20 @@ namespace occa {
     }
     //  ================================
 
+    //  ---[ System Header File Opener ]---
+    systemHeaderFileOpener_t::systemHeaderFileOpener_t() {}
+
+    bool systemHeaderFileOpener_t::handles(const std::string &filename) {
+      return ((2 <= filename.size()) &&
+              (filename[0] == '<')   &&
+              (filename[filename.size() - 1] == '>'));
+    }
+
+    std::string systemHeaderFileOpener_t::expand(const std::string &filename) {
+      return filename;
+    }
+    //  ================================
+
     //==================================
 
     const std::string& cachePath() {
@@ -181,9 +195,9 @@ namespace occa {
       fileOpener &fo = fileOpener::get(expFilename);
       expFilename = fo.expand(expFilename);
 
-      if (makeAbsolute && !isAbsolutePath(expFilename))
+      if (makeAbsolute && !isAbsolutePath(expFilename)) {
         expFilename = env::PWD + expFilename;
-
+      }
       return expFilename;
     }
 
@@ -261,7 +275,7 @@ namespace occa {
       return expFilename;
     }
 
-    std::string read(const std::string &filename, const bool readingBinary) {
+    char* c_read(const std::string &filename, size_t *chars, const bool readingBinary) {
       std::string expFilename = io::filename(filename);
 
       FILE *fp = fopen(filename.c_str(), readingBinary ? "rb" : "r");
@@ -279,10 +293,20 @@ namespace occa {
       fclose(fp);
       buffer[nread] = '\0';
 
-      std::string contents(buffer, nread);
+      if (chars != NULL) {
+        *chars = nread;
+      }
 
-      free(buffer);
+      return buffer;
+    }
 
+    std::string read(const std::string &filename, const bool readingBinary) {
+      size_t chars;
+      const char *c = c_read(filename, &chars, readingBinary);
+
+      std::string contents(c, chars);
+
+      ::free((void*) c);
       return contents;
     }
 

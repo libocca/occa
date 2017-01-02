@@ -26,6 +26,7 @@
 #include <iostream>
 
 #include "occa/defines.hpp"
+#include "occa/types.hpp"
 
 namespace occa {
   // Uses FNV hashing
@@ -42,6 +43,7 @@ namespace occa {
     hash_t(const hash_t &hash);
     hash_t& operator = (const hash_t &hash);
 
+    bool operator < (const hash_t &fo) const;
     bool operator == (const hash_t &fo) const;
     bool operator != (const hash_t &fo) const;
 
@@ -63,6 +65,7 @@ namespace occa {
     return hash(&t, sizeof(TM));
   }
 
+  hash_t hash(const char *c);
   hash_t hash(const std::string &str);
   hash_t hashFile(const std::string &filename);
 }

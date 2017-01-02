@@ -14,6 +14,8 @@ void testRefreeze(occa::trie_t<std::string> &trie);
 
 int main(const int argc, const char **argv) {
   occa::trie_t<std::string> trie;
+  trie.autoFreeze = false;
+
   testInsert(trie);
   testSearch(trie);
   testFrozenSearch(trie);
@@ -38,23 +40,23 @@ void testSearch(occa::trie_t<std::string> &trie) {
   OCCA_TEST_COMPARE(trie.has("goo")   , false);
   OCCA_TEST_COMPARE(trie.has("goods") , false);
 
-  OCCA_TEST_COMPARE(trie.getFirst("blue").value   , "blue");
-  OCCA_TEST_COMPARE(trie.getFirst("boring").value , "boring");
-  OCCA_TEST_COMPARE(trie.getFirst("glue").value   , "glue");
-  OCCA_TEST_COMPARE(trie.getFirst("good").value   , "good");
+  OCCA_TEST_COMPARE(trie.getFirst("blue").value()   , "blue");
+  OCCA_TEST_COMPARE(trie.getFirst("boring").value() , "boring");
+  OCCA_TEST_COMPARE(trie.getFirst("glue").value()   , "glue");
+  OCCA_TEST_COMPARE(trie.getFirst("good").value()   , "good");
 
-  OCCA_TEST_COMPARE(trie.getFirst("red").value   , "");
-  OCCA_TEST_COMPARE(trie.getFirst("goo").value   , "");
-  OCCA_TEST_COMPARE(trie.getFirst("goods").value , "good");
+  OCCA_TEST_COMPARE(trie.getFirst("red").value()   , "");
+  OCCA_TEST_COMPARE(trie.getFirst("goo").value()   , "");
+  OCCA_TEST_COMPARE(trie.getFirst("goods").value() , "good");
 
-  OCCA_TEST_COMPARE(trie.get("blue").value   , "blue");
-  OCCA_TEST_COMPARE(trie.get("boring").value , "boring");
-  OCCA_TEST_COMPARE(trie.get("glue").value   , "glue");
-  OCCA_TEST_COMPARE(trie.get("good").value   , "good");
+  OCCA_TEST_COMPARE(trie.get("blue").value()   , "blue");
+  OCCA_TEST_COMPARE(trie.get("boring").value() , "boring");
+  OCCA_TEST_COMPARE(trie.get("glue").value()   , "glue");
+  OCCA_TEST_COMPARE(trie.get("good").value()   , "good");
 
-  OCCA_TEST_COMPARE(trie.get("red").value   , "");
-  OCCA_TEST_COMPARE(trie.get("goo").value   , "");
-  OCCA_TEST_COMPARE(trie.get("goods").value , "");
+  OCCA_TEST_COMPARE(trie.get("red").value()   , "");
+  OCCA_TEST_COMPARE(trie.get("goo").value()   , "");
+  OCCA_TEST_COMPARE(trie.get("goods").value() , "");
 }
 
 void testFrozenSearch(occa::trie_t<std::string> &trie) {
@@ -68,23 +70,23 @@ void testFrozenSearch(occa::trie_t<std::string> &trie) {
   OCCA_TEST_COMPARE(trie.has("goo")   , false);
   OCCA_TEST_COMPARE(trie.has("goods") , false);
 
-  OCCA_TEST_COMPARE(trie.getFirst("blue").value   , "blue");
-  OCCA_TEST_COMPARE(trie.getFirst("boring").value , "boring");
-  OCCA_TEST_COMPARE(trie.getFirst("glue").value   , "glue");
-  OCCA_TEST_COMPARE(trie.getFirst("good").value   , "good");
+  OCCA_TEST_COMPARE(trie.getFirst("blue").value()   , "blue");
+  OCCA_TEST_COMPARE(trie.getFirst("boring").value() , "boring");
+  OCCA_TEST_COMPARE(trie.getFirst("glue").value()   , "glue");
+  OCCA_TEST_COMPARE(trie.getFirst("good").value()   , "good");
 
-  OCCA_TEST_COMPARE(trie.getFirst("red").value   , "");
-  OCCA_TEST_COMPARE(trie.getFirst("goo").value   , "");
-  OCCA_TEST_COMPARE(trie.getFirst("goods").value , "good");
+  OCCA_TEST_COMPARE(trie.getFirst("red").value()   , "");
+  OCCA_TEST_COMPARE(trie.getFirst("goo").value()   , "");
+  OCCA_TEST_COMPARE(trie.getFirst("goods").value() , "good");
 
-  OCCA_TEST_COMPARE(trie.get("blue").value   , "blue");
-  OCCA_TEST_COMPARE(trie.get("boring").value , "boring");
-  OCCA_TEST_COMPARE(trie.get("glue").value   , "glue");
-  OCCA_TEST_COMPARE(trie.get("good").value   , "good");
+  OCCA_TEST_COMPARE(trie.get("blue").value()   , "blue");
+  OCCA_TEST_COMPARE(trie.get("boring").value() , "boring");
+  OCCA_TEST_COMPARE(trie.get("glue").value()   , "glue");
+  OCCA_TEST_COMPARE(trie.get("good").value()   , "good");
 
-  OCCA_TEST_COMPARE(trie.get("red").value   , "");
-  OCCA_TEST_COMPARE(trie.get("goo").value   , "");
-  OCCA_TEST_COMPARE(trie.get("goods").value , "");
+  OCCA_TEST_COMPARE(trie.get("red").value()   , "");
+  OCCA_TEST_COMPARE(trie.get("goo").value()   , "");
+  OCCA_TEST_COMPARE(trie.get("goods").value() , "");
 }
 
 void testRefreeze(occa::trie_t<std::string> &trie) {
@@ -94,12 +96,12 @@ void testRefreeze(occa::trie_t<std::string> &trie) {
   trie.add("red", "red");
   OCCA_TEST_COMPARE(trie.isFrozen, false);
   OCCA_TEST_COMPARE(trie.has("red"), true);
-  OCCA_TEST_COMPARE(trie.get("red").value, "red");
+  OCCA_TEST_COMPARE(trie.get("red").value(), "red");
 
   trie.autoFreeze = true;
   trie.add("blue", "red");
   OCCA_TEST_COMPARE(trie.isFrozen, true);
   OCCA_TEST_COMPARE(trie.has("red"), true);
-  OCCA_TEST_COMPARE(trie.get("red").value, "red");
-  OCCA_TEST_COMPARE(trie.get("blue").value, "red");
+  OCCA_TEST_COMPARE(trie.get("red").value(), "red");
+  OCCA_TEST_COMPARE(trie.get("blue").value(), "red");
 }

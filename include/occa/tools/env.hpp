@@ -41,7 +41,6 @@ namespace occa {
     void initEnvironment();
     void initCachePath();
     void initIncludePath();
-    void registerModes();
     void registerFileOpeners();
 
     std::string var(const std::string &var);

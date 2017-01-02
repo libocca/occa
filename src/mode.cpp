@@ -31,6 +31,10 @@ namespace occa {
     return modeMap_;
   }
 
+  void registerMode(mode_v* mode) {
+    modeMap()[mode->name()] = mode;
+  }
+
   bool modeIsEnabled(const std::string &mode) {
     return (modeMap().find(mode) != modeMap().end());
   }

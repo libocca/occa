@@ -118,12 +118,12 @@
 #define OCCA_ERROR2(expr, filename, function, line, message) OCCA_ERROR3(expr, filename, function, line, message)
 #define OCCA_ERROR(message, expr) OCCA_ERROR2(expr, __FILE__, __PRETTY_FUNCTION__, __LINE__, message)
 
-#define OCCA_WARN3(expr, filename, function, line, message) OCCA_TEMPLATE_CHECK(occa::warn, expr, filename, function, line, message)
-#define OCCA_WARN2(expr, filename, function, line, message) OCCA_WARN3(expr, filename, function, line, message)
-#define OCCA_WARN(message, expr) OCCA_WARN2(expr, __FILE__, __PRETTY_FUNCTION__, __LINE__, message)
+#define OCCA_WARNING3(expr, filename, function, line, message) OCCA_TEMPLATE_CHECK(occa::warn, expr, filename, function, line, message)
+#define OCCA_WARNING2(expr, filename, function, line, message) OCCA_WARNING3(expr, filename, function, line, message)
+#define OCCA_WARNING(message, expr) OCCA_WARNING2(expr, __FILE__, __PRETTY_FUNCTION__, __LINE__, message)
 
 #define OCCA_FORCE_ERROR(message) OCCA_ERROR(message, false)
-#define OCCA_FORCE_WARN(message)  OCCA_WARN(message, false)
+#define OCCA_FORCE_WARNING(message)  OCCA_WARNING(message, false)
 
 #define OCCA_DEFAULT_MEM_BYTE_ALIGN 32
 
@@ -303,9 +303,9 @@
 #define OCCA_OPENCL_ERROR2(expr, filename, function, line, message) OCCA_OPENCL_ERROR3(expr, filename, function, line, message)
 #define OCCA_OPENCL_ERROR(message, expr) OCCA_OPENCL_ERROR2(expr, __FILE__, __PRETTY_FUNCTION__, __LINE__, message)
 
-#define OCCA_OPENCL_WARN3(expr, filename, function, line, message) OCCA_OPENCL_TEMPLATE_CHECK(occa::opencl::warn, expr, filename, function, line, message)
-#define OCCA_OPENCL_WARN2(expr, filename, function, line, message) OCCA_OPENCL_WARN3(expr, filename, function, line, message)
-#define OCCA_OPENCL_WARN(message, expr) OCCA_OPENCL_WARN2(expr, __FILE__, __PRETTY_FUNCTION__, __LINE__, message)
+#define OCCA_OPENCL_WARNING3(expr, filename, function, line, message) OCCA_OPENCL_TEMPLATE_CHECK(occa::opencl::warn, expr, filename, function, line, message)
+#define OCCA_OPENCL_WARNING2(expr, filename, function, line, message) OCCA_OPENCL_WARNING3(expr, filename, function, line, message)
+#define OCCA_OPENCL_WARNING(message, expr) OCCA_OPENCL_WARNING2(expr, __FILE__, __PRETTY_FUNCTION__, __LINE__, message)
 //======================================
 
 
@@ -324,9 +324,9 @@
 #define OCCA_CUDA_ERROR2(expr, filename, function, line, message) OCCA_CUDA_ERROR3(expr, filename, function, line, message)
 #define OCCA_CUDA_ERROR(message, expr) OCCA_CUDA_ERROR2(expr, __FILE__, __PRETTY_FUNCTION__, __LINE__, message)
 
-#define OCCA_CUDA_WARN3(expr, filename, function, line, message) OCCA_CUDA_TEMPLATE_CHECK(occa::cuda::warn, expr, filename, function, line, message)
-#define OCCA_CUDA_WARN2(expr, filename, function, line, message) OCCA_CUDA_WARN3(expr, filename, function, line, message)
-#define OCCA_CUDA_WARN(message, expr) OCCA_CUDA_WARN2(expr, __FILE__, __PRETTY_FUNCTION__, __LINE__, message)
+#define OCCA_CUDA_WARNING3(expr, filename, function, line, message) OCCA_CUDA_TEMPLATE_CHECK(occa::cuda::warn, expr, filename, function, line, message)
+#define OCCA_CUDA_WARNING2(expr, filename, function, line, message) OCCA_CUDA_WARNING3(expr, filename, function, line, message)
+#define OCCA_CUDA_WARNING(message, expr) OCCA_CUDA_WARNING2(expr, __FILE__, __PRETTY_FUNCTION__, __LINE__, message)
 //======================================
 
 #endif

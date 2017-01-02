@@ -161,6 +161,10 @@ namespace occa {
       skipFrom(c, whitespaceChars);
     }
 
+    void skipWhitespace(const char *&c, const char escapeChar) {
+      skipFrom(c, whitespaceChars, escapeChar);
+    }
+
     void skipToWhitespace(const char *&c) {
       skipTo(c, whitespaceChars);
     }
@@ -169,6 +173,12 @@ namespace occa {
       skipWhitespace(c);
       skipToWhitespace(c);
       skipWhitespace(c);
+    }
+
+    void skipBetweenWhitespaces(const char *&c, const char escapeChar) {
+      skipWhitespace(c, escapeChar);
+      skipToWhitespace(c);
+      skipWhitespace(c, escapeChar);
     }
   }
 }

@@ -45,12 +45,16 @@ namespace occa {
     //---[ Result ]---------------------
     class result_t {
     public:
+      const trie_t<TM> *trie;
       int length;
-      TM value;
+      int valueIdx;
 
       result_t();
-      result_t(const int length_, const TM &value_ = TM());
-      operator bool();
+      result_t(const trie_t<TM> *trie_,
+               const int length_ = 0,
+               const int valueIdx_ = -1);
+
+      const TM& value() const;
     };
     //==================================
 
@@ -65,6 +69,9 @@ namespace occa {
 
     trie_t();
 
+    void clear();
+    bool isEmpty() const;
+
     void add(const char *c, const TM &value = TM());
     void add(const std::string &s, const TM &value = TM());
 
@@ -72,18 +79,25 @@ namespace occa {
     int freeze(const trieNode_t &node, int offset);
     void defrost();
 
-    bool empty() const;
-
     result_t getFirst(const char *c) const;
     result_t trieGetFirst(const char *c) const;
+    inline result_t getFirst(const std::string &s) const {
+      return getFirst(s.c_str());
+    }
 
     result_t get(const char *c) const;
+    inline result_t get(const std::string &s) const {
+      return get(s.c_str());
+    }
 
     bool has(const char c) const;
     bool trieHas(const char c) const;
 
     bool has(const char *c) const;
     bool has(const char *c, const int size) const;
+    inline bool has(const std::string &s) const {
+      return has(s.c_str(), s.size());
+    }
 
     void print();
   };

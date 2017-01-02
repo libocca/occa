@@ -21,17 +21,28 @@ namespace occa {
   //---[ Macro ]-------------------------
   const std::string macro_t::VA_ARGS = "__VA_ARGS__";
 
-  macro_t::macro_t() {}
+  macro_t::macro_t() :
+    definedLine(-1),
+    undefinedLine(-1) {}
 
-  macro_t::macro_t(const char *c) {
+  macro_t::macro_t(const char *c) :
+    definedLine(-1),
+    undefinedLine(-1) {
+
     load(c, strlen(c));
   }
 
-  macro_t::macro_t(const char *c, const int chars) {
+  macro_t::macro_t(const char *c, const int chars) :
+    definedLine(-1),
+    undefinedLine(-1) {
+
     load(c, chars);
   }
 
-  macro_t::macro_t(const std::string &s) {
+  macro_t::macro_t(const std::string &s) :
+    definedLine(-1),
+    undefinedLine(-1) {
+
     load(s.c_str(), s.size());
   }
 

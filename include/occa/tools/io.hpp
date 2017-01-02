@@ -84,6 +84,15 @@ namespace occa {
       std::string expand(const std::string &filename);
     };
     //  ================================
+
+    //  ---[ System Header File Opener ]---
+    class systemHeaderFileOpener_t : public fileOpener {
+    public:
+      systemHeaderFileOpener_t();
+      bool handles(const std::string &filename);
+      std::string expand(const std::string &filename);
+    };
+    //  ================================
     //==================================
 
     const std::string& cachePath();
@@ -100,6 +109,7 @@ namespace occa {
 
     std::string shortname(const std::string &filename);
 
+    char* c_read(const std::string &filename, size_t *chars = NULL, const bool readingBinary = false);
     std::string read(const std::string &filename, const bool readingBinary = false);
 
     void write(const std::string &filename, const std::string &content);

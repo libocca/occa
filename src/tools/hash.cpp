@@ -35,16 +35,19 @@ namespace occa {
     h[2] = 101533; h[3] = 101537;
     h[4] = 101561; h[5] = 101573;
     h[6] = 101581; h[7] = 101599;
-    for (int i = 0; i < 8; ++i)
+    for (int i = 0; i < 8; ++i) {
       sh[i] = 0;
+    }
   }
 
   hash_t::hash_t(const int *h_) {
     initialized = true;
-    for (int i = 0; i < 8; ++i)
+    for (int i = 0; i < 8; ++i) {
       h[i] = h_[i];
-    for (int i = 0; i < 8; ++i)
+    }
+    for (int i = 0; i < 8; ++i) {
       sh[i] = 0;
+    }
   }
 
   hash_t::hash_t(const hash_t &hash) {
@@ -53,33 +56,49 @@ namespace occa {
 
   hash_t& hash_t::operator = (const hash_t &hash) {
     initialized = hash.initialized;
-    for (int i = 0; i < 8; ++i)
+    for (int i = 0; i < 8; ++i) {
       h[i] = hash.h[i];
-    for (int i = 0; i < 8; ++i)
+    }
+    for (int i = 0; i < 8; ++i) {
       sh[i] = 0;
+    }
     return *this;
+  }
+
+  bool hash_t::operator < (const hash_t &fo) const {
+    for (int i = 0; i < 8; ++i) {
+      if (h[i] < fo.h[i]) {
+        return true;
+      } else if (h[i] > fo.h[i]) {
+        return false;
+      }
+    }
+    return true;
   }
 
   bool hash_t::operator == (const hash_t &fo) const {
     for (int i = 0; i < 8; ++i) {
-      if (h[i] != fo.h[i])
+      if (h[i] != fo.h[i]) {
         return false;
+      }
     }
     return true;
   }
 
   bool hash_t::operator != (const hash_t &fo) const {
     for (int i = 0; i < 8; ++i) {
-      if (h[i] != fo.h[i])
+      if (h[i] != fo.h[i]) {
         return true;
+      }
     }
     return false;
   }
 
   hash_t hash_t::operator ^ (const hash_t hash) const {
     hash_t mix;
-    for (int i = 0; i < 8; ++i)
+    for (int i = 0; i < 8; ++i) {
       mix.h[i] = (h[i] ^ hash.h[i]);
+    }
     mix.initialized = true;
     return mix;
   }
@@ -91,9 +110,9 @@ namespace occa {
 
   std::string hash_t::const_toString() const {
     std::stringstream ss;
-    for (int i = 0; i < 8; ++i)
+    for (int i = 0; i < 8; ++i) {
       ss << std::hex << h[i];
-
+    }
     std::string s = ss.str();
     return (s.size() < 16) ? s : s.substr(0, 16);
   }
@@ -128,8 +147,10 @@ namespace occa {
     hash_t hash;
     int *h = hash.h;
 
-    const int p[8] = {102679, 102701, 102761, 102763,
-                      102769, 102793, 102797, 102811};
+    const int p[8] = {
+      102679, 102701, 102761, 102763,
+      102769, 102793, 102797, 102811
+    };
 
     for (udim_t i = 0; i < bytes; ++i) {
       for (int j = 0; j < 8; ++j) {
@@ -141,11 +162,18 @@ namespace occa {
     return hash;
   }
 
+  hash_t hash(const char *c) {
+    return hash(c, strlen(c));
+  }
+
   hash_t hash(const std::string &str) {
     return hash(str.c_str(), str.size());
   }
 
   hash_t hashFile(const std::string &filename) {
-    return hash(io::read(filename));
+    const char *c = io::c_read(filename);
+    hash_t ret = hash(c);
+    ::free((void*) c);
+    return ret;
   }
 }
