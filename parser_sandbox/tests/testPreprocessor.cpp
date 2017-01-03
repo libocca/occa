@@ -12,6 +12,7 @@ void testEval();
 int main(const int argc, const char **argv) {
   testMacroDefines();
   testLineDefine();
+
 #if 0
   testIfElseDefines();
   testErrorDefines();

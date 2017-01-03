@@ -1,6 +1,7 @@
 #ifndef OCCA_PARSER_PREPROCESSOR_HEADER2
 #define OCCA_PARSER_PREPROCESSOR_HEADER2
 
+#include <ostream>
 #include <vector>
 #include <map>
 
@@ -11,7 +12,7 @@
 #include "trie.hpp"
 
 namespace occa {
-  typedef trie_t<macro_t> macroTrie_t;
+  typedef trie_t<macro_t*> macroTrie_t;
 
   class preprocessor_t;
   preprocessor_t& getPreprocessor(hash_t &compilerHash);
@@ -23,6 +24,14 @@ namespace occa {
 
     static const std::string macroEndDelimiters;
 
+    class status_t {
+    public:
+      int status, lineNumber;
+
+      status_t();
+      status_t(const int status_, const int lineNumber_);
+    };
+
     //---[ Stack Information ]----------
     trie_t<char> allFilenames;
     int filenameIdx;
@@ -30,22 +39,35 @@ namespace occa {
     std::vector<std::string> filenames;
     std::string filename;
 
+    std::vector<char*> filePointers;
+
     std::vector<int> lineNumbers;
     int lineNumber;
+
+    std::vector<status_t> statusStack;
     //==================================
 
+    //---[ Macros and Directives ]------
     directiveTrie_t &directives;
 
     macroTrie_t compilerMacros;
     macroTrie_t sourceMacros;
+    //==================================
 
-    std::vector<int> statusStack;
+    //---[ Misc ]-----------------------
+    std::ostream *outputStream;
+    //==================================
 
     preprocessor_t();
     void clear();
 
+    void setOutputStream(std::ostream &out_);
+
     static directiveTrie_t& getDirectiveTrie();
+
     int& getStatus();
+    int& getStatusLineNumber();
+    void pushStatus(const int status);
 
     void setFilename(const std::string &filename_, const bool add = true);
     void processFile(const std::string &filename_);
@@ -80,6 +102,21 @@ namespace occa {
     void processInclude(char *&c);
     void processPragma(char *&c);
     void processLine(char *&c);
+
+    //---[ Messages ]-------------------
+    void printMessage(const std::string &message,
+                      const int lineNumber_, const int position,
+                      const bool isError) const;
+
+    void printError(const std::string &message,
+                    const int lineNumber_ = -1, const int position = -1) const;
+
+    void printFatalError(const std::string &message,
+                         const int lineNumber_ = -1, const int position = -1) const;
+
+    void printWarning(const std::string &message,
+                      const int lineNumber_ = -1, const int position = -1) const;
+    //==================================
 
     //---[ Overriding Lex Methods ]-----
     void updateLines(const char *c, const int chars);

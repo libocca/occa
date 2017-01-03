@@ -151,6 +151,37 @@ namespace occa {
   double atod(const std::string &str);
 
   std::string stringifyBytes(udim_t bytes);
+
+  //---[ Color Strings ]----------------
+  namespace color {
+    enum color_t {
+      normal  = 0,
+      black   = 1,
+      red     = 2,
+      green   = 3,
+      yellow  = 4,
+      blue    = 5,
+      magenta = 6,
+      cyan    = 7,
+      white   = 8
+    };
+
+    extern const char fgMap[9][7];
+    extern const char bgMap[9][7];
+
+    std::string string(const std::string &s, color_t fg);
+    std::string string(const std::string &s, color_t fg, color_t bg);
+  }
+
+  std::string black(const std::string &s);
+  std::string red(const std::string &s);
+  std::string green(const std::string &s);
+  std::string yellow(const std::string &s);
+  std::string blue(const std::string &s);
+  std::string magenta(const std::string &s);
+  std::string cyan(const std::string &s);
+  std::string white(const std::string &s);
+  //====================================
 }
 
 #endif
