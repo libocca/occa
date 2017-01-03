@@ -273,4 +273,68 @@ namespace occa {
 
     return "";
   }
+
+  //---[ Color Strings ]----------------
+  namespace color {
+    const char fgMap[9][7] = {
+      "\033[39m",
+      "\033[30m", "\033[31m", "\033[32m", "\033[33m",
+      "\033[34m", "\033[35m", "\033[36m", "\033[37m"
+    };
+
+    const char bgMap[9][7] = {
+      "\033[49m",
+      "\033[40m", "\033[41m", "\033[42m", "\033[43m",
+      "\033[44m", "\033[45m", "\033[46m", "\033[47m"
+    };
+
+    std::string string(const std::string &s, color_t fg) {
+      std::string ret = fgMap[fg];
+      ret += s;
+      ret += fgMap[normal];
+      return ret;
+    }
+
+    std::string string(const std::string &s, color_t fg, color_t bg) {
+      std::string ret = fgMap[fg];
+      ret += bgMap[bg];
+      ret += s;
+      ret += fgMap[normal];
+      ret += bgMap[normal];
+      return ret;
+    }
+  }
+
+  std::string black(const std::string &s) {
+    return color::string(s, color::black);
+  }
+
+  std::string red(const std::string &s) {
+    return color::string(s, color::red);
+  }
+
+  std::string green(const std::string &s) {
+    return color::string(s, color::green);
+  }
+
+  std::string yellow(const std::string &s) {
+    return color::string(s, color::yellow);
+  }
+
+  std::string blue(const std::string &s) {
+    return color::string(s, color::blue);
+  }
+
+  std::string magenta(const std::string &s) {
+    return color::string(s, color::magenta);
+  }
+
+  std::string cyan(const std::string &s) {
+    return color::string(s, color::cyan);
+  }
+
+  std::string white(const std::string &s) {
+    return color::string(s, color::white);
+  }
+  //====================================
 }

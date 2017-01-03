@@ -7,6 +7,7 @@
 #include "occa/tools/sys.hpp"
 
 #include "macro.hpp"
+#include "preprocessor.hpp"
 
 namespace occa {
   //---[ Part ]-------------------------
@@ -25,18 +26,21 @@ namespace occa {
   //---[ Macro ]-------------------------
   const std::string macro_t::VA_ARGS = "__VA_ARGS__";
 
-  macro_t::macro_t() :
+  macro_t::macro_t(const preprocessor_t *preprocessor_) :
+    preprocessor(preprocessor_),
     definedLine(-1),
     undefinedLine(-1) {}
 
-  macro_t::macro_t(char *c) :
+  macro_t::macro_t(const preprocessor_t *preprocessor_, char *c) :
+    preprocessor(preprocessor_),
     definedLine(-1),
     undefinedLine(-1) {
 
     load(c);
   }
 
-  macro_t::macro_t(const char *c) :
+  macro_t::macro_t(const preprocessor_t *preprocessor_, const char *c) :
+    preprocessor(preprocessor_),
     definedLine(-1),
     undefinedLine(-1) {
 
@@ -68,11 +72,14 @@ namespace occa {
     // Check and remove ... from arguments
     for (int i = 0; i < argc; ++i) {
       if (argNames[i].str == "...") {
-        OCCA_ERROR("Variable arguments (...) must be the last argument",
-                   i == (argc - 1));
         hasVarArgs = true;
-        argNames.pop_back();
-        --argc;
+        if (i != (argc - 1)) {
+          printError("Variable arguments (...) must be the last argument");
+          argNames.resize(i + 1);
+        } else {
+          argNames.pop_back();
+        }
+        argc = i;
       }
     }
 
@@ -106,8 +113,9 @@ namespace occa {
     char *argsStart = c;
     lex::skipTo(c, ')');
     char *argsEnd = c;
-    OCCA_ERROR("Missing closing \")\"",
-               *argsEnd == ')');
+    if (*argsEnd != ')') {
+      printError("Missing closing \")\"");
+    }
 
     c = argsStart;
     while(c < argsEnd) {
@@ -304,5 +312,19 @@ namespace occa {
 
     return ret;
   }
+
+  //  ---[ Messages ]-------------------
+  void macro_t::printError(const std::string &message) const {
+    preprocessor->printError(message);
+  }
+
+  void macro_t::printFatalError(const std::string &message) const {
+    preprocessor->printFatalError(message);
+  }
+
+  void macro_t::printWarning(const std::string &message) const {
+    preprocessor->printWarning(message);
+  }
+  //  ==================================
   //====================================
 }

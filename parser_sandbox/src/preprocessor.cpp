@@ -1,15 +1,26 @@
+#include <sstream>
+#include <stdlib.h>
+
 #include "occa/tools/hash.hpp"
 #include "occa/tools/io.hpp"
 #include "occa/tools/lex.hpp"
+#include "occa/tools/string.hpp"
 
 #include "preprocessor.hpp"
 #include "primitive.hpp"
+#include "specialMacros.hpp"
 
 namespace occa {
   //---[ Status ]---------------------
   static const int reading    = (1 << 0);
   static const int ignoring   = (1 << 1);
   static const int finishedIf = (1 << 2);
+
+  preprocessor_t::status_t::status_t() {}
+
+  preprocessor_t::status_t::status_t(const int status_, const int lineNumber_) :
+    status(status_),
+    lineNumber(lineNumber_) {}
   //==================================
 
   preprocessor_t& getPreprocessor(hash_t &compilerHash) {
@@ -24,13 +35,27 @@ namespace occa {
 
   preprocessor_t::preprocessor_t() :
     directives(getDirectiveTrie()) {
+
     filenameIdx = 0;
     filename    ="";
     lineNumber  = 0;
 
     compilerMacros.autoFreeze = false;
+    macro_t *specialMacros[5] = {
+      new fileMacro_t(this),   // __FILE__
+      new lineMacro_t(this),   // __LINE__
+      new dateMacro_t(this),   // __DATE__
+      new timeMacro_t(this),   // __TIME__
+      new counterMacro_t(this) // __COUNTER__
+    };
+    for (int i = 0; i < 5; ++i) {
+      compilerMacros.add(specialMacros[i]->name, specialMacros[i]);
+    }
+    // [-] Add actual compiler macros as well
 
-    statusStack.push_back(reading);
+    outputStream = &std::cerr;
+
+    pushStatus(reading);
   }
 
   void preprocessor_t::clear() {
@@ -40,11 +65,17 @@ namespace occa {
     filenames.clear();
     filename ="";
 
+    filePointers.clear();
+
     lineNumbers.clear();
     lineNumber = 0;
 
     sourceMacros.clear();
     statusStack.clear();
+  }
+
+  void preprocessor_t::setOutputStream(std::ostream &outputStream_) {
+    outputStream = &outputStream_;
   }
 
   preprocessor_t::directiveTrie_t& preprocessor_t::getDirectiveTrie() {
@@ -73,7 +104,15 @@ namespace occa {
   }
 
   int& preprocessor_t::getStatus() {
-    return statusStack[statusStack.size() - 1];
+    return statusStack[statusStack.size() - 1].status;
+  }
+
+  int& preprocessor_t::getStatusLineNumber() {
+    return statusStack[statusStack.size() - 1].lineNumber;
+  }
+
+  void preprocessor_t::pushStatus(const int status) {
+    statusStack.push_back(status_t(status, lineNumber));
   }
 
   void preprocessor_t::setFilename(const std::string &filename_, const bool add) {
@@ -85,13 +124,15 @@ namespace occa {
   }
 
   void preprocessor_t::processFile(const std::string &filename_) {
-    filenames.push_back(filename);
-    lineNumbers.push_back(lineNumber);
-
     setFilename(filename_);
     lineNumber = 0;
 
     char *c = io::c_read(filename);
+
+    filenames.push_back(filename);
+    filePointers.push_back(c);
+    lineNumbers.push_back(lineNumber);
+
     process(c);
     ::free((void*) c);
 
@@ -99,7 +140,13 @@ namespace occa {
     lineNumber = lineNumbers[lineNumbers.size() - 1];
 
     filenames.pop_back();
+    filePointers.pop_back();
     lineNumbers.pop_back();
+
+    if ((filenames.size() == 0) &&
+        (0 < statusStack.size())) {
+      printError("#if without a closing #endif");
+    }
   }
 
   void preprocessor_t::process(char *c) {
@@ -122,10 +169,10 @@ namespace occa {
     for (int i = 0; i < 2; ++i) {
       macroTrie_t::result_t result = macroSources[i]->get(macroName);
       if (result.success()) {
-        const macro_t &macro = result.value();
-        if ((macro.undefinedLine < 0) ||
-            (lineNumber < macro.undefinedLine)) {
-          return &macro;
+        macro_t * const macro = result.value();
+        if ((macro->undefinedLine < 0) ||
+            (lineNumber < macro->undefinedLine)) {
+          return macro;
         }
       }
     }
@@ -170,17 +217,20 @@ namespace occa {
   }
 
   void preprocessor_t::processDirective(char *&c) {
-    const int thisLineNumber = lineNumber;
     updatingSkipWhitespace(c);
     char *cStart = c;
     updatingSkipTo(c, macroEndDelimiters);
     char *cEnd = c;
 
     directiveTrie_t::result_t result = directives.get(cStart, cEnd - cStart);
-    OCCA_ERROR("Directive \""
-               << std::string(cStart, cEnd - cStart)
-               << "\" is not defined",
-               result.success());
+    if (!result.success()) {
+      std::string message = "Directive \"";
+      message += std::string(cStart, cEnd - cStart);
+      message += "\" is not defined";
+      printError(message);
+      updatingSkipTo(c, '\n');
+      return;
+    }
 
     // Parse #if[,def], #el[se,if], #endif even when ignored
     // For some reason the preprocessor honors ignored #if/#el/#endif stacks
@@ -201,7 +251,7 @@ namespace occa {
 
     int &status = getStatus();
     if (status & ignoring) {
-      statusStack.push_back(ignoring | finishedIf);
+      pushStatus(ignoring | finishedIf);
       return;
     }
 
@@ -217,7 +267,7 @@ namespace occa {
 
     int &status = getStatus();
     if (status & ignoring) {
-      statusStack.push_back(ignoring | finishedIf);
+      pushStatus(ignoring | finishedIf);
       return;
     }
 
@@ -254,10 +304,13 @@ namespace occa {
 
   void preprocessor_t::processEndif(char *&c) {
     updatingSkipTo(c, '\n');
-    if (getStatus() & ignoring) {
-      statusStack.pop_back();
-      return;
+
+    if ((statusStack.size() == 0) ||
+        (getStatus() & ignoring)) {
+      printError("#endif without #if");
     }
+
+    statusStack.pop_back();
   }
 
   void preprocessor_t::processDefine(char *&c) {
@@ -267,11 +320,11 @@ namespace occa {
 
     const char lastChar = *c;
     *c = '\0';
-    macro_t macro(cStart);
+    macro_t *macro = new macro_t(this, cStart);
     *c = lastChar;
 
-    macro.definedLine = thisLineNumber;
-    sourceMacros.add(macro.name, macro);
+    macro->definedLine = thisLineNumber;
+    sourceMacros.add(macro->name, macro);
   }
 
   void preprocessor_t::processUndef(char *&c) {
@@ -283,15 +336,12 @@ namespace occa {
 
     macroTrie_t::result_t result = sourceMacros.get(cStart, cEnd - cStart);
     if (0 <= result.valueIdx) {
-      macro_t &macro = sourceMacros.values[result.valueIdx];
+      macro_t &macro = *(sourceMacros.values[result.valueIdx]);
       macro.undefinedLine = thisLineNumber;
-    } else {
-      OCCA_FORCE_WARNING("Macro not defined");
     }
   }
 
   void preprocessor_t::processMessage(char *&c, const bool isError) {
-    const int thisLineNumber = lineNumber;
     char *cStart = c;
     updatingSkipTo(c, '\n');
 
@@ -300,9 +350,9 @@ namespace occa {
     line = strip(line);
 
     if (isError) {
-      OCCA_FORCE_ERROR(line);
+      printError(line);
     } else {
-      OCCA_FORCE_WARNING(line);
+      printWarning(line);
     }
   }
 
@@ -315,7 +365,6 @@ namespace occa {
   }
 
   void preprocessor_t::processInclude(char *&c) {
-    const int thisLineNumber = lineNumber;
     char *cStart = c;
     updatingSkipTo(c, '\n');
 
@@ -331,7 +380,6 @@ namespace occa {
   }
 
   void preprocessor_t::processLine(char *&c) {
-    const int thisLineNumber = lineNumber;
     char *cStart = c;
     updatingSkipTo(c, '\n');
 
@@ -348,7 +396,8 @@ namespace occa {
     lex::skipToWhitespace(cEndLine);
     for (char *c_ = cStartLine; c_ < cEndLine; ++c_) {
       if (!lex::isDigit(*c_)) {
-        OCCA_FORCE_ERROR("#line line number must be a simple number");
+        printError("#line line number must be a simple number");
+        return;
       }
     }
     line[cEndLine - line.c_str()] = '\0';
@@ -364,6 +413,72 @@ namespace occa {
       setFilename(io::filename(rawFilename));
     }
   }
+
+  //---[ Messages ]---------------------
+  void preprocessor_t::printMessage(const std::string &message,
+                                    const int lineNumber_, const int position,
+                                    const bool isError) const {
+    std::stringstream ss;
+
+    // /path/to/file:line:pos:
+    ss << filename << ':' << lineNumber_;
+    if (0 <= position) {
+      ss << ':' << position;
+    }
+
+    // Error/Warning: <message>\n
+    ss << ": "
+       << (isError ? red("Error:") : yellow("Warning:"))
+       << ' ' << message << '\n';
+
+    // <line>
+    if (filePointers.size()) {
+      const char *c = filePointers[filePointers.size() - 1];
+      int ln = 0;
+      while ((*c != '\0') &&
+             (ln != lineNumber_)) {
+        lex::skipTo(c, '\n');
+        ++c;
+        ++ln;
+      }
+
+      if (ln == lineNumber_) {
+        const char *cStart = c;
+        lex::skipTo(c, '\n');
+        ss << std::string(cStart, c - cStart);
+      }
+
+      // ... ^
+      if (0 <= position) {
+        ss << std::string(position, ' ') << green("^") << '\n';
+      }
+    }
+
+    *outputStream << ss.str();
+  }
+
+  void preprocessor_t::printError(const std::string &message,
+                                  const int lineNumber_, const int position) const {
+    printMessage(message,
+                 0 <= lineNumber_ ? lineNumber_ : lineNumber,
+                 position,
+                 true);
+  }
+
+  void preprocessor_t::printFatalError(const std::string &message,
+                                       const int lineNumber_, const int position) const {
+    printError(message, lineNumber_, position);
+    ::exit(1);
+  }
+
+  void preprocessor_t::printWarning(const std::string &message,
+                                    const int lineNumber_, const int position) const {
+    printMessage(message,
+                 0 <= lineNumber_ ? lineNumber_ : lineNumber,
+                 position,
+                 false);
+  }
+  //====================================
 
   //---[ Overriding Lex Methods ]-------
   void preprocessor_t::updateLines(const char *c, const int chars) {

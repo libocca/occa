@@ -40,8 +40,18 @@ namespace occa {
     extern const char quote1Delimiters[];
     extern const char quote2Delimiters[];
 
+    inline bool isDigit(const char c) {
+      return (('0' <= c) && (c <= '9'));
+    }
+
+    inline bool isAlpha(const char c) {
+      return ((('a' <= c) && (c <= 'z')) ||
+              (('A' <= c) && (c <= 'Z')));
+    }
+
     bool charIsIn(const char c, const char *delimiters);
 
+    //---[ Skip ]-----------------------
     void skipTo(const char *&c, const char delimiter);
     void skipTo(const char *&c, const char delimiter, const char escapeChar);
     void skipTo(const char *&c, const char *delimiters);
@@ -120,16 +130,9 @@ namespace occa {
     inline void skipFrom(char *&c, const std::string &delimiters, const char escapeChar) {
       skipFrom((const char *&) c, delimiters, escapeChar);
     }
+    //==================================
 
-    inline bool isDigit(const char c) {
-      return (('0' <= c) && (c <= '9'));
-    }
-
-    inline bool isAlpha(const char c) {
-      return ((('a' <= c) && (c <= 'z')) ||
-              (('A' <= c) && (c <= 'Z')));
-    }
-
+    //---[ Whitespace ]-----------------
     bool isWhitespace(const char c);
 
     void skipWhitespace(const char *&c);
@@ -170,6 +173,7 @@ namespace occa {
     inline void strip(char *&start, char *&end, const char escapeChar) {
       strip((const char *&) start, (const char *&) end, escapeChar);
     }
+    //==================================
   }
 }
 #endif
