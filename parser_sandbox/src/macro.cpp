@@ -62,7 +62,6 @@ namespace occa {
       return;
     }
     macroPartVector_t argNames;
-    // Skip '('
     loadArgs(c, argNames);
     argc = (int) argNames.size();
 
@@ -77,8 +76,7 @@ namespace occa {
       }
     }
 
-    // Skip ')'
-    setParts(++c, argNames);
+    setParts(c, argNames);
   }
 
   void macro_t::loadName(char *&c) {
@@ -102,6 +100,7 @@ namespace occa {
       return;
     }
 
+    // Skip '('
     ++c;
     lex::skipWhitespace(c);
     char *argsStart = c;
@@ -131,8 +130,7 @@ namespace occa {
       }
       argNames.push_back(arg);
     }
-    c = argsEnd;
-    lex::skipWhitespace(c);
+    c = argsEnd + (*argsEnd == ')');
   }
 
   void macro_t::setParts(char *&c, macroPartVector_t &argNames) {
@@ -232,6 +230,7 @@ namespace occa {
 
   std::string macro_t::expand(char *&c) const {
     const int partCount = (int) parts.size();
+
     if (partCount == 0) {
       return "";
     } else if ((argc == 0) && !hasVarArgs) {

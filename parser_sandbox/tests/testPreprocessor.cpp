@@ -3,20 +3,69 @@
 
 #include "preprocessor.hpp"
 
+void testMacroDefines();
 void testIfElseDefines();
 void testErrorDefines();
 void testLineDefine();
-void testFunctionMacros();
 void testEval();
 
 int main(const int argc, const char **argv) {
+  testMacroDefines();
   testLineDefine();
 #if 0
   testIfElseDefines();
   testErrorDefines();
-  testFunctionMacros();
   testEval();
 #endif
+}
+
+void testMacroDefines() {
+  occa::preprocessor_t preprocessor;
+  preprocessor.process("#define A\n");
+  OCCA_TEST_COMPARE("",
+                    preprocessor.applyMacros("A"));
+
+  preprocessor.process("#define B 1 2 3\n");
+  OCCA_TEST_COMPARE("1 2 3",
+                    preprocessor.applyMacros("B"));
+
+  preprocessor.process("#define C(A1) A1\n");
+  OCCA_TEST_COMPARE("",
+                    preprocessor.applyMacros("C()"));
+  OCCA_TEST_COMPARE("1",
+                    preprocessor.applyMacros("C(1)"));
+
+  preprocessor.process("#define D(A1, A2) A1 A2\n");
+  OCCA_TEST_COMPARE("2  3",
+                    preprocessor.applyMacros("D(2, 3)"));
+  OCCA_TEST_COMPARE("4  5",
+                    preprocessor.applyMacros("D(4, 5, 6)"));
+
+  preprocessor.process("#define E(A1, A2) A1##A2\n");
+  OCCA_TEST_COMPARE(" 6",
+                    preprocessor.applyMacros("E(, 6)"));
+  OCCA_TEST_COMPARE("07",
+                    preprocessor.applyMacros("E(0, 7)"));
+
+  preprocessor.process("#define F(A1, ...) A1 __VA_ARGS__\n");
+  OCCA_TEST_COMPARE("7 ",
+                    preprocessor.applyMacros("F(7,)"));
+  OCCA_TEST_COMPARE("8 9, 10,",
+                    preprocessor.applyMacros("F(8, 9, 10,)"));
+
+  preprocessor.process("#define G(...) (X, ##__VA_ARGS__)\n");
+  OCCA_TEST_COMPARE("(X, 11 )",
+                    preprocessor.applyMacros("G(11,)"));
+  OCCA_TEST_COMPARE("(X, )",
+                    preprocessor.applyMacros("G()"));
+
+  preprocessor.process("#define H(A1) #A1\n");
+  OCCA_TEST_COMPARE("\"12\"",
+                    preprocessor.applyMacros("H(12)"));
+
+  preprocessor.process("#define I(A1, A2) #A1##A2\n");
+  OCCA_TEST_COMPARE("\"1\"3",
+                    preprocessor.applyMacros("I(1, 3)"));
 }
 
 #if 0
@@ -114,8 +163,8 @@ void testErrorDefines() {
 void testLineDefine() {
   occa::preprocessor_t preprocessor;
   preprocessor.process("#line 10\n");
-  OCCA_TEST_COMPARE(preprocessor.lineNumber,
-                    11);
+  OCCA_TEST_COMPARE(11,
+                    preprocessor.lineNumber);
 
   preprocessor.process("#line 20 \"foo\"\n");
   OCCA_TEST_COMPARE(21,
@@ -125,60 +174,6 @@ void testLineDefine() {
 }
 
 #if 0
-void testFunctionMacros() {
-  occa::preprocessor_t preprocessor;
-  preprocessor.props["exitOnError"] = false;
-
-  preprocessor.process("#define FOO(A) A\n");
-  OCCA_TEST_COMPARE("",
-                    preprocessor.process("FOO\n"));
-  OCCA_TEST_COMPARE("",
-                    preprocessor.process("FOO()\n"));
-  OCCA_TEST_COMPARE("1",
-                    preprocessor.process("FOO(1)\n"));
-
-  preprocessor.process("#undef FOO\n"
-                       "#define FOO(A, B) A B\n");
-  OCCA_TEST_COMPARE("2 3",
-                    preprocessor.process("FOO(2, 3)\n"));
-  OCCA_TEST_COMPARE("4 5",
-                    preprocessor.process("FOO(4, 5, 6)\n"));
-
-  preprocessor.process("#undef FOO\n"
-                       "#define FOO(A, B) A##B\n");
-  OCCA_TEST_COMPARE("6",
-                    preprocessor.process("FOO(, 6)\n"));
-
-  preprocessor.process("#undef FOO\n"
-                       "#define FOO(A, ...) A __VA_ARGS__\n");
-  OCCA_TEST_COMPARE("7",
-                    preprocessor.process("FOO(7,)\n"));
-  OCCA_TEST_COMPARE("8 9, 10",
-                    preprocessor.process("FOO(8, 9, 10,)\n"));
-
-  preprocessor.process("#undef FOO\n"
-                       "#define FOO(...) (X, ##__VA_ARGS__)\n");
-  OCCA_TEST_COMPARE("(X, 11)",
-                    preprocessor.process("FOO(10,)\n"));
-  OCCA_TEST_COMPARE("(X)",
-                    preprocessor.process("FOO()\n"));
-
-  preprocessor.process("#undef FOO\n"
-                       "#define FOO(...) __VA_ARGS_COUNT__\n");
-  OCCA_TEST_COMPARE("12",
-                    preprocessor.process("FOO (1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12)\n"));
-
-  preprocessor.process("#undef FOO\n"
-                       "#define FOO(A) #A\n");
-  OCCA_TEST_COMPARE("\"13\"",
-                    preprocessor.process("FOO(13)\n"));
-
-  preprocessor.process("#undef FOO\n"
-                       "#define FOO(A, B) #A##B\n");
-  OCCA_TEST_COMPARE("\"14\"",
-                    preprocessor.process("FOO(1, 4)\n"));
-}
-
 void testEval() {
   occa::preprocessor_t preprocessor;
   preprocessor.props["exitOnError"] = false;

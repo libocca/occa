@@ -31,77 +31,79 @@ void testInsert(occa::trie_t<std::string> &trie) {
 }
 
 void testSearch(occa::trie_t<std::string> &trie) {
-  OCCA_TEST_COMPARE(trie.has("blue")   , true);
-  OCCA_TEST_COMPARE(trie.has("boring") , true);
-  OCCA_TEST_COMPARE(trie.has("glue")   , true);
-  OCCA_TEST_COMPARE(trie.has("good")   , true);
+  OCCA_TEST_COMPARE(true, trie.has("blue"));
+  OCCA_TEST_COMPARE(true, trie.has("boring"));
+  OCCA_TEST_COMPARE(true, trie.has("glue"));
+  OCCA_TEST_COMPARE(true, trie.has("good"));
 
-  OCCA_TEST_COMPARE(trie.has("red")   , false);
-  OCCA_TEST_COMPARE(trie.has("goo")   , false);
-  OCCA_TEST_COMPARE(trie.has("goods") , false);
+  OCCA_TEST_COMPARE(false, trie.has("red"));
+  OCCA_TEST_COMPARE(false, trie.has("goo"));
+  OCCA_TEST_COMPARE(false, trie.has("goods"));
 
-  OCCA_TEST_COMPARE(trie.getFirst("blue").value()   , "blue");
-  OCCA_TEST_COMPARE(trie.getFirst("boring").value() , "boring");
-  OCCA_TEST_COMPARE(trie.getFirst("glue").value()   , "glue");
-  OCCA_TEST_COMPARE(trie.getFirst("good").value()   , "good");
+  OCCA_TEST_COMPARE("blue"  , trie.getFirst("blue").value());
+  OCCA_TEST_COMPARE("boring", trie.getFirst("boring").value());
+  OCCA_TEST_COMPARE("glue"  , trie.getFirst("glue").value());
+  OCCA_TEST_COMPARE("good"  , trie.getFirst("good").value());
 
-  OCCA_TEST_COMPARE(trie.getFirst("red").value()   , "");
-  OCCA_TEST_COMPARE(trie.getFirst("goo").value()   , "");
-  OCCA_TEST_COMPARE(trie.getFirst("goods").value() , "good");
+  OCCA_TEST_COMPARE(""    , trie.getFirst("red").value());
+  OCCA_TEST_COMPARE(""    , trie.getFirst("goo").value());
+  OCCA_TEST_COMPARE("good", trie.getFirst("goods").value());
 
-  OCCA_TEST_COMPARE(trie.get("blue").value()   , "blue");
-  OCCA_TEST_COMPARE(trie.get("boring").value() , "boring");
-  OCCA_TEST_COMPARE(trie.get("glue").value()   , "glue");
-  OCCA_TEST_COMPARE(trie.get("good").value()   , "good");
+  OCCA_TEST_COMPARE("blue"  , trie.get("blue").value());
+  OCCA_TEST_COMPARE("boring", trie.get("boring").value());
+  OCCA_TEST_COMPARE("glue"  , trie.get("glue").value());
+  OCCA_TEST_COMPARE("good"  , trie.get("good").value());
 
-  OCCA_TEST_COMPARE(trie.get("red").value()   , "");
-  OCCA_TEST_COMPARE(trie.get("goo").value()   , "");
-  OCCA_TEST_COMPARE(trie.get("goods").value() , "");
+  OCCA_TEST_COMPARE("", trie.get("red").value());
+  OCCA_TEST_COMPARE("", trie.get("goo").value());
+  OCCA_TEST_COMPARE("", trie.get("goods").value());
 }
 
 void testFrozenSearch(occa::trie_t<std::string> &trie) {
   trie.freeze();
-  OCCA_TEST_COMPARE(trie.has("blue")   , true);
-  OCCA_TEST_COMPARE(trie.has("boring") , true);
-  OCCA_TEST_COMPARE(trie.has("glue")   , true);
-  OCCA_TEST_COMPARE(trie.has("good")   , true);
+  OCCA_TEST_COMPARE(true, trie.has("blue"));
+  OCCA_TEST_COMPARE(true, trie.has("boring"));
+  OCCA_TEST_COMPARE(true, trie.has("glue"));
+  OCCA_TEST_COMPARE(true, trie.has("good"));
 
-  OCCA_TEST_COMPARE(trie.has("red")   , false);
-  OCCA_TEST_COMPARE(trie.has("goo")   , false);
-  OCCA_TEST_COMPARE(trie.has("goods") , false);
+  OCCA_TEST_COMPARE(false, trie.has("red"));
+  OCCA_TEST_COMPARE(false, trie.has("goo"));
+  OCCA_TEST_COMPARE(false, trie.has("goods"));
 
-  OCCA_TEST_COMPARE(trie.getFirst("blue").value()   , "blue");
-  OCCA_TEST_COMPARE(trie.getFirst("boring").value() , "boring");
-  OCCA_TEST_COMPARE(trie.getFirst("glue").value()   , "glue");
-  OCCA_TEST_COMPARE(trie.getFirst("good").value()   , "good");
+  OCCA_TEST_COMPARE("blue"  , trie.getFirst("blue").value());
+  OCCA_TEST_COMPARE("boring", trie.getFirst("boring").value());
+  OCCA_TEST_COMPARE("glue"  , trie.getFirst("glue").value());
+  OCCA_TEST_COMPARE("good"  , trie.getFirst("good").value());
 
-  OCCA_TEST_COMPARE(trie.getFirst("red").value()   , "");
-  OCCA_TEST_COMPARE(trie.getFirst("goo").value()   , "");
-  OCCA_TEST_COMPARE(trie.getFirst("goods").value() , "good");
+  OCCA_TEST_COMPARE(""    , trie.getFirst("red").value());
+  OCCA_TEST_COMPARE(""    , trie.getFirst("goo").value());
+  OCCA_TEST_COMPARE("good", trie.getFirst("goods").value());
 
-  OCCA_TEST_COMPARE(trie.get("blue").value()   , "blue");
-  OCCA_TEST_COMPARE(trie.get("boring").value() , "boring");
-  OCCA_TEST_COMPARE(trie.get("glue").value()   , "glue");
-  OCCA_TEST_COMPARE(trie.get("good").value()   , "good");
+  OCCA_TEST_COMPARE("blue"  , trie.get("blue").value());
+  OCCA_TEST_COMPARE("boring", trie.get("boring").value());
+  OCCA_TEST_COMPARE("glue"  , trie.get("glue").value());
+  OCCA_TEST_COMPARE("good"  , trie.get("good").value());
 
-  OCCA_TEST_COMPARE(trie.get("red").value()   , "");
-  OCCA_TEST_COMPARE(trie.get("goo").value()   , "");
-  OCCA_TEST_COMPARE(trie.get("goods").value() , "");
+  OCCA_TEST_COMPARE("", trie.get("red").value());
+  OCCA_TEST_COMPARE("", trie.get("goo").value());
+  OCCA_TEST_COMPARE("", trie.get("goods").value());
 }
 
 void testRefreeze(occa::trie_t<std::string> &trie) {
-  OCCA_TEST_COMPARE(trie.isFrozen, true);
-  OCCA_TEST_COMPARE(trie.has("red"), false);
+  OCCA_TEST_COMPARE(true , trie.isFrozen);
+  OCCA_TEST_COMPARE(false, trie.has("red"));
 
   trie.add("red", "red");
-  OCCA_TEST_COMPARE(trie.isFrozen, false);
-  OCCA_TEST_COMPARE(trie.has("red"), true);
-  OCCA_TEST_COMPARE(trie.get("red").value(), "red");
+  OCCA_TEST_COMPARE(false, trie.isFrozen);
+  OCCA_TEST_COMPARE(true , trie.has("red"));
+
+  OCCA_TEST_COMPARE("red", trie.get("red").value());
 
   trie.autoFreeze = true;
   trie.add("blue", "red");
-  OCCA_TEST_COMPARE(trie.isFrozen, true);
-  OCCA_TEST_COMPARE(trie.has("red"), true);
-  OCCA_TEST_COMPARE(trie.get("red").value(), "red");
-  OCCA_TEST_COMPARE(trie.get("blue").value(), "red");
+  OCCA_TEST_COMPARE(true, trie.isFrozen);
+  OCCA_TEST_COMPARE(true, trie.has("red"));
+
+  OCCA_TEST_COMPARE("red", trie.get("red").value());
+  OCCA_TEST_COMPARE("red", trie.get("blue").value());
 }

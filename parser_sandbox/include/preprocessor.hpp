@@ -58,6 +58,7 @@ namespace occa {
 
     const macro_t* getMacro(char *c, const size_t chars);
 
+    std::string applyMacros(const char *c);
     std::string applyMacros(char *c, const size_t chars);
     void applyMacros(char *c, const size_t chars, std::string &out);
 
