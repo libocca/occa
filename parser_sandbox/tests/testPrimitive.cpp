@@ -12,38 +12,63 @@ int main(const int argc, const char **argv) {
 }
 
 void testLoad() {
-  OCCA_TEST_COMPARE((int) occa::primitive("15"), 15);
-  OCCA_TEST_COMPARE((int) occa::primitive("-15"), -15);
+  OCCA_TEST_COMPARE(15,
+                    (int) occa::primitive("15"));
+  OCCA_TEST_COMPARE(-15,
+                    (int) occa::primitive("-15"));
 
-  OCCA_TEST_COMPARE((int) occa::primitive("0xF"), 15);
-  OCCA_TEST_COMPARE((int) occa::primitive("0XF"), 15);
-  OCCA_TEST_COMPARE((int) occa::primitive("-0xF"), -15);
-  OCCA_TEST_COMPARE((int) occa::primitive("-0XF"), -15);
+  OCCA_TEST_COMPARE(15,
+                    (int) occa::primitive("0xF"));
+  OCCA_TEST_COMPARE(15,
+                    (int) occa::primitive("0XF"));
+  OCCA_TEST_COMPARE(-15,
+                    (int) occa::primitive("-0xF"));
+  OCCA_TEST_COMPARE(-15,
+                    (int) occa::primitive("-0XF"));
 
-  OCCA_TEST_COMPARE((int) occa::primitive("0b1111"), 15);
-  OCCA_TEST_COMPARE((int) occa::primitive("0B1111"), 15);
-  OCCA_TEST_COMPARE((int) occa::primitive("-0b1111"), -15);
-  OCCA_TEST_COMPARE((int) occa::primitive("-0B1111"), -15);
+  OCCA_TEST_COMPARE(15,
+                    (int) occa::primitive("0b1111"));
+  OCCA_TEST_COMPARE(15,
+                    (int) occa::primitive("0B1111"));
+  OCCA_TEST_COMPARE(-15,
+                    (int) occa::primitive("-0b1111"));
+  OCCA_TEST_COMPARE(-15,
+                    (int) occa::primitive("-0B1111"));
 
-  OCCA_TEST_COMPARE((double) occa::primitive("15.01"), 15.01);
-  OCCA_TEST_COMPARE((double) occa::primitive("-15.01"), -15.01);
+  OCCA_TEST_COMPARE(15.01,
+                    (double) occa::primitive("15.01"));
+  OCCA_TEST_COMPARE(-15.01,
+                    (double) occa::primitive("-15.01"));
 
-  OCCA_TEST_COMPARE((double) occa::primitive("1.501e1"), 15.01);
-  OCCA_TEST_COMPARE((double) occa::primitive("-1.501e1"), -15.01);
-  OCCA_TEST_COMPARE((double) occa::primitive("1.501E1"), 15.01);
-  OCCA_TEST_COMPARE((double) occa::primitive("-1.501E1"), -15.01);
+  OCCA_TEST_COMPARE(15.01,
+                    (double) occa::primitive("1.501e1"));
+  OCCA_TEST_COMPARE(-15.01,
+                    (double) occa::primitive("-1.501e1"));
+  OCCA_TEST_COMPARE(15.01,
+                    (double) occa::primitive("1.501E1"));
+  OCCA_TEST_COMPARE(-15.01,
+                    (double) occa::primitive("-1.501E1"));
 
-  OCCA_TEST_COMPARE((double) occa::primitive("1.501e+1"), 15.01);
-  OCCA_TEST_COMPARE((double) occa::primitive("-1.501e+1"), -15.01);
-  OCCA_TEST_COMPARE((double) occa::primitive("1.501E+1"), 15.01);
-  OCCA_TEST_COMPARE((double) occa::primitive("-1.501E+1"), -15.01);
+  OCCA_TEST_COMPARE(15.01,
+                    (double) occa::primitive("1.501e+1"));
+  OCCA_TEST_COMPARE(-15.01,
+                    (double) occa::primitive("-1.501e+1"));
+  OCCA_TEST_COMPARE(15.01,
+                    (double) occa::primitive("1.501E+1"));
+  OCCA_TEST_COMPARE(-15.01,
+                    (double) occa::primitive("-1.501E+1"));
 
-  OCCA_TEST_COMPARE((double) occa::primitive("150.1e-1"), 15.01);
-  OCCA_TEST_COMPARE((double) occa::primitive("-150.1e-1"), -15.01);
-  OCCA_TEST_COMPARE((double) occa::primitive("150.1E-1"), 15.01);
-  OCCA_TEST_COMPARE((double) occa::primitive("-150.1E-1"), -15.01);
+  OCCA_TEST_COMPARE(15.01,
+                    (double) occa::primitive("150.1e-1"));
+  OCCA_TEST_COMPARE(-15.01,
+                    (double) occa::primitive("-150.1e-1"));
+  OCCA_TEST_COMPARE(15.01,
+                    (double) occa::primitive("150.1E-1"));
+  OCCA_TEST_COMPARE(-15.01,
+                    (double) occa::primitive("-150.1E-1"));
 }
 
 void testToString() {
-  OCCA_TEST_COMPARE((std::string) occa::primitive("0xFFFFFFFFF"), "68719476735L");
+  OCCA_TEST_COMPARE("68719476735L",
+                    (std::string) occa::primitive("0xFFFFFFFFF"));
 }

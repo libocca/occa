@@ -133,6 +133,11 @@ namespace occa {
     return NULL;
   }
 
+  std::string preprocessor_t::applyMacros(const char *c) {
+    std::string s(c);
+    return applyMacros(&(s[0]), s.size());
+  }
+
   std::string preprocessor_t::applyMacros(char *c, const size_t chars) {
     std::string out;
     applyMacros(c, chars, out);
