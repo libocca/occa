@@ -119,7 +119,7 @@ namespace occa {
 
     void device::finish() {}
 
-    bool device::fakesUva() {
+    bool device::hasSeparateMemorySpace() {
       return false;
     }
 

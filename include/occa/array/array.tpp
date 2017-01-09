@@ -276,8 +276,7 @@ namespace occa {
   //---[ allocate(...) ]----------------
   template <class TM, const int idxType>
   void array<TM,idxType>::allocate() {
-    data_ = (TM*) device.managedAlloc(bytes());
-
+    data_  = (TM*) device.uvaAlloc(bytes());
     memory = occa::memory(data_);
   }
 

@@ -100,53 +100,45 @@ namespace occa {
   occa::memory_v* uvaToMemory(void *ptr) {
     ptrRangeMap_t::iterator it = uvaMap.find(ptr);
 
-    if (it == uvaMap.end())
+    if (it == uvaMap.end()) {
       return NULL;
-
+    }
     return it->second;
   }
 
   void startManaging(void *ptr) {
     occa::memory_v *mem = uvaToMemory(ptr);
-
-    if (mem == NULL)
-      return;
-
-    mem->memInfo &= ~uvaFlag::leftInDevice;
+    if (mem != NULL) {
+      mem->memInfo |= uvaFlag::isManaged;
+    }
   }
 
   void stopManaging(void *ptr) {
     occa::memory_v *mem = uvaToMemory(ptr);
-
-    if (mem == NULL)
-      return;
-
-    mem->memInfo |= uvaFlag::leftInDevice;
+    if (mem != NULL) {
+      mem->memInfo &= ~uvaFlag::isManaged;
+    }
   }
 
   void syncToDevice(void *ptr, const udim_t bytes) {
     occa::memory_v *mem = uvaToMemory(ptr);
-
-    if (mem == NULL)
-      return;
-
-    syncMemToDevice(mem, bytes, ptrDiff(mem->uvaPtr, ptr));
+    if (mem != NULL) {
+      syncMemToDevice(mem, bytes, ptrDiff(mem->uvaPtr, ptr));
+    }
   }
 
   void syncFromDevice(void *ptr, const udim_t bytes) {
     occa::memory_v *mem = uvaToMemory(ptr);
-
-    if (mem == NULL)
-      return;
-
-    syncMemFromDevice(mem, bytes, ptrDiff(mem->uvaPtr, ptr));
+    if (mem != NULL) {
+      syncMemFromDevice(mem, bytes, ptrDiff(mem->uvaPtr, ptr));
+    }
   }
 
   void syncMemToDevice(occa::memory_v *mem,
                        const udim_t bytes,
                        const udim_t offset) {
 
-    if (!mem->dHandle->fakesUva()) {
+    if (!mem->dHandle->hasSeparateMemorySpace()) {
       memcpy(occa::memory(mem->handle),
              ptrOff(mem->uvaPtr, offset),
              bytes, offset);
@@ -159,7 +151,7 @@ namespace occa {
                          const udim_t bytes,
                          const udim_t offset) {
 
-    if (!mem->dHandle->fakesUva()) {
+    if (!mem->dHandle->hasSeparateMemorySpace()) {
       memcpy(ptrOff(mem->uvaPtr, offset),
              occa::memory(mem->handle),
              bytes, offset);
@@ -170,23 +162,18 @@ namespace occa {
 
   bool needsSync(void *ptr) {
     occa::memory_v *mem = uvaToMemory(ptr);
-
-    if (mem == NULL)
-      return false;
-
-    return mem->isStale();
+    return (mem == NULL) ? false : mem->isStale();
   }
 
   void sync(void *ptr) {
     occa::memory_v *mem = uvaToMemory(ptr);
 
-    if (mem == NULL)
-      return;
-
-    if (mem->inDevice()) {
-      syncMemFromDevice(mem);
-    } else {
-      syncMemToDevice(mem);
+    if (mem != NULL) {
+      if (mem->inDevice()) {
+        syncMemFromDevice(mem);
+      } else {
+        syncMemToDevice(mem);
+      }
     }
   }
 
@@ -197,14 +184,14 @@ namespace occa {
   void removeFromStaleMap(void *ptr) {
     ptrRangeMap_t::iterator it = uvaMap.find(ptr);
 
-    if (it == uvaMap.end())
+    if (it == uvaMap.end()) {
       return;
-
+    }
     memory m(it->second);
 
-    if (!m.uvaIsStale())
+    if (!m.uvaIsStale()) {
       return;
-
+    }
     removeFromStaleMap(m.getMHandle());
   }
 
@@ -221,23 +208,6 @@ namespace occa {
         break;
       }
     }
-  }
-
-  void setupMagicFor(void *ptr) {
-    ptrRangeMap_t::iterator it = uvaMap.find(ptr);
-
-    if (it == uvaMap.end())
-      return;
-
-    memory_v &mem = *(it->second);
-
-    if (mem.dHandle->fakesUva())
-      return;
-
-    if (mem.uvaPtr == NULL)
-      mem.uvaPtr = sys::malloc(mem.size);
-
-    memcpy(mem.uvaPtr, mem.handle, mem.size);
   }
 
   void free(void *ptr) {

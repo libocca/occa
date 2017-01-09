@@ -100,7 +100,7 @@ namespace occa {
                       cuStreamSynchronize(*((CUstream*) currentStream)) );
     }
 
-    bool device::fakesUva() {
+    bool device::hasSeparateMemorySpace() {
       return true;
     }
 

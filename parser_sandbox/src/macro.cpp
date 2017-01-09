@@ -56,11 +56,8 @@ namespace occa {
   void macro_t::load(char *c) {
     clear();
 
-    lex::skipWhitespace(c);
-    if (!lex::isAlpha(*c) && *c != '_') {
-      return;
-    }
     loadName(c);
+
     if (*c != '(') {
       parts.push_back(c);
       return;
@@ -87,15 +84,26 @@ namespace occa {
   }
 
   void macro_t::loadName(char *&c) {
-    static std::string delimiters;
-    if (delimiters.size() == 0) {
-      delimiters = lex::whitespaceChars;
-      delimiters += '(';
-    }
-    char *nameStart = c;
-    lex::skipTo(c, delimiters);
-    name = std::string(nameStart, c - nameStart);
     lex::skipWhitespace(c);
+
+    if (*c == '\0') {
+      printError("Macro name missing");
+      return;
+    }
+    if (!lex::charIsIn(*c, lex::identifierStartChar)) {
+      printError("Macro name must be an identifier: [a-zA-Z_]([a-zA-Z0-9_]*)");
+      return;
+    }
+
+    char *nameStart = c++;
+    lex::skipFrom(c, lex::identifierChars);
+    name = std::string(nameStart, c - nameStart);
+
+    if (!lex::isWhitespace(*c) && (*c != '(') && (*c != '\0')) {
+      printWarning("Whitespace recommended after macro name");
+    } else {
+      lex::skipWhitespace(c);
+    }
   }
 
   void macro_t::loadArgs(char *&c, macroPartVector_t &argNames, const bool keepWhitespace) const {

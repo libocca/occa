@@ -130,7 +130,7 @@ namespace occa {
   void device::finish() {
     checkIfInitialized();
 
-    if (dHandle->fakesUva()) {
+    if (dHandle->hasSeparateMemorySpace()) {
       const size_t staleEntries = uvaStaleMemory.size();
       for (size_t i = 0; i < staleEntries; ++i) {
         occa::memory_v *mem = uvaStaleMemory[i];
@@ -356,16 +356,20 @@ namespace occa {
     return mem;
   }
 
-  void* device::managedAlloc(const dim_t bytes,
-                             void *src,
-                             const occa::properties &props) {
+  void* device::uvaAlloc(const dim_t bytes,
+                         void *src,
+                         const occa::properties &props) {
     checkIfInitialized();
 
     OCCA_ERROR("Trying to allocate negative bytes (" << bytes << ")",
                bytes >= 0);
 
     memory mem = malloc(bytes, src, props);
-    mem.manage();
+    mem.setupUva();
+
+    if (props.get<bool>("managed", true)) {
+      mem.startManaging();
+    }
 
     return mem.mHandle->uvaPtr;
   }

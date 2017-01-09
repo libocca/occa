@@ -11,9 +11,9 @@ int main(int argc, char **argv) {
   //   occa::device = occa::currentDevice();
 
   // Use the default device (mode = Serial)
-  float *a  = (float*) occa::managedAlloc(entries * sizeof(float));
-  float *b  = (float*) occa::managedAlloc(entries * sizeof(float));
-  float *ab = (float*) occa::managedAlloc(entries * sizeof(float));
+  float *a  = (float*) occa::uvaAlloc(entries * sizeof(float));
+  float *b  = (float*) occa::uvaAlloc(entries * sizeof(float));
+  float *ab = (float*) occa::uvaAlloc(entries * sizeof(float));
 
   for (int i = 0; i < entries; ++i) {
     a[i]  = i;

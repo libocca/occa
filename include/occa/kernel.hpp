@@ -196,6 +196,7 @@ namespace occa {
 
     //---[ Virtual Methods ]------------
     virtual ~kernel_v() = 0;
+    virtual void free() = 0;
 
     virtual void* getHandle(const occa::properties &props) = 0;
 
@@ -212,8 +213,6 @@ namespace occa {
     virtual dim maxInnerDims() = 0;
 
     virtual void runFromArguments(const int kArgc, const kernelArg *kArgs) = 0;
-
-    virtual void free() = 0;
     //==================================
   };
   //====================================

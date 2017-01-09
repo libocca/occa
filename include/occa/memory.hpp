@@ -38,8 +38,7 @@ namespace occa {
     static const int none         = 0;
     static const int isManaged    = (1 << 0);
     static const int inDevice     = (1 << 1);
-    static const int leftInDevice = (1 << 2);
-    static const int isStale      = (1 << 3);
+    static const int isStale      = (1 << 2);
   }
 
   //---[ memory_v ]---------------------
@@ -59,13 +58,13 @@ namespace occa {
 
     bool isManaged() const;
     bool inDevice() const;
-    bool leftInDevice() const;
     bool isStale() const;
 
     void* uvaHandle();
 
     //---[ Virtual Methods ]------------
     virtual ~memory_v() = 0;
+    virtual void free() = 0;
 
     virtual void* getHandle(const occa::properties &props) = 0;
     virtual kernelArg makeKernelArg() const = 0;
@@ -86,7 +85,6 @@ namespace occa {
                           const udim_t srcOffset = 0,
                           const occa::properties &props = occa::properties()) = 0;
 
-    virtual void free() = 0;
     virtual void detach() = 0;
     //==================================
 
@@ -142,12 +140,13 @@ namespace occa {
 
     bool isManaged() const;
     bool inDevice() const;
-    bool leftInDevice() const;
     bool isStale() const;
 
     void* getHandle(const occa::properties &props = occa::properties());
 
-    void manage();
+    void setupUva();
+    void startManaging();
+    void stopManaging();
 
     void syncToDevice(const dim_t bytes, const dim_t offset);
     void syncFromDevice(const dim_t bytes, const dim_t offset);

@@ -37,6 +37,9 @@ namespace occa {
     extern const char numChars[];
     extern const char alphanumChars[];
 
+    extern const char identifierStartChar[];
+    extern const char identifierChars[];
+
     extern const char quote1Delimiters[];
     extern const char quote2Delimiters[];
 

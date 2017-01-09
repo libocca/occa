@@ -160,9 +160,9 @@ OCCA_LFUNC occaMemory OCCA_RFUNC occaMalloc(const occaUDim_t bytes,
                                             void *src,
                                             occaProperties props);
 
-OCCA_LFUNC void* OCCA_RFUNC occaManagedAlloc(const occaUDim_t bytes,
-                                             void *src,
-                                             occaProperties props);
+OCCA_LFUNC void* OCCA_RFUNC occaUvaAlloc(const occaUDim_t bytes,
+                                         void *src,
+                                         occaProperties props);
 
 OCCA_LFUNC occaMemory OCCA_RFUNC occaWrapMemory(void *handle_,
                                                 const occaUDim_t bytes,
@@ -201,10 +201,10 @@ OCCA_LFUNC occaMemory OCCA_RFUNC occaDeviceMalloc(occaDevice device,
                                                   void *src,
                                                   occaProperties props);
 
-OCCA_LFUNC void* OCCA_RFUNC occaDeviceManagedAlloc(occaDevice device,
-                                                   const occaUDim_t bytes,
-                                                   void *src,
-                                                   occaProperties props);
+OCCA_LFUNC void* OCCA_RFUNC occaDeviceUvaAlloc(occaDevice device,
+                                               const occaUDim_t bytes,
+                                               void *src,
+                                               occaProperties props);
 
 OCCA_LFUNC occaMemory OCCA_RFUNC occaDeviceWrapMemory(occaDevice device,
                                                       void *handle_,
