@@ -68,7 +68,7 @@ namespace occa {
 
     virtual void finish() = 0;
 
-    virtual bool fakesUva() = 0;
+    virtual bool hasSeparateMemorySpace() = 0;
 
     //  |---[ Stream ]------------------
     virtual stream_t createStream() = 0;
@@ -170,9 +170,9 @@ namespace occa {
                         void *src = NULL,
                         const occa::properties &props = occa::properties());
 
-    void* managedAlloc(const dim_t bytes,
-                       void *src = NULL,
-                       const occa::properties &props = occa::properties());
+    void* uvaAlloc(const dim_t bytes,
+                   void *src = NULL,
+                   const occa::properties &props = occa::properties());
 
     occa::memory wrapMemory(void *handle_,
                             const dim_t bytes,

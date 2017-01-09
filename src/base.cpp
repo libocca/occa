@@ -123,11 +123,11 @@ namespace occa {
     return currentDevice().malloc(bytes, src, props);
   }
 
-  void* managedAlloc(const dim_t bytes,
-                     void *src,
-                     const properties &props) {
+  void* uvaAlloc(const dim_t bytes,
+                 void *src,
+                 const properties &props) {
 
-    return currentDevice().managedAlloc(bytes, src, props);
+    return currentDevice().uvaAlloc(bytes, src, props);
   }
 
   occa::memory wrapMemory(void *handle_,
@@ -144,7 +144,7 @@ namespace occa {
     ptrRangeMap_t::iterator srcIt  = uvaMap.find(const_cast<void*>(src));
     ptrRangeMap_t::iterator destIt = uvaMap.find(dest);
 
-    occa::memory_v *srcMem  = ((srcIt != uvaMap.end())  ? (srcIt->second)  : NULL);
+    occa::memory_v *srcMem  = ((srcIt  != uvaMap.end()) ? (srcIt->second)  : NULL);
     occa::memory_v *destMem = ((destIt != uvaMap.end()) ? (destIt->second) : NULL);
 
     const udim_t srcOff  = (srcMem  ? (((char*) src)  - ((char*) srcMem->uvaPtr))  : 0);

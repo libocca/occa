@@ -452,12 +452,12 @@ occaMemory OCCA_RFUNC occaMalloc(const occaUDim_t bytes,
   return memory;
 }
 
-void* OCCA_RFUNC occaManagedAlloc(const occaUDim_t bytes,
-                                  void *src,
-                                  occaProperties props) {
+void* OCCA_RFUNC occaUvaAlloc(const occaUDim_t bytes,
+                              void *src,
+                              occaProperties props) {
 
   occa::properties &props_ = occa::c::getProperties(props);
-  return occa::managedAlloc(bytes, src, props_);
+  return occa::uvaAlloc(bytes, src, props_);
 }
 
 occaMemory OCCA_RFUNC occaWrapMemory(void *handle_,
@@ -562,14 +562,14 @@ occaMemory OCCA_RFUNC occaDeviceMalloc(occaDevice device,
   return memory;
 }
 
-void* OCCA_RFUNC occaDeviceManagedAlloc(occaDevice device,
-                                        const occaUDim_t bytes,
-                                        void *src,
-                                        occaProperties props) {
+void* OCCA_RFUNC occaDeviceUvaAlloc(occaDevice device,
+                                    const occaUDim_t bytes,
+                                    void *src,
+                                    occaProperties props) {
 
   occa::device device_ = occa::c::getDevice(device);
   occa::properties &props_ = occa::c::getProperties(props);
-  return device_.managedAlloc(bytes, src, props_);
+  return device_.uvaAlloc(bytes, src, props_);
 }
 
 occaMemory OCCA_RFUNC occaDeviceWrapMemory(occaDevice device,

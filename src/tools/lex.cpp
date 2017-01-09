@@ -29,6 +29,9 @@ namespace occa {
     const char numChars[]      = "0123456789";
     const char alphanumChars[] = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
 
+    const char identifierStartChar[] = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_";
+    const char identifierChars[]     = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_0123456789";
+
     const char quote1Delimiters[] = "\n'";
     const char quote2Delimiters[] = "\n\"";
 

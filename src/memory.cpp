@@ -61,10 +61,6 @@ namespace occa {
     return (memInfo & uvaFlag::inDevice);
   }
 
-  bool memory_v::leftInDevice() const {
-    return (memInfo & uvaFlag::leftInDevice);
-  }
-
   bool memory_v::isStale() const {
     return (memInfo & uvaFlag::isStale);
   }
@@ -143,19 +139,15 @@ namespace occa {
   }
 
   bool memory::isManaged() const {
-    return (mHandle->memInfo & uvaFlag::isManaged);
+    return mHandle->isManaged();
   }
 
   bool memory::inDevice() const {
-    return (mHandle->memInfo & uvaFlag::inDevice);
-  }
-
-  bool memory::leftInDevice() const {
-    return (mHandle->memInfo & uvaFlag::leftInDevice);
+    return mHandle->inDevice();
   }
 
   bool memory::isStale() const {
-    return (mHandle->memInfo & uvaFlag::isStale);
+    return mHandle->isStale();
   }
 
   void* memory::getHandle(const occa::properties &props) {
@@ -163,10 +155,10 @@ namespace occa {
     return mHandle->getHandle(props);
   }
 
-  void memory::manage() {
+  void memory::setupUva() {
     checkIfInitialized();
 
-    if ( !(mHandle->dHandle->fakesUva()) ) {
+    if ( !(mHandle->dHandle->hasSeparateMemorySpace()) ) {
       mHandle->uvaPtr = mHandle->uvaHandle();
     } else {
       mHandle->uvaPtr = sys::malloc(mHandle->size);
@@ -183,8 +175,14 @@ namespace occa {
     if (mHandle->uvaPtr != mHandle->handle) {
       uvaMap[mHandle->handle] = mHandle;
     }
+  }
 
+  void memory::startManaging() {
     mHandle->memInfo |= uvaFlag::isManaged;
+  }
+
+  void memory::stopManaging() {
+    mHandle->memInfo &= ~uvaFlag::isManaged;
   }
 
   void memory::syncToDevice(const dim_t bytes,
@@ -198,7 +196,7 @@ namespace occa {
     OCCA_ERROR("Cannot have a negative offset (" << offset << ")",
                offset >= 0);
 
-    if (mHandle->dHandle->fakesUva()) {
+    if (mHandle->dHandle->hasSeparateMemorySpace()) {
       OCCA_ERROR("Memory has size [" << mHandle->size << "],"
                  << "trying to access [ " << offset << " , " << (offset + bytes_) << " ]",
                  (bytes_ + offset) <= mHandle->size);
@@ -223,7 +221,7 @@ namespace occa {
     OCCA_ERROR("Cannot have a negative offset (" << offset << ")",
                offset >= 0);
 
-    if (mHandle->dHandle->fakesUva()) {
+    if (mHandle->dHandle->hasSeparateMemorySpace()) {
       OCCA_ERROR("Memory has size [" << mHandle->size << "],"
                  << "trying to access [ " << offset << " , " << (offset + bytes_) << " ]",
                  (bytes_ + offset) <= mHandle->size);

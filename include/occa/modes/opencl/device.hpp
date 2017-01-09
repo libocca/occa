@@ -47,7 +47,7 @@ namespace occa {
 
       void finish();
 
-      bool fakesUva();
+      bool hasSeparateMemorySpace();
 
       //  |---[ Stream ]----------------
       stream_t createStream();

@@ -85,9 +85,9 @@ namespace occa {
                       void *src = NULL,
                       const properties &props = occa::properties());
 
-  void* managedAlloc(const dim_t bytes,
-                     void *src = NULL,
-                     const properties &props = occa::properties());
+  void* uvaAlloc(const dim_t bytes,
+                 void *src = NULL,
+                 const properties &props = occa::properties());
 
   occa::memory wrapMemory(void *handle_,
                           const dim_t bytes,

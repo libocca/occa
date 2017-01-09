@@ -90,7 +90,7 @@ namespace occa {
                         clFinish(*((cl_command_queue*) currentStream)));
     }
 
-    bool device::fakesUva() {
+    bool device::hasSeparateMemorySpace() {
       return true;
     }
 

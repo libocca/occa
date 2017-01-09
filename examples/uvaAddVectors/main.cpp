@@ -11,12 +11,12 @@ int main(int argc, char **argv) {
 
   occa::device device("mode = OpenCL, platformID = 0, deviceID = 0, uva = enabled");
 
-  // Allocate [managed] arrays that will
+  // Allocate [uva] arrays that will
   //   automatically synchronize between
   //   the process and [device]
-  float *a  = (float*) device.managedAlloc(entries * sizeof(float));
-  float *b  = (float*) device.managedAlloc(entries * sizeof(float));
-  float *ab = (float*) device.managedAlloc(entries * sizeof(float));
+  float *a  = (float*) device.uvaAlloc(entries * sizeof(float));
+  float *b  = (float*) device.uvaAlloc(entries * sizeof(float));
+  float *ab = (float*) device.uvaAlloc(entries * sizeof(float));
 
   for (int i = 0; i < entries; ++i) {
     a[i]  = i;

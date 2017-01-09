@@ -15,6 +15,8 @@ void testErrors();
 int main(const int argc, const char **argv) {
   testPlainMacros();
   testFunctionMacros();
+  testSpecialMacros();
+  testErrors();
 }
 
 void testPlainMacros() {
@@ -27,10 +29,6 @@ void testPlainMacros() {
   macro.load("B 1 2 3");
   OCCA_TEST_COMPARE(macro.name, "B");
   OCCA_TEST_COMPARE(macro.expand(""), "1 2 3");
-
-  macro.load("");
-  OCCA_TEST_COMPARE(macro.name, "");
-  OCCA_TEST_COMPARE(macro.expand(""), "");
 }
 
 void testFunctionMacros() {
@@ -110,6 +108,30 @@ void testErrors() {
   occa::macro_t macro(&preprocessor, "FOO(A) A");
   macro.expand("(1");
 
+  OCCA_TEST_COMPARE(0,
+                    !ss.str().size());
+
+  // No macro name
+  ss.str("");
+  macro.load("");
+  OCCA_TEST_COMPARE(0,
+                    !ss.str().size());
+
+  // Identifier starts badly
+  ss.str("");
+  macro.load("0A 0");
+  OCCA_TEST_COMPARE(0,
+                    !ss.str().size());
+
+  // No whitespace warning
+  ss.str("");
+  macro.load("FOO-10");
+  OCCA_TEST_COMPARE(0,
+                    !ss.str().size());
+
+  // Variadic in wrong position
+  ss.str("");
+  macro.load("FOO(A, ..., B)");
   OCCA_TEST_COMPARE(0,
                     !ss.str().size());
 }

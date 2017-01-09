@@ -421,9 +421,20 @@ namespace occa {
     std::stringstream ss;
 
     // /path/to/file:line:pos:
-    ss << filename << ':' << lineNumber_;
-    if (0 <= position) {
-      ss << ':' << position;
+    const int filenameCount = (int) filenames.size();
+    for (int i = 0; i < (filenameCount - 1); ++i) {
+      ss << filenames[i] << ':' << lineNumbers[i] << '\n';
+    }
+    if (filenameCount == 0) {
+      ss << "(source)" << ':' << lineNumber_;
+      if (0 <= position) {
+        ss << ':' << position;
+      }
+    } else {
+      ss << filename << ':' << lineNumber_;
+      if (0 <= position) {
+        ss << ':' << position;
+      }
     }
 
     // Error/Warning: <message>\n
