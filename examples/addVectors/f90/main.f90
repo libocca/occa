@@ -8,12 +8,11 @@ program main
 
   integer(4) :: platformID = 0, deviceID = 0, dims
 
-  character(len=1024) :: Serial_Info   = "mode = Serial"
-  character(len=1024) :: OpenMP_Info   = "mode = OpenMP  , schedule = compact, chunk = 10"
-  character(len=1024) :: OpenCL_Info   = "mode = OpenCL  , platformID = 0, deviceID = 0"
-  character(len=1024) :: CUDA_Info     = "mode = CUDA    , deviceID = 0"
-  character(len=1024) :: Pthreads_Info = "mode = Pthreads, threadCount = 4, schedule = compact, pinnedCores = [0, 0, 1, 1]"
-  character(len=1024) :: COI_Info      = "mode = COI     , deviceID = 0"
+  character(len=1024) :: Serial_Info  : "mode: 'Serial'"
+  character(len=1024) :: OpenMP_Info  : "mode: 'OpenMP' , schedule: 'compact', chunk: 10"
+  character(len=1024) :: OpenCL_Info  : "mode: 'OpenCL' , platformID: 0, deviceID: 0"
+  character(len=1024) :: CUDA_Info    : "mode: 'CUDA'   , deviceID: 0"
+  character(len=1024) :: Pthreads_Info: "mode: 'Threads', threadCount: 4, schedule: 'compact', pinnedCores: [0, 0, 1, 1]"
 
   real(4), allocatable :: a(:), b(:), ab(:)
 
