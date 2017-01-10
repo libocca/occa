@@ -1,0 +1,10 @@
+{
+  device: "mode: 'Serial'",
+
+  shapeFunction: "mandelbulb",
+
+  width: 1000,
+  height: 800,
+
+  batchSize: 128,
+}

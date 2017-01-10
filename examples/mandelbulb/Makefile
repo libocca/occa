@@ -21,6 +21,8 @@ else
   endif
 endif
 
+flags += -I$(PROJ_DIR)/include
+
 ifeq ($(DOUBLE), 1)
   flags += -D tFloat=double -D tFloat3=occa::double3
 else
