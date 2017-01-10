@@ -1,5 +1,5 @@
-[DEVICE INFO] "mode = Serial"
-#[DEVICE INFO] "mode = OpenCL, platformID = 0, deviceID = 1"
+[DEVICE INFO] "mode: 'Serial'"
+#[DEVICE INFO] "mode: 'OpenCL', platformID: 0, deviceID: 1"
 
 [STENCIL RADIUS]
 7

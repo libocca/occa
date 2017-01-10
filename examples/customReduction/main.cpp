@@ -83,7 +83,7 @@ int main(int argc, char **argv) {
     a2[i] = 0;
   }
 
-  occa::device device("mode = Serial");
+  occa::device device("mode: 'Serial'");
   customReduction squareArray;
   occa::memory o_a, o_a2;
 

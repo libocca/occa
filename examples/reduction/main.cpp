@@ -26,7 +26,7 @@ int main(int argc, char **argv) {
 
   occa::kernelInfo reductionInfo;
 
-  device.setup("mode = Serial");
+  device.setup("mode: 'Serial'");
 
   o_a  = device.malloc(entries*sizeof(float));
   o_aRed = device.malloc(reducedEntries*sizeof(float));
