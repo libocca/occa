@@ -37,16 +37,12 @@ namespace occa {
   void preprocessor_t::frame_t::clear() {
     filenameIdx = 0;
     fileStart = NULL;
-    fileLineNumber = 0;
-    lineNumber = 0;
+    fileLineNumber = 1;
+    lineNumber = 1;
   }
 
   std::string preprocessor_t::frame_t::filename() const {
-    const strVector_t &filenames = preprocessor->allFilenames.values;
-    if (filenameIdx < (int) filenames.size()) {
-      return filenames[filenameIdx];
-    }
-    return "(source)";
+    return preprocessor->allFilenames.values[filenameIdx];
   }
 
   std::string preprocessor_t::frame_t::getLineMessage() const {
@@ -58,7 +54,6 @@ namespace occa {
     ret += filename();
     ret += ':';
     ret += occa::toString(lineNumber_);
-    ret += '\n';
     return ret;
   }
   //====================================
@@ -142,31 +137,47 @@ namespace occa {
     currentStatus.lineNumber = currentFrame.lineNumber;
   }
 
-  void preprocessor_t::setFilename(const std::string &filename_, const bool add) {
+  void preprocessor_t::setFilename(const std::string &filename, const bool add) {
     if (add) {
-      allFilenames.add(filename_, filename_);
+      allFilenames.add(filename, filename);
     }
-    currentFrame.filenameIdx = allFilenames.get(filename_).valueIdx;
+    currentFrame.filenameIdx = allFilenames.get(filename).valueIdx;
   }
 
-  void preprocessor_t::processFile(const std::string &filename_) {
-    char *c = io::c_read(filename_);
-
-    frames.push_back(currentFrame);
-    currentFrame.clear();
-    setFilename(filename_);
-    currentFrame.fileStart = c;
-
-    process(c);
+  void preprocessor_t::processFile(const std::string &filename) {
+    char *c = io::c_read(filename);
+    processFile(filename, c);
     ::free((void*) c);
+  }
 
-    currentFrame = frames[frames.size() - 1];
-    frames.pop_back();
-
-    if ((frames.size() == 0) &&
-        (0 < statusStack.size())) {
-      printError("#if without a closing #endif");
+  void preprocessor_t::processFile(const std::string &filename, char *content) {
+    if (currentFrame.fileStart) {
+      frames.push_back(currentFrame);
     }
+    currentFrame.clear();
+    setFilename(filename);
+    currentFrame.fileStart = content;
+
+    process(content);
+
+    if (frames.size()) {
+      currentFrame = frames[frames.size() - 1];
+      frames.pop_back();
+
+      if ((frames.size() == 0) &&
+          (0 < statusStack.size())) {
+        printError("#if without a closing #endif");
+      }
+    }
+  }
+
+  void preprocessor_t::processSource(char *c) {
+    processFile("(source)", c);
+  }
+
+  void preprocessor_t::processSource(const char *c) {
+    std::string s(c);
+    processFile("(source)", &(s[0]));
   }
 
   void preprocessor_t::process(char *c) {
@@ -454,12 +465,9 @@ namespace occa {
     // /path/to/file:line:pos:
     const int frameCount = frames.size();
     for (int i = 0; i < frameCount; ++i) {
-      if (i < (frameCount - 1)) {
-        ss << frames[i].getLineMessage() << '\n';
-      } else {
-        ss << frames[i].getLineMessage(errorLineNumber);
-      }
+      ss << frames[i].getLineMessage() << '\n';
     }
+    ss << currentFrame.getLineMessage(errorLineNumber);
 
     // Error/Warning: <message>\n
     ss << ": "
@@ -480,7 +488,7 @@ namespace occa {
       if (ln == fileLineNumber) {
         const char *cStart = c;
         lex::skipTo(c, '\n');
-        ss << std::string(cStart, c - cStart);
+        ss << std::string(cStart, c - cStart) << '\n';
       }
 
       // ... ^

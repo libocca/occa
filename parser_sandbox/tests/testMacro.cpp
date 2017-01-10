@@ -22,6 +22,7 @@ int main(const int argc, const char **argv) {
 
 void testPlainMacros() {
   occa::preprocessor_t preprocessor;
+  preprocessor.processSource("");
   occa::macro_t macro(&preprocessor, "A");
 
   OCCA_TEST_COMPARE(macro.name, "A");
@@ -34,6 +35,7 @@ void testPlainMacros() {
 
 void testFunctionMacros() {
   occa::preprocessor_t preprocessor;
+  preprocessor.processSource("");
   occa::macro_t macro(&preprocessor, "FOO(A) A");
 
   OCCA_TEST_COMPARE("",
@@ -76,7 +78,7 @@ void testFunctionMacros() {
 
 void testSpecialMacros() {
   occa::preprocessor_t preprocessor;
-  preprocessor.process("#line 10 foo");
+  preprocessor.processSource("#line 10 foo");
 
   char *c = new char[1];
 
@@ -103,6 +105,7 @@ void testSpecialMacros() {
 void testErrors() {
   occa::preprocessor_t preprocessor;
   std::stringstream ss;
+  preprocessor.processSource("");
   preprocessor.setOutputStream(ss);
 
   occa::macro_t macro(&preprocessor, "FOO(A) A");

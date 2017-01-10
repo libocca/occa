@@ -22,6 +22,8 @@ int main(const int argc, const char **argv) {
 
 void testMacroDefines() {
   occa::preprocessor_t preprocessor;
+  preprocessor.setFilename("(source)");
+
   preprocessor.process("#define A\n");
   OCCA_TEST_COMPARE("",
                     preprocessor.applyMacros("A"));
@@ -72,6 +74,8 @@ void testMacroDefines() {
 #if 0
 void testIfElseDefines() {
   occa::preprocessor_t preprocessor;
+  preprocessor.setFilename("(source)");
+
   OCCA_TEST_COMPARE("",
                     preprocessor.process("#ifdef FOO\n"
                                          "1\n"
@@ -151,6 +155,7 @@ void testIfElseDefines() {
 
 void testErrorDefines() {
   occa::preprocessor_t preprocessor;
+  preprocessor.setFilename("(source)");
   preprocessor.props["exitOnError"] = false;
 
   preprocessor.process("#error \"Error\"\n");
@@ -163,6 +168,8 @@ void testErrorDefines() {
 
 void testLineDefine() {
   occa::preprocessor_t preprocessor;
+  preprocessor.setFilename("(source)");
+
   preprocessor.process("#line 10\n");
   OCCA_TEST_COMPARE(10,
                     preprocessor.currentFrame.lineNumber);
@@ -177,6 +184,7 @@ void testLineDefine() {
 #if 0
 void testEval() {
   occa::preprocessor_t preprocessor;
+  preprocessor.setFilename("(source)");
   preprocessor.props["exitOnError"] = false;
 
   // Types
