@@ -189,7 +189,7 @@ namespace occa {
     }
 
     template <class TM>
-    TM get(const std::string &s, const TM &default_ = TM()) const {
+    inline TM get(const std::string &s, const TM &default_ = TM()) const {
       return get<TM>(s.c_str(), default_);
     }
 
@@ -258,6 +258,8 @@ namespace occa {
         return value.boolean == j.value.boolean;
       case null_:
         return true;
+      default:
+        return false;
       }
     }
 

@@ -273,7 +273,7 @@ namespace occa {
       if (error && hash.initialized) {
         io::releaseHash(hash, hashTag);
       }
-      if (settings.get("verboseCompilation", true)) {
+      if (settings().get("verboseCompilation", true)) {
         if (hash.initialized) {
           std::cout << "OpenCL compiling " << functionName
                     << " from [" << sourceFile << "]";
@@ -327,7 +327,7 @@ namespace occa {
       }
       OCCA_OPENCL_ERROR("Kernel (" + functionName + "): Creating Kernel", error);
 
-      if (settings.get("verboseCompilation", true)) {
+      if (settings().get("verboseCompilation", true)) {
         if (sourceFile.size()) {
           std::cout << "OpenCL compiled " << functionName << " from [" << sourceFile << "]";
 

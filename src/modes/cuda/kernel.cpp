@@ -59,12 +59,12 @@ namespace occa {
       occa::properties allProps = properties + props;
       name = functionName;
 
-      if (allProps["compilerFlags"].find("-arch=sm_") == std::string::npos) {
+      if (allProps.get<std::string>("compilerFlags").find("-arch=sm_") == std::string::npos) {
         const int major = ((cuda::device*) dHandle)->archMajorVersion;
         const int minor = ((cuda::device*) dHandle)->archMinorVersion;
         std::stringstream ss;
         ss << " -arch=sm_" << major << minor << ' ';
-        allProps["compilerFlags"] += ss.str();
+        allProps["compilerFlags"].getString() += ss.str();
       }
 
       hash_t hash = occa::hashFile(filename);
@@ -85,7 +85,7 @@ namespace occa {
       }
 
       if (foundBinary) {
-        if (settings.get("verboseCompilation", true)) {
+        if (settings().get("verboseCompilation", true)) {
           std::cout << "Found cached binary of [" << io::shortname(filename)
                     << "] in [" << io::shortname(binaryFile) << "]\n";
         }
@@ -110,7 +110,7 @@ namespace occa {
                                                          ss.str(),
                                                          allProps["footer"]);
 
-      if (settings.get("verboseCompilation", true)) {
+      if (settings().get("verboseCompilation", true)) {
         std::cout << "Compiling [" << functionName << "]\n";
       }
 
@@ -132,7 +132,7 @@ namespace occa {
               << " -o "       << ptxBinaryFile;
 
       const std::string &ptxCommand = command.str();
-      if (settings.get("verboseCompilation", true)) {
+      if (settings().get("verboseCompilation", true)) {
         std::cout << "Compiling [" << functionName << "]\n" << ptxCommand << "\n";
       }
 
@@ -156,7 +156,7 @@ namespace occa {
               << " -o "    << binaryFile;
 
       const std::string &sCommand = command.str();
-      if (settings.get("verboseCompilation", true)) {
+      if (settings().get("verboseCompilation", true)) {
         std::cout << sCommand << '\n';
       }
 

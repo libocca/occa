@@ -26,6 +26,7 @@
 #include "occa/parser/tools.hpp"
 #include "occa/tools/env.hpp"
 #include "occa/tools/io.hpp"
+#include "occa/tools/misc.hpp"
 #include "occa/tools/sys.hpp"
 
 void printHelp();
@@ -208,7 +209,7 @@ void runClearOn(const std::string &path) {
 
   if (input == "y") {
     std::string command = "rm -rf " + path + "*";
-    system(command.c_str());
+    occa::ignoreResult( system(command.c_str()) );
   }
   else if (input != "n") {
     std::cout << "  Input must be [y] or [n], ignoring clear command\n";

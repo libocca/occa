@@ -104,7 +104,7 @@ const occaUDim_t occaAllBytes = -1;
 const void *occaEmptyProperties = (void*) new occa::properties();
 
 void OCCA_RFUNC occaSetVerboseCompilation(const int value) {
-  occa::settings["verboseCompilation"] = (bool) value;
+  occa::settings()["verboseCompilation"] = (bool) value;
 }
 //======================================
 
