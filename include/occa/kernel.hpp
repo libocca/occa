@@ -151,7 +151,7 @@ namespace occa {
 
     template <class TM>
     inline void addDefine(const std::string &macro, const TM &value) {
-      std::string &headers = props["headers"];
+      std::string &headers = (*this)["headers"].getString();
       if (isAnOccaDefine(macro)) {
         headers += "\n#undef " + macro;
       }
@@ -230,8 +230,6 @@ namespace occa {
 
     kernel(const kernel &k);
     kernel& operator = (const kernel &k);
-
-    void checkIfInitialized() const;
 
     void* getHandle(const occa::properties &props = occa::properties());
     kernel_v* getKHandle();

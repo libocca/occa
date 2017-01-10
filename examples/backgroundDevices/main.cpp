@@ -6,8 +6,11 @@ int main(int argc, char **argv) {
   int entries = 5;
 
   // Other useful functions:
-  //   occa::setDevice("mode = OpenMP")
-  //   occa::setDevice("mode = OpenCL, platformID = 0, deviceID = 1, uva = enabled");
+  //   occa::setDevice("mode: 'OpenMP'")
+  //   occa::device device("mode       : 'OpenCL', "
+  //                       "platformID : 0, "
+  //                       "deviceID   : 0, "
+  //                       "uva        : true");
   //   occa::device = occa::currentDevice();
 
   // Use the default device (mode = Serial)

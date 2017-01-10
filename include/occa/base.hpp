@@ -45,10 +45,9 @@ namespace occa {
   //====================================
 
   //---[ Device Functions ]-------------
-  extern device currentDevice_;
-  device currentDevice();
-
   device host();
+  device& currentDevice();
+
   void setDevice(device d);
   void setDevice(const properties &props);
 

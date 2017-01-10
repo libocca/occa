@@ -76,7 +76,7 @@ namespace occa {
       loadParserFlags(properties_);
 
       //---[ Language ]-------
-      if (properties["language"] == "OFL") {
+      if (properties["language"].getString() == "OFL") {
         parsingLanguage = parserInfo::parsingFortran;
       } else {
         parsingLanguage = parserInfo::parsingC;
@@ -89,9 +89,9 @@ namespace occa {
                  properties.has("mode"));
 
       //---[ Magic ]----------
-      std::string content = properties["headers"];
+      std::string content = properties["header"];
       content += io::read(filename);
-      content += properties["footer"];
+      content += (std::string) properties["footer"];
 
       return parseSource(content.c_str());
     }

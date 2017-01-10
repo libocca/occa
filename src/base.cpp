@@ -35,28 +35,28 @@ namespace occa {
 
 
   //---[ Device Functions ]-------------
-  device currentDevice_;
-  device currentDevice() {
-    if (currentDevice_.getDHandle() == NULL) {
-      currentDevice_ = host();
-    }
-    return currentDevice_;
-  }
-
   device host() {
     static device _host;
     if (_host.getDHandle() == NULL) {
-      _host = occa::device(newModeDevice(occa::properties("mode = Serial")));
+      _host = occa::device(newModeDevice(occa::properties("mode: 'Serial'")));
     }
     return _host;
   }
 
+  device& currentDevice() {
+    static device cdev;
+    if (cdev.getDHandle() == NULL) {
+      cdev = host();
+    }
+    return cdev;
+  }
+
   void setDevice(device d) {
-    currentDevice_ = d;
+    currentDevice() = d;
   }
 
   void setDevice(const properties &props) {
-    currentDevice_ = device(props);
+    currentDevice() = device(props);
   }
 
   properties& deviceProperties() {

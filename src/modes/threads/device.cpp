@@ -36,7 +36,7 @@ namespace occa {
 
       threads  = properties.get("threads", coreCount);
 
-      if (properties.get("schedule", "compact") == "compact") {
+      if (properties.get<std::string>("schedule", "compact") == "compact") {
         schedule = compact;
       } else {
         schedule = scatter;

@@ -110,7 +110,7 @@
     if (!isOK) {                                                        \
       std::stringstream _check_ss;                                      \
       _check_ss << message;                                             \
-      checkFunction(filename, function, line, _check_ss.str());   \
+      checkFunction(filename, function, line, _check_ss.str());         \
     }                                                                   \
   } while(0)
 

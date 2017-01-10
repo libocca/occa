@@ -8,8 +8,14 @@ template <class TM, const int TMi>
 void printMatrix(occa::array<TM,TMi> &a);
 
 int main(int argc, char **argv) {
-  // occa::setDevice("mode = OpenCL, platformID = 0, deviceID = 1, uva = enabled");
-  // occa::setDevice("mode = CUDA, deviceID = 0, uva = enabled");
+  // device.setup("mode       : 'OpenCL', "
+  //              "platformID : 0, "
+  //              "deviceID   : 1, "
+  //              "uva        : true");
+
+  // device.setup("mode     : 'CUDA', "
+  //              "deviceID : 0, "
+  //              "uva      : true");
 
   //---[ Testing API ]------------------
   std::cout << "Testing API:\n";

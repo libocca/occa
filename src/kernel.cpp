@@ -210,21 +210,21 @@ namespace occa {
   }
 
   void kernelInfo::addIncludeDefine(const std::string &filename) {
-    props["headers"] += "#include \"" + filename + "\"";
+    (*this)["headers"].getString() += "#include \"" + filename + "\"";
   }
 
   void kernelInfo::addInclude(const std::string &filename) {
-    props["headers"] += io::read(filename);
+    (*this)["headers"].getString() += io::read(filename);
   }
 
   void kernelInfo::removeDefine(const std::string &macro) {
     if (!isAnOccaDefine(macro)) {
-      props["headers"] += "#undef " + macro;
+      (*this)["headers"].getString() += "#undef " + macro;
     }
   }
 
   void kernelInfo::addSource(const std::string &content) {
-    props["headers"] += content;
+    (*this)["headers"].getString() += content;
   }
   //====================================
 
@@ -302,49 +302,35 @@ namespace occa {
     return *this;
   }
 
-  void kernel::checkIfInitialized() const {
-    OCCA_ERROR("Kernel is not initialized",
-               kHandle != NULL);
-  }
-
   void* kernel::getHandle(const occa::properties &props) {
-    checkIfInitialized();
     return kHandle->getHandle(props);
   }
 
   kernel_v* kernel::getKHandle() {
-    checkIfInitialized();
     return kHandle;
   }
 
   const std::string& kernel::mode() {
-    checkIfInitialized();
     return device(kHandle->dHandle).mode();
   }
 
   const std::string& kernel::name() {
-    checkIfInitialized();
     return kHandle->name;
   }
 
   const std::string& kernel::sourceFilename() {
-    checkIfInitialized();
     return kHandle->sourceFilename;
   }
 
   const std::string& kernel::binaryFilename() {
-    checkIfInitialized();
     return kHandle->binaryFilename;
   }
 
   occa::device kernel::getDevice() {
-    checkIfInitialized();
     return occa::device(kHandle->dHandle);
   }
 
   void kernel::setWorkingDims(int dims, occa::dim inner, occa::dim outer) {
-    checkIfInitialized();
-
     for (int i = 0; i < dims; ++i) {
       inner[i] += (inner[i] ? 0 : 1);
       outer[i] += (outer[i] ? 0 : 1);
@@ -365,23 +351,18 @@ namespace occa {
   }
 
   int kernel::maxDims() {
-    checkIfInitialized();
     return kHandle->maxDims();
   }
 
   dim kernel::maxOuterDims() {
-    checkIfInitialized();
     return kHandle->maxOuterDims();
   }
 
   dim kernel::maxInnerDims() {
-    checkIfInitialized();
     return kHandle->maxInnerDims();
   }
 
   void kernel::addArgument(const int argPos, const kernelArg &arg) {
-    checkIfInitialized();
-
     if (kHandle->argumentCount() <= argPos) {
       OCCA_ERROR("Kernels can only have at most [" << OCCA_MAX_ARGS << "] arguments,"
                  << " [" << argPos << "] arguments were set",
@@ -394,8 +375,6 @@ namespace occa {
   }
 
   void kernel::runFromArguments() {
-    checkIfInitialized();
-
     const int argc = (int) kHandle->arguments.size();
     for (int i = 0; i < argc; ++i) {
       const bool argIsConst = kHandle->metadata.argIsConst(i);
@@ -418,15 +397,12 @@ namespace occa {
   }
 
   void kernel::clearArgumentList() {
-    checkIfInitialized();
     kHandle->arguments.clear();
   }
 
 #include "operators/definitions.cpp"
 
   void kernel::free() {
-    checkIfInitialized();
-
     if (kHandle->nestedKernelCount()) {
       for (int k = 0; k < kHandle->nestedKernelCount(); ++k)
         kHandle->nestedKernels[k].free();

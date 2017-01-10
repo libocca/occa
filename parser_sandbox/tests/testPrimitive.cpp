@@ -1,7 +1,7 @@
 #include "occa/defines.hpp"
 #include "occa/tools/sys.hpp"
 #include "occa/tools/testing.hpp"
-#include "primitive.hpp"
+#include "occa/parser/primitive.hpp"
 
 void testLoad();
 void testToString();

@@ -127,8 +127,6 @@ namespace occa {
 
     memory& swap(memory &m);
 
-    void checkIfInitialized() const;
-
     memory_v* getMHandle();
     device_v* getDHandle();
 

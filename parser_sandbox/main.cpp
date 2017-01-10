@@ -12,7 +12,7 @@
 #include "occa/tools/sys.hpp"
 
 #include "basicParser.hpp"
-#include "primitive.hpp"
+#include "occa/parser/primitive.hpp"
 
 int main(int argc, char **argv) {
 #if 0

@@ -79,7 +79,7 @@ namespace occa {
 
       std::string kernelDefines;
       if (properties.has("occa::kernelDefines")) {
-        kernelDefines = properties["occa::kernelDefines"];
+        kernelDefines = properties["occa::kernelDefines"].getString();
       } else {
         kernelDefines = io::cacheFile(env::OCCA_DIR + "/include/occa/modes/serial/kernelDefines.hpp",
                                       "serialKernelDefines.hpp");
@@ -92,7 +92,7 @@ namespace occa {
       std::stringstream ss, command;
       ss << "#include \"" << kernelDefines << "\"\n"
          << "#include \"" << vectorDefines << "\"\n"
-         << allProps["headers"] << '\n'
+         << allProps["headers"].getString() << '\n'
          << "#if defined(OCCA_IN_KERNEL) && !OCCA_IN_KERNEL\n"
          << "using namespace occa;\n"
          << "#endif\n";
@@ -101,15 +101,16 @@ namespace occa {
                                                          kc::sourceFile,
                                                          hash,
                                                          ss.str(),
-                                                         allProps["footer"]);
+                                                         allProps["footer"].getString());
 
-      if (allProps.has("compilerEnvScript")) {
-        command << allProps["compilerEnvScript"] << " && ";
+      const std::string &compilerEnvScript = allProps["compilerEnvScript"].getString();
+      if (compilerEnvScript.size()) {
+        command << compilerEnvScript << " && ";
       }
 
 #if (OCCA_OS & (OCCA_LINUX_OS | OCCA_OSX_OS))
-      command << allProps["compiler"]
-              << ' '    << allProps["compilerFlags"]
+      command << allProps["compiler"].getString()
+              << ' '    << allProps["compilerFlags"].getString()
               << ' '    << cachedSourceFile
               << " -o " << binaryFile
               << " -I"  << env::OCCA_DIR << "include"
