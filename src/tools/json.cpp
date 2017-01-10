@@ -23,13 +23,15 @@
 #include <cstring>
 
 #include "occa/defines.hpp"
+#include "occa/tools/io.hpp"
 #include "occa/tools/json.hpp"
 
 namespace occa {
   const char json::objectKeyEndChars[] = " \t\r\n\v\f:";
 
-  json::json() :
-    type(none_) {}
+  json::json() {
+    clear();
+  }
 
   void json::clear() {
     type = none_;
@@ -70,6 +72,14 @@ namespace occa {
   void json::load(const std::string &s) {
     const char *c = s.c_str();
     load(c);
+  }
+
+  json json::loads(const std::string &filename) {
+    return json(io::read(filename));
+  }
+
+  void json::dumps(const std::string &filename) {
+    io::write(filename, toString());
   }
 
   void json::loadString(const char *&c) {
@@ -415,6 +425,7 @@ namespace occa {
         std::string newIndent = indent + "  ";
         out += '\n';
         while (it != value.object.end()) {
+          out += newIndent;
           out += '"';
           out += it->first;
           out += "\": ";

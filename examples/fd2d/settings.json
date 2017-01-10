@@ -1,0 +1,19 @@
+{
+  device: "mode: 'Serial'",
+
+  radius: 7,
+  width : 256,
+  length: 256,
+  height: 256,
+
+  bx: 16,
+  by: 16,
+
+  dx: 0.01,
+  dt: 0.001,
+
+  frequency: 3,
+
+  minU: 0.0,
+  maxU: 0.0005,
+}

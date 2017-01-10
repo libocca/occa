@@ -5,16 +5,15 @@
 #include <vector>
 #include "math.h"
 
-#include "visualizer.hpp"
-#include "setupAide.hpp"
 #include "occa.hpp"
+#include "occa/tools/json.hpp"
+
+#include "visualizer.hpp"
 
 #if OCCA_GL_ENABLED
 visualizer vis;
 int click;
 #endif
-
-setupAide setup;
 
 std::string deviceInfo;
 
@@ -33,8 +32,8 @@ int mX, mY;
 tFloat freq;
 tFloat minU, maxU;
 
-vector<tFloat> u1, u2;
-vector<tFloat> xyz;
+std::vector<tFloat> u1, u2;
+std::vector<tFloat> xyz;
 
 void run();
 void setupMesh();
@@ -103,39 +102,31 @@ void run() {
 }
 
 void setupMesh() {
-  setup.read("setuprc");
+  occa::json settings = occa::json::loads("settings.json");
 
-  setup.getArgs("DEVICE INFO", deviceInfo);
+  deviceInfo = (std::string) settings["device"];
 
-  setup.getArgs("STENCIL RADIUS" , stencilRadius);
+  stencilRadius = (int) settings["radius"];
 
-  setup.getArgs("WIDTH" , width);
-  setup.getArgs("HEIGHT", height);
+  width  = (int) settings["width"];
+  height = (int) settings["height"];
 
-  setup.getArgs("BX", Bx);
-  setup.getArgs("BY", By);
+  Bx = (int) settings["bx"];
+  By = (int) settings["by"];
 
-  setup.getArgs("DX", dx);
-  setup.getArgs("DT", dt);
+  dx = (double) settings["dx"];
+  dt = (double) settings["dt"];
 
-  setup.getArgs("MIN U", minU);
-  setup.getArgs("MAX U", maxU);
+  minU = (double) settings["minU"];
+  maxU = (double) settings["maxU"];
 
-  setup.getArgs("FREQUENCY", freq);
+  freq = (int) settings["frequency"];
 
   heightScale = 20000.0;
 
   currentTime = 0;
 
-  std::cout << "DEVICE INFO    = " << deviceInfo << '\n'
-            << "STENCIL RADIUS = " << stencilRadius << '\n'
-            << "WIDTH          = " << width << '\n'
-            << "HEIGHT         = " << height << '\n'
-            << "DX             = " << dx << '\n'
-            << "DT             = " << dt << '\n'
-            << "MIN U          = " << minU << '\n'
-            << "MAX U          = " << maxU << '\n'
-            << "FREQUENCY      = " << freq << '\n';
+  std::cout << settings << '\n';
 
   u1.resize(width*height, 0);
   u2.resize(width*height, 0);

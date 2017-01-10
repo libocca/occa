@@ -5,7 +5,6 @@
 #include "math.h"
 
 #include "visualizer.hpp"
-#include "setupAide.hpp"
 
 #include "occa.hpp"
 #include "occa/array.hpp"
@@ -14,8 +13,6 @@
 visualizer vis;
 GLuint screenTexID;
 #endif
-
-setupAide setup;
 
 const tFloat DEPTH_OF_FIELD = 2.5;
 const tFloat EYE_DISTANCE_FROM_NEAR_FIELD = 2.2;
@@ -113,20 +110,18 @@ void glRun() {
 #endif
 
 void readSetupFile() {
-  setup.read("setuprc");
+  occa::json settings = occa::json::loads("settings.json");
 
-  setup.getArgs("DEVICE INFO", deviceInfo);
+  deviceInfo = (std::string) settings["device"];
 
-  setup.getArgs("SHAPE FUNCTION", shapeFunction);
+  shapeFunction = (std::string) settings["shapeFunction"];
 
-  setup.getArgs("WIDTH" , width);
-  setup.getArgs("HEIGHT", height);
-  setup.getArgs("BATCH_SIZE", batchSize);
+  width  = (int) settings["width"];
+  height = (int) settings["height"];
 
-  std::cout << "DEVICE INFO    = " << deviceInfo    << '\n'
-            << "SHAPE FUNCTION = " << shapeFunction << '\n'
-            << "WIDTH          = " << width         << '\n'
-            << "HEIGHT         = " << height        << '\n';
+  batchSize = (int) settings["batchSize"];
+
+  std::cout << settings << '\n';
 }
 
 void updateScene() {
@@ -199,7 +194,7 @@ void setupRenderer() {
 void render() {
   vis.placeViewport(0,0);
 
-  const double startTime = occa::currentTime();
+  const double startTime = occa::sys::currentTime();
 
   rayMarcher(rgba,
              lightDirection,
@@ -208,7 +203,7 @@ void render() {
 
   occa::finish();
 
-  const double endTime = occa::currentTime();
+  const double endTime = occa::sys::currentTime();
 
   std::cout << "Render Time Taken: " << (endTime - startTime) << '\n';
 
