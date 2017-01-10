@@ -164,14 +164,14 @@ void testErrorDefines() {
 void testLineDefine() {
   occa::preprocessor_t preprocessor;
   preprocessor.process("#line 10\n");
-  OCCA_TEST_COMPARE(11,
-                    preprocessor.lineNumber);
+  OCCA_TEST_COMPARE(10,
+                    preprocessor.currentFrame.lineNumber);
 
   preprocessor.process("#line 20 \"foo\"\n");
-  OCCA_TEST_COMPARE(21,
-                    preprocessor.lineNumber);
+  OCCA_TEST_COMPARE(20,
+                    preprocessor.currentFrame.lineNumber);
   OCCA_TEST_COMPARE(occa::env::PWD + "foo",
-                    preprocessor.filename);
+                    preprocessor.currentFrame.filename());
 }
 
 #if 0
