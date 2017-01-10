@@ -26,7 +26,7 @@ namespace occa {
 
   template <class TM>
   const TM& trie_t<TM>::result_t::value() const {
-    return trie->values[valueIdx];
+    return (0 <= valueIdx) ? trie->values[valueIdx] : trie->defaultValue;
   }
   //  ==================================
 

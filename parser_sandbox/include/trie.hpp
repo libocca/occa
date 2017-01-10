@@ -66,6 +66,7 @@ namespace occa {
     //==================================
 
     trieNode_t root;
+    TM defaultValue;
     std::vector<TM> values;
 
     bool isFrozen, autoFreeze;

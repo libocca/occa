@@ -400,8 +400,16 @@ namespace occa {
         return;
       }
     }
-    line[cEndLine - line.c_str()] = '\0';
+    const int cEndLineIdx = (int) (cEndLine - line.c_str());
+    const int lineSize = (int) line.size();
+    if (cEndLineIdx < lineSize) {
+      line[cEndLineIdx] = '\0';
+    }
     lineNumber = (int) primitive(cStartLine);
+
+    if (lineSize <= cEndLineIdx) {
+      return;
+    }
 
     // Get filename (if exists)
     char *cStartFilename = cEndLine + 1;
