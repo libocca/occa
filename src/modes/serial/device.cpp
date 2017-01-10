@@ -36,7 +36,7 @@ namespace occa {
       int vendor;
       std::string compiler, compilerFlags, compilerEnvScript;
 
-      if (properties.has("compiler")) {
+      if (properties.get<std::string>("compiler").size()) {
         compiler = properties["compiler"].getString();
       } else if (env::var("OCCA_CXX").size()) {
         compiler = env::var("OCCA_CXX");
@@ -52,7 +52,7 @@ namespace occa {
 
       vendor = sys::compilerVendor(compiler);
 
-      if (properties.has("compilerFlags")) {
+      if (properties.get<std::string>("compilerFlags").size()) {
         compilerFlags = properties["compilerFlags"].getString();
       } else if (env::var("OCCA_CXXFLAGS").size()) {
         compilerFlags = env::var("OCCA_CXXFLAGS");
@@ -70,7 +70,7 @@ namespace occa {
 #endif
       }
 
-      if (properties.has("compilerEnvScript")) {
+      if (properties.get<std::string>("compilerEnvScript").size()) {
         compilerEnvScript = properties["compilerEnvScript"].getString();
       } else {
 #if (OCCA_OS == OCCA_WINDOWS_OS)

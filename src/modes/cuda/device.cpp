@@ -50,26 +50,27 @@ namespace occa {
 
       p2pEnabled = false;
 
-      std::string compiler, compilerFlags;
+      std::string compiler = properties["compiler"].getString();
+      std::string compilerFlags = properties["compilerFlags"].getString();
 
-      if (properties.has("compiler")) {
-        compiler = properties["compiler"];
-      } else if (env::var("OCCA_CUDA_COMPILER").size()) {
-        compiler = env::var("OCCA_CUDA_COMPILER");
-      } else {
-        compiler = "nvcc";
+      if (!compiler.size()) {
+        if (env::var("OCCA_CUDA_COMPILER").size()) {
+          compiler = env::var("OCCA_CUDA_COMPILER");
+        } else {
+          compiler = "nvcc";
+        }
       }
 
-      if (properties.has("compilerFlags")) {
-        compilerFlags = properties["compilerFlags"];
-      } else if (env::var("OCCA_CUDA_COMPILER_FLAGS").size()) {
-        compilerFlags = env::var("OCCA_CUDA_COMPILER_FLAGS");
-      } else {
+      if (!compilerFlags.size()) {
+        if (env::var("OCCA_CUDA_COMPILER_FLAGS").size()) {
+          compilerFlags = env::var("OCCA_CUDA_COMPILER_FLAGS");
+        } else {
 #if OCCA_DEBUG_ENABLED
-        compilerFlags = "-g";
+          compilerFlags = "-g";
 #else
-        compilerFlags = "";
+          compilerFlags = "";
 #endif
+        }
       }
 
       properties["compiler"]      = compiler;
@@ -89,7 +90,7 @@ namespace occa {
     }
 
     void* device::getHandle(const occa::properties &props) {
-      if (props.get("type") == "context") {
+      if (props.get<std::string>("type", "") == "context") {
         return (void*) context;
       }
       return (void*) (uintptr_t) handle;

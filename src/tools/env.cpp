@@ -52,10 +52,10 @@ namespace occa {
     }
 
     void initSettings() {
-      settings = occa::properties();
-      settings["version"] = "1.0";
-      settings["parser-version"] = "0.1";
-      settings["verboseCompilation"] = true;
+      properties &settings_ = settings();
+      settings_["version"] = "1.0";
+      settings_["parser-version"] = "0.1";
+      settings_["verboseCompilation"] = true;
     }
 
     void initSignalHandling() {
@@ -85,11 +85,7 @@ namespace occa {
       OCCA_DIR = env::var("OCCA_DIR");
 #ifdef OCCA_COMPILED_DIR
       if (OCCA_DIR.size() == 0) {
-#  if (OCCA_OS & (OCCA_LINUX_OS | OCCA_OSX_OS))
-        OCCA_DIR = OCCA_STRINGIFY(OCCA_COMPILED_DIR);
-#  else
         OCCA_DIR = OCCA_COMPILED_DIR;
-#  endif
       }
 #endif
       OCCA_ERROR("Environment variable [OCCA_DIR] is not set",

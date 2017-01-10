@@ -224,7 +224,7 @@ namespace occa {
       if (k->metadata.nestedKernels) {
         std::stringstream ss;
 
-        const bool vc_f = settings.get("verboseCompilation", true);
+        const bool vc_f = settings().get("verboseCompilation", true);
 
         for (int ki = 0; ki < k->metadata.nestedKernels; ++ki) {
           ss << ki;
@@ -243,10 +243,10 @@ namespace occa {
 
           // Only show compilation the first time
           if (ki == 0) {
-            settings["verboseCompilation"] = false;
+            settings()["verboseCompilation"] = false;
           }
         }
-        settings["verboseCompilation"] = vc_f;
+        settings()["verboseCompilation"] = vc_f;
       }
     } else {
       k = dHandle->buildKernel(realFilename,

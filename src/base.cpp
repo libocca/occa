@@ -26,7 +26,10 @@
 
 namespace occa {
   //---[ Globals & Flags ]--------------
-  properties settings;
+  properties& settings() {
+    static properties settings_;
+    return settings_;
+  }
   //====================================
 
 

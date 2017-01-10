@@ -41,7 +41,7 @@
 
 namespace occa {
   //---[ Globals & Flags ]--------------
-  extern properties settings;
+  properties& settings();
   //====================================
 
   //---[ Device Functions ]-------------

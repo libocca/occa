@@ -150,12 +150,12 @@ namespace occa {
     void removeDefine(const std::string &macro);
 
     template <class TM>
-    inline void addDefine(const std::string &macro, const TM &value) {
+    inline void addDefine(const std::string &macro, const TM &definedValue) {
       std::string &headers = (*this)["headers"].getString();
       if (isAnOccaDefine(macro)) {
         headers += "\n#undef " + macro;
       }
-      headers += "\n#define " + macro + " " + occa::toString(value);
+      headers += "\n#define " + macro + " " + occa::toString(definedValue);
     }
 
     void addSource(const std::string &content);
