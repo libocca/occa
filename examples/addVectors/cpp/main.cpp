@@ -22,32 +22,31 @@ int main(int argc, char **argv) {
   occa::memory o_a, o_b, o_ab;
 
   //---[ Device setup with string flags ]-------------------
-  device.setup("mode = Serial");
-  // device.setup("mode = OpenMP , schedule = compact, chunk = 10");
-  // device.setup("mode = OpenCL , platformID = 0, deviceID = 1");
-  // device.setup("mode = CUDA   , deviceID = 0");
-  // device.setup("mode = Threads, threadCount = 4, schedule = compact, pinnedCores = [0, 0, 1, 1]");
+  device.setup("mode: 'Serial'");
+
+  // device.setup("mode     : 'OpenMP', "
+  //              "schedule : 'compact', "
+  //              "chunk    : 10");
+
+  // device.setup("mode       : 'OpenCL', "
+  //              "platformID : 0, "
+  //              "deviceID   : 1");
+
+  // device.setup("mode     : 'CUDA', "
+  //              "deviceID : 0");
+
+  // device.setup("mode        : 'Threads', "
+  //              "threadCount : 4, "
+  //              "schedule    : 'compact', "
+  //              "pinnedCores : [0, 0, 1, 1]");
   //========================================================
 
   o_a  = device.malloc(entries*sizeof(float));
   o_b  = device.malloc(entries*sizeof(float));
   o_ab = device.malloc(entries*sizeof(float));
 
-  // OKL: OCCA Kernel Language
   addVectors = device.buildKernel("addVectors.okl",
                                   "addVectors");
-
-  // OFL: OCCA Fortran Language
-  // addVectors = device.buildKernel("addVectors.ofl",
-  //                                 "addVectors");
-
-  //---[ Don't need to set these up when using OKL/OFL ]----
-  // int dims = 1;
-  // int itemsPerGroup(16);
-  // int groups((entries + itemsPerGroup - 1)/itemsPerGroup);
-
-  // addVectors.setWorkingDims(dims, itemsPerGroup, groups);
-  //========================================================
 
   o_a.copyFrom(a);
   o_b.copyFrom(b);

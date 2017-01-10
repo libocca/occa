@@ -25,163 +25,34 @@
 #include "occa/parser/parser.hpp"
 
 namespace occa {
-  //---[ properties ]-------------------
-  void *properties::_NULL = NULL;
-  properties::properties(hasProperties *holder_) :
-    holder(holder_) {}
-
-  properties::properties(const std::string &props_) {
-    initFromString(props_);
+  properties::properties() {
+    type = object_;
   }
 
-  properties::properties(const char *props_) {
-    initFromString(props_);
+  properties::properties(const char *c) {
+    load(c);
   }
 
-  properties::properties(const properties &p) {
-    *this = p;
+  properties::properties(const std::string &s) {
+    load(s);
   }
 
-  properties& properties::operator = (const properties &p) {
-    props = p.props;
-    return *this;
+  void properties::load(const char *&c) {
+    loadObject(c);
   }
 
-  void properties::initFromString(const std::string &props_) {
-    if (props_.size() == 0)
-      return;
-
-    parserNS::expNode expRoot = parserNS::createOrganizedExpNodeFrom(props_);
-    parserNS::expNode &csvFlatRoot = *(expRoot.makeCsvFlatHandle());
-
-    for (int i = 0; i < csvFlatRoot.leafCount; ++i) {
-      parserNS::expNode &leaf = csvFlatRoot[i];
-      std::string &prop = (leaf.leafCount ? leaf[0].value : leaf.value);
-
-      if (leaf.value != "=") {
-        std::cout << "Property [" << prop << "] was not set, skipping it\n";
-        continue;
-      }
-
-      set(prop, leaf[1].toString());
-    }
-
-    parserNS::expNode::freeFlatHandle(csvFlatRoot);
+  void properties::load(const std::string &s) {
+    const char *c = s.c_str();
+    loadObject(c);
   }
 
-  udim_t properties::size() {
-    return props.size();
-  }
-
-  bool properties::has(const std::string &prop) const {
-    citer_t it = props.find(prop);
-    return ((it != props.end()) && it->second.size());
-  }
-
-  std::string& properties::operator [] (const std::string &prop) {
-    return props[prop];
-  }
-
-  const std::string properties::operator [] (const std::string &prop) const {
-    citer_t it = props.find(prop);
-    if (it != props.end()) {
-      return it->second;
-    }
-    return "";
-  }
-
-  std::string properties::get(const std::string &prop, const std::string &default_) const {
-    return get<std::string>(prop, default_);
-  }
-
-  properties properties::operator + (const properties &other) const {
+  properties properties::operator + (const properties &j) const {
     properties all = *this;
-    citer_t it = other.props.begin();
-    while (it != other.props.end()) {
-      all.props[it->first] = it->second;
+    cJsonObjectIterator it = j.value.object.begin();
+    while (it != j.value.object.end()) {
+      all.value.object[it->first] = it->second;
       ++it;
     }
     return all;
   }
-
-  void properties::remove(const std::string &prop) {
-    iter_t it = props.find(prop);
-    std::string &oldValue = it->second;
-    onChange(Remove, prop, oldValue, "");
-    props.erase(it);
-  }
-
-  bool properties::iMatch(const std::string &prop, const std::string &value) const {
-    citer_t it = props.find(prop);
-    if (it == props.end()) {
-      return false;
-    }
-    return (lowercase(it->second) == lowercase(value));
-  }
-
-  void properties::setOnChangeFunc(hasProperties &holder_) {
-    holder = &holder_;
-  }
-
-  void properties::onChange(properties::Op op,
-                            const std::string &prop,
-                            const std::string &oldValue,
-                            const std::string &newValue) const {
-    if (holder) {
-      holder->onPropertyChange(op, prop, oldValue, newValue);
-    }
-  }
-
-  hash_t properties::hash() const {
-    citer_t it = props.begin();
-    hash_t hash_;
-    while (it != props.end()) {
-      hash_ ^= occa::hash(it->first);
-      hash_ ^= occa::hash(it->second);
-      ++it;
-    }
-    return hash_;
-  }
-
-  std::string properties::toString() const {
-    citer_t it = props.begin();
-    std::stringstream ss;
-
-    int maxChars = 0;
-    while (it != props.end()) {
-      const int chars = (int) it->first.size();
-      maxChars = (maxChars < chars) ? chars : maxChars;
-      ++it;
-    }
-
-    ss << "{\n";
-
-    it = props.begin();
-    while (it != props.end()) {
-      ss << "  "
-         << it->first
-         << std::string(maxChars - it->first.size() + 1, ' ') << ": "
-         << it->second
-         << ",\n";
-      ++it;
-    }
-
-    ss << "}\n";
-    return ss.str();
-  }
-
-  std::ostream& operator << (std::ostream &out, const properties &props) {
-    out << props.toString();
-    return out;
-  }
-  //====================================
-
-  //---[ hasProperties ]----------------
-  hasProperties::hasProperties() : properties(this) {}
-
-  void hasProperties::onPropertyChange(properties::Op op,
-                                       const std::string &prop,
-                                       const std::string &oldValue,
-                                       const std::string &newValue) const {}
-  //====================================
 }

@@ -104,18 +104,11 @@ namespace occa {
     return *this;
   }
 
-  void memory::checkIfInitialized() const {
-    OCCA_ERROR("Memory is not initialized",
-               mHandle != NULL);
-  }
-
   memory_v* memory::getMHandle() {
-    checkIfInitialized();
     return mHandle;
   }
 
   device_v* memory::getDHandle() {
-    checkIfInitialized();
     return mHandle->dHandle;
   }
 
@@ -127,7 +120,6 @@ namespace occa {
   }
 
   const std::string& memory::mode() {
-    checkIfInitialized();
     return device(mHandle->dHandle).mode();
   }
 
@@ -151,13 +143,10 @@ namespace occa {
   }
 
   void* memory::getHandle(const occa::properties &props) {
-    checkIfInitialized();
     return mHandle->getHandle(props);
   }
 
   void memory::setupUva() {
-    checkIfInitialized();
-
     if ( !(mHandle->dHandle->hasSeparateMemorySpace()) ) {
       mHandle->uvaPtr = mHandle->uvaHandle();
     } else {
@@ -187,8 +176,6 @@ namespace occa {
 
   void memory::syncToDevice(const dim_t bytes,
                             const dim_t offset) {
-    checkIfInitialized();
-
     udim_t bytes_ = ((bytes == -1) ? mHandle->size : bytes);
 
     OCCA_ERROR("Trying to allocate negative bytes (" << bytes << ")",
@@ -212,8 +199,6 @@ namespace occa {
 
   void memory::syncFromDevice(const dim_t bytes,
                               const dim_t offset) {
-    checkIfInitialized();
-
     udim_t bytes_ = ((bytes == 0) ? mHandle->size : bytes);
 
     OCCA_ERROR("Trying to allocate negative bytes (" << bytes << ")",
@@ -236,19 +221,16 @@ namespace occa {
   }
 
   bool memory::uvaIsStale() {
-    checkIfInitialized();
     return (mHandle && mHandle->isStale());
   }
 
   void memory::uvaMarkStale() {
-    checkIfInitialized();
     if (mHandle != NULL) {
       mHandle->memInfo |= uvaFlag::isStale;
     }
   }
 
   void memory::uvaMarkFresh() {
-    checkIfInitialized();
     if (mHandle != NULL) {
       mHandle->memInfo &= ~uvaFlag::isStale;
     }
@@ -258,8 +240,6 @@ namespace occa {
                         const dim_t bytes,
                         const dim_t offset,
                         const occa::properties &props) {
-    checkIfInitialized();
-
     udim_t bytes_ = ((bytes == -1) ? mHandle->size : bytes);
 
     OCCA_ERROR("Trying to allocate negative bytes (" << bytes << ")",
@@ -278,8 +258,6 @@ namespace occa {
                         const dim_t destOffset,
                         const dim_t srcOffset,
                         const occa::properties &props) {
-    checkIfInitialized();
-
     udim_t bytes_ = ((bytes == -1) ? mHandle->size : bytes);
 
     OCCA_ERROR("Trying to allocate negative bytes (" << bytes << ")",
@@ -302,8 +280,6 @@ namespace occa {
                       const dim_t bytes,
                       const dim_t offset,
                       const occa::properties &props) {
-    checkIfInitialized();
-
     udim_t bytes_ = ((bytes == -1) ? mHandle->size : bytes);
 
     OCCA_ERROR("Trying to allocate negative bytes (" << bytes << ")",
@@ -322,8 +298,6 @@ namespace occa {
                       const dim_t destOffset,
                       const dim_t srcOffset,
                       const occa::properties &props) {
-    checkIfInitialized();
-
     udim_t bytes_ = ((bytes == -1) ? mHandle->size : bytes);
 
     OCCA_ERROR("Trying to allocate negative bytes (" << bytes << ")",
@@ -351,8 +325,6 @@ namespace occa {
   }
 
   void memory::deleteRefs(const bool freeMemory) {
-    checkIfInitialized();
-
     mHandle->dHandle->bytesAllocated -= (mHandle->size);
 
     if (mHandle->uvaPtr) {

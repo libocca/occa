@@ -24,13 +24,25 @@ int main(int argc, char **argv) {
   occaMemory o_a, o_b, o_ab;
 
   //---[ Device setup with string flags ]-------------------
-  const char *deviceInfo = "mode = Serial";
-  /* const char *deviceInfo = "mode = OpenMP  , schedule = compact, chunk = 10"; */
-  /* const char *deviceInfo = "mode = OpenCL  , platformID = 0, deviceID = 0"; */
-  /* const char *deviceInfo = "mode = CUDA    , deviceID = 0"; */
-  /* const char *deviceInfo = "mode = Pthreads, threadCount = 4, schedule = compact, pinnedCores = [0, 0, 1, 1]"; */
-  /* const char *deviceInfo = "mode = COI     , deviceID = 0"; */
+  const char *deviceInfo = "mode: 'Serial'";
 
+  /*
+  const char *deviceInfo = ("mode     : 'OpenMP', "
+                            "schedule : 'compact', "
+                            "chunk    : 10");
+
+  const char *deviceInfo = ("mode       : 'OpenCL', "
+                            "platformID : 0, "
+                            "deviceID   : 1");
+
+  const char *deviceInfo = ("mode     : 'CUDA', "
+                            "deviceID : 0");
+
+  const char *deviceInfo = ("mode        : 'Threads', "
+                            "threadCount : 4, "
+                            "schedule    : 'compact', "
+                            "pinnedCores : [0, 0, 1, 1]");
+  */
   device = occaCreateDevice(occaString(deviceInfo));
 
   o_a  = occaDeviceMalloc(device, entries*sizeof(float), NULL, occaDefault);

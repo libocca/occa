@@ -55,7 +55,7 @@ namespace occa {
       settings = occa::properties();
       settings["version"] = "1.0";
       settings["parser-version"] = "0.1";
-      settings.set<bool>("verboseCompilation", true);
+      settings["verboseCompilation"] = true;
     }
 
     void initSignalHandling() {

@@ -57,7 +57,7 @@ namespace occa {
       std::string compilerFlags;
 
       if (properties.has("compilerFlags")) {
-        compilerFlags = properties["compilerFlags"];
+        compilerFlags = properties["compilerFlags"].getString();
       } else if (env::var("OCCA_OPENCL_COMPILER_FLAGS").size()) {
         compilerFlags = env::var("OCCA_OPENCL_COMPILER_FLAGS");
       } else {
@@ -79,7 +79,7 @@ namespace occa {
     }
 
     void* device::getHandle(const occa::properties &props) {
-      if (props.get("type") == "context") {
+      if (props["type"] == "context") {
         return (void*) clContext;
       }
       return NULL;

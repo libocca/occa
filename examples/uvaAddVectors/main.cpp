@@ -8,8 +8,10 @@ int main(int argc, char **argv) {
   // [U]nified [V]irtual [A]dressing is
   //   disabled by default
   // occa::enableUVAByDefault();
-
-  occa::device device("mode = OpenCL, platformID = 0, deviceID = 0, uva = enabled");
+  occa::device device("mode       : 'OpenCL', "
+                      "platformID : 0, "
+                      "deviceID   : 0, "
+                      "uva        : true");
 
   // Allocate [uva] arrays that will
   //   automatically synchronize between

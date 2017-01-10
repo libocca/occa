@@ -120,8 +120,6 @@ namespace occa {
     device(const occa::device &d);
     device& operator = (const occa::device &d);
 
-    void checkIfInitialized() const;
-
     const std::string& mode();
     occa::properties& properties();
 
@@ -129,7 +127,6 @@ namespace occa {
     device_v* getDHandle();
 
     void setup(const occa::properties &props);
-    // void setup(const std::string &props);
 
     udim_t memorySize() const;
     udim_t memoryAllocated() const;

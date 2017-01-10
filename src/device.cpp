@@ -32,10 +32,10 @@ namespace occa {
   device_v::device_v(const occa::properties &properties_) :
     hasProperties() {
 
-    mode = properties_["mode"];
+    mode = properties_["mode"].getString();
     properties = properties_;
 
-    uvaEnabled_ = this->properties.iMatch("uva", "enabled");
+    uvaEnabled_ = this->properties.get<bool>("uva", false);
     currentStream = NULL;
     bytesAllocated = 0;
   }
@@ -81,11 +81,6 @@ namespace occa {
     return *this;
   }
 
-  void device::checkIfInitialized() const {
-    OCCA_ERROR("Device is not initialized",
-               dHandle != NULL);
-  }
-
   void* device::getHandle(const occa::properties &props) {
     return dHandle->getHandle(props);
   }
@@ -96,46 +91,39 @@ namespace occa {
 
   void device::setup(const occa::properties &props) {
     dHandle = occa::newModeDevice(props);
-    dHandle->uvaEnabled_ = dHandle->properties.iMatch("uva", "enabled");
+    dHandle->uvaEnabled_ = dHandle->properties.get<bool>("uva", false);
 
     stream newStream = createStream();
     dHandle->currentStream = newStream.handle;
   }
 
   occa::properties& device::properties() {
-    checkIfInitialized();
     return dHandle->properties;
   }
 
   udim_t device::memorySize() const {
-    checkIfInitialized();
     return dHandle->memorySize();
   }
 
   udim_t device::memoryAllocated() const {
-    checkIfInitialized();
     return dHandle->bytesAllocated;
   }
 
   bool device::hasUvaEnabled() {
-    checkIfInitialized();
     return dHandle->hasUvaEnabled();
   }
 
   const std::string& device::mode() {
-    checkIfInitialized();
     return dHandle->mode;
   }
 
   void device::finish() {
-    checkIfInitialized();
-
     if (dHandle->hasSeparateMemorySpace()) {
       const size_t staleEntries = uvaStaleMemory.size();
       for (size_t i = 0; i < staleEntries; ++i) {
         occa::memory_v *mem = uvaStaleMemory[i];
 
-        mem->copyTo(mem->uvaPtr, mem->size, 0, occa::properties("async = 1"));
+        mem->copyTo(mem->uvaPtr, mem->size, 0, occa::properties("async: true"));
 
         mem->memInfo &= ~uvaFlag::inDevice;
         mem->memInfo &= ~uvaFlag::isStale;
@@ -150,8 +138,6 @@ namespace occa {
 
   //  |---[ Stream ]--------------------
   stream device::createStream() {
-    checkIfInitialized();
-
     stream newStream(dHandle, dHandle->createStream());
     dHandle->streams.push_back(newStream.handle);
 
@@ -159,8 +145,6 @@ namespace occa {
   }
 
   void device::freeStream(stream s) {
-    checkIfInitialized();
-
     const int streamCount = dHandle->streams.size();
 
     for (int i = 0; i < streamCount; ++i) {
@@ -177,32 +161,26 @@ namespace occa {
   }
 
   stream device::getStream() {
-    checkIfInitialized();
     return stream(dHandle, dHandle->currentStream);
   }
 
   void device::setStream(stream s) {
-    checkIfInitialized();
     dHandle->currentStream = s.handle;
   }
 
   stream device::wrapStream(void *handle_) {
-    checkIfInitialized();
     return stream(dHandle, dHandle->wrapStream(handle_));
   }
 
   streamTag device::tagStream() {
-    checkIfInitialized();
     return dHandle->tagStream();
   }
 
   void device::waitFor(streamTag tag) {
-    checkIfInitialized();
     dHandle->waitFor(tag);
   }
 
   double device::timeBetween(const streamTag &startTag, const streamTag &endTag) {
-    checkIfInitialized();
     return dHandle->timeBetween(startTag, endTag);
   }
   //  |=================================
@@ -211,8 +189,6 @@ namespace occa {
   kernel device::buildKernel(const std::string &filename,
                              const std::string &functionName,
                              const occa::properties &props) {
-    checkIfInitialized();
-
     occa::properties allProps = properties() + props;
 
     const std::string realFilename = io::filename(filename);
@@ -223,8 +199,8 @@ namespace occa {
     kernel_v *&k = ker.kHandle;
 
     if (usingParser) {
-      k          = newModeKernel(occa::properties("mode = Serial"));
-      k->dHandle = newModeDevice(occa::properties("mode = Serial"));
+      k          = newModeKernel(occa::properties("mode: 'Serial'"));
+      k->dHandle = newModeDevice(occa::properties("mode: 'Serial'"));
 
       hash_t hash = occa::hashFile(realFilename);
       hash ^= props.hash();
@@ -267,11 +243,10 @@ namespace occa {
 
           // Only show compilation the first time
           if (ki == 0) {
-            settings.set<bool>("verboseCompilation", false);
+            settings["verboseCompilation"] = false;
           }
         }
-
-        settings.set<bool>("verboseCompilation", vc_f);
+        settings["verboseCompilation"] = vc_f;
       }
     } else {
       k = dHandle->buildKernel(realFilename,
@@ -286,8 +261,6 @@ namespace occa {
   kernel device::buildKernelFromString(const std::string &content,
                                        const std::string &functionName,
                                        const occa::properties &props) {
-    checkIfInitialized();
-
     const occa::properties allProps = properties() + props;
     hash_t hash = occa::hash(content);
     hash ^= allProps.hash();
@@ -296,7 +269,7 @@ namespace occa {
     const std::string hashTag = "occa-device";
 
     std::string stringSourceFile = hashDir;
-    const std::string language = allProps.get("language", "OKL");
+    const std::string language = allProps.get<std::string>("language", "OKL");
 
     if (language == "OCCA") {
       stringSourceFile += "stringSource.occa";
@@ -328,8 +301,6 @@ namespace occa {
   kernel device::buildKernelFromBinary(const std::string &filename,
                                        const std::string &functionName,
                                        const occa::properties &props) {
-    checkIfInitialized();
-
     kernel ker;
     ker.kHandle = dHandle->buildKernelFromBinary(filename, functionName, props);
     ker.kHandle->dHandle = dHandle;
@@ -342,8 +313,6 @@ namespace occa {
   memory device::malloc(const dim_t bytes,
                         void *src,
                         const occa::properties &props) {
-    checkIfInitialized();
-
     OCCA_ERROR("Trying to allocate negative bytes (" << bytes << ")",
                bytes >= 0);
 
@@ -359,8 +328,6 @@ namespace occa {
   void* device::uvaAlloc(const dim_t bytes,
                          void *src,
                          const occa::properties &props) {
-    checkIfInitialized();
-
     OCCA_ERROR("Trying to allocate negative bytes (" << bytes << ")",
                bytes >= 0);
 
@@ -377,8 +344,6 @@ namespace occa {
   occa::memory device::wrapMemory(void *handle_,
                                   const dim_t bytes,
                                   const occa::properties &props) {
-    checkIfInitialized();
-
     OCCA_ERROR("Trying to wrap memory with negative bytes (" << bytes << ")",
                bytes >= 0);
 
@@ -393,8 +358,6 @@ namespace occa {
   //  |=================================
 
   void device::free() {
-    checkIfInitialized();
-
     const int streamCount = dHandle->streams.size();
 
     for (int i = 0; i < streamCount; ++i)

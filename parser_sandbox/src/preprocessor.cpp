@@ -5,9 +5,9 @@
 #include "occa/tools/io.hpp"
 #include "occa/tools/lex.hpp"
 #include "occa/tools/string.hpp"
+#include "occa/parser/primitive.hpp"
 
 #include "preprocessor.hpp"
-#include "primitive.hpp"
 #include "specialMacros.hpp"
 
 namespace occa {

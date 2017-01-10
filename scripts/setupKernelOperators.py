@@ -24,7 +24,15 @@ import os.path as osp
 
 occadir = osp.abspath(osp.join(osp.dirname(__file__), ".."))
 
-maxN = 50
+EDIT_WARNING = """/*
+-------------[ DO NOT EDIT ]-------------
+ THIS IS AN AUTOMATICALLY GENERATED FILE
+ EDIT: scripts/setupKernelOperators.py
+=========================================
+*/
+"""
+
+maxN = 250
 nSpacing = 3
 
 def nlc(n, N):
@@ -98,6 +106,7 @@ void OCCA_RFUNC occaKernelRun{N}(occaKernel kernel, {args}) {{
 
 def gen_file(filename, content):
     with open(occadir + filename, 'w') as f:
+        f.write(EDIT_WARNING);
         f.write(content + '\n')
 
 gen_file('/src/operators/runFunctionFromArguments.cpp' , runFunctionFromArguments(maxN))

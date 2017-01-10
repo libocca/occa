@@ -1,10 +1,35 @@
 sudo    : false
+language: cpp
+
+compiler:
+  - clang
+  - gcc
+
+env:
+  global:
+    - LD_LIBRARY_PATH=${TRAVIS_BUILD_DIR}/lib:${LD_LIBRARY_PATH}
+
+addons:
+  apt:
+    sources:
+      - ubuntu-toolchain-r-test
+    packages:
+      - fglrx
+      - opencl-headers
+
+before_install:
+  - pip install --user cpp-coveralls
 
 script:
-  - echo 'Still refactoring'
+  - export CXX_FLAGS='-g --coverage'
+  - make
+  - make test
+  - cd parser_sandbox
+  - make
+  - make test
+
+after_success:
+  - coveralls --exclude lib --gcov-options '\-lp'
 
 notifications:
-  email:
-    recipients:
-    on_success: [never]
-    on_failure: [always]
+  email: false

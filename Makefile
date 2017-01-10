@@ -159,27 +159,23 @@ $(libPath)/_C_occa.so: $(libPath)/libocca.so $(incPath)/occa/lang/python/_C_occa
 
 #---[ TEST ]--------------------------------------
 test:
-	echo '---[ Testing ]--------------------------'
-	cd $(OCCA_DIR); \
-	make -j 4 CXXFLAGS='-g' FCFLAGS='-g'
+	cd $(OCCA_DIR)/examples/addVectors/cpp && \
+	make -j 4 CXXFLAGS='-g' FCFLAGS='-g' && \
+	./main
 
-	cd $(OCCA_DIR)/examples/addVectors/cpp; \
+	cd $(OCCA_DIR)/examples/addVectors/c && \
+	make -j 4 CXXFLAGS='-g' FCFLAGS='-g' && \
+	./main
+
+	cd $(OCCA_DIR)/examples/uvaAddVectors/ && \
 	make -j 4 CXXFLAGS='-g' FCFLAGS='-g'; \
 	./main
 
-	cd $(OCCA_DIR)/examples/addVectors/c; \
+	cd $(OCCA_DIR)/examples/backgroundDevices/ && \
 	make -j 4 CXXFLAGS='-g' FCFLAGS='-g'; \
 	./main
 
-	cd $(OCCA_DIR)/examples/addVectors/f90; \
-	make -j 4 CXXFLAGS='-g' FCFLAGS='-g'; \
-	./main
-
-	cd $(OCCA_DIR)/examples/reduction/; \
-	make -j 4 CXXFLAGS='-g' FCFLAGS='-g'; \
-	./main
-
-	cd $(OCCA_DIR)/examples/usingArrays/; \
+	cd $(OCCA_DIR)/examples/usingArrays/ && \
 	make -j 4 CXXFLAGS='-g' FCFLAGS='-g'; \
 	./main
 #=================================================

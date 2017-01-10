@@ -21,6 +21,7 @@
  */
 
 #include "occa/defines.hpp"
+#include "occa/tools/sys.hpp"
 
 namespace occa {
   template <class TM, const int idxType>
@@ -94,7 +95,7 @@ namespace occa {
       }
       return str;
     } else {
-      OCCA_ERROR("Only occa::array<TM, occa::useIdxOrder> can use setIdxOrder()"
+      OCCA_ERROR("Only occa::array<TM, occa::useIdxOrder> can use setIdxOrder()",
                  false);
     }
     return "";
@@ -153,10 +154,10 @@ namespace occa {
     case 6: allocate(d[0], d[1], d[2], d[3], d[4], d[5]); break;
     default:
       if (dim <= 0) {
-        OCCA_ERROR("Number of dimensions must be [1-6]"
+        OCCA_ERROR("Number of dimensions must be [1-6]",
                    false);
       } else {
-        OCCA_ERROR("occa::array can only take up to 6 dimensions"
+        OCCA_ERROR("occa::array can only take up to 6 dimensions",
                    false);
       }
     }
@@ -213,10 +214,10 @@ namespace occa {
     case 6: allocate(device_, d[0], d[1], d[2], d[3], d[4], d[5]); break;
     default:
       if (dim <= 0) {
-        OCCA_ERROR("Number of dimensions must be [1-6]"
+        OCCA_ERROR("Number of dimensions must be [1-6]",
                    false);
       } else {
-        OCCA_ERROR("occa::array can only take up to 6 dimensions"
+        OCCA_ERROR("occa::array can only take up to 6 dimensions",
                    false);
       }
     }
@@ -291,10 +292,10 @@ namespace occa {
     case 6: allocate(d[0], d[1], d[2], d[3], d[4], d[5]); break;
     default:
       if (dim <= 0) {
-        OCCA_ERROR("Number of dimensions must be [1-6]"
+        OCCA_ERROR("Number of dimensions must be [1-6]",
                    false);
       } else {
-        OCCA_ERROR("occa::array can only take up to 6 dimensions"
+        OCCA_ERROR("occa::array can only take up to 6 dimensions",
                    false);
       }
     }
@@ -351,10 +352,10 @@ namespace occa {
     case 6: allocate(device_, d[0], d[1], d[2], d[3], d[4], d[5]); break;
     default:
       if (dim <= 0) {
-        OCCA_ERROR("Number of dimensions must be [1-6]"
+        OCCA_ERROR("Number of dimensions must be [1-6]",
                    false);
       } else {
-        OCCA_ERROR("occa::array can only take up to 6 dimensions"
+        OCCA_ERROR("occa::array can only take up to 6 dimensions",
                    false);
       }
     }
@@ -423,10 +424,10 @@ namespace occa {
     case 6: reshape(d[0], d[1], d[2], d[3], d[4], d[5]); break;
     default:
       if (dim <= 0) {
-        OCCA_ERROR("Number of dimensions must be [1-6]"
+        OCCA_ERROR("Number of dimensions must be [1-6]",
                    false);
       } else {
-        OCCA_ERROR("occa::array can only take up to 6 dimensions"
+        OCCA_ERROR("occa::array can only take up to 6 dimensions",
                    false);
       }
     }
@@ -515,15 +516,15 @@ namespace occa {
       case 6: setIdxOrder(o[0], o[1], o[2], o[3], o[4], o[5]); break;
       default:
         if (dim <= 0) {
-          OCCA_ERROR("Number of dimensions must be [1-6]"
+          OCCA_ERROR("Number of dimensions must be [1-6]",
                      false);
         } else {
-          OCCA_ERROR("occa::array can only take up to 6 dimensions"
+          OCCA_ERROR("occa::array can only take up to 6 dimensions",
                      false);
         }
       }
     } else {
-      OCCA_ERROR("Only occa::array<TM, occa::useIdxOrder> can use setIdxOrder()"
+      OCCA_ERROR("Only occa::array<TM, occa::useIdxOrder> can use setIdxOrder()",
                  false);
     }
   }
@@ -593,7 +594,7 @@ namespace occa {
       sOrder_[3] =  3; sOrder_[4] =  4; sOrder_[5] =  5;
       updateFS(3);
     } else {
-      OCCA_ERROR("Only occa::array<TM, occa::useIdxOrder> can use setIdxOrder()"
+      OCCA_ERROR("Only occa::array<TM, occa::useIdxOrder> can use setIdxOrder()",
                  false);
     }
   }
@@ -617,7 +618,7 @@ namespace occa {
       sOrder_[3] = o3; sOrder_[4] =  4; sOrder_[5] =  5;
       updateFS(4);
     } else {
-      OCCA_ERROR("Only occa::array<TM, occa::useIdxOrder> can use setIdxOrder()"
+      OCCA_ERROR("Only occa::array<TM, occa::useIdxOrder> can use setIdxOrder()",
                  false);
     }
   }
@@ -642,7 +643,7 @@ namespace occa {
       sOrder_[3] = o3; sOrder_[4] = o4; sOrder_[5] =  5;
       updateFS(5);
     } else {
-      OCCA_ERROR("Only occa::array<TM, occa::useIdxOrder> can use setIdxOrder()"
+      OCCA_ERROR("Only occa::array<TM, occa::useIdxOrder> can use setIdxOrder()",
                  false);
     }
   }
@@ -669,7 +670,7 @@ namespace occa {
       sOrder_[3] = o3; sOrder_[4] = o4; sOrder_[5] = o5;
       updateFS(6);
     } else {
-      OCCA_ERROR("Only occa::array<TM, occa::useIdxOrder> can use setIdxOrder()"
+      OCCA_ERROR("Only occa::array<TM, occa::useIdxOrder> can use setIdxOrder()",
                  false);
     }
   }

@@ -103,7 +103,11 @@ namespace occa {
          << "#include \"" << vectorDefines << "\"\n"
          << allProps["headers"];
 
-      io::cacheFile(filename, kc::sourceFile, hash, ss.str(), allProps["footer"]);
+      io::cacheFile(filename,
+                    kc::sourceFile,
+                    hash,
+                    ss.str(),
+                    allProps["footer"]);
 
       std::string cFunction = io::read(sourceFile);
       info_t clInfo = makeCLInfo();
