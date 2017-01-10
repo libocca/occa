@@ -88,7 +88,8 @@ namespace occa {
 
   // __COUNTER__
   counterMacro_t::counterMacro_t(const preprocessor_t *preprocessor_) :
-    macro_t(preprocessor_) {
+    macro_t(preprocessor_),
+    counter(0) {
     name = "__COUNTER__";
   }
 
