@@ -1,5 +1,6 @@
 #include <sstream>
 
+#include "occa/tools/env.hpp"
 #include "occa/tools/string.hpp"
 #include "occa/tools/testing.hpp"
 
@@ -75,8 +76,7 @@ void testFunctionMacros() {
 
 void testSpecialMacros() {
   occa::preprocessor_t preprocessor;
-  preprocessor.filename   = "foo";
-  preprocessor.lineNumber = 10;
+  preprocessor.process("#line 10 foo");
 
   char *c = new char[1];
 
@@ -84,10 +84,10 @@ void testSpecialMacros() {
   occa::lineMacro_t lineMacro(&preprocessor);       // __LINE__
   occa::counterMacro_t counterMacro(&preprocessor); // __COUNTER__
 
-  OCCA_TEST_COMPARE(occa::toString(preprocessor.filename),
+  OCCA_TEST_COMPARE(occa::env::PWD + "foo",
                     fileMacro.expand(c));
 
-  OCCA_TEST_COMPARE(occa::toString(preprocessor.lineNumber),
+  OCCA_TEST_COMPARE("9",
                     lineMacro.expand(c));
 
   OCCA_TEST_COMPARE("0",

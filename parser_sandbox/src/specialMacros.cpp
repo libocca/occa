@@ -14,7 +14,7 @@ namespace occa {
   }
 
   std::string fileMacro_t::expand(char *&c) const {
-    return preprocessor->filename;
+    return preprocessor->currentFrame.filename();
   }
 
   // __LINE__
@@ -24,7 +24,7 @@ namespace occa {
   }
 
   std::string lineMacro_t::expand(char *&c) const {
-    return toString(preprocessor->lineNumber);
+    return toString(preprocessor->currentFrame.lineNumber);
   }
 
   // __DATE__
