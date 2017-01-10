@@ -81,8 +81,13 @@ namespace occa {
 
     void pushStatus(const int status);
 
-    void setFilename(const std::string &filename_, const bool add = true);
-    void processFile(const std::string &filename_);
+    void setFilename(const std::string &filename, const bool add = true);
+
+    void processFile(const std::string &filename);
+    void processFile(const std::string &filename, char *content);
+
+    void processSource(char *c);
+    void processSource(const char *c);
 
     void process(char *c);
     inline void process(const char *c) {
