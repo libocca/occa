@@ -37,13 +37,16 @@ namespace occa {
 
   class macro_t {
   public:
-    const preprocessor_t *preprocessor;
-
     static const std::string VA_ARGS;
+
+    const preprocessor_t *preprocessor;
+    const char *macroStart;
+    const char *localMacroStart;
+
     std::string name;
 
     int argc;
-    bool hasVarArgs;
+    mutable bool hasVarArgs;
     macroPartVector_t parts;
 
     int definedLine, undefinedLine;
@@ -56,7 +59,7 @@ namespace occa {
     void load(const char *c);
 
     void loadName(char *&c);
-    void loadArgs(char *&c, macroPartVector_t &argNames, const bool keepWhitespace = false) const;
+    void loadArgs(char *&c, macroPartVector_t &argNames, const bool loadingArgNames = true) const;
     void setParts(char *&c, macroPartVector_t &argNames);
 
     void clear();
@@ -64,9 +67,9 @@ namespace occa {
     virtual std::string expand(char *&c) const;
 
     //---[ Messages ]-------------------
-    void printError(const std::string &message) const;
-    void printFatalError(const std::string &message) const;
-    void printWarning(const std::string &message) const;
+    void printError(const char *c, const std::string &message) const;
+    void printFatalError(const char *c, const std::string &message) const;
+    void printWarning(const char *c, const std::string &message) const;
     //==================================
   };
   //====================================

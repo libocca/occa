@@ -39,13 +39,13 @@ void testMacroDefines() {
                     preprocessor.applyMacros("C(1)"));
 
   preprocessor.process("#define D(A1, A2) A1 A2\n");
-  OCCA_TEST_COMPARE("2  3",
+  OCCA_TEST_COMPARE("2 3",
                     preprocessor.applyMacros("D(2, 3)"));
-  OCCA_TEST_COMPARE("4  5",
+  OCCA_TEST_COMPARE("4 5",
                     preprocessor.applyMacros("D(4, 5, 6)"));
 
   preprocessor.process("#define E(A1, A2) A1##A2\n");
-  OCCA_TEST_COMPARE(" 6",
+  OCCA_TEST_COMPARE("6",
                     preprocessor.applyMacros("E(, 6)"));
   OCCA_TEST_COMPARE("07",
                     preprocessor.applyMacros("E(0, 7)"));

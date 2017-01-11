@@ -22,6 +22,7 @@ int main(const int argc, const char **argv) {
 
 void testPlainMacros() {
   occa::preprocessor_t preprocessor;
+  preprocessor.exitOnFatalError = false;
   preprocessor.processSource("");
   occa::macro_t macro(&preprocessor, "A");
 
@@ -35,6 +36,7 @@ void testPlainMacros() {
 
 void testFunctionMacros() {
   occa::preprocessor_t preprocessor;
+  preprocessor.exitOnFatalError = false;
   preprocessor.processSource("");
   occa::macro_t macro(&preprocessor, "FOO(A) A");
 
@@ -44,13 +46,13 @@ void testFunctionMacros() {
                     macro.expand("(1)"));
 
   macro.load("FOO(A, B) A B");
-  OCCA_TEST_COMPARE("2  3",
+  OCCA_TEST_COMPARE("2 3",
                     macro.expand("(2, 3)"));
-  OCCA_TEST_COMPARE("4  5",
+  OCCA_TEST_COMPARE("4 5",
                     macro.expand("(4, 5, 6)"));
 
   macro.load("FOO(A, B) A##B");
-  OCCA_TEST_COMPARE(" 6",
+  OCCA_TEST_COMPARE("6",
                     macro.expand("(, 6)"));
   OCCA_TEST_COMPARE("07",
                     macro.expand("(0, 7)"));
@@ -78,6 +80,7 @@ void testFunctionMacros() {
 
 void testSpecialMacros() {
   occa::preprocessor_t preprocessor;
+  preprocessor.exitOnFatalError = false;
   preprocessor.processSource("#line 10 foo");
 
   char *c = new char[1];
@@ -105,9 +108,11 @@ void testSpecialMacros() {
 void testErrors() {
   occa::preprocessor_t preprocessor;
   std::stringstream ss;
-  preprocessor.processSource("");
+  preprocessor.exitOnFatalError = false;
   preprocessor.setOutputStream(ss);
+  preprocessor.processSource("");
 
+  // Missing closing )
   occa::macro_t macro(&preprocessor, "FOO(A) A");
   macro.expand("(1");
 

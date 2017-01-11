@@ -27,10 +27,11 @@ namespace occa {
     //---[ Stack Information ]----------
     class status_t {
     public:
-      int status, lineNumber;
+      int status;
+      const char *filePosition;
 
       status_t();
-      status_t(const int status_, const int lineNumber_);
+      status_t(const int status_, const char *filePosition_);
       void clear();
     };
 
@@ -39,8 +40,8 @@ namespace occa {
       const preprocessor_t *preprocessor;
 
       int filenameIdx;
-      char *fileStart;
-      int fileLineNumber;
+      char *fileStart, *fileEnd;
+      char *filePosition;
       int lineNumber;
 
       frame_t(const preprocessor_t *preprocessor_);
@@ -50,6 +51,7 @@ namespace occa {
 
       std::string getLineMessage() const;
       std::string getLineMessage(const int lineNumber_) const;
+      std::string getLineMessage(const char *c) const;
     };
 
     trie_t<std::string> allFilenames;
@@ -69,6 +71,9 @@ namespace occa {
     //==================================
 
     //---[ Misc ]-----------------------
+    bool exitOnFatalError;
+    mutable int errorCount, warningCount;
+
     std::ostream *outputStream;
     //==================================
 
@@ -89,10 +94,11 @@ namespace occa {
     void processSource(char *c);
     void processSource(const char *c);
 
-    void process(char *c);
+    void process(char *&c);
     inline void process(const char *c) {
       std::string s(c);
-      process(&(s[0]));
+      char *c_ = &(s[0]);
+      process(c_);
     }
 
     const macro_t* getMacro(char *c, const size_t chars);
@@ -122,25 +128,19 @@ namespace occa {
 
     //---[ Messages ]-------------------
     void printMessage(const std::string &message,
-                      const int fileLineNumber,
-                      const int errorLineNumber,
-                      const int position,
+                      const char *errorPosition,
                       const bool isError) const;
 
     void printError(const std::string &message,
-                    const int fileLineNumber = -1,
-                    const int errorLineNumber = -1,
-                    const int position = -1) const;
+                    const char *errorPosition) const;
 
     void printFatalError(const std::string &message,
-                         const int fileLineNumber = -1,
-                         const int errorLineNumber = -1,
-                         const int position = -1) const;
+                         const char *errorPosition) const;
 
     void printWarning(const std::string &message,
-                      const int fileLineNumber = -1,
-                      const int errorLineNumber = -1,
-                      const int position = -1) const;
+                      const char *errorPosition) const;
+
+    void printErrorAndWarningCounts() const;
     //==================================
 
     //---[ Overriding Lex Methods ]-----
