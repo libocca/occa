@@ -28,6 +28,7 @@ namespace occa {
 
   macro_t::macro_t(const preprocessor_t *preprocessor_) :
     preprocessor(preprocessor_),
+    macroStart(NULL),
     definedLine(-1),
     undefinedLine(-1) {}
 
@@ -36,6 +37,7 @@ namespace occa {
     definedLine(-1),
     undefinedLine(-1) {
 
+    macroStart = c;
     load(c);
   }
 
@@ -44,17 +46,20 @@ namespace occa {
     definedLine(-1),
     undefinedLine(-1) {
 
+    macroStart = c;
     std::string s(c);
     load(&(s[0]));
   }
 
   void macro_t::load(const char *c) {
+    macroStart = c;
     std::string s(c);
     load(&(s[0]));
   }
 
   void macro_t::load(char *c) {
     clear();
+    localMacroStart = c;
 
     loadName(c);
 
@@ -66,20 +71,6 @@ namespace occa {
     loadArgs(c, argNames);
     argc = (int) argNames.size();
 
-    // Check and remove ... from arguments
-    for (int i = 0; i < argc; ++i) {
-      if (argNames[i].str == "...") {
-        hasVarArgs = true;
-        if (i != (argc - 1)) {
-          printError("Variable arguments (...) must be the last argument");
-          argNames.resize(i + 1);
-        } else {
-          argNames.pop_back();
-        }
-        argc = i;
-      }
-    }
-
     setParts(c, argNames);
   }
 
@@ -87,11 +78,11 @@ namespace occa {
     lex::skipWhitespace(c);
 
     if (*c == '\0') {
-      printError("Macro name missing");
+      printError(c, "Macro name missing");
       return;
     }
     if (!lex::charIsIn(*c, lex::identifierStartChar)) {
-      printError("Macro name must be an identifier: [a-zA-Z_]([a-zA-Z0-9_]*)");
+      printError(c, "Macro name must be an identifier: [a-zA-Z_]([a-zA-Z0-9_]*)");
       return;
     }
 
@@ -100,13 +91,13 @@ namespace occa {
     name = std::string(nameStart, c - nameStart);
 
     if (!lex::isWhitespace(*c) && (*c != '(') && (*c != '\0')) {
-      printWarning("Whitespace recommended after macro name");
+      printWarning(c, "Whitespace recommended after macro name");
     } else {
       lex::skipWhitespace(c);
     }
   }
 
-  void macro_t::loadArgs(char *&c, macroPartVector_t &argNames, const bool keepWhitespace) const {
+  void macro_t::loadArgs(char *&c, macroPartVector_t &argNames, const bool loadingArgNames) const {
     static std::string startDelimiters = std::string(lex::whitespaceChars) + "(";
     static std::string endDelimiters(",)");
 
@@ -122,7 +113,7 @@ namespace occa {
     lex::skipTo(c, ')');
     char *argsEnd = c;
     if (*argsEnd != ')') {
-      printError("Missing closing \")\"");
+      printError(c, "Missing closing \")\"");
     }
 
     c = argsStart;
@@ -136,7 +127,7 @@ namespace occa {
 
       macroPart_t arg;
       arg.str = std::string(argStart, argEnd - argStart);
-      if (keepWhitespace) {
+      if (loadingArgNames) {
         if (lex::isWhitespace(*start)) {
           arg.info |= macroInfo::hasLeftSpace;
         }
@@ -144,7 +135,16 @@ namespace occa {
           arg.info |= macroInfo::hasRightSpace;
         }
       }
-      argNames.push_back(arg);
+
+      if (loadingArgNames && hasVarArgs) {
+        printFatalError(argStart, "Variable arguments (...) must be the last argument");
+      }
+
+      if (loadingArgNames && arg.str == "...") {
+        hasVarArgs = true;
+      } else {
+        argNames.push_back(arg);
+      }
     }
     c = argsEnd + (*argsEnd == ')');
   }
@@ -232,6 +232,7 @@ namespace occa {
     name = "";
 
     argc = 0;
+    hasVarArgs = false;
     parts.clear();
 
     definedLine   = -1;
@@ -254,7 +255,7 @@ namespace occa {
     }
 
     macroPartVector_t args;
-    loadArgs(c, args, true);
+    loadArgs(c, args, false);
 
     const int inputArgc = (int) args.size();
     std::string ret;
@@ -322,16 +323,19 @@ namespace occa {
   }
 
   //  ---[ Messages ]-------------------
-  void macro_t::printError(const std::string &message) const {
-    preprocessor->printError(message);
+  void macro_t::printError(const char *c,
+                           const std::string &message) const {
+    preprocessor->printError(message, macroStart + (c - localMacroStart));
   }
 
-  void macro_t::printFatalError(const std::string &message) const {
-    preprocessor->printFatalError(message);
+  void macro_t::printFatalError(const char *c,
+                                const std::string &message) const {
+    preprocessor->printFatalError(message, macroStart + (c - localMacroStart));
   }
 
-  void macro_t::printWarning(const std::string &message) const {
-    preprocessor->printWarning(message);
+  void macro_t::printWarning(const char *c,
+                             const std::string &message) const {
+    preprocessor->printWarning(message, macroStart + (c - localMacroStart));
   }
   //  ==================================
   //====================================

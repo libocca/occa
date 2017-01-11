@@ -20,13 +20,13 @@ namespace occa {
 
   preprocessor_t::status_t::status_t() {}
 
-  preprocessor_t::status_t::status_t(const int status_, const int lineNumber_) :
+  preprocessor_t::status_t::status_t(const int status_, const char *filePosition_) :
     status(status_),
-    lineNumber(lineNumber_) {}
+    filePosition(filePosition_) {}
 
   void preprocessor_t::status_t::clear() {
     status = reading;
-    lineNumber = 0;
+    filePosition = NULL;
   }
 
   preprocessor_t::frame_t::frame_t(const preprocessor_t *preprocessor_) :
@@ -37,7 +37,8 @@ namespace occa {
   void preprocessor_t::frame_t::clear() {
     filenameIdx = 0;
     fileStart = NULL;
-    fileLineNumber = 1;
+    fileEnd = NULL;
+    filePosition = NULL;
     lineNumber = 1;
   }
 
@@ -84,6 +85,10 @@ namespace occa {
       compilerMacros.add(specialMacros[i]->name, specialMacros[i]);
     }
     // [-] Add actual compiler macros as well
+
+    exitOnFatalError = true;
+    errorCount   = 0;
+    warningCount = 0;
 
     outputStream = &std::cerr;
 
@@ -133,8 +138,8 @@ namespace occa {
 
   void preprocessor_t::pushStatus(const int status) {
     statusStack.push_back(currentStatus);
-    currentStatus.status     = status;
-    currentStatus.lineNumber = currentFrame.lineNumber;
+    currentStatus.status       = status;
+    currentStatus.filePosition = currentFrame.filePosition;
   }
 
   void preprocessor_t::setFilename(const std::string &filename, const bool add) {
@@ -156,9 +161,11 @@ namespace occa {
     }
     currentFrame.clear();
     setFilename(filename);
-    currentFrame.fileStart = content;
+    currentFrame.fileStart    = content;
+    currentFrame.fileEnd      = content + strlen(content);
+    currentFrame.filePosition = content;
 
-    process(content);
+    process(currentFrame.filePosition);
 
     if (frames.size()) {
       currentFrame = frames[frames.size() - 1];
@@ -166,7 +173,8 @@ namespace occa {
 
       if ((frames.size() == 0) &&
           (0 < statusStack.size())) {
-        printError("#if without a closing #endif");
+        printError("#if without a closing #endif",
+                   currentStatus.filePosition);
       }
     }
   }
@@ -180,7 +188,7 @@ namespace occa {
     processFile("(source)", &(s[0]));
   }
 
-  void preprocessor_t::process(char *c) {
+  void preprocessor_t::process(char *&c) {
     while (*c != '\0') {
       updatingSkipWhitespace(c);
       if (*c == '#') {
@@ -258,7 +266,7 @@ namespace occa {
       std::string message = "Directive \"";
       message += std::string(cStart, cEnd - cStart);
       message += "\" is not defined";
-      printError(message);
+      printError(message, cStart);
       updatingSkipTo(c, '\n');
       return;
     }
@@ -334,11 +342,12 @@ namespace occa {
   }
 
   void preprocessor_t::processEndif(char *&c) {
+    const char *cStart = c;
     updatingSkipTo(c, '\n');
 
     if ((statusStack.size() == 0) ||
         (currentStatus.status & ignoring)) {
-      printError("#endif without #if");
+      printError("#endif without #if", cStart);
     }
 
     statusStack.pop_back();
@@ -381,9 +390,9 @@ namespace occa {
     line = strip(line);
 
     if (isError) {
-      printError(line);
+      printError(line, cStart);
     } else {
-      printWarning(line);
+      printWarning(line, cStart);
     }
   }
 
@@ -427,7 +436,7 @@ namespace occa {
     lex::skipToWhitespace(cEndLine);
     for (char *c_ = cStartLine; c_ < cEndLine; ++c_) {
       if (!lex::isDigit(*c_)) {
-        printError("#line line number must be a simple number");
+        printError("#line line number must be a simple number", c_);
         return;
       }
     }
@@ -456,44 +465,58 @@ namespace occa {
 
   //---[ Messages ]---------------------
   void preprocessor_t::printMessage(const std::string &message,
-                                    const int fileLineNumber,
-                                    const int errorLineNumber,
-                                    const int position,
+                                    const char *errorPosition,
                                     const bool isError) const {
     std::stringstream ss;
+    const char *fileStart = currentFrame.fileStart;
+    const char *fileEnd   = currentFrame.fileEnd;
 
-    // /path/to/file:line:pos:
+    const bool useErrorPosition = (fileStart                    &&
+                                   (fileStart <= errorPosition) &&
+                                   (errorPosition < fileEnd));
+
+    // Print filename stack
     const int frameCount = frames.size();
     for (int i = 0; i < frameCount; ++i) {
       ss << frames[i].getLineMessage() << '\n';
     }
-    ss << currentFrame.getLineMessage(errorLineNumber);
+
+    // Get line number based on errorPosition
+    int lineNumber = currentFrame.lineNumber;
+    const char *lineStart = fileStart;
+
+    if (useErrorPosition) {
+      lineNumber = 1;
+      for (const char *c = fileStart; c < errorPosition; ++c) {
+        if (*c == '\n') {
+          lineStart = c + 1;
+          ++lineNumber;
+        }
+      }
+    } else {
+      for (int i = 0; i < lineNumber; ++i) {
+        lex::skipTo(lineStart, '\n');
+        lineStart += (lineStart != '\0');
+      }
+    }
+    // Print current file with found line number
+    ss << currentFrame.getLineMessage(lineNumber);
 
     // Error/Warning: <message>\n
     ss << ": "
        << (isError ? red("Error:") : yellow("Warning:"))
        << ' ' << message << '\n';
 
-    // <line>
-    if (currentFrame.fileStart) {
-      const char *c = currentFrame.fileStart;
-      int ln = 0;
-      while ((*c != '\0') &&
-             (ln != fileLineNumber)) {
-        lex::skipTo(c, '\n');
-        ++c;
-        ++ln;
-      }
+    // Print found line
+    const char *lineEnd = lineStart;
+    lex::skipTo(lineEnd, '\n');
 
-      if (ln == fileLineNumber) {
-        const char *cStart = c;
-        lex::skipTo(c, '\n');
-        ss << std::string(cStart, c - cStart) << '\n';
-      }
+    if (lineStart < lineEnd) {
+      ss << std::string(lineStart, lineEnd - lineStart) << '\n';
 
       // ... ^
-      if (0 <= position) {
-        ss << std::string(position, ' ') << green("^") << '\n';
+      if (useErrorPosition) {
+        ss << std::string(errorPosition - lineStart, ' ') << green("^") << '\n';
       }
     }
 
@@ -501,33 +524,46 @@ namespace occa {
   }
 
   void preprocessor_t::printError(const std::string &message,
-                                  const int fileLineNumber,
-                                  const int errorLineNumber,
-                                  const int position) const {
-    printMessage(message,
-                 0 <= fileLineNumber  ? fileLineNumber  : currentFrame.fileLineNumber,
-                 0 <= errorLineNumber ? errorLineNumber : currentFrame.lineNumber,
-                 position,
-                 true);
+                                  const char *errorPosition) const {
+    printMessage(message, errorPosition, true);
+    ++errorCount;
   }
 
   void preprocessor_t::printFatalError(const std::string &message,
-                                       const int fileLineNumber,
-                                       const int errorLineNumber,
-                                       const int position) const {
-    printError(message, fileLineNumber, errorLineNumber, position);
-    ::exit(1);
+                                       const char *errorPosition) const {
+    printMessage(message, errorPosition, true);
+    ++errorCount;
+    if (exitOnFatalError) {
+      printErrorAndWarningCounts();
+      throw 1;
+    }
   }
 
   void preprocessor_t::printWarning(const std::string &message,
-                                    const int fileLineNumber,
-                                    const int errorLineNumber,
-                                    const int position) const {
-    printMessage(message,
-                 0 <= fileLineNumber  ? fileLineNumber  : currentFrame.fileLineNumber,
-                 0 <= errorLineNumber ? errorLineNumber : currentFrame.lineNumber,
-                 position,
-                 false);
+                                    const char *errorPosition) const {
+    printMessage(message, errorPosition, false);
+    ++warningCount;
+  }
+
+  void preprocessor_t::printErrorAndWarningCounts() const {
+    if (warningCount) {
+      *outputStream << warningCount << " warning";
+      if (1 < warningCount) {
+        *outputStream << 's';
+      }
+    }
+    if (errorCount) {
+      if (warningCount) {
+        *outputStream << " and ";
+      }
+      *outputStream << errorCount << " error";
+      if (1 < errorCount) {
+        *outputStream << 's';
+      }
+    }
+    if (warningCount || errorCount) {
+      *outputStream << " generated.\n";
+    }
   }
   //====================================
 
@@ -535,7 +571,6 @@ namespace occa {
   void preprocessor_t::updateLines(const char *c, const int chars) {
     for (int i = 0; i < chars; ++i) {
       if (c[i] == '\n') {
-        ++currentFrame.fileLineNumber;
         ++currentFrame.lineNumber;
       }
     }
