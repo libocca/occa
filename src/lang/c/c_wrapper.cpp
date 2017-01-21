@@ -48,7 +48,6 @@ namespace occa {
       stream_,
 
       properties_,
-      kernelInfo_,
 
       argumentList_
     };
@@ -398,14 +397,14 @@ occaStreamTag OCCA_RFUNC occaTagStream() {
 //  |---[ Kernel ]----------------------
 occaKernel OCCA_RFUNC occaBuildKernel(const char *filename,
                                       const char *functionName,
-                                      const occaKernelInfo info) {
+                                      const occaProperties props) {
   occa::kernel kernel;
 
-  if (occa::c::isDefault(info)) {
+  if (occa::c::isDefault(props)) {
     kernel = occa::buildKernel(filename, functionName);
   } else {
-    occa::kernelInfo &info_ = occa::c::from<occa::kernelInfo>(info);
-    kernel = occa::buildKernel(filename, functionName, info_);
+    occa::properties &props_ = occa::c::from<occa::properties>(props);
+    kernel = occa::buildKernel(filename, functionName, props_);
   }
 
   return newObject(kernel.getKHandle(), occa::c::kernel_);
@@ -413,14 +412,14 @@ occaKernel OCCA_RFUNC occaBuildKernel(const char *filename,
 
 occaKernel OCCA_RFUNC occaBuildKernelFromString(const char *str,
                                                 const char *functionName,
-                                                const occaKernelInfo info) {
+                                                const occaProperties props) {
   occa::kernel kernel;
 
-  if (occa::c::isDefault(info)) {
+  if (occa::c::isDefault(props)) {
     kernel = occa::buildKernelFromString(str, functionName);
   } else {
-    occa::kernelInfo &info_ = occa::c::from<occa::kernelInfo>(info);
-    kernel = occa::buildKernelFromString(str, functionName, info_);
+    occa::properties &props_ = occa::c::from<occa::properties>(props);
+    kernel = occa::buildKernelFromString(str, functionName, props_);
   }
 
   return newObject(kernel.getKHandle(), occa::c::kernel_);
@@ -509,15 +508,15 @@ occaUDim_t OCCA_RFUNC occaDeviceMemoryAllocated(occaDevice device) {
 occaKernel OCCA_RFUNC occaDeviceBuildKernel(occaDevice device,
                                             const char *filename,
                                             const char *functionName,
-                                            const occaKernelInfo info) {
+                                            const occaProperties props) {
   occa::device device_ = occa::c::getDevice(device);
   occa::kernel kernel;
 
-  if (occa::c::isDefault(info)) {
+  if (occa::c::isDefault(props)) {
     kernel = device_.buildKernel(filename, functionName);
   } else {
-    occa::kernelInfo &info_ = *((occa::kernelInfo*) info.ptr->obj);
-    kernel = device_.buildKernel(filename, functionName, info_);
+    occa::properties &props_ = occa::c::from<occa::properties>(props);
+    kernel = device_.buildKernel(filename, functionName, props_);
   }
 
   return newObject(kernel.getKHandle(), occa::c::kernel_);
@@ -526,15 +525,15 @@ occaKernel OCCA_RFUNC occaDeviceBuildKernel(occaDevice device,
 occaKernel OCCA_RFUNC occaDeviceBuildKernelFromString(occaDevice device,
                                                       const char *str,
                                                       const char *functionName,
-                                                      const occaKernelInfo info) {
+                                                      const occaProperties props) {
   occa::device device_ = occa::c::getDevice(device);
   occa::kernel kernel;
 
-  if (occa::c::isDefault(info)) {
+  if (occa::c::isDefault(props)) {
     kernel = device_.buildKernelFromString(str, functionName);
   } else {
-    occa::kernelInfo &info_ = *((occa::kernelInfo*) info.ptr->obj);
-    kernel = device_.buildKernelFromString(str, functionName, info_);
+    occa::properties &props_ = occa::c::from<occa::properties>(props);
+    kernel = device_.buildKernelFromString(str, functionName, props_);
   }
 
   return newObject(kernel.getKHandle(), occa::c::kernel_);
@@ -774,31 +773,6 @@ void OCCA_RFUNC occaKernelRunN(occaKernel kernel, const int argc, occaType *args
 void OCCA_RFUNC occaKernelFree(occaKernel kernel) {
   occa::c::getKernel(kernel).free();
   occa::c::freePtr(kernel);
-}
-
-occaKernelInfo OCCA_RFUNC occaCreateKernelInfo() {
-  occa::kernelInfo &newKernelInfo = *(new occa::kernelInfo());
-  return newObject(&newKernelInfo, occa::c::kernelInfo_);
-}
-
-void OCCA_RFUNC occaKernelInfoAddDefine(const occaKernelInfo info,
-                                        const char *macro,
-                                        occaType value) {
-
-  occa::kernelInfo &info_ = occa::c::from<occa::kernelInfo>(info);
-  info_.addDefine(macro, occa::c::toString(value));
-  occa::c::free<void>(value);
-}
-
-void OCCA_RFUNC occaKernelInfoAddInclude(const occaKernelInfo info,
-                                         const char *filename) {
-
-  occa::kernelInfo &info_ = occa::c::from<occa::kernelInfo>(info);
-  info_.addInclude(filename);
-}
-
-void OCCA_RFUNC occaKernelInfoFree(const occaKernelInfo info) {
-  occa::c::free<occa::kernelInfo>(info);
 }
 //======================================
 

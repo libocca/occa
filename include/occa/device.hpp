@@ -135,6 +135,8 @@ namespace occa {
 
     void finish();
 
+    bool hasSeparateMemorySpace();
+
     //  |---[ Stream ]------------------
     stream createStream();
     void freeStream(stream s);

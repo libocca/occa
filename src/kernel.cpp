@@ -190,41 +190,29 @@ namespace occa {
   //====================================
 
 
-  //---[ kernelInfo ]---------------------
+  //---[ Kernel Properties ]------------
+  std::string assembleHeader(const occa::properties &props) {
+    const jsonArray_t &lines = props["kernel/headers"].getArray();
+    const int lineCount = (int) lines.size();
 
-  //  |---[ Kernel Info ]-------------------------
-  kernelInfo::kernelInfo() :
-    occa::properties() {}
+    const jsonObject_t &defines = props["kernel/defines"].getObject();
+    cJsonObjectIterator it = defines.begin();
 
-  kernelInfo::kernelInfo(const properties &props_) :
-    occa::properties(props_) {}
-
-  bool kernelInfo::isAnOccaDefine(const std::string &name) {
-    return ((name == "occaInnerDim0") ||
-            (name == "occaInnerDim1") ||
-            (name == "occaInnerDim2") ||
-
-            (name == "occaOuterDim0") ||
-            (name == "occaOuterDim1") ||
-            (name == "occaOuterDim2"));
-  }
-
-  void kernelInfo::addIncludeDefine(const std::string &filename) {
-    (*this)["headers"].getString() += "#include \"" + filename + "\"";
-  }
-
-  void kernelInfo::addInclude(const std::string &filename) {
-    (*this)["headers"].getString() += io::read(filename);
-  }
-
-  void kernelInfo::removeDefine(const std::string &macro) {
-    if (!isAnOccaDefine(macro)) {
-      (*this)["headers"].getString() += "#undef " + macro;
+    std::string header;
+    while (it != defines.end()) {
+      header += "#define ";
+      header += ' ';
+      header += it->first;
+      header += ' ';
+      header += it->second.toString();
+      header += '\n';
+      ++it;
     }
-  }
-
-  void kernelInfo::addSource(const std::string &content) {
-    (*this)["headers"].getString() += content;
+    for (int i = 0; i < lineCount; ++i) {
+      header += lines[i].toString();
+      header += '\n';
+    }
+    return header;
   }
   //====================================
 
@@ -300,6 +288,10 @@ namespace occa {
   kernel& kernel::operator = (const kernel &k) {
     kHandle = k.kHandle;
     return *this;
+  }
+
+  bool kernel::isInitialized() {
+    return (kHandle != NULL);
   }
 
   void* kernel::getHandle(const occa::properties &props) {

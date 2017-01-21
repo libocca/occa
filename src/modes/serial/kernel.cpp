@@ -92,7 +92,7 @@ namespace occa {
       std::stringstream ss, command;
       ss << "#include \"" << kernelDefines << "\"\n"
          << "#include \"" << vectorDefines << "\"\n"
-         << allProps["headers"].getString() << '\n'
+         << assembleHeader(allProps) << '\n'
          << "#if defined(OCCA_IN_KERNEL) && !OCCA_IN_KERNEL\n"
          << "using namespace occa;\n"
          << "#endif\n";

@@ -80,7 +80,7 @@ namespace occa {
       const std::string parseSource(const char *cRoot);
 
       //---[ Parser Warnings ]----------
-      void loadParserFlags(const occa::properties &properties_);
+      void setProperties(const occa::properties &properties_);
 
       bool hasMagicEnabled();
       bool compilingForCPU();

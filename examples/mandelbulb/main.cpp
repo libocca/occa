@@ -158,27 +158,26 @@ void setupOCCA() {
     }
   }
 
-  occa::kernelInfo kInfo;
+  occa::properties kernelProps;
 
-  kInfo.addDefine("WIDTH"         , width);
-  kInfo.addDefine("HEIGHT"        , height);
-  kInfo.addDefine("BATCH_SIZE"    , batchSize);
-  kInfo.addDefine("SHAPE_FUNCTION", shapeFunction);
-  kInfo.addDefine("PIXEL"         , pixel);
-  kInfo.addDefine("HALF_PIXEL"    , halfPixel);
+  kernelProps["kernel/defines/WIDTH"]         = width;
+  kernelProps["kernel/defines/HEIGHT"]        = height;
+  kernelProps["kernel/defines/BATCH_SIZE"]    = batchSize;
+  kernelProps["kernel/defines/SHAPE_FUNCTION"]= shapeFunction;
+  kernelProps["kernel/defines/PIXEL"]         = pixel;
+  kernelProps["kernel/defines/HALF_PIXEL"]    = halfPixel;
 
   if (sizeof(tFloat) == sizeof(float)) {
-    kInfo.addDefine("tFloat" , "float");
-    kInfo.addDefine("tFloat3", "float3");
-  }
-  else {
-    kInfo.addDefine("tFloat" , "double");
-    kInfo.addDefine("tFloat3", "double3");
+    kernelProps["kernel/defines/tFloat"]  = "float";
+    kernelProps["kernel/defines/tFloat3"] = "float3";
+  } else {
+    kernelProps["kernel/defines/tFloat"]  = "double";
+    kernelProps["kernel/defines/tFloat3"] = "double3";
   }
 
   rayMarcher = occa::buildKernel("rayMarcher.okl",
                                  "rayMarcher",
-                                 kInfo);
+                                 kernelProps);
 }
 
 #if OCCA_GL_ENABLED

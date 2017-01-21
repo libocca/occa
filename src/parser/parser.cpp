@@ -21,6 +21,7 @@
  */
 
 #include "occa/parser/parser.hpp"
+#include "occa/kernel.hpp"
 #include "occa/tools/env.hpp"
 #include "occa/tools/io.hpp"
 #include "occa/tools/string.hpp"
@@ -73,7 +74,7 @@ namespace occa {
 
       filename = filename_;
 
-      loadParserFlags(properties_);
+      setProperties(properties_);
 
       //---[ Language ]-------
       if (properties["language"].getString() == "OFL") {
@@ -89,7 +90,7 @@ namespace occa {
                  properties.has("mode"));
 
       //---[ Magic ]----------
-      std::string content = properties["header"];
+      std::string content = assembleHeader(properties);
       content += io::read(filename);
       content += (std::string) properties["footer"];
 
@@ -151,7 +152,7 @@ namespace occa {
     }
 
     //---[ Parser Warnings ]------------
-    void parserBase::loadParserFlags(const occa::properties &properties_) {
+    void parserBase::setProperties(const occa::properties &properties_) {
       properties = properties_;
 
       const std::string &mode = properties["mode"];

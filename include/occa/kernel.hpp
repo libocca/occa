@@ -138,28 +138,8 @@ namespace occa {
   //====================================
 
 
-  //---[ kernelInfo ]---------------------
-  class kernelInfo : public occa::properties {
-  public:
-    kernelInfo();
-    kernelInfo(const properties &props);
-
-    static bool isAnOccaDefine(const std::string &name);
-    void addIncludeDefine(const std::string &filename);
-    void addInclude(const std::string &filename);
-    void removeDefine(const std::string &macro);
-
-    template <class TM>
-    inline void addDefine(const std::string &macro, const TM &definedValue) {
-      std::string &headers = (*this)["headers"].getString();
-      if (isAnOccaDefine(macro)) {
-        headers += "\n#undef " + macro;
-      }
-      headers += "\n#define " + macro + " " + occa::toString(definedValue);
-    }
-
-    void addSource(const std::string &content);
-  };
+  //---[ Kernel Properties ]------------
+  std::string assembleHeader(const occa::properties &props);
   //====================================
 
 
@@ -230,6 +210,8 @@ namespace occa {
 
     kernel(const kernel &k);
     kernel& operator = (const kernel &k);
+
+    bool isInitialized();
 
     void* getHandle(const occa::properties &props = occa::properties());
     kernel_v* getKHandle();

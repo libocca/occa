@@ -55,7 +55,6 @@ typedef struct occaObject occaKernel;
 typedef struct occaObject occaMemory;
 typedef struct occaObject occaStream;
 typedef struct occaObject occaProperties;
-typedef struct occaObject occaKernelInfo;
 typedef struct occaObject occaArgumentList;
 
 typedef struct occaStreamTag_t {
@@ -143,11 +142,11 @@ OCCA_LFUNC occaStreamTag OCCA_RFUNC occaTagStream();
 //  |---[ Kernel ]----------------------
 OCCA_LFUNC occaKernel OCCA_RFUNC occaBuildKernel(const char *filename,
                                                  const char *functionName,
-                                                 const occaKernelInfo info);
+                                                 const occaProperties props);
 
 OCCA_LFUNC occaKernel OCCA_RFUNC occaBuildKernelFromString(const char *str,
                                                            const char *functionName,
-                                                           const occaKernelInfo info);
+                                                           const occaProperties props);
 
 OCCA_LFUNC occaKernel OCCA_RFUNC occaBuildKernelFromBinary(const char *filename,
                                                            const char *functionName);
@@ -185,12 +184,12 @@ OCCA_LFUNC occaUDim_t OCCA_RFUNC occaDeviceBytesAllocated(occaDevice device);
 OCCA_LFUNC occaKernel OCCA_RFUNC occaDeviceBuildKernel(occaDevice device,
                                                        const char *filename,
                                                        const char *functionName,
-                                                       const occaKernelInfo info);
+                                                       const occaProperties props);
 
 OCCA_LFUNC occaKernel OCCA_RFUNC occaDeviceBuildKernelFromString(occaDevice device,
                                                                  const char *str,
                                                                  const char *functionName,
-                                                                 const occaKernelInfo info);
+                                                                 const occaProperties props);
 
 OCCA_LFUNC occaKernel OCCA_RFUNC occaDeviceBuildKernelFromBinary(occaDevice device,
                                                                  const char *filename,
@@ -264,17 +263,6 @@ OCCA_LFUNC void OCCA_RFUNC occaKernelRunN(occaKernel kernel,
 #include "occa/operators/cKernelOperators.hpp"
 
 OCCA_LFUNC void OCCA_RFUNC occaKernelFree(occaKernel kernel);
-
-OCCA_LFUNC occaKernelInfo OCCA_RFUNC occaCreateKernelInfo();
-
-OCCA_LFUNC void OCCA_RFUNC occaKernelInfoAddDefine(const occaKernelInfo info,
-                                                   const char *macro,
-                                                   occaObject value);
-
-OCCA_LFUNC void OCCA_RFUNC occaKernelInfoAddInclude(const occaKernelInfo info,
-                                                    const char *filename);
-
-OCCA_LFUNC void OCCA_RFUNC occaKernelInfoFree(const occaKernelInfo info);
 //======================================
 
 
