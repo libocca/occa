@@ -143,11 +143,6 @@ static PyObject* py_occaArgumentListAddArg(PyObject *self, PyObject *args);
 
 static PyObject* py_occaKernelRun(PyObject *self, PyObject *args);
 
-static PyObject* py_occaCreateKernelInfo(PyObject *self, PyObject *args);
-static PyObject* py_occaKernelInfoAddDefine(PyObject *self, PyObject *args);
-static PyObject* py_occaKernelInfoAddInclude(PyObject *self, PyObject *args);
-
-static PyObject* py_occaKernelInfoFree(PyObject *self, PyObject *args);
 static PyObject* py_occaKernelFree(PyObject *self, PyObject *args);
 //======================================
 
@@ -300,11 +295,6 @@ static PyMethodDef _C_occaMethods[] = {
 
   {"kernelRun", py_occaKernelRun, METH_VARARGS},
 
-  {"createKernelInfo"    , py_occaCreateKernelInfo    , METH_VARARGS},
-  {"kernelInfoAddDefine" , py_occaKernelInfoAddDefine , METH_VARARGS},
-  {"kernelInfoAddInclude", py_occaKernelInfoAddInclude, METH_VARARGS},
-
-  {"kernelInfoFree", py_occaKernelInfoFree, METH_VARARGS},
   {"kernelFree"    , py_occaKernelFree    , METH_VARARGS},
   //====================================
 

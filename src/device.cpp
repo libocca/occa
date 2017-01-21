@@ -136,6 +136,10 @@ namespace occa {
     dHandle->finish();
   }
 
+  bool device::hasSeparateMemorySpace() {
+    return dHandle->hasSeparateMemorySpace();
+  }
+
   //  |---[ Stream ]--------------------
   stream device::createStream() {
     stream newStream(dHandle, dHandle->createStream());
@@ -213,12 +217,11 @@ namespace occa {
                                              functionName,
                                              props);
 
-      kernelInfo info(props);
-      info.addDefine("OCCA_LAUNCH_KERNEL", 1);
+      occa::properties launchKernelProps("OCCA_LAUNCH_KERNEL: 1");
 
       k->build(parsedFile,
                functionName,
-               k->dHandle->properties + info);
+               k->dHandle->properties + launchKernelProps);
       k->nestedKernels.clear();
 
       if (k->metadata.nestedKernels) {

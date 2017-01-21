@@ -84,6 +84,20 @@ namespace occa {
     for (int i = 0; i < 5; ++i) {
       compilerMacros.add(specialMacros[i]->name, specialMacros[i]);
     }
+
+    // Alternative representations
+    compilerMacros.add("and"   , new macro_t(this, "and     &&"));
+    compilerMacros.add("and_eq", new macro_t(this, "and_eq  &="));
+    compilerMacros.add("bitand", new macro_t(this, "bitand  &"));
+    compilerMacros.add("bitor" , new macro_t(this, "bitor   |"));
+    compilerMacros.add("compl" , new macro_t(this, "compl   ~"));
+    compilerMacros.add("not"   , new macro_t(this, "not     !"));
+    compilerMacros.add("not_eq", new macro_t(this, "not_eq  !="));
+    compilerMacros.add("or"    , new macro_t(this, "or      ||"));
+    compilerMacros.add("or_eq" , new macro_t(this, "or_eq   |="));
+    compilerMacros.add("xor"   , new macro_t(this, "xor     ^"));
+    compilerMacros.add("xor_eq", new macro_t(this, "xor_eq  ^="));
+
     // [-] Add actual compiler macros as well
 
     exitOnFatalError = true;

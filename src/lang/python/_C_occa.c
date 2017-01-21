@@ -803,47 +803,6 @@ static PyObject* py_occaKernelRun(PyObject *self, PyObject *args) {
   return Py_None;
 }
 
-static PyObject* py_occaCreateKernelInfo(PyObject *self, PyObject *args) {
-  occaKernelInfo kInfo = occaCreateKernelInfo();
-
-  return PyLong_FromVoidPtr(kInfo);
-}
-
-static PyObject* py_occaKernelInfoAddDefine(PyObject *self, PyObject *args) {
-  occaKernelInfo kInfo = occaCreateKernelInfo();
-  const char *macro, *value;
-
-  if (!PyArg_ParseTuple(args, "nss", &kInfo, &macro, &value)) {
-    return NULL;
-  }
-  occaKernelInfoAddDefine(kInfo, macro, occaString(value));
-
-  return Py_None;
-}
-
-static PyObject* py_occaKernelInfoAddInclude(PyObject *self, PyObject *args) {
-  occaKernelInfo kInfo = occaCreateKernelInfo();
-  const char *filename;
-
-  if (!PyArg_ParseTuple(args, "nn", &kInfo, &filename)) {
-    return NULL;
-  }
-  occaKernelInfoAddInclude(kInfo, filename);
-
-  return Py_None;
-}
-
-static PyObject* py_occaKernelInfoFree(PyObject *self, PyObject *args) {
-  occaKernelInfo kInfo;
-
-  if (!PyArg_ParseTuple(args, "n", &kInfo)) {
-    return NULL;
-  }
-  occaKernelInfoFree(kInfo);
-
-  return Py_None;
-}
-
 static PyObject* py_occaKernelFree(PyObject *self, PyObject *args) {
   occaKernel kernel;
 

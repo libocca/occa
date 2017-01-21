@@ -101,7 +101,7 @@ namespace occa {
       std::stringstream ss;
       ss << "#include \"" << kernelDefines << "\"\n"
          << "#include \"" << vectorDefines << "\"\n"
-         << allProps["headers"];
+         << assembleHeader(allProps);
 
       io::cacheFile(filename,
                     kc::sourceFile,

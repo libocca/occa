@@ -112,34 +112,52 @@ void testErrors() {
   preprocessor.setOutputStream(ss);
   preprocessor.processSource("");
 
+  const bool printOutput = false;
+
   // Missing closing )
   occa::macro_t macro(&preprocessor, "FOO(A) A");
   macro.expand("(1");
 
   OCCA_TEST_COMPARE(0,
                     !ss.str().size());
+  if (printOutput) {
+    std::cout << ss.str();
+  }
+  ss.str("");
 
   // No macro name
-  ss.str("");
   macro.load("");
   OCCA_TEST_COMPARE(0,
                     !ss.str().size());
+  if (printOutput) {
+    std::cout << ss.str();
+  }
+  ss.str("");
 
   // Identifier starts badly
-  ss.str("");
   macro.load("0A 0");
   OCCA_TEST_COMPARE(0,
                     !ss.str().size());
+  if (printOutput) {
+    std::cout << ss.str();
+  }
+  ss.str("");
 
   // No whitespace warning
-  ss.str("");
   macro.load("FOO-10");
   OCCA_TEST_COMPARE(0,
                     !ss.str().size());
+  if (printOutput) {
+    std::cout << ss.str();
+  }
+  ss.str("");
 
   // Variadic in wrong position
-  ss.str("");
   macro.load("FOO(A, ..., B)");
   OCCA_TEST_COMPARE(0,
                     !ss.str().size());
+  if (printOutput) {
+    std::cout << ss.str();
+  }
+  ss.str("");
 }

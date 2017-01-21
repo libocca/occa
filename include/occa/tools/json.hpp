@@ -64,12 +64,142 @@ namespace occa {
     } value;
 
     json();
+    json(const json &j);
     json(const char *c);
     json(const std::string &s);
+
+    inline json(const bool boolean) :
+      type(boolean_) {
+      value.boolean = boolean;
+    }
+
+    inline json(const uint8_t number) :
+      type(number_) {
+      value.number = number;
+    }
+
+    inline json(const int8_t number) :
+      type(number_) {
+      value.number = number;
+    }
+
+    inline json(const uint16_t number) :
+      type(number_) {
+      value.number = number;
+    }
+
+    inline json(const int16_t number) :
+      type(number_) {
+      value.number = number;
+    }
+
+    inline json(const uint32_t number) :
+      type(number_) {
+      value.number = number;
+    }
+
+    inline json(const int32_t number) :
+      type(number_) {
+      value.number = number;
+    }
+
+    inline json(const uint64_t number) :
+      type(number_) {
+      value.number = number;
+    }
+
+    inline json(const int64_t number) :
+      type(number_) {
+      value.number = number;
+    }
+
+    inline json(const double number) :
+      type(number_) {
+      value.number = number;
+    }
+
+    inline json(const primitive &number) :
+      type(number_) {
+      value.number = number;
+    }
+
+    inline json(const jsonObject_t &object) :
+      type(object_) {
+      value.object = object;
+    }
+
+    inline json(const jsonArray_t &array) :
+      type(array_) {
+      value.array = array;
+    }
+
+    json& clear();
+
+    json& operator = (const json &j);
 
     inline json& operator = (const std::string &string) {
       type = string_;
       value.string = string;
+      return *this;
+    }
+
+    inline json& operator = (const bool boolean) {
+      type = boolean_;
+      value.boolean = boolean;
+      return *this;
+    }
+
+    inline json& operator = (const uint8_t number) {
+      type = number_;
+      value.number = number;
+      return *this;
+    }
+
+    inline json& operator = (const int8_t number) {
+      type = number_;
+      value.number = number;
+      return *this;
+    }
+
+    inline json& operator = (const uint16_t number) {
+      type = number_;
+      value.number = number;
+      return *this;
+    }
+
+    inline json& operator = (const int16_t number) {
+      type = number_;
+      value.number = number;
+      return *this;
+    }
+
+    inline json& operator = (const uint32_t number) {
+      type = number_;
+      value.number = number;
+      return *this;
+    }
+
+    inline json& operator = (const int32_t number) {
+      type = number_;
+      value.number = number;
+      return *this;
+    }
+
+    inline json& operator = (const uint64_t number) {
+      type = number_;
+      value.number = number;
+      return *this;
+    }
+
+    inline json& operator = (const int64_t number) {
+      type = number_;
+      value.number = number;
+      return *this;
+    }
+
+    inline json& operator = (const double number) {
+      type = number_;
+      value.number = number;
       return *this;
     }
 
@@ -91,16 +221,8 @@ namespace occa {
       return *this;
     }
 
-    inline json& operator = (const bool boolean) {
-      type = boolean_;
-      value.boolean = boolean;
-      return *this;
-    }
-
-    void clear();
-
-    void load(const char *&c);
-    void load(const std::string &s);
+    json& load(const char *&c);
+    json& load(const std::string &s);
 
     static json loads(const std::string &filename);
     void dumps(const std::string &filename);
@@ -113,6 +235,9 @@ namespace occa {
     void loadTrue(const char *&c);
     void loadFalse(const char *&c);
     void loadNull(const char *&c);
+
+    json operator + (const json &j);
+    json& operator += (const json &j);
 
     bool has(const std::string &s) const;
 
@@ -136,19 +261,19 @@ namespace occa {
       return value.boolean;
     }
 
-    inline std::string getString() const {
+    inline const std::string& getString() const {
       return value.string;
     }
 
-    inline primitive getNumber() const {
+    inline const primitive& getNumber() const {
       return value.number;
     }
 
-    inline jsonObject_t getObject() const {
+    inline const jsonObject_t& getObject() const {
       return value.object;
     }
 
-    inline jsonArray_t getArray() const {
+    inline const jsonArray_t& getArray() const {
       return value.array;
     }
 
@@ -236,10 +361,16 @@ namespace occa {
       return get<TM>(s.c_str(), default_);
     }
 
-    void remove(const char *c);
+    template <class TM>
+    json& add(const TM &t) {
+      return *this;
+    }
 
-    inline void remove(const std::string &s) {
+    json& remove(const char *c);
+
+    inline json& remove(const std::string &s) {
       remove(s.c_str());
+      return *this;
     }
 
     inline bool operator == (const json &j) const {

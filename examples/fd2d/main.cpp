@@ -268,33 +268,25 @@ void setupSolver() {
   o_u2 = dev.malloc(u1.size()*sizeof(tFloat), &(u1[0]));
   o_u3 = dev.malloc(u2.size()*sizeof(tFloat), &(u2[0]));
 
-  size_t dims      = 2;
-  occa::dim inner(Bx, By);
-  occa::dim outer((width  + inner.x - 1)/inner.x,
-                  (height + inner.y - 1)/inner.y);
+  occa::properties kernelProps;
+  kernelProps["kernel/defines/sr"]   = stencilRadius;
+  kernelProps["kernel/defines/w"]    = width;
+  kernelProps["kernel/defines/h"]    = height;
+  kernelProps["kernel/defines/dx"]   = dx;
+  kernelProps["kernel/defines/dt"]   = dt;
+  kernelProps["kernel/defines/freq"] = freq;
+  kernelProps["kernel/defines/mX"]   = mX;
+  kernelProps["kernel/defines/mY"]   = mY;
+  kernelProps["kernel/defines/Bx"]   = Bx;
+  kernelProps["kernel/defines/By"]   = By;
 
-  occa::kernelInfo fdInfo;
+  if (sizeof(tFloat) == sizeof(float)) {
+    kernelProps["kernel/defines/tFloat"] = "float";
+  } else {
+    kernelProps["kernel/defines/tFloat"] = "double";
+  }
 
-  fdInfo.addDefine("sr"  , stencilRadius);
-  fdInfo.addDefine("w"   , width);
-  fdInfo.addDefine("h"   , height);
-  fdInfo.addDefine("dx"  , dx);
-  fdInfo.addDefine("dt"  , dt);
-  fdInfo.addDefine("freq", freq);
-  fdInfo.addDefine("mX"  , mX);
-  fdInfo.addDefine("mY"  , mY);
-  fdInfo.addDefine("Bx"  , Bx);
-  fdInfo.addDefine("By"  , By);
-
-  if (sizeof(tFloat) == sizeof(float))
-    fdInfo.addDefine("tFloat", "float");
-  else
-    fdInfo.addDefine("tFloat", "double");
-
-  // fd2d = dev.buildKernel("fd2d.cl", "fd2d", fdInfo);
-  fd2d = dev.buildKernel("fd2d.okl", "fd2d", fdInfo);
-
-  fd2d.setWorkingDims(dims, inner, outer);
+  fd2d = dev.buildKernel("fd2d.okl", "fd2d", kernelProps);
 }
 
 void solve() {

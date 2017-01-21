@@ -33,14 +33,9 @@ namespace occa {
     clear();
   }
 
-  void json::clear() {
-    type = none_;
-    value.string = "";
-    value.number = 0;
-    value.object.clear();
-    value.array.clear();
-    value.boolean = false;
-  }
+  json::json(const json &j) :
+    type(j.type),
+    value(j.value) {}
 
   json::json(const char *c) {
     load(c);
@@ -50,7 +45,23 @@ namespace occa {
     load(s);
   }
 
-  void json::load(const char *&c) {
+  json& json::clear() {
+    type = none_;
+    value.string = "";
+    value.number = 0;
+    value.object.clear();
+    value.array.clear();
+    value.boolean = false;
+    return *this;
+  }
+
+  json& json::operator = (const json &j) {
+    type = j.type;
+    value = j.value;
+    return *this;
+  }
+
+  json& json::load(const char *&c) {
     clear();
     lex::skipWhitespace(c);
     switch (*c) {
@@ -67,11 +78,13 @@ namespace occa {
     default: {
       OCCA_FORCE_ERROR("Cannot load JSON");
     }}
+    return *this;
   }
 
-  void json::load(const std::string &s) {
+  json& json::load(const std::string &s) {
     const char *c = s.c_str();
     load(c);
+    return *this;
   }
 
   json json::loads(const std::string &filename) {
@@ -238,6 +251,18 @@ namespace occa {
     type = null_;
   }
 
+  json json::operator + (const json &j) {
+    json sum = *this;
+    sum += j;
+    return sum;
+  }
+
+  json& json::operator += (const json &j) {
+    value.object.insert(value.object.begin(),
+                        value.object.end());
+    return *this;
+  }
+
   bool json::has(const std::string &s) const {
     const char *c  = s.c_str();
     const json *j = this;
@@ -248,7 +273,7 @@ namespace occa {
       }
 
       const char *cStart = c;
-      lex::skipTo(c, '/');
+      lex::skipTo(c, '/', '\\');
       std::string key(cStart, c - cStart);
       if (*c == '/') {
         ++c;
@@ -276,7 +301,7 @@ namespace occa {
                   j->type == object_);
 
        const char *cStart = c;
-       lex::skipTo(c, '/');
+       lex::skipTo(c, '/', '\\');
        std::string key(cStart, c - cStart);
        if (*c == '/') {
          ++c;
@@ -299,7 +324,7 @@ namespace occa {
       }
 
       const char *cStart = c;
-      lex::skipTo(c, '/');
+      lex::skipTo(c, '/', '\\');
       std::string key(cStart, c - cStart);
       if (*c == '/') {
         ++c;
@@ -314,15 +339,15 @@ namespace occa {
     return *j;
   }
 
-  void json::remove(const char *c) {
+  json& json::remove(const char *c) {
     json *j = this;
     while (*c != '\0') {
       if (j->type != object_) {
-        return;
+        return *this;
       }
 
       const char *cStart = c;
-      lex::skipTo(c, '/');
+      lex::skipTo(c, '/', '\\');
       std::string key(cStart, c - cStart);
       if (*c == '/') {
         ++c;
@@ -330,15 +355,16 @@ namespace occa {
 
       if (*c == '\0') {
         j->value.object.erase(key);
-        return;
+        return *this;
       }
 
       jsonObjectIterator it = j->value.object.find(key);
       if (it == j->value.object.end()) {
-        return;
+        return *this;
       }
       j = &(it->second);
     }
+    return *this;
   }
 
   hash_t json::hash() const {

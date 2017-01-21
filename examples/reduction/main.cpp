@@ -24,23 +24,22 @@ int main(int argc, char **argv) {
   occa::kernel reduction;
   occa::memory o_a, o_aRed;
 
-  occa::kernelInfo reductionInfo;
-
   device.setup("mode: 'Serial'");
 
   o_a  = device.malloc(entries*sizeof(float));
   o_aRed = device.malloc(reducedEntries*sizeof(float));
 
-  reductionInfo.addDefine("p_Nred", p_Nred);
+  occa::properties kernelProps;
+  kernelProps["kernel/defines/p_Nred"] = p_Nred;
 
 #if 1
   reduction = device.buildKernel("reduction.okl",
                                  "reduction",
-                                 reductionInfo);
+                                 kernelProps);
 #else
   reduction = device.buildKernel("reduction.cu",
                                  "reduction",
-                                 reductionInfo);
+                                 kernelProps);
 
   size_t dims     = 1;
   occa::dim inner(p_Nred);

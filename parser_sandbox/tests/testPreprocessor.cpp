@@ -11,11 +11,11 @@ void testEval();
 
 int main(const int argc, const char **argv) {
   testMacroDefines();
+  testErrorDefines();
   testLineDefine();
 
 #if 0
   testIfElseDefines();
-  testErrorDefines();
   testEval();
 #endif
 }
@@ -152,19 +152,33 @@ void testIfElseDefines() {
                                          "15\n"
                                          "#endif\n"));
 }
+#endif
 
 void testErrorDefines() {
   occa::preprocessor_t preprocessor;
-  preprocessor.setFilename("(source)");
-  preprocessor.props["exitOnError"] = false;
+  std::stringstream ss;
+  preprocessor.exitOnFatalError = false;
+  preprocessor.setOutputStream(ss);
 
-  preprocessor.process("#error \"Error\"\n");
-  OCCA_TEST_COMPARE(1, preprocessor.errors.size());
+  const bool printOutput = true;
 
-  preprocessor.process("#warning \"Warning\"\n");
-  OCCA_TEST_COMPARE(1, preprocessor.warnings.size());
+  preprocessor.processSource("#error \"Error\"\n");
+  OCCA_TEST_COMPARE(0,
+                    !ss.str().size());
+  if (printOutput) {
+    std::cout << ss.str();
+  }
+  ss.str("");
+
+  preprocessor.clear();
+  preprocessor.processSource("#warning \"Warning\"\n");
+  OCCA_TEST_COMPARE(0,
+                    !ss.str().size());
+  if (printOutput) {
+    std::cout << ss.str();
+  }
+  ss.str("");
 }
-#endif
 
 void testLineDefine() {
   occa::preprocessor_t preprocessor;
