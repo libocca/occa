@@ -32,6 +32,8 @@
 namespace occa {
   namespace cuda {
     class device : public occa::device_v {
+      hash_t hash_;
+
     public:
       int archMajorVersion, archMinorVersion;
       bool p2pEnabled;
@@ -48,6 +50,8 @@ namespace occa {
       void finish();
 
       bool hasSeparateMemorySpace();
+
+      hash_t hash();
 
       //  |---[ Stream ]----------------
       stream_t createStream();

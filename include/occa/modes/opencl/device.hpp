@@ -32,6 +32,8 @@
 namespace occa {
   namespace opencl {
     class device : public occa::device_v {
+      hash_t hash_;
+
     public:
       int platformID, deviceID;
 
@@ -48,6 +50,8 @@ namespace occa {
       void finish();
 
       bool hasSeparateMemorySpace();
+
+      hash_t hash();
 
       //  |---[ Stream ]----------------
       stream_t createStream();

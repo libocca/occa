@@ -216,12 +216,12 @@ namespace occa {
     void* getHandle(const occa::properties &props = occa::properties());
     kernel_v* getKHandle();
 
+    occa::device getDevice();
+
     const std::string& mode();
     const std::string& name();
     const std::string& sourceFilename();
     const std::string& binaryFilename();
-
-    occa::device getDevice();
 
     int maxDims();
     dim maxOuterDims();
@@ -234,6 +234,40 @@ namespace occa {
     void clearArgumentList();
 
 #include "occa/operators/declarations.hpp"
+
+    void free();
+  };
+  //====================================
+
+  //---[ kernel builder ]---------------
+  typedef std::map<hash_t,occa::kernel>     hashedKernelMap_t;
+  typedef hashedKernelMap_t::iterator       hashedKernelMapIterator;
+  typedef hashedKernelMap_t::const_iterator cHashedKernelMapIterator;
+
+  class kernelBuilder {
+  private:
+    std::string filename_;
+    std::string function_;
+    occa::properties props_;
+
+    hashedKernelMap_t kernelMap;
+
+  public:
+    kernelBuilder();
+    kernelBuilder(const std::string &filename,
+                  const std::string &function,
+                  const occa::properties &props = occa::properties());
+
+    kernelBuilder(const kernelBuilder &k);
+    kernelBuilder& operator = (const kernelBuilder &k);
+
+    bool isInitialized();
+
+    void use(const std::string &filename,
+             const std::string &function,
+             const occa::properties &props = occa::properties());
+
+    occa::kernel operator [] (occa::device device);
 
     void free();
   };

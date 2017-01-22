@@ -94,6 +94,13 @@ namespace occa {
       return true;
     }
 
+    hash_t device::hash() {
+      if (!hash_.initialized) {
+        hash_ = occa::hash(properties);
+      }
+      return hash_;
+    }
+
     //  |---[ Stream ]----------------
     stream_t device::createStream() {
       cl_int error;

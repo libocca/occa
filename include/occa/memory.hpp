@@ -125,10 +125,14 @@ namespace occa {
     memory(const memory &m);
     memory& operator = (const memory &m);
 
+    bool isInitialized();
+
     memory& swap(memory &m);
 
     memory_v* getMHandle();
     device_v* getDHandle();
+
+    occa::device getDevice();
 
     operator kernelArg() const;
 

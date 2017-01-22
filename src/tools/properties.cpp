@@ -37,6 +37,10 @@ namespace occa {
     load(s);
   }
 
+  bool properties::isInitialized() {
+    return (0 < value.object.size());
+  }
+
   void properties::load(const char *&c) {
     loadObject(c);
   }

@@ -29,6 +29,8 @@
 namespace occa {
   namespace serial {
     class device : public occa::device_v {
+      hash_t hash_;
+
     public:
       device(const occa::properties &properties_ = occa::properties());
       ~device();
@@ -39,6 +41,8 @@ namespace occa {
       void finish();
 
       bool hasSeparateMemorySpace();
+
+      hash_t hash();
 
       //  |---[ Stream ]----------------
       stream_t createStream();
