@@ -221,6 +221,8 @@ namespace occa {
       return *this;
     }
 
+    bool isInitialized();
+
     json& load(const char *&c);
     json& load(const std::string &s);
 
@@ -450,6 +452,9 @@ namespace occa {
     std::string toString() const;
     void toString(std::string &out, const std::string &indent = "") const;
   };
+
+  template <>
+  hash_t hash(const occa::json &json);
 
   std::ostream& operator << (std::ostream &out, const json &j);
 }

@@ -81,11 +81,15 @@ namespace occa {
     return *this;
   }
 
+  bool device::isInitialized() {
+    return (dHandle != NULL);
+  }
+
   void* device::getHandle(const occa::properties &props) {
     return dHandle->getHandle(props);
   }
 
-  device_v* device::getDHandle() {
+  device_v* device::getDHandle() const {
     return dHandle;
   }
 
@@ -361,6 +365,9 @@ namespace occa {
   //  |=================================
 
   void device::free() {
+    if (dHandle == NULL) {
+      return;
+    }
     const int streamCount = dHandle->streams.size();
 
     for (int i = 0; i < streamCount; ++i)
@@ -370,6 +377,11 @@ namespace occa {
 
     delete dHandle;
     dHandle = NULL;
+  }
+
+  template <>
+  hash_t hash(const occa::device &device) {
+    return device.getDHandle()->hash();
   }
   //====================================
 

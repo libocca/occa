@@ -302,6 +302,10 @@ namespace occa {
     return kHandle;
   }
 
+  occa::device kernel::getDevice() {
+    return occa::device(kHandle->dHandle);
+  }
+
   const std::string& kernel::mode() {
     return device(kHandle->dHandle).mode();
   }
@@ -316,10 +320,6 @@ namespace occa {
 
   const std::string& kernel::binaryFilename() {
     return kHandle->binaryFilename;
-  }
-
-  occa::device kernel::getDevice() {
-    return occa::device(kHandle->dHandle);
   }
 
   void kernel::setWorkingDims(int dims, occa::dim inner, occa::dim outer) {
@@ -395,6 +395,9 @@ namespace occa {
 #include "operators/definitions.cpp"
 
   void kernel::free() {
+    if (kHandle == NULL) {
+      return;
+    }
     if (kHandle->nestedKernelCount()) {
       for (int k = 0; k < kHandle->nestedKernelCount(); ++k)
         kHandle->nestedKernels[k].free();
@@ -405,5 +408,60 @@ namespace occa {
     delete kHandle;
     kHandle = NULL;
   }
+  //====================================
+
+  //---[ kernel builder ]---------------
+  kernelBuilder::kernelBuilder() {}
+
+  kernelBuilder::kernelBuilder(const std::string &filename,
+                               const std::string &function,
+                               const occa::properties &props) :
+    filename_(filename),
+    function_(function),
+    props_(props) {}
+
+  kernelBuilder::kernelBuilder(const kernelBuilder &k) :
+    filename_(k.filename_),
+    function_(k.function_),
+    props_(k.props_),
+    kernelMap(k.kernelMap) {}
+
+  kernelBuilder& kernelBuilder::operator = (const kernelBuilder &k) {
+    filename_ = k.filename_;
+    function_ = k.function_;
+    props_    = k.props_;
+    kernelMap = k.kernelMap;
+    return *this;
+  }
+
+  bool kernelBuilder::isInitialized() {
+    return (0 < filename_.size());
+  }
+
+  void kernelBuilder::use(const std::string &filename,
+                          const std::string &function,
+                          const occa::properties &props) {
+    free();
+    filename_ = filename;
+    function_ = function;
+    props_    = props;
+  }
+
+  occa::kernel kernelBuilder::operator [] (occa::device device) {
+    occa::kernel &k = kernelMap[occa::hash(device)];
+    if (!k.isInitialized()) {
+      k = device.buildKernel(filename_, function_, props_);
+    }
+    return k;
+  }
+
+  void kernelBuilder::free() {
+    hashedKernelMapIterator it = kernelMap.begin();
+    while (it != kernelMap.end()) {
+      it->second.free();
+      ++it;
+    }
+  }
+
   //====================================
 }

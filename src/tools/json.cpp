@@ -61,6 +61,10 @@ namespace occa {
     return *this;
   }
 
+  bool json::isInitialized() {
+    return (type != none_);
+  }
+
   json& json::load(const char *&c) {
     clear();
     lex::skipWhitespace(c);
@@ -460,6 +464,7 @@ namespace occa {
           ++it;
         }
       }
+      out += indent;
       out += '}';
       break;
     }
@@ -474,6 +479,7 @@ namespace occa {
           out += '\n';
         }
       }
+      out += indent;
       out += ']';
       break;
     }
@@ -483,6 +489,11 @@ namespace occa {
     case null_: {
       out += "null";
     }}
+  }
+
+  template <>
+  hash_t hash(const occa::json &json) {
+    return json.hash();
   }
 
   std::ostream& operator << (std::ostream &out, const json &j) {

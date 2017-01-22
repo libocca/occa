@@ -104,12 +104,20 @@ namespace occa {
     return *this;
   }
 
+  bool memory::isInitialized() {
+    return (mHandle != NULL);
+  }
+
   memory_v* memory::getMHandle() {
     return mHandle;
   }
 
   device_v* memory::getDHandle() {
     return mHandle->dHandle;
+  }
+
+  occa::device memory::getDevice() {
+    return occa::device(mHandle->dHandle);
   }
 
   memory::operator kernelArg() const {
@@ -325,6 +333,9 @@ namespace occa {
   }
 
   void memory::deleteRefs(const bool freeMemory) {
+    if (mHandle == NULL) {
+      return;
+    }
     mHandle->dHandle->bytesAllocated -= (mHandle->size);
 
     if (mHandle->uvaPtr) {

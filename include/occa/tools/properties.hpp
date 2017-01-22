@@ -32,6 +32,8 @@ namespace occa {
     properties(const char *c);
     properties(const std::string &s);
 
+    bool isInitialized();
+
     void load(const char *&c);
     void load(const std::string &s);
 

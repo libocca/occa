@@ -70,6 +70,8 @@ namespace occa {
 
     virtual bool hasSeparateMemorySpace() = 0;
 
+    virtual hash_t hash() = 0;
+
     //  |---[ Stream ]------------------
     virtual stream_t createStream() = 0;
     virtual void freeStream(stream_t s) = 0;
@@ -120,11 +122,13 @@ namespace occa {
     device(const occa::device &d);
     device& operator = (const occa::device &d);
 
+    bool isInitialized();
+
     const std::string& mode();
     occa::properties& properties();
 
     void* getHandle(const occa::properties &props = occa::properties());
-    device_v* getDHandle();
+    device_v* getDHandle() const;
 
     void setup(const occa::properties &props);
 
@@ -180,6 +184,9 @@ namespace occa {
 
     void free();
   };
+
+  template <>
+  hash_t hash(const occa::device &device);
   //====================================
 
   //---[ stream ]-----------------------

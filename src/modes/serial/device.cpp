@@ -123,6 +123,13 @@ namespace occa {
       return false;
     }
 
+    hash_t device::hash() {
+      if (!hash_.initialized) {
+        hash_ = occa::hash(properties);
+      }
+      return hash_;
+    }
+
     void device::waitFor(streamTag tag) {}
 
     stream_t device::createStream() {

@@ -105,6 +105,15 @@ namespace occa {
       return true;
     }
 
+    hash_t device::hash() {
+      if (!hash_.initialized) {
+        hash_ ^= occa::hash(properties);
+        hash_ ^= occa::hash(archMajorVersion);
+        hash_ ^= occa::hash(archMinorVersion);
+      }
+      return hash_;
+    }
+
     //  |---[ Stream ]----------------
     stream_t device::createStream() {
       CUstream *retStream = new CUstream;
