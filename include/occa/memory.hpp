@@ -125,18 +125,18 @@ namespace occa {
     memory(const memory &m);
     memory& operator = (const memory &m);
 
-    bool isInitialized();
+    bool isInitialized() const;
 
     memory& swap(memory &m);
 
     memory_v* getMHandle();
     device_v* getDHandle();
 
-    occa::device getDevice();
+    occa::device getDevice() const;
 
     operator kernelArg() const;
 
-    const std::string& mode();
+    const std::string& mode() const;
 
     udim_t size() const;
 
