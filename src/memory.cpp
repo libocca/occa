@@ -104,7 +104,7 @@ namespace occa {
     return *this;
   }
 
-  bool memory::isInitialized() {
+  bool memory::isInitialized() const {
     return (mHandle != NULL);
   }
 
@@ -116,7 +116,7 @@ namespace occa {
     return mHandle->dHandle;
   }
 
-  occa::device memory::getDevice() {
+  occa::device memory::getDevice() const {
     return occa::device(mHandle->dHandle);
   }
 
@@ -127,7 +127,7 @@ namespace occa {
     return kArg;
   }
 
-  const std::string& memory::mode() {
+  const std::string& memory::mode() const {
     return device(mHandle->dHandle).mode();
   }
 
