@@ -221,7 +221,8 @@ namespace occa {
                                              functionName,
                                              props);
 
-      occa::properties launchKernelProps("OCCA_LAUNCH_KERNEL: 1");
+      occa::properties launchKernelProps;
+      launchKernelProps["kernel/defines/OCCA_LAUNCH_KERNEL"] = 1;
 
       k->build(parsedFile,
                functionName,
