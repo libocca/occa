@@ -29,6 +29,7 @@
 #include <stdint.h>
 
 #include "occa/defines.hpp"
+#include "occa/vector.hpp"
 
 namespace occa {
   typedef int64_t dim_t;
@@ -76,6 +77,15 @@ namespace occa {
 
     udim_t& operator [] (int i);
     udim_t  operator [] (int i) const;
+  };
+  //====================================
+
+  //---[ Type To String ]---------------
+  template <class TM>
+  class typeinfo {
+    static const std::string id;
+    static const std::string name;
+    static const bool isUnsigned;
   };
   //====================================
 }

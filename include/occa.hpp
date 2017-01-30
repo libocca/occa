@@ -24,6 +24,5 @@
 #define OCCA_HEADER
 
 #include "occa/base.hpp"
-#include "occa/defines/vector.hpp"
 
 #endif

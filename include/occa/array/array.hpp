@@ -99,6 +99,7 @@ namespace occa {
     }
 
     std::string idxOrderStr();
+    //==================================
 
     //---[ clone() ]--------------------
     array<TM,idxType> clone(const int copyOn = copyOnHostAndDevice);
@@ -117,6 +118,7 @@ namespace occa {
     template <class TM2, const int idxType2>
     array<TM2,idxType2> cloneOn(occa::device device_,
                                 const int copyOn = copyOnHostAndDevice);
+    //==================================
 
     //---[ array(...) ]----------------
     array(const int dim, const udim_t *d);
@@ -130,6 +132,7 @@ namespace occa {
           const udim_t d3, const udim_t d4);
     array(const udim_t d0, const udim_t d1, const udim_t d2,
           const udim_t d3, const udim_t d4, const udim_t d5);
+    //==================================
 
     //---[ array(device, ...) ]--------
     array(occa::device device_, const int dim, const udim_t *d);
@@ -149,6 +152,7 @@ namespace occa {
     array(occa::device device_,
           const udim_t d0, const udim_t d1, const udim_t d2,
           const udim_t d3, const udim_t d4, const udim_t d5);
+    //==================================
 
     //---[ allocate(...) ]--------------
   private:
@@ -166,6 +170,7 @@ namespace occa {
                   const udim_t d3, const udim_t d4);
     void allocate(const udim_t d0, const udim_t d1, const udim_t d2,
                   const udim_t d3, const udim_t d4, const udim_t d5);
+    //==================================
 
     //---[ allocate(device, ...) ]------
     void allocate(occa::device device_, const int dim, const udim_t *d);
@@ -185,6 +190,7 @@ namespace occa {
     void allocate(occa::device device_,
                   const udim_t d0, const udim_t d1, const udim_t d2,
                   const udim_t d3, const udim_t d4, const udim_t d5);
+    //==================================
 
     //---[ reshape(...) ]---------------
     void reshape(const int dim, const udim_t *d);
@@ -198,6 +204,7 @@ namespace occa {
                  const udim_t d3, const udim_t d4);
     void reshape(const udim_t d0, const udim_t d1, const udim_t d2,
                  const udim_t d3, const udim_t d4, const udim_t d5);
+    //==================================
 
     //---[ setIdxOrder(...) ]-----------
     void updateFS(const int idxCount_ = 1);
@@ -215,8 +222,9 @@ namespace occa {
                      const int o3, const int o4);
     void setIdxOrder(const int o0, const int o1, const int o2,
                      const int o3, const int o4, const int o5);
+    //==================================
 
-    //---[ Operators ]------------------
+    //---[ Access Operators ]-----------
     inline TM& operator [] (const udim_t i0);
 
     inline TM& operator () (const udim_t i0);
@@ -228,6 +236,10 @@ namespace occa {
                             const udim_t i3, const udim_t i4);
     inline TM& operator () (const udim_t i0, const udim_t i1, const udim_t i2,
                             const udim_t i3, const udim_t i4, const udim_t i5);
+    //==================================
+
+    //---[ Operators ]------------------
+    //==================================
 
     //---[ Syncs ]----------------------
     void startManaging();
@@ -239,6 +251,7 @@ namespace occa {
     bool needsSync();
     void sync();
     void dontSync();
+    //==================================
   };
 }
 

@@ -49,12 +49,12 @@ int main(int argc, char **argv) {
   o_b  = occaDeviceMalloc(device, entries*sizeof(float), NULL, occaDefault);
   o_ab = occaDeviceMalloc(device, entries*sizeof(float), NULL, occaDefault);
 
-  occaKernelInfo info = occaCreateKernelInfo();
-  occaKernelInfoAddDefine(info, "DIMENSION", occaInt(10));
+  occaProperties props = occaCreateProperties();
+  occaPropertiesSet(props, "DIMENSION", occaInt(10));
 
   addVectors = occaDeviceBuildKernel(device,
                                      "addVectors.okl", "addVectors",
-                                     info);
+                                     props);
 
   occaCopyPtrToMem(o_a, a, entries*sizeof(float), 0, occaDefault);
   occaCopyPtrToMem(o_b, b, occaAllBytes         , 0, occaDefault);
@@ -76,7 +76,7 @@ int main(int argc, char **argv) {
   free(b);
   free(ab);
 
-  occaKernelInfoFree(info);
+  occaPropertiesFree(props);
   occaKernelFree(addVectors);
   occaMemoryFree(o_a);
   occaMemoryFree(o_b);

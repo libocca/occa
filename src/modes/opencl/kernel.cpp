@@ -94,13 +94,9 @@ namespace occa {
       const std::string kernelDefines =
         io::cacheFile(env::OCCA_DIR + "/include/occa/modes/opencl/kernelDefines.hpp",
                       "openclKernelDefines.hpp");
-      const std::string vectorDefines =
-        io::cacheFile(env::OCCA_DIR + "/include/occa/defines/vector.hpp",
-                      "vectorDefines.hpp");
 
       std::stringstream ss;
       ss << "#include \"" << kernelDefines << "\"\n"
-         << "#include \"" << vectorDefines << "\"\n"
          << assembleHeader(allProps);
 
       io::cacheFile(filename,
