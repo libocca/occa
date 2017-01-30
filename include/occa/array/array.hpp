@@ -238,7 +238,8 @@ namespace occa {
                             const udim_t i3, const udim_t i4, const udim_t i5);
     //==================================
 
-    //---[ Operators ]------------------
+    //---[ Arithmetic Operators ]-------
+
     //==================================
 
     //---[ Syncs ]----------------------
