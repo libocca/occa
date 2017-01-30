@@ -83,41 +83,50 @@ extern OCCA_LFUNC const void *occaEmptyProperties;
 //======================================
 
 
-//---[ TypeCasting ]--------------------
+//---[ Types ]--------------------------
 //  ---[ Known Types ]------------------
-OCCA_LFUNC occaObject OCCA_RFUNC occaPtr(void *value);
+OCCA_LFUNC occaType OCCA_RFUNC occaPtr(void *value);
 
-OCCA_LFUNC occaObject OCCA_RFUNC occaInt8(int value);
-OCCA_LFUNC occaObject OCCA_RFUNC occaUInt8(unsigned int value);
+OCCA_LFUNC occaType OCCA_RFUNC occaInt8(int8_t value);
+OCCA_LFUNC occaType OCCA_RFUNC occaUInt8(uint8_t value);
 
-OCCA_LFUNC occaObject OCCA_RFUNC occaInt16(int value);
-OCCA_LFUNC occaObject OCCA_RFUNC occaUInt16(unsigned int value);
+OCCA_LFUNC occaType OCCA_RFUNC occaInt16(int16_t value);
+OCCA_LFUNC occaType OCCA_RFUNC occaUInt16(uint16_t value);
 
-OCCA_LFUNC occaObject OCCA_RFUNC occaInt32(int value);
-OCCA_LFUNC occaObject OCCA_RFUNC occaUInt32(unsigned int value);
+OCCA_LFUNC occaType OCCA_RFUNC occaInt32(int32_t value);
+OCCA_LFUNC occaType OCCA_RFUNC occaUInt32(uint32_t value);
 
-OCCA_LFUNC occaObject OCCA_RFUNC occaInt64(int value);
-OCCA_LFUNC occaObject OCCA_RFUNC occaUInt64(unsigned int value);
+OCCA_LFUNC occaType OCCA_RFUNC occaInt64(int64_t value);
+OCCA_LFUNC occaType OCCA_RFUNC occaUInt64(uint64_t value);
 //  ====================================
 
 //  ---[ Ambiguous Types ]--------------
-OCCA_LFUNC occaObject OCCA_RFUNC occaInt(int value);
-OCCA_LFUNC occaObject OCCA_RFUNC occaUInt(unsigned int value);
+OCCA_LFUNC occaType OCCA_RFUNC occaChar(char value);
+OCCA_LFUNC occaType OCCA_RFUNC occaUChar(unsigned char value);
 
-OCCA_LFUNC occaObject OCCA_RFUNC occaChar(char value);
-OCCA_LFUNC occaObject OCCA_RFUNC occaUChar(unsigned char value);
+OCCA_LFUNC occaType OCCA_RFUNC occaShort(short value);
+OCCA_LFUNC occaType OCCA_RFUNC occaUShort(unsigned short value);
 
-OCCA_LFUNC occaObject OCCA_RFUNC occaShort(short value);
-OCCA_LFUNC occaObject OCCA_RFUNC occaUShort(unsigned short value);
+OCCA_LFUNC occaType OCCA_RFUNC occaInt(int value);
+OCCA_LFUNC occaType OCCA_RFUNC occaUInt(unsigned int value);
 
-OCCA_LFUNC occaObject OCCA_RFUNC occaLong(long value);
-OCCA_LFUNC occaObject OCCA_RFUNC occaULong(unsigned long value);
+OCCA_LFUNC occaType OCCA_RFUNC occaLong(long value);
+OCCA_LFUNC occaType OCCA_RFUNC occaULong(unsigned long value);
 
-OCCA_LFUNC occaObject OCCA_RFUNC occaFloat(float value);
-OCCA_LFUNC occaObject OCCA_RFUNC occaDouble(double value);
+OCCA_LFUNC occaType OCCA_RFUNC occaFloat(float value);
+OCCA_LFUNC occaType OCCA_RFUNC occaDouble(double value);
 
-OCCA_LFUNC occaObject OCCA_RFUNC occaStruct(void *value, occaUDim_t bytes);
-OCCA_LFUNC occaObject OCCA_RFUNC occaString(const char *str);
+OCCA_LFUNC occaType OCCA_RFUNC occaStruct(void *value, occaUDim_t bytes);
+OCCA_LFUNC occaType OCCA_RFUNC occaString(const char *str);
+//  ====================================
+
+//  ---[ Properties ]-------------------
+OCCA_LFUNC occaObject OCCA_RFUNC occaCreateProperties();
+OCCA_LFUNC occaObject OCCA_RFUNC occaCreatePropertiesFromString(const char *c);
+OCCA_LFUNC void OCCA_RFUNC occaPropertiesSet(occaProperties properties,
+                                             const char *key,
+                                             occaType value);
+OCCA_LFUNC void OCCA_RFUNC occaPropertiesFree(occaProperties properties);
 //  ====================================
 //======================================
 
@@ -252,13 +261,14 @@ OCCA_LFUNC void OCCA_RFUNC occaArgumentListFree(occaArgumentList list);
 
 OCCA_LFUNC void OCCA_RFUNC occaArgumentListAddArg(occaArgumentList list,
                                                   int argPos,
-                                                  occaType type);
+                                                  occaObject type);
 
 OCCA_LFUNC void OCCA_RFUNC occaKernelRun_(occaKernel kernel,
                                           occaArgumentList list);
 
 OCCA_LFUNC void OCCA_RFUNC occaKernelRunN(occaKernel kernel,
-                                          const int argc, occaType *args);
+                                          const int argc,
+                                          occaObject *args);
 
 #include "occa/operators/cKernelOperators.hpp"
 
@@ -291,6 +301,10 @@ OCCA_LFUNC void OCCA_RFUNC occaCopyMemToPtr(void *dest, occaMemory src,
                                             occaProperties props);
 
 OCCA_LFUNC void OCCA_RFUNC occaMemoryFree(occaMemory memory);
+//======================================
+
+//---[ Misc ]---------------------------
+OCCA_LFUNC void OCCA_RFUNC occaFree(occaObject obj);
 //======================================
 
 OCCA_END_EXTERN_C

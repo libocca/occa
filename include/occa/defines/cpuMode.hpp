@@ -31,6 +31,9 @@
 
 #include "occa/defines.hpp"
 #include "occa/base.hpp"
+#include "occa/vector.hpp"
+
+using namespace occa;
 
 //---[ Defines ]----------------------------------
 #define OCCA_MAX_THREADS 512

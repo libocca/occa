@@ -85,13 +85,8 @@ namespace occa {
                                       "serialKernelDefines.hpp");
       }
 
-      const std::string vectorDefines =
-        io::cacheFile(env::OCCA_DIR + "/include/occa/defines/vector.hpp",
-                      "vectorDefines.hpp");
-
       std::stringstream ss, command;
       ss << "#include \"" << kernelDefines << "\"\n"
-         << "#include \"" << vectorDefines << "\"\n"
          << assembleHeader(allProps) << '\n'
          << "#if defined(OCCA_IN_KERNEL) && !OCCA_IN_KERNEL\n"
          << "using namespace occa;\n"
