@@ -522,6 +522,9 @@ namespace occa {
   template <>
   kernel_t<OpenCL>::kernel_t(){
     strMode = "OpenCL";
+    name = "";
+    sourceFilename = "";
+    binaryFilename = "";
 
     data    = NULL;
     dHandle = NULL;
@@ -594,27 +597,27 @@ namespace occa {
                                                 dHandle->getInfoSalt(info));
 
     const std::string hashDir    = hashDirFor(filename, hash);
-    const std::string sourceFile = hashDir + kc::sourceFile;
-    const std::string binaryFile = hashDir + fixBinaryName(kc::binaryFile);
+    sourceFilename = hashDir + kc::sourceFile;
+    binaryFilename = hashDir + fixBinaryName(kc::binaryFile);
     bool foundBinary = true;
 
     if (!haveHash(hash, 0))
       waitForHash(hash, 0);
-    else if (sys::fileExists(binaryFile))
+    else if (sys::fileExists(binaryFilename))
       releaseHash(hash, 0);
     else
       foundBinary = false;
 
     if (foundBinary) {
       if(verboseCompilation_f)
-        std::cout << "Found cached binary of [" << compressFilename(filename) << "] in [" << compressFilename(binaryFile) << "]\n";
+        std::cout << "Found cached binary of [" << compressFilename(filename) << "] in [" << compressFilename(binaryFilename) << "]\n";
 
-      return buildFromBinary(binaryFile, functionName);
+      return buildFromBinary(binaryFilename, functionName);
     }
 
     createSourceFileFrom(filename, hashDir, info);
 
-    std::string cFunction = readFile(sourceFile);
+    std::string cFunction = readFile(sourceFilename);
 
     std::string catFlags = info.flags + dHandle->compilerFlags;
 
@@ -622,9 +625,9 @@ namespace occa {
                               cFunction.c_str(), cFunction.size(),
                               functionName,
                               catFlags,
-                              hash, sourceFile);
+                              hash, sourceFilename);
 
-    cl::saveProgramBinary(data_, binaryFile, hash);
+    cl::saveProgramBinary(data_, binaryFilename, hash);
 
     releaseHash(hash, 0);
 

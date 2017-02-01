@@ -103,6 +103,9 @@ namespace occa {
   template <>
   kernel_t<OpenMP>::kernel_t(){
     strMode = "OpenMP";
+    name = "";
+    sourceFilename = "";
+    binaryFilename = "";
 
     data    = NULL;
     dHandle = NULL;
@@ -178,22 +181,22 @@ namespace occa {
                                                 dHandle->getInfoSalt(info));
 
     const std::string hashDir    = hashDirFor(filename, hash);
-    const std::string sourceFile = hashDir + kc::sourceFile;
-    const std::string binaryFile = hashDir + fixBinaryName(kc::binaryFile);
+    sourceFilename = hashDir + kc::sourceFile;
+    binaryFilename = hashDir + fixBinaryName(kc::binaryFile);
     bool foundBinary = true;
 
     if (!haveHash(hash, 0))
       waitForHash(hash, 0);
-    else if (sys::fileExists(binaryFile))
+    else if (sys::fileExists(binaryFilename))
       releaseHash(hash, 0);
     else
       foundBinary = false;
 
     if (foundBinary) {
       if(verboseCompilation_f)
-        std::cout << "Found cached binary of [" << compressFilename(filename) << "] in [" << compressFilename(binaryFile) << "]\n";
+        std::cout << "Found cached binary of [" << compressFilename(filename) << "] in [" << compressFilename(binaryFilename) << "]\n";
 
-      return buildFromBinary(binaryFile, functionName);
+      return buildFromBinary(binaryFilename, functionName);
     }
 
     data = new OpenMPKernelData_t;
@@ -222,8 +225,8 @@ namespace occa {
     command << dHandle->compiler
             << ' '    << dHandle->compilerFlags
             << ' '    << info.flags
-            << ' '    << sourceFile
-            << " -o " << binaryFile
+            << ' '    << sourceFilename
+            << " -o " << binaryFilename
             << " -I"  << env::OCCA_DIR << "/include"
             << " -L"  << env::OCCA_DIR << "/lib -locca"
             << std::endl;
@@ -241,8 +244,8 @@ namespace occa {
             << ' '    << dHandle->compilerFlags
             << ' '    << info.flags
             << " /I"  << env::OCCA_DIR << "\\include"
-            << ' '    << sourceFile
-            << " /link " << occaLib << ptLib << " /OUT:" << binaryFile
+            << ' '    << sourceFilename
+            << " /link " << occaLib << ptLib << " /OUT:" << binaryFilename
             << std::endl;
 #endif
 
@@ -264,7 +267,7 @@ namespace occa {
 
     OCCA_EXTRACT_DATA(OpenMP, Kernel);
 
-    data_.dlHandle = cpu::dlopen(binaryFile, hash);
+    data_.dlHandle = cpu::dlopen(binaryFilename, hash);
     data_.handle   = cpu::dlsym(data_.dlHandle, functionName, hash);
 
     releaseHash(hash, 0);
@@ -277,6 +280,7 @@ namespace occa {
                                                       const std::string &functionName){
 
     name = functionName;
+    binaryFilename = filename;
 
     data = new OpenMPKernelData_t;
 
