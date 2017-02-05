@@ -1,24 +1,15 @@
 <a name="OCCA"></a>
-## OCCA
+# OCCA
 
 [![Build Status](https://travis-ci.org/libocca/occa.svg?branch=master)](https://travis-ci.org/libocca/occa)
+[![Documentation](https://readthedocs.org/projects/occa/badge/?version=latest)](https://occa.readthedocs.io/en/latest/?badge=latest)
 [![Join the chat at https://gitter.im/libocca/occa](https://badges.gitter.im/libocca/occa.svg)](https://gitter.im/libocca/occa?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
 OCCA is an open-source (MIT license) library used to program current multi-core/many-core architectures.
 Devices (such as CPUs, GPUs, Intel's Xeon Phi, FPGAs, etc) are abstracted using an offload-model for application development and programming for the devices is done through a C-based (OKL) or Fortran-based kernel language (OFL).
 OCCA gives developers the ability to target devices at run-time by using run-time compilation for device kernels.
 
-<a name="Taiga"></a>
-## Taiga
-
-We are using <a href="https://tree.taiga.io/project/dsm5-occa/kanban">Taiga</a> to schedule and manage our tasks.
-
-To submit an issue, please follow <a href="https://tree.taiga.io/project/dsm5-occa/issues?page=1">this link</a>
-
-<a name="README"></a>
-## README
-
-### Installing
+## Installing
 
 Using a terminal, go to your OCCA directory
 You should see:
@@ -29,25 +20,27 @@ You should see:
 
 To compile `libocca.so`, type:
 
-```
-make
+```bash
+git clone https://github.com/libocca/occa.git
+cd occa
+make -j 4
 ```
 
 To compile the Fortran library, setup the `OCCA_FORTRAN_ENABLED` environment variable before compiling
 
-```
+```bash
 export OCCA_FORTRAN_ENABLED="1"
 ```
 
-Python 2 and 3 bindings are available with OCCA.
-If you wish to setup the occa Python module, rather than using `make`, compile both `libocca.so` and the module with
+Python 2 and 3 bindings are also available.
+If you wish to setup the occa Python module
 
+```bash
+python scripts/make.py
 ```
-python make.py
-```
 
 
-### Examples
+## Examples
 
 We have a few examples to show different features of OCCA. The addVectors example contains examples for each current supported language
 
@@ -57,28 +50,31 @@ We have a few examples to show different features of OCCA. The addVectors exampl
 * Fortran
 * Julia
 
-#### Compile
+### Compile
 To compile addVectors (Hello World! style example) in C++
 
-```
+```bash
 cd examples/addVectors/cpp
 make
 ```
 
-#### Environment
-Setup your `LD_LIBRARY_PATH` to point to libocca.so
+### Environment
+Setup your library path to point to libocca.so
 
-```
+```bash
+# Linux
 export LD_LIBRARY_PATH+=':<occa>/lib'
+# Mac
+export DYLD_LIBRARY_PATH+=':<occa>/lib'
 ```
 where `<occa>` is the OCCA directory
 
-### Run
-```
+## Run
+```bash
 ./main
 ```
 
-### Status
+## Status
 * Linux and OSX are fully supported
 * Windows is partially supported
   * Code is up-to-date for windows
@@ -86,31 +82,24 @@ where `<occa>` is the OCCA directory
   * Visual Studio project is out of date
 
 * OKL Status:
-  * Supports most of C (send bugs =))
-  * Preprocessor is missing variadic functions
+  * Supports most of C
 
-* OFL Status:
-  * Obsolete for now
-  * Version 0.1 supports a subset of Fortran:
-    * integer, real, character, logical, double precision
-    * function, subroutine
-    * DO, WHILE, IF, IF ELSE, ELSE
-
-### Useful environment variables:
+## Useful environment variables:
 | Environment Variable       | Description                                         |
 |----------------------------|-----------------------------------------------------|
+| OCCA_DIR                   | Sets directory where OCCA was installed |
 | OCCA_CACHE_DIR             | Sets directory where kernels are cached (Default: ${HOME}/._occa |
 | OCCA_INCLUDE_PATH          | Adds directories to find headers |
 | OCCA_LIBRARY_PATH          | Adds directories to find libraries |
 | OCCA_CXX                   | C++ compiler used for libocca.so and run-time compilation |
 | OCCA_CXXFLAGS              | C++ compiler flags used for libocca.so and run-time compilation |
 
-#### OpenCL
+### OpenCL
 | Environment Variable       | Description                                         |
 |----------------------------|-----------------------------------------------------|
 | OCCA_OPENCL_COMPILER_FLAGS | Adds additional OpenCL flags when compiling kernels |
 
-#### CUDA
+### CUDA
 | Environment Variable       | Description                                         |
 |----------------------------|-----------------------------------------------------|
 | OCCA_CUDA_COMPILER         | Can be used to specify the CUDA compiler            |
