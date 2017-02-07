@@ -269,21 +269,21 @@ void setupSolver() {
   o_u3 = dev.malloc(u2.size()*sizeof(tFloat), &(u2[0]));
 
   occa::properties kernelProps;
-  kernelProps["kernel/defines/sr"]   = stencilRadius;
-  kernelProps["kernel/defines/w"]    = width;
-  kernelProps["kernel/defines/h"]    = height;
-  kernelProps["kernel/defines/dx"]   = dx;
-  kernelProps["kernel/defines/dt"]   = dt;
-  kernelProps["kernel/defines/freq"] = freq;
-  kernelProps["kernel/defines/mX"]   = mX;
-  kernelProps["kernel/defines/mY"]   = mY;
-  kernelProps["kernel/defines/Bx"]   = Bx;
-  kernelProps["kernel/defines/By"]   = By;
+  kernelProps["defines/sr"]   = stencilRadius;
+  kernelProps["defines/w"]    = width;
+  kernelProps["defines/h"]    = height;
+  kernelProps["defines/dx"]   = dx;
+  kernelProps["defines/dt"]   = dt;
+  kernelProps["defines/freq"] = freq;
+  kernelProps["defines/mX"]   = mX;
+  kernelProps["defines/mY"]   = mY;
+  kernelProps["defines/Bx"]   = Bx;
+  kernelProps["defines/By"]   = By;
 
   if (sizeof(tFloat) == sizeof(float)) {
-    kernelProps["kernel/defines/tFloat"] = "float";
+    kernelProps["defines/tFloat"] = "float";
   } else {
-    kernelProps["kernel/defines/tFloat"] = "double";
+    kernelProps["defines/tFloat"] = "double";
   }
 
   fd2d = dev.buildKernel("fd2d.okl", "fd2d", kernelProps);

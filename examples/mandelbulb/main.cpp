@@ -160,19 +160,19 @@ void setupOCCA() {
 
   occa::properties kernelProps;
 
-  kernelProps["kernel/defines/WIDTH"]         = width;
-  kernelProps["kernel/defines/HEIGHT"]        = height;
-  kernelProps["kernel/defines/BATCH_SIZE"]    = batchSize;
-  kernelProps["kernel/defines/SHAPE_FUNCTION"]= shapeFunction;
-  kernelProps["kernel/defines/PIXEL"]         = pixel;
-  kernelProps["kernel/defines/HALF_PIXEL"]    = halfPixel;
+  kernelProps["defines/WIDTH"]         = width;
+  kernelProps["defines/HEIGHT"]        = height;
+  kernelProps["defines/BATCH_SIZE"]    = batchSize;
+  kernelProps["defines/SHAPE_FUNCTION"]= shapeFunction;
+  kernelProps["defines/PIXEL"]         = pixel;
+  kernelProps["defines/HALF_PIXEL"]    = halfPixel;
 
   if (sizeof(tFloat) == sizeof(float)) {
-    kernelProps["kernel/defines/tFloat"]  = "float";
-    kernelProps["kernel/defines/tFloat3"] = "float3";
+    kernelProps["defines/tFloat"]  = "float";
+    kernelProps["defines/tFloat3"] = "float3";
   } else {
-    kernelProps["kernel/defines/tFloat"]  = "double";
-    kernelProps["kernel/defines/tFloat3"] = "double3";
+    kernelProps["defines/tFloat"]  = "double";
+    kernelProps["defines/tFloat3"] = "double3";
   }
 
   rayMarcher = occa::buildKernel("rayMarcher.okl",

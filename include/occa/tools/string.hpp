@@ -152,6 +152,10 @@ namespace occa {
 
   std::string stringifyBytes(udim_t bytes);
 
+  //---[ Vector Methods ]---------------
+  std::string join(const strVector_t &vec, const std::string &seq);
+  //====================================
+
   //---[ Color Strings ]----------------
   namespace color {
     enum color_t {

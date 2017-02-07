@@ -30,7 +30,7 @@ int main(int argc, char **argv) {
   o_aRed = device.malloc(reducedEntries*sizeof(float));
 
   occa::properties kernelProps;
-  kernelProps["kernel/defines/p_Nred"] = p_Nred;
+  kernelProps["defines/p_Nred"] = p_Nred;
 
 #if 1
   reduction = device.buildKernel("reduction.okl",
