@@ -262,8 +262,38 @@ namespace occa {
   }
 
   json& json::operator += (const json &j) {
-    value.object.insert(value.object.begin(),
-                        value.object.end());
+    OCCA_ERROR("Cannot apply operator + with different JSON types",
+               (type == array_) ||
+               (type == j.type));
+
+    switch(type) {
+    case none_: {
+      break;
+    }
+    case string_: {
+      value.string += j.value.string;
+      break;
+    }
+    case number_: {
+      value.number += j.value.number;
+      break;
+    }
+    case object_: {
+      value.object.insert(j.value.object.begin(),
+                          j.value.object.end());
+      break;
+    }
+    case array_: {
+      value.array.push_back(j);
+      break;
+    }
+    case boolean_: {
+      value.boolean += j.value.boolean;
+      break;
+    }
+    case null_: {
+      break;
+    }}
     return *this;
   }
 

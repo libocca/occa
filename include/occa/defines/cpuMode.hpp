@@ -357,48 +357,16 @@ public:
     return data[index()][0];
   }
 
-  friend inline TM operator + (const TM &a, const occaPrivate_t &b) {
-    return (a + b.data[b.index()][0]);
-  }
-
-  friend inline TM operator + (const occaPrivate_t &a, const TM &b) {
-    return (a.data[a.index()][0] + b);
-  }
-
   friend inline TM operator + (const occaPrivate_t &a, const occaPrivate_t &b) {
     return (a.data[a.index()][0] + b.data[b.index()][0]);
-  }
-
-  friend inline TM operator - (const TM &a, const occaPrivate_t &b) {
-    return (a - b.data[b.index()][0]);
-  }
-
-  friend inline TM operator - (const occaPrivate_t &a, const TM &b) {
-    return (a.data[a.index()][0] - b);
   }
 
   friend inline TM operator - (const occaPrivate_t &a, const occaPrivate_t &b) {
     return (a.data[a.index()][0] - b.data[b.index()][0]);
   }
 
-  friend inline TM operator * (const TM &a, const occaPrivate_t &b) {
-    return (a * b.data[b.index()][0]);
-  }
-
-  friend inline TM operator * (const occaPrivate_t &a, const TM &b) {
-    return (a.data[a.index()][0] * b);
-  }
-
   friend inline TM operator * (const occaPrivate_t &a, const occaPrivate_t &b) {
     return (a.data[a.index()][0] * b.data[b.index()][0]);
-  }
-
-  friend inline TM operator / (const TM &a, const occaPrivate_t &b) {
-    return (a / b.data[b.index()][0]);
-  }
-
-  friend inline TM operator / (const occaPrivate_t &a, const TM &b) {
-    return (a.data[a.index()][0] / b);
   }
 
   friend inline TM operator / (const occaPrivate_t &a, const occaPrivate_t &b) {
