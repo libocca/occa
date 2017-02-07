@@ -200,6 +200,12 @@ std::string envEcho(const std::string &arg) {
   return (ret.size() ? ret : "[NOT SET]");
 }
 
+template <class TM>
+std::string envEcho(const std::string &arg, const TM &defaultValue) {
+  std::string ret = occa::env::var(arg);
+  return (ret.size() ? ret : occa::toString(defaultValue));
+}
+
 void runClearOn(const std::string &path) {
   std::string input;
 
@@ -270,10 +276,9 @@ void runEnv() {
             << "    - LDFLAGS                    : " << envEcho("LDFLAGS") << "\n"
 
             << "  Backend Support:\n"
-            << "    - OCCA_OPENMP_ENABLED        : " << envEcho("OCCA_OPENMP_ENABLED") << "\n"
-            << "    - OCCA_OPENCL_ENABLED        : " << envEcho("OCCA_OPENCL_ENABLED") << "\n"
-            << "    - OCCA_CUDA_ENABLED          : " << envEcho("OCCA_CUDA_ENABLED") << "\n"
-            << "    - OCCA_COI_ENABLED           : " << envEcho("OCCA_COI_ENABLED") << "\n"
+            << "    - OCCA_OPENMP_ENABLED        : " << envEcho("OCCA_OPENMP_ENABLED", OCCA_OPENMP_ENABLED) << "\n"
+            << "    - OCCA_OPENCL_ENABLED        : " << envEcho("OCCA_OPENCL_ENABLED", OCCA_OPENCL_ENABLED) << "\n"
+            << "    - OCCA_CUDA_ENABLED          : " << envEcho("OCCA_CUDA_ENABLED", OCCA_CUDA_ENABLED) << "\n"
 
             << "  Run-Time Options:\n"
             << "    - OCCA_CXX                   : " << envEcho("OCCA_CXX") << "\n"
