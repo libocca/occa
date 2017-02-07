@@ -183,13 +183,6 @@ namespace occa {
   const bool typeinfo<uchar2>::isUnsigned = true;
 
   template <>
-  const std::string typeinfo<uchar3>::id = "vuc3";
-  template <>
-  const std::string typeinfo<uchar3>::name = "uchar3";
-  template <>
-  const bool typeinfo<uchar3>::isUnsigned = true;
-
-  template <>
   const std::string typeinfo<uchar4>::id = "vuc4";
   template <>
   const std::string typeinfo<uchar4>::name = "uchar4";
@@ -202,13 +195,6 @@ namespace occa {
   const std::string typeinfo<char2>::name = "char2";
   template <>
   const bool typeinfo<char2>::isUnsigned = false;
-
-  template <>
-  const std::string typeinfo<char3>::id = "vc3";
-  template <>
-  const std::string typeinfo<char3>::name = "char3";
-  template <>
-  const bool typeinfo<char3>::isUnsigned = false;
 
   template <>
   const std::string typeinfo<char4>::id = "vc4";
@@ -225,13 +211,6 @@ namespace occa {
   const bool typeinfo<ushort2>::isUnsigned = true;
 
   template <>
-  const std::string typeinfo<ushort3>::id = "vus3";
-  template <>
-  const std::string typeinfo<ushort3>::name = "ushort3";
-  template <>
-  const bool typeinfo<ushort3>::isUnsigned = true;
-
-  template <>
   const std::string typeinfo<ushort4>::id = "vus4";
   template <>
   const std::string typeinfo<ushort4>::name = "ushort4";
@@ -244,13 +223,6 @@ namespace occa {
   const std::string typeinfo<short2>::name = "short2";
   template <>
   const bool typeinfo<short2>::isUnsigned = false;
-
-  template <>
-  const std::string typeinfo<short3>::id = "vs3";
-  template <>
-  const std::string typeinfo<short3>::name = "short3";
-  template <>
-  const bool typeinfo<short3>::isUnsigned = false;
 
   template <>
   const std::string typeinfo<short4>::id = "vs4";
@@ -267,13 +239,6 @@ namespace occa {
   const bool typeinfo<uint2>::isUnsigned = true;
 
   template <>
-  const std::string typeinfo<uint3>::id = "vui3";
-  template <>
-  const std::string typeinfo<uint3>::name = "uint3";
-  template <>
-  const bool typeinfo<uint3>::isUnsigned = true;
-
-  template <>
   const std::string typeinfo<uint4>::id = "vui4";
   template <>
   const std::string typeinfo<uint4>::name = "uint4";
@@ -286,13 +251,6 @@ namespace occa {
   const std::string typeinfo<int2>::name = "int2";
   template <>
   const bool typeinfo<int2>::isUnsigned = false;
-
-  template <>
-  const std::string typeinfo<int3>::id = "vi3";
-  template <>
-  const std::string typeinfo<int3>::name = "int3";
-  template <>
-  const bool typeinfo<int3>::isUnsigned = false;
 
   template <>
   const std::string typeinfo<int4>::id = "vi4";
@@ -309,13 +267,6 @@ namespace occa {
   const bool typeinfo<ulong2>::isUnsigned = true;
 
   template <>
-  const std::string typeinfo<ulong3>::id = "vul3";
-  template <>
-  const std::string typeinfo<ulong3>::name = "ulong3";
-  template <>
-  const bool typeinfo<ulong3>::isUnsigned = true;
-
-  template <>
   const std::string typeinfo<ulong4>::id = "vul4";
   template <>
   const std::string typeinfo<ulong4>::name = "ulong4";
@@ -328,13 +279,6 @@ namespace occa {
   const std::string typeinfo<long2>::name = "long2";
   template <>
   const bool typeinfo<long2>::isUnsigned = false;
-
-  template <>
-  const std::string typeinfo<long3>::id = "vl3";
-  template <>
-  const std::string typeinfo<long3>::name = "long3";
-  template <>
-  const bool typeinfo<long3>::isUnsigned = false;
 
   template <>
   const std::string typeinfo<long4>::id = "vl4";
@@ -351,13 +295,6 @@ namespace occa {
   const bool typeinfo<float2>::isUnsigned = false;
 
   template <>
-  const std::string typeinfo<float3>::id = "vf3";
-  template <>
-  const std::string typeinfo<float3>::name = "float3";
-  template <>
-  const bool typeinfo<float3>::isUnsigned = false;
-
-  template <>
   const std::string typeinfo<float4>::id = "vf4";
   template <>
   const std::string typeinfo<float4>::name = "float4";
@@ -370,13 +307,6 @@ namespace occa {
   const std::string typeinfo<double2>::name = "double2";
   template <>
   const bool typeinfo<double2>::isUnsigned = false;
-
-  template <>
-  const std::string typeinfo<double3>::id = "vd3";
-  template <>
-  const std::string typeinfo<double3>::name = "double3";
-  template <>
-  const bool typeinfo<double3>::isUnsigned = false;
 
   template <>
   const std::string typeinfo<double4>::id = "vd4";
