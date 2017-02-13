@@ -51,7 +51,7 @@ namespace occa {
   void setDevice(device d);
   void setDevice(const properties &props);
 
-  properties& deviceProperties();
+  const properties& deviceProperties();
 
   void finish();
 

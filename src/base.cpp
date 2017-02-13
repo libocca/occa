@@ -62,7 +62,7 @@ namespace occa {
     currentDevice() = device(props);
   }
 
-  properties& deviceProperties() {
+  const properties& deviceProperties() {
     return currentDevice().properties();
   }
 

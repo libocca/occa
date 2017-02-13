@@ -164,10 +164,9 @@ namespace occa {
   void kernelArg::setupForKernelCall(const bool isConst) const {
     occa::memory_v *mHandle = arg.mHandle;
 
-    if (mHandle                                    &&
-        mHandle->isManaged()                       &&
-        mHandle->dHandle->hasSeparateMemorySpace() &&
-        mHandle->dHandle->hasUvaEnabled()) {
+    if (mHandle              &&
+        mHandle->isManaged() &&
+        mHandle->dHandle->hasSeparateMemorySpace()) {
 
       if (!mHandle->inDevice()) {
         mHandle->copyFrom(mHandle->uvaPtr, mHandle->size);

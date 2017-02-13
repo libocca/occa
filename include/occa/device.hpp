@@ -46,7 +46,6 @@ namespace occa {
   public:
     std::string mode;
 
-    bool uvaEnabled_;
     ptrRangeMap_t uvaMap;
     memoryVector_t uvaStaleMemory;
 
@@ -58,7 +57,6 @@ namespace occa {
     device_v(const occa::properties &properties_);
 
     void initFrom(const device_v &m);
-    bool hasUvaEnabled();
 
     //---[ Virtual Methods ]------------
     virtual ~device_v() = 0;
@@ -116,16 +114,17 @@ namespace occa {
   public:
     device();
     device(device_v *dHandle_);
-
     device(const occa::properties &props);
 
     device(const occa::device &d);
     device& operator = (const occa::device &d);
 
+    void free();
+
     bool isInitialized();
 
     const std::string& mode();
-    occa::properties& properties();
+    const occa::properties& properties();
 
     void* getHandle(const occa::properties &props = occa::properties());
     device_v* getDHandle() const;
@@ -134,8 +133,6 @@ namespace occa {
 
     udim_t memorySize() const;
     udim_t memoryAllocated() const;
-
-    bool hasUvaEnabled();
 
     void finish();
 
@@ -181,8 +178,6 @@ namespace occa {
                             const dim_t bytes,
                             const occa::properties &props = occa::properties());
     //  |===============================
-
-    void free();
   };
 
   template <>
