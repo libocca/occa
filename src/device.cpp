@@ -35,7 +35,6 @@ namespace occa {
     mode = properties_["mode"].getString();
     properties = properties_;
 
-    uvaEnabled_ = this->properties.get<bool>("uva", false);
     currentStream = NULL;
     bytesAllocated = 0;
   }
@@ -45,7 +44,6 @@ namespace occa {
   void device_v::initFrom(const device_v &m) {
     properties = m.properties;
 
-    uvaEnabled_    = m.uvaEnabled_;
     uvaMap         = m.uvaMap;
     uvaStaleMemory = m.uvaStaleMemory;
 
@@ -53,10 +51,6 @@ namespace occa {
     streams       = m.streams;
 
     bytesAllocated = m.bytesAllocated;
-  }
-
-  bool device_v::hasUvaEnabled() {
-    return uvaEnabled_;
   }
   //====================================
 
@@ -81,6 +75,21 @@ namespace occa {
     return *this;
   }
 
+  void device::free() {
+    if (dHandle == NULL) {
+      return;
+    }
+    const int streamCount = dHandle->streams.size();
+
+    for (int i = 0; i < streamCount; ++i)
+      dHandle->freeStream(dHandle->streams[i]);
+
+    dHandle->free();
+
+    delete dHandle;
+    dHandle = NULL;
+  }
+
   bool device::isInitialized() {
     return (dHandle != NULL);
   }
@@ -95,13 +104,16 @@ namespace occa {
 
   void device::setup(const occa::properties &props) {
     dHandle = occa::newModeDevice(props);
-    dHandle->uvaEnabled_ = dHandle->properties.get<bool>("uva", false);
 
     stream newStream = createStream();
     dHandle->currentStream = newStream.handle;
   }
 
-  occa::properties& device::properties() {
+  const std::string& device::mode() {
+    return dHandle->mode;
+  }
+
+  const occa::properties& device::properties() {
     return dHandle->properties;
   }
 
@@ -111,14 +123,6 @@ namespace occa {
 
   udim_t device::memoryAllocated() const {
     return dHandle->bytesAllocated;
-  }
-
-  bool device::hasUvaEnabled() {
-    return dHandle->hasUvaEnabled();
-  }
-
-  const std::string& device::mode() {
-    return dHandle->mode;
   }
 
   void device::finish() {
@@ -364,21 +368,6 @@ namespace occa {
     return mem;
   }
   //  |=================================
-
-  void device::free() {
-    if (dHandle == NULL) {
-      return;
-    }
-    const int streamCount = dHandle->streams.size();
-
-    for (int i = 0; i < streamCount; ++i)
-      dHandle->freeStream(dHandle->streams[i]);
-
-    dHandle->free();
-
-    delete dHandle;
-    dHandle = NULL;
-  }
 
   template <>
   hash_t hash(const occa::device &device) {
