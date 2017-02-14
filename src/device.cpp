@@ -180,8 +180,8 @@ namespace occa {
     dHandle->currentStream = s.handle;
   }
 
-  stream device::wrapStream(void *handle_) {
-    return stream(dHandle, dHandle->wrapStream(handle_));
+  stream device::wrapStream(void *handle_, const occa::properties &props) {
+    return stream(dHandle, dHandle->wrapStream(handle_, props));
   }
 
   streamTag device::tagStream() {

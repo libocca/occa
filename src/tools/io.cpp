@@ -399,7 +399,7 @@ namespace occa {
                                         const std::string &filename,
                                         const std::string &parsedFile,
                                         const std::string &functionName,
-                                        const properties &props) {
+                                        const occa::properties &props) {
 
       const std::string ext = extension(filename);
       occa::properties properties = props;

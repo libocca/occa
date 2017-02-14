@@ -161,7 +161,7 @@ namespace occa {
       return (double) (1.0e-3 * (double) msTimeTaken);
     }
 
-    stream_t device::wrapStream(void *handle_) {
+    stream_t device::wrapStream(void *handle_, const occa::properties &props) {
       return handle_;
     }
     //  |===============================

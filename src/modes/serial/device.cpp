@@ -138,7 +138,7 @@ namespace occa {
 
     void device::freeStream(stream_t s) {}
 
-    stream_t device::wrapStream(void *handle_) {
+    stream_t device::wrapStream(void *handle_, const occa::properties &props) {
       return NULL;
     }
 
