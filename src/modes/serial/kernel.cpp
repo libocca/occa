@@ -48,11 +48,11 @@ namespace occa {
     }
 
     void kernel::build(const std::string &filename,
-                       const std::string &functionName,
+                       const std::string &kernelName,
                        const occa::properties &props) {
 
       const occa::properties allProps = properties + props;
-      name = functionName;
+      name = kernelName;
 
       hash_t hash = occa::hashFile(filename);
       hash ^= allProps.hash();
@@ -74,7 +74,7 @@ namespace occa {
         if (settings().get("verboseCompilation", true)) {
           std::cout << "Found cached binary of [" << io::shortname(filename) << "] in [" << io::shortname(binaryFile) << "]\n";
         }
-        return buildFromBinary(binaryFile, functionName, props);
+        return buildFromBinary(binaryFile, kernelName, props);
       }
 
       std::string kernelDefines;
@@ -134,7 +134,7 @@ namespace occa {
       const std::string &sCommand = command.str();
 
       if (settings().get("verboseCompilation", true)) {
-        std::cout << "Compiling [" << functionName << "]\n" << sCommand << "\n";
+        std::cout << "Compiling [" << kernelName << "]\n" << sCommand << "\n";
       }
 
 #if (OCCA_OS & (OCCA_LINUX_OS | OCCA_OSX_OS))
@@ -149,19 +149,19 @@ namespace occa {
       }
 
       dlHandle = sys::dlopen(binaryFile, hash, hashTag);
-      handle   = sys::dlsym(dlHandle, functionName, hash, hashTag);
+      handle   = sys::dlsym(dlHandle, kernelName, hash, hashTag);
 
       io::releaseHash(hash, hashTag);
     }
 
     void kernel::buildFromBinary(const std::string &filename,
-                                 const std::string &functionName,
+                                 const std::string &kernelName,
                                  const occa::properties &props) {
 
-      name = functionName;
+      name = kernelName;
 
       dlHandle = sys::dlopen(filename);
-      handle   = sys::dlsym(dlHandle, functionName);
+      handle   = sys::dlsym(dlHandle, kernelName);
     }
 
     int kernel::maxDims() {

@@ -150,15 +150,15 @@ OCCA_LFUNC occaStreamTag OCCA_RFUNC occaTagStream();
 
 //  |---[ Kernel ]----------------------
 OCCA_LFUNC occaKernel OCCA_RFUNC occaBuildKernel(const char *filename,
-                                                 const char *functionName,
+                                                 const char *kernelName,
                                                  const occaProperties props);
 
 OCCA_LFUNC occaKernel OCCA_RFUNC occaBuildKernelFromString(const char *str,
-                                                           const char *functionName,
+                                                           const char *kernelName,
                                                            const occaProperties props);
 
 OCCA_LFUNC occaKernel OCCA_RFUNC occaBuildKernelFromBinary(const char *filename,
-                                                           const char *functionName);
+                                                           const char *kernelName);
 //  |===================================
 
 //  |---[ Memory ]----------------------
@@ -192,17 +192,17 @@ OCCA_LFUNC occaUDim_t OCCA_RFUNC occaDeviceBytesAllocated(occaDevice device);
 
 OCCA_LFUNC occaKernel OCCA_RFUNC occaDeviceBuildKernel(occaDevice device,
                                                        const char *filename,
-                                                       const char *functionName,
+                                                       const char *kernelName,
                                                        const occaProperties props);
 
 OCCA_LFUNC occaKernel OCCA_RFUNC occaDeviceBuildKernelFromString(occaDevice device,
                                                                  const char *str,
-                                                                 const char *functionName,
+                                                                 const char *kernelName,
                                                                  const occaProperties props);
 
 OCCA_LFUNC occaKernel OCCA_RFUNC occaDeviceBuildKernelFromBinary(occaDevice device,
                                                                  const char *filename,
-                                                                 const char *functionName);
+                                                                 const char *kernelName);
 
 OCCA_LFUNC occaMemory OCCA_RFUNC occaDeviceMalloc(occaDevice device,
                                                   const occaUDim_t bytes,

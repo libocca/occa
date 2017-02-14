@@ -66,11 +66,11 @@ namespace occa {
 
       //  |---[ Kernel ]----------------
       kernel_v* buildKernel(const std::string &filename,
-                            const std::string &functionName,
+                            const std::string &kernelName,
                             const occa::properties &props);
 
       kernel_v* buildKernelFromBinary(const std::string &filename,
-                                      const std::string &functionName,
+                                      const std::string &kernelName,
                                       const occa::properties &props);
       //  |=============================
 

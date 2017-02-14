@@ -61,11 +61,11 @@ namespace occa {
     }
 
     void kernel::build(const std::string &filename,
-                       const std::string &functionName,
+                       const std::string &kernelName,
                        const occa::properties &props) {
 
       const occa::properties allProps = properties + props;
-      name = functionName;
+      name = kernelName;
 
       hash_t hash = occa::hashFile(filename);
       hash ^= allProps.hash();
@@ -88,7 +88,7 @@ namespace occa {
           std::cout << "Found cached binary of [" << io::shortname(filename)
                     << "] in [" << io::shortname(binaryFile) << "]\n";
         }
-        return buildFromBinary(binaryFile, functionName, props);
+        return buildFromBinary(binaryFile, kernelName, props);
       }
 
       const std::string kernelDefines =
@@ -109,7 +109,7 @@ namespace occa {
       info_t clInfo = makeCLInfo();
       opencl::buildKernel(clInfo,
                           cFunction.c_str(), cFunction.size(),
-                          functionName,
+                          kernelName,
                           allProps["compilerFlags"],
                           hash, sourceFile);
       clProgram = clInfo.clProgram;
@@ -121,17 +121,17 @@ namespace occa {
     }
 
     void kernel::buildFromBinary(const std::string &filename,
-                                 const std::string &functionName,
+                                 const std::string &kernelName,
                                  const occa::properties &props) {
 
-      name = functionName;
+      name = kernelName;
 
       std::string cFile = io::read(filename);
       info_t clInfo = makeCLInfo();
       opencl::buildKernelFromBinary(clInfo,
                                     (const unsigned char*) cFile.c_str(),
                                     cFile.size(),
-                                    functionName,
+                                    kernelName,
                                     ((opencl::device*) dHandle)->properties["compilerFlags"]);
       clProgram = clInfo.clProgram;
       clKernel  = clInfo.clKernel;

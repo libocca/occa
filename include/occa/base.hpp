@@ -67,15 +67,15 @@ namespace occa {
 
   //---[ Kernel Functions ]-------------
   kernel buildKernel(const std::string &filename,
-                     const std::string &functionName,
+                     const std::string &kernelName,
                      const properties &props = occa::properties());
 
   kernel buildKernelFromString(const std::string &content,
-                               const std::string &functionName,
+                               const std::string &kernelName,
                                const properties &props = occa::properties());
 
   kernel buildKernelFromBinary(const std::string &filename,
-                               const std::string &functionName,
+                               const std::string &kernelName,
                                const properties &props = occa::properties());
   //====================================
 

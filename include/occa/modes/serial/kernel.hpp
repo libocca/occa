@@ -45,11 +45,11 @@ namespace occa {
       std::string binaryName(const std::string &filename);
 
       void build(const std::string &filename,
-                 const std::string &functionName,
+                 const std::string &kernelName,
                  const occa::properties &props);
 
       void buildFromBinary(const std::string &filename,
-                           const std::string &functionName,
+                           const std::string &kernelName,
                            const occa::properties &props);
 
       int maxDims();
