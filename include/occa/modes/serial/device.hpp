@@ -52,7 +52,7 @@ namespace occa {
       void waitFor(streamTag tag);
       double timeBetween(const streamTag &startTag, const streamTag &endTag);
 
-      stream_t wrapStream(void *handle_);
+      stream_t wrapStream(void *handle_, const occa::properties &props);
       //  |=============================
 
       //  |---[ Kernel ]----------------

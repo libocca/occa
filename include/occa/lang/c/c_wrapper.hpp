@@ -143,7 +143,8 @@ OCCA_LFUNC void OCCA_RFUNC occaWaitFor(occaStreamTag tag);
 OCCA_LFUNC occaStream OCCA_RFUNC occaCreateStream();
 OCCA_LFUNC occaStream OCCA_RFUNC occaGetStream();
 OCCA_LFUNC void OCCA_RFUNC occaSetStream(occaStream stream);
-OCCA_LFUNC occaStream OCCA_RFUNC occaWrapStream(void *handle_);
+OCCA_LFUNC occaStream OCCA_RFUNC occaWrapStream(void *handle_,
+                                                const occaProperties props);
 
 OCCA_LFUNC occaStreamTag OCCA_RFUNC occaTagStream();
 //  |===================================
@@ -224,7 +225,9 @@ OCCA_LFUNC void OCCA_RFUNC occaDeviceFinish(occaDevice device);
 OCCA_LFUNC occaStream OCCA_RFUNC occaDeviceCreateStream(occaDevice device);
 OCCA_LFUNC occaStream OCCA_RFUNC occaDeviceGetStream(occaDevice device);
 OCCA_LFUNC void       OCCA_RFUNC occaDeviceSetStream(occaDevice device, occaStream stream);
-OCCA_LFUNC occaStream OCCA_RFUNC occaDeviceWrapStream(occaDevice device, void *handle_);
+OCCA_LFUNC occaStream OCCA_RFUNC occaDeviceWrapStream(occaDevice device,
+                                                      void *handle_,
+                                                      const occaProperties props);
 
 OCCA_LFUNC occaStreamTag OCCA_RFUNC occaDeviceTagStream(occaDevice device);
 OCCA_LFUNC void OCCA_RFUNC occaDeviceWaitForTag(occaDevice device,

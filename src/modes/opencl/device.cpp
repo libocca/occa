@@ -167,7 +167,7 @@ namespace occa {
       return (double) (1.0e-9 * (double)(end - start));
     }
 
-    stream_t device::wrapStream(void *handle_) {
+    stream_t device::wrapStream(void *handle_, const occa::properties &props) {
       return handle_;
     }
     //  |===============================

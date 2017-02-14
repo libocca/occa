@@ -137,7 +137,7 @@ namespace occa {
                                         const std::string &filename,
                                         const std::string &cachedBinary,
                                         const std::string &functionName,
-                                        const properties &props);
+                                        const occa::properties &props);
 
     std::string removeSlashes(const std::string &str);
 

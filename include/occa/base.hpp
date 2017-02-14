@@ -49,9 +49,9 @@ namespace occa {
   device& currentDevice();
 
   void setDevice(device d);
-  void setDevice(const properties &props);
+  void setDevice(const occa::properties &props);
 
-  const properties& deviceProperties();
+  const occa::properties& deviceProperties();
 
   void finish();
 
@@ -60,7 +60,8 @@ namespace occa {
   stream createStream();
   stream getStream();
   void setStream(stream s);
-  stream wrapStream(void *handle_);
+  stream wrapStream(void *handle_,
+                    const occa::properties &props = occa::properties());
 
   streamTag tagStream();
   //====================================
@@ -68,25 +69,25 @@ namespace occa {
   //---[ Kernel Functions ]-------------
   kernel buildKernel(const std::string &filename,
                      const std::string &kernelName,
-                     const properties &props = occa::properties());
+                     const occa::properties &props = occa::properties());
 
   kernel buildKernelFromString(const std::string &content,
                                const std::string &kernelName,
-                               const properties &props = occa::properties());
+                               const occa::properties &props = occa::properties());
 
   kernel buildKernelFromBinary(const std::string &filename,
                                const std::string &kernelName,
-                               const properties &props = occa::properties());
+                               const occa::properties &props = occa::properties());
   //====================================
 
   //---[ Memory Functions ]-------------
   occa::memory malloc(const dim_t bytes,
                       void *src = NULL,
-                      const properties &props = occa::properties());
+                      const occa::properties &props = occa::properties());
 
   void* uvaAlloc(const dim_t bytes,
                  void *src = NULL,
-                 const properties &props = occa::properties());
+                 const occa::properties &props = occa::properties());
 
   occa::memory wrapMemory(void *handle_,
                           const dim_t bytes,
@@ -94,23 +95,23 @@ namespace occa {
 
   void memcpy(void *dest, const void *src,
               const dim_t bytes,
-              const properties &props = properties());
+              const occa::properties &props = properties());
 
   void memcpy(memory dest, const void *src,
               const dim_t bytes = -1,
               const dim_t offset = 0,
-              const properties &props = properties());
+              const occa::properties &props = properties());
 
   void memcpy(void *dest, memory src,
               const dim_t bytes = -1,
               const dim_t offset = 0,
-              const properties &props = properties());
+              const occa::properties &props = properties());
 
   void memcpy(memory dest, memory src,
               const dim_t bytes = -1,
               const dim_t destOffset = 0,
               const dim_t srcOffset = 0,
-              const properties &props = properties());
+              const occa::properties &props = properties());
   //====================================
 
   //---[ Free Functions ]---------------

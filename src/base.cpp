@@ -58,11 +58,11 @@ namespace occa {
     currentDevice() = d;
   }
 
-  void setDevice(const properties &props) {
+  void setDevice(const occa::properties &props) {
     currentDevice() = device(props);
   }
 
-  const properties& deviceProperties() {
+  const occa::properties& deviceProperties() {
     return currentDevice().properties();
   }
 
@@ -86,8 +86,8 @@ namespace occa {
     currentDevice().setStream(s);
   }
 
-  stream wrapStream(void *handle_) {
-    return currentDevice().wrapStream(handle_);
+  stream wrapStream(void *handle_, const occa::properties &props) {
+    return currentDevice().wrapStream(handle_, props);
   }
 
   streamTag tagStream() {
@@ -97,7 +97,7 @@ namespace occa {
   //---[ Kernel Functions ]-------------
   kernel buildKernel(const std::string &filename,
                      const std::string &kernelName,
-                     const properties &props) {
+                     const occa::properties &props) {
 
     return currentDevice().buildKernel(filename,
                                        kernelName,
@@ -121,14 +121,14 @@ namespace occa {
   //---[ Memory Functions ]-------------
   occa::memory malloc(const dim_t bytes,
                       void *src,
-                      const properties &props) {
+                      const occa::properties &props) {
 
     return currentDevice().malloc(bytes, src, props);
   }
 
   void* uvaAlloc(const dim_t bytes,
                  void *src,
-                 const properties &props) {
+                 const occa::properties &props) {
 
     return currentDevice().uvaAlloc(bytes, src, props);
   }
@@ -142,7 +142,7 @@ namespace occa {
 
   void memcpy(void *dest, const void *src,
               const dim_t bytes,
-              const properties &props) {
+              const occa::properties &props) {
 
     ptrRangeMap_t::iterator srcIt  = uvaMap.find(const_cast<void*>(src));
     ptrRangeMap_t::iterator destIt = uvaMap.find(dest);
@@ -173,7 +173,7 @@ namespace occa {
   void memcpy(memory dest, const void *src,
               const dim_t bytes,
               const dim_t offset,
-              const properties &props) {
+              const occa::properties &props) {
 
     dest.copyFrom(src, bytes, offset, props);
   }
@@ -181,7 +181,7 @@ namespace occa {
   void memcpy(void *dest, memory src,
               const dim_t bytes,
               const dim_t offset,
-              const properties &props) {
+              const occa::properties &props) {
 
     src.copyTo(dest, bytes, offset, props);
   }
@@ -190,7 +190,7 @@ namespace occa {
               const dim_t bytes,
               const dim_t destOffset,
               const dim_t srcOffset,
-              const properties &props) {
+              const occa::properties &props) {
 
     dest.copyFrom(src, bytes, destOffset, srcOffset, props);
   }

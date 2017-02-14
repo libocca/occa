@@ -479,8 +479,9 @@ void OCCA_RFUNC occaSetStream(occaStream stream) {
   occa::setStream(occa::c::from<occa::stream>(stream));
 }
 
-occaStream OCCA_RFUNC occaWrapStream(void *handle_) {
-  occa::stream &newStream = *(new occa::stream(occa::wrapStream(handle_)));
+occaStream OCCA_RFUNC occaWrapStream(void *handle_, const occaProperties props) {
+  occa::properties &props_ = occa::c::from<occa::properties>(props);
+  occa::stream &newStream = *(new occa::stream(occa::wrapStream(handle_, props_)));
   return newObject(&newStream, occa::c::stream_);
 }
 
@@ -708,9 +709,12 @@ void OCCA_RFUNC occaDeviceSetStream(occaDevice device, occaStream stream) {
   device_.setStream(*((occa::stream*) stream.ptr->obj));
 }
 
-occaStream OCCA_RFUNC occaDeviceWrapStream(occaDevice device, void *handle_) {
+occaStream OCCA_RFUNC occaDeviceWrapStream(occaDevice device,
+                                           void *handle_,
+                                           const occaProperties props) {
   occa::device device_ = occa::c::getDevice(device);
-  occa::stream &newStream = *(new occa::stream(device_.wrapStream(handle_)));
+  occa::properties &props_ = occa::c::from<occa::properties>(props);
+  occa::stream &newStream = *(new occa::stream(device_.wrapStream(handle_, props_)));
   return newObject(&newStream, occa::c::stream_);
 }
 
