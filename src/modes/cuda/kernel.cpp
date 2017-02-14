@@ -53,11 +53,11 @@ namespace occa {
     }
 
     void kernel::build(const std::string &filename,
-                       const std::string &functionName,
+                       const std::string &kernelName,
                        const occa::properties &props) {
 
       occa::properties allProps = properties + props;
-      name = functionName;
+      name = kernelName;
 
       if (allProps.get<std::string>("compilerFlags").find("-arch=sm_") == std::string::npos) {
         const int major = ((cuda::device*) dHandle)->archMajorVersion;
@@ -89,7 +89,7 @@ namespace occa {
           std::cout << "Found cached binary of [" << io::shortname(filename)
                     << "] in [" << io::shortname(binaryFile) << "]\n";
         }
-        return buildFromBinary(binaryFile, functionName, props);
+        return buildFromBinary(binaryFile, kernelName, props);
       }
 
       const std::string kernelDefines =
@@ -107,7 +107,7 @@ namespace occa {
                                                          allProps["footer"]);
 
       if (settings().get("verboseCompilation", true)) {
-        std::cout << "Compiling [" << functionName << "]\n";
+        std::cout << "Compiling [" << kernelName << "]\n";
       }
 
       //---[ PTX Check Command ]----------
@@ -129,7 +129,7 @@ namespace occa {
 
       const std::string &ptxCommand = command.str();
       if (settings().get("verboseCompilation", true)) {
-        std::cout << "Compiling [" << functionName << "]\n" << ptxCommand << "\n";
+        std::cout << "Compiling [" << kernelName << "]\n" << ptxCommand << "\n";
       }
 
 #if (OCCA_OS & (OCCA_LINUX_OS | OCCA_OSX_OS))
@@ -189,15 +189,15 @@ namespace occa {
     }
 
     void kernel::buildFromBinary(const std::string &filename,
-                                 const std::string &functionName,
+                                 const std::string &kernelName,
                                  const occa::properties &props) {
-      name = functionName;
+      name = kernelName;
 
-      OCCA_CUDA_ERROR("Kernel (" + functionName + ") : Loading Module",
+      OCCA_CUDA_ERROR("Kernel (" + kernelName + ") : Loading Module",
                       cuModuleLoad(&module, filename.c_str()));
 
-      OCCA_CUDA_ERROR("Kernel (" + functionName + ") : Loading Function",
-                      cuModuleGetFunction(&handle, module, functionName.c_str()));
+      OCCA_CUDA_ERROR("Kernel (" + kernelName + ") : Loading Function",
+                      cuModuleGetFunction(&handle, module, kernelName.c_str()));
     }
 
     int kernel::maxDims() {

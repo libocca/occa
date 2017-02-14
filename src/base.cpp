@@ -96,26 +96,26 @@ namespace occa {
 
   //---[ Kernel Functions ]-------------
   kernel buildKernel(const std::string &filename,
-                     const std::string &functionName,
+                     const std::string &kernelName,
                      const properties &props) {
 
     return currentDevice().buildKernel(filename,
-                                       functionName,
+                                       kernelName,
                                        props);
   }
 
   kernel buildKernelFromString(const std::string &content,
-                               const std::string &functionName,
+                               const std::string &kernelName,
                                const occa::properties &props) {
 
-    return currentDevice().buildKernelFromString(content, functionName, props);
+    return currentDevice().buildKernelFromString(content, kernelName, props);
   }
 
   kernel buildKernelFromBinary(const std::string &filename,
-                               const std::string &functionName,
+                               const std::string &kernelName,
                                const occa::properties &props) {
 
-    return currentDevice().buildKernelFromBinary(filename, functionName, props);
+    return currentDevice().buildKernelFromBinary(filename, kernelName, props);
   }
 
   //---[ Memory Functions ]-------------

@@ -497,39 +497,39 @@ occaStreamTag OCCA_RFUNC occaTagStream() {
 
 //  |---[ Kernel ]----------------------
 occaKernel OCCA_RFUNC occaBuildKernel(const char *filename,
-                                      const char *functionName,
+                                      const char *kernelName,
                                       const occaProperties props) {
   occa::kernel kernel;
 
   if (occa::c::isDefault(props)) {
-    kernel = occa::buildKernel(filename, functionName);
+    kernel = occa::buildKernel(filename, kernelName);
   } else {
     occa::properties &props_ = occa::c::from<occa::properties>(props);
-    kernel = occa::buildKernel(filename, functionName, props_);
+    kernel = occa::buildKernel(filename, kernelName, props_);
   }
 
   return newObject(kernel.getKHandle(), occa::c::kernel_);
 }
 
 occaKernel OCCA_RFUNC occaBuildKernelFromString(const char *str,
-                                                const char *functionName,
+                                                const char *kernelName,
                                                 const occaProperties props) {
   occa::kernel kernel;
 
   if (occa::c::isDefault(props)) {
-    kernel = occa::buildKernelFromString(str, functionName);
+    kernel = occa::buildKernelFromString(str, kernelName);
   } else {
     occa::properties &props_ = occa::c::from<occa::properties>(props);
-    kernel = occa::buildKernelFromString(str, functionName, props_);
+    kernel = occa::buildKernelFromString(str, kernelName, props_);
   }
 
   return newObject(kernel.getKHandle(), occa::c::kernel_);
 }
 
 occaKernel OCCA_RFUNC occaBuildKernelFromBinary(const char *filename,
-                                                const char *functionName) {
+                                                const char *kernelName) {
 
-  occa::kernel kernel = occa::buildKernelFromBinary(filename, functionName);
+  occa::kernel kernel = occa::buildKernelFromBinary(filename, kernelName);
   return newObject(kernel.getKHandle(), occa::c::kernel_);
 }
 //  |===================================
@@ -608,16 +608,16 @@ occaUDim_t OCCA_RFUNC occaDeviceMemoryAllocated(occaDevice device) {
 
 occaKernel OCCA_RFUNC occaDeviceBuildKernel(occaDevice device,
                                             const char *filename,
-                                            const char *functionName,
+                                            const char *kernelName,
                                             const occaProperties props) {
   occa::device device_ = occa::c::getDevice(device);
   occa::kernel kernel;
 
   if (occa::c::isDefault(props)) {
-    kernel = device_.buildKernel(filename, functionName);
+    kernel = device_.buildKernel(filename, kernelName);
   } else {
     occa::properties &props_ = occa::c::from<occa::properties>(props);
-    kernel = device_.buildKernel(filename, functionName, props_);
+    kernel = device_.buildKernel(filename, kernelName, props_);
   }
 
   return newObject(kernel.getKHandle(), occa::c::kernel_);
@@ -625,16 +625,16 @@ occaKernel OCCA_RFUNC occaDeviceBuildKernel(occaDevice device,
 
 occaKernel OCCA_RFUNC occaDeviceBuildKernelFromString(occaDevice device,
                                                       const char *str,
-                                                      const char *functionName,
+                                                      const char *kernelName,
                                                       const occaProperties props) {
   occa::device device_ = occa::c::getDevice(device);
   occa::kernel kernel;
 
   if (occa::c::isDefault(props)) {
-    kernel = device_.buildKernelFromString(str, functionName);
+    kernel = device_.buildKernelFromString(str, kernelName);
   } else {
     occa::properties &props_ = occa::c::from<occa::properties>(props);
-    kernel = device_.buildKernelFromString(str, functionName, props_);
+    kernel = device_.buildKernelFromString(str, kernelName, props_);
   }
 
   return newObject(kernel.getKHandle(), occa::c::kernel_);
@@ -642,9 +642,9 @@ occaKernel OCCA_RFUNC occaDeviceBuildKernelFromString(occaDevice device,
 
 occaKernel OCCA_RFUNC occaDeviceBuildKernelFromBinary(occaDevice device,
                                                       const char *filename,
-                                                      const char *functionName) {
+                                                      const char *kernelName) {
   occa::device device_ = occa::c::getDevice(device);
-  occa::kernel kernel = device_.buildKernelFromBinary(filename, functionName);
+  occa::kernel kernel = device_.buildKernelFromBinary(filename, kernelName);
   return newObject(kernel.getKHandle(), occa::c::kernel_);
 }
 

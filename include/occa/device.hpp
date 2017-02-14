@@ -83,11 +83,11 @@ namespace occa {
 
     //  |---[ Kernel ]------------------
     virtual kernel_v* buildKernel(const std::string &filename,
-                                  const std::string &functionName,
+                                  const std::string &kernelName,
                                   const occa::properties &props) = 0;
 
     virtual kernel_v* buildKernelFromBinary(const std::string &filename,
-                                            const std::string &functionName,
+                                            const std::string &kernelName,
                                             const occa::properties &props) = 0;
     //  |===============================
 
@@ -153,15 +153,15 @@ namespace occa {
 
     //  |---[ Kernel ]------------------
     occa::kernel buildKernel(const std::string &filename,
-                             const std::string &functionName,
+                             const std::string &kernelName,
                              const occa::properties &props = occa::properties());
 
     occa::kernel buildKernelFromString(const std::string &content,
-                                       const std::string &functionName,
+                                       const std::string &kernelName,
                                        const occa::properties &props = occa::properties());
 
     occa::kernel buildKernelFromBinary(const std::string &filename,
-                                       const std::string &functionName,
+                                       const std::string &kernelName,
                                        const occa::properties &props = occa::properties());
     //  |===============================
 

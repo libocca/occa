@@ -181,11 +181,11 @@ namespace occa {
     virtual void* getHandle(const occa::properties &props) = 0;
 
     virtual void build(const std::string &filename,
-                       const std::string &functionName,
+                       const std::string &kernelName,
                        const occa::properties &props) = 0;
 
     virtual void buildFromBinary(const std::string &filename,
-                                 const std::string &functionName,
+                                 const std::string &kernelName,
                                  const occa::properties &props) = 0;
 
     virtual int maxDims() = 0;

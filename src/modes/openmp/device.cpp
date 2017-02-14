@@ -52,11 +52,11 @@ namespace occa {
     }
 
     kernel_v* device::buildKernel(const std::string &filename,
-                                  const std::string &functionName,
+                                  const std::string &kernelName,
                                   const occa::properties &props) {
       kernel *k = new kernel();
       k->dHandle = this;
-      k->build(filename, functionName, props);
+      k->build(filename, kernelName, props);
       return k;
     }
   }

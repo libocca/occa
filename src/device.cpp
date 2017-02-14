@@ -199,7 +199,7 @@ namespace occa {
 
   //  |---[ Kernel ]--------------------
   kernel device::buildKernel(const std::string &filename,
-                             const std::string &functionName,
+                             const std::string &kernelName,
                              const occa::properties &props) {
     occa::properties allProps = properties() + props;
 
@@ -222,14 +222,14 @@ namespace occa {
       k->metadata = io::parseFileForFunction(mode(),
                                              realFilename,
                                              parsedFile,
-                                             functionName,
+                                             kernelName,
                                              props);
 
       occa::properties launchKernelProps;
       launchKernelProps["defines/OCCA_LAUNCH_KERNEL"] = 1;
 
       k->build(parsedFile,
-               functionName,
+               kernelName,
                k->dHandle->properties + launchKernelProps);
       k->nestedKernels.clear();
 
@@ -262,7 +262,7 @@ namespace occa {
       }
     } else {
       k = dHandle->buildKernel(realFilename,
-                               functionName,
+                               kernelName,
                                allProps);
       k->dHandle = dHandle;
     }
@@ -271,7 +271,7 @@ namespace occa {
   }
 
   kernel device::buildKernelFromString(const std::string &content,
-                                       const std::string &functionName,
+                                       const std::string &kernelName,
                                        const occa::properties &props) {
     const occa::properties allProps = properties() + props;
     hash_t hash = occa::hash(content);
@@ -295,14 +295,14 @@ namespace occa {
       io::waitForHash(hash, hashTag);
 
       return buildKernelFromBinary(hashDir + kc::binaryFile,
-                                   functionName,
+                                   kernelName,
                                    props);
     }
 
     io::write(stringSourceFile, content);
 
     kernel k = buildKernel(stringSourceFile,
-                           functionName,
+                           kernelName,
                            allProps);
 
     io::releaseHash(hash, hashTag);
@@ -311,10 +311,10 @@ namespace occa {
   }
 
   kernel device::buildKernelFromBinary(const std::string &filename,
-                                       const std::string &functionName,
+                                       const std::string &kernelName,
                                        const occa::properties &props) {
     kernel ker;
-    ker.kHandle = dHandle->buildKernelFromBinary(filename, functionName, props);
+    ker.kHandle = dHandle->buildKernelFromBinary(filename, kernelName, props);
     ker.kHandle->dHandle = dHandle;
 
     return ker;
