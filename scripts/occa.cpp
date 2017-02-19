@@ -104,18 +104,21 @@ std::string envEcho(const std::string &arg, const TM &defaultValue) {
   return (ret.size() ? ret : occa::toString(defaultValue));
 }
 
-bool removePath(const std::string &path) {
-  if (!occa::sys::fileExists(path)) {
+bool removeDir(const std::string &dir) {
+  const std::string fulldir = occa::io::endWithSlash(dir);
+
+  if (!occa::sys::fileExists(fulldir)) {
     return false;
   }
+
   std::string input;
 
-  std::cout << "  Removing [" << path << "*], are you sure? [y/n]:  ";
+  std::cout << "  Removing [" << fulldir << "*], are you sure? [y/n]:  ";
   std::cin >> input;
   occa::strip(input);
 
   if (input == "y") {
-    std::string command = "rm -rf " + path + "*";
+    std::string command = "rm -rf " + fulldir + "*";
     occa::ignoreResult( system(command.c_str()) );
   } else if (input != "n") {
     std::cout << "  Input must be [y] or [n], ignoring clear command\n";
@@ -135,18 +138,20 @@ bool runClear(const occa::args::command &command,
   bool removedSomething = false;
   while (it != options.end()) {
     if (it->first == "all") {
-      removedSomething |= removePath(occa::env::OCCA_CACHE_DIR);
+      removedSomething |= removeDir(occa::env::OCCA_CACHE_DIR);
     } else if (it->first == "lib") {
       const occa::jsonArray_t &libraries = it->second.array();
       for (int i = 0; i < (int) libraries.size(); ++i) {
-        removedSomething |= removePath(occa::io::libraryPath() +
+        removedSomething |= removeDir(occa::io::libraryPath() +
                                        libraries[i].array()[0].string());
       }
+    } else if (it->first == "libraries") {
+      removedSomething |= removeDir(occa::io::libraryPath());
     } else if (it->first == "kernels") {
-      removedSomething |= removePath(occa::io::cachePath());
+      removedSomething |= removeDir(occa::io::cachePath());
     } else if (it->first == "locks") {
       const std::string lockPath = occa::env::OCCA_CACHE_DIR + "locks/";
-      removedSomething |= removePath(lockPath);
+      removedSomething |= removeDir(lockPath);
     }
     ++it;
   }
