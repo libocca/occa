@@ -27,6 +27,8 @@
 #include <iomanip>
 #include <sstream>
 
+#include <cstring>
+
 #include "occa/defines.hpp"
 #include "occa/types.hpp"
 
@@ -114,6 +116,23 @@ namespace occa {
   template <>
   inline std::string fromString(const std::string &s) {
     return s;
+  }
+
+  inline bool startsWith(const std::string &s,
+                         const std::string &match) {
+    const int matchChars = (int) match.size();
+    return ((matchChars <= (int) s.size()) &&
+            (!strncmp(s.c_str(), match.c_str(), matchChars)));
+  }
+
+  inline bool endsWith(const std::string &s,
+                       const std::string &match) {
+    const int sChars = (int) s.size();
+    const int matchChars = (int) match.size();
+    return ((matchChars <= sChars) &&
+            (!strncmp(s.c_str() + (sChars - matchChars),
+                      match.c_str(),
+                      matchChars)));
   }
 
   inline char uppercase(const char c) {

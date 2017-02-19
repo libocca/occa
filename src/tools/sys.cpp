@@ -713,13 +713,17 @@ namespace occa {
 #if (OCCA_OS & (OCCA_LINUX_OS | OCCA_OSX_OS))
       static const int maxFrames = 1024;
       static void *frames[maxFrames];
-      char **symbols;
-      int frameCount = 0;
 
-      frameCount    = ::backtrace(frames, maxFrames);
-      symbols = ::backtrace_symbols(frames, frameCount);
+      const int frameCount = ::backtrace(frames, maxFrames);
+      char **symbols = ::backtrace_symbols(frames, frameCount);
+
+      const int digits = toString(frameCount - frameStart).size();
+
       for (int i = frameStart; i < frameCount; ++i) {
-        std::cout << indent << prettyStackSymbol(frames[i], symbols[i]) << '\n';
+        const std::string localFrame = toString(frameCount - i);
+        std::cout << indent
+                  << localFrame << std::string(digits - localFrame.size() + 1, ' ')
+                  << prettyStackSymbol(frames[i], symbols[i]) << '\n';
       }
       ::free(symbols);
 #endif
@@ -801,17 +805,17 @@ namespace occa {
     std::string header = "---[ " + title + " ]";
     header += std::string(60 - header.size(), '-');
 
-    std::cout << '\n'
+    std::cerr << '\n'
               << header << '\n'
               << "    File     : " << filename << '\n'
               << "    Function : " << function << '\n'
               << "    Line     : " << line     << '\n';
     if (message.size()) {
-      std::cout << "    Message  : " << message << '\n';
+      std::cerr << "    Message  : " << message << '\n';
     }
-    std::cout << "    Stack    :\n";
+    std::cerr << "    Stack    :\n";
     sys::printStacktrace(3, "      ");
-    std::cout << std::string(60, '=') << '\n';
+    std::cerr << std::string(60, '=') << '\n';
 
     if (exitInFailure) {
       throw 1;

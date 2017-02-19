@@ -37,7 +37,7 @@ namespace occa {
       std::string compiler, compilerFlags, compilerEnvScript;
 
       if (properties.get<std::string>("compiler").size()) {
-        compiler = properties["compiler"].getString();
+        compiler = properties["compiler"].string();
       } else if (env::var("OCCA_CXX").size()) {
         compiler = env::var("OCCA_CXX");
       } else if (env::var("CXX").size()) {
@@ -53,7 +53,7 @@ namespace occa {
       vendor = sys::compilerVendor(compiler);
 
       if (properties.get<std::string>("compilerFlags").size()) {
-        compilerFlags = properties["compilerFlags"].getString();
+        compilerFlags = properties["compilerFlags"].string();
       } else if (env::var("OCCA_CXXFLAGS").size()) {
         compilerFlags = env::var("OCCA_CXXFLAGS");
       } else if (env::var("CXXFLAGS").size()) {
@@ -71,7 +71,7 @@ namespace occa {
       }
 
       if (properties.get<std::string>("compilerEnvScript").size()) {
-        compilerEnvScript = properties["compilerEnvScript"].getString();
+        compilerEnvScript = properties["compilerEnvScript"].string();
       } else {
 #if (OCCA_OS == OCCA_WINDOWS_OS)
         std::string byteness;

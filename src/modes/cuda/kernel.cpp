@@ -64,7 +64,7 @@ namespace occa {
         const int minor = ((cuda::device*) dHandle)->archMinorVersion;
         std::stringstream ss;
         ss << " -arch=sm_" << major << minor << ' ';
-        allProps["compilerFlags"].getString() += ss.str();
+        allProps["compilerFlags"].string() += ss.str();
       }
 
       hash_t hash = occa::hashFile(filename);

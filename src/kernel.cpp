@@ -191,10 +191,10 @@ namespace occa {
 
   //---[ Kernel Properties ]------------
   std::string assembleHeader(const occa::properties &props) {
-    const jsonArray_t &lines = props["headers"].getArray();
+    const jsonArray_t &lines = props["headers"].array();
     const int lineCount = (int) lines.size();
 
-    const jsonObject_t &defines = props["defines"].getObject();
+    const jsonObject_t &defines = props["defines"].object();
     cJsonObjectIterator it = defines.begin();
 
     std::string header;

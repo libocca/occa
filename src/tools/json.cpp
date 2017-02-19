@@ -29,21 +29,14 @@
 namespace occa {
   const char json::objectKeyEndChars[] = " \t\r\n\v\f:";
 
-  json::json() {
+  json::json(type_t type_) {
     clear();
+    type = type_;
   }
 
   json::json(const json &j) :
     type(j.type),
     value(j.value) {}
-
-  json::json(const char *c) {
-    load(c);
-  }
-
-  json::json(const std::string &s) {
-    load(s);
-  }
 
   json& json::clear() {
     type = none_;
@@ -490,7 +483,7 @@ namespace occa {
           out += it->first;
           out += "\": ";
           it->second.toString(out, newIndent);
-          out += '\n';
+          out += ",\n";
           ++it;
         }
       }
@@ -505,11 +498,12 @@ namespace occa {
         std::string newIndent = indent + "  ";
         out += '\n';
         for (int i = 0; i < arraySize; ++i) {
+          out += newIndent;
           value.array[i].toString(out, newIndent);
-          out += '\n';
+          out += ",\n";
         }
+        out += indent;
       }
-      out += indent;
       out += ']';
       break;
     }
