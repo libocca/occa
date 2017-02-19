@@ -63,10 +63,8 @@ namespace occa {
       bool boolean;
     } value;
 
-    json();
+    json(type_t type_ = none_);
     json(const json &j);
-    json(const char *c);
-    json(const std::string &s);
 
     inline json(const bool boolean) :
       type(boolean_) {
@@ -121,6 +119,11 @@ namespace occa {
     inline json(const primitive &number) :
       type(number_) {
       value.number = number;
+    }
+
+    inline json(const std::string &string) :
+      type(string_) {
+      value.string = string;
     }
 
     inline json(const jsonObject_t &object) :
@@ -243,43 +246,88 @@ namespace occa {
 
     bool has(const std::string &s) const;
 
-    inline std::string& getString() {
+    inline bool isString() {
+      return (type == string_);
+    }
+
+    inline bool isNumber() {
+      return (type == number_);
+    }
+
+    inline bool isObject() {
+      return (type == object_);
+    }
+
+    inline bool isArray() {
+      return (type == array_);
+    }
+
+    inline bool isBoolean() {
+      return (type == boolean_);
+    }
+
+    inline json& asString() {
+      type = string_;
+      return *this;
+    }
+
+    inline json& asNumber() {
+      type = number_;
+      return *this;
+    }
+
+    inline json& asObject() {
+      type = object_;
+      return *this;
+    }
+
+    inline json& asArray() {
+      type = array_;
+      return *this;
+    }
+
+    inline json& asBoolean() {
+      type = boolean_;
+      return *this;
+    }
+
+    inline std::string& string() {
       return value.string;
     }
 
-    inline primitive& getNumber() {
+    inline primitive& number() {
       return value.number;
     }
 
-    inline jsonObject_t& getObject() {
+    inline jsonObject_t& object() {
       return value.object;
     }
 
-    inline jsonArray_t& getArray() {
+    inline jsonArray_t& array() {
       return value.array;
     }
 
-    inline bool& getBoolean() {
+    inline bool& boolean() {
       return value.boolean;
     }
 
-    inline const std::string& getString() const {
+    inline const std::string& string() const {
       return value.string;
     }
 
-    inline const primitive& getNumber() const {
+    inline const primitive& number() const {
       return value.number;
     }
 
-    inline const jsonObject_t& getObject() const {
+    inline const jsonObject_t& object() const {
       return value.object;
     }
 
-    inline const jsonArray_t& getArray() const {
+    inline const jsonArray_t& array() const {
       return value.array;
     }
 
-    inline bool getBoolean() const {
+    inline bool boolean() const {
       return value.boolean;
     }
 
@@ -324,11 +372,19 @@ namespace occa {
     }
 
     template <class TM>
-    std::vector<TM> getList(const char *c,
-                            const std::vector<TM> &default_ = std::vector<TM>()) const {
+    std::vector<TM> getArray(const std::vector<TM> &default_ = std::vector<TM>()) const {
+      std::string empty;
+      return getArray(empty.c_str(), default_);
+    }
+
+    friend std::ostream& operator << (std::ostream &out, const json &j);
+
+    template <class TM>
+    std::vector<TM> getArray(const char *c,
+                             const std::vector<TM> &default_ = std::vector<TM>()) const {
       const char *c0 = c;
       const json *j = this;
-      while (*c != '\0') {
+      while (*c) {
         OCCA_ERROR("Path '" << std::string(c0, c - c0) << "' is not an object",
                    j->type == object_);
 
@@ -350,7 +406,7 @@ namespace occa {
       }
 
       const int entries = (int) j->value.array.size();
-      std::vector<TM> ret(entries);
+      std::vector<TM> ret;
       for (int i = 0; i < entries; ++i) {
         ret.push_back((TM) j->value.array[i]);
       }
@@ -358,14 +414,9 @@ namespace occa {
     }
 
     template <class TM>
-    std::vector<TM> getList(const std::string &s,
-                            const std::vector<TM> &default_ = std::vector<TM>()) const {
+    std::vector<TM> getArray(const std::string &s,
+                             const std::vector<TM> &default_ = std::vector<TM>()) const {
       return get<TM>(s.c_str(), default_);
-    }
-
-    template <class TM>
-    json& add(const TM &t) {
-      return *this;
     }
 
     json& remove(const char *c);

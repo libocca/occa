@@ -42,11 +42,11 @@ namespace occa {
                                                           properties["compiler"]);
 
       if (openmpFlag != openmp::notSupported) {
-        std::string &compilerFlags = properties["compilerFlags"].getString();
+        std::string &compilerFlags = properties["compilerFlags"].string();
         compilerFlags += ' ';
         compilerFlags += openmpFlag;
       } else {
-        std::cout << "Compiler [" << properties["compiler"].getString()
+        std::cout << "Compiler [" << properties["compiler"].string()
                   << "] does not support OpenMP, defaulting to [Serial] mode\n";
       }
     }

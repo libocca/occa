@@ -77,7 +77,7 @@ namespace occa {
       setProperties(properties_);
 
       //---[ Language ]-------
-      if (properties["language"].getString() == "OFL") {
+      if (properties["language"].string() == "OFL") {
         parsingLanguage = parserInfo::parsingFortran;
       } else {
         parsingLanguage = parserInfo::parsingC;

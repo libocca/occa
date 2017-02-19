@@ -57,7 +57,7 @@ namespace occa {
       std::string compilerFlags;
 
       if (properties.has("compilerFlags")) {
-        compilerFlags = properties["compilerFlags"].getString();
+        compilerFlags = properties["compilerFlags"].string();
       } else if (env::var("OCCA_OPENCL_COMPILER_FLAGS").size()) {
         compilerFlags = env::var("OCCA_OPENCL_COMPILER_FLAGS");
       } else {

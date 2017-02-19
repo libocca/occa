@@ -32,7 +32,7 @@ namespace occa {
   device_v::device_v(const occa::properties &properties_) :
     hasProperties() {
 
-    mode = properties_["mode"].getString();
+    mode = properties_["mode"].string();
     properties = properties_;
 
     currentStream = NULL;

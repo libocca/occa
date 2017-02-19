@@ -79,7 +79,7 @@ namespace occa {
 
       std::string kernelDefines;
       if (properties.has("occa::kernelDefines")) {
-        kernelDefines = properties["occa::kernelDefines"].getString();
+        kernelDefines = properties["occa::kernelDefines"].string();
       } else {
         kernelDefines = io::cacheFile(env::OCCA_DIR + "/include/occa/modes/serial/kernelDefines.hpp",
                                       "serialKernelDefines.hpp");
@@ -96,16 +96,16 @@ namespace occa {
                                                          kc::sourceFile,
                                                          hash,
                                                          ss.str(),
-                                                         allProps["footer"].getString());
+                                                         allProps["footer"].string());
 
-      const std::string &compilerEnvScript = allProps["compilerEnvScript"].getString();
+      const std::string &compilerEnvScript = allProps["compilerEnvScript"].string();
       if (compilerEnvScript.size()) {
         command << compilerEnvScript << " && ";
       }
 
 #if (OCCA_OS & (OCCA_LINUX_OS | OCCA_OSX_OS))
-      command << allProps["compiler"].getString()
-              << ' '    << allProps["compilerFlags"].getString()
+      command << allProps["compiler"].string()
+              << ' '    << allProps["compilerFlags"].string()
               << ' '    << cachedSourceFile
               << " -o " << binaryFile
               << " -I"  << env::OCCA_DIR << "include"

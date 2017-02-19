@@ -24,175 +24,73 @@
 
 #include "occa/base.hpp"
 #include "occa/parser/tools.hpp"
+#include "occa/tools/args.hpp"
 #include "occa/tools/env.hpp"
 #include "occa/tools/io.hpp"
+#include "occa/tools/json.hpp"
 #include "occa/tools/misc.hpp"
 #include "occa/tools/sys.hpp"
 
-void printHelp();
-
-void runHelp(const std::string &cmd);
-
-void runClearOn(const std::string &path);
-void runClearCache(const int argc, std::string *args);
-void runClearLocks();
-
-void runEnv();
-
-void runInfo();
-
-void runUpdate(const int argc, std::string *args);
+bool runCache(const occa::args::command &command,
+              const occa::json &info);
+bool runClear(const occa::args::command &command,
+              const occa::json &info);
+bool runEnv(const occa::args::command &command,
+            const occa::json &info);
+bool runInfo(const occa::args::command &command,
+             const occa::json &info);
 
 int main(int argc, char **argv) {
-  --argc;
+  occa::args::command mainCommand;
+  occa::args::command cacheCommand, clearCommand, envCommand, infoCommand;
 
-  if (argc == 0) {
-    printHelp();
-    return 0;
-  }
+  mainCommand
+    .withDescription("Can be used to display information of cache kernels.");
 
-  std::string *args = new std::string[argc];
-  for (int i = 0; i < argc; ++i) {
-    args[i] = argv[i + 1];
-  }
+  cacheCommand
+    .withName("cache")
+    .withCallback(runCache)
+    .withDescription("Compile and cache kernels")
+    .addRepetitiveArgument("RECIPE",
+                           "JSON/JS recipe file. "
+                           "The file should be an object with all device and kernel property combinations that will be compiled.",
+                           true);
 
-  if (args[0] == "help") {
-    if (1 < argc) {
-      runHelp(args[1]);
-    } else {
-      printHelp();
-    }
-  }
-  else if (args[0] == "clear") {
-    if (1 < argc) {
-      if (args[1] == "all") {
-        runClearOn(occa::env::OCCA_CACHE_DIR);
-      } else if (args[1] == "cache") {
-        runClearCache(argc - 2, args + 2);
-      } else if (args[1] == "locks") {
-        runClearLocks();
-      } else {
-        printHelp();
-      }
-    }
-    else {
-      printHelp();
-    }
-  } else if (args[0] == "env") {
-    runEnv();
-  } else if (args[0] == "info") {
-    runInfo();
-  } else if (args[0] == "update") {
-    --argc;
+  clearCommand
+    .withName("clear")
+    .withCallback(runClear)
+    .withDescription("Clears cached files and cache locks")
+    .addOption('a', "all",
+               "Clear cached kernels, cached libraries, and locks.")
+    .addOption('k', "kernels",
+               "Clear cached kernels.")
+    .addOption('l', "lib",
+               "Clear cached library.", 1)
+    .addOption('\0', "libraries",
+               "Clear cached libraries.")
+    .addOption('o', "locks",
+               "Clear cache locks");
 
-    if (argc < 2) {
-      runHelp("update");
-    } else {
-      runUpdate(argc, args + 1);
-    }
-  } else {
-    printHelp();
-  }
+  envCommand
+    .withName("env")
+    .withCallback(runEnv)
+    .withDescription("Print environment variables used in OCCA");
 
-  delete [] args;
+  infoCommand
+    .withName("info")
+    .withCallback(runInfo)
+    .withDescription("Prints information about available OCCA modes");
+
+  mainCommand
+    .requiresCommand()
+    .addCommand(cacheCommand)
+    .addCommand(clearCommand)
+    .addCommand(envCommand)
+    .addCommand(infoCommand);
+
+  mainCommand.run(argc, (const char**) argv);
+
   return 0;
-}
-
-void printHelp() {
-  std::cout << "  For help on a specific command, type:  [occa help <command>]\n"
-            << "  Otherwise run a command with:          [occa <command> <arguments>]\n\n"
-
-            << "  Available commands:\n"
-            << "    - clear\n"
-            << "    - env\n"
-            << "    - info\n"
-            << "    - update <library or application name> <file>[, file2...]\n\n"
-
-            << "  Additional information:\n"
-            << "    - occa help cache\n";
-}
-
-void runHelp(const std::string &cmd) {
-  if (cmd == "cache") {
-    std::cout << "- OCCA caches kernels in:\n\n"
-
-              << "      $OCCA_CACHE_DIR/\n\n"
-
-              << "  which defaults to:\n\n"
-
-              << "      ~/.occa/\n\n"
-
-              << "- Kernel libraries are represented in kernels as:\n\n"
-
-              << "      occa://libraryName/kernel.okl\n\n"
-
-              << "  which can be found in:\n\n"
-
-              << "      $OCCA_CACHE_DIR/libraries/libraryName/kernel.okl\n\n"
-
-              << "- If a kernel is not in a library, the intermediate files\n"
-              << "  and binaries can still be found in:\n\n"
-
-              << "      $OCCA_CACHE_DIR/cache/<hash>/source.occa\n"
-              << "      $OCCA_CACHE_DIR/cache/<hash>/binary\n\n"
-
-              << "  where the <hash> is printed (by default) when the kernel\n"
-              << "  is built\n";
-  } else if (cmd == "clear") {
-    std::cout << "  Clears kernels that were cached and compilation locks\n"
-              << "    - occa clear all\n"
-              << "    - occa clear cache library1[, library2, ...]\n"
-              << "    - occa clear locks\n";
-  } else if (cmd == "env") {
-    std::cout << "  The following are optional environment variables and their use\n"
-              << "  Basic:\n"
-              << "    - OCCA_CACHE_DIR: Directory where kernels and their compiled binaries are cached\n"
-              << "                        [Defaults to ~/.occa]\n\n"
-
-              << "  Makefile:\n"
-              << "    - CXX           : C++ compiler\n"
-              << "                        [Defaults to g++     ]\n"
-              << "    - CXXFLAGS      : C++ compiler flags\n"
-              << "                        [Defaults to -g      ]\n"
-              << "    - FC            : Fortran compiler\n"
-              << "                        [Defaults to gfortran]\n"
-              << "    - FCFLAGS       : Fortran compiler flags\n"
-              << "                        [Defaults to -g      ]\n"
-              << "    - LDFLAGS       : Extra linking flags\n"
-              << "                        [Defaults to \"\"      ]\n\n"
-
-              << "  Backend Support:\n"
-              << "  [WARNING] These are auto-detected, manually setting these will require \n"
-              << "              the user to explicitly put library directories and libraries through\n"
-              << "              CXXFLAGS and LDFLAGS (for example: -L/path/to/CL -lopencl)\n\n"
-
-              << "    - OCCA_OPENMP_ENABLED: Set to 0 if you wish to manually disable it\n"
-              << "    - OCCA_OPENCL_ENABLED: Set to 0 if you wish to manually disable it\n"
-              << "    - OCCA_CUDA_ENABLED  : Set to 0 if you wish to manually disable it\n"
-              << "    - OCCA_COI_ENABLED   : Set to 0 if you wish to manually disable it\n\n"
-
-              << "  Run-Time Options:\n"
-              << "    - OCCA_CXX                   : C++ compiler used on the kernels\n"
-              << "                                      [Defaults to g++             ]\n"
-              << "    - OCCA_CXXFLAGS              : C++ compiler used on the kernels\n"
-              << "                                      [Defaults to -g              ]\n"
-              << "    - OCCA_OPENCL_COMPILER_FLAGS : Compiler flags used when compiling OpenCL kernels\n"
-              << "                                      [Defaults to -cl-opt-disable ]\n"
-              << "    - OCCA_CUDA_COMPILER         : Compiler used when compiling CUDA kernels\n"
-              << "                                      [Defaults to nvcc            ]\n"
-              << "    - OCCA_CUDA_COMPILER_FLAGS   : Compiler flags used when compiling CUDA kernels\n"
-              << "                                      [Defaults to -g              ]\n";
-  } else if (cmd == "info") {
-    std::cout << "  Prints available devices for enabled backends\n"
-              << "  For example:\n"
-              << "    - Basic CPU information\n"
-              << "    - OpenCL platforms and devices\n"
-              << "    - CUDA devices\n";
-  } else if (cmd == "update") {
-    std::cout << "  Updates the library or application's kernel files in a cache directory\n"
-              << "  This is used to find kernels at run-time without specifying an absolute path to the files\n"
-              << "  See [occa help env] for more information about environment variables\n";
-  }
 }
 
 std::string envEcho(const std::string &arg) {
@@ -206,7 +104,10 @@ std::string envEcho(const std::string &arg, const TM &defaultValue) {
   return (ret.size() ? ret : occa::toString(defaultValue));
 }
 
-void runClearOn(const std::string &path) {
+bool removePath(const std::string &path) {
+  if (!occa::sys::fileExists(path)) {
+    return false;
+  }
   std::string input;
 
   std::cout << "  Removing [" << path << "*], are you sure? [y/n]:  ";
@@ -216,80 +117,48 @@ void runClearOn(const std::string &path) {
   if (input == "y") {
     std::string command = "rm -rf " + path + "*";
     occa::ignoreResult( system(command.c_str()) );
-  }
-  else if (input != "n") {
+  } else if (input != "n") {
     std::cout << "  Input must be [y] or [n], ignoring clear command\n";
   }
+  return true;
 }
 
-void runClearCache(const int argc, std::string *args) {
-  const std::string cPath = occa::io::cachePath();
-  const std::string lPath = occa::io::libraryPath();
+bool runClear(const occa::args::command &command,
+              const occa::json &info) {
 
-  const bool cPathExists = occa::sys::fileExists(cPath);
-  const bool lPathExists = occa::sys::fileExists(lPath);
+  const occa::jsonObject_t &options = info["options"].object();
+  occa::cJsonObjectIterator it = options.begin();
 
-  if (!lPathExists && !cPathExists) {
-    std::cout << "  Cache is already empty\n";
-    return;
+  if (it == options.end()) {
+    return false;
   }
-
-  if (argc == 0) {
-    if (cPathExists) {
-      runClearOn(cPath);
-    }
-    if (lPathExists) {
-      runClearOn(lPath);
-    }
-  }
-  else {
-    for (int i = 0; i < argc; ++i) {
-      const std::string argLibPath = lPath + args[i] + "/";
-
-      if (occa::sys::fileExists(argLibPath)) {
-        runClearOn(argLibPath);
-      } else {
-        std::cout << "  Cache for [" << args[i] << "] is already empty\n";
+  bool removedSomething = false;
+  while (it != options.end()) {
+    if (it->first == "all") {
+      removedSomething |= removePath(occa::env::OCCA_CACHE_DIR);
+    } else if (it->first == "lib") {
+      const occa::jsonArray_t &libraries = it->second.array();
+      for (int i = 0; i < (int) libraries.size(); ++i) {
+        removedSomething |= removePath(occa::io::libraryPath() +
+                                       libraries[i].array()[0].string());
       }
+    } else if (it->first == "kernels") {
+      removedSomething |= removePath(occa::io::cachePath());
+    } else if (it->first == "locks") {
+      const std::string lockPath = occa::env::OCCA_CACHE_DIR + "locks/";
+      removedSomething |= removePath(lockPath);
     }
+    ++it;
   }
-}
-
-void runClearLocks() {
-  const std::string lockPath = occa::env::OCCA_CACHE_DIR + "locks/";
-  if (occa::sys::fileExists(lockPath)) {
-    runClearOn(lockPath);
-  } else {
-    std::cout << "  No locks found\n";
+  if (!removedSomething) {
+    std::cout << "  Nothing to remove.\n";
   }
+  return true;
 }
 
-void runEnv() {
-  std::cout << "  The following are optional environment variables and their values\n"
-            << "  Basic:\n"
-            << "    - OCCA_CACHE_DIR             : " << envEcho("OCCA_CACHE_DIR") << "\n"
-            << "  Makefile:\n"
-            << "    - CXX                        : " << envEcho("CXX") << "\n"
-            << "    - CXXFLAGS                   : " << envEcho("CXXFLAGS") << "\n"
-            << "    - FC                         : " << envEcho("FC") << "\n"
-            << "    - FCFLAGS                    : " << envEcho("FCFLAGS") << "\n"
-            << "    - LDFLAGS                    : " << envEcho("LDFLAGS") << "\n"
-
-            << "  Backend Support:\n"
-            << "    - OCCA_OPENMP_ENABLED        : " << envEcho("OCCA_OPENMP_ENABLED", OCCA_OPENMP_ENABLED) << "\n"
-            << "    - OCCA_OPENCL_ENABLED        : " << envEcho("OCCA_OPENCL_ENABLED", OCCA_OPENCL_ENABLED) << "\n"
-            << "    - OCCA_CUDA_ENABLED          : " << envEcho("OCCA_CUDA_ENABLED", OCCA_CUDA_ENABLED) << "\n"
-
-            << "  Run-Time Options:\n"
-            << "    - OCCA_CXX                   : " << envEcho("OCCA_CXX") << "\n"
-            << "    - OCCA_CXXFLAGS              : " << envEcho("OCCA_CXXFLAGS") << "\n"
-            << "    - OCCA_OPENCL_COMPILER_FLAGS : " << envEcho("OCCA_OPENCL_COMPILER_FLAGS") << "\n"
-            << "    - OCCA_CUDA_COMPILER         : " << envEcho("OCCA_CUDA_COMPILER") << "\n"
-            << "    - OCCA_CUDA_COMPILER_FLAGS   : " << envEcho("OCCA_CUDA_COMPILER_FLAGS") << "\n";
-}
-
-void runInfo() {
-  occa::printModeInfo();
+bool runCache(const occa::args::command &command,
+              const occa::json &info) {
+  return false;
 }
 
 void runUpdate(const int argc, std::string *args) {
@@ -316,4 +185,38 @@ void runUpdate(const int argc, std::string *args) {
     originalS.close();
     newS.close();
   }
+}
+
+bool runEnv(const occa::args::command &command,
+            const occa::json &info) {
+  std::cout << "  Basic:\n"
+            << "    - OCCA_CACHE_DIR             : " << envEcho("OCCA_CACHE_DIR") << "\n"
+
+            << "  Makefile:\n"
+            << "    - CXX                        : " << envEcho("CXX") << "\n"
+            << "    - CXXFLAGS                   : " << envEcho("CXXFLAGS") << "\n"
+            << "    - FC                         : " << envEcho("FC") << "\n"
+            << "    - FCFLAGS                    : " << envEcho("FCFLAGS") << "\n"
+            << "    - LDFLAGS                    : " << envEcho("LDFLAGS") << "\n"
+
+            << "  Backend Support:\n"
+            << "    - OCCA_OPENMP_ENABLED        : " << envEcho("OCCA_OPENMP_ENABLED", OCCA_OPENMP_ENABLED) << "\n"
+            << "    - OCCA_OPENCL_ENABLED        : " << envEcho("OCCA_OPENCL_ENABLED", OCCA_OPENCL_ENABLED) << "\n"
+            << "    - OCCA_CUDA_ENABLED          : " << envEcho("OCCA_CUDA_ENABLED", OCCA_CUDA_ENABLED) << "\n"
+
+            << "  Run-Time Options:\n"
+            << "    - OCCA_CXX                   : " << envEcho("OCCA_CXX") << "\n"
+            << "    - OCCA_CXXFLAGS              : " << envEcho("OCCA_CXXFLAGS") << "\n"
+            << "    - OCCA_OPENCL_COMPILER_FLAGS : " << envEcho("OCCA_OPENCL_COMPILER_FLAGS") << "\n"
+            << "    - OCCA_CUDA_COMPILER         : " << envEcho("OCCA_CUDA_COMPILER") << "\n"
+            << "    - OCCA_CUDA_COMPILER_FLAGS   : " << envEcho("OCCA_CUDA_COMPILER_FLAGS") << "\n";
+  ::exit(0);
+  return true;
+}
+
+bool runInfo(const occa::args::command &command,
+             const occa::json &info) {
+  occa::printModeInfo();
+  ::exit(0);
+  return true;
 }
