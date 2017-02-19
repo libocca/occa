@@ -76,9 +76,9 @@ namespace occa {
       PATH            = env::var("PATH");
       LD_LIBRARY_PATH = env::var("LD_LIBRARY_PATH");
 
-      endDirWithSlash(HOME);
-      endDirWithSlash(PWD);
-      endDirWithSlash(PATH);
+      io::endWithSlash(HOME);
+      io::endWithSlash(PWD);
+      io::endWithSlash(PATH);
 #endif
 
       // OCCA environment variables
@@ -94,8 +94,8 @@ namespace occa {
       initCachePath();
       initIncludePath();
 
-      endDirWithSlash(OCCA_DIR);
-      endDirWithSlash(OCCA_CACHE_DIR);
+      io::endWithSlash(OCCA_DIR);
+      io::endWithSlash(OCCA_CACHE_DIR);
 
       OCCA_MEM_BYTE_ALIGN = OCCA_DEFAULT_MEM_BYTE_ALIGN;
       if (env::var("OCCA_MEM_BYTE_ALIGN").size() > 0) {
@@ -164,7 +164,7 @@ namespace occa {
         if (0 < (cEnd - cStart)) {
           std::string newPath(cStart, cEnd - cStart);
           newPath = io::filename(newPath);
-          endDirWithSlash(newPath);
+          io::endWithSlash(newPath);
 
           tmpOIP.push_back(newPath);
         }
@@ -192,13 +192,6 @@ namespace occa {
     void signalExit(int sig) {
       io::clearLocks();
       ::exit(sig);
-    }
-
-    void endDirWithSlash(std::string &dir) {
-      if ((0 < dir.size()) &&
-          (dir[dir.size() - 1] != '/')) {
-        dir += '/';
-      }
     }
 
     envInitializer_t::envInitializer_t() {

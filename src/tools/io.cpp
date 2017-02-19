@@ -153,6 +153,19 @@ namespace occa {
       return path;
     }
 
+    void endWithSlash(std::string &dir) {
+      if ((0 < dir.size()) &&
+          (dir[dir.size() - 1] != '/')) {
+        dir += '/';
+      }
+    }
+
+    std::string endWithSlash(const std::string &dir) {
+      std::string ret = dir;
+      endWithSlash(ret);
+      return ret;
+    }
+
     bool isAbsolutePath(const std::string &filename) {
 #if (OCCA_OS & (OCCA_LINUX_OS | OCCA_OSX_OS))
       return ((0 < filename.size()) &&

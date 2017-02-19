@@ -47,8 +47,6 @@ namespace occa {
 
     void signalExit(int sig);
 
-    void endDirWithSlash(std::string &dir);
-
     class envInitializer_t {
     public: envInitializer_t();
     };
