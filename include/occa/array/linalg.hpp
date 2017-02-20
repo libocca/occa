@@ -31,8 +31,8 @@
 
 namespace occa {
   namespace linalg {
-    static const int assigmentTileSizeCount = 5;
-    static const int assigmentTileSizes[5] = {32, 64, 128, 256, 512};
+    static const int usedTileSizeCount = 5;
+    static const int usedTileSizes[5] = {32, 64, 128, 256, 512};
 
     template <class VTYPE_IN, class VTYPE_OUT>
     kernelBuilder makeAssignmentBuilder(const std::string &kernelName,
@@ -41,15 +41,15 @@ namespace occa {
     template <class VTYPE_IN, class VTYPE_OUT>
     kernelBuilder* makeAssignmentBuilders(const std::string &kernelName);
 
-    inline occa::kernel getAssignmentKernel(kernelBuilder *builders,
-                                            occa::device dev,
-                                            const int tileSize) {
-      for (int i = 0; i < assigmentTileSizeCount; ++i) {
-        if (assigmentTileSizes[i] <= tileSize) {
+    inline occa::kernel getTiledKernel(kernelBuilder *builders,
+                                       occa::device dev,
+                                       const int tileSize) {
+      for (int i = 0; i < usedTileSizeCount; ++i) {
+        if (usedTileSizes[i] <= tileSize) {
           return builders[i].build(dev);
         }
       }
-      return builders[assigmentTileSizeCount - 1].build(dev);
+      return builders[usedTileSizeCount - 1].build(dev);
     }
 
     template <class VTYPE, class RETTYPE>
@@ -149,6 +149,12 @@ namespace occa {
 
     template <class VTYPE1, class VTYPE2, class RETTYPE>
     RETTYPE dot(occa::memory vec);
+
+    template <class TYPE_A, class VTYPE_X, class VTYPE_Y>
+    void axpy(const TYPE_A &alpha,
+              occa::memory x,
+              occa::memory y,
+              const int tileSize = 128);
     //==================================
   }
 }
