@@ -18,6 +18,47 @@ int main(int argc, char **argv) {
   //---[ Testing API ]------------------
   std::cout << "Testing API:\n";
 
+  occa::array<float> vec1(10), vec2(10);
+  for (int i = 0; i < 10; ++i) {
+    vec1[i] = vec2[i] = i + 1;
+  }
+
+  printVector(vec1);
+  vec1 += 100;
+  std::cout << "vec1 += 100\n";
+  printVector(vec1);
+  vec1 -= 100;
+  std::cout << "vec1 -= 100\n";
+  printVector(vec1);
+  vec1 *= 10;
+  std::cout << "vec1 *= 10\n";
+  printVector(vec1);
+  vec1 /= 10;
+  std::cout << "vec1 /= 10\n";
+  printVector(vec1);
+
+  vec1 += vec2;
+  std::cout << "vec1 += vec2\n";
+  printVector(vec1);
+  vec1 -= vec2;
+  std::cout << "vec1 -= vec2\n";
+  printVector(vec1);
+  vec1 *= vec2;
+  std::cout << "vec1 *= vec2\n";
+  printVector(vec1);
+  vec1 /= vec2;
+  std::cout << "vec1 /= vec2\n";
+  printVector(vec1);
+
+  // Basic linear algebra routines
+  std::cout << "vec1.l1Norm()   = " << vec1.l1Norm<double>() << '\n'
+            << "vec1.l2Norm()   = " << vec1.l2Norm<double>() << '\n'
+            << "vec1.lpNorm(2)  = " << vec1.lpNorm<double>(2) << '\n'
+            << "vec1.lInfNorm() = " << vec1.lInfNorm<double>() << '\n'
+            << "vec1.dot()      = " << vec1.dot<double>(vec2) << '\n'
+            << "vec1.max()      = " << vec1.max<double>() << '\n'
+            << "vec1.min()      = " << vec1.min<double>() << '\n';
+
   occa::array<int> a(3,3);
   occa::array<int, occa::useIdxOrder> b(3,3);
 
@@ -33,15 +74,6 @@ int main(int argc, char **argv) {
 
   // Can pass @idxOrder to the kernel
   std::cout << "b.idxOrderStr() = " << b.idxOrderStr() << '\n';
-
-  // Basic linear algebra routines
-  std::cout << "a.l1Norm()   = " << a.l1Norm<double>() << '\n'
-            << "a.l2Norm()   = " << a.l2Norm<double>() << '\n'
-            << "a.lpNorm(2)  = " << a.lpNorm<double>(2) << '\n'
-            << "a.lInfNorm() = " << a.lInfNorm<double>() << '\n'
-            << "a.dot()      = " << a.dot<double>(b) << '\n'
-            << "a.max()      = " << a.max<double>() << '\n'
-            << "a.min()      = " << a.min<double>() << '\n';
 
   // Arrays a and b print out differently
   //   due to b.setIdxOrder()

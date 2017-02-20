@@ -1,11 +1,3 @@
-#ifndef VTYPE1
-#  define VTYPE1 VTYPE
-#  define VTYPE2 VTYPE
-#endif
-#ifndef VTYPE
-#  define VTYPE VTYPE1
-#endif
-
 #define CPU_CHUNK ((entries + CPU_DOT_OUTER - 1)/ CPU_DOT_OUTER)
 #define CPU_REDUCTION_BODY(OPERATION, RED_OPERATION)  \
   for (int oi = 0; oi < CPU_DOT_OUTER; ++oi; outer) { \
@@ -133,7 +125,7 @@ kernel void vecMin(const int entries,
 }
 
 kernel void dot(const int entries,
-                const VTYPE1 * vec1,
+                const VTYPE * vec1,
                 const VTYPE2 * vec2,
                 RETTYPE * vecReduction) {
 #define DOT_OPERATION(out, idx)                 \
