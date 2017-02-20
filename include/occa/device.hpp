@@ -120,6 +120,8 @@ namespace occa {
     device(const occa::device &d);
     device& operator = (const occa::device &d);
 
+    bool operator == (const occa::device &d) const;
+
     void free();
 
     bool isInitialized();

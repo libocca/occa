@@ -71,8 +71,11 @@ namespace occa {
 
   device& device::operator = (const device &d) {
     dHandle = d.dHandle;
-
     return *this;
+  }
+
+  bool device::operator == (const occa::device &d) const {
+    return (dHandle == d.dHandle);
   }
 
   void device::free() {

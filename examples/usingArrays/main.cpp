@@ -39,7 +39,7 @@ int main(int argc, char **argv) {
             << "a.l2Norm()   = " << a.l2Norm<double>() << '\n'
             << "a.lpNorm(2)  = " << a.lpNorm<double>(2) << '\n'
             << "a.lInfNorm() = " << a.lInfNorm<double>() << '\n'
-            << "a.dot()      = " << a.dot<double>() << '\n'
+            << "a.dot()      = " << a.dot<double>(b) << '\n'
             << "a.max()      = " << a.max<double>() << '\n'
             << "a.min()      = " << a.min<double>() << '\n';
 

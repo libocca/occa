@@ -1,6 +1,6 @@
 /* The MIT License (MIT)
  *
- * Copyright (c) 2014-2017 David Medina and Tim Warburton
+ * Copyright (c) 2014-2017 David Median and Tim Warburton
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -272,22 +272,22 @@ namespace occa {
     //==================================
 
     //---[ Linear Algebra ]-------------
-    template <class TM2>
-    TM2 l1Norm();
-    template <class TM2>
-    TM2 l2Norm();
-    template <class TM2>
-    TM2 lpNorm(const float p);
-    template <class TM2>
-    TM2 lInfNorm();
+    template <class RETTYPE>
+    RETTYPE l1Norm();
+    template <class RETTYPE>
+    RETTYPE l2Norm();
+    template <class RETTYPE>
+    RETTYPE lpNorm(const float p);
+    template <class RETTYPE>
+    RETTYPE lInfNorm();
 
-    template <class TM2>
-    TM2 max();
-    template <class TM2>
-    TM2 min();
+    template <class RETTYPE>
+    RETTYPE max();
+    template <class RETTYPE>
+    RETTYPE min();
 
-    template <class TM2>
-    TM2 dot();
+    template <class RETTYPE, class TM2, const int idxType2>
+    RETTYPE dot(const array<TM2, idxType2> &vec);
     //==================================
 
     //---[ Syncs ]----------------------
