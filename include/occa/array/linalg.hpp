@@ -27,11 +27,85 @@
 
 #include "occa/defines.hpp"
 #include "occa/base.hpp"
+#include "occa/tools/env.hpp"
 
 namespace occa {
   namespace linalg {
-    std::string getKernelFile();
+    static const int assigmentTileSizeCount = 5;
+    static const int assigmentTileSizes[5] = {32, 64, 128, 256, 512};
 
+    template <class VTYPE_IN, class VTYPE_OUT>
+    kernelBuilder makeAssignmentBuilder(const std::string &kernelName,
+                                        const int tileSize);
+
+    template <class VTYPE_IN, class VTYPE_OUT>
+    kernelBuilder* makeAssignmentBuilders(const std::string &kernelName);
+
+    inline occa::kernel getAssignmentKernel(kernelBuilder *builders,
+                                            occa::device dev,
+                                            const int tileSize) {
+      for (int i = 0; i < assigmentTileSizeCount; ++i) {
+        if (assigmentTileSizes[i] <= tileSize) {
+          return builders[i].build(dev);
+        }
+      }
+      return builders[assigmentTileSizeCount - 1].build(dev);
+    }
+
+    template <class VTYPE, class RETTYPE>
+    kernelBuilder makeLinalgBuilder(const std::string &kernelName);
+
+    template <class VTYPE1, class VTYPE2, class RETTYPE>
+    kernelBuilder makeLinalgBuilder(const std::string &kernelName);
+
+    //---[ Assignment ]-----------------
+    template <class VTYPE_OUT>
+    void operator_eq(occa::memory vec,
+                     const VTYPE_OUT value,
+                     const int tileSize = 128);
+
+    template <class VTYPE_OUT>
+    void operator_plus_eq(occa::memory vec,
+                          const VTYPE_OUT value,
+                          const int tileSize = 128);
+
+    template <class VTYPE_IN, class VTYPE_OUT>
+    void operator_plus_eq(occa::memory in,
+                          occa::memory out,
+                          const int tileSize = 128);
+
+    template <class VTYPE_OUT>
+    void operator_sub_eq(occa::memory vec,
+                         const VTYPE_OUT value,
+                         const int tileSize = 128);
+
+    template <class VTYPE_IN, class VTYPE_OUT>
+    void operator_sub_eq(occa::memory in,
+                         occa::memory out,
+                         const int tileSize = 128);
+
+    template <class VTYPE_OUT>
+    void operator_mult_eq(occa::memory vec,
+                          const VTYPE_OUT value,
+                          const int tileSize = 128);
+
+    template <class VTYPE_IN, class VTYPE_OUT>
+    void operator_mult_eq(occa::memory in,
+                          occa::memory out,
+                          const int tileSize = 128);
+
+    template <class VTYPE_OUT>
+    void operator_div_eq(occa::memory vec,
+                         const VTYPE_OUT value,
+                         const int tileSize = 128);
+
+    template <class VTYPE_IN, class VTYPE_OUT>
+    void operator_div_eq(occa::memory in,
+                         occa::memory out,
+                         const int tileSize = 128);
+    //==================================
+
+    //---[ Linear Algebra ]-------------
     template <class TM>
     inline std::map<int, TM*>& hostBufferMap() {
       static std::map<int, TM*> bufferMap;
@@ -75,6 +149,7 @@ namespace occa {
 
     template <class VTYPE1, class VTYPE2, class RETTYPE>
     RETTYPE dot(occa::memory vec);
+    //==================================
   }
 }
 

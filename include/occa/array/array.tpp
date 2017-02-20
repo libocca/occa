@@ -728,6 +728,67 @@ namespace occa {
     }
     return data_[fs_[0]*i0 + fs_[1]*i1 + fs_[2]*i2 + fs_[3]*i3 + fs_[4]*i4 + fs_[5]*i5];
   }
+  //====================================
+
+  //---[ Assignment Operators ]-------
+  template <class TM, const int idxType>
+  array<TM,idxType>& array<TM,idxType>::operator = (const TM value) {
+    linalg::operator_eq<TM>(memory, value);
+    return *this;
+  }
+
+  template <class TM, const int idxType>
+  array<TM,idxType>& array<TM,idxType>::operator += (const TM value) {
+    linalg::operator_plus_eq<TM>(memory, value);
+    return *this;
+  }
+
+  template <class TM, const int idxType>
+  template <class TM2, const int idxType2>
+  array<TM,idxType>& array<TM,idxType>::operator += (const array<TM2,idxType2> &vec) {
+    linalg::operator_plus_eq<TM2,TM>(vec.memory, memory);
+    return *this;
+  }
+
+  template <class TM, const int idxType>
+  array<TM,idxType>& array<TM,idxType>::operator -= (const TM value) {
+    linalg::operator_sub_eq<TM>(memory, value);
+    return *this;
+  }
+
+  template <class TM, const int idxType>
+  template <class TM2, const int idxType2>
+  array<TM,idxType>& array<TM,idxType>::operator -= (const array<TM2,idxType2> &vec) {
+    linalg::operator_sub_eq<TM2,TM>(vec.memory, memory);
+    return *this;
+  }
+
+  template <class TM, const int idxType>
+  array<TM,idxType>& array<TM,idxType>::operator *= (const TM value) {
+    linalg::operator_mult_eq<TM>(memory, value);
+    return *this;
+  }
+
+  template <class TM, const int idxType>
+  template <class TM2, const int idxType2>
+  array<TM,idxType>& array<TM,idxType>::operator *= (const array<TM2,idxType2> &vec) {
+    linalg::operator_mult_eq<TM2,TM>(vec.memory, memory);
+    return *this;
+  }
+
+  template <class TM, const int idxType>
+  array<TM,idxType>& array<TM,idxType>::operator /= (const TM value) {
+    linalg::operator_div_eq<TM>(memory, value);
+    return *this;
+  }
+
+  template <class TM, const int idxType>
+  template <class TM2, const int idxType2>
+  array<TM,idxType>& array<TM,idxType>::operator /= (const array<TM2,idxType2> &vec) {
+    linalg::operator_div_eq<TM2,TM>(vec.memory, memory);
+    return *this;
+  }
+  //====================================
 
   //---[ Linear Algebra ]---------------
   template <class TM, const int idxType>

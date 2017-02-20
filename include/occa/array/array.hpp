@@ -240,35 +240,27 @@ namespace occa {
     //==================================
 
     //---[ Assignment Operators ]-------
-    template <class TM2>
-    array& operator = (const TM2 value);
+    array& operator = (const TM value);
 
-    template <class TM2>
-    array& operator = (const array<TM2> &value);
+    array& operator += (const TM value);
 
-    template <class TM2>
-    array& operator += (const TM2 value);
+    template <class TM2, const int idxType2>
+    array& operator += (const array<TM2,idxType2> &vec);
 
-    template <class TM2>
-    array& operator += (const array<TM2> &value);
+    array& operator -= (const TM value);
 
-    template <class TM2>
-    array& operator -= (const TM2 value);
+    template <class TM2, const int idxType2>
+    array& operator -= (const array<TM2,idxType2> &vec);
 
-    template <class TM2>
-    array& operator -= (const array<TM2> &value);
+    array& operator *= (const TM value);
 
-    template <class TM2>
-    array& operator *= (const TM2 value);
+    template <class TM2, const int idxType2>
+    array& operator *= (const array<TM2,idxType2> &vec);
 
-    template <class TM2>
-    array& operator *= (const array<TM2> &value);
+    array& operator /= (const TM value);
 
-    template <class TM2>
-    array& operator /= (const TM2 value);
-
-    template <class TM2>
-    array& operator /= (const array<TM2> &value);
+    template <class TM2, const int idxType2>
+    array& operator /= (const array<TM2,idxType2> &vec);
     //==================================
 
     //---[ Linear Algebra ]-------------
