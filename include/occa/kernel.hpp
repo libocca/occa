@@ -243,26 +243,29 @@ namespace occa {
   //---[ kernel builder ]---------------
   class kernelBuilder {
   protected:
-    std::string filename_;
+    std::string source_;
     std::string function_;
     occa::properties props_;
 
     hashedKernelMap_t kernelMap;
 
+    bool buildingFromFile;
+
   public:
     kernelBuilder();
-    kernelBuilder(const std::string &filename,
-                  const std::string &function,
-                  const occa::properties &props = occa::properties());
 
     kernelBuilder(const kernelBuilder &k);
     kernelBuilder& operator = (const kernelBuilder &k);
 
-    bool isInitialized();
+    static kernelBuilder fromFile(const std::string &filename,
+                                  const std::string &function,
+                                  const occa::properties &props = occa::properties());
 
-    void use(const std::string &filename,
-             const std::string &function,
-             const occa::properties &props = occa::properties());
+    static kernelBuilder fromString(const std::string &content,
+                                    const std::string &function,
+                                    const occa::properties &props = occa::properties());
+
+    bool isInitialized();
 
     virtual occa::kernel build(occa::device device,
                                const hash_t &hash);
@@ -279,27 +282,6 @@ namespace occa {
     occa::kernel operator [] (occa::device device);
 
     void free();
-  };
-
-  class sourceKernelBuilder : public kernelBuilder {
-  private:
-    std::string content_;
-
-  public:
-    sourceKernelBuilder();
-    sourceKernelBuilder(const std::string &content,
-                            const std::string &function,
-                            const occa::properties &props = occa::properties());
-
-    sourceKernelBuilder(const sourceKernelBuilder &k);
-    sourceKernelBuilder& operator = (const sourceKernelBuilder &k);
-
-    void use(const std::string &content,
-             const std::string &function,
-             const occa::properties &props = occa::properties());
-
-    virtual occa::kernel build(occa::device device,
-                               const hash_t &hash);
   };
   //====================================
 }

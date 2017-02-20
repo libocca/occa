@@ -167,6 +167,14 @@ kernel void dot(const int entries,
   REDUCTION_BODY(DOT_OPERATION, SUM_RED_OPERATION);
 }
 
+kernel void sum(const int entries,
+                const VTYPE * vec,
+                RETTYPE * vecReduction) {
+#define SUM_OPERATION(out, idx)                 \
+  out += vec[idx]
+  REDUCTION_BODY(SUM_OPERATION, SUM_RED_OPERATION);
+}
+
 kernel void axpy(const int entries,
                  const TYPE_A alpha,
                  const VTYPE_X * x,

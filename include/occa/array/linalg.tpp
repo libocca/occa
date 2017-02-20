@@ -25,13 +25,13 @@ namespace occa {
     template <class VTYPE_IN, class VTYPE_OUT>
     kernelBuilder makeAssignmentBuilder(const std::string &kernelName,
                                         const int tileSize) {
-      return kernelBuilder(env::OCCA_DIR + "include/occa/array/kernels/assignment.okl",
-                           kernelName,
-                           "defines: {"
-                           "  VTYPE_IN: '" + primitiveinfo<VTYPE_IN>::name + "',"
-                           "  VTYPE_OUT: '" + primitiveinfo<VTYPE_OUT>::name + "',"
-                           "  TILESIZE: '" + toString(tileSize) + "',"
-                           "}");
+      return kernelBuilder::fromFile(env::OCCA_DIR + "include/occa/array/kernels/assignment.okl",
+                                     kernelName,
+                                     "defines: {"
+                                     "  VTYPE_IN: '" + primitiveinfo<VTYPE_IN>::name + "',"
+                                     "  VTYPE_OUT: '" + primitiveinfo<VTYPE_OUT>::name + "',"
+                                     "  TILESIZE: '" + toString(tileSize) + "',"
+                                     "}");
     }
 
     template <class VTYPE_IN, class VTYPE_OUT>
@@ -46,30 +46,30 @@ namespace occa {
 
     template <class VTYPE, class RETTYPE>
     kernelBuilder makeLinalgBuilder(const std::string &kernelName) {
-      return kernelBuilder(env::OCCA_DIR + "include/occa/array/kernels/linalg.okl",
-                           kernelName,
-                           "defines: {"
-                           "  VTYPE: '" + primitiveinfo<VTYPE>::name + "',"
-                           "  VTYPE2: '" + primitiveinfo<VTYPE>::name + "',"
-                           "  RETTYPE: '" + primitiveinfo<RETTYPE>::name + "',"
-                           "  CPU_DOT_OUTER: 1024,"
-                           "  GPU_DOT_OUTER: 1024,"
-                           "  GPU_DOT_INNER: 128,"
-                           "}");
+      return kernelBuilder::fromFile(env::OCCA_DIR + "include/occa/array/kernels/linalg.okl",
+                                     kernelName,
+                                     "defines: {"
+                                     "  VTYPE: '" + primitiveinfo<VTYPE>::name + "',"
+                                     "  VTYPE2: '" + primitiveinfo<VTYPE>::name + "',"
+                                     "  RETTYPE: '" + primitiveinfo<RETTYPE>::name + "',"
+                                     "  CPU_DOT_OUTER: 1024,"
+                                     "  GPU_DOT_OUTER: 1024,"
+                                     "  GPU_DOT_INNER: 128,"
+                                     "}");
     }
 
     template <class VTYPE1, class VTYPE2, class RETTYPE>
     kernelBuilder makeLinalgBuilder(const std::string &kernelName) {
-      return kernelBuilder(env::OCCA_DIR + "include/occa/array/kernels/linalg.okl",
-                           kernelName,
-                           "defines: {"
-                           "  VTYPE: '" + primitiveinfo<VTYPE1>::name + "',"
-                           "  VTYPE2: '" + primitiveinfo<VTYPE2>::name + "',"
-                           "  RETTYPE: '" + primitiveinfo<RETTYPE>::name + "',"
-                           "  CPU_DOT_OUTER: 1024,"
-                           "  GPU_DOT_OUTER: 1024,"
-                           "  GPU_DOT_INNER: 128,"
-                           "}");
+      return kernelBuilder::fromFile(env::OCCA_DIR + "include/occa/array/kernels/linalg.okl",
+                                     kernelName,
+                                     "defines: {"
+                                     "  VTYPE: '" + primitiveinfo<VTYPE1>::name + "',"
+                                     "  VTYPE2: '" + primitiveinfo<VTYPE2>::name + "',"
+                                     "  RETTYPE: '" + primitiveinfo<RETTYPE>::name + "',"
+                                     "  CPU_DOT_OUTER: 1024,"
+                                     "  GPU_DOT_OUTER: 1024,"
+                                     "  GPU_DOT_INNER: 128,"
+                                     "}");
     }
 
     //---[ Assignment ]-----------------
@@ -354,15 +354,28 @@ namespace occa {
       return ret;
     }
 
+    template <class VTYPE, class RETTYPE>
+    RETTYPE sum(occa::memory vec) {
+      static kernelBuilder builder =
+        makeLinalgBuilder<VTYPE, RETTYPE>("sum");
+
+      RETTYPE *partialReduction = reduce<VTYPE,RETTYPE>(vec, builder, 1024);
+      RETTYPE ret = 0;
+      for (int i = 0; i < 1024; ++i) {
+        ret += partialReduction[i];
+      }
+      return ret;
+    }
+
     template <class TYPE_A, class VTYPE_X, class VTYPE_Y>
     void axpy(const TYPE_A &alpha,
               occa::memory x,
               occa::memory y,
               const int tileSize) {
 
-      static sourceKernelBuilder *builders;
+      static kernelBuilder *builders;
       if (!builders) {
-        builders = new sourceKernelBuilder[usedTileSizeCount];
+        builders = new kernelBuilder[usedTileSizeCount];
         for (int i = 0; i < usedTileSizeCount; ++i) {
           builders[i] =
             customLinearMethod("axpy",
