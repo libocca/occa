@@ -34,14 +34,15 @@ namespace occa {
   class kernel_v; class kernel;
   class memory_v; class memory;
   class device_v; class device;
-
-  static const bool useParser = true;
-
   class kernelArg_t;
 
   typedef std::vector<kernelArg_t>     kArgVector_t;
   typedef kArgVector_t::iterator       kArgVectorIterator;
   typedef kArgVector_t::const_iterator cKArgVectorIterator;
+
+  typedef std::map<hash_t,occa::kernel>     hashedKernelMap_t;
+  typedef hashedKernelMap_t::iterator       hashedKernelMapIterator;
+  typedef hashedKernelMap_t::const_iterator cHashedKernelMapIterator;
 
   //---[ KernelArg ]--------------------
   namespace kArgInfo {
@@ -240,10 +241,6 @@ namespace occa {
   //====================================
 
   //---[ kernel builder ]---------------
-  typedef std::map<hash_t,occa::kernel>     hashedKernelMap_t;
-  typedef hashedKernelMap_t::iterator       hashedKernelMapIterator;
-  typedef hashedKernelMap_t::const_iterator cHashedKernelMapIterator;
-
   class kernelBuilder {
   private:
     std::string filename_;
@@ -266,6 +263,18 @@ namespace occa {
     void use(const std::string &filename,
              const std::string &function,
              const occa::properties &props = occa::properties());
+
+    occa::kernel build(occa::device device,
+                       const hash_t &hash);
+
+    occa::kernel build(occa::device device);
+
+    occa::kernel build(occa::device device,
+                       const occa::properties &props);
+
+    occa::kernel build(const int id,
+                       occa::device device,
+                       const occa::properties &props = occa::properties());
 
     occa::kernel operator [] (occa::device device);
 

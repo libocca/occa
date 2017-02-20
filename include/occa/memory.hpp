@@ -34,6 +34,11 @@ namespace occa {
   class device_v; class device;
   class kernelArg;
 
+
+  typedef std::map<hash_t,occa::memory>     hashedMemoryMap_t;
+  typedef hashedMemoryMap_t::iterator       hashedMemoryMapIterator;
+  typedef hashedMemoryMap_t::const_iterator cHashedMemoryMapIterator;
+
   namespace uvaFlag {
     static const int none         = 0;
     static const int isManaged    = (1 << 0);

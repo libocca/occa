@@ -729,6 +729,50 @@ namespace occa {
     return data_[fs_[0]*i0 + fs_[1]*i1 + fs_[2]*i2 + fs_[3]*i3 + fs_[4]*i4 + fs_[5]*i5];
   }
 
+  //---[ Linear Algebra ]---------------
+  template <class TM, const int idxType>
+  template <class TM2>
+  TM2 array<TM,idxType>::l1Norm() {
+    return linalg::l1Norm<TM,TM2>(memory);
+  }
+
+  template <class TM, const int idxType>
+  template <class TM2>
+  TM2 array<TM,idxType>::l2Norm() {
+    return linalg::l2Norm<TM,TM2>(memory);
+  }
+
+  template <class TM, const int idxType>
+  template <class TM2>
+  TM2 array<TM,idxType>::lpNorm(const float p) {
+    return linalg::lpNorm<TM,TM2>(p, memory);
+  }
+
+  template <class TM, const int idxType>
+  template <class TM2>
+  TM2 array<TM,idxType>::lInfNorm() {
+    return linalg::lInfNorm<TM,TM2>(memory);
+  }
+
+  template <class TM, const int idxType>
+  template <class TM2>
+  TM2 array<TM,idxType>::max() {
+    return linalg::max<TM,TM2>(memory);
+  }
+
+  template <class TM, const int idxType>
+  template <class TM2>
+  TM2 array<TM,idxType>::min() {
+    return linalg::min<TM,TM2>(memory);
+  }
+
+  template <class TM, const int idxType>
+  template <class TM2>
+  TM2 array<TM,idxType>::dot() {
+    return linalg::dot<TM,TM2>(memory);
+  }
+  //==================================
+
   //---[ Syncs ]------------------------
   template <class TM, const int idxType>
   void array<TM,idxType>::startManaging() {

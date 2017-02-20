@@ -73,7 +73,7 @@ namespace occa {
         return false;
       }
     }
-    return true;
+    return false;
   }
 
   bool hash_t::operator == (const hash_t &fo) const {
@@ -94,7 +94,8 @@ namespace occa {
     return false;
   }
 
-  hash_t hash_t::operator ^ (const hash_t hash) const {
+  template <>
+  hash_t hash_t::operator ^ (const hash_t &hash) const {
     hash_t mix;
     for (int i = 0; i < 8; ++i) {
       mix.h[i] = (h[i] ^ hash.h[i]);

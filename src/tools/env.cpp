@@ -55,7 +55,7 @@ namespace occa {
       properties &settings_ = settings();
       settings_["version"] = "1.0";
       settings_["parser-version"] = "0.1";
-      settings_["verboseCompilation"] = true;
+      settings_["verboseCompilation"] = false;
     }
 
     void initSignalHandling() {
