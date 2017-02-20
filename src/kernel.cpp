@@ -439,7 +439,7 @@ namespace occa {
   }
 
   bool kernelBuilder::isInitialized() {
-    return (0 < filename_.size());
+    return (0 < function_.size());
   }
 
   void kernelBuilder::use(const std::string &filename,
@@ -451,8 +451,8 @@ namespace occa {
     props_    = props;
   }
 
-  inline occa::kernel kernelBuilder::build(occa::device device,
-                                           const hash_t &hash) {
+  occa::kernel kernelBuilder::build(occa::device device,
+                                    const hash_t &hash) {
     occa::kernel &k = kernelMap[hash];
     if (!k.isInitialized()) {
       k = device.buildKernel(filename_, function_, props_);
@@ -490,6 +490,50 @@ namespace occa {
       it->second.free();
       ++it;
     }
+  }
+
+  sourceKernelBuilder::sourceKernelBuilder() {}
+
+  sourceKernelBuilder::sourceKernelBuilder(const std::string &content,
+                                           const std::string &function,
+                                           const occa::properties &props) :
+    content_(content) {
+
+    function_ = function;
+    props_ = props;
+  }
+
+  sourceKernelBuilder::sourceKernelBuilder(const sourceKernelBuilder &k) :
+    content_(k.content_) {
+    function_ = k.function_;
+    props_ = k.props_;
+    kernelMap = k.kernelMap;
+  }
+
+  sourceKernelBuilder& sourceKernelBuilder::operator = (const sourceKernelBuilder &k) {
+    content_  = k.content_;
+    function_ = k.function_;
+    props_    = k.props_;
+    kernelMap = k.kernelMap;
+    return *this;
+  }
+
+  void sourceKernelBuilder::use(const std::string &content,
+                                const std::string &function,
+                                const occa::properties &props) {
+    free();
+    content_  = content;
+    function_ = function;
+    props_    = props;
+  }
+
+  occa::kernel sourceKernelBuilder::build(occa::device device,
+                                          const hash_t &hash) {
+    occa::kernel &k = kernelMap[hash];
+    if (!k.isInitialized()) {
+      k = device.buildKernelFromString(content_, function_, props_);
+    }
+    return k;
   }
 
   //====================================

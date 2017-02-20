@@ -148,13 +148,17 @@ namespace occa {
     RETTYPE min(occa::memory vec);
 
     template <class VTYPE1, class VTYPE2, class RETTYPE>
-    RETTYPE dot(occa::memory vec);
+    RETTYPE dot(occa::memory vec1, occa::memory vec2);
 
     template <class TYPE_A, class VTYPE_X, class VTYPE_Y>
     void axpy(const TYPE_A &alpha,
               occa::memory x,
               occa::memory y,
               const int tileSize = 128);
+
+    sourceKernelBuilder customLinearMethod(const std::string &kernelName,
+                                           const std::string &formula,
+                                           const occa::properties &props = occa::properties());
     //==================================
   }
 }
