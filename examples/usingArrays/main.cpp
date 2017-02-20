@@ -59,13 +59,14 @@ int main(int argc, char **argv) {
   printVector(vec1);
 
   // Basic linear algebra routines
-  std::cout << "vec1.l1Norm()   = " << vec1.l1Norm<double>() << '\n'
-            << "vec1.l2Norm()   = " << vec1.l2Norm<double>() << '\n'
-            << "vec1.lpNorm(2)  = " << vec1.lpNorm<double>(2) << '\n'
-            << "vec1.lInfNorm() = " << vec1.lInfNorm<double>() << '\n'
-            << "vec1.dot()      = " << vec1.dot<double>(vec2) << '\n'
-            << "vec1.max()      = " << vec1.max<double>() << '\n'
-            << "vec1.min()      = " << vec1.min<double>() << '\n';
+  std::cout << "vec1.l1Norm()       = " << vec1.l1Norm<double>() << '\n'
+            << "vec1.l2Norm()       = " << vec1.l2Norm<double>() << '\n'
+            << "vec1.lpNorm(2)      = " << vec1.lpNorm<double>(2) << '\n'
+            << "vec1.lInfNorm()     = " << vec1.lInfNorm<double>() << '\n'
+            << "vec1.dot(vec2)      = " << vec1.dot<double>(vec2) << '\n'
+            << "vec1.distance(vec2) = " << vec1.distance<double>(vec2) << '\n'
+            << "vec1.max()          = " << vec1.max<double>() << '\n'
+            << "vec1.min()          = " << vec1.min<double>() << '\n';
 
   occa::array<int> a(3,3);
   occa::array<int, occa::useIdxOrder> b(3,3);

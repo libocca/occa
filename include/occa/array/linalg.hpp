@@ -150,6 +150,9 @@ namespace occa {
     template <class VTYPE1, class VTYPE2, class RETTYPE>
     RETTYPE dot(occa::memory vec1, occa::memory vec2);
 
+    template <class VTYPE1, class VTYPE2, class RETTYPE>
+    RETTYPE distance(occa::memory vec1, occa::memory vec2);
+
     template <class VTYPE, class RETTYPE>
     RETTYPE sum(occa::memory vec);
 
