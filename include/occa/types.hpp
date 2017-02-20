@@ -82,7 +82,16 @@ namespace occa {
 
   //---[ Type To String ]---------------
   template <class TM>
+  class primitiveinfo {
+  public:
+    static const std::string id;
+    static const std::string name;
+    static const bool isUnsigned;
+  };
+
+  template <class TM>
   class typeinfo {
+  public:
     static const std::string id;
     static const std::string name;
     static const bool isUnsigned;

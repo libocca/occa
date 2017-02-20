@@ -8,14 +8,12 @@ template <class TM, const int TMi>
 void printMatrix(occa::array<TM,TMi> &a);
 
 int main(int argc, char **argv) {
-  // device.setup("mode       : 'OpenCL', "
-  //              "platformID : 0, "
-  //              "deviceID   : 1, "
-  //              "uva        : true");
+  // occa::setDevice("mode       : 'OpenCL', "
+  //                 "platformID : 0, "
+  //                 "deviceID   : 1, ");
 
-  // device.setup("mode     : 'CUDA', "
-  //              "deviceID : 0, "
-  //              "uva      : true");
+  // occa::setDevice("mode     : 'CUDA', "
+  //                 "deviceID : 0, ");
 
   //---[ Testing API ]------------------
   std::cout << "Testing API:\n";
@@ -35,6 +33,15 @@ int main(int argc, char **argv) {
 
   // Can pass @idxOrder to the kernel
   std::cout << "b.idxOrderStr() = " << b.idxOrderStr() << '\n';
+
+  // Basic linear algebra routines
+  std::cout << "a.l1Norm()   = " << a.l1Norm<double>() << '\n'
+            << "a.l2Norm()   = " << a.l2Norm<double>() << '\n'
+            << "a.lpNorm(2)  = " << a.lpNorm<double>(2) << '\n'
+            << "a.lInfNorm() = " << a.lInfNorm<double>() << '\n'
+            << "a.dot()      = " << a.dot<double>() << '\n'
+            << "a.max()      = " << a.max<double>() << '\n'
+            << "a.min()      = " << a.min<double>() << '\n';
 
   // Arrays a and b print out differently
   //   due to b.setIdxOrder()

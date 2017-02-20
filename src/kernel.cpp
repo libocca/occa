@@ -203,7 +203,12 @@ namespace occa {
       header += ' ';
       header += it->first;
       header += ' ';
-      header += it->second.toString();
+      // Avoid the quotes wrapping the string
+      if (it->second.isString()) {
+        header += it->second.string();
+      } else {
+        header += it->second.toString();
+      }
       header += '\n';
       ++it;
     }
@@ -446,12 +451,37 @@ namespace occa {
     props_    = props;
   }
 
-  occa::kernel kernelBuilder::operator [] (occa::device device) {
-    occa::kernel &k = kernelMap[occa::hash(device)];
+  inline occa::kernel kernelBuilder::build(occa::device device,
+                                           const hash_t &hash) {
+    occa::kernel &k = kernelMap[hash];
     if (!k.isInitialized()) {
       k = device.buildKernel(filename_, function_, props_);
     }
     return k;
+  }
+
+  occa::kernel kernelBuilder::build(occa::device device) {
+    return build(device,
+                 hash(device));
+  }
+
+  occa::kernel kernelBuilder::build(occa::device device,
+                                    const occa::properties &props) {
+    return build(device,
+                 hash(device) ^
+                 occa::hash(props_ + props));
+  }
+
+  occa::kernel kernelBuilder::build(const int id,
+                                    occa::device device,
+                                    const occa::properties &props) {
+    return build(device,
+                 hash(device) ^ id);
+  }
+
+  occa::kernel kernelBuilder::operator [] (occa::device device) {
+    return build(device,
+                 hash(device));
   }
 
   void kernelBuilder::free() {

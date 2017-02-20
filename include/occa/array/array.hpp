@@ -20,12 +20,13 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  */
 
-#ifndef OCCA_ARRAY_HEADER
-#define OCCA_ARRAY_HEADER
+#ifndef OCCA_ARRAY_ARRAY_HEADER
+#define OCCA_ARRAY_ARRAY_HEADER
 
 #include "occa/defines.hpp"
 #include "occa/base.hpp"
 #include "occa/tools/misc.hpp"
+#include "occa/array/linalg.hpp"
 
 namespace occa {
   static const int copyOnHost          = (1 << 0);
@@ -238,8 +239,55 @@ namespace occa {
                             const udim_t i3, const udim_t i4, const udim_t i5);
     //==================================
 
-    //---[ Arithmetic Operators ]-------
+    //---[ Assignment Operators ]-------
+    template <class TM2>
+    array& operator = (const TM2 value);
 
+    template <class TM2>
+    array& operator = (const array<TM2> &value);
+
+    template <class TM2>
+    array& operator += (const TM2 value);
+
+    template <class TM2>
+    array& operator += (const array<TM2> &value);
+
+    template <class TM2>
+    array& operator -= (const TM2 value);
+
+    template <class TM2>
+    array& operator -= (const array<TM2> &value);
+
+    template <class TM2>
+    array& operator *= (const TM2 value);
+
+    template <class TM2>
+    array& operator *= (const array<TM2> &value);
+
+    template <class TM2>
+    array& operator /= (const TM2 value);
+
+    template <class TM2>
+    array& operator /= (const array<TM2> &value);
+    //==================================
+
+    //---[ Linear Algebra ]-------------
+    template <class TM2>
+    TM2 l1Norm();
+    template <class TM2>
+    TM2 l2Norm();
+    template <class TM2>
+    TM2 lpNorm(const float p);
+    template <class TM2>
+    TM2 lInfNorm();
+
+    template <class TM2>
+    TM2 max();
+    template <class TM2>
+    TM2 min();
+
+    template <class TM2>
+    TM2 dot();
     //==================================
 
     //---[ Syncs ]----------------------

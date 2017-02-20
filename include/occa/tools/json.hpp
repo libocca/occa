@@ -246,23 +246,23 @@ namespace occa {
 
     bool has(const std::string &s) const;
 
-    inline bool isString() {
+    inline bool isString() const {
       return (type == string_);
     }
 
-    inline bool isNumber() {
+    inline bool isNumber() const {
       return (type == number_);
     }
 
-    inline bool isObject() {
+    inline bool isObject() const {
       return (type == object_);
     }
 
-    inline bool isArray() {
+    inline bool isArray() const {
       return (type == array_);
     }
 
-    inline bool isBoolean() {
+    inline bool isBoolean() const {
       return (type == boolean_);
     }
 

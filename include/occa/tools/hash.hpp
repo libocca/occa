@@ -47,8 +47,10 @@ namespace occa {
     bool operator == (const hash_t &fo) const;
     bool operator != (const hash_t &fo) const;
 
-    hash_t operator ^ (const hash_t hash) const;
     hash_t& operator ^= (const hash_t hash);
+
+    template <class TM>
+    hash_t operator ^ (const TM &t) const;
 
     std::string const_toString() const;
     std::string toString();
@@ -61,9 +63,17 @@ namespace occa {
   hash_t hash(const void *ptr, udim_t bytes);
 
   template <class TM>
-  hash_t hash(const TM &t) {
+  inline hash_t hash(const TM &t) {
     return hash(&t, sizeof(TM));
   }
+
+  template <class TM>
+  inline hash_t hash_t::operator ^ (const TM &t) const {
+    return (*this ^ hash(t));
+  }
+
+  template <>
+  hash_t hash_t::operator ^ (const hash_t &hash) const;
 
   hash_t hash(const char *c);
   hash_t hash(const std::string &str);

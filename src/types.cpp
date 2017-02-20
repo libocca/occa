@@ -106,6 +106,83 @@ namespace occa {
 
   //---[ Type To String ]---------------
   template <>
+  const std::string primitiveinfo<char>::id = "c";
+  template <>
+  const std::string primitiveinfo<char>::name = "char";
+  template <>
+  const bool primitiveinfo<char>::isUnsigned = false;
+
+  template <>
+  const std::string primitiveinfo<short>::id = "s";
+  template <>
+  const std::string primitiveinfo<short>::name = "short";
+  template <>
+  const bool primitiveinfo<short>::isUnsigned = false;
+
+  template <>
+  const std::string primitiveinfo<int>::id = "i";
+  template <>
+  const std::string primitiveinfo<int>::name = "int";
+  template <>
+  const bool primitiveinfo<int>::isUnsigned = false;
+
+  template <>
+  const std::string primitiveinfo<long>::id = "l";
+  template <>
+  const std::string primitiveinfo<long>::name = "long";
+  template <>
+  const bool primitiveinfo<long>::isUnsigned = false;
+
+  template <>
+  const std::string primitiveinfo<unsigned char>::id = "uc";
+  template <>
+  const std::string primitiveinfo<unsigned char>::name = "unsigned char";
+  template <>
+  const bool primitiveinfo<unsigned char>::isUnsigned = true;
+
+  template <>
+  const std::string primitiveinfo<unsigned short>::id = "us";
+  template <>
+  const std::string primitiveinfo<unsigned short>::name = "unsigned short";
+  template <>
+  const bool primitiveinfo<unsigned short>::isUnsigned = true;
+
+  template <>
+  const std::string primitiveinfo<unsigned int>::id = "ui";
+  template <>
+  const std::string primitiveinfo<unsigned int>::name = "unsigned int";
+  template <>
+  const bool primitiveinfo<unsigned int>::isUnsigned = true;
+
+  template <>
+  const std::string primitiveinfo<unsigned long>::id = "ul";
+  template <>
+  const std::string primitiveinfo<unsigned long>::name = "unsigned long";
+  template <>
+  const bool primitiveinfo<unsigned long>::isUnsigned = true;
+
+  template <>
+  const std::string primitiveinfo<signed char>::id = "sc";
+  template <>
+  const std::string primitiveinfo<signed char>::name = "signed char";
+  template <>
+  const bool primitiveinfo<signed char>::isUnsigned = false;
+
+  template <>
+  const std::string primitiveinfo<float>::id = "f";
+  template <>
+  const std::string primitiveinfo<float>::name = "float";
+  template <>
+  const bool primitiveinfo<float>::isUnsigned = false;
+
+  template <>
+  const std::string primitiveinfo<double>::id = "d";
+  template <>
+  const std::string primitiveinfo<double>::name = "double";
+  template <>
+  const bool primitiveinfo<double>::isUnsigned = false;
+
+  template <>
   const std::string typeinfo<uint8_t>::id = "u8";
   template <>
   const std::string typeinfo<uint8_t>::name = "uint8";
