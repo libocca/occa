@@ -1,11 +1,18 @@
+#ifndef VTYPE1
+#  define VTYPE1 VTYPE
+#  define VTYPE2 VTYPE
+#endif
+#ifndef VTYPE
+#  define VTYPE VTYPE1
+#endif
+
 #define CPU_CHUNK ((entries + CPU_DOT_OUTER - 1)/ CPU_DOT_OUTER)
-#define CPU_REDUCTION_BODY(OPERATION)                 \
+#define CPU_REDUCTION_BODY(OPERATION, RED_OPERATION)  \
   for (int oi = 0; oi < CPU_DOT_OUTER; ++oi; outer) { \
     VTYPE r_red = 0;                                  \
     for (int i = 0; i < CPU_CHUNK; ++i; inner) {      \
       if ((oi * CPU_CHUNK + i) < entries) {           \
-        VTYPE vec_i = vec[oi * CPU_CHUNK + i];        \
-        OPERATION(r_red, vec_i);                      \
+        OPERATION(r_red, oi * CPU_CHUNK + i);         \
       }                                               \
     }                                                 \
     vecReduction[oi] = r_red;                         \
@@ -14,15 +21,16 @@
 
 #define GPU_DOT_BLOCK (GPU_DOT_OUTER * GPU_DOT_INNER)
 
-#define GPU_UNROLLED_DOT_ITER(N, OPERATION)         \
+#define GPU_UNROLLED_DOT_ITER(N, RED_OPERATION)     \
   for (int i = 0; i < GPU_DOT_INNER; ++i; inner) {  \
     if (GPU_DOT_BLOCK >= (2*N)) {                   \
       if (i < N) {                                  \
-        OPERATION(s_red[i], s_red[i + N]));         \
+        RED_OPERATION(s_red[i], s_red[i + N]);      \
+      }                                             \
     }                                               \
   }
 
-#define GPU_REDUCTION_BODY(OPERATION)                                   \
+#define GPU_REDUCTION_BODY(OPERATION, RED_OPERATION)                    \
   for (int oi = 0; oi < (entries + GPU_DOT_OUTER - 1)/GPU_DOT_OUTER; ++oi; outer) { \
     shared VTYPE s_red[GPU_DOT_INNER];                                  \
                                                                         \
@@ -30,21 +38,20 @@
       VTYPE r_red = 0;                                                  \
       for (int j = 0; j < GPU_DOT_BLOCK; ++j) {                         \
         if ((oi*GPU_DOT_OUTER + i*GPU_DOT_BLOCK + j) < entries) {       \
-          VTYPE vec_i = vec[oi*GPU_DOT_OUTER + i*GPU_DOT_BLOCK + j];    \
-          OPERATION(r_red, vec_i);                                      \
+          OPERATION(r_red, oi*GPU_DOT_OUTER + i*GPU_DOT_BLOCK + j);     \
         }                                                               \
       }                                                                 \
       s_red[i] = r_red;                                                 \
     }                                                                   \
                                                                         \
-    GPU_UNROLLED_DOT_ITER(256, OPERATION);                              \
-    GPU_UNROLLED_DOT_ITER(128, OPERATION);                              \
-    GPU_UNROLLED_DOT_ITER(64 , OPERATION);                              \
-    GPU_UNROLLED_DOT_ITER(32 , OPERATION);                              \
-    GPU_UNROLLED_DOT_ITER(16 , OPERATION);                              \
-    GPU_UNROLLED_DOT_ITER(8  , OPERATION);                              \
-    GPU_UNROLLED_DOT_ITER(2  , OPERATION);                              \
-    GPU_UNROLLED_DOT_ITER(1  , OPERATION);                              \
+    GPU_UNROLLED_DOT_ITER(256, RED_OPERATION);                          \
+    GPU_UNROLLED_DOT_ITER(128, RED_OPERATION);                          \
+    GPU_UNROLLED_DOT_ITER(64 , RED_OPERATION);                          \
+    GPU_UNROLLED_DOT_ITER(32 , RED_OPERATION);                          \
+    GPU_UNROLLED_DOT_ITER(16 , RED_OPERATION);                          \
+    GPU_UNROLLED_DOT_ITER(8  , RED_OPERATION);                          \
+    GPU_UNROLLED_DOT_ITER(2  , RED_OPERATION);                          \
+    GPU_UNROLLED_DOT_ITER(1  , RED_OPERATION);                          \
                                                                         \
     for (int i = 0; i < GPU_DOT_INNER; ++i; inner) {                    \
       if (i == 0) {                                                     \
@@ -59,59 +66,77 @@
 #  define REDUCTION_BODY GPU_REDUCTION_BODY
 #endif
 
+#define SUM_RED_OPERATION(red, part)            \
+  red += part
+
+#define ABS_MAX_RED_OPERATION(red, part)        \
+  red = abs(red*red > part*part ? red : part)
+
+#define MAX_RED_OPERATION(red, part)            \
+  red = red > part ? red : part
+
+#define MIN_RED_OPERATION(red, part)            \
+  red = red < part ? red : part
+
 kernel void l1Norm(const int entries,
                    const VTYPE * vec,
                    RETTYPE * vecReduction) {
-#define L1_NORM_BODY(out, in)                   \
-  out += abs(in)
-  REDUCTION_BODY(L1_NORM_BODY);
+#define L1_NORM_OPERATION(out, idx)             \
+  out += abs(vec[idx])
+  REDUCTION_BODY(L1_NORM_OPERATION, SUM_RED_OPERATION);
 }
 
 kernel void l2Norm(const int entries,
                    const VTYPE * vec,
                    RETTYPE * vecReduction) {
-#define L2_NORM_BODY(out, in)                   \
-  out += in * in;
-  REDUCTION_BODY(L2_NORM_BODY);
+#define L2_NORM_OPERATION(out, idx)             \
+  const VTYPE vec_i = vec[idx];                 \
+  out += vec_i * vec_i;
+  REDUCTION_BODY(L2_NORM_OPERATION, SUM_RED_OPERATION);
 }
 
 kernel void lpNorm(const int entries,
                    const float p,
                    const VTYPE * vec,
                    RETTYPE * vecReduction) {
-#define LP_NORM_BODY(out, in)                   \
-  out += pow(in, p)
-  REDUCTION_BODY(LP_NORM_BODY);
+#define LP_NORM_OPERATION(out, idx)             \
+  const VTYPE vec_i = vec[idx];                 \
+  out += pow(vec_i, p)
+  REDUCTION_BODY(LP_NORM_OPERATION, SUM_RED_OPERATION);
 }
 
 kernel void lInfNorm(const int entries,
                      const VTYPE * vec,
                      RETTYPE * vecReduction) {
-#define LINF_NORM_BODY(out, in)                 \
-  out = abs(out*out > in*in ? out : in)
-  REDUCTION_BODY(LINF_NORM_BODY);
+#define LINF_NORM_OPERATION(out, idx)           \
+  const VTYPE vec_i = vec[idx];                 \
+  out = abs(out*out > vec_i*vec_i ? out : vec_i)
+  REDUCTION_BODY(LINF_NORM_OPERATION, ABS_MAX_RED_OPERATION);
 }
 
 kernel void vecMax(const int entries,
                    const VTYPE * vec,
                    RETTYPE * vecReduction) {
-#define MAX_BODY(out, in)                       \
-  out = out > in ? out : in
-  REDUCTION_BODY(MAX_BODY);
+#define MAX_OPERATION(out, idx)                 \
+  const VTYPE vec_i = vec[idx];                 \
+  out = out > vec_i ? out : vec_i
+  REDUCTION_BODY(MAX_OPERATION, MAX_RED_OPERATION);
 }
 
 kernel void vecMin(const int entries,
                    const VTYPE * vec,
                    RETTYPE * vecReduction) {
-#define MIN_BODY(out, in)                       \
-  out = out < in ? out : in
-  REDUCTION_BODY(MIN_BODY);
+#define MIN_OPERATION(out, idx)                 \
+  const VTYPE vec_i = vec[idx];                 \
+  out = out < vec_i ? out : vec_i
+  REDUCTION_BODY(MIN_OPERATION, MIN_RED_OPERATION);
 }
 
 kernel void dot(const int entries,
-                const VTYPE * vec,
+                const VTYPE1 * vec1,
+                const VTYPE2 * vec2,
                 RETTYPE * vecReduction) {
-#define DOT_BODY(out, in)                       \
-  out += in * in
-  REDUCTION_BODY(DOT_BODY);
+#define DOT_OPERATION(out, idx)                 \
+  out += vec1[idx] * vec2[idx]
+  REDUCTION_BODY(DOT_OPERATION, SUM_RED_OPERATION);
 }

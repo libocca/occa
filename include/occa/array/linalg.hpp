@@ -73,7 +73,7 @@ namespace occa {
     template <class VTYPE, class RETTYPE>
     RETTYPE min(occa::memory vec);
 
-    template <class VTYPE, class RETTYPE>
+    template <class VTYPE1, class VTYPE2, class RETTYPE>
     RETTYPE dot(occa::memory vec);
   }
 }

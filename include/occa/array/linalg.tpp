@@ -194,21 +194,36 @@ namespace occa {
       return ret;
     }
 
-    template <class VTYPE, class RETTYPE>
-    RETTYPE dot(occa::memory vec) {
+    template <class VTYPE1, class VTYPE2, class RETTYPE>
+    RETTYPE dot(occa::memory vec1, occa::memory vec2) {
       static kernelBuilder builder(getKernelFile(),
                                    "dot",
                                    "defines: {"
-                                   "  VTYPE: '" + primitiveinfo<VTYPE>::name + "',"
+                                   "  VTYPE1: '" + primitiveinfo<VTYPE1>::name + "',"
+                                   "  VTYPE2: '" + primitiveinfo<VTYPE2>::name + "',"
                                    "  RETTYPE: '" + primitiveinfo<RETTYPE>::name + "',"
                                    "  CPU_DOT_OUTER: 1024,"
                                    "  GPU_DOT_OUTER: 1024,"
                                    "  GPU_DOT_INNER: 128,"
                                    "}");
-      RETTYPE *partialReduction = reduce<VTYPE,RETTYPE>(vec, builder, 1024);
+
+      OCCA_ERROR("Vectors must be in the same device",
+                 vec1.getDevice() == vec2.getDevice());
+
+      device dev = vec1.getDevice();
+      const int bufferSize = 1024;
+      RETTYPE *hostBuffer = hostReductionBuffer<RETTYPE>(bufferSize);
+      memory deviceBuffer = deviceReductionBuffer<RETTYPE>(dev, bufferSize);
+      const int entries = vec1.size() / sizeof(VTYPE1);
+      builder.build(dev)(entries,
+                         vec1,
+                         vec2,
+                         deviceBuffer);
+      dev.finish();
+      deviceBuffer.copyTo(hostBuffer);
       RETTYPE ret = 0;
       for (int i = 0; i < 1024; ++i) {
-        ret += partialReduction[i];
+        ret += hostBuffer[i];
       }
       return ret;
     }

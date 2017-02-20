@@ -731,45 +731,45 @@ namespace occa {
 
   //---[ Linear Algebra ]---------------
   template <class TM, const int idxType>
-  template <class TM2>
-  TM2 array<TM,idxType>::l1Norm() {
-    return linalg::l1Norm<TM,TM2>(memory);
+  template <class RETTYPE>
+  RETTYPE array<TM,idxType>::l1Norm() {
+    return linalg::l1Norm<TM,RETTYPE>(memory);
   }
 
   template <class TM, const int idxType>
-  template <class TM2>
-  TM2 array<TM,idxType>::l2Norm() {
-    return linalg::l2Norm<TM,TM2>(memory);
+  template <class RETTYPE>
+  RETTYPE array<TM,idxType>::l2Norm() {
+    return linalg::l2Norm<TM,RETTYPE>(memory);
   }
 
   template <class TM, const int idxType>
-  template <class TM2>
-  TM2 array<TM,idxType>::lpNorm(const float p) {
-    return linalg::lpNorm<TM,TM2>(p, memory);
+  template <class RETTYPE>
+  RETTYPE array<TM,idxType>::lpNorm(const float p) {
+    return linalg::lpNorm<TM,RETTYPE>(p, memory);
   }
 
   template <class TM, const int idxType>
-  template <class TM2>
-  TM2 array<TM,idxType>::lInfNorm() {
-    return linalg::lInfNorm<TM,TM2>(memory);
+  template <class RETTYPE>
+  RETTYPE array<TM,idxType>::lInfNorm() {
+    return linalg::lInfNorm<TM,RETTYPE>(memory);
   }
 
   template <class TM, const int idxType>
-  template <class TM2>
-  TM2 array<TM,idxType>::max() {
-    return linalg::max<TM,TM2>(memory);
+  template <class RETTYPE>
+  RETTYPE array<TM,idxType>::max() {
+    return linalg::max<TM,RETTYPE>(memory);
   }
 
   template <class TM, const int idxType>
-  template <class TM2>
-  TM2 array<TM,idxType>::min() {
-    return linalg::min<TM,TM2>(memory);
+  template <class RETTYPE>
+  RETTYPE array<TM,idxType>::min() {
+    return linalg::min<TM,RETTYPE>(memory);
   }
 
   template <class TM, const int idxType>
-  template <class TM2>
-  TM2 array<TM,idxType>::dot() {
-    return linalg::dot<TM,TM2>(memory);
+  template <class RETTYPE, class TM2, const int idxType2>
+  RETTYPE array<TM,idxType>::dot(const array<TM2, idxType2> &vec) {
+    return linalg::dot<TM,TM2,RETTYPE>(memory, vec.memory);
   }
   //==================================
 
