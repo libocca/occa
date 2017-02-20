@@ -242,7 +242,7 @@ namespace occa {
 
   //---[ kernel builder ]---------------
   class kernelBuilder {
-  private:
+  protected:
     std::string filename_;
     std::string function_;
     occa::properties props_;
@@ -264,8 +264,8 @@ namespace occa {
              const std::string &function,
              const occa::properties &props = occa::properties());
 
-    occa::kernel build(occa::device device,
-                       const hash_t &hash);
+    virtual occa::kernel build(occa::device device,
+                               const hash_t &hash);
 
     occa::kernel build(occa::device device);
 
@@ -279,6 +279,27 @@ namespace occa {
     occa::kernel operator [] (occa::device device);
 
     void free();
+  };
+
+  class sourceKernelBuilder : public kernelBuilder {
+  private:
+    std::string content_;
+
+  public:
+    sourceKernelBuilder();
+    sourceKernelBuilder(const std::string &content,
+                            const std::string &function,
+                            const occa::properties &props = occa::properties());
+
+    sourceKernelBuilder(const sourceKernelBuilder &k);
+    sourceKernelBuilder& operator = (const sourceKernelBuilder &k);
+
+    void use(const std::string &content,
+             const std::string &function,
+             const occa::properties &props = occa::properties());
+
+    virtual occa::kernel build(occa::device device,
+                               const hash_t &hash);
   };
   //====================================
 }

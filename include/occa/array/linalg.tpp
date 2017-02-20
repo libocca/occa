@@ -360,26 +360,26 @@ namespace occa {
               occa::memory y,
               const int tileSize) {
 
-      static kernelBuilder *builders;
+      static sourceKernelBuilder *builders;
       if (!builders) {
-        builders = new kernelBuilder[usedTileSizeCount];
+        builders = new sourceKernelBuilder[usedTileSizeCount];
         for (int i = 0; i < usedTileSizeCount; ++i) {
-          builders[i] = kernelBuilder(env::OCCA_DIR +
-                                      "include/occa/array/kernels/linalg.okl",
-                                      "axpy",
-                                      "defines: {"
-                                      "  TYPE_A: '" + primitiveinfo<TYPE_A>::name + "',"
-                                      "  VTYPE_X: '" + primitiveinfo<VTYPE_X>::name + "',"
-                                      "  VTYPE_Y: '" + primitiveinfo<VTYPE_Y>::name + "',"
-                                      "  TILESIZE: '" + toString(usedTileSizes[i]) + "',"
-                                      "}");
+          builders[i] =
+            customLinearMethod("axpy",
+                               "v0[i] += c0 * v1[i]",
+                               "defines: {"
+                               "  CTYPE0: '" + primitiveinfo<TYPE_A>::name + "',"
+                               "  VTYPE0: '" + primitiveinfo<VTYPE_Y>::name + "',"
+                               "  VTYPE1: '" + primitiveinfo<VTYPE_X>::name + "',"
+                               "  TILESIZE: '" + toString(usedTileSizes[i]) + "',"
+                               "}");
         }
       }
 
       const int entries = y.size() / sizeof(VTYPE_Y);
       getTiledKernel(builders,
                      y.getDevice(),
-                     tileSize)(entries, alpha, x, y);
+                     tileSize)(entries, alpha, y, x);
     }
     //==================================
   }
