@@ -1,3 +1,37 @@
+// Make sure the compiler doesn't complain if we don't define some things
+// We define what is needed on a kernel-by-kernel basis
+#ifndef RETTYPE
+#  define RETTYPE float
+#endif
+#ifndef VTYPE
+#  define VTYPE float
+#endif
+#ifndef VTYPE2
+#  define VTYPE2 float
+#endif
+#ifndef CPU_DOT_OUTER
+#  define CPU_DOT_OUTER 1
+#endif
+#ifndef GPU_DOT_OUTER
+#  define GPU_DOT_OUTER 1
+#endif
+#ifndef GPU_DOT_INNER
+#  define GPU_DOT_INNER 1
+#endif
+
+#ifndef TILESIZE
+#  define TILESIZE 128
+#endif
+#ifndef TYPE_A
+#  define TYPE_A float
+#endif
+#ifndef VTYPE_X
+#  define VTYPE_X float
+#endif
+#ifndef VTYPE_Y
+#  define VTYPE_Y float
+#endif
+
 #define CPU_CHUNK ((entries + CPU_DOT_OUTER - 1)/ CPU_DOT_OUTER)
 #define CPU_REDUCTION_BODY(OPERATION, RED_OPERATION)  \
   for (int oi = 0; oi < CPU_DOT_OUTER; ++oi; outer) { \
@@ -131,4 +165,15 @@ kernel void dot(const int entries,
 #define DOT_OPERATION(out, idx)                 \
   out += vec1[idx] * vec2[idx]
   REDUCTION_BODY(DOT_OPERATION, SUM_RED_OPERATION);
+}
+
+kernel void axpy(const int entries,
+                 const TYPE_A alpha,
+                 const VTYPE_X * x,
+                 VTYPE_Y * y) {
+  for (int i = 0; i < entries; ++i; tile(TILESIZE)) {
+    if (i < entries) {
+      y[i] += alpha * x[i];
+    }
+  }
 }

@@ -36,10 +36,10 @@ namespace occa {
 
     template <class VTYPE_IN, class VTYPE_OUT>
     kernelBuilder* makeAssignmentBuilders(const std::string &kernelName) {
-      kernelBuilder *builders = new kernelBuilder[assigmentTileSizeCount];
-      for (int i = 0; i < assigmentTileSizeCount; ++i) {
+      kernelBuilder *builders = new kernelBuilder[usedTileSizeCount];
+      for (int i = 0; i < usedTileSizeCount; ++i) {
         builders[i] = makeAssignmentBuilder<VTYPE_IN,VTYPE_OUT>(kernelName,
-                                                                assigmentTileSizes[i]);
+                                                                usedTileSizes[i]);
       }
       return builders;
     }
@@ -81,9 +81,9 @@ namespace occa {
         makeAssignmentBuilders<VTYPE_OUT,VTYPE_OUT>("eq_const");
 
       const int entries = vec.size() / sizeof(VTYPE_OUT);
-      getAssignmentKernel(builders,
-                          vec.getDevice(),
-                          tileSize)(entries, value, vec);
+      getTiledKernel(builders,
+                     vec.getDevice(),
+                     tileSize)(entries, value, vec);
     }
 
     template <class VTYPE_OUT>
@@ -94,9 +94,9 @@ namespace occa {
         makeAssignmentBuilders<VTYPE_OUT,VTYPE_OUT>("plus_eq_const");
 
       const int entries = vec.size() / sizeof(VTYPE_OUT);
-      getAssignmentKernel(builders,
-                          vec.getDevice(),
-                          tileSize)(entries, value, vec);
+      getTiledKernel(builders,
+                     vec.getDevice(),
+                     tileSize)(entries, value, vec);
     }
 
     template <class VTYPE_IN, class VTYPE_OUT>
@@ -107,9 +107,9 @@ namespace occa {
         makeAssignmentBuilders<VTYPE_IN,VTYPE_OUT>("plus_eq");
 
       const int entries = in.size() / sizeof(VTYPE_OUT);
-      getAssignmentKernel(builders,
-                          in.getDevice(),
-                          tileSize)(entries, in, out);
+      getTiledKernel(builders,
+                     in.getDevice(),
+                     tileSize)(entries, in, out);
     }
 
     template <class VTYPE_OUT>
@@ -120,9 +120,9 @@ namespace occa {
         makeAssignmentBuilders<VTYPE_OUT,VTYPE_OUT>("sub_eq_const");
 
       const int entries = vec.size() / sizeof(VTYPE_OUT);
-      getAssignmentKernel(builders,
-                          vec.getDevice(),
-                          tileSize)(entries, value, vec);
+      getTiledKernel(builders,
+                     vec.getDevice(),
+                     tileSize)(entries, value, vec);
     }
 
     template <class VTYPE_IN, class VTYPE_OUT>
@@ -133,9 +133,9 @@ namespace occa {
         makeAssignmentBuilders<VTYPE_IN,VTYPE_OUT>("sub_eq");
 
       const int entries = in.size() / sizeof(VTYPE_OUT);
-      getAssignmentKernel(builders,
-                          in.getDevice(),
-                          tileSize)(entries, in, out);
+      getTiledKernel(builders,
+                     in.getDevice(),
+                     tileSize)(entries, in, out);
     }
 
     template <class VTYPE_OUT>
@@ -146,9 +146,9 @@ namespace occa {
         makeAssignmentBuilders<VTYPE_OUT,VTYPE_OUT>("mult_eq_const");
 
       const int entries = vec.size() / sizeof(VTYPE_OUT);
-      getAssignmentKernel(builders,
-                          vec.getDevice(),
-                          tileSize)(entries, value, vec);
+      getTiledKernel(builders,
+                     vec.getDevice(),
+                     tileSize)(entries, value, vec);
     }
 
     template <class VTYPE_IN, class VTYPE_OUT>
@@ -159,9 +159,9 @@ namespace occa {
         makeAssignmentBuilders<VTYPE_IN,VTYPE_OUT>("mult_eq");
 
       const int entries = in.size() / sizeof(VTYPE_OUT);
-      getAssignmentKernel(builders,
-                          in.getDevice(),
-                          tileSize)(entries, in, out);
+      getTiledKernel(builders,
+                     in.getDevice(),
+                     tileSize)(entries, in, out);
     }
 
     template <class VTYPE_OUT>
@@ -172,9 +172,9 @@ namespace occa {
         makeAssignmentBuilders<VTYPE_OUT,VTYPE_OUT>("div_eq_const");
 
       const int entries = vec.size() / sizeof(VTYPE_OUT);
-      getAssignmentKernel(builders,
-                          vec.getDevice(),
-                          tileSize)(entries, value, vec);
+      getTiledKernel(builders,
+                     vec.getDevice(),
+                     tileSize)(entries, value, vec);
     }
 
     template <class VTYPE_IN, class VTYPE_OUT>
@@ -185,9 +185,9 @@ namespace occa {
         makeAssignmentBuilders<VTYPE_IN,VTYPE_OUT>("div_eq");
 
       const int entries = in.size() / sizeof(VTYPE_OUT);
-      getAssignmentKernel(builders,
-                          in.getDevice(),
-                          tileSize)(entries, in, out);
+      getTiledKernel(builders,
+                     in.getDevice(),
+                     tileSize)(entries, in, out);
     }
     //==================================
 
@@ -352,6 +352,34 @@ namespace occa {
         ret += hostBuffer[i];
       }
       return ret;
+    }
+
+    template <class TYPE_A, class VTYPE_X, class VTYPE_Y>
+    void axpy(const TYPE_A &alpha,
+              occa::memory x,
+              occa::memory y,
+              const int tileSize) {
+
+      static kernelBuilder *builders;
+      if (!builders) {
+        builders = new kernelBuilder[usedTileSizeCount];
+        for (int i = 0; i < usedTileSizeCount; ++i) {
+          builders[i] = kernelBuilder(env::OCCA_DIR +
+                                      "include/occa/array/kernels/linalg.okl",
+                                      "axpy",
+                                      "defines: {"
+                                      "  TYPE_A: '" + primitiveinfo<TYPE_A>::name + "',"
+                                      "  VTYPE_X: '" + primitiveinfo<VTYPE_X>::name + "',"
+                                      "  VTYPE_Y: '" + primitiveinfo<VTYPE_Y>::name + "',"
+                                      "  TILESIZE: '" + toString(usedTileSizes[i]) + "',"
+                                      "}");
+        }
+      }
+
+      const int entries = y.size() / sizeof(VTYPE_Y);
+      getTiledKernel(builders,
+                     y.getDevice(),
+                     tileSize)(entries, alpha, x, y);
     }
     //==================================
   }

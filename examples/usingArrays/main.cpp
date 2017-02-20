@@ -50,6 +50,14 @@ int main(int argc, char **argv) {
   std::cout << "vec1 /= vec2\n";
   printVector(vec1);
 
+  std::cout << "vec1 += -1*vec2 (axpy)\n";
+  vec1.sum(-1, vec2);
+  printVector(vec1);
+
+  std::cout << "vec1 += 10*vec2 (axpy)\n";
+  vec1.sum(10, vec2);
+  printVector(vec1);
+
   // Basic linear algebra routines
   std::cout << "vec1.l1Norm()   = " << vec1.l1Norm<double>() << '\n'
             << "vec1.l2Norm()   = " << vec1.l2Norm<double>() << '\n'

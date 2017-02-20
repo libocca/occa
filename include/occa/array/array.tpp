@@ -832,6 +832,14 @@ namespace occa {
   RETTYPE array<TM,idxType>::dot(const array<TM2, idxType2> &vec) {
     return linalg::dot<TM,TM2,RETTYPE>(memory, vec.memory);
   }
+
+  template <class TM, const int idxType>
+  template <class TYPE_A, class TM2, const int idxType2>
+  array<TM,idxType>& array<TM,idxType>::sum(const TYPE_A alpha,
+                                            const array<TM2, idxType2> &vec) {
+    linalg::axpy<TYPE_A,TM2,TM>(alpha, vec.memory, memory);
+    return *this;
+  }
   //==================================
 
   //---[ Syncs ]------------------------
