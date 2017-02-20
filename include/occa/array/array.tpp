@@ -834,6 +834,12 @@ namespace occa {
   }
 
   template <class TM, const int idxType>
+  template <class RETTYPE, class TM2, const int idxType2>
+  RETTYPE array<TM,idxType>::distance(const array<TM2, idxType2> &vec) {
+    return linalg::distance<TM,TM2,RETTYPE>(memory, vec.memory);
+  }
+
+  template <class TM, const int idxType>
   template <class TYPE_A, class TM2, const int idxType2>
   array<TM,idxType>& array<TM,idxType>::sum(const TYPE_A alpha,
                                             const array<TM2, idxType2> &vec) {

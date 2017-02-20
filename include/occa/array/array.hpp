@@ -281,6 +281,9 @@ namespace occa {
     template <class RETTYPE, class TM2, const int idxType2>
     RETTYPE dot(const array<TM2, idxType2> &vec);
 
+    template <class RETTYPE, class TM2, const int idxType2>
+    RETTYPE distance(const array<TM2, idxType2> &vec);
+
     template <class TYPE_A, class TM2, const int idxType2>
     array& sum(const TYPE_A alpha,
                const array<TM2, idxType2> &vec);
