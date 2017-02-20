@@ -417,45 +417,57 @@ namespace occa {
   //---[ kernel builder ]---------------
   kernelBuilder::kernelBuilder() {}
 
-  kernelBuilder::kernelBuilder(const std::string &filename,
-                               const std::string &function,
-                               const occa::properties &props) :
-    filename_(filename),
-    function_(function),
-    props_(props) {}
-
   kernelBuilder::kernelBuilder(const kernelBuilder &k) :
-    filename_(k.filename_),
+    source_(k.source_),
     function_(k.function_),
     props_(k.props_),
-    kernelMap(k.kernelMap) {}
+    kernelMap(k.kernelMap),
+    buildingFromFile(k.buildingFromFile) {}
 
   kernelBuilder& kernelBuilder::operator = (const kernelBuilder &k) {
-    filename_ = k.filename_;
+    source_   = k.source_;
     function_ = k.function_;
     props_    = k.props_;
     kernelMap = k.kernelMap;
+    buildingFromFile = k.buildingFromFile;
     return *this;
+  }
+
+  kernelBuilder kernelBuilder::fromFile(const std::string &filename,
+                                        const std::string &function,
+                                        const occa::properties &props) {
+    kernelBuilder builder;
+    builder.source_   = filename;
+    builder.function_ = function;
+    builder.props_    = props;
+    builder.buildingFromFile = true;
+    return builder;
+  }
+
+  kernelBuilder kernelBuilder::fromString(const std::string &content,
+                                          const std::string &function,
+                                          const occa::properties &props) {
+    kernelBuilder builder;
+    builder.source_   = content;
+    builder.function_ = function;
+    builder.props_    = props;
+    builder.buildingFromFile = false;
+    return builder;
   }
 
   bool kernelBuilder::isInitialized() {
     return (0 < function_.size());
   }
 
-  void kernelBuilder::use(const std::string &filename,
-                          const std::string &function,
-                          const occa::properties &props) {
-    free();
-    filename_ = filename;
-    function_ = function;
-    props_    = props;
-  }
-
   occa::kernel kernelBuilder::build(occa::device device,
                                     const hash_t &hash) {
     occa::kernel &k = kernelMap[hash];
     if (!k.isInitialized()) {
-      k = device.buildKernel(filename_, function_, props_);
+      if (buildingFromFile) {
+        k = device.buildKernel(source_, function_, props_);
+      } else {
+        k = device.buildKernelFromString(source_, function_, props_);
+      }
     }
     return k;
   }
@@ -491,50 +503,5 @@ namespace occa {
       ++it;
     }
   }
-
-  sourceKernelBuilder::sourceKernelBuilder() {}
-
-  sourceKernelBuilder::sourceKernelBuilder(const std::string &content,
-                                           const std::string &function,
-                                           const occa::properties &props) :
-    content_(content) {
-
-    function_ = function;
-    props_ = props;
-  }
-
-  sourceKernelBuilder::sourceKernelBuilder(const sourceKernelBuilder &k) :
-    content_(k.content_) {
-    function_ = k.function_;
-    props_ = k.props_;
-    kernelMap = k.kernelMap;
-  }
-
-  sourceKernelBuilder& sourceKernelBuilder::operator = (const sourceKernelBuilder &k) {
-    content_  = k.content_;
-    function_ = k.function_;
-    props_    = k.props_;
-    kernelMap = k.kernelMap;
-    return *this;
-  }
-
-  void sourceKernelBuilder::use(const std::string &content,
-                                const std::string &function,
-                                const occa::properties &props) {
-    free();
-    content_  = content;
-    function_ = function;
-    props_    = props;
-  }
-
-  occa::kernel sourceKernelBuilder::build(occa::device device,
-                                          const hash_t &hash) {
-    occa::kernel &k = kernelMap[hash];
-    if (!k.isInitialized()) {
-      k = device.buildKernelFromString(content_, function_, props_);
-    }
-    return k;
-  }
-
   //====================================
 }

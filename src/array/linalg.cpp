@@ -30,11 +30,11 @@
 namespace occa {
   namespace linalg {
     // "v0[i] = c1 * (v0[i] + v1[i])"
-    sourceKernelBuilder customLinearMethod(const std::string &kernelName,
-                                           const std::string &formula,
-                                           const occa::properties &props) {
+    kernelBuilder customLinearMethod(const std::string &kernelName,
+                                     const std::string &formula,
+                                     const occa::properties &props) {
 
-      sourceKernelBuilder builder;
+      kernelBuilder builder;
 
       // Extract input and constant counts
       intVector_t inputs, constants;
@@ -126,7 +126,7 @@ namespace occa {
         "  }\n"
         "}\n";
 
-      return sourceKernelBuilder(ss.str(), kernelName, props);
+      return kernelBuilder::fromString(ss.str(), kernelName, props);
     }
   }
 }
