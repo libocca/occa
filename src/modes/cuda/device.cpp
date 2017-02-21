@@ -196,7 +196,7 @@ namespace occa {
 
     //  |---[ Memory ]------------------
     memory_v* device::malloc(const udim_t bytes,
-                             void *src,
+                             const void *src,
                              const occa::properties &props) {
 
       if (props.get<bool>("mapped")) {
@@ -221,7 +221,7 @@ namespace occa {
     }
 
     memory_v* device::mappedAlloc(const udim_t bytes,
-                                  void *src) {
+                                  const void *src) {
 
       cuda::memory *mem = new cuda::memory();
       mem->dHandle = this;

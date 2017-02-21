@@ -67,7 +67,7 @@ namespace occa {
 
       //  |---[ Kernel ]----------------
       memory_v* malloc(const udim_t bytes,
-                       void *src,
+                       const void *src,
                        const occa::properties &props);
 
       memory_v* wrapMemory(void *handle_,

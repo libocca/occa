@@ -82,11 +82,11 @@ namespace occa {
 
   //---[ Memory Functions ]-------------
   occa::memory malloc(const dim_t bytes,
-                      void *src = NULL,
+                      const void *src = NULL,
                       const occa::properties &props = occa::properties());
 
   void* uvaAlloc(const dim_t bytes,
-                 void *src = NULL,
+                 const void *src = NULL,
                  const occa::properties &props = occa::properties());
 
   occa::memory wrapMemory(void *handle_,

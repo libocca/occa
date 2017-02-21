@@ -94,7 +94,7 @@ namespace occa {
 
     //  |---[ Memory ]------------------
     virtual memory_v* malloc(const udim_t bytes,
-                             void* src,
+                             const void* src,
                              const occa::properties &props) = 0;
 
     virtual memory_v* wrapMemory(void *handle_,
@@ -171,11 +171,11 @@ namespace occa {
 
     //  |---[ Memory ]------------------
     occa::memory malloc(const dim_t bytes,
-                        void *src = NULL,
+                        const void *src = NULL,
                         const occa::properties &props = occa::properties());
 
     void* uvaAlloc(const dim_t bytes,
-                   void *src = NULL,
+                   const void *src = NULL,
                    const occa::properties &props = occa::properties());
 
     occa::memory wrapMemory(void *handle_,
