@@ -43,6 +43,7 @@ namespace occa {
 
       const char *c = formula.c_str();
       while (*c) {
+        // Input vectors/constants are of the format [cv][0-9]+
         if ((*c == 'v') || (*c == 'c')) {
           intVector_t &vec = (*c == 'v') ? inputs : constants;
           int &minVal = (*c == 'v') ? minInput : minConstant;
@@ -50,8 +51,11 @@ namespace occa {
 
           const char *cStart = ++c;
           lex::skipFrom(c, lex::numChars);
-          OCCA_ERROR("Digit must follow 'v' or 'c'",
-                     cStart != c);
+          // This is not the 'v' or 'c' you're looking for
+          if (cStart == c) {
+            ++c;
+            continue;
+          }
 
           const int idx = occa::atoi(std::string(cStart, c - cStart));
           if (std::find(vec.begin(), vec.end(), idx) == vec.end()) {
