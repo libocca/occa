@@ -171,7 +171,7 @@ namespace occa {
     }
 
     memory_v* device::malloc(const udim_t bytes,
-                             void *src,
+                             const void *src,
                              const occa::properties &props) {
       memory *mem = new memory();
 

@@ -543,7 +543,7 @@ void OCCA_RFUNC occaMemorySwap(occaMemory a, occaMemory b) {
 }
 
 occaMemory OCCA_RFUNC occaMalloc(const occaUDim_t bytes,
-                                 void *src,
+                                 const void *src,
                                  occaProperties props) {
   occa::properties &props_ = occa::c::getProperties(props);
   occa::memory memory_ = occa::malloc(bytes, src, props_);
@@ -554,7 +554,7 @@ occaMemory OCCA_RFUNC occaMalloc(const occaUDim_t bytes,
 }
 
 void* OCCA_RFUNC occaUvaAlloc(const occaUDim_t bytes,
-                              void *src,
+                              const void *src,
                               occaProperties props) {
 
   occa::properties &props_ = occa::c::getProperties(props);
@@ -651,7 +651,7 @@ occaKernel OCCA_RFUNC occaDeviceBuildKernelFromBinary(occaDevice device,
 
 occaMemory OCCA_RFUNC occaDeviceMalloc(occaDevice device,
                                        const occaUDim_t bytes,
-                                       void *src,
+                                       const void *src,
                                        occaProperties props) {
 
   occa::device device_ = occa::c::getDevice(device);
@@ -665,7 +665,7 @@ occaMemory OCCA_RFUNC occaDeviceMalloc(occaDevice device,
 
 void* OCCA_RFUNC occaDeviceUvaAlloc(occaDevice device,
                                     const occaUDim_t bytes,
-                                    void *src,
+                                    const void *src,
                                     occaProperties props) {
 
   occa::device device_ = occa::c::getDevice(device);
@@ -892,7 +892,7 @@ void* OCCA_RFUNC occaMemoryGetHandle(occaMemory memory,
   return occa::c::getMemory(memory).getHandle(occa::c::getProperties(props));
 }
 
-void OCCA_RFUNC occaMemcpy(void *dest, void *src,
+void OCCA_RFUNC occaMemcpy(void *dest, const void *src,
                            const occaUDim_t bytes,
                            occaProperties props) {
   if (!occa::c::isDefault(props)) {

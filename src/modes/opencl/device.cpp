@@ -214,7 +214,7 @@ namespace occa {
 
     //  |---[ Memory ]------------------
     memory_v* device::malloc(const udim_t bytes,
-                             void *src,
+                             const void *src,
                              const occa::properties &props) {
 
       if (props.get<bool>("mapped")) {
@@ -235,7 +235,7 @@ namespace occa {
       } else {
         *((cl_mem*) mem->handle) = clCreateBuffer(clContext,
                                                   CL_MEM_READ_WRITE | CL_MEM_COPY_HOST_PTR,
-                                                  bytes, src, &error);
+                                                  bytes, const_cast<void*>(src), &error);
 
         finish();
       }
@@ -244,7 +244,7 @@ namespace occa {
     }
 
     memory_v* device::mappedAlloc(const udim_t bytes,
-                                  void *src) {
+                                  const void *src) {
 
       cl_int error;
 

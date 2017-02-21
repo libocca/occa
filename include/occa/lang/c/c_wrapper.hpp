@@ -166,11 +166,11 @@ OCCA_LFUNC occaKernel OCCA_RFUNC occaBuildKernelFromBinary(const char *filename,
 OCCA_LFUNC void OCCA_RFUNC occaMemorySwap(occaMemory a, occaMemory b);
 
 OCCA_LFUNC occaMemory OCCA_RFUNC occaMalloc(const occaUDim_t bytes,
-                                            void *src,
+                                            const void *src,
                                             occaProperties props);
 
 OCCA_LFUNC void* OCCA_RFUNC occaUvaAlloc(const occaUDim_t bytes,
-                                         void *src,
+                                         const void *src,
                                          occaProperties props);
 
 OCCA_LFUNC occaMemory OCCA_RFUNC occaWrapMemory(void *handle_,
@@ -207,12 +207,12 @@ OCCA_LFUNC occaKernel OCCA_RFUNC occaDeviceBuildKernelFromBinary(occaDevice devi
 
 OCCA_LFUNC occaMemory OCCA_RFUNC occaDeviceMalloc(occaDevice device,
                                                   const occaUDim_t bytes,
-                                                  void *src,
+                                                  const void *src,
                                                   occaProperties props);
 
 OCCA_LFUNC void* OCCA_RFUNC occaDeviceUvaAlloc(occaDevice device,
                                                const occaUDim_t bytes,
-                                               void *src,
+                                               const void *src,
                                                occaProperties props);
 
 OCCA_LFUNC occaMemory OCCA_RFUNC occaDeviceWrapMemory(occaDevice device,
@@ -285,7 +285,7 @@ OCCA_LFUNC const char* OCCA_RFUNC occaMemoryMode(occaMemory memory);
 OCCA_LFUNC void* OCCA_RFUNC occaMemoryGetHandle(occaMemory mem,
                                                 occaProperties props);
 
-OCCA_LFUNC void OCCA_RFUNC occaMemcpy(void *dest, void *src,
+OCCA_LFUNC void OCCA_RFUNC occaMemcpy(void *dest, const void *src,
                                       const occaUDim_t bytes,
                                       occaProperties props);
 

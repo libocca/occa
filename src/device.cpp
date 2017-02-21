@@ -326,7 +326,7 @@ namespace occa {
 
   //  |---[ Memory ]--------------------
   memory device::malloc(const dim_t bytes,
-                        void *src,
+                        const void *src,
                         const occa::properties &props) {
     OCCA_ERROR("Trying to allocate negative bytes (" << bytes << ")",
                bytes >= 0);
@@ -341,7 +341,7 @@ namespace occa {
   }
 
   void* device::uvaAlloc(const dim_t bytes,
-                         void *src,
+                         const void *src,
                          const occa::properties &props) {
     OCCA_ERROR("Trying to allocate negative bytes (" << bytes << ")",
                bytes >= 0);

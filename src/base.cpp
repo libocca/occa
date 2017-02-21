@@ -120,14 +120,14 @@ namespace occa {
 
   //---[ Memory Functions ]-------------
   occa::memory malloc(const dim_t bytes,
-                      void *src,
+                      const void *src,
                       const occa::properties &props) {
 
     return currentDevice().malloc(bytes, src, props);
   }
 
   void* uvaAlloc(const dim_t bytes,
-                 void *src,
+                 const void *src,
                  const occa::properties &props) {
 
     return currentDevice().uvaAlloc(bytes, src, props);
