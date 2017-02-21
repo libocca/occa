@@ -61,166 +61,166 @@ namespace occa {
       jsonObject_t object;
       jsonArray_t array;
       bool boolean;
-    } value;
+    } value_;
 
     json(type_t type_ = none_);
     json(const json &j);
 
-    inline json(const bool boolean) :
+    inline json(const bool value) :
       type(boolean_) {
-      value.boolean = boolean;
+      value_.boolean = value;
     }
 
-    inline json(const uint8_t number) :
+    inline json(const uint8_t value) :
       type(number_) {
-      value.number = number;
+      value_.number = value;
     }
 
-    inline json(const int8_t number) :
+    inline json(const int8_t value) :
       type(number_) {
-      value.number = number;
+      value_.number = value;
     }
 
-    inline json(const uint16_t number) :
+    inline json(const uint16_t value) :
       type(number_) {
-      value.number = number;
+      value_.number = value;
     }
 
-    inline json(const int16_t number) :
+    inline json(const int16_t value) :
       type(number_) {
-      value.number = number;
+      value_.number = value;
     }
 
-    inline json(const uint32_t number) :
+    inline json(const uint32_t value) :
       type(number_) {
-      value.number = number;
+      value_.number = value;
     }
 
-    inline json(const int32_t number) :
+    inline json(const int32_t value) :
       type(number_) {
-      value.number = number;
+      value_.number = value;
     }
 
-    inline json(const uint64_t number) :
+    inline json(const uint64_t value) :
       type(number_) {
-      value.number = number;
+      value_.number = value;
     }
 
-    inline json(const int64_t number) :
+    inline json(const int64_t value) :
       type(number_) {
-      value.number = number;
+      value_.number = value;
     }
 
-    inline json(const double number) :
+    inline json(const double value) :
       type(number_) {
-      value.number = number;
+      value_.number = value;
     }
 
-    inline json(const primitive &number) :
+    inline json(const primitive &value) :
       type(number_) {
-      value.number = number;
+      value_.number = value;
     }
 
-    inline json(const std::string &string) :
+    inline json(const std::string &value) :
       type(string_) {
-      value.string = string;
+      value_.string = value;
     }
 
-    inline json(const jsonObject_t &object) :
+    inline json(const jsonObject_t &value) :
       type(object_) {
-      value.object = object;
+      value_.object = value;
     }
 
-    inline json(const jsonArray_t &array) :
+    inline json(const jsonArray_t &value) :
       type(array_) {
-      value.array = array;
+      value_.array = value;
     }
 
     json& clear();
 
     json& operator = (const json &j);
 
-    inline json& operator = (const std::string &string) {
+    inline json& operator = (const std::string &value) {
       type = string_;
-      value.string = string;
+      value_.string = value;
       return *this;
     }
 
-    inline json& operator = (const bool boolean) {
+    inline json& operator = (const bool value) {
       type = boolean_;
-      value.boolean = boolean;
+      value_.boolean = value;
       return *this;
     }
 
-    inline json& operator = (const uint8_t number) {
+    inline json& operator = (const uint8_t value) {
       type = number_;
-      value.number = number;
+      value_.number = value;
       return *this;
     }
 
-    inline json& operator = (const int8_t number) {
+    inline json& operator = (const int8_t value) {
       type = number_;
-      value.number = number;
+      value_.number = value;
       return *this;
     }
 
-    inline json& operator = (const uint16_t number) {
+    inline json& operator = (const uint16_t value) {
       type = number_;
-      value.number = number;
+      value_.number = value;
       return *this;
     }
 
-    inline json& operator = (const int16_t number) {
+    inline json& operator = (const int16_t value) {
       type = number_;
-      value.number = number;
+      value_.number = value;
       return *this;
     }
 
-    inline json& operator = (const uint32_t number) {
+    inline json& operator = (const uint32_t value) {
       type = number_;
-      value.number = number;
+      value_.number = value;
       return *this;
     }
 
-    inline json& operator = (const int32_t number) {
+    inline json& operator = (const int32_t value) {
       type = number_;
-      value.number = number;
+      value_.number = value;
       return *this;
     }
 
-    inline json& operator = (const uint64_t number) {
+    inline json& operator = (const uint64_t value) {
       type = number_;
-      value.number = number;
+      value_.number = value;
       return *this;
     }
 
-    inline json& operator = (const int64_t number) {
+    inline json& operator = (const int64_t value) {
       type = number_;
-      value.number = number;
+      value_.number = value;
       return *this;
     }
 
-    inline json& operator = (const double number) {
+    inline json& operator = (const double value) {
       type = number_;
-      value.number = number;
+      value_.number = value;
       return *this;
     }
 
-    inline json& operator = (const primitive &number) {
+    inline json& operator = (const primitive &value) {
       type = number_;
-      value.number = number;
+      value_.number = value;
       return *this;
     }
 
-    inline json& operator = (const jsonObject_t &object) {
+    inline json& operator = (const jsonObject_t &value) {
       type = object_;
-      value.object = object;
+      value_.object = value;
       return *this;
     }
 
-    inline json& operator = (const jsonArray_t &array) {
+    inline json& operator = (const jsonArray_t &value) {
       type = array_;
-      value.array = array;
+      value_.array = value;
       return *this;
     }
 
@@ -292,43 +292,43 @@ namespace occa {
     }
 
     inline std::string& string() {
-      return value.string;
+      return value_.string;
     }
 
     inline primitive& number() {
-      return value.number;
+      return value_.number;
     }
 
     inline jsonObject_t& object() {
-      return value.object;
+      return value_.object;
     }
 
     inline jsonArray_t& array() {
-      return value.array;
+      return value_.array;
     }
 
     inline bool& boolean() {
-      return value.boolean;
+      return value_.boolean;
     }
 
     inline const std::string& string() const {
-      return value.string;
+      return value_.string;
     }
 
     inline const primitive& number() const {
-      return value.number;
+      return value_.number;
     }
 
     inline const jsonObject_t& object() const {
-      return value.object;
+      return value_.object;
     }
 
     inline const jsonArray_t& array() const {
-      return value.array;
+      return value_.array;
     }
 
     inline bool boolean() const {
-      return value.boolean;
+      return value_.boolean;
     }
 
     json& operator [] (const char *c);
@@ -357,8 +357,8 @@ namespace occa {
           ++c;
         }
 
-        cJsonObjectIterator it = j->value.object.find(key);
-        if (it == j->value.object.end()) {
+        cJsonObjectIterator it = j->value_.object.find(key);
+        if (it == j->value_.object.end()) {
           return default_;
         }
         j = &(it->second);
@@ -395,8 +395,8 @@ namespace occa {
           ++c;
         }
 
-        cJsonObjectIterator it = j->value.object.find(key);
-        if (it == j->value.object.end()) {
+        cJsonObjectIterator it = j->value_.object.find(key);
+        if (it == j->value_.object.end()) {
           return default_;
         }
         j = &(it->second);
@@ -405,10 +405,10 @@ namespace occa {
         return default_;
       }
 
-      const int entries = (int) j->value.array.size();
+      const int entries = (int) j->value_.array.size();
       std::vector<TM> ret;
       for (int i = 0; i < entries; ++i) {
-        ret.push_back((TM) j->value.array[i]);
+        ret.push_back((TM) j->value_.array[i]);
       }
       return ret;
     }
@@ -434,15 +434,15 @@ namespace occa {
       case none_:
         return true;
       case string_:
-        return value.string == j.value.string;
+        return value_.string == j.value_.string;
       case number_:
-        return value.number == j.value.number;
+        return value_.number == j.value_.number;
       case object_:
-        return value.object == j.value.object;
+        return value_.object == j.value_.object;
       case array_:
-        return value.array == j.value.array;
+        return value_.array == j.value_.array;
       case boolean_:
-        return value.boolean == j.value.boolean;
+        return value_.boolean == j.value_.boolean;
       case null_:
         return true;
       default:
@@ -451,51 +451,51 @@ namespace occa {
     }
 
     inline operator bool () const {
-      return value.boolean;
+      return value_.boolean;
     }
 
     inline operator uint8_t () const {
-      return (uint8_t) value.number;
+      return (uint8_t) value_.number;
     }
 
     inline operator uint16_t () const {
-      return (uint16_t) value.number;
+      return (uint16_t) value_.number;
     }
 
     inline operator uint32_t () const {
-      return (uint32_t) value.number;
+      return (uint32_t) value_.number;
     }
 
     inline operator uint64_t () const {
-      return (uint64_t) value.number;
+      return (uint64_t) value_.number;
     }
 
     inline operator int8_t () const {
-      return (int8_t) value.number;
+      return (int8_t) value_.number;
     }
 
     inline operator int16_t () const {
-      return (int16_t) value.number;
+      return (int16_t) value_.number;
     }
 
     inline operator int32_t () const {
-      return (int32_t) value.number;
+      return (int32_t) value_.number;
     }
 
     inline operator int64_t () const {
-      return (int64_t) value.number;
+      return (int64_t) value_.number;
     }
 
     inline operator float () const {
-      return (float) value.number;
+      return (float) value_.number;
     }
 
     inline operator double () const {
-      return (double) value.number;
+      return (double) value_.number;
     }
 
     inline operator std::string () const {
-      return value.string;
+      return value_.string;
     }
 
     hash_t hash() const;

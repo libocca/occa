@@ -36,21 +36,21 @@ namespace occa {
 
   json::json(const json &j) :
     type(j.type),
-    value(j.value) {}
+    value_(j.value_) {}
 
   json& json::clear() {
     type = none_;
-    value.string = "";
-    value.number = 0;
-    value.object.clear();
-    value.array.clear();
-    value.boolean = false;
+    value_.string = "";
+    value_.number = 0;
+    value_.object.clear();
+    value_.array.clear();
+    value_.boolean = false;
     return *this;
   }
 
   json& json::operator = (const json &j) {
     type = j.type;
-    value = j.value;
+    value_ = j.value_;
     return *this;
   }
 
@@ -102,14 +102,14 @@ namespace occa {
       if (*c == '\\') {
         ++c;
         switch (*c) {
-        case '"':  value.string += '"';  break;
-        case '\\': value.string += '\\'; break;
-        case '/':  value.string += '/';  break;
-        case 'b':  value.string += '\b'; break;
-        case 'f':  value.string += '\f'; break;
-        case 'n':  value.string += '\n'; break;
-        case 'r':  value.string += '\r'; break;
-        case 't':  value.string += '\t'; break;
+        case '"':  value_.string += '"';  break;
+        case '\\': value_.string += '\\'; break;
+        case '/':  value_.string += '/';  break;
+        case 'b':  value_.string += '\b'; break;
+        case 'f':  value_.string += '\f'; break;
+        case 'n':  value_.string += '\n'; break;
+        case 'r':  value_.string += '\r'; break;
+        case 't':  value_.string += '\t'; break;
         case 'u':
           OCCA_FORCE_ERROR("Unicode is not supported yet");
           break;
@@ -121,7 +121,7 @@ namespace occa {
         ++c;
         return;
       } else {
-        value.string += *(c++);
+        value_.string += *(c++);
       }
     }
     OCCA_FORCE_ERROR("Unclosed string");
@@ -129,7 +129,7 @@ namespace occa {
 
   void json::loadNumber(const char *&c) {
     type = number_;
-    value.number = primitive::load(c);
+    value_.number = primitive::load(c);
   }
 
   void json::loadObject(const char *&c) {
@@ -177,7 +177,7 @@ namespace occa {
     if (*c == '"') {
       json jKey;
       jKey.loadString(c);
-      key = jKey.value.string;
+      key = jKey.value_.string;
     } else {
       const char *cStart = c;
       lex::skipTo(c, objectKeyEndChars);
@@ -190,7 +190,7 @@ namespace occa {
     OCCA_ERROR("Key must be followed by ':'",
                *c == ':');
     ++c;
-    value.object[key].load(c);
+    value_.object[key].load(c);
   }
 
   void json::loadArray(const char *&c) {
@@ -205,8 +205,8 @@ namespace occa {
         break;
       }
 
-      value.array.push_back(json());
-      value.array[value.array.size() - 1].load(c);
+      value_.array.push_back(json());
+      value_.array[value_.array.size() - 1].load(c);
       lex::skipWhitespace(c);
 
       if (*c == ',') {
@@ -264,24 +264,24 @@ namespace occa {
       break;
     }
     case string_: {
-      value.string += j.value.string;
+      value_.string += j.value_.string;
       break;
     }
     case number_: {
-      value.number += j.value.number;
+      value_.number += j.value_.number;
       break;
     }
     case object_: {
-      value.object.insert(j.value.object.begin(),
-                          j.value.object.end());
+      value_.object.insert(j.value_.object.begin(),
+                          j.value_.object.end());
       break;
     }
     case array_: {
-      value.array.push_back(j);
+      value_.array.push_back(j);
       break;
     }
     case boolean_: {
-      value.boolean += j.value.boolean;
+      value_.boolean += j.value_.boolean;
       break;
     }
     case null_: {
@@ -306,8 +306,8 @@ namespace occa {
         ++c;
       }
 
-      cJsonObjectIterator it = j->value.object.find(key);
-      if (it == j->value.object.end()) {
+      cJsonObjectIterator it = j->value_.object.find(key);
+      if (it == j->value_.object.end()) {
         return false;
       }
       j = &(it->second);
@@ -334,7 +334,7 @@ namespace occa {
          ++c;
        }
 
-       j = &(j->value.object[key]);
+       j = &(j->value_.object[key]);
        if (j->type == none_) {
          j->type = object_;
        }
@@ -357,8 +357,8 @@ namespace occa {
         ++c;
       }
 
-      cJsonObjectIterator it = j->value.object.find(key);
-      if (it == j->value.object.end()) {
+      cJsonObjectIterator it = j->value_.object.find(key);
+      if (it == j->value_.object.end()) {
         return default_;
       }
       j = &(it->second);
@@ -381,12 +381,12 @@ namespace occa {
       }
 
       if (*c == '\0') {
-        j->value.object.erase(key);
+        j->value_.object.erase(key);
         return *this;
       }
 
-      jsonObjectIterator it = j->value.object.find(key);
-      if (it == j->value.object.end()) {
+      jsonObjectIterator it = j->value_.object.find(key);
+      if (it == j->value_.object.end()) {
         return *this;
       }
       j = &(it->second);
@@ -401,16 +401,16 @@ namespace occa {
       break;
     }
     case string_: {
-      hash_ ^= occa::hash(value.string);
+      hash_ ^= occa::hash(value_.string);
       break;
     }
     case number_: {
-      hash_ ^= occa::hash(value.number.value.ptr);
+      hash_ ^= occa::hash(value_.number.value.ptr);
       break;
     }
     case object_: {
-      cJsonObjectIterator it = value.object.begin();
-      while (it != value.object.end()) {
+      cJsonObjectIterator it = value_.object.begin();
+      while (it != value_.object.end()) {
         hash_ ^= occa::hash(it->first);
         hash_ ^= occa::hash(it->second);
         ++it;
@@ -418,14 +418,14 @@ namespace occa {
       break;
     }
     case array_: {
-      const int arraySize = (int) value.array.size();
+      const int arraySize = (int) value_.array.size();
       for (int i = 0; i < arraySize; ++i) {
-        hash_ ^= occa::hash(value.array[i]);
+        hash_ ^= occa::hash(value_.array[i]);
       }
       break;
     }
     case boolean_: {
-      hash_ ^= occa::hash(value.boolean);
+      hash_ ^= occa::hash(value_.boolean);
       break;
     }
     case null_: {
@@ -448,9 +448,9 @@ namespace occa {
     }
     case string_: {
       out += '"';
-      const int chars = (int) value.string.size();
+      const int chars = (int) value_.string.size();
       for (int i = 0; i < chars; ++i) {
-        const char c = value.string[i];
+        const char c = value_.string[i];
         switch (c) {
         case '"' : out += "\\\"";  break;
         case '\\': out += "\\\\";  break;
@@ -468,16 +468,16 @@ namespace occa {
       break;
     }
     case number_: {
-      out += (std::string) value.number;
+      out += (std::string) value_.number;
       break;
     }
     case object_: {
-      cJsonObjectIterator it = value.object.begin();
+      cJsonObjectIterator it = value_.object.begin();
       out += '{';
-      if (it != value.object.end()) {
+      if (it != value_.object.end()) {
         std::string newIndent = indent + "  ";
         out += '\n';
-        while (it != value.object.end()) {
+        while (it != value_.object.end()) {
           out += newIndent;
           out += '"';
           out += it->first;
@@ -493,13 +493,13 @@ namespace occa {
     }
     case array_: {
       out += '[';
-      const int arraySize = (int) value.array.size();
+      const int arraySize = (int) value_.array.size();
       if (arraySize) {
         std::string newIndent = indent + "  ";
         out += '\n';
         for (int i = 0; i < arraySize; ++i) {
           out += newIndent;
-          value.array[i].toString(out, newIndent);
+          value_.array[i].toString(out, newIndent);
           out += ",\n";
         }
         out += indent;
@@ -508,7 +508,7 @@ namespace occa {
       break;
     }
     case boolean_: {
-      out += value.boolean ? "true" : "false";
+      out += value_.boolean ? "true" : "false";
     }
     case null_: {
       out += "null";
@@ -521,7 +521,11 @@ namespace occa {
   }
 
   std::ostream& operator << (std::ostream &out, const json &j) {
-    out << j.toString() << '\n';
+    if (j.isString()) {
+      out << j.string();
+    } else {
+      out << j.toString() << '\n';
+    }
     return out;
   }
 }
