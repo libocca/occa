@@ -109,6 +109,7 @@ int main(int argc, char **argv) {
 
 template <class TM, const int TMi>
 void printVector(occa::array<TM,TMi> &a) {
+  occa::finish();
   std::cout << '[';
 
   for (int i = 0; i < (int) a.entries(); ++i) {
@@ -122,6 +123,7 @@ void printVector(occa::array<TM,TMi> &a) {
 
 template <class TM, const int TMi>
 void printMatrix(occa::array<TM,TMi> &a) {
+  occa::finish();
   for (int j = 0; j < (int) a.dim(1); ++j) {
     std::cout << "| ";
 

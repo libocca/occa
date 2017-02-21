@@ -45,13 +45,11 @@ namespace occa {
       // Print the description across multiple lines if needed
       const char *desc_c = &(description_[0]);
       while (*desc_c) {
-        bool startedNewline = false;
         const char *start = desc_c;
         lex::skipToWhitespace(desc_c);
         const std::string word(start, desc_c - start);
 
         if ((int) (ss.str().size() + word.size()) >= width) {
-          startedNewline = true;
           out << ss.str()
               << '\n' << std::string(indent, ' ');
           ss.str("");
@@ -189,48 +187,48 @@ namespace occa {
               !arguments[argumentCount - 1].isRequired);
     }
 
-    parser& parser::addArgument(const std::string &name,
+    parser& parser::addArgument(const std::string &name_,
                                 const std::string &description_,
-                                const bool isRequired) {
+                                const bool isRequired_) {
 
       OCCA_ERROR("Cannot add " << arguments[arguments.size() - 1]
                  << ", an optional argument has already been added\n",
                  !hasOptionalArg());
 
-      arguments.push_back(option(name, description_,
-                                 0, isRequired));
+      arguments.push_back(option(name_, description_,
+                                 0, isRequired_));
 
       return *this;
     }
 
-    parser& parser::addRepetitiveArgument(const std::string &name,
+    parser& parser::addRepetitiveArgument(const std::string &name_,
                                           const std::string &description_,
-                                          const bool isRequired) {
+                                          const bool isRequired_) {
 
-      addArgument(name, description_, isRequired);
+      addArgument(name_, description_, isRequired_);
       hasRepetitiveArg = true;
 
       return *this;
     }
 
-    parser& parser::addOption(const std::string &name,
+    parser& parser::addOption(const std::string &name_,
                               const std::string &description_,
                               const int args,
-                              const bool isRequired) {
+                              const bool isRequired_) {
 
-      options.push_back(option(name, description_,
-                               args, isRequired));
+      options.push_back(option(name_, description_,
+                               args, isRequired_));
       return *this;
     }
 
-    parser& parser::addOption(const char shortname,
-                              const std::string &name,
+    parser& parser::addOption(const char shortname_,
+                              const std::string &name_,
                               const std::string &description_,
                               const int args,
-                           const bool isRequired) {
+                           const bool isRequired_) {
 
-      options.push_back(option(shortname, name, description_,
-                               args, isRequired));
+      options.push_back(option(shortname_, name_, description_,
+                               args, isRequired_));
       return *this;
     }
 
@@ -396,24 +394,24 @@ namespace occa {
       return *this;
     }
 
-    int command::getCommandIdx(const std::string &name) const {
+    int command::getCommandIdx(const std::string &name_) const {
       const int commandCount = (int) commands.size();
       for (int i = 0; i < commandCount; ++i) {
         const command &comm = commands[i];
-        if (comm.name == name) {
+        if (comm.name == name_) {
           return i;
         }
       }
       return -1;
     }
 
-    const command* command::getCommand(const std::string &name) const {
-      const int idx = getCommandIdx(name);
+    const command* command::getCommand(const std::string &name_) const {
+      const int idx = getCommandIdx(name_);
       return idx < 0 ? NULL : &commands[idx];
     }
 
-    command* command::getCommand(const std::string &name) {
-      const int idx = getCommandIdx(name);
+    command* command::getCommand(const std::string &name_) {
+      const int idx = getCommandIdx(name_);
       return idx < 0 ? NULL : &commands[idx];
     }
 
@@ -452,8 +450,8 @@ namespace occa {
       return *this;
     }
 
-    command& command::addCommand(const occa::args::command &command) {
-      commands.push_back(command);
+    command& command::addCommand(const occa::args::command &command_) {
+      commands.push_back(command_);
       return *this;
     }
 

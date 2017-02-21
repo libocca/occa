@@ -142,10 +142,10 @@ namespace occa {
 
   //---[ array(...) ]------------------
   template <class TM, const int idxType>
-  array<TM,idxType>::array(const int dim, const udim_t *d) {
-    initSOrder(dim);
+  array<TM,idxType>::array(const int dim_, const udim_t *d) {
+    initSOrder(dim_);
 
-    switch(dim) {
+    switch(dim_) {
     case 1: allocate(d[0]);                               break;
     case 2: allocate(d[0], d[1]);                         break;
     case 3: allocate(d[0], d[1], d[2]);                   break;
@@ -153,7 +153,7 @@ namespace occa {
     case 5: allocate(d[0], d[1], d[2], d[3], d[4]);       break;
     case 6: allocate(d[0], d[1], d[2], d[3], d[4], d[5]); break;
     default:
-      if (dim <= 0) {
+      if (dim_ <= 0) {
         OCCA_ERROR("Number of dimensions must be [1-6]",
                    false);
       } else {
@@ -204,8 +204,8 @@ namespace occa {
 
   //---[ array(device, ...) ]----------
   template <class TM, const int idxType>
-  array<TM,idxType>::array(occa::device device_, const int dim, const udim_t *d) {
-    switch(dim) {
+  array<TM,idxType>::array(occa::device device_, const int dim_, const udim_t *d) {
+    switch(dim_) {
     case 1: allocate(device_, d[0]);                               break;
     case 2: allocate(device_, d[0], d[1]);                         break;
     case 3: allocate(device_, d[0], d[1], d[2]);                   break;
@@ -213,7 +213,7 @@ namespace occa {
     case 5: allocate(device_, d[0], d[1], d[2], d[3], d[4]);       break;
     case 6: allocate(device_, d[0], d[1], d[2], d[3], d[4], d[5]); break;
     default:
-      if (dim <= 0) {
+      if (dim_ <= 0) {
         OCCA_ERROR("Number of dimensions must be [1-6]",
                    false);
       } else {
@@ -282,8 +282,8 @@ namespace occa {
   }
 
   template <class TM, const int idxType>
-  void array<TM,idxType>::allocate(const int dim, const udim_t *d) {
-    switch(dim) {
+  void array<TM,idxType>::allocate(const int dim_, const udim_t *d) {
+    switch(dim_) {
     case 1: allocate(d[0]);                               break;
     case 2: allocate(d[0], d[1]);                         break;
     case 3: allocate(d[0], d[1], d[2]);                   break;
@@ -291,7 +291,7 @@ namespace occa {
     case 5: allocate(d[0], d[1], d[2], d[3], d[4]);       break;
     case 6: allocate(d[0], d[1], d[2], d[3], d[4], d[5]); break;
     default:
-      if (dim <= 0) {
+      if (dim_ <= 0) {
         OCCA_ERROR("Number of dimensions must be [1-6]",
                    false);
       } else {
@@ -342,8 +342,8 @@ namespace occa {
 
   //---[ allocate(device, ...) ]--------
   template <class TM, const int idxType>
-  void array<TM,idxType>::allocate(occa::device device_, const int dim, const udim_t *d) {
-    switch(dim) {
+  void array<TM,idxType>::allocate(occa::device device_, const int dim_, const udim_t *d) {
+    switch(dim_) {
     case 1: allocate(device_, d[0]);                               break;
     case 2: allocate(device_, d[0], d[1]);                         break;
     case 3: allocate(device_, d[0], d[1], d[2]);                   break;
@@ -351,7 +351,7 @@ namespace occa {
     case 5: allocate(device_, d[0], d[1], d[2], d[3], d[4]);       break;
     case 6: allocate(device_, d[0], d[1], d[2], d[3], d[4], d[5]); break;
     default:
-      if (dim <= 0) {
+      if (dim_ <= 0) {
         OCCA_ERROR("Number of dimensions must be [1-6]",
                    false);
       } else {
@@ -414,8 +414,8 @@ namespace occa {
 
   //---[ reshape(...) ]-----------------
   template <class TM, const int idxType>
-  void array<TM,idxType>::reshape(const int dim, const udim_t *d) {
-    switch(dim) {
+  void array<TM,idxType>::reshape(const int dim_, const udim_t *d) {
+    switch(dim_) {
     case 1: reshape(d[0]);                               break;
     case 2: reshape(d[0], d[1]);                         break;
     case 3: reshape(d[0], d[1], d[2]);                   break;
@@ -423,7 +423,7 @@ namespace occa {
     case 5: reshape(d[0], d[1], d[2], d[3], d[4]);       break;
     case 6: reshape(d[0], d[1], d[2], d[3], d[4], d[5]); break;
     default:
-      if (dim <= 0) {
+      if (dim_ <= 0) {
         OCCA_ERROR("Number of dimensions must be [1-6]",
                    false);
       } else {
@@ -505,9 +505,9 @@ namespace occa {
 
   //  |---[ useIdxOrder ]---------------
   template <class TM, const int idxType>
-  void array<TM,idxType>::setIdxOrder(const int dim, const int *o) {
+  void array<TM,idxType>::setIdxOrder(const int dim_, const int *o) {
     if (idxType == occa::useIdxOrder) {
-      switch(dim) {
+      switch(dim_) {
       case 1:                                                  break;
       case 2: setIdxOrder(o[0], o[1]);                         break;
       case 3: setIdxOrder(o[0], o[1], o[2]);                   break;
@@ -515,7 +515,7 @@ namespace occa {
       case 5: setIdxOrder(o[0], o[1], o[2], o[3], o[4]);       break;
       case 6: setIdxOrder(o[0], o[1], o[2], o[3], o[4], o[5]); break;
       default:
-        if (dim <= 0) {
+        if (dim_ <= 0) {
           OCCA_ERROR("Number of dimensions must be [1-6]",
                      false);
         } else {
@@ -533,22 +533,22 @@ namespace occa {
   void array<TM,idxType>::setIdxOrder(const std::string &default_,
                                       const std::string &given) {
 
-    const int dim = (int) default_.size();
+    const int dim_ = (int) default_.size();
     int o[6];
 
     OCCA_ERROR("occa::array::setIdxOrder(default, given) must have matching sized strings of size [1-6]",
-               (dim == ((int) given.size())) &&
-               (1 <= dim) && (dim <= 6));
+               (dim_ == ((int) given.size())) &&
+               (1 <= dim_) && (dim_ <= 6));
 
-    for (int j = 0; j < dim; ++j) {
+    for (int j = 0; j < dim_; ++j) {
       o[j] = -1;
     }
-    for (int j_ = (dim - 1); 0 <= j_; --j_) {
-      const int j = (dim - j_ - 1);
+    for (int j_ = (dim_ - 1); 0 <= j_; --j_) {
+      const int j = (dim_ - j_ - 1);
       const char C = default_[j_];
 
-      for (int i_ = (dim - 1); 0 <= i_; --i_) {
-        const int i = (dim - i_ - 1);
+      for (int i_ = (dim_ - 1); 0 <= i_; --i_) {
+        const int i = (dim_ - i_ - 1);
 
         if (C == given[i_]) {
           OCCA_ERROR("occa::array::setIdxOrder(default, given) must have strings with unique characters",

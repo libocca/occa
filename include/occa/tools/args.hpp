@@ -154,21 +154,21 @@ namespace occa {
 
       bool hasOptionalArg();
 
-      parser& addArgument(const std::string &name,
+      parser& addArgument(const std::string &name_,
                           const std::string &description_,
                           const bool isRequired);
 
-      parser& addRepetitiveArgument(const std::string &name,
+      parser& addRepetitiveArgument(const std::string &name_,
                                     const std::string &description_,
                                     const bool isRequired);
 
-      parser& addOption(const std::string &name,
+      parser& addOption(const std::string &name_,
                         const std::string &description_,
                         const int args = 0,
                         const bool isRequired = false);
 
-      parser& addOption(const char shortname,
-                        const std::string &name,
+      parser& addOption(const char shortname_,
+                        const std::string &name_,
                         const std::string &description_,
                         const int args = 0,
                         const bool isRequired = false);
@@ -203,9 +203,9 @@ namespace occa {
       command& withName(const std::string &name_);
       command& withCallback(callback_t callback_);
 
-      int getCommandIdx(const std::string &name) const;
-      command* getCommand(const std::string &name);
-      const command* getCommand(const std::string &name) const;
+      int getCommandIdx(const std::string &name_) const;
+      command* getCommand(const std::string &name_);
+      const command* getCommand(const std::string &name_) const;
 
       void fillProgram(std::string &program);
 
@@ -217,7 +217,7 @@ namespace occa {
       virtual void printRequired(std::ostream &out);
 
       command& requiresCommand();
-      command& addCommand(const occa::args::command &command);
+      command& addCommand(const occa::args::command &command_);
 
       void run(const int argc, const char **argv);
       void run(const strVector_t &args,

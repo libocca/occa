@@ -38,7 +38,7 @@ namespace occa {
   }
 
   bool properties::isInitialized() {
-    return (0 < value.object.size());
+    return (0 < value_.object.size());
   }
 
   void properties::load(const char *&c) {
@@ -52,9 +52,9 @@ namespace occa {
 
   properties properties::operator + (const properties &j) const {
     properties all = *this;
-    cJsonObjectIterator it = j.value.object.begin();
-    while (it != j.value.object.end()) {
-      all.value.object[it->first] = it->second;
+    cJsonObjectIterator it = j.value_.object.begin();
+    while (it != j.value_.object.end()) {
+      all.value_.object[it->first] = it->second;
       ++it;
     }
     return all;
