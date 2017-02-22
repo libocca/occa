@@ -29,6 +29,11 @@ namespace occa {
     type = object_;
   }
 
+  properties::properties(const json &j) {
+    type = object_;
+    value_ = j.value_;
+  }
+
   properties::properties(const char *c) {
     load(c);
   }
@@ -48,15 +53,5 @@ namespace occa {
   void properties::load(const std::string &s) {
     const char *c = s.c_str();
     loadObject(c);
-  }
-
-  properties properties::operator + (const properties &j) const {
-    properties all = *this;
-    cJsonObjectIterator it = j.value_.object.begin();
-    while (it != j.value_.object.end()) {
-      all.value_.object[it->first] = it->second;
-      ++it;
-    }
-    return all;
   }
 }

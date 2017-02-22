@@ -29,15 +29,6 @@
 namespace occa {
   const char json::objectKeyEndChars[] = " \t\r\n\v\f:";
 
-  json::json(type_t type_) {
-    clear();
-    type = type_;
-  }
-
-  json::json(const json &j) :
-    type(j.type),
-    value_(j.value_) {}
-
   json& json::clear() {
     type = none_;
     value_.string = "";
@@ -248,7 +239,7 @@ namespace occa {
     type = null_;
   }
 
-  json json::operator + (const json &j) {
+  json json::operator + (const json &j) const {
     json sum = *this;
     sum += j;
     return sum;
@@ -272,24 +263,7 @@ namespace occa {
       break;
     }
     case object_: {
-      cJsonObjectIterator it = j.value_.object.begin();
-      while (it != j.value_.object.end()) {
-        const std::string &key = it->first;
-        const json &val = it->second;
-        // If we're merging two json objects, recursively merge them
-        if (val.isObject() && has(key)) {
-          // Reuse prefetch
-          json &oldVal = value_.object[key];
-          if (oldVal.isObject()) {
-            oldVal += val;
-          } else {
-            oldVal = val;
-          }
-        } else {
-          value_.object[key] = val;
-        }
-        ++it;
-      }
+      mergeWithObject(j.value_.object);
       break;
     }
     case array_: {
@@ -304,6 +278,28 @@ namespace occa {
       break;
     }}
     return *this;
+  }
+
+  void json::mergeWithObject(const jsonObject_t &obj) {
+    cJsonObjectIterator it = obj.begin();
+    while (it != obj.end()) {
+      const std::string &key = it->first;
+      const json &val = it->second;
+      ++it;
+
+      // If we're merging two json objects, recursively merge them
+      if (val.isObject() && has(key)) {
+        // Reuse prefetch
+        json &oldVal = value_.object[key];
+        if (oldVal.isObject()) {
+          oldVal += val;
+        } else {
+          oldVal = val;
+        }
+      } else {
+        value_.object[key] = val;
+      }
+    }
   }
 
   bool json::has(const std::string &s) const {

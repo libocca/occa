@@ -29,6 +29,7 @@ namespace occa {
   class properties: public json {
   public:
     properties();
+    properties(const json &j);
     properties(const char *c);
     properties(const std::string &s);
 
@@ -37,7 +38,11 @@ namespace occa {
     void load(const char *&c);
     void load(const std::string &s);
 
-    properties operator + (const properties &p) const;
+    inline properties operator + (const properties &p) const {
+      properties ret = *this;
+      ret.mergeWithObject(p.value_.object);
+      return ret;
+    }
   };
 
   class hasProperties {
