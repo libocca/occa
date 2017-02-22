@@ -160,22 +160,27 @@ $(libPath)/_C_occa.so: $(libPath)/libocca.so $(incPath)/occa/lang/python/_C_occa
 #---[ TEST ]--------------------------------------
 test:
 	cd $(OCCA_DIR)/examples/addVectors/cpp && \
+	rm -f main && \
 	make -j 4 CXXFLAGS='-g' FCFLAGS='-g' && \
 	./main
 
 	cd $(OCCA_DIR)/examples/addVectors/c && \
+	rm -f main && \
 	make -j 4 CXXFLAGS='-g' FCFLAGS='-g' && \
 	./main
 
 	cd $(OCCA_DIR)/examples/uvaAddVectors/ && \
+	rm -f main && \
 	make -j 4 CXXFLAGS='-g' FCFLAGS='-g'; \
 	./main
 
 	cd $(OCCA_DIR)/examples/backgroundDevices/ && \
+	rm -f main && \
 	make -j 4 CXXFLAGS='-g' FCFLAGS='-g'; \
 	./main
 
 	cd $(OCCA_DIR)/examples/usingArrays/ && \
+	rm -f main && \
 	make -j 4 CXXFLAGS='-g' FCFLAGS='-g'; \
 	./main
 #=================================================
