@@ -405,7 +405,7 @@ namespace occa {
         for (int i = 0; i < usedTileSizeCount; ++i) {
           builders[i] =
             customLinearMethod("axpy",
-                               "v0[i] += c0 * v1[i]",
+                               "v0[i] += c0 * v1[i];",
                                "defines: {"
                                "  CTYPE0: '" + primitiveinfo<TYPE_A>::name + "',"
                                "  VTYPE0: '" + primitiveinfo<VTYPE_Y>::name + "',"

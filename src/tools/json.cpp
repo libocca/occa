@@ -272,8 +272,11 @@ namespace occa {
       break;
     }
     case object_: {
-      value_.object.insert(j.value_.object.begin(),
-                          j.value_.object.end());
+      cJsonObjectIterator it = j.value_.object.begin();
+      while (it != j.value_.object.end()) {
+        value_.object[it->first] = it->second;
+        ++it;
+      }
       break;
     }
     case array_: {
