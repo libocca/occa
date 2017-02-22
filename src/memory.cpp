@@ -193,7 +193,7 @@ namespace occa {
 
     if (mHandle->dHandle->hasSeparateMemorySpace()) {
       OCCA_ERROR("Memory has size [" << mHandle->size << "],"
-                 << "trying to access [ " << offset << " , " << (offset + bytes_) << " ]",
+                 << " trying to access [ " << offset << " , " << (offset + bytes_) << " ]",
                  (bytes_ + offset) <= mHandle->size);
 
       copyTo(mHandle->uvaPtr, bytes_, offset);
@@ -216,7 +216,7 @@ namespace occa {
 
     if (mHandle->dHandle->hasSeparateMemorySpace()) {
       OCCA_ERROR("Memory has size [" << mHandle->size << "],"
-                 << "trying to access [ " << offset << " , " << (offset + bytes_) << " ]",
+                 << " trying to access [ " << offset << " , " << (offset + bytes_) << " ]",
                  (bytes_ + offset) <= mHandle->size);
 
       copyFrom(mHandle->uvaPtr, bytes_, offset);

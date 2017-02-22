@@ -41,8 +41,8 @@ namespace occa {
   template <class TM, const int idxType>
   template <class TM2, const int idxType2>
   array<TM,idxType>& array<TM,idxType>::operator = (const array<TM2,idxType2> &v) {
-    device = v.device;
-    memory = v.memory;
+    device  = v.device;
+    memory_ = v.memory_;
 
     data_ = v.data_;
 
@@ -277,8 +277,8 @@ namespace occa {
   //---[ allocate(...) ]----------------
   template <class TM, const int idxType>
   void array<TM,idxType>::allocate() {
-    data_  = (TM*) device.uvaAlloc(bytes());
-    memory = occa::memory(data_);
+    data_   = (TM*) device.uvaAlloc(bytes());
+    memory_ = occa::memory(data_);
   }
 
   template <class TM, const int idxType>
@@ -733,59 +733,59 @@ namespace occa {
   //---[ Assignment Operators ]-------
   template <class TM, const int idxType>
   array<TM,idxType>& array<TM,idxType>::operator = (const TM value) {
-    linalg::operator_eq<TM>(memory, value);
+    linalg::operator_eq<TM>(memory_, value);
     return *this;
   }
 
   template <class TM, const int idxType>
   array<TM,idxType>& array<TM,idxType>::operator += (const TM value) {
-    linalg::operator_plus_eq<TM>(memory, value);
+    linalg::operator_plus_eq<TM>(memory_, value);
     return *this;
   }
 
   template <class TM, const int idxType>
   template <class TM2, const int idxType2>
   array<TM,idxType>& array<TM,idxType>::operator += (const array<TM2,idxType2> &vec) {
-    linalg::operator_plus_eq<TM2,TM>(vec.memory, memory);
+    linalg::operator_plus_eq<TM2,TM>(vec.memory_, memory_);
     return *this;
   }
 
   template <class TM, const int idxType>
   array<TM,idxType>& array<TM,idxType>::operator -= (const TM value) {
-    linalg::operator_sub_eq<TM>(memory, value);
+    linalg::operator_sub_eq<TM>(memory_, value);
     return *this;
   }
 
   template <class TM, const int idxType>
   template <class TM2, const int idxType2>
   array<TM,idxType>& array<TM,idxType>::operator -= (const array<TM2,idxType2> &vec) {
-    linalg::operator_sub_eq<TM2,TM>(vec.memory, memory);
+    linalg::operator_sub_eq<TM2,TM>(vec.memory_, memory_);
     return *this;
   }
 
   template <class TM, const int idxType>
   array<TM,idxType>& array<TM,idxType>::operator *= (const TM value) {
-    linalg::operator_mult_eq<TM>(memory, value);
+    linalg::operator_mult_eq<TM>(memory_, value);
     return *this;
   }
 
   template <class TM, const int idxType>
   template <class TM2, const int idxType2>
   array<TM,idxType>& array<TM,idxType>::operator *= (const array<TM2,idxType2> &vec) {
-    linalg::operator_mult_eq<TM2,TM>(vec.memory, memory);
+    linalg::operator_mult_eq<TM2,TM>(vec.memory_, memory_);
     return *this;
   }
 
   template <class TM, const int idxType>
   array<TM,idxType>& array<TM,idxType>::operator /= (const TM value) {
-    linalg::operator_div_eq<TM>(memory, value);
+    linalg::operator_div_eq<TM>(memory_, value);
     return *this;
   }
 
   template <class TM, const int idxType>
   template <class TM2, const int idxType2>
   array<TM,idxType>& array<TM,idxType>::operator /= (const array<TM2,idxType2> &vec) {
-    linalg::operator_div_eq<TM2,TM>(vec.memory, memory);
+    linalg::operator_div_eq<TM2,TM>(vec.memory_, memory_);
     return *this;
   }
   //====================================
@@ -794,56 +794,56 @@ namespace occa {
   template <class TM, const int idxType>
   template <class RETTYPE>
   RETTYPE array<TM,idxType>::l1Norm() {
-    return linalg::l1Norm<TM,RETTYPE>(memory);
+    return linalg::l1Norm<TM,RETTYPE>(memory_);
   }
 
   template <class TM, const int idxType>
   template <class RETTYPE>
   RETTYPE array<TM,idxType>::l2Norm() {
-    return linalg::l2Norm<TM,RETTYPE>(memory);
+    return linalg::l2Norm<TM,RETTYPE>(memory_);
   }
 
   template <class TM, const int idxType>
   template <class RETTYPE>
   RETTYPE array<TM,idxType>::lpNorm(const float p) {
-    return linalg::lpNorm<TM,RETTYPE>(p, memory);
+    return linalg::lpNorm<TM,RETTYPE>(p, memory_);
   }
 
   template <class TM, const int idxType>
   template <class RETTYPE>
   RETTYPE array<TM,idxType>::lInfNorm() {
-    return linalg::lInfNorm<TM,RETTYPE>(memory);
+    return linalg::lInfNorm<TM,RETTYPE>(memory_);
   }
 
   template <class TM, const int idxType>
   template <class RETTYPE>
   RETTYPE array<TM,idxType>::max() {
-    return linalg::max<TM,RETTYPE>(memory);
+    return linalg::max<TM,RETTYPE>(memory_);
   }
 
   template <class TM, const int idxType>
   template <class RETTYPE>
   RETTYPE array<TM,idxType>::min() {
-    return linalg::min<TM,RETTYPE>(memory);
+    return linalg::min<TM,RETTYPE>(memory_);
   }
 
   template <class TM, const int idxType>
   template <class RETTYPE, class TM2, const int idxType2>
   RETTYPE array<TM,idxType>::dot(const array<TM2, idxType2> &vec) {
-    return linalg::dot<TM,TM2,RETTYPE>(memory, vec.memory);
+    return linalg::dot<TM,TM2,RETTYPE>(memory_, vec.memory_);
   }
 
   template <class TM, const int idxType>
   template <class RETTYPE, class TM2, const int idxType2>
   RETTYPE array<TM,idxType>::distance(const array<TM2, idxType2> &vec) {
-    return linalg::distance<TM,TM2,RETTYPE>(memory, vec.memory);
+    return linalg::distance<TM,TM2,RETTYPE>(memory_, vec.memory_);
   }
 
   template <class TM, const int idxType>
   template <class TYPE_A, class TM2, const int idxType2>
   array<TM,idxType>& array<TM,idxType>::sum(const TYPE_A alpha,
                                             const array<TM2, idxType2> &vec) {
-    linalg::axpy<TYPE_A,TM2,TM>(alpha, vec.memory, memory);
+    linalg::axpy<TYPE_A,TM2,TM>(alpha, vec.memory_, memory_);
     return *this;
   }
   //==================================

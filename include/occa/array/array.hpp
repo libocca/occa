@@ -40,7 +40,7 @@ namespace occa {
   class array {
   public:
     occa::device device;
-    occa::memory memory;
+    occa::memory memory_;
 
     TM *data_;
 
@@ -68,15 +68,27 @@ namespace occa {
       return data_;
     }
 
-    inline udim_t entries() {
+    inline const TM* data() const {
+      return data_;
+    }
+
+    inline occa::memory memory() {
+      return memory_;
+    }
+
+    inline const occa::memory memory() const {
+      return memory_;
+    }
+
+    inline udim_t entries() const {
       return s_[0] * s_[1] * s_[2] * s_[3] * s_[4] * s_[5];
     }
 
-    inline udim_t bytes() {
+    inline udim_t bytes() const {
       return (entries() * sizeof(TM));
     }
 
-    inline udim_t dim(const int i) {
+    inline udim_t dim(const int i) const {
       return s_[i];
     }
 
@@ -84,10 +96,10 @@ namespace occa {
       occa::kernelArg ret;
       occa::kernelArg_t sizeArg;
 
-      ret.arg.mHandle = memory.getMHandle();
-      ret.arg.dHandle = memory.getDHandle();
+      ret.arg.mHandle = memory_.getMHandle();
+      ret.arg.dHandle = memory_.getDHandle();
 
-      ret.arg.data.void_ = memory.getHandle();
+      ret.arg.data.void_ = memory_.getHandle();
       ret.arg.size       = sizeof(void*);
       ret.arg.info       = kArgInfo::usePointer;
 

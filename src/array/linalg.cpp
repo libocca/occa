@@ -29,7 +29,7 @@
 
 namespace occa {
   namespace linalg {
-    // "v0[i] = c1 * (v0[i] + v1[i])"
+    // "v0[i] = c1 * (v0[i] + v1[i]);"
     kernelBuilder customLinearMethod(const std::string &kernelName,
                                      const std::string &formula,
                                      const occa::properties &props) {
@@ -37,9 +37,12 @@ namespace occa {
       kernelBuilder builder;
 
       // Extract input and constant counts
+      // If formula is correct
+      //   - minInput should go down to 0
+      //   - maxOutput should go up to at least 0
       intVector_t inputs, constants;
-      int minInput = 0, maxInput = 0;
-      int minConstant = 0, maxConstant = 0;
+      int minInput = 1, maxInput = -1;
+      int minConstant = 0, maxConstant = -1;
 
       const char *c = formula.c_str();
       while (*c) {
@@ -125,7 +128,7 @@ namespace occa {
       ss << ") {\n"
         "  for (int i = 0; i < entries; ++i; tile(TILESIZE)) {\n"
         "    if (i < entries) {\n"
-        "      " << formula << ";\n"
+        "      " << formula << "\n"
         "    }\n"
         "  }\n"
         "}\n";
