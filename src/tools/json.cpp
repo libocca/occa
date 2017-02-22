@@ -274,7 +274,20 @@ namespace occa {
     case object_: {
       cJsonObjectIterator it = j.value_.object.begin();
       while (it != j.value_.object.end()) {
-        value_.object[it->first] = it->second;
+        const std::string &key = it->first;
+        const json &val = it->second;
+        // If we're merging two json objects, recursively merge them
+        if (val.isObject() && has(key)) {
+          // Reuse prefetch
+          json &oldVal = value_.object[key];
+          if (oldVal.isObject()) {
+            oldVal += val;
+          } else {
+            oldVal = val;
+          }
+        } else {
+          value_.object[key] = val;
+        }
         ++it;
       }
       break;
