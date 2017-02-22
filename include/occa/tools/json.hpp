@@ -39,6 +39,14 @@ namespace occa {
 
   typedef std::vector<json> jsonArray_t;
 
+  typedef struct {
+    std::string string;
+    primitive number;
+    jsonObject_t object;
+    jsonArray_t array;
+    bool boolean;
+  } jsonValue_t;
+
   class json {
   public:
     static const char objectKeyEndChars[];
@@ -54,17 +62,16 @@ namespace occa {
     };
 
     type_t type;
+    jsonValue_t value_;
 
-    struct {
-      std::string string;
-      primitive number;
-      jsonObject_t object;
-      jsonArray_t array;
-      bool boolean;
-    } value_;
+    inline json(type_t type_ = none_) {
+      clear();
+      type = type_;
+    }
 
-    json(type_t type_ = none_);
-    json(const json &j);
+    inline json(const json &j) :
+      type(j.type),
+      value_(j.value_) {}
 
     inline json(const bool value) :
       type(boolean_) {
@@ -241,8 +248,10 @@ namespace occa {
     void loadFalse(const char *&c);
     void loadNull(const char *&c);
 
-    json operator + (const json &j);
+    json operator + (const json &j) const;
     json& operator += (const json &j);
+
+    void mergeWithObject(const jsonObject_t &obj);
 
     bool has(const std::string &s) const;
 
