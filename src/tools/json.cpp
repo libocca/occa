@@ -378,6 +378,18 @@ namespace occa {
     return *j;
   }
 
+  json& json::operator [] (const int n) {
+    OCCA_ERROR("Can only apply operator [] with JSON arrays",
+               type == array_);
+    return value_.array[n];
+  }
+
+  const json& json::operator [] (const int n) const {
+    OCCA_ERROR("Can only apply operator [] with JSON arrays",
+               type == array_);
+    return value_.array[n];
+  }
+
   json& json::remove(const char *c) {
     json *j = this;
     while (*c != '\0') {

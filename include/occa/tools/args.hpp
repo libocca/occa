@@ -188,7 +188,9 @@ namespace occa {
     class command : public parser {
     public:
       typedef bool (*callback_t)(const occa::args::command &command,
-                                 const json &info);
+                                 jsonArray_t order,
+                                 jsonObject_t options,
+                                 jsonArray_t arguments);
 
       bool commandIsRequired;
       std::vector<command> commands;
