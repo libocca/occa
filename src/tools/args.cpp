@@ -499,7 +499,10 @@ namespace occa {
         comm = getCommand(commandName);
       }
 
-      if (callback && !callback(*this, info)) {
+      if (callback && !callback(*this,
+                                info["order"].array(),
+                                info["options"].object(),
+                                info["arguments"].array())) {
         printUsage(std::cerr);
         ::exit(1);
       }

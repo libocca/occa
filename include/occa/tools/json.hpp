@@ -351,6 +351,9 @@ namespace occa {
       return (*this)[s.c_str()];
     }
 
+    json& operator [] (const int n);
+    const json& operator [] (const int n) const;
+
     template <class TM>
     TM get(const char *c, const TM &default_ = TM()) const {
       const char *c0 = c;

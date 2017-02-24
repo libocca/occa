@@ -35,7 +35,7 @@ namespace occa {
 
     std::string OCCA_DIR, OCCA_CACHE_DIR;
     size_t OCCA_MEM_BYTE_ALIGN;
-    strVector_t OCCA_INCLUDE_PATH;
+    strVector_t OCCA_PATH;
 
     void initialize() {
       static bool isInitialized = false;
@@ -145,13 +145,12 @@ namespace occa {
     }
 
     void initIncludePath() {
-      env::OCCA_INCLUDE_PATH.clear();
-      std::string oip = env::var("OCCA_INCLUDE_PATH");
+      strVector_t &oipVec = env::OCCA_PATH;
+      oipVec.clear();
+      std::string oip = env::var("OCCA_PATH");
 
       const char *cStart = oip.c_str();
       const char *cEnd;
-
-      strVector_t tmpOIP;
 
       while(cStart[0] != '\0') {
         cEnd = cStart;
@@ -166,13 +165,11 @@ namespace occa {
           newPath = io::filename(newPath);
           io::endWithSlash(newPath);
 
-          tmpOIP.push_back(newPath);
+          oipVec.push_back(newPath);
         }
 
         cStart = (cEnd + (cEnd[0] != '\0'));
       }
-
-      tmpOIP.swap(env::OCCA_INCLUDE_PATH);
     }
 
     void registerFileOpeners() {

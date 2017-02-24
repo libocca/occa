@@ -32,17 +32,29 @@
 #include "occa/tools/sys.hpp"
 
 bool runCache(const occa::args::command &command,
-              const occa::json &info);
+              occa::jsonArray_t order,
+              occa::jsonObject_t options,
+              occa::jsonArray_t arguments);
 bool runClear(const occa::args::command &command,
-              const occa::json &info);
+              occa::jsonArray_t order,
+              occa::jsonObject_t options,
+              occa::jsonArray_t arguments);
+bool runCompile(const occa::args::command &command,
+                occa::jsonArray_t order,
+                occa::jsonObject_t options,
+                occa::jsonArray_t arguments);
 bool runEnv(const occa::args::command &command,
-            const occa::json &info);
+            occa::jsonArray_t order,
+            occa::jsonObject_t options,
+            occa::jsonArray_t arguments);
 bool runInfo(const occa::args::command &command,
-             const occa::json &info);
+             occa::jsonArray_t order,
+             occa::jsonObject_t options,
+             occa::jsonArray_t arguments);
 
 int main(int argc, char **argv) {
   occa::args::command mainCommand;
-  occa::args::command cacheCommand, clearCommand, envCommand, infoCommand;
+  occa::args::command cacheCommand, clearCommand, compileCommand, envCommand, infoCommand;
 
   mainCommand
     .withDescription("Can be used to display information of cache kernels.");
@@ -50,10 +62,12 @@ int main(int argc, char **argv) {
   cacheCommand
     .withName("cache")
     .withCallback(runCache)
-    .withDescription("Compile and cache kernels")
-    .addRepetitiveArgument("RECIPE",
-                           "JSON/JS recipe file. "
-                           "The file should be an object with all device and kernel property combinations that will be compiled.",
+    .withDescription("Cache kernels")
+    .addOption('l', "lib",
+               "Cache kernels in this library directory",
+               1, true)
+    .addRepetitiveArgument("FILE",
+                           "OKL files that will be cached.",
                            true);
 
   clearCommand
@@ -70,6 +84,15 @@ int main(int argc, char **argv) {
                "Clear cached libraries.")
     .addOption('o', "locks",
                "Clear cache locks");
+
+  compileCommand
+    .withName("compile")
+    .withCallback(runCompile)
+    .withDescription("Compile and cache kernels")
+    .addRepetitiveArgument("RECIPE",
+                           "JSON/JS recipe file. "
+                           "The file should be an object with all device and kernel property combinations that will be compiled.",
+                           true);
 
   envCommand
     .withName("env")
@@ -127,9 +150,10 @@ bool removeDir(const std::string &dir) {
 }
 
 bool runClear(const occa::args::command &command,
-              const occa::json &info) {
+              occa::jsonArray_t order,
+              occa::jsonObject_t options,
+              occa::jsonArray_t arguments) {
 
-  const occa::jsonObject_t &options = info["options"].object();
   occa::cJsonObjectIterator it = options.begin();
 
   if (it == options.end()) {
@@ -143,7 +167,7 @@ bool runClear(const occa::args::command &command,
       const occa::jsonArray_t &libraries = it->second.array();
       for (int i = 0; i < (int) libraries.size(); ++i) {
         removedSomething |= removeDir(occa::io::libraryPath() +
-                                       libraries[i].array()[0].string());
+                                      libraries[i].array()[0].string());
       }
     } else if (it->first == "libraries") {
       removedSomething |= removeDir(occa::io::libraryPath());
@@ -162,40 +186,49 @@ bool runClear(const occa::args::command &command,
 }
 
 bool runCache(const occa::args::command &command,
-              const occa::json &info) {
-  return false;
-}
-
-void runUpdate(const int argc, std::string *args) {
-  std::string &library = args[0];
-  std::string libDir   = occa::io::dirname("occa://" + library + "/");
-
+              occa::jsonArray_t order,
+              occa::jsonObject_t options,
+              occa::jsonArray_t arguments) {
+  std::string libDir = occa::io::dirname("occa://" + options["lib"][0][0].string() + "/");
   occa::sys::mkpath(libDir);
 
-  for (int i = 1; i < argc; ++i) {
-    std::string originalFile = occa::io::filename(args[i], true);
+  const int fileCount = arguments.size();
+  for (int i = 0; i < fileCount; ++i) {
+    const std::string &srcFile = arguments[i].string();
+    const std::string destFile = libDir + occa::io::basename(srcFile);
 
-    if (!occa::sys::fileExists(originalFile)) {
+    if (!occa::sys::fileExists(srcFile)) {
+      std::cerr << occa::yellow("Warning") << ": File '"
+                << srcFile << "' does not exist\n";
       continue;
     }
 
-    std::string filename = occa::io::basename(originalFile);
-    std::string newFile  = libDir + filename;
+    std::ifstream src(srcFile.c_str(), std::ios::binary);
+    std::ofstream dest(destFile.c_str(), std::ios::binary);
 
-    std::ifstream originalS(originalFile.c_str(), std::ios::binary);
-    std::ofstream newS(     newFile.c_str()     , std::ios::binary);
+    dest << src.rdbuf();
 
-    newS << originalS.rdbuf();
-
-    originalS.close();
-    newS.close();
+    src.close();
+    dest.close();
   }
+  return true;
+}
+
+bool runCompile(const occa::args::command &command,
+                occa::jsonArray_t order,
+                occa::jsonObject_t options,
+                occa::jsonArray_t arguments) {
+  return true;
 }
 
 bool runEnv(const occa::args::command &command,
-            const occa::json &info) {
+            occa::jsonArray_t order,
+            occa::jsonObject_t options,
+            occa::jsonArray_t arguments) {
   std::cout << "  Basic:\n"
+            << "    - OCCA_DIR                   : " << envEcho("OCCA_DIR") << "\n"
             << "    - OCCA_CACHE_DIR             : " << envEcho("OCCA_CACHE_DIR") << "\n"
+            << "    - OCCA_PATH                  : " << envEcho("OCCA_PATH") << "\n"
 
             << "  Makefile:\n"
             << "    - CXX                        : " << envEcho("CXX") << "\n"
@@ -220,7 +253,9 @@ bool runEnv(const occa::args::command &command,
 }
 
 bool runInfo(const occa::args::command &command,
-             const occa::json &info) {
+             occa::jsonArray_t order,
+             occa::jsonObject_t options,
+             occa::jsonArray_t arguments) {
   occa::printModeInfo();
   ::exit(0);
   return true;
