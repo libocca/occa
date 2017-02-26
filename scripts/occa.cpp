@@ -189,7 +189,7 @@ bool runCache(const occa::args::command &command,
               occa::jsonArray_t order,
               occa::jsonObject_t options,
               occa::jsonArray_t arguments) {
-  std::string libDir = occa::io::dirname("occa://" + options["lib"][0][0].string() + "/");
+  std::string libDir = occa::io::libraryPath() + options["lib"][0][0].string() + "/";
   occa::sys::mkpath(libDir);
 
   const int fileCount = arguments.size();

@@ -65,6 +65,10 @@ namespace occa {
     return *this;
   }
 
+  void hash_t::clear() {
+    *this = hash_t();
+  }
+
   bool hash_t::operator < (const hash_t &fo) const {
     for (int i = 0; i < 8; ++i) {
       if (h[i] < fo.h[i]) {
