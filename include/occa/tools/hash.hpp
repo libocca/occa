@@ -43,6 +43,10 @@ namespace occa {
     hash_t(const hash_t &hash);
     hash_t& operator = (const hash_t &hash);
 
+    void clear();
+
+    inline bool isInitialized() const { return initialized; }
+
     bool operator < (const hash_t &fo) const;
     bool operator == (const hash_t &fo) const;
     bool operator != (const hash_t &fo) const;

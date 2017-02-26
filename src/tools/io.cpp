@@ -104,7 +104,7 @@ namespace occa {
     }
 
     std::string occaFileOpener_t::expand(const std::string &filename) {
-      return (env::OCCA_CACHE_DIR + filename.substr(7));
+      return (libraryPath() + filename.substr(7));
     }
     //  ================================
 
