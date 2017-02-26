@@ -112,7 +112,7 @@ void printVector(occa::array<TM,TMi> &a) {
   occa::finish();
   std::cout << '[';
 
-  for (int i = 0; i < (int) a.entries(); ++i) {
+  for (int i = 0; i < (int) a.size(); ++i) {
     if (i) std::cout << ", ";
     std::cout << a[i];
   }

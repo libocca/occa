@@ -81,12 +81,12 @@ namespace occa {
       return memory_;
     }
 
-    inline udim_t entries() const {
+    inline udim_t size() const {
       return s_[0] * s_[1] * s_[2] * s_[3] * s_[4] * s_[5];
     }
 
     inline udim_t bytes() const {
-      return (entries() * sizeof(TM));
+      return (size() * sizeof(TM));
     }
 
     inline udim_t dim(const int i) const {
