@@ -24,5 +24,6 @@
 #define OCCA_HEADER
 
 #include "occa/base.hpp"
+#include "occa/array.hpp"
 
 #endif

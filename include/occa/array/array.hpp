@@ -1,6 +1,6 @@
 /* The MIT License (MIT)
  *
- * Copyright (c) 2014-2017 David Median and Tim Warburton
+ * Copyright (c) 2014-2017 David Medina and Tim Warburton
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -38,7 +38,7 @@ namespace occa {
 
   template <class TM, const int idxType = occa::dontUseIdxOrder>
   class array {
-  public:
+  private:
     occa::device device;
     occa::memory memory_;
 
@@ -51,6 +51,7 @@ namespace occa {
     udim_t fs_[7];  // Full Strides (used with idxOrder)
     int sOrder_[6]; // Stride Ordering
 
+  public:
     array();
 
     template <class TM2, const int idxType2>
