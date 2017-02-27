@@ -72,8 +72,9 @@ namespace occa {
 
   template <class TM, const int idxType>
   void array<TM,idxType>::free() {
-    if (data_ == NULL)
+    if (data_ == NULL) {
       return;
+    }
 
     occa::free(data_);
     data_ = NULL;

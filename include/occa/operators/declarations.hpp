@@ -1,105 +1,89 @@
-/* The MIT License (MIT)
- * 
- * Copyright (c) 2014-2017 David Medina and Tim Warburton
- * 
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- * 
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
- * 
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- */
+/*
+-------------[ DO NOT EDIT ]-------------
+ THIS IS AN AUTOMATICALLY GENERATED FILE
+ EDIT: scripts/setupKernelOperators.py
+=========================================
+*/
+    void operator () (const kernelArg &arg0) const;
 
-    void operator () (const kernelArg &arg0);
+    void operator () (const kernelArg &arg0,  const kernelArg &arg1) const;
 
-    void operator () (const kernelArg &arg0,  const kernelArg &arg1);
-
-    void operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2);
+    void operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2) const;
 
     void operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
-                      const kernelArg &arg3);
+                      const kernelArg &arg3) const;
 
     void operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
-                      const kernelArg &arg3,  const kernelArg &arg4);
+                      const kernelArg &arg3,  const kernelArg &arg4) const;
 
     void operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
-                      const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5);
+                      const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5) const;
 
     void operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
                       const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
-                      const kernelArg &arg6);
+                      const kernelArg &arg6) const;
 
     void operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
                       const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
-                      const kernelArg &arg6,  const kernelArg &arg7);
+                      const kernelArg &arg6,  const kernelArg &arg7) const;
 
     void operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
                       const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
-                      const kernelArg &arg6,  const kernelArg &arg7,  const kernelArg &arg8);
+                      const kernelArg &arg6,  const kernelArg &arg7,  const kernelArg &arg8) const;
 
     void operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
                       const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
                       const kernelArg &arg6,  const kernelArg &arg7,  const kernelArg &arg8, 
-                      const kernelArg &arg9);
+                      const kernelArg &arg9) const;
 
     void operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
                       const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
                       const kernelArg &arg6,  const kernelArg &arg7,  const kernelArg &arg8, 
-                      const kernelArg &arg9,  const kernelArg &arg10);
+                      const kernelArg &arg9,  const kernelArg &arg10) const;
 
     void operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
                       const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
                       const kernelArg &arg6,  const kernelArg &arg7,  const kernelArg &arg8, 
-                      const kernelArg &arg9,  const kernelArg &arg10,  const kernelArg &arg11);
+                      const kernelArg &arg9,  const kernelArg &arg10,  const kernelArg &arg11) const;
 
     void operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
                       const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
                       const kernelArg &arg6,  const kernelArg &arg7,  const kernelArg &arg8, 
                       const kernelArg &arg9,  const kernelArg &arg10,  const kernelArg &arg11, 
-                      const kernelArg &arg12);
+                      const kernelArg &arg12) const;
 
     void operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
                       const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
                       const kernelArg &arg6,  const kernelArg &arg7,  const kernelArg &arg8, 
                       const kernelArg &arg9,  const kernelArg &arg10,  const kernelArg &arg11, 
-                      const kernelArg &arg12,  const kernelArg &arg13);
+                      const kernelArg &arg12,  const kernelArg &arg13) const;
 
     void operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
                       const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
                       const kernelArg &arg6,  const kernelArg &arg7,  const kernelArg &arg8, 
                       const kernelArg &arg9,  const kernelArg &arg10,  const kernelArg &arg11, 
-                      const kernelArg &arg12,  const kernelArg &arg13,  const kernelArg &arg14);
+                      const kernelArg &arg12,  const kernelArg &arg13,  const kernelArg &arg14) const;
 
     void operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
                       const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
                       const kernelArg &arg6,  const kernelArg &arg7,  const kernelArg &arg8, 
                       const kernelArg &arg9,  const kernelArg &arg10,  const kernelArg &arg11, 
                       const kernelArg &arg12,  const kernelArg &arg13,  const kernelArg &arg14, 
-                      const kernelArg &arg15);
+                      const kernelArg &arg15) const;
 
     void operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
                       const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
                       const kernelArg &arg6,  const kernelArg &arg7,  const kernelArg &arg8, 
                       const kernelArg &arg9,  const kernelArg &arg10,  const kernelArg &arg11, 
                       const kernelArg &arg12,  const kernelArg &arg13,  const kernelArg &arg14, 
-                      const kernelArg &arg15,  const kernelArg &arg16);
+                      const kernelArg &arg15,  const kernelArg &arg16) const;
 
     void operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
                       const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
                       const kernelArg &arg6,  const kernelArg &arg7,  const kernelArg &arg8, 
                       const kernelArg &arg9,  const kernelArg &arg10,  const kernelArg &arg11, 
                       const kernelArg &arg12,  const kernelArg &arg13,  const kernelArg &arg14, 
-                      const kernelArg &arg15,  const kernelArg &arg16,  const kernelArg &arg17);
+                      const kernelArg &arg15,  const kernelArg &arg16,  const kernelArg &arg17) const;
 
     void operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
                       const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
@@ -107,7 +91,7 @@
                       const kernelArg &arg9,  const kernelArg &arg10,  const kernelArg &arg11, 
                       const kernelArg &arg12,  const kernelArg &arg13,  const kernelArg &arg14, 
                       const kernelArg &arg15,  const kernelArg &arg16,  const kernelArg &arg17, 
-                      const kernelArg &arg18);
+                      const kernelArg &arg18) const;
 
     void operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
                       const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
@@ -115,7 +99,7 @@
                       const kernelArg &arg9,  const kernelArg &arg10,  const kernelArg &arg11, 
                       const kernelArg &arg12,  const kernelArg &arg13,  const kernelArg &arg14, 
                       const kernelArg &arg15,  const kernelArg &arg16,  const kernelArg &arg17, 
-                      const kernelArg &arg18,  const kernelArg &arg19);
+                      const kernelArg &arg18,  const kernelArg &arg19) const;
 
     void operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
                       const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
@@ -123,7 +107,7 @@
                       const kernelArg &arg9,  const kernelArg &arg10,  const kernelArg &arg11, 
                       const kernelArg &arg12,  const kernelArg &arg13,  const kernelArg &arg14, 
                       const kernelArg &arg15,  const kernelArg &arg16,  const kernelArg &arg17, 
-                      const kernelArg &arg18,  const kernelArg &arg19,  const kernelArg &arg20);
+                      const kernelArg &arg18,  const kernelArg &arg19,  const kernelArg &arg20) const;
 
     void operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
                       const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
@@ -132,7 +116,7 @@
                       const kernelArg &arg12,  const kernelArg &arg13,  const kernelArg &arg14, 
                       const kernelArg &arg15,  const kernelArg &arg16,  const kernelArg &arg17, 
                       const kernelArg &arg18,  const kernelArg &arg19,  const kernelArg &arg20, 
-                      const kernelArg &arg21);
+                      const kernelArg &arg21) const;
 
     void operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
                       const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
@@ -141,7 +125,7 @@
                       const kernelArg &arg12,  const kernelArg &arg13,  const kernelArg &arg14, 
                       const kernelArg &arg15,  const kernelArg &arg16,  const kernelArg &arg17, 
                       const kernelArg &arg18,  const kernelArg &arg19,  const kernelArg &arg20, 
-                      const kernelArg &arg21,  const kernelArg &arg22);
+                      const kernelArg &arg21,  const kernelArg &arg22) const;
 
     void operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
                       const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
@@ -150,7 +134,7 @@
                       const kernelArg &arg12,  const kernelArg &arg13,  const kernelArg &arg14, 
                       const kernelArg &arg15,  const kernelArg &arg16,  const kernelArg &arg17, 
                       const kernelArg &arg18,  const kernelArg &arg19,  const kernelArg &arg20, 
-                      const kernelArg &arg21,  const kernelArg &arg22,  const kernelArg &arg23);
+                      const kernelArg &arg21,  const kernelArg &arg22,  const kernelArg &arg23) const;
 
     void operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
                       const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
@@ -160,7 +144,7 @@
                       const kernelArg &arg15,  const kernelArg &arg16,  const kernelArg &arg17, 
                       const kernelArg &arg18,  const kernelArg &arg19,  const kernelArg &arg20, 
                       const kernelArg &arg21,  const kernelArg &arg22,  const kernelArg &arg23, 
-                      const kernelArg &arg24);
+                      const kernelArg &arg24) const;
 
     void operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
                       const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
@@ -170,7 +154,7 @@
                       const kernelArg &arg15,  const kernelArg &arg16,  const kernelArg &arg17, 
                       const kernelArg &arg18,  const kernelArg &arg19,  const kernelArg &arg20, 
                       const kernelArg &arg21,  const kernelArg &arg22,  const kernelArg &arg23, 
-                      const kernelArg &arg24,  const kernelArg &arg25);
+                      const kernelArg &arg24,  const kernelArg &arg25) const;
 
     void operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
                       const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
@@ -180,7 +164,7 @@
                       const kernelArg &arg15,  const kernelArg &arg16,  const kernelArg &arg17, 
                       const kernelArg &arg18,  const kernelArg &arg19,  const kernelArg &arg20, 
                       const kernelArg &arg21,  const kernelArg &arg22,  const kernelArg &arg23, 
-                      const kernelArg &arg24,  const kernelArg &arg25,  const kernelArg &arg26);
+                      const kernelArg &arg24,  const kernelArg &arg25,  const kernelArg &arg26) const;
 
     void operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
                       const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
@@ -191,7 +175,7 @@
                       const kernelArg &arg18,  const kernelArg &arg19,  const kernelArg &arg20, 
                       const kernelArg &arg21,  const kernelArg &arg22,  const kernelArg &arg23, 
                       const kernelArg &arg24,  const kernelArg &arg25,  const kernelArg &arg26, 
-                      const kernelArg &arg27);
+                      const kernelArg &arg27) const;
 
     void operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
                       const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
@@ -202,7 +186,7 @@
                       const kernelArg &arg18,  const kernelArg &arg19,  const kernelArg &arg20, 
                       const kernelArg &arg21,  const kernelArg &arg22,  const kernelArg &arg23, 
                       const kernelArg &arg24,  const kernelArg &arg25,  const kernelArg &arg26, 
-                      const kernelArg &arg27,  const kernelArg &arg28);
+                      const kernelArg &arg27,  const kernelArg &arg28) const;
 
     void operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
                       const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
@@ -213,7 +197,7 @@
                       const kernelArg &arg18,  const kernelArg &arg19,  const kernelArg &arg20, 
                       const kernelArg &arg21,  const kernelArg &arg22,  const kernelArg &arg23, 
                       const kernelArg &arg24,  const kernelArg &arg25,  const kernelArg &arg26, 
-                      const kernelArg &arg27,  const kernelArg &arg28,  const kernelArg &arg29);
+                      const kernelArg &arg27,  const kernelArg &arg28,  const kernelArg &arg29) const;
 
     void operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
                       const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
@@ -225,7 +209,7 @@
                       const kernelArg &arg21,  const kernelArg &arg22,  const kernelArg &arg23, 
                       const kernelArg &arg24,  const kernelArg &arg25,  const kernelArg &arg26, 
                       const kernelArg &arg27,  const kernelArg &arg28,  const kernelArg &arg29, 
-                      const kernelArg &arg30);
+                      const kernelArg &arg30) const;
 
     void operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
                       const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
@@ -237,7 +221,7 @@
                       const kernelArg &arg21,  const kernelArg &arg22,  const kernelArg &arg23, 
                       const kernelArg &arg24,  const kernelArg &arg25,  const kernelArg &arg26, 
                       const kernelArg &arg27,  const kernelArg &arg28,  const kernelArg &arg29, 
-                      const kernelArg &arg30,  const kernelArg &arg31);
+                      const kernelArg &arg30,  const kernelArg &arg31) const;
 
     void operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
                       const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
@@ -249,7 +233,7 @@
                       const kernelArg &arg21,  const kernelArg &arg22,  const kernelArg &arg23, 
                       const kernelArg &arg24,  const kernelArg &arg25,  const kernelArg &arg26, 
                       const kernelArg &arg27,  const kernelArg &arg28,  const kernelArg &arg29, 
-                      const kernelArg &arg30,  const kernelArg &arg31,  const kernelArg &arg32);
+                      const kernelArg &arg30,  const kernelArg &arg31,  const kernelArg &arg32) const;
 
     void operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
                       const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
@@ -262,7 +246,7 @@
                       const kernelArg &arg24,  const kernelArg &arg25,  const kernelArg &arg26, 
                       const kernelArg &arg27,  const kernelArg &arg28,  const kernelArg &arg29, 
                       const kernelArg &arg30,  const kernelArg &arg31,  const kernelArg &arg32, 
-                      const kernelArg &arg33);
+                      const kernelArg &arg33) const;
 
     void operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
                       const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
@@ -275,7 +259,7 @@
                       const kernelArg &arg24,  const kernelArg &arg25,  const kernelArg &arg26, 
                       const kernelArg &arg27,  const kernelArg &arg28,  const kernelArg &arg29, 
                       const kernelArg &arg30,  const kernelArg &arg31,  const kernelArg &arg32, 
-                      const kernelArg &arg33,  const kernelArg &arg34);
+                      const kernelArg &arg33,  const kernelArg &arg34) const;
 
     void operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
                       const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
@@ -288,7 +272,7 @@
                       const kernelArg &arg24,  const kernelArg &arg25,  const kernelArg &arg26, 
                       const kernelArg &arg27,  const kernelArg &arg28,  const kernelArg &arg29, 
                       const kernelArg &arg30,  const kernelArg &arg31,  const kernelArg &arg32, 
-                      const kernelArg &arg33,  const kernelArg &arg34,  const kernelArg &arg35);
+                      const kernelArg &arg33,  const kernelArg &arg34,  const kernelArg &arg35) const;
 
     void operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
                       const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
@@ -302,7 +286,7 @@
                       const kernelArg &arg27,  const kernelArg &arg28,  const kernelArg &arg29, 
                       const kernelArg &arg30,  const kernelArg &arg31,  const kernelArg &arg32, 
                       const kernelArg &arg33,  const kernelArg &arg34,  const kernelArg &arg35, 
-                      const kernelArg &arg36);
+                      const kernelArg &arg36) const;
 
     void operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
                       const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
@@ -316,7 +300,7 @@
                       const kernelArg &arg27,  const kernelArg &arg28,  const kernelArg &arg29, 
                       const kernelArg &arg30,  const kernelArg &arg31,  const kernelArg &arg32, 
                       const kernelArg &arg33,  const kernelArg &arg34,  const kernelArg &arg35, 
-                      const kernelArg &arg36,  const kernelArg &arg37);
+                      const kernelArg &arg36,  const kernelArg &arg37) const;
 
     void operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
                       const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
@@ -330,7 +314,7 @@
                       const kernelArg &arg27,  const kernelArg &arg28,  const kernelArg &arg29, 
                       const kernelArg &arg30,  const kernelArg &arg31,  const kernelArg &arg32, 
                       const kernelArg &arg33,  const kernelArg &arg34,  const kernelArg &arg35, 
-                      const kernelArg &arg36,  const kernelArg &arg37,  const kernelArg &arg38);
+                      const kernelArg &arg36,  const kernelArg &arg37,  const kernelArg &arg38) const;
 
     void operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
                       const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
@@ -345,7 +329,7 @@
                       const kernelArg &arg30,  const kernelArg &arg31,  const kernelArg &arg32, 
                       const kernelArg &arg33,  const kernelArg &arg34,  const kernelArg &arg35, 
                       const kernelArg &arg36,  const kernelArg &arg37,  const kernelArg &arg38, 
-                      const kernelArg &arg39);
+                      const kernelArg &arg39) const;
 
     void operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
                       const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
@@ -360,7 +344,7 @@
                       const kernelArg &arg30,  const kernelArg &arg31,  const kernelArg &arg32, 
                       const kernelArg &arg33,  const kernelArg &arg34,  const kernelArg &arg35, 
                       const kernelArg &arg36,  const kernelArg &arg37,  const kernelArg &arg38, 
-                      const kernelArg &arg39,  const kernelArg &arg40);
+                      const kernelArg &arg39,  const kernelArg &arg40) const;
 
     void operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
                       const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
@@ -375,7 +359,7 @@
                       const kernelArg &arg30,  const kernelArg &arg31,  const kernelArg &arg32, 
                       const kernelArg &arg33,  const kernelArg &arg34,  const kernelArg &arg35, 
                       const kernelArg &arg36,  const kernelArg &arg37,  const kernelArg &arg38, 
-                      const kernelArg &arg39,  const kernelArg &arg40,  const kernelArg &arg41);
+                      const kernelArg &arg39,  const kernelArg &arg40,  const kernelArg &arg41) const;
 
     void operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
                       const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
@@ -391,7 +375,7 @@
                       const kernelArg &arg33,  const kernelArg &arg34,  const kernelArg &arg35, 
                       const kernelArg &arg36,  const kernelArg &arg37,  const kernelArg &arg38, 
                       const kernelArg &arg39,  const kernelArg &arg40,  const kernelArg &arg41, 
-                      const kernelArg &arg42);
+                      const kernelArg &arg42) const;
 
     void operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
                       const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
@@ -407,7 +391,7 @@
                       const kernelArg &arg33,  const kernelArg &arg34,  const kernelArg &arg35, 
                       const kernelArg &arg36,  const kernelArg &arg37,  const kernelArg &arg38, 
                       const kernelArg &arg39,  const kernelArg &arg40,  const kernelArg &arg41, 
-                      const kernelArg &arg42,  const kernelArg &arg43);
+                      const kernelArg &arg42,  const kernelArg &arg43) const;
 
     void operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
                       const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
@@ -423,7 +407,7 @@
                       const kernelArg &arg33,  const kernelArg &arg34,  const kernelArg &arg35, 
                       const kernelArg &arg36,  const kernelArg &arg37,  const kernelArg &arg38, 
                       const kernelArg &arg39,  const kernelArg &arg40,  const kernelArg &arg41, 
-                      const kernelArg &arg42,  const kernelArg &arg43,  const kernelArg &arg44);
+                      const kernelArg &arg42,  const kernelArg &arg43,  const kernelArg &arg44) const;
 
     void operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
                       const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
@@ -440,7 +424,7 @@
                       const kernelArg &arg36,  const kernelArg &arg37,  const kernelArg &arg38, 
                       const kernelArg &arg39,  const kernelArg &arg40,  const kernelArg &arg41, 
                       const kernelArg &arg42,  const kernelArg &arg43,  const kernelArg &arg44, 
-                      const kernelArg &arg45);
+                      const kernelArg &arg45) const;
 
     void operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
                       const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
@@ -457,7 +441,7 @@
                       const kernelArg &arg36,  const kernelArg &arg37,  const kernelArg &arg38, 
                       const kernelArg &arg39,  const kernelArg &arg40,  const kernelArg &arg41, 
                       const kernelArg &arg42,  const kernelArg &arg43,  const kernelArg &arg44, 
-                      const kernelArg &arg45,  const kernelArg &arg46);
+                      const kernelArg &arg45,  const kernelArg &arg46) const;
 
     void operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
                       const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
@@ -474,7 +458,7 @@
                       const kernelArg &arg36,  const kernelArg &arg37,  const kernelArg &arg38, 
                       const kernelArg &arg39,  const kernelArg &arg40,  const kernelArg &arg41, 
                       const kernelArg &arg42,  const kernelArg &arg43,  const kernelArg &arg44, 
-                      const kernelArg &arg45,  const kernelArg &arg46,  const kernelArg &arg47);
+                      const kernelArg &arg45,  const kernelArg &arg46,  const kernelArg &arg47) const;
 
     void operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
                       const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
@@ -492,7 +476,7 @@
                       const kernelArg &arg39,  const kernelArg &arg40,  const kernelArg &arg41, 
                       const kernelArg &arg42,  const kernelArg &arg43,  const kernelArg &arg44, 
                       const kernelArg &arg45,  const kernelArg &arg46,  const kernelArg &arg47, 
-                      const kernelArg &arg48);
+                      const kernelArg &arg48) const;
 
     void operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
                       const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
@@ -510,7 +494,7 @@
                       const kernelArg &arg39,  const kernelArg &arg40,  const kernelArg &arg41, 
                       const kernelArg &arg42,  const kernelArg &arg43,  const kernelArg &arg44, 
                       const kernelArg &arg45,  const kernelArg &arg46,  const kernelArg &arg47, 
-                      const kernelArg &arg48,  const kernelArg &arg49);
+                      const kernelArg &arg48,  const kernelArg &arg49) const;
 
     void operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
                       const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
@@ -528,7 +512,7 @@
                       const kernelArg &arg39,  const kernelArg &arg40,  const kernelArg &arg41, 
                       const kernelArg &arg42,  const kernelArg &arg43,  const kernelArg &arg44, 
                       const kernelArg &arg45,  const kernelArg &arg46,  const kernelArg &arg47, 
-                      const kernelArg &arg48,  const kernelArg &arg49,  const kernelArg &arg50);
+                      const kernelArg &arg48,  const kernelArg &arg49,  const kernelArg &arg50) const;
 
     void operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
                       const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
@@ -547,7 +531,7 @@
                       const kernelArg &arg42,  const kernelArg &arg43,  const kernelArg &arg44, 
                       const kernelArg &arg45,  const kernelArg &arg46,  const kernelArg &arg47, 
                       const kernelArg &arg48,  const kernelArg &arg49,  const kernelArg &arg50, 
-                      const kernelArg &arg51);
+                      const kernelArg &arg51) const;
 
     void operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
                       const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
@@ -566,7 +550,7 @@
                       const kernelArg &arg42,  const kernelArg &arg43,  const kernelArg &arg44, 
                       const kernelArg &arg45,  const kernelArg &arg46,  const kernelArg &arg47, 
                       const kernelArg &arg48,  const kernelArg &arg49,  const kernelArg &arg50, 
-                      const kernelArg &arg51,  const kernelArg &arg52);
+                      const kernelArg &arg51,  const kernelArg &arg52) const;
 
     void operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
                       const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
@@ -585,7 +569,7 @@
                       const kernelArg &arg42,  const kernelArg &arg43,  const kernelArg &arg44, 
                       const kernelArg &arg45,  const kernelArg &arg46,  const kernelArg &arg47, 
                       const kernelArg &arg48,  const kernelArg &arg49,  const kernelArg &arg50, 
-                      const kernelArg &arg51,  const kernelArg &arg52,  const kernelArg &arg53);
+                      const kernelArg &arg51,  const kernelArg &arg52,  const kernelArg &arg53) const;
 
     void operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
                       const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
@@ -605,7 +589,7 @@
                       const kernelArg &arg45,  const kernelArg &arg46,  const kernelArg &arg47, 
                       const kernelArg &arg48,  const kernelArg &arg49,  const kernelArg &arg50, 
                       const kernelArg &arg51,  const kernelArg &arg52,  const kernelArg &arg53, 
-                      const kernelArg &arg54);
+                      const kernelArg &arg54) const;
 
     void operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
                       const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
@@ -625,7 +609,7 @@
                       const kernelArg &arg45,  const kernelArg &arg46,  const kernelArg &arg47, 
                       const kernelArg &arg48,  const kernelArg &arg49,  const kernelArg &arg50, 
                       const kernelArg &arg51,  const kernelArg &arg52,  const kernelArg &arg53, 
-                      const kernelArg &arg54,  const kernelArg &arg55);
+                      const kernelArg &arg54,  const kernelArg &arg55) const;
 
     void operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
                       const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
@@ -645,7 +629,7 @@
                       const kernelArg &arg45,  const kernelArg &arg46,  const kernelArg &arg47, 
                       const kernelArg &arg48,  const kernelArg &arg49,  const kernelArg &arg50, 
                       const kernelArg &arg51,  const kernelArg &arg52,  const kernelArg &arg53, 
-                      const kernelArg &arg54,  const kernelArg &arg55,  const kernelArg &arg56);
+                      const kernelArg &arg54,  const kernelArg &arg55,  const kernelArg &arg56) const;
 
     void operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
                       const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
@@ -666,7 +650,7 @@
                       const kernelArg &arg48,  const kernelArg &arg49,  const kernelArg &arg50, 
                       const kernelArg &arg51,  const kernelArg &arg52,  const kernelArg &arg53, 
                       const kernelArg &arg54,  const kernelArg &arg55,  const kernelArg &arg56, 
-                      const kernelArg &arg57);
+                      const kernelArg &arg57) const;
 
     void operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
                       const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
@@ -687,7 +671,7 @@
                       const kernelArg &arg48,  const kernelArg &arg49,  const kernelArg &arg50, 
                       const kernelArg &arg51,  const kernelArg &arg52,  const kernelArg &arg53, 
                       const kernelArg &arg54,  const kernelArg &arg55,  const kernelArg &arg56, 
-                      const kernelArg &arg57,  const kernelArg &arg58);
+                      const kernelArg &arg57,  const kernelArg &arg58) const;
 
     void operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
                       const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
@@ -708,7 +692,7 @@
                       const kernelArg &arg48,  const kernelArg &arg49,  const kernelArg &arg50, 
                       const kernelArg &arg51,  const kernelArg &arg52,  const kernelArg &arg53, 
                       const kernelArg &arg54,  const kernelArg &arg55,  const kernelArg &arg56, 
-                      const kernelArg &arg57,  const kernelArg &arg58,  const kernelArg &arg59);
+                      const kernelArg &arg57,  const kernelArg &arg58,  const kernelArg &arg59) const;
 
     void operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
                       const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
@@ -730,7 +714,7 @@
                       const kernelArg &arg51,  const kernelArg &arg52,  const kernelArg &arg53, 
                       const kernelArg &arg54,  const kernelArg &arg55,  const kernelArg &arg56, 
                       const kernelArg &arg57,  const kernelArg &arg58,  const kernelArg &arg59, 
-                      const kernelArg &arg60);
+                      const kernelArg &arg60) const;
 
     void operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
                       const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
@@ -752,7 +736,7 @@
                       const kernelArg &arg51,  const kernelArg &arg52,  const kernelArg &arg53, 
                       const kernelArg &arg54,  const kernelArg &arg55,  const kernelArg &arg56, 
                       const kernelArg &arg57,  const kernelArg &arg58,  const kernelArg &arg59, 
-                      const kernelArg &arg60,  const kernelArg &arg61);
+                      const kernelArg &arg60,  const kernelArg &arg61) const;
 
     void operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
                       const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
@@ -774,7 +758,7 @@
                       const kernelArg &arg51,  const kernelArg &arg52,  const kernelArg &arg53, 
                       const kernelArg &arg54,  const kernelArg &arg55,  const kernelArg &arg56, 
                       const kernelArg &arg57,  const kernelArg &arg58,  const kernelArg &arg59, 
-                      const kernelArg &arg60,  const kernelArg &arg61,  const kernelArg &arg62);
+                      const kernelArg &arg60,  const kernelArg &arg61,  const kernelArg &arg62) const;
 
     void operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
                       const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
@@ -797,7 +781,7 @@
                       const kernelArg &arg54,  const kernelArg &arg55,  const kernelArg &arg56, 
                       const kernelArg &arg57,  const kernelArg &arg58,  const kernelArg &arg59, 
                       const kernelArg &arg60,  const kernelArg &arg61,  const kernelArg &arg62, 
-                      const kernelArg &arg63);
+                      const kernelArg &arg63) const;
 
     void operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
                       const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
@@ -820,7 +804,7 @@
                       const kernelArg &arg54,  const kernelArg &arg55,  const kernelArg &arg56, 
                       const kernelArg &arg57,  const kernelArg &arg58,  const kernelArg &arg59, 
                       const kernelArg &arg60,  const kernelArg &arg61,  const kernelArg &arg62, 
-                      const kernelArg &arg63,  const kernelArg &arg64);
+                      const kernelArg &arg63,  const kernelArg &arg64) const;
 
     void operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
                       const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
@@ -843,7 +827,7 @@
                       const kernelArg &arg54,  const kernelArg &arg55,  const kernelArg &arg56, 
                       const kernelArg &arg57,  const kernelArg &arg58,  const kernelArg &arg59, 
                       const kernelArg &arg60,  const kernelArg &arg61,  const kernelArg &arg62, 
-                      const kernelArg &arg63,  const kernelArg &arg64,  const kernelArg &arg65);
+                      const kernelArg &arg63,  const kernelArg &arg64,  const kernelArg &arg65) const;
 
     void operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
                       const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
@@ -867,7 +851,7 @@
                       const kernelArg &arg57,  const kernelArg &arg58,  const kernelArg &arg59, 
                       const kernelArg &arg60,  const kernelArg &arg61,  const kernelArg &arg62, 
                       const kernelArg &arg63,  const kernelArg &arg64,  const kernelArg &arg65, 
-                      const kernelArg &arg66);
+                      const kernelArg &arg66) const;
 
     void operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
                       const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
@@ -891,7 +875,7 @@
                       const kernelArg &arg57,  const kernelArg &arg58,  const kernelArg &arg59, 
                       const kernelArg &arg60,  const kernelArg &arg61,  const kernelArg &arg62, 
                       const kernelArg &arg63,  const kernelArg &arg64,  const kernelArg &arg65, 
-                      const kernelArg &arg66,  const kernelArg &arg67);
+                      const kernelArg &arg66,  const kernelArg &arg67) const;
 
     void operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
                       const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
@@ -915,7 +899,7 @@
                       const kernelArg &arg57,  const kernelArg &arg58,  const kernelArg &arg59, 
                       const kernelArg &arg60,  const kernelArg &arg61,  const kernelArg &arg62, 
                       const kernelArg &arg63,  const kernelArg &arg64,  const kernelArg &arg65, 
-                      const kernelArg &arg66,  const kernelArg &arg67,  const kernelArg &arg68);
+                      const kernelArg &arg66,  const kernelArg &arg67,  const kernelArg &arg68) const;
 
     void operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
                       const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
@@ -940,7 +924,7 @@
                       const kernelArg &arg60,  const kernelArg &arg61,  const kernelArg &arg62, 
                       const kernelArg &arg63,  const kernelArg &arg64,  const kernelArg &arg65, 
                       const kernelArg &arg66,  const kernelArg &arg67,  const kernelArg &arg68, 
-                      const kernelArg &arg69);
+                      const kernelArg &arg69) const;
 
     void operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
                       const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
@@ -965,7 +949,7 @@
                       const kernelArg &arg60,  const kernelArg &arg61,  const kernelArg &arg62, 
                       const kernelArg &arg63,  const kernelArg &arg64,  const kernelArg &arg65, 
                       const kernelArg &arg66,  const kernelArg &arg67,  const kernelArg &arg68, 
-                      const kernelArg &arg69,  const kernelArg &arg70);
+                      const kernelArg &arg69,  const kernelArg &arg70) const;
 
     void operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
                       const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
@@ -990,7 +974,7 @@
                       const kernelArg &arg60,  const kernelArg &arg61,  const kernelArg &arg62, 
                       const kernelArg &arg63,  const kernelArg &arg64,  const kernelArg &arg65, 
                       const kernelArg &arg66,  const kernelArg &arg67,  const kernelArg &arg68, 
-                      const kernelArg &arg69,  const kernelArg &arg70,  const kernelArg &arg71);
+                      const kernelArg &arg69,  const kernelArg &arg70,  const kernelArg &arg71) const;
 
     void operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
                       const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
@@ -1016,7 +1000,7 @@
                       const kernelArg &arg63,  const kernelArg &arg64,  const kernelArg &arg65, 
                       const kernelArg &arg66,  const kernelArg &arg67,  const kernelArg &arg68, 
                       const kernelArg &arg69,  const kernelArg &arg70,  const kernelArg &arg71, 
-                      const kernelArg &arg72);
+                      const kernelArg &arg72) const;
 
     void operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
                       const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
@@ -1042,7 +1026,7 @@
                       const kernelArg &arg63,  const kernelArg &arg64,  const kernelArg &arg65, 
                       const kernelArg &arg66,  const kernelArg &arg67,  const kernelArg &arg68, 
                       const kernelArg &arg69,  const kernelArg &arg70,  const kernelArg &arg71, 
-                      const kernelArg &arg72,  const kernelArg &arg73);
+                      const kernelArg &arg72,  const kernelArg &arg73) const;
 
     void operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
                       const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
@@ -1068,7 +1052,7 @@
                       const kernelArg &arg63,  const kernelArg &arg64,  const kernelArg &arg65, 
                       const kernelArg &arg66,  const kernelArg &arg67,  const kernelArg &arg68, 
                       const kernelArg &arg69,  const kernelArg &arg70,  const kernelArg &arg71, 
-                      const kernelArg &arg72,  const kernelArg &arg73,  const kernelArg &arg74);
+                      const kernelArg &arg72,  const kernelArg &arg73,  const kernelArg &arg74) const;
 
     void operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
                       const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
@@ -1095,7 +1079,7 @@
                       const kernelArg &arg66,  const kernelArg &arg67,  const kernelArg &arg68, 
                       const kernelArg &arg69,  const kernelArg &arg70,  const kernelArg &arg71, 
                       const kernelArg &arg72,  const kernelArg &arg73,  const kernelArg &arg74, 
-                      const kernelArg &arg75);
+                      const kernelArg &arg75) const;
 
     void operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
                       const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
@@ -1122,7 +1106,7 @@
                       const kernelArg &arg66,  const kernelArg &arg67,  const kernelArg &arg68, 
                       const kernelArg &arg69,  const kernelArg &arg70,  const kernelArg &arg71, 
                       const kernelArg &arg72,  const kernelArg &arg73,  const kernelArg &arg74, 
-                      const kernelArg &arg75,  const kernelArg &arg76);
+                      const kernelArg &arg75,  const kernelArg &arg76) const;
 
     void operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
                       const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
@@ -1149,7 +1133,7 @@
                       const kernelArg &arg66,  const kernelArg &arg67,  const kernelArg &arg68, 
                       const kernelArg &arg69,  const kernelArg &arg70,  const kernelArg &arg71, 
                       const kernelArg &arg72,  const kernelArg &arg73,  const kernelArg &arg74, 
-                      const kernelArg &arg75,  const kernelArg &arg76,  const kernelArg &arg77);
+                      const kernelArg &arg75,  const kernelArg &arg76,  const kernelArg &arg77) const;
 
     void operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
                       const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
@@ -1177,7 +1161,7 @@
                       const kernelArg &arg69,  const kernelArg &arg70,  const kernelArg &arg71, 
                       const kernelArg &arg72,  const kernelArg &arg73,  const kernelArg &arg74, 
                       const kernelArg &arg75,  const kernelArg &arg76,  const kernelArg &arg77, 
-                      const kernelArg &arg78);
+                      const kernelArg &arg78) const;
 
     void operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
                       const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
@@ -1205,7 +1189,7 @@
                       const kernelArg &arg69,  const kernelArg &arg70,  const kernelArg &arg71, 
                       const kernelArg &arg72,  const kernelArg &arg73,  const kernelArg &arg74, 
                       const kernelArg &arg75,  const kernelArg &arg76,  const kernelArg &arg77, 
-                      const kernelArg &arg78,  const kernelArg &arg79);
+                      const kernelArg &arg78,  const kernelArg &arg79) const;
 
     void operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
                       const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
@@ -1233,7 +1217,7 @@
                       const kernelArg &arg69,  const kernelArg &arg70,  const kernelArg &arg71, 
                       const kernelArg &arg72,  const kernelArg &arg73,  const kernelArg &arg74, 
                       const kernelArg &arg75,  const kernelArg &arg76,  const kernelArg &arg77, 
-                      const kernelArg &arg78,  const kernelArg &arg79,  const kernelArg &arg80);
+                      const kernelArg &arg78,  const kernelArg &arg79,  const kernelArg &arg80) const;
 
     void operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
                       const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
@@ -1262,7 +1246,7 @@
                       const kernelArg &arg72,  const kernelArg &arg73,  const kernelArg &arg74, 
                       const kernelArg &arg75,  const kernelArg &arg76,  const kernelArg &arg77, 
                       const kernelArg &arg78,  const kernelArg &arg79,  const kernelArg &arg80, 
-                      const kernelArg &arg81);
+                      const kernelArg &arg81) const;
 
     void operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
                       const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
@@ -1291,7 +1275,7 @@
                       const kernelArg &arg72,  const kernelArg &arg73,  const kernelArg &arg74, 
                       const kernelArg &arg75,  const kernelArg &arg76,  const kernelArg &arg77, 
                       const kernelArg &arg78,  const kernelArg &arg79,  const kernelArg &arg80, 
-                      const kernelArg &arg81,  const kernelArg &arg82);
+                      const kernelArg &arg81,  const kernelArg &arg82) const;
 
     void operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
                       const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
@@ -1320,7 +1304,7 @@
                       const kernelArg &arg72,  const kernelArg &arg73,  const kernelArg &arg74, 
                       const kernelArg &arg75,  const kernelArg &arg76,  const kernelArg &arg77, 
                       const kernelArg &arg78,  const kernelArg &arg79,  const kernelArg &arg80, 
-                      const kernelArg &arg81,  const kernelArg &arg82,  const kernelArg &arg83);
+                      const kernelArg &arg81,  const kernelArg &arg82,  const kernelArg &arg83) const;
 
     void operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
                       const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
@@ -1350,7 +1334,7 @@
                       const kernelArg &arg75,  const kernelArg &arg76,  const kernelArg &arg77, 
                       const kernelArg &arg78,  const kernelArg &arg79,  const kernelArg &arg80, 
                       const kernelArg &arg81,  const kernelArg &arg82,  const kernelArg &arg83, 
-                      const kernelArg &arg84);
+                      const kernelArg &arg84) const;
 
     void operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
                       const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
@@ -1380,7 +1364,7 @@
                       const kernelArg &arg75,  const kernelArg &arg76,  const kernelArg &arg77, 
                       const kernelArg &arg78,  const kernelArg &arg79,  const kernelArg &arg80, 
                       const kernelArg &arg81,  const kernelArg &arg82,  const kernelArg &arg83, 
-                      const kernelArg &arg84,  const kernelArg &arg85);
+                      const kernelArg &arg84,  const kernelArg &arg85) const;
 
     void operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
                       const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
@@ -1410,7 +1394,7 @@
                       const kernelArg &arg75,  const kernelArg &arg76,  const kernelArg &arg77, 
                       const kernelArg &arg78,  const kernelArg &arg79,  const kernelArg &arg80, 
                       const kernelArg &arg81,  const kernelArg &arg82,  const kernelArg &arg83, 
-                      const kernelArg &arg84,  const kernelArg &arg85,  const kernelArg &arg86);
+                      const kernelArg &arg84,  const kernelArg &arg85,  const kernelArg &arg86) const;
 
     void operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
                       const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
@@ -1441,7 +1425,7 @@
                       const kernelArg &arg78,  const kernelArg &arg79,  const kernelArg &arg80, 
                       const kernelArg &arg81,  const kernelArg &arg82,  const kernelArg &arg83, 
                       const kernelArg &arg84,  const kernelArg &arg85,  const kernelArg &arg86, 
-                      const kernelArg &arg87);
+                      const kernelArg &arg87) const;
 
     void operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
                       const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
@@ -1472,7 +1456,7 @@
                       const kernelArg &arg78,  const kernelArg &arg79,  const kernelArg &arg80, 
                       const kernelArg &arg81,  const kernelArg &arg82,  const kernelArg &arg83, 
                       const kernelArg &arg84,  const kernelArg &arg85,  const kernelArg &arg86, 
-                      const kernelArg &arg87,  const kernelArg &arg88);
+                      const kernelArg &arg87,  const kernelArg &arg88) const;
 
     void operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
                       const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
@@ -1503,7 +1487,7 @@
                       const kernelArg &arg78,  const kernelArg &arg79,  const kernelArg &arg80, 
                       const kernelArg &arg81,  const kernelArg &arg82,  const kernelArg &arg83, 
                       const kernelArg &arg84,  const kernelArg &arg85,  const kernelArg &arg86, 
-                      const kernelArg &arg87,  const kernelArg &arg88,  const kernelArg &arg89);
+                      const kernelArg &arg87,  const kernelArg &arg88,  const kernelArg &arg89) const;
 
     void operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
                       const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
@@ -1535,7 +1519,7 @@
                       const kernelArg &arg81,  const kernelArg &arg82,  const kernelArg &arg83, 
                       const kernelArg &arg84,  const kernelArg &arg85,  const kernelArg &arg86, 
                       const kernelArg &arg87,  const kernelArg &arg88,  const kernelArg &arg89, 
-                      const kernelArg &arg90);
+                      const kernelArg &arg90) const;
 
     void operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
                       const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
@@ -1567,7 +1551,7 @@
                       const kernelArg &arg81,  const kernelArg &arg82,  const kernelArg &arg83, 
                       const kernelArg &arg84,  const kernelArg &arg85,  const kernelArg &arg86, 
                       const kernelArg &arg87,  const kernelArg &arg88,  const kernelArg &arg89, 
-                      const kernelArg &arg90,  const kernelArg &arg91);
+                      const kernelArg &arg90,  const kernelArg &arg91) const;
 
     void operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
                       const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
@@ -1599,7 +1583,7 @@
                       const kernelArg &arg81,  const kernelArg &arg82,  const kernelArg &arg83, 
                       const kernelArg &arg84,  const kernelArg &arg85,  const kernelArg &arg86, 
                       const kernelArg &arg87,  const kernelArg &arg88,  const kernelArg &arg89, 
-                      const kernelArg &arg90,  const kernelArg &arg91,  const kernelArg &arg92);
+                      const kernelArg &arg90,  const kernelArg &arg91,  const kernelArg &arg92) const;
 
     void operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
                       const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
@@ -1632,7 +1616,7 @@
                       const kernelArg &arg84,  const kernelArg &arg85,  const kernelArg &arg86, 
                       const kernelArg &arg87,  const kernelArg &arg88,  const kernelArg &arg89, 
                       const kernelArg &arg90,  const kernelArg &arg91,  const kernelArg &arg92, 
-                      const kernelArg &arg93);
+                      const kernelArg &arg93) const;
 
     void operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
                       const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
@@ -1665,7 +1649,7 @@
                       const kernelArg &arg84,  const kernelArg &arg85,  const kernelArg &arg86, 
                       const kernelArg &arg87,  const kernelArg &arg88,  const kernelArg &arg89, 
                       const kernelArg &arg90,  const kernelArg &arg91,  const kernelArg &arg92, 
-                      const kernelArg &arg93,  const kernelArg &arg94);
+                      const kernelArg &arg93,  const kernelArg &arg94) const;
 
     void operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
                       const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
@@ -1698,7 +1682,7 @@
                       const kernelArg &arg84,  const kernelArg &arg85,  const kernelArg &arg86, 
                       const kernelArg &arg87,  const kernelArg &arg88,  const kernelArg &arg89, 
                       const kernelArg &arg90,  const kernelArg &arg91,  const kernelArg &arg92, 
-                      const kernelArg &arg93,  const kernelArg &arg94,  const kernelArg &arg95);
+                      const kernelArg &arg93,  const kernelArg &arg94,  const kernelArg &arg95) const;
 
     void operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
                       const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
@@ -1732,7 +1716,7 @@
                       const kernelArg &arg87,  const kernelArg &arg88,  const kernelArg &arg89, 
                       const kernelArg &arg90,  const kernelArg &arg91,  const kernelArg &arg92, 
                       const kernelArg &arg93,  const kernelArg &arg94,  const kernelArg &arg95, 
-                      const kernelArg &arg96);
+                      const kernelArg &arg96) const;
 
     void operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
                       const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
@@ -1766,7 +1750,7 @@
                       const kernelArg &arg87,  const kernelArg &arg88,  const kernelArg &arg89, 
                       const kernelArg &arg90,  const kernelArg &arg91,  const kernelArg &arg92, 
                       const kernelArg &arg93,  const kernelArg &arg94,  const kernelArg &arg95, 
-                      const kernelArg &arg96,  const kernelArg &arg97);
+                      const kernelArg &arg96,  const kernelArg &arg97) const;
 
     void operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
                       const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
@@ -1800,7 +1784,7 @@
                       const kernelArg &arg87,  const kernelArg &arg88,  const kernelArg &arg89, 
                       const kernelArg &arg90,  const kernelArg &arg91,  const kernelArg &arg92, 
                       const kernelArg &arg93,  const kernelArg &arg94,  const kernelArg &arg95, 
-                      const kernelArg &arg96,  const kernelArg &arg97,  const kernelArg &arg98);
+                      const kernelArg &arg96,  const kernelArg &arg97,  const kernelArg &arg98) const;
 
     void operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
                       const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
@@ -1835,7 +1819,7 @@
                       const kernelArg &arg90,  const kernelArg &arg91,  const kernelArg &arg92, 
                       const kernelArg &arg93,  const kernelArg &arg94,  const kernelArg &arg95, 
                       const kernelArg &arg96,  const kernelArg &arg97,  const kernelArg &arg98, 
-                      const kernelArg &arg99);
+                      const kernelArg &arg99) const;
 
     void operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
                       const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
@@ -1870,7 +1854,7 @@
                       const kernelArg &arg90,  const kernelArg &arg91,  const kernelArg &arg92, 
                       const kernelArg &arg93,  const kernelArg &arg94,  const kernelArg &arg95, 
                       const kernelArg &arg96,  const kernelArg &arg97,  const kernelArg &arg98, 
-                      const kernelArg &arg99,  const kernelArg &arg100);
+                      const kernelArg &arg99,  const kernelArg &arg100) const;
 
     void operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
                       const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
@@ -1905,7 +1889,7 @@
                       const kernelArg &arg90,  const kernelArg &arg91,  const kernelArg &arg92, 
                       const kernelArg &arg93,  const kernelArg &arg94,  const kernelArg &arg95, 
                       const kernelArg &arg96,  const kernelArg &arg97,  const kernelArg &arg98, 
-                      const kernelArg &arg99,  const kernelArg &arg100,  const kernelArg &arg101);
+                      const kernelArg &arg99,  const kernelArg &arg100,  const kernelArg &arg101) const;
 
     void operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
                       const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
@@ -1941,7 +1925,7 @@
                       const kernelArg &arg93,  const kernelArg &arg94,  const kernelArg &arg95, 
                       const kernelArg &arg96,  const kernelArg &arg97,  const kernelArg &arg98, 
                       const kernelArg &arg99,  const kernelArg &arg100,  const kernelArg &arg101, 
-                      const kernelArg &arg102);
+                      const kernelArg &arg102) const;
 
     void operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
                       const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
@@ -1977,7 +1961,7 @@
                       const kernelArg &arg93,  const kernelArg &arg94,  const kernelArg &arg95, 
                       const kernelArg &arg96,  const kernelArg &arg97,  const kernelArg &arg98, 
                       const kernelArg &arg99,  const kernelArg &arg100,  const kernelArg &arg101, 
-                      const kernelArg &arg102,  const kernelArg &arg103);
+                      const kernelArg &arg102,  const kernelArg &arg103) const;
 
     void operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
                       const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
@@ -2013,7 +1997,7 @@
                       const kernelArg &arg93,  const kernelArg &arg94,  const kernelArg &arg95, 
                       const kernelArg &arg96,  const kernelArg &arg97,  const kernelArg &arg98, 
                       const kernelArg &arg99,  const kernelArg &arg100,  const kernelArg &arg101, 
-                      const kernelArg &arg102,  const kernelArg &arg103,  const kernelArg &arg104);
+                      const kernelArg &arg102,  const kernelArg &arg103,  const kernelArg &arg104) const;
 
     void operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
                       const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
@@ -2050,7 +2034,7 @@
                       const kernelArg &arg96,  const kernelArg &arg97,  const kernelArg &arg98, 
                       const kernelArg &arg99,  const kernelArg &arg100,  const kernelArg &arg101, 
                       const kernelArg &arg102,  const kernelArg &arg103,  const kernelArg &arg104, 
-                      const kernelArg &arg105);
+                      const kernelArg &arg105) const;
 
     void operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
                       const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
@@ -2087,7 +2071,7 @@
                       const kernelArg &arg96,  const kernelArg &arg97,  const kernelArg &arg98, 
                       const kernelArg &arg99,  const kernelArg &arg100,  const kernelArg &arg101, 
                       const kernelArg &arg102,  const kernelArg &arg103,  const kernelArg &arg104, 
-                      const kernelArg &arg105,  const kernelArg &arg106);
+                      const kernelArg &arg105,  const kernelArg &arg106) const;
 
     void operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
                       const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
@@ -2124,7 +2108,7 @@
                       const kernelArg &arg96,  const kernelArg &arg97,  const kernelArg &arg98, 
                       const kernelArg &arg99,  const kernelArg &arg100,  const kernelArg &arg101, 
                       const kernelArg &arg102,  const kernelArg &arg103,  const kernelArg &arg104, 
-                      const kernelArg &arg105,  const kernelArg &arg106,  const kernelArg &arg107);
+                      const kernelArg &arg105,  const kernelArg &arg106,  const kernelArg &arg107) const;
 
     void operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
                       const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
@@ -2162,7 +2146,7 @@
                       const kernelArg &arg99,  const kernelArg &arg100,  const kernelArg &arg101, 
                       const kernelArg &arg102,  const kernelArg &arg103,  const kernelArg &arg104, 
                       const kernelArg &arg105,  const kernelArg &arg106,  const kernelArg &arg107, 
-                      const kernelArg &arg108);
+                      const kernelArg &arg108) const;
 
     void operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
                       const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
@@ -2200,7 +2184,7 @@
                       const kernelArg &arg99,  const kernelArg &arg100,  const kernelArg &arg101, 
                       const kernelArg &arg102,  const kernelArg &arg103,  const kernelArg &arg104, 
                       const kernelArg &arg105,  const kernelArg &arg106,  const kernelArg &arg107, 
-                      const kernelArg &arg108,  const kernelArg &arg109);
+                      const kernelArg &arg108,  const kernelArg &arg109) const;
 
     void operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
                       const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
@@ -2238,7 +2222,7 @@
                       const kernelArg &arg99,  const kernelArg &arg100,  const kernelArg &arg101, 
                       const kernelArg &arg102,  const kernelArg &arg103,  const kernelArg &arg104, 
                       const kernelArg &arg105,  const kernelArg &arg106,  const kernelArg &arg107, 
-                      const kernelArg &arg108,  const kernelArg &arg109,  const kernelArg &arg110);
+                      const kernelArg &arg108,  const kernelArg &arg109,  const kernelArg &arg110) const;
 
     void operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
                       const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
@@ -2277,7 +2261,7 @@
                       const kernelArg &arg102,  const kernelArg &arg103,  const kernelArg &arg104, 
                       const kernelArg &arg105,  const kernelArg &arg106,  const kernelArg &arg107, 
                       const kernelArg &arg108,  const kernelArg &arg109,  const kernelArg &arg110, 
-                      const kernelArg &arg111);
+                      const kernelArg &arg111) const;
 
     void operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
                       const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
@@ -2316,7 +2300,7 @@
                       const kernelArg &arg102,  const kernelArg &arg103,  const kernelArg &arg104, 
                       const kernelArg &arg105,  const kernelArg &arg106,  const kernelArg &arg107, 
                       const kernelArg &arg108,  const kernelArg &arg109,  const kernelArg &arg110, 
-                      const kernelArg &arg111,  const kernelArg &arg112);
+                      const kernelArg &arg111,  const kernelArg &arg112) const;
 
     void operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
                       const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
@@ -2355,7 +2339,7 @@
                       const kernelArg &arg102,  const kernelArg &arg103,  const kernelArg &arg104, 
                       const kernelArg &arg105,  const kernelArg &arg106,  const kernelArg &arg107, 
                       const kernelArg &arg108,  const kernelArg &arg109,  const kernelArg &arg110, 
-                      const kernelArg &arg111,  const kernelArg &arg112,  const kernelArg &arg113);
+                      const kernelArg &arg111,  const kernelArg &arg112,  const kernelArg &arg113) const;
 
     void operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
                       const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
@@ -2395,7 +2379,7 @@
                       const kernelArg &arg105,  const kernelArg &arg106,  const kernelArg &arg107, 
                       const kernelArg &arg108,  const kernelArg &arg109,  const kernelArg &arg110, 
                       const kernelArg &arg111,  const kernelArg &arg112,  const kernelArg &arg113, 
-                      const kernelArg &arg114);
+                      const kernelArg &arg114) const;
 
     void operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
                       const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
@@ -2435,7 +2419,7 @@
                       const kernelArg &arg105,  const kernelArg &arg106,  const kernelArg &arg107, 
                       const kernelArg &arg108,  const kernelArg &arg109,  const kernelArg &arg110, 
                       const kernelArg &arg111,  const kernelArg &arg112,  const kernelArg &arg113, 
-                      const kernelArg &arg114,  const kernelArg &arg115);
+                      const kernelArg &arg114,  const kernelArg &arg115) const;
 
     void operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
                       const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
@@ -2475,7 +2459,7 @@
                       const kernelArg &arg105,  const kernelArg &arg106,  const kernelArg &arg107, 
                       const kernelArg &arg108,  const kernelArg &arg109,  const kernelArg &arg110, 
                       const kernelArg &arg111,  const kernelArg &arg112,  const kernelArg &arg113, 
-                      const kernelArg &arg114,  const kernelArg &arg115,  const kernelArg &arg116);
+                      const kernelArg &arg114,  const kernelArg &arg115,  const kernelArg &arg116) const;
 
     void operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
                       const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
@@ -2516,7 +2500,7 @@
                       const kernelArg &arg108,  const kernelArg &arg109,  const kernelArg &arg110, 
                       const kernelArg &arg111,  const kernelArg &arg112,  const kernelArg &arg113, 
                       const kernelArg &arg114,  const kernelArg &arg115,  const kernelArg &arg116, 
-                      const kernelArg &arg117);
+                      const kernelArg &arg117) const;
 
     void operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
                       const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
@@ -2557,7 +2541,7 @@
                       const kernelArg &arg108,  const kernelArg &arg109,  const kernelArg &arg110, 
                       const kernelArg &arg111,  const kernelArg &arg112,  const kernelArg &arg113, 
                       const kernelArg &arg114,  const kernelArg &arg115,  const kernelArg &arg116, 
-                      const kernelArg &arg117,  const kernelArg &arg118);
+                      const kernelArg &arg117,  const kernelArg &arg118) const;
 
     void operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
                       const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
@@ -2598,7 +2582,7 @@
                       const kernelArg &arg108,  const kernelArg &arg109,  const kernelArg &arg110, 
                       const kernelArg &arg111,  const kernelArg &arg112,  const kernelArg &arg113, 
                       const kernelArg &arg114,  const kernelArg &arg115,  const kernelArg &arg116, 
-                      const kernelArg &arg117,  const kernelArg &arg118,  const kernelArg &arg119);
+                      const kernelArg &arg117,  const kernelArg &arg118,  const kernelArg &arg119) const;
 
     void operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
                       const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
@@ -2640,7 +2624,7 @@
                       const kernelArg &arg111,  const kernelArg &arg112,  const kernelArg &arg113, 
                       const kernelArg &arg114,  const kernelArg &arg115,  const kernelArg &arg116, 
                       const kernelArg &arg117,  const kernelArg &arg118,  const kernelArg &arg119, 
-                      const kernelArg &arg120);
+                      const kernelArg &arg120) const;
 
     void operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
                       const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
@@ -2682,7 +2666,7 @@
                       const kernelArg &arg111,  const kernelArg &arg112,  const kernelArg &arg113, 
                       const kernelArg &arg114,  const kernelArg &arg115,  const kernelArg &arg116, 
                       const kernelArg &arg117,  const kernelArg &arg118,  const kernelArg &arg119, 
-                      const kernelArg &arg120,  const kernelArg &arg121);
+                      const kernelArg &arg120,  const kernelArg &arg121) const;
 
     void operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
                       const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
@@ -2724,7 +2708,7 @@
                       const kernelArg &arg111,  const kernelArg &arg112,  const kernelArg &arg113, 
                       const kernelArg &arg114,  const kernelArg &arg115,  const kernelArg &arg116, 
                       const kernelArg &arg117,  const kernelArg &arg118,  const kernelArg &arg119, 
-                      const kernelArg &arg120,  const kernelArg &arg121,  const kernelArg &arg122);
+                      const kernelArg &arg120,  const kernelArg &arg121,  const kernelArg &arg122) const;
 
     void operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
                       const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
@@ -2767,7 +2751,7 @@
                       const kernelArg &arg114,  const kernelArg &arg115,  const kernelArg &arg116, 
                       const kernelArg &arg117,  const kernelArg &arg118,  const kernelArg &arg119, 
                       const kernelArg &arg120,  const kernelArg &arg121,  const kernelArg &arg122, 
-                      const kernelArg &arg123);
+                      const kernelArg &arg123) const;
 
     void operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
                       const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
@@ -2810,7 +2794,7 @@
                       const kernelArg &arg114,  const kernelArg &arg115,  const kernelArg &arg116, 
                       const kernelArg &arg117,  const kernelArg &arg118,  const kernelArg &arg119, 
                       const kernelArg &arg120,  const kernelArg &arg121,  const kernelArg &arg122, 
-                      const kernelArg &arg123,  const kernelArg &arg124);
+                      const kernelArg &arg123,  const kernelArg &arg124) const;
 
     void operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
                       const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
@@ -2853,7 +2837,7 @@
                       const kernelArg &arg114,  const kernelArg &arg115,  const kernelArg &arg116, 
                       const kernelArg &arg117,  const kernelArg &arg118,  const kernelArg &arg119, 
                       const kernelArg &arg120,  const kernelArg &arg121,  const kernelArg &arg122, 
-                      const kernelArg &arg123,  const kernelArg &arg124,  const kernelArg &arg125);
+                      const kernelArg &arg123,  const kernelArg &arg124,  const kernelArg &arg125) const;
 
     void operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
                       const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
@@ -2897,7 +2881,7 @@
                       const kernelArg &arg117,  const kernelArg &arg118,  const kernelArg &arg119, 
                       const kernelArg &arg120,  const kernelArg &arg121,  const kernelArg &arg122, 
                       const kernelArg &arg123,  const kernelArg &arg124,  const kernelArg &arg125, 
-                      const kernelArg &arg126);
+                      const kernelArg &arg126) const;
 
     void operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
                       const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
@@ -2941,7 +2925,7 @@
                       const kernelArg &arg117,  const kernelArg &arg118,  const kernelArg &arg119, 
                       const kernelArg &arg120,  const kernelArg &arg121,  const kernelArg &arg122, 
                       const kernelArg &arg123,  const kernelArg &arg124,  const kernelArg &arg125, 
-                      const kernelArg &arg126,  const kernelArg &arg127);
+                      const kernelArg &arg126,  const kernelArg &arg127) const;
 
     void operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
                       const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
@@ -2985,7 +2969,7 @@
                       const kernelArg &arg117,  const kernelArg &arg118,  const kernelArg &arg119, 
                       const kernelArg &arg120,  const kernelArg &arg121,  const kernelArg &arg122, 
                       const kernelArg &arg123,  const kernelArg &arg124,  const kernelArg &arg125, 
-                      const kernelArg &arg126,  const kernelArg &arg127,  const kernelArg &arg128);
+                      const kernelArg &arg126,  const kernelArg &arg127,  const kernelArg &arg128) const;
 
     void operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
                       const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
@@ -3030,7 +3014,7 @@
                       const kernelArg &arg120,  const kernelArg &arg121,  const kernelArg &arg122, 
                       const kernelArg &arg123,  const kernelArg &arg124,  const kernelArg &arg125, 
                       const kernelArg &arg126,  const kernelArg &arg127,  const kernelArg &arg128, 
-                      const kernelArg &arg129);
+                      const kernelArg &arg129) const;
 
     void operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
                       const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
@@ -3075,7 +3059,7 @@
                       const kernelArg &arg120,  const kernelArg &arg121,  const kernelArg &arg122, 
                       const kernelArg &arg123,  const kernelArg &arg124,  const kernelArg &arg125, 
                       const kernelArg &arg126,  const kernelArg &arg127,  const kernelArg &arg128, 
-                      const kernelArg &arg129,  const kernelArg &arg130);
+                      const kernelArg &arg129,  const kernelArg &arg130) const;
 
     void operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
                       const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
@@ -3120,7 +3104,7 @@
                       const kernelArg &arg120,  const kernelArg &arg121,  const kernelArg &arg122, 
                       const kernelArg &arg123,  const kernelArg &arg124,  const kernelArg &arg125, 
                       const kernelArg &arg126,  const kernelArg &arg127,  const kernelArg &arg128, 
-                      const kernelArg &arg129,  const kernelArg &arg130,  const kernelArg &arg131);
+                      const kernelArg &arg129,  const kernelArg &arg130,  const kernelArg &arg131) const;
 
     void operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
                       const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
@@ -3166,7 +3150,7 @@
                       const kernelArg &arg123,  const kernelArg &arg124,  const kernelArg &arg125, 
                       const kernelArg &arg126,  const kernelArg &arg127,  const kernelArg &arg128, 
                       const kernelArg &arg129,  const kernelArg &arg130,  const kernelArg &arg131, 
-                      const kernelArg &arg132);
+                      const kernelArg &arg132) const;
 
     void operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
                       const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
@@ -3212,7 +3196,7 @@
                       const kernelArg &arg123,  const kernelArg &arg124,  const kernelArg &arg125, 
                       const kernelArg &arg126,  const kernelArg &arg127,  const kernelArg &arg128, 
                       const kernelArg &arg129,  const kernelArg &arg130,  const kernelArg &arg131, 
-                      const kernelArg &arg132,  const kernelArg &arg133);
+                      const kernelArg &arg132,  const kernelArg &arg133) const;
 
     void operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
                       const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
@@ -3258,7 +3242,7 @@
                       const kernelArg &arg123,  const kernelArg &arg124,  const kernelArg &arg125, 
                       const kernelArg &arg126,  const kernelArg &arg127,  const kernelArg &arg128, 
                       const kernelArg &arg129,  const kernelArg &arg130,  const kernelArg &arg131, 
-                      const kernelArg &arg132,  const kernelArg &arg133,  const kernelArg &arg134);
+                      const kernelArg &arg132,  const kernelArg &arg133,  const kernelArg &arg134) const;
 
     void operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
                       const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
@@ -3305,7 +3289,7 @@
                       const kernelArg &arg126,  const kernelArg &arg127,  const kernelArg &arg128, 
                       const kernelArg &arg129,  const kernelArg &arg130,  const kernelArg &arg131, 
                       const kernelArg &arg132,  const kernelArg &arg133,  const kernelArg &arg134, 
-                      const kernelArg &arg135);
+                      const kernelArg &arg135) const;
 
     void operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
                       const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
@@ -3352,7 +3336,7 @@
                       const kernelArg &arg126,  const kernelArg &arg127,  const kernelArg &arg128, 
                       const kernelArg &arg129,  const kernelArg &arg130,  const kernelArg &arg131, 
                       const kernelArg &arg132,  const kernelArg &arg133,  const kernelArg &arg134, 
-                      const kernelArg &arg135,  const kernelArg &arg136);
+                      const kernelArg &arg135,  const kernelArg &arg136) const;
 
     void operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
                       const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
@@ -3399,7 +3383,7 @@
                       const kernelArg &arg126,  const kernelArg &arg127,  const kernelArg &arg128, 
                       const kernelArg &arg129,  const kernelArg &arg130,  const kernelArg &arg131, 
                       const kernelArg &arg132,  const kernelArg &arg133,  const kernelArg &arg134, 
-                      const kernelArg &arg135,  const kernelArg &arg136,  const kernelArg &arg137);
+                      const kernelArg &arg135,  const kernelArg &arg136,  const kernelArg &arg137) const;
 
     void operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
                       const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
@@ -3447,7 +3431,7 @@
                       const kernelArg &arg129,  const kernelArg &arg130,  const kernelArg &arg131, 
                       const kernelArg &arg132,  const kernelArg &arg133,  const kernelArg &arg134, 
                       const kernelArg &arg135,  const kernelArg &arg136,  const kernelArg &arg137, 
-                      const kernelArg &arg138);
+                      const kernelArg &arg138) const;
 
     void operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
                       const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
@@ -3495,7 +3479,7 @@
                       const kernelArg &arg129,  const kernelArg &arg130,  const kernelArg &arg131, 
                       const kernelArg &arg132,  const kernelArg &arg133,  const kernelArg &arg134, 
                       const kernelArg &arg135,  const kernelArg &arg136,  const kernelArg &arg137, 
-                      const kernelArg &arg138,  const kernelArg &arg139);
+                      const kernelArg &arg138,  const kernelArg &arg139) const;
 
     void operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
                       const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
@@ -3543,7 +3527,7 @@
                       const kernelArg &arg129,  const kernelArg &arg130,  const kernelArg &arg131, 
                       const kernelArg &arg132,  const kernelArg &arg133,  const kernelArg &arg134, 
                       const kernelArg &arg135,  const kernelArg &arg136,  const kernelArg &arg137, 
-                      const kernelArg &arg138,  const kernelArg &arg139,  const kernelArg &arg140);
+                      const kernelArg &arg138,  const kernelArg &arg139,  const kernelArg &arg140) const;
 
     void operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
                       const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
@@ -3592,7 +3576,7 @@
                       const kernelArg &arg132,  const kernelArg &arg133,  const kernelArg &arg134, 
                       const kernelArg &arg135,  const kernelArg &arg136,  const kernelArg &arg137, 
                       const kernelArg &arg138,  const kernelArg &arg139,  const kernelArg &arg140, 
-                      const kernelArg &arg141);
+                      const kernelArg &arg141) const;
 
     void operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
                       const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
@@ -3641,7 +3625,7 @@
                       const kernelArg &arg132,  const kernelArg &arg133,  const kernelArg &arg134, 
                       const kernelArg &arg135,  const kernelArg &arg136,  const kernelArg &arg137, 
                       const kernelArg &arg138,  const kernelArg &arg139,  const kernelArg &arg140, 
-                      const kernelArg &arg141,  const kernelArg &arg142);
+                      const kernelArg &arg141,  const kernelArg &arg142) const;
 
     void operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
                       const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
@@ -3690,7 +3674,7 @@
                       const kernelArg &arg132,  const kernelArg &arg133,  const kernelArg &arg134, 
                       const kernelArg &arg135,  const kernelArg &arg136,  const kernelArg &arg137, 
                       const kernelArg &arg138,  const kernelArg &arg139,  const kernelArg &arg140, 
-                      const kernelArg &arg141,  const kernelArg &arg142,  const kernelArg &arg143);
+                      const kernelArg &arg141,  const kernelArg &arg142,  const kernelArg &arg143) const;
 
     void operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
                       const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
@@ -3740,7 +3724,7 @@
                       const kernelArg &arg135,  const kernelArg &arg136,  const kernelArg &arg137, 
                       const kernelArg &arg138,  const kernelArg &arg139,  const kernelArg &arg140, 
                       const kernelArg &arg141,  const kernelArg &arg142,  const kernelArg &arg143, 
-                      const kernelArg &arg144);
+                      const kernelArg &arg144) const;
 
     void operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
                       const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
@@ -3790,7 +3774,7 @@
                       const kernelArg &arg135,  const kernelArg &arg136,  const kernelArg &arg137, 
                       const kernelArg &arg138,  const kernelArg &arg139,  const kernelArg &arg140, 
                       const kernelArg &arg141,  const kernelArg &arg142,  const kernelArg &arg143, 
-                      const kernelArg &arg144,  const kernelArg &arg145);
+                      const kernelArg &arg144,  const kernelArg &arg145) const;
 
     void operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
                       const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
@@ -3840,7 +3824,7 @@
                       const kernelArg &arg135,  const kernelArg &arg136,  const kernelArg &arg137, 
                       const kernelArg &arg138,  const kernelArg &arg139,  const kernelArg &arg140, 
                       const kernelArg &arg141,  const kernelArg &arg142,  const kernelArg &arg143, 
-                      const kernelArg &arg144,  const kernelArg &arg145,  const kernelArg &arg146);
+                      const kernelArg &arg144,  const kernelArg &arg145,  const kernelArg &arg146) const;
 
     void operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
                       const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
@@ -3891,7 +3875,7 @@
                       const kernelArg &arg138,  const kernelArg &arg139,  const kernelArg &arg140, 
                       const kernelArg &arg141,  const kernelArg &arg142,  const kernelArg &arg143, 
                       const kernelArg &arg144,  const kernelArg &arg145,  const kernelArg &arg146, 
-                      const kernelArg &arg147);
+                      const kernelArg &arg147) const;
 
     void operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
                       const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
@@ -3942,7 +3926,7 @@
                       const kernelArg &arg138,  const kernelArg &arg139,  const kernelArg &arg140, 
                       const kernelArg &arg141,  const kernelArg &arg142,  const kernelArg &arg143, 
                       const kernelArg &arg144,  const kernelArg &arg145,  const kernelArg &arg146, 
-                      const kernelArg &arg147,  const kernelArg &arg148);
+                      const kernelArg &arg147,  const kernelArg &arg148) const;
 
     void operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
                       const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
@@ -3993,7 +3977,7 @@
                       const kernelArg &arg138,  const kernelArg &arg139,  const kernelArg &arg140, 
                       const kernelArg &arg141,  const kernelArg &arg142,  const kernelArg &arg143, 
                       const kernelArg &arg144,  const kernelArg &arg145,  const kernelArg &arg146, 
-                      const kernelArg &arg147,  const kernelArg &arg148,  const kernelArg &arg149);
+                      const kernelArg &arg147,  const kernelArg &arg148,  const kernelArg &arg149) const;
 
     void operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
                       const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
@@ -4045,7 +4029,7 @@
                       const kernelArg &arg141,  const kernelArg &arg142,  const kernelArg &arg143, 
                       const kernelArg &arg144,  const kernelArg &arg145,  const kernelArg &arg146, 
                       const kernelArg &arg147,  const kernelArg &arg148,  const kernelArg &arg149, 
-                      const kernelArg &arg150);
+                      const kernelArg &arg150) const;
 
     void operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
                       const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
@@ -4097,7 +4081,7 @@
                       const kernelArg &arg141,  const kernelArg &arg142,  const kernelArg &arg143, 
                       const kernelArg &arg144,  const kernelArg &arg145,  const kernelArg &arg146, 
                       const kernelArg &arg147,  const kernelArg &arg148,  const kernelArg &arg149, 
-                      const kernelArg &arg150,  const kernelArg &arg151);
+                      const kernelArg &arg150,  const kernelArg &arg151) const;
 
     void operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
                       const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
@@ -4149,7 +4133,7 @@
                       const kernelArg &arg141,  const kernelArg &arg142,  const kernelArg &arg143, 
                       const kernelArg &arg144,  const kernelArg &arg145,  const kernelArg &arg146, 
                       const kernelArg &arg147,  const kernelArg &arg148,  const kernelArg &arg149, 
-                      const kernelArg &arg150,  const kernelArg &arg151,  const kernelArg &arg152);
+                      const kernelArg &arg150,  const kernelArg &arg151,  const kernelArg &arg152) const;
 
     void operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
                       const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
@@ -4202,7 +4186,7 @@
                       const kernelArg &arg144,  const kernelArg &arg145,  const kernelArg &arg146, 
                       const kernelArg &arg147,  const kernelArg &arg148,  const kernelArg &arg149, 
                       const kernelArg &arg150,  const kernelArg &arg151,  const kernelArg &arg152, 
-                      const kernelArg &arg153);
+                      const kernelArg &arg153) const;
 
     void operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
                       const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
@@ -4255,7 +4239,7 @@
                       const kernelArg &arg144,  const kernelArg &arg145,  const kernelArg &arg146, 
                       const kernelArg &arg147,  const kernelArg &arg148,  const kernelArg &arg149, 
                       const kernelArg &arg150,  const kernelArg &arg151,  const kernelArg &arg152, 
-                      const kernelArg &arg153,  const kernelArg &arg154);
+                      const kernelArg &arg153,  const kernelArg &arg154) const;
 
     void operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
                       const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
@@ -4308,7 +4292,7 @@
                       const kernelArg &arg144,  const kernelArg &arg145,  const kernelArg &arg146, 
                       const kernelArg &arg147,  const kernelArg &arg148,  const kernelArg &arg149, 
                       const kernelArg &arg150,  const kernelArg &arg151,  const kernelArg &arg152, 
-                      const kernelArg &arg153,  const kernelArg &arg154,  const kernelArg &arg155);
+                      const kernelArg &arg153,  const kernelArg &arg154,  const kernelArg &arg155) const;
 
     void operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
                       const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
@@ -4362,7 +4346,7 @@
                       const kernelArg &arg147,  const kernelArg &arg148,  const kernelArg &arg149, 
                       const kernelArg &arg150,  const kernelArg &arg151,  const kernelArg &arg152, 
                       const kernelArg &arg153,  const kernelArg &arg154,  const kernelArg &arg155, 
-                      const kernelArg &arg156);
+                      const kernelArg &arg156) const;
 
     void operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
                       const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
@@ -4416,7 +4400,7 @@
                       const kernelArg &arg147,  const kernelArg &arg148,  const kernelArg &arg149, 
                       const kernelArg &arg150,  const kernelArg &arg151,  const kernelArg &arg152, 
                       const kernelArg &arg153,  const kernelArg &arg154,  const kernelArg &arg155, 
-                      const kernelArg &arg156,  const kernelArg &arg157);
+                      const kernelArg &arg156,  const kernelArg &arg157) const;
 
     void operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
                       const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
@@ -4470,7 +4454,7 @@
                       const kernelArg &arg147,  const kernelArg &arg148,  const kernelArg &arg149, 
                       const kernelArg &arg150,  const kernelArg &arg151,  const kernelArg &arg152, 
                       const kernelArg &arg153,  const kernelArg &arg154,  const kernelArg &arg155, 
-                      const kernelArg &arg156,  const kernelArg &arg157,  const kernelArg &arg158);
+                      const kernelArg &arg156,  const kernelArg &arg157,  const kernelArg &arg158) const;
 
     void operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
                       const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
@@ -4525,7 +4509,7 @@
                       const kernelArg &arg150,  const kernelArg &arg151,  const kernelArg &arg152, 
                       const kernelArg &arg153,  const kernelArg &arg154,  const kernelArg &arg155, 
                       const kernelArg &arg156,  const kernelArg &arg157,  const kernelArg &arg158, 
-                      const kernelArg &arg159);
+                      const kernelArg &arg159) const;
 
     void operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
                       const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
@@ -4580,7 +4564,7 @@
                       const kernelArg &arg150,  const kernelArg &arg151,  const kernelArg &arg152, 
                       const kernelArg &arg153,  const kernelArg &arg154,  const kernelArg &arg155, 
                       const kernelArg &arg156,  const kernelArg &arg157,  const kernelArg &arg158, 
-                      const kernelArg &arg159,  const kernelArg &arg160);
+                      const kernelArg &arg159,  const kernelArg &arg160) const;
 
     void operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
                       const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
@@ -4635,7 +4619,7 @@
                       const kernelArg &arg150,  const kernelArg &arg151,  const kernelArg &arg152, 
                       const kernelArg &arg153,  const kernelArg &arg154,  const kernelArg &arg155, 
                       const kernelArg &arg156,  const kernelArg &arg157,  const kernelArg &arg158, 
-                      const kernelArg &arg159,  const kernelArg &arg160,  const kernelArg &arg161);
+                      const kernelArg &arg159,  const kernelArg &arg160,  const kernelArg &arg161) const;
 
     void operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
                       const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
@@ -4691,7 +4675,7 @@
                       const kernelArg &arg153,  const kernelArg &arg154,  const kernelArg &arg155, 
                       const kernelArg &arg156,  const kernelArg &arg157,  const kernelArg &arg158, 
                       const kernelArg &arg159,  const kernelArg &arg160,  const kernelArg &arg161, 
-                      const kernelArg &arg162);
+                      const kernelArg &arg162) const;
 
     void operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
                       const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
@@ -4747,7 +4731,7 @@
                       const kernelArg &arg153,  const kernelArg &arg154,  const kernelArg &arg155, 
                       const kernelArg &arg156,  const kernelArg &arg157,  const kernelArg &arg158, 
                       const kernelArg &arg159,  const kernelArg &arg160,  const kernelArg &arg161, 
-                      const kernelArg &arg162,  const kernelArg &arg163);
+                      const kernelArg &arg162,  const kernelArg &arg163) const;
 
     void operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
                       const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
@@ -4803,7 +4787,7 @@
                       const kernelArg &arg153,  const kernelArg &arg154,  const kernelArg &arg155, 
                       const kernelArg &arg156,  const kernelArg &arg157,  const kernelArg &arg158, 
                       const kernelArg &arg159,  const kernelArg &arg160,  const kernelArg &arg161, 
-                      const kernelArg &arg162,  const kernelArg &arg163,  const kernelArg &arg164);
+                      const kernelArg &arg162,  const kernelArg &arg163,  const kernelArg &arg164) const;
 
     void operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
                       const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
@@ -4860,7 +4844,7 @@
                       const kernelArg &arg156,  const kernelArg &arg157,  const kernelArg &arg158, 
                       const kernelArg &arg159,  const kernelArg &arg160,  const kernelArg &arg161, 
                       const kernelArg &arg162,  const kernelArg &arg163,  const kernelArg &arg164, 
-                      const kernelArg &arg165);
+                      const kernelArg &arg165) const;
 
     void operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
                       const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
@@ -4917,7 +4901,7 @@
                       const kernelArg &arg156,  const kernelArg &arg157,  const kernelArg &arg158, 
                       const kernelArg &arg159,  const kernelArg &arg160,  const kernelArg &arg161, 
                       const kernelArg &arg162,  const kernelArg &arg163,  const kernelArg &arg164, 
-                      const kernelArg &arg165,  const kernelArg &arg166);
+                      const kernelArg &arg165,  const kernelArg &arg166) const;
 
     void operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
                       const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
@@ -4974,7 +4958,7 @@
                       const kernelArg &arg156,  const kernelArg &arg157,  const kernelArg &arg158, 
                       const kernelArg &arg159,  const kernelArg &arg160,  const kernelArg &arg161, 
                       const kernelArg &arg162,  const kernelArg &arg163,  const kernelArg &arg164, 
-                      const kernelArg &arg165,  const kernelArg &arg166,  const kernelArg &arg167);
+                      const kernelArg &arg165,  const kernelArg &arg166,  const kernelArg &arg167) const;
 
     void operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
                       const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
@@ -5032,7 +5016,7 @@
                       const kernelArg &arg159,  const kernelArg &arg160,  const kernelArg &arg161, 
                       const kernelArg &arg162,  const kernelArg &arg163,  const kernelArg &arg164, 
                       const kernelArg &arg165,  const kernelArg &arg166,  const kernelArg &arg167, 
-                      const kernelArg &arg168);
+                      const kernelArg &arg168) const;
 
     void operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
                       const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
@@ -5090,7 +5074,7 @@
                       const kernelArg &arg159,  const kernelArg &arg160,  const kernelArg &arg161, 
                       const kernelArg &arg162,  const kernelArg &arg163,  const kernelArg &arg164, 
                       const kernelArg &arg165,  const kernelArg &arg166,  const kernelArg &arg167, 
-                      const kernelArg &arg168,  const kernelArg &arg169);
+                      const kernelArg &arg168,  const kernelArg &arg169) const;
 
     void operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
                       const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
@@ -5148,7 +5132,7 @@
                       const kernelArg &arg159,  const kernelArg &arg160,  const kernelArg &arg161, 
                       const kernelArg &arg162,  const kernelArg &arg163,  const kernelArg &arg164, 
                       const kernelArg &arg165,  const kernelArg &arg166,  const kernelArg &arg167, 
-                      const kernelArg &arg168,  const kernelArg &arg169,  const kernelArg &arg170);
+                      const kernelArg &arg168,  const kernelArg &arg169,  const kernelArg &arg170) const;
 
     void operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
                       const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
@@ -5207,7 +5191,7 @@
                       const kernelArg &arg162,  const kernelArg &arg163,  const kernelArg &arg164, 
                       const kernelArg &arg165,  const kernelArg &arg166,  const kernelArg &arg167, 
                       const kernelArg &arg168,  const kernelArg &arg169,  const kernelArg &arg170, 
-                      const kernelArg &arg171);
+                      const kernelArg &arg171) const;
 
     void operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
                       const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
@@ -5266,7 +5250,7 @@
                       const kernelArg &arg162,  const kernelArg &arg163,  const kernelArg &arg164, 
                       const kernelArg &arg165,  const kernelArg &arg166,  const kernelArg &arg167, 
                       const kernelArg &arg168,  const kernelArg &arg169,  const kernelArg &arg170, 
-                      const kernelArg &arg171,  const kernelArg &arg172);
+                      const kernelArg &arg171,  const kernelArg &arg172) const;
 
     void operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
                       const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
@@ -5325,7 +5309,7 @@
                       const kernelArg &arg162,  const kernelArg &arg163,  const kernelArg &arg164, 
                       const kernelArg &arg165,  const kernelArg &arg166,  const kernelArg &arg167, 
                       const kernelArg &arg168,  const kernelArg &arg169,  const kernelArg &arg170, 
-                      const kernelArg &arg171,  const kernelArg &arg172,  const kernelArg &arg173);
+                      const kernelArg &arg171,  const kernelArg &arg172,  const kernelArg &arg173) const;
 
     void operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
                       const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
@@ -5385,7 +5369,7 @@
                       const kernelArg &arg165,  const kernelArg &arg166,  const kernelArg &arg167, 
                       const kernelArg &arg168,  const kernelArg &arg169,  const kernelArg &arg170, 
                       const kernelArg &arg171,  const kernelArg &arg172,  const kernelArg &arg173, 
-                      const kernelArg &arg174);
+                      const kernelArg &arg174) const;
 
     void operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
                       const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
@@ -5445,7 +5429,7 @@
                       const kernelArg &arg165,  const kernelArg &arg166,  const kernelArg &arg167, 
                       const kernelArg &arg168,  const kernelArg &arg169,  const kernelArg &arg170, 
                       const kernelArg &arg171,  const kernelArg &arg172,  const kernelArg &arg173, 
-                      const kernelArg &arg174,  const kernelArg &arg175);
+                      const kernelArg &arg174,  const kernelArg &arg175) const;
 
     void operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
                       const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
@@ -5505,7 +5489,7 @@
                       const kernelArg &arg165,  const kernelArg &arg166,  const kernelArg &arg167, 
                       const kernelArg &arg168,  const kernelArg &arg169,  const kernelArg &arg170, 
                       const kernelArg &arg171,  const kernelArg &arg172,  const kernelArg &arg173, 
-                      const kernelArg &arg174,  const kernelArg &arg175,  const kernelArg &arg176);
+                      const kernelArg &arg174,  const kernelArg &arg175,  const kernelArg &arg176) const;
 
     void operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
                       const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
@@ -5566,7 +5550,7 @@
                       const kernelArg &arg168,  const kernelArg &arg169,  const kernelArg &arg170, 
                       const kernelArg &arg171,  const kernelArg &arg172,  const kernelArg &arg173, 
                       const kernelArg &arg174,  const kernelArg &arg175,  const kernelArg &arg176, 
-                      const kernelArg &arg177);
+                      const kernelArg &arg177) const;
 
     void operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
                       const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
@@ -5627,7 +5611,7 @@
                       const kernelArg &arg168,  const kernelArg &arg169,  const kernelArg &arg170, 
                       const kernelArg &arg171,  const kernelArg &arg172,  const kernelArg &arg173, 
                       const kernelArg &arg174,  const kernelArg &arg175,  const kernelArg &arg176, 
-                      const kernelArg &arg177,  const kernelArg &arg178);
+                      const kernelArg &arg177,  const kernelArg &arg178) const;
 
     void operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
                       const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
@@ -5688,7 +5672,7 @@
                       const kernelArg &arg168,  const kernelArg &arg169,  const kernelArg &arg170, 
                       const kernelArg &arg171,  const kernelArg &arg172,  const kernelArg &arg173, 
                       const kernelArg &arg174,  const kernelArg &arg175,  const kernelArg &arg176, 
-                      const kernelArg &arg177,  const kernelArg &arg178,  const kernelArg &arg179);
+                      const kernelArg &arg177,  const kernelArg &arg178,  const kernelArg &arg179) const;
 
     void operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
                       const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
@@ -5750,7 +5734,7 @@
                       const kernelArg &arg171,  const kernelArg &arg172,  const kernelArg &arg173, 
                       const kernelArg &arg174,  const kernelArg &arg175,  const kernelArg &arg176, 
                       const kernelArg &arg177,  const kernelArg &arg178,  const kernelArg &arg179, 
-                      const kernelArg &arg180);
+                      const kernelArg &arg180) const;
 
     void operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
                       const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
@@ -5812,7 +5796,7 @@
                       const kernelArg &arg171,  const kernelArg &arg172,  const kernelArg &arg173, 
                       const kernelArg &arg174,  const kernelArg &arg175,  const kernelArg &arg176, 
                       const kernelArg &arg177,  const kernelArg &arg178,  const kernelArg &arg179, 
-                      const kernelArg &arg180,  const kernelArg &arg181);
+                      const kernelArg &arg180,  const kernelArg &arg181) const;
 
     void operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
                       const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
@@ -5874,7 +5858,7 @@
                       const kernelArg &arg171,  const kernelArg &arg172,  const kernelArg &arg173, 
                       const kernelArg &arg174,  const kernelArg &arg175,  const kernelArg &arg176, 
                       const kernelArg &arg177,  const kernelArg &arg178,  const kernelArg &arg179, 
-                      const kernelArg &arg180,  const kernelArg &arg181,  const kernelArg &arg182);
+                      const kernelArg &arg180,  const kernelArg &arg181,  const kernelArg &arg182) const;
 
     void operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
                       const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
@@ -5937,7 +5921,7 @@
                       const kernelArg &arg174,  const kernelArg &arg175,  const kernelArg &arg176, 
                       const kernelArg &arg177,  const kernelArg &arg178,  const kernelArg &arg179, 
                       const kernelArg &arg180,  const kernelArg &arg181,  const kernelArg &arg182, 
-                      const kernelArg &arg183);
+                      const kernelArg &arg183) const;
 
     void operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
                       const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
@@ -6000,7 +5984,7 @@
                       const kernelArg &arg174,  const kernelArg &arg175,  const kernelArg &arg176, 
                       const kernelArg &arg177,  const kernelArg &arg178,  const kernelArg &arg179, 
                       const kernelArg &arg180,  const kernelArg &arg181,  const kernelArg &arg182, 
-                      const kernelArg &arg183,  const kernelArg &arg184);
+                      const kernelArg &arg183,  const kernelArg &arg184) const;
 
     void operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
                       const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
@@ -6063,7 +6047,7 @@
                       const kernelArg &arg174,  const kernelArg &arg175,  const kernelArg &arg176, 
                       const kernelArg &arg177,  const kernelArg &arg178,  const kernelArg &arg179, 
                       const kernelArg &arg180,  const kernelArg &arg181,  const kernelArg &arg182, 
-                      const kernelArg &arg183,  const kernelArg &arg184,  const kernelArg &arg185);
+                      const kernelArg &arg183,  const kernelArg &arg184,  const kernelArg &arg185) const;
 
     void operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
                       const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
@@ -6127,7 +6111,7 @@
                       const kernelArg &arg177,  const kernelArg &arg178,  const kernelArg &arg179, 
                       const kernelArg &arg180,  const kernelArg &arg181,  const kernelArg &arg182, 
                       const kernelArg &arg183,  const kernelArg &arg184,  const kernelArg &arg185, 
-                      const kernelArg &arg186);
+                      const kernelArg &arg186) const;
 
     void operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
                       const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
@@ -6191,7 +6175,7 @@
                       const kernelArg &arg177,  const kernelArg &arg178,  const kernelArg &arg179, 
                       const kernelArg &arg180,  const kernelArg &arg181,  const kernelArg &arg182, 
                       const kernelArg &arg183,  const kernelArg &arg184,  const kernelArg &arg185, 
-                      const kernelArg &arg186,  const kernelArg &arg187);
+                      const kernelArg &arg186,  const kernelArg &arg187) const;
 
     void operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
                       const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
@@ -6255,7 +6239,7 @@
                       const kernelArg &arg177,  const kernelArg &arg178,  const kernelArg &arg179, 
                       const kernelArg &arg180,  const kernelArg &arg181,  const kernelArg &arg182, 
                       const kernelArg &arg183,  const kernelArg &arg184,  const kernelArg &arg185, 
-                      const kernelArg &arg186,  const kernelArg &arg187,  const kernelArg &arg188);
+                      const kernelArg &arg186,  const kernelArg &arg187,  const kernelArg &arg188) const;
 
     void operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
                       const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
@@ -6320,7 +6304,7 @@
                       const kernelArg &arg180,  const kernelArg &arg181,  const kernelArg &arg182, 
                       const kernelArg &arg183,  const kernelArg &arg184,  const kernelArg &arg185, 
                       const kernelArg &arg186,  const kernelArg &arg187,  const kernelArg &arg188, 
-                      const kernelArg &arg189);
+                      const kernelArg &arg189) const;
 
     void operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
                       const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
@@ -6385,7 +6369,7 @@
                       const kernelArg &arg180,  const kernelArg &arg181,  const kernelArg &arg182, 
                       const kernelArg &arg183,  const kernelArg &arg184,  const kernelArg &arg185, 
                       const kernelArg &arg186,  const kernelArg &arg187,  const kernelArg &arg188, 
-                      const kernelArg &arg189,  const kernelArg &arg190);
+                      const kernelArg &arg189,  const kernelArg &arg190) const;
 
     void operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
                       const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
@@ -6450,7 +6434,7 @@
                       const kernelArg &arg180,  const kernelArg &arg181,  const kernelArg &arg182, 
                       const kernelArg &arg183,  const kernelArg &arg184,  const kernelArg &arg185, 
                       const kernelArg &arg186,  const kernelArg &arg187,  const kernelArg &arg188, 
-                      const kernelArg &arg189,  const kernelArg &arg190,  const kernelArg &arg191);
+                      const kernelArg &arg189,  const kernelArg &arg190,  const kernelArg &arg191) const;
 
     void operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
                       const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
@@ -6516,7 +6500,7 @@
                       const kernelArg &arg183,  const kernelArg &arg184,  const kernelArg &arg185, 
                       const kernelArg &arg186,  const kernelArg &arg187,  const kernelArg &arg188, 
                       const kernelArg &arg189,  const kernelArg &arg190,  const kernelArg &arg191, 
-                      const kernelArg &arg192);
+                      const kernelArg &arg192) const;
 
     void operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
                       const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
@@ -6582,7 +6566,7 @@
                       const kernelArg &arg183,  const kernelArg &arg184,  const kernelArg &arg185, 
                       const kernelArg &arg186,  const kernelArg &arg187,  const kernelArg &arg188, 
                       const kernelArg &arg189,  const kernelArg &arg190,  const kernelArg &arg191, 
-                      const kernelArg &arg192,  const kernelArg &arg193);
+                      const kernelArg &arg192,  const kernelArg &arg193) const;
 
     void operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
                       const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
@@ -6648,7 +6632,7 @@
                       const kernelArg &arg183,  const kernelArg &arg184,  const kernelArg &arg185, 
                       const kernelArg &arg186,  const kernelArg &arg187,  const kernelArg &arg188, 
                       const kernelArg &arg189,  const kernelArg &arg190,  const kernelArg &arg191, 
-                      const kernelArg &arg192,  const kernelArg &arg193,  const kernelArg &arg194);
+                      const kernelArg &arg192,  const kernelArg &arg193,  const kernelArg &arg194) const;
 
     void operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
                       const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
@@ -6715,7 +6699,7 @@
                       const kernelArg &arg186,  const kernelArg &arg187,  const kernelArg &arg188, 
                       const kernelArg &arg189,  const kernelArg &arg190,  const kernelArg &arg191, 
                       const kernelArg &arg192,  const kernelArg &arg193,  const kernelArg &arg194, 
-                      const kernelArg &arg195);
+                      const kernelArg &arg195) const;
 
     void operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
                       const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
@@ -6782,7 +6766,7 @@
                       const kernelArg &arg186,  const kernelArg &arg187,  const kernelArg &arg188, 
                       const kernelArg &arg189,  const kernelArg &arg190,  const kernelArg &arg191, 
                       const kernelArg &arg192,  const kernelArg &arg193,  const kernelArg &arg194, 
-                      const kernelArg &arg195,  const kernelArg &arg196);
+                      const kernelArg &arg195,  const kernelArg &arg196) const;
 
     void operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
                       const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
@@ -6849,7 +6833,7 @@
                       const kernelArg &arg186,  const kernelArg &arg187,  const kernelArg &arg188, 
                       const kernelArg &arg189,  const kernelArg &arg190,  const kernelArg &arg191, 
                       const kernelArg &arg192,  const kernelArg &arg193,  const kernelArg &arg194, 
-                      const kernelArg &arg195,  const kernelArg &arg196,  const kernelArg &arg197);
+                      const kernelArg &arg195,  const kernelArg &arg196,  const kernelArg &arg197) const;
 
     void operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
                       const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
@@ -6917,7 +6901,7 @@
                       const kernelArg &arg189,  const kernelArg &arg190,  const kernelArg &arg191, 
                       const kernelArg &arg192,  const kernelArg &arg193,  const kernelArg &arg194, 
                       const kernelArg &arg195,  const kernelArg &arg196,  const kernelArg &arg197, 
-                      const kernelArg &arg198);
+                      const kernelArg &arg198) const;
 
     void operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
                       const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
@@ -6985,7 +6969,7 @@
                       const kernelArg &arg189,  const kernelArg &arg190,  const kernelArg &arg191, 
                       const kernelArg &arg192,  const kernelArg &arg193,  const kernelArg &arg194, 
                       const kernelArg &arg195,  const kernelArg &arg196,  const kernelArg &arg197, 
-                      const kernelArg &arg198,  const kernelArg &arg199);
+                      const kernelArg &arg198,  const kernelArg &arg199) const;
 
     void operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
                       const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
@@ -7053,7 +7037,7 @@
                       const kernelArg &arg189,  const kernelArg &arg190,  const kernelArg &arg191, 
                       const kernelArg &arg192,  const kernelArg &arg193,  const kernelArg &arg194, 
                       const kernelArg &arg195,  const kernelArg &arg196,  const kernelArg &arg197, 
-                      const kernelArg &arg198,  const kernelArg &arg199,  const kernelArg &arg200);
+                      const kernelArg &arg198,  const kernelArg &arg199,  const kernelArg &arg200) const;
 
     void operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
                       const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
@@ -7122,7 +7106,7 @@
                       const kernelArg &arg192,  const kernelArg &arg193,  const kernelArg &arg194, 
                       const kernelArg &arg195,  const kernelArg &arg196,  const kernelArg &arg197, 
                       const kernelArg &arg198,  const kernelArg &arg199,  const kernelArg &arg200, 
-                      const kernelArg &arg201);
+                      const kernelArg &arg201) const;
 
     void operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
                       const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
@@ -7191,7 +7175,7 @@
                       const kernelArg &arg192,  const kernelArg &arg193,  const kernelArg &arg194, 
                       const kernelArg &arg195,  const kernelArg &arg196,  const kernelArg &arg197, 
                       const kernelArg &arg198,  const kernelArg &arg199,  const kernelArg &arg200, 
-                      const kernelArg &arg201,  const kernelArg &arg202);
+                      const kernelArg &arg201,  const kernelArg &arg202) const;
 
     void operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
                       const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
@@ -7260,7 +7244,7 @@
                       const kernelArg &arg192,  const kernelArg &arg193,  const kernelArg &arg194, 
                       const kernelArg &arg195,  const kernelArg &arg196,  const kernelArg &arg197, 
                       const kernelArg &arg198,  const kernelArg &arg199,  const kernelArg &arg200, 
-                      const kernelArg &arg201,  const kernelArg &arg202,  const kernelArg &arg203);
+                      const kernelArg &arg201,  const kernelArg &arg202,  const kernelArg &arg203) const;
 
     void operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
                       const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
@@ -7330,7 +7314,7 @@
                       const kernelArg &arg195,  const kernelArg &arg196,  const kernelArg &arg197, 
                       const kernelArg &arg198,  const kernelArg &arg199,  const kernelArg &arg200, 
                       const kernelArg &arg201,  const kernelArg &arg202,  const kernelArg &arg203, 
-                      const kernelArg &arg204);
+                      const kernelArg &arg204) const;
 
     void operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
                       const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
@@ -7400,7 +7384,7 @@
                       const kernelArg &arg195,  const kernelArg &arg196,  const kernelArg &arg197, 
                       const kernelArg &arg198,  const kernelArg &arg199,  const kernelArg &arg200, 
                       const kernelArg &arg201,  const kernelArg &arg202,  const kernelArg &arg203, 
-                      const kernelArg &arg204,  const kernelArg &arg205);
+                      const kernelArg &arg204,  const kernelArg &arg205) const;
 
     void operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
                       const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
@@ -7470,7 +7454,7 @@
                       const kernelArg &arg195,  const kernelArg &arg196,  const kernelArg &arg197, 
                       const kernelArg &arg198,  const kernelArg &arg199,  const kernelArg &arg200, 
                       const kernelArg &arg201,  const kernelArg &arg202,  const kernelArg &arg203, 
-                      const kernelArg &arg204,  const kernelArg &arg205,  const kernelArg &arg206);
+                      const kernelArg &arg204,  const kernelArg &arg205,  const kernelArg &arg206) const;
 
     void operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
                       const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
@@ -7541,7 +7525,7 @@
                       const kernelArg &arg198,  const kernelArg &arg199,  const kernelArg &arg200, 
                       const kernelArg &arg201,  const kernelArg &arg202,  const kernelArg &arg203, 
                       const kernelArg &arg204,  const kernelArg &arg205,  const kernelArg &arg206, 
-                      const kernelArg &arg207);
+                      const kernelArg &arg207) const;
 
     void operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
                       const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
@@ -7612,7 +7596,7 @@
                       const kernelArg &arg198,  const kernelArg &arg199,  const kernelArg &arg200, 
                       const kernelArg &arg201,  const kernelArg &arg202,  const kernelArg &arg203, 
                       const kernelArg &arg204,  const kernelArg &arg205,  const kernelArg &arg206, 
-                      const kernelArg &arg207,  const kernelArg &arg208);
+                      const kernelArg &arg207,  const kernelArg &arg208) const;
 
     void operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
                       const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
@@ -7683,7 +7667,7 @@
                       const kernelArg &arg198,  const kernelArg &arg199,  const kernelArg &arg200, 
                       const kernelArg &arg201,  const kernelArg &arg202,  const kernelArg &arg203, 
                       const kernelArg &arg204,  const kernelArg &arg205,  const kernelArg &arg206, 
-                      const kernelArg &arg207,  const kernelArg &arg208,  const kernelArg &arg209);
+                      const kernelArg &arg207,  const kernelArg &arg208,  const kernelArg &arg209) const;
 
     void operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
                       const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
@@ -7755,7 +7739,7 @@
                       const kernelArg &arg201,  const kernelArg &arg202,  const kernelArg &arg203, 
                       const kernelArg &arg204,  const kernelArg &arg205,  const kernelArg &arg206, 
                       const kernelArg &arg207,  const kernelArg &arg208,  const kernelArg &arg209, 
-                      const kernelArg &arg210);
+                      const kernelArg &arg210) const;
 
     void operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
                       const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
@@ -7827,7 +7811,7 @@
                       const kernelArg &arg201,  const kernelArg &arg202,  const kernelArg &arg203, 
                       const kernelArg &arg204,  const kernelArg &arg205,  const kernelArg &arg206, 
                       const kernelArg &arg207,  const kernelArg &arg208,  const kernelArg &arg209, 
-                      const kernelArg &arg210,  const kernelArg &arg211);
+                      const kernelArg &arg210,  const kernelArg &arg211) const;
 
     void operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
                       const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
@@ -7899,7 +7883,7 @@
                       const kernelArg &arg201,  const kernelArg &arg202,  const kernelArg &arg203, 
                       const kernelArg &arg204,  const kernelArg &arg205,  const kernelArg &arg206, 
                       const kernelArg &arg207,  const kernelArg &arg208,  const kernelArg &arg209, 
-                      const kernelArg &arg210,  const kernelArg &arg211,  const kernelArg &arg212);
+                      const kernelArg &arg210,  const kernelArg &arg211,  const kernelArg &arg212) const;
 
     void operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
                       const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
@@ -7972,7 +7956,7 @@
                       const kernelArg &arg204,  const kernelArg &arg205,  const kernelArg &arg206, 
                       const kernelArg &arg207,  const kernelArg &arg208,  const kernelArg &arg209, 
                       const kernelArg &arg210,  const kernelArg &arg211,  const kernelArg &arg212, 
-                      const kernelArg &arg213);
+                      const kernelArg &arg213) const;
 
     void operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
                       const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
@@ -8045,7 +8029,7 @@
                       const kernelArg &arg204,  const kernelArg &arg205,  const kernelArg &arg206, 
                       const kernelArg &arg207,  const kernelArg &arg208,  const kernelArg &arg209, 
                       const kernelArg &arg210,  const kernelArg &arg211,  const kernelArg &arg212, 
-                      const kernelArg &arg213,  const kernelArg &arg214);
+                      const kernelArg &arg213,  const kernelArg &arg214) const;
 
     void operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
                       const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
@@ -8118,7 +8102,7 @@
                       const kernelArg &arg204,  const kernelArg &arg205,  const kernelArg &arg206, 
                       const kernelArg &arg207,  const kernelArg &arg208,  const kernelArg &arg209, 
                       const kernelArg &arg210,  const kernelArg &arg211,  const kernelArg &arg212, 
-                      const kernelArg &arg213,  const kernelArg &arg214,  const kernelArg &arg215);
+                      const kernelArg &arg213,  const kernelArg &arg214,  const kernelArg &arg215) const;
 
     void operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
                       const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
@@ -8192,7 +8176,7 @@
                       const kernelArg &arg207,  const kernelArg &arg208,  const kernelArg &arg209, 
                       const kernelArg &arg210,  const kernelArg &arg211,  const kernelArg &arg212, 
                       const kernelArg &arg213,  const kernelArg &arg214,  const kernelArg &arg215, 
-                      const kernelArg &arg216);
+                      const kernelArg &arg216) const;
 
     void operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
                       const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
@@ -8266,7 +8250,7 @@
                       const kernelArg &arg207,  const kernelArg &arg208,  const kernelArg &arg209, 
                       const kernelArg &arg210,  const kernelArg &arg211,  const kernelArg &arg212, 
                       const kernelArg &arg213,  const kernelArg &arg214,  const kernelArg &arg215, 
-                      const kernelArg &arg216,  const kernelArg &arg217);
+                      const kernelArg &arg216,  const kernelArg &arg217) const;
 
     void operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
                       const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
@@ -8340,7 +8324,7 @@
                       const kernelArg &arg207,  const kernelArg &arg208,  const kernelArg &arg209, 
                       const kernelArg &arg210,  const kernelArg &arg211,  const kernelArg &arg212, 
                       const kernelArg &arg213,  const kernelArg &arg214,  const kernelArg &arg215, 
-                      const kernelArg &arg216,  const kernelArg &arg217,  const kernelArg &arg218);
+                      const kernelArg &arg216,  const kernelArg &arg217,  const kernelArg &arg218) const;
 
     void operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
                       const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
@@ -8415,7 +8399,7 @@
                       const kernelArg &arg210,  const kernelArg &arg211,  const kernelArg &arg212, 
                       const kernelArg &arg213,  const kernelArg &arg214,  const kernelArg &arg215, 
                       const kernelArg &arg216,  const kernelArg &arg217,  const kernelArg &arg218, 
-                      const kernelArg &arg219);
+                      const kernelArg &arg219) const;
 
     void operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
                       const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
@@ -8490,7 +8474,7 @@
                       const kernelArg &arg210,  const kernelArg &arg211,  const kernelArg &arg212, 
                       const kernelArg &arg213,  const kernelArg &arg214,  const kernelArg &arg215, 
                       const kernelArg &arg216,  const kernelArg &arg217,  const kernelArg &arg218, 
-                      const kernelArg &arg219,  const kernelArg &arg220);
+                      const kernelArg &arg219,  const kernelArg &arg220) const;
 
     void operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
                       const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
@@ -8565,7 +8549,7 @@
                       const kernelArg &arg210,  const kernelArg &arg211,  const kernelArg &arg212, 
                       const kernelArg &arg213,  const kernelArg &arg214,  const kernelArg &arg215, 
                       const kernelArg &arg216,  const kernelArg &arg217,  const kernelArg &arg218, 
-                      const kernelArg &arg219,  const kernelArg &arg220,  const kernelArg &arg221);
+                      const kernelArg &arg219,  const kernelArg &arg220,  const kernelArg &arg221) const;
 
     void operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
                       const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
@@ -8641,7 +8625,7 @@
                       const kernelArg &arg213,  const kernelArg &arg214,  const kernelArg &arg215, 
                       const kernelArg &arg216,  const kernelArg &arg217,  const kernelArg &arg218, 
                       const kernelArg &arg219,  const kernelArg &arg220,  const kernelArg &arg221, 
-                      const kernelArg &arg222);
+                      const kernelArg &arg222) const;
 
     void operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
                       const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
@@ -8717,7 +8701,7 @@
                       const kernelArg &arg213,  const kernelArg &arg214,  const kernelArg &arg215, 
                       const kernelArg &arg216,  const kernelArg &arg217,  const kernelArg &arg218, 
                       const kernelArg &arg219,  const kernelArg &arg220,  const kernelArg &arg221, 
-                      const kernelArg &arg222,  const kernelArg &arg223);
+                      const kernelArg &arg222,  const kernelArg &arg223) const;
 
     void operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
                       const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
@@ -8793,7 +8777,7 @@
                       const kernelArg &arg213,  const kernelArg &arg214,  const kernelArg &arg215, 
                       const kernelArg &arg216,  const kernelArg &arg217,  const kernelArg &arg218, 
                       const kernelArg &arg219,  const kernelArg &arg220,  const kernelArg &arg221, 
-                      const kernelArg &arg222,  const kernelArg &arg223,  const kernelArg &arg224);
+                      const kernelArg &arg222,  const kernelArg &arg223,  const kernelArg &arg224) const;
 
     void operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
                       const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
@@ -8870,7 +8854,7 @@
                       const kernelArg &arg216,  const kernelArg &arg217,  const kernelArg &arg218, 
                       const kernelArg &arg219,  const kernelArg &arg220,  const kernelArg &arg221, 
                       const kernelArg &arg222,  const kernelArg &arg223,  const kernelArg &arg224, 
-                      const kernelArg &arg225);
+                      const kernelArg &arg225) const;
 
     void operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
                       const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
@@ -8947,7 +8931,7 @@
                       const kernelArg &arg216,  const kernelArg &arg217,  const kernelArg &arg218, 
                       const kernelArg &arg219,  const kernelArg &arg220,  const kernelArg &arg221, 
                       const kernelArg &arg222,  const kernelArg &arg223,  const kernelArg &arg224, 
-                      const kernelArg &arg225,  const kernelArg &arg226);
+                      const kernelArg &arg225,  const kernelArg &arg226) const;
 
     void operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
                       const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
@@ -9024,7 +9008,7 @@
                       const kernelArg &arg216,  const kernelArg &arg217,  const kernelArg &arg218, 
                       const kernelArg &arg219,  const kernelArg &arg220,  const kernelArg &arg221, 
                       const kernelArg &arg222,  const kernelArg &arg223,  const kernelArg &arg224, 
-                      const kernelArg &arg225,  const kernelArg &arg226,  const kernelArg &arg227);
+                      const kernelArg &arg225,  const kernelArg &arg226,  const kernelArg &arg227) const;
 
     void operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
                       const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
@@ -9102,7 +9086,7 @@
                       const kernelArg &arg219,  const kernelArg &arg220,  const kernelArg &arg221, 
                       const kernelArg &arg222,  const kernelArg &arg223,  const kernelArg &arg224, 
                       const kernelArg &arg225,  const kernelArg &arg226,  const kernelArg &arg227, 
-                      const kernelArg &arg228);
+                      const kernelArg &arg228) const;
 
     void operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
                       const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
@@ -9180,7 +9164,7 @@
                       const kernelArg &arg219,  const kernelArg &arg220,  const kernelArg &arg221, 
                       const kernelArg &arg222,  const kernelArg &arg223,  const kernelArg &arg224, 
                       const kernelArg &arg225,  const kernelArg &arg226,  const kernelArg &arg227, 
-                      const kernelArg &arg228,  const kernelArg &arg229);
+                      const kernelArg &arg228,  const kernelArg &arg229) const;
 
     void operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
                       const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
@@ -9258,7 +9242,7 @@
                       const kernelArg &arg219,  const kernelArg &arg220,  const kernelArg &arg221, 
                       const kernelArg &arg222,  const kernelArg &arg223,  const kernelArg &arg224, 
                       const kernelArg &arg225,  const kernelArg &arg226,  const kernelArg &arg227, 
-                      const kernelArg &arg228,  const kernelArg &arg229,  const kernelArg &arg230);
+                      const kernelArg &arg228,  const kernelArg &arg229,  const kernelArg &arg230) const;
 
     void operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
                       const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
@@ -9337,7 +9321,7 @@
                       const kernelArg &arg222,  const kernelArg &arg223,  const kernelArg &arg224, 
                       const kernelArg &arg225,  const kernelArg &arg226,  const kernelArg &arg227, 
                       const kernelArg &arg228,  const kernelArg &arg229,  const kernelArg &arg230, 
-                      const kernelArg &arg231);
+                      const kernelArg &arg231) const;
 
     void operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
                       const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
@@ -9416,7 +9400,7 @@
                       const kernelArg &arg222,  const kernelArg &arg223,  const kernelArg &arg224, 
                       const kernelArg &arg225,  const kernelArg &arg226,  const kernelArg &arg227, 
                       const kernelArg &arg228,  const kernelArg &arg229,  const kernelArg &arg230, 
-                      const kernelArg &arg231,  const kernelArg &arg232);
+                      const kernelArg &arg231,  const kernelArg &arg232) const;
 
     void operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
                       const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
@@ -9495,7 +9479,7 @@
                       const kernelArg &arg222,  const kernelArg &arg223,  const kernelArg &arg224, 
                       const kernelArg &arg225,  const kernelArg &arg226,  const kernelArg &arg227, 
                       const kernelArg &arg228,  const kernelArg &arg229,  const kernelArg &arg230, 
-                      const kernelArg &arg231,  const kernelArg &arg232,  const kernelArg &arg233);
+                      const kernelArg &arg231,  const kernelArg &arg232,  const kernelArg &arg233) const;
 
     void operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
                       const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
@@ -9575,7 +9559,7 @@
                       const kernelArg &arg225,  const kernelArg &arg226,  const kernelArg &arg227, 
                       const kernelArg &arg228,  const kernelArg &arg229,  const kernelArg &arg230, 
                       const kernelArg &arg231,  const kernelArg &arg232,  const kernelArg &arg233, 
-                      const kernelArg &arg234);
+                      const kernelArg &arg234) const;
 
     void operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
                       const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
@@ -9655,7 +9639,7 @@
                       const kernelArg &arg225,  const kernelArg &arg226,  const kernelArg &arg227, 
                       const kernelArg &arg228,  const kernelArg &arg229,  const kernelArg &arg230, 
                       const kernelArg &arg231,  const kernelArg &arg232,  const kernelArg &arg233, 
-                      const kernelArg &arg234,  const kernelArg &arg235);
+                      const kernelArg &arg234,  const kernelArg &arg235) const;
 
     void operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
                       const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
@@ -9735,7 +9719,7 @@
                       const kernelArg &arg225,  const kernelArg &arg226,  const kernelArg &arg227, 
                       const kernelArg &arg228,  const kernelArg &arg229,  const kernelArg &arg230, 
                       const kernelArg &arg231,  const kernelArg &arg232,  const kernelArg &arg233, 
-                      const kernelArg &arg234,  const kernelArg &arg235,  const kernelArg &arg236);
+                      const kernelArg &arg234,  const kernelArg &arg235,  const kernelArg &arg236) const;
 
     void operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
                       const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
@@ -9816,7 +9800,7 @@
                       const kernelArg &arg228,  const kernelArg &arg229,  const kernelArg &arg230, 
                       const kernelArg &arg231,  const kernelArg &arg232,  const kernelArg &arg233, 
                       const kernelArg &arg234,  const kernelArg &arg235,  const kernelArg &arg236, 
-                      const kernelArg &arg237);
+                      const kernelArg &arg237) const;
 
     void operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
                       const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
@@ -9897,7 +9881,7 @@
                       const kernelArg &arg228,  const kernelArg &arg229,  const kernelArg &arg230, 
                       const kernelArg &arg231,  const kernelArg &arg232,  const kernelArg &arg233, 
                       const kernelArg &arg234,  const kernelArg &arg235,  const kernelArg &arg236, 
-                      const kernelArg &arg237,  const kernelArg &arg238);
+                      const kernelArg &arg237,  const kernelArg &arg238) const;
 
     void operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
                       const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
@@ -9978,7 +9962,7 @@
                       const kernelArg &arg228,  const kernelArg &arg229,  const kernelArg &arg230, 
                       const kernelArg &arg231,  const kernelArg &arg232,  const kernelArg &arg233, 
                       const kernelArg &arg234,  const kernelArg &arg235,  const kernelArg &arg236, 
-                      const kernelArg &arg237,  const kernelArg &arg238,  const kernelArg &arg239);
+                      const kernelArg &arg237,  const kernelArg &arg238,  const kernelArg &arg239) const;
 
     void operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
                       const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
@@ -10060,7 +10044,7 @@
                       const kernelArg &arg231,  const kernelArg &arg232,  const kernelArg &arg233, 
                       const kernelArg &arg234,  const kernelArg &arg235,  const kernelArg &arg236, 
                       const kernelArg &arg237,  const kernelArg &arg238,  const kernelArg &arg239, 
-                      const kernelArg &arg240);
+                      const kernelArg &arg240) const;
 
     void operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
                       const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
@@ -10142,7 +10126,7 @@
                       const kernelArg &arg231,  const kernelArg &arg232,  const kernelArg &arg233, 
                       const kernelArg &arg234,  const kernelArg &arg235,  const kernelArg &arg236, 
                       const kernelArg &arg237,  const kernelArg &arg238,  const kernelArg &arg239, 
-                      const kernelArg &arg240,  const kernelArg &arg241);
+                      const kernelArg &arg240,  const kernelArg &arg241) const;
 
     void operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
                       const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
@@ -10224,7 +10208,7 @@
                       const kernelArg &arg231,  const kernelArg &arg232,  const kernelArg &arg233, 
                       const kernelArg &arg234,  const kernelArg &arg235,  const kernelArg &arg236, 
                       const kernelArg &arg237,  const kernelArg &arg238,  const kernelArg &arg239, 
-                      const kernelArg &arg240,  const kernelArg &arg241,  const kernelArg &arg242);
+                      const kernelArg &arg240,  const kernelArg &arg241,  const kernelArg &arg242) const;
 
     void operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
                       const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
@@ -10307,7 +10291,7 @@
                       const kernelArg &arg234,  const kernelArg &arg235,  const kernelArg &arg236, 
                       const kernelArg &arg237,  const kernelArg &arg238,  const kernelArg &arg239, 
                       const kernelArg &arg240,  const kernelArg &arg241,  const kernelArg &arg242, 
-                      const kernelArg &arg243);
+                      const kernelArg &arg243) const;
 
     void operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
                       const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
@@ -10390,7 +10374,7 @@
                       const kernelArg &arg234,  const kernelArg &arg235,  const kernelArg &arg236, 
                       const kernelArg &arg237,  const kernelArg &arg238,  const kernelArg &arg239, 
                       const kernelArg &arg240,  const kernelArg &arg241,  const kernelArg &arg242, 
-                      const kernelArg &arg243,  const kernelArg &arg244);
+                      const kernelArg &arg243,  const kernelArg &arg244) const;
 
     void operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
                       const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
@@ -10473,7 +10457,7 @@
                       const kernelArg &arg234,  const kernelArg &arg235,  const kernelArg &arg236, 
                       const kernelArg &arg237,  const kernelArg &arg238,  const kernelArg &arg239, 
                       const kernelArg &arg240,  const kernelArg &arg241,  const kernelArg &arg242, 
-                      const kernelArg &arg243,  const kernelArg &arg244,  const kernelArg &arg245);
+                      const kernelArg &arg243,  const kernelArg &arg244,  const kernelArg &arg245) const;
 
     void operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
                       const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
@@ -10557,7 +10541,7 @@
                       const kernelArg &arg237,  const kernelArg &arg238,  const kernelArg &arg239, 
                       const kernelArg &arg240,  const kernelArg &arg241,  const kernelArg &arg242, 
                       const kernelArg &arg243,  const kernelArg &arg244,  const kernelArg &arg245, 
-                      const kernelArg &arg246);
+                      const kernelArg &arg246) const;
 
     void operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
                       const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
@@ -10641,7 +10625,7 @@
                       const kernelArg &arg237,  const kernelArg &arg238,  const kernelArg &arg239, 
                       const kernelArg &arg240,  const kernelArg &arg241,  const kernelArg &arg242, 
                       const kernelArg &arg243,  const kernelArg &arg244,  const kernelArg &arg245, 
-                      const kernelArg &arg246,  const kernelArg &arg247);
+                      const kernelArg &arg246,  const kernelArg &arg247) const;
 
     void operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
                       const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
@@ -10725,7 +10709,7 @@
                       const kernelArg &arg237,  const kernelArg &arg238,  const kernelArg &arg239, 
                       const kernelArg &arg240,  const kernelArg &arg241,  const kernelArg &arg242, 
                       const kernelArg &arg243,  const kernelArg &arg244,  const kernelArg &arg245, 
-                      const kernelArg &arg246,  const kernelArg &arg247,  const kernelArg &arg248);
+                      const kernelArg &arg246,  const kernelArg &arg247,  const kernelArg &arg248) const;
 
     void operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
                       const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
@@ -10810,4 +10794,4 @@
                       const kernelArg &arg240,  const kernelArg &arg241,  const kernelArg &arg242, 
                       const kernelArg &arg243,  const kernelArg &arg244,  const kernelArg &arg245, 
                       const kernelArg &arg246,  const kernelArg &arg247,  const kernelArg &arg248, 
-                      const kernelArg &arg249);
+                      const kernelArg &arg249) const;

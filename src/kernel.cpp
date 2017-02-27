@@ -370,7 +370,7 @@ namespace occa {
     kHandle->arguments.insert(kHandle->arguments.begin() + argPos, arg);
   }
 
-  void kernel::runFromArguments() {
+  void kernel::runFromArguments() const {
     const int argc = (int) kHandle->arguments.size();
     for (int i = 0; i < argc; ++i) {
       const bool argIsConst = kHandle->metadata.argIsConst(i);
