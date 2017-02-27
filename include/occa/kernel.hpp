@@ -231,7 +231,7 @@ namespace occa {
     void setWorkingDims(int dims, dim inner, dim outer);
 
     void addArgument(const int argPos, const kernelArg &arg);
-    void runFromArguments();
+    void runFromArguments() const;
     void clearArgumentList();
 
 #include "occa/operators/declarations.hpp"

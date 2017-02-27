@@ -59,7 +59,7 @@ def operatorDeclarations(N):
     return '\n\n'.join(operatorDeclaration(n + 1) for n in range(N))
 
 def operatorDeclaration(N):
-    return '    void operator () ({args});'.format(
+    return '    void operator () ({args}) const;'.format(
         args=' '.join('const kernelArg &arg' + str(n) + nlc(n, N) for n in range(N)),
     )
 
@@ -68,7 +68,7 @@ def operatorDefinitions(N):
     return '\n\n'.join(operatorDefinition(n + 1) for n in range(N))
 
 def operatorDefinition(N):
-    return """  void kernel::operator() ({args}) {{
+    return """  void kernel::operator() ({args}) const {{
     kernelArg args[] = {{ {argarray} }};
     kHandle->arguments.clear();
     kHandle->arguments.reserve({N});
