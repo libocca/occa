@@ -382,7 +382,10 @@ namespace occa {
     void parser::printRequired(std::ostream &out) {}
 
     //---[ Command ]--------------------
-    command::command() {}
+    command::command() :
+      commandIsRequired(false),
+      callback(NULL),
+      runParent(NULL) {}
 
     command& command::withName(const std::string &name_) {
       name = name_;
