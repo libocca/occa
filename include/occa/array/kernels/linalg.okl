@@ -33,9 +33,9 @@
 #endif
 
 #define CPU_CHUNK ((entries + CPU_DOT_OUTER - 1)/ CPU_DOT_OUTER)
-#define CPU_REDUCTION_BODY(OPERATION, RED_OPERATION)  \
+#define CPU_REDUCTION_BODY(INIT, OPERATION, RED_OPERATION)  \
   for (int oi = 0; oi < CPU_DOT_OUTER; ++oi; outer) { \
-    VTYPE r_red = 0;                                  \
+    VTYPE r_red = INIT(oi);                           \
     for (int i = 0; i < CPU_CHUNK; ++i; inner) {      \
       if ((oi * CPU_CHUNK + i) < entries) {           \
         OPERATION(r_red, oi * CPU_CHUNK + i);         \
@@ -56,12 +56,12 @@
     }                                               \
   }
 
-#define GPU_REDUCTION_BODY(OPERATION, RED_OPERATION)                    \
+#define GPU_REDUCTION_BODY(INIT, OPERATION, RED_OPERATION)              \
   for (int oi = 0; oi < (entries + GPU_DOT_OUTER - 1)/GPU_DOT_OUTER; ++oi; outer) { \
     shared VTYPE s_red[GPU_DOT_INNER];                                  \
                                                                         \
     for (int i = 0; i < (GPU_DOT_INNER * GPU_DOT_BLOCK); i += GPU_DOT_INNER; inner) { \
-      VTYPE r_red = 0;                                                  \
+      VTYPE r_red = INIT(oi);                                           \
       for (int j = 0; j < GPU_DOT_BLOCK; ++j) {                         \
         if ((oi*GPU_DOT_OUTER + i*GPU_DOT_BLOCK + j) < entries) {       \
           OPERATION(r_red, oi*GPU_DOT_OUTER + i*GPU_DOT_BLOCK + j);     \
@@ -92,6 +92,9 @@
 #  define REDUCTION_BODY GPU_REDUCTION_BODY
 #endif
 
+#define INIT_ZERO(i) 0
+#define INIT_FIRST(i) (i) < entries ? vec[i] : vec[0]
+
 #define SUM_RED_OPERATION(red, part)            \
   red += part
 
@@ -109,7 +112,7 @@ kernel void l1Norm(const int entries,
                    RETTYPE * vecReduction) {
 #define L1_NORM_OPERATION(out, idx)             \
   out += abs(vec[idx])
-  REDUCTION_BODY(L1_NORM_OPERATION, SUM_RED_OPERATION);
+  REDUCTION_BODY(INIT_ZERO, L1_NORM_OPERATION, SUM_RED_OPERATION);
 }
 
 kernel void l2Norm(const int entries,
@@ -118,7 +121,7 @@ kernel void l2Norm(const int entries,
 #define L2_NORM_OPERATION(out, idx)             \
   const VTYPE vec_i = vec[idx];                 \
   out += vec_i * vec_i;
-  REDUCTION_BODY(L2_NORM_OPERATION, SUM_RED_OPERATION);
+  REDUCTION_BODY(INIT_ZERO, L2_NORM_OPERATION, SUM_RED_OPERATION);
 }
 
 kernel void lpNorm(const int entries,
@@ -128,7 +131,7 @@ kernel void lpNorm(const int entries,
 #define LP_NORM_OPERATION(out, idx)             \
   const VTYPE vec_i = vec[idx];                 \
   out += pow(vec_i, p)
-  REDUCTION_BODY(LP_NORM_OPERATION, SUM_RED_OPERATION);
+  REDUCTION_BODY(INIT_ZERO, LP_NORM_OPERATION, SUM_RED_OPERATION);
 }
 
 kernel void lInfNorm(const int entries,
@@ -137,7 +140,7 @@ kernel void lInfNorm(const int entries,
 #define LINF_NORM_OPERATION(out, idx)           \
   const VTYPE vec_i = vec[idx];                 \
   out = abs(out*out > vec_i*vec_i ? out : vec_i)
-  REDUCTION_BODY(LINF_NORM_OPERATION, ABS_MAX_RED_OPERATION);
+  REDUCTION_BODY(INIT_ZERO, LINF_NORM_OPERATION, ABS_MAX_RED_OPERATION);
 }
 
 kernel void vecMax(const int entries,
@@ -146,7 +149,7 @@ kernel void vecMax(const int entries,
 #define MAX_OPERATION(out, idx)                 \
   const VTYPE vec_i = vec[idx];                 \
   out = out > vec_i ? out : vec_i
-  REDUCTION_BODY(MAX_OPERATION, MAX_RED_OPERATION);
+  REDUCTION_BODY(INIT_FIRST, MAX_OPERATION, MAX_RED_OPERATION);
 }
 
 kernel void vecMin(const int entries,
@@ -155,7 +158,7 @@ kernel void vecMin(const int entries,
 #define MIN_OPERATION(out, idx)                 \
   const VTYPE vec_i = vec[idx];                 \
   out = out < vec_i ? out : vec_i
-  REDUCTION_BODY(MIN_OPERATION, MIN_RED_OPERATION);
+  REDUCTION_BODY(INIT_FIRST, MIN_OPERATION, MIN_RED_OPERATION);
 }
 
 kernel void dot(const int entries,
@@ -164,7 +167,7 @@ kernel void dot(const int entries,
                 RETTYPE * vecReduction) {
 #define DOT_OPERATION(out, idx)                 \
   out += vec1[idx] * vec2[idx]
-  REDUCTION_BODY(DOT_OPERATION, SUM_RED_OPERATION);
+  REDUCTION_BODY(INIT_ZERO, DOT_OPERATION, SUM_RED_OPERATION);
 }
 
 kernel void sum(const int entries,
@@ -172,7 +175,7 @@ kernel void sum(const int entries,
                 RETTYPE * vecReduction) {
 #define SUM_OPERATION(out, idx)                 \
   out += vec[idx]
-  REDUCTION_BODY(SUM_OPERATION, SUM_RED_OPERATION);
+  REDUCTION_BODY(INIT_ZERO, SUM_OPERATION, SUM_RED_OPERATION);
 }
 
 kernel void distance(const int entries,
@@ -182,7 +185,7 @@ kernel void distance(const int entries,
 #define DISTANCE_OPERATION(out, idx)            \
   const RETTYPE diff = (vec1[idx] - vec2[idx]); \
   out += diff * diff
-  REDUCTION_BODY(DISTANCE_OPERATION, SUM_RED_OPERATION);
+  REDUCTION_BODY(INIT_ZERO, DISTANCE_OPERATION, SUM_RED_OPERATION);
 }
 
 kernel void axpy(const int entries,
