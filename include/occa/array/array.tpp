@@ -26,8 +26,15 @@
 namespace occa {
   template <class TM, const int idxType>
   array<TM,idxType>::array() :
+    device(),
+    memory_(),
     data_(NULL) {
 
+    for (int i = 0; i < 6; ++i) {
+      ks_[i]     = 0;
+      s_[i]      = 0;
+      sOrder_[i] = i;
+    }
     initSOrder();
   }
 
