@@ -199,7 +199,7 @@ namespace occa {
                              const void *src,
                              const occa::properties &props) {
 
-      if (props.get<bool>("mapped")) {
+      if (props.get<bool>("mapped", false)) {
         return mappedAlloc(bytes, src);
       }
 

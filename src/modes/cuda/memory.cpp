@@ -55,7 +55,7 @@ namespace occa {
       const CUstream &stream = *((CUstream*) dHandle->currentStream);
       const bool async = props.get("async", false);
 
-      if (async) {
+      if (!async) {
         OCCA_CUDA_ERROR("Memory: Copy From",
                         cuMemcpyHtoD(*((CUdeviceptr*) handle) + offset,
                                      src,
@@ -77,7 +77,7 @@ namespace occa {
       const CUstream &stream = *((CUstream*) dHandle->currentStream);
       const bool async = props.get("async", false);
 
-      if (async) {
+      if (!async) {
         OCCA_CUDA_ERROR("Memory: Copy From",
                         cuMemcpyDtoD(*((CUdeviceptr*) handle) + destOffset,
                                      *((CUdeviceptr*) src->handle) + srcOffset,
@@ -98,7 +98,7 @@ namespace occa {
       const CUstream &stream = *((CUstream*) dHandle->currentStream);
       const bool async = props.get("async", false);
 
-      if (async) {
+      if (!async) {
         OCCA_CUDA_ERROR("Memory: Copy From",
                         cuMemcpyDtoH(dest,
                                      *((CUdeviceptr*) handle) + offset,

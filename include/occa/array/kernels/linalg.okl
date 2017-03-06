@@ -93,13 +93,13 @@
 #endif
 
 #define INIT_ZERO(i) 0
-#define INIT_FIRST(i) (i) < entries ? vec[i] : vec[0]
+#define INIT_FIRST(i) vec[0]
 
 #define SUM_RED_OPERATION(red, part)            \
   red += part
 
-#define ABS_MAX_RED_OPERATION(red, part)        \
-  red = abs(red*red > part*part ? red : part)
+#define ABS_MAX_RED_OPERATION(red, part)            \
+  red = occaFabs(red*red > part*part ? red : part)
 
 #define MAX_RED_OPERATION(red, part)            \
   red = red > part ? red : part
@@ -111,7 +111,7 @@ kernel void l1Norm(const int entries,
                    const VTYPE * vec,
                    RETTYPE * vecReduction) {
 #define L1_NORM_OPERATION(out, idx)             \
-  out += abs(vec[idx])
+  out += occaFabs(vec[idx])
   REDUCTION_BODY(INIT_ZERO, L1_NORM_OPERATION, SUM_RED_OPERATION);
 }
 
@@ -130,16 +130,16 @@ kernel void lpNorm(const int entries,
                    RETTYPE * vecReduction) {
 #define LP_NORM_OPERATION(out, idx)             \
   const VTYPE vec_i = vec[idx];                 \
-  out += pow(vec_i, p)
+  out += occaPow(vec_i, p)
   REDUCTION_BODY(INIT_ZERO, LP_NORM_OPERATION, SUM_RED_OPERATION);
 }
 
 kernel void lInfNorm(const int entries,
                      const VTYPE * vec,
                      RETTYPE * vecReduction) {
-#define LINF_NORM_OPERATION(out, idx)           \
-  const VTYPE vec_i = vec[idx];                 \
-  out = abs(out*out > vec_i*vec_i ? out : vec_i)
+#define LINF_NORM_OPERATION(out, idx)                 \
+  const VTYPE vec_i = vec[idx];                       \
+  out = occaFabs(out*out > vec_i*vec_i ? out : vec_i)
   REDUCTION_BODY(INIT_ZERO, LINF_NORM_OPERATION, ABS_MAX_RED_OPERATION);
 }
 
