@@ -47,37 +47,99 @@
 
 #define GPU_DOT_BLOCK (GPU_DOT_OUTER * GPU_DOT_INNER)
 
-#define GPU_UNROLLED_DOT_ITER(N, RED_OPERATION)     \
+#if GPU_DOT_INNER >= (2*256)
+#  define DO_OPER_256 1
+#else
+#  define DO_OPER_256 0
+#endif
+
+#if GPU_DOT_INNER >= (2*128)
+#  define DO_OPER_128 1
+#else
+#  define DO_OPER_128 0
+#endif
+
+#if GPU_DOT_INNER >= (2*64)
+#  define DO_OPER_64 1
+#else
+#  define DO_OPER_64 0
+#endif
+
+#if GPU_DOT_INNER >= (2*32)
+#  define DO_OPER_32 1
+#else
+#  define DO_OPER_32 0
+#endif
+
+#if GPU_DOT_INNER >= (2*16)
+#  define DO_OPER_16 1
+#else
+#  define DO_OPER_16 0
+#endif
+
+#if GPU_DOT_INNER >= (2*8)
+#  define DO_OPER_8 1
+#else
+#  define DO_OPER_8 0
+#endif
+
+#if GPU_DOT_INNER >= (2*4)
+#  define DO_OPER_4 1
+#else
+#  define DO_OPER_4 0
+#endif
+
+#if GPU_DOT_INNER >= (2*2)
+#  define DO_OPER_2 1
+#else
+#  define DO_OPER_2 0
+#endif
+
+#if GPU_DOT_INNER >= (2*1)
+#  define DO_OPER_1 1
+#else
+#  define DO_OPER_1 0
+#endif
+
+#define GPU_UNROLLED_DOT_ITER(N, RED_OPERATION) \
+  GPU_UNROLLED_DOT_ITER2(DO_OPER_##N, N, RED_OPERATION)
+
+#define GPU_UNROLLED_DOT_ITER2(BOOL, N, RED_OPERATION)  \
+  GPU_UNROLLED_DOT_ITER3(BOOL, N, RED_OPERATION)
+
+#define GPU_UNROLLED_DOT_ITER3(BOOL, N, RED_OPERATION)  \
+  GPU_UNROLLED_DOT_ITER_##BOOL(N, RED_OPERATION)
+
+#define GPU_UNROLLED_DOT_ITER_0(N, RED_OPERATION)
+
+#define GPU_UNROLLED_DOT_ITER_1(N, RED_OPERATION)   \
   for (int i = 0; i < GPU_DOT_INNER; ++i; inner) {  \
-    if (GPU_DOT_BLOCK >= (2*N)) {                   \
-      if (i < N) {                                  \
-        RED_OPERATION(s_red[i], s_red[i + N]);      \
-      }                                             \
+    if (i < N) {                                    \
+      RED_OPERATION(s_red[i], s_red[i + N]);        \
     }                                               \
   }
 
 #define GPU_REDUCTION_BODY(INIT, OPERATION, RED_OPERATION)              \
-  for (int oi = 0; oi < (entries + GPU_DOT_OUTER - 1)/GPU_DOT_OUTER; ++oi; outer) { \
+  for (int oi = 0; oi < GPU_DOT_OUTER; ++oi; outer) {                   \
     shared VTYPE s_red[GPU_DOT_INNER];                                  \
                                                                         \
-    for (int i = 0; i < (GPU_DOT_INNER * GPU_DOT_BLOCK); i += GPU_DOT_INNER; inner) { \
+    for (int i = 0; i < GPU_DOT_INNER; ++i; inner) {                    \
       VTYPE r_red = INIT(oi);                                           \
-      for (int j = 0; j < GPU_DOT_BLOCK; ++j) {                         \
-        if ((oi*GPU_DOT_OUTER + i*GPU_DOT_BLOCK + j) < entries) {       \
-          OPERATION(r_red, oi*GPU_DOT_OUTER + i*GPU_DOT_BLOCK + j);     \
-        }                                                               \
+      for (int j = (oi*GPU_DOT_INNER + i); j < entries; j += GPU_DOT_BLOCK) { \
+        OPERATION(r_red, j);                                            \
       }                                                                 \
       s_red[i] = r_red;                                                 \
     }                                                                   \
                                                                         \
     GPU_UNROLLED_DOT_ITER(256, RED_OPERATION);                          \
     GPU_UNROLLED_DOT_ITER(128, RED_OPERATION);                          \
-    GPU_UNROLLED_DOT_ITER(64 , RED_OPERATION);                          \
-    GPU_UNROLLED_DOT_ITER(32 , RED_OPERATION);                          \
-    GPU_UNROLLED_DOT_ITER(16 , RED_OPERATION);                          \
-    GPU_UNROLLED_DOT_ITER(8  , RED_OPERATION);                          \
-    GPU_UNROLLED_DOT_ITER(2  , RED_OPERATION);                          \
-    GPU_UNROLLED_DOT_ITER(1  , RED_OPERATION);                          \
+    GPU_UNROLLED_DOT_ITER(64, RED_OPERATION);                           \
+    GPU_UNROLLED_DOT_ITER(32, RED_OPERATION);                           \
+    GPU_UNROLLED_DOT_ITER(16, RED_OPERATION);                           \
+    GPU_UNROLLED_DOT_ITER(8, RED_OPERATION);                            \
+    GPU_UNROLLED_DOT_ITER(4, RED_OPERATION);                            \
+    GPU_UNROLLED_DOT_ITER(2, RED_OPERATION);                            \
+    GPU_UNROLLED_DOT_ITER(1, RED_OPERATION);                            \
                                                                         \
     for (int i = 0; i < GPU_DOT_INNER; ++i; inner) {                    \
       if (i == 0) {                                                     \
@@ -94,18 +156,20 @@
 
 #define INIT_ZERO(i) 0
 #define INIT_FIRST(i) vec[0]
+#define INIT_ABS_FIRST(i) occaFabs(vec[0])
 
 #define SUM_RED_OPERATION(red, part)            \
   red += part
 
-#define ABS_MAX_RED_OPERATION(red, part)            \
-  red = occaFabs(red*red > part*part ? red : part)
-
 #define MAX_RED_OPERATION(red, part)            \
-  red = red > part ? red : part
+  const VTYPE r_red2 = red;                     \
+  const VTYPE r_part2 = part;                   \
+  red = r_red2 > r_part2 ? r_red2 : r_part2
 
 #define MIN_RED_OPERATION(red, part)            \
-  red = red < part ? red : part
+  const VTYPE r_red2 = red;                     \
+  const VTYPE r_part2 = part;                   \
+  red = r_red2 < r_part2 ? r_red2 : r_part2
 
 kernel void l1Norm(const int entries,
                    const VTYPE * vec,
@@ -138,9 +202,12 @@ kernel void lInfNorm(const int entries,
                      const VTYPE * vec,
                      RETTYPE * vecReduction) {
 #define LINF_NORM_OPERATION(out, idx)                 \
-  const VTYPE vec_i = vec[idx];                       \
-  out = occaFabs(out*out > vec_i*vec_i ? out : vec_i)
-  REDUCTION_BODY(INIT_ZERO, LINF_NORM_OPERATION, ABS_MAX_RED_OPERATION);
+  const VTYPE vec_i = occaFabs(vec[idx]);             \
+  if (out < vec_i) {                                  \
+    out = vec_i;                                      \
+  }
+
+  REDUCTION_BODY(INIT_ABS_FIRST, LINF_NORM_OPERATION, MAX_RED_OPERATION);
 }
 
 kernel void vecMax(const int entries,

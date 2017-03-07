@@ -288,9 +288,9 @@ namespace occa {
         makeLinalgBuilder<VTYPE, RETTYPE>("lInfNorm");
 
       RETTYPE *partialReduction = reduce<VTYPE,RETTYPE>(vec, builder, 1024);
-      RETTYPE ret = std::abs(partialReduction[0]);
+      RETTYPE ret = partialReduction[0];
       for (int i = 1; i < 1024; ++i) {
-        const RETTYPE abs_i = std::abs(partialReduction[i]);
+        const RETTYPE abs_i = partialReduction[i];
         if (ret < abs_i) {
           ret = abs_i;
         }

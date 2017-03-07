@@ -214,11 +214,13 @@ namespace occa {
     kernel_v *&k = ker.kHandle;
 
     if (usingParser) {
-      k          = newModeKernel(occa::properties("mode: 'Serial'"));
-      k->dHandle = newModeDevice(occa::properties("mode: 'Serial'"));
+      occa::properties launcherProps("mode: 'Serial'");
+      k          = newModeKernel(launcherProps);
+      k->dHandle = newModeDevice(launcherProps);
 
       hash_t hash = occa::hashFile(realFilename);
       hash ^= props.hash();
+      hash ^= occa::hash(mode());
 
       const std::string hashDir    = io::hashDir(realFilename, hash);
       const std::string parsedFile = hashDir + "parsedSource.occa";
@@ -229,6 +231,7 @@ namespace occa {
                                              props);
 
       occa::properties launchKernelProps;
+      launchKernelProps["mode"] = "Serial";
       launchKernelProps["defines/OCCA_LAUNCH_KERNEL"] = 1;
 
       k->build(parsedFile,
