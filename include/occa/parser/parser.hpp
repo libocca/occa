@@ -60,7 +60,6 @@ namespace occa {
       bool macrosAreInitialized;
       bool _hasMagicEnabled;
       bool _compilingForCPU;
-      bool _warnForMissingBarriers;
       bool _warnForConditionalBarriers;
       bool _insertBarriersAutomatically;
       //================================
@@ -84,7 +83,6 @@ namespace occa {
 
       bool hasMagicEnabled();
       bool compilingForCPU();
-      bool warnForMissingBarriers();
       bool warnForConditionalBarriers();
       bool insertBarriersAutomatically();
       //================================
@@ -112,6 +110,7 @@ namespace occa {
                                         const int parsingLanguage_ = parserInfo::parsingC);
       //====================================
 
+      void initModeMacros();
       void initMacros(const int parsingLanguage_ = parserInfo::parsingC);
       void initFortranMacros();
 

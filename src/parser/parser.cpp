@@ -77,12 +77,7 @@ namespace occa {
       setProperties(properties_);
 
       //---[ Language ]-------
-      if (properties["language"].string() == "OFL") {
-        parsingLanguage = parserInfo::parsingFortran;
-      } else {
-        parsingLanguage = parserInfo::parsingC;
-      }
-
+      parsingLanguage = parserInfo::parsingC;
       pushLanguage(parsingLanguage);
 
       //---[ Mode ]-----------
@@ -161,7 +156,6 @@ namespace occa {
                           (mode == "Pthreads") ||
                           (mode == "OpenMP"));
 
-      _warnForMissingBarriers      = properties.get("warn-for-missing-barriers"    , false);
       _warnForConditionalBarriers  = properties.get("warn-for-conditional-barriers", false);
       _insertBarriersAutomatically = properties.get("automate-add-barriers"        , true);
     }
@@ -173,10 +167,6 @@ namespace occa {
     bool parserBase::compilingForCPU() {
       return false;
       // return _compilingForCPU;
-    }
-
-    bool parserBase::warnForMissingBarriers() {
-      return _warnForMissingBarriers;
     }
 
     bool parserBase::warnForConditionalBarriers() {
@@ -442,9 +432,9 @@ namespace occa {
             pos = macros.size();
             macros.push_back(tmpMacro);
             macroMap[name] = pos;
-          }
-          else
+          } else {
             pos = macroMap[name];
+          }
 
           macroInfo &info = macros[pos];
           info.name = name;
@@ -640,10 +630,17 @@ namespace occa {
 
             c = cEnd;
 
-            if (cStart < (cEnd - 1))
+            if (cStart < (cEnd - 1)) {
               args.push_back( std::string(cStart, cEnd - cStart - 1) );
+            }
 
-            newLine += info.applyArgs(args);
+            const int argCount = (int) args.size();
+            for (int i = 0; i < argCount; ++i) {
+              applyMacros(args[i]);
+            }
+            std::string funcResult = info.applyArgs(args);
+            applyMacros(funcResult);
+            newLine += funcResult;
           }
         }
         else {
@@ -755,6 +752,8 @@ namespace occa {
       // allExp.print();
       // throw 1;
 
+      initModeMacros();
+
       initMacros(parsingLanguage_);
       preprocessMacros(allExp);
 
@@ -767,6 +766,25 @@ namespace occa {
       return allExp;
     }
     //====================================
+    void parserBase::initModeMacros() {
+      std::string modes[5] = {
+        "SERIAL", "OPENMP", "OPENCL", "CUDA", "PTHREADS",
+      };
+      const std::string currentMode = uppercase(properties["mode"].string());
+      for (int i = 0; i < 5; ++i) {
+        std::string modeDefine = "#define OCCA_USING_";
+        modeDefine += modes[i];
+        if (modes[i] != currentMode) {
+          modeDefine += " 0";
+        } else {
+          modeDefine += " 1";
+        }
+        loadMacro(modeDefine);
+      }
+
+      loadMacro("#define OCCA_USING_CPU (OCCA_USING_SERIAL || OCCA_USING_OPENMP || OCCA_USING_PTHREADS)");
+      loadMacro("#define OCCA_USING_GPU (OCCA_USING_OPENCL || OCCA_USING_CUDA)");
+    }
 
     void parserBase::initMacros(const int parsingLanguage_) {
       if (parsingLanguage_ & parserInfo::parsingFortran)
@@ -828,7 +846,7 @@ namespace occa {
         loadMacro("#define native" + cmf + "(...) occaNative" + cmf + "(__VA_ARGS__)");
       }
 
-      //---[ CUDA Macros ]----------------
+      //---[ CUDA Macros ]--------------
       loadMacro("#define __global__ occaKernel");
 
       loadMacro("#define __syncthreads()       occaBarrier(occaGlobalMemFence)");
@@ -842,7 +860,7 @@ namespace occa {
 
       loadMacro("#define __device__ occaFunction");
 
-      //---[ OpenCL Macros ]--------------
+      //---[ OpenCL Macros ]------------
       loadMacro("#define __kernel occaKernel");
 
       loadMacro("#define CLK_LOCAL_MEM_FENCE  occaLocalMemFence");
@@ -2065,15 +2083,6 @@ namespace occa {
           }
 
           if (snPos == lastLoop) {
-            if (warnForMissingBarriers()) {
-              std::cout << "Warning: Placing a shared-memory barrier between:\n"
-                        << "---[ A ]--------------------------------\n"
-                        << *(firstLoop->value)
-                        << "---[ B ]--------------------------------\n"
-                        << *(lastLoop->value)
-                        << "========================================\n";
-            }
-
             s.pushSourceLeftOf(lastLoop, "occaBarrier(occaLocalMemFence);");
           }
         }

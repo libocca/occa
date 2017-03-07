@@ -418,12 +418,7 @@ namespace occa {
       occa::properties properties = props;
       parser fileParser;
 
-      properties["mode"]     = deviceMode;
-      properties["language"] = ((ext != "ofl") ? "C" : "Fortran");
-
-      if ((ext == "oak") || (ext == "oaf")) {
-        properties["magic"] = "enabled";
-      }
+      properties["mode"] = deviceMode;
 
       std::string parsedContent = fileParser.parseFile(io::filename(filename), properties);
 
