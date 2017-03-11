@@ -69,13 +69,6 @@ typedef struct {
   occaUDim_t x, y, z;
 } occaDim;
 
-typedef enum {
-  IR  = OCCA_CONST_IR,
-  OKL = OCCA_CONST_OKL,
-  OFL = OCCA_CONST_OFL
-} occaLanguage;
-
-
 //---[ Globals & Flags ]----------------
 extern OCCA_LFUNC const occaObject occaDefault;
 extern OCCA_LFUNC const occaUDim_t occaAllBytes;

@@ -134,8 +134,6 @@ namespace occa {
     void releaseHash(const hash_t &hash, const std::string &tag);
     void releaseHashLock(const std::string &lockDir);
 
-    bool fileNeedsParser(const std::string &filename);
-
     kernelMetadata parseFileForFunction(const std::string &deviceMode,
                                         const std::string &filename,
                                         const std::string &cachedBinary,

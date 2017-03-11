@@ -19,7 +19,7 @@ namespace occa {
 
   class preprocessor_t {
   public:
-    typedef void (preprocessor_t::*processDirective_t)(char *&c);
+    typedef void (preprocessor_t::*processDirective_t)(char *&dStart, char *&c);
     typedef trie_t<processDirective_t> directiveTrie_t;
 
     static const std::string macroEndDelimiters;
@@ -108,23 +108,23 @@ namespace occa {
     void applyMacros(char *c, const size_t chars, std::string &out);
 
     void processDirective(char *&c);
-    void processIf(char *&c);
-    void processIfdef(char *&c);
-    void processIfndef(char *&c);
-    void processElif(char *&c);
-    void processElse(char *&c);
-    void processEndif(char *&c);
+    void processIf(char *&dStart, char *&c);
+    void processIfdef(char *&dStart, char *&c);
+    void processIfndef(char *&dStart, char *&c);
+    void processElif(char *&dStart, char *&c);
+    void processElse(char *&dStart, char *&c);
+    void processEndif(char *&dStart, char *&c);
 
-    void processDefine(char *&c);
-    void processUndef(char *&c);
+    void processDefine(char *&dStart, char *&c);
+    void processUndef(char *&dStart, char *&c);
 
     void processMessage(char *&c, const bool isError);
-    void processError(char *&c);
-    void processWarning(char *&c);
+    void processError(char *&dStart, char *&c);
+    void processWarning(char *&dStart, char *&c);
 
-    void processInclude(char *&c);
-    void processPragma(char *&c);
-    void processLine(char *&c);
+    void processInclude(char *&dStart, char *&c);
+    void processPragma(char *&dStart, char *&c);
+    void processLine(char *&dStart, char *&c);
 
     //---[ Messages ]-------------------
     void printMessage(const std::string &message,

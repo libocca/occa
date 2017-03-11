@@ -6,7 +6,7 @@
 [![Join the chat at https://gitter.im/libocca/occa](https://badges.gitter.im/libocca/occa.svg)](https://gitter.im/libocca/occa?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
 OCCA is an open-source (MIT license) library used to program current multi-core/many-core architectures.
-Devices (such as CPUs, GPUs, Intel's Xeon Phi, FPGAs, etc) are abstracted using an offload-model for application development and programming for the devices is done through a C-based (OKL) or Fortran-based kernel language (OFL).
+Devices (such as CPUs, GPUs, Intel's Xeon Phi, FPGAs, etc) are abstracted using an offload-model for application development and programming for the devices is done through a C-based (OKL) kernel.
 OCCA gives developers the ability to target devices at run-time by using run-time compilation for device kernels.
 
 ## Installing
@@ -26,12 +26,6 @@ cd occa
 make -j 4
 ```
 
-To compile the Fortran library, setup the `OCCA_FORTRAN_ENABLED` environment variable before compiling
-
-```bash
-export OCCA_FORTRAN_ENABLED="1"
-```
-
 Python 2 and 3 bindings are also available.
 If you wish to setup the occa Python module
 
@@ -47,8 +41,6 @@ We have a few examples to show different features of OCCA. The addVectors exampl
 * C++
 * C
 * Python
-* Fortran
-* Julia
 
 ### Compile
 To compile addVectors (Hello World! style example) in C++

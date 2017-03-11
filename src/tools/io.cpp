@@ -399,15 +399,6 @@ namespace occa {
       fileLocks.erase(lockDir);
     }
 
-    bool fileNeedsParser(const std::string &filename) {
-      std::string ext = io::extension(filename);
-
-      return ((ext == "okl") ||
-              (ext == "ofl") ||
-              (ext == "cl") ||
-              (ext == "cu"));
-    }
-
     kernelMetadata parseFileForFunction(const std::string &deviceMode,
                                         const std::string &filename,
                                         const std::string &parsedFile,

@@ -292,13 +292,13 @@ namespace occa {
         (strncmp(cStart, "if" , 2) &&
          strncmp(cStart, "el" , 2) &&
          strncmp(cStart, "end", 3))) {
-      (this->*(result.value()))(c);
+      (this->*(result.value()))(cStart, c);
     } else {
       updatingSkipTo(c, '\n');
     }
   }
 
-  void preprocessor_t::processIf(char *&c) {
+  void preprocessor_t::processIf(char *&dStart, char *&c) {
     char *cStart = c;
     updatingSkipTo(c, '\n');
 
@@ -314,7 +314,7 @@ namespace occa {
     status |= finishedIf;
   }
 
-  void preprocessor_t::processIfdef(char *&c) {
+  void preprocessor_t::processIfdef(char *&dStart, char *&c) {
     char *cStart = c;
     updatingSkipTo(c, '\n');
 
@@ -331,8 +331,8 @@ namespace occa {
     status |= (macro != NULL) ? ignoring : finishedIf;
   }
 
-  void preprocessor_t::processIfndef(char *&c) {
-    processIfdef(c);
+  void preprocessor_t::processIfndef(char *&dStart, char *&c) {
+    processIfdef(dStart, c);
     int &status = currentStatus.status;
     // Ifdef already set finishedIf so we can return
     if (status & ignoring) {
@@ -342,11 +342,11 @@ namespace occa {
     status ^= finishedIf;
   }
 
-  void preprocessor_t::processElif(char *&c) {
-    processIf(c);
+  void preprocessor_t::processElif(char *&dStart, char *&c) {
+    processIf(dStart, c);
   }
 
-  void preprocessor_t::processElse(char *&c) {
+  void preprocessor_t::processElse(char *&dStart, char *&c) {
     int &status = currentStatus.status;
     if (status & finishedIf) {
       updatingSkipTo(c, '\n');
@@ -355,7 +355,7 @@ namespace occa {
     status |= finishedIf;
   }
 
-  void preprocessor_t::processEndif(char *&c) {
+  void preprocessor_t::processEndif(char *&dStart, char *&c) {
     const char *cStart = c;
     updatingSkipTo(c, '\n');
 
@@ -367,7 +367,7 @@ namespace occa {
     statusStack.pop_back();
   }
 
-  void preprocessor_t::processDefine(char *&c) {
+  void preprocessor_t::processDefine(char *&dStart, char *&c) {
     const int thisLineNumber = currentFrame.lineNumber;
     char *cStart = c;
     updatingSkipTo(c, '\n');
@@ -381,7 +381,7 @@ namespace occa {
     sourceMacros.add(macro->name, macro);
   }
 
-  void preprocessor_t::processUndef(char *&c) {
+  void preprocessor_t::processUndef(char *&dStart, char *&c) {
     const int thisLineNumber = currentFrame.lineNumber;
     char *cStart = c;
     updatingSkipToWhitespace(c);
@@ -410,15 +410,15 @@ namespace occa {
     }
   }
 
-  void preprocessor_t::processError(char *&c) {
-    processMessage(c, true);
+  void preprocessor_t::processError(char *&dStart, char *&c) {
+    processMessage(dStart, true);
   }
 
-  void preprocessor_t::processWarning(char *&c) {
-    processMessage(c, false);
+  void preprocessor_t::processWarning(char *&dStart, char *&c) {
+    processMessage(dStart, false);
   }
 
-  void preprocessor_t::processInclude(char *&c) {
+  void preprocessor_t::processInclude(char *&dStart, char *&c) {
     char *cStart = c;
     updatingSkipTo(c, '\n');
 
@@ -429,11 +429,11 @@ namespace occa {
     processFile(io::filename(line));
   }
 
-  void preprocessor_t::processPragma(char *&c) {
+  void preprocessor_t::processPragma(char *&dStart, char *&c) {
     updatingSkipTo(c, '\n');
   }
 
-  void preprocessor_t::processLine(char *&c) {
+  void preprocessor_t::processLine(char *&dStart, char *&c) {
     char *cStart = c;
     updatingSkipTo(c, '\n');
 
