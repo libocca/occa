@@ -281,13 +281,6 @@
 //======================================
 
 
-//---[ Constants ]----------------------
-#define OCCA_CONST_IR  (1 << 0)
-#define OCCA_CONST_OKL (1 << 1)
-#define OCCA_CONST_OFL (1 << 2)
-//======================================
-
-
 //---[ OpenCL ]-------------------------
 #define OCCA_OPENCL_TEMPLATE_CHECK(checkFunction, expr, filename, function, line, message) \
   do {                                                                  \
