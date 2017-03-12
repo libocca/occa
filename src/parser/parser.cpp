@@ -218,20 +218,12 @@ namespace occa {
 
       while((*c != '\n') &&
             (*c != '\0')) {
-
         ++c;
       }
 
-      std::string iFilename = compressAllWhitespace(cStart, c - cStart);
-      const int chars = iFilename.size();
-
-      const bool skipFirst = ((iFilename[0] == '"') ||
-                              (iFilename[0] == '<'));
-
-      const bool skipLast  = ((iFilename[chars - 1] == '"') ||
-                              (iFilename[chars - 1] == '<'));
-
-      return iFilename.substr(skipFirst, chars - (skipFirst + skipLast));
+      const std::string iFilename = compressAllWhitespace(cStart, c - cStart);
+      io::fileOpener &opener = io::fileOpener::get(iFilename);
+      return opener.expand(iFilename);
     }
 
     typeHolder parserBase::evaluateMacroStatement(const char *c) {
@@ -366,14 +358,18 @@ namespace occa {
         skipToWhitespace(cEnd);
 
         if (stringsAreEqual(c, (cEnd - c), "if")) {
+          if (state & ignoring) {
+            return (startHash | ignoreUntilEnd);
+          }
           c = cEnd;
 
           bool isTrue = evaluateMacroBoolStatement(c);
 
-          if (isTrue)
+          if (isTrue) {
             return (startHash | readUntilNextHash);
-          else
+          } else {
             return (startHash | ignoreUntilNextHash);
+          }
         }
 
         else if (stringsAreEqual(c, (cEnd - c), "elif")) {
@@ -391,10 +387,11 @@ namespace occa {
         }
 
         else if (stringsAreEqual(c, (cEnd - c), "else")) {
-          if ((state & readUntilNextHash) || (state & ignoreUntilEnd))
+          if ((state & readUntilNextHash) || (state & ignoreUntilEnd)) {
             return (ignoreUntilEnd);
-          else
+          } else {
             return (readUntilNextHash);
+          }
         }
 
         else if (stringsAreEqual(c, (cEnd - c), "ifdef")) {
@@ -465,13 +462,12 @@ namespace occa {
             return (state | keepMacro);
 
           std::string includeFile = getMacroIncludeFile(c);
-
           includeFile = io::filename(includeFile);
 
           if (includeFile == "")
             return (state);
 
-          const char *cRoot = cReadFile(includeFile);
+          const char *cRoot = io::c_read(includeFile);
 
           expNode includeExpRoot = splitContent(cRoot, parsingLanguage);
 
@@ -709,8 +705,9 @@ namespace occa {
             ignoreLine = true;
         }
 
-        if (ignoreLine)
+        if (ignoreLine) {
           linesIgnored.push_back(linePos);
+        }
       }
 
       if (linesIgnored.size() == 0)

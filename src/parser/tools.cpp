@@ -23,6 +23,7 @@
 #include "occa/parser/preprocessor.hpp"
 #include "occa/parser/tools.hpp"
 #include "occa/tools/env.hpp"
+#include "occa/tools/io.hpp"
 #include "occa/tools/sys.hpp"
 
 namespace occa {
@@ -524,26 +525,6 @@ namespace occa {
     str = compressAllWhitespace(str.c_str(), str.size());
   }
 
-  char* cReadFile(const std::string &filename) {
-    FILE *fp = fopen(filename.c_str(), "r");
-    OCCA_ERROR("Failed to open [" << filename << ']',
-               fp != NULL);
-
-    struct stat statbuf;
-    stat(filename.c_str(), &statbuf);
-
-    const size_t nchars = statbuf.st_size;
-
-    char *buffer = new char[nchars + 1]();
-    size_t nread = fread(buffer, sizeof(char), nchars, fp);
-
-    buffer[nread] = '\0';
-
-    fclose(fp);
-
-    return buffer;
-  }
-
   int stripComments(std::string &line, const int parsingLanguage_) {
     if (!(parsingLanguage_ & parserInfo::parsingC))
       return stripFortranComments(line);
@@ -559,6 +540,8 @@ namespace occa {
     while (*cRight != '\0') {
       if ((*cRight == '\0') || (*cRight == '\n'))
         break;
+
+      skipString(cRight, parsingLanguage_);
 
       if ((cRight[0] == '/') && (cRight[1] == '/')) {
         if ( !(status == parserNS::insideCommentBlock) ) {

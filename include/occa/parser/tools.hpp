@@ -109,8 +109,6 @@ namespace occa {
   void compressAllWhitespace(std::string &str,
                              const int parsingLanguage_ = parserInfo::parsingC);
 
-  char* cReadFile(const std::string &filename);
-
   int stripComments(std::string &line,
                     const int parsingLanguage_ = parserInfo::parsingC);
   int stripFortranComments(std::string &line);
