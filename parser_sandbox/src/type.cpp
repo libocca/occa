@@ -1,3 +1,8 @@
+#include <sstream>
+
+#include "occa/defines.hpp"
+#include "occa/tools/sys.hpp"
+
 #include "type.hpp"
 
 namespace occa {
@@ -102,17 +107,17 @@ namespace occa {
       specifier(name_, specType_),
       baseType(NULL) {}
 
-    type::type(const type &baseType_) :
-      specifier(specifier::definedType),
+    type::type(const type &baseType_, const std::string &name_) :
+      specifier(name_, specifier::definedType),
       baseType(&(baseType_.clone())) {}
 
-    type::type(const qualifiers &qs) :
-      specifier(specifier::definedType),
+    type::type(const qualifiers &qs, const std::string &name_) :
+      specifier(name_, specifier::definedType),
       baseType(NULL),
       qualifiers_(qs) {}
 
-    type::type(const qualifiers &qs, const type &baseType_) :
-      specifier(specifier::definedType),
+    type::type(const qualifiers &qs, const type &baseType_, const std::string &name_) :
+      specifier(name_, specifier::definedType),
       baseType(&(baseType_.clone())),
       qualifiers_(qs) {}
 
@@ -160,25 +165,20 @@ namespace occa {
     pointer::pointer(const type &t) :
       type(t) {}
 
-    pointer::pointer(const qualifiers &qs) :
-      type(qs) {}
-
     pointer::pointer(const qualifiers &qs, const type &t) :
       type(qs, t) {}
 
     pointer::~pointer() {}
 
     type& pointer::clone() const {
-      if (baseType) {
-        return *(new pointer(qualifiers_, baseType->clone()));
-      }
-      return *(new pointer(qualifiers_));
+      OCCA_ERROR("occa::lang::pointer has a NULL baseType",
+                 baseType);
+      return *(new pointer(qualifiers_, baseType->clone()));
     }
 
     void pointer::printOn(std::string &out) const {
-      if (!baseType) {
-        return;
-      }
+      OCCA_ERROR("occa::lang::pointer has a NULL baseType",
+                 baseType);
       baseType->printOn(out);
       out += " *";
       if (qualifiers_.size()) {
@@ -187,11 +187,54 @@ namespace occa {
       }
     }
 
+    //---[ Reference ]--------------------
+    reference::reference(const type &t) :
+      type(t) {}
+
+    reference::~reference() {}
+
+    type& reference::clone() const {
+      OCCA_ERROR("occa::lang::reference has a NULL baseType",
+                 baseType);
+      return *(new reference(baseType->clone()));
+    }
+
+    void reference::printOn(std::string &out) const {
+      OCCA_ERROR("occa::lang::reference has a NULL baseType",
+                 baseType);
+      baseType->printOn(out);
+      out += " &";
+      if (qualifiers_.size()) {
+        out += ' ';
+        qualifiers_.printOn(out);
+      }
+    }
+
     //---[ Typedef ]--------------------
+    typedefType::typedefType(const type &t, const std::string &name_) :
+      type(t, name_) {}
+
+    typedefType::typedefType(const qualifiers &qs, const type &t, const std::string &name_) :
+      type(qs, t, name_) {}
+
     typedefType::~typedefType() {}
 
     type& typedefType::clone() const {
       return *(const_cast<typedefType*>(this));
+    }
+
+    void typedefType::printOn(std::string &out) const {
+      if (!baseType) {
+        return;
+      }
+      out += "typedef ";
+      if (qualifiers_.size()) {
+        qualifiers_.printOn(out);
+        out += ' ';
+      }
+      baseType->printOn(out);
+      out += ' ';
+      out += name;
     }
 
     //---[ Class ]----------------------

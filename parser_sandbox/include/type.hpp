@@ -27,9 +27,7 @@ namespace occa {
       static const int definedType   = (1 << 5);
 
       specifier(const int specType_);
-
       specifier(const std::string &name_, const int specType_);
-
       virtual ~specifier();
 
       inline bool isNamed() const {
@@ -55,9 +53,7 @@ namespace occa {
     class qualifier : public specifier {
     public:
       qualifier(const std::string &name_);
-
       qualifier(const std::string &name_, const int specType_);
-
       virtual ~qualifier();
     };
 
@@ -67,9 +63,7 @@ namespace occa {
       qualifierVec_t qualifierVec;
 
       qualifiers();
-
       qualifiers(const qualifier &q);
-
       ~qualifiers();
 
       inline int size() const {
@@ -97,9 +91,9 @@ namespace occa {
       type(const std::string &name_);
       type(const std::string &name_, const int specType_);
 
-      type(const type &baseType_);
-      type(const qualifiers &qs);
-      type(const qualifiers &qs, const type &baseType_);
+      type(const type &baseType_, const std::string &name_ = "");
+      type(const qualifiers &qs, const std::string &name_ = "");
+      type(const qualifiers &qs, const type &baseType_, const std::string &name_ = "");
 
       virtual ~type();
 
@@ -124,7 +118,6 @@ namespace occa {
     class primitive : public type {
     public:
       primitive(const std::string &name_);
-
       virtual ~primitive();
 
       virtual type& clone() const;
@@ -134,10 +127,19 @@ namespace occa {
     class pointer : public type {
     public:
       pointer(const type &t);
-      pointer(const qualifiers &qs);
       pointer(const qualifiers &qs, const type &t);
-
       virtual ~pointer();
+
+      virtual type& clone() const;
+
+      virtual void printOn(std::string &out) const;
+    };
+
+    //---[ Reference ]------------------
+    class reference : public type {
+    public:
+      reference(const type &t);
+      virtual ~reference();
 
       virtual type& clone() const;
 
@@ -146,9 +148,14 @@ namespace occa {
 
     //---[ Typedef ]--------------------
     class typedefType : public type {
+    public:
+      typedefType(const type &t, const std::string &name_);
+      typedefType(const qualifiers &qs, const type &t, const std::string &name_);
       virtual ~typedefType();
 
       virtual type& clone() const;
+
+      virtual void printOn(std::string &out) const;
     };
 
     //---[ Class ]----------------------
