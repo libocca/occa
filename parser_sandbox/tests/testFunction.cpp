@@ -24,9 +24,12 @@ void testFunction() {
   typedefType td1 = typedefType(t1, "t1");
   typedefType td2 = typedefType(t2, "t2");
 
-  // function f(void_, "foo");
-  // f.addArgument(t1, "a");
-  // f.addArgument(t2, "b");
+  function f(void_, "foo");
+  f.add(t1     , "a");
+  f.add(td2    , "b");
+  f.add(volatile_, float_ , "c");
+  f.add(pointer(const_, char_));
+  f.add(double_, "e");
 
   std::cout << "q1   = " << q1 << '\n'
             << "t1_0 = " << t1_0 << '\n'
@@ -34,5 +37,6 @@ void testFunction() {
             << "t1   = " << t1 << '\n'
             << "t2   = " << t2 << '\n'
             << "td1  = " << td1 << '\n'
-            << "td2  = " << td2 << '\n';
+            << "td2  = " << td2 << '\n'
+            << "f    =\n" << f << '\n';
 }
