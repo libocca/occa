@@ -11,7 +11,12 @@
 namespace occa {
   namespace lang {
     class qualifier;
+    class type;
+
     typedef std::vector<const qualifier*> qualifierVec_t;
+    typedef std::vector<type*> typeVec_t;
+
+    int charsFromNewline(const std::string &s);
 
     //---[ Specifier ]------------------
     class specifier {
@@ -97,6 +102,8 @@ namespace occa {
 
       virtual ~type();
 
+      void replaceBaseType(const type &baseType_);
+
       virtual type& clone() const;
 
       inline void add(const qualifier &q) {
@@ -111,6 +118,7 @@ namespace occa {
         return qualifiers_.has(q) >= 0;
       }
 
+      virtual void printDeclarationOn(std::string &out) const;
       virtual void printOn(std::string &out) const;
     };
 
@@ -121,6 +129,9 @@ namespace occa {
       virtual ~primitive();
 
       virtual type& clone() const;
+
+      virtual void printDeclarationOn(std::string &out) const;
+      virtual void printOn(std::string &out) const;
     };
 
     //---[ Pointer ]--------------------
@@ -132,6 +143,7 @@ namespace occa {
 
       virtual type& clone() const;
 
+      virtual void printDeclarationOn(std::string &out) const;
       virtual void printOn(std::string &out) const;
     };
 
@@ -143,6 +155,7 @@ namespace occa {
 
       virtual type& clone() const;
 
+      virtual void printDeclarationOn(std::string &out) const;
       virtual void printOn(std::string &out) const;
     };
 
@@ -155,6 +168,7 @@ namespace occa {
 
       virtual type& clone() const;
 
+      virtual void printDeclarationOn(std::string &out) const;
       virtual void printOn(std::string &out) const;
     };
 
@@ -163,6 +177,33 @@ namespace occa {
       virtual ~classType();
 
       virtual type& clone() const;
+    };
+
+    //---[ Function ]-------------------
+    class function : public type {
+    public:
+      typeVec_t args;
+
+      function(const type &returnType);
+      function(const type &returnType, const std::string &name_);
+      virtual ~function();
+
+      void setReturnType(const type &returnType);
+      const type& returnType() const;
+
+      void add(const type &argType,
+               const std::string &argName = "");
+
+      void add(const qualifiers &qs,
+               const type &argType,
+               const std::string &argName = "");
+
+      inline int argumentCount() const {
+        return (int) args.size();
+      }
+
+      virtual void printDeclarationOn(std::string &out) const;
+      virtual void printOn(std::string &out) const;
     };
   }
 }
