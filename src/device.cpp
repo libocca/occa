@@ -134,7 +134,7 @@ namespace occa {
       for (size_t i = 0; i < staleEntries; ++i) {
         occa::memory_v *mem = uvaStaleMemory[i];
 
-        mem->copyTo(mem->uvaPtr, mem->size, 0, occa::properties("async: true"));
+        mem->copyTo(mem->uvaPtr, mem->size, 0, "async: true");
 
         mem->memInfo &= ~uvaFlag::inDevice;
         mem->memInfo &= ~uvaFlag::isStale;

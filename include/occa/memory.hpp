@@ -184,6 +184,18 @@ namespace occa {
                 const dim_t srcOffset = 0,
                 const occa::properties &props = occa::properties());
 
+    void copyFrom(const void *src,
+                  const occa::properties &props);
+
+    void copyFrom(const memory src,
+                  const occa::properties &props);
+
+    void copyTo(void *dest,
+                const occa::properties &props);
+
+    void copyTo(const memory dest,
+                const occa::properties &props);
+
     void free();
     void detach();
     void deleteRefs(const bool freeMemory = false);
