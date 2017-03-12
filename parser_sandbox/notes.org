@@ -123,12 +123,3 @@ statement
     new variables
 
   getNamespace()
-* Misc
-
-0   libocca.so                          0x000000010de01550 _ZN4occa3sys15printStacktraceEv + 32
-1   libocca.so                          0x000000010de01e07 _ZN4occa8_messageERKNSt3__112basic_stringIcNS0_11char_traitsIcEENS0_9allocatorIcEEEEbS8_S8_iS8_ + 2103
-2   libocca.so                          0x000000010ddf4ac9 _ZN4occa5errorERKNSt3__112basic_stringIcNS0_11char_traitsIcEENS0_9allocatorIcEEEES8_iS8_ + 185
-3   testTrie                            0x000000010db92996 _ZN4occa7testing7compareIbEEvRKT_S4_ + 1942
-4   testTrie                            0x000000010db91ee2 _Z10testSearchRN4occa6trie_tE + 50
-5   testTrie                            0x000000010db91dd9 main + 57
-6   libdyld.dylib                       0x00007fffb0357255 start + 1
