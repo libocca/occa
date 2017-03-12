@@ -194,6 +194,26 @@ namespace occa {
 
     dest.copyFrom(src, bytes, destOffset, srcOffset, props);
   }
+
+  void memcpy(void *dest, const void *src,
+              const occa::properties &props) {
+    memcpy(dest, src, -1, props);
+  }
+
+  void memcpy(memory dest, const void *src,
+              const occa::properties &props) {
+    memcpy(dest, src, -1, 0, props);
+  }
+
+  void memcpy(void *dest, memory src,
+              const occa::properties &props) {
+    memcpy(dest, src, -1, 0, props);
+  }
+
+  void memcpy(memory dest, memory src,
+              const occa::properties &props) {
+    memcpy(dest, src, -1, 0, 0, props);
+  }
   //====================================
 
   //---[ Free Functions ]---------------

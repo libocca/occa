@@ -324,6 +324,26 @@ namespace occa {
     dest.mHandle->copyFrom(mHandle, bytes_, destOffset, srcOffset, props);
   }
 
+  void memory::copyFrom(const void *src,
+                        const occa::properties &props) {
+    copyFrom(src, -1, 0, props);
+  }
+
+  void memory::copyFrom(const memory src,
+                        const occa::properties &props) {
+    copyFrom(src, -1, 0, 0, props);
+  }
+
+  void memory::copyTo(void *dest,
+                      const occa::properties &props) {
+    copyTo(dest, -1, 0, props);
+  }
+
+  void memory::copyTo(const memory dest,
+                      const occa::properties &props) {
+    copyTo(dest, -1, 0, 0, props);
+  }
+
   void memory::free() {
     deleteRefs(true);
   }

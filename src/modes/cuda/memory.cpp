@@ -37,6 +37,9 @@ namespace occa {
     memory::~memory() {}
 
     void* memory::getHandle(const occa::properties &properties_) {
+      if (properties_.get<std::string>("type", "") == "mapped") {
+        return mappedPtr;
+      }
       return handle;
     }
 

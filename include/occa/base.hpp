@@ -112,6 +112,18 @@ namespace occa {
               const dim_t destOffset = 0,
               const dim_t srcOffset = 0,
               const occa::properties &props = properties());
+
+  void memcpy(void *dest, const void *src,
+              const occa::properties &props);
+
+  void memcpy(memory dest, const void *src,
+              const occa::properties &props);
+
+  void memcpy(void *dest, memory src,
+              const occa::properties &props);
+
+  void memcpy(memory dest, memory src,
+              const occa::properties &props);
   //====================================
 
   //---[ Free Functions ]---------------
