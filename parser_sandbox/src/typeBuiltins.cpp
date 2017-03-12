@@ -25,17 +25,17 @@ namespace occa {
     const qualifier struct_ ("struct", specifier::variableType);
     const qualifier union_  ("union" , specifier::variableType);
 
-    const primitive bool_     ("bool");
-    const primitive char_     ("char");
-    const primitive char16_t_ ("char16_t");
-    const primitive char32_t_ ("char32_t");
-    const primitive wchar_t_  ("wchar_t");
-    const primitive short_    ("short");
-    const primitive int_      ("int");
-    const primitive long_     ("long");
-    const primitive float_    ("float");
-    const primitive double_   ("double");
-    const primitive void_     ("void");
-    const primitive auto_     ("auto");
+    const primitiveType bool_     ("bool");
+    const primitiveType char_     ("char");
+    const primitiveType char16_t_ ("char16_t");
+    const primitiveType char32_t_ ("char32_t");
+    const primitiveType wchar_t_  ("wchar_t");
+    const primitiveType short_    ("short");
+    const primitiveType int_      ("int");
+    const primitiveType long_     ("long");
+    const primitiveType float_    ("float");
+    const primitiveType double_   ("double");
+    const primitiveType void_     ("void");
+    const primitiveType auto_     ("auto");
   }
 }

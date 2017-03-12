@@ -18,17 +18,17 @@ void testFunction() {
 
   type t1_0(float_);
   t1_0.add(const_);
-  pointer t1_1(q1, t1_0);
-  reference t1(t1_1);
-  pointer t2(const_, t1_1);
+  pointerType t1_1(q1, t1_0);
+  referenceType t1(t1_1);
+  pointerType t2(const_, t1_1);
   typedefType td1 = typedefType(t1, "t1");
   typedefType td2 = typedefType(t2, "t2");
 
-  function f(void_, "foo");
+  functionType f(void_, "foo");
   f.add(t1     , "a");
   f.add(td2    , "b");
   f.add(volatile_, float_ , "c");
-  f.add(pointer(const_, char_));
+  f.add(pointerType(const_, char_));
   f.add(double_, "e");
 
   std::cout << "q1   = " << q1 << '\n'

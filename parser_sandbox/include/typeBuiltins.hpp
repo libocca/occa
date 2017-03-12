@@ -28,18 +28,18 @@ namespace occa {
     extern const qualifier struct_;
     extern const qualifier union_;
 
-    extern const primitive bool_;
-    extern const primitive char_;
-    extern const primitive char16_t_;
-    extern const primitive char32_t_;
-    extern const primitive wchar_t_;
-    extern const primitive short_;
-    extern const primitive int_;
-    extern const primitive long_;
-    extern const primitive float_;
-    extern const primitive double_;
-    extern const primitive void_;
-    extern const primitive auto_;
+    extern const primitiveType bool_;
+    extern const primitiveType char_;
+    extern const primitiveType char16_t_;
+    extern const primitiveType char32_t_;
+    extern const primitiveType wchar_t_;
+    extern const primitiveType short_;
+    extern const primitiveType int_;
+    extern const primitiveType long_;
+    extern const primitiveType float_;
+    extern const primitiveType double_;
+    extern const primitiveType void_;
+    extern const primitiveType auto_;
   }
 }
 #endif

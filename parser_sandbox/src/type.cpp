@@ -188,44 +188,44 @@ namespace occa {
     }
 
     //---[ Primitive ]------------------
-    primitive::primitive(const std::string &name_) :
+    primitiveType::primitiveType(const std::string &name_) :
       type(name_, specifier::primitiveType) {}
 
-    primitive::~primitive() {}
+    primitiveType::~primitiveType() {}
 
-    type& primitive::clone() const {
-      return *(const_cast<primitive*>(this));
+    type& primitiveType::clone() const {
+      return *(const_cast<primitiveType*>(this));
     }
 
-    void primitive::printDeclarationOn(std::string &out) const {
+    void primitiveType::printDeclarationOn(std::string &out) const {
       out += name;
     }
 
-    void primitive::printOn(std::string &out) const {
+    void primitiveType::printOn(std::string &out) const {
       out += name;
     }
 
     //---[ Pointer ]--------------------
-    pointer::pointer(const type &t) :
+    pointerType::pointerType(const type &t) :
       type(t) {}
 
-    pointer::pointer(const qualifiers &qs, const type &t) :
+    pointerType::pointerType(const qualifiers &qs, const type &t) :
       type(qs, t) {}
 
-    pointer::~pointer() {}
+    pointerType::~pointerType() {}
 
-    type& pointer::clone() const {
-      OCCA_ERROR("occa::lang::pointer has a NULL baseType",
+    type& pointerType::clone() const {
+      OCCA_ERROR("occa::lang::pointerType has a NULL baseType",
                  baseType);
-      return *(new pointer(qualifiers_, baseType->clone()));
+      return *(new pointerType(qualifiers_, baseType->clone()));
     }
 
-    void pointer::printDeclarationOn(std::string &out) const {
-      pointer::printOn(out);
+    void pointerType::printDeclarationOn(std::string &out) const {
+      pointerType::printOn(out);
     }
 
-    void pointer::printOn(std::string &out) const {
-      OCCA_ERROR("occa::lang::pointer has a NULL baseType",
+    void pointerType::printOn(std::string &out) const {
+      OCCA_ERROR("occa::lang::pointerType has a NULL baseType",
                  baseType);
       baseType->printOn(out);
       out += " *";
@@ -236,23 +236,23 @@ namespace occa {
     }
 
     //---[ Reference ]--------------------
-    reference::reference(const type &t) :
+    referenceType::referenceType(const type &t) :
       type(t) {}
 
-    reference::~reference() {}
+    referenceType::~referenceType() {}
 
-    type& reference::clone() const {
-      OCCA_ERROR("occa::lang::reference has a NULL baseType",
+    type& referenceType::clone() const {
+      OCCA_ERROR("occa::lang::referenceType has a NULL baseType",
                  baseType);
-      return *(new reference(baseType->clone()));
+      return *(new referenceType(baseType->clone()));
     }
 
-    void reference::printDeclarationOn(std::string &out) const {
-      reference::printOn(out);
+    void referenceType::printDeclarationOn(std::string &out) const {
+      referenceType::printOn(out);
     }
 
-    void reference::printOn(std::string &out) const {
-      OCCA_ERROR("occa::lang::reference has a NULL baseType",
+    void referenceType::printOn(std::string &out) const {
+      OCCA_ERROR("occa::lang::referenceType has a NULL baseType",
                  baseType);
       baseType->printOn(out);
       out += " &";
@@ -300,13 +300,13 @@ namespace occa {
     }
 
     //---[ Function ]-------------------
-    function::function(const type &returnType_) :
+    functionType::functionType(const type &returnType_) :
       type(returnType_) {}
 
-    function::function(const type &returnType_, const std::string &name_) :
+    functionType::functionType(const type &returnType_, const std::string &name_) :
       type(returnType_, name_) {}
 
-    function::~function() {
+    functionType::~functionType() {
       const int argCount = argumentCount();
       if (!argCount) {
         return;
@@ -319,33 +319,33 @@ namespace occa {
       }
     }
 
-    void function::setReturnType(const type &returnType) {
+    void functionType::setReturnType(const type &returnType) {
       replaceBaseType(returnType);
     }
 
-    const type& function::returnType() const {
-      OCCA_ERROR("occa::lang::function has a NULL baseType",
+    const type& functionType::returnType() const {
+      OCCA_ERROR("occa::lang::functionType has a NULL baseType",
                  baseType);
       return *(baseType);
     }
 
-    void function::add(const type &argType, const std::string &argName) {
+    void functionType::add(const type &argType, const std::string &argName) {
       args.push_back(new type(argType, argName));
     }
 
-    void function::add(const qualifiers &qs,
-                       const type &argType,
-                       const std::string &argName) {
+    void functionType::add(const qualifiers &qs,
+                           const type &argType,
+                           const std::string &argName) {
 
       args.push_back(new type(qs, argType, argName));
     }
 
-    void function::printDeclarationOn(std::string &out) const {
-      function::printOn(out);
+    void functionType::printDeclarationOn(std::string &out) const {
+      functionType::printOn(out);
     }
 
-    void function::printOn(std::string &out) const {
-      OCCA_ERROR("occa::lang::function has a NULL baseType",
+    void functionType::printOn(std::string &out) const {
+      OCCA_ERROR("occa::lang::functionType has a NULL baseType",
                  baseType);
       baseType->printOn(out);
       out += ' ';

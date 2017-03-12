@@ -122,11 +122,11 @@ namespace occa {
       virtual void printOn(std::string &out) const;
     };
 
-    //---[ Primitive ]------------------
-    class primitive : public type {
+    //---[ PrimitiveType ]------------------
+    class primitiveType : public type {
     public:
-      primitive(const std::string &name_);
-      virtual ~primitive();
+      primitiveType(const std::string &name_);
+      virtual ~primitiveType();
 
       virtual type& clone() const;
 
@@ -135,11 +135,11 @@ namespace occa {
     };
 
     //---[ Pointer ]--------------------
-    class pointer : public type {
+    class pointerType : public type {
     public:
-      pointer(const type &t);
-      pointer(const qualifiers &qs, const type &t);
-      virtual ~pointer();
+      pointerType(const type &t);
+      pointerType(const qualifiers &qs, const type &t);
+      virtual ~pointerType();
 
       virtual type& clone() const;
 
@@ -148,10 +148,10 @@ namespace occa {
     };
 
     //---[ Reference ]------------------
-    class reference : public type {
+    class referenceType : public type {
     public:
-      reference(const type &t);
-      virtual ~reference();
+      referenceType(const type &t);
+      virtual ~referenceType();
 
       virtual type& clone() const;
 
@@ -180,13 +180,13 @@ namespace occa {
     };
 
     //---[ Function ]-------------------
-    class function : public type {
+    class functionType : public type {
     public:
       typeVec_t args;
 
-      function(const type &returnType);
-      function(const type &returnType, const std::string &name_);
-      virtual ~function();
+      functionType(const type &returnType);
+      functionType(const type &returnType, const std::string &name_);
+      virtual ~functionType();
 
       void setReturnType(const type &returnType);
       const type& returnType() const;
