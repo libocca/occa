@@ -116,7 +116,7 @@ namespace occa {
     return dHandle->mode;
   }
 
-  const occa::properties& device::properties() {
+  occa::properties& device::properties() {
     return dHandle->properties;
   }
 
