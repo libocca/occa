@@ -127,7 +127,7 @@ namespace occa {
     bool isInitialized();
 
     const std::string& mode();
-    const occa::properties& properties();
+    occa::properties& properties();
 
     void* getHandle(const occa::properties &props = occa::properties());
     device_v* getDHandle() const;
