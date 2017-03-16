@@ -51,8 +51,8 @@
 namespace occa {
   // Kernel Caching
   namespace kc {
-    std::string sourceFile = "source.occa";
-    std::string binaryFile = "binary";
+    const std::string sourceFile = "source.cpp";
+    const std::string binaryFile = "binary";
   }
 
   namespace io {

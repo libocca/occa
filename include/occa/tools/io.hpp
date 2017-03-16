@@ -34,8 +34,8 @@
 namespace occa {
   // Kernel Caching
   namespace kc {
-    extern std::string sourceFile;
-    extern std::string binaryFile;
+    extern const std::string sourceFile;
+    extern const std::string binaryFile;
   }
 
   namespace io {
