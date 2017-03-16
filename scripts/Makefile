@@ -45,6 +45,22 @@ testPath = $(PROJ_DIR)/tests
 debugEnabled = 0
 checkEnabled = 1
 
+ifdef OCCA_DEVELOPER
+ ifeq ($(OCCA_DEVELOPER),1)
+  ifeq ($(DEBUG),0)
+     debugEnabled = 0
+  else
+     debugEnabled = 1
+  endif
+ else
+  ifeq ($(DEBUG),1)
+     debugEnabled = 1
+  else
+     debugEnabled = 0
+  endif
+ endif
+endif
+
 osFlags =
 flags   =
 fFlags  =
@@ -91,22 +107,6 @@ endif
 
 
 #---[ Variables ]---------------------------------
-ifdef OCCA_DEVELOPER
- ifeq ($(OCCA_DEVELOPER), 1)
-  ifeq ($(DEBUG), 0)
-     debugEnabled = 0
-  else
-     debugEnabled = 1
-  endif
- else
-  ifeq ($(DEBUG), 1)
-     debugEnabled = 1
-  else
-     debugEnabled = 0
-  endif
- endif
-endif
-
 ifndef CXX
   ifdef OCCA_CXX
     CXX = ${OCCA_CXX}
@@ -120,26 +120,29 @@ ifndef FC
 endif
 
 ifndef CXXFLAGS
-  ifeq ($(DEBUG),1)
-    CXXFLAGS = -g
+  ifeq ($(debugEnabled),1)
+    OCCA_DEBUG_ENABLED := 1
+    compilerFlags = $(debugFlags)
   else
-    CXXFLAGS = -O3
+    OCCA_DEBUG_ENABLED := 0
+    compilerFlags = $(releaseFlags) -DNDEBUG=1
   endif
+else
+  compilerFlags = $(CXXFLAGS)
 endif
 
 ifndef FCFLAGS
-  ifeq ($(DEBUG),1)
-    FCFLAGS = -g
+  ifeq ($(debugEnabled),1)
+    fCompilerFlags = -g
   else
-    FCFLAGS = -O3
+    fCompilerFlags = -O3
   endif
+else
+  fCompilerFlags = $(FCFLAGS)
 endif
 
-compiler      = $(CXX)
-compilerFlags = $(CXXFLAGS)
-
-fCompiler      = $(FC)
-fCompilerFlags = $(FCFLAGS)
+compiler  = $(CXX)
+fCompiler = $(FC)
 
 links = $(LDFLAGS)
 #=================================================
@@ -239,7 +242,7 @@ else
   openmpEnabled  = $(call compilerSupportsOpenMP)
   fOpenmpEnabled = $(call fCompilerSupportsOpenMP)
 
-  ifeq ($(openmpEnabled), 1)
+  ifeq ($(openmpEnabled),1)
     flags  += $(call compilerOpenMPFlags)
     fFlags += $(call fCompilerOpenMPFlags)
   endif
@@ -248,7 +251,7 @@ endif
 ifdef OCCA_OPENCL_ENABLED
   openclEnabled = $(OCCA_OPENCL_ENABLED)
 
-  ifeq ($(openclEnabled), 1)
+  ifeq ($(openclEnabled),1)
     ifeq ($(usingLinux),1)
       links += -lOpenCL
     else ifeq ($(usingOSX),1)
@@ -281,7 +284,7 @@ endif
 ifdef OCCA_CUDA_ENABLED
   cudaEnabled = $(OCCA_CUDA_ENABLED)
 
-  ifeq ($(cudaEnabled), 1)
+  ifeq ($(cudaEnabled),1)
     ifeq ($(usingLinux),1)
       links += -lcuda
     else ifeq ($(usingOSX),1)
@@ -307,16 +310,7 @@ else
   endif
 endif
 
-ifeq ($(debugEnabled), 1)
-  OCCA_DEBUG_ENABLED := 1
-  cfFlags += $(debugFlags)
-else
-  OCCA_DEBUG_ENABLED := 0
-  cfFlags += $(releaseFlags)
-  cfFlags += -DNDEBUG=1
-endif
-
-ifeq ($(checkEnabled), 1)
+ifeq ($(checkEnabled),1)
   OCCA_CHECK_ENABLED := 1
 else
   OCCA_CHECK_ENABLED := 0

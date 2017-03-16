@@ -406,9 +406,11 @@ function compilerPicFlag {
     local vendor=$(compilerVendor $1)
 
     case $vendor in
-        GCC | LLVM | INTEL | PATHSCALE | CRAY | IBM | PGI) command echo "-fPIC";;
-        HP) command echo "+z";;
-        *)  command echo ""  ;;
+        GCC | LLVM | INTEL | PATHSCALE | CRAY | PGI)
+             command echo "-fPIC";;
+        IBM) command echo "-qpic";;
+        HP)  command echo "+z";;
+        *)   command echo ""  ;;
     esac
 }
 
@@ -416,9 +418,11 @@ function compilerSharedFlag {
     local vendor=$(compilerVendor $1)
 
     case $vendor in
-        GCC | LLVM | INTEL | PATHSCALE | CRAY | IBM | PGI) command echo "-shared";;
-        HP)                                                command echo "-b"     ;;
-        *)                                                 command echo ""       ;;
+        GCC | LLVM | INTEL | PATHSCALE | CRAY | PGI)
+             command echo "-shared";;
+        IBM) command echo "-qmkshrobj";;
+        HP)  command echo "-b"     ;;
+        *)   command echo ""       ;;
     esac
 }
 
