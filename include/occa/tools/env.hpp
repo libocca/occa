@@ -25,6 +25,7 @@
 
 #include "occa/defines.hpp"
 #include "occa/types.hpp"
+#include "occa/tools/string.hpp"
 
 namespace occa {
   namespace env {
@@ -44,6 +45,15 @@ namespace occa {
     void registerFileOpeners();
 
     std::string var(const std::string &var);
+
+    template <class TM>
+    TM get(const std::string &var, const TM &defaultsTo = TM()) {
+      const std::string v = env::var(var);
+      if (v.size() == 0) {
+        return defaultsTo;
+      }
+      return fromString<TM>(var);
+    }
 
     void signalExit(int sig);
 
