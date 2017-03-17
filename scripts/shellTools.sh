@@ -67,7 +67,7 @@ function dirWithFileInPath {
     local filename="$2"
 
     if [ ! -z "$path" ]; then
-        for dir_ in "${path//:/ }"; do
+        for dir_ in ${path//:/ }; do
             if ls "$dir_/$filename" > /dev/null 2>&1; then
                 command echo "$dir_"
                 return
@@ -83,7 +83,7 @@ function dirWithFileInIncludePath {
     local filename="$2"
 
     if [ ! -z "$path" ]; then
-        for dir_ in "${path//:/ }"; do
+        for dir_ in ${path//:/ }; do
             if ls "$dir_/$filename" > /dev/null 2>&1; then
                 command echo "$dir_"
                 return
