@@ -25,10 +25,10 @@ OCCA_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")"/.. && pwd)"
 
 #---[ Library Information ]-------------
 function uniqueAddToPath {
-    local path=$1
-    local dir=$2
+    local path="$1"
+    local dir="$2"
 
-    if [ ! -z $path ]; then
+    if [ ! -z "$path" ]; then
         case ":$path:" in
             *":$dir:"*)         ;; # Already in the path
             *) path="$path:$dir";;
@@ -37,39 +37,39 @@ function uniqueAddToPath {
         path="$dir"
     fi
 
-    command echo $path
+    command echo "$path"
 }
 
 function removeDuplicatesInPath {
-    local path=$1
+    local path="$1"
 
-    for dir_ in ${path//:/ }; do
-        if ls $dir_ > /dev/null 2>&1; then
-            path=$(uniqueAddToPath $path $dir_)
+    for dir_ in "${path//:/ }"; do
+        if ls "$dir_" > /dev/null 2>&1; then
+            path=$(uniqueAddToPath "$path" "$dir_")
         fi
     done
 
-    command echo $path
+    command echo "$path"
 }
 
 function getIncludePath {
-    local path=$1
+    local path="$1"
 
     path=$(command echo "$path:" | command sed 's/\/lib[^:]*:/\/include:/g')
 
-    path=$(removeDuplicatesInPath $path)
+    path=$(removeDuplicatesInPath "$path")
 
-    command echo $path
+    command echo "$path"
 }
 
 function dirWithFileInPath {
-    local path=$1
-    local filename=$2
+    local path="$1"
+    local filename="$2"
 
-    if [ ! -z $path ]; then
-        for dir_ in ${path//:/ }; do
-            if ls $dir_/$filename > /dev/null 2>&1; then
-                command echo $dir_
+    if [ ! -z "$path" ]; then
+        for dir_ in "${path//:/ }"; do
+            if ls "$dir_/$filename" > /dev/null 2>&1; then
+                command echo "$dir_"
                 return
             fi
         done
@@ -79,13 +79,13 @@ function dirWithFileInPath {
 }
 
 function dirWithFileInIncludePath {
-    local path=$(getIncludePath $1)
-    local filename=$2
+    local path=$(getIncludePath "$1")
+    local filename="$2"
 
-    if [ ! -z $path ]; then
-        for dir_ in ${path//:/ }; do
-            if ls $dir_/$filename > /dev/null 2>&1; then
-                command echo $dir_
+    if [ ! -z "$path" ]; then
+        for dir_ in "${path//:/ }"; do
+            if ls "$dir_/$filename" > /dev/null 2>&1; then
+                command echo "$dir_"
                 return
             fi
         done
@@ -100,26 +100,26 @@ function dirWithLibrary {
 
     local mergedLibPaths=""
 
-    mergedLibPaths=$mergedLibPaths:$OCCA_LIBRARY_PATH
-    mergedLibPaths=$mergedLibPaths:$LD_LIBRARY_PATH
-    mergedLibPaths=$mergedLibPaths:$DYLD_LIBRARY_PATH
-    mergedLibPaths=$mergedLibPaths:"/usr/local/cuda*/lib*"
-    mergedLibPaths=$mergedLibPaths:"/usr/local/cuda*/lib*/stubs"
-    mergedLibPaths=$mergedLibPaths:"/lib:/usr/lib:/usr/lib32:/usr/lib64:"
-    mergedLibPaths=$mergedLibPaths:"/usr/lib/*-gnu/"
+    mergedLibPaths="$mergedLibPaths:$OCCA_LIBRARY_PATH"
+    mergedLibPaths="$mergedLibPaths:$LD_LIBRARY_PATH"
+    mergedLibPaths="$mergedLibPaths:$DYLD_LIBRARY_PATH"
+    mergedLibPaths="$mergedLibPaths:/usr/local/cuda*/lib*"
+    mergedLibPaths="$mergedLibPaths:/usr/local/cuda*/lib*/stubs"
+    mergedLibPaths="$mergedLibPaths:/lib:/usr/lib:/usr/lib32:/usr/lib64:"
+    mergedLibPaths="$mergedLibPaths:/usr/lib/*-gnu/"
 
-    result=$(dirWithFileInPath "$mergedLibPaths" $libName)
+    result=$(dirWithFileInPath "$mergedLibPaths" "$libName")
 
-    if [ ! -z $result ]; then command echo $result; return; fi
+    if [ ! -z "$result" ]; then command echo "$result"; return; fi
 
     if hash ldconfig 2> /dev/null; then
-        command echo $(command ldconfig -p | command grep -m 1 $libName | command sed 's/.*=>\(.*\/\).*/\1/g')
+        command echo $(command ldconfig -p | command grep -m 1 "$libName" | command sed 's/.*=>\(.*\/\).*/\1/g')
         return
     fi
 
     case "$(uname)" in
         Darwin)
-            if ls /System/Library/Frameworks/$1.framework > /dev/null 2>&1; then
+            if ls "/System/Library/Frameworks/$1.framework" > /dev/null 2>&1; then
                 command echo "Is A System/Library Framework"
                 return
             fi
@@ -139,38 +139,38 @@ function dirWithHeader {
     local mergedPaths=""
     local mergedLibPaths=""
 
-    mergedPaths=$mergedPaths:$OCCA_INCLUDE_PATH
-    mergedPaths=$mergedPaths:$CPLUS_INCLUDE_PATH
-    mergedPaths=$mergedPaths:$C_INCLUDE_PATH
-    mergedPaths=$mergedPaths:$INCLUDEPATH
-    mergedPaths=$mergedPaths:"/usr/local/cuda*/include"
-    mergedPaths=$mergedPaths:"/Developer/NVIDIA/CUDA*/include"
-    mergedPaths=$mergedPaths:"/usr/include"
+    mergedPaths="$mergedPaths:$OCCA_INCLUDE_PATH"
+    mergedPaths="$mergedPaths:$CPLUS_INCLUDE_PATH"
+    mergedPaths="$mergedPaths:$C_INCLUDE_PATH"
+    mergedPaths="$mergedPaths:$INCLUDEPATH"
+    mergedPaths="$mergedPaths:/usr/local/cuda*/include"
+    mergedPaths="$mergedPaths:/Developer/NVIDIA/CUDA*/include"
+    mergedPaths="$mergedPaths:/usr/include"
 
-    mergedLibPaths=$mergedLibPaths:$OCCA_LIBRARY_PATH
-    mergedLibPaths=$mergedLibPaths:$LD_LIBRARY_PATH
-    mergedLibPaths=$mergedLibPaths:$DYLD_LIBRARY_PATH
-    mergedLibPaths=$mergedLibPaths:"/usr/local/cuda*/lib*"
-    mergedLibPaths=$mergedLibPaths:"/usr/local/cuda*/lib*/stubs"
-    mergedLibPaths=$mergedLibPaths:"/lib:/usr/lib:/usr/lib32:/usr/lib64:"
-    mergedLibPaths=$mergedLibPaths:"/usr/lib/*-gnu/"
+    mergedLibPaths="$mergedLibPaths:$OCCA_LIBRARY_PATH"
+    mergedLibPaths="$mergedLibPaths:$LD_LIBRARY_PATH"
+    mergedLibPaths="$mergedLibPaths:$DYLD_LIBRARY_PATH"
+    mergedLibPaths="$mergedLibPaths:/usr/local/cuda*/lib*"
+    mergedLibPaths="$mergedLibPaths:/usr/local/cuda*/lib*/stubs"
+    mergedLibPaths="$mergedLibPaths:/lib:/usr/lib:/usr/lib32:/usr/lib64:"
+    mergedLibPaths="$mergedLibPaths:/usr/lib/*-gnu/"
 
-    result=$(dirWithFileInPath "$mergedPaths" $filename)
-    if [ ! -z $result ]; then command echo $result; return; fi
+    result=$(dirWithFileInPath "$mergedPaths" "$filename")
+    if [ ! -z "$result" ]; then command echo "$result"; return; fi
 
-    result=$(dirWithFileInIncludePath "$mergedLibPaths" $filename)
+    result=$(dirWithFileInIncludePath "$mergedLibPaths" "$filename")
 
-    if [ ! -z $result ]; then command echo $result; return; fi
+    if [ ! -z "$result" ]; then command echo "$result"; return; fi
 
     command echo ""
 }
 
 function dirsWithHeaders {
-    local headers=$1
+    local headers="$1"
     local path=""
 
     if [ ! -z $headers ]; then
-        for header in ${headers//:/ }; do
+        for header in "${headers//:/ }"; do
             local inc=$(dirWithHeader $header)
 
             if [ ! -z $inc ]; then
@@ -182,11 +182,11 @@ function dirsWithHeaders {
         done
     fi
 
-    command echo $path
+    command echo "$path"
 }
 
 function libraryFlags {
-    local libName=$1
+    local libName="$1"
 
     local libDir=$(dirWithLibrary $libName)
     local flags=""
@@ -204,83 +204,83 @@ function libraryFlags {
         flags="-L$libDir -l$libName"
     fi
 
-    command echo $flags
+    command echo "$flags"
 }
 
 
 function headerFlags {
-    local headers=$1
+    local headers="$1"
 
     local incDirs
     local flags=""
 
-    if [ ! -z $headers ]; then
-        incDirs=$(dirsWithHeaders $headers)
+    if [ ! -z "$headers" ]; then
+        incDirs=$(dirsWithHeaders "$headers")
 
-        if [ -z $incDirs ]; then command echo ""; return; fi
+        if [ -z "$incDirs" ]; then command echo ""; return; fi
 
-        incDirs=${incDirs%?}        # Remove the last :
+        incDirs="${incDirs%?}"      # Remove the last :
         flags="-I${incDirs//:/ -I}" # : -> -I
     fi
 
-    command echo $flags
+    command echo "$flags"
 }
 #=======================================
 
 
 #---[ Compiler Information ]------------
 function getPath {
-    command echo ${1%/*}
+    command echo "${1%/*}"
 }
 
 function stripPath {
-    command echo ${1##*/}
+    command echo "${1##*/}"
 }
 
 function resolveRelativePath {
-    local from=$1
-    local to=$2
+    local from="$1"
+    local to="$2"
 
-    if [[ $to == /* ]]; then
-        echo $to
+    if [[ "$to" == /* ]]; then
+        echo "$to"
     else
-        echo $(getPath $from)/$to
+        echo $(getPath "$from")/"$to"
     fi
 }
 
 function manualReadlink {
     if [[ $(command -v readlink) == "" ]]; then
-        pushd `dirname $1` > /dev/null
+        pushd `dirname "$1"` > /dev/null
         SCRIPTPATH=`pwd -P`
         popd > /dev/null
     else
         case "$(uname)" in
-            Darwin) readlink    $1;;
-            *)      readlink -f $1;;
+            Darwin) readlink    "$1";;
+            *)      readlink -f "$1";;
         esac
     fi
 }
 
 function manualWhich {
-    local input=$1
+    local input="$1"
 
-    local typeOutput=$(command type $input 2> /dev/null)
+    local typeOutput=$(command type "$input" 2> /dev/null)
 
     if [[ $typeOutput == *" is hashed "* ]]; then
-        local mWhich=$(command type $input 2> /dev/null | sed "s/.*(\(.*\)).*/\1/g")
+        local mWhich=$(command type "$input" 2> /dev/null | sed "s/.*(\(.*\)).*/\1/g")
     else
-        local mWhich=$(command type $input 2> /dev/null | sed "s/.* is \(.*\)/\1/g")
+        local mWhich=$(command type "$input" 2> /dev/null | sed "s/.* is \(.*\)/\1/g")
     fi
 
     if [ ! -z "$mWhich" ]; then
-        echo $mWhich
+        echo "$mWhich"
     else
-        echo $input
+        echo "$input"
     fi
 }
 
 function realCommand {
-    local a=$(manualWhich $1)
+    local a=$(manualWhich "$1")
     local b
 
     case "$(uname)" in
@@ -288,22 +288,22 @@ function realCommand {
         *)      b="$(manualReadlink $a)";;
     esac
 
-    if [ -z $b ]; then
-        command echo $a
+    if [ -z "$b" ]; then
+        command echo "$a"
         return
     fi
 
     while [ "$a" != "$b" ]; do
-        b=$(resolveRelativePath $a $b)
-        a=$(manualWhich $b)
+        b=$(resolveRelativePath "$a" "$b")
+        a=$(manualWhich "$b")
 
         case "$(uname)" in
             Darwin) b="$(manualReadlink $a)";;
             *)      b="$(manualReadlink $a)";;
         esac
 
-        if [ -z $b ]; then
-            command echo $a
+        if [ -z "$b" ]; then
+            command echo "$a"
             return
         fi
     done
@@ -312,32 +312,32 @@ function realCommand {
 }
 
 function unaliasCommand {
-    typeOutput=$(command type $1 2> /dev/null)
+    typeOutput=$(command type "$1" 2> /dev/null)
 
-    aliasedTo=$(command echo $typeOutput | command grep -m 1 "$1 is aliased to" | command sed "s/[^\`]*\`\([^ \t']*\)[ \t']/\1/g")
+    aliasedTo=$(command echo "$typeOutput" | command grep -m 1 "$1 is aliased to" | command sed "s/[^\`]*\`\([^ \t']*\)[ \t']/\1/g")
 
-    if [ ! -z $aliasedTo ]; then
-        command echo $aliasedTo
+    if [ ! -z "$aliasedTo" ]; then
+        command echo "$aliasedTo"
         return
     fi
 
-    command echo $1
+    command echo "$1"
 }
 
 function compilerName {
-    local chosenCompiler=$1
-    local realCompiler=$(realCommand $chosenCompiler)
-    local unaliasedCompiler=$(unaliasCommand $realCompiler)
-    local strippedCompiler=$(stripPath $unaliasedCompiler)
-    command echo $strippedCompiler
+    local chosenCompiler="$1"
+    local realCompiler=$(realCommand "$chosenCompiler")
+    local unaliasedCompiler=$(unaliasCommand "$realCompiler")
+    local strippedCompiler=$(stripPath "$unaliasedCompiler")
+    command echo "$strippedCompiler"
 }
 
 function compilerVendor {
-    local chosenCompiler=$1
-    local compiler=$(compilerName $1)
+    local chosenCompiler="$1"
+    local compiler=$(compilerName "$1")
 
     # Fortran Compilers
-    case $compiler in
+    case "$compiler" in
         gfortran*)         command echo GCC      ; return;;
         ifort*)            command echo INTEL    ; return;;
         ftn*)              command echo CRAY     ; return;;
@@ -359,30 +359,30 @@ function compilerVendor {
     local testFilename="${OCCA_DIR}/scripts/compilerVendorTest.cpp"
     local binaryFilename="${OCCA_DIR}/scripts/compilerVendorTest"
 
-    eval "${chosenCompiler} ${testFilename} -o ${binaryFilename} > /dev/null 2>&1"
+    eval "${chosenCompiler}" "${testFilename}" -o "${binaryFilename}" > /dev/null 2>&1
     eval "${binaryFilename}"
-    bit=$?
+    bit="$?"
 
     # C/C++ Compilers
-    case $bit in
-        ${b_GNU})          command echo GCC          ;;
-        ${b_LLVM})         command echo LLVM         ;;
-        ${b_Intel})        command echo INTEL        ;;
-        ${b_IBM})          command echo IBM          ;;
-        ${b_PGI})          command echo PGI          ;;
-        ${b_Pathscale})    command echo PATHSCALE    ;;
-        ${b_HP})           command echo HP           ;;
-        ${b_Cray})         command echo CRAY         ;;
-        ${b_VisualStudio}) command echo VISUALSTUDIO ;;
-        *)                 command echo N/A          ;;
+    case "$bit" in
+        "${b_GNU}")          command echo GCC          ;;
+        "${b_LLVM}")         command echo LLVM         ;;
+        "${b_Intel}")        command echo INTEL        ;;
+        "${b_IBM}")          command echo IBM          ;;
+        "${b_PGI}")          command echo PGI          ;;
+        "${b_Pathscale}")    command echo PATHSCALE    ;;
+        "${b_HP}")           command echo HP           ;;
+        "${b_Cray}")         command echo CRAY         ;;
+        "${b_VisualStudio}") command echo VISUALSTUDIO ;;
+        *)                   command echo N/A          ;;
     esac
 }
 
 function compilerReleaseFlags {
-    local vendor=$(compilerVendor $1)
+    local vendor=$(compilerVendor "$1")
 
-    case $vendor in
-        GCC | LLVM) command echo "-O3 -D __extern_always_inline=inline"     ;;
+    case "$vendor" in
+        GCC|LLVM)   command echo "-O3 -D __extern_always_inline=inline"     ;;
         INTEL)      command echo "-O3 -xHost"                               ;;
         CRAY)       command echo "-O3 -h intrinsics -fast"                  ;;
         IBM)        command echo "-O3 -qhot=simd"                           ;;
@@ -394,19 +394,19 @@ function compilerReleaseFlags {
 }
 
 function compilerDebugFlags {
-    local vendor=$(compilerVendor $1)
+    local vendor=$(compilerVendor "$1")
 
-    case $vendor in
+    case "$vendor" in
         N/A)                   ;;
         *)   command echo "-g" ;;
     esac
 }
 
 function compilerPicFlag {
-    local vendor=$(compilerVendor $1)
+    local vendor=$(compilerVendor "$1")
 
-    case $vendor in
-        GCC | LLVM | INTEL | PATHSCALE | CRAY | PGI)
+    case "$vendor" in
+        GCC|LLVM|INTEL|PATHSCALE|CRAY|PGI)
              command echo "-fPIC";;
         IBM) command echo "-qpic";;
         HP)  command echo "+z";;
@@ -415,10 +415,10 @@ function compilerPicFlag {
 }
 
 function compilerSharedFlag {
-    local vendor=$(compilerVendor $1)
+    local vendor=$(compilerVendor "$1")
 
-    case $vendor in
-        GCC | LLVM | INTEL | PATHSCALE | CRAY | PGI)
+    case "$vendor" in
+        GCC|LLVM|INTEL|PATHSCALE|CRAY|PGI)
              command echo "-shared";;
         IBM) command echo "-qmkshrobj";;
         HP)  command echo "-b"     ;;
@@ -429,49 +429,49 @@ function compilerSharedFlag {
 function compilerOpenMPFlags {
     local vendor=$(compilerVendor $1)
 
-    case $vendor in
-        GCC   | LLVM)      command echo "-fopenmp" ;;
-        INTEL | PATHSCALE) command echo "-openmp"  ;;
-        CRAY)              command echo ""         ;;
-        IBM)               command echo "-qsmp"    ;;
-        PGI)               command echo "-mp"      ;;
-        HP)                command echo "+Oopenmp" ;;
-        *)                 command echo ""         ;;
+    case "$vendor" in
+        GCC|LLVM)        command echo "-fopenmp" ;;
+        INTEL|PATHSCALE) command echo "-openmp"  ;;
+        CRAY)            command echo ""         ;;
+        IBM)             command echo "-qsmp"    ;;
+        PGI)             command echo "-mp"      ;;
+        HP)              command echo "+Oopenmp" ;;
+        *)               command echo ""         ;;
     esac
 }
 
 function fCompilerModuleDirFlag {
-    local vendor=$(compilerVendor $1)
+    local vendor=$(compilerVendor "$1")
 
-    case $vendor in
-        GCC   | CRAY)            command echo "-J"       ;;
-        INTEL | PGI | PATHSCALE) command echo "-module"  ;;
-        IBM)                     command echo "-qmoddir" ;;
-        *)                       command echo ""         ;;
+    case "$vendor" in
+        GCC|CRAY)            command echo "-J"       ;;
+        INTEL|PGI|PATHSCALE) command echo "-module"  ;;
+        IBM)                 command echo "-qmoddir" ;;
+        *)                   command echo ""         ;;
     esac
 }
 
 function compilerSupportsOpenMP {
-    local compiler=$1
-    local vendor=$(compilerVendor $compiler)
-    local ompFlag=$(compilerOpenMPFlags $compiler)
+    local compiler="$1"
+    local vendor=$(compilerVendor "$compiler")
+    local ompFlag=$(compilerOpenMPFlags "$compiler")
 
-    local filename=${OCCA_DIR}/scripts/openmpTest.cpp
-    local binary=${OCCA_DIR}/scripts/openmpTest
+    local filename="${OCCA_DIR}"/scripts/openmpTest.cpp
+    local binary="${OCCA_DIR}"/scripts/openmpTest
 
     # Test compilation
-    $compiler $ompFlag $filename -o $binary > /dev/null 2>&1
+    "$compiler" "$ompFlag" "$filename" -o "$binary" > /dev/null 2>&1
 
-    if [[ ! -a $binary ]]; then
+    if [[ ! -a "$binary" ]]; then
         command echo 0
         return
     fi
 
-    if [[ $? -eq 0 ]]; then
+    if [[ "$?" -eq 0 ]]; then
         # Test binary
-        $binary
+        "$binary"
 
-        if [[ $? -eq 0 ]]; then
+        if [[ "$?" -eq 0 ]]; then
             command echo 1
         else
             command echo 0
@@ -480,8 +480,8 @@ function compilerSupportsOpenMP {
         command echo 0
     fi
 
-    if [ ! -z $binary ]; then
-        rm -f $binary
+    if [ ! -z "$binary" ]; then
+        rm -f "$binary"
     fi
 }
 #=======================================
@@ -493,7 +493,9 @@ function getFieldFrom {
     local field="$2"
 
     if hash grep 2> /dev/null; then
-        command echo $(LC_ALL=C; $command_ | command grep -m 1 "^$field" | sed "s/.*:[ \t]*\(.*\)/\1/g")
+        command echo $(LC_ALL=C; "$command_" | \
+                           command grep -m 1 "^$field" | \
+                           sed "s/.*:[ \t]*\(.*\)/\1/g")
         return
     fi
 

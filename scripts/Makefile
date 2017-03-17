@@ -128,6 +128,7 @@ ifndef CXXFLAGS
     compilerFlags = $(releaseFlags) -DNDEBUG=1
   endif
 else
+  OCCA_DEBUG_ENABLED := 0
   compilerFlags = $(CXXFLAGS)
 endif
 
