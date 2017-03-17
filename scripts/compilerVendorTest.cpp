@@ -32,8 +32,9 @@
 #define OCCA_NOT_FOUND           9
 
 int main(int argc, char **argv) {
-#if defined(__clang__)
-  return OCCA_LLVM_VENDOR;
+
+#if defined(__xlc__) || defined(__xlC__) || defined(__IBMC__) || defined(__IBMCPP__)
+  return OCCA_IBM_VENDOR;
 
 #elif defined(__ICC) || defined(__INTEL_COMPILER)
   return OCCA_INTEL_VENDOR;
@@ -43,9 +44,6 @@ int main(int argc, char **argv) {
 
 #elif defined(__HP_cc) || defined(__HP_aCC)
   return OCCA_HP_VENDOR;
-
-#elif defined(__IBMC__) || defined(__IBMCPP__)
-  return OCCA_IBM_VENDOR;
 
 #elif defined(__PGI)
   return OCCA_PGI_VENDOR;
@@ -58,6 +56,9 @@ int main(int argc, char **argv) {
 
 #elif defined(_MSC_VER)
   return OCCA_VISUALSTUDIO_VENDOR;
+
+#elif defined(__clang__)
+  return OCCA_LLVM_VENDOR;
 
 #else
   return OCCA_NOT_FOUND
