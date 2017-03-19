@@ -51,12 +51,12 @@ namespace occa {
       device(const occa::properties &properties_ = occa::properties());
       ~device();
 
-      void finish();
+      void finish() const;
 
       //---[ Stream ]-------------------
-      streamTag tagStream();
-      void waitFor(streamTag tag);
-      double timeBetween(const streamTag &startTag, const streamTag &endTag);
+      streamTag tagStream() const;
+      void waitFor(streamTag tag) const;
+      double timeBetween(const streamTag &startTag, const streamTag &endTag) const;
       //================================
 
       //---[ Custom ]-------------------

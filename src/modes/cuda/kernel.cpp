@@ -40,7 +40,7 @@ namespace occa {
 
     kernel::~kernel() {}
 
-    void* kernel::getHandle(const occa::properties &props) {
+    void* kernel::getHandle(const occa::properties &props) const {
       const std::string type = props["type"];
 
       if (type == "kernel") {
@@ -200,15 +200,15 @@ namespace occa {
                       cuModuleGetFunction(&handle, module, kernelName.c_str()));
     }
 
-    int kernel::maxDims() {
+    int kernel::maxDims() const {
       return 3;
     }
 
-    dim kernel::maxOuterDims() {
+    dim kernel::maxOuterDims() const {
       return dim(-1, -1, -1);
     }
 
-    dim kernel::maxInnerDims() {
+    dim kernel::maxInnerDims() const {
       static dim innerDims(0);
       if (innerDims.x == 0) {
         int maxSize;
@@ -222,7 +222,7 @@ namespace occa {
       return innerDims;
     }
 
-    void kernel::runFromArguments(const int kArgc, const kernelArg *kArgs) {
+    void kernel::runFromArguments(const int kArgc, const kernelArg *kArgs) const {
       int occaKernelInfoArgs = 0;
       int argc = 0;
 

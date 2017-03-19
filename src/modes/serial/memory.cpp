@@ -31,7 +31,7 @@ namespace occa {
 
     memory::~memory() {}
 
-    void* memory::getHandle(const occa::properties &props) {
+    void* memory::getHandle(const occa::properties &props) const {
       return handle;
     }
 
@@ -46,7 +46,7 @@ namespace occa {
     void memory::copyTo(void *dest,
                         const udim_t bytes,
                         const udim_t offset,
-                        const occa::properties &props) {
+                        const occa::properties &props) const {
       const void *srcPtr = ((char*) handle) + offset;
 
       ::memcpy(dest, srcPtr, bytes);

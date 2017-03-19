@@ -108,11 +108,11 @@ namespace occa {
     return (mHandle != NULL);
   }
 
-  memory_v* memory::getMHandle() {
+  memory_v* memory::getMHandle() const {
     return mHandle;
   }
 
-  device_v* memory::getDHandle() {
+  device_v* memory::getDHandle() const {
     return mHandle->dHandle;
   }
 
@@ -150,7 +150,7 @@ namespace occa {
     return mHandle->isStale();
   }
 
-  void* memory::getHandle(const occa::properties &props) {
+  void* memory::getHandle(const occa::properties &props) const {
     return mHandle->getHandle(props);
   }
 
@@ -228,7 +228,7 @@ namespace occa {
     }
   }
 
-  bool memory::uvaIsStale() {
+  bool memory::uvaIsStale() const {
     return (mHandle && mHandle->isStale());
   }
 
@@ -287,7 +287,7 @@ namespace occa {
   void memory::copyTo(void *dest,
                       const dim_t bytes,
                       const dim_t offset,
-                      const occa::properties &props) {
+                      const occa::properties &props) const {
     udim_t bytes_ = ((bytes == -1) ? mHandle->size : bytes);
 
     OCCA_ERROR("Trying to allocate negative bytes (" << bytes << ")",
@@ -305,7 +305,7 @@ namespace occa {
                       const dim_t bytes,
                       const dim_t destOffset,
                       const dim_t srcOffset,
-                      const occa::properties &props) {
+                      const occa::properties &props) const {
     udim_t bytes_ = ((bytes == -1) ? mHandle->size : bytes);
 
     OCCA_ERROR("Trying to allocate negative bytes (" << bytes << ")",
@@ -335,12 +335,12 @@ namespace occa {
   }
 
   void memory::copyTo(void *dest,
-                      const occa::properties &props) {
+                      const occa::properties &props) const {
     copyTo(dest, -1, 0, props);
   }
 
   void memory::copyTo(const memory dest,
-                      const occa::properties &props) {
+                      const occa::properties &props) const {
     copyTo(dest, -1, 0, 0, props);
   }
 

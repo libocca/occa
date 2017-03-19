@@ -32,7 +32,7 @@
 namespace occa {
   namespace cuda {
     class device : public occa::device_v {
-      hash_t hash_;
+      mutable hash_t hash_;
 
     public:
       int archMajorVersion, archMinorVersion;
@@ -45,23 +45,23 @@ namespace occa {
       ~device();
       void free();
 
-      void* getHandle(const occa::properties &props);
+      void* getHandle(const occa::properties &props) const;
 
-      void finish();
+      void finish() const;
 
-      bool hasSeparateMemorySpace();
+      bool hasSeparateMemorySpace() const;
 
-      hash_t hash();
+      hash_t hash() const;
 
       //  |---[ Stream ]----------------
-      stream_t createStream();
-      void freeStream(stream_t s);
+      stream_t createStream() const;
+      void freeStream(stream_t s) const;
 
-      streamTag tagStream();
-      void waitFor(streamTag tag);
-      double timeBetween(const streamTag &startTag, const streamTag &endTag);
+      streamTag tagStream() const;
+      void waitFor(streamTag tag) const;
+      double timeBetween(const streamTag &startTag, const streamTag &endTag) const;
 
-      stream_t wrapStream(void *handle_, const occa::properties &props);
+      stream_t wrapStream(void *handle_, const occa::properties &props) const;
       //  |=============================
 
       //  |---[ Kernel ]----------------
@@ -86,7 +86,7 @@ namespace occa {
                            const udim_t bytes,
                            const occa::properties &props);
 
-      udim_t memorySize();
+      udim_t memorySize() const;
       //  |=============================
     };
   }
