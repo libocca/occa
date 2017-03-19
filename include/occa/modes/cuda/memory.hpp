@@ -45,7 +45,7 @@ namespace occa {
       ~memory();
 
       void* getHandle(const occa::properties &properties_) const;
-      kernelArg makeKernelArg() const const;
+      kernelArg makeKernelArg() const;
 
       void copyTo(void *dest,
                   const udim_t bytes,

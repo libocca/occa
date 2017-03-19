@@ -36,42 +36,20 @@
 
 
 //---[ Atomics ]----------------------------------
-template <class TM>
-TM occaAtomicAdd(TM *ptr, const TM &update) {
-  const TM old = *ptr;
-  *ptr += update;
+#define occaAtomicAdd(ptr, update) *(ptr) += (update)
+#define occaAtomicSub(ptr, update) *(ptr) -= (update)
 
-  return old;
-}
+#define occaAtomicInc(ptr) ((*(ptr))++)
+#define occaAtomicDec(ptr) ((*(ptr))--)
 
-template <class TM>
-TM occaAtomicSub(TM *ptr, const TM &update) {
-  const TM old = *ptr;
-  *ptr -= update;
-
-  return old;
-}
+#define occaAtomicAnd(ptr, update) *(ptr) &= update
+#define occaAtomicOr(ptr, update)  *(ptr) |= update
+#define occaAtomicXor(ptr, update) *(ptr) ^= update
 
 template <class TM>
 TM occaAtomicSwap(TM *ptr, const TM &update) {
   const TM old = *ptr;
   *ptr = update;
-
-  return old;
-}
-
-template <class TM>
-TM occaAtomicInc(TM *ptr) {
-  const TM old = *ptr;
-  ++(*ptr);
-
-  return old;
-}
-
-template <class TM>
-TM occaAtomicDec(TM *ptr, const TM &update) {
-  const TM old = *ptr;
-  --(*ptr);
 
   return old;
 }
@@ -93,40 +71,11 @@ TM occaAtomicMax(TM *ptr, const TM &update) {
 }
 
 template <class TM>
-TM occaAtomicAnd(TM *ptr, const TM &update) {
-  const TM old = *ptr;
-  *ptr &= update;
-
-  return old;
-}
-
-template <class TM>
-TM occaAtomicOr(TM *ptr, const TM &update) {
-  const TM old = *ptr;
-  *ptr |= update;
-
-  return old;
-}
-
-template <class TM>
-TM occaAtomicXor(TM *ptr, const TM &update) {
-  const TM old = *ptr;
-  *ptr ^= update;
-
-  return old;
-}
-
-template <class TM>
 TM occaAtomicCAS(TM *ptr, const int comp, const TM &update) {
-  TM old;
-
-#pragma omp critical
-  {
-    old = *ptr;
-    if (comp)
-      *ptr = update;
+  TM old = *ptr;
+  if (comp) {
+    *ptr = update;
   }
-
   return old;
 }
 

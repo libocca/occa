@@ -36,7 +36,7 @@ namespace occa {
 
       kernel_v* buildKernel(const std::string &filename,
                             const std::string &kernelName,
-                            const occa::properties &props) const;
+                            const occa::properties &props);
     };
   }
 }
