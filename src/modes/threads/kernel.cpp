@@ -35,7 +35,7 @@ namespace occa {
 
     kernel::~kernel() {}
 
-    void kernel::runFromArguments(const int kArgc, const kernelArg *kArgs) {
+    void kernel::runFromArguments(const int kArgc, const kernelArg *kArgs) const {
       job_t job;
 
       job.count = threads;

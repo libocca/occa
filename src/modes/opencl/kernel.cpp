@@ -39,7 +39,7 @@ namespace occa {
 
     kernel::~kernel() {}
 
-    info_t kernel::makeCLInfo() {
+    info_t kernel::makeCLInfo() const {
       info_t info;
       info.clDeviceID = clDeviceID;
       info.clContext  = clContext;
@@ -48,7 +48,7 @@ namespace occa {
       return info;
     }
 
-    void* kernel::getHandle(const occa::properties &props) {
+    void* kernel::getHandle(const occa::properties &props) const {
       const std::string type = props["type"];
 
       if (type == "kernel") {
@@ -137,7 +137,7 @@ namespace occa {
       clKernel  = clInfo.clKernel;
     }
 
-    int kernel::maxDims() {
+    int kernel::maxDims() const {
       static cl_uint dims_ = 0;
       if (dims_ == 0) {
         size_t bytes;
@@ -153,7 +153,7 @@ namespace occa {
       return (int) dims_;
     }
 
-    dim kernel::maxOuterDims() {
+    dim kernel::maxOuterDims() const {
       static occa::dim outerDims(0);
       if (outerDims.x == 0) {
         int dims_ = maxDims();
@@ -175,7 +175,7 @@ namespace occa {
       return outerDims;
     }
 
-    dim kernel::maxInnerDims() {
+    dim kernel::maxInnerDims() const {
       static occa::dim innerDims(0);
       if (innerDims.x == 0) {
         size_t dims_;
@@ -195,7 +195,7 @@ namespace occa {
       return innerDims;
     }
 
-    void kernel::runFromArguments(const int kArgc, const kernelArg *kArgs) {
+    void kernel::runFromArguments(const int kArgc, const kernelArg *kArgs) const {
       occa::dim fullOuter = outer*inner;
 
       size_t fullOuter_[3] = { fullOuter.x, fullOuter.y, fullOuter.z };

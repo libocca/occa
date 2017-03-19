@@ -113,42 +113,42 @@ namespace occa {
 
     device::~device() {}
 
-    void* device::getHandle(const occa::properties &props) {
+    void* device::getHandle(const occa::properties &props) const {
       return NULL;
     }
 
-    void device::finish() {}
+    void device::finish() const {}
 
-    bool device::hasSeparateMemorySpace() {
+    bool device::hasSeparateMemorySpace() const {
       return false;
     }
 
-    hash_t device::hash() {
+    hash_t device::hash() const {
       if (!hash_.initialized) {
         hash_ = occa::hash(properties);
       }
       return hash_;
     }
 
-    void device::waitFor(streamTag tag) {}
+    void device::waitFor(streamTag tag) const {}
 
-    stream_t device::createStream() {
+    stream_t device::createStream() const {
       return NULL;
     }
 
-    void device::freeStream(stream_t s) {}
+    void device::freeStream(stream_t s) const {}
 
-    stream_t device::wrapStream(void *handle_, const occa::properties &props) {
+    stream_t device::wrapStream(void *handle_, const occa::properties &props) const {
       return NULL;
     }
 
-    streamTag device::tagStream() {
+    streamTag device::tagStream() const {
       streamTag ret;
       ret.tagTime = sys::currentTime();
       return ret;
     }
 
-    double device::timeBetween(const streamTag &startTag, const streamTag &endTag) {
+    double device::timeBetween(const streamTag &startTag, const streamTag &endTag) const {
       return (endTag.tagTime - startTag.tagTime);
     }
 
@@ -198,7 +198,7 @@ namespace occa {
       return mem;
     }
 
-    udim_t device::memorySize() {
+    udim_t device::memorySize() const {
       return sys::installedRAM();
     }
 

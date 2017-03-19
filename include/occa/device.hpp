@@ -62,24 +62,24 @@ namespace occa {
     virtual ~device_v() = 0;
     virtual void free() = 0;
 
-    virtual void* getHandle(const occa::properties &props) = 0;
+    virtual void* getHandle(const occa::properties &props) const = 0;
 
-    virtual void finish() = 0;
+    virtual void finish() const = 0;
 
-    virtual bool hasSeparateMemorySpace() = 0;
+    virtual bool hasSeparateMemorySpace() const = 0;
 
-    virtual hash_t hash() = 0;
+    virtual hash_t hash() const = 0;
 
     //  |---[ Stream ]------------------
-    virtual stream_t createStream() = 0;
-    virtual void freeStream(stream_t s) = 0;
+    virtual stream_t createStream() const = 0;
+    virtual void freeStream(stream_t s) const = 0;
 
-    virtual streamTag tagStream() = 0;
-    virtual void waitFor(streamTag tag) = 0;
-    virtual double timeBetween(const streamTag &startTag, const streamTag &endTag) = 0;
+    virtual streamTag tagStream() const = 0;
+    virtual void waitFor(streamTag tag) const = 0;
+    virtual double timeBetween(const streamTag &startTag, const streamTag &endTag) const = 0;
 
     virtual stream_t wrapStream(void *handle_,
-                                const occa::properties &props) = 0;
+                                const occa::properties &props) const = 0;
     //  |===============================
 
     //  |---[ Kernel ]------------------
@@ -101,7 +101,7 @@ namespace occa {
                                  const udim_t bytes,
                                  const occa::properties &props) = 0;
 
-    virtual udim_t memorySize() = 0;
+    virtual udim_t memorySize() const = 0;
     //  |===============================
     //==================================
   };

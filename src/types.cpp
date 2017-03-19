@@ -57,25 +57,25 @@ namespace occa {
     return *this;
   }
 
-  dim dim::operator + (const dim &d) {
+  dim dim::operator + (const dim &d) const {
     return dim(x + d.x,
                y + d.y,
                z + d.z);
   }
 
-  dim dim::operator - (const dim &d) {
+  dim dim::operator - (const dim &d) const {
     return dim(x - d.x,
                y - d.y,
                z - d.z);
   }
 
-  dim dim::operator * (const dim &d) {
+  dim dim::operator * (const dim &d) const {
     return dim(x * d.x,
                y * d.y,
                z * d.z);
   }
 
-  dim dim::operator / (const dim &d) {
+  dim dim::operator / (const dim &d) const {
     return dim(x / d.x,
                y / d.y,
                z / d.z);

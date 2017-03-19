@@ -179,7 +179,7 @@ namespace occa {
     virtual ~kernel_v() = 0;
     virtual void free() = 0;
 
-    virtual void* getHandle(const occa::properties &props) = 0;
+    virtual void* getHandle(const occa::properties &props) const = 0;
 
     virtual void build(const std::string &filename,
                        const std::string &kernelName,
@@ -189,11 +189,11 @@ namespace occa {
                                  const std::string &kernelName,
                                  const occa::properties &props) = 0;
 
-    virtual int maxDims() = 0;
-    virtual dim maxOuterDims() = 0;
-    virtual dim maxInnerDims() = 0;
+    virtual int maxDims() const = 0;
+    virtual dim maxOuterDims() const = 0;
+    virtual dim maxInnerDims() const = 0;
 
-    virtual void runFromArguments(const int kArgc, const kernelArg *kArgs) = 0;
+    virtual void runFromArguments(const int kArgc, const kernelArg *kArgs) const = 0;
     //==================================
   };
   //====================================

@@ -36,7 +36,7 @@ namespace occa {
       kernel(const occa::properties &properties_ = occa::properties());
       ~kernel();
 
-      void runFromArguments(const int kArgc, const kernelArg *kArgs);
+      void runFromArguments(const int kArgc, const kernelArg *kArgs) const;
     };
   }
 }

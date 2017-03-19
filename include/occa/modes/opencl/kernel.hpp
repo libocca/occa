@@ -50,9 +50,9 @@ namespace occa {
       kernel(const occa::properties &properties_ = occa::properties());
       ~kernel();
 
-      info_t makeCLInfo();
+      info_t makeCLInfo() const;
 
-      void* getHandle(const occa::properties &props);
+      void* getHandle(const occa::properties &props) const;
 
       void build(const std::string &filename,
                  const std::string &kernelName,
@@ -62,11 +62,11 @@ namespace occa {
                            const std::string &kernelName,
                            const occa::properties &props);
 
-      int maxDims();
-      dim maxOuterDims();
-      dim maxInnerDims();
+      int maxDims() const;
+      dim maxOuterDims() const;
+      dim maxInnerDims() const;
 
-      void runFromArguments(const int kArgc, const kernelArg *kArgs);
+      void runFromArguments(const int kArgc, const kernelArg *kArgs) const;
 
       void free();
     };

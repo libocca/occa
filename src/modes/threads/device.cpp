@@ -101,7 +101,7 @@ namespace occa {
 
     device::~device() {}
 
-    void device::finish() {
+    void device::finish() const {
       bool done = false;
       while (!done) {
         done = true;
@@ -116,17 +116,17 @@ namespace occa {
     }
 
     //---[ Stream ]---------------------
-    streamTag device::tagStream() {
+    streamTag device::tagStream() const {
       streamTag ret;
       ret.tagTime = sys::currentTime();
       return ret;
     }
 
-    void device::waitFor(streamTag tag) {
+    void device::waitFor(streamTag tag) const {
       finish(); // [-] Not done
     }
 
-    double device::timeBetween(const streamTag &startTag, const streamTag &endTag) {
+    double device::timeBetween(const streamTag &startTag, const streamTag &endTag) const {
       return (endTag.tagTime - startTag.tagTime);
     }
     //==================================

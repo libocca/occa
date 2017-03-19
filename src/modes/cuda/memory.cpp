@@ -36,7 +36,7 @@ namespace occa {
 
     memory::~memory() {}
 
-    void* memory::getHandle(const occa::properties &properties_) {
+    void* memory::getHandle(const occa::properties &properties_) const {
       if (properties_.get<std::string>("type", "") == "mapped") {
         return mappedPtr;
       }
@@ -97,7 +97,7 @@ namespace occa {
     void memory::copyTo(void *dest,
                         const udim_t bytes,
                         const udim_t offset,
-                        const occa::properties &props) {
+                        const occa::properties &props) const {
       const CUstream &stream = *((CUstream*) dHandle->currentStream);
       const bool async = props.get("async", false);
 

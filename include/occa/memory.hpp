@@ -71,13 +71,13 @@ namespace occa {
     virtual ~memory_v() = 0;
     virtual void free() = 0;
 
-    virtual void* getHandle(const occa::properties &props) = 0;
+    virtual void* getHandle(const occa::properties &props) const = 0;
     virtual kernelArg makeKernelArg() const = 0;
 
     virtual void copyTo(void *dest,
                         const udim_t bytes,
                         const udim_t offset = 0,
-                        const occa::properties &props = occa::properties()) = 0;
+                        const occa::properties &props = occa::properties()) const = 0;
 
     virtual void copyFrom(const void *src,
                           const udim_t bytes,
@@ -134,8 +134,8 @@ namespace occa {
 
     memory& swap(memory &m);
 
-    memory_v* getMHandle();
-    device_v* getDHandle();
+    memory_v* getMHandle() const;
+    device_v* getDHandle() const;
 
     occa::device getDevice() const;
 
@@ -149,7 +149,7 @@ namespace occa {
     bool inDevice() const;
     bool isStale() const;
 
-    void* getHandle(const occa::properties &props = occa::properties());
+    void* getHandle(const occa::properties &props = occa::properties()) const;
 
     void setupUva();
     void startManaging();
@@ -158,7 +158,7 @@ namespace occa {
     void syncToDevice(const dim_t bytes, const dim_t offset);
     void syncFromDevice(const dim_t bytes, const dim_t offset);
 
-    bool uvaIsStale();
+    bool uvaIsStale() const;
     void uvaMarkStale();
     void uvaMarkFresh();
 
@@ -176,13 +176,13 @@ namespace occa {
     void copyTo(void *dest,
                 const dim_t bytes = -1,
                 const dim_t offset = 0,
-                const occa::properties &props = occa::properties());
+                const occa::properties &props = occa::properties()) const;
 
     void copyTo(const memory dest,
                 const dim_t bytes = -1,
                 const dim_t destOffset = 0,
                 const dim_t srcOffset = 0,
-                const occa::properties &props = occa::properties());
+                const occa::properties &props = occa::properties()) const;
 
     void copyFrom(const void *src,
                   const occa::properties &props);
@@ -191,10 +191,10 @@ namespace occa {
                   const occa::properties &props);
 
     void copyTo(void *dest,
-                const occa::properties &props);
+                const occa::properties &props) const;
 
     void copyTo(const memory dest,
-                const occa::properties &props);
+                const occa::properties &props) const;
 
     void free();
     void detach();

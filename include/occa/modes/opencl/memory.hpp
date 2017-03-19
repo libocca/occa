@@ -43,13 +43,13 @@ namespace occa {
       memory(const occa::properties &properties_ = occa::properties());
       ~memory();
 
-      void* getHandle(const occa::properties &properties_);
+      void* getHandle(const occa::properties &properties_) const;
       kernelArg makeKernelArg() const;
 
       void copyTo(void *dest,
                   const udim_t bytes,
                   const udim_t destOffset = 0,
-                  const occa::properties &props = occa::properties());
+                  const occa::properties &props = occa::properties()) const;
 
       void copyFrom(const void *src,
                     const udim_t bytes,

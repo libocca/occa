@@ -34,15 +34,15 @@ namespace occa {
       void *dlHandle;
       handleFunction_t handle;
 
-      void *vArgs[2*OCCA_MAX_ARGS];
+      mutable void *vArgs[2*OCCA_MAX_ARGS];
 
     public:
       kernel(const occa::properties &properties_ = occa::properties());
       ~kernel();
 
-      void* getHandle(const occa::properties &props);
+      void* getHandle(const occa::properties &props) const;
 
-      std::string binaryName(const std::string &filename);
+      std::string binaryName(const std::string &filename) const;
 
       void build(const std::string &filename,
                  const std::string &kernelName,
@@ -52,11 +52,11 @@ namespace occa {
                            const std::string &kernelName,
                            const occa::properties &props);
 
-      int maxDims();
-      dim maxOuterDims();
-      dim maxInnerDims();
+      int maxDims() const;
+      dim maxOuterDims() const;
+      dim maxInnerDims() const;
 
-      void runFromArguments(const int kArgc, const kernelArg *kArgs);
+      void runFromArguments(const int kArgc, const kernelArg *kArgs) const;
 
       void free();
     };

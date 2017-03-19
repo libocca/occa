@@ -68,10 +68,10 @@ namespace occa {
 
     dim& operator = (const dim &d);
 
-    dim operator + (const dim &d);
-    dim operator - (const dim &d);
-    dim operator * (const dim &d);
-    dim operator / (const dim &d);
+    dim operator + (const dim &d) const;
+    dim operator - (const dim &d) const;
+    dim operator * (const dim &d) const;
+    dim operator / (const dim &d) const;
 
     bool hasNegativeEntries();
 

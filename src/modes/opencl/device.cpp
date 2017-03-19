@@ -78,23 +78,23 @@ namespace occa {
                         clReleaseContext(clContext) );
     }
 
-    void* device::getHandle(const occa::properties &props) {
+    void* device::getHandle(const occa::properties &props) const {
       if (props["type"] == "context") {
         return (void*) clContext;
       }
       return NULL;
     }
 
-    void device::finish() {
+    void device::finish() const {
       OCCA_OPENCL_ERROR("Device: Finish",
                         clFinish(*((cl_command_queue*) currentStream)));
     }
 
-    bool device::hasSeparateMemorySpace() {
+    bool device::hasSeparateMemorySpace() const {
       return true;
     }
 
-    hash_t device::hash() {
+    hash_t device::hash() const {
       if (!hash_.initialized) {
         hash_ = occa::hash(properties);
       }
@@ -102,7 +102,7 @@ namespace occa {
     }
 
     //  |---[ Stream ]----------------
-    stream_t device::createStream() {
+    stream_t device::createStream() const {
       cl_int error;
 
       cl_command_queue *retStream = new cl_command_queue;
@@ -113,14 +113,14 @@ namespace occa {
       return retStream;
     }
 
-    void device::freeStream(stream_t s) {
+    void device::freeStream(stream_t s) const {
       OCCA_OPENCL_ERROR("Device: freeStream",
                         clReleaseCommandQueue( *((cl_command_queue*) s) ));
 
       delete (cl_command_queue*) s;
     }
 
-    streamTag device::tagStream() {
+    streamTag device::tagStream() const {
       cl_command_queue &stream = *((cl_command_queue*) currentStream);
 
       streamTag ret;
@@ -136,12 +136,12 @@ namespace occa {
       return ret;
     }
 
-    void device::waitFor(streamTag tag) {
+    void device::waitFor(streamTag tag) const {
       OCCA_OPENCL_ERROR("Device: Waiting For Tag",
                         clWaitForEvents(1, &event(tag)));
     }
 
-    double device::timeBetween(const streamTag &startTag, const streamTag &endTag) {
+    double device::timeBetween(const streamTag &startTag, const streamTag &endTag) const {
       cl_ulong start, end;
 
       finish();
@@ -167,7 +167,7 @@ namespace occa {
       return (double) (1.0e-9 * (double)(end - start));
     }
 
-    stream_t device::wrapStream(void *handle_, const occa::properties &props) {
+    stream_t device::wrapStream(void *handle_, const occa::properties &props) const {
       return handle_;
     }
     //  |===============================
@@ -294,7 +294,7 @@ namespace occa {
       return mem;
     }
 
-    udim_t device::memorySize() {
+    udim_t device::memorySize() const {
       return opencl::getDeviceMemorySize(clDeviceID);
     }
     //  |===============================

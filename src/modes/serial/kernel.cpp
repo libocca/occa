@@ -35,14 +35,14 @@ namespace occa {
 
     kernel::~kernel() {}
 
-    void* kernel::getHandle(const occa::properties &props) {
+    void* kernel::getHandle(const occa::properties &props) const {
       const std::string type = props["type"];
 
       if (type == "dl_handle") {
         return dlHandle;
       }
       if (type == "function") {
-        return &handle;
+        return (void*) &handle;
       }
       return NULL;
     }
@@ -164,19 +164,19 @@ namespace occa {
       handle   = sys::dlsym(dlHandle, kernelName);
     }
 
-    int kernel::maxDims() {
+    int kernel::maxDims() const {
       return 3;
     }
 
-    dim kernel::maxOuterDims() {
+    dim kernel::maxOuterDims() const {
       return dim(-1,-1,-1);
     }
 
-    dim kernel::maxInnerDims() {
+    dim kernel::maxInnerDims() const {
       return dim(-1,-1,-1);
     }
 
-    void kernel::runFromArguments(const int kArgc, const kernelArg *kArgs) {
+    void kernel::runFromArguments(const int kArgc, const kernelArg *kArgs) const {
       int occaKernelArgs[6];
 
       occaKernelArgs[0] = outer.z; occaKernelArgs[3] = inner.z;
