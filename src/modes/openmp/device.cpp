@@ -53,7 +53,7 @@ namespace occa {
 
     kernel_v* device::buildKernel(const std::string &filename,
                                   const std::string &kernelName,
-                                  const occa::properties &props) const {
+                                  const occa::properties &props) {
       kernel *k = new kernel();
       k->dHandle = this;
       k->build(filename, kernelName, props);
