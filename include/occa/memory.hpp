@@ -145,6 +145,14 @@ namespace occa {
 
     udim_t size() const;
 
+    template <class TM>
+    udim_t entries() const {
+      if (mHandle == NULL) {
+        return 0;
+      }
+      return (mHandle->size / sizeof(TM));
+    }
+
     bool isManaged() const;
     bool inDevice() const;
     bool isStale() const;
