@@ -44,11 +44,6 @@ namespace occa {
       return ret;
     }
   };
-
-  class hasProperties {
-  public:
-    occa::properties properties;
-  };
 }
 
 #endif

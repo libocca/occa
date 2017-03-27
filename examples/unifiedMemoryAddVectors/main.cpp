@@ -5,20 +5,17 @@
 int main(int argc, char **argv) {
   int entries = 5;
 
-  // [U]nified [V]irtual [A]dressing is
-  //   disabled by default
-  // occa::enableUVAByDefault();
   occa::device device("mode       : 'OpenCL', "
                       "platformID : 0, "
-                      "deviceID   : 0, "
-                      "uva        : true");
+                      "deviceID   : 0");
 
-  // Allocate [uva] arrays that will
-  //   automatically synchronize between
-  //   the process and [device]
-  float *a  = (float*) device.uvaAlloc(entries * sizeof(float));
-  float *b  = (float*) device.uvaAlloc(entries * sizeof(float));
-  float *ab = (float*) device.uvaAlloc(entries * sizeof(float));
+  // umalloc: [U]nified [M]emory [Alloc]ation
+  // Allocate host memory that auto-syncs with the device
+  //   between before kernel calls and device::finish()
+  //   if needed.
+  float *a  = (float*) device.umalloc(entries * sizeof(float));
+  float *b  = (float*) device.umalloc(entries * sizeof(float));
+  float *ab = (float*) device.umalloc(entries * sizeof(float));
 
   for (int i = 0; i < entries; ++i) {
     a[i]  = i;
