@@ -126,11 +126,11 @@ namespace occa {
     return currentDevice().malloc(bytes, src, props);
   }
 
-  void* uvaAlloc(const dim_t bytes,
-                 const void *src,
-                 const occa::properties &props) {
+  void* umalloc(const dim_t bytes,
+                const void *src,
+                const occa::properties &props) {
 
-    return currentDevice().uvaAlloc(bytes, src, props);
+    return currentDevice().umalloc(bytes, src, props);
   }
 
   occa::memory wrapMemory(void *handle_,

@@ -29,9 +29,7 @@
 
 namespace occa {
   //---[ device_v ]---------------------
-  device_v::device_v(const occa::properties &properties_) :
-    hasProperties() {
-
+  device_v::device_v(const occa::properties &properties_) {
     mode = properties_["mode"].string();
     properties = properties_;
 
@@ -327,9 +325,9 @@ namespace occa {
     return mem;
   }
 
-  void* device::uvaAlloc(const dim_t bytes,
-                         const void *src,
-                         const occa::properties &props) {
+  void* device::umalloc(const dim_t bytes,
+                        const void *src,
+                        const occa::properties &props) {
     OCCA_ERROR("Trying to allocate negative bytes (" << bytes << ")",
                bytes >= 0);
 

@@ -42,9 +42,10 @@ namespace occa {
   class streamTag;
 
   //---[ device_v ]---------------------
-  class device_v : public hasProperties {
+  class device_v {
   public:
     std::string mode;
+    occa::properties properties;
 
     ptrRangeMap_t uvaMap;
     memoryVector_t uvaStaleMemory;
@@ -174,9 +175,9 @@ namespace occa {
                         const void *src = NULL,
                         const occa::properties &props = occa::properties());
 
-    void* uvaAlloc(const dim_t bytes,
-                   const void *src = NULL,
-                   const occa::properties &props = occa::properties());
+    void* umalloc(const dim_t bytes,
+                  const void *src = NULL,
+                  const occa::properties &props = occa::properties());
 
     occa::memory wrapMemory(void *handle_,
                             const dim_t bytes,

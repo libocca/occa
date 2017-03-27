@@ -9,14 +9,13 @@ int main(int argc, char **argv) {
   //   occa::setDevice("mode: 'OpenMP'")
   //   occa::device device("mode       : 'OpenCL', "
   //                       "platformID : 0, "
-  //                       "deviceID   : 0, "
-  //                       "uva        : true");
+  //                       "deviceID   : 0");
   //   occa::device = occa::currentDevice();
 
   // Use the default device (mode = Serial)
-  float *a  = (float*) occa::uvaAlloc(entries * sizeof(float));
-  float *b  = (float*) occa::uvaAlloc(entries * sizeof(float));
-  float *ab = (float*) occa::uvaAlloc(entries * sizeof(float));
+  float *a  = (float*) occa::umalloc(entries * sizeof(float));
+  float *b  = (float*) occa::umalloc(entries * sizeof(float));
+  float *ab = (float*) occa::umalloc(entries * sizeof(float));
 
   for (int i = 0; i < entries; ++i) {
     a[i]  = i;

@@ -169,7 +169,7 @@ test:
 	make -j 4 CXXFLAGS='-g' FCFLAGS='-g' && \
 	./main
 
-	cd $(OCCA_DIR)/examples/uvaAddVectors/ && \
+	cd $(OCCA_DIR)/examples/unifiedMemoryAddVectors/ && \
 	rm -f main && \
 	make -j 4 CXXFLAGS='-g' FCFLAGS='-g'; \
 	./main

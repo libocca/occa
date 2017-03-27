@@ -74,15 +74,12 @@ namespace occa {
     mHandle(NULL) {}
 
   memory::memory(void *uvaPtr) {
-    // Default to uvaPtr is actually a memory_v*
-    memory_v *mHandle_ = (memory_v*) uvaPtr;
     ptrRangeMap_t::iterator it = uvaMap.find(uvaPtr);
-
     if (it != uvaMap.end()) {
-      mHandle_ = it->second;
+      mHandle = it->second;
+    } else {
+      mHandle = (memory_v*) uvaPtr;
     }
-
-    mHandle = mHandle_;
   }
 
   memory::memory(memory_v *mHandle_) :
@@ -92,9 +89,9 @@ namespace occa {
     mHandle(m.mHandle) {}
 
   memory& memory::swap(memory &m) {
-    memory_v *tmp = mHandle;
-    mHandle       = m.mHandle;
-    m.mHandle     = tmp;
+    memory_v *mHandle_ = mHandle;
+    mHandle = m.mHandle;
+    m.mHandle = mHandle_;
 
     return *this;
   }
