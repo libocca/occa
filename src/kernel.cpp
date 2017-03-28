@@ -284,14 +284,44 @@ namespace occa {
     kHandle(NULL) {}
 
   kernel::kernel(kernel_v *kHandle_) :
-    kHandle(kHandle_) {}
+    kHandle(NULL) {
+    setKHandle(kHandle_);
+  }
 
   kernel::kernel(const kernel &k) :
-    kHandle(k.kHandle) {}
+    kHandle(NULL) {
+    setKHandle(k.kHandle);
+  }
 
   kernel& kernel::operator = (const kernel &k) {
-    kHandle = k.kHandle;
+    setKHandle(k.kHandle);
     return *this;
+  }
+
+  kernel::~kernel() {
+    removeKHandleRef();
+  }
+
+  void kernel::setKHandle(kernel_v *kHandle_) {
+    if (kHandle != kHandle_) {
+      removeKHandleRef();
+      kHandle = kHandle_;
+      kHandle->addRef();
+    }
+  }
+
+  void kernel::removeKHandleRef() {
+    if (kHandle && !kHandle->removeRef()) {
+      free();
+      delete kHandle;
+      kHandle = NULL;
+    }
+  }
+
+  void kernel::dontUseRefs() {
+    if (kHandle) {
+      kHandle->dontUseRefs();
+    }
   }
 
   bool kernel::isInitialized() {
@@ -403,14 +433,11 @@ namespace occa {
       return;
     }
     if (kHandle->nestedKernelCount()) {
-      for (int k = 0; k < kHandle->nestedKernelCount(); ++k)
+      for (int k = 0; k < kHandle->nestedKernelCount(); ++k) {
         kHandle->nestedKernels[k].free();
+      }
     }
-
     kHandle->free();
-
-    delete kHandle;
-    kHandle = NULL;
   }
   //====================================
 

@@ -27,6 +27,7 @@
 #include <vector>
 
 #include "occa/defines.hpp"
+#include "occa/types.hpp"
 
 namespace occa {
   class device;

@@ -27,6 +27,7 @@
 #include <stdint.h>
 
 #include "occa/defines.hpp"
+#include "occa/tools/gc.hpp"
 #include "occa/tools/properties.hpp"
 #include "occa/parser/types.hpp"
 
@@ -145,7 +146,7 @@ namespace occa {
 
 
   //---[ kernel_v ]---------------------
-  class kernel_v {
+  class kernel_v : public withRefs {
   public:
     occa::device_v *dHandle;
 
@@ -177,6 +178,7 @@ namespace occa {
 
     //---[ Virtual Methods ]------------
     virtual ~kernel_v() = 0;
+    // Must be able to be called multiple times safely
     virtual void free() = 0;
 
     virtual void* getHandle(const occa::properties &props) const = 0;
@@ -211,6 +213,14 @@ namespace occa {
 
     kernel(const kernel &k);
     kernel& operator = (const kernel &k);
+    ~kernel();
+
+  private:
+    void setKHandle(kernel_v *kHandle_);
+    void removeKHandleRef();
+
+  public:
+    void dontUseRefs();
 
     bool isInitialized();
 

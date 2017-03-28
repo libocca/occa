@@ -56,5 +56,6 @@ int main(int argc, char **argv) {
   // The user can also free the device
   occa::free(occa::currentDevice());
 
+
   return 0;
 }

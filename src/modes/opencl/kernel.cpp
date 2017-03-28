@@ -230,8 +230,11 @@ namespace occa {
     }
 
     void kernel::free() {
-      OCCA_OPENCL_ERROR("Kernel: Free",
-                        clReleaseKernel(clKernel));
+      if (clKernel) {
+        OCCA_OPENCL_ERROR("Kernel: Free",
+                          clReleaseKernel(clKernel));
+        clKernel = NULL;
+      }
     }
   }
 }

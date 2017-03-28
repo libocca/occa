@@ -116,15 +116,17 @@ namespace occa {
     }
 
     void memory::free() {
-      if (mappedPtr != NULL) {
+      if (mappedPtr) {
         OCCA_CUDA_ERROR("Device: mappedFree()",
                         cuMemFreeHost(mappedPtr));
-      } else {
+      } else if (handle) {
         cuMemFree(*((CUdeviceptr*) handle));
       }
-      delete (CUdeviceptr*) handle;
-      handle = NULL;
-      size   = 0;
+      if (handle) {
+        delete (CUdeviceptr*) handle;
+        handle = NULL;
+        size   = 0;
+      }
     }
 
     void memory::detach() {

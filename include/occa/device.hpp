@@ -27,9 +27,10 @@
 #include <sstream>
 
 #include "occa/defines.hpp"
-#include "occa/parser/tools.hpp"
 #include "occa/uva.hpp"
 #include "occa/kernel.hpp"
+#include "occa/tools/gc.hpp"
+#include "occa/parser/tools.hpp"
 
 namespace occa {
   class kernel_v; class kernel;
@@ -42,7 +43,7 @@ namespace occa {
   class streamTag;
 
   //---[ device_v ]---------------------
-  class device_v {
+  class device_v : public withRefs {
   public:
     std::string mode;
     occa::properties properties;
@@ -61,6 +62,7 @@ namespace occa {
 
     //---[ Virtual Methods ]------------
     virtual ~device_v() = 0;
+    // Must be able to be called multiple times safely
     virtual void free() = 0;
 
     virtual void* getHandle(const occa::properties &props) const = 0;
@@ -120,6 +122,14 @@ namespace occa {
 
     device(const occa::device &d);
     device& operator = (const occa::device &d);
+    ~device();
+
+  private:
+    void setDHandle(device_v *dhandle_);
+    void removeDHandleRef();
+
+  public:
+    void dontUseRefs();
 
     bool operator == (const occa::device &d) const;
 

@@ -26,6 +26,7 @@
 #include <iostream>
 
 #include "occa/defines.hpp"
+#include "occa/tools/gc.hpp"
 #include "occa/tools/properties.hpp"
 
 namespace occa {
@@ -47,7 +48,7 @@ namespace occa {
   }
 
   //---[ memory_v ]---------------------
-  class memory_v {
+  class memory_v : public withRefs {
   public:
     int memInfo;
     occa::properties properties;
@@ -69,6 +70,7 @@ namespace occa {
 
     //---[ Virtual Methods ]------------
     virtual ~memory_v() = 0;
+    // Must be able to be called multiple times safely
     virtual void free() = 0;
 
     virtual void* getHandle(const occa::properties &props) const = 0;
@@ -129,6 +131,14 @@ namespace occa {
 
     memory(const memory &m);
     memory& operator = (const memory &m);
+    ~memory();
+
+  private:
+    void setMHandle(memory_v *mHandle_);
+    void removeMHandleRef();
+
+  public:
+    void dontUseRefs();
 
     bool isInitialized() const;
 

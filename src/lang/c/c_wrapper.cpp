@@ -443,6 +443,7 @@ void OCCA_RFUNC occaPropertiesFree(occaProperties properties) {
 //  |---[ Device ]----------------------
 void OCCA_RFUNC occaSetDevice(occaDevice device) {
   occa::device device_ = occa::c::getDevice(device);
+  device_.dontUseRefs();
   occa::setDevice(device_);
 }
 
@@ -508,6 +509,7 @@ occaKernel OCCA_RFUNC occaBuildKernel(const char *filename,
     occa::properties &props_ = occa::c::from<occa::properties>(props);
     kernel = occa::buildKernel(filename, kernelName, props_);
   }
+  kernel.dontUseRefs();
 
   return newObject(kernel.getKHandle(), occa::c::kernel_);
 }
@@ -523,6 +525,7 @@ occaKernel OCCA_RFUNC occaBuildKernelFromString(const char *str,
     occa::properties &props_ = occa::c::from<occa::properties>(props);
     kernel = occa::buildKernelFromString(str, kernelName, props_);
   }
+  kernel.dontUseRefs();
 
   return newObject(kernel.getKHandle(), occa::c::kernel_);
 }
@@ -531,6 +534,7 @@ occaKernel OCCA_RFUNC occaBuildKernelFromBinary(const char *filename,
                                                 const char *kernelName) {
 
   occa::kernel kernel = occa::buildKernelFromBinary(filename, kernelName);
+  kernel.dontUseRefs();
   return newObject(kernel.getKHandle(), occa::c::kernel_);
 }
 //  |===================================
@@ -547,6 +551,7 @@ occaMemory OCCA_RFUNC occaMalloc(const occaUDim_t bytes,
                                  occaProperties props) {
   occa::properties &props_ = occa::c::getProperties(props);
   occa::memory memory_ = occa::malloc(bytes, src, props_);
+  memory_.dontUseRefs();
 
   occaMemory memory = occa::c::newType(occa::c::memory_);
   occa::c::getKernelArg(memory).data.void_ = memory_.getMHandle();
@@ -558,7 +563,12 @@ void* OCCA_RFUNC occaUmalloc(const occaUDim_t bytes,
                              occaProperties props) {
 
   occa::properties &props_ = occa::c::getProperties(props);
-  return occa::umalloc(bytes, src, props_);
+  void *ptr = occa::umalloc(bytes, src, props_);
+
+  occa::memory memory(ptr);
+  memory.dontUseRefs();
+
+  return ptr;
 }
 
 occaMemory OCCA_RFUNC occaWrapMemory(void *handle_,
@@ -589,6 +599,7 @@ occaDevice OCCA_RFUNC occaCreateDevice(occaObject info) {
   } else if (info.ptr->type == occa::c::properties_) {
     device = occa::device(occa::c::getProperties(info));
   }
+  device.dontUseRefs();
   return newObject(device.getDHandle(), occa::c::device_);
 }
 
@@ -620,6 +631,7 @@ occaKernel OCCA_RFUNC occaDeviceBuildKernel(occaDevice device,
     occa::properties &props_ = occa::c::from<occa::properties>(props);
     kernel = device_.buildKernel(filename, kernelName, props_);
   }
+  kernel.dontUseRefs();
 
   return newObject(kernel.getKHandle(), occa::c::kernel_);
 }
@@ -637,6 +649,7 @@ occaKernel OCCA_RFUNC occaDeviceBuildKernelFromString(occaDevice device,
     occa::properties &props_ = occa::c::from<occa::properties>(props);
     kernel = device_.buildKernelFromString(str, kernelName, props_);
   }
+  kernel.dontUseRefs();
 
   return newObject(kernel.getKHandle(), occa::c::kernel_);
 }
@@ -646,6 +659,7 @@ occaKernel OCCA_RFUNC occaDeviceBuildKernelFromBinary(occaDevice device,
                                                       const char *kernelName) {
   occa::device device_ = occa::c::getDevice(device);
   occa::kernel kernel = device_.buildKernelFromBinary(filename, kernelName);
+  kernel.dontUseRefs();
   return newObject(kernel.getKHandle(), occa::c::kernel_);
 }
 
@@ -657,6 +671,7 @@ occaMemory OCCA_RFUNC occaDeviceMalloc(occaDevice device,
   occa::device device_ = occa::c::getDevice(device);
   occa::properties &props_ = occa::c::getProperties(props);
   occa::memory memory_ = device_.malloc(bytes, src, props_);
+  memory_.dontUseRefs();
 
   occaMemory memory = occa::c::newType(occa::c::memory_);
   occa::c::getKernelArg(memory).data.void_ = memory_.getMHandle();
@@ -670,7 +685,12 @@ void* OCCA_RFUNC occaDeviceUmalloc(occaDevice device,
 
   occa::device device_ = occa::c::getDevice(device);
   occa::properties &props_ = occa::c::getProperties(props);
-  return device_.umalloc(bytes, src, props_);
+  void *ptr = device_.umalloc(bytes, src, props_);
+
+  occa::memory memory(ptr);
+  memory.dontUseRefs();
+
+  return ptr;
 }
 
 occaMemory OCCA_RFUNC occaDeviceWrapMemory(occaDevice device,
