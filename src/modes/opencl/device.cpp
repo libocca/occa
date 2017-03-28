@@ -74,8 +74,11 @@ namespace occa {
     device::~device() {}
 
     void device::free() {
-      OCCA_OPENCL_ERROR("Device: Freeing Context",
-                        clReleaseContext(clContext) );
+      if (clContext) {
+        OCCA_OPENCL_ERROR("Device: Freeing Context",
+                          clReleaseContext(clContext) );
+        clContext = NULL;
+      }
     }
 
     void* device::getHandle(const occa::properties &props) const {

@@ -76,9 +76,11 @@ namespace occa {
     }
 
     void memory::free() {
-      sys::free(handle);
-      handle = NULL;
-      size = 0;
+      if (handle) {
+        sys::free(handle);
+        handle = NULL;
+        size = 0;
+      }
     }
 
     void memory::detach() {

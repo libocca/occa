@@ -67,11 +67,5 @@ int main(int argc, char **argv) {
   delete [] b;
   delete [] ab;
 
-  addVectors.free();
-  o_a.free();
-  o_b.free();
-  o_ab.free();
-  device.free();
-
   return 0;
 }

@@ -73,36 +73,66 @@ namespace occa {
   memory::memory() :
     mHandle(NULL) {}
 
-  memory::memory(void *uvaPtr) {
+  memory::memory(void *uvaPtr) :
+    mHandle(NULL) {
     ptrRangeMap_t::iterator it = uvaMap.find(uvaPtr);
     if (it != uvaMap.end()) {
-      mHandle = it->second;
+      setMHandle(it->second);
     } else {
-      mHandle = (memory_v*) uvaPtr;
+      setMHandle((memory_v*) uvaPtr);
     }
   }
 
   memory::memory(memory_v *mHandle_) :
-    mHandle(mHandle_) {}
+    mHandle(NULL) {
+    setMHandle(mHandle_);
+  }
 
   memory::memory(const memory &m) :
-    mHandle(m.mHandle) {}
-
-  memory& memory::swap(memory &m) {
-    memory_v *mHandle_ = mHandle;
-    mHandle = m.mHandle;
-    m.mHandle = mHandle_;
-
-    return *this;
+    mHandle(NULL) {
+    setMHandle(m.mHandle);
   }
 
   memory& memory::operator = (const memory &m) {
-    mHandle = m.mHandle;
+    setMHandle(m.mHandle);
     return *this;
+  }
+
+  memory::~memory() {
+    removeMHandleRef();
+  }
+
+  void memory::setMHandle(memory_v *mHandle_) {
+    if (mHandle != mHandle_) {
+      removeMHandleRef();
+      mHandle = mHandle_;
+      mHandle->addRef();
+    }
+  }
+
+  void memory::removeMHandleRef() {
+    if (mHandle && !mHandle->removeRef()) {
+      free();
+      delete mHandle;
+      mHandle = NULL;
+    }
+  }
+
+  void memory::dontUseRefs() {
+    if (mHandle) {
+      mHandle->dontUseRefs();
+    }
   }
 
   bool memory::isInitialized() const {
     return (mHandle != NULL);
+  }
+
+  memory& memory::swap(memory &m) {
+    memory_v *mHandle_ = mHandle;
+    mHandle   = m.mHandle;
+    m.mHandle = mHandle_;
+    return *this;
   }
 
   memory_v* memory::getMHandle() const {
@@ -374,8 +404,5 @@ namespace occa {
     } else {
       mHandle->detach();
     }
-
-    delete mHandle;
-    mHandle = NULL;
   }
 }

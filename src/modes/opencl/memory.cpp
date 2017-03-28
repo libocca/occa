@@ -99,7 +99,7 @@ namespace occa {
     }
 
     void memory::free() {
-      if (mappedPtr != NULL) {
+      if (mappedPtr) {
         cl_command_queue &stream = *((cl_command_queue*) dHandle->currentStream);
 
         OCCA_OPENCL_ERROR("Mapped Free: clEnqueueUnmapMemObject",
@@ -108,13 +108,15 @@ namespace occa {
                                                   mappedPtr,
                                                   0, NULL, NULL));
       }
-      // Free mapped-host pointer
-      OCCA_OPENCL_ERROR("Mapped Free: clReleaseMemObject",
-                        clReleaseMemObject(*((cl_mem*) handle)));
-      delete (cl_mem*) handle;
+      if (handle) {
+        // Free mapped-host pointer
+        OCCA_OPENCL_ERROR("Mapped Free: clReleaseMemObject",
+                          clReleaseMemObject(*((cl_mem*) handle)));
+        delete (cl_mem*) handle;
 
-      handle = NULL;
-      size   = 0;
+        handle = NULL;
+        size   = 0;
+      }
     }
 
     void memory::detach() {

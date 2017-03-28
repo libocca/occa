@@ -250,8 +250,11 @@ namespace occa {
     }
 
     void kernel::free() {
-      OCCA_CUDA_ERROR("Kernel (" + name + ") : Unloading Module",
-                      cuModuleUnload(module));
+      if (module) {
+        OCCA_CUDA_ERROR("Kernel (" + name + ") : Unloading Module",
+                        cuModuleUnload(module));
+        module = NULL;
+      }
     }
   }
 }

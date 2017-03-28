@@ -203,7 +203,10 @@ namespace occa {
     }
 
     void kernel::free() {
-      sys::dlclose(dlHandle);
+      if (dlHandle) {
+        sys::dlclose(dlHandle);
+        dlHandle = NULL;
+      }
     }
   }
 }

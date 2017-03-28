@@ -53,23 +53,53 @@ namespace occa {
   //====================================
 
   //---[ device ]-----------------------
-  device::device() {
-    dHandle = NULL;
-  }
+  device::device() :
+    dHandle(NULL) {}
 
   device::device(device_v *dHandle_) :
-    dHandle(dHandle_) {}
+    dHandle(NULL) {
+    setDHandle(dHandle_);
+  }
 
-  device::device(const occa::properties &props) {
+  device::device(const occa::properties &props) :
+    dHandle(NULL) {
     setup(props);
   }
 
   device::device(const device &d) :
-    dHandle(d.dHandle) {}
+    dHandle(NULL) {
+    setDHandle(d.dHandle);
+  }
 
   device& device::operator = (const device &d) {
-    dHandle = d.dHandle;
+    setDHandle(d.dHandle);
     return *this;
+  }
+
+  device::~device() {
+    removeDHandleRef();
+  }
+
+  void device::setDHandle(device_v *dHandle_) {
+    if (dHandle != dHandle_) {
+      removeDHandleRef();
+      dHandle = dHandle_;
+      dHandle->addRef();
+    }
+  }
+
+  void device::removeDHandleRef() {
+    if (dHandle && !dHandle->removeRef()) {
+      free();
+      delete dHandle;
+      dHandle = NULL;
+    }
+  }
+
+  void device::dontUseRefs() {
+    if (dHandle) {
+      dHandle->dontUseRefs();
+    }
   }
 
   bool device::operator == (const occa::device &d) const {
@@ -82,13 +112,11 @@ namespace occa {
     }
     const int streamCount = dHandle->streams.size();
 
-    for (int i = 0; i < streamCount; ++i)
+    for (int i = 0; i < streamCount; ++i) {
       dHandle->freeStream(dHandle->streams[i]);
-
+    }
+    dHandle->streams.clear();
     dHandle->free();
-
-    delete dHandle;
-    dHandle = NULL;
   }
 
   bool device::isInitialized() {
@@ -104,7 +132,7 @@ namespace occa {
   }
 
   void device::setup(const occa::properties &props) {
-    dHandle = occa::newModeDevice(props);
+    setDHandle(occa::newModeDevice(props));
 
     stream newStream = createStream();
     dHandle->currentStream = newStream.handle;
@@ -211,11 +239,9 @@ namespace occa {
     hash ^= props.hash();
     hash ^= occa::hash(mode());
 
-    kernel ker;
-    kernel_v *&k = ker.kHandle;
-
     occa::properties launcherProps("mode: 'Serial'");
-    k = newModeKernel(launcherProps);
+    kernel ker(newModeKernel(launcherProps));
+    kernel_v *k = ker.kHandle;
     k->dHandle = newModeDevice(launcherProps);
 
     const std::string hashDir = io::hashDir(realFilename, hash);
@@ -246,9 +272,7 @@ namespace occa {
         const std::string sKerName = k->metadata.baseName + ss.str();
         ss.str("");
 
-        kernel sKer;
-        sKer.kHandle = dHandle->buildKernel(parsedFile, sKerName, allProps);
-
+        kernel sKer(dHandle->buildKernel(parsedFile, sKerName, allProps));
         sKer.kHandle->metadata               = k->metadata;
         sKer.kHandle->metadata.name          = sKerName;
         sKer.kHandle->metadata.nestedKernels = 0;
@@ -301,10 +325,9 @@ namespace occa {
   kernel device::buildKernelFromBinary(const std::string &filename,
                                        const std::string &kernelName,
                                        const occa::properties &props) {
-    kernel ker;
-    ker.kHandle = dHandle->buildKernelFromBinary(filename, kernelName, props);
-    ker.kHandle->dHandle = dHandle;
 
+    kernel ker(dHandle->buildKernelFromBinary(filename, kernelName, props));
+    ker.kHandle->dHandle = dHandle;
     return ker;
   }
   //  |=================================
@@ -316,8 +339,7 @@ namespace occa {
     OCCA_ERROR("Trying to allocate negative bytes (" << bytes << ")",
                bytes >= 0);
 
-    memory mem;
-    mem.mHandle          = dHandle->malloc(bytes, src, props);
+    memory mem(dHandle->malloc(bytes, src, props));
     mem.mHandle->dHandle = dHandle;
 
     dHandle->bytesAllocated += bytes;
@@ -333,6 +355,7 @@ namespace occa {
 
     memory mem = malloc(bytes, src, props);
     mem.setupUva();
+    mem.dontUseRefs();
 
     if (props.get<bool>("managed", true)) {
       mem.startManaging();
@@ -347,9 +370,9 @@ namespace occa {
     OCCA_ERROR("Trying to wrap memory with negative bytes (" << bytes << ")",
                bytes >= 0);
 
-    memory mem;
-    mem.mHandle          = dHandle->wrapMemory(handle_, bytes, props);
+    memory mem(dHandle->wrapMemory(handle_, bytes, props));
     mem.mHandle->dHandle = dHandle;
+    mem.dontUseRefs();
 
     dHandle->bytesAllocated += bytes;
 
