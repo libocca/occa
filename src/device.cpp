@@ -306,12 +306,14 @@ namespace occa {
     if (!io::haveHash(hash, hashTag)) {
       io::waitForHash(hash, hashTag);
 
-      return buildKernelFromBinary(hashDir + kc::binaryFile,
-                                   kernelName,
-                                   props);
+      return buildKernel(stringSourceFile,
+                         kernelName,
+                         allProps);
     }
 
-    io::write(stringSourceFile, content);
+    if (!sys::fileExists(stringSourceFile)) {
+      io::write(stringSourceFile, content);
+    }
 
     kernel k = buildKernel(stringSourceFile,
                            kernelName,
