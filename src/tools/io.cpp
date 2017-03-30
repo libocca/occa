@@ -372,8 +372,9 @@ namespace occa {
 
       int mkdirStatus = sys::mkdir(lockDir);
 
-      if (mkdirStatus && (errno == EEXIST))
+      if (mkdirStatus && (errno == EEXIST)) {
         return false;
+      }
 
       fileLocks[lockDir] = hashAndTag(hash, tag);
 
@@ -414,12 +415,21 @@ namespace occa {
       std::string parsedContent = fileParser.parseFile(io::filename(filename), properties);
 
       if (!sys::fileExists(parsedFile)) {
-        sys::mkpath(dirname(parsedFile));
+        hash_t hash = occa::hash(parsedFile);
+        const std::string hashTag = "parse-file";
 
-        std::ofstream fs;
-        fs.open(parsedFile.c_str());
-        fs << parsedContent;
-        fs.close();
+        if (io::haveHash(hash, hashTag)) {
+          sys::mkpath(dirname(parsedFile));
+
+          std::ofstream fs;
+          fs.open(parsedFile.c_str());
+          fs << parsedContent;
+          fs.close();
+
+          io::releaseHash(hash, hashTag);
+        } else {
+          io::waitForHash(hash, hashTag);
+        }
       }
 
       kernelInfoIterator kIt = fileParser.kernelInfoMap.find(functionName);
