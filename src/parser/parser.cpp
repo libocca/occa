@@ -2774,15 +2774,11 @@ namespace occa {
 
       const int outerDim = 1 + occa::atoi(maxOuterAttr.valueStr());
       const int innerDim = 1 + occa::atoi(maxInnerAttr.valueStr());
-      const int maxDim   = ((outerDim > innerDim) ?
-                            outerDim              :
-                            innerDim);
 
       // [outer/inner][dim]
       std::string iterExps[2][3];
 
-      ss << "const int dims = " << maxDim << ";\n"
-         << "int outer, inner;\n";
+      ss << "int outer, inner;\n";
 
       for (int i = 0; i < occaLoopCount; ++i) {
         statement &loop = *(occaLoops[i]);
@@ -2795,17 +2791,21 @@ namespace occa {
 
         std::string &iterExp = iterExps[occaTag][occaNest];
 
-        if (iterExp.size() == 0)
+        if (iterExp.size() == 0) {
           iterExp = loop.attribute("occaIterExp").valueStr();
+        }
       }
 
-      for (int o = 0; o < outerDim; ++o)
+      ss << "outer.dims = " << outerDim << ";\n";
+      for (int o = 0; o < outerDim; ++o) {
         ss << "outer[" << o << "] = " << iterExps[0][o] << ";\n";
-
-      for (int i = 0; i < innerDim; ++i)
+      }
+      ss << "inner.dims = " << innerDim << ";\n";
+      for (int i = 0; i < innerDim; ++i) {
         ss << "inner[" << i << "] = " << iterExps[1][i] << ";\n";
+      }
 
-      ss << "nestedKernels[" << newKernelPos << "].setWorkingDims(dims, inner, outer);\n"
+      ss << "nestedKernels[" << newKernelPos << "].setRunDims(inner, outer);\n"
          << "nestedKernels[" << newKernelPos << "](";
 
       const int argCount = newKernelVar.argumentCount;

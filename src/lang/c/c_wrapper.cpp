@@ -806,26 +806,22 @@ occaDevice OCCA_RFUNC occaKernelGetDevice(occaKernel kernel) {
   return newObject(device.getDHandle(), occa::c::device_);
 }
 
-void OCCA_RFUNC occaKernelSetWorkingDims(occaKernel kernel,
-                                         int dims,
-                                         occaDim items,
-                                         occaDim groups) {
+void OCCA_RFUNC occaKernelSetRunDims(occaKernel kernel,
+                                     occaDim items,
+                                     occaDim groups) {
 
   occa::kernel kernel_ = occa::c::getKernel(kernel);
-  kernel_.setWorkingDims(dims,
-                         occa::dim(items.x, items.y, items.z),
-                         occa::dim(groups.x, groups.y, groups.z));
+  kernel_.setRunDims(occa::dim(items.x, items.y, items.z),
+                     occa::dim(groups.x, groups.y, groups.z));
 }
 
-void OCCA_RFUNC occaKernelSetAllWorkingDims(occaKernel kernel,
-                                            int dims,
-                                            occaUDim_t itemsX, occaUDim_t itemsY, occaUDim_t itemsZ,
-                                            occaUDim_t groupsX, occaUDim_t groupsY, occaUDim_t groupsZ) {
+void OCCA_RFUNC occaKernelSetRunAllDims(occaKernel kernel,
+                                        occaUDim_t itemsX, occaUDim_t itemsY, occaUDim_t itemsZ,
+                                        occaUDim_t groupsX, occaUDim_t groupsY, occaUDim_t groupsZ) {
 
   occa::kernel kernel_ = occa::c::getKernel(kernel);
-  kernel_.setWorkingDims(dims,
-                         occa::dim(itemsX, itemsY, itemsZ),
-                         occa::dim(groupsX, groupsY, groupsZ));
+  kernel_.setRunDims(occa::dim(itemsX, itemsY, itemsZ),
+                     occa::dim(groupsX, groupsY, groupsZ));
 }
 
 

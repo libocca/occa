@@ -235,6 +235,10 @@ namespace occa {
 
     const std::string realFilename = io::filename(filename);
 
+    if (!allProps.get("OKL", true)) {
+      return kernel(dHandle->buildKernel(realFilename, kernelName, allProps));
+    }
+
     hash_t hash = occa::hashFile(realFilename);
     hash ^= props.hash();
     hash ^= occa::hash(mode());
@@ -264,7 +268,7 @@ namespace occa {
     if (k->metadata.nestedKernels) {
       std::stringstream ss;
 
-      const bool vc_f = settings().get("verboseCompilation", true);
+      const bool vc_f = settings()["verboseCompilation"];
 
       for (int ki = 0; ki < k->metadata.nestedKernels; ++ki) {
         ss << ki;
@@ -286,7 +290,6 @@ namespace occa {
       }
       settings()["verboseCompilation"] = vc_f;
     }
-
     return ker;
   }
 

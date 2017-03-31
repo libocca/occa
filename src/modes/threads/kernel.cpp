@@ -42,7 +42,6 @@ namespace occa {
 
       job.handle = handle;
 
-      job.dims  = dims;
       job.inner = inner;
       job.outer = outer;
 

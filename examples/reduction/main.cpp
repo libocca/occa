@@ -45,7 +45,7 @@ int main(int argc, char **argv) {
   occa::dim inner(p_Nred);
   occa::dim outer((entries + p_Nred - 1) / p_Nred);
 
-  reduction.setWorkingDims(dims, inner, outer);
+  reduction.setRunDims(dims, inner, outer);
 #endif
 
   o_a.copyFrom(a);

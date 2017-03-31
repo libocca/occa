@@ -154,7 +154,6 @@ namespace occa {
     std::string sourceFilename, binaryFilename;
     occa::properties properties;
 
-    int dims;
     dim inner, outer;
 
     std::vector<kernel> nestedKernels;
@@ -238,7 +237,7 @@ namespace occa {
     dim maxOuterDims();
     dim maxInnerDims();
 
-    void setWorkingDims(int dims, dim inner, dim outer);
+    void setRunDims(dim inner, dim outer);
 
     void addArgument(const int argPos, const kernelArg &arg);
     void runFromArguments() const;
