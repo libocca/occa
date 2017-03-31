@@ -179,9 +179,12 @@ namespace occa {
     void kernel::runFromArguments(const int kArgc, const kernelArg *kArgs) const {
       int occaKernelArgs[6];
 
-      occaKernelArgs[0] = outer.z; occaKernelArgs[3] = inner.z;
-      occaKernelArgs[1] = outer.y; occaKernelArgs[4] = inner.y;
-      occaKernelArgs[2] = outer.x; occaKernelArgs[5] = inner.x;
+      occaKernelArgs[0] = outer.z;
+      occaKernelArgs[1] = outer.y;
+      occaKernelArgs[2] = outer.x;
+      occaKernelArgs[3] = inner.z;
+      occaKernelArgs[4] = inner.y;
+      occaKernelArgs[5] = inner.x;
 
       int argc = 0;
       for (int i = 0; i < kArgc; ++i) {

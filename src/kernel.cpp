@@ -227,9 +227,8 @@ namespace occa {
 
     properties = properties_;
 
-    dims  = 1;
-    inner = occa::dim(1,1,1);
-    outer = occa::dim(1,1,1);
+    inner = occa::dim();
+    outer = occa::dim();
   }
 
   kernel_v::~kernel_v() {}
@@ -242,7 +241,6 @@ namespace occa {
 
     metadata = m.metadata;
 
-    dims = m.dims;
     inner = m.inner;
     outer = m.outer;
 
@@ -356,24 +354,9 @@ namespace occa {
     return kHandle->binaryFilename;
   }
 
-  void kernel::setWorkingDims(int dims, occa::dim inner, occa::dim outer) {
-    for (int i = 0; i < dims; ++i) {
-      inner[i] += (inner[i] ? 0 : 1);
-      outer[i] += (outer[i] ? 0 : 1);
-    }
-
-    for (int i = dims; i < 3; ++i)
-      inner[i] = outer[i] = 1;
-
-    if (kHandle->nestedKernelCount()) {
-      for (int k = 0; k < kHandle->nestedKernelCount(); ++k) {
-        kHandle->nestedKernels[k].setWorkingDims(dims, inner, outer);
-      }
-    } else {
-      kHandle->dims  = dims;
-      kHandle->inner = inner;
-      kHandle->outer = outer;
-    }
+  void kernel::setRunDims(occa::dim inner, occa::dim outer) {
+    kHandle->inner = inner;
+    kHandle->outer = outer;
   }
 
   int kernel::maxDims() {

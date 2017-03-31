@@ -202,8 +202,11 @@ namespace occa {
       size_t inner_[3] = { inner.x, inner.y, inner.z };
 
       int argc = 0;
-      OCCA_OPENCL_ERROR("Kernel (" + metadata.name + ") : Setting Kernel Argument [0]",
-                        clSetKernelArg(clKernel, argc++, sizeof(void*), NULL));
+
+      if (properties.get("OKL", true)) {
+        OCCA_OPENCL_ERROR("Kernel (" + metadata.name + ") : Setting Kernel Argument [0]",
+                          clSetKernelArg(clKernel, argc++, sizeof(void*), NULL));
+      }
 
       for (int i = 0; i < kArgc; ++i) {
         const kernelArg_t &arg = kArgs[i].arg;
@@ -222,7 +225,7 @@ namespace occa {
       OCCA_OPENCL_ERROR("Kernel (" + metadata.name + ") : Kernel Run",
                         clEnqueueNDRangeKernel(*((cl_command_queue*) dHandle->currentStream),
                                                clKernel,
-                                               (cl_int) dims,
+                                               (cl_int) fullOuter.dims,
                                                NULL,
                                                (size_t*) &fullOuter_,
                                                (size_t*) &inner_,

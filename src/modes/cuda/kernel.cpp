@@ -226,8 +226,13 @@ namespace occa {
       int occaKernelInfoArgs = 0;
       int argc = 0;
 
-      void **vArgs = new void*[1 + kernelArg::argumentCount(kArgc, kArgs)];
-      vArgs[argc++] = &occaKernelInfoArgs;
+      const bool addInfoArgs = properties.get("OKL", true);
+
+      void **vArgs = new void*[addInfoArgs + kernelArg::argumentCount(kArgc, kArgs)];
+
+      if (addInfoArgs) {
+        vArgs[argc++] = &occaKernelInfoArgs;
+      }
 
       for (int i = 0; i < kArgc; ++i) {
         const kernelArg_t &arg = kArgs[i].arg;

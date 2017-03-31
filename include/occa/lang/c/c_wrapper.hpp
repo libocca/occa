@@ -239,15 +239,13 @@ OCCA_LFUNC const char* OCCA_RFUNC occaKernelName(occaKernel kernel);
 
 OCCA_LFUNC occaDevice OCCA_RFUNC occaKernelGetDevice(occaKernel kernel);
 
-OCCA_LFUNC void OCCA_RFUNC occaKernelSetWorkingDims(occaKernel kernel,
-                                                    int dims,
-                                                    occaDim items,
-                                                    occaDim groups);
+OCCA_LFUNC void OCCA_RFUNC occaKernelSetRunDims(occaKernel kernel,
+                                                occaDim items,
+                                                occaDim groups);
 
-OCCA_LFUNC void OCCA_RFUNC occaKernelSetAllWorkingDims(occaKernel kernel,
-                                                       int dims,
-                                                       occaUDim_t itemsX, occaUDim_t itemsY, occaUDim_t itemsZ,
-                                                       occaUDim_t groupsX, occaUDim_t groupsY, occaUDim_t groupsZ);
+OCCA_LFUNC void OCCA_RFUNC occaKernelSetAllRunDims(occaKernel kernel,
+                                                   occaUDim_t itemsX, occaUDim_t itemsY, occaUDim_t itemsZ,
+                                                   occaUDim_t groupsX, occaUDim_t groupsY, occaUDim_t groupsZ);
 
 OCCA_LFUNC occaArgumentList OCCA_RFUNC occaCreateArgumentList();
 

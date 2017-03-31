@@ -25,58 +25,73 @@
 namespace occa {
   //---[ Dim ]--------------------------
   dim::dim() :
+    dims(0),
     x(1),
     y(1),
     z(1) {}
 
   dim::dim(udim_t x_) :
+    dims(1),
     x(x_),
     y(1),
     z(1) {}
 
   dim::dim(udim_t x_, udim_t y_) :
+    dims(2),
     x(x_),
     y(y_),
     z(1) {}
 
   dim::dim(udim_t x_, udim_t y_, udim_t z_) :
+    dims(3),
+    x(x_),
+    y(y_),
+    z(z_) {}
+
+  dim::dim(int dims_, udim_t x_, udim_t y_, udim_t z_) :
+    dims(dims_),
     x(x_),
     y(y_),
     z(z_) {}
 
   dim::dim(const dim &d) :
+    dims(d.dims),
     x(d.x),
     y(d.y),
     z(d.z) {}
 
   dim& dim::operator = (const dim &d) {
+    dims = d.dims;
     x = d.x;
     y = d.y;
     z = d.z;
-
     return *this;
   }
 
   dim dim::operator + (const dim &d) const {
-    return dim(x + d.x,
+    return dim(dims > d.dims ? dims : d.dims,
+               x + d.x,
                y + d.y,
                z + d.z);
   }
 
   dim dim::operator - (const dim &d) const {
-    return dim(x - d.x,
+    return dim(dims > d.dims ? dims : d.dims,
+               x - d.x,
                y - d.y,
                z - d.z);
   }
 
   dim dim::operator * (const dim &d) const {
-    return dim(x * d.x,
+    return dim(dims > d.dims ? dims : d.dims,
+               x * d.x,
                y * d.y,
                z * d.z);
   }
 
   dim dim::operator / (const dim &d) const {
-    return dim(x / d.x,
+    return dim(dims > d.dims ? dims : d.dims,
+               x / d.x,
                y / d.y,
                z / d.z);
   }
