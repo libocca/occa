@@ -42,7 +42,7 @@ int main(int argc, char **argv) {
   o_a.copyFrom(a);
   o_b.copyFrom(b);
 
-  addVectors.setRunDims(16, (entries + 15) / 16);
+  addVectors.setRunDims((entries + 15) / 16, 16);
   addVectors(entries, o_a, o_b, o_ab);
 
   o_ab.copyTo(ab);

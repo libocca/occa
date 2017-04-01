@@ -807,21 +807,12 @@ occaDevice OCCA_RFUNC occaKernelGetDevice(occaKernel kernel) {
 }
 
 void OCCA_RFUNC occaKernelSetRunDims(occaKernel kernel,
-                                     occaDim items,
-                                     occaDim groups) {
+                                     occaDim groups,
+                                     occaDim items) {
 
   occa::kernel kernel_ = occa::c::getKernel(kernel);
-  kernel_.setRunDims(occa::dim(items.x, items.y, items.z),
-                     occa::dim(groups.x, groups.y, groups.z));
-}
-
-void OCCA_RFUNC occaKernelSetRunAllDims(occaKernel kernel,
-                                        occaUDim_t itemsX, occaUDim_t itemsY, occaUDim_t itemsZ,
-                                        occaUDim_t groupsX, occaUDim_t groupsY, occaUDim_t groupsZ) {
-
-  occa::kernel kernel_ = occa::c::getKernel(kernel);
-  kernel_.setRunDims(occa::dim(itemsX, itemsY, itemsZ),
-                     occa::dim(groupsX, groupsY, groupsZ));
+  kernel_.setRunDims(occa::dim(groups.x, groups.y, groups.z),
+                     occa::dim(items.x, items.y, items.z));
 }
 
 

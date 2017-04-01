@@ -237,7 +237,7 @@ namespace occa {
     dim maxOuterDims();
     dim maxInnerDims();
 
-    void setRunDims(dim inner, dim outer);
+    void setRunDims(dim outer, dim inner);
 
     void addArgument(const int argPos, const kernelArg &arg);
     void runFromArguments() const;
