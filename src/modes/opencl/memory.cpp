@@ -52,6 +52,29 @@ namespace occa {
       return kArg;
     }
 
+    memory_v* memory::addOffset(const dim_t offset, bool &needsFree) {
+      opencl::device &dev = *((opencl::device*) dHandle);
+      opencl::memory *m = new opencl::memory();
+      m->dHandle = &dev;
+      m->handle  = new cl_mem;
+      m->size    = size - offset;
+
+      cl_buffer_region info;
+      info.origin = offset;
+      info.size   = m->size;
+
+      cl_int error;
+      *((cl_mem*) m->handle) = clCreateSubBuffer(*((cl_mem*) handle),
+                                                 CL_MEM_READ_WRITE,
+                                                 CL_BUFFER_CREATE_TYPE_REGION,
+                                                 &info,
+                                                 &error);
+
+      OCCA_OPENCL_ERROR("Device: clCreateSubBuffer", error);
+      needsFree = true;
+      return m;
+    }
+
     void memory::copyFrom(const void *src,
                           const udim_t bytes,
                           const udim_t offset,

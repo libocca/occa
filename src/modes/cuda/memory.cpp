@@ -51,6 +51,16 @@ namespace occa {
       return kArg;
     }
 
+    memory_v* memory::addOffset(const dim_t offset, bool &needsFree) {
+      memory *m = new memory(properties);
+      m->handle = (((char*) handle) + offset);
+      if (mappedPtr) {
+        m->mappedPtr = (((char*) mappedPtr) + offset);
+      }
+      needsFree = false;
+      return m;
+    };
+
     void memory::copyFrom(const void *src,
                           const udim_t bytes,
                           const udim_t offset,

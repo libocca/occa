@@ -76,6 +76,8 @@ namespace occa {
     virtual void* getHandle(const occa::properties &props) const = 0;
     virtual kernelArg makeKernelArg() const = 0;
 
+    virtual memory_v* addOffset(const dim_t offset, bool &needsFree) = 0;
+
     virtual void copyTo(void *dest,
                         const udim_t bytes,
                         const udim_t offset = 0,
@@ -179,6 +181,8 @@ namespace occa {
     bool uvaIsStale() const;
     void uvaMarkStale();
     void uvaMarkFresh();
+
+    occa::memory operator + (const dim_t offset);
 
     void copyFrom(const void *src,
                   const dim_t bytes = -1,
