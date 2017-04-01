@@ -2805,7 +2805,7 @@ namespace occa {
         ss << "inner[" << i << "] = " << iterExps[1][i] << ";\n";
       }
 
-      ss << "nestedKernels[" << newKernelPos << "].setRunDims(inner, outer);\n"
+      ss << "nestedKernels[" << newKernelPos << "].setRunDims(outer, inner);\n"
          << "nestedKernels[" << newKernelPos << "](";
 
       const int argCount = newKernelVar.argumentCount;

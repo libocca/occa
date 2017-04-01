@@ -354,7 +354,7 @@ namespace occa {
     return kHandle->binaryFilename;
   }
 
-  void kernel::setRunDims(occa::dim inner, occa::dim outer) {
+  void kernel::setRunDims(occa::dim outer, occa::dim inner) {
     kHandle->inner = inner;
     kHandle->outer = outer;
   }
