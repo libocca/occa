@@ -235,10 +235,12 @@ namespace occa {
         *((cl_mem*) mem->handle) = clCreateBuffer(clContext,
                                                   CL_MEM_READ_WRITE,
                                                   bytes, NULL, &error);
+        OCCA_OPENCL_ERROR("Device: clCreateBuffer", error);
       } else {
         *((cl_mem*) mem->handle) = clCreateBuffer(clContext,
                                                   CL_MEM_READ_WRITE | CL_MEM_COPY_HOST_PTR,
                                                   bytes, const_cast<void*>(src), &error);
+        OCCA_OPENCL_ERROR("Device: clCreateBuffer", error);
 
         finish();
       }

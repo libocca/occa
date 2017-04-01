@@ -43,6 +43,13 @@ namespace occa {
       return kArg;
     }
 
+    memory_v* memory::addOffset(const dim_t offset, bool &needsFree) {
+      memory *m = new memory(properties);
+      m->handle = (((char*) handle) + offset);
+      needsFree = false;
+      return m;
+    }
+
     void memory::copyTo(void *dest,
                         const udim_t bytes,
                         const udim_t offset,
