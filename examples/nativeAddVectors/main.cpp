@@ -22,7 +22,8 @@ int main(int argc, char **argv) {
   occa::memory o_a, o_b, o_ab;
 
   //---[ Device setup with string flags ]-------------------
-  device.setup("mode: 'CUDA', deviceID: 0");
+  device.setup("mode: 'Serial'");
+  // device.setup("mode: 'CUDA', deviceID: 0");
   // device.setup("mode: 'OpenCL', platformID : 0, deviceID: 1");
   //========================================================
 
@@ -30,10 +31,14 @@ int main(int argc, char **argv) {
   o_b  = device.malloc(entries*sizeof(float));
   o_ab = device.malloc(entries*sizeof(float));
 
-  // Native CUDA kernel
-  addVectors = device.buildKernel("addVectors.cu",
+  // Native Serial kernel
+  addVectors = device.buildKernel("addVectors.cpp",
                                   "addVectors",
                                   "OKL: false");
+  // Native CUDA kernel
+  // addVectors = device.buildKernel("addVectors.cu",
+  //                                 "addVectors",
+  //                                 "OKL: false");
   // Native OpenCL kernel
   // addVectors = device.buildKernel("addVectors.cl",
   //                                 "addVectors",
@@ -42,7 +47,8 @@ int main(int argc, char **argv) {
   o_a.copyFrom(a);
   o_b.copyFrom(b);
 
-  addVectors.setRunDims((entries + 15) / 16, 16);
+  // Needed for CUDA and OpenCL kernels
+  // addVectors.setRunDims((entries + 15) / 16, 16);
   addVectors(entries, o_a, o_b, o_ab);
 
   o_ab.copyTo(ab);

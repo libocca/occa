@@ -533,6 +533,7 @@ namespace occa {
     }
     case boolean_: {
       out += value_.boolean ? "true" : "false";
+      break;
     }
     case null_: {
       out += "null";

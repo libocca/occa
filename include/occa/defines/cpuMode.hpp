@@ -31,6 +31,7 @@
 
 #include "occa/defines.hpp"
 #include "occa/base.hpp"
+#include "occa/modes/serial/kernel.hpp"
 #include "occa/vector.hpp"
 
 using namespace occa;
@@ -67,13 +68,17 @@ using namespace occa;
 
 
 //---[ Loop Info ]--------------------------------
-#define occaOuterDim2 occaKernelArgs[0]
-#define occaOuterDim1 occaKernelArgs[1]
-#define occaOuterDim0 occaKernelArgs[2]
+#define occaOuterDim2 occaKernelInfoArg_.outerDim2
+#define occaOuterDim1 occaKernelInfoArg_.outerDim1
+#define occaOuterDim0 occaKernelInfoArg_.outerDim0
 // - - - - - - - - - - - - - - - - - - - - - - - -
-#define occaInnerDim2 occaKernelArgs[3]
-#define occaInnerDim1 occaKernelArgs[4]
-#define occaInnerDim0 occaKernelArgs[5]
+#define occaInnerDim2 occaKernelInfoArg_.innerDim2
+#define occaInnerDim1 occaKernelInfoArg_.innerDim1
+#define occaInnerDim0 occaKernelInfoArg_.innerDim0
+// - - - - - - - - - - - - - - - - - - - - - - - -
+#define occaInnerId2 occaKernelInfoArg_.innerId2
+#define occaInnerId1 occaKernelInfoArg_.innerId1
+#define occaInnerId0 occaKernelInfoArg_.innerId0
 // - - - - - - - - - - - - - - - - - - - - - - - -
 #define occaGlobalDim2 (occaInnerDim2 * occaOuterDim2)
 #define occaGlobalId2  (occaOuterId2*occaInnerDim2 + occaInnerId2)
@@ -141,9 +146,9 @@ using namespace occa;
 
 
 //---[ Kernel Info ]------------------------------
-#define occaKernelInfoArg   const int * occaRestrict occaKernelArgs, int occaInnerId0, int occaInnerId1, int occaInnerId2
-#define occaFunctionInfoArg const int * occaRestrict occaKernelArgs, int occaInnerId0, int occaInnerId1, int occaInnerId2
-#define occaFunctionInfo                             occaKernelArgs,     occaInnerId0,     occaInnerId1,     occaInnerId2
+#define occaKernelInfoArg   occa::serial::kernelInfoArg_t &occaKernelInfoArg_
+#define occaFunctionInfoArg occa::serial::kernelInfoArg_t &occaKernelInfoArg_
+#define occaFunctionInfo    occaKernelInfoArg_
 // - - - - - - - - - - - - - - - - - - - - - - - -
 #if (OCCA_OS & (OCCA_LINUX_OS | OCCA_OSX_OS))
 #  define occaKernel extern "C"

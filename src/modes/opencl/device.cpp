@@ -198,7 +198,7 @@ namespace occa {
     kernel_v* device::buildKernelFromBinary(const std::string &filename,
                                             const std::string &kernelName,
                                             const occa::properties &props) {
-      opencl::kernel *k = new opencl::kernel();
+      opencl::kernel *k = new opencl::kernel(props);
 
       k->dHandle = this;
 
@@ -221,12 +221,12 @@ namespace occa {
                              const occa::properties &props) {
 
       if (props.get<bool>("mapped")) {
-        return mappedAlloc(bytes, src);
+        return mappedAlloc(bytes, src, props);
       }
 
       cl_int error;
 
-      opencl::memory *mem = new opencl::memory();
+      opencl::memory *mem = new opencl::memory(props);
       mem->dHandle = this;
       mem->handle  = new cl_mem;
       mem->size    = bytes;
@@ -249,12 +249,13 @@ namespace occa {
     }
 
     memory_v* device::mappedAlloc(const udim_t bytes,
-                                  const void *src) {
+                                  const void *src,
+                                  const occa::properties &props) {
 
       cl_int error;
 
       cl_command_queue &stream = *((cl_command_queue*) currentStream);
-      opencl::memory *mem = new opencl::memory;
+      opencl::memory *mem = new opencl::memory(props);
       mem->dHandle  = this;
       mem->handle   = new cl_mem;
       mem->size     = bytes;
@@ -291,7 +292,7 @@ namespace occa {
     memory_v* device::wrapMemory(void *handle_,
                                  const udim_t bytes,
                                  const occa::properties &props) {
-      opencl::memory *mem = new opencl::memory;
+      opencl::memory *mem = new opencl::memory(props);
       mem->dHandle  = this;
       mem->handle   = new cl_mem;
       mem->size     = bytes;

@@ -186,7 +186,7 @@ namespace occa {
     kernel_v* device::buildKernelFromBinary(const std::string &filename,
                                             const std::string &kernelName,
                                             const occa::properties &props) {
-      cuda::kernel *k = new cuda::kernel();
+      cuda::kernel *k = new cuda::kernel(props);
 
       k->dHandle = this;
       k->context = context;
@@ -203,10 +203,10 @@ namespace occa {
                              const occa::properties &props) {
 
       if (props.get<bool>("mapped", false)) {
-        return mappedAlloc(bytes, src);
+        return mappedAlloc(bytes, src, props);
       }
 
-      cuda::memory *mem = new cuda::memory();
+      cuda::memory *mem = new cuda::memory(props);
       mem->dHandle = this;
       mem->handle  = new CUdeviceptr;
       mem->size    = bytes;
@@ -224,9 +224,10 @@ namespace occa {
     }
 
     memory_v* device::mappedAlloc(const udim_t bytes,
-                                  const void *src) {
+                                  const void *src,
+                                  const occa::properties &props) {
 
-      cuda::memory *mem = new cuda::memory();
+      cuda::memory *mem = new cuda::memory(props);
       mem->dHandle = this;
       mem->handle  = new CUdeviceptr;
       mem->size    = bytes;

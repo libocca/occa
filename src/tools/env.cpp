@@ -54,7 +54,7 @@ namespace occa {
     void initSettings() {
       properties &settings_ = settings();
       settings_["version"] = "1.0";
-      settings_["parserVersion"] = "0.1";
+      settings_["parserVersion"] = "20170302";
       settings_["verboseCompilation"] = env::get<bool>("OCCA_VERBOSE", false);
     }
 

@@ -80,7 +80,8 @@ namespace occa {
                        const occa::properties &props);
 
       memory_v* mappedAlloc(const udim_t bytes,
-                            const void *src);
+                            const void *src,
+                            const occa::properties &props);
 
       memory_v* wrapMemory(void *handle_,
                            const udim_t bytes,

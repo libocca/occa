@@ -4,7 +4,8 @@ kernel void addVectors(const int entries,
                        float *ab) {
 
   for (int i = 0; i < entries; ++i; tile(16)) {
-    if (i < entries)
+    if (i < entries) {
       ab[i] = a[i] + b[i];
+    }
   }
 }
