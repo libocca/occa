@@ -59,7 +59,7 @@ namespace occa {
       }
       needsFree = false;
       return m;
-    };
+    }
 
     void memory::copyFrom(const void *src,
                           const udim_t bytes,

@@ -50,7 +50,7 @@ def runFunctionFromArguments(N):
 
 def runFunctionFromArgument(N):
     return """  case {N}:
-    f(occaKernelInfoArgs, occaInnerId0, occaInnerId1, occaInnerId2, {args}); break;""".format(
+    f({args}); break;""".format(
         N=N,
         args=', '.join('args[{0}]'.format(n) for n in range(N)),
     )

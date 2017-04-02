@@ -701,11 +701,7 @@ namespace occa {
 #endif
     }
 
-    void runFunction(handleFunction_t f,
-                     const int *occaKernelInfoArgs,
-                     int occaInnerId0, int occaInnerId1, int occaInnerId2,
-                     int argc, void **args) {
-
+    void runFunction(handleFunction_t f, const int argc, void **args) {
 #include "operators/runFunctionFromArguments.cpp"
     }
 

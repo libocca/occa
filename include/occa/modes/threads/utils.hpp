@@ -28,8 +28,6 @@
 
 #include "occa/defines.hpp"
 #include "occa/modes/threads/headers.hpp"
-#include "occa/tools/sys.hpp"
-#include "occa/device.hpp"
 
 namespace occa {
   namespace threads {

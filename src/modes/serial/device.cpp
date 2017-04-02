@@ -155,7 +155,7 @@ namespace occa {
     kernel_v* device::buildKernel(const std::string &filename,
                                   const std::string &kernelName,
                                   const occa::properties &props) {
-      kernel *k = new kernel();
+      kernel *k = new kernel(props);
       k->dHandle = this;
       k->build(filename, kernelName, props);
       return k;
@@ -164,7 +164,7 @@ namespace occa {
     kernel_v* device::buildKernelFromBinary(const std::string &filename,
                                             const std::string &kernelName,
                                             const occa::properties &props) {
-      kernel *k = new kernel();
+      kernel *k = new kernel(props);
       k->dHandle = this;
       k->buildFromBinary(filename, kernelName, props);
       return k;
@@ -173,7 +173,7 @@ namespace occa {
     memory_v* device::malloc(const udim_t bytes,
                              const void *src,
                              const occa::properties &props) {
-      memory *mem = new memory();
+      memory *mem = new memory(props);
 
       mem->dHandle = this;
       mem->size    = bytes;
@@ -189,7 +189,7 @@ namespace occa {
     memory_v* device::wrapMemory(void *handle_,
                                  const udim_t bytes,
                                  const occa::properties &props) {
-      memory *mem = new memory();
+      memory *mem = new memory(props);
 
       mem->dHandle = this;
       mem->size    = bytes;

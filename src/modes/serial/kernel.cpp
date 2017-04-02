@@ -177,16 +177,18 @@ namespace occa {
     }
 
     void kernel::runFromArguments(const int kArgc, const kernelArg *kArgs) const {
-      int occaKernelArgs[6];
-
-      occaKernelArgs[0] = outer.z;
-      occaKernelArgs[1] = outer.y;
-      occaKernelArgs[2] = outer.x;
-      occaKernelArgs[3] = inner.z;
-      occaKernelArgs[4] = inner.y;
-      occaKernelArgs[5] = inner.x;
-
       int argc = 0;
+      kernelInfoArg_t info;
+
+      if (properties.get("OKL", true)) {
+        info.outerDim0 = outer.x; info.innerDim0 = inner.x;
+        info.outerDim1 = outer.y; info.innerDim1 = inner.y;
+        info.outerDim2 = outer.z; info.innerDim2 = inner.z;
+
+        info.innerId0 = info.innerId1 = info.innerId2 = 0;
+        vArgs[argc++] = &info;
+      }
+
       for (int i = 0; i < kArgc; ++i) {
         const kernelArg_t &arg = kArgs[i].arg;
         const dim_t extraArgCount = kArgs[i].extraArgs.size();
@@ -198,11 +200,7 @@ namespace occa {
         }
       }
 
-      int occaInnerId0 = 0, occaInnerId1 = 0, occaInnerId2 = 0;
-      sys::runFunction(handle,
-                       occaKernelArgs,
-                       occaInnerId0, occaInnerId1, occaInnerId2,
-                       argc, vArgs);
+      sys::runFunction(handle, argc, vArgs);
     }
 
     void kernel::free() {

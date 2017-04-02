@@ -20,6 +20,8 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  */
 
+#include "occa/tools/sys.hpp"
+#include "occa/modes/serial/kernel.hpp"
 #include "occa/modes/threads/utils.hpp"
 
 namespace occa {
@@ -118,22 +120,15 @@ namespace occa {
         end[dp]   = start[dp] + loops;
       }
 
-      int occaKernelArgs[12];
+      serial::kernelInfoArg_t info;
+      info.outerDim0 = outer.x; info.innerDim0 = inner.x;
+      info.outerDim1 = outer.y; info.innerDim1 = inner.y;
+      info.outerDim2 = outer.z; info.innerDim2 = inner.z;
 
-      occaKernelArgs[0]  = outer.z; occaKernelArgs[3]  = inner.z;
-      occaKernelArgs[1]  = outer.y; occaKernelArgs[4]  = inner.y;
-      occaKernelArgs[2]  = outer.x; occaKernelArgs[5]  = inner.x;
+      info.innerId0 = info.innerId1 = info.innerId2 = 0;
+      job.args.push_back(&info);
 
-      occaKernelArgs[6]  = start.z; occaKernelArgs[7]  = end.z;
-      occaKernelArgs[8]  = start.y; occaKernelArgs[9]  = end.y;
-      occaKernelArgs[10] = start.x; occaKernelArgs[11] = end.x;
-
-      int occaInnerId0 = 0, occaInnerId1 = 0, occaInnerId2 = 0;
-
-      sys::runFunction(tmpKernel,
-                       occaKernelArgs,
-                       occaInnerId0, occaInnerId1, occaInnerId2,
-                       (int) job.args.size(), &(job.args[0]));
+      sys::runFunction(tmpKernel, (int) job.args.size(), &(job.args[0]));
     }
     //==================================
   }

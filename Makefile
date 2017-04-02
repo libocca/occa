@@ -179,6 +179,11 @@ test:
 	make -j 4 CXXFLAGS='-g' FCFLAGS='-g'; \
 	./main
 
+	cd $(OCCA_DIR)/examples/nativeAddVectors/ && \
+	rm -f main && \
+	make -j 4 CXXFLAGS='-g' FCFLAGS='-g'; \
+	./main
+
 	cd $(OCCA_DIR)/examples/usingArrays/ && \
 	rm -f main && \
 	make -j 4 CXXFLAGS='-g' FCFLAGS='-g'; \

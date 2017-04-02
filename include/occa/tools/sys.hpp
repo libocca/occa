@@ -31,10 +31,7 @@
 #include "occa/tools/hash.hpp"
 
 namespace occa {
-  typedef void (*handleFunction_t)(const int *occaKernelInfoArgs,
-                                   int occaInnerId0,
-                                   int occaInnerId1,
-                                   int occaInnerId2, ...);
+  typedef void (*handleFunction_t)(...);
 
   namespace flags {
     extern const int checkCacheDir;
@@ -118,10 +115,7 @@ namespace occa {
 
     void dlclose(void *dlHandle);
 
-    void runFunction(handleFunction_t f,
-                     const int *occaKernelInfoArgs,
-                     int occaInnerId0, int occaInnerId1, int occaInnerId2,
-                     int argc, void **args);
+    void runFunction(handleFunction_t f, const int argc, void **args);
 
     void printStacktrace(const int frameStart = 0, const std::string indent = "");
     std::string prettyStackSymbol(void *frame, const char *symbol);

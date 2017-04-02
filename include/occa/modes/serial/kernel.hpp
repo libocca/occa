@@ -29,6 +29,12 @@
 
 namespace occa {
   namespace serial {
+    struct kernelInfoArg_t {
+      int outerDim2, outerDim1, outerDim0;
+      int innerDim2, innerDim1, innerDim0;
+      int innerId2, innerId1, innerId0;
+    };
+
     class kernel : public occa::kernel_v {
     protected:
       void *dlHandle;
