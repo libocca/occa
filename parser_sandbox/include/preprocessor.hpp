@@ -85,6 +85,7 @@ namespace occa {
     static directiveTrie_t& getDirectiveTrie();
 
     void pushStatus(const int status);
+    int popStatus();
 
     void setFilename(const std::string &filename, const bool add = true);
 
@@ -168,6 +169,11 @@ namespace occa {
       updatingSkipToWhitespace((const char *&) c);
     }
     //==================================
+
+    template <class TM>
+    TM eval(const std::string &s) {
+      return TM();
+    }
   };
 }
 #endif
