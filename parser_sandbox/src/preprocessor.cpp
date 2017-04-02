@@ -15,7 +15,8 @@ namespace occa {
   //|-----[ Status ]--------------------
   static const int reading    = (1 << 0);
   static const int ignoring   = (1 << 1);
-  static const int finishedIf = (1 << 2);
+  static const int foundElse  = (1 << 2);
+  static const int finishedIf = (1 << 3);
   //|===================================
 
   preprocessor_t::status_t::status_t() {}
@@ -35,11 +36,11 @@ namespace occa {
   }
 
   void preprocessor_t::frame_t::clear() {
-    filenameIdx = 0;
-    fileStart = NULL;
-    fileEnd = NULL;
+    filenameIdx  = 0;
+    fileStart    = NULL;
+    fileEnd      = NULL;
     filePosition = NULL;
-    lineNumber = 1;
+    lineNumber   = 1;
   }
 
   std::string preprocessor_t::frame_t::filename() const {
@@ -156,6 +157,17 @@ namespace occa {
     currentStatus.filePosition = currentFrame.filePosition;
   }
 
+  int preprocessor_t::popStatus() {
+    const int pos = (int) statusStack.size() - 1;
+    if (pos >= 0) {
+      currentStatus.status       = statusStack[pos].status;
+      currentStatus.filePosition = statusStack[pos].filePosition;
+      statusStack.pop_back();
+      return currentStatus.status;
+    }
+    return 0;
+  }
+
   void preprocessor_t::setFilename(const std::string &filename, const bool add) {
     if (add) {
       allFilenames.add(filename, filename);
@@ -185,8 +197,7 @@ namespace occa {
       currentFrame = frames[frames.size() - 1];
       frames.pop_back();
 
-      if ((frames.size() == 0) &&
-          (0 < statusStack.size())) {
+      if (!frames.size() && statusStack.size()) {
         printError("#if without a closing #endif",
                    currentStatus.filePosition);
       }
@@ -285,9 +296,10 @@ namespace occa {
       return;
     }
 
-    // Parse #if[,def], #el[se,if], #endif even when ignored
-    // For some reason the preprocessor honors ignored #if/#el/#endif stacks
+    // Parse #if[,def], #el[se,if], #end[if] even when ignored
+    // The preprocessor honors ignored #if/#el/#endif stacks
     const int status = currentStatus.status;
+
     if (!(status & ignoring) ||
         (strncmp(cStart, "if" , 2) &&
          strncmp(cStart, "el" , 2) &&
@@ -302,69 +314,99 @@ namespace occa {
     char *cStart = c;
     updatingSkipTo(c, '\n');
 
-    int &status = currentStatus.status;
-    if (status & ignoring) {
-      pushStatus(ignoring | finishedIf);
-      return;
+    int status = currentStatus.status;
+
+    if (!(status & ignoring)) {
+      std::string line;
+      applyMacros(cStart, c - cStart, line);
+      pushStatus(eval<bool>(line) ? reading : ignoring);
+    } else {
+      pushStatus(finishedIf);
     }
-
-    std::string line;
-    applyMacros(cStart, c - cStart, line);
-
-    status |= finishedIf;
   }
 
   void preprocessor_t::processIfdef(char *&dStart, char *&c) {
     char *cStart = c;
     updatingSkipTo(c, '\n');
 
-    int &status = currentStatus.status;
-    if (status & ignoring) {
-      pushStatus(ignoring | finishedIf);
-      return;
+    int status = currentStatus.status;
+
+    if (!(status & ignoring)) {
+      std::string line;
+      applyMacros(cStart, c - cStart, line);
+
+      const macro_t *macro = getMacro(&(line[0]), line.size());
+      pushStatus(macro != NULL ? reading : ignoring);
+    } else {
+      pushStatus(finishedIf);
     }
-
-    std::string line;
-    applyMacros(cStart, c - cStart, line);
-    const macro_t *macro = getMacro(&(line[0]), line.size());
-
-    status |= (macro != NULL) ? ignoring : finishedIf;
   }
 
   void preprocessor_t::processIfndef(char *&dStart, char *&c) {
-    processIfdef(dStart, c);
-    int &status = currentStatus.status;
-    // Ifdef already set finishedIf so we can return
-    if (status & ignoring) {
-      return;
+    char *cStart = c;
+    updatingSkipTo(c, '\n');
+
+    int status = currentStatus.status;
+
+    if (!(status & ignoring)) {
+      std::string line;
+      applyMacros(cStart, c - cStart, line);
+
+      const macro_t *macro = getMacro(&(line[0]), line.size());
+      pushStatus(macro == NULL ? reading : ignoring);
+    } else {
+      pushStatus(finishedIf);
     }
-    // Do the opposite as Ifdef
-    status ^= finishedIf;
   }
 
   void preprocessor_t::processElif(char *&dStart, char *&c) {
-    processIf(dStart, c);
+    char *cStart = c;
+    updatingSkipTo(c, '\n');
+
+    int status = currentStatus.status;
+
+    if (!statusStack.size()) {
+      printError("#elif without #if", cStart);
+    }
+
+    if (status & ignoring) {
+      std::string line;
+      applyMacros(cStart, c - cStart, line);
+      pushStatus(eval<bool>(line) ? reading : ignoring);
+    } else {
+      pushStatus(finishedIf);
+    }
   }
 
   void preprocessor_t::processElse(char *&dStart, char *&c) {
-    int &status = currentStatus.status;
-    if (status & finishedIf) {
-      updatingSkipTo(c, '\n');
-      return;
+    char *cStart = c;
+    updatingSkipTo(c, '\n');
+
+    int status = currentStatus.status;
+
+    if (!statusStack.size()) {
+      printError("#else without #if", cStart);
     }
-    status |= finishedIf;
+    if (status & foundElse) {
+      printError("Found two #else directives", cStart);
+    }
+
+    if (status & ignoring) {
+      std::string line;
+      applyMacros(cStart, c - cStart, line);
+      pushStatus(foundElse | (eval<bool>(line) ? reading : ignoring));
+    } else {
+      pushStatus(foundElse | finishedIf);
+    }
   }
 
   void preprocessor_t::processEndif(char *&dStart, char *&c) {
     const char *cStart = c;
     updatingSkipTo(c, '\n');
 
-    if ((statusStack.size() == 0) ||
-        (currentStatus.status & ignoring)) {
+    if (!popStatus()) {
       printError("#endif without #if", cStart);
     }
-
-    statusStack.pop_back();
   }
 
   void preprocessor_t::processDefine(char *&dStart, char *&c) {
