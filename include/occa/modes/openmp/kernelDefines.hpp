@@ -223,10 +223,10 @@ TM occaAtomicCAS(TM *ptr, const int comp, const TM &update) {
 
 
 //---[ Misc ]-------------------------------------
-#define occaParallelFor2 OCCA_PRAGMA("omp parallel for collapse(3) firstprivate(occaInnerId0,occaInnerId1,occaInnerId2)")
-#define occaParallelFor1 OCCA_PRAGMA("omp parallel for collapse(2) firstprivate(occaInnerId0,occaInnerId1,occaInnerId2)")
-#define occaParallelFor0 OCCA_PRAGMA("omp parallel for             firstprivate(occaInnerId0,occaInnerId1,occaInnerId2)")
-#define occaParallelFor  OCCA_PRAGMA("omp parallel for             firstprivate(occaInnerId0,occaInnerId1,occaInnerId2)")
+#define occaParallelFor2 OCCA_PRAGMA("omp parallel for collapse(3) firstprivate(occaKernelInfoArg_)")
+#define occaParallelFor1 OCCA_PRAGMA("omp parallel for collapse(2) firstprivate(occaKernelInfoArg_)")
+#define occaParallelFor0 OCCA_PRAGMA("omp parallel for             firstprivate(occaKernelInfoArg_)")
+#define occaParallelFor  OCCA_PRAGMA("omp parallel for             firstprivate(occaKernelInfoArg_)")
 //================================================
 
 #endif

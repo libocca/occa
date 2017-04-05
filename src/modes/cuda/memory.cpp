@@ -37,7 +37,7 @@ namespace occa {
     memory::~memory() {}
 
     void* memory::getHandle(const occa::properties &properties_) const {
-      if (properties_.get<std::string>("type", "") == "mapped") {
+      if (props.get<bool>("mapped", false)) {
         return mappedPtr;
       }
       return handle;
@@ -129,6 +129,7 @@ namespace occa {
       if (mappedPtr) {
         OCCA_CUDA_ERROR("Device: mappedFree()",
                         cuMemFreeHost(mappedPtr));
+        mappedPtr = NULL;
       } else if (handle) {
         cuMemFree(*((CUdeviceptr*) handle));
       }
