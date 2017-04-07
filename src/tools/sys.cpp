@@ -135,8 +135,9 @@ namespace occa {
       size_t lineBytes = 512;
       char lineBuffer[512];
 
-      while(fgets(lineBuffer, lineBytes, fp))
+      while (fgets(lineBuffer, lineBytes, fp)) {
         output += lineBuffer;
+      }
 
 #if (OCCA_OS & (OCCA_LINUX_OS | OCCA_OSX_OS))
       return pclose(fp);
@@ -538,14 +539,16 @@ namespace occa {
              << " -o " << binaryFilename
              << " > /dev/null 2>&1";
 
-          const int compileError = system(ss.str().c_str());
+          system(ss.str().c_str());
 
-          if (!compileError) {
-            int exitStatus = system(binaryFilename.c_str());
-            int vendorBit  = WEXITSTATUS(exitStatus);
+          OCCA_ERROR("Could not compile compilerVendorTest.cpp",
+                     sys::fileExists(binaryFilename));
 
-            if (vendorBit < sys::vendor::b_max)
-              vendor_ = (1 << vendorBit);
+          int exitStatus = system(binaryFilename.c_str());
+          int vendorBit  = WEXITSTATUS(exitStatus);
+
+          if (vendorBit < sys::vendor::b_max) {
+            vendor_ = (1 << vendorBit);
           }
 
           ss.str("");
@@ -609,11 +612,12 @@ namespace occa {
     void addSharedBinaryFlagsTo(const int vendor_, std::string &flags) {
       std::string sFlags = sys::compilerSharedBinaryFlags(vendor_);
 
-      if (flags.size() == 0)
+      if (flags.size() == 0) {
         flags = sFlags;
-
-      if (flags.find(sFlags) == std::string::npos)
+      }
+      if (flags.find(sFlags) == std::string::npos) {
         flags = (sFlags + " " + flags);
+      }
     }
 
     //---[ Dynamic Methods ]------------

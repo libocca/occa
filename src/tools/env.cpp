@@ -65,6 +65,8 @@ namespace occa {
 #if (OCCA_OS & (OCCA_LINUX_OS | OCCA_OSX_OS))
       ::signal(SIGKILL, env::signalExit);
       ::signal(SIGQUIT, env::signalExit);
+      ::signal(SIGUSR1, env::signalExit);
+      ::signal(SIGUSR2, env::signalExit);
 #endif
     }
 
