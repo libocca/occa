@@ -87,7 +87,8 @@ namespace occa {
              << " -o " << binaryFilename
              << " > /dev/null 2>&1";
 
-          const int compileError = system(ss.str().c_str());
+          const std::string compileLine = ss.str();
+          const int compileError = system(compileLine.c_str());
 
           if (compileError) {
             flag = openmp::notSupported;

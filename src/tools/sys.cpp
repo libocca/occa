@@ -539,7 +539,8 @@ namespace occa {
              << " -o " << binaryFilename
              << " > /dev/null 2>&1";
 
-          system(ss.str().c_str());
+          const std::string compileLine = ss.str();
+          system(compileLine.c_str());
 
           OCCA_ERROR("Could not compile compilerVendorTest.cpp",
                      sys::fileExists(binaryFilename));
