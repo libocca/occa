@@ -40,15 +40,15 @@ namespace occa {
   //---[ Device Functions ]-------------
   device host() {
     static device _host;
-    if (_host.getDHandle() == NULL) {
-      _host = occa::device(newModeDevice(occa::properties("mode: 'Serial'")));
+    if (!_host.isInitialized()) {
+      _host = occa::device(newModeDevice("mode: 'Serial'"));
     }
     return _host;
   }
 
   device& currentDevice() {
     static device cdev;
-    if (cdev.getDHandle() == NULL) {
+    if (!cdev.isInitialized()) {
       cdev = host();
     }
     return cdev;

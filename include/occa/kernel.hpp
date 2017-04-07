@@ -216,6 +216,7 @@ namespace occa {
 
   private:
     void setKHandle(kernel_v *kHandle_);
+    void setDHandle(device_v *dHandle_);
     void removeKHandleRef();
 
   public:

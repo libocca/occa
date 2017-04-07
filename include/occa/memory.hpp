@@ -137,6 +137,7 @@ namespace occa {
 
   private:
     void setMHandle(memory_v *mHandle_);
+    void setDHandle(device_v *dHandle_);
     void removeMHandleRef();
 
   public:

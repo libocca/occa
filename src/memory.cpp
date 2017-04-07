@@ -110,9 +110,18 @@ namespace occa {
     }
   }
 
+  void memory::setDHandle(device_v *dHandle) {
+    mHandle->dHandle = dHandle;
+    // If this is the very first reference, update the device references
+    if (mHandle->getRefs() == 1) {
+      mHandle->dHandle->addRef();
+    }
+  }
+
   void memory::removeMHandleRef() {
     if (mHandle && !mHandle->removeRef()) {
       free();
+      device::removeDHandleRefFrom(mHandle->dHandle);
       delete mHandle;
       mHandle = NULL;
     }

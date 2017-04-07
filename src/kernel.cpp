@@ -308,9 +308,18 @@ namespace occa {
     }
   }
 
+  void kernel::setDHandle(device_v *dHandle) {
+    kHandle->dHandle = dHandle;
+    // If this is the very first reference, update the device references
+    if (kHandle->getRefs() == 1) {
+      kHandle->dHandle->addRef();
+    }
+  }
+
   void kernel::removeKHandleRef() {
     if (kHandle && !kHandle->removeRef()) {
       free();
+      device::removeDHandleRefFrom(kHandle->dHandle);
       delete kHandle;
       kHandle = NULL;
     }
