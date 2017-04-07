@@ -4,7 +4,6 @@
 
 int main(int argc, char **argv) {
   occa::printModeInfo();
-
   int entries = 5;
 
   float *a  = new float[entries];
@@ -59,8 +58,9 @@ int main(int argc, char **argv) {
     std::cout << i << ": " << ab[i] << '\n';
   }
   for (int i = 0; i < entries; ++i) {
-    if (ab[i] != (a[i] + b[i]))
+    if (ab[i] != (a[i] + b[i])) {
       throw 1;
+    }
   }
 
   delete [] a;

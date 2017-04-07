@@ -89,10 +89,14 @@ namespace occa {
   }
 
   void device::removeDHandleRef() {
-    if (dHandle && !dHandle->removeRef()) {
-      free();
-      delete dHandle;
-      dHandle = NULL;
+    removeDHandleRefFrom(dHandle);
+  }
+
+  void device::removeDHandleRefFrom(device_v *&dHandle_) {
+    if (dHandle_ && !dHandle_->removeRef()) {
+      free(dHandle_);
+      delete dHandle_;
+      dHandle_ = NULL;
     }
   }
 
@@ -107,16 +111,20 @@ namespace occa {
   }
 
   void device::free() {
-    if (dHandle == NULL) {
+    free(dHandle);
+  }
+
+  void device::free(device_v *&dHandle_) {
+    if (dHandle_ == NULL) {
       return;
     }
-    const int streamCount = dHandle->streams.size();
+    const int streamCount = dHandle_->streams.size();
 
     for (int i = 0; i < streamCount; ++i) {
-      dHandle->freeStream(dHandle->streams[i]);
+      dHandle_->freeStream(dHandle_->streams[i]);
     }
-    dHandle->streams.clear();
-    dHandle->free();
+    dHandle_->streams.clear();
+    dHandle_->free();
   }
 
   bool device::isInitialized() {
@@ -236,17 +244,18 @@ namespace occa {
     const std::string realFilename = io::filename(filename);
 
     if (!allProps.get("OKL", true)) {
-      return kernel(dHandle->buildKernel(realFilename, kernelName, allProps));
+      kernel ker(dHandle->buildKernel(realFilename, kernelName, allProps));
+      ker.setDHandle(dHandle);
+      return ker;
     }
 
     hash_t hash = occa::hashFile(realFilename);
     hash ^= props.hash();
     hash ^= occa::hash(mode());
 
-    occa::properties launcherProps("mode: 'Serial'");
-    kernel ker(newModeKernel(launcherProps));
+    kernel ker(newModeKernel(host().properties()));
+    ker.setDHandle(host().dHandle);
     kernel_v *k = ker.kHandle;
-    k->dHandle = newModeDevice(launcherProps);
 
     const std::string hashDir = io::hashDir(realFilename, hash);
     const std::string parsedFile = hashDir + "parsedSource.occa";
@@ -277,6 +286,7 @@ namespace occa {
         ss.str("");
 
         kernel sKer(dHandle->buildKernel(parsedFile, sKerName, allProps));
+        sKer.setDHandle(dHandle);
         sKer.kHandle->metadata               = k->metadata;
         sKer.kHandle->metadata.name          = sKerName;
         sKer.kHandle->metadata.nestedKernels = 0;
@@ -332,7 +342,7 @@ namespace occa {
                                        const occa::properties &props) {
 
     kernel ker(dHandle->buildKernelFromBinary(filename, kernelName, props));
-    ker.kHandle->dHandle = dHandle;
+    ker.setDHandle(dHandle);
     return ker;
   }
   //  |=================================
@@ -341,24 +351,35 @@ namespace occa {
   memory device::malloc(const dim_t bytes,
                         const void *src,
                         const occa::properties &props) {
-    OCCA_ERROR("Trying to allocate negative bytes (" << bytes << ")",
-               bytes >= 0);
+
+    OCCA_ERROR("Trying to allocate "
+               << (bytes ? "negative" : "zero") << " bytes (" << bytes << ")",
+               bytes > 0);
 
     memory mem(dHandle->malloc(bytes, src, props));
-    mem.mHandle->dHandle = dHandle;
+    mem.setDHandle(dHandle);
 
     dHandle->bytesAllocated += bytes;
 
     return mem;
   }
 
+  memory device::malloc(const dim_t bytes,
+                        const occa::properties &props) {
+
+    return malloc(bytes, NULL, props);
+  }
+
   void* device::umalloc(const dim_t bytes,
                         const void *src,
                         const occa::properties &props) {
-    OCCA_ERROR("Trying to allocate negative bytes (" << bytes << ")",
-               bytes >= 0);
+
+    OCCA_ERROR("Trying to allocate "
+               << (bytes ? "negative" : "zero") << " bytes (" << bytes << ")",
+               bytes > 0);
 
     memory mem = malloc(bytes, src, props);
+    mem.setDHandle(dHandle);
     mem.setupUva();
     mem.dontUseRefs();
 
@@ -369,14 +390,21 @@ namespace occa {
     return mem.mHandle->uvaPtr;
   }
 
+  void* device::umalloc(const dim_t bytes,
+                        const occa::properties &props) {
+
+    return umalloc(bytes, NULL, props);
+  }
+
   occa::memory device::wrapMemory(void *handle_,
                                   const dim_t bytes,
                                   const occa::properties &props) {
+
     OCCA_ERROR("Trying to wrap memory with negative bytes (" << bytes << ")",
                bytes >= 0);
 
     memory mem(dHandle->wrapMemory(handle_, bytes, props));
-    mem.mHandle->dHandle = dHandle;
+    mem.setDHandle(dHandle);
     mem.dontUseRefs();
 
     dHandle->bytesAllocated += bytes;

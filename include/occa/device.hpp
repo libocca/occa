@@ -112,6 +112,9 @@ namespace occa {
 
   //---[ device ]-----------------------
   class device {
+    friend class kernel;
+    friend class memory;
+
   private:
     device_v *dHandle;
 
@@ -127,6 +130,7 @@ namespace occa {
   private:
     void setDHandle(device_v *dhandle_);
     void removeDHandleRef();
+    static void removeDHandleRefFrom(device_v *&dhandle_);
 
   public:
     void dontUseRefs();
@@ -134,6 +138,7 @@ namespace occa {
     bool operator == (const occa::device &d) const;
 
     void free();
+    static void free(device_v *&dHandle_);
 
     bool isInitialized();
 
