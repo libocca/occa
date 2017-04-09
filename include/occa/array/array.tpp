@@ -287,6 +287,7 @@ namespace occa {
   void array<TM,idxType>::allocate() {
     data_   = (TM*) device.umalloc(bytes());
     memory_ = occa::memory(data_);
+    memory_.getMHandle()->setRefs(1);
   }
 
   template <class TM, const int idxType>

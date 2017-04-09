@@ -36,6 +36,7 @@ namespace occa {
   class memory_v; class memory;
   class device_v; class device;
   class kernelArg_t;
+  class kernelBuilder;
 
   typedef std::vector<kernelArg_t>     kArgVector_t;
   typedef kArgVector_t::iterator       kArgVectorIterator;
@@ -44,6 +45,10 @@ namespace occa {
   typedef std::map<hash_t,occa::kernel>     hashedKernelMap_t;
   typedef hashedKernelMap_t::iterator       hashedKernelMapIterator;
   typedef hashedKernelMap_t::const_iterator cHashedKernelMapIterator;
+
+  typedef std::vector<kernelBuilder>            kernelBuilderVector_t;
+  typedef kernelBuilderVector_t::iterator       kernelBuilderVectorIterator;
+  typedef kernelBuilderVector_t::const_iterator cKernelBuilderVectorIterator;
 
   //---[ KernelArg ]--------------------
   namespace kArgInfo {

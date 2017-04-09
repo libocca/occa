@@ -36,6 +36,8 @@ namespace occa {
     int getRefs() const;
     void addRef();
     int removeRef();
+
+    void setRefs(const int refs_);
     void dontUseRefs();
   };
 }
