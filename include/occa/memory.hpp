@@ -159,7 +159,7 @@ namespace occa {
     udim_t size() const;
 
     template <class TM>
-    udim_t entries() const {
+    udim_t size() const {
       if (mHandle == NULL) {
         return 0;
       }
