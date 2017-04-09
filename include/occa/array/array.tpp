@@ -150,16 +150,17 @@ namespace occa {
 
   //---[ array(...) ]------------------
   template <class TM, const int idxType>
-  array<TM,idxType>::array(const int dim_, const udim_t *d) {
+  array<TM,idxType>::array(const int dim_, const udim_t *d,
+                           const TM *src) {
     initSOrder(dim_);
 
     switch(dim_) {
-    case 1: allocate(d[0]);                               break;
-    case 2: allocate(d[0], d[1]);                         break;
-    case 3: allocate(d[0], d[1], d[2]);                   break;
-    case 4: allocate(d[0], d[1], d[2], d[3]);             break;
-    case 5: allocate(d[0], d[1], d[2], d[3], d[4]);       break;
-    case 6: allocate(d[0], d[1], d[2], d[3], d[4], d[5]); break;
+    case 1: allocate(d[0], src);                               break;
+    case 2: allocate(d[0], d[1], src);                         break;
+    case 3: allocate(d[0], d[1], d[2], src);                   break;
+    case 4: allocate(d[0], d[1], d[2], d[3], src);             break;
+    case 5: allocate(d[0], d[1], d[2], d[3], d[4], src);       break;
+    case 6: allocate(d[0], d[1], d[2], d[3], d[4], d[5], src); break;
     default:
       if (dim_ <= 0) {
         OCCA_ERROR("Number of dimensions must be [1-6]",
@@ -172,54 +173,130 @@ namespace occa {
   }
 
   template <class TM, const int idxType>
-  array<TM,idxType>::array(const udim_t d0) {
+  array<TM,idxType>::array(const int dim_, const udim_t *d,
+                           const occa::memory src) {
+    initSOrder(dim_);
+
+    switch(dim_) {
+    case 1: allocate(d[0], src);                               break;
+    case 2: allocate(d[0], d[1], src);                         break;
+    case 3: allocate(d[0], d[1], d[2], src);                   break;
+    case 4: allocate(d[0], d[1], d[2], d[3], src);             break;
+    case 5: allocate(d[0], d[1], d[2], d[3], d[4], src);       break;
+    case 6: allocate(d[0], d[1], d[2], d[3], d[4], d[5], src); break;
+    default:
+      if (dim_ <= 0) {
+        OCCA_ERROR("Number of dimensions must be [1-6]",
+                   false);
+      } else {
+        OCCA_ERROR("occa::array can only take up to 6 dimensions",
+                   false);
+      }
+    }
+  }
+
+  template <class TM, const int idxType>
+  array<TM,idxType>::array(const udim_t d0,
+                           const TM *src) {
     initSOrder(1);
-    allocate(d0);
+    allocate(d0, src);
   }
 
   template <class TM, const int idxType>
-  array<TM,idxType>::array(const udim_t d0, const udim_t d1) {
+  array<TM,idxType>::array(const udim_t d0, const udim_t d1,
+                           const TM *src) {
     initSOrder(2);
-    allocate(d0, d1);
+    allocate(d0, d1, src);
   }
 
   template <class TM, const int idxType>
-  array<TM,idxType>::array(const udim_t d0, const udim_t d1, const udim_t d2) {
+  array<TM,idxType>::array(const udim_t d0, const udim_t d1, const udim_t d2,
+                           const TM *src) {
     initSOrder(3);
-    allocate(d0, d1, d2);
+    allocate(d0, d1, d2, src);
   }
 
   template <class TM, const int idxType>
   array<TM,idxType>::array(const udim_t d0, const udim_t d1, const udim_t d2,
-                           const udim_t d3) {
+                           const udim_t d3,
+                           const TM *src) {
     initSOrder(4);
-    allocate(d0, d1, d2, d3);
+    allocate(d0, d1, d2, d3, src);
   }
 
   template <class TM, const int idxType>
   array<TM,idxType>::array(const udim_t d0, const udim_t d1, const udim_t d2,
-                           const udim_t d3, const udim_t d4) {
+                           const udim_t d3, const udim_t d4,
+                           const TM *src) {
     initSOrder(5);
-    allocate(d0, d1, d2, d3, d4);
+    allocate(d0, d1, d2, d3, d4, src);
   }
 
   template <class TM, const int idxType>
   array<TM,idxType>::array(const udim_t d0, const udim_t d1, const udim_t d2,
-                           const udim_t d3, const udim_t d4, const udim_t d5) {
+                           const udim_t d3, const udim_t d4, const udim_t d5,
+                           const TM *src) {
     initSOrder(6);
-    allocate(d0, d1, d2, d3, d4, d5);
+    allocate(d0, d1, d2, d3, d4, d5, src);
+  }
+
+  template <class TM, const int idxType>
+  array<TM,idxType>::array(const udim_t d0,
+                           const occa::memory src) {
+    initSOrder(1);
+    allocate(d0, src);
+  }
+
+  template <class TM, const int idxType>
+  array<TM,idxType>::array(const udim_t d0, const udim_t d1,
+                           const occa::memory src) {
+    initSOrder(2);
+    allocate(d0, d1, src);
+  }
+
+  template <class TM, const int idxType>
+  array<TM,idxType>::array(const udim_t d0, const udim_t d1, const udim_t d2,
+                           const occa::memory src) {
+    initSOrder(3);
+    allocate(d0, d1, d2, src);
+  }
+
+  template <class TM, const int idxType>
+  array<TM,idxType>::array(const udim_t d0, const udim_t d1, const udim_t d2,
+                           const udim_t d3,
+                           const occa::memory src) {
+    initSOrder(4);
+    allocate(d0, d1, d2, d3, src);
+  }
+
+  template <class TM, const int idxType>
+  array<TM,idxType>::array(const udim_t d0, const udim_t d1, const udim_t d2,
+                           const udim_t d3, const udim_t d4,
+                           const occa::memory src) {
+    initSOrder(5);
+    allocate(d0, d1, d2, d3, d4, src);
+  }
+
+  template <class TM, const int idxType>
+  array<TM,idxType>::array(const udim_t d0, const udim_t d1, const udim_t d2,
+                           const udim_t d3, const udim_t d4, const udim_t d5,
+                           const occa::memory src) {
+    initSOrder(6);
+    allocate(d0, d1, d2, d3, d4, d5, src);
   }
 
   //---[ array(device, ...) ]----------
   template <class TM, const int idxType>
-  array<TM,idxType>::array(occa::device device_, const int dim_, const udim_t *d) {
+  array<TM,idxType>::array(occa::device device_,
+                           const int dim_, const udim_t *d,
+                           const TM *src) {
     switch(dim_) {
-    case 1: allocate(device_, d[0]);                               break;
-    case 2: allocate(device_, d[0], d[1]);                         break;
-    case 3: allocate(device_, d[0], d[1], d[2]);                   break;
-    case 4: allocate(device_, d[0], d[1], d[2], d[3]);             break;
-    case 5: allocate(device_, d[0], d[1], d[2], d[3], d[4]);       break;
-    case 6: allocate(device_, d[0], d[1], d[2], d[3], d[4], d[5]); break;
+    case 1: allocate(device_, d[0], src);                               break;
+    case 2: allocate(device_, d[0], d[1], src);                         break;
+    case 3: allocate(device_, d[0], d[1], d[2], src);                   break;
+    case 4: allocate(device_, d[0], d[1], d[2], d[3], src);             break;
+    case 5: allocate(device_, d[0], d[1], d[2], d[3], d[4], src);       break;
+    case 6: allocate(device_, d[0], d[1], d[2], d[3], d[4], d[5], src); break;
     default:
       if (dim_ <= 0) {
         OCCA_ERROR("Number of dimensions must be [1-6]",
@@ -233,72 +310,177 @@ namespace occa {
 
   template <class TM, const int idxType>
   array<TM,idxType>::array(occa::device device_,
-                           const udim_t d0) {
+                           const int dim_, const udim_t *d,
+                           const occa::memory src) {
+    switch(dim_) {
+    case 1: allocate(device_, d[0], src);                               break;
+    case 2: allocate(device_, d[0], d[1], src);                         break;
+    case 3: allocate(device_, d[0], d[1], d[2], src);                   break;
+    case 4: allocate(device_, d[0], d[1], d[2], d[3], src);             break;
+    case 5: allocate(device_, d[0], d[1], d[2], d[3], d[4], src);       break;
+    case 6: allocate(device_, d[0], d[1], d[2], d[3], d[4], d[5], src); break;
+    default:
+      if (dim_ <= 0) {
+        OCCA_ERROR("Number of dimensions must be [1-6]",
+                   false);
+      } else {
+        OCCA_ERROR("occa::array can only take up to 6 dimensions",
+                   false);
+      }
+    }
+  }
+
+  template <class TM, const int idxType>
+  array<TM,idxType>::array(occa::device device_,
+                           const udim_t d0,
+                           const TM *src) {
     initSOrder(1);
     allocate(device_,
-             d0);
+             d0,
+             src);
   }
 
   template <class TM, const int idxType>
   array<TM,idxType>::array(occa::device device_,
-                           const udim_t d0, const udim_t d1) {
+                           const udim_t d0, const udim_t d1,
+                           const TM *src) {
     initSOrder(2);
     allocate(device_,
-             d0, d1);
+             d0, d1,
+             src);
   }
 
   template <class TM, const int idxType>
   array<TM,idxType>::array(occa::device device_,
-                           const udim_t d0, const udim_t d1, const udim_t d2) {
+                           const udim_t d0, const udim_t d1, const udim_t d2,
+                           const TM *src) {
     initSOrder(3);
     allocate(device_,
-             d0, d1, d2);
+             d0, d1, d2,
+             src);
   }
 
   template <class TM, const int idxType>
   array<TM,idxType>::array(occa::device device_,
                            const udim_t d0, const udim_t d1, const udim_t d2,
-                           const udim_t d3) {
+                           const udim_t d3,
+                           const TM *src) {
     initSOrder(4);
     allocate(device_,
-             d0, d1, d2, d3);
+             d0, d1, d2, d3,
+             src);
   }
 
   template <class TM, const int idxType>
   array<TM,idxType>::array(occa::device device_,
                            const udim_t d0, const udim_t d1, const udim_t d2,
-                           const udim_t d3, const udim_t d4) {
+                           const udim_t d3, const udim_t d4,
+                           const TM *src) {
     initSOrder(5);
     allocate(device_,
-             d0, d1, d2, d3, d4);
+             d0, d1, d2, d3, d4,
+             src);
   }
 
   template <class TM, const int idxType>
   array<TM,idxType>::array(occa::device device_,
                            const udim_t d0, const udim_t d1, const udim_t d2,
-                           const udim_t d3, const udim_t d4, const udim_t d5) {
+                           const udim_t d3, const udim_t d4, const udim_t d5,
+                           const TM *src) {
     initSOrder(6);
     allocate(device_,
-             d0, d1, d2, d3, d4, d5);
+             d0, d1, d2, d3, d4, d5,
+             src);
+  }
+
+  template <class TM, const int idxType>
+  array<TM,idxType>::array(occa::device device_,
+                           const udim_t d0,
+                           const occa::memory src) {
+    initSOrder(1);
+    allocate(device_,
+             d0,
+             src);
+  }
+
+  template <class TM, const int idxType>
+  array<TM,idxType>::array(occa::device device_,
+                           const udim_t d0, const udim_t d1,
+                           const occa::memory src) {
+    initSOrder(2);
+    allocate(device_,
+             d0, d1,
+             src);
+  }
+
+  template <class TM, const int idxType>
+  array<TM,idxType>::array(occa::device device_,
+                           const udim_t d0, const udim_t d1, const udim_t d2,
+                           const occa::memory src) {
+    initSOrder(3);
+    allocate(device_,
+             d0, d1, d2,
+             src);
+  }
+
+  template <class TM, const int idxType>
+  array<TM,idxType>::array(occa::device device_,
+                           const udim_t d0, const udim_t d1, const udim_t d2,
+                           const udim_t d3,
+                           const occa::memory src) {
+    initSOrder(4);
+    allocate(device_,
+             d0, d1, d2, d3,
+             src);
+  }
+
+  template <class TM, const int idxType>
+  array<TM,idxType>::array(occa::device device_,
+                           const udim_t d0, const udim_t d1, const udim_t d2,
+                           const udim_t d3, const udim_t d4,
+                           const occa::memory src) {
+    initSOrder(5);
+    allocate(device_,
+             d0, d1, d2, d3, d4,
+             src);
+  }
+
+  template <class TM, const int idxType>
+  array<TM,idxType>::array(occa::device device_,
+                           const udim_t d0, const udim_t d1, const udim_t d2,
+                           const udim_t d3, const udim_t d4, const udim_t d5,
+                           const occa::memory src) {
+    initSOrder(6);
+    allocate(device_,
+             d0, d1, d2, d3, d4, d5,
+             src);
   }
 
   //---[ allocate(...) ]----------------
   template <class TM, const int idxType>
-  void array<TM,idxType>::allocate() {
-    data_   = (TM*) device.umalloc(bytes());
+  void array<TM,idxType>::allocate(const TM *src) {
+    data_   = (TM*) device.umalloc(bytes(), src);
     memory_ = occa::memory(data_);
     memory_.getMHandle()->setRefs(1);
   }
 
   template <class TM, const int idxType>
-  void array<TM,idxType>::allocate(const int dim_, const udim_t *d) {
+  void array<TM,idxType>::allocate(const occa::memory src) {
+    data_   = (TM*) device.umalloc(bytes(), src);
+    memory_ = occa::memory(data_);
+    memory_.getMHandle()->setRefs(1);
+  }
+
+  template <class TM, const int idxType>
+  void array<TM,idxType>::allocate(const int dim_, const udim_t *d,
+                                   const TM *src) {
     switch(dim_) {
-    case 1: allocate(d[0]);                               break;
-    case 2: allocate(d[0], d[1]);                         break;
-    case 3: allocate(d[0], d[1], d[2]);                   break;
-    case 4: allocate(d[0], d[1], d[2], d[3]);             break;
-    case 5: allocate(d[0], d[1], d[2], d[3], d[4]);       break;
-    case 6: allocate(d[0], d[1], d[2], d[3], d[4], d[5]); break;
+    case 1: allocate(d[0], src);                               break;
+    case 2: allocate(d[0], d[1], src);                         break;
+    case 3: allocate(d[0], d[1], d[2], src);                   break;
+    case 4: allocate(d[0], d[1], d[2], d[3], src);             break;
+    case 5: allocate(d[0], d[1], d[2], d[3], d[4], src);       break;
+    case 6: allocate(d[0], d[1], d[2], d[3], d[4], d[5], src); break;
     default:
       if (dim_ <= 0) {
         OCCA_ERROR("Number of dimensions must be [1-6]",
@@ -311,54 +493,159 @@ namespace occa {
   }
 
   template <class TM, const int idxType>
-  void array<TM,idxType>::allocate(const udim_t d0) {
-    allocate(occa::currentDevice(),
-             d0);
+  void array<TM,idxType>::allocate(const int dim_, const udim_t *d, occa::memory src) {
+    switch(dim_) {
+    case 1: allocate(d[0], src);                               break;
+    case 2: allocate(d[0], d[1], src);                         break;
+    case 3: allocate(d[0], d[1], d[2], src);                   break;
+    case 4: allocate(d[0], d[1], d[2], d[3], src);             break;
+    case 5: allocate(d[0], d[1], d[2], d[3], d[4], src);       break;
+    case 6: allocate(d[0], d[1], d[2], d[3], d[4], d[5], src); break;
+    default:
+      if (dim_ <= 0) {
+        OCCA_ERROR("Number of dimensions must be [1-6]",
+                   false);
+      } else {
+        OCCA_ERROR("occa::array can only take up to 6 dimensions",
+                   false);
+      }
+    }
   }
 
   template <class TM, const int idxType>
-  void array<TM,idxType>::allocate(const udim_t d0, const udim_t d1) {
+  void array<TM,idxType>::allocate(const udim_t d0,
+                                   const TM *src) {
     allocate(occa::currentDevice(),
-             d0, d1);
+             d0,
+             src);
   }
 
   template <class TM, const int idxType>
-  void array<TM,idxType>::allocate(const udim_t d0, const udim_t d1, const udim_t d2) {
+  void array<TM,idxType>::allocate(const udim_t d0, const udim_t d1,
+                                   const TM *src) {
     allocate(occa::currentDevice(),
-             d0, d1, d2);
+             d0, d1,
+             src);
   }
 
   template <class TM, const int idxType>
   void array<TM,idxType>::allocate(const udim_t d0, const udim_t d1, const udim_t d2,
-                                   const udim_t d3) {
+                                   const TM *src) {
     allocate(occa::currentDevice(),
-             d0, d1, d2, d3);
+             d0, d1, d2,
+             src);
   }
 
   template <class TM, const int idxType>
   void array<TM,idxType>::allocate(const udim_t d0, const udim_t d1, const udim_t d2,
-                                   const udim_t d3, const udim_t d4) {
+                                   const udim_t d3,
+                                   const TM *src) {
     allocate(occa::currentDevice(),
-             d0, d1, d2, d3, d4);
+             d0, d1, d2, d3,
+             src);
   }
 
   template <class TM, const int idxType>
   void array<TM,idxType>::allocate(const udim_t d0, const udim_t d1, const udim_t d2,
-                                   const udim_t d3, const udim_t d4, const udim_t d5) {
+                                   const udim_t d3, const udim_t d4,
+                                   const TM *src) {
     allocate(occa::currentDevice(),
-             d0, d1, d2, d3, d4, d5);
+             d0, d1, d2, d3, d4,
+             src);
+  }
+
+  template <class TM, const int idxType>
+  void array<TM,idxType>::allocate(const udim_t d0, const udim_t d1, const udim_t d2,
+                                   const udim_t d3, const udim_t d4, const udim_t d5,
+                                   const TM *src) {
+    allocate(occa::currentDevice(),
+             d0, d1, d2, d3, d4, d5,
+             src);
+  }
+
+  template <class TM, const int idxType>
+  void array<TM,idxType>::allocate(const udim_t d0,
+                                   const occa::memory src) {
+    allocate(occa::currentDevice(),
+             d0,
+             src);
+  }
+
+  template <class TM, const int idxType>
+  void array<TM,idxType>::allocate(const udim_t d0, const udim_t d1,
+                                   const occa::memory src) {
+    allocate(occa::currentDevice(),
+             d0, d1,
+             src);
+  }
+
+  template <class TM, const int idxType>
+  void array<TM,idxType>::allocate(const udim_t d0, const udim_t d1, const udim_t d2,
+                                   const occa::memory src) {
+    allocate(occa::currentDevice(),
+             d0, d1, d2,
+             src);
+  }
+
+  template <class TM, const int idxType>
+  void array<TM,idxType>::allocate(const udim_t d0, const udim_t d1, const udim_t d2,
+                                   const udim_t d3,
+                                   const occa::memory src) {
+    allocate(occa::currentDevice(),
+             d0, d1, d2, d3,
+             src);
+  }
+
+  template <class TM, const int idxType>
+  void array<TM,idxType>::allocate(const udim_t d0, const udim_t d1, const udim_t d2,
+                                   const udim_t d3, const udim_t d4,
+                                   const occa::memory src) {
+    allocate(occa::currentDevice(),
+             d0, d1, d2, d3, d4,
+             src);
+  }
+
+  template <class TM, const int idxType>
+  void array<TM,idxType>::allocate(const udim_t d0, const udim_t d1, const udim_t d2,
+                                   const udim_t d3, const udim_t d4, const udim_t d5,
+                                   const occa::memory src) {
+    allocate(occa::currentDevice(),
+             d0, d1, d2, d3, d4, d5,
+             src);
   }
 
   //---[ allocate(device, ...) ]--------
   template <class TM, const int idxType>
-  void array<TM,idxType>::allocate(occa::device device_, const int dim_, const udim_t *d) {
+  void array<TM,idxType>::allocate(occa::device device_, const int dim_, const udim_t *d,
+                                   const TM *src) {
     switch(dim_) {
-    case 1: allocate(device_, d[0]);                               break;
-    case 2: allocate(device_, d[0], d[1]);                         break;
-    case 3: allocate(device_, d[0], d[1], d[2]);                   break;
-    case 4: allocate(device_, d[0], d[1], d[2], d[3]);             break;
-    case 5: allocate(device_, d[0], d[1], d[2], d[3], d[4]);       break;
-    case 6: allocate(device_, d[0], d[1], d[2], d[3], d[4], d[5]); break;
+    case 1: allocate(device_, d[0], src);                               break;
+    case 2: allocate(device_, d[0], d[1], src);                         break;
+    case 3: allocate(device_, d[0], d[1], d[2], src);                   break;
+    case 4: allocate(device_, d[0], d[1], d[2], d[3], src);             break;
+    case 5: allocate(device_, d[0], d[1], d[2], d[3], d[4], src);       break;
+    case 6: allocate(device_, d[0], d[1], d[2], d[3], d[4], d[5], src); break;
+    default:
+      if (dim_ <= 0) {
+        OCCA_ERROR("Number of dimensions must be [1-6]",
+                   false);
+      } else {
+        OCCA_ERROR("occa::array can only take up to 6 dimensions",
+                   false);
+      }
+    }
+  }
+
+  template <class TM, const int idxType>
+  void array<TM,idxType>::allocate(occa::device device_, const int dim_, const udim_t *d,
+                                   const occa::memory src) {
+    switch(dim_) {
+    case 1: allocate(device_, d[0], src);                               break;
+    case 2: allocate(device_, d[0], d[1], src);                         break;
+    case 3: allocate(device_, d[0], d[1], d[2], src);                   break;
+    case 4: allocate(device_, d[0], d[1], d[2], d[3], src);             break;
+    case 5: allocate(device_, d[0], d[1], d[2], d[3], d[4], src);       break;
+    case 6: allocate(device_, d[0], d[1], d[2], d[3], d[4], d[5], src); break;
     default:
       if (dim_ <= 0) {
         OCCA_ERROR("Number of dimensions must be [1-6]",
@@ -372,53 +659,116 @@ namespace occa {
 
   template <class TM, const int idxType>
   void array<TM,idxType>::allocate(occa::device device_,
-                                   const udim_t d0) {
+                                   const udim_t d0,
+                                   const TM *src) {
     device = device_;
     reshape(d0);
-    allocate();
+    allocate(src);
   }
 
   template <class TM, const int idxType>
   void array<TM,idxType>::allocate(occa::device device_,
-                                   const udim_t d0, const udim_t d1) {
+                                   const udim_t d0, const udim_t d1,
+                                   const TM *src) {
     device = device_;
     reshape(d0, d1);
-    allocate();
+    allocate(src);
   }
 
   template <class TM, const int idxType>
   void array<TM,idxType>::allocate(occa::device device_,
-                                   const udim_t d0, const udim_t d1, const udim_t d2) {
+                                   const udim_t d0, const udim_t d1, const udim_t d2,
+                                   const TM *src) {
     device = device_;
     reshape(d0, d1, d2);
-    allocate();
+    allocate(src);
   }
 
   template <class TM, const int idxType>
   void array<TM,idxType>::allocate(occa::device device_,
                                    const udim_t d0, const udim_t d1, const udim_t d2,
-                                   const udim_t d3) {
+                                   const udim_t d3,
+                                   const TM *src) {
     device = device_;
     reshape(d0, d1, d2, d3);
-    allocate();
+    allocate(src);
   }
 
   template <class TM, const int idxType>
   void array<TM,idxType>::allocate(occa::device device_,
                                    const udim_t d0, const udim_t d1, const udim_t d2,
-                                   const udim_t d3, const udim_t d4) {
+                                   const udim_t d3, const udim_t d4,
+                                   const TM *src) {
     device = device_;
     reshape(d0, d1, d2, d3, d4);
-    allocate();
+    allocate(src);
   }
 
   template <class TM, const int idxType>
   void array<TM,idxType>::allocate(occa::device device_,
                                    const udim_t d0, const udim_t d1, const udim_t d2,
-                                   const udim_t d3, const udim_t d4, const udim_t d5) {
+                                   const udim_t d3, const udim_t d4, const udim_t d5,
+                                   const TM *src) {
     device = device_;
     reshape(d0, d1, d2, d3, d4, d5);
-    allocate();
+    allocate(src);
+  }
+
+  template <class TM, const int idxType>
+  void array<TM,idxType>::allocate(occa::device device_,
+                                   const udim_t d0,
+                                   const occa::memory src) {
+    device = device_;
+    reshape(d0);
+    allocate(src);
+  }
+
+  template <class TM, const int idxType>
+  void array<TM,idxType>::allocate(occa::device device_,
+                                   const udim_t d0, const udim_t d1,
+                                   const occa::memory src) {
+    device = device_;
+    reshape(d0, d1);
+    allocate(src);
+  }
+
+  template <class TM, const int idxType>
+  void array<TM,idxType>::allocate(occa::device device_,
+                                   const udim_t d0, const udim_t d1, const udim_t d2,
+                                   const occa::memory src) {
+    device = device_;
+    reshape(d0, d1, d2);
+    allocate(src);
+  }
+
+  template <class TM, const int idxType>
+  void array<TM,idxType>::allocate(occa::device device_,
+                                   const udim_t d0, const udim_t d1, const udim_t d2,
+                                   const udim_t d3,
+                                   const occa::memory src) {
+    device = device_;
+    reshape(d0, d1, d2, d3);
+    allocate(src);
+  }
+
+  template <class TM, const int idxType>
+  void array<TM,idxType>::allocate(occa::device device_,
+                                   const udim_t d0, const udim_t d1, const udim_t d2,
+                                   const udim_t d3, const udim_t d4,
+                                   const occa::memory src) {
+    device = device_;
+    reshape(d0, d1, d2, d3, d4);
+    allocate(src);
+  }
+
+  template <class TM, const int idxType>
+  void array<TM,idxType>::allocate(occa::device device_,
+                                   const udim_t d0, const udim_t d1, const udim_t d2,
+                                   const udim_t d3, const udim_t d4, const udim_t d5,
+                                   const occa::memory src) {
+    device = device_;
+    reshape(d0, d1, d2, d3, d4, d5);
+    allocate(src);
   }
 
   //---[ reshape(...) ]-----------------
@@ -876,6 +1226,18 @@ namespace occa {
   template <class TM, const int idxType>
   void array<TM,idxType>::syncFromDevice() {
     occa::syncFromDevice(data_);
+  }
+
+  template <class TM, const int idxType>
+  void array<TM,idxType>::keepInDevice() {
+    syncToDevice();
+    stopManaging();
+  }
+
+  template <class TM, const int idxType>
+  void array<TM,idxType>::keepInHost() {
+    syncFromDevice();
+    stopManaging();
   }
 
   template <class TM, const int idxType>

@@ -365,6 +365,17 @@ namespace occa {
   }
 
   memory device::malloc(const dim_t bytes,
+                        const occa::memory src,
+                        const occa::properties &props) {
+
+    memory mem = malloc(bytes, NULL, props);
+    if (src.size()) {
+      mem.copyFrom(src);
+    }
+    return mem;
+  }
+
+  memory device::malloc(const dim_t bytes,
                         const occa::properties &props) {
 
     return malloc(bytes, NULL, props);
@@ -372,6 +383,17 @@ namespace occa {
 
   void* device::umalloc(const dim_t bytes,
                         const void *src,
+                        const occa::properties &props) {
+
+    void *ptr = umalloc(bytes, occa::memory(), props);
+    if (src) {
+      ::memcpy(ptr, src, bytes);
+    }
+    return ptr;
+  }
+
+  void* device::umalloc(const dim_t bytes,
+                        const occa::memory src,
                         const occa::properties &props) {
 
     OCCA_ERROR("Trying to allocate "
@@ -385,8 +407,11 @@ namespace occa {
     if (props.get<bool>("managed", true)) {
       mem.startManaging();
     }
-
-    return mem.mHandle->uvaPtr;
+    void *ptr = mem.mHandle->uvaPtr;
+    if (src.size()) {
+      src.copyTo(ptr, bytes);
+    }
+    return ptr;
   }
 
   void* device::umalloc(const dim_t bytes,

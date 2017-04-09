@@ -110,6 +110,9 @@ namespace occa {
     void endWithSlash(std::string &dir);
     std::string endWithSlash(const std::string &dir);
 
+    void removeEndSlash(std::string &dir);
+    std::string removeEndSlash(const std::string &dir);
+
     bool isAbsolutePath(const std::string &filename);
     std::string convertSlashes(const std::string &filename);
     std::string filename(const std::string &filename, bool makeAbsolute = true);

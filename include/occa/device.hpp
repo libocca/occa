@@ -191,10 +191,18 @@ namespace occa {
                         const occa::properties &props = occa::properties());
 
     occa::memory malloc(const dim_t bytes,
+                        const occa::memory src,
+                        const occa::properties &props = occa::properties());
+
+    occa::memory malloc(const dim_t bytes,
                         const occa::properties &props);
 
     void* umalloc(const dim_t bytes,
                   const void *src = NULL,
+                  const occa::properties &props = occa::properties());
+
+    void* umalloc(const dim_t bytes,
+                  const occa::memory src,
                   const occa::properties &props = occa::properties());
 
     void* umalloc(const dim_t bytes,

@@ -83,7 +83,9 @@ int main(int argc, char **argv) {
     .addOption('\0', "libraries",
                "Clear cached libraries.")
     .addOption('o', "locks",
-               "Clear cache locks");
+               "Clear cache locks")
+    .addOption('y', "yes",
+               "Automatically answer everything with [y/yes]");
 
   compileCommand
     .withName("compile")
@@ -127,21 +129,25 @@ std::string envEcho(const std::string &arg, const TM &defaultValue) {
   return (ret.size() ? ret : occa::toString(defaultValue));
 }
 
-bool removeDir(const std::string &dir) {
-  const std::string fulldir = occa::io::endWithSlash(dir);
-
-  if (!occa::sys::fileExists(fulldir)) {
+bool removeDir(const std::string &dir, const bool promptCheck = true) {
+  if (!occa::sys::dirExists(dir)) {
     return false;
   }
 
   std::string input;
 
-  std::cout << "  Removing [" << fulldir << "*], are you sure? [y/n]:  ";
-  std::cin >> input;
-  occa::strip(input);
+  std::cout << "  Removing [" << dir << "]";
+  if (promptCheck) {
+    std::cout << ", are you sure? [y/n]:  ";
+    std::cin >> input;
+    occa::strip(input);
+  } else {
+    std::cout << '\n';
+    input = "y";
+  }
 
   if (input == "y") {
-    std::string command = "rm -rf " + fulldir + "*";
+    std::string command = "rm -rf " + dir;
     occa::ignoreResult( system(command.c_str()) );
   } else if (input != "n") {
     std::cout << "  Input must be [y] or [n], ignoring clear command\n";
@@ -160,22 +166,24 @@ bool runClear(const occa::args::command &command,
     return false;
   }
   bool removedSomething = false;
+  const bool promptCheck = (options.find("yes") == options.end());
   while (it != options.end()) {
     if (it->first == "all") {
-      removedSomething |= removeDir(occa::env::OCCA_CACHE_DIR);
+      removedSomething |= removeDir(occa::env::OCCA_CACHE_DIR, promptCheck);
     } else if (it->first == "lib") {
       const occa::jsonArray_t &libraries = it->second.array();
       for (int i = 0; i < (int) libraries.size(); ++i) {
         removedSomething |= removeDir(occa::io::libraryPath() +
-                                      libraries[i].array()[0].string());
+                                      libraries[i].array()[0].string(),
+                                      promptCheck);
       }
     } else if (it->first == "libraries") {
-      removedSomething |= removeDir(occa::io::libraryPath());
+      removedSomething |= removeDir(occa::io::libraryPath(), promptCheck);
     } else if (it->first == "kernels") {
-      removedSomething |= removeDir(occa::io::cachePath());
+      removedSomething |= removeDir(occa::io::cachePath(), promptCheck);
     } else if (it->first == "locks") {
       const std::string lockPath = occa::env::OCCA_CACHE_DIR + "locks/";
-      removedSomething |= removeDir(lockPath);
+      removedSomething |= removeDir(lockPath, promptCheck);
     }
     ++it;
   }
