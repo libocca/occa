@@ -44,6 +44,10 @@ namespace occa {
     return refs;
   }
 
+  void withRefs::setRefs(const int refs_) {
+    refs = refs_;
+  }
+
   void withRefs::dontUseRefs() {
     refs = -1;
   }

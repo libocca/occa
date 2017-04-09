@@ -28,18 +28,18 @@ namespace occa {
       return kernelBuilder::fromFile(env::OCCA_DIR + "include/occa/array/kernels/assignment.okl",
                                      kernelName,
                                      "defines: {"
-                                     "  VTYPE_IN: '" + primitiveinfo<VTYPE_IN>::name + "',"
+                                     "  VTYPE_IN: '"  + primitiveinfo<VTYPE_IN>::name  + "',"
                                      "  VTYPE_OUT: '" + primitiveinfo<VTYPE_OUT>::name + "',"
-                                     "  TILESIZE: '" + toString(tileSize) + "',"
+                                     "  TILESIZE: '"  + toString(tileSize) + "',"
                                      "}");
     }
 
     template <class VTYPE_IN, class VTYPE_OUT>
-    kernelBuilder* makeAssignmentBuilders(const std::string &kernelName) {
-      kernelBuilder *builders = new kernelBuilder[usedTileSizeCount];
+    kernelBuilderVector_t makeAssignmentBuilders(const std::string &kernelName) {
+      kernelBuilderVector_t builders;
       for (int i = 0; i < usedTileSizeCount; ++i) {
-        builders[i] = makeAssignmentBuilder<VTYPE_IN,VTYPE_OUT>(kernelName,
-                                                                usedTileSizes[i]);
+        builders.push_back(makeAssignmentBuilder<VTYPE_IN,VTYPE_OUT>(kernelName,
+                                                                     usedTileSizes[i]));
       }
       return builders;
     }
@@ -63,8 +63,8 @@ namespace occa {
       return kernelBuilder::fromFile(env::OCCA_DIR + "include/occa/array/kernels/linalg.okl",
                                      kernelName,
                                      "defines: {"
-                                     "  VTYPE: '" + primitiveinfo<VTYPE1>::name + "',"
-                                     "  VTYPE2: '" + primitiveinfo<VTYPE2>::name + "',"
+                                     "  VTYPE: '"   + primitiveinfo<VTYPE1>::name  + "',"
+                                     "  VTYPE2: '"  + primitiveinfo<VTYPE2>::name  + "',"
                                      "  RETTYPE: '" + primitiveinfo<RETTYPE>::name + "',"
                                      "  CPU_DOT_OUTER: 1024,"
                                      "  GPU_DOT_OUTER: 1024,"
@@ -77,7 +77,7 @@ namespace occa {
     void operator_eq(occa::memory vec,
                      const VTYPE_OUT value,
                      const int tileSize) {
-      static kernelBuilder *builders =
+      static kernelBuilderVector_t builders =
         makeAssignmentBuilders<VTYPE_OUT,VTYPE_OUT>("eq_const");
 
       const int entries = vec.size() / sizeof(VTYPE_OUT);
@@ -90,7 +90,7 @@ namespace occa {
     void operator_plus_eq(occa::memory vec,
                           const VTYPE_OUT value,
                           const int tileSize) {
-      static kernelBuilder *builders =
+      static kernelBuilderVector_t builders =
         makeAssignmentBuilders<VTYPE_OUT,VTYPE_OUT>("plus_eq_const");
 
       const int entries = vec.size() / sizeof(VTYPE_OUT);
@@ -103,7 +103,7 @@ namespace occa {
     void operator_plus_eq(occa::memory in,
                           occa::memory out,
                           const int tileSize) {
-      static kernelBuilder *builders =
+      static kernelBuilderVector_t builders =
         makeAssignmentBuilders<VTYPE_IN,VTYPE_OUT>("plus_eq");
 
       const int entries = in.size() / sizeof(VTYPE_OUT);
@@ -116,7 +116,7 @@ namespace occa {
     void operator_sub_eq(occa::memory vec,
                          const VTYPE_OUT value,
                          const int tileSize) {
-      static kernelBuilder *builders =
+      static kernelBuilderVector_t builders =
         makeAssignmentBuilders<VTYPE_OUT,VTYPE_OUT>("sub_eq_const");
 
       const int entries = vec.size() / sizeof(VTYPE_OUT);
@@ -129,7 +129,7 @@ namespace occa {
     void operator_sub_eq(occa::memory in,
                          occa::memory out,
                          const int tileSize) {
-      static kernelBuilder *builders =
+      static kernelBuilderVector_t builders =
         makeAssignmentBuilders<VTYPE_IN,VTYPE_OUT>("sub_eq");
 
       const int entries = in.size() / sizeof(VTYPE_OUT);
@@ -142,7 +142,7 @@ namespace occa {
     void operator_mult_eq(occa::memory vec,
                           const VTYPE_OUT value,
                           const int tileSize) {
-      static kernelBuilder *builders =
+      static kernelBuilderVector_t builders =
         makeAssignmentBuilders<VTYPE_OUT,VTYPE_OUT>("mult_eq_const");
 
       const int entries = vec.size() / sizeof(VTYPE_OUT);
@@ -155,7 +155,7 @@ namespace occa {
     void operator_mult_eq(occa::memory in,
                           occa::memory out,
                           const int tileSize) {
-      static kernelBuilder *builders =
+      static kernelBuilderVector_t builders =
         makeAssignmentBuilders<VTYPE_IN,VTYPE_OUT>("mult_eq");
 
       const int entries = in.size() / sizeof(VTYPE_OUT);
@@ -168,7 +168,7 @@ namespace occa {
     void operator_div_eq(occa::memory vec,
                          const VTYPE_OUT value,
                          const int tileSize) {
-      static kernelBuilder *builders =
+      static kernelBuilderVector_t builders =
         makeAssignmentBuilders<VTYPE_OUT,VTYPE_OUT>("div_eq_const");
 
       const int entries = vec.size() / sizeof(VTYPE_OUT);
@@ -181,7 +181,7 @@ namespace occa {
     void operator_div_eq(occa::memory in,
                          occa::memory out,
                          const int tileSize) {
-      static kernelBuilder *builders =
+      static kernelBuilderVector_t builders =
         makeAssignmentBuilders<VTYPE_IN,VTYPE_OUT>("div_eq");
 
       const int entries = in.size() / sizeof(VTYPE_OUT);
@@ -399,11 +399,10 @@ namespace occa {
               occa::memory y,
               const int tileSize) {
 
-      static kernelBuilder *builders;
-      if (!builders) {
-        builders = new kernelBuilder[usedTileSizeCount];
+      static kernelBuilderVector_t builders;
+      if (!builders.size()) {
         for (int i = 0; i < usedTileSizeCount; ++i) {
-          builders[i] =
+          kernelBuilder kerb =
             customLinearMethod("axpy",
                                "v0[i] += c0 * v1[i];",
                                "defines: {"
@@ -412,6 +411,7 @@ namespace occa {
                                "  VTYPE1: '" + primitiveinfo<VTYPE_X>::name + "',"
                                "  TILESIZE: '" + toString(usedTileSizes[i]) + "',"
                                "}");
+          builders.push_back(kerb);
         }
       }
 

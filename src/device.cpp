@@ -379,9 +379,8 @@ namespace occa {
                bytes > 0);
 
     memory mem = malloc(bytes, src, props);
-    mem.setDHandle(dHandle);
-    mem.setupUva();
     mem.dontUseRefs();
+    mem.setupUva();
 
     if (props.get<bool>("managed", true)) {
       mem.startManaging();

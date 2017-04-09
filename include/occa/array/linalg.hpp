@@ -39,9 +39,9 @@ namespace occa {
                                         const int tileSize);
 
     template <class VTYPE_IN, class VTYPE_OUT>
-    kernelBuilder* makeAssignmentBuilders(const std::string &kernelName);
+    kernelBuilderVector_t makeAssignmentBuilders(const std::string &kernelName);
 
-    inline occa::kernel getTiledKernel(kernelBuilder *builders,
+    inline occa::kernel getTiledKernel(kernelBuilderVector_t &builders,
                                        occa::device dev,
                                        const int tileSize) {
       for (int i = 0; i < usedTileSizeCount; ++i) {
