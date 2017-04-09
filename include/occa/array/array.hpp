@@ -65,6 +65,10 @@ namespace occa {
     void free();
 
     //---[ Info ]-----------------------
+    inline bool isInitialized() const {
+      return data_ != NULL;
+    }
+
     inline TM* data() {
       return data_;
     }
@@ -79,6 +83,14 @@ namespace occa {
 
     inline const occa::memory memory() const {
       return memory_;
+    }
+
+    inline occa::device getDevice() {
+      return device;
+    }
+
+    inline const occa::device getDevice() const {
+      return device;
     }
 
     inline udim_t size() const {
@@ -135,75 +147,194 @@ namespace occa {
     //==================================
 
     //---[ array(...) ]----------------
-    array(const int dim, const udim_t *d);
+    array(const int dim, const udim_t *d,
+          const TM *src = NULL);
 
-    array(const udim_t d0);
-    array(const udim_t d0, const udim_t d1);
-    array(const udim_t d0, const udim_t d1, const udim_t d2);
+    array(const udim_t d0,
+          const TM *src = NULL);
+    array(const udim_t d0, const udim_t d1,
+          const TM *src = NULL);
     array(const udim_t d0, const udim_t d1, const udim_t d2,
-          const udim_t d3);
+          const TM *src = NULL);
     array(const udim_t d0, const udim_t d1, const udim_t d2,
-          const udim_t d3, const udim_t d4);
+          const udim_t d3,
+          const TM *src = NULL);
     array(const udim_t d0, const udim_t d1, const udim_t d2,
-          const udim_t d3, const udim_t d4, const udim_t d5);
+          const udim_t d3, const udim_t d4,
+          const TM *src = NULL);
+    array(const udim_t d0, const udim_t d1, const udim_t d2,
+          const udim_t d3, const udim_t d4, const udim_t d5,
+          const TM *src = NULL);
+
+    array(const int dim, const udim_t *d,
+          const occa::memory src);
+
+    array(const udim_t d0,
+          const occa::memory src);
+    array(const udim_t d0, const udim_t d1,
+          const occa::memory src);
+    array(const udim_t d0, const udim_t d1, const udim_t d2,
+          const occa::memory src);
+    array(const udim_t d0, const udim_t d1, const udim_t d2,
+          const udim_t d3,
+          const occa::memory src);
+    array(const udim_t d0, const udim_t d1, const udim_t d2,
+          const udim_t d3, const udim_t d4,
+          const occa::memory src);
+    array(const udim_t d0, const udim_t d1, const udim_t d2,
+          const udim_t d3, const udim_t d4, const udim_t d5,
+          const occa::memory src);
     //==================================
 
     //---[ array(device, ...) ]--------
-    array(occa::device device_, const int dim, const udim_t *d);
+    array(occa::device device_,
+          const int dim, const udim_t *d,
+          const TM *src = NULL);
 
     array(occa::device device_,
-          const udim_t d0);
+          const udim_t d0,
+          const TM *src = NULL);
     array(occa::device device_,
-          const udim_t d0, const udim_t d1);
-    array(occa::device device_,
-          const udim_t d0, const udim_t d1, const udim_t d2);
-    array(occa::device device_,
-          const udim_t d0, const udim_t d1, const udim_t d2,
-          const udim_t d3);
+          const udim_t d0, const udim_t d1,
+          const TM *src = NULL);
     array(occa::device device_,
           const udim_t d0, const udim_t d1, const udim_t d2,
-          const udim_t d3, const udim_t d4);
+          const TM *src = NULL);
     array(occa::device device_,
           const udim_t d0, const udim_t d1, const udim_t d2,
-          const udim_t d3, const udim_t d4, const udim_t d5);
+          const udim_t d3,
+          const TM *src = NULL);
+    array(occa::device device_,
+          const udim_t d0, const udim_t d1, const udim_t d2,
+          const udim_t d3, const udim_t d4,
+          const TM *src = NULL);
+    array(occa::device device_,
+          const udim_t d0, const udim_t d1, const udim_t d2,
+          const udim_t d3, const udim_t d4, const udim_t d5,
+          const TM *src = NULL);
+
+    array(occa::device device_,
+          const int dim, const udim_t *d,
+          const occa::memory src);
+
+    array(occa::device device_,
+          const udim_t d0,
+          const occa::memory src);
+    array(occa::device device_,
+          const udim_t d0, const udim_t d1,
+          const occa::memory src);
+    array(occa::device device_,
+          const udim_t d0, const udim_t d1, const udim_t d2,
+          const occa::memory src);
+    array(occa::device device_,
+          const udim_t d0, const udim_t d1, const udim_t d2,
+          const udim_t d3,
+          const occa::memory src);
+    array(occa::device device_,
+          const udim_t d0, const udim_t d1, const udim_t d2,
+          const udim_t d3, const udim_t d4,
+          const occa::memory src);
+    array(occa::device device_,
+          const udim_t d0, const udim_t d1, const udim_t d2,
+          const udim_t d3, const udim_t d4, const udim_t d5,
+          const occa::memory src);
     //==================================
 
     //---[ allocate(...) ]--------------
   private:
-    void allocate();
+    void allocate(const TM *src = NULL);
+    void allocate(const occa::memory src);
 
   public:
-    void allocate(const int dim, const udim_t *d);
+    void allocate(const int dim, const udim_t *d,
+                  const TM *src = NULL);
+    void allocate(const int dim, const udim_t *d,
+                  const occa::memory src);
 
-    void allocate(const udim_t d0);
-    void allocate(const udim_t d0, const udim_t d1);
-    void allocate(const udim_t d0, const udim_t d1, const udim_t d2);
+    void allocate(const udim_t d0,
+                  const TM *src = NULL);
+    void allocate(const udim_t d0, const udim_t d1,
+                  const TM *src = NULL);
     void allocate(const udim_t d0, const udim_t d1, const udim_t d2,
-                  const udim_t d3);
+                  const TM *src = NULL);
     void allocate(const udim_t d0, const udim_t d1, const udim_t d2,
-                  const udim_t d3, const udim_t d4);
+                  const udim_t d3,
+                  const TM *src = NULL);
     void allocate(const udim_t d0, const udim_t d1, const udim_t d2,
-                  const udim_t d3, const udim_t d4, const udim_t d5);
+                  const udim_t d3, const udim_t d4,
+                  const TM *src = NULL);
+    void allocate(const udim_t d0, const udim_t d1, const udim_t d2,
+                  const udim_t d3, const udim_t d4, const udim_t d5,
+                  const TM *src = NULL);
+
+    void allocate(const udim_t d0,
+                  const occa::memory src);
+    void allocate(const udim_t d0, const udim_t d1,
+                  const occa::memory src);
+    void allocate(const udim_t d0, const udim_t d1, const udim_t d2,
+                  const occa::memory src);
+    void allocate(const udim_t d0, const udim_t d1, const udim_t d2,
+                  const udim_t d3,
+                  const occa::memory src);
+    void allocate(const udim_t d0, const udim_t d1, const udim_t d2,
+                  const udim_t d3, const udim_t d4,
+                  const occa::memory src);
+    void allocate(const udim_t d0, const udim_t d1, const udim_t d2,
+                  const udim_t d3, const udim_t d4, const udim_t d5,
+                  const occa::memory src);
     //==================================
 
     //---[ allocate(device, ...) ]------
-    void allocate(occa::device device_, const int dim, const udim_t *d);
+    void allocate(occa::device device_,
+                  const int dim, const udim_t *d,
+                  const TM *src = NULL);
+    void allocate(occa::device device_,
+                  const int dim, const udim_t *d,
+                  const occa::memory src);
 
     void allocate(occa::device device_,
-                  const udim_t d0);
+                  const udim_t d0,
+                  const TM *src = NULL);
     void allocate(occa::device device_,
-                  const udim_t d0, const udim_t d1);
-    void allocate(occa::device device_,
-                  const udim_t d0, const udim_t d1, const udim_t d2);
-    void allocate(occa::device device_,
-                  const udim_t d0, const udim_t d1, const udim_t d2,
-                  const udim_t d3);
+                  const udim_t d0, const udim_t d1,
+                  const TM *src = NULL);
     void allocate(occa::device device_,
                   const udim_t d0, const udim_t d1, const udim_t d2,
-                  const udim_t d3, const udim_t d4);
+                  const TM *src = NULL);
     void allocate(occa::device device_,
                   const udim_t d0, const udim_t d1, const udim_t d2,
-                  const udim_t d3, const udim_t d4, const udim_t d5);
+                  const udim_t d3,
+                  const TM *src = NULL);
+    void allocate(occa::device device_,
+                  const udim_t d0, const udim_t d1, const udim_t d2,
+                  const udim_t d3, const udim_t d4,
+                  const TM *src = NULL);
+    void allocate(occa::device device_,
+                  const udim_t d0, const udim_t d1, const udim_t d2,
+                  const udim_t d3, const udim_t d4, const udim_t d5,
+                  const TM *src = NULL);
+
+    void allocate(occa::device device_,
+                  const udim_t d0,
+                  const occa::memory src);
+    void allocate(occa::device device_,
+                  const udim_t d0, const udim_t d1,
+                  const occa::memory src);
+    void allocate(occa::device device_,
+                  const udim_t d0, const udim_t d1, const udim_t d2,
+                  const occa::memory src);
+    void allocate(occa::device device_,
+                  const udim_t d0, const udim_t d1, const udim_t d2,
+                  const udim_t d3,
+                  const occa::memory src);
+    void allocate(occa::device device_,
+                  const udim_t d0, const udim_t d1, const udim_t d2,
+                  const udim_t d3, const udim_t d4,
+                  const occa::memory src);
+    void allocate(occa::device device_,
+                  const udim_t d0, const udim_t d1, const udim_t d2,
+                  const udim_t d3, const udim_t d4, const udim_t d5,
+                  const occa::memory src);
     //==================================
 
     //---[ reshape(...) ]---------------
@@ -308,6 +439,9 @@ namespace occa {
 
     void syncToDevice();
     void syncFromDevice();
+
+    void keepInDevice();
+    void keepInHost();
 
     bool needsSync();
     void sync();

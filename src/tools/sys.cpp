@@ -249,7 +249,7 @@ namespace occa {
 
       struct stat statInfo;
       return ((stat(dir.c_str(), &statInfo) == 0) &&
-              (statInfo.st_mode &S_IFDIR));
+              S_ISDIR(statInfo.st_mode));
     }
 
     bool fileExists(const std::string &filename_,

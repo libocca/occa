@@ -154,8 +154,9 @@ namespace occa {
     }
 
     void endWithSlash(std::string &dir) {
-      if ((0 < dir.size()) &&
-          (dir[dir.size() - 1] != '/')) {
+      const int chars = (int) dir.size();
+      if ((0 < chars) &&
+          (dir[chars - 1] != '/')) {
         dir += '/';
       }
     }
@@ -163,6 +164,20 @@ namespace occa {
     std::string endWithSlash(const std::string &dir) {
       std::string ret = dir;
       endWithSlash(ret);
+      return ret;
+    }
+
+    void removeEndSlash(std::string &dir) {
+      const int chars = (int) dir.size();
+      if ((0 < chars) &&
+          (dir[chars - 1] == '/')) {
+        dir.erase(chars - 1, 1);
+      }
+    }
+
+    std::string removeEndSlash(const std::string &dir) {
+      std::string ret = dir;
+      removeEndSlash(ret);
       return ret;
     }
 
