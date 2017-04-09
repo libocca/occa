@@ -83,14 +83,11 @@ namespace occa {
 
   uvaPtrInfo_t& uvaPtrInfo_t::operator = (const uvaPtrInfo_t &upi) {
     mem = upi.mem;
-
     return *this;
   }
 
   occa::device uvaPtrInfo_t::getDevice() {
-    occa::memory m(mem);
-
-    return occa::device(m.getDHandle());
+    return occa::device(mem->dHandle);
   }
 
   occa::memory uvaPtrInfo_t::getMemory() {
@@ -99,11 +96,7 @@ namespace occa {
 
   occa::memory_v* uvaToMemory(void *ptr) {
     ptrRangeMap_t::iterator it = uvaMap.find(ptr);
-
-    if (it == uvaMap.end()) {
-      return NULL;
-    }
-    return it->second;
+    return (it == uvaMap.end()) ? NULL : it->second;
   }
 
   void startManaging(void *ptr) {
@@ -139,7 +132,7 @@ namespace occa {
                        const udim_t offset) {
 
     if (!mem->dHandle->hasSeparateMemorySpace()) {
-      memcpy(occa::memory(mem->handle),
+      memcpy(occa::memory(mem),
              ptrOff(mem->uvaPtr, offset),
              bytes, offset);
     } else {
@@ -153,7 +146,7 @@ namespace occa {
 
     if (!mem->dHandle->hasSeparateMemorySpace()) {
       memcpy(ptrOff(mem->uvaPtr, offset),
-             occa::memory(mem->handle),
+             occa::memory(mem),
              bytes, offset);
     } else {
       occa::memory(mem).syncFromDevice(bytes, offset);
@@ -183,28 +176,26 @@ namespace occa {
 
   void removeFromStaleMap(void *ptr) {
     ptrRangeMap_t::iterator it = uvaMap.find(ptr);
-
     if (it == uvaMap.end()) {
       return;
     }
-    memory m(it->second);
 
+    memory m(it->second);
     if (!m.uvaIsStale()) {
       return;
     }
+
     removeFromStaleMap(m.getMHandle());
   }
 
   void removeFromStaleMap(memory_v *mem) {
     occa::memory m(mem);
-
     const size_t staleEntries = uvaStaleMemory.size();
 
     for (size_t i = 0; i < staleEntries; ++i) {
       if (uvaStaleMemory[i] == mem) {
         m.uvaMarkFresh();
         uvaStaleMemory.erase(uvaStaleMemory.begin() + i);
-
         break;
       }
     }
@@ -215,7 +206,6 @@ namespace occa {
 
     if ((it != uvaMap.end()) &&
        (((void*) it->first.start) != ((void*) it->second))) {
-
       occa::memory(it->second).free();
     } else {
       ::free(ptr);
