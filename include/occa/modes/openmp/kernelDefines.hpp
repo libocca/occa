@@ -223,10 +223,29 @@ TM occaAtomicCAS(TM *ptr, const int comp, const TM &update) {
 
 
 //---[ Misc ]-------------------------------------
-#define occaParallelFor2 OCCA_PRAGMA("omp parallel for collapse(3) firstprivate(occaKernelInfoArg_)")
-#define occaParallelFor1 OCCA_PRAGMA("omp parallel for collapse(2) firstprivate(occaKernelInfoArg_)")
-#define occaParallelFor0 OCCA_PRAGMA("omp parallel for             firstprivate(occaKernelInfoArg_)")
-#define occaParallelFor  OCCA_PRAGMA("omp parallel for             firstprivate(occaKernelInfoArg_)")
+#undef occaKernelInfoArg
+#undef occaFunctionInfoArg
+#undef occaFunctionInfo
+
+#define occaKernelInfoArg   occa::serial::kernelInfoArg_t &occaKernelInfoArg__
+#define occaFunctionInfoArg occa::serial::kernelInfoArg_t &occaKernelInfoArg_
+#define occaFunctionInfo    occaKernelInfoArg_
+
+#define occaParallelFor2                                                \
+  occa::serial::kernelInfoArg_t occaKernelInfoArg_ = occaKernelInfoArg__; \
+  OCCA_PRAGMA("omp parallel for collapse(3) firstprivate(occaKernelInfoArg_)")
+
+#define occaParallelFor1                                                \
+  occa::serial::kernelInfoArg_t occaKernelInfoArg_ = occaKernelInfoArg__; \
+  OCCA_PRAGMA("omp parallel for collapse(2) firstprivate(occaKernelInfoArg_)")
+
+#define occaParallelFor0                                                \
+  occa::serial::kernelInfoArg_t occaKernelInfoArg_ = occaKernelInfoArg__; \
+  OCCA_PRAGMA("omp parallel for             firstprivate(occaKernelInfoArg_)")
+
+#define occaParallelFor                                                 \
+  occa::serial::kernelInfoArg_t occaKernelInfoArg_ = occaKernelInfoArg__; \
+  OCCA_PRAGMA("omp parallel for             firstprivate(occaKernelInfoArg_)")
 //================================================
 
 #endif
