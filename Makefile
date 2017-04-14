@@ -89,6 +89,7 @@ MAKE_COMPILED_DEFINES := $(shell cat "$(OCCA_DIR)/scripts/compiledDefinesTemplat
                                       s,@@OCCA_COMPILED_DIR@@,\"$(OCCA_DIR)\",g;\
                                       s,@@OCCA_DEBUG_ENABLED@@,$(OCCA_DEBUG_ENABLED),g;\
                                       s,@@OCCA_CHECK_ENABLED@@,$(OCCA_CHECK_ENABLED),g;\
+                                      s,@@OCCA_MPI_ENABLED@@,$(OCCA_MPI_ENABLED),g;\
                                       s,@@OCCA_OPENMP_ENABLED@@,$(OCCA_OPENMP_ENABLED),g;\
                                       s,@@OCCA_OPENCL_ENABLED@@,$(OCCA_OPENCL_ENABLED),g;\
                                       s,@@OCCA_CUDA_ENABLED@@,$(OCCA_CUDA_ENABLED),g" > "$(NEW_COMPILED_DEFINES)")
@@ -103,6 +104,7 @@ all: $(objects) $(outputs)
 	@echo -e "    OCCA_COMPILED_DIR   : \"$(OCCA_DIR)\"\n"
 	@echo -e "    OCCA_DEBUG_ENABLED  : $(OCCA_DEBUG_ENABLED)"
 	@echo -e "    OCCA_CHECK_ENABLED  : $(OCCA_CHECK_ENABLED)\n"
+	@echo -e "    OCCA_MPI_ENABLED    : $(OCCA_MPI_ENABLED)"
 	@echo -e "    OCCA_OPENMP_ENABLED : $(OCCA_OPENMP_ENABLED)"
 	@echo -e "    OCCA_OPENCL_ENABLED : $(OCCA_OPENCL_ENABLED)"
 	@echo -e "    OCCA_CUDA_ENABLED   : $(OCCA_CUDA_ENABLED)"

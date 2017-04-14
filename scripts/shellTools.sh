@@ -454,23 +454,25 @@ function fCompilerModuleDirFlag {
 
 function compilerSupportsOpenMP {
     local compiler="$1"
-    local vendor=$(compilerVendor "$compiler")
-    local ompFlag=$(compilerOpenMPFlags "$compiler")
+    local vendor=$(compilerVendor "${compiler}")
+    local ompFlag=$(compilerOpenMPFlags "${compiler}")
 
     local filename="${OCCA_DIR}"/scripts/openmpTest.cpp
     local binary="${OCCA_DIR}"/scripts/openmpTest
 
-    # Test compilation
-    "$compiler" "$ompFlag" "$filename" -o "$binary" > /dev/null 2>&1
+    rm -f "${binary}"
 
-    if [[ ! -a "$binary" ]]; then
+    # Test compilation
+    "${compiler}" "${ompFlag}" "${filename}" -o "${binary}" > /dev/null 2>&1
+
+    if [[ ! -a "${binary}" ]]; then
         command echo 0
         return
     fi
 
     if [[ "$?" -eq 0 ]]; then
         # Test binary
-        "$binary"
+        "${binary}"
 
         if [[ "$?" -eq 0 ]]; then
             command echo 1
@@ -481,9 +483,29 @@ function compilerSupportsOpenMP {
         command echo 0
     fi
 
-    if [ ! -z "$binary" ]; then
-        rm -f "$binary"
+    if [ ! -z "${binary}" ]; then
+        rm -f "${binary}"
     fi
+}
+
+function compilerSupportsMPI {
+    local compiler="$1"
+
+    local filename="${OCCA_DIR}"/scripts/mpiTest.cpp
+    local binary="${OCCA_DIR}"/scripts/mpiTest
+
+    rm -f "${binary}"
+
+    # Test compilation
+    "${compiler}" "${filename}" -o "${binary}" > /dev/null 2>&1
+
+    if [[ ! -a "${binary}" ]]; then
+        command echo 0
+        return
+    fi
+
+    rm -f "${binary}"
+    command echo 1
 }
 #=======================================
 
