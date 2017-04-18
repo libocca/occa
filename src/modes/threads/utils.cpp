@@ -80,9 +80,6 @@ namespace occa {
       job_t job;
 
       while(true) {
-        // Fence local data (incase of out-of-socket updates)
-        OCCA_LFENCE;
-
         hasJob = false;
         data.jobMutex->lock();
         if (data.jobs->size()) {

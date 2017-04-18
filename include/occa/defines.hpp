@@ -91,18 +91,6 @@
 #  define OCCA_32_BIT 0
 #endif
 
-#if OCCA_ARM
-#  define OCCA_LFENCE __asm__ __volatile__ ("dmb")
-#elif defined(_ARCH_PWR4)
-#  define OCCA_LFENCE __asm__ __volatile__ ("lwsync")
-#else
-#  if (OCCA_OS & (OCCA_LINUX_OS | OCCA_OSX_OS))
-#    define OCCA_LFENCE __asm__ __volatile__ ("lfence")
-#  else
-#    define OCCA_LFENCE MemoryBarrier()
-#  endif
-#endif
-
 //---[ Checks and Info ]----------------
 #define OCCA_TEMPLATE_CHECK(checkFunction, expr, filename, function, line, message) \
   do {                                                                  \

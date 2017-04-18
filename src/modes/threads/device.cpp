@@ -111,7 +111,6 @@ namespace occa {
             break;
           }
         }
-        OCCA_LFENCE;
       }
     }
 
