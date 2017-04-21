@@ -21,8 +21,6 @@ namespace occa {
 
       while(true){
         // Fence local data (incase of out-of-socket updates)
-        OCCA_LFENCE;
-
         if( *(data.pendingJobs) ){
           data.kernelMutex->lock();
           PthreadKernelInfo_t &pkInfo = *(data.pKernelInfo->front());
@@ -36,9 +34,7 @@ namespace occa {
           --( *(data.pendingJobs) );
           data.pendingJobsMutex->unlock();
 
-          while((*data.pendingJobs) % data.count){
-            OCCA_LFENCE;
-          }
+          while((*data.pendingJobs) % data.count){}
           //==============================
         }
       }
@@ -941,9 +937,7 @@ namespace occa {
     OCCA_EXTRACT_DATA(Pthreads, Device);
 
     // Fence local data (incase of out-of-socket updates)
-    while(data_.pendingJobs){
-      OCCA_LFENCE;
-    }
+    while(data_.pendingJobs){}
   }
 
   template <>
