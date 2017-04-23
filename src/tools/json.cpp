@@ -419,44 +419,9 @@ namespace occa {
   }
 
   hash_t json::hash() const {
-    hash_t hash_;
-    switch(type) {
-    case none_: {
-      break;
-    }
-    case string_: {
-      hash_ ^= occa::hash(value_.string);
-      break;
-    }
-    case number_: {
-      hash_ ^= occa::hash(value_.number.value.ptr);
-      break;
-    }
-    case object_: {
-      cJsonObjectIterator it = value_.object.begin();
-      while (it != value_.object.end()) {
-        hash_ ^= occa::hash(it->first);
-        hash_ ^= occa::hash(it->second);
-        ++it;
-      }
-      break;
-    }
-    case array_: {
-      const int arraySize = (int) value_.array.size();
-      for (int i = 0; i < arraySize; ++i) {
-        hash_ ^= occa::hash(value_.array[i]);
-      }
-      break;
-    }
-    case boolean_: {
-      hash_ ^= occa::hash(value_.boolean);
-      break;
-    }
-    case null_: {
-      hash_ ^= occa::hash("null");
-      break;
-    }}
-    return hash_;
+    std::string out;
+    toString(out);
+    return occa::hash(out);
   }
 
   std::string json::toString() const {
