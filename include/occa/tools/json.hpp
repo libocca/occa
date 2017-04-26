@@ -147,6 +147,12 @@ namespace occa {
 
     json& operator = (const json &j);
 
+    inline json& operator = (const char *c) {
+      type = string_;
+      value_.string = c;
+      return *this;
+    }
+
     inline json& operator = (const std::string &value) {
       type = string_;
       value_.string = value;
