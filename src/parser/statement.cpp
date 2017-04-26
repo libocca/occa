@@ -221,13 +221,13 @@ namespace occa {
 
       // Don't need to load stuff
       if ((sInfo->info & (smntType::skipStatement      |
-                         smntType::macroStatement     |
-                         smntType::namespaceStatement |
-                         smntType::gotoStatement      |
-                         smntType::blockStatement))      ||
-         (sInfo->info == smntType::occaFor)              ||
-         (sInfo->info == smntType::elseStatement)        ||
-         (sInfo->info == smntType::doWhileStatement)) {
+                          smntType::macroStatement     |
+                          smntType::namespaceStatement |
+                          smntType::gotoStatement      |
+                          smntType::blockStatement))      ||
+          (sInfo->info == smntType::occaFor)              ||
+          (sInfo->info == smntType::elseStatement)        ||
+          (sInfo->info == smntType::doWhileStatement)) {
 
         if (sInfo->info == smntType::elseStatement) {
           info  = expType::checkSInfo;
