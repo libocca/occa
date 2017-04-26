@@ -1461,11 +1461,12 @@ namespace occa {
           attribute_t &occaTagAttr = occaLoop.attribute("occaTag");
           std::string occaTag      = occaTagAttr.valueStr();
 
-          if (occaTag == "tile")
+          if (occaTag == "tile") {
             return;
-
-          if (occaTag == "outer")
+          }
+          if (occaTag == "outer") {
             ++outerCount;
+          }
         }
 
         // Reorder tags
@@ -2029,67 +2030,123 @@ namespace occa {
     }
 
     void parserBase::addOccaBarriers() {
-      if (!insertBarriersAutomatically())
+      if (!insertBarriersAutomatically()) {
         return;
+      }
 
       statementNode *statementPos = globalScope->statementStart;
 
       while(statementPos) {
-        statement *s = statementPos->value;
+        statement &s = *(statementPos->value);
 
-        if (statementIsAKernel(*s)      && // Kernel
-           (s->statementStart != NULL)) {  // not empty
-
-          addOccaBarriersToStatement(*s);
+        if (statementIsAKernel(s)) {
+          statementVector_t loops;
+          findInnerLoopSets(s, loops);
+          const int loopCount = (int) loops.size();
+          for (int i = 0; i < (loopCount - 1); ++i) {
+            statement &s1 = *(loops[i]);
+            statement &s2 = *(loops[i + 1]);
+            if (statementUsesShared(s2) &&
+                !barrierBetween(s1, s2)) {
+              s2.up->pushSourceLeftOf(s2.getStatementNode(),
+                                      "occaBarrier(occaLocalMemFence);");
+            }
+          }
         }
 
         statementPos = statementPos->right;
       }
     }
 
-    void parserBase::addOccaBarriersToStatement(statement &s) {
+    void parserBase::findInnerLoopSets(statement &s, statementVector_t &loops) {
       statementNode *statementPos = s.statementStart;
 
-      statementNode *lastLoop = NULL;
-
-      while(statementPos) {
+      while (statementPos) {
         statement &s2 = *(statementPos->value);
 
         attribute_t *occaTagAttr = s2.hasAttribute("occaTag");
 
-        if ((occaTagAttr == NULL) ||
-           occaTagAttr->valueStr() != "inner") {
-
-          addOccaBarriersToStatement(s2);
-        }
-        else if (lastLoop == NULL) {
-          lastLoop = statementPos;
-        }
-        else {
-          statementNode *firstLoop = lastLoop;
-          statementNode *snPos     = firstLoop->right;
-          lastLoop = statementPos;
-
-          while(snPos != lastLoop) {
-            statement &s3 = *(snPos->value);
-
-            if (s3.hasStatementWithBarrier())
-              break;
-
-            snPos = snPos->right;
-          }
-
-          if (snPos == lastLoop) {
-            s.pushSourceLeftOf(lastLoop, "occaBarrier(occaLocalMemFence);");
-          }
+        if (occaTagAttr &&
+            occaTagAttr->valueStr() == "inner") {
+          loops.push_back(&s2);
+        } else {
+          findInnerLoopSets(s2, loops);
         }
 
         statementPos = statementPos->right;
       }
     }
 
-    bool parserBase::statementHasBarrier(statement &s) {
-      return s.hasBarrier();
+    bool parserBase::statementUsesShared(statement &s) {
+      expNode &flatRoot = *(s.expRoot.makeFlatHandle());
+
+      for (int i = 0; i < flatRoot.leafCount; ++i) {
+        if ((flatRoot[i].info & expType::varInfo) &&
+            flatRoot[i].getVarInfo().hasQualifier("occaShared")) {
+
+          expNode::freeFlatHandle(flatRoot);
+          return true;
+        }
+      }
+
+      expNode::freeFlatHandle(flatRoot);
+
+      statementNode *statementPos = s.statementStart;
+      while (statementPos) {
+        statement &s2 = *(statementPos->value);
+        if (statementUsesShared(s2)) {
+          return true;
+        }
+        statementPos = statementPos->right;
+      }
+
+      return false;
+    }
+
+    bool parserBase::barrierBetween(statement &s1, statement &s2) {
+      statement &gcs = s1.greatestCommonStatement(s2);
+
+      statementVector_t path[2];
+      statementNodeVector_t nodes[2];
+
+      for (int pass = 0; pass < 2; ++pass) {
+        statement *cs = ((pass == 0) ? &s1 : &s2);
+
+        // Get path leading to the GCS
+        while (cs != &gcs) {
+          path[pass].push_back(cs);
+          nodes[pass].push_back(cs->getStatementNode());
+          cs = cs->up;
+        }
+
+        // Check all following child statements in each parent (except GCS)
+        const int pathSize = (int) path[pass].size();
+        for (int i = 0; i < (pathSize - 1); ++i) {
+          // We only want to check
+          //   - s1's parent's rights
+          //   - s2's parent's lefts
+          // Otherwise we might get statements left of s1 or right of s2
+          if (barrierBetween(pass ? nodes[pass][i]->left : nodes[pass][i]->right,
+                             NULL)) {
+            return true;
+          }
+        }
+      }
+
+      // Search nodes between GCS childs leading to s1 and s2
+      return barrierBetween(nodes[0][path[0].size() - 1]->right,
+                            nodes[1][path[1].size() - 1]);
+    }
+
+    bool parserBase::barrierBetween(statementNode *sn1, statementNode *sn2) {
+      while (sn1 && (sn1 != sn2)) {
+        statement &s = *(sn1->value);
+        if (s.hasStatementWithBarrier()) {
+          return true;
+        }
+        sn1 = sn1->right;
+      }
+      return false;
     }
 
     void parserBase::updateConstToConstant() {
@@ -3272,7 +3329,7 @@ namespace occa {
         }
 
         // Has variable
-        if ((sVar != NULL)                    &&
+        if ((sVar != NULL)                   &&
            !sVar->hasQualifier("occaShared") &&
            !sVar->hasQualifier("exclusive")) {
 

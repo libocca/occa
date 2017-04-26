@@ -181,9 +181,10 @@ namespace occa {
 
       void checkOccaBarriers(statement &s);
       void addOccaBarriers();
-      void addOccaBarriersToStatement(statement &s);
-
-      bool statementHasBarrier(statement &s);
+      void findInnerLoopSets(statement &s, statementVector_t &loops);
+      bool statementUsesShared(statement &s);
+      bool barrierBetween(statement &s1, statement &s2);
+      bool barrierBetween(statementNode *sn1, statementNode *s2);
 
       void addParallelFors(statement &s);
 

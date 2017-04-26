@@ -39,7 +39,7 @@ namespace occa {
     //---[ Exp Node ]-------------------------------
     namespace expType {
       static const info_t root            = 0;
-      static const info_t firstPass       = (((info_t) 1)  << 63);
+      static const info_t firstPass       = (((info_t) 1) << 63);
       static const info_t firstPassMask   = ~firstPass;
 
       static const info_t L               = (((info_t) 1)  << 0);
