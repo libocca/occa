@@ -115,14 +115,14 @@ namespace occa {
 
   void syncToDevice(void *ptr, const udim_t bytes) {
     occa::memory_v *mem = uvaToMemory(ptr);
-    if (mem != NULL) {
+    if (mem) {
       syncMemToDevice(mem, bytes, ptrDiff(mem->uvaPtr, ptr));
     }
   }
 
   void syncFromDevice(void *ptr, const udim_t bytes) {
     occa::memory_v *mem = uvaToMemory(ptr);
-    if (mem != NULL) {
+    if (mem) {
       syncMemFromDevice(mem, bytes, ptrDiff(mem->uvaPtr, ptr));
     }
   }
@@ -131,11 +131,7 @@ namespace occa {
                        const udim_t bytes,
                        const udim_t offset) {
 
-    if (!mem->dHandle->hasSeparateMemorySpace()) {
-      memcpy(occa::memory(mem),
-             ptrOff(mem->uvaPtr, offset),
-             bytes, offset);
-    } else {
+    if (mem->dHandle->hasSeparateMemorySpace()) {
       occa::memory(mem).syncToDevice(bytes, offset);
     }
   }
@@ -144,11 +140,7 @@ namespace occa {
                          const udim_t bytes,
                          const udim_t offset) {
 
-    if (!mem->dHandle->hasSeparateMemorySpace()) {
-      memcpy(ptrOff(mem->uvaPtr, offset),
-             occa::memory(mem),
-             bytes, offset);
-    } else {
+    if (mem->dHandle->hasSeparateMemorySpace()) {
       occa::memory(mem).syncFromDevice(bytes, offset);
     }
   }
