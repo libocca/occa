@@ -235,13 +235,12 @@ namespace occa {
       }
 
       for (int i = 0; i < kArgc; ++i) {
-        const kernelArg_t &arg = kArgs[i].arg;
-        const dim_t extraArgCount = kArgs[i].extraArgs.size();
-        const kernelArg_t *extraArgs = extraArgCount ? &(kArgs[i].extraArgs[0]) : NULL;
-
-        vArgs[argc++] = arg.ptr();
-        for (int j = 0; j < extraArgCount; ++j) {
-          vArgs[argc++] = extraArgs[j].ptr();
+        const int argCount = (int) kArgs[i].args.size();
+        if (argCount) {
+          const kernelArg_t *kArgs_i = &(kArgs[i].args[0]);
+          for (int j = 0; j < argCount; ++j) {
+            vArgs[argc++] = kArgs_i[j].ptr();
+          }
         }
       }
 

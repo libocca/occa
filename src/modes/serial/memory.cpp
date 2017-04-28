@@ -36,11 +36,11 @@ namespace occa {
     }
 
     kernelArg memory::makeKernelArg() const {
-      kernelArg kArg;
-      kArg.arg.data.void_ = handle;
-      kArg.arg.size       = sizeof(void*);
-      kArg.arg.info       = kArgInfo::usePointer;
-      return kArg;
+      kernelArg_t arg;
+      arg.data.void_ = handle;
+      arg.size       = sizeof(void*);
+      arg.info       = kArgInfo::usePointer;
+      return kernelArg(arg);
     }
 
     memory_v* memory::addOffset(const dim_t offset, bool &needsFree) {

@@ -98,7 +98,9 @@ int main(int argc, char **argv) {
   std::cout << "Before:\n";
   printMatrix(a);
 
-  smallTranspose((int) a.dim(0), a, b);
+  smallTranspose((int) a.dim(0),
+                 a.arrayArg(),
+                 b.arrayArg());
   occa::finish();
 
   std::cout << "After:\n";

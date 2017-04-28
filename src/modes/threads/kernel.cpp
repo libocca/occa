@@ -38,22 +38,19 @@ namespace occa {
     void kernel::runFromArguments(const int kArgc, const kernelArg *kArgs) const {
       job_t job;
 
-      job.count = threads;
-
+      job.count  = threads;
       job.handle = handle;
-
-      job.inner = inner;
-      job.outer = outer;
+      job.inner  = inner;
+      job.outer  = outer;
 
       const int argc = kernelArg::argumentCount(kArgc, kArgs);
       for (int i = 0; i < argc; ++i) {
-        const kernelArg_t &arg = kArgs[i].arg;
-        const dim_t extraArgCount = kArgs[i].extraArgs.size();
-        const kernelArg_t *extraArgs = extraArgCount ? &(kArgs[i].extraArgs[0]) : NULL;
-
-        job.args.push_back(arg.ptr());
-        for (int j = 0; j < extraArgCount; ++j) {
-          job.args.push_back(extraArgs[j].ptr());
+        const int argCount = (int) kArgs[i].args.size();
+        if (argCount) {
+          const kernelArg_t *kArgs_i = &(kArgs[i].args[0]);
+          for (int j = 0; j < argCount; ++j) {
+            job.args.push_back(kArgs_i[j].ptr());
+          }
         }
       }
 

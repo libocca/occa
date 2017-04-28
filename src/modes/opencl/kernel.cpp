@@ -209,16 +209,14 @@ namespace occa {
       }
 
       for (int i = 0; i < kArgc; ++i) {
-        const kernelArg_t &arg = kArgs[i].arg;
-        const dim_t extraArgCount = kArgs[i].extraArgs.size();
-        const kernelArg_t *extraArgs = extraArgCount ? &(kArgs[i].extraArgs[0]) : NULL;
-
-        OCCA_OPENCL_ERROR("Kernel (" + metadata.name + ") : Setting Kernel Argument [" << (i + 1) << "]",
-                          clSetKernelArg(clKernel, argc++, arg.size, arg.ptr()));
-
-        for (int j = 0; j < extraArgCount; ++j) {
-          OCCA_OPENCL_ERROR("Kernel (" + metadata.name + ") : Setting Kernel Argument [" << (i + 1) << "]",
-                            clSetKernelArg(clKernel, argc++, extraArgs[j].size, extraArgs[j].ptr()));
+        const int argCount = (int) kArgs[i].args.size();
+        if (argCount) {
+          const kernelArg_t *kArgs_i = &(kArgs[i].args[0]);
+          for (int j = 0; j < argCount; ++j) {
+            const kernelArg_t &kArg_j = kArgs_i[j];
+            OCCA_OPENCL_ERROR("Kernel (" + metadata.name + ") : Setting Kernel Argument [" << (i + 1) << "]",
+                              clSetKernelArg(clKernel, argc++, kArg_j.size, kArg_j.ptr()));
+          }
         }
       }
 

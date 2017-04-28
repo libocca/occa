@@ -158,8 +158,8 @@ namespace occa {
 
   memory::operator kernelArg() const {
     kernelArg kArg = mHandle->makeKernelArg();
-    kArg.arg.mHandle = mHandle;
-    kArg.arg.dHandle = mHandle->dHandle;
+    kArg.args[0].mHandle = mHandle;
+    kArg.args[0].dHandle = mHandle->dHandle;
     return kArg;
   }
 
