@@ -80,8 +80,8 @@ namespace occa {
     occa::memory_v *mHandle;
 
     kernelArgData_t data;
-    udim_t          size;
-    char            info;
+    udim_t size;
+    char info;
 
     kernelArg_t();
     kernelArg_t(const kernelArg_t &k);
@@ -93,55 +93,55 @@ namespace occa {
 
   class kernelArg {
   public:
-    kernelArg_t arg;
-    kArgVector_t extraArgs;
+    kArgVector_t args;
 
     kernelArg();
     ~kernelArg();
-    kernelArg(kernelArg_t &arg_);
+    kernelArg(kernelArg_t &arg);
     kernelArg(const kernelArg &k);
     kernelArg& operator = (const kernelArg &k);
 
     template <class TM>
-    kernelArg(const TM &arg_) {
-      setupFrom(const_cast<TM*>(&arg_), sizeof(TM), false);
+    kernelArg(const TM &arg) {
+      addArg((void*) const_cast<TM*>(&arg), sizeof(TM), false);
     }
 
     template <class TM>
-    kernelArg(TM *arg_) {
-      setupFrom(arg_);
+    kernelArg(TM *arg) {
+      addArg((void*) arg, true, false);
     }
 
     template <class TM>
-    kernelArg(const TM *arg_) {
-      setupFrom(const_cast<TM*>(arg_));
+    void addArg(const TM &arg) {
+      addArg((void*) const_cast<TM*>(&arg), sizeof(TM), false);
     }
 
-    void setupFrom(void *arg_,
-                   bool lookAtUva = true, bool argIsUva = false);
+    void addArg(void *arg,
+                bool lookAtUva = true, bool argIsUva = false);
 
-    void setupFrom(void *arg_, size_t bytes,
-                   bool lookAtUva = true, bool argIsUva = false);
-
-    occa::device getDevice() const;
+    void addArg(void *arg, size_t bytes,
+                bool lookAtUva = true, bool argIsUva = false);
 
     void setupForKernelCall(const bool isConst) const;
 
     static int argumentCount(const int argc, const kernelArg *args);
   };
 
-  template <> kernelArg::kernelArg(const uint8_t &arg_);
-  template <> kernelArg::kernelArg(const uint16_t &arg_);
-  template <> kernelArg::kernelArg(const uint32_t &arg_);
-  template <> kernelArg::kernelArg(const uint64_t &arg_);
+  template <> kernelArg::kernelArg(const uint8_t &arg);
+  template <> kernelArg::kernelArg(const uint16_t &arg);
+  template <> kernelArg::kernelArg(const uint32_t &arg);
+  template <> kernelArg::kernelArg(const uint64_t &arg);
 
-  template <> kernelArg::kernelArg(const int8_t &arg_);
-  template <> kernelArg::kernelArg(const int16_t &arg_);
-  template <> kernelArg::kernelArg(const int32_t &arg_);
-  template <> kernelArg::kernelArg(const int64_t &arg_);
+  template <> kernelArg::kernelArg(const int8_t &arg);
+  template <> kernelArg::kernelArg(const int16_t &arg);
+  template <> kernelArg::kernelArg(const int32_t &arg);
+  template <> kernelArg::kernelArg(const int64_t &arg);
 
-  template <> kernelArg::kernelArg(const float &arg_);
-  template <> kernelArg::kernelArg(const double &arg_);
+  template <> kernelArg::kernelArg(const float &arg);
+  template <> kernelArg::kernelArg(const double &arg);
+
+  template <>
+  void kernelArg::addArg(const kernelArg &arg);
   //====================================
 
 
