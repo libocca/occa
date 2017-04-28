@@ -37,8 +37,9 @@ namespace occa {
     device::device(const occa::properties &properties_) :
       occa::device_v(properties_) {
 
-      OCCA_ERROR("[CUDA] device not given [deviceID]",
-                 properties.has("deviceID"));
+      OCCA_ERROR("[CUDA] device not given a [deviceID] integer",
+                 properties.has("deviceID") &&
+                 properties["deviceID"].isNumber());
 
       const int deviceID = properties.get<int>("deviceID");
 

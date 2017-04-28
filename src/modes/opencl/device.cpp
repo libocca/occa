@@ -38,12 +38,14 @@ namespace occa {
       occa::device_v(properties_) {
 
       cl_int error;
-      OCCA_ERROR("[OpenCL] device not given [platformID]",
-                 properties.has("platformID"));
+      OCCA_ERROR("[OpenCL] device not given a [platformID] integer",
+                 properties.has("platformID") &&
+                 properties["platformID"].isNumber());
 
 
-      OCCA_ERROR("[OpenCL] device not given [deviceID]",
-                 properties.has("deviceID"));
+      OCCA_ERROR("[OpenCL] device not given a [deviceID] integer",
+                 properties.has("deviceID") &&
+                 properties["deviceID"].isNumber());
 
       platformID = properties.get<int>("platformID");
       deviceID   = properties.get<int>("deviceID");

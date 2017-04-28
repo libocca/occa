@@ -34,7 +34,7 @@ namespace occa {
 
       std::vector<int> pinnedCores;
 
-      threads  = properties.get("threads", coreCount);
+      threads = properties.get("threads", coreCount);
 
       if (properties.get<std::string>("schedule", "compact") == "compact") {
         schedule = compact;
