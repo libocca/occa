@@ -50,7 +50,7 @@ namespace occa {
     };
 
     typedef std::map<std::string, hashAndTag> hashMap_t;
-    extern hashMap_t fileLocks;
+    hashMap_t& fileLocks();
 
     //---[ File Openers ]---------------
     class fileOpener {
