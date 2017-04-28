@@ -231,23 +231,25 @@ namespace occa {
       return;
     }
 
-    if (mHandle->dHandle->hasSeparateMemorySpace()) {
-      OCCA_ERROR("Memory has size [" << mHandle->size << "],"
-                 << " trying to access [ " << offset << " , " << (offset + bytes_) << " ]",
-                 (bytes_ + offset) <= mHandle->size);
+    OCCA_ERROR("Memory has size [" << mHandle->size << "],"
+               << " trying to access [ " << offset << " , " << (offset + bytes_) << " ]",
+               (bytes_ + offset) <= mHandle->size);
 
-      copyFrom(mHandle->uvaPtr, bytes_, offset);
-
-      mHandle->memInfo |=  uvaFlag::inDevice;
-      mHandle->memInfo &= ~uvaFlag::isStale;
-
-      removeFromStaleMap(mHandle);
+    if (!mHandle->dHandle->hasSeparateMemorySpace()) {
+      return;
     }
+
+    copyFrom(mHandle->uvaPtr, bytes_, offset);
+
+    mHandle->memInfo |=  uvaFlag::inDevice;
+    mHandle->memInfo &= ~uvaFlag::isStale;
+
+    removeFromStaleMap(mHandle);
   }
 
   void memory::syncFromDevice(const dim_t bytes,
                               const dim_t offset) {
-    udim_t bytes_ = ((bytes == 0) ? mHandle->size : bytes);
+    udim_t bytes_ = ((bytes == -1) ? mHandle->size : bytes);
 
     OCCA_ERROR("Trying to copy negative bytes (" << bytes << ")",
                bytes >= -1);
@@ -258,18 +260,20 @@ namespace occa {
       return;
     }
 
-    if (mHandle->dHandle->hasSeparateMemorySpace()) {
-      OCCA_ERROR("Memory has size [" << mHandle->size << "],"
-                 << " trying to access [ " << offset << " , " << (offset + bytes_) << " ]",
-                 (bytes_ + offset) <= mHandle->size);
+    OCCA_ERROR("Memory has size [" << mHandle->size << "],"
+               << " trying to access [ " << offset << " , " << (offset + bytes_) << " ]",
+               (bytes_ + offset) <= mHandle->size);
 
-      copyTo(mHandle->uvaPtr, bytes_, offset);
-
-      mHandle->memInfo &= ~uvaFlag::inDevice;
-      mHandle->memInfo &= ~uvaFlag::isStale;
-
-      removeFromStaleMap(mHandle);
+    if (!mHandle->dHandle->hasSeparateMemorySpace()) {
+      return;
     }
+
+    copyTo(mHandle->uvaPtr, bytes_, offset);
+
+    mHandle->memInfo &= ~uvaFlag::inDevice;
+    mHandle->memInfo &= ~uvaFlag::isStale;
+
+    removeFromStaleMap(mHandle);
   }
 
   bool memory::uvaIsStale() const {

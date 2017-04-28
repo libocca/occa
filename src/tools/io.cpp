@@ -56,7 +56,10 @@ namespace occa {
   }
 
   namespace io {
-    hashMap_t fileLocks;
+    hashMap_t& fileLocks() {
+      static hashMap_t locks;
+      return locks;
+    }
 
     //---[ File Openers ]---------------
     std::vector<fileOpener*>& fileOpener::getOpeners() {
@@ -371,13 +374,13 @@ namespace occa {
     }
 
     void clearLocks() {
-      hashMap_t::iterator it = fileLocks.begin();
-      while (it != fileLocks.end()) {
+      hashMap_t::iterator it = fileLocks().begin();
+      while (it != fileLocks().end()) {
         hashAndTag &ht = it->second;
         releaseHash(ht.hash, ht.tag);
         ++it;
       }
-      fileLocks.clear();
+      fileLocks().clear();
     }
 
     bool haveHash(const hash_t &hash, const std::string &tag) {
@@ -391,7 +394,7 @@ namespace occa {
         return false;
       }
 
-      fileLocks[lockDir] = hashAndTag(hash, tag);
+      fileLocks()[lockDir] = hashAndTag(hash, tag);
 
       return true;
     }
@@ -412,7 +415,7 @@ namespace occa {
 
     void releaseHashLock(const std::string &lockDir) {
       sys::rmdir(lockDir);
-      fileLocks.erase(lockDir);
+      fileLocks().erase(lockDir);
     }
 
     kernelMetadata parseFileForFunction(const std::string &deviceMode,
