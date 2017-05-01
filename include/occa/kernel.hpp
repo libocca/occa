@@ -116,42 +116,36 @@ namespace occa {
 
     template <class TM>
     kernelArg(const type2<TM> &arg) {
-      addArg((void*) const_cast<type2<TM>*>(&arg), sizeof(type2<TM>), false);
+      add((void*) const_cast<type2<TM>*>(&arg), sizeof(type2<TM>), false);
     }
 
     template <class TM>
     kernelArg(const type4<TM> &arg) {
-      addArg((void*) const_cast<type4<TM>*>(&arg), sizeof(type4<TM>), false);
+      add((void*) const_cast<type4<TM>*>(&arg), sizeof(type4<TM>), false);
     }
 
     template <class TM>
     kernelArg(TM *arg) {
-      addArg((void*) arg, true, false);
+      add((void*) arg, true, false);
     }
 
     template <class TM>
     kernelArg(const TM *arg) {
-      addArg((void*) const_cast<TM*>(arg), true, false);
+      add((void*) const_cast<TM*>(arg), true, false);
     }
 
-    template <class TM>
-    void addArg(const TM &arg) {
-      addArg((void*) const_cast<TM*>(&arg), sizeof(TM), false);
-    }
+    void add(const kernelArg &arg);
 
-    void addArg(void *arg,
-                bool lookAtUva = true, bool argIsUva = false);
+    void add(void *arg,
+             bool lookAtUva = true, bool argIsUva = false);
 
-    void addArg(void *arg, size_t bytes,
-                bool lookAtUva = true, bool argIsUva = false);
+    void add(void *arg, size_t bytes,
+             bool lookAtUva = true, bool argIsUva = false);
 
     void setupForKernelCall(const bool isConst) const;
 
     static int argumentCount(const int argc, const kernelArg *args);
   };
-
-  template <>
-  void kernelArg::addArg(const kernelArg &arg);
   //====================================
 
 

@@ -134,21 +134,20 @@ namespace occa {
     args.push_back(kArg);
   }
 
-  template <>
-  void kernelArg::addArg(const kernelArg &arg) {
+  void kernelArg::add(const kernelArg &arg) {
     const int newArgs = (int) arg.args.size();
     for (int i = 0; i < newArgs; ++i) {
       args.push_back(arg.args[i]);
     }
   }
 
-  void kernelArg::addArg(void *arg,
-                         bool lookAtUva, bool argIsUva) {
-    addArg(arg, sizeof(void*), lookAtUva, argIsUva);
+  void kernelArg::add(void *arg,
+                      bool lookAtUva, bool argIsUva) {
+    add(arg, sizeof(void*), lookAtUva, argIsUva);
   }
 
-  void kernelArg::addArg(void *arg, size_t bytes,
-                         bool lookAtUva, bool argIsUva) {
+  void kernelArg::add(void *arg, size_t bytes,
+                      bool lookAtUva, bool argIsUva) {
     kernelArg_t kArg;
     memory_v *mHandle = NULL;
     if (argIsUva) {
@@ -176,19 +175,22 @@ namespace occa {
   }
 
   void kernelArg::setupForKernelCall(const bool isConst) const {
-    occa::memory_v *mHandle = args[0].mHandle;
+    const int argCount = (int) args.size();
+    for (int i = 0; i < argCount; ++i) {
+      occa::memory_v *mHandle = args[i].mHandle;
 
-    if (mHandle              &&
-        mHandle->isManaged() &&
-        mHandle->dHandle->hasSeparateMemorySpace()) {
+      if (mHandle              &&
+          mHandle->isManaged() &&
+          mHandle->dHandle->hasSeparateMemorySpace()) {
 
-      if (!mHandle->inDevice()) {
-        mHandle->copyFrom(mHandle->uvaPtr, mHandle->size);
-        mHandle->memInfo |= uvaFlag::inDevice;
-      }
-      if (!isConst && !mHandle->isStale()) {
-        uvaStaleMemory.push_back(mHandle);
-        mHandle->memInfo |= uvaFlag::isStale;
+        if (!mHandle->inDevice()) {
+          mHandle->copyFrom(mHandle->uvaPtr, mHandle->size);
+          mHandle->memInfo |= uvaFlag::inDevice;
+        }
+        if (!isConst && !mHandle->isStale()) {
+          uvaStaleMemory.push_back(mHandle);
+          mHandle->memInfo |= uvaFlag::isStale;
+        }
       }
     }
   }
