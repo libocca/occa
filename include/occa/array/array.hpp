@@ -105,8 +105,8 @@ namespace occa {
       return s_[i];
     }
 
-    inline operator occa::kernelArg () {
-      return memory_;
+    inline operator occa::kernelArg () const {
+      return memory_.operator occa::kernelArg();
     }
 
     inline occa::kernelArg arrayArg() {

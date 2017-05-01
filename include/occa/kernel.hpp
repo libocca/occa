@@ -101,14 +101,37 @@ namespace occa {
     kernelArg(const kernelArg &k);
     kernelArg& operator = (const kernelArg &k);
 
+    kernelArg(const uint8_t arg);
+    kernelArg(const uint16_t arg);
+    kernelArg(const uint32_t arg);
+    kernelArg(const uint64_t arg);
+
+    kernelArg(const int8_t arg);
+    kernelArg(const int16_t arg);
+    kernelArg(const int32_t arg);
+    kernelArg(const int64_t arg);
+
+    kernelArg(const float arg);
+    kernelArg(const double arg);
+
     template <class TM>
-    kernelArg(const TM &arg) {
-      addArg((void*) const_cast<TM*>(&arg), sizeof(TM), false);
+    kernelArg(const type2<TM> &arg) {
+      addArg((void*) const_cast<type2<TM>*>(&arg), sizeof(type2<TM>), false);
+    }
+
+    template <class TM>
+    kernelArg(const type4<TM> &arg) {
+      addArg((void*) const_cast<type4<TM>*>(&arg), sizeof(type4<TM>), false);
     }
 
     template <class TM>
     kernelArg(TM *arg) {
       addArg((void*) arg, true, false);
+    }
+
+    template <class TM>
+    kernelArg(const TM *arg) {
+      addArg((void*) const_cast<TM*>(arg), true, false);
     }
 
     template <class TM>
@@ -126,19 +149,6 @@ namespace occa {
 
     static int argumentCount(const int argc, const kernelArg *args);
   };
-
-  template <> kernelArg::kernelArg(const uint8_t &arg);
-  template <> kernelArg::kernelArg(const uint16_t &arg);
-  template <> kernelArg::kernelArg(const uint32_t &arg);
-  template <> kernelArg::kernelArg(const uint64_t &arg);
-
-  template <> kernelArg::kernelArg(const int8_t &arg);
-  template <> kernelArg::kernelArg(const int16_t &arg);
-  template <> kernelArg::kernelArg(const int32_t &arg);
-  template <> kernelArg::kernelArg(const int64_t &arg);
-
-  template <> kernelArg::kernelArg(const float &arg);
-  template <> kernelArg::kernelArg(const double &arg);
 
   template <>
   void kernelArg::addArg(const kernelArg &arg);

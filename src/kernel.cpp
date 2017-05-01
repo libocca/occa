@@ -74,6 +74,66 @@ namespace occa {
     return *this;
   }
 
+  kernelArg::kernelArg(const uint8_t arg) {
+    kernelArg_t kArg;
+    kArg.data.uint8_ = arg; kArg.size = sizeof(uint8_t);
+    args.push_back(kArg);
+  }
+
+  kernelArg::kernelArg(const uint16_t arg) {
+    kernelArg_t kArg;
+    kArg.data.uint16_ = arg; kArg.size = sizeof(uint16_t);
+    args.push_back(kArg);
+  }
+
+  kernelArg::kernelArg(const uint32_t arg) {
+    kernelArg_t kArg;
+    kArg.data.uint32_ = arg; kArg.size = sizeof(uint32_t);
+    args.push_back(kArg);
+  }
+
+  kernelArg::kernelArg(const uint64_t arg) {
+    kernelArg_t kArg;
+    kArg.data.uint64_ = arg; kArg.size = sizeof(uint64_t);
+    args.push_back(kArg);
+  }
+
+  kernelArg::kernelArg(const int8_t arg) {
+    kernelArg_t kArg;
+    kArg.data.int8_ = arg; kArg.size = sizeof(int8_t);
+    args.push_back(kArg);
+  }
+
+  kernelArg::kernelArg(const int16_t arg) {
+    kernelArg_t kArg;
+    kArg.data.int16_ = arg; kArg.size = sizeof(int16_t);
+    args.push_back(kArg);
+  }
+
+  kernelArg::kernelArg(const int32_t arg) {
+    kernelArg_t kArg;
+    kArg.data.int32_ = arg; kArg.size = sizeof(int32_t);
+    args.push_back(kArg);
+  }
+
+  kernelArg::kernelArg(const int64_t arg) {
+    kernelArg_t kArg;
+    kArg.data.int64_ = arg; kArg.size = sizeof(int64_t);
+    args.push_back(kArg);
+  }
+
+  kernelArg::kernelArg(const float arg) {
+    kernelArg_t kArg;
+    kArg.data.float_ = arg; kArg.size = sizeof(float);
+    args.push_back(kArg);
+  }
+
+  kernelArg::kernelArg(const double arg) {
+    kernelArg_t kArg;
+    kArg.data.double_ = arg; kArg.size = sizeof(double);
+    args.push_back(kArg);
+  }
+
   template <>
   void kernelArg::addArg(const kernelArg &arg) {
     const int newArgs = (int) arg.args.size();
@@ -112,76 +172,6 @@ namespace occa {
       kArg.data.void_ = arg;
     }
 
-    args.push_back(kArg);
-  }
-
-  template <>
-  kernelArg::kernelArg(const uint8_t &arg) {
-    kernelArg_t kArg;
-    kArg.data.uint8_ = arg; kArg.size = sizeof(uint8_t);
-    args.push_back(kArg);
-  }
-
-  template <>
-  kernelArg::kernelArg(const uint16_t &arg) {
-    kernelArg_t kArg;
-    kArg.data.uint16_ = arg; kArg.size = sizeof(uint16_t);
-    args.push_back(kArg);
-  }
-
-  template <>
-  kernelArg::kernelArg(const uint32_t &arg) {
-    kernelArg_t kArg;
-    kArg.data.uint32_ = arg; kArg.size = sizeof(uint32_t);
-    args.push_back(kArg);
-  }
-
-  template <>
-  kernelArg::kernelArg(const uint64_t &arg) {
-    kernelArg_t kArg;
-    kArg.data.uint64_ = arg; kArg.size = sizeof(uint64_t);
-    args.push_back(kArg);
-  }
-
-  template <>
-  kernelArg::kernelArg(const int8_t &arg) {
-    kernelArg_t kArg;
-    kArg.data.int8_ = arg; kArg.size = sizeof(int8_t);
-    args.push_back(kArg);
-  }
-
-  template <>
-  kernelArg::kernelArg(const int16_t &arg) {
-    kernelArg_t kArg;
-    kArg.data.int16_ = arg; kArg.size = sizeof(int16_t);
-    args.push_back(kArg);
-  }
-
-  template <>
-  kernelArg::kernelArg(const int32_t &arg) {
-    kernelArg_t kArg;
-    kArg.data.int32_ = arg; kArg.size = sizeof(int32_t);
-    args.push_back(kArg);
-  }
-
-  template <>
-  kernelArg::kernelArg(const int64_t &arg) {
-    kernelArg_t kArg;
-    kArg.data.int64_ = arg; kArg.size = sizeof(int64_t);
-    args.push_back(kArg);
-  }
-
-  template <>
-  kernelArg::kernelArg(const float &arg) {
-    kernelArg_t kArg;
-    kArg.data.float_ = arg; kArg.size = sizeof(float);
-    args.push_back(kArg);
-  }
-
-  template <>
-  kernelArg::kernelArg(const double &arg) {
-    kernelArg_t kArg;
-    kArg.data.double_ = arg; kArg.size = sizeof(double);
     args.push_back(kArg);
   }
 
