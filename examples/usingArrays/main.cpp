@@ -1,5 +1,4 @@
 #include "occa.hpp"
-#include "occa/array.hpp"
 
 template <class TM, const int TMi>
 void printVector(occa::array<TM,TMi> &a);

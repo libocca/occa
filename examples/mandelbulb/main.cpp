@@ -7,7 +7,6 @@
 #include "visualizer.hpp"
 
 #include "occa.hpp"
-#include "occa/array.hpp"
 
 #if OCCA_GL_ENABLED
 visualizer vis;
