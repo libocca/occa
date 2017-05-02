@@ -162,6 +162,25 @@ namespace occa {
 #endif
     }
 
+    void prefetch(occa::memory mem) {
+#if CUDA_VERSION >= 8000
+      occa::device device = mem.getDevice();
+      occa::stream stream = device.getStream();
+      OCCA_CUDA_ERROR("Prefetching unified memory",
+                      cuMemPrefetchAsync(*((CUdeviceptr*) mem.getHandle()),
+                                         mem.size(),
+                                         *((CUdevice*) device.getHandle()),
+                                         *((CUstream*) stream.getHandle())) );
+#else
+      OCCA_ERROR("CUDA version ["
+                 << ((int) (CUDA_VERSION / 1000))
+                 << '.'
+                 << ((int) ((CUDA_VERSION % 100) / 10))
+                 << "] does not support unified memory prefetching",
+                 false);
+#endif
+    }
+
     occa::device wrapDevice(CUdevice device,
                             CUcontext context,
                             const occa::properties &props) {
