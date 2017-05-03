@@ -97,7 +97,7 @@ namespace occa {
       if (props.get<std::string>("type", "") == "context") {
         return (void*) context;
       }
-      return (void*) &handle;
+      return (void*) handle;
     }
 
     void device::finish() const {
