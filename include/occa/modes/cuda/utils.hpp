@@ -71,6 +71,8 @@ namespace occa {
                           CUstream usingStream,
                           const bool isAsync);
 
+    void prefetch(occa::memory mem);
+
     occa::device wrapDevice(CUdevice device,
                             CUcontext context,
                             const occa::properties &props);
