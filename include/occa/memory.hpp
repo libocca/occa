@@ -184,6 +184,7 @@ namespace occa {
     void uvaMarkFresh();
 
     occa::memory operator + (const dim_t offset);
+    occa::memory& operator += (const dim_t offset);
 
     void copyFrom(const void *src,
                   const dim_t bytes = -1,

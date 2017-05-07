@@ -390,6 +390,10 @@ namespace occa {
                             const udim_t i3, const udim_t i4, const udim_t i5);
     //==================================
 
+    //---[ Subarray ]-------------------
+    array operator + (const udim_t offset);
+    //==================================
+
     //---[ Assignment Operators ]-------
     array& operator = (const TM value);
 
