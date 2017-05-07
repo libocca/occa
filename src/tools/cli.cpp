@@ -24,12 +24,12 @@
 #include <iomanip>
 #include <sstream>
 
-#include "occa/tools/args.hpp"
+#include "occa/tools/cli.hpp"
 #include "occa/tools/string.hpp"
 #include "occa/tools/lex.hpp"
 
 namespace occa {
-  namespace args {
+  namespace cli {
     //---[ Printable ]------------------
     printable::printable() {}
 
@@ -248,24 +248,34 @@ namespace occa {
       occa::json parsedInfo(json::object_);
       const int argc = (int) args.size();
 
-      occa::json &jOrder = parsedInfo["order"].asArray();
-      occa::json &jOptions = parsedInfo["options"].asObject();
+      occa::json &jOrder     = parsedInfo["order"].asArray();
+      occa::json &jOptions   = parsedInfo["options"].asObject();
       occa::json &jArguments = parsedInfo["arguments"].asArray();
 
+      std::vector<option*> opts;
       option *opt = NULL;
+
       occa::json *optArgs = &jArguments;
       bool readingOpts = true;
 
       for (int i = 1; i < argc; ++i) {
         const std::string &arg_i = args[i];
         bool gotOpt = false;
+        opts.clear();
 
         if (readingOpts) {
           if (startsWith(arg_i, "--")) {
             opt = getOption(arg_i.substr(2));
             gotOpt = true;
           } else if (startsWith(arg_i, "-")) {
-            opt = getShortOption(arg_i.substr(1));
+            std::string args_i = arg_i.substr(1);
+            const int shortArgs = (int) args_i.size();
+            for (int j = 0; j < (shortArgs - 1); ++j) {
+              opts.push_back(getShortOption(std::string(1, args_i[j])));
+            }
+            if (shortArgs) {
+              opt = getShortOption(std::string(1, args_i[shortArgs - 1]));
+            }
             gotOpt = true;
           } else {
             const int optArgCount = (int) optArgs->array().size();
@@ -289,20 +299,26 @@ namespace occa {
             ::exit(0);
           }
 
-          if (opt == NULL) {
-            std::cerr << "Unknown option: " << arg_i << '\n';
-            printUsage(args[0], std::cerr);
-            ::exit(1);
+          opts.push_back(opt);
+          const int optCount = (int) opts.size();
+
+          for (int j = 0; j < optCount; ++j) {
+            if (!opts[j]) {
+              std::cerr << "Unknown option: " << arg_i << '\n';
+              printUsage(args[0], std::cerr);
+              ::exit(1);
+            }
+
+            option &opt_j = *(opts[j]);
+            jOrder += opt_j.name;
+
+            // --foo a b       = [[a b]]
+            // --foo a --foo b = [[a], [b]]
+            json &argArrays = jOptions[opt_j.name].asArray();
+            argArrays += json(json::array_);
+            jsonArray_t &argArray = argArrays.array();
+            optArgs = &(argArray[argArray.size() - 1]);
           }
-
-          jOrder += opt->name;
-
-          // --foo a b       = [[a b]]
-          // --foo a --foo b = [[a], [b]]
-          json &argArrays = jOptions[opt->name].asArray();
-          argArrays += json(json::array_);
-          jsonArray_t &argArray = argArrays.array();
-          optArgs = &(argArray[argArray.size() - 1]);
         }
       }
 
@@ -453,7 +469,7 @@ namespace occa {
       return *this;
     }
 
-    command& command::addCommand(const occa::args::command &command_) {
+    command& command::addCommand(const occa::cli::command &command_) {
       commands.push_back(command_);
       return *this;
     }

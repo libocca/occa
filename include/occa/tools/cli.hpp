@@ -31,7 +31,7 @@
 #include "occa/tools/json.hpp"
 
 namespace occa {
-  namespace args {
+  namespace cli {
     //---[ Printable ]------------------
     class printable {
     public:
@@ -187,7 +187,7 @@ namespace occa {
     //---[ Command ]--------------------
     class command : public parser {
     public:
-      typedef bool (*callback_t)(const occa::args::command &command,
+      typedef bool (*callback_t)(const occa::cli::command &command,
                                  jsonArray_t order,
                                  jsonObject_t options,
                                  jsonArray_t arguments);
@@ -219,7 +219,7 @@ namespace occa {
       virtual void printRequired(std::ostream &out);
 
       command& requiresCommand();
-      command& addCommand(const occa::args::command &command_);
+      command& addCommand(const occa::cli::command &command_);
 
       void run(const int argc, const char **argv);
       void run(const strVector_t &args,

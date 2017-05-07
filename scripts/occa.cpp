@@ -22,39 +22,32 @@
 
 #include <fstream>
 
-#include "occa/base.hpp"
-#include "occa/parser/tools.hpp"
-#include "occa/tools/args.hpp"
-#include "occa/tools/env.hpp"
-#include "occa/tools/io.hpp"
-#include "occa/tools/json.hpp"
-#include "occa/tools/misc.hpp"
-#include "occa/tools/sys.hpp"
+#include "occa.hpp"
 
-bool runCache(const occa::args::command &command,
+bool runCache(const occa::cli::command &command,
               occa::jsonArray_t order,
               occa::jsonObject_t options,
               occa::jsonArray_t arguments);
-bool runClear(const occa::args::command &command,
+bool runClear(const occa::cli::command &command,
               occa::jsonArray_t order,
               occa::jsonObject_t options,
               occa::jsonArray_t arguments);
-bool runCompile(const occa::args::command &command,
+bool runCompile(const occa::cli::command &command,
                 occa::jsonArray_t order,
                 occa::jsonObject_t options,
                 occa::jsonArray_t arguments);
-bool runEnv(const occa::args::command &command,
+bool runEnv(const occa::cli::command &command,
             occa::jsonArray_t order,
             occa::jsonObject_t options,
             occa::jsonArray_t arguments);
-bool runInfo(const occa::args::command &command,
+bool runInfo(const occa::cli::command &command,
              occa::jsonArray_t order,
              occa::jsonObject_t options,
              occa::jsonArray_t arguments);
 
 int main(int argc, char **argv) {
-  occa::args::command mainCommand;
-  occa::args::command cacheCommand, clearCommand, compileCommand, envCommand, infoCommand;
+  occa::cli::command mainCommand;
+  occa::cli::command cacheCommand, clearCommand, compileCommand, envCommand, infoCommand;
 
   mainCommand
     .withDescription("Can be used to display information of cache kernels.");
@@ -155,7 +148,7 @@ bool removeDir(const std::string &dir, const bool promptCheck = true) {
   return true;
 }
 
-bool runClear(const occa::args::command &command,
+bool runClear(const occa::cli::command &command,
               occa::jsonArray_t order,
               occa::jsonObject_t options,
               occa::jsonArray_t arguments) {
@@ -193,7 +186,7 @@ bool runClear(const occa::args::command &command,
   return true;
 }
 
-bool runCache(const occa::args::command &command,
+bool runCache(const occa::cli::command &command,
               occa::jsonArray_t order,
               occa::jsonObject_t options,
               occa::jsonArray_t arguments) {
@@ -222,14 +215,14 @@ bool runCache(const occa::args::command &command,
   return true;
 }
 
-bool runCompile(const occa::args::command &command,
+bool runCompile(const occa::cli::command &command,
                 occa::jsonArray_t order,
                 occa::jsonObject_t options,
                 occa::jsonArray_t arguments) {
   return true;
 }
 
-bool runEnv(const occa::args::command &command,
+bool runEnv(const occa::cli::command &command,
             occa::jsonArray_t order,
             occa::jsonObject_t options,
             occa::jsonArray_t arguments) {
@@ -260,7 +253,7 @@ bool runEnv(const occa::args::command &command,
   return true;
 }
 
-bool runInfo(const occa::args::command &command,
+bool runInfo(const occa::cli::command &command,
              occa::jsonArray_t order,
              occa::jsonObject_t options,
              occa::jsonArray_t arguments) {
