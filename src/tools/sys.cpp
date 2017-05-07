@@ -28,15 +28,19 @@
 #  include <errno.h>
 #  include <execinfo.h>
 #  include <sys/time.h>
+#  include <sys/syscall.h>
 #  include <sys/sysctl.h>
 #  include <sys/sysinfo.h>
+#  include <pthread.h>
 #  include <unistd.h>
 #elif (OCCA_OS & OCCA_OSX_OS)
 #  include <cxxabi.h>
 #  include <dlfcn.h>
 #  include <execinfo.h>
 #  include <mach/mach_host.h>
+#  include <sys/syscall.h>
 #  include <sys/sysctl.h>
+#  include <unistd.h>
 #  ifdef __clang__
 #    include <CoreServices/CoreServices.h>
 #    include <mach/mach_time.h>
@@ -264,6 +268,37 @@ namespace occa {
       struct stat statInfo;
 
       return (stat(filename.c_str(), &statInfo) == 0);
+    }
+
+    int getPID() {
+#if (OCCA_OS & (OCCA_LINUX_OS | OCCA_OSX_OS))
+      return getpid();
+#else
+      return GetCurrentProcessId();
+#endif
+    }
+
+    int getTID() {
+#if (OCCA_OS & (OCCA_LINUX_OS | OCCA_OSX_OS))
+      return syscall(SYS_gettid);
+#else
+      return GetCurrentThreadId();
+#endif
+    }
+
+    void pinToCore(const int core) {
+      const int coreCount = getCoreCount();
+      OCCA_ERROR("Core to pin (" << core << ") is not in range: [0, "
+                 << coreCount << "]",
+                 (0 <= core) && (core < coreCount));
+#if (OCCA_OS == OCCA_LINUX_OS)
+      cpu_set_t cpuSet;
+      CPU_ZERO(&cpuSet);
+      CPU_SET(core, &cpuSet);
+      syscall(__NR_sched_setaffinity, getTID(), sizeof(cpu_set_t), &cpuSet);
+#elif (OCCA_OS == OCCA_WINDOWS_OS)
+      SetThreadAffinityMask(GetCurrentThread(), 1 << core);
+#endif
     }
     //==================================
 

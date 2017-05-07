@@ -41,7 +41,7 @@ namespace occa {
     double currentTime();
 
     namespace vendor {
-      static const int notFound     = 0;
+      static const int notFound = 0;
 
       static const int b_GNU          = 0;
       static const int b_LLVM         = 1;
@@ -78,6 +78,10 @@ namespace occa {
     bool dirExists(const std::string &dir_);
     bool fileExists(const std::string &filename_,
                     const int flags = 0);
+
+    int getPID();
+    int getTID();
+    void pinToCore(const int core);
     //==================================
 
     //---[ Processor Info ]-------------
