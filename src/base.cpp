@@ -22,6 +22,7 @@
 
 #include "occa/base.hpp"
 #include "occa/mode.hpp"
+#include "occa/par/tls.hpp"
 #include "occa/tools/sys.hpp"
 
 namespace occa {
@@ -39,19 +40,21 @@ namespace occa {
 
   //---[ Device Functions ]-------------
   device host() {
-    static device _host;
-    if (!_host.isInitialized()) {
-      _host = occa::device(newModeDevice("mode: 'Serial'"));
+    static tls<device> hostDevice;
+    device &dev = hostDevice.value();
+    if (!dev.isInitialized()) {
+      dev = occa::device(newModeDevice("mode: 'Serial'"));
     }
-    return _host;
+    return dev;
   }
 
   device& currentDevice() {
-    static device cdev;
-    if (!cdev.isInitialized()) {
-      cdev = host();
+    static tls<device> tdev;
+    device &dev = tdev.value();
+    if (!dev.isInitialized()) {
+      dev = host();
     }
-    return cdev;
+    return dev;
   }
 
   void setDevice(device d) {

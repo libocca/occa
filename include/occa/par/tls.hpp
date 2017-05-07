@@ -20,11 +20,51 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  */
 
-#ifndef OCCA_HEADER
-#define OCCA_HEADER
+#ifndef OCCA_PAR_TLS_HEADER
+#define OCCA_PAR_TLS_HEADER
 
-#include "occa/base.hpp"
-#include "occa/array/includes.hpp"
-#include "occa/par/includes.hpp"
+#include "occa/defines.hpp"
+
+#include <iostream>
+
+#if (OCCA_OS & (OCCA_LINUX_OS | OCCA_OSX_OS))
+#  include <pthread.h>
+#else
+#  include <windows.h>
+#  include <intrin.h>
+#endif
+
+namespace occa {
+  template <class TM>
+  class tls {
+  private:
+#if (OCCA_OS & (OCCA_LINUX_OS | OCCA_OSX_OS))
+    pthread_key_t pkey;
+#else
+    __declspec(thread) TM value_;
+#endif
+
+  public:
+    tls(const TM &val = TM());
+    template <class TM2>
+    tls(const tls<TM2> &t);
+
+    template <class TM2>
+    const TM2& operator = (const TM2 &val);
+    template <class TM2>
+    const TM2& operator = (const tls<TM2> &t);
+
+    TM& value();
+    const TM& value() const;
+
+    operator TM ();
+    operator TM () const;
+  };
+
+  template <class TM>
+  std::ostream& operator << (std::ostream &out, const tls<TM> &t);
+}
+
+#include "occa/par/tls.tpp"
 
 #endif
