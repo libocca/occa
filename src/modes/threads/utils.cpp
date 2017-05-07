@@ -63,18 +63,7 @@ namespace occa {
     void* limbo(void *args) {
       workerData_t &data = *((workerData_t*) args);
 
-      // Thread affinity
-#if (OCCA_OS == OCCA_LINUX_OS) // Not WINUX
-      cpu_set_t cpuHandle;
-      CPU_ZERO(&cpuHandle);
-      CPU_SET(data.pinnedCore, &cpuHandle);
-#else
-      // TODO: Check affinity on hyperthreaded multi-socket systems?
-      if (data.rank == 0) {
-        fprintf(stderr, "[Pthreads] Affinity not guaranteed in this OS\n");
-      }
-      // BOOL SetProcessAffinityMask(HANDLE hProcess,DWORD_PTR dwProcessAffinityMask);
-#endif
+      sys::pinToCore(data.pinnedCore);
 
       bool hasJob;
       job_t job;
