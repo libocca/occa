@@ -1034,7 +1034,7 @@ namespace occa {
     }
   }
 
-  //---[ Operators ]--------------------
+  //---[ Access Operators ]-------------
   template <class TM, const int idxType>
   inline TM& array<TM,idxType>::operator [] (const udim_t i0) {
     return data_[i0];
@@ -1086,6 +1086,18 @@ namespace occa {
       return data_[i0 + s_[0]*(i1 + s_[1]*(i2 + s_[2]*(i3 + s_[3]*(i4 + s_[4]*i5))))];
     }
     return data_[fs_[0]*i0 + fs_[1]*i1 + fs_[2]*i2 + fs_[3]*i3 + fs_[4]*i4 + fs_[5]*i5];
+  }
+  //====================================
+
+  //---[ Subarray ]---------------------
+  template <class TM, const int idxType>
+  inline array<TM,idxType> array<TM,idxType>::operator + (const udim_t offset) {
+    array<TM,idxType> ret = *this;
+    udim_t byteOffset = offset * sizeof(TM);
+    ret.memory_ += byteOffset;
+    ret.data_   += offset;
+    ret.reshape(size() - offset);
+    return ret;
   }
   //====================================
 

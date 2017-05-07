@@ -63,17 +63,22 @@ namespace occa {
       return bytes;
     }
 
+    std::string getVersion() {
+      std::stringstream ss;
+      ss << ((int) (CUDA_VERSION / 1000))
+         << '.'
+         << ((int) ((CUDA_VERSION % 100) / 10));
+      return ss.str();
+    }
+
     void enablePeerToPeer(CUcontext context) {
 #if CUDA_VERSION >= 4000
       OCCA_CUDA_ERROR("Enabling Peer-to-Peer",
                       cuCtxEnablePeerAccess(context, 0) );
 #else
-      OCCA_ERROR("CUDA version ["
-                 << ((int) (CUDA_VERSION / 1000))
-                 << '.'
-                 << ((int) ((CUDA_VERSION % 100) / 10))
-                 << "] does not support Peer-to-Peer",
-                 false);
+      OCCA_FORCE_ERROR("CUDA version ["
+                       << cuda::getVersion()
+                       << "] does not support Peer-to-Peer");
 #endif
     }
 
@@ -91,9 +96,7 @@ namespace occa {
                  (canAccessPeer == 1));
 #else
       OCCA_ERROR("CUDA version ["
-                 << ((int) (CUDA_VERSION / 1000))
-                 << '.'
-                 << ((int) ((CUDA_VERSION % 100) / 10))
+                 << cuda::getVersion()
                  << "] does not support Peer-to-Peer",
                  false);
 #endif
@@ -154,31 +157,53 @@ namespace occa {
                                           usingStream));
       }
 #else
-      OCCA_ERROR("CUDA version ["
-                 << ((int) (CUDA_VERSION / 1000))
-                 << '.'
-                 << ((int) ((CUDA_VERSION % 100) / 10))
-                 << "] does not support Peer-to-Peer",
-                 false);
+      OCCA_FORCE_ERROR("CUDA version ["
+                       << cuda::getVersion()
+                       << "] does not support Peer-to-Peer");
 #endif
     }
 
-    void prefetch(occa::memory mem) {
+    void advise(occa::memory mem, advice_t advice, const dim_t bytes) {
+      advise(mem, advice, bytes, mem.getDevice());
+    }
+
+    void advise(occa::memory mem, advice_t advice, occa::device device) {
+      advise(mem, advice, -1, device);
+    }
+
+    void advise(occa::memory mem, advice_t advice, const dim_t bytes, occa::device device) {
 #if CUDA_VERSION >= 8000
+      udim_t bytes_ = ((bytes == -1) ? mem.size() : bytes);
+      CUdevice cuDevice = *((CUdevice*) device.getHandle());
+      if (device.mode() != "CUDA") {
+        cuDevice = CU_DEVICE_CPU;
+      }
+      OCCA_CUDA_ERROR("Advising about unified memory",
+                      cuMemAdvise(*((CUdeviceptr*) mem.getHandle()),
+                                  (size_t) bytes_,
+                                  advice,
+                                  cuDevice);
+#else
+      OCCA_FORCE_ERROR("CUDA version ["
+                       << cuda::getVersion()
+                       << "] does not support unified memory advising");
+#endif
+    }
+
+    void prefetch(occa::memory mem, const dim_t bytes) {
+#if CUDA_VERSION >= 8000
+      udim_t bytes_ = ((bytes == -1) ? mem.size() : bytes);
       occa::device device = mem.getDevice();
       occa::stream stream = device.getStream();
       OCCA_CUDA_ERROR("Prefetching unified memory",
                       cuMemPrefetchAsync(*((CUdeviceptr*) mem.getHandle()),
-                                         mem.size(),
+                                         (size_t) bytes_,
                                          *((CUdevice*) device.getHandle()),
                                          *((CUstream*) stream.getHandle())) );
 #else
-      OCCA_ERROR("CUDA version ["
-                 << ((int) (CUDA_VERSION / 1000))
-                 << '.'
-                 << ((int) ((CUDA_VERSION % 100) / 10))
-                 << "] does not support unified memory prefetching",
-                 false);
+      OCCA_FORCE_ERROR("CUDA version ["
+                       << cuda::getVersion()
+                       << "] does not support unified memory prefetching");
 #endif
     }
 
@@ -233,58 +258,74 @@ namespace occa {
       occa::error(filename, function, line, ss.str());
     }
 
+#define OCCA_CUDA_ERROR_CASE(MACRO)             \
+    case MACRO: return #MACRO
+
     std::string getErrorMessage(const CUresult errorCode) {
       switch(errorCode) {
-      case CUDA_SUCCESS:                              return "CUDA_SUCCESS";
-      case CUDA_ERROR_INVALID_VALUE:                  return "CUDA_ERROR_INVALID_VALUE";
-      case CUDA_ERROR_OUT_OF_MEMORY:                  return "CUDA_ERROR_OUT_OF_MEMORY";
-      case CUDA_ERROR_NOT_INITIALIZED:                return "CUDA_ERROR_NOT_INITIALIZED";
-      case CUDA_ERROR_DEINITIALIZED:                  return "CUDA_ERROR_DEINITIALIZED";
-      case CUDA_ERROR_PROFILER_DISABLED:              return "CUDA_ERROR_PROFILER_DISABLED";
-      case CUDA_ERROR_PROFILER_NOT_INITIALIZED:       return "CUDA_ERROR_PROFILER_NOT_INITIALIZED";
-      case CUDA_ERROR_PROFILER_ALREADY_STARTED:       return "CUDA_ERROR_PROFILER_ALREADY_STARTED";
-      case CUDA_ERROR_PROFILER_ALREADY_STOPPED:       return "CUDA_ERROR_PROFILER_ALREADY_STOPPED";
-      case CUDA_ERROR_NO_DEVICE:                      return "CUDA_ERROR_NO_DEVICE";
-      case CUDA_ERROR_INVALID_DEVICE:                 return "CUDA_ERROR_INVALID_DEVICE";
-      case CUDA_ERROR_INVALID_IMAGE:                  return "CUDA_ERROR_INVALID_IMAGE";
-      case CUDA_ERROR_INVALID_CONTEXT:                return "CUDA_ERROR_INVALID_CONTEXT";
-      case CUDA_ERROR_CONTEXT_ALREADY_CURRENT:        return "CUDA_ERROR_CONTEXT_ALREADY_CURRENT";
-      case CUDA_ERROR_MAP_FAILED:                     return "CUDA_ERROR_MAP_FAILED";
-      case CUDA_ERROR_UNMAP_FAILED:                   return "CUDA_ERROR_UNMAP_FAILED";
-      case CUDA_ERROR_ARRAY_IS_MAPPED:                return "CUDA_ERROR_ARRAY_IS_MAPPED";
-      case CUDA_ERROR_ALREADY_MAPPED:                 return "CUDA_ERROR_ALREADY_MAPPED";
-      case CUDA_ERROR_NO_BINARY_FOR_GPU:              return "CUDA_ERROR_NO_BINARY_FOR_GPU";
-      case CUDA_ERROR_ALREADY_ACQUIRED:               return "CUDA_ERROR_ALREADY_ACQUIRED";
-      case CUDA_ERROR_NOT_MAPPED:                     return "CUDA_ERROR_NOT_MAPPED";
-      case CUDA_ERROR_NOT_MAPPED_AS_ARRAY:            return "CUDA_ERROR_NOT_MAPPED_AS_ARRAY";
-      case CUDA_ERROR_NOT_MAPPED_AS_POINTER:          return "CUDA_ERROR_NOT_MAPPED_AS_POINTER";
-      case CUDA_ERROR_ECC_UNCORRECTABLE:              return "CUDA_ERROR_ECC_UNCORRECTABLE";
-      case CUDA_ERROR_UNSUPPORTED_LIMIT:              return "CUDA_ERROR_UNSUPPORTED_LIMIT";
-      case CUDA_ERROR_CONTEXT_ALREADY_IN_USE:         return "CUDA_ERROR_CONTEXT_ALREADY_IN_USE";
-      case CUDA_ERROR_PEER_ACCESS_UNSUPPORTED:        return "CUDA_ERROR_PEER_ACCESS_UNSUPPORTED";
-      case CUDA_ERROR_INVALID_SOURCE:                 return "CUDA_ERROR_INVALID_SOURCE";
-      case CUDA_ERROR_FILE_NOT_FOUND:                 return "CUDA_ERROR_FILE_NOT_FOUND";
-      case CUDA_ERROR_SHARED_OBJECT_SYMBOL_NOT_FOUND: return "CUDA_ERROR_SHARED_OBJECT_SYMBOL_NOT_FOUND";
-      case CUDA_ERROR_SHARED_OBJECT_INIT_FAILED:      return "CUDA_ERROR_SHARED_OBJECT_INIT_FAILED";
-      case CUDA_ERROR_OPERATING_SYSTEM:               return "CUDA_ERROR_OPERATING_SYSTEM";
-      case CUDA_ERROR_INVALID_HANDLE:                 return "CUDA_ERROR_INVALID_HANDLE";
-      case CUDA_ERROR_NOT_FOUND:                      return "CUDA_ERROR_NOT_FOUND";
-      case CUDA_ERROR_NOT_READY:                      return "CUDA_ERROR_NOT_READY";
-      case CUDA_ERROR_LAUNCH_FAILED:                  return "CUDA_ERROR_LAUNCH_FAILED";
-      case CUDA_ERROR_LAUNCH_OUT_OF_RESOURCES:        return "CUDA_ERROR_LAUNCH_OUT_OF_RESOURCES";
-      case CUDA_ERROR_LAUNCH_TIMEOUT:                 return "CUDA_ERROR_LAUNCH_TIMEOUT";
-      case CUDA_ERROR_LAUNCH_INCOMPATIBLE_TEXTURING:  return "CUDA_ERROR_LAUNCH_INCOMPATIBLE_TEXTURING";
-      case CUDA_ERROR_PEER_ACCESS_ALREADY_ENABLED:    return "CUDA_ERROR_PEER_ACCESS_ALREADY_ENABLED";
-      case CUDA_ERROR_PEER_ACCESS_NOT_ENABLED:        return "CUDA_ERROR_PEER_ACCESS_NOT_ENABLED";
-      case CUDA_ERROR_PRIMARY_CONTEXT_ACTIVE:         return "CUDA_ERROR_PRIMARY_CONTEXT_ACTIVE";
-      case CUDA_ERROR_CONTEXT_IS_DESTROYED:           return "CUDA_ERROR_CONTEXT_IS_DESTROYED";
-      case CUDA_ERROR_ASSERT:                         return "CUDA_ERROR_ASSERT";
-      case CUDA_ERROR_TOO_MANY_PEERS:                 return "CUDA_ERROR_TOO_MANY_PEERS";
-      case CUDA_ERROR_HOST_MEMORY_ALREADY_REGISTERED: return "CUDA_ERROR_HOST_MEMORY_ALREADY_REGISTERED";
-      case CUDA_ERROR_HOST_MEMORY_NOT_REGISTERED:     return "CUDA_ERROR_HOST_MEMORY_NOT_REGISTERED";
-      case CUDA_ERROR_NOT_PERMITTED:                  return "CUDA_ERROR_NOT_PERMITTED";
-      case CUDA_ERROR_NOT_SUPPORTED:                  return "CUDA_ERROR_NOT_SUPPORTED";
-      default:                                        return "UNKNOWN ERROR";
+        OCCA_CUDA_ERROR_CASE(CUDA_SUCCESS);
+        OCCA_CUDA_ERROR_CASE(CUDA_ERROR_INVALID_VALUE);
+        OCCA_CUDA_ERROR_CASE(CUDA_ERROR_OUT_OF_MEMORY);
+        OCCA_CUDA_ERROR_CASE(CUDA_ERROR_NOT_INITIALIZED);
+        OCCA_CUDA_ERROR_CASE(CUDA_ERROR_DEINITIALIZED);
+        OCCA_CUDA_ERROR_CASE(CUDA_ERROR_PROFILER_DISABLED);
+        OCCA_CUDA_ERROR_CASE(CUDA_ERROR_PROFILER_NOT_INITIALIZED);
+        OCCA_CUDA_ERROR_CASE(CUDA_ERROR_PROFILER_ALREADY_STARTED);
+        OCCA_CUDA_ERROR_CASE(CUDA_ERROR_PROFILER_ALREADY_STOPPED);
+        OCCA_CUDA_ERROR_CASE(CUDA_ERROR_NO_DEVICE);
+        OCCA_CUDA_ERROR_CASE(CUDA_ERROR_INVALID_DEVICE);
+        OCCA_CUDA_ERROR_CASE(CUDA_ERROR_INVALID_IMAGE);
+        OCCA_CUDA_ERROR_CASE(CUDA_ERROR_INVALID_CONTEXT);
+        OCCA_CUDA_ERROR_CASE(CUDA_ERROR_CONTEXT_ALREADY_CURRENT);
+        OCCA_CUDA_ERROR_CASE(CUDA_ERROR_MAP_FAILED);
+        OCCA_CUDA_ERROR_CASE(CUDA_ERROR_UNMAP_FAILED);
+        OCCA_CUDA_ERROR_CASE(CUDA_ERROR_ARRAY_IS_MAPPED);
+        OCCA_CUDA_ERROR_CASE(CUDA_ERROR_ALREADY_MAPPED);
+        OCCA_CUDA_ERROR_CASE(CUDA_ERROR_NO_BINARY_FOR_GPU);
+        OCCA_CUDA_ERROR_CASE(CUDA_ERROR_ALREADY_ACQUIRED);
+        OCCA_CUDA_ERROR_CASE(CUDA_ERROR_NOT_MAPPED);
+        OCCA_CUDA_ERROR_CASE(CUDA_ERROR_NOT_MAPPED_AS_ARRAY);
+        OCCA_CUDA_ERROR_CASE(CUDA_ERROR_NOT_MAPPED_AS_POINTER);
+        OCCA_CUDA_ERROR_CASE(CUDA_ERROR_ECC_UNCORRECTABLE);
+        OCCA_CUDA_ERROR_CASE(CUDA_ERROR_UNSUPPORTED_LIMIT);
+        OCCA_CUDA_ERROR_CASE(CUDA_ERROR_CONTEXT_ALREADY_IN_USE);
+        OCCA_CUDA_ERROR_CASE(CUDA_ERROR_PEER_ACCESS_UNSUPPORTED);
+        OCCA_CUDA_ERROR_CASE(CUDA_ERROR_INVALID_SOURCE);
+        OCCA_CUDA_ERROR_CASE(CUDA_ERROR_FILE_NOT_FOUND);
+        OCCA_CUDA_ERROR_CASE(CUDA_ERROR_SHARED_OBJECT_SYMBOL_NOT_FOUND);
+        OCCA_CUDA_ERROR_CASE(CUDA_ERROR_SHARED_OBJECT_INIT_FAILED);
+        OCCA_CUDA_ERROR_CASE(CUDA_ERROR_OPERATING_SYSTEM);
+        OCCA_CUDA_ERROR_CASE(CUDA_ERROR_INVALID_HANDLE);
+        OCCA_CUDA_ERROR_CASE(CUDA_ERROR_NOT_FOUND);
+        OCCA_CUDA_ERROR_CASE(CUDA_ERROR_NOT_READY);
+        OCCA_CUDA_ERROR_CASE(CUDA_ERROR_LAUNCH_FAILED);
+        OCCA_CUDA_ERROR_CASE(CUDA_ERROR_LAUNCH_OUT_OF_RESOURCES);
+        OCCA_CUDA_ERROR_CASE(CUDA_ERROR_LAUNCH_TIMEOUT);
+        OCCA_CUDA_ERROR_CASE(CUDA_ERROR_LAUNCH_INCOMPATIBLE_TEXTURING);
+        OCCA_CUDA_ERROR_CASE(CUDA_ERROR_PEER_ACCESS_ALREADY_ENABLED);
+        OCCA_CUDA_ERROR_CASE(CUDA_ERROR_PEER_ACCESS_NOT_ENABLED);
+        OCCA_CUDA_ERROR_CASE(CUDA_ERROR_PRIMARY_CONTEXT_ACTIVE);
+        OCCA_CUDA_ERROR_CASE(CUDA_ERROR_CONTEXT_IS_DESTROYED);
+        OCCA_CUDA_ERROR_CASE(CUDA_ERROR_ASSERT);
+        OCCA_CUDA_ERROR_CASE(CUDA_ERROR_TOO_MANY_PEERS);
+        OCCA_CUDA_ERROR_CASE(CUDA_ERROR_HOST_MEMORY_ALREADY_REGISTERED);
+        OCCA_CUDA_ERROR_CASE(CUDA_ERROR_HOST_MEMORY_NOT_REGISTERED);
+        OCCA_CUDA_ERROR_CASE(CUDA_ERROR_NOT_PERMITTED);
+        OCCA_CUDA_ERROR_CASE(CUDA_ERROR_NOT_SUPPORTED);
+#if CUDA_VERSION >= 7000
+        OCCA_CUDA_ERROR_CASE(CUDA_ERROR_INVALID_PTX);
+        OCCA_CUDA_ERROR_CASE(CUDA_ERROR_ILLEGAL_ADDRESS);
+        OCCA_CUDA_ERROR_CASE(CUDA_ERROR_HARDWARE_STACK_ERROR);
+        OCCA_CUDA_ERROR_CASE(CUDA_ERROR_ILLEGAL_INSTRUCTION);
+        OCCA_CUDA_ERROR_CASE(CUDA_ERROR_MISALIGNED_ADDRESS);
+        OCCA_CUDA_ERROR_CASE(CUDA_ERROR_INVALID_ADDRESS_SPACE);
+        OCCA_CUDA_ERROR_CASE(CUDA_ERROR_INVALID_PC);
+#endif
+#if CUDA_VERSION >= 8000
+        OCCA_CUDA_ERROR_CASE(CUDA_ERROR_NVLINK_UNCORRECTABLE);
+#endif
+      default:
+        return "UNKNOWN ERROR";
       };
     }
   }

@@ -57,6 +57,10 @@ int main(int argc, char **argv) {
   vec1.sum(10, vec2);
   printVector(vec1);
 
+  occa::array<float> subvec1 = vec1 + 5;
+  std::cout << "vec1 + 5\n";
+  printVector(subvec1);
+
   // Basic linear algebra routines
   std::cout << "vec1.l1Norm()       = " << vec1.l1Norm<double>() << '\n'
             << "vec1.l2Norm()       = " << vec1.l2Norm<double>() << '\n'

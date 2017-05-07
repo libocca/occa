@@ -32,11 +32,19 @@
 
 namespace occa {
   namespace cuda {
+#if CUDA_VERSION >= 8000
+    typedef CUmem_advise advice_t ;
+#else
+    typedef int advice_t ;
+#endif
+
     void init();
 
     int getDeviceCount();
     CUdevice getDevice(const int id);
     udim_t getDeviceMemorySize(CUdevice device);
+
+    std::string getVersion();
 
     void enablePeerToPeer(CUcontext context);
     void checkPeerToPeer(CUdevice destDevice,
@@ -71,7 +79,11 @@ namespace occa {
                           CUstream usingStream,
                           const bool isAsync);
 
-    void prefetch(occa::memory mem);
+    void advise(occa::memory mem, int advice, const dim_t bytes = -1);
+    void advise(occa::memory mem, int advice, occa::device device);
+    void advise(occa::memory mem, int advice, const dim_t bytes, occa::device device);
+
+    void prefetch(occa::memory mem, const dim_t bytes = -1);
 
     occa::device wrapDevice(CUdevice device,
                             CUcontext context,
