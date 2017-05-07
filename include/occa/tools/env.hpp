@@ -26,6 +26,7 @@
 #include "occa/defines.hpp"
 #include "occa/types.hpp"
 #include "occa/tools/string.hpp"
+#include "occa/tools/properties.hpp"
 
 namespace occa {
   namespace env {
@@ -35,6 +36,8 @@ namespace occa {
     extern std::string OCCA_DIR, OCCA_CACHE_DIR;
     extern size_t      OCCA_MEM_BYTE_ALIGN;
     extern strVector_t OCCA_PATH;
+
+    properties& baseSettings();
 
     void initialize();
     void initSettings();
