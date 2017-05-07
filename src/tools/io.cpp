@@ -47,6 +47,7 @@
 #include "occa/tools/io.hpp"
 #include "occa/tools/string.hpp"
 #include "occa/tools/sys.hpp"
+#include "occa/par/tls.hpp"
 
 namespace occa {
   // Kernel Caching
@@ -57,8 +58,8 @@ namespace occa {
 
   namespace io {
     hashMap_t& fileLocks() {
-      static hashMap_t locks;
-      return locks;
+      static tls<hashMap_t> locks;
+      return locks.value();
     }
 
     //---[ File Openers ]---------------

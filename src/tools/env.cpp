@@ -37,6 +37,11 @@ namespace occa {
     size_t OCCA_MEM_BYTE_ALIGN;
     strVector_t OCCA_PATH;
 
+    properties& baseSettings() {
+      static properties settings_;
+      return settings_;
+    }
+
     void initialize() {
       static bool isInitialized = false;
       if (isInitialized) {
@@ -52,7 +57,7 @@ namespace occa {
     }
 
     void initSettings() {
-      properties &settings_ = settings();
+      properties &settings_ = baseSettings();
       settings_["version"] = "1.0";
       settings_["parserVersion"] = "20170302";
       settings_["verboseCompilation"] = env::get<bool>("OCCA_VERBOSE", false);

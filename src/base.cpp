@@ -23,25 +23,24 @@
 #include "occa/base.hpp"
 #include "occa/mode.hpp"
 #include "occa/par/tls.hpp"
+#include "occa/tools/env.hpp"
 #include "occa/tools/sys.hpp"
 
 namespace occa {
   //---[ Globals & Flags ]--------------
   properties& settings() {
-    static properties settings_;
-    return settings_;
+    static tls<properties> settings_;
+    properties& props = settings_.value();
+    if (!props.isInitialized()) {
+      props = env::baseSettings();
+    }
+    return props;
   }
   //====================================
 
-
-  //---[ Memory ]-----------------------
-  //====================================
-
-
   //---[ Device Functions ]-------------
   device host() {
-    static tls<device> hostDevice;
-    device &dev = hostDevice.value();
+    static device dev;
     if (!dev.isInitialized()) {
       dev = occa::device(newModeDevice("mode: 'Serial'"));
     }
