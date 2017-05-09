@@ -25,8 +25,10 @@
 #include <sstream>
 
 #include "occa/tools/cli.hpp"
-#include "occa/tools/string.hpp"
+#include "occa/tools/env.hpp"
+#include "occa/tools/io.hpp"
 #include "occa/tools/lex.hpp"
+#include "occa/tools/string.hpp"
 
 namespace occa {
   namespace cli {
@@ -74,31 +76,61 @@ namespace occa {
     }
 
     //---[ Option ]---------------------
-    option::option() {}
+    option::option() :
+      shortname('\0'),
+      flags(0),
+      requiredArgs(0),
+      expansionFunction("") {
 
-    option::option(const std::string &name_,
-                   const std::string &description_,
-                   const int args_,
-                   const bool isRequired_) :
-      shortname(0),
-      args(args_),
-      isRequired(isRequired_) {
+      name="";
+      description="";
+    }
+
+    option::option(const char shortname_,
+                   const std::string &name_,
+                   const std::string &description_) :
+      shortname(shortname_),
+      flags(0),
+      requiredArgs(0),
+      expansionFunction("") {
 
       name = name_;
       description = description_;
     }
 
-    option::option(const char shortname_,
-                   const std::string &name_,
-                   const std::string &description_,
-                   const int args_,
-                   const bool isRequired_) :
-      shortname(shortname_),
-      args(args_),
-      isRequired(isRequired_) {
+    option option::isRequired() {
+      option opt = *this;
+      opt.flags |= flags_t::isRequired;
+      return opt;
+    }
 
-      name = name_;
-      description = description_;
+    option option::reusable() {
+      option opt = *this;
+      opt.flags |= flags_t::reusable;
+      return opt;
+    }
+
+    option option::stopsExpansion() {
+      option opt = *this;
+      opt.flags |= flags_t::stopsExpansion;
+      return opt;
+    }
+
+    option option::expandsFiles() {
+      option opt = *this;
+      opt.flags |= flags_t::expandsFiles;
+      return opt;
+    }
+
+    option option::expandsFunction(const std::string &function) {
+      option opt = *this;
+      opt.flags |= flags_t::expandsFunction;
+      opt.expansionFunction = function;
+      return opt;
+    }
+
+    bool option::getIsRequired() {
+      return (flags & flags_t::isRequired);
     }
 
     std::string option::getName() const {
@@ -106,13 +138,85 @@ namespace occa {
       if (shortname) {
         ret += '-';
         ret += shortname;
-        ret += ", --";
-        ret += name;
+        if (name.size()) {
+          ret += ", --";
+          ret += name;
+        }
       } else {
         ret += "    --";
         ret += name;
       }
       return ret;
+    }
+
+    void option::printBashAutocomplete(const std::string &funcPrefix) {
+      const std::string shortFlag = (!shortname   ? "" : ("-" + std::string(1, shortname)));
+      const std::string longFlag  = (!name.size() ? "" : ("--" + name));
+      const std::string shortFunc = funcPrefix + "_" + shortFlag;
+      const std::string longFunc  = funcPrefix + "_" + longFlag;
+
+      // Arguments for init_flag
+      std::string flagArgs = "";
+      if (shortname) {
+        flagArgs += " \"" + shortFlag + "\"";
+      }
+      if (name.size()) {
+        flagArgs += " \"" + longFlag + "\"";
+      }
+
+      // If the short and long flags exist, the short will call the long
+      const std::string definitionFunc = longFlag.size() ? longFunc : shortFunc;
+
+      // Methods to find the pair's flag
+      if (shortFlag.size()) {
+        std::cout << '\n'
+                  << shortFunc << "-long() {\n"
+                  << "    echo \"" << longFlag << "\"\n"
+                  << "}\n";
+      }
+      if (longFlag.size()) {
+        std::cout << '\n'
+                  << longFunc << "-short() {\n"
+                  << "    echo \"" << shortFlag << "\"\n"
+                  << "}\n";
+      }
+
+      if (shortFlag.size() && longFlag.size()) {
+        std::cout << '\n'
+                  << shortFunc << "() {\n"
+                  << "    " << longFunc << "\n"
+                  << "}\n"
+                  << "\n";
+      }
+      // The actual flag defines
+      std::cout << '\n'
+                << definitionFunc << "() {\n";
+
+      if (flags & flags_t::stopsExpansion) {
+        std::cout << "    compIsDone=true\n"
+                  << "}\n";
+        return;
+      }
+
+      std::cout << "    options=()\n"
+                << "    flags=()\n";
+
+      if (flags & flags_t::expandsFiles) {
+        std::cout << "    expansions=(file)\n";
+      } else if (flags & flags_t::expandsFunction) {
+        std::cout << "    expansions=(func)\n"
+                  << "    expansionFunction=\"" << expansionFunction << "\"\n";
+      } else {
+        std::cout << "    expansions=(same)\n";
+      }
+
+      std::cout << "    __occa_init_flag   " << flagArgs << "\n";
+      if (flags & flags_t::reusable) {
+        std::cout << "    __occa_reuse_flags " << flagArgs << "\n";
+      }
+      std::cout << "    __occa_compgen\n"
+                << "}\n"
+                << "\n";
     }
 
     bool operator < (const option &l, const option &r) {
@@ -141,8 +245,9 @@ namespace occa {
       shortname = opt.shortname;
       name = opt.name;
       description = opt.description;
-      args = opt.args;
-      isRequired = opt.isRequired;
+
+      flags = opt.flags;
+      expansionFunction = expansionFunction;
     }
 
     std::string longOption::getName() const {
@@ -176,15 +281,10 @@ namespace occa {
       return NULL;
     }
 
-    parser& parser::withDescription(const std::string &description_) {
-      description = description_;
-      return *this;
-    }
-
     bool parser::hasOptionalArg() {
       const int argumentCount = (int) arguments.size();
       return (argumentCount &&
-              !arguments[argumentCount - 1].isRequired);
+              !arguments[argumentCount - 1].getIsRequired());
     }
 
     parser& parser::addArgument(const std::string &name_,
@@ -195,8 +295,11 @@ namespace occa {
                  << ", an optional argument has already been added\n",
                  !hasOptionalArg());
 
-      arguments.push_back(option(name_, description_,
-                                 0, isRequired_));
+      option opt('\0', name_, description_);
+      if (isRequired_) {
+        opt = opt.isRequired();
+      }
+      arguments.push_back(opt);
 
       return *this;
     }
@@ -211,24 +314,8 @@ namespace occa {
       return *this;
     }
 
-    parser& parser::addOption(const std::string &name_,
-                              const std::string &description_,
-                              const int args,
-                              const bool isRequired_) {
-
-      options.push_back(option(name_, description_,
-                               args, isRequired_));
-      return *this;
-    }
-
-    parser& parser::addOption(const char shortname_,
-                              const std::string &name_,
-                              const std::string &description_,
-                              const int args,
-                           const bool isRequired_) {
-
-      options.push_back(option(shortname_, name_, description_,
-                               args, isRequired_));
+    parser& parser::addOption(const option &option) {
+      options.push_back(option);
       return *this;
     }
 
@@ -279,7 +366,9 @@ namespace occa {
             gotOpt = true;
           } else {
             const int optArgCount = (int) optArgs->array().size();
-            if (opt && opt->args <= optArgCount) {
+            if (opt &&
+                (opt->requiredArgs >= 0) &&
+                (opt->requiredArgs <= optArgCount)) {
               opt = NULL;
               optArgs = &jArguments;
             }
@@ -330,13 +419,14 @@ namespace occa {
         if (hasOption) {
           jsonArray_t optArgs_i = jOptions[opt_i.name].array();
           for (int j = 0; j < (int) optArgs_i.size(); ++j) {
-            if (opt_i.args != (int) optArgs_i[j].array().size()) {
-              std::cerr << "Option " << opt_i << " is required and missing\n";
+            if (opt_i.requiredArgs != (int) optArgs_i[j].array().size()) {
+              std::cerr << "Option " << opt_i << " requires "
+                        << opt_i.requiredArgs << " arguments\n";
               printUsage(args[0], std::cerr);
               ::exit(1);
             }
           }
-        } else if (opt_i.isRequired) {
+        } else if (opt_i.getIsRequired()) {
           std::cerr << "Option " << opt_i << " is required and missing\n";
           printUsage(args[0], std::cerr);
           ::exit(1);
@@ -368,7 +458,7 @@ namespace occa {
       for (int i = 0; i < argumentCount; ++i) {
         option &argument = arguments[i];
         const bool repeats = hasRepetitiveArg && (i == (argumentCount - 1));
-        if (argument.isRequired) {
+        if (argument.getIsRequired()) {
           out << ' ' << argument.name;
         } else if (!repeats) {
           out << " [" << argument.name << ']';
@@ -408,8 +498,18 @@ namespace occa {
       return *this;
     }
 
+    command& command::withDescription(const std::string &description_) {
+      description = description_;
+      return *this;
+    }
+
     command& command::withCallback(callback_t callback_) {
       callback = callback_;
+      return *this;
+    }
+
+    command& command::withFunctionExpansion(std::string expansion) {
+      expansionFunction = expansion;
       return *this;
     }
 
@@ -532,6 +632,123 @@ namespace occa {
         std::cerr << "Unknown command: " << commandName << '\n';
         printUsage(std::cerr);
         ::exit(1);
+      }
+    }
+
+    void command::printBashAutocomplete(const std::string &funcPrefix) {
+      const std::string funcName = funcPrefix + "_" + name;
+      const bool isRoot = (funcPrefix.size() == 0);
+
+      if (isRoot) {
+        std::cout << io::read(env::OCCA_DIR + "scripts/autocomplete.sh");
+      }
+
+      std::cout << '\n'
+                << funcName << "() {\n";
+      // Setup global variables in the root command
+      if (isRoot) {
+        std::cout <<
+          ("    __occa_debug_echo \"\"\n"
+           "    __occa_debug_echo \"COMP_CWORD      : [${COMP_CWORD}]\"\n"
+           "    __occa_debug_echo \"COMP_LINE       : [${COMP_LINE}]\"\n"
+           "    __occa_debug_echo \"COMP_POINT      : [${COMP_POINT}]\"\n"
+           "    __occa_debug_echo \"COMP_WORDBREAKS : [${COMP_WORDBREAKS}]\"\n"
+           "    __occa_debug_echo \"COMP_WORDS      : [${COMP_WORDS}]\"\n"
+           "\n"
+           "    # Global variables\n"
+           "    local command=(") << name << (")\n"
+           "    local prevCommand=(") << name << (")\n"
+           "    local inputs=(\"${COMP_WORDS[@]:1}\")\n"
+           "    local nextInput=$(__occa_next_input)\n"
+           "    local options=()\n"
+           "    local flags=()\n"
+           "    local allUsedArgs=()\n"
+           "    local usedFlags=()\n"
+           "    local usedArgs=()\n"
+           "    local expansions=(args)\n"
+           "    local epansionFunction=\"\"\n"
+           "    local commandOptions=()\n"
+           "    local commandFlags=()\n"
+           "    local currentFlag=\"\"\n"
+           "    local compIsDone=false\n"
+           "\n"
+           "    # Real command info\n");
+      }
+
+      // Terminology mixup...
+      // commands -> options
+      // options  -> flags
+      std::string optionsArray = "";
+      std::string flagsArray   = "";
+      for (int i = 0; i < (int) commands.size(); ++i) {
+        if (i) {
+          optionsArray += ' ';
+        }
+        optionsArray += "'" + commands[i].name + "'";
+      }
+      for (int i = 0; i < (int) options.size(); ++i) {
+        option &opt = options[i];
+        if (i) {
+          flagsArray += ' ';
+        }
+        if (opt.shortname) {
+          flagsArray += "'-";
+          flagsArray += opt.shortname;
+          flagsArray += "'";
+          if (opt.name.size()) {
+            flagsArray += ' ';
+          }
+        }
+        if (opt.name.size()) {
+          flagsArray += "'--" + opt.name + "'";
+        }
+      }
+      std::cout << "    options=(" << optionsArray << ")\n"
+                << "    flags=("   << flagsArray   << ")\n"
+                << "\n"
+                << "    __occa_init_command\n";
+
+      if (commands.size()) {
+        // If we have commands, always try to autocomplete
+        std::cout << "    expansions=(args)\n"
+                  << "    __occa_compgen\n";
+      } else if (options.size()) {
+        // If the next input is an unused flag, use the (args) expansion to
+        //   continue the autocomplete
+        std::cout <<
+          ("    local unusedFlags=$(__occa_unused_flags)\n"
+           "\n"
+           "    if [ $(__occa_input_in \"${unusedFlags[@]}\") ]; then\n"
+           "        expansions=(args)\n"
+           "        __occa_compgen\n"
+           "    else\n"
+           "        __occa_autocomplete \"${unusedFlags[@]}\"\n"
+           "        compIsDone=true\n"
+           "    fi\n");
+      } else {
+        // Otherwise, use expansion type
+        if (expansionFunction.size()) {
+          std::cout << "    expansions=(func)\n"
+                    << "    expansionFunction=\"" << expansionFunction << "\"";
+        } else {
+          std::cout << "    expansions=(file)\n";
+        }
+        std::cout << "    __occa_compgen\n";
+      }
+
+      std::cout << "}\n";
+
+      for (int i = 0; i < (int) options.size(); ++i) {
+        options[i].printBashAutocomplete(funcName);
+      }
+
+      for (int i = 0; i < (int) commands.size(); ++i) {
+        commands[i].printBashAutocomplete(funcName);
+      }
+
+      if (isRoot) {
+        std::cout << '\n'
+                  << "complete -F " << funcName << " " << name << "\n";
       }
     }
 

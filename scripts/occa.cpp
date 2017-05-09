@@ -24,62 +24,77 @@
 
 #include "occa.hpp"
 
+occa::cli::command occaCommand;
+
 bool runCache(const occa::cli::command &command,
               occa::jsonArray_t order,
               occa::jsonObject_t options,
               occa::jsonArray_t arguments);
+
 bool runClear(const occa::cli::command &command,
               occa::jsonArray_t order,
               occa::jsonObject_t options,
               occa::jsonArray_t arguments);
+
 bool runCompile(const occa::cli::command &command,
                 occa::jsonArray_t order,
                 occa::jsonObject_t options,
                 occa::jsonArray_t arguments);
+
 bool runEnv(const occa::cli::command &command,
             occa::jsonArray_t order,
             occa::jsonObject_t options,
             occa::jsonArray_t arguments);
+
 bool runInfo(const occa::cli::command &command,
              occa::jsonArray_t order,
              occa::jsonObject_t options,
              occa::jsonArray_t arguments);
 
+bool runBashAutocomplete(const occa::cli::command &command,
+                         occa::jsonArray_t order,
+                         occa::jsonObject_t options,
+                         occa::jsonArray_t arguments);
+
 int main(int argc, char **argv) {
-  occa::cli::command mainCommand;
-  occa::cli::command cacheCommand, clearCommand, compileCommand, envCommand, infoCommand;
-
-  mainCommand
-    .withDescription("Can be used to display information of cache kernels.");
-
+  occa::cli::command cacheCommand;
   cacheCommand
     .withName("cache")
     .withCallback(runCache)
     .withDescription("Cache kernels")
-    .addOption('l', "lib",
-               "Cache kernels in this library directory",
-               1, true)
+    .addArgument("LIBRARY",
+                 "Library where kernels will be cached under",
+                 true)
     .addRepetitiveArgument("FILE",
                            "OKL files that will be cached.",
                            true);
 
+  occa::cli::command clearCommand;
   clearCommand
     .withName("clear")
     .withCallback(runClear)
     .withDescription("Clears cached files and cache locks")
-    .addOption('a', "all",
-               "Clear cached kernels, cached libraries, and locks.")
-    .addOption('k', "kernels",
-               "Clear cached kernels.")
-    .addOption('l', "lib",
-               "Clear cached library.", 1)
-    .addOption('\0', "libraries",
-               "Clear cached libraries.")
-    .addOption('o', "locks",
-               "Clear cache locks")
-    .addOption('y', "yes",
-               "Automatically answer everything with [y/yes]");
+    .addOption(occa::cli::option('a', "all",
+                                 "Clear cached kernels, cached libraries, and locks.")
+               .stopsExpansion())
+    .addOption(occa::cli::option('k', "kernel",
+                                 "Clear cached kernel.")
+               .reusable()
+               .expandsFunction("ls ${OCCA_CACHE_DIR:-${HOME}/.occa}/cache"))
+    .addOption(occa::cli::option('\0', "kernels",
+                                 "Clear cached kernels."))
+    .addOption(occa::cli::option('l', "lib",
+                                 "Clear cached library.")
+               .reusable()
+               .expandsFunction("ls ${OCCA_CACHE_DIR:-${HOME}/.occa}/libraries"))
+    .addOption(occa::cli::option('\0', "libraries",
+                                 "Clear cached libraries."))
+    .addOption(occa::cli::option('o', "locks",
+                                 "Clear cache locks"))
+    .addOption(occa::cli::option('y', "yes",
+                                 "Automatically answer everything with [y/yes]"));
 
+  occa::cli::command compileCommand;
   compileCommand
     .withName("compile")
     .withCallback(runCompile)
@@ -89,24 +104,42 @@ int main(int argc, char **argv) {
                            "The file should be an object with all device and kernel property combinations that will be compiled.",
                            true);
 
+  occa::cli::command envCommand;
   envCommand
     .withName("env")
     .withCallback(runEnv)
     .withDescription("Print environment variables used in OCCA");
 
+  occa::cli::command infoCommand;
   infoCommand
     .withName("info")
     .withCallback(runInfo)
     .withDescription("Prints information about available OCCA modes");
 
-  mainCommand
+  occa::cli::command autocompleteBash;
+  autocompleteBash
+    .withName("bash")
+    .withCallback(runBashAutocomplete)
+    .withDescription("Prints bash functions to autocomplete occa commands and arguments");
+
+  occa::cli::command autocompleteCommand;
+  autocompleteCommand
+    .withName("autocomplete")
+    .withDescription("Prints shell functions to autocomplete occa commands and arguments")
+    .requiresCommand()
+    .addCommand(autocompleteBash);
+
+  occaCommand
+    .withName("occa")
+    .withDescription("Can be used to display information of cache kernels.")
     .requiresCommand()
     .addCommand(cacheCommand)
     .addCommand(clearCommand)
     .addCommand(envCommand)
-    .addCommand(infoCommand);
+    .addCommand(infoCommand)
+    .addCommand(autocompleteCommand);
 
-  mainCommand.run(argc, (const char**) argv);
+  occaCommand.run(argc, (const char**) argv);
 
   return 0;
 }
@@ -164,14 +197,27 @@ bool runClear(const occa::cli::command &command,
     if (it->first == "all") {
       removedSomething |= removeDir(occa::env::OCCA_CACHE_DIR, promptCheck);
     } else if (it->first == "lib") {
-      const occa::jsonArray_t &libraries = it->second.array();
-      for (int i = 0; i < (int) libraries.size(); ++i) {
-        removedSomething |= removeDir(occa::io::libraryPath() +
-                                      libraries[i].array()[0].string(),
-                                      promptCheck);
+      const occa::jsonArray_t &libGroups = it->second.array();
+      for (int i = 0; i < (int) libGroups.size(); ++i) {
+        const occa::jsonArray_t &libs = libGroups[i].array();
+        for (int j = 0; j < (int) libs.size(); ++j) {
+          removedSomething |= removeDir(occa::io::libraryPath() +
+                                        libs[j].string(),
+                                        promptCheck);
+        }
       }
     } else if (it->first == "libraries") {
       removedSomething |= removeDir(occa::io::libraryPath(), promptCheck);
+    } else if (it->first == "kernel") {
+      const occa::jsonArray_t &kernelGroups = it->second.array();
+      for (int i = 0; i < (int) kernelGroups.size(); ++i) {
+        const occa::jsonArray_t &kernels = kernelGroups[i].array();
+        for (int j = 0; j < (int) kernels.size(); ++j) {
+          removedSomething |= removeDir(occa::io::cachePath() +
+                                        kernels[j].string(),
+                                        promptCheck);
+        }
+      }
     } else if (it->first == "kernels") {
       removedSomething |= removeDir(occa::io::cachePath(), promptCheck);
     } else if (it->first == "locks") {
@@ -258,6 +304,15 @@ bool runInfo(const occa::cli::command &command,
              occa::jsonObject_t options,
              occa::jsonArray_t arguments) {
   occa::printModeInfo();
+  ::exit(0);
+  return true;
+}
+
+bool runBashAutocomplete(const occa::cli::command &command,
+                         occa::jsonArray_t order,
+                         occa::jsonObject_t options,
+                         occa::jsonArray_t arguments) {
+  occaCommand.printBashAutocomplete();
   ::exit(0);
   return true;
 }
