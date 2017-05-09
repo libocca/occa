@@ -108,23 +108,37 @@ namespace occa {
     public:
       char shortname;
 
-      int args;
-      bool isRequired;
+      class flags_t {
+      public:
+        static const int isRequired      = (1 << 0);
+        static const int reusable        = (1 << 1);
+        static const int stopsExpansion  = (1 << 2);
+        static const int expandsFiles    = (1 << 3);
+        static const int expandsFunction = (1 << 4);
+      };
+
+      int flags;
+      int requiredArgs;
+      std::string expansionFunction;
 
       option();
 
-      option(const std::string &name_,
-             const std::string &description_,
-             const int args_ = 0,
-             const bool isRequired_ = false);
-
       option(const char shortname_,
              const std::string &name_,
-             const std::string &description_,
-             const int args_ = 0,
-             const bool isRequired_ = false);
+             const std::string &description_);
+
+      option isRequired();
+      option reusable();
+
+      option stopsExpansion();
+      option expandsFiles();
+      option expandsFunction(const std::string &function);
+
+      bool getIsRequired();
 
       virtual std::string getName() const;
+
+      void printBashAutocomplete(const std::string &funcPrefix);
 
       friend bool operator < (const option &l, const option &r);
       friend std::ostream& operator << (std::ostream &out, const option &opt);
@@ -150,8 +164,6 @@ namespace occa {
       option* getShortOption(const std::string &opt);
       option* getOption(const std::string &opt);
 
-      parser& withDescription(const std::string &description_);
-
       bool hasOptionalArg();
 
       parser& addArgument(const std::string &name_,
@@ -162,16 +174,7 @@ namespace occa {
                                     const std::string &description_,
                                     const bool isRequired);
 
-      parser& addOption(const std::string &name_,
-                        const std::string &description_,
-                        const int args = 0,
-                        const bool isRequired = false);
-
-      parser& addOption(const char shortname_,
-                        const std::string &name_,
-                        const std::string &description_,
-                        const int args = 0,
-                        const bool isRequired = false);
+      parser& addOption(const option &option);
 
       strVector_t makeArgs(const int argc, const char **argv);
 
@@ -196,6 +199,7 @@ namespace occa {
       std::vector<command> commands;
 
       callback_t callback;
+      std::string expansionFunction;
 
       command *runParent;
       strVector_t runArgs;
@@ -203,7 +207,9 @@ namespace occa {
       command();
 
       command& withName(const std::string &name_);
+      command& withDescription(const std::string &description_);
       command& withCallback(callback_t callback_);
+      command& withFunctionExpansion(std::string expansion);
 
       int getCommandIdx(const std::string &name_) const;
       command* getCommand(const std::string &name_);
@@ -224,6 +230,8 @@ namespace occa {
       void run(const int argc, const char **argv);
       void run(const strVector_t &args,
                command *parent = NULL);
+
+      void printBashAutocomplete(const std::string &funcPrefix="");
 
       bool operator < (const command &comm) const;
     };
