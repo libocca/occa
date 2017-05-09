@@ -182,7 +182,7 @@ namespace occa {
                       cuMemAdvise(*((CUdeviceptr*) mem.getHandle()),
                                   (size_t) bytes_,
                                   advice,
-                                  cuDevice);
+                                  cuDevice));
 #else
       OCCA_FORCE_ERROR("CUDA version ["
                        << cuda::getVersion()
