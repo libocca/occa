@@ -79,9 +79,9 @@ namespace occa {
                           CUstream usingStream,
                           const bool isAsync);
 
-    void advise(occa::memory mem, int advice, const dim_t bytes = -1);
-    void advise(occa::memory mem, int advice, occa::device device);
-    void advise(occa::memory mem, int advice, const dim_t bytes, occa::device device);
+    void advise(occa::memory mem, advice_t advice, const dim_t bytes = -1);
+    void advise(occa::memory mem, advice_t advice, occa::device device);
+    void advise(occa::memory mem, advice_t advice, const dim_t bytes, occa::device device);
 
     void prefetch(occa::memory mem, const dim_t bytes = -1);
 
