@@ -23,6 +23,7 @@
 #include "occa/defines.hpp"
 
 #if   (OCCA_OS & OCCA_LINUX_OS)
+#  include <ctime>
 #  include <cxxabi.h>
 #  include <dlfcn.h>
 #  include <errno.h>
@@ -34,6 +35,7 @@
 #  include <pthread.h>
 #  include <unistd.h>
 #elif (OCCA_OS & OCCA_OSX_OS)
+#  include <ctime>
 #  include <cxxabi.h>
 #  include <dlfcn.h>
 #  include <execinfo.h>
@@ -76,6 +78,7 @@ namespace occa {
   }
 
   namespace sys {
+    //---[ System Info ]----------------
     double currentTime() {
 #if (OCCA_OS & OCCA_LINUX_OS)
       timespec ct;
@@ -117,6 +120,67 @@ namespace occa {
       return ((double) (ct.QuadPart)) / ((double) (freq.QuadPart));
 #endif
     }
+
+    std::string date() {
+      ::time_t time_ = ::time(0);
+      struct ::tm &timeInfo = *(::localtime(&time_));
+      const int year  = timeInfo.tm_year + 1900;
+      const int month = timeInfo.tm_mon + 1;
+      const int day   = timeInfo.tm_mday;
+      const int hour  = timeInfo.tm_hour;
+      const int min   = timeInfo.tm_min;
+      const int sec   = timeInfo.tm_sec;
+
+      std::stringstream ss;
+      ss << year << '/';
+      if (month < 10) ss << '0';
+      ss << month << '/';
+      if (day   < 10) ss << '0';
+      ss << day << ' ';
+      if (hour  < 10) ss << '0';
+      ss << hour << ':';
+      if (min   < 10) ss << '0';
+      ss << min << ':';
+      if (sec   < 10) ss << '0';
+      ss << sec;
+      return ss.str();
+    }
+
+    std::string humanDate() {
+      ::time_t time_ = ::time(0);
+      struct ::tm &timeInfo = *(::localtime(&time_));
+      const int year  = timeInfo.tm_year + 1900;
+      const int month = timeInfo.tm_mon + 1;
+      const int day   = timeInfo.tm_mday;
+      const int hour  = timeInfo.tm_hour;
+      const int min   = timeInfo.tm_min;
+
+      std::stringstream ss;
+
+      switch (month) {
+      case 0 : ss << "Jan"; break;
+      case 1 : ss << "Feb"; break;
+      case 2 : ss << "Mar"; break;
+      case 3 : ss << "Apr"; break;
+      case 4 : ss << "May"; break;
+      case 5 : ss << "Jun"; break;
+      case 6 : ss << "Jul"; break;
+      case 7 : ss << "Aug"; break;
+      case 8 : ss << "Sep"; break;
+      case 9 : ss << "Oct"; break;
+      case 10: ss << "Nov"; break;
+      case 11: ss << "Dec"; break;
+      }
+
+      ss << ' ' << day << ' ' << year << ' ';
+      if (hour < 10) ss << '0';
+      ss << hour << ':';
+      if (min  < 10) ss << '0';
+      ss << min;
+
+      return ss.str();
+    }
+    //==================================
 
     //---[ System Calls ]---------------
     int call(const std::string &cmdline) {

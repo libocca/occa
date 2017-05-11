@@ -54,6 +54,7 @@ namespace occa {
   namespace kc {
     const std::string sourceFile = "source.cpp";
     const std::string binaryFile = "binary";
+    const std::string infoFile   = "info.json";
   }
 
   namespace io {
@@ -419,29 +420,26 @@ namespace occa {
       fileLocks().erase(lockDir);
     }
 
-    kernelMetadata parseFileForFunction(const std::string &deviceMode,
-                                        const std::string &filename,
-                                        const std::string &parsedFile,
+    kernelMetadata parseFileForFunction(const std::string &filename,
+                                        const std::string &outputFile,
                                         const std::string &functionName,
                                         const occa::properties &props) {
 
       const std::string ext = extension(filename);
-      occa::properties properties = props;
       parser fileParser;
 
-      properties["mode"] = deviceMode;
+      std::string parsedContent = fileParser.parseFile(io::filename(filename),
+                                                       props);
 
-      std::string parsedContent = fileParser.parseFile(io::filename(filename), properties);
-
-      if (!sys::fileExists(parsedFile)) {
-        hash_t hash = occa::hash(parsedFile);
+      if (!sys::fileExists(outputFile)) {
+        hash_t hash = occa::hash(outputFile);
         const std::string hashTag = "parse-file";
 
         if (io::haveHash(hash, hashTag)) {
-          sys::mkpath(dirname(parsedFile));
+          sys::mkpath(dirname(outputFile));
 
           std::ofstream fs;
-          fs.open(parsedFile.c_str());
+          fs.open(outputFile.c_str());
           fs << parsedContent;
           fs.close();
 
@@ -523,8 +521,9 @@ namespace occa {
                           const std::string &footer) {
 
       const std::string expFilename = io::filename(filename);
-      const std::string hashDir = io::hashDir(expFilename, hash);
-      const std::string sourceFile = hashDir + cachedName;
+      const std::string hashDir     = io::hashDir(expFilename, hash);
+      const std::string infoFile    = hashDir + kc::infoFile;
+      const std::string sourceFile  = hashDir + cachedName;
 
       if (sys::fileExists(sourceFile)) {
         return sourceFile;
@@ -532,6 +531,14 @@ namespace occa {
       sys::mkpath(hashDir);
 
       std::ofstream fs;
+      fs.open(infoFile.c_str());
+      fs << "{\n"
+         << "  \"file\"     : \"" << expFilename      << "\",\n"
+         << "  \"date\"     : \"" << sys::date()      << "\",\n"
+         << "  \"humanDate\": \"" << sys::humanDate() << "\"\n"
+         << "}\n";
+      fs.close();
+
       fs.open(sourceFile.c_str());
 
       fs << header                << '\n'

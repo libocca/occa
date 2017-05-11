@@ -38,8 +38,6 @@ namespace occa {
   }
 
   namespace sys {
-    double currentTime();
-
     namespace vendor {
       static const int notFound = 0;
 
@@ -64,6 +62,12 @@ namespace occa {
       static const int VisualStudio = (1 << b_VisualStudio); // cl.exe
       static const int Cray         = (1 << b_Cray);         // cc     , CC
     }
+
+    //---[ System Info ]----------------
+    double currentTime();
+    std::string date();
+    std::string humanDate();
+    //==================================
 
     //---[ System Calls ]---------------
     int call(const std::string &cmdline);
