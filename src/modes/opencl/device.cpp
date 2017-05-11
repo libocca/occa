@@ -37,24 +37,26 @@ namespace occa {
     device::device(const occa::properties &properties_) :
       occa::device_v(properties_) {
 
-      cl_int error;
-      OCCA_ERROR("[OpenCL] device not given a [platformID] integer",
-                 properties.has("platformID") &&
-                 properties["platformID"].isNumber());
+      if (!properties.has("wrapped")) {
+        cl_int error;
+        OCCA_ERROR("[OpenCL] device not given a [platformID] integer",
+                   properties.has("platformID") &&
+                   properties["platformID"].isNumber());
 
 
-      OCCA_ERROR("[OpenCL] device not given a [deviceID] integer",
-                 properties.has("deviceID") &&
-                 properties["deviceID"].isNumber());
+        OCCA_ERROR("[OpenCL] device not given a [deviceID] integer",
+                   properties.has("deviceID") &&
+                   properties["deviceID"].isNumber());
 
-      platformID = properties.get<int>("platformID");
-      deviceID   = properties.get<int>("deviceID");
+        platformID = properties.get<int>("platformID");
+        deviceID   = properties.get<int>("deviceID");
 
-      clPlatformID = opencl::platformID(platformID);
-      clDeviceID   = opencl::deviceID(platformID, deviceID);
+        clPlatformID = opencl::platformID(platformID);
+        clDeviceID   = opencl::deviceID(platformID, deviceID);
 
-      clContext = clCreateContext(NULL, 1, &clDeviceID, NULL, NULL, &error);
-      OCCA_OPENCL_ERROR("Device: Creating Context", error);
+        clContext = clCreateContext(NULL, 1, &clDeviceID, NULL, NULL, &error);
+        OCCA_OPENCL_ERROR("Device: Creating Context", error);
+      }
 
       std::string compilerFlags;
 

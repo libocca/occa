@@ -54,8 +54,7 @@ public:
       kernel.free();
     }
     kernel = device.buildKernelFromString(ss.str(),
-                                          "customReductionKernel",
-                                          occa::properties("language = OKL"));
+                                          "customReductionKernel");
 
     init = true;
   }

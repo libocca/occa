@@ -19,7 +19,7 @@ int main(int argc, char **argv) {
     ab[i] = 0;
   }
 
-  device.setup("OpenMP");
+  device.setup("mode: 'OpenMP'");
 
   o_a  = device.wrapMemory(a , entries*sizeof(float));
   o_b  = device.wrapMemory(b , entries*sizeof(float));

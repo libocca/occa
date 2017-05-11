@@ -210,14 +210,14 @@ namespace occa {
     occa::device wrapDevice(CUdevice device,
                             CUcontext context,
                             const occa::properties &props) {
-      cuda::device &cdev = *(new cuda::device(props));
-      cdev.handle     = device;
-      cdev.context    = context;
-      cdev.p2pEnabled = false;
+      cuda::device &dev = *(new cuda::device(props));
+      dev.handle     = device;
+      dev.context    = context;
+      dev.p2pEnabled = false;
 
-      cdev.currentStream = cdev.createStream();
+      dev.currentStream = dev.createStream();
 
-      return occa::device(&cdev);
+      return occa::device(&dev);
     }
 
     CUevent& event(streamTag &tag) {

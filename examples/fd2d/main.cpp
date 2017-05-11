@@ -126,7 +126,7 @@ void setupMesh() {
 
   currentTime = 0;
 
-  std::cout << settings << '\n';
+  std::cout << "Settings:\n" << settings << '\n';
 
   u1.resize(width*height, 0);
   u2.resize(width*height, 0);
@@ -317,23 +317,10 @@ void solve() {
   const tFloat bw    = sizeof(tFloat)*width*height*(2*stencilDiameter + 3);
   const tFloat ns    = width*height;
 
-#if 1
-  std::cout << "Time Taken: " << timeTakenPerIteration << '\n';
-  std::cout << "GFLOPS    : " << flops/(1.0e9*timeTakenPerIteration) << '\n';
-  std::cout << "BW        : " <<    bw/(1.0e9*timeTakenPerIteration) << '\n';
-  std::cout << "NS        : " <<    ns/(1.0e6*timeTakenPerIteration) << '\n';
-#endif
-
   totalFlops += flops/(1.0e9*timeTakenPerIteration);
   totalBW    += bw/(1.0e9*timeTakenPerIteration);
   totalNS    += ns/(1.0e6*timeTakenPerIteration);
   totalIters += 1;
 
   o_u1.copyTo( &(u1[0]) );
-
-#if 0
-  std::cout << "Time: " << currentTime << '\n';
-  std::cout << "Min : " << *std::min_element(&u1[0], &u1.back()) << '\n';
-  std::cout << "Max : " << *std::max_element(&u1[0], &u1.back()) << '\n';
-#endif
 }

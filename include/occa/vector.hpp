@@ -80,6 +80,11 @@ namespace occa {
   };
 
   template <class TM>
+  inline type2<TM> operator - (const type2<TM> &a) {
+    return type2<TM>(-a.x, -a.y);
+  }
+
+  template <class TM>
   inline type2<TM> operator + (const type2<TM> &a, const type2<TM> &b) {
     return type2<TM>(a.x + b.x,
                      a.y + b.y);
@@ -264,6 +269,11 @@ namespace occa {
   };
 
   template <class TM>
+  inline type4<TM> operator - (const type4<TM> &a) {
+    return type4<TM>(-a.x, -a.y, -a.z, -a.w);
+  }
+
+  template <class TM>
   inline type4<TM> operator + (const type4<TM> &a, const type4<TM> &b) {
     return type4<TM>(a.x + b.x,
                      a.y + b.y,
@@ -271,16 +281,16 @@ namespace occa {
                      a.w + b.w);
   }
 
-  template <class TM>
-  inline type4<TM> operator + (const TM a, const type4<TM> &b) {
+  template <class TM, class TM2>
+  inline type4<TM> operator + (const TM2 a, const type4<TM> &b) {
     return type4<TM>(a + b.x,
                      a + b.y,
                      a + b.z,
                      a + b.w);
   }
 
-  template <class TM>
-  inline type4<TM> operator + (const type4<TM> &a, const TM b) {
+  template <class TM, class TM2>
+  inline type4<TM> operator + (const type4<TM> &a, const TM2 b) {
     return type4<TM>(a.x + b,
                      a.y + b,
                      a.z + b,
@@ -296,8 +306,8 @@ namespace occa {
     return a;
   }
 
-  template <class TM>
-  inline type4<TM>& operator += ( type4<TM> &a, const TM b) {
+  template <class TM, class TM2>
+  inline type4<TM>& operator += ( type4<TM> &a, const TM2 b) {
     a.x += b;
     a.y += b;
     a.z += b;
@@ -313,16 +323,16 @@ namespace occa {
                      a.w - b.w);
   }
 
-  template <class TM>
-  inline type4<TM> operator - (const TM a, const type4<TM> &b) {
+  template <class TM, class TM2>
+  inline type4<TM> operator - (const TM2 a, const type4<TM> &b) {
     return type4<TM>(a - b.x,
                      a - b.y,
                      a - b.z,
                      a - b.w);
   }
 
-  template <class TM>
-  inline type4<TM> operator - (const type4<TM> &a, const TM b) {
+  template <class TM, class TM2>
+  inline type4<TM> operator - (const type4<TM> &a, const TM2 b) {
     return type4<TM>(a.x - b,
                      a.y - b,
                      a.z - b,
@@ -338,8 +348,8 @@ namespace occa {
     return a;
   }
 
-  template <class TM>
-  inline type4<TM>& operator -= ( type4<TM> &a, const TM b) {
+  template <class TM, class TM2>
+  inline type4<TM>& operator -= ( type4<TM> &a, const TM2 b) {
     a.x -= b;
     a.y -= b;
     a.z -= b;
@@ -355,16 +365,16 @@ namespace occa {
                      a.w * b.w);
   }
 
-  template <class TM>
-  inline type4<TM> operator * (const TM a, const type4<TM> &b) {
+  template <class TM, class TM2>
+  inline type4<TM> operator * (const TM2 a, const type4<TM> &b) {
     return type4<TM>(a * b.x,
                      a * b.y,
                      a * b.z,
                      a * b.w);
   }
 
-  template <class TM>
-  inline type4<TM> operator * (const type4<TM> &a, const TM b) {
+  template <class TM, class TM2>
+  inline type4<TM> operator * (const type4<TM> &a, const TM2 b) {
     return type4<TM>(a.x * b,
                      a.y * b,
                      a.z * b,
@@ -380,8 +390,8 @@ namespace occa {
     return a;
   }
 
-  template <class TM>
-  inline type4<TM>& operator *= ( type4<TM> &a, const TM b) {
+  template <class TM, class TM2>
+  inline type4<TM>& operator *= ( type4<TM> &a, const TM2 b) {
     a.x *= b;
     a.y *= b;
     a.z *= b;
@@ -397,16 +407,16 @@ namespace occa {
                      a.w / b.w);
   }
 
-  template <class TM>
-  inline type4<TM> operator / (const TM a, const type4<TM> &b) {
+  template <class TM, class TM2>
+  inline type4<TM> operator / (const TM2 a, const type4<TM> &b) {
     return type4<TM>(a / b.x,
                      a / b.y,
                      a / b.z,
                      a / b.w);
   }
 
-  template <class TM>
-  inline type4<TM> operator / (const type4<TM> &a, const TM b) {
+  template <class TM, class TM2>
+  inline type4<TM> operator / (const type4<TM> &a, const TM2 b) {
     return type4<TM>(a.x / b,
                      a.y / b,
                      a.z / b,
@@ -422,8 +432,8 @@ namespace occa {
     return a;
   }
 
-  template <class TM>
-  inline type4<TM>& operator /= ( type4<TM> &a, const TM b) {
+  template <class TM, class TM2>
+  inline type4<TM>& operator /= ( type4<TM> &a, const TM2 b) {
     a.x /= b;
     a.y /= b;
     a.z /= b;
@@ -510,7 +520,7 @@ namespace occa {
   template <class TM>
   inline type4<TM> normalize(const type4<TM> &v) {
     const double invNorm = (1.0 / length(v));
-    return type2<TM>(invNorm * v.x,
+    return type4<TM>(invNorm * v.x,
                      invNorm * v.y,
                      invNorm * v.z,
                      invNorm * v.w);
@@ -535,14 +545,14 @@ namespace occa {
     return (value < min) ? min : ((max < value) ? max : value);
   }
 
-  template <class TM>
-  inline type2<TM> clamp(const type2<TM> &v, const TM min, const TM max) {
+  template <class TM, class TM2>
+  inline type2<TM> clamp(const type2<TM> &v, const TM2 min, const TM2 max) {
     return type2<TM>(clamp(v.x, min, max),
                      clamp(v.y, min, max));
   }
 
-  template <class TM>
-  inline type4<TM> clamp(const type4<TM> &v, const TM min, const TM max) {
+  template <class TM, class TM2>
+  inline type4<TM> clamp(const type4<TM> &v, const TM2 min, const TM2 max) {
     return type4<TM>(clamp(v.x, min, max),
                      clamp(v.y, min, max),
                      clamp(v.z, min, max),

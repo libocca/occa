@@ -67,7 +67,7 @@ int main(int argc, char **argv) {
   while(true) {
     const double startTime = occa::currentTime();
 
-    rayMarcher(rgba,
+    rayMarcher(rgba.arrayArg(),
                lightDirection,
                viewDirectionY, viewDirectionX,
                nearFieldLocation, eyeLocation);
@@ -153,7 +153,7 @@ void setupOCCA() {
 
   for (int x = 0; x < width; ++x) {
     for (int y = 0; y < height; ++y) {
-      rgba(3,x,y) = 255;
+      rgba(3,x,y) = (char) 255;
     }
   }
 
@@ -194,7 +194,7 @@ void render() {
 
   const double startTime = occa::sys::currentTime();
 
-  rayMarcher(rgba,
+  rayMarcher(rgba.arrayArg(),
              lightDirection,
              viewDirectionY, viewDirectionX,
              nearFieldLocation, eyeLocation);

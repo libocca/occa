@@ -76,7 +76,9 @@ namespace occa {
   }
 
   json json::loads(const std::string &filename) {
-    return json(io::read(filename));
+    json j;
+    j.load(io::read(filename));
+    return j;
   }
 
   void json::dumps(const std::string &filename) {

@@ -1,6 +1,8 @@
 #include <iostream>
 
 #include "occa.hpp"
+// Has OpenCL includes
+#include "occa/modes/opencl/utils.hpp"
 
 int main(int argc, char **argv) {
   int entries = 5;
@@ -8,18 +10,18 @@ int main(int argc, char **argv) {
   //---[ Init OpenCL ]------------------
   cl_int error;
 
-  cl_platform_id clPlatformID = occa::cl::platformID(0);
-  cl_device_id clDeviceID     = occa::cl::deviceID(0,0);
+  cl_platform_id clPlatformID = occa::opencl::platformID(0);
+  cl_device_id clDeviceID     = occa::opencl::deviceID(0,0);
 
   cl_context clContext = clCreateContext(NULL,
                                          1, &clDeviceID,
                                          NULL, NULL, &error);
-  OCCA_CL_CHECK("Device: Creating Context", error);
+  OCCA_OPENCL_ERROR("Device: Creating Context", error);
 
   cl_command_queue clStream = clCreateCommandQueue(clContext,
                                                    clDeviceID,
                                                    CL_QUEUE_PROFILING_ENABLE, &error);
-  OCCA_CL_CHECK("Device: createStream", error);
+  OCCA_OPENCL_ERROR("Device: createStream", error);
 
   cl_mem cl_a = clCreateBuffer(clContext,
                                CL_MEM_READ_WRITE,
@@ -38,9 +40,9 @@ int main(int argc, char **argv) {
   float *b  = new float[entries];
   float *ab = new float[entries];
 
-  occa::device device = occa::cl::wrapDevice(clPlatformID,
-                                             clDeviceID,
-                                             clContext);
+  occa::device device = occa::opencl::wrapDevice(clPlatformID,
+                                                 clDeviceID,
+                                                 clContext);
 
   occa::stream stream = device.wrapStream(&clStream);
   device.setStream(stream);
