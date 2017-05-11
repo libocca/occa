@@ -210,10 +210,15 @@ namespace occa {
     occa::device wrapDevice(CUdevice device,
                             CUcontext context,
                             const occa::properties &props) {
-      cuda::device &dev = *(new cuda::device(props));
-      dev.handle     = device;
-      dev.context    = context;
-      dev.p2pEnabled = false;
+
+      occa::properties allProps = props;
+      allProps["mode"]     = "CUDA";
+      allProps["deviceID"] = -1;
+      allProps["wrapped"]  = true;
+
+      cuda::device &dev = *(new cuda::device(allProps));
+      dev.handle  = device;
+      dev.context = context;
 
       dev.currentStream = dev.createStream();
 
