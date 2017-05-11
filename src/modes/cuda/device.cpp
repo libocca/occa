@@ -37,17 +37,19 @@ namespace occa {
     device::device(const occa::properties &properties_) :
       occa::device_v(properties_) {
 
-      OCCA_ERROR("[CUDA] device not given a [deviceID] integer",
-                 properties.has("deviceID") &&
-                 properties["deviceID"].isNumber());
+      if (!properties.has("wrapped")) {
+        OCCA_ERROR("[CUDA] device not given a [deviceID] integer",
+                   properties.has("deviceID") &&
+                   properties["deviceID"].isNumber());
 
-      const int deviceID = properties.get<int>("deviceID");
+        const int deviceID = properties.get<int>("deviceID");
 
-      OCCA_CUDA_ERROR("Device: Creating Device",
-                      cuDeviceGet(&handle, deviceID));
+        OCCA_CUDA_ERROR("Device: Creating Device",
+                        cuDeviceGet(&handle, deviceID));
 
-      OCCA_CUDA_ERROR("Device: Creating Context",
-                      cuCtxCreate(&context, CU_CTX_SCHED_AUTO, handle));
+        OCCA_CUDA_ERROR("Device: Creating Context",
+                        cuCtxCreate(&context, CU_CTX_SCHED_AUTO, handle));
+      }
 
       p2pEnabled = false;
 

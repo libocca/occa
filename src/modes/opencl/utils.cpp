@@ -421,8 +421,16 @@ namespace occa {
 
     occa::device wrapDevice(cl_platform_id platformID,
                             cl_device_id deviceID,
-                            cl_context context) {
-      opencl::device &dev = *(new opencl::device("wrapped: true"));
+                            cl_context context,
+                            const occa::properties &props) {
+
+      occa::properties allProps = props;
+      allProps["mode"]       = "OpenCL";
+      allProps["platformID"] = -1;
+      allProps["deviceID"]   = -1;
+      allProps["wrapped"]    = true;
+
+      opencl::device &dev = *(new opencl::device(allProps));
       dev.platformID = -1;
       dev.deviceID   = -1;
 

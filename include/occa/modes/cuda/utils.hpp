@@ -87,7 +87,7 @@ namespace occa {
 
     occa::device wrapDevice(CUdevice device,
                             CUcontext context,
-                            const occa::properties &props);
+                            const occa::properties &props = occa::properties());
 
     CUevent& event(streamTag &tag);
     const CUevent& event(const streamTag &tag);

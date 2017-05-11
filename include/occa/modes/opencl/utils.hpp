@@ -107,7 +107,8 @@ namespace occa {
 
     occa::device wrapDevice(cl_platform_id platformID,
                             cl_device_id deviceID,
-                            cl_context context);
+                            cl_context context,
+                            const occa::properties &props = occa::properties());
 
     cl_event& event(streamTag &tag);
     const cl_event& event(const streamTag &tag);
