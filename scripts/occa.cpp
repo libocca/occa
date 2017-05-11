@@ -130,7 +130,6 @@ int main(int argc, char **argv) {
     .addCommand(autocompleteBash);
 
   occaCommand
-    .withName("occa")
     .withDescription("Can be used to display information of cache kernels.")
     .requiresCommand()
     .addCommand(cacheCommand)
@@ -236,11 +235,11 @@ bool runCache(const occa::cli::command &command,
               occa::jsonArray_t order,
               occa::jsonObject_t options,
               occa::jsonArray_t arguments) {
-  std::string libDir = occa::io::libraryPath() + options["lib"][0][0].string() + "/";
+  std::string libDir = occa::io::libraryPath() + arguments[0].string() + "/";
   occa::sys::mkpath(libDir);
 
   const int fileCount = arguments.size();
-  for (int i = 0; i < fileCount; ++i) {
+  for (int i = 1; i < fileCount; ++i) {
     const std::string &srcFile = arguments[i].string();
     const std::string destFile = libDir + occa::io::basename(srcFile);
 
