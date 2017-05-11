@@ -253,14 +253,16 @@ namespace occa {
     hash ^= props.hash();
     hash ^= occa::hash(mode());
 
+    allProps["mode"] = mode();
+
     kernel ker(newModeKernel(host().properties()));
     ker.setDHandle(host().dHandle);
     kernel_v *k = ker.kHandle;
 
     const std::string hashDir = io::hashDir(realFilename, hash);
     const std::string parsedFile = hashDir + "parsedSource.occa";
-    k->metadata = io::parseFileForFunction(mode(),
-                                           realFilename,
+
+    k->metadata = io::parseFileForFunction(realFilename,
                                            parsedFile,
                                            kernelName,
                                            props);

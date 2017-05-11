@@ -36,6 +36,7 @@ namespace occa {
   namespace kc {
     extern const std::string sourceFile;
     extern const std::string binaryFile;
+    extern const std::string infoFile;
   }
 
   namespace io {
@@ -137,9 +138,8 @@ namespace occa {
     void releaseHash(const hash_t &hash, const std::string &tag);
     void releaseHashLock(const std::string &lockDir);
 
-    kernelMetadata parseFileForFunction(const std::string &deviceMode,
-                                        const std::string &filename,
-                                        const std::string &cachedBinary,
+    kernelMetadata parseFileForFunction(const std::string &filename,
+                                        const std::string &outputFile,
                                         const std::string &functionName,
                                         const occa::properties &props);
 
