@@ -25,6 +25,7 @@
 #if OCCA_OPENCL_ENABLED
 
 #include "occa/modes/opencl/utils.hpp"
+#include "occa/modes/opencl/device.hpp"
 #include "occa/tools/io.hpp"
 #include "occa/tools/sys.hpp"
 #include "occa/base.hpp"
@@ -416,6 +417,22 @@ namespace occa {
       fclose(fp);
 
       delete [] binary;
+    }
+
+    occa::device wrapDevice(cl_platform_id platformID,
+                            cl_device_id deviceID,
+                            cl_context context) {
+      opencl::device &dev = *(new opencl::device("wrapped: true"));
+      dev.platformID = -1;
+      dev.deviceID   = -1;
+
+      dev.clPlatformID = platformID;
+      dev.clDeviceID   = deviceID;
+      dev.clContext    = context;
+
+      dev.currentStream = dev.createStream();
+
+      return occa::device(&dev);
     }
 
     cl_event& event(streamTag &tag) {

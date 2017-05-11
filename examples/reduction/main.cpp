@@ -3,7 +3,7 @@
 #include "occa.hpp"
 
 int main(int argc, char **argv) {
-  int entries = 10000; // Not divisible
+  int entries = 10000; // Not divisible by 256
   int p_Nred = 256;
   int reducedEntries = (entries + p_Nred - 1)/p_Nred;
 
@@ -37,6 +37,7 @@ int main(int argc, char **argv) {
                                  "reduction",
                                  kernelProps);
 #else
+  kernelProps["OKL"] = false;
   reduction = device.buildKernel("reduction.cu",
                                  "reduction",
                                  kernelProps);
