@@ -335,6 +335,9 @@ namespace occa {
       occa::json parsedInfo(json::object_);
       const int argc = (int) args.size();
 
+      // Set name to script name
+      name = args[0];
+
       occa::json &jOrder     = parsedInfo["order"].asArray();
       occa::json &jOptions   = parsedInfo["options"].asObject();
       occa::json &jArguments = parsedInfo["arguments"].asArray();
@@ -384,7 +387,7 @@ namespace occa {
           if (((arg_i == "-h")     && !getShortOption("h")) ||
               ((arg_i == "--help") && !getShortOption("help"))) {
 
-            printUsage(args[0]);
+            printUsage(name);
             ::exit(0);
           }
 
@@ -394,7 +397,7 @@ namespace occa {
           for (int j = 0; j < optCount; ++j) {
             if (!opts[j]) {
               std::cerr << "Unknown option: " << arg_i << '\n';
-              printUsage(args[0], std::cerr);
+              printUsage(name, std::cerr);
               ::exit(1);
             }
 
@@ -422,13 +425,13 @@ namespace occa {
             if (opt_i.requiredArgs != (int) optArgs_i[j].array().size()) {
               std::cerr << "Option " << opt_i << " requires "
                         << opt_i.requiredArgs << " arguments\n";
-              printUsage(args[0], std::cerr);
+              printUsage(name, std::cerr);
               ::exit(1);
             }
           }
         } else if (opt_i.getIsRequired()) {
           std::cerr << "Option " << opt_i << " is required and missing\n";
-          printUsage(args[0], std::cerr);
+          printUsage(name, std::cerr);
           ::exit(1);
         }
       }
@@ -438,7 +441,7 @@ namespace occa {
 
       if (argCount < reqArgCount) {
         std::cerr << "Incorrect number of arguments\n";
-        printUsage(args[0], std::cerr);
+        printUsage(name, std::cerr);
         ::exit(1);
       }
 
@@ -537,13 +540,12 @@ namespace occa {
     void command::fillProgram(std::string &program) {
       if (runParent) {
         runParent->fillProgram(program);
+        if (name.size()) {
+          program += ' ';
+          program += name;
+        }
       } else {
         program = runArgs[0];
-      }
-
-      if (name.size()) {
-        program += ' ';
-        program += name;
       }
     }
 
