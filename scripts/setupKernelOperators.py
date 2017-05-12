@@ -32,7 +32,7 @@ EDIT_WARNING = """/*
 */
 """
 
-maxN = 250
+maxN = 100
 nSpacing = 3
 
 def nlc(n, N):
