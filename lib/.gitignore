@@ -1,9 +1,0 @@
-# Ignore everything in this directory
-*
-# Except this file
-!.gitignore
-!occa.py
-!OCCA.jl/
-!OCCA.jl/*
-!occa/
-!occa/*

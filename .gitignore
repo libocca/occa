@@ -1,6 +1,7 @@
 .gitattributes
 
 bin/
+lib/
 obj/
 /include/occa/defines/compiledDefines.hpp
 /scripts/compilerVendorTest

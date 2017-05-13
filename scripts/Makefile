@@ -61,16 +61,10 @@ ifdef OCCA_DEVELOPER
  endif
 endif
 
-osFlags =
-flags   =
-fFlags  =
-cfFlags =
+flags =
 
 # CXX      : C++ Compiler
 # CXXFLAGS : C++ Compiler Flags
-
-# FC       : Fortran Compiler
-# FCFLAGS  : Fortran Compiler Flags
 
 # OCCA_INCLUDE_PATH : Extra include paths
 # OCCA_LIBRARY_PATH : Extra library paths
@@ -115,10 +109,6 @@ ifndef CXX
   endif
 endif
 
-ifndef FC
-  FC = gfortran
-endif
-
 ifndef CXXFLAGS
   ifeq ($(debugEnabled),1)
     OCCA_DEBUG_ENABLED := 1
@@ -132,18 +122,7 @@ else
   compilerFlags = $(CXXFLAGS)
 endif
 
-ifndef FCFLAGS
-  ifeq ($(debugEnabled),1)
-    fCompilerFlags = -g
-  else
-    fCompilerFlags = -O3
-  endif
-else
-  fCompilerFlags = $(FCFLAGS)
-endif
-
-compiler  = $(CXX)
-fCompiler = $(FC)
+compiler = $(CXX)
 
 links = $(LDFLAGS)
 #=================================================
@@ -178,15 +157,9 @@ compilerDebugFlags   = $(shell . $(OCCA_DIR)/scripts/shellTools.sh; compilerDebu
 compilerPicFlag      = $(shell . $(OCCA_DIR)/scripts/shellTools.sh; compilerPicFlag      "$(compiler)")
 compilerSharedFlag   = $(shell . $(OCCA_DIR)/scripts/shellTools.sh; compilerSharedFlag   "$(compiler)")
 
-fCompilerModuleDirFlag = $(shell . $(OCCA_DIR)/scripts/shellTools.sh; fCompilerModuleDirFlag "$(fCompiler)")
-
 compilerSupportsMPI    = $(shell . $(OCCA_DIR)/scripts/shellTools.sh; compilerSupportsMPI    "$(compiler)")
 compilerSupportsOpenMP = $(shell . $(OCCA_DIR)/scripts/shellTools.sh; compilerSupportsOpenMP "$(compiler)")
 compilerOpenMPFlags    = $(shell . $(OCCA_DIR)/scripts/shellTools.sh; compilerOpenMPFlags    "$(compiler)")
-
-fCompilerSupportsMPI    = $(shell . $(OCCA_DIR)/scripts/shellTools.sh; compilerSupportsMPI    "$(fCompiler)")
-fCompilerSupportsOpenMP = $(shell . $(OCCA_DIR)/scripts/shellTools.sh; compilerSupportsOpenMP "$(fCompiler)")
-fCompilerOpenMPFlags    = $(shell . $(OCCA_DIR)/scripts/shellTools.sh; compilerOpenMPFlags    "$(fCompiler)")
 #=================================================
 
 
@@ -195,7 +168,6 @@ debugFlags   = $(call compilerDebugFlags)
 releaseFlags = $(call compilerReleaseFlags)
 picFlag      = $(call compilerPicFlag)
 sharedFlag   = $(call compilerSharedFlag)
-fModDirFlag  = $(call fCompilerModuleDirFlag)
 #=================================================
 
 
@@ -215,7 +187,7 @@ ifeq ($(usingLinux),1)
 else ifeq ($(usingOSX),1)
 
 	OCCA_OS := OCCA_OSX_OS
-  osFlags += -Wno-deprecated-declarations
+  flags += -Wno-deprecated-declarations
   links += -framework accelerate -framework CoreServices
 
 else ifeq ($(usingWindows),1)
@@ -250,11 +222,9 @@ ifdef OCCA_OPENMP_ENABLED
   fOpenmpEnabled = $(OCCA_OPENMP_ENABLED)
 else
   openmpEnabled  = $(call compilerSupportsOpenMP)
-  fOpenmpEnabled = $(call fCompilerSupportsOpenMP)
 
   ifeq ($(openmpEnabled),1)
-    flags  += $(call compilerOpenMPFlags)
-    fFlags += $(call fCompilerOpenMPFlags)
+    flags += $(call compilerOpenMPFlags)
   endif
 endif
 
@@ -330,7 +300,4 @@ OCCA_MPI_ENABLED    := $(mpiEnabled)
 OCCA_OPENMP_ENABLED := $(openmpEnabled)
 OCCA_OPENCL_ENABLED := $(openclEnabled)
 OCCA_CUDA_ENABLED   := $(cudaEnabled)
-
-flags  += $(cfFlags) $(osFlags)
-fFlags += $(cfFlags) $(osFlags)
 #=================================================
