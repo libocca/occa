@@ -1,7 +1,7 @@
 #include "stdlib.h"
 #include "stdio.h"
 
-#include "occa_c.h"
+#include "occa.h"
 
 int main(int argc, char **argv) {
   occaPrintModeInfo();

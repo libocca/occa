@@ -21,8 +21,8 @@ int main(int argc, char **argv) {
 
   occa::stream streamA, streamB;
 
-  // device.setup("mode: 'CUDA', deviceID: 0");
-  device.setup("mode: 'OpenCL', platformID: 0, deviceID: 1");
+  device.setup("mode: 'CUDA', deviceID: 0");
+  // device.setup("mode: 'OpenCL', platformID: 0, deviceID: 1");
 
   streamA = device.getStream();
   streamB = device.createStream();

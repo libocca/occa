@@ -5,9 +5,7 @@
 int main(int argc, char **argv) {
   int entries = 5;
 
-  occa::device device("mode       : 'OpenCL', "
-                      "platformID : 0, "
-                      "deviceID   : 0");
+  occa::device device("mode: 'CUDA', deviceID: 0");
 
   // umalloc: [U]nified [M]emory [Alloc]ation
   // Allocate host memory that auto-syncs with the device

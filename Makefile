@@ -122,36 +122,24 @@ $(OCCA_DIR)/obj/%.o:$(OCCA_DIR)/src/%.cpp $(COMPILED_DEFINES_CHANGED)
 
 
 #---[ TEST ]--------------------------------------
+examples =                 \
+	addVectors/cpp           \
+	addVectors/c             \
+	backgroundDevices        \
+	customReduction          \
+	reduction                \
+	unifiedMemoryAddVectors  \
+	usingArrays              \
+	usingStreams
+
 test:
-	cd $(OCCA_DIR)/examples/addVectors/cpp && \
-	rm -f main && \
-	make -j 4 CXXFLAGS='-g' FCFLAGS='-g' && \
-	./main
-
-	cd $(OCCA_DIR)/examples/addVectors/c && \
-	rm -f main && \
-	make -j 4 CXXFLAGS='-g' FCFLAGS='-g' && \
-	./main
-
-	cd $(OCCA_DIR)/examples/unifiedMemoryAddVectors/ && \
-	rm -f main && \
-	make -j 4 CXXFLAGS='-g' FCFLAGS='-g'; \
-	./main
-
-	cd $(OCCA_DIR)/examples/backgroundDevices/ && \
-	rm -f main && \
-	make -j 4 CXXFLAGS='-g' FCFLAGS='-g'; \
-	./main
-
-	cd $(OCCA_DIR)/examples/nativeAddVectors/ && \
-	rm -f main && \
-	make -j 4 CXXFLAGS='-g' FCFLAGS='-g'; \
-	./main
-
-	cd $(OCCA_DIR)/examples/usingArrays/ && \
-	rm -f main && \
-	make -j 4 CXXFLAGS='-g' FCFLAGS='-g'; \
-	./main
+	@for dir in $(examples); do         \
+	  echo "Compiling example [$$dir]"; \
+	  cd $(OCCA_DIR)/examples/$$dir &&  \
+	  rm -f main                    &&  \
+	  CXXFLAGS='-g' make            &&  \
+	  ./main;                           \
+	done
 #=================================================
 
 
