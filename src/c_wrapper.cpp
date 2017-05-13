@@ -25,7 +25,7 @@
 
 #define OCCA_C_EXPORTS
 
-#include "occa/lang/c/c_wrapper.hpp"
+#include "occa/c_wrapper.hpp"
 
 namespace occa {
   namespace c {
