@@ -12,7 +12,7 @@ sources = $(wildcard $(srcPath)/*.cpp)
 objects = $(subst $(srcPath)/,$(objPath)/,$(sources:.cpp=.o))
 
 ${PROJ_DIR}/main: $(objects) $(headers) ${PROJ_DIR}/main.c
-	$(compiler) $(compilerFlags) -Wno-variadic-macros -o ${PROJ_DIR}/main $(flags) $(objects) ${PROJ_DIR}/main.c $(paths) $(links)
+	$(cCompiler) $(cCompilerFlags) -Wno-variadic-macros -o ${PROJ_DIR}/main $(flags) $(objects) ${PROJ_DIR}/main.c $(paths) $(links)
 
 $(objPath)/%.o:$(srcPath)/%.cpp $(wildcard $(subst $(srcPath)/,$(incPath)/,$(<:.cpp=.hpp))) $(wildcard $(subst $(srcPath)/,$(incPath)/,$(<:.cpp=.tpp)))
 	$(compiler) $(compilerFlags) -Wno-variadic-macros -o $@ $(flags) -c $(paths) $<

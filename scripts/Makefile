@@ -122,7 +122,27 @@ else
   compilerFlags = $(CXXFLAGS)
 endif
 
-compiler = $(CXX)
+ifndef CC
+  CC = ${CC}
+else
+  CC = gcc
+endif
+
+ifndef CFLAGS
+  ifeq ($(debugEnabled),1)
+    OCCA_DEBUG_ENABLED := 1
+    cCompilerFlags = $(debugFlags)
+  else
+    OCCA_DEBUG_ENABLED := 0
+    cCompilerFlags = $(releaseFlags) -DNDEBUG=1
+  endif
+else
+  OCCA_DEBUG_ENABLED := 0
+  cCompilerFlags = $(CFLAGS)
+endif
+
+compiler  = $(CXX)
+cCompiler = $(CC)
 
 links = $(LDFLAGS)
 #=================================================

@@ -11,7 +11,7 @@ env:
     - CXXFLAGS="-g"
 
 before_install:
-  - pip install --user cpp-coveralls
+  - pip install --user urllib3[secure] cpp-coveralls
   - if [ "${TRAVIS_OS_NAME}" = "osx" ]; then brew update; fi
 
 install:

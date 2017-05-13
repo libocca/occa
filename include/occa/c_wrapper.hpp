@@ -70,7 +70,7 @@ typedef struct {
 } occaDim;
 
 //---[ Globals & Flags ]----------------
-extern OCCA_LFUNC const occaObject occaDefault;
+extern OCCA_LFUNC const struct occaObject occaDefault;
 extern OCCA_LFUNC const occaUDim_t occaAllBytes;
 extern OCCA_LFUNC const void *occaEmptyProperties;
 //======================================
@@ -114,8 +114,8 @@ OCCA_LFUNC occaType OCCA_RFUNC occaString(const char *str);
 //  ====================================
 
 //  ---[ Properties ]-------------------
-OCCA_LFUNC occaObject OCCA_RFUNC occaCreateProperties();
-OCCA_LFUNC occaObject OCCA_RFUNC occaCreatePropertiesFromString(const char *c);
+OCCA_LFUNC struct occaObject OCCA_RFUNC occaCreateProperties();
+OCCA_LFUNC struct occaObject OCCA_RFUNC occaCreatePropertiesFromString(const char *c);
 OCCA_LFUNC void OCCA_RFUNC occaPropertiesSet(occaProperties properties,
                                              const char *key,
                                              occaType value);
@@ -176,7 +176,7 @@ OCCA_LFUNC occaMemory OCCA_RFUNC occaWrapMemory(void *handle_,
 //---[ Device ]-------------------------
 OCCA_LFUNC void OCCA_RFUNC occaPrintModeInfo();
 
-OCCA_LFUNC occaDevice OCCA_RFUNC occaCreateDevice(occaObject info);
+OCCA_LFUNC occaDevice OCCA_RFUNC occaCreateDevice(struct occaObject info);
 
 OCCA_LFUNC const char* OCCA_RFUNC occaDeviceMode(occaDevice device);
 
@@ -251,14 +251,14 @@ OCCA_LFUNC void OCCA_RFUNC occaArgumentListFree(occaArgumentList list);
 
 OCCA_LFUNC void OCCA_RFUNC occaArgumentListAddArg(occaArgumentList list,
                                                   int argPos,
-                                                  occaObject type);
+                                                  struct occaObject type);
 
 OCCA_LFUNC void OCCA_RFUNC occaKernelRun_(occaKernel kernel,
                                           occaArgumentList list);
 
 OCCA_LFUNC void OCCA_RFUNC occaKernelRunN(occaKernel kernel,
                                           const int argc,
-                                          occaObject *args);
+                                          struct occaObject *args);
 
 #include "occa/operators/cKernelOperators.hpp"
 
@@ -294,7 +294,7 @@ OCCA_LFUNC void OCCA_RFUNC occaMemoryFree(occaMemory memory);
 //======================================
 
 //---[ Misc ]---------------------------
-OCCA_LFUNC void OCCA_RFUNC occaFree(occaObject obj);
+OCCA_LFUNC void OCCA_RFUNC occaFree(struct occaObject obj);
 //======================================
 
 OCCA_END_EXTERN_C
