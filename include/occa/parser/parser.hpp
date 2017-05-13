@@ -30,8 +30,6 @@
 #include "occa/parser/nodes.hpp"
 #include "occa/parser/types.hpp"
 #include "occa/parser/statement.hpp"
-#include "occa/parser/analyzer.hpp"
-#include "occa/parser/magic.hpp"
 #include "occa/tools/properties.hpp"
 
 namespace occa {
@@ -58,7 +56,6 @@ namespace occa {
 
       //---[ Parser Warnings ]----------
       bool macrosAreInitialized;
-      bool _hasMagicEnabled;
       bool _compilingForCPU;
       bool _warnForConditionalBarriers;
       bool _insertBarriersAutomatically;
@@ -81,7 +78,6 @@ namespace occa {
       //---[ Parser Warnings ]----------
       void setProperties(const occa::properties &properties_);
 
-      bool hasMagicEnabled();
       bool compilingForCPU();
       bool warnForConditionalBarriers();
       bool insertBarriersAutomatically();

@@ -2,26 +2,23 @@ sudo    : false
 language: cpp
 
 compiler:
-  - clang
   - gcc
+  - clang
 
 env:
   global:
-    - LD_LIBRARY_PATH=${TRAVIS_BUILD_DIR}/lib:${LD_LIBRARY_PATH}
-
-addons:
-  apt:
-    sources:
-      - ubuntu-toolchain-r-test
-    packages:
-      - fglrx
-      - opencl-headers
+    - LD_LIBRARY_PATH="${TRAVIS_BUILD_DIR}/lib:${LD_LIBRARY_PATH}"
+    - CXXFLAGS="-g"
 
 before_install:
   - pip install --user cpp-coveralls
+  - if [ "${TRAVIS_OS_NAME}" = "osx" ]; then brew update; fi
+
+install:
+  - if [ "${CXX}" != "clang++" ]; then CXXFLAGS+=" --coverage"; fi
 
 script:
-  - export CXX_FLAGS='-g --coverage'
+  - cd ${TRAVIS_BUILD_DIR}
   - make
   - make test
   - cd parser_sandbox
@@ -29,7 +26,18 @@ script:
   - make test
 
 after_success:
-  - coveralls --exclude lib --gcov-options '\-lp'
+  - cd ${TRAVIS_BUILD_DIR}
+  - coveralls
+    --include include
+    --include src
+    --exclude tests
+    --exclude lib
+    --exclude include/occa/operators
+    --exclude src/operators
+    --exclude-pattern '.*\.h(pp)?$'
+    --exclude-pattern '.*/(cuda|opencl|openmp|threads)/.*'
+    --exclude-pattern '.*/lang/(fortran|python)/.*'
+    --gcov-options '\-lp'
 
 notifications:
   email: false
