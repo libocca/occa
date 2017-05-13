@@ -36,7 +36,6 @@ after_success:
     --exclude src/operators
     --exclude-pattern '.*\.h(pp)?$'
     --exclude-pattern '.*/(cuda|opencl|openmp|threads)/.*'
-    --exclude-pattern '.*/lang/(fortran|python)/.*'
     --gcov-options '\-lp'
 
 notifications:
