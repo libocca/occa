@@ -40,6 +40,30 @@ namespace occa {
 
   strVector_t split(const std::string &s, const char delimeter, const char escapeChar = 0);
 
+  inline char uppercase(const char c) {
+    if (('a' <= c) && (c <= 'z')) {
+      return ((c + 'A') - 'a');
+    }
+    return c;
+  }
+
+  inline char lowercase(const char c) {
+    if (('A' <= c) && (c <= 'Z')) {
+      return ((c + 'a') - 'A');
+    }
+    return c;
+  }
+
+  std::string uppercase(const char *c, const int chars);
+  inline std::string uppercase(const std::string &s) {
+    return uppercase(s.c_str(), s.size());
+  }
+
+  std::string lowercase(const char *c, const int chars);
+  inline std::string lowercase(const std::string &s) {
+    return uppercase(s.c_str(), s.size());
+  }
+
   template <class TM>
   inline std::string toString(const TM &t) {
     std::stringstream ss;
@@ -91,6 +115,17 @@ namespace occa {
     return t;
   }
 
+  template <>
+  inline bool fromString(const std::string &s) {
+    if (s == "0") {
+      return false;
+    }
+    const std::string sUp = uppercase(s);
+    return !((sUp == "N") ||
+             (sUp == "NO") ||
+             (sUp == "FALSE"));
+  }
+
   template <class TM>
   inline std::vector<TM> listFromString(const std::string &s) {
     std::string str = strip(s);
@@ -133,30 +168,6 @@ namespace occa {
             (!strncmp(s.c_str() + (sChars - matchChars),
                       match.c_str(),
                       matchChars)));
-  }
-
-  inline char uppercase(const char c) {
-    if (('a' <= c) && (c <= 'z')) {
-      return ((c + 'A') - 'a');
-    }
-    return c;
-  }
-
-  inline char lowercase(const char c) {
-    if (('A' <= c) && (c <= 'Z')) {
-      return ((c + 'a') - 'A');
-    }
-    return c;
-  }
-
-  std::string uppercase(const char *c, const int chars);
-  inline std::string uppercase(const std::string &s) {
-    return uppercase(s.c_str(), s.size());
-  }
-
-  std::string lowercase(const char *c, const int chars);
-  inline std::string lowercase(const std::string &s) {
-    return uppercase(s.c_str(), s.size());
   }
 
   udim_t atoi(const char *c);

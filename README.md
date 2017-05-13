@@ -22,6 +22,7 @@ make -j 4
 Setup environment variables inside the `occa` directory
 
 #### Linux
+
 ```bash
 export OCCA_DIR="${PWD}"
 export PATH+=":${OCCA_DIR}"
@@ -29,10 +30,19 @@ export LD_LIBRARY_PATH+=":${OCCA_DIR}/lib"
 ```
 
 #### Mac OSX
+
 ```bash
 export OCCA_DIR="${PWD}"
 export PATH+=":${OCCA_DIR}"
 export DYLD_LIBRARY_PATH+=":${OCCA_DIR}/lib"
+```
+
+### Hello World
+
+```bash
+cd ${OCCA_DIR}/examples/addVectors/cpp
+make
+./main
 ```
 
 ### occa Command
@@ -56,32 +66,30 @@ Commands:
 
 Arguments:
   COMMAND    Command to run
-```  
+```
 
-Autocomplete with 
-
-#### Linux
+#### Linux Autocomplete
 
 ```bash
 . <(occa autocomplete bash)
 ```
 
-#### Mac OSX
+#### Mac OSX Autocomplete
 
 ```bash
 eval "$(occa autocomplete bash)"
 ```
 
 ### Useful environment variables:
-| Environment Variable       | Description                                                                      |
-|----------------------------|----------------------------------------------------------------------------------|
-| OCCA_DIR                   | Directory where OCCA is installed, overwrites occa::OCCA_DIR set at compile-time |
-| OCCA_CACHE_DIR             | Directory where kernels get cached (Default: ${HOME}/.occa)                      |
-| OCCA_INCLUDE_PATH          | Path to find headers, such as CUDA and OpenCL headers (: delimited)              |
-| OCCA_LIBRARY_PATH          | Path to find .so libraries (: delimited)                                         |
-| OCCA_CXX                   | C++ compiler used for run-time kernel compilation                                |
-| OCCA_CXXFLAGS              | C++ compiler flags used for run-time kernel compilation                          |
-| OCCA_OPENCL_COMPILER_FLAGS | Additional OpenCL flags when compiling kernels                                   |
-| OCCA_CUDA_COMPILER         | Compiler used for run-time CUDA kernel compilation                               |
-| OCCA_CUDA_COMPILER_FLAGS   | CUDA compiler flags used for run-time kernel compilation                         |
-| OCCA_VERBOSE               | Verbose logging if set to true if not: 0/n/no/false (Default: false)             |
+| Environment Variable       | Description                                                                         |
+|----------------------------|-------------------------------------------------------------------------------------|
+| OCCA_DIR                   | Directory where OCCA is installed, overwrites `occa::OCCA_DIR` set at compile-time  |
+| OCCA_CACHE_DIR             | Directory where kernels get cached (Default: `${HOME}/.occa`)                       |
+| OCCA_INCLUDE_PATH          | Path to find headers, such as CUDA and OpenCL headers (`:` delimited)               |
+| OCCA_LIBRARY_PATH          | Path to find .so libraries (`:` delimited)                                          |
+| OCCA_CXX                   | C++ compiler used for run-time kernel compilation                                   |
+| OCCA_CXXFLAGS              | C++ compiler flags used for run-time kernel compilation                             |
+| OCCA_OPENCL_COMPILER_FLAGS | Additional OpenCL flags when compiling kernels                                      |
+| OCCA_CUDA_COMPILER         | Compiler used for run-time CUDA kernel compilation                                  |
+| OCCA_CUDA_COMPILER_FLAGS   | CUDA compiler flags used for run-time kernel compilation                            |
+| OCCA_VERBOSE               | Verbose logging is suppresed if set to either: `0, n, no, false` (Default: `false`) |
