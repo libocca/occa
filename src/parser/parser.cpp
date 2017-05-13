@@ -84,7 +84,6 @@ namespace occa {
       OCCA_ERROR("Compilation mode must be passed to the parser",
                  properties.has("mode"));
 
-      //---[ Magic ]----------
       std::string content = assembleHeader(properties);
       content += io::read(filename);
       content += (std::string) properties["footer"];
@@ -110,12 +109,6 @@ namespace occa {
 
       markKernelFunctions();
       labelNativeKernels();
-
-      if (hasMagicEnabled()) {
-        magician::castMagicOn(*this);
-        std::cout << (std::string) *globalScope;
-        throw 1;
-      }
 
       applyToAllStatements(*globalScope, &parserBase::setupCudaVariables);
       applyToAllStatements(*globalScope, &parserBase::setupOccaVariables);
@@ -151,17 +144,12 @@ namespace occa {
       properties = properties_;
 
       const std::string &mode = properties["mode"];
-      _hasMagicEnabled = properties.get("magic", false);
       _compilingForCPU = ((mode == "Serial")   ||
                           (mode == "Pthreads") ||
                           (mode == "OpenMP"));
 
       _warnForConditionalBarriers  = properties.get("warn-for-conditional-barriers", false);
       _insertBarriersAutomatically = properties.get("automate-add-barriers"        , true);
-    }
-
-    bool parserBase::hasMagicEnabled() {
-      return _hasMagicEnabled;
     }
 
     bool parserBase::compilingForCPU() {
