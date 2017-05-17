@@ -207,6 +207,8 @@ namespace occa {
 
       if (props.get<bool>("mapped", false)) {
         return mappedAlloc(bytes, src, props);
+      } else if (props.get<bool>("managed", false)) {
+        return managedAlloc(bytes, src, props);
       }
 
       cuda::memory *mem = new cuda::memory(props);
@@ -247,6 +249,36 @@ namespace occa {
       if (src != NULL) {
         ::memcpy(mem->mappedPtr, src, bytes);
       }
+      return mem;
+    }
+
+    memory_v* device::managedAlloc(const udim_t bytes,
+                                   const void *src,
+                                   const occa::properties &props) {
+      cuda::memory *mem = new cuda::memory(props);
+#if CUDA_VERSION >= 8000
+      mem->dHandle = this;
+      mem->handle  = new CUdeviceptr;
+      mem->size    = bytes;
+
+      const unsigned int flags = (props.get<bool>("managed/attachedHost", false) ?
+                                  CU_MEM_ATTACH_HOST : CU_MEM_ATTACH_GLOBAL);
+
+      OCCA_CUDA_ERROR("Device: Setting Context",
+                      cuCtxSetCurrent(context));
+      OCCA_CUDA_ERROR("Device: managed alloc",
+                      cuMemAllocManaged((CUdeviceptr*) mem->handle,
+                                        bytes,
+                                        flags));
+
+      if (src != NULL) {
+        mem->copyFrom(src, bytes, 0);
+      }
+#else
+      OCCA_FORCE_ERROR("CUDA version ["
+                       << cuda::getVersion()
+                       << "] does not support unified memory allocation");
+#endif
       return mem;
     }
 
