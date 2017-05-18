@@ -264,8 +264,6 @@ namespace occa {
       const unsigned int flags = (props.get("um/attachedHost", false) ?
                                   CU_MEM_ATTACH_HOST : CU_MEM_ATTACH_GLOBAL);
 
-      mem->autoPrefetch = props.get("um/autoPrefetch", true);
-
       OCCA_CUDA_ERROR("Device: Setting Context",
                       cuCtxSetCurrent(context));
       OCCA_CUDA_ERROR("Device: managed alloc",
