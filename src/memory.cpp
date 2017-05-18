@@ -292,7 +292,7 @@ namespace occa {
     }
   }
 
-  occa::memory memory::operator + (const dim_t offset) {
+  occa::memory memory::operator + (const dim_t offset) const {
     OCCA_ERROR("Cannot have a negative offset (" << offset << ")",
                offset >= 0);
     OCCA_ERROR("Cannot have an offset greater than the memory size ("

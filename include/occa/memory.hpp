@@ -183,7 +183,7 @@ namespace occa {
     void uvaMarkStale();
     void uvaMarkFresh();
 
-    occa::memory operator + (const dim_t offset);
+    occa::memory operator + (const dim_t offset) const;
     occa::memory& operator += (const dim_t offset);
 
     void copyFrom(const void *src,
