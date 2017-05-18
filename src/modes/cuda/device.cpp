@@ -53,8 +53,8 @@ namespace occa {
 
       p2pEnabled = false;
 
-      std::string compiler = properties["compiler"].string();
-      std::string compilerFlags = properties["compilerFlags"].string();
+      std::string compiler = properties["kernel/compiler"].string();
+      std::string compilerFlags = properties["kernel/compilerFlags"].string();
 
       if (!compiler.size()) {
         if (env::var("OCCA_CUDA_COMPILER").size()) {
@@ -76,8 +76,8 @@ namespace occa {
         }
       }
 
-      properties["compiler"]      = compiler;
-      properties["compilerFlags"] = compilerFlags;
+      properties["kernel/compiler"]      = compiler;
+      properties["kernel/compilerFlags"] = compilerFlags;
 
       OCCA_CUDA_ERROR("Device: Getting CUDA Device Arch",
                       cuDeviceComputeCapability(&archMajorVersion,

@@ -35,7 +35,7 @@ namespace occa {
     kernel::kernel(const occa::properties &properties_) :
       serial::kernel(properties_) {
 
-      properties["occa::kernelDefines"] =
+      properties["occa/kernel/defines"] =
         io::cacheFile(env::OCCA_DIR + "/include/occa/modes/openmp/kernelDefines.hpp",
                       "openmpKernelDefines.hpp");
     }

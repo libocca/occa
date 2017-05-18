@@ -60,8 +60,8 @@ namespace occa {
 
       std::string compilerFlags;
 
-      if (properties.has("compilerFlags")) {
-        compilerFlags = properties["compilerFlags"].string();
+      if (properties.has("kernel/compilerFlags")) {
+        compilerFlags = properties["kernel/compilerFlags"].string();
       } else if (env::var("OCCA_OPENCL_COMPILER_FLAGS").size()) {
         compilerFlags = env::var("OCCA_OPENCL_COMPILER_FLAGS");
       } else {
@@ -72,7 +72,7 @@ namespace occa {
 #endif
       }
 
-      properties["compilerFlags"] = compilerFlags;
+      properties["kernel/compilerFlags"] = compilerFlags;
     }
 
     device::~device() {}
