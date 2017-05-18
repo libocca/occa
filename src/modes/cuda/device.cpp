@@ -261,10 +261,10 @@ namespace occa {
       mem->handle  = new CUdeviceptr;
       mem->size    = bytes;
 
-      const unsigned int flags = (props.get("managed/attachedHost", false) ?
+      const unsigned int flags = (props.get("um/attachedHost", false) ?
                                   CU_MEM_ATTACH_HOST : CU_MEM_ATTACH_GLOBAL);
 
-      mem->autoPrefetch = props.get("managed/autoPrefetch", true);
+      mem->autoPrefetch = props.get("um/autoPrefetch", true);
 
       OCCA_CUDA_ERROR("Device: Setting Context",
                       cuCtxSetCurrent(context));
