@@ -218,23 +218,22 @@ namespace occa {
   }
 
   void json::loadTrue(const char *&c) {
-    type = boolean_;
     OCCA_ERROR("Cannot read value: " << c,
                !strncmp(c, "true", 4));
     c += 4;
-    *this = true;
+    type = boolean_;
+    value_.boolean = true;
   }
 
   void json::loadFalse(const char *&c) {
-    type = boolean_;
     OCCA_ERROR("Cannot read value: " << c,
                !strncmp(c, "false", 5));
     c += 5;
-    *this = false;
+    type = boolean_;
+    value_.boolean = false;
   }
 
   void json::loadNull(const char *&c) {
-    type = null_;
     OCCA_ERROR("Cannot read value: " << c,
                !strncmp(c, "null", 4));
     c += 4;
