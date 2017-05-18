@@ -154,6 +154,18 @@ namespace occa {
     return dHandle->properties;
   }
 
+  occa::json& device::kernelProperties() {
+    occa::json &ret = properties()["kernel"];
+    ret["mode"] = mode();
+    return ret;
+  }
+
+  occa::json& device::memoryProperties() {
+    occa::json &ret = properties()["memory"];
+    ret["mode"] = mode();
+    return ret;
+  }
+
   udim_t device::memorySize() const {
     return dHandle->memorySize();
   }
@@ -239,7 +251,8 @@ namespace occa {
                              const std::string &kernelName,
                              const occa::properties &props) {
 
-    occa::properties allProps = properties() + props;
+    occa::properties allProps = props + kernelProperties();
+    allProps["mode"] = mode();
 
     const std::string realFilename = io::filename(filename);
 
@@ -253,9 +266,7 @@ namespace occa {
     hash ^= props.hash();
     hash ^= occa::hash(mode());
 
-    allProps["mode"] = mode();
-
-    kernel ker(newModeKernel(host().properties()));
+    kernel ker(newModeKernel(host().kernelProperties()));
     ker.setDHandle(host().dHandle);
     kernel_v *k = ker.kHandle;
 
@@ -308,7 +319,8 @@ namespace occa {
   kernel device::buildKernelFromString(const std::string &content,
                                        const std::string &kernelName,
                                        const occa::properties &props) {
-    const occa::properties allProps = properties() + props;
+    occa::properties allProps = props + kernelProperties();
+
     hash_t hash = occa::hash(content);
     hash ^= allProps.hash();
 
@@ -358,7 +370,9 @@ namespace occa {
                << (bytes ? "negative" : "zero") << " bytes (" << bytes << ")",
                bytes > 0);
 
-    memory mem(dHandle->malloc(bytes, src, props));
+    occa::properties memProps = props + memoryProperties();
+
+    memory mem(dHandle->malloc(bytes, src, memProps));
     mem.setDHandle(dHandle);
 
     dHandle->bytesAllocated += bytes;
@@ -402,11 +416,13 @@ namespace occa {
                << (bytes ? "negative" : "zero") << " bytes (" << bytes << ")",
                bytes > 0);
 
-    memory mem = malloc(bytes, src, props);
+    occa::properties memProps = props + memoryProperties();
+
+    memory mem = malloc(bytes, src, memProps);
     mem.dontUseRefs();
     mem.setupUva();
 
-    if (props.get("managed", true)) {
+    if (memProps.get("managed", true)) {
       mem.startManaging();
     }
     void *ptr = mem.mHandle->uvaPtr;

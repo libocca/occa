@@ -78,8 +78,8 @@ namespace occa {
       }
 
       std::string kernelDefines;
-      if (properties.has("occa::kernelDefines")) {
-        kernelDefines = properties["occa::kernelDefines"].string();
+      if (properties.has("occa/kernel/defines")) {
+        kernelDefines = properties["occa/kernel/defines"].string();
       } else {
         kernelDefines = io::cacheFile(env::OCCA_DIR + "/include/occa/modes/serial/kernelDefines.hpp",
                                       "serialKernelDefines.hpp");

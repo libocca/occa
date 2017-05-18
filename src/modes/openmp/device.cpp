@@ -38,15 +38,15 @@ namespace occa {
       // Generate an OpenMP library dependency (so it doesn't crash when dlclose())
       omp_get_num_threads();
 
-      const std::string openmpFlag = openmp::compilerFlag(properties.get<int>("vendor"),
-                                                          properties["compiler"]);
+      const std::string openmpFlag = openmp::compilerFlag(properties.get<int>("kernel/vendor"),
+                                                          properties["kernel/compiler"]);
 
       if (openmpFlag != openmp::notSupported) {
-        std::string &compilerFlags = properties["compilerFlags"].string();
+        std::string &compilerFlags = properties["kernel/compilerFlags"].string();
         compilerFlags += ' ';
         compilerFlags += openmpFlag;
       } else {
-        std::cout << "Compiler [" << properties["compiler"].string()
+        std::cout << "Compiler [" << properties["kernel/compiler"].string()
                   << "] does not support OpenMP, defaulting to [Serial] mode\n";
       }
     }

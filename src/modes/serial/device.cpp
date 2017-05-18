@@ -36,8 +36,8 @@ namespace occa {
       int vendor;
       std::string compiler, compilerFlags, compilerEnvScript;
 
-      if (properties.get<std::string>("compiler").size()) {
-        compiler = properties["compiler"].string();
+      if (properties.get<std::string>("kernel/compiler").size()) {
+        compiler = properties["kernel/compiler"].string();
       } else if (env::var("OCCA_CXX").size()) {
         compiler = env::var("OCCA_CXX");
       } else if (env::var("CXX").size()) {
@@ -52,8 +52,8 @@ namespace occa {
 
       vendor = sys::compilerVendor(compiler);
 
-      if (properties.get<std::string>("compilerFlags").size()) {
-        compilerFlags = properties["compilerFlags"].string();
+      if (properties.get<std::string>("kernel/compilerFlags").size()) {
+        compilerFlags = properties["kernel/compilerFlags"].string();
       } else if (env::var("OCCA_CXXFLAGS").size()) {
         compilerFlags = env::var("OCCA_CXXFLAGS");
       } else if (env::var("CXXFLAGS").size()) {
@@ -70,8 +70,8 @@ namespace occa {
 #endif
       }
 
-      if (properties.get<std::string>("compilerEnvScript").size()) {
-        compilerEnvScript = properties["compilerEnvScript"].string();
+      if (properties.get<std::string>("kernel/compilerEnvScript").size()) {
+        compilerEnvScript = properties["kernel/compilerEnvScript"].string();
       } else {
 #if (OCCA_OS == OCCA_WINDOWS_OS)
         std::string byteness;
@@ -103,12 +103,12 @@ namespace occa {
 #endif
       }
 
-      properties["vendor"] = vendor;
+      properties["kernel/vendor"] = vendor;
       sys::addSharedBinaryFlagsTo(vendor, compilerFlags);
 
-      properties["compiler"]          = compiler;
-      properties["compilerFlags"]     = compilerFlags;
-      properties["compilerEnvScript"] = compilerEnvScript;
+      properties["kernel/compiler"]          = compiler;
+      properties["kernel/compilerFlags"]     = compilerFlags;
+      properties["kernel/compilerEnvScript"] = compilerEnvScript;
     }
 
     device::~device() {}

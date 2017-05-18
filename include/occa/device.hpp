@@ -145,6 +145,9 @@ namespace occa {
     const std::string& mode();
     occa::properties& properties();
 
+    occa::json& kernelProperties();
+    occa::json& memoryProperties();
+
     void* getHandle(const occa::properties &props = occa::properties());
     device_v* getDHandle() const;
 
