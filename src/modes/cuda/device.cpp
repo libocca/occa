@@ -205,9 +205,9 @@ namespace occa {
                              const void *src,
                              const occa::properties &props) {
 
-      if (props.get<bool>("mapped", false)) {
+      if (props.get("mapped", false)) {
         return mappedAlloc(bytes, src, props);
-      } else if (props.get<bool>("managed", false)) {
+      } else if (props.get("managed", false)) {
         return managedAlloc(bytes, src, props);
       }
 
@@ -261,8 +261,10 @@ namespace occa {
       mem->handle  = new CUdeviceptr;
       mem->size    = bytes;
 
-      const unsigned int flags = (props.get<bool>("managed/attachedHost", false) ?
+      const unsigned int flags = (props.get("managed/attachedHost", false) ?
                                   CU_MEM_ATTACH_HOST : CU_MEM_ATTACH_GLOBAL);
+
+      mem->autoPrefetch = props.get("managed/autoPrefetch", true);
 
       OCCA_CUDA_ERROR("Device: Setting Context",
                       cuCtxSetCurrent(context));

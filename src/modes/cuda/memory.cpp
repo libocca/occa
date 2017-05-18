@@ -32,18 +32,22 @@ namespace occa {
   namespace cuda {
     memory::memory(const occa::properties &properties_) :
       occa::memory_v(properties_),
-      mappedPtr(NULL) {}
+      mappedPtr(NULL),
+      autoPrefetch(false) {}
 
     memory::~memory() {}
 
     void* memory::getHandle(const occa::properties &properties_) const {
-      if (properties_.get<bool>("mapped", false)) {
+      if (properties_.get("mapped", false)) {
         return mappedPtr;
       }
       return handle;
     }
 
     kernelArg memory::makeKernelArg() const {
+      if (autoPrefetch) {
+        prefetch(occa::memory(const_cast<memory*>(this)));
+      }
       kernelArg_t arg;
       arg.data.void_ = handle;
       arg.size       = sizeof(void*);
@@ -57,6 +61,7 @@ namespace occa {
       if (mappedPtr) {
         m->mappedPtr = (((char*) mappedPtr) + offset);
       }
+      m->autoPrefetch = autoPrefetch;
       needsFree = false;
       return m;
     }

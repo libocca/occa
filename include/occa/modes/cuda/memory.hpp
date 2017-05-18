@@ -39,6 +39,7 @@ namespace occa {
 
     private:
       void *mappedPtr;
+      bool autoPrefetch;
 
     public:
       memory(const occa::properties &properties_ = occa::properties());

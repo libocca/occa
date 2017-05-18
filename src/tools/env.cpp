@@ -60,7 +60,7 @@ namespace occa {
       properties &settings_ = baseSettings();
       settings_["version"] = "1.0";
       settings_["parserVersion"] = "20170302";
-      settings_["verboseCompilation"] = env::get<bool>("OCCA_VERBOSE", false);
+      settings_["verboseCompilation"] = env::get("OCCA_VERBOSE", false);
     }
 
     void initSignalHandling() {

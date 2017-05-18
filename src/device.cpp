@@ -406,7 +406,7 @@ namespace occa {
     mem.dontUseRefs();
     mem.setupUva();
 
-    if (props.get<bool>("managed", true)) {
+    if (props.get("managed", true)) {
       mem.startManaging();
     }
     void *ptr = mem.mHandle->uvaPtr;
