@@ -1,17 +1,17 @@
 /* The MIT License (MIT)
- * 
+ *
  * Copyright (c) 2014-2017 David Medina and Tim Warburton
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be included in all
  * copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -213,16 +213,29 @@ __device__ inline double occaCuda_hypot(const double x, const double y) {  retur
 #define occaFastHypot   occaCuda_hypot
 #define occaNativeHypot occaCuda_hypot
 
+template <class TM>
+__device__ inline TM     occaCuda_fabs(const TM x)    {  return x >= 0 ? x : -x; }
+template <>
 __device__ inline float  occaCuda_fabs(const float x) {  return fabsf(x); }
+template <>
 __device__ inline double occaCuda_fabs(const double x) { return fabs(x);  }
 
 #define occaFabs       occaCuda_fabs
 #define occaFastFabs   occaCuda_fabs
 #define occaNativeFabs occaCuda_fabs
 
-__device__ inline float  occaCuda_sqrt(const float x) {      return sqrtf(x);      }
-__device__ inline double occaCuda_sqrt(const double x) {     return sqrt(x);       }
-__device__ inline float  occaCuda_fastSqrt(const float x) {  return __fsqrt_rn(x); }
+template <class TM>
+__device__ inline TM     occaCuda_sqrt(const TM x)         { return sqrt(x);       }
+template <>
+__device__ inline float  occaCuda_sqrt(const float x)      { return sqrtf(x);      }
+template <>
+__device__ inline double occaCuda_sqrt(const double x)     { return sqrt(x);       }
+
+template <class TM>
+__device__ inline TM     occaCuda_fastSqrt(const TM x)     { return sqrt(x);       }
+template <>
+__device__ inline float  occaCuda_fastSqrt(const float x)  { return __fsqrt_rn(x); }
+template <>
 __device__ inline double occaCuda_fastSqrt(const double x) { return __dsqrt_rn(x); }
 
 #define occaSqrt       occaCuda_sqrt
