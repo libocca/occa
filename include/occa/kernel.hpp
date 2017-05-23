@@ -181,8 +181,18 @@ namespace occa {
     int argumentCount();
 
     std::string binaryName(const std::string &filename);
-    std::string getSourceFilename(const std::string &filename, hash_t &hash);
-    std::string getBinaryFilename(const std::string &filename, hash_t &hash);
+
+    std::string getLaunchSourceFilename(const std::string &filename,
+                                        const hash_t &hash);
+
+    std::string getLaunchBinaryFilename(const std::string &filename,
+                                        const hash_t &hash);
+
+    std::string getSourceFilename(const std::string &filename,
+                                  const hash_t &hash);
+
+    std::string getBinaryFilename(const std::string &filename,
+                                  const hash_t &hash);
 
     //---[ Virtual Methods ]------------
     virtual ~kernel_v() = 0;
@@ -193,6 +203,7 @@ namespace occa {
 
     virtual void build(const std::string &filename,
                        const std::string &kernelName,
+                       const hash_t hash,
                        const occa::properties &props) = 0;
 
     virtual void buildFromBinary(const std::string &filename,
@@ -259,7 +270,7 @@ namespace occa {
   };
   //====================================
 
-  //---[ kernel builder ]---------------
+  //---[ kernelBuilder ]----------------
   class kernelBuilder {
   protected:
     std::string source_;

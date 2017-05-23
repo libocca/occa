@@ -284,11 +284,23 @@ namespace occa {
     return filename;
   }
 
-  std::string kernel_v::getSourceFilename(const std::string &filename, hash_t &hash) {
+  std::string kernel_v::getLaunchSourceFilename(const std::string &filename,
+                                          const hash_t &hash) {
+    return io::hashDir(filename, hash) + kc::launchSourceFile;
+  }
+
+  std::string kernel_v::getLaunchBinaryFilename(const std::string &filename,
+                                                const hash_t &hash) {
+    return io::hashDir(filename, hash) + binaryName(kc::launchBinaryFile);
+  }
+
+  std::string kernel_v::getSourceFilename(const std::string &filename,
+                                          const hash_t &hash) {
     return io::hashDir(filename, hash) + kc::sourceFile;
   }
 
-  std::string kernel_v::getBinaryFilename(const std::string &filename, hash_t &hash) {
+  std::string kernel_v::getBinaryFilename(const std::string &filename,
+                                          const hash_t &hash) {
     return io::hashDir(filename, hash) + binaryName(kc::binaryFile);
   }
   //====================================
@@ -449,7 +461,7 @@ namespace occa {
   }
   //====================================
 
-  //---[ kernel builder ]---------------
+  //---[ kernelBuilder ]----------------
   kernelBuilder::kernelBuilder() {}
 
   kernelBuilder::kernelBuilder(const kernelBuilder &k) :

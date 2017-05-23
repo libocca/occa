@@ -34,6 +34,9 @@
 namespace occa {
   // Kernel Caching
   namespace kc {
+    extern const std::string parsedSourceFile;
+    extern const std::string launchSourceFile;
+    extern const std::string launchBinaryFile;
     extern const std::string sourceFile;
     extern const std::string binaryFile;
     extern const std::string infoFile;
@@ -164,6 +167,11 @@ namespace occa {
                           const hash_t &hash,
                           const std::string &header = "",
                           const std::string &footer = "");
+
+    void storeCacheInfo(const std::string &filename,
+                        const hash_t &hash,
+                        const occa::properties &props,
+                        const occa::properties &rootProps = occa::properties());
 
     std::string getLibraryName(const std::string &filename);
 

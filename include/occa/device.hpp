@@ -73,6 +73,8 @@ namespace occa {
 
     virtual hash_t hash() const = 0;
 
+    virtual hash_t getKernelHash(const occa::properties &props) const = 0;
+
     //  |---[ Stream ]------------------
     virtual stream_t createStream() const = 0;
     virtual void freeStream(stream_t s) const = 0;
@@ -88,6 +90,7 @@ namespace occa {
     //  |---[ Kernel ]------------------
     virtual kernel_v* buildKernel(const std::string &filename,
                                   const std::string &kernelName,
+                                  const hash_t hash,
                                   const occa::properties &props) = 0;
 
     virtual kernel_v* buildKernelFromBinary(const std::string &filename,

@@ -54,21 +54,20 @@ namespace occa {
 
     void kernel::build(const std::string &filename,
                        const std::string &kernelName,
+                       const hash_t hash,
                        const occa::properties &props) {
 
-      occa::properties allProps = properties + props;
       name = kernelName;
+      properties += props;
 
-      if (allProps.get<std::string>("compilerFlags").find("-arch=sm_") == std::string::npos) {
-        const int major = ((cuda::device*) dHandle)->archMajorVersion;
-        const int minor = ((cuda::device*) dHandle)->archMinorVersion;
+      if (properties.get<std::string>("compilerFlags").find("-arch=sm_") == std::string::npos) {
+        cuda::device &dev = *((cuda::device*) dHandle);
+        const int major = dev.archMajorVersion;
+        const int minor = dev.archMinorVersion;
         std::stringstream ss;
         ss << " -arch=sm_" << major << minor << ' ';
-        allProps["compilerFlags"].string() += ss.str();
+        properties["compilerFlags"].string() += ss.str();
       }
-
-      hash_t hash = occa::hashFile(filename);
-      hash ^= allProps.hash();
 
       const std::string sourceFile    = getSourceFilename(filename, hash);
       const std::string binaryFile    = getBinaryFilename(filename, hash);
@@ -98,13 +97,13 @@ namespace occa {
 
       std::stringstream ss;
       ss << "#include \"" << kernelDefines << "\"\n"
-         << assembleHeader(allProps);
+         << assembleHeader(properties);
 
       const std::string cachedSourceFile = io::cacheFile(filename,
                                                          kc::sourceFile,
                                                          hash,
                                                          ss.str(),
-                                                         allProps["footer"]);
+                                                         properties["footer"]);
 
       if (settings().get("verboseCompilation", true)) {
         std::cout << "Compiling [" << kernelName << "]\n";
@@ -112,12 +111,12 @@ namespace occa {
 
       //---[ PTX Check Command ]----------
       std::stringstream command;
-      if (allProps.has("compilerEnvScript")) {
-        command << allProps["compilerEnvScript"] << " && ";
+      if (properties.has("compilerEnvScript")) {
+        command << properties["compilerEnvScript"] << " && ";
       }
 
-      command << allProps["compiler"]
-              << ' '          << allProps["compilerFlags"]
+      command << properties["compiler"]
+              << ' '          << properties["compilerFlags"]
               << " -Xptxas -v,-dlcm=cg"
 #if (OCCA_OS == OCCA_WINDOWS_OS)
               << " -D OCCA_OS=OCCA_WINDOWS_OS -D _MSC_VER=1800"
@@ -140,8 +139,8 @@ namespace occa {
 
       //---[ Compiling Command ]----------
       command.str("");
-      command << allProps["compiler"]
-              << ' '       << allProps["compilerFlags"]
+      command << properties["compiler"]
+              << ' '       << properties["compilerFlags"]
               << " -ptx"
 #if (OCCA_OS == OCCA_WINDOWS_OS)
               << " -D OCCA_OS=OCCA_WINDOWS_OS -D _MSC_VER=1800"
@@ -191,7 +190,9 @@ namespace occa {
     void kernel::buildFromBinary(const std::string &filename,
                                  const std::string &kernelName,
                                  const occa::properties &props) {
+
       name = kernelName;
+      properties += props;
 
       OCCA_CUDA_ERROR("Kernel (" + kernelName + ") : Loading Module",
                       cuModuleLoad(&module, filename.c_str()));

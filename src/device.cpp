@@ -256,55 +256,48 @@ namespace occa {
 
     const std::string realFilename = io::filename(filename);
 
+    hash_t hash = (dHandle->getKernelHash(props)
+                   ^ hashFile(filename));
+
     if (!allProps.get("OKL", true)) {
-      kernel ker(dHandle->buildKernel(realFilename, kernelName, allProps));
+      kernel ker(dHandle->buildKernel(realFilename, kernelName, hash, allProps));
       ker.setDHandle(dHandle);
       return ker;
     }
 
-    hash_t hash = occa::hashFile(realFilename);
-    hash ^= props.hash();
-    hash ^= occa::hash(mode());
-
-    kernel ker(newModeKernel(host().kernelProperties()));
-    ker.setDHandle(host().dHandle);
-    kernel_v *k = ker.kHandle;
-
     const std::string hashDir = io::hashDir(realFilename, hash);
-    const std::string parsedFile = hashDir + "parsedSource.occa";
+    const std::string parsedFile = hashDir + kc::parsedSourceFile;
 
-    k->metadata = io::parseFileForFunction(realFilename,
-                                           parsedFile,
-                                           kernelName,
-                                           props);
+    // Create launch kernel
+    occa::properties launchProps = host().kernelProperties();
+    launchProps["defines/OCCA_LAUNCH_KERNEL"] = 1;
 
-    occa::properties launchKernelProps;
-    launchKernelProps["mode"] = "Serial";
-    launchKernelProps["defines/OCCA_LAUNCH_KERNEL"] = 1;
+    kernel_v *launchKHandle = newModeKernel(launchProps);
+    kernelMetadata &metadata = launchKHandle->metadata;
+    metadata = io::parseFileForFunction(realFilename,
+                                        parsedFile,
+                                        kernelName,
+                                        allProps);
+    launchKHandle->build(parsedFile,
+                         kernelName,
+                         hash,
+                         launchProps);
+    launchKHandle->nestedKernels.clear();
 
-    k->build(parsedFile,
-             kernelName,
-             k->dHandle->properties + launchKernelProps);
-    k->nestedKernels.clear();
-
-    if (k->metadata.nestedKernels) {
-      std::stringstream ss;
-
+    // Load nested kernels
+    if (metadata.nestedKernels) {
       const bool vc_f = settings()["verboseCompilation"];
 
-      for (int ki = 0; ki < k->metadata.nestedKernels; ++ki) {
-        ss << ki;
+      for (int ki = 0; ki < metadata.nestedKernels; ++ki) {
+        const std::string sKerName = metadata.baseName + toString(ki);
 
-        const std::string sKerName = k->metadata.baseName + ss.str();
-        ss.str("");
-
-        kernel sKer(dHandle->buildKernel(parsedFile, sKerName, allProps));
+        kernel sKer(dHandle->buildKernel(parsedFile, sKerName, hash, allProps));
         sKer.setDHandle(dHandle);
-        sKer.kHandle->metadata               = k->metadata;
+        sKer.kHandle->metadata               = metadata;
         sKer.kHandle->metadata.name          = sKerName;
         sKer.kHandle->metadata.nestedKernels = 0;
-        sKer.kHandle->metadata.removeArg(0); // remove nestedKernels **
-        k->nestedKernels.push_back(sKer);
+        sKer.kHandle->metadata.removeArg(0); // remove nestedKernels** argument
+        launchKHandle->nestedKernels.push_back(sKer);
 
         // Only show compilation the first time
         if (ki == 0) {
@@ -313,16 +306,15 @@ namespace occa {
       }
       settings()["verboseCompilation"] = vc_f;
     }
-    return ker;
+    return occa::kernel(launchKHandle);
   }
 
   kernel device::buildKernelFromString(const std::string &content,
                                        const std::string &kernelName,
                                        const occa::properties &props) {
-    occa::properties allProps = props + kernelProperties();
 
-    hash_t hash = occa::hash(content);
-    hash ^= allProps.hash();
+    hash_t hash = (dHandle->getKernelHash(props)
+                   ^ occa::hash(content));
 
     const std::string hashDir = io::hashDir(hash);
     const std::string hashTag = "occa-device";
@@ -335,7 +327,7 @@ namespace occa {
 
       return buildKernel(stringSourceFile,
                          kernelName,
-                         allProps);
+                         props);
     }
 
     if (!sys::fileExists(stringSourceFile)) {
@@ -344,7 +336,7 @@ namespace occa {
 
     kernel k = buildKernel(stringSourceFile,
                            kernelName,
-                           allProps);
+                           props);
 
     io::releaseHash(hash, hashTag);
 

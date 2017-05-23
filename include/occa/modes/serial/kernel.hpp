@@ -52,6 +52,7 @@ namespace occa {
 
       void build(const std::string &filename,
                  const std::string &kernelName,
+                 const hash_t hash,
                  const occa::properties &props);
 
       void buildFromBinary(const std::string &filename,

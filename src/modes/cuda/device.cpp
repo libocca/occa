@@ -83,6 +83,9 @@ namespace occa {
                       cuDeviceComputeCapability(&archMajorVersion,
                                                 &archMinorVersion,
                                                 handle) );
+
+      archMajorVersion = properties.get("arch/major", archMajorVersion);
+      archMinorVersion = properties.get("arch/minor", archMinorVersion);
     }
 
     device::~device() {}
@@ -113,11 +116,26 @@ namespace occa {
 
     hash_t device::hash() const {
       if (!hash_.initialized) {
-        hash_ ^= occa::hash(properties);
-        hash_ ^= occa::hash(archMajorVersion);
-        hash_ ^= occa::hash(archMinorVersion);
+        std::stringstream ss;
+        ss << "major: " << archMajorVersion << ' '
+           << "minor: " << archMinorVersion;
+        hash_ = occa::hash(ss.str());
       }
       return hash_;
+    }
+
+    hash_t device::getKernelHash(const occa::properties &props) const {
+      occa::properties allProps = properties["kernel"] + props;
+      std::stringstream ss;
+      ss << "mode:"              << mode
+         << "compiler:"          << allProps["compiler"]
+         << "compilerFlags:"     << allProps["compilerFlags"]
+         << "compilerEnvScript:" << allProps["compilerEnvScript"]
+         << "header:"            << allProps["header"]
+         << "footer:"            << allProps["footer"];
+
+      return (hash()
+              ^ occa::hash(ss.str()));
     }
 
     //  |---[ Stream ]----------------
@@ -175,13 +193,14 @@ namespace occa {
     //  |---[ Kernel ]------------------
     kernel_v* device::buildKernel(const std::string &filename,
                                   const std::string &kernelName,
+                                  const hash_t kernelHash,
                                   const occa::properties &props) {
       cuda::kernel *k = new cuda::kernel(props);
 
       k->dHandle = this;
       k->context = context;
 
-      k->build(filename, kernelName, props);
+      k->build(filename, kernelName, kernelHash, props);
 
       return k;
     }
