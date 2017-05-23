@@ -103,9 +103,26 @@ namespace occa {
 
     hash_t device::hash() const {
       if (!hash_.initialized) {
-        hash_ = occa::hash(properties);
+        std::stringstream ss;
+        ss << "platform: " << platformID << ' '
+           << "device: " << deviceID;
+        hash_ = occa::hash(ss.str());
       }
       return hash_;
+    }
+
+    hash_t device::getKernelHash(const occa::properties &props) const {
+
+      occa::properties allProps = properties["kernel"] + props;
+      std::stringstream ss;
+      ss << "mode:"              << mode
+         << "compilerFlags:"     << allProps["compilerFlags"]
+         << "compilerEnvScript:" << allProps["compilerEnvScript"]
+         << "header:"            << allProps["header"]
+         << "footer:"            << allProps["footer"];
+
+      return (hash()
+              ^ occa::hash(ss.str()));
     }
 
     //  |---[ Stream ]----------------
@@ -182,6 +199,7 @@ namespace occa {
     //  |---[ Kernel ]------------------
     kernel_v* device::buildKernel(const std::string &filename,
                                   const std::string &kernelName,
+                                  const hash_t kernelHash,
                                   const occa::properties &props) {
       opencl::kernel *k = new opencl::kernel(props);
 
@@ -194,7 +212,7 @@ namespace occa {
       k->clDeviceID   = clDeviceID;
       k->clContext    = clContext;
 
-      k->build(filename, kernelName, props);
+      k->build(filename, kernelName, kernelHash, props);
 
       return k;
     }

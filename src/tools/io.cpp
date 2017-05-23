@@ -52,9 +52,12 @@
 namespace occa {
   // Kernel Caching
   namespace kc {
-    const std::string sourceFile = "source.cpp";
-    const std::string binaryFile = "binary";
-    const std::string infoFile   = "info.json";
+    const std::string parsedSourceFile = "parsedSource.cpp";
+    const std::string launchSourceFile = "launchSource.cpp";
+    const std::string launchBinaryFile = "launch-binary";
+    const std::string sourceFile       = "deviceSource.cpp";
+    const std::string binaryFile       = "device-binary";
+    const std::string infoFile         = "build-info.json";
   }
 
   namespace io {
@@ -531,22 +534,32 @@ namespace occa {
       sys::mkpath(hashDir);
 
       std::ofstream fs;
-      fs.open(infoFile.c_str());
-      fs << "{\n"
-         << "  \"file\"     : \"" << expFilename      << "\",\n"
-         << "  \"date\"     : \"" << sys::date()      << "\",\n"
-         << "  \"humanDate\": \"" << sys::humanDate() << "\"\n"
-         << "}\n";
-      fs.close();
-
       fs.open(sourceFile.c_str());
-
       fs << header                << '\n'
          << io::read(expFilename) << '\n'
          << footer;
       fs.close();
 
       return sourceFile;
+    }
+
+    void storeCacheInfo(const std::string &filename,
+                        const hash_t &hash,
+                        const occa::properties &props,
+                        const occa::properties &rootProps) {
+      const std::string expFilename = io::filename(filename);
+      const std::string hashDir     = io::hashDir(expFilename, hash);
+      const std::string infoFile    = hashDir + kc::infoFile;
+
+      occa::properties info = rootProps;
+      info["date"]       = sys::date();
+      info["humanDate"]  = sys::humanDate();
+      info["properties"] = props;
+
+      std::ofstream fs;
+      fs.open(infoFile.c_str());
+      fs << info;
+      fs.close();
     }
 
     std::string getLibraryName(const std::string &filename) {

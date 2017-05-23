@@ -62,13 +62,11 @@ namespace occa {
 
     void kernel::build(const std::string &filename,
                        const std::string &kernelName,
+                       const hash_t hash,
                        const occa::properties &props) {
 
-      const occa::properties allProps = properties + props;
       name = kernelName;
-
-      hash_t hash = occa::hashFile(filename);
-      hash ^= allProps.hash();
+      properties += props;
 
       const std::string sourceFile = getSourceFilename(filename, hash);
       const std::string binaryFile = getBinaryFilename(filename, hash);
@@ -97,20 +95,20 @@ namespace occa {
 
       std::stringstream ss;
       ss << "#include \"" << kernelDefines << "\"\n"
-         << assembleHeader(allProps);
+         << assembleHeader(properties);
 
       io::cacheFile(filename,
                     kc::sourceFile,
                     hash,
                     ss.str(),
-                    allProps["footer"]);
+                    properties["footer"]);
 
       std::string cFunction = io::read(sourceFile);
       info_t clInfo = makeCLInfo();
       opencl::buildKernel(clInfo,
                           cFunction.c_str(), cFunction.size(),
                           kernelName,
-                          allProps["compilerFlags"],
+                          properties["compilerFlags"],
                           hash, sourceFile);
       clProgram = clInfo.clProgram;
       clKernel  = clInfo.clKernel;
@@ -125,6 +123,7 @@ namespace occa {
                                  const occa::properties &props) {
 
       name = kernelName;
+      properties += props;
 
       std::string cFile = io::read(filename);
       info_t clInfo = makeCLInfo();

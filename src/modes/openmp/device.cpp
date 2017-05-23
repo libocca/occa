@@ -53,11 +53,27 @@ namespace occa {
 
     kernel_v* device::buildKernel(const std::string &filename,
                                   const std::string &kernelName,
+                                  const hash_t kernelHash,
                                   const occa::properties &props) {
       kernel *k = new kernel();
       k->dHandle = this;
-      k->build(filename, kernelName, props);
+      k->build(filename, kernelName, kernelHash, props);
       return k;
+    }
+
+    hash_t device::getKernelHash(const occa::properties &props) const {
+
+      occa::properties allProps = properties["kernel"] + props;
+      std::stringstream ss;
+      ss << "mode:"              << mode
+         << "compiler:"          << allProps["compiler"]
+         << "compilerFlags:"     << allProps["compilerFlags"]
+         << "compilerEnvScript:" << allProps["compilerEnvScript"]
+         << "header:"            << allProps["header"]
+         << "footer:"            << allProps["footer"];
+
+      return (hash()
+              ^ occa::hash(ss.str()));
     }
   }
 }

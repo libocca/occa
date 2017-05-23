@@ -49,16 +49,23 @@ namespace occa {
 
     void kernel::build(const std::string &filename,
                        const std::string &kernelName,
+                       const hash_t hash,
                        const occa::properties &props) {
 
-      const occa::properties allProps = properties + props;
       name = kernelName;
+      properties += props;
 
-      hash_t hash = occa::hashFile(filename);
-      hash ^= allProps.hash();
+      const bool isLaunchKernel = props.has("defines/OCCA_LAUNCH_KERNEL");
 
-      const std::string sourceFile = getSourceFilename(filename, hash);
-      const std::string binaryFile = getBinaryFilename(filename, hash);
+      const std::string sourceFile = (isLaunchKernel
+                                      ? getLaunchSourceFilename(filename, hash)
+                                      : getSourceFilename(filename, hash));
+      const std::string binaryFile = (isLaunchKernel
+                                      ? getLaunchBinaryFilename(filename, hash)
+                                      : getBinaryFilename(filename, hash));
+      const std::string sourceBasename = (isLaunchKernel
+                                          ? kc::launchSourceFile
+                                          : kc::sourceFile);
       bool foundBinary = true;
 
       const std::string hashTag = "serial-kernel";
@@ -87,25 +94,25 @@ namespace occa {
 
       std::stringstream ss, command;
       ss << "#include \"" << kernelDefines << "\"\n"
-         << assembleHeader(allProps) << '\n'
+         << assembleHeader(properties) << '\n'
          << "#if defined(OCCA_IN_KERNEL) && !OCCA_IN_KERNEL\n"
          << "using namespace occa;\n"
          << "#endif\n";
 
       const std::string cachedSourceFile = io::cacheFile(filename,
-                                                         kc::sourceFile,
+                                                         sourceBasename,
                                                          hash,
                                                          ss.str(),
-                                                         allProps["footer"].string());
+                                                         properties["footer"].string());
 
-      const std::string &compilerEnvScript = allProps["compilerEnvScript"].string();
+      const std::string &compilerEnvScript = properties["compilerEnvScript"].string();
       if (compilerEnvScript.size()) {
         command << compilerEnvScript << " && ";
       }
 
 #if (OCCA_OS & (OCCA_LINUX_OS | OCCA_OSX_OS))
-      command << allProps["compiler"].string()
-              << ' '    << allProps["compilerFlags"].string()
+      command << properties["compiler"].string()
+              << ' '    << properties["compilerFlags"].string()
               << ' '    << cachedSourceFile
               << " -o " << binaryFile
               << " -I"  << env::OCCA_DIR << "include"
@@ -118,12 +125,12 @@ namespace occa {
       const std::string occaLib = env::OCCA_DIR + "lib/libocca.lib ";
 #  endif
 
-      command << allProps["compiler"]
+      command << properties["compiler"]
               << " /D MC_CL_EXE"
               << " /D OCCA_OS=OCCA_WINDOWS_OS"
               << " /EHsc"
               << " /wd4244 /wd4800 /wd4804 /wd4018"
-              << ' '       << allProps["compilerFlags"]
+              << ' '       << properties["compilerFlags"]
               << " /I"     << env::OCCA_DIR << "/include"
               << ' '       << sourceFile
               << " /link " << occaLib
@@ -159,6 +166,7 @@ namespace occa {
                                  const occa::properties &props) {
 
       name = kernelName;
+      properties += props;
 
       dlHandle = sys::dlopen(filename);
       handle   = sys::dlsym(dlHandle, kernelName);
