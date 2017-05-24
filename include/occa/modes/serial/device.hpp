@@ -42,8 +42,6 @@ namespace occa {
 
       hash_t hash() const;
 
-      hash_t getKernelHash(const occa::properties &props) const;
-
       //  |---[ Stream ]----------------
       stream_t createStream() const;
       void freeStream(stream_t s) const;

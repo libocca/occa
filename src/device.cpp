@@ -240,7 +240,8 @@ namespace occa {
 
     const std::string realFilename = io::filename(filename);
 
-    hash_t hash = (dHandle->getKernelHash(props)
+    hash_t hash = (dHandle->hash()
+                   ^ occa::hash(allProps)
                    ^ hashFile(filename));
 
     if (!allProps.get("OKL", true)) {
@@ -297,7 +298,11 @@ namespace occa {
                                        const std::string &kernelName,
                                        const occa::properties &props) {
 
-    hash_t hash = (dHandle->getKernelHash(props)
+    occa::properties allProps = props + kernelProperties();
+    allProps["mode"] = mode();
+
+    hash_t hash = (dHandle->hash()
+                   ^ occa::hash(allProps)
                    ^ occa::hash(content));
 
     const std::string hashDir = io::hashDir(hash);
