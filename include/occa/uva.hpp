@@ -76,15 +76,15 @@ namespace occa {
   void startManaging(void *ptr);
   void stopManaging(void *ptr);
 
-  void syncToDevice(void *ptr, const udim_t bytes = -1);
-  void syncFromDevice(void *ptr, const udim_t bytes = -1);
+  void syncToDevice(void *ptr, const udim_t bytes = (udim_t) -1);
+  void syncFromDevice(void *ptr, const udim_t bytes = (udim_t) -1);
 
   void syncMemToDevice(occa::memory_v *mem,
-                       const udim_t bytes = -1,
+                       const udim_t bytes = (udim_t) -1,
                        const udim_t offset = 0);
 
   void syncMemFromDevice(occa::memory_v *mem,
-                         const udim_t bytes = -1,
+                         const udim_t bytes = (udim_t) -1,
                          const udim_t offset = 0);
 
   bool needsSync(void *ptr);

@@ -89,10 +89,6 @@ namespace occa {
                 const void *src = NULL,
                 const occa::properties &props = occa::properties());
 
-  occa::memory wrapMemory(void *handle_,
-                          const dim_t bytes,
-                          const occa::properties &props = occa::properties());
-
   void memcpy(void *dest, const void *src,
               const dim_t bytes,
               const occa::properties &props = properties());

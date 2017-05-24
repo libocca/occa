@@ -45,10 +45,10 @@ namespace occa {
         const int deviceID = properties.get<int>("deviceID");
 
         OCCA_CUDA_ERROR("Device: Creating Device",
-                        cuDeviceGet(&handle, deviceID));
+                        cuDeviceGet(&cuDevice, deviceID));
 
         OCCA_CUDA_ERROR("Device: Creating Context",
-                        cuCtxCreate(&context, CU_CTX_SCHED_AUTO, handle));
+                        cuCtxCreate(&cuContext, CU_CTX_SCHED_AUTO, cuDevice));
       }
 
       p2pEnabled = false;
@@ -82,7 +82,7 @@ namespace occa {
       OCCA_CUDA_ERROR("Device: Getting CUDA Device Arch",
                       cuDeviceComputeCapability(&archMajorVersion,
                                                 &archMinorVersion,
-                                                handle) );
+                                                cuDevice) );
 
       archMajorVersion = properties.get("arch/major", archMajorVersion);
       archMinorVersion = properties.get("arch/minor", archMinorVersion);
@@ -91,18 +91,11 @@ namespace occa {
     device::~device() {}
 
     void device::free() {
-      if (context) {
+      if (cuContext) {
         OCCA_CUDA_ERROR("Device: Freeing Context",
-                        cuCtxDestroy(context) );
-        context = NULL;
+                        cuCtxDestroy(cuContext) );
+        cuContext = NULL;
       }
-    }
-
-    void* device::getHandle(const occa::properties &props) const {
-      if (props.get<std::string>("type", "") == "context") {
-        return (void*) context;
-      }
-      return (void*) &handle;
     }
 
     void device::finish() const {
@@ -143,7 +136,7 @@ namespace occa {
       CUstream *retStream = new CUstream;
 
       OCCA_CUDA_ERROR("Device: Setting Context",
-                      cuCtxSetCurrent(context));
+                      cuCtxSetCurrent(cuContext));
       OCCA_CUDA_ERROR("Device: createStream",
                       cuStreamCreate(retStream, CU_STREAM_DEFAULT));
 
@@ -160,7 +153,7 @@ namespace occa {
       streamTag ret;
 
       OCCA_CUDA_ERROR("Device: Setting Context",
-                      cuCtxSetCurrent(context));
+                      cuCtxSetCurrent(cuContext));
       OCCA_CUDA_ERROR("Device: Tagging Stream (Creating Tag)",
                       cuEventCreate(&cuda::event(ret), CU_EVENT_DEFAULT));
       OCCA_CUDA_ERROR("Device: Tagging Stream",
@@ -198,8 +191,6 @@ namespace occa {
       cuda::kernel *k = new cuda::kernel(props);
 
       k->dHandle = this;
-      k->context = context;
-
       k->build(filename, kernelName, kernelHash, props);
 
       return k;
@@ -211,8 +202,6 @@ namespace occa {
       cuda::kernel *k = new cuda::kernel(props);
 
       k->dHandle = this;
-      k->context = context;
-
       k->buildFromBinary(filename, kernelName, props);
 
       return k;
@@ -230,90 +219,77 @@ namespace occa {
         return managedAlloc(bytes, src, props);
       }
 
-      cuda::memory *mem = new cuda::memory(props);
-      mem->dHandle = this;
-      mem->handle  = new CUdeviceptr;
-      mem->size    = bytes;
+      cuda::memory &mem = *(new cuda::memory(props));
+      mem.dHandle = this;
+      mem.size    = bytes;
 
       OCCA_CUDA_ERROR("Device: Setting Context",
-                      cuCtxSetCurrent(context));
+                      cuCtxSetCurrent(cuContext));
 
       OCCA_CUDA_ERROR("Device: malloc",
-                      cuMemAlloc((CUdeviceptr*) mem->handle, bytes));
+                      cuMemAlloc(&(mem.cuPtr), bytes));
 
       if (src != NULL) {
-        mem->copyFrom(src, bytes, 0);
+        mem.copyFrom(src, bytes, 0);
       }
-      return mem;
+      return &mem;
     }
 
     memory_v* device::mappedAlloc(const udim_t bytes,
                                   const void *src,
                                   const occa::properties &props) {
 
-      cuda::memory *mem = new cuda::memory(props);
-      mem->dHandle = this;
-      mem->handle  = new CUdeviceptr;
-      mem->size    = bytes;
+      cuda::memory &mem = *(new cuda::memory(props));
+      mem.dHandle = this;
+      mem.size    = bytes;
 
       OCCA_CUDA_ERROR("Device: Setting Context",
-                      cuCtxSetCurrent(context));
+                      cuCtxSetCurrent(cuContext));
       OCCA_CUDA_ERROR("Device: malloc host",
-                      cuMemAllocHost((void**) &(mem->mappedPtr), bytes));
+                      cuMemAllocHost((void**) &(mem.mappedPtr), bytes));
       OCCA_CUDA_ERROR("Device: get device pointer from host",
-                      cuMemHostGetDevicePointer((CUdeviceptr*) mem->handle,
-                                                mem->mappedPtr,
+                      cuMemHostGetDevicePointer(&(mem.cuPtr),
+                                                mem.mappedPtr,
                                                 0));
 
       if (src != NULL) {
-        ::memcpy(mem->mappedPtr, src, bytes);
+        ::memcpy(mem.mappedPtr, src, bytes);
       }
-      return mem;
+      return &mem;
     }
 
     memory_v* device::managedAlloc(const udim_t bytes,
                                    const void *src,
                                    const occa::properties &props) {
-      cuda::memory *mem = new cuda::memory(props);
+      cuda::memory &mem = *(new cuda::memory(props));
 #if CUDA_VERSION >= 8000
-      mem->dHandle = this;
-      mem->handle  = new CUdeviceptr;
-      mem->size    = bytes;
+      mem.dHandle   = this;
+      mem.size      = bytes;
+      mem.isManaged = true;
 
       const unsigned int flags = (props.get("um/attachedHost", false) ?
                                   CU_MEM_ATTACH_HOST : CU_MEM_ATTACH_GLOBAL);
 
       OCCA_CUDA_ERROR("Device: Setting Context",
-                      cuCtxSetCurrent(context));
+                      cuCtxSetCurrent(cuContext));
       OCCA_CUDA_ERROR("Device: managed alloc",
-                      cuMemAllocManaged((CUdeviceptr*) mem->handle,
+                      cuMemAllocManaged(&(mem.cuPtr),
                                         bytes,
                                         flags));
 
       if (src != NULL) {
-        mem->copyFrom(src, bytes, 0);
+        mem.copyFrom(src, bytes, 0);
       }
 #else
       OCCA_FORCE_ERROR("CUDA version ["
                        << cuda::getVersion()
                        << "] does not support unified memory allocation");
 #endif
-      return mem;
-    }
-
-    memory_v* device::wrapMemory(void *handle_,
-                                 const udim_t bytes,
-                                 const occa::properties &props) {
-      cuda::memory *mem = new cuda::memory();
-      mem->dHandle = this;
-      mem->handle  = new CUdeviceptr;
-      mem->size    = bytes;
-      ::memcpy(mem->handle, &handle_, sizeof(CUdeviceptr));
-      return mem;
+      return &mem;
     }
 
     udim_t device::memorySize() const {
-      return cuda::getDeviceMemorySize(handle);
+      return cuda::getDeviceMemorySize(cuDevice);
     }
     //  |===============================
   }

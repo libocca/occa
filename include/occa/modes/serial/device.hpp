@@ -36,8 +36,6 @@ namespace occa {
       ~device();
       void free();
 
-      void* getHandle(const occa::properties &props) const;
-
       void finish() const;
 
       bool hasSeparateMemorySpace() const;
@@ -72,10 +70,6 @@ namespace occa {
       memory_v* malloc(const udim_t bytes,
                        const void *src,
                        const occa::properties &props);
-
-      memory_v* wrapMemory(void *handle_,
-                           const udim_t bytes,
-                           const occa::properties &props);
 
       udim_t memorySize() const;
       //  |=============================

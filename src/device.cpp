@@ -38,18 +38,6 @@ namespace occa {
   }
 
   device_v::~device_v() {}
-
-  void device_v::initFrom(const device_v &m) {
-    properties = m.properties;
-
-    uvaMap         = m.uvaMap;
-    uvaStaleMemory = m.uvaStaleMemory;
-
-    currentStream = m.currentStream;
-    streams       = m.streams;
-
-    bytesAllocated = m.bytesAllocated;
-  }
   //====================================
 
   //---[ device ]-----------------------
@@ -129,10 +117,6 @@ namespace occa {
 
   bool device::isInitialized() {
     return (dHandle != NULL);
-  }
-
-  void* device::getHandle(const occa::properties &props) {
-    return dHandle->getHandle(props);
   }
 
   device_v* device::getDHandle() const {
@@ -428,22 +412,6 @@ namespace occa {
                         const occa::properties &props) {
 
     return umalloc(bytes, NULL, props);
-  }
-
-  occa::memory device::wrapMemory(void *handle_,
-                                  const dim_t bytes,
-                                  const occa::properties &props) {
-
-    OCCA_ERROR("Trying to wrap memory with negative bytes (" << bytes << ")",
-               bytes >= 0);
-
-    memory mem(dHandle->wrapMemory(handle_, bytes, props));
-    mem.setDHandle(dHandle);
-    mem.dontUseRefs();
-
-    dHandle->bytesAllocated += bytes;
-
-    return mem;
   }
   //  |=================================
 

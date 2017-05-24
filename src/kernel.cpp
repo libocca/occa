@@ -159,19 +159,14 @@ namespace occa {
       }
     }
 
-    kArg.info = kArgInfo::usePointer;
-    kArg.size = bytes;
-
-    if (mHandle) {
-      kArg.mHandle = mHandle;
-      kArg.dHandle = mHandle->dHandle;
-
-      kArg.data.void_ = mHandle->handle;
-    } else {
+    if (!mHandle) {
+      kArg.info       = kArgInfo::usePointer;
+      kArg.size       = bytes;
       kArg.data.void_ = arg;
+      args.push_back(kArg);
+    } else {
+      add(mHandle->makeKernelArg());
     }
-
-    args.push_back(kArg);
   }
 
   void kernelArg::setupForKernelCall(const bool isConst) const {
@@ -248,21 +243,6 @@ namespace occa {
   }
 
   kernel_v::~kernel_v() {}
-
-  void kernel_v::initFrom(const kernel_v &m) {
-    dHandle = m.dHandle;
-
-    name = m.name;
-    properties = m.properties;
-
-    metadata = m.metadata;
-
-    inner = m.inner;
-    outer = m.outer;
-
-    nestedKernels = m.nestedKernels;
-    arguments = m.arguments;
-  }
 
   kernel* kernel_v::nestedKernelsPtr() {
     return &(nestedKernels[0]);
@@ -361,10 +341,6 @@ namespace occa {
 
   bool kernel::isInitialized() {
     return (kHandle != NULL);
-  }
-
-  void* kernel::getHandle(const occa::properties &props) {
-    return kHandle->getHandle(props);
   }
 
   kernel_v* kernel::getKHandle() {

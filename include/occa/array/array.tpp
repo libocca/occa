@@ -64,6 +64,7 @@ namespace occa {
     if (idxType == occa::useIdxOrder) {
       updateFS(v.idxCount);
     }
+    return *this;
   }
 
   template <class TM, const int idxType>

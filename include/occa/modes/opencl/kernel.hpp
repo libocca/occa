@@ -36,23 +36,17 @@ namespace occa {
 
     class kernel : public occa::kernel_v {
       friend class device;
+      friend cl_kernel getKernel(occa::kernel kernel);
 
     private:
-      int platformID, deviceID;
-
-      cl_platform_id clPlatformID;
-      cl_device_id   clDeviceID;
-      cl_context     clContext;
-      cl_program     clProgram;
-      cl_kernel      clKernel;
+      cl_device_id clDevice;
+      cl_kernel    clKernel;
 
     public:
       kernel(const occa::properties &properties_ = occa::properties());
       ~kernel();
 
       info_t makeCLInfo() const;
-
-      void* getHandle(const occa::properties &props) const;
 
       void build(const std::string &filename,
                  const std::string &kernelName,

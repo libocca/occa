@@ -570,18 +570,6 @@ void* OCCA_RFUNC occaUmalloc(const occaUDim_t bytes,
 
   return ptr;
 }
-
-occaMemory OCCA_RFUNC occaWrapMemory(void *handle_,
-                                     const occaUDim_t bytes,
-                                     occaProperties props) {
-
-  occa::properties &props_ = occa::c::getProperties(props);
-  occa::memory memory_ = occa::wrapMemory(handle_, bytes, props_);
-
-  occaMemory memory = occa::c::newType(occa::c::memory_);
-  occa::c::getKernelArg(memory).data.void_ = memory_.getMHandle();
-  return memory;
-}
 //  |===================================
 //======================================
 
@@ -691,20 +679,6 @@ void* OCCA_RFUNC occaDeviceUmalloc(occaDevice device,
   memory.dontUseRefs();
 
   return ptr;
-}
-
-occaMemory OCCA_RFUNC occaDeviceWrapMemory(occaDevice device,
-                                           void *handle_,
-                                           const occaUDim_t bytes,
-                                           occaProperties props) {
-
-  occa::device device_ = occa::c::getDevice(device);
-  occa::properties &props_ = occa::c::getProperties(props);
-  occa::memory memory_ = device_.wrapMemory(handle_, bytes, props_);
-
-  occaMemory memory = occa::c::newType(occa::c::memory_);
-  occa::c::getKernelArg(memory).data.void_ = memory_.getMHandle();
-  return memory;
 }
 
 void OCCA_RFUNC occaDeviceFinish(occaDevice device) {
@@ -892,11 +866,6 @@ void OCCA_RFUNC occaKernelFree(occaKernel kernel) {
 //---[ Memory ]-------------------------
 const char* OCCA_RFUNC occaMemoryMode(occaMemory memory) {
   return occa::c::getMemory(memory).mode().c_str();
-}
-
-void* OCCA_RFUNC occaMemoryGetHandle(occaMemory memory,
-                                     occaProperties props) {
-  return occa::c::getMemory(memory).getHandle(occa::c::getProperties(props));
 }
 
 void OCCA_RFUNC occaMemcpy(void *dest, const void *src,

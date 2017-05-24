@@ -10,8 +10,7 @@ int main(int argc, char **argv) {
   //---[ Init OpenCL ]------------------
   cl_int error;
 
-  cl_platform_id clPlatformID = occa::opencl::platformID(0);
-  cl_device_id clDeviceID     = occa::opencl::deviceID(0,0);
+  cl_device_id clDeviceID = occa::opencl::deviceID(0,0);
 
   cl_context clContext = clCreateContext(NULL,
                                          1, &clDeviceID,
@@ -40,8 +39,7 @@ int main(int argc, char **argv) {
   float *b  = new float[entries];
   float *ab = new float[entries];
 
-  occa::device device = occa::opencl::wrapDevice(clPlatformID,
-                                                 clDeviceID,
+  occa::device device = occa::opencl::wrapDevice(clDeviceID,
                                                  clContext);
 
   occa::stream stream = device.wrapStream(&clStream);
@@ -56,9 +54,9 @@ int main(int argc, char **argv) {
     ab[i] = 0;
   }
 
-  o_a  = device.wrapMemory(&cl_a , entries*sizeof(float));
-  o_b  = device.wrapMemory(&cl_b , entries*sizeof(float));
-  o_ab = device.wrapMemory(&cl_ab, entries*sizeof(float));
+  o_a  = occa::opencl::wrapMemory(device, cl_a , entries*sizeof(float));
+  o_b  = occa::opencl::wrapMemory(device, cl_b , entries*sizeof(float));
+  o_ab = occa::opencl::wrapMemory(device, cl_ab, entries*sizeof(float));
 
   addVectors = device.buildKernel("addVectors.okl",
                                   "addVectors");
@@ -70,13 +68,9 @@ int main(int argc, char **argv) {
 
   o_ab.copyTo(ab);
 
-  for (int i = 0; i < 5; ++i)
+  for (int i = 0; i < 5; ++i) {
     std::cout << i << ": " << ab[i] << '\n';
-
-  addVectors.free();
-  o_a.free();
-  o_b.free();
-  o_ab.free();
+  }
 
   delete [] a;
   delete [] b;

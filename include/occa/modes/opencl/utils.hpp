@@ -36,7 +36,7 @@ namespace occa {
 
   namespace opencl {
     struct info_t {
-      cl_device_id clDeviceID;
+      cl_device_id clDevice;
       cl_context   clContext;
       cl_program   clProgram;
       cl_kernel    clKernel;
@@ -105,9 +105,17 @@ namespace occa {
                            const hash_t &hash,
                            const std::string &hashTag);
 
-    occa::device wrapDevice(cl_platform_id platformID,
-                            cl_device_id deviceID,
+    cl_context getContext(occa::device device);
+    cl_mem getMem(occa::memory memory);
+    cl_kernel getKernel(occa::kernel kernel);
+
+    occa::device wrapDevice(cl_device_id clDevice,
                             cl_context context,
+                            const occa::properties &props = occa::properties());
+
+    occa::memory wrapMemory(occa::device device,
+                            cl_mem clMem,
+                            const udim_t bytes,
                             const occa::properties &props = occa::properties());
 
     cl_event& event(streamTag &tag);

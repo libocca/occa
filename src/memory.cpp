@@ -22,8 +22,10 @@
 
 #include <map>
 
+#include "occa/base.hpp"
 #include "occa/memory.hpp"
 #include "occa/device.hpp"
+#include "occa/modes/serial/memory.hpp"
 #include "occa/uva.hpp"
 #include "occa/tools/sys.hpp"
 
@@ -33,7 +35,7 @@ namespace occa {
     memInfo = uvaFlag::none;
     properties = properties_;
 
-    handle = NULL;
+    ptr    = NULL;
     uvaPtr = NULL;
 
     dHandle = NULL;
@@ -41,17 +43,6 @@ namespace occa {
   }
 
   memory_v::~memory_v() {}
-
-  void memory_v::initFrom(const memory_v &m) {
-    memInfo = m.memInfo;
-    properties = m.properties;
-
-    handle = m.handle;
-    uvaPtr = m.uvaPtr;
-
-    dHandle = m.dHandle;
-    size    = m.size;
-  }
 
   bool memory_v::isManaged() const {
     return (memInfo & uvaFlag::isManaged);
@@ -63,10 +54,6 @@ namespace occa {
 
   bool memory_v::isStale() const {
     return (memInfo & uvaFlag::isStale);
-  }
-
-  void* memory_v::uvaHandle() {
-    return handle;
   }
 
   //---[ memory ]-----------------------
@@ -144,6 +131,14 @@ namespace occa {
     return *this;
   }
 
+  void* memory::ptr() {
+    return mHandle->ptr;
+  }
+
+  const void* memory::ptr() const {
+    return mHandle->ptr;
+  }
+
   memory_v* memory::getMHandle() const {
     return mHandle;
   }
@@ -186,27 +181,23 @@ namespace occa {
     return mHandle->isStale();
   }
 
-  void* memory::getHandle(const occa::properties &props) const {
-    return mHandle->getHandle(props);
-  }
-
   void memory::setupUva() {
     if ( !(mHandle->dHandle->hasSeparateMemorySpace()) ) {
-      mHandle->uvaPtr = mHandle->uvaHandle();
+      mHandle->uvaPtr = mHandle->ptr;
     } else {
-      mHandle->uvaPtr = sys::malloc(mHandle->size);
+      mHandle->uvaPtr = (char*) sys::malloc(mHandle->size);
     }
 
     ptrRange_t uvaRange;
-    uvaRange.start = (char*) (mHandle->uvaPtr);
+    uvaRange.start = mHandle->uvaPtr;
     uvaRange.end   = (uvaRange.start + mHandle->size);
 
     uvaMap[uvaRange]                   = mHandle;
     mHandle->dHandle->uvaMap[uvaRange] = mHandle;
 
     // Needed for kernelArg.void_ -> mHandle checks
-    if (mHandle->uvaPtr != mHandle->handle) {
-      uvaMap[mHandle->handle] = mHandle;
+    if (mHandle->uvaPtr != mHandle->ptr) {
+      uvaMap[mHandle->ptr] = mHandle;
     }
   }
 
@@ -433,8 +424,8 @@ namespace occa {
       mHandle->dHandle->uvaMap.erase(mHandle->uvaPtr);
 
       // CPU case where memory is shared
-      if (mHandle->uvaPtr != mHandle->handle) {
-        uvaMap.erase(mHandle->handle);
+      if (mHandle->uvaPtr != mHandle->ptr) {
+        uvaMap.erase(mHandle->ptr);
         mHandle->dHandle->uvaMap.erase(mHandle->uvaPtr);
 
         ::free(mHandle->uvaPtr);
@@ -446,6 +437,19 @@ namespace occa {
       mHandle->free();
     } else {
       mHandle->detach();
+    }
+  }
+
+  namespace cpu {
+    occa::memory wrapMemory(void *ptr, const udim_t bytes) {
+      serial::memory &mem = *(new serial::memory);
+      mem.dontUseRefs();
+
+      mem.dHandle = host().getDHandle();
+      mem.size    = bytes;
+      mem.ptr     = (char*) ptr;
+
+      return occa::memory(&mem);
     }
   }
 }
