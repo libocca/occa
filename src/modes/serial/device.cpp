@@ -126,21 +126,6 @@ namespace occa {
       return hash_;
     }
 
-    hash_t device::getKernelHash(const occa::properties &props) const {
-
-      occa::properties allProps = properties["kernel"] + props;
-      std::stringstream ss;
-      ss << "mode:"              << mode
-         << "compiler:"          << allProps["compiler"]
-         << "compilerFlags:"     << allProps["compilerFlags"]
-         << "compilerEnvScript:" << allProps["compilerEnvScript"]
-         << "header:"            << allProps["header"]
-         << "footer:"            << allProps["footer"];
-
-      return (hash()
-              ^ occa::hash(ss.str()));
-    }
-
     void device::waitFor(streamTag tag) const {}
 
     stream_t device::createStream() const {

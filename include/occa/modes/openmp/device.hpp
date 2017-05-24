@@ -34,8 +34,6 @@ namespace occa {
     public:
       device(const occa::properties &properties_);
 
-      hash_t getKernelHash(const occa::properties &props) const;
-
       kernel_v* buildKernel(const std::string &filename,
                             const std::string &kernelName,
                             const hash_t kernelHash,
