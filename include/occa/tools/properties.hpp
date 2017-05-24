@@ -44,6 +44,9 @@ namespace occa {
       return ret;
     }
   };
+
+  template <>
+  hash_t hash(const properties &props);
 }
 
 #endif

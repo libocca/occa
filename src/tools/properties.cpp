@@ -54,4 +54,9 @@ namespace occa {
     const char *c = s.c_str();
     loadObject(c);
   }
+
+  template <>
+  hash_t hash(const properties &props) {
+    return props.hash();
+  }
 }
