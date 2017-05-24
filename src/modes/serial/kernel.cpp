@@ -35,18 +35,6 @@ namespace occa {
 
     kernel::~kernel() {}
 
-    void* kernel::getHandle(const occa::properties &props) const {
-      const std::string type = props["type"];
-
-      if (type == "dl_handle") {
-        return dlHandle;
-      }
-      if (type == "function") {
-        return (void*) &handle;
-      }
-      return NULL;
-    }
-
     void kernel::build(const std::string &filename,
                        const std::string &kernelName,
                        const hash_t hash,

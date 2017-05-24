@@ -35,15 +35,20 @@ namespace occa {
 
     class memory : public occa::memory_v {
       friend class opencl::device;
+      friend cl_mem getMem(occa::memory memory);
+      friend occa::memory wrapMemory(occa::device device,
+                                     cl_mem clMem,
+                                     const udim_t bytes,
+                                     const occa::properties &props);
 
     private:
+      cl_mem clMem;
       void *mappedPtr;
 
     public:
       memory(const occa::properties &properties_ = occa::properties());
       ~memory();
 
-      void* getHandle(const occa::properties &properties_) const;
       kernelArg makeKernelArg() const;
 
       memory_v* addOffset(const dim_t offset, bool &needsFree);

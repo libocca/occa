@@ -58,14 +58,10 @@ namespace occa {
 
     device_v(const occa::properties &properties_);
 
-    void initFrom(const device_v &m);
-
     //---[ Virtual Methods ]------------
     virtual ~device_v() = 0;
     // Must be able to be called multiple times safely
     virtual void free() = 0;
-
-    virtual void* getHandle(const occa::properties &props) const = 0;
 
     virtual void finish() const = 0;
 
@@ -102,10 +98,6 @@ namespace occa {
     virtual memory_v* malloc(const udim_t bytes,
                              const void* src,
                              const occa::properties &props) = 0;
-
-    virtual memory_v* wrapMemory(void *handle_,
-                                 const udim_t bytes,
-                                 const occa::properties &props) = 0;
 
     virtual udim_t memorySize() const = 0;
     //  |===============================
@@ -151,7 +143,6 @@ namespace occa {
     occa::json& kernelProperties();
     occa::json& memoryProperties();
 
-    void* getHandle(const occa::properties &props = occa::properties());
     device_v* getDHandle() const;
 
     void setup(const occa::properties &props);
@@ -213,10 +204,6 @@ namespace occa {
 
     void* umalloc(const dim_t bytes,
                   const occa::properties &props);
-
-    occa::memory wrapMemory(void *handle_,
-                            const dim_t bytes,
-                            const occa::properties &props = occa::properties());
     //  |===============================
   };
 

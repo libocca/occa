@@ -33,7 +33,6 @@ namespace occa {
       memory(const occa::properties &properties_ = occa::properties());
       ~memory();
 
-      void* getHandle(const occa::properties &props) const;
       kernelArg makeKernelArg() const;
 
       memory_v* addOffset(const dim_t offset, bool &needsFree);

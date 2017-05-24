@@ -41,23 +41,10 @@ namespace occa {
 
     info_t kernel::makeCLInfo() const {
       info_t info;
-      info.clDeviceID = clDeviceID;
-      info.clContext  = clContext;
-      info.clProgram  = clProgram;
-      info.clKernel   = clKernel;
+      info.clDevice  = clDevice;
+      info.clContext = ((device*) dHandle)->clContext;
+      info.clKernel  = clKernel;
       return info;
-    }
-
-    void* kernel::getHandle(const occa::properties &props) const {
-      const std::string type = props["type"];
-
-      if (type == "kernel") {
-        return clKernel;
-      }
-      if (type == "program") {
-        return clProgram;
-      }
-      return NULL;
     }
 
     void kernel::build(const std::string &filename,
@@ -110,8 +97,7 @@ namespace occa {
                           kernelName,
                           properties["compilerFlags"],
                           hash, sourceFile);
-      clProgram = clInfo.clProgram;
-      clKernel  = clInfo.clKernel;
+      clKernel = clInfo.clKernel;
 
       opencl::saveProgramBinary(clInfo, binaryFile, hash, hashTag);
 
@@ -132,8 +118,7 @@ namespace occa {
                                     cFile.size(),
                                     kernelName,
                                     ((opencl::device*) dHandle)->properties["compilerFlags"]);
-      clProgram = clInfo.clProgram;
-      clKernel  = clInfo.clKernel;
+      clKernel = clInfo.clKernel;
     }
 
     int kernel::maxDims() const {
@@ -141,11 +126,11 @@ namespace occa {
       if (dims_ == 0) {
         size_t bytes;
         OCCA_OPENCL_ERROR("Kernel: Max Dims",
-                          clGetDeviceInfo(clDeviceID,
+                          clGetDeviceInfo(clDevice,
                                           CL_DEVICE_MAX_WORK_ITEM_DIMENSIONS,
                                           0, NULL, &bytes));
         OCCA_OPENCL_ERROR("Kernel: Max Dims",
-                          clGetDeviceInfo(clDeviceID,
+                          clGetDeviceInfo(clDevice,
                                           CL_DEVICE_MAX_WORK_ITEM_DIMENSIONS,
                                           bytes, &dims_, NULL));
       }
@@ -159,11 +144,11 @@ namespace occa {
         size_t *od = new size_t[dims_];
         size_t bytes;
         OCCA_OPENCL_ERROR("Kernel: Max Outer Dims",
-                          clGetDeviceInfo(clDeviceID,
+                          clGetDeviceInfo(clDevice,
                                           CL_DEVICE_MAX_WORK_ITEM_SIZES,
                                           0, NULL, &bytes));
         OCCA_OPENCL_ERROR("Kernel: Max Outer Dims",
-                          clGetDeviceInfo(clDeviceID,
+                          clGetDeviceInfo(clDevice,
                                           CL_DEVICE_MAX_WORK_ITEM_SIZES,
                                           bytes, &od, NULL));
         for (int i = 0; i < dims_; ++i) {
@@ -181,12 +166,12 @@ namespace occa {
         size_t bytes;
         OCCA_OPENCL_ERROR("Kernel: Max Inner Dims",
                           clGetKernelWorkGroupInfo(clKernel,
-                                                   clDeviceID,
+                                                   clDevice,
                                                    CL_KERNEL_WORK_GROUP_SIZE,
                                                    0, NULL, &bytes));
         OCCA_OPENCL_ERROR("Kernel: Max Inner Dims",
                           clGetKernelWorkGroupInfo(clKernel,
-                                                   clDeviceID,
+                                                   clDevice,
                                                    CL_KERNEL_WORK_GROUP_SIZE,
                                                    bytes, &dims_, NULL));
         innerDims.x = dims_;

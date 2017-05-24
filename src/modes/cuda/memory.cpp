@@ -32,20 +32,15 @@ namespace occa {
   namespace cuda {
     memory::memory(const occa::properties &properties_) :
       occa::memory_v(properties_),
-      mappedPtr(NULL) {}
+      cuPtr((CUdeviceptr&) ptr),
+      mappedPtr(NULL),
+      isManaged(false) {}
 
     memory::~memory() {}
 
-    void* memory::getHandle(const occa::properties &properties_) const {
-      if (properties_.get("mapped", false)) {
-        return mappedPtr;
-      }
-      return handle;
-    }
-
     kernelArg memory::makeKernelArg() const {
       kernelArg_t arg;
-      arg.data.void_ = handle;
+      arg.data.void_ = (void*) &cuPtr;
       arg.size       = sizeof(void*);
       arg.info       = kArgInfo::usePointer;
       return kernelArg(arg);
@@ -53,10 +48,11 @@ namespace occa {
 
     memory_v* memory::addOffset(const dim_t offset, bool &needsFree) {
       memory *m = new memory(properties);
-      m->handle = (((char*) handle) + offset);
+      m->cuPtr = cuPtr + offset;
       if (mappedPtr) {
-        m->mappedPtr = (((char*) mappedPtr) + offset);
+        m->mappedPtr = mappedPtr + offset;
       }
+      m->isManaged = isManaged;
       needsFree = false;
       return m;
     }
@@ -70,12 +66,12 @@ namespace occa {
 
       if (!async) {
         OCCA_CUDA_ERROR("Memory: Copy From",
-                        cuMemcpyHtoD(*((CUdeviceptr*) handle) + offset,
+                        cuMemcpyHtoD(cuPtr + offset,
                                      src,
                                      bytes) );
       } else {
         OCCA_CUDA_ERROR("Memory: Async Copy From",
-                        cuMemcpyHtoDAsync(*((CUdeviceptr*) handle) + offset,
+                        cuMemcpyHtoDAsync(cuPtr + offset,
                                           src,
                                           bytes,
                                           stream) );
@@ -92,13 +88,13 @@ namespace occa {
 
       if (!async) {
         OCCA_CUDA_ERROR("Memory: Copy From",
-                        cuMemcpyDtoD(*((CUdeviceptr*) handle) + destOffset,
-                                     *((CUdeviceptr*) src->handle) + srcOffset,
+                        cuMemcpyDtoD(cuPtr + destOffset,
+                                     ((memory*) src)->cuPtr + srcOffset,
                                      bytes) );
       } else {
         OCCA_CUDA_ERROR("Memory: Async Copy From",
-                        cuMemcpyDtoDAsync(*((CUdeviceptr*) handle) + destOffset,
-                                          *((CUdeviceptr*) src->handle) + srcOffset,
+                        cuMemcpyDtoDAsync(cuPtr + destOffset,
+                                          ((memory*) src)->cuPtr + srcOffset,
                                           bytes,
                                           stream) );
       }
@@ -114,12 +110,12 @@ namespace occa {
       if (!async) {
         OCCA_CUDA_ERROR("Memory: Copy From",
                         cuMemcpyDtoH(dest,
-                                     *((CUdeviceptr*) handle) + offset,
+                                     cuPtr + offset,
                                      bytes) );
       } else {
         OCCA_CUDA_ERROR("Memory: Async Copy From",
                         cuMemcpyDtoHAsync(dest,
-                                          *((CUdeviceptr*) handle) + offset,
+                                          cuPtr + offset,
                                           bytes,
                                           stream) );
       }
@@ -130,20 +126,16 @@ namespace occa {
         OCCA_CUDA_ERROR("Device: mappedFree()",
                         cuMemFreeHost(mappedPtr));
         mappedPtr = NULL;
-      } else if (handle) {
-        cuMemFree(*((CUdeviceptr*) handle));
+      } else if (cuPtr) {
+        cuMemFree(cuPtr);
+        cuPtr = 0;
       }
-      if (handle) {
-        delete (CUdeviceptr*) handle;
-        handle = NULL;
-        size   = 0;
-      }
+      size = 0;
     }
 
     void memory::detach() {
-      delete (CUdeviceptr*) handle;
-      handle = NULL;
-      size   = 0;
+      cuPtr = 0;
+      size = 0;
     }
   }
 }

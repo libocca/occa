@@ -53,27 +53,23 @@ namespace occa {
     int memInfo;
     occa::properties properties;
 
-    void *handle, *uvaPtr;
+    char *ptr;
+    char *uvaPtr;
     occa::device_v *dHandle;
 
     udim_t size;
 
     memory_v(const occa::properties &properties_);
 
-    void initFrom(const memory_v &m);
-
     bool isManaged() const;
     bool inDevice() const;
     bool isStale() const;
-
-    void* uvaHandle();
 
     //---[ Virtual Methods ]------------
     virtual ~memory_v() = 0;
     // Must be able to be called multiple times safely
     virtual void free() = 0;
 
-    virtual void* getHandle(const occa::properties &props) const = 0;
     virtual kernelArg makeKernelArg() const = 0;
 
     virtual memory_v* addOffset(const dim_t offset, bool &needsFree) = 0;
@@ -147,6 +143,19 @@ namespace occa {
 
     memory& swap(memory &m);
 
+    void* ptr();
+    const void* ptr() const;
+
+    template <class TM>
+    TM* ptr() {
+      return (TM*) mHandle->ptr;
+    }
+
+    template <class TM>
+    const TM* ptr() const {
+      return (const TM*) mHandle->ptr;
+    }
+
     memory_v* getMHandle() const;
     device_v* getDHandle() const;
 
@@ -169,8 +178,6 @@ namespace occa {
     bool isManaged() const;
     bool inDevice() const;
     bool isStale() const;
-
-    void* getHandle(const occa::properties &props = occa::properties()) const;
 
     void setupUva();
     void startManaging();
@@ -225,6 +232,10 @@ namespace occa {
     void deleteRefs(const bool freeMemory = false);
   };
   //====================================
+
+  namespace cpu {
+    occa::memory wrapMemory(void *ptr, const udim_t bytes);
+  }
 }
 
 #endif

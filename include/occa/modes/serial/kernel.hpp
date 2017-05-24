@@ -46,8 +46,6 @@ namespace occa {
       kernel(const occa::properties &properties_ = occa::properties());
       ~kernel();
 
-      void* getHandle(const occa::properties &props) const;
-
       std::string binaryName(const std::string &filename) const;
 
       void build(const std::string &filename,

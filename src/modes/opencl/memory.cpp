@@ -37,16 +37,9 @@ namespace occa {
 
     memory::~memory() {}
 
-    void* memory::getHandle(const occa::properties &properties_) const {
-      if (properties_.get<std::string>("type", "") == "mapped") {
-        return mappedPtr;
-      }
-      return handle;
-    }
-
     kernelArg memory::makeKernelArg() const {
       kernelArg_t arg;
-      arg.data.void_ = handle;
+      arg.data.void_ = (void*) &clMem;
       arg.size       = sizeof(void*);
       arg.info       = kArgInfo::usePointer;
       return kernelArg(arg);
@@ -56,7 +49,6 @@ namespace occa {
       opencl::device &dev = *((opencl::device*) dHandle);
       opencl::memory *m = new opencl::memory();
       m->dHandle = &dev;
-      m->handle  = new cl_mem;
       m->size    = size - offset;
 
       cl_buffer_region info;
@@ -64,11 +56,11 @@ namespace occa {
       info.size   = m->size;
 
       cl_int error;
-      *((cl_mem*) m->handle) = clCreateSubBuffer(*((cl_mem*) handle),
-                                                 CL_MEM_READ_WRITE,
-                                                 CL_BUFFER_CREATE_TYPE_REGION,
-                                                 &info,
-                                                 &error);
+      m->clMem = clCreateSubBuffer(clMem,
+                                   CL_MEM_READ_WRITE,
+                                   CL_BUFFER_CREATE_TYPE_REGION,
+                                   &info,
+                                   &error);
 
       OCCA_OPENCL_ERROR("Device: clCreateSubBuffer", error);
       needsFree = true;
@@ -83,7 +75,7 @@ namespace occa {
       const bool async = props.get("async", false);
 
       OCCA_OPENCL_ERROR("Memory: " << (async ? "Async " : "") << "Copy From",
-                        clEnqueueWriteBuffer(stream, *((cl_mem*) handle),
+                        clEnqueueWriteBuffer(stream, clMem,
                                              async ? CL_FALSE : CL_TRUE,
                                              offset, bytes, src,
                                              0, NULL, NULL));
@@ -99,8 +91,8 @@ namespace occa {
 
       OCCA_OPENCL_ERROR("Memory: " << (async ? "Async " : "") << "Copy From",
                         clEnqueueCopyBuffer(stream,
-                                            *((cl_mem*) src->handle),
-                                            *((cl_mem*) handle),
+                                            ((memory*) src)->clMem,
+                                            clMem,
                                             srcOffset, destOffset,
                                             bytes,
                                             0, NULL, NULL));
@@ -115,7 +107,7 @@ namespace occa {
       const bool async = props.get("async", false);
 
       OCCA_OPENCL_ERROR("Memory: " << (async ? "Async " : "") << "Copy To",
-                        clEnqueueReadBuffer(stream, *((cl_mem*) handle),
+                        clEnqueueReadBuffer(stream, clMem,
                                             async ? CL_FALSE : CL_TRUE,
                                             offset, bytes, dest,
                                             0, NULL, NULL));
@@ -127,25 +119,20 @@ namespace occa {
 
         OCCA_OPENCL_ERROR("Mapped Free: clEnqueueUnmapMemObject",
                           clEnqueueUnmapMemObject(stream,
-                                                  *((cl_mem*) handle),
+                                                  clMem,
                                                   mappedPtr,
                                                   0, NULL, NULL));
       }
-      if (handle) {
+      if (size) {
         // Free mapped-host pointer
         OCCA_OPENCL_ERROR("Mapped Free: clReleaseMemObject",
-                          clReleaseMemObject(*((cl_mem*) handle)));
-        delete (cl_mem*) handle;
-
-        handle = NULL;
-        size   = 0;
+                          clReleaseMemObject(clMem));
+        size = 0;
       }
     }
 
     void memory::detach() {
-      delete (cl_mem*) handle;
-      handle = NULL;
-      size   = 0;
+      size = 0;
     }
   }
 }

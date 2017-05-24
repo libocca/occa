@@ -51,10 +51,9 @@ namespace occa {
         platformID = properties.get<int>("platformID");
         deviceID   = properties.get<int>("deviceID");
 
-        clPlatformID = opencl::platformID(platformID);
-        clDeviceID   = opencl::deviceID(platformID, deviceID);
+        clDevice = opencl::deviceID(platformID, deviceID);
 
-        clContext = clCreateContext(NULL, 1, &clDeviceID, NULL, NULL, &error);
+        clContext = clCreateContext(NULL, 1, &clDevice, NULL, NULL, &error);
         OCCA_OPENCL_ERROR("Device: Creating Context", error);
       }
 
@@ -83,13 +82,6 @@ namespace occa {
                           clReleaseContext(clContext) );
         clContext = NULL;
       }
-    }
-
-    void* device::getHandle(const occa::properties &props) const {
-      if (props["type"] == "context") {
-        return (void*) clContext;
-      }
-      return NULL;
     }
 
     void device::finish() const {
@@ -131,7 +123,10 @@ namespace occa {
 
       cl_command_queue *retStream = new cl_command_queue;
 
-      *retStream = clCreateCommandQueue(clContext, clDeviceID, CL_QUEUE_PROFILING_ENABLE, &error);
+      *retStream = clCreateCommandQueue(clContext,
+                                        clDevice,
+                                        CL_QUEUE_PROFILING_ENABLE,
+                                        &error);
       OCCA_OPENCL_ERROR("Device: createStream", error);
 
       return retStream;
@@ -203,14 +198,8 @@ namespace occa {
                                   const occa::properties &props) {
       opencl::kernel *k = new opencl::kernel(props);
 
-      k->dHandle = this;
-
-      k->platformID = platformID;
-      k->deviceID   = deviceID;
-
-      k->clPlatformID = clPlatformID;
-      k->clDeviceID   = clDeviceID;
-      k->clContext    = clContext;
+      k->dHandle  = this;
+      k->clDevice = clDevice;
 
       k->build(filename, kernelName, kernelHash, props);
 
@@ -223,13 +212,7 @@ namespace occa {
       opencl::kernel *k = new opencl::kernel(props);
 
       k->dHandle = this;
-
-      k->platformID = platformID;
-      k->deviceID   = deviceID;
-
-      k->clPlatformID = clPlatformID;
-      k->clDeviceID   = clDeviceID;
-      k->clContext    = clContext;
+      k->clDevice = clDevice;
 
       k->buildFromBinary(filename, kernelName, props);
 
@@ -250,18 +233,17 @@ namespace occa {
 
       opencl::memory *mem = new opencl::memory(props);
       mem->dHandle = this;
-      mem->handle  = new cl_mem;
       mem->size    = bytes;
 
       if (src == NULL) {
-        *((cl_mem*) mem->handle) = clCreateBuffer(clContext,
-                                                  CL_MEM_READ_WRITE,
-                                                  bytes, NULL, &error);
+        mem->clMem = clCreateBuffer(clContext,
+                                    CL_MEM_READ_WRITE,
+                                    bytes, NULL, &error);
         OCCA_OPENCL_ERROR("Device: clCreateBuffer", error);
       } else {
-        *((cl_mem*) mem->handle) = clCreateBuffer(clContext,
-                                                  CL_MEM_READ_WRITE | CL_MEM_COPY_HOST_PTR,
-                                                  bytes, const_cast<void*>(src), &error);
+        mem->clMem = clCreateBuffer(clContext,
+                                    CL_MEM_READ_WRITE | CL_MEM_COPY_HOST_PTR,
+                                    bytes, const_cast<void*>(src), &error);
         OCCA_OPENCL_ERROR("Device: clCreateBuffer", error);
 
         finish();
@@ -278,15 +260,14 @@ namespace occa {
 
       cl_command_queue &stream = *((cl_command_queue*) currentStream);
       opencl::memory *mem = new opencl::memory(props);
-      mem->dHandle  = this;
-      mem->handle   = new cl_mem;
-      mem->size     = bytes;
+      mem->dHandle = this;
+      mem->size    = bytes;
 
       // Alloc pinned host buffer
-      *((cl_mem*) mem->handle) = clCreateBuffer(clContext,
-                                                CL_MEM_READ_WRITE | CL_MEM_ALLOC_HOST_PTR,
-                                                bytes,
-                                                NULL, &error);
+      mem->clMem = clCreateBuffer(clContext,
+                                  CL_MEM_READ_WRITE | CL_MEM_ALLOC_HOST_PTR,
+                                  bytes,
+                                  NULL, &error);
 
       OCCA_OPENCL_ERROR("Device: clCreateBuffer", error);
 
@@ -296,7 +277,7 @@ namespace occa {
 
       // Map memory to read/write
       mem->mappedPtr = clEnqueueMapBuffer(stream,
-                                          *((cl_mem*) mem->handle),
+                                          mem->clMem,
                                           CL_TRUE,
                                           CL_MAP_READ | CL_MAP_WRITE,
                                           0, bytes,
@@ -311,19 +292,8 @@ namespace occa {
       return mem;
     }
 
-    memory_v* device::wrapMemory(void *handle_,
-                                 const udim_t bytes,
-                                 const occa::properties &props) {
-      opencl::memory *mem = new opencl::memory(props);
-      mem->dHandle  = this;
-      mem->handle   = new cl_mem;
-      mem->size     = bytes;
-      ::memcpy(mem->handle, handle_, sizeof(cl_mem));
-      return mem;
-    }
-
     udim_t device::memorySize() const {
-      return opencl::getDeviceMemorySize(clDeviceID);
+      return opencl::getDeviceMemorySize(clDevice);
     }
     //  |===============================
   }

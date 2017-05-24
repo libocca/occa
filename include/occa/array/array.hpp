@@ -111,15 +111,7 @@ namespace occa {
 
     inline occa::kernelArg arrayArg() {
       occa::kernelArg ret;
-      occa::kernelArg_t dataArg;
       occa::kernelArg_t sizeArg;
-
-      dataArg.mHandle = memory_.getMHandle();
-      dataArg.dHandle = memory_.getDHandle();
-
-      dataArg.data.void_ = memory_.getHandle();
-      dataArg.size       = sizeof(void*);
-      dataArg.info       = kArgInfo::usePointer;
 
       sizeArg.mHandle = memory_.getMHandle();
       sizeArg.dHandle = memory_.getDHandle();
@@ -128,7 +120,7 @@ namespace occa {
       sizeArg.size       = maxBase2(idxCount) * sizeof(int);
       sizeArg.info       = kArgInfo::usePointer;
 
-      ret.args.push_back(dataArg);
+      ret.add((kernelArg) memory_);
       ret.args.push_back(sizeArg);
 
       return ret;

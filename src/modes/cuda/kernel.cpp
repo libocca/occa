@@ -40,18 +40,6 @@ namespace occa {
 
     kernel::~kernel() {}
 
-    void* kernel::getHandle(const occa::properties &props) const {
-      const std::string type = props["type"];
-
-      if (type == "kernel") {
-        return handle;
-      }
-      if (type == "module") {
-        return module;
-      }
-      return NULL;
-    }
-
     void kernel::build(const std::string &filename,
                        const std::string &kernelName,
                        const hash_t hash,
@@ -163,7 +151,7 @@ namespace occa {
                    false);
       }
 
-      const CUresult moduleLoadError = cuModuleLoad(&module,
+      const CUresult moduleLoadError = cuModuleLoad(&cuModule,
                                                     binaryFile.c_str());
 
       if (moduleLoadError) {
@@ -173,8 +161,8 @@ namespace occa {
       OCCA_CUDA_ERROR("Kernel (" + name + ") : Loading Module",
                       moduleLoadError);
 
-      const CUresult moduleGetFunctionError = cuModuleGetFunction(&handle,
-                                                                  module,
+      const CUresult moduleGetFunctionError = cuModuleGetFunction(&cuFunction,
+                                                                  cuModule,
                                                                   name.c_str());
 
       if (moduleGetFunctionError) {
@@ -195,10 +183,10 @@ namespace occa {
       properties += props;
 
       OCCA_CUDA_ERROR("Kernel (" + kernelName + ") : Loading Module",
-                      cuModuleLoad(&module, filename.c_str()));
+                      cuModuleLoad(&cuModule, filename.c_str()));
 
       OCCA_CUDA_ERROR("Kernel (" + kernelName + ") : Loading Function",
-                      cuModuleGetFunction(&handle, module, kernelName.c_str()));
+                      cuModuleGetFunction(&cuFunction, cuModule, kernelName.c_str()));
     }
 
     int kernel::maxDims() const {
@@ -216,7 +204,7 @@ namespace occa {
         OCCA_CUDA_ERROR("Kernel: Getting Maximum Inner-Dim Size",
                         cuFuncGetAttribute(&maxSize,
                                            CU_FUNC_ATTRIBUTE_MAX_THREADS_PER_BLOCK,
-                                           handle));
+                                           cuFunction));
 
         innerDims.x = maxSize;
       }
@@ -246,7 +234,7 @@ namespace occa {
       }
 
       OCCA_CUDA_ERROR("Launching Kernel",
-                      cuLaunchKernel(handle,
+                      cuLaunchKernel(cuFunction,
                                      outer.x, outer.y, outer.z,
                                      inner.x, inner.y, inner.z,
                                      0, *((CUstream*) dHandle->currentStream),
@@ -255,10 +243,10 @@ namespace occa {
     }
 
     void kernel::free() {
-      if (module) {
+      if (cuModule) {
         OCCA_CUDA_ERROR("Kernel (" + name + ") : Unloading Module",
-                        cuModuleUnload(module));
-        module = NULL;
+                        cuModuleUnload(cuModule));
+        cuModule = NULL;
       }
     }
   }

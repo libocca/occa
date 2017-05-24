@@ -113,10 +113,6 @@ namespace occa {
 
     device::~device() {}
 
-    void* device::getHandle(const occa::properties &props) const {
-      return NULL;
-    }
-
     void device::finish() const {}
 
     bool device::hasSeparateMemorySpace() const {
@@ -193,23 +189,11 @@ namespace occa {
 
       mem->dHandle = this;
       mem->size    = bytes;
-      mem->handle  = sys::malloc(bytes);
+      mem->ptr     = (char*) sys::malloc(bytes);
 
       if (src != NULL) {
-        ::memcpy(mem->handle, src, bytes);
+        ::memcpy(mem->ptr, src, bytes);
       }
-
-      return mem;
-    }
-
-    memory_v* device::wrapMemory(void *handle_,
-                                 const udim_t bytes,
-                                 const occa::properties &props) {
-      memory *mem = new memory(props);
-
-      mem->dHandle = this;
-      mem->size    = bytes;
-      mem->handle  = handle_;
 
       return mem;
     }

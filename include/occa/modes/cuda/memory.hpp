@@ -36,16 +36,20 @@ namespace occa {
 
     class memory : public occa::memory_v {
       friend class cuda::device;
+      friend occa::memory wrapMemory(occa::device device,
+                                     void *ptr,
+                                     const udim_t bytes,
+                                     const occa::properties &props);
 
     private:
-      void *mappedPtr;
-      bool autoPrefetch;
+      CUdeviceptr &cuPtr;
+      char *mappedPtr;
+      bool isManaged;
 
     public:
       memory(const occa::properties &properties_ = occa::properties());
       ~memory();
 
-      void* getHandle(const occa::properties &properties_) const;
       kernelArg makeKernelArg() const;
 
       memory_v* addOffset(const dim_t offset, bool &needsFree);

@@ -32,20 +32,20 @@
 namespace occa {
   namespace opencl {
     class device : public occa::device_v {
+      friend cl_context getContext(occa::device device);
+
+    private:
       mutable hash_t hash_;
 
     public:
       int platformID, deviceID;
 
-      cl_platform_id clPlatformID;
-      cl_device_id clDeviceID;
+      cl_device_id clDevice;
       cl_context clContext;
 
       device(const occa::properties &properties_ = occa::properties());
       ~device();
       void free();
-
-      void* getHandle(const occa::properties &props) const;
 
       void finish() const;
 
@@ -85,10 +85,6 @@ namespace occa {
       memory_v* mappedAlloc(const udim_t bytes,
                             const void *src,
                             const occa::properties &props);
-
-      memory_v* wrapMemory(void *handle_,
-                           const udim_t bytes,
-                           const occa::properties &props);
 
       udim_t memorySize() const;
       //  |=============================

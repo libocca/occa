@@ -135,13 +135,6 @@ namespace occa {
     return currentDevice().umalloc(bytes, src, props);
   }
 
-  occa::memory wrapMemory(void *handle_,
-                          const dim_t bytes,
-                          const occa::properties &props) {
-
-    return currentDevice().wrapMemory(handle_, bytes, props);
-  }
-
   void memcpy(void *dest, const void *src,
               const dim_t bytes,
               const occa::properties &props) {

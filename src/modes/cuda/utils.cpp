@@ -29,6 +29,7 @@
 #include "occa/tools/string.hpp"
 #include "occa/tools/sys.hpp"
 #include "occa/modes/cuda/device.hpp"
+#include "occa/modes/cuda/memory.hpp"
 #include "occa/modes/cuda/utils.hpp"
 
 namespace occa {
@@ -174,12 +175,11 @@ namespace occa {
     void advise(occa::memory mem, advice_t advice, const dim_t bytes, occa::device device) {
 #if CUDA_VERSION >= 8000
       udim_t bytes_ = ((bytes == -1) ? mem.size() : bytes);
-      CUdevice cuDevice = *((CUdevice*) device.getHandle());
-      if (device.mode() != "CUDA") {
-        cuDevice = CU_DEVICE_CPU;
-      }
+      CUdevice cuDevice = ((device.mode() == "CUDA")
+                           ? ((cuda::device*) device.getDHandle())->handle
+                           : CU_DEVICE_CPU);
       OCCA_CUDA_ERROR("Advising about unified memory",
-                      cuMemAdvise(*((CUdeviceptr*) mem.getHandle()),
+                      cuMemAdvise(((cuda::memory*) mem.getMHandle())->cuPtr,
                                   (size_t) bytes_,
                                   advice,
                                   cuDevice));
@@ -191,20 +191,28 @@ namespace occa {
     }
 
     void prefetch(occa::memory mem, const dim_t bytes) {
+      OCCA_ERROR("Memory allocated with mode [" << mem.mode() << "], not [CUDA]",
+                 mem.mode() == "CUDA");
 #if CUDA_VERSION >= 8000
       udim_t bytes_ = ((bytes == -1) ? mem.size() : bytes);
-      occa::device device = mem.getDevice();
+      CUdevice cuDevice = ((device.mode() == "CUDA")
+                           ? ((cuda::device*) device.getDHandle())->handle
+                           : CU_DEVICE_CPU);
       occa::stream stream = device.getStream();
       OCCA_CUDA_ERROR("Prefetching unified memory",
-                      cuMemPrefetchAsync(*((CUdeviceptr*) mem.getHandle()),
+                      cuMemPrefetchAsync(((cuda::memory*) mem.getMHandle())->cuPtr,
                                          (size_t) bytes_,
-                                         *((CUdevice*) device.getHandle()),
+                                         cuDevice,
                                          *((CUstream*) stream.getHandle())) );
 #else
       OCCA_FORCE_ERROR("CUDA version ["
                        << cuda::getVersion()
                        << "] does not support unified memory prefetching");
 #endif
+    }
+
+    CUcontext getContext(occa::device device) {
+      return ((cuda::device*) device.getDHandle())->cuContext;
     }
 
     occa::device wrapDevice(CUdevice device,
@@ -217,12 +225,26 @@ namespace occa {
       allProps["wrapped"]  = true;
 
       cuda::device &dev = *(new cuda::device(allProps));
-      dev.handle  = device;
-      dev.context = context;
+      dev.cuDevice  = device;
+      dev.cuContext = context;
 
       dev.currentStream = dev.createStream();
 
       return occa::device(&dev);
+    }
+
+    occa::memory wrapMemory(occa::device device,
+                            void *ptr,
+                            const udim_t bytes,
+                            const occa::properties &props) {
+
+      cuda::memory &mem = *(new cuda::memory(props));
+      mem.dHandle   = device.getDHandle();
+      mem.ptr       = (char*) ptr;
+      mem.size      = bytes;
+      mem.mappedPtr = NULL;
+      mem.isManaged = props.get("managed", false);
+      return occa::memory(&mem);
     }
 
     CUevent& event(streamTag &tag) {

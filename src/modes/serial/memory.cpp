@@ -31,13 +31,9 @@ namespace occa {
 
     memory::~memory() {}
 
-    void* memory::getHandle(const occa::properties &props) const {
-      return handle;
-    }
-
     kernelArg memory::makeKernelArg() const {
       kernelArg_t arg;
-      arg.data.void_ = handle;
+      arg.data.void_ = ptr;
       arg.size       = sizeof(void*);
       arg.info       = kArgInfo::usePointer;
       return kernelArg(arg);
@@ -45,7 +41,7 @@ namespace occa {
 
     memory_v* memory::addOffset(const dim_t offset, bool &needsFree) {
       memory *m = new memory(properties);
-      m->handle = (((char*) handle) + offset);
+      m->ptr = ptr + offset;
       needsFree = false;
       return m;
     }
@@ -54,7 +50,7 @@ namespace occa {
                         const udim_t bytes,
                         const udim_t offset,
                         const occa::properties &props) const {
-      const void *srcPtr = ((char*) handle) + offset;
+      const void *srcPtr = ptr + offset;
 
       ::memcpy(dest, srcPtr, bytes);
     }
@@ -64,7 +60,7 @@ namespace occa {
                           const udim_t offset,
                           const occa::properties &props) {
 
-      void *destPtr      = ((char*) handle) + offset;
+      void *destPtr      = ptr + offset;
       const void *srcPtr = src;
 
       ::memcpy(destPtr, srcPtr, bytes);
@@ -76,22 +72,22 @@ namespace occa {
                           const udim_t srcOffset,
                           const occa::properties &props) {
 
-      void *destPtr      = ((char*) handle)      + destOffset;
-      const void *srcPtr = ((char*) src->handle) + srcOffset;
+      void *destPtr      = ptr + destOffset;
+      const void *srcPtr = ptr + srcOffset;
 
       ::memcpy(destPtr, srcPtr, bytes);
     }
 
     void memory::free() {
-      if (handle) {
-        sys::free(handle);
-        handle = NULL;
+      if (ptr) {
+        sys::free(ptr);
+        ptr = NULL;
         size = 0;
       }
     }
 
     void memory::detach() {
-      handle = NULL;
+      ptr = NULL;
       size = 0;
     }
   }

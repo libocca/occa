@@ -172,8 +172,6 @@ namespace occa {
 
     kernel_v(const occa::properties &properties_);
 
-    void initFrom(const kernel_v &m);
-
     kernel* nestedKernelsPtr();
     int nestedKernelCount();
 
@@ -198,8 +196,6 @@ namespace occa {
     virtual ~kernel_v() = 0;
     // Must be able to be called multiple times safely
     virtual void free() = 0;
-
-    virtual void* getHandle(const occa::properties &props) const = 0;
 
     virtual void build(const std::string &filename,
                        const std::string &kernelName,
@@ -244,7 +240,6 @@ namespace occa {
 
     bool isInitialized();
 
-    void* getHandle(const occa::properties &props = occa::properties());
     kernel_v* getKHandle();
 
     occa::device getDevice();

@@ -38,16 +38,12 @@ namespace occa {
       friend class device;
 
     private:
-      CUdevice   device;
-      CUcontext  context;
-      CUmodule   module;
-      CUfunction handle;
+      CUmodule   cuModule;
+      CUfunction cuFunction;
 
     public:
       kernel(const occa::properties &properties_ = occa::properties());
       ~kernel();
-
-      void* getHandle(const occa::properties &props) const;
 
       void build(const std::string &filename,
                  const std::string &kernelName,

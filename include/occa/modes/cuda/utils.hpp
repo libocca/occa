@@ -85,8 +85,15 @@ namespace occa {
 
     void prefetch(occa::memory mem, const dim_t bytes = -1);
 
+    CUcontext getContext(occa::device device);
+
     occa::device wrapDevice(CUdevice device,
                             CUcontext context,
+                            const occa::properties &props = occa::properties());
+
+    occa::memory wrapMemory(occa::device device,
+                            void *ptr,
+                            const udim_t bytes,
                             const occa::properties &props = occa::properties());
 
     CUevent& event(streamTag &tag);
