@@ -73,7 +73,7 @@ namespace occa {
                           const occa::properties &props) {
 
       void *destPtr      = ptr + destOffset;
-      const void *srcPtr = ptr + srcOffset;
+      const void *srcPtr = src->ptr + srcOffset;
 
       ::memcpy(destPtr, srcPtr, bytes);
     }
