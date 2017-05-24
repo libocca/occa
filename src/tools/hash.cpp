@@ -176,7 +176,7 @@ namespace occa {
   }
 
   hash_t hashFile(const std::string &filename) {
-    const char *c = io::c_read(filename);
+    const char *c = io::c_read(io::filename(filename));
     hash_t ret = hash(c);
     ::free((void*) c);
     return ret;
