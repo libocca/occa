@@ -41,12 +41,11 @@ namespace occa {
                                      const udim_t bytes,
                                      const occa::properties &props);
 
-    private:
+    public:
       CUdeviceptr &cuPtr;
       char *mappedPtr;
       bool isManaged;
 
-    public:
       memory(const occa::properties &properties_ = occa::properties());
       ~memory();
 

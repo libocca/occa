@@ -37,11 +37,10 @@ namespace occa {
     class kernel : public occa::kernel_v {
       friend class device;
 
-    private:
+    public:
       CUmodule   cuModule;
       CUfunction cuFunction;
 
-    public:
       kernel(const occa::properties &properties_ = occa::properties());
       ~kernel();
 
