@@ -84,6 +84,8 @@ namespace occa {
     void advise(occa::memory mem, advice_t advice, const dim_t bytes, occa::device device);
 
     void prefetch(occa::memory mem, const dim_t bytes = -1);
+    void prefetch(occa::memory mem, occa::device device);
+    void prefetch(occa::memory mem, const dim_t bytes, occa::device device);
 
     CUcontext getContext(occa::device device);
 
