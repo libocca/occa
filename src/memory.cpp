@@ -238,8 +238,8 @@ namespace occa {
     removeFromStaleMap(mHandle);
   }
 
-  void memory::syncFromDevice(const dim_t bytes,
-                              const dim_t offset) {
+  void memory::syncToHost(const dim_t bytes,
+                          const dim_t offset) {
     udim_t bytes_ = ((bytes == -1) ? mHandle->size : bytes);
 
     OCCA_ERROR("Trying to copy negative bytes (" << bytes << ")",

@@ -28,7 +28,7 @@ namespace occa {
   array<TM,idxType>::array() :
     device(),
     memory_(),
-    data_(NULL) {
+    ptr_(NULL) {
 
     for (int i = 0; i < 6; ++i) {
       ks_[i]     = 0;
@@ -51,7 +51,7 @@ namespace occa {
     device  = v.device;
     memory_ = v.memory_;
 
-    data_ = v.data_;
+    ptr_ = v.ptr_;
 
     initSOrder(v.idxCount);
 
@@ -80,12 +80,12 @@ namespace occa {
 
   template <class TM, const int idxType>
   void array<TM,idxType>::free() {
-    if (data_ == NULL) {
+    if (ptr_ == NULL) {
       return;
     }
 
-    occa::free(data_);
-    data_ = NULL;
+    occa::free(ptr_);
+    ptr_ = NULL;
 
     for (int i = 0; i < 6; ++i) {
       ks_[i]     = 0;
@@ -144,7 +144,7 @@ namespace occa {
     array<TM2,idxType2> clone_ = *this;
 
     clone_.allocate(device_, idxCount, s_);
-    occa::memcpy(clone_.data_, data_, bytes());
+    occa::memcpy(clone_.ptr_, ptr_, bytes());
 
     return clone_;
   }
@@ -460,15 +460,15 @@ namespace occa {
   //---[ allocate(...) ]----------------
   template <class TM, const int idxType>
   void array<TM,idxType>::allocate(const TM *src) {
-    data_   = (TM*) device.umalloc(bytes(), src);
-    memory_ = occa::memory(data_);
+    ptr_   = (TM*) device.umalloc(bytes(), src);
+    memory_ = occa::memory(ptr_);
     memory_.getMHandle()->setRefs(1);
   }
 
   template <class TM, const int idxType>
   void array<TM,idxType>::allocate(const occa::memory src) {
-    data_   = (TM*) device.umalloc(bytes(), src);
-    memory_ = occa::memory(data_);
+    ptr_   = (TM*) device.umalloc(bytes(), src);
+    memory_ = occa::memory(ptr_);
     memory_.getMHandle()->setRefs(1);
   }
 
@@ -1038,55 +1038,55 @@ namespace occa {
   //---[ Access Operators ]-------------
   template <class TM, const int idxType>
   inline TM& array<TM,idxType>::operator [] (const udim_t i0) {
-    return data_[i0];
+    return ptr_[i0];
   }
 
   template <class TM, const int idxType>
   inline TM& array<TM,idxType>::operator () (const udim_t i0) {
-    return data_[i0];
+    return ptr_[i0];
   }
 
   template <class TM, const int idxType>
   inline TM& array<TM,idxType>::operator () (const udim_t i0, const udim_t i1) {
     if (idxType == occa::dontUseIdxOrder) {
-      return data_[i0 + s_[0]*i1];
+      return ptr_[i0 + s_[0]*i1];
     }
-    return data_[fs_[0]*i0 + fs_[1]*i1];
+    return ptr_[fs_[0]*i0 + fs_[1]*i1];
   }
 
   template <class TM, const int idxType>
   inline TM& array<TM,idxType>::operator () (const udim_t i0, const udim_t i1, const udim_t i2) {
     if (idxType == occa::dontUseIdxOrder) {
-      return data_[i0 + s_[0]*(i1 + s_[1]*i2)];
+      return ptr_[i0 + s_[0]*(i1 + s_[1]*i2)];
     }
-    return data_[fs_[0]*i0 + fs_[1]*i1 + fs_[2]*i2];
+    return ptr_[fs_[0]*i0 + fs_[1]*i1 + fs_[2]*i2];
   }
 
   template <class TM, const int idxType>
   inline TM& array<TM,idxType>::operator () (const udim_t i0, const udim_t i1, const udim_t i2,
                                              const udim_t i3) {
     if (idxType == occa::dontUseIdxOrder) {
-      return data_[i0 + s_[0]*(i1 + s_[1]*(i2 + s_[2]*i3))];
+      return ptr_[i0 + s_[0]*(i1 + s_[1]*(i2 + s_[2]*i3))];
     }
-    return data_[fs_[0]*i0 + fs_[1]*i1 + fs_[2]*i2 + fs_[3]*i3];
+    return ptr_[fs_[0]*i0 + fs_[1]*i1 + fs_[2]*i2 + fs_[3]*i3];
   }
 
   template <class TM, const int idxType>
   inline TM& array<TM,idxType>::operator () (const udim_t i0, const udim_t i1, const udim_t i2,
                                              const udim_t i3, const udim_t i4) {
     if (idxType == occa::dontUseIdxOrder) {
-      return data_[i0 + s_[0]*(i1 + s_[1]*(i2 + s_[2]*(i3 + s_[3]*i4)))];
+      return ptr_[i0 + s_[0]*(i1 + s_[1]*(i2 + s_[2]*(i3 + s_[3]*i4)))];
     }
-    return data_[fs_[0]*i0 + fs_[1]*i1 + fs_[2]*i2 + fs_[3]*i3 + fs_[4]*i4];
+    return ptr_[fs_[0]*i0 + fs_[1]*i1 + fs_[2]*i2 + fs_[3]*i3 + fs_[4]*i4];
   }
 
   template <class TM, const int idxType>
   inline TM& array<TM,idxType>::operator () (const udim_t i0, const udim_t i1, const udim_t i2,
                                              const udim_t i3, const udim_t i4, const udim_t i5) {
     if (idxType == occa::dontUseIdxOrder) {
-      return data_[i0 + s_[0]*(i1 + s_[1]*(i2 + s_[2]*(i3 + s_[3]*(i4 + s_[4]*i5))))];
+      return ptr_[i0 + s_[0]*(i1 + s_[1]*(i2 + s_[2]*(i3 + s_[3]*(i4 + s_[4]*i5))))];
     }
-    return data_[fs_[0]*i0 + fs_[1]*i1 + fs_[2]*i2 + fs_[3]*i3 + fs_[4]*i4 + fs_[5]*i5];
+    return ptr_[fs_[0]*i0 + fs_[1]*i1 + fs_[2]*i2 + fs_[3]*i3 + fs_[4]*i4 + fs_[5]*i5];
   }
   //====================================
 
@@ -1096,7 +1096,7 @@ namespace occa {
     array<TM,idxType> ret = *this;
     udim_t byteOffset = offset * sizeof(TM);
     ret.memory_ += byteOffset;
-    ret.data_   += offset;
+    ret.ptr_   += offset;
     ret.reshape(size() - offset);
     return ret;
   }
@@ -1223,22 +1223,22 @@ namespace occa {
   //---[ Syncs ]------------------------
   template <class TM, const int idxType>
   void array<TM,idxType>::startManaging() {
-    occa::startManaging(data_);
+    occa::startManaging(ptr_);
   }
 
   template <class TM, const int idxType>
   void array<TM,idxType>::stopManaging() {
-    occa::stopManaging(data_);
+    occa::stopManaging(ptr_);
   }
 
   template <class TM, const int idxType>
   void array<TM,idxType>::syncToDevice() {
-    occa::syncToDevice(data_);
+    occa::syncToDevice(ptr_);
   }
 
   template <class TM, const int idxType>
-  void array<TM,idxType>::syncFromDevice() {
-    occa::syncFromDevice(data_);
+  void array<TM,idxType>::syncToHost() {
+    occa::syncToHost(ptr_);
   }
 
   template <class TM, const int idxType>
@@ -1249,22 +1249,22 @@ namespace occa {
 
   template <class TM, const int idxType>
   void array<TM,idxType>::keepInHost() {
-    syncFromDevice();
+    syncToHost();
     stopManaging();
   }
 
   template <class TM, const int idxType>
   bool array<TM,idxType>::needsSync() {
-    return occa::needsSync(data_);
+    return occa::needsSync(ptr_);
   }
 
   template <class TM, const int idxType>
   void array<TM,idxType>::sync() {
-    occa::sync(data_);
+    occa::sync(ptr_);
   }
 
   template <class TM, const int idxType>
   void array<TM,idxType>::dontSync() {
-    occa::dontSync(data_);
+    occa::dontSync(ptr_);
   }
 }

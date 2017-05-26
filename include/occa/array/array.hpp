@@ -42,7 +42,7 @@ namespace occa {
     occa::device device;
     occa::memory memory_;
 
-    TM *data_;
+    TM *ptr_;
 
     int ks_[6];     // Passed to the kernel, not a problem for 32-bit
     udim_t s_[6];   // Strides
@@ -66,15 +66,15 @@ namespace occa {
 
     //---[ Info ]-----------------------
     inline bool isInitialized() const {
-      return data_ != NULL;
+      return ptr_ != NULL;
     }
 
-    inline TM* data() {
-      return data_;
+    inline TM* ptr() {
+      return ptr_;
     }
 
-    inline const TM* data() const {
-      return data_;
+    inline const TM* ptr() const {
+      return ptr_;
     }
 
     inline occa::memory memory() {
@@ -444,7 +444,7 @@ namespace occa {
     void stopManaging();
 
     void syncToDevice();
-    void syncFromDevice();
+    void syncToHost();
 
     void keepInDevice();
     void keepInHost();

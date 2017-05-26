@@ -102,15 +102,15 @@ namespace occa {
     friend void stopManaging(void *ptr);
 
     friend void syncToDevice(void *ptr, const dim_t bytes);
-    friend void syncFromDevice(void *ptr, const dim_t bytes);
+    friend void syncToHost(void *ptr, const dim_t bytes);
 
     friend void syncMemToDevice(occa::memory_v *mem,
                                 const dim_t bytes,
                                 const dim_t offset);
 
-    friend void syncMemFromDevice(occa::memory_v *mem,
-                                  const dim_t bytes,
-                                  const dim_t offset);
+    friend void syncMemToHost(occa::memory_v *mem,
+                              const dim_t bytes,
+                              const dim_t offset);
   };
   //====================================
 
@@ -174,7 +174,7 @@ namespace occa {
     void stopManaging();
 
     void syncToDevice(const dim_t bytes, const dim_t offset);
-    void syncFromDevice(const dim_t bytes, const dim_t offset);
+    void syncToHost(const dim_t bytes, const dim_t offset);
 
     bool uvaIsStale() const;
     void uvaMarkStale();
