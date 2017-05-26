@@ -146,16 +146,6 @@ namespace occa {
     void* ptr();
     const void* ptr() const;
 
-    template <class TM>
-    TM* ptr() {
-      return (TM*) mHandle->ptr;
-    }
-
-    template <class TM>
-    const TM* ptr() const {
-      return (const TM*) mHandle->ptr;
-    }
-
     memory_v* getMHandle() const;
     device_v* getDHandle() const;
 
