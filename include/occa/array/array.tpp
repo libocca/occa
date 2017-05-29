@@ -1164,9 +1164,19 @@ namespace occa {
 
   //---[ Linear Algebra ]---------------
   template <class TM, const int idxType>
+  TM array<TM,idxType>::l1Norm() {
+    return linalg::l1Norm<TM,TM>(memory_);
+  }
+
+  template <class TM, const int idxType>
   template <class RETTYPE>
   RETTYPE array<TM,idxType>::l1Norm() {
     return linalg::l1Norm<TM,RETTYPE>(memory_);
+  }
+
+  template <class TM, const int idxType>
+  TM array<TM,idxType>::l2Norm() {
+    return linalg::l2Norm<TM,TM>(memory_);
   }
 
   template <class TM, const int idxType>
@@ -1176,9 +1186,19 @@ namespace occa {
   }
 
   template <class TM, const int idxType>
+  TM array<TM,idxType>::lpNorm(const float p) {
+    return linalg::lpNorm<TM,TM>(p, memory_);
+  }
+
+  template <class TM, const int idxType>
   template <class RETTYPE>
   RETTYPE array<TM,idxType>::lpNorm(const float p) {
     return linalg::lpNorm<TM,RETTYPE>(p, memory_);
+  }
+
+  template <class TM, const int idxType>
+  TM array<TM,idxType>::lInfNorm() {
+    return linalg::lInfNorm<TM,TM>(memory_);
   }
 
   template <class TM, const int idxType>
@@ -1188,15 +1208,13 @@ namespace occa {
   }
 
   template <class TM, const int idxType>
-  template <class RETTYPE>
-  RETTYPE array<TM,idxType>::max() {
-    return linalg::max<TM,RETTYPE>(memory_);
+  TM array<TM,idxType>::max() {
+    return linalg::max<TM,TM>(memory_);
   }
 
   template <class TM, const int idxType>
-  template <class RETTYPE>
-  RETTYPE array<TM,idxType>::min() {
-    return linalg::min<TM,RETTYPE>(memory_);
+  TM array<TM,idxType>::min() {
+    return linalg::min<TM,TM>(memory_);
   }
 
   template <class TM, const int idxType>
