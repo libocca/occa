@@ -414,19 +414,24 @@ namespace occa {
     //==================================
 
     //---[ Linear Algebra ]-------------
+    TM l1Norm();
     template <class RETTYPE>
     RETTYPE l1Norm();
+
+    TM l2Norm();
     template <class RETTYPE>
     RETTYPE l2Norm();
+
+    TM lpNorm(const float p);
     template <class RETTYPE>
     RETTYPE lpNorm(const float p);
+
+    TM lInfNorm();
     template <class RETTYPE>
     RETTYPE lInfNorm();
 
-    template <class RETTYPE>
-    RETTYPE max();
-    template <class RETTYPE>
-    RETTYPE min();
+    TM min();
+    TM max();
 
     template <class RETTYPE, class TM2, const int idxType2>
     RETTYPE dot(const array<TM2, idxType2> &vec);
