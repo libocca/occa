@@ -117,7 +117,6 @@ namespace occa {
     std::string ret;
     for (int i = 0; i < 8; ++i) {
       ret += toHex(h[i]);
-      sh[i] = h[i];
     }
     return ret;
   }
@@ -126,6 +125,9 @@ namespace occa {
     if (*this != hash_t(sh)) {
       h_string = toFullString();
       h_string = (h_string.size() < 16) ? h_string : h_string.substr(0, 16);
+      for (int i = 0; i < 8; ++i) {
+        sh[i] = h[i];
+      }
     }
     return h_string;
   }

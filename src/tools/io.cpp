@@ -641,7 +641,7 @@ namespace occa {
         }
       }
 
-      std::string occaLibName = getLibraryName(io::filename(filename));
+      std::string occaLibName = getLibraryName(filename);
 
       if (occaLibName.size() == 0) {
         if (hash.initialized) {

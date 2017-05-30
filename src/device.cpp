@@ -269,6 +269,7 @@ namespace occa {
           kernelMetadata metadata = kernelMetadata::fromJson(kInfo["metadata"]);
           const std::string cHash = cacheHash(hash, metadata.name);
 
+          // [-] Not right
           dHandle->cachedKernels[cHash] = buildKernel(dirs[d] + kc::sourceFile,
                                                       hash,
                                                       kInfo["props"],
