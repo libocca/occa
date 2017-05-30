@@ -244,6 +244,12 @@ namespace occa {
 
   kernel_v::~kernel_v() {}
 
+  // This should only be called in the very first reference
+  void kernel_v::setDHandle(device_v *dHandle_) {
+    dHandle = dHandle_;
+    dHandle->addRef();
+  }
+
   kernel* kernel_v::nestedKernelsPtr() {
     return &(nestedKernels[0]);
   }
@@ -313,14 +319,6 @@ namespace occa {
       removeKHandleRef();
       kHandle = kHandle_;
       kHandle->addRef();
-    }
-  }
-
-  void kernel::setDHandle(device_v *dHandle) {
-    kHandle->dHandle = dHandle;
-    // If this is the very first reference, update the device references
-    if (kHandle->getRefs() == 1) {
-      kHandle->dHandle->addRef();
     }
   }
 

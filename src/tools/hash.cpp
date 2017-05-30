@@ -113,31 +113,31 @@ namespace occa {
     return *this;
   }
 
-  std::string hash_t::const_toString() const {
-    std::stringstream ss;
+  std::string hash_t::toFullString() const {
+    std::string ret;
     for (int i = 0; i < 8; ++i) {
-      ss << std::hex << h[i];
+      ret += toHex(h[i]);
+      sh[i] = h[i];
     }
-    std::string s = ss.str();
-    return (s.size() < 16) ? s : s.substr(0, 16);
-  }
-
-  std::string hash_t::toString() {
-    if (*this != hash_t(sh)) {
-      h_string = const_toString();
-    }
-    return h_string;
+    return ret;
   }
 
   std::string hash_t::toString() const {
     if (*this != hash_t(sh)) {
-      return const_toString();
+      h_string = toFullString();
+      h_string = (h_string.size() < 16) ? h_string : h_string.substr(0, 16);
     }
     return h_string;
   }
 
   hash_t::operator std::string () const {
     return toString();
+  }
+
+  hash_t hash_t::fromString(const std::string &s) {
+    hash_t hash;
+    fromHex(s, hash.h, 8 * sizeof(int));
+    return hash;
   }
 
   std::ostream& operator << (std::ostream &out, const hash_t &hash) {

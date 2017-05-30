@@ -2440,39 +2440,14 @@ namespace occa {
         statement &s = *(snPos->value);
 
         if (statementIsAKernel(s)) {
-          varInfo &kernel = *(s.getFunctionVar());
-
-          //---[ Setup Info ]-----------
-          kernelInfo &info = *(new kernelInfo);
-
-          info.name     = kernel.name;
-          info.baseName = info.name;
-
-          if (kernel.argumentCount) {
-            info.argumentInfos.reserve(kernel.argumentCount);
-
-            for (int arg = 0; arg < kernel.argumentCount; ++arg) {
-              varInfo &varg = *(kernel.argumentVarInfos[arg]);
-
-              argumentInfo argInfo;
-              argInfo.isConst = varg.isConst();
-
-              info.argumentInfos.push_back(argInfo);
-            }
-          }
-
-          kernelInfoMap[info.name] = &info;
-          //============================
-
-          snPos = splitKernelStatement(snPos, info);
-        }
-        else
+          snPos = splitKernelStatement(snPos);
+        } else {
           snPos = snPos->right;
+        }
       }
     }
 
-    statementNode* parserBase::splitKernelStatement(statementNode *snKernel,
-                                                    kernelInfo &info) {
+    statementNode* parserBase::splitKernelStatement(statementNode *snKernel) {
 
       statement &sKernel       = *(snKernel->value);
       statementNode *lastNewSN = snKernel->right;
@@ -2495,7 +2470,7 @@ namespace occa {
         kernelCount = 0;
       }
 
-      if (0 < kernelCount) {
+      if (kernelCount) {
         varOriginMapVector_t varDeps(kernelCount);
 
         for (int k = 0; k < kernelCount; ++k)
@@ -2521,16 +2496,16 @@ namespace occa {
       if (kernelCount) {
         sKernel.up->pushSourceRightOf(snKernel , "#else");
         sKernel.up->pushSourceRightOf(lastNewSN, "#endif");
-      }
-      else {
+      } else {
         sKernel.up->pushSourceRightOf(snKernel, "#endif");
         sKernel.up->pushSourceRightOf(snKernel, "#else");
 
-        if (lastNewSN)
+        if (lastNewSN) {
           lastNewSN = lastNewSN->left;
+        }
       }
 
-      storeKernelInfo(info, sKernel, newKernels);
+      storeKernelInfo(sKernel, newKernels);
 
       return ((lastNewSN != NULL) ?
               lastNewSN->right    :
@@ -2886,8 +2861,7 @@ namespace occa {
       return sHost;
     }
 
-    void parserBase::storeKernelInfo(kernelInfo &info,
-                                     statement &sKernel,
+    void parserBase::storeKernelInfo(statement &sKernel,
                                      statementVector_t &newKernels) {
 
       const int kernelCount = (int) newKernels.size();
@@ -2899,6 +2873,8 @@ namespace occa {
 
       const int argCount = kernelVar.argumentCount;
 
+      kernelInfo &info = *(new kernelInfo);
+
       // Remove the 0 in the first new kernel
       //   to get the baseName
       info.name     = kernelVar.name;
@@ -2906,9 +2882,9 @@ namespace occa {
                        newKernelVar->name.substr(0, newKernelVar->name.size() - 1) :
                        kernelVar.name);
 
-      for (int k = 0; k < kernelCount; ++k)
+      for (int k = 0; k < kernelCount; ++k) {
         info.nestedKernels.push_back(newKernels[k]);
-
+      }
       for (int i = 0; i < argCount; ++i) {
         argumentInfo argInfo;
         varInfo &arg = kernelVar.getArgument(i);
@@ -2919,6 +2895,8 @@ namespace occa {
 
         info.argumentInfos.push_back(argInfo);
       }
+
+      kernelInfoMap[info.name] = &info;
     }
 
     void parserBase::zeroOccaIdsFrom(statement &s) {

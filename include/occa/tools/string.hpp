@@ -180,6 +180,48 @@ namespace occa {
   double atod(const char *c);
   double atod(const std::string &str);
 
+  inline char toHexChar(const char c) {
+    // '7' = ('A' - 10)
+    return c + ((c < 10) ? '0' : '7');
+  }
+
+  inline char fromHexChar(const char c) {
+    // '7' = ('A' - 10)
+    return c - ((c <= '9') ? '0' : '7');
+  }
+
+  template <class TM>
+  std::string toHex(const TM &t) {
+    std::string str;
+    const char *c = (const char*) &t;
+    const int bytes = (int) sizeof(t);
+
+    for (int i = 0; i < bytes; ++i) {
+      const char ci = c[i];
+      str += toHexChar(ci        & 0xF);
+      str += toHexChar((ci >> 4) & 0xF);
+    }
+
+    return str;
+  }
+
+  template <class TM>
+  void fromHex(const std::string &str,
+               TM *t,
+               const int bytes) {
+    const int viewBytes = (((int) str.size() > (2 * bytes))
+                           ? bytes
+                           : (int) (str.size() / 2));
+    const char *c_str = str.c_str();
+    char *c = (char*) t;
+
+    for (int i = 0; i < viewBytes; ++i) {
+      const char c1 = fromHexChar(c_str[2*i + 0]);
+      const char c2 = fromHexChar(c_str[2*i + 1]);
+      c[i] = c1 | (c2 << 4);
+    }
+  }
+
   std::string stringifyBytes(udim_t bytes);
 
   //---[ Vector Methods ]---------------
