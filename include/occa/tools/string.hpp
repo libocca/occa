@@ -181,13 +181,13 @@ namespace occa {
   double atod(const std::string &str);
 
   inline char toHexChar(const char c) {
-    // '7' = ('A' - 10)
-    return c + ((c < 10) ? '0' : '7');
+    // 'W' = ('a' - 10)
+    return c + ((c < 10) ? '0' : 'W');
   }
 
   inline char fromHexChar(const char c) {
-    // '7' = ('A' - 10)
-    return c - ((c <= '9') ? '0' : '7');
+    // 'W' = ('a' - 10)
+    return c - ((c <= '9') ? '0' : 'W');
   }
 
   template <class TM>
