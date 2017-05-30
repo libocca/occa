@@ -153,7 +153,7 @@ namespace occa {
                                   const hash_t kernelHash,
                                   const occa::properties &props) {
       kernel *k = new kernel(props);
-      k->dHandle = this;
+      k->setDHandle(this);
       k->build(filename, kernelName, kernelHash, props);
       return k;
     }

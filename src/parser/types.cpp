@@ -2657,6 +2657,20 @@ namespace occa {
       return *this;
     }
 
+    argumentInfo argumentInfo::fromJson(const json &j) {
+      argumentInfo info;
+      info.pos     = j["pos"];
+      info.isConst = j["isConst"];
+      return info;
+    }
+
+    json argumentInfo::toJson() const {
+      json j;
+      j["pos"] = pos;
+      j["isConst"] = isConst;
+      return j;
+    }
+
     kernelInfo::kernelInfo() :
       name(),
       baseName() {}
@@ -2694,7 +2708,8 @@ namespace occa {
   //---[ Parsed Kernel Info ]---------------------
   kernelMetadata::kernelMetadata() :
     name(""),
-    baseName("") {}
+    baseName(""),
+    nestedKernels(0) {}
 
   kernelMetadata::kernelMetadata(const kernelMetadata &kInfo) :
     name(kInfo.name),
@@ -2707,7 +2722,6 @@ namespace occa {
     baseName = kInfo.baseName;
 
     nestedKernels = kInfo.nestedKernels;
-
     argumentInfos = kInfo.argumentInfos;
 
     return *this;
@@ -2715,6 +2729,54 @@ namespace occa {
 
   void kernelMetadata::removeArg(const int pos) {
     argumentInfos.erase(argumentInfos.begin() + pos);
+  }
+
+
+  kernelMetadata kernelMetadata::getNestedKernelMetadata(const int kIdx) const {
+    kernelMetadata meta;
+    meta.name     = baseName + toString(kIdx);
+    meta.baseName = baseName;
+
+    const int argumentCount = (int) argumentInfos.size();
+    for (int i = 0; i < argumentCount; ++i) {
+      // Don't pass nestedKernels** argument
+      if (i != 1) {
+        meta.argumentInfos.push_back(argumentInfos[i]);
+      }
+    }
+    return meta;
+  }
+
+  kernelMetadata kernelMetadata::fromJson(const json &j) {
+    kernelMetadata meta;
+
+    meta.name          = j["name"].string();
+    meta.baseName      = j["baseName"].string();
+    meta.nestedKernels = j["nestedKernels"].number();
+
+    const jsonArray_t &argInfos = j["argumentInfos"].array();
+    const int argumentCount = (int) argInfos.size();
+    for (int i = 0; i < argumentCount; ++i) {
+      meta.argumentInfos.push_back(argumentInfo::fromJson(argInfos[i]));
+    }
+
+    return meta;
+  }
+
+  json kernelMetadata::toJson() const {
+    json j;
+
+    j["name"]          = name;
+    j["baseName"]      = baseName;
+    j["nestedKernels"] = nestedKernels;
+
+    const int argumentCount = (int) argumentInfos.size();
+    json &argInfos = j["argumentInfos"].asArray();
+    for (int k = 0; k < argumentCount; ++k) {
+      argInfos += argumentInfos[k].toJson();
+    }
+
+    return j;
   }
   //==============================================
 }

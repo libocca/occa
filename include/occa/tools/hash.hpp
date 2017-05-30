@@ -35,8 +35,8 @@ namespace occa {
     bool initialized;
     int h[8];
 
-    std::string h_string;
-    int sh[8];
+    mutable std::string h_string;
+    mutable int sh[8];
 
     hash_t();
     hash_t(const int *h_);
@@ -56,10 +56,12 @@ namespace occa {
     template <class TM>
     hash_t operator ^ (const TM &t) const;
 
-    std::string const_toString() const;
-    std::string toString();
+    std::string toFullString() const;
     std::string toString() const;
     operator std::string () const;
+
+    static hash_t fromString(const std::string &s);
+
     friend std::ostream& operator << (std::ostream &out, const hash_t &hash);
   };
   std::ostream& operator << (std::ostream &out, const hash_t &hash);

@@ -128,6 +128,10 @@ namespace occa {
 
     std::string shortname(const std::string &filename);
 
+    strVector_t filesInDir(const std::string &dir, const unsigned char fileType);
+    strVector_t directories(const std::string &dir);
+    strVector_t files(const std::string &dir);
+
     char* c_read(const std::string &filename, size_t *chars = NULL, const bool readingBinary = false);
     std::string read(const std::string &filename, const bool readingBinary = false);
 
@@ -170,8 +174,7 @@ namespace occa {
 
     void storeCacheInfo(const std::string &filename,
                         const hash_t &hash,
-                        const occa::properties &props,
-                        const occa::properties &rootProps = occa::properties());
+                        const occa::properties &props);
 
     std::string getLibraryName(const std::string &filename);
 

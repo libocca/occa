@@ -55,8 +55,8 @@ namespace occa {
                                   const std::string &kernelName,
                                   const hash_t kernelHash,
                                   const occa::properties &props) {
-      kernel *k = new kernel();
-      k->dHandle = this;
+      kernel *k = new kernel(props);
+      k->setDHandle(this);
       k->build(filename, kernelName, kernelHash, props);
       return k;
     }

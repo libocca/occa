@@ -183,12 +183,9 @@ namespace occa {
                                   const hash_t kernelHash,
                                   const occa::properties &props) {
       opencl::kernel *k = new opencl::kernel(props);
-
-      k->dHandle  = this;
+      k->setDHandle(this);
       k->clDevice = clDevice;
-
       k->build(filename, kernelName, kernelHash, props);
-
       return k;
     }
 

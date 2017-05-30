@@ -23,11 +23,13 @@
 #include "occa/defines.hpp"
 
 #if (OCCA_OS & OCCA_LINUX_OS)
+#  include <dirent.h>
 #  include <unistd.h>
 #  include <errno.h>
 #  include <sys/types.h>
 #  include <sys/dir.h>
 #elif (OCCA_OS & OCCA_OSX_OS)
+#  include <dirent.h>
 #  include <sys/types.h>
 #  include <sys/dir.h>
 #else
@@ -112,6 +114,9 @@ namespace occa {
     }
 
     std::string occaFileOpener_t::expand(const std::string &filename) {
+      if (filename.size() == 7) {
+        return cachePath();
+      }
       return (libraryPath() + filename.substr(7));
     }
     //  ================================
@@ -306,8 +311,9 @@ namespace occa {
     std::string shortname(const std::string &filename) {
       std::string expFilename = io::filename(filename);
 
-      if (expFilename.find(env::OCCA_CACHE_DIR) != 0)
+      if (expFilename.find(env::OCCA_CACHE_DIR) != 0) {
         return filename;
+      }
 
       const std::string &lPath = libraryPath();
       const std::string &cPath = cachePath();
@@ -322,6 +328,38 @@ namespace occa {
       }
 
       return expFilename;
+    }
+
+    strVector_t filesInDir(const std::string &dir, const unsigned char fileType) {
+      strVector_t files;
+      const std::string expDir = filename(dir);
+
+      DIR *c_dir = ::opendir(expDir.c_str());
+      struct dirent *file;
+      while ((file = ::readdir(c_dir)) != NULL) {
+        const std::string filename = file->d_name;
+        if ((filename == ".") ||
+            (filename == "..")) {
+          continue;
+        }
+        if (file->d_type == fileType) {
+          std::string fullname = expDir + filename;
+          if (fileType == DT_DIR) {
+            endWithSlash(fullname);
+          }
+          files.push_back(fullname);
+        }
+      }
+      ::closedir(c_dir);
+      return files;
+    }
+
+    strVector_t directories(const std::string &dir) {
+      return filesInDir(dir, DT_DIR);
+    }
+
+    strVector_t files(const std::string &dir) {
+      return filesInDir(dir, DT_REG);
     }
 
     char* c_read(const std::string &filename, size_t *chars, const bool readingBinary) {
@@ -439,13 +477,7 @@ namespace occa {
         const std::string hashTag = "parse-file";
 
         if (io::haveHash(hash, hashTag)) {
-          sys::mkpath(dirname(outputFile));
-
-          std::ofstream fs;
-          fs.open(outputFile.c_str());
-          fs << parsedContent;
-          fs.close();
-
+          write(outputFile, parsedContent);
           io::releaseHash(hash, hashTag);
         } else {
           io::waitForHash(hash, hashTag);
@@ -495,12 +527,7 @@ namespace occa {
         io::waitForHash(hash, hashTag);
       } else {
         if (!sys::fileExists(expFilename)) {
-          sys::mkpath(dirname(expFilename));
-
-          std::ofstream fs2;
-          fs2.open(expFilename.c_str());
-          fs2 << source;
-          fs2.close();
+          write(expFilename, source);
         }
         io::releaseHash(hash, hashTag);
       }
@@ -528,38 +555,37 @@ namespace occa {
       const std::string infoFile    = hashDir + kc::infoFile;
       const std::string sourceFile  = hashDir + cachedName;
 
-      if (sys::fileExists(sourceFile)) {
-        return sourceFile;
+      if (!sys::fileExists(sourceFile)) {
+        std::stringstream ss;
+        ss << header                << '\n'
+           << io::read(expFilename) << '\n'
+           << footer;
+        write(sourceFile, ss.str());
       }
-      sys::mkpath(hashDir);
-
-      std::ofstream fs;
-      fs.open(sourceFile.c_str());
-      fs << header                << '\n'
-         << io::read(expFilename) << '\n'
-         << footer;
-      fs.close();
 
       return sourceFile;
     }
 
     void storeCacheInfo(const std::string &filename,
                         const hash_t &hash,
-                        const occa::properties &props,
-                        const occa::properties &rootProps) {
-      const std::string expFilename = io::filename(filename);
-      const std::string hashDir     = io::hashDir(expFilename, hash);
-      const std::string infoFile    = hashDir + kc::infoFile;
+                        const occa::properties &props) {
+      const std::string hashDir  = io::hashDir(filename, hash);
+      const std::string infoFile = hashDir + kc::infoFile;
 
-      occa::properties info = rootProps;
-      info["date"]       = sys::date();
-      info["humanDate"]  = sys::humanDate();
-      info["properties"] = props;
+      const std::string hashTag = "kernel-info";
+      if (!io::haveHash(hash, hashTag)) {
+        return;
+      } else if (sys::fileExists(infoFile)) {
+        io::releaseHash(hash, hashTag);
+        return;
+      }
 
-      std::ofstream fs;
-      fs.open(infoFile.c_str());
-      fs << info;
-      fs.close();
+      occa::properties info;
+      info["date"]      = sys::date();
+      info["humanDate"] = sys::humanDate();
+      info["info"]      = props;
+
+      write(infoFile, info.toString());
     }
 
     std::string getLibraryName(const std::string &filename) {

@@ -642,18 +642,20 @@ namespace occa {
     void expNode::organizeFunctionStatement() {
       const bool functionIsDefined = (sInfo->info & smntType::functionDefinition);
 
-      if (functionIsDefined)
+      if (functionIsDefined) {
         info = (expType::function | expType::declaration);
-      else
+      } else {
         info = (expType::function | expType::prototype);
+      }
 
-      if (leafCount == 0)
+      if (leafCount == 0) {
         return;
+      }
 
       varInfo &var = addVarInfoNode(0);
       int leafPos  = var.loadFrom(*this, 1);
 
-      if ((sInfo->up != NULL)              &&
+      if ((sInfo->up != NULL) &&
          (!sInfo->up->scope->hasLocalVariable(var.name))) {
 
         sInfo->up->addVariable(&var);
@@ -662,8 +664,9 @@ namespace occa {
       if (functionIsDefined) {
         leaves[0]->info |= expType::type;
 
-        for (int i = 0; i < var.argumentCount; ++i)
+        for (int i = 0; i < var.argumentCount; ++i) {
           sInfo->addVariable(var.argumentVarInfos[i]);
+        }
       }
 
       removeNodes(1, leafPos);

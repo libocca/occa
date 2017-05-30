@@ -26,6 +26,7 @@
 #include "occa/defines.hpp"
 #include "occa/parser/defines.hpp"
 #include "occa/parser/nodes.hpp"
+#include "occa/tools/json.hpp"
 
 namespace occa {
   class kernelMetadata;
@@ -605,6 +606,9 @@ namespace occa {
 
       argumentInfo(const argumentInfo &info);
       argumentInfo& operator = (const argumentInfo &info);
+
+      static argumentInfo fromJson(const json &j);
+      json toJson() const;
     };
 
     class kernelInfo {
@@ -648,6 +652,11 @@ namespace occa {
 
       return false;
     }
+
+    kernelMetadata getNestedKernelMetadata(const int pos) const;
+
+    static kernelMetadata fromJson(const json &j);
+    json toJson() const;
   };
   //==============================================
 }

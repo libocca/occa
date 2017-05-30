@@ -42,7 +42,7 @@ namespace occa {
   typedef kArgVector_t::iterator       kArgVectorIterator;
   typedef kArgVector_t::const_iterator cKArgVectorIterator;
 
-  typedef std::map<hash_t,occa::kernel>     hashedKernelMap_t;
+  typedef std::map<hash_t, kernel>          hashedKernelMap_t;
   typedef hashedKernelMap_t::iterator       hashedKernelMapIterator;
   typedef hashedKernelMap_t::const_iterator cHashedKernelMapIterator;
 
@@ -172,6 +172,9 @@ namespace occa {
 
     kernel_v(const occa::properties &properties_);
 
+    // This should only be called in the very first reference
+    void setDHandle(device_v *dHandle_);
+
     kernel* nestedKernelsPtr();
     int nestedKernelCount();
 
@@ -232,7 +235,6 @@ namespace occa {
 
   private:
     void setKHandle(kernel_v *kHandle_);
-    void setDHandle(device_v *dHandle_);
     void removeKHandleRef();
 
   public:

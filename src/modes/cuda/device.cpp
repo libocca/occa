@@ -175,10 +175,8 @@ namespace occa {
                                   const hash_t kernelHash,
                                   const occa::properties &props) {
       cuda::kernel *k = new cuda::kernel(props);
-
-      k->dHandle = this;
+      k->setDHandle(this);
       k->build(filename, kernelName, kernelHash, props);
-
       return k;
     }
 

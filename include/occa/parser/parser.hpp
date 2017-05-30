@@ -201,8 +201,7 @@ namespace occa {
       //   ---[ Load Kernels ]----------
       void loadKernelInfos();
 
-      statementNode* splitKernelStatement(statementNode *snKernel,
-                                          kernelInfo &info);
+      statementNode* splitKernelStatement(statementNode *snKernel);
 
       statementVector_t findOuterLoopSets(statement &sKernel);
       void findOuterLoopSets(statement &s, statementVector_t &omLoops);
@@ -240,8 +239,7 @@ namespace occa {
                                           const int newKernelPos,
                                           varInfo &newKernelVar);
 
-      void storeKernelInfo(kernelInfo &info,
-                           statement &sKernel,
+      void storeKernelInfo(statement &sKernel,
                            statementVector_t &newKernels);
 
       void zeroOccaIdsFrom(statement &s);
