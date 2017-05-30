@@ -118,7 +118,7 @@ namespace occa {
 
   template <class TM, const int idxType>
   array<TM,idxType> array<TM,idxType>::cloneOnCurrentDevice(const int copyOn) {
-    return cloneOn(occa::currentDevice(), copyOn);
+    return cloneOn(occa::getDevice(), copyOn);
   }
 
   template <class TM, const int idxType>
@@ -135,7 +135,7 @@ namespace occa {
   template <class TM, const int idxType>
   template <class TM2, const int idxType2>
   array<TM2,idxType2> array<TM,idxType>::cloneOnCurrentDevice(const int copyOn) {
-    return cloneOn<TM2>(occa::currentDevice(), copyOn);
+    return cloneOn<TM2>(occa::getDevice(), copyOn);
   }
 
   template <class TM, const int idxType>
@@ -516,7 +516,7 @@ namespace occa {
   template <class TM, const int idxType>
   void array<TM,idxType>::allocate(const udim_t d0,
                                    const TM *src) {
-    allocate(occa::currentDevice(),
+    allocate(occa::getDevice(),
              d0,
              src);
   }
@@ -524,7 +524,7 @@ namespace occa {
   template <class TM, const int idxType>
   void array<TM,idxType>::allocate(const udim_t d0, const udim_t d1,
                                    const TM *src) {
-    allocate(occa::currentDevice(),
+    allocate(occa::getDevice(),
              d0, d1,
              src);
   }
@@ -532,7 +532,7 @@ namespace occa {
   template <class TM, const int idxType>
   void array<TM,idxType>::allocate(const udim_t d0, const udim_t d1, const udim_t d2,
                                    const TM *src) {
-    allocate(occa::currentDevice(),
+    allocate(occa::getDevice(),
              d0, d1, d2,
              src);
   }
@@ -541,7 +541,7 @@ namespace occa {
   void array<TM,idxType>::allocate(const udim_t d0, const udim_t d1, const udim_t d2,
                                    const udim_t d3,
                                    const TM *src) {
-    allocate(occa::currentDevice(),
+    allocate(occa::getDevice(),
              d0, d1, d2, d3,
              src);
   }
@@ -550,7 +550,7 @@ namespace occa {
   void array<TM,idxType>::allocate(const udim_t d0, const udim_t d1, const udim_t d2,
                                    const udim_t d3, const udim_t d4,
                                    const TM *src) {
-    allocate(occa::currentDevice(),
+    allocate(occa::getDevice(),
              d0, d1, d2, d3, d4,
              src);
   }
@@ -559,7 +559,7 @@ namespace occa {
   void array<TM,idxType>::allocate(const udim_t d0, const udim_t d1, const udim_t d2,
                                    const udim_t d3, const udim_t d4, const udim_t d5,
                                    const TM *src) {
-    allocate(occa::currentDevice(),
+    allocate(occa::getDevice(),
              d0, d1, d2, d3, d4, d5,
              src);
   }
@@ -567,7 +567,7 @@ namespace occa {
   template <class TM, const int idxType>
   void array<TM,idxType>::allocate(const udim_t d0,
                                    const occa::memory src) {
-    allocate(occa::currentDevice(),
+    allocate(occa::getDevice(),
              d0,
              src);
   }
@@ -575,7 +575,7 @@ namespace occa {
   template <class TM, const int idxType>
   void array<TM,idxType>::allocate(const udim_t d0, const udim_t d1,
                                    const occa::memory src) {
-    allocate(occa::currentDevice(),
+    allocate(occa::getDevice(),
              d0, d1,
              src);
   }
@@ -583,7 +583,7 @@ namespace occa {
   template <class TM, const int idxType>
   void array<TM,idxType>::allocate(const udim_t d0, const udim_t d1, const udim_t d2,
                                    const occa::memory src) {
-    allocate(occa::currentDevice(),
+    allocate(occa::getDevice(),
              d0, d1, d2,
              src);
   }
@@ -592,7 +592,7 @@ namespace occa {
   void array<TM,idxType>::allocate(const udim_t d0, const udim_t d1, const udim_t d2,
                                    const udim_t d3,
                                    const occa::memory src) {
-    allocate(occa::currentDevice(),
+    allocate(occa::getDevice(),
              d0, d1, d2, d3,
              src);
   }
@@ -601,7 +601,7 @@ namespace occa {
   void array<TM,idxType>::allocate(const udim_t d0, const udim_t d1, const udim_t d2,
                                    const udim_t d3, const udim_t d4,
                                    const occa::memory src) {
-    allocate(occa::currentDevice(),
+    allocate(occa::getDevice(),
              d0, d1, d2, d3, d4,
              src);
   }
@@ -610,7 +610,7 @@ namespace occa {
   void array<TM,idxType>::allocate(const udim_t d0, const udim_t d1, const udim_t d2,
                                    const udim_t d3, const udim_t d4, const udim_t d5,
                                    const occa::memory src) {
-    allocate(occa::currentDevice(),
+    allocate(occa::getDevice(),
              d0, d1, d2, d3, d4, d5,
              src);
   }

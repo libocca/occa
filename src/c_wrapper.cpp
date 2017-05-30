@@ -451,8 +451,8 @@ void OCCA_RFUNC occaSetDeviceFromInfo(const char *infos) {
   occa::setDevice(infos);
 }
 
-occaDevice OCCA_RFUNC occaCurrentDevice() {
-  occa::device device = occa::currentDevice();
+occaDevice OCCA_RFUNC occaGetDevice() {
+  occa::device device = occa::getDevice();
   return newObject(device.getDHandle(), occa::c::device_);
 }
 

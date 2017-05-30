@@ -47,7 +47,7 @@ namespace occa {
     return dev;
   }
 
-  device& currentDevice() {
+  device& getDevice() {
     static tls<device> tdev;
     device &dev = tdev.value();
     if (!dev.isInitialized()) {
@@ -57,43 +57,47 @@ namespace occa {
   }
 
   void setDevice(device d) {
-    currentDevice() = d;
+    getDevice() = d;
   }
 
   void setDevice(const occa::properties &props) {
-    currentDevice() = device(props);
+    getDevice() = device(props);
   }
 
   const occa::properties& deviceProperties() {
-    return currentDevice().properties();
+    return getDevice().properties();
+  }
+
+  void loadKernels(const std::string &library) {
+    getDevice().loadKernels(library);
   }
 
   void finish() {
-    currentDevice().finish();
+    getDevice().finish();
   }
 
   void waitFor(streamTag tag) {
-    currentDevice().waitFor(tag);
+    getDevice().waitFor(tag);
   }
 
   stream createStream() {
-    return currentDevice().createStream();
+    return getDevice().createStream();
   }
 
   stream getStream() {
-    return currentDevice().getStream();
+    return getDevice().getStream();
   }
 
   void setStream(stream s) {
-    currentDevice().setStream(s);
+    getDevice().setStream(s);
   }
 
   stream wrapStream(void *handle_, const occa::properties &props) {
-    return currentDevice().wrapStream(handle_, props);
+    return getDevice().wrapStream(handle_, props);
   }
 
   streamTag tagStream() {
-    return currentDevice().tagStream();
+    return getDevice().tagStream();
   }
 
   //---[ Kernel Functions ]-------------
@@ -101,7 +105,7 @@ namespace occa {
                      const std::string &kernelName,
                      const occa::properties &props) {
 
-    return currentDevice().buildKernel(filename,
+    return getDevice().buildKernel(filename,
                                        kernelName,
                                        props);
   }
@@ -110,14 +114,14 @@ namespace occa {
                                const std::string &kernelName,
                                const occa::properties &props) {
 
-    return currentDevice().buildKernelFromString(content, kernelName, props);
+    return getDevice().buildKernelFromString(content, kernelName, props);
   }
 
   kernel buildKernelFromBinary(const std::string &filename,
                                const std::string &kernelName,
                                const occa::properties &props) {
 
-    return currentDevice().buildKernelFromBinary(filename, kernelName, props);
+    return getDevice().buildKernelFromBinary(filename, kernelName, props);
   }
 
   //---[ Memory Functions ]-------------
@@ -125,14 +129,14 @@ namespace occa {
                       const void *src,
                       const occa::properties &props) {
 
-    return currentDevice().malloc(bytes, src, props);
+    return getDevice().malloc(bytes, src, props);
   }
 
   void* umalloc(const dim_t bytes,
                 const void *src,
                 const occa::properties &props) {
 
-    return currentDevice().umalloc(bytes, src, props);
+    return getDevice().umalloc(bytes, src, props);
   }
 
   void memcpy(void *dest, const void *src,
@@ -217,7 +221,7 @@ namespace occa {
   }
 
   void free(stream s) {
-    currentDevice().freeStream(s);
+    getDevice().freeStream(s);
   }
 
   void free(kernel k) {
