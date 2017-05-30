@@ -46,12 +46,14 @@ namespace occa {
 
   //---[ Device Functions ]-------------
   device host();
-  device& currentDevice();
+  device& getDevice();
 
   void setDevice(device d);
   void setDevice(const occa::properties &props);
 
   const occa::properties& deviceProperties();
+
+  void loadKernels(const std::string &library = "");
 
   void finish();
 

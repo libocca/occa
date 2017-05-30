@@ -10,7 +10,7 @@ int main(int argc, char **argv) {
   //   occa::device device("mode       : 'OpenCL', "
   //                       "platformID : 0, "
   //                       "deviceID   : 0");
-  //   occa::device = occa::currentDevice();
+  //   occa::device = occa::getDevice();
 
   // Use the default device (mode = Serial)
   float *a  = (float*) occa::umalloc(entries * sizeof(float));
@@ -54,7 +54,7 @@ int main(int argc, char **argv) {
   occa::free(addVectors);
 
   // The user can also free the device
-  occa::free(occa::currentDevice());
+  occa::free(occa::getDevice());
 
 
   return 0;
