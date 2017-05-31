@@ -234,13 +234,20 @@ namespace occa {
   void device::storeCacheInfo(const std::string &filename,
                               const hash_t &hash,
                               const occa::properties &kernelProps,
-                              const kernelMetadata &metadata) {
+                              const kernelMetadataMap_t &metadataMap) {
     occa::properties infoProps;
     infoProps["device"]          = dHandle->properties;
     infoProps["device/hash"]     = dHandle->hash().toFullString();
     infoProps["kernel/props"]    = kernelProps;
     infoProps["kernel/hash"]     = hash.toFullString();
-    infoProps["kernel/metadata"] = metadata.toJson();
+
+    json &metadataJson = infoProps["kernel/metadata"].asArray();
+    cKernelMetadataMapIterator kIt = metadataMap.begin();
+    while (kIt != metadataMap.end()) {
+      metadataJson += (kIt->second).toJson();
+      ++kIt;
+    }
+
     io::storeCacheInfo(filename, hash, infoProps);
   }
 
@@ -260,20 +267,30 @@ namespace occa {
     for (int d = 0; d < dirCount; ++d) {
       const std::string infoFile = dirs[d] + kc::infoFile;
 
-      if (sys::fileExists(infoFile)) {
-        json info = json::loads(infoFile)["info"];
+      if (!sys::fileExists(infoFile)) {
+        continue;
+      }
 
-        if (info["device/hash"] == devHash) {
-          json &kInfo = info["kernel"];
-          hash_t hash = hash_t::fromString(kInfo["hash"]);
-          kernelMetadata metadata = kernelMetadata::fromJson(kInfo["metadata"]);
-          const std::string cHash = cacheHash(hash, metadata.name);
+      json info = json::loads(infoFile)["info"];
+      if (info["device/hash"].string() != devHash) {
+        continue;
+      }
 
-          // [-] Not right
-          dHandle->cachedKernels[cHash] = buildKernel(dirs[d] + kc::sourceFile,
-                                                      hash,
-                                                      kInfo["props"],
-                                                      metadata);
+      json &kInfo = info["kernel"];
+      hash_t hash = hash_t::fromString(kInfo["hash"].string());
+      jsonArray_t metadataArray = kInfo["metadata"].array();
+      occa::properties kernelProps = kInfo["props"];
+      const std::string sourceFilename = dirs[d] + kc::parsedSourceFile;
+
+      const int kernels = metadataArray.size();
+      for (int k = 0; k < kernels; ++k) {
+        kernelMetadata metadata = kernelMetadata::fromJson(metadataArray[k]);
+        kernel &ker = dHandle->cachedKernels[cacheHash(hash, metadata.name)];
+        if (!ker.isInitialized()) {
+          ker = buildKernel(sourceFilename,
+                            hash,
+                            kernelProps,
+                            metadata);
         }
       }
     }
@@ -300,16 +317,28 @@ namespace occa {
       kernelMetadata metadata;
       if (allProps.get("OKL", true)) {
         sourceFilename = hashDir + kc::parsedSourceFile;
-        metadata = io::parseFileForFunction(realFilename,
-                                            sourceFilename,
-                                            kernelName,
-                                            allProps);
+
+        kernelMetadataMap_t metadataMap = io::parseFile(realFilename,
+                                                        sourceFilename,
+                                                        allProps);
+
+        kernelMetadataMapIterator kIt = metadataMap.find(kernelName);
+        OCCA_ERROR("Could not find kernel ["
+                   << kernelName << "] in file ["
+                   << io::shortname(filename) << "]",
+                   kIt != metadataMap.end());
+
+        metadata = kIt->second;
+
+        storeCacheInfo(filename, hash, allProps, metadataMap);
       } else {
         metadata.name = kernelName;
       }
-      storeCacheInfo(filename, hash, allProps, metadata);
 
-      ker = buildKernel(sourceFilename, hash, allProps, metadata);
+      ker = buildKernel(sourceFilename,
+                        hash,
+                        allProps,
+                        metadata);
     }
 
     return ker;
@@ -319,6 +348,7 @@ namespace occa {
                                    const hash_t &hash,
                                    const occa::properties &kernelProps,
                                    const kernelMetadata &metadata) {
+
     if (metadata.nestedKernels == 0) {
       return kernel(dHandle->buildKernel(filename,
                                          metadata.name,

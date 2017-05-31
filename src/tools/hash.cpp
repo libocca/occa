@@ -139,6 +139,7 @@ namespace occa {
   hash_t hash_t::fromString(const std::string &s) {
     hash_t hash;
     fromHex(s, hash.h, 8 * sizeof(int));
+    hash.initialized = true;
     return hash;
   }
 

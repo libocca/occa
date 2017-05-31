@@ -145,10 +145,9 @@ namespace occa {
     void releaseHash(const hash_t &hash, const std::string &tag);
     void releaseHashLock(const std::string &lockDir);
 
-    kernelMetadata parseFileForFunction(const std::string &filename,
-                                        const std::string &outputFile,
-                                        const std::string &functionName,
-                                        const occa::properties &props);
+    kernelMetadataMap_t parseFile(const std::string &filename,
+                                  const std::string &outputFile,
+                                  const occa::properties &props);
 
     std::string removeSlashes(const std::string &str);
 

@@ -31,6 +31,10 @@
 namespace occa {
   class kernelMetadata;
 
+  typedef std::map<std::string, kernelMetadata> kernelMetadataMap_t;
+  typedef kernelMetadataMap_t::iterator         kernelMetadataMapIterator;
+  typedef kernelMetadataMap_t::const_iterator   cKernelMetadataMapIterator;
+
   namespace parserNS {
     class expNode;
     class typeInfo;

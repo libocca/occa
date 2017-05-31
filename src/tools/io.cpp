@@ -335,6 +335,10 @@ namespace occa {
       const std::string expDir = filename(dir);
 
       DIR *c_dir = ::opendir(expDir.c_str());
+      if (!c_dir) {
+        return files;
+      }
+
       struct dirent *file;
       while ((file = ::readdir(c_dir)) != NULL) {
         const std::string filename = file->d_name;
@@ -355,7 +359,7 @@ namespace occa {
     }
 
     strVector_t directories(const std::string &dir) {
-      return filesInDir(dir, DT_DIR);
+      return filesInDir(endWithSlash(dir), DT_DIR);
     }
 
     strVector_t files(const std::string &dir) {
@@ -461,10 +465,9 @@ namespace occa {
       fileLocks().erase(lockDir);
     }
 
-    kernelMetadata parseFileForFunction(const std::string &filename,
-                                        const std::string &outputFile,
-                                        const std::string &functionName,
-                                        const occa::properties &props) {
+    kernelMetadataMap_t parseFile(const std::string &filename,
+                                  const std::string &outputFile,
+                                  const occa::properties &props) {
 
       const std::string ext = extension(filename);
       parser fileParser;
@@ -484,17 +487,14 @@ namespace occa {
         }
       }
 
-      kernelInfoIterator kIt = fileParser.kernelInfoMap.find(functionName);
-      if (kIt != fileParser.kernelInfoMap.end()) {
-        return (kIt->second)->metadata();
+      kernelMetadataMap_t metadataMap;
+      kernelInfoMapIterator kIt = fileParser.kernelInfoMap.begin();
+      while (kIt != fileParser.kernelInfoMap.end()) {
+        metadataMap[kIt->first] = kIt->second->metadata();
+        ++kIt;
       }
 
-      OCCA_ERROR("Could not find function ["
-                 << functionName << "] in file ["
-                 << io::shortname(filename) << "]",
-                 false);
-
-      return kernelMetadata();
+      return metadataMap;
     }
 
     std::string removeSlashes(const std::string &str) {
