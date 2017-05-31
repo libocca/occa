@@ -176,7 +176,7 @@ namespace occa {
     void storeCacheInfo(const std::string &filename,
                         const hash_t &hash,
                         const occa::properties &kernelProps,
-                        const kernelMetadata &metadata);
+                        const kernelMetadataMap_t &metadataMap);
 
     std::string cacheHash(const hash_t &hash,
                           const std::string &kernelName);
@@ -187,7 +187,7 @@ namespace occa {
                              const std::string &kernelName,
                              const occa::properties &props = occa::properties());
 
-    occa::kernel buildKernel(const std::string &hashDir,
+    occa::kernel buildKernel(const std::string &filename,
                              const hash_t &hash,
                              const occa::properties &kernelProps,
                              const kernelMetadata &metadata);

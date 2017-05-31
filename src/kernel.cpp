@@ -271,7 +271,7 @@ namespace occa {
   }
 
   std::string kernel_v::getLaunchSourceFilename(const std::string &filename,
-                                          const hash_t &hash) {
+                                                const hash_t &hash) {
     return io::hashDir(filename, hash) + kc::launchSourceFile;
   }
 
