@@ -480,36 +480,36 @@ namespace occa {
     return (0 < function_.size());
   }
 
+  occa::kernel kernelBuilder::build(occa::device device) {
+    return build(device, hash(device), props_);
+  }
+
+  occa::kernel kernelBuilder::build(occa::device device,
+                                    const occa::properties &props) {
+    occa::properties kernelProps = props_;
+    kernelProps += props;
+    return build(device,
+                 hash(device) ^ hash(kernelProps),
+                 kernelProps);
+  }
+
   occa::kernel kernelBuilder::build(occa::device device,
                                     const hash_t &hash) {
+    return build(device, hash, props_);
+  }
+
+  occa::kernel kernelBuilder::build(occa::device device,
+                                    const hash_t &hash,
+                                    const occa::properties &props) {
     occa::kernel &k = kernelMap[hash];
     if (!k.isInitialized()) {
       if (buildingFromFile) {
-        k = device.buildKernel(source_, function_, props_);
+        k = device.buildKernel(source_, function_, props);
       } else {
-        k = device.buildKernelFromString(source_, function_, props_);
+        k = device.buildKernelFromString(source_, function_, props);
       }
     }
     return k;
-  }
-
-  occa::kernel kernelBuilder::build(occa::device device) {
-    return build(device,
-                 hash(device));
-  }
-
-  occa::kernel kernelBuilder::build(occa::device device,
-                                    const occa::properties &props) {
-    return build(device,
-                 hash(device) ^
-                 occa::hash(props_ + props));
-  }
-
-  occa::kernel kernelBuilder::build(const int id,
-                                    occa::device device,
-                                    const occa::properties &props) {
-    return build(device,
-                 hash(device) ^ id);
   }
 
   occa::kernel kernelBuilder::operator [] (occa::device device) {
