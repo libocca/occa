@@ -132,11 +132,11 @@ namespace occa {
   }
 
   void* memory::ptr() {
-    return mHandle->ptr;
+    return (mHandle ? mHandle->ptr : NULL);
   }
 
   const void* memory::ptr() const {
-    return mHandle->ptr;
+    return (mHandle ? mHandle->ptr : NULL);
   }
 
   memory_v* memory::getMHandle() const {
