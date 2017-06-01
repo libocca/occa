@@ -294,17 +294,17 @@ namespace occa {
 
     bool isInitialized();
 
-    virtual occa::kernel build(occa::device device,
-                               const hash_t &hash);
-
     occa::kernel build(occa::device device);
 
     occa::kernel build(occa::device device,
                        const occa::properties &props);
 
-    occa::kernel build(const int id,
-                       occa::device device,
-                       const occa::properties &props = occa::properties());
+    occa::kernel build(occa::device device,
+                       const hash_t &hash);
+
+    occa::kernel build(occa::device device,
+                       const hash_t &hash,
+                       const occa::properties &props);
 
     occa::kernel operator [] (occa::device device);
 
