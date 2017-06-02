@@ -233,6 +233,8 @@ namespace occa {
       allProps["wrapped"]  = true;
 
       cuda::device &dev = *(new cuda::device(allProps));
+      dev.dontUseRefs();
+
       dev.cuDevice  = device;
       dev.cuContext = context;
 
@@ -247,11 +249,14 @@ namespace occa {
                             const occa::properties &props) {
 
       cuda::memory &mem = *(new cuda::memory(props));
+      mem.dontUseRefs();
+
       mem.dHandle   = device.getDHandle();
       mem.ptr       = (char*) ptr;
       mem.size      = bytes;
       mem.mappedPtr = NULL;
       mem.isManaged = props.get("managed", false);
+
       return occa::memory(&mem);
     }
 
