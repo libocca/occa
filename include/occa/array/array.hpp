@@ -33,10 +33,10 @@ namespace occa {
   static const int copyOnDevice        = (1 << 1);
   static const int copyOnHostAndDevice = (1 << 1);
 
-  static const int dontUseIdxOrder = (1 << 0);
-  static const int useIdxOrder     = (1 << 1);
+  static const int fixed   = (1 << 0);
+  static const int dynamic = (1 << 1);
 
-  template <class TM, const int idxType = occa::dontUseIdxOrder>
+  template <class TM, const int idxType = occa::fixed>
   class array {
   private:
     occa::device device;
@@ -126,7 +126,7 @@ namespace occa {
       return ret;
     }
 
-    std::string idxOrderStr();
+    std::string indexingStr();
     //==================================
 
     //---[ clone() ]--------------------
@@ -353,22 +353,19 @@ namespace occa {
                  const udim_t d3, const udim_t d4, const udim_t d5);
     //==================================
 
-    //---[ setIdxOrder(...) ]-----------
+    //---[ reindex(...) ]-----------
     void updateFS(const int idxCount_ = 1);
 
-    void setIdxOrder(const int dim, const int *o);
-    void setIdxOrder(const std::string &default_,
-                     const std::string &given);
-
-    void setIdxOrder(const int o0);
-    void setIdxOrder(const int o0, const int o1);
-    void setIdxOrder(const int o0, const int o1, const int o2);
-    void setIdxOrder(const int o0, const int o1, const int o2,
-                     const int o3);
-    void setIdxOrder(const int o0, const int o1, const int o2,
-                     const int o3, const int o4);
-    void setIdxOrder(const int o0, const int o1, const int o2,
-                     const int o3, const int o4, const int o5);
+    void reindex(const int dim, const int *o);
+    void reindex(const int o0);
+    void reindex(const int o0, const int o1);
+    void reindex(const int o0, const int o1, const int o2);
+    void reindex(const int o0, const int o1, const int o2,
+                 const int o3);
+    void reindex(const int o0, const int o1, const int o2,
+                 const int o3, const int o4);
+    void reindex(const int o0, const int o1, const int o2,
+                 const int o3, const int o4, const int o5);
     //==================================
 
     //---[ Access Operators ]-----------

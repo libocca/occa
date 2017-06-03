@@ -61,7 +61,7 @@ namespace occa {
       sOrder_[i] = v.sOrder_[i];
     }
 
-    if (idxType == occa::useIdxOrder) {
+    if (idxType == occa::dynamic) {
       updateFS(v.idxCount);
     }
     return *this;
@@ -71,7 +71,7 @@ namespace occa {
   void array<TM,idxType>::initSOrder(int idxCount_) {
     idxCount = idxCount_;
 
-    if (idxType == occa::useIdxOrder) {
+    if (idxType == occa::dynamic) {
       for (int i = 0; i < 6; ++i) {
         sOrder_[i] = i;
       }
@@ -96,15 +96,15 @@ namespace occa {
 
   //---[ Info ]-------------------------
   template <class TM, const int idxType>
-  std::string array<TM,idxType>::idxOrderStr() {
-    if (idxType == occa::useIdxOrder) {
+  std::string array<TM,idxType>::indexingStr() {
+    if (idxType == occa::dynamic) {
       std::string str(2*idxCount - 1, ',');
       for (int i = 0; i < idxCount; ++i) {
         str[2*i] = ('0' + sOrder_[idxCount - i - 1]);
       }
       return str;
     } else {
-      OCCA_ERROR("Only occa::array<TM, occa::useIdxOrder> can use setIdxOrder()",
+      OCCA_ERROR("Only occa::array<TM, occa::dynamic> can use reindex()",
                  false);
     }
     return "";
@@ -838,7 +838,7 @@ namespace occa {
     updateFS(6);
   }
 
-  //---[ setIdxOrder(...) ]-------------
+  //---[ reindex(...) ]-------------
   template <class TM, const int idxType>
   void array<TM,idxType>::updateFS(const int idxCount_) {
     idxCount = idxCount_;
@@ -846,7 +846,7 @@ namespace occa {
     for (int i = 0; i < idxCount; ++i) {
       ks_[i] = s_[i];
     }
-    if (idxType == occa::useIdxOrder) {
+    if (idxType == occa::dynamic) {
       udim_t fs2[7];
       fs2[0] = 1;
 
@@ -863,17 +863,17 @@ namespace occa {
     }
   }
 
-  //  |---[ useIdxOrder ]---------------
+  //  |---[ dynamic ]---------------
   template <class TM, const int idxType>
-  void array<TM,idxType>::setIdxOrder(const int dim_, const int *o) {
-    if (idxType == occa::useIdxOrder) {
+  void array<TM,idxType>::reindex(const int dim_, const int *o) {
+    if (idxType == occa::dynamic) {
       switch(dim_) {
       case 1:                                                  break;
-      case 2: setIdxOrder(o[0], o[1]);                         break;
-      case 3: setIdxOrder(o[0], o[1], o[2]);                   break;
-      case 4: setIdxOrder(o[0], o[1], o[2], o[3]);             break;
-      case 5: setIdxOrder(o[0], o[1], o[2], o[3], o[4]);       break;
-      case 6: setIdxOrder(o[0], o[1], o[2], o[3], o[4], o[5]); break;
+      case 2: reindex(o[0], o[1]);                         break;
+      case 3: reindex(o[0], o[1], o[2]);                   break;
+      case 4: reindex(o[0], o[1], o[2], o[3]);             break;
+      case 5: reindex(o[0], o[1], o[2], o[3], o[4]);       break;
+      case 6: reindex(o[0], o[1], o[2], o[3], o[4], o[5]); break;
       default:
         if (dim_ <= 0) {
           OCCA_ERROR("Number of dimensions must be [1-6]",
@@ -884,47 +884,15 @@ namespace occa {
         }
       }
     } else {
-      OCCA_ERROR("Only occa::array<TM, occa::useIdxOrder> can use setIdxOrder()",
+      OCCA_ERROR("Only occa::array<TM, occa::dynamic> can use reindex()",
                  false);
     }
   }
 
   template <class TM, const int idxType>
-  void array<TM,idxType>::setIdxOrder(const std::string &default_,
-                                      const std::string &given) {
-
-    const int dim_ = (int) default_.size();
-    int o[6];
-
-    OCCA_ERROR("occa::array::setIdxOrder(default, given) must have matching sized strings of size [1-6]",
-               (dim_ == ((int) given.size())) &&
-               (1 <= dim_) && (dim_ <= 6));
-
-    for (int j = 0; j < dim_; ++j) {
-      o[j] = -1;
-    }
-    for (int j_ = (dim_ - 1); 0 <= j_; --j_) {
-      const int j = (dim_ - j_ - 1);
-      const char C = default_[j_];
-
-      for (int i_ = (dim_ - 1); 0 <= i_; --i_) {
-        const int i = (dim_ - i_ - 1);
-
-        if (C == given[i_]) {
-          OCCA_ERROR("occa::array::setIdxOrder(default, given) must have strings with unique characters",
-                     o[j] == -1);
-
-          o[j] = i;
-          break;
-        }
-      }
-    }
-  }
-
-  template <class TM, const int idxType>
-  void array<TM,idxType>::setIdxOrder(const int o0, const int o1) {
-    if (idxType == occa::useIdxOrder) {
-      OCCA_ERROR("occa::array::setIdxOrder("
+  void array<TM,idxType>::reindex(const int o0, const int o1) {
+    if (idxType == occa::dynamic) {
+      OCCA_ERROR("occa::array::reindex("
                  << o1 << ','
                  << o0 << ") has index out of bounds",
                  (0 <= o0) && (o0 <= 1) &&
@@ -935,14 +903,14 @@ namespace occa {
       updateFS(2);
     } else {
       OCCA_ERROR(false,
-                 "Only occa::array<TM, occa::useIdxOrder> can use setIdxOrder()");
+                 "Only occa::array<TM, occa::dynamic> can use reindex()");
     }
   }
 
   template <class TM, const int idxType>
-  void array<TM,idxType>::setIdxOrder(const int o0, const int o1, const int o2) {
-    if (idxType == occa::useIdxOrder) {
-      OCCA_ERROR("occa::array::setIdxOrder("
+  void array<TM,idxType>::reindex(const int o0, const int o1, const int o2) {
+    if (idxType == occa::dynamic) {
+      OCCA_ERROR("occa::array::reindex("
                  << o0 << ','
                  << o1 << ','
                  << o2 << ") has index out of bounds",
@@ -954,17 +922,17 @@ namespace occa {
       sOrder_[3] =  3; sOrder_[4] =  4; sOrder_[5] =  5;
       updateFS(3);
     } else {
-      OCCA_ERROR("Only occa::array<TM, occa::useIdxOrder> can use setIdxOrder()",
+      OCCA_ERROR("Only occa::array<TM, occa::dynamic> can use reindex()",
                  false);
     }
   }
 
   template <class TM, const int idxType>
-  void array<TM,idxType>::setIdxOrder(const int o0, const int o1, const int o2,
-                                      const int o3) {
+  void array<TM,idxType>::reindex(const int o0, const int o1, const int o2,
+                                  const int o3) {
 
-    if (idxType == occa::useIdxOrder) {
-      OCCA_ERROR("occa::array::setIdxOrder("
+    if (idxType == occa::dynamic) {
+      OCCA_ERROR("occa::array::reindex("
                  << o0 << ','
                  << o1 << ','
                  << o2 << ','
@@ -978,16 +946,16 @@ namespace occa {
       sOrder_[3] = o3; sOrder_[4] =  4; sOrder_[5] =  5;
       updateFS(4);
     } else {
-      OCCA_ERROR("Only occa::array<TM, occa::useIdxOrder> can use setIdxOrder()",
+      OCCA_ERROR("Only occa::array<TM, occa::dynamic> can use reindex()",
                  false);
     }
   }
 
   template <class TM, const int idxType>
-  void array<TM,idxType>::setIdxOrder(const int o0, const int o1, const int o2,
-                                      const int o3, const int o4) {
-    if (idxType == occa::useIdxOrder) {
-      OCCA_ERROR("occa::array::setIdxOrder("
+  void array<TM,idxType>::reindex(const int o0, const int o1, const int o2,
+                                  const int o3, const int o4) {
+    if (idxType == occa::dynamic) {
+      OCCA_ERROR("occa::array::reindex("
                  << o0 << ','
                  << o1 << ','
                  << o2 << ','
@@ -1003,16 +971,16 @@ namespace occa {
       sOrder_[3] = o3; sOrder_[4] = o4; sOrder_[5] =  5;
       updateFS(5);
     } else {
-      OCCA_ERROR("Only occa::array<TM, occa::useIdxOrder> can use setIdxOrder()",
+      OCCA_ERROR("Only occa::array<TM, occa::dynamic> can use reindex()",
                  false);
     }
   }
 
   template <class TM, const int idxType>
-  void array<TM,idxType>::setIdxOrder(const int o0, const int o1, const int o2,
-                                      const int o3, const int o4, const int o5) {
-    if (idxType == occa::useIdxOrder) {
-      OCCA_ERROR("occa::array::setIdxOrder("
+  void array<TM,idxType>::reindex(const int o0, const int o1, const int o2,
+                                  const int o3, const int o4, const int o5) {
+    if (idxType == occa::dynamic) {
+      OCCA_ERROR("occa::array::reindex("
                  << o0 << ','
                  << o1 << ','
                  << o2 << ','
@@ -1030,7 +998,7 @@ namespace occa {
       sOrder_[3] = o3; sOrder_[4] = o4; sOrder_[5] = o5;
       updateFS(6);
     } else {
-      OCCA_ERROR("Only occa::array<TM, occa::useIdxOrder> can use setIdxOrder()",
+      OCCA_ERROR("Only occa::array<TM, occa::dynamic> can use reindex()",
                  false);
     }
   }
@@ -1048,7 +1016,7 @@ namespace occa {
 
   template <class TM, const int idxType>
   inline TM& array<TM,idxType>::operator () (const udim_t i0, const udim_t i1) {
-    if (idxType == occa::dontUseIdxOrder) {
+    if (idxType == occa::fixed) {
       return ptr_[i0 + s_[0]*i1];
     }
     return ptr_[fs_[0]*i0 + fs_[1]*i1];
@@ -1056,7 +1024,7 @@ namespace occa {
 
   template <class TM, const int idxType>
   inline TM& array<TM,idxType>::operator () (const udim_t i0, const udim_t i1, const udim_t i2) {
-    if (idxType == occa::dontUseIdxOrder) {
+    if (idxType == occa::fixed) {
       return ptr_[i0 + s_[0]*(i1 + s_[1]*i2)];
     }
     return ptr_[fs_[0]*i0 + fs_[1]*i1 + fs_[2]*i2];
@@ -1065,7 +1033,7 @@ namespace occa {
   template <class TM, const int idxType>
   inline TM& array<TM,idxType>::operator () (const udim_t i0, const udim_t i1, const udim_t i2,
                                              const udim_t i3) {
-    if (idxType == occa::dontUseIdxOrder) {
+    if (idxType == occa::fixed) {
       return ptr_[i0 + s_[0]*(i1 + s_[1]*(i2 + s_[2]*i3))];
     }
     return ptr_[fs_[0]*i0 + fs_[1]*i1 + fs_[2]*i2 + fs_[3]*i3];
@@ -1074,7 +1042,7 @@ namespace occa {
   template <class TM, const int idxType>
   inline TM& array<TM,idxType>::operator () (const udim_t i0, const udim_t i1, const udim_t i2,
                                              const udim_t i3, const udim_t i4) {
-    if (idxType == occa::dontUseIdxOrder) {
+    if (idxType == occa::fixed) {
       return ptr_[i0 + s_[0]*(i1 + s_[1]*(i2 + s_[2]*(i3 + s_[3]*i4)))];
     }
     return ptr_[fs_[0]*i0 + fs_[1]*i1 + fs_[2]*i2 + fs_[3]*i3 + fs_[4]*i4];
@@ -1083,7 +1051,7 @@ namespace occa {
   template <class TM, const int idxType>
   inline TM& array<TM,idxType>::operator () (const udim_t i0, const udim_t i1, const udim_t i2,
                                              const udim_t i3, const udim_t i4, const udim_t i5) {
-    if (idxType == occa::dontUseIdxOrder) {
+    if (idxType == occa::fixed) {
       return ptr_[i0 + s_[0]*(i1 + s_[1]*(i2 + s_[2]*(i3 + s_[3]*(i4 + s_[4]*i5))))];
     }
     return ptr_[fs_[0]*i0 + fs_[1]*i1 + fs_[2]*i2 + fs_[3]*i3 + fs_[4]*i4 + fs_[5]*i5];
