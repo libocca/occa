@@ -72,20 +72,18 @@ int main(int argc, char **argv) {
             << "vec1.min()          = " << vec1.min() << '\n';
 
   occa::array<int> a(3,3);
-  occa::array<int, occa::useIdxOrder> b(3,3);
-
-  // b.setIdxOrder("AB", "BA");
-  b.setIdxOrder(0,1);
+  occa::array<int, occa::dynamic> b(3,3);
+  b.reindex(1,0);
 
   for (int j = 0; j < (int) a.dim(1); ++j) {
     for (int i = 0; i < (int) a.dim(0); ++i) {
-      a(j,i) = 10*j + i;
-      b(j,i) = 10*j + i;
+      a(i,j) = 10*j + i;
+      b(i,j) = 10*j + i;
     }
   }
 
   // Can pass @idxOrder to the kernel
-  std::cout << "b.idxOrderStr() = " << b.idxOrderStr() << '\n';
+  std::cout << "b.indexingStr() = " << b.indexingStr() << '\n';
 
   // Arrays a and b print out differently
   //   due to b.setIdxOrder()
