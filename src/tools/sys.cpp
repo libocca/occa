@@ -641,7 +641,7 @@ namespace occa {
           const std::string compileLine = ss.str();
           system(compileLine.c_str());
 
-          OCCA_ERROR("Could not compile compilerVendorTest.cpp",
+          OCCA_ERROR("Could not compile compilerVendorTest.cpp with following command:\n" << compileLine,
                      sys::fileExists(binaryFilename));
 
           int exitStatus = system(binaryFilename.c_str());
