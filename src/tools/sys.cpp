@@ -625,8 +625,10 @@ namespace occa {
       hash ^= occa::hash(compiler);
 
       const std::string srcFilename = io::cacheFile(compilerVendorTest, "compilerVendorTest.cpp", hash);
-      const std::string binaryFilename = io::dirname(srcFilename) + "binary";
-      const std::string outFilename = io::dirname(srcFilename) + "output";
+      const std::string hashDir = io::dirname(srcFilename);
+      const std::string binaryFilename   = hashDir + "binary";
+      const std::string outFilename      = hashDir + "output";
+      const std::string buildOutFilename = hashDir + "buildOutput.log";
 
       const std::string hashTag = "compiler";
       if (!io::haveHash(hash, hashTag)) {
@@ -636,7 +638,7 @@ namespace occa {
           ss << compiler
              << ' '    << srcFilename
              << " -o " << binaryFilename
-             << " > /dev/null 2>&1";
+             << " > " << buildOutFilename << " 2>&1";
 
           const std::string compileLine = ss.str();
           system(compileLine.c_str());
