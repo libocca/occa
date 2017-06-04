@@ -63,6 +63,7 @@
 #include <sys/types.h>
 #include <fcntl.h>
 
+#include "occa/base.hpp"
 #include "occa/tools/env.hpp"
 #include "occa/tools/hash.hpp"
 #include "occa/tools/io.hpp"
@@ -628,7 +629,7 @@ namespace occa {
       const std::string hashDir = io::dirname(srcFilename);
       const std::string binaryFilename   = hashDir + "binary";
       const std::string outFilename      = hashDir + "output";
-      const std::string buildOutFilename = hashDir + "buildOutput.log";
+      const std::string buildLogFilename = hashDir + "build.log";
 
       const std::string hashTag = "compiler";
       if (!io::haveHash(hash, hashTag)) {
@@ -638,9 +639,13 @@ namespace occa {
           ss << compiler
              << ' '    << srcFilename
              << " -o " << binaryFilename
-             << " > " << buildOutFilename << " 2>&1";
-
+             << " > " << buildLogFilename << " 2>&1";
           const std::string compileLine = ss.str();
+
+          if (settings().get("verboseCompilation", true)) {
+            std::cout << "Finding compiler vendor: " << compileLine << '\n';
+          }
+
           system(compileLine.c_str());
 
           OCCA_ERROR("Could not compile compilerVendorTest.cpp with following command:\n" << compileLine,
