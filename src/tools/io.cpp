@@ -452,8 +452,22 @@ namespace occa {
       std::string lockDir   = getFileLock(hash, tag);
       const char *c_lockDir = lockDir.c_str();
 
-      while(stat(c_lockDir, &buffer) == 0)
-        ; // Do Nothing
+      if (stat(c_lockDir, &buffer) == 0) {
+        double start = sys::currentTime();
+        bool printedMessage = false;
+        while(stat(c_lockDir, &buffer) == 0) {
+          double now = sys::currentTime();
+          if ((now - start) > 10) {
+            if (printedMessage) {
+              std::cout << "Still waiting on lock [" << lockDir << "]";
+              printedMessage = true;
+            } else {
+              std::cout << " .";
+            }
+            start -= 10;
+          }
+        }
+      }
     }
 
     void releaseHash(const hash_t &hash, const std::string &tag) {
