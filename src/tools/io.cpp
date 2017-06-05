@@ -600,6 +600,7 @@ namespace occa {
       info["info"]      = props;
 
       write(infoFile, info.toString());
+      io::releaseHash(hash, hashTag);
     }
 
     std::string getLibraryName(const std::string &filename) {

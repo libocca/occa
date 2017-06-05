@@ -198,7 +198,7 @@ namespace occa {
     }
 
     void signalExit(int sig) {
-      io::clearLocks();
+      // io::clearLocks();
       ::exit(sig);
     }
 
