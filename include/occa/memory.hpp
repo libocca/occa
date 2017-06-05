@@ -180,6 +180,9 @@ namespace occa {
     void uvaMarkStale();
     void uvaMarkFresh();
 
+    bool operator == (const occa::memory &m);
+    bool operator != (const occa::memory &m);
+
     occa::memory operator + (const dim_t offset) const;
     occa::memory& operator += (const dim_t offset);
 

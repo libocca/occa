@@ -283,6 +283,14 @@ namespace occa {
     }
   }
 
+  bool memory::operator == (const occa::memory &m) {
+    return (mHandle == m.mHandle);
+  }
+
+  bool memory::operator != (const occa::memory &m) {
+    return (mHandle != m.mHandle);
+  }
+
   occa::memory memory::operator + (const dim_t offset) const {
     OCCA_ERROR("Cannot have a negative offset (" << offset << ")",
                offset >= 0);

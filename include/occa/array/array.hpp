@@ -389,6 +389,12 @@ namespace occa {
     //---[ Assignment Operators ]-------
     array& operator = (const TM value);
 
+    template <class TM2, const int idxType2>
+    bool operator == (const array<TM2,idxType2> &vec);
+
+    template <class TM2, const int idxType2>
+    bool operator != (const array<TM2,idxType2> &vec);
+
     array& operator += (const TM value);
 
     template <class TM2, const int idxType2>
