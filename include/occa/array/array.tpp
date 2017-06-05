@@ -1078,6 +1078,18 @@ namespace occa {
   }
 
   template <class TM, const int idxType>
+  template <class TM2, const int idxType2>
+  bool array<TM,idxType>::operator == (const array<TM2,idxType2> &vec) {
+    return (memory_ == vec.memory_);
+  }
+
+  template <class TM, const int idxType>
+  template <class TM2, const int idxType2>
+  bool array<TM,idxType>::operator != (const array<TM2,idxType2> &vec) {
+    return (memory_ != vec.memory_);
+  }
+
+  template <class TM, const int idxType>
   array<TM,idxType>& array<TM,idxType>::operator += (const TM value) {
     linalg::operator_plus_eq<TM>(memory_, value);
     return *this;
