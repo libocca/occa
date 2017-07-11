@@ -4076,6 +4076,7 @@ namespace occa {
       cKeywordType["continue"]           = expType::specialKeyword;
       cKeywordType["return"]             = expType::specialKeyword;
       cKeywordType["goto"]               = expType::specialKeyword;
+      cKeywordType["throw"]              = expType::specialKeyword;
 
       //---[ OCCA Keywords ]--------------
       cKeywordType["kernel"]             = (expType::qualifier | expType::occaKeyword);
