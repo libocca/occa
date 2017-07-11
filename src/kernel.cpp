@@ -46,7 +46,7 @@ namespace occa {
     dHandle = k.dHandle;
     mHandle = k.mHandle;
 
-    ::memcpy(&data, &(k.data), sizeof(data));
+    data = k.data;
     size = k.size;
     info = k.info;
 
@@ -401,8 +401,11 @@ namespace occa {
       kHandle->arguments[i].setupForKernelCall(argIsConst);
     }
 
+    kernelArg* args = &(kHandle->arguments[0]);
+
     // Add nestedKernels
-    if (kHandle->nestedKernelCount()) {
+    const bool hasNestedKernels = kHandle->nestedKernelCount();
+    if (hasNestedKernels) {
       kHandle->arguments.insert(kHandle->arguments.begin(),
                                 kHandle->nestedKernelsPtr());
     }
@@ -411,7 +414,7 @@ namespace occa {
                               kHandle->argumentsPtr());
 
     // Remove nestedKernels
-    if (kHandle->nestedKernelCount()) {
+    if (hasNestedKernels) {
       kHandle->arguments.erase(kHandle->arguments.begin());
     }
   }
