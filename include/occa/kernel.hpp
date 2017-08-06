@@ -242,11 +242,13 @@ namespace occa {
 
     bool isInitialized();
 
+    const std::string& mode();
+    occa::properties& properties();
+
     kernel_v* getKHandle();
 
     occa::device getDevice();
 
-    const std::string& mode();
     const std::string& name();
     const std::string& sourceFilename();
     const std::string& binaryFilename();

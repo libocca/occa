@@ -341,16 +341,20 @@ namespace occa {
     return (kHandle != NULL);
   }
 
+  const std::string& kernel::mode() {
+    return kHandle->dHandle->mode;
+  }
+
+  occa::properties& kernel::properties() {
+    return kHandle->properties;
+  }
+
   kernel_v* kernel::getKHandle() {
     return kHandle;
   }
 
   occa::device kernel::getDevice() {
     return occa::device(kHandle->dHandle);
-  }
-
-  const std::string& kernel::mode() {
-    return device(kHandle->dHandle).mode();
   }
 
   const std::string& kernel::name() {
@@ -400,8 +404,6 @@ namespace occa {
       const bool argIsConst = kHandle->metadata.argIsConst(i);
       kHandle->arguments[i].setupForKernelCall(argIsConst);
     }
-
-    kernelArg* args = &(kHandle->arguments[0]);
 
     // Add nestedKernels
     const bool hasNestedKernels = kHandle->nestedKernelCount();
