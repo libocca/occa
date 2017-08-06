@@ -115,7 +115,7 @@ namespace occa {
     friend class memory;
 
   private:
-    device_v *dHandle;
+    mutable device_v *dHandle;
 
   public:
     device();
@@ -141,11 +141,13 @@ namespace occa {
 
     bool isInitialized();
 
-    const std::string& mode();
-    occa::properties& properties();
+    const std::string& mode() const;
 
-    occa::json& kernelProperties();
-    occa::json& memoryProperties();
+    occa::properties& properties();
+    const occa::properties& properties() const;
+
+    const occa::json& kernelProperties() const;
+    const occa::json& memoryProperties() const;
 
     device_v* getDHandle() const;
 
@@ -176,29 +178,29 @@ namespace occa {
     void storeCacheInfo(const std::string &filename,
                         const hash_t &hash,
                         const occa::properties &kernelProps,
-                        const kernelMetadataMap_t &metadataMap);
+                        const kernelMetadataMap_t &metadataMap) const;
 
     std::string cacheHash(const hash_t &hash,
-                          const std::string &kernelName);
+                          const std::string &kernelName) const;
 
     void loadKernels(const std::string &library = "");
 
     occa::kernel buildKernel(const std::string &filename,
                              const std::string &kernelName,
-                             const occa::properties &props = occa::properties());
+                             const occa::properties &props = occa::properties()) const;
 
     occa::kernel buildKernel(const std::string &filename,
                              const hash_t &hash,
                              const occa::properties &kernelProps,
-                             const kernelMetadata &metadata);
+                             const kernelMetadata &metadata) const;
 
     occa::kernel buildKernelFromString(const std::string &content,
                                        const std::string &kernelName,
-                                       const occa::properties &props = occa::properties());
+                                       const occa::properties &props = occa::properties()) const;
 
     occa::kernel buildKernelFromBinary(const std::string &filename,
                                        const std::string &kernelName,
-                                       const occa::properties &props = occa::properties());
+                                       const occa::properties &props = occa::properties()) const;
     //  |===============================
 
     //  |---[ Memory ]------------------

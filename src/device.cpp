@@ -130,7 +130,7 @@ namespace occa {
     dHandle->currentStream = newStream.handle;
   }
 
-  const std::string& device::mode() {
+  const std::string& device::mode() const {
     return dHandle->mode;
   }
 
@@ -138,14 +138,18 @@ namespace occa {
     return dHandle->properties;
   }
 
-  occa::json& device::kernelProperties() {
-    occa::json &ret = properties()["kernel"];
+  const occa::properties& device::properties() const {
+    return dHandle->properties;
+  }
+
+  const occa::json& device::kernelProperties() const {
+    occa::json &ret = dHandle->properties["kernel"];
     ret["mode"] = mode();
     return ret;
   }
 
-  occa::json& device::memoryProperties() {
-    occa::json &ret = properties()["memory"];
+  const occa::json& device::memoryProperties() const {
+    occa::json &ret = dHandle->properties["memory"];
     ret["mode"] = mode();
     return ret;
   }
@@ -234,7 +238,7 @@ namespace occa {
   void device::storeCacheInfo(const std::string &filename,
                               const hash_t &hash,
                               const occa::properties &kernelProps,
-                              const kernelMetadataMap_t &metadataMap) {
+                              const kernelMetadataMap_t &metadataMap) const {
     occa::properties infoProps;
     infoProps["device"]          = dHandle->properties;
     infoProps["device/hash"]     = dHandle->hash().toFullString();
@@ -253,7 +257,7 @@ namespace occa {
 
 
   std::string device::cacheHash(const hash_t &hash,
-                                const std::string &kernelName) {
+                                const std::string &kernelName) const {
     std::string str = hash.toFullString();
     str += '-';
     return str + kernelName;
@@ -298,7 +302,7 @@ namespace occa {
 
   kernel device::buildKernel(const std::string &filename,
                              const std::string &kernelName,
-                             const occa::properties &props) {
+                             const occa::properties &props) const {
 
     occa::properties allProps = props + kernelProperties();
     allProps["mode"] = mode();
@@ -347,7 +351,7 @@ namespace occa {
   occa::kernel device::buildKernel(const std::string &filename,
                                    const hash_t &hash,
                                    const occa::properties &kernelProps,
-                                   const kernelMetadata &metadata) {
+                                   const kernelMetadata &metadata) const {
 
     if (metadata.nestedKernels == 0) {
       return kernel(dHandle->buildKernel(filename,
@@ -390,7 +394,7 @@ namespace occa {
 
   kernel device::buildKernelFromString(const std::string &content,
                                        const std::string &kernelName,
-                                       const occa::properties &props) {
+                                       const occa::properties &props) const {
 
     occa::properties allProps = props + kernelProperties();
     allProps["mode"] = mode();
@@ -421,7 +425,7 @@ namespace occa {
 
   kernel device::buildKernelFromBinary(const std::string &filename,
                                        const std::string &kernelName,
-                                       const occa::properties &props) {
+                                       const occa::properties &props) const {
 
     return kernel(dHandle->buildKernelFromBinary(filename, kernelName, props));
   }
