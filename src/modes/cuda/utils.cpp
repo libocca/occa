@@ -255,7 +255,7 @@ namespace occa {
       mem.ptr       = (char*) ptr;
       mem.size      = bytes;
       mem.mappedPtr = NULL;
-      mem.isManaged = props.get("managed", false);
+      mem.isManaged = props.get("cuda/managed", false);
 
       return occa::memory(&mem);
     }

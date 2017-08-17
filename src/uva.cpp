@@ -103,7 +103,6 @@ namespace occa {
     occa::memory_v *mem = uvaToMemory(ptr);
     if (mem != NULL) {
       mem->memInfo |= uvaFlag::isManaged;
-      mem->uvaPtr = (char*) ptr;
     }
   }
 
@@ -111,7 +110,6 @@ namespace occa {
     occa::memory_v *mem = uvaToMemory(ptr);
     if (mem != NULL) {
       mem->memInfo &= ~uvaFlag::isManaged;
-      mem->uvaPtr = NULL;
     }
   }
 

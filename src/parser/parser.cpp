@@ -148,8 +148,8 @@ namespace occa {
                           (mode == "Pthreads") ||
                           (mode == "OpenMP"));
 
-      _warnForConditionalBarriers  = properties.get("warn-for-conditional-barriers", false);
-      _insertBarriersAutomatically = properties.get("automate-add-barriers"        , true);
+      _warnForConditionalBarriers  = properties.get("parser/warn-for-conditional-barriers", false);
+      _insertBarriersAutomatically = properties.get("parser/automate-add-barriers"        , true);
     }
 
     bool parserBase::compilingForCPU() {
