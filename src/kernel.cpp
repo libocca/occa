@@ -148,8 +148,9 @@ namespace occa {
 
   void kernelArg::add(void *arg, size_t bytes,
                       bool lookAtUva, bool argIsUva) {
-    kernelArg_t kArg;
+
     memory_v *mHandle = NULL;
+
     if (argIsUva) {
       mHandle = (memory_v*) arg;
     } else if (lookAtUva) {
@@ -159,13 +160,14 @@ namespace occa {
       }
     }
 
-    if (!mHandle) {
+    if (mHandle) {
+      add(mHandle->makeKernelArg());
+    } else {
+      kernelArg_t kArg;
       kArg.info       = kArgInfo::usePointer;
       kArg.size       = bytes;
       kArg.data.void_ = arg;
       args.push_back(kArg);
-    } else {
-      add(mHandle->makeKernelArg());
     }
   }
 
