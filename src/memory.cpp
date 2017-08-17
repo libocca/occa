@@ -152,10 +152,7 @@ namespace occa {
   }
 
   memory::operator kernelArg() const {
-    kernelArg kArg = mHandle->makeKernelArg();
-    kArg.args[0].mHandle = mHandle;
-    kArg.args[0].dHandle = mHandle->dHandle;
-    return kArg;
+    return mHandle->makeKernelArg();
   }
 
   const std::string& memory::mode() const {
