@@ -300,8 +300,12 @@ namespace occa {
 
     bool needsFree;
     occa::memory m(mHandle->addOffset(offset, needsFree));
-    m.mHandle->dHandle = mHandle->dHandle;
-    m.mHandle->size = size() - offset;
+    memory_v &mv = *(m.mHandle);
+    mv.dHandle = mHandle->dHandle;
+    mv.size = size() - offset;
+    if (mHandle->uvaPtr) {
+      mv.uvaPtr = (mHandle->uvaPtr + offset);
+    }
     if (!needsFree) {
       m.dontUseRefs();
     }
