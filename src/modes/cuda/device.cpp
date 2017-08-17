@@ -84,8 +84,8 @@ namespace occa {
                                                 &archMinorVersion,
                                                 cuDevice) );
 
-      archMajorVersion = properties.get("arch/major", archMajorVersion);
-      archMinorVersion = properties.get("arch/minor", archMinorVersion);
+      archMajorVersion = properties.get("cuda/arch/major", archMajorVersion);
+      archMinorVersion = properties.get("cuda/arch/minor", archMinorVersion);
     }
 
     device::~device() {}
@@ -197,9 +197,9 @@ namespace occa {
                              const void *src,
                              const occa::properties &props) {
 
-      if (props.get("mapped", false)) {
+      if (props.get("cuda/mapped", false)) {
         return mappedAlloc(bytes, src, props);
-      } else if (props.get("managed", false)) {
+      } else if (props.get("cuda/managed", false)) {
         return managedAlloc(bytes, src, props);
       }
 
@@ -251,7 +251,7 @@ namespace occa {
       mem.size      = bytes;
       mem.isManaged = true;
 
-      const unsigned int flags = (props.get("um/attachedHost", false) ?
+      const unsigned int flags = (props.get("cuda/attachedHost", false) ?
                                   CU_MEM_ATTACH_HOST : CU_MEM_ATTACH_GLOBAL);
 
       OCCA_CUDA_ERROR("Device: Setting Context",

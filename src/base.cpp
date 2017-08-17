@@ -149,11 +149,13 @@ namespace occa {
     occa::memory_v *srcMem  = ((srcIt  != uvaMap.end()) ? (srcIt->second)  : NULL);
     occa::memory_v *destMem = ((destIt != uvaMap.end()) ? (destIt->second) : NULL);
 
-    const udim_t srcOff  = (srcMem  ? (((char*) src)  - ((char*) srcMem->uvaPtr))  : 0);
-    const udim_t destOff = (destMem ? (((char*) dest) - ((char*) destMem->uvaPtr)) : 0);
+    const udim_t srcOff  = (srcMem  ? (((char*) src)  - srcMem->uvaPtr)  : 0);
+    const udim_t destOff = (destMem ? (((char*) dest) - destMem->uvaPtr) : 0);
 
-    const bool usingSrcPtr  = ((srcMem  == NULL) || srcMem->isManaged());
-    const bool usingDestPtr = ((destMem == NULL) || destMem->isManaged());
+    const bool usingSrcPtr  = ((srcMem  == NULL) ||
+                               ((srcMem->isManaged() && !srcMem->inDevice())));
+    const bool usingDestPtr = ((destMem  == NULL) ||
+                               ((destMem->isManaged() && !destMem->inDevice())));
 
     if (usingSrcPtr && usingDestPtr) {
       ::memcpy(dest, src, bytes);
