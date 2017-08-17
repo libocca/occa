@@ -39,9 +39,14 @@ namespace occa {
 
     kernelArg memory::makeKernelArg() const {
       kernelArg_t arg;
+
+      arg.dHandle = dHandle;
+      arg.mHandle = const_cast<memory*>(this);
+
       arg.data.void_ = (void*) &clMem;
       arg.size       = sizeof(void*);
       arg.info       = kArgInfo::usePointer;
+
       return kernelArg(arg);
     }
 
