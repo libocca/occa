@@ -43,7 +43,7 @@ namespace occa {
     const char *macroStart;
     const char *localMacroStart;
 
-    std::string name;
+    std::string name, source;
 
     int argc;
     mutable bool hasVarArgs;
@@ -65,6 +65,10 @@ namespace occa {
     void clear();
     std::string expand(const char *c) const;
     virtual std::string expand(char *&c) const;
+
+    std::string toString() const;
+    operator std::string() const;
+    void print() const;
 
     //---[ Messages ]-------------------
     void printError(const char *c, const std::string &message) const;

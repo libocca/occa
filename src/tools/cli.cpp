@@ -110,6 +110,12 @@ namespace occa {
       return opt;
     }
 
+    option option::withArgs(const int requiredArgs_) {
+      option opt = *this;
+      opt.requiredArgs = requiredArgs_;
+      return opt;
+    }
+
     option option::stopsExpansion() {
       option opt = *this;
       opt.flags |= flags_t::stopsExpansion;
@@ -424,7 +430,8 @@ namespace occa {
           for (int j = 0; j < (int) optArgs_i.size(); ++j) {
             if (opt_i.requiredArgs != (int) optArgs_i[j].array().size()) {
               std::cerr << "Option " << opt_i << " requires "
-                        << opt_i.requiredArgs << " arguments\n";
+                        << opt_i.requiredArgs << " argument"
+                        << ((opt_i.requiredArgs > 1) ? "s\n" : "\n");
               printUsage(name, std::cerr);
               ::exit(1);
             }
