@@ -77,15 +77,12 @@ int main(int argc, char **argv) {
     .addOption(occa::cli::option('a', "all",
                                  "Clear cached kernels, cached libraries, and locks.")
                .stopsExpansion())
-    .addOption(occa::cli::option('k', "kernel",
-                                 "Clear cached kernel.")
-               .reusable()
-               .expandsFunction("ls ${OCCA_CACHE_DIR:-${HOME}/.occa}/cache"))
     .addOption(occa::cli::option('\0', "kernels",
                                  "Clear cached kernels."))
     .addOption(occa::cli::option('l', "lib",
                                  "Clear cached library.")
                .reusable()
+               .withArgs(1)
                .expandsFunction("ls ${OCCA_CACHE_DIR:-${HOME}/.occa}/libraries"))
     .addOption(occa::cli::option('\0', "libraries",
                                  "Clear cached libraries."))
@@ -193,7 +190,7 @@ bool runClear(const occa::cli::command &command,
   bool removedSomething = false;
   const bool promptCheck = (options.find("yes") == options.end());
   while (it != options.end()) {
-    if (it->first == "all") {
+      if (it->first == "all") {
       removedSomething |= removeDir(occa::env::OCCA_CACHE_DIR, promptCheck);
     } else if (it->first == "lib") {
       const occa::jsonArray_t &libGroups = it->second.array();
@@ -207,16 +204,6 @@ bool runClear(const occa::cli::command &command,
       }
     } else if (it->first == "libraries") {
       removedSomething |= removeDir(occa::io::libraryPath(), promptCheck);
-    } else if (it->first == "kernel") {
-      const occa::jsonArray_t &kernelGroups = it->second.array();
-      for (int i = 0; i < (int) kernelGroups.size(); ++i) {
-        const occa::jsonArray_t &kernels = kernelGroups[i].array();
-        for (int j = 0; j < (int) kernels.size(); ++j) {
-          removedSomething |= removeDir(occa::io::cachePath() +
-                                        kernels[j].string(),
-                                        promptCheck);
-        }
-      }
     } else if (it->first == "kernels") {
       removedSomething |= removeDir(occa::io::cachePath(), promptCheck);
     } else if (it->first == "locks") {

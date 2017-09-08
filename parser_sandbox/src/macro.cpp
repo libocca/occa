@@ -65,13 +65,18 @@ namespace occa {
 
     if (*c != '(') {
       parts.push_back(c);
-      return;
-    }
-    macroPartVector_t argNames;
-    loadArgs(c, argNames);
-    argc = (int) argNames.size();
+    } else {
+      macroPartVector_t argNames;
+      loadArgs(c, argNames);
+      argc = (int) argNames.size();
 
-    setParts(c, argNames);
+      setParts(c, argNames);
+    }
+
+    if (c > localMacroStart) {
+      source = "#define ";
+      source += std::string(localMacroStart, c - localMacroStart);
+    }
   }
 
   void macro_t::loadName(char *&c) {
@@ -230,6 +235,7 @@ namespace occa {
 
   void macro_t::clear() {
     name = "";
+    source = "";
 
     argc = 0;
     hasVarArgs = false;
@@ -320,6 +326,18 @@ namespace occa {
     }
 
     return ret;
+  }
+
+  std::string macro_t::toString() const {
+    return source;
+  }
+
+  macro_t::operator std::string() const {
+    return source;
+  }
+
+  void macro_t::print() const {
+    std::cout << toString();
   }
 
   //  ---[ Messages ]-------------------

@@ -129,6 +129,7 @@ namespace occa {
 
       option isRequired();
       option reusable();
+      option withArgs(const int requiredArgs_);
 
       option stopsExpansion();
       option expandsFiles();
