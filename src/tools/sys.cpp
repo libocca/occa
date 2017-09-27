@@ -693,12 +693,12 @@ namespace occa {
       if (vendor_ & (sys::vendor::GNU   |
                      sys::vendor::LLVM  |
                      sys::vendor::Intel |
-                     sys::vendor::IBM   |
                      sys::vendor::PGI   |
                      sys::vendor::Cray  |
                      sys::vendor::Pathscale)) {
-
         return "-x c++ -fPIC -shared";
+      } else if (vendor_ & sys::vendor::IBM) {
+        return "-x c++ -qpic -shared";
       } else if (vendor_ & sys::vendor::HP) {
         return "+z -b";
       } else if (vendor_ & sys::vendor::VisualStudio) {
@@ -708,7 +708,7 @@ namespace occa {
         return "/TP /LD /MD";
 #endif
       }
-
+      OCCA_FORCE_ERROR("Could not find compiler flags for creating a shared object");
       return "";
     }
 
