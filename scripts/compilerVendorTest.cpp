@@ -33,7 +33,9 @@
 
 int main(int argc, char **argv) {
 
-#if defined(__xlc__) || defined(__xlC__) || defined(__IBMC__) || defined(__IBMCPP__)
+#if defined(__xlc__) || defined(__xlC__) \
+  || defined(__IBMC__) || defined(__IBMCPP__) \
+  || defined( __ibmxl__)
   return OCCA_IBM_VENDOR;
 
 #elif defined(__ICC) || defined(__INTEL_COMPILER)
