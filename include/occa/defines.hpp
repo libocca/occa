@@ -83,16 +83,6 @@
 #  define OCCA_32_BIT 0
 #endif
 
-#if OCCA_ARM
-#  define OCCA_LFENCE __asm__ __volatile__ ("dmb")
-#else
-#  if (OCCA_OS & (LINUX_OS | OSX_OS))
-#    define OCCA_LFENCE __asm__ __volatile__ ("lfence")
-#  else
-#    define OCCA_LFENCE MemoryBarrier()
-#  endif
-#endif
-
 //---[ Checks and Info ]----------------
 #ifndef OCCA_COMPILED_FOR_JULIA
 #  define OCCA_THROW abort()
