@@ -116,7 +116,7 @@ function defaultLibraryPath {
     mergedPaths+=":$OCCA_LIBRARY_PATH"
     mergedPaths+=":$LD_LIBRARY_PATH"
     mergedPaths+=":$DYLD_LIBRARY_PATH"
-    mergedPaths+=":/opt/rocm/opencl/lib/x86_64"
+    mergedPaths+=":/opt/rocm/opencl/lib/*"
     mergedPaths+=":/usr/local/cuda*/lib*"
     mergedPaths+=":/usr/local/cuda*/lib*/stubs"
     mergedPaths+=":/lib:/usr/lib:/usr/lib32:/usr/lib64:"
