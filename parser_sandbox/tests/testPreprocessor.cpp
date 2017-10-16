@@ -3,157 +3,170 @@
 
 #include "preprocessor.hpp"
 
-void testMacroDefines();
-void testIfElseDefines();
-void testErrorDefines();
-void testLineDefine();
-void testEval();
-
-int main(const int argc, const char **argv) {
-  testMacroDefines();
-  testErrorDefines();
-  testLineDefine();
-
-#if 0
-  testIfElseDefines();
-  testEval();
-#endif
-}
-
-void testMacroDefines() {
+class preprocessorTester {
   occa::preprocessor_t preprocessor;
 
-  preprocessor.process("#define A\n");
+public:
+  preprocessorTester();
+
+  void testMacroDefines();
+
+  void testIfElseDefines();
+
+  void testErrorDefines();
+
+  void testLineDefine();
+
+  void testEval();
+
+  void test() {
+    testMacroDefines();
+    testErrorDefines();
+    testLineDefine();
+
+#if 0
+    testIfElseDefines();
+    testEval();
+#endif
+  }
+};
+
+int main(const int argc, const char **argv) {
+  preprocessorTester tester;
+  tester.test();
+}
+
+preprocessorTester::preprocessorTester() {}
+
+void preprocessorTester::testMacroDefines() {
   OCCA_TEST_COMPARE("",
-                    preprocessor.applyMacros("A"));
+                    preprocessor.processSource("#define A\n"
+                                               "A"));
 
-  preprocessor.process("#define B 1 2 3\n");
   OCCA_TEST_COMPARE("1 2 3",
-                    preprocessor.applyMacros("B"));
+                    preprocessor.processSource("#define B 1 2 3\n"
+                                               "B"));
 
-  preprocessor.process("#define C(A1) A1\n");
+  preprocessor.processSource("#define C(A1) A1\n");
   OCCA_TEST_COMPARE("",
                     preprocessor.applyMacros("C()"));
   OCCA_TEST_COMPARE("1",
                     preprocessor.applyMacros("C(1)"));
 
-  preprocessor.process("#define D(A1, A2) A1 A2\n");
+  preprocessor.processSource("#define D(A1, A2) A1 A2\n");
   OCCA_TEST_COMPARE("2 3",
                     preprocessor.applyMacros("D(2, 3)"));
   OCCA_TEST_COMPARE("4 5",
                     preprocessor.applyMacros("D(4, 5, 6)"));
 
-  preprocessor.process("#define E(A1, A2) A1##A2\n");
+  preprocessor.processSource("#define E(A1, A2) A1##A2\n");
   OCCA_TEST_COMPARE("6",
                     preprocessor.applyMacros("E(, 6)"));
   OCCA_TEST_COMPARE("07",
                     preprocessor.applyMacros("E(0, 7)"));
 
-  preprocessor.process("#define F(A1, ...) A1 __VA_ARGS__\n");
+  preprocessor.processSource("#define F(A1, ...) A1 __VA_ARGS__\n");
   OCCA_TEST_COMPARE("7 ",
                     preprocessor.applyMacros("F(7,)"));
   OCCA_TEST_COMPARE("8 9, 10,",
                     preprocessor.applyMacros("F(8, 9, 10,)"));
 
-  preprocessor.process("#define G(...) (X, ##__VA_ARGS__)\n");
+  preprocessor.processSource("#define G(...) (X, ##__VA_ARGS__)\n");
   OCCA_TEST_COMPARE("(X, 11 )",
                     preprocessor.applyMacros("G(11,)"));
   OCCA_TEST_COMPARE("(X, )",
                     preprocessor.applyMacros("G()"));
 
-  preprocessor.process("#define H(A1) #A1\n");
+  preprocessor.processSource("#define H(A1) #A1\n");
   OCCA_TEST_COMPARE("\"12\"",
                     preprocessor.applyMacros("H(12)"));
 
-  preprocessor.process("#define I(A1, A2) #A1##A2\n");
+  preprocessor.processSource("#define I(A1, A2) #A1##A2\n");
   OCCA_TEST_COMPARE("\"1\"3",
                     preprocessor.applyMacros("I(1, 3)"));
 }
 
 #if 0
-void testIfElseDefines() {
-  occa::preprocessor_t preprocessor;
-
+void preprocessorTester::testIfElseDefines() {
   OCCA_TEST_COMPARE("",
-                    preprocessor.process("#ifdef FOO\n"
-                                         "1\n"
-                                         "#endif\n"));
+                    preprocessor.processSource("#ifdef FOO\n"
+                                               "1\n"
+                                               "#endif\n"));
 
   OCCA_TEST_COMPARE("2",
-                    preprocessor.process("#ifndef FOO\n"
-                                         "2\n"
-                                         "#endif\n"));
+                    preprocessor.processSource("#ifndef FOO\n"
+                                               "2\n"
+                                               "#endif\n"));
 
   OCCA_TEST_COMPARE("",
-                    preprocessor.process("#if defined(FOO)\n"
-                                         "3\n"
-                                         "#endif\n"));
+                    preprocessor.processSource("#if defined(FOO)\n"
+                                               "3\n"
+                                               "#endif\n"));
 
   OCCA_TEST_COMPARE("4",
-                    preprocessor.process("#if !defined(FOO)\n"
-                                         "4\n"
-                                         "#endif\n"));
+                    preprocessor.processSource("#if !defined(FOO)\n"
+                                               "4\n"
+                                               "#endif\n"));
 
-  preprocessor.process("#define FOO 9\n");
+  preprocessor.processSource("#define FOO 9\n");
 
   OCCA_TEST_COMPARE("5",
-                    preprocessor.process("#ifdef FOO\n"
-                                         "5\n"
-                                         "#endif\n"));
+                    preprocessor.processSource("#ifdef FOO\n"
+                                               "5\n"
+                                               "#endif\n"));
 
   OCCA_TEST_COMPARE("",
-                    preprocessor.process("#ifndef FOO\n"
-                                         "6\n"
-                                         "#endif\n"));
+                    preprocessor.processSource("#ifndef FOO\n"
+                                               "6\n"
+                                               "#endif\n"));
 
   OCCA_TEST_COMPARE("7",
-                    preprocessor.process("#if defined(FOO)\n"
-                                         "7\n"
-                                         "#endif\n"));
+                    preprocessor.processSource("#if defined(FOO)\n"
+                                               "7\n"
+                                               "#endif\n"));
 
   OCCA_TEST_COMPARE("",
-                    preprocessor.process("#if !defined(FOO)\n"
-                                         "8\n"
-                                         "#endif\n"));
+                    preprocessor.processSource("#if !defined(FOO)\n"
+                                               "8\n"
+                                               "#endif\n"));
 
   OCCA_TEST_COMPARE("9",
-                    preprocessor.process("FOO\n"));
+                    preprocessor.processSource("FOO\n"));
 
   OCCA_TEST_COMPARE("10",
-                    preprocessor.process("#undef FOO\n"
-                                         "#define FOO 10\n"
-                                         "FOO"));
+                    preprocessor.processSource("#undef FOO\n"
+                                               "#define FOO 10\n"
+                                               "FOO"));
 
   OCCA_TEST_COMPARE("11",
-                    preprocessor.process("#define FOO 11\n"
-                                         "FOO"));
+                    preprocessor.processSource("#define FOO 11\n"
+                                               "FOO"));
 
-  preprocessor.process("#undef FOO\n");
+  preprocessor.processSource("#undef FOO\n");
 
   OCCA_TEST_COMPARE("",
-                    preprocessor.process("#ifdef FOO\n"
-                                         "12\n"
-                                         "#endif\n"));
+                    preprocessor.processSource("#ifdef FOO\n"
+                                               "12\n"
+                                               "#endif\n"));
 
   OCCA_TEST_COMPARE("13",
-                    preprocessor.process("#ifndef FOO\n"
-                                         "13\n"
-                                         "#endif\n"));
+                    preprocessor.processSource("#ifndef FOO\n"
+                                               "13\n"
+                                               "#endif\n"));
 
   OCCA_TEST_COMPARE("",
-                    preprocessor.process("#if defined(FOO)\n"
-                                         "14\n"
-                                         "#endif\n"));
+                    preprocessor.processSource("#if defined(FOO)\n"
+                                               "14\n"
+                                               "#endif\n"));
 
   OCCA_TEST_COMPARE("15",
-                    preprocessor.process("#if !defined(FOO)\n"
-                                         "15\n"
-                                         "#endif\n"));
+                    preprocessor.processSource("#if !defined(FOO)\n"
+                                               "15\n"
+                                               "#endif\n"));
 }
 #endif
 
-void testErrorDefines() {
-  occa::preprocessor_t preprocessor;
+void preprocessorTester::testErrorDefines() {
   std::stringstream ss;
   preprocessor.exitOnFatalError = false;
   preprocessor.setOutputStream(ss);
@@ -169,6 +182,9 @@ void testErrorDefines() {
   ss.str("");
 
   preprocessor.clear();
+  preprocessor.exitOnFatalError = false;
+  preprocessor.setOutputStream(ss);
+
   preprocessor.processSource("#warning \"Warning\"\n");
   OCCA_TEST_COMPARE(0,
                     !ss.str().size());
@@ -178,14 +194,12 @@ void testErrorDefines() {
   ss.str("");
 }
 
-void testLineDefine() {
-  occa::preprocessor_t preprocessor;
-
-  preprocessor.process("#line 10\n");
+void preprocessorTester::testLineDefine() {
+  preprocessor.processSource("#line 10\n");
   OCCA_TEST_COMPARE(10,
                     preprocessor.currentFrame.lineNumber);
 
-  preprocessor.process("#line 20 \"foo\"\n");
+  preprocessor.processSource("#line 20 \"foo\"\n");
   OCCA_TEST_COMPARE(20,
                     preprocessor.currentFrame.lineNumber);
   OCCA_TEST_COMPARE(occa::env::PWD + "foo",
@@ -193,10 +207,7 @@ void testLineDefine() {
 }
 
 #if 0
-void testEval() {
-  occa::preprocessor_t preprocessor;
-  preprocessor.props["exitOnError"] = false;
-
+void preprocessorTester::testEval() {
   // Types
   OCCA_TEST_COMPARE<int>(1 + 1,
                          preprocessor.eval<int>("1 + 1"));

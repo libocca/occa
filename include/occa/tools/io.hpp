@@ -132,8 +132,12 @@ namespace occa {
     strVector_t directories(const std::string &dir);
     strVector_t files(const std::string &dir);
 
-    char* c_read(const std::string &filename, size_t *chars = NULL, const bool readingBinary = false);
-    std::string read(const std::string &filename, const bool readingBinary = false);
+    char* c_read(const std::string &filename,
+                 size_t *chars = NULL,
+                 const bool readingBinary = false);
+
+    std::string read(const std::string &filename,
+                     const bool readingBinary = false);
 
     void write(const std::string &filename, const std::string &content);
 

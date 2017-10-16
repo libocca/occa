@@ -268,6 +268,10 @@ namespace occa {
     strVector_t dirs = io::directories("occa://" + library);
     const int dirCount = (int) dirs.size();
 
+    const bool isVerbose = settings().get("verboseCompilation", true);
+    settings()["verboseCompilation"] = false;
+    int kernelsLoaded = 0;
+
     for (int d = 0; d < dirCount; ++d) {
       const std::string infoFile = dirs[d] + kc::infoFile;
 
@@ -279,6 +283,8 @@ namespace occa {
       if (info["device/hash"].string() != devHash) {
         continue;
       }
+
+      ++kernelsLoaded;
 
       json &kInfo = info["kernel"];
       hash_t hash = hash_t::fromString(kInfo["hash"].string());
@@ -297,6 +303,17 @@ namespace occa {
                             metadata);
         }
       }
+    }
+
+    settings()["verboseCompilation"] = isVerbose;
+    if (isVerbose && kernelsLoaded) {
+      std::cout << "Loaded " << kernelsLoaded;
+      if (library.size()) {
+        std::cout << " ["<< library << "]";
+      } else {
+        std::cout << " cached";
+      }
+      std::cout << ((kernelsLoaded == 1) ? " kernel\n" : " kernels\n");
     }
   }
 

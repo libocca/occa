@@ -360,6 +360,8 @@ namespace occa {
     json& operator [] (const int n);
     const json& operator [] (const int n) const;
 
+    int size() const;
+
     template <class TM>
     TM get(const char *c, const TM &default_ = TM()) const {
       const char *c0 = c;
