@@ -646,7 +646,7 @@ namespace occa {
             std::cout << "Finding compiler vendor: " << compileLine << '\n';
           }
 
-          system(compileLine.c_str());
+          ignoreResult( system(compileLine.c_str()) );
 
           OCCA_ERROR("Could not compile compilerVendorTest.cpp with following command:\n" << compileLine,
                      sys::fileExists(binaryFilename));
