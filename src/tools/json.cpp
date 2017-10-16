@@ -391,6 +391,31 @@ namespace occa {
     return value_.array[n];
   }
 
+  int json::size() const {
+    switch(type) {
+    case none_: {
+      return 0;
+    }
+    case string_: {
+      return 1;
+    }
+    case number_: {
+      return 1;
+    }
+    case object_: {
+      return (int) value_.object.size();
+    }
+    case array_: {
+      return (int) value_.array.size();
+    }
+    case boolean_: {
+      return 1;
+    }
+    case null_: {
+      return 1;
+    }}
+  }
+
   json& json::remove(const char *c) {
     json *j = this;
     while (*c != '\0') {

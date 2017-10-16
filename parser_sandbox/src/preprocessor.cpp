@@ -99,15 +99,9 @@ namespace occa {
     compilerMacros.add("xor"   , new macro_t(this, "xor     ^"));
     compilerMacros.add("xor_eq", new macro_t(this, "xor_eq  ^="));
 
-    // [-] Add actual compiler macros as well
+    // TODO: Add actual compiler macros as well
 
-    exitOnFatalError = true;
-    errorCount   = 0;
-    warningCount = 0;
-
-    outputStream = &std::cerr;
-
-    pushStatus(reading);
+    clear();
   }
 
   void preprocessor_t::clear() {
@@ -120,6 +114,14 @@ namespace occa {
     currentStatus.clear();
 
     sourceMacros.clear();
+
+    exitOnFatalError = true;
+    errorCount   = 0;
+    warningCount = 0;
+
+    outputStream = &std::cerr;
+
+    pushStatus(reading);
   }
 
   void preprocessor_t::setOutputStream(std::ostream &outputStream_) {
@@ -175,13 +177,22 @@ namespace occa {
     currentFrame.filenameIdx = allFilenames.get(filename).valueIdx;
   }
 
-  void preprocessor_t::processFile(const std::string &filename) {
+  std::string preprocessor_t::processFile(const std::string &filename) {
+    std::string output;
+    processFile(filename, output);
+    return output;
+  }
+
+  void preprocessor_t::processFile(const std::string &filename,
+                                   std::string &output) {
     char *c = io::c_read(filename);
-    processFile(filename, c);
+    processFile(filename, c, output);
     ::free((void*) c);
   }
 
-  void preprocessor_t::processFile(const std::string &filename, char *content) {
+  void preprocessor_t::processFile(const std::string &filename,
+                                   char *content,
+                                   std::string &output) {
     if (currentFrame.fileStart) {
       frames.push_back(currentFrame);
     }
@@ -191,29 +202,39 @@ namespace occa {
     currentFrame.fileEnd      = content + strlen(content);
     currentFrame.filePosition = content;
 
-    process(currentFrame.filePosition);
+    process(currentFrame.filePosition, output);
 
     if (frames.size()) {
       currentFrame = frames[frames.size() - 1];
       frames.pop_back();
 
-      if (!frames.size() && statusStack.size()) {
+      if (!frames.size() && (statusStack.size() > 1)) {
         printError("#if without a closing #endif",
                    currentStatus.filePosition);
       }
     }
   }
 
-  void preprocessor_t::processSource(char *c) {
-    processFile("(source)", c);
+  std::string preprocessor_t::processSource(const std::string &content) {
+    std::string str = content;
+    std::string output;
+    processFile("(source)", &(str[0]), output);
+    return output;
   }
 
-  void preprocessor_t::processSource(const char *c) {
+  void preprocessor_t::processSource(char *c,
+                                     std::string &output) {
+    processFile("(source)", c, output);
+  }
+
+  void preprocessor_t::processSource(const char *c,
+                                     std::string &output) {
     std::string s(c);
-    processFile("(source)", &(s[0]));
+    processFile("(source)", &(s[0]), output);
   }
 
-  void preprocessor_t::process(char *&c) {
+  void preprocessor_t::process(char *&c,
+                               std::string &output) {
     while (*c != '\0') {
       updatingSkipWhitespace(c);
       if (*c == '#') {
@@ -221,7 +242,10 @@ namespace occa {
       } else {
         char *cStart = c;
         updatingSkipTo(c, '\n');
-        applyMacros(cStart, c - cStart);
+        output += applyMacros(cStart, c - cStart);
+        if (*c == '\n') {
+          output += '\n';
+        }
       }
     }
   }

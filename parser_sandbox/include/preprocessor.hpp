@@ -89,18 +89,25 @@ namespace occa {
 
     void setFilename(const std::string &filename, const bool add = true);
 
-    void processFile(const std::string &filename);
-    void processFile(const std::string &filename, char *content);
+    std::string processFile(const std::string &filename);
 
-    void processSource(char *c);
-    void processSource(const char *c);
+    void processFile(const std::string &filename,
+                     std::string &output);
 
-    void process(char *&c);
-    inline void process(const char *c) {
-      std::string s(c);
-      char *c_ = &(s[0]);
-      process(c_);
-    }
+    void processFile(const std::string &filename,
+                     char *content,
+                     std::string &output);
+
+    std::string processSource(const std::string &content);
+
+    void processSource(char *c,
+                       std::string &output);
+
+    void processSource(const char *c,
+                       std::string &output);
+
+    void process(char *&c,
+                 std::string &output);
 
     const macro_t* getMacro(char *c, const size_t chars);
 
