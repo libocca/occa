@@ -16,6 +16,8 @@
 namespace occa {
 #  endif
 
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wint-in-bool-context"
 //---[ bool2 ]--------------------------
 #define OCCA_BOOL2 bool2
 class bool2{
@@ -1605,6 +1607,7 @@ inline std::ostream& operator << (std::ostream &out, const bool16& a){
 //======================================
 
 
+#pragma GCC diagnostic pop
 //---[ char2 ]--------------------------
 #if (defined(OCCA_IN_KERNEL) && OCCA_USING_CUDA)
 #  define OCCA_CHAR2 make_char2

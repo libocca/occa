@@ -263,7 +263,12 @@ def define_all_types():
     define += '#  endif\n\n'
 
     for type_ in types:
+        if type_ == 'bool':
+            define += '#pragma GCC diagnostic push\n'
+            define += '#pragma GCC diagnostic ignored "-Wint-in-bool-context"\n'
         define += define_type(type_)
+        if type_ == 'bool':
+            define += '#pragma GCC diagnostic pop\n'
 
     define += '#  ifndef OCCA_IN_KERNEL\n'
     define += '}\n'
