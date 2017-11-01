@@ -1303,7 +1303,7 @@ namespace occa {
   template <>
   void device_t<Serial>::appendAvailableDevices(std::vector<device> &dList){
     device d;
-    d.setup("Serial");
+    d.setup("Serial", 0, 0);
 
     dList.push_back(d);
   }
