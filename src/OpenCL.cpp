@@ -1254,7 +1254,7 @@ namespace occa {
 
       for(int d = 0; d < deviceCount; ++d){
         device dev;
-        dev.setup("OpenCL", p, d);
+        dev.setup("mode = OpenCL", p, d);
 
         dList.push_back(dev);
       }
