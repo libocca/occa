@@ -797,7 +797,6 @@ namespace occa {
   void device_t<OpenMP>::appendAvailableDevices(std::vector<device> &dList){
     device d;
     d.setup("mode = OpenMP");
-
     dList.push_back(d);
   }
 
