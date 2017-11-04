@@ -231,6 +231,8 @@ OCCA_LFUNC void OCCA_RFUNC occaDeviceSetCompilerFlags(occaDevice device,
 OCCA_LFUNC const char* OCCA_RFUNC occaDeviceGetCompiler(occaDevice device);
 OCCA_LFUNC const char* OCCA_RFUNC occaDeviceGetCompilerEnvScript(occaDevice device);
 OCCA_LFUNC const char* OCCA_RFUNC occaDeviceGetCompilerFlags(occaDevice device);
+OCCA_LFUNC int   OCCA_RFUNC occaDeviceGetID(occaDevice device);
+OCCA_LFUNC void        OCCA_RFUNC occaDeviceGetDeviceList(int *n, occaDevice** devices);
 
 
 OCCA_LFUNC uintptr_t OCCA_RFUNC occaDeviceMemorySize(occaDevice device);
