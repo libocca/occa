@@ -450,13 +450,16 @@ namespace occa {
     return occa::hash(out);
   }
 
-  std::string json::toString() const {
+  std::string json::toString(const int indent) const {
     std::string out;
-    toString(out);
+    std::string indentStr(indent, ' ');
+    toString(out, indentStr);
     return out;
   }
 
-  void json::toString(std::string &out, const std::string &indent) const {
+  void json::toString(std::string &out,
+                      const std::string &indent,
+                      const std::string &currentIndent) const {
     switch(type) {
     case none_: {
       return;
@@ -490,19 +493,27 @@ namespace occa {
       cJsonObjectIterator it = value_.object.begin();
       out += '{';
       if (it != value_.object.end()) {
-        std::string newIndent = indent + "  ";
-        out += '\n';
+        std::string newIndent = currentIndent + indent;
+        if (indent.size()) {
+          out += '\n';
+        }
         while (it != value_.object.end()) {
           out += newIndent;
           out += '"';
           out += it->first;
           out += "\": ";
           it->second.toString(out, newIndent);
-          out += ",\n";
           ++it;
+          if (indent.size()) {
+            out += ",\n";
+          } else if (it != value_.object.end()) {
+            out += ", ";
+          }
         }
       }
-      out += indent;
+      if (indent.size()) {
+        out += currentIndent;
+      }
       out += '}';
       break;
     }
@@ -510,14 +521,20 @@ namespace occa {
       out += '[';
       const int arraySize = (int) value_.array.size();
       if (arraySize) {
-        std::string newIndent = indent + "  ";
-        out += '\n';
+        std::string newIndent = currentIndent + indent;
+        if (indent.size()) {
+          out += '\n';
+        }
         for (int i = 0; i < arraySize; ++i) {
           out += newIndent;
           value_.array[i].toString(out, newIndent);
-          out += ",\n";
+          if (indent.size()) {
+            out += ",\n";
+          } else if (i < (arraySize - 1)) {
+            out += ", ";
+          }
         }
-        out += indent;
+        out += currentIndent;
       }
       out += ']';
       break;

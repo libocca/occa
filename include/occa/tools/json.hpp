@@ -525,8 +525,10 @@ namespace occa {
 
     hash_t hash() const;
 
-    std::string toString() const;
-    void toString(std::string &out, const std::string &indent = "") const;
+    std::string toString(const int indent = 2) const;
+    void toString(std::string &out,
+                  const std::string &indent = "  ",
+                  const std::string &currentIndent = "") const;
   };
 
   template <>
