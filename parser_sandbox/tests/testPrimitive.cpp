@@ -40,6 +40,8 @@ void testLoad() {
   OCCA_TEST_COMPARE(-15.01,
                     (double) occa::primitive("-15.01"));
 
+  OCCA_TEST_COMPARE(1e-16,
+                    (double) occa::primitive("1e-16"));
   OCCA_TEST_COMPARE(15.01,
                     (double) occa::primitive("1.501e1"));
   OCCA_TEST_COMPARE(-15.01,
