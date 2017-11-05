@@ -10,6 +10,7 @@ void testNumber();
 void testObject();
 void testArray();
 void testKeywords();
+void testMethods();
 
 int main(const int argc, const char **argv) {
   testString();
@@ -17,6 +18,7 @@ int main(const int argc, const char **argv) {
   testObject();
   testArray();
   testKeywords();
+  testMethods();
 }
 
 void testString() {
@@ -165,4 +167,14 @@ void testKeywords() {
  OCCA_TEST_COMPARE(false, j.value_.boolean);
  j.load("null");
  OCCA_TEST_COMPARE(occa::json::null_, j.type);
+}
+
+void testMethods() {
+ occa::json j;
+
+ j.load("{ a: 1, b: 2 }");
+ occa::strVector_t keys = j.keys();
+ OCCA_TEST_COMPARE(2, (int) keys.size());
+ OCCA_TEST_COMPARE("a", keys[0]);
+ OCCA_TEST_COMPARE("b", keys[1]);
 }

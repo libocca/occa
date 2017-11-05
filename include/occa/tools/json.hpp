@@ -38,6 +38,7 @@ namespace occa {
   typedef jsonObject_t::const_iterator cJsonObjectIterator;
 
   typedef std::vector<json> jsonArray_t;
+  typedef std::vector<const json> cJsonArray_t;
 
   typedef struct {
     std::string string;
@@ -438,6 +439,10 @@ namespace occa {
                              const std::vector<TM> &default_ = std::vector<TM>()) const {
       return get<TM>(s.c_str(), default_);
     }
+
+    strVector_t keys() const;
+    jsonArray_t values();
+    cJsonArray_t values() const;
 
     json& remove(const char *c);
 

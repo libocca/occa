@@ -531,6 +531,45 @@ namespace occa {
     }}
   }
 
+  strVector_t json::keys() const {
+    strVector_t vec;
+    if (type == object_) {
+      const jsonObject_t &obj = value_.object;
+      cJsonObjectIterator it = obj.begin();
+      while (it != obj.end()) {
+        vec.push_back(it->first);
+        ++it;
+      }
+    }
+    return vec;
+  }
+
+  jsonArray_t json::values() {
+    jsonArray_t vec;
+    if (type == object_) {
+      jsonObject_t &obj = value_.object;
+      jsonObjectIterator it = obj.begin();
+      while (it != obj.end()) {
+        vec.push_back(it->second);
+        ++it;
+      }
+    }
+    return vec;
+  }
+
+  cJsonArray_t json::values() const {
+    cJsonArray_t vec;
+    if (type == object_) {
+      const jsonObject_t &obj = value_.object;
+      cJsonObjectIterator it = obj.begin();
+      while (it != obj.end()) {
+        vec.push_back(it->second);
+        ++it;
+      }
+    }
+    return vec;
+  }
+
   template <>
   hash_t hash(const occa::json &json) {
     return json.hash();
