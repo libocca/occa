@@ -149,7 +149,7 @@ links = $(LDFLAGS)
 
 
 #---[ Paths/Flags/Links ]-------------------------
-paths = -I$(OCCA_DIR)/lib -I$(OCCA_DIR)/include -L$(OCCA_DIR)/lib
+paths = -I$(OCCA_DIR)/include
 paths += $(foreach path, $(subst :, ,$(OCCA_INCLUDE_PATH)), -I$(path))
 paths += $(foreach path, $(subst :, ,$(OCCA_LIBRARY_PATH)), -L$(path))
 

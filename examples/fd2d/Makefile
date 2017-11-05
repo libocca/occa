@@ -26,7 +26,7 @@ objects = $(subst $(srcPath)/,$(objPath)/,$(sources:.cpp=.o))
 flags += -I$(PROJ_DIR)/include
 
 ${PROJ_DIR}/main: $(objects) $(headers) ${PROJ_DIR}/main.cpp
-	$(compiler) $(compilerFlags) -o ${PROJ_DIR}/main $(flags) $(objects) ${PROJ_DIR}/main.cpp $(paths) $(links)
+	$(compiler) $(compilerFlags) -o ${PROJ_DIR}/main $(flags) $(objects) ${PROJ_DIR}/main.cpp $(paths) -L${OCCA_DIR}/lib $(links)
 
 $(objPath)/%.o:$(srcPath)/%.cpp $(wildcard $(subst $(srcPath)/,$(incPath)/,$(<:.cpp=.hpp))) $(wildcard $(subst $(srcPath)/,$(incPath)/,$(<:.cpp=.tpp)))
 	$(compiler) $(compilerFlags) -o $@ $(flags) -c $(paths) $<
