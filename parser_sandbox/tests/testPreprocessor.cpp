@@ -10,19 +10,15 @@ public:
   preprocessorTester();
 
   void testMacroDefines();
-
   void testIfElseDefines();
-
   void testErrorDefines();
-
-  void testLineDefine();
-
+  void testSpecialMacros();
   void testEval();
 
   void test() {
     testMacroDefines();
     testErrorDefines();
-    testLineDefine();
+    testSpecialMacros();
 
 #if 0
     testIfElseDefines();
@@ -86,7 +82,6 @@ void preprocessorTester::testMacroDefines() {
                     preprocessor.applyMacros("I(1, 3)"));
 }
 
-#if 0
 void preprocessorTester::testIfElseDefines() {
   OCCA_TEST_COMPARE("",
                     preprocessor.processSource("#ifdef FOO\n"
@@ -164,7 +159,6 @@ void preprocessorTester::testIfElseDefines() {
                                                "15\n"
                                                "#endif\n"));
 }
-#endif
 
 void preprocessorTester::testErrorDefines() {
   std::stringstream ss;
@@ -194,16 +188,30 @@ void preprocessorTester::testErrorDefines() {
   ss.str("");
 }
 
-void preprocessorTester::testLineDefine() {
-  preprocessor.processSource("#line 10\n");
-  OCCA_TEST_COMPARE(10,
-                    preprocessor.currentFrame.lineNumber);
+void preprocessorTester::testSpecialMacros() {
+  OCCA_TEST_COMPARE("10\n",
+                    preprocessor.processSource("#line 10\n"
+                                               "__LINE__\n"));
 
-  preprocessor.processSource("#line 20 \"foo\"\n");
-  OCCA_TEST_COMPARE(20,
-                    preprocessor.currentFrame.lineNumber);
-  OCCA_TEST_COMPARE(occa::env::PWD + "foo",
-                    preprocessor.currentFrame.filename());
+  OCCA_TEST_COMPARE("20\n"
+                    + occa::env::PWD + "foo\n"
+                    "22\n",
+                    preprocessor.processSource("#line 20 \"foo\"\n"
+                                               "__LINE__\n"
+                                               "__FILE__\n"
+                                               "__LINE__\n"));
+
+  OCCA_TEST_COMPARE("0\n"
+                    "1\n"
+                    "3\n"
+                    "2\n",
+                    preprocessor.processSource("__COUNTER__\n"
+                                               "__COUNTER__\n"
+                                               "__LINE__\n"
+                                               "__COUNTER__\n"));
+
+  std::cout << preprocessor.processSource("_DATE_ macro: __DATE__\n"
+                                          "_TIME_ macro: __TIME__\n");
 }
 
 #if 0
