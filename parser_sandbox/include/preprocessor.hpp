@@ -94,9 +94,9 @@ namespace occa {
     void processFile(const std::string &filename,
                      std::string &output);
 
-    void processFile(const std::string &filename,
-                     char *content,
-                     std::string &output);
+    void processSource(const std::string &filename,
+                       char *content,
+                       std::string &output);
 
     std::string processSource(const std::string &content);
 

@@ -20,7 +20,7 @@ executables = ${PROJ_DIR}/main
 all: $(executables)
 
 ${PROJ_DIR}/main: $(objects) $(headers) ${PROJ_DIR}/main.cpp $(tests)
-	$(compiler) $(compilerFlags) -o ${PROJ_DIR}/main $(flags) $(objects) ${PROJ_DIR}/main.cpp $(paths) $(links)
+	$(compiler) $(compilerFlags) -o ${PROJ_DIR}/main $(flags) -L ${OCCA_DIR}/lib $(objects) ${PROJ_DIR}/main.cpp $(paths) $(links)
 
 $(objPath)/%.o:$(srcPath)/%.cpp $(incPath)/%.hpp
 	@mkdir -p $(objPath)
@@ -32,12 +32,12 @@ $(objPath)/%.o:$(srcPath)/%.cpp $(incPath)/%.hpp $(incPath)/%.tpp
 
 $(testPath)/bin/%:$(testPath)/%.cpp $(objects) $(headers)
 	@mkdir -p $(testPath)/bin
-	$(compiler) $(compilerFlags) -o $@ $(flags) $(objects) $< $(paths) $(links)
+	$(compiler) $(compilerFlags) -o $@ $(flags) -L ${OCCA_DIR}/lib $(objects) $< $(paths) $(links)
 
 test: $(tests)
-	@for test in $(tests); do \
-	    echo $$test;          \
-	    $$test;               \
+	@for test in $(tests); do   \
+	    echo "Running: $$test"; \
+	    $$test;                 \
 	done
 
 clean:

@@ -186,13 +186,13 @@ namespace occa {
   void preprocessor_t::processFile(const std::string &filename,
                                    std::string &output) {
     char *c = io::c_read(filename);
-    processFile(filename, c, output);
+    processSource(filename, c, output);
     ::free((void*) c);
   }
 
-  void preprocessor_t::processFile(const std::string &filename,
-                                   char *content,
-                                   std::string &output) {
+  void preprocessor_t::processSource(const std::string &filename,
+                                     char *content,
+                                     std::string &output) {
     if (currentFrame.fileStart) {
       frames.push_back(currentFrame);
     }
@@ -218,19 +218,19 @@ namespace occa {
   std::string preprocessor_t::processSource(const std::string &content) {
     std::string str = content;
     std::string output;
-    processFile("(source)", &(str[0]), output);
+    processSource("(source)", &(str[0]), output);
     return output;
   }
 
   void preprocessor_t::processSource(char *c,
                                      std::string &output) {
-    processFile("(source)", c, output);
+    processSource("(source)", c, output);
   }
 
   void preprocessor_t::processSource(const char *c,
                                      std::string &output) {
     std::string s(c);
-    processFile("(source)", &(s[0]), output);
+    processSource("(source)", &(s[0]), output);
   }
 
   void preprocessor_t::process(char *&c,
@@ -477,10 +477,12 @@ namespace occa {
   }
 
   void preprocessor_t::processError(char *&dStart, char *&c) {
+    dStart += 5 + (dStart[5] != '\0');
     processMessage(dStart, true);
   }
 
   void preprocessor_t::processWarning(char *&dStart, char *&c) {
+    dStart += 7 + (dStart[7] != '\0');
     processMessage(dStart, false);
   }
 
