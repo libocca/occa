@@ -442,7 +442,7 @@ namespace occa {
 
     strVector_t keys() const;
     jsonArray_t values();
-    cJsonArray_t values() const;
+    jsonArray_t values() const;
 
     json& remove(const char *c);
 

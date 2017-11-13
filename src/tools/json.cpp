@@ -574,8 +574,8 @@ namespace occa {
     return vec;
   }
 
-  cJsonArray_t json::values() const {
-    cJsonArray_t vec;
+  jsonArray_t json::values() const {
+    jsonArray_t vec;
     if (type == object_) {
       const jsonObject_t &obj = value_.object;
       cJsonObjectIterator it = obj.begin();
