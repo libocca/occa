@@ -32,7 +32,8 @@ namespace occa {
     definedLine(-1),
     undefinedLine(-1) {}
 
-  macro_t::macro_t(const preprocessor_t *preprocessor_, char *c) :
+  macro_t::macro_t(const preprocessor_t *preprocessor_,
+                   char *c) :
     preprocessor(preprocessor_),
     definedLine(-1),
     undefinedLine(-1) {
@@ -41,7 +42,8 @@ namespace occa {
     load(c);
   }
 
-  macro_t::macro_t(const preprocessor_t *preprocessor_, const char *c) :
+  macro_t::macro_t(const preprocessor_t *preprocessor_,
+                   const char *c) :
     preprocessor(preprocessor_),
     definedLine(-1),
     undefinedLine(-1) {
@@ -102,7 +104,9 @@ namespace occa {
     }
   }
 
-  void macro_t::loadArgs(char *&c, macroPartVector_t &argNames, const bool loadingArgNames) const {
+  void macro_t::loadArgs(char *&c,
+                         macroPartVector_t &argNames,
+                         const bool loadingArgNames) const {
     static std::string startDelimiters = std::string(lex::whitespaceChars) + "(";
     static std::string endDelimiters(",)");
 
@@ -154,7 +158,8 @@ namespace occa {
     c = argsEnd + (*argsEnd == ')');
   }
 
-  void macro_t::setParts(char *&c, macroPartVector_t &argNames) {
+  void macro_t::setParts(char *&c,
+                         macroPartVector_t &argNames) {
     static std::string delimiters;
     // Setup word delimeters [a-zA-Z0-9]
     if (delimiters.size() == 0) {

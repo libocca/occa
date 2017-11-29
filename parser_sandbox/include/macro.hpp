@@ -2,6 +2,7 @@
 #define OCCA_PARSER_MACRO_HEADER2
 
 #include <vector>
+#include <iostream>
 
 namespace occa {
   class macroPart_t;
@@ -52,15 +53,20 @@ namespace occa {
     int definedLine, undefinedLine;
 
     macro_t(const preprocessor_t *preprocessor_ = NULL);
-    macro_t(const preprocessor_t *preprocessor_, char *c);
-    macro_t(const preprocessor_t *preprocessor_, const char *c);
+    macro_t(const preprocessor_t *preprocessor_,
+            char *c);
+    macro_t(const preprocessor_t *preprocessor_,
+            const char *c);
 
     void load(char *c);
     void load(const char *c);
 
     void loadName(char *&c);
-    void loadArgs(char *&c, macroPartVector_t &argNames, const bool loadingArgNames = true) const;
-    void setParts(char *&c, macroPartVector_t &argNames);
+    void loadArgs(char *&c,
+                  macroPartVector_t &argNames,
+                  const bool loadingArgNames = true) const;
+    void setParts(char *&c,
+                  macroPartVector_t &argNames);
 
     void clear();
     std::string expand(const char *c) const;
@@ -71,9 +77,12 @@ namespace occa {
     void print() const;
 
     //---[ Messages ]-------------------
-    void printError(const char *c, const std::string &message) const;
-    void printFatalError(const char *c, const std::string &message) const;
-    void printWarning(const char *c, const std::string &message) const;
+    void printError(const char *c,
+                    const std::string &message) const;
+    void printFatalError(const char *c,
+                         const std::string &message) const;
+    void printWarning(const char *c,
+                      const std::string &message) const;
     //==================================
   };
   //====================================

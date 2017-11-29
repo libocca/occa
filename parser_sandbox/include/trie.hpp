@@ -51,7 +51,7 @@ namespace occa {
     //---[ Result ]---------------------
     class result_t {
     public:
-      const trie_t<TM> *trie;
+      trie_t<TM> *trie;
       int length;
       int valueIdx;
 
@@ -62,6 +62,7 @@ namespace occa {
 
       inline bool success() const;
       inline const TM& value() const;
+      inline TM& value();
     };
     //==================================
 
@@ -90,12 +91,12 @@ namespace occa {
     result_t getFirst(const char *c, const int length = INT_MAX) const;
     result_t trieGetFirst(const char *c, const int length) const;
     inline result_t getFirst(const std::string &s) const {
-      return getFirst(s.c_str(), s.size());
+      return getFirst(s.c_str(), (int) s.size());
     }
 
     result_t get(const char *c, const int length = INT_MAX) const;
     inline result_t get(const std::string &s) const {
-      return get(s.c_str());
+      return get(s.c_str(), (int) s.size());
     }
 
     bool has(const char c) const;

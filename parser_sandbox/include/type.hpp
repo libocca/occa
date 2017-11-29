@@ -7,16 +7,32 @@
 
 #include "occa/defines.hpp"
 #include "occa/types.hpp"
+#include "printer.hpp"
+
+// TODO: Add mangle logic here
 
 namespace occa {
   namespace lang {
+    class statement_t;
     class qualifier;
-    class type;
+    class type_t;
 
     typedef std::vector<const qualifier*> qualifierVec_t;
-    typedef std::vector<type*> typeVec_t;
+    typedef std::vector<type_t*> typeVec_t;
 
-    int charsFromNewline(const std::string &s);
+    class classAccess {
+    public:
+      static const int private_   = (1 << 0);
+      static const int protected_ = (1 << 1);
+      static const int public_    = (1 << 2);
+    };
+
+    class classLabel {
+    public:
+      static const int class_  = (1 << 0);
+      static const int struct_ = (1 << 1);
+      static const int union_  = (1 << 2);
+    };
 
     //---[ Specifier ]------------------
     class specifier {
@@ -30,6 +46,7 @@ namespace occa {
       static const int variableType  = (1 << 3);
       static const int primitiveType = (1 << 4);
       static const int definedType   = (1 << 5);
+      static const int attributeType = (1 << 6);
 
       specifier(const int specType_);
       specifier(const std::string &name_, const int specType_);
@@ -43,16 +60,13 @@ namespace occa {
         return (name.size() == 0);
       }
 
-      inline std::string toString() const {
-        std::string s;
-        printOn(s);
-        return s;
-      }
+      virtual std::string uniqueName() const;
 
-      virtual void printOn(std::string &out) const;
+      virtual void print(printer_t &pout) const;
+
+      std::string toString() const;
+      void debugPrint() const;
     };
-
-    std::ostream& operator << (std::ostream &out, const specifier &s);
 
     //---[ Qualifier ]------------------
     class qualifier : public specifier {
@@ -79,32 +93,35 @@ namespace occa {
       void add(const qualifier &q);
       void remove(const qualifier &q);
 
-      std::string toString() const;
+      void print(printer_t &pout) const;
 
-      void printOn(std::string &out) const;
+      std::string toString() const;
+      void debugPrint() const;
     };
 
-    std::ostream& operator << (std::ostream &out, const qualifiers &qs);
-
     //---[ Type ]-----------------------
-    class type : public specifier {
+    class type_t : public specifier {
     public:
-      const type *baseType;
+      const type_t *baseType;
       qualifiers qualifiers_;
 
-      type();
-      type(const std::string &name_);
-      type(const std::string &name_, const int specType_);
+      type_t();
+      type_t(const std::string &name_);
+      type_t(const std::string &name_, const int specType_);
 
-      type(const type &baseType_, const std::string &name_ = "");
-      type(const qualifiers &qs, const std::string &name_ = "");
-      type(const qualifiers &qs, const type &baseType_, const std::string &name_ = "");
+      type_t(const type_t &baseType_,
+             const std::string &name_ = "");
+      type_t(const qualifiers &qs,
+             const std::string &name_ = "");
+      type_t(const qualifiers &qs,
+             const type_t &baseType_,
+             const std::string &name_ = "");
 
-      virtual ~type();
+      virtual ~type_t();
 
-      void replaceBaseType(const type &baseType_);
+      void replaceBaseType(const type_t &baseType_);
 
-      virtual type& clone() const;
+      virtual type_t& clone() const;
 
       inline void add(const qualifier &q) {
         qualifiers_.add(q);
@@ -118,92 +135,119 @@ namespace occa {
         return qualifiers_.has(q) >= 0;
       }
 
-      virtual void printDeclarationOn(std::string &out) const;
-      virtual void printOn(std::string &out) const;
+      virtual void print(printer_t &pout) const;
+    };
+
+    class declarationType_t : public virtual type_t {
+    public:
+      virtual void printDeclaration(printer_t &pout) const = 0;
     };
 
     //---[ PrimitiveType ]------------------
-    class primitiveType : public type {
+    class primitiveType : public type_t {
     public:
       primitiveType(const std::string &name_);
       virtual ~primitiveType();
 
-      virtual type& clone() const;
+      virtual type_t& clone() const;
 
-      virtual void printDeclarationOn(std::string &out) const;
-      virtual void printOn(std::string &out) const;
+      virtual void print(printer_t &pout) const;
     };
 
     //---[ Pointer ]--------------------
-    class pointerType : public type {
+    class pointerType : public type_t {
     public:
-      pointerType(const type &t);
-      pointerType(const qualifiers &qs, const type &t);
+      pointerType(const type_t &t);
+      pointerType(const qualifiers &qs, const type_t &t);
       virtual ~pointerType();
 
-      virtual type& clone() const;
+      virtual type_t& clone() const;
 
-      virtual void printDeclarationOn(std::string &out) const;
-      virtual void printOn(std::string &out) const;
+      virtual void print(printer_t &pout) const;
     };
 
     //---[ Reference ]------------------
-    class referenceType : public type {
+    class referenceType : public type_t {
     public:
-      referenceType(const type &t);
+      referenceType(const type_t &t);
       virtual ~referenceType();
 
-      virtual type& clone() const;
+      virtual type_t& clone() const;
 
-      virtual void printDeclarationOn(std::string &out) const;
-      virtual void printOn(std::string &out) const;
-    };
-
-    //---[ Typedef ]--------------------
-    class typedefType : public type {
-    public:
-      typedefType(const type &t, const std::string &name_);
-      typedefType(const qualifiers &qs, const type &t, const std::string &name_);
-      virtual ~typedefType();
-
-      virtual type& clone() const;
-
-      virtual void printDeclarationOn(std::string &out) const;
-      virtual void printOn(std::string &out) const;
+      virtual void print(printer_t &pout) const;
     };
 
     //---[ Class ]----------------------
-    class classType : public type {
+    class classType : public declarationType_t {
+      std::string name;
+      int label;
+      statement_t *body;
+
+      classType(const std::string &name_,
+                const int label_);
+
+      void setBody(statement_t &body_);
+
       virtual ~classType();
 
-      virtual type& clone() const;
+      virtual type_t& clone() const;
+
+      virtual void printDeclaration(printer_t &pout) const;
+      virtual void print(printer_t &pout) const;
+    };
+
+    //---[ Typedef ]--------------------
+    class typedefType : public declarationType_t {
+    public:
+      typedefType(const type_t &t, const std::string &name_);
+      typedefType(const qualifiers &qs, const type_t &t, const std::string &name_);
+      virtual ~typedefType();
+
+      virtual type_t& clone() const;
+
+      virtual void printDeclaration(printer_t &pout) const;
+      virtual void print(printer_t &pout) const;
     };
 
     //---[ Function ]-------------------
-    class functionType : public type {
+    class functionType : public declarationType_t {
     public:
       typeVec_t args;
+      std::vector<void*> defaultValues;
+      mutable statement_t *body;
 
-      functionType(const type &returnType);
-      functionType(const type &returnType, const std::string &name_);
+      functionType(const type_t &returnType);
+      functionType(const type_t &returnType, const std::string &name_);
       virtual ~functionType();
 
-      void setReturnType(const type &returnType);
-      const type& returnType() const;
+      void setReturnType(const type_t &returnType);
+      const type_t& returnType() const;
 
-      void add(const type &argType,
-               const std::string &argName = "");
+      void addArg(const type_t &argType,
+                  const std::string &argName = "",
+                  const void *defaultValue = NULL); // TODO: default values
 
-      void add(const qualifiers &qs,
-               const type &argType,
-               const std::string &argName = "");
+      void addArg(const qualifiers &qs,
+                  const type_t &argType,
+                  const std::string &argName = "",
+                  const void *defaultValue = NULL);
 
       inline int argumentCount() const {
         return (int) args.size();
       }
 
-      virtual void printDeclarationOn(std::string &out) const;
-      virtual void printOn(std::string &out) const;
+      void setBody(statement_t &body_);
+
+      virtual void printDeclaration(printer_t &pout) const;
+      virtual void print(printer_t &pout) const;
+    };
+
+    //---[ Attribute ]----------------
+    class attribute : public specifier {
+      attribute(const std::string &name_);
+      virtual ~attribute();
+
+      virtual void print(printer_t &pout) const;
     };
   }
 }

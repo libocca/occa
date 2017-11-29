@@ -1,164 +1,273 @@
-#if 0
-
 #ifndef OCCA_PARSER_STATEMENT_HEADER2
 #define OCCA_PARSER_STATEMENT_HEADER2
 
 #include "occa/tools/gc.hpp"
+#include "macro.hpp"
+#include "context.hpp"
+#include "scope.hpp"
 
 namespace occa {
-  class statementPrintInfo_t {
-  public:
-    std::string s;
-    std::string indent;
-    bool inlined;
+  namespace lang {
+    class directiveStatement_t;
+    class blockStatement_t;
+    class typeDeclStatement_t;
+    class classAccessStatement_t;
+    class expressionStatement_t;
+    class declarationStatement_t;
+    class gotoStatement_t;
+    class gotoLabelStatement_t;
+    class namespaceStatement_t;
+    class whileStatement_t;
+    class forStatement_t;
+    class switchStatement_t;
+    class caseStatement_t;
 
-    statementPrintInfo_t();
+    class statementType {
+    public:
+      static const int none        = 0;
+      static const int block       = (1 << 0);
+      static const int typeDecl    = (1 << 1);
+      static const int expression  = (1 << 2);
+      static const int declaration = (1 << 3);
+      static const int while_      = (1 << 4);
+      static const int for_        = (1 << 5);
+      static const int switch_     = (1 << 6);
+    };
 
-    void addIndentation();
-    void removeIndentation();
-  };
+    class statement_t : public withRefs {
+    public:
+      statement_t *up;
+      context_t &context;
+      scope_t scope;
 
-  class statement_t : public withRefs {
-  public:
-    parser_t &parser;
-    scope_t scope;
+      statement_t(context_t &context_);
 
-    astNode_t root;
-    statement_t *up;
+      virtual ~statement_t();
 
-    statement_t(parser_t &parser_);
-    statement_t(const statement_t &s);
-    statement_t& operator = (const statement_t &s);
+      virtual statement_t& clone() const = 0;
 
-    ~statement_t();
+      virtual int type() const;
+      virtual bool hasScope() const;
 
-    virtual statement_t& clone() = 0;
+      // Creation methods
+      directiveStatement_t   newDirectiveStatement(macro_t &macro);
+      blockStatement_t       newBlockStatement();
+      typeDeclStatement_t    newTypeDeclarationStatement(declarationType_t &declType_);
+      classAccessStatement_t newClassAccessStatement(const int access_);
+      expressionStatement_t  newExpressionStatement();
+      declarationStatement_t newDeclarationStatement();
+      gotoStatement_t        newGotoStatement(const std::string &name_);
+      gotoLabelStatement_t   newGotoLabelStatement(const std::string &name_);
+      namespaceStatement_t   newNamespaceStatement(const std::string &name_);
+      whileStatement_t       newWhileStatement(statement_t &check_);
+      forStatement_t         newForStatement(statement_t &init_,
+                                             statement_t &check_,
+                                             statement_t &update_);
+      switchStatement_t      newSwitchStatement(statement_t &value_);
+      caseStatement_t        newCaseStatement(statement_t &value_);
 
-    virtual void print(statementPrintInfo_t &pi) const = 0;
+      virtual void print(printer_t &pout) const = 0;
 
-    void addIndentation(std::string &indent);
-    void removeIndentation(std::string &indent);
+      std::string toString() const;
+      operator std::string() const;
+      void print() const;
+    };
 
-    std::string toString() const;
-    operator std::string() const;
-    void print() const;
-  };
+    //---[ Directive ]--------------------
+    class directiveStatement_t : public statement_t {
+    public:
+      macro_t &macro;
 
-  //---[ Directive ]--------------------
-  class directiveStatement_t : public statement_t {
-  public:
-    std::string directive;
+      directiveStatement_t(context_t &context_,
+                           macro_t &macro_);
 
-    virtual statement_t& clone() const;
-    virtual void print(statementPrintInfo_t &pi) const;
-  };
-  //====================================
+      virtual statement_t& clone() const;
+      virtual void print(printer_t &pout) const;
+    };
+    //====================================
 
-  //---[ Type ]-------------------------
-  class typeStatement_t : public statement_t {
-  public:
+    //---[ Block ]------------------------
+    class blockStatement_t : public statement_t {
+    public:
+      std::vector<statement_t*> children;
 
-    virtual statement_t& clone() const;
-    virtual void print(statementPrintInfo_t &pi) const;
-  };
-  //====================================
+      blockStatement_t(context_t &context_);
 
-  //---[ Declaration ]------------------
-  class declarationStatement_t : public statement_t {
-  public:
+      void addChild(statement_t &child);
+      void clearChildren();
 
-    virtual statement_t& clone() const;
-    virtual void print(statementPrintInfo_t &pi) const;
-  };
-  //====================================
+      virtual statement_t& clone() const;
 
-  //---[ Expression ]-------------------
-  class expressionStatement_t : public statement_t {
-  public:
+      virtual int type() const;
 
-    virtual statement_t& clone() const;
-    virtual void print(statementPrintInfo_t &pi) const;
-  };
-  //====================================
+      virtual bool hasScope() const;
 
-  //---[ Goto ]-------------------------
-  class gotoStatement_t : public statement_t {
-  public:
-    std::string name;
+      virtual void print(printer_t &pout) const;
+      void printChildren(printer_t &pout) const;
+    };
+    //====================================
 
-    virtual statement_t& clone() const;
-    virtual void print(statementPrintInfo_t &pi) const;
-  };
-  //====================================
+    //---[ Type ]-------------------------
+    class typeDeclStatement_t : public statement_t {
+    public:
+      declarationType_t &declType;
 
-  //---[ Block ]------------------------
-  class blockStatement_t : public statement_t {
-  public:
-    std::vector<statement_t*> children;
+      typeDeclStatement_t(context_t &context_,
+                          declarationType_t &declType_);
 
-    blockStatement_t();
+      virtual statement_t& clone() const;
 
-    void addChild(statement_t &child);
-    void clearChildren();
+      virtual int type() const;
 
-    virtual statement_t& clone() const;
-    virtual void print(statementPrintInfo_t &pi) const;
-    void printChildren(statementPrintInfo_t &pi) const;
-  };
-  //====================================
+      virtual bool hasScope() const;
 
-  //---[ Namespace ]--------------------
-  class namespaceStatement_t : public blockStatement_t {
-  public:
-    std::string name;
+      virtual void print(printer_t &pout) const;
+    };
 
-    namespaceStatement_t(const std::string &name_);
+    class classAccessStatement_t : public statement_t {
+    public:
+      int access;
 
-    virtual statement_t& clone() const;
-    virtual void print(statementPrintInfo_t &pi) const;
-  };
-  //====================================
+      classAccessStatement_t(context_t &context_,
+                             const int access_);
 
-  //---[ While ]------------------------
-  class whileStatement_t : public blockStatement_t {
-  public:
-    statement &check;
+      virtual statement_t& clone() const;
+      virtual void print(printer_t &pout) const;
+    };
+    //====================================
 
-    virtual statement_t& clone() const;
-    virtual void print(statementPrintInfo_t &pi) const;
-  };
-  //====================================
+    //---[ Expression ]------------------- TODO
+    class expressionStatement_t : public statement_t {
+    public:
+      expressionStatement_t(context_t &context_);
 
-  //---[ For ]--------------------------
-  class forStatement_t : public blockStatement_t {
-  public:
-    statement &init, &check, &update;
+      virtual statement_t& clone() const;
 
-    virtual statement_t& clone() const;
-    virtual void print(statementPrintInfo_t &pi) const;
-  };
-  //====================================
+      virtual int type() const;
 
-  //---[ Switch ]-----------------------
-  class switchStatement_t : public blockStatement_t {
-  public:
-    statement &value;
+      virtual void print(printer_t &pout) const;
+    };
 
-    virtual statement_t& clone() const;
-    virtual void print(statementPrintInfo_t &pi) const;
-  };
-  //====================================
+    class declarationStatement_t : public statement_t {
+    public:
+      declarationStatement_t(context_t &context_);
 
-  //---[ Case ]-------------------------
-  class caseStatement_t : public statement_t {
-  public:
-    statement &value;
+      virtual statement_t& clone() const;
 
-    virtual statement_t& clone() const;
-    virtual void print(statementPrintInfo_t &pi) const;
-  };
-  //====================================
+      virtual int type() const;
+
+      virtual void print(printer_t &pout) const;
+    };
+    //====================================
+
+    //---[ Goto ]-------------------------
+    class gotoStatement_t : public statement_t {
+    public:
+      std::string name;
+
+      gotoStatement_t(context_t &context_,
+                      const std::string &name_);
+
+      virtual statement_t& clone() const;
+      virtual void print(printer_t &pout) const;
+    };
+
+    class gotoLabelStatement_t : public statement_t {
+    public:
+      std::string name;
+
+      gotoLabelStatement_t(context_t &context_,
+                           const std::string &name_);
+
+      virtual statement_t& clone() const;
+      virtual void print(printer_t &pout) const;
+    };
+    //====================================
+
+    //---[ Namespace ]--------------------
+    class namespaceStatement_t : public blockStatement_t {
+    public:
+      std::string name;
+
+      namespaceStatement_t(context_t &context_,
+                           const std::string &name_);
+
+      virtual bool hasScope() const;
+
+      virtual statement_t& clone() const;
+      virtual void print(printer_t &pout) const;
+    };
+    //====================================
+
+    //---[ While ]------------------------
+    class whileStatement_t : public blockStatement_t {
+    public:
+      statement_t &check;
+
+      whileStatement_t(context_t &context_,
+                       statement_t &check_);
+
+      virtual statement_t& clone() const;
+
+      virtual int type() const;
+
+      virtual bool hasScope() const;
+
+      virtual void print(printer_t &pout) const;
+    };
+    //====================================
+
+    //---[ For ]--------------------------
+    class forStatement_t : public blockStatement_t {
+    public:
+      statement_t &init, &check, &update;
+
+      forStatement_t(context_t &context_,
+                     statement_t &init_,
+                     statement_t &check_,
+                     statement_t &update_);
+
+      virtual statement_t& clone() const;
+
+      virtual int type() const;
+
+      virtual bool hasScope() const;
+
+      virtual void print(printer_t &pout) const;
+    };
+    //====================================
+
+    //---[ Switch ]-----------------------
+    class switchStatement_t : public blockStatement_t {
+    public:
+      statement_t &value;
+
+      switchStatement_t(context_t &context_,
+                        statement_t &value_);
+
+      virtual statement_t& clone() const;
+
+      virtual int type() const;
+
+      virtual bool hasScope() const;
+
+      virtual void print(printer_t &pout) const;
+    };
+    //====================================
+
+    //---[ Case ]-------------------------
+    class caseStatement_t : public statement_t {
+    public:
+      statement_t &value;
+
+      caseStatement_t(context_t &context_,
+                      statement_t &value_);
+
+      virtual statement_t& clone() const;
+      virtual void print(printer_t &pout) const;
+    };
+    //====================================
+  }
 }
 
-#endif
 #endif

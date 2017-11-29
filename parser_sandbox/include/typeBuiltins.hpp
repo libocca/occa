@@ -24,8 +24,8 @@ namespace occa {
     extern const qualifier virtual_;
 
     extern const qualifier class_;
-    extern const qualifier enum_;
     extern const qualifier struct_;
+    extern const qualifier enum_;
     extern const qualifier union_;
 
     extern const primitiveType bool_;

@@ -15,7 +15,7 @@ namespace occa {
   trie_t<TM>::result_t::result_t(const trie_t<TM> *trie_,
                                  const int length_,
                                  const int valueIdx_) :
-    trie(trie_),
+    trie(const_cast<trie_t<TM>*>(trie_)),
     length(length_),
     valueIdx(valueIdx_) {}
 
@@ -26,7 +26,16 @@ namespace occa {
 
   template <class TM>
   const TM& trie_t<TM>::result_t::value() const {
-    return (0 <= valueIdx) ? trie->values[valueIdx] : trie->defaultValue;
+    return ((0 <= valueIdx)
+            ? trie->values[valueIdx]
+            : trie->defaultValue);
+  }
+
+  template <class TM>
+  TM& trie_t<TM>::result_t::value() {
+    return ((0 <= valueIdx)
+            ? trie->values[valueIdx]
+            : trie->defaultValue);
   }
   //  ==================================
 
@@ -136,7 +145,8 @@ namespace occa {
   }
 
   template <class TM>
-  typename trie_t<TM>::result_t trie_t<TM>::getFirst(const char *c, const int length) const {
+  typename trie_t<TM>::result_t trie_t<TM>::getFirst(const char *c,
+                                                     const int length) const {
     if (!isFrozen) {
       return trieGetFirst(c, length);
     }

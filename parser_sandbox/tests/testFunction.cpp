@@ -16,7 +16,7 @@ void testFunction() {
   qualifiers q1;
   q1.add(volatile_);
 
-  type t1_0(float_);
+  type_t t1_0(float_);
   t1_0.add(const_);
   pointerType t1_1(q1, t1_0);
   referenceType t1(t1_1);
@@ -25,18 +25,18 @@ void testFunction() {
   typedefType td2 = typedefType(t2, "t2");
 
   functionType f(void_, "foo");
-  f.add(t1     , "a");
-  f.add(td2    , "b");
-  f.add(volatile_, float_ , "c");
-  f.add(pointerType(const_, char_));
-  f.add(double_, "e");
+  f.addArg(t1     , "a");
+  f.addArg(td2    , "b");
+  f.addArg(volatile_, float_ , "c");
+  f.addArg(pointerType(const_, char_));
+  f.addArg(double_, "e");
 
-  std::cout << "q1   = " << q1 << '\n'
-            << "t1_0 = " << t1_0 << '\n'
-            << "t1_1 = " << t1_1 << '\n'
-            << "t1   = " << t1 << '\n'
-            << "t2   = " << t2 << '\n'
-            << "td1  = " << td1 << '\n'
-            << "td2  = " << td2 << '\n'
-            << "f    =\n" << f << '\n';
+  std::cout << "q1   = " << q1.toString() << '\n'
+            << "t1_0 = " << t1_0.toString() << '\n'
+            << "t1_1 = " << t1_1.toString() << '\n'
+            << "t1   = " << t1.toString() << '\n'
+            << "t2   = " << t2.toString() << '\n'
+            << "td1  = " << td1.toString() << '\n'
+            << "td2  = " << td2.toString() << '\n'
+            << "f    =\n" << f.toString() << '\n';
 }
