@@ -82,8 +82,12 @@ function dirWithLibrary {
     mergedLibPaths=$mergedLibPaths:$OCCA_LIBRARY_PATH
     mergedLibPaths=$mergedLibPaths:$LD_LIBRARY_PATH
     mergedLibPaths=$mergedLibPaths:$DYLD_LIBRARY_PATH
-    mergedLibPaths=$mergedLibPaths:"/usr/local/cuda*/lib*"
-    mergedLibPaths=$mergedLibPaths:"/usr/local/cuda*/lib*/stubs"
+    if [ -z $OCCA_CUDA_LIBRARY_PATH ]; then
+      mergedLibPaths=$mergedLibPaths:"/usr/local/cuda*/lib*"
+      mergedLibPaths=$mergedLibPaths:"/usr/local/cuda*/lib*/stubs"
+    else
+      mergedLibPaths=$mergedLibPaths:$OCCA_CUDA_LIBRARY_PATH
+    fi
     mergedLibPaths=$mergedLibPaths:"/lib:/usr/lib:/usr/lib32:/usr/lib64:"
     mergedLibPaths=$mergedLibPaths:"/usr/lib/*-gnu/"
 
@@ -122,15 +126,23 @@ function dirWithHeader {
     mergedPaths=$mergedPaths:$CPLUS_INCLUDE_PATH
     mergedPaths=$mergedPaths:$C_INCLUDE_PATH
     mergedPaths=$mergedPaths:$INCLUDEPATH
-    mergedPaths=$mergedPaths:"/usr/local/cuda*/include"
-    mergedPaths=$mergedPaths:"/Developer/NVIDIA/CUDA*/include"
+    if [ -z $OCCA_CUDA_INCLUDE_PATH ]; then
+      mergedPaths=$mergedPaths:"/usr/local/cuda*/include"
+      mergedPaths=$mergedPaths:"/Developer/NVIDIA/CUDA*/include"
+    else
+      mergedPaths=$mergedPaths:$OCCA_CUDA_INCLUDE_PATH
+    fi
     mergedPaths=$mergedPaths:"/usr/include"
 
     mergedLibPaths=$mergedLibPaths:$OCCA_LIBRARY_PATH
     mergedLibPaths=$mergedLibPaths:$LD_LIBRARY_PATH
     mergedLibPaths=$mergedLibPaths:$DYLD_LIBRARY_PATH
-    mergedLibPaths=$mergedLibPaths:"/usr/local/cuda*/lib*"
-    mergedLibPaths=$mergedLibPaths:"/usr/local/cuda*/lib*/stubs"
+    if [ -z $OCCA_CUDA_LIBRARY_PATH ]; then
+      mergedLibPaths=$mergedLibPaths:"/usr/local/cuda*/lib*"
+      mergedLibPaths=$mergedLibPaths:"/usr/local/cuda*/lib*/stubs"
+    else
+      mergedLibPaths=$mergedLibPaths:$OCCA_CUDA_LIBRARY_PATH
+    fi
     mergedLibPaths=$mergedLibPaths:"/lib:/usr/lib:/usr/lib32:/usr/lib64:"
     mergedLibPaths=$mergedLibPaths:"/usr/lib/*-gnu/"
 
