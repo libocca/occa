@@ -105,8 +105,8 @@ function defaultIncludePath {
     mergedPaths+=":/usr/local/cuda*/include"
     mergedPaths+=":/Developer/NVIDIA/CUDA*/include"
     mergedPaths+=":/usr/local/cuda*/targets/*/include/"
-    mergedPaths+=":/usr/include"
     mergedPaths+=":/opt/cuda*/include/"
+    mergedPaths+=":/usr/include"
 
     echo "${mergedPaths}"
 }
@@ -120,9 +120,9 @@ function defaultLibraryPath {
     mergedPaths+=":/opt/rocm/opencl/lib/*"
     mergedPaths+=":/usr/local/cuda*/lib*"
     mergedPaths+=":/usr/local/cuda*/lib*/stubs"
+    mergedPaths+=":/opt/cuda*/lib*"
     mergedPaths+=":/lib:/usr/lib:/usr/lib32:/usr/lib64:"
     mergedPaths+=":/usr/lib/*-gnu/"
-    mergedPaths+=":/opt/cuda*/lib*"
 
     echo "${mergedPaths}"
 }
