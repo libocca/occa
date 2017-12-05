@@ -25,9 +25,15 @@ rmSlash = $(patsubst %/,%,$1)
 OCCA_DIR := $(call rmSlash,$(dir $(abspath $(lastword $(MAKEFILE_LIST)))))
 PROJ_DIR := $(OCCA_DIR)
 
+ifndef PREFIX
+  OCCA_COMPILED_DIR = $(OCCA_DIR)
+else
+  OCCA_COMPILED_DIR = $(PREFIX)
+endif
+
 include $(OCCA_DIR)/scripts/Makefile
 
-#---[ WORKING PATHS ]-----------------------------
+#---[ Working Paths ]-----------------------------
 ifeq ($(usingWinux),0)
   compilerFlags  += $(picFlag)
   fCompilerFlags += $(picFlag)
@@ -42,7 +48,7 @@ paths := $(filter-out -L$(OCCA_DIR)/lib,$(paths))
 links := $(filter-out -locca,$(links))
 #=================================================
 
-#---[ VARIABLES ]---------------------------------
+#---[ variables ]---------------------------------
 srcToObject  = $(subst $(PROJ_DIR)/src,$(PROJ_DIR)/obj,$(1:.cpp=.o))
 
 sources  = $(realpath $(shell find $(PROJ_DIR)/src     -type f -name '*.cpp'))
@@ -55,7 +61,7 @@ outputs = $(libPath)/libocca.so $(binPath)/occa
 #=================================================
 
 
-#---[ COMPILE LIBRARY ]---------------------------
+#---[ Compile Library ]---------------------------
 # Setup compiled defines and force rebuild if defines changed
 NEW_COMPILED_DEFINES     := $(OCCA_DIR)/include/occa/defines/compiledDefines.hpp
 OLD_COMPILED_DEFINES     := $(OCCA_DIR)/.old_compiledDefines
@@ -66,7 +72,7 @@ MAKE_COMPILED_DEFINES := $(shell cp "$(NEW_COMPILED_DEFINES)" "$(OLD_COMPILED_DE
 MAKE_COMPILED_DEFINES := $(shell cat "$(OCCA_DIR)/scripts/compiledDefinesTemplate.hpp" | \
                                  sed "s,@@OCCA_OS@@,$(OCCA_OS),g;\
                                       s,@@OCCA_USING_VS@@,$(OCCA_USING_VS),g;\
-                                      s,@@OCCA_COMPILED_DIR@@,\"$(OCCA_DIR)\",g;\
+                                      s,@@OCCA_COMPILED_DIR@@,\"$(OCCA_COMPILED_DIR)\",g;\
                                       s,@@OCCA_DEBUG_ENABLED@@,$(OCCA_DEBUG_ENABLED),g;\
                                       s,@@OCCA_CHECK_ENABLED@@,$(OCCA_CHECK_ENABLED),g;\
                                       s,@@OCCA_OPENMP_ENABLED@@,$(OCCA_OPENMP_ENABLED),g;\
@@ -77,11 +83,12 @@ MAKE_COMPILED_DEFINES := $(shell [ -n "$(shell diff -q $(OLD_COMPILED_DEFINES) $
 MAKE_COMPILED_DEFINES := $(shell rm $(OLD_COMPILED_DEFINES))
 
 all: $(objects) $(outputs)
+	@(. $(OCCA_DIR)/scripts/shellTools.sh && installOcca)
 	@echo -e ""
 	@echo -e "---[ Compiled With ]--------------------------------------------------------"
 	@echo -e "    OCCA_OS             : $(OCCA_OS)"
 	@echo -e "    OCCA_USING_VS       : $(OCCA_USING_VS)"
-	@echo -e "    OCCA_COMPILED_DIR   : \"$(OCCA_DIR)\"\n"
+	@echo -e "    OCCA_COMPILED_DIR   : \"$(OCCA_COMPILED_DIR)\"\n"
 	@echo -e "    OCCA_DEBUG_ENABLED  : $(OCCA_DEBUG_ENABLED)"
 	@echo -e "    OCCA_CHECK_ENABLED  : $(OCCA_CHECK_ENABLED)\n"
 	@echo -e "    OCCA_OPENMP_ENABLED : $(OCCA_OPENMP_ENABLED)"
@@ -94,7 +101,7 @@ $(COMPILED_DEFINES_CHANGED):
 #=================================================
 
 
-#---[ BUILDS ]------------------------------------
+#---[ Builds ]------------------------------------
 #  ---[ libocca ]-------------
 $(libPath)/libocca.so:$(objects) $(headers) $(COMPILED_DEFINES_CHANGED)
 	mkdir -p $(libPath)
@@ -121,7 +128,7 @@ $(OCCA_DIR)/obj/%.o:$(OCCA_DIR)/src/%.cpp $(COMPILED_DEFINES_CHANGED)
 #=================================================
 
 
-#---[ TEST ]--------------------------------------
+#---[ Test ]--------------------------------------
 examples =                 \
 	addVectors/cpp           \
 	addVectors/c             \
@@ -143,7 +150,7 @@ test:
 #=================================================
 
 
-#---[ CLEAN ]-------------------------------------
+#---[ Clean ]-------------------------------------
 clean:
 	rm -rf $(objPath)/*
 	rm -rf $(binPath)/*

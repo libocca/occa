@@ -577,3 +577,17 @@ function getCPUINFOField {
     echo ""
 }
 #=======================================
+
+
+#---[ Commands ]------------------------
+function installOcca {
+    if [ -z "${PREFIX}" ]; then
+        return
+    fi
+    mkdir -p "${PREFIX}"
+    cp -r bin     "${PREFIX}/bin"
+    cp -r include "${PREFIX}/include"
+    cp -r scripts "${PREFIX}/scripts"
+    cp -r lib     "${PREFIX}/lib"
+}
+#=======================================
