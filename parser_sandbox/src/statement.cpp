@@ -30,6 +30,10 @@ namespace occa {
       return false;
     }
 
+    emptyStatement_t statement_t::newEmptyStatement() {
+      return emptyStatement_t(context);
+    }
+
     directiveStatement_t statement_t::newDirectiveStatement(macro_t &macro) {
       return directiveStatement_t(context, macro);
     }
@@ -67,7 +71,11 @@ namespace occa {
     }
 
     whileStatement_t statement_t::newWhileStatement(statement_t &check_) {
-      return whileStatement_t(context, check_);
+      return whileStatement_t(context, check_, false);
+    }
+
+    whileStatement_t statement_t::newDoWhileStatement(statement_t &check_) {
+      return whileStatement_t(context, check_, true);
     }
 
     forStatement_t statement_t::newForStatement(statement_t &init_,
@@ -84,9 +92,28 @@ namespace occa {
       return caseStatement_t(context, value_);
     }
 
+    returnStatement_t statement_t::newReturnStatement(statement_t &value_) {
+      return returnStatement_t(context, value_);
+    }
+
     void statement_t::print() const {
       std::cout << toString();
     }
+
+    //---[ Empty ]------------------------
+    emptyStatement_t::emptyStatement_t(context_t &context_) :
+      statement_t(context_) {}
+
+    statement_t& emptyStatement_t::clone() const {
+      return *(new emptyStatement_t(context));
+    }
+
+    int emptyStatement_t::type() const {
+      return statementType::empty;
+    }
+
+    void emptyStatement_t::print(printer_t &pout) const {}
+    //====================================
 
     //---[ Directive ]--------------------
     directiveStatement_t::directiveStatement_t(context_t &context_,
@@ -301,12 +328,14 @@ namespace occa {
 
     //---[ While ]------------------------
     whileStatement_t::whileStatement_t(context_t &context_,
-                                       statement_t &check_) :
+                                       statement_t &check_,
+                                       const bool isDoWhile_) :
       blockStatement_t(context_),
-      check(check_) {}
+      check(check_),
+      isDoWhile(isDoWhile_) {}
 
     statement_t& whileStatement_t::clone() const {
-      return *(new whileStatement_t(context, check.clone()));
+      return *(new whileStatement_t(context, check.clone(), isDoWhile));
     }
 
     int whileStatement_t::type() const {
@@ -319,11 +348,16 @@ namespace occa {
 
     void whileStatement_t::print(printer_t &pout) const {
       pout.printStartIndentation();
-      pout << "while (";
-      pout.pushInlined(true);
-      check.print(pout);
-      pout.popInlined();
-      pout << ") {\n";
+      if (isDoWhile) {
+        pout << "while (";
+        pout.pushInlined(true);
+        check.print(pout);
+        pout.popInlined();
+        pout << ')';
+      } else {
+        pout << "do";
+      }
+      pout << " {\n";
 
       pout.pushInlined(false);
       pout.addIndentation();
@@ -333,6 +367,13 @@ namespace occa {
 
       pout.printIndentation();
       pout << '}';
+      if (isDoWhile) {
+        pout << " while (";
+        pout.pushInlined(true);
+        check.print(pout);
+        pout.popInlined();
+        pout << ')';
+      }
       pout.printEndNewline();
     }
     //====================================
@@ -443,6 +484,53 @@ namespace occa {
       pout << ":\n";
 
       pout.addIndentation();
+    }
+    //====================================
+
+    //---[ Exit ]-------------------------
+    continueStatement_t::continueStatement_t(context_t &context_) :
+      statement_t(context_) {}
+
+    statement_t& continueStatement_t::clone() const {
+      return *(new continueStatement_t(context));
+    }
+
+    void continueStatement_t::print(printer_t &pout) const {
+      pout.printIndentation();
+      pout << "continue;\n";
+    }
+
+    breakStatement_t::breakStatement_t(context_t &context_) :
+      statement_t(context_) {}
+
+    statement_t& breakStatement_t::clone() const {
+      return *(new breakStatement_t(context));
+    }
+
+    void breakStatement_t::print(printer_t &pout) const {
+      pout.printIndentation();
+      pout << "break;\n";
+    }
+
+    returnStatement_t::returnStatement_t(context_t &context_,
+                                         statement_t &value_) :
+      statement_t(context_),
+      value(value_) {}
+
+    statement_t& returnStatement_t::clone() const {
+      return *(new returnStatement_t(context, value.clone()));
+    }
+
+    void returnStatement_t::print(printer_t &pout) const {
+      pout.printIndentation();
+      pout << "return";
+      if (value.type() != statementType::empty) {
+        pout << ' ';
+        pout.pushInlined(true);
+        value.print(pout);
+        pout.popInlined();
+      }
+      pout << ";\n";
     }
     //====================================
   }
