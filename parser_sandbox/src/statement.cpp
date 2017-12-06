@@ -22,10 +22,6 @@ namespace occa {
       return toString();
     }
 
-    int statement_t::type() const {
-      return statementType::none;
-    }
-
     bool statement_t::hasScope() const {
       return false;
     }
@@ -123,6 +119,10 @@ namespace occa {
 
     statement_t& directiveStatement_t::clone() const {
       return *(new directiveStatement_t(context, macro));
+    }
+
+    int directiveStatement_t::type() const {
+      return statementType::directive;
     }
 
     void directiveStatement_t::print(printer_t &pout) const {
@@ -224,6 +224,10 @@ namespace occa {
       return *(new classAccessStatement_t(context, access));
     }
 
+    int classAccessStatement_t::type() const {
+      return statementType::classAccess;
+    }
+
     void classAccessStatement_t::print(printer_t &pout) const {
       pout.removeIndentation();
 
@@ -278,6 +282,10 @@ namespace occa {
       return *(new gotoStatement_t(context, name));
     }
 
+    int gotoStatement_t::type() const {
+      return statementType::goto_;
+    }
+
     void gotoStatement_t::print(printer_t &pout) const {
       pout.printIndentation();
       pout << "goto " << name << ";\n";
@@ -290,6 +298,10 @@ namespace occa {
 
     statement_t& gotoLabelStatement_t::clone() const {
       return *(new gotoLabelStatement_t(context, name));
+    }
+
+    int gotoLabelStatement_t::type() const {
+      return statementType::gotoLabel;
     }
 
     void gotoLabelStatement_t::print(printer_t &pout) const {
@@ -305,6 +317,10 @@ namespace occa {
 
     statement_t& namespaceStatement_t::clone() const {
       return *(new namespaceStatement_t(context, name));
+    }
+
+    int namespaceStatement_t::type() const {
+      return statementType::namespace_;
     }
 
     bool namespaceStatement_t::hasScope() const {
@@ -473,6 +489,10 @@ namespace occa {
       return *(new caseStatement_t(context, value.clone()));
     }
 
+    int caseStatement_t::type() const {
+      return statementType::case_;
+    }
+
     void caseStatement_t::print(printer_t &pout) const {
       pout.removeIndentation();
 
@@ -495,6 +515,10 @@ namespace occa {
       return *(new continueStatement_t(context));
     }
 
+    int continueStatement_t::type() const {
+      return statementType::continue_;
+    }
+
     void continueStatement_t::print(printer_t &pout) const {
       pout.printIndentation();
       pout << "continue;\n";
@@ -505,6 +529,10 @@ namespace occa {
 
     statement_t& breakStatement_t::clone() const {
       return *(new breakStatement_t(context));
+    }
+
+    int breakStatement_t::type() const {
+      return statementType::break_;
     }
 
     void breakStatement_t::print(printer_t &pout) const {
@@ -519,6 +547,10 @@ namespace occa {
 
     statement_t& returnStatement_t::clone() const {
       return *(new returnStatement_t(context, value.clone()));
+    }
+
+    int returnStatement_t::type() const {
+      return statementType::return_;
     }
 
     void returnStatement_t::print(printer_t &pout) const {

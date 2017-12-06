@@ -28,15 +28,23 @@ namespace occa {
 
     class statementType {
     public:
-      static const int none        = 0;
       static const int empty       = (1 << 0);
-      static const int block       = (1 << 1);
-      static const int typeDecl    = (1 << 2);
-      static const int expression  = (1 << 3);
-      static const int declaration = (1 << 4);
-      static const int while_      = (1 << 5);
-      static const int for_        = (1 << 6);
-      static const int switch_     = (1 << 7);
+      static const int directive   = (1 << 1);
+      static const int block       = (1 << 2);
+      static const int typeDecl    = (1 << 3);
+      static const int classAccess = (1 << 4);
+      static const int expression  = (1 << 5);
+      static const int declaration = (1 << 6);
+      static const int goto_       = (1 << 7);
+      static const int gotoLabel   = (1 << 8);
+      static const int namespace_  = (1 << 9);
+      static const int while_      = (1 << 10);
+      static const int for_        = (1 << 11);
+      static const int switch_     = (1 << 12);
+      static const int case_       = (1 << 13);
+      static const int continue_   = (1 << 14);
+      static const int break_      = (1 << 15);
+      static const int return_     = (1 << 16);
     };
 
     class statement_t : public withRefs {
@@ -50,8 +58,8 @@ namespace occa {
       virtual ~statement_t();
 
       virtual statement_t& clone() const = 0;
+      virtual int type() const = 0;
 
-      virtual int type() const;
       virtual bool hasScope() const;
 
       // Creation methods
@@ -89,7 +97,6 @@ namespace occa {
       emptyStatement_t(context_t &context_);
 
       virtual statement_t& clone() const;
-
       virtual int type() const;
 
       virtual void print(printer_t &pout) const;
@@ -105,6 +112,8 @@ namespace occa {
                            macro_t &macro_);
 
       virtual statement_t& clone() const;
+      virtual int type() const;
+
       virtual void print(printer_t &pout) const;
     };
     //====================================
@@ -120,7 +129,6 @@ namespace occa {
       void clearChildren();
 
       virtual statement_t& clone() const;
-
       virtual int type() const;
 
       virtual bool hasScope() const;
@@ -139,7 +147,6 @@ namespace occa {
                           declarationType_t &declType_);
 
       virtual statement_t& clone() const;
-
       virtual int type() const;
 
       virtual bool hasScope() const;
@@ -155,6 +162,8 @@ namespace occa {
                              const int access_);
 
       virtual statement_t& clone() const;
+      virtual int type() const;
+
       virtual void print(printer_t &pout) const;
     };
     //====================================
@@ -165,7 +174,6 @@ namespace occa {
       expressionStatement_t(context_t &context_);
 
       virtual statement_t& clone() const;
-
       virtual int type() const;
 
       virtual void print(printer_t &pout) const;
@@ -176,7 +184,6 @@ namespace occa {
       declarationStatement_t(context_t &context_);
 
       virtual statement_t& clone() const;
-
       virtual int type() const;
 
       virtual void print(printer_t &pout) const;
@@ -192,6 +199,8 @@ namespace occa {
                       const std::string &name_);
 
       virtual statement_t& clone() const;
+      virtual int type() const;
+
       virtual void print(printer_t &pout) const;
     };
 
@@ -203,6 +212,8 @@ namespace occa {
                            const std::string &name_);
 
       virtual statement_t& clone() const;
+      virtual int type() const;
+
       virtual void print(printer_t &pout) const;
     };
     //====================================
@@ -218,6 +229,8 @@ namespace occa {
       virtual bool hasScope() const;
 
       virtual statement_t& clone() const;
+      virtual int type() const;
+
       virtual void print(printer_t &pout) const;
     };
     //====================================
@@ -233,7 +246,6 @@ namespace occa {
                        const bool isDoWhile_ = false);
 
       virtual statement_t& clone() const;
-
       virtual int type() const;
 
       virtual bool hasScope() const;
@@ -253,7 +265,6 @@ namespace occa {
                      statement_t &update_);
 
       virtual statement_t& clone() const;
-
       virtual int type() const;
 
       virtual bool hasScope() const;
@@ -271,7 +282,6 @@ namespace occa {
                         statement_t &value_);
 
       virtual statement_t& clone() const;
-
       virtual int type() const;
 
       virtual bool hasScope() const;
@@ -289,6 +299,8 @@ namespace occa {
                       statement_t &value_);
 
       virtual statement_t& clone() const;
+      virtual int type() const;
+
       virtual void print(printer_t &pout) const;
     };
     //====================================
@@ -299,6 +311,8 @@ namespace occa {
       continueStatement_t(context_t &context_);
 
       virtual statement_t& clone() const;
+      virtual int type() const;
+
       virtual void print(printer_t &pout) const;
     };
 
@@ -307,6 +321,8 @@ namespace occa {
       breakStatement_t(context_t &context_);
 
       virtual statement_t& clone() const;
+      virtual int type() const;
+
       virtual void print(printer_t &pout) const;
     };
 
@@ -318,6 +334,8 @@ namespace occa {
                         statement_t &value_);
 
       virtual statement_t& clone() const;
+      virtual int type() const;
+
       virtual void print(printer_t &pout) const;
     };
     //====================================
