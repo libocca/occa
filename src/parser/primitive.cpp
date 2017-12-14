@@ -189,7 +189,7 @@ namespace occa {
     return isNegative ? primitive((int64_t) -value) : primitive((uint64_t) value);
   }
 
-  primitive::operator std::string () const {
+  std::string primitive::toString() const {
     std::string str;
     switch(type) {
     case uint8_  : str = occa::toString((uint64_t) value.uint8_);  break;
@@ -216,8 +216,12 @@ namespace occa {
     return str;
   }
 
+  primitive::operator std::string () const {
+    return toString();
+  }
+
   std::ostream& operator << (std::ostream &out, const primitive &p) {
-    out << (std::string) p;
+    out << p.toString();
     return out;
   }
 }

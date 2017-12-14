@@ -16,12 +16,12 @@ namespace occa {
   namespace lang {
     class statement_t;
 
-    typedef std::vector<statement_t*> statementPtrVector;
-    typedef std::vector<keyword_t>    keywordVector;
+    typedef std::vector<statement_t*> statementPtrVector_t;
+    typedef std::vector<keyword_t>    keywordVector_t;
 
-    typedef std::map<statement_t*, keywordVector> statementKeywordMap;
-    typedef trie_t<statementKeywordMap>           statementTrie;
-    typedef trie_t<keyword_t>                     keywordTrie;
+    typedef std::map<statement_t*, keywordVector_t> statementKeywordMap;
+    typedef trie_t<statementKeywordMap>             statementTrie;
+    typedef trie_t<keyword_t>                       keywordTrie;
 
     class context_t {
       statementKeywordMap statementMap;
@@ -63,14 +63,14 @@ namespace occa {
 
       void removeRecord(statement_t &s);
 
-      statementPtrVector getStatements(const std::string &name,
+      statementPtrVector_t getStatements(const std::string &name,
                                        const int ktype = keywordType::none);
-      statementPtrVector getStatements(classType     &value);
-      statementPtrVector getStatements(functionType  &value);
-      statementPtrVector getStatements(attribute     &value);
+      statementPtrVector_t getStatements(classType     &value);
+      statementPtrVector_t getStatements(functionType  &value);
+      statementPtrVector_t getStatements(attribute     &value);
       void getStatements(statementTrie &trie,
                          const std::string &name,
-                         statementPtrVector &vec);
+                         statementPtrVector_t &vec);
     };
   }
 }

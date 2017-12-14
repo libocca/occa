@@ -260,7 +260,7 @@ namespace occa {
       break;
     }
     case number_: {
-      value_.number += j.value_.number;
+      addEq(value_.number, j.value_.number);
       break;
     }
     case object_: {

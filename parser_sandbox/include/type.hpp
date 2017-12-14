@@ -16,9 +16,95 @@ namespace occa {
     class statement_t;
     class qualifier;
     class type_t;
+    class variable_t;
 
-    typedef std::vector<const qualifier*> qualifierVec_t;
-    typedef std::vector<type_t*> typeVec_t;
+    typedef std::vector<const qualifier*> qualifierVector_t;
+    typedef std::vector<type_t*> typeVector_t;
+
+    typedef int      stype_t;
+    typedef uint64_t qtype_t;
+
+    class specifierType {
+    public:
+      static const stype_t none = 0;
+
+      static const stype_t qualifier = (1 << 0);
+      static const stype_t type      = (1 << 1);
+      static const stype_t primitive = (1 << 2);
+      static const stype_t pointer   = (1 << 3);
+      static const stype_t reference = (1 << 4);
+      static const stype_t array     = (1 << 5);
+      static const stype_t class_    = (1 << 6);
+      static const stype_t typedef_  = (1 << 7);
+      static const stype_t function  = (1 << 8);
+      static const stype_t attribute = (1 << 9);
+
+      static const stype_t canBeDereferenced = (pointer |
+                                                array);
+      static const stype_t printsOnBothSides = (array |
+                                                function);
+    };
+
+    class qualifierType {
+    public:
+      static const qtype_t none          = 0;
+
+      static const qtype_t auto_         = (1L << 0);
+      static const qtype_t const_        = (1L << 1);
+      static const qtype_t constexpr_    = (1L << 2);
+      static const qtype_t restrict_     = (1L << 3);
+      static const qtype_t signed_       = (1L << 4);
+      static const qtype_t unsigned_     = (1L << 5);
+      static const qtype_t volatile_     = (1L << 6);
+      static const qtype_t register_     = (1L << 7);
+      static const qtype_t typeInfo      = (const_     |
+                                            constexpr_ |
+                                            signed_    |
+                                            unsigned_  |
+                                            volatile_  |
+
+                                            register_);
+
+      static const qtype_t extern_       = (1L << 8);
+      static const qtype_t static_       = (1L << 9);
+      static const qtype_t thread_local_ = (1L << 10);
+      static const qtype_t globalScope   = (extern_ |
+                                            static_ |
+                                            thread_local_);
+
+      static const qtype_t friend_       = (1L << 11);
+      static const qtype_t mutable_      = (1L << 12);
+      static const qtype_t classInfo     = (friend_ |
+                                            mutable_);
+
+      static const qtype_t inline_       = (1L << 13);
+      static const qtype_t virtual_      = (1L << 14);
+      static const qtype_t explicit_     = (1L << 15);
+      static const qtype_t functionInfo  = (typeInfo |
+                                            inline_  |
+                                            virtual_ |
+                                            explicit_);
+
+      static const qtype_t builtin_      = (1L << 16);
+      static const qtype_t typedef_      = (1L << 17);
+      static const qtype_t class_        = (1L << 18);
+      static const qtype_t enum_         = (1L << 19);
+      static const qtype_t struct_       = (1L << 20);
+      static const qtype_t union_        = (1L << 21);
+      static const qtype_t newType       = (typedef_ |
+                                            class_   |
+                                            enum_    |
+                                            struct_  |
+                                            union_);
+    };
+
+    class classLabel {
+    public:
+      static const int class_  = 1;
+      static const int enum_   = 2;
+      static const int struct_ = 3;
+      static const int union_  = 4;
+    };
 
     class classAccess {
     public:
@@ -27,30 +113,16 @@ namespace occa {
       static const int public_    = (1 << 2);
     };
 
-    class classLabel {
-    public:
-      static const int class_  = (1 << 0);
-      static const int struct_ = (1 << 1);
-      static const int union_  = (1 << 2);
-    };
-
     //---[ Specifier ]------------------
     class specifier {
     public:
       std::string name;
-      int specType;
 
-      static const int qualifierType = (1 << 0);
-      static const int functionType  = (1 << 1);
-      static const int storageType   = (1 << 2);
-      static const int variableType  = (1 << 3);
-      static const int primitiveType = (1 << 4);
-      static const int definedType   = (1 << 5);
-      static const int attributeType = (1 << 6);
-
-      specifier(const int specType_);
-      specifier(const std::string &name_, const int specType_);
+      specifier();
+      specifier(const std::string &name_);
       virtual ~specifier();
+
+      virtual stype_t type() const = 0;
 
       inline bool isNamed() const {
         return (name.size() != 0);
@@ -67,19 +139,25 @@ namespace occa {
       std::string toString() const;
       void debugPrint() const;
     };
+    //==================================
 
     //---[ Qualifier ]------------------
     class qualifier : public specifier {
     public:
-      qualifier(const std::string &name_);
-      qualifier(const std::string &name_, const int specType_);
+      const qtype_t qtype;
+
+      qualifier(const std::string &name_,
+                const qtype_t qtype_);
       virtual ~qualifier();
+
+      virtual stype_t type() const;
     };
+    //==================================
 
     //---[ Qualifiers ]-----------------
     class qualifiers {
     public:
-      qualifierVec_t qualifierVec;
+      qualifierVector_t qualifierVec;
 
       qualifiers();
       qualifiers(const qualifier &q);
@@ -98,6 +176,7 @@ namespace occa {
       std::string toString() const;
       void debugPrint() const;
     };
+    //==================================
 
     //---[ Type ]-----------------------
     class type_t : public specifier {
@@ -107,8 +186,6 @@ namespace occa {
 
       type_t();
       type_t(const std::string &name_);
-      type_t(const std::string &name_, const int specType_);
-
       type_t(const type_t &baseType_,
              const std::string &name_ = "");
       type_t(const qualifiers &qs,
@@ -119,72 +196,115 @@ namespace occa {
 
       virtual ~type_t();
 
-      void replaceBaseType(const type_t &baseType_);
+      virtual stype_t type() const;
+
+      void replaceBaseType(type_t &baseType_);
 
       virtual type_t& clone() const;
 
-      inline void add(const qualifier &q) {
+      inline void addQualifier(const qualifier &q) {
         qualifiers_.add(q);
       }
 
-      inline void remove(const qualifier &q) {
+      inline void removeQualifier(const qualifier &q) {
         qualifiers_.remove(q);
       }
 
-      inline bool has(const qualifier &q) {
+      inline bool hasQualifier(const qualifier &q) {
         return qualifiers_.has(q) >= 0;
       }
 
+      virtual void printLeft(printer_t &pout) const;
+      virtual void printRight(printer_t &pout) const;
+
       virtual void print(printer_t &pout) const;
+      void print(printer_t &pout, const variable_t &var) const;
     };
 
     class declarationType_t : public virtual type_t {
     public:
       virtual void printDeclaration(printer_t &pout) const = 0;
-    };
 
-    //---[ PrimitiveType ]------------------
+      std::string declarationToString() const;
+      void declarationDebugPrint() const;
+    };
+    //==================================
+
+    //---[ PrimitiveType ]--------------
     class primitiveType : public type_t {
     public:
       primitiveType(const std::string &name_);
       virtual ~primitiveType();
 
-      virtual type_t& clone() const;
+      virtual stype_t type() const;
 
-      virtual void print(printer_t &pout) const;
+      virtual type_t& clone() const;
     };
+    //==================================
 
     //---[ Pointer ]--------------------
     class pointerType : public type_t {
     public:
-      pointerType(const type_t &t);
-      pointerType(const qualifiers &qs, const type_t &t);
+      qualifiers rightQualifiers;
+
+      pointerType(const type_t &baseType_);
+      pointerType(const pointerType &baseType_);
+      pointerType(const type_t &baseType_,
+                  const qualifiers &rightQualifiers_);
       virtual ~pointerType();
+
+      virtual stype_t type() const;
 
       virtual type_t& clone() const;
 
-      virtual void print(printer_t &pout) const;
+      virtual void printLeft(printer_t &pout) const;
     };
+    //==================================
+
+    //---[ Array ]----------------------
+    class arrayType : public type_t {
+    public:
+      void* sizeExpression;
+
+      arrayType(const type_t &baseType_);
+      arrayType(const arrayType &baseType_);
+      arrayType(const type_t &baseType_,
+                void * sizeExpression_);
+      virtual ~arrayType();
+
+      virtual stype_t type() const;
+
+      virtual type_t& clone() const;
+
+      virtual void printRight(printer_t &pout) const;
+    };
+    //==================================
 
     //---[ Reference ]------------------
     class referenceType : public type_t {
     public:
-      referenceType(const type_t &t);
+      referenceType(const type_t &baseType_);
+      referenceType(const referenceType &baseType_);
       virtual ~referenceType();
+
+      virtual stype_t type() const;
 
       virtual type_t& clone() const;
 
-      virtual void print(printer_t &pout) const;
+      virtual void printLeft(printer_t &pout) const;
     };
+    //==================================
 
     //---[ Class ]----------------------
     class classType : public declarationType_t {
       std::string name;
-      int label;
+      qtype_t label;
       statement_t *body;
 
       classType(const std::string &name_,
                 const int label_);
+
+      virtual stype_t type() const;
 
       void setBody(statement_t &body_);
 
@@ -193,62 +313,71 @@ namespace occa {
       virtual type_t& clone() const;
 
       virtual void printDeclaration(printer_t &pout) const;
-      virtual void print(printer_t &pout) const;
     };
+    //==================================
 
     //---[ Typedef ]--------------------
     class typedefType : public declarationType_t {
     public:
-      typedefType(const type_t &t, const std::string &name_);
-      typedefType(const qualifiers &qs, const type_t &t, const std::string &name_);
+      typedefType(const type_t &baseType_,
+                  const std::string &name_);
+      typedefType(const qualifiers &qs,
+                  const type_t &baseType_,
+                  const std::string &name_);
       virtual ~typedefType();
+
+      virtual stype_t type() const;
 
       virtual type_t& clone() const;
 
+      virtual void printLeft(printer_t &pout) const;
       virtual void printDeclaration(printer_t &pout) const;
-      virtual void print(printer_t &pout) const;
     };
+    //==================================
 
     //---[ Function ]-------------------
     class functionType : public declarationType_t {
     public:
-      typeVec_t args;
-      std::vector<void*> defaultValues;
-      mutable statement_t *body;
+      typeVector_t args;
 
       functionType(const type_t &returnType);
+      functionType(const functionType &returnType);
       functionType(const type_t &returnType, const std::string &name_);
       virtual ~functionType();
 
-      void setReturnType(const type_t &returnType);
+      virtual stype_t type() const;
+
       const type_t& returnType() const;
+      void setReturnType(const type_t &returnType);
 
-      void addArg(const type_t &argType,
-                  const std::string &argName = "",
-                  const void *defaultValue = NULL); // TODO: default values
+      void addArgument(const type_t &argType,
+                       const std::string &argName = "");
 
-      void addArg(const qualifiers &qs,
-                  const type_t &argType,
-                  const std::string &argName = "",
-                  const void *defaultValue = NULL);
+      void addArgument(const qualifiers &qs,
+                       const type_t &argType,
+                       const std::string &argName = "");
 
-      inline int argumentCount() const {
+      int argumentCount() const {
         return (int) args.size();
       }
 
-      void setBody(statement_t &body_);
+      void printDeclarationLeft(printer_t &pout) const;
+      void printDeclarationRight(printer_t &pout) const;
 
       virtual void printDeclaration(printer_t &pout) const;
-      virtual void print(printer_t &pout) const;
     };
+    //==================================
 
-    //---[ Attribute ]----------------
+    //---[ Attribute ]------------------
     class attribute : public specifier {
       attribute(const std::string &name_);
       virtual ~attribute();
 
+      virtual stype_t type() const;
+
       virtual void print(printer_t &pout) const;
     };
+    //==================================
   }
 }
 #endif

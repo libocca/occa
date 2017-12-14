@@ -461,7 +461,7 @@ namespace occa {
       case string_:
         return value_.string == j.value_.string;
       case number_:
-        return value_.number == j.value_.number;
+        return equal(value_.number, j.value_.number);
       case object_:
         return value_.object == j.value_.object;
       case array_:

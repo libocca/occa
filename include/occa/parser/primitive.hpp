@@ -299,13 +299,14 @@ namespace occa {
       return type & isUnsigned_;
     }
 
+    std::string toString() const;
     operator std::string () const;
 
     friend std::ostream& operator << (std::ostream &out, const primitive &p);
   };
 
   //---[ Unary Operators ]--------------
-  inline primitive operator ! (const primitive &p) {
+  inline primitive not_(const primitive &p) {
     switch(p.type) {
     case primitive::int8_   : return primitive(!p.value.int8_);
     case primitive::uint8_  : return primitive(!p.value.uint8_);
@@ -322,7 +323,7 @@ namespace occa {
     return primitive();
   }
 
-  inline primitive operator + (const primitive &p) {
+  inline primitive positive(const primitive &p) {
     switch(p.type) {
     case primitive::int8_   : return primitive(+p.value.int8_);
     case primitive::uint8_  : return primitive(+p.value.uint8_);
@@ -339,7 +340,7 @@ namespace occa {
     return primitive();
   }
 
-  inline primitive operator - (const primitive &p) {
+  inline primitive negative(const primitive &p) {
     switch(p.type) {
     case primitive::int8_   : return primitive(-p.value.int8_);
     case primitive::uint8_  : return primitive(-p.value.uint8_);
@@ -356,7 +357,7 @@ namespace occa {
     return primitive();
   }
 
-  inline primitive operator ~ (const primitive &p) {
+  inline primitive tilde(const primitive &p) {
     switch(p.type) {
     case primitive::int8_   : return primitive(~p.value.int8_);
     case primitive::uint8_  : return primitive(~p.value.uint8_);
@@ -373,7 +374,7 @@ namespace occa {
     return primitive();
   }
 
-  inline primitive& operator ++ (primitive &p) {
+  inline primitive& leftIncrement(primitive &p) {
     switch(p.type) {
     case primitive::int8_   : ++p.value.int8_;    return p;
     case primitive::uint8_  : ++p.value.uint8_;   return p;
@@ -390,7 +391,7 @@ namespace occa {
     return p;
   }
 
-  inline primitive& operator -- (primitive &p) {
+  inline primitive& leftDecrement(primitive &p) {
     switch(p.type) {
     case primitive::int8_   : --p.value.int8_;    return p;
     case primitive::uint8_  : --p.value.uint8_;   return p;
@@ -407,7 +408,7 @@ namespace occa {
     return p;
   }
 
-  inline primitive operator ++ (primitive &p, int) {
+  inline primitive rightIncrement(primitive &p, int) {
     switch(p.type) {
     case primitive::int8_   : p.value.int8_++;    return p;
     case primitive::uint8_  : p.value.uint8_++;   return p;
@@ -424,7 +425,7 @@ namespace occa {
     return p;
   }
 
-  inline primitive operator -- (primitive &p, int) {
+  inline primitive rightDecrement(primitive &p, int) {
     switch(p.type) {
     case primitive::int8_   : p.value.int8_--;    return p;
     case primitive::uint8_  : p.value.uint8_--;   return p;
@@ -444,7 +445,7 @@ namespace occa {
 
 
   //---[ Boolean Operators ]------------
-  inline primitive operator < (const primitive &a, const primitive &b) {
+  inline primitive lessThan(const primitive &a, const primitive &b) {
     const primitive::type_t retType = (a.type > b.type) ? a.type : b.type;
     switch(retType) {
     case primitive::int8_   : return primitive(a.to<int8_t>()   < b.to<int8_t>());
@@ -462,7 +463,25 @@ namespace occa {
     return primitive();
   }
 
-  inline primitive operator == (const primitive &a, const primitive &b) {
+  inline primitive lessThanEq(const primitive &a, const primitive &b) {
+    const primitive::type_t retType = (a.type > b.type) ? a.type : b.type;
+    switch(retType) {
+    case primitive::int8_   : return primitive(a.to<int8_t>()   <= b.to<int8_t>());
+    case primitive::uint8_  : return primitive(a.to<uint8_t>()  <= b.to<uint8_t>());
+    case primitive::int16_  : return primitive(a.to<int16_t>()  <= b.to<int16_t>());
+    case primitive::uint16_ : return primitive(a.to<uint16_t>() <= b.to<uint16_t>());
+    case primitive::int32_  : return primitive(a.to<int32_t>()  <= b.to<int32_t>());
+    case primitive::uint32_ : return primitive(a.to<uint32_t>() <= b.to<uint32_t>());
+    case primitive::int64_  : return primitive(a.to<int64_t>()  <= b.to<int64_t>());
+    case primitive::uint64_ : return primitive(a.to<uint64_t>() <= b.to<uint64_t>());
+    case primitive::float_  : return primitive(a.to<float>()    <= b.to<float>());
+    case primitive::double_ : return primitive(a.to<double>()   <= b.to<double>());
+    default: ;
+    }
+    return primitive();
+  }
+
+  inline primitive equal(const primitive &a, const primitive &b) {
     const primitive::type_t retType = (a.type > b.type) ? a.type : b.type;
     switch(retType) {
     case primitive::int8_   : return primitive(a.to<int8_t>()   == b.to<int8_t>());
@@ -480,7 +499,7 @@ namespace occa {
     return primitive();
   }
 
-  inline primitive operator != (const primitive &a, const primitive &b) {
+  inline primitive notEqual(const primitive &a, const primitive &b) {
     const primitive::type_t retType = (a.type > b.type) ? a.type : b.type;
     switch(retType) {
     case primitive::int8_   : return primitive(a.to<int8_t>()   != b.to<int8_t>());
@@ -498,7 +517,7 @@ namespace occa {
     return primitive();
   }
 
-  inline primitive operator >= (const primitive &a, const primitive &b) {
+  inline primitive greaterThanEq(const primitive &a, const primitive &b) {
     const primitive::type_t retType = (a.type > b.type) ? a.type : b.type;
     switch(retType) {
     case primitive::int8_   : return primitive(a.to<int8_t>()   >= b.to<int8_t>());
@@ -516,7 +535,7 @@ namespace occa {
     return primitive();
   }
 
-  inline primitive operator > (const primitive &a, const primitive &b) {
+  inline primitive greaterThan(const primitive &a, const primitive &b) {
     const primitive::type_t retType = (a.type > b.type) ? a.type : b.type;
     switch(retType) {
     case primitive::int8_   : return primitive(a.to<int8_t>()   > b.to<int8_t>());
@@ -534,7 +553,7 @@ namespace occa {
     return primitive();
   }
 
-  inline primitive operator && (const primitive &a, const primitive &b) {
+  inline primitive and_(const primitive &a, const primitive &b) {
     const primitive::type_t retType = (a.type > b.type) ? a.type : b.type;
     switch(retType) {
     case primitive::int8_   : return primitive(a.to<int8_t>()   && b.to<int8_t>());
@@ -552,7 +571,7 @@ namespace occa {
     return primitive();
   }
 
-  inline primitive operator || (const primitive &a, const primitive &b) {
+  inline primitive or_(const primitive &a, const primitive &b) {
     const primitive::type_t retType = (a.type > b.type) ? a.type : b.type;
     switch(retType) {
     case primitive::int8_   : return primitive(a.to<int8_t>()   || b.to<int8_t>());
@@ -573,7 +592,7 @@ namespace occa {
 
 
   //---[ Binary Operators ]-------------
-  inline primitive operator * (const primitive &a, const primitive &b) {
+  inline primitive mult(const primitive &a, const primitive &b) {
     const primitive::type_t retType = (a.type > b.type) ? a.type : b.type;
     switch(retType) {
     case primitive::int8_   : return primitive(a.to<int8_t>()   * b.to<int8_t>());
@@ -591,7 +610,7 @@ namespace occa {
     return primitive();
   }
 
-  inline primitive operator + (const primitive &a, const primitive &b) {
+  inline primitive add(const primitive &a, const primitive &b) {
     const primitive::type_t retType = (a.type > b.type) ? a.type : b.type;
     switch(retType) {
     case primitive::int8_   : return primitive(a.to<int8_t>()   + b.to<int8_t>());
@@ -609,7 +628,7 @@ namespace occa {
     return primitive();
   }
 
-  inline primitive operator - (const primitive &a, const primitive &b) {
+  inline primitive sub(const primitive &a, const primitive &b) {
     const primitive::type_t retType = (a.type > b.type) ? a.type : b.type;
     switch(retType) {
     case primitive::int8_   : return primitive(a.to<int8_t>()   - b.to<int8_t>());
@@ -627,7 +646,7 @@ namespace occa {
     return primitive();
   }
 
-  inline primitive operator / (const primitive &a, const primitive &b) {
+  inline primitive div(const primitive &a, const primitive &b) {
     const primitive::type_t retType = (a.type > b.type) ? a.type : b.type;
     switch(retType) {
     case primitive::int8_   : return primitive(a.to<int8_t>()   / b.to<int8_t>());
@@ -645,7 +664,7 @@ namespace occa {
     return primitive();
   }
 
-  inline primitive operator % (const primitive &a, const primitive &b) {
+  inline primitive mod(const primitive &a, const primitive &b) {
     const primitive::type_t retType = (a.type > b.type) ? a.type : b.type;
     switch(retType) {
     case primitive::int8_   : return primitive(a.to<int8_t>()   % b.to<int8_t>());
@@ -663,7 +682,7 @@ namespace occa {
     return primitive();
   }
 
-  inline primitive operator & (const primitive &a, const primitive &b) {
+  inline primitive bitAnd(const primitive &a, const primitive &b) {
     const primitive::type_t retType = (a.type > b.type) ? a.type : b.type;
     switch(retType) {
     case primitive::int8_   : return primitive(a.to<int8_t>()   & b.to<int8_t>());
@@ -681,7 +700,7 @@ namespace occa {
     return primitive();
   }
 
-  inline primitive operator | (const primitive &a, const primitive &b) {
+  inline primitive bitOr(const primitive &a, const primitive &b) {
     const primitive::type_t retType = (a.type > b.type) ? a.type : b.type;
     switch(retType) {
     case primitive::int8_   : return primitive(a.to<int8_t>()   | b.to<int8_t>());
@@ -699,7 +718,7 @@ namespace occa {
     return primitive();
   }
 
-  inline primitive operator ^ (const primitive &a, const primitive &b) {
+  inline primitive xor_(const primitive &a, const primitive &b) {
     const primitive::type_t retType = (a.type > b.type) ? a.type : b.type;
     switch(retType) {
     case primitive::int8_   : return primitive(a.to<int8_t>()   ^ b.to<int8_t>());
@@ -717,7 +736,7 @@ namespace occa {
     return primitive();
   }
 
-  inline primitive operator >> (const primitive &a, const primitive &b) {
+  inline primitive rightShift(const primitive &a, const primitive &b) {
     const primitive::type_t retType = (a.type > b.type) ? a.type : b.type;
     switch(retType) {
     case primitive::int8_   : return primitive(a.to<int8_t>()   >> b.to<int8_t>());
@@ -735,7 +754,7 @@ namespace occa {
     return primitive();
   }
 
-  inline primitive operator << (const primitive &a, const primitive &b) {
+  inline primitive leftShift(const primitive &a, const primitive &b) {
     const primitive::type_t retType = (a.type > b.type) ? a.type : b.type;
     switch(retType) {
     case primitive::int8_   : return primitive(a.to<int8_t>()   << b.to<int8_t>());
@@ -756,53 +775,183 @@ namespace occa {
 
 
   //---[ Assignment Operators ]---------
-  inline primitive& operator *= (primitive &a, const primitive &b) {
-    a = (a * b);
+  inline primitive& multEq(primitive &a, const primitive &b) {
+    const primitive::type_t retType = (a.type > b.type) ? a.type : b.type;
+    switch(retType) {
+    case primitive::int8_   : a = (a.to<int8_t>()   * b.to<int8_t>());   break;
+    case primitive::uint8_  : a = (a.to<uint8_t>()  * b.to<uint8_t>());  break;
+    case primitive::int16_  : a = (a.to<int16_t>()  * b.to<int16_t>());  break;
+    case primitive::uint16_ : a = (a.to<uint16_t>() * b.to<uint16_t>()); break;
+    case primitive::int32_  : a = (a.to<int32_t>()  * b.to<int32_t>());  break;
+    case primitive::uint32_ : a = (a.to<uint32_t>() * b.to<uint32_t>()); break;
+    case primitive::int64_  : a = (a.to<int64_t>()  * b.to<int64_t>());  break;
+    case primitive::uint64_ : a = (a.to<uint64_t>() * b.to<uint64_t>()); break;
+    case primitive::float_  : a = (a.to<float>()    * b.to<float>());    break;
+    case primitive::double_ : a = (a.to<double>()   * b.to<double>());   break;
+    default: ;
+    }
     return a;
   }
 
-  inline primitive& operator += (primitive &a, const primitive &b) {
-    a = (a + b);
+  inline primitive& addEq(primitive &a, const primitive &b) {
+    const primitive::type_t retType = (a.type > b.type) ? a.type : b.type;
+    switch(retType) {
+    case primitive::int8_   : a = (a.to<int8_t>()   + b.to<int8_t>());   break;
+    case primitive::uint8_  : a = (a.to<uint8_t>()  + b.to<uint8_t>());  break;
+    case primitive::int16_  : a = (a.to<int16_t>()  + b.to<int16_t>());  break;
+    case primitive::uint16_ : a = (a.to<uint16_t>() + b.to<uint16_t>()); break;
+    case primitive::int32_  : a = (a.to<int32_t>()  + b.to<int32_t>());  break;
+    case primitive::uint32_ : a = (a.to<uint32_t>() + b.to<uint32_t>()); break;
+    case primitive::int64_  : a = (a.to<int64_t>()  + b.to<int64_t>());  break;
+    case primitive::uint64_ : a = (a.to<uint64_t>() + b.to<uint64_t>()); break;
+    case primitive::float_  : a = (a.to<float>()    + b.to<float>());    break;
+    case primitive::double_ : a = (a.to<double>()   + b.to<double>());   break;
+    default: ;
+    }
     return a;
   }
 
-  inline primitive& operator -= (primitive &a, const primitive &b) {
-    a = (a - b);
+  inline primitive& subEq(primitive &a, const primitive &b) {
+    const primitive::type_t retType = (a.type > b.type) ? a.type : b.type;
+    switch(retType) {
+    case primitive::int8_   : a = (a.to<int8_t>()   - b.to<int8_t>());   break;
+    case primitive::uint8_  : a = (a.to<uint8_t>()  - b.to<uint8_t>());  break;
+    case primitive::int16_  : a = (a.to<int16_t>()  - b.to<int16_t>());  break;
+    case primitive::uint16_ : a = (a.to<uint16_t>() - b.to<uint16_t>()); break;
+    case primitive::int32_  : a = (a.to<int32_t>()  - b.to<int32_t>());  break;
+    case primitive::uint32_ : a = (a.to<uint32_t>() - b.to<uint32_t>()); break;
+    case primitive::int64_  : a = (a.to<int64_t>()  - b.to<int64_t>());  break;
+    case primitive::uint64_ : a = (a.to<uint64_t>() - b.to<uint64_t>()); break;
+    case primitive::float_  : a = (a.to<float>()    - b.to<float>());    break;
+    case primitive::double_ : a = (a.to<double>()   - b.to<double>());   break;
+    default: ;
+    }
     return a;
   }
 
-  inline primitive& operator /= (primitive &a, const primitive &b) {
-    a = (a / b);
+  inline primitive& divEq(primitive &a, const primitive &b) {
+    const primitive::type_t retType = (a.type > b.type) ? a.type : b.type;
+    switch(retType) {
+    case primitive::int8_   : a = (a.to<int8_t>()   / b.to<int8_t>());   break;
+    case primitive::uint8_  : a = (a.to<uint8_t>()  / b.to<uint8_t>());  break;
+    case primitive::int16_  : a = (a.to<int16_t>()  / b.to<int16_t>());  break;
+    case primitive::uint16_ : a = (a.to<uint16_t>() / b.to<uint16_t>()); break;
+    case primitive::int32_  : a = (a.to<int32_t>()  / b.to<int32_t>());  break;
+    case primitive::uint32_ : a = (a.to<uint32_t>() / b.to<uint32_t>()); break;
+    case primitive::int64_  : a = (a.to<int64_t>()  / b.to<int64_t>());  break;
+    case primitive::uint64_ : a = (a.to<uint64_t>() / b.to<uint64_t>()); break;
+    case primitive::float_  : a = (a.to<float>()    / b.to<float>());    break;
+    case primitive::double_ : a = (a.to<double>()   / b.to<double>());   break;
+    default: ;
+    }
     return a;
   }
 
-  inline primitive& operator %= (primitive &a, const primitive &b) {
-    a = (a % b);
+  inline primitive& modEq(primitive &a, const primitive &b) {
+    const primitive::type_t retType = (a.type > b.type) ? a.type : b.type;
+    switch(retType) {
+    case primitive::int8_   : a = (a.to<int8_t>()   % b.to<int8_t>());   break;
+    case primitive::uint8_  : a = (a.to<uint8_t>()  % b.to<uint8_t>());  break;
+    case primitive::int16_  : a = (a.to<int16_t>()  % b.to<int16_t>());  break;
+    case primitive::uint16_ : a = (a.to<uint16_t>() % b.to<uint16_t>()); break;
+    case primitive::int32_  : a = (a.to<int32_t>()  % b.to<int32_t>());  break;
+    case primitive::uint32_ : a = (a.to<uint32_t>() % b.to<uint32_t>()); break;
+    case primitive::int64_  : a = (a.to<int64_t>()  % b.to<int64_t>());  break;
+    case primitive::uint64_ : a = (a.to<uint64_t>() % b.to<uint64_t>()); break;
+    case primitive::float_  : OCCA_FORCE_ERROR("Cannot apply operator % to float type"); break;
+    case primitive::double_ : OCCA_FORCE_ERROR("Cannot apply operator % to double type"); break;
+    default: ;
+    }
     return a;
   }
 
-  inline primitive& operator &= (primitive &a, const primitive &b) {
-    a = (a & b);
+  inline primitive& bitAndEq(primitive &a, const primitive &b) {
+    const primitive::type_t retType = (a.type > b.type) ? a.type : b.type;
+    switch(retType) {
+    case primitive::int8_   : a = (a.to<int8_t>()   & b.to<int8_t>());   break;
+    case primitive::uint8_  : a = (a.to<uint8_t>()  & b.to<uint8_t>());  break;
+    case primitive::int16_  : a = (a.to<int16_t>()  & b.to<int16_t>());  break;
+    case primitive::uint16_ : a = (a.to<uint16_t>() & b.to<uint16_t>()); break;
+    case primitive::int32_  : a = (a.to<int32_t>()  & b.to<int32_t>());  break;
+    case primitive::uint32_ : a = (a.to<uint32_t>() & b.to<uint32_t>()); break;
+    case primitive::int64_  : a = (a.to<int64_t>()  & b.to<int64_t>());  break;
+    case primitive::uint64_ : a = (a.to<uint64_t>() & b.to<uint64_t>()); break;
+    case primitive::float_  : OCCA_FORCE_ERROR("Cannot apply operator & to float type");  break;
+    case primitive::double_ : OCCA_FORCE_ERROR("Cannot apply operator & to double type"); break;
+    default: ;
+    }
     return a;
   }
 
-  inline primitive& operator |= (primitive &a, const primitive &b) {
-    a = (a | b);
+  inline primitive& bitOrEq(primitive &a, const primitive &b) {
+    const primitive::type_t retType = (a.type > b.type) ? a.type : b.type;
+    switch(retType) {
+    case primitive::int8_   : a = (a.to<int8_t>()   | b.to<int8_t>());   break;
+    case primitive::uint8_  : a = (a.to<uint8_t>()  | b.to<uint8_t>());  break;
+    case primitive::int16_  : a = (a.to<int16_t>()  | b.to<int16_t>());  break;
+    case primitive::uint16_ : a = (a.to<uint16_t>() | b.to<uint16_t>()); break;
+    case primitive::int32_  : a = (a.to<int32_t>()  | b.to<int32_t>());  break;
+    case primitive::uint32_ : a = (a.to<uint32_t>() | b.to<uint32_t>()); break;
+    case primitive::int64_  : a = (a.to<int64_t>()  | b.to<int64_t>());  break;
+    case primitive::uint64_ : a = (a.to<uint64_t>() | b.to<uint64_t>()); break;
+    case primitive::float_  : OCCA_FORCE_ERROR("Cannot apply operator | to float type");  break;
+    case primitive::double_ : OCCA_FORCE_ERROR("Cannot apply operator | to double type"); break;
+    default: ;
+    }
     return a;
   }
 
-  inline primitive& operator ^= (primitive &a, const primitive &b) {
-    a = (a ^ b);
+  inline primitive& xor_Eq(primitive &a, const primitive &b) {
+    const primitive::type_t retType = (a.type > b.type) ? a.type : b.type;
+    switch(retType) {
+    case primitive::int8_   : a = (a.to<int8_t>()   ^ b.to<int8_t>());   break;
+    case primitive::uint8_  : a = (a.to<uint8_t>()  ^ b.to<uint8_t>());  break;
+    case primitive::int16_  : a = (a.to<int16_t>()  ^ b.to<int16_t>());  break;
+    case primitive::uint16_ : a = (a.to<uint16_t>() ^ b.to<uint16_t>()); break;
+    case primitive::int32_  : a = (a.to<int32_t>()  ^ b.to<int32_t>());  break;
+    case primitive::uint32_ : a = (a.to<uint32_t>() ^ b.to<uint32_t>()); break;
+    case primitive::int64_  : a = (a.to<int64_t>()  ^ b.to<int64_t>());  break;
+    case primitive::uint64_ : a = (a.to<uint64_t>() ^ b.to<uint64_t>()); break;
+    case primitive::float_  : OCCA_FORCE_ERROR("Cannot apply operator ^ to float type");  break;
+    case primitive::double_ : OCCA_FORCE_ERROR("Cannot apply operator ^ to double type"); break;
+    default: ;
+    }
     return a;
   }
 
-  inline primitive& operator >>= (primitive &a, const primitive &b) {
-    a = (a >> b);
+  inline primitive& rightShiftEq(primitive &a, const primitive &b) {
+    const primitive::type_t retType = (a.type > b.type) ? a.type : b.type;
+    switch(retType) {
+    case primitive::int8_   : a = (a.to<int8_t>()   >> b.to<int8_t>());   break;
+    case primitive::uint8_  : a = (a.to<uint8_t>()  >> b.to<uint8_t>());  break;
+    case primitive::int16_  : a = (a.to<int16_t>()  >> b.to<int16_t>());  break;
+    case primitive::uint16_ : a = (a.to<uint16_t>() >> b.to<uint16_t>()); break;
+    case primitive::int32_  : a = (a.to<int32_t>()  >> b.to<int32_t>());  break;
+    case primitive::uint32_ : a = (a.to<uint32_t>() >> b.to<uint32_t>()); break;
+    case primitive::int64_  : a = (a.to<int64_t>()  >> b.to<int64_t>());  break;
+    case primitive::uint64_ : a = (a.to<uint64_t>() >> b.to<uint64_t>()); break;
+    case primitive::float_  : OCCA_FORCE_ERROR("Cannot apply operator >> to float type");  break;
+    case primitive::double_ : OCCA_FORCE_ERROR("Cannot apply operator >> to double type"); break;
+    default: ;
+    }
     return a;
   }
 
-  inline primitive& operator <<= (primitive &a, const primitive &b) {
-    a = (a << b);
+  inline primitive& leftShiftEq(primitive &a, const primitive &b) {
+    const primitive::type_t retType = (a.type > b.type) ? a.type : b.type;
+    switch(retType) {
+    case primitive::int8_   : a = (a.to<int8_t>()   << b.to<int8_t>());   break;
+    case primitive::uint8_  : a = (a.to<uint8_t>()  << b.to<uint8_t>());  break;
+    case primitive::int16_  : a = (a.to<int16_t>()  << b.to<int16_t>());  break;
+    case primitive::uint16_ : a = (a.to<uint16_t>() << b.to<uint16_t>()); break;
+    case primitive::int32_  : a = (a.to<int32_t>()  << b.to<int32_t>());  break;
+    case primitive::uint32_ : a = (a.to<uint32_t>() << b.to<uint32_t>()); break;
+    case primitive::int64_  : a = (a.to<int64_t>()  << b.to<int64_t>());  break;
+    case primitive::uint64_ : a = (a.to<uint64_t>() << b.to<uint64_t>()); break;
+    case primitive::float_  : OCCA_FORCE_ERROR("Cannot apply operator << to float type");  break;
+    case primitive::double_ : OCCA_FORCE_ERROR("Cannot apply operator << to double type"); break;
+    default: ;
+    }
     return a;
   }
   //====================================

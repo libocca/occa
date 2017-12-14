@@ -33,6 +33,14 @@ namespace occa {
       inlinedStack.push_back(false);
     }
 
+    int printer_t::size() {
+      int pos = ss.tellg();
+      ss.seekg(0, ss.end);
+      int size = ss.tellg();
+      ss.seekg(pos);
+      return size;
+    }
+
     void printer_t::setOutputStream(std::ostream &outputStream_) {
       outputStream = &outputStream_;
     }

@@ -126,7 +126,7 @@ namespace occa {
       if (it == statementMap.end()) {
         return;
       }
-      keywordVector &keywords = it->second;
+      keywordVector_t &keywords = it->second;
       const int keywordCount = (int) keywords.size();
       for (int i = 0; i < keywordCount; ++i) {
         statementKeywordMap &statements = getKeywordStatements(keywords[i]);
@@ -138,27 +138,27 @@ namespace occa {
       statementMap.erase(it);
     }
 
-    statementPtrVector context_t::getStatements(classType &value) {
-      statementPtrVector vec;
+    statementPtrVector_t context_t::getStatements(classType &value) {
+      statementPtrVector_t vec;
       getStatements(classTrie, value.uniqueName(), vec);
       return vec;
     }
 
-    statementPtrVector context_t::getStatements(functionType &value) {
-      statementPtrVector vec;
+    statementPtrVector_t context_t::getStatements(functionType &value) {
+      statementPtrVector_t vec;
       getStatements(functionTrie, value.uniqueName(), vec);
       return vec;
     }
 
-    statementPtrVector context_t::getStatements(attribute &value) {
-      statementPtrVector vec;
+    statementPtrVector_t context_t::getStatements(attribute &value) {
+      statementPtrVector_t vec;
       getStatements(attributeTrie, value.uniqueName(), vec);
       return vec;
     }
 
     void context_t::getStatements(statementTrie &trie,
                                   const std::string &name,
-                                  statementPtrVector &vec) {
+                                  statementPtrVector_t &vec) {
       statementKeywordMap &statements = (trie
                                          .get(name)
                                          .value());

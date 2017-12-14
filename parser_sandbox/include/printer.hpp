@@ -27,6 +27,8 @@ namespace occa {
 
       void setOutputStream(std::ostream &outputStream_);
 
+      int size();
+
       bool isInlined();
       void pushInlined(const bool inlined);
       void popInlined();
