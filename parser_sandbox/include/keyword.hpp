@@ -52,7 +52,7 @@ namespace occa {
         return (ktype == keywordType::attribute);
       }
 
-      inline qualifier& qualifier() {
+      inline class qualifier& qualifier() {
         return *((class qualifier*) ptr);
       }
 
@@ -72,7 +72,7 @@ namespace occa {
         return *dynamic_cast<functionType*>(ptr);
       }
 
-      inline attribute& attribute() {
+      inline class attribute& attribute() {
         return *((class attribute*) ptr);
       }
     };

@@ -46,8 +46,8 @@ namespace occa {
       return classAccessStatement_t(context, access_);
     }
 
-    expressionStatement_t statement_t::newExpressionStatement() {
-      return expressionStatement_t(context);
+    expressionStatement_t statement_t::newExpressionStatement(exprNode &expression_) {
+      return expressionStatement_t(context, expression_);
     }
 
     declarationStatement_t statement_t::newDeclarationStatement() {
@@ -243,11 +243,13 @@ namespace occa {
     //====================================
 
     //---[ Expression ]-------------------
-    expressionStatement_t::expressionStatement_t(context_t &context_) :
-      statement_t(context_) {}
+    expressionStatement_t::expressionStatement_t(context_t &context_,
+                                                 exprNode &expression_) :
+      statement_t(context_),
+      expression(expression_) {}
 
     statement_t& expressionStatement_t::clone() const {
-      return *(new expressionStatement_t(context));
+      return *(new expressionStatement_t(context, expression));
     }
 
     int expressionStatement_t::type() const {

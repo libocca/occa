@@ -68,7 +68,7 @@ namespace occa {
       blockStatement_t       newBlockStatement();
       typeDeclStatement_t    newTypeDeclarationStatement(declarationType_t &declType_);
       classAccessStatement_t newClassAccessStatement(const int access_);
-      expressionStatement_t  newExpressionStatement();
+      expressionStatement_t  newExpressionStatement(exprNode &expression_);
       declarationStatement_t newDeclarationStatement();
       gotoStatement_t        newGotoStatement(const std::string &name_);
       gotoLabelStatement_t   newGotoLabelStatement(const std::string &name_);
@@ -168,10 +168,13 @@ namespace occa {
     };
     //====================================
 
-    //---[ Expression ]------------------- TODO
+    //---[ Expression ]-------------------
     class expressionStatement_t : public statement_t {
     public:
-      expressionStatement_t(context_t &context_);
+      exprNode &expression;
+
+      expressionStatement_t(context_t &context_,
+                            exprNode &expression_);
 
       virtual statement_t& clone() const;
       virtual int type() const;

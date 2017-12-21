@@ -1,6 +1,7 @@
 #ifndef OCCA_PARSER_OPERATOR_HEADER2
 #define OCCA_PARSER_OPERATOR_HEADER2
 
+#include "occa/types.hpp"
 #include "printer.hpp"
 
 namespace occa {
@@ -125,10 +126,6 @@ namespace occa {
                                                 rightShiftEq);
 
       static const optype_t ternary          = (1L << 26);
-
-      // TODO: Finish associative
-      static const optype_t leftAssociative  = (add);
-      static const optype_t rightAssociative = (add);
     };
 
     class operator_t {
