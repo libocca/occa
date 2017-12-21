@@ -2,6 +2,17 @@
 
 namespace occa {
   namespace lang {
+    std::string exprNode::toString() const {
+      std::stringstream ss;
+      printer_t pout(ss);
+      print(pout);
+      return ss.str();
+    }
+
+    void exprNode::debugPrint() const {
+      std::cout << toString();
+    }
+
     //---[ Empty ]----------------------
     emptyNode::emptyNode() {}
 
@@ -10,6 +21,8 @@ namespace occa {
     }
 
     void emptyNode::print(printer_t &pout) const {}
+
+    const emptyNode noExprNode;
     //==================================
 
     //---[ Values ]---------------------
@@ -40,31 +53,17 @@ namespace occa {
     void variableNode::print(printer_t &pout) const {
       value.print(pout);
     }
-
-    functionNode::functionNode(variable_t &value_) :
-      value(value_) {}
-
-    functionNode::functionNode(const functionNode &node) :
-      value(node.value) {}
-
-    int functionNode::nodeType() const {
-      return exprNodeType::function;
-    }
-
-    void functionNode::print(printer_t &pout) const {
-      value.print(pout);
-    }
     //==================================
 
     //---[ Operators ]------------------
-    opNode::opNode(operator_t &op_) :
+    opNode::opNode(const operator_t &op_) :
       op(op_) {}
 
     int opNode::opnodeType() const {
       return op.optype;
     }
 
-    leftUnaryOpNode::leftUnaryOpNode(operator_t &op_,
+    leftUnaryOpNode::leftUnaryOpNode(const operator_t &op_,
                                      exprNode &value_) :
       opNode(op_),
       value(value_) {}
@@ -82,7 +81,7 @@ namespace occa {
       value.print(pout);
     }
 
-    rightUnaryOpNode::rightUnaryOpNode(operator_t &op_,
+    rightUnaryOpNode::rightUnaryOpNode(const operator_t &op_,
                                        exprNode &value_) :
       opNode(op_),
       value(value_) {}
@@ -100,7 +99,7 @@ namespace occa {
       op.print(pout);
     }
 
-    binaryOpNode::binaryOpNode(operator_t &op_,
+    binaryOpNode::binaryOpNode(const operator_t &op_,
                                exprNode &leftValue_,
                                exprNode &rightValue_) :
       opNode(op_),
@@ -124,7 +123,7 @@ namespace occa {
       rightValue.print(pout);
     }
 
-    ternaryOpNode::ternaryOpNode(operator_t &op_,
+    ternaryOpNode::ternaryOpNode(const operator_t &op_,
                                  exprNode &checkValue_,
                                  exprNode &trueValue_,
                                  exprNode &falseValue_) :
@@ -200,12 +199,21 @@ namespace occa {
     }
 
     newNode::newNode(type_t &type_,
+                     exprNode &value_) :
+      type(type_),
+      value(value_),
+      size(const_cast<emptyNode&>(noExprNode)) {}
+
+    newNode::newNode(type_t &type_,
+                     exprNode &value_,
                      exprNode &size_) :
       type(type_),
+      value(value_),
       size(size_) {}
 
     newNode::newNode(const newNode &node) :
       type(node.type),
+      value(node.value),
       size(node.size) {}
 
     int newNode::nodeType() const {
@@ -213,8 +221,11 @@ namespace occa {
     }
 
     void newNode::print(printer_t &pout) const {
+      // TODO: Print type without qualifiers
+      //       Also convert [] to *
       pout << "new ";
       type.print(pout);
+      value.print(pout);
       if (size.nodeType() != exprNodeType::empty) {
         pout << '[';
         size.print(pout);
@@ -293,6 +304,8 @@ namespace occa {
     }
 
     void funcCastNode::print(printer_t &pout) const {
+      // TODO: Print type without qualifiers
+      //       Also convert [] to *
       type.print(pout);
       pout << '(';
       value.print(pout);
@@ -313,6 +326,8 @@ namespace occa {
     }
 
     void parenCastNode::print(printer_t &pout) const {
+      // TODO: Print type without qualifiers
+      //       Also convert [] to *
       pout << '(';
       type.print(pout);
       pout << ") ";
@@ -333,6 +348,8 @@ namespace occa {
     }
 
     void constCast::print(printer_t &pout) const {
+      // TODO: Print type without qualifiers
+      //       Also convert [] to *
       pout << "const_cast<";
       type.print(pout);
       pout << ">(";
@@ -354,6 +371,8 @@ namespace occa {
     }
 
     void staticCast::print(printer_t &pout) const {
+      // TODO: Print type without qualifiers
+      //       Also convert [] to *
       pout << "static_cast<";
       type.print(pout);
       pout << ">(";
@@ -375,6 +394,8 @@ namespace occa {
     }
 
     void reinterpretCast::print(printer_t &pout) const {
+      // TODO: Print type without qualifiers
+      //       Also convert [] to *
       pout << "reinterpret_cast<";
       type.print(pout);
       pout << ">(";
@@ -396,6 +417,8 @@ namespace occa {
     }
 
     void dynamicCast::print(printer_t &pout) const {
+      // TODO: Print type without qualifiers
+      //       Also convert [] to *
       pout << "dynamic_cast<";
       type.print(pout);
       pout << ">(";

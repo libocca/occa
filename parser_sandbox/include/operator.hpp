@@ -151,7 +151,7 @@ namespace occa {
       extern const operator_t negative;
       extern const operator_t tilde;
       extern const operator_t leftIncrement;
-      extern const operator_t rightDecrement;
+      extern const operator_t leftDecrement;
       //================================
 
       //---[ Right Unary ]--------------

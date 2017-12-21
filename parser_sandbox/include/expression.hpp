@@ -19,39 +19,41 @@ namespace occa {
       static const int empty           = (1 << 0);
       static const int primitive       = (1 << 1);
       static const int variable        = (1 << 2);
-      static const int function        = (1 << 3);
       static const int value           = (primitive |
-                                          variable  |
-                                          function);
-      static const int leftUnary       = (1 << 4);
-      static const int rightUnary      = (1 << 5);
-      static const int binary          = (1 << 6);
-      static const int ternary         = (1 << 7);
+                                          variable);
+      static const int leftUnary       = (1 << 5);
+      static const int rightUnary      = (1 << 6);
+      static const int binary          = (1 << 7);
+      static const int ternary         = (1 << 8);
       static const int op              = (leftUnary  |
                                           rightUnary |
                                           binary     |
                                           ternary);
-      static const int subscript       = (1 << 8);
-      static const int call            = (1 << 9);
-      static const int new_            = (1 << 10);
-      static const int delete_         = (1 << 11);
-      static const int throw_          = (1 << 12);
-      static const int sizeof_         = (1 << 13);
-      static const int funcCast        = (1 << 14);
-      static const int parenCast       = (1 << 15);
-      static const int constCast       = (1 << 16);
-      static const int staticCast      = (1 << 17);
-      static const int reinterpretCast = (1 << 18);
-      static const int dynamicCast     = (1 << 19);
-      static const int parentheses     = (1 << 20);
-      static const int tuple           = (1 << 21);
-      static const int cudaCall        = (1 << 22);
+      static const int subscript       = (1 << 9);
+      static const int call            = (1 << 10);
+      static const int new_            = (1 << 11);
+      static const int delete_         = (1 << 12);
+      static const int throw_          = (1 << 13);
+      static const int sizeof_         = (1 << 14);
+      static const int funcCast        = (1 << 15);
+      static const int parenCast       = (1 << 16);
+      static const int constCast       = (1 << 17);
+      static const int staticCast      = (1 << 18);
+      static const int reinterpretCast = (1 << 19);
+      static const int dynamicCast     = (1 << 20);
+      static const int parentheses     = (1 << 21);
+      static const int tuple           = (1 << 22);
+      static const int cudaCall        = (1 << 23);
     };
 
     class exprNode {
     public:
       virtual int nodeType() const = 0;
+
       virtual void print(printer_t &pout) const = 0;
+
+      std::string toString() const;
+      void debugPrint() const;
     };
 
     //---[ Empty ]----------------------
@@ -62,6 +64,8 @@ namespace occa {
       virtual int nodeType() const;
       virtual void print(printer_t &pout) const;
     };
+
+    extern const emptyNode noExprNode;
     //==================================
 
     //---[ Values ]---------------------
@@ -86,25 +90,14 @@ namespace occa {
       virtual int nodeType() const;
       virtual void print(printer_t &pout) const;
     };
-
-    class functionNode : public exprNode {
-    public:
-      variable_t &value;
-
-      functionNode(variable_t &value_);
-      functionNode(const functionNode &node);
-
-      virtual int nodeType() const;
-      virtual void print(printer_t &pout) const;
-    };
     //==================================
 
     //---[ Operators ]------------------
     class opNode : virtual public exprNode {
     public:
-      operator_t &op;
+      const operator_t &op;
 
-      opNode(operator_t &op_);
+      opNode(const operator_t &op_);
       int opnodeType() const;
     };
 
@@ -112,7 +105,7 @@ namespace occa {
     public:
       exprNode &value;
 
-      leftUnaryOpNode(operator_t &op_,
+      leftUnaryOpNode(const operator_t &op_,
                       exprNode &value_);
       leftUnaryOpNode(const leftUnaryOpNode &node);
 
@@ -124,7 +117,7 @@ namespace occa {
     public:
       exprNode &value;
 
-      rightUnaryOpNode(operator_t &op_,
+      rightUnaryOpNode(const operator_t &op_,
                        exprNode &value_);
       rightUnaryOpNode(const rightUnaryOpNode &node);
 
@@ -136,7 +129,7 @@ namespace occa {
     public:
       exprNode &leftValue, &rightValue;
 
-      binaryOpNode(operator_t &op_,
+      binaryOpNode(const operator_t &op_,
                    exprNode &leftValue_,
                    exprNode &rightValue_);
       binaryOpNode(const binaryOpNode &node);
@@ -149,7 +142,7 @@ namespace occa {
     public:
       exprNode &checkValue, &trueValue, &falseValue;
 
-      ternaryOpNode(operator_t &op_,
+      ternaryOpNode(const operator_t &op_,
                     exprNode &checkValue_,
                     exprNode &trueValue_,
                     exprNode &falseValue_);
@@ -193,9 +186,13 @@ namespace occa {
     class newNode : public exprNode {
     public:
       type_t &type;
+      exprNode &value;
       exprNode &size;
 
       newNode(type_t &type_,
+              exprNode &value_);
+      newNode(type_t &type_,
+              exprNode &value_,
               exprNode &size_);
       newNode(const newNode &node);
 

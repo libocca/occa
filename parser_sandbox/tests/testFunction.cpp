@@ -3,6 +3,7 @@
 
 #include "type.hpp"
 #include "typeBuiltins.hpp"
+#include "expression.hpp"
 
 void testFunction();
 
@@ -26,11 +27,15 @@ void testFunction() {
 
   pointerType arg3(char_, volatile_);
 
+  primitiveNode arg4Size(1337);
+  arrayType arg4(t2, arg4Size);
+
   functionType f(void_, "foo");
   f.addArgument(t1 , "a");
   f.addArgument(td2, "b");
   f.addArgument(volatile_, float_, "c");
   f.addArgument(arg3);
+  f.addArgument(arg4, "array");
   f.addArgument(double_, "e");
 
   functionType f2(f, "bar");
@@ -42,7 +47,6 @@ void testFunction() {
             << "t2   = " << t2.toString() << '\n'
             << "td1  = " << td1.declarationToString() << '\n'
             << "td2  = " << td2.declarationToString() << '\n'
-            << "f    =\n" << f.declarationToString() << '\n';
-  // TODO: Fix nested function pointers
-  // << "f2   =\n" << f2.declarationToString() << '\n';
+            << "f    =\n" << f.declarationToString() << '\n'
+            << "f2   =\n" << f2.declarationToString() << '\n';
 }

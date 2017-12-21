@@ -17,6 +17,7 @@ namespace occa {
     class qualifier;
     class type_t;
     class variable_t;
+    class exprNode;
 
     typedef std::vector<const qualifier*> qualifierVector_t;
     typedef std::vector<type_t*> typeVector_t;
@@ -264,15 +265,17 @@ namespace occa {
     //---[ Array ]----------------------
     class arrayType : public type_t {
     public:
-      void* sizeExpression;
+      const exprNode *size;
 
       arrayType(const type_t &baseType_);
       arrayType(const arrayType &baseType_);
       arrayType(const type_t &baseType_,
-                void * sizeExpression_);
+                const exprNode &size_);
       virtual ~arrayType();
 
       virtual stype_t type() const;
+
+      void setSize(exprNode &size_);
 
       virtual type_t& clone() const;
 

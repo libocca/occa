@@ -6,6 +6,7 @@
 #include "type.hpp"
 #include "statement.hpp"
 #include "variable.hpp"
+#include "expression.hpp"
 
 namespace occa {
   namespace lang {
@@ -263,19 +264,19 @@ namespace occa {
     //---[ Array ]----------------------
     arrayType::arrayType(const type_t &baseType_) :
       type_t(baseType_),
-      sizeExpression(NULL) {}
+      size(&noExprNode) {}
 
     arrayType::arrayType(const arrayType &baseType_) :
       type_t(baseType_),
-      sizeExpression(NULL) {}
+      size(&noExprNode) {}
 
     arrayType::arrayType(const type_t &baseType_,
-                         void *sizeExpression_) :
+                         const exprNode &size_) :
       type_t(baseType_),
-      sizeExpression(sizeExpression_) {}
+      size(&size_) {}
 
     arrayType::~arrayType() {
-      // TODO: Delete sizeExpression
+      // TODO: Delete size
     }
 
     stype_t arrayType::type() const {
@@ -285,15 +286,19 @@ namespace occa {
     type_t& arrayType::clone() const {
       OCCA_ERROR("occa::lang::arrayType has a NULL baseType",
                  baseType);
-      // TODO: sizeExpression.clone()
+      // TODO: size.clone()
       return *(new arrayType(baseType->clone(),
-                             sizeExpression));
+                             *size));
+    }
+
+    void arrayType::setSize(exprNode &size_) {
+      size = &size_;
     }
 
     void arrayType::printRight(printer_t &pout) const {
       baseType->printRight(pout);
       pout << '[';
-      // TODO: sizeExpression.print(pout)
+      size->print(pout);
       pout << ']';
     }
     //==================================
@@ -476,13 +481,11 @@ namespace occa {
       } else {
         baseType->print(pout);
       }
-      if (pout.lastCharNeedsWhitespace()) {
+      if (pout.lastCharNeedsWhitespace() &&
+          !(baseType->type() & specifierType::function)) {
         pout << ' ';
       }
       pout << "(*";
-      if (isNamed()) {
-        pout << name;
-      }
     }
 
     void functionType::printDeclarationRight(printer_t &pout) const {
@@ -508,6 +511,9 @@ namespace occa {
                  baseType);
       pout.printIndentation();
       printDeclarationLeft(pout);
+      if (isNamed()) {
+        pout << name;
+      }
       printDeclarationRight(pout);
     }
     //==================================

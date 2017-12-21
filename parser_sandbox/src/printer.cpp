@@ -71,6 +71,10 @@ namespace occa {
       }
     }
 
+    char printer_t::getLastChar() {
+      return lastChar;
+    }
+
     bool printer_t::lastCharNeedsWhitespace() {
       switch (lastChar) {
       case '\0':

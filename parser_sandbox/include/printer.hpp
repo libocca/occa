@@ -36,6 +36,7 @@ namespace occa {
       void addIndentation();
       void removeIndentation();
 
+      char getLastChar();
       bool lastCharNeedsWhitespace();
       void forceNextInlined();
 
