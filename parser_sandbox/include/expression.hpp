@@ -48,8 +48,10 @@ namespace occa {
 
     class exprNode {
     public:
-      virtual int nodeType() const = 0;
+      virtual ~exprNode();
 
+      virtual int nodeType() const = 0;
+      virtual exprNode& clone() const = 0;
       virtual void print(printer_t &pout) const = 0;
 
       std::string toString() const;
@@ -60,12 +62,12 @@ namespace occa {
     class emptyNode : public exprNode {
     public:
       emptyNode();
+      ~emptyNode();
 
       virtual int nodeType() const;
+      virtual exprNode& clone() const;
       virtual void print(printer_t &pout) const;
     };
-
-    extern const emptyNode noExprNode;
     //==================================
 
     //---[ Values ]---------------------
@@ -75,8 +77,10 @@ namespace occa {
 
       primitiveNode(primitive value_);
       primitiveNode(const primitiveNode& node);
+      ~primitiveNode();
 
       virtual int nodeType() const;
+      virtual exprNode& clone() const;
       virtual void print(printer_t &pout) const;
     };
 
@@ -86,8 +90,10 @@ namespace occa {
 
       variableNode(variable_t &value_);
       variableNode(const variableNode& node);
+      ~variableNode();
 
       virtual int nodeType() const;
+      virtual exprNode& clone() const;
       virtual void print(printer_t &pout) const;
     };
     //==================================
@@ -108,8 +114,10 @@ namespace occa {
       leftUnaryOpNode(const operator_t &op_,
                       exprNode &value_);
       leftUnaryOpNode(const leftUnaryOpNode &node);
+      ~leftUnaryOpNode();
 
       virtual int nodeType() const;
+      virtual exprNode& clone() const;
       virtual void print(printer_t &pout) const;
     };
 
@@ -120,8 +128,10 @@ namespace occa {
       rightUnaryOpNode(const operator_t &op_,
                        exprNode &value_);
       rightUnaryOpNode(const rightUnaryOpNode &node);
+      ~rightUnaryOpNode();
 
       virtual int nodeType() const;
+      virtual exprNode& clone() const;
       virtual void print(printer_t &pout) const;
     };
 
@@ -133,8 +143,10 @@ namespace occa {
                    exprNode &leftValue_,
                    exprNode &rightValue_);
       binaryOpNode(const binaryOpNode &node);
+                   ~binaryOpNode();
 
       virtual int nodeType() const;
+      virtual exprNode& clone() const;
       virtual void print(printer_t &pout) const;
     };
 
@@ -147,8 +159,10 @@ namespace occa {
                     exprNode &trueValue_,
                     exprNode &falseValue_);
       ternaryOpNode(const ternaryOpNode &node);
+                    ~ternaryOpNode();
 
       virtual int nodeType() const;
+      virtual exprNode& clone() const;
       virtual void print(printer_t &pout) const;
     };
     //==================================
@@ -161,8 +175,10 @@ namespace occa {
       subscriptNode(exprNode &value_,
                     exprNode &index_);
       subscriptNode(const subscriptNode &node);
+      ~subscriptNode();
 
       virtual int nodeType() const;
+      virtual exprNode& clone() const;
       virtual void print(printer_t &pout) const;
     };
 
@@ -174,12 +190,14 @@ namespace occa {
       callNode(exprNode &value_,
                exprNodeVector_t args_);
       callNode(const callNode &node);
+      ~callNode();
 
       inline int argCount() const {
         return (int) args.size();
       }
 
       virtual int nodeType() const;
+      virtual exprNode& clone() const;
       virtual void print(printer_t &pout) const;
     };
 
@@ -195,8 +213,10 @@ namespace occa {
               exprNode &value_,
               exprNode &size_);
       newNode(const newNode &node);
+      ~newNode();
 
       virtual int nodeType() const;
+      virtual exprNode& clone() const;
       virtual void print(printer_t &pout) const;
     };
 
@@ -208,8 +228,10 @@ namespace occa {
       deleteNode(exprNode &value_,
                  const bool isArray_);
       deleteNode(const deleteNode &node);
+      ~deleteNode();
 
       virtual int nodeType() const;
+      virtual exprNode& clone() const;
       virtual void print(printer_t &pout) const;
     };
 
@@ -219,8 +241,10 @@ namespace occa {
 
       throwNode(exprNode &value_);
       throwNode(const throwNode &node);
+      ~throwNode();
 
       virtual int nodeType() const;
+      virtual exprNode& clone() const;
       virtual void print(printer_t &pout) const;
     };
     //==================================
@@ -232,8 +256,10 @@ namespace occa {
 
       sizeofNode(exprNode &value_);
       sizeofNode(const sizeofNode &node);
+      ~sizeofNode();
 
       virtual int nodeType() const;
+      virtual exprNode& clone() const;
       virtual void print(printer_t &pout) const;
     };
 
@@ -245,8 +271,10 @@ namespace occa {
       funcCastNode(type_t &type_,
                    exprNode &value_);
       funcCastNode(const funcCastNode &node);
+      ~funcCastNode();
 
       virtual int nodeType() const;
+      virtual exprNode& clone() const;
       virtual void print(printer_t &pout) const;
     };
 
@@ -258,60 +286,70 @@ namespace occa {
       parenCastNode(type_t &type_,
                     exprNode &value_);
       parenCastNode(const parenCastNode &node);
+      ~parenCastNode();
 
       virtual int nodeType() const;
+      virtual exprNode& clone() const;
       virtual void print(printer_t &pout) const;
     };
 
-    class constCast : public exprNode {
+    class constCastNode : public exprNode {
     public:
       type_t &type;
       exprNode &value;
 
-      constCast(type_t &type_,
+      constCastNode(type_t &type_,
                 exprNode &value_);
-      constCast(const constCast &node);
+      constCastNode(const constCastNode &node);
+      ~constCastNode();
 
       virtual int nodeType() const;
+      virtual exprNode& clone() const;
       virtual void print(printer_t &pout) const;
     };
 
-    class staticCast : public exprNode {
+    class staticCastNode : public exprNode {
     public:
       type_t &type;
       exprNode &value;
 
-      staticCast(type_t &type_,
+      staticCastNode(type_t &type_,
                  exprNode &value_);
-      staticCast(const staticCast &node);
+      staticCastNode(const staticCastNode &node);
+      ~staticCastNode();
 
       virtual int nodeType() const;
+      virtual exprNode& clone() const;
       virtual void print(printer_t &pout) const;
     };
 
-    class reinterpretCast : public exprNode {
+    class reinterpretCastNode : public exprNode {
     public:
       type_t &type;
       exprNode &value;
 
-      reinterpretCast(type_t &type_,
+      reinterpretCastNode(type_t &type_,
                       exprNode &value_);
-      reinterpretCast(const reinterpretCast &node);
+      reinterpretCastNode(const reinterpretCastNode &node);
+      ~reinterpretCastNode();
 
       virtual int nodeType() const;
+      virtual exprNode& clone() const;
       virtual void print(printer_t &pout) const;
     };
 
-    class dynamicCast : public exprNode {
+    class dynamicCastNode : public exprNode {
     public:
       type_t &type;
       exprNode &value;
 
-      dynamicCast(type_t &type_,
+      dynamicCastNode(type_t &type_,
                   exprNode &value_);
-      dynamicCast(const dynamicCast &node);
+      dynamicCastNode(const dynamicCastNode &node);
+      ~dynamicCastNode();
 
       virtual int nodeType() const;
+      virtual exprNode& clone() const;
       virtual void print(printer_t &pout) const;
     };
     //==================================
@@ -323,8 +361,10 @@ namespace occa {
 
       parenthesesNode(exprNode &value_);
       parenthesesNode(const parenthesesNode &node);
+      ~parenthesesNode();
 
       virtual int nodeType() const;
+      virtual exprNode& clone() const;
       virtual void print(printer_t &pout) const;
     };
     //==================================
@@ -337,8 +377,10 @@ namespace occa {
       cudaCallNode(exprNode &blocks_,
                    exprNode &threads_);
       cudaCallNode(const cudaCallNode &node);
+      ~cudaCallNode();
 
       virtual int nodeType() const;
+      virtual exprNode& clone() const;
       virtual void print(printer_t &pout) const;
     };
     //==================================

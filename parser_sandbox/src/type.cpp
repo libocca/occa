@@ -264,19 +264,19 @@ namespace occa {
     //---[ Array ]----------------------
     arrayType::arrayType(const type_t &baseType_) :
       type_t(baseType_),
-      size(&noExprNode) {}
+      size(new emptyNode()) {}
 
     arrayType::arrayType(const arrayType &baseType_) :
       type_t(baseType_),
-      size(&noExprNode) {}
+      size(new emptyNode()) {}
 
     arrayType::arrayType(const type_t &baseType_,
                          const exprNode &size_) :
       type_t(baseType_),
-      size(&size_) {}
+      size(&(size_.clone())) {}
 
     arrayType::~arrayType() {
-      // TODO: Delete size
+      delete size;
     }
 
     stype_t arrayType::type() const {
@@ -286,13 +286,12 @@ namespace occa {
     type_t& arrayType::clone() const {
       OCCA_ERROR("occa::lang::arrayType has a NULL baseType",
                  baseType);
-      // TODO: size.clone()
       return *(new arrayType(baseType->clone(),
-                             *size));
+                             size->clone()));
     }
 
     void arrayType::setSize(exprNode &size_) {
-      size = &size_;
+      size = &(size_.clone());
     }
 
     void arrayType::printRight(printer_t &pout) const {

@@ -414,6 +414,7 @@ namespace occa {
     case null_: {
       return 1;
     }}
+    return 0;
   }
 
   json& json::remove(const char *c) {
