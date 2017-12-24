@@ -40,7 +40,7 @@ namespace occa {
       // If formula is correct
       //   - minInput should go down to 0
       //   - maxOutput should go up to at least 0
-      intVector_t inputs, constants;
+      intVector inputs, constants;
       int minInput = 1, maxInput = -1;
       int minConstant = 0, maxConstant = -1;
 
@@ -48,7 +48,7 @@ namespace occa {
       while (*c) {
         // Input vectors/constants are of the format [cv][0-9]+
         if ((*c == 'v') || (*c == 'c')) {
-          intVector_t &vec = (*c == 'v') ? inputs : constants;
+          intVector &vec = (*c == 'v') ? inputs : constants;
           int &minVal = (*c == 'v') ? minInput : minConstant;
           int &maxVal = (*c == 'v') ? maxInput : maxConstant;
 

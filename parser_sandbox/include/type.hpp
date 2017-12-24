@@ -13,11 +13,11 @@
 
 namespace occa {
   namespace lang {
-    class statement_t;
     class qualifier;
     class type_t;
-    class variable_t;
+    class variable;
     class exprNode;
+    class blockStatement;
 
     typedef std::vector<const qualifier*> qualifierVector_t;
     typedef std::vector<type_t*> typeVector_t;
@@ -135,7 +135,7 @@ namespace occa {
 
       virtual std::string uniqueName() const;
 
-      virtual void print(printer_t &pout) const;
+      virtual void print(printer &pout) const;
 
       std::string toString() const;
       void debugPrint() const;
@@ -172,7 +172,7 @@ namespace occa {
       void add(const qualifier &q);
       void remove(const qualifier &q);
 
-      void print(printer_t &pout) const;
+      void print(printer &pout) const;
 
       std::string toString() const;
       void debugPrint() const;
@@ -215,16 +215,16 @@ namespace occa {
         return qualifiers_.has(q) >= 0;
       }
 
-      virtual void printLeft(printer_t &pout) const;
-      virtual void printRight(printer_t &pout) const;
+      virtual void printLeft(printer &pout) const;
+      virtual void printRight(printer &pout) const;
 
-      virtual void print(printer_t &pout) const;
-      void print(printer_t &pout, const variable_t &var) const;
+      virtual void print(printer &pout) const;
+      void print(printer &pout, const variable &var) const;
     };
 
-    class declarationType_t : public virtual type_t {
+    class declarationType : public virtual type_t {
     public:
-      virtual void printDeclaration(printer_t &pout) const = 0;
+      virtual void printDeclaration(printer &pout) const = 0;
 
       std::string declarationToString() const;
       void declarationDebugPrint() const;
@@ -258,7 +258,7 @@ namespace occa {
 
       virtual type_t& clone() const;
 
-      virtual void printLeft(printer_t &pout) const;
+      virtual void printLeft(printer &pout) const;
     };
     //==================================
 
@@ -279,7 +279,7 @@ namespace occa {
 
       virtual type_t& clone() const;
 
-      virtual void printRight(printer_t &pout) const;
+      virtual void printRight(printer &pout) const;
     };
     //==================================
 
@@ -294,33 +294,35 @@ namespace occa {
 
       virtual type_t& clone() const;
 
-      virtual void printLeft(printer_t &pout) const;
+      virtual void printLeft(printer &pout) const;
     };
     //==================================
 
     //---[ Class ]----------------------
-    class classType : public declarationType_t {
+    class classType : public declarationType {
       std::string name;
       qtype_t label;
-      statement_t *body;
+      blockStatement *body;
 
       classType(const std::string &name_,
                 const int label_);
 
-      virtual stype_t type() const;
+      classType(const std::string &name_,
+                const int label_,
+                blockStatement &body_);
 
-      void setBody(statement_t &body_);
+      virtual stype_t type() const;
 
       virtual ~classType();
 
       virtual type_t& clone() const;
 
-      virtual void printDeclaration(printer_t &pout) const;
+      virtual void printDeclaration(printer &pout) const;
     };
     //==================================
 
     //---[ Typedef ]--------------------
-    class typedefType : public declarationType_t {
+    class typedefType : public declarationType {
     public:
       typedefType(const type_t &baseType_,
                   const std::string &name_);
@@ -333,13 +335,13 @@ namespace occa {
 
       virtual type_t& clone() const;
 
-      virtual void printLeft(printer_t &pout) const;
-      virtual void printDeclaration(printer_t &pout) const;
+      virtual void printLeft(printer &pout) const;
+      virtual void printDeclaration(printer &pout) const;
     };
     //==================================
 
     //---[ Function ]-------------------
-    class functionType : public declarationType_t {
+    class functionType : public declarationType {
     public:
       typeVector_t args;
 
@@ -364,10 +366,10 @@ namespace occa {
         return (int) args.size();
       }
 
-      void printDeclarationLeft(printer_t &pout) const;
-      void printDeclarationRight(printer_t &pout) const;
+      void printDeclarationLeft(printer &pout) const;
+      void printDeclarationRight(printer &pout) const;
 
-      virtual void printDeclaration(printer_t &pout) const;
+      virtual void printDeclaration(printer &pout) const;
     };
     //==================================
 
@@ -378,7 +380,7 @@ namespace occa {
 
       virtual stype_t type() const;
 
-      virtual void print(printer_t &pout) const;
+      virtual void print(printer &pout) const;
     };
     //==================================
   }

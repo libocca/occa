@@ -47,7 +47,7 @@ namespace occa {
       for (int i = 0; i < argc; ++i) {
         const int argCount = (int) kArgs[i].args.size();
         if (argCount) {
-          const kernelArg_t *kArgs_i = &(kArgs[i].args[0]);
+          const kernelArgData *kArgs_i = &(kArgs[i].args[0]);
           for (int j = 0; j < argCount; ++j) {
             job.args.push_back(kArgs_i[j].ptr());
           }

@@ -80,7 +80,7 @@ void testOtherNodes() {
   pointerType t1_1(t1_0, const_);
   pointerType t1(t1_1);
 
-  variable_t var_(t1, "var");
+  variable var_(t1, "var");
   variableNode var(var_);
 
   primitiveNode one(1), two(2), three(3);

@@ -35,7 +35,7 @@ namespace occa {
 
     extern std::string OCCA_DIR, OCCA_CACHE_DIR;
     extern size_t      OCCA_MEM_BYTE_ALIGN;
-    extern strVector_t OCCA_PATH;
+    extern strVector   OCCA_PATH;
 
     properties& baseSettings();
 

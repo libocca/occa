@@ -9,7 +9,7 @@ namespace occa {
   namespace lang {
     int charsFromNewline(const std::string &s);
 
-    class printer_t {
+    class printer {
     private:
       std::stringstream ss;
       std::ostream *outputStream;
@@ -22,8 +22,8 @@ namespace occa {
       int charsFromNewline;
 
     public:
-      printer_t();
-      printer_t(std::ostream &outputStream_);
+      printer();
+      printer(std::ostream &outputStream_);
 
       void setOutputStream(std::ostream &outputStream_);
 
@@ -47,7 +47,7 @@ namespace occa {
       void printEndNewline();
 
       template <class TM>
-      printer_t& operator << (const TM &t) {
+      printer& operator << (const TM &t) {
         ss << t;
         const std::string str = ss.str();
         const char *c_str = str.c_str();

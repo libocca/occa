@@ -3,24 +3,24 @@
 
 /*
   Comments are replaced by a space ' '
- */
+*/
 
 namespace occa {
   namespace lang {
     class token_t;
 
-    class tokenStream_t {
+    class tokenStream {
       const char *start, *end;
       const char *ptr;
 
     public:
-      tokenStream_t() :
+      tokenStream() :
         start(NULL),
         end(NULL),
         ptr(NULL) {}
 
-      tokenStream_t(const char *start_,
-                    const char *end_ = NULL) :
+      tokenStream(const char *start_,
+                  const char *end_ = NULL) :
         start(start_),
         ptr(start) {
         end = ((end_ != NULL)
@@ -28,7 +28,7 @@ namespace occa {
                : (start + strlen(start)));
       }
 
-      tokenStream_t(const std::string &str) {
+      tokenStream(const std::string &str) {
         const int chars = (int) str.size();
         if (chars == 0) {
           start = end = ptr = NULL;
@@ -69,7 +69,7 @@ namespace occa {
 
     class token_t {
     public:
-      bool in(tokenStream_t &stream) {
+      bool in(tokenStream &stream) {
         if (stream.hasNext()) {
           stream.setNext(*this);
           return true;

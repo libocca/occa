@@ -46,7 +46,7 @@ namespace occa {
 
       std::queue<job_t> jobs[50];
 
-      mutex_t jobMutex;
+      mutex jobMutex;
 
       device(const occa::properties &properties_ = occa::properties());
       ~device();

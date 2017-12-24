@@ -6,7 +6,7 @@ namespace occa {
 
     std::string exprNode::toString() const {
       std::stringstream ss;
-      printer_t pout(ss);
+      printer pout(ss);
       print(pout);
       return ss.str();
     }
@@ -27,7 +27,7 @@ namespace occa {
       return *(new emptyNode());
     }
 
-    void emptyNode::print(printer_t &pout) const {}
+    void emptyNode::print(printer &pout) const {}
 
     const emptyNode noExprNode;
     //==================================
@@ -49,11 +49,11 @@ namespace occa {
       return *(new primitiveNode(value));
     }
 
-    void primitiveNode::print(printer_t &pout) const {
+    void primitiveNode::print(printer &pout) const {
       pout << (std::string) value;
     }
 
-    variableNode::variableNode(variable_t &value_) :
+    variableNode::variableNode(variable &value_) :
       value(value_) {}
 
     variableNode::variableNode(const variableNode &node) :
@@ -69,7 +69,7 @@ namespace occa {
       return *(new variableNode(value));
     }
 
-    void variableNode::print(printer_t &pout) const {
+    void variableNode::print(printer &pout) const {
       value.print(pout);
     }
     //==================================
@@ -103,7 +103,7 @@ namespace occa {
       return *(new leftUnaryOpNode(op, value));
     }
 
-    void leftUnaryOpNode::print(printer_t &pout) const {
+    void leftUnaryOpNode::print(printer &pout) const {
       op.print(pout);
       value.print(pout);
     }
@@ -129,7 +129,7 @@ namespace occa {
       return *(new rightUnaryOpNode(op, value));
     }
 
-    void rightUnaryOpNode::print(printer_t &pout) const {
+    void rightUnaryOpNode::print(printer &pout) const {
       value.print(pout);
       op.print(pout);
     }
@@ -159,7 +159,7 @@ namespace occa {
       return *(new binaryOpNode(op, leftValue, rightValue));
     }
 
-    void binaryOpNode::print(printer_t &pout) const {
+    void binaryOpNode::print(printer &pout) const {
       leftValue.print(pout);
       pout << ' ';
       op.print(pout);
@@ -196,7 +196,7 @@ namespace occa {
       return *(new ternaryOpNode(op, checkValue, trueValue, falseValue));
     }
 
-    void ternaryOpNode::print(printer_t &pout) const {
+    void ternaryOpNode::print(printer &pout) const {
       checkValue.print(pout);
       pout << " ? ";
       trueValue.print(pout);
@@ -228,7 +228,7 @@ namespace occa {
       return *(new subscriptNode(value, index));
     }
 
-    void subscriptNode::print(printer_t &pout) const {
+    void subscriptNode::print(printer &pout) const {
       value.print(pout);
       pout << '[';
       index.print(pout);
@@ -269,7 +269,7 @@ namespace occa {
       return *(new callNode(value, args));
     }
 
-    void callNode::print(printer_t &pout) const {
+    void callNode::print(printer &pout) const {
       value.print(pout);
       pout << '(';
       const int argCount = (int) args.size();
@@ -313,7 +313,7 @@ namespace occa {
       return *(new newNode(type, value, size));
     }
 
-    void newNode::print(printer_t &pout) const {
+    void newNode::print(printer &pout) const {
       // TODO: Print type without qualifiers
       //       Also convert [] to *
       pout << "new ";
@@ -347,7 +347,7 @@ namespace occa {
       return *(new deleteNode(value, isArray));
     }
 
-    void deleteNode::print(printer_t &pout) const {
+    void deleteNode::print(printer &pout) const {
       pout << "delete ";
       if (isArray) {
         pout << "[] ";
@@ -373,7 +373,7 @@ namespace occa {
       return *(new throwNode(value));
     }
 
-    void throwNode::print(printer_t &pout) const {
+    void throwNode::print(printer &pout) const {
       pout << "throw";
       if (value.nodeType() != exprNodeType::empty) {
         pout << ' ';
@@ -401,7 +401,7 @@ namespace occa {
       return *(new sizeofNode(value));
     }
 
-    void sizeofNode::print(printer_t &pout) const {
+    void sizeofNode::print(printer &pout) const {
       pout << "sizeof(";
       value.print(pout);
       pout << ')';
@@ -428,7 +428,7 @@ namespace occa {
       return *(new funcCastNode(type, value));
     }
 
-    void funcCastNode::print(printer_t &pout) const {
+    void funcCastNode::print(printer &pout) const {
       // TODO: Print type without qualifiers
       //       Also convert [] to *
       type.print(pout);
@@ -458,7 +458,7 @@ namespace occa {
       return *(new parenCastNode(type, value));
     }
 
-    void parenCastNode::print(printer_t &pout) const {
+    void parenCastNode::print(printer &pout) const {
       // TODO: Print type without qualifiers
       //       Also convert [] to *
       pout << '(';
@@ -488,7 +488,7 @@ namespace occa {
       return *(new constCastNode(type, value));
     }
 
-    void constCastNode::print(printer_t &pout) const {
+    void constCastNode::print(printer &pout) const {
       // TODO: Print type without qualifiers
       //       Also convert [] to *
       pout << "const_cast<";
@@ -519,7 +519,7 @@ namespace occa {
       return *(new staticCastNode(type, value));
     }
 
-    void staticCastNode::print(printer_t &pout) const {
+    void staticCastNode::print(printer &pout) const {
       // TODO: Print type without qualifiers
       //       Also convert [] to *
       pout << "static_cast<";
@@ -550,7 +550,7 @@ namespace occa {
       return *(new reinterpretCastNode(type, value));
     }
 
-    void reinterpretCastNode::print(printer_t &pout) const {
+    void reinterpretCastNode::print(printer &pout) const {
       // TODO: Print type without qualifiers
       //       Also convert [] to *
       pout << "reinterpret_cast<";
@@ -581,7 +581,7 @@ namespace occa {
       return *(new dynamicCastNode(type, value));
     }
 
-    void dynamicCastNode::print(printer_t &pout) const {
+    void dynamicCastNode::print(printer &pout) const {
       // TODO: Print type without qualifiers
       //       Also convert [] to *
       pout << "dynamic_cast<";
@@ -611,7 +611,7 @@ namespace occa {
       return *(new parenthesesNode(value));
     }
 
-    void parenthesesNode::print(printer_t &pout) const {
+    void parenthesesNode::print(printer &pout) const {
       pout << '(';
       value.print(pout);
       pout << ')';
@@ -641,7 +641,7 @@ namespace occa {
       return *(new cudaCallNode(blocks, threads));
     }
 
-    void cudaCallNode::print(printer_t &pout) const {
+    void cudaCallNode::print(printer &pout) const {
       pout << "<<<";
       blocks.print(pout);
       pout << ", ";

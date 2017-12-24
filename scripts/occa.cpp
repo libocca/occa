@@ -27,34 +27,34 @@
 occa::cli::command occaCommand;
 
 bool runCache(const occa::cli::command &command,
-              occa::jsonArray_t order,
-              occa::jsonObject_t options,
-              occa::jsonArray_t arguments);
+              occa::jsonArray order,
+              occa::jsonObject options,
+              occa::jsonArray arguments);
 
 bool runClear(const occa::cli::command &command,
-              occa::jsonArray_t order,
-              occa::jsonObject_t options,
-              occa::jsonArray_t arguments);
+              occa::jsonArray order,
+              occa::jsonObject options,
+              occa::jsonArray arguments);
 
 bool runCompile(const occa::cli::command &command,
-                occa::jsonArray_t order,
-                occa::jsonObject_t options,
-                occa::jsonArray_t arguments);
+                occa::jsonArray order,
+                occa::jsonObject options,
+                occa::jsonArray arguments);
 
 bool runEnv(const occa::cli::command &command,
-            occa::jsonArray_t order,
-            occa::jsonObject_t options,
-            occa::jsonArray_t arguments);
+            occa::jsonArray order,
+            occa::jsonObject options,
+            occa::jsonArray arguments);
 
 bool runInfo(const occa::cli::command &command,
-             occa::jsonArray_t order,
-             occa::jsonObject_t options,
-             occa::jsonArray_t arguments);
+             occa::jsonArray order,
+             occa::jsonObject options,
+             occa::jsonArray arguments);
 
 bool runBashAutocomplete(const occa::cli::command &command,
-                         occa::jsonArray_t order,
-                         occa::jsonObject_t options,
-                         occa::jsonArray_t arguments);
+                         occa::jsonArray order,
+                         occa::jsonObject options,
+                         occa::jsonArray arguments);
 
 int main(int argc, char **argv) {
   occa::cli::command cacheCommand;
@@ -178,9 +178,9 @@ bool removeDir(const std::string &dir, const bool promptCheck = true) {
 }
 
 bool runClear(const occa::cli::command &command,
-              occa::jsonArray_t order,
-              occa::jsonObject_t options,
-              occa::jsonArray_t arguments) {
+              occa::jsonArray order,
+              occa::jsonObject options,
+              occa::jsonArray arguments) {
 
   occa::cJsonObjectIterator it = options.begin();
 
@@ -190,12 +190,12 @@ bool runClear(const occa::cli::command &command,
   bool removedSomething = false;
   const bool promptCheck = (options.find("yes") == options.end());
   while (it != options.end()) {
-      if (it->first == "all") {
+    if (it->first == "all") {
       removedSomething |= removeDir(occa::env::OCCA_CACHE_DIR, promptCheck);
     } else if (it->first == "lib") {
-      const occa::jsonArray_t &libGroups = it->second.array();
+      const occa::jsonArray &libGroups = it->second.array();
       for (int i = 0; i < (int) libGroups.size(); ++i) {
-        const occa::jsonArray_t &libs = libGroups[i].array();
+        const occa::jsonArray &libs = libGroups[i].array();
         for (int j = 0; j < (int) libs.size(); ++j) {
           removedSomething |= removeDir(occa::io::libraryPath() +
                                         libs[j].string(),
@@ -219,9 +219,9 @@ bool runClear(const occa::cli::command &command,
 }
 
 bool runCache(const occa::cli::command &command,
-              occa::jsonArray_t order,
-              occa::jsonObject_t options,
-              occa::jsonArray_t arguments) {
+              occa::jsonArray order,
+              occa::jsonObject options,
+              occa::jsonArray arguments) {
   std::string libDir = occa::io::libraryPath() + arguments[0].string() + "/";
   occa::sys::mkpath(libDir);
 
@@ -248,16 +248,16 @@ bool runCache(const occa::cli::command &command,
 }
 
 bool runCompile(const occa::cli::command &command,
-                occa::jsonArray_t order,
-                occa::jsonObject_t options,
-                occa::jsonArray_t arguments) {
+                occa::jsonArray order,
+                occa::jsonObject options,
+                occa::jsonArray arguments) {
   return true;
 }
 
 bool runEnv(const occa::cli::command &command,
-            occa::jsonArray_t order,
-            occa::jsonObject_t options,
-            occa::jsonArray_t arguments) {
+            occa::jsonArray order,
+            occa::jsonObject options,
+            occa::jsonArray arguments) {
   std::cout << "  Basic:\n"
             << "    - OCCA_DIR                   : " << envEcho("OCCA_DIR") << "\n"
             << "    - OCCA_CACHE_DIR             : " << envEcho("OCCA_CACHE_DIR") << "\n"
@@ -286,18 +286,18 @@ bool runEnv(const occa::cli::command &command,
 }
 
 bool runInfo(const occa::cli::command &command,
-             occa::jsonArray_t order,
-             occa::jsonObject_t options,
-             occa::jsonArray_t arguments) {
+             occa::jsonArray order,
+             occa::jsonObject options,
+             occa::jsonArray arguments) {
   occa::printModeInfo();
   ::exit(0);
   return true;
 }
 
 bool runBashAutocomplete(const occa::cli::command &command,
-                         occa::jsonArray_t order,
-                         occa::jsonObject_t options,
-                         occa::jsonArray_t arguments) {
+                         occa::jsonArray order,
+                         occa::jsonObject options,
+                         occa::jsonArray arguments) {
   occaCommand.printBashAutocomplete();
   ::exit(0);
   return true;

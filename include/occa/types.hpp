@@ -35,24 +35,24 @@ namespace occa {
   typedef int64_t dim_t;
   typedef uint64_t udim_t;
 
-  typedef std::vector<int>                   intVector_t;
-  typedef std::vector<intVector_t>           intVecVector_t;
+  typedef std::vector<int>                   intVector;
+  typedef std::vector<intVector>             intVecVector;
 
-  typedef std::vector<std::string>           strVector_t;
-  typedef strVector_t::iterator              strVectorIterator;
-  typedef strVector_t::const_iterator        cStrVectorIterator;
+  typedef std::vector<std::string>           strVector;
+  typedef strVector::iterator                strVectorIterator;
+  typedef strVector::const_iterator          cStrVectorIterator;
 
-  typedef std::map<std::string, std::string> strToStrMap_t;
-  typedef strToStrMap_t::iterator            strToStrMapIterator;
-  typedef strToStrMap_t::const_iterator      cStrToStrMapIterator;
+  typedef std::map<std::string, std::string> strToStrMap;
+  typedef strToStrMap::iterator              strToStrMapIterator;
+  typedef strToStrMap::const_iterator        cStrToStrMapIterator;
 
-  typedef std::map<std::string,strVector_t>  strToStrsMap_t;
-  typedef strToStrsMap_t::iterator           strToStrsMapIterator;
-  typedef strToStrsMap_t::const_iterator     cStrToStrsMapIterator;
+  typedef std::map<std::string,strVector>    strToStrsMap;
+  typedef strToStrsMap::iterator             strToStrsMapIterator;
+  typedef strToStrsMap::const_iterator       cStrToStrsMapIterator;
 
-  typedef std::map<std::string, bool>        strToBoolMap_t;
-  typedef strToBoolMap_t::iterator           strToBoolMapIterator;
-  typedef strToBoolMap_t::const_iterator     cStrToBoolMapIterator;
+  typedef std::map<std::string, bool>        strToBoolMap;
+  typedef strToBoolMap::iterator             strToBoolMapIterator;
+  typedef strToBoolMap::const_iterator       cStrToBoolMapIterator;
 
   //---[ Dim ]--------------------------
   class dim {

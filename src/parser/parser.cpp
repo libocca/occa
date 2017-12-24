@@ -29,7 +29,7 @@
 
 namespace occa {
   namespace parserNS {
-    intVector_t loadedLanguageVec;
+    intVector loadedLanguageVec;
 
     int loadedLanguage() {
       return loadedLanguageVec.back();
@@ -248,9 +248,9 @@ namespace occa {
 
       ++c; // '('
 
-      typedef std::map<std::string,int> macroArgMap_t;
-      typedef macroArgMap_t::iterator macroArgMapIterator;
-      macroArgMap_t macroArgMap;
+      typedef std::map<std::string,int> macroArgMap;
+      typedef macroArgMap::iterator macroArgMapIterator;
+      macroArgMap macroArgs;
 
       while(*c != '\0') {
         const char *cStart = c;
@@ -262,11 +262,11 @@ namespace occa {
           OCCA_ERROR("Macro [" << info.name << "] has arguments after variadic ... argument",
                      !info.hasVarArgs);
           if (macroArgName != "...") {
-            macroArgMap[macroArgName] = (info.argc++);
+            macroArgs[macroArgName] = (info.argc++);
           }
           else {
             info.hasVarArgs = true;
-            macroArgMap["__VA_ARGS__"] = macroInfo::VA_ARGS_POS;
+            macroArgs["__VA_ARGS__"] = macroInfo::VA_ARGS_POS;
           }
         }
         else {
@@ -301,9 +301,9 @@ namespace occa {
 
         std::string word = std::string(cStart, c - cStart);
 
-        macroArgMapIterator it = macroArgMap.find(word);
+        macroArgMapIterator it = macroArgs.find(word);
 
-        if (it == macroArgMap.end()) {
+        if (it == macroArgs.end()) {
           info.parts[partPos] += word;
         }
         else {
@@ -1161,7 +1161,7 @@ namespace occa {
 
           // [---] Temporary fix
           if (((leaf.info & expType::varInfo) == 0) ||
-             (leaf.getVarInfo().name != var.name)) {
+              (leaf.getVarInfo().name != var.name)) {
 
             continue;
           }
@@ -1186,9 +1186,9 @@ namespace occa {
         std::string &forName = s.expRoot.value;
 
         if ((forName.find("occaOuterFor") != std::string::npos) &&
-           ((forName == "occaOuterFor0") ||
-            (forName == "occaOuterFor1") ||
-            (forName == "occaOuterFor2"))) {
+            ((forName == "occaOuterFor0") ||
+             (forName == "occaOuterFor1") ||
+             (forName == "occaOuterFor2"))) {
 
           return true;
         }
@@ -1202,9 +1202,9 @@ namespace occa {
         std::string &forName = s.expRoot.value;
 
         if ((forName.find("occaInnerFor") != std::string::npos) &&
-           ((forName == "occaInnerFor0") ||
-            (forName == "occaInnerFor1") ||
-            (forName == "occaInnerFor2"))) {
+            ((forName == "occaInnerFor0") ||
+             (forName == "occaInnerFor1") ||
+             (forName == "occaInnerFor2"))) {
 
           return true;
         }
@@ -1231,7 +1231,7 @@ namespace occa {
 
     bool parserBase::statementHasOccaFor(statement &s) {
       if ((s.info == smntType::occaFor) &&
-         (s.getForStatementCount() == 0)) {
+          (s.getForStatementCount() == 0)) {
 
         return true;
       }
@@ -1250,7 +1250,7 @@ namespace occa {
 
     bool parserBase::statementHasOklFor(statement &s) {
       if ((s.info == smntType::occaFor) &&
-         (0 < s.getForStatementCount())) {
+          (0 < s.getForStatementCount())) {
 
         return true;
       }
@@ -1287,7 +1287,7 @@ namespace occa {
     }
 
     void parserBase::reorderLoops() {
-      statementVector_t loopsToReorder; // ltr
+      statementVector loopsToReorder; // ltr
 
       placeLoopsToReorder(*globalScope, loopsToReorder);
 
@@ -1299,7 +1299,7 @@ namespace occa {
       int start = 0;
       statement *sRoot = loopsToReorder[0];
 
-      // depMap_t depMap(*sRoot);
+      // depMap depMap(*sRoot);
 
       // varInfo &ai        = *(sRoot->hasVariableInScope("ai"));
       // varDepInfo &vdInfo = depMap(ai);
@@ -1328,21 +1328,21 @@ namespace occa {
         reorderLoops(loopsToReorder, start, ltrCount);
     }
 
-    void parserBase::reorderLoops(statementVector_t &loopsToReorder,
+    void parserBase::reorderLoops(statementVector &loopsToReorder,
                                   const int start,
                                   const int end) {
 
       if ((end - start) < 2)
         return;
 
-      intVector_t relatedLoops = relatedReorderLoops(loopsToReorder,
-                                                     start,
-                                                     end);
+      intVector relatedLoops = relatedReorderLoops(loopsToReorder,
+                                                   start,
+                                                   end);
 
       const int rlCount = (int) relatedLoops.size();
 
-      intVector_t oldTo(rlCount);
-      intVector_t newFrom(rlCount);
+      intVector oldTo(rlCount);
+      intVector newFrom(rlCount);
 
       for (int i = 0; i < rlCount; ++i) {
         statement &s      = *(loopsToReorder[relatedLoops[i]]);
@@ -1377,11 +1377,11 @@ namespace occa {
       }
     }
 
-    intVector_t parserBase::relatedReorderLoops(statementVector_t &loopsToReorder,
-                                                const int start,
-                                                const int end) {
+    intVector parserBase::relatedReorderLoops(statementVector &loopsToReorder,
+                                              const int start,
+                                              const int end) {
 
-      intVector_t relatedLoops;
+      intVector relatedLoops;
       relatedLoops.push_back(start);
 
       statement &sRoot      = *(loopsToReorder[start]);
@@ -1404,7 +1404,7 @@ namespace occa {
           relatedLoops.push_back(i);
         }
         else if ((rootAttr.argCount == 2) &&
-                (rootAttr[0].value == attr[0].value)) {
+                 (rootAttr[0].value == attr[0].value)) {
 
           relatedLoops.push_back(i);
         }
@@ -1414,10 +1414,10 @@ namespace occa {
     }
 
     void parserBase::placeLoopsToReorder(statement &s,
-                                         statementVector_t &loopsToReorder) {
+                                         statementVector &loopsToReorder) {
 
       if ((s.info & smntType::forStatement) &&
-         s.hasAttribute("loopOrder")) {
+          s.hasAttribute("loopOrder")) {
 
         loopsToReorder.push_back(&s);
       }
@@ -1438,7 +1438,7 @@ namespace occa {
 
     void parserBase::retagOccaLoops(statement &s) {
       if (s.info == smntType::occaFor) {
-        statementVector_t occaLoops = findOccaLoops(s);
+        statementVector occaLoops = findOccaLoops(s);
         const int occaLoopCount     = (int) occaLoops.size();
 
         int outerCount = 0;
@@ -1513,7 +1513,7 @@ namespace occa {
       attribute_t *occaTagAttr_ = s.hasAttribute("occaTag");
 
       if ((occaTagAttr_ == NULL) ||
-         (occaTagAttr_->valueStr() != "tile")) {
+          (occaTagAttr_->valueStr() != "tile")) {
 
         return;
       }
@@ -1618,7 +1618,7 @@ namespace occa {
           }
           else {
             if ((check[side].value    == ".") &&
-               (check[side][0].value == var.name)) {
+                (check[side][0].value == var.name)) {
 
               dim2 = (check[side][1].value[0] - 'x');
               checkIterOnLeft[dim2] = (side == 0);
@@ -1788,7 +1788,7 @@ namespace occa {
         is.expRoot.free();
 
         if ((dim == 0) &&
-           (varIsDeclared)) {
+            (varIsDeclared)) {
 
           varOriginMap[&var] = NULL;
 
@@ -1800,7 +1800,7 @@ namespace occa {
 
         // [--] Nasty, fix later
         if ((dim == 0) &&
-           (varIsDeclared)) {
+            (varIsDeclared)) {
 
           varOriginMap[&var] = &is;
         }
@@ -1856,7 +1856,7 @@ namespace occa {
         statement &s2 = *(snPos->value);
 
         if ( !(s2.info & smntType::functionStatement) ||
-            statementIsAKernel(s2) ) {
+             statementIsAKernel(s2) ) {
 
           snPos = snPos->right;
           continue;
@@ -1878,7 +1878,7 @@ namespace occa {
         statement &s = *(statementPos->value);
 
         if (statementIsAKernel(s) && // Kernel
-           (s.statementStart != NULL)) {
+            (s.statementStart != NULL)) {
 
           bool hasOccaFor = statementHasOccaFor(s);
           bool hasOklFor  = statementHasOklFor(s);
@@ -1901,10 +1901,10 @@ namespace occa {
 
     void parserBase::setupCudaVariables(statement &s) {
       if ((!(s.info & smntType::simpleStatement)    &&
-          !(s.info & smntType::forStatement)       &&
-          !(s.info & smntType::functionStatement)) ||
-         // OCCA for's don't have arguments
-         (s.info == smntType::occaFor))
+           !(s.info & smntType::forStatement)       &&
+           !(s.info & smntType::functionStatement)) ||
+          // OCCA for's don't have arguments
+          (s.info == smntType::occaFor))
         return;
 
       if (getStatementKernel(s) == NULL)
@@ -2029,7 +2029,7 @@ namespace occa {
         statement &s = *(statementPos->value);
 
         if (statementIsAKernel(s)) {
-          statementVector_t loops;
+          statementVector loops;
           findInnerLoopSets(s, loops);
           const int loopCount = (int) loops.size();
           for (int i = 0; i < (loopCount - 1); ++i) {
@@ -2047,7 +2047,7 @@ namespace occa {
       }
     }
 
-    void parserBase::findInnerLoopSets(statement &s, statementVector_t &loops) {
+    void parserBase::findInnerLoopSets(statement &s, statementVector &loops) {
       statementNode *statementPos = s.statementStart;
 
       while (statementPos) {
@@ -2095,8 +2095,8 @@ namespace occa {
     bool parserBase::barrierBetween(statement &s1, statement &s2) {
       statement &gcs = s1.greatestCommonStatement(s2);
 
-      statementVector_t path[2];
-      statementNodeVector_t nodes[2];
+      statementVector path[2];
+      statementNodeVector nodes[2];
 
       for (int pass = 0; pass < 2; ++pass) {
         statement *cs = ((pass == 0) ? &s1 : &s2);
@@ -2145,7 +2145,7 @@ namespace occa {
         statement &s = *(snPos->value);
 
         if ((s.info & smntType::declareStatement) &&
-           (s.hasQualifier("occaConst"))) {
+            (s.hasQualifier("occaConst"))) {
 
           s.removeQualifier("occaConst");
           s.addQualifier("occaConstant");
@@ -2162,7 +2162,7 @@ namespace occa {
         statement &s = *(statementPos->value);
 
         if ((s.info & smntType::functionDefinition) &&
-           (s.functionHasQualifier("occaKernel"))) {
+            (s.functionHasQualifier("occaKernel"))) {
 
           addArgQualifiersTo(s);
         }
@@ -2197,7 +2197,7 @@ namespace occa {
       }
 
       if ((s.getFunctionArgCount() == 0) ||
-         (s.getFunctionArgName(0) != "occaKernelInfoArg")) {
+          (s.getFunctionArgName(0) != "occaKernelInfoArg")) {
 
         varInfo &arg0 = *(new varInfo());
 
@@ -2230,7 +2230,7 @@ namespace occa {
         // Find inner-most outer-for loop
         while(sUp) {
           if ((sUp->info == smntType::occaFor) &&
-             statementIsOccaOuterFor(*sUp)) {
+              statementIsOccaOuterFor(*sUp)) {
             break;
           }
 
@@ -2245,8 +2245,8 @@ namespace occa {
             statement &s3 = *(sn3->value);
 
             if ((!(s3.info & smntType::declareStatement)) ||
-               (!s3.hasQualifier("exclusive") &&
-                !s3.hasQualifier("occaShared"))) {
+                (!s3.hasQualifier("exclusive") &&
+                 !s3.hasQualifier("occaShared"))) {
               break;
             }
 
@@ -2289,8 +2289,8 @@ namespace occa {
 
         if ((s2.info & smntType::declareStatement)) {
           if (isAppending &&
-             (s2.hasQualifier("exclusive") ||
-              s2.hasQualifier("occaShared"))) {
+              (s2.hasQualifier("exclusive") ||
+               s2.hasQualifier("occaShared"))) {
 
             snTail = snTail->push(&s2);
           }
@@ -2310,9 +2310,9 @@ namespace occa {
 
     void parserBase::modifyExclusiveVariables(statement &s) {
       if ( !(s.info & smntType::declareStatement)   ||
-          (getStatementKernel(s) == NULL)    ||
-          (statementKernelUsesNativeOCCA(s)) ||
-          (!s.hasQualifier("exclusive")) ) {
+           (getStatementKernel(s) == NULL)    ||
+           (statementKernelUsesNativeOCCA(s)) ||
+           (!s.hasQualifier("exclusive")) ) {
 
         return;
       }
@@ -2454,10 +2454,10 @@ namespace occa {
       statementNode *lastNewSN = snKernel->right;
 
       // [O]uter [M]ost [Loops]
-      statementVector_t omLoops = findOuterLoopSets(sKernel);
+      statementVector omLoops = findOuterLoopSets(sKernel);
       int kernelCount = (int) omLoops.size();
 
-      statementVector_t newKernels;
+      statementVector newKernels;
 
       // Add parallel for's
       if (compilingForCPU()) {
@@ -2472,7 +2472,7 @@ namespace occa {
       }
 
       if (kernelCount) {
-        varOriginMapVector_t varDeps(kernelCount);
+        varOriginMapVector varDeps(kernelCount);
 
         for (int k = 0; k < kernelCount; ++k)
           varDeps[k] = findKernelDependenciesFor(sKernel,
@@ -2513,8 +2513,8 @@ namespace occa {
               NULL);
     }
 
-    statementVector_t parserBase::findOuterLoopSets(statement &sKernel) {
-      statementVector_t omLoops;
+    statementVector parserBase::findOuterLoopSets(statement &sKernel) {
+      statementVector omLoops;
 
       findOuterLoopSets(sKernel, omLoops);
 
@@ -2522,7 +2522,7 @@ namespace occa {
     }
 
     void parserBase::findOuterLoopSets(statement &s,
-                                       statementVector_t &omLoops) {
+                                       statementVector &omLoops) {
 
       if (s.info == smntType::occaFor) {
         attribute_t &occaTagAttr = s.attribute("occaTag");
@@ -2544,8 +2544,8 @@ namespace occa {
       }
     }
 
-    statementVector_t parserBase::findOccaLoops(statement &sKernel) {
-      statementVector_t occaLoops;
+    statementVector parserBase::findOccaLoops(statement &sKernel) {
+      statementVector occaLoops;
 
       findOccaLoops(sKernel, occaLoops);
 
@@ -2553,7 +2553,7 @@ namespace occa {
     }
 
     void parserBase::findOccaLoops(statement &s,
-                                   statementVector_t &occaLoops) {
+                                   statementVector &occaLoops) {
 
       if (s.info == smntType::occaFor)
         occaLoops.push_back(&s);
@@ -2571,7 +2571,7 @@ namespace occa {
 
     varOriginMap_t parserBase::findKernelDependenciesFor(statement &sKernel,
                                                          statement &omLoop) {
-      varInfoVector_t depsIgnored;
+      varInfoVector depsIgnored;
       varOriginMap_t deps;
 
       findDependenciesFor(omLoop, deps);
@@ -2582,9 +2582,9 @@ namespace occa {
         statement &varOrigin = *(it->second);
 
         if ((&varOrigin   == &sKernel)    ||
-           (varOrigin.up == globalScope) ||
-           (&varOrigin   == &omLoop)     ||
-           (varOrigin.insideOf(omLoop))) {
+            (varOrigin.up == globalScope) ||
+            (&varOrigin   == &omLoop)     ||
+            (varOrigin.insideOf(omLoop))) {
 
           depsIgnored.push_back(it->first);
         }
@@ -2661,10 +2661,10 @@ namespace occa {
       expNode::freeFlatHandle(flatRoot);
     }
 
-    statementVector_t parserBase::newKernelsFromLoops(statement &sKernel,
-                                                      statementVector_t &omLoops,
-                                                      varOriginMapVector_t &varDeps) {
-      statementVector_t newKernels;
+    statementVector parserBase::newKernelsFromLoops(statement &sKernel,
+                                                    statementVector &omLoops,
+                                                    varOriginMapVector &varDeps) {
+      statementVector newKernels;
 
       const int kernelCount = (int) omLoops.size();
 
@@ -2718,15 +2718,15 @@ namespace occa {
 
       varOriginMapIterator it = deps.begin();
 
-      statementIdMap_t placedStatements;
-      varInfoVector_t usedVars;
+      statementIdMap placedStatements;
+      varInfoVector usedVars;
 
       while(it != deps.end()) {
         varInfo &var         = *(it->first);
         statement &varOrigin = *(it->second);
 
         if (var.hasQualifier("exclusive") ||
-           var.hasQualifier("occaShared")) {
+            var.hasQualifier("occaShared")) {
 
           usedVars.push_back(&var);
           placedStatements[&varOrigin];
@@ -2761,7 +2761,7 @@ namespace occa {
       varInfo &kernelVar = *(sKernel.getFunctionVar());
       int argPos         = kernelVar.argumentCount;
 
-      varToVarMap_t v2v;
+      varToVarMap v2v;
 
       varOriginMapIterator it = deps.begin();
 
@@ -2787,7 +2787,7 @@ namespace occa {
 
       std::stringstream ss;
 
-      statementVector_t occaLoops = findOccaLoops(omLoop);
+      statementVector occaLoops = findOccaLoops(omLoop);
       const int occaLoopCount     = (int) occaLoops.size();
 
       attribute_t &maxOuterAttr = omLoop.attribute("occaMaxNest_outer");
@@ -2863,7 +2863,7 @@ namespace occa {
     }
 
     void parserBase::storeKernelInfo(statement &sKernel,
-                                     statementVector_t &newKernels) {
+                                     statementVector &newKernels) {
 
       const int kernelCount = (int) newKernels.size();
 
@@ -2909,8 +2909,8 @@ namespace occa {
 
       for (int i = 0; i < flatRoot.leafCount; ++i) {
         if (((flatRoot[i].info & expType::presetValue) &&
-            isAnOccaID(flatRoot[i].value))               ||
-           (flatRoot[i].value.find("__occa_oTileVar") != std::string::npos)) {
+             isAnOccaID(flatRoot[i].value))               ||
+            (flatRoot[i].value.find("__occa_oTileVar") != std::string::npos)) {
 
           flatRoot[i].freeThis();
 
@@ -3122,7 +3122,7 @@ namespace occa {
       if (innerDim < 0)
         return;
 
-      varInfoIdMap_t varInfoIdMap;
+      varInfoIdMap varInfoIdMap;
       int currentInnerID = 0;
 
       // Add inner for-loops
@@ -3130,7 +3130,7 @@ namespace occa {
     }
 
     void parserBase::addInnerForsTo(statement &s,
-                                    varInfoIdMap_t &varInfoIdMap,
+                                    varInfoIdMap &varInfoIdMap,
                                     int &currentInnerID,
                                     const int innerDim) {
 
@@ -3149,7 +3149,7 @@ namespace occa {
 
         // Add inner-for inside the for/while loop
         if (s2.info & (smntType::forStatement |
-                      smntType::whileStatement)) {
+                       smntType::whileStatement)) {
 
           addInnerForsTo(s2, varInfoIdMap, currentInnerID, innerDim);
           sBreaks.push_back(&s2);
@@ -3171,7 +3171,7 @@ namespace occa {
       // Start with first non-break statement
       for (int b = 0; b < breaks; ++b) {
         if (ssStart &&
-           (sBreaks[b] == ssStart->value)) {
+            (sBreaks[b] == ssStart->value)) {
 
           ssStart = ssStart->right;
 
@@ -3269,7 +3269,7 @@ namespace occa {
     }
 
     void parserBase::checkStatementForExclusives(statement &s,
-                                                 varInfoIdMap_t &varInfoIdMap,
+                                                 varInfoIdMap &varInfoIdMap,
                                                  const int innerID) {
 
       statementNode *statementPos = s.statementStart;
@@ -3290,21 +3290,21 @@ namespace occa {
 
         // Check for variable
         if ((flatRoot[i].info & expType::varInfo) &&
-           (flatRoot[i].info & expType::declaration)) {
+            (flatRoot[i].info & expType::declaration)) {
 
           sVar = &(flatRoot[i].getVarInfo());
         }
 
         // Has variable
         if ((sVar != NULL)                   &&
-           !sVar->hasQualifier("occaShared") &&
-           !sVar->hasQualifier("exclusive")) {
+            !sVar->hasQualifier("occaShared") &&
+            !sVar->hasQualifier("exclusive")) {
 
           varInfoIdMapIterator it = varInfoIdMap.find(sVar);
 
           if (it != varInfoIdMap.end()) {
             if (((it->second) != -1) &&
-               ((it->second) != innerID)) {
+                ((it->second) != innerID)) {
 
               splitDefineAndInitForVariable(*sVar);
               sVar->addQualifier("exclusive", 0);
@@ -3402,9 +3402,9 @@ namespace occa {
         statement *s = statementPos->value;
 
         if (statementIsAKernel(*s)            && // Kernel
-           (s->statementStart != NULL)       && //   not empty
-           !statementKernelUsesNativeOKL(*s) && //   not OKL
-           !statementKernelUsesNativeOCCA(*s)) { //   not OCCA
+            (s->statementStart != NULL)       && //   not empty
+            !statementKernelUsesNativeOKL(*s) && //   not OKL
+            !statementKernelUsesNativeOCCA(*s)) { //   not OCCA
 
           removeUnnecessaryBlocksInKernel(*s);
           addOccaForsToKernel(*s);
@@ -3644,8 +3644,8 @@ namespace occa {
 
         // Line carrying over to next line
         if (line.size()                                 &&
-           (line[line.size() - 1] == continuationChar) &&
-           (*cEnd != '\0')) {
+            (line[line.size() - 1] == continuationChar) &&
+            (*cEnd != '\0')) {
 
           line.erase(line.size() - 1);
           continue;
@@ -3654,7 +3654,7 @@ namespace occa {
         if (line.size()) {
           // Remove old-style Fortran line comment
           if (parsingFortran &&
-             (line[0] == 'c')) {
+              (line[0] == 'c')) {
 
             line.clear();
             continue;
@@ -3664,8 +3664,8 @@ namespace occa {
           compressAllWhitespace(line, parsingLanguage_);
 
           if (line.size() &&
-             ((status != insideCommentBlock) ||
-              (status == finishedCommentBlock))) {
+              ((status != insideCommentBlock) ||
+               (status == finishedCommentBlock))) {
 
             allExp[expPos++].value = line;
             line.clear();
@@ -3849,14 +3849,14 @@ namespace occa {
                 }
                 else {
                   if (checkLastTwoNodes(*cNode, "else", "if"   , parsingLanguage_) ||
-                     checkLastTwoNodes(*cNode, "do"  , "while", parsingLanguage_)) {
+                      checkLastTwoNodes(*cNode, "do"  , "while", parsingLanguage_)) {
 
                     mergeLastTwoNodes(*cNode, addSpace, parsingLanguage_);
                   }
                   else if (checkLastTwoNodes(*cNode, "end" , "do"        , parsingLanguage_) ||
-                          checkLastTwoNodes(*cNode, "end" , "if"        , parsingLanguage_) ||
-                          checkLastTwoNodes(*cNode, "end" , "function"  , parsingLanguage_) ||
-                          checkLastTwoNodes(*cNode, "end" , "subroutine", parsingLanguage_)) {
+                           checkLastTwoNodes(*cNode, "end" , "if"        , parsingLanguage_) ||
+                           checkLastTwoNodes(*cNode, "end" , "function"  , parsingLanguage_) ||
+                           checkLastTwoNodes(*cNode, "end" , "subroutine", parsingLanguage_)) {
 
                     mergeLastTwoNodes(*cNode, !addSpace, parsingLanguage_);
 

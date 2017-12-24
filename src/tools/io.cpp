@@ -63,8 +63,8 @@ namespace occa {
   }
 
   namespace io {
-    hashMap_t& fileLocks() {
-      static tls<hashMap_t> locks;
+    hashMap& fileLocks() {
+      static tls<hashMap> locks;
       return locks.value();
     }
 
@@ -75,7 +75,7 @@ namespace occa {
     }
 
     fileOpener& fileOpener::defaultOpener() {
-      static defaultFileOpener_t fo;
+      static defaultFileOpener fo;
       return fo;
     }
 
@@ -94,26 +94,26 @@ namespace occa {
     }
 
     //  ---[ Default File Opener ]------
-    defaultFileOpener_t::defaultFileOpener_t() {}
+    defaultFileOpener::defaultFileOpener() {}
 
-    bool defaultFileOpener_t::handles(const std::string &filename) {
+    bool defaultFileOpener::handles(const std::string &filename) {
       return true;
     }
 
-    std::string defaultFileOpener_t::expand(const std::string &filename) {
+    std::string defaultFileOpener::expand(const std::string &filename) {
       return filename;
     }
     //  ================================
 
     //  ---[ OCCA File Opener ]---------
-    occaFileOpener_t::occaFileOpener_t() {}
+    occaFileOpener::occaFileOpener() {}
 
-    bool occaFileOpener_t::handles(const std::string &filename) {
+    bool occaFileOpener::handles(const std::string &filename) {
       return ((7 <= filename.size()) &&
               (filename.substr(0, 7) == "occa://"));
     }
 
-    std::string occaFileOpener_t::expand(const std::string &filename) {
+    std::string occaFileOpener::expand(const std::string &filename) {
       if (filename.size() == 7) {
         return cachePath();
       }
@@ -122,29 +122,29 @@ namespace occa {
     //  ================================
 
     //  ---[ Header File Opener ]-------
-    headerFileOpener_t::headerFileOpener_t() {}
+    headerFileOpener::headerFileOpener() {}
 
-    bool headerFileOpener_t::handles(const std::string &filename) {
+    bool headerFileOpener::handles(const std::string &filename) {
       return ((2 <= filename.size()) &&
               (filename[0] == '"')   &&
               (filename[filename.size() - 1] == '"'));
     }
 
-    std::string headerFileOpener_t::expand(const std::string &filename) {
+    std::string headerFileOpener::expand(const std::string &filename) {
       return filename.substr(1, filename.size() - 2);
     }
     //  ================================
 
     //  ---[ System Header File Opener ]---
-    systemHeaderFileOpener_t::systemHeaderFileOpener_t() {}
+    systemHeaderFileOpener::systemHeaderFileOpener() {}
 
-    bool systemHeaderFileOpener_t::handles(const std::string &filename) {
+    bool systemHeaderFileOpener::handles(const std::string &filename) {
       return ((2 <= filename.size()) &&
               (filename[0] == '<')   &&
               (filename[filename.size() - 1] == '>'));
     }
 
-    std::string systemHeaderFileOpener_t::expand(const std::string &filename) {
+    std::string systemHeaderFileOpener::expand(const std::string &filename) {
       return filename.substr(1, filename.size() - 2);
     }
     //  ================================
@@ -224,7 +224,7 @@ namespace occa {
 #if (OCCA_OS == OCCA_WINDOWS_OS)
       char slash = '\\';
       if (isAbsolutePath(filename)) {
-          slash = filename[2];
+        slash = filename[2];
       } else {
         const char *c = filename.c_str();
         const char *c0 = c;
@@ -330,8 +330,8 @@ namespace occa {
       return expFilename;
     }
 
-    strVector_t filesInDir(const std::string &dir, const unsigned char fileType) {
-      strVector_t files;
+    strVector filesInDir(const std::string &dir, const unsigned char fileType) {
+      strVector files;
       const std::string expDir = filename(dir);
 
       DIR *c_dir = ::opendir(expDir.c_str());
@@ -358,11 +358,11 @@ namespace occa {
       return files;
     }
 
-    strVector_t directories(const std::string &dir) {
+    strVector directories(const std::string &dir) {
       return filesInDir(endWithSlash(dir), DT_DIR);
     }
 
-    strVector_t files(const std::string &dir) {
+    strVector files(const std::string &dir) {
       return filesInDir(dir, DT_REG);
     }
 
@@ -421,7 +421,7 @@ namespace occa {
     }
 
     void clearLocks() {
-      hashMap_t::iterator it = fileLocks().begin();
+      hashMap::iterator it = fileLocks().begin();
       while (it != fileLocks().end()) {
         hashAndTag &ht = it->second;
         releaseHash(ht.hash, ht.tag);
@@ -479,9 +479,9 @@ namespace occa {
       fileLocks().erase(lockDir);
     }
 
-    kernelMetadataMap_t parseFile(const std::string &filename,
-                                  const std::string &outputFile,
-                                  const occa::properties &props) {
+    kernelMetadataMap parseFile(const std::string &filename,
+                                const std::string &outputFile,
+                                const occa::properties &props) {
 
       const std::string ext = extension(filename);
       parser fileParser;
@@ -501,7 +501,7 @@ namespace occa {
         }
       }
 
-      kernelMetadataMap_t metadataMap;
+      kernelMetadataMap metadataMap;
       kernelInfoMapIterator kIt = fileParser.kernelInfoMap.begin();
       while (kIt != fileParser.kernelInfoMap.end()) {
         metadataMap[kIt->first] = kIt->second->metadata();

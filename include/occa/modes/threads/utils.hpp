@@ -62,7 +62,7 @@ namespace occa {
 
       std::queue<job_t> *jobs;
 
-      mutex_t *jobMutex;
+      mutex *jobMutex;
     };
     //==================================
 

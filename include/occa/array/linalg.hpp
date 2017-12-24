@@ -39,9 +39,9 @@ namespace occa {
                                         const int tileSize);
 
     template <class VTYPE_IN, class VTYPE_OUT>
-    kernelBuilderVector_t makeAssignmentBuilders(const std::string &kernelName);
+    kernelBuilderVector makeAssignmentBuilders(const std::string &kernelName);
 
-    inline occa::kernel getTiledKernel(kernelBuilderVector_t &builders,
+    inline occa::kernel getTiledKernel(kernelBuilderVector &builders,
                                        occa::device dev,
                                        const int tileSize) {
       for (int i = 0; i < usedTileSizeCount; ++i) {
@@ -113,8 +113,8 @@ namespace occa {
     }
 
     template <class TM>
-    inline hashedMemoryMap_t& deviceBufferMap() {
-      static hashedMemoryMap_t bufferMap;
+    inline hashedMemoryMap& deviceBufferMap() {
+      static hashedMemoryMap bufferMap;
       return bufferMap;
     }
 

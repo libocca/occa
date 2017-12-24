@@ -5,17 +5,17 @@
 
 namespace occa {
   namespace lang {
-    class variable_t {
+    class variable {
     public:
       type_t *type;
       std::string name;
 
-      variable_t(type_t &type_,
-                 const std::string &name_);
+      variable(type_t &type_,
+               const std::string &name_);
 
-      variable_t& clone() const;
+      variable& clone() const;
 
-      void print(printer_t &pout) const;
+      void print(printer &pout) const;
     };
   }
 }

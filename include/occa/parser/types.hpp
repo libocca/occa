@@ -31,9 +31,9 @@
 namespace occa {
   class kernelMetadata;
 
-  typedef std::map<std::string, kernelMetadata> kernelMetadataMap_t;
-  typedef kernelMetadataMap_t::iterator         kernelMetadataMapIterator;
-  typedef kernelMetadataMap_t::const_iterator   cKernelMetadataMapIterator;
+  typedef std::map<std::string, kernelMetadata> kernelMetadataMap;
+  typedef kernelMetadataMap::iterator           kernelMetadataMapIterator;
+  typedef kernelMetadataMap::const_iterator     cKernelMetadataMapIterator;
 
   namespace parserNS {
     class expNode;
@@ -52,9 +52,9 @@ namespace occa {
 
       std::string name;
 
-      scopeMap_t scopeMap;
-      typeMap_t  typeMap;
-      varMap_t   varMap;
+      scopeMap scopeMap;
+      typeMap  typeMap;
+      varMap   varMap;
 
       scopeInfo();
 
@@ -142,19 +142,19 @@ namespace occa {
       }
     };
 
-    void updateAttributeMap(attributeMap_t &attributeMap,
+    void updateAttributeMap(attributeMap &attributeMap,
                             const std::string &attrName);
 
-    int updateAttributeMap(attributeMap_t &attributeMap,
+    int updateAttributeMap(attributeMap &attributeMap,
                            expNode &expRoot,
                            int leafPos);
 
-    int updateAttributeMapR(attributeMap_t &attributeMap,
+    int updateAttributeMapR(attributeMap &attributeMap,
                             expNode &expRoot,
                             int leafPos);
 
-    void printAttributeMap(attributeMap_t &attributeMap);
-    std::string attributeMapToString(attributeMap_t &attributeMap);
+    void printAttributeMap(attributeMap &attributeMap);
+    std::string attributeMapToString(attributeMap &attributeMap);
     //============================================
 
 
@@ -370,7 +370,7 @@ namespace occa {
 
       int info;
 
-      attributeMap_t attributeMap;
+      attributeMap attributeMap;
       qualifierInfo leftQualifiers, rightQualifiers;
 
       typeInfo *baseType;
@@ -390,7 +390,7 @@ namespace occa {
 
       // @dim()
       attribute_t dimAttr;
-      intVector_t idxOrdering;
+      intVector idxOrdering;
 
       bool usesTemplate;
       int tArgCount;
@@ -580,7 +580,7 @@ namespace occa {
 
       varInfo* bestFitFor(const int argumentCount,
                           varInfo *argumentTypes,
-                          varInfoVector_t &candidates);
+                          varInfoVector &candidates);
     };
     //============================================
 

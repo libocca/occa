@@ -60,7 +60,7 @@ namespace occa {
       optype(optype_),
       precedence(precedence_) {}
 
-    void operator_t::print(printer_t &pout) const {
+    void operator_t::print(printer &pout) const {
       pout << str;
     }
   }

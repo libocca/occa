@@ -177,10 +177,10 @@ namespace occa {
 
       parser& addOption(const option &option);
 
-      strVector_t makeArgs(const int argc, const char **argv);
+      strVector makeArgs(const int argc, const char **argv);
 
       occa::json parse(const int argc, const char **argv);
-      occa::json parse(const strVector_t &args);
+      occa::json parse(const strVector &args);
 
       virtual void printUsage(const std::string &program,
                               std::ostream &out = std::cout);
@@ -192,9 +192,9 @@ namespace occa {
     class command : public parser {
     public:
       typedef bool (*callback_t)(const occa::cli::command &command,
-                                 jsonArray_t order,
-                                 jsonObject_t options,
-                                 jsonArray_t arguments);
+                                 jsonArray order,
+                                 jsonObject options,
+                                 jsonArray arguments);
 
       bool commandIsRequired;
       std::vector<command> commands;
@@ -203,7 +203,7 @@ namespace occa {
       std::string expansionFunction;
 
       command *runParent;
-      strVector_t runArgs;
+      strVector runArgs;
 
       command();
 
@@ -229,7 +229,7 @@ namespace occa {
       command& addCommand(const occa::cli::command &command_);
 
       void run(const int argc, const char **argv);
-      void run(const strVector_t &args,
+      void run(const strVector &args,
                command *parent = NULL);
 
       void printBashAutocomplete(const std::string &funcPrefix="");

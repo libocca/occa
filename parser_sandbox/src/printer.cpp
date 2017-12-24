@@ -13,7 +13,7 @@ namespace occa {
       return chars;
     }
 
-    printer_t::printer_t() :
+    printer::printer() :
       ss(),
       outputStream(&ss),
       indent(),
@@ -23,7 +23,7 @@ namespace occa {
       inlinedStack.push_back(false);
     }
 
-    printer_t::printer_t(std::ostream &outputStream_) :
+    printer::printer(std::ostream &outputStream_) :
       ss(),
       outputStream(&outputStream_),
       indent(),
@@ -33,7 +33,7 @@ namespace occa {
       inlinedStack.push_back(false);
     }
 
-    int printer_t::size() {
+    int printer::size() {
       int pos = ss.tellg();
       ss.seekg(0, ss.end);
       int size = ss.tellg();
@@ -41,41 +41,41 @@ namespace occa {
       return size;
     }
 
-    void printer_t::setOutputStream(std::ostream &outputStream_) {
+    void printer::setOutputStream(std::ostream &outputStream_) {
       outputStream = &outputStream_;
     }
 
-    bool printer_t::isInlined() {
+    bool printer::isInlined() {
       const int count = (int) inlinedStack.size();
       return (count && inlinedStack[count - 1]);
     }
 
-    void printer_t::pushInlined(const bool inlined) {
+    void printer::pushInlined(const bool inlined) {
       inlinedStack.push_back(inlined);
     }
 
-    void printer_t::popInlined() {
+    void printer::popInlined() {
       if (inlinedStack.size()) {
         inlinedStack.pop_back();
       }
     }
 
-    void printer_t::addIndentation() {
+    void printer::addIndentation() {
       indent += "  ";
     }
 
-    void printer_t::removeIndentation() {
+    void printer::removeIndentation() {
       const int chars = (int) indent.size();
       if (chars >= 2) {
         indent.resize(chars - 2);
       }
     }
 
-    char printer_t::getLastChar() {
+    char printer::getLastChar() {
       return lastChar;
     }
 
-    bool printer_t::lastCharNeedsWhitespace() {
+    bool printer::lastCharNeedsWhitespace() {
       switch (lastChar) {
       case '\0':
       case '(':  case '[':
@@ -86,19 +86,19 @@ namespace occa {
       return true;
     }
 
-    void printer_t::forceNextInlined() {
+    void printer::forceNextInlined() {
       lastChar = '\0';
     }
 
-    std::string printer_t::indentFromNewline() {
+    std::string printer::indentFromNewline() {
       return std::string(charsFromNewline, ' ');
     }
 
-    void printer_t::printIndentation() {
+    void printer::printIndentation() {
       *this << indent;
     }
 
-    void printer_t::printStartIndentation() {
+    void printer::printStartIndentation() {
       if (!isInlined()) {
         *this << indent;
       } if (lastCharNeedsWhitespace()) {
@@ -106,7 +106,7 @@ namespace occa {
       }
     }
 
-    void printer_t::printEndNewline() {
+    void printer::printEndNewline() {
       if (!isInlined()) {
         *this << '\n';
       } else if (lastCharNeedsWhitespace()) {

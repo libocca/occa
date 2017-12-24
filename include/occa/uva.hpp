@@ -34,38 +34,38 @@ namespace occa {
   class memory;
   class memory_v;
 
-  class ptrRange_t {
+  class ptrRange {
   public:
     char *start, *end;
 
-    ptrRange_t();
-    ptrRange_t(void *ptr, const udim_t bytes = 0);
-    ptrRange_t(const ptrRange_t &r);
+    ptrRange();
+    ptrRange(void *ptr, const udim_t bytes = 0);
+    ptrRange(const ptrRange &r);
 
-    ptrRange_t& operator =  (const ptrRange_t &r);
-    bool        operator == (const ptrRange_t &r) const;
-    bool        operator != (const ptrRange_t &r) const;
+    ptrRange& operator =  (const ptrRange &r);
+    bool        operator == (const ptrRange &r) const;
+    bool        operator != (const ptrRange &r) const;
 
-    friend int operator < (const ptrRange_t &a, const ptrRange_t &b);
+    friend int operator < (const ptrRange &a, const ptrRange &b);
   };
 
-  typedef std::map<ptrRange_t, occa::memory_v*> ptrRangeMap_t;
-  typedef std::vector<occa::memory_v*>          memoryVector_t;
+  typedef std::map<ptrRange, occa::memory_v*> ptrRangeMap;
+  typedef std::vector<occa::memory_v*>        memoryVector;
 
-  extern ptrRangeMap_t uvaMap;
-  extern memoryVector_t uvaStaleMemory;
+  extern ptrRangeMap uvaMap;
+  extern memoryVector uvaStaleMemory;
 
-  class uvaPtrInfo_t {
+  class uvaPtrInfo {
   private:
     occa::memory_v *mem;
 
   public:
-    uvaPtrInfo_t();
-    uvaPtrInfo_t(void *ptr);
-    uvaPtrInfo_t(occa::memory_v *mem_);
+    uvaPtrInfo();
+    uvaPtrInfo(void *ptr);
+    uvaPtrInfo(occa::memory_v *mem_);
 
-    uvaPtrInfo_t(const uvaPtrInfo_t &upi);
-    uvaPtrInfo_t& operator = (const uvaPtrInfo_t &upi);
+    uvaPtrInfo(const uvaPtrInfo &upi);
+    uvaPtrInfo& operator = (const uvaPtrInfo &upi);
 
     occa::device getDevice();
     occa::memory getMemory();

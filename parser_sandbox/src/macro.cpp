@@ -11,14 +11,14 @@
 
 namespace occa {
   //---[ Part ]-------------------------
-  macroPart_t::macroPart_t(const int info_) :
+  macroPart::macroPart(const int info_) :
     info(info_) {}
 
-  macroPart_t::macroPart_t(const char *c) :
+  macroPart::macroPart(const char *c) :
     info(macroInfo::string),
     str(c) {}
 
-  macroPart_t::macroPart_t(const std::string &str_) :
+  macroPart::macroPart(const std::string &str_) :
     info(macroInfo::string),
     str(str_) {}
   //====================================
@@ -134,7 +134,7 @@ namespace occa {
       lex::quotedSkipTo(c, endDelimiters);
       char *argEnd = c;
 
-      macroPart_t arg;
+      macroPart arg;
       arg.str = std::string(argStart, argEnd - argStart);
       if (loadingArgNames) {
         if (lex::isWhitespace(*start)) {
@@ -183,7 +183,7 @@ namespace occa {
       lex::skipFrom(c, delimiters);
 
       const int partSize = (c - partStart);
-      macroPart_t part;
+      macroPart part;
       // Iterate over argument names if part starts with [a-zA-Z0-9]
       if ((*partStart < '0') || ('9' < *partStart)) {
         for (int i = 0; i < argc; ++i) {
@@ -228,7 +228,7 @@ namespace occa {
         }
         // Push back argument part
         parts.push_back(part);
-          // Update the lazy string start
+        // Update the lazy string start
         lex::skipWhitespace(c);
         cStart = c;
       }
@@ -272,7 +272,7 @@ namespace occa {
     std::string ret;
 
     for (int i = 0; i < partCount; ++i) {
-      const macroPart_t &part = parts[i];
+      const macroPart &part = parts[i];
       const size_t startRetSize = ret.size();
 
       if (part.info & macroInfo::string) {
@@ -293,7 +293,7 @@ namespace occa {
                 ((j < (inputArgc - 2))            ||
                  !(part.info & macroInfo::concat) ||
                  (0 < args[j + 1].str.size()))) {
-                argStr += ',';
+              argStr += ',';
             }
           }
         } else if (part.argPos < inputArgc) {
@@ -311,7 +311,7 @@ namespace occa {
           if ((part.argPos < 0) || (inputArgc <= part.argPos)) {
             ret += argStr;
           } else {
-            const macroPart_t arg = args[part.argPos];
+            const macroPart arg = args[part.argPos];
             if (arg.info & macroInfo::hasLeftSpace) {
               ret += ' ';
             }

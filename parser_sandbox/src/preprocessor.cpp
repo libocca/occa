@@ -76,11 +76,11 @@ namespace occa {
 
     compilerMacros.autoFreeze = false;
     macro_t *specialMacros[5] = {
-      new fileMacro_t(this),   // __FILE__
-      new lineMacro_t(this),   // __LINE__
-      new dateMacro_t(this),   // __DATE__
-      new timeMacro_t(this),   // __TIME__
-      new counterMacro_t(this) // __COUNTER__
+      new fileMacro(this),   // __FILE__
+      new lineMacro(this),   // __LINE__
+      new dateMacro(this),   // __DATE__
+      new timeMacro(this),   // __TIME__
+      new counterMacro(this) // __COUNTER__
     };
     for (int i = 0; i < 5; ++i) {
       compilerMacros.add(specialMacros[i]->name, specialMacros[i]);
@@ -128,8 +128,8 @@ namespace occa {
     outputStream = &outputStream_;
   }
 
-  preprocessor_t::directiveTrie_t& preprocessor_t::getDirectiveTrie() {
-    static directiveTrie_t trie;
+  preprocessor_t::directiveTrie& preprocessor_t::getDirectiveTrie() {
+    static directiveTrie trie;
     if (trie.isEmpty()) {
       trie.autoFreeze = false;
       trie.add("if"    , &preprocessor_t::processIf);
@@ -253,9 +253,9 @@ namespace occa {
   const macro_t* preprocessor_t::getMacro(char *c, const size_t chars) {
     const std::string macroName = std::string(c, chars);
 
-    macroTrie_t *macroSources[2] = { &sourceMacros, &compilerMacros };
+    macroTrie *macroSources[2] = { &sourceMacros, &compilerMacros };
     for (int i = 0; i < 2; ++i) {
-      macroTrie_t::result_t result = macroSources[i]->get(macroName);
+      macroTrie::result_t result = macroSources[i]->get(macroName);
       if (result.success()) {
         macro_t * const macro = result.value();
         if ((macro->undefinedLine < 0) ||
@@ -310,7 +310,7 @@ namespace occa {
     updatingSkipTo(c, macroEndDelimiters);
     char *cEnd = c;
 
-    directiveTrie_t::result_t result = directives.get(cStart, cEnd - cStart);
+    directiveTrie::result_t result = directives.get(cStart, cEnd - cStart);
     if (!result.success()) {
       std::string message = "Directive \"";
       message += std::string(cStart, cEnd - cStart);
@@ -454,7 +454,7 @@ namespace occa {
     char *cEnd = c;
     updatingSkipTo(c, '\n');
 
-    macroTrie_t::result_t result = sourceMacros.get(cStart, cEnd - cStart);
+    macroTrie::result_t result = sourceMacros.get(cStart, cEnd - cStart);
     if (0 <= result.valueIdx) {
       macro_t &macro = *(sourceMacros.values[result.valueIdx]);
       macro.undefinedLine = thisLineNumber;

@@ -33,7 +33,9 @@ namespace occa {
     return std::string(start, end - start);
   }
 
-  std::string escape(const std::string &str, const char c, const char escapeChar) {
+  std::string escape(const std::string &str,
+                     const char c,
+                     const char escapeChar) {
     const int chars = (int) str.size();
     const char *cstr = str.c_str();
     std::string ret;
@@ -46,7 +48,9 @@ namespace occa {
     return ret;
   }
 
-  std::string unescape(const std::string &str, const char c, const char escapeChar) {
+  std::string unescape(const std::string &str,
+                       const char c,
+                       const char escapeChar) {
     std::string ret;
     const int chars = (int) str.size();
     const char *cstr = str.c_str();
@@ -59,8 +63,10 @@ namespace occa {
     return ret;
   }
 
-  strVector_t split(const std::string &s, const char delimeter, const char escapeChar) {
-    strVector_t sv;
+  strVector split(const std::string &s,
+                  const char delimeter,
+                  const char escapeChar) {
+    strVector sv;
     const char *c = s.c_str();
 
     while (*c != '\0') {
@@ -75,7 +81,8 @@ namespace occa {
     return sv;
   }
 
-  std::string uppercase(const char *c, const int chars) {
+  std::string uppercase(const char *c,
+                        const int chars) {
     std::string ret(c, chars);
     for (int i = 0; i < chars; ++i) {
       ret[i] = uppercase(ret[i]);
@@ -83,7 +90,8 @@ namespace occa {
     return ret;
   }
 
-  std::string lowercase(const char *c, const int chars) {
+  std::string lowercase(const char *c,
+                        const int chars) {
     std::string ret(c, chars);
     for (int i = 0; i < chars; ++i) {
       ret[i] = lowercase(ret[i]);
@@ -275,7 +283,8 @@ namespace occa {
   }
 
   //---[ Vector Methods ]---------------
-  std::string join(const strVector_t &vec, const std::string &seq) {
+  std::string join(const strVector &vec,
+                   const std::string &seq) {
     const int entries = (int) vec.size();
     if (entries == 0) {
       return "";
@@ -303,14 +312,17 @@ namespace occa {
       "\033[44m", "\033[45m", "\033[46m", "\033[47m"
     };
 
-    std::string string(const std::string &s, color_t fg) {
+    std::string string(const std::string &s,
+                       color_t fg) {
       std::string ret = fgMap[fg];
       ret += s;
       ret += fgMap[normal];
       return ret;
     }
 
-    std::string string(const std::string &s, color_t fg, color_t bg) {
+    std::string string(const std::string &s,
+                       color_t fg,
+                       color_t bg) {
       std::string ret = fgMap[fg];
       ret += bgMap[bg];
       ret += s;

@@ -42,9 +42,9 @@ namespace occa {
   class stream;
   class streamTag;
 
-  typedef std::map<std::string, kernel>     cachedKernelMap_t;
-  typedef cachedKernelMap_t::iterator       cachedKernelMapIterator;
-  typedef cachedKernelMap_t::const_iterator cCachedKernelMapIterator;
+  typedef std::map<std::string, kernel>   cachedKernelMap;
+  typedef cachedKernelMap::iterator       cachedKernelMapIterator;
+  typedef cachedKernelMap::const_iterator cCachedKernelMapIterator;
 
   //---[ device_v ]---------------------
   class device_v : public withRefs {
@@ -52,15 +52,15 @@ namespace occa {
     std::string mode;
     occa::properties properties;
 
-    ptrRangeMap_t uvaMap;
-    memoryVector_t uvaStaleMemory;
+    ptrRangeMap uvaMap;
+    memoryVector uvaStaleMemory;
 
     stream_t currentStream;
     std::vector<stream_t> streams;
 
     udim_t bytesAllocated;
 
-    cachedKernelMap_t cachedKernels;
+    cachedKernelMap cachedKernels;
 
     device_v(const occa::properties &properties_);
 
@@ -178,7 +178,7 @@ namespace occa {
     void storeCacheInfo(const std::string &filename,
                         const hash_t &hash,
                         const occa::properties &kernelProps,
-                        const kernelMetadataMap_t &metadataMap) const;
+                        const kernelMetadataMap &metadataMap) const;
 
     std::string cacheHash(const hash_t &hash,
                           const std::string &kernelName) const;

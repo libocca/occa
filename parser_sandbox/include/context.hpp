@@ -14,14 +14,14 @@
 
 namespace occa {
   namespace lang {
-    class statement_t;
+    class statement;
 
-    typedef std::vector<statement_t*> statementPtrVector_t;
-    typedef std::vector<keyword_t>    keywordVector_t;
+    typedef std::vector<statement*> statementPtrVector_t;
+    typedef std::vector<keyword_t>  keywordVector_t;
 
-    typedef std::map<statement_t*, keywordVector_t> statementKeywordMap;
-    typedef trie_t<statementKeywordMap>             statementTrie;
-    typedef trie_t<keyword_t>                       keywordTrie;
+    typedef std::map<statement*, keywordVector_t> statementKeywordMap;
+    typedef trie<statementKeywordMap>             statementTrie;
+    typedef trie<keyword_t>                       keywordTrie;
 
     class context_t {
       statementKeywordMap statementMap;
@@ -53,18 +53,18 @@ namespace occa {
                specifier &value,
                const int ktype);
 
-      void addRecord(classType     &value, statement_t &s);
-      void addRecord(functionType  &value, statement_t &s);
-      void addRecord(attribute     &value, statement_t &s);
+      void addRecord(classType     &value, statement &s);
+      void addRecord(functionType  &value, statement &s);
+      void addRecord(attribute     &value, statement &s);
       void addRecord(statementTrie &trie,
                      specifier *ptr,
-                     statement_t &s,
+                     statement &s,
                      const int ktype);
 
-      void removeRecord(statement_t &s);
+      void removeRecord(statement &s);
 
       statementPtrVector_t getStatements(const std::string &name,
-                                       const int ktype = keywordType::none);
+                                         const int ktype = keywordType::none);
       statementPtrVector_t getStatements(classType     &value);
       statementPtrVector_t getStatements(functionType  &value);
       statementPtrVector_t getStatements(attribute     &value);

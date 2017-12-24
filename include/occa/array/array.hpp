@@ -111,7 +111,7 @@ namespace occa {
 
     inline occa::kernelArg arrayArg() {
       occa::kernelArg ret;
-      occa::kernelArg_t sizeArg;
+      occa::kernelArgData sizeArg;
 
       sizeArg.mHandle = memory_.getMHandle();
       sizeArg.dHandle = memory_.getDHandle();

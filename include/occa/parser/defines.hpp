@@ -78,36 +78,36 @@ namespace occa {
   typedef parserNS::node<parserNS::statement*>              statementNode;
   typedef parserNS::node<parserNS::varInfo*>                varInfoNode;
 
-  typedef std::vector<parserNS::statement*>                 statementVector_t;
-  typedef std::vector<statementNode*>                       statementNodeVector_t;
-  typedef std::vector<parserNS::varInfo*>                   varInfoVector_t;
-  typedef std::vector<varInfoVector_t>                      varInfoVecVector_t;
+  typedef std::vector<parserNS::statement*>                 statementVector;
+  typedef std::vector<statementNode*>                       statementNodeVector;
+  typedef std::vector<parserNS::varInfo*>                   varInfoVector;
+  typedef std::vector<varInfoVector>                        varInfoVecVector;
 
-  typedef std::map<std::string,info_t>                      macroMap_t;
-  typedef macroMap_t::iterator                              macroMapIterator;
-  typedef macroMap_t::const_iterator                        cMacroMapIterator;
+  typedef std::map<std::string,info_t>                      macroMap;
+  typedef macroMap::iterator                                macroMapIterator;
+  typedef macroMap::const_iterator                          cMacroMapIterator;
 
-  typedef std::map<std::string,info_t>                      keywordTypeMap_t;
-  typedef keywordTypeMap_t::iterator                        keywordTypeMapIterator;
-  typedef keywordTypeMap_t::const_iterator                  cKeywordTypeMapIterator;
+  typedef std::map<std::string,info_t>                      keywordTypeMap;
+  typedef keywordTypeMap::iterator                          keywordTypeMapIterator;
+  typedef keywordTypeMap::const_iterator                    cKeywordTypeMapIterator;
 
-  typedef std::map<parserNS::opHolder,info_t>               opTypeMap_t;
-  typedef opTypeMap_t::iterator                             opTypeMapIterator;
-  typedef opTypeMap_t::const_iterator                       cOpTypeMapIterator;
+  typedef std::map<parserNS::opHolder,info_t>               opTypeMap;
+  typedef opTypeMap::iterator                               opTypeMapIterator;
+  typedef opTypeMap::const_iterator                         cOpTypeMapIterator;
 
-  typedef std::vector<parserNS::typeInfo*>                  anonymousTypeMap_t;
+  typedef std::vector<parserNS::typeInfo*>                  anonymousTypeMap;
 
-  typedef std::map<std::string,parserNS::typeInfo*>         typeMap_t;
-  typedef typeMap_t::iterator                               typeMapIterator;
-  typedef typeMap_t::const_iterator                         cTypeMapIterator;
+  typedef std::map<std::string,parserNS::typeInfo*>         typeMap;
+  typedef typeMap::iterator                                 typeMapIterator;
+  typedef typeMap::const_iterator                           cTypeMapIterator;
 
-  typedef std::map<std::string,parserNS::varInfo*>          varMap_t;
-  typedef varMap_t::iterator                                varMapIterator;
-  typedef varMap_t::const_iterator                          cVarMapIterator;
+  typedef std::map<std::string,parserNS::varInfo*>          varMap;
+  typedef varMap::iterator                                  varMapIterator;
+  typedef varMap::const_iterator                            cVarMapIterator;
 
-  typedef std::map<std::string,parserNS::scopeInfo*>        scopeMap_t;
-  typedef scopeMap_t::iterator                              scopeMapIterator;
-  typedef scopeMap_t::const_iterator                        cScopeMapIterator;
+  typedef std::map<std::string,parserNS::scopeInfo*>        scopeMap;
+  typedef scopeMap::iterator                                scopeMapIterator;
+  typedef scopeMap::const_iterator                          cScopeMapIterator;
 
   typedef std::map<std::string,parserNS::overloadedOp_t*>   opOverloadMaps_t;
   typedef opOverloadMaps_t::iterator                        opOverloadMapsIterator;
@@ -117,41 +117,41 @@ namespace occa {
   typedef varOriginMap_t::iterator                          varOriginMapIterator;
   typedef varOriginMap_t::const_iterator                    cVarOriginMapIterator;
 
-  typedef std::vector<varOriginMap_t>                       varOriginMapVector_t;
-  typedef varOriginMapVector_t::iterator                    varOriginMapVectorIterator;
-  typedef varOriginMapVector_t::const_iterator              cVarOriginMapVectorIterator;
+  typedef std::vector<varOriginMap_t>                       varOriginMapVector;
+  typedef varOriginMapVector::iterator                      varOriginMapVectorIterator;
+  typedef varOriginMapVector::const_iterator                cVarOriginMapVectorIterator;
 
-  typedef std::map<parserNS::varInfo*, statementNode>       varUsedMap_t;
-  typedef varUsedMap_t::iterator                            varUsedMapIterator;
-  typedef varUsedMap_t::const_iterator                      cVarUsedMapIterator;
+  typedef std::map<parserNS::varInfo*, statementNode>       varUsedMap;
+  typedef varUsedMap::iterator                              varUsedMapIterator;
+  typedef varUsedMap::const_iterator                        cVarUsedMapIterator;
 
-  typedef std::vector<varUsedMap_t>                         varUsedMapVector_t;
-  typedef varUsedMapVector_t::iterator                      varUsedMapVectorIterator;
-  typedef varUsedMapVector_t::const_iterator                cVarUsedMapVectorIterator;
+  typedef std::vector<varUsedMap>                           varUsedMapVector;
+  typedef varUsedMapVector::iterator                        varUsedMapVectorIterator;
+  typedef varUsedMapVector::const_iterator                  cVarUsedMapVectorIterator;
 
   typedef std::map<std::string,parserNS::kernelInfo*>       kernelInfoMap_t;
   typedef kernelInfoMap_t::iterator                         kernelInfoMapIterator;
   typedef kernelInfoMap_t::const_iterator                   cKernelInfoMapIterator;
 
-  typedef std::map<std::string,parserNS::attribute_t*>      attributeMap_t;
-  typedef attributeMap_t::iterator                          attributeMapIterator;
-  typedef attributeMap_t::const_iterator                    cAttributeMapIterator;
+  typedef std::map<std::string,parserNS::attribute_t*>      attributeMap;
+  typedef attributeMap::iterator                            attributeMapIterator;
+  typedef attributeMap::const_iterator                      cAttributeMapIterator;
 
-  typedef std::map<parserNS::varInfo*,parserNS::varInfo*>   varToVarMap_t;
-  typedef varToVarMap_t::iterator                           varToVarMapIterator;
-  typedef varToVarMap_t::const_iterator                     cVarToVarMapIterator;
+  typedef std::map<parserNS::varInfo*,parserNS::varInfo*>   varToVarMap;
+  typedef varToVarMap::iterator                             varToVarMapIterator;
+  typedef varToVarMap::const_iterator                       cVarToVarMapIterator;
 
-  typedef std::map<parserNS::statement*,int>                statementIdMap_t;
-  typedef statementIdMap_t::iterator                        statementIdMapIterator;
+  typedef std::map<parserNS::statement*,int>                statementIdMap;
+  typedef statementIdMap::iterator                          statementIdMapIterator;
 
-  typedef std::map<parserNS::varInfo*,int>                  varInfoIdMap_t;
-  typedef varInfoIdMap_t::iterator                          varInfoIdMapIterator;
+  typedef std::map<parserNS::varInfo*,int>                  varInfoIdMap;
+  typedef varInfoIdMap::iterator                            varInfoIdMapIterator;
 
-  typedef std::map<int,bool>                                idDepMap_t;
-  typedef idDepMap_t::iterator                              idDepMapIterator;
+  typedef std::map<int,bool>                                idDepMap;
+  typedef idDepMap::iterator                                idDepMapIterator;
 
-  typedef std::vector<parserNS::expNode*>                   expVector_t;
-  typedef expVector_t::iterator                             expVectorIterator;
+  typedef std::vector<parserNS::expNode*>                   expVector;
+  typedef expVector::iterator                               expVectorIterator;
 
   typedef void (parserNS::parserBase::*applyToAllStatements_t)(parserNS::statement &s);
 
@@ -166,8 +166,8 @@ namespace occa {
 
   namespace parserNS {
 
-    extern keywordTypeMap_t *keywordType;
-    extern keywordTypeMap_t cKeywordType, fortranKeywordType;
+    extern keywordTypeMap *keywordType;
+    extern keywordTypeMap cKeywordType, fortranKeywordType;
 
     extern bool cKeywordsAreInitialized;
     extern bool fortranKeywordsAreInitialized;

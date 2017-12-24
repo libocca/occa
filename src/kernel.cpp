@@ -29,7 +29,7 @@
 
 namespace occa {
   //---[ KernelArg ]--------------------
-  kernelArg_t::kernelArg_t() {
+  kernelArgData::kernelArgData() {
     dHandle = NULL;
     mHandle = NULL;
 
@@ -38,11 +38,11 @@ namespace occa {
     info = kArgInfo::none;
   }
 
-  kernelArg_t::kernelArg_t(const kernelArg_t &k) {
+  kernelArgData::kernelArgData(const kernelArgData &k) {
     *this = k;
   }
 
-  kernelArg_t& kernelArg_t::operator = (const kernelArg_t &k) {
+  kernelArgData& kernelArgData::operator = (const kernelArgData &k) {
     dHandle = k.dHandle;
     mHandle = k.mHandle;
 
@@ -53,16 +53,16 @@ namespace occa {
     return *this;
   }
 
-  kernelArg_t::~kernelArg_t() {}
+  kernelArgData::~kernelArgData() {}
 
-  void* kernelArg_t::ptr() const {
+  void* kernelArgData::ptr() const {
     return ((info & kArgInfo::usePointer) ? data.void_ : (void*) &data);
   }
 
   kernelArg::kernelArg() {}
   kernelArg::~kernelArg() {}
 
-  kernelArg::kernelArg(kernelArg_t &arg) {
+  kernelArg::kernelArg(kernelArgData &arg) {
     args.push_back(arg);
   }
 
@@ -75,61 +75,61 @@ namespace occa {
   }
 
   kernelArg::kernelArg(const uint8_t arg) {
-    kernelArg_t kArg;
+    kernelArgData kArg;
     kArg.data.uint8_ = arg; kArg.size = sizeof(uint8_t);
     args.push_back(kArg);
   }
 
   kernelArg::kernelArg(const uint16_t arg) {
-    kernelArg_t kArg;
+    kernelArgData kArg;
     kArg.data.uint16_ = arg; kArg.size = sizeof(uint16_t);
     args.push_back(kArg);
   }
 
   kernelArg::kernelArg(const uint32_t arg) {
-    kernelArg_t kArg;
+    kernelArgData kArg;
     kArg.data.uint32_ = arg; kArg.size = sizeof(uint32_t);
     args.push_back(kArg);
   }
 
   kernelArg::kernelArg(const uint64_t arg) {
-    kernelArg_t kArg;
+    kernelArgData kArg;
     kArg.data.uint64_ = arg; kArg.size = sizeof(uint64_t);
     args.push_back(kArg);
   }
 
   kernelArg::kernelArg(const int8_t arg) {
-    kernelArg_t kArg;
+    kernelArgData kArg;
     kArg.data.int8_ = arg; kArg.size = sizeof(int8_t);
     args.push_back(kArg);
   }
 
   kernelArg::kernelArg(const int16_t arg) {
-    kernelArg_t kArg;
+    kernelArgData kArg;
     kArg.data.int16_ = arg; kArg.size = sizeof(int16_t);
     args.push_back(kArg);
   }
 
   kernelArg::kernelArg(const int32_t arg) {
-    kernelArg_t kArg;
+    kernelArgData kArg;
     kArg.data.int32_ = arg; kArg.size = sizeof(int32_t);
     args.push_back(kArg);
   }
 
   kernelArg::kernelArg(const int64_t arg) {
-    kernelArg_t kArg;
+    kernelArgData kArg;
     kArg.data.int64_ = arg; kArg.size = sizeof(int64_t);
     args.push_back(kArg);
   }
 
   kernelArg::kernelArg(const float arg) {
-    kernelArg_t kArg;
+    kernelArgData kArg;
     kArg.data.float_ = arg; kArg.size = sizeof(float);
     args.push_back(kArg);
   }
 
   kernelArg::kernelArg(const double arg) {
-    kernelArg_t kArg;
+    kernelArgData kArg;
     kArg.data.double_ = arg; kArg.size = sizeof(double);
     args.push_back(kArg);
   }
@@ -154,7 +154,7 @@ namespace occa {
     if (argIsUva) {
       mHandle = (memory_v*) arg;
     } else if (lookAtUva) {
-      ptrRangeMap_t::iterator it = uvaMap.find(arg);
+      ptrRangeMap::iterator it = uvaMap.find(arg);
       if (it != uvaMap.end()) {
         mHandle = it->second;
       }
@@ -163,7 +163,7 @@ namespace occa {
     if (mHandle) {
       add(mHandle->makeKernelArg());
     } else {
-      kernelArg_t kArg;
+      kernelArgData kArg;
       kArg.info       = kArgInfo::usePointer;
       kArg.size       = bytes;
       kArg.data.void_ = arg;
@@ -204,10 +204,10 @@ namespace occa {
 
   //---[ Kernel Properties ]------------
   std::string assembleHeader(const occa::properties &props) {
-    const jsonArray_t &lines = props["headers"].array();
+    const jsonArray &lines = props["headers"].array();
     const int lineCount = (int) lines.size();
 
-    const jsonObject_t &defines = props["defines"].object();
+    const jsonObject &defines = props["defines"].object();
     cJsonObjectIterator it = defines.begin();
 
     std::string header;

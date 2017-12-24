@@ -459,8 +459,8 @@ namespace occa {
       //================================
 
       //---[ Analysis Info ]------------
-      bool valueIsKnown(const strToStrMap_t &stsMap = strToStrMap_t());
-      typeHolder calculateValue(const strToStrMap_t &stsMap = strToStrMap_t());
+      bool valueIsKnown(const strToStrMap &stsMap = strToStrMap());
+      typeHolder calculateValue(const strToStrMap &stsMap = strToStrMap());
       //================================
 
       void freeLeaf(const int leafPos);
@@ -473,7 +473,7 @@ namespace occa {
                          const std::string &tab = "",
                          const info_t flags = expFlag::none);
 
-      static void printVec(expVector_t &v);
+      static void printVec(expVector &v);
 
       inline std::string toString(const std::string &tab = "",
                                   const info_t flags = expFlag::none) {
@@ -543,7 +543,7 @@ namespace occa {
 
       statementNode *statementStart, *statementEnd;
 
-      attributeMap_t attributeMap;
+      attributeMap attributeMap;
 
       statement(parserBase &pb);
       statement(const statement &s);
@@ -556,14 +556,14 @@ namespace occa {
       ~statement();
 
       statement& operator [] (const int snPos);
-      statement& operator [] (intVector_t &path);
+      statement& operator [] (intVector &path);
 
       int getSubIndex();
 
       int depth();
       int statementCount();
 
-      void setIndexPath(intVector_t &path, statement *target = NULL);
+      void setIndexPath(intVector &path, statement *target = NULL);
 
       statement* makeSubStatement();
 
@@ -786,16 +786,16 @@ namespace occa {
 
       bool insideOf(statement &s);
 
-      void setStatementIdMap(statementIdMap_t &idMap);
+      void setStatementIdMap(statementIdMap &idMap);
 
-      void setStatementIdMap(statementIdMap_t &idMap,
+      void setStatementIdMap(statementIdMap &idMap,
                              int &startID);
 
-      void setStatementVector(statementVector_t &vec,
+      void setStatementVector(statementVector &vec,
                               const bool init = true);
 
-      static void setStatementVector(statementIdMap_t &idMap,
-                                     statementVector_t &vec);
+      static void setStatementVector(statementIdMap &idMap,
+                                     statementVector &vec);
       //================================
 
       void checkIfVariableIsDefined(varInfo &var,
@@ -810,7 +810,7 @@ namespace occa {
                        statement *origin_ = NULL);
 
       // Swap variable varInfo*
-      void replaceVarInfos(varToVarMap_t &v2v);
+      void replaceVarInfos(varToVarMap &v2v);
 
       void addStatement(statement *newStatement);
       void removeStatement(statement &s);

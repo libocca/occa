@@ -23,13 +23,13 @@ namespace occa {
       return name;
     }
 
-    void specifier::print(printer_t &pout) const {
+    void specifier::print(printer &pout) const {
       pout << name;
     }
 
     std::string specifier::toString() const {
       std::stringstream ss;
-      printer_t pout(ss);
+      printer pout(ss);
       print(pout);
       return ss.str();
     }
@@ -84,7 +84,7 @@ namespace occa {
       }
     }
 
-    void qualifiers::print(printer_t &pout) const {
+    void qualifiers::print(printer &pout) const {
       const int count = (int) qualifierVec.size();
       if (!count) {
         return;
@@ -98,7 +98,7 @@ namespace occa {
 
     std::string qualifiers::toString() const {
       std::stringstream ss;
-      printer_t pout(ss);
+      printer pout(ss);
       print(pout);
       return ss.str();
     }
@@ -155,7 +155,7 @@ namespace occa {
       return *(new type_t(qualifiers_));
     }
 
-    void type_t::printLeft(printer_t &pout) const {
+    void type_t::printLeft(printer &pout) const {
       if (qualifiers_.size()) {
         qualifiers_.print(pout);
         pout << ' ';
@@ -171,19 +171,19 @@ namespace occa {
       }
     }
 
-    void type_t::printRight(printer_t &pout) const {
+    void type_t::printRight(printer &pout) const {
       if (baseType) {
         baseType->printRight(pout);
       }
     }
 
-    void type_t::print(printer_t &pout) const {
+    void type_t::print(printer &pout) const {
       printLeft(pout);
       printRight(pout);
     }
 
-    void type_t::print(printer_t &pout,
-                       const variable_t &var) const {
+    void type_t::print(printer &pout,
+                       const variable &var) const {
       printLeft(pout);
       if (var.name.size()) {
         if (pout.lastCharNeedsWhitespace()) {
@@ -194,14 +194,14 @@ namespace occa {
       printRight(pout);
     }
 
-    std::string declarationType_t::declarationToString() const {
+    std::string declarationType::declarationToString() const {
       std::stringstream ss;
-      printer_t pout(ss);
+      printer pout(ss);
       printDeclaration(pout);
       return ss.str();
     }
 
-    void declarationType_t::declarationDebugPrint() const {
+    void declarationType::declarationDebugPrint() const {
       std::cout << declarationToString();
     }
     //==================================
@@ -246,7 +246,7 @@ namespace occa {
                                rightQualifiers));
     }
 
-    void pointerType::printLeft(printer_t &pout) const {
+    void pointerType::printLeft(printer &pout) const {
       OCCA_ERROR("occa::lang::pointerType has a NULL baseType",
                  baseType);
       baseType->printLeft(pout);
@@ -294,7 +294,7 @@ namespace occa {
       size = &(size_.clone());
     }
 
-    void arrayType::printRight(printer_t &pout) const {
+    void arrayType::printRight(printer &pout) const {
       baseType->printRight(pout);
       pout << '[';
       size->print(pout);
@@ -321,7 +321,7 @@ namespace occa {
       return *(new referenceType(baseType->clone()));
     }
 
-    void referenceType::printLeft(printer_t &pout) const {
+    void referenceType::printLeft(printer &pout) const {
       OCCA_ERROR("occa::lang::referenceType has a NULL baseType",
                  baseType);
       baseType->printLeft(pout);
@@ -339,11 +339,14 @@ namespace occa {
       label(label_),
       body(NULL) {}
 
-    classType::~classType() {
-      if (body) {
-        delete body;
-      }
-    }
+    classType::classType(const std::string &name_,
+                         const int label_,
+                         blockStatement &body_) :
+      type_t(name_),
+      label(label_),
+      body(dynamic_cast<blockStatement*>(&(body_.clone()))) {}
+
+    classType::~classType() {}
 
     stype_t classType::type() const {
       return specifierType::class_;
@@ -353,7 +356,7 @@ namespace occa {
       return *(const_cast<classType*>(this));
     }
 
-    void classType::printDeclaration(printer_t &pout) const {
+    void classType::printDeclaration(printer &pout) const {
       pout.printIndentation();
 
       switch (label) {
@@ -365,24 +368,14 @@ namespace occa {
       if (name.size()) {
         pout << ' ' << name;
       }
-      pout << " {";
-
       if (body) {
-        pout << '\n';
-
-        pout.pushInlined(false);
-        pout.addIndentation();
+        pout.pushInlined(true);
         body->print(pout);
-        pout.removeIndentation();
-        pout.popInlined();
-
-        pout.printIndentation();
+        pout.pushInlined(false);
+      } else {
+        pout << " {}";
       }
-
-      pout << '}';
-      if (!pout.isInlined()) {
-        pout << ";\n";
-      }
+      pout << ";\n";
     }
     //==================================
 
@@ -406,11 +399,11 @@ namespace occa {
       return *(const_cast<typedefType*>(this));
     }
 
-    void typedefType::printLeft(printer_t &pout) const {
+    void typedefType::printLeft(printer &pout) const {
       pout << name;
     }
 
-    void typedefType::printDeclaration(printer_t &pout) const {
+    void typedefType::printDeclaration(printer &pout) const {
       OCCA_ERROR("occa::lang::typedefType has a NULL baseType",
                  baseType);
       pout.printIndentation();
@@ -473,7 +466,7 @@ namespace occa {
       args.push_back(new type_t(qs, argType, argName));
     }
 
-    void functionType::printDeclarationLeft(printer_t &pout) const {
+    void functionType::printDeclarationLeft(printer &pout) const {
       if (baseType->type() & specifierType::function) {
         dynamic_cast<const functionType*>(baseType)->
           printDeclarationLeft(pout);
@@ -487,7 +480,7 @@ namespace occa {
       pout << "(*";
     }
 
-    void functionType::printDeclarationRight(printer_t &pout) const {
+    void functionType::printDeclarationRight(printer &pout) const {
       pout << ")(";
       const std::string argIndent = pout.indentFromNewline();
       const int argCount = argumentCount();
@@ -505,7 +498,7 @@ namespace occa {
       pout << '\n';
     }
 
-    void functionType::printDeclaration(printer_t &pout) const {
+    void functionType::printDeclaration(printer &pout) const {
       OCCA_ERROR("occa::lang::functionType has a NULL baseType",
                  baseType);
       pout.printIndentation();
@@ -527,7 +520,7 @@ namespace occa {
       return specifierType::attribute;
     }
 
-    void attribute::print(printer_t &pout) const {}
+    void attribute::print(printer &pout) const {}
     //==================================
   }
 }

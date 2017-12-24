@@ -19,10 +19,10 @@ namespace occa {
     public:
       scope_t(context_t &context_);
 
-      void add(typedefType   &value);
-      void add(classType     &value);
-      void add(functionType  &value);
-      void add(attribute     &value);
+      void add(typedefType  &value);
+      void add(classType    &value);
+      void add(functionType &value);
+      void add(attribute    &value);
       void add(specifier &value, const int ktype);
 
       keyword_t get(const std::string &name);

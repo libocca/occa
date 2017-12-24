@@ -2,140 +2,140 @@
 
 namespace occa {
   namespace lang {
-    statement_t::statement_t(context_t &context_) :
+    statement::statement(context_t &context_) :
       up(NULL),
       context(context_),
       scope(context_) {
       addRef();
     }
 
-    statement_t::~statement_t() {}
+    statement::~statement() {}
 
-    std::string statement_t::toString() const {
+    std::string statement::toString() const {
       std::stringstream ss;
-      printer_t pout(ss);
+      printer pout(ss);
       print(pout);
       return ss.str();
     }
 
-    statement_t::operator std::string() const {
+    statement::operator std::string() const {
       return toString();
     }
 
-    bool statement_t::hasScope() const {
+    bool statement::hasScope() const {
       return false;
     }
 
-    emptyStatement_t statement_t::newEmptyStatement() {
-      return emptyStatement_t(context);
+    emptyStatement statement::newEmptyStatement() {
+      return emptyStatement(context);
     }
 
-    directiveStatement_t statement_t::newDirectiveStatement(macro_t &macro) {
-      return directiveStatement_t(context, macro);
+    directiveStatement statement::newDirectiveStatement(macro_t &macro) {
+      return directiveStatement(context, macro);
     }
 
-    blockStatement_t statement_t::newBlockStatement() {
-      return blockStatement_t(context);
+    blockStatement statement::newBlockStatement() {
+      return blockStatement(context);
     }
 
-    typeDeclStatement_t statement_t::newTypeDeclarationStatement(declarationType_t &declType_) {
-      return typeDeclStatement_t(context, declType_);
+    typeDeclStatement statement::newTypeDeclarationStatement(declarationType &declType) {
+      return typeDeclStatement(context, declType);
     }
 
-    classAccessStatement_t statement_t::newClassAccessStatement(const int access_) {
-      return classAccessStatement_t(context, access_);
+    classAccessStatement statement::newClassAccessStatement(const int access) {
+      return classAccessStatement(context, access);
     }
 
-    expressionStatement_t statement_t::newExpressionStatement(exprNode &expression_) {
-      return expressionStatement_t(context, expression_);
+    expressionStatement statement::newExpressionStatement(exprNode &expression) {
+      return expressionStatement(context, expression);
     }
 
-    declarationStatement_t statement_t::newDeclarationStatement() {
-      return declarationStatement_t(context);
+    declarationStatement statement::newDeclarationStatement() {
+      return declarationStatement(context);
     }
 
-    gotoStatement_t statement_t::  newGotoStatement(const std::string &name_) {
-      return gotoStatement_t(context, name_);
+    gotoStatement statement::  newGotoStatement(const std::string &name) {
+      return gotoStatement(context, name);
     }
 
-    gotoLabelStatement_t statement_t::newGotoLabelStatement(const std::string &name_) {
-      return gotoLabelStatement_t(context, name_);
+    gotoLabelStatement statement::newGotoLabelStatement(const std::string &name) {
+      return gotoLabelStatement(context, name);
     }
 
-    namespaceStatement_t statement_t::newNamespaceStatement(const std::string &name_) {
-      return namespaceStatement_t(context, name_);
+    namespaceStatement statement::newNamespaceStatement(const std::string &name) {
+      return namespaceStatement(context, name);
     }
 
-    whileStatement_t statement_t::newWhileStatement(statement_t &check_) {
-      return whileStatement_t(context, check_, false);
+    whileStatement statement::newWhileStatement(statement &check) {
+      return whileStatement(context, check, false);
     }
 
-    whileStatement_t statement_t::newDoWhileStatement(statement_t &check_) {
-      return whileStatement_t(context, check_, true);
+    whileStatement statement::newDoWhileStatement(statement &check) {
+      return whileStatement(context, check, true);
     }
 
-    forStatement_t statement_t::newForStatement(statement_t &init_,
-                                                statement_t &check_,
-                                                statement_t &update_) {
-      return forStatement_t(context, init_, check_, update_);
+    forStatement statement::newForStatement(statement &init,
+                                            statement &check,
+                                            statement &update) {
+      return forStatement(context, init, check, update);
     }
 
-    switchStatement_t statement_t::newSwitchStatement(statement_t &value_) {
-      return switchStatement_t(context, value_);
+    switchStatement statement::newSwitchStatement(statement &value) {
+      return switchStatement(context, value);
     }
 
-    caseStatement_t statement_t::newCaseStatement(statement_t &value_) {
-      return caseStatement_t(context, value_);
+    caseStatement statement::newCaseStatement(statement &value) {
+      return caseStatement(context, value);
     }
 
-    returnStatement_t statement_t::newReturnStatement(statement_t &value_) {
-      return returnStatement_t(context, value_);
+    returnStatement statement::newReturnStatement(statement &value) {
+      return returnStatement(context, value);
     }
 
-    void statement_t::print() const {
+    void statement::print() const {
       std::cout << toString();
     }
 
     //---[ Empty ]------------------------
-    emptyStatement_t::emptyStatement_t(context_t &context_) :
-      statement_t(context_) {}
+    emptyStatement::emptyStatement(context_t &context_) :
+      statement(context_) {}
 
-    statement_t& emptyStatement_t::clone() const {
-      return *(new emptyStatement_t(context));
+    statement& emptyStatement::clone() const {
+      return *(new emptyStatement(context));
     }
 
-    int emptyStatement_t::type() const {
+    int emptyStatement::type() const {
       return statementType::empty;
     }
 
-    void emptyStatement_t::print(printer_t &pout) const {}
+    void emptyStatement::print(printer &pout) const {}
     //====================================
 
     //---[ Directive ]--------------------
-    directiveStatement_t::directiveStatement_t(context_t &context_,
-                                               macro_t &macro_) :
-      statement_t(context_),
+    directiveStatement::directiveStatement(context_t &context_,
+                                           macro_t &macro_) :
+      statement(context_),
       macro(macro_) {}
 
-    statement_t& directiveStatement_t::clone() const {
-      return *(new directiveStatement_t(context, macro));
+    statement& directiveStatement::clone() const {
+      return *(new directiveStatement(context, macro));
     }
 
-    int directiveStatement_t::type() const {
+    int directiveStatement::type() const {
       return statementType::directive;
     }
 
-    void directiveStatement_t::print(printer_t &pout) const {
+    void directiveStatement::print(printer &pout) const {
       pout << macro.toString() << '\n';
     }
     //====================================
 
     //---[ Block ]------------------------
-    blockStatement_t::blockStatement_t(context_t &context_) :
-      statement_t(context_) {}
+    blockStatement::blockStatement(context_t &context_) :
+      statement(context_) {}
 
-    statement_t& blockStatement_t::clone() const {
-      blockStatement_t &s = *(new blockStatement_t(context));
+    statement& blockStatement::clone() const {
+      blockStatement &s = *(new blockStatement(context));
       const int childCount = (int) children.size();
       for (int i = 0; i < childCount; ++i) {
         s.addChild(children[i]->clone());
@@ -143,20 +143,20 @@ namespace occa {
       return s;
     }
 
-    int blockStatement_t::type() const {
+    int blockStatement::type() const {
       return statementType::block;
     }
 
-    bool blockStatement_t::hasScope() const {
+    bool blockStatement::hasScope() const {
       return true;
     }
 
-    void blockStatement_t::addChild(statement_t &child) {
+    void blockStatement::addChild(statement &child) {
       children.push_back(&child);
       child.up = this;
     }
 
-    void blockStatement_t::clearChildren() {
+    void blockStatement::clearChildren() {
       const int count = (int) children.size();
       for (int i = 0; i < count; ++i) {
         if (!children[i]->removeRef()) {
@@ -166,12 +166,21 @@ namespace occa {
       children.clear();
     }
 
-    void blockStatement_t::print(printer_t &pout) const {
+    void blockStatement::print(printer &pout) const {
       // Don't print { } for root statement
       if (up) {
-        pout.printIndentation();
-        pout << "{\n";
-        pout.addIndentation();
+        if (pout.isInlined()) {
+          pout << ' ';
+        } else {
+          pout.printIndentation();
+        }
+        pout << '{';
+        if (children.size()) {
+          pout << '\n';
+          pout.addIndentation();
+        } else {
+          pout << ' ';
+        }
       }
 
       printChildren(pout);
@@ -183,7 +192,7 @@ namespace occa {
       }
     }
 
-    void blockStatement_t::printChildren(printer_t &pout) const {
+    void blockStatement::printChildren(printer &pout) const {
       const int count = (int) children.size();
       for (int i = 0; i < count; ++i) {
         children[i]->print(pout);
@@ -192,43 +201,43 @@ namespace occa {
     //====================================
 
     //---[ Type ]-------------------------
-    typeDeclStatement_t::typeDeclStatement_t(context_t &context_,
-                                                           declarationType_t &declType_) :
-      statement_t(context_),
+    typeDeclStatement::typeDeclStatement(context_t &context_,
+                                         declarationType &declType_) :
+      statement(context_),
       declType(declType_) {}
 
 
-    statement_t& typeDeclStatement_t::clone() const {
-      return *(new typeDeclStatement_t(context, declType));
+    statement& typeDeclStatement::clone() const {
+      return *(new typeDeclStatement(context, declType));
     }
 
-    int typeDeclStatement_t::type() const {
+    int typeDeclStatement::type() const {
       return statementType::typeDecl;
     }
 
-    bool typeDeclStatement_t::hasScope() const {
+    bool typeDeclStatement::hasScope() const {
       return (dynamic_cast<classType*>(&declType)
               || dynamic_cast<functionType*>(&declType));
     }
 
-    void typeDeclStatement_t::print(printer_t &pout) const {
+    void typeDeclStatement::print(printer &pout) const {
       declType.printDeclaration(pout);
     }
 
-    classAccessStatement_t::classAccessStatement_t(context_t &context_,
-                                                   const int access_) :
-      statement_t(context_),
+    classAccessStatement::classAccessStatement(context_t &context_,
+                                               const int access_) :
+      statement(context_),
       access(access_) {}
 
-    statement_t& classAccessStatement_t::clone() const {
-      return *(new classAccessStatement_t(context, access));
+    statement& classAccessStatement::clone() const {
+      return *(new classAccessStatement(context, access));
     }
 
-    int classAccessStatement_t::type() const {
+    int classAccessStatement::type() const {
       return statementType::classAccess;
     }
 
-    void classAccessStatement_t::print(printer_t &pout) const {
+    void classAccessStatement::print(printer &pout) const {
       pout.removeIndentation();
 
       pout.printIndentation();
@@ -243,93 +252,93 @@ namespace occa {
     //====================================
 
     //---[ Expression ]-------------------
-    expressionStatement_t::expressionStatement_t(context_t &context_,
-                                                 exprNode &expression_) :
-      statement_t(context_),
+    expressionStatement::expressionStatement(context_t &context_,
+                                             exprNode &expression_) :
+      statement(context_),
       expression(expression_) {}
 
-    statement_t& expressionStatement_t::clone() const {
-      return *(new expressionStatement_t(context, expression));
+    statement& expressionStatement::clone() const {
+      return *(new expressionStatement(context, expression));
     }
 
-    int expressionStatement_t::type() const {
+    int expressionStatement::type() const {
       return statementType::expression;
     }
 
-    void expressionStatement_t::print(printer_t &pout) const {
+    void expressionStatement::print(printer &pout) const {
     }
 
-    declarationStatement_t::declarationStatement_t(context_t &context_) :
-      statement_t(context_) {}
+    declarationStatement::declarationStatement(context_t &context_) :
+      statement(context_) {}
 
-    statement_t& declarationStatement_t::clone() const {
-      return *(new declarationStatement_t(context));
+    statement& declarationStatement::clone() const {
+      return *(new declarationStatement(context));
     }
 
-    int declarationStatement_t::type() const {
+    int declarationStatement::type() const {
       return statementType::declaration;
     }
 
-    void declarationStatement_t::print(printer_t &pout) const {
+    void declarationStatement::print(printer &pout) const {
     }
     //====================================
 
     //---[ Goto ]-------------------------
-    gotoStatement_t::gotoStatement_t(context_t &context_,
-                                     const std::string &name_) :
-      statement_t(context_),
+    gotoStatement::gotoStatement(context_t &context_,
+                                 const std::string &name_) :
+      statement(context_),
       name(name_) {}
 
-    statement_t& gotoStatement_t::clone() const {
-      return *(new gotoStatement_t(context, name));
+    statement& gotoStatement::clone() const {
+      return *(new gotoStatement(context, name));
     }
 
-    int gotoStatement_t::type() const {
+    int gotoStatement::type() const {
       return statementType::goto_;
     }
 
-    void gotoStatement_t::print(printer_t &pout) const {
+    void gotoStatement::print(printer &pout) const {
       pout.printIndentation();
       pout << "goto " << name << ";\n";
     }
 
-    gotoLabelStatement_t::gotoLabelStatement_t(context_t &context_,
-                                               const std::string &name_) :
-      statement_t(context_),
+    gotoLabelStatement::gotoLabelStatement(context_t &context_,
+                                           const std::string &name_) :
+      statement(context_),
       name(name_) {}
 
-    statement_t& gotoLabelStatement_t::clone() const {
-      return *(new gotoLabelStatement_t(context, name));
+    statement& gotoLabelStatement::clone() const {
+      return *(new gotoLabelStatement(context, name));
     }
 
-    int gotoLabelStatement_t::type() const {
+    int gotoLabelStatement::type() const {
       return statementType::gotoLabel;
     }
 
-    void gotoLabelStatement_t::print(printer_t &pout) const {
+    void gotoLabelStatement::print(printer &pout) const {
       pout << name << ":\n";
     }
     //====================================
 
     //---[ Namespace ]--------------------
-    namespaceStatement_t::namespaceStatement_t(context_t &context_,
-                                               const std::string &name_) :
-      blockStatement_t(context_),
+    namespaceStatement::namespaceStatement(context_t &context_,
+                                           const std::string &name_) :
+      blockStatement(context_),
       name(name_) {}
 
-    statement_t& namespaceStatement_t::clone() const {
-      return *(new namespaceStatement_t(context, name));
+    statement& namespaceStatement::clone() const {
+      return *(new namespaceStatement(context, name));
     }
 
-    int namespaceStatement_t::type() const {
+    int namespaceStatement::type() const {
       return statementType::namespace_;
     }
 
-    bool namespaceStatement_t::hasScope() const {
+    bool namespaceStatement::hasScope() const {
       return true;
     }
 
-    void namespaceStatement_t::print(printer_t &pout) const {
+    void namespaceStatement::print(printer &pout) const {
       pout.printIndentation();
       pout << "namespace " << name << " {\n";
 
@@ -345,26 +354,26 @@ namespace occa {
     //====================================
 
     //---[ While ]------------------------
-    whileStatement_t::whileStatement_t(context_t &context_,
-                                       statement_t &check_,
-                                       const bool isDoWhile_) :
-      blockStatement_t(context_),
+    whileStatement::whileStatement(context_t &context_,
+                                   statement &check_,
+                                   const bool isDoWhile_) :
+      blockStatement(context_),
       check(check_),
       isDoWhile(isDoWhile_) {}
 
-    statement_t& whileStatement_t::clone() const {
-      return *(new whileStatement_t(context, check.clone(), isDoWhile));
+    statement& whileStatement::clone() const {
+      return *(new whileStatement(context, check.clone(), isDoWhile));
     }
 
-    int whileStatement_t::type() const {
+    int whileStatement::type() const {
       return statementType::while_;
     }
 
-    bool whileStatement_t::hasScope() const {
+    bool whileStatement::hasScope() const {
       return true;
     }
 
-    void whileStatement_t::print(printer_t &pout) const {
+    void whileStatement::print(printer &pout) const {
       pout.printStartIndentation();
       if (isDoWhile) {
         pout << "while (";
@@ -397,31 +406,31 @@ namespace occa {
     //====================================
 
     //---[ For ]--------------------------
-    forStatement_t::forStatement_t(context_t &context_,
-                                   statement_t &init_,
-                                   statement_t &check_,
-                                   statement_t &update_) :
-      blockStatement_t(context_),
+    forStatement::forStatement(context_t &context_,
+                               statement &init_,
+                               statement &check_,
+                               statement &update_) :
+      blockStatement(context_),
       init(init_),
       check(check_),
       update(update_) {}
 
-    statement_t& forStatement_t::clone() const {
-      return *(new forStatement_t(context,
-                                  init.clone(),
-                                  check.clone(),
-                                  update.clone()));
+    statement& forStatement::clone() const {
+      return *(new forStatement(context,
+                                init.clone(),
+                                check.clone(),
+                                update.clone()));
     }
 
-    int forStatement_t::type() const {
+    int forStatement::type() const {
       return statementType::for_;
     }
 
-    bool forStatement_t::hasScope() const {
+    bool forStatement::hasScope() const {
       return true;
     }
 
-    void forStatement_t::print(printer_t &pout) const {
+    void forStatement::print(printer &pout) const {
       pout.printStartIndentation();
       pout << "for (";
       pout.pushInlined(true);
@@ -444,24 +453,24 @@ namespace occa {
     //====================================
 
     //---[ Switch ]-----------------------
-    switchStatement_t::switchStatement_t(context_t &context_,
-                                         statement_t &value_) :
-      blockStatement_t(context_),
+    switchStatement::switchStatement(context_t &context_,
+                                     statement &value_) :
+      blockStatement(context_),
       value(value_) {}
 
-    statement_t& switchStatement_t::clone() const {
-      return *(new switchStatement_t(context, value.clone()));
+    statement& switchStatement::clone() const {
+      return *(new switchStatement(context, value.clone()));
     }
 
-    int switchStatement_t::type() const {
+    int switchStatement::type() const {
       return statementType::switch_;
     }
 
-    bool switchStatement_t::hasScope() const {
+    bool switchStatement::hasScope() const {
       return true;
     }
 
-    void switchStatement_t::print(printer_t &pout) const {
+    void switchStatement::print(printer &pout) const {
       pout.printStartIndentation();
       pout << "switch (";
       pout.pushInlined(true);
@@ -482,20 +491,20 @@ namespace occa {
     //====================================
 
     //---[ Case ]-------------------------
-    caseStatement_t::caseStatement_t(context_t &context_,
-                                     statement_t &value_) :
-      statement_t(context_),
+    caseStatement::caseStatement(context_t &context_,
+                                 statement &value_) :
+      statement(context_),
       value(value_) {}
 
-    statement_t& caseStatement_t::clone() const {
-      return *(new caseStatement_t(context, value.clone()));
+    statement& caseStatement::clone() const {
+      return *(new caseStatement(context, value.clone()));
     }
 
-    int caseStatement_t::type() const {
+    int caseStatement::type() const {
       return statementType::case_;
     }
 
-    void caseStatement_t::print(printer_t &pout) const {
+    void caseStatement::print(printer &pout) const {
       pout.removeIndentation();
 
       pout.printIndentation();
@@ -510,52 +519,52 @@ namespace occa {
     //====================================
 
     //---[ Exit ]-------------------------
-    continueStatement_t::continueStatement_t(context_t &context_) :
-      statement_t(context_) {}
+    continueStatement::continueStatement(context_t &context_) :
+      statement(context_) {}
 
-    statement_t& continueStatement_t::clone() const {
-      return *(new continueStatement_t(context));
+    statement& continueStatement::clone() const {
+      return *(new continueStatement(context));
     }
 
-    int continueStatement_t::type() const {
+    int continueStatement::type() const {
       return statementType::continue_;
     }
 
-    void continueStatement_t::print(printer_t &pout) const {
+    void continueStatement::print(printer &pout) const {
       pout.printIndentation();
       pout << "continue;\n";
     }
 
-    breakStatement_t::breakStatement_t(context_t &context_) :
-      statement_t(context_) {}
+    breakStatement::breakStatement(context_t &context_) :
+      statement(context_) {}
 
-    statement_t& breakStatement_t::clone() const {
-      return *(new breakStatement_t(context));
+    statement& breakStatement::clone() const {
+      return *(new breakStatement(context));
     }
 
-    int breakStatement_t::type() const {
+    int breakStatement::type() const {
       return statementType::break_;
     }
 
-    void breakStatement_t::print(printer_t &pout) const {
+    void breakStatement::print(printer &pout) const {
       pout.printIndentation();
       pout << "break;\n";
     }
 
-    returnStatement_t::returnStatement_t(context_t &context_,
-                                         statement_t &value_) :
-      statement_t(context_),
+    returnStatement::returnStatement(context_t &context_,
+                                     statement &value_) :
+      statement(context_),
       value(value_) {}
 
-    statement_t& returnStatement_t::clone() const {
-      return *(new returnStatement_t(context, value.clone()));
+    statement& returnStatement::clone() const {
+      return *(new returnStatement(context, value.clone()));
     }
 
-    int returnStatement_t::type() const {
+    int returnStatement::type() const {
       return statementType::return_;
     }
 
-    void returnStatement_t::print(printer_t &pout) const {
+    void returnStatement::print(printer &pout) const {
       pout.printIndentation();
       pout << "return";
       if (value.type() != statementType::empty) {

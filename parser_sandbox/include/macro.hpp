@@ -5,8 +5,8 @@
 #include <iostream>
 
 namespace occa {
-  class macroPart_t;
-  typedef std::vector<macroPart_t> macroPartVector_t;
+  class macroPart;
+  typedef std::vector<macroPart> macroPartVector_t;
 
   namespace macroInfo {
     static const int string        = (1 << 0);
@@ -21,15 +21,15 @@ namespace occa {
   }
 
   //---[ Part ]-------------------------
-  class macroPart_t {
+  class macroPart {
   public:
     int info;
     std::string str;
     int argPos;
 
-    macroPart_t(const int info_ = 0);
-    macroPart_t(const char *c);
-    macroPart_t(const std::string &str_);
+    macroPart(const int info_ = 0);
+    macroPart(const char *c);
+    macroPart(const std::string &str_);
   };
   //====================================
 

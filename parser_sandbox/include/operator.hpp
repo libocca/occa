@@ -138,7 +138,7 @@ namespace occa {
                  optype_t optype_,
                  int precedence_);
 
-      void print(printer_t &pout) const;
+      void print(printer &pout) const;
     };
 
     namespace op {

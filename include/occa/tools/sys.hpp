@@ -147,7 +147,7 @@ namespace occa {
              const int line,
              const std::string &message);
 
-  class mutex_t {
+  class mutex {
   public:
 #if (OCCA_OS & (OCCA_LINUX_OS | OCCA_OSX_OS))
     pthread_mutex_t mutexHandle;
@@ -155,7 +155,7 @@ namespace occa {
     HANDLE mutexHandle;
 #endif
 
-    mutex_t();
+    mutex();
     void free();
 
     void lock();

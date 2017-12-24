@@ -35,20 +35,20 @@ namespace occa {
   class kernel_v; class kernel;
   class memory_v; class memory;
   class device_v; class device;
-  class kernelArg_t;
+  class kernelArgData;
   class kernelBuilder;
 
-  typedef std::vector<kernelArg_t>     kArgVector_t;
-  typedef kArgVector_t::iterator       kArgVectorIterator;
-  typedef kArgVector_t::const_iterator cKArgVectorIterator;
+  typedef std::vector<kernelArgData>          kArgVector;
+  typedef kArgVector::iterator                kArgVectorIterator;
+  typedef kArgVector::const_iterator          cKArgVectorIterator;
 
-  typedef std::map<hash_t, kernel>          hashedKernelMap_t;
-  typedef hashedKernelMap_t::iterator       hashedKernelMapIterator;
-  typedef hashedKernelMap_t::const_iterator cHashedKernelMapIterator;
+  typedef std::map<hash_t, kernel>            hashedKernelMap;
+  typedef hashedKernelMap::iterator           hashedKernelMapIterator;
+  typedef hashedKernelMap::const_iterator     cHashedKernelMapIterator;
 
-  typedef std::vector<kernelBuilder>            kernelBuilderVector_t;
-  typedef kernelBuilderVector_t::iterator       kernelBuilderVectorIterator;
-  typedef kernelBuilderVector_t::const_iterator cKernelBuilderVectorIterator;
+  typedef std::vector<kernelBuilder>          kernelBuilderVector;
+  typedef kernelBuilderVector::iterator       kernelBuilderVectorIterator;
+  typedef kernelBuilderVector::const_iterator cKernelBuilderVectorIterator;
 
   //---[ KernelArg ]--------------------
   namespace kArgInfo {
@@ -74,7 +74,7 @@ namespace occa {
     void* void_;
   };
 
-  class kernelArg_t {
+  class kernelArgData {
   public:
     occa::device_v *dHandle;
     occa::memory_v *mHandle;
@@ -83,21 +83,21 @@ namespace occa {
     udim_t size;
     char info;
 
-    kernelArg_t();
-    kernelArg_t(const kernelArg_t &k);
-    kernelArg_t& operator = (const kernelArg_t &k);
-    ~kernelArg_t();
+    kernelArgData();
+    kernelArgData(const kernelArgData &k);
+    kernelArgData& operator = (const kernelArgData &k);
+    ~kernelArgData();
 
     void* ptr() const;
   };
 
   class kernelArg {
   public:
-    kArgVector_t args;
+    kArgVector args;
 
     kernelArg();
     ~kernelArg();
-    kernelArg(kernelArg_t &arg);
+    kernelArg(kernelArgData &arg);
     kernelArg(const kernelArg &k);
     kernelArg& operator = (const kernelArg &k);
 
@@ -276,7 +276,7 @@ namespace occa {
     std::string function_;
     occa::properties props_;
 
-    hashedKernelMap_t kernelMap;
+    hashedKernelMap kernelMap;
 
     bool buildingFromFile;
 

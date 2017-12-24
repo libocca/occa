@@ -238,7 +238,7 @@ namespace occa {
   void device::storeCacheInfo(const std::string &filename,
                               const hash_t &hash,
                               const occa::properties &kernelProps,
-                              const kernelMetadataMap_t &metadataMap) const {
+                              const kernelMetadataMap &metadataMap) const {
     occa::properties infoProps;
     infoProps["device"]          = dHandle->properties;
     infoProps["device/hash"]     = dHandle->hash().toFullString();
@@ -265,7 +265,7 @@ namespace occa {
 
   void device::loadKernels(const std::string &library) {
     std::string devHash = dHandle->hash().toFullString();
-    strVector_t dirs = io::directories("occa://" + library);
+    strVector dirs = io::directories("occa://" + library);
     const int dirCount = (int) dirs.size();
 
     const bool isVerbose = settings().get("verboseCompilation", true);
@@ -288,7 +288,7 @@ namespace occa {
 
       json &kInfo = info["kernel"];
       hash_t hash = hash_t::fromString(kInfo["hash"].string());
-      jsonArray_t metadataArray = kInfo["metadata"].array();
+      jsonArray metadataArray = kInfo["metadata"].array();
       occa::properties kernelProps = kInfo["props"];
       const std::string sourceFilename = dirs[d] + kc::parsedSourceFile;
 
@@ -339,9 +339,9 @@ namespace occa {
       if (allProps.get("OKL", true)) {
         sourceFilename = hashDir + kc::parsedSourceFile;
 
-        kernelMetadataMap_t metadataMap = io::parseFile(realFilename,
-                                                        sourceFilename,
-                                                        allProps);
+        kernelMetadataMap metadataMap = io::parseFile(realFilename,
+                                                      sourceFilename,
+                                                      allProps);
 
         kernelMetadataMapIterator kIt = metadataMap.find(kernelName);
         OCCA_ERROR("Could not find kernel ["

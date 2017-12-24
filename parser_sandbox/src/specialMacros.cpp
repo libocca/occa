@@ -8,32 +8,32 @@
 
 namespace occa {
   // __FILE__
-  fileMacro_t::fileMacro_t(const preprocessor_t *preprocessor_) :
+  fileMacro::fileMacro(const preprocessor_t *preprocessor_) :
     macro_t(preprocessor_) {
     name = "__FILE__";
   }
 
-  std::string fileMacro_t::expand(char *&c) const {
+  std::string fileMacro::expand(char *&c) const {
     return preprocessor->currentFrame.filename();
   }
 
   // __LINE__
-  lineMacro_t::lineMacro_t(const preprocessor_t *preprocessor_) :
+  lineMacro::lineMacro(const preprocessor_t *preprocessor_) :
     macro_t(preprocessor_) {
     name = "__LINE__";
   }
 
-  std::string lineMacro_t::expand(char *&c) const {
+  std::string lineMacro::expand(char *&c) const {
     return occa::toString(preprocessor->currentFrame.lineNumber);
   }
 
   // __DATE__
-  dateMacro_t::dateMacro_t(const preprocessor_t *preprocessor_) :
+  dateMacro::dateMacro(const preprocessor_t *preprocessor_) :
     macro_t(preprocessor_) {
     name = "__DATE__";
   }
 
-  std::string dateMacro_t::expand(char *&c) const {
+  std::string dateMacro::expand(char *&c) const {
     static char month[12][5] = {
       "Jan", "Feb", "Mar", "Apr", "May", "Jun",
       "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
@@ -57,12 +57,12 @@ namespace occa {
   }
 
   // __TIME__
-  timeMacro_t::timeMacro_t(const preprocessor_t *preprocessor_) :
+  timeMacro::timeMacro(const preprocessor_t *preprocessor_) :
     macro_t(preprocessor_) {
     name = "__TIME__";
   }
 
-  std::string timeMacro_t::expand(char *&c) const {
+  std::string timeMacro::expand(char *&c) const {
     time_t t = ::time(NULL);
     struct tm *ct = ::localtime(&t);
 
@@ -87,13 +87,13 @@ namespace occa {
   }
 
   // __COUNTER__
-  counterMacro_t::counterMacro_t(const preprocessor_t *preprocessor_) :
+  counterMacro::counterMacro(const preprocessor_t *preprocessor_) :
     macro_t(preprocessor_),
     counter(0) {
     name = "__COUNTER__";
   }
 
-  std::string counterMacro_t::expand(char *&c) const {
+  std::string counterMacro::expand(char *&c) const {
     return occa::toString(counter++);
   }
 }

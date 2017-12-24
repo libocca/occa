@@ -38,10 +38,10 @@ namespace occa {
 
   class mode_v;
 
-  typedef std::map<std::string,mode_v*> strToModeMap_t;
-  typedef strToModeMap_t::iterator      strToModeMapIterator;
+  typedef std::map<std::string,mode_v*> strToModeMap;
+  typedef strToModeMap::iterator        strToModeMapIterator;
 
-  strToModeMap_t& modeMap();
+  strToModeMap& modeMap();
   void registerMode(mode_v* mode);
   bool modeIsEnabled(const std::string &mode);
 

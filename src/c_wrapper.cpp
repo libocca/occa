@@ -147,7 +147,7 @@ namespace occa {
       occaType ot;
       ot.ptr = new occaObject_t();
       ot.ptr->type = type;
-      ot.ptr->obj = new occa::kernelArg_t();
+      ot.ptr->obj = new occa::kernelArgData();
       return ot;
     }
 
@@ -204,8 +204,8 @@ namespace occa {
       return t.ptr->type;
     }
 
-    inline occa::kernelArg_t& getKernelArg(const occaObject &t) {
-      return occa::c::from<occa::kernelArg_t>(t);
+    inline occa::kernelArgData& getKernelArg(const occaObject &t) {
+      return occa::c::from<occa::kernelArgData>(t);
     }
 
     inline occa::device getDevice(const occaDevice &device) {
@@ -229,7 +229,7 @@ namespace occa {
 
     inline occaType createOccaType(void *ptr, size_t bytes, occa::c::type type) {
       occaType ot = occa::c::newType(type);
-      occa::kernelArg_t &kArg = occa::c::getKernelArg(ot);
+      occa::kernelArgData &kArg = occa::c::getKernelArg(ot);
       if ((type == ptr_) || (type == struct_) || (type == string_)) {
         kArg.info = occa::kArgInfo::usePointer;
       }
@@ -246,8 +246,8 @@ namespace occa {
     }
 
     inline std::string toString(occaType value) {
-      occa::kernelArg_t &value_ = occa::c::getKernelArg(value);
-      const int valueType       = occa::c::getType(value);
+      occa::kernelArgData &value_ = occa::c::getKernelArg(value);
+      const int valueType         = occa::c::getType(value);
 
       switch (valueType) {
       case int8_  : return occa::toString(value_.data.int8_);
@@ -378,9 +378,9 @@ occaObject OCCA_RFUNC occaCreatePropertiesFromString(const char *c) {
 void OCCA_RFUNC occaPropertiesSet(occaProperties properties,
                                   const char *key,
                                   occaType value) {
-  occa::properties &props_  = occa::c::from<occa::properties>(properties);
-  occa::kernelArg_t &value_ = occa::c::getKernelArg(value);
-  const int valueType       = occa::c::getType(value);
+  occa::properties &props_    = occa::c::from<occa::properties>(properties);
+  occa::kernelArgData &value_ = occa::c::getKernelArg(value);
+  const int valueType         = occa::c::getType(value);
 
   switch (valueType) {
   case occa::c::int8_  : {
@@ -669,7 +669,7 @@ occaMemory OCCA_RFUNC occaDeviceMalloc(occaDevice device,
 void* OCCA_RFUNC occaDeviceUmalloc(occaDevice device,
                                    const occaUDim_t bytes,
                                    const void *src,
-                                  occaProperties props) {
+                                   occaProperties props) {
 
   occa::device device_ = occa::c::getDevice(device);
   occa::properties &props_ = occa::c::getProperties(props);
@@ -839,7 +839,7 @@ void OCCA_RFUNC occaKernelRunN(occaKernel kernel, const int argc, occaType *args
   kernel_.clearArgumentList();
 
   for (int i = 0; i < argc; ++i) {
-    occa::kernelArg_t &arg = occa::c::getKernelArg(args[i]);
+    occa::kernelArgData &arg = occa::c::getKernelArg(args[i]);
     void *argPtr = arg.data.void_;
 
     if (args[i].ptr->type == occa::c::memory_) {

@@ -36,9 +36,9 @@ namespace occa {
   class kernelArg;
 
 
-  typedef std::map<hash_t,occa::memory>     hashedMemoryMap_t;
-  typedef hashedMemoryMap_t::iterator       hashedMemoryMapIterator;
-  typedef hashedMemoryMap_t::const_iterator cHashedMemoryMapIterator;
+  typedef std::map<hash_t,occa::memory>   hashedMemoryMap;
+  typedef hashedMemoryMap::iterator       hashedMemoryMapIterator;
+  typedef hashedMemoryMap::const_iterator cHashedMemoryMapIterator;
 
   namespace uvaFlag {
     static const int none         = 0;

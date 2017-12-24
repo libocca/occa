@@ -162,14 +162,14 @@ namespace occa {
       ++leafPos;
 
       if ((attrTag == "@")              &&
-         (leafPos < expRoot.leafCount) &&
-         (expRoot[leafPos].value != "(")) {
+          (leafPos < expRoot.leafCount) &&
+          (expRoot[leafPos].value != "(")) {
 
         ++leafPos;
       }
 
       if ((leafPos < expRoot.leafCount) &&
-         (expRoot[leafPos].value == "(")) {
+          (expRoot[leafPos].value == "(")) {
 
         ++leafPos;
       }
@@ -286,7 +286,7 @@ namespace occa {
       return ret;
     }
 
-    void updateAttributeMap(attributeMap_t &attributeMap,
+    void updateAttributeMap(attributeMap &attributeMap,
                             const std::string &attrName) {
 
       attribute_t &attr = *(new attribute_t());
@@ -295,7 +295,7 @@ namespace occa {
       attributeMap[attrName] = &attr;
     }
 
-    int updateAttributeMap(attributeMap_t &attributeMap,
+    int updateAttributeMap(attributeMap &attributeMap,
                            expNode &expRoot,
                            int leafPos) {
 
@@ -311,7 +311,7 @@ namespace occa {
       return leafPos;
     }
 
-    int updateAttributeMapR(attributeMap_t &attributeMap,
+    int updateAttributeMapR(attributeMap &attributeMap,
                             expNode &expRoot,
                             int leafPos) {
 
@@ -350,7 +350,7 @@ namespace occa {
         const int leafStart = leafPos;
 
         if (((leafPos + 1) < expRoot.leafCount) &&
-           (expRoot[leafPos + 1].info & expType::C)) {
+            (expRoot[leafPos + 1].info & expType::C)) {
 
           ++leafPos;
         }
@@ -398,12 +398,12 @@ namespace occa {
       return (leafPos + 1);
     }
 
-    void printAttributeMap(attributeMap_t &attributeMap) {
+    void printAttributeMap(attributeMap &attributeMap) {
       if (attributeMap.size())
         std::cout << attributeMapToString(attributeMap) << '\n';
     }
 
-    std::string attributeMapToString(attributeMap_t &attributeMap) {
+    std::string attributeMapToString(attributeMap &attributeMap) {
       std::string ret;
 
       if (attributeMap.size() == 0)
@@ -537,7 +537,7 @@ namespace occa {
           if (expHasQualifier(expRoot, leafPos)) {
             if (pass == 1) {
               if ((expRoot[leafPos].value == "*") &&
-                 hasImplicitInt()) {
+                  hasImplicitInt()) {
                 break;
               }
 
@@ -745,7 +745,7 @@ namespace occa {
       qualifierCount -= count;
 
       if ((qualifierCount == 0) &&
-         (count != 0)) {
+          (count != 0)) {
 
         delete [] qualifiers;
         qualifiers = NULL;
@@ -777,8 +777,8 @@ namespace occa {
 
         // Don't put the space if the variable doesn't have a name
         if ((i == (qualifierCount - 1)) &&
-           (var != NULL)               &&
-           (var->name.size() == 0)) {
+            (var != NULL)               &&
+            (var->name.size() == 0)) {
 
           return;
         }
@@ -917,7 +917,7 @@ namespace occa {
         leafPos = loadTypedefFrom(s, expRoot, leafPos);
 
         if (addTypeToScope &&
-           (s.up != NULL)) {
+            (s.up != NULL)) {
 
           s.up->addType(*this);
         }
@@ -928,12 +928,12 @@ namespace occa {
       baseType = this;
 
       if ((leafPos < expRoot.leafCount) &&
-         (expRoot[leafPos].info & expType::unknown)) {
+          (expRoot[leafPos].info & expType::unknown)) {
 
         name = expRoot[leafPos++].value;
 
         if (addTypeToScope &&
-           (s.up != NULL)) {
+            (s.up != NULL)) {
 
           s.up->addType(*this);
         }
@@ -946,7 +946,7 @@ namespace occa {
       }
 
       if ((leafPos < expRoot.leafCount) &&
-         (expRoot[leafPos].value == "{")) {
+          (expRoot[leafPos].value == "{")) {
 
         expNode &leaf = expRoot[leafPos++];
 
@@ -1010,7 +1010,7 @@ namespace occa {
       leftQualifiers.remove("typedef");
 
       if ((leafPos < expRoot.leafCount) &&
-         (expRoot[leafPos].value != "{")) {
+          (expRoot[leafPos].value != "{")) {
 
         typeInfo *leafType = s.hasTypeInScope(expRoot[leafPos].value);
 
@@ -1034,7 +1034,7 @@ namespace occa {
       }
 
       if ((leafPos < expRoot.leafCount) &&
-         (expRoot[leafPos].value == "{")) {
+          (expRoot[leafPos].value == "{")) {
 
         // Anonymous type
         if (typedefing == NULL) {
@@ -1088,7 +1088,7 @@ namespace occa {
           thType = (unsigned_ ? ushortType : shortType);
         }
         else if ((name == "int") ||
-                (name == "long")) {
+                 (name == "long")) {
 
           const bool unsigned_ = hasQualifier("unsigned");
           const int longs_     = hasQualifier("long");
@@ -1125,7 +1125,7 @@ namespace occa {
 
       if (leafPos < expRoot.leafCount) {
         if ((expRoot[leafPos].info & expType::unknown) &&
-           (!s.hasTypeInScope(expRoot[leafPos].value))) {
+            (!s.hasTypeInScope(expRoot[leafPos].value))) {
 
           return true;
         }
@@ -1396,7 +1396,7 @@ namespace occa {
 
       for (int i = 0; i < expRoot.leafCount; ++i) {
         if ((expRoot[i].value == ",") ||
-           (expRoot[i].value == ";")) {
+            (expRoot[i].value == ";")) {
 
           ++argc;
         }
@@ -1439,7 +1439,7 @@ namespace occa {
       leafPos = loadArgsFrom(s, expRoot, leafPos);
 
       if ((leafPos < expRoot.leafCount) &&
-         expRoot[leafPos].value == ":") {
+          expRoot[leafPos].value == ":") {
 
         ++leafPos;
 
@@ -1523,7 +1523,7 @@ namespace occa {
           return varType::functionDec;
 
         if ((expRoot[leafPos].value == "{") ||
-           isInlinedASM(expRoot, leafPos)) {
+            isInlinedASM(expRoot, leafPos)) {
 
           return varType::functionDef;
         }
@@ -1547,7 +1547,7 @@ namespace occa {
             (leaf->leafCount != 0)) {
 
         if ((leaf->leaves[0]->value == "*") ||
-           (leaf->leaves[0]->value == "^")) {
+            (leaf->leaves[0]->value == "^")) {
 
           ++nestCount;
 
@@ -1584,7 +1584,7 @@ namespace occa {
             (leaf->value == "(")) {
 
         if (((*leaf)[0].value == "*") ||
-           ((*leaf)[0].value == "^")) {
+            ((*leaf)[0].value == "^")) {
 
           if ((*leaf)[0].value == "^")
             info |= varType::block;
@@ -1593,7 +1593,7 @@ namespace occa {
             leaf = expRoot2->leaves[leafPos2 + 1];
 
             if ((leaf->info & expType::C) &&
-               (leaf->value == "(")) {
+                (leaf->value == "(")) {
 
               functionNests[nestPos].info = varType::function;
               functionNests[nestPos].loadArgsFrom(s, *expRoot2, leafPos2 + 1);
@@ -1615,12 +1615,12 @@ namespace occa {
       }
 
       if ((expRoot2 != &expRoot) &&
-         (nodeHasName(*expRoot2, leafPos2))) {
+          (nodeHasName(*expRoot2, leafPos2))) {
 
         leafPos2 = loadNameFromNode(*expRoot2, leafPos2);
 
         if ((leafPos2 < expRoot2->leafCount) &&
-           expRoot2->leaves[leafPos2]->value == "(") {
+            expRoot2->leaves[leafPos2]->value == "(") {
 
           info = varType::function;
           loadArgsFrom(s, *expRoot2, leafPos2);
@@ -1651,8 +1651,8 @@ namespace occa {
       expNode *leaf = expRoot.leaves[leafPos];
 
       if (leaf->info & (expType::unknown  |
-                       expType::varInfo  |
-                       expType::function)) {
+                        expType::varInfo  |
+                        expType::function)) {
 
         if (leaf->info & expType::varInfo)
           name = leaf->getVarInfo().name;
@@ -1761,7 +1761,7 @@ namespace occa {
 
             // Don't add if it's already added
             if ((argumentCount <= (i + 1)) ||
-               (args[i + 1]->name != arrayArgName)) {
+                (args[i + 1]->name != arrayArgName)) {
 
               varInfo &arrayArg = getArrayArgument(s,
                                                    *(args[i]),
@@ -1924,7 +1924,7 @@ namespace occa {
         bool foundIdx = false;
 
         if ((idxOrderAttr[i].leafCount    == 0) &&
-           (idxOrderAttr[i].value.size() == 1)) {
+            (idxOrderAttr[i].value.size() == 1)) {
 
           const char c = idxOrderAttr[i].value[0];
 
@@ -2095,7 +2095,7 @@ namespace occa {
           if (typeNode.find("INTEGER") != std::string::npos)
             bytes = 4;
           else if ((typeNode == "LOGICAL") ||
-                  (typeNode == "CHARACTER"))
+                   (typeNode == "CHARACTER"))
             bytes = 1;
         }
 
@@ -2106,7 +2106,7 @@ namespace occa {
             ++leafPos;
           }
           else if ((expRoot[leafPos].value == "(") &&
-                  (expRoot[leafPos].leafCount)) {
+                   (expRoot[leafPos].leafCount)) {
 
             bytes = atoi(expRoot[leafPos][0].value.c_str());
             ++leafPos;
@@ -2145,7 +2145,7 @@ namespace occa {
         return leafPos;
 
       if ((expRoot[leafPos].value != "(") ||
-         (expRoot[leafPos].leafCount == 0)) {
+          (expRoot[leafPos].leafCount == 0)) {
 
         if (expRoot[leafPos].value == "(")
           return (leafPos + 1);
@@ -2196,7 +2196,7 @@ namespace occa {
       ++leafPos;
 
       if (pointerCount &&
-         rightQualifiers.has("&")) {
+          rightQualifiers.has("&")) {
 
         rightQualifiers.remove("&");
       }
@@ -2242,7 +2242,7 @@ namespace occa {
         return (it->second);
 
       if ((baseType             != NULL) &&
-         (baseType->typedefVar != NULL)) {
+          (baseType->typedefVar != NULL)) {
 
         return baseType->typedefVar->hasAttribute(attr);
       }
@@ -2370,7 +2370,7 @@ namespace occa {
 
     bool varInfo::canBeCastedTo(varInfo &var) {
       if (((    baseType->thType & noType) == 0) &&
-         ((var.baseType->thType & noType) == 0)) {
+          ((var.baseType->thType & noType) == 0)) {
 
         return true;
       }
@@ -2400,7 +2400,7 @@ namespace occa {
         const std::string &q = leftQualifiers[i];
 
         if ((q == "const") ||
-           (q == "occaConst")) {
+            (q == "occaConst")) {
 
           return true;
         }
@@ -2429,9 +2429,9 @@ namespace occa {
 
         if (!addSpaceBeforeName) {
           if ((info & varType::function)       &&
-             (rightQualifiers.qualifierCount) &&
-             ((getLastRightQualifier() == "*") ||
-              (getLastRightQualifier() == "&"))) {
+              (rightQualifiers.qualifierCount) &&
+              ((getLastRightQualifier() == "*") ||
+               (getLastRightQualifier() == "&"))) {
 
             addSpaceBeforeName = true;
           }
@@ -2454,7 +2454,7 @@ namespace occa {
       }
 
       if (addSpaceBeforeName &&
-         (name.size() != 0))
+          (name.size() != 0))
         str += ' ';
 
       str += name;
@@ -2556,7 +2556,7 @@ namespace occa {
 
       const int functionCount = (int) functions.size();
 
-      varInfoVector_t candidates;
+      varInfoVector candidates;
 
       for (int i = 0; i < functionCount; ++i) {
         varInfo &f = argumentTypes[i];
@@ -2581,7 +2581,7 @@ namespace occa {
 
     varInfo* overloadedOp_t::bestFitFor(const int argumentCount,
                                         varInfo *argumentTypes,
-                                        varInfoVector_t &candidates) {
+                                        varInfoVector &candidates) {
 
       const int candidateCount = (int) candidates.size();
 
@@ -2754,7 +2754,7 @@ namespace occa {
     meta.baseName      = j["baseName"].string();
     meta.nestedKernels = j["nestedKernels"].number();
 
-    const jsonArray_t &argInfos = j["argumentInfos"].array();
+    const jsonArray &argInfos = j["argumentInfos"].array();
     const int argumentCount = (int) argInfos.size();
     for (int i = 0; i < argumentCount; ++i) {
       meta.argumentInfos.push_back(argumentInfo::fromJson(argInfos[i]));

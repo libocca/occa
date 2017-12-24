@@ -12,7 +12,7 @@
 #include "trie.hpp"
 
 namespace occa {
-  typedef trie_t<macro_t*> macroTrie_t;
+  typedef trie<macro_t*> macroTrie;
 
   class preprocessor_t;
   preprocessor_t& getPreprocessor(hash_t &compilerHash);
@@ -20,7 +20,7 @@ namespace occa {
   class preprocessor_t {
   public:
     typedef void (preprocessor_t::*processDirective_t)(char *&dStart, char *&c);
-    typedef trie_t<processDirective_t> directiveTrie_t;
+    typedef trie<processDirective_t> directiveTrie;
 
     static const std::string macroEndDelimiters;
 
@@ -54,7 +54,7 @@ namespace occa {
       std::string getLineMessage(const char *c) const;
     };
 
-    trie_t<std::string> allFilenames;
+    trie<std::string> allFilenames;
 
     std::vector<frame_t> frames;
     frame_t currentFrame;
@@ -64,10 +64,10 @@ namespace occa {
     //==================================
 
     //---[ Macros and Directives ]------
-    directiveTrie_t &directives;
+    directiveTrie &directives;
 
-    macroTrie_t compilerMacros;
-    macroTrie_t sourceMacros;
+    macroTrie compilerMacros;
+    macroTrie sourceMacros;
     //==================================
 
     //---[ Misc ]-----------------------
@@ -82,7 +82,7 @@ namespace occa {
 
     void setOutputStream(std::ostream &out_);
 
-    static directiveTrie_t& getDirectiveTrie();
+    static directiveTrie& getDirectiveTrie();
 
     void pushStatus(const int status);
     int popStatus();

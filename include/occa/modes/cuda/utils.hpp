@@ -33,9 +33,9 @@
 namespace occa {
   namespace cuda {
 #if CUDA_VERSION >= 8000
-    typedef CUmem_advise advice_t ;
+    typedef CUmem_advise advice_t;
 #else
-    typedef int advice_t ;
+    typedef int advice_t;
 #endif
 
     void init();
@@ -79,13 +79,24 @@ namespace occa {
                           CUstream usingStream,
                           const bool isAsync);
 
-    void advise(occa::memory mem, advice_t advice, const dim_t bytes = -1);
-    void advise(occa::memory mem, advice_t advice, occa::device device);
-    void advise(occa::memory mem, advice_t advice, const dim_t bytes, occa::device device);
+    void advise(occa::memory mem,
+                advice_t advice,
+                const dim_t bytes = -1);
+    void advise(occa::memory mem,
+                advice_t advice,
+                occa::device device);
+    void advise(occa::memory mem,
+                advice_t advice,
+                const dim_t bytes,
+                occa::device device);
 
-    void prefetch(occa::memory mem, const dim_t bytes = -1);
-    void prefetch(occa::memory mem, occa::device device);
-    void prefetch(occa::memory mem, const dim_t bytes, occa::device device);
+    void prefetch(occa::memory mem,
+                  const dim_t bytes = -1);
+    void prefetch(occa::memory mem,
+                  occa::device device);
+    void prefetch(occa::memory mem,
+                  const dim_t bytes,
+                  occa::device device);
 
     CUcontext getContext(occa::device device);
 

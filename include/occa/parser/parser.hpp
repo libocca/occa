@@ -36,7 +36,7 @@ namespace occa {
   namespace parserNS {
     class occaLoopInfo;
 
-    extern intVector_t loadedLanguageVec;
+    extern intVector loadedLanguageVec;
 
     int loadedLanguage();
 
@@ -51,7 +51,7 @@ namespace occa {
 
       occa::properties properties;
 
-      macroMap_t macroMap;
+      macroMap macroMap;
       std::vector<macroInfo> macros;
 
       //---[ Parser Warnings ]----------
@@ -62,7 +62,6 @@ namespace occa {
       //================================
 
       varOriginMap_t varOriginMap;
-
       kernelInfoMap_t kernelInfoMap;
 
       statement *globalScope;
@@ -150,16 +149,16 @@ namespace occa {
       //   ---[ Loop Reordering ]-------
       void reorderLoops();
 
-      void reorderLoops(statementVector_t &loopsToReorder,
+      void reorderLoops(statementVector &loopsToReorder,
                         const int start,
                         const int end);
 
-      intVector_t relatedReorderLoops(statementVector_t &loopsToReorder,
-                                      const int start,
-                                      const int end);
+      intVector relatedReorderLoops(statementVector &loopsToReorder,
+                                    const int start,
+                                    const int end);
 
       void placeLoopsToReorder(statement &s,
-                               statementVector_t &loopsToReorder);
+                               statementVector &loopsToReorder);
       //   =============================
 
       void retagOccaLoops();
@@ -177,7 +176,7 @@ namespace occa {
 
       void checkOccaBarriers(statement &s);
       void addOccaBarriers();
-      void findInnerLoopSets(statement &s, statementVector_t &loops);
+      void findInnerLoopSets(statement &s, statementVector &loops);
       bool statementUsesShared(statement &s);
       bool barrierBetween(statement &s1, statement &s2);
       bool barrierBetween(statementNode *sn1, statementNode *s2);
@@ -203,11 +202,11 @@ namespace occa {
 
       statementNode* splitKernelStatement(statementNode *snKernel);
 
-      statementVector_t findOuterLoopSets(statement &sKernel);
-      void findOuterLoopSets(statement &s, statementVector_t &omLoops);
+      statementVector findOuterLoopSets(statement &sKernel);
+      void findOuterLoopSets(statement &s, statementVector &omLoops);
 
-      statementVector_t findOccaLoops(statement &sKernel);
-      void findOccaLoops(statement &s, statementVector_t &occaLoops);
+      statementVector findOccaLoops(statement &sKernel);
+      void findOccaLoops(statement &s, statementVector &occaLoops);
 
       varOriginMap_t findKernelDependenciesFor(statement &sKernel,
                                                statement &omLoop);
@@ -224,9 +223,9 @@ namespace occa {
       void findDependenciesFor(expNode &e,
                                varOriginMap_t &deps);
 
-      statementVector_t newKernelsFromLoops(statement &sKernel,
-                                            statementVector_t &omLoops,
-                                            varOriginMapVector_t &varDeps);
+      statementVector newKernelsFromLoops(statement &sKernel,
+                                          statementVector &omLoops,
+                                          varOriginMapVector &varDeps);
 
       void addDepStatementsToKernel(statement &sKernel,
                                     varOriginMap_t &deps);
@@ -240,7 +239,7 @@ namespace occa {
                                           varInfo &newKernelVar);
 
       void storeKernelInfo(statement &sKernel,
-                           statementVector_t &newKernels);
+                           statementVector &newKernels);
 
       void zeroOccaIdsFrom(statement &s);
       void zeroOccaIdsFrom(expNode &e);
@@ -261,12 +260,12 @@ namespace occa {
 
       void addInnerFors(statement &s);
       void addInnerForsTo(statement &s,
-                          varInfoIdMap_t &varInfoIdMap,
+                          varInfoIdMap &varInfoIdMap,
                           int &currentInnerID,
                           const int innerDim);
 
       void checkStatementForExclusives(statement &s,
-                                       varInfoIdMap_t &varInfoIdMap,
+                                       varInfoIdMap &varInfoIdMap,
                                        const int innerID);
 
       void addOuterFors(statement &s);

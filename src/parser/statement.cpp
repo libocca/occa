@@ -155,7 +155,7 @@ namespace occa {
           expNode &l2 = *(e.leaves[j]);
 
           if (l1.sameAs(l2, !nestedSearch) &&
-             l1.sameAs(l2,  nestedSearch)) {
+              l1.sameAs(l2,  nestedSearch)) {
 
             iFound   = true;
             found[j] = true;
@@ -207,7 +207,7 @@ namespace occa {
 
       // expPos is not included, it starts the next expNode tree
       if ((1 < (expPos - expStart)) ||
-         (0 < allExp[expStart].leafCount)) {
+          (0 < allExp[expStart].leafCount)) {
         useExpLeaves(allExp, expStart, (expPos - expStart));
         firstLeaf = leaves[0];
       }
@@ -246,12 +246,12 @@ namespace occa {
       //---[ Special Type ]---
       if (firstLeaf->info & expType::specialKeyword) {
         if ((firstValue == "break")    ||
-           (firstValue == "continue")) {
+            (firstValue == "continue")) {
 
           info = expType::transfer_;
 
           if ((firstValue == "continue") &&
-             (sInfo->distToOccaForLoop() <= sInfo->distToForLoop())) {
+              (sInfo->distToOccaForLoop() <= sInfo->distToForLoop())) {
 
             value = "occaContinue";
           }
@@ -277,11 +277,11 @@ namespace occa {
         // Case where nodeRoot = [case, return]
 
         if ((firstValue == "case") ||
-           (firstValue == "default")) {
+            (firstValue == "default")) {
           info = expType::checkSInfo;
         }
         else if ((parsingC       && (firstValue == "return")) ||
-                (parsingFortran && (firstValue == "RETURN"))) {
+                 (parsingFortran && (firstValue == "RETURN"))) {
 
           info = expType::return_;
 
@@ -296,7 +296,7 @@ namespace occa {
 
           // Don't put the [;]
           if (leafCount &&
-             (leaves[leafCount - 1]->value == ";")) {
+              (leaves[leafCount - 1]->value == ";")) {
 
             --leafCount;
           }
@@ -308,7 +308,7 @@ namespace occa {
           value = firstValue;
 
           if ((1 < leafCount) &&
-             (leaves[1]->value == "(")) {
+              (leaves[1]->value == "(")) {
 
             setLeaf(*(leaves[1]), 0);
             leafCount = 1;
@@ -322,7 +322,7 @@ namespace occa {
         // [occaParallelFor][#]
         // 15              + 1 = 16
         if ((firstValue.find("occaParallelFor") != std::string::npos) &&
-           (firstValue.size() == 16)) {
+            (firstValue.size() == 16)) {
 
           sInfo->info = smntType::macroStatement;
           info        = expType::printValue;
@@ -379,7 +379,7 @@ namespace occa {
                                  int &expPos) {
 
       if ((sInfo == NULL)              ||
-         !isAnAttribute(allExp, expPos)) {
+          !isAnAttribute(allExp, expPos)) {
 
         return;
       }
@@ -404,10 +404,10 @@ namespace occa {
         organizeUpdateStatement();
 
       else if ((sInfo->info & (smntType::ifStatement    |
-                              smntType::forStatement   |
-                              smntType::whileStatement |
-                              smntType::switchStatement)) &&
-              (sInfo->info != smntType::elseStatement)) {
+                               smntType::forStatement   |
+                               smntType::whileStatement |
+                               smntType::switchStatement)) &&
+               (sInfo->info != smntType::elseStatement)) {
 
         organizeFlowStatement();
       }
@@ -444,9 +444,9 @@ namespace occa {
         organizeFortranUpdateStatement();
 
       else if ((sInfo->info & (smntType::ifStatement  |
-                              smntType::forStatement |
-                              smntType::whileStatement)) &&
-              (sInfo->info != smntType::elseStatement)) {
+                               smntType::forStatement |
+                               smntType::whileStatement)) &&
+               (sInfo->info != smntType::elseStatement)) {
 
         organizeFortranFlowStatement();
       }
@@ -523,8 +523,8 @@ namespace occa {
 
         // Don't put the [;]
         if (leafCount              &&
-           (sExpEnd == leafCount) &&
-           (leaves[sExpEnd - 1]->value == ";")) {
+            (sExpEnd == leafCount) &&
+            (leaves[sExpEnd - 1]->value == ";")) {
 
           --sExpEnd;
         }
@@ -548,7 +548,7 @@ namespace occa {
     void expNode::organizeUpdateStatement() {
       // Don't put the [;]
       if (leafCount &&
-         (leaves[leafCount - 1]->value == ";")) {
+          (leaves[leafCount - 1]->value == ";")) {
 
         info |= expType::hasSemicolon;
         --leafCount;
@@ -588,10 +588,10 @@ namespace occa {
           bool hasDeclare = ((sInfo->info & smntType::forStatement) && (i == 0));
 
           if (hasDeclare &&
-             ((leaf.leafCount == 0) ||
-              !(leaf[0].info & (expType::qualifier |
-                                expType::type      |
-                                expType::typeInfo)))) {
+              ((leaf.leafCount == 0) ||
+               !(leaf[0].info & (expType::qualifier |
+                                 expType::type      |
+                                 expType::typeInfo)))) {
 
             hasDeclare = false;
           }
@@ -656,7 +656,7 @@ namespace occa {
       int leafPos  = var.loadFrom(*this, 1);
 
       if ((sInfo->up != NULL) &&
-         (!sInfo->up->scope->hasLocalVariable(var.name))) {
+          (!sInfo->up->scope->hasLocalVariable(var.name))) {
 
         sInfo->up->addVariable(&var);
       }
@@ -688,7 +688,7 @@ namespace occa {
       leafPos = type.loadFrom(*this, leafPos, addTypeToScope);
 
       if ((leafCount <= leafPos) ||
-         ((*this)[leafPos].value == ";")) {
+          ((*this)[leafPos].value == ";")) {
 
         expNode::swap(*this, newExp);
         return;
@@ -822,7 +822,7 @@ namespace occa {
 
           // Make sure it registers as a pointer
           if ((var.pointerCount      == 0) &&
-             (var.stackPointerCount != 0)) {
+              (var.stackPointerCount != 0)) {
 
             var.pointerCount = 1;
             var.rightQualifiers.add("*", 0);
@@ -856,14 +856,14 @@ namespace occa {
             statement *s = sInfo->parser.varOriginMap[pVar];
 
             if (s &&
-               (s->info & smntType::functionDefinition)) {
+                (s->info & smntType::functionDefinition)) {
 
               // Hide stack info in arguments
               var.stackPointersUsed = 0;
 
               // Make sure it registers as a pointer
               if ((var.pointerCount      == 0) &&
-                 (var.stackPointerCount != 0)) {
+                  (var.stackPointerCount != 0)) {
 
                 var.pointerCount = 1;
                 var.rightQualifiers.add("*", 0);
@@ -893,7 +893,7 @@ namespace occa {
 
       // Don't put the [;]
       if (leafCount &&
-         (leaves[leafCount - 1]->value == ";")) {
+          (leaves[leafCount - 1]->value == ";")) {
 
         info |= expType::hasSemicolon;
         --leafCount;
@@ -930,8 +930,8 @@ namespace occa {
       varInfo *funcExp = sInfo->getFunctionVar();
 
       if ((funcExp == NULL)            ||
-         ((*this)[0].value    != "=") ||
-         ((*this)[0][0].value != funcExp->name)) {
+          ((*this)[0].value    != "=") ||
+          ((*this)[0][0].value != funcExp->name)) {
 
         info |= expType::hasSemicolon;
 
@@ -959,8 +959,8 @@ namespace occa {
       }
       // [IF/ELSE IF/DO WHILE]( EXPR )
       else if ((sInfo->info == smntType::ifStatement)     ||
-              (sInfo->info == smntType::elseIfStatement) ||
-              (sInfo->info == smntType::whileStatement)) {
+               (sInfo->info == smntType::elseIfStatement) ||
+               (sInfo->info == smntType::whileStatement)) {
 
         OCCA_ERROR("No expression in if-statement: " << *this << '\n',
                    leafCount != 0);
@@ -1122,7 +1122,7 @@ namespace occa {
       int leafPos  = var.loadFromFortran(*this, 1);
 
       if ((sInfo->up != NULL)              &&
-         !sInfo->up->scope->hasLocalVariable(var.name)) {
+          !sInfo->up->scope->hasLocalVariable(var.name)) {
 
         sInfo->up->addVariable(&var);
 
@@ -1145,7 +1145,7 @@ namespace occa {
         const bool parsingFortran = (parsingLanguage_ & parserInfo::parsingFortran);
 
         if ((parsingC       && (exp.value == "directLoad")) ||
-           (parsingFortran && upStringCheck(exp.value, "DIRECTLOAD"))) {
+            (parsingFortran && upStringCheck(exp.value, "DIRECTLOAD"))) {
 
           exp.value = "occaDirectLoad";
         }
@@ -1167,7 +1167,7 @@ namespace occa {
 
     bool expNode::needsExpChange() {
       if ((info == expType::root) ||
-         (info & expType::hasInfo)) {
+          (info & expType::hasInfo)) {
 
         return false;
       }
@@ -1194,17 +1194,17 @@ namespace occa {
           if (nodeVar && nodeType) {
             // [const] [type]
             if ((leftLeaf != NULL) &&
-               (leftLeaf->info & expType::qualifier)) {
+                (leftLeaf->info & expType::qualifier)) {
 
               info = expType::type;
             }
             // [type] [X]
             else if ((leafPos == 0)  &&
-                    (1 < upLeafCount) &&
-                    ((*up)[1].info & (expType::varInfo  |
-                                      expType::function |
-                                      expType::unknown  |
-                                      expType::variable))) {
+                     (1 < upLeafCount) &&
+                     ((*up)[1].info & (expType::varInfo  |
+                                       expType::function |
+                                       expType::unknown  |
+                                       expType::variable))) {
               info = expType::type;
             }
             else {
@@ -1223,7 +1223,7 @@ namespace occa {
           else if (nodeType) {
             // [type] [varName]
             if ((leftLeaf != NULL) &&
-               (leftLeaf->info & expType::type)) {
+                (leftLeaf->info & expType::type)) {
 
               info = expType::unknown;
             }
@@ -1269,7 +1269,7 @@ namespace occa {
         }
 
         else if ( !(preInfo & (expType::presetValue |
-                              expType::operator_)) ) {
+                               expType::operator_)) ) {
           info = expType::printValue;
         }
       }
@@ -1286,7 +1286,7 @@ namespace occa {
       // Organize leaves bottom -> up
       for (int i = 0; i < leafCount; ++i) {
         if ((leaves[i]->leafCount) &&
-           !(leaves[i]->info & expType::hasInfo)) {
+            !(leaves[i]->info & expType::hasInfo)) {
 
           leaves[i]->initOrganization();
         }
@@ -1308,7 +1308,7 @@ namespace occa {
       // Organize leaves bottom -> up
       for (int i = 0; i < leafCount; ++i) {
         if ((leaves[i]->leafCount) &&
-           !(leaves[i]->info & expType::hasInfo)) {
+            !(leaves[i]->info & expType::hasInfo)) {
 
           leaves[i]->organizeLeaves(false);
         }
@@ -1374,7 +1374,7 @@ namespace occa {
       // Organize leaves bottom -> up
       for (int i = 0; i < leafCount; ++i) {
         if ((leaves[i]->leafCount) &&
-           !(leaves[i]->info & expType::hasInfo)) {
+            !(leaves[i]->info & expType::hasInfo)) {
 
           leaves[i]->organizeFortranLeaves();
         }
@@ -1398,12 +1398,12 @@ namespace occa {
 
       while(true) {
         if (( (leftToRight) && (leafCount <= leafPos)) ||
-           ((!leftToRight) && (leafPos < 0)))
+            ((!leftToRight) && (leafPos < 0)))
           break;
 
         if ((leaves[leafPos]->leafCount)                  ||
-           (leaves[leafPos]->info &  expType::hasInfo)   ||
-           (leaves[leafPos]->info == expType::qualifier)) {
+            (leaves[leafPos]->info &  expType::hasInfo)   ||
+            (leaves[leafPos]->info == expType::qualifier)) {
 
           leafPos += ls;
           continue;
@@ -1433,7 +1433,7 @@ namespace occa {
 
             // Cases: & * + -
             if ((lInfo & expType::LR) ||
-               ((lInfo & expType::L_R) == expType::L_R)) {
+                ((lInfo & expType::L_R) == expType::L_R)) {
               const int invTarget = leafPos + ((targetOff == 1) ?
                                                -1 : 1);
 
@@ -1532,8 +1532,8 @@ namespace occa {
         expNode &leaf = *(leaves[leafPos]);
 
         if ((((leaf.info & expType::operator_) == 0) &&
-            ((leaf.info & expType::qualifier) == 0))   ||
-           ((*keywordType)[leaf.value] != opQ)) {
+             ((leaf.info & expType::qualifier) == 0))   ||
+            ((*keywordType)[leaf.value] != opQ)) {
 
           ++leafPos;
           continue;
@@ -1548,7 +1548,7 @@ namespace occa {
         expNode &lLeaf = *(leaves[leafPos - 1]);
 
         if (lLeaf.info & (expType::qualifier |
-                         expType::type)) {
+                          expType::type)) {
 
           leaf.info = (opQ & ~expType::operator_);
         }
@@ -1566,8 +1566,8 @@ namespace occa {
         }
 
         else if ((lLeaf.value == ",") &&
-                (up == NULL)         &&
-                (sInfo->info == smntType::declareStatement)) {
+                 (up == NULL)         &&
+                 (sInfo->info == smntType::declareStatement)) {
 
           leaf.info = (opQ & ~expType::operator_);
         }
@@ -1585,7 +1585,7 @@ namespace occa {
       // Don't mistake:
       //   int main(int) -> int main[(int)]
       if ((sInfo == NULL) ||
-         (sInfo->info & smntType::functionStatement)) {
+          (sInfo->info & smntType::functionStatement)) {
 
         return;
       }
@@ -1596,19 +1596,19 @@ namespace occa {
         expNode &leaf = *(leaves[leafPos]);
 
         if ((leaf.value == "(")                      &&
-           (leaf.leafCount)                         &&
-           ((leaf[0].info & (expType::type      |
-                             expType::qualifier |
-                             expType::typeInfo))     ||
-            sInfo->hasTypeInScope(leaves[leafPos]->value))) {
+            (leaf.leafCount)                         &&
+            ((leaf[0].info & (expType::type      |
+                              expType::qualifier |
+                              expType::typeInfo))     ||
+             sInfo->hasTypeInScope(leaves[leafPos]->value))) {
 
           bool isCast = true;
 
           for (int i = 1; i < leaf.leafCount; ++i) {
             if (!(leaf[i].info & (expType::type      |
-                                 expType::qualifier |
-                                 expType::typeInfo))     &&
-               !sInfo->hasTypeInScope(leaves[leafPos]->value)) {
+                                  expType::qualifier |
+                                  expType::typeInfo))     &&
+                !sInfo->hasTypeInScope(leaves[leafPos]->value)) {
 
               isCast = false;
               break;
@@ -1637,7 +1637,7 @@ namespace occa {
         }
 
         if (sInfo->hasTypeInScope(leaves[leafPos]->value) ||
-           (leaves[leafPos]->info == expType::qualifier)) {
+            (leaves[leafPos]->info == expType::qualifier)) {
 
           varInfo &var = addVarInfoNode(leafPos);
 
@@ -1666,10 +1666,10 @@ namespace occa {
 
       while(leafPos < leafCount) {
         if ((leaves[leafPos]->info  & expType::C) &&
-           (leaves[leafPos]->value == "(")) {
+            (leaves[leafPos]->value == "(")) {
 
           if ((leafPos) &&
-             (leaves[leafPos - 1]->info & expType::function)) {
+              (leaves[leafPos - 1]->info & expType::function)) {
             expNode &fNode    = *(leaves[leafPos - 1]);
             expNode &argsNode = *(leaves[leafPos    ]);
 
@@ -1707,11 +1707,11 @@ namespace occa {
         expNode &leaf    = *(leaves[leafPos]);
 
         if ((leaf.info & expType::C)  && // ( or [
-           ((leaf.value == "[") ||
-            (leaf.value == "("))     &&
-           (preLeaf.info & (expType::typeInfo |     // that should be merged with a type, var, or ?
-                            expType::varInfo  |
-                            expType::unknown))) {
+            ((leaf.value == "[") ||
+             (leaf.value == "("))     &&
+            (preLeaf.info & (expType::typeInfo |     // that should be merged with a type, var, or ?
+                             expType::varInfo  |
+                             expType::unknown))) {
 
           leaf.info = expType::LR;
 
@@ -1736,9 +1736,9 @@ namespace occa {
         expNode &leaf = *(leaves[leafPos]);
 
         if ((leaf.info & expType::LR)             &&
-           (leaf.value == "(")                   && // () operator
-           (leaf[0].info & expType::varInfo)     && // varInfo
-           (leaf[0].getVarInfo().pointerDepth())) {  // that is a pointer
+            (leaf.value == "(")                   && // () operator
+            (leaf[0].info & expType::varInfo)     && // varInfo
+            (leaf[0].getVarInfo().pointerDepth())) {  // that is a pointer
 
           varInfo &var      = leaf[0].getVarInfo();
           expNode &arrNode  = leaf[1];
@@ -1747,7 +1747,7 @@ namespace occa {
           const bool reorder = var.idxOrdering.size();
 
           expNode &csvFlatRoot = *(arrNode.makeCsvFlatHandle());
-          expVector_t indices;
+          expVector indices;
 
           OCCA_ERROR("Variable use [" << toString() << "] cannot be used without the @(dim(...)) attribute",
                      dims != 0);
@@ -1988,7 +1988,7 @@ namespace occa {
 
     bool expNode::typeEndsWithStar() {
       if ( !(info & expType::type) ||
-          (leafCount == 0) )
+           (leafCount == 0) )
         return false;
 
       if (leaves[leafCount - 1]->info & expType::qualifier)
@@ -1999,7 +1999,7 @@ namespace occa {
 
     bool expNode::hasAnArrayQualifier(const int pos) {
       if ( !(info & expType::qualifier) ||
-          (leafCount <= pos) )
+           (leafCount <= pos) )
         return false;
 
       return ((leaves[pos]->value == "*") ||
@@ -2018,11 +2018,11 @@ namespace occa {
         expNode &leaf = *(leaves[leafPos]);
 
         if ((leaf.info & expType::C)                       &&
-           (leaf.value == "(")                            && // Is ()
-           (leaf.leafCount)                               && //   and has stuff
-           (0 < leafPos)                                  && //   and follows
-           (leaves[leafPos - 1]->info & (expType::varInfo | //   something [-] Fortran::variable ?
-                                         expType::unknown))) {
+            (leaf.value == "(")                            && // Is ()
+            (leaf.leafCount)                               && //   and has stuff
+            (0 < leafPos)                                  && //   and follows
+            (leaves[leafPos - 1]->info & (expType::varInfo | //   something [-] Fortran::variable ?
+                                          expType::unknown))) {
 
           leaf.value = "[";
 
@@ -2071,7 +2071,7 @@ namespace occa {
                            false);
               }
 
-              expVector_t indices;
+              expVector indices;
 
               // Feed the indices backwards
               for (int i = 0; i < entries; ++i) {
@@ -2116,7 +2116,7 @@ namespace occa {
                 }
               }
             }
-              leafPos += (entries - 1);
+            leafPos += (entries - 1);
           }
 
           expNode::freeFlatHandle(csvFlatRoot);
@@ -2146,7 +2146,7 @@ namespace occa {
         expNode &n = flatRoot[i];
 
         if ((n.info  & expType::LR) &&
-           (n.value == "%")) {
+            (n.value == "%")) {
 
           n.value = ".";
         }
@@ -2162,7 +2162,7 @@ namespace occa {
         expNode &n = flatRoot[i];
 
         if ((n.info  & expType::LR) &&
-           (n.value == "**")) {
+            (n.value == "**")) {
 
           expNode &x = n[0];
           expNode &y = n[1];
@@ -2272,7 +2272,7 @@ namespace occa {
                 newExp.sInfo->addVariable(&var);
               }
               else if ((sUp != NULL) &&
-                      !(sUp->hasVariableInLocalScope(var.name))) {
+                       !(sUp->hasVariableInLocalScope(var.name))) {
 
                 sUp->addVariable(&var, newExp.sInfo);
               }
@@ -2291,8 +2291,8 @@ namespace occa {
           type = getTypeInfo().clone();
 
           if (sChanged      &&
-             (sUp != NULL) &&
-             !(sUp->hasVariableInLocalScope(type.name))) {
+              (sUp != NULL) &&
+              !(sUp->hasVariableInLocalScope(type.name))) {
 
             sUp->addType(type);
           }
@@ -2308,8 +2308,8 @@ namespace occa {
           // Make sure we haven't initialized it
           //   from the original or an extern
           if (sChanged      &&
-             (sUp != NULL) &&
-             !(sUp->hasVariableInLocalScope(newVar.name)) ) {
+              (sUp != NULL) &&
+              !(sUp->hasVariableInLocalScope(newVar.name)) ) {
 
             sUp->addVariable(&newVar);
           }
@@ -2776,11 +2776,11 @@ namespace occa {
 
     bool expNode::hasVariable() {
       if (info & (expType::variable |  // [-] Fortran::variable ?
-                 expType::varInfo  |
-                 expType::function)) {
+                  expType::varInfo  |
+                  expType::function)) {
 
         if ( (info & expType::varInfo) ||
-            (value.size() != 0) ) {
+             (value.size() != 0) ) {
 
           return true;
         }
@@ -2799,13 +2799,13 @@ namespace occa {
         // if (isALongInt(str))
         //   var.baseType = sInfo->hasTypeInScope("long");
         // else
-          var.baseType = sInfo->hasTypeInScope("int");
+        var.baseType = sInfo->hasTypeInScope("int");
       }
       else if (isAFloat(str)) {
         // if (isADouble(str))
         //   var.baseType = sInfo->hasTypeInScope("double");
         // else
-          var.baseType = sInfo->hasTypeInScope("float");
+        var.baseType = sInfo->hasTypeInScope("float");
       }
       else if ((str == "false") || (str == "true")) {
         var.baseType = sInfo->hasTypeInScope("bool");
@@ -2880,7 +2880,7 @@ namespace occa {
           varInfo var1 = leaves[1]->evaluateType();
 
           if ((var0.baseType == NULL) ||
-             (var1.baseType == NULL)) {
+              (var1.baseType == NULL)) {
 
             return var;
           }
@@ -2890,7 +2890,7 @@ namespace occa {
             const int thType1 = var1.baseType->thType;
 
             if ((thType0 & noType) ||
-               (thType1 & noType)) {
+                (thType1 & noType)) {
 
               varInfo *funcVar = sInfo->parser.hasOperator(info,
                                                            value,
@@ -2919,7 +2919,7 @@ namespace occa {
           varInfo var2 = leaves[2]->evaluateType();
 
           if ((var1.baseType == NULL) ||
-             (var2.baseType == NULL)) {
+              (var2.baseType == NULL)) {
 
             return var;
           }
@@ -2929,7 +2929,7 @@ namespace occa {
             const int thType2 = var2.baseType->thType;
 
             if ((thType1 & noType) ||
-               (thType2 & noType)) {
+                (thType2 & noType)) {
 
               OCCA_ERROR("Oops, not implemented yet",
                          false);
@@ -2953,7 +2953,7 @@ namespace occa {
       }
       else if (info & expType::type) {
         if (!leafCount ||
-           !(leaves[0]->info & expType::qualifier))
+            !(leaves[0]->info & expType::qualifier))
           return false;
 
         return leaves[0]->hasQualifier(qualifier);
@@ -3040,7 +3040,7 @@ namespace occa {
           return varLeaf;
         }
         else if (varNode.leafCount &&
-                (varLeaf->value == "=")) {
+                 (varLeaf->value == "=")) {
 
           return varLeaf->leaves[0];
         }
@@ -3054,7 +3054,7 @@ namespace occa {
         expNode &varNode = *(getVariableNode(pos));
 
         if (varNode.leafCount &&
-           (varNode[0].info & expType::LR)) {
+            (varNode[0].info & expType::LR)) {
 
           return &(varNode[0]);
         }
@@ -3088,7 +3088,7 @@ namespace occa {
           return leaf.getVarInfo().name;
         }
         else if (leaf.leafCount &&
-                (leaf[0].value == "=")) {
+                 (leaf[0].value == "=")) {
 
           return leaf[0].getVarInfo(0).name;
         }
@@ -3227,7 +3227,7 @@ namespace occa {
 
 
     //---[ Analysis Info ]------------
-    bool expNode::valueIsKnown(const strToStrMap_t &stsMap) {
+    bool expNode::valueIsKnown(const strToStrMap &stsMap) {
       bool isKnown = true;
 
       expNode &flatRoot = *(makeFlatHandle());
@@ -3236,9 +3236,9 @@ namespace occa {
         expNode &n = flatRoot[i];
 
         if (n.info & (expType::unknown  |
-                     expType::variable | // [-] Fortran::variable ?
-                     expType::function | // [-] Check function later
-                     expType::varInfo)) {
+                      expType::variable | // [-] Fortran::variable ?
+                      expType::function | // [-] Check function later
+                      expType::varInfo)) {
 
           cStrToStrMapIterator it;
 
@@ -3253,7 +3253,7 @@ namespace occa {
           }
         }
         else if ((n.info  & expType::C) && // [-] Don't load constant arrays yet
-                (n.value == "[")) {
+                 (n.value == "[")) {
 
           isKnown = false;
           break;
@@ -3265,7 +3265,7 @@ namespace occa {
       return isKnown;
     }
 
-    typeHolder expNode::calculateValue(const strToStrMap_t &stsMap) {
+    typeHolder expNode::calculateValue(const strToStrMap &stsMap) {
       if (valueIsKnown() == false)
         return typeHolder();
 
@@ -3277,9 +3277,9 @@ namespace occa {
         expNode &n = flatRoot[i];
 
         if (n.info & (expType::unknown  |
-                     expType::variable | // [-] Fortran::variable ?
-                     expType::function | // [-] Check function later
-                     expType::varInfo)) {
+                      expType::variable | // [-] Fortran::variable ?
+                      expType::function | // [-] Check function later
+                      expType::varInfo)) {
 
           cStrToStrMapIterator it;
 
@@ -3756,7 +3756,7 @@ namespace occa {
           }
 
           if ( !(sInfo->info & smntType::gotoStatement) &&
-              (sInfo->info != smntType::elseStatement) ) {
+               (sInfo->info != smntType::elseStatement) ) {
 
             str += ')';
           }
@@ -3825,7 +3825,7 @@ namespace occa {
       };
     }
 
-    void expNode::printVec(expVector_t &v) {
+    void expNode::printVec(expVector &v) {
       const int vCount = (int) v.size();
 
       for (int i = 0; i < vCount; ++i)
@@ -3900,7 +3900,7 @@ namespace occa {
       return *(sn->value);
     }
 
-    statement& statement::operator [] (intVector_t &path) {
+    statement& statement::operator [] (intVector &path) {
       statement *s = this;
 
       const int pathCount = (int) path.size();
@@ -3953,7 +3953,7 @@ namespace occa {
       return count;
     }
 
-    void statement::setIndexPath(intVector_t &path,
+    void statement::setIndexPath(intVector &path,
                                  statement *target) {
       int depth_ = depth();
 
@@ -4040,7 +4040,7 @@ namespace occa {
       }
 
       else if (allExp[expPos].info & (expType::operator_ |
-                                     expType::presetValue))
+                                      expType::presetValue))
         return checkUpdateStatementType(allExp, expPos);
 
       else if (expHasDescriptor(allExp, expPos))
@@ -4048,7 +4048,7 @@ namespace occa {
 
       else if (allExp[expPos].info & expType::unknown) {
         if (((expPos + 1) < allExp.leafCount) &&
-           (allExp[expPos + 1].value == ":")) {
+            (allExp[expPos + 1].value == ":")) {
 
           return checkGotoStatementType(allExp, expPos);
         }
@@ -4180,7 +4180,7 @@ namespace occa {
         ++expPos;
 
         if ((expValue != "else") &&
-           (expValue != "do")) {
+            (expValue != "do")) {
 
           ++expPos;
         }
@@ -4220,7 +4220,7 @@ namespace occa {
           ++expPos;
 
           if ((allExp.leafCount <= expPos) ||
-             (allExp[expPos].value != "::")) {
+              (allExp[expPos].value != "::")) {
 
             break;
           }
@@ -4229,7 +4229,7 @@ namespace occa {
         }
         // namespace A::B::C [{]
         else if ((leaf.info  == expType::C) &&
-           (leaf.value == "{")) {
+                 (leaf.value == "{")) {
 
           break;
         }
@@ -4332,8 +4332,8 @@ namespace occa {
       if (it == attributeMap.end())
         return;
 
-      strVector_t attributesToAdd;
-      strVector_t attributesToErase;
+      strVector attributesToAdd;
+      strVector attributesToErase;
 
       while(it != attributeMap.end()) {
         attribute_t &attr = *(it->second);
@@ -4454,8 +4454,8 @@ namespace occa {
 
     bool statement::expHasDescriptor(expNode &allExp, int expPos) {
       if (expHasSpecifier(allExp, expPos) ||
-         expHasQualifier(allExp, expPos) ||
-         isAnAttribute(allExp, expPos)) {
+          expHasQualifier(allExp, expPos) ||
+          isAnAttribute(allExp, expPos)) {
 
         return true;
       }
@@ -4745,7 +4745,7 @@ namespace occa {
 
       if (parsingLanguage & parserInfo::parsingC) {
         if ((allExp[expPos].info  & expType::C) &&
-           (allExp[expPos].value == "{")) {
+            (allExp[expPos].value == "{")) {
 
           loadAllFromNode(allExp[expPos]);
           ++expPos;
@@ -4856,7 +4856,7 @@ namespace occa {
         }
 
         if ((expPos < allExp.leafCount) &&
-           (allExp[expPos].value == "THEN")) {
+            (allExp[expPos].value == "THEN")) {
 
           newStatement->loadUntilFortranEnd(allExp, expPos);
         }
@@ -4977,8 +4977,8 @@ namespace occa {
         ++expPos;
 
         if ((expPos < allExp.leafCount)                   &&
-           (allExp[expPos].info & expType::endStatement) &&
-           (allExp[expPos].value == ";")) {
+            (allExp[expPos].info & expType::endStatement) &&
+            (allExp[expPos].value == ";")) {
 
           ++expPos;
         }
@@ -5022,8 +5022,8 @@ namespace occa {
 
     info_t statement::checkFortranDescriptorStatementType(expNode &allExp, int &expPos) {
       if (((expPos + 1) < allExp.leafCount)        &&
-         (allExp[expPos].value     == "IMPLICIT") &&
-         (allExp[expPos + 1].value == "NONE")) {
+          (allExp[expPos].value     == "IMPLICIT") &&
+          (allExp[expPos + 1].value == "NONE")) {
 
         skipUntilFortranStatementEnd(allExp, expPos);
 
@@ -5092,7 +5092,7 @@ namespace occa {
           retType = smntType::updateStatement;
         }
         else if ((allExp[expPos].value == "FUNCTION") ||
-                (allExp[expPos].value == "SUBROUTINE")) {
+                 (allExp[expPos].value == "SUBROUTINE")) {
 
           retType = checkFortranDescriptorStatementType(allExp, expPos);
         }
@@ -5118,7 +5118,7 @@ namespace occa {
           return (expValue == "ENDFUNCTION");
       }
       else if (info & (smntType::forStatement |
-                      smntType::whileStatement)) {
+                       smntType::whileStatement)) {
 
         return (expValue == "ENDDO");
       }
@@ -5126,8 +5126,8 @@ namespace occa {
         if (info != smntType::elseStatement) {
 
           if ((expValue == "ENDIF")   ||
-             (expValue == "ELSE IF") ||
-             (expValue == "ELSE")) {
+              (expValue == "ELSE IF") ||
+              (expValue == "ELSE")) {
 
             return true;
           }
@@ -5146,7 +5146,7 @@ namespace occa {
 
       // Don't skip [ELSE IF] and [ELSE]
       if ((expPos < allExp.leafCount) &&
-         (allExp[expPos].value.substr(0,3) == "END")) {
+          (allExp[expPos].value.substr(0,3) == "END")) {
 
         skipUntilFortranStatementEnd(allExp, expPos);
       }
@@ -5170,7 +5170,7 @@ namespace occa {
     void statement::skipUntilFortranStatementEnd(expNode &allExp, int &expPos) {
       while(expPos < allExp.leafCount) {
         if ((allExp[expPos].value == "\\n") ||
-           (allExp[expPos].value == ";")) {
+            (allExp[expPos].value == ";")) {
 
           break;
         }
@@ -5464,13 +5464,13 @@ namespace occa {
       return false;
     }
 
-    void statement::setStatementIdMap(statementIdMap_t &idMap) {
+    void statement::setStatementIdMap(statementIdMap &idMap) {
       int startID = 0;
 
       setStatementIdMap(idMap, startID);
     }
 
-    void statement::setStatementIdMap(statementIdMap_t &idMap,
+    void statement::setStatementIdMap(statementIdMap &idMap,
                                       int &startID) {
 
       statementNode *nodePos = statementStart;
@@ -5485,7 +5485,7 @@ namespace occa {
       }
     }
 
-    void statement::setStatementVector(statementVector_t &vec,
+    void statement::setStatementVector(statementVector &vec,
                                        const bool init) {
 
       statementNode *nodePos = statementStart;
@@ -5504,8 +5504,8 @@ namespace occa {
       }
     }
 
-    void statement::setStatementVector(statementIdMap_t &idMap,
-                                       statementVector_t &vec) {
+    void statement::setStatementVector(statementIdMap &idMap,
+                                       statementVector &vec) {
 
       statementIdMapIterator it = idMap.begin();
 
@@ -5525,8 +5525,8 @@ namespace occa {
     void statement::checkIfVariableIsDefined(varInfo &var,
                                              statement *origin) {
       if ((var.name.size() == 0)     ||
-         var.hasQualifier("extern") ||
-         (var.info & varType::functionDef)) {
+          var.hasQualifier("extern") ||
+          (var.info & varType::functionDef)) {
 
         return;
       }
@@ -5565,7 +5565,7 @@ namespace occa {
     }
 
     // Swap variable varInfo*
-    void statement::replaceVarInfos(varToVarMap_t &v2v) {
+    void statement::replaceVarInfos(varToVarMap &v2v) {
       expNode &flatRoot = *(expRoot.makeDumbFlatHandle());
 
       for (int i = 0; i < flatRoot.leafCount; ++i) {
@@ -5843,7 +5843,7 @@ namespace occa {
           expNode &node1 = *(expRoot.leaves[0]);
 
           if ((node1.leafCount) &&
-             (node1.leaves[0]->info & expType::type)) {
+              (node1.leaves[0]->info & expType::type)) {
 
             return node1.leaves[0]->hasQualifier(qualifier);
           }
@@ -6077,7 +6077,7 @@ namespace occa {
 
       // OCCA For's
       if ((info == smntType::occaFor) &&
-         (expRoot.leafCount == 0)) {
+          (expRoot.leafCount == 0)) {
 
         if ( !(flags & statementFlag::printSubStatements) ) {
           str += expRoot.value;
@@ -6279,10 +6279,10 @@ namespace occa {
 
     bool isAnOccaInnerTag(const std::string &tag) {
       if ( (tag.find("inner") == std::string::npos) ||
-          ((tag != "inner")  &&
-           (tag != "inner0") &&
-           (tag != "inner1") &&
-           (tag != "inner2")) ) {
+           ((tag != "inner")  &&
+            (tag != "inner0") &&
+            (tag != "inner1") &&
+            (tag != "inner2")) ) {
 
         return false;
       }
@@ -6292,10 +6292,10 @@ namespace occa {
 
     bool isAnOccaOuterTag(const std::string &tag) {
       if ( (tag.find("outer") == std::string::npos) ||
-          ((tag != "outer")  &&
-           (tag != "outer0") &&
-           (tag != "outer1") &&
-           (tag != "outer2")) ) {
+           ((tag != "outer")  &&
+            (tag != "outer0") &&
+            (tag != "outer1") &&
+            (tag != "outer2")) ) {
 
         return false;
       }

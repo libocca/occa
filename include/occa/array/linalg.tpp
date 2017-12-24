@@ -35,8 +35,8 @@ namespace occa {
     }
 
     template <class VTYPE_IN, class VTYPE_OUT>
-    kernelBuilderVector_t makeAssignmentBuilders(const std::string &kernelName) {
-      kernelBuilderVector_t builders;
+    kernelBuilderVector makeAssignmentBuilders(const std::string &kernelName) {
+      kernelBuilderVector builders;
       for (int i = 0; i < usedTileSizeCount; ++i) {
         builders.push_back(makeAssignmentBuilder<VTYPE_IN,VTYPE_OUT>(kernelName,
                                                                      usedTileSizes[i]));
@@ -77,7 +77,7 @@ namespace occa {
     void operator_eq(occa::memory vec,
                      const VTYPE_OUT value,
                      const int tileSize) {
-      static kernelBuilderVector_t builders =
+      static kernelBuilderVector builders =
         makeAssignmentBuilders<VTYPE_OUT,VTYPE_OUT>("eq_const");
 
       const int entries = vec.size() / sizeof(VTYPE_OUT);
@@ -90,7 +90,7 @@ namespace occa {
     void operator_plus_eq(occa::memory vec,
                           const VTYPE_OUT value,
                           const int tileSize) {
-      static kernelBuilderVector_t builders =
+      static kernelBuilderVector builders =
         makeAssignmentBuilders<VTYPE_OUT,VTYPE_OUT>("plus_eq_const");
 
       const int entries = vec.size() / sizeof(VTYPE_OUT);
@@ -103,7 +103,7 @@ namespace occa {
     void operator_plus_eq(occa::memory in,
                           occa::memory out,
                           const int tileSize) {
-      static kernelBuilderVector_t builders =
+      static kernelBuilderVector builders =
         makeAssignmentBuilders<VTYPE_IN,VTYPE_OUT>("plus_eq");
 
       const int entries = in.size() / sizeof(VTYPE_OUT);
@@ -116,7 +116,7 @@ namespace occa {
     void operator_sub_eq(occa::memory vec,
                          const VTYPE_OUT value,
                          const int tileSize) {
-      static kernelBuilderVector_t builders =
+      static kernelBuilderVector builders =
         makeAssignmentBuilders<VTYPE_OUT,VTYPE_OUT>("sub_eq_const");
 
       const int entries = vec.size() / sizeof(VTYPE_OUT);
@@ -129,7 +129,7 @@ namespace occa {
     void operator_sub_eq(occa::memory in,
                          occa::memory out,
                          const int tileSize) {
-      static kernelBuilderVector_t builders =
+      static kernelBuilderVector builders =
         makeAssignmentBuilders<VTYPE_IN,VTYPE_OUT>("sub_eq");
 
       const int entries = in.size() / sizeof(VTYPE_OUT);
@@ -142,7 +142,7 @@ namespace occa {
     void operator_mult_eq(occa::memory vec,
                           const VTYPE_OUT value,
                           const int tileSize) {
-      static kernelBuilderVector_t builders =
+      static kernelBuilderVector builders =
         makeAssignmentBuilders<VTYPE_OUT,VTYPE_OUT>("mult_eq_const");
 
       const int entries = vec.size() / sizeof(VTYPE_OUT);
@@ -155,7 +155,7 @@ namespace occa {
     void operator_mult_eq(occa::memory in,
                           occa::memory out,
                           const int tileSize) {
-      static kernelBuilderVector_t builders =
+      static kernelBuilderVector builders =
         makeAssignmentBuilders<VTYPE_IN,VTYPE_OUT>("mult_eq");
 
       const int entries = in.size() / sizeof(VTYPE_OUT);
@@ -168,7 +168,7 @@ namespace occa {
     void operator_div_eq(occa::memory vec,
                          const VTYPE_OUT value,
                          const int tileSize) {
-      static kernelBuilderVector_t builders =
+      static kernelBuilderVector builders =
         makeAssignmentBuilders<VTYPE_OUT,VTYPE_OUT>("div_eq_const");
 
       const int entries = vec.size() / sizeof(VTYPE_OUT);
@@ -181,7 +181,7 @@ namespace occa {
     void operator_div_eq(occa::memory in,
                          occa::memory out,
                          const int tileSize) {
-      static kernelBuilderVector_t builders =
+      static kernelBuilderVector builders =
         makeAssignmentBuilders<VTYPE_IN,VTYPE_OUT>("div_eq");
 
       const int entries = in.size() / sizeof(VTYPE_OUT);
@@ -206,7 +206,7 @@ namespace occa {
     occa::memory deviceReductionBuffer(occa::device device,
                                        const int size) {
 
-      hashedMemoryMap_t &bufferMap = deviceBufferMap<TM>();
+      hashedMemoryMap &bufferMap = deviceBufferMap<TM>();
       occa::memory &buffer = bufferMap[hash(device) ^ size];
       if (!buffer.isInitialized()) {
         buffer = device.malloc(size * sizeof(TM));
@@ -399,7 +399,7 @@ namespace occa {
               occa::memory y,
               const int tileSize) {
 
-      static kernelBuilderVector_t builders;
+      static kernelBuilderVector builders;
       if (!builders.size()) {
         for (int i = 0; i < usedTileSizeCount; ++i) {
           kernelBuilder kerb =

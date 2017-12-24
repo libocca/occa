@@ -5,39 +5,39 @@
 
 namespace occa {
   // __FILE__
-  class fileMacro_t : public macro_t {
+  class fileMacro : public macro_t {
   public:
-    fileMacro_t(const preprocessor_t *preprocessor_);
+    fileMacro(const preprocessor_t *preprocessor_);
     std::string expand(char *&c) const;
   };
 
   // __LINE__
-  class lineMacro_t : public macro_t {
+  class lineMacro : public macro_t {
   public:
-    lineMacro_t(const preprocessor_t *preprocessor_);
+    lineMacro(const preprocessor_t *preprocessor_);
     std::string expand(char *&c) const;
   };
 
   // __DATE__
-  class dateMacro_t : public macro_t {
+  class dateMacro : public macro_t {
   public:
-    dateMacro_t(const preprocessor_t *preprocessor_);
+    dateMacro(const preprocessor_t *preprocessor_);
     std::string expand(char *&c) const;
   };
 
   // __TIME__
-  class timeMacro_t : public macro_t {
+  class timeMacro : public macro_t {
   public:
-    timeMacro_t(const preprocessor_t *preprocessor_);
+    timeMacro(const preprocessor_t *preprocessor_);
     std::string expand(char *&c) const;
   };
 
   // __COUNTER__
-  class counterMacro_t : public macro_t {
+  class counterMacro : public macro_t {
   public:
     mutable int counter;
 
-    counterMacro_t(const preprocessor_t *preprocessor_);
+    counterMacro(const preprocessor_t *preprocessor_);
     std::string expand(char *&c) const;
   };
 }

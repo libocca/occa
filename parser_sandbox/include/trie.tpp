@@ -9,38 +9,38 @@ namespace occa {
   //---[ Trie ]-------------------------
   //  ---[ Result ]---------------------
   template <class TM>
-  trie_t<TM>::result_t::result_t() {}
+  trie<TM>::result_t::result_t() {}
 
   template <class TM>
-  trie_t<TM>::result_t::result_t(const trie_t<TM> *trie_,
-                                 const int length_,
-                                 const int valueIdx_) :
-    trie(const_cast<trie_t<TM>*>(trie_)),
+  trie<TM>::result_t::result_t(const trie<TM> *trie__,
+                               const int length_,
+                               const int valueIdx_) :
+    trie_(const_cast<trie<TM>*>(trie__)),
     length(length_),
     valueIdx(valueIdx_) {}
 
   template <class TM>
-  bool trie_t<TM>::result_t::success() const {
+  bool trie<TM>::result_t::success() const {
     return (0 <= valueIdx);
   }
 
   template <class TM>
-  const TM& trie_t<TM>::result_t::value() const {
+  const TM& trie<TM>::result_t::value() const {
     return ((0 <= valueIdx)
-            ? trie->values[valueIdx]
-            : trie->defaultValue);
+            ? trie_->values[valueIdx]
+            : trie_->defaultValue);
   }
 
   template <class TM>
-  TM& trie_t<TM>::result_t::value() {
+  TM& trie<TM>::result_t::value() {
     return ((0 <= valueIdx)
-            ? trie->values[valueIdx]
-            : trie->defaultValue);
+            ? trie_->values[valueIdx]
+            : trie_->defaultValue);
   }
   //  ==================================
 
   template <class TM>
-  trie_t<TM>::trie_t() :
+  trie<TM>::trie() :
     isFrozen(false),
     autoFreeze(true),
     nodeCount(0),
@@ -51,19 +51,19 @@ namespace occa {
     valueIndices(NULL) {}
 
   template <class TM>
-  void trie_t<TM>::clear() {
+  void trie<TM>::clear() {
     root.leaves.clear();
     values.clear();
     defrost();
   }
 
   template <class TM>
-  bool trie_t<TM>::isEmpty() const {
+  bool trie<TM>::isEmpty() const {
     return (root.leaves.size() == 0);
   }
 
   template <class TM>
-  void trie_t<TM>::add(const char *c, const TM &value) {
+  void trie<TM>::add(const char *c, const TM &value) {
     defrost();
     int valueIdx = root.getValueIdx(c);
     if (valueIdx < 0) {
@@ -79,12 +79,12 @@ namespace occa {
   }
 
   template <class TM>
-  void trie_t<TM>::add(const std::string &s, const TM &value) {
+  void trie<TM>::add(const std::string &s, const TM &value) {
     add(s.c_str(), value);
   }
 
   template <class TM>
-  void trie_t<TM>::freeze() {
+  void trie<TM>::freeze() {
     defrost();
 
     nodeCount     = root.nodeCount();
@@ -105,13 +105,13 @@ namespace occa {
   }
 
   template <class TM>
-  int trie_t<TM>::freeze(const trieNode_t &node, int offset) {
+  int trie<TM>::freeze(const trieNode &node, int offset) {
     const trieNodeMap_t &leaves = node.leaves;
     cTrieNodeMapIterator leaf = leaves.begin();
     int leafOffset = offset + (int) leaves.size();
 
     while (leaf != leaves.end()) {
-      const trieNode_t &leafNode = leaf->second;
+      const trieNode &leafNode = leaf->second;
       chars[offset]        = leaf->first;
       offsets[offset]      = leafOffset;
       leafCount[offset]    = (int) leafNode.leaves.size();
@@ -125,7 +125,7 @@ namespace occa {
   }
 
   template <class TM>
-  void trie_t<TM>::defrost() {
+  void trie<TM>::defrost() {
     if (isFrozen) {
       nodeCount     = 0;
       baseNodeCount = 0;
@@ -145,8 +145,8 @@ namespace occa {
   }
 
   template <class TM>
-  typename trie_t<TM>::result_t trie_t<TM>::getFirst(const char *c,
-                                                     const int length) const {
+  typename trie<TM>::result_t trie<TM>::getFirst(const char *c,
+                                                 const int length) const {
     if (!isFrozen) {
       return trieGetFirst(c, length);
     }
@@ -195,8 +195,8 @@ namespace occa {
   }
 
   template <class TM>
-  typename trie_t<TM>::result_t trie_t<TM>::trieGetFirst(const char *c, const int length) const {
-    trieNode_t::result_t result = root.get(c, length);
+  typename trie<TM>::result_t trie<TM>::trieGetFirst(const char *c, const int length) const {
+    trieNode::result_t result = root.get(c, length);
     if (result.success()) {
       return result_t(this, result.length, result.valueIdx);
     }
@@ -204,9 +204,9 @@ namespace occa {
   }
 
   template <class TM>
-  typename trie_t<TM>::result_t trie_t<TM>::get(const char *c, const int length) const {
+  typename trie<TM>::result_t trie<TM>::get(const char *c, const int length) const {
     const int length_ = (length == INT_MAX) ? strlen(c) : length;
-    trie_t<TM>::result_t result = getFirst(c, length_);
+    trie<TM>::result_t result = getFirst(c, length_);
     if (result.length != length_) {
       result.length = 0;
       result.valueIdx = -1;
@@ -215,7 +215,7 @@ namespace occa {
   }
 
   template <class TM>
-  bool trie_t<TM>::has(const char c) const {
+  bool trie<TM>::has(const char c) const {
     if (!isFrozen) {
       return trieHas(c);
     }
@@ -228,7 +228,7 @@ namespace occa {
   }
 
   template <class TM>
-  bool trie_t<TM>::trieHas(const char c) const {
+  bool trie<TM>::trieHas(const char c) const {
     const trieNodeMap_t &leaves = root.leaves;
     cTrieNodeMapIterator it = leaves.begin();
     while (it != leaves.end()) {
@@ -241,20 +241,20 @@ namespace occa {
   }
 
   template <class TM>
-  bool trie_t<TM>::has(const char *c) const {
+  bool trie<TM>::has(const char *c) const {
     result_t result = get(c);
     return ((size_t) result.length == strlen(c));
   }
 
   template <class TM>
-  bool trie_t<TM>::has(const char *c, const int size) const {
+  bool trie<TM>::has(const char *c, const int size) const {
     OCCA_ERROR("Cannot search for a char* with size: " << size,
                0 < size);
     return (get(c, size).success());
   }
 
   template <class TM>
-  void trie_t<TM>::print() {
+  void trie<TM>::print() {
     const bool wasFrozen = isFrozen;
     if (!isFrozen) {
       freeze();

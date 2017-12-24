@@ -106,8 +106,8 @@ namespace occa {
                      const occa::properties &props) {
 
     return getDevice().buildKernel(filename,
-                                       kernelName,
-                                       props);
+                                   kernelName,
+                                   props);
   }
 
   kernel buildKernelFromString(const std::string &content,
@@ -143,8 +143,8 @@ namespace occa {
               const dim_t bytes,
               const occa::properties &props) {
 
-    ptrRangeMap_t::iterator srcIt  = uvaMap.find(const_cast<void*>(src));
-    ptrRangeMap_t::iterator destIt = uvaMap.find(dest);
+    ptrRangeMap::iterator srcIt  = uvaMap.find(const_cast<void*>(src));
+    ptrRangeMap::iterator destIt = uvaMap.find(dest);
 
     occa::memory_v *srcMem  = ((srcIt  != uvaMap.end()) ? (srcIt->second)  : NULL);
     occa::memory_v *destMem = ((destIt != uvaMap.end()) ? (destIt->second) : NULL);
@@ -236,7 +236,7 @@ namespace occa {
   //====================================
 
   void printModeInfo() {
-    strToModeMap_t &modes = modeMap();
+    strToModeMap &modes = modeMap();
     strToModeMapIterator it = modes.begin();
     styling::table table;
     int serialIdx = 0;

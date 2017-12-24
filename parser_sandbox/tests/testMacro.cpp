@@ -85,9 +85,9 @@ void testSpecialMacros() {
 
   char *c = new char[1];
 
-  occa::fileMacro_t fileMacro(&preprocessor);       // __FILE__
-  occa::lineMacro_t lineMacro(&preprocessor);       // __LINE__
-  occa::counterMacro_t counterMacro(&preprocessor); // __COUNTER__
+  occa::fileMacro fileMacro(&preprocessor);       // __FILE__
+  occa::lineMacro lineMacro(&preprocessor);       // __LINE__
+  occa::counterMacro counterMacro(&preprocessor); // __COUNTER__
 
   OCCA_TEST_COMPARE(occa::env::PWD + "foo",
                     fileMacro.expand(c));

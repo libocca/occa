@@ -62,7 +62,7 @@ namespace occa {
 
   memory::memory(void *uvaPtr) :
     mHandle(NULL) {
-    ptrRangeMap_t::iterator it = uvaMap.find(uvaPtr);
+    ptrRangeMap::iterator it = uvaMap.find(uvaPtr);
     if (it != uvaMap.end()) {
       setMHandle(it->second);
     } else {
@@ -185,12 +185,12 @@ namespace occa {
       mHandle->uvaPtr = (char*) sys::malloc(mHandle->size);
     }
 
-    ptrRange_t uvaRange;
-    uvaRange.start = mHandle->uvaPtr;
-    uvaRange.end   = (uvaRange.start + mHandle->size);
+    ptrRange range;
+    range.start = mHandle->uvaPtr;
+    range.end   = (range.start + mHandle->size);
 
-    uvaMap[uvaRange]                   = mHandle;
-    mHandle->dHandle->uvaMap[uvaRange] = mHandle;
+    uvaMap[range]                   = mHandle;
+    mHandle->dHandle->uvaMap[range] = mHandle;
 
     // Needed for kernelArg.void_ -> mHandle checks
     if (mHandle->uvaPtr != mHandle->ptr) {

@@ -272,7 +272,7 @@ namespace occa {
     }
 
     void mkpath(const std::string &dir) {
-      strVector_t path = split(io::filename(dir), '/');
+      strVector path = split(io::filename(dir), '/');
 
       const int dirCount = (int) path.size();
       std::string sPath;
@@ -945,7 +945,7 @@ namespace occa {
              filename, function, line, message);
   }
 
-  mutex_t::mutex_t() {
+  mutex::mutex() {
 #if (OCCA_OS & (OCCA_LINUX_OS | OCCA_OSX_OS))
     int error = pthread_mutex_init(&mutexHandle, NULL);
 
@@ -956,7 +956,7 @@ namespace occa {
 #endif
   }
 
-  void mutex_t::free() {
+  void mutex::free() {
 #if (OCCA_OS & (OCCA_LINUX_OS | OCCA_OSX_OS))
     int error = pthread_mutex_destroy(&mutexHandle);
 
@@ -967,7 +967,7 @@ namespace occa {
 #endif
   }
 
-  void mutex_t::lock() {
+  void mutex::lock() {
 #if (OCCA_OS & (OCCA_LINUX_OS | OCCA_OSX_OS))
     pthread_mutex_lock(&mutexHandle);
 #else
@@ -975,7 +975,7 @@ namespace occa {
 #endif
   }
 
-  void mutex_t::unlock() {
+  void mutex::unlock() {
 #if (OCCA_OS & (OCCA_LINUX_OS | OCCA_OSX_OS))
     pthread_mutex_unlock(&mutexHandle);
 #else

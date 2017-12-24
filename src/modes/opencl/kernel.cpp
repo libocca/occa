@@ -195,9 +195,9 @@ namespace occa {
       for (int i = 0; i < kArgc; ++i) {
         const int argCount = (int) kArgs[i].args.size();
         if (argCount) {
-          const kernelArg_t *kArgs_i = &(kArgs[i].args[0]);
+          const kernelArgData *kArgs_i = &(kArgs[i].args[0]);
           for (int j = 0; j < argCount; ++j) {
-            const kernelArg_t &kArg_j = kArgs_i[j];
+            const kernelArgData &kArg_j = kArgs_i[j];
             OCCA_OPENCL_ERROR("Kernel (" + metadata.name + ") : Setting Kernel Argument [" << (i + 1) << "]",
                               clSetKernelArg(clKernel, argc++, kArg_j.size, kArg_j.ptr()));
           }

@@ -7,13 +7,13 @@
 #include "occa/tools/io.hpp"
 #include "occa/tools/lex.hpp"
 
-void testInsert(occa::trie_t<std::string> &trie);
-void testSearch(occa::trie_t<std::string> &trie);
-void testFrozenSearch(occa::trie_t<std::string> &trie);
-void testRefreeze(occa::trie_t<std::string> &trie);
+void testInsert(occa::trie<std::string> &trie);
+void testSearch(occa::trie<std::string> &trie);
+void testFrozenSearch(occa::trie<std::string> &trie);
+void testRefreeze(occa::trie<std::string> &trie);
 
 int main(const int argc, const char **argv) {
-  occa::trie_t<std::string> trie;
+  occa::trie<std::string> trie;
   trie.autoFreeze = false;
 
   testInsert(trie);
@@ -22,7 +22,7 @@ int main(const int argc, const char **argv) {
   testRefreeze(trie);
 }
 
-void testInsert(occa::trie_t<std::string> &trie) {
+void testInsert(occa::trie<std::string> &trie) {
   trie.add("blue"    , "blue");
   trie.add("blueblue", "blueblue");
   trie.add("boring"  , "boring");
@@ -30,7 +30,7 @@ void testInsert(occa::trie_t<std::string> &trie) {
   trie.add("good"    , "good");
 }
 
-void testSearch(occa::trie_t<std::string> &trie) {
+void testSearch(occa::trie<std::string> &trie) {
   OCCA_TEST_COMPARE(true, trie.has("blue"));
   OCCA_TEST_COMPARE(true, trie.has("boring"));
   OCCA_TEST_COMPARE(true, trie.has("glue"));
@@ -59,7 +59,7 @@ void testSearch(occa::trie_t<std::string> &trie) {
   OCCA_TEST_COMPARE("", trie.get("goods").value());
 }
 
-void testFrozenSearch(occa::trie_t<std::string> &trie) {
+void testFrozenSearch(occa::trie<std::string> &trie) {
   trie.freeze();
   OCCA_TEST_COMPARE(true, trie.has("blue"));
   OCCA_TEST_COMPARE(true, trie.has("boring"));
@@ -89,7 +89,7 @@ void testFrozenSearch(occa::trie_t<std::string> &trie) {
   OCCA_TEST_COMPARE("", trie.get("goods").value());
 }
 
-void testRefreeze(occa::trie_t<std::string> &trie) {
+void testRefreeze(occa::trie<std::string> &trie) {
   OCCA_TEST_COMPARE(true , trie.isFrozen);
   OCCA_TEST_COMPARE(false, trie.has("red"));
 

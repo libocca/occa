@@ -52,7 +52,7 @@ namespace occa {
 
       virtual int nodeType() const = 0;
       virtual exprNode& clone() const = 0;
-      virtual void print(printer_t &pout) const = 0;
+      virtual void print(printer &pout) const = 0;
 
       std::string toString() const;
       void debugPrint() const;
@@ -66,7 +66,7 @@ namespace occa {
 
       virtual int nodeType() const;
       virtual exprNode& clone() const;
-      virtual void print(printer_t &pout) const;
+      virtual void print(printer &pout) const;
     };
     //==================================
 
@@ -81,20 +81,20 @@ namespace occa {
 
       virtual int nodeType() const;
       virtual exprNode& clone() const;
-      virtual void print(printer_t &pout) const;
+      virtual void print(printer &pout) const;
     };
 
     class variableNode : public exprNode {
     public:
-      variable_t &value;
+      variable &value;
 
-      variableNode(variable_t &value_);
+      variableNode(variable &value_);
       variableNode(const variableNode& node);
       ~variableNode();
 
       virtual int nodeType() const;
       virtual exprNode& clone() const;
-      virtual void print(printer_t &pout) const;
+      virtual void print(printer &pout) const;
     };
     //==================================
 
@@ -118,7 +118,7 @@ namespace occa {
 
       virtual int nodeType() const;
       virtual exprNode& clone() const;
-      virtual void print(printer_t &pout) const;
+      virtual void print(printer &pout) const;
     };
 
     class rightUnaryOpNode : public opNode {
@@ -132,7 +132,7 @@ namespace occa {
 
       virtual int nodeType() const;
       virtual exprNode& clone() const;
-      virtual void print(printer_t &pout) const;
+      virtual void print(printer &pout) const;
     };
 
     class binaryOpNode : public opNode {
@@ -143,11 +143,11 @@ namespace occa {
                    exprNode &leftValue_,
                    exprNode &rightValue_);
       binaryOpNode(const binaryOpNode &node);
-                   ~binaryOpNode();
+      ~binaryOpNode();
 
       virtual int nodeType() const;
       virtual exprNode& clone() const;
-      virtual void print(printer_t &pout) const;
+      virtual void print(printer &pout) const;
     };
 
     class ternaryOpNode : public opNode {
@@ -159,11 +159,11 @@ namespace occa {
                     exprNode &trueValue_,
                     exprNode &falseValue_);
       ternaryOpNode(const ternaryOpNode &node);
-                    ~ternaryOpNode();
+      ~ternaryOpNode();
 
       virtual int nodeType() const;
       virtual exprNode& clone() const;
-      virtual void print(printer_t &pout) const;
+      virtual void print(printer &pout) const;
     };
     //==================================
 
@@ -179,7 +179,7 @@ namespace occa {
 
       virtual int nodeType() const;
       virtual exprNode& clone() const;
-      virtual void print(printer_t &pout) const;
+      virtual void print(printer &pout) const;
     };
 
     class callNode : public exprNode {
@@ -198,7 +198,7 @@ namespace occa {
 
       virtual int nodeType() const;
       virtual exprNode& clone() const;
-      virtual void print(printer_t &pout) const;
+      virtual void print(printer &pout) const;
     };
 
     class newNode : public exprNode {
@@ -217,7 +217,7 @@ namespace occa {
 
       virtual int nodeType() const;
       virtual exprNode& clone() const;
-      virtual void print(printer_t &pout) const;
+      virtual void print(printer &pout) const;
     };
 
     class deleteNode : public exprNode {
@@ -232,7 +232,7 @@ namespace occa {
 
       virtual int nodeType() const;
       virtual exprNode& clone() const;
-      virtual void print(printer_t &pout) const;
+      virtual void print(printer &pout) const;
     };
 
     class throwNode : public exprNode {
@@ -245,7 +245,7 @@ namespace occa {
 
       virtual int nodeType() const;
       virtual exprNode& clone() const;
-      virtual void print(printer_t &pout) const;
+      virtual void print(printer &pout) const;
     };
     //==================================
 
@@ -260,7 +260,7 @@ namespace occa {
 
       virtual int nodeType() const;
       virtual exprNode& clone() const;
-      virtual void print(printer_t &pout) const;
+      virtual void print(printer &pout) const;
     };
 
     class funcCastNode : public exprNode {
@@ -275,7 +275,7 @@ namespace occa {
 
       virtual int nodeType() const;
       virtual exprNode& clone() const;
-      virtual void print(printer_t &pout) const;
+      virtual void print(printer &pout) const;
     };
 
     class parenCastNode : public exprNode {
@@ -290,7 +290,7 @@ namespace occa {
 
       virtual int nodeType() const;
       virtual exprNode& clone() const;
-      virtual void print(printer_t &pout) const;
+      virtual void print(printer &pout) const;
     };
 
     class constCastNode : public exprNode {
@@ -299,13 +299,13 @@ namespace occa {
       exprNode &value;
 
       constCastNode(type_t &type_,
-                exprNode &value_);
+                    exprNode &value_);
       constCastNode(const constCastNode &node);
       ~constCastNode();
 
       virtual int nodeType() const;
       virtual exprNode& clone() const;
-      virtual void print(printer_t &pout) const;
+      virtual void print(printer &pout) const;
     };
 
     class staticCastNode : public exprNode {
@@ -314,13 +314,13 @@ namespace occa {
       exprNode &value;
 
       staticCastNode(type_t &type_,
-                 exprNode &value_);
+                     exprNode &value_);
       staticCastNode(const staticCastNode &node);
       ~staticCastNode();
 
       virtual int nodeType() const;
       virtual exprNode& clone() const;
-      virtual void print(printer_t &pout) const;
+      virtual void print(printer &pout) const;
     };
 
     class reinterpretCastNode : public exprNode {
@@ -329,13 +329,13 @@ namespace occa {
       exprNode &value;
 
       reinterpretCastNode(type_t &type_,
-                      exprNode &value_);
+                          exprNode &value_);
       reinterpretCastNode(const reinterpretCastNode &node);
       ~reinterpretCastNode();
 
       virtual int nodeType() const;
       virtual exprNode& clone() const;
-      virtual void print(printer_t &pout) const;
+      virtual void print(printer &pout) const;
     };
 
     class dynamicCastNode : public exprNode {
@@ -344,13 +344,13 @@ namespace occa {
       exprNode &value;
 
       dynamicCastNode(type_t &type_,
-                  exprNode &value_);
+                      exprNode &value_);
       dynamicCastNode(const dynamicCastNode &node);
       ~dynamicCastNode();
 
       virtual int nodeType() const;
       virtual exprNode& clone() const;
-      virtual void print(printer_t &pout) const;
+      virtual void print(printer &pout) const;
     };
     //==================================
 
@@ -365,7 +365,7 @@ namespace occa {
 
       virtual int nodeType() const;
       virtual exprNode& clone() const;
-      virtual void print(printer_t &pout) const;
+      virtual void print(printer &pout) const;
     };
     //==================================
 
@@ -381,7 +381,7 @@ namespace occa {
 
       virtual int nodeType() const;
       virtual exprNode& clone() const;
-      virtual void print(printer_t &pout) const;
+      virtual void print(printer &pout) const;
     };
     //==================================
   }

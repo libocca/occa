@@ -281,7 +281,7 @@ namespace occa {
     return *this;
   }
 
-  void json::mergeWithObject(const jsonObject_t &obj) {
+  void json::mergeWithObject(const jsonObject &obj) {
     cJsonObjectIterator it = obj.begin();
     while (it != obj.end()) {
       const std::string &key = it->first;
@@ -329,31 +329,31 @@ namespace occa {
   }
 
   json& json::operator [] (const char *c) {
-     const char *c0 = c;
-     json *j = this;
+    const char *c0 = c;
+    json *j = this;
 
-     if (type == none_) {
-       type = object_;
-     }
+    if (type == none_) {
+      type = object_;
+    }
 
-     while (*c != '\0') {
-       OCCA_ERROR("Path '" << std::string(c0, c - c0) << "' is not an object",
-                  j->type == object_);
+    while (*c != '\0') {
+      OCCA_ERROR("Path '" << std::string(c0, c - c0) << "' is not an object",
+                 j->type == object_);
 
-       const char *cStart = c;
-       lex::skipTo(c, '/', '\\');
-       std::string key(cStart, c - cStart);
-       if (*c == '/') {
-         ++c;
-       }
+      const char *cStart = c;
+      lex::skipTo(c, '/', '\\');
+      std::string key(cStart, c - cStart);
+      if (*c == '/') {
+        ++c;
+      }
 
-       j = &(j->value_.object[key]);
-       if (j->type == none_) {
-         j->type = object_;
-       }
-     }
-     return *j;
-   }
+      j = &(j->value_.object[key]);
+      if (j->type == none_) {
+        j->type = object_;
+      }
+    }
+    return *j;
+  }
 
   const json& json::operator [] (const char *c) const {
     static json default_;
@@ -549,10 +549,10 @@ namespace occa {
     }}
   }
 
-  strVector_t json::keys() const {
-    strVector_t vec;
+  strVector json::keys() const {
+    strVector vec;
     if (type == object_) {
-      const jsonObject_t &obj = value_.object;
+      const jsonObject &obj = value_.object;
       cJsonObjectIterator it = obj.begin();
       while (it != obj.end()) {
         vec.push_back(it->first);
@@ -562,10 +562,10 @@ namespace occa {
     return vec;
   }
 
-  jsonArray_t json::values() {
-    jsonArray_t vec;
+  jsonArray json::values() {
+    jsonArray vec;
     if (type == object_) {
-      jsonObject_t &obj = value_.object;
+      jsonObject &obj = value_.object;
       jsonObjectIterator it = obj.begin();
       while (it != obj.end()) {
         vec.push_back(it->second);
@@ -575,10 +575,10 @@ namespace occa {
     return vec;
   }
 
-  jsonArray_t json::values() const {
-    jsonArray_t vec;
+  jsonArray json::values() const {
+    jsonArray vec;
     if (type == object_) {
-      const jsonObject_t &obj = value_.object;
+      const jsonObject &obj = value_.object;
       cJsonObjectIterator it = obj.begin();
       while (it != obj.end()) {
         vec.push_back(it->second);

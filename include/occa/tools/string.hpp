@@ -35,10 +35,17 @@
 namespace occa {
   std::string strip(const std::string &str);
 
-  std::string escape(const std::string &str, const char c, const char excapeChar = '\\');
-  std::string unescape(const std::string &str, const char c, const char excapeChar = '\\');
+  std::string escape(const std::string &str,
+                     const char c,
+                     const char excapeChar = '\\');
 
-  strVector_t split(const std::string &s, const char delimeter, const char escapeChar = 0);
+  std::string unescape(const std::string &str,
+                       const char c,
+                       const char excapeChar = '\\');
+
+  strVector split(const std::string &s,
+                  const char delimeter,
+                  const char escapeChar = 0);
 
   inline char uppercase(const char c) {
     if (('a' <= c) && (c <= 'z')) {
@@ -54,12 +61,16 @@ namespace occa {
     return c;
   }
 
-  std::string uppercase(const char *c, const int chars);
+  std::string uppercase(const char *c,
+                        const int chars);
+
   inline std::string uppercase(const std::string &s) {
     return uppercase(s.c_str(), s.size());
   }
 
-  std::string lowercase(const char *c, const int chars);
+  std::string lowercase(const char *c,
+                        const int chars);
+
   inline std::string lowercase(const std::string &s) {
     return uppercase(s.c_str(), s.size());
   }
@@ -137,7 +148,7 @@ namespace occa {
       str = str.substr(1);
     }
 
-    strVector_t parts = split(str, ',', '\\');
+    strVector parts = split(str, ',', '\\');
     const int partCount = (int) parts.size();
 
     std::vector<TM> ret;
@@ -225,7 +236,8 @@ namespace occa {
   std::string stringifyBytes(udim_t bytes);
 
   //---[ Vector Methods ]---------------
-  std::string join(const strVector_t &vec, const std::string &seq);
+  std::string join(const strVector &vec,
+                   const std::string &seq);
   //====================================
 
   //---[ Color Strings ]----------------
@@ -245,8 +257,11 @@ namespace occa {
     extern const char fgMap[9][7];
     extern const char bgMap[9][7];
 
-    std::string string(const std::string &s, color_t fg);
-    std::string string(const std::string &s, color_t fg, color_t bg);
+    std::string string(const std::string &s,
+                       color_t fg);
+    std::string string(const std::string &s,
+                       color_t fg,
+                       color_t bg);
   }
 
   std::string black(const std::string &s);

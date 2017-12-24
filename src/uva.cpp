@@ -28,45 +28,45 @@
 #include "occa/uva.hpp"
 
 namespace occa {
-  ptrRangeMap_t uvaMap;
-  memoryVector_t uvaStaleMemory;
+  ptrRangeMap uvaMap;
+  memoryVector uvaStaleMemory;
 
-  ptrRange_t::ptrRange_t() :
+  ptrRange::ptrRange() :
     start(NULL),
     end(NULL) {}
 
-  ptrRange_t::ptrRange_t(void *ptr, const udim_t bytes) :
+  ptrRange::ptrRange(void *ptr, const udim_t bytes) :
     start((char*) ptr),
     end(((char*) ptr) + bytes) {}
 
-  ptrRange_t::ptrRange_t(const ptrRange_t &r) :
+  ptrRange::ptrRange(const ptrRange &r) :
     start(r.start),
     end(r.end) {}
 
-  ptrRange_t& ptrRange_t::operator = (const ptrRange_t &r) {
+  ptrRange& ptrRange::operator = (const ptrRange &r) {
     start = r.start;
     end   = r.end;
 
     return *this;
   }
 
-  bool ptrRange_t::operator == (const ptrRange_t &r) const {
+  bool ptrRange::operator == (const ptrRange &r) const {
     return ((start <= r.start) && (r.start < end));
   }
 
-  bool ptrRange_t::operator != (const ptrRange_t &r) const {
+  bool ptrRange::operator != (const ptrRange &r) const {
     return ((r.start < start) || (end <= r.start));
   }
 
-  int operator < (const ptrRange_t &a, const ptrRange_t &b) {
+  int operator < (const ptrRange &a, const ptrRange &b) {
     return ((a != b) && (a.start < b.start));
   }
 
-  uvaPtrInfo_t::uvaPtrInfo_t() :
+  uvaPtrInfo::uvaPtrInfo() :
     mem(NULL) {}
 
-  uvaPtrInfo_t::uvaPtrInfo_t(void *ptr) {
-    ptrRangeMap_t::iterator it = uvaMap.find(ptr);
+  uvaPtrInfo::uvaPtrInfo(void *ptr) {
+    ptrRangeMap::iterator it = uvaMap.find(ptr);
 
     if (it != uvaMap.end()) {
       mem = (it->second);
@@ -75,27 +75,27 @@ namespace occa {
     }
   }
 
-  uvaPtrInfo_t::uvaPtrInfo_t(occa::memory_v *mem_) :
+  uvaPtrInfo::uvaPtrInfo(occa::memory_v *mem_) :
     mem(mem_) {}
 
-  uvaPtrInfo_t::uvaPtrInfo_t(const uvaPtrInfo_t &upi) :
+  uvaPtrInfo::uvaPtrInfo(const uvaPtrInfo &upi) :
     mem(upi.mem) {}
 
-  uvaPtrInfo_t& uvaPtrInfo_t::operator = (const uvaPtrInfo_t &upi) {
+  uvaPtrInfo& uvaPtrInfo::operator = (const uvaPtrInfo &upi) {
     mem = upi.mem;
     return *this;
   }
 
-  occa::device uvaPtrInfo_t::getDevice() {
+  occa::device uvaPtrInfo::getDevice() {
     return occa::device(mem->dHandle);
   }
 
-  occa::memory uvaPtrInfo_t::getMemory() {
+  occa::memory uvaPtrInfo::getMemory() {
     return occa::memory(mem);
   }
 
   occa::memory_v* uvaToMemory(void *ptr) {
-    ptrRangeMap_t::iterator it = uvaMap.find(ptr);
+    ptrRangeMap::iterator it = uvaMap.find(ptr);
     return (it == uvaMap.end()) ? NULL : it->second;
   }
 
@@ -167,7 +167,7 @@ namespace occa {
   }
 
   void removeFromStaleMap(void *ptr) {
-    ptrRangeMap_t::iterator it = uvaMap.find(ptr);
+    ptrRangeMap::iterator it = uvaMap.find(ptr);
     if (it == uvaMap.end()) {
       return;
     }
@@ -194,10 +194,10 @@ namespace occa {
   }
 
   void free(void *ptr) {
-    ptrRangeMap_t::iterator it = uvaMap.find(ptr);
+    ptrRangeMap::iterator it = uvaMap.find(ptr);
 
     if ((it != uvaMap.end()) &&
-       (((void*) it->first.start) != ((void*) it->second))) {
+        (((void*) it->first.start) != ((void*) it->second))) {
       occa::memory(it->second).free();
     } else {
       ::free(ptr);

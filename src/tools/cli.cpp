@@ -325,8 +325,8 @@ namespace occa {
       return *this;
     }
 
-    strVector_t parser::makeArgs(const int argc, const char **argv) {
-      strVector_t args;
+    strVector parser::makeArgs(const int argc, const char **argv) {
+      strVector args;
       for (int i = 0; i < argc; ++i) {
         args.push_back(argv[i]);
       }
@@ -337,7 +337,7 @@ namespace occa {
       return parse(makeArgs(argc, argv));
     }
 
-    occa::json parser::parse(const strVector_t &args) {
+    occa::json parser::parse(const strVector &args) {
       occa::json parsedInfo(json::object_);
       const int argc = (int) args.size();
 
@@ -414,7 +414,7 @@ namespace occa {
             // --foo a --foo b = [[a], [b]]
             json &argArrays = jOptions[opt_j.name].asArray();
             argArrays += json(json::array_);
-            jsonArray_t &argArray = argArrays.array();
+            jsonArray &argArray = argArrays.array();
             optArgs = &(argArray[argArray.size() - 1]);
           }
         }
@@ -426,7 +426,7 @@ namespace occa {
         const bool hasOption = jOptions.has(opt_i.name);
 
         if (hasOption) {
-          jsonArray_t optArgs_i = jOptions[opt_i.name].array();
+          jsonArray optArgs_i = jOptions[opt_i.name].array();
           for (int j = 0; j < (int) optArgs_i.size(); ++j) {
             if (opt_i.requiredArgs != (int) optArgs_i[j].array().size()) {
               std::cerr << "Option " << opt_i << " requires "
@@ -587,7 +587,7 @@ namespace occa {
       run(makeArgs(argc, argv));
     }
 
-    void command::run(const strVector_t &args,
+    void command::run(const strVector &args,
                       command *parent) {
       runParent = parent;
       runArgs = args;
@@ -603,7 +603,7 @@ namespace occa {
       json info = parse(args);
 
       json &jArguments = info["arguments"];
-      strVector_t inputArgs = jArguments.getArray<std::string>();
+      strVector inputArgs = jArguments.getArray<std::string>();
 
       const int commandArg = arguments.size() - 1;
       std::string commandName;
@@ -615,13 +615,13 @@ namespace occa {
           commandArg < (int) inputArgs.size()) {
 
         // Remove command arguments
-        jsonArray_t &jArgArray = jArguments.array();
-        jArgArray = jsonArray_t(jArgArray.begin(),
-                                jArgArray.begin() + commandArg + 1);
+        jsonArray &jArgArray = jArguments.array();
+        jArgArray = jsonArray(jArgArray.begin(),
+                              jArgArray.begin() + commandArg + 1);
 
         // Extract command arguments
-        inputArgs = strVector_t(inputArgs.begin() + commandArg,
-                                inputArgs.end());
+        inputArgs = strVector(inputArgs.begin() + commandArg,
+                              inputArgs.end());
 
         commandName = inputArgs[0];
         comm = getCommand(commandName);
@@ -666,22 +666,22 @@ namespace occa {
            "\n"
            "    # Global variables\n"
            "    local command=(") << name << (")\n"
-           "    local prevCommand=(") << name << (")\n"
-           "    local inputs=(\"${COMP_WORDS[@]:1}\")\n"
-           "    local nextInput=$(__occa_next_input)\n"
-           "    local options=()\n"
-           "    local flags=()\n"
-           "    local allUsedArgs=()\n"
-           "    local usedFlags=()\n"
-           "    local usedArgs=()\n"
-           "    local expansions=(args)\n"
-           "    local epansionFunction=\"\"\n"
-           "    local commandOptions=()\n"
-           "    local commandFlags=()\n"
-           "    local currentFlag=\"\"\n"
-           "    local compIsDone=false\n"
-           "\n"
-           "    # Real command info\n");
+                                              "    local prevCommand=(") << name << (")\n"
+                                                                                     "    local inputs=(\"${COMP_WORDS[@]:1}\")\n"
+                                                                                     "    local nextInput=$(__occa_next_input)\n"
+                                                                                     "    local options=()\n"
+                                                                                     "    local flags=()\n"
+                                                                                     "    local allUsedArgs=()\n"
+                                                                                     "    local usedFlags=()\n"
+                                                                                     "    local usedArgs=()\n"
+                                                                                     "    local expansions=(args)\n"
+                                                                                     "    local epansionFunction=\"\"\n"
+                                                                                     "    local commandOptions=()\n"
+                                                                                     "    local commandFlags=()\n"
+                                                                                     "    local currentFlag=\"\"\n"
+                                                                                     "    local compIsDone=false\n"
+                                                                                     "\n"
+                                                                                     "    # Real command info\n");
       }
 
       // Terminology mixup...

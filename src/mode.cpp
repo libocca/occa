@@ -26,8 +26,8 @@
 #include "occa/memory.hpp"
 
 namespace occa {
-  strToModeMap_t& modeMap() {
-    static strToModeMap_t modeMap_;
+  strToModeMap& modeMap() {
+    static strToModeMap modeMap_;
     return modeMap_;
   }
 

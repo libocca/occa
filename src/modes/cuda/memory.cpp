@@ -39,7 +39,7 @@ namespace occa {
     memory::~memory() {}
 
     kernelArg memory::makeKernelArg() const {
-      kernelArg_t arg;
+      kernelArgData arg;
 
       arg.dHandle = dHandle;
       arg.mHandle = const_cast<memory*>(this);

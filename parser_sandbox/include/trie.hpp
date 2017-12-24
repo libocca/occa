@@ -8,13 +8,13 @@
 #include <limits.h>
 
 namespace occa {
-  class trieNode_t;
-  typedef std::map<char, trieNode_t>    trieNodeMap_t;
+  class trieNode;
+  typedef std::map<char, trieNode>      trieNodeMap_t;
   typedef trieNodeMap_t::iterator       trieNodeMapIterator;
   typedef trieNodeMap_t::const_iterator cTrieNodeMapIterator;
 
   //---[ Node ]-------------------------
-  class trieNode_t {
+  class trieNode {
   public:
     class result_t {
     public:
@@ -32,8 +32,8 @@ namespace occa {
     int valueIdx;
     trieNodeMap_t leaves;
 
-    trieNode_t();
-    trieNode_t(const int valueIdx_);
+    trieNode();
+    trieNode(const int valueIdx_);
 
     void add(const char *c, const int valueIdx_);
 
@@ -46,17 +46,17 @@ namespace occa {
 
   //---[ Trie ]-------------------------
   template <class TM>
-  class trie_t {
+  class trie {
   public:
     //---[ Result ]---------------------
     class result_t {
     public:
-      trie_t<TM> *trie;
+      trie<TM> *trie_;
       int length;
       int valueIdx;
 
       result_t();
-      result_t(const trie_t<TM> *trie_,
+      result_t(const trie<TM> *trie__,
                const int length_ = 0,
                const int valueIdx_ = -1);
 
@@ -66,7 +66,7 @@ namespace occa {
     };
     //==================================
 
-    trieNode_t root;
+    trieNode root;
     TM defaultValue;
     std::vector<TM> values;
 
@@ -76,7 +76,7 @@ namespace occa {
     int *offsets, *leafCount;
     int *valueIndices;
 
-    trie_t();
+    trie();
 
     void clear();
     bool isEmpty() const;
@@ -85,7 +85,7 @@ namespace occa {
     void add(const std::string &s, const TM &value = TM());
 
     void freeze();
-    int freeze(const trieNode_t &node, int offset);
+    int freeze(const trieNode &node, int offset);
     void defrost();
 
     result_t getFirst(const char *c, const int length = INT_MAX) const;

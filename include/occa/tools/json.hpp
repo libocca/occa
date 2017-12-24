@@ -33,18 +33,18 @@
 namespace occa {
   class json;
 
-  typedef std::map<std::string, json>  jsonObject_t;
-  typedef jsonObject_t::iterator       jsonObjectIterator;
-  typedef jsonObject_t::const_iterator cJsonObjectIterator;
+  typedef std::map<std::string, json> jsonObject;
+  typedef jsonObject::iterator        jsonObjectIterator;
+  typedef jsonObject::const_iterator  cJsonObjectIterator;
 
-  typedef std::vector<json> jsonArray_t;
+  typedef std::vector<json>       jsonArray;
   typedef std::vector<const json> cJsonArray_t;
 
   typedef struct {
     std::string string;
     primitive number;
-    jsonObject_t object;
-    jsonArray_t array;
+    jsonObject object;
+    jsonArray array;
     bool boolean;
   } jsonValue_t;
 
@@ -134,12 +134,12 @@ namespace occa {
       value_.string = value;
     }
 
-    inline json(const jsonObject_t &value) :
+    inline json(const jsonObject &value) :
       type(object_) {
       value_.object = value;
     }
 
-    inline json(const jsonArray_t &value) :
+    inline json(const jsonArray &value) :
       type(array_) {
       value_.array = value;
     }
@@ -226,13 +226,13 @@ namespace occa {
       return *this;
     }
 
-    inline json& operator = (const jsonObject_t &value) {
+    inline json& operator = (const jsonObject &value) {
       type = object_;
       value_.object = value;
       return *this;
     }
 
-    inline json& operator = (const jsonArray_t &value) {
+    inline json& operator = (const jsonArray &value) {
       type = array_;
       value_.array = value;
       return *this;
@@ -258,7 +258,7 @@ namespace occa {
     json operator + (const json &j) const;
     json& operator += (const json &j);
 
-    void mergeWithObject(const jsonObject_t &obj);
+    void mergeWithObject(const jsonObject &obj);
 
     bool has(const std::string &s) const;
 
@@ -315,11 +315,11 @@ namespace occa {
       return value_.number;
     }
 
-    inline jsonObject_t& object() {
+    inline jsonObject& object() {
       return value_.object;
     }
 
-    inline jsonArray_t& array() {
+    inline jsonArray& array() {
       return value_.array;
     }
 
@@ -335,11 +335,11 @@ namespace occa {
       return value_.number;
     }
 
-    inline const jsonObject_t& object() const {
+    inline const jsonObject& object() const {
       return value_.object;
     }
 
-    inline const jsonArray_t& array() const {
+    inline const jsonArray& array() const {
       return value_.array;
     }
 
@@ -440,9 +440,9 @@ namespace occa {
       return get<TM>(s.c_str(), default_);
     }
 
-    strVector_t keys() const;
-    jsonArray_t values();
-    jsonArray_t values() const;
+    strVector keys() const;
+    jsonArray values();
+    jsonArray values() const;
 
     json& remove(const char *c);
 
