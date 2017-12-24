@@ -104,6 +104,7 @@ namespace occa {
         break;
       }
     }
+
     // If there was something else or no number
     if ((digits == 0) ||
         ((*c != '\0') && !charIsDelimiter(*c))) {

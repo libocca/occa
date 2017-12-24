@@ -173,7 +173,7 @@ void testMethods() {
  occa::json j;
 
  j.load("{ a: 1, b: 2 }");
- occa::strVector_t keys = j.keys();
+ occa::strVector keys = j.keys();
  OCCA_TEST_COMPARE(2, (int) keys.size());
  OCCA_TEST_COMPARE("a", keys[0]);
  OCCA_TEST_COMPARE("b", keys[1]);

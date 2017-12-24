@@ -42,8 +42,21 @@ namespace occa {
       return settings_;
     }
 
-    void initialize() {
-      static bool isInitialized = false;
+    std::string var(const std::string &varName) {
+      char *c_varName = getenv(varName.c_str());
+      if (c_varName != NULL) {
+        return std::string(c_varName);
+      }
+      return "";
+    }
+
+    void signalExit(int sig) {
+      // io::clearLocks();
+      ::exit(sig);
+    }
+
+    envInitializer_t::envInitializer_t() :
+      isInitialized(false) {
       if (isInitialized) {
         return;
       }
@@ -59,14 +72,14 @@ namespace occa {
       isInitialized = true;
     }
 
-    void initSettings() {
+    void envInitializer_t::initSettings() {
       properties &settings_ = baseSettings();
       settings_["version"] = "1.0";
       settings_["parserVersion"] = "20170302";
       settings_["verboseCompilation"] = env::get("OCCA_VERBOSE", false);
     }
 
-    void initSignalHandling() {
+    void envInitializer_t::initSignalHandling() {
       // Signal handling
       ::signal(SIGTERM, env::signalExit);
       ::signal(SIGINT , env::signalExit);
@@ -79,7 +92,7 @@ namespace occa {
 #endif
     }
 
-    void initEnvironment() {
+    void envInitializer_t::initEnvironment() {
       // Standard environment variables
 #if (OCCA_OS & (OCCA_LINUX_OS | OCCA_OSX_OS))
       HOME            = env::var("HOME");
@@ -122,7 +135,7 @@ namespace occa {
       }
     }
 
-    void initCachePath() {
+    void envInitializer_t::initCachePath() {
       env::OCCA_CACHE_DIR = env::var("OCCA_CACHE_DIR");
 
       if (env::OCCA_CACHE_DIR.size() == 0) {
@@ -155,7 +168,7 @@ namespace occa {
       }
     }
 
-    void initIncludePath() {
+    void envInitializer_t::initIncludePath() {
       strVector &oipVec = env::OCCA_PATH;
       oipVec.clear();
       std::string oip = env::var("OCCA_PATH");
@@ -183,28 +196,27 @@ namespace occa {
       }
     }
 
-    void registerFileOpeners() {
+    void envInitializer_t::registerFileOpeners() {
       io::fileOpener::add(new io::occaFileOpener());
       io::fileOpener::add(new io::headerFileOpener());
       io::fileOpener::add(new io::systemHeaderFileOpener());
     }
 
-    std::string var(const std::string &varName) {
-      char *c_varName = getenv(varName.c_str());
-      if (c_varName != NULL) {
-        return std::string(c_varName);
+    void envInitializer_t::cleanFileOpeners() {
+      std::vector<io::fileOpener*> &openers = io::fileOpener::getOpeners();
+      const int count = (int) openers.size();
+      for (int i = 0; i < count; ++i) {
+        delete openers[i];
       }
-      return "";
+      openers.clear();
     }
 
-    void signalExit(int sig) {
-      // io::clearLocks();
-      ::exit(sig);
+    envInitializer_t::~envInitializer_t() {
+      if (isInitialized) {
+        cleanFileOpeners();
+      }
     }
 
-    envInitializer_t::envInitializer_t() {
-      env::initialize();
-    }
     envInitializer_t envInitializer;
   }
 }

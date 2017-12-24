@@ -69,6 +69,8 @@ namespace occa {
     }
 
     //---[ File Openers ]---------------
+    fileOpener::~fileOpener() {}
+
     std::vector<fileOpener*>& fileOpener::getOpeners() {
       static std::vector<fileOpener*> openers;
       return openers;
@@ -95,6 +97,7 @@ namespace occa {
 
     //  ---[ Default File Opener ]------
     defaultFileOpener::defaultFileOpener() {}
+    defaultFileOpener::~defaultFileOpener() {}
 
     bool defaultFileOpener::handles(const std::string &filename) {
       return true;
@@ -107,6 +110,7 @@ namespace occa {
 
     //  ---[ OCCA File Opener ]---------
     occaFileOpener::occaFileOpener() {}
+    occaFileOpener::~occaFileOpener() {}
 
     bool occaFileOpener::handles(const std::string &filename) {
       return ((7 <= filename.size()) &&
@@ -123,6 +127,7 @@ namespace occa {
 
     //  ---[ Header File Opener ]-------
     headerFileOpener::headerFileOpener() {}
+    headerFileOpener::~headerFileOpener() {}
 
     bool headerFileOpener::handles(const std::string &filename) {
       return ((2 <= filename.size()) &&
@@ -137,6 +142,7 @@ namespace occa {
 
     //  ---[ System Header File Opener ]---
     systemHeaderFileOpener::systemHeaderFileOpener() {}
+    systemHeaderFileOpener::~systemHeaderFileOpener() {}
 
     bool systemHeaderFileOpener::handles(const std::string &filename) {
       return ((2 <= filename.size()) &&

@@ -39,14 +39,6 @@ namespace occa {
 
     properties& baseSettings();
 
-    void initialize();
-    void initSettings();
-    void initSignalHandling();
-    void initEnvironment();
-    void initCachePath();
-    void initIncludePath();
-    void registerFileOpeners();
-
     std::string var(const std::string &var);
 
     template <class TM>
@@ -61,8 +53,23 @@ namespace occa {
     void signalExit(int sig);
 
     class envInitializer_t {
-    public: envInitializer_t();
+    public:
+      envInitializer_t();
+      ~envInitializer_t();
+
+    private:
+      bool isInitialized;
+
+      void initSettings();
+      void initSignalHandling();
+      void initEnvironment();
+      void initCachePath();
+      void initIncludePath();
+      void registerFileOpeners();
+
+      void cleanFileOpeners();
     };
+
     extern envInitializer_t envInitializer;
   }
 }

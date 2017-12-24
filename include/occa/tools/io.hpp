@@ -42,6 +42,10 @@ namespace occa {
     extern const std::string infoFile;
   }
 
+  namespace env {
+    class envInitializer_t;
+  }
+
   namespace io {
     class hashAndTag {
     public:
@@ -59,14 +63,17 @@ namespace occa {
 
     //---[ File Openers ]---------------
     class fileOpener {
+      friend class occa::env::envInitializer_t;
+
     private:
       static std::vector<fileOpener*>& getOpeners();
       static fileOpener& defaultOpener();
 
     public:
-      static const std::vector<fileOpener*>& all();
       static fileOpener& get(const std::string &filename);
       static void add(fileOpener* opener);
+
+      virtual ~fileOpener();
 
       virtual bool handles(const std::string &filename) = 0;
       virtual std::string expand(const std::string &filename) = 0;
@@ -76,6 +83,8 @@ namespace occa {
     class defaultFileOpener : public fileOpener {
     public:
       defaultFileOpener();
+      virtual ~defaultFileOpener();
+
       bool handles(const std::string &filename);
       std::string expand(const std::string &filename);
     };
@@ -85,6 +94,8 @@ namespace occa {
     class occaFileOpener : public fileOpener {
     public:
       occaFileOpener();
+      virtual ~occaFileOpener();
+
       bool handles(const std::string &filename);
       std::string expand(const std::string &filename);
     };
@@ -94,6 +105,8 @@ namespace occa {
     class headerFileOpener : public fileOpener {
     public:
       headerFileOpener();
+      virtual ~headerFileOpener();
+
       bool handles(const std::string &filename);
       std::string expand(const std::string &filename);
     };
@@ -103,6 +116,8 @@ namespace occa {
     class systemHeaderFileOpener : public fileOpener {
     public:
       systemHeaderFileOpener();
+      virtual ~systemHeaderFileOpener();
+
       bool handles(const std::string &filename);
       std::string expand(const std::string &filename);
     };

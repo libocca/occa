@@ -1,3 +1,10 @@
+* Leftover
+- Write backends
+- Token stream
+- Find statement to load
+- Statement loaders
+- Store variable/types in context
+- Store records
 * Compiler Defines
 
 |---------------------------+---------------------------------+-----------------------------------|

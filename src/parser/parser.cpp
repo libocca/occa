@@ -52,8 +52,6 @@ namespace occa {
     }
 
     parserBase::parserBase() {
-      env::initialize();
-
       parsingLanguage = parserInfo::parsingC;
 
       macrosAreInitialized = false;

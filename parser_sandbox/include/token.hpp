@@ -7,7 +7,20 @@
 
 namespace occa {
   namespace lang {
-    class token_t;
+    class tokenType {
+      directive
+    };
+
+    class token_t {
+    public:
+      bool in(tokenStream &stream) {
+        if (stream.hasNext()) {
+          stream.setNext(*this);
+          return true;
+        }
+        return false;
+      };
+    };
 
     class tokenStream {
       const char *start, *end;
@@ -61,21 +74,6 @@ namespace occa {
                    (start <= c) && (c < end));
         ptr = c;
       }
-    };
-
-    class tokenType {
-      directive
-    };
-
-    class token_t {
-    public:
-      bool in(tokenStream &stream) {
-        if (stream.hasNext()) {
-          stream.setNext(*this);
-          return true;
-        }
-        return false;
-      };
     };
   }
 }
