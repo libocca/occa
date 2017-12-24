@@ -286,7 +286,7 @@ namespace occa {
       return ret;
     }
 
-    void updateAttributeMap(attributeMap &attributeMap,
+    void updateAttributeMap(attributeMap_t &attributeMap,
                             const std::string &attrName) {
 
       attribute_t &attr = *(new attribute_t());
@@ -295,7 +295,7 @@ namespace occa {
       attributeMap[attrName] = &attr;
     }
 
-    int updateAttributeMap(attributeMap &attributeMap,
+    int updateAttributeMap(attributeMap_t &attributeMap,
                            expNode &expRoot,
                            int leafPos) {
 
@@ -311,7 +311,7 @@ namespace occa {
       return leafPos;
     }
 
-    int updateAttributeMapR(attributeMap &attributeMap,
+    int updateAttributeMapR(attributeMap_t &attributeMap,
                             expNode &expRoot,
                             int leafPos) {
 
@@ -398,12 +398,12 @@ namespace occa {
       return (leafPos + 1);
     }
 
-    void printAttributeMap(attributeMap &attributeMap) {
+    void printAttributeMap(attributeMap_t &attributeMap) {
       if (attributeMap.size())
         std::cout << attributeMapToString(attributeMap) << '\n';
     }
 
-    std::string attributeMapToString(attributeMap &attributeMap) {
+    std::string attributeMapToString(attributeMap_t &attributeMap) {
       std::string ret;
 
       if (attributeMap.size() == 0)

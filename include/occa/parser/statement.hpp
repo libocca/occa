@@ -543,7 +543,7 @@ namespace occa {
 
       statementNode *statementStart, *statementEnd;
 
-      attributeMap attributeMap;
+      attributeMap_t attributeMap;
 
       statement(parserBase &pb);
       statement(const statement &s);

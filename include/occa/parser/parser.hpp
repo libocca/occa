@@ -51,7 +51,7 @@ namespace occa {
 
       occa::properties properties;
 
-      macroMap macroMap;
+      macroMap_t macroMap;
       std::vector<macroInfo> macros;
 
       //---[ Parser Warnings ]----------

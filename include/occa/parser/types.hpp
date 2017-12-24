@@ -52,9 +52,9 @@ namespace occa {
 
       std::string name;
 
-      scopeMap scopeMap;
-      typeMap  typeMap;
-      varMap   varMap;
+      scopeMap_t scopeMap;
+      typeMap_t  typeMap;
+      varMap_t   varMap;
 
       scopeInfo();
 
@@ -142,19 +142,19 @@ namespace occa {
       }
     };
 
-    void updateAttributeMap(attributeMap &attributeMap,
+    void updateAttributeMap(attributeMap_t &attributeMap,
                             const std::string &attrName);
 
-    int updateAttributeMap(attributeMap &attributeMap,
+    int updateAttributeMap(attributeMap_t &attributeMap,
                            expNode &expRoot,
                            int leafPos);
 
-    int updateAttributeMapR(attributeMap &attributeMap,
+    int updateAttributeMapR(attributeMap_t &attributeMap,
                             expNode &expRoot,
                             int leafPos);
 
-    void printAttributeMap(attributeMap &attributeMap);
-    std::string attributeMapToString(attributeMap &attributeMap);
+    void printAttributeMap(attributeMap_t &attributeMap);
+    std::string attributeMapToString(attributeMap_t &attributeMap);
     //============================================
 
 
@@ -370,7 +370,7 @@ namespace occa {
 
       int info;
 
-      attributeMap attributeMap;
+      attributeMap_t attributeMap;
       qualifierInfo leftQualifiers, rightQualifiers;
 
       typeInfo *baseType;
