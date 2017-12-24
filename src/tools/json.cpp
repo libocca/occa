@@ -503,7 +503,7 @@ namespace occa {
           out += '"';
           out += it->first;
           out += "\": ";
-          it->second.toString(out, newIndent);
+          it->second.toString(out, indent, newIndent);
           ++it;
           if (indent.size()) {
             out += ",\n";
@@ -528,7 +528,7 @@ namespace occa {
         }
         for (int i = 0; i < arraySize; ++i) {
           out += newIndent;
-          value_.array[i].toString(out, newIndent);
+          value_.array[i].toString(out, indent, newIndent);
           if (indent.size()) {
             out += ",\n";
           } else if (i < (arraySize - 1)) {
