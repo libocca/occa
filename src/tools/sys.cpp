@@ -159,18 +159,18 @@ namespace occa {
       std::stringstream ss;
 
       switch (month) {
-      case 0 : ss << "Jan"; break;
-      case 1 : ss << "Feb"; break;
-      case 2 : ss << "Mar"; break;
-      case 3 : ss << "Apr"; break;
-      case 4 : ss << "May"; break;
-      case 5 : ss << "Jun"; break;
-      case 6 : ss << "Jul"; break;
-      case 7 : ss << "Aug"; break;
-      case 8 : ss << "Sep"; break;
-      case 9 : ss << "Oct"; break;
-      case 10: ss << "Nov"; break;
-      case 11: ss << "Dec"; break;
+      case 1 : ss << "Jan"; break;
+      case 2 : ss << "Feb"; break;
+      case 3 : ss << "Mar"; break;
+      case 4 : ss << "Apr"; break;
+      case 5 : ss << "May"; break;
+      case 6 : ss << "Jun"; break;
+      case 7 : ss << "Jul"; break;
+      case 8 : ss << "Aug"; break;
+      case 9 : ss << "Sep"; break;
+      case 10: ss << "Oct"; break;
+      case 11: ss << "Nov"; break;
+      case 12: ss << "Dec"; break;
       }
 
       ss << ' ' << day << ' ' << year << ' ';
