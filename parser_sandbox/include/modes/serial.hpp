@@ -1,16 +1,19 @@
-#if 0
 #ifndef OCCA_PARSER_MODES_SERIAL_HEADER2
 #define OCCA_PARSER_MODES_SERIAL_HEADER2
 
+#include "modes/backend.hpp"
+
 namespace occa {
   namespace lang {
-    class serialBackend : public backend {
+    class serialBackend : public oklBackend {
     public:
-      virtual void transform(statement_t &root,
-                             const properties &props = "");
+      virtual void backendTransform(statement &root);
+
+      void setupKernelArgs(statement &root);
+
+      void modifyExclusiveVariables(statement &root);
     };
   }
 }
 
-#endif
 #endif
