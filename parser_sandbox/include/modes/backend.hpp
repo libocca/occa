@@ -22,14 +22,13 @@ namespace occa {
       virtual void transform(statement &root);
       virtual void backendTransform(statement &root) = 0;
 
-      // Apply loop reordering
-      void reorderLoops(statement &root);
+      // @tile(...) -> for-loops
+      void splitTileOccaFors(statement &root);
 
       // @outer -> @outer(#)
       void retagOccaLoops(statement &root);
 
-      // @tile(root) -> for-loops
-      void splitTileOccaFors(statement &root);
+      void verifyOccaLoop(forStatement &loop);
 
       // Store inner/outer + dim attributes
       void storeOccaInfo(statement &root);
@@ -37,8 +36,7 @@ namespace occa {
       // Check conditional barriers
       void checkOccaBarriers(statement &root);
 
-      // Add barriers between for-loops
-      //   that use shared memory
+      // Add barriers between for-loops that use shared memory
       void addOccaBarriers(statement &root);
 
       // Move the defines to the kernel scope

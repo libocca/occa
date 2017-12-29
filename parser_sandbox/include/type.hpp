@@ -7,9 +7,10 @@
 
 #include "occa/defines.hpp"
 #include "occa/types.hpp"
+#include "occa/tools/sys.hpp"
 #include "printer.hpp"
 
-// TODO: Add mangle logic here
+// TODO: Add mangle logic to uniqueName()
 
 namespace occa {
   namespace lang {
@@ -40,8 +41,6 @@ namespace occa {
       static const stype_t function  = (1 << 8);
       static const stype_t attribute = (1 << 9);
 
-      static const stype_t canBeDereferenced = (pointer |
-                                                array);
       static const stype_t printsOnBothSides = (array |
                                                 function);
     };
@@ -63,7 +62,6 @@ namespace occa {
                                             signed_    |
                                             unsigned_  |
                                             volatile_  |
-
                                             register_);
 
       static const qtype_t extern_       = (1L << 8);
@@ -156,19 +154,21 @@ namespace occa {
     //==================================
 
     //---[ Qualifiers ]-----------------
-    class qualifiers {
+    class qualifiers_t {
     public:
-      qualifierVector_t qualifierVec;
+      qualifierVector_t qualifiers;
 
-      qualifiers();
-      qualifiers(const qualifier &q);
-      ~qualifiers();
+      qualifiers_t();
+      qualifiers_t(const qualifier &q);
+      ~qualifiers_t();
 
       inline int size() const {
-        return (int) qualifierVec.size();
+        return (int) qualifiers.size();
       }
 
-      int has(const qualifier &q);
+      int indexOf(const qualifier &q) const;
+      bool has(const qualifier &q) const;
+
       void add(const qualifier &q);
       void remove(const qualifier &q);
 
@@ -183,36 +183,60 @@ namespace occa {
     class type_t : public specifier {
     public:
       const type_t *baseType;
-      qualifiers qualifiers_;
+      qualifiers_t qualifiers;
 
       type_t();
       type_t(const std::string &name_);
       type_t(const type_t &baseType_,
              const std::string &name_ = "");
-      type_t(const qualifiers &qs,
+      type_t(const qualifiers_t &qualifiers_,
              const std::string &name_ = "");
-      type_t(const qualifiers &qs,
+      type_t(const qualifiers_t &qualifiers_,
              const type_t &baseType_,
              const std::string &name_ = "");
 
       virtual ~type_t();
 
       virtual stype_t type() const;
+      virtual type_t& clone() const;
+
+      virtual bool canBeDereferenced() const;
+      virtual bool canBeCastedToExplicitly(const type_t &alias) const;
+      virtual bool canBeCastedToImplicitly(const type_t &alias) const;
+
+      template <class TM>
+      inline bool is() const {
+        return (dynamic_cast<const TM*>(this) != NULL);
+      }
+
+      template <class TM>
+      inline TM& to() {
+        TM *ptr = dynamic_cast<TM*>(this);
+        OCCA_ERROR("Unable to cast type_t::to",
+                   ptr != NULL);
+        return *ptr;
+      }
+
+      template <class TM>
+      inline const TM& to() const {
+        const TM *ptr = dynamic_cast<const TM*>(this);
+        OCCA_ERROR("Unable to cast type_t::to",
+                   ptr != NULL);
+        return *ptr;
+      }
 
       void replaceBaseType(type_t &baseType_);
 
-      virtual type_t& clone() const;
-
       inline void addQualifier(const qualifier &q) {
-        qualifiers_.add(q);
+        qualifiers.add(q);
       }
 
       inline void removeQualifier(const qualifier &q) {
-        qualifiers_.remove(q);
+        qualifiers.remove(q);
       }
 
       inline bool hasQualifier(const qualifier &q) {
-        return qualifiers_.has(q) >= 0;
+        return qualifiers.has(q);
       }
 
       virtual void printLeft(printer &pout) const;
@@ -238,24 +262,35 @@ namespace occa {
       virtual ~primitiveType();
 
       virtual stype_t type() const;
-
       virtual type_t& clone() const;
+
+      virtual bool canBeDereferenced() const;
+      virtual bool canBeCastedToExplicitly(const type_t &alias) const;
+      virtual bool canBeCastedToImplicitly(const type_t &alias) const;
+    };
+    //==================================
+
+    //---[ Base Pointer ]---------------
+    class basePointerType : virtual public type_t {
+    public:
+      virtual bool canBeDereferenced() const;
+      virtual bool canBeCastedToExplicitly(const type_t &alias) const;
+      virtual bool canBeCastedToImplicitly(const type_t &alias) const;
     };
     //==================================
 
     //---[ Pointer ]--------------------
-    class pointerType : public type_t {
+    class pointerType : public basePointerType {
     public:
-      qualifiers rightQualifiers;
-
       pointerType(const type_t &baseType_);
+      pointerType(const qualifiers_t &qualifiers_,
+                  const type_t &baseType_);
+
       pointerType(const pointerType &baseType_);
-      pointerType(const type_t &baseType_,
-                  const qualifiers &rightQualifiers_);
+
       virtual ~pointerType();
 
       virtual stype_t type() const;
-
       virtual type_t& clone() const;
 
       virtual void printLeft(printer &pout) const;
@@ -263,94 +298,53 @@ namespace occa {
     //==================================
 
     //---[ Array ]----------------------
-    class arrayType : public type_t {
+    class arrayType : public basePointerType {
     public:
       const exprNode *size;
 
       arrayType(const type_t &baseType_);
-      arrayType(const arrayType &baseType_);
+
+      arrayType(const qualifiers_t &qualifiers_,
+                const type_t &baseType_);
+
       arrayType(const type_t &baseType_,
                 const exprNode &size_);
+
+      arrayType(const qualifiers_t &qualifiers_,
+                const type_t &baseType_,
+                const exprNode &size_);
+
+      arrayType(const arrayType &baseType_);
+
       virtual ~arrayType();
 
       virtual stype_t type() const;
+      virtual type_t& clone() const;
 
       void setSize(exprNode &size_);
-
-      virtual type_t& clone() const;
 
       virtual void printRight(printer &pout) const;
     };
     //==================================
 
-    //---[ Reference ]------------------
-    class referenceType : public type_t {
-    public:
-      referenceType(const type_t &baseType_);
-      referenceType(const referenceType &baseType_);
-      virtual ~referenceType();
-
-      virtual stype_t type() const;
-
-      virtual type_t& clone() const;
-
-      virtual void printLeft(printer &pout) const;
-    };
-    //==================================
-
-    //---[ Class ]----------------------
-    class classType : public declarationType {
-      std::string name;
-      qtype_t label;
-      blockStatement *body;
-
-      classType(const std::string &name_,
-                const int label_);
-
-      classType(const std::string &name_,
-                const int label_,
-                blockStatement &body_);
-
-      virtual stype_t type() const;
-
-      virtual ~classType();
-
-      virtual type_t& clone() const;
-
-      virtual void printDeclaration(printer &pout) const;
-    };
-    //==================================
-
-    //---[ Typedef ]--------------------
-    class typedefType : public declarationType {
-    public:
-      typedefType(const type_t &baseType_,
-                  const std::string &name_);
-      typedefType(const qualifiers &qs,
-                  const type_t &baseType_,
-                  const std::string &name_);
-      virtual ~typedefType();
-
-      virtual stype_t type() const;
-
-      virtual type_t& clone() const;
-
-      virtual void printLeft(printer &pout) const;
-      virtual void printDeclaration(printer &pout) const;
-    };
-    //==================================
-
     //---[ Function ]-------------------
-    class functionType : public declarationType {
+    class functionType : public declarationType,
+                         public basePointerType {
     public:
       typeVector_t args;
 
       functionType(const type_t &returnType);
+      functionType(const type_t &returnType,
+                   const std::string &name_);
+
       functionType(const functionType &returnType);
-      functionType(const type_t &returnType, const std::string &name_);
+
       virtual ~functionType();
 
       virtual stype_t type() const;
+      virtual type_t& clone() const;
+
+      virtual bool canBeCastedToImplicitly(const type_t &alias) const;
 
       const type_t& returnType() const;
       void setReturnType(const type_t &returnType);
@@ -358,7 +352,7 @@ namespace occa {
       void addArgument(const type_t &argType,
                        const std::string &argName = "");
 
-      void addArgument(const qualifiers &qs,
+      void addArgument(const qualifiers_t &qualifiers_,
                        const type_t &argType,
                        const std::string &argName = "");
 
@@ -373,8 +367,86 @@ namespace occa {
     };
     //==================================
 
+    //---[ Reference ]------------------
+    class referenceType : public type_t {
+    public:
+      referenceType(const type_t &baseType_);
+      referenceType(const qualifiers_t &qualifiers_,
+                    const type_t &baseType_);
+      referenceType(const referenceType &baseType_);
+      virtual ~referenceType();
+
+      virtual stype_t type() const;
+      virtual type_t& clone() const;
+
+      virtual bool canBeDereferenced() const;
+      virtual bool canBeCastedToExplicitly(const type_t &alias) const;
+      virtual bool canBeCastedToImplicitly(const type_t &alias) const;
+
+      virtual void printLeft(printer &pout) const;
+    };
+    //==================================
+
+    //---[ Class ]----------------------
+    class classType : public declarationType {
+    public:
+      std::string name;
+      qtype_t label;
+      blockStatement *body;
+
+      classType(const std::string &name_,
+                const int label_);
+      classType(const qualifiers_t &qualifiers_,
+                const std::string &name_,
+                const int label_);
+
+      classType(const std::string &name_,
+                const int label_,
+                blockStatement &body_);
+      classType(const qualifiers_t &qualifiers_,
+                const std::string &name_,
+                const int label_,
+                blockStatement &body_);
+
+      virtual ~classType();
+
+      virtual stype_t type() const;
+      virtual type_t& clone() const;
+
+      virtual bool canBeDereferenced() const;
+      virtual bool canBeCastedToExplicitly(const type_t &alias) const;
+      virtual bool canBeCastedToImplicitly(const type_t &alias) const;
+
+      virtual void printDeclaration(printer &pout) const;
+    };
+    //==================================
+
+    //---[ Typedef ]--------------------
+    class typedefType : public declarationType {
+    public:
+      typedefType(const type_t &baseType_,
+                  const std::string &name_);
+      typedefType(const qualifiers_t &qualifiers_,
+                  const type_t &baseType_,
+                  const std::string &name_);
+
+      virtual ~typedefType();
+
+      virtual stype_t type() const;
+      virtual type_t& clone() const;
+
+      virtual bool canBeDereferenced() const;
+      virtual bool canBeCastedToExplicitly(const type_t &alias) const;
+      virtual bool canBeCastedToImplicitly(const type_t &alias) const;
+
+      virtual void printLeft(printer &pout) const;
+      virtual void printDeclaration(printer &pout) const;
+    };
+    //==================================
+
     //---[ Attribute ]------------------
     class attribute : public specifier {
+    public:
       attribute(const std::string &name_);
       virtual ~attribute();
 

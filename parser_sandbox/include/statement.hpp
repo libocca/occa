@@ -1,7 +1,6 @@
 #ifndef OCCA_PARSER_STATEMENT_HEADER2
 #define OCCA_PARSER_STATEMENT_HEADER2
 
-#include "occa/tools/gc.hpp"
 #include "macro.hpp"
 #include "context.hpp"
 #include "scope.hpp"
@@ -47,15 +46,36 @@ namespace occa {
       static const int return_     = (1 << 16);
     };
 
-    class statement : public withRefs {
+    class statement {
     public:
       statement *up;
-      context_t &context;
+      context &ctx;
       scope_t scope;
 
-      statement(context_t &context_);
+      statement(context &ctx_);
 
       virtual ~statement();
+
+      template <class TM>
+      inline bool is() const {
+        return (dynamic_cast<const TM*>(this) != NULL);
+      }
+
+      template <class TM>
+      inline TM& to() {
+        TM *ptr = dynamic_cast<TM*>(this);
+        OCCA_ERROR("Unable to cast statement::to",
+                   ptr != NULL);
+        return *ptr;
+      }
+
+      template <class TM>
+      inline const TM& to() const {
+        const TM *ptr = dynamic_cast<const TM*>(this);
+        OCCA_ERROR("Unable to cast statement::to",
+                   ptr != NULL);
+        return *ptr;
+      }
 
       virtual statement& clone() const = 0;
       virtual int type() const = 0;
@@ -94,7 +114,7 @@ namespace occa {
     //---[ Empty ]------------------------
     class emptyStatement : public statement {
     public:
-      emptyStatement(context_t &context_);
+      emptyStatement(context &ctx_);
 
       virtual statement& clone() const;
       virtual int type() const;
@@ -108,7 +128,7 @@ namespace occa {
     public:
       macro_t &macro;
 
-      directiveStatement(context_t &context_,
+      directiveStatement(context &ctx_,
                          macro_t &macro_);
 
       virtual statement& clone() const;
@@ -121,9 +141,9 @@ namespace occa {
     //---[ Block ]------------------------
     class blockStatement : public statement {
     public:
-      std::vector<statement*> children;
+      statementPtrVector children;
 
-      blockStatement(context_t &context_);
+      blockStatement(context &ctx_);
 
       void addChild(statement &child);
       void clearChildren();
@@ -143,7 +163,7 @@ namespace occa {
     public:
       declarationType &declType;
 
-      typeDeclStatement(context_t &context_,
+      typeDeclStatement(context &ctx_,
                         declarationType &declType_);
 
       virtual statement& clone() const;
@@ -158,7 +178,7 @@ namespace occa {
     public:
       int access;
 
-      classAccessStatement(context_t &context_,
+      classAccessStatement(context &ctx_,
                            const int access_);
 
       virtual statement& clone() const;
@@ -173,7 +193,7 @@ namespace occa {
     public:
       exprNode &expression;
 
-      expressionStatement(context_t &context_,
+      expressionStatement(context &ctx_,
                           exprNode &expression_);
 
       virtual statement& clone() const;
@@ -184,7 +204,7 @@ namespace occa {
 
     class declarationStatement : public statement {
     public:
-      declarationStatement(context_t &context_);
+      declarationStatement(context &ctx_);
 
       virtual statement& clone() const;
       virtual int type() const;
@@ -198,7 +218,7 @@ namespace occa {
     public:
       std::string name;
 
-      gotoStatement(context_t &context_,
+      gotoStatement(context &ctx_,
                     const std::string &name_);
 
       virtual statement& clone() const;
@@ -211,7 +231,7 @@ namespace occa {
     public:
       std::string name;
 
-      gotoLabelStatement(context_t &context_,
+      gotoLabelStatement(context &ctx_,
                          const std::string &name_);
 
       virtual statement& clone() const;
@@ -226,7 +246,7 @@ namespace occa {
     public:
       std::string name;
 
-      namespaceStatement(context_t &context_,
+      namespaceStatement(context &ctx_,
                          const std::string &name_);
 
       virtual bool hasScope() const;
@@ -244,7 +264,7 @@ namespace occa {
       statement &check;
       bool isDoWhile;
 
-      whileStatement(context_t &context_,
+      whileStatement(context &ctx_,
                      statement &check_,
                      const bool isDoWhile_ = false);
 
@@ -262,7 +282,7 @@ namespace occa {
     public:
       statement &init, &check, &update;
 
-      forStatement(context_t &context_,
+      forStatement(context &ctx_,
                    statement &init_,
                    statement &check_,
                    statement &update_);
@@ -281,7 +301,7 @@ namespace occa {
     public:
       statement &value;
 
-      switchStatement(context_t &context_,
+      switchStatement(context &ctx_,
                       statement &value_);
 
       virtual statement& clone() const;
@@ -298,7 +318,7 @@ namespace occa {
     public:
       statement &value;
 
-      caseStatement(context_t &context_,
+      caseStatement(context &ctx_,
                     statement &value_);
 
       virtual statement& clone() const;
@@ -311,7 +331,7 @@ namespace occa {
     //---[ Exit ]-------------------------
     class continueStatement : public statement {
     public:
-      continueStatement(context_t &context_);
+      continueStatement(context &ctx_);
 
       virtual statement& clone() const;
       virtual int type() const;
@@ -321,7 +341,7 @@ namespace occa {
 
     class breakStatement : public statement {
     public:
-      breakStatement(context_t &context_);
+      breakStatement(context &ctx_);
 
       virtual statement& clone() const;
       virtual int type() const;
@@ -333,7 +353,7 @@ namespace occa {
     public:
       statement &value;
 
-      returnStatement(context_t &context_,
+      returnStatement(context &ctx_,
                       statement &value_);
 
       virtual statement& clone() const;

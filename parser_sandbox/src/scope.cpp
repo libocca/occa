@@ -2,8 +2,8 @@
 
 namespace occa {
   namespace lang {
-    scope_t::scope_t(context_t &context_) :
-      context(context_) {}
+    scope_t::scope_t(context &ctx_) :
+      ctx(ctx_) {}
 
     void scope_t::add(typedefType &value) {
       add(value, keywordType::typedef_);
@@ -22,8 +22,8 @@ namespace occa {
     }
 
     void scope_t::add(specifier &value, const int ktype) {
-      // Context checks for duplicates
-      context.add(value, ktype);
+      // Ctx checks for duplicates
+      ctx.add(value, ktype);
       trie.add(value.uniqueName(),
                keyword_t(ktype, &value));
     }

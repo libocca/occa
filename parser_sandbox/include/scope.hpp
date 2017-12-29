@@ -13,11 +13,11 @@
 namespace occa {
   namespace lang {
     class scope_t {
-      context_t &context;
+      context &ctx;
       keywordTrie trie;
 
     public:
-      scope_t(context_t &context_);
+      scope_t(context &ctx_);
 
       void add(typedefType  &value);
       void add(classType    &value);

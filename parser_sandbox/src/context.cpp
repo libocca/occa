@@ -4,7 +4,7 @@
 
 namespace occa {
   namespace lang {
-    statementTrie& context_t::getTrie(const int ktype) {
+    statementTrie& context::getTrie(const int ktype) {
       switch (ktype) {
       case keywordType::qualifier: {
         return qualifierTrie;
@@ -31,51 +31,51 @@ namespace occa {
       return qualifierTrie;
     }
 
-    int context_t::getKeywordType(const std::string &name) {
+    int context::getKeywordType(const std::string &name) {
       keywordTrie::result_t result = keywordMap.get(name);
       return (result.success()
               ? result.value().ktype
               : keywordType::none);
     }
 
-    statementKeywordMap& context_t::getKeywordStatements(keyword_t &keyword) {
+    statementKeywordMap& context::getKeywordStatements(keyword_t &keyword) {
       return (getTrie(keyword.ktype)
               .get(keyword.ptr->uniqueName())
               .value());
     }
 
-    void context_t::add(qualifier &value) {
+    void context::add(qualifier &value) {
       add(qualifierTrie, value, keywordType::qualifier);
     }
 
-    void context_t::add(primitiveType &value) {
+    void context::add(primitiveType &value) {
       add(primitiveTrie, value, keywordType::primitive);
     }
 
-    void context_t::add(typedefType &value) {
+    void context::add(typedefType &value) {
       add(typedefTrie, value, keywordType::typedef_);
     }
 
-    void context_t::add(classType &value) {
+    void context::add(classType &value) {
       add(classTrie, value, keywordType::class_);
     }
 
-    void context_t::add(functionType &value) {
+    void context::add(functionType &value) {
       add(functionTrie, value, keywordType::function_);
     }
 
-    void context_t::add(attribute &value) {
+    void context::add(attribute &value) {
       add(attributeTrie, value, keywordType::attribute);
     }
 
-    void context_t::add(specifier &value,
-                        const int ktype) {
+    void context::add(specifier &value,
+                      const int ktype) {
       add(getTrie(ktype), value, ktype);
     }
 
-    void context_t::add(statementTrie &trie,
-                        specifier &value,
-                        const int ktype) {
+    void context::add(statementTrie &trie,
+                      specifier &value,
+                      const int ktype) {
       // TODO: Add more information to the error message
       OCCA_ERROR("Keyword [" << (value.uniqueName()) << "] is already defined",
                  !keywordMap.has(value.uniqueName()));
@@ -83,31 +83,31 @@ namespace occa {
       trie.add(value.uniqueName());
     }
 
-    void context_t::addRecord(classType &value, statement &s) {
+    void context::addRecord(classType &value, statement &s) {
       addRecord(classTrie,
                 &value,
                 s,
                 keywordType::class_);
     }
 
-    void context_t::addRecord(functionType &value, statement &s) {
+    void context::addRecord(functionType &value, statement &s) {
       addRecord(functionTrie,
                 &value,
                 s,
                 keywordType::function_);
     }
 
-    void context_t::addRecord(attribute &value, statement &s) {
+    void context::addRecord(attribute &value, statement &s) {
       addRecord(attributeTrie,
                 &value,
                 s,
                 keywordType::attribute);
     }
 
-    void context_t::addRecord(statementTrie &trie,
-                              specifier *ptr,
-                              statement &s,
-                              const int ktype) {
+    void context::addRecord(statementTrie &trie,
+                            specifier *ptr,
+                            statement &s,
+                            const int ktype) {
       statementTrie::result_t result = trie.get(ptr->uniqueName());
       OCCA_ERROR("Keyword [" << (ptr->uniqueName()) << "] is not in scope",
                  result.success());
@@ -121,12 +121,12 @@ namespace occa {
       }
     }
 
-    void context_t::removeRecord(statement &s) {
+    void context::removeRecord(statement &s) {
       statementKeywordMap::iterator it = statementMap.find(&s);
       if (it == statementMap.end()) {
         return;
       }
-      keywordVector_t &keywords = it->second;
+      keywordVector &keywords = it->second;
       const int keywordCount = (int) keywords.size();
       for (int i = 0; i < keywordCount; ++i) {
         statementKeywordMap &statements = getKeywordStatements(keywords[i]);
@@ -138,27 +138,27 @@ namespace occa {
       statementMap.erase(it);
     }
 
-    statementPtrVector_t context_t::getStatements(classType &value) {
-      statementPtrVector_t vec;
+    statementPtrVector context::getStatements(classType &value) {
+      statementPtrVector vec;
       getStatements(classTrie, value.uniqueName(), vec);
       return vec;
     }
 
-    statementPtrVector_t context_t::getStatements(functionType &value) {
-      statementPtrVector_t vec;
+    statementPtrVector context::getStatements(functionType &value) {
+      statementPtrVector vec;
       getStatements(functionTrie, value.uniqueName(), vec);
       return vec;
     }
 
-    statementPtrVector_t context_t::getStatements(attribute &value) {
-      statementPtrVector_t vec;
+    statementPtrVector context::getStatements(attribute &value) {
+      statementPtrVector vec;
       getStatements(attributeTrie, value.uniqueName(), vec);
       return vec;
     }
 
-    void context_t::getStatements(statementTrie &trie,
-                                  const std::string &name,
-                                  statementPtrVector_t &vec) {
+    void context::getStatements(statementTrie &trie,
+                                const std::string &name,
+                                statementPtrVector &vec) {
       statementKeywordMap &statements = (trie
                                          .get(name)
                                          .value());

@@ -72,12 +72,12 @@ void testOperatorNodes() {
 }
 
 void testOtherNodes() {
-  qualifiers q1;
+  qualifiers_t q1;
   q1.add(volatile_);
 
   type_t t1_0(float_);
   t1_0.addQualifier(const_);
-  pointerType t1_1(t1_0, const_);
+  pointerType t1_1(const_, t1_0);
   pointerType t1(t1_1);
 
   variable var_(t1, "var");
