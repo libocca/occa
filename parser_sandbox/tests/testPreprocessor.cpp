@@ -12,6 +12,7 @@ public:
   void testMacroDefines();
   void testIfElseDefines();
   void testErrorDefines();
+  void testWeirdCase();
   void testSpecialMacros();
   void testEval();
 
@@ -19,6 +20,7 @@ public:
     testMacroDefines();
     testErrorDefines();
     testSpecialMacros();
+    testWeirdCase();
 
 #if 0
     testIfElseDefines();
@@ -158,6 +160,16 @@ void preprocessorTester::testIfElseDefines() {
                     preprocessor.processSource("#if !defined(FOO)\n"
                                                "15\n"
                                                "#endif\n"));
+}
+
+void preprocessorTester::testWeirdCase() {
+  // Should print out "x ## y"
+  // std::string str = preprocessor.processSource("#define hash_hash # ## #\n"
+  //                                              "#define mkstr(a) # a\n"
+  //                                              "#define in_between(a) mkstr(a)\n"
+  //                                              "#define join(c, d) in_between(c hash_hash d)\n"
+  //                                              "join(x, y)\n");
+  // std::cout << "str = " << str << '\n';
 }
 
 void preprocessorTester::testErrorDefines() {

@@ -1,81 +1,83 @@
+#if 0
 #ifndef OCCA_PARSER_TOKEN_HEADER2
 #define OCCA_PARSER_TOKEN_HEADER2
 
+#include <iostream>
+
+#include "occa/tools/gc.hpp"
+
 /*
   Comments are replaced by a space ' '
+
+  \\n -> nothing
+
+  \n is guaranteed by the end of a file
+  \s -> one space
+
+  "a" "b" -> "ab"
+
+  Make tokens
 */
+
+class fileInfo {
+public:
+  std::string path;
+  std::string source;
+
+  fileInfo(const std::string &path_);
+};
+
+class fileInfoDB {
+private:
+  std::map<std::string, int> pathToID;
+  std::map<int, fileInfo*> idToPath;
+  int currentID;
+
+public:
+  fileInfoDB();
+  fileInfoDB();
+  ~fileInfoDB();
+
+  const std::string& get(const std::string &path);
+  const std::string& get(const int id);
+};
 
 namespace occa {
   namespace lang {
-    class tokenType {
-      directive
-    };
+    class tokenStream;
 
     class token_t {
     public:
-      bool in(tokenStream &stream) {
-        if (stream.hasNext()) {
-          stream.setNext(*this);
-          return true;
-        }
-        return false;
-      };
     };
 
     class tokenStream {
-      const char *start, *end;
-      const char *ptr;
+    private:
+      char *start, *end;
+      char *ptr;
 
     public:
-      tokenStream() :
-        start(NULL),
-        end(NULL),
-        ptr(NULL) {}
+      tokenStream();
 
       tokenStream(const char *start_,
-                  const char *end_ = NULL) :
-        start(start_),
-        ptr(start) {
-        end = ((end_ != NULL)
-               ? end_
-               : (start + strlen(start)));
-      }
+                  const char *end_ = NULL);
 
-      tokenStream(const std::string &str) {
-        const int chars = (int) str.size();
-        if (chars == 0) {
-          start = end = ptr = NULL;
-          return;
-        }
-        start = new char[chars + 1];
-        ptr = start;
-        end = start + chars;
-        ::memcpy(start, str.c_str(), chars + 1);
-      }
+      tokenStream(const std::string &str);
 
-      void clear() {
-        ptr = start;
-      }
+      tokenStream(const tokenStream &stream);
 
-      bool hasNext() {
-        skipWhitespace(ptr);
-        return (ptr < end);
-      }
+      virtual void destructor();
 
-      void setNext(token_t &token) {
-        tokenTrie_t::result_t result = tokenList.getFirst(ptr);
-        if (result.success()) {
+      void load(const char *start_,
+                const char *end_ = NULL);
 
-        }
-      }
+      void clear();
 
-      void set(const char *c) {
-        OCCA_ERROR("Must set pointer between bounds",
-                   (start <= c) && (c < end));
-        ptr = c;
-      }
+      bool hasNext();
+
+      bool get(token_t &token);
     };
   }
 }
 
+#endif
 #endif

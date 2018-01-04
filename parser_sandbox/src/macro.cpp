@@ -53,6 +53,18 @@ namespace occa {
     load(&(s[0]));
   }
 
+  void macro_t::clear() {
+    name = "";
+    source = "";
+
+    argc = 0;
+    hasVarArgs = false;
+    parts.clear();
+
+    definedLine   = -1;
+    undefinedLine = -1;
+  }
+
   void macro_t::load(const char *c) {
     macroStart = c;
     std::string s(c);
@@ -238,16 +250,8 @@ namespace occa {
     }
   }
 
-  void macro_t::clear() {
-    name = "";
-    source = "";
-
-    argc = 0;
-    hasVarArgs = false;
-    parts.clear();
-
-    definedLine   = -1;
-    undefinedLine = -1;
+  bool macro_t::isFunctionLike() const {
+    return ((argc > 0) || hasVarArgs);
   }
 
   std::string macro_t::expand(const char *c) const {
@@ -261,7 +265,7 @@ namespace occa {
 
     if (partCount == 0) {
       return "";
-    } else if ((argc == 0) && !hasVarArgs) {
+    } else if (!isFunctionLike()) {
       return parts[0].str;
     }
 

@@ -58,6 +58,8 @@ namespace occa {
     macro_t(const preprocessor_t *preprocessor_,
             const char *c);
 
+    void clear();
+
     void load(char *c);
     void load(const char *c);
 
@@ -68,7 +70,8 @@ namespace occa {
     void setParts(char *&c,
                   macroPartVector_t &argNames);
 
-    void clear();
+    bool isFunctionLike() const;
+
     std::string expand(const char *c) const;
     virtual std::string expand(char *&c) const;
 

@@ -2,6 +2,7 @@
 #define OCCA_PARSER_MODES_BACKEND_HEADER2
 
 #include "occa/tools/properties.hpp"
+#include "operator.hpp"
 #include "statement.hpp"
 
 namespace occa {
@@ -23,21 +24,30 @@ namespace occa {
       virtual void backendTransform(statement &root) = 0;
 
       // @tile(...) -> for-loops
-      void splitTileOccaFors(statement &root);
+      void splitTiledOccaLoops(statement &root);
 
       // @outer -> @outer(#)
       void retagOccaLoops(statement &root);
 
-      void verifyOccaLoop(forStatement &loop);
+      void attributeOccaLoop(forStatement &loop);
 
-      // Store inner/outer + dim attributes
-      void storeOccaInfo(statement &root);
+      void verifyOccaLoopInit(forStatement &loop,
+                              variable *&initVar);
+
+      void verifyOccaLoopCheck(forStatement &loop,
+                               variable &initVar,
+                               operator_t *&checkOp,
+                               exprNode *&checkExpression);
+
+      void verifyOccaLoopUpdate(forStatement &loop,
+                                variable &initVar,
+                                operator_t *&updateOp,
+                                exprNode *&updateExpression);
+
+      void splitTiledOccaLoop(forStatement &loop);
 
       // Check conditional barriers
       void checkOccaBarriers(statement &root);
-
-      // Add barriers between for-loops that use shared memory
-      void addOccaBarriers(statement &root);
 
       // Move the defines to the kernel scope
       void floatSharedAndExclusiveDefines(statement &root);

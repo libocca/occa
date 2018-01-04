@@ -40,6 +40,20 @@ namespace occa {
     void setRefs(const int refs_);
     void dontUseRefs();
   };
+
+  class withRef : public withRefs {
+  protected:
+    withRefs *ref;
+
+    withRef();
+    withRef(const withRef &other);
+
+    void newRef();
+    void removeRef();
+    void changeRef(const withRef &other);
+
+    virtual void destructor() = 0;
+  };
 }
 
 #endif

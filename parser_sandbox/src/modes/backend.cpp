@@ -7,20 +7,13 @@ namespace occa {
 
     void oklBackend::transform(statement &root) {
       // @tile(...) -> for-loops
-      splitTileOccaFors(root);
+      splitTiledOccaLoops(root);
 
       // @outer -> @outer(#)
       retagOccaLoops(root);
 
-      // Store inner/outer + dim attributes
-      storeOccaInfo(root);
-
       // Check conditional barriers
       checkOccaBarriers(root);
-
-      // Add barriers between for-loops
-      //   that use shared memory
-      addOccaBarriers(root);
 
       // Move the defines to the root scope
       floatSharedAndExclusiveDefines(root);
@@ -29,7 +22,7 @@ namespace occa {
     }
 
     // @tile(root) -> for-loops
-    void oklBackend::splitTileOccaFors(statement &root) {
+    void oklBackend::splitTiledOccaLoops(statement &root) {
 #if 0
       statementQuery tiledQuery = (query::findForLoops()
                                    .withAttribute("tile"));
@@ -40,7 +33,10 @@ namespace occa {
         forStatement &loop = tiledLoops[i]->to<forStatement>();
         tileAttribute &tile = loop.getAttribute<tileAttribute>("tile");
 
-        verifyOccaLoop(loop);
+        attributeOccaLoop(loop);
+        if (loop.hasAttribute(oklLoopInfo)) {
+          splitTiledOccaLoop(loop);
+        }
       }
 #endif
     }
@@ -62,41 +58,163 @@ namespace occa {
 #endif
     }
 
-    void oklBackend::verifyOccaLoop(forStatement &loop) {
+    void oklBackend::attributeOccaLoop(forStatement &loop) {
 #if 0
-      const std::string initError = ("@outer, @inner, and @tile loops must have a simple"
-                                     " variable declaration statement (e.g. int x = 0)");
+      int errors = 0;
       if (loop.init.type() != statementType::expression) {
-        loop.init.error(initError);
+        loop.init.error("@outer, @inner, and @tile loops must have a simple"
+                        " variable declaration statement"
+                        " (e.g. for(int iter = N; ...; ...))");
+        ++errors;
       }
-      expressionStatement &init = loop.init.to<expressionStatement>();
-      type_t *initType;
+      if (loop.check.type() != statementType::expression) {
+        loop.check.error("@outer, @inner, and @tile loops must have a simple"
+                         " check statement"
+                         " (e.g. for(...; iter < N or N < iter; ...))");
+        ++errors;
+      }
+      if (loop.update.type() != statementType::expression) {
+        loop.update.error("@outer, @inner, and @tile loops must have a simple"
+                          " update statement"
+                          " (e.g. for(...; ...; ++iter or iter += N))");
+        ++errors;
+      }
+      if (errors) {
+        return;
+      }
+
       variable *initVar;
-      expression *initExpression;
-      if (!query(init.expression)
-          .hasFormat(query::type(initType, query::flags::optional)
-                     + query::variable(initVar)
-                     + query::op("=")
-                     + query::expression(initExpression))) {
-        loop.init.error(initError);
+      operator_t *checkOp, *updateOp;
+      exprNode *checkExpression, *updateExpression;
+      verifyOccaLoopInit(loop, initVar);
+      if (!initVar) {
+        return;
+      }
+      verifyOccaLoopCheck(loop, *initVar, checkOp, checkExpression);
+      if (!checkOp || !checkExpression) {
+        return;
+      }
+      verifyOccaLoopUpdate(loop, *initVar, updateOp, updateExpression);
+      if (updateExpression) {
+        loop.addAttribute(
+          oklLoopInfo(initVar,
+                      checkOp, checkExpression,
+                      updateOp, updateExpression)
+        );
       }
 #endif
     }
 
-    // Store inner/outer + dim attributes
-    void oklBackend::storeOccaInfo(statement &root) {
+    void verifyOccaLoopInit(forStatement &loop,
+                            variable *&initVar) {
+#if 0
+      expressionStatement &init = loop.init.to<expressionStatement>();
+      type_t *initType;
+      exprNode *initExpression;
+      if (!query(init.expression)
+          .hasFormat(
+            query::optional(
+              query::type(initType)
+            )
+            + query::variable(initVar)
+            + query::op(op::equals)
+            + query::expression(initExpression)
+          )) {
+        loop.init.error("@outer, @inner, and @tile loops must have a simple"
+                        " variable declaration statement"
+                        " (e.g. for(int iter = N; ...; ...))");
+        return;
+      }
+      if (!errors
+          && !initVar->type->canBeCastedToImplicitly(int_)) {
+        loop.init.error("@outer, @inner, and @tile loops iterations"
+                        " must use int or long iteration indices");
+      }
+#endif
+    }
+
+    void verifyOccaLoopCheck(forStatement &loop,
+                             variable &initVar,
+                             operator_t *&checkOp,
+                             exprNode *&checkExpression) {
+#if 0
+      expressionStatement &check = loop.check.to<expressionStatement>();
+      if (!query(init.expression)
+          .hasFormat(
+            + query::variable(initVar)
+            + query::any(
+              query::op(checkOp, op::lessThan),
+              query::op(checkOp, op::lessThanEq),
+              query::op(checkOp, op::greaterThan),
+              query::op(checkOp, op::greaterThanEq)
+            )
+            + query::expression(checkExpression)
+          )) {
+        loop.check.error("@outer, @inner, and @tile loops must have a simple"
+                         " check statement"
+                         " (e.g. for(...; iter < N or N < iter; ...))");
+      }
+#endif
+    }
+
+    void verifyOccaLoopUpdate(forStatement &loop,
+                              variable &initVar,
+                              operator_t *&updateOp,
+                              exprNode *&updateExpression) {
+#if 0
+      expressionStatement &update = loop.update.to<expressionStatement>();
+      errors = 0;
+      if (!query(init.update)
+          .hasFormat(
+            + query::variable(initVar)
+            + query::any(
+              query::op(updateOp, op::rightIncrement),
+              query::op(updateOp, op::addEq),
+              query::op(updateOp, op::subEq)
+            )
+            + query::optional(
+              query::expression(updateExpression)
+            )
+          )) {
+        loop.update.error("@outer, @inner, and @tile loops must have a simple"
+                          " update statement"
+                          " (e.g. for(...; ...; ++iter or iter += N))");
+        return;
+      }
+#endif
+    }
+
+    void oklBackend::splitTiledOccaLoop(forStatement &loop) {
+#if 0
+      oklLoopInfo &info = loop.getAttribute("oklLoopInfo").to<oklLoopInfo>();
+      // for (int i = INIT; i OP CHECK; i OP UPDATE) {}
+      // Copy:
+      //   for (int i2 = INIT; i2 OP CHECK   ; i2 OP UPDATE) {}
+      forStatement &outerLoop = loop.clone().to<forStatement>();
+      // Change the update value:
+      //   for (int i2 = INIT; i2 OP CHECK   ; i2 OP (UPDATE * TILESIZE)) {}
+      variable &outerInitVar = info.initVar.clone();
+      outerLoop.initVar = &outerInitVar;
+      // Update the init variable
+      //   for (int i = i2   ; i OP CHECK    ; i OP UPDATE) {}
+      // Update the check value
+      //   for (int i = i2   ; i OP TILESIZE ; i OP UPDATE) {}
+#endif
     }
 
     // Check conditional barriers
     void oklBackend::checkOccaBarriers(statement &root) {
-    }
-
-    // Add barriers between for-loops that use shared memory
-    void oklBackend::addOccaBarriers(statement &root) {
+#if 0
+      // Check for outer-most inner loops
+      // Place after [:-1] ([:] if in a loop)
+#endif
     }
 
       // Move the defines to the kernel scope
     void oklBackend::floatSharedAndExclusiveDefines(statement &root) {
+#if 0
+      // Move
+#endif
     }
   }
 }

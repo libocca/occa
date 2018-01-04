@@ -51,4 +51,32 @@ namespace occa {
   void withRefs::dontUseRefs() {
     refs = -1;
   }
+
+  withRef::withRef() :
+    ref(new withRefs()) {
+    ref->addRef();
+  }
+
+  withRef::withRef(const withRef &other) :
+    ref(other.ref) {
+    ref->addRef();
+  }
+
+  void withRef::newRef() {
+    removeRef();
+    ref = new withRefs();
+  }
+
+  void withRef::removeRef() {
+    if (!ref->removeRef()) {
+      destructor();
+      delete ref;
+    }
+  }
+
+  void withRef::changeRef(const withRef &other) {
+    removeRef();
+    ref = other.ref;
+    ref->addRef();
+  }
 }
