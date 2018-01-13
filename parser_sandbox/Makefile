@@ -17,12 +17,7 @@ tests   = $(subst $(testPath)/,$(testPath)/bin/,$(testSources:.cpp=))
 
 flags += -I$(incPath)
 
-executables = ${PROJ_DIR}/main
-
-all: $(executables)
-
-${PROJ_DIR}/main: $(objects) $(headers) ${PROJ_DIR}/main.cpp $(tests)
-	$(compiler) $(compilerFlags) -o ${PROJ_DIR}/main $(flags) -L ${OCCA_DIR}/lib $(objects) ${PROJ_DIR}/main.cpp $(paths) $(links)
+all: $(objects) $(headers)
 
 $(objPath)/%.o:$(srcPath)/%.cpp $(incPath)/%.hpp
 	@mkdir -p $(abspath $(dir $@))
@@ -35,6 +30,8 @@ $(objPath)/%.o:$(srcPath)/%.cpp $(incPath)/%.hpp $(incPath)/%.tpp
 $(testPath)/bin/%:$(testPath)/%.cpp $(objects) $(headers)
 	@mkdir -p $(testPath)/bin
 	$(compiler) $(compilerFlags) $(pthreadFlag) -o $@ $(flags) -L ${OCCA_DIR}/lib $(objects) $< $(paths) $(links)
+
+build-tests: $(tests)
 
 test: $(tests)
 	@for test in $(tests); do   \

@@ -21,7 +21,7 @@
  */
 #include "occa/tools/testing.hpp"
 
-#include "tokenizer.hpp"
+#include "token.hpp"
 
 void testSkipMethods();
 void testPushPop();
@@ -29,7 +29,7 @@ void testPeekMethods();
 void testTokenMethods();
 
 std::string streamSource;
-occa::lang::charStream stream(NULL);
+occa::lang::tokenStream stream(NULL);
 occa::lang::token_t *token = NULL;
 
 int main(const int argc, const char **argv) {
@@ -45,7 +45,7 @@ int main(const int argc, const char **argv) {
 
 void setStream(const std::string &s) {
   streamSource = s;
-  stream = occa::lang::charStream(NULL, streamSource.c_str());
+  stream = occa::lang::tokenStream(NULL, streamSource.c_str());
 }
 
 void setToken(const std::string &s) {

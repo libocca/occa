@@ -19,86 +19,239 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  */
-#if 0
-#ifndef OCCA_PARSER_TOKEN_HEADER2
-#define OCCA_PARSER_TOKEN_HEADER2
+#ifndef OCCA_PARSER_PREPROCESSOR_HEADER2
+#define OCCA_PARSER_PREPROCESSOR_HEADER2
 
-#include <iostream>
+#include "occa/tools/io.hpp"
 
-#include "occa/tools/gc.hpp"
-
-/*
-  Comments are replaced by a space ' '
-
-  \\n -> nothing
-
-  \n is guaranteed by the end of a file
-  \s -> one space
-
-  "a" "b" -> "ab"
-
-  Make tokens
-*/
-
-class fileInfo {
-public:
-  std::string path;
-  std::string source;
-
-  fileInfo(const std::string &path_);
-};
-
-class fileInfoDB {
-private:
-  std::map<std::string, int> pathToID;
-  std::map<int, fileInfo*> idToPath;
-  int currentID;
-
-public:
-  fileInfoDB();
-  fileInfoDB();
-  ~fileInfoDB();
-
-  const std::string& get(const std::string &path);
-  const std::string& get(const int id);
-};
+#include "trie.hpp"
+#include "file.hpp"
 
 namespace occa {
   namespace lang {
-    class tokenStream;
+    class operator_t;
+
+    typedef trie<const operator_t*> operatorTrie;
+
+    namespace charcodes {
+      extern const char whitespace[];
+      extern const char alpha[];
+      extern const char number[];
+      extern const char alphanumber[];
+      extern const char identifierStart[];
+      extern const char identifier[];
+      extern const char operators[];
+    }
+
+    operatorTrie& getOperators();
+
+    //---[ Tokens ]---------------------
+    namespace encodingType {
+      extern const int none;
+      extern const int R;
+      extern const int u8;
+      extern const int u;
+      extern const int U;
+      extern const int L;
+      extern const int ux;
+      extern const int bits;
+    }
+
+    namespace tokenType {
+      extern const int none;
+
+      extern const int identifier;
+
+      extern const int systemHeader;
+      extern const int header;
+
+      extern const int primitive;
+      extern const int op;
+
+      extern const int char_;
+      extern const int string;
+      extern const int withUDF;
+      extern const int withEncoding;
+      extern const int encodingShift;
+    }
 
     class token_t {
     public:
+      fileOrigin origin;
+
+      token_t(const fileOrigin &origin_);
+      virtual ~token_t();
+
+      template <class TM>
+      inline bool is() const {
+        return (dynamic_cast<const TM*>(this) != NULL);
+      }
+
+      template <class TM>
+      inline TM& to() {
+        TM *ptr = dynamic_cast<TM*>(this);
+        OCCA_ERROR("Unable to cast token_t::to",
+                   ptr != NULL);
+        return *ptr;
+      }
+
+      template <class TM>
+      inline const TM& to() const {
+        const TM *ptr = dynamic_cast<const TM*>(this);
+        OCCA_ERROR("Unable to cast token_t::to",
+                   ptr != NULL);
+        return *ptr;
+      }
+
+      virtual int type() const = 0;
+
+      virtual void print(printer &pout) const = 0;
     };
 
-    class tokenStream {
-    private:
-      char *start, *end;
-      char *ptr;
-
+    class identifierToken : public token_t {
     public:
-      tokenStream();
+      std::string value;
 
-      tokenStream(const char *start_,
-                  const char *end_ = NULL);
+      identifierToken(const fileOrigin &origin_,
+                      const std::string &value_);
+      virtual ~identifierToken();
 
-      tokenStream(const std::string &str);
+      virtual int type() const;
+
+      virtual void print(printer &pout) const;
+    };
+
+    class primitiveToken : public token_t {
+    public:
+      primitive value;
+
+      primitiveToken(const fileOrigin &origin_,
+                     const primitive &value_);
+      virtual ~primitiveToken();
+
+      virtual int type() const;
+
+      virtual void print(printer &pout) const;
+    };
+
+    class operatorToken : public token_t {
+    public:
+      const operator_t &op;
+
+      operatorToken(const fileOrigin &origin_,
+                    const operator_t &op_);
+      virtual ~operatorToken();
+
+      virtual int type() const;
+
+      virtual void print(printer &pout) const;
+    };
+
+    class charToken : public token_t {
+    public:
+      int encoding;
+      std::string value;
+      std::string udf;
+
+      charToken(const fileOrigin &origin_,
+                int encoding_,
+                const std::string &value_,
+                const std::string &udf_);
+      virtual ~charToken();
+
+      virtual int type() const;
+
+      virtual void print(printer &pout) const;
+    };
+
+    class stringToken : public token_t {
+    public:
+      int encoding;
+      std::string value;
+      std::string udf;
+
+      stringToken(const fileOrigin &origin_,
+                  int encoding_,
+                  const std::string &value_,
+                  const std::string &udf_);
+      virtual ~stringToken();
+
+      virtual int type() const;
+
+      virtual void print(printer &pout) const;
+    };
+
+    class headerToken : public token_t {
+    public:
+      bool systemHeader;
+      std::string value;
+
+      headerToken(const fileOrigin &origin_,
+                  const bool systemHeader_,
+                  const std::string &value_);
+      virtual ~headerToken();
+
+      virtual int type() const;
+
+      virtual void print(printer &pout) const;
+    };
+    //==================================
+
+    //---[ Character Stream ]-----------
+    int getEncodingType(const std::string &str);
+    int getCharacterEncoding(const std::string &str);
+    int getStringEncoding(const std::string &str);
+
+    class tokenStream {
+    public:
+      file_t *file;
+      filePosition fp;
+      std::vector<filePosition> stack;
+
+      tokenStream(const char *root);
+      tokenStream(file_t *file_,
+                  const char *root);
 
       tokenStream(const tokenStream &stream);
 
-      virtual void destructor();
+      const char *getPosition();
+      void setPosition(const char * pos);
+      int getLine();
+      void setLine(const int line);
+      fileOrigin getFileOrigin();
 
-      void load(const char *start_,
-                const char *end_ = NULL);
+      void push();
+      void pop(const bool rewind = false);
+      void popAndRewind();
+      std::string str();
 
-      void clear();
+      void countSkippedLines();
 
-      bool hasNext();
+      void skipTo(const char delimiter);
+      void skipTo(const char *delimiters);
+      void skipFrom(const char *delimiters);
 
-      bool get(token_t &token);
+      void skipWhitespace();
+
+      int peek();
+      int shallowPeek();
+      int peekForIdentifier();
+      int peekForHeader();
+
+      void getIdentifier(std::string &value);
+      void getString(std::string &value,
+                     const int encoding = 0);
+
+      token_t* getToken();
+      token_t* getIdentifierToken();
+      token_t* getPrimitiveToken();
+      token_t* getOperatorToken();
+      token_t* getStringToken(const int encoding);
+      token_t* getCharToken(const int encoding);
+      token_t* getHeaderToken();
     };
+    //==================================
   }
 }
 
-#endif
 #endif

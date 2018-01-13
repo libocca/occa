@@ -20,7 +20,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  */
 #include "file.hpp"
-#include "tokenizer.hpp"
+#include "token.hpp"
 #include "occa/tools/io.hpp"
 
 namespace occa {
@@ -116,10 +116,10 @@ namespace occa {
       if (fromInclude) {
         pout << ": Included file:\n";
       } else {
-        charStream stream(position.pos);
-        // TODO: Add identifier
-        // stream.skipIdentifier();
-        pout << ": Expanded from macro '" << stream.str() << "':\n";
+        tokenStream stream(position.pos);
+        std::string macro;
+        stream.getIdentifier(macro);
+        pout << ": Expanded from macro '" << macro << "':\n";
       }
     }
   }
