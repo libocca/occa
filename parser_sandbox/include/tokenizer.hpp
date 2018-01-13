@@ -1,3 +1,24 @@
+/* The MIT License (MIT)
+ *
+ * Copyright (c) 2014-2018 David Medina and Tim Warburton
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ */
 #ifndef OCCA_PARSER_PREPROCESSOR_HEADER2
 #define OCCA_PARSER_PREPROCESSOR_HEADER2
 
@@ -56,9 +77,9 @@ namespace occa {
 
     class token_t {
     public:
-      fileOrigin *origin;
+      fileOrigin origin;
 
-      token_t(fileOrigin *origin_);
+      token_t(const fileOrigin &origin_);
       virtual ~token_t();
 
       virtual int type() const = 0;
@@ -70,7 +91,7 @@ namespace occa {
     public:
       std::string value;
 
-      identifierToken(fileOrigin *origin_,
+      identifierToken(const fileOrigin &origin_,
                       const std::string &value_);
       virtual ~identifierToken();
 
@@ -83,7 +104,7 @@ namespace occa {
     public:
       primitive value;
 
-      primitiveToken(fileOrigin *origin_,
+      primitiveToken(const fileOrigin &origin_,
                      const primitive &value_);
       virtual ~primitiveToken();
 
@@ -96,7 +117,7 @@ namespace occa {
     public:
       const operator_t &op;
 
-      operatorToken(fileOrigin *origin_,
+      operatorToken(const fileOrigin &origin_,
                     const operator_t &op_);
       virtual ~operatorToken();
 
@@ -111,7 +132,7 @@ namespace occa {
       std::string value;
       std::string udf;
 
-      charToken(fileOrigin *origin_,
+      charToken(const fileOrigin &origin_,
                 int uType_,
                 const std::string &value_,
                 const std::string &udf_);
@@ -128,7 +149,7 @@ namespace occa {
       std::string value;
       std::string udf;
 
-      stringToken(fileOrigin *origin_,
+      stringToken(const fileOrigin &origin_,
                   int uType_,
                   const std::string &value_,
                   const std::string &udf_);
@@ -144,7 +165,7 @@ namespace occa {
       bool systemHeader;
       std::string value;
 
-      headerToken(fileOrigin *origin_,
+      headerToken(const fileOrigin &origin_,
                   const bool systemHeader_,
                   const std::string &value_);
       virtual ~headerToken();
@@ -160,47 +181,34 @@ namespace occa {
     int getCharacterEncoding(const std::string &str);
     int getStringEncoding(const std::string &str);
 
-    class charStringInfo {
-    public:
-      const char *root, *pos;
-      int newlinesPassed;
-
-      charStringInfo(const char *root_);
-      charStringInfo(const charStringInfo &other);
-    };
-
     class charStream {
     public:
-      const char *root, *pos;
-      int newlinesPassed;
-      std::vector<charStringInfo> stack;
+      file_t *file;
+      filePosition fp;
+      std::vector<filePosition> stack;
 
-      charStream(const char *root_);
+      charStream(const char *root);
+      charStream(file_t *file_,
+                 const char *root);
 
       charStream(const charStream &stream);
 
       const char *getPosition();
-      void setPosition(const char * pos_);
+      void setPosition(const char * pos);
+      int getLine();
+      void setLine(const int line);
+      fileOrigin getFileOrigin();
 
-      void clear();
       void push();
-      void pop(const bool rewind = true);
+      void pop(const bool rewind = false);
+      void popAndRewind();
       std::string str();
 
+      void countSkippedLines(const char *start);
+
       void skipTo(const char delimiter);
-
-      void skipTo(const char delimiter,
-                  const char escape);
-
       void skipTo(const char *delimiters);
-
-      void skipTo(const char *delimiters,
-                  const char escape);
-
       void skipFrom(const char *delimiters);
-
-      void skipFrom(const char *delimiters,
-                    const char escape);
 
       void skipWhitespace();
 

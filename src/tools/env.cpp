@@ -1,6 +1,6 @@
 /* The MIT License (MIT)
  *
- * Copyright (c) 2014-2017 David Medina and Tim Warburton
+ * Copyright (c) 2014-2018 David Medina and Tim Warburton
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -75,7 +75,7 @@ namespace occa {
     void envInitializer_t::initSettings() {
       properties &settings_ = baseSettings();
       settings_["version"] = "1.0";
-      settings_["parserVersion"] = "20171224";
+      settings_["parserVersion"] = "20181224";
       settings_["verboseCompilation"] = env::get("OCCA_VERBOSE", false);
     }
 

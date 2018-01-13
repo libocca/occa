@@ -1,3 +1,24 @@
+/* The MIT License (MIT)
+ *
+ * Copyright (c) 2014-2018 David Medina and Tim Warburton
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ */
 #include "tokenizer.hpp"
 #include "occa/tools/io.hpp"
 #include "occa/par/tls.hpp"
@@ -83,12 +104,12 @@ namespace occa {
     }
 
     //---[ Tokens ]---------------------
-    token_t::token_t(fileOrigin *origin_) :
+    token_t::token_t(const fileOrigin &origin_) :
       origin(origin_) {}
 
     token_t::~token_t() {}
 
-    identifierToken::identifierToken(fileOrigin *origin_,
+    identifierToken::identifierToken(const fileOrigin &origin_,
                                      const std::string &value_) :
       token_t(origin_),
       value(value_) {}
@@ -103,7 +124,7 @@ namespace occa {
       pout << value;
     }
 
-    primitiveToken::primitiveToken(fileOrigin *origin_,
+    primitiveToken::primitiveToken(const fileOrigin &origin_,
                                    const primitive &value_) :
       token_t(origin_),
       value(value_) {}
@@ -118,7 +139,7 @@ namespace occa {
       pout << value;
     }
 
-    operatorToken::operatorToken(fileOrigin *origin_,
+    operatorToken::operatorToken(const fileOrigin &origin_,
                                  const operator_t &op_) :
       token_t(origin_),
       op(op_) {}
@@ -133,7 +154,7 @@ namespace occa {
       op.print(pout);
     }
 
-    charToken::charToken(fileOrigin *origin_,
+    charToken::charToken(const fileOrigin &origin_,
                          int uType_,
                          const std::string &value_,
                          const std::string &udf_) :
@@ -168,7 +189,7 @@ namespace occa {
 
     stringToken::~stringToken() {}
 
-    stringToken::stringToken(fileOrigin *origin_,
+    stringToken::stringToken(const fileOrigin &origin_,
                              int uType_,
                              const std::string &value_,
                              const std::string &udf_) :
@@ -199,7 +220,7 @@ namespace occa {
       pout << '"' << value << '"' << udf;
     }
 
-    headerToken::headerToken(fileOrigin *origin_,
+    headerToken::headerToken(const fileOrigin &origin_,
                              const bool systemHeader_,
                              const std::string &value_) :
       token_t(origin_),
@@ -273,151 +294,132 @@ namespace occa {
     }
 
     //---[ Character Stream ]-----------
-    charStringInfo::charStringInfo(const char *root_) :
-      root(root_),
-      pos(root_),
-      newlinesPassed(0) {}
+    charStream::charStream(const char *root) :
+      file(NULL),
+      fp(root) {}
 
-    charStringInfo::charStringInfo(const charStringInfo &other) :
-      root(other.root),
-      pos(other.pos),
-      newlinesPassed(other.newlinesPassed) {}
-
-    charStream::charStream(const char *root_) :
-      root(root_),
-      pos(root_),
-      newlinesPassed(0) {}
+    charStream::charStream(file_t *file_,
+                           const char *root) :
+      file(file_),
+      fp(root) {}
 
     charStream::charStream(const charStream &stream) :
-      root(stream.root),
-      pos(stream.pos),
-      newlinesPassed(stream.newlinesPassed),
+      file(stream.file),
+      fp(stream.fp),
       stack(stream.stack) {}
 
-    const char * charStream::getPosition() {
-      return pos;
+    const char *charStream::getPosition() {
+      return fp.pos;
     }
 
-    void charStream::setPosition(const char * pos_) {
-      pos = pos_;
+    void charStream::setPosition(const char * pos) {
+      fp.pos = pos;
     }
 
-    void charStream::clear() {
-      newlinesPassed = 0;
+    int charStream::getLine() {
+      return fp.line;
+    }
+
+    void charStream::setLine(const int line) {
+      fp.line = line;
+    }
+
+    fileOrigin charStream::getFileOrigin() {
+      return fileOrigin(file, fp);
     }
 
     void charStream::push() {
-      charStringInfo info(root);
-      info.pos = pos;
-      info.newlinesPassed = info.newlinesPassed;
-      stack.push_back(info);
-
-      newlinesPassed = 0;
+      stack.push_back(
+        filePosition(fp.line,
+                     fp.lineStart,
+                     fp.pos)
+      );
     }
 
     void charStream::pop(const bool rewind) {
       if (stack.size() > 0) {
         if (rewind) {
-          charStringInfo info = stack.back();
-          root = info.root;
-          pos = info.pos;
-          newlinesPassed = info.newlinesPassed;
+          fp = stack.back();
         }
         stack.pop_back();
       }
+    }
+
+    void charStream::popAndRewind() {
+      pop(true);
     }
 
     std::string charStream::str() {
       if (stack.size() == 0) {
         return "";
       }
-      charStringInfo last = stack.back();
-      return std::string(last.pos, pos - last.pos);
+      filePosition last = stack.back();
+      return std::string(last.pos, fp.pos - last.pos);
     }
 
-    void charStream::skipTo(const char delimiter) {
-      while (*pos != '\0') {
-        if (*pos == delimiter) {
-          return;
+    void charStream::countSkippedLines(const char *start) {
+      const char *pos = start;
+      const char *end = fp.pos;
+      while (pos < end) {
+        if (*pos == '\\') {
+          pos += 1 + (pos[1] != '\0');
+          continue;
         }
         if (*pos == '\n') {
-          ++newlinesPassed;
+          fp.lineStart = fp.pos + 1;
+          ++fp.line;
         }
         ++pos;
       }
     }
 
-    void charStream::skipTo(const char delimiter,
-                            const char escapeChar) {
-      while (*pos != '\0') {
-        if (*pos == escapeChar) {
-          pos += 1 + (pos[1] != '\0');
+    void charStream::skipTo(const char delimiter) {
+      while (*fp.pos != '\0') {
+        if (*fp.pos == '\\') {
+          fp.pos += 1 + (fp.pos[1] != '\0');
           continue;
         }
-        if (*pos == delimiter) {
+        if (*fp.pos == delimiter) {
           return;
         }
-        if (*pos == '\n') {
-          ++newlinesPassed;
+        if (*fp.pos == '\n') {
+          fp.lineStart = fp.pos + 1;
+          ++fp.line;
         }
-        ++pos;
+        ++fp.pos;
       }
     }
 
     void charStream::skipTo(const char *delimiters) {
-      while (*pos != '\0') {
-        if (lex::charIsIn(*pos, delimiters)) {
-          return;
-        }
-        if (*pos == '\n') {
-          ++newlinesPassed;
-        }
-        ++pos;
-      }
-    }
-
-    void charStream::skipTo(const char *delimiters,
-                            const char escapeChar) {
-      while (*pos != '\0') {
-        if (*pos == escapeChar) {
-          pos += 1 + (pos[1] != '\0');
+      while (*fp.pos != '\0') {
+        if (*fp.pos == '\\') {
+          fp.pos += 1 + (fp.pos[1] != '\0');
           continue;
         }
-        if (lex::charIsIn(*pos, delimiters)) {
+        if (lex::charIsIn(*fp.pos, delimiters)) {
           return;
         }
-        if (*pos == '\n') {
-          ++newlinesPassed;
+        if (*fp.pos == '\n') {
+          fp.lineStart = fp.pos + 1;
+          ++fp.line;
         }
-        ++pos;
+        ++fp.pos;
       }
     }
 
     void charStream::skipFrom(const char *delimiters) {
-      while (*pos != '\0') {
-        if (lex::charIsIn(*pos, delimiters)) {
-          ++pos;
+      while (*fp.pos != '\0') {
+        if (*fp.pos == '\\') {
+          fp.pos += 1 + (fp.pos[1] != '\0');
           continue;
         }
-        if (*pos == '\n') {
-          ++newlinesPassed;
-        }
-        return;
-      }
-    }
-
-    void charStream::skipFrom(const char *delimiters, const char escapeChar) {
-      while (*pos != '\0') {
-        if (*pos == escapeChar) {
-          pos += 1 + (pos[1] != '\0');
+        if (lex::charIsIn(*fp.pos, delimiters)) {
+          ++fp.pos;
           continue;
         }
-        if (lex::charIsIn(*pos, delimiters)) {
-          ++pos;
-          continue;
-        }
-        if (*pos == '\n') {
-          ++newlinesPassed;
+        if (*fp.pos == '\n') {
+          fp.lineStart = fp.pos + 1;
+          ++fp.line;
         }
         return;
       }
@@ -436,7 +438,7 @@ namespace occa {
     }
 
     int charStream::shallowPeek() {
-      const char c = *pos;
+      const char c = *fp.pos;
       if (c == '\0') {
         return tokenType::none;
       }
@@ -446,15 +448,15 @@ namespace occa {
       if (lex::charIsIn(c, charcodes::operators)) {
         return tokenType::op;
       }
-      const char *pos2 = pos;
-      if (primitive::load(pos2).type != primitiveType::none) {
-        return tokenType::primitive;
-      }
       if (c == '"') {
         return tokenType::string;
       }
       if (c == '\'') {
         return tokenType::char_;
+      }
+      const char *pos = fp.pos;
+      if (primitive::load(pos).type != primitiveType::none) {
+        return tokenType::primitive;
       }
       // TODO: Print proper error
       OCCA_FORCE_ERROR("Could not find token type");
@@ -467,7 +469,7 @@ namespace occa {
       // skipIdentifier();
       const std::string identifier = str();
       int type = shallowPeek();
-      pop();
+      popAndRewind();
 
       // [u8]"foo" or [u8]'foo'
       if ((type & tokenType::char_) &&
@@ -492,7 +494,7 @@ namespace occa {
         // TODO: Fix
         // skipOperator();
         const std::string op = str();
-        pop();
+        popAndRewind();
         if (op == "<") {
           return tokenType::systemHeader;
         }
@@ -503,6 +505,7 @@ namespace occa {
     }
 
     token_t* charStream::getToken() {
+      skipWhitespace();
       int type = peek();
       if (type & tokenType::identifier) {
         return getIdentifierToken();
@@ -528,87 +531,104 @@ namespace occa {
     token_t* charStream::getIdentifierToken() {
       // TODO: Print proper error
       OCCA_ERROR("Not able to parse identifier",
-                 lex::charIsIn(*pos, charcodes::identifierStart));
+                 lex::charIsIn(*fp.pos, charcodes::identifierStart));
       push();
-      ++pos;
+      ++fp.pos;
       skipFrom(charcodes::identifier);
-      return new identifierToken(NULL, str());
+      return new identifierToken(getFileOrigin(),
+                                 str());
       pop();
     }
 
     token_t* charStream::getPrimitiveToken() {
-      primitive value = primitive::load(pos);
+      const char *start = fp.pos;
+      primitive value = primitive::load(fp.pos);
       // TODO: Print proper error
       OCCA_ERROR("Not able to parse primitive",
                  !value.isNaN());
-      return new primitiveToken(NULL, value);
+      countSkippedLines(start);
+      return new primitiveToken(getFileOrigin(),
+                                value);
     }
 
     token_t* charStream::getOperatorToken() {
       operatorTrie &operators = getOperators();
-      operatorTrie::result_t result = operators.getLongest(pos);
+      operatorTrie::result_t result = operators.getLongest(fp.pos);
       // TODO: Print proper error
       OCCA_ERROR("Not able to parse operator",
                  result.success());
-      return new operatorToken(NULL, *(result.value()));
+      return new operatorToken(getFileOrigin(),
+                               *(result.value()));
     }
 
     token_t* charStream::getStringToken() {
-      if (*pos != '"') {
+      if (*fp.pos != '"') {
         // TODO: Print proper error
         OCCA_FORCE_ERROR("Not able to parse string");
       }
-      ++pos;
+      ++fp.pos;
       push();
-      skipTo('"', '\\');
-      token_t *token = new stringToken(NULL,
+      skipTo("\"\n");
+      if (*fp.pos == '\n') {
+        // TODO: Print proper error
+        OCCA_FORCE_ERROR("Unable to find closing \"");
+      }
+      token_t *token = new stringToken(getFileOrigin(),
                                        encodingType::u8,
                                        str(),
                                        "_km");
-      pop(false);
-      ++pos;
+      pop();
+      ++fp.pos;
       return token;
     }
 
     token_t* charStream::getCharToken() {
-      if (*pos != '\'') {
+      if (*fp.pos != '\'') {
         // TODO: Print proper error
         OCCA_FORCE_ERROR("Not able to parse string");
       }
-      ++pos;
+      ++fp.pos;
       push();
-      skipTo('\'', '\\');
-      token_t *token = new charToken(NULL,
+      skipTo("\'\n");
+      if (*fp.pos == '\n') {
+        // TODO: Print proper error
+        OCCA_FORCE_ERROR("Unable to find closing '");
+      }
+      token_t *token = new charToken(getFileOrigin(),
                                      encodingType::u,
                                      str(),
                                      "_km");
-      pop(false);
-      ++pos;
+      pop();
+      ++fp.pos;
       return token;
     }
 
     token_t* charStream::getHeaderToken() {
       int type = shallowPeek();
       if (type & tokenType::op) {
-        ++pos;
+        ++fp.pos;
         push();
-        token_t *token = new headerToken(NULL,
+        token_t *token = new headerToken(getFileOrigin(),
                                          true,
                                          str());
-        skipTo('>');
-        ++pos;
-        pop(false);
+        skipTo(">\n");
+        if (*fp.pos == '\n') {
+          // TODO: Print proper error
+          OCCA_FORCE_ERROR("Unable to find closing >");
+        }
+        ++fp.pos;
+        pop();
         return token;
       }
       if (type & tokenType::string) {
         stringToken &token = *((stringToken*) getStringToken());
         std::string value = token.value;
         delete &token;
-        return new headerToken(NULL, false, value);
+        return new headerToken(getFileOrigin(), false, value);
       }
       // TODO: Print proper error
       OCCA_FORCE_ERROR("Not able to parse header");
-      return new headerToken(NULL, false, "");
+      return new headerToken(getFileOrigin(), false, "");
     }
     //==================================
 
