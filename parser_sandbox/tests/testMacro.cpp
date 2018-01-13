@@ -47,12 +47,12 @@ void testPlainMacros() {
   preprocessor.processSource("");
   occa::macro_t macro(&preprocessor, "A");
 
-  OCCA_TEST_COMPARE(macro.name, "A");
-  OCCA_TEST_COMPARE(macro.expand(""), "");
+  OCCA_ASSERT_EQUAL(macro.name, "A");
+  OCCA_ASSERT_EQUAL(macro.expand(""), "");
 
   macro.load("B 1 2 3");
-  OCCA_TEST_COMPARE(macro.name, "B");
-  OCCA_TEST_COMPARE(macro.expand(""), "1 2 3");
+  OCCA_ASSERT_EQUAL(macro.name, "B");
+  OCCA_ASSERT_EQUAL(macro.expand(""), "1 2 3");
 }
 
 void testFunctionMacros() {
@@ -61,41 +61,41 @@ void testFunctionMacros() {
   preprocessor.processSource("");
   occa::macro_t macro(&preprocessor, "FOO(A) A");
 
-  OCCA_TEST_COMPARE("",
+  OCCA_ASSERT_EQUAL("",
                     macro.expand("()"));
-  OCCA_TEST_COMPARE("1",
+  OCCA_ASSERT_EQUAL("1",
                     macro.expand("(1)"));
 
   macro.load("FOO(A, B) A B");
-  OCCA_TEST_COMPARE("2 3",
+  OCCA_ASSERT_EQUAL("2 3",
                     macro.expand("(2, 3)"));
-  OCCA_TEST_COMPARE("4 5",
+  OCCA_ASSERT_EQUAL("4 5",
                     macro.expand("(4, 5, 6)"));
 
   macro.load("FOO(A, B) A##B");
-  OCCA_TEST_COMPARE("6",
+  OCCA_ASSERT_EQUAL("6",
                     macro.expand("(, 6)"));
-  OCCA_TEST_COMPARE("07",
+  OCCA_ASSERT_EQUAL("07",
                     macro.expand("(0, 7)"));
 
   macro.load("FOO(A, ...) A __VA_ARGS__");
-  OCCA_TEST_COMPARE("7 ",
+  OCCA_ASSERT_EQUAL("7 ",
                     macro.expand("(7,)"));
-  OCCA_TEST_COMPARE("8 9, 10,",
+  OCCA_ASSERT_EQUAL("8 9, 10,",
                     macro.expand("(8, 9, 10,)"));
 
   macro.load("FOO(...) (X, ##__VA_ARGS__)");
-  OCCA_TEST_COMPARE("(X, 11 )",
+  OCCA_ASSERT_EQUAL("(X, 11 )",
                     macro.expand("(11,)"));
-  OCCA_TEST_COMPARE("(X, )",
+  OCCA_ASSERT_EQUAL("(X, )",
                     macro.expand("()"));
 
   macro.load("FOO(A) #A");
-  OCCA_TEST_COMPARE("\"12\"",
+  OCCA_ASSERT_EQUAL("\"12\"",
                     macro.expand("(12)"));
 
   macro.load("FOO(A, B) #A##B");
-  OCCA_TEST_COMPARE("\"1\"3",
+  OCCA_ASSERT_EQUAL("\"1\"3",
                     macro.expand("(1, 3)"));
 }
 
@@ -110,17 +110,17 @@ void testSpecialMacros() {
   occa::lineMacro lineMacro(&preprocessor);       // __LINE__
   occa::counterMacro counterMacro(&preprocessor); // __COUNTER__
 
-  OCCA_TEST_COMPARE(occa::env::PWD + "foo",
+  OCCA_ASSERT_EQUAL(occa::env::PWD + "foo",
                     fileMacro.expand(c));
 
-  OCCA_TEST_COMPARE("9",
+  OCCA_ASSERT_EQUAL("9",
                     lineMacro.expand(c));
 
-  OCCA_TEST_COMPARE("0",
+  OCCA_ASSERT_EQUAL("0",
                     counterMacro.expand(c));
-  OCCA_TEST_COMPARE("1",
+  OCCA_ASSERT_EQUAL("1",
                     counterMacro.expand(c));
-  OCCA_TEST_COMPARE("2",
+  OCCA_ASSERT_EQUAL("2",
                     counterMacro.expand(c));
 
   delete [] c;
@@ -139,7 +139,7 @@ void testErrors() {
   occa::macro_t macro(&preprocessor, "FOO(A) A");
   macro.expand("(1");
 
-  OCCA_TEST_COMPARE(0,
+  OCCA_ASSERT_EQUAL(0,
                     !ss.str().size());
   if (printOutput) {
     std::cout << ss.str();
@@ -148,7 +148,7 @@ void testErrors() {
 
   // No macro name
   macro.load("");
-  OCCA_TEST_COMPARE(0,
+  OCCA_ASSERT_EQUAL(0,
                     !ss.str().size());
   if (printOutput) {
     std::cout << ss.str();
@@ -157,7 +157,7 @@ void testErrors() {
 
   // Identifier starts badly
   macro.load("0A 0");
-  OCCA_TEST_COMPARE(0,
+  OCCA_ASSERT_EQUAL(0,
                     !ss.str().size());
   if (printOutput) {
     std::cout << ss.str();
@@ -166,7 +166,7 @@ void testErrors() {
 
   // No whitespace warning
   macro.load("FOO-10");
-  OCCA_TEST_COMPARE(0,
+  OCCA_ASSERT_EQUAL(0,
                     !ss.str().size());
   if (printOutput) {
     std::cout << ss.str();
@@ -175,7 +175,7 @@ void testErrors() {
 
   // Variadic in wrong position
   macro.load("FOO(A, ..., B)");
-  OCCA_TEST_COMPARE(0,
+  OCCA_ASSERT_EQUAL(0,
                     !ss.str().size());
   if (printOutput) {
     std::cout << ss.str();

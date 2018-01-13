@@ -58,126 +58,126 @@ int main(const int argc, const char **argv) {
 preprocessorTester::preprocessorTester() {}
 
 void preprocessorTester::testMacroDefines() {
-  OCCA_TEST_COMPARE("",
+  OCCA_ASSERT_EQUAL("",
                     preprocessor.processSource("#define A\n"
                                                "A"));
 
-  OCCA_TEST_COMPARE("1 2 3",
+  OCCA_ASSERT_EQUAL("1 2 3",
                     preprocessor.processSource("#define B 1 2 3\n"
                                                "B"));
 
   preprocessor.processSource("#define C(A1) A1\n");
-  OCCA_TEST_COMPARE("",
+  OCCA_ASSERT_EQUAL("",
                     preprocessor.applyMacros("C()"));
-  OCCA_TEST_COMPARE("1",
+  OCCA_ASSERT_EQUAL("1",
                     preprocessor.applyMacros("C(1)"));
 
   preprocessor.processSource("#define D(A1, A2) A1 A2\n");
-  OCCA_TEST_COMPARE("2 3",
+  OCCA_ASSERT_EQUAL("2 3",
                     preprocessor.applyMacros("D(2, 3)"));
-  OCCA_TEST_COMPARE("4 5",
+  OCCA_ASSERT_EQUAL("4 5",
                     preprocessor.applyMacros("D(4, 5, 6)"));
 
   preprocessor.processSource("#define E(A1, A2) A1##A2\n");
-  OCCA_TEST_COMPARE("6",
+  OCCA_ASSERT_EQUAL("6",
                     preprocessor.applyMacros("E(, 6)"));
-  OCCA_TEST_COMPARE("07",
+  OCCA_ASSERT_EQUAL("07",
                     preprocessor.applyMacros("E(0, 7)"));
 
   preprocessor.processSource("#define F(A1, ...) A1 __VA_ARGS__\n");
-  OCCA_TEST_COMPARE("7 ",
+  OCCA_ASSERT_EQUAL("7 ",
                     preprocessor.applyMacros("F(7,)"));
-  OCCA_TEST_COMPARE("8 9, 10,",
+  OCCA_ASSERT_EQUAL("8 9, 10,",
                     preprocessor.applyMacros("F(8, 9, 10,)"));
 
   preprocessor.processSource("#define G(...) (X, ##__VA_ARGS__)\n");
-  OCCA_TEST_COMPARE("(X, 11 )",
+  OCCA_ASSERT_EQUAL("(X, 11 )",
                     preprocessor.applyMacros("G(11,)"));
-  OCCA_TEST_COMPARE("(X, )",
+  OCCA_ASSERT_EQUAL("(X, )",
                     preprocessor.applyMacros("G()"));
 
   preprocessor.processSource("#define H(A1) #A1\n");
-  OCCA_TEST_COMPARE("\"12\"",
+  OCCA_ASSERT_EQUAL("\"12\"",
                     preprocessor.applyMacros("H(12)"));
 
   preprocessor.processSource("#define I(A1, A2) #A1##A2\n");
-  OCCA_TEST_COMPARE("\"1\"3",
+  OCCA_ASSERT_EQUAL("\"1\"3",
                     preprocessor.applyMacros("I(1, 3)"));
 }
 
 void preprocessorTester::testIfElseDefines() {
-  OCCA_TEST_COMPARE("",
+  OCCA_ASSERT_EQUAL("",
                     preprocessor.processSource("#ifdef FOO\n"
                                                "1\n"
                                                "#endif\n"));
 
-  OCCA_TEST_COMPARE("2",
+  OCCA_ASSERT_EQUAL("2",
                     preprocessor.processSource("#ifndef FOO\n"
                                                "2\n"
                                                "#endif\n"));
 
-  OCCA_TEST_COMPARE("",
+  OCCA_ASSERT_EQUAL("",
                     preprocessor.processSource("#if defined(FOO)\n"
                                                "3\n"
                                                "#endif\n"));
 
-  OCCA_TEST_COMPARE("4",
+  OCCA_ASSERT_EQUAL("4",
                     preprocessor.processSource("#if !defined(FOO)\n"
                                                "4\n"
                                                "#endif\n"));
 
   preprocessor.processSource("#define FOO 9\n");
 
-  OCCA_TEST_COMPARE("5",
+  OCCA_ASSERT_EQUAL("5",
                     preprocessor.processSource("#ifdef FOO\n"
                                                "5\n"
                                                "#endif\n"));
 
-  OCCA_TEST_COMPARE("",
+  OCCA_ASSERT_EQUAL("",
                     preprocessor.processSource("#ifndef FOO\n"
                                                "6\n"
                                                "#endif\n"));
 
-  OCCA_TEST_COMPARE("7",
+  OCCA_ASSERT_EQUAL("7",
                     preprocessor.processSource("#if defined(FOO)\n"
                                                "7\n"
                                                "#endif\n"));
 
-  OCCA_TEST_COMPARE("",
+  OCCA_ASSERT_EQUAL("",
                     preprocessor.processSource("#if !defined(FOO)\n"
                                                "8\n"
                                                "#endif\n"));
 
-  OCCA_TEST_COMPARE("9",
+  OCCA_ASSERT_EQUAL("9",
                     preprocessor.processSource("FOO\n"));
 
-  OCCA_TEST_COMPARE("10",
+  OCCA_ASSERT_EQUAL("10",
                     preprocessor.processSource("#undef FOO\n"
                                                "#define FOO 10\n"
                                                "FOO"));
 
-  OCCA_TEST_COMPARE("11",
+  OCCA_ASSERT_EQUAL("11",
                     preprocessor.processSource("#define FOO 11\n"
                                                "FOO"));
 
   preprocessor.processSource("#undef FOO\n");
 
-  OCCA_TEST_COMPARE("",
+  OCCA_ASSERT_EQUAL("",
                     preprocessor.processSource("#ifdef FOO\n"
                                                "12\n"
                                                "#endif\n"));
 
-  OCCA_TEST_COMPARE("13",
+  OCCA_ASSERT_EQUAL("13",
                     preprocessor.processSource("#ifndef FOO\n"
                                                "13\n"
                                                "#endif\n"));
 
-  OCCA_TEST_COMPARE("",
+  OCCA_ASSERT_EQUAL("",
                     preprocessor.processSource("#if defined(FOO)\n"
                                                "14\n"
                                                "#endif\n"));
 
-  OCCA_TEST_COMPARE("15",
+  OCCA_ASSERT_EQUAL("15",
                     preprocessor.processSource("#if !defined(FOO)\n"
                                                "15\n"
                                                "#endif\n"));
@@ -201,7 +201,7 @@ void preprocessorTester::testErrorDefines() {
   const bool printOutput = true;
 
   preprocessor.processSource("#error \"Error\"\n");
-  OCCA_TEST_COMPARE(0,
+  OCCA_ASSERT_EQUAL(0,
                     !ss.str().size());
   if (printOutput) {
     std::cout << ss.str();
@@ -213,7 +213,7 @@ void preprocessorTester::testErrorDefines() {
   preprocessor.setOutputStream(ss);
 
   preprocessor.processSource("#warning \"Warning\"\n");
-  OCCA_TEST_COMPARE(0,
+  OCCA_ASSERT_EQUAL(0,
                     !ss.str().size());
   if (printOutput) {
     std::cout << ss.str();
@@ -222,11 +222,11 @@ void preprocessorTester::testErrorDefines() {
 }
 
 void preprocessorTester::testSpecialMacros() {
-  OCCA_TEST_COMPARE("10\n",
+  OCCA_ASSERT_EQUAL("10\n",
                     preprocessor.processSource("#line 10\n"
                                                "__LINE__\n"));
 
-  OCCA_TEST_COMPARE("20\n"
+  OCCA_ASSERT_EQUAL("20\n"
                     + occa::env::PWD + "foo\n"
                     "22\n",
                     preprocessor.processSource("#line 20 \"foo\"\n"
@@ -234,7 +234,7 @@ void preprocessorTester::testSpecialMacros() {
                                                "__FILE__\n"
                                                "__LINE__\n"));
 
-  OCCA_TEST_COMPARE("0\n"
+  OCCA_ASSERT_EQUAL("0\n"
                     "1\n"
                     "3\n"
                     "2\n",
@@ -250,67 +250,67 @@ void preprocessorTester::testSpecialMacros() {
 #if 0
 void preprocessorTester::testEval() {
   // Types
-  OCCA_TEST_COMPARE<int>(1 + 1,
+  OCCA_ASSERT_EQUAL<int>(1 + 1,
                          preprocessor.eval<int>("1 + 1"));
-  OCCA_TEST_COMPARE<bool>(true,
+  OCCA_ASSERT_EQUAL<bool>(true,
                           preprocessor.eval<bool>("1 + 1"));
-  OCCA_TEST_COMPARE<double>(0.5 + 1.5,
+  OCCA_ASSERT_EQUAL<double>(0.5 + 1.5,
                             preprocessor.eval<double>("0.5 + 1.5"));
-  OCCA_TEST_COMPARE("2",
+  OCCA_ASSERT_EQUAL("2",
                     preprocessor.eval<std::string>("1 + 1"));
-  OCCA_TEST_COMPARE<double>(100000000000L,
+  OCCA_ASSERT_EQUAL<double>(100000000000L,
                             preprocessor.eval<long>("100000000000L"));
 
   // Unary Operators
-  OCCA_TEST_COMPARE<int>(+1,
+  OCCA_ASSERT_EQUAL<int>(+1,
                          preprocessor.eval<int>("+1"));
-  OCCA_TEST_COMPARE<int>(-1,
+  OCCA_ASSERT_EQUAL<int>(-1,
                          preprocessor.eval<int>("-1"));
-  OCCA_TEST_COMPARE<int>(!1,
+  OCCA_ASSERT_EQUAL<int>(!1,
                          preprocessor.eval<int>("!1"));
-  OCCA_TEST_COMPARE<int>(~1,
+  OCCA_ASSERT_EQUAL<int>(~1,
                          preprocessor.eval<int>("~1"));
 
   // Binary Operators
-  OCCA_TEST_COMPARE<double>(1 + 2,
+  OCCA_ASSERT_EQUAL<double>(1 + 2,
                             preprocessor.eval<double>("1 + 2"));
-  OCCA_TEST_COMPARE<double>(1 - 2,
+  OCCA_ASSERT_EQUAL<double>(1 - 2,
                             preprocessor.eval<double>("1 - 2"));
-  OCCA_TEST_COMPARE<int>(1 / 2,
+  OCCA_ASSERT_EQUAL<int>(1 / 2,
                          preprocessor.eval<double>("1 / 2"));
-  OCCA_TEST_COMPARE<double>(1 / 2.0,
+  OCCA_ASSERT_EQUAL<double>(1 / 2.0,
                             preprocessor.eval<double>("1 / 2.0"));
-  OCCA_TEST_COMPARE<int>(5 % 2,
+  OCCA_ASSERT_EQUAL<int>(5 % 2,
                          preprocessor.eval<int>("5 % 2"));
 
   // Bit operators
-  OCCA_TEST_COMPARE<int>(1 & 3,
+  OCCA_ASSERT_EQUAL<int>(1 & 3,
                          preprocessor.eval<int>("1 & 3"));
-  OCCA_TEST_COMPARE<int>(1 ^ 3,
+  OCCA_ASSERT_EQUAL<int>(1 ^ 3,
                          preprocessor.eval<int>("1 ^ 3"));
-  OCCA_TEST_COMPARE<int>(1 | 3,
+  OCCA_ASSERT_EQUAL<int>(1 | 3,
                          preprocessor.eval<int>("1 | 3"));
 
   // Shift operators
-  OCCA_TEST_COMPARE<int>(0,
+  OCCA_ASSERT_EQUAL<int>(0,
                          preprocessor.eval<int>("1 >> 1"));
-  OCCA_TEST_COMPARE<int>(2,
+  OCCA_ASSERT_EQUAL<int>(2,
                          preprocessor.eval<int>("1 << 1"));
 
   // Parentheses
-  OCCA_TEST_COMPARE<double>(3*(1 + 1),
+  OCCA_ASSERT_EQUAL<double>(3*(1 + 1),
                             preprocessor.eval<int>("3*(1 + 1)"));
 
-  OCCA_TEST_COMPARE<double>((3 * 1)*(1 + 1),
+  OCCA_ASSERT_EQUAL<double>((3 * 1)*(1 + 1),
                             preprocessor.eval<int>("(3 * 1)*(1 + 1)"));
 
   /*
   // NaN and Inf
   float x = preprocessor.eval<float>("1/0");
-  OCCA_TEST_COMPARE(true, x != x);
+  OCCA_ASSERT_EQUAL(true, x != x);
 
   x = preprocessor.eval<float>("0/0");
-  OCCA_TEST_COMPARE(true, x != x);
+  OCCA_ASSERT_EQUAL(true, x != x);
   */
 }
 #endif

@@ -113,94 +113,54 @@ void testCasting() {
             << "constIntArray2: " << constIntArray2.toString() << '\n';
 
   // Test explicit casting
-  OCCA_TEST_COMPARE(intPointer.canBeCastedToExplicitly(intArray),
-                    true);
-  OCCA_TEST_COMPARE(intPointer.canBeCastedToExplicitly(intArray2),
-                    true);
-  OCCA_TEST_COMPARE(intPointer.canBeCastedToExplicitly(constIntArray),
-                    true);
-  OCCA_TEST_COMPARE(intPointer.canBeCastedToExplicitly(constIntArray),
-                    true);
+  OCCA_ASSERT_TRUE(intPointer.canBeCastedToExplicitly(intArray));
+  OCCA_ASSERT_TRUE(intPointer.canBeCastedToExplicitly(intArray2));
+  OCCA_ASSERT_TRUE(intPointer.canBeCastedToExplicitly(constIntArray));
+  OCCA_ASSERT_TRUE(intPointer.canBeCastedToExplicitly(constIntArray));
 
-  OCCA_TEST_COMPARE(intArray.canBeCastedToExplicitly(intPointer),
-                    true);
-  OCCA_TEST_COMPARE(intArray.canBeCastedToExplicitly(intArray2),
-                    true);
-  OCCA_TEST_COMPARE(intArray.canBeCastedToExplicitly(constIntArray),
-                    true);
-  OCCA_TEST_COMPARE(intArray.canBeCastedToExplicitly(constIntArray2),
-                    true);
+  OCCA_ASSERT_TRUE(intArray.canBeCastedToExplicitly(intPointer));
+  OCCA_ASSERT_TRUE(intArray.canBeCastedToExplicitly(intArray2));
+  OCCA_ASSERT_TRUE(intArray.canBeCastedToExplicitly(constIntArray));
+  OCCA_ASSERT_TRUE(intArray.canBeCastedToExplicitly(constIntArray2));
 
-  OCCA_TEST_COMPARE(intArray2.canBeCastedToExplicitly(intPointer),
-                    true);
-  OCCA_TEST_COMPARE(intArray2.canBeCastedToExplicitly(intArray),
-                    true);
-  OCCA_TEST_COMPARE(intArray2.canBeCastedToExplicitly(constIntArray),
-                    true);
-  OCCA_TEST_COMPARE(intArray2.canBeCastedToExplicitly(constIntArray2),
-                    true);
+  OCCA_ASSERT_TRUE(intArray2.canBeCastedToExplicitly(intPointer));
+  OCCA_ASSERT_TRUE(intArray2.canBeCastedToExplicitly(intArray));
+  OCCA_ASSERT_TRUE(intArray2.canBeCastedToExplicitly(constIntArray));
+  OCCA_ASSERT_TRUE(intArray2.canBeCastedToExplicitly(constIntArray2));
 
-  OCCA_TEST_COMPARE(constIntArray.canBeCastedToExplicitly(intPointer),
-                    true);
-  OCCA_TEST_COMPARE(constIntArray.canBeCastedToExplicitly(intArray),
-                    true);
-  OCCA_TEST_COMPARE(constIntArray.canBeCastedToExplicitly(intArray2),
-                    true);
-  OCCA_TEST_COMPARE(constIntArray.canBeCastedToExplicitly(constIntArray2),
-                    true);
+  OCCA_ASSERT_TRUE(constIntArray.canBeCastedToExplicitly(intPointer));
+  OCCA_ASSERT_TRUE(constIntArray.canBeCastedToExplicitly(intArray));
+  OCCA_ASSERT_TRUE(constIntArray.canBeCastedToExplicitly(intArray2));
+  OCCA_ASSERT_TRUE(constIntArray.canBeCastedToExplicitly(constIntArray2));
 
-  OCCA_TEST_COMPARE(constIntArray2.canBeCastedToExplicitly(intPointer),
-                    true);
-  OCCA_TEST_COMPARE(constIntArray2.canBeCastedToExplicitly(intArray),
-                    true);
-  OCCA_TEST_COMPARE(constIntArray2.canBeCastedToExplicitly(intArray2),
-                    true);
-  OCCA_TEST_COMPARE(constIntArray2.canBeCastedToExplicitly(constIntArray),
-                    true);
+  OCCA_ASSERT_TRUE(constIntArray2.canBeCastedToExplicitly(intPointer));
+  OCCA_ASSERT_TRUE(constIntArray2.canBeCastedToExplicitly(intArray));
+  OCCA_ASSERT_TRUE(constIntArray2.canBeCastedToExplicitly(intArray2));
+  OCCA_ASSERT_TRUE(constIntArray2.canBeCastedToExplicitly(constIntArray));
 
   // Test implicit casting
-  OCCA_TEST_COMPARE(intPointer.canBeCastedToImplicitly(intArray),
-                    true);
-  OCCA_TEST_COMPARE(intPointer.canBeCastedToImplicitly(intArray2),
-                    true);
-  OCCA_TEST_COMPARE(intPointer.canBeCastedToImplicitly(constIntArray),
-                    false);
-  OCCA_TEST_COMPARE(intPointer.canBeCastedToImplicitly(constIntArray2),
-                    false);
+  OCCA_ASSERT_TRUE(intPointer.canBeCastedToImplicitly(intArray));
+  OCCA_ASSERT_TRUE(intPointer.canBeCastedToImplicitly(intArray2));
+  OCCA_ASSERT_FALSE(intPointer.canBeCastedToImplicitly(constIntArray));
+  OCCA_ASSERT_FALSE(intPointer.canBeCastedToImplicitly(constIntArray2));
 
-  OCCA_TEST_COMPARE(intArray.canBeCastedToImplicitly(intPointer),
-                    true);
-  OCCA_TEST_COMPARE(intArray.canBeCastedToImplicitly(intArray2),
-                    true);
-  OCCA_TEST_COMPARE(intArray.canBeCastedToImplicitly(constIntArray),
-                    false);
-  OCCA_TEST_COMPARE(intArray.canBeCastedToImplicitly(constIntArray2),
-                    false);
+  OCCA_ASSERT_TRUE(intArray.canBeCastedToImplicitly(intPointer));
+  OCCA_ASSERT_TRUE(intArray.canBeCastedToImplicitly(intArray2));
+  OCCA_ASSERT_FALSE(intArray.canBeCastedToImplicitly(constIntArray));
+  OCCA_ASSERT_FALSE(intArray.canBeCastedToImplicitly(constIntArray2));
 
-  OCCA_TEST_COMPARE(intArray2.canBeCastedToImplicitly(intPointer),
-                    true);
-  OCCA_TEST_COMPARE(intArray2.canBeCastedToImplicitly(intArray),
-                    true);
-  OCCA_TEST_COMPARE(intArray2.canBeCastedToImplicitly(constIntArray),
-                    false);
-  OCCA_TEST_COMPARE(intArray2.canBeCastedToImplicitly(constIntArray2),
-                    false);
+  OCCA_ASSERT_TRUE(intArray2.canBeCastedToImplicitly(intPointer));
+  OCCA_ASSERT_TRUE(intArray2.canBeCastedToImplicitly(intArray));
+  OCCA_ASSERT_FALSE(intArray2.canBeCastedToImplicitly(constIntArray));
+  OCCA_ASSERT_FALSE(intArray2.canBeCastedToImplicitly(constIntArray2));
 
-  OCCA_TEST_COMPARE(constIntArray.canBeCastedToImplicitly(intPointer),
-                    false);
-  OCCA_TEST_COMPARE(constIntArray.canBeCastedToImplicitly(intArray),
-                    false);
-  OCCA_TEST_COMPARE(constIntArray.canBeCastedToImplicitly(intArray2),
-                    false);
-  OCCA_TEST_COMPARE(constIntArray.canBeCastedToImplicitly(constIntArray2),
-                    true);
+  OCCA_ASSERT_FALSE(constIntArray.canBeCastedToImplicitly(intPointer));
+  OCCA_ASSERT_FALSE(constIntArray.canBeCastedToImplicitly(intArray));
+  OCCA_ASSERT_FALSE(constIntArray.canBeCastedToImplicitly(intArray2));
+  OCCA_ASSERT_TRUE(constIntArray.canBeCastedToImplicitly(constIntArray2));
 
-  OCCA_TEST_COMPARE(constIntArray2.canBeCastedToImplicitly(intPointer),
-                    false);
-  OCCA_TEST_COMPARE(constIntArray2.canBeCastedToImplicitly(intArray),
-                    false);
-  OCCA_TEST_COMPARE(constIntArray2.canBeCastedToImplicitly(intArray2),
-                    false);
-  OCCA_TEST_COMPARE(constIntArray2.canBeCastedToImplicitly(constIntArray),
-                    true);
+  OCCA_ASSERT_FALSE(constIntArray2.canBeCastedToImplicitly(intPointer));
+  OCCA_ASSERT_FALSE(constIntArray2.canBeCastedToImplicitly(intArray));
+  OCCA_ASSERT_FALSE(constIntArray2.canBeCastedToImplicitly(intArray2));
+  OCCA_ASSERT_TRUE(constIntArray2.canBeCastedToImplicitly(constIntArray));
 }
