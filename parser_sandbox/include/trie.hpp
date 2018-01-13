@@ -88,10 +88,10 @@ namespace occa {
     int freeze(const trieNode &node, int offset);
     void defrost();
 
-    result_t getFirst(const char *c, const int length = INT_MAX) const;
-    result_t trieGetFirst(const char *c, const int length) const;
-    inline result_t getFirst(const std::string &s) const {
-      return getFirst(s.c_str(), (int) s.size());
+    result_t getLongest(const char *c, const int length = INT_MAX) const;
+    result_t trieGetLongest(const char *c, const int length) const;
+    inline result_t getLongest(const std::string &s) const {
+      return getLongest(s.c_str(), (int) s.size());
     }
 
     result_t get(const char *c, const int length = INT_MAX) const;

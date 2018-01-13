@@ -145,10 +145,10 @@ namespace occa {
   }
 
   template <class TM>
-  typename trie<TM>::result_t trie<TM>::getFirst(const char *c,
-                                                 const int length) const {
+  typename trie<TM>::result_t trie<TM>::getLongest(const char *c,
+                                                   const int length) const {
     if (!isFrozen) {
-      return trieGetFirst(c, length);
+      return trieGetLongest(c, length);
     }
     const char * const cStart = c;
     int retLength = 0;
@@ -195,7 +195,7 @@ namespace occa {
   }
 
   template <class TM>
-  typename trie<TM>::result_t trie<TM>::trieGetFirst(const char *c, const int length) const {
+  typename trie<TM>::result_t trie<TM>::trieGetLongest(const char *c, const int length) const {
     trieNode::result_t result = root.get(c, length);
     if (result.success()) {
       return result_t(this, result.length, result.valueIdx);
@@ -206,7 +206,7 @@ namespace occa {
   template <class TM>
   typename trie<TM>::result_t trie<TM>::get(const char *c, const int length) const {
     const int length_ = (length == INT_MAX) ? strlen(c) : length;
-    trie<TM>::result_t result = getFirst(c, length_);
+    trie<TM>::result_t result = getLongest(c, length_);
     if (result.length != length_) {
       result.length = 0;
       result.valueIdx = -1;

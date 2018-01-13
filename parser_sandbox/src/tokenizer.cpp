@@ -546,7 +546,7 @@ namespace occa {
 
     token_t* charStream::getOperatorToken() {
       operatorTrie &operators = getOperators();
-      operatorTrie::result_t result = operators.getFirst(pos);
+      operatorTrie::result_t result = operators.getLongest(pos);
       // TODO: Print proper error
       OCCA_ERROR("Not able to parse operator",
                  result.success());
