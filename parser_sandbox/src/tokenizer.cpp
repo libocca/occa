@@ -658,26 +658,34 @@ namespace occa {
     }
 
     token_t* charStream::getCharToken(const int encoding) {
+      if (encoding) {
+        std::string encodingStr;
+        getIdentifier(encodingStr);
+      }
       if (*fp.pos != '\'') {
         // TODO: Print proper error
-        // "Not able to parse string"
+        // "Not able to parse char"
         return NULL;
       }
+
       ++fp.pos;
       push();
-      skipTo("\'\n");
+      skipTo("'\n");
       if (*fp.pos == '\n') {
         // TODO: Print proper error
-        // "Unable to find closing '"
+        // "Unable to find closing '
+        popAndRewind();
         return NULL;
       }
-      token_t *token = new charToken(getFileOrigin(),
-                                     encodingType::u,
-                                     str(),
-                                     "_km");
+      const std::string value = str();
       pop();
-      ++fp.pos;
-      return token;
+
+      std::string udf;
+      if (*fp.pos == '_') {
+        getIdentifier(udf);
+      }
+      return new charToken(getFileOrigin(),
+                           encoding, value, udf);
     }
 
     token_t* charStream::getHeaderToken() {

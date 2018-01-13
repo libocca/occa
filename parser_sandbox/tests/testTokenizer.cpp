@@ -260,11 +260,11 @@ void testTokenMethods() {
   testStringToken("LR\"string\""        , (occa::lang::encodingType::L |
                                            occa::lang::encodingType::R));
 
-  // testCharToken("'a'"    , 0);
-  // testCharToken("'\\''"  , 0);
-  // testCharToken("u'\\''" , occa::lang::encodingType::u);
-  // testCharToken("U'\\''" , occa::lang::encodingType::U);
-  // testCharToken("L'\\''" , occa::lang::encodingType::L);
+  testCharToken("'a'"    , 0);
+  testCharToken("'\\''"  , 0);
+  testCharToken("u'\\''" , occa::lang::encodingType::u);
+  testCharToken("U'\\''" , occa::lang::encodingType::U);
+  testCharToken("L'\\''" , occa::lang::encodingType::L);
 
   setHeaderToken("<foobar>");
   OCCA_ASSERT_EQUAL_BINARY(occa::lang::tokenType::header,
