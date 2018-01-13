@@ -4,10 +4,12 @@
 #include "occa/parser/primitive.hpp"
 
 void testLoad();
+void testBadParsing();
 void testToString();
 
 int main(const int argc, const char **argv) {
   testLoad();
+  testBadParsing();
   testToString();
 }
 
@@ -70,7 +72,42 @@ void testLoad() {
                     (double) occa::primitive("-150.1E-1"));
 }
 
+void testBadParsing() {
+  OCCA_TEST_COMPARE(occa::primitiveType::none,
+                    occa::primitive("").type);
+
+  OCCA_TEST_COMPARE(occa::primitiveType::none,
+                    occa::primitive(" ").type);
+
+  OCCA_TEST_COMPARE(occa::primitiveType::none,
+                    occa::primitive("-").type);
+
+  OCCA_TEST_COMPARE(occa::primitiveType::none,
+                    occa::primitive("+").type);
+
+  OCCA_TEST_COMPARE(occa::primitiveType::none,
+                    occa::primitive("-   ").type);
+
+  OCCA_TEST_COMPARE(occa::primitiveType::none,
+                    occa::primitive("+   ").type);
+
+  OCCA_TEST_COMPARE(occa::primitiveType::none,
+                    occa::primitive("0x").type);
+
+  OCCA_TEST_COMPARE(occa::primitiveType::none,
+                    occa::primitive("0b").type);
+
+  OCCA_TEST_COMPARE(occa::primitiveType::none,
+                    occa::primitive("A").type);
+
+  OCCA_TEST_COMPARE(occa::primitiveType::none,
+                    occa::primitive("*").type);
+}
+
 void testToString() {
   OCCA_TEST_COMPARE("68719476735L",
                     (std::string) occa::primitive("0xFFFFFFFFF"));
+
+  OCCA_TEST_COMPARE("NaN",
+                    (std::string) occa::primitive(""));
 }

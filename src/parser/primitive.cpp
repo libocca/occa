@@ -23,6 +23,7 @@
 #include <cstring>
 
 #include "occa/parser/primitive.hpp"
+#include "occa/tools/lex.hpp"
 
 namespace occa {
   primitive::primitive(const char *c) {
@@ -45,28 +46,38 @@ namespace occa {
     const char *c0 = c;
     primitive p;
 
-    if ((strcmp(c, "true")  == 0) ||
-        (strcmp(c, "false") == 0)) {
-      p = (uint8_t) (strcmp(c, "true") == 0);
-      c += (p.value.uint8_ ? 4 : 5);
+    if (strcmp(c, "true")  == 0) {
+      p = true;
+      c += 4;
+      return p;
+    }
+    if (strcmp(c, "false")  == 0) {
+      p = false;
+      c += 5;
       return p;
     }
 
     if ((*c == '+') || (*c == '-')) {
       negative = (*c == '-');
       ++c;
+      lex::skipWhitespace(c);
     }
 
     if (*c == '0') {
       ++digits;
       ++c;
-
       const char C = uppercase(*c);
-
-      if (C == 'B') {
-        return primitive::loadBinary(++c, negative);
-      } else if (C == 'X') {
-        return primitive::loadHex(++c, negative);
+      if ((C == 'B') || (C == 'X')) {
+        if (C == 'B') {
+          p = primitive::loadBinary(++c, negative);
+        } else if (C == 'X') {
+          p = primitive::loadHex(++c, negative);
+        }
+        if (p.type & primitiveType::none) {
+          c = c0;
+          return primitive();
+        }
+        return p;
       } else {
         --c;
       }
@@ -83,9 +94,13 @@ namespace occa {
       ++c;
     }
 
+    if (!digits && !decimal) {
+      c = c0;
+      return p;
+    }
+
     while(*c != '\0') {
       const char C = uppercase(*c);
-
       if (C == 'L') {
         ++longs;
         ++c;
@@ -95,7 +110,7 @@ namespace occa {
       } else if (C == 'E') {
         primitive exp = primitive::load(++c);
         // Check if there was an 'F' in exp
-        float_ = (exp.type & isFloat);
+        float_ = (exp.type & primitiveType::isFloat);
         break;
       } else if (C == 'F') {
         float_ = true;
@@ -108,8 +123,6 @@ namespace occa {
     // If there was something else or no number
     if ((digits == 0) ||
         ((*c != '\0') && !charIsDelimiter(*c))) {
-      p = (void*) NULL;
-      p.type = none;
       c = c0;
       return p;
     }
@@ -152,6 +165,9 @@ namespace occa {
       value = (value << 1) | (*c - '0');
       ++c;
     }
+    if (c == c0) {
+      return primitive();
+    }
 
     const int bits = c - c0 + isNegative;
     if (bits < 8) {
@@ -178,6 +194,9 @@ namespace occa {
       }
       ++c;
     }
+    if (c == c0) {
+      return primitive();
+    }
 
     const int bits = 4*(c - c0) + isNegative;
     if (bits < 8) {
@@ -193,17 +212,19 @@ namespace occa {
   std::string primitive::toString() const {
     std::string str;
     switch(type) {
-    case uint8_  : str = occa::toString((uint64_t) value.uint8_);  break;
-    case uint16_ : str = occa::toString((uint64_t) value.uint16_); break;
-    case uint32_ : str = occa::toString((uint64_t) value.uint32_); break;
-    case uint64_ : str = occa::toString((uint64_t) value.uint64_); break;
-    case int8_   : str = occa::toString((int64_t)  value.int8_);   break;
-    case int16_  : str = occa::toString((int64_t)  value.int16_);  break;
-    case int32_  : str = occa::toString((int64_t)  value.int32_);  break;
-    case int64_  : str = occa::toString((int64_t)  value.int64_);  break;
-    case float_  : str = occa::toString(value.float_);  break;
-    case double_ : str = occa::toString(value.double_); break;
-    default: OCCA_FORCE_ERROR("Type not set");
+    case primitiveType::bool_   : str = (value.bool_ ? "true" : "false");         break;
+    case primitiveType::uint8_  : str = occa::toString((uint64_t) value.uint8_);  break;
+    case primitiveType::uint16_ : str = occa::toString((uint64_t) value.uint16_); break;
+    case primitiveType::uint32_ : str = occa::toString((uint64_t) value.uint32_); break;
+    case primitiveType::uint64_ : str = occa::toString((uint64_t) value.uint64_); break;
+    case primitiveType::int8_   : str = occa::toString((int64_t)  value.int8_);   break;
+    case primitiveType::int16_  : str = occa::toString((int64_t)  value.int16_);  break;
+    case primitiveType::int32_  : str = occa::toString((int64_t)  value.int32_);  break;
+    case primitiveType::int64_  : str = occa::toString((int64_t)  value.int64_);  break;
+    case primitiveType::float_  : str = occa::toString(value.float_);  break;
+    case primitiveType::double_ : str = occa::toString(value.double_); break;
+    default:
+      return "NaN";
     }
 
     if ((str.find("inf") != std::string::npos) ||
@@ -211,7 +232,8 @@ namespace occa {
       return str;
     }
 
-    if (type & (uint64_ | int64_)) {
+    if (type & (primitiveType::uint64_ |
+                primitiveType::int64_)) {
       str += 'L';
     }
     return str;
