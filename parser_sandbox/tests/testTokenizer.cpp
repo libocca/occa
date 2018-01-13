@@ -30,18 +30,42 @@ void testTokenMethods();
 
 std::string streamSource;
 occa::lang::charStream stream(NULL);
+occa::lang::token_t *token = NULL;
 
 int main(const int argc, const char **argv) {
   testSkipMethods();
   testPushPop();
   testPeekMethods();
   testTokenMethods();
+  if (token) {
+    delete token;
+  }
   return 0;
 }
 
 void setStream(const std::string &s) {
   streamSource = s;
   stream = occa::lang::charStream(NULL, streamSource.c_str());
+}
+
+void setToken(const std::string &s) {
+  setStream(s);
+  if (token) {
+    delete token;
+  }
+  token = stream.getToken();
+}
+
+void setHeaderToken(const std::string &s) {
+  setStream(s);
+  if (token) {
+    delete token;
+  }
+  token = stream.getHeaderToken();
+}
+
+int tokenType() {
+  return token ? token->type() : 0;
 }
 
 void testSkipMethods() {
@@ -90,16 +114,16 @@ void testPushPop() {
                     stream.getPosition());
 }
 
-#define testCharPeek(s, type)                                 \
-  setStream(s);                                               \
-  OCCA_ASSERT_EQUAL_BINARY(type |                             \
-                           occa::lang::tokenType::char_,      \
+#define testStringPeek(s, encoding)                                     \
+  setStream(s);                                                         \
+  OCCA_ASSERT_EQUAL_BINARY((encoding << occa::lang::tokenType::encodingShift) | \
+                           occa::lang::tokenType::string,               \
                            stream.peek())
 
-#define testStringPeek(s, type)                               \
-  setStream(s);                                               \
-  OCCA_ASSERT_EQUAL_BINARY(type |                             \
-                           occa::lang::tokenType::string,     \
+#define testCharPeek(s, encoding)                                       \
+  setStream(s);                                                         \
+  OCCA_ASSERT_EQUAL_BINARY((encoding << occa::lang::tokenType::encodingShift) | \
+                           occa::lang::tokenType::char_,                \
                            stream.peek())
 
 void testPeekMethods() {
@@ -112,13 +136,6 @@ void testPeekMethods() {
   setStream("_abcd020230");
   OCCA_ASSERT_EQUAL_BINARY(occa::lang::tokenType::identifier,
                            stream.peek());
-
-  setStream("<foobar>");
-  OCCA_ASSERT_EQUAL_BINARY(occa::lang::tokenType::systemHeader,
-                           stream.peekForHeader());
-  setStream("\"foobar\"");
-  OCCA_ASSERT_EQUAL_BINARY(occa::lang::tokenType::header,
-                           stream.peekForHeader());
 
   setStream("1");
   OCCA_ASSERT_EQUAL_BINARY(occa::lang::tokenType::primitive,
@@ -146,36 +163,115 @@ void testPeekMethods() {
   OCCA_ASSERT_EQUAL_BINARY(occa::lang::tokenType::op,
                            stream.peek());
 
-  testCharPeek("'a'"    , 0);
-  testCharPeek("'\\''"  , 0);
-  testCharPeek("u'\\''" , occa::lang::tokenType::withUType);
-  testCharPeek("U'\\''" , occa::lang::tokenType::withUType);
-  testCharPeek("L'\\''" , occa::lang::tokenType::withUType);
-
   testStringPeek("\"\""                , 0);
   testStringPeek("\"string\\\"string\"", 0);
-  testStringPeek("R\"string\""         , occa::lang::tokenType::withUType);
-  testStringPeek("u8\"string\""        , occa::lang::tokenType::withUType);
-  testStringPeek("u\"string\""         , occa::lang::tokenType::withUType);
-  testStringPeek("U\"string\""         , occa::lang::tokenType::withUType);
-  testStringPeek("L\"string\""         , occa::lang::tokenType::withUType);
-  testStringPeek("u8R\"string\""       , occa::lang::tokenType::withUType);
-  testStringPeek("uR\"string\""        , occa::lang::tokenType::withUType);
-  testStringPeek("UR\"string\""        , occa::lang::tokenType::withUType);
-  testStringPeek("LR\"string\""        , occa::lang::tokenType::withUType);
+  testStringPeek("R\"string\""         , occa::lang::encodingType::R);
+  testStringPeek("u8\"string\""        , occa::lang::encodingType::u8);
+  testStringPeek("u\"string\""         , occa::lang::encodingType::u);
+  testStringPeek("U\"string\""         , occa::lang::encodingType::U);
+  testStringPeek("L\"string\""         , occa::lang::encodingType::L);
+  testStringPeek("u8R\"string\""       , (occa::lang::encodingType::u8 |
+                                          occa::lang::encodingType::R));
+  testStringPeek("uR\"string\""        , (occa::lang::encodingType::u |
+                                          occa::lang::encodingType::R));
+  testStringPeek("UR\"string\""        , (occa::lang::encodingType::U |
+                                          occa::lang::encodingType::R));
+  testStringPeek("LR\"string\""        , (occa::lang::encodingType::L |
+                                          occa::lang::encodingType::R));
 
-  //---[ Failures ]---------------------
-  // setStream("abcd");
-  // OCCA_ASSERT_EQUAL_BINARY(occa::lang::tokenType::identifier,
-  //                   stream.peek());
-  // setStream("_abcd");
-  // OCCA_ASSERT_EQUAL_BINARY(occa::lang::tokenType::identifier,
-  //                   stream.peek());
-  // setStream("_abcd020230");
-  // OCCA_ASSERT_EQUAL_BINARY(occa::lang::tokenType::identifier,
-  //                   stream.peek());
-  // occa::lang::tokenType::none;
+  testCharPeek("'a'"    , 0);
+  testCharPeek("'\\''"  , 0);
+  testCharPeek("u'\\''" , occa::lang::encodingType::u);
+  testCharPeek("U'\\''" , occa::lang::encodingType::U);
+  testCharPeek("L'\\''" , occa::lang::encodingType::L);
+
+  setStream("<foobar>");
+  OCCA_ASSERT_EQUAL_BINARY(occa::lang::tokenType::systemHeader,
+                           stream.peekForHeader());
+  setStream("\"foobar\"");
+  OCCA_ASSERT_EQUAL_BINARY(occa::lang::tokenType::header,
+                           stream.peekForHeader());
 }
 
+#define testStringToken(s, encoding_)                                   \
+  setToken(s);                                                          \
+  OCCA_ASSERT_EQUAL_BINARY(occa::lang::tokenType::string,               \
+                           tokenType())                                 \
+  OCCA_ASSERT_EQUAL_BINARY(encoding_,                                   \
+                           token->to<occa::lang::stringToken>().encoding)
+
+#define testCharToken(s, encoding_)                                     \
+  setToken(s);                                                          \
+  OCCA_ASSERT_EQUAL_BINARY(occa::lang::tokenType::char_,                \
+                           tokenType())                                 \
+  OCCA_ASSERT_EQUAL_BINARY(encoding_,                                   \
+                           token->to<occa::lang::charToken>().encoding)
+
 void testTokenMethods() {
+  setToken("abcd");
+  OCCA_ASSERT_EQUAL_BINARY(occa::lang::tokenType::identifier,
+                           tokenType());
+  setToken("_abcd");
+  OCCA_ASSERT_EQUAL_BINARY(occa::lang::tokenType::identifier,
+                           tokenType());
+  setToken("_abcd020230");
+  OCCA_ASSERT_EQUAL_BINARY(occa::lang::tokenType::identifier,
+                           tokenType());
+
+  setToken("1");
+  OCCA_ASSERT_EQUAL_BINARY(occa::lang::tokenType::primitive,
+                           tokenType());
+  setToken("+2.0");
+  OCCA_ASSERT_EQUAL_BINARY(occa::lang::tokenType::primitive,
+                           tokenType());
+  setToken("+2.0e10");
+  OCCA_ASSERT_EQUAL_BINARY(occa::lang::tokenType::primitive,
+                           tokenType());
+  setToken("+.0e10-10");
+  OCCA_ASSERT_EQUAL_BINARY(occa::lang::tokenType::primitive,
+                           tokenType());
+
+  setToken("+");
+  OCCA_ASSERT_EQUAL_BINARY(occa::lang::tokenType::op,
+                           tokenType());
+  setToken("<");
+  OCCA_ASSERT_EQUAL_BINARY(occa::lang::tokenType::op,
+                           tokenType());
+  setToken("->*");
+  OCCA_ASSERT_EQUAL_BINARY(occa::lang::tokenType::op,
+                           tokenType());
+  setToken("==");
+  OCCA_ASSERT_EQUAL_BINARY(occa::lang::tokenType::op,
+                           tokenType());
+
+  testStringToken("\"\""                , 0);
+  testStringToken("\"string\\\"string\"", 0);
+  testStringToken("R\"string\""         , occa::lang::encodingType::R);
+  testStringToken("u8\"string\""        , occa::lang::encodingType::u8);
+  testStringToken("u\"string\""         , occa::lang::encodingType::u);
+  testStringToken("U\"string\""         , occa::lang::encodingType::U);
+  testStringToken("L\"string\""         , occa::lang::encodingType::L);
+  testStringToken("u8R\"string\""       , (occa::lang::encodingType::u8 |
+                                           occa::lang::encodingType::R));
+  testStringToken("uR\"string\""        , (occa::lang::encodingType::u |
+                                           occa::lang::encodingType::R));
+  testStringToken("UR\"string\""        , (occa::lang::encodingType::U |
+                                           occa::lang::encodingType::R));
+  testStringToken("LR\"string\""        , (occa::lang::encodingType::L |
+                                           occa::lang::encodingType::R));
+
+  // testCharToken("'a'"    , 0);
+  // testCharToken("'\\''"  , 0);
+  // testCharToken("u'\\''" , occa::lang::encodingType::u);
+  // testCharToken("U'\\''" , occa::lang::encodingType::U);
+  // testCharToken("L'\\''" , occa::lang::encodingType::L);
+
+  setHeaderToken("<foobar>");
+  OCCA_ASSERT_EQUAL_BINARY(occa::lang::tokenType::header,
+                           tokenType());
+  OCCA_ASSERT_TRUE(token->to<occa::lang::headerToken>().systemHeader);
+  setHeaderToken("\"foobar\"");
+  OCCA_ASSERT_EQUAL_BINARY(occa::lang::tokenType::header,
+                           tokenType());
+  OCCA_ASSERT_FALSE(token->to<occa::lang::headerToken>().systemHeader);
 }

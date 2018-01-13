@@ -54,6 +54,7 @@ namespace occa {
       extern const int U;
       extern const int L;
       extern const int ux;
+      extern const int bits;
     }
 
     namespace tokenType {
@@ -67,10 +68,11 @@ namespace occa {
       extern const int primitive;
       extern const int op;
 
-      extern const int withUType;
-      extern const int withUDF;
       extern const int char_;
       extern const int string;
+      extern const int withUDF;
+      extern const int withEncoding;
+      extern const int encodingShift;
     }
 
     class token_t {
@@ -79,6 +81,27 @@ namespace occa {
 
       token_t(const fileOrigin &origin_);
       virtual ~token_t();
+
+      template <class TM>
+      inline bool is() const {
+        return (dynamic_cast<const TM*>(this) != NULL);
+      }
+
+      template <class TM>
+      inline TM& to() {
+        TM *ptr = dynamic_cast<TM*>(this);
+        OCCA_ERROR("Unable to cast token_t::to",
+                   ptr != NULL);
+        return *ptr;
+      }
+
+      template <class TM>
+      inline const TM& to() const {
+        const TM *ptr = dynamic_cast<const TM*>(this);
+        OCCA_ERROR("Unable to cast token_t::to",
+                   ptr != NULL);
+        return *ptr;
+      }
 
       virtual int type() const = 0;
 
@@ -126,12 +149,12 @@ namespace occa {
 
     class charToken : public token_t {
     public:
-      int uType;
+      int encoding;
       std::string value;
       std::string udf;
 
       charToken(const fileOrigin &origin_,
-                int uType_,
+                int encoding_,
                 const std::string &value_,
                 const std::string &udf_);
       virtual ~charToken();
@@ -143,12 +166,12 @@ namespace occa {
 
     class stringToken : public token_t {
     public:
-      int uType;
+      int encoding;
       std::string value;
       std::string udf;
 
       stringToken(const fileOrigin &origin_,
-                  int uType_,
+                  int encoding_,
                   const std::string &value_,
                   const std::string &udf_);
       virtual ~stringToken();
@@ -202,7 +225,7 @@ namespace occa {
       void popAndRewind();
       std::string str();
 
-      void countSkippedLines(const char *start);
+      void countSkippedLines();
 
       void skipTo(const char delimiter);
       void skipTo(const char *delimiters);
@@ -215,12 +238,16 @@ namespace occa {
       int peekForIdentifier();
       int peekForHeader();
 
+      void getIdentifier(std::string &value);
+      void getString(std::string &value,
+                     const int encoding = 0);
+
       token_t* getToken();
       token_t* getIdentifierToken();
       token_t* getPrimitiveToken();
       token_t* getOperatorToken();
-      token_t* getStringToken();
-      token_t* getCharToken();
+      token_t* getStringToken(const int encoding);
+      token_t* getCharToken(const int encoding);
       token_t* getHeaderToken();
     };
     //==================================

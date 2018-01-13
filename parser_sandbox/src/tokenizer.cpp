@@ -112,23 +112,26 @@ namespace occa {
       const int U    = (1 << 3);
       const int L    = (1 << 4);
       const int ux   = (u8 | u | U | L);
+      const int bits = 5;
     }
 
     namespace tokenType {
-      const int none         = 0;
+      const int none          = 0;
 
-      const int identifier   = (1 << 0);
+      const int identifier    = (1 << 0);
 
-      const int systemHeader = (1 << 1);
-      const int header       = (3 << 1);
+      const int systemHeader  = (1 << 1);
+      const int header        = (3 << 1);
 
-      const int primitive    = (1 << 3);
-      const int op           = (1 << 4);
+      const int primitive     = (1 << 3);
+      const int op            = (1 << 4);
 
-      const int withUType    = (1 << 5);
-      const int withUDF      = (1 << 6);
-      const int char_        = (1 << 7);
-      const int string       = (1 << 8);
+      const int char_         = (1 << 5);
+      const int string        = (1 << 6);
+      const int withUDF       = (1 << 7);
+      const int withEncoding  = ((encodingType::ux |
+                                  encodingType::R) << 8);
+      const int encodingShift = 8;
     }
 
     token_t::token_t(const fileOrigin &origin_) :
@@ -182,11 +185,11 @@ namespace occa {
     }
 
     charToken::charToken(const fileOrigin &origin_,
-                         int uType_,
+                         int encoding_,
                          const std::string &value_,
                          const std::string &udf_) :
       token_t(origin_),
-      uType(uType_),
+      encoding(encoding_),
       value(value_),
       udf(udf_) {}
 
@@ -197,11 +200,11 @@ namespace occa {
     }
 
     void charToken::print(printer &pout) const {
-      if (uType & encodingType::u) {
+      if (encoding & encodingType::u) {
         pout << 'u';
-      } else if (uType & encodingType::U) {
+      } else if (encoding & encodingType::U) {
         pout << 'U';
-      } else if (uType & encodingType::L) {
+      } else if (encoding & encodingType::L) {
         pout << 'L';
       }
       pout << '\'' << value << '\'' << udf;
@@ -210,11 +213,11 @@ namespace occa {
     stringToken::~stringToken() {}
 
     stringToken::stringToken(const fileOrigin &origin_,
-                             int uType_,
+                             int encoding_,
                              const std::string &value_,
                              const std::string &udf_) :
       token_t(origin_),
-      uType(uType_),
+      encoding(encoding_),
       value(value_),
       udf(udf_) {}
 
@@ -223,18 +226,18 @@ namespace occa {
     }
 
     void stringToken::print(printer &pout) const {
-      if (uType & encodingType::ux) {
-        if (uType & encodingType::u8) {
+      if (encoding & encodingType::ux) {
+        if (encoding & encodingType::u8) {
           pout << "u8";
-        } else if (uType & encodingType::u) {
+        } else if (encoding & encodingType::u) {
           pout << 'u';
-        } else if (uType & encodingType::U) {
+        } else if (encoding & encodingType::U) {
           pout << 'U';
-        } else if (uType & encodingType::L) {
+        } else if (encoding & encodingType::L) {
           pout << 'L';
         }
       }
-      if (uType & encodingType::R) {
+      if (encoding & encodingType::R) {
         pout << 'R';
       }
       pout << '"' << value << '"' << udf;
@@ -378,8 +381,12 @@ namespace occa {
       return std::string(last.pos, fp.pos - last.pos);
     }
 
-    void charStream::countSkippedLines(const char *start) {
-      const char *pos = start;
+    void charStream::countSkippedLines() {
+      if (stack.size() == 0) {
+        return;
+      }
+      filePosition last = stack.back();
+      const char *pos = last.pos;
       const char *end = fp.pos;
       while (pos < end) {
         if (*pos == '\\') {
@@ -495,17 +502,19 @@ namespace occa {
       popAndRewind();
 
       // [u8R]"foo" or [u]'foo'
-      if ((type & tokenType::string) &&
-          getStringEncoding(identifier)) {
-        // u8R["foo"]
-        return (tokenType::withUType
-                | tokenType::string);
+      if (type & tokenType::string) {
+        const int encoding = getStringEncoding(identifier);
+        if (encoding) {
+        return (tokenType::string |
+                (encoding << tokenType::encodingShift));
+        }
       }
-      if ((type & tokenType::char_) &&
-          getCharacterEncoding(identifier)) {
-        // u['foo']
-        return (tokenType::withUType
-                | tokenType::char_);
+      if (type & tokenType::char_) {
+        const int encoding = getStringEncoding(identifier);
+        if (encoding) {
+          return (tokenType::char_ |
+                  (encoding << tokenType::encodingShift));
+        }
       }
       return tokenType::identifier;
     }
@@ -527,14 +536,46 @@ namespace occa {
       return tokenType::none;
     }
 
+    void charStream::getIdentifier(std::string &value) {
+      if (!lex::charIsIn(*fp.pos, charcodes::identifierStart)) {
+        return;
+      }
+      push();
+      ++fp.pos;
+      skipFrom(charcodes::identifier);
+      value = str();
+      pop();
+    }
+
+    void charStream::getString(std::string &value,
+                               const int encoding) {
+      if (*fp.pos != '"') {
+        return;
+      }
+      push();
+      ++fp.pos;
+      push();
+      if (!(encoding & encodingType::R)) {
+        skipTo("\"\n");
+        if (*fp.pos == '\n') {
+          pop();
+          popAndRewind();
+          return;
+        }
+      } else {
+        skipTo("\"");
+      }
+      value = str();
+      pop();
+      pop();
+      ++fp.pos;
+    }
+
     token_t* charStream::getToken() {
       skipWhitespace();
       int type = peek();
       if (type & tokenType::identifier) {
         return getIdentifierToken();
-      }
-      if (type & tokenType::header) {
-        return getHeaderToken();
       }
       if (type & tokenType::primitive) {
         return getPrimitiveToken();
@@ -543,33 +584,37 @@ namespace occa {
         return getOperatorToken();
       }
       if (type & tokenType::char_) {
-        return getCharToken();
+        return getCharToken(type >> tokenType::encodingShift);
       }
       if (type & tokenType::string) {
-        return getStringToken();
+        return getStringToken(type >> tokenType::encodingShift);
       }
       return NULL;
     }
 
     token_t* charStream::getIdentifierToken() {
-      // TODO: Print proper error
-      OCCA_ERROR("Not able to parse identifier",
-                 lex::charIsIn(*fp.pos, charcodes::identifierStart));
-      push();
-      ++fp.pos;
-      skipFrom(charcodes::identifier);
+      if (!lex::charIsIn(*fp.pos, charcodes::identifierStart)) {
+        // TODO: Print proper error
+        // "Not able to parse identifier"
+        return NULL;
+      }
+      std::string value;
+      getIdentifier(value);
       return new identifierToken(getFileOrigin(),
-                                 str());
-      pop();
+                                 value);
     }
 
     token_t* charStream::getPrimitiveToken() {
-      const char *start = fp.pos;
+      push();
       primitive value = primitive::load(fp.pos);
-      // TODO: Print proper error
-      OCCA_ERROR("Not able to parse primitive",
-                 !value.isNaN());
-      countSkippedLines(start);
+      if (value.isNaN()) {
+        // TODO: Print proper error
+        // "Not able to parse primitive"
+        popAndRewind();
+        return NULL;
+      }
+      countSkippedLines();
+      pop();
       return new primitiveToken(getFileOrigin(),
                                 value);
     }
@@ -577,45 +622,54 @@ namespace occa {
     token_t* charStream::getOperatorToken() {
       operatorTrie &operators = getOperators();
       operatorTrie::result_t result = operators.getLongest(fp.pos);
-      // TODO: Print proper error
-      OCCA_ERROR("Not able to parse operator",
-                 result.success());
+      if (!result.success()) {
+        // TODO: Print proper error
+        // "Not able to parse operator"
+        return NULL;
+      }
+      fp.pos += result.length;
       return new operatorToken(getFileOrigin(),
                                *(result.value()));
     }
 
-    token_t* charStream::getStringToken() {
+    token_t* charStream::getStringToken(const int encoding) {
+      if (encoding) {
+        std::string encodingStr;
+        getIdentifier(encodingStr);
+      }
       if (*fp.pos != '"') {
         // TODO: Print proper error
-        OCCA_FORCE_ERROR("Not able to parse string");
+        // "Not able to parse string"
+        return NULL;
       }
-      ++fp.pos;
-      push();
-      skipTo("\"\n");
-      if (*fp.pos == '\n') {
+      const char *start = fp.pos;
+      std::string value, udf;
+      getString(value, encoding);
+      if (fp.pos == start) {
         // TODO: Print proper error
-        OCCA_FORCE_ERROR("Unable to find closing \"");
+        // "Unable to find closing \"
+        return NULL;
       }
-      token_t *token = new stringToken(getFileOrigin(),
-                                       encodingType::u8,
-                                       str(),
-                                       "_km");
-      pop();
-      ++fp.pos;
-      return token;
+      if (*fp.pos == '_') {
+        getIdentifier(udf);
+      }
+      return new stringToken(getFileOrigin(),
+                             encoding, value, udf);
     }
 
-    token_t* charStream::getCharToken() {
+    token_t* charStream::getCharToken(const int encoding) {
       if (*fp.pos != '\'') {
         // TODO: Print proper error
-        OCCA_FORCE_ERROR("Not able to parse string");
+        // "Not able to parse string"
+        return NULL;
       }
       ++fp.pos;
       push();
       skipTo("\'\n");
       if (*fp.pos == '\n') {
         // TODO: Print proper error
-        OCCA_FORCE_ERROR("Unable to find closing '");
+        // "Unable to find closing '"
+        return NULL;
       }
       token_t *token = new charToken(getFileOrigin(),
                                      encodingType::u,
@@ -631,27 +685,27 @@ namespace occa {
       if (type & tokenType::op) {
         ++fp.pos;
         push();
-        token_t *token = new headerToken(getFileOrigin(),
-                                         true,
-                                         str());
         skipTo(">\n");
         if (*fp.pos == '\n') {
           // TODO: Print proper error
-          OCCA_FORCE_ERROR("Unable to find closing >");
+          // "Unable to find closing >"
+          return NULL;
         }
+        token_t *token = new headerToken(getFileOrigin(),
+                                         true,
+                                         str());
         ++fp.pos;
         pop();
         return token;
       }
-      if (type & tokenType::string) {
-        stringToken &token = *((stringToken*) getStringToken());
-        std::string value = token.value;
-        delete &token;
-        return new headerToken(getFileOrigin(), false, value);
+      if (!(type & tokenType::string)) {
+        // TODO: Print proper error
+        // "Not able to parse header"
+        return NULL;
       }
-      // TODO: Print proper error
-      OCCA_FORCE_ERROR("Not able to parse header");
-      return new headerToken(getFileOrigin(), false, "");
+      std::string value;
+      getString(value);
+      return new headerToken(getFileOrigin(), false, value);
     }
     //==================================
 
