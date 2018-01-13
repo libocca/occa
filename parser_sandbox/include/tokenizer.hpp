@@ -46,33 +46,31 @@ namespace occa {
     operatorTrie& getOperators();
 
     //---[ Tokens ]---------------------
-    class encodingType {
-    public:
-      static const int none = 0;
-      static const int R    = (1 << 0);
-      static const int u8   = (1 << 1);
-      static const int u    = (1 << 2);
-      static const int U    = (1 << 3);
-      static const int L    = (1 << 4);
-      static const int ux   = (u8 | u | U | L);
+    namespace encodingType {
+      extern const int none;
+      extern const int R;
+      extern const int u8;
+      extern const int u;
+      extern const int U;
+      extern const int L;
+      extern const int ux;
     };
 
-    class tokenType {
-    public:
-      static const int none         = 0;
+    namespace tokenType {
+      extern const int none;
 
-      static const int identifier   = (1 << 0);
+      extern const int identifier;
 
-      static const int systemHeader = (1 << 1);
-      static const int header       = (3 << 1);
+      extern const int systemHeader;
+      extern const int header;
 
-      static const int primitive    = (1 << 3);
-      static const int op           = (1 << 4);
+      extern const int primitive;
+      extern const int op;
 
-      static const int withUType    = (1 << 5);
-      static const int withUDF      = (1 << 6);
-      static const int char_        = (1 << 7);
-      static const int string       = (1 << 8);
+      extern const int withUType;
+      extern const int withUDF;
+      extern const int char_;
+      extern const int string;
     };
 
     class token_t {

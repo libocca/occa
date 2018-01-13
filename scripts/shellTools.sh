@@ -457,6 +457,10 @@ function compilerSharedFlag {
     esac
 }
 
+function compilerPthreadFlags {
+    command echo "-lpthread"
+}
+
 function compilerOpenMPFlags {
     local vendor=$(compilerVendor $1)
 

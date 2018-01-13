@@ -104,6 +104,33 @@ namespace occa {
     }
 
     //---[ Tokens ]---------------------
+    namespace encodingType {
+      const int none = 0;
+      const int R    = (1 << 0);
+      const int u8   = (1 << 1);
+      const int u    = (1 << 2);
+      const int U    = (1 << 3);
+      const int L    = (1 << 4);
+      const int ux   = (u8 | u | U | L);
+    };
+
+    namespace tokenType {
+      const int none         = 0;
+
+      const int identifier   = (1 << 0);
+
+      const int systemHeader = (1 << 1);
+      const int header       = (3 << 1);
+
+      const int primitive    = (1 << 3);
+      const int op           = (1 << 4);
+
+      const int withUType    = (1 << 5);
+      const int withUDF      = (1 << 6);
+      const int char_        = (1 << 7);
+      const int string       = (1 << 8);
+    };
+
     token_t::token_t(const fileOrigin &origin_) :
       origin(origin_) {}
 

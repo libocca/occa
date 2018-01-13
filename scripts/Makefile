@@ -176,10 +176,11 @@ compilerReleaseFlags = $(shell . $(OCCA_DIR)/scripts/shellTools.sh; compilerRele
 compilerDebugFlags   = $(shell . $(OCCA_DIR)/scripts/shellTools.sh; compilerDebugFlags   "$(compiler)")
 compilerPicFlag      = $(shell . $(OCCA_DIR)/scripts/shellTools.sh; compilerPicFlag      "$(compiler)")
 compilerSharedFlag   = $(shell . $(OCCA_DIR)/scripts/shellTools.sh; compilerSharedFlag   "$(compiler)")
+compilerPthreadFlag  = $(shell . $(OCCA_DIR)/scripts/shellTools.sh; compilerPthreadFlags "$(compiler)")
 
 compilerSupportsMPI    = $(shell . $(OCCA_DIR)/scripts/shellTools.sh; compilerSupportsMPI    "$(compiler)")
 compilerSupportsOpenMP = $(shell . $(OCCA_DIR)/scripts/shellTools.sh; compilerSupportsOpenMP "$(compiler)")
-compilerOpenMPFlags    = $(shell . $(OCCA_DIR)/scripts/shellTools.sh; compilerOpenMPFlags    "$(compiler)")
+compilerOpenMPFlag     = $(shell . $(OCCA_DIR)/scripts/shellTools.sh; compilerOpenMPFlag     "$(compiler)")
 #=================================================
 
 
@@ -188,6 +189,7 @@ debugFlags   = $(call compilerDebugFlags)
 releaseFlags = $(call compilerReleaseFlags)
 picFlag      = $(call compilerPicFlag)
 sharedFlag   = $(call compilerSharedFlag)
+pthreadFlag  = $(call compilerPthreadFlag)
 #=================================================
 
 
@@ -244,7 +246,7 @@ else
   openmpEnabled  = $(call compilerSupportsOpenMP)
 
   ifeq ($(openmpEnabled),1)
-    flags += $(call compilerOpenMPFlags)
+    flags += $(call compilerOpenMPFlag)
   endif
 endif
 
