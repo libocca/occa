@@ -54,7 +54,7 @@ namespace occa {
       extern const int U;
       extern const int L;
       extern const int ux;
-    };
+    }
 
     namespace tokenType {
       extern const int none;
@@ -71,7 +71,7 @@ namespace occa {
       extern const int withUDF;
       extern const int char_;
       extern const int string;
-    };
+    }
 
     class token_t {
     public:

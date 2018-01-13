@@ -90,92 +90,89 @@ void testPushPop() {
                     stream.getPosition());
 }
 
-void testCharPeek(const std::string &s) {
-  setStream(s);
-  OCCA_ASSERT_EQUAL(occa::lang::tokenType::withUType |
-                    occa::lang::tokenType::char_,
-                    stream.peek());
-}
+#define testCharPeek(s, type)                                 \
+  setStream(s);                                               \
+  OCCA_ASSERT_EQUAL_BINARY(type |                             \
+                           occa::lang::tokenType::char_,      \
+                           stream.peek())
 
-void testStringPeek(const std::string &s) {
-  setStream(s);
-  OCCA_ASSERT_EQUAL(occa::lang::tokenType::withUType |
-                    occa::lang::tokenType::string,
-                    stream.peek());
-}
+#define testStringPeek(s, type)                               \
+  setStream(s);                                               \
+  OCCA_ASSERT_EQUAL_BINARY(type |                             \
+                           occa::lang::tokenType::string,     \
+                           stream.peek())
 
 void testPeekMethods() {
   setStream("abcd");
-  OCCA_ASSERT_EQUAL(occa::lang::tokenType::identifier,
-                    stream.peek());
+  OCCA_ASSERT_EQUAL_BINARY(occa::lang::tokenType::identifier,
+                           stream.peek());
   setStream("_abcd");
-  OCCA_ASSERT_EQUAL(occa::lang::tokenType::identifier,
-                    stream.peek());
+  OCCA_ASSERT_EQUAL_BINARY(occa::lang::tokenType::identifier,
+                           stream.peek());
   setStream("_abcd020230");
-  OCCA_ASSERT_EQUAL(occa::lang::tokenType::identifier,
-                    stream.peek());
+  OCCA_ASSERT_EQUAL_BINARY(occa::lang::tokenType::identifier,
+                           stream.peek());
 
   setStream("<foobar>");
-  OCCA_ASSERT_EQUAL(occa::lang::tokenType::systemHeader,
-                    stream.peekForHeader());
+  OCCA_ASSERT_EQUAL_BINARY(occa::lang::tokenType::systemHeader,
+                           stream.peekForHeader());
   setStream("\"foobar\"");
-  OCCA_ASSERT_EQUAL(occa::lang::tokenType::header,
-                    stream.peekForHeader());
+  OCCA_ASSERT_EQUAL_BINARY(occa::lang::tokenType::header,
+                           stream.peekForHeader());
 
   setStream("1");
-  OCCA_ASSERT_EQUAL(occa::lang::tokenType::primitive,
-                    stream.peek());
+  OCCA_ASSERT_EQUAL_BINARY(occa::lang::tokenType::primitive,
+                           stream.peek());
   setStream("+2.0");
-  OCCA_ASSERT_EQUAL(occa::lang::tokenType::primitive,
-                    stream.peek());
+  OCCA_ASSERT_EQUAL_BINARY(occa::lang::tokenType::primitive,
+                           stream.peek());
   setStream("+2.0e10");
-  OCCA_ASSERT_EQUAL(occa::lang::tokenType::primitive,
-                    stream.peek());
+  OCCA_ASSERT_EQUAL_BINARY(occa::lang::tokenType::primitive,
+                           stream.peek());
   setStream("+.0e10-10");
-  OCCA_ASSERT_EQUAL(occa::lang::tokenType::primitive,
-                    stream.peek());
+  OCCA_ASSERT_EQUAL_BINARY(occa::lang::tokenType::primitive,
+                           stream.peek());
 
   setStream("+");
-  OCCA_ASSERT_EQUAL(occa::lang::tokenType::op,
-                    stream.peek());
+  OCCA_ASSERT_EQUAL_BINARY(occa::lang::tokenType::op,
+                           stream.peek());
   setStream("<");
-  OCCA_ASSERT_EQUAL(occa::lang::tokenType::op,
-                    stream.peek());
+  OCCA_ASSERT_EQUAL_BINARY(occa::lang::tokenType::op,
+                           stream.peek());
   setStream("->*");
-  OCCA_ASSERT_EQUAL(occa::lang::tokenType::op,
-                    stream.peek());
+  OCCA_ASSERT_EQUAL_BINARY(occa::lang::tokenType::op,
+                           stream.peek());
   setStream("==");
-  OCCA_ASSERT_EQUAL(occa::lang::tokenType::op,
-                    stream.peek());
+  OCCA_ASSERT_EQUAL_BINARY(occa::lang::tokenType::op,
+                           stream.peek());
 
-  testCharPeek("'a'");
-  testCharPeek("'\\''");
-  testCharPeek("u8'\\''");
-  testCharPeek("u'\\''");
-  testCharPeek("U'\\''");
-  testCharPeek("L'\\''");
+  testCharPeek("'a'"    , 0);
+  testCharPeek("'\\''"  , 0);
+  testCharPeek("u'\\''" , occa::lang::tokenType::withUType);
+  testCharPeek("U'\\''" , occa::lang::tokenType::withUType);
+  testCharPeek("L'\\''" , occa::lang::tokenType::withUType);
 
-  testStringPeek("");
-  testStringPeek("\"string\\\"string\"");
-  testStringPeek("R\"string\"");
-  testStringPeek("u8\"string\"");
-  testStringPeek("u\"string\"");
-  testStringPeek("U\"string\"");
-  testStringPeek("L\"string\"");
-  testStringPeek("u8R\"string\"");
-  testStringPeek("uR\"string\"");
-  testStringPeek("UR\"string\"");
-  testStringPeek("LR\"string\"");
+  testStringPeek("\"\""                , 0);
+  testStringPeek("\"string\\\"string\"", 0);
+  testStringPeek("R\"string\""         , occa::lang::tokenType::withUType);
+  testStringPeek("u8\"string\""        , occa::lang::tokenType::withUType);
+  testStringPeek("u\"string\""         , occa::lang::tokenType::withUType);
+  testStringPeek("U\"string\""         , occa::lang::tokenType::withUType);
+  testStringPeek("L\"string\""         , occa::lang::tokenType::withUType);
+  testStringPeek("u8R\"string\""       , occa::lang::tokenType::withUType);
+  testStringPeek("uR\"string\""        , occa::lang::tokenType::withUType);
+  testStringPeek("UR\"string\""        , occa::lang::tokenType::withUType);
+  testStringPeek("LR\"string\""        , occa::lang::tokenType::withUType);
 
   //---[ Failures ]---------------------
   // setStream("abcd");
-  // OCCA_ASSERT_EQUAL(occa::lang::tokenType::identifier,
+  // OCCA_ASSERT_EQUAL_BINARY(occa::lang::tokenType::identifier,
   //                   stream.peek());
   // setStream("_abcd");
-  // OCCA_ASSERT_EQUAL(occa::lang::tokenType::identifier,
+  // OCCA_ASSERT_EQUAL_BINARY(occa::lang::tokenType::identifier,
   //                   stream.peek());
   // setStream("_abcd020230");
-  // OCCA_ASSERT_EQUAL(occa::lang::tokenType::identifier,
+  // OCCA_ASSERT_EQUAL_BINARY(occa::lang::tokenType::identifier,
   //                   stream.peek());
   // occa::lang::tokenType::none;
 }

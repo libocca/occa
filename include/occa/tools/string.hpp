@@ -233,6 +233,26 @@ namespace occa {
     }
   }
 
+  template <class TM>
+  std::string stringifySetBits(const TM value) {
+    if (value == 0) {
+      return "0";
+    }
+    std::stringstream ss;
+    const int bits = (int) (8 * sizeof(TM));
+    bool hasBits = false;
+    for (int i = 0; i < bits; ++i) {
+      if (value & (((TM) 1) << i)) {
+        if (hasBits) {
+          ss << ", ";
+        }
+        ss << i;
+        hasBits = true;
+      }
+    }
+    return ss.str();
+  }
+
   std::string stringifyBytes(udim_t bytes);
 
   //---[ Vector Methods ]---------------

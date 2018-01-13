@@ -23,6 +23,233 @@
 
 namespace occa {
   namespace lang {
+    namespace operatorType {
+      const optype_t not_              = (1L << 0);
+      const optype_t positive          = (1L << 1);
+      const optype_t negative          = (1L << 2);
+      const optype_t tilde             = (1L << 3);
+      const optype_t leftIncrement     = (1L << 4);
+      const optype_t rightIncrement    = (1L << 5);
+      const optype_t increment         = (leftIncrement |
+                                          rightIncrement);
+      const optype_t leftDecrement     = (1L << 6);
+      const optype_t rightDecrement    = (1L << 7);
+      const optype_t decrement         = (leftDecrement |
+                                          rightDecrement);
+
+      const optype_t add               = (1L << 8);
+      const optype_t sub               = (1L << 9);
+      const optype_t mult              = (1L << 10);
+      const optype_t div               = (1L << 11);
+      const optype_t mod               = (1L << 12);
+      const optype_t arithmetic        = (add  |
+                                          sub  |
+                                          mult |
+                                          div  |
+                                          mod);
+
+      const optype_t lessThan          = (1L << 13);
+      const optype_t lessThanEq        = (1L << 14);
+      const optype_t equal             = (1L << 15);
+      const optype_t notEqual          = (1L << 16);
+      const optype_t greaterThan       = (1L << 17);
+      const optype_t greaterThanEq     = (1L << 18);
+      const optype_t comparison        = (lessThan    |
+                                          lessThanEq  |
+                                          equal       |
+                                          notEqual    |
+                                          greaterThan |
+                                          greaterThanEq);
+
+      const optype_t and_              = (1L << 19);
+      const optype_t or_               = (1L << 20);
+      const optype_t boolean           = (and_ |
+                                          or_);
+
+      const optype_t bitAnd            = (1L << 21);
+      const optype_t bitOr             = (1L << 22);
+      const optype_t xor_              = (1L << 23);
+      const optype_t leftShift         = (1L << 24);
+      const optype_t rightShift        = (1L << 25);
+      const optype_t shift             = (leftShift |
+                                          rightShift);
+      const optype_t bitOp             = (bitAnd    |
+                                          bitOr     |
+                                          xor_      |
+                                          leftShift |
+                                          rightShift);
+
+      const optype_t assign            = (1L << 26);
+      const optype_t addEq             = (1L << 27);
+      const optype_t subEq             = (1L << 28);
+      const optype_t multEq            = (1L << 29);
+      const optype_t divEq             = (1L << 30);
+      const optype_t modEq             = (1L << 31);
+      const optype_t andEq             = (1L << 32);
+      const optype_t orEq              = (1L << 33);
+      const optype_t xorEq             = (1L << 34);
+      const optype_t leftShiftEq       = (1L << 35);
+      const optype_t rightShiftEq      = (1L << 36);
+      const optype_t assignment        = (assign      |
+                                          addEq       |
+                                          subEq       |
+                                          multEq      |
+                                          divEq       |
+                                          modEq       |
+                                          andEq       |
+                                          orEq        |
+                                          xorEq       |
+                                          leftShiftEq |
+                                          rightShiftEq);
+
+      const optype_t comma             = (1L << 37);
+      const optype_t scope             = (1L << 38);
+      const optype_t dot               = (1L << 39);
+      const optype_t dotStar           = (1L << 40);
+      const optype_t arrow             = (1L << 41);
+      const optype_t arrowStar         = (1L << 42);
+
+      const optype_t leftUnary         = (not_          |
+                                          positive      |
+                                          negative      |
+                                          tilde         |
+                                          leftIncrement |
+                                          rightDecrement);
+
+      const optype_t rightUnary        = (rightIncrement |
+                                          rightDecrement);
+
+      const optype_t binary            = (add           |
+                                          sub           |
+                                          mult          |
+                                          div           |
+                                          mod           |
+
+                                          lessThan      |
+                                          lessThanEq    |
+                                          equal         |
+                                          notEqual      |
+                                          greaterThan   |
+                                          greaterThanEq |
+
+                                          and_          |
+                                          or_           |
+                                          bitAnd        |
+                                          bitOr         |
+                                          xor_          |
+                                          leftShift     |
+                                          rightShift    |
+
+                                          assign        |
+                                          addEq         |
+                                          subEq         |
+                                          multEq        |
+                                          divEq         |
+                                          modEq         |
+                                          andEq         |
+                                          orEq          |
+                                          xorEq         |
+
+                                          leftShiftEq   |
+                                          rightShiftEq  |
+
+                                          comma         |
+                                          scope         |
+                                          dot           |
+                                          dotStar       |
+                                          arrow         |
+                                          arrowStar);
+
+      const optype_t ternary           = (3L << 43);
+      const optype_t colon             = (1L << 44);
+
+      const optype_t braceStart        = (1L << 45);
+      const optype_t braceEnd          = (1L << 46);
+      const optype_t bracketStart      = (1L << 47);
+      const optype_t bracketEnd        = (1L << 48);
+      const optype_t parenthesesStart  = (1L << 49);
+      const optype_t parenthesesEnd    = (1L << 50);
+
+      const optype_t braces            = (braceStart       |
+                                          braceEnd);
+      const optype_t brackets          = (bracketStart     |
+                                          bracketEnd);
+      const optype_t parentheses       = (parenthesesStart |
+                                          parenthesesEnd);
+
+      const optype_t pair              = (braceStart       |
+                                          braceEnd         |
+                                          bracketStart     |
+                                          bracketEnd       |
+                                          parenthesesStart |
+                                          parenthesesEnd);
+
+      const optype_t pairStart         = (braceStart       |
+                                          bracketStart     |
+                                          parenthesesStart);
+
+      const optype_t pairEnd           = (braceEnd         |
+                                          bracketEnd       |
+                                          parenthesesEnd);
+
+      const optype_t hash              = (1L << 51);
+      const optype_t hashhash          = (1L << 52);
+      const optype_t preprocessor      = (hash |
+                                          hashhash);
+
+      const optype_t semicolon         = (1L << 53);
+      const optype_t ellipsis          = (1L << 54);
+
+      const optype_t special           = (hash           |
+                                          hashhash       |
+                                          semicolon      |
+                                          ellipsis);
+
+      const optype_t overloadable      = (not_           |
+                                          positive       |
+                                          negative       |
+                                          tilde          |
+                                          leftIncrement  |
+                                          leftDecrement  |
+                                          rightIncrement |
+                                          rightDecrement |
+
+                                          add            |
+                                          sub            |
+                                          mult           |
+                                          div            |
+                                          mod            |
+
+                                          lessThan       |
+                                          lessThanEq     |
+                                          equal          |
+                                          notEqual       |
+                                          greaterThan    |
+                                          greaterThanEq  |
+
+                                          and_           |
+                                          or_            |
+                                          bitAnd         |
+                                          bitOr          |
+                                          xor_           |
+                                          leftShift      |
+                                          rightShift     |
+
+                                          assign         |
+                                          addEq          |
+                                          subEq          |
+                                          multEq         |
+                                          divEq          |
+                                          modEq          |
+                                          andEq          |
+                                          orEq           |
+                                          xorEq          |
+                                          leftShiftEq    |
+                                          rightShiftEq   |
+
+                                          comma);
+    }
+
     namespace op {
       //---[ Left Unary ]---------------
       const operator_t not_             ("!"  , operatorType::not_            , 1);

@@ -21,17 +21,30 @@
  */
 
 #include "occa/defines.hpp"
+#include "occa/tools/string.hpp"
 #include "occa/tools/sys.hpp"
 
-#define OCCA_ASSERT_EQUAL(a, b) OCCA_ERROR("Comparison Failed",        \
-                                           occa::test::assertEqual(a, b));
+#define OCCA_ASSERT_EQUAL(a, b)                 \
+  OCCA_ERROR("Comparison Failed",               \
+             occa::test::assertEqual(a, b));
 
-#define OCCA_ASSERT_NOT_EQUAL(a, b) OCCA_ERROR("Comparison Failed",        \
-                                               occa::test::assertNotEqual(a, b));
+#define OCCA_ASSERT_NOT_EQUAL(a, b)             \
+  OCCA_ERROR("Comparison Failed",               \
+             occa::test::assertNotEqual(a, b));
 
-#define OCCA_ASSERT_TRUE(value) OCCA_ERROR("Comparison Failed", value);
+#define OCCA_ASSERT_EQUAL_BINARY(a, b)              \
+  OCCA_ERROR("Comparison Failed",                   \
+             occa::test::assertEqualBinary(a, b));
 
-#define OCCA_ASSERT_FALSE(value) OCCA_ERROR("Comparison Failed", !value);
+#define OCCA_ASSERT_NOT_EQUAL_BINARY(a, b)            \
+  OCCA_ERROR("Comparison Failed",                     \
+             occa::test::assertNotEqualBinary(a, b));
+
+#define OCCA_ASSERT_TRUE(value)                 \
+  OCCA_ERROR("Comparison Failed", value);
+
+#define OCCA_ASSERT_FALSE(value)                \
+  OCCA_ERROR("Comparison Failed", !value);
 
 namespace occa {
   namespace test {
@@ -55,6 +68,26 @@ namespace occa {
       if (areEqual(a, b)) {
         std::cerr << "a: " << a << '\n'
                   << "b: " << b;
+        return false;
+      }
+      return true;
+    }
+
+    template <class TM1, class TM2>
+    bool assertEqualBinary(const TM1 &a, const TM2 &b) {
+      if (a != b) {
+        std::cerr << "a: " << stringifySetBits(a) << '\n'
+                  << "b: " << stringifySetBits(b);
+        return false;
+      }
+      return true;
+    }
+
+    template <class TM1, class TM2>
+    bool assertNotEqualBinary(const TM1 &a, const TM2 &b) {
+      if (a != b) {
+        std::cerr << "a: " << stringifySetBits(a) << '\n'
+                  << "b: " << stringifySetBits(b);
         return false;
       }
       return true;

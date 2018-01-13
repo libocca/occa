@@ -112,7 +112,7 @@ namespace occa {
       const int U    = (1 << 3);
       const int L    = (1 << 4);
       const int ux   = (u8 | u | U | L);
-    };
+    }
 
     namespace tokenType {
       const int none         = 0;
@@ -129,7 +129,7 @@ namespace occa {
       const int withUDF      = (1 << 6);
       const int char_        = (1 << 7);
       const int string       = (1 << 8);
-    };
+    }
 
     token_t::token_t(const fileOrigin &origin_) :
       origin(origin_) {}
@@ -197,19 +197,12 @@ namespace occa {
     }
 
     void charToken::print(printer &pout) const {
-      if (uType & encodingType::ux) {
-        if (uType & encodingType::u8) {
-          pout << "u8";
-        } else if (uType & encodingType::u) {
-          pout << 'u';
-        } else if (uType & encodingType::U) {
-          pout << 'U';
-        } else if (uType & encodingType::L) {
-          pout << 'L';
-        }
-      }
-      if (uType & encodingType::R) {
-        pout << 'R';
+      if (uType & encodingType::u) {
+        pout << 'u';
+      } else if (uType & encodingType::U) {
+        pout << 'U';
+      } else if (uType & encodingType::L) {
+        pout << 'L';
       }
       pout << '\'' << value << '\'' << udf;
     }
@@ -309,11 +302,12 @@ namespace occa {
 
     int getCharacterEncoding(const std::string &str) {
       const int encoding = getEncodingType(str);
-      if (encoding &&
-          !(encoding & encodingType::u8)) {
-        return encoding;
+      if (!encoding ||
+          (encoding & (encodingType::u8 |
+                       encodingType::R))) {
+        return encodingType::none;
       }
-      return encodingType::none;
+      return encoding;
     }
 
     int getStringEncoding(const std::string &str) {
@@ -472,6 +466,12 @@ namespace occa {
       if (lex::charIsIn(c, charcodes::identifierStart)) {
         return tokenType::identifier;
       }
+      // Primitive must be checked before operators since
+      //   it can start with + or -
+      const char *pos = fp.pos;
+      if (primitive::load(pos).type != primitiveType::none) {
+        return tokenType::primitive;
+      }
       if (lex::charIsIn(c, charcodes::operators)) {
         return tokenType::op;
       }
@@ -481,10 +481,6 @@ namespace occa {
       if (c == '\'') {
         return tokenType::char_;
       }
-      const char *pos = fp.pos;
-      if (primitive::load(pos).type != primitiveType::none) {
-        return tokenType::primitive;
-      }
       // TODO: Print proper error
       OCCA_FORCE_ERROR("Could not find token type");
       return tokenType::none;
@@ -492,22 +488,22 @@ namespace occa {
 
     int charStream::peekForIdentifier() {
       push();
-      // TODO: Fix
-      // skipIdentifier();
+      ++fp.pos;
+      skipFrom(charcodes::identifier);
       const std::string identifier = str();
       int type = shallowPeek();
       popAndRewind();
 
-      // [u8]"foo" or [u8]'foo'
-      if ((type & tokenType::char_) &&
-          getCharacterEncoding(identifier)) {
-        // u8["foo"]
+      // [u8R]"foo" or [u]'foo'
+      if ((type & tokenType::string) &&
+          getStringEncoding(identifier)) {
+        // u8R["foo"]
         return (tokenType::withUType
                 | tokenType::string);
       }
-      if ((type & tokenType::string) &&
-          getStringEncoding(identifier)) {
-        // u8['foo']
+      if ((type & tokenType::char_) &&
+          getCharacterEncoding(identifier)) {
+        // u['foo']
         return (tokenType::withUType
                 | tokenType::char_);
       }
@@ -518,11 +514,11 @@ namespace occa {
       int type = shallowPeek();
       if (type & tokenType::op) {
         push();
-        // TODO: Fix
-        // skipOperator();
-        const std::string op = str();
+        operatorTrie &operators = getOperators();
+        operatorTrie::result_t result = operators.getLongest(fp.pos);
         popAndRewind();
-        if (op == "<") {
+        if (result.success() &&
+            (result.value()->optype & operatorType::lessThan)) {
           return tokenType::systemHeader;
         }
       } else if (type & tokenType::string) {
