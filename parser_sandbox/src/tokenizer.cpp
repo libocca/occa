@@ -86,10 +86,14 @@ namespace occa {
     token_t::token_t(fileOrigin *origin_) :
       origin(origin_) {}
 
+    token_t::~token_t() {}
+
     identifierToken::identifierToken(fileOrigin *origin_,
                                      const std::string &value_) :
       token_t(origin_),
       value(value_) {}
+
+    identifierToken::~identifierToken() {}
 
     int identifierToken::type() const {
       return tokenType::identifier;
@@ -104,6 +108,8 @@ namespace occa {
       token_t(origin_),
       value(value_) {}
 
+    primitiveToken::~primitiveToken() {}
+
     int primitiveToken::type() const {
       return tokenType::primitive;
     }
@@ -113,9 +119,11 @@ namespace occa {
     }
 
     operatorToken::operatorToken(fileOrigin *origin_,
-                                 operator_t &op_) :
+                                 const operator_t &op_) :
       token_t(origin_),
       op(op_) {}
+
+    operatorToken::~operatorToken() {}
 
     int operatorToken::type() const {
       return tokenType::op;
@@ -133,6 +141,8 @@ namespace occa {
       uType(uType_),
       value(value_),
       udf(udf_) {}
+
+    charToken::~charToken() {}
 
     int charToken::type() const {
       return tokenType::char_;
@@ -155,6 +165,8 @@ namespace occa {
       }
       pout << '\'' << value << '\'' << udf;
     }
+
+    stringToken::~stringToken() {}
 
     stringToken::stringToken(fileOrigin *origin_,
                              int uType_,
@@ -193,6 +205,8 @@ namespace occa {
       token_t(origin_),
       systemHeader(systemHeader_),
       value(value_) {}
+
+    headerToken::~headerToken() {}
 
     int headerToken::type() const {
       return tokenType::header;
@@ -321,94 +335,6 @@ namespace occa {
       return std::string(last.pos, pos - last.pos);
     }
 
-    int charStream::peek() {
-      int type = shallowPeek();
-      if (type == tokenType::identifier) {
-        return peekForIdentifier();
-      }
-      if (type == tokenType::op) {
-        return tokenType::op;
-      }
-      if (type == tokenType::string) {
-        return peekForString();
-      }
-      if (type == tokenType::char_) {
-        return peekForCharacter();
-      }
-      return tokenType::none;
-    }
-
-    int charStream::shallowPeek() {
-      const char c = *pos;
-      if (c == '\0') {
-        return tokenType::none;
-      }
-      if (lex::charIsIn(c, charcodes::identifierStart)) {
-        return tokenType::identifier;
-      }
-      if (lex::charIsIn(c, charcodes::operators)) {
-        return tokenType::op;
-      }
-      if (c == '"') {
-        return tokenType::string;
-      }
-      if (c == '\'') {
-        return tokenType::char_;
-      }
-      // TODO: Print proper error
-      OCCA_FORCE_ERROR("Could not find token type");
-      return tokenType::none;
-    }
-
-    int charStream::peekForIdentifier() {
-      push();
-      // TODO: Fix
-      // skipIdentifier();
-      const std::string identifier = str();
-      int type = shallowPeek();
-      pop();
-
-      // [u8]"foo" or [u8]'foo'
-      if ((type & tokenType::char_) &&
-          getCharacterEncoding(identifier)) {
-        // u8["foo"]
-        return (tokenType::withUType
-                | peekForString());
-      }
-      if ((type & tokenType::string) &&
-          getStringEncoding(identifier)) {
-        // u8['foo']
-        return (tokenType::withUType
-                | peekForCharacter());
-      }
-      return tokenType::identifier;
-    }
-
-    int charStream::peekForHeader() {
-      int type = shallowPeek();
-      if (type & tokenType::op) {
-        push();
-        // TODO: Fix
-        // skipOperator();
-        const std::string op = str();
-        pop();
-        if (op == "<") {
-          return tokenType::systemHeader;
-        }
-      } else if (type & tokenType::string) {
-        return tokenType::header;
-      }
-      return tokenType::none;
-    }
-
-    int charStream::peekForString() {
-      return tokenType::string;
-    }
-
-    int charStream::peekForCharacter() {
-      return tokenType::char_;
-    }
-
     void charStream::skipTo(const char delimiter) {
       while (*pos != '\0') {
         if (*pos == delimiter) {
@@ -501,15 +427,133 @@ namespace occa {
       skipFrom(charcodes::whitespace);
     }
 
-    identifierToken charStream::getIdentifierToken() {
-      return identifierToken(NULL, "NULL");
+    int charStream::peek() {
+      int type = shallowPeek();
+      if (type == tokenType::identifier) {
+        return peekForIdentifier();
+      }
+      return type;
     }
 
-    primitiveToken charStream::getPrimitiveToken() {
-      return primitiveToken(NULL, 1.0);
+    int charStream::shallowPeek() {
+      const char c = *pos;
+      if (c == '\0') {
+        return tokenType::none;
+      }
+      if (lex::charIsIn(c, charcodes::identifierStart)) {
+        return tokenType::identifier;
+      }
+      if (lex::charIsIn(c, charcodes::operators)) {
+        return tokenType::op;
+      }
+      const char *pos2 = pos;
+      if (primitive::load(pos2).type != primitiveType::none) {
+        return tokenType::primitive;
+      }
+      if (c == '"') {
+        return tokenType::string;
+      }
+      if (c == '\'') {
+        return tokenType::char_;
+      }
+      // TODO: Print proper error
+      OCCA_FORCE_ERROR("Could not find token type");
+      return tokenType::none;
     }
 
-    stringToken charStream::getStringToken() {
+    int charStream::peekForIdentifier() {
+      push();
+      // TODO: Fix
+      // skipIdentifier();
+      const std::string identifier = str();
+      int type = shallowPeek();
+      pop();
+
+      // [u8]"foo" or [u8]'foo'
+      if ((type & tokenType::char_) &&
+          getCharacterEncoding(identifier)) {
+        // u8["foo"]
+        return (tokenType::withUType
+                | tokenType::string);
+      }
+      if ((type & tokenType::string) &&
+          getStringEncoding(identifier)) {
+        // u8['foo']
+        return (tokenType::withUType
+                | tokenType::char_);
+      }
+      return tokenType::identifier;
+    }
+
+    int charStream::peekForHeader() {
+      int type = shallowPeek();
+      if (type & tokenType::op) {
+        push();
+        // TODO: Fix
+        // skipOperator();
+        const std::string op = str();
+        pop();
+        if (op == "<") {
+          return tokenType::systemHeader;
+        }
+      } else if (type & tokenType::string) {
+        return tokenType::header;
+      }
+      return tokenType::none;
+    }
+
+    token_t* charStream::getToken() {
+      int type = peek();
+      if (type & tokenType::identifier) {
+        return getIdentifierToken();
+      }
+      if (type & tokenType::header) {
+        return getHeaderToken();
+      }
+      if (type & tokenType::primitive) {
+        return getPrimitiveToken();
+      }
+      if (type & tokenType::op) {
+        return getOperatorToken();
+      }
+      if (type & tokenType::char_) {
+        return getCharToken();
+      }
+      if (type & tokenType::string) {
+        return getStringToken();
+      }
+      return NULL;
+    }
+
+    token_t* charStream::getIdentifierToken() {
+      // TODO: Print proper error
+      OCCA_ERROR("Not able to parse identifier",
+                 lex::charIsIn(*pos, charcodes::identifierStart));
+      push();
+      ++pos;
+      skipFrom(charcodes::identifier);
+      return new identifierToken(NULL, str());
+      pop();
+    }
+
+    token_t* charStream::getPrimitiveToken() {
+      primitive value = primitive::load(pos);
+      // TODO: Print proper error
+      OCCA_ERROR("Not able to parse primitive",
+                 !value.isNaN());
+      return new primitiveToken(NULL, value);
+    }
+
+    token_t* charStream::getOperatorToken() {
+      operatorTrie &operators = getOperators();
+      operatorTrie::result_t result = operators.getFirst(pos);
+      // TODO: Print proper error
+      OCCA_ERROR("Not able to parse operator",
+                 result.success());
+      return new operatorToken(NULL, *(result.value()));
+    }
+
+    token_t* charStream::getStringToken() {
       if (*pos != '"') {
         // TODO: Print proper error
         OCCA_FORCE_ERROR("Not able to parse string");
@@ -517,16 +561,16 @@ namespace occa {
       ++pos;
       push();
       skipTo('"', '\\');
-      stringToken token(NULL,
-                        encodingType::u8,
-                        str(),
-                        "_km");
+      token_t *token = new stringToken(NULL,
+                                       encodingType::u8,
+                                       str(),
+                                       "_km");
       pop(false);
       ++pos;
       return token;
     }
 
-    charToken charStream::getCharToken() {
+    token_t* charStream::getCharToken() {
       if (*pos != '\'') {
         // TODO: Print proper error
         OCCA_FORCE_ERROR("Not able to parse string");
@@ -534,32 +578,37 @@ namespace occa {
       ++pos;
       push();
       skipTo('\'', '\\');
-      charToken token(NULL,
-                      encodingType::u,
-                      str(),
-                      "_km");
+      token_t *token = new charToken(NULL,
+                                     encodingType::u,
+                                     str(),
+                                     "_km");
       pop(false);
       ++pos;
       return token;
     }
 
-    headerToken charStream::getHeaderToken() {
+    token_t* charStream::getHeaderToken() {
       int type = shallowPeek();
       if (type & tokenType::op) {
         ++pos;
         push();
-        headerToken token(NULL, true, str());
+        token_t *token = new headerToken(NULL,
+                                         true,
+                                         str());
         skipTo('>');
         ++pos;
         pop(false);
         return token;
       }
       if (type & tokenType::string) {
-        return headerToken(NULL, false, getStringToken().value);
+        stringToken &token = *((stringToken*) getStringToken());
+        std::string value = token.value;
+        delete &token;
+        return new headerToken(NULL, false, value);
       }
       // TODO: Print proper error
       OCCA_FORCE_ERROR("Not able to parse header");
-      return headerToken(NULL, false, "");
+      return new headerToken(NULL, false, "");
     }
     //==================================
 

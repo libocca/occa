@@ -59,6 +59,7 @@ namespace occa {
       fileOrigin *origin;
 
       token_t(fileOrigin *origin_);
+      virtual ~token_t();
 
       virtual int type() const = 0;
 
@@ -71,6 +72,7 @@ namespace occa {
 
       identifierToken(fileOrigin *origin_,
                       const std::string &value_);
+      virtual ~identifierToken();
 
       virtual int type() const;
 
@@ -83,6 +85,7 @@ namespace occa {
 
       primitiveToken(fileOrigin *origin_,
                      const primitive &value_);
+      virtual ~primitiveToken();
 
       virtual int type() const;
 
@@ -91,17 +94,18 @@ namespace occa {
 
     class operatorToken : public token_t {
     public:
-      operator_t &op;
+      const operator_t &op;
 
       operatorToken(fileOrigin *origin_,
-                    operator_t &op_);
+                    const operator_t &op_);
+      virtual ~operatorToken();
 
       virtual int type() const;
 
       virtual void print(printer &pout) const;
     };
 
-    class charToken: public token_t {
+    class charToken : public token_t {
     public:
       int uType;
       std::string value;
@@ -111,13 +115,14 @@ namespace occa {
                 int uType_,
                 const std::string &value_,
                 const std::string &udf_);
+      virtual ~charToken();
 
       virtual int type() const;
 
       virtual void print(printer &pout) const;
     };
 
-    class stringToken: public token_t {
+    class stringToken : public token_t {
     public:
       int uType;
       std::string value;
@@ -127,6 +132,7 @@ namespace occa {
                   int uType_,
                   const std::string &value_,
                   const std::string &udf_);
+      virtual ~stringToken();
 
       virtual int type() const;
 
@@ -141,6 +147,7 @@ namespace occa {
       headerToken(fileOrigin *origin_,
                   const bool systemHeader_,
                   const std::string &value_);
+      virtual ~headerToken();
 
       virtual int type() const;
 
@@ -180,13 +187,6 @@ namespace occa {
       void pop(const bool rewind = true);
       std::string str();
 
-      int peek();
-      int shallowPeek();
-      int peekForIdentifier();
-      int peekForString();
-      int peekForCharacter();
-      int peekForHeader();
-
       void skipTo(const char delimiter);
 
       void skipTo(const char delimiter,
@@ -204,12 +204,18 @@ namespace occa {
 
       void skipWhitespace();
 
-      identifierToken getIdentifierToken();
-      primitiveToken getPrimitiveToken();
-      operatorToken getOperatorToken();
-      stringToken getStringToken();
-      charToken getCharToken();
-      headerToken getHeaderToken();
+      int peek();
+      int shallowPeek();
+      int peekForIdentifier();
+      int peekForHeader();
+
+      token_t* getToken();
+      token_t* getIdentifierToken();
+      token_t* getPrimitiveToken();
+      token_t* getOperatorToken();
+      token_t* getStringToken();
+      token_t* getCharToken();
+      token_t* getHeaderToken();
     };
     //==================================
 
