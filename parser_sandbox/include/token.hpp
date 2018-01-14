@@ -217,7 +217,7 @@ namespace occa {
     };
     //==================================
 
-    //---[ Character Stream ]-----------
+    //---[ Token Stream ]---------------
     int getEncodingType(const std::string &str);
     int getCharacterEncoding(const std::string &str);
     int getStringEncoding(const std::string &str);
