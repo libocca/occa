@@ -134,6 +134,20 @@ namespace occa {
       const int withEncoding  = ((encodingType::ux |
                                   encodingType::R) << 9);
       const int encodingShift = 9;
+
+      int getEncoding(const int type) {
+        return ((type & withEncoding) >> encodingShift);
+      }
+
+      int mergeEncodings(const int encoding1, const int encoding2) {
+        int rawEncoding = ((encoding1 | encoding2) & encodingType::R);
+        const int encoding1_ = (encoding1 & encodingType::ux);
+        const int encoding2_ = (encoding2 & encodingType::ux);
+        if (encoding1_ > encoding2_) {
+          return (encoding1_ | rawEncoding);
+        }
+        return (encoding2_ | rawEncoding);
+      }
     }
 
     token_t::token_t(const fileOrigin &origin_) :
@@ -225,6 +239,13 @@ namespace occa {
 
     int stringToken::type() const {
       return tokenType::string;
+    }
+
+    void stringToken::append(const stringToken &token) {
+      encoding = tokenType::mergeEncodings(encoding,
+                                           token.encoding);
+      value += token.value;
+      udf = token.udf;
     }
 
     void stringToken::print(printer &pout) const {
@@ -480,10 +501,13 @@ namespace occa {
     }
 
     int tokenStream::peek() {
+      push();
+      skipWhitespace();
       int type = shallowPeek();
       if (type == tokenType::identifier) {
-        return peekForIdentifier();
+        type = peekForIdentifier();
       }
+      pop();
       return type;
     }
 
@@ -514,7 +538,6 @@ namespace occa {
         return tokenType::attribute;
       }
       // TODO: Print proper error
-      OCCA_FORCE_ERROR("Could not find token type");
       return tokenType::none;
     }
 
@@ -660,10 +683,10 @@ namespace occa {
         return getOperatorToken();
       }
       if (type & tokenType::char_) {
-        return getCharToken(type >> tokenType::encodingShift);
+        return getCharToken(tokenType::getEncoding(type));
       }
       if (type & tokenType::string) {
-        return getStringToken(type >> tokenType::encodingShift);
+        return getStringToken(tokenType::getEncoding(type));
       }
       if (type & tokenType::attribute) {
         return getAttributeToken();
@@ -712,6 +735,28 @@ namespace occa {
     }
 
     token_t* tokenStream::getStringToken(const int encoding) {
+      token_t *token_ = getOneStringToken(encoding);
+      if (token_ == NULL) {
+        return NULL;
+      }
+      stringToken &token = token_->to<stringToken>();
+      int type = peek();
+      skipWhitespace();
+      while(type & tokenType::string) {
+        token_t *update = getOneStringToken(tokenType::getEncoding(type));
+        if (update == NULL) {
+          break;
+        }
+        token.append(update->to<stringToken>());
+        if (token.udf.size()) {
+          break;
+        }
+        type = peek();
+      }
+      return token_;
+    }
+
+    token_t* tokenStream::getOneStringToken(const int encoding) {
       if (encoding) {
         std::string encodingStr;
         getIdentifier(encodingStr);

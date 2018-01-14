@@ -75,6 +75,9 @@ namespace occa {
       extern const int withUDF;
       extern const int withEncoding;
       extern const int encodingShift;
+
+      int getEncoding(const int type);
+      int mergeEncodings(const int type1, const int type2);
     }
 
     class token_t {
@@ -180,6 +183,8 @@ namespace occa {
 
       virtual int type() const;
 
+      void append(const stringToken &token);
+
       virtual void print(printer &pout) const;
     };
 
@@ -264,6 +269,7 @@ namespace occa {
       token_t* getPrimitiveToken();
       token_t* getOperatorToken();
       token_t* getStringToken(const int encoding);
+      token_t* getOneStringToken(const int encoding);
       token_t* getCharToken(const int encoding);
       token_t* getHeaderToken();
       token_t* getAttributeToken();

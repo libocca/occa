@@ -116,15 +116,15 @@ void testPushPop() {
                     stream.getPosition());
 }
 
-#define testStringPeek(s, encoding)                                     \
+#define testStringPeek(s, encoding_)                                    \
   setStream(s);                                                         \
-  OCCA_ASSERT_EQUAL_BINARY((encoding << occa::lang::tokenType::encodingShift) | \
+  OCCA_ASSERT_EQUAL_BINARY((encoding_ << occa::lang::tokenType::encodingShift) | \
                            occa::lang::tokenType::string,               \
                            stream.peek())
 
-#define testCharPeek(s, encoding)                                       \
+#define testCharPeek(s, encoding_)                                      \
   setStream(s);                                                         \
-  OCCA_ASSERT_EQUAL_BINARY((encoding << occa::lang::tokenType::encodingShift) | \
+  OCCA_ASSERT_EQUAL_BINARY((encoding_ << occa::lang::tokenType::encodingShift) | \
                            occa::lang::tokenType::char_,                \
                            stream.peek())
 
@@ -292,7 +292,21 @@ void testTokenMethods() {
   OCCA_ASSERT_EQUAL(value_,                                     \
                     token->to<occa::lang::stringToken>().value)
 
+
+void addEncodingPrefixes(std::string &s1,
+                         std::string &s2,
+                         std::string &s3,
+                         const std::string &encoding1,
+                         const std::string &encoding2) {
+  const std::string a  = "\"a\"";
+  const std::string b  = "\"b\"";
+  s1 = (encoding1 + a) + " " + b;
+  s2 = a               + " " + (encoding2 + b);
+  s3 = (encoding1 + a) + " " + (encoding2 + b);
+}
+
 void testStringMethods() {
+  // Test values
   testStringValue("\"\""                , "");
   testStringValue("\"string\\\"string\"", "string\\\"string");
   testStringValue("R\"(string)\""       , "string");
@@ -305,6 +319,7 @@ void testStringMethods() {
   testStringValue("UR\"(string)\""      , "string");
   testStringValue("LR\"(string)\""      , "string");
 
+  // Test raw strings
   testStringValue("R\"*(string)*\""  , "string");
   testStringValue("u8R\"*(string)*\"", "string");
   testStringValue("uR\"*(string)*\"" , "string");
@@ -316,4 +331,63 @@ void testStringMethods() {
   testStringValue("uR\"foo(string)foo\"" , "string");
   testStringValue("UR\"foo(string)foo\"" , "string");
   testStringValue("LR\"foo(string)foo\"" , "string");
+
+  // Test string concatination
+  const std::string ab = "ab";
+  std::string s1, s2, s3;
+  addEncodingPrefixes(s1, s2, s3, "", "");
+  testStringValue(s1, ab);
+  testStringValue(s2, ab);
+  testStringValue(s3, ab);
+  testStringToken(s1, 0);
+  testStringToken(s2, 0);
+  testStringToken(s3, 0);
+
+  addEncodingPrefixes(s1, s2, s3, "", "u");
+  testStringValue(s1, ab);
+  testStringValue(s2, ab);
+  testStringValue(s3, ab);
+  testStringToken(s1, 0);
+  testStringToken(s2, occa::lang::encodingType::u);
+  testStringToken(s3, occa::lang::encodingType::u);
+
+  addEncodingPrefixes(s1, s2, s3, "", "U");
+  testStringValue(s1, ab);
+  testStringValue(s2, ab);
+  testStringValue(s3, ab);
+  testStringToken(s1, 0);
+  testStringToken(s2, occa::lang::encodingType::U);
+  testStringToken(s3, occa::lang::encodingType::U);
+
+  addEncodingPrefixes(s1, s2, s3, "", "L");
+  testStringValue(s1, ab);
+  testStringValue(s2, ab);
+  testStringValue(s3, ab);
+  testStringToken(s1, 0);
+  testStringToken(s2, occa::lang::encodingType::L);
+  testStringToken(s3, occa::lang::encodingType::L);
+
+  addEncodingPrefixes(s1, s2, s3, "u", "U");
+  testStringValue(s1, ab);
+  testStringValue(s2, ab);
+  testStringValue(s3, ab);
+  testStringToken(s1, occa::lang::encodingType::u);
+  testStringToken(s2, occa::lang::encodingType::U);
+  testStringToken(s3, occa::lang::encodingType::U);
+
+  addEncodingPrefixes(s1, s2, s3, "u", "L");
+  testStringValue(s1, ab);
+  testStringValue(s2, ab);
+  testStringValue(s3, ab);
+  testStringToken(s1, occa::lang::encodingType::u);
+  testStringToken(s2, occa::lang::encodingType::L);
+  testStringToken(s3, occa::lang::encodingType::L);
+
+  addEncodingPrefixes(s1, s2, s3, "U", "L");
+  testStringValue(s1, ab);
+  testStringValue(s2, ab);
+  testStringValue(s3, ab);
+  testStringToken(s1, occa::lang::encodingType::U);
+  testStringToken(s2, occa::lang::encodingType::L);
+  testStringToken(s3, occa::lang::encodingType::L);
 }
