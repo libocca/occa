@@ -28,6 +28,7 @@ void testPushPop();
 void testPeekMethods();
 void testTokenMethods();
 void testStringMethods();
+void testPrimitiveMethods();
 
 std::string streamSource;
 occa::lang::tokenStream stream(NULL);
@@ -39,6 +40,7 @@ int main(const int argc, const char **argv) {
   testPeekMethods();
   testTokenMethods();
   testStringMethods();
+  testPrimitiveMethods();
   if (token) {
     delete token;
   }
@@ -390,4 +392,22 @@ void testStringMethods() {
   testStringToken(s1, occa::lang::encodingType::U);
   testStringToken(s2, occa::lang::encodingType::L);
   testStringToken(s3, occa::lang::encodingType::L);
+}
+
+#define testPrimitiveToken(type_, value_)                               \
+  token = stream.getToken();                                            \
+  OCCA_ASSERT_EQUAL_BINARY(occa::lang::tokenType::primitive,            \
+                           tokenType());                                \
+  OCCA_ASSERT_EQUAL(value_,                                             \
+                    (type_) token->to<occa::lang::primitiveToken>().value)
+
+
+
+void testPrimitiveMethods() {
+  setStream("1 68719476735L +0.1 .1e-10 -4.5L");
+  testPrimitiveToken(int, 1);
+  testPrimitiveToken(int64_t, 68719476735L);
+  testPrimitiveToken(float, +0.1);
+  testPrimitiveToken(float, .1e-10);
+  testPrimitiveToken(double, -4.5L);
 }

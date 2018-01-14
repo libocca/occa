@@ -31,7 +31,7 @@ $(testPath)/bin/%:$(testPath)/%.cpp $(objects) $(headers)
 	@mkdir -p $(testPath)/bin
 	$(compiler) $(compilerFlags) $(pthreadFlag) -o $@ $(flags) -L ${OCCA_DIR}/lib $(objects) $< $(paths) $(links)
 
-build-tests: $(tests)
+tests: $(tests)
 
 test: $(tests)
 	@for test in $(tests); do   \
