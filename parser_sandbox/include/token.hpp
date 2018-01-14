@@ -68,6 +68,8 @@ namespace occa {
       extern const int primitive;
       extern const int op;
 
+      extern const int attribute;
+
       extern const int char_;
       extern const int string;
       extern const int withUDF;
@@ -195,6 +197,19 @@ namespace occa {
 
       virtual void print(printer &pout) const;
     };
+
+    class attributeToken : public token_t {
+    public:
+      std::string value;
+
+      attributeToken(const fileOrigin &origin_,
+                     const std::string &value_);
+      virtual ~attributeToken();
+
+      virtual int type() const;
+
+      virtual void print(printer &pout) const;
+    };
     //==================================
 
     //---[ Character Stream ]-----------
@@ -221,6 +236,7 @@ namespace occa {
       fileOrigin getFileOrigin();
 
       void push();
+      void pushAndSet(const filePosition &fp_);
       void pop(const bool rewind = false);
       void popAndRewind();
       std::string str();
@@ -241,6 +257,7 @@ namespace occa {
       void getIdentifier(std::string &value);
       void getString(std::string &value,
                      const int encoding = 0);
+      void getRawString(std::string &value);
 
       token_t* getToken();
       token_t* getIdentifierToken();
@@ -249,6 +266,7 @@ namespace occa {
       token_t* getStringToken(const int encoding);
       token_t* getCharToken(const int encoding);
       token_t* getHeaderToken();
+      token_t* getAttributeToken();
     };
     //==================================
   }

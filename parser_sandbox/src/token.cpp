@@ -126,12 +126,14 @@ namespace occa {
       const int primitive     = (1 << 3);
       const int op            = (1 << 4);
 
-      const int char_         = (1 << 5);
-      const int string        = (1 << 6);
-      const int withUDF       = (1 << 7);
+      const int attribute     = (1 << 5);
+
+      const int char_         = (1 << 6);
+      const int string        = (1 << 7);
+      const int withUDF       = (1 << 8);
       const int withEncoding  = ((encodingType::ux |
-                                  encodingType::R) << 8);
-      const int encodingShift = 8;
+                                  encodingType::R) << 9);
+      const int encodingShift = 9;
     }
 
     token_t::token_t(const fileOrigin &origin_) :
@@ -263,6 +265,21 @@ namespace occa {
         pout << '"' << value << '"';
       }
     }
+
+    attributeToken::attributeToken(const fileOrigin &origin_,
+                                   const std::string &value_) :
+      token_t(origin_),
+      value(value_) {}
+
+    attributeToken::~attributeToken() {}
+
+    int attributeToken::type() const {
+      return tokenType::attribute;
+    }
+
+    void attributeToken::print(printer &pout) const {
+      pout << '@' << value;
+    }
     //==================================
 
     int getEncodingType(const std::string &str) {
@@ -358,6 +375,11 @@ namespace occa {
                      fp.lineStart,
                      fp.pos)
       );
+    }
+
+    void tokenStream::pushAndSet(const filePosition &fp_) {
+      push();
+      fp = fp_;
     }
 
     void tokenStream::pop(const bool rewind) {
@@ -488,6 +510,9 @@ namespace occa {
       if (c == '\'') {
         return tokenType::char_;
       }
+      if (c == '@') {
+        return tokenType::attribute;
+      }
       // TODO: Print proper error
       OCCA_FORCE_ERROR("Could not find token type");
       return tokenType::none;
@@ -549,26 +574,77 @@ namespace occa {
 
     void tokenStream::getString(std::string &value,
                                 const int encoding) {
+      if (encoding & encodingType::R) {
+        getRawString(value);
+        return;
+      }
       if (*fp.pos != '"') {
         return;
       }
       push();
       ++fp.pos;
       push();
-      if (!(encoding & encodingType::R)) {
-        skipTo("\"\n");
-        if (*fp.pos == '\n') {
-          pop();
-          popAndRewind();
-          return;
-        }
-      } else {
-        skipTo("\"");
+      skipTo("\"\n");
+      if (*fp.pos == '\n') {
+        pop();
+        popAndRewind();
+        return;
       }
       value = str();
       pop();
       pop();
       ++fp.pos;
+    }
+
+    void tokenStream::getRawString(std::string &value) {
+      if (*fp.pos != '"') {
+        return;
+      }
+      push();
+      ++fp.pos; // Skip "
+      push();
+      // Find delimiter
+      skipTo("(\n");
+      if (*fp.pos == '\n') {
+        pop();
+        popAndRewind();
+        return;
+      }
+      // Find end pattern
+      std::string end;
+      end += ')';
+      end += str();
+      end += '"';
+      pop();
+      ++fp.pos; // Skip (
+      push();
+      // Find end match
+      const int chars = (int) end.size();
+      const char *m   = end.c_str();
+      int mi;
+      while (*fp.pos != '\0') {
+        for (mi = 0; mi < chars; ++mi) {
+          if (fp.pos[mi] != m[mi]) {
+            break;
+          }
+        }
+        if (mi == chars) {
+          break;
+        }
+        if (*fp.pos == '\n') {
+          fp.lineStart = fp.pos + 1;
+          ++fp.line;
+        }
+        ++fp.pos;
+      }
+      // Make sure we found delimiter
+      if (*fp.pos == '\0') {
+        pop();
+        popAndRewind();
+        return;
+      }
+      value = str();
+      fp.pos += (chars + 1);
     }
 
     token_t* tokenStream::getToken() {
@@ -588,6 +664,9 @@ namespace occa {
       }
       if (type & tokenType::string) {
         return getStringToken(type >> tokenType::encodingShift);
+      }
+      if (type & tokenType::attribute) {
+        return getAttributeToken();
       }
       return NULL;
     }
@@ -627,7 +706,7 @@ namespace occa {
         // "Not able to parse operator"
         return NULL;
       }
-      fp.pos += result.length;
+      fp.pos += (result.length + 1); // Skip operator
       return new operatorToken(getFileOrigin(),
                                *(result.value()));
     }
@@ -668,7 +747,7 @@ namespace occa {
         return NULL;
       }
 
-      ++fp.pos;
+      ++fp.pos; // Skip '
       push();
       skipTo("'\n");
       if (*fp.pos == '\n') {
@@ -691,18 +770,19 @@ namespace occa {
     token_t* tokenStream::getHeaderToken() {
       int type = shallowPeek();
       if (type & tokenType::op) {
-        ++fp.pos;
+        ++fp.pos; // Skip <
         push();
         skipTo(">\n");
         if (*fp.pos == '\n') {
           // TODO: Print proper error
           // "Unable to find closing >"
+          popAndRewind();
           return NULL;
         }
         token_t *token = new headerToken(getFileOrigin(),
                                          true,
                                          str());
-        ++fp.pos;
+        ++fp.pos; // Skip >
         pop();
         return token;
       }
@@ -713,7 +793,29 @@ namespace occa {
       }
       std::string value;
       getString(value);
-      return new headerToken(getFileOrigin(), false, value);
+      return new headerToken(getFileOrigin(),
+                             false,
+                             value);
+    }
+
+    token_t* tokenStream::getAttributeToken() {
+      if (*fp.pos != '@') {
+        // TODO: Print proper error
+        // "Not able to parse attribute"
+        return NULL;
+      }
+      push();
+      ++fp.pos; // Skip @
+      std::string value;
+      getIdentifier(value);
+      if (!value.size()) {
+        // TODO: Print proper error
+        // "Not able to parse attribute"
+        popAndRewind();
+        return NULL;
+      }
+      return new attributeToken(getFileOrigin(),
+                                value);
     }
     //==================================
 

@@ -176,7 +176,7 @@ compilerReleaseFlags = $(shell . $(OCCA_DIR)/scripts/shellTools.sh; compilerRele
 compilerDebugFlags   = $(shell . $(OCCA_DIR)/scripts/shellTools.sh; compilerDebugFlags   "$(compiler)")
 compilerPicFlag      = $(shell . $(OCCA_DIR)/scripts/shellTools.sh; compilerPicFlag      "$(compiler)")
 compilerSharedFlag   = $(shell . $(OCCA_DIR)/scripts/shellTools.sh; compilerSharedFlag   "$(compiler)")
-compilerPthreadFlag  = $(shell . $(OCCA_DIR)/scripts/shellTools.sh; compilerPthreadFlags "$(compiler)")
+compilerPthreadFlag  = $(shell . $(OCCA_DIR)/scripts/shellTools.sh; compilerPthreadFlag  "$(compiler)")
 
 compilerSupportsMPI    = $(shell . $(OCCA_DIR)/scripts/shellTools.sh; compilerSupportsMPI    "$(compiler)")
 compilerSupportsOpenMP = $(shell . $(OCCA_DIR)/scripts/shellTools.sh; compilerSupportsOpenMP "$(compiler)")
