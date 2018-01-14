@@ -37,7 +37,7 @@ namespace occa {
       file_t(const std::string &filename_);
     };
 
-    class filePosition : public withRefs {
+    class filePosition {
     public:
       int line;
       const char *lineStart;
@@ -54,13 +54,12 @@ namespace occa {
       filePosition(const filePosition &other);
     };
 
-    class fileOrigin {
+    class fileOrigin : public withRefs {
     public:
       bool fromInclude;
       file_t *file;
       filePosition position;
-
-      filePosition *up;
+      fileOrigin *up;
 
       fileOrigin();
 
@@ -71,11 +70,12 @@ namespace occa {
 
       ~fileOrigin();
 
-      fileOrigin& push(const bool fromInclude_,
-                       file_t *file_,
-                       const filePosition &position_);
+      void push(const bool fromInclude_,
+                file_t *file_,
+                const filePosition &position_);
 
-      void print(printer &pout);
+      void print(printer &pout,
+                 const bool root = true);
     };
   }
 }

@@ -91,35 +91,43 @@ namespace occa {
       }
     }
 
-    fileOrigin& fileOrigin::push(const bool fromInclude_,
-                                 file_t *file_,
-                                 const filePosition &position_) {
-      // TODO: fix
-      return *this;
+    void fileOrigin::push(const bool fromInclude_,
+                          file_t *file_,
+                          const filePosition &position_) {
+      fileOrigin &newUp = *(new fileOrigin(*this));
+      newUp.fromInclude = fromInclude_;
+      newUp.addRef();
+      if (up) {
+        up->removeRef();
+      }
+      up = &newUp;
+      file = file_;
+      position = position_;
     }
 
-    void fileOrigin::print(printer &pout) {
+    void fileOrigin::print(printer &pout,
+                           const bool root) {
+      if (up) {
+        up->print(pout, false);
+      }
       // Print file location
       if (file) {
         pout << file->filename;
       } else {
         pout << "(source)";
       }
-      pout << ':' << position.line;
-      if (fromInclude) {
-        pout << ':' << (position.pos - position.lineStart + 1);
-      }
-      if (!up) {
-        return;
-      }
-      // Print connection from *up
-      if (fromInclude) {
-        pout << ": Included file:\n";
-      } else {
-        tokenStream stream(position.pos);
-        std::string macro;
-        stream.getIdentifier(macro);
-        pout << ": Expanded from macro '" << macro << "':\n";
+      pout << ':' << position.line
+           << ':' << (position.pos - position.lineStart + 1)
+           << ": ";
+      if (!root) {
+        if (fromInclude) {
+          pout << "Included file:\n";
+        } else {
+          tokenStream stream(position.pos);
+          std::string macro;
+          stream.getIdentifier(macro);
+          pout << "Expanded from macro '" << macro << "':\n";
+        }
       }
     }
   }
