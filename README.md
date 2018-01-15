@@ -1,7 +1,7 @@
 <a name="OCCA"></a>
 # OCCA
 
-[![Build Status](https://travis-ci.org/libocca/occa.svg?branch=master)](https://travis-ci.org/libocca/occa)
+[![Build Status](https://travis-ci.org/libocca/occa.svg?branch=1.0)](https://travis-ci.org/libocca/occa)
 [![Coverage Status](https://coveralls.io/repos/github/libocca/occa/badge.svg?branch=1.0)](https://coveralls.io/github/libocca/occa?branch=1.0)
 [![Documentation](https://readthedocs.org/projects/occa/badge/?version=latest)](https://occa.readthedocs.io/en/latest/?badge=latest)
 
