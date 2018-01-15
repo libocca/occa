@@ -119,28 +119,28 @@ namespace occa {
       position = position_;
     }
 
-    void fileOrigin::print(printer &pout,
-                           const bool root) {
+    void fileOrigin::print(std::ostream &out,
+                           const bool root) const {
       if (up) {
-        up->print(pout, false);
+        up->print(out, false);
       }
       // Print file location
       if (file) {
-        pout << file->filename;
+        out << file->filename;
       } else {
-        pout << "(source)";
+        out << "(source)";
       }
-      pout << ':' << position.line
+      out << ':' << position.line
            << ':' << (position.pos - position.lineStart + 1)
            << ": ";
       if (!root) {
         if (fromInclude) {
-          pout << "Included file:\n";
+          out << "Included file:\n";
         } else {
           tokenStream stream(position.pos);
           std::string macro;
           stream.getIdentifier(macro);
-          pout << "Expanded from macro '" << macro << "':\n";
+          out << "Expanded from macro '" << macro << "':\n";
         }
       }
     }

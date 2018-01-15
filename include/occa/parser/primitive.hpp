@@ -167,16 +167,6 @@ namespace occa {
       value.ptr = (char*) value_;
     }
 
-    static inline bool charIsDelimiter(const char c) {
-      static const char delimiters[]  = " \t\r\n\v\f!\"#%&'()*+,-./:;<=>?[]^{|}~@\0";
-      const char *d = delimiters;
-      while (*d != '\0')
-        if (c == *(d++)) {
-          return true;
-        }
-      return false;
-    }
-
     static primitive load(const char *&c);
     static primitive load(const std::string &s);
 

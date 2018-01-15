@@ -35,11 +35,11 @@ occa::lang::tokenStream stream(NULL);
 occa::lang::token_t *token = NULL;
 
 int main(const int argc, const char **argv) {
-  testSkipMethods();
-  testPushPop();
-  testPeekMethods();
-  testTokenMethods();
-  testStringMethods();
+  // testSkipMethods();
+  // testPushPop();
+  // testPeekMethods();
+  // testTokenMethods();
+  // testStringMethods();
   testPrimitiveMethods();
   if (token) {
     delete token;
@@ -52,12 +52,16 @@ void setStream(const std::string &s) {
   stream = occa::lang::tokenStream(NULL, streamSource.c_str());
 }
 
-void setToken(const std::string &s) {
-  setStream(s);
+void getToken() {
   if (token) {
     delete token;
   }
   token = stream.getToken();
+}
+
+void setToken(const std::string &s) {
+  setStream(s);
+  getToken();
 }
 
 void setHeaderToken(const std::string &s) {

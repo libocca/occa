@@ -21,6 +21,7 @@
  */
 #include "token.hpp"
 #include "occa/tools/io.hpp"
+#include "occa/tools/string.hpp"
 #include "occa/par/tls.hpp"
 
 namespace occa {
@@ -376,6 +377,14 @@ namespace occa {
       return *this;
     }
 
+    std::string tokenStream::className() const {
+      return "occa::lang::tokenStream";
+    }
+
+    void tokenStream::preprint(std::ostream &out) const {
+      origin.print(out);
+    }
+
     void tokenStream::setLine(const int line) {
       fp.line = line;
     }
@@ -399,7 +408,7 @@ namespace occa {
 
     void tokenStream::pop(const bool rewind) {
       if (stack.size() == 0) {
-        // TODO: Add error
+        printError("Trying to pop() without a stack");
         return;
       }
       if (rewind) {
@@ -414,7 +423,7 @@ namespace occa {
 
     std::string tokenStream::str() {
       if (stack.size() == 0) {
-        // TODO: Add error
+        printError("Unable to str() without a stack");
         return "";
       }
       fileOrigin last = stack.back();
@@ -424,12 +433,12 @@ namespace occa {
 
     void tokenStream::countSkippedLines() {
       if (stack.size() == 0) {
-        // TODO: Add error
+        printError("Unable to countSkippedLines() without a stack");
         return;
       }
       fileOrigin last = stack.back();
       if (last.file != origin.file) {
-        // TODO: Add error
+        printError("Trying to countSkippedLines() across different files");
         return;
       }
       const char *pos = last.position.pos;
@@ -453,12 +462,12 @@ namespace occa {
           fp.pos += 1 + (fp.pos[1] != '\0');
           continue;
         }
-        if (*fp.pos == delimiter) {
-          return;
-        }
         if (*fp.pos == '\n') {
           fp.lineStart = fp.pos + 1;
           ++fp.line;
+        }
+        if (*fp.pos == delimiter) {
+          return;
         }
         ++fp.pos;
       }
@@ -470,12 +479,12 @@ namespace occa {
           fp.pos += 1 + (fp.pos[1] != '\0');
           continue;
         }
-        if (lex::charIsIn(*fp.pos, delimiters)) {
-          return;
-        }
         if (*fp.pos == '\n') {
           fp.lineStart = fp.pos + 1;
           ++fp.line;
+        }
+        if (lex::charIsIn(*fp.pos, delimiters)) {
+          return;
         }
         ++fp.pos;
       }
@@ -487,13 +496,13 @@ namespace occa {
           fp.pos += 1 + (fp.pos[1] != '\0');
           continue;
         }
-        if (lex::charIsIn(*fp.pos, delimiters)) {
-          ++fp.pos;
-          continue;
-        }
         if (*fp.pos == '\n') {
           fp.lineStart = fp.pos + 1;
           ++fp.line;
+        }
+        if (lex::charIsIn(*fp.pos, delimiters)) {
+          ++fp.pos;
+          continue;
         }
         return;
       }
@@ -540,7 +549,7 @@ namespace occa {
       if (c == '@') {
         return tokenType::attribute;
       }
-      // TODO: Print proper error
+      printError("Unable to shallowPeek");
       return tokenType::none;
     }
 
@@ -700,8 +709,7 @@ namespace occa {
     token_t* tokenStream::getIdentifierToken() {
       fileOrigin tokenOrigin = origin;
       if (!lex::charIsIn(*fp.pos, charcodes::identifierStart)) {
-        // TODO: Print proper error
-        // "Not able to parse identifier"
+        printError("Not able to parse identifier");
         return NULL;
       }
       std::string value;
@@ -715,8 +723,7 @@ namespace occa {
       push();
       primitive value = primitive::load(fp.pos);
       if (value.isNaN()) {
-        // TODO: Print proper error
-        // "Not able to parse primitive"
+        printError("Not able to parse primitive");
         popAndRewind();
         return NULL;
       }
@@ -731,8 +738,7 @@ namespace occa {
       operatorTrie &operators = getOperators();
       operatorTrie::result_t result = operators.getLongest(fp.pos);
       if (!result.success()) {
-        // TODO: Print proper error
-        // "Not able to parse operator"
+        printError("Not able to parse operator");
         return NULL;
       }
       fp.pos += (result.length + 1); // Skip operator
@@ -769,16 +775,14 @@ namespace occa {
         getIdentifier(encodingStr);
       }
       if (*fp.pos != '"') {
-        // TODO: Print proper error
-        // "Not able to parse string"
+        printError("Not able to parse string");
         return NULL;
       }
       const char *start = fp.pos;
       std::string value, udf;
       getString(value, encoding);
       if (fp.pos == start) {
-        // TODO: Print proper error
-        // "Unable to find closing \"
+        printError("Unable to find closing \"");
         return NULL;
       }
       if (*fp.pos == '_') {
@@ -795,8 +799,7 @@ namespace occa {
         getIdentifier(encodingStr);
       }
       if (*fp.pos != '\'') {
-        // TODO: Print proper error
-        // "Not able to parse char"
+        printError("Not able to parse char");
         return NULL;
       }
 
@@ -804,8 +807,7 @@ namespace occa {
       push();
       skipTo("'\n");
       if (*fp.pos == '\n') {
-        // TODO: Print proper error
-        // "Unable to find closing '
+        printError("Unable to find closing '");
         popAndRewind();
         return NULL;
       }
@@ -828,8 +830,7 @@ namespace occa {
         push();
         skipTo(">\n");
         if (*fp.pos == '\n') {
-          // TODO: Print proper error
-          // "Unable to find closing >"
+          printError("Unable to find closing >");
           popAndRewind();
           return NULL;
         }
@@ -840,8 +841,7 @@ namespace occa {
         return token;
       }
       if (!(type & tokenType::string)) {
-        // TODO: Print proper error
-        // "Not able to parse header"
+        printError("Not able to parse header");
         return NULL;
       }
       std::string value;
@@ -853,8 +853,7 @@ namespace occa {
     token_t* tokenStream::getAttributeToken() {
       fileOrigin tokenOrigin = origin;
       if (*fp.pos != '@') {
-        // TODO: Print proper error
-        // "Not able to parse attribute"
+        printError("Not able to parse attribute");
         return NULL;
       }
       push();
@@ -862,8 +861,7 @@ namespace occa {
       std::string value;
       getIdentifier(value);
       if (!value.size()) {
-        // TODO: Print proper error
-        // "Not able to parse attribute"
+        printError("Not able to parse attribute");
         popAndRewind();
         return NULL;
       }

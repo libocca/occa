@@ -120,13 +120,6 @@ namespace occa {
       }
     }
 
-    // If there was something else or no number
-    if ((digits == 0) ||
-        ((*c != '\0') && !charIsDelimiter(*c))) {
-      c = c0;
-      return p;
-    }
-
     if (decimal || float_) {
       if (float_) {
         p = (float) occa::atof(std::string(c0, c - c0));

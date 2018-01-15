@@ -76,8 +76,12 @@ namespace occa {
                 file_t *file_,
                 const filePosition &position_);
 
-      void print(printer &pout,
-                 const bool root = true);
+      void print(std::ostream &out,
+                 const bool root = true) const;
+
+      inline void print(const bool root = true) const {
+        print(std::cerr, root);
+      }
     };
   }
 }

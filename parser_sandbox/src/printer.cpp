@@ -20,6 +20,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  */
 #include "printer.hpp"
+#include "occa/tools/string.hpp"
 
 namespace occa {
   namespace lang {
@@ -133,6 +134,32 @@ namespace occa {
       } else if (lastCharNeedsWhitespace()) {
         *this << ' ';
       }
+    }
+
+    void prints::preprint(std::ostream &out) const {}
+
+    void prints::print(std::ostream &out,
+                       const std::string &message) const {
+      preprint(out);
+      out << className() << ": " << message << '\n';
+    }
+
+    void prints::printWarning(std::ostream &out,
+                              const std::string &message) const {
+      preprint(out);
+      out << className()
+          << ": "
+          << yellow("Warning: ")
+          << message << '\n';
+    }
+
+    void prints::printError(std::ostream &out,
+                            const std::string &message) const {
+      preprint(out);
+      out << className()
+          << ": "
+          << red("Error: ")
+          << message << '\n';
     }
   }
 }

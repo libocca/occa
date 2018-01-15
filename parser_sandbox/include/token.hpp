@@ -222,7 +222,7 @@ namespace occa {
     int getCharacterEncoding(const std::string &str);
     int getStringEncoding(const std::string &str);
 
-    class tokenStream {
+    class tokenStream : public prints {
     public:
       fileOrigin origin;
       filePosition &fp;
@@ -234,6 +234,9 @@ namespace occa {
 
       tokenStream(const tokenStream &stream);
       tokenStream& operator = (const tokenStream &stream);
+
+      virtual std::string className() const;
+      virtual void preprint(std::ostream &out) const;
 
       void setLine(const int line);
 

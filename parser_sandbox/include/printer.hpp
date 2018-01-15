@@ -88,6 +88,34 @@ namespace occa {
         return *this;
       }
     };
+
+    class prints {
+    public:
+      virtual std::string className() const = 0;
+
+      virtual void preprint(std::ostream &out) const;
+
+      void print(std::ostream &out,
+                 const std::string &message) const;
+
+      inline void print(const std::string &message) const {
+        print(std::cerr, message);
+      }
+
+      void printWarning(std::ostream &out,
+                        const std::string &message) const;
+
+      inline void printWarning(const std::string &message) const {
+        printWarning(std::cerr, message);
+      }
+
+      void printError(std::ostream &out,
+                      const std::string &message) const;
+
+      inline void printError(const std::string &message) const {
+        printError(std::cerr, message);
+      }
+    };
   }
 }
 
