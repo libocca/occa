@@ -21,7 +21,7 @@
  */
 #include "occa/tools/testing.hpp"
 
-#include "token.hpp"
+#include "tokenStream.hpp"
 
 void testSkipMethods();
 void testPushPop();

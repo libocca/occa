@@ -20,7 +20,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  */
 #include "file.hpp"
-#include "token.hpp"
+#include "tokenStream.hpp"
 #include "occa/tools/io.hpp"
 
 namespace occa {
