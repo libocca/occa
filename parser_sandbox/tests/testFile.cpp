@@ -24,7 +24,7 @@
 #include "file.hpp"
 
 int main(const int argc, const char **argv) {
-  occa::lang::fileOrigin orig;
+  occa::lang::fileOrigin orig, orig2;
   std::string line = "#define foo bar";
   const char *c_line = line.c_str();
   const int foo = 8;
@@ -37,13 +37,21 @@ int main(const int argc, const char **argv) {
             occa::lang::filePosition(20,
                                      c_line,
                                      c_line + bar));
+  orig2 = orig;
   orig.push(false,
             NULL,
             occa::lang::filePosition(30,
                                      c_line,
                                      c_line + foo));
+  orig2.push(false,
+             NULL,
+             occa::lang::filePosition(40,
+                                      c_line,
+                                      c_line + bar));
   occa::lang::printer pout(std::cout);
   orig.print(pout);
-  pout << "Test message\n";
+  pout << "Test message\n\n";
+  orig2.print(pout);
+  pout << "Test message 2\n";
   return 0;
 }

@@ -82,6 +82,20 @@ namespace occa {
       }
     }
 
+    fileOrigin& fileOrigin::operator = (const fileOrigin &other) {
+      fromInclude = other.fromInclude;
+      file = other.file;
+      position = other.position;
+      up = other.up;
+      if (file) {
+        file->addRef();
+      }
+      if (up) {
+        up->addRef();
+      }
+      return *this;
+    }
+
     fileOrigin::~fileOrigin() {
       if (file && !file->removeRef()) {
         delete file;

@@ -68,6 +68,8 @@ namespace occa {
 
       fileOrigin(const fileOrigin &other);
 
+      fileOrigin& operator = (const fileOrigin &other);
+
       ~fileOrigin();
 
       void push(const bool fromInclude_,
