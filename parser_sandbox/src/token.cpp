@@ -698,6 +698,7 @@ namespace occa {
     }
 
     token_t* tokenStream::getIdentifierToken() {
+      fileOrigin tokenOrigin = origin;
       if (!lex::charIsIn(*fp.pos, charcodes::identifierStart)) {
         // TODO: Print proper error
         // "Not able to parse identifier"
@@ -705,11 +706,12 @@ namespace occa {
       }
       std::string value;
       getIdentifier(value);
-      return new identifierToken(origin,
+      return new identifierToken(tokenOrigin,
                                  value);
     }
 
     token_t* tokenStream::getPrimitiveToken() {
+      fileOrigin tokenOrigin = origin;
       push();
       primitive value = primitive::load(fp.pos);
       if (value.isNaN()) {
@@ -720,11 +722,12 @@ namespace occa {
       }
       countSkippedLines();
       pop();
-      return new primitiveToken(origin,
+      return new primitiveToken(tokenOrigin,
                                 value);
     }
 
     token_t* tokenStream::getOperatorToken() {
+      fileOrigin tokenOrigin = origin;
       operatorTrie &operators = getOperators();
       operatorTrie::result_t result = operators.getLongest(fp.pos);
       if (!result.success()) {
@@ -733,7 +736,7 @@ namespace occa {
         return NULL;
       }
       fp.pos += (result.length + 1); // Skip operator
-      return new operatorToken(origin,
+      return new operatorToken(tokenOrigin,
                                *(result.value()));
     }
 
@@ -760,6 +763,7 @@ namespace occa {
     }
 
     token_t* tokenStream::getOneStringToken(const int encoding) {
+      fileOrigin tokenOrigin = origin;
       if (encoding) {
         std::string encodingStr;
         getIdentifier(encodingStr);
@@ -780,11 +784,12 @@ namespace occa {
       if (*fp.pos == '_') {
         getIdentifier(udf);
       }
-      return new stringToken(origin,
+      return new stringToken(tokenOrigin,
                              encoding, value, udf);
     }
 
     token_t* tokenStream::getCharToken(const int encoding) {
+      fileOrigin tokenOrigin = origin;
       if (encoding) {
         std::string encodingStr;
         getIdentifier(encodingStr);
@@ -811,11 +816,12 @@ namespace occa {
       if (*fp.pos == '_') {
         getIdentifier(udf);
       }
-      return new charToken(origin,
+      return new charToken(tokenOrigin,
                            encoding, value, udf);
     }
 
     token_t* tokenStream::getHeaderToken() {
+      fileOrigin tokenOrigin = origin;
       int type = shallowPeek();
       if (type & tokenType::op) {
         ++fp.pos; // Skip <
@@ -827,7 +833,7 @@ namespace occa {
           popAndRewind();
           return NULL;
         }
-        token_t *token = new headerToken(origin,
+        token_t *token = new headerToken(tokenOrigin,
                                          true, str());
         ++fp.pos; // Skip >
         pop();
@@ -840,11 +846,12 @@ namespace occa {
       }
       std::string value;
       getString(value);
-      return new headerToken(origin,
+      return new headerToken(tokenOrigin,
                              false, value);
     }
 
     token_t* tokenStream::getAttributeToken() {
+      fileOrigin tokenOrigin = origin;
       if (*fp.pos != '@') {
         // TODO: Print proper error
         // "Not able to parse attribute"
@@ -860,7 +867,7 @@ namespace occa {
         popAndRewind();
         return NULL;
       }
-      return new attributeToken(origin,
+      return new attributeToken(tokenOrigin,
                                 value);
     }
     //==================================
