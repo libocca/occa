@@ -224,21 +224,23 @@ namespace occa {
 
     class tokenStream {
     public:
-      file_t *file;
-      filePosition fp;
-      std::vector<filePosition> stack;
+      fileOrigin origin;
+      filePosition &fp;
+      std::vector<fileOrigin> stack;
 
       tokenStream(const char *root);
       tokenStream(file_t *file_,
                   const char *root);
 
       tokenStream(const tokenStream &stream);
+      tokenStream& operator = (const tokenStream &stream);
 
-      const char *getPosition();
-      void setPosition(const char * pos);
-      int getLine();
       void setLine(const int line);
-      fileOrigin getFileOrigin();
+
+      void pushSource(const bool fromInclude,
+                    file_t *file,
+                    const filePosition &position);
+      void popSource();
 
       void push();
       void pushAndSet(const filePosition &fp_);

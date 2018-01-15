@@ -357,59 +357,55 @@ namespace occa {
 
     //---[ Character Stream ]-----------
     tokenStream::tokenStream(const char *root) :
-      file(NULL),
-      fp(root) {}
+      origin(NULL, filePosition(root)),
+      fp(origin.position) {}
 
     tokenStream::tokenStream(file_t *file_,
                              const char *root) :
-      file(file_),
-      fp(root) {}
+      origin(file_, filePosition(root)),
+      fp(origin.position) {}
 
     tokenStream::tokenStream(const tokenStream &stream) :
-      file(stream.file),
-      fp(stream.fp),
+      origin(stream.origin),
+      fp(origin.position),
       stack(stream.stack) {}
 
-    const char *tokenStream::getPosition() {
-      return fp.pos;
-    }
-
-    void tokenStream::setPosition(const char * pos) {
-      fp.pos = pos;
-    }
-
-    int tokenStream::getLine() {
-      return fp.line;
+    tokenStream& tokenStream::operator = (const tokenStream &stream) {
+      origin = stream.origin;
+      stack = stream.stack;
+      return *this;
     }
 
     void tokenStream::setLine(const int line) {
       fp.line = line;
     }
 
-    fileOrigin tokenStream::getFileOrigin() {
-      return fileOrigin(file, fp);
+    void tokenStream::pushSource(const bool fromInclude,
+                                 file_t *file,
+                                 const filePosition &position) {
+      push();
+      origin.push(fromInclude,
+                  file,
+                  position);
+    }
+
+    void tokenStream::popSource() {
+      popAndRewind();
     }
 
     void tokenStream::push() {
-      stack.push_back(
-        filePosition(fp.line,
-                     fp.lineStart,
-                     fp.pos)
-      );
-    }
-
-    void tokenStream::pushAndSet(const filePosition &fp_) {
-      push();
-      fp = fp_;
+      stack.push_back(origin);
     }
 
     void tokenStream::pop(const bool rewind) {
-      if (stack.size() > 0) {
-        if (rewind) {
-          fp = stack.back();
-        }
-        stack.pop_back();
+      if (stack.size() == 0) {
+        // TODO: Add error
+        return;
       }
+      if (rewind) {
+        origin = stack.back();
+      }
+      stack.pop_back();
     }
 
     void tokenStream::popAndRewind() {
@@ -418,18 +414,25 @@ namespace occa {
 
     std::string tokenStream::str() {
       if (stack.size() == 0) {
+        // TODO: Add error
         return "";
       }
-      filePosition last = stack.back();
-      return std::string(last.pos, fp.pos - last.pos);
+      fileOrigin last = stack.back();
+      return std::string(last.position.pos,
+                         fp.pos - last.position.pos);
     }
 
     void tokenStream::countSkippedLines() {
       if (stack.size() == 0) {
+        // TODO: Add error
         return;
       }
-      filePosition last = stack.back();
-      const char *pos = last.pos;
+      fileOrigin last = stack.back();
+      if (last.file != origin.file) {
+        // TODO: Add error
+        return;
+      }
+      const char *pos = last.position.pos;
       const char *end = fp.pos;
       while (pos < end) {
         if (*pos == '\\') {
@@ -702,7 +705,7 @@ namespace occa {
       }
       std::string value;
       getIdentifier(value);
-      return new identifierToken(getFileOrigin(),
+      return new identifierToken(origin,
                                  value);
     }
 
@@ -717,7 +720,7 @@ namespace occa {
       }
       countSkippedLines();
       pop();
-      return new primitiveToken(getFileOrigin(),
+      return new primitiveToken(origin,
                                 value);
     }
 
@@ -730,7 +733,7 @@ namespace occa {
         return NULL;
       }
       fp.pos += (result.length + 1); // Skip operator
-      return new operatorToken(getFileOrigin(),
+      return new operatorToken(origin,
                                *(result.value()));
     }
 
@@ -777,7 +780,7 @@ namespace occa {
       if (*fp.pos == '_') {
         getIdentifier(udf);
       }
-      return new stringToken(getFileOrigin(),
+      return new stringToken(origin,
                              encoding, value, udf);
     }
 
@@ -808,7 +811,7 @@ namespace occa {
       if (*fp.pos == '_') {
         getIdentifier(udf);
       }
-      return new charToken(getFileOrigin(),
+      return new charToken(origin,
                            encoding, value, udf);
     }
 
@@ -824,9 +827,8 @@ namespace occa {
           popAndRewind();
           return NULL;
         }
-        token_t *token = new headerToken(getFileOrigin(),
-                                         true,
-                                         str());
+        token_t *token = new headerToken(origin,
+                                         true, str());
         ++fp.pos; // Skip >
         pop();
         return token;
@@ -838,9 +840,8 @@ namespace occa {
       }
       std::string value;
       getString(value);
-      return new headerToken(getFileOrigin(),
-                             false,
-                             value);
+      return new headerToken(origin,
+                             false, value);
     }
 
     token_t* tokenStream::getAttributeToken() {
@@ -859,7 +860,7 @@ namespace occa {
         popAndRewind();
         return NULL;
       }
-      return new attributeToken(getFileOrigin(),
+      return new attributeToken(origin,
                                 value);
     }
     //==================================

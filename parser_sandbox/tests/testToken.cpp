@@ -77,17 +77,17 @@ void testSkipMethods() {
   const char *c = streamSource.c_str();
 
   stream.skipTo('b');
-  OCCA_ASSERT_EQUAL('b', *stream.getPosition());
+  OCCA_ASSERT_EQUAL('b', *stream.fp.pos);
   stream.skipTo('e');
-  OCCA_ASSERT_EQUAL('e', *stream.getPosition());
+  OCCA_ASSERT_EQUAL('e', *stream.fp.pos);
 
-  stream.setPosition(c);
+  stream.fp.pos = c;
   stream.skipTo("c\n");
-  OCCA_ASSERT_EQUAL(c + 1, stream.getPosition());
+  OCCA_ASSERT_EQUAL(c + 1, stream.fp.pos);
 
-  stream.setPosition(c + 5);
+  stream.fp.pos = c + 5;
   stream.skipFrom("\n");
-  OCCA_ASSERT_EQUAL('d', *stream.getPosition());
+  OCCA_ASSERT_EQUAL('d', *stream.fp.pos);
 }
 
 void testPushPop() {
@@ -97,14 +97,14 @@ void testPushPop() {
   stream.push();
   stream.skipTo('c');
   OCCA_ASSERT_EQUAL(3,
-                    stream.getLine());
+                    stream.fp.line);
   OCCA_ASSERT_EQUAL(c + 4,
-                    stream.getPosition());
+                    stream.fp.pos);
   stream.popAndRewind();
   OCCA_ASSERT_EQUAL(1,
-                    stream.getLine());
+                    stream.fp.line);
   OCCA_ASSERT_EQUAL(c + 0,
-                    stream.getPosition());
+                    stream.fp.pos);
   stream.push();
   stream.push();
   stream.push();
@@ -113,9 +113,9 @@ void testPushPop() {
   stream.pop();
   stream.pop();
   OCCA_ASSERT_EQUAL(3,
-                    stream.getLine());
+                    stream.fp.line);
   OCCA_ASSERT_EQUAL(c + 4,
-                    stream.getPosition());
+                    stream.fp.pos);
 }
 
 #define testStringPeek(s, encoding_)                                    \
