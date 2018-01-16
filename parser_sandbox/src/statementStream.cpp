@@ -41,6 +41,9 @@ namespace occa {
     }
 
     int statementStream::peek() {
+      tokens.push();
+      // token_t *token = tokens.getToken();
+      tokens.pop();
       return 0;
     }
 

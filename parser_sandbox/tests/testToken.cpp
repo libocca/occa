@@ -300,9 +300,13 @@ void testTokenMethods() {
 }
 
 #define testStringValue(s, value_)                              \
-  setToken(s);                                                  \
+  setStream(s);                                                 \
+  testNextStringValue(value_)
+
+#define testNextStringValue(value_)                             \
+  getToken();                                                   \
   OCCA_ASSERT_EQUAL_BINARY(occa::lang::tokenType::string,       \
-                           tokenType())                         \
+                           tokenType());                        \
   OCCA_ASSERT_EQUAL(value_,                                     \
                     token->to<occa::lang::stringToken>().value)
 
@@ -416,7 +420,7 @@ void testStringMethods() {
 
 
 void testPrimitiveMethods() {
-  setStream("1 68719476735L +0.1 .1e-10 -4.5L\n$ test\nfoo bar ` bar foo");
+  setStream("1 68719476735L +0.1 .1e-10 -4.5L\n$ test\n\"foo\" \"bar\" ` bar foo");
   testPrimitiveToken(int, 1);
   testPrimitiveToken(int64_t, 68719476735L);
   testPrimitiveToken(float, +0.1);
@@ -425,5 +429,6 @@ void testPrimitiveMethods() {
   std::cerr << "Testing error outputs:\n";
   getToken();
   stream.skipTo('\n');
+  testNextStringValue("foobar");
   getToken();
 }

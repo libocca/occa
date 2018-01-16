@@ -107,8 +107,10 @@ namespace occa {
     void tokenStream::postprint(std::ostream &out) {
       push();
       fp.pos = fp.lineStart;
+      push();
       skipTo('\n');
       out << str() << '\n';
+      pop();
       popAndRewind();
       for (const char *c = fp.lineStart; c < fp.pos; ++c) {
         out << ' ';
@@ -284,7 +286,6 @@ namespace occa {
       if (c == '@') {
         return tokenType::attribute;
       }
-      printError("Not able to create token for:");
       return tokenType::none;
     }
 
@@ -438,6 +439,9 @@ namespace occa {
       }
       if (type & tokenType::attribute) {
         return getAttributeToken();
+      }
+      if (!type) {
+        printError("Not able to create token for:");
       }
       return NULL;
     }
