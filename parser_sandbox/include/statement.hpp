@@ -67,15 +67,15 @@ namespace occa {
       static const int return_     = (1 << 16);
     };
 
-    class statement {
+    class statement_t {
     public:
-      statement *up;
+      statement_t *up;
       context &ctx;
       scope_t scope;
 
-      statement(context &ctx_);
+      statement_t(context &ctx_);
 
-      virtual ~statement();
+      virtual ~statement_t();
 
       template <class TM>
       inline bool is() const {
@@ -85,7 +85,7 @@ namespace occa {
       template <class TM>
       inline TM& to() {
         TM *ptr = dynamic_cast<TM*>(this);
-        OCCA_ERROR("Unable to cast statement::to",
+        OCCA_ERROR("Unable to cast statement_t::to",
                    ptr != NULL);
         return *ptr;
       }
@@ -93,12 +93,12 @@ namespace occa {
       template <class TM>
       inline const TM& to() const {
         const TM *ptr = dynamic_cast<const TM*>(this);
-        OCCA_ERROR("Unable to cast statement::to",
+        OCCA_ERROR("Unable to cast statement_t::to",
                    ptr != NULL);
         return *ptr;
       }
 
-      virtual statement& clone() const = 0;
+      virtual statement_t& clone() const = 0;
       virtual int type() const = 0;
 
       virtual bool hasScope() const;
@@ -114,16 +114,16 @@ namespace occa {
       gotoStatement        newGotoStatement(const std::string &name);
       gotoLabelStatement   newGotoLabelStatement(const std::string &name);
       namespaceStatement   newNamespaceStatement(const std::string &name);
-      whileStatement       newWhileStatement(statement &check);
-      whileStatement       newDoWhileStatement(statement &check);
-      forStatement         newForStatement(statement &init,
-                                           statement &check,
-                                           statement &update);
-      switchStatement      newSwitchStatement(statement &value);
-      caseStatement        newCaseStatement(statement &value);
+      whileStatement       newWhileStatement(statement_t &check);
+      whileStatement       newDoWhileStatement(statement_t &check);
+      forStatement         newForStatement(statement_t &init,
+                                           statement_t &check,
+                                           statement_t &update);
+      switchStatement      newSwitchStatement(statement_t &value);
+      caseStatement        newCaseStatement(statement_t &value);
       continueStatement    newContinueStatement();
       breakStatement       newBreakStatement();
-      returnStatement      newReturnStatement(statement &value);
+      returnStatement      newReturnStatement(statement_t &value);
 
       virtual void print(printer &pout) const = 0;
 
@@ -133,11 +133,11 @@ namespace occa {
     };
 
     //---[ Empty ]------------------------
-    class emptyStatement : public statement {
+    class emptyStatement : public statement_t {
     public:
       emptyStatement(context &ctx_);
 
-      virtual statement& clone() const;
+      virtual statement_t& clone() const;
       virtual int type() const;
 
       virtual void print(printer &pout) const;
@@ -145,14 +145,14 @@ namespace occa {
     //====================================
 
     //---[ Directive ]--------------------
-    class directiveStatement : public statement {
+    class directiveStatement : public statement_t {
     public:
       macro_t &macro;
 
       directiveStatement(context &ctx_,
                          macro_t &macro_);
 
-      virtual statement& clone() const;
+      virtual statement_t& clone() const;
       virtual int type() const;
 
       virtual void print(printer &pout) const;
@@ -160,16 +160,16 @@ namespace occa {
     //====================================
 
     //---[ Block ]------------------------
-    class blockStatement : public statement {
+    class blockStatement : public statement_t {
     public:
       statementPtrVector children;
 
       blockStatement(context &ctx_);
 
-      void addChild(statement &child);
+      void addChild(statement_t &child);
       void clearChildren();
 
-      virtual statement& clone() const;
+      virtual statement_t& clone() const;
       virtual int type() const;
 
       virtual bool hasScope() const;
@@ -180,14 +180,14 @@ namespace occa {
     //====================================
 
     //---[ Type ]-------------------------
-    class typeDeclStatement : public statement {
+    class typeDeclStatement : public statement_t {
     public:
       declarationType &declType;
 
       typeDeclStatement(context &ctx_,
                         declarationType &declType_);
 
-      virtual statement& clone() const;
+      virtual statement_t& clone() const;
       virtual int type() const;
 
       virtual bool hasScope() const;
@@ -195,14 +195,14 @@ namespace occa {
       virtual void print(printer &pout) const;
     };
 
-    class classAccessStatement : public statement {
+    class classAccessStatement : public statement_t {
     public:
       int access;
 
       classAccessStatement(context &ctx_,
                            const int access_);
 
-      virtual statement& clone() const;
+      virtual statement_t& clone() const;
       virtual int type() const;
 
       virtual void print(printer &pout) const;
@@ -210,24 +210,24 @@ namespace occa {
     //====================================
 
     //---[ Expression ]-------------------
-    class expressionStatement : public statement {
+    class expressionStatement : public statement_t {
     public:
       exprNode &expression;
 
       expressionStatement(context &ctx_,
                           exprNode &expression_);
 
-      virtual statement& clone() const;
+      virtual statement_t& clone() const;
       virtual int type() const;
 
       virtual void print(printer &pout) const;
     };
 
-    class declarationStatement : public statement {
+    class declarationStatement : public statement_t {
     public:
       declarationStatement(context &ctx_);
 
-      virtual statement& clone() const;
+      virtual statement_t& clone() const;
       virtual int type() const;
 
       virtual void print(printer &pout) const;
@@ -235,27 +235,27 @@ namespace occa {
     //====================================
 
     //---[ Goto ]-------------------------
-    class gotoStatement : public statement {
+    class gotoStatement : public statement_t {
     public:
       std::string name;
 
       gotoStatement(context &ctx_,
                     const std::string &name_);
 
-      virtual statement& clone() const;
+      virtual statement_t& clone() const;
       virtual int type() const;
 
       virtual void print(printer &pout) const;
     };
 
-    class gotoLabelStatement : public statement {
+    class gotoLabelStatement : public statement_t {
     public:
       std::string name;
 
       gotoLabelStatement(context &ctx_,
                          const std::string &name_);
 
-      virtual statement& clone() const;
+      virtual statement_t& clone() const;
       virtual int type() const;
 
       virtual void print(printer &pout) const;
@@ -272,7 +272,7 @@ namespace occa {
 
       virtual bool hasScope() const;
 
-      virtual statement& clone() const;
+      virtual statement_t& clone() const;
       virtual int type() const;
 
       virtual void print(printer &pout) const;
@@ -282,14 +282,14 @@ namespace occa {
     //---[ While ]------------------------
     class whileStatement : public blockStatement {
     public:
-      statement &check;
+      statement_t &check;
       bool isDoWhile;
 
       whileStatement(context &ctx_,
-                     statement &check_,
+                     statement_t &check_,
                      const bool isDoWhile_ = false);
 
-      virtual statement& clone() const;
+      virtual statement_t& clone() const;
       virtual int type() const;
 
       virtual bool hasScope() const;
@@ -301,14 +301,14 @@ namespace occa {
     //---[ For ]--------------------------
     class forStatement : public blockStatement {
     public:
-      statement &init, &check, &update;
+      statement_t &init, &check, &update;
 
       forStatement(context &ctx_,
-                   statement &init_,
-                   statement &check_,
-                   statement &update_);
+                   statement_t &init_,
+                   statement_t &check_,
+                   statement_t &update_);
 
-      virtual statement& clone() const;
+      virtual statement_t& clone() const;
       virtual int type() const;
 
       virtual bool hasScope() const;
@@ -320,12 +320,12 @@ namespace occa {
     //---[ Switch ]-----------------------
     class switchStatement : public blockStatement {
     public:
-      statement &value;
+      statement_t &value;
 
       switchStatement(context &ctx_,
-                      statement &value_);
+                      statement_t &value_);
 
-      virtual statement& clone() const;
+      virtual statement_t& clone() const;
       virtual int type() const;
 
       virtual bool hasScope() const;
@@ -335,14 +335,14 @@ namespace occa {
     //====================================
 
     //---[ Case ]-------------------------
-    class caseStatement : public statement {
+    class caseStatement : public statement_t {
     public:
-      statement &value;
+      statement_t &value;
 
       caseStatement(context &ctx_,
-                    statement &value_);
+                    statement_t &value_);
 
-      virtual statement& clone() const;
+      virtual statement_t& clone() const;
       virtual int type() const;
 
       virtual void print(printer &pout) const;
@@ -350,34 +350,34 @@ namespace occa {
     //====================================
 
     //---[ Exit ]-------------------------
-    class continueStatement : public statement {
+    class continueStatement : public statement_t {
     public:
       continueStatement(context &ctx_);
 
-      virtual statement& clone() const;
+      virtual statement_t& clone() const;
       virtual int type() const;
 
       virtual void print(printer &pout) const;
     };
 
-    class breakStatement : public statement {
+    class breakStatement : public statement_t {
     public:
       breakStatement(context &ctx_);
 
-      virtual statement& clone() const;
+      virtual statement_t& clone() const;
       virtual int type() const;
 
       virtual void print(printer &pout) const;
     };
 
-    class returnStatement : public statement {
+    class returnStatement : public statement_t {
     public:
-      statement &value;
+      statement_t &value;
 
       returnStatement(context &ctx_,
-                      statement &value_);
+                      statement_t &value_);
 
-      virtual statement& clone() const;
+      virtual statement_t& clone() const;
       virtual int type() const;
 
       virtual void print(printer &pout) const;

@@ -25,6 +25,7 @@
 #include "occa/tools/io.hpp"
 
 #include "file.hpp"
+#include "printer.hpp"
 #include "token.hpp"
 
 namespace occa {

@@ -34,21 +34,21 @@ namespace occa {
 
       backend(const properties &props_ = "");
 
-      virtual void transform(statement &root) = 0;
+      virtual void transform(statement_t &root) = 0;
     };
 
     class oklBackend : public backend {
     public:
       oklBackend(const properties &props_);
 
-      virtual void transform(statement &root);
-      virtual void backendTransform(statement &root) = 0;
+      virtual void transform(statement_t &root);
+      virtual void backendTransform(statement_t &root) = 0;
 
       // @tile(...) -> for-loops
-      void splitTiledOccaLoops(statement &root);
+      void splitTiledOccaLoops(statement_t &root);
 
       // @outer -> @outer(#)
-      void retagOccaLoops(statement &root);
+      void retagOccaLoops(statement_t &root);
 
       void attributeOccaLoop(forStatement &loop);
 
@@ -68,10 +68,10 @@ namespace occa {
       void splitTiledOccaLoop(forStatement &loop);
 
       // Check conditional barriers
-      void checkOccaBarriers(statement &root);
+      void checkOccaBarriers(statement_t &root);
 
       // Move the defines to the kernel scope
-      void floatSharedAndExclusiveDefines(statement &root);
+      void floatSharedAndExclusiveDefines(statement_t &root);
     };
   }
 }

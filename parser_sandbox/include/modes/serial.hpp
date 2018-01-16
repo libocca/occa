@@ -28,11 +28,11 @@ namespace occa {
   namespace lang {
     class serialBackend : public oklBackend {
     public:
-      virtual void backendTransform(statement &root);
+      virtual void backendTransform(statement_t &root);
 
-      void setupKernelArgs(statement &root);
+      void setupKernelArgs(statement_t &root);
 
-      void modifyExclusiveVariables(statement &root);
+      void modifyExclusiveVariables(statement_t &root);
     };
   }
 }

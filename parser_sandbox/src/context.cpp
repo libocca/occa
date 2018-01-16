@@ -104,21 +104,21 @@ namespace occa {
       trie.add(value.uniqueName());
     }
 
-    void context::addRecord(classType &value, statement &s) {
+    void context::addRecord(classType &value, statement_t &s) {
       addRecord(classTrie,
                 &value,
                 s,
                 keywordType::class_);
     }
 
-    void context::addRecord(functionType &value, statement &s) {
+    void context::addRecord(functionType &value, statement_t &s) {
       addRecord(functionTrie,
                 &value,
                 s,
                 keywordType::function_);
     }
 
-    void context::addRecord(attribute &value, statement &s) {
+    void context::addRecord(attribute &value, statement_t &s) {
       addRecord(attributeTrie,
                 &value,
                 s,
@@ -127,7 +127,7 @@ namespace occa {
 
     void context::addRecord(statementTrie &trie,
                             specifier *ptr,
-                            statement &s,
+                            statement_t &s,
                             const int ktype) {
       statementTrie::result_t result = trie.get(ptr->uniqueName());
       OCCA_ERROR("Keyword [" << (ptr->uniqueName()) << "] is not in scope",
@@ -142,7 +142,7 @@ namespace occa {
       }
     }
 
-    void context::removeRecord(statement &s) {
+    void context::removeRecord(statement_t &s) {
       statementKeywordMap::iterator it = statementMap.find(&s);
       if (it == statementMap.end()) {
         return;

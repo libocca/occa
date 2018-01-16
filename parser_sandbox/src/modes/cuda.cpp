@@ -23,23 +23,23 @@
 
 namespace occa {
   namespace lang {
-    void cudaBackend::backendTransform(statement &root) {
+    void cudaBackend::backendTransform(statement_t &root) {
       updateConstToConstant(root);
       addOccaFors(root);
       setupKernelArgs(root);
       setupLaunchKernel(root);
     }
 
-    void cudaBackend::updateConstToConstant(statement &root) {
+    void cudaBackend::updateConstToConstant(statement_t &root) {
     }
 
-    void cudaBackend::addOccaFors(statement &root) {
+    void cudaBackend::addOccaFors(statement_t &root) {
     }
 
-    void cudaBackend::setupKernelArgs(statement &root) {
+    void cudaBackend::setupKernelArgs(statement_t &root) {
     }
 
-    void cudaBackend::setupLaunchKernel(statement &root) {
+    void cudaBackend::setupLaunchKernel(statement_t &root) {
     }
   }
 }

@@ -23,15 +23,15 @@
 
 namespace occa {
   namespace lang {
-    void serialBackend::backendTransform(statement &root) {
+    void serialBackend::backendTransform(statement_t &root) {
       setupKernelArgs(root);
       modifyExclusiveVariables(root);
     }
 
-    void serialBackend::setupKernelArgs(statement &root) {
+    void serialBackend::setupKernelArgs(statement_t &root) {
     }
 
-    void serialBackend::modifyExclusiveVariables(statement &root) {
+    void serialBackend::modifyExclusiveVariables(statement_t &root) {
     }
   }
 }

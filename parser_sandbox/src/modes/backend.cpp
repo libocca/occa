@@ -26,7 +26,7 @@ namespace occa {
     backend::backend(const properties &props_) :
       props(props_) {}
 
-    void oklBackend::transform(statement &root) {
+    void oklBackend::transform(statement_t &root) {
       // @tile(...) -> for-loops
       splitTiledOccaLoops(root);
 
@@ -43,7 +43,7 @@ namespace occa {
     }
 
     // @tile(root) -> for-loops
-    void oklBackend::splitTiledOccaLoops(statement &root) {
+    void oklBackend::splitTiledOccaLoops(statement_t &root) {
 #if 0
       statementQuery tiledQuery = (query::findForLoops()
                                    .withAttribute("tile"));
@@ -63,7 +63,7 @@ namespace occa {
     }
 
     // @outer -> @outer(#)
-    void oklBackend::retagOccaLoops(statement &root) {
+    void oklBackend::retagOccaLoops(statement_t &root) {
 #if 0
       statementQuery outerLoops = (query::findForLoops(query::first)
                                    .withAttribute("outer"));
@@ -224,7 +224,7 @@ namespace occa {
     }
 
     // Check conditional barriers
-    void oklBackend::checkOccaBarriers(statement &root) {
+    void oklBackend::checkOccaBarriers(statement_t &root) {
 #if 0
       // Check for outer-most inner loops
       // Place after [:-1] ([:] if in a loop)
@@ -232,7 +232,7 @@ namespace occa {
     }
 
       // Move the defines to the kernel scope
-    void oklBackend::floatSharedAndExclusiveDefines(statement &root) {
+    void oklBackend::floatSharedAndExclusiveDefines(statement_t &root) {
 #if 0
       // Move
 #endif

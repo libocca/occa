@@ -23,7 +23,7 @@
 
 namespace occa {
   namespace lang {
-    void openclBackend::backendTransform(statement &root) {
+    void openclBackend::backendTransform(statement_t &root) {
       addFunctionPrototypes(root);
       updateConstToConstant(root);
       addOccaFors(root);
@@ -31,19 +31,19 @@ namespace occa {
       setupLaunchKernel(root);
     }
 
-    void openclBackend::addFunctionPrototypes(statement &root) {
+    void openclBackend::addFunctionPrototypes(statement_t &root) {
     }
 
-    void openclBackend::updateConstToConstant(statement &root) {
+    void openclBackend::updateConstToConstant(statement_t &root) {
     }
 
-    void openclBackend::addOccaFors(statement &root) {
+    void openclBackend::addOccaFors(statement_t &root) {
     }
 
-    void openclBackend::setupKernelArgs(statement &root) {
+    void openclBackend::setupKernelArgs(statement_t &root) {
     }
 
-    void openclBackend::setupLaunchKernel(statement &root) {
+    void openclBackend::setupLaunchKernel(statement_t &root) {
     }
   }
 }

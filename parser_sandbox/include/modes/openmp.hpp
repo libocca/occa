@@ -28,9 +28,9 @@ namespace occa {
   namespace lang {
     class openmpBackend : public serialBackend {
     public:
-      virtual void backendTransform(statement &root);
+      virtual void backendTransform(statement_t &root);
 
-      void addPragmas(statement &root);
+      void addPragmas(statement_t &root);
     };
   }
 }

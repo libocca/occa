@@ -28,17 +28,17 @@ namespace occa {
   namespace lang {
     class openclBackend : public oklBackend {
     public:
-      virtual void backendTransform(statement &root);
+      virtual void backendTransform(statement_t &root);
 
-      void addFunctionPrototypes(statement &root);
+      void addFunctionPrototypes(statement_t &root);
 
-      void updateConstToConstant(statement &root);
+      void updateConstToConstant(statement_t &root);
 
-      void addOccaFors(statement &root);
+      void addOccaFors(statement_t &root);
 
-      void setupKernelArgs(statement &root);
+      void setupKernelArgs(statement_t &root);
 
-      void setupLaunchKernel(statement &root);
+      void setupLaunchKernel(statement_t &root);
     };
   }
 }
