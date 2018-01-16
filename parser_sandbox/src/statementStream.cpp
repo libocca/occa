@@ -32,16 +32,88 @@ namespace occa {
       tokens(file_, root) {
     }
 
-    std::string statementStream::className() const {
-      return "occa::lang::statementStream";
+    void statementStream::preprint(std::ostream &out) {
+      tokens.preprint(out);
     }
 
-    void statementStream::preprint(std::ostream &out) const {
-      tokens.preprint(out);
+    void statementStream::postprint(std::ostream &out) {
+      tokens.postprint(out);
     }
 
     int statementStream::peek() {
       return 0;
+    }
+
+    statement_t* statementStream::getStatement() {
+      return NULL;
+    }
+
+    statement_t* statementStream::getEmptyStatement() {
+      return NULL;
+    }
+
+    statement_t* statementStream::getDirectiveStatement() {
+      return NULL;
+    }
+
+    statement_t* statementStream::getBlockStatement() {
+      return NULL;
+    }
+
+    statement_t* statementStream::getTypeDeclStatement() {
+      return NULL;
+    }
+
+    statement_t* statementStream::getClassAccessStatement() {
+      return NULL;
+    }
+
+    statement_t* statementStream::getExpressionStatement() {
+      return NULL;
+    }
+
+    statement_t* statementStream::getDeclarationStatement() {
+      return NULL;
+    }
+
+    statement_t* statementStream::getGotoStatement() {
+      return NULL;
+    }
+
+    statement_t* statementStream::getGotoLabelStatement() {
+      return NULL;
+    }
+
+    statement_t* statementStream::getNamespaceStatement() {
+      return NULL;
+    }
+
+    statement_t* statementStream::getWhileStatement() {
+      return NULL;
+    }
+
+    statement_t* statementStream::getForStatement() {
+      return NULL;
+    }
+
+    statement_t* statementStream::getSwitchStatement() {
+      return NULL;
+    }
+
+    statement_t* statementStream::getCaseStatement() {
+      return NULL;
+    }
+
+    statement_t* statementStream::getContinueStatement() {
+      return NULL;
+    }
+
+    statement_t* statementStream::getBreakStatement() {
+      return NULL;
+    }
+
+    statement_t* statementStream::getReturnStatement() {
+      return NULL;
     }
   }
 }

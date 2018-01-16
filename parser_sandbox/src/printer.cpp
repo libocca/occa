@@ -136,30 +136,30 @@ namespace occa {
       }
     }
 
-    void prints::preprint(std::ostream &out) const {}
+    void prints::preprint(std::ostream &out) {}
+    void prints::postprint(std::ostream &out) {}
 
     void prints::print(std::ostream &out,
-                       const std::string &message) const {
+                       const std::string &message) {
       preprint(out);
-      out << className() << ": " << message << '\n';
+      out << message << '\n';
+      postprint(out);
     }
 
     void prints::printWarning(std::ostream &out,
-                              const std::string &message) const {
+                              const std::string &message) {
       preprint(out);
-      out << className()
-          << ": "
-          << yellow("Warning: ")
+      out << yellow("Warning: ")
           << message << '\n';
+      postprint(out);
     }
 
     void prints::printError(std::ostream &out,
-                            const std::string &message) const {
+                            const std::string &message) {
       preprint(out);
-      out << className()
-          << ": "
-          << red("Error: ")
+      out << red("Error: ")
           << message << '\n';
+      postprint(out);
     }
   }
 }

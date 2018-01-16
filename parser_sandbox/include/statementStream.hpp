@@ -36,20 +36,29 @@ namespace occa {
       statementStream(file_t *file_,
                       const char *root);
 
-      virtual std::string className() const;
-      virtual void preprint(std::ostream &out) const;
+      virtual void preprint(std::ostream &out);
+      virtual void postprint(std::ostream &out);
 
       int peek();
 
       statement_t* getStatement();
-      statement_t* getIdentifierStatement();
-      statement_t* getPrimitiveStatement();
-      statement_t* getOperatorStatement();
-      statement_t* getStringStatement(const int encoding);
-      statement_t* getOneStringStatement(const int encoding);
-      statement_t* getCharStatement(const int encoding);
-      statement_t* getHeaderStatement();
-      statement_t* getAttributeStatement();
+      statement_t* getEmptyStatement();
+      statement_t* getDirectiveStatement();
+      statement_t* getBlockStatement();
+      statement_t* getTypeDeclStatement();
+      statement_t* getClassAccessStatement();
+      statement_t* getExpressionStatement();
+      statement_t* getDeclarationStatement();
+      statement_t* getGotoStatement();
+      statement_t* getGotoLabelStatement();
+      statement_t* getNamespaceStatement();
+      statement_t* getWhileStatement();
+      statement_t* getForStatement();
+      statement_t* getSwitchStatement();
+      statement_t* getCaseStatement();
+      statement_t* getContinueStatement();
+      statement_t* getBreakStatement();
+      statement_t* getReturnStatement();
     };
   }
 }

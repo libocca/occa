@@ -35,11 +35,11 @@ occa::lang::tokenStream stream(NULL);
 occa::lang::token_t *token = NULL;
 
 int main(const int argc, const char **argv) {
-  // testSkipMethods();
-  // testPushPop();
-  // testPeekMethods();
-  // testTokenMethods();
-  // testStringMethods();
+  testSkipMethods();
+  testPushPop();
+  testPeekMethods();
+  testTokenMethods();
+  testStringMethods();
   testPrimitiveMethods();
   if (token) {
     delete token;
@@ -77,12 +77,16 @@ int tokenType() {
 }
 
 void testSkipMethods() {
-  setStream("a\nb\nc\n\n\n\n\n\nd\ne");
+  setStream("ab\nc\n\n\n\n\n\nd\ne");
   const char *c = streamSource.c_str();
+
+  stream.skipTo('a');
+  OCCA_ASSERT_EQUAL('a', *stream.fp.pos);
+  OCCA_ASSERT_FALSE(stream.passedNewline);
 
   stream.skipTo('b');
   OCCA_ASSERT_EQUAL('b', *stream.fp.pos);
-  OCCA_ASSERT_TRUE(stream.passedNewline);
+  OCCA_ASSERT_FALSE(stream.passedNewline);
 
   stream.skipTo('e');
   OCCA_ASSERT_EQUAL('e', *stream.fp.pos);
@@ -90,10 +94,10 @@ void testSkipMethods() {
 
   stream.fp.pos = c;
   stream.skipTo("c\n");
-  OCCA_ASSERT_EQUAL(c + 1, stream.fp.pos);
-  OCCA_ASSERT_FALSE(stream.passedNewline);
+  OCCA_ASSERT_EQUAL(c + 2, stream.fp.pos);
+  OCCA_ASSERT_TRUE(stream.passedNewline);
 
-  stream.fp.pos = c + 5;
+  stream.fp.pos = c + 6;
   stream.skipFrom("\n");
   OCCA_ASSERT_EQUAL('d', *stream.fp.pos);
 }
@@ -412,10 +416,14 @@ void testStringMethods() {
 
 
 void testPrimitiveMethods() {
-  setStream("1 68719476735L +0.1 .1e-10 -4.5L");
+  setStream("1 68719476735L +0.1 .1e-10 -4.5L\n$ test\nfoo bar ` bar foo");
   testPrimitiveToken(int, 1);
   testPrimitiveToken(int64_t, 68719476735L);
   testPrimitiveToken(float, +0.1);
   testPrimitiveToken(float, .1e-10);
   testPrimitiveToken(double, -4.5L);
+  std::cerr << "Testing error outputs:\n";
+  getToken();
+  stream.skipTo('\n');
+  getToken();
 }

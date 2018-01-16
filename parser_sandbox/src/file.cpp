@@ -22,6 +22,7 @@
 #include "file.hpp"
 #include "tokenStream.hpp"
 #include "occa/tools/io.hpp"
+#include "occa/tools/string.hpp"
 
 namespace occa {
   namespace lang {
@@ -126,9 +127,9 @@ namespace occa {
       }
       // Print file location
       if (file) {
-        out << file->filename;
+        out << blue(file->filename);
       } else {
-        out << "(source)";
+        out << blue("(source)");
       }
       out << ':' << position.line
            << ':' << (position.pos - position.lineStart + 1)

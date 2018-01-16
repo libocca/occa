@@ -100,12 +100,20 @@ namespace occa {
       return *this;
     }
 
-    std::string tokenStream::className() const {
-      return "occa::lang::tokenStream";
+    void tokenStream::preprint(std::ostream &out) {
+      origin.print(out);
     }
 
-    void tokenStream::preprint(std::ostream &out) const {
-      origin.print(out);
+    void tokenStream::postprint(std::ostream &out) {
+      push();
+      fp.pos = fp.lineStart;
+      skipTo('\n');
+      out << str() << '\n';
+      popAndRewind();
+      for (const char *c = fp.lineStart; c < fp.pos; ++c) {
+        out << ' ';
+      }
+      out << green("^") << '\n';
     }
 
     void tokenStream::setLine(const int line) {
@@ -146,7 +154,7 @@ namespace occa {
 
     std::string tokenStream::str() {
       if (stack.size() == 0) {
-        printError("Unable to str() without a stack");
+        printError("Not able to str() without a stack");
         return "";
       }
       fileOrigin last = stack.back();
@@ -156,7 +164,7 @@ namespace occa {
 
     void tokenStream::countSkippedLines() {
       if (stack.size() == 0) {
-        printError("Unable to countSkippedLines() without a stack");
+        printError("Not able to countSkippedLines() without a stack");
         return;
       }
       fileOrigin last = stack.back();
@@ -231,7 +239,7 @@ namespace occa {
           ++fp.pos;
           continue;
         }
-        return;
+        break;
       }
     }
 
@@ -276,7 +284,7 @@ namespace occa {
       if (c == '@') {
         return tokenType::attribute;
       }
-      printError("Unable to shallowPeek");
+      printError("Not able to create token for:");
       return tokenType::none;
     }
 
@@ -510,7 +518,7 @@ namespace occa {
       std::string value, udf;
       getString(value, encoding);
       if (fp.pos == start) {
-        printError("Unable to find closing \"");
+        printError("Not able to find closing \"");
         return NULL;
       }
       if (*fp.pos == '_') {
@@ -535,7 +543,7 @@ namespace occa {
       push();
       skipTo("'\n");
       if (*fp.pos == '\n') {
-        printError("Unable to find closing '");
+        printError("Not able to find closing '");
         popAndRewind();
         return NULL;
       }
@@ -558,7 +566,7 @@ namespace occa {
         push();
         skipTo(">\n");
         if (*fp.pos == '\n') {
-          printError("Unable to find closing >");
+          printError("Not able to find closing >");
           popAndRewind();
           return NULL;
         }

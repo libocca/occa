@@ -48,8 +48,8 @@ namespace occa {
       tokenStream(const tokenStream &stream);
       tokenStream& operator = (const tokenStream &stream);
 
-      virtual std::string className() const;
-      virtual void preprint(std::ostream &out) const;
+      virtual void preprint(std::ostream &out);
+      virtual void postprint(std::ostream &out);
 
       void setLine(const int line);
 
