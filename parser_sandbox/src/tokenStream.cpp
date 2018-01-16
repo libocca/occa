@@ -78,21 +78,25 @@ namespace occa {
 
     tokenStream::tokenStream(const char *root) :
       origin(NULL, filePosition(root)),
-      fp(origin.position) {}
+      fp(origin.position),
+      passedNewline(false) {}
 
     tokenStream::tokenStream(file_t *file_,
                              const char *root) :
       origin(file_, filePosition(root)),
-      fp(origin.position) {}
+      fp(origin.position),
+      passedNewline(false) {}
 
     tokenStream::tokenStream(const tokenStream &stream) :
       origin(stream.origin),
       fp(origin.position),
-      stack(stream.stack) {}
+      stack(stream.stack),
+      passedNewline(stream.passedNewline) {}
 
     tokenStream& tokenStream::operator = (const tokenStream &stream) {
-      origin = stream.origin;
-      stack = stream.stack;
+      origin        = stream.origin;
+      stack         = stream.stack;
+      passedNewline = stream.passedNewline;
       return *this;
     }
 
@@ -170,6 +174,7 @@ namespace occa {
         if (*pos == '\n') {
           fp.lineStart = fp.pos + 1;
           ++fp.line;
+          passedNewline = true;
         }
         ++pos;
       }
@@ -184,6 +189,7 @@ namespace occa {
         if (*fp.pos == '\n') {
           fp.lineStart = fp.pos + 1;
           ++fp.line;
+          passedNewline = true;
         }
         if (*fp.pos == delimiter) {
           return;
@@ -201,6 +207,7 @@ namespace occa {
         if (*fp.pos == '\n') {
           fp.lineStart = fp.pos + 1;
           ++fp.line;
+          passedNewline = true;
         }
         if (lex::charIsIn(*fp.pos, delimiters)) {
           return;
@@ -218,6 +225,7 @@ namespace occa {
         if (*fp.pos == '\n') {
           fp.lineStart = fp.pos + 1;
           ++fp.line;
+          passedNewline = true;
         }
         if (lex::charIsIn(*fp.pos, delimiters)) {
           ++fp.pos;
@@ -402,6 +410,7 @@ namespace occa {
     }
 
     token_t* tokenStream::getToken() {
+      passedNewline = false;
       skipWhitespace();
       int type = peek();
       if (type & tokenType::identifier) {

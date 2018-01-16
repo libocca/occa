@@ -82,12 +82,16 @@ void testSkipMethods() {
 
   stream.skipTo('b');
   OCCA_ASSERT_EQUAL('b', *stream.fp.pos);
+  OCCA_ASSERT_TRUE(stream.passedNewline);
+
   stream.skipTo('e');
   OCCA_ASSERT_EQUAL('e', *stream.fp.pos);
+  OCCA_ASSERT_TRUE(stream.passedNewline);
 
   stream.fp.pos = c;
   stream.skipTo("c\n");
   OCCA_ASSERT_EQUAL(c + 1, stream.fp.pos);
+  OCCA_ASSERT_FALSE(stream.passedNewline);
 
   stream.fp.pos = c + 5;
   stream.skipFrom("\n");

@@ -39,6 +39,7 @@ namespace occa {
       fileOrigin origin;
       filePosition &fp;
       std::vector<fileOrigin> stack;
+      bool passedNewline;
 
       tokenStream(const char *root);
       tokenStream(file_t *file_,
