@@ -24,13 +24,13 @@
 namespace occa {
   namespace lang {
     statementStream::statementStream(const char *root) :
-      tokens(root) {
-    }
+      tokens(root),
+      parentStatement(NULL) {}
 
     statementStream::statementStream(file_t *file_,
                                      const char *root) :
-      tokens(file_, root) {
-    }
+      tokens(file_, root),
+      parentStatement(NULL) {}
 
     void statementStream::preprint(std::ostream &out) {
       tokens.preprint(out);
@@ -40,15 +40,103 @@ namespace occa {
       tokens.postprint(out);
     }
 
-    int statementStream::peek() {
+    void statementStream::clear() {
+      tokenStack.clear();
+      attributes.clear();
+    }
+
+    token_t* statementStream::getToken() {
       tokens.push();
-      // token_t *token = tokens.getToken();
+      token_t *token = tokens.getToken();
+      if ((token == NULL)
+          && !tokens.isEmpty()) {
+        tokens.popAndRewind();
+        handleTokenError();
+      }
       tokens.pop();
-      return 0;
+      tokenStack.push_back(token);
+      return token;
+    }
+
+    int statementStream::peek() {
+      token_t *token = getToken();
+      const int tokenType = (token
+                             ? token->type()
+                             : tokenType::none);
+
+      if (tokenType & tokenType::identifier) {
+        return peekForIdentifier();
+      }
+      if (tokenType & tokenType::op) {
+        return peekForOperator();
+      }
+      if (tokenType & (tokenType::primitive |
+                       tokenType::char_     |
+                       tokenType::string)) {
+        return statementType::expression;
+      }
+      if (tokenType & tokenType::attribute) {
+        // attributes.push_back(&(token->to<attributeToken>()));
+        tokenStack.pop_back();
+        return peek();
+      }
+      return statementType::none;
+    }
+
+    int statementStream::peekForIdentifier() {
+      return statementType::none;
+    }
+
+    int statementStream::peekForOperator() {
+      return statementType::none;
     }
 
     statement_t* statementStream::getStatement() {
-      return NULL;
+      statement_t *statement;
+      switch (peek()) {
+      case statementType::directive:
+        statement = getDirectiveStatement();   break;
+      case statementType::block:
+        statement = getBlockStatement();       break;
+      case statementType::typeDecl:
+        statement = getTypeDeclStatement();    break;
+      case statementType::classAccess:
+        statement = getClassAccessStatement(); break;
+      case statementType::expression:
+        statement = getExpressionStatement();  break;
+      case statementType::declaration:
+        statement = getDeclarationStatement(); break;
+      case statementType::goto_:
+        statement = getGotoStatement();        break;
+      case statementType::gotoLabel:
+        statement = getGotoLabelStatement();   break;
+      case statementType::namespace_:
+        statement = getNamespaceStatement();   break;
+      case statementType::while_:
+        statement = getWhileStatement();       break;
+      case statementType::for_:
+        statement = getForStatement();         break;
+      case statementType::switch_:
+        statement = getSwitchStatement();      break;
+      case statementType::case_:
+        statement = getCaseStatement();        break;
+      case statementType::continue_:
+        statement = getContinueStatement();    break;
+      case statementType::break_:
+        statement = getBreakStatement();       break;
+      case statementType::return_:
+        statement = getReturnStatement();
+      }
+      if ((statement == NULL) &&
+          !tokens.isEmpty()) {
+        printError("Not able to create statement for:");
+        return NULL;
+      }
+      const int attributeCount = (int) attributes.size();
+      for (int i = 0; i < attributeCount; ++i) {
+        statement->addAttribute(attributes[i]);
+      }
+      return statement;
     }
 
     statement_t* statementStream::getEmptyStatement() {
@@ -117,6 +205,12 @@ namespace occa {
 
     statement_t* statementStream::getReturnStatement() {
       return NULL;
+    }
+
+    void statementStream::handleTokenError() {
+      if (parentStatement == NULL) {
+        tokens.skipTo('\n');
+      }
     }
   }
 }

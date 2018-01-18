@@ -26,7 +26,8 @@ namespace occa {
     statement_t::statement_t(context &ctx_) :
       up(NULL),
       ctx(ctx_),
-      scope(ctx_) {}
+      scope(ctx_),
+      attributes() {}
 
     statement_t::~statement_t() {}
 
@@ -43,6 +44,12 @@ namespace occa {
 
     bool statement_t::hasScope() const {
       return false;
+    }
+
+    void statement_t::addAttribute(const attribute_t &attribute) {
+      // TODO: Warning if attribute already exists
+      // Override last attribute by default
+      attributes.push_back(attribute);
     }
 
     emptyStatement statement_t::newEmptyStatement() {
@@ -120,7 +127,9 @@ namespace occa {
       statement_t(ctx_) {}
 
     statement_t& emptyStatement::clone() const {
-      return *(new emptyStatement(ctx));
+      emptyStatement &s = *(new emptyStatement(ctx));
+      s.attributes = attributes;
+      return s;
     }
 
     int emptyStatement::type() const {
@@ -137,7 +146,9 @@ namespace occa {
       macro(macro_) {}
 
     statement_t& directiveStatement::clone() const {
-      return *(new directiveStatement(ctx, macro));
+      directiveStatement &s = *(new directiveStatement(ctx, macro));
+      s.attributes = attributes;
+      return s;
     }
 
     int directiveStatement::type() const {
@@ -155,6 +166,7 @@ namespace occa {
 
     statement_t& blockStatement::clone() const {
       blockStatement &s = *(new blockStatement(ctx));
+      s.attributes = attributes;
       const int childCount = (int) children.size();
       for (int i = 0; i < childCount; ++i) {
         s.addChild(children[i]->clone());
@@ -225,7 +237,9 @@ namespace occa {
 
 
     statement_t& typeDeclStatement::clone() const {
-      return *(new typeDeclStatement(ctx, declType));
+      typeDeclStatement &s = *(new typeDeclStatement(ctx, declType));
+      s.attributes = attributes;
+      return s;
     }
 
     int typeDeclStatement::type() const {
@@ -247,7 +261,9 @@ namespace occa {
       access(access_) {}
 
     statement_t& classAccessStatement::clone() const {
-      return *(new classAccessStatement(ctx, access));
+      classAccessStatement &s = *(new classAccessStatement(ctx, access));
+      s.attributes = attributes;
+      return s;
     }
 
     int classAccessStatement::type() const {
@@ -275,7 +291,9 @@ namespace occa {
       expression(expression_) {}
 
     statement_t& expressionStatement::clone() const {
-      return *(new expressionStatement(ctx, expression));
+      expressionStatement &s = *(new expressionStatement(ctx, expression));
+      s.attributes = attributes;
+      return s;
     }
 
     int expressionStatement::type() const {
@@ -289,7 +307,9 @@ namespace occa {
       statement_t(ctx_) {}
 
     statement_t& declarationStatement::clone() const {
-      return *(new declarationStatement(ctx));
+      declarationStatement &s = *(new declarationStatement(ctx));
+      s.attributes = attributes;
+      return s;
     }
 
     int declarationStatement::type() const {
@@ -307,7 +327,9 @@ namespace occa {
       name(name_) {}
 
     statement_t& gotoStatement::clone() const {
-      return *(new gotoStatement(ctx, name));
+      gotoStatement &s = *(new gotoStatement(ctx, name));
+      s.attributes = attributes;
+      return s;
     }
 
     int gotoStatement::type() const {
@@ -325,7 +347,9 @@ namespace occa {
       name(name_) {}
 
     statement_t& gotoLabelStatement::clone() const {
-      return *(new gotoLabelStatement(ctx, name));
+      gotoLabelStatement &s = *(new gotoLabelStatement(ctx, name));
+      s.attributes = attributes;
+      return s;
     }
 
     int gotoLabelStatement::type() const {
@@ -344,7 +368,9 @@ namespace occa {
       name(name_) {}
 
     statement_t& namespaceStatement::clone() const {
-      return *(new namespaceStatement(ctx, name));
+      namespaceStatement &s = *(new namespaceStatement(ctx, name));
+      s.attributes = attributes;
+      return s;
     }
 
     int namespaceStatement::type() const {
@@ -379,7 +405,9 @@ namespace occa {
       isDoWhile(isDoWhile_) {}
 
     statement_t& whileStatement::clone() const {
-      return *(new whileStatement(ctx, check.clone(), isDoWhile));
+      whileStatement &s = *(new whileStatement(ctx, check.clone(), isDoWhile));
+      s.attributes = attributes;
+      return s;
     }
 
     int whileStatement::type() const {
@@ -433,10 +461,12 @@ namespace occa {
       update(update_) {}
 
     statement_t& forStatement::clone() const {
-      return *(new forStatement(ctx,
-                                init.clone(),
-                                check.clone(),
-                                update.clone()));
+      forStatement &s = *(new forStatement(ctx,
+                                           init.clone(),
+                                           check.clone(),
+                                           update.clone()));
+      s.attributes = attributes;
+      return s;
     }
 
     int forStatement::type() const {
@@ -476,7 +506,9 @@ namespace occa {
       value(value_) {}
 
     statement_t& switchStatement::clone() const {
-      return *(new switchStatement(ctx, value.clone()));
+      switchStatement &s = *(new switchStatement(ctx, value.clone()));
+      s.attributes = attributes;
+      return s;
     }
 
     int switchStatement::type() const {
@@ -514,7 +546,9 @@ namespace occa {
       value(value_) {}
 
     statement_t& caseStatement::clone() const {
-      return *(new caseStatement(ctx, value.clone()));
+      caseStatement &s = *(new caseStatement(ctx, value.clone()));
+      s.attributes = attributes;
+      return s;
     }
 
     int caseStatement::type() const {
@@ -540,7 +574,9 @@ namespace occa {
       statement_t(ctx_) {}
 
     statement_t& continueStatement::clone() const {
-      return *(new continueStatement(ctx));
+      continueStatement &s = *(new continueStatement(ctx));
+      s.attributes = attributes;
+      return s;
     }
 
     int continueStatement::type() const {
@@ -556,7 +592,9 @@ namespace occa {
       statement_t(ctx_) {}
 
     statement_t& breakStatement::clone() const {
-      return *(new breakStatement(ctx));
+      breakStatement &s = *(new breakStatement(ctx));
+      s.attributes = attributes;
+      return s;
     }
 
     int breakStatement::type() const {
@@ -574,7 +612,9 @@ namespace occa {
       value(value_) {}
 
     statement_t& returnStatement::clone() const {
-      return *(new returnStatement(ctx, value.clone()));
+      returnStatement &s = *(new returnStatement(ctx, value.clone()));
+      s.attributes = attributes;
+      return s;
     }
 
     int returnStatement::type() const {

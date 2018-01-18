@@ -25,12 +25,16 @@
 #include "printer.hpp"
 #include "statement.hpp"
 #include "tokenStream.hpp"
+#include "type.hpp"
 
 namespace occa {
   namespace lang {
     class statementStream : public prints {
     public:
       tokenStream tokens;
+      std::vector<token_t*> tokenStack;
+      attributeVector_t attributes;
+      statement_t *parentStatement;
 
       statementStream(const char *root);
       statementStream(file_t *file_,
@@ -39,7 +43,13 @@ namespace occa {
       virtual void preprint(std::ostream &out);
       virtual void postprint(std::ostream &out);
 
+      void clear();
+
+      token_t* getToken();
+
       int peek();
+      int peekForIdentifier();
+      int peekForOperator();
 
       statement_t* getStatement();
       statement_t* getEmptyStatement();
@@ -59,6 +69,8 @@ namespace occa {
       statement_t* getContinueStatement();
       statement_t* getBreakStatement();
       statement_t* getReturnStatement();
+
+      void handleTokenError();
     };
   }
 }

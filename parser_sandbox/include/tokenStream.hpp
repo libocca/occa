@@ -53,13 +53,13 @@ namespace occa {
 
       void setLine(const int line);
 
+      bool isEmpty();
       void pushSource(const bool fromInclude,
                     file_t *file,
                     const filePosition &position);
       void popSource();
 
       void push();
-      void pushAndSet(const filePosition &fp_);
       void pop(const bool rewind = false);
       void popAndRewind();
       std::string str();

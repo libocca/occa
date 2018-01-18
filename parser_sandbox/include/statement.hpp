@@ -48,6 +48,7 @@ namespace occa {
 
     class statementType {
     public:
+      static const int none        = 0;
       static const int empty       = (1 << 0);
       static const int directive   = (1 << 1);
       static const int block       = (1 << 2);
@@ -72,6 +73,7 @@ namespace occa {
       statement_t *up;
       context &ctx;
       scope_t scope;
+      attributeVector_t attributes;
 
       statement_t(context &ctx_);
 
@@ -102,6 +104,8 @@ namespace occa {
       virtual int type() const = 0;
 
       virtual bool hasScope() const;
+
+      void addAttribute(const attribute_t &attribute);
 
       // Creation methods
       emptyStatement       newEmptyStatement();

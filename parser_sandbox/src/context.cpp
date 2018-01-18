@@ -85,7 +85,7 @@ namespace occa {
       add(functionTrie, value, keywordType::function_);
     }
 
-    void context::add(attribute &value) {
+    void context::add(attribute_t &value) {
       add(attributeTrie, value, keywordType::attribute);
     }
 
@@ -118,7 +118,7 @@ namespace occa {
                 keywordType::function_);
     }
 
-    void context::addRecord(attribute &value, statement_t &s) {
+    void context::addRecord(attribute_t &value, statement_t &s) {
       addRecord(attributeTrie,
                 &value,
                 s,
@@ -171,7 +171,7 @@ namespace occa {
       return vec;
     }
 
-    statementPtrVector context::getStatements(attribute &value) {
+    statementPtrVector context::getStatements(attribute_t &value) {
       statementPtrVector vec;
       getStatements(attributeTrie, value.uniqueName(), vec);
       return vec;

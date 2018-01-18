@@ -122,6 +122,10 @@ namespace occa {
       fp.line = line;
     }
 
+    bool tokenStream::isEmpty() {
+      return (*fp.pos == '\0');
+    }
+
     void tokenStream::pushSource(const bool fromInclude,
                                  file_t *file,
                                  const filePosition &position) {
@@ -421,6 +425,11 @@ namespace occa {
     token_t* tokenStream::getToken() {
       passedNewline = false;
       skipWhitespace();
+      // Check if file finished
+      while ((*fp.pos == '\0') && stack.size()) {
+        popSource();
+        skipWhitespace();
+      }
       int type = peek();
       if (type & tokenType::identifier) {
         return getIdentifierToken();
@@ -440,9 +449,7 @@ namespace occa {
       if (type & tokenType::attribute) {
         return getAttributeToken();
       }
-      if (!type) {
-        printError("Not able to create token for:");
-      }
+      printError("Not able to create token for:");
       return NULL;
     }
 

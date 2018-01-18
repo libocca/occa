@@ -67,7 +67,7 @@ namespace occa {
       void add(typedefType   &value);
       void add(classType     &value);
       void add(functionType  &value);
-      void add(attribute     &value);
+      void add(attribute_t   &value);
       void add(specifier &value,
                const int ktype);
       void add(statementTrie &trie,
@@ -76,7 +76,7 @@ namespace occa {
 
       void addRecord(classType     &value, statement_t &s);
       void addRecord(functionType  &value, statement_t &s);
-      void addRecord(attribute     &value, statement_t &s);
+      void addRecord(attribute_t   &value, statement_t &s);
       void addRecord(statementTrie &trie,
                      specifier *ptr,
                      statement_t &s,
@@ -88,7 +88,7 @@ namespace occa {
                                        const int ktype = keywordType::none);
       statementPtrVector getStatements(classType     &value);
       statementPtrVector getStatements(functionType  &value);
-      statementPtrVector getStatements(attribute     &value);
+      statementPtrVector getStatements(attribute_t   &value);
       void getStatements(statementTrie &trie,
                          const std::string &name,
                          statementPtrVector &vec);

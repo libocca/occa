@@ -38,7 +38,7 @@ namespace occa {
       add(value, keywordType::function_);
     }
 
-    void scope_t::add(attribute &value) {
+    void scope_t::add(attribute_t &value) {
       add(value, keywordType::attribute);
     }
 

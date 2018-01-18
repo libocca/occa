@@ -43,7 +43,7 @@ namespace occa {
       void add(typedefType  &value);
       void add(classType    &value);
       void add(functionType &value);
-      void add(attribute    &value);
+      void add(attribute_t  &value);
       void add(specifier &value, const int ktype);
 
       keyword_t get(const std::string &name);

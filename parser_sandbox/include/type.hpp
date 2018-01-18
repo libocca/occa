@@ -37,12 +37,14 @@ namespace occa {
   namespace lang {
     class qualifier;
     class type_t;
+    class attribute_t;
     class variable;
     class exprNode;
     class blockStatement;
 
     typedef std::vector<const qualifier*> qualifierVector_t;
-    typedef std::vector<type_t*> typeVector_t;
+    typedef std::vector<type_t*>          typeVector_t;
+    typedef std::vector<attribute_t>      attributeVector_t;
 
     typedef int      stype_t;
     typedef uint64_t qtype_t;
@@ -466,10 +468,10 @@ namespace occa {
     //==================================
 
     //---[ Attribute ]------------------
-    class attribute : public specifier {
+    class attribute_t : public specifier {
     public:
-      attribute(const std::string &name_);
-      virtual ~attribute();
+      attribute_t(const std::string &name_);
+      virtual ~attribute_t();
 
       virtual stype_t type() const;
 

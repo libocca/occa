@@ -718,16 +718,16 @@ namespace occa {
     //==================================
 
     //---[ Attribute ]------------------
-    attribute::attribute(const std::string &name_) :
+    attribute_t::attribute_t(const std::string &name_) :
       specifier(name_) {}
 
-    attribute::~attribute() {}
+    attribute_t::~attribute_t() {}
 
-    stype_t attribute::type() const {
+    stype_t attribute_t::type() const {
       return specifierType::attribute;
     }
 
-    void attribute::print(printer &pout) const {}
+    void attribute_t::print(printer &pout) const {}
     //==================================
   }
 }
