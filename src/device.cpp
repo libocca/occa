@@ -279,7 +279,7 @@ namespace occa {
         continue;
       }
 
-      json info = json::loads(infoFile)["info"];
+      json info = json::read(infoFile)["info"];
       if (info["device/hash"].string() != devHash) {
         continue;
       }

@@ -243,8 +243,11 @@ namespace occa {
     json& load(const char *&c);
     json& load(const std::string &s);
 
-    static json loads(const std::string &filename);
-    void dumps(const std::string &filename);
+    static json parse(const char *&c);
+    static json parse(const std::string &s);
+
+    static json read(const std::string &filename);
+    void write(const std::string &filename);
 
     void loadString(const char *&c);
     void loadNumber(const char *&c);

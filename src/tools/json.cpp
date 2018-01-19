@@ -75,13 +75,25 @@ namespace occa {
     return *this;
   }
 
-  json json::loads(const std::string &filename) {
+  json json::parse(const char *&c) {
+    json j;
+    j.load(c);
+    return j;
+  }
+
+  json json::parse(const std::string &s) {
+    json j;
+    j.load(s);
+    return j;
+  }
+
+  json json::read(const std::string &filename) {
     json j;
     j.load(io::read(filename));
     return j;
   }
 
-  void json::dumps(const std::string &filename) {
+  void json::write(const std::string &filename) {
     io::write(filename, toString());
   }
 
