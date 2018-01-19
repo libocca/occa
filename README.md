@@ -40,7 +40,7 @@ export DYLD_LIBRARY_PATH+=":${OCCA_DIR}/lib"
 ### Hello World
 
 ```bash
-cd ${OCCA_DIR}/examples/addVectors/cpp
+cd ${OCCA_DIR}/examples/1_add_vectors/cpp
 make
 ./main
 ```

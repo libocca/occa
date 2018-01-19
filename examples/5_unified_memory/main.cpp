@@ -24,11 +24,17 @@
 #include "occa.hpp"
 
 int main(int argc, char **argv) {
-  int entries = 8;
+  occa::setDevice("mode: 'CUDA', deviceID: 0");
 
-  float *a  = new float[entries];
-  float *b  = new float[entries];
-  float *ab = new float[entries];
+  int entries = 5;
+
+  // umalloc: [U]nified [M]emory [Alloc]ation
+  // Allocate host memory that auto-syncs with the device
+  //   between before kernel calls and device::finish()
+  //   if needed.
+  float *a  = (float*) occa::umalloc(entries * sizeof(float));
+  float *b  = (float*) occa::umalloc(entries * sizeof(float));
+  float *ab = (float*) occa::umalloc(entries * sizeof(float));
 
   for (int i = 0; i < entries; ++i) {
     a[i]  = i;
@@ -36,46 +42,32 @@ int main(int argc, char **argv) {
     ab[i] = 0;
   }
 
-  occa::device device;
-  occa::kernel addVectors;
-  occa::memory o_a, o_b, o_ab;
+  occa::kernel addVectors = occa::buildKernel("addVectors.okl",
+                                              "addVectors");
 
-  occa::stream streamA, streamB;
+  // Arrays a, b, and ab are now resident
+  //   on [device]
+  addVectors(entries, a, b, ab);
 
-  device.setup("mode: 'CUDA', deviceID: 0");
-  // device.setup("mode: 'OpenCL', platformID: 0, deviceID: 1");
+  // b is not const in the kernel, so we can use
+  //   dontSync(b) to manually force b to not sync
+  occa::dontSync(b);
 
-  streamA = device.getStream();
-  streamB = device.createStream();
+  // Finish work queued up in [device],
+  //   synchronizing a, b, and ab and
+  //   making it safe to use them again
+  occa::finish();
 
-  o_a  = device.malloc(entries*sizeof(float));
-  o_b  = device.malloc(entries*sizeof(float));
-  o_ab = device.malloc(entries*sizeof(float));
-
-  addVectors = device.buildKernel("addVectors.okl",
-                                  "addVectors");
-
-  o_a.copyFrom(a);
-  o_b.copyFrom(b);
-
-  device.setStream(streamA);
-  addVectors(entries, o_a, o_b, o_ab);
-
-  device.setStream(streamB);
-  addVectors(entries, o_a, o_b, o_ab);
-
-  o_ab.copyTo(ab);
-
-  for (int i = 0; i < entries; ++i)
+  for (int i = 0; i < 5; ++i) {
     std::cout << i << ": " << ab[i] << '\n';
+  }
+  for (int i = 0; i < entries; ++i) {
+    if (ab[i] != (a[i] + b[i])) {
+      throw 1;
+    }
+  }
 
-  delete [] a;
-  delete [] b;
-  delete [] ab;
+  // Memory is automatically freed
 
-  addVectors.free();
-  o_a.free();
-  o_b.free();
-  o_ab.free();
-  device.free();
+  return 0;
 }
