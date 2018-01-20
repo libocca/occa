@@ -130,14 +130,14 @@ $(OCCA_DIR)/obj/%.o:$(OCCA_DIR)/src/%.cpp $(COMPILED_DEFINES_CHANGED)
 
 #---[ Test ]--------------------------------------
 examples =                 \
-	addVectors/cpp           \
-	addVectors/c             \
-	backgroundDevices        \
-	customReduction          \
-	reduction                \
-	unifiedMemoryAddVectors  \
-	usingArrays              \
-	usingStreams
+	1_add_vectors/cpp        \
+	1_add_vectors/c          \
+	2_background_device      \
+  3_reduction              \
+  4_building_kernels       \
+  5_unified_memory         \
+  6_arrays                 \
+  7_streams
 
 test:
 	@for dir in $(examples); do         \

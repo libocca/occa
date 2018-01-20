@@ -2,7 +2,7 @@
 # OCCA
 
 [![Build Status](https://travis-ci.org/libocca/occa.svg?branch=1.0)](https://travis-ci.org/libocca/occa)
-[![Coverage Status](https://coveralls.io/repos/github/libocca/occa/badge.svg?branch=1.0)](https://coveralls.io/github/libocca/occa?branch=1.0)
+[![codecov.io](https://codecov.io/github/libocca/occa/coverage.svg?branch=1.0)](https://codecov.io/github/libocca/occa?branch=1.0)
 [![Documentation](https://readthedocs.org/projects/occa/badge/?version=latest)](https://occa.readthedocs.io/en/latest/?badge=latest)
 
 OCCA is an open-source (MIT license) library used to program current multi-core/many-core architectures.

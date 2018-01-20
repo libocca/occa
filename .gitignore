@@ -15,6 +15,11 @@ main
 .DS_Store
 *.dSYM
 
+# Coverage
+*.gcno
+*.gcda
+*.gcov
+
 # Visual Studio
 editorTools/visualStudio/*
 !editorTools/visualStudio/occa.sln

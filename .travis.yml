@@ -1,4 +1,4 @@
-sudo    : false
+sudo:     false
 language: cpp
 
 compiler:
@@ -11,11 +11,13 @@ env:
     - CXXFLAGS="-g"
 
 before_install:
-  - pip install --user urllib3[secure] cpp-coveralls
   - if [ "${TRAVIS_OS_NAME}" = "osx" ]; then brew update; fi
 
 install:
-  - if [ "${CXX}" != "clang++" ]; then CXXFLAGS+=" --coverage"; fi
+  - |
+    if [ "${CXX}" != "clang++" ]; then
+      CXXFLAGS+=" -fprofile-arcs -ftest-coverage -lgcov"
+    fi
 
 script:
   - cd ${TRAVIS_BUILD_DIR}
@@ -26,20 +28,11 @@ script:
   - make test
 
 after_success:
-  - cd ${TRAVIS_BUILD_DIR}
-  - coveralls
-    --include include
-    --include src
-    --include parser_sandbox/include
-    --include parser_sandbox/src
-    --exclude tests
-    --exclude parser_sandbox/tests
-    --exclude lib
-    --exclude include/occa/operators
-    --exclude src/operators
-    --exclude-pattern '.*\.h(pp)?$'
-    --exclude-pattern '.*/(cuda|opencl|openmp|threads)/.*'
-    --gcov-options '\-lp'
+  - |
+    if [ "${CXX}" != "clang++" ]; then
+      cd ${TRAVIS_BUILD_DIR}
+      bash <(curl -s https://codecov.io/bash)
+    fi
 
 notifications:
   email: false

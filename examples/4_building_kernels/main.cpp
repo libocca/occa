@@ -67,9 +67,7 @@ public:
        << '}';
 
     kernel = device.buildKernelFromString(ss.str(),
-                                          "dynamicKernel");
-
-    init = true;
+                                          "map");
   }
 
   void operator () (const int entries, occa::memory &in, occa::memory &out) {
@@ -93,30 +91,30 @@ int main(int argc, char **argv) {
   map squareArray;
   occa::memory o_vec, o_vec2;
 
-  o_vec  = device.malloc(entries*sizeof(float));
-  o_vec2 = device.malloc(entries*sizeof(float));
+  o_vec  = occa::malloc(entries*sizeof(float));
+  o_vec2 = occa::malloc(entries*sizeof(float));
 
   squareArray.setup("float", "vec",
                     "float", "vec2",
                     "vec2 = vec * vec;");
 
-  o_ve.copyFrom(ve);
-  o_ve2.copyFrom(ve2);
+  o_vec.copyFrom(vec);
+  o_vec2.copyFrom(vec2);
 
-  squareArray(entries, o_ve, o_ve2);
+  squareArray(entries, o_vec, o_vec2);
 
-  o_ve2.copyTo(ve2);
+  o_vec2.copyTo(vec2);
 
   for (int i = 0; i < 5; ++i)
-    std::cout << ve[i] << "^2 = " << ve2[i] << '\n';
+    std::cout << vec[i] << "^2 = " << vec2[i] << '\n';
 
   for (int i = 0; i < entries; ++i) {
-    if (ve2[i] != (ve[i] * ve[i]))
+    if (vec2[i] != (vec[i] * vec[i]))
       throw 1;
   }
 
-  delete [] ve;
-  delete [] ve2;
+  delete [] vec;
+  delete [] vec2;
 
   return 0;
 }
