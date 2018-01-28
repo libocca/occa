@@ -514,6 +514,22 @@ const char* OCCA_RFUNC occaDeviceGetCompilerFlags(occaDevice device) {
   return device_.getCompilerEnvScript().c_str();
 }
 
+int OCCA_RFUNC occaDeviceGetID(occaDevice device) {
+  occa::device device_((occa::device_v*) device);
+  return device_.id();
+}
+
+void OCCA_RFUNC occaDeviceGetDeviceList(int *n, occaDevice** devices) {
+  std::vector<occa::device>& deviceList = occa::getDeviceList();
+  *n = deviceList.size();
+
+  *devices = (occaDevice*) malloc(sizeof(occaDevice)*(*n));
+
+  for (int i = 0; i < *n; i++) {
+    (*devices)[i]  = (occaDevice) deviceList[i].getDHandle();
+  }
+}
+
 uintptr_t OCCA_RFUNC occaDeviceMemorySize(occaDevice device) {
   occa::device device_((occa::device_v*) device);
   return device_.memorySize();
