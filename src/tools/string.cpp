@@ -261,18 +261,25 @@ namespace occa {
     if (0 < bytes) {
       std::stringstream ss;
       uint64_t bigBytes = bytes;
-      uint64_t big1 = 1;
 
-      if (bigBytes < (big1 << 10)) {
+      if (bigBytes < (1L << 10)) {
         ss << bigBytes << " bytes";
-      } else if (bigBytes < (big1 << 20)) {
-        ss << (bigBytes >> 10) << " KB";
-      } else if (bigBytes < (big1 << 30)) {
-        ss << (bigBytes >> 20) << " MB";
-      } else if (bigBytes < (big1 << 40)) {
-        ss << (bigBytes >> 30) << " GB";
-      } else if (bigBytes < (big1 << 50)) {
-        ss << (bigBytes >> 40) << " TB";
+      } else if (bigBytes < (1L << 20)) {
+        ss << (bigBytes >> 10);
+        stringifyBytesFraction(ss, bigBytes >> 0);
+        ss << " KB";
+      } else if (bigBytes < (1L << 30)) {
+        ss << (bigBytes >> 20);
+        stringifyBytesFraction(ss, bigBytes >> 10);
+        ss << " MB";
+      } else if (bigBytes < (1L << 40)) {
+        ss << (bigBytes >> 30);
+        stringifyBytesFraction(ss, bigBytes >> 20);
+        ss << " GB";
+      } else if (bigBytes < (1L << 50)) {
+        ss << (bigBytes >> 40);
+        stringifyBytesFraction(ss, bigBytes >> 30);
+        ss << " TB";
       } else {
         ss << bigBytes << " bytes";
       }
@@ -280,6 +287,14 @@ namespace occa {
     }
 
     return "";
+  }
+
+  void stringifyBytesFraction(std::stringstream &ss,
+                              uint64_t fraction) {
+    const int part = (int) (100.0 * (fraction % 1024) / 1024.0);
+    if (part) {
+      ss << '.' << part;
+    }
   }
 
   //---[ Vector Methods ]---------------
