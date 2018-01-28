@@ -1194,22 +1194,28 @@ namespace occa {
 
   std::string stringifyBytes(uintptr_t bytes) {
     if (0 < bytes) {
+
       std::stringstream ss;
 	  uint64_t bigBytes = bytes;
       uint64_t big1 = 1;
 
+      char  bufr[32];
+#     define __ROUNDIT(b)  (sprintf( bufr, "%.3g", bigBytes / (double)((uint64_t)1 << (b)) ), bufr )
+
       if (bigBytes < (big1 << 10))
         ss << bigBytes << " bytes";
       else if (bigBytes < (big1 << 20))
-        ss << (bigBytes >> 10) << " KB";
+        ss << __ROUNDIT(10) << " KB";
       else if (bigBytes < (big1 << 30))
-        ss << (bigBytes >> 20) << " MB";
+        ss << __ROUNDIT(20) << " MB";
       else if (bigBytes < (big1 << 40))
-        ss << (bigBytes >> 30) << " GB";
+        ss << __ROUNDIT(30) << " GB";
       else if (bigBytes < (big1 << 50))
-        ss << (bigBytes >> 40) << " TB";
+        ss << __ROUNDIT(40) << " TB";
       else
         ss << bigBytes << " bytes";
+
+#     undef __ROUNDIT
 
       return ss.str();
     }
