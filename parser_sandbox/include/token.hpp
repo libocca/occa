@@ -128,9 +128,12 @@ namespace occa {
     class primitiveToken : public token_t {
     public:
       primitive value;
+      std::string strValue;
 
       primitiveToken(const fileOrigin &origin_,
-                     const primitive &value_);
+                     const primitive &value_,
+                     const std::string &strValue_);
+
       virtual ~primitiveToken();
 
       virtual int type() const;

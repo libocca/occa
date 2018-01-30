@@ -182,6 +182,11 @@ namespace occa {
       const char *end = fp.pos;
       while (pos < end) {
         if (*pos == '\\') {
+          if (fp.pos[1] == '\n') {
+            fp.lineStart = fp.pos + 2;
+            ++fp.line;
+            passedNewline = true;
+          }
           pos += 1 + (pos[1] != '\0');
           continue;
         }
@@ -197,16 +202,21 @@ namespace occa {
     void tokenStream::skipTo(const char delimiter) {
       while (*fp.pos != '\0') {
         if (*fp.pos == '\\') {
+          if (fp.pos[1] == '\n') {
+            fp.lineStart = fp.pos + 2;
+            ++fp.line;
+            passedNewline = true;
+          }
           fp.pos += 1 + (fp.pos[1] != '\0');
           continue;
+        }
+        if (*fp.pos == delimiter) {
+          return;
         }
         if (*fp.pos == '\n') {
           fp.lineStart = fp.pos + 1;
           ++fp.line;
           passedNewline = true;
-        }
-        if (*fp.pos == delimiter) {
-          return;
         }
         ++fp.pos;
       }
@@ -215,16 +225,21 @@ namespace occa {
     void tokenStream::skipTo(const char *delimiters) {
       while (*fp.pos != '\0') {
         if (*fp.pos == '\\') {
+          if (fp.pos[1] == '\n') {
+            fp.lineStart = fp.pos + 2;
+            ++fp.line;
+            passedNewline = true;
+          }
           fp.pos += 1 + (fp.pos[1] != '\0');
           continue;
+        }
+        if (lex::charIsIn(*fp.pos, delimiters)) {
+          return;
         }
         if (*fp.pos == '\n') {
           fp.lineStart = fp.pos + 1;
           ++fp.line;
           passedNewline = true;
-        }
-        if (lex::charIsIn(*fp.pos, delimiters)) {
-          return;
         }
         ++fp.pos;
       }
@@ -233,19 +248,23 @@ namespace occa {
     void tokenStream::skipFrom(const char *delimiters) {
       while (*fp.pos != '\0') {
         if (*fp.pos == '\\') {
+          if (fp.pos[1] == '\n') {
+            fp.lineStart = fp.pos + 2;
+            ++fp.line;
+            passedNewline = true;
+          }
           fp.pos += 1 + (fp.pos[1] != '\0');
           continue;
+        }
+        if (!lex::charIsIn(*fp.pos, delimiters)) {
+          break;
         }
         if (*fp.pos == '\n') {
           fp.lineStart = fp.pos + 1;
           ++fp.line;
           passedNewline = true;
         }
-        if (lex::charIsIn(*fp.pos, delimiters)) {
-          ++fp.pos;
-          continue;
-        }
-        break;
+        ++fp.pos;
       }
     }
 
@@ -254,15 +273,18 @@ namespace occa {
     }
 
     int tokenStream::peek() {
-      push();
       skipWhitespace();
+      const bool alreadyPassedNewline = passedNewline;
+
       int type = shallowPeek();
       if (type == tokenType::identifier) {
         type = peekForIdentifier();
       } else if (type == tokenType::op) {
         type = peekForOperator();
       }
-      pop();
+
+      passedNewline = alreadyPassedNewline;
+
       return type;
     }
 
@@ -274,14 +296,14 @@ namespace occa {
       if (lex::charIsIn(c, charcodes::identifierStart)) {
         return tokenType::identifier;
       }
-      // Primitive must be checked before operators since
-      //   it can start with + or -
+      if (lex::charIsIn(c, charcodes::operators)) {
+        return tokenType::op;
+      }
+      // Primitive must be checked after operators since
+      //   it can take a + or - operator
       const char *pos = fp.pos;
       if (primitive::load(pos).type != primitiveType::none) {
         return tokenType::primitive;
-      }
-      if (lex::charIsIn(c, charcodes::operators)) {
-        return tokenType::op;
       }
       if (c == '"') {
         return tokenType::string;
@@ -312,7 +334,7 @@ namespace occa {
         }
       }
       if (type & tokenType::char_) {
-        const int encoding = getStringEncoding(identifier);
+        const int encoding = getCharacterEncoding(identifier);
         if (encoding) {
           return (tokenType::char_ |
                   (encoding << tokenType::encodingShift));
@@ -342,9 +364,10 @@ namespace occa {
         }
         else {
           printError("Couldn't find an opening /*");
-          return shallowPeek();
+          return peek();
         }
       }
+      popAndRewind();
       return tokenType::op;
     }
 
@@ -459,7 +482,7 @@ namespace occa {
     int tokenStream::skipLineCommentAndPeek() {
       skipTo('\n');
       skipWhitespace();
-      return shallowPeek();
+      return peek();
     }
 
     int tokenStream::skipBlockCommentAndPeek() {
@@ -470,7 +493,7 @@ namespace occa {
           if (*fp.pos == '/') {
             ++fp.pos;
             skipWhitespace();
-            return shallowPeek();
+            return peek();
           }
         }
       }
@@ -483,8 +506,12 @@ namespace occa {
 
       // Check if file finished
       while ((*fp.pos == '\0') && stack.size()) {
+        passedNewline = true;
         popSource();
         skipWhitespace();
+      }
+      if ((*fp.pos == '\0') && !stack.size()) {
+        return NULL;
       }
 
       int type = peek();
@@ -532,10 +559,12 @@ namespace occa {
         popAndRewind();
         return NULL;
       }
+      const std::string strValue = str();
       countSkippedLines();
       pop();
       return new primitiveToken(tokenOrigin,
-                                value);
+                                value,
+                                strValue);
     }
 
     token_t* tokenStream::getOperatorToken() {
@@ -546,7 +575,7 @@ namespace occa {
         printError("Not able to parse operator");
         return NULL;
       }
-      fp.pos += (result.length + 1); // Skip operator
+      fp.pos += result.length; // Skip operator
       return new operatorToken(tokenOrigin,
                                *(result.value()));
     }
@@ -607,7 +636,6 @@ namespace occa {
         printError("Not able to parse char");
         return NULL;
       }
-
       ++fp.pos; // Skip '
       push();
       skipTo("'\n");
@@ -617,6 +645,7 @@ namespace occa {
         return NULL;
       }
       const std::string value = str();
+      ++fp.pos;
       pop();
 
       std::string udf;

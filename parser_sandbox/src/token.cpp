@@ -183,9 +183,11 @@ namespace occa {
     }
 
     primitiveToken::primitiveToken(const fileOrigin &origin_,
-                                   const primitive &value_) :
+                                   const primitive &value_,
+                                   const std::string &strValue_) :
       token_t(origin_),
-      value(value_) {}
+      value(value_),
+      strValue(strValue_) {}
 
     primitiveToken::~primitiveToken() {}
 
@@ -194,7 +196,7 @@ namespace occa {
     }
 
     void primitiveToken::print(printer &pout) const {
-      pout << value;
+      pout << strValue;
     }
 
     operatorToken::operatorToken(const fileOrigin &origin_,
