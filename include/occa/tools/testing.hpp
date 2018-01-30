@@ -56,8 +56,8 @@ namespace occa {
     template <class TM1, class TM2>
     bool assertEqual(const TM1 &a, const TM2 &b) {
       if (!areEqual(a, b)) {
-        std::cerr << "a: " << a << '\n'
-                  << "b: " << b;
+        std::cerr << "left : " << a << '\n'
+                  << "right: " << b;
         return false;
       }
       return true;
@@ -66,8 +66,8 @@ namespace occa {
     template <class TM1, class TM2>
     bool assertNotEqual(const TM1 &a, const TM2 &b) {
       if (areEqual(a, b)) {
-        std::cerr << "a: " << a << '\n'
-                  << "b: " << b;
+        std::cerr << "left : " << a << '\n'
+                  << "right: " << b;
         return false;
       }
       return true;
@@ -76,8 +76,8 @@ namespace occa {
     template <class TM1, class TM2>
     bool assertEqualBinary(const TM1 &a, const TM2 &b) {
       if (a != b) {
-        std::cerr << "a: " << stringifySetBits(a) << '\n'
-                  << "b: " << stringifySetBits(b);
+        std::cerr << "left : " << stringifySetBits(a) << '\n'
+                  << "right: " << stringifySetBits(b);
         return false;
       }
       return true;
@@ -86,8 +86,8 @@ namespace occa {
     template <class TM1, class TM2>
     bool assertNotEqualBinary(const TM1 &a, const TM2 &b) {
       if (a != b) {
-        std::cerr << "a: " << stringifySetBits(a) << '\n'
-                  << "b: " << stringifySetBits(b);
+        std::cerr << "left : " << stringifySetBits(a) << '\n'
+                  << "right: " << stringifySetBits(b);
         return false;
       }
       return true;

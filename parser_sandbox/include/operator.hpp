@@ -112,6 +112,11 @@ namespace occa {
       extern const optype_t pairStart;
       extern const optype_t pairEnd;
 
+      extern const optype_t lineComment;
+      extern const optype_t blockCommentStart;
+      extern const optype_t blockCommentEnd;
+      extern const optype_t comment;
+
       extern const optype_t hash;
       extern const optype_t hashhash;
       extern const optype_t preprocessor;
@@ -208,6 +213,12 @@ namespace occa {
       extern const operator_t bracketEnd;
       extern const operator_t parenthesesStart;
       extern const operator_t parenthesesEnd;
+      //================================
+
+      //---[ Comments ]-----------------
+      extern const operator_t lineComment;
+      extern const operator_t blockCommentStart;
+      extern const operator_t blockCommentEnd;
       //================================
 
       //---[ Special ]------------------

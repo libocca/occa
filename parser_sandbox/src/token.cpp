@@ -52,24 +52,29 @@ namespace occa {
       operators.add("~"  , &op::tilde);
       operators.add("++" , &op::leftIncrement);
       operators.add("--" , &op::leftDecrement);
+
       operators.add("+"  , &op::add);
       operators.add("-"  , &op::sub);
       operators.add("*"  , &op::mult);
       operators.add("/"  , &op::div);
       operators.add("%"  , &op::mod);
+
       operators.add("<"  , &op::lessThan);
       operators.add("<=" , &op::lessThanEq);
       operators.add("==" , &op::equal);
       operators.add("!=" , &op::notEqual);
       operators.add(">"  , &op::greaterThan);
       operators.add(">=" , &op::greaterThanEq);
+
       operators.add("&&" , &op::and_);
       operators.add("||" , &op::or_);
+
       operators.add("&"  , &op::bitAnd);
       operators.add("|"  , &op::bitOr);
       operators.add("^"  , &op::xor_);
       operators.add("<<" , &op::leftShift);
       operators.add(">>" , &op::rightShift);
+
       operators.add("="  , &op::assign);
       operators.add("+=" , &op::addEq);
       operators.add("-=" , &op::subEq);
@@ -81,6 +86,7 @@ namespace occa {
       operators.add("^=" , &op::xorEq);
       operators.add("<<=", &op::leftShiftEq);
       operators.add(">>=", &op::rightShiftEq);
+
       operators.add(","  , &op::comma);
       operators.add("::" , &op::scope);
       operators.add("."  , &op::dot);
@@ -89,16 +95,24 @@ namespace occa {
       operators.add("->*", &op::arrowStar);
       operators.add("?"  , &op::ternary);
       operators.add(":"  , &op::colon);
+
       operators.add("{"  , &op::braceStart);
       operators.add("}"  , &op::braceEnd);
       operators.add("["  , &op::bracketStart);
       operators.add("]"  , &op::bracketEnd);
       operators.add("("  , &op::parenthesesStart);
       operators.add(")"  , &op::parenthesesEnd);
+
+      operators.add("//" , &op::lineComment);
+      operators.add("/*" , &op::blockCommentStart);
+      operators.add("*/" , &op::blockCommentEnd);
+
       operators.add("#"  , &op::hash);
       operators.add("##" , &op::hashhash);
+
       operators.add(";"  , &op::semicolon);
       operators.add("...", &op::ellipsis);
+
       return operators;
     }
 

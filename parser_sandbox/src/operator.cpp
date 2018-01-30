@@ -192,13 +192,20 @@ namespace occa {
                                           bracketEnd       |
                                           parenthesesEnd);
 
-      const optype_t hash              = (1L << 51);
-      const optype_t hashhash          = (1L << 52);
+      const optype_t lineComment       = (1L << 51);
+      const optype_t blockCommentStart = (1L << 52);
+      const optype_t blockCommentEnd   = (1L << 53);
+      const optype_t comment           = (lineComment       |
+                                          blockCommentStart |
+                                          blockCommentEnd);
+
+      const optype_t hash              = (1L << 54);
+      const optype_t hashhash          = (1L << 55);
       const optype_t preprocessor      = (hash |
                                           hashhash);
 
-      const optype_t semicolon         = (1L << 53);
-      const optype_t ellipsis          = (1L << 54);
+      const optype_t semicolon         = (1L << 56);
+      const optype_t ellipsis          = (1L << 57);
 
       const optype_t special           = (hash           |
                                           hashhash       |
@@ -321,6 +328,12 @@ namespace occa {
       const operator_t bracketEnd       ("]"  , operatorType::bracketEnd      , 1);
       const operator_t parenthesesStart ("("  , operatorType::parenthesesStart, 1);
       const operator_t parenthesesEnd   (")"  , operatorType::parenthesesEnd  , 1);
+      //================================
+
+      //---[ Comments ]-----------------
+      const operator_t lineComment      ("//" , operatorType::lineComment      , 1);
+      const operator_t blockCommentStart("/*" , operatorType::blockCommentStart, 1);
+      const operator_t blockCommentEnd  ("*/" , operatorType::blockCommentEnd  , 1);
       //================================
 
       //---[ Special ]------------------

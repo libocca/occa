@@ -259,6 +259,8 @@ namespace occa {
       int type = shallowPeek();
       if (type == tokenType::identifier) {
         type = peekForIdentifier();
+      } else if (type == tokenType::op) {
+        type = peekForOperator();
       }
       pop();
       return type;
@@ -319,6 +321,33 @@ namespace occa {
       return tokenType::identifier;
     }
 
+    int tokenStream::peekForOperator() {
+      push();
+      fileOrigin tokenOrigin = origin;
+      operatorTrie &operators = getOperators();
+      operatorTrie::result_t result = operators.getLongest(fp.pos);
+      if (!result.success()) {
+        printError("Not able to parse operator");
+        popAndRewind();
+        return tokenType::none;
+      }
+      const operator_t &op = *(result.value());
+      if (op.optype & operatorType::comment) {
+        pop();
+        if (op.optype == operatorType::lineComment) {
+          return skipLineCommentAndPeek();
+        }
+        else if (op.optype == operatorType::blockCommentStart) {
+          return skipBlockCommentAndPeek();
+        }
+        else {
+          printError("Couldn't find an opening /*");
+          return shallowPeek();
+        }
+      }
+      return tokenType::op;
+    }
+
     int tokenStream::peekForHeader() {
       int type = shallowPeek();
       if (type & tokenType::op) {
@@ -330,7 +359,8 @@ namespace occa {
             (result.value()->optype & operatorType::lessThan)) {
           return tokenType::systemHeader;
         }
-      } else if (type & tokenType::string) {
+      }
+      else if (type & tokenType::string) {
         return tokenType::header;
       }
       return tokenType::none;
@@ -378,6 +408,7 @@ namespace occa {
       push();
       ++fp.pos; // Skip "
       push();
+
       // Find delimiter
       skipTo("(\n");
       if (*fp.pos == '\n') {
@@ -385,6 +416,7 @@ namespace occa {
         popAndRewind();
         return;
       }
+
       // Find end pattern
       std::string end;
       end += ')';
@@ -393,6 +425,7 @@ namespace occa {
       pop();
       ++fp.pos; // Skip (
       push();
+
       // Find end match
       const int chars = (int) end.size();
       const char *m   = end.c_str();
@@ -412,6 +445,7 @@ namespace occa {
         }
         ++fp.pos;
       }
+
       // Make sure we found delimiter
       if (*fp.pos == '\0') {
         pop();
@@ -419,17 +453,40 @@ namespace occa {
         return;
       }
       value = str();
-      fp.pos += (chars + 1);
+      fp.pos += chars;
+    }
+
+    int tokenStream::skipLineCommentAndPeek() {
+      skipTo('\n');
+      skipWhitespace();
+      return shallowPeek();
+    }
+
+    int tokenStream::skipBlockCommentAndPeek() {
+      while (*fp.pos != '\0') {
+        skipTo('*');
+        if (*fp.pos == '*') {
+          ++fp.pos;
+          if (*fp.pos == '/') {
+            ++fp.pos;
+            skipWhitespace();
+            return shallowPeek();
+          }
+        }
+      }
+      return tokenType::none;
     }
 
     token_t* tokenStream::getToken() {
       passedNewline = false;
       skipWhitespace();
+
       // Check if file finished
       while ((*fp.pos == '\0') && stack.size()) {
         popSource();
         skipWhitespace();
       }
+
       int type = peek();
       if (type & tokenType::identifier) {
         return getIdentifierToken();
@@ -449,6 +506,7 @@ namespace occa {
       if (type & tokenType::attribute) {
         return getAttributeToken();
       }
+
       printError("Not able to create token for:");
       return NULL;
     }

@@ -75,12 +75,16 @@ namespace occa {
       int peek();
       int shallowPeek();
       int peekForIdentifier();
+      int peekForOperator();
       int peekForHeader();
 
       void getIdentifier(std::string &value);
       void getString(std::string &value,
                      const int encoding = 0);
       void getRawString(std::string &value);
+
+      int skipLineCommentAndPeek();
+      int skipBlockCommentAndPeek();
 
       token_t* getToken();
       token_t* getIdentifierToken();
