@@ -32,675 +32,360 @@
 #include "specialMacros.hpp"
 
 namespace occa {
-  //---[ Stack Information ]------------
-  //|-----[ Status ]--------------------
-  static const int reading    = (1 << 0);
-  static const int ignoring   = (1 << 1);
-  static const int foundElse  = (1 << 2);
-  static const int finishedIf = (1 << 3);
-  //|===================================
-
-  preprocessor_t::status_t::status_t() {}
-
-  preprocessor_t::status_t::status_t(const int status_, const char *filePosition_) :
-    status(status_),
-    filePosition(filePosition_) {}
-
-  void preprocessor_t::status_t::clear() {
-    status = reading;
-    filePosition = NULL;
-  }
-
-  preprocessor_t::frame_t::frame_t(const preprocessor_t *preprocessor_) :
-    preprocessor(preprocessor_) {
-    clear();
-  }
-
-  void preprocessor_t::frame_t::clear() {
-    filenameIdx  = 0;
-    fileStart    = NULL;
-    fileEnd      = NULL;
-    filePosition = NULL;
-    lineNumber   = 1;
-  }
-
-  std::string preprocessor_t::frame_t::filename() const {
-    return preprocessor->allFilenames.values[filenameIdx];
-  }
-
-  std::string preprocessor_t::frame_t::getLineMessage() const {
-    return getLineMessage(lineNumber);
-  }
-
-  std::string preprocessor_t::frame_t::getLineMessage(const int lineNumber_) const {
-    std::string ret;
-    ret += filename();
-    ret += ':';
-    ret += occa::toString(lineNumber_);
-    return ret;
-  }
-  //====================================
-
-  preprocessor_t& getPreprocessor(hash_t &compilerHash) {
-    static std::map<hash_t, preprocessor_t> preprocessors;
-    preprocessor_t &preprocessor = preprocessors[compilerHash];
-    if (preprocessor.compilerMacros.isEmpty()) {
-    }
-    return preprocessor;
-  }
-
-  const std::string preprocessor_t::macroEndDelimiters = std::string(lex::whitespaceChars) + '(';
-
-  preprocessor_t::preprocessor_t() :
-    currentFrame(this),
-    directives(getDirectiveTrie()) {
-
-    compilerMacros.autoFreeze = false;
-    macro_t *specialMacros[5] = {
-      new fileMacro(this),   // __FILE__
-      new lineMacro(this),   // __LINE__
-      new dateMacro(this),   // __DATE__
-      new timeMacro(this),   // __TIME__
-      new counterMacro(this) // __COUNTER__
-    };
-    for (int i = 0; i < 5; ++i) {
-      compilerMacros.add(specialMacros[i]->name, specialMacros[i]);
-    }
-
-    // Alternative representations
-    compilerMacros.add("and"   , new macro_t(this, "and     &&"));
-    compilerMacros.add("and_eq", new macro_t(this, "and_eq  &="));
-    compilerMacros.add("bitand", new macro_t(this, "bitand  &"));
-    compilerMacros.add("bitor" , new macro_t(this, "bitor   |"));
-    compilerMacros.add("compl" , new macro_t(this, "compl   ~"));
-    compilerMacros.add("not"   , new macro_t(this, "not     !"));
-    compilerMacros.add("not_eq", new macro_t(this, "not_eq  !="));
-    compilerMacros.add("or"    , new macro_t(this, "or      ||"));
-    compilerMacros.add("or_eq" , new macro_t(this, "or_eq   |="));
-    compilerMacros.add("xor"   , new macro_t(this, "xor     ^"));
-    compilerMacros.add("xor_eq", new macro_t(this, "xor_eq  ^="));
+  namespace lang {
+    //|-----[ Status ]--------------------
+    static const int reading    = (1 << 0);
+    static const int ignoring   = (1 << 1);
+    static const int foundElse  = (1 << 2);
+    static const int finishedIf = (1 << 3);
+    //|===================================
 
     // TODO: Add actual compiler macros as well
+    preprocessor::preprocessor() :
+      expandedIndex(0),
+      passedNewline(true),
+      directives(getDirectiveTrie()) {
 
-    clear();
-  }
+      compilerMacros.autoFreeze = false;
+      macro_t *specialMacros[5] = {
+        new fileMacro(this),   // __FILE__
+        new lineMacro(this),   // __LINE__
+        new dateMacro(this),   // __DATE__
+        new timeMacro(this),   // __TIME__
+        new counterMacro(this) // __COUNTER__
+      };
+      for (int i = 0; i < 5; ++i) {
+        compilerMacros.add(specialMacros[i]->name, specialMacros[i]);
+      }
 
-  void preprocessor_t::clear() {
-    allFilenames.clear();
+      // Alternative representations
+      compilerMacros.add("and"   , new macro_t(this, "and     &&"));
+      compilerMacros.add("and_eq", new macro_t(this, "and_eq  &="));
+      compilerMacros.add("bitand", new macro_t(this, "bitand  &"));
+      compilerMacros.add("bitor" , new macro_t(this, "bitor   |"));
+      compilerMacros.add("compl" , new macro_t(this, "compl   ~"));
+      compilerMacros.add("not"   , new macro_t(this, "not     !"));
+      compilerMacros.add("not_eq", new macro_t(this, "not_eq  !="));
+      compilerMacros.add("or"    , new macro_t(this, "or      ||"));
+      compilerMacros.add("or_eq" , new macro_t(this, "or_eq   |="));
+      compilerMacros.add("xor"   , new macro_t(this, "xor     ^"));
+      compilerMacros.add("xor_eq", new macro_t(this, "xor_eq  ^="));
 
-    frames.clear();
-    currentFrame.clear();
-
-    statusStack.clear();
-    currentStatus.clear();
-
-    sourceMacros.clear();
-
-    exitOnFatalError = true;
-    errorCount   = 0;
-    warningCount = 0;
-
-    outputStream = &std::cerr;
-
-    pushStatus(reading);
-  }
-
-  void preprocessor_t::setOutputStream(std::ostream &outputStream_) {
-    outputStream = &outputStream_;
-  }
-
-  preprocessor_t::directiveTrie& preprocessor_t::getDirectiveTrie() {
-    static directiveTrie trie;
-    if (trie.isEmpty()) {
-      trie.autoFreeze = false;
-      trie.add("if"    , &preprocessor_t::processIf);
-      trie.add("ifdef" , &preprocessor_t::processIfdef);
-      trie.add("ifndef", &preprocessor_t::processIfndef);
-      trie.add("elif"  , &preprocessor_t::processElif);
-      trie.add("else"  , &preprocessor_t::processElse);
-      trie.add("endif" , &preprocessor_t::processEndif);
-
-      trie.add("define", &preprocessor_t::processDefine);
-      trie.add("undef" , &preprocessor_t::processUndef);
-
-      trie.add("error"  , &preprocessor_t::processError);
-      trie.add("warning", &preprocessor_t::processWarning);
-
-      trie.add("include", &preprocessor_t::processInclude);
-      trie.add("pragma" , &preprocessor_t::processPragma);
-      trie.add("line"   , &preprocessor_t::processLine);
-      trie.freeze();
+      pushStatus(reading);
     }
-    return trie;
-  }
 
-  void preprocessor_t::pushStatus(const int status) {
-    statusStack.push_back(currentStatus);
-    currentStatus.status       = status;
-    currentStatus.filePosition = currentFrame.filePosition;
-  }
+    preprocessor::directiveTrie& preprocessor::getDirectiveTrie() {
+      static directiveTrie trie;
+      if (trie.isEmpty()) {
+        trie.autoFreeze = false;
+        trie.add("if"    , &preprocessor::processIf);
+        trie.add("ifdef" , &preprocessor::processIfdef);
+        trie.add("ifndef", &preprocessor::processIfndef);
+        trie.add("elif"  , &preprocessor::processElif);
+        trie.add("else"  , &preprocessor::processElse);
+        trie.add("endif" , &preprocessor::processEndif);
 
-  int preprocessor_t::popStatus() {
-    const int pos = (int) statusStack.size() - 1;
-    if (pos >= 0) {
-      currentStatus.status       = statusStack[pos].status;
-      currentStatus.filePosition = statusStack[pos].filePosition;
+        trie.add("define", &preprocessor::processDefine);
+        trie.add("undef" , &preprocessor::processUndef);
+
+        trie.add("error"  , &preprocessor::processError);
+        trie.add("warning", &preprocessor::processWarning);
+
+        trie.add("include", &preprocessor::processInclude);
+        trie.add("pragma" , &preprocessor::processPragma);
+        trie.add("line"   , &preprocessor::processLine);
+        trie.freeze();
+      }
+      return trie;
+    }
+
+    void preprocessor::addExpandedToken(token_t *token) {
+      expandedTokens.push_back(token);
+    }
+
+    void preprocessor::pushStatus(const int status) {
+      statusStack.push_back(currentStatus);
+      currentStatus = status;
+    }
+
+    int preprocessor::popStatus() {
+      if (!statusStack.size()) {
+        return 0;
+      }
+      currentStatus = statusStack.back();
       statusStack.pop_back();
-      return currentStatus.status;
+      return currentStatus;
     }
-    return 0;
-  }
 
-  void preprocessor_t::setFilename(const std::string &filename, const bool add) {
-    if (add) {
-      allFilenames.add(filename, filename);
-    }
-    currentFrame.filenameIdx = allFilenames.get(filename).valueIdx;
-  }
-
-  std::string preprocessor_t::processFile(const std::string &filename) {
-    std::string output;
-    processFile(filename, output);
-    return output;
-  }
-
-  void preprocessor_t::processFile(const std::string &filename,
-                                   std::string &output) {
-    char *c = io::c_read(filename);
-    processSource(filename, c, output);
-    ::free((void*) c);
-  }
-
-  void preprocessor_t::processSource(const std::string &filename,
-                                     char *content,
-                                     std::string &output) {
-    if (currentFrame.fileStart) {
-      frames.push_back(currentFrame);
-    }
-    currentFrame.clear();
-    setFilename(filename);
-    currentFrame.fileStart    = content;
-    currentFrame.fileEnd      = content + strlen(content);
-    currentFrame.filePosition = content;
-
-    process(currentFrame.filePosition, output);
-
-    if (frames.size()) {
-      currentFrame = frames[frames.size() - 1];
-      frames.pop_back();
-
-      if (!frames.size() && (statusStack.size() > 1)) {
-        printError("#if without a closing #endif",
-                   currentStatus.filePosition);
-      }
-    }
-  }
-
-  std::string preprocessor_t::processSource(const std::string &content) {
-    std::string str = content;
-    std::string output;
-    processSource("(source)", &(str[0]), output);
-    return output;
-  }
-
-  void preprocessor_t::processSource(char *c,
-                                     std::string &output) {
-    processSource("(source)", c, output);
-  }
-
-  void preprocessor_t::processSource(const char *c,
-                                     std::string &output) {
-    std::string s(c);
-    processSource("(source)", &(s[0]), output);
-  }
-
-  void preprocessor_t::process(char *&c,
-                               std::string &output) {
-    while (*c != '\0') {
-      updatingSkipWhitespace(c);
-      if (*c == '#') {
-        processDirective(++c);
-      } else {
-        char *cStart = c;
-        updatingSkipTo(c, '\n');
-        output += applyMacros(cStart, c - cStart);
-        if (*c == '\n') {
-          output += '\n';
-        }
-      }
-    }
-  }
-
-  const macro_t* preprocessor_t::getMacro(char *c, const size_t chars) {
-    const std::string macroName = std::string(c, chars);
-
-    macroTrie *macroSources[2] = { &sourceMacros, &compilerMacros };
-    for (int i = 0; i < 2; ++i) {
-      macroTrie::result_t result = macroSources[i]->get(macroName);
+    macro_t* preprocessor::getMacro(const std::string &name) {
+      macroTrie::result_t result = sourceMacros.get(name);
       if (result.success()) {
-        macro_t * const macro = result.value();
-        if ((macro->undefinedLine < 0) ||
-            (currentFrame.lineNumber < macro->undefinedLine)) {
-          return macro;
+        return result.value();
+      }
+      result = compilerMacros.get(name);
+      if (result.success()) {
+        return result.value();
+      }
+      return NULL;
+    }
+
+    token_t* preprocessor::_getToken() {
+      passedNewline = false;
+
+      // Check if we've expanded tokens
+      token_t *token = getExpandedToken();
+      if (token) {
+        return token;
+      }
+      while (!token) {
+        // Get next token
+        token = getSourceToken();
+        if (!token) {
+          return NULL;
+        }
+        const int tokenType = token->type();
+        if (tokenType == tokenType::identifier) {
+          token = processIdentifier(token->to<identifierToken>());
+        } else if (tokenType == tokenType::op) {
+          token = processOperator(token->to<operatorToken>());
+        } else if (tokenType == tokenType::newline) {
+          passedNewline = true;
         }
       }
+      return token;
     }
 
-    return NULL;
-  }
+    token_t* preprocessor::getExpandedToken() {
+      const int expandCount = expandedTokens.size();
+      if (expandCount) {
+        if (expandedIndex < expandCount) {
+          token_t *token = expandedTokens[expandedIndex++];
+          if (token_t::safeType(token) == tokenType::newline) {
+            passedNewline = true;
+          }
+          return token;
+        }
+        expandedIndex = 0;
+        expandedTokens.clear();
+      }
+      return NULL;
+    }
 
-  std::string preprocessor_t::applyMacros(const char *c) {
-    std::string s(c);
-    return applyMacros(&(s[0]), s.size());
-  }
+    void preprocessor::expandMacro(macro_t &macro) {
+      // TODO
+    }
 
-  std::string preprocessor_t::applyMacros(char *c, const size_t chars) {
-    std::string out;
-    applyMacros(c, chars, out);
-    return out;
-  }
-
-  void preprocessor_t::applyMacros(char *c, const size_t chars, std::string &out) {
-    char &lastChar = c[chars];
-    const char lastCharValue = lastChar;
-    lastChar = '\0';
-
-    char *cStart = c;
-    while (*c != '\0') {
-      lex::skipWhitespace(c);
-      char *cMacroStart = c;
-      lex::skipTo(c, macroEndDelimiters);
-
-      const macro_t *macro = getMacro(cMacroStart, c - cMacroStart);
-      if (macro != NULL) {
-        out += std::string(cStart, cMacroStart - cStart);
-        out += macro->expand(c);
-        cStart = c;
+    void preprocessor::skipToNewline() {
+      token_t *token = _getToken();
+      while (token) {
+        const int tokenType = token->type();
+        delete token;
+        if (tokenType == tokenType::newline) {
+          return;
+        }
+        token = getSourceToken();
       }
     }
 
-    if (cStart < c) {
-      out += std::string(cStart, c - cStart);
-    }
-    lastChar = lastCharValue;
-  }
-
-  void preprocessor_t::processDirective(char *&c) {
-    updatingSkipWhitespace(c);
-    char *cStart = c;
-    updatingSkipTo(c, macroEndDelimiters);
-    char *cEnd = c;
-
-    directiveTrie::result_t result = directives.get(cStart, cEnd - cStart);
-    if (!result.success()) {
-      std::string message = "Directive \"";
-      message += std::string(cStart, cEnd - cStart);
-      message += "\" is not defined";
-      printError(message, cStart);
-      updatingSkipTo(c, '\n');
-      return;
+    void preprocessor::getTokensUntilNewline(tokenVector &lineTokens) {
+      while (true) {
+        token_t *token = getSourceToken();
+        if (!token) {
+          break;
+        }
+        if (token->type() == tokenType::newline) {
+          delete token;
+          break;
+        }
+        lineTokens.push_back(token);
+      }
     }
 
-    // Parse #if[,def], #el[se,if], #end[if] even when ignored
-    // The preprocessor honors ignored #if/#el/#endif stacks
-    const int status = currentStatus.status;
-
-    if (!(status & ignoring) ||
-        (strncmp(cStart, "if" , 2) &&
-         strncmp(cStart, "el" , 2) &&
-         strncmp(cStart, "end", 3))) {
-      (this->*(result.value()))(cStart, c);
-    } else {
-      updatingSkipTo(c, '\n');
-    }
-  }
-
-  void preprocessor_t::processIf(char *&dStart, char *&c) {
-    char *cStart = c;
-    updatingSkipTo(c, '\n');
-
-    int status = currentStatus.status;
-
-    if (!(status & ignoring)) {
-      std::string line;
-      applyMacros(cStart, c - cStart, line);
-      pushStatus(eval<bool>(line) ? reading : ignoring);
-    } else {
-      pushStatus(finishedIf);
-    }
-  }
-
-  void preprocessor_t::processIfdef(char *&dStart, char *&c) {
-    char *cStart = c;
-    updatingSkipTo(c, '\n');
-
-    int status = currentStatus.status;
-
-    if (!(status & ignoring)) {
-      std::string line;
-      applyMacros(cStart, c - cStart, line);
-
-      const macro_t *macro = getMacro(&(line[0]), line.size());
-      pushStatus(macro != NULL ? reading : ignoring);
-    } else {
-      pushStatus(finishedIf);
-    }
-  }
-
-  void preprocessor_t::processIfndef(char *&dStart, char *&c) {
-    char *cStart = c;
-    updatingSkipTo(c, '\n');
-
-    int status = currentStatus.status;
-
-    if (!(status & ignoring)) {
-      std::string line;
-      applyMacros(cStart, c - cStart, line);
-
-      const macro_t *macro = getMacro(&(line[0]), line.size());
-      pushStatus(macro == NULL ? reading : ignoring);
-    } else {
-      pushStatus(finishedIf);
-    }
-  }
-
-  void preprocessor_t::processElif(char *&dStart, char *&c) {
-    char *cStart = c;
-    updatingSkipTo(c, '\n');
-
-    int status = currentStatus.status;
-
-    if (!statusStack.size()) {
-      printError("#elif without #if", cStart);
+    token_t* preprocessor::processIdentifier(identifierToken &token) {
+      macro_t *macro = getMacro(token.value);
+      if (macro) {
+        if (!macro->isFunctionLike()) {
+          expandMacro(*macro);
+          delete &token;
+          return getExpandedToken();
+        }
+        // Make sure that the macro starts with a '('
+        token_t *nextToken = getSourceToken();
+        if (token_t::safeType(nextToken) == tokenType::op) {
+          const opType_t opType = nextToken->to<operatorToken>().op.opType;
+          if (opType & operatorType::parenthesesEnd) {
+            expandMacro(*macro);
+            delete &token;
+            delete nextToken;
+            return getExpandedToken();
+          }
+        }
+        expandedTokens.push_back(nextToken);
+      }
+      return &token;
     }
 
-    if (status & ignoring) {
-      std::string line;
-      applyMacros(cStart, c - cStart, line);
-      pushStatus(eval<bool>(line) ? reading : ignoring);
-    } else {
-      pushStatus(finishedIf);
+    token_t* preprocessor::processOperator(operatorToken &token) {
+      if ((token.op.opType != operatorType::hash) ||
+          !passedNewline) {
+        return &token;
+      }
+      delete &token;
+
+      // Find directive
+      token_t *directive = getSourceToken();
+      // NULL or an empty # is ok
+      if (!directive || passedNewline) {
+        return directive;
+      }
+
+      // Check for valid directive
+      if (directive->type() != tokenType::identifier) {
+        directive->printError("Unknown preprocessor directive");
+        skipToNewline();
+        return NULL;
+      }
+      identifierToken &directiveToken = directive->to<identifierToken>();
+      const std::string &directiveStr = directiveToken.value;
+      directiveTrie::result_t result  = directives.get(directiveStr);
+      if (!result.success()) {
+        directive->printError("Unknown preprocessor directive");
+        delete directive;
+        skipToNewline();
+        return NULL;
+      }
+      (this->*(result.value()))(directiveToken);
+      delete directive;
+      return NULL;
     }
-  }
 
-  void preprocessor_t::processElse(char *&dStart, char *&c) {
-    char *cStart = c;
-    updatingSkipTo(c, '\n');
-
-    int status = currentStatus.status;
-
-    if (!statusStack.size()) {
-      printError("#else without #if", cStart);
-    }
-    if (status & foundElse) {
-      printError("Found two #else directives", cStart);
-    }
-
-    if (status & ignoring) {
-      std::string line;
-      applyMacros(cStart, c - cStart, line);
-      pushStatus(foundElse | (eval<bool>(line) ? reading : ignoring));
-    } else {
-      pushStatus(foundElse | finishedIf);
-    }
-  }
-
-  void preprocessor_t::processEndif(char *&dStart, char *&c) {
-    const char *cStart = c;
-    updatingSkipTo(c, '\n');
-
-    if (!popStatus()) {
-      printError("#endif without #if", cStart);
-    }
-  }
-
-  void preprocessor_t::processDefine(char *&dStart, char *&c) {
-    const int thisLineNumber = currentFrame.lineNumber;
-    char *cStart = c;
-    updatingSkipTo(c, '\n');
-
-    const char lastChar = *c;
-    *c = '\0';
-    macro_t *macro = new macro_t(this, cStart);
-    *c = lastChar;
-
-    macro->definedLine = thisLineNumber;
-    sourceMacros.add(macro->name, macro);
-  }
-
-  void preprocessor_t::processUndef(char *&dStart, char *&c) {
-    const int thisLineNumber = currentFrame.lineNumber;
-    char *cStart = c;
-    updatingSkipToWhitespace(c);
-    char *cEnd = c;
-    updatingSkipTo(c, '\n');
-
-    macroTrie::result_t result = sourceMacros.get(cStart, cEnd - cStart);
-    if (0 <= result.valueIdx) {
-      macro_t &macro = *(sourceMacros.values[result.valueIdx]);
-      macro.undefinedLine = thisLineNumber;
-    }
-  }
-
-  void preprocessor_t::processMessage(char *&c, const bool isError) {
-    char *cStart = c;
-    updatingSkipTo(c, '\n');
-
-    std::string line;
-    applyMacros(cStart, c - cStart, line);
-    line = strip(line);
-
-    if (isError) {
-      printError(line, cStart);
-    } else {
-      printWarning(line, cStart);
-    }
-  }
-
-  void preprocessor_t::processError(char *&dStart, char *&c) {
-    dStart += 5 + (dStart[5] != '\0');
-    processMessage(dStart, true);
-  }
-
-  void preprocessor_t::processWarning(char *&dStart, char *&c) {
-    dStart += 7 + (dStart[7] != '\0');
-    processMessage(dStart, false);
-  }
-
-  void preprocessor_t::processInclude(char *&dStart, char *&c) {
-    char *cStart = c;
-    updatingSkipTo(c, '\n');
-
-    std::string line;
-    applyMacros(cStart, c - cStart, line);
-    line = strip(line);
-
-    processFile(io::filename(line));
-  }
-
-  void preprocessor_t::processPragma(char *&dStart, char *&c) {
-    updatingSkipTo(c, '\n');
-  }
-
-  void preprocessor_t::processLine(char *&dStart, char *&c) {
-    char *cStart = c;
-    updatingSkipTo(c, '\n');
-
-    std::string line;
-    applyMacros(cStart, c - cStart, line);
-
-    cStart = &(line[0]);
-    char *cEnd = cStart + line.size();
-    lex::strip(cStart, cEnd, '\\');
-
-    // Get line number
-    char *cStartLine = cStart;
-    char *cEndLine = cStartLine;
-    lex::skipToWhitespace(cEndLine);
-    for (char *c_ = cStartLine; c_ < cEndLine; ++c_) {
-      if (!lex::isDigit(*c_)) {
-        printError("#line line number must be a simple number", c_);
+    void preprocessor::processIf(identifierToken &directive) {
+      tokenVector lineTokens;
+      getTokensUntilNewline(lineTokens);
+      if (!lineTokens.size()) {
+        directive.printError("Expected a value");
+        pushStatus(ignoring); // Keep checking for errors
         return;
       }
-    }
-    const int cEndLineIdx = (int) (cEndLine - line.c_str());
-    const int lineSize = (int) line.size();
-    if (cEndLineIdx < lineSize) {
-      line[cEndLineIdx] = '\0';
-    }
-    // We subtract one since the NEXT line has the line number given in #line
-    currentFrame.lineNumber = ((int) primitive(cStartLine)) - 1;
-
-    if (lineSize <= cEndLineIdx) {
-      return;
+      pushStatus(eval<bool>(lineTokens)
+                 ? reading
+                 : ignoring);
     }
 
-    // Get filename (if exists)
-    char *cStartFilename = cEndLine + 1;
-    char *cEndFilename   = cEnd;
-    lex::skipWhitespace(cStartFilename);
-    if (cStartFilename < cEndFilename) {
-      const std::string rawFilename = std::string(cStartFilename,
-                                                  cEndFilename - cStartFilename);
-      setFilename(io::filename(rawFilename));
-    }
-  }
-
-  //---[ Messages ]---------------------
-  void preprocessor_t::printMessage(const std::string &message,
-                                    const char *errorPosition,
-                                    const bool isError) const {
-    std::stringstream ss;
-    const char *fileStart = currentFrame.fileStart;
-    const char *fileEnd   = currentFrame.fileEnd;
-
-    const bool useErrorPosition = (fileStart                    &&
-                                   (fileStart <= errorPosition) &&
-                                   (errorPosition < fileEnd));
-
-    // Print filename stack
-    const int frameCount = frames.size();
-    for (int i = 0; i < frameCount; ++i) {
-      ss << frames[i].getLineMessage() << '\n';
-    }
-
-    // Get line number based on errorPosition
-    int lineNumber = currentFrame.lineNumber;
-    const char *lineStart = fileStart;
-
-    if (useErrorPosition) {
-      lineNumber = 1;
-      for (const char *c = fileStart; c < errorPosition; ++c) {
-        if (*c == '\n') {
-          lineStart = c + 1;
-          ++lineNumber;
+    void preprocessor::processIfdef(identifierToken &directive) {
+      token_t *token = getSourceToken();
+      if (!token
+          || (token->type() != tokenType::identifier)
+          || passedNewline) {
+        if (!token || passedNewline) {
+          directive.printError("Expected an identifier");
+        } else {
+          token->printError("Expected an identifier");
         }
+        pushStatus(ignoring);
+        return;
       }
-    } else {
-      for (int i = 0; i < lineNumber; ++i) {
-        lex::skipTo(lineStart, '\n');
-        lineStart += (lineStart != '\0');
-      }
+      const std::string &macroName = token->to<identifierToken>().value;
+      delete token;
+      pushStatus(getMacro(macroName)
+                 ? reading
+                 : ignoring);
+      skipToNewline();
     }
-    // Print current file with found line number
-    ss << currentFrame.getLineMessage(lineNumber);
 
-    // Error/Warning: <message>\n
-    ss << ": "
-       << (isError ? red("Error:") : yellow("Warning:"))
-       << ' ' << message << '\n';
-
-    // Print found line
-    const char *lineEnd = lineStart;
-    lex::skipTo(lineEnd, '\n');
-
-    if (lineStart < lineEnd) {
-      ss << std::string(lineStart, lineEnd - lineStart) << '\n';
-
-      // ... ^
-      if (useErrorPosition) {
-        ss << std::string(errorPosition - lineStart, ' ') << green("^") << '\n';
+    void preprocessor::processIfndef(identifierToken &directive) {
+      const int oldErrors = errors;
+      processIfdef(directive);
+      // Keep the ignoring status if ifdef found an error
+      if (oldErrors == errors) {
+        const int status = ((currentStatus == reading)
+                            ? ignoring
+                            : reading);
+        popStatus();
+        pushStatus(status);
       }
     }
 
-    *outputStream << ss.str();
-  }
-
-  void preprocessor_t::printError(const std::string &message,
-                                  const char *errorPosition) const {
-    printMessage(message, errorPosition, true);
-    ++errorCount;
-  }
-
-  void preprocessor_t::printFatalError(const std::string &message,
-                                       const char *errorPosition) const {
-    printMessage(message, errorPosition, true);
-    ++errorCount;
-    if (exitOnFatalError) {
-      printErrorAndWarningCounts();
-      throw 1;
+    void preprocessor::processElif(identifierToken &directive) {
+      // TODO: Test if we're inside an if
+      processIf(directive);
     }
-  }
 
-  void preprocessor_t::printWarning(const std::string &message,
-                                    const char *errorPosition) const {
-    printMessage(message, errorPosition, false);
-    ++warningCount;
-  }
+    void preprocessor::processElse(identifierToken &directive) {
+      // TODO: Test if we're inside an if
+      skipToNewline();
+    }
 
-  void preprocessor_t::printErrorAndWarningCounts() const {
-    if (warningCount) {
-      *outputStream << warningCount << " warning";
-      if (1 < warningCount) {
-        *outputStream << 's';
+    void preprocessor::processEndif(identifierToken &directive) {
+      // TODO: Test if we're inside an if
+      if (!popStatus()) {
+        printError("#endif without #if");
       }
+      skipToNewline();
     }
-    if (errorCount) {
-      if (warningCount) {
-        *outputStream << " and ";
+
+    void preprocessor::processDefine(identifierToken &directive) {
+      token_t *token = getSourceToken();
+      if (!token
+          || (token->type() != tokenType::identifier)
+          || passedNewline) {
+        if (!token || passedNewline) {
+          directive.printError("Expected an identifier");
+        } else {
+          token->printError("Expected an identifier");
+        }
+        skipToNewline();
+        return;
       }
-      *outputStream << errorCount << " error";
-      if (1 < errorCount) {
-        *outputStream << 's';
+      // TODO
+      // macro_t *macro;
+      // sourceMacros.add(macro->name, macro);
+    }
+
+    void preprocessor::processUndef(identifierToken &directive) {
+      token_t *token = getSourceToken();
+      const int tokenType = token_t::safeType(token);
+      if (token->type() != tokenType::identifier) {
+        if (tokenType & (tokenType::none |
+                         tokenType::newline)) {
+          directive.printError("Expected an identifier");
+        } else {
+          token->printError("Expected an identifier");
+        }
+        skipToNewline();
+        return;
       }
+      // Remove macro
+      const std::string &macroName = token->to<identifierToken>().value;
+      delete token;
+      sourceMacros.remove(macroName);
     }
-    if (warningCount || errorCount) {
-      *outputStream << " generated.\n";
+
+    void preprocessor::processError(identifierToken &directive) {
+      // TODO
+      const std::string message = "message";
+      directive.printError(message);
+      skipToNewline();
     }
-  }
-  //====================================
 
-  //---[ Overriding Lex Methods ]-------
-  void preprocessor_t::updateLines(const char *c, const int chars) {
-    for (int i = 0; i < chars; ++i) {
-      if (c[i] == '\n') {
-        ++currentFrame.lineNumber;
-      }
+    void preprocessor::processWarning(identifierToken &directive) {
+      // TODO
+      const std::string message = "message";
+      directive.printWarning(message);
+      skipToNewline();
     }
-  }
 
-  void preprocessor_t::updatingSkipTo(const char *&c, const char delimiter) {
-    const char *cStart = c;
-    lex::quotedSkipTo(c, delimiter);
-    updateLines(cStart, c - cStart);
-  }
+    void preprocessor::processInclude(identifierToken &directive) {
+      // TODO
+    }
 
-  void preprocessor_t::updatingSkipTo(const char *&c, const std::string &delimiters) {
-    const char *cStart = c;
-    lex::quotedSkipTo(c, delimiters);
-    updateLines(cStart, c - cStart);
-  }
+    void preprocessor::processPragma(identifierToken &directive) {
+      // TODO
+    }
 
-  void preprocessor_t::updatingSkipWhitespace(const char *&c) {
-    const char *cStart = c;
-    lex::skipWhitespace(c, '\\');
-    updateLines(cStart, c - cStart);
+    void preprocessor::processLine(identifierToken &directive) {
+      // TODO
+    }
+    //====================================
   }
-
-  void preprocessor_t::updatingSkipToWhitespace(const char *&c) {
-    const char *cStart = c;
-    lex::quotedSkipTo(c, lex::whitespaceChars);
-    updateLines(cStart, c - cStart);
-  }
-  //====================================
 }

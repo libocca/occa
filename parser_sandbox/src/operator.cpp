@@ -24,73 +24,73 @@
 namespace occa {
   namespace lang {
     namespace operatorType {
-      const optype_t not_              = (1L << 0);
-      const optype_t positive          = (1L << 1);
-      const optype_t negative          = (1L << 2);
-      const optype_t tilde             = (1L << 3);
-      const optype_t leftIncrement     = (1L << 4);
-      const optype_t rightIncrement    = (1L << 5);
-      const optype_t increment         = (leftIncrement |
+      const opType_t not_              = (1L << 0);
+      const opType_t positive          = (1L << 1);
+      const opType_t negative          = (1L << 2);
+      const opType_t tilde             = (1L << 3);
+      const opType_t leftIncrement     = (1L << 4);
+      const opType_t rightIncrement    = (1L << 5);
+      const opType_t increment         = (leftIncrement |
                                           rightIncrement);
-      const optype_t leftDecrement     = (1L << 6);
-      const optype_t rightDecrement    = (1L << 7);
-      const optype_t decrement         = (leftDecrement |
+      const opType_t leftDecrement     = (1L << 6);
+      const opType_t rightDecrement    = (1L << 7);
+      const opType_t decrement         = (leftDecrement |
                                           rightDecrement);
 
-      const optype_t add               = (1L << 8);
-      const optype_t sub               = (1L << 9);
-      const optype_t mult              = (1L << 10);
-      const optype_t div               = (1L << 11);
-      const optype_t mod               = (1L << 12);
-      const optype_t arithmetic        = (add  |
+      const opType_t add               = (1L << 8);
+      const opType_t sub               = (1L << 9);
+      const opType_t mult              = (1L << 10);
+      const opType_t div               = (1L << 11);
+      const opType_t mod               = (1L << 12);
+      const opType_t arithmetic        = (add  |
                                           sub  |
                                           mult |
                                           div  |
                                           mod);
 
-      const optype_t lessThan          = (1L << 13);
-      const optype_t lessThanEq        = (1L << 14);
-      const optype_t equal             = (1L << 15);
-      const optype_t notEqual          = (1L << 16);
-      const optype_t greaterThan       = (1L << 17);
-      const optype_t greaterThanEq     = (1L << 18);
-      const optype_t comparison        = (lessThan    |
+      const opType_t lessThan          = (1L << 13);
+      const opType_t lessThanEq        = (1L << 14);
+      const opType_t equal             = (1L << 15);
+      const opType_t notEqual          = (1L << 16);
+      const opType_t greaterThan       = (1L << 17);
+      const opType_t greaterThanEq     = (1L << 18);
+      const opType_t comparison        = (lessThan    |
                                           lessThanEq  |
                                           equal       |
                                           notEqual    |
                                           greaterThan |
                                           greaterThanEq);
 
-      const optype_t and_              = (1L << 19);
-      const optype_t or_               = (1L << 20);
-      const optype_t boolean           = (and_ |
+      const opType_t and_              = (1L << 19);
+      const opType_t or_               = (1L << 20);
+      const opType_t boolean           = (and_ |
                                           or_);
 
-      const optype_t bitAnd            = (1L << 21);
-      const optype_t bitOr             = (1L << 22);
-      const optype_t xor_              = (1L << 23);
-      const optype_t leftShift         = (1L << 24);
-      const optype_t rightShift        = (1L << 25);
-      const optype_t shift             = (leftShift |
+      const opType_t bitAnd            = (1L << 21);
+      const opType_t bitOr             = (1L << 22);
+      const opType_t xor_              = (1L << 23);
+      const opType_t leftShift         = (1L << 24);
+      const opType_t rightShift        = (1L << 25);
+      const opType_t shift             = (leftShift |
                                           rightShift);
-      const optype_t bitOp             = (bitAnd    |
+      const opType_t bitOp             = (bitAnd    |
                                           bitOr     |
                                           xor_      |
                                           leftShift |
                                           rightShift);
 
-      const optype_t assign            = (1L << 26);
-      const optype_t addEq             = (1L << 27);
-      const optype_t subEq             = (1L << 28);
-      const optype_t multEq            = (1L << 29);
-      const optype_t divEq             = (1L << 30);
-      const optype_t modEq             = (1L << 31);
-      const optype_t andEq             = (1L << 32);
-      const optype_t orEq              = (1L << 33);
-      const optype_t xorEq             = (1L << 34);
-      const optype_t leftShiftEq       = (1L << 35);
-      const optype_t rightShiftEq      = (1L << 36);
-      const optype_t assignment        = (assign      |
+      const opType_t assign            = (1L << 26);
+      const opType_t addEq             = (1L << 27);
+      const opType_t subEq             = (1L << 28);
+      const opType_t multEq            = (1L << 29);
+      const opType_t divEq             = (1L << 30);
+      const opType_t modEq             = (1L << 31);
+      const opType_t andEq             = (1L << 32);
+      const opType_t orEq              = (1L << 33);
+      const opType_t xorEq             = (1L << 34);
+      const opType_t leftShiftEq       = (1L << 35);
+      const opType_t rightShiftEq      = (1L << 36);
+      const opType_t assignment        = (assign      |
                                           addEq       |
                                           subEq       |
                                           multEq      |
@@ -102,24 +102,24 @@ namespace occa {
                                           leftShiftEq |
                                           rightShiftEq);
 
-      const optype_t comma             = (1L << 37);
-      const optype_t scope             = (1L << 38);
-      const optype_t dot               = (1L << 39);
-      const optype_t dotStar           = (1L << 40);
-      const optype_t arrow             = (1L << 41);
-      const optype_t arrowStar         = (1L << 42);
+      const opType_t comma             = (1L << 37);
+      const opType_t scope             = (1L << 38);
+      const opType_t dot               = (1L << 39);
+      const opType_t dotStar           = (1L << 40);
+      const opType_t arrow             = (1L << 41);
+      const opType_t arrowStar         = (1L << 42);
 
-      const optype_t leftUnary         = (not_          |
+      const opType_t leftUnary         = (not_          |
                                           positive      |
                                           negative      |
                                           tilde         |
                                           leftIncrement |
                                           rightDecrement);
 
-      const optype_t rightUnary        = (rightIncrement |
+      const opType_t rightUnary        = (rightIncrement |
                                           rightDecrement);
 
-      const optype_t binary            = (add           |
+      const opType_t binary            = (add           |
                                           sub           |
                                           mult          |
                                           div           |
@@ -160,59 +160,61 @@ namespace occa {
                                           arrow         |
                                           arrowStar);
 
-      const optype_t ternary           = (3L << 43);
-      const optype_t colon             = (1L << 44);
+      const opType_t ternary           = (3L << 43);
+      const opType_t colon             = (1L << 44);
 
-      const optype_t braceStart        = (1L << 45);
-      const optype_t braceEnd          = (1L << 46);
-      const optype_t bracketStart      = (1L << 47);
-      const optype_t bracketEnd        = (1L << 48);
-      const optype_t parenthesesStart  = (1L << 49);
-      const optype_t parenthesesEnd    = (1L << 50);
+      const opType_t braceStart        = (1L << 45);
+      const opType_t braceEnd          = (1L << 46);
+      const opType_t bracketStart      = (1L << 47);
+      const opType_t bracketEnd        = (1L << 48);
+      const opType_t parenthesesStart  = (1L << 49);
+      const opType_t parenthesesEnd    = (1L << 50);
 
-      const optype_t braces            = (braceStart       |
+      const opType_t braces            = (braceStart       |
                                           braceEnd);
-      const optype_t brackets          = (bracketStart     |
+      const opType_t brackets          = (bracketStart     |
                                           bracketEnd);
-      const optype_t parentheses       = (parenthesesStart |
+      const opType_t parentheses       = (parenthesesStart |
                                           parenthesesEnd);
 
-      const optype_t pair              = (braceStart       |
+      const opType_t pair              = (braceStart       |
                                           braceEnd         |
                                           bracketStart     |
                                           bracketEnd       |
                                           parenthesesStart |
                                           parenthesesEnd);
 
-      const optype_t pairStart         = (braceStart       |
+      const opType_t pairStart         = (braceStart       |
                                           bracketStart     |
                                           parenthesesStart);
 
-      const optype_t pairEnd           = (braceEnd         |
+      const opType_t pairEnd           = (braceEnd         |
                                           bracketEnd       |
                                           parenthesesEnd);
 
-      const optype_t lineComment       = (1L << 51);
-      const optype_t blockCommentStart = (1L << 52);
-      const optype_t blockCommentEnd   = (1L << 53);
-      const optype_t comment           = (lineComment       |
+      const opType_t lineComment       = (1L << 51);
+      const opType_t blockCommentStart = (1L << 52);
+      const opType_t blockCommentEnd   = (1L << 53);
+      const opType_t comment           = (lineComment       |
                                           blockCommentStart |
                                           blockCommentEnd);
 
-      const optype_t hash              = (1L << 54);
-      const optype_t hashhash          = (1L << 55);
-      const optype_t preprocessor      = (hash |
+      const opType_t hash              = (1L << 54);
+      const opType_t hashhash          = (1L << 55);
+      const opType_t preprocessor      = (hash |
                                           hashhash);
 
-      const optype_t semicolon         = (1L << 56);
-      const optype_t ellipsis          = (1L << 57);
+      const opType_t semicolon         = (1L << 56);
+      const opType_t ellipsis          = (1L << 57);
+      const opType_t attribute         = (1L << 58);
 
-      const optype_t special           = (hash           |
+      const opType_t special           = (hash           |
                                           hashhash       |
                                           semicolon      |
-                                          ellipsis);
+                                          ellipsis       |
+                                          attribute);
 
-      const optype_t overloadable      = (not_           |
+      const opType_t overloadable      = (not_           |
                                           positive       |
                                           negative       |
                                           tilde          |
@@ -342,14 +344,15 @@ namespace occa {
 
       const operator_t semicolon        (";"  , operatorType::semicolon       , 1);
       const operator_t ellipsis         ("...", operatorType::ellipsis        , 1);
+      const operator_t attribute        ("@"  , operatorType::attribute       , 1);
       //================================
     }
 
     operator_t::operator_t(const std::string &str_,
-                           optype_t optype_,
+                           opType_t opType_,
                            int precedence_) :
       str(str_),
-      optype(optype_),
+      opType(opType_),
       precedence(precedence_) {}
 
     void operator_t::print(printer &pout) const {

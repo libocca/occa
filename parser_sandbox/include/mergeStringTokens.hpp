@@ -19,58 +19,16 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  */
-#ifndef OCCA_PARSER_MACRO_HEADER2
-#define OCCA_PARSER_MACRO_HEADER2
-
-#include <vector>
-#include <iostream>
+#ifndef OCCA_PARSER_MERGESTRINGSTOKEN_HEADER2
+#define OCCA_PARSER_MERGESTRINGSTOKEN_HEADER2
 
 #include "tokenStream.hpp"
 
 namespace occa {
   namespace lang {
-    class token_t;
-    class macroToken;
-    typedef std::vector<macroToken> macroTokenVector_t;
-
-    class macroToken {
+    class mergeStringTokens : public tokenStream {
     public:
-      token_t *token;
-      int arg;
-
-      macroToken();
-      macroToken(token_t *token_);
-      macroToken(const int arg_);
-
-      inline bool isArg() const {
-        return (arg >= 0);
-      }
-    };
-
-    class macro_t : public tokenStream {
-    public:
-      static const std::string VA_ARGS;
-
-      std::string name;
-
-      int argCount;
-      mutable bool hasVarArgs;
-
-      std::vector<tokenVector> args;
-      int macroTokenIndex, argTokenIndex;
-      macroTokenVector_t macroTokens;
-
-      macro_t(tokenStream *sourceStream_,
-              const std::string &name_);
-      ~macro_t();
-
-      inline bool isFunctionLike() const {
-        return ((argCount >= 0) || hasVarArgs);
-      }
-
-      bool loadArgs();
-
-      virtual token_t* getToken();
+      virtual token_t* _getToken();
     };
   }
 }

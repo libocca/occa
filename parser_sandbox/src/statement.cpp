@@ -56,8 +56,8 @@ namespace occa {
       return emptyStatement(ctx);
     }
 
-    directiveStatement statement_t::newDirectiveStatement(macro_t &macro) {
-      return directiveStatement(ctx, macro);
+    pragmaStatement statement_t::newPragmaStatement(const std::string &line) {
+      return pragmaStatement(ctx, line);
     }
 
     blockStatement statement_t::newBlockStatement() {
@@ -139,24 +139,24 @@ namespace occa {
     void emptyStatement::print(printer &pout) const {}
     //====================================
 
-    //---[ Directive ]--------------------
-    directiveStatement::directiveStatement(context &ctx_,
-                                           macro_t &macro_) :
+    //---[ Pragma ]--------------------
+    pragmaStatement::pragmaStatement(context &ctx_,
+                                     const std::string &line_) :
       statement_t(ctx_),
-      macro(macro_) {}
+      line(line_) {}
 
-    statement_t& directiveStatement::clone() const {
-      directiveStatement &s = *(new directiveStatement(ctx, macro));
+    statement_t& pragmaStatement::clone() const {
+      pragmaStatement &s = *(new pragmaStatement(ctx, line));
       s.attributes = attributes;
       return s;
     }
 
-    int directiveStatement::type() const {
-      return statementType::directive;
+    int pragmaStatement::type() const {
+      return statementType::pragma;
     }
 
-    void directiveStatement::print(printer &pout) const {
-      pout << macro.toString() << '\n';
+    void pragmaStatement::print(printer &pout) const {
+      pout << "#pragma " << line << '\n';
     }
     //====================================
 

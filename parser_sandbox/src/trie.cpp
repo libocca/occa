@@ -26,7 +26,10 @@ namespace occa {
   //  ---[ Result ]---------------------
   trieNode::result_t::result_t() {}
 
-  trieNode::result_t::result_t(const int length_, const int valueIdx_) :
+  trieNode::result_t::result_t(trieNode *node_,
+                               const int length_,
+                               const int valueIdx_) :
+    node(node_),
     length(length_),
     valueIdx(valueIdx_) {}
   //  ==================================
@@ -71,11 +74,53 @@ namespace occa {
     if ((cIdx < length) && (it != leaves.end())) {
       result_t result = it->second.get(c, cIdx + 1, length);
       if (!result.success() && (0 <= valueIdx)) {
-        return result_t(cIdx + 1, valueIdx);
+        return result_t(const_cast<trieNode*>(this),
+                        cIdx + 1,
+                        valueIdx);
       }
       return result;
     }
-    return result_t(cIdx, valueIdx);
+    return result_t(const_cast<trieNode*>(this),
+                    cIdx,
+                    valueIdx);
+  }
+
+  void trieNode::remove(const char *c, const int valueIdx_) {
+    if (*c == '\0') {
+      return;
+    }
+    const int length = (int) strlen(c);
+    bool found = false;
+    if (length > 1) {
+      result_t result = get(c, length - 1);
+      if (result.success()) {
+        trieNodeMap_t &leaves_ = result.node->leaves;
+        leaves_.erase(leaves_.find(c[length - 1]));
+        found = true;
+      }
+    } else {
+      trieNodeMapIterator it = leaves.find(*c);
+      if (it != leaves.end()) {
+        leaves.erase(it);
+        found = true;
+      }
+    }
+    if (!found) {
+      return;
+    }
+    // Offset every leaf > valueidx_ by -1
+    decrementIndex(valueIdx_);
+  }
+
+  void trieNode::decrementIndex(const int valueIdx_) {
+    trieNodeMapIterator it = leaves.begin();
+    while (it != leaves.end()) {
+      trieNode &leaf = it->second;
+      if (leaf.valueIdx > valueIdx_) {
+        --leaf.valueIdx;
+      }
+      leaf.decrementIndex(valueIdx_);
+    }
   }
   //====================================
 }

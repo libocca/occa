@@ -70,8 +70,8 @@ namespace occa {
 
       scopeInfo* addNamespace(const std::string &namespaceName);
 
-      typeInfo*  hasLocalType(const std::string &typeName);
-      varInfo*   hasLocalVariable(const std::string &varName);
+      typeInfo* hasLocalType(const std::string &typeName);
+      varInfo*  hasLocalVariable(const std::string &varName);
 
       bool removeLocalType(const std::string &typeName);
       bool removeLocalVariable(const std::string &varName);

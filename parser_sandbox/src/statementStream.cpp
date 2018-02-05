@@ -19,6 +19,7 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  */
+#if 0
 #include "statementStream.hpp"
 
 namespace occa {
@@ -46,16 +47,28 @@ namespace occa {
     }
 
     token_t* statementStream::getToken() {
-      tokens.push();
       token_t *token = tokens.getToken();
-      if ((token == NULL)
-          && !tokens.isEmpty()) {
-        tokens.popAndRewind();
-        handleTokenError();
+      if (token) {
+        tokenStack.push_back(token);
       }
-      tokens.pop();
-      tokenStack.push_back(token);
       return token;
+    }
+
+    void statementStream::popTokens(const int count) {
+      const int total = (int) tokenStack.size();
+      for (int i = 0; i < count; ++i) {
+        token_t *token = tokenStack[total - i - 1];
+        delete token;
+        tokenStack.pop_back();
+      }
+    }
+
+    void statementStream::popToken() {
+      popTokens(1);
+    }
+
+    void statementStream::clearTokens() {
+      popTokens((int) tokenStack.size());
     }
 
     int statementStream::peek() {
@@ -65,30 +78,78 @@ namespace occa {
                              : tokenType::none);
 
       if (tokenType & tokenType::identifier) {
-        return peekForIdentifier();
+        return peekForIdentifier(token->to<identifierToken>());
       }
       if (tokenType & tokenType::op) {
-        return peekForOperator();
+        return peekForOperator(token->to<operatorToken>());
       }
       if (tokenType & (tokenType::primitive |
                        tokenType::char_     |
                        tokenType::string)) {
         return statementType::expression;
       }
-      if (tokenType & tokenType::attribute) {
-        // attributes.push_back(&(token->to<attributeToken>()));
-        tokenStack.pop_back();
-        return peek();
+
+      return statementType::none;
+    }
+
+    int statementStream::peekForIdentifier(identifierToken &token) {
+      keywordTrie::result_t result = keywords.get(token.value);
+      if (!result.success()) {
+
       }
+      // type | qualifier -> statementType::typeDecl
+      // goto             -> statementType::gotoLabel
+      // variable         -> statementType::expression
+
+      // "goto"           -> statementType::goto_
+      // "namespace"      -> statementType::namespace_
+      // "while"          -> statementType::while_
+      // "for"            -> statementType::for_
+      // "switch"         -> statementType::switch_
+      // "case"           -> statementType::case_
+      // "continue"       -> statementType::continue_
+      // "break"          -> statementType::break_
+      // "return"         -> statementType::return_
+      // "typedef" | "class" | "struct" | "enum" | "union" | ?
+      //                  -> statementType::declaration
       return statementType::none;
     }
 
-    int statementStream::peekForIdentifier() {
-      return statementType::none;
+    int statementStream::peekForOperator(operatorToken &token) {
+      const opType_t opType = token.opType;
+      if (opType & operatorType::hash) {
+        return statementType::directive;
+      }
+      if (opType & operatorType::hashHash) {
+        handleTokenError();
+        return statementType::none;
+      }
+      if (opType & operatorType::braceStart) {
+        return statementType::block;
+      }
+      if (opType & operatorType::attribute) {
+        loadAttribute();
+        return statementType::attribute;
+      }
+      return statementType::expression;
     }
 
-    int statementStream::peekForOperator() {
-      return statementType::none;
+    void statementStream::loadAttribute() {
+      token_t *token = getToken();
+      const int tokenType = (token
+                             ? token->type()
+                             : tokenType::none);
+      if (tokenType & tokenType::identifier) {
+        // TODO: Error at the @ token
+        handleTokenError();
+        return;
+      }
+      const std::string name = ptoken->to<identifierToken>().value;
+      popTokens(2); // [@][name]
+
+      // TODO: Finish parsing the () tokens
+
+      attributes.push_back(name);
     }
 
     statement_t* statementStream::getStatement() {
@@ -136,6 +197,7 @@ namespace occa {
       for (int i = 0; i < attributeCount; ++i) {
         statement->addAttribute(attributes[i]);
       }
+      attributes.clear();
       return statement;
     }
 
@@ -214,3 +276,4 @@ namespace occa {
     }
   }
 }
+#endif

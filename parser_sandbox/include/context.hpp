@@ -74,16 +74,6 @@ namespace occa {
                specifier &value,
                const int ktype);
 
-      void addRecord(classType     &value, statement_t &s);
-      void addRecord(functionType  &value, statement_t &s);
-      void addRecord(attribute_t   &value, statement_t &s);
-      void addRecord(statementTrie &trie,
-                     specifier *ptr,
-                     statement_t &s,
-                     const int ktype);
-
-      void removeRecord(statement_t &s);
-
       statementPtrVector getStatements(const std::string &name,
                                        const int ktype = keywordType::none);
       statementPtrVector getStatements(classType     &value);

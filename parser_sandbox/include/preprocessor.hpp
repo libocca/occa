@@ -31,177 +31,79 @@
 
 #include "macro.hpp"
 #include "trie.hpp"
+#include "tokenStream.hpp"
 
 namespace occa {
-  typedef trie<macro_t*> macroTrie;
+  namespace lang {
+    typedef trie<macro_t*> macroTrie;
 
-  class preprocessor_t;
-  preprocessor_t& getPreprocessor(hash_t &compilerHash);
-
-  class preprocessor_t {
-  public:
-    typedef void (preprocessor_t::*processDirective_t)(char *&dStart, char *&c);
-    typedef trie<processDirective_t> directiveTrie;
-
-    static const std::string macroEndDelimiters;
-
-    //---[ Stack Information ]----------
-    class status_t {
+    class preprocessor : public tokenStreamTransform {
     public:
-      int status;
-      const char *filePosition;
+      typedef void (preprocessor::*processDirective_t)(identifierToken &directive);
+      typedef trie<processDirective_t> directiveTrie;
 
-      status_t();
-      status_t(const int status_, const char *filePosition_);
-      void clear();
+      //---[ Status ]-------------------
+      std::vector<int> statusStack;
+      int currentStatus;
+
+      int expandedIndex;
+      tokenVector expandedTokens;
+
+      bool passedNewline;
+      //==================================
+
+      //---[ Macros and Directives ]------
+      directiveTrie &directives;
+
+      macroTrie compilerMacros;
+      macroTrie sourceMacros;
+      //==================================
+
+      preprocessor();
+
+      static directiveTrie& getDirectiveTrie();
+
+      void addExpandedToken(token_t *token);
+
+      void pushStatus(const int status);
+      int popStatus();
+
+      macro_t* getMacro(const std::string &name);
+
+      virtual token_t* _getToken();
+      token_t* getExpandedToken();
+
+      void expandMacro(macro_t &macro);
+
+      void skipToNewline();
+      void getTokensUntilNewline(tokenVector &lineTokens);
+
+      token_t* processIdentifier(identifierToken &token);
+      token_t* processOperator(operatorToken &token);
+
+      void processIf(identifierToken &directive);
+      void processIfdef(identifierToken &directive);
+      void processIfndef(identifierToken &directive);
+      void processElif(identifierToken &directive);
+      void processElse(identifierToken &directive);
+      void processEndif(identifierToken &directive);
+
+      void processDefine(identifierToken &directive);
+      void processUndef(identifierToken &directive);
+
+      void processError(identifierToken &directive);
+      void processWarning(identifierToken &directive);
+
+      void processInclude(identifierToken &directive);
+      void processPragma(identifierToken &directive);
+      void processLine(identifierToken &directive);
+
+      template <class TM>
+      TM eval(tokenVector &lineTokens) {
+        return TM();
+      }
     };
-
-    class frame_t {
-    public:
-      const preprocessor_t *preprocessor;
-
-      int filenameIdx;
-      char *fileStart, *fileEnd;
-      char *filePosition;
-      int lineNumber;
-
-      frame_t(const preprocessor_t *preprocessor_);
-      void clear();
-
-      std::string filename() const;
-
-      std::string getLineMessage() const;
-      std::string getLineMessage(const int lineNumber_) const;
-      std::string getLineMessage(const char *c) const;
-    };
-
-    trie<std::string> allFilenames;
-
-    std::vector<frame_t> frames;
-    frame_t currentFrame;
-
-    std::vector<status_t> statusStack;
-    status_t currentStatus;
-    //==================================
-
-    //---[ Macros and Directives ]------
-    directiveTrie &directives;
-
-    macroTrie compilerMacros;
-    macroTrie sourceMacros;
-    //==================================
-
-    //---[ Misc ]-----------------------
-    bool exitOnFatalError;
-    mutable int errorCount, warningCount;
-
-    std::ostream *outputStream;
-    //==================================
-
-    preprocessor_t();
-    void clear();
-
-    void setOutputStream(std::ostream &out_);
-
-    static directiveTrie& getDirectiveTrie();
-
-    void pushStatus(const int status);
-    int popStatus();
-
-    void setFilename(const std::string &filename, const bool add = true);
-
-    std::string processFile(const std::string &filename);
-
-    void processFile(const std::string &filename,
-                     std::string &output);
-
-    void processSource(const std::string &filename,
-                       char *content,
-                       std::string &output);
-
-    std::string processSource(const std::string &content);
-
-    void processSource(char *c,
-                       std::string &output);
-
-    void processSource(const char *c,
-                       std::string &output);
-
-    void process(char *&c,
-                 std::string &output);
-
-    const macro_t* getMacro(char *c, const size_t chars);
-
-    std::string applyMacros(const char *c);
-    std::string applyMacros(char *c, const size_t chars);
-    void applyMacros(char *c, const size_t chars, std::string &out);
-
-    void processDirective(char *&c);
-    void processIf(char *&dStart, char *&c);
-    void processIfdef(char *&dStart, char *&c);
-    void processIfndef(char *&dStart, char *&c);
-    void processElif(char *&dStart, char *&c);
-    void processElse(char *&dStart, char *&c);
-    void processEndif(char *&dStart, char *&c);
-
-    void processDefine(char *&dStart, char *&c);
-    void processUndef(char *&dStart, char *&c);
-
-    void processMessage(char *&c, const bool isError);
-    void processError(char *&dStart, char *&c);
-    void processWarning(char *&dStart, char *&c);
-
-    void processInclude(char *&dStart, char *&c);
-    void processPragma(char *&dStart, char *&c);
-    void processLine(char *&dStart, char *&c);
-
-    //---[ Messages ]-------------------
-    void printMessage(const std::string &message,
-                      const char *errorPosition,
-                      const bool isError) const;
-
-    void printError(const std::string &message,
-                    const char *errorPosition) const;
-
-    void printFatalError(const std::string &message,
-                         const char *errorPosition) const;
-
-    void printWarning(const std::string &message,
-                      const char *errorPosition) const;
-
-    void printErrorAndWarningCounts() const;
-    //==================================
-
-    //---[ Overriding Lex Methods ]-----
-    void updateLines(const char *c, const int chars);
-
-    void updatingSkipTo(const char *&c, const char delimiter);
-    void updatingSkipTo(const char *&c, const std::string &delimiters);
-
-    inline void updatingSkipTo(char *&c, const char delimiter) {
-      updatingSkipTo((const char *&) c, delimiter);
-    }
-
-    inline void updatingSkipTo(char *&c, const std::string &delimiters) {
-      updatingSkipTo((const char *&) c, delimiters);
-    }
-
-    void updatingSkipWhitespace(const char *&c);
-    void updatingSkipToWhitespace(const char *&c);
-
-    inline void updatingSkipWhitespace(char *&c) {
-      updatingSkipWhitespace((const char *&) c);
-    }
-
-    inline void updatingSkipToWhitespace(char *&c) {
-      updatingSkipToWhitespace((const char *&) c);
-    }
-    //==================================
-
-    template <class TM>
-    TM eval(const std::string &s) {
-      return TM();
-    }
-  };
+  }
 }
+
 #endif

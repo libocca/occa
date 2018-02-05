@@ -85,23 +85,40 @@ namespace occa {
 
   template <class TM>
   void trie<TM>::add(const char *c, const TM &value) {
-    defrost();
     int valueIdx = root.getValueIdx(c);
     if (valueIdx < 0) {
+      defrost();
       valueIdx = values.size();
       values.push_back(value);
+      root.add(c, valueIdx);
+      if (autoFreeze) {
+        freeze();
+      }
     } else {
       values[valueIdx] = value;
-    }
-    root.add(c, valueIdx);
-    if (autoFreeze) {
-      freeze();
     }
   }
 
   template <class TM>
   void trie<TM>::add(const std::string &s, const TM &value) {
     add(s.c_str(), value);
+  }
+
+  template <class TM>
+  void trie<TM>::remove(const char *c) {
+    int valueIdx = root.getValueIdx(c);
+    if (valueIdx >= 0) {
+      defrost();
+      root.remove(c, valueIdx);
+      if (autoFreeze) {
+        freeze();
+      }
+    }
+  }
+
+  template <class TM>
+  void trie<TM>::remove(const std::string &s) {
+    remove(s.c_str());
   }
 
   template <class TM>

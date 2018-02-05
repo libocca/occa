@@ -54,7 +54,8 @@ namespace occa {
       filePosition(const filePosition &other);
     };
 
-    class fileOrigin : public withRefs {
+    class fileOrigin : public withRefs,
+                       public errorHandler {
     public:
       bool fromInclude;
       file_t *file;
@@ -70,11 +71,16 @@ namespace occa {
 
       fileOrigin& operator = (const fileOrigin &other);
 
-      ~fileOrigin();
+      virtual ~fileOrigin();
 
       void push(const bool fromInclude_,
                 file_t *file_,
                 const filePosition &position_);
+
+      void pop();
+
+      virtual void preprint(std::ostream &out);
+      virtual void postprint(std::ostream &out);
 
       void print(std::ostream &out,
                  const bool root = true) const;

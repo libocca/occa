@@ -136,26 +136,33 @@ namespace occa {
       }
     }
 
-    void prints::preprint(std::ostream &out) {}
-    void prints::postprint(std::ostream &out) {}
+    errorHandler::errorHandler() :
+      warnings(0),
+      errors(0) {}
 
-    void prints::print(std::ostream &out,
-                       const std::string &message) {
+    void errorHandler::preprint(std::ostream &out) {}
+    void errorHandler::postprint(std::ostream &out) {}
+
+    void errorHandler::printNote(std::ostream &out,
+                                 const std::string &message) {
       preprint(out);
-      out << message << '\n';
+      out << blue("Note: ")
+          << message << '\n';
       postprint(out);
     }
 
-    void prints::printWarning(std::ostream &out,
-                              const std::string &message) {
+    void errorHandler::printWarning(std::ostream &out,
+                                    const std::string &message) {
+      ++warnings;
       preprint(out);
       out << yellow("Warning: ")
           << message << '\n';
       postprint(out);
     }
 
-    void prints::printError(std::ostream &out,
-                            const std::string &message) {
+    void errorHandler::printError(std::ostream &out,
+                                  const std::string &message) {
+      ++errors;
       preprint(out);
       out << red("Error: ")
           << message << '\n';

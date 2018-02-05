@@ -19,10 +19,12 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  */
-#include "file.hpp"
-#include "tokenStream.hpp"
 #include "occa/tools/io.hpp"
 #include "occa/tools/string.hpp"
+#include "occa/tools/lex.hpp"
+
+#include "file.hpp"
+#include "sourceStream.hpp"
 
 namespace occa {
   namespace lang {
@@ -84,15 +86,25 @@ namespace occa {
     }
 
     fileOrigin& fileOrigin::operator = (const fileOrigin &other) {
+      file_t *oldFile   = file;
+      fileOrigin *oldUp = up;
       fromInclude = other.fromInclude;
-      file = other.file;
-      position = other.position;
-      up = other.up;
+      position    = other.position;
+      file        = other.file;
+      up          = other.up;
       if (file) {
         file->addRef();
       }
       if (up) {
         up->addRef();
+      }
+      // Remove at the end in case we're computing
+      //   *this = *up
+      if (oldFile) {
+        oldFile->removeRef();
+      }
+      if (oldUp) {
+        oldUp->removeRef();
       }
       return *this;
     }
@@ -120,6 +132,27 @@ namespace occa {
       position = position_;
     }
 
+    void fileOrigin::pop() {
+      OCCA_ERROR("Unable to call fileOrigin::pop()",
+                 up != NULL);
+      *this = *up;
+    }
+
+    void fileOrigin::preprint(std::ostream &out) {
+      print(out);
+    }
+
+    void fileOrigin::postprint(std::ostream &out) {
+      const char *lineEnd = position.lineStart;
+      lex::skipTo(lineEnd, '\n');
+      out << std::string(position.lineStart,
+                         lineEnd - position.lineStart) << '\n';
+      for (const char *c = position.lineStart; c < lineEnd; ++c) {
+        out << ' ';
+      }
+      out << green("^") << '\n';
+    }
+
     void fileOrigin::print(std::ostream &out,
                            const bool root) const {
       if (up) {
@@ -138,7 +171,7 @@ namespace occa {
         if (fromInclude) {
           out << "Included file:\n";
         } else {
-          tokenStream stream(position.pos);
+          sourceStream stream(position.pos);
           std::string macro;
           stream.getIdentifier(macro);
           out << "Expanded from macro '" << macro << "':\n";

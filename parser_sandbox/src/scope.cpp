@@ -43,8 +43,9 @@ namespace occa {
     }
 
     void scope_t::add(specifier &value, const int ktype) {
-      // Ctx checks for duplicates
+      // Context checks for duplicates
       ctx.add(value, ktype);
+      // TODO: Store simple name with overrides somehow
       trie.add(value.uniqueName(),
                keyword_t(ktype, &value));
     }

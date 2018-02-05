@@ -97,66 +97,12 @@ namespace occa {
     void context::add(statementTrie &trie,
                       specifier &value,
                       const int ktype) {
+      const std::string name = value.uniqueName();
       // TODO: Add more information to the error message
-      OCCA_ERROR("Keyword [" << (value.uniqueName()) << "] is already defined",
-                 !keywordMap.has(value.uniqueName()));
-      keywordMap.add(value.uniqueName(), keyword_t(ktype, &value));
-      trie.add(value.uniqueName());
-    }
-
-    void context::addRecord(classType &value, statement_t &s) {
-      addRecord(classTrie,
-                &value,
-                s,
-                keywordType::class_);
-    }
-
-    void context::addRecord(functionType &value, statement_t &s) {
-      addRecord(functionTrie,
-                &value,
-                s,
-                keywordType::function_);
-    }
-
-    void context::addRecord(attribute_t &value, statement_t &s) {
-      addRecord(attributeTrie,
-                &value,
-                s,
-                keywordType::attribute);
-    }
-
-    void context::addRecord(statementTrie &trie,
-                            specifier *ptr,
-                            statement_t &s,
-                            const int ktype) {
-      statementTrie::result_t result = trie.get(ptr->uniqueName());
-      OCCA_ERROR("Keyword [" << (ptr->uniqueName()) << "] is not in scope",
-                 result.success());
-
-      keyword_t keyword(ktype, ptr);
-      statementKeywordMap &statements = result.value();
-      statementKeywordMap::iterator it = statements.find(&s);
-      if (it == statements.end()) {
-        statements[&s].push_back(keyword);
-        statementMap[&s].push_back(keyword);
-      }
-    }
-
-    void context::removeRecord(statement_t &s) {
-      statementKeywordMap::iterator it = statementMap.find(&s);
-      if (it == statementMap.end()) {
-        return;
-      }
-      keywordVector &keywords = it->second;
-      const int keywordCount = (int) keywords.size();
-      for (int i = 0; i < keywordCount; ++i) {
-        statementKeywordMap &statements = getKeywordStatements(keywords[i]);
-        statementKeywordMap::iterator it2 = statements.find(&s);
-        if (it2 != statements.end()){
-          statements.erase(it2);
-        }
-      }
-      statementMap.erase(it);
+      OCCA_ERROR("Keyword [" << name << "] is already defined",
+                 !keywordMap.has(name));
+      keywordMap.add(name, keyword_t(ktype, &value));
+      trie.add(name);
     }
 
     statementPtrVector context::getStatements(classType &value) {

@@ -25,41 +25,44 @@
 #include "macro.hpp"
 
 namespace occa {
-  // __FILE__
-  class fileMacro : public macro_t {
-  public:
-    fileMacro(const preprocessor_t *preprocessor_);
-    std::string expand(char *&c) const;
-  };
+  namespace lang {
+    // __FILE__
+    class fileMacro : public macro_t {
+    public:
+      fileMacro(tokenStream *sourceStream_);
+      virtual token_t* getToken();
+    };
 
-  // __LINE__
-  class lineMacro : public macro_t {
-  public:
-    lineMacro(const preprocessor_t *preprocessor_);
-    std::string expand(char *&c) const;
-  };
+    // __LINE__
+    class lineMacro : public macro_t {
+    public:
+      lineMacro(tokenStream *sourceStream_);
+      virtual token_t* getToken();
+    };
 
-  // __DATE__
-  class dateMacro : public macro_t {
-  public:
-    dateMacro(const preprocessor_t *preprocessor_);
-    std::string expand(char *&c) const;
-  };
+    // __DATE__
+    class dateMacro : public macro_t {
+    public:
+      dateMacro(tokenStream *sourceStream_);
+      virtual token_t* getToken();
+    };
 
-  // __TIME__
-  class timeMacro : public macro_t {
-  public:
-    timeMacro(const preprocessor_t *preprocessor_);
-    std::string expand(char *&c) const;
-  };
+    // __TIME__
+    class timeMacro : public macro_t {
+    public:
+      timeMacro(tokenStream *sourceStream_);
+      virtual token_t* getToken();
+    };
 
-  // __COUNTER__
-  class counterMacro : public macro_t {
-  public:
-    mutable int counter;
+    // __COUNTER__
+    class counterMacro : public macro_t {
+    public:
+      mutable int counter;
 
-    counterMacro(const preprocessor_t *preprocessor_);
-    std::string expand(char *&c) const;
-  };
+      counterMacro(tokenStream *sourceStream_);
+      virtual token_t* getToken();
+    };
+  }
 }
+
 #endif

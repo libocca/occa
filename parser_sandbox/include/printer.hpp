@@ -89,16 +89,20 @@ namespace occa {
       }
     };
 
-    class prints {
+    class errorHandler {
     public:
+      int warnings, errors;
+
+      errorHandler();
+
       virtual void preprint(std::ostream &out);
       virtual void postprint(std::ostream &out);
 
-      void print(std::ostream &out,
-                 const std::string &message);
+      void printNote(std::ostream &out,
+                     const std::string &message);
 
-      inline void print(const std::string &message) {
-        print(std::cerr, message);
+      inline void printNote(const std::string &message) {
+        printNote(std::cerr, message);
       }
 
       void printWarning(std::ostream &out,

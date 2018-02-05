@@ -19,60 +19,36 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  */
-#ifndef OCCA_PARSER_MACRO_HEADER2
-#define OCCA_PARSER_MACRO_HEADER2
 
-#include <vector>
-#include <iostream>
-
-#include "tokenStream.hpp"
+#include "mergeStringTokens.hpp"
 
 namespace occa {
   namespace lang {
-    class token_t;
-    class macroToken;
-    typedef std::vector<macroToken> macroTokenVector_t;
+    token_t* mergeStringTokens::_getToken() {
+      token_t *token = getSourceToken();
 
-    class macroToken {
-    public:
-      token_t *token;
-      int arg;
-
-      macroToken();
-      macroToken(token_t *token_);
-      macroToken(const int arg_);
-
-      inline bool isArg() const {
-        return (arg >= 0);
-      }
-    };
-
-    class macro_t : public tokenStream {
-    public:
-      static const std::string VA_ARGS;
-
-      std::string name;
-
-      int argCount;
-      mutable bool hasVarArgs;
-
-      std::vector<tokenVector> args;
-      int macroTokenIndex, argTokenIndex;
-      macroTokenVector_t macroTokens;
-
-      macro_t(tokenStream *sourceStream_,
-              const std::string &name_);
-      ~macro_t();
-
-      inline bool isFunctionLike() const {
-        return ((argCount >= 0) || hasVarArgs);
+      // Not a string token
+      while (!token ||
+             (token->type() != tokenType::string)) {
+        return token;
       }
 
-      bool loadArgs();
-
-      virtual token_t* getToken();
-    };
+      stringToken &strToken = token->to<stringToken>();
+      while (true) {
+        // Merge until no stringToken appears
+        token_t *nextToken = getSourceToken();
+        if (!nextToken ||
+            (nextToken->type() != tokenType::string)) {
+          break;
+        }
+        strToken.append(nextToken->to<stringToken>());
+        delete nextToken;
+        // Can't merge strings with udfs in one token
+        if (strToken.udf.size()) {
+          break;
+        }
+      }
+      return &strToken;
+    }
   }
 }
-
-#endif

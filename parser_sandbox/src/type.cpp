@@ -727,7 +727,9 @@ namespace occa {
       return specifierType::attribute;
     }
 
-    void attribute_t::print(printer &pout) const {}
+    void attribute_t::print(printer &pout) const {
+      pout << '@' << name;
+    }
     //==================================
   }
 }

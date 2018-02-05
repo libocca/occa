@@ -39,13 +39,16 @@ namespace occa {
   public:
     class result_t {
     public:
+      trieNode *node;
       int length;
       int valueIdx;
 
       result_t();
-      result_t(const int length_, const int valueIdx);
+      result_t(trieNode *node_,
+               const int length_,
+               const int valueIdx);
 
-      bool success() const {
+      inline bool success() const {
         return (0 <= valueIdx);
       }
     };
@@ -62,6 +65,9 @@ namespace occa {
     int getValueIdx(const char *c) const;
     result_t get(const char *c, const int length) const;
     result_t get(const char *c, const int cIdx, const int length) const;
+
+    void remove(const char *c, const int valueIdx_);
+    void decrementIndex(const int valueIdx_);
   };
   //====================================
 
@@ -104,6 +110,9 @@ namespace occa {
 
     void add(const char *c, const TM &value = TM());
     void add(const std::string &s, const TM &value = TM());
+
+    void remove(const char *c);
+    void remove(const std::string &s);
 
     void freeze();
     int freeze(const trieNode &node, int offset);

@@ -37,31 +37,15 @@ occa::lang::tokenStream stream(NULL);
 occa::lang::token_t *token = NULL;
 
 int main(const int argc, const char **argv) {
-  streamSource = occa::io::read("/home/david/git/night/parser_sandbox/tests/cleanTest.c");
-  stream = occa::lang::tokenStream(NULL,
-                                   streamSource.c_str());
+  testSkipMethods();
+  testPushPop();
+  testPeekMethods();
+  testTokenMethods();
+  testCommentSkipping();
+  testStringMethods();
+  testPrimitiveMethods();
+  testErrors();
 
-  occa::lang::printer pout(std::cout);
-
-  while(!stream.isEmpty()) {
-    token = stream.getToken();
-    if (token) {
-      if (stream.passedNewline) {
-        std::cout << '\n' << (stream.fp.line) << ": ";
-      }
-      token->print(pout);
-      pout << ' ';
-    }
-  }
-
-  // testSkipMethods();
-  // testPushPop();
-  // testPeekMethods();
-  // testTokenMethods();
-  // testCommentSkipping();
-  // testStringMethods();
-  // testPrimitiveMethods();
-  // testErrors();
   if (token) {
     delete token;
   }

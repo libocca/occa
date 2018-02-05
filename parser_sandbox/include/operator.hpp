@@ -27,116 +27,116 @@
 
 namespace occa {
   namespace lang {
-    typedef uint64_t optype_t;
+    typedef uint64_t opType_t;
 
     namespace operatorType {
-      extern const optype_t not_;
-      extern const optype_t positive;
-      extern const optype_t negative;
-      extern const optype_t tilde;
-      extern const optype_t leftIncrement;
-      extern const optype_t rightIncrement;
-      extern const optype_t increment;
-      extern const optype_t leftDecrement;
-      extern const optype_t rightDecrement;
-      extern const optype_t decrement;
+      extern const opType_t not_;
+      extern const opType_t positive;
+      extern const opType_t negative;
+      extern const opType_t tilde;
+      extern const opType_t leftIncrement;
+      extern const opType_t rightIncrement;
+      extern const opType_t increment;
+      extern const opType_t leftDecrement;
+      extern const opType_t rightDecrement;
+      extern const opType_t decrement;
 
-      extern const optype_t add;
-      extern const optype_t sub;
-      extern const optype_t mult;
-      extern const optype_t div;
-      extern const optype_t mod;
-      extern const optype_t arithmetic;
+      extern const opType_t add;
+      extern const opType_t sub;
+      extern const opType_t mult;
+      extern const opType_t div;
+      extern const opType_t mod;
+      extern const opType_t arithmetic;
 
-      extern const optype_t lessThan;
-      extern const optype_t lessThanEq;
-      extern const optype_t equal;
-      extern const optype_t notEqual;
-      extern const optype_t greaterThan;
-      extern const optype_t greaterThanEq;
-      extern const optype_t comparison;
+      extern const opType_t lessThan;
+      extern const opType_t lessThanEq;
+      extern const opType_t equal;
+      extern const opType_t notEqual;
+      extern const opType_t greaterThan;
+      extern const opType_t greaterThanEq;
+      extern const opType_t comparison;
 
-      extern const optype_t and_;
-      extern const optype_t or_;
-      extern const optype_t boolean;
+      extern const opType_t and_;
+      extern const opType_t or_;
+      extern const opType_t boolean;
 
-      extern const optype_t bitAnd;
-      extern const optype_t bitOr;
-      extern const optype_t xor_;
-      extern const optype_t leftShift;
-      extern const optype_t rightShift;
-      extern const optype_t shift;
-      extern const optype_t bitOp;
+      extern const opType_t bitAnd;
+      extern const opType_t bitOr;
+      extern const opType_t xor_;
+      extern const opType_t leftShift;
+      extern const opType_t rightShift;
+      extern const opType_t shift;
+      extern const opType_t bitOp;
 
-      extern const optype_t assign;
-      extern const optype_t addEq;
-      extern const optype_t subEq;
-      extern const optype_t multEq;
-      extern const optype_t divEq;
-      extern const optype_t modEq;
-      extern const optype_t andEq;
-      extern const optype_t orEq;
-      extern const optype_t xorEq;
-      extern const optype_t leftShiftEq;
-      extern const optype_t rightShiftEq;
-      extern const optype_t assignment;
+      extern const opType_t assign;
+      extern const opType_t addEq;
+      extern const opType_t subEq;
+      extern const opType_t multEq;
+      extern const opType_t divEq;
+      extern const opType_t modEq;
+      extern const opType_t andEq;
+      extern const opType_t orEq;
+      extern const opType_t xorEq;
+      extern const opType_t leftShiftEq;
+      extern const opType_t rightShiftEq;
+      extern const opType_t assignment;
 
-      extern const optype_t comma;
-      extern const optype_t scope;
-      extern const optype_t dot;
-      extern const optype_t dotStar;
-      extern const optype_t arrow;
-      extern const optype_t arrowStar;
+      extern const opType_t comma;
+      extern const opType_t scope;
+      extern const opType_t dot;
+      extern const opType_t dotStar;
+      extern const opType_t arrow;
+      extern const opType_t arrowStar;
 
-      extern const optype_t leftUnary;
+      extern const opType_t leftUnary;
 
-      extern const optype_t rightUnary;
+      extern const opType_t rightUnary;
 
-      extern const optype_t binary;
+      extern const opType_t binary;
 
-      extern const optype_t ternary;
-      extern const optype_t colon;
+      extern const opType_t ternary;
+      extern const opType_t colon;
 
-      extern const optype_t braceStart;
-      extern const optype_t braceEnd;
-      extern const optype_t bracketStart;
-      extern const optype_t bracketEnd;
-      extern const optype_t parenthesesStart;
-      extern const optype_t parenthesesEnd;
+      extern const opType_t braceStart;
+      extern const opType_t braceEnd;
+      extern const opType_t bracketStart;
+      extern const opType_t bracketEnd;
+      extern const opType_t parenthesesStart;
+      extern const opType_t parenthesesEnd;
 
-      extern const optype_t braces;
-      extern const optype_t brackets;
-      extern const optype_t parentheses;
+      extern const opType_t braces;
+      extern const opType_t brackets;
+      extern const opType_t parentheses;
 
-      extern const optype_t pair;
-      extern const optype_t pairStart;
-      extern const optype_t pairEnd;
+      extern const opType_t pair;
+      extern const opType_t pairStart;
+      extern const opType_t pairEnd;
 
-      extern const optype_t lineComment;
-      extern const optype_t blockCommentStart;
-      extern const optype_t blockCommentEnd;
-      extern const optype_t comment;
+      extern const opType_t lineComment;
+      extern const opType_t blockCommentStart;
+      extern const opType_t blockCommentEnd;
+      extern const opType_t comment;
 
-      extern const optype_t hash;
-      extern const optype_t hashhash;
-      extern const optype_t preprocessor;
+      extern const opType_t hash;
+      extern const opType_t hashhash;
+      extern const opType_t preprocessor;
 
-      extern const optype_t semicolon;
-      extern const optype_t ellipsis;
+      extern const opType_t semicolon;
+      extern const opType_t ellipsis;
 
-      extern const optype_t special;
+      extern const opType_t special;
 
-      extern const optype_t overloadable;
+      extern const opType_t overloadable;
     }
 
     class operator_t {
     public:
       std::string str;
-      optype_t optype;
+      opType_t opType;
       int precedence;
 
       operator_t(const std::string &str_,
-                 optype_t optype_,
+                 opType_t opType_,
                  int precedence_);
 
       void print(printer &pout) const;
@@ -227,6 +227,7 @@ namespace occa {
 
       extern const operator_t semicolon;
       extern const operator_t ellipsis;
+      extern const operator_t attribute;
       //================================
     }
   }

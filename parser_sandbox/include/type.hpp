@@ -269,7 +269,7 @@ namespace occa {
       void print(printer &pout, const variable &var) const;
     };
 
-    class declarationType : public virtual type_t {
+    class declarationType : virtual public type_t {
     public:
       virtual void printDeclaration(printer &pout) const = 0;
 

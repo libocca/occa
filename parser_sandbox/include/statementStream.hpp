@@ -19,6 +19,7 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  */
+#if 0
 #ifndef OCCA_PARSER_STATEMENTSTREAM_HEADER2
 #define OCCA_PARSER_STATEMENTSTREAM_HEADER2
 
@@ -29,11 +30,13 @@
 
 namespace occa {
   namespace lang {
-    class statementStream : public prints {
+    class statementStream : public errorHandler {
     public:
       tokenStream tokens;
-      std::vector<token_t*> tokenStack;
+      tokenVector tokenStack;
+
       attributeVector_t attributes;
+
       statement_t *parentStatement;
 
       statementStream(const char *root);
@@ -46,10 +49,15 @@ namespace occa {
       void clear();
 
       token_t* getToken();
+      void popTokens(const int count);
+      void popToken();
+      void clearTokens();
 
       int peek();
-      int peekForIdentifier();
-      int peekForOperator();
+      int peekForIdentifier(identifierToken &token);
+      int peekForOperator(operatorToken &token);
+
+      void loadAttribute();
 
       statement_t* getStatement();
       statement_t* getEmptyStatement();
@@ -75,4 +83,5 @@ namespace occa {
   }
 }
 
+#endif
 #endif

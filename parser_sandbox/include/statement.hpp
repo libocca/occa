@@ -22,14 +22,16 @@
 #ifndef OCCA_PARSER_STATEMENT_HEADER2
 #define OCCA_PARSER_STATEMENT_HEADER2
 
-#include "macro.hpp"
 #include "context.hpp"
+#include "keyword.hpp"
+#include "macro.hpp"
 #include "scope.hpp"
+#include "trie.hpp"
 
 namespace occa {
   namespace lang {
     class emptyStatement;
-    class directiveStatement;
+    class pragmaStatement;
     class blockStatement;
     class typeDeclStatement;
     class classAccessStatement;
@@ -50,7 +52,7 @@ namespace occa {
     public:
       static const int none        = 0;
       static const int empty       = (1 << 0);
-      static const int directive   = (1 << 1);
+      static const int pragma      = (1 << 1);
       static const int block       = (1 << 2);
       static const int typeDecl    = (1 << 3);
       static const int classAccess = (1 << 4);
@@ -66,6 +68,7 @@ namespace occa {
       static const int continue_   = (1 << 14);
       static const int break_      = (1 << 15);
       static const int return_     = (1 << 16);
+      static const int attribute   = (1 << 17);
     };
 
     class statement_t {
@@ -109,7 +112,7 @@ namespace occa {
 
       // Creation methods
       emptyStatement       newEmptyStatement();
-      directiveStatement   newDirectiveStatement(macro_t &macro);
+      pragmaStatement      newPragmaStatement(const std::string &line);
       blockStatement       newBlockStatement();
       typeDeclStatement    newTypeDeclarationStatement(declarationType &declType);
       classAccessStatement newClassAccessStatement(const int access);
@@ -136,7 +139,7 @@ namespace occa {
       void print() const;
     };
 
-    //---[ Empty ]------------------------
+    //---[ Empty ]----------------------
     class emptyStatement : public statement_t {
     public:
       emptyStatement(context &ctx_);
@@ -146,15 +149,15 @@ namespace occa {
 
       virtual void print(printer &pout) const;
     };
-    //====================================
+    //==================================
 
-    //---[ Directive ]--------------------
-    class directiveStatement : public statement_t {
+    //---[ Pragma ]---------------------
+    class pragmaStatement : public statement_t {
     public:
-      macro_t &macro;
+      std::string line;
 
-      directiveStatement(context &ctx_,
-                         macro_t &macro_);
+      pragmaStatement(context &ctx_,
+                      const std::string &line_);
 
       virtual statement_t& clone() const;
       virtual int type() const;

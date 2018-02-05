@@ -100,7 +100,7 @@ namespace occa {
       op(op_) {}
 
     int opNode::opnodeType() const {
-      return op.optype;
+      return op.opType;
     }
 
     leftUnaryOpNode::leftUnaryOpNode(const operator_t &op_,

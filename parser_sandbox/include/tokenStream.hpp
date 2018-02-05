@@ -30,72 +30,58 @@
 
 namespace occa {
   namespace lang {
-    int getEncodingType(const std::string &str);
-    int getCharacterEncoding(const std::string &str);
-    int getStringEncoding(const std::string &str);
+    class tokenStream;
+    class tokenStreamTransform;
 
-    class tokenStream : public prints {
+    //---[ tokenStream ]----------------
+    class tokenStream : public errorHandler,
+                        public withRefs {
+    protected:
+      tokenStream *sourceStream;
+
     public:
-      fileOrigin origin;
-      filePosition &fp;
-      std::vector<fileOrigin> stack;
-      bool passedNewline;
+      virtual ~tokenStream() = 0;
 
-      tokenStream(const char *root);
-      tokenStream(file_t *file_,
-                  const char *root);
+      virtual token_t* getToken() = 0;
 
-      tokenStream(const tokenStream &stream);
-      tokenStream& operator = (const tokenStream &stream);
-
-      virtual void preprint(std::ostream &out);
-      virtual void postprint(std::ostream &out);
-
-      void setLine(const int line);
-
-      bool isEmpty();
-      void pushSource(const bool fromInclude,
-                    file_t *file,
-                    const filePosition &position);
-      void popSource();
-
-      void push();
-      void pop(const bool rewind = false);
-      void popAndRewind();
-      std::string str();
-
-      void countSkippedLines();
-
-      void skipTo(const char delimiter);
-      void skipTo(const char *delimiters);
-      void skipFrom(const char *delimiters);
-
-      void skipWhitespace();
-
-      int peek();
-      int shallowPeek();
-      int peekForIdentifier();
-      int peekForOperator();
-      int peekForHeader();
-
-      void getIdentifier(std::string &value);
-      void getString(std::string &value,
-                     const int encoding = 0);
-      void getRawString(std::string &value);
-
-      int skipLineCommentAndPeek();
-      int skipBlockCommentAndPeek();
-
-      token_t* getToken();
-      token_t* getIdentifierToken();
-      token_t* getPrimitiveToken();
-      token_t* getOperatorToken();
-      token_t* getStringToken(const int encoding);
-      token_t* getOneStringToken(const int encoding);
-      token_t* getCharToken(const int encoding);
-      token_t* getHeaderToken();
-      token_t* getAttributeToken();
+    protected:
+      token_t* getSourceToken();
     };
+    //==================================
+
+    //---[ With Map ]-------------------
+    class tokenStreamWithMap : public tokenStream {
+    private:
+      std::vector<tokenStreamTransform*> transforms;
+
+    public:
+      virtual ~tokenStreamWithMap();
+
+      virtual token_t* getToken();
+
+      tokenStreamWithMap& map(tokenStreamTransform *transform);
+
+    private:
+      virtual token_t* _getToken() = 0;
+    };
+    //==================================
+
+    //---[ Transform ]------------------
+    class tokenStreamTransform : public tokenStream {
+      friend class tokenStreamWithMap;
+
+    public:
+      virtual ~tokenStreamTransform() = 0;
+    };
+    //==================================
+
+    //---[ Transform With Map ]---------
+    class tokenStreamTransformWithMap : public tokenStreamTransform,
+                                        public tokenStreamWithMap {
+    public:
+      virtual ~tokenStreamTransformWithMap() = 0;
+    };
+    //==================================
   }
 }
 

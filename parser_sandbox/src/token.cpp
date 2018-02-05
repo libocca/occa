@@ -25,21 +25,22 @@
 namespace occa {
   namespace lang {
     namespace charcodes {
-      const char whitespace[]      = " \t\r\n\v\f";
-      const char alpha[]           = ("abcdefghijklmnopqrstuvwxyz"
-                                      "ABCDEFGHIJKLMNOPQRSTUVWXYZ");
-      const char number[]          = "0123456789";
-      const char alphanumber[]     = ("abcdefghijklmnopqrstuvwxyz"
-                                      "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
-                                      "0123456789");
-      const char identifierStart[] = ("abcdefghijklmnopqrstuvwxyz"
-                                      "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
-                                      "_");
-      const char identifier[]      = ("abcdefghijklmnopqrstuvwxyz"
-                                      "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
-                                      "0123456789"
-                                      "_");
-      const char operators[]       = "!#%&()*+,-./:;<=>?[]^{|}~";
+      const char whitespace[]          = " \n\t\r\v\f";
+      const char whitespaceNoNewline[] = " \t\r\v\f";
+      const char alpha[]               = ("abcdefghijklmnopqrstuvwxyz"
+                                          "ABCDEFGHIJKLMNOPQRSTUVWXYZ");
+      const char number[]              = "0123456789";
+      const char alphanumber[]         = ("abcdefghijklmnopqrstuvwxyz"
+                                          "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+                                          "0123456789");
+      const char identifierStart[]     = ("abcdefghijklmnopqrstuvwxyz"
+                                          "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+                                          "_");
+      const char identifier[]          = ("abcdefghijklmnopqrstuvwxyz"
+                                          "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+                                          "0123456789"
+                                          "_");
+      const char operators[]           = "!#%&()*+,-./:;<=>?[]^{|}~";
     }
 
     operatorTrie& getOperators() {
@@ -48,70 +49,71 @@ namespace occa {
       if (!operators.isEmpty()) {
         return operators;
       }
-      operators.add("!"  , &op::not_);
-      operators.add("~"  , &op::tilde);
-      operators.add("++" , &op::leftIncrement);
-      operators.add("--" , &op::leftDecrement);
+      operators.add(op::not_.str         , &op::not_);
+      operators.add(op::tilde.str        , &op::tilde);
+      operators.add(op::leftIncrement.str, &op::leftIncrement);
+      operators.add(op::leftDecrement.str, &op::leftDecrement);
 
-      operators.add("+"  , &op::add);
-      operators.add("-"  , &op::sub);
-      operators.add("*"  , &op::mult);
-      operators.add("/"  , &op::div);
-      operators.add("%"  , &op::mod);
+      operators.add(op::add.str , &op::add);
+      operators.add(op::sub.str , &op::sub);
+      operators.add(op::mult.str, &op::mult);
+      operators.add(op::div.str , &op::div);
+      operators.add(op::mod.str , &op::mod);
 
-      operators.add("<"  , &op::lessThan);
-      operators.add("<=" , &op::lessThanEq);
-      operators.add("==" , &op::equal);
-      operators.add("!=" , &op::notEqual);
-      operators.add(">"  , &op::greaterThan);
-      operators.add(">=" , &op::greaterThanEq);
+      operators.add(op::lessThan.str     , &op::lessThan);
+      operators.add(op::lessThanEq.str   , &op::lessThanEq);
+      operators.add(op::equal.str        , &op::equal);
+      operators.add(op::notEqual.str     , &op::notEqual);
+      operators.add(op::greaterThan.str  , &op::greaterThan);
+      operators.add(op::greaterThanEq.str, &op::greaterThanEq);
 
-      operators.add("&&" , &op::and_);
-      operators.add("||" , &op::or_);
+      operators.add(op::and_.str, &op::and_);
+      operators.add(op::or_.str , &op::or_);
 
-      operators.add("&"  , &op::bitAnd);
-      operators.add("|"  , &op::bitOr);
-      operators.add("^"  , &op::xor_);
-      operators.add("<<" , &op::leftShift);
-      operators.add(">>" , &op::rightShift);
+      operators.add(op::bitAnd.str    , &op::bitAnd);
+      operators.add(op::bitOr.str     , &op::bitOr);
+      operators.add(op::xor_.str      , &op::xor_);
+      operators.add(op::leftShift.str , &op::leftShift);
+      operators.add(op::rightShift.str, &op::rightShift);
 
-      operators.add("="  , &op::assign);
-      operators.add("+=" , &op::addEq);
-      operators.add("-=" , &op::subEq);
-      operators.add("*=" , &op::multEq);
-      operators.add("/=" , &op::divEq);
-      operators.add("%=" , &op::modEq);
-      operators.add("&=" , &op::andEq);
-      operators.add("|=" , &op::orEq);
-      operators.add("^=" , &op::xorEq);
-      operators.add("<<=", &op::leftShiftEq);
-      operators.add(">>=", &op::rightShiftEq);
+      operators.add(op::assign.str      , &op::assign);
+      operators.add(op::addEq.str       , &op::addEq);
+      operators.add(op::subEq.str       , &op::subEq);
+      operators.add(op::multEq.str      , &op::multEq);
+      operators.add(op::divEq.str       , &op::divEq);
+      operators.add(op::modEq.str       , &op::modEq);
+      operators.add(op::andEq.str       , &op::andEq);
+      operators.add(op::orEq.str        , &op::orEq);
+      operators.add(op::xorEq.str       , &op::xorEq);
+      operators.add(op::leftShiftEq.str , &op::leftShiftEq);
+      operators.add(op::rightShiftEq.str, &op::rightShiftEq);
 
-      operators.add(","  , &op::comma);
-      operators.add("::" , &op::scope);
-      operators.add("."  , &op::dot);
-      operators.add(".*" , &op::dotStar);
-      operators.add("->" , &op::arrow);
-      operators.add("->*", &op::arrowStar);
-      operators.add("?"  , &op::ternary);
-      operators.add(":"  , &op::colon);
+      operators.add(op::comma.str    , &op::comma);
+      operators.add(op::scope.str    , &op::scope);
+      operators.add(op::dot.str      , &op::dot);
+      operators.add(op::dotStar.str  , &op::dotStar);
+      operators.add(op::arrow.str    , &op::arrow);
+      operators.add(op::arrowStar.str, &op::arrowStar);
+      operators.add(op::ternary.str  , &op::ternary);
+      operators.add(op::colon.str    , &op::colon);
 
-      operators.add("{"  , &op::braceStart);
-      operators.add("}"  , &op::braceEnd);
-      operators.add("["  , &op::bracketStart);
-      operators.add("]"  , &op::bracketEnd);
-      operators.add("("  , &op::parenthesesStart);
-      operators.add(")"  , &op::parenthesesEnd);
+      operators.add(op::braceStart.str      , &op::braceStart);
+      operators.add(op::braceEnd.str        , &op::braceEnd);
+      operators.add(op::bracketStart.str    , &op::bracketStart);
+      operators.add(op::bracketEnd.str      , &op::bracketEnd);
+      operators.add(op::parenthesesStart.str, &op::parenthesesStart);
+      operators.add(op::parenthesesEnd.str  , &op::parenthesesEnd);
 
-      operators.add("//" , &op::lineComment);
-      operators.add("/*" , &op::blockCommentStart);
-      operators.add("*/" , &op::blockCommentEnd);
+      operators.add(op::lineComment.str      , &op::lineComment);
+      operators.add(op::blockCommentStart.str, &op::blockCommentStart);
+      operators.add(op::blockCommentEnd.str  , &op::blockCommentEnd);
 
-      operators.add("#"  , &op::hash);
-      operators.add("##" , &op::hashhash);
+      operators.add(op::hash.str    , &op::hash);
+      operators.add(op::hashhash.str, &op::hashhash);
 
-      operators.add(";"  , &op::semicolon);
-      operators.add("...", &op::ellipsis);
+      operators.add(op::semicolon.str, &op::semicolon);
+      operators.add(op::ellipsis.str , &op::ellipsis);
+      operators.add(op::ellipsis.str , &op::ellipsis);
 
       return operators;
     }
@@ -130,15 +132,15 @@ namespace occa {
     namespace tokenType {
       const int none          = 0;
 
-      const int identifier    = (1 << 0);
+      const int newline       = (1 << 0);
 
-      const int systemHeader  = (1 << 1);
-      const int header        = (3 << 1);
+      const int identifier    = (1 << 1);
 
-      const int primitive     = (1 << 3);
-      const int op            = (1 << 4);
+      const int systemHeader  = (1 << 2);
+      const int header        = (3 << 2);
 
-      const int attribute     = (1 << 5);
+      const int primitive     = (1 << 4);
+      const int op            = (1 << 5);
 
       const int char_         = (1 << 6);
       const int string        = (1 << 7);
@@ -167,6 +169,37 @@ namespace occa {
 
     token_t::~token_t() {}
 
+    void token_t::preprint(std::ostream &out) {
+      origin.preprint(out);
+    }
+
+    int token_t::safeType(token_t *token) {
+      return (token
+              ? token->type()
+              : tokenType::none);
+    }
+
+    void token_t::postprint(std::ostream &out) {
+      origin.postprint(out);
+    }
+
+    newlineToken::newlineToken(const fileOrigin &origin_) :
+      token_t(origin_) {}
+
+    newlineToken::~newlineToken() {}
+
+    int newlineToken::type() const {
+      return tokenType::newline;
+    }
+
+    token_t* newlineToken::clone() {
+      return new newlineToken(origin);
+    }
+
+    void newlineToken::print(std::ostream &out) const {
+      out << '\n';
+    }
+
     identifierToken::identifierToken(const fileOrigin &origin_,
                                      const std::string &value_) :
       token_t(origin_),
@@ -178,8 +211,12 @@ namespace occa {
       return tokenType::identifier;
     }
 
-    void identifierToken::print(printer &pout) const {
-      pout << value;
+    token_t* identifierToken::clone() {
+      return new identifierToken(origin, value);
+    }
+
+    void identifierToken::print(std::ostream &out) const {
+      out << value;
     }
 
     primitiveToken::primitiveToken(const fileOrigin &origin_,
@@ -195,8 +232,12 @@ namespace occa {
       return tokenType::primitive;
     }
 
-    void primitiveToken::print(printer &pout) const {
-      pout << strValue;
+    token_t* primitiveToken::clone() {
+      return new primitiveToken(origin, value, strValue);
+    }
+
+    void primitiveToken::print(std::ostream &out) const {
+      out << strValue;
     }
 
     operatorToken::operatorToken(const fileOrigin &origin_,
@@ -210,8 +251,12 @@ namespace occa {
       return tokenType::op;
     }
 
-    void operatorToken::print(printer &pout) const {
-      op.print(pout);
+    token_t* operatorToken::clone() {
+      return new operatorToken(origin, op);
+    }
+
+    void operatorToken::print(std::ostream &out) const {
+      out << op.str;
     }
 
     charToken::charToken(const fileOrigin &origin_,
@@ -229,18 +274,29 @@ namespace occa {
       return tokenType::char_;
     }
 
-    void charToken::print(printer &pout) const {
+    token_t* charToken::clone() {
+      return new charToken(origin, encoding, value, udf);
+    }
+
+    void charToken::print(std::ostream &out) const {
       if (encoding & encodingType::u) {
-        pout << 'u';
+        out << 'u';
       } else if (encoding & encodingType::U) {
-        pout << 'U';
+        out << 'U';
       } else if (encoding & encodingType::L) {
-        pout << 'L';
+        out << 'L';
       }
-      pout << '\'' << value << '\'' << udf;
+      out << '\'' << value << '\'' << udf;
     }
 
     stringToken::~stringToken() {}
+
+    stringToken::stringToken(const fileOrigin &origin_,
+                             const std::string &value_) :
+      token_t(origin_),
+      encoding(encodingType::none),
+      value(value_),
+      udf() {}
 
     stringToken::stringToken(const fileOrigin &origin_,
                              int encoding_,
@@ -255,6 +311,10 @@ namespace occa {
       return tokenType::string;
     }
 
+    token_t* stringToken::clone() {
+      return new stringToken(origin, encoding, value, udf);
+    }
+
     void stringToken::append(const stringToken &token) {
       encoding = tokenType::mergeEncodings(encoding,
                                            token.encoding);
@@ -262,22 +322,22 @@ namespace occa {
       udf = token.udf;
     }
 
-    void stringToken::print(printer &pout) const {
+    void stringToken::print(std::ostream &out) const {
       if (encoding & encodingType::ux) {
         if (encoding & encodingType::u8) {
-          pout << "u8";
+          out << "u8";
         } else if (encoding & encodingType::u) {
-          pout << 'u';
+          out << 'u';
         } else if (encoding & encodingType::U) {
-          pout << 'U';
+          out << 'U';
         } else if (encoding & encodingType::L) {
-          pout << 'L';
+          out << 'L';
         }
       }
       if (encoding & encodingType::R) {
-        pout << 'R';
+        out << 'R';
       }
-      pout << '"' << value << '"' << udf;
+      out << '"' << value << '"' << udf;
     }
 
     headerToken::headerToken(const fileOrigin &origin_,
@@ -293,27 +353,16 @@ namespace occa {
       return tokenType::header;
     }
 
-    void headerToken::print(printer &pout) const {
+    token_t* headerToken::clone() {
+      return new headerToken(origin, systemHeader, value);
+    }
+
+    void headerToken::print(std::ostream &out) const {
       if (systemHeader) {
-        pout << '<' << value << '>';
+        out << '<' << value << '>';
       } else {
-        pout << '"' << value << '"';
+        out << '"' << value << '"';
       }
-    }
-
-    attributeToken::attributeToken(const fileOrigin &origin_,
-                                   const std::string &value_) :
-      token_t(origin_),
-      value(value_) {}
-
-    attributeToken::~attributeToken() {}
-
-    int attributeToken::type() const {
-      return tokenType::attribute;
-    }
-
-    void attributeToken::print(printer &pout) const {
-      pout << '@' << value;
     }
   }
 }

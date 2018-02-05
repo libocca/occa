@@ -26,15 +26,19 @@
 
 #include "trie.hpp"
 #include "file.hpp"
+#include "type.hpp"
 
 namespace occa {
   namespace lang {
     class operator_t;
+    class token_t;
 
     typedef trie<const operator_t*> operatorTrie;
+    typedef std::vector<token_t*> tokenVector;
 
     namespace charcodes {
       extern const char whitespace[];
+      extern const char whitespaceNoNewline[];
       extern const char alpha[];
       extern const char number[];
       extern const char alphanumber[];
@@ -59,6 +63,8 @@ namespace occa {
     namespace tokenType {
       extern const int none;
 
+      extern const int newline;
+
       extern const int identifier;
 
       extern const int systemHeader;
@@ -66,8 +72,6 @@ namespace occa {
 
       extern const int primitive;
       extern const int op;
-
-      extern const int attribute;
 
       extern const int char_;
       extern const int string;
@@ -79,7 +83,7 @@ namespace occa {
       int mergeEncodings(const int type1, const int type2);
     }
 
-    class token_t {
+    class token_t : public errorHandler {
     public:
       fileOrigin origin;
 
@@ -107,9 +111,28 @@ namespace occa {
         return *ptr;
       }
 
+      static int safeType(token_t *token);
+
       virtual int type() const = 0;
 
-      virtual void print(printer &pout) const = 0;
+      virtual token_t* clone() = 0;
+
+      virtual void print(std::ostream &out) const = 0;
+
+      void preprint(std::ostream &out);
+      void postprint(std::ostream &out);
+    };
+
+    class newlineToken : public token_t {
+    public:
+      newlineToken(const fileOrigin &origin_);
+      virtual ~newlineToken();
+
+      virtual int type() const;
+
+      virtual token_t* clone();
+
+      virtual void print(std::ostream &out) const;
     };
 
     class identifierToken : public token_t {
@@ -122,7 +145,9 @@ namespace occa {
 
       virtual int type() const;
 
-      virtual void print(printer &pout) const;
+      virtual token_t* clone();
+
+      virtual void print(std::ostream &out) const;
     };
 
     class primitiveToken : public token_t {
@@ -138,7 +163,9 @@ namespace occa {
 
       virtual int type() const;
 
-      virtual void print(printer &pout) const;
+      virtual token_t* clone();
+
+      virtual void print(std::ostream &out) const;
     };
 
     class operatorToken : public token_t {
@@ -151,7 +178,9 @@ namespace occa {
 
       virtual int type() const;
 
-      virtual void print(printer &pout) const;
+      virtual token_t* clone();
+
+      virtual void print(std::ostream &out) const;
     };
 
     class charToken : public token_t {
@@ -168,7 +197,9 @@ namespace occa {
 
       virtual int type() const;
 
-      virtual void print(printer &pout) const;
+      virtual token_t* clone();
+
+      virtual void print(std::ostream &out) const;
     };
 
     class stringToken : public token_t {
@@ -178,6 +209,8 @@ namespace occa {
       std::string udf;
 
       stringToken(const fileOrigin &origin_,
+                  const std::string &value_);
+      stringToken(const fileOrigin &origin_,
                   int encoding_,
                   const std::string &value_,
                   const std::string &udf_);
@@ -185,9 +218,11 @@ namespace occa {
 
       virtual int type() const;
 
+      virtual token_t* clone();
+
       void append(const stringToken &token);
 
-      virtual void print(printer &pout) const;
+      virtual void print(std::ostream &out) const;
     };
 
     class headerToken : public token_t {
@@ -202,20 +237,9 @@ namespace occa {
 
       virtual int type() const;
 
-      virtual void print(printer &pout) const;
-    };
+      virtual token_t* clone();
 
-    class attributeToken : public token_t {
-    public:
-      std::string value;
-
-      attributeToken(const fileOrigin &origin_,
-                     const std::string &value_);
-      virtual ~attributeToken();
-
-      virtual int type() const;
-
-      virtual void print(printer &pout) const;
+      virtual void print(std::ostream &out) const;
     };
   }
 }
