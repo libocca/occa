@@ -36,50 +36,55 @@ namespace occa {
     //---[ tokenStream ]----------------
     class tokenStream : public errorHandler,
                         public withRefs {
+      friend class tokenStreamWithMap;
+      friend class tokenStreamTransform;
+      friend class tokenStreamTransformWithMap;
+
     protected:
       tokenStream *sourceStream;
 
     public:
-      virtual ~tokenStream() = 0;
+      virtual ~tokenStream();
 
-      virtual token_t* getToken() = 0;
+      virtual token_t* getToken();
 
     protected:
+      virtual token_t* _getToken();
+
       token_t* getSourceToken();
     };
     //==================================
 
     //---[ With Map ]-------------------
-    class tokenStreamWithMap : public tokenStream {
+    class tokenStreamWithMap : virtual public tokenStream {
     private:
       std::vector<tokenStreamTransform*> transforms;
 
     public:
       virtual ~tokenStreamWithMap();
 
+      void copyStreamTransforms(const tokenStreamWithMap &stream);
+
       virtual token_t* getToken();
 
       tokenStreamWithMap& map(tokenStreamTransform *transform);
-
-    private:
-      virtual token_t* _getToken() = 0;
     };
     //==================================
 
     //---[ Transform ]------------------
-    class tokenStreamTransform : public tokenStream {
-      friend class tokenStreamWithMap;
-
+    class tokenStreamTransform : virtual public tokenStream {
     public:
-      virtual ~tokenStreamTransform() = 0;
+      virtual ~tokenStreamTransform();
     };
     //==================================
 
     //---[ Transform With Map ]---------
-    class tokenStreamTransformWithMap : public tokenStreamTransform,
+    class tokenStreamTransformWithMap : virtual public tokenStream,
+                                        public tokenStreamTransform,
                                         public tokenStreamWithMap {
+      friend class tokenStreamWithMap;
     public:
-      virtual ~tokenStreamTransformWithMap() = 0;
+      virtual ~tokenStreamTransformWithMap();
     };
     //==================================
   }

@@ -78,23 +78,33 @@ namespace occa {
 
     sourceStream::sourceStream(const char *root) :
       origin(NULL, filePosition(root)),
-      fp(origin.position) {}
+      fp(origin.position) {
+      pushSource(true, NULL, origin.position);
+    }
 
     sourceStream::sourceStream(file_t *file_,
                                const char *root) :
       origin(file_, filePosition(root)),
-      fp(origin.position) {}
+      fp(origin.position) {
+      pushSource(true, file_, origin.position);
+    }
 
     sourceStream::sourceStream(const sourceStream &stream) :
+      tokenStreamWithMap(stream),
       origin(stream.origin),
       fp(origin.position),
-      stack(stream.stack) {}
+      stack(stream.stack),
+      sourceStack(stream.sourceStack) {}
 
     sourceStream& sourceStream::operator = (const sourceStream &stream) {
-      origin = stream.origin;
-      stack  = stream.stack;
+      copyStreamTransforms(stream);
+      origin      = stream.origin;
+      stack       = stream.stack;
+      sourceStack = stream.sourceStack;
       return *this;
     }
+
+    sourceStream::~sourceStream() {}
 
     void sourceStream::preprint(std::ostream &out) {
       origin.preprint(out);
@@ -255,9 +265,9 @@ namespace occa {
 
     int sourceStream::peek() {
       int type = shallowPeek();
-      if (type == tokenType::identifier) {
+      if (type & tokenType::identifier) {
         type = peekForIdentifier();
-      } else if (type == tokenType::op) {
+      } else if (type & tokenType::op) {
         type = peekForOperator();
       }
       return type;
@@ -273,17 +283,17 @@ namespace occa {
       if (lex::charIsIn(c, charcodes::identifierStart)) {
         return tokenType::identifier;
       }
+      // Primitive must be checked before operators since
+      //   it can start with a . (for example, .01)
+      const char *pos = fp.pos;
+      if (primitive::load(pos, false).type != occa::primitiveType::none) {
+        return tokenType::primitive;
+      }
       if (lex::charIsIn(c, charcodes::operators)) {
         return tokenType::op;
       }
       if (c == '\n') {
         return tokenType::newline;
-      }
-      // Primitive must be checked after operators since
-      //   it can take a + or - operator
-      const char *pos = fp.pos;
-      if (primitive::load(pos).type != occa::primitiveType::none) {
-        return tokenType::primitive;
       }
       if (c == '"') {
         return tokenType::string;
@@ -402,6 +412,7 @@ namespace occa {
     }
 
     void sourceStream::getRawString(std::string &value) {
+      // TODO: Keep the delimiter(s)
       if (*fp.pos != '"') {
         return;
       }
@@ -478,7 +489,7 @@ namespace occa {
       return tokenType::none;
     }
 
-    token_t* sourceStream::getToken() {
+    token_t* sourceStream::_getToken() {
       skipWhitespace();
 
       // Check if file finished
@@ -506,6 +517,7 @@ namespace occa {
         return getOperatorToken();
       }
       if (type & tokenType::newline) {
+        ++fp.pos;
         return new newlineToken(origin);
       }
       if (type & tokenType::char_) {

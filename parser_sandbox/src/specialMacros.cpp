@@ -33,7 +33,7 @@ namespace occa {
     fileMacro::fileMacro(tokenStream *sourceStream_) :
       macro_t(sourceStream_, "__FILE__") {}
 
-    token_t* fileMacro::getToken() {
+    token_t* fileMacro::_getToken() {
       fileOrigin origin; // TODO
       return new stringToken(origin, "file");
     }
@@ -42,7 +42,7 @@ namespace occa {
     lineMacro::lineMacro(tokenStream *sourceStream_) :
       macro_t(sourceStream_, "__LINE__") {}
 
-    token_t* lineMacro::getToken() {
+    token_t* lineMacro::_getToken() {
       fileOrigin origin; // TODO
       const primitive value = 0;
       const std::string strValue = occa::toString(value);
@@ -53,7 +53,7 @@ namespace occa {
     dateMacro::dateMacro(tokenStream *sourceStream_) :
       macro_t(sourceStream_, "__DATE__") {}
 
-    token_t* dateMacro::getToken() {
+    token_t* dateMacro::_getToken() {
       static char month[12][5] = {
         "Jan", "Feb", "Mar", "Apr", "May", "Jun",
         "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
@@ -83,7 +83,7 @@ namespace occa {
     timeMacro::timeMacro(tokenStream *sourceStream_) :
       macro_t(sourceStream_, "__TIME__") {}
 
-    token_t* timeMacro::getToken() {
+    token_t* timeMacro::_getToken() {
       fileOrigin origin; // TODO
 
       time_t t = ::time(NULL);
@@ -115,7 +115,7 @@ namespace occa {
       macro_t(sourceStream_, "__COUNTER__"),
       counter(0) {}
 
-    token_t* counterMacro::getToken() {
+    token_t* counterMacro::_getToken() {
       fileOrigin origin; // TODO
       const primitive value = counter++;
       const std::string strValue = occa::toString(value);

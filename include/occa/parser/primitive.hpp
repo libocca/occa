@@ -167,8 +167,10 @@ namespace occa {
       value.ptr = (char*) value_;
     }
 
-    static primitive load(const char *&c);
-    static primitive load(const std::string &s);
+    static primitive load(const char *&c,
+                          const bool includeSign = true);
+    static primitive load(const std::string &s,
+                          const bool includeSign = true);
 
     static primitive loadBinary(const char *&c, const bool isNegative = false);
     static primitive loadHex(const char *&c, const bool isNegative = false);

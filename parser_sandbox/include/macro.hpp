@@ -62,7 +62,7 @@ namespace occa {
 
       macro_t(tokenStream *sourceStream_,
               const std::string &name_);
-      ~macro_t();
+      virtual ~macro_t();
 
       inline bool isFunctionLike() const {
         return ((argCount >= 0) || hasVarArgs);
@@ -70,7 +70,7 @@ namespace occa {
 
       bool loadArgs();
 
-      virtual token_t* getToken();
+      virtual token_t* _getToken();
     };
   }
 }

@@ -21,7 +21,8 @@
  */
 #include "occa/tools/testing.hpp"
 
-#include "tokenStream.hpp"
+#include "sourceStream.hpp"
+#include "mergeStringTokens.hpp"
 
 void testSkipMethods();
 void testPushPop();
@@ -33,7 +34,8 @@ void testPrimitiveMethods();
 void testErrors();
 
 std::string streamSource;
-occa::lang::tokenStream stream(NULL);
+occa::lang::sourceStream stream(NULL);
+occa::lang::mergeStringTokens mergeStrings;
 occa::lang::token_t *token = NULL;
 
 int main(const int argc, const char **argv) {
@@ -54,8 +56,11 @@ int main(const int argc, const char **argv) {
 
 void setStream(const std::string &s) {
   streamSource = s;
-  stream = occa::lang::tokenStream(NULL,
-                                   streamSource.c_str());
+  stream = occa::lang::sourceStream(NULL,
+                                    streamSource.c_str());
+  mergeStrings = occa::lang::mergeStringTokens();
+  mergeStrings.addRef();
+  stream.map(&mergeStrings);
 }
 
 void getToken() {
@@ -88,20 +93,16 @@ void testSkipMethods() {
 
   stream.skipTo('a');
   OCCA_ASSERT_EQUAL('a', *stream.fp.pos);
-  OCCA_ASSERT_FALSE(stream.passedNewline);
 
   stream.skipTo('b');
   OCCA_ASSERT_EQUAL('b', *stream.fp.pos);
-  OCCA_ASSERT_FALSE(stream.passedNewline);
 
   stream.skipTo('e');
   OCCA_ASSERT_EQUAL('e', *stream.fp.pos);
-  OCCA_ASSERT_TRUE(stream.passedNewline);
 
   stream.fp.pos = c;
   stream.skipTo("c\n");
   OCCA_ASSERT_EQUAL(c + 2, stream.fp.pos);
-  OCCA_ASSERT_TRUE(stream.passedNewline);
 
   stream.fp.pos = c + 6;
   stream.skipFrom("\n");
@@ -172,17 +173,17 @@ void testPeekMethods() {
     occa::lang::tokenType::primitive,
     stream.peek()
   );
-  setStream("+2.0");
+  setStream("2.0");
   OCCA_ASSERT_EQUAL_BINARY(
     occa::lang::tokenType::primitive,
     stream.peek()
   );
-  setStream("+2.0e10");
+  setStream("2.0e10");
   OCCA_ASSERT_EQUAL_BINARY(
     occa::lang::tokenType::primitive,
     stream.peek()
   );
-  setStream("+.0e10-10");
+  setStream(".0e10-10");
   OCCA_ASSERT_EQUAL_BINARY(
     occa::lang::tokenType::primitive,
     stream.peek()
@@ -206,12 +207,6 @@ void testPeekMethods() {
   setStream("==");
   OCCA_ASSERT_EQUAL_BINARY(
     occa::lang::tokenType::op,
-    stream.peek()
-  );
-
-  setStream("@foo");
-  OCCA_ASSERT_EQUAL_BINARY(
-    occa::lang::tokenType::attribute,
     stream.peek()
   );
 
@@ -281,17 +276,17 @@ void testTokenMethods() {
     occa::lang::tokenType::primitive,
     tokenType()
   );
-  setToken("+2.0");
+  setToken("2.0");
   OCCA_ASSERT_EQUAL_BINARY(
     occa::lang::tokenType::primitive,
     tokenType()
   );
-  setToken("+2.0e10");
+  setToken("2.0e10");
   OCCA_ASSERT_EQUAL_BINARY(
     occa::lang::tokenType::primitive,
     tokenType()
   );
-  setToken("+.0e10-10");
+  setToken(".0e10-10");
   OCCA_ASSERT_EQUAL_BINARY(
     occa::lang::tokenType::primitive,
     tokenType()
@@ -315,11 +310,6 @@ void testTokenMethods() {
   setToken("==");
   OCCA_ASSERT_EQUAL_BINARY(
     occa::lang::tokenType::op,
-    tokenType()
-  );
-  setToken("@foo");
-  OCCA_ASSERT_EQUAL_BINARY(
-    occa::lang::tokenType::attribute,
     tokenType()
   );
 
@@ -390,6 +380,11 @@ void addEncodingPrefixes(std::string &s1,
 void testCommentSkipping() {
   setStream("// test    \n"
             "1.0");
+  OCCA_ASSERT_EQUAL_BINARY(
+    occa::lang::tokenType::newline,
+    stream.peek()
+  );
+  getToken();
   OCCA_ASSERT_EQUAL_BINARY(
     occa::lang::tokenType::primitive,
     stream.peek()
@@ -496,7 +491,7 @@ void testStringMethods() {
 }
 
 #define testPrimitiveToken(type_, value_)                               \
-  token = stream.getToken();                                            \
+  getToken();                                                           \
   OCCA_ASSERT_EQUAL_BINARY(                                             \
     occa::lang::tokenType::primitive,                                   \
     tokenType());                                                       \
@@ -511,9 +506,11 @@ void testPrimitiveMethods() {
   setStream("1 68719476735L +0.1 .1e-10 -4.5L");
   testPrimitiveToken(int, 1);
   testPrimitiveToken(int64_t, 68719476735L);
-  testPrimitiveToken(float, +0.1);
+  getToken();
+  testPrimitiveToken(float, 0.1);
   testPrimitiveToken(float, .1e-10);
-  testPrimitiveToken(double, -4.5L);
+  getToken();
+  testPrimitiveToken(double, 4.5L);
 }
 
 void testErrors() {
@@ -521,6 +518,7 @@ void testErrors() {
   std::cerr << "Testing error outputs:\n";
   getToken();
   stream.skipTo('\n');
+  getToken();
   testNextStringValue("foobar");
   getToken();
 }

@@ -144,11 +144,11 @@ namespace occa {
           return NULL;
         }
         const int tokenType = token->type();
-        if (tokenType == tokenType::identifier) {
+        if (tokenType & tokenType::identifier) {
           token = processIdentifier(token->to<identifierToken>());
-        } else if (tokenType == tokenType::op) {
+        } else if (tokenType & tokenType::op) {
           token = processOperator(token->to<operatorToken>());
-        } else if (tokenType == tokenType::newline) {
+        } else if (tokenType & tokenType::newline) {
           passedNewline = true;
         }
       }
@@ -160,7 +160,7 @@ namespace occa {
       if (expandCount) {
         if (expandedIndex < expandCount) {
           token_t *token = expandedTokens[expandedIndex++];
-          if (token_t::safeType(token) == tokenType::newline) {
+          if (token_t::safeType(token) & tokenType::newline) {
             passedNewline = true;
           }
           return token;
@@ -180,7 +180,7 @@ namespace occa {
       while (token) {
         const int tokenType = token->type();
         delete token;
-        if (tokenType == tokenType::newline) {
+        if (tokenType & tokenType::newline) {
           return;
         }
         token = getSourceToken();
@@ -193,7 +193,7 @@ namespace occa {
         if (!token) {
           break;
         }
-        if (token->type() == tokenType::newline) {
+        if (token->type() & tokenType::newline) {
           delete token;
           break;
         }
@@ -211,7 +211,7 @@ namespace occa {
         }
         // Make sure that the macro starts with a '('
         token_t *nextToken = getSourceToken();
-        if (token_t::safeType(nextToken) == tokenType::op) {
+        if (token_t::safeType(nextToken) & tokenType::op) {
           const opType_t opType = nextToken->to<operatorToken>().op.opType;
           if (opType & operatorType::parenthesesEnd) {
             expandMacro(*macro);

@@ -35,7 +35,8 @@ namespace occa {
     *this = load(c);
   }
 
-  primitive primitive::load(const char *&c) {
+  primitive primitive::load(const char *&c,
+                            const bool includeSign) {
     bool unsigned_ = false;
     bool negative  = false;
     bool decimal   = false;
@@ -58,6 +59,9 @@ namespace occa {
     }
 
     if ((*c == '+') || (*c == '-')) {
+      if (!includeSign) {
+        return p;
+      }
       negative = (*c == '-');
       ++c;
       lex::skipWhitespace(c);
@@ -146,9 +150,10 @@ namespace occa {
     return p;
   }
 
-  primitive primitive::load(const std::string &s) {
+  primitive primitive::load(const std::string &s,
+                            const bool includeSign) {
     const char *c = s.c_str();
-    return load(c);
+    return load(c, includeSign);
   }
 
   primitive primitive::loadBinary(const char *&c, const bool isNegative) {

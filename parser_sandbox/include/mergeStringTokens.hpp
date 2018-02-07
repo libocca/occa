@@ -26,8 +26,14 @@
 
 namespace occa {
   namespace lang {
-    class mergeStringTokens : public tokenStream {
+    class mergeStringTokens : public tokenStreamTransform {
+    private:
+      token_t *nextToken;
+
     public:
+      mergeStringTokens();
+      virtual ~mergeStringTokens();
+
       virtual token_t* _getToken();
     };
   }

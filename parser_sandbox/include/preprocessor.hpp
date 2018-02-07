@@ -37,7 +37,7 @@ namespace occa {
   namespace lang {
     typedef trie<macro_t*> macroTrie;
 
-    class preprocessor : public tokenStreamTransform {
+    class preprocessor : public tokenStreamTransformWithMap {
     public:
       typedef void (preprocessor::*processDirective_t)(identifierToken &directive);
       typedef trie<processDirective_t> directiveTrie;

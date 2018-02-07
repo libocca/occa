@@ -24,10 +24,21 @@
 
 namespace occa {
   namespace lang {
+    tokenStream::~tokenStream() {}
+
+    token_t* tokenStream::getToken() {
+      return _getToken();
+    }
+
+    token_t* tokenStream::_getToken() {
+      OCCA_FORCE_ERROR("_getToken() not implemented");
+      return NULL;
+    }
+
     token_t* tokenStream::getSourceToken() {
       OCCA_ERROR("Calling getSourceToken without a source tokenStream",
                  sourceStream != NULL);
-      return sourceStream->getToken();
+      return sourceStream->_getToken();
     }
 
     tokenStreamWithMap::~tokenStreamWithMap() {
@@ -41,17 +52,21 @@ namespace occa {
       transforms.clear();
     }
 
+    void tokenStreamWithMap::copyStreamTransforms(const tokenStreamWithMap &stream) {
+      transforms = stream.transforms;
+    }
+
     token_t* tokenStreamWithMap::getToken() {
       tokenStream *lastTransform = this;
 
       const int transformCount = (int) transforms.size();
-      for (int i = 1; i < transformCount; ++i) {
+      for (int i = 0; i < transformCount; ++i) {
         tokenStreamTransform *transform = transforms[i];
         transform->sourceStream = lastTransform;
         lastTransform = transform;
       }
 
-      return lastTransform->getToken();
+      return lastTransform->_getToken();
     }
 
     tokenStreamWithMap& tokenStreamWithMap::map(tokenStreamTransform *transform) {
@@ -59,5 +74,8 @@ namespace occa {
       transforms.push_back(transform);
       return *this;
     }
+
+    tokenStreamTransform::~tokenStreamTransform() {}
+    tokenStreamTransformWithMap::~tokenStreamTransformWithMap() {}
   }
 }

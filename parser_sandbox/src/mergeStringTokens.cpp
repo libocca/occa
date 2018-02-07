@@ -24,25 +24,37 @@
 
 namespace occa {
   namespace lang {
+    mergeStringTokens::mergeStringTokens() :
+      nextToken(NULL) {}
+
+    mergeStringTokens::~mergeStringTokens() {}
+
     token_t* mergeStringTokens::_getToken() {
-      token_t *token = getSourceToken();
+      token_t *token;
+      if (nextToken) {
+        token = nextToken;
+        nextToken = NULL;
+        return token;
+      }
+      token = getSourceToken();
 
       // Not a string token
       while (!token ||
-             (token->type() != tokenType::string)) {
+             !(token->type() & tokenType::string)) {
         return token;
       }
 
       stringToken &strToken = token->to<stringToken>();
       while (true) {
         // Merge until no stringToken appears
-        token_t *nextToken = getSourceToken();
+        nextToken = getSourceToken();
         if (!nextToken ||
-            (nextToken->type() != tokenType::string)) {
+            !(nextToken->type() & tokenType::string)) {
           break;
         }
         strToken.append(nextToken->to<stringToken>());
         delete nextToken;
+        nextToken = NULL;
         // Can't merge strings with udfs in one token
         if (strToken.udf.size()) {
           break;

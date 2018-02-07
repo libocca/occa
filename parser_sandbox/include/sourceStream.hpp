@@ -36,7 +36,7 @@ namespace occa {
     int getCharacterEncoding(const std::string &str);
     int getStringEncoding(const std::string &str);
 
-    class sourceStream : public tokenStream {
+    class sourceStream : public tokenStreamWithMap {
     public:
       fileOrigin origin;
       filePosition &fp;
@@ -49,6 +49,8 @@ namespace occa {
 
       sourceStream(const sourceStream &stream);
       sourceStream& operator = (const sourceStream &stream);
+
+      virtual ~sourceStream();
 
       virtual void preprint(std::ostream &out);
       virtual void postprint(std::ostream &out);
@@ -88,7 +90,7 @@ namespace occa {
       int skipLineCommentAndPeek();
       int skipBlockCommentAndPeek();
 
-      virtual token_t* getToken();
+      virtual token_t* _getToken();
       token_t* getIdentifierToken();
       token_t* getPrimitiveToken();
       token_t* getOperatorToken();

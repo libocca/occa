@@ -114,7 +114,7 @@ namespace occa {
       return false;
     }
 
-    token_t* macro_t::getToken() {
+    token_t* macro_t::_getToken() {
       const int tokens = (int) macroTokens.size();
 
       while (macroTokenIndex < tokens) {
