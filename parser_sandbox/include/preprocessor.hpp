@@ -32,13 +32,16 @@
 #include "macro.hpp"
 #include "trie.hpp"
 #include "stream.hpp"
+#include "token.hpp"
 
 namespace occa {
   namespace lang {
     typedef trie<macro_t*> macroTrie;
+    typedef streamMap<token_t*, token_t*> tokenMap;
     typedef cacheMap<token_t*, token_t*> tokenCacheMap;
 
-    class preprocessor : public tokenCacheMap {
+    class preprocessor : public tokenCacheMap,
+                         public errorHandler {
     public:
       typedef void (preprocessor::*processDirective_t)(identifierToken &directive);
       typedef trie<processDirective_t> directiveTrie;
@@ -73,8 +76,8 @@ namespace occa {
       macro_t* getMacro(const std::string &name);
       macro_t* getSourceMacro();
 
+      token_t* getSourceToken();
       token_t* getToken();
-      token_t* getExpandedToken();
 
       void expandMacro(macro_t &macro);
 

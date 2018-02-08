@@ -19,46 +19,27 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  */
+#ifndef OCCA_PARSER_MERGESTRINGSTOKEN_HEADER2
+#define OCCA_PARSER_MERGESTRINGSTOKEN_HEADER2
 
-#include "mergeStringTokens.hpp"
+#include "stream.hpp"
 
 namespace occa {
   namespace lang {
-    mergeStringTokens::mergeStringTokens() {}
-    mergeStringTokens::mergeStringTokens(const mergeStringTokens*map) :
-      cacheMap(map) {}
+    class token_t;
 
-    token_t* mergeStringTokens::pop() {
-      token_t *token;
-      *(this->input) >> token;
+    typedef streamMap<token_t*, token_t*> tokenMap;
+    typedef cacheMap<token_t*, token_t*> tokenCacheMap;
 
-      // Not a string token
-      if (!token ||
-          !(token->type() & tokenType::string)) {
-        return token;
-      }
+    class mergeStrings : public tokenCacheMap {
+    public:
+      mergeStrings();
+      mergeStrings(const mergeStrings &map);
 
-      stringToken &strToken = token->to<stringToken>();
-      while (true) {
-        // Merge until no stringToken appears
-        token_t *nextToken;
-        *(this->input) >> nextToken;
-        if (!nextToken) {
-          break;
-        }
-        if (!(nextToken->type() & tokenType::string)) {
-          push(nextToken);
-          break;
-        }
-        strToken.append(nextToken->to<stringToken>());
-        delete nextToken;
-        nextToken = NULL;
-        // Can't merge strings with udfs in one token
-        if (strToken.udf.size()) {
-          break;
-        }
-      }
-      return &strToken;
-    }
+      virtual tokenMap& cloneMap() const;
+      virtual token_t* pop();
+    };
   }
 }
+
+#endif

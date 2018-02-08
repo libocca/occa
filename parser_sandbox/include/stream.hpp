@@ -39,7 +39,7 @@ namespace occa {
   public:
     baseStream(baseStream *head_ = NULL);
     baseStream(const baseStream &other);
-    ~baseStream();
+    virtual ~baseStream();
 
     virtual bool isContainer() const;
     virtual bool isEmpty() const;

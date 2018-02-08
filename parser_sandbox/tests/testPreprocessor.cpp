@@ -21,28 +21,13 @@
  */
 #include "occa/tools/env.hpp"
 
-#include "preprocessor.hpp"
-
 #include "./tokenUtils.hpp"
 
-occa::lang::mergeStringTokens mergeStrings;
-occa::lang::preprocessor *preprocessor = NULL;
-
 void setStream(const std::string &s) {
-
   tu::setStream(s);
-
-  if (preprocessor) {
-    delete preprocessor;
-  }
-  preprocessor = new occa::lang::preprocessor();
-
-  mergeStrings = occa::lang::mergeStringTokens();
-  mergeStrings.addRef();
-
-  stream
-    .map(preprocessor)
-    .map(&mergeStrings);
+  stream = (stream
+            .map(new occa::lang::preprocessor())
+            .map(new occa::lang::mergeStrings()));
 }
 
 void setToken(const std::string &s) {

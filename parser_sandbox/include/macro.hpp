@@ -26,13 +26,19 @@
 #include <iostream>
 
 #include "stream.hpp"
+#include "printer.hpp"
 
 namespace occa {
   namespace lang {
     class token_t;
     class macroToken;
+    class preprocessor;
+
     typedef std::vector<token_t*>  tokenVector;
     typedef std::vector<macroToken> macroTokenVector_t;
+
+    typedef streamMap<token_t*, token_t*> tokenMap;
+    typedef cacheMap<token_t*, token_t*> tokenCacheMap;
 
     class macroToken {
     public:
@@ -48,21 +54,24 @@ namespace occa {
       }
     };
 
-    class macro_t : public streamSource<token_t*> {
+    class macro_t : public tokenCacheMap,
+                    public errorHandler {
     public:
       static const std::string VA_ARGS;
 
+      preprocessor &pp;
       std::string name;
 
       int argCount;
       mutable bool hasVarArgs;
 
       std::vector<tokenVector> args;
-      int macroTokenIndex, argTokenIndex;
+      int macroTokenIndex;
       macroTokenVector_t macroTokens;
 
-      macro_t(tokenStream *sourceStream_,
+      macro_t(preprocessor &pp_,
               const std::string &name_);
+      macro_t(const macro_t &macro);
       virtual ~macro_t();
 
       inline bool isFunctionLike() const {
@@ -71,11 +80,8 @@ namespace occa {
 
       bool loadArgs();
 
-      virtual occa::baseStream<output_t>& clone() const;
-
-      virtual bool isEmpty() const;
-
-      virtual occa::streamSource<output_t>& operator >> (output_t &out);
+      virtual tokenMap& cloneMap() const;
+      virtual token_t* pop();
     };
   }
 }

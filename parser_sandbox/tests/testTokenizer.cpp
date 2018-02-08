@@ -31,26 +31,14 @@ void testPrimitiveMethods();
 void testErrors();
 
 void setStream(const std::string &s) {
-  static occa::lang::mergeStringTokens mergeStrings;
-
   tu::setStream(s);
-
-  mergeStrings = occa::lang::mergeStringTokens();
-  mergeStrings.addRef();
-  stream.map(&mergeStrings);
+  stream = (stream
+            .map(new occa::lang::mergeStrings()));
 }
 
 void setToken(const std::string &s) {
   setStream(s);
   tu::getToken();
-}
-
-void setHeaderToken(const std::string &s) {
-  setStream(s);
-  if (token) {
-    delete token;
-  }
-  token = stream.getHeaderToken();
 }
 
 int main(const int argc, const char **argv) {
@@ -316,6 +304,7 @@ void testTokenMethods() {
   testCharToken("U'\\''" , occa::lang::encodingType::U);
   testCharToken("L'\\''" , occa::lang::encodingType::L);
 
+  // Test this in testPreprocessor (#include tests)
   setHeaderToken("<foobar>");
   OCCA_ASSERT_EQUAL_BINARY(
     occa::lang::tokenType::header,

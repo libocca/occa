@@ -46,15 +46,20 @@ namespace occa {
       token(NULL),
       arg(arg_) {}
 
-    macro_t::macro_t(tokenStream *sourceStream_,
+    macro_t::macro_t(preprocessor &pp_,
                      const std::string &name_) :
+      pp(pp_),
       name(name_),
       argCount(-1),
       hasVarArgs(false),
-      macroTokenIndex(0),
-      argTokenIndex(0) {
-      sourceStream = sourceStream_;
-    }
+      macroTokenIndex(0) {}
+
+    macro_t::macro_t(const macro_t &macro) :
+      pp(macro.pp),
+      name(macro.name),
+      argCount(macro.argCount),
+      hasVarArgs(macro.hasVarArgs),
+      macroTokenIndex(macro.macroTokenIndex) {}
 
     macro_t::~macro_t() {
       const int tokens = (int) macroTokens.size();
@@ -66,7 +71,6 @@ namespace occa {
 
     bool macro_t::loadArgs() {
       macroTokenIndex = 0;
-      argTokenIndex = 0;
 
       if (!isFunctionLike()) {
         return true;
@@ -74,8 +78,9 @@ namespace occa {
 
       // Assumes ( has been checked
       int argIndex = 0;
+      token_t *token;
       while (true) {
-        token_t *token = getSourceToken();
+        pp >> token;
         if (!token) {
           printError("Not able to find closing )");
           break;
@@ -114,26 +119,29 @@ namespace occa {
       return false;
     }
 
-    token_t* macro_t::_getToken() {
-      const int tokens = (int) macroTokens.size();
+    tokenMap& macro_t::cloneMap() const {
+      return *(new macro_t(*this));
+    }
 
-      while (macroTokenIndex < tokens) {
-        macroToken token = macroTokens[macroTokenIndex];
-        if (token.arg < 0) {
-          ++macroTokenIndex;
-          return token.token->clone();
-        }
-        tokenVector &argTokens = args[token.arg];
-        const int argTokenCount = (int) argTokens.size();
-        if (argTokenIndex < argTokenCount) {
-          return argTokens[argTokenIndex++];
-        } else {
-          ++macroTokenIndex;
-          argTokenIndex = 0;
-        }
+    token_t* macro_t::pop() {
+      if (macroTokenIndex >= (int) macroTokens.size()) {
+        return NULL;
       }
 
-      return NULL;
+      macroToken token = macroTokens[macroTokenIndex++];
+      if (token.arg < 0) {
+        return token.token->clone();
+      }
+
+      tokenVector &argTokens = args[token.arg];
+      const int argTokenCount = (int) argTokens.size();
+      if (!argTokenCount) {
+        return NULL;
+      }
+      for (int i = 0; i < (argTokenCount - 1); ++i) {
+        push(argTokens[i]);
+      }
+      return argTokens[argTokenCount - 1];
     }
   }
 }

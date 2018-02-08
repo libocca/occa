@@ -93,7 +93,7 @@ public:
   virtual output_t pop() {
     output_t value;
     *(this->input) >> value;
-    push(value);
+    this->push(value);
     return value;
   }
 };
@@ -107,12 +107,11 @@ int main(const int argc, const char **argv) {
   occa::stream<int> s          = vectorStream<int>(values);
   occa::stream<double> sTimes4 = s.map(new multMap<int, double>(4));
   occa::stream<double> sTimes1 = sTimes4.map(new multMap<double, double>(0.25));
-  occa::stream<int> s2         = s.map(new duplicateMap());
-
-  double value;
+  occa::stream<int> s2         = s.map(new duplicateMap<int>());
 
   // Test source
   for (int i = 0; i < 3; ++i) {
+    int value;
     s >> value;
     OCCA_ASSERT_EQUAL(i, value);
   }
@@ -122,7 +121,8 @@ int main(const int argc, const char **argv) {
 
   // Test map
   for (int i = 0; i < 3; ++i) {
-    s >> value;
+    double value;
+    sTimes4 >> value;
     OCCA_ASSERT_EQUAL(4.0 * i, value);
   }
   OCCA_ASSERT_TRUE(sTimes4.isEmpty());
@@ -130,14 +130,16 @@ int main(const int argc, const char **argv) {
 
   // Test map composition
   for (int i = 0; i < 3; ++i) {
-    s >> value;
+    double value;
+    sTimes1 >> value;
     OCCA_ASSERT_EQUAL((i * 4.0) * 0.25, value);
   }
   OCCA_ASSERT_TRUE(sTimes1.isEmpty());
 
   // Test cache map
   for (int i = 0; i < 6; ++i) {
-    s >> value;
+    int value;
+    s2 >> value;
     OCCA_ASSERT_EQUAL(i / 2, value);
   }
   OCCA_ASSERT_TRUE(s2.isEmpty());

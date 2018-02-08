@@ -30,19 +30,27 @@
 namespace occa {
   namespace lang {
     // __FILE__
-    fileMacro::fileMacro(tokenStream *sourceStream_) :
-      macro_t(sourceStream_, "__FILE__") {}
+    fileMacro::fileMacro(preprocessor &pp_) :
+      macro_t(pp_, "__FILE__") {}
 
-    token_t* fileMacro::_getToken() {
+    tokenMap& fileMacro::cloneMap() const {
+      return *(new fileMacro(pp));
+    }
+
+    token_t* fileMacro::pop() {
       fileOrigin origin; // TODO
       return new stringToken(origin, "file");
     }
 
     // __LINE__
-    lineMacro::lineMacro(tokenStream *sourceStream_) :
-      macro_t(sourceStream_, "__LINE__") {}
+    lineMacro::lineMacro(preprocessor &pp_) :
+      macro_t(pp_, "__LINE__") {}
 
-    token_t* lineMacro::_getToken() {
+    tokenMap& lineMacro::cloneMap() const {
+      return *(new lineMacro(pp));
+    }
+
+    token_t* lineMacro::pop() {
       fileOrigin origin; // TODO
       const primitive value = 0;
       const std::string strValue = occa::toString(value);
@@ -50,10 +58,14 @@ namespace occa {
     }
 
     // __DATE__
-    dateMacro::dateMacro(tokenStream *sourceStream_) :
-      macro_t(sourceStream_, "__DATE__") {}
+    dateMacro::dateMacro(preprocessor &pp_) :
+      macro_t(pp_, "__DATE__") {}
 
-    token_t* dateMacro::_getToken() {
+    tokenMap& dateMacro::cloneMap() const {
+      return *(new dateMacro(pp));
+    }
+
+    token_t* dateMacro::pop() {
       static char month[12][5] = {
         "Jan", "Feb", "Mar", "Apr", "May", "Jun",
         "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
@@ -80,10 +92,14 @@ namespace occa {
     }
 
     // __TIME__
-    timeMacro::timeMacro(tokenStream *sourceStream_) :
-      macro_t(sourceStream_, "__TIME__") {}
+    timeMacro::timeMacro(preprocessor &pp_) :
+      macro_t(pp_, "__TIME__") {}
 
-    token_t* timeMacro::_getToken() {
+    tokenMap& timeMacro::cloneMap() const {
+      return *(new timeMacro(pp));
+    }
+
+    token_t* timeMacro::pop() {
       fileOrigin origin; // TODO
 
       time_t t = ::time(NULL);
@@ -111,11 +127,15 @@ namespace occa {
     }
 
     // __COUNTER__
-    counterMacro::counterMacro(tokenStream *sourceStream_) :
-      macro_t(sourceStream_, "__COUNTER__"),
+    counterMacro::counterMacro(preprocessor &pp_) :
+      macro_t(pp_, "__COUNTER__"),
       counter(0) {}
 
-    token_t* counterMacro::_getToken() {
+    tokenMap& counterMacro::cloneMap() const {
+      return *(new counterMacro(pp));
+    }
+
+    token_t* counterMacro::pop() {
       fileOrigin origin; // TODO
       const primitive value = counter++;
       const std::string strValue = occa::toString(value);

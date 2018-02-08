@@ -24,25 +24,27 @@
 
 #include "occa/tools/testing.hpp"
 
-#include "sourceStream.hpp"
-#include "mergeStringTokens.hpp"
+#include "token.hpp"
+#include "tokenizer.hpp"
+#include "mergeStrings.hpp"
+#include "preprocessor.hpp"
 
 std::string streamSource;
-occa::lang::sourceStream stream(NULL);
+occa::stream<occa::lang::token_t*> stream;
 occa::lang::token_t *token = NULL;
 
 namespace tu {
   void setStream(const std::string &s) {
     streamSource = s;
-    stream = occa::lang::sourceStream(NULL,
-                                      streamSource.c_str());
+    stream = occa::lang::tokenizer(NULL,
+                                   streamSource.c_str());
   }
 
   void getToken() {
     if (token) {
       delete token;
     }
-    token = stream.getToken();
+    stream >> token;
   }
 
   void setToken(const std::string &s) {

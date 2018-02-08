@@ -21,6 +21,7 @@
  */
 #include "tokenizer.hpp"
 #include "occa/tools/string.hpp"
+#include "token.hpp"
 
 namespace occa {
   namespace lang {
@@ -90,7 +91,7 @@ namespace occa {
     }
 
     tokenizer::tokenizer(const tokenizer &stream) :
-      baseStream<token_t*>(stream),
+      streamSource<token_t*>(stream),
       origin(stream.origin),
       fp(origin.position),
       stack(stream.stack),

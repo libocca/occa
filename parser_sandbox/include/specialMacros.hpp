@@ -29,29 +29,33 @@ namespace occa {
     // __FILE__
     class fileMacro : public macro_t {
     public:
-      fileMacro(tokenStream *sourceStream_);
-      virtual token_t* _getToken();
+      fileMacro(preprocessor &pp_);
+      virtual tokenMap& cloneMap() const;
+      virtual token_t* pop();
     };
 
     // __LINE__
     class lineMacro : public macro_t {
     public:
-      lineMacro(tokenStream *sourceStream_);
-      virtual token_t* _getToken();
+      lineMacro(preprocessor &pp_);
+      virtual tokenMap& cloneMap() const;
+      virtual token_t* pop();
     };
 
     // __DATE__
     class dateMacro : public macro_t {
     public:
-      dateMacro(tokenStream *sourceStream_);
-      virtual token_t* _getToken();
+      dateMacro(preprocessor &pp_);
+      virtual tokenMap& cloneMap() const;
+      virtual token_t* pop();
     };
 
     // __TIME__
     class timeMacro : public macro_t {
     public:
-      timeMacro(tokenStream *sourceStream_);
-      virtual token_t* _getToken();
+      timeMacro(preprocessor &pp_);
+      virtual tokenMap& cloneMap() const;
+      virtual token_t* pop();
     };
 
     // __COUNTER__
@@ -59,8 +63,9 @@ namespace occa {
     public:
       mutable int counter;
 
-      counterMacro(tokenStream *sourceStream_);
-      virtual token_t* _getToken();
+      counterMacro(preprocessor &pp_);
+      virtual tokenMap& cloneMap() const;
+      virtual token_t* pop();
     };
   }
 }
