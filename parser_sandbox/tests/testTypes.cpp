@@ -32,6 +32,7 @@ void testCasting();
 int main(const int argc, const char **argv) {
   testFunction();
   testCasting();
+  return 0;
 }
 
 using namespace occa::lang;

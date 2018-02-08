@@ -25,10 +25,13 @@
 #include "occa/tools/io.hpp"
 
 #include "file.hpp"
-#include "tokenStream.hpp"
+#include "printer.hpp"
+#include "stream.hpp"
 
 namespace occa {
   namespace lang {
+    class token_t;
+
     typedef std::vector<token_t*> tokenVector;
     typedef std::vector<fileOrigin> originVector;
 
@@ -36,28 +39,31 @@ namespace occa {
     int getCharacterEncoding(const std::string &str);
     int getStringEncoding(const std::string &str);
 
-    class sourceStream : public tokenStreamWithMap {
+    class tokenizer : public streamSource<token_t*>,
+                      public errorHandler {
     public:
       fileOrigin origin;
       filePosition &fp;
       originVector stack;
       std::vector<originVector> sourceStack;
 
-      sourceStream(const char *root);
-      sourceStream(file_t *file_,
-                   const char *root);
+      tokenizer(const char *root);
+      tokenizer(file_t *file_,
+                const char *root);
 
-      sourceStream(const sourceStream &stream);
-      sourceStream& operator = (const sourceStream &stream);
+      tokenizer(const tokenizer &stream);
 
-      virtual ~sourceStream();
+      virtual ~tokenizer();
 
       virtual void preprint(std::ostream &out);
       virtual void postprint(std::ostream &out);
 
       void setLine(const int line);
 
-      bool isEmpty();
+      virtual bool isEmpty() const;
+      virtual baseStream<token_t*>& clone() const;
+      virtual streamSource<token_t*>& operator >> (token_t *&out);
+
       void pushSource(const bool fromInclude,
                       file_t *file,
                       const filePosition &position);
@@ -90,7 +96,7 @@ namespace occa {
       int skipLineCommentAndPeek();
       int skipBlockCommentAndPeek();
 
-      virtual token_t* _getToken();
+      token_t* getToken();
       token_t* getIdentifierToken();
       token_t* getPrimitiveToken();
       token_t* getOperatorToken();

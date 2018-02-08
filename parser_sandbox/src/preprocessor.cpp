@@ -42,7 +42,6 @@ namespace occa {
 
     // TODO: Add actual compiler macros as well
     preprocessor::preprocessor() :
-      expandedIndex(0),
       passedNewline(true),
       directives(getDirectiveTrie()) {
 
@@ -74,6 +73,14 @@ namespace occa {
       pushStatus(reading);
     }
 
+    preprocessor::preprocessor(const preprocessor &pp) :
+      cacheMap(pp),
+      statusStack(pp.statusStack),
+      currentStatus(pp.currentStatus),
+      passedNewline(pp.passedNewline),
+      directives(getDirectiveTrie()),
+      sourceMacros(pp.sourceMacros) {}
+
     preprocessor::directiveTrie& preprocessor::getDirectiveTrie() {
       static directiveTrie trie;
       if (trie.isEmpty()) {
@@ -99,8 +106,12 @@ namespace occa {
       return trie;
     }
 
-    void preprocessor::addExpandedToken(token_t *token) {
-      expandedTokens.push_back(token);
+    tokenCacheMap& preprocessor::cloneMap() const {
+      return *(new preprocessor(*this));
+    }
+
+    token_t* preprocessor::pop() {
+      return getToken();
     }
 
     void preprocessor::pushStatus(const int status) {
@@ -129,14 +140,14 @@ namespace occa {
       return NULL;
     }
 
-    token_t* preprocessor::_getToken() {
-      passedNewline = false;
+    token_t* preprocessor::getSourceToken() {
+      token_t *token;
+      *(this->input) >> token;
+      return token;
+    }
 
-      // Check if we've expanded tokens
-      token_t *token = getExpandedToken();
-      if (token) {
-        return token;
-      }
+    token_t* preprocessor::getToken() {
+      token_t *token = NULL;
       while (!token) {
         // Get next token
         token = getSourceToken();
@@ -153,22 +164,6 @@ namespace occa {
         }
       }
       return token;
-    }
-
-    token_t* preprocessor::getExpandedToken() {
-      const int expandCount = expandedTokens.size();
-      if (expandCount) {
-        if (expandedIndex < expandCount) {
-          token_t *token = expandedTokens[expandedIndex++];
-          if (token_t::safeType(token) & tokenType::newline) {
-            passedNewline = true;
-          }
-          return token;
-        }
-        expandedIndex = 0;
-        expandedTokens.clear();
-      }
-      return NULL;
     }
 
     void preprocessor::expandMacro(macro_t &macro) {
@@ -207,7 +202,7 @@ namespace occa {
         if (!macro->isFunctionLike()) {
           expandMacro(*macro);
           delete &token;
-          return getExpandedToken();
+          return NULL;
         }
         // Make sure that the macro starts with a '('
         token_t *nextToken = getSourceToken();
@@ -217,10 +212,10 @@ namespace occa {
             expandMacro(*macro);
             delete &token;
             delete nextToken;
-            return getExpandedToken();
+            return NULL;
           }
         }
-        expandedTokens.push_back(nextToken);
+        push(nextToken);
       }
       return &token;
     }

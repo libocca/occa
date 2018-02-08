@@ -31,6 +31,7 @@ void testOtherNodes();
 int main(const int argc, const char **argv) {
   testOperatorNodes();
   testOtherNodes();
+  return 0;
 }
 
 using namespace occa::lang;

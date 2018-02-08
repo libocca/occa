@@ -40,6 +40,7 @@ int main(const int argc, const char **argv) {
   testArray();
   testKeywords();
   testMethods();
+  return 0;
 }
 
 void testString() {

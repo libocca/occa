@@ -24,7 +24,7 @@
 #include "occa/tools/lex.hpp"
 
 #include "file.hpp"
-#include "sourceStream.hpp"
+#include "tokenizer.hpp"
 
 namespace occa {
   namespace lang {
@@ -171,7 +171,7 @@ namespace occa {
         if (fromInclude) {
           out << "Included file:\n";
         } else {
-          sourceStream stream(position.pos);
+          tokenizer stream(position.pos);
           std::string macro;
           stream.getIdentifier(macro);
           out << "Expanded from macro '" << macro << "':\n";

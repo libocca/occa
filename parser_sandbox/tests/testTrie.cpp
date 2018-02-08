@@ -41,6 +41,7 @@ int main(const int argc, const char **argv) {
   testSearch(trie);
   testFrozenSearch(trie);
   testRefreeze(trie);
+  return 0;
 }
 
 void testInsert(occa::trie<std::string> &trie) {

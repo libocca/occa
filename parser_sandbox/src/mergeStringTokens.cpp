@@ -24,32 +24,30 @@
 
 namespace occa {
   namespace lang {
-    mergeStringTokens::mergeStringTokens() :
-      nextToken(NULL) {}
+    mergeStringTokens::mergeStringTokens() {}
+    mergeStringTokens::mergeStringTokens(const mergeStringTokens*map) :
+      cacheMap(map) {}
 
-    mergeStringTokens::~mergeStringTokens() {}
-
-    token_t* mergeStringTokens::_getToken() {
+    token_t* mergeStringTokens::pop() {
       token_t *token;
-      if (nextToken) {
-        token = nextToken;
-        nextToken = NULL;
-        return token;
-      }
-      token = getSourceToken();
+      *(this->input) >> token;
 
       // Not a string token
-      while (!token ||
-             !(token->type() & tokenType::string)) {
+      if (!token ||
+          !(token->type() & tokenType::string)) {
         return token;
       }
 
       stringToken &strToken = token->to<stringToken>();
       while (true) {
         // Merge until no stringToken appears
-        nextToken = getSourceToken();
-        if (!nextToken ||
-            !(nextToken->type() & tokenType::string)) {
+        token_t *nextToken;
+        *(this->input) >> nextToken;
+        if (!nextToken) {
+          break;
+        }
+        if (!(nextToken->type() & tokenType::string)) {
+          push(nextToken);
           break;
         }
         strToken.append(nextToken->to<stringToken>());

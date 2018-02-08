@@ -25,12 +25,13 @@
 #include <vector>
 #include <iostream>
 
-#include "tokenStream.hpp"
+#include "stream.hpp"
 
 namespace occa {
   namespace lang {
     class token_t;
     class macroToken;
+    typedef std::vector<token_t*>  tokenVector;
     typedef std::vector<macroToken> macroTokenVector_t;
 
     class macroToken {
@@ -47,7 +48,7 @@ namespace occa {
       }
     };
 
-    class macro_t : public tokenStream {
+    class macro_t : public streamSource<token_t*> {
     public:
       static const std::string VA_ARGS;
 
@@ -70,7 +71,11 @@ namespace occa {
 
       bool loadArgs();
 
-      virtual token_t* _getToken();
+      virtual occa::baseStream<output_t>& clone() const;
+
+      virtual bool isEmpty() const;
+
+      virtual occa::streamSource<output_t>& operator >> (output_t &out);
     };
   }
 }

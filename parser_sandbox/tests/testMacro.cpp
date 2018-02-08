@@ -39,6 +39,7 @@ int main(const int argc, const char **argv) {
   testFunctionMacros();
   testSpecialMacros();
   testErrors();
+  return 0;
 }
 
 void testPlainMacros() {

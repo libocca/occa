@@ -22,19 +22,18 @@
 #ifndef OCCA_PARSER_MERGESTRINGSTOKEN_HEADER2
 #define OCCA_PARSER_MERGESTRINGSTOKEN_HEADER2
 
-#include "tokenStream.hpp"
+#include "stream.hpp"
 
 namespace occa {
   namespace lang {
-    class mergeStringTokens : public tokenStreamTransform {
-    private:
-      token_t *nextToken;
+    typedef cacheMap<token_t*, token_t*> tokenCacheMap;
 
+    class mergeStringTokens : public tokenCacheMap {
     public:
       mergeStringTokens();
-      virtual ~mergeStringTokens();
 
-      virtual token_t* _getToken();
+      virtual tokenMap& cloneMap() const;
+      virtual token_t* pop();
     };
   }
 }
