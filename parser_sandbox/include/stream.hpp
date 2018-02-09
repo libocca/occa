@@ -111,7 +111,7 @@ namespace occa {
     virtual bool isEmpty() const;
     virtual streamMap<input_t, output_t>& operator >> (output_t &out);
 
-    virtual void push(const output_t &value);
+    void push(const output_t &value);
 
     virtual output_t pop() = 0;
   };

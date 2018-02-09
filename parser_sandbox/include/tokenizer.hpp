@@ -52,6 +52,7 @@ namespace occa {
                 const char *root);
 
       tokenizer(const tokenizer &stream);
+      tokenizer& operator = (const tokenizer &stream);
 
       virtual ~tokenizer();
 

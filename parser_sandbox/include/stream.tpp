@@ -83,8 +83,9 @@ namespace occa {
   //---[ stream ]-----------------------
   template <class output_t>
   stream<output_t>::stream(baseStream<output_t> *head_) :
-    baseStream<output_t>(head_) {
-  }
+    baseStream<output_t>(head_
+                         ? head_->clone()
+                         : NULL) {}
 
   template <class output_t>
   stream<output_t>::stream(baseStream<output_t> stream) {

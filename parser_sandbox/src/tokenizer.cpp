@@ -91,11 +91,18 @@ namespace occa {
     }
 
     tokenizer::tokenizer(const tokenizer &stream) :
-      streamSource<token_t*>(stream),
       origin(stream.origin),
       fp(origin.position),
       stack(stream.stack),
       sourceStack(stream.sourceStack) {}
+
+
+    tokenizer& tokenizer::operator = (const tokenizer &stream) {
+      origin      = stream.origin;
+      stack       = stream.stack;
+      sourceStack = stream.sourceStack;
+      return *this;
+    }
 
     tokenizer::~tokenizer() {}
 
@@ -520,6 +527,8 @@ namespace occa {
       }
       if (type & tokenType::newline) {
         ++fp.pos;
+        ++fp.line;
+        fp.lineStart = fp.pos;
         return new newlineToken(origin);
       }
       if (type & tokenType::char_) {
