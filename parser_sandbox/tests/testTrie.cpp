@@ -31,6 +31,7 @@
 void testInsert(occa::trie<std::string> &trie);
 void testSearch(occa::trie<std::string> &trie);
 void testFrozenSearch(occa::trie<std::string> &trie);
+void testRemoval(occa::trie<std::string> &trie);
 void testRefreeze(occa::trie<std::string> &trie);
 
 int main(const int argc, const char **argv) {
@@ -40,7 +41,9 @@ int main(const int argc, const char **argv) {
   testInsert(trie);
   testSearch(trie);
   testFrozenSearch(trie);
+  testRemoval(trie);
   testRefreeze(trie);
+
   return 0;
 }
 
@@ -115,7 +118,30 @@ void testFrozenSearch(occa::trie<std::string> &trie) {
   OCCA_ASSERT_EQUAL(""        , trie.get("goods").value());
 }
 
+void testRemoval(occa::trie<std::string> &trie) {
+  OCCA_ASSERT_TRUE(trie.has("blue"));
+  trie.remove("blue");
+  OCCA_ASSERT_FALSE(trie.has("blue"));
+
+  OCCA_ASSERT_TRUE(trie.has("blueblue"));
+  trie.remove("blueblue");
+  OCCA_ASSERT_FALSE(trie.has("blueblue"));
+
+  OCCA_ASSERT_TRUE(trie.has("boring"));
+  trie.remove("boring");
+  OCCA_ASSERT_FALSE(trie.has("boring"));
+
+  OCCA_ASSERT_TRUE(trie.has("glue"));
+  trie.remove("glue");
+  OCCA_ASSERT_FALSE(trie.has("glue"));
+
+  OCCA_ASSERT_TRUE(trie.has("good"));
+  trie.remove("good");
+  OCCA_ASSERT_FALSE(trie.has("good"));
+}
+
 void testRefreeze(occa::trie<std::string> &trie) {
+  trie.freeze();
   OCCA_ASSERT_TRUE(trie.isFrozen);
   OCCA_ASSERT_FALSE(trie.has("red"));
 
@@ -128,7 +154,7 @@ void testRefreeze(occa::trie<std::string> &trie) {
   trie.autoFreeze = true;
   trie.add("blue", "red");
   OCCA_ASSERT_TRUE(trie.isFrozen);
-  OCCA_ASSERT_TRUE(trie.has("red"));
+  OCCA_ASSERT_TRUE(trie.has("blue"));
 
   OCCA_ASSERT_EQUAL("red", trie.get("red").value());
   OCCA_ASSERT_EQUAL("red", trie.get("blue").value());

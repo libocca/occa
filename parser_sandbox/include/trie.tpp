@@ -35,27 +35,27 @@ namespace occa {
   template <class TM>
   trie<TM>::result_t::result_t(const trie<TM> *trie__,
                                const int length_,
-                               const int valueIdx_) :
+                               const int valueIndex_) :
     trie_(const_cast<trie<TM>*>(trie__)),
     length(length_),
-    valueIdx(valueIdx_) {}
+    valueIndex(valueIndex_) {}
 
   template <class TM>
   bool trie<TM>::result_t::success() const {
-    return (0 <= valueIdx);
+    return (0 <= valueIndex);
   }
 
   template <class TM>
   const TM& trie<TM>::result_t::value() const {
-    return ((0 <= valueIdx)
-            ? trie_->values[valueIdx]
+    return ((0 <= valueIndex)
+            ? trie_->values[valueIndex]
             : trie_->defaultValue);
   }
 
   template <class TM>
   TM& trie<TM>::result_t::value() {
-    return ((0 <= valueIdx)
-            ? trie_->values[valueIdx]
+    return ((0 <= valueIndex)
+            ? trie_->values[valueIndex]
             : trie_->defaultValue);
   }
   //  ==================================
@@ -85,17 +85,17 @@ namespace occa {
 
   template <class TM>
   void trie<TM>::add(const char *c, const TM &value) {
-    int valueIdx = root.getValueIdx(c);
-    if (valueIdx < 0) {
+    int valueIndex = root.getValueIndex(c);
+    if (valueIndex < 0) {
       defrost();
-      valueIdx = values.size();
+      valueIndex = values.size();
       values.push_back(value);
-      root.add(c, valueIdx);
+      root.add(c, valueIndex);
       if (autoFreeze) {
         freeze();
       }
     } else {
-      values[valueIdx] = value;
+      values[valueIndex] = value;
     }
   }
 
@@ -105,11 +105,14 @@ namespace occa {
   }
 
   template <class TM>
-  void trie<TM>::remove(const char *c) {
-    int valueIdx = root.getValueIdx(c);
-    if (valueIdx >= 0) {
+  void trie<TM>::remove(const char *c, const int length) {
+    int valueIndex = root.getValueIndex(c);
+    if (valueIndex >= 0) {
+      const int length_ = ((length == INT_MAX)
+                           ? strlen(c)
+                           : length);
       defrost();
-      root.remove(c, valueIdx);
+      root.remove(c, length_, valueIndex);
       if (autoFreeze) {
         freeze();
       }
@@ -118,7 +121,7 @@ namespace occa {
 
   template <class TM>
   void trie<TM>::remove(const std::string &s) {
-    remove(s.c_str());
+    remove(s.c_str(), (int) s.size());
   }
 
   template <class TM>
@@ -153,7 +156,7 @@ namespace occa {
       chars[offset]        = leaf->first;
       offsets[offset]      = leafOffset;
       leafCount[offset]    = (int) leafNode.leaves.size();
-      valueIndices[offset] = leafNode.valueIdx;
+      valueIndices[offset] = leafNode.valueIndex;
 
       leafOffset = freeze(leafNode, leafOffset);
       ++offset;
@@ -190,7 +193,7 @@ namespace occa {
     }
     const char * const cStart = c;
     int retLength = 0;
-    int retValueIdx = -1;
+    int retValueIndex = -1;
 
     int offset = 0;
     int count = baseNodeCount;
@@ -210,7 +213,7 @@ namespace occa {
           ++c;
           if (0 <= valueIndices[offset + OCCA_TRIE_MID]) {
             retLength   = (c - cStart);
-            retValueIdx = valueIndices[offset + OCCA_TRIE_MID];
+            retValueIndex = valueIndices[offset + OCCA_TRIE_MID];
           }
 
           count  = leafCount[offset + OCCA_TRIE_MID];
@@ -227,7 +230,7 @@ namespace occa {
     }
 
     if (retLength) {
-      return result_t(this, retLength, retValueIdx);
+      return result_t(this, retLength, retValueIndex);
     }
     return result_t(this);
   }
@@ -236,7 +239,7 @@ namespace occa {
   typename trie<TM>::result_t trie<TM>::trieGetLongest(const char *c, const int length) const {
     trieNode::result_t result = root.get(c, length);
     if (result.success()) {
-      return result_t(this, result.length, result.valueIdx);
+      return result_t(this, result.length, result.valueIndex);
     }
     return result_t(this);
   }
@@ -247,7 +250,7 @@ namespace occa {
     trie<TM>::result_t result = getLongest(c, length_);
     if (result.length != length_) {
       result.length = 0;
-      result.valueIdx = -1;
+      result.valueIndex = -1;
     }
     return result;
   }
@@ -298,11 +301,11 @@ namespace occa {
       freeze();
     }
     const std::string headers[] = {
-      "index    : ",
-      "chars    : ",
-      "offsets  : ",
-      "leafCount: ",
-      "valueIdx : "
+      "index      : ",
+      "chars      : ",
+      "offsets    : ",
+      "leafCount  : ",
+      "valueIndex : "
     };
     std::cout << headers[0];
     for (int i = 0; i < nodeCount; ++i) {
@@ -327,12 +330,12 @@ namespace occa {
     }
     std::cout << '\n' << headers[4];
     for (int i = 0; i < nodeCount; ++i) {
-      const int valueIdx = valueIndices[i];
-      std::string spaces(valueIdx < 10 ? 2 : ((valueIdx < 100) ? 1 : 0), ' ');
-      if (valueIdx < 0) {
+      const int valueIndex = valueIndices[i];
+      std::string spaces(valueIndex < 10 ? 2 : ((valueIndex < 100) ? 1 : 0), ' ');
+      if (valueIndex < 0) {
         spaces = spaces.substr(1);
       }
-      std::cout << valueIdx << ' ' << spaces;
+      std::cout << valueIndex << ' ' << spaces;
     }
     std::cout << '\n';
     isFrozen = wasFrozen;

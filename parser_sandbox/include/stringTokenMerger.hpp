@@ -31,10 +31,10 @@ namespace occa {
     typedef streamMap<token_t*, token_t*> tokenMap;
     typedef cacheMap<token_t*, token_t*> tokenCacheMap;
 
-    class mergeStrings : public tokenCacheMap {
+    class stringTokenMerger : public tokenCacheMap {
     public:
-      mergeStrings();
-      mergeStrings(const mergeStrings &map);
+      stringTokenMerger();
+      stringTokenMerger(const stringTokenMerger &map);
 
       virtual tokenMap& cloneMap() const;
       virtual token_t* pop();

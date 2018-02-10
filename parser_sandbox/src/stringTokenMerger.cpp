@@ -19,48 +19,51 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  */
-#ifndef TOKEN_UTILS
-#define TOKEN_UTILS
 
-#include "occa/tools/testing.hpp"
-
+#include "stringTokenMerger.hpp"
 #include "token.hpp"
-#include "tokenizer.hpp"
-#include "mergeStrings.hpp"
-#include "preprocessor.hpp"
 
-std::string streamSource;
-occa::stream<occa::lang::token_t*> stream;
-occa::lang::token_t *token = NULL;
+namespace occa {
+  namespace lang {
+    stringTokenMerger::stringTokenMerger() {}
+    stringTokenMerger::stringTokenMerger(const stringTokenMerger &map) :
+      cacheMap(map) {}
 
-namespace tu {
-  void setStream(const std::string &s) {
-    streamSource = s;
-    stream = occa::lang::tokenizer(NULL,
-                                   streamSource.c_str());
-  }
-
-  void getToken() {
-    if (token) {
-      delete token;
+    tokenMap& stringTokenMerger::cloneMap() const {
+      return *(new stringTokenMerger(*this));
     }
-    stream >> token;
-  }
 
-  void setToken(const std::string &s) {
-    setStream(s);
-    getToken();
-  }
+    token_t* stringTokenMerger::pop() {
+      token_t *token;
+      *(this->input) >> token;
 
-  int tokenType() {
-    return token ? token->type() : 0;
-  }
+      // Not a string token
+      if (!token ||
+          !(token->type() & tokenType::string)) {
+        return token;
+      }
 
-  void free() {
-    if (token) {
-      delete token;
+      stringToken &strToken = token->to<stringToken>();
+      while (true) {
+        // Merge until no stringToken appears
+        token_t *nextToken;
+        *(this->input) >> nextToken;
+        if (!nextToken) {
+          break;
+        }
+        if (!(nextToken->type() & tokenType::string)) {
+          push(nextToken);
+          break;
+        }
+        strToken.append(nextToken->to<stringToken>());
+        delete nextToken;
+        nextToken = NULL;
+        // Can't merge strings with udfs in one token
+        if (strToken.udf.size()) {
+          break;
+        }
+      }
+      return &strToken;
     }
   }
 }
-
-#endif

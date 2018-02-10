@@ -22,6 +22,7 @@
 #ifndef OCCA_STREAM_HEADER2
 #define OCCA_STREAM_HEADER2
 
+#include <cstddef>
 #include <queue>
 
 namespace occa {

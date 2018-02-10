@@ -41,33 +41,45 @@ namespace occa {
     public:
       trieNode *node;
       int length;
-      int valueIdx;
+      int valueIndex;
 
       result_t();
       result_t(trieNode *node_,
                const int length_,
-               const int valueIdx);
+               const int valueIndex);
 
       inline bool success() const {
-        return (0 <= valueIdx);
+        return (0 <= valueIndex);
       }
     };
 
-    int valueIdx;
+    int valueIndex;
     trieNodeMap_t leaves;
 
     trieNode();
-    trieNode(const int valueIdx_);
+    trieNode(const int valueIndex_);
 
-    void add(const char *c, const int valueIdx_);
+    void add(const char *c, const int valueIndex_);
 
     int nodeCount() const;
-    int getValueIdx(const char *c) const;
-    result_t get(const char *c, const int length) const;
-    result_t get(const char *c, const int cIdx, const int length) const;
+    int getValueIndex(const char *c) const;
 
-    void remove(const char *c, const int valueIdx_);
-    void decrementIndex(const int valueIdx_);
+    result_t get(const char *c,
+                 const int length) const;
+    result_t get(const char *c,
+                 const int cIndex,
+                 const int length) const;
+
+    void remove(const char *c,
+                const int valueIndex_);
+    void remove(const char *c,
+                const int length,
+                const int valueIndex_);
+    bool nestedRemove(const char *c,
+                      const int length,
+                      const int valueIndex_);
+
+    void decrementIndex(const int valueIndex_);
   };
   //====================================
 
@@ -80,12 +92,12 @@ namespace occa {
     public:
       trie<TM> *trie_;
       int length;
-      int valueIdx;
+      int valueIndex;
 
       result_t();
       result_t(const trie<TM> *trie__,
                const int length_ = 0,
-               const int valueIdx_ = -1);
+               const int valueIndex_ = -1);
 
       inline bool success() const;
       inline const TM& value() const;
@@ -111,20 +123,28 @@ namespace occa {
     void add(const char *c, const TM &value = TM());
     void add(const std::string &s, const TM &value = TM());
 
-    void remove(const char *c);
+    void remove(const char *c,
+                const int length = INT_MAX);
+
     void remove(const std::string &s);
 
     void freeze();
     int freeze(const trieNode &node, int offset);
     void defrost();
 
-    result_t getLongest(const char *c, const int length = INT_MAX) const;
-    result_t trieGetLongest(const char *c, const int length) const;
+    result_t getLongest(const char *c,
+                        const int length = INT_MAX) const;
+
+    result_t trieGetLongest(const char *c,
+                            const int length) const;
+
     inline result_t getLongest(const std::string &s) const {
       return getLongest(s.c_str(), (int) s.size());
     }
 
-    result_t get(const char *c, const int length = INT_MAX) const;
+    result_t get(const char *c,
+                 const int length = INT_MAX) const;
+
     inline result_t get(const std::string &s) const {
       return get(s.c_str(), (int) s.size());
     }
@@ -133,7 +153,9 @@ namespace occa {
     bool trieHas(const char c) const;
 
     bool has(const char *c) const;
-    bool has(const char *c, const int size) const;
+    bool has(const char *c,
+             const int size) const;
+
     inline bool has(const std::string &s) const {
       return has(s.c_str(), s.size());
     }

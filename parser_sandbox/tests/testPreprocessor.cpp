@@ -21,19 +21,7 @@
  */
 #include "occa/tools/env.hpp"
 
-#include "./tokenUtils.hpp"
-
-void setStream(const std::string &s) {
-  tu::setStream(s);
-  stream = (stream
-            .map(new occa::lang::preprocessor())
-            .map(new occa::lang::mergeStrings()));
-}
-
-void setToken(const std::string &s) {
-  setStream(s);
-  tu::getToken();
-}
+#include "preprocessor.hpp"
 
 class preprocessorTester {
   occa::lang::preprocessor pp;
