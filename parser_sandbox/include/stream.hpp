@@ -27,49 +27,32 @@
 
 namespace occa {
   template <class output_t> class stream;
+  template <class output_t> class streamSource;
   template <class input_t, class output_t> class streamMap;
 
-  //---[ baseStream ]-------------------
+  //---[ stream ]-----------------------
   template <class output_t>
-  class baseStream {
+  class stream {
     template<typename> friend class stream;
-    template<typename> friend class baseStream;
+    template<typename> friend class stream;
 
   private:
-    baseStream *head;
+    stream *head;
 
   public:
-    baseStream(baseStream *head_ = NULL);
-    baseStream(const baseStream &other);
-    virtual ~baseStream();
+    stream(stream *head_ = NULL);
+    stream(const stream &other);
+    virtual ~stream();
+
+    stream& operator = (const stream &other);
 
     virtual bool isContainer() const;
     virtual bool isEmpty() const;
 
-    virtual baseStream& clone() const;
+    virtual stream& clone() const;
 
     template <class newOutput_t>
     stream<newOutput_t> map(const streamMap<output_t, newOutput_t> &smap) const;
-
-    virtual baseStream& operator >> (output_t &out);
-  };
-  //====================================
-
-
-  //---[ stream ]-----------------------
-  template <class output_t>
-  class stream : public baseStream<output_t> {
-    template<typename> friend class stream;
-    template<typename> friend class baseStream;
-
-  public:
-    stream(baseStream<output_t> *head_ = NULL);
-
-    stream(const stream<output_t> &other);
-    stream(const baseStream<output_t> &other);
-
-    stream& operator = (const stream<output_t> &other);
-    stream& operator = (const baseStream<output_t> &other);
 
     virtual stream& operator >> (output_t &out);
   };
@@ -78,7 +61,7 @@ namespace occa {
 
   //---[ streamSource ]-----------------
   template <class output_t>
-  class streamSource : public baseStream<output_t> {
+  class streamSource : public stream<output_t> {
   public:
     virtual bool isContainer() const;
 
@@ -92,9 +75,9 @@ namespace occa {
   //---[ streamMap ]--------------------
   template <class input_t,
             class output_t>
-  class streamMap : public baseStream<output_t> {
+  class streamMap : public stream<output_t> {
   public:
-    baseStream<input_t> *input;
+    stream<input_t> *input;
 
     streamMap();
 

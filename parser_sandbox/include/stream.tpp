@@ -20,44 +20,57 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  */
 
-#include <iostream>
-
 namespace occa {
-  //---[ baseStream ]-------------------
+  //---[ stream ]-----------------------
   template <class output_t>
-  baseStream<output_t>::baseStream(baseStream *head_) :
+  stream<output_t>::stream(stream *head_) :
     head(head_) {}
 
   template <class output_t>
-  baseStream<output_t>::baseStream(const baseStream &other) :
-    head(other.head) {}
+  stream<output_t>::stream(const stream &other) :
+    head(NULL) {
+    *this = other;
+  }
 
   template <class output_t>
-  baseStream<output_t>::~baseStream() {
+  stream<output_t>::~stream() {
     delete head;
     head = NULL;
   }
 
   template <class output_t>
-  bool baseStream<output_t>::isContainer() const {
+  stream<output_t>& stream<output_t>::operator = (const stream &other) {
+    delete this->head;
+    if (other.isContainer()) {
+      this->head = (other.head
+                    ? &(other.head->clone())
+                    : NULL);
+    } else {
+      this->head = &(other.clone());
+    }
+    return *this;
+  }
+
+  template <class output_t>
+  bool stream<output_t>::isContainer() const {
     return true;
   }
 
   template <class output_t>
-  bool baseStream<output_t>::isEmpty() const {
+  bool stream<output_t>::isEmpty() const {
     return (!head || head->isEmpty());
   }
 
   template <class output_t>
-  baseStream<output_t>& baseStream<output_t>::clone() const {
-    return *(new baseStream(head
-                            ? head->clone()
-                            : NULL));
+  stream<output_t>& stream<output_t>::clone() const {
+    return *(new stream(head
+                        ? head->clone()
+                        : NULL));
   }
 
   template <class output_t>
   template <class newOutput_t>
-  stream<newOutput_t> baseStream<output_t>::map(
+  stream<newOutput_t> stream<output_t>::map(
     const streamMap<output_t, newOutput_t> &smap
   ) const {
     if (isContainer() && !head) {
@@ -77,56 +90,9 @@ namespace occa {
   }
 
   template <class output_t>
-  baseStream<output_t>& baseStream<output_t>::operator >> (output_t &out) {
+  stream<output_t>& stream<output_t>::operator >> (output_t &out) {
     if (head) {
       (*head) >> out;
-    }
-    return *this;
-  }
-  //====================================
-
-
-  //---[ stream ]-----------------------
-  template <class output_t>
-  stream<output_t>::stream(baseStream<output_t> *head_) :
-    baseStream<output_t>(head_
-                         ? head_->clone()
-                         : NULL) {}
-
-  template <class output_t>
-  stream<output_t>::stream(const stream<output_t> &other) {
-    *this = other;
-  }
-
-  template <class output_t>
-  stream<output_t>::stream(const baseStream<output_t> &other) {
-    *this = other;
-  }
-
-  template <class output_t>
-  stream<output_t>& stream<output_t>::operator = (const stream<output_t> &other) {
-    delete this->head;
-    this->head = &(other.head->clone());
-    return *this;
-  }
-
-  template <class output_t>
-  stream<output_t>& stream<output_t>::operator = (const baseStream<output_t> &other) {
-    delete this->head;
-    if (other.isContainer()) {
-      this->head = (other.head
-                    ? &(other.head->clone())
-                    : NULL);
-    } else {
-      this->head = &(other.clone());
-    }
-    return *this;
-  }
-
-  template <class output_t>
-  stream<output_t>& stream<output_t>::operator >> (output_t &out) {
-    if (this->head) {
-      *(this->head) >> out;
     }
     return *this;
   }

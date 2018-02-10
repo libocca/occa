@@ -122,7 +122,7 @@ namespace occa {
       return (*fp.pos == '\0');
     }
 
-    baseStream<token_t*>& tokenizer::clone() const {
+    stream<token_t*>& tokenizer::clone() const {
       return *(new tokenizer(*this));
     }
 

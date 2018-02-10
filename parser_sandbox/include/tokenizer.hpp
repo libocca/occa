@@ -62,7 +62,7 @@ namespace occa {
       void setLine(const int line);
 
       virtual bool isEmpty() const;
-      virtual baseStream<token_t*>& clone() const;
+      virtual stream<token_t*>& clone() const;
       virtual streamSource<token_t*>& operator >> (token_t *&out);
 
       void pushSource(const bool fromInclude,

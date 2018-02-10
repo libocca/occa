@@ -41,7 +41,7 @@ public:
     return occa::stream<output_t>(&clone());
   }
 
-  virtual occa::baseStream<output_t>& clone() const {
+  virtual occa::stream<output_t>& clone() const {
     return *(new vectorStream(values, index));
   }
 
