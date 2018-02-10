@@ -44,7 +44,7 @@ occa::lang::token_t *token = NULL;
 void setStream(const std::string &s) {
   source = s;
   tokenizer = occa::lang::tokenizer(source.c_str());
-  mergeTokenStream = tokenizer.map(new occa::lang::stringTokenMerger());
+  mergeTokenStream = tokenizer.map(occa::lang::stringTokenMerger());
 }
 
 void getToken() {

@@ -32,7 +32,8 @@ namespace occa {
   //---[ baseStream ]-------------------
   template <class output_t>
   class baseStream {
-    friend class stream<output_t>;
+    template<typename> friend class stream;
+    template<typename> friend class baseStream;
 
   private:
     baseStream *head;
@@ -48,7 +49,7 @@ namespace occa {
     virtual baseStream& clone() const;
 
     template <class newOutput_t>
-    stream<newOutput_t> map(streamMap<output_t, newOutput_t> *smap) const;
+    stream<newOutput_t> map(const streamMap<output_t, newOutput_t> &smap) const;
 
     virtual baseStream& operator >> (output_t &out);
   };
@@ -58,9 +59,17 @@ namespace occa {
   //---[ stream ]-----------------------
   template <class output_t>
   class stream : public baseStream<output_t> {
+    template<typename> friend class stream;
+    template<typename> friend class baseStream;
+
   public:
     stream(baseStream<output_t> *head_ = NULL);
-    stream(baseStream<output_t> stream);
+
+    stream(const stream<output_t> &other);
+    stream(const baseStream<output_t> &other);
+
+    stream& operator = (const stream<output_t> &other);
+    stream& operator = (const baseStream<output_t> &other);
 
     virtual stream& operator >> (output_t &out);
   };
@@ -86,6 +95,8 @@ namespace occa {
   class streamMap : public baseStream<output_t> {
   public:
     baseStream<input_t> *input;
+
+    streamMap();
 
     virtual bool isContainer() const;
     bool inputIsEmpty() const;

@@ -105,13 +105,13 @@ int main(const int argc, const char **argv) {
   }
 
   occa::stream<int> s          = vectorStream<int>(values);
-  occa::stream<double> sTimes4 = s.map(new multMap<int, double>(4));
-  occa::stream<double> sTimes1 = sTimes4.map(new multMap<double, double>(0.25));
-  occa::stream<int> s2         = s.map(new duplicateMap<int>());
+  occa::stream<double> sTimes4 = s.map(multMap<int, double>(4));
+  occa::stream<double> sTimes1 = sTimes4.map(multMap<double, double>(0.25));
+  occa::stream<int> s2         = s.map(duplicateMap<int>());
 
   // Test source
   for (int i = 0; i < 3; ++i) {
-    int value;
+    int value = -1;
     s >> value;
     OCCA_ASSERT_EQUAL(i, value);
   }

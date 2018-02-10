@@ -26,6 +26,7 @@
 namespace occa {
   namespace lang {
     stringTokenMerger::stringTokenMerger() {}
+
     stringTokenMerger::stringTokenMerger(const stringTokenMerger &map) :
       cacheMap(map) {}
 
