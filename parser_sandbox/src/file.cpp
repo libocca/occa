@@ -139,18 +139,17 @@ namespace occa {
     }
 
     void fileOrigin::preprint(std::ostream &out) {
-      print(out);
+      print(out, true);
     }
 
     void fileOrigin::postprint(std::ostream &out) {
       const char *lineEnd = position.lineStart;
       lex::skipTo(lineEnd, '\n');
-      out << std::string(position.lineStart,
-                         lineEnd - position.lineStart) << '\n';
-      for (const char *c = position.lineStart; c < lineEnd; ++c) {
-        out << ' ';
-      }
-      out << green("^") << '\n';
+      const std::string line(position.lineStart,
+                             lineEnd - position.lineStart);
+      const std::string space(position.pos - position.lineStart, ' ');
+      out << line << '\n'
+          << space << green("^") << '\n';
     }
 
     void fileOrigin::print(std::ostream &out,

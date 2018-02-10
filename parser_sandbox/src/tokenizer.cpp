@@ -79,16 +79,12 @@ namespace occa {
 
     tokenizer::tokenizer(const char *root) :
       origin(NULL, filePosition(root)),
-      fp(origin.position) {
-      pushSource(true, NULL, origin.position);
-    }
+      fp(origin.position) {}
 
     tokenizer::tokenizer(file_t *file_,
                          const char *root) :
       origin(file_, filePosition(root)),
-      fp(origin.position) {
-      pushSource(true, file_, origin.position);
-    }
+      fp(origin.position) {}
 
     tokenizer::tokenizer(const tokenizer &stream) :
       origin(stream.origin),
@@ -119,7 +115,7 @@ namespace occa {
     }
 
     bool tokenizer::isEmpty() const {
-      return (*fp.pos == '\0');
+      return ((*fp.pos == '\0') && !stack.size());
     }
 
     stream<token_t*>& tokenizer::clone() const {
@@ -127,7 +123,14 @@ namespace occa {
     }
 
     streamSource<token_t*>& tokenizer::operator >> (token_t *&out) {
-      out = getToken();
+      out = NULL;
+      while (!out && !isEmpty()) {
+        out = getToken();
+        if (!out && !isEmpty()) {
+          printError("Not able to create token for:");
+          ++fp.pos;
+        }
+      }
       return *this;
     }
 
@@ -499,6 +502,10 @@ namespace occa {
     }
 
     token_t* tokenizer::getToken() {
+      if ((*fp.pos == '\0') && !stack.size()) {
+        return NULL;
+      }
+
       skipWhitespace();
 
       // Check if file finished
@@ -510,9 +517,6 @@ namespace occa {
       }
       if (finishedSource) {
         return new newlineToken(origin);
-      }
-      if ((*fp.pos == '\0') && !stack.size()) {
-        return NULL;
       }
 
       int type = peek();
@@ -537,8 +541,6 @@ namespace occa {
       if (type & tokenType::string) {
         return getStringToken(tokenType::getEncoding(type));
       }
-
-      printError("Not able to create token for:");
       return NULL;
     }
 

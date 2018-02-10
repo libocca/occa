@@ -522,9 +522,7 @@ void testPrimitiveMethods() {
 void testErrors() {
   setStream("$ test\n\"foo\" \"bar\" ` bar foo");
   std::cerr << "Testing error outputs:\n";
-  getToken();
-  tokenizer.skipTo('\n');
-  getToken();
-  getToken();
-  getToken();
+  for (int i = 0; i < 5; ++i) {
+    getToken();
+  }
 }
