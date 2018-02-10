@@ -84,6 +84,14 @@ namespace occa {
   }
 
   template <class TM>
+  int trie<TM>::size() const {
+    if (isFrozen) {
+      return (int) values.size();
+    }
+    return root.size();
+  }
+
+  template <class TM>
   void trie<TM>::add(const char *c, const TM &value) {
     int valueIndex = root.getValueIndex(c);
     if (valueIndex < 0) {
@@ -116,6 +124,11 @@ namespace occa {
       if (autoFreeze) {
         freeze();
       }
+
+      for (int i = (valueIndex + 1); i < (int) values.size(); ++i) {
+        values[i - 1] = values[i];
+      }
+      values.pop_back();
     }
   }
 

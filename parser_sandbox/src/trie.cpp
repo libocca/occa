@@ -40,13 +40,14 @@ namespace occa {
   trieNode::trieNode(const int valueIndex_) :
     valueIndex(valueIndex_) {}
 
-  void trieNode::add(const char *c, const int valueIndex_) {
-    if (*c == '\0') {
-      valueIndex = valueIndex_;
-      return;
+  int trieNode::size() const {
+    int count = (valueIndex >= 0);
+    cTrieNodeMapIterator it = leaves.begin();
+    while (it != leaves.end()) {
+      count += it->second.size();
+      ++it;
     }
-    trieNode &newNode = leaves[*c];
-    newNode.add(c + 1, valueIndex_);
+    return count;
   }
 
   int trieNode::nodeCount() const {
@@ -63,6 +64,15 @@ namespace occa {
     const int length = (int) strlen(c);
     result_t result = get(c, length);
     return (result.length == length) ? result.valueIndex : -1;
+  }
+
+  void trieNode::add(const char *c, const int valueIndex_) {
+    if (*c == '\0') {
+      valueIndex = valueIndex_;
+      return;
+    }
+    trieNode &newNode = leaves[*c];
+    newNode.add(c + 1, valueIndex_);
   }
 
   trieNode::result_t trieNode::get(const char *c, const int length) const {

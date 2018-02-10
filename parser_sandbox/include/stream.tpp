@@ -150,7 +150,7 @@ namespace occa {
 
   template <class input_t, class output_t>
   cacheMap<input_t, output_t>::cacheMap(
-    const cacheMap<input_t, output_t>::cacheMap &map
+    const cacheMap<input_t, output_t> &map
   ) :
     cache(map.cache) {}
 

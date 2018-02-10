@@ -59,10 +59,12 @@ namespace occa {
     trieNode();
     trieNode(const int valueIndex_);
 
-    void add(const char *c, const int valueIndex_);
-
+    int size() const;
     int nodeCount() const;
+
     int getValueIndex(const char *c) const;
+
+    void add(const char *c, const int valueIndex_);
 
     result_t get(const char *c,
                  const int length) const;
@@ -119,6 +121,7 @@ namespace occa {
 
     void clear();
     bool isEmpty() const;
+    int size() const;
 
     void add(const char *c, const TM &value = TM());
     void add(const std::string &s, const TM &value = TM());

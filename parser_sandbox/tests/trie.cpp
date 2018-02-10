@@ -53,6 +53,8 @@ void testInsert(occa::trie<std::string> &trie) {
   trie.add("boring"  , "boring");
   trie.add("glue"    , "glue");
   trie.add("good"    , "good");
+
+  OCCA_ASSERT_EQUAL(5, trie.size());
 }
 
 void testSearch(occa::trie<std::string> &trie) {
@@ -119,6 +121,8 @@ void testFrozenSearch(occa::trie<std::string> &trie) {
 }
 
 void testRemoval(occa::trie<std::string> &trie) {
+  OCCA_ASSERT_EQUAL(5, trie.size());
+
   OCCA_ASSERT_TRUE(trie.has("blue"));
   trie.remove("blue");
   OCCA_ASSERT_FALSE(trie.has("blue"));
@@ -138,9 +142,14 @@ void testRemoval(occa::trie<std::string> &trie) {
   OCCA_ASSERT_TRUE(trie.has("good"));
   trie.remove("good");
   OCCA_ASSERT_FALSE(trie.has("good"));
+
+  OCCA_ASSERT_EQUAL(0, trie.size());
 }
 
 void testRefreeze(occa::trie<std::string> &trie) {
+  trie.clear();
+  OCCA_ASSERT_EQUAL(0, trie.size());
+
   trie.freeze();
   OCCA_ASSERT_TRUE(trie.isFrozen);
   OCCA_ASSERT_FALSE(trie.has("red"));
@@ -158,4 +167,11 @@ void testRefreeze(occa::trie<std::string> &trie) {
 
   OCCA_ASSERT_EQUAL("red", trie.get("red").value());
   OCCA_ASSERT_EQUAL("red", trie.get("blue").value());
+
+  OCCA_ASSERT_EQUAL(2, trie.size());
+
+  trie.remove("red");
+  trie.remove("blue");
+  OCCA_ASSERT_EQUAL(0, trie.size());
+  OCCA_ASSERT_TRUE(trie.isFrozen);
 }
