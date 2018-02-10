@@ -150,9 +150,9 @@ namespace occa {
 
   template <class input_t, class output_t>
   cacheMap<input_t, output_t>::cacheMap(
-    const std::queue<output_t> &cache_
+    const cacheMap<input_t, output_t>::cacheMap &map
   ) :
-    cache(cache_) {}
+    cache(map.cache) {}
 
   template <class input_t, class output_t>
   bool cacheMap<input_t, output_t>::isEmpty() const {

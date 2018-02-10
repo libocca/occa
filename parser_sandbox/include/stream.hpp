@@ -101,7 +101,7 @@ namespace occa {
     std::queue<output_t> cache;
 
     cacheMap();
-    cacheMap(const std::queue<output_t> &cache_);
+    cacheMap(const cacheMap<input_t, output_t> &map);
 
     virtual bool isEmpty() const;
     virtual streamMap<input_t, output_t>& operator >> (output_t &out);
