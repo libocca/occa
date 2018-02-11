@@ -23,65 +23,125 @@
 #define OCCA_PARSER_MACRO_HEADER2
 
 #include <vector>
-#include <iostream>
-
-#include "stream.hpp"
-#include "printer.hpp"
+#include "token.hpp"
 
 namespace occa {
   namespace lang {
     class token_t;
+    class identifierToken;
     class macroToken;
     class preprocessor;
 
     typedef std::vector<token_t*>  tokenVector;
-    typedef std::vector<macroToken> macroTokenVector_t;
+    typedef std::vector<macroToken*> macroTokenVector_t;
 
-    typedef streamMap<token_t*, token_t*> tokenMap;
-    typedef cacheMap<token_t*, token_t*> tokenCacheMap;
-
+    //---[ Macro Tokens ]---------------
     class macroToken {
     public:
-      token_t *token;
-      int arg;
+      virtual ~macroToken();
 
-      macroToken();
-      macroToken(token_t *token_);
-      macroToken(const int arg_);
+      virtual void expandTokens(tokenVector &newTokens,
+                                token_t *source,
+                                std::vector<tokenVector> &args) = 0;
 
-      inline bool isArg() const {
-        return (arg >= 0);
-      }
+      std::string stringifyTokens(tokenVector &tokens,
+                                  const bool addSpaces);
     };
 
-    class macro_t : public tokenCacheMap,
-                    public errorHandler {
+    class macroValue : public macroToken {
+    public:
+      token_t *token;
+
+      macroValue(token_t *token_);
+      ~macroValue();
+
+      void expandTokens(tokenVector &newTokens,
+                        token_t *source,
+                        std::vector<tokenVector> &args);
+    };
+
+    class macroArgument : public macroToken {
+    public:
+      int arg;
+
+      macroArgument(const int arg_);
+
+      void expandTokens(tokenVector &newTokens,
+                        token_t *source,
+                        std::vector<tokenVector> &args);
+    };
+
+    class macroStringify : public macroToken {
+    public:
+      macroToken *token;
+
+      macroStringify(macroToken *token_);
+      ~macroStringify();
+
+      void expandTokens(tokenVector &newTokens,
+                        token_t *source,
+                        std::vector<tokenVector> &args);
+    };
+
+    class macroConcat : public macroToken {
+    public:
+      std::vector<macroToken*> tokens;
+
+      macroConcat(const std::vector<macroToken*> &tokens_);
+      ~macroConcat();
+
+      void expandTokens(tokenVector &newTokens,
+                        token_t *source,
+                        std::vector<tokenVector> &args);
+    };
+    //==================================
+
+    //---[ Macro ]----------------------
+    class macro_t {
     public:
       static const std::string VA_ARGS;
 
       preprocessor &pp;
-      std::string name;
+      identifierToken &thisToken;
 
       int argCount;
-      mutable bool hasVarArgs;
-
-      std::vector<tokenVector> args;
-      int macroTokenIndex;
+      bool hasVarArgs;
       macroTokenVector_t macroTokens;
 
       macro_t(preprocessor &pp_,
+              identifierToken &thisToken_);
+
+      macro_t(preprocessor &pp_,
               const std::string &name_);
-      macro_t(const macro_t &macro);
+
+      macro_t(const macro_t &other);
+
       virtual ~macro_t();
 
       inline bool isFunctionLike() const {
         return ((argCount >= 0) || hasVarArgs);
       }
 
-      bool loadArgs();
+      inline const std::string& name() const {
+        return thisToken.value;
+      }
 
-      virtual tokenMap& cloneMap() const;
-      virtual token_t* pop();
+      virtual bool expandTokens(identifierToken &source);
+
+      bool loadArgs(identifierToken &source,
+                    std::vector<tokenVector> &args);
+
+      void printError(token_t *token,
+                      const std::string &message);
+
+#if 0
+      static macro_t define(const std::string &name_,
+                            const std::string contents);
+
+      static macro_t define(fileOrigin origin,
+                            const std::string &name_,
+                            const std::string contents);
+#endif
     };
   }
 }

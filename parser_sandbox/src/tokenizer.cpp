@@ -78,12 +78,16 @@ namespace occa {
     }
 
     tokenizer::tokenizer(const char *root) :
-      origin(NULL, filePosition(root)),
+      origin(filePosition(root)),
       fp(origin.position) {}
 
     tokenizer::tokenizer(file_t *file_,
                          const char *root) :
-      origin(file_, filePosition(root)),
+      origin(*file_, filePosition(root)),
+      fp(origin.position) {}
+
+    tokenizer::tokenizer(fileOrigin origin_) :
+      origin(origin_),
       fp(origin.position) {}
 
     tokenizer::tokenizer(const tokenizer &stream) :
@@ -139,7 +143,7 @@ namespace occa {
                                const filePosition &position) {
       sourceStack.push_back(stack);
       origin.push(fromInclude,
-                  file,
+                  *file,
                   position);
     }
 
@@ -664,6 +668,28 @@ namespace occa {
       getString(value);
       return new headerToken(tokenOrigin,
                              false, value);
+    }
+
+    void tokenizer::tokenize(tokenVector &tokens,
+                             fileOrigin origin,
+                             const std::string &source) {
+      // Dummy origin to read source and report
+      //   errors on
+      origin.push(false,
+                  source::string,
+                  source.c_str());
+
+      tokenizer tstream(origin);
+      // Fill tokens
+      token_t *token;
+      while (!tstream.isEmpty()) {
+        tstream >> token;
+        if (token) {
+          tokens.push_back(token);
+        }
+      }
+      // Reset origin since str is temporary
+      origin.pop();
     }
   }
 }

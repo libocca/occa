@@ -60,21 +60,21 @@ namespace occa {
         new counterMacro(*this)  // __COUNTER__
       };
       for (int i = 0; i < specialMacroCount; ++i) {
-        compilerMacros.add(specialMacros[i]->name, specialMacros[i]);
+        compilerMacros.add(specialMacros[i]->name(), specialMacros[i]);
       }
 
       // Alternative representations
-      compilerMacros.add("and"   , new macro_t(*this, "and     &&"));
-      compilerMacros.add("and_eq", new macro_t(*this, "and_eq  &="));
-      compilerMacros.add("bitand", new macro_t(*this, "bitand  &"));
-      compilerMacros.add("bitor" , new macro_t(*this, "bitor   |"));
-      compilerMacros.add("compl" , new macro_t(*this, "compl   ~"));
-      compilerMacros.add("not"   , new macro_t(*this, "not     !"));
-      compilerMacros.add("not_eq", new macro_t(*this, "not_eq  !="));
-      compilerMacros.add("or"    , new macro_t(*this, "or      ||"));
-      compilerMacros.add("or_eq" , new macro_t(*this, "or_eq   |="));
-      compilerMacros.add("xor"   , new macro_t(*this, "xor     ^"));
-      compilerMacros.add("xor_eq", new macro_t(*this, "xor_eq  ^="));
+      // compilerMacros.add("and"   , new macro_t(*this, "and     &&"));
+      // compilerMacros.add("and_eq", new macro_t(*this, "and_eq  &="));
+      // compilerMacros.add("bitand", new macro_t(*this, "bitand  &"));
+      // compilerMacros.add("bitor" , new macro_t(*this, "bitor   |"));
+      // compilerMacros.add("compl" , new macro_t(*this, "compl   ~"));
+      // compilerMacros.add("not"   , new macro_t(*this, "not     !"));
+      // compilerMacros.add("not_eq", new macro_t(*this, "not_eq  !="));
+      // compilerMacros.add("or"    , new macro_t(*this, "or      ||"));
+      // compilerMacros.add("or_eq" , new macro_t(*this, "or_eq   |="));
+      // compilerMacros.add("xor"   , new macro_t(*this, "xor     ^"));
+      // compilerMacros.add("xor_eq", new macro_t(*this, "xor_eq  ^="));
       compilerMacros.autoFreeze = true;
       compilerMacros.freeze();
 
@@ -94,15 +94,15 @@ namespace occa {
       static directiveTrie trie;
       if (trie.isEmpty()) {
         trie.autoFreeze = false;
-        trie.add("if"    , &preprocessor::processIf);
-        trie.add("ifdef" , &preprocessor::processIfdef);
-        trie.add("ifndef", &preprocessor::processIfndef);
-        trie.add("elif"  , &preprocessor::processElif);
-        trie.add("else"  , &preprocessor::processElse);
-        trie.add("endif" , &preprocessor::processEndif);
+        trie.add("if"     , &preprocessor::processIf);
+        trie.add("ifdef"  , &preprocessor::processIfdef);
+        trie.add("ifndef" , &preprocessor::processIfndef);
+        trie.add("elif"   , &preprocessor::processElif);
+        trie.add("else"   , &preprocessor::processElse);
+        trie.add("endif"  , &preprocessor::processEndif);
 
-        trie.add("define", &preprocessor::processDefine);
-        trie.add("undef" , &preprocessor::processUndef);
+        trie.add("define" , &preprocessor::processDefine);
+        trie.add("undef"  , &preprocessor::processUndef);
 
         trie.add("error"  , &preprocessor::processError);
         trie.add("warning", &preprocessor::processWarning);
@@ -462,7 +462,7 @@ namespace occa {
       }
       // TODO
       // macro_t *macro;
-      // sourceMacros.add(macro->name, macro);
+      // sourceMacros.add(macro->name(), macro);
     }
 
     void preprocessor::processUndef(identifierToken &directive) {

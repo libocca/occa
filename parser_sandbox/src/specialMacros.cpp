@@ -33,119 +33,96 @@ namespace occa {
     definedMacro::definedMacro(preprocessor &pp_) :
       macro_t(pp_, "defined") {}
 
-    tokenMap& definedMacro::cloneMap() const {
-      return *(new definedMacro(pp));
-    }
-
-    token_t* definedMacro::pop() {
-      fileOrigin origin; // TODO
-
-      token_t *token = pp.getSourceToken();
-      if (!(token_t::safeType(token) & tokenType::identifier)) {
-        return token;
-      }
-
-      bool isDefined = !!pp.getMacro(token->to<identifierToken>().value);
-      return new primitiveToken(origin,
-                                isDefined,
-                                isDefined ? "true" : "false");
+    bool definedMacro::expandTokens(identifierToken &source) {
+      bool isDefined = !!pp.getMacro(source.value);
+      pp.push(new primitiveToken(source.origin,
+                                 isDefined,
+                                 isDefined ? "true" : "false"));
+      return true;
     }
 
     // __FILE__
     fileMacro::fileMacro(preprocessor &pp_) :
       macro_t(pp_, "__FILE__") {}
 
-    tokenMap& fileMacro::cloneMap() const {
-      return *(new fileMacro(pp));
-    }
-
-    token_t* fileMacro::pop() {
-      fileOrigin origin; // TODO
-      return new stringToken(origin, "file");
+    bool fileMacro::expandTokens(identifierToken &source) {
+      pp.push(new stringToken(source.origin,
+                              source.origin.file->filename));
+      return true;
     }
 
     // __LINE__
     lineMacro::lineMacro(preprocessor &pp_) :
       macro_t(pp_, "__LINE__") {}
 
-    tokenMap& lineMacro::cloneMap() const {
-      return *(new lineMacro(pp));
-    }
-
-    token_t* lineMacro::pop() {
-      fileOrigin origin; // TODO
-      const primitive value = 0;
-      const std::string strValue = occa::toString(value);
-      return new primitiveToken(origin, value, strValue);
+    bool lineMacro::expandTokens(identifierToken &source) {
+      const int line = source.origin.position.line;
+      pp.push(new primitiveToken(source.origin,
+                                 line,
+                                 occa::toString(line)));
+      return true;
     }
 
     // __DATE__
     dateMacro::dateMacro(preprocessor &pp_) :
       macro_t(pp_, "__DATE__") {}
 
-    tokenMap& dateMacro::cloneMap() const {
-      return *(new dateMacro(pp));
-    }
-
-    token_t* dateMacro::pop() {
+    bool dateMacro::expandTokens(identifierToken &source) {
       static char month[12][5] = {
         "Jan", "Feb", "Mar", "Apr", "May", "Jun",
         "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
       };
 
-      fileOrigin origin; // TODO
-
       time_t t = ::time(NULL);
       struct tm *ct = ::localtime(&t);
 
-      if (ct == NULL) {
-        return new stringToken(origin, "??? ?? ????");
-      }
-
       std::stringstream ss;
-      ss << month[ct->tm_mon] << ' ';
-      if (ct->tm_mday < 10) {
-        ss << ' ';
-      }
-      ss << ct->tm_mday << ' '
-         << ct->tm_year + 1900;
 
-      return new stringToken(origin, ss.str());
+      if (ct == NULL) {
+        ss << "??? ?? ????";
+      } else {
+        ss << month[ct->tm_mon] << ' ';
+        if (ct->tm_mday < 10) {
+          ss << ' ';
+        }
+        ss << ct->tm_mday << ' '
+           << ct->tm_year + 1900;
+      }
+
+      pp.push(new stringToken(source.origin,
+                              ss.str()));
+      return true;
     }
 
     // __TIME__
     timeMacro::timeMacro(preprocessor &pp_) :
       macro_t(pp_, "__TIME__") {}
 
-    tokenMap& timeMacro::cloneMap() const {
-      return *(new timeMacro(pp));
-    }
-
-    token_t* timeMacro::pop() {
-      fileOrigin origin; // TODO
-
+    bool timeMacro::expandTokens(identifierToken &source) {
       time_t t = ::time(NULL);
       struct tm *ct = ::localtime(&t);
 
-      if (ct == NULL) {
-        return new stringToken(origin, "??:??:??");
-      }
-
       std::stringstream ss;
-      if (ct->tm_hour < 10) {
-        ss << '0';
+      if (ct == NULL) {
+        ss << "??:??:??";
+      } else {
+        if (ct->tm_hour < 10) {
+          ss << '0';
+        }
+        ss << ct->tm_hour << ':';
+        if (ct->tm_min < 10) {
+          ss << '0';
+        }
+        ss << ct->tm_min << ':';
+        if (ct->tm_sec < 10) {
+          ss << '0';
+        }
+        ss << ct->tm_sec;
       }
-      ss << ct->tm_hour << ':';
-      if (ct->tm_min < 10) {
-        ss << '0';
-      }
-      ss << ct->tm_min << ':';
-      if (ct->tm_sec < 10) {
-        ss << '0';
-      }
-      ss << ct->tm_sec;
 
-      return new stringToken(origin, ss.str());
+      pp.push(new stringToken(source.origin,
+                              ss.str()));
+      return true;
     }
 
     // __COUNTER__
@@ -153,15 +130,12 @@ namespace occa {
       macro_t(pp_, "__COUNTER__"),
       counter(0) {}
 
-    tokenMap& counterMacro::cloneMap() const {
-      return *(new counterMacro(pp));
-    }
-
-    token_t* counterMacro::pop() {
-      fileOrigin origin; // TODO
-      const primitive value = counter++;
-      const std::string strValue = occa::toString(value);
-      return new primitiveToken(origin, value, strValue);
+    bool counterMacro::expandTokens(identifierToken &source) {
+      const int value = counter;
+      pp.push(new primitiveToken(source.origin,
+                                 value,
+                                 occa::toString(value)));
+      return true;
     }
   }
 }

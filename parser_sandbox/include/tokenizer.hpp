@@ -48,8 +48,11 @@ namespace occa {
       std::vector<originVector> sourceStack;
 
       tokenizer(const char *root);
+
       tokenizer(file_t *file_,
                 const char *root);
+
+      tokenizer(fileOrigin origin_);
 
       tokenizer(const tokenizer &stream);
       tokenizer& operator = (const tokenizer &stream);
@@ -104,6 +107,10 @@ namespace occa {
       token_t* getStringToken(const int encoding);
       token_t* getCharToken(const int encoding);
       token_t* getHeaderToken();
+
+      static void tokenize(tokenVector &tokens,
+                           fileOrigin origin,
+                           const std::string &source);
     };
   }
 }

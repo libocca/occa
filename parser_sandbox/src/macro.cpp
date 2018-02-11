@@ -23,66 +23,192 @@
 
 #include "occa/defines.hpp"
 #include "occa/types.hpp"
-#include "occa/tools/lex.hpp"
-#include "occa/tools/string.hpp"
-#include "occa/tools/sys.hpp"
 
+#include "occa/tools/string.hpp"
 #include "macro.hpp"
+#include "tokenizer.hpp"
 #include "preprocessor.hpp"
 
 namespace occa {
   namespace lang {
     const std::string macro_t::VA_ARGS = "__VA_ARGS__";
 
-    macroToken::macroToken() :
-      token(NULL),
-      arg(-1) {}
+    //---[ Macro Tokens ]---------------
+    macroToken::~macroToken() {}
 
-    macroToken::macroToken(token_t *token_) :
-      token(token_),
-      arg(-1) {}
+    std::string macroToken::stringifyTokens(tokenVector &tokens,
+                                            const bool addSpaces) {
+      std::stringstream ss;
+      const int tokenCount = (int) tokens.size();
+      for (int i = 0; i < tokenCount; ++i) {
+        tokens[i]->print(ss);
+        if (addSpaces) {
+          ss << ' ';
+        }
+      }
+      return ss.str();
+    }
 
-    macroToken::macroToken(const int arg_) :
-      token(NULL),
+    macroValue::macroValue(token_t *token_) :
+      token(token_) {}
+
+    macroValue::~macroValue() {
+      delete token;
+    }
+
+    void macroValue::expandTokens(tokenVector &newTokens,
+                                  token_t *source,
+                                  std::vector<tokenVector> &args) {
+      newTokens.push_back(token->clone());
+    }
+
+    macroArgument::macroArgument(const int arg_) :
       arg(arg_) {}
+
+    void macroArgument::expandTokens(tokenVector &newTokens,
+                                     token_t *source,
+                                     std::vector<tokenVector> &args) {
+      tokenVector &argTokens = args[arg];
+      const int tokenCount = (int) argTokens.size();
+      for (int i = 0; i < tokenCount; ++i) {
+        newTokens.push_back(argTokens[i]);
+      }
+    }
+
+    macroStringify::macroStringify(macroToken *token_) :
+      token(token_) {}
+
+    macroStringify::~macroStringify() {
+      delete token;
+    }
+
+    void macroStringify::expandTokens(tokenVector &newTokens,
+                                      token_t *source,
+                                      std::vector<tokenVector> &args) {
+      // Get tokens to stringify
+      token->expandTokens(newTokens, source, args);
+      const std::string rawValue = stringifyTokens(newTokens, true);
+
+      // Escape double quotes
+      std::string value = "\"";
+      value += escape(rawValue, '"');
+      value += '"';
+
+      // Create token
+      newTokens.clear();
+      tokenizer::tokenize(newTokens,
+                          source->origin,
+                          value);
+    }
+
+    macroConcat::macroConcat(const std::vector<macroToken*> &tokens_) :
+      tokens(tokens_) {}
+
+    macroConcat::~macroConcat() {
+      const int macroTokenCount = (int) tokens.size();
+      for (int i = 0; i < macroTokenCount; ++i) {
+        delete tokens[i];
+      }
+      tokens.clear();
+    }
+
+    void macroConcat::expandTokens(tokenVector &newTokens,
+                                   token_t *source,
+                                   std::vector<tokenVector> &args) {
+      // Evaluate all parts
+      const int macroTokenCount = (int) tokens.size();
+      for (int i = 0; i < macroTokenCount; ++i) {
+        tokens[i]->expandTokens(newTokens, source, args);
+      }
+
+      // Combine tokens to create one token identifier
+      const std::string newToken = stringifyTokens(newTokens, false);
+
+      // Create token
+      newTokens.clear();
+      tokenizer::tokenize(newTokens,
+                          source->origin,
+                          newToken);
+      newTokens.clear();
+    }
+    //==================================
+
+    //---[ Macro ]----------------------
+    macro_t::macro_t(preprocessor &pp_,
+                     identifierToken &thisToken_) :
+      pp(pp_),
+      thisToken(thisToken_
+                .clone()
+                ->to<identifierToken>()),
+      argCount(-1),
+      hasVarArgs(false) {}
+
 
     macro_t::macro_t(preprocessor &pp_,
                      const std::string &name_) :
       pp(pp_),
-      name(name_),
+      thisToken(*(new identifierToken(source::builtin, name_))),
       argCount(-1),
-      hasVarArgs(false),
-      macroTokenIndex(0) {}
+      hasVarArgs(false) {}
 
-    macro_t::macro_t(const macro_t &macro) :
-      pp(macro.pp),
-      name(macro.name),
-      argCount(macro.argCount),
-      hasVarArgs(macro.hasVarArgs),
-      macroTokenIndex(macro.macroTokenIndex) {}
+    macro_t::macro_t(const macro_t &other) :
+      pp(other.pp),
+      thisToken(other.thisToken),
+      argCount(other.argCount),
+      hasVarArgs(other.hasVarArgs),
+      macroTokens(other.macroTokens) {}
 
     macro_t::~macro_t() {
+      delete &thisToken;
       const int tokens = (int) macroTokens.size();
       for (int i = 0; i < tokens; ++i) {
-        delete macroTokens[i].token;
+        delete macroTokens[i];
       }
       macroTokens.clear();
     }
 
-    bool macro_t::loadArgs() {
-      macroTokenIndex = 0;
+    bool macro_t::expandTokens(identifierToken &source) {
+      // Assumes ( has been checked
+      std::vector<tokenVector> args;
+      bool succeeded = loadArgs(source, args);
+      if (!succeeded) {
+        return false;
+      }
+      // Expand tokens
+      tokenVector newTokens;
+      const int macroTokenCount = (int) macroTokens.size();
+      for (int i = 0; i < macroTokenCount; ++i) {
+        macroTokens[i]->expandTokens(newTokens,
+                                     &source,
+                                     args);
+      }
+      // Push new tokens
+      const int newTokenCount = (int) newTokens.size();
+      for (int i = 0; i < newTokenCount; ++i) {
+        pp.push(newTokens[i]);
+      }
+      return true;
+    }
 
+    bool macro_t::loadArgs(identifierToken &source,
+                           std::vector<tokenVector> &args) {
       if (!isFunctionLike()) {
         return true;
       }
 
-      // Assumes ( has been checked
+      // Clear args
+      args.clear();
+      for (int i = 0; i < argCount; ++i) {
+        args.push_back(tokenVector());
+      }
+
       int argIndex = 0;
-      token_t *token;
+      token_t *token = NULL;
       while (true) {
         pp >> token;
         if (!token) {
-          printError("Not able to find closing )");
+          printError(&source,
+                     "Not able to find closing )");
           break;
         }
         if (token->type() != tokenType::op) {
@@ -90,58 +216,64 @@ namespace occa {
           args[argIndex].push_back(token);
           continue;
         }
-        opType_t opType = token->to<operatorToken>().op.opType;
+
         // Check for closing )
+        opType_t opType = token->to<operatorToken>().op.opType;
         if (opType == operatorType::parenthesesEnd) {
           return true;
         }
+
         // Check for comma
         if (opType != operatorType::comma) {
           // Add token to current arg
           args[argIndex].push_back(token);
         }
-        // Load next argument
+
+        // Load next argument and check
         ++argIndex;
-        // Make sure we haven't passed arg count
+        args.push_back(tokenVector());
         if (!hasVarArgs && (argIndex >= argCount)) {
           if (argCount) {
             std::stringstream ss;
             ss << "Too many arguments, expected "
                << argCount << " argument(s)";
-            printError(ss.str());
+            printError(token, ss.str());
           } else {
-            printError("Macro does not take arguments");
+            printError(token,
+                       "Macro does not take arguments");
           }
           break;
         }
-        args.push_back(tokenVector());
       }
       return false;
     }
 
-    tokenMap& macro_t::cloneMap() const {
-      return *(new macro_t(*this));
+    void macro_t::printError(token_t *token,
+                             const std::string &message) {
+      fileOrigin fp = thisToken.origin;
+      fp.push(false,
+              *(token->origin.file),
+              token->origin.position);
+      fp.printError(message);
     }
 
-    token_t* macro_t::pop() {
-      if (macroTokenIndex >= (int) macroTokens.size()) {
-        return NULL;
-      }
-
-      macroToken token = macroTokens[macroTokenIndex++];
-      if (token.arg < 0) {
-        return token.token->clone();
-      }
-
-      tokenVector &argTokens = args[token.arg];
-      const int argTokenCount = (int) argTokens.size();
-      if (!argTokenCount) {
-        return NULL;
-      }
-      for (int i = 0; i < (argTokenCount - 1); ++i) {
-        push(argTokens[i]);
-      }
-      return argTokens[argTokenCount - 1];
+#if 0
+    macro_t macro_t::define(const std::string &name_,
+                            const std::string &contents) {
+      fileOrigin origin(source::builtin,
+                        contents.c_str());
+      return define(origin, name_, contents);
     }
+
+    macro_t macro_t::define(fileOrigin origin,
+                            const std::string &name_,
+                            const std::string &contents) {
+      tokenVector tokens;
+      tokenizer::tokenize(tokens,
+                          origin,
+                          contents);
+    }
+#endif
+    //==================================
   }
 }

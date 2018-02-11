@@ -30,40 +30,35 @@ namespace occa {
     class definedMacro : public macro_t {
     public:
       definedMacro(preprocessor &pp_);
-      virtual tokenMap& cloneMap() const;
-      virtual token_t* pop();
+      virtual bool expandTokens(identifierToken &source);
     };
 
     // __FILE__
     class fileMacro : public macro_t {
     public:
       fileMacro(preprocessor &pp_);
-      virtual tokenMap& cloneMap() const;
-      virtual token_t* pop();
+      virtual bool expandTokens(identifierToken &source);
     };
 
     // __LINE__
     class lineMacro : public macro_t {
     public:
       lineMacro(preprocessor &pp_);
-      virtual tokenMap& cloneMap() const;
-      virtual token_t* pop();
+      virtual bool expandTokens(identifierToken &source);
     };
 
     // __DATE__
     class dateMacro : public macro_t {
     public:
       dateMacro(preprocessor &pp_);
-      virtual tokenMap& cloneMap() const;
-      virtual token_t* pop();
+      virtual bool expandTokens(identifierToken &source);
     };
 
     // __TIME__
     class timeMacro : public macro_t {
     public:
       timeMacro(preprocessor &pp_);
-      virtual tokenMap& cloneMap() const;
-      virtual token_t* pop();
+      virtual bool expandTokens(identifierToken &source);
     };
 
     // __COUNTER__
@@ -72,8 +67,7 @@ namespace occa {
       mutable int counter;
 
       counterMacro(preprocessor &pp_);
-      virtual tokenMap& cloneMap() const;
-      virtual token_t* pop();
+      virtual bool expandTokens(identifierToken &source);
     };
   }
 }

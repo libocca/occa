@@ -33,6 +33,24 @@ namespace occa {
       filename(io::basename(filename_)),
       content(io::read(filename_)) {}
 
+    file_t::file_t(const std::string &dirname_,
+                   const std::string &filename_,
+                   const std::string &content_) :
+      dirname(dirname_),
+      filename(filename_),
+      content(content_) {
+      // Local file_t object doesn't require
+      //   freeing
+      addRef();
+    }
+
+
+    namespace source {
+      file_t builtin("", "(builtin)", "");
+      file_t string("" , "(source)" , "");
+    }
+
+    //---[ File Origin ]----------------
     filePosition::filePosition() :
       line(1),
       lineStart(NULL),
@@ -54,22 +72,40 @@ namespace occa {
       line(other.line),
       lineStart(other.lineStart),
       pos(other.pos) {}
+    //==================================
 
+    //---[ File Origin ]----------------
     fileOrigin::fileOrigin() :
       fromInclude(true),
-      file(NULL),
+      file(&source::string),
       position(),
-      up(NULL) {}
+      up(NULL) {
+      file->addRef();
+    }
 
-    fileOrigin::fileOrigin(file_t *file_,
-                           const filePosition &position_) :
+    fileOrigin::fileOrigin(file_t &file_) :
       fromInclude(true),
-      file(file_),
+      file(&file_),
+      position(file_.content.c_str()),
+      up(NULL) {
+      file->addRef();
+    }
+
+    fileOrigin::fileOrigin(const filePosition &position_) :
+      fromInclude(true),
+      file(&source::string),
       position(position_),
       up(NULL) {
-      if (file) {
-        file->addRef();
-      }
+      file->addRef();
+    }
+
+    fileOrigin::fileOrigin(file_t &file_,
+                           const filePosition &position_) :
+      fromInclude(true),
+      file(&file_),
+      position(position_),
+      up(NULL) {
+      file->addRef();
     }
 
     fileOrigin::fileOrigin(const fileOrigin &other) :
@@ -77,40 +113,23 @@ namespace occa {
       file(other.file),
       position(other.position),
       up(other.up) {
-      if (file) {
-        file->addRef();
-      }
+      file->addRef();
       if (up) {
         up->addRef();
       }
     }
 
     fileOrigin& fileOrigin::operator = (const fileOrigin &other) {
-      file_t *oldFile   = file;
-      fileOrigin *oldUp = up;
       fromInclude = other.fromInclude;
       position    = other.position;
-      file        = other.file;
-      up          = other.up;
-      if (file) {
-        file->addRef();
-      }
-      if (up) {
-        up->addRef();
-      }
-      // Remove at the end in case we're computing
-      //   *this = *up
-      if (oldFile) {
-        oldFile->removeRef();
-      }
-      if (oldUp) {
-        oldUp->removeRef();
-      }
+
+      setFile(*other.file);
+      setUp(other.up);
       return *this;
     }
 
     fileOrigin::~fileOrigin() {
-      if (file && !file->removeRef()) {
+      if (!file->removeRef()) {
         delete file;
       }
       if (up && !up->removeRef()) {
@@ -118,24 +137,43 @@ namespace occa {
       }
     }
 
-    void fileOrigin::push(const bool fromInclude_,
-                          file_t *file_,
-                          const filePosition &position_) {
-      fileOrigin &newUp = *(new fileOrigin(*this));
-      newUp.fromInclude = fromInclude_;
-      newUp.addRef();
-      if (up) {
-        up->removeRef();
+    void fileOrigin::setFile(file_t &file_) {
+      file_.addRef();
+      if (!file->removeRef()) {
+        delete file;
       }
-      up = &newUp;
-      file = file_;
+      file = &file_;
+    }
+
+    void fileOrigin::setUp(fileOrigin *up_) {
+      if (up_) {
+        up_->addRef();
+      }
+      if (up && !up->removeRef()) {
+        delete up;
+      }
+      up = up_;
+    }
+
+    void fileOrigin::push(const bool fromInclude_,
+                          file_t &file_,
+                          const filePosition &position_) {
+      setFile(file_);
+
+      setUp(new fileOrigin(*this));
+      up->fromInclude = fromInclude_;
+
       position = position_;
     }
 
     void fileOrigin::pop() {
       OCCA_ERROR("Unable to call fileOrigin::pop()",
                  up != NULL);
-      *this = *up;
+
+      fromInclude = up->fromInclude;
+      position    = up->position;
+      setFile(*(up->file));
+      setUp(up->up);
     }
 
     void fileOrigin::preprint(std::ostream &out) {
@@ -158,14 +196,10 @@ namespace occa {
         up->print(out, false);
       }
       // Print file location
-      if (file) {
-        out << blue(file->filename);
-      } else {
-        out << blue("(source)");
-      }
-      out << ':' << position.line
-           << ':' << (position.pos - position.lineStart + 1)
-           << ": ";
+      out << blue(file->filename)
+          << ':' << position.line
+          << ':' << (position.pos - position.lineStart + 1)
+          << ": ";
       if (!root) {
         if (fromInclude) {
           out << "Included file:\n";
@@ -177,5 +211,6 @@ namespace occa {
         }
       }
     }
+    //==================================
   }
 }

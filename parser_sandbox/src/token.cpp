@@ -169,18 +169,24 @@ namespace occa {
 
     token_t::~token_t() {}
 
-    void token_t::preprint(std::ostream &out) {
-      origin.preprint(out);
-    }
-
     int token_t::safeType(token_t *token) {
       return (token
               ? token->type()
               : tokenType::none);
     }
 
+    void token_t::preprint(std::ostream &out) {
+      origin.preprint(out);
+    }
+
     void token_t::postprint(std::ostream &out) {
       origin.postprint(out);
+    }
+
+    std::string token_t::str() const {
+      std::stringstream ss;
+      print(ss);
+      return ss.str();
     }
 
     newlineToken::newlineToken(const fileOrigin &origin_) :

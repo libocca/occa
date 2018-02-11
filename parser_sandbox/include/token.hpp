@@ -88,6 +88,7 @@ namespace occa {
       fileOrigin origin;
 
       token_t(const fileOrigin &origin_);
+
       virtual ~token_t();
 
       template <class TM>
@@ -121,11 +122,14 @@ namespace occa {
 
       void preprint(std::ostream &out);
       void postprint(std::ostream &out);
+
+      std::string str() const;
     };
 
     class newlineToken : public token_t {
     public:
       newlineToken(const fileOrigin &origin_);
+
       virtual ~newlineToken();
 
       virtual int type() const;
@@ -141,6 +145,7 @@ namespace occa {
 
       identifierToken(const fileOrigin &origin_,
                       const std::string &value_);
+
       virtual ~identifierToken();
 
       virtual int type() const;
@@ -174,6 +179,7 @@ namespace occa {
 
       operatorToken(const fileOrigin &origin_,
                     const operator_t &op_);
+
       virtual ~operatorToken();
 
       virtual int type() const;
@@ -193,6 +199,7 @@ namespace occa {
                 int encoding_,
                 const std::string &value_,
                 const std::string &udf_);
+
       virtual ~charToken();
 
       virtual int type() const;
@@ -210,10 +217,12 @@ namespace occa {
 
       stringToken(const fileOrigin &origin_,
                   const std::string &value_);
+
       stringToken(const fileOrigin &origin_,
                   int encoding_,
                   const std::string &value_,
                   const std::string &udf_);
+
       virtual ~stringToken();
 
       virtual int type() const;
@@ -233,6 +242,7 @@ namespace occa {
       headerToken(const fileOrigin &origin_,
                   const bool systemHeader_,
                   const std::string &value_);
+
       virtual ~headerToken();
 
       virtual int type() const;

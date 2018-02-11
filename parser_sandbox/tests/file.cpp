@@ -33,18 +33,18 @@ int main(const int argc, const char **argv) {
                                            c_line,
                                            c_line + foo);
   orig.push(true,
-            NULL,
+            occa::lang::source::string,
             occa::lang::filePosition(20,
                                      c_line,
                                      c_line + bar));
   orig2 = orig;
   orig.push(false,
-            NULL,
+            occa::lang::source::string,
             occa::lang::filePosition(30,
                                      c_line,
                                      c_line + foo));
   orig2.push(false,
-             NULL,
+             occa::lang::source::string,
              occa::lang::filePosition(40,
                                       c_line,
                                       c_line + bar));

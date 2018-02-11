@@ -35,7 +35,16 @@ namespace occa {
       std::string content;
 
       file_t(const std::string &filename_);
+
+      file_t(const std::string &dirname_,
+             const std::string &filename_,
+             const std::string &content_);
     };
+
+    namespace source {
+      extern file_t builtin;
+      extern file_t string;
+    }
 
     class filePosition {
     public:
@@ -64,7 +73,11 @@ namespace occa {
 
       fileOrigin();
 
-      fileOrigin(file_t *file_,
+      fileOrigin(file_t &file_);
+
+      fileOrigin(const filePosition &position_);
+
+      fileOrigin(file_t &file_,
                  const filePosition &position_);
 
       fileOrigin(const fileOrigin &other);
@@ -73,8 +86,11 @@ namespace occa {
 
       virtual ~fileOrigin();
 
+      void setFile(file_t &file_);
+      void setUp(fileOrigin *up_);
+
       void push(const bool fromInclude_,
-                file_t *file_,
+                file_t &file_,
                 const filePosition &position_);
 
       void pop();

@@ -40,10 +40,14 @@ namespace occa {
     const char *cstr = str.c_str();
     std::string ret;
     for (int i = 0; i < chars; ++i) {
-      if (cstr[i] == c) {
-        ret += escapeChar;
+      if (cstr[i] != c) {
+        ret += cstr[i];
+      } else {
+        if (i && (cstr[i - 1] == c)) {
+          ret += escapeChar;
+        }
+        ret += c;
       }
-      ret += cstr[i];
     }
     return ret;
   }
@@ -55,7 +59,8 @@ namespace occa {
     const int chars = (int) str.size();
     const char *cstr = str.c_str();
     for (int i = 0; i < chars; ++i) {
-      if (cstr[i] == escapeChar && cstr[i + 1] == c) {
+      if ((cstr[i] == escapeChar) &&
+          (cstr[i + 1] == c)) {
         continue;
       }
       ret += cstr[i];
