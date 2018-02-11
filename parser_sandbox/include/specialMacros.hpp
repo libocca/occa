@@ -26,6 +26,14 @@
 
 namespace occa {
   namespace lang {
+    // defined()
+    class definedMacro : public macro_t {
+    public:
+      definedMacro(preprocessor &pp_);
+      virtual tokenMap& cloneMap() const;
+      virtual token_t* pop();
+    };
+
     // __FILE__
     class fileMacro : public macro_t {
     public:

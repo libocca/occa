@@ -20,11 +20,46 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  */
 
-#include "stringTokenMerger.hpp"
 #include "token.hpp"
+#include "processingStages.hpp"
 
 namespace occa {
   namespace lang {
+    //---[ Newlines ]-------------------
+    newlineTokenMerger::newlineTokenMerger() {}
+
+    newlineTokenMerger::newlineTokenMerger(const newlineTokenMerger &map) :
+      cacheMap(map) {}
+
+    tokenMap& newlineTokenMerger::cloneMap() const {
+      return *(new newlineTokenMerger(*this));
+    }
+
+    token_t* newlineTokenMerger::pop() {
+      token_t *token;
+      *(this->input) >> token;
+
+      // Not a string token
+      if (!token ||
+          !(token->type() & tokenType::newline)) {
+        return token;
+      }
+      push(token);
+      while (true) {
+        *(this->input) >> token;
+        if (token &&
+            (token->type() & tokenType::newline)) {
+          delete token;
+          token = NULL;
+          continue;
+        }
+        break;
+      }
+      return token;
+    }
+    //==================================
+
+    //---[ Strings ]--------------------
     stringTokenMerger::stringTokenMerger() {}
 
     stringTokenMerger::stringTokenMerger(const stringTokenMerger &map) :
@@ -66,5 +101,6 @@ namespace occa {
       }
       return &strToken;
     }
+    //==================================
   }
 }

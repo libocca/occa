@@ -85,36 +85,36 @@ namespace occa {
           printError("Not able to find closing )");
           break;
         }
-        if (token->type() == tokenType::op) {
-          opType_t opType = token->to<operatorToken>().op.opType;
-          // Check for closing )
-          if (opType == operatorType::parenthesesEnd) {
-            return true;
-          }
-          // Check for comma
-          if (opType == operatorType::comma) {
-            ++argIndex;
-            // Make sure we haven't passed arg count
-            if (!hasVarArgs && (argIndex >= argCount)) {
-              std::stringstream ss;
-              if (argCount) {
-                ss << "Too many arguments, expected "
-                   << argCount << " argument";
-                if (argCount > 1) {
-                  ss << 's';
-                }
-              } else {
-                ss << "Macro does not take arguments";
-              }
-              printError(ss.str());
-              break;
-            }
-            args.push_back(tokenVector());
-            continue;
-          }
+        if (token->type() != tokenType::op) {
+          // Add token to current arg
+          args[argIndex].push_back(token);
+          continue;
         }
-        // Add token to current arg
-        args[argIndex].push_back(token);
+        opType_t opType = token->to<operatorToken>().op.opType;
+        // Check for closing )
+        if (opType == operatorType::parenthesesEnd) {
+          return true;
+        }
+        // Check for comma
+        if (opType != operatorType::comma) {
+          // Add token to current arg
+          args[argIndex].push_back(token);
+        }
+        // Load next argument
+        ++argIndex;
+        // Make sure we haven't passed arg count
+        if (!hasVarArgs && (argIndex >= argCount)) {
+          if (argCount) {
+            std::stringstream ss;
+            ss << "Too many arguments, expected "
+               << argCount << " argument(s)";
+            printError(ss.str());
+          } else {
+            printError("Macro does not take arguments");
+          }
+          break;
+        }
+        args.push_back(tokenVector());
       }
       return false;
     }

@@ -36,12 +36,6 @@ namespace occa {
     namespace ppStatus {
       const int reading    = (1 << 0);
       const int ignoring   = (1 << 1);
-
-      const int readingToIgnoring = (~ignoring |
-                                     reading);
-      const int ignoringToReading = (~reading |
-                                     ignoring);
-
       const int foundIf    = (1 << 2);
       const int foundElse  = (1 << 3);
       const int finishedIf = (1 << 4);
@@ -55,15 +49,17 @@ namespace occa {
       // Always start off as if we passed a newline
       incrementNewline();
 
+      const int specialMacroCount = 6;
       compilerMacros.autoFreeze = false;
-      macro_t *specialMacros[5] = {
-        new fileMacro(*this),   // __FILE__
-        new lineMacro(*this),   // __LINE__
-        new dateMacro(*this),   // __DATE__
-        new timeMacro(*this),   // __TIME__
-        new counterMacro(*this) // __COUNTER__
+      macro_t *specialMacros[specialMacroCount] = {
+        new definedMacro(*this), // defined()
+        new fileMacro(*this),    // __FILE__
+        new lineMacro(*this),    // __LINE__
+        new dateMacro(*this),    // __DATE__
+        new timeMacro(*this),    // __TIME__
+        new counterMacro(*this)  // __COUNTER__
       };
-      for (int i = 0; i < 5; ++i) {
+      for (int i = 0; i < specialMacroCount; ++i) {
         compilerMacros.add(specialMacros[i]->name, specialMacros[i]);
       }
 
@@ -195,6 +191,13 @@ namespace occa {
         if (!token) {
           return NULL;
         }
+        std::cout << "1. [";
+        token->print(std::cout);
+        std::cout << "] ("
+                  << ((status & ppStatus::ignoring)
+                      ? "ignoring"
+                      : "reading")
+                  << ")\n";
 
         const int tokenType = token->type();
         if (tokenType & tokenType::identifier) {
@@ -206,6 +209,15 @@ namespace occa {
           push(token);
           token = NULL;
         }
+        std::cout << "2. [";
+        if (token) {
+          token->print(std::cout);
+        }
+        std::cout << "] ("
+                  << ((status & ppStatus::ignoring)
+                      ? "ignoring"
+                      : "reading")
+                  << ")\n";
 
         // Ignore tokens inside disabled #if/#elif/#else regions
         if (status & ppStatus::ignoring) {
@@ -367,9 +379,11 @@ namespace occa {
       // Keep the ignoring status if ifdef found an error
       if (oldErrors == errors) {
         if (status & ppStatus::reading) {
-          status &= ppStatus::readingToIgnoring;
+          status &= ~ppStatus::reading;
+          status |= ppStatus::ignoring;
         } else {
-          status &= ppStatus::ignoringToReading;
+          status &= ~ppStatus::ignoring;
+          status |= ppStatus::reading;
         }
       }
     }
@@ -383,8 +397,9 @@ namespace occa {
       else if (status & ppStatus::foundElse) {
         errorOn(&directive,
                 "#elif found after an #else directive");
-        status &= ppStatus::readingToIgnoring;
-        status |= ppStatus::finishedIf;
+        status &= ~ppStatus::reading;
+        status |= (ppStatus::ignoring |
+                   ppStatus::finishedIf);
         skipToNewline();
       }
       else if (status & ppStatus::finishedIf) {
@@ -406,11 +421,14 @@ namespace occa {
       else if (status & ppStatus::foundElse) {
         errorOn(&directive,
                 "Two #else directives found for the same #if");
-        status &= ppStatus::readingToIgnoring;
-        status |= ppStatus::finishedIf;
+        status &= ~ppStatus::reading;
+        status |= (ppStatus::ignoring |
+                   ppStatus::finishedIf);
       }
       else if (!(status & ppStatus::finishedIf)) {
-        status &= ppStatus::ignoringToReading;
+        status &= ~ppStatus::ignoring;
+        status |= (ppStatus::reading |
+                   ppStatus::finishedIf);
       }
       status |= ppStatus::foundElse;
       skipToNewline();
@@ -430,9 +448,7 @@ namespace occa {
 
     void preprocessor::processDefine(identifierToken &directive) {
       token_t *token = getSourceToken();
-      if (!token
-          || (token->type() != tokenType::identifier)
-          || passedNewline) {
+      if (token_t::safeType(token) != tokenType::identifier) {
         if (!token || passedNewline) {
           incrementNewline();
           errorOn(&directive,
@@ -452,7 +468,7 @@ namespace occa {
     void preprocessor::processUndef(identifierToken &directive) {
       token_t *token = getSourceToken();
       const int tokenType = token_t::safeType(token);
-      if (token->type() != tokenType::identifier) {
+      if (tokenType != tokenType::identifier) {
         if (tokenType & (tokenType::none |
                          tokenType::newline)) {
           incrementNewline();

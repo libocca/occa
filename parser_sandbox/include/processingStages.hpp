@@ -19,8 +19,8 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  */
-#ifndef OCCA_PARSER_MERGESTRINGSTOKEN_HEADER2
-#define OCCA_PARSER_MERGESTRINGSTOKEN_HEADER2
+#ifndef OCCA_PARSER_PROCESSINGSTAGES_HEADER2
+#define OCCA_PARSER_PROCESSINGSTAGES_HEADER2
 
 #include "stream.hpp"
 
@@ -30,6 +30,15 @@ namespace occa {
 
     typedef streamMap<token_t*, token_t*> tokenMap;
     typedef cacheMap<token_t*, token_t*> tokenCacheMap;
+
+    class newlineTokenMerger : public tokenCacheMap {
+    public:
+      newlineTokenMerger();
+      newlineTokenMerger(const newlineTokenMerger &map);
+
+      virtual tokenMap& cloneMap() const;
+      virtual token_t* pop();
+    };
 
     class stringTokenMerger : public tokenCacheMap {
     public:

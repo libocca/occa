@@ -24,7 +24,7 @@
 
 #include "token.hpp"
 #include "tokenizer.hpp"
-#include "stringTokenMerger.hpp"
+#include "processingStages.hpp"
 
 void testSkipMethods();
 void testPushPop();

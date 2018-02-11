@@ -29,6 +29,28 @@
 
 namespace occa {
   namespace lang {
+    // defined()
+    definedMacro::definedMacro(preprocessor &pp_) :
+      macro_t(pp_, "defined") {}
+
+    tokenMap& definedMacro::cloneMap() const {
+      return *(new definedMacro(pp));
+    }
+
+    token_t* definedMacro::pop() {
+      fileOrigin origin; // TODO
+
+      token_t *token = pp.getSourceToken();
+      if (!(token_t::safeType(token) & tokenType::identifier)) {
+        return token;
+      }
+
+      bool isDefined = !!pp.getMacro(token->to<identifierToken>().value);
+      return new primitiveToken(origin,
+                                isDefined,
+                                isDefined ? "true" : "false");
+    }
+
     // __FILE__
     fileMacro::fileMacro(preprocessor &pp_) :
       macro_t(pp_, "__FILE__") {}
