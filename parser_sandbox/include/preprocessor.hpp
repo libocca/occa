@@ -40,6 +40,14 @@ namespace occa {
     typedef streamMap<token_t*, token_t*> tokenMap;
     typedef cacheMap<token_t*, token_t*> tokenCacheMap;
 
+    namespace ppStatus {
+      extern const int reading;
+      extern const int ignoring;
+      extern const int foundIf;
+      extern const int foundElse;
+      extern const int finishedIf;
+    }
+
     class preprocessor : public tokenCacheMap,
                          public errorHandler {
     public:
@@ -48,9 +56,10 @@ namespace occa {
 
       //---[ Status ]-------------------
       std::vector<int> statusStack;
-      int currentStatus;
+      int status;
 
-      bool passedNewline;
+      int passedNewline;
+      token_t *errorOnToken;
       //==================================
 
       //---[ Macros and Directives ]------
@@ -63,6 +72,13 @@ namespace occa {
       preprocessor();
       preprocessor(const preprocessor &pp);
 
+      virtual void preprint(std::ostream &out);
+
+      virtual void postprint(std::ostream &out);
+
+      void errorOn(token_t *token,
+                   const std::string &message);
+
       virtual tokenMap& cloneMap() const;
       virtual token_t* pop();
 
@@ -70,8 +86,11 @@ namespace occa {
 
       void addExpandedToken(token_t *token);
 
-      void pushStatus(const int status);
+      void pushStatus(const int status_);
       int popStatus();
+
+      void incrementNewline();
+      void decrementNewline();
 
       macro_t* getMacro(const std::string &name);
       macro_t* getSourceMacro();

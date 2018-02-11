@@ -81,20 +81,20 @@ public:
   }
 };
 
-template <class output_t>
-class duplicateMap : public occa::cacheMap<output_t, output_t> {
+template <class input_t, class output_t>
+class addHalfMap : public occa::cacheMap<input_t, output_t> {
 public:
-  duplicateMap() {}
+  addHalfMap() {}
 
-  virtual occa::streamMap<output_t, output_t>& cloneMap() const {
-    return *(new duplicateMap());
+  virtual occa::streamMap<input_t, output_t>& cloneMap() const {
+    return *(new addHalfMap());
   }
 
   virtual output_t pop() {
-    output_t value;
+    input_t value;
     *(this->input) >> value;
     this->push(value);
-    return value;
+    return value + 0.5;
   }
 };
 
@@ -107,7 +107,7 @@ int main(const int argc, const char **argv) {
   occa::stream<int> s          = vectorStream<int>(values);
   occa::stream<double> sTimes4 = s.map(multMap<int, double>(4));
   occa::stream<double> sTimes1 = sTimes4.map(multMap<double, double>(0.25));
-  occa::stream<int> s2         = s.map(duplicateMap<int>());
+  occa::stream<double> s2      = s.map(addHalfMap<int, double>());
 
   // Test source
   for (int i = 0; i < 3; ++i) {
@@ -138,9 +138,9 @@ int main(const int argc, const char **argv) {
 
   // Test cache map
   for (int i = 0; i < 6; ++i) {
-    int value;
+    double value;
     s2 >> value;
-    OCCA_ASSERT_EQUAL(i / 2, value);
+    OCCA_ASSERT_EQUAL(i * 0.5, value);
   }
   OCCA_ASSERT_TRUE(s2.isEmpty());
 

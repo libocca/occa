@@ -36,6 +36,7 @@ void testStringMerging();
 void testPrimitiveMethods();
 void testErrors();
 
+//---[ Util Methods ]-------------------
 std::string source;
 occa::lang::tokenizer tokenizer(NULL);
 occa::stream<occa::lang::token_t*> mergeTokenStream;
@@ -71,7 +72,69 @@ void setHeaderToken(const std::string &s) {
 int tokenType() {
   return token ? token->type() : 0;
 }
+//======================================
 
+//---[ Macro Util Methods ]-------------
+#define testStringPeek(s, encoding_)                      \
+  setStream(s);                                           \
+  OCCA_ASSERT_EQUAL_BINARY(                               \
+    (encoding_ << occa::lang::tokenType::encodingShift) | \
+    occa::lang::tokenType::string,                        \
+    tokenizer.peek())
+
+#define testCharPeek(s, encoding_)                        \
+  setStream(s);                                           \
+  OCCA_ASSERT_EQUAL_BINARY(                               \
+    (encoding_ << occa::lang::tokenType::encodingShift) | \
+    occa::lang::tokenType::char_,                         \
+    tokenizer.peek())
+
+#define testStringToken(s, encoding_)                                   \
+  setToken(s);                                                          \
+  OCCA_ASSERT_EQUAL_BINARY(occa::lang::tokenType::string,               \
+                           tokenType())                                 \
+  OCCA_ASSERT_EQUAL_BINARY(encoding_,                                   \
+                           token->to<occa::lang::stringToken>().encoding)
+
+#define testCharToken(s, encoding_)                                     \
+  setToken(s);                                                          \
+  OCCA_ASSERT_EQUAL_BINARY(occa::lang::tokenType::char_,                \
+                           tokenType())                                 \
+  OCCA_ASSERT_EQUAL_BINARY(encoding_,                                   \
+                           token->to<occa::lang::charToken>().encoding)
+
+#define testStringValue(s, value_)              \
+  setStream(s);                                 \
+  getToken();                                   \
+  testNextStringValue(value_)
+
+#define testStringMergeValue(s, value_)         \
+  setStream(s);                                 \
+  getStringMergeToken();                        \
+  testNextStringValue(value_)
+
+#define testNextStringValue(value_)             \
+  OCCA_ASSERT_EQUAL_BINARY(                     \
+    occa::lang::tokenType::string,              \
+    tokenType()                                 \
+  );                                            \
+  OCCA_ASSERT_EQUAL(                            \
+    value_,                                     \
+    token->to<occa::lang::stringToken>().value  \
+  )
+
+#define testPrimitiveToken(type_, value_)                 \
+  getToken();                                             \
+  OCCA_ASSERT_EQUAL_BINARY(                               \
+    occa::lang::tokenType::primitive,                     \
+    tokenType());                                         \
+  OCCA_ASSERT_EQUAL(                                      \
+    value_,                                               \
+    (type_) token->to<occa::lang::primitiveToken>().value \
+  )
+//======================================
+
+//---[ Tests ]--------------------------
 int main(const int argc, const char **argv) {
   testSkipMethods();
   testPushPop();
@@ -136,20 +199,6 @@ void testPushPop() {
   OCCA_ASSERT_EQUAL(c + 4,
                     tokenizer.fp.pos);
 }
-
-#define testStringPeek(s, encoding_)                      \
-  setStream(s);                                           \
-  OCCA_ASSERT_EQUAL_BINARY(                               \
-    (encoding_ << occa::lang::tokenType::encodingShift) | \
-    occa::lang::tokenType::string,                        \
-    tokenizer.peek())
-
-#define testCharPeek(s, encoding_)                        \
-  setStream(s);                                           \
-  OCCA_ASSERT_EQUAL_BINARY(                               \
-    (encoding_ << occa::lang::tokenType::encodingShift) | \
-    occa::lang::tokenType::char_,                         \
-    tokenizer.peek())
 
 void testPeekMethods() {
   setStream("abcd");
@@ -239,20 +288,6 @@ void testPeekMethods() {
   OCCA_ASSERT_EQUAL_BINARY(occa::lang::tokenType::header,
                            tokenizer.peekForHeader());
 }
-
-#define testStringToken(s, encoding_)                                   \
-  setToken(s);                                                          \
-  OCCA_ASSERT_EQUAL_BINARY(occa::lang::tokenType::string,               \
-                           tokenType())                                 \
-  OCCA_ASSERT_EQUAL_BINARY(encoding_,                                   \
-                           token->to<occa::lang::stringToken>().encoding)
-
-#define testCharToken(s, encoding_)                                     \
-  setToken(s);                                                          \
-  OCCA_ASSERT_EQUAL_BINARY(occa::lang::tokenType::char_,                \
-                           tokenType())                                 \
-  OCCA_ASSERT_EQUAL_BINARY(encoding_,                                   \
-                           token->to<occa::lang::charToken>().encoding)
 
 void testTokenMethods() {
   setToken("abcd");
@@ -349,27 +384,6 @@ void testTokenMethods() {
   );
   OCCA_ASSERT_FALSE(token->to<occa::lang::headerToken>().systemHeader);
 }
-
-#define testStringValue(s, value_)              \
-  setStream(s);                                 \
-  getToken();                                   \
-  testNextStringValue(value_)
-
-#define testStringMergeValue(s, value_)         \
-  setStream(s);                                 \
-  getStringMergeToken();                        \
-  testNextStringValue(value_)
-
-#define testNextStringValue(value_)             \
-  OCCA_ASSERT_EQUAL_BINARY(                     \
-    occa::lang::tokenType::string,              \
-    tokenType()                                 \
-  );                                            \
-  OCCA_ASSERT_EQUAL(                            \
-    value_,                                     \
-    token->to<occa::lang::stringToken>().value  \
-  )
-
 
 void addEncodingPrefixes(std::string &s1,
                          std::string &s2,
@@ -498,16 +512,6 @@ void testStringMerging() {
   testStringToken(s3, occa::lang::encodingType::L);
 }
 
-#define testPrimitiveToken(type_, value_)                 \
-  getToken();                                             \
-  OCCA_ASSERT_EQUAL_BINARY(                               \
-    occa::lang::tokenType::primitive,                     \
-    tokenType());                                         \
-  OCCA_ASSERT_EQUAL(                                      \
-    value_,                                               \
-    (type_) token->to<occa::lang::primitiveToken>().value \
-  )
-
 void testPrimitiveMethods() {
   setStream("1 68719476735L +0.1 .1e-10 -4.5L");
   testPrimitiveToken(int, 1);
@@ -526,3 +530,4 @@ void testErrors() {
     getToken();
   }
 }
+//======================================

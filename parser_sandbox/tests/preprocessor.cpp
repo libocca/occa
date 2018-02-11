@@ -20,40 +20,59 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  */
 #include "occa/tools/env.hpp"
+#include "occa/tools/testing.hpp"
 
+#include "tokenizer.hpp"
 #include "preprocessor.hpp"
 
-class preprocessorTester {
-  occa::lang::preprocessor pp;
+void testMacroDefines();
+void testIfElseDefines();
+void testErrorDefines();
+void testWeirdCase();
+void testSpecialMacros();
+void testEval();
 
-public:
-  preprocessorTester();
+//---[ Util Methods ]-------------------
+std::string source;
+occa::stream<occa::lang::token_t*> stream;
+occa::lang::token_t *token = NULL;
 
-  void testMacroDefines();
-  void testIfElseDefines();
-  void testErrorDefines();
-  void testWeirdCase();
-  void testSpecialMacros();
-  void testEval();
-
-  void test() {
-    testMacroDefines();
-    testErrorDefines();
-    testSpecialMacros();
-    testWeirdCase();
-    testIfElseDefines();
-    testEval();
-  }
-};
-
-int main(const int argc, const char **argv) {
-  preprocessorTester tester;
-  tester.test();
+void setStream(const std::string &s) {
+  source = s;
+  stream = (occa::lang::tokenizer(source.c_str())
+            .map(occa::lang::preprocessor()));
 }
 
-preprocessorTester::preprocessorTester() {}
+void getToken() {
+  delete token;
+  stream >> token;
+}
 
-void preprocessorTester::testMacroDefines() {
+void setToken(const std::string &s) {
+  setStream(s);
+  getToken();
+}
+
+int tokenType() {
+  return token ? token->type() : 0;
+}
+//======================================
+
+//---[ Macro Util Methods ]-------------
+
+//======================================
+
+//---[ Tests ]--------------------------
+int main(const int argc, const char **argv) {
+  testMacroDefines();
+  testErrorDefines();
+  testSpecialMacros();
+  testWeirdCase();
+  testIfElseDefines();
+  testEval();
+}
+
+void testMacroDefines() {
   #if 0
   OCCA_ASSERT_EQUAL("",
                     pp.processSource("#define A\n"
@@ -103,87 +122,93 @@ void preprocessorTester::testMacroDefines() {
 #endif
 }
 
-void preprocessorTester::testIfElseDefines() {
-  #if 0
-  OCCA_ASSERT_EQUAL("",
-                    pp.processSource("#ifdef FOO\n"
-                                     "1\n"
-                                     "#endif\n"));
-
-  OCCA_ASSERT_EQUAL("2",
-                    pp.processSource("#ifndef FOO\n"
-                                     "2\n"
-                                     "#endif\n"));
-
-  OCCA_ASSERT_EQUAL("",
-                    pp.processSource("#if defined(FOO)\n"
-                                     "3\n"
-                                     "#endif\n"));
-
-  OCCA_ASSERT_EQUAL("4",
-                    pp.processSource("#if !defined(FOO)\n"
-                                     "4\n"
-                                     "#endif\n"));
-
-  pp.processSource("#define FOO 9\n");
-
-  OCCA_ASSERT_EQUAL("5",
-                    pp.processSource("#ifdef FOO\n"
-                                     "5\n"
-                                     "#endif\n"));
-
-  OCCA_ASSERT_EQUAL("",
-                    pp.processSource("#ifndef FOO\n"
-                                     "6\n"
-                                     "#endif\n"));
-
-  OCCA_ASSERT_EQUAL("7",
-                    pp.processSource("#if defined(FOO)\n"
-                                     "7\n"
-                                     "#endif\n"));
-
-  OCCA_ASSERT_EQUAL("",
-                    pp.processSource("#if !defined(FOO)\n"
-                                     "8\n"
-                                     "#endif\n"));
-
-  OCCA_ASSERT_EQUAL("9",
-                    pp.processSource("FOO\n"));
-
-  OCCA_ASSERT_EQUAL("10",
-                    pp.processSource("#undef FOO\n"
-                                     "#define FOO 10\n"
-                                     "FOO"));
-
-  OCCA_ASSERT_EQUAL("11",
-                    pp.processSource("#define FOO 11\n"
-                                     "FOO"));
-
-  pp.processSource("#undef FOO\n");
-
-  OCCA_ASSERT_EQUAL("",
-                    pp.processSource("#ifdef FOO\n"
-                                     "12\n"
-                                     "#endif\n"));
-
-  OCCA_ASSERT_EQUAL("13",
-                    pp.processSource("#ifndef FOO\n"
-                                     "13\n"
-                                     "#endif\n"));
-
-  OCCA_ASSERT_EQUAL("",
-                    pp.processSource("#if defined(FOO)\n"
-                                     "14\n"
-                                     "#endif\n"));
-
-  OCCA_ASSERT_EQUAL("15",
-                    pp.processSource("#if !defined(FOO)\n"
-                                     "15\n"
-                                     "#endif\n"));
-#endif
+void testIfElseDefines() {
+  setStream(""
+            // ""
+            "#ifdef FOO\n"
+            "1\n"
+            "#endif\n"
+            // "2"
+            "#ifndef FOO\n"
+            "2\n"
+            "#endif\n"
+            // ""
+            "#if defined(FOO)\n"
+            "3\n"
+            "#endif\n"
+            // "4"
+            "#if !defined(FOO)\n"
+            "4\n"
+            "#endif\n"
+            // Redefine FOO
+            "#define FOO 9\n"
+            // "5"
+            "#ifdef FOO\n"
+            "5\n"
+            "#endif\n"
+            // ""
+            "#ifndef FOO\n"
+            "6\n"
+            "#endif\n"
+            // "7"
+            "#if defined(FOO)\n"
+            "7\n"
+            "#endif\n"
+            // ""
+            "#if !defined(FOO)\n"
+            "8\n"
+            "#endif\n"
+            // "9"
+            "FOO\n"
+            // "10"
+            "#undef FOO\n"
+            "#define FOO 10\n"
+            "FOO"
+            // "11"
+            "#define FOO 11\n"
+            "FOO"
+            "#undef FOO\n"
+            // ""
+            "#ifdef FOO\n"
+            "12\n"
+            "#endif\n"
+            // "13"
+            "#ifndef FOO\n"
+            "13\n"
+            "#endif\n"
+            // ""
+            "#if defined(FOO)\n"
+            "14\n"
+            "#endif\n"
+            // "15"
+            "#if !defined(FOO)\n"
+            "15\n"
+            "#endif\n");
+  int values[9] = {
+    2, 4, 5, 7, 9, 10, 11, 13, 15
+  };
+  for (int i = 0; i < 9; ++i) {
+    while (true) {
+      getToken();
+      if (tokenType() & occa::lang::tokenType::primitive) {
+        break;
+      }
+      if (!tokenType()) {
+        OCCA_FORCE_ERROR("[" << i << "] Expected more tokens");
+      }
+      if (tokenType() != occa::lang::tokenType::newline) {
+        token->printError("Expected only primitive or newline tokens");
+        OCCA_FORCE_ERROR("Error on [" << i << "]");
+      }
+    }
+    occa::lang::primitiveToken &pToken =
+      *((occa::lang::primitiveToken*) token);
+    OCCA_ASSERT_EQUAL(values[i],
+                      (int) pToken.value);
+  }
 }
 
-void preprocessorTester::testWeirdCase() {
+void testWeirdCase() {
   #if 0
   // Should print out "x ## y"
   // std::string str = pp.processSource("#define hash_hash # ## #\n"
@@ -195,7 +220,7 @@ void preprocessorTester::testWeirdCase() {
 #endif
 }
 
-void preprocessorTester::testErrorDefines() {
+void testErrorDefines() {
   #if 0
   std::stringstream ss;
   pp.exitOnFatalError = false;
@@ -225,7 +250,7 @@ void preprocessorTester::testErrorDefines() {
 #endif
 }
 
-void preprocessorTester::testSpecialMacros() {
+void testSpecialMacros() {
   #if 0
   OCCA_ASSERT_EQUAL("10\n",
                     pp.processSource("#line 10\n"
@@ -253,7 +278,7 @@ void preprocessorTester::testSpecialMacros() {
 #endif
 }
 
-void preprocessorTester::testEval() {
+void testEval() {
   #if 0
   // Types
   OCCA_ASSERT_EQUAL<int>(1 + 1,
@@ -320,3 +345,4 @@ void preprocessorTester::testEval() {
   */
 #endif
 }
+//======================================

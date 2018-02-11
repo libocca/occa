@@ -155,10 +155,8 @@ namespace occa {
     }
 
     void tokenizer::pop(const bool rewind) {
-      if (stack.size() == 0) {
-        printError("Trying to pop() without a stack");
-        return;
-      }
+      OCCA_ERROR("Unable to call tokenizer::pop()",
+                 stack.size() > 0);
       if (rewind) {
         origin = stack.back();
       }
