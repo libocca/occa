@@ -64,17 +64,17 @@ namespace occa {
       }
 
       // Alternative representations
-      // compilerMacros.add("and"   , new macro_t(*this, "and     &&"));
-      // compilerMacros.add("and_eq", new macro_t(*this, "and_eq  &="));
-      // compilerMacros.add("bitand", new macro_t(*this, "bitand  &"));
-      // compilerMacros.add("bitor" , new macro_t(*this, "bitor   |"));
-      // compilerMacros.add("compl" , new macro_t(*this, "compl   ~"));
-      // compilerMacros.add("not"   , new macro_t(*this, "not     !"));
-      // compilerMacros.add("not_eq", new macro_t(*this, "not_eq  !="));
-      // compilerMacros.add("or"    , new macro_t(*this, "or      ||"));
-      // compilerMacros.add("or_eq" , new macro_t(*this, "or_eq   |="));
-      // compilerMacros.add("xor"   , new macro_t(*this, "xor     ^"));
-      // compilerMacros.add("xor_eq", new macro_t(*this, "xor_eq  ^="));
+      compilerMacros.add("and"   , macro_t::define(*this, "and"   , "&&"));
+      compilerMacros.add("and_eq", macro_t::define(*this, "and_eq", "&="));
+      compilerMacros.add("bitand", macro_t::define(*this, "bitand", "&"));
+      compilerMacros.add("bitor" , macro_t::define(*this, "bitor" , "|"));
+      compilerMacros.add("compl" , macro_t::define(*this, "compl" , "~"));
+      compilerMacros.add("not"   , macro_t::define(*this, "not"   , "!"));
+      compilerMacros.add("not_eq", macro_t::define(*this, "not_eq", "!="));
+      compilerMacros.add("or"    , macro_t::define(*this, "or"    , "||"));
+      compilerMacros.add("or_eq" , macro_t::define(*this, "or_eq" , "|="));
+      compilerMacros.add("xor"   , macro_t::define(*this, "xor"   , "^"));
+      compilerMacros.add("xor_eq", macro_t::define(*this, "xor_eq", "^="));
       compilerMacros.autoFreeze = true;
       compilerMacros.freeze();
 

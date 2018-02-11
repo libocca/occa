@@ -24,6 +24,7 @@
 
 #include <vector>
 #include "token.hpp"
+#include "trie.hpp"
 
 namespace occa {
   namespace lang {
@@ -32,7 +33,9 @@ namespace occa {
     class macroToken;
     class preprocessor;
 
-    typedef std::vector<token_t*>  tokenVector;
+    typedef trie<int> intTrie;
+
+    typedef std::vector<token_t*>    tokenVector;
     typedef std::vector<macroToken*> macroTokenVector_t;
 
     //---[ Macro Tokens ]---------------
@@ -48,12 +51,12 @@ namespace occa {
                                   const bool addSpaces);
     };
 
-    class macroValue : public macroToken {
+    class macroRawToken : public macroToken {
     public:
       token_t *token;
 
-      macroValue(token_t *token_);
-      ~macroValue();
+      macroRawToken(token_t *token_);
+      ~macroRawToken();
 
       void expandTokens(tokenVector &newTokens,
                         token_t *source,
@@ -85,9 +88,9 @@ namespace occa {
 
     class macroConcat : public macroToken {
     public:
-      std::vector<macroToken*> tokens;
+      macroTokenVector_t tokens;
 
-      macroConcat(const std::vector<macroToken*> &tokens_);
+      macroConcat(const macroTokenVector_t &tokens_);
       ~macroConcat();
 
       void expandTokens(tokenVector &newTokens,
@@ -106,6 +109,7 @@ namespace occa {
 
       int argCount;
       bool hasVarArgs;
+      intTrie argNames;
       macroTokenVector_t macroTokens;
 
       macro_t(preprocessor &pp_,
@@ -126,7 +130,14 @@ namespace occa {
         return thisToken.value;
       }
 
-      virtual bool expandTokens(identifierToken &source);
+      void clearMacroTokens();
+
+      void setDefinition(tokenVector &tokens);
+      void setMacroTokens(tokenVector &tokens);
+      void stringifyMacroTokens();
+      void concatMacroTokens();
+
+      virtual bool expand(identifierToken &source);
 
       bool loadArgs(identifierToken &source,
                     std::vector<tokenVector> &args);
@@ -134,14 +145,14 @@ namespace occa {
       void printError(token_t *token,
                       const std::string &message);
 
-#if 0
-      static macro_t define(const std::string &name_,
-                            const std::string contents);
+      static macro_t* define(preprocessor &pp_,
+                             const std::string &name_,
+                             const std::string &contents);
 
-      static macro_t define(fileOrigin origin,
-                            const std::string &name_,
-                            const std::string contents);
-#endif
+      static macro_t* define(preprocessor &pp_,
+                             fileOrigin origin,
+                             const std::string &name_,
+                             const std::string &contents);
     };
   }
 }
