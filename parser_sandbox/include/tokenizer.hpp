@@ -108,6 +108,8 @@ namespace occa {
       token_t* getCharToken(const int encoding);
       token_t* getHeaderToken();
 
+      static tokenVector tokenize(const std::string &source);
+
       static void tokenize(tokenVector &tokens,
                            fileOrigin origin,
                            const std::string &source);

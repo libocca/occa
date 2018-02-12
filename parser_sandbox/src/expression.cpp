@@ -29,13 +29,6 @@ namespace occa {
 
     exprNode::~exprNode() {}
 
-    std::string exprNode::toString() const {
-      std::stringstream ss;
-      printer pout(ss);
-      print(pout);
-      return ss.str();
-    }
-
     bool exprNode::canEvaluate() const {
       return false;
     }
@@ -44,12 +37,25 @@ namespace occa {
       return primitive();
     }
 
+    std::string exprNode::toString() const {
+      std::stringstream ss;
+      printer pout(ss);
+      print(pout);
+      return ss.str();
+    }
+
     void exprNode::debugPrint() const {
-      std::cout << toString();
+      debugPrint("");
+    }
+
+    void exprNode::childDebugPrint(const std::string &prefix) const {
+      debugPrint(prefix + "|   ");
     }
 
     // Using Shunting-Yard algorithm
     exprNode* exprNode::load(const tokenVector &tokens) {
+      // TODO: Delete tokens
+      // TODO: Ternary operator
       exprNodeQueue output;
       operatorStack operators;
 
@@ -65,8 +71,10 @@ namespace occa {
           continue;
         }
         const int tokenType = token->type();
+        bool success = true;
         if (tokenType & outputTokenType) {
-          pushOutputNode(token, output);
+          pushOutputNode(token,
+                         output);
         }
         else if (tokenType & tokenType::op) {
           operatorToken &opToken = token->to<operatorToken>();
@@ -75,16 +83,35 @@ namespace occa {
             operators.push(&opToken);
           }
           else if (opToken.op.opType & operatorType::pairEnd) {
-            bool success = groupPairNodes(opToken, output, operators);
-            if (!success) {
-              return NULL;
-            }
+            success = closePair(opToken,
+                                     output,
+                                operators);
           }
           else {
-
+            success = applyFasterOperators(opToken,
+                                           output,
+                                           operators);
+            operators.push(&opToken);
           }
         }
+        if (!success) {
+          return NULL;
+        }
       }
+
+      // Finish applying operators
+      while (operators.size()) {
+        operatorToken &opToken = *(operators.top());
+        bool success = applyOperator(opToken,
+                                     output,
+                                     operators);
+        if (!success) {
+          return NULL;
+        }
+        operators.pop();
+      }
+
+      // Make sure we only have 1 root node
       const int outputNodes = (int) output.size();
       if (!outputNodes) {
         return NULL;
@@ -94,6 +121,8 @@ namespace occa {
         output.front()->token->printError("Unable to form an expression");
         return NULL;
       }
+
+      // Return the root node
       return output.front();
     }
 
@@ -120,10 +149,9 @@ namespace occa {
       }
     }
 
-    bool exprNode::groupPairNodes(operatorToken &opToken,
-                                  exprNodeQueue &output,
-                                  operatorStack &operators) {
-
+    bool exprNode::closePair(operatorToken &opToken,
+                             exprNodeQueue &output,
+                             operatorStack &operators) {
       const opType_t opType = opToken.op.opType;
       operatorToken *errorToken = &opToken;
 
@@ -134,17 +162,21 @@ namespace occa {
 
         if (nextOpType & operatorType::pairStart) {
           if (opType == (nextOpType << 1)) {
-            // Apply operator
-            return true;
+            return applyOperator(opToken,
+                                 output,
+                                 operators);
           }
           errorToken = &nextOpToken;
           break;
         }
-        else {
-          // Apply operator
+
+        bool success = applyOperator(nextOpToken,
+                                     output,
+                                     operators);
+        if (!success) {
+          return false;
         }
       }
-
       // Found a pairStart that doesn't match
       const opType_t errorOpType = errorToken->op.opType;
       std::stringstream ss;
@@ -162,6 +194,77 @@ namespace occa {
       return false;
     }
 
+    bool exprNode::applyFasterOperators(operatorToken &opToken,
+                                        exprNodeQueue &output,
+                                        operatorStack &operators) {
+      const operator_t &op = opToken.op;
+      while (operators.size()) {
+        const operator_t &nextOp = operators.top()->op;
+
+        if ((nextOp.precedence > op.precedence) ||
+            ((nextOp.precedence == op.precedence) &&
+             op::associativity[op.precedence] == op::leftAssociative)) {
+
+          bool success = applyOperator(*operators.top(),
+                                       output,
+                                       operators);
+          if (!success) {
+            return false;
+          }
+          operators.pop();
+          continue;
+        }
+
+        break;
+      }
+      return true;
+    }
+
+    bool exprNode::applyOperator(operatorToken &opToken,
+                                 exprNodeQueue &output,
+                                 operatorStack &operators) {
+      const operator_t &op = opToken.op;
+      const opType_t opType = op.opType;
+      const int outputCount = (int) output.size();
+
+      if (!outputCount) {
+        return false;
+      }
+
+      exprNode &value = *(output.front());
+      output.pop();
+
+      if (opType & operatorType::binary) {
+        if (outputCount < 2) {
+          return false;
+        }
+        exprNode &left = *(output.front());
+        output.pop();
+        output.push(new binaryOpNode(&opToken,
+                                     (const binaryOperator_t&) op,
+                                     left,
+                                     value));
+      }
+      else if (opType & operatorType::leftUnary) {
+        output.push(new leftUnaryOpNode(&opToken,
+                                        (const unaryOperator_t&) op,
+                                        value));
+      }
+      else if (opType & operatorType::rightUnary) {
+        output.push(new rightUnaryOpNode(&opToken,
+                                         (const unaryOperator_t&) op,
+                                         value));
+      }
+      else if (opType & operatorType::pair) {
+        output.push(new parenthesesNode(&opToken,
+                                        value));
+      } else {
+        return false;
+      }
+
+      return true;
+    }
+
     //---[ Empty ]----------------------
     emptyNode::emptyNode() :
       exprNode() {}
@@ -177,6 +280,12 @@ namespace occa {
     }
 
     void emptyNode::print(printer &pout) const {}
+
+    void emptyNode::debugPrint(const std::string &prefix) const {
+      std::cerr << prefix << "|\n"
+                << prefix << "|---o\n"
+                << prefix << '\n';
+    }
 
     const emptyNode noExprNode;
     //==================================
@@ -215,6 +324,14 @@ namespace occa {
     void primitiveNode::print(printer &pout) const {
       pout << (std::string) value;
     }
+
+    void primitiveNode::debugPrint(const std::string &prefix) const {
+      printer pout(std::cerr);
+      std::cerr << prefix << "|\n"
+                << prefix << "|---[";
+      print(pout);
+      std::cerr << "] (primitive)\n";
+    }
     //  |===============================
 
     //  |---[ Char ]--------------------
@@ -241,6 +358,14 @@ namespace occa {
 
     void charNode::print(printer &pout) const {
       pout << "'" << escape(value, '\'') << '"';
+    }
+
+    void charNode::debugPrint(const std::string &prefix) const {
+      printer pout(std::cerr);
+      std::cerr << prefix << '\n'
+                << prefix << "|---[";
+      print(pout);
+      std::cerr << "] (char)\n";
     }
     //  |===============================
 
@@ -269,6 +394,14 @@ namespace occa {
     void stringNode::print(printer &pout) const {
       pout << "\"" << escape(value, '"') << "\"";
     }
+
+    void stringNode::debugPrint(const std::string &prefix) const {
+      printer pout(std::cerr);
+      std::cerr << prefix << "|\n"
+                << prefix << "|---[";
+      print(pout);
+      std::cerr << "] (string)\n";
+    }
     //  |===============================
 
     //  |---[ Identifier ]--------------
@@ -296,6 +429,14 @@ namespace occa {
     void identifierNode::print(printer &pout) const {
       pout << value;
     }
+
+    void identifierNode::debugPrint(const std::string &prefix) const {
+      printer pout(std::cerr);
+      std::cerr << prefix << '\n'
+                << prefix << "|---[";
+      print(pout);
+      std::cerr << "] (identifier)\n";
+    }
     //  |===============================
 
     //  |---[ Variable ]----------------
@@ -322,6 +463,14 @@ namespace occa {
 
     void variableNode::print(printer &pout) const {
       value.print(pout);
+    }
+
+    void variableNode::debugPrint(const std::string &prefix) const {
+      printer pout(std::cerr);
+      std::cerr << prefix << "|\n"
+                << prefix << "|---[";
+      print(pout);
+      std::cerr << "] (variable)\n";
     }
     //  |===============================
     //==================================
@@ -373,6 +522,15 @@ namespace occa {
       value.print(pout);
     }
 
+    void leftUnaryOpNode::debugPrint(const std::string &prefix) const {
+      printer pout(std::cerr);
+      std::cerr << prefix << "|\n"
+                << prefix << "|---[";
+      op.print(pout);
+      std::cerr << "] (leftUnary)\n";
+      value.childDebugPrint(prefix);
+    }
+
     rightUnaryOpNode::rightUnaryOpNode(const unaryOperator_t &op_,
                                        exprNode &value_) :
       op(op_),
@@ -417,6 +575,15 @@ namespace occa {
     void rightUnaryOpNode::print(printer &pout) const {
       value.print(pout);
       op.print(pout);
+    }
+
+    void rightUnaryOpNode::debugPrint(const std::string &prefix) const {
+      printer pout(std::cerr);
+      std::cerr << prefix << "|\n"
+                << prefix << "|---[";
+      op.print(pout);
+      std::cerr << "] (rightUnary)\n";
+      value.childDebugPrint(prefix);
     }
 
     binaryOpNode::binaryOpNode(const binaryOperator_t &op_,
@@ -473,6 +640,16 @@ namespace occa {
       op.print(pout);
       pout << ' ';
       rightValue.print(pout);
+    }
+
+    void binaryOpNode::debugPrint(const std::string &prefix) const {
+      printer pout(std::cerr);
+      std::cerr << prefix << "|\n"
+                << prefix << "|---[";
+      op.print(pout);
+      std::cerr << "] (binary)\n";
+      leftValue.childDebugPrint(prefix);
+      rightValue.childDebugPrint(prefix);
     }
 
     ternaryOpNode::ternaryOpNode(exprNode &checkValue_,
@@ -534,6 +711,15 @@ namespace occa {
       pout << " : ";
       falseValue.print(pout);
     }
+
+    void ternaryOpNode::debugPrint(const std::string &prefix) const {
+      printer pout(std::cerr);
+      std::cerr << prefix << "|\n"
+                << prefix << "|---[?:] (ternary)\n";
+      checkValue.childDebugPrint(prefix);
+      trueValue.childDebugPrint(prefix);
+      falseValue.childDebugPrint(prefix);
+    }
     //==================================
 
     //---[ Pseudo Operators ]-----------
@@ -571,6 +757,15 @@ namespace occa {
       pout << '[';
       index.print(pout);
       pout << ']';
+    }
+
+    void subscriptNode::debugPrint(const std::string &prefix) const {
+      printer pout(std::cerr);
+      std::cerr << prefix << "|\n"
+                << prefix << "|---[";
+      index.print(pout);
+      std::cerr << "] (subscript)\n";
+      value.childDebugPrint(prefix);
     }
 
     callNode::callNode(exprNode &value_,
@@ -631,6 +826,17 @@ namespace occa {
       pout << ')';
     }
 
+    void callNode::debugPrint(const std::string &prefix) const {
+      printer pout(std::cerr);
+      std::cerr << prefix << "|\n"
+                << prefix << "|---[";
+      value.print(pout);
+      std::cerr << "] (call)\n";
+      for (int i = 0; i < ((int) args.size()); ++i) {
+        args[i]->childDebugPrint(prefix);
+      }
+    }
+
     newNode::newNode(type_t &type_,
                      exprNode &value_) :
       type(type_),
@@ -684,6 +890,16 @@ namespace occa {
       }
     }
 
+    void newNode::debugPrint(const std::string &prefix) const {
+      printer pout(std::cerr);
+      std::cerr << prefix << "|\n"
+                << prefix << "|---[";
+      type.print(pout);
+      std::cerr << "] (new)\n";
+      value.childDebugPrint(prefix);
+      size.childDebugPrint(prefix);
+    }
+
     deleteNode::deleteNode(exprNode &value_,
                            const bool isArray_) :
       value(value_.clone()),
@@ -720,6 +936,18 @@ namespace occa {
       value.print(pout);
     }
 
+    void deleteNode::debugPrint(const std::string &prefix) const {
+      printer pout(std::cerr);
+      std::cerr << prefix << '\n'
+                << prefix << "|---[";
+      value.print(pout);
+      std::cerr << "] (delete";
+      if (isArray) {
+        std::cerr << " []";
+      }
+      std::cerr << ")\n";
+    }
+
     throwNode::throwNode(exprNode &value_) :
       value(value_.clone()) {}
 
@@ -749,6 +977,15 @@ namespace occa {
         pout << ' ';
         value.print(pout);
       }
+    }
+
+    void throwNode::debugPrint(const std::string &prefix) const {
+      printer pout(std::cerr);
+      std::cerr << prefix << "|\n"
+                << prefix << "|\n"
+                << prefix << "|---[";
+      value.print(pout);
+      std::cerr << "] (throw)\n";
     }
     //==================================
 
@@ -790,6 +1027,14 @@ namespace occa {
       pout << ')';
     }
 
+    void sizeofNode::debugPrint(const std::string &prefix) const {
+      printer pout(std::cerr);
+      std::cerr << prefix << '\n'
+                << prefix << "|---[";
+      value.print(pout);
+      std::cerr << "] (sizeof)\n";
+    }
+
     funcCastNode::funcCastNode(type_t &type_,
                                exprNode &value_) :
       type(type_),
@@ -827,6 +1072,15 @@ namespace occa {
       pout << ')';
     }
 
+    void funcCastNode::debugPrint(const std::string &prefix) const {
+      printer pout(std::cerr);
+      std::cerr << prefix << "|\n"
+                << prefix << "|---[";
+      type.print(pout);
+      std::cerr << "] (funcCast)\n";
+      value.childDebugPrint(prefix);
+    }
+
     parenCastNode::parenCastNode(type_t &type_,
                                  exprNode &value_) :
       type(type_),
@@ -862,6 +1116,15 @@ namespace occa {
       type.print(pout);
       pout << ") ";
       value.print(pout);
+    }
+
+    void parenCastNode::debugPrint(const std::string &prefix) const {
+      printer pout(std::cerr);
+      std::cerr << prefix << "|\n"
+                << prefix << "|---[";
+      type.print(pout);
+      std::cerr << "] (parenCast)\n";
+      value.childDebugPrint(prefix);
     }
 
     constCastNode::constCastNode(type_t &type_,
@@ -902,6 +1165,15 @@ namespace occa {
       pout << ')';
     }
 
+    void constCastNode::debugPrint(const std::string &prefix) const {
+      printer pout(std::cerr);
+      std::cerr << prefix << "|\n"
+                << prefix << "|---[";
+      type.print(pout);
+      std::cerr << "] (constCast)\n";
+      value.childDebugPrint(prefix);
+    }
+
     staticCastNode::staticCastNode(type_t &type_,
                                    exprNode &value_) :
       type(type_),
@@ -938,6 +1210,15 @@ namespace occa {
       pout << ">(";
       value.print(pout);
       pout << ')';
+    }
+
+    void staticCastNode::debugPrint(const std::string &prefix) const {
+      printer pout(std::cerr);
+      std::cerr << prefix << "|\n"
+                << prefix << "|---[";
+      type.print(pout);
+      std::cerr << "] (staticCast)\n";
+      value.childDebugPrint(prefix);
     }
 
     reinterpretCastNode::reinterpretCastNode(type_t &type_,
@@ -978,6 +1259,15 @@ namespace occa {
       pout << ')';
     }
 
+    void reinterpretCastNode::debugPrint(const std::string &prefix) const {
+      printer pout(std::cerr);
+      std::cerr << prefix << "|\n"
+                << prefix << "|---[";
+      type.print(pout);
+      std::cerr << "] (reinterpretCast)\n";
+      value.childDebugPrint(prefix);
+    }
+
     dynamicCastNode::dynamicCastNode(type_t &type_,
                                      exprNode &value_) :
       type(type_),
@@ -1014,6 +1304,15 @@ namespace occa {
       pout << ">(";
       value.print(pout);
       pout << ')';
+    }
+
+    void dynamicCastNode::debugPrint(const std::string &prefix) const {
+      printer pout(std::cerr);
+      std::cerr << prefix << "|\n"
+                << prefix << "|---[";
+      type.print(pout);
+      std::cerr << "] (dynamicCast)\n";
+      value.childDebugPrint(prefix);
     }
     //==================================
 
@@ -1054,6 +1353,13 @@ namespace occa {
       value.print(pout);
       pout << ')';
     }
+
+    void parenthesesNode::debugPrint(const std::string &prefix) const {
+      printer pout(std::cerr);
+      std::cerr << prefix << "|\n"
+                << prefix << "|---[()] (parentheses)\n";
+      value.childDebugPrint(prefix);
+    }
     //==================================
 
     //---[ Extensions ]-----------------
@@ -1092,6 +1398,15 @@ namespace occa {
       pout << ", ";
       threads.print(pout);
       pout << ">>>";
+    }
+
+    void cudaCallNode::debugPrint(const std::string &prefix) const {
+      printer pout(std::cerr);
+      std::cerr << prefix << "|\n"
+                << prefix << "|---[<<<...>>>";
+      std::cerr << "] (cudaCall)\n";
+      blocks.childDebugPrint(prefix);
+      threads.childDebugPrint(prefix);
     }
     //==================================
   }

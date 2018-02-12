@@ -24,13 +24,17 @@
 
 #include "typeBuiltins.hpp"
 #include "expression.hpp"
+#include "tokenizer.hpp"
 
 void testOperatorNodes();
 void testOtherNodes();
+void testLoad();
 
 int main(const int argc, const char **argv) {
   testOperatorNodes();
   testOtherNodes();
+  testLoad();
+
   return 0;
 }
 
@@ -129,4 +133,10 @@ void testOtherNodes() {
             << "dynamicCastNode     : " << dynamicCastNode(t1, var).toString() << '\n'
             << "parenthesesNode     : " << parenthesesNode(var).toString() << '\n'
             << "cudaCallNode        : " << cudaCallNode(one, two).toString() << '\n';
+}
+
+void testLoad() {
+  tokenVector tokens = tokenizer::tokenize("3 + 4 * 2 / (1 - 5) ^ 2 ^ 2");
+  exprNode *node = exprNode::load(tokens);
+  node->debugPrint();
 }

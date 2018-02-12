@@ -251,8 +251,8 @@ namespace occa {
       //================================
 
       //---[ Associativity ]------------
-      extern const int left;
-      extern const int right;
+      extern const int leftAssociative;
+      extern const int rightAssociative;
       extern const int associativity[18];
       //================================
     }

@@ -94,7 +94,12 @@ namespace occa {
       virtual void print(printer &pout) const = 0;
 
       std::string toString() const;
+
       void debugPrint() const;
+
+      virtual void debugPrint(const std::string &prefix) const = 0;
+
+      void childDebugPrint(const std::string &prefix) const;
 
       // Load tokens as an expression
       static exprNode* load(const tokenVector &tokens);
@@ -102,9 +107,17 @@ namespace occa {
       static void pushOutputNode(token_t *token,
                                  exprNodeQueue &output);
 
-      static bool groupPairNodes(operatorToken &opToken,
-                                 exprNodeQueue &output,
-                                 operatorStack &operators);
+      static bool closePair(operatorToken &opToken,
+                            exprNodeQueue &output,
+                            operatorStack &operators);
+
+      static bool applyFasterOperators(operatorToken &opToken,
+                                       exprNodeQueue &output,
+                                       operatorStack &operators);
+
+      static bool applyOperator(operatorToken &opToken,
+                                exprNodeQueue &output,
+                                operatorStack &operators);
     };
 
     //---[ Empty ]----------------------
@@ -118,6 +131,8 @@ namespace occa {
       virtual exprNode& clone() const;
 
       virtual void print(printer &pout) const;
+
+      virtual void debugPrint(const std::string &prefix) const;
     };
     //==================================
 
@@ -143,6 +158,8 @@ namespace occa {
       virtual primitive eval() const;
 
       virtual void print(printer &pout) const;
+
+      virtual void debugPrint(const std::string &prefix) const;
     };
 
     class charNode : public exprNode {
@@ -163,6 +180,8 @@ namespace occa {
       virtual exprNode& clone() const;
 
       virtual void print(printer &pout) const;
+
+      virtual void debugPrint(const std::string &prefix) const;
     };
 
     class stringNode : public exprNode {
@@ -184,6 +203,8 @@ namespace occa {
       virtual exprNode& clone() const;
 
       virtual void print(printer &pout) const;
+
+      virtual void debugPrint(const std::string &prefix) const;
     };
 
     class identifierNode : public exprNode {
@@ -204,6 +225,8 @@ namespace occa {
       virtual exprNode& clone() const;
 
       virtual void print(printer &pout) const;
+
+      virtual void debugPrint(const std::string &prefix) const;
     };
 
     class variableNode : public exprNode {
@@ -224,6 +247,8 @@ namespace occa {
       virtual exprNode& clone() const;
 
       virtual void print(printer &pout) const;
+
+      virtual void debugPrint(const std::string &prefix) const;
     };
     //==================================
 
@@ -253,6 +278,8 @@ namespace occa {
       virtual primitive eval() const;
 
       virtual void print(printer &pout) const;
+
+      virtual void debugPrint(const std::string &prefix) const;
     };
 
     class rightUnaryOpNode : public exprNode {
@@ -280,6 +307,8 @@ namespace occa {
       virtual primitive eval() const;
 
       virtual void print(printer &pout) const;
+
+      virtual void debugPrint(const std::string &prefix) const;
     };
 
     class binaryOpNode : public exprNode {
@@ -309,6 +338,8 @@ namespace occa {
       virtual primitive eval() const;
 
       virtual void print(printer &pout) const;
+
+      virtual void debugPrint(const std::string &prefix) const;
     };
 
     class ternaryOpNode : public exprNode {
@@ -336,6 +367,8 @@ namespace occa {
       virtual primitive eval() const;
 
       virtual void print(printer &pout) const;
+
+      virtual void debugPrint(const std::string &prefix) const;
     };
     //==================================
 
@@ -360,6 +393,8 @@ namespace occa {
       virtual exprNode& clone() const;
 
       virtual void print(printer &pout) const;
+
+      virtual void debugPrint(const std::string &prefix) const;
     };
 
     class callNode : public exprNode {
@@ -387,6 +422,8 @@ namespace occa {
       virtual exprNode& clone() const;
 
       virtual void print(printer &pout) const;
+
+      virtual void debugPrint(const std::string &prefix) const;
     };
 
     class newNode : public exprNode {
@@ -415,6 +452,8 @@ namespace occa {
       virtual exprNode& clone() const;
 
       virtual void print(printer &pout) const;
+
+      virtual void debugPrint(const std::string &prefix) const;
     };
 
     class deleteNode : public exprNode {
@@ -438,6 +477,8 @@ namespace occa {
       virtual exprNode& clone() const;
 
       virtual void print(printer &pout) const;
+
+      virtual void debugPrint(const std::string &prefix) const;
     };
 
     class throwNode : public exprNode {
@@ -458,6 +499,8 @@ namespace occa {
       virtual exprNode& clone() const;
 
       virtual void print(printer &pout) const;
+
+      virtual void debugPrint(const std::string &prefix) const;
     };
     //==================================
 
@@ -483,6 +526,8 @@ namespace occa {
       virtual primitive eval() const;
 
       virtual void print(printer &pout) const;
+
+      virtual void debugPrint(const std::string &prefix) const;
     };
 
     class funcCastNode : public exprNode {
@@ -506,6 +551,8 @@ namespace occa {
       virtual exprNode& clone() const;
 
       virtual void print(printer &pout) const;
+
+      virtual void debugPrint(const std::string &prefix) const;
     };
 
     class parenCastNode : public exprNode {
@@ -529,6 +576,8 @@ namespace occa {
       virtual exprNode& clone() const;
 
       virtual void print(printer &pout) const;
+
+      virtual void debugPrint(const std::string &prefix) const;
     };
 
     class constCastNode : public exprNode {
@@ -552,6 +601,8 @@ namespace occa {
       virtual exprNode& clone() const;
 
       virtual void print(printer &pout) const;
+
+      virtual void debugPrint(const std::string &prefix) const;
     };
 
     class staticCastNode : public exprNode {
@@ -575,6 +626,8 @@ namespace occa {
       virtual exprNode& clone() const;
 
       virtual void print(printer &pout) const;
+
+      virtual void debugPrint(const std::string &prefix) const;
     };
 
     class reinterpretCastNode : public exprNode {
@@ -598,6 +651,8 @@ namespace occa {
       virtual exprNode& clone() const;
 
       virtual void print(printer &pout) const;
+
+      virtual void debugPrint(const std::string &prefix) const;
     };
 
     class dynamicCastNode : public exprNode {
@@ -621,6 +676,8 @@ namespace occa {
       virtual exprNode& clone() const;
 
       virtual void print(printer &pout) const;
+
+      virtual void debugPrint(const std::string &prefix) const;
     };
     //==================================
 
@@ -646,6 +703,8 @@ namespace occa {
       virtual primitive eval() const;
 
       virtual void print(printer &pout) const;
+
+      virtual void debugPrint(const std::string &prefix) const;
     };
     //==================================
 
@@ -670,6 +729,8 @@ namespace occa {
       virtual exprNode& clone() const;
 
       virtual void print(printer &pout) const;
+
+      virtual void debugPrint(const std::string &prefix) const;
     };
     //==================================
   }

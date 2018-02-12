@@ -349,27 +349,27 @@ namespace occa {
       //================================
 
       //---[ Associativity ]------------
-      const int left  = 0;
-      const int right = 1;
+      const int leftAssociative  = 0;
+      const int rightAssociative = 1;
       const int associativity[18] = {
-        left,  // 0
-        left,  // 1
-        left,  // 2
-        right, // 3  [Unary operators]
-        left,  // 4
-        left,  // 5
-        left,  // 6
-        left,  // 7
-        left,  // 8
-        left,  // 9
-        left,  // 10
-        left,  // 11
-        left,  // 12
-        left,  // 13
-        left,  // 14
-        left,  // 15
-        right, // 16 [?:, throw, assignment]
-        left,  // 17
+        leftAssociative,  // 0
+        leftAssociative,  // 1
+        leftAssociative,  // 2
+        rightAssociative, // 3  [Unary operators]
+        leftAssociative,  // 4
+        leftAssociative,  // 5
+        leftAssociative,  // 6
+        leftAssociative,  // 7
+        leftAssociative,  // 8
+        leftAssociative,  // 9
+        leftAssociative,  // 10
+        leftAssociative,  // 11
+        leftAssociative,  // 12
+        leftAssociative,  // 13
+        leftAssociative,  // 14
+        leftAssociative,  // 15
+        rightAssociative, // 16 [?:, throw, assignment]
+        leftAssociative,  // 17
       };
       //================================
     }
