@@ -292,7 +292,7 @@ namespace occa {
       } else if (encoding & encodingType::L) {
         out << 'L';
       }
-      out << '\'' << value << '\'' << udf;
+      out << '\'' << escape(value, '\'') << '\'' << udf;
     }
 
     stringToken::~stringToken() {}
@@ -343,7 +343,7 @@ namespace occa {
       if (encoding & encodingType::R) {
         out << 'R';
       }
-      out << '"' << value << '"' << udf;
+      out << '"' << escape(value, '"') << '"' << udf;
     }
 
     headerToken::headerToken(const fileOrigin &origin_,

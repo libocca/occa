@@ -419,7 +419,7 @@ namespace occa {
         popAndRewind();
         return;
       }
-      value = str();
+      value = unescape(str(), '"');
       pop();
       pop();
       ++fp.pos;
@@ -630,7 +630,7 @@ namespace occa {
         popAndRewind();
         return NULL;
       }
-      const std::string value = str();
+      const std::string value = unescape(str(), '\'');
       ++fp.pos;
       pop();
 

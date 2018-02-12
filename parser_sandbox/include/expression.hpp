@@ -22,6 +22,8 @@
 #ifndef OCCA_PARSER_EXPRESSION_HEADER2
 #define OCCA_PARSER_EXPRESSION_HEADER2
 
+#include <queue>
+#include <stack>
 #include <vector>
 
 #include "occa/parser/primitive.hpp"
@@ -34,43 +36,52 @@ namespace occa {
   namespace lang {
     class exprNode;
 
-    typedef std::vector<exprNode*> exprNodeVector;
-    typedef std::vector<token_t*>  tokenVector;
+    typedef std::vector<exprNode*>     exprNodeVector;
+    typedef std::queue<exprNode*>      exprNodeQueue;
+    typedef std::stack<operatorToken*> operatorStack;
+    typedef std::vector<token_t*>      tokenVector;
 
     class exprNodeType {
     public:
       static const int empty           = (1 << 0);
       static const int primitive       = (1 << 1);
-      static const int variable        = (1 << 2);
+      static const int char_           = (1 << 2);
+      static const int string          = (1 << 3);
+      static const int identifier      = (1 << 4);
+      static const int variable        = (1 << 5);
       static const int value           = (primitive |
                                           variable);
-      static const int leftUnary       = (1 << 5);
-      static const int rightUnary      = (1 << 6);
-      static const int binary          = (1 << 7);
-      static const int ternary         = (1 << 8);
+      static const int leftUnary       = (1 << 6);
+      static const int rightUnary      = (1 << 7);
+      static const int binary          = (1 << 8);
+      static const int ternary         = (1 << 9);
       static const int op              = (leftUnary  |
                                           rightUnary |
                                           binary     |
                                           ternary);
-      static const int subscript       = (1 << 9);
-      static const int call            = (1 << 10);
-      static const int new_            = (1 << 11);
-      static const int delete_         = (1 << 12);
-      static const int throw_          = (1 << 13);
-      static const int sizeof_         = (1 << 14);
-      static const int funcCast        = (1 << 15);
-      static const int parenCast       = (1 << 16);
-      static const int constCast       = (1 << 17);
-      static const int staticCast      = (1 << 18);
-      static const int reinterpretCast = (1 << 19);
-      static const int dynamicCast     = (1 << 20);
-      static const int parentheses     = (1 << 21);
-      static const int tuple           = (1 << 22);
-      static const int cudaCall        = (1 << 23);
+      static const int subscript       = (1 << 10);
+      static const int call            = (1 << 11);
+      static const int new_            = (1 << 12);
+      static const int delete_         = (1 << 13);
+      static const int throw_          = (1 << 14);
+      static const int sizeof_         = (1 << 15);
+      static const int funcCast        = (1 << 16);
+      static const int parenCast       = (1 << 17);
+      static const int constCast       = (1 << 18);
+      static const int staticCast      = (1 << 19);
+      static const int reinterpretCast = (1 << 20);
+      static const int dynamicCast     = (1 << 21);
+      static const int parentheses     = (1 << 22);
+      static const int tuple           = (1 << 23);
+      static const int cudaCall        = (1 << 24);
     };
 
     class exprNode {
     public:
+      token_t *token;
+
+      exprNode(token_t *token_ = NULL);
+
       virtual ~exprNode();
 
       virtual int nodeType() const = 0;
@@ -85,7 +96,15 @@ namespace occa {
       std::string toString() const;
       void debugPrint() const;
 
+      // Load tokens as an expression
       static exprNode* load(const tokenVector &tokens);
+
+      static void pushOutputNode(token_t *token,
+                                 exprNodeQueue &output);
+
+      static bool groupPairNodes(operatorToken &opToken,
+                                 exprNodeQueue &output,
+                                 operatorStack &operators);
     };
 
     //---[ Empty ]----------------------
@@ -108,7 +127,12 @@ namespace occa {
       primitive value;
 
       primitiveNode(primitive value_);
+
+      primitiveNode(token_t *token_,
+                    primitive value_);
+
       primitiveNode(const primitiveNode& node);
+
       ~primitiveNode();
 
       virtual int nodeType() const;
@@ -121,12 +145,78 @@ namespace occa {
       virtual void print(printer &pout) const;
     };
 
+    class charNode : public exprNode {
+    public:
+      std::string value;
+
+      charNode(const std::string &value_);
+
+      charNode(token_t *token_,
+               const std::string &value_);
+
+      charNode(const charNode& node);
+
+      ~charNode();
+
+      virtual int nodeType() const;
+
+      virtual exprNode& clone() const;
+
+      virtual void print(printer &pout) const;
+    };
+
+    class stringNode : public exprNode {
+    public:
+      int encoding;
+      std::string value;
+
+      stringNode(const std::string &value_);
+
+      stringNode(token_t *token_,
+                 const std::string &value_);
+
+      stringNode(const stringNode& node);
+
+      ~stringNode();
+
+      virtual int nodeType() const;
+
+      virtual exprNode& clone() const;
+
+      virtual void print(printer &pout) const;
+    };
+
+    class identifierNode : public exprNode {
+    public:
+      std::string value;
+
+      identifierNode(const std::string &value_);
+
+      identifierNode(token_t *token_,
+                     const std::string &value_);
+
+      identifierNode(const identifierNode& node);
+
+      ~identifierNode();
+
+      virtual int nodeType() const;
+
+      virtual exprNode& clone() const;
+
+      virtual void print(printer &pout) const;
+    };
+
     class variableNode : public exprNode {
     public:
       variable &value;
 
       variableNode(variable &value_);
+
+      variableNode(token_t *token_,
+                   variable &value_);
+
       variableNode(const variableNode& node);
+
       ~variableNode();
 
       virtual int nodeType() const;
@@ -145,7 +235,13 @@ namespace occa {
 
       leftUnaryOpNode(const unaryOperator_t &op_,
                       exprNode &value_);
+
+      leftUnaryOpNode(token_t *token_,
+                      const unaryOperator_t &op_,
+                      exprNode &value_);
+
       leftUnaryOpNode(const leftUnaryOpNode &node);
+
       ~leftUnaryOpNode();
 
       virtual int nodeType() const;
@@ -166,7 +262,13 @@ namespace occa {
 
       rightUnaryOpNode(const unaryOperator_t &op_,
                        exprNode &value_);
+
+      rightUnaryOpNode(token_t *token,
+                       const unaryOperator_t &op_,
+                       exprNode &value_);
+
       rightUnaryOpNode(const rightUnaryOpNode &node);
+
       ~rightUnaryOpNode();
 
       virtual int nodeType() const;
@@ -188,7 +290,14 @@ namespace occa {
       binaryOpNode(const binaryOperator_t &op_,
                    exprNode &leftValue_,
                    exprNode &rightValue_);
+
+      binaryOpNode(token_t *token,
+                   const binaryOperator_t &op_,
+                   exprNode &leftValue_,
+                   exprNode &rightValue_);
+
       binaryOpNode(const binaryOpNode &node);
+
       ~binaryOpNode();
 
       virtual int nodeType() const;
@@ -209,6 +318,12 @@ namespace occa {
       ternaryOpNode(exprNode &checkValue_,
                     exprNode &trueValue_,
                     exprNode &falseValue_);
+
+      ternaryOpNode(token_t *token,
+                    exprNode &checkValue_,
+                    exprNode &trueValue_,
+                    exprNode &falseValue_);
+
       ternaryOpNode(const ternaryOpNode &node);
       ~ternaryOpNode();
 
@@ -231,7 +346,13 @@ namespace occa {
 
       subscriptNode(exprNode &value_,
                     exprNode &index_);
+
+      subscriptNode(token_t *token_,
+                    exprNode &value_,
+                    exprNode &index_);
+
       subscriptNode(const subscriptNode &node);
+
       ~subscriptNode();
 
       virtual int nodeType() const;
@@ -248,7 +369,13 @@ namespace occa {
 
       callNode(exprNode &value_,
                exprNodeVector args_);
+
+      callNode(token_t *token_,
+               exprNode &value_,
+               exprNodeVector args_);
+
       callNode(const callNode &node);
+
       ~callNode();
 
       inline int argCount() const {
@@ -273,7 +400,14 @@ namespace occa {
       newNode(type_t &type_,
               exprNode &value_,
               exprNode &size_);
+
+      newNode(token_t *token_,
+              type_t &type_,
+              exprNode &value_,
+              exprNode &size_);
+
       newNode(const newNode &node);
+
       ~newNode();
 
       virtual int nodeType() const;
@@ -290,7 +424,13 @@ namespace occa {
 
       deleteNode(exprNode &value_,
                  const bool isArray_);
+
+      deleteNode(token_t *token_,
+                 exprNode &value_,
+                 const bool isArray_);
+
       deleteNode(const deleteNode &node);
+
       ~deleteNode();
 
       virtual int nodeType() const;
@@ -305,7 +445,12 @@ namespace occa {
       exprNode &value;
 
       throwNode(exprNode &value_);
+
+      throwNode(token_t *token_,
+                exprNode &value_);
+
       throwNode(const throwNode &node);
+
       ~throwNode();
 
       virtual int nodeType() const;
@@ -322,7 +467,12 @@ namespace occa {
       exprNode &value;
 
       sizeofNode(exprNode &value_);
+
+      sizeofNode(token_t *token_,
+                 exprNode &value_);
+
       sizeofNode(const sizeofNode &node);
+
       ~sizeofNode();
 
       virtual int nodeType() const;
@@ -342,7 +492,13 @@ namespace occa {
 
       funcCastNode(type_t &type_,
                    exprNode &value_);
+
+      funcCastNode(token_t *token_,
+                   type_t &type_,
+                   exprNode &value_);
+
       funcCastNode(const funcCastNode &node);
+
       ~funcCastNode();
 
       virtual int nodeType() const;
@@ -359,7 +515,13 @@ namespace occa {
 
       parenCastNode(type_t &type_,
                     exprNode &value_);
+
+      parenCastNode(token_t *token_,
+                    type_t &type_,
+                    exprNode &value_);
+
       parenCastNode(const parenCastNode &node);
+
       ~parenCastNode();
 
       virtual int nodeType() const;
@@ -376,7 +538,13 @@ namespace occa {
 
       constCastNode(type_t &type_,
                     exprNode &value_);
+
+      constCastNode(token_t *token_,
+                    type_t &type_,
+                    exprNode &value_);
+
       constCastNode(const constCastNode &node);
+
       ~constCastNode();
 
       virtual int nodeType() const;
@@ -393,7 +561,13 @@ namespace occa {
 
       staticCastNode(type_t &type_,
                      exprNode &value_);
+
+      staticCastNode(token_t *token_,
+                     type_t &type_,
+                     exprNode &value_);
+
       staticCastNode(const staticCastNode &node);
+
       ~staticCastNode();
 
       virtual int nodeType() const;
@@ -410,7 +584,13 @@ namespace occa {
 
       reinterpretCastNode(type_t &type_,
                           exprNode &value_);
+
+      reinterpretCastNode(token_t *token_,
+                          type_t &type_,
+                          exprNode &value_);
+
       reinterpretCastNode(const reinterpretCastNode &node);
+
       ~reinterpretCastNode();
 
       virtual int nodeType() const;
@@ -427,7 +607,13 @@ namespace occa {
 
       dynamicCastNode(type_t &type_,
                       exprNode &value_);
+
+      dynamicCastNode(token_t *token_,
+                      type_t &type_,
+                      exprNode &value_);
+
       dynamicCastNode(const dynamicCastNode &node);
+
       ~dynamicCastNode();
 
       virtual int nodeType() const;
@@ -444,7 +630,12 @@ namespace occa {
       exprNode &value;
 
       parenthesesNode(exprNode &value_);
+
+      parenthesesNode(token_t *token_,
+                      exprNode &value_);
+
       parenthesesNode(const parenthesesNode &node);
+
       ~parenthesesNode();
 
       virtual int nodeType() const;
@@ -465,7 +656,13 @@ namespace occa {
 
       cudaCallNode(exprNode &blocks_,
                    exprNode &threads_);
+
+      cudaCallNode(token_t *token_,
+                   exprNode &blocks_,
+                   exprNode &threads_);
+
       cudaCallNode(const cudaCallNode &node);
+
       ~cudaCallNode();
 
       virtual int nodeType() const;

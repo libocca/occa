@@ -426,7 +426,8 @@ void testCommentSkipping() {
 void testStringMethods() {
   // Test values
   testStringValue("\"\""                , "");
-  testStringValue("\"string\\\"string\"", "string\\\"string");
+  testStringValue("\"\\\"\""            , "\"");
+  testStringValue("\"string\\\"string\"", "string\"string");
   testStringValue("R\"(string)\""       , "string");
   testStringValue("u8\"string\""        , "string");
   testStringValue("u\"string\""         , "string");

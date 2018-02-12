@@ -249,6 +249,12 @@ namespace occa {
       extern const operator_t ellipsis;
       extern const operator_t attribute;
       //================================
+
+      //---[ Associativity ]------------
+      extern const int left;
+      extern const int right;
+      extern const int associativity[18];
+      //================================
     }
   }
 }

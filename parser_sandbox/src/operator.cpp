@@ -163,6 +163,7 @@ namespace occa {
       const opType_t ternary           = (3L << 43);
       const opType_t colon             = (1L << 44);
 
+      // End = (Start << 1)
       const opType_t braceStart        = (1L << 45);
       const opType_t braceEnd          = (1L << 46);
       const opType_t bracketStart      = (1L << 47);
@@ -345,6 +346,31 @@ namespace occa {
       const operator_t semicolon            (";"  , operatorType::semicolon        , 0);
       const operator_t ellipsis             ("...", operatorType::ellipsis         , 0);
       const operator_t attribute            ("@"  , operatorType::attribute        , 0);
+      //================================
+
+      //---[ Associativity ]------------
+      const int left  = 0;
+      const int right = 1;
+      const int associativity[18] = {
+        left,  // 0
+        left,  // 1
+        left,  // 2
+        right, // 3  [Unary operators]
+        left,  // 4
+        left,  // 5
+        left,  // 6
+        left,  // 7
+        left,  // 8
+        left,  // 9
+        left,  // 10
+        left,  // 11
+        left,  // 12
+        left,  // 13
+        left,  // 14
+        left,  // 15
+        right, // 16 [?:, throw, assignment]
+        left,  // 17
+      };
       //================================
     }
 
