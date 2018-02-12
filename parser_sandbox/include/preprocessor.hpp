@@ -122,11 +122,6 @@ namespace occa {
       void processInclude(identifierToken &directive);
       void processPragma(identifierToken &directive);
       void processLine(identifierToken &directive);
-
-      template <class TM>
-      TM eval(tokenVector &lineTokens) {
-        return TM();
-      }
     };
   }
 }

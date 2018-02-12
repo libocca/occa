@@ -143,14 +143,14 @@ exprNode* makeExpression(const std::string &s) {
 
 bool canEvaluate(const std::string &s) {
   exprNode *expr = makeExpression(s);
-  bool ret = expr->canEval();
+  bool ret = expr->canEvaluate();
   delete expr;
   return ret;
 }
 
 primitive eval(const std::string &s) {
   exprNode *expr = makeExpression(s);
-  primitive value = expr->eval();
+  primitive value = expr->evaluate();
   delete expr;
   return value;
 }

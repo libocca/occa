@@ -30,6 +30,7 @@
 
 #include "preprocessor.hpp"
 #include "specialMacros.hpp"
+#include "expression.hpp"
 
 namespace occa {
   namespace lang {
@@ -337,7 +338,17 @@ namespace occa {
                    ppStatus::foundIf);
         return;
       }
-      pushStatus(ppStatus::foundIf | (eval<bool>(lineTokens)
+      exprNode *expr = exprNode::load(lineTokens);
+      if (!expr) {
+        return;
+      }
+      if (!expr->canEvaluate()) {
+        errorOn(&directive,
+                "Unable to evaluate expression");
+        return;
+      }
+
+      pushStatus(ppStatus::foundIf | (((bool) expr->evaluate())
                                       ? ppStatus::reading
                                       : ppStatus::ignoring));
     }

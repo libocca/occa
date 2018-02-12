@@ -87,8 +87,8 @@ namespace occa {
 
       virtual exprNode& clone() const = 0;
 
-      virtual bool canEval() const;
-      virtual primitive eval() const;
+      virtual bool canEvaluate() const;
+      virtual primitive evaluate() const;
 
       virtual void print(printer &pout) const = 0;
 
@@ -153,8 +153,8 @@ namespace occa {
 
       virtual exprNode& clone() const;
 
-      virtual bool canEval() const;
-      virtual primitive eval() const;
+      virtual bool canEvaluate() const;
+      virtual primitive evaluate() const;
 
       virtual void print(printer &pout) const;
 
@@ -273,8 +273,8 @@ namespace occa {
 
       virtual exprNode& clone() const;
 
-      virtual bool canEval() const;
-      virtual primitive eval() const;
+      virtual bool canEvaluate() const;
+      virtual primitive evaluate() const;
 
       virtual void print(printer &pout) const;
 
@@ -302,8 +302,8 @@ namespace occa {
 
       virtual exprNode& clone() const;
 
-      virtual bool canEval() const;
-      virtual primitive eval() const;
+      virtual bool canEvaluate() const;
+      virtual primitive evaluate() const;
 
       virtual void print(printer &pout) const;
 
@@ -333,8 +333,8 @@ namespace occa {
 
       virtual exprNode& clone() const;
 
-      virtual bool canEval() const;
-      virtual primitive eval() const;
+      virtual bool canEvaluate() const;
+      virtual primitive evaluate() const;
 
       virtual void print(printer &pout) const;
 
@@ -362,8 +362,8 @@ namespace occa {
 
       virtual exprNode& clone() const;
 
-      virtual bool canEval() const;
-      virtual primitive eval() const;
+      virtual bool canEvaluate() const;
+      virtual primitive evaluate() const;
 
       virtual void print(printer &pout) const;
 
@@ -521,8 +521,8 @@ namespace occa {
 
       virtual exprNode& clone() const;
 
-      virtual bool canEval() const;
-      virtual primitive eval() const;
+      virtual bool canEvaluate() const;
+      virtual primitive evaluate() const;
 
       virtual void print(printer &pout) const;
 
@@ -698,8 +698,8 @@ namespace occa {
 
       virtual exprNode& clone() const;
 
-      virtual bool canEval() const;
-      virtual primitive eval() const;
+      virtual bool canEvaluate() const;
+      virtual primitive evaluate() const;
 
       virtual void print(printer &pout) const;
 

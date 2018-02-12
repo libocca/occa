@@ -29,11 +29,11 @@ namespace occa {
 
     exprNode::~exprNode() {}
 
-    bool exprNode::canEval() const {
+    bool exprNode::canEvaluate() const {
       return false;
     }
 
-    primitive exprNode::eval() const {
+    primitive exprNode::evaluate() const {
       return primitive();
     }
 
@@ -317,11 +317,11 @@ namespace occa {
       return *(new primitiveNode(value));
     }
 
-    bool primitiveNode::canEval() const {
+    bool primitiveNode::canEvaluate() const {
       return true;
     }
 
-    primitive primitiveNode::eval() const {
+    primitive primitiveNode::evaluate() const {
       return value;
     }
 
@@ -512,12 +512,12 @@ namespace occa {
       return *(new leftUnaryOpNode(op, value));
     }
 
-    bool leftUnaryOpNode::canEval() const {
-      return value.canEval();
+    bool leftUnaryOpNode::canEvaluate() const {
+      return value.canEvaluate();
     }
 
-    primitive leftUnaryOpNode::eval() const {
-      primitive pValue = value.eval();
+    primitive leftUnaryOpNode::evaluate() const {
+      primitive pValue = value.evaluate();
       return op(pValue);
     }
 
@@ -567,12 +567,12 @@ namespace occa {
       return *(new rightUnaryOpNode(op, value));
     }
 
-    bool rightUnaryOpNode::canEval() const {
-      return value.canEval();
+    bool rightUnaryOpNode::canEvaluate() const {
+      return value.canEvaluate();
     }
 
-    primitive rightUnaryOpNode::eval() const {
-      primitive pValue = value.eval();
+    primitive rightUnaryOpNode::evaluate() const {
+      primitive pValue = value.evaluate();
       return op(pValue);
     }
 
@@ -628,14 +628,14 @@ namespace occa {
       return *(new binaryOpNode(op, leftValue, rightValue));
     }
 
-    bool binaryOpNode::canEval() const {
-      return (leftValue.canEval() &&
-              rightValue.canEval());
+    bool binaryOpNode::canEvaluate() const {
+      return (leftValue.canEvaluate() &&
+              rightValue.canEvaluate());
     }
 
-    primitive binaryOpNode::eval() const {
-      primitive pLeft  = leftValue.eval();
-      primitive pRight = rightValue.eval();
+    primitive binaryOpNode::evaluate() const {
+      primitive pLeft  = leftValue.evaluate();
+      primitive pRight = rightValue.evaluate();
       return op(pLeft, pRight);
     }
 
@@ -698,17 +698,17 @@ namespace occa {
                                  falseValue));
     }
 
-    bool ternaryOpNode::canEval() const {
-      return (checkValue.canEval() &&
-              trueValue.canEval()  &&
-              falseValue.canEval());
+    bool ternaryOpNode::canEvaluate() const {
+      return (checkValue.canEvaluate() &&
+              trueValue.canEvaluate()  &&
+              falseValue.canEvaluate());
     }
 
-    primitive ternaryOpNode::eval() const {
-      if ((bool) checkValue.eval()) {
-        return trueValue.eval();
+    primitive ternaryOpNode::evaluate() const {
+      if ((bool) checkValue.evaluate()) {
+        return trueValue.evaluate();
       }
-      return falseValue.eval();
+      return falseValue.evaluate();
     }
 
     void ternaryOpNode::print(printer &pout) const {
@@ -1020,12 +1020,12 @@ namespace occa {
       return *(new sizeofNode(value));
     }
 
-    bool sizeofNode::canEval() const {
-      return value.canEval();
+    bool sizeofNode::canEvaluate() const {
+      return value.canEvaluate();
     }
 
-    primitive sizeofNode::eval() const {
-      return value.eval().sizeof_();
+    primitive sizeofNode::evaluate() const {
+      return value.evaluate().sizeof_();
     }
 
     void sizeofNode::print(printer &pout) const {
@@ -1347,12 +1347,12 @@ namespace occa {
       return *(new parenthesesNode(value));
     }
 
-    bool parenthesesNode::canEval() const {
-      return value.canEval();
+    bool parenthesesNode::canEvaluate() const {
+      return value.canEvaluate();
     }
 
-    primitive parenthesesNode::eval() const {
-      return value.eval();
+    primitive parenthesesNode::evaluate() const {
+      return value.evaluate();
     }
 
     void parenthesesNode::print(printer &pout) const {
