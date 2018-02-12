@@ -159,7 +159,7 @@ void testLoad() {
   OCCA_ASSERT_TRUE(canEvaluate("1 + 2 / (3)"));
   OCCA_ASSERT_FALSE(canEvaluate("1 + 2 / (3) + '1'"));
 
-  OCCA_ASSERT_EQUAL((int) 1,
+  OCCA_ASSERT_EQUAL((int) (1 + 2 / (3)),
                     (int) eval("1 + 2 / (3)"));
 
   OCCA_ASSERT_EQUAL((double) ((1 + 2 / 3.1 * 4.4) / 1.2),
