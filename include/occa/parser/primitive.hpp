@@ -342,6 +342,26 @@ namespace occa {
     operator std::string () const;
 
     friend std::ostream& operator << (std::ostream &out, const primitive &p);
+
+    //---[ Misc Methods ]-----------------
+    inline std::size_t sizeof_() {
+      switch(type) {
+      case primitiveType::bool_   : return sizeof(bool);
+      case primitiveType::uint8_  : return sizeof(uint8_t);
+      case primitiveType::uint16_ : return sizeof(uint16_t);
+      case primitiveType::uint32_ : return sizeof(uint32_t);
+      case primitiveType::uint64_ : return sizeof(uint64_t);
+      case primitiveType::int8_   : return sizeof(int8_t);
+      case primitiveType::int16_  : return sizeof(int16_t);
+      case primitiveType::int32_  : return sizeof(int32_t);
+      case primitiveType::int64_  : return sizeof(int64_t);
+      case primitiveType::float_  : return sizeof(float);
+      case primitiveType::double_ : return sizeof(double);
+      default: OCCA_FORCE_ERROR("Type not set");
+      }
+      return 0;
+    }
+    //====================================
   };
 
   //---[ Unary Operators ]--------------
@@ -453,7 +473,7 @@ namespace occa {
     return p;
   }
 
-  inline primitive rightIncrement(primitive &p, int) {
+  inline primitive rightIncrement(primitive &p) {
     switch(p.type) {
     case primitiveType::bool_   : OCCA_FORCE_ERROR("Cannot apply operator ++ to bool type"); break;
     case primitiveType::int8_   : p.value.int8_++;    return p;
@@ -471,7 +491,7 @@ namespace occa {
     return p;
   }
 
-  inline primitive rightDecrement(primitive &p, int) {
+  inline primitive rightDecrement(primitive &p) {
     switch(p.type) {
     case primitiveType::bool_   : OCCA_FORCE_ERROR("Cannot apply operator -- to bool type"); break;
     case primitiveType::int8_   : p.value.int8_--;    return p;
@@ -840,6 +860,11 @@ namespace occa {
 
 
   //---[ Assignment Operators ]---------
+  inline primitive& assign(primitive &a, const primitive &b) {
+    a = b;
+    return a;
+  }
+
   inline primitive& multEq(primitive &a, const primitive &b) {
     const int retType = (a.type > b.type) ? a.type : b.type;
     switch(retType) {
@@ -973,7 +998,7 @@ namespace occa {
     return a;
   }
 
-  inline primitive& xor_Eq(primitive &a, const primitive &b) {
+  inline primitive& xorEq(primitive &a, const primitive &b) {
     const int retType = (a.type > b.type) ? a.type : b.type;
     switch(retType) {
     case primitiveType::bool_   : a = (a.to<bool>()     ^ b.to<bool>());     break;

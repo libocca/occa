@@ -24,6 +24,7 @@
 
 #include "occa/types.hpp"
 #include "printer.hpp"
+#include "occa/parser/primitive.hpp"
 
 namespace occa {
   namespace lang {
@@ -142,63 +143,82 @@ namespace occa {
       void print(printer &pout) const;
     };
 
+    class unaryOperator_t : public operator_t {
+    public:
+      unaryOperator_t(const std::string &str_,
+                      opType_t opType_,
+                      int precedence_);
+
+      primitive operator () (primitive &value) const;
+    };
+
+    class binaryOperator_t : public operator_t {
+    public:
+      binaryOperator_t(const std::string &str_,
+                       opType_t opType_,
+                       int precedence_);
+
+      primitive operator () (primitive &leftValue,
+                             primitive &rightValue) const;
+    };
+
     namespace op {
       //---[ Left Unary ]---------------
-      extern const operator_t not_;
-      extern const operator_t positive;
-      extern const operator_t negative;
-      extern const operator_t tilde;
-      extern const operator_t leftIncrement;
-      extern const operator_t leftDecrement;
+      extern const unaryOperator_t not_;
+      extern const unaryOperator_t positive;
+      extern const unaryOperator_t negative;
+      extern const unaryOperator_t tilde;
+      extern const unaryOperator_t leftIncrement;
+      extern const unaryOperator_t leftDecrement;
       //================================
 
       //---[ Right Unary ]--------------
-      extern const operator_t rightIncrement;
-      extern const operator_t rightDecrement;
+      extern const unaryOperator_t rightIncrement;
+      extern const unaryOperator_t rightDecrement;
       //================================
 
       //---[ Binary ]-------------------
-      extern const operator_t add;
-      extern const operator_t sub;
-      extern const operator_t mult;
-      extern const operator_t div;
-      extern const operator_t mod;
+      extern const binaryOperator_t add;
+      extern const binaryOperator_t sub;
+      extern const binaryOperator_t mult;
+      extern const binaryOperator_t div;
+      extern const binaryOperator_t mod;
 
-      extern const operator_t lessThan;
-      extern const operator_t lessThanEq;
-      extern const operator_t equal;
-      extern const operator_t notEqual;
-      extern const operator_t greaterThan;
-      extern const operator_t greaterThanEq;
+      extern const binaryOperator_t lessThan;
+      extern const binaryOperator_t lessThanEq;
+      extern const binaryOperator_t equal;
+      extern const binaryOperator_t notEqual;
+      extern const binaryOperator_t greaterThan;
+      extern const binaryOperator_t greaterThanEq;
 
-      extern const operator_t and_;
-      extern const operator_t or_;
-      extern const operator_t bitAnd;
-      extern const operator_t bitOr;
-      extern const operator_t xor_;
-      extern const operator_t leftShift;
-      extern const operator_t rightShift;
+      extern const binaryOperator_t and_;
+      extern const binaryOperator_t or_;
+      extern const binaryOperator_t bitAnd;
+      extern const binaryOperator_t bitOr;
+      extern const binaryOperator_t xor_;
+      extern const binaryOperator_t leftShift;
+      extern const binaryOperator_t rightShift;
 
-      extern const operator_t assign;
-      extern const operator_t addEq;
-      extern const operator_t subEq;
-      extern const operator_t multEq;
-      extern const operator_t divEq;
-      extern const operator_t modEq;
-      extern const operator_t andEq;
-      extern const operator_t orEq;
-      extern const operator_t xorEq;
-      extern const operator_t leftShiftEq;
-      extern const operator_t rightShiftEq;
+      extern const binaryOperator_t assign;
+      extern const binaryOperator_t addEq;
+      extern const binaryOperator_t subEq;
+      extern const binaryOperator_t multEq;
+      extern const binaryOperator_t divEq;
+      extern const binaryOperator_t modEq;
+      extern const binaryOperator_t andEq;
+      extern const binaryOperator_t orEq;
+      extern const binaryOperator_t xorEq;
+      extern const binaryOperator_t leftShiftEq;
+      extern const binaryOperator_t rightShiftEq;
 
-      extern const operator_t comma;
+      extern const binaryOperator_t comma;
 
       // Non-Overloadable
-      extern const operator_t scope;
-      extern const operator_t dot;
-      extern const operator_t dotStar;
-      extern const operator_t arrow;
-      extern const operator_t arrowStar;
+      extern const binaryOperator_t scope;
+      extern const binaryOperator_t dot;
+      extern const binaryOperator_t dotStar;
+      extern const binaryOperator_t arrow;
+      extern const binaryOperator_t arrowStar;
       //================================
 
       //---[ Ternary ]------------------

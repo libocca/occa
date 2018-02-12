@@ -56,16 +56,17 @@ namespace occa {
       delete token;
     }
 
-    void macroRawToken::expandTokens(tokenVector &newTokens,
+    bool macroRawToken::expandTokens(tokenVector &newTokens,
                                      token_t *source,
                                      std::vector<tokenVector> &args) {
       newTokens.push_back(token->clone());
+      return true;
     }
 
     macroArgument::macroArgument(const int arg_) :
       arg(arg_) {}
 
-    void macroArgument::expandTokens(tokenVector &newTokens,
+    bool macroArgument::expandTokens(tokenVector &newTokens,
                                      token_t *source,
                                      std::vector<tokenVector> &args) {
       tokenVector &argTokens = args[arg];
@@ -73,6 +74,7 @@ namespace occa {
       for (int i = 0; i < tokenCount; ++i) {
         newTokens.push_back(argTokens[i]);
       }
+      return true;
     }
 
     macroStringify::macroStringify(macroToken *token_) :
@@ -82,11 +84,15 @@ namespace occa {
       delete token;
     }
 
-    void macroStringify::expandTokens(tokenVector &newTokens,
+    bool macroStringify::expandTokens(tokenVector &newTokens,
                                       token_t *source,
                                       std::vector<tokenVector> &args) {
       // Get tokens to stringify
-      token->expandTokens(newTokens, source, args);
+      bool success = token->expandTokens(newTokens, source, args);
+      if (!success) {
+        return false;
+      }
+
       const std::string rawValue = stringifyTokens(newTokens, true);
 
       // Escape double quotes
@@ -99,6 +105,7 @@ namespace occa {
       tokenizer::tokenize(newTokens,
                           source->origin,
                           value);
+      return (newTokens.size() == 1);
     }
 
     macroConcat::macroConcat(const macroTokenVector_t &tokens_) :
@@ -112,13 +119,16 @@ namespace occa {
       tokens.clear();
     }
 
-    void macroConcat::expandTokens(tokenVector &newTokens,
+    bool macroConcat::expandTokens(tokenVector &newTokens,
                                    token_t *source,
                                    std::vector<tokenVector> &args) {
       // Evaluate all parts
       const int macroTokenCount = (int) tokens.size();
       for (int i = 0; i < macroTokenCount; ++i) {
-        tokens[i]->expandTokens(newTokens, source, args);
+        bool success = tokens[i]->expandTokens(newTokens, source, args);
+        if (!success) {
+          return false;
+        }
       }
 
       // Combine tokens to create one token identifier
@@ -129,7 +139,7 @@ namespace occa {
       tokenizer::tokenize(newTokens,
                           source->origin,
                           newToken);
-      newTokens.clear();
+      return (newTokens.size() == 1);
     }
     //==================================
 
@@ -290,7 +300,8 @@ namespace occa {
       macroTokens = newMacroTokens;
     }
 
-    bool macro_t::expand(identifierToken &source) {
+    bool macro_t::expand(identifierToken &source,
+                         tokenVector &expandedTokens) {
       // Assumes ( has been checked
       std::vector<tokenVector> args;
       bool succeeded = loadArgs(source, args);
@@ -298,17 +309,14 @@ namespace occa {
         return false;
       }
       // Expand tokens
-      tokenVector newTokens;
       const int macroTokenCount = (int) macroTokens.size();
       for (int i = 0; i < macroTokenCount; ++i) {
-        macroTokens[i]->expandTokens(newTokens,
-                                     &source,
-                                     args);
-      }
-      // Push new tokens
-      const int newTokenCount = (int) newTokens.size();
-      for (int i = 0; i < newTokenCount; ++i) {
-        pp.push(newTokens[i]);
+        succeeded = macroTokens[i]->expandTokens(expandedTokens,
+                                                 &source,
+                                                 args);
+        if (!succeeded) {
+          return false;
+        }
       }
       return true;
     }
@@ -394,7 +402,7 @@ namespace occa {
                              const std::string &contents) {
       std::string source = name_;
       source += ' ';
-      source = contents;
+      source += contents;
 
       tokenVector tokens;
       tokenizer::tokenize(tokens,

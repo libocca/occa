@@ -261,90 +261,90 @@ namespace occa {
 
     namespace op {
       //---[ Left Unary ]---------------
-      const operator_t not_             ("!"  , operatorType::not_            , 1);
-      const operator_t positive         ("+"  , operatorType::positive        , 1);
-      const operator_t negative         ("-"  , operatorType::negative        , 1);
-      const operator_t tilde            ("~"  , operatorType::tilde           , 1);
-      const operator_t leftIncrement    ("++" , operatorType::leftIncrement   , 1);
-      const operator_t leftDecrement    ("--" , operatorType::leftDecrement   , 1);
+      const unaryOperator_t not_           ("!"  , operatorType::not_              , 3);
+      const unaryOperator_t positive       ("+"  , operatorType::positive          , 3);
+      const unaryOperator_t negative       ("-"  , operatorType::negative          , 3);
+      const unaryOperator_t tilde          ("~"  , operatorType::tilde             , 3);
+      const unaryOperator_t leftIncrement  ("++" , operatorType::leftIncrement     , 3);
+      const unaryOperator_t leftDecrement  ("--" , operatorType::leftDecrement     , 3);
       //================================
 
       //---[ Right Unary ]--------------
-      const operator_t rightIncrement   ("++" , operatorType::rightIncrement  , 1);
-      const operator_t rightDecrement   ("--" , operatorType::rightDecrement  , 1);
+      const unaryOperator_t rightIncrement ("++" , operatorType::rightIncrement    , 2);
+      const unaryOperator_t rightDecrement ("--" , operatorType::rightDecrement    , 2);
       //================================
 
       //---[ Binary ]-------------------
-      const operator_t add              ("+"  , operatorType::add             , 1);
-      const operator_t sub              ("-"  , operatorType::sub             , 1);
-      const operator_t mult             ("*"  , operatorType::mult            , 1);
-      const operator_t div              ("/"  , operatorType::div             , 1);
-      const operator_t mod              ("%"  , operatorType::mod             , 1);
+      const binaryOperator_t add            ("+"  , operatorType::add              , 6);
+      const binaryOperator_t sub            ("-"  , operatorType::sub              , 6);
+      const binaryOperator_t mult           ("*"  , operatorType::mult             , 5);
+      const binaryOperator_t div            ("/"  , operatorType::div              , 5);
+      const binaryOperator_t mod            ("%"  , operatorType::mod              , 5);
 
-      const operator_t lessThan         ("<"  , operatorType::lessThan        , 1);
-      const operator_t lessThanEq       ("<=" , operatorType::lessThanEq      , 1);
-      const operator_t equal            ("==" , operatorType::equal           , 1);
-      const operator_t notEqual         ("!=" , operatorType::notEqual        , 1);
-      const operator_t greaterThan      (">"  , operatorType::greaterThan     , 1);
-      const operator_t greaterThanEq    (">=" , operatorType::greaterThanEq   , 1);
+      const binaryOperator_t lessThan       ("<"  , operatorType::lessThan         , 9);
+      const binaryOperator_t lessThanEq     ("<=" , operatorType::lessThanEq       , 9);
+      const binaryOperator_t equal          ("==" , operatorType::equal            , 10);
+      const binaryOperator_t notEqual       ("!=" , operatorType::notEqual         , 10);
+      const binaryOperator_t greaterThan    (">"  , operatorType::greaterThan      , 9);
+      const binaryOperator_t greaterThanEq  (">=" , operatorType::greaterThanEq    , 9);
 
-      const operator_t and_             ("&&" , operatorType::and_            , 1);
-      const operator_t or_              ("||" , operatorType::or_             , 1);
-      const operator_t bitAnd           ("&"  , operatorType::bitAnd          , 1);
-      const operator_t bitOr            ("|"  , operatorType::bitOr           , 1);
-      const operator_t xor_             ("^"  , operatorType::xor_            , 1);
-      const operator_t leftShift        ("<<" , operatorType::leftShift       , 1);
-      const operator_t rightShift       (">>" , operatorType::rightShift      , 1);
+      const binaryOperator_t and_           ("&&" , operatorType::and_             , 14);
+      const binaryOperator_t or_            ("||" , operatorType::or_              , 15);
+      const binaryOperator_t bitAnd         ("&"  , operatorType::bitAnd           , 11);
+      const binaryOperator_t bitOr          ("|"  , operatorType::bitOr            , 13);
+      const binaryOperator_t xor_           ("^"  , operatorType::xor_             , 12);
+      const binaryOperator_t leftShift      ("<<" , operatorType::leftShift        , 7);
+      const binaryOperator_t rightShift     (">>" , operatorType::rightShift       , 7);
 
-      const operator_t assign           (","  , operatorType::assign          , 1);
-      const operator_t addEq            ("+=" , operatorType::addEq           , 1);
-      const operator_t subEq            ("-=" , operatorType::subEq           , 1);
-      const operator_t multEq           ("*=" , operatorType::multEq          , 1);
-      const operator_t divEq            ("/=" , operatorType::divEq           , 1);
-      const operator_t modEq            ("%=" , operatorType::modEq           , 1);
-      const operator_t andEq            ("&=" , operatorType::andEq           , 1);
-      const operator_t orEq             ("|=" , operatorType::orEq            , 1);
-      const operator_t xorEq            ("^=" , operatorType::xorEq           , 1);
-      const operator_t leftShiftEq      ("<<=", operatorType::leftShiftEq     , 1);
-      const operator_t rightShiftEq     (">>=", operatorType::rightShiftEq    , 1);
+      const binaryOperator_t assign         ("="  , operatorType::assign           , 16);
+      const binaryOperator_t addEq          ("+=" , operatorType::addEq            , 16);
+      const binaryOperator_t subEq          ("-=" , operatorType::subEq            , 16);
+      const binaryOperator_t multEq         ("*=" , operatorType::multEq           , 16);
+      const binaryOperator_t divEq          ("/=" , operatorType::divEq            , 16);
+      const binaryOperator_t modEq          ("%=" , operatorType::modEq            , 16);
+      const binaryOperator_t andEq          ("&=" , operatorType::andEq            , 16);
+      const binaryOperator_t orEq           ("|=" , operatorType::orEq             , 16);
+      const binaryOperator_t xorEq          ("^=" , operatorType::xorEq            , 16);
+      const binaryOperator_t leftShiftEq    ("<<=", operatorType::leftShiftEq      , 16);
+      const binaryOperator_t rightShiftEq   (">>=", operatorType::rightShiftEq     , 16);
 
-      const operator_t comma            (","  , operatorType::comma           , 1);
+      const binaryOperator_t comma          (","  , operatorType::comma            , 17);
 
       // Non-Overloadable
-      const operator_t scope            ("::" , operatorType::scope           , 1);
-      const operator_t dot              ("."  , operatorType::dot             , 1);
-      const operator_t dotStar          (".*" , operatorType::dotStar         , 1);
-      const operator_t arrow            ("->" , operatorType::arrow           , 1);
-      const operator_t arrowStar        ("->*", operatorType::arrowStar       , 1);
+      const binaryOperator_t scope          ("::" , operatorType::scope            , 1);
+      const binaryOperator_t dot            ("."  , operatorType::dot              , 2);
+      const binaryOperator_t dotStar        (".*" , operatorType::dotStar          , 4);
+      const binaryOperator_t arrow          ("->" , operatorType::arrow            , 2);
+      const binaryOperator_t arrowStar      ("->*", operatorType::arrowStar        , 4);
       //================================
 
       //---[ Ternary ]------------------
-      const operator_t ternary          ("?"  , operatorType::ternary         , 1);
-      const operator_t colon            (":"  , operatorType::colon           , 1);
+      const operator_t ternary              ("?"  , operatorType::ternary          , 16);
+      const operator_t colon                (":"  , operatorType::colon            , 16);
       //================================
 
       //---[ Pairs ]--------------------
-      const operator_t braceStart       ("{"  , operatorType::braceStart      , 1);
-      const operator_t braceEnd         ("}"  , operatorType::braceEnd        , 1);
-      const operator_t bracketStart     ("["  , operatorType::bracketStart    , 1);
-      const operator_t bracketEnd       ("]"  , operatorType::bracketEnd      , 1);
-      const operator_t parenthesesStart ("("  , operatorType::parenthesesStart, 1);
-      const operator_t parenthesesEnd   (")"  , operatorType::parenthesesEnd  , 1);
+      const operator_t braceStart           ("{"  , operatorType::braceStart       , 0);
+      const operator_t braceEnd             ("}"  , operatorType::braceEnd         , 0);
+      const operator_t bracketStart         ("["  , operatorType::bracketStart     , 0);
+      const operator_t bracketEnd           ("]"  , operatorType::bracketEnd       , 0);
+      const operator_t parenthesesStart     ("("  , operatorType::parenthesesStart , 0);
+      const operator_t parenthesesEnd       (")"  , operatorType::parenthesesEnd   , 0);
       //================================
 
       //---[ Comments ]-----------------
-      const operator_t lineComment      ("//" , operatorType::lineComment      , 1);
-      const operator_t blockCommentStart("/*" , operatorType::blockCommentStart, 1);
-      const operator_t blockCommentEnd  ("*/" , operatorType::blockCommentEnd  , 1);
+      const operator_t lineComment          ("//" , operatorType::lineComment      , 0);
+      const operator_t blockCommentStart    ("/*" , operatorType::blockCommentStart, 0);
+      const operator_t blockCommentEnd      ("*/" , operatorType::blockCommentEnd  , 0);
       //================================
 
       //---[ Special ]------------------
-      const operator_t hash             ("#"  , operatorType::hash            , 1);
-      const operator_t hashhash         ("##" , operatorType::hashhash        , 1);
+      const operator_t hash                 ("#"  , operatorType::hash             , 0);
+      const operator_t hashhash             ("##" , operatorType::hashhash         , 0);
 
-      const operator_t semicolon        (";"  , operatorType::semicolon       , 1);
-      const operator_t ellipsis         ("...", operatorType::ellipsis        , 1);
-      const operator_t attribute        ("@"  , operatorType::attribute       , 1);
+      const operator_t semicolon            (";"  , operatorType::semicolon        , 0);
+      const operator_t ellipsis             ("...", operatorType::ellipsis         , 0);
+      const operator_t attribute            ("@"  , operatorType::attribute        , 0);
       //================================
     }
 
@@ -357,6 +357,77 @@ namespace occa {
 
     void operator_t::print(printer &pout) const {
       pout << str;
+    }
+
+
+    unaryOperator_t::unaryOperator_t(const std::string &str_,
+                                     opType_t opType_,
+                                     int precedence_) :
+      operator_t(str_, opType_, precedence_) {}
+
+
+    binaryOperator_t::binaryOperator_t(const std::string &str_,
+                                       opType_t opType_,
+                                       int precedence_) :
+      operator_t(str_, opType_, precedence_) {}
+
+
+    primitive unaryOperator_t::operator () (primitive &value) const {
+      switch(opType) {
+      case operatorType::not_           : return not_(value);
+      case operatorType::positive       : return positive(value);
+      case operatorType::negative       : return negative(value);
+      case operatorType::tilde          : return tilde(value);
+      case operatorType::leftIncrement  : return leftIncrement(value);
+      case operatorType::leftDecrement  : return leftDecrement(value);
+
+      case operatorType::rightIncrement : return rightIncrement(value);
+      case operatorType::rightDecrement : return rightDecrement(value);
+      default:
+        return primitive();
+      }
+    }
+
+    primitive binaryOperator_t::operator () (primitive &leftValue,
+                                             primitive &rightValue) const {
+      switch(opType) {
+      case operatorType::add          : return add(leftValue, rightValue);
+      case operatorType::sub          : return sub(leftValue, rightValue);
+      case operatorType::mult         : return mult(leftValue, rightValue);
+      case operatorType::div          : return div(leftValue, rightValue);
+      case operatorType::mod          : return mod(leftValue, rightValue);
+
+      case operatorType::lessThan     : return lessThan(leftValue, rightValue);
+      case operatorType::lessThanEq   : return lessThanEq(leftValue, rightValue);
+      case operatorType::equal        : return equal(leftValue, rightValue);
+      case operatorType::notEqual     : return notEqual(leftValue, rightValue);
+      case operatorType::greaterThan  : return greaterThan(leftValue, rightValue);
+      case operatorType::greaterThanEq: return greaterThanEq(leftValue, rightValue);
+
+      case operatorType::and_         : return and_(leftValue, rightValue);
+      case operatorType::or_          : return or_(leftValue, rightValue);
+      case operatorType::bitAnd       : return bitAnd(leftValue, rightValue);
+      case operatorType::bitOr        : return bitOr(leftValue, rightValue);
+      case operatorType::xor_         : return xor_(leftValue, rightValue);
+      case operatorType::leftShift    : return leftShift(leftValue, rightValue);
+      case operatorType::rightShift   : return rightShift(leftValue, rightValue);
+
+      case operatorType::assign       : return assign(leftValue, rightValue);
+      case operatorType::addEq        : return addEq(leftValue, rightValue);
+      case operatorType::subEq        : return subEq(leftValue, rightValue);
+      case operatorType::multEq       : return multEq(leftValue, rightValue);
+      case operatorType::divEq        : return divEq(leftValue, rightValue);
+      case operatorType::modEq        : return modEq(leftValue, rightValue);
+      case operatorType::andEq        : return bitAndEq(leftValue, rightValue);
+      case operatorType::orEq         : return bitOrEq(leftValue, rightValue);
+      case operatorType::xorEq        : return xorEq(leftValue, rightValue);
+      case operatorType::leftShiftEq  : return leftShiftEq(leftValue, rightValue);
+      case operatorType::rightShiftEq : return rightShiftEq(leftValue, rightValue);
+
+      case operatorType::comma        : return rightValue;
+      default:
+        return primitive();
+      }
     }
   }
 }

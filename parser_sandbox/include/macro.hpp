@@ -43,7 +43,7 @@ namespace occa {
     public:
       virtual ~macroToken();
 
-      virtual void expandTokens(tokenVector &newTokens,
+      virtual bool expandTokens(tokenVector &newTokens,
                                 token_t *source,
                                 std::vector<tokenVector> &args) = 0;
 
@@ -58,7 +58,7 @@ namespace occa {
       macroRawToken(token_t *token_);
       ~macroRawToken();
 
-      void expandTokens(tokenVector &newTokens,
+      bool expandTokens(tokenVector &newTokens,
                         token_t *source,
                         std::vector<tokenVector> &args);
     };
@@ -69,7 +69,7 @@ namespace occa {
 
       macroArgument(const int arg_);
 
-      void expandTokens(tokenVector &newTokens,
+      bool expandTokens(tokenVector &newTokens,
                         token_t *source,
                         std::vector<tokenVector> &args);
     };
@@ -81,7 +81,7 @@ namespace occa {
       macroStringify(macroToken *token_);
       ~macroStringify();
 
-      void expandTokens(tokenVector &newTokens,
+      bool expandTokens(tokenVector &newTokens,
                         token_t *source,
                         std::vector<tokenVector> &args);
     };
@@ -93,7 +93,7 @@ namespace occa {
       macroConcat(const macroTokenVector_t &tokens_);
       ~macroConcat();
 
-      void expandTokens(tokenVector &newTokens,
+      bool expandTokens(tokenVector &newTokens,
                         token_t *source,
                         std::vector<tokenVector> &args);
     };
@@ -137,7 +137,8 @@ namespace occa {
       void stringifyMacroTokens();
       void concatMacroTokens();
 
-      virtual bool expand(identifierToken &source);
+      virtual bool expand(identifierToken &source,
+                          tokenVector &expandedTokens);
 
       bool loadArgs(identifierToken &source,
                     std::vector<tokenVector> &args);

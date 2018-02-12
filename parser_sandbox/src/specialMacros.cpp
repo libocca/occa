@@ -33,11 +33,14 @@ namespace occa {
     definedMacro::definedMacro(preprocessor &pp_) :
       macro_t(pp_, "defined") {}
 
-    bool definedMacro::expandTokens(identifierToken &source) {
+    bool definedMacro::expandTokens(identifierToken &source,
+                                    tokenVector &expandedTokens) {
       bool isDefined = !!pp.getMacro(source.value);
-      pp.push(new primitiveToken(source.origin,
-                                 isDefined,
-                                 isDefined ? "true" : "false"));
+      expandedTokens.push_back(
+        new primitiveToken(source.origin,
+                           isDefined,
+                           isDefined ? "true" : "false")
+      );
       return true;
     }
 
@@ -45,9 +48,12 @@ namespace occa {
     fileMacro::fileMacro(preprocessor &pp_) :
       macro_t(pp_, "__FILE__") {}
 
-    bool fileMacro::expandTokens(identifierToken &source) {
-      pp.push(new stringToken(source.origin,
-                              source.origin.file->filename));
+    bool fileMacro::expandTokens(identifierToken &source,
+                                 tokenVector &expandedTokens) {
+      expandedTokens.push_back(
+        new stringToken(source.origin,
+                        source.origin.file->filename)
+      );
       return true;
     }
 
@@ -55,11 +61,14 @@ namespace occa {
     lineMacro::lineMacro(preprocessor &pp_) :
       macro_t(pp_, "__LINE__") {}
 
-    bool lineMacro::expandTokens(identifierToken &source) {
+    bool lineMacro::expandTokens(identifierToken &source,
+                                 tokenVector &expandedTokens) {
       const int line = source.origin.position.line;
-      pp.push(new primitiveToken(source.origin,
-                                 line,
-                                 occa::toString(line)));
+      expandedTokens.push_back(
+        new primitiveToken(source.origin,
+                           line,
+                           occa::toString(line))
+      );
       return true;
     }
 
@@ -67,7 +76,8 @@ namespace occa {
     dateMacro::dateMacro(preprocessor &pp_) :
       macro_t(pp_, "__DATE__") {}
 
-    bool dateMacro::expandTokens(identifierToken &source) {
+    bool dateMacro::expandTokens(identifierToken &source,
+                                 tokenVector &expandedTokens) {
       static char month[12][5] = {
         "Jan", "Feb", "Mar", "Apr", "May", "Jun",
         "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
@@ -89,8 +99,10 @@ namespace occa {
            << ct->tm_year + 1900;
       }
 
-      pp.push(new stringToken(source.origin,
-                              ss.str()));
+      expandedTokens.push_back(
+        new stringToken(source.origin,
+                        ss.str())
+      );
       return true;
     }
 
@@ -98,7 +110,8 @@ namespace occa {
     timeMacro::timeMacro(preprocessor &pp_) :
       macro_t(pp_, "__TIME__") {}
 
-    bool timeMacro::expandTokens(identifierToken &source) {
+    bool timeMacro::expandTokens(identifierToken &source,
+                                 tokenVector &expandedTokens) {
       time_t t = ::time(NULL);
       struct tm *ct = ::localtime(&t);
 
@@ -120,8 +133,10 @@ namespace occa {
         ss << ct->tm_sec;
       }
 
-      pp.push(new stringToken(source.origin,
-                              ss.str()));
+      expandedTokens.push_back(
+        new stringToken(source.origin,
+                        ss.str())
+      );
       return true;
     }
 
@@ -130,11 +145,14 @@ namespace occa {
       macro_t(pp_, "__COUNTER__"),
       counter(0) {}
 
-    bool counterMacro::expandTokens(identifierToken &source) {
+    bool counterMacro::expandTokens(identifierToken &source,
+                                    tokenVector &expandedTokens) {
       const int value = counter;
-      pp.push(new primitiveToken(source.origin,
-                                 value,
-                                 occa::toString(value)));
+      expandedTokens.push_back(
+        new primitiveToken(source.origin,
+                           value,
+                           occa::toString(value))
+      );
       return true;
     }
   }

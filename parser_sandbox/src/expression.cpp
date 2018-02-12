@@ -32,8 +32,20 @@ namespace occa {
       return ss.str();
     }
 
+    bool exprNode::canEvaluate() const {
+      return false;
+    }
+
+    primitive exprNode::eval() const {
+      return primitive();
+    }
+
     void exprNode::debugPrint() const {
       std::cout << toString();
+    }
+
+    exprNode* exprNode::load(const tokenVector &tokens) {
+      return NULL;
     }
 
     //---[ Empty ]----------------------
@@ -70,6 +82,14 @@ namespace occa {
       return *(new primitiveNode(value));
     }
 
+    bool primitiveNode::canEvaluate() const {
+      return true;
+    }
+
+    primitive primitiveNode::eval() const {
+      return value;
+    }
+
     void primitiveNode::print(printer &pout) const {
       pout << (std::string) value;
     }
@@ -96,20 +116,13 @@ namespace occa {
     //==================================
 
     //---[ Operators ]------------------
-    opNode::opNode(const operator_t &op_) :
-      op(op_) {}
-
-    int opNode::opnodeType() const {
-      return op.opType;
-    }
-
-    leftUnaryOpNode::leftUnaryOpNode(const operator_t &op_,
+    leftUnaryOpNode::leftUnaryOpNode(const unaryOperator_t &op_,
                                      exprNode &value_) :
-      opNode(op_),
+      op(op_),
       value(value_.clone()) {}
 
     leftUnaryOpNode::leftUnaryOpNode(const leftUnaryOpNode &node) :
-      opNode(node.op),
+      op(node.op),
       value(node.value.clone()) {}
 
     leftUnaryOpNode::~leftUnaryOpNode() {
@@ -120,8 +133,21 @@ namespace occa {
       return exprNodeType::leftUnary;
     }
 
+    opType_t leftUnaryOpNode::opnodeType() const {
+      return op.opType;
+    }
+
     exprNode& leftUnaryOpNode::clone() const {
       return *(new leftUnaryOpNode(op, value));
+    }
+
+    bool leftUnaryOpNode::canEvaluate() const {
+      return true;
+    }
+
+    primitive leftUnaryOpNode::eval() const {
+      primitive pValue = value.eval();
+      return op(pValue);
     }
 
     void leftUnaryOpNode::print(printer &pout) const {
@@ -129,13 +155,13 @@ namespace occa {
       value.print(pout);
     }
 
-    rightUnaryOpNode::rightUnaryOpNode(const operator_t &op_,
+    rightUnaryOpNode::rightUnaryOpNode(const unaryOperator_t &op_,
                                        exprNode &value_) :
-      opNode(op_),
+      op(op_),
       value(value_.clone()) {}
 
     rightUnaryOpNode::rightUnaryOpNode(const rightUnaryOpNode &node) :
-      opNode(node.op),
+      op(node.op),
       value(node.value.clone()) {}
 
     rightUnaryOpNode::~rightUnaryOpNode() {
@@ -146,8 +172,21 @@ namespace occa {
       return exprNodeType::rightUnary;
     }
 
+    opType_t rightUnaryOpNode::opnodeType() const {
+      return op.opType;
+    }
+
     exprNode& rightUnaryOpNode::clone() const {
       return *(new rightUnaryOpNode(op, value));
+    }
+
+    bool rightUnaryOpNode::canEvaluate() const {
+      return true;
+    }
+
+    primitive rightUnaryOpNode::eval() const {
+      primitive pValue = value.eval();
+      return op(pValue);
     }
 
     void rightUnaryOpNode::print(printer &pout) const {
@@ -155,15 +194,15 @@ namespace occa {
       op.print(pout);
     }
 
-    binaryOpNode::binaryOpNode(const operator_t &op_,
+    binaryOpNode::binaryOpNode(const binaryOperator_t &op_,
                                exprNode &leftValue_,
                                exprNode &rightValue_) :
-      opNode(op_),
+      op(op_),
       leftValue(leftValue_.clone()),
       rightValue(rightValue_.clone()) {}
 
     binaryOpNode::binaryOpNode(const binaryOpNode &node) :
-      opNode(node.op),
+      op(node.op),
       leftValue(node.leftValue.clone()),
       rightValue(node.rightValue.clone()) {}
 
@@ -176,8 +215,22 @@ namespace occa {
       return exprNodeType::binary;
     }
 
+    opType_t binaryOpNode::opnodeType() const {
+      return op.opType;
+    }
+
     exprNode& binaryOpNode::clone() const {
       return *(new binaryOpNode(op, leftValue, rightValue));
+    }
+
+    bool binaryOpNode::canEvaluate() const {
+      return true;
+    }
+
+    primitive binaryOpNode::eval() const {
+      primitive pLeft  = leftValue.eval();
+      primitive pRight = rightValue.eval();
+      return op(pLeft, pRight);
     }
 
     void binaryOpNode::print(printer &pout) const {
@@ -188,17 +241,14 @@ namespace occa {
       rightValue.print(pout);
     }
 
-    ternaryOpNode::ternaryOpNode(const operator_t &op_,
-                                 exprNode &checkValue_,
+    ternaryOpNode::ternaryOpNode(exprNode &checkValue_,
                                  exprNode &trueValue_,
                                  exprNode &falseValue_) :
-      opNode(op_),
       checkValue(checkValue_.clone()),
       trueValue(trueValue_.clone()),
       falseValue(falseValue_.clone()) {}
 
     ternaryOpNode::ternaryOpNode(const ternaryOpNode &node) :
-      opNode(node.op),
       checkValue(node.checkValue.clone()),
       trueValue(node.trueValue.clone()),
       falseValue(node.falseValue.clone()) {}
@@ -213,8 +263,25 @@ namespace occa {
       return exprNodeType::ternary;
     }
 
+    opType_t ternaryOpNode::opnodeType() const {
+      return operatorType::ternary;
+    }
+
     exprNode& ternaryOpNode::clone() const {
-      return *(new ternaryOpNode(op, checkValue, trueValue, falseValue));
+      return *(new ternaryOpNode(checkValue,
+                                 trueValue,
+                                 falseValue));
+    }
+
+    bool ternaryOpNode::canEvaluate() const {
+      return true;
+    }
+
+    primitive ternaryOpNode::eval() const {
+      if ((bool) checkValue.eval()) {
+        return trueValue.eval();
+      }
+      return falseValue.eval();
     }
 
     void ternaryOpNode::print(printer &pout) const {
@@ -257,7 +324,7 @@ namespace occa {
     }
 
     callNode::callNode(exprNode &value_,
-                       exprNodeVector_t args_) :
+                       exprNodeVector args_) :
       value(value_.clone()) {
       const int argCount = (int) args_.size();
       for (int i = 0; i < argCount; ++i) {
@@ -420,6 +487,14 @@ namespace occa {
 
     exprNode& sizeofNode::clone() const {
       return *(new sizeofNode(value));
+    }
+
+    bool sizeofNode::canEvaluate() const {
+      return true;
+    }
+
+    primitive sizeofNode::eval() const {
+      return value.eval().sizeof_();
     }
 
     void sizeofNode::print(printer &pout) const {
@@ -630,6 +705,14 @@ namespace occa {
 
     exprNode& parenthesesNode::clone() const {
       return *(new parenthesesNode(value));
+    }
+
+    bool parenthesesNode::canEvaluate() const {
+      return true;
+    }
+
+    primitive parenthesesNode::eval() const {
+      return value.eval();
     }
 
     void parenthesesNode::print(printer &pout) const {

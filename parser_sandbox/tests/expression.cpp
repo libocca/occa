@@ -88,7 +88,7 @@ void testOperatorNodes() {
     //================================
 
     //---[ Ternary ]------------------
-    << "ternary        : " << ternaryOpNode(op::ternary, a, b, c).toString() << '\n'
+    << "ternary        : " << ternaryOpNode(a, b, c).toString() << '\n'
     //================================
     ;
 }
@@ -106,7 +106,7 @@ void testOtherNodes() {
   variableNode var(var_);
 
   primitiveNode one(1), two(2), three(3);
-  exprNodeVector_t args;
+  exprNodeVector args;
   args.push_back(&one);
   args.push_back(&two);
   args.push_back(&three);
