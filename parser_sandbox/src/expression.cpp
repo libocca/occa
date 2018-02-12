@@ -29,7 +29,7 @@ namespace occa {
 
     exprNode::~exprNode() {}
 
-    bool exprNode::canEvaluate() const {
+    bool exprNode::canEval() const {
       return false;
     }
 
@@ -56,7 +56,7 @@ namespace occa {
     exprNode* exprNode::load(const tokenVector &tokens) {
       // TODO: Delete tokens
       // TODO: Ternary operator
-      exprNodeQueue output;
+      exprNodeStack output;
       operatorStack operators;
 
       const int outputTokenType = (tokenType::identifier |
@@ -118,16 +118,16 @@ namespace occa {
       }
       if (outputNodes > 1) {
         output.pop();
-        output.front()->token->printError("Unable to form an expression");
+        output.top()->token->printError("Unable to form an expression");
         return NULL;
       }
 
       // Return the root node
-      return output.front();
+      return output.top();
     }
 
     void exprNode::pushOutputNode(token_t *token,
-                                  exprNodeQueue &output) {
+                                  exprNodeStack &output) {
       const int tokenType = token->type();
       if (tokenType & tokenType::identifier) {
         identifierToken &t = token->to<identifierToken>();
@@ -150,7 +150,7 @@ namespace occa {
     }
 
     bool exprNode::closePair(operatorToken &opToken,
-                             exprNodeQueue &output,
+                             exprNodeStack &output,
                              operatorStack &operators) {
       const opType_t opType = opToken.op.opType;
       operatorToken *errorToken = &opToken;
@@ -195,15 +195,19 @@ namespace occa {
     }
 
     bool exprNode::applyFasterOperators(operatorToken &opToken,
-                                        exprNodeQueue &output,
+                                        exprNodeStack &output,
                                         operatorStack &operators) {
       const operator_t &op = opToken.op;
       while (operators.size()) {
-        const operator_t &nextOp = operators.top()->op;
+        const operator_t &prevOp = operators.top()->op;
 
-        if ((nextOp.precedence > op.precedence) ||
-            ((nextOp.precedence == op.precedence) &&
-             op::associativity[op.precedence] == op::leftAssociative)) {
+        if (prevOp.opType & operatorType::pairStart) {
+          break;
+        }
+
+        if ((op.precedence > prevOp.precedence) ||
+            ((op.precedence == prevOp.precedence) &&
+             op::associativity[prevOp.precedence] == op::leftAssociative)) {
 
           bool success = applyOperator(*operators.top(),
                                        output,
@@ -221,7 +225,7 @@ namespace occa {
     }
 
     bool exprNode::applyOperator(operatorToken &opToken,
-                                 exprNodeQueue &output,
+                                 exprNodeStack &output,
                                  operatorStack &operators) {
       const operator_t &op = opToken.op;
       const opType_t opType = op.opType;
@@ -231,14 +235,14 @@ namespace occa {
         return false;
       }
 
-      exprNode &value = *(output.front());
+      exprNode &value = *(output.top());
       output.pop();
 
       if (opType & operatorType::binary) {
         if (outputCount < 2) {
           return false;
         }
-        exprNode &left = *(output.front());
+        exprNode &left = *(output.top());
         output.pop();
         output.push(new binaryOpNode(&opToken,
                                      (const binaryOperator_t&) op,
@@ -313,7 +317,7 @@ namespace occa {
       return *(new primitiveNode(value));
     }
 
-    bool primitiveNode::canEvaluate() const {
+    bool primitiveNode::canEval() const {
       return true;
     }
 
@@ -508,8 +512,8 @@ namespace occa {
       return *(new leftUnaryOpNode(op, value));
     }
 
-    bool leftUnaryOpNode::canEvaluate() const {
-      return true;
+    bool leftUnaryOpNode::canEval() const {
+      return value.canEval();
     }
 
     primitive leftUnaryOpNode::eval() const {
@@ -563,8 +567,8 @@ namespace occa {
       return *(new rightUnaryOpNode(op, value));
     }
 
-    bool rightUnaryOpNode::canEvaluate() const {
-      return true;
+    bool rightUnaryOpNode::canEval() const {
+      return value.canEval();
     }
 
     primitive rightUnaryOpNode::eval() const {
@@ -624,8 +628,9 @@ namespace occa {
       return *(new binaryOpNode(op, leftValue, rightValue));
     }
 
-    bool binaryOpNode::canEvaluate() const {
-      return true;
+    bool binaryOpNode::canEval() const {
+      return (leftValue.canEval() &&
+              rightValue.canEval());
     }
 
     primitive binaryOpNode::eval() const {
@@ -693,8 +698,10 @@ namespace occa {
                                  falseValue));
     }
 
-    bool ternaryOpNode::canEvaluate() const {
-      return true;
+    bool ternaryOpNode::canEval() const {
+      return (checkValue.canEval() &&
+              trueValue.canEval()  &&
+              falseValue.canEval());
     }
 
     primitive ternaryOpNode::eval() const {
@@ -1013,8 +1020,8 @@ namespace occa {
       return *(new sizeofNode(value));
     }
 
-    bool sizeofNode::canEvaluate() const {
-      return true;
+    bool sizeofNode::canEval() const {
+      return value.canEval();
     }
 
     primitive sizeofNode::eval() const {
@@ -1340,8 +1347,8 @@ namespace occa {
       return *(new parenthesesNode(value));
     }
 
-    bool parenthesesNode::canEvaluate() const {
-      return true;
+    bool parenthesesNode::canEval() const {
+      return value.canEval();
     }
 
     primitive parenthesesNode::eval() const {

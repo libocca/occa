@@ -38,6 +38,7 @@ int main(const int argc, const char **argv) {
   return 0;
 }
 
+using namespace occa;
 using namespace occa::lang;
 
 void testOperatorNodes() {
@@ -135,8 +136,32 @@ void testOtherNodes() {
             << "cudaCallNode        : " << cudaCallNode(one, two).toString() << '\n';
 }
 
+exprNode* makeExpression(const std::string &s) {
+  tokenVector tokens = tokenizer::tokenize(s);
+  return exprNode::load(tokens);
+}
+
+bool canEvaluate(const std::string &s) {
+  exprNode *expr = makeExpression(s);
+  bool ret = expr->canEval();
+  delete expr;
+  return ret;
+}
+
+primitive eval(const std::string &s) {
+  exprNode *expr = makeExpression(s);
+  primitive value = expr->eval();
+  delete expr;
+  return value;
+}
+
 void testLoad() {
-  tokenVector tokens = tokenizer::tokenize("3 + 4 * 2 / (1 - 5) ^ 2 ^ 2");
-  exprNode *node = exprNode::load(tokens);
-  node->debugPrint();
+  OCCA_ASSERT_TRUE(canEvaluate("1 + 2 / (3)"));
+  OCCA_ASSERT_FALSE(canEvaluate("1 + 2 / (3) + '1'"));
+
+  OCCA_ASSERT_EQUAL((int) 1,
+                    (int) eval("1 + 2 / (3)"));
+
+  OCCA_ASSERT_EQUAL((double) ((1 + 2 / 3.1 * 4.4) / 1.2),
+                    (double) eval("(1 + 2 / 3.1 * 4.4) / 1.2"));
 }

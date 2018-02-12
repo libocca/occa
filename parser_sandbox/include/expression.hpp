@@ -22,7 +22,6 @@
 #ifndef OCCA_PARSER_EXPRESSION_HEADER2
 #define OCCA_PARSER_EXPRESSION_HEADER2
 
-#include <queue>
 #include <stack>
 #include <vector>
 
@@ -37,7 +36,7 @@ namespace occa {
     class exprNode;
 
     typedef std::vector<exprNode*>     exprNodeVector;
-    typedef std::queue<exprNode*>      exprNodeQueue;
+    typedef std::stack<exprNode*>      exprNodeStack;
     typedef std::stack<operatorToken*> operatorStack;
     typedef std::vector<token_t*>      tokenVector;
 
@@ -88,7 +87,7 @@ namespace occa {
 
       virtual exprNode& clone() const = 0;
 
-      virtual bool canEvaluate() const;
+      virtual bool canEval() const;
       virtual primitive eval() const;
 
       virtual void print(printer &pout) const = 0;
@@ -105,18 +104,18 @@ namespace occa {
       static exprNode* load(const tokenVector &tokens);
 
       static void pushOutputNode(token_t *token,
-                                 exprNodeQueue &output);
+                                 exprNodeStack &output);
 
       static bool closePair(operatorToken &opToken,
-                            exprNodeQueue &output,
+                            exprNodeStack &output,
                             operatorStack &operators);
 
       static bool applyFasterOperators(operatorToken &opToken,
-                                       exprNodeQueue &output,
+                                       exprNodeStack &output,
                                        operatorStack &operators);
 
       static bool applyOperator(operatorToken &opToken,
-                                exprNodeQueue &output,
+                                exprNodeStack &output,
                                 operatorStack &operators);
     };
 
@@ -154,7 +153,7 @@ namespace occa {
 
       virtual exprNode& clone() const;
 
-      virtual bool canEvaluate() const;
+      virtual bool canEval() const;
       virtual primitive eval() const;
 
       virtual void print(printer &pout) const;
@@ -274,7 +273,7 @@ namespace occa {
 
       virtual exprNode& clone() const;
 
-      virtual bool canEvaluate() const;
+      virtual bool canEval() const;
       virtual primitive eval() const;
 
       virtual void print(printer &pout) const;
@@ -303,7 +302,7 @@ namespace occa {
 
       virtual exprNode& clone() const;
 
-      virtual bool canEvaluate() const;
+      virtual bool canEval() const;
       virtual primitive eval() const;
 
       virtual void print(printer &pout) const;
@@ -334,7 +333,7 @@ namespace occa {
 
       virtual exprNode& clone() const;
 
-      virtual bool canEvaluate() const;
+      virtual bool canEval() const;
       virtual primitive eval() const;
 
       virtual void print(printer &pout) const;
@@ -363,7 +362,7 @@ namespace occa {
 
       virtual exprNode& clone() const;
 
-      virtual bool canEvaluate() const;
+      virtual bool canEval() const;
       virtual primitive eval() const;
 
       virtual void print(printer &pout) const;
@@ -522,7 +521,7 @@ namespace occa {
 
       virtual exprNode& clone() const;
 
-      virtual bool canEvaluate() const;
+      virtual bool canEval() const;
       virtual primitive eval() const;
 
       virtual void print(printer &pout) const;
@@ -699,7 +698,7 @@ namespace occa {
 
       virtual exprNode& clone() const;
 
-      virtual bool canEvaluate() const;
+      virtual bool canEval() const;
       virtual primitive eval() const;
 
       virtual void print(printer &pout) const;
