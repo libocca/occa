@@ -111,13 +111,13 @@ namespace occa {
       const opType_t arrow             = (1L << 43);
       const opType_t arrowStar         = (1L << 44);
 
-      const opType_t leftUnary         = (not_           |
-                                          positive       |
-                                          negative       |
-                                          tilde          |
-                                          leftIncrement  |
-                                          rightDecrement |
-                                          dereference    |
+      const opType_t leftUnary         = (not_          |
+                                          positive      |
+                                          negative      |
+                                          tilde         |
+                                          leftIncrement |
+                                          leftDecrement |
+                                          dereference   |
                                           address);
 
       const opType_t rightUnary        = (rightIncrement |

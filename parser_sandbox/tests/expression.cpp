@@ -168,9 +168,33 @@ void testLoad() {
   OCCA_ASSERT_EQUAL((int) 3,
                     (int) eval("++++1"));
 
+  OCCA_ASSERT_EQUAL((int) 1,
+                    (int) eval("1++++"));
+
   OCCA_ASSERT_EQUAL((int) 4,
                     (int) eval("1 ++ + ++ 2"));
 
   OCCA_ASSERT_EQUAL((int) 5,
                     (int) eval("1 ++ + ++ + ++ 2"));
+
+  OCCA_ASSERT_EQUAL((int) -1,
+                    (int) eval("----1"));
+
+  OCCA_ASSERT_EQUAL((int) 1,
+                    (int) eval("1----"));
+
+  OCCA_ASSERT_EQUAL((int) 2,
+                    (int) eval("1 -- + -- 2"));
+
+  OCCA_ASSERT_EQUAL((int) 1,
+                    (int) eval("1 -- + -- + -- 2"));
+
+  OCCA_ASSERT_EQUAL((int) 1,
+                    (int) eval("+ + + + + + 1"));
+
+  OCCA_ASSERT_EQUAL((int) -1,
+                    (int) eval("- - - - - 1"));
+
+  OCCA_ASSERT_EQUAL((int) 1,
+                    (int) eval("- - - - - - 1"));
 }

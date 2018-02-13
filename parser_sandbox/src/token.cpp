@@ -49,71 +49,71 @@ namespace occa {
       if (!operators.isEmpty()) {
         return operators;
       }
-      operators.add(op::not_.str         , &op::not_);
-      operators.add(op::tilde.str        , &op::tilde);
-      operators.add(op::leftIncrement.str, &op::leftIncrement);
-      operators.add(op::leftDecrement.str, &op::leftDecrement);
+      operators.add(op::not_.str             , &op::not_);
+      operators.add(op::tilde.str            , &op::tilde);
+      operators.add(op::leftIncrement.str    , &op::leftIncrement);
+      operators.add(op::leftDecrement.str    , &op::leftDecrement);
 
-      operators.add(op::add.str , &op::add);
-      operators.add(op::sub.str , &op::sub);
-      operators.add(op::mult.str, &op::mult);
-      operators.add(op::div.str , &op::div);
-      operators.add(op::mod.str , &op::mod);
+      operators.add(op::add.str              , &op::add);
+      operators.add(op::sub.str              , &op::sub);
+      operators.add(op::mult.str             , &op::mult);
+      operators.add(op::div.str              , &op::div);
+      operators.add(op::mod.str              , &op::mod);
 
-      operators.add(op::lessThan.str     , &op::lessThan);
-      operators.add(op::lessThanEq.str   , &op::lessThanEq);
-      operators.add(op::equal.str        , &op::equal);
-      operators.add(op::notEqual.str     , &op::notEqual);
-      operators.add(op::greaterThan.str  , &op::greaterThan);
-      operators.add(op::greaterThanEq.str, &op::greaterThanEq);
+      operators.add(op::lessThan.str         , &op::lessThan);
+      operators.add(op::lessThanEq.str       , &op::lessThanEq);
+      operators.add(op::equal.str            , &op::equal);
+      operators.add(op::notEqual.str         , &op::notEqual);
+      operators.add(op::greaterThan.str      , &op::greaterThan);
+      operators.add(op::greaterThanEq.str    , &op::greaterThanEq);
 
-      operators.add(op::and_.str, &op::and_);
-      operators.add(op::or_.str , &op::or_);
+      operators.add(op::and_.str             , &op::and_);
+      operators.add(op::or_.str              , &op::or_);
 
-      operators.add(op::bitAnd.str    , &op::bitAnd);
-      operators.add(op::bitOr.str     , &op::bitOr);
-      operators.add(op::xor_.str      , &op::xor_);
-      operators.add(op::leftShift.str , &op::leftShift);
-      operators.add(op::rightShift.str, &op::rightShift);
+      operators.add(op::bitAnd.str           , &op::bitAnd);
+      operators.add(op::bitOr.str            , &op::bitOr);
+      operators.add(op::xor_.str             , &op::xor_);
+      operators.add(op::leftShift.str        , &op::leftShift);
+      operators.add(op::rightShift.str       , &op::rightShift);
 
-      operators.add(op::assign.str      , &op::assign);
-      operators.add(op::addEq.str       , &op::addEq);
-      operators.add(op::subEq.str       , &op::subEq);
-      operators.add(op::multEq.str      , &op::multEq);
-      operators.add(op::divEq.str       , &op::divEq);
-      operators.add(op::modEq.str       , &op::modEq);
-      operators.add(op::andEq.str       , &op::andEq);
-      operators.add(op::orEq.str        , &op::orEq);
-      operators.add(op::xorEq.str       , &op::xorEq);
-      operators.add(op::leftShiftEq.str , &op::leftShiftEq);
-      operators.add(op::rightShiftEq.str, &op::rightShiftEq);
+      operators.add(op::assign.str           , &op::assign);
+      operators.add(op::addEq.str            , &op::addEq);
+      operators.add(op::subEq.str            , &op::subEq);
+      operators.add(op::multEq.str           , &op::multEq);
+      operators.add(op::divEq.str            , &op::divEq);
+      operators.add(op::modEq.str            , &op::modEq);
+      operators.add(op::andEq.str            , &op::andEq);
+      operators.add(op::orEq.str             , &op::orEq);
+      operators.add(op::xorEq.str            , &op::xorEq);
+      operators.add(op::leftShiftEq.str      , &op::leftShiftEq);
+      operators.add(op::rightShiftEq.str     , &op::rightShiftEq);
 
-      operators.add(op::comma.str    , &op::comma);
-      operators.add(op::scope.str    , &op::scope);
-      operators.add(op::dot.str      , &op::dot);
-      operators.add(op::dotStar.str  , &op::dotStar);
-      operators.add(op::arrow.str    , &op::arrow);
-      operators.add(op::arrowStar.str, &op::arrowStar);
-      operators.add(op::ternary.str  , &op::ternary);
-      operators.add(op::colon.str    , &op::colon);
+      operators.add(op::comma.str            , &op::comma);
+      operators.add(op::scope.str            , &op::scope);
+      operators.add(op::dot.str              , &op::dot);
+      operators.add(op::dotStar.str          , &op::dotStar);
+      operators.add(op::arrow.str            , &op::arrow);
+      operators.add(op::arrowStar.str        , &op::arrowStar);
+      operators.add(op::ternary.str          , &op::ternary);
+      operators.add(op::colon.str            , &op::colon);
 
-      operators.add(op::braceStart.str      , &op::braceStart);
-      operators.add(op::braceEnd.str        , &op::braceEnd);
-      operators.add(op::bracketStart.str    , &op::bracketStart);
-      operators.add(op::bracketEnd.str      , &op::bracketEnd);
-      operators.add(op::parenthesesStart.str, &op::parenthesesStart);
-      operators.add(op::parenthesesEnd.str  , &op::parenthesesEnd);
+      operators.add(op::braceStart.str       , &op::braceStart);
+      operators.add(op::braceEnd.str         , &op::braceEnd);
+      operators.add(op::bracketStart.str     , &op::bracketStart);
+      operators.add(op::bracketEnd.str       , &op::bracketEnd);
+      operators.add(op::parenthesesStart.str , &op::parenthesesStart);
+      operators.add(op::parenthesesEnd.str   , &op::parenthesesEnd);
 
       operators.add(op::lineComment.str      , &op::lineComment);
       operators.add(op::blockCommentStart.str, &op::blockCommentStart);
       operators.add(op::blockCommentEnd.str  , &op::blockCommentEnd);
 
-      operators.add(op::hash.str    , &op::hash);
-      operators.add(op::hashhash.str, &op::hashhash);
+      operators.add(op::hash.str             , &op::hash);
+      operators.add(op::hashhash.str         , &op::hashhash);
 
-      operators.add(op::semicolon.str, &op::semicolon);
-      operators.add(op::ellipsis.str , &op::ellipsis);
-      operators.add(op::ellipsis.str , &op::ellipsis);
+      operators.add(op::semicolon.str        , &op::semicolon);
+      operators.add(op::ellipsis.str         , &op::ellipsis);
+      operators.add(op::ellipsis.str         , &op::ellipsis);
 
       return operators;
     }

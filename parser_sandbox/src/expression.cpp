@@ -119,7 +119,9 @@ namespace occa {
             closePair(opToken, state);
           }
           else {
-            applyFasterOperators(opToken, state);
+            // opToken might have changed from
+            //   ambiguous type (+) to unary or binary
+            token = &applyFasterOperators(opToken, state);
           }
         }
 
@@ -135,15 +137,13 @@ namespace occa {
 
       // Finish applying operators
       while (state.operatorCount()) {
-        operatorToken &opToken = state.lastOperator();
-
-        applyOperator(opToken, state);
+        applyOperator(state.lastOperator(),
+                      state);
 
         if (state.hasError) {
           // TODO: Clear tokens
           return NULL;
         }
-        state.operators.pop();
       }
 
       // Make sure we only have 1 root node
@@ -192,7 +192,6 @@ namespace occa {
       while (state.operatorCount()) {
         operatorToken &nextOpToken = state.lastOperator();
         const opType_t nextOpType = nextOpToken.op.opType;
-        state.operators.pop();
 
         if (nextOpType & operatorType::pairStart) {
           if (opType == (nextOpType << 1)) {
@@ -249,7 +248,19 @@ namespace occa {
         return !state.prevToken;
       }
 
+      // Test for left unary first
       const bool prevTokenIsOp = (state.prevToken->type() & tokenType::op);
+      if (prevTokenIsOp) {
+        opType_t prevType = state.prevToken->to<operatorToken>().op.opType;
+        // + + + 1
+        if (prevType & operatorType::leftUnary) {
+          return true;
+        }
+        if (!onlyUnary) {
+          return false;
+        }
+      }
+
       const bool nextTokenIsOp = (state.nextToken->type() & tokenType::op);
 
       //   v check right
@@ -272,11 +283,6 @@ namespace occa {
 
       opType_t prevType = state.prevToken->to<operatorToken>().op.opType;
       opType_t nextType = state.nextToken->to<operatorToken>().op.opType;
-
-      // + + + 1
-      if (!onlyUnary) {
-        return (prevType & operatorType::leftUnary);
-      }
 
       // x ++ ++ ++ y
       if ((prevType & chainable) &&
@@ -345,12 +351,12 @@ namespace occa {
       return opToken;
     }
 
-    void exprNode::applyFasterOperators(operatorToken &opToken,
-                                        exprLoadState &state) {
+    operatorToken& exprNode::applyFasterOperators(operatorToken &opToken,
+                                                  exprLoadState &state) {
 
       operatorToken &opToken_ = getOperatorToken(opToken, state);
       if (state.hasError) {
-        return;
+        return opToken;
       }
 
       const operator_t &op = opToken_.op;
@@ -365,12 +371,12 @@ namespace occa {
             ((op.precedence == prevOp.precedence) &&
              op::associativity[prevOp.precedence] == op::leftAssociative)) {
 
-          applyOperator(state.lastOperator(), state);
+          applyOperator(state.lastOperator(),
+                        state);
 
           if (state.hasError) {
-            return;
+            return opToken;
           }
-          state.operators.pop();
           continue;
         }
 
@@ -380,6 +386,7 @@ namespace occa {
       // After applying faster operators,
       //   place opToken in the stack
       state.operators.push(&opToken_);
+      return opToken_;
     }
 
     void exprNode::applyOperator(operatorToken &opToken,
@@ -388,6 +395,7 @@ namespace occa {
       const operator_t &op = opToken.op;
       const opType_t opType = op.opType;
       const int outputCount = state.outputCount();
+      state.operators.pop();
 
       if (!outputCount) {
         state.hasError = true;
@@ -395,16 +403,16 @@ namespace occa {
         return;
       }
 
-      exprNode &value = *(state.output.top());
+      exprNode &value = state.lastOutput();
       state.output.pop();
 
       if (opType & operatorType::binary) {
-        if (outputCount < 2) {
+        if (!outputCount) {
           state.hasError = true;
           opToken.printError("Unable to apply operator");
           return;
         }
-        exprNode &left = *(state.output.top());
+        exprNode &left = state.lastOutput();
         state.output.pop();
         state.output.push(new binaryOpNode(&opToken,
                                            (const binaryOperator_t&) op,

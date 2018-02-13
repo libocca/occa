@@ -135,8 +135,8 @@ namespace occa {
       static operatorToken& getOperatorToken(operatorToken &opToken,
                                              exprLoadState &state);
 
-      static void applyFasterOperators(operatorToken &opToken,
-                                       exprLoadState &state);
+      static operatorToken& applyFasterOperators(operatorToken &opToken,
+                                                 exprLoadState &state);
 
       static void applyOperator(operatorToken &opToken,
                                 exprLoadState &state);
