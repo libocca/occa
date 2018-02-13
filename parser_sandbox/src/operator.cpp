@@ -87,7 +87,7 @@ namespace occa {
       const rawOpType_t parenthesesStart  (1L << 52);
       const rawOpType_t parenthesesEnd    (1L << 53);
 
-      // Special operators
+      //---[ Special operators ]--------
       const rawOpType_t lineComment       (1L << 0);
       const rawOpType_t blockCommentStart (1L << 1);
       const rawOpType_t blockCommentEnd   (1L << 2);
@@ -98,6 +98,7 @@ namespace occa {
       const rawOpType_t semicolon         (1L << 5);
       const rawOpType_t ellipsis          (1L << 6);
       const rawOpType_t attribute         (1L << 7);
+      //================================
     }
 
     namespace operatorType {

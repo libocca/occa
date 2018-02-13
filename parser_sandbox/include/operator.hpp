@@ -94,6 +94,7 @@ namespace occa {
       extern const rawOpType_t parenthesesStart;
       extern const rawOpType_t parenthesesEnd;
 
+      //---[ Special operators ]--------
       extern const rawOpType_t lineComment;
       extern const rawOpType_t blockCommentStart;
       extern const rawOpType_t blockCommentEnd;
@@ -103,6 +104,8 @@ namespace occa {
 
       extern const rawOpType_t semicolon;
       extern const rawOpType_t ellipsis;
+      extern const rawOpType_t attribute;
+      //================================
     }
 
 
