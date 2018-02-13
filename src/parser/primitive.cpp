@@ -98,7 +98,7 @@ namespace occa {
       ++c;
     }
 
-    if (!digits && !decimal) {
+    if (!digits) {
       c = c0;
       return p;
     }

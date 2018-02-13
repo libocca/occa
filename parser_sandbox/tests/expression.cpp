@@ -158,6 +158,13 @@ primitive eval(const std::string &s) {
 void testLoad() {
   OCCA_ASSERT_TRUE(canEvaluate("1 + 2 / (3)"));
   OCCA_ASSERT_FALSE(canEvaluate("1 + 2 / (3) + '1'"));
+  OCCA_ASSERT_FALSE(canEvaluate("&1"));
+  OCCA_ASSERT_FALSE(canEvaluate("*1"));
+  OCCA_ASSERT_FALSE(canEvaluate("1::2"));
+  OCCA_ASSERT_FALSE(canEvaluate("(1).(2)"));
+  OCCA_ASSERT_FALSE(canEvaluate("(1).*(2)"));
+  OCCA_ASSERT_FALSE(canEvaluate("1->2"));
+  OCCA_ASSERT_FALSE(canEvaluate("1->*2"));
 
   OCCA_ASSERT_EQUAL((int) (1 + 2 / (3)),
                     (int) eval("1 + 2 / (3)"));

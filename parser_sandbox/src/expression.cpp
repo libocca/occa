@@ -152,7 +152,9 @@ namespace occa {
         return NULL;
       }
       if (outputCount > 1) {
+        state.lastOutput().debugPrint();
         state.output.pop();
+        state.lastOutput().debugPrint();
         state.lastOutput().token->printError("Unable to form an expression");
         return NULL;
       }
@@ -682,6 +684,10 @@ namespace occa {
     }
 
     bool leftUnaryOpNode::canEvaluate() const {
+      if (op.opType & (operatorType::dereference |
+                       operatorType::address)) {
+        return false;
+      }
       return value.canEvaluate();
     }
 
@@ -798,6 +804,13 @@ namespace occa {
     }
 
     bool binaryOpNode::canEvaluate() const {
+      if (op.opType & (operatorType::scope     |
+                       operatorType::dot       |
+                       operatorType::dotStar   |
+                       operatorType::arrow     |
+                       operatorType::arrowStar)) {
+        return false;
+      }
       return (leftValue.canEvaluate() &&
               rightValue.canEvaluate());
     }
