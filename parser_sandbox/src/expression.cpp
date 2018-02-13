@@ -24,6 +24,29 @@
 
 namespace occa {
   namespace lang {
+    //---[ Expression State ]-----------
+    exprLoadState::exprLoadState() :
+      prevToken(NULL),
+      nextToken(NULL),
+      hasError(false) {}
+
+    int exprLoadState::outputCount() {
+      return (int) output.size();
+    }
+
+    int exprLoadState::operatorCount() {
+      return (int) operators.size();
+    }
+
+    exprNode& exprLoadState::lastOutput() {
+      return *(output.top());
+    }
+
+    operatorToken& exprLoadState::lastOperator() {
+      return *(operators.top());
+    }
+    //==================================
+
     exprNode::exprNode(token_t *token_) :
       token(token_) {}
 
@@ -46,6 +69,7 @@ namespace occa {
 
     void exprNode::debugPrint() const {
       debugPrint("");
+      std::cerr << '\n';
     }
 
     void exprNode::childDebugPrint(const std::string &prefix) const {
@@ -56,8 +80,7 @@ namespace occa {
     exprNode* exprNode::load(const tokenVector &tokens) {
       // TODO: Delete tokens
       // TODO: Ternary operator
-      exprNodeStack output;
-      operatorStack operators;
+      exprLoadState state;
 
       const int outputTokenType = (tokenType::identifier |
                                    tokenType::primitive  |
@@ -70,114 +93,126 @@ namespace occa {
         if (!token) {
           continue;
         }
+
+        // Keep track of the next token
+        //   to break ++ and -- left/right
+        //   unary ambiguity
+        state.nextToken = NULL;
+        for (int j = (i + 1); j < count; ++j) {
+          if (tokens[j]) {
+            state.nextToken = tokens[j];
+            break;
+          }
+        }
+
         const int tokenType = token->type();
-        bool success = true;
         if (tokenType & outputTokenType) {
-          pushOutputNode(token,
-                         output);
+          pushOutputNode(token, state);
         }
         else if (tokenType & tokenType::op) {
           operatorToken &opToken = token->to<operatorToken>();
 
           if (opToken.op.opType & operatorType::pairStart) {
-            operators.push(&opToken);
+            state.operators.push(&opToken);
           }
           else if (opToken.op.opType & operatorType::pairEnd) {
-            success = closePair(opToken,
-                                     output,
-                                operators);
+            closePair(opToken, state);
           }
           else {
-            success = applyFasterOperators(opToken,
-                                           output,
-                                           operators);
-            operators.push(&opToken);
+            applyFasterOperators(opToken, state);
           }
         }
-        if (!success) {
+
+        if (state.hasError) {
+          // TODO: Clear tokens
           return NULL;
         }
+
+        // Keep track of the previous token
+        //   to break operator ambiguity
+        state.prevToken = token;
       }
 
       // Finish applying operators
-      while (operators.size()) {
-        operatorToken &opToken = *(operators.top());
-        bool success = applyOperator(opToken,
-                                     output,
-                                     operators);
-        if (!success) {
+      while (state.operatorCount()) {
+        operatorToken &opToken = state.lastOperator();
+
+        applyOperator(opToken, state);
+
+        if (state.hasError) {
+          // TODO: Clear tokens
           return NULL;
         }
-        operators.pop();
+        state.operators.pop();
       }
 
       // Make sure we only have 1 root node
-      const int outputNodes = (int) output.size();
-      if (!outputNodes) {
+      const int outputCount = state.outputCount();
+      if (!outputCount) {
         return NULL;
       }
-      if (outputNodes > 1) {
-        output.pop();
-        output.top()->token->printError("Unable to form an expression");
+      if (outputCount > 1) {
+        state.output.pop();
+        state.lastOutput().token->printError("Unable to form an expression");
         return NULL;
       }
 
       // Return the root node
-      return output.top();
+      return &state.lastOutput();
     }
 
     void exprNode::pushOutputNode(token_t *token,
-                                  exprNodeStack &output) {
+                                  exprLoadState &state) {
       const int tokenType = token->type();
       if (tokenType & tokenType::identifier) {
         identifierToken &t = token->to<identifierToken>();
-        output.push(new identifierNode(token, t.value));
+        state.output.push(new identifierNode(token, t.value));
       }
       else if (tokenType & tokenType::primitive) {
         primitiveToken &t = token->to<primitiveToken>();
-        output.push(new primitiveNode(token, t.value));
+        state.output.push(new primitiveNode(token, t.value));
       }
       else if (tokenType & tokenType::char_) {
         // TODO: Handle char udfs here
         charToken &t = token->to<charToken>();
-        output.push(new charNode(token, t.value));
+        state.output.push(new charNode(token, t.value));
       }
       else if (tokenType & tokenType::string) {
         // TODO: Handle string udfs here
         stringToken &t = token->to<stringToken>();
-        output.push(new stringNode(token, t.value));
+        state.output.push(new stringNode(token, t.value));
       }
     }
 
-    bool exprNode::closePair(operatorToken &opToken,
-                             exprNodeStack &output,
-                             operatorStack &operators) {
+    void exprNode::closePair(operatorToken &opToken,
+                             exprLoadState &state) {
       const opType_t opType = opToken.op.opType;
       operatorToken *errorToken = &opToken;
 
-      while (operators.size()) {
-        operatorToken &nextOpToken = *(operators.top());
+      while (state.operatorCount()) {
+        operatorToken &nextOpToken = state.lastOperator();
         const opType_t nextOpType = nextOpToken.op.opType;
-        operators.pop();
+        state.operators.pop();
 
         if (nextOpType & operatorType::pairStart) {
           if (opType == (nextOpType << 1)) {
-            return applyOperator(opToken,
-                                 output,
-                                 operators);
+            applyOperator(opToken, state);
+            return;
           }
           errorToken = &nextOpToken;
           break;
         }
 
-        bool success = applyOperator(nextOpToken,
-                                     output,
-                                     operators);
-        if (!success) {
-          return false;
+        applyOperator(nextOpToken, state);
+
+        if (state.hasError) {
+          return;
         }
       }
+
       // Found a pairStart that doesn't match
+      state.hasError = true;
+
       const opType_t errorOpType = errorToken->op.opType;
       std::stringstream ss;
       ss << "Could not find an opening ";
@@ -191,15 +226,136 @@ namespace occa {
         ss << '(';
       }
       errorToken->printError(ss.str());
-      return false;
     }
 
-    bool exprNode::applyFasterOperators(operatorToken &opToken,
-                                        exprNodeStack &output,
-                                        operatorStack &operators) {
-      const operator_t &op = opToken.op;
-      while (operators.size()) {
-        const operator_t &prevOp = operators.top()->op;
+    bool exprNode::operatorIsLeftUnary(operatorToken &opToken,
+                                       exprLoadState &state) {
+      const opType_t opType = opToken.op.opType;
+
+      // Test for chaining increments
+      // 1 + ++ ++ x
+      // (2) ++ ++
+      opType_t chainable = (operatorType::increment |
+                            operatorType::decrement |
+                            operatorType::parentheses);
+
+      // ++ and -- operators
+      const bool onlyUnary = (opType & (operatorType::increment |
+                                        operatorType::decrement));
+
+      // If this is the first token, it's left unary
+      // If this is the last token, it's binary or right unary
+      if ((!state.prevToken) != (!state.nextToken)) {
+        return !state.prevToken;
+      }
+
+      const bool prevTokenIsOp = (state.prevToken->type() & tokenType::op);
+      const bool nextTokenIsOp = (state.nextToken->type() & tokenType::op);
+
+      //   v check right
+      // 1 + ++ x
+      //     ^ check left
+      if (prevTokenIsOp != nextTokenIsOp) {
+        return (onlyUnary
+                ? prevTokenIsOp
+                : nextTokenIsOp);
+      }
+      // y ++ x (Unable to apply operator)
+      // y + x
+      if (!prevTokenIsOp) {
+        if (onlyUnary) {
+          state.hasError = true;
+          opToken.printError("Ambiguous operator");
+        }
+        return false;
+      }
+
+      opType_t prevType = state.prevToken->to<operatorToken>().op.opType;
+      opType_t nextType = state.nextToken->to<operatorToken>().op.opType;
+
+      // + + + 1
+      if (!onlyUnary) {
+        return (prevType & operatorType::leftUnary);
+      }
+
+      // x ++ ++ ++ y
+      if ((prevType & chainable) &&
+          (nextType & chainable)) {
+        state.hasError = true;
+        opToken.printError("Ambiguous operator");
+        return false;
+      }
+      return !(prevType & chainable);
+    }
+
+    operatorToken& exprNode::getOperatorToken(operatorToken &opToken,
+                                              exprLoadState &state) {
+
+      const opType_t opType = opToken.op.opType;
+      if (!(opType & operatorType::ambiguous)) {
+        return opToken;
+      }
+
+      fileOrigin origin = opToken.origin;
+      delete &opToken;
+
+      const bool isLeftUnary = operatorIsLeftUnary(opToken, state);
+      if (state.hasError) {
+        return opToken;
+      }
+
+      const operator_t *newOperator = NULL;
+      if (opType & operatorType::plus) {           // +
+        newOperator = (isLeftUnary
+                       ? (const operator_t*) &op::positive
+                       : (const operator_t*) &op::add);
+      }
+      else if (opType & operatorType::minus) {     // -
+        newOperator = (isLeftUnary
+                       ? (const operator_t*) &op::negative
+                       : (const operator_t*) &op::sub);
+      }
+      else if (opType & operatorType::asterisk) {  // *
+        newOperator = (isLeftUnary
+                       ? (const operator_t*) &op::dereference
+                       : (const operator_t*) &op::mult);
+      }
+      else if (opType & operatorType::ampersand) { // &
+        newOperator = (isLeftUnary
+                       ? (const operator_t*) &op::address
+                       : (const operator_t*) &op::bitAnd);
+      }
+      else if (opType & operatorType::increment) { // ++
+        newOperator = (isLeftUnary
+                       ? (const operator_t*) &op::leftIncrement
+                       : (const operator_t*) &op::rightIncrement);
+      }
+      else if (opType & operatorType::decrement) { // --
+        newOperator = (isLeftUnary
+                       ? (const operator_t*) &op::leftDecrement
+                       : (const operator_t*) &op::rightDecrement);
+      }
+
+      if (newOperator) {
+        return *(new operatorToken(origin, *newOperator));
+      }
+
+      state.hasError = true;
+      opToken.printError("Unable to parse ambiguous token");
+      return opToken;
+    }
+
+    void exprNode::applyFasterOperators(operatorToken &opToken,
+                                        exprLoadState &state) {
+
+      operatorToken &opToken_ = getOperatorToken(opToken, state);
+      if (state.hasError) {
+        return;
+      }
+
+      const operator_t &op = opToken_.op;
+      while (state.operatorCount()) {
+        const operator_t &prevOp = state.lastOperator().op;
 
         if (prevOp.opType & operatorType::pairStart) {
           break;
@@ -209,64 +365,69 @@ namespace occa {
             ((op.precedence == prevOp.precedence) &&
              op::associativity[prevOp.precedence] == op::leftAssociative)) {
 
-          bool success = applyOperator(*operators.top(),
-                                       output,
-                                       operators);
-          if (!success) {
-            return false;
+          applyOperator(state.lastOperator(), state);
+
+          if (state.hasError) {
+            return;
           }
-          operators.pop();
+          state.operators.pop();
           continue;
         }
 
         break;
       }
-      return true;
+
+      // After applying faster operators,
+      //   place opToken in the stack
+      state.operators.push(&opToken_);
     }
 
-    bool exprNode::applyOperator(operatorToken &opToken,
-                                 exprNodeStack &output,
-                                 operatorStack &operators) {
+    void exprNode::applyOperator(operatorToken &opToken,
+                                 exprLoadState &state) {
+
       const operator_t &op = opToken.op;
       const opType_t opType = op.opType;
-      const int outputCount = (int) output.size();
+      const int outputCount = state.outputCount();
 
       if (!outputCount) {
-        return false;
+        state.hasError = true;
+        opToken.printError("Unable to apply operator");
+        return;
       }
 
-      exprNode &value = *(output.top());
-      output.pop();
+      exprNode &value = *(state.output.top());
+      state.output.pop();
 
       if (opType & operatorType::binary) {
         if (outputCount < 2) {
-          return false;
+          state.hasError = true;
+          opToken.printError("Unable to apply operator");
+          return;
         }
-        exprNode &left = *(output.top());
-        output.pop();
-        output.push(new binaryOpNode(&opToken,
-                                     (const binaryOperator_t&) op,
-                                     left,
-                                     value));
+        exprNode &left = *(state.output.top());
+        state.output.pop();
+        state.output.push(new binaryOpNode(&opToken,
+                                           (const binaryOperator_t&) op,
+                                           left,
+                                           value));
       }
       else if (opType & operatorType::leftUnary) {
-        output.push(new leftUnaryOpNode(&opToken,
-                                        (const unaryOperator_t&) op,
-                                        value));
+        state.output.push(new leftUnaryOpNode(&opToken,
+                                              (const unaryOperator_t&) op,
+                                              value));
       }
       else if (opType & operatorType::rightUnary) {
-        output.push(new rightUnaryOpNode(&opToken,
-                                         (const unaryOperator_t&) op,
-                                         value));
+        state.output.push(new rightUnaryOpNode(&opToken,
+                                               (const unaryOperator_t&) op,
+                                               value));
       }
       else if (opType & operatorType::pair) {
-        output.push(new parenthesesNode(&opToken,
-                                        value));
+        state.output.push(new parenthesesNode(&opToken,
+                                              value));
       } else {
-        return false;
+        state.hasError = true;
+        opToken.printError("Unable to apply operator");
       }
-
-      return true;
     }
 
     //---[ Empty ]----------------------

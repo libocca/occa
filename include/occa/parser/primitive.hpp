@@ -474,39 +474,41 @@ namespace occa {
   }
 
   inline primitive rightIncrement(primitive &p) {
+    primitive oldP = p;
     switch(p.type) {
     case primitiveType::bool_   : OCCA_FORCE_ERROR("Cannot apply operator ++ to bool type"); break;
-    case primitiveType::int8_   : p.value.int8_++;    return p;
-    case primitiveType::uint8_  : p.value.uint8_++;   return p;
-    case primitiveType::int16_  : p.value.int16_++;   return p;
-    case primitiveType::uint16_ : p.value.uint16_++;  return p;
-    case primitiveType::int32_  : p.value.int32_++;   return p;
-    case primitiveType::uint32_ : p.value.uint32_++;  return p;
-    case primitiveType::int64_  : p.value.int64_++;   return p;
-    case primitiveType::uint64_ : p.value.uint64_++;  return p;
-    case primitiveType::float_  : p.value.float_++;   return p;
-    case primitiveType::double_ : p.value.double_++;  return p;
+    case primitiveType::int8_   : p.value.int8_++;    return oldP;
+    case primitiveType::uint8_  : p.value.uint8_++;   return oldP;
+    case primitiveType::int16_  : p.value.int16_++;   return oldP;
+    case primitiveType::uint16_ : p.value.uint16_++;  return oldP;
+    case primitiveType::int32_  : p.value.int32_++;   return oldP;
+    case primitiveType::uint32_ : p.value.uint32_++;  return oldP;
+    case primitiveType::int64_  : p.value.int64_++;   return oldP;
+    case primitiveType::uint64_ : p.value.uint64_++;  return oldP;
+    case primitiveType::float_  : p.value.float_++;   return oldP;
+    case primitiveType::double_ : p.value.double_++;  return oldP;
     default: ;
     }
-    return p;
+    return oldP;
   }
 
   inline primitive rightDecrement(primitive &p) {
+    primitive oldP = p;
     switch(p.type) {
     case primitiveType::bool_   : OCCA_FORCE_ERROR("Cannot apply operator -- to bool type"); break;
-    case primitiveType::int8_   : p.value.int8_--;    return p;
-    case primitiveType::uint8_  : p.value.uint8_--;   return p;
-    case primitiveType::int16_  : p.value.int16_--;   return p;
-    case primitiveType::uint16_ : p.value.uint16_--;  return p;
-    case primitiveType::int32_  : p.value.int32_--;   return p;
-    case primitiveType::uint32_ : p.value.uint32_--;  return p;
-    case primitiveType::int64_  : p.value.int64_--;   return p;
-    case primitiveType::uint64_ : p.value.uint64_--;  return p;
-    case primitiveType::float_  : p.value.float_--;   return p;
-    case primitiveType::double_ : p.value.double_--;  return p;
+    case primitiveType::int8_   : p.value.int8_--;    return oldP;
+    case primitiveType::uint8_  : p.value.uint8_--;   return oldP;
+    case primitiveType::int16_  : p.value.int16_--;   return oldP;
+    case primitiveType::uint16_ : p.value.uint16_--;  return oldP;
+    case primitiveType::int32_  : p.value.int32_--;   return oldP;
+    case primitiveType::uint32_ : p.value.uint32_--;  return oldP;
+    case primitiveType::int64_  : p.value.int64_--;   return oldP;
+    case primitiveType::uint64_ : p.value.uint64_--;  return oldP;
+    case primitiveType::float_  : p.value.float_--;   return oldP;
+    case primitiveType::double_ : p.value.double_--;  return oldP;
     default: ;
     }
-    return p;
+    return oldP;
   }
   //====================================
 

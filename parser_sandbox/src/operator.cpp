@@ -104,17 +104,21 @@ namespace occa {
 
       const opType_t comma             = (1L << 37);
       const opType_t scope             = (1L << 38);
-      const opType_t dot               = (1L << 39);
-      const opType_t dotStar           = (1L << 40);
-      const opType_t arrow             = (1L << 41);
-      const opType_t arrowStar         = (1L << 42);
+      const opType_t dereference       = (1L << 39);
+      const opType_t address           = (1L << 40);
+      const opType_t dot               = (1L << 41);
+      const opType_t dotStar           = (1L << 42);
+      const opType_t arrow             = (1L << 43);
+      const opType_t arrowStar         = (1L << 44);
 
-      const opType_t leftUnary         = (not_          |
-                                          positive      |
-                                          negative      |
-                                          tilde         |
-                                          leftIncrement |
-                                          rightDecrement);
+      const opType_t leftUnary         = (not_           |
+                                          positive       |
+                                          negative       |
+                                          tilde          |
+                                          leftIncrement  |
+                                          rightDecrement |
+                                          dereference    |
+                                          address);
 
       const opType_t rightUnary        = (rightIncrement |
                                           rightDecrement);
@@ -160,16 +164,16 @@ namespace occa {
                                           arrow         |
                                           arrowStar);
 
-      const opType_t ternary           = (3L << 43);
-      const opType_t colon             = (1L << 44);
+      const opType_t ternary           = (3L << 45);
+      const opType_t colon             = (1L << 46);
 
       // End = (Start << 1)
-      const opType_t braceStart        = (1L << 45);
-      const opType_t braceEnd          = (1L << 46);
-      const opType_t bracketStart      = (1L << 47);
-      const opType_t bracketEnd        = (1L << 48);
-      const opType_t parenthesesStart  = (1L << 49);
-      const opType_t parenthesesEnd    = (1L << 50);
+      const opType_t braceStart        = (1L << 47);
+      const opType_t braceEnd          = (1L << 48);
+      const opType_t bracketStart      = (1L << 49);
+      const opType_t bracketEnd        = (1L << 50);
+      const opType_t parenthesesStart  = (1L << 51);
+      const opType_t parenthesesEnd    = (1L << 52);
 
       const opType_t braces            = (braceStart       |
                                           braceEnd);
@@ -193,27 +197,48 @@ namespace occa {
                                           bracketEnd       |
                                           parenthesesEnd);
 
-      const opType_t lineComment       = (1L << 51);
-      const opType_t blockCommentStart = (1L << 52);
-      const opType_t blockCommentEnd   = (1L << 53);
+      const opType_t lineComment       = (1L << 53);
+      const opType_t blockCommentStart = (1L << 54);
+      const opType_t blockCommentEnd   = (1L << 55);
       const opType_t comment           = (lineComment       |
                                           blockCommentStart |
                                           blockCommentEnd);
 
-      const opType_t hash              = (1L << 54);
-      const opType_t hashhash          = (1L << 55);
+      const opType_t hash              = (1L << 56);
+      const opType_t hashhash          = (1L << 57);
       const opType_t preprocessor      = (hash |
                                           hashhash);
 
-      const opType_t semicolon         = (1L << 56);
-      const opType_t ellipsis          = (1L << 57);
-      const opType_t attribute         = (1L << 58);
+      const opType_t semicolon         = (1L << 58);
+      const opType_t ellipsis          = (1L << 59);
+      const opType_t attribute         = (1L << 60);
 
-      const opType_t special           = (hash           |
-                                          hashhash       |
-                                          semicolon      |
-                                          ellipsis       |
+      const opType_t special           = (hash      |
+                                          hashhash  |
+                                          semicolon |
+                                          ellipsis  |
                                           attribute);
+
+      //---[ Ambiguous Symbols ]--------
+      const opType_t plus              = (positive  |
+                                          add);
+
+      const opType_t minus             = (negative  |
+                                          sub);
+
+      const opType_t ampersand         = (bitAnd    |
+                                          address);
+
+      const opType_t asterisk          = (mult      |
+                                          dereference);
+
+      const opType_t ambiguous         = (plus      |
+                                          minus     |
+                                          increment |
+                                          decrement |
+                                          ampersand |
+                                          asterisk);
+      //================================
 
       const opType_t overloadable      = (not_           |
                                           positive       |
@@ -313,6 +338,8 @@ namespace occa {
 
       // Non-Overloadable
       const binaryOperator_t scope          ("::" , operatorType::scope            , 1);
+      const unaryOperator_t  dereference    ("*"  , operatorType::dereference      , 3);
+      const unaryOperator_t  address        ("&"  , operatorType::address          , 3);
       const binaryOperator_t dot            ("."  , operatorType::dot              , 2);
       const binaryOperator_t dotStar        (".*" , operatorType::dotStar          , 4);
       const binaryOperator_t arrow          ("->" , operatorType::arrow            , 2);

@@ -84,6 +84,8 @@ namespace occa {
 
       extern const opType_t comma;
       extern const opType_t scope;
+      extern const opType_t dereference;
+      extern const opType_t address;
       extern const opType_t dot;
       extern const opType_t dotStar;
       extern const opType_t arrow;
@@ -126,6 +128,16 @@ namespace occa {
       extern const opType_t ellipsis;
 
       extern const opType_t special;
+
+      //---[ Ambiguous Symbols ]--------
+      extern const opType_t plus;
+      extern const opType_t minus;
+      extern const opType_t plusplus;
+      extern const opType_t minusminus;
+      extern const opType_t ampersand;
+      extern const opType_t asterisk;
+      extern const opType_t ambiguous;
+      //================================
 
       extern const opType_t overloadable;
     }
@@ -215,6 +227,8 @@ namespace occa {
 
       // Non-Overloadable
       extern const binaryOperator_t scope;
+      extern const unaryOperator_t  dereference;
+      extern const unaryOperator_t  address;
       extern const binaryOperator_t dot;
       extern const binaryOperator_t dotStar;
       extern const binaryOperator_t arrow;

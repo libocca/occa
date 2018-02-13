@@ -680,13 +680,10 @@ namespace occa {
     void tokenizer::tokenize(tokenVector &tokens,
                              fileOrigin origin,
                              const std::string &source) {
-      // Dummy origin to read source and report
-      //   errors on
-      origin.push(false,
-                  source::string,
-                  source.c_str());
+      fileOrigin fakeOrigin(*origin.file,
+                            source.c_str());
 
-      tokenizer tstream(origin);
+      tokenizer tstream(fakeOrigin);
       // Fill tokens
       token_t *token;
       while (!tstream.isEmpty()) {
@@ -695,8 +692,6 @@ namespace occa {
           tokens.push_back(token);
         }
       }
-      // Reset origin since str is temporary
-      origin.pop();
     }
   }
 }

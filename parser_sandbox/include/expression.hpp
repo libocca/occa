@@ -75,6 +75,26 @@ namespace occa {
       static const int cudaCall        = (1 << 24);
     };
 
+    //---[ Expression State ]-----------
+    class exprLoadState {
+    public:
+      token_t *prevToken;
+      token_t *nextToken;
+      exprNodeStack output;
+      operatorStack operators;
+
+      bool hasError;
+
+      exprLoadState();
+
+      int outputCount();
+      int operatorCount();
+
+      exprNode& lastOutput();
+      operatorToken& lastOperator();
+    };
+    //==================================
+
     class exprNode {
     public:
       token_t *token;
@@ -104,19 +124,22 @@ namespace occa {
       static exprNode* load(const tokenVector &tokens);
 
       static void pushOutputNode(token_t *token,
-                                 exprNodeStack &output);
+                                 exprLoadState &state);
 
-      static bool closePair(operatorToken &opToken,
-                            exprNodeStack &output,
-                            operatorStack &operators);
+      static void closePair(operatorToken &opToken,
+                            exprLoadState &state);
 
-      static bool applyFasterOperators(operatorToken &opToken,
-                                       exprNodeStack &output,
-                                       operatorStack &operators);
+      static bool operatorIsLeftUnary(operatorToken &opToken,
+                                      exprLoadState &state);
 
-      static bool applyOperator(operatorToken &opToken,
-                                exprNodeStack &output,
-                                operatorStack &operators);
+      static operatorToken& getOperatorToken(operatorToken &opToken,
+                                             exprLoadState &state);
+
+      static void applyFasterOperators(operatorToken &opToken,
+                                       exprLoadState &state);
+
+      static void applyOperator(operatorToken &opToken,
+                                exprLoadState &state);
     };
 
     //---[ Empty ]----------------------
