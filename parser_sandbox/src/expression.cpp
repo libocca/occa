@@ -117,6 +117,7 @@ namespace occa {
           }
           else if (opToken.op.opType & operatorType::pairEnd) {
             closePair(opToken, state);
+            attachPair(opToken, state);
           }
           else {
             // opToken might have changed from
@@ -152,9 +153,7 @@ namespace occa {
         return NULL;
       }
       if (outputCount > 1) {
-        state.lastOutput().debugPrint();
         state.output.pop();
-        state.lastOutput().debugPrint();
         state.lastOutput().token->printError("Unable to form an expression");
         return NULL;
       }
@@ -227,6 +226,16 @@ namespace occa {
         ss << '(';
       }
       errorToken->printError(ss.str());
+    }
+
+    void exprNode::attachPair(operatorToken &opToken,
+                              exprLoadState &state) {
+      if (!state.outputCount()) {
+        return;
+      }
+      exprNode &value = state.lastOutput();
+      if (value.nodeType() & exprNodeType::op) {
+      }
     }
 
     bool exprNode::operatorIsLeftUnary(operatorToken &opToken,

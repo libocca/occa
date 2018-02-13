@@ -41,10 +41,10 @@
              occa::test::assertNotEqualBinary(a, b));
 
 #define OCCA_ASSERT_TRUE(value)                 \
-  OCCA_ERROR("Comparison Failed", value);
+  OCCA_ERROR("Comparison Failed", (bool) (value));
 
 #define OCCA_ASSERT_FALSE(value)                \
-  OCCA_ERROR("Comparison Failed", !value);
+  OCCA_ERROR("Comparison Failed", !((bool) (value)));
 
 namespace occa {
   namespace test {

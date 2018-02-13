@@ -236,7 +236,7 @@ namespace occa {
   template <class TM>
   std::string stringifySetBits(const TM value) {
     if (value == 0) {
-      return "0";
+      return "no bits set";
     }
     std::stringstream ss;
     const int bits = (int) (8 * sizeof(TM));

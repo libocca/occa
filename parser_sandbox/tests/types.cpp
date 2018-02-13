@@ -26,16 +26,72 @@
 #include "typeBuiltins.hpp"
 #include "expression.hpp"
 
+void testBitfields();
 void testFunction();
 void testCasting();
 
 int main(const int argc, const char **argv) {
+  testBitfields();
   testFunction();
   testCasting();
   return 0;
 }
 
 using namespace occa::lang;
+
+void testBitfields() {
+  occa::bitfield bf1(0, 1 << 0);
+  OCCA_ASSERT_EQUAL_BINARY(bf1.b1, 0UL);
+  OCCA_ASSERT_EQUAL_BINARY(bf1.b2, 1UL);
+
+  bf1 <<= (occa::bitfield::bits() / 2);
+  OCCA_ASSERT_EQUAL_BINARY(bf1.b1, 1UL);
+  OCCA_ASSERT_EQUAL_BINARY(bf1.b2, 0UL);
+
+  bf1 >>= (occa::bitfield::bits() / 2);
+  OCCA_ASSERT_EQUAL_BINARY(bf1.b1, 0UL);
+  OCCA_ASSERT_EQUAL_BINARY(bf1.b2, 1UL);
+
+  occa::bitfield bf2 = (occa::bitfield(0, 1 << 0) |
+                        occa::bitfield(0, 1 << 1));
+
+  OCCA_ASSERT_TRUE(bf1 & bf2);
+  bf2 <<= 1;
+  OCCA_ASSERT_FALSE(bf1 & bf2);
+
+  const occa::bitfield a1(0, 1L << 0);
+  const occa::bitfield a2(0, 1L << 1);
+  const occa::bitfield b1(0, 1L << 2);
+  const occa::bitfield b2(0, 1L << 3);
+  const occa::bitfield c1(0, 1L << 4);
+  const occa::bitfield c2(0, 1L << 5);
+
+  const occa::bitfield a = (a1 | a2);
+  const occa::bitfield b = (b1 | b2);
+  const occa::bitfield c = (c1 | c2);
+
+  const occa::bitfield start = (a1 | b1 | c1);
+  const occa::bitfield end   = (a2 | b2 | c2);
+
+  OCCA_ASSERT_TRUE(a & a1);
+  OCCA_ASSERT_TRUE(a & a2);
+
+  OCCA_ASSERT_TRUE(start & a);
+  OCCA_ASSERT_TRUE(start & a1);
+  OCCA_ASSERT_TRUE(start & b1);
+  OCCA_ASSERT_TRUE(start & c1);
+
+  OCCA_ASSERT_TRUE(end & a);
+  OCCA_ASSERT_TRUE(end & a2);
+  OCCA_ASSERT_TRUE(end & b2);
+  OCCA_ASSERT_TRUE(end & c2);
+
+  OCCA_ASSERT_FALSE(a & b);
+  OCCA_ASSERT_FALSE(a & c);
+  OCCA_ASSERT_FALSE(b & c);
+
+  OCCA_ASSERT_FALSE(start & end);
+}
 
 void testFunction() {
   qualifiers_t q1;

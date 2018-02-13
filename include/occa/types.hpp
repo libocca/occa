@@ -82,6 +82,112 @@ namespace occa {
   };
   //====================================
 
+  //---[ Bitfield ]---------------------
+  class bitfield {
+  public:
+    udim_t b1, b2;
+
+    inline bitfield() :
+      b1(0),
+      b2(0) {}
+
+    inline bitfield(const udim_t b2_) :
+      b1(0),
+      b2(b2_) {}
+
+    inline bitfield(const udim_t b1_,
+                    const udim_t b2_) :
+      b1(b1_),
+      b2(b2_) {}
+
+    inline bitfield(const bitfield &bf) :
+      b1(bf.b1),
+      b2(bf.b2) {}
+
+    inline bitfield& operator = (const bitfield &bf) {
+      b1 = bf.b1;
+      b2 = bf.b2;
+      return *this;
+    }
+
+    inline static int bits() {
+      return 16 * sizeof(udim_t);
+    }
+
+    inline bool operator == (const bitfield &bf) const {
+      return ((b1 == bf.b1) &&
+              (b2 == bf.b2));
+    }
+
+    inline bool operator != (const bitfield &bf) const {
+      return ((b1 != bf.b1) ||
+              (b2 != bf.b2));
+    }
+
+    inline bitfield operator | (const bitfield &bf) const {
+      return bitfield(b1 | bf.b1,
+                      b2 | bf.b2);
+    }
+
+    inline bitfield operator & (const bitfield &bf) const {
+      return bitfield(b1 & bf.b1,
+                      b2 & bf.b2);
+    };
+
+    inline bitfield operator << (const int shift) const {
+      if (shift <= 0) {
+        return *this;
+      }
+      const int bSize = 8 * sizeof(udim_t);
+      if (shift > (2 * bSize)) {
+        return 0;
+      }
+
+      if (shift >= bSize) {
+        return bitfield(b2 << (shift - bSize),
+                        0);
+      }
+
+      const udim_t carryOver = (b2 >> (bSize - shift));
+      return bitfield((b1 << shift) | carryOver,
+                      b2 << shift);
+    };
+
+    inline bitfield operator >> (const int shift) const {
+      if (shift <= 0) {
+        return *this;
+      }
+      const int bSize = 8 * sizeof(udim_t);
+      if (shift > (2 * bSize)) {
+        return 0;
+      }
+
+      if (shift >= bSize) {
+        return bitfield(0,
+                        b1 >> (shift - bSize));
+      }
+
+      const udim_t carryOver = (b1 << (bSize - shift));
+      return bitfield(b1 >> shift,
+                      (b2 >> shift) | carryOver);
+    };
+
+    inline bitfield& operator <<= (const int shift) {
+      *this = (*this << shift);
+      return *this;
+    }
+
+    inline bitfield& operator >>= (const int shift) {
+      *this = (*this >> shift);
+      return *this;
+    }
+
+    inline operator bool () const {
+      return (b1 || b2);
+    }
+  };
+  //====================================
+
   //---[ Type To String ]---------------
   template <class TM>
   class primitiveinfo {

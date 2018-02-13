@@ -28,7 +28,83 @@
 
 namespace occa {
   namespace lang {
-    typedef uint64_t opType_t;
+    typedef udim_t   rawOpType_t;
+    typedef bitfield opType_t;
+
+    namespace rawOperatorType {
+      extern const rawOpType_t not_;
+      extern const rawOpType_t positive;
+      extern const rawOpType_t negative;
+      extern const rawOpType_t tilde;
+      extern const rawOpType_t leftIncrement;
+      extern const rawOpType_t rightIncrement;
+      extern const rawOpType_t leftDecrement;
+      extern const rawOpType_t rightDecrement;
+
+      extern const rawOpType_t add;
+      extern const rawOpType_t sub;
+      extern const rawOpType_t mult;
+      extern const rawOpType_t div;
+      extern const rawOpType_t mod;
+
+      extern const rawOpType_t lessThan;
+      extern const rawOpType_t lessThanEq;
+      extern const rawOpType_t equal;
+      extern const rawOpType_t notEqual;
+      extern const rawOpType_t greaterThan;
+      extern const rawOpType_t greaterThanEq;
+
+      extern const rawOpType_t and_;
+      extern const rawOpType_t or_;
+
+      extern const rawOpType_t bitAnd;
+      extern const rawOpType_t bitOr;
+      extern const rawOpType_t xor_;
+      extern const rawOpType_t leftShift;
+      extern const rawOpType_t rightShift;
+
+      extern const rawOpType_t assign;
+      extern const rawOpType_t addEq;
+      extern const rawOpType_t subEq;
+      extern const rawOpType_t multEq;
+      extern const rawOpType_t divEq;
+      extern const rawOpType_t modEq;
+      extern const rawOpType_t andEq;
+      extern const rawOpType_t orEq;
+      extern const rawOpType_t xorEq;
+      extern const rawOpType_t leftShiftEq;
+      extern const rawOpType_t rightShiftEq;
+
+      extern const rawOpType_t comma;
+      extern const rawOpType_t scope;
+      extern const rawOpType_t dereference;
+      extern const rawOpType_t address;
+      extern const rawOpType_t dot;
+      extern const rawOpType_t dotStar;
+      extern const rawOpType_t arrow;
+      extern const rawOpType_t arrowStar;
+
+      extern const rawOpType_t questionMark;
+      extern const rawOpType_t colon;
+
+      extern const rawOpType_t braceStart;
+      extern const rawOpType_t braceEnd;
+      extern const rawOpType_t bracketStart;
+      extern const rawOpType_t bracketEnd;
+      extern const rawOpType_t parenthesesStart;
+      extern const rawOpType_t parenthesesEnd;
+
+      extern const rawOpType_t lineComment;
+      extern const rawOpType_t blockCommentStart;
+      extern const rawOpType_t blockCommentEnd;
+
+      extern const rawOpType_t hash;
+      extern const rawOpType_t hashhash;
+
+      extern const rawOpType_t semicolon;
+      extern const rawOpType_t ellipsis;
+    }
+
 
     namespace operatorType {
       extern const opType_t not_;
@@ -97,8 +173,9 @@ namespace occa {
 
       extern const opType_t binary;
 
-      extern const opType_t ternary;
+      extern const opType_t questionMark;
       extern const opType_t colon;
+      extern const opType_t ternary;
 
       extern const opType_t braceStart;
       extern const opType_t braceEnd;

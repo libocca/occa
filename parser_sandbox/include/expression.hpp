@@ -129,6 +129,9 @@ namespace occa {
       static void closePair(operatorToken &opToken,
                             exprLoadState &state);
 
+      static void attachPair(operatorToken &opToken,
+                             exprLoadState &state);
+
       static bool operatorIsLeftUnary(operatorToken &opToken,
                                       exprLoadState &state);
 

@@ -23,37 +23,114 @@
 
 namespace occa {
   namespace lang {
+    namespace rawOperatorType {
+      const rawOpType_t not_              (1L << 1);
+      const rawOpType_t positive          (1L << 2);
+      const rawOpType_t negative          (1L << 3);
+      const rawOpType_t tilde             (1L << 4);
+      const rawOpType_t leftIncrement     (1L << 5);
+      const rawOpType_t rightIncrement    (1L << 6);
+      const rawOpType_t leftDecrement     (1L << 7);
+      const rawOpType_t rightDecrement    (1L << 8);
+
+      const rawOpType_t add               (1L << 9);
+      const rawOpType_t sub               (1L << 10);
+      const rawOpType_t mult              (1L << 11);
+      const rawOpType_t div               (1L << 12);
+      const rawOpType_t mod               (1L << 13);
+
+      const rawOpType_t lessThan          (1L << 14);
+      const rawOpType_t lessThanEq        (1L << 15);
+      const rawOpType_t equal             (1L << 16);
+      const rawOpType_t notEqual          (1L << 17);
+      const rawOpType_t greaterThan       (1L << 18);
+      const rawOpType_t greaterThanEq     (1L << 19);
+
+      const rawOpType_t and_              (1L << 20);
+      const rawOpType_t or_               (1L << 21);
+
+      const rawOpType_t bitAnd            (1L << 22);
+      const rawOpType_t bitOr             (1L << 23);
+      const rawOpType_t xor_              (1L << 24);
+      const rawOpType_t leftShift         (1L << 25);
+      const rawOpType_t rightShift        (1L << 26);
+
+      const rawOpType_t assign            (1L << 27);
+      const rawOpType_t addEq             (1L << 28);
+      const rawOpType_t subEq             (1L << 29);
+      const rawOpType_t multEq            (1L << 30);
+      const rawOpType_t divEq             (1L << 31);
+      const rawOpType_t modEq             (1L << 32);
+      const rawOpType_t andEq             (1L << 33);
+      const rawOpType_t orEq              (1L << 34);
+      const rawOpType_t xorEq             (1L << 35);
+      const rawOpType_t leftShiftEq       (1L << 36);
+      const rawOpType_t rightShiftEq      (1L << 37);
+
+      const rawOpType_t comma             (1L << 38);
+      const rawOpType_t scope             (1L << 39);
+      const rawOpType_t dereference       (1L << 40);
+      const rawOpType_t address           (1L << 41);
+      const rawOpType_t dot               (1L << 42);
+      const rawOpType_t dotStar           (1L << 43);
+      const rawOpType_t arrow             (1L << 44);
+      const rawOpType_t arrowStar         (1L << 45);
+
+      const rawOpType_t questionMark      (1L << 46);
+      const rawOpType_t colon             (1L << 47);
+
+      // End = (Start << 1)
+      const rawOpType_t braceStart        (1L << 48);
+      const rawOpType_t braceEnd          (1L << 49);
+      const rawOpType_t bracketStart      (1L << 50);
+      const rawOpType_t bracketEnd        (1L << 51);
+      const rawOpType_t parenthesesStart  (1L << 52);
+      const rawOpType_t parenthesesEnd    (1L << 53);
+
+      // Special operators
+      const rawOpType_t lineComment       (1L << 0);
+      const rawOpType_t blockCommentStart (1L << 1);
+      const rawOpType_t blockCommentEnd   (1L << 2);
+
+      const rawOpType_t hash              (1L << 3);
+      const rawOpType_t hashhash          (1L << 4);
+
+      const rawOpType_t semicolon         (1L << 5);
+      const rawOpType_t ellipsis          (1L << 6);
+      const rawOpType_t attribute         (1L << 7);
+    }
+
     namespace operatorType {
-      const opType_t not_              = (1L << 0);
-      const opType_t positive          = (1L << 1);
-      const opType_t negative          = (1L << 2);
-      const opType_t tilde             = (1L << 3);
-      const opType_t leftIncrement     = (1L << 4);
-      const opType_t rightIncrement    = (1L << 5);
+      const opType_t not_              (0, rawOperatorType::not_);
+      const opType_t positive          (0, rawOperatorType::positive);
+      const opType_t negative          (0, rawOperatorType::negative);
+      const opType_t tilde             (0, rawOperatorType::tilde);
+      const opType_t leftIncrement     (0, rawOperatorType::leftIncrement);
+      const opType_t rightIncrement    (0, rawOperatorType::rightIncrement);
       const opType_t increment         = (leftIncrement |
                                           rightIncrement);
-      const opType_t leftDecrement     = (1L << 6);
-      const opType_t rightDecrement    = (1L << 7);
+      const opType_t leftDecrement     (0, rawOperatorType::leftDecrement);
+      const opType_t rightDecrement    (0, rawOperatorType::rightDecrement);
       const opType_t decrement         = (leftDecrement |
                                           rightDecrement);
 
-      const opType_t add               = (1L << 8);
-      const opType_t sub               = (1L << 9);
-      const opType_t mult              = (1L << 10);
-      const opType_t div               = (1L << 11);
-      const opType_t mod               = (1L << 12);
+      const opType_t add               (0, rawOperatorType::add);
+      const opType_t sub               (0, rawOperatorType::sub);
+      const opType_t mult              (0, rawOperatorType::mult);
+      const opType_t div               (0, rawOperatorType::div);
+      const opType_t mod               (0, rawOperatorType::mod);
       const opType_t arithmetic        = (add  |
                                           sub  |
                                           mult |
                                           div  |
                                           mod);
 
-      const opType_t lessThan          = (1L << 13);
-      const opType_t lessThanEq        = (1L << 14);
-      const opType_t equal             = (1L << 15);
-      const opType_t notEqual          = (1L << 16);
-      const opType_t greaterThan       = (1L << 17);
-      const opType_t greaterThanEq     = (1L << 18);
+      const opType_t lessThan          (0, rawOperatorType::lessThan);
+      const opType_t lessThanEq        (0, rawOperatorType::lessThanEq);
+      const opType_t equal             (0, rawOperatorType::equal);
+      const opType_t notEqual          (0, rawOperatorType::notEqual);
+      const opType_t greaterThan       (0, rawOperatorType::greaterThan);
+      const opType_t greaterThanEq     (0, rawOperatorType::greaterThanEq);
       const opType_t comparison        = (lessThan    |
                                           lessThanEq  |
                                           equal       |
@@ -61,16 +138,16 @@ namespace occa {
                                           greaterThan |
                                           greaterThanEq);
 
-      const opType_t and_              = (1L << 19);
-      const opType_t or_               = (1L << 20);
+      const opType_t and_              (0, rawOperatorType::and_);
+      const opType_t or_               (0, rawOperatorType::or_);
       const opType_t boolean           = (and_ |
                                           or_);
 
-      const opType_t bitAnd            = (1L << 21);
-      const opType_t bitOr             = (1L << 22);
-      const opType_t xor_              = (1L << 23);
-      const opType_t leftShift         = (1L << 24);
-      const opType_t rightShift        = (1L << 25);
+      const opType_t bitAnd            (0, rawOperatorType::bitAnd);
+      const opType_t bitOr             (0, rawOperatorType::bitOr);
+      const opType_t xor_              (0, rawOperatorType::xor_);
+      const opType_t leftShift         (0, rawOperatorType::leftShift);
+      const opType_t rightShift        (0, rawOperatorType::rightShift);
       const opType_t shift             = (leftShift |
                                           rightShift);
       const opType_t bitOp             = (bitAnd    |
@@ -79,17 +156,17 @@ namespace occa {
                                           leftShift |
                                           rightShift);
 
-      const opType_t assign            = (1L << 26);
-      const opType_t addEq             = (1L << 27);
-      const opType_t subEq             = (1L << 28);
-      const opType_t multEq            = (1L << 29);
-      const opType_t divEq             = (1L << 30);
-      const opType_t modEq             = (1L << 31);
-      const opType_t andEq             = (1L << 32);
-      const opType_t orEq              = (1L << 33);
-      const opType_t xorEq             = (1L << 34);
-      const opType_t leftShiftEq       = (1L << 35);
-      const opType_t rightShiftEq      = (1L << 36);
+      const opType_t assign            (0, rawOperatorType::assign);
+      const opType_t addEq             (0, rawOperatorType::addEq);
+      const opType_t subEq             (0, rawOperatorType::subEq);
+      const opType_t multEq            (0, rawOperatorType::multEq);
+      const opType_t divEq             (0, rawOperatorType::divEq);
+      const opType_t modEq             (0, rawOperatorType::modEq);
+      const opType_t andEq             (0, rawOperatorType::andEq);
+      const opType_t orEq              (0, rawOperatorType::orEq);
+      const opType_t xorEq             (0, rawOperatorType::xorEq);
+      const opType_t leftShiftEq       (0, rawOperatorType::leftShiftEq);
+      const opType_t rightShiftEq      (0, rawOperatorType::rightShiftEq);
       const opType_t assignment        = (assign      |
                                           addEq       |
                                           subEq       |
@@ -102,14 +179,14 @@ namespace occa {
                                           leftShiftEq |
                                           rightShiftEq);
 
-      const opType_t comma             = (1L << 37);
-      const opType_t scope             = (1L << 38);
-      const opType_t dereference       = (1L << 39);
-      const opType_t address           = (1L << 40);
-      const opType_t dot               = (1L << 41);
-      const opType_t dotStar           = (1L << 42);
-      const opType_t arrow             = (1L << 43);
-      const opType_t arrowStar         = (1L << 44);
+      const opType_t comma             (0, rawOperatorType::comma);
+      const opType_t scope             (0, rawOperatorType::scope);
+      const opType_t dereference       (0, rawOperatorType::dereference);
+      const opType_t address           (0, rawOperatorType::address);
+      const opType_t dot               (0, rawOperatorType::dot);
+      const opType_t dotStar           (0, rawOperatorType::dotStar);
+      const opType_t arrow             (0, rawOperatorType::arrow);
+      const opType_t arrowStar         (0, rawOperatorType::arrowStar);
 
       const opType_t leftUnary         = (not_          |
                                           positive      |
@@ -164,16 +241,18 @@ namespace occa {
                                           arrow         |
                                           arrowStar);
 
-      const opType_t ternary           = (3L << 45);
-      const opType_t colon             = (1L << 46);
+      const opType_t questionMark      (0, rawOperatorType::questionMark);
+      const opType_t colon             (0, rawOperatorType::colon);
+      const opType_t ternary           = (questionMark |
+                                          colon);
 
       // End = (Start << 1)
-      const opType_t braceStart        = (1L << 47);
-      const opType_t braceEnd          = (1L << 48);
-      const opType_t bracketStart      = (1L << 49);
-      const opType_t bracketEnd        = (1L << 50);
-      const opType_t parenthesesStart  = (1L << 51);
-      const opType_t parenthesesEnd    = (1L << 52);
+      const opType_t braceStart        (0, rawOperatorType::braceStart);
+      const opType_t braceEnd          (0, rawOperatorType::braceEnd);
+      const opType_t bracketStart      (0, rawOperatorType::bracketStart);
+      const opType_t bracketEnd        (0, rawOperatorType::bracketEnd);
+      const opType_t parenthesesStart  (0, rawOperatorType::parenthesesStart);
+      const opType_t parenthesesEnd    (0, rawOperatorType::parenthesesEnd);
 
       const opType_t braces            = (braceStart       |
                                           braceEnd);
@@ -197,21 +276,22 @@ namespace occa {
                                           bracketEnd       |
                                           parenthesesEnd);
 
-      const opType_t lineComment       = (1L << 53);
-      const opType_t blockCommentStart = (1L << 54);
-      const opType_t blockCommentEnd   = (1L << 55);
+      // Special operators
+      const opType_t lineComment       (rawOperatorType::lineComment      , 0);
+      const opType_t blockCommentStart (rawOperatorType::blockCommentStart, 0);
+      const opType_t blockCommentEnd   (rawOperatorType::blockCommentEnd  , 0);
       const opType_t comment           = (lineComment       |
                                           blockCommentStart |
                                           blockCommentEnd);
 
-      const opType_t hash              = (1L << 56);
-      const opType_t hashhash          = (1L << 57);
+      const opType_t hash              (rawOperatorType::hash    , 0);
+      const opType_t hashhash          (rawOperatorType::hashhash, 0);
       const opType_t preprocessor      = (hash |
                                           hashhash);
 
-      const opType_t semicolon         = (1L << 58);
-      const opType_t ellipsis          = (1L << 59);
-      const opType_t attribute         = (1L << 60);
+      const opType_t semicolon         (rawOperatorType::semicolon, 0);
+      const opType_t ellipsis          (rawOperatorType::ellipsis , 0);
+      const opType_t attribute         (rawOperatorType::attribute, 0);
 
       const opType_t special           = (hash      |
                                           hashhash  |
@@ -426,16 +506,16 @@ namespace occa {
 
 
     primitive unaryOperator_t::operator () (primitive &value) const {
-      switch(opType) {
-      case operatorType::not_           : return not_(value);
-      case operatorType::positive       : return positive(value);
-      case operatorType::negative       : return negative(value);
-      case operatorType::tilde          : return tilde(value);
-      case operatorType::leftIncrement  : return leftIncrement(value);
-      case operatorType::leftDecrement  : return leftDecrement(value);
+      switch(opType.b2) {
+      case rawOperatorType::not_           : return not_(value);
+      case rawOperatorType::positive       : return positive(value);
+      case rawOperatorType::negative       : return negative(value);
+      case rawOperatorType::tilde          : return tilde(value);
+      case rawOperatorType::leftIncrement  : return leftIncrement(value);
+      case rawOperatorType::leftDecrement  : return leftDecrement(value);
 
-      case operatorType::rightIncrement : return rightIncrement(value);
-      case operatorType::rightDecrement : return rightDecrement(value);
+      case rawOperatorType::rightIncrement : return rightIncrement(value);
+      case rawOperatorType::rightDecrement : return rightDecrement(value);
       default:
         return primitive();
       }
@@ -443,41 +523,41 @@ namespace occa {
 
     primitive binaryOperator_t::operator () (primitive &leftValue,
                                              primitive &rightValue) const {
-      switch(opType) {
-      case operatorType::add          : return add(leftValue, rightValue);
-      case operatorType::sub          : return sub(leftValue, rightValue);
-      case operatorType::mult         : return mult(leftValue, rightValue);
-      case operatorType::div          : return div(leftValue, rightValue);
-      case operatorType::mod          : return mod(leftValue, rightValue);
+      switch(opType.b2) {
+      case rawOperatorType::add          : return add(leftValue, rightValue);
+      case rawOperatorType::sub          : return sub(leftValue, rightValue);
+      case rawOperatorType::mult         : return mult(leftValue, rightValue);
+      case rawOperatorType::div          : return div(leftValue, rightValue);
+      case rawOperatorType::mod          : return mod(leftValue, rightValue);
 
-      case operatorType::lessThan     : return lessThan(leftValue, rightValue);
-      case operatorType::lessThanEq   : return lessThanEq(leftValue, rightValue);
-      case operatorType::equal        : return equal(leftValue, rightValue);
-      case operatorType::notEqual     : return notEqual(leftValue, rightValue);
-      case operatorType::greaterThan  : return greaterThan(leftValue, rightValue);
-      case operatorType::greaterThanEq: return greaterThanEq(leftValue, rightValue);
+      case rawOperatorType::lessThan     : return lessThan(leftValue, rightValue);
+      case rawOperatorType::lessThanEq   : return lessThanEq(leftValue, rightValue);
+      case rawOperatorType::equal        : return equal(leftValue, rightValue);
+      case rawOperatorType::notEqual     : return notEqual(leftValue, rightValue);
+      case rawOperatorType::greaterThan  : return greaterThan(leftValue, rightValue);
+      case rawOperatorType::greaterThanEq: return greaterThanEq(leftValue, rightValue);
 
-      case operatorType::and_         : return and_(leftValue, rightValue);
-      case operatorType::or_          : return or_(leftValue, rightValue);
-      case operatorType::bitAnd       : return bitAnd(leftValue, rightValue);
-      case operatorType::bitOr        : return bitOr(leftValue, rightValue);
-      case operatorType::xor_         : return xor_(leftValue, rightValue);
-      case operatorType::leftShift    : return leftShift(leftValue, rightValue);
-      case operatorType::rightShift   : return rightShift(leftValue, rightValue);
+      case rawOperatorType::and_         : return and_(leftValue, rightValue);
+      case rawOperatorType::or_          : return or_(leftValue, rightValue);
+      case rawOperatorType::bitAnd       : return bitAnd(leftValue, rightValue);
+      case rawOperatorType::bitOr        : return bitOr(leftValue, rightValue);
+      case rawOperatorType::xor_         : return xor_(leftValue, rightValue);
+      case rawOperatorType::leftShift    : return leftShift(leftValue, rightValue);
+      case rawOperatorType::rightShift   : return rightShift(leftValue, rightValue);
 
-      case operatorType::assign       : return assign(leftValue, rightValue);
-      case operatorType::addEq        : return addEq(leftValue, rightValue);
-      case operatorType::subEq        : return subEq(leftValue, rightValue);
-      case operatorType::multEq       : return multEq(leftValue, rightValue);
-      case operatorType::divEq        : return divEq(leftValue, rightValue);
-      case operatorType::modEq        : return modEq(leftValue, rightValue);
-      case operatorType::andEq        : return bitAndEq(leftValue, rightValue);
-      case operatorType::orEq         : return bitOrEq(leftValue, rightValue);
-      case operatorType::xorEq        : return xorEq(leftValue, rightValue);
-      case operatorType::leftShiftEq  : return leftShiftEq(leftValue, rightValue);
-      case operatorType::rightShiftEq : return rightShiftEq(leftValue, rightValue);
+      case rawOperatorType::assign       : return assign(leftValue, rightValue);
+      case rawOperatorType::addEq        : return addEq(leftValue, rightValue);
+      case rawOperatorType::subEq        : return subEq(leftValue, rightValue);
+      case rawOperatorType::multEq       : return multEq(leftValue, rightValue);
+      case rawOperatorType::divEq        : return divEq(leftValue, rightValue);
+      case rawOperatorType::modEq        : return modEq(leftValue, rightValue);
+      case rawOperatorType::andEq        : return bitAndEq(leftValue, rightValue);
+      case rawOperatorType::orEq         : return bitOrEq(leftValue, rightValue);
+      case rawOperatorType::xorEq        : return xorEq(leftValue, rightValue);
+      case rawOperatorType::leftShiftEq  : return leftShiftEq(leftValue, rightValue);
+      case rawOperatorType::rightShiftEq : return rightShiftEq(leftValue, rightValue);
 
-      case operatorType::comma        : return rightValue;
+      case rawOperatorType::comma        : return rightValue;
       default:
         return primitive();
       }
