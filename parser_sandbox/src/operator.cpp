@@ -98,6 +98,9 @@ namespace occa {
       const rawOpType_t semicolon         (1L << 5);
       const rawOpType_t ellipsis          (1L << 6);
       const rawOpType_t attribute         (1L << 7);
+
+      const rawOpType_t cudaCallStart     (1L << 8);
+      const rawOpType_t cudaCallEnd       (1L << 9);
       //================================
     }
 
@@ -267,15 +270,19 @@ namespace occa {
                                           bracketStart     |
                                           bracketEnd       |
                                           parenthesesStart |
-                                          parenthesesEnd);
+                                          parenthesesEnd   |
+                                          cudaCallStart    |
+                                          cudaCallEnd);
 
       const opType_t pairStart         = (braceStart       |
                                           bracketStart     |
-                                          parenthesesStart);
+                                          parenthesesStart |
+                                          cudaCallStart);
 
       const opType_t pairEnd           = (braceEnd         |
                                           bracketEnd       |
-                                          parenthesesEnd);
+                                          parenthesesEnd   |
+                                          cudaCallEnd);
 
       // Special operators
       const opType_t lineComment       (rawOperatorType::lineComment      , 0);
@@ -294,11 +301,16 @@ namespace occa {
       const opType_t ellipsis          (rawOperatorType::ellipsis , 0);
       const opType_t attribute         (rawOperatorType::attribute, 0);
 
-      const opType_t special           = (hash      |
-                                          hashhash  |
-                                          semicolon |
-                                          ellipsis  |
-                                          attribute);
+      const opType_t cudaCallStart     (rawOperatorType::cudaCallStart, 0);
+      const opType_t cudaCallEnd       (rawOperatorType::cudaCallEnd  , 0);
+
+      const opType_t special           = (hash          |
+                                          hashhash      |
+                                          semicolon     |
+                                          ellipsis      |
+                                          attribute     |
+                                          cudaCallStart |
+                                          cudaCallEnd);
 
       //---[ Ambiguous Symbols ]--------
       const opType_t plus              = (positive  |
@@ -454,6 +466,9 @@ namespace occa {
       const operator_t semicolon            (";"  , operatorType::semicolon        , 0);
       const operator_t ellipsis             ("...", operatorType::ellipsis         , 0);
       const operator_t attribute            ("@"  , operatorType::attribute        , 0);
+
+      const operator_t cudaCallStart        ("<<<", operatorType::cudaCallStart    , 0);
+      const operator_t cudaCallEnd          (">>>", operatorType::cudaCallEnd      , 0);
       //================================
 
       //---[ Associativity ]------------

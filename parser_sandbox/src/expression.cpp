@@ -24,10 +24,45 @@
 
 namespace occa {
   namespace lang {
+    namespace exprNodeType {
+      const int empty           = (1 << 0);
+      const int primitive       = (1 << 1);
+      const int char_           = (1 << 2);
+      const int string          = (1 << 3);
+      const int identifier      = (1 << 4);
+      const int variable        = (1 << 5);
+      const int value           = (primitive |
+                                   variable);
+      const int leftUnary       = (1 << 6);
+      const int rightUnary      = (1 << 7);
+      const int binary          = (1 << 8);
+      const int ternary         = (1 << 9);
+      const int op              = (leftUnary  |
+                                   rightUnary |
+                                   binary     |
+                                   ternary);
+      const int subscript       = (1 << 10);
+      const int call            = (1 << 11);
+      const int new_            = (1 << 12);
+      const int delete_         = (1 << 13);
+      const int throw_          = (1 << 14);
+      const int sizeof_         = (1 << 15);
+      const int funcCast        = (1 << 16);
+      const int parenCast       = (1 << 17);
+      const int constCast       = (1 << 18);
+      const int staticCast      = (1 << 19);
+      const int reinterpretCast = (1 << 20);
+      const int dynamicCast     = (1 << 21);
+      const int parentheses     = (1 << 22);
+      const int tuple           = (1 << 23);
+      const int cudaCall        = (1 << 24);
+    }
+
     //---[ Expression State ]-----------
     exprLoadState::exprLoadState() :
       prevToken(NULL),
       nextToken(NULL),
+      tokenBeforePair(NULL),
       hasError(false) {}
 
     int exprLoadState::outputCount() {
@@ -113,6 +148,7 @@ namespace occa {
           operatorToken &opToken = token->to<operatorToken>();
 
           if (opToken.op.opType & operatorType::pairStart) {
+            state.tokenBeforePair = state.prevToken;
             state.operators.push(&opToken);
           }
           else if (opToken.op.opType & operatorType::pairEnd) {
@@ -230,12 +266,64 @@ namespace occa {
 
     void exprNode::attachPair(operatorToken &opToken,
                               exprLoadState &state) {
-      if (!state.outputCount()) {
+      if (state.outputCount() < 2) {
         return;
       }
-      exprNode &value = state.lastOutput();
-      if (value.nodeType() & exprNodeType::op) {
+
+      // Only consider () as a function call if:
+      //   - identifier()
+      //   - (...)()
+      //   - [...]()
+      //   - {...}()
+      //   - <<<...>>>()
+      const int prevTokenType = state.tokenBeforePair->type();
+      if (!(prevTokenType & (tokenType::identifier |
+                             tokenType::op))) {
+        return;
       }
+      if (prevTokenType & tokenType::op) {
+        operatorToken &prevOpToken = state.tokenBeforePair->to<operatorToken>();
+        if (!(prevOpToken.op.opType & operatorType::pairEnd)) {
+          return;
+        }
+      }
+
+      parenthesesNode &argsNode = state.lastOutput().to<parenthesesNode>();
+      state.output.pop();
+      exprNode &value = state.lastOutput();
+      state.output.pop();
+
+      exprNode *commaNode = &(argsNode.value);
+      exprNodeVector args;
+      // We need to push all args and reverse it at the end
+      //   since commaNode looks like (...tail, head)
+      while (true) {
+        if (commaNode->nodeType() & exprNodeType::binary) {
+          binaryOpNode &opNode = commaNode->to<binaryOpNode>();
+          if (opNode.op.opType & operatorType::comma) {
+            args.push_back(&opNode.rightValue);
+            commaNode = &(opNode.leftValue);
+            continue;
+          }
+        }
+        args.push_back(commaNode);
+        break;
+      }
+
+      // Reverse arguments back to original order
+      const int argCount = (int) args.size();
+      for (int i = 0 ; i < (argCount / 2); ++i) {
+        exprNode *arg_i = args[i];
+        args[i] = args[argCount - i - 1];
+        args[argCount - i - 1] = arg_i;
+      }
+
+      // Delete the root node since callNode
+      //   clones all expressions recursively
+      state.output.push(new callNode(value.token,
+                                     value,
+                                     args));
+      delete &argsNode;
     }
 
     bool exprNode::operatorIsLeftUnary(operatorToken &opToken,

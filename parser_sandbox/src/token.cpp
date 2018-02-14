@@ -113,7 +113,9 @@ namespace occa {
 
       operators.add(op::semicolon.str        , &op::semicolon);
       operators.add(op::ellipsis.str         , &op::ellipsis);
-      operators.add(op::ellipsis.str         , &op::ellipsis);
+
+      operators.add(op::cudaCallStart.str    , &op::cudaCallStart);
+      operators.add(op::cudaCallEnd.str      , &op::cudaCallEnd);
 
       return operators;
     }

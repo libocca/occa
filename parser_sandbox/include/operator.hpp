@@ -105,6 +105,9 @@ namespace occa {
       extern const rawOpType_t semicolon;
       extern const rawOpType_t ellipsis;
       extern const rawOpType_t attribute;
+
+      extern const rawOpType_t cudaCallStart;
+      extern const rawOpType_t cudaCallEnd;
       //================================
     }
 
@@ -206,6 +209,10 @@ namespace occa {
 
       extern const opType_t semicolon;
       extern const opType_t ellipsis;
+
+      extern const opType_t cudaCallStart;
+      extern const opType_t cudaCallEnd;
+      extern const opType_t cudaCall;
 
       extern const opType_t special;
 
@@ -342,6 +349,9 @@ namespace occa {
       extern const operator_t semicolon;
       extern const operator_t ellipsis;
       extern const operator_t attribute;
+
+      extern const operator_t cudaCallStart;
+      extern const operator_t cudaCallEnd;
       //================================
 
       //---[ Associativity ]------------

@@ -28,12 +28,16 @@
 
 void testOperatorNodes();
 void testOtherNodes();
-void testLoad();
+void testFunctions();
+void testCanEvaluate();
+void testEval();
 
 int main(const int argc, const char **argv) {
   testOperatorNodes();
   testOtherNodes();
-  testLoad();
+  testFunctions();
+  testCanEvaluate();
+  testEval();
 
   return 0;
 }
@@ -110,7 +114,10 @@ void testOtherNodes() {
   variable var_(t1, "var");
   variableNode var(var_);
 
-  primitiveNode one(1), two(2), three(3);
+  primitiveNode one(1);
+  primitiveNode two(2);
+  primitiveNode three(3);
+
   exprNodeVector args;
   args.push_back(&one);
   args.push_back(&two);
@@ -155,7 +162,22 @@ primitive eval(const std::string &s) {
   return value;
 }
 
-void testLoad() {
+void testFunctions() {
+  // Test functions
+  exprNode &funcExpr = *(makeExpression("func(0,1,2,3,4)"));
+  OCCA_ASSERT_EQUAL(exprNodeType::call, funcExpr.nodeType());
+  callNode &func = funcExpr.to<callNode>();
+
+  OCCA_ASSERT_EQUAL("func", func.value.to<identifierNode>().value);
+  OCCA_ASSERT_EQUAL(5, (int) func.args.size());
+  for (int i = 0; i < 5; ++i) {
+    primitiveNode &arg = func.args[i]->to<primitiveNode>();
+    OCCA_ASSERT_EQUAL(i, (int) arg.value);
+  }
+}
+
+void testCanEvaluate() {
+  // Test evaluatable
   OCCA_ASSERT_TRUE(canEvaluate("1 + 2 / (3)"));
   OCCA_ASSERT_FALSE(canEvaluate("1 + 2 / (3) + '1'"));
   OCCA_ASSERT_FALSE(canEvaluate("&1"));
@@ -165,7 +187,9 @@ void testLoad() {
   OCCA_ASSERT_FALSE(canEvaluate("(1).*(2)"));
   OCCA_ASSERT_FALSE(canEvaluate("1->2"));
   OCCA_ASSERT_FALSE(canEvaluate("1->*2"));
+}
 
+void testEval() {
   OCCA_ASSERT_EQUAL((int) (1 + 2 / (3)),
                     (int) eval("1 + 2 / (3)"));
 

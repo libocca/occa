@@ -40,46 +40,44 @@ namespace occa {
     typedef std::stack<operatorToken*> operatorStack;
     typedef std::vector<token_t*>      tokenVector;
 
-    class exprNodeType {
-    public:
-      static const int empty           = (1 << 0);
-      static const int primitive       = (1 << 1);
-      static const int char_           = (1 << 2);
-      static const int string          = (1 << 3);
-      static const int identifier      = (1 << 4);
-      static const int variable        = (1 << 5);
-      static const int value           = (primitive |
-                                          variable);
-      static const int leftUnary       = (1 << 6);
-      static const int rightUnary      = (1 << 7);
-      static const int binary          = (1 << 8);
-      static const int ternary         = (1 << 9);
-      static const int op              = (leftUnary  |
-                                          rightUnary |
-                                          binary     |
-                                          ternary);
-      static const int subscript       = (1 << 10);
-      static const int call            = (1 << 11);
-      static const int new_            = (1 << 12);
-      static const int delete_         = (1 << 13);
-      static const int throw_          = (1 << 14);
-      static const int sizeof_         = (1 << 15);
-      static const int funcCast        = (1 << 16);
-      static const int parenCast       = (1 << 17);
-      static const int constCast       = (1 << 18);
-      static const int staticCast      = (1 << 19);
-      static const int reinterpretCast = (1 << 20);
-      static const int dynamicCast     = (1 << 21);
-      static const int parentheses     = (1 << 22);
-      static const int tuple           = (1 << 23);
-      static const int cudaCall        = (1 << 24);
-    };
+    namespace exprNodeType {
+      extern const int empty;
+      extern const int primitive;
+      extern const int char_;
+      extern const int string;
+      extern const int identifier;
+      extern const int variable;
+      extern const int value;
+
+      extern const int leftUnary;
+      extern const int rightUnary;
+      extern const int binary;
+      extern const int ternary;
+      extern const int op;
+
+      extern const int subscript;
+      extern const int call;
+      extern const int new_;
+      extern const int delete_;
+      extern const int throw_;
+      extern const int sizeof_;
+      extern const int funcCast;
+      extern const int parenCast;
+      extern const int constCast;
+      extern const int staticCast;
+      extern const int reinterpretCast;
+      extern const int dynamicCast;
+      extern const int parentheses;
+      extern const int tuple;
+      extern const int cudaCall;
+    }
 
     //---[ Expression State ]-----------
     class exprLoadState {
     public:
       token_t *prevToken;
       token_t *nextToken;
+      token_t *tokenBeforePair;
       exprNodeStack output;
       operatorStack operators;
 
@@ -102,6 +100,27 @@ namespace occa {
       exprNode(token_t *token_ = NULL);
 
       virtual ~exprNode();
+
+      template <class TM>
+      inline bool is() const {
+        return (dynamic_cast<const TM*>(this) != NULL);
+      }
+
+      template <class TM>
+      inline TM& to() {
+        TM *ptr = dynamic_cast<TM*>(this);
+        OCCA_ERROR("Unable to cast exprNode::to",
+                   ptr != NULL);
+        return *ptr;
+      }
+
+      template <class TM>
+      inline const TM& to() const {
+        const TM *ptr = dynamic_cast<const TM*>(this);
+        OCCA_ERROR("Unable to cast exprNode::to",
+                   ptr != NULL);
+        return *ptr;
+      }
 
       virtual int nodeType() const = 0;
 
