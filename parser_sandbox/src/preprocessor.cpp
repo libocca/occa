@@ -50,15 +50,16 @@ namespace occa {
       // Always start off as if we passed a newline
       incrementNewline();
 
-      const int specialMacroCount = 6;
+      const int specialMacroCount = 7;
       compilerMacros.autoFreeze = false;
       macro_t *specialMacros[specialMacroCount] = {
-        new definedMacro(*this), // defined()
-        new fileMacro(*this),    // __FILE__
-        new lineMacro(*this),    // __LINE__
-        new dateMacro(*this),    // __DATE__
-        new timeMacro(*this),    // __TIME__
-        new counterMacro(*this)  // __COUNTER__
+        new definedMacro(*this),    // defined()
+        new hasIncludeMacro(*this), // __has_include()
+        new fileMacro(*this),       // __FILE__
+        new lineMacro(*this),       // __LINE__
+        new dateMacro(*this),       // __DATE__
+        new timeMacro(*this),       // __TIME__
+        new counterMacro(*this)     // __COUNTER__
       };
       for (int i = 0; i < specialMacroCount; ++i) {
         compilerMacros.add(specialMacros[i]->name(), specialMacros[i]);

@@ -23,6 +23,7 @@
 #include <ctime>
 
 #include "occa/tools/string.hpp"
+#include "occa/tools/io.hpp"
 
 #include "preprocessor.hpp"
 #include "specialMacros.hpp"
@@ -40,6 +41,27 @@ namespace occa {
         new primitiveToken(source.origin,
                            isDefined,
                            isDefined ? "true" : "false")
+      );
+      return true;
+    }
+
+    // __has_include()
+    hasIncludeMacro::hasIncludeMacro(preprocessor &pp_) :
+      macro_t(pp_, "__has_include") {}
+
+    bool hasIncludeMacro::expandTokens(identifierToken &source,
+                                       tokenVector &expandedTokens) {
+      if ((expandedTokens.size() != 1) ||
+          !(expandedTokens[0]->type() & tokenType::string)) {
+        source.printError("Expected a string for the header to check");
+        return false;
+      }
+      const std::string &header = expandedTokens[0]->to<stringToken>().value;
+      bool hasInclude = io::exists(header);
+      expandedTokens.push_back(
+        new primitiveToken(source.origin,
+                           hasInclude,
+                           hasInclude ? "true" : "false")
       );
       return true;
     }

@@ -372,12 +372,24 @@ namespace occa {
       return filesInDir(dir, DT_REG);
     }
 
-    char* c_read(const std::string &filename, size_t *chars, const bool readingBinary) {
+    bool exists(const std::string &filename) {
+      std::string expFilename = io::filename(filename);
+      FILE *fp = fopen(filename.c_str(), "rb");
+      if (fp == NULL) {
+        return false;
+      }
+      fclose(fp);
+      return true;
+    }
+
+    char* c_read(const std::string &filename,
+                 size_t *chars,
+                 const bool readingBinary) {
       std::string expFilename = io::filename(filename);
 
       FILE *fp = fopen(filename.c_str(), readingBinary ? "rb" : "r");
       OCCA_ERROR("Failed to open [" << io::shortname(filename) << "]",
-                 fp != 0);
+                 fp != NULL);
 
       struct stat statbuf;
       stat(filename.c_str(), &statbuf);

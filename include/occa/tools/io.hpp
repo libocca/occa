@@ -158,6 +158,8 @@ namespace occa {
 
     strVector files(const std::string &dir);
 
+    bool exists(const std::string &filename);
+
     char* c_read(const std::string &filename,
                  size_t *chars = NULL,
                  const bool readingBinary = false);

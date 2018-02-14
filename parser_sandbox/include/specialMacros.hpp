@@ -34,6 +34,14 @@ namespace occa {
                                 tokenVector &expandedTokens);
     };
 
+    // __has_include()
+    class hasIncludeMacro : public macro_t {
+    public:
+      hasIncludeMacro(preprocessor &pp_);
+      virtual bool expandTokens(identifierToken &source,
+                                tokenVector &expandedTokens);
+    };
+
     // __FILE__
     class fileMacro : public macro_t {
     public:
