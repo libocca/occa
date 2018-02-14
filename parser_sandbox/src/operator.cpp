@@ -257,6 +257,8 @@ namespace occa {
       const opType_t bracketEnd        (0, rawOperatorType::bracketEnd);
       const opType_t parenthesesStart  (0, rawOperatorType::parenthesesStart);
       const opType_t parenthesesEnd    (0, rawOperatorType::parenthesesEnd);
+      const opType_t cudaCallStart     (rawOperatorType::cudaCallStart, 0);
+      const opType_t cudaCallEnd       (rawOperatorType::cudaCallEnd  , 0);
 
       const opType_t braces            = (braceStart       |
                                           braceEnd);
@@ -264,6 +266,8 @@ namespace occa {
                                           bracketEnd);
       const opType_t parentheses       = (parenthesesStart |
                                           parenthesesEnd);
+      const opType_t cudaCall          = (cudaCallStart    |
+                                          cudaCallEnd);
 
       const opType_t pair              = (braceStart       |
                                           braceEnd         |
@@ -300,9 +304,6 @@ namespace occa {
       const opType_t semicolon         (rawOperatorType::semicolon, 0);
       const opType_t ellipsis          (rawOperatorType::ellipsis , 0);
       const opType_t attribute         (rawOperatorType::attribute, 0);
-
-      const opType_t cudaCallStart     (rawOperatorType::cudaCallStart, 0);
-      const opType_t cudaCallEnd       (rawOperatorType::cudaCallEnd  , 0);
 
       const opType_t special           = (hash          |
                                           hashhash      |

@@ -55,6 +55,8 @@ namespace occa {
       extern const int ternary;
       extern const int op;
 
+      extern const int pair;
+
       extern const int subscript;
       extern const int call;
       extern const int new_;
@@ -97,7 +99,7 @@ namespace occa {
     public:
       token_t *token;
 
-      exprNode(token_t *token_ = NULL);
+      exprNode(token_t *token_);
 
       virtual ~exprNode();
 
@@ -148,6 +150,13 @@ namespace occa {
       static void closePair(operatorToken &opToken,
                             exprLoadState &state);
 
+      static void extractArgs(exprNodeVector &args,
+                              exprNode &node,
+                              exprLoadState &state);
+
+      static void transformLastPair(operatorToken &opToken,
+                                    exprLoadState &state);
+
       static void attachPair(operatorToken &opToken,
                              exprLoadState &state);
 
@@ -185,8 +194,6 @@ namespace occa {
     public:
       primitive value;
 
-      primitiveNode(primitive value_);
-
       primitiveNode(token_t *token_,
                     primitive value_);
 
@@ -210,8 +217,6 @@ namespace occa {
     public:
       std::string value;
 
-      charNode(const std::string &value_);
-
       charNode(token_t *token_,
                const std::string &value_);
 
@@ -233,8 +238,6 @@ namespace occa {
       int encoding;
       std::string value;
 
-      stringNode(const std::string &value_);
-
       stringNode(token_t *token_,
                  const std::string &value_);
 
@@ -255,8 +258,6 @@ namespace occa {
     public:
       std::string value;
 
-      identifierNode(const std::string &value_);
-
       identifierNode(token_t *token_,
                      const std::string &value_);
 
@@ -276,8 +277,6 @@ namespace occa {
     class variableNode : public exprNode {
     public:
       variable &value;
-
-      variableNode(variable &value_);
 
       variableNode(token_t *token_,
                    variable &value_);
@@ -301,9 +300,6 @@ namespace occa {
     public:
       const unaryOperator_t &op;
       exprNode &value;
-
-      leftUnaryOpNode(const unaryOperator_t &op_,
-                      exprNode &value_);
 
       leftUnaryOpNode(token_t *token_,
                       const unaryOperator_t &op_,
@@ -421,9 +417,6 @@ namespace occa {
     public:
       exprNode &value, &index;
 
-      subscriptNode(exprNode &value_,
-                    exprNode &index_);
-
       subscriptNode(token_t *token_,
                     exprNode &value_,
                     exprNode &index_);
@@ -445,9 +438,6 @@ namespace occa {
     public:
       exprNode &value;
       exprNodeVector args;
-
-      callNode(exprNode &value_,
-               exprNodeVector args_);
 
       callNode(token_t *token_,
                exprNode &value_,
@@ -476,11 +466,9 @@ namespace occa {
       exprNode &value;
       exprNode &size;
 
-      newNode(type_t &type_,
+      newNode(token_t *token_,
+              type_t &type_,
               exprNode &value_);
-      newNode(type_t &type_,
-              exprNode &value_,
-              exprNode &size_);
 
       newNode(token_t *token_,
               type_t &type_,
@@ -505,9 +493,6 @@ namespace occa {
       exprNode &value;
       bool isArray;
 
-      deleteNode(exprNode &value_,
-                 const bool isArray_);
-
       deleteNode(token_t *token_,
                  exprNode &value_,
                  const bool isArray_);
@@ -528,8 +513,6 @@ namespace occa {
     class throwNode : public exprNode {
     public:
       exprNode &value;
-
-      throwNode(exprNode &value_);
 
       throwNode(token_t *token_,
                 exprNode &value_);
@@ -552,8 +535,6 @@ namespace occa {
     class sizeofNode : public exprNode {
     public:
       exprNode &value;
-
-      sizeofNode(exprNode &value_);
 
       sizeofNode(token_t *token_,
                  exprNode &value_);
@@ -579,9 +560,6 @@ namespace occa {
       type_t &type;
       exprNode &value;
 
-      funcCastNode(type_t &type_,
-                   exprNode &value_);
-
       funcCastNode(token_t *token_,
                    type_t &type_,
                    exprNode &value_);
@@ -603,9 +581,6 @@ namespace occa {
     public:
       type_t &type;
       exprNode &value;
-
-      parenCastNode(type_t &type_,
-                    exprNode &value_);
 
       parenCastNode(token_t *token_,
                     type_t &type_,
@@ -629,9 +604,6 @@ namespace occa {
       type_t &type;
       exprNode &value;
 
-      constCastNode(type_t &type_,
-                    exprNode &value_);
-
       constCastNode(token_t *token_,
                     type_t &type_,
                     exprNode &value_);
@@ -653,9 +625,6 @@ namespace occa {
     public:
       type_t &type;
       exprNode &value;
-
-      staticCastNode(type_t &type_,
-                     exprNode &value_);
 
       staticCastNode(token_t *token_,
                      type_t &type_,
@@ -679,9 +648,6 @@ namespace occa {
       type_t &type;
       exprNode &value;
 
-      reinterpretCastNode(type_t &type_,
-                          exprNode &value_);
-
       reinterpretCastNode(token_t *token_,
                           type_t &type_,
                           exprNode &value_);
@@ -704,9 +670,6 @@ namespace occa {
       type_t &type;
       exprNode &value;
 
-      dynamicCastNode(type_t &type_,
-                      exprNode &value_);
-
       dynamicCastNode(token_t *token_,
                       type_t &type_,
                       exprNode &value_);
@@ -726,11 +689,33 @@ namespace occa {
     //==================================
 
     //---[ Misc ]-----------------------
+    class pairNode : public exprNode {
+    public:
+      const operator_t &op;
+      exprNode &value;
+
+      pairNode(operatorToken &opToken,
+               exprNode &value_);
+
+      pairNode(const pairNode &node);
+
+      ~pairNode();
+
+      virtual int nodeType() const;
+
+      virtual exprNode& clone() const;
+
+      virtual bool canEvaluate() const;
+      virtual primitive evaluate() const;
+
+      virtual void print(printer &pout) const;
+
+      virtual void debugPrint(const std::string &prefix) const;
+    };
+
     class parenthesesNode : public exprNode {
     public:
       exprNode &value;
-
-      parenthesesNode(exprNode &value_);
 
       parenthesesNode(token_t *token_,
                       exprNode &value_);
@@ -750,17 +735,40 @@ namespace occa {
 
       virtual void debugPrint(const std::string &prefix) const;
     };
+
+    class tupleNode : public exprNode {
+    public:
+      exprNodeVector args;
+
+      tupleNode(token_t *token_,
+                exprNodeVector args_);
+
+      tupleNode(const tupleNode &node);
+
+      ~tupleNode();
+
+      inline int argCount() const {
+        return (int) args.size();
+      }
+
+      virtual int nodeType() const;
+
+      virtual exprNode& clone() const;
+
+      virtual void print(printer &pout) const;
+
+      virtual void debugPrint(const std::string &prefix) const;
+    };
     //==================================
 
     //---[ Extensions ]-----------------
     class cudaCallNode : public exprNode {
     public:
+      exprNode &value;
       exprNode &blocks, &threads;
 
-      cudaCallNode(exprNode &blocks_,
-                   exprNode &threads_);
-
       cudaCallNode(token_t *token_,
+                   exprNode &value_,
                    exprNode &blocks_,
                    exprNode &threads_);
 

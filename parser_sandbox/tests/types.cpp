@@ -107,7 +107,7 @@ void testFunction() {
 
   pointerType arg3(volatile_, char_);
 
-  primitiveNode arg4Size(1337);
+  primitiveNode arg4Size(NULL, 1337);
   arrayType arg4(t2, arg4Size);
 
   functionType f(void_, "foo");
@@ -155,7 +155,7 @@ void testCasting() {
   }
 
   // Test pointer <-> array
-  primitiveNode one(1);
+  primitiveNode one(NULL, 1);
   type_t constInt(const_, int_);
   pointerType intPointer(int_);
   arrayType intArray(int_);
