@@ -163,9 +163,9 @@ primitive eval(const std::string &s) {
 }
 
 void testPairMatching() {
-  exprNode *funcExpr = makeExpression("func(0,1,2,3,4)");
-  OCCA_ASSERT_EQUAL(exprNodeType::call, funcExpr->nodeType());
-  callNode &func = funcExpr->to<callNode>();
+  exprNode *expr = makeExpression("func(0,1,2,3,4)");
+  OCCA_ASSERT_EQUAL(exprNodeType::call, expr->nodeType());
+  callNode &func = expr->to<callNode>();
 
   OCCA_ASSERT_EQUAL("func", func.value.to<identifierNode>().value);
   OCCA_ASSERT_EQUAL(5, (int) func.args.size());
@@ -174,17 +174,17 @@ void testPairMatching() {
     OCCA_ASSERT_EQUAL(i, (int) arg.value);
   }
 
-  funcExpr = makeExpression("(0,1,2,3,4)");
-  OCCA_ASSERT_EQUAL(exprNodeType::parentheses, funcExpr->nodeType());
+  expr = makeExpression("(0,1,2,3,4)");
+  OCCA_ASSERT_EQUAL(exprNodeType::parentheses, expr->nodeType());
 
-  funcExpr = makeExpression("{0,1,2,3,4}");
-  OCCA_ASSERT_EQUAL(exprNodeType::tuple, funcExpr->nodeType());
+  expr = makeExpression("{0,1,2,3,4}");
+  OCCA_ASSERT_EQUAL(exprNodeType::tuple, expr->nodeType());
 
-  funcExpr = makeExpression("func[0 + 1]");
-  OCCA_ASSERT_EQUAL(exprNodeType::subscript, funcExpr->nodeType());
+  expr = makeExpression("func[0 + 1]");
+  OCCA_ASSERT_EQUAL(exprNodeType::subscript, expr->nodeType());
 
-  funcExpr = makeExpression("func<<<0,1>>>");
-  OCCA_ASSERT_EQUAL(exprNodeType::cudaCall, funcExpr->nodeType());
+  expr = makeExpression("func<<<0,1>>>");
+  OCCA_ASSERT_EQUAL(exprNodeType::cudaCall, expr->nodeType());
 }
 
 void testCanEvaluate() {
