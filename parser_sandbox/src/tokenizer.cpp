@@ -130,10 +130,6 @@ namespace occa {
       out = NULL;
       while (!out && !isEmpty()) {
         out = getToken();
-        if (!out && !isEmpty()) {
-          printError("Not able to create token for:");
-          ++fp.pos;
-        }
       }
       return *this;
     }
@@ -294,14 +290,16 @@ namespace occa {
       if (c == '\0') {
         return tokenType::none;
       }
-      if (lex::charIsIn(c, charcodes::identifierStart)) {
-        return tokenType::identifier;
-      }
-      // Primitive must be checked before operators since
-      //   it can start with a . (for example, .01)
+      // Primitive must be checked before identifiers
+      //   and operators since:
+      //   - true/false
+      //   - Operators can start with a . (for example, .01)
       const char *pos = fp.pos;
       if (primitive::load(pos, false).type != occa::primitiveType::none) {
         return tokenType::primitive;
+      }
+      if (lex::charIsIn(c, charcodes::identifierStart)) {
+        return tokenType::identifier;
       }
       if (lex::charIsIn(c, charcodes::operators)) {
         return tokenType::op;
@@ -543,7 +541,10 @@ namespace occa {
       if (type & tokenType::string) {
         return getStringToken(tokenType::getEncoding(type));
       }
-      return NULL;
+
+      token_t *token = new unknownToken(origin);
+      ++fp.pos;
+      return token;
     }
 
     token_t* tokenizer::getIdentifierToken() {

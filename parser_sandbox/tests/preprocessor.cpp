@@ -125,7 +125,79 @@ void testMacroDefines() {
 }
 
 void testIfElseDefines() {
+  // Test if/elif/else combinations
+  setStream(// Test #if true with #elif false
+            "#if true\n"
+            "1\n"
+            "#elif false\n"
+            "0\n"
+            "#elif false\n"
+            "0\n"
+            "#else\n"
+            "0\n"
+            "#endif\n"
+            "\n"
+            // Test #if true with #elif true
+            "#if true\n"
+            "1\n"
+            "#elif true\n"
+            "0\n"
+            "#elif true\n"
+            "0\n"
+            "#else\n"
+            "0\n"
+            "#endif\n"
+            "\n"
+            // Test #if false with 1st #elif true
+            "#if false\n"
+            "0\n"
+            "#elif true\n"
+            "1\n"
+            "#elif false\n"
+            "0\n"
+            "#else\n"
+            "0\n"
+            "#endif\n"
+            // Test #if false with 2nd #elif true
+            "#if false\n"
+            "0\n"
+            "#elif false\n"
+            "0\n"
+            "#elif true\n"
+            "1\n"
+            "#else\n"
+            "0\n"
+            "#endif\n"
+            // Test #else without #elif
+            "#if false\n"
+            "0\n"
+            "#else\n"
+            "1\n"
+            "#endif\n"
+            // Test #else without #elif
+            "#if false\n"
+            "0\n"
+            "#elif false\n"
+            "0\n"
+            "#elif false\n"
+            "0\n"
+            "#else\n"
+            "0\n"
+            "#endif\n");
+
+  getToken();
+  while (token) {
+    if (tokenType() & occa::lang::tokenType::newline) {
+      getToken();
+      continue;
+    }
+    std::cout << "\n------------[ ";
+    token->print(std::cout);
+    std::cout << "]------------\n";
+    getToken();
+  }
 #if 0
+      // Test defines
   setStream(""
             // ""
             "#ifdef FOO\n"

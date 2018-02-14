@@ -156,6 +156,16 @@ namespace occa {
       return status;
     }
 
+    void preprocessor::swapReadingStatus() {
+      if (status & ppStatus::reading) {
+        status &= ~ppStatus::reading;
+        status |= ppStatus::ignoring;
+      } else {
+        status &= ppStatus::ignoring;
+        status |= ~ppStatus::reading;
+      }
+    }
+
     void preprocessor::incrementNewline() {
       // We need to keep passedNewline 'truthy'
       //   until after the next token
@@ -194,7 +204,9 @@ namespace occa {
           return NULL;
         }
         std::cout << "1. [";
-        token->print(std::cout);
+        if (token->type() & ~tokenType::newline) {
+          token->print(std::cout);
+        }
         std::cout << "] ("
                   << ((status & ppStatus::ignoring)
                       ? "ignoring"
@@ -212,7 +224,8 @@ namespace occa {
           token = NULL;
         }
         std::cout << "2. [";
-        if (token) {
+        if (token &&
+            (token->type() & ~tokenType::newline)) {
           token->print(std::cout);
         }
         std::cout << "] ("
@@ -220,12 +233,6 @@ namespace occa {
                       ? "ignoring"
                       : "reading")
                   << ")\n";
-
-        // Ignore tokens inside disabled #if/#elif/#else regions
-        if (status & ppStatus::ignoring) {
-          delete token;
-          token = NULL;
-        }
       }
       return token;
     }
@@ -248,7 +255,7 @@ namespace occa {
       }
     }
 
-    void preprocessor::getTokensUntilNewline(tokenVector &lineTokens) {
+    void preprocessor::getLineTokens(tokenVector &lineTokens) {
       while (true) {
         token_t *token = getSourceToken();
         if (!token) {
@@ -266,7 +273,30 @@ namespace occa {
       }
     }
 
+    void preprocessor::freeLineTokens(tokenVector &lineTokens) {
+      const int tokens = (int) lineTokens.size();
+      for (int i = 0; i < tokens; ++i) {
+        delete lineTokens[i];
+      }
+      lineTokens.clear();
+    }
+
+    void preprocessor::warnOnNonEmptyLine(const std::string &message) {
+      tokenVector lineTokens;
+      getLineTokens(lineTokens);
+      if (lineTokens.size()) {
+        lineTokens[0]->printWarning(message);
+        freeLineTokens(lineTokens);
+      }
+    }
+
     token_t* preprocessor::processIdentifier(identifierToken &token) {
+      // Ignore tokens inside disabled #if/#elif/#else regions
+      if (status & ppStatus::ignoring) {
+        delete &token;
+        return NULL;
+      }
+
       macro_t *macro = getMacro(token.value);
       if (macro) {
         if (!macro->isFunctionLike()) {
@@ -291,15 +321,19 @@ namespace occa {
     }
 
     token_t* preprocessor::processOperator(operatorToken &token) {
+      // // Ignore tokens inside disabled #if/#elif/#else regions
+      // if (status & ppStatus::ignoring) {
+      //   delete &token;
+      //   return NULL;
+      // }
       if ((token.op.opType != operatorType::hash) ||
           !passedNewline) {
         return &token;
       }
       delete &token;
 
-      // Find directive
-      token_t *directive = getSourceToken();
       // NULL or an empty # is ok
+      token_t *directive = getSourceToken();
       if (!directive ||
           (directive->type() & tokenType::newline)) {
         incrementNewline();
@@ -329,23 +363,38 @@ namespace occa {
     }
 
     void preprocessor::processIf(identifierToken &directive) {
+      // Nested case
+      if (status & ppStatus::ignoring) {
+        skipToNewline();
+        pushStatus(ppStatus::ignoring |
+                   ppStatus::foundIf  |
+                   ppStatus::finishedIf);
+        return;
+      }
+
       tokenVector lineTokens;
-      getTokensUntilNewline(lineTokens);
-      if (!lineTokens.size()) {
+      getLineTokens(lineTokens);
+      exprNode *expr = getExpression(lineTokens);
+
+      // Test for errors
+      // (expr == NULL) error is handled
+      //   while forming the expression
+      bool exprError = !expr;
+      if (expr &&
+          (expr->type() & exprNodeType::empty)) {
         errorOn(&directive,
                 "Expected a value or expression");
-        // Default to #if false
-        pushStatus(ppStatus::ignoring |
-                   ppStatus::foundIf);
-        return;
+        exprError = true;
       }
-      exprNode *expr = exprNode::load(lineTokens);
-      if (!expr) {
-        return;
-      }
-      if (!expr->canEvaluate()) {
+      else if (!expr->canEvaluate()) {
         errorOn(&directive,
                 "Unable to evaluate expression");
+        exprError = true;
+      }
+      // Default to #if false with error
+      if (exprError) {
+        pushStatus(ppStatus::ignoring |
+                   ppStatus::foundIf);
         return;
       }
 
@@ -355,107 +404,141 @@ namespace occa {
     }
 
     void preprocessor::processIfdef(identifierToken &directive) {
+      // Nested case
+      if (status & ppStatus::ignoring) {
+        skipToNewline();
+        pushStatus(ppStatus::ignoring |
+                   ppStatus::foundIf  |
+                   ppStatus::finishedIf);
+        return;
+      }
+
       token_t *token = getSourceToken();
       const int tokenType = token_t::safeType(token);
 
       if (!(tokenType & tokenType::identifier)) {
-        // Print from the directive if we don't
-        //   have a token in the same line
-        if (tokenType & (tokenType::none |
-                         tokenType::newline)) {
+          // Print from the directive if we don't
+          //   have a token in the same line
+        token_t *errorToken = &directive;
+        if (tokenType & tokenType::newline) {
           incrementNewline();
-          errorOn(&directive,
-                  "Expected an identifier");
-        } else {
-          errorOn(token,
-                  "Expected an identifier");
-          skipToNewline();
+          push(token);
+        } else if (tokenType & ~tokenType::none) {
+          errorToken = token;
         }
+        errorOn(errorToken,
+                "Expected an identifier");
+
         // Default to false
-        pushStatus(ppStatus::foundIf |
-                   ppStatus::ignoring);
+        pushStatus(ppStatus::ignoring |
+                   ppStatus::foundIf);
         return;
       }
 
       const std::string &macroName = token->to<identifierToken>().value;
-      delete token;
       pushStatus(ppStatus::foundIf | (getMacro(macroName)
                                       ? ppStatus::reading
                                       : ppStatus::ignoring));
-      skipToNewline();
+
+      warnOnNonEmptyLine("Extra tokens after macro name");
+      delete token;
     }
 
     void preprocessor::processIfndef(identifierToken &directive) {
+      const int oldStatus = status;
       const int oldErrors = errors;
       processIfdef(directive);
       // Keep the ignoring status if ifdef found an error
-      if (oldErrors == errors) {
-        if (status & ppStatus::reading) {
-          status &= ~ppStatus::reading;
-          status |= ppStatus::ignoring;
-        } else {
-          status &= ~ppStatus::ignoring;
-          status |= ppStatus::reading;
-        }
+      if (oldErrors != errors) {
+        return;
       }
+      // If we're in a nested #if 0, keep the status
+      if (oldStatus & ppStatus::ignoring) {
+        return;
+      }
+      swapReadingStatus();
     }
 
     void preprocessor::processElif(identifierToken &directive) {
+      // Check for errors
       if (!(status & ppStatus::foundIf)) {
         errorOn(&directive,
                 "#elif without #if");
         skipToNewline();
+        return;
       }
-      else if (status & ppStatus::foundElse) {
+      if (status & ppStatus::foundElse) {
         errorOn(&directive,
                 "#elif found after an #else directive");
         status &= ~ppStatus::reading;
         status |= (ppStatus::ignoring |
                    ppStatus::finishedIf);
         skipToNewline();
+        return;
       }
-      else if (status & ppStatus::finishedIf) {
+
+      const int oldErrors = errors;
+      // Run processIf to catch possible errors
+      processIf(directive);
+      // processIf pushes to stack, gotta pop it out
+      const int newStatus = popStatus();
+
+      // Keep the ignoring status if ifdef found an error
+      if (oldErrors != errors) {
+        status = newStatus;
+        return;
+      }
+      // If we already finished, keep old state
+      if (status & ppStatus::finishedIf) {
         skipToNewline();
+        return;
       }
-      else {
-        // processIf pushes status, we only want to
-        //   update it
-        processIf(directive);
-        status = popStatus();
-      }
+      status = newStatus;
     }
 
     void preprocessor::processElse(identifierToken &directive) {
+      warnOnNonEmptyLine("Extra tokens after #else directive");
+
+      // Test errors
       if (!(status & ppStatus::foundIf)) {
         errorOn(&directive,
                 "#else without #if");
+        return;
       }
-      else if (status & ppStatus::foundElse) {
+      if (status & ppStatus::foundElse) {
         errorOn(&directive,
                 "Two #else directives found for the same #if");
         status &= ~ppStatus::reading;
         status |= (ppStatus::ignoring |
                    ppStatus::finishedIf);
+        return;
       }
-      else if (!(status & ppStatus::finishedIf)) {
-        status &= ~ppStatus::ignoring;
-        status |= (ppStatus::reading |
-                   ppStatus::finishedIf);
-      }
+
+      // Make sure to error on multiple #else
       status |= ppStatus::foundElse;
-      skipToNewline();
+
+      // Test status cases
+      if (status & ppStatus::finishedIf) {
+        return;
+      }
+
+      if (status & ppStatus::reading) {
+        swapReadingStatus();
+        status |= ppStatus::finishedIf;
+      } else {
+        swapReadingStatus();
+      }
     }
 
     void preprocessor::processEndif(identifierToken &directive) {
+      warnOnNonEmptyLine("Extra tokens after #endif directive");
+
       if (!(status & ppStatus::foundIf)) {
         errorOn(&directive,
                 "#endif without #if");
+      } else {
+        popStatus();
       }
-      // TODO: Test if we're inside an if
-      if (!popStatus()) {
-        printError("#endif without #if");
-      }
-      skipToNewline();
     }
 
     void preprocessor::processDefine(identifierToken &directive) {

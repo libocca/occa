@@ -145,7 +145,7 @@ void testOtherNodes() {
 
 exprNode* makeExpression(const std::string &s) {
   tokenVector tokens = tokenizer::tokenize(s);
-  return exprNode::load(tokens);
+  return getExpression(tokens);
 }
 
 bool canEvaluate(const std::string &s) {
@@ -164,7 +164,7 @@ primitive eval(const std::string &s) {
 
 void testPairMatching() {
   exprNode *expr = makeExpression("func(0,1,2,3,4)");
-  OCCA_ASSERT_EQUAL(exprNodeType::call, expr->nodeType());
+  OCCA_ASSERT_EQUAL(exprNodeType::call, expr->type());
   callNode &func = expr->to<callNode>();
 
   OCCA_ASSERT_EQUAL("func", func.value.to<identifierNode>().value);
@@ -175,16 +175,16 @@ void testPairMatching() {
   }
 
   expr = makeExpression("(0,1,2,3,4)");
-  OCCA_ASSERT_EQUAL(exprNodeType::parentheses, expr->nodeType());
+  OCCA_ASSERT_EQUAL(exprNodeType::parentheses, expr->type());
 
   expr = makeExpression("{0,1,2,3,4}");
-  OCCA_ASSERT_EQUAL(exprNodeType::tuple, expr->nodeType());
+  OCCA_ASSERT_EQUAL(exprNodeType::tuple, expr->type());
 
   expr = makeExpression("func[0 + 1]");
-  OCCA_ASSERT_EQUAL(exprNodeType::subscript, expr->nodeType());
+  OCCA_ASSERT_EQUAL(exprNodeType::subscript, expr->type());
 
   expr = makeExpression("func<<<0,1>>>");
-  OCCA_ASSERT_EQUAL(exprNodeType::cudaCall, expr->nodeType());
+  OCCA_ASSERT_EQUAL(exprNodeType::cudaCall, expr->type());
 }
 
 void testCanEvaluate() {

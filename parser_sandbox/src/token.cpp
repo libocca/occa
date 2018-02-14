@@ -133,23 +133,24 @@ namespace occa {
 
     namespace tokenType {
       const int none          = 0;
+      const int unknown       = (1 << 0);
 
-      const int newline       = (1 << 0);
+      const int newline       = (1 << 1);
 
-      const int identifier    = (1 << 1);
+      const int identifier    = (1 << 2);
 
-      const int systemHeader  = (1 << 2);
-      const int header        = (3 << 2);
+      const int systemHeader  = (1 << 3);
+      const int header        = (3 << 3);
 
-      const int primitive     = (1 << 4);
-      const int op            = (1 << 5);
+      const int primitive     = (1 << 5);
+      const int op            = (1 << 6);
 
-      const int char_         = (1 << 6);
-      const int string        = (1 << 7);
-      const int withUDF       = (1 << 8);
+      const int char_         = (1 << 7);
+      const int string        = (1 << 8);
+      const int withUDF       = (1 << 9);
       const int withEncoding  = ((encodingType::ux |
-                                  encodingType::R) << 9);
-      const int encodingShift = 9;
+                                  encodingType::R) << 10);
+      const int encodingShift = 10;
 
       int getEncoding(const int type) {
         return ((type & withEncoding) >> encodingShift);
@@ -191,6 +192,26 @@ namespace occa {
       return ss.str();
     }
 
+    //---[ Unknown ]--------------------
+    unknownToken::unknownToken(const fileOrigin &origin_) :
+      token_t(origin_) {}
+
+    unknownToken::~unknownToken() {}
+
+    int unknownToken::type() const {
+      return tokenType::unknown;
+    }
+
+    token_t* unknownToken::clone() {
+      return new unknownToken(origin);
+    }
+
+    void unknownToken::print(std::ostream &out) const {
+      out << origin.position.pos[0];
+    }
+    //==================================
+
+    //---[ Newline ]--------------------
     newlineToken::newlineToken(const fileOrigin &origin_) :
       token_t(origin_) {}
 
@@ -207,7 +228,9 @@ namespace occa {
     void newlineToken::print(std::ostream &out) const {
       out << '\n';
     }
+    //==================================
 
+    //---[ Identifier ]-----------------
     identifierToken::identifierToken(const fileOrigin &origin_,
                                      const std::string &value_) :
       token_t(origin_),
@@ -226,7 +249,9 @@ namespace occa {
     void identifierToken::print(std::ostream &out) const {
       out << value;
     }
+    //==================================
 
+    //---[ Primitive ]------------------
     primitiveToken::primitiveToken(const fileOrigin &origin_,
                                    const primitive &value_,
                                    const std::string &strValue_) :
@@ -247,7 +272,9 @@ namespace occa {
     void primitiveToken::print(std::ostream &out) const {
       out << strValue;
     }
+    //==================================
 
+    //---[ Operator ]-------------------
     operatorToken::operatorToken(const fileOrigin &origin_,
                                  const operator_t &op_) :
       token_t(origin_),
@@ -266,7 +293,9 @@ namespace occa {
     void operatorToken::print(std::ostream &out) const {
       out << op.str;
     }
+    //==================================
 
+    //---[ Char ]-----------------------
     charToken::charToken(const fileOrigin &origin_,
                          int encoding_,
                          const std::string &value_,
@@ -296,9 +325,9 @@ namespace occa {
       }
       out << '\'' << escape(value, '\'') << '\'' << udf;
     }
+    //==================================
 
-    stringToken::~stringToken() {}
-
+    //---[ String ]---------------------
     stringToken::stringToken(const fileOrigin &origin_,
                              const std::string &value_) :
       token_t(origin_),
@@ -314,6 +343,8 @@ namespace occa {
       encoding(encoding_),
       value(value_),
       udf(udf_) {}
+
+    stringToken::~stringToken() {}
 
     int stringToken::type() const {
       return tokenType::string;
@@ -347,7 +378,9 @@ namespace occa {
       }
       out << '"' << escape(value, '"') << '"' << udf;
     }
+    //==================================
 
+    //---[ Header ]---------------------
     headerToken::headerToken(const fileOrigin &origin_,
                              const bool systemHeader_,
                              const std::string &value_) :
@@ -372,5 +405,6 @@ namespace occa {
         out << '"' << value << '"';
       }
     }
+    //==================================
   }
 }

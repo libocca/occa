@@ -48,6 +48,17 @@ namespace occa {
       virtual tokenMap& cloneMap() const;
       virtual token_t* pop();
     };
+
+    class unknownTokenFilter : public tokenMap {
+    public:
+      bool printError;
+
+      unknownTokenFilter(const bool printError_);
+
+      tokenMap& cloneMap() const;
+
+      tokenMap& operator >> (token_t *&token);
+    };
   }
 }
 

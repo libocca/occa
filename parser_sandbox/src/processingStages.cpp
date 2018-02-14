@@ -102,5 +102,29 @@ namespace occa {
       return &strToken;
     }
     //==================================
+
+    //---[ Unknown ]--------------------
+    unknownTokenFilter::unknownTokenFilter(const bool printError_) :
+      printError(printError_) {}
+
+    tokenMap& unknownTokenFilter::cloneMap() const {
+      return *(new unknownTokenFilter(printError));
+    }
+
+    tokenMap& unknownTokenFilter::operator >> (token_t *&token) {
+      while (true) {
+        *(this->input) >> token;
+        if (token &&
+            token->type() & tokenType::unknown) {
+          if (printError) {
+            token->printError("Unknown symbol");
+          }
+          continue;
+        }
+        break;
+      }
+      return *this;
+    }
+    //==================================
   }
 }

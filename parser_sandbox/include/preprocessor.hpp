@@ -88,6 +88,7 @@ namespace occa {
 
       void pushStatus(const int status_);
       int popStatus();
+      void swapReadingStatus();
 
       void incrementNewline();
       void decrementNewline();
@@ -101,7 +102,9 @@ namespace occa {
       void expandMacro(macro_t &macro);
 
       void skipToNewline();
-      void getTokensUntilNewline(tokenVector &lineTokens);
+      void getLineTokens(tokenVector &lineTokens);
+      void freeLineTokens(tokenVector &lineTokens);
+      void warnOnNonEmptyLine(const std::string &message);
 
       token_t* processIdentifier(identifierToken &token);
       token_t* processOperator(operatorToken &token);

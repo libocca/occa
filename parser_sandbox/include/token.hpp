@@ -62,6 +62,7 @@ namespace occa {
 
     namespace tokenType {
       extern const int none;
+      extern const int unknown;
 
       extern const int newline;
 
@@ -126,6 +127,24 @@ namespace occa {
       std::string str() const;
     };
 
+    //---[ Unknown ]--------------------
+    class unknownToken : public token_t {
+    public:
+      char symbol;
+
+      unknownToken(const fileOrigin &origin_);
+
+      virtual ~unknownToken();
+
+      virtual int type() const;
+
+      virtual token_t* clone();
+
+      virtual void print(std::ostream &out) const;
+    };
+    //==================================
+
+    //---[ Newline ]--------------------
     class newlineToken : public token_t {
     public:
       newlineToken(const fileOrigin &origin_);
@@ -138,7 +157,9 @@ namespace occa {
 
       virtual void print(std::ostream &out) const;
     };
+    //==================================
 
+    //---[ Identifier ]-----------------
     class identifierToken : public token_t {
     public:
       std::string value;
@@ -154,7 +175,9 @@ namespace occa {
 
       virtual void print(std::ostream &out) const;
     };
+    //==================================
 
+    //---[ Primitive ]------------------
     class primitiveToken : public token_t {
     public:
       primitive value;
@@ -172,7 +195,9 @@ namespace occa {
 
       virtual void print(std::ostream &out) const;
     };
+    //==================================
 
+    //---[ Operator ]-------------------
     class operatorToken : public token_t {
     public:
       const operator_t &op;
@@ -188,7 +213,9 @@ namespace occa {
 
       virtual void print(std::ostream &out) const;
     };
+    //==================================
 
+    //---[ Char ]-----------------------
     class charToken : public token_t {
     public:
       int encoding;
@@ -208,7 +235,9 @@ namespace occa {
 
       virtual void print(std::ostream &out) const;
     };
+    //==================================
 
+    //---[ String ]---------------------
     class stringToken : public token_t {
     public:
       int encoding;
@@ -233,7 +262,9 @@ namespace occa {
 
       virtual void print(std::ostream &out) const;
     };
+    //==================================
 
+    //---[ Header ]---------------------
     class headerToken : public token_t {
     public:
       bool systemHeader;
@@ -251,6 +282,7 @@ namespace occa {
 
       virtual void print(std::ostream &out) const;
     };
+    //==================================
   }
 }
 

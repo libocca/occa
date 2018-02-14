@@ -306,6 +306,17 @@ void testTokenMethods() {
     tokenType()
   );
 
+  setToken("true");
+  OCCA_ASSERT_EQUAL_BINARY(
+    occa::lang::tokenType::primitive,
+    tokenType()
+  );
+  setToken("false");
+  OCCA_ASSERT_EQUAL_BINARY(
+    occa::lang::tokenType::primitive,
+    tokenType()
+  );
+
   setToken("1");
   OCCA_ASSERT_EQUAL_BINARY(
     occa::lang::tokenType::primitive,
@@ -526,9 +537,12 @@ void testPrimitiveMethods() {
 
 void testErrors() {
   setStream("$ test\n\"foo\" \"bar\" ` bar foo");
+  occa::stream<occa::lang::token_t*> streamWithErrors =
+    tokenizer.map(occa::lang::unknownTokenFilter(true));
+
   std::cerr << "Testing error outputs:\n";
   for (int i = 0; i < 5; ++i) {
-    getToken();
+    streamWithErrors >> token;
   }
 }
 //======================================

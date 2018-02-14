@@ -47,12 +47,12 @@ namespace occa {
     const char *c0 = c;
     primitive p;
 
-    if (strcmp(c, "true")  == 0) {
+    if (strncmp(c, "true", 4) == 0) {
       p = true;
       c += 4;
       return p;
     }
-    if (strcmp(c, "false")  == 0) {
+    if (strncmp(c, "false", 5) == 0) {
       p = false;
       c += 5;
       return p;
