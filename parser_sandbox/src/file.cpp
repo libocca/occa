@@ -45,7 +45,7 @@ namespace occa {
     }
 
 
-    namespace source {
+    namespace originSource {
       file_t builtin("", "(builtin)", "");
       file_t string("" , "(source)" , "");
     }
@@ -77,7 +77,7 @@ namespace occa {
     //---[ File Origin ]----------------
     fileOrigin::fileOrigin() :
       fromInclude(true),
-      file(&source::string),
+      file(&originSource::string),
       position(),
       up(NULL) {
       file->addRef();
@@ -93,7 +93,7 @@ namespace occa {
 
     fileOrigin::fileOrigin(const filePosition &position_) :
       fromInclude(true),
-      file(&source::string),
+      file(&originSource::string),
       position(position_),
       up(NULL) {
       file->addRef();

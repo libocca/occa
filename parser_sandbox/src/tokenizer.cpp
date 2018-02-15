@@ -673,7 +673,7 @@ namespace occa {
 
     tokenVector tokenizer::tokenize(const std::string &source) {
       tokenVector tokens;
-      fileOrigin origin = source::string;
+      fileOrigin origin = originSource::string;
       tokenize(tokens, origin, source);
       return tokens;
     }

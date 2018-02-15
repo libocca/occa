@@ -33,16 +33,18 @@ void testWeirdCase();
 void testSpecialMacros();
 void testEval();
 
+using namespace occa::lang;
+
 //---[ Util Methods ]-------------------
 std::string source;
-occa::stream<occa::lang::token_t*> stream;
-occa::lang::token_t *token = NULL;
+occa::stream<token_t*> stream;
+token_t *token = NULL;
 
 void setStream(const std::string &s) {
-  source = s;
-  stream = (occa::lang::tokenizer(source.c_str())
-            .map(occa::lang::preprocessor())
-            .map(occa::lang::newlineTokenMerger()));
+  ::source = s;
+  stream = (tokenizer(source.c_str())
+            .map(preprocessor())
+            .map(newlineTokenMerger()));
 }
 
 void getToken() {
@@ -55,7 +57,7 @@ void setToken(const std::string &s) {
   getToken();
 }
 
-int tokenType() {
+int getTokenType() {
   return token ? token->type() : 0;
 }
 //======================================
@@ -75,7 +77,7 @@ int main(const int argc, const char **argv) {
 }
 
 void testMacroDefines() {
-  #if 0
+#if 0
   OCCA_ASSERT_EQUAL("",
                     pp.processSource("#define A\n"
                                      "A"));
@@ -127,77 +129,82 @@ void testMacroDefines() {
 void testIfElseDefines() {
   // Test if/elif/else combinations
   setStream(// Test #if true with #elif false
-            "#if true\n"
-            "1\n"
-            "#elif false\n"
-            "0\n"
-            "#elif false\n"
-            "0\n"
-            "#else\n"
-            "0\n"
-            "#endif\n"
-            "\n"
-            // Test #if true with #elif true
-            "#if true\n"
-            "1\n"
-            "#elif true\n"
-            "0\n"
-            "#elif true\n"
-            "0\n"
-            "#else\n"
-            "0\n"
-            "#endif\n"
-            "\n"
-            // Test #if false with 1st #elif true
-            "#if false\n"
-            "0\n"
-            "#elif true\n"
-            "1\n"
-            "#elif false\n"
-            "0\n"
-            "#else\n"
-            "0\n"
-            "#endif\n"
-            // Test #if false with 2nd #elif true
-            "#if false\n"
-            "0\n"
-            "#elif false\n"
-            "0\n"
-            "#elif true\n"
-            "1\n"
-            "#else\n"
-            "0\n"
-            "#endif\n"
-            // Test #else without #elif
-            "#if false\n"
-            "0\n"
-            "#else\n"
-            "1\n"
-            "#endif\n"
-            // Test #else without #elif
-            "#if false\n"
-            "0\n"
-            "#elif false\n"
-            "0\n"
-            "#elif false\n"
-            "0\n"
-            "#else\n"
-            "0\n"
-            "#endif\n");
+    "#if true\n"
+    "1\n"
+    "#elif false\n"
+    "A\n"
+    "#elif false\n"
+    "B\n"
+    "#else\n"
+    "C\n"
+    "#endif\n"
+    // Test #if true with #elif true
+    "#if true\n"
+    "1\n"
+    "#elif true\n"
+    "D\n"
+    "#elif true\n"
+    "E\n"
+    "#else\n"
+    "F\n"
+    "#endif\n"
+    // Test #if false with 1st #elif true
+    "#if false\n"
+    "G\n"
+    "#elif true\n"
+    "1\n"
+    "#elif false\n"
+    "H\n"
+    "#else\n"
+    "I\n"
+    "#endif\n"
+    // Test #if false with 2nd #elif true
+    "#if false\n"
+    "J\n"
+    "#elif false\n"
+    "K\n"
+    "#elif true\n"
+    "1\n"
+    "#else\n"
+    "L\n"
+    "#endif\n"
+    // Test #else without #elif
+    "#if false\n"
+    "M\n"
+    "#else\n"
+    "1\n"
+    "#endif\n"
+    // Test #else without #elif
+    "#if false\n"
+    "N\n"
+    "#elif false\n"
+    "O\n"
+    "#elif false\n"
+    "P\n"
+    "#else\n"
+    "1\n"
+    "#endif\n");
 
-  getToken();
-  while (token) {
-    if (tokenType() & occa::lang::tokenType::newline) {
-      getToken();
+  int tokensFound = 0;
+  do {
+    getToken();
+    if (getTokenType() & tokenType::newline) {
       continue;
     }
-    std::cout << "\n------------[ ";
-    token->print(std::cout);
-    std::cout << "]------------\n";
-    getToken();
-  }
+    if (token) {
+      ++tokensFound;
+      OCCA_ASSERT_EQUAL_BINARY(tokenType::primitive,
+                               token->type());
+      OCCA_ASSERT_EQUAL(1,
+                        (int) token->to<primitiveToken>().value);
+    }
+  } while (token);
+
+  OCCA_ASSERT_EQUAL(6,
+                    tokensFound);
+
 #if 0
-      // Test defines
+  // Test defines
   setStream(""
             // ""
             "#ifdef FOO\n"
@@ -265,19 +272,18 @@ void testIfElseDefines() {
   for (int i = 0; i < 9; ++i) {
     while (true) {
       getToken();
-      if (tokenType() & occa::lang::tokenType::primitive) {
+      if (getTokenType() & tokenType::primitive) {
         break;
       }
-      if (!tokenType()) {
+      if (!getTokenType()) {
         OCCA_FORCE_ERROR("[" << i << "] Expected more tokens");
       }
-      if (tokenType() != occa::lang::tokenType::newline) {
+      if (getTokenType() != tokenType::newline) {
         token->printError("Expected only primitive or newline tokens");
         OCCA_FORCE_ERROR("Error on [" << i << "]");
       }
     }
-    occa::lang::primitiveToken &pToken =
-      *((occa::lang::primitiveToken*) token);
+    primitiveToken &pToken = *((primitiveToken*) token);
     OCCA_ASSERT_EQUAL(values[i],
                       (int) pToken.value);
   }
@@ -285,7 +291,7 @@ void testIfElseDefines() {
 }
 
 void testWeirdCase() {
-  #if 0
+#if 0
   // Should print out "x ## y"
   // std::string str = pp.processSource("#define hash_hash # ## #\n"
   //                                              "#define mkstr(a) # a\n"
@@ -297,7 +303,7 @@ void testWeirdCase() {
 }
 
 void testErrorDefines() {
-  #if 0
+#if 0
   std::stringstream ss;
   pp.exitOnFatalError = false;
   pp.setOutputStream(ss);
@@ -327,7 +333,7 @@ void testErrorDefines() {
 }
 
 void testSpecialMacros() {
-  #if 0
+#if 0
   OCCA_ASSERT_EQUAL("10\n",
                     pp.processSource("#line 10\n"
                                      "__LINE__\n"));
@@ -355,7 +361,7 @@ void testSpecialMacros() {
 }
 
 void testEval() {
-  #if 0
+#if 0
   // Types
   OCCA_ASSERT_EQUAL<int>(1 + 1,
                          pp.eval<int>("1 + 1"));

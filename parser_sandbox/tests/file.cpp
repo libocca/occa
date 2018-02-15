@@ -23,31 +23,33 @@
 
 #include "file.hpp"
 
+using namespace occa::lang;
+
 int main(const int argc, const char **argv) {
-  occa::lang::fileOrigin orig, orig2;
+  fileOrigin orig, orig2;
   std::string line = "#define foo bar";
   const char *c_line = line.c_str();
   const int foo = 8;
   const int bar = 12;
-  orig.position = occa::lang::filePosition(10,
-                                           c_line,
-                                           c_line + foo);
+  orig.position = filePosition(10,
+                               c_line,
+                               c_line + foo);
   orig.push(true,
-            occa::lang::source::string,
-            occa::lang::filePosition(20,
-                                     c_line,
-                                     c_line + bar));
+            originSource::string,
+            filePosition(20,
+                         c_line,
+                         c_line + bar));
   orig2 = orig;
   orig.push(false,
-            occa::lang::source::string,
-            occa::lang::filePosition(30,
-                                     c_line,
-                                     c_line + foo));
+            originSource::string,
+            filePosition(30,
+                         c_line,
+                         c_line + foo));
   orig2.push(false,
-             occa::lang::source::string,
-             occa::lang::filePosition(40,
-                                      c_line,
-                                      c_line + bar));
+             originSource::string,
+             filePosition(40,
+                          c_line,
+                          c_line + bar));
   orig.print(std::cout);
   std::cout << "Test message\n\n";
   orig2.print(std::cout);

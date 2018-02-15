@@ -41,7 +41,7 @@ namespace occa {
              const std::string &content_);
     };
 
-    namespace source {
+    namespace originSource {
       extern file_t builtin;
       extern file_t string;
     }

@@ -98,6 +98,7 @@ namespace occa {
 
       token_t* getSourceToken();
       token_t* getToken();
+      token_t* processToken(token_t *token);
 
       void expandMacro(macro_t &macro);
 
@@ -109,6 +110,7 @@ namespace occa {
       token_t* processIdentifier(identifierToken &token);
       token_t* processOperator(operatorToken &token);
 
+      bool lineIsTrue(identifierToken &directive);
       void processIf(identifierToken &directive);
       void processIfdef(identifierToken &directive);
       void processIfndef(identifierToken &directive);

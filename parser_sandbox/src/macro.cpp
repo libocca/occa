@@ -157,7 +157,7 @@ namespace occa {
     macro_t::macro_t(preprocessor &pp_,
                      const std::string &name_) :
       pp(pp_),
-      thisToken(*(new identifierToken(source::builtin, name_))),
+      thisToken(*(new identifierToken(originSource::builtin, name_))),
       argCount(-1),
       hasVarArgs(false) {}
 
@@ -391,7 +391,7 @@ namespace occa {
     macro_t* macro_t::define(preprocessor &pp_,
                              const std::string &name_,
                              const std::string &contents) {
-      fileOrigin origin(source::builtin,
+      fileOrigin origin(originSource::builtin,
                         contents.c_str());
       return define(pp_, origin, name_, contents);
     }
