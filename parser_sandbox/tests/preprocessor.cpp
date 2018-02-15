@@ -27,6 +27,8 @@
 #include "preprocessor.hpp"
 
 void testMacroDefines();
+void testCppStandardTests();
+void testIfElse();
 void testIfElseDefines();
 void testErrorDefines();
 void testWeirdCase();
@@ -68,67 +70,198 @@ int getTokenType() {
 
 //---[ Tests ]--------------------------
 int main(const int argc, const char **argv) {
-  testMacroDefines();
+  // testMacroDefines();
+  // testCppStandardTests();
   testErrorDefines();
   testSpecialMacros();
   testWeirdCase();
+  testIfElse();
   testIfElseDefines();
   testEval();
 }
 
 void testMacroDefines() {
-#if 0
-  OCCA_ASSERT_EQUAL("",
-                    pp.processSource("#define A\n"
-                                     "A"));
+  setStream(
+    // Test #define
+    "#define A\n"
+    "A\n"
+    // Test multi-token expansion
+    "#define B 1 2 3\n"
+    "B\n"
+    // Test function-like macros
+    "#define C(A1) A1\n"
+    "C(1)\n"
+    // Test multi-argument expansion
+    "#define D(A1, A2) A1 A2 A2 A1\n"
+    "D(2, 3)\n"
+    // Test stringify
+    "#define H(A1) #A1\n"
+    "H(12)\n"
+    // Test multi-token stringify
+    "#define H(A1, A2) #A1 #A2\n"
+    "H(12, 34)\n"
+    // Test concat
+    "#define E(A1, A2) A1 ## A2\n"
+    "E(, 6)\n"
+    "E(0, 7)\n"
+    // Test varargs
+    "#define F(A1, ...) A1 __VA_ARGS__\n"
+    "F(7,)\n"
+    "F(8, 9, 10,)\n"
+    // Test only varargs
+    "#define G(...) (X, ##__VA_ARGS__)\n"
+    "G(11,)\n"
+    "G()\n"
+    // Errors:
+    // - Argument missing
+    "C()\n"
+    // - Too many arguments
+    "D(4, 5, 6)\n"
+    // - Test stringify with concat fail
+    "#define I(A1, A2) # A1 ## A2\n"
+    "I(1, 3)\n"
+  );
 
-  OCCA_ASSERT_EQUAL("1 2 3",
-                    pp.processSource("#define B 1 2 3\n"
-                                     "B"));
-
-  pp.processSource("#define C(A1) A1\n");
-  OCCA_ASSERT_EQUAL("",
-                    pp.applyMacros("C()"));
-  OCCA_ASSERT_EQUAL("1",
-                    pp.applyMacros("C(1)"));
-
-  pp.processSource("#define D(A1, A2) A1 A2\n");
-  OCCA_ASSERT_EQUAL("2 3",
-                    pp.applyMacros("D(2, 3)"));
-  OCCA_ASSERT_EQUAL("4 5",
-                    pp.applyMacros("D(4, 5, 6)"));
-
-  pp.processSource("#define E(A1, A2) A1##A2\n");
-  OCCA_ASSERT_EQUAL("6",
-                    pp.applyMacros("E(, 6)"));
-  OCCA_ASSERT_EQUAL("07",
-                    pp.applyMacros("E(0, 7)"));
-
-  pp.processSource("#define F(A1, ...) A1 __VA_ARGS__\n");
-  OCCA_ASSERT_EQUAL("7 ",
-                    pp.applyMacros("F(7,)"));
-  OCCA_ASSERT_EQUAL("8 9, 10,",
-                    pp.applyMacros("F(8, 9, 10,)"));
-
-  pp.processSource("#define G(...) (X, ##__VA_ARGS__)\n");
-  OCCA_ASSERT_EQUAL("(X, 11 )",
-                    pp.applyMacros("G(11,)"));
-  OCCA_ASSERT_EQUAL("(X, )",
-                    pp.applyMacros("G()"));
-
-  pp.processSource("#define H(A1) #A1\n");
-  OCCA_ASSERT_EQUAL("\"12\"",
-                    pp.applyMacros("H(12)"));
-
-  pp.processSource("#define I(A1, A2) #A1##A2\n");
-  OCCA_ASSERT_EQUAL("\"1\"3",
-                    pp.applyMacros("I(1, 3)"));
-#endif
+  std::cerr << "Testing preprocessor errors:\n";
 }
 
-void testIfElseDefines() {
-  // Test if/elif/else combinations
-  setStream(// Test #if true with #elif false
+void testCppStandardTests() {
+  // Test 1 in the C++ standard
+  setStream(
+    "#define hash_hash # ## #\n"
+    "#define mkstr(a) # a\n"
+    "#define in_between(a) mkstr(a)\n"
+    "#define join(c, d) in_between(c hash_hash d)\n"
+    "join(x, y)"
+  );
+
+  getToken();
+  OCCA_ASSERT_EQUAL_BINARY(tokenType::newline,
+                           token->type());
+  OCCA_ASSERT_EQUAL_BINARY(tokenType::string,
+                           token->type());
+
+  const std::string output = token->to<stringToken>().value;
+  OCCA_ASSERT_EQUAL("x ## y", output);
+
+  // Test 2 in C++ standard
+  setStream(
+    // Defines
+    "#define x      3\n"
+    "#define f(a)   f(x * (a))\n"
+    "#udnef  x\n"
+    "#define x      2\n"
+    "#define g      f\n"
+    "#define z      z[0]\n"
+    "#define h      g(~\n"
+    "#define m(a)   a(w)\n"
+    "#define w      0,1\n"
+    "#define t(a)   a\n"
+    "#define p()    int\n"
+    "#define q(x)   x\n"
+    "#define r(x,y) x ## y\n"
+    "#define str(x) # x\n"
+    // Source
+    "f(y+1) + f(f(z)) % t(t(g)(0) + t)(1);\n"
+    "g(x+(3,4)-w) | h 5) & m\n"
+    "    (f)^m(m);\n"
+    "p() i[q()] = { q(1), r(2,3), r(4,), r(,5), r(,) };\n"
+    "char c[2][6] = { str(hello), str() };\n"
+  );
+
+  /*
+    f(2 * y+1)) + f(2 * (f(2 * (z[0])))) % f(2 * (0)) + t(1);
+    f(2 * (2+(3,4)-0,1)) | f(2 * (~ 5)) & f(2 * (0,1))^m(0,1);
+    int i[] = { 1, 23, 4, 5, };
+    char c[2][6] = { "hello", "" };
+   */
+
+  // Test 3 in C++ standard
+  setStream(
+    // Defines
+    "#define str(s)      \n"
+    "#define xstr(x)     \n"
+    "#define debug(s, t) \n"
+    "#define INCFILE(n)  \n"
+    "#define glue(a, b)  \n"
+    "#define xglue(a, b) \n"
+    "#define HIGHLOW     \n"
+    "#define LOW         \n"
+    // Source
+    "debug(1, 2);\n"
+    "fputs(str(strncmp(\"abc\0d\", \"abc\", '\4')\n"
+    "    == 0) str(: @\n), s);\n"
+    "include xstr(INCFILE(2).h)\n"
+    "glue(HIGH, LOW);\n"
+    "xglue(HIGH, LOW)\n"
+  );
+
+  /*
+    printf("x1= %d, x2= %s", x1, x2);
+    fputs("strncmp(\"abc\\0d\", \"abc\", '\\4') == 0: @\n", s);
+    include "vers2.h"
+    "hello";
+    "hello, world"
+   */
+
+  // Test 4 in C++ standard
+  setStream(
+    // Defines
+    "#define t(x,y,z) x ## y ## z\n"
+    // Source
+    "int j[] = { t(1,2,3), t(,4,5), t(6,,7), t(8,9,),\n"
+    "t(10,,), t(,11,), t(,,12), t(,,) };\n"
+  );
+
+  /*
+    int j[] = { 123, 45, 67, 89,
+      10, 11, 12, };
+   */
+
+  // Test 5 in C++ standard
+  setStream(
+    // Defines
+    "#define OBJ_LIKE      (1-1)\n"
+    "#define OBJ_LIKE       /* white space */ (1-1) /* other */\n"
+    "#define FUNC_LIKE(a)    ( a )\n"
+    "#define FUNC_LIKE( a )(      /* note the white space */ \\\n"
+    "                a /* other stuff on this line\n"
+    "                  */ )\n"
+  );
+
+  std::cerr << "Testing wrong macro redefinitions:";
+  setStream(
+    // Defines
+    "#define OBJ_LIKE      (1-1)\n"
+    "#define OBJ_LIKE      (0)\n"
+    "#define FUNC_LIKE(a)  ( a )\n"
+    "#define FUNC_LIKE(b)  ( a )\n"
+  );
+
+  // Test 6 in C++ standard
+  setStream(
+    // Defines
+    "#define debug(...) fprintf(stderr, __VA_ARGS__)\n"
+    "#define showlist(...) puts(#__VA_ARGS__)\n"
+    "#define report(test, ...) ((test) ? puts(#test) : printf(__VA_ARGS__))\n"
+    // Source
+    "debug(\"Flag\");\n"
+    "debug(\"X = %d\\n\", x);\n"
+    "showlist(The first, second, and third items.);\n"
+    "report(x>y, \"x is %d but y is %d\", x, y);\n"
+  );
+
+  /*
+    fprintf(stderr, "Flag");
+    fprintf(stderr, "X = %d\n", x);
+    puts("The first, second, and third items.");
+    ((x>y) ? puts("x>y") : printf("x is %d but y is %d", x, y));
+   */
+}
+
+void testIfElse() {
+  setStream(
+    // Test #if true with #elif false
     "#if true\n"
     "1\n"
     "#elif false\n"
@@ -202,7 +335,9 @@ void testIfElseDefines() {
 
   OCCA_ASSERT_EQUAL(6,
                     tokensFound);
+}
 
+void testIfElseDefines () {
 #if 0
   // Test defines
   setStream(""
