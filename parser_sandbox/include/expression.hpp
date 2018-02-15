@@ -32,8 +32,12 @@ namespace occa {
     //---[ Expression State ]-----------
     class expressionState {
     public:
+      // Keep track of the prev/next tokens
+      //   to break ++ and -- left/right
+      //   unary ambiguity
       token_t *prevToken;
       token_t *nextToken;
+
       token_t *tokenBeforePair;
       exprNodeStack output;
       operatorStack operators;
@@ -52,6 +56,9 @@ namespace occa {
 
     // Using Shunting-Yard algorithm
     exprNode* getExpression(const tokenVector &tokens);
+
+    void getInitialExpression(const tokenVector &tokens,
+                              expressionState &state);
 
     void pushOutputNode(token_t *token,
                         expressionState &state);

@@ -56,9 +56,9 @@ namespace occa {
       delete token;
     }
 
-    bool macroRawToken::expandTokens(tokenVector &newTokens,
-                                     token_t *source,
-                                     std::vector<tokenVector> &args) {
+    bool macroRawToken::expand(tokenVector &newTokens,
+                               token_t *source,
+                               std::vector<tokenVector> &args) {
       newTokens.push_back(token->clone());
       return true;
     }
@@ -66,9 +66,9 @@ namespace occa {
     macroArgument::macroArgument(const int arg_) :
       arg(arg_) {}
 
-    bool macroArgument::expandTokens(tokenVector &newTokens,
-                                     token_t *source,
-                                     std::vector<tokenVector> &args) {
+    bool macroArgument::expand(tokenVector &newTokens,
+                               token_t *source,
+                               std::vector<tokenVector> &args) {
       tokenVector &argTokens = args[arg];
       const int tokenCount = (int) argTokens.size();
       for (int i = 0; i < tokenCount; ++i) {
@@ -84,11 +84,11 @@ namespace occa {
       delete token;
     }
 
-    bool macroStringify::expandTokens(tokenVector &newTokens,
-                                      token_t *source,
-                                      std::vector<tokenVector> &args) {
+    bool macroStringify::expand(tokenVector &newTokens,
+                                token_t *source,
+                                std::vector<tokenVector> &args) {
       // Get tokens to stringify
-      bool success = token->expandTokens(newTokens, source, args);
+      bool success = token->expand(newTokens, source, args);
       if (!success) {
         return false;
       }
@@ -119,13 +119,13 @@ namespace occa {
       tokens.clear();
     }
 
-    bool macroConcat::expandTokens(tokenVector &newTokens,
-                                   token_t *source,
-                                   std::vector<tokenVector> &args) {
+    bool macroConcat::expand(tokenVector &newTokens,
+                             token_t *source,
+                             std::vector<tokenVector> &args) {
       // Evaluate all parts
       const int macroTokenCount = (int) tokens.size();
       for (int i = 0; i < macroTokenCount; ++i) {
-        bool success = tokens[i]->expandTokens(newTokens, source, args);
+        bool success = tokens[i]->expand(newTokens, source, args);
         if (!success) {
           return false;
         }
@@ -300,24 +300,26 @@ namespace occa {
       macroTokens = newMacroTokens;
     }
 
+    // Assumes ( has already been loaded and verified
     bool macro_t::expand(identifierToken &source,
                          tokenVector &expandedTokens) {
-      // Assumes ( has been checked
       std::vector<tokenVector> args;
       bool succeeded = loadArgs(source, args);
       if (!succeeded) {
         return false;
       }
+
       // Expand tokens
       const int macroTokenCount = (int) macroTokens.size();
       for (int i = 0; i < macroTokenCount; ++i) {
-        succeeded = macroTokens[i]->expandTokens(expandedTokens,
-                                                 &source,
-                                                 args);
+        succeeded = macroTokens[i]->expand(expandedTokens,
+                                           &source,
+                                           args);
         if (!succeeded) {
           return false;
         }
       }
+
       return true;
     }
 
@@ -388,9 +390,9 @@ namespace occa {
       fp.printError(message);
     }
 
-    macro_t* macro_t::define(preprocessor &pp_,
-                             const std::string &name_,
-                             const std::string &contents) {
+    macro_t* macro_t::defineBuiltin(preprocessor &pp_,
+                                    const std::string &name_,
+                                    const std::string &contents) {
       fileOrigin origin(originSource::builtin,
                         contents.c_str());
       return define(pp_, origin, name_, contents);

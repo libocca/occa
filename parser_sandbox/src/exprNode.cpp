@@ -31,8 +31,10 @@ namespace occa {
       const int string          = (1 << 3);
       const int identifier      = (1 << 4);
       const int variable        = (1 << 5);
+
       const int value           = (primitive |
                                    variable);
+
       const int leftUnary       = (1 << 6);
       const int rightUnary      = (1 << 7);
       const int binary          = (1 << 8);
@@ -43,7 +45,6 @@ namespace occa {
                                    ternary);
 
       const int pair            = (1 << 10);
-
       const int subscript       = (1 << 11);
       const int call            = (1 << 12);
       const int new_            = (1 << 13);
@@ -88,6 +89,24 @@ namespace occa {
 
     void exprNode::childDebugPrint(const std::string &prefix) const {
       debugPrint(prefix + "|   ");
+    }
+
+    void cloneExprNodeVector(exprNodeVector &dest,
+                             const exprNodeVector &src) {
+      const int nodes = (int) src.size();
+      dest.clear();
+      dest.reserve(nodes);
+      for (int i = 0; i < nodes; ++i) {
+        dest.push_back(&(src[i]->clone()));
+      }
+    }
+
+    void freeExprNodeVector(exprNodeVector &vec) {
+      const int nodes = (int) vec.size();
+      for (int i = 0; i < nodes; ++i) {
+        delete vec[i];
+      }
+      vec.clear();
     }
 
     //---[ Empty ]----------------------
@@ -576,31 +595,21 @@ namespace occa {
 
     callNode::callNode(token_t *token_,
                        exprNode &value_,
-                       exprNodeVector args_) :
+                       const exprNodeVector &args_) :
       exprNode(token_),
       value(value_.clone()) {
-      const int argCount = (int) args_.size();
-      for (int i = 0; i < argCount; ++i) {
-        args.push_back(&(args_[i]->clone()));
-      }
+      cloneExprNodeVector(args, args_);
     }
 
     callNode::callNode(const callNode &node) :
       exprNode(node.token),
       value(node.value.clone()) {
-      const int argCount = (int) node.args.size();
-      for (int i = 0; i < argCount; ++i) {
-        args.push_back(&(node.args[i]->clone()));
-      }
+      cloneExprNodeVector(args, node.args);
     }
 
     callNode::~callNode() {
       delete &value;
-      const int argCount = (int) args.size();
-      for (int i = 0; i < argCount; ++i) {
-        delete args[i];
-      }
-      args.clear();
+      freeExprNodeVector(args);
     }
 
     int callNode::type() const {
@@ -1170,28 +1179,18 @@ namespace occa {
     }
 
     tupleNode::tupleNode(token_t *token_,
-                         exprNodeVector args_) :
+                         const exprNodeVector &args_) :
       exprNode(token_) {
-      const int argCount = (int) args_.size();
-      for (int i = 0; i < argCount; ++i) {
-        args.push_back(&(args_[i]->clone()));
-      }
+      cloneExprNodeVector(args, args_);
     }
 
     tupleNode::tupleNode(const tupleNode &node) :
       exprNode(node.token) {
-      const int argCount = (int) node.args.size();
-      for (int i = 0; i < argCount; ++i) {
-        args.push_back(&(node.args[i]->clone()));
-      }
+      cloneExprNodeVector(args, node.args);
     }
 
     tupleNode::~tupleNode() {
-      const int argCount = (int) args.size();
-      for (int i = 0; i < argCount; ++i) {
-        delete args[i];
-      }
-      args.clear();
+      freeExprNodeVector(args);
     }
 
     int tupleNode::type() const {
@@ -1217,8 +1216,7 @@ namespace occa {
     void tupleNode::debugPrint(const std::string &prefix) const {
       printer pout(std::cerr);
       std::cerr << prefix << "|\n"
-                << prefix << "|---[";
-      std::cerr << "] (tuple)\n";
+                << prefix << "|---(tuple)\n";
       for (int i = 0; i < ((int) args.size()); ++i) {
         args[i]->childDebugPrint(prefix);
       }

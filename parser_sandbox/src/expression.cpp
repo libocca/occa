@@ -56,6 +56,39 @@ namespace occa {
       // TODO: Delete tokens
       // TODO: Ternary operator
       expressionState state;
+      getInitialExpression(tokens, state);
+      if (state.hasError) {
+        return NULL;
+      }
+
+      // Finish applying operators
+      while (state.operatorCount()) {
+        applyOperator(state.lastOperator(),
+                      state);
+
+        if (state.hasError) {
+          // TODO: Clear tokens
+          return NULL;
+        }
+      }
+
+      // Make sure we only have 1 root node
+      const int outputCount = state.outputCount();
+      if (!outputCount) {
+        return &(noExprNode.clone());
+      }
+      if (outputCount > 1) {
+        state.output.pop();
+        state.lastOutput().token->printError("Unable to form an expression");
+        return NULL;
+      }
+
+      // Return the root node
+      return &state.lastOutput();
+    }
+
+    void getInitialExpression(const tokenVector &tokens,
+                              expressionState &state) {
 
       const int outputTokenType = (tokenType::identifier |
                                    tokenType::primitive  |
@@ -69,9 +102,6 @@ namespace occa {
           continue;
         }
 
-        // Keep track of the next token
-        //   to break ++ and -- left/right
-        //   unary ambiguity
         state.nextToken = NULL;
         for (int j = (i + 1); j < count; ++j) {
           if (tokens[j]) {
@@ -103,39 +133,10 @@ namespace occa {
         }
 
         if (state.hasError) {
-          // TODO: Clear tokens
-          return NULL;
+          return;
         }
-
-        // Keep track of the previous token
-        //   to break operator ambiguity
         state.prevToken = token;
       }
-
-      // Finish applying operators
-      while (state.operatorCount()) {
-        applyOperator(state.lastOperator(),
-                      state);
-
-        if (state.hasError) {
-          // TODO: Clear tokens
-          return NULL;
-        }
-      }
-
-      // Make sure we only have 1 root node
-      const int outputCount = state.outputCount();
-      if (!outputCount) {
-        return NULL;
-      }
-      if (outputCount > 1) {
-        state.output.pop();
-        state.lastOutput().token->printError("Unable to form an expression");
-        return NULL;
-      }
-
-      // Return the root node
-      return &state.lastOutput();
     }
 
     void pushOutputNode(token_t *token,

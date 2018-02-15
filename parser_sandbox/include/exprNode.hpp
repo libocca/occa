@@ -121,6 +121,11 @@ namespace occa {
       void childDebugPrint(const std::string &prefix) const;
     };
 
+    void cloneExprNodeVector(exprNodeVector &dest,
+                             const exprNodeVector &src);
+
+    void freeExprNodeVector(exprNodeVector &vec);
+
     //---[ Empty ]----------------------
     class emptyNode : public exprNode {
     public:
@@ -391,7 +396,7 @@ namespace occa {
 
       callNode(token_t *token_,
                exprNode &value_,
-               exprNodeVector args_);
+               const exprNodeVector &args_);
 
       callNode(const callNode &node);
 
@@ -691,7 +696,7 @@ namespace occa {
       exprNodeVector args;
 
       tupleNode(token_t *token_,
-                exprNodeVector args_);
+                const exprNodeVector &args_);
 
       tupleNode(const tupleNode &node);
 

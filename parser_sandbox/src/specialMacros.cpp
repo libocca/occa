@@ -32,10 +32,12 @@ namespace occa {
   namespace lang {
     // defined()
     definedMacro::definedMacro(preprocessor &pp_) :
-      macro_t(pp_, "defined") {}
+      macro_t(pp_, "defined") {
+      argCount = 1;
+    }
 
-    bool definedMacro::expandTokens(identifierToken &source,
-                                    tokenVector &expandedTokens) {
+    bool definedMacro::expand(identifierToken &source,
+                              tokenVector &expandedTokens) {
       bool isDefined = !!pp.getMacro(source.value);
       expandedTokens.push_back(
         new primitiveToken(source.origin,
@@ -47,10 +49,12 @@ namespace occa {
 
     // __has_include()
     hasIncludeMacro::hasIncludeMacro(preprocessor &pp_) :
-      macro_t(pp_, "__has_include") {}
+      macro_t(pp_, "__has_include") {
+      argCount = 1;
+    }
 
-    bool hasIncludeMacro::expandTokens(identifierToken &source,
-                                       tokenVector &expandedTokens) {
+    bool hasIncludeMacro::expand(identifierToken &source,
+                                 tokenVector &expandedTokens) {
       if ((expandedTokens.size() != 1) ||
           !(expandedTokens[0]->type() & tokenType::string)) {
         source.printError("Expected a string for the header to check");
@@ -70,8 +74,8 @@ namespace occa {
     fileMacro::fileMacro(preprocessor &pp_) :
       macro_t(pp_, "__FILE__") {}
 
-    bool fileMacro::expandTokens(identifierToken &source,
-                                 tokenVector &expandedTokens) {
+    bool fileMacro::expand(identifierToken &source,
+                           tokenVector &expandedTokens) {
       expandedTokens.push_back(
         new stringToken(source.origin,
                         source.origin.file->filename)
@@ -83,8 +87,8 @@ namespace occa {
     lineMacro::lineMacro(preprocessor &pp_) :
       macro_t(pp_, "__LINE__") {}
 
-    bool lineMacro::expandTokens(identifierToken &source,
-                                 tokenVector &expandedTokens) {
+    bool lineMacro::expand(identifierToken &source,
+                           tokenVector &expandedTokens) {
       const int line = source.origin.position.line;
       expandedTokens.push_back(
         new primitiveToken(source.origin,
@@ -98,8 +102,8 @@ namespace occa {
     dateMacro::dateMacro(preprocessor &pp_) :
       macro_t(pp_, "__DATE__") {}
 
-    bool dateMacro::expandTokens(identifierToken &source,
-                                 tokenVector &expandedTokens) {
+    bool dateMacro::expand(identifierToken &source,
+                           tokenVector &expandedTokens) {
       static char month[12][5] = {
         "Jan", "Feb", "Mar", "Apr", "May", "Jun",
         "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
@@ -132,8 +136,8 @@ namespace occa {
     timeMacro::timeMacro(preprocessor &pp_) :
       macro_t(pp_, "__TIME__") {}
 
-    bool timeMacro::expandTokens(identifierToken &source,
-                                 tokenVector &expandedTokens) {
+    bool timeMacro::expand(identifierToken &source,
+                           tokenVector &expandedTokens) {
       time_t t = ::time(NULL);
       struct tm *ct = ::localtime(&t);
 
@@ -167,8 +171,8 @@ namespace occa {
       macro_t(pp_, "__COUNTER__"),
       counter(0) {}
 
-    bool counterMacro::expandTokens(identifierToken &source,
-                                    tokenVector &expandedTokens) {
+    bool counterMacro::expand(identifierToken &source,
+                              tokenVector &expandedTokens) {
       const int value = counter;
       expandedTokens.push_back(
         new primitiveToken(source.origin,

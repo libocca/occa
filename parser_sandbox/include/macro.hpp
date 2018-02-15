@@ -43,9 +43,9 @@ namespace occa {
     public:
       virtual ~macroToken();
 
-      virtual bool expandTokens(tokenVector &newTokens,
-                                token_t *source,
-                                std::vector<tokenVector> &args) = 0;
+      virtual bool expand(tokenVector &newTokens,
+                          token_t *source,
+                          std::vector<tokenVector> &args) = 0;
 
       std::string stringifyTokens(tokenVector &tokens,
                                   const bool addSpaces);
@@ -58,9 +58,9 @@ namespace occa {
       macroRawToken(token_t *token_);
       ~macroRawToken();
 
-      bool expandTokens(tokenVector &newTokens,
-                        token_t *source,
-                        std::vector<tokenVector> &args);
+      virtual bool expand(tokenVector &newTokens,
+                          token_t *source,
+                          std::vector<tokenVector> &args);
     };
 
     class macroArgument : public macroToken {
@@ -69,9 +69,9 @@ namespace occa {
 
       macroArgument(const int arg_);
 
-      bool expandTokens(tokenVector &newTokens,
-                        token_t *source,
-                        std::vector<tokenVector> &args);
+      virtual bool expand(tokenVector &newTokens,
+                          token_t *source,
+                          std::vector<tokenVector> &args);
     };
 
     class macroStringify : public macroToken {
@@ -81,9 +81,9 @@ namespace occa {
       macroStringify(macroToken *token_);
       ~macroStringify();
 
-      bool expandTokens(tokenVector &newTokens,
-                        token_t *source,
-                        std::vector<tokenVector> &args);
+      virtual bool expand(tokenVector &newTokens,
+                          token_t *source,
+                          std::vector<tokenVector> &args);
     };
 
     class macroConcat : public macroToken {
@@ -93,9 +93,9 @@ namespace occa {
       macroConcat(const macroTokenVector_t &tokens_);
       ~macroConcat();
 
-      bool expandTokens(tokenVector &newTokens,
-                        token_t *source,
-                        std::vector<tokenVector> &args);
+      virtual bool expand(tokenVector &newTokens,
+                          token_t *source,
+                          std::vector<tokenVector> &args);
     };
     //==================================
 
@@ -146,9 +146,9 @@ namespace occa {
       void printError(token_t *token,
                       const std::string &message);
 
-      static macro_t* define(preprocessor &pp_,
-                             const std::string &name_,
-                             const std::string &contents);
+      static macro_t* defineBuiltin(preprocessor &pp_,
+                                    const std::string &name_,
+                                    const std::string &contents);
 
       static macro_t* define(preprocessor &pp_,
                              fileOrigin origin,
