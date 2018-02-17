@@ -25,49 +25,72 @@
 #include <cstddef>
 #include <queue>
 
+#include "occa/types.hpp"
+
 namespace occa {
-  template <class output_t> class stream;
-  template <class output_t> class streamSource;
-  template <class input_t, class output_t> class streamMap;
+  template <class output_t>
+  class stream;
+  template <class input_t, class output_t>
+  class streamMap;
+
+  //---[ baseStream ]-------------------
+  template <class output_t>
+  class baseStream {
+    template<typename>
+    friend class stream;
+
+  protected:
+    dim_t index;
+
+  public:
+    baseStream();
+    virtual ~baseStream();
+
+    dim_t getIndex() const;
+
+    virtual bool isEmpty() = 0;
+
+    virtual baseStream& clone() const = 0;
+
+    virtual void setNext(output_t &out) = 0;
+
+    template <class newOutput_t>
+    stream<newOutput_t> map(const streamMap<output_t, newOutput_t> &smap) const;
+
+    baseStream& operator >> (output_t &out);
+  };
+  //====================================
 
   //---[ stream ]-----------------------
   template <class output_t>
   class stream {
-    template<typename> friend class stream;
-    template<typename> friend class stream;
+    template<typename>
+    friend class baseStream;
+
+    template<typename>
+    friend class stream;
 
   private:
-    stream *head;
+    baseStream<output_t> *head;
 
   public:
-    stream(stream *head_ = NULL);
+    stream();
+    stream(const baseStream<output_t> &head_);
     stream(const stream &other);
     virtual ~stream();
 
     stream& operator = (const stream &other);
 
-    virtual bool isContainer() const;
-    virtual bool isEmpty() const;
+    dim_t getIndex() const;
 
-    virtual stream& clone() const;
+    bool isEmpty();
+
+    stream& clone() const;
 
     template <class newOutput_t>
     stream<newOutput_t> map(const streamMap<output_t, newOutput_t> &smap) const;
 
-    virtual stream& operator >> (output_t &out);
-  };
-  //====================================
-
-
-  //---[ streamSource ]-----------------
-  template <class output_t>
-  class streamSource : public stream<output_t> {
-  public:
-    virtual bool isContainer() const;
-
-    virtual streamSource<output_t>& operator >> (output_t &out) = 0;
-
-    operator stream<output_t> ();
+    stream& operator >> (output_t &out);
   };
   //====================================
 
@@ -75,20 +98,34 @@ namespace occa {
   //---[ streamMap ]--------------------
   template <class input_t,
             class output_t>
-  class streamMap : public stream<output_t> {
+  class streamMap : public baseStream<output_t> {
   public:
     stream<input_t> *input;
 
     streamMap();
+    ~streamMap();
 
-    virtual bool isContainer() const;
     bool inputIsEmpty() const;
-    virtual bool isEmpty() const;
-
-    virtual streamMap& operator >> (output_t &out) = 0;
+    virtual bool isEmpty();
 
     virtual streamMap& clone() const;
-    virtual streamMap& cloneMap() const = 0;
+    virtual streamMap& clone_() const = 0;
+  };
+  //====================================
+
+
+  //---[ streamFilter ]-----------------
+  template <class input_t>
+  class streamFilter : public streamMap<input_t, input_t> {
+  public:
+    input_t lastValue;
+
+    streamFilter();
+
+    virtual bool isEmpty();
+
+    virtual void setNext(input_t &out);
+    virtual bool isValid(const input_t &value) = 0;
   };
   //====================================
 
@@ -103,12 +140,13 @@ namespace occa {
     cacheMap();
     cacheMap(const cacheMap<input_t, output_t> &map);
 
-    virtual bool isEmpty() const;
-    virtual streamMap<input_t, output_t>& operator >> (output_t &out);
+    virtual bool isEmpty();
+
+    virtual void setNext(output_t &out);
 
     void push(const output_t &value);
 
-    virtual output_t pop() = 0;
+    virtual void pop() = 0;
   };
   //====================================
 }

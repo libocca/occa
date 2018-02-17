@@ -54,6 +54,8 @@ namespace occa {
       typedef void (preprocessor::*processDirective_t)(identifierToken &directive);
       typedef trie<processDirective_t> directiveTrie;
 
+      token_t *lastToken;
+
       //---[ Status ]-------------------
       std::vector<int> statusStack;
       int status;
@@ -79,8 +81,9 @@ namespace occa {
       void errorOn(token_t *token,
                    const std::string &message);
 
-      virtual tokenMap& cloneMap() const;
-      virtual token_t* pop();
+      virtual tokenMap& clone_() const;
+
+      virtual void pop();
 
       static directiveTrie& getDirectiveTrie();
 

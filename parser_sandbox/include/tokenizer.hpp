@@ -39,11 +39,14 @@ namespace occa {
     int getCharacterEncoding(const std::string &str);
     int getStringEncoding(const std::string &str);
 
-    class tokenizer : public streamSource<token_t*>,
+    class tokenizer : public baseStream<token_t*>,
                       public errorHandler {
     public:
+      token_t *lastToken;
+
       fileOrigin origin;
       filePosition &fp;
+
       originVector stack;
       std::vector<originVector> sourceStack;
 
@@ -64,9 +67,11 @@ namespace occa {
 
       void setLine(const int line);
 
-      virtual bool isEmpty() const;
-      virtual stream<token_t*>& clone() const;
-      virtual streamSource<token_t*>& operator >> (token_t *&out);
+      virtual baseStream<token_t*>& clone() const;
+
+      bool reachedTheEnd() const;
+      virtual bool isEmpty();
+      virtual void setNext(token_t *&out);
 
       void pushSource(const bool fromInclude,
                       file_t *file,

@@ -135,12 +135,16 @@ namespace occa {
       errorOnToken = NULL;
     }
 
-    tokenMap& preprocessor::cloneMap() const {
+    tokenMap& preprocessor::clone_() const {
       return *(new preprocessor(*this));
     }
 
-    token_t* preprocessor::pop() {
-      return getToken();
+    void preprocessor::pop() {
+      size_t size = cache.size();
+      while (!inputIsEmpty() &&
+             (cache.size() == size)) {
+        lastToken = getToken();
+      }
     }
 
     void preprocessor::pushStatus(const int status_) {

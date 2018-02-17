@@ -78,19 +78,23 @@ namespace occa {
     }
 
     tokenizer::tokenizer(const char *root) :
+      lastToken(NULL),
       origin(filePosition(root)),
       fp(origin.position) {}
 
     tokenizer::tokenizer(file_t *file_,
                          const char *root) :
+      lastToken(NULL),
       origin(*file_, filePosition(root)),
       fp(origin.position) {}
 
     tokenizer::tokenizer(fileOrigin origin_) :
+      lastToken(NULL),
       origin(origin_),
       fp(origin.position) {}
 
     tokenizer::tokenizer(const tokenizer &stream) :
+      lastToken(stream.lastToken),
       origin(stream.origin),
       fp(origin.position),
       stack(stream.stack),
@@ -98,6 +102,7 @@ namespace occa {
 
 
     tokenizer& tokenizer::operator = (const tokenizer &stream) {
+      lastToken   = stream.lastToken;
       origin      = stream.origin;
       stack       = stream.stack;
       sourceStack = stream.sourceStack;
@@ -118,20 +123,31 @@ namespace occa {
       fp.line = line;
     }
 
-    bool tokenizer::isEmpty() const {
-      return ((*fp.pos == '\0') && !stack.size());
-    }
-
-    stream<token_t*>& tokenizer::clone() const {
+    baseStream<token_t*>& tokenizer::clone() const {
       return *(new tokenizer(*this));
     }
 
-    streamSource<token_t*>& tokenizer::operator >> (token_t *&out) {
-      out = NULL;
-      while (!out && !isEmpty()) {
-        out = getToken();
+    bool tokenizer::reachedTheEnd() const {
+      return ((*fp.pos == '\0') &&
+              !stack.size());
+    }
+
+    bool tokenizer::isEmpty() {
+      while (!reachedTheEnd() &&
+             !lastToken) {
+        lastToken = getToken();
       }
-      return *this;
+      return lastToken;
+    }
+
+    void tokenizer::setNext(token_t *&out) {
+      if (!isEmpty()) {
+        out = NULL;
+      } else {
+        ++index;
+        out = lastToken;
+        lastToken = NULL;
+      }
     }
 
     void tokenizer::pushSource(const bool fromInclude,
@@ -502,7 +518,7 @@ namespace occa {
     }
 
     token_t* tokenizer::getToken() {
-      if ((*fp.pos == '\0') && !stack.size()) {
+      if (reachedTheEnd()) {
         return NULL;
       }
 
@@ -688,7 +704,7 @@ namespace occa {
       // Fill tokens
       token_t *token;
       while (!tstream.isEmpty()) {
-        tstream >> token;
+        tstream.setNext(token);
         if (token) {
           tokens.push_back(token);
         }

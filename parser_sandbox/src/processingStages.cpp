@@ -31,31 +31,39 @@ namespace occa {
     newlineTokenMerger::newlineTokenMerger(const newlineTokenMerger &map) :
       cacheMap(map) {}
 
-    tokenMap& newlineTokenMerger::cloneMap() const {
+    tokenMap& newlineTokenMerger::clone_() const {
       return *(new newlineTokenMerger(*this));
     }
 
-    token_t* newlineTokenMerger::pop() {
-      token_t *token;
-      *(this->input) >> token;
+    void newlineTokenMerger::pop() {
+      token_t *token = NULL;
 
-      // Not a string token
-      if (!token ||
-          !(token->type() & tokenType::newline)) {
-        return token;
-      }
+      *(this->input) >> token;
       push(token);
-      while (true) {
+
+      // Not a newline token
+      if (!(token->type() & tokenType::newline)) {
+        return;
+      }
+
+      while (!inputIsEmpty()) {
+        int oldIndex = this->input->getIndex();
+
         *(this->input) >> token;
-        if (token &&
-            (token->type() & tokenType::newline)) {
+
+        if (oldIndex == this->input->getIndex()) {
+          break;
+        }
+
+        if (token->type() & tokenType::newline) {
           delete token;
           token = NULL;
           continue;
         }
+
+        push(token);
         break;
       }
-      return token;
     }
     //==================================
 
@@ -65,32 +73,31 @@ namespace occa {
     stringTokenMerger::stringTokenMerger(const stringTokenMerger &map) :
       cacheMap(map) {}
 
-    tokenMap& stringTokenMerger::cloneMap() const {
+    tokenMap& stringTokenMerger::clone_() const {
       return *(new stringTokenMerger(*this));
     }
 
-    token_t* stringTokenMerger::pop() {
-      token_t *token;
+    void stringTokenMerger::pop() {
+      token_t *token = NULL;
+
       *(this->input) >> token;
+      push(token);
 
       // Not a string token
-      if (!token ||
-          !(token->type() & tokenType::string)) {
-        return token;
+      if (!(token->type() & tokenType::string)) {
+        return;
       }
 
       stringToken &strToken = token->to<stringToken>();
-      while (true) {
+      while (!inputIsEmpty()) {
         // Merge until no stringToken appears
-        token_t *nextToken;
+        token_t *nextToken = NULL;
         *(this->input) >> nextToken;
-        if (!nextToken) {
-          break;
-        }
+
         if (!(nextToken->type() & tokenType::string)) {
-          push(nextToken);
           break;
         }
+
         strToken.append(nextToken->to<stringToken>());
         delete nextToken;
         nextToken = NULL;
@@ -99,7 +106,8 @@ namespace occa {
           break;
         }
       }
-      return &strToken;
+
+      push(&strToken);
     }
     //==================================
 
@@ -107,23 +115,18 @@ namespace occa {
     unknownTokenFilter::unknownTokenFilter(const bool printError_) :
       printError(printError_) {}
 
-    tokenMap& unknownTokenFilter::cloneMap() const {
+    tokenMap& unknownTokenFilter::clone_() const {
       return *(new unknownTokenFilter(printError));
     }
 
-    tokenMap& unknownTokenFilter::operator >> (token_t *&token) {
-      while (true) {
-        *(this->input) >> token;
-        if (token &&
-            token->type() & tokenType::unknown) {
-          if (printError) {
-            token->printError("Unknown symbol");
-          }
-          continue;
-        }
-        break;
+    bool unknownTokenFilter::isValid(token_t * const &token) {
+      if (!(token->type() & tokenType::unknown)) {
+        return true;
       }
-      return *this;
+      if (printError) {
+        token->printError("Unknown symbol");
+      }
+      return false;
     }
     //==================================
   }

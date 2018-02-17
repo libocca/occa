@@ -23,38 +23,35 @@
 #include "stream.hpp"
 
 template <class output_t>
-class vectorStream : public occa::streamSource<output_t> {
+class vectorStream : public occa::baseStream<output_t> {
 public:
   std::vector<output_t> values;
-  int index;
+  int valueIndex;
 
   vectorStream() :
+    occa::baseStream<output_t>(),
     values(),
-    index(0) {}
+    valueIndex(0) {}
 
   vectorStream(const std::vector<output_t> &values_,
-               const int index_ = 0) :
+               const int valueIndex_ = 0) :
     values(values_),
-    index(index_) {}
+    valueIndex(valueIndex_) {}
 
-  operator occa::stream<output_t> () {
-    return occa::stream<output_t>(&clone());
+  virtual occa::baseStream<output_t>& clone() const {
+    return *(new vectorStream(values, valueIndex));
   }
 
-  virtual occa::stream<output_t>& clone() const {
-    return *(new vectorStream(values, index));
+  virtual bool isEmpty() {
+    return (valueIndex >= (int) values.size());
   }
 
-  virtual bool isEmpty() const {
-    return (index >= (int) values.size());
-  }
-
-  virtual occa::streamSource<output_t>& operator >> (output_t &out) {
+  virtual void setNext(output_t &out) {
     const int size = (int) values.size();
-    if (index < size) {
-      out = values[index++];
+    if (valueIndex < size) {
+      ++this->index;
+      out = values[valueIndex++];
     }
-    return *this;
   }
 };
 
@@ -65,19 +62,17 @@ public:
   output_t factor;
 
   multMap(output_t factor_) :
+    occa::streamMap<input_t, output_t>(),
     factor(factor_) {}
 
-  virtual occa::streamMap<input_t, output_t>& cloneMap() const {
+  virtual occa::streamMap<input_t, output_t>& clone_() const {
     return *(new multMap(factor));
   }
 
-  virtual occa::streamMap<input_t, output_t>& operator >> (output_t &out) {
-    if (!this->inputIsEmpty()) {
-      input_t in;
-      *(this->input) >> in;
-      out = (in * factor);
-    }
-    return *this;
+  virtual void setNext(output_t &out) {
+    input_t in;
+    *(this->input) >> in;
+    out = (in * factor);
   }
 };
 
@@ -86,15 +81,15 @@ class addHalfMap : public occa::cacheMap<input_t, output_t> {
 public:
   addHalfMap() {}
 
-  virtual occa::streamMap<input_t, output_t>& cloneMap() const {
+  virtual occa::streamMap<input_t, output_t>& clone_() const {
     return *(new addHalfMap());
   }
 
-  virtual output_t pop() {
+  virtual void pop() {
     input_t value;
     *(this->input) >> value;
     this->push(value);
-    return value + 0.5;
+    this->push(value + 0.5);
   }
 };
 
