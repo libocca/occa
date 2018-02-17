@@ -25,6 +25,7 @@ namespace occa {
   template <class output_t>
   baseStream<output_t>::~baseStream() {}
 
+  // Map
   template <class output_t>
   template <class newOutput_t>
   stream<newOutput_t> baseStream<output_t>::map(
@@ -33,6 +34,35 @@ namespace occa {
 
     stream<output_t> s(*this);
     return s.map(smap);
+  }
+
+  template <class output_t>
+  template <class newOutput_t>
+  stream<newOutput_t> baseStream<output_t>::map(
+    newOutput_t (*func)(const output_t &value)
+  ) const {
+
+    stream<output_t> s(*this);
+    return s.map(func);
+  }
+
+  // Filter
+  template <class output_t>
+  stream<output_t> baseStream<output_t>::filter(
+    const streamFilter<output_t> &sfilter
+  ) const {
+
+    stream<output_t> s(*this);
+    return s.filter(sfilter);
+  }
+
+  template <class output_t>
+  stream<output_t> baseStream<output_t>::filter(
+    bool (*func)(const output_t &value)
+  ) const {
+
+    stream<output_t> s(*this);
+    return s.filter(func);
   }
 
   template <class output_t>
@@ -86,6 +116,7 @@ namespace occa {
     return *(new stream(*head));
   }
 
+  // Map
   template <class output_t>
   template <class newOutput_t>
   stream<newOutput_t> stream<output_t>::map(
@@ -105,11 +136,27 @@ namespace occa {
   }
 
   template <class output_t>
+  template <class newOutput_t>
+  stream<newOutput_t> stream<output_t>::map(
+    newOutput_t (*func)(const output_t &value)
+  ) const {
+    return map(streamMapFunc<output_t, newOutput_t>(func));
+  }
+
+  // Filter
+  template <class output_t>
   stream<output_t> stream<output_t>::filter(
     const streamFilter<output_t> &filter_
   ) const {
 
     return map(filter_);
+  }
+
+  template <class output_t>
+  stream<output_t> stream<output_t>::filter(
+    bool (*func)(const output_t &value)
+  ) const {
+    return map(streamFilterFunc<output_t>(func));
   }
 
   template <class output_t>
@@ -150,6 +197,22 @@ namespace occa {
                   : NULL);
     return smap;
   }
+
+  template <class input_t, class output_t>
+  streamMapFunc<input_t, output_t>::streamMapFunc(output_t (*func_)(const input_t &value)) :
+    func(func_) {}
+
+  template <class input_t, class output_t>
+  streamMap<input_t, output_t>& streamMapFunc<input_t, output_t>::clone_() const {
+    return *(new streamMapFunc<input_t, output_t>(func));
+  }
+
+  template <class input_t, class output_t>
+  void streamMapFunc<input_t, output_t>::setNext(output_t &out) {
+    input_t value;
+    (*this->input) >> value;
+    out = func(value);
+  }
   //====================================
 
 
@@ -187,6 +250,20 @@ namespace occa {
       usedLastValue = true;
     }
   }
+
+  template <class input_t>
+  streamFilterFunc<input_t>::streamFilterFunc(bool (*func_)(const input_t &value)) :
+    func(func_) {}
+
+  template <class input_t>
+  streamMap<input_t, input_t>& streamFilterFunc<input_t>::clone_() const {
+    return *(new streamFilterFunc<input_t>(func));
+  }
+
+  template <class input_t>
+  bool streamFilterFunc<input_t>::isValid(const input_t &value) {
+    return func(value);
+  }
   //====================================
 
 
@@ -206,10 +283,9 @@ namespace occa {
     if (!cache.empty()) {
       return false;
     }
-    if (this->inputIsEmpty()) {
-      return true;
+    while (!this->inputIsEmpty()) {
+      this->pop();
     }
-    this->pop();
     return cache.empty();
   }
 

@@ -92,19 +92,45 @@ public:
   }
 };
 
+template <class input_t>
+class oddFilter : public occa::streamFilter<input_t> {
+public:
+  oddFilter() {}
+
+  virtual occa::streamMap<input_t, input_t>& clone_() const {
+    return *(new oddFilter());
+  }
+
+  virtual bool isValid(const input_t &value) {
+    return !(value % 2);
+  }
+};
+
+double mult2(const double &value) {
+  return 2.0 * value;
+}
+
+bool isEven(const int &value) {
+  return !(value % 2);
+}
+
 int main(const int argc, const char **argv) {
   std::vector<int> values;
-  for (int i = 0; i < 3; ++i) {
+  const int N = 4;
+  for (int i = 0; i < N; ++i) {
     values.push_back(i);
   }
 
-  occa::stream<int> s          = vectorStream<int>(values);
-  occa::stream<double> sTimes4 = s.map(multMap<int, double>(4));
-  occa::stream<double> sTimes1 = sTimes4.map(multMap<double, double>(0.25));
-  occa::stream<double> s2      = s.map(addHalfMap<int, double>());
+  occa::stream<int> s            = vectorStream<int>(values);
+  occa::stream<double> sTimes4   = s.map(multMap<int, double>(4));
+  occa::stream<double> sTimes1   = sTimes4.map(multMap<double, double>(0.25));
+  occa::stream<double> sTimes2   = sTimes1.map(mult2);
+  occa::stream<double> sPlusHalf = s.map(addHalfMap<int, double>());
+  occa::stream<int> sEven        = s.filter(oddFilter<int>());
+  occa::stream<int> sEvenFunc    = s.filter(isEven);
 
   // Test source
-  for (int i = 0; i < 3; ++i) {
+  for (int i = 0; i < N; ++i) {
     int value = -1;
     s >> value;
     OCCA_ASSERT_EQUAL(i, value);
@@ -114,7 +140,7 @@ int main(const int argc, const char **argv) {
   OCCA_ASSERT_FALSE(sTimes1.isEmpty());
 
   // Test map
-  for (int i = 0; i < 3; ++i) {
+  for (int i = 0; i < N; ++i) {
     double value;
     sTimes4 >> value;
     OCCA_ASSERT_EQUAL(4.0 * i, value);
@@ -123,20 +149,44 @@ int main(const int argc, const char **argv) {
   OCCA_ASSERT_FALSE(sTimes1.isEmpty());
 
   // Test map composition
-  for (int i = 0; i < 3; ++i) {
+  for (int i = 0; i < N; ++i) {
     double value;
     sTimes1 >> value;
     OCCA_ASSERT_EQUAL((i * 4.0) * 0.25, value);
   }
   OCCA_ASSERT_TRUE(sTimes1.isEmpty());
 
-  // Test cache map
-  for (int i = 0; i < 6; ++i) {
+  // Test function map
+  for (int i = 0; i < N; ++i) {
     double value;
-    s2 >> value;
+    sTimes2 >> value;
+    OCCA_ASSERT_EQUAL(((i * 4.0) * 0.25) * 2.0, value);
+  }
+  OCCA_ASSERT_TRUE(sTimes2.isEmpty());
+
+  // Test cache map
+  for (int i = 0; i < (2 * N); ++i) {
+    double value;
+    sPlusHalf >> value;
     OCCA_ASSERT_EQUAL(i * 0.5, value);
   }
-  OCCA_ASSERT_TRUE(s2.isEmpty());
+  OCCA_ASSERT_TRUE(sPlusHalf.isEmpty());
+
+  // Test filter
+  for (int i = 0; i < (N / 2); ++i) {
+    int value;
+    sEven >> value;
+    OCCA_ASSERT_EQUAL(2 * i, value);
+  }
+  OCCA_ASSERT_TRUE(sEven.isEmpty());
+
+  // Test function filter
+  for (int i = 0; i < (N / 2); ++i) {
+    int value;
+    sEvenFunc >> value;
+    OCCA_ASSERT_EQUAL(2 * i, value);
+  }
+  OCCA_ASSERT_TRUE(sEvenFunc.isEmpty());
 
   return 0;
 }

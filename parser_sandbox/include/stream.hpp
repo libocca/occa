@@ -47,10 +47,17 @@ namespace occa {
 
     virtual void setNext(output_t &out) = 0;
 
+    // Map
     template <class newOutput_t>
     stream<newOutput_t> map(const streamMap<output_t, newOutput_t> &smap) const;
 
+    template <class newOutput_t>
+    stream<newOutput_t> map(newOutput_t (*func)(const output_t &value)) const;
+
+    // Filter
     stream<output_t> filter(const streamFilter<output_t> &sfilter) const;
+
+    stream<output_t> filter(bool (*func)(const output_t &value)) const;
 
     baseStream& operator >> (output_t &out);
   };
@@ -80,10 +87,17 @@ namespace occa {
 
     stream& clone() const;
 
+    // Map
     template <class newOutput_t>
     stream<newOutput_t> map(const streamMap<output_t, newOutput_t> &map_) const;
 
+    template <class newOutput_t>
+    stream<newOutput_t> map(newOutput_t (*func)(const output_t &value)) const;
+
+    // Filter
     stream<output_t> filter(const streamFilter<output_t> &filter_) const;
+
+    stream<output_t> filter(bool (*func)(const output_t &value)) const;
 
     stream& operator >> (output_t &out);
   };
@@ -106,6 +120,19 @@ namespace occa {
     virtual streamMap& clone() const;
     virtual streamMap& clone_() const = 0;
   };
+
+  template <class input_t,
+            class output_t>
+  class streamMapFunc : public streamMap<input_t, output_t> {
+  public:
+    output_t (*func)(const input_t &value);
+
+    streamMapFunc(output_t (*func_)(const input_t &value));
+
+    virtual streamMap<input_t, output_t>& clone_() const;
+
+    virtual void setNext(output_t &out);
+  };
   //====================================
 
 
@@ -123,6 +150,18 @@ namespace occa {
 
     virtual void setNext(input_t &out);
     virtual bool isValid(const input_t &value) = 0;
+  };
+
+  template <class input_t>
+  class streamFilterFunc : public streamFilter<input_t> {
+  public:
+    bool (*func)(const input_t &value);
+
+    streamFilterFunc(bool (*func_)(const input_t &value));
+
+    virtual streamMap<input_t, input_t>& clone_() const;
+
+    virtual bool isValid(const input_t &value);
   };
   //====================================
 

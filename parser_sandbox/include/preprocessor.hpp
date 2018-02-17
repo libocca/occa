@@ -83,8 +83,6 @@ namespace occa {
 
       virtual tokenMap& clone_() const;
 
-      virtual void pop();
-
       static directiveTrie& getDirectiveTrie();
 
       void addExpandedToken(token_t *token);
@@ -100,7 +98,7 @@ namespace occa {
       macro_t* getSourceMacro();
 
       token_t* getSourceToken();
-      void processNextToken();
+      virtual void pop();
 
       void expandMacro(macro_t &macro);
 

@@ -139,15 +139,6 @@ namespace occa {
       return *(new preprocessor(*this));
     }
 
-    void preprocessor::pop() {
-      size_t size = cache.size();
-      while (!inputIsEmpty() &&
-             (cache.size() == size)) {
-
-        processNextToken();
-      }
-    }
-
     void preprocessor::pushStatus(const int status_) {
       statusStack.push_back(status);
       status = status_;
@@ -202,7 +193,7 @@ namespace occa {
       return token;
     }
 
-    void preprocessor::processNextToken() {
+    void preprocessor::pop() {
       token_t *token = getSourceToken();
       const int tokenType = token->type();
 
