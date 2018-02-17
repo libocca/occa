@@ -100,8 +100,7 @@ namespace occa {
       macro_t* getSourceMacro();
 
       token_t* getSourceToken();
-      token_t* getToken();
-      token_t* processToken(token_t *token);
+      void processNextToken();
 
       void expandMacro(macro_t &macro);
 
@@ -110,8 +109,8 @@ namespace occa {
       void freeLineTokens(tokenVector &lineTokens);
       void warnOnNonEmptyLine(const std::string &message);
 
-      token_t* processIdentifier(identifierToken &token);
-      token_t* processOperator(operatorToken &token);
+      void processIdentifier(identifierToken &token);
+      void processOperator(operatorToken &token);
 
       bool lineIsTrue(identifierToken &directive);
       void processIf(identifierToken &directive);

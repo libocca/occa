@@ -137,16 +137,15 @@ namespace occa {
              !lastToken) {
         lastToken = getToken();
       }
-      return lastToken;
+      return !lastToken;
     }
 
     void tokenizer::setNext(token_t *&out) {
       if (!isEmpty()) {
-        out = NULL;
-      } else {
-        ++index;
         out = lastToken;
         lastToken = NULL;
+      } else {
+        out = NULL;
       }
     }
 

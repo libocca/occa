@@ -23,16 +23,7 @@
 namespace occa {
   //---[ baseStream ]-------------------
   template <class output_t>
-  baseStream<output_t>::baseStream() :
-    index(0) {}
-
-  template <class output_t>
   baseStream<output_t>::~baseStream() {}
-
-  template <class output_t>
-  dim_t baseStream<output_t>::getIndex() const {
-    return index;
-  }
 
   template <class output_t>
   template <class newOutput_t>
@@ -40,13 +31,8 @@ namespace occa {
     const streamMap<output_t, newOutput_t> &smap
   ) const {
 
-    stream<newOutput_t> s(smap);
-    streamMap<output_t, newOutput_t> &smap_ =
-      *(static_cast< streamMap<output_t, newOutput_t>* >(s.head));
-
-    smap_.input = new stream<newOutput_t>(*this);
-
-    return s;
+    stream<output_t> s(*this);
+    return s.map(smap);
   }
 
   template <class output_t>
@@ -88,13 +74,6 @@ namespace occa {
   }
 
   template <class output_t>
-  dim_t stream<output_t>::getIndex() const {
-    return (head
-            ? head->getIndex()
-            : -1);
-  }
-
-  template <class output_t>
   bool stream<output_t>::isEmpty() {
     return (!head || head->isEmpty());
   }
@@ -110,19 +89,27 @@ namespace occa {
   template <class output_t>
   template <class newOutput_t>
   stream<newOutput_t> stream<output_t>::map(
-    const streamMap<output_t, newOutput_t> &smap
+    const streamMap<output_t, newOutput_t> &map_
   ) const {
     if (!head) {
       return stream<newOutput_t>();
     }
 
-    stream<newOutput_t> s(smap);
-    streamMap<output_t, newOutput_t> &smap_ =
-      *(static_cast< streamMap<output_t, newOutput_t>* >(s.head));
+    typedef streamMap<output_t, newOutput_t> mapType;
 
-    smap_.input = new stream(*head);
+    stream<newOutput_t> s(map_);
+    mapType &sHead = *(static_cast<mapType*>(s.head));
+    sHead.input = &(head->clone());
 
     return s;
+  }
+
+  template <class output_t>
+  stream<output_t> stream<output_t>::filter(
+    const streamFilter<output_t> &filter_
+  ) const {
+
+    return map(filter_);
   }
 
   template <class output_t>
@@ -169,31 +156,35 @@ namespace occa {
   //---[ streamFilter ]-----------------
   template <class input_t>
   streamFilter<input_t>::streamFilter() :
-    streamMap<input_t, input_t>() {}
+    streamMap<input_t, input_t>(),
+    usedLastValue(true),
+    isEmpty_(true) {}
 
   template <class input_t>
   bool streamFilter<input_t>::isEmpty() {
-    while (!this->inputIsEmpty()) {
-      const dim_t oldIndex = this->input->getIndex();
+    if (!usedLastValue) {
+      return isEmpty_;
+    }
 
+    isEmpty_ = true;
+
+    while (!this->inputIsEmpty()) {
       (*this->input) >> lastValue;
 
-      if (oldIndex == this->input->getIndex()) {
-        this->index = -1;
+      if (isValid(lastValue)) {
+        usedLastValue = false;
+        isEmpty_ = false;
         break;
       }
-      else if (isValid(lastValue)) {
-        return false;
-      }
     }
-    return false;
+    return isEmpty_;
   }
 
   template <class input_t>
   void streamFilter<input_t>::setNext(input_t &out) {
     if (!isEmpty()) {
-      ++this->index;
       out = lastValue;
+      usedLastValue = true;
     }
   }
   //====================================
@@ -225,7 +216,6 @@ namespace occa {
   template <class input_t, class output_t>
   void cacheMap<input_t, output_t>::setNext(output_t &out) {
     if (!isEmpty()) {
-      ++this->index;
       out = cache.front();
       cache.pop();
     }

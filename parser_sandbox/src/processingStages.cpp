@@ -47,13 +47,7 @@ namespace occa {
       }
 
       while (!inputIsEmpty()) {
-        int oldIndex = this->input->getIndex();
-
         *(this->input) >> token;
-
-        if (oldIndex == this->input->getIndex()) {
-          break;
-        }
 
         if (token->type() & tokenType::newline) {
           delete token;

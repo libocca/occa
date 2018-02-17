@@ -32,21 +32,14 @@ namespace occa {
   class stream;
   template <class input_t, class output_t>
   class streamMap;
+  template <class input_t>
+  class streamFilter;
 
   //---[ baseStream ]-------------------
   template <class output_t>
   class baseStream {
-    template<typename>
-    friend class stream;
-
-  protected:
-    dim_t index;
-
   public:
-    baseStream();
     virtual ~baseStream();
-
-    dim_t getIndex() const;
 
     virtual bool isEmpty() = 0;
 
@@ -56,6 +49,8 @@ namespace occa {
 
     template <class newOutput_t>
     stream<newOutput_t> map(const streamMap<output_t, newOutput_t> &smap) const;
+
+    stream<output_t> filter(const streamFilter<output_t> &sfilter) const;
 
     baseStream& operator >> (output_t &out);
   };
@@ -81,14 +76,14 @@ namespace occa {
 
     stream& operator = (const stream &other);
 
-    dim_t getIndex() const;
-
     bool isEmpty();
 
     stream& clone() const;
 
     template <class newOutput_t>
-    stream<newOutput_t> map(const streamMap<output_t, newOutput_t> &smap) const;
+    stream<newOutput_t> map(const streamMap<output_t, newOutput_t> &map_) const;
+
+    stream<output_t> filter(const streamFilter<output_t> &filter_) const;
 
     stream& operator >> (output_t &out);
   };
@@ -100,7 +95,7 @@ namespace occa {
             class output_t>
   class streamMap : public baseStream<output_t> {
   public:
-    stream<input_t> *input;
+    baseStream<input_t> *input;
 
     streamMap();
     ~streamMap();
@@ -119,6 +114,8 @@ namespace occa {
   class streamFilter : public streamMap<input_t, input_t> {
   public:
     input_t lastValue;
+    bool usedLastValue;
+    bool isEmpty_;
 
     streamFilter();
 

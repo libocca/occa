@@ -143,7 +143,8 @@ namespace occa {
       size_t size = cache.size();
       while (!inputIsEmpty() &&
              (cache.size() == size)) {
-        lastToken = getToken();
+
+        processNextToken();
       }
     }
 
@@ -195,55 +196,45 @@ namespace occa {
 
     token_t* preprocessor::getSourceToken() {
       token_t *token = NULL;
-      while (!token &&
-             !this->input->isEmpty()) {
+      if (!inputIsEmpty()) {
         *(this->input) >> token;
       }
       return token;
     }
 
-    token_t* preprocessor::getToken() {
-      token_t *token = NULL;
-
-      while (!token) {
-        decrementNewline();
-
-        token = getSourceToken();
-        if (!token) {
-          return NULL;
-        }
-        token = processToken(token);
-      }
-
-      return token;
-    }
-
-    token_t* preprocessor::processToken(token_t *token) {
+    void preprocessor::processNextToken() {
+      token_t *token = getSourceToken();
       const int tokenType = token->type();
+
       if (tokenType & tokenType::newline) {
         incrementNewline();
-        return token;
+        push(token);
+        return;
       }
 
+      // Only process operators when ignoring
+      //   for potential #
       if (status & ppStatus::ignoring) {
         if (!(tokenType & tokenType::op)) {
           delete token;
-          return NULL;
+          return;
         }
         const operator_t &op = token->to<operatorToken>().op;
         if (!(op.opType & operatorType::preprocessor)) {
           delete token;
-          return NULL;
+          return;
         }
       }
 
       if (tokenType & tokenType::identifier) {
-        return processIdentifier(token->to<identifierToken>());
+        processIdentifier(token->to<identifierToken>());
       }
-      if (tokenType & tokenType::op) {
-        return processOperator(token->to<operatorToken>());
+      else if (tokenType & tokenType::op) {
+        processOperator(token->to<operatorToken>());
       }
-      return token;
+      else {
+        push(token);
+      }
     }
 
     void preprocessor::expandMacro(macro_t &macro) {
@@ -251,33 +242,29 @@ namespace occa {
     }
 
     void preprocessor::skipToNewline() {
-      token_t *token = getSourceToken();
-      while (token) {
-        const int tokenType = token->type();
-        if (tokenType & tokenType::newline) {
-          incrementNewline();
-          push(token);
-          return;
-        }
-        delete token;
-        token = getSourceToken();
+      tokenVector lineTokens;
+      getLineTokens(lineTokens);
+
+      // Push the newline token
+      const int tokens = (int) lineTokens.size();
+      if (tokens) {
+        push(lineTokens[tokens-1]);
+        lineTokens.pop_back();
       }
+
+      freeLineTokens(lineTokens);
     }
 
     void preprocessor::getLineTokens(tokenVector &lineTokens) {
-      while (true) {
+      while (!inputIsEmpty()) {
         token_t *token = getSourceToken();
-        if (!token) {
-          break;
-        }
+
         if (token->type() & tokenType::newline) {
           incrementNewline();
-          // Add the newline token back to the queue
-          // Only used by processIf, so nothing else
-          //   should be expanding in between...
-          push(token);
+          lineTokens.push_back(token);
           break;
         }
+
         lineTokens.push_back(token);
       }
     }
@@ -294,16 +281,19 @@ namespace occa {
       tokenVector lineTokens;
       getLineTokens(lineTokens);
       if (lineTokens.size()) {
-        lineTokens[0]->printWarning(message);
+        // Don't account for the newline token
+        if (lineTokens[0]->type() != tokenType::newline) {
+          lineTokens[0]->printWarning(message);
+        }
         freeLineTokens(lineTokens);
       }
     }
 
-    token_t* preprocessor::processIdentifier(identifierToken &token) {
+    void preprocessor::processIdentifier(identifierToken &token) {
       // Ignore tokens inside disabled #if/#elif/#else regions
       if (status & ppStatus::ignoring) {
         delete &token;
-        return NULL;
+        return;
       }
 
       macro_t *macro = getMacro(token.value);
@@ -311,37 +301,54 @@ namespace occa {
         if (!macro->isFunctionLike()) {
           expandMacro(*macro);
           delete &token;
-          return NULL;
+          return;
         }
+
+        if (inputIsEmpty()) {
+          push(&token);
+          return;
+        }
+
         // Make sure that the macro starts with a '('
         token_t *nextToken = getSourceToken();
-        if (token_t::safeType(nextToken) & tokenType::op) {
+        if (nextToken->type() & tokenType::op) {
           const opType_t opType = nextToken->to<operatorToken>().op.opType;
           if (opType & operatorType::parenthesesEnd) {
             expandMacro(*macro);
             delete &token;
             delete nextToken;
-            return NULL;
+            return;
           }
         }
+        // Prioritize possible variable if no () is found:
+        //   #define FOO()
+        //   int FOO;
+        push(&token);
         push(nextToken);
+        return;
       }
-      return &token;
+
+      push(&token);
     }
 
-    token_t* preprocessor::processOperator(operatorToken &token) {
+    void preprocessor::processOperator(operatorToken &token) {
       if ((token.op.opType != operatorType::hash) ||
           !passedNewline) {
-        return &token;
+        push(&token);
+        return;
       }
       delete &token;
 
+      if (inputIsEmpty()) {
+        return;
+      }
+
       // NULL or an empty # is ok
       token_t *directive = getSourceToken();
-      if (!directive ||
-          (directive->type() & tokenType::newline)) {
+      if (directive->type() & tokenType::newline) {
         incrementNewline();
-        return directive;
+        push(directive);
+        return;
       }
 
       // Check for valid directive
@@ -349,7 +356,7 @@ namespace occa {
         errorOn(directive,
                 "Unknown preprocessor directive");
         skipToNewline();
-        return NULL;
+        return;
       }
 
       identifierToken &directiveToken = directive->to<identifierToken>();
@@ -360,24 +367,28 @@ namespace occa {
                 "Unknown preprocessor directive");
         delete directive;
         skipToNewline();
-        return NULL;
+        return;
       }
 
       (this->*(result.value()))(directiveToken);
 
       delete directive;
-      return NULL;
     }
 
 
     bool preprocessor::lineIsTrue(identifierToken &directive) {
       tokenVector lineTokens;
       getLineTokens(lineTokens);
+
+      // Remove the newline token
+      if (lineTokens.size()) {
+        lineTokens.pop_back();
+      }
+
       exprNode *expr = getExpression(lineTokens);
 
-      // Test for errors
-      // Note: Errors when expr is NULL are
-      //   handled while forming the expression
+      // Errors when expr is NULL are handled
+      //   while forming the expression
       bool exprError = !expr;
       if (expr) {
         if (expr->type() & exprNodeType::empty) {

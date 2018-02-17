@@ -26,31 +26,30 @@ template <class output_t>
 class vectorStream : public occa::baseStream<output_t> {
 public:
   std::vector<output_t> values;
-  int valueIndex;
+  int index;
 
   vectorStream() :
     occa::baseStream<output_t>(),
     values(),
-    valueIndex(0) {}
+    index(0) {}
 
   vectorStream(const std::vector<output_t> &values_,
-               const int valueIndex_ = 0) :
+               const int index_ = 0) :
     values(values_),
-    valueIndex(valueIndex_) {}
+    index(index_) {}
 
   virtual occa::baseStream<output_t>& clone() const {
-    return *(new vectorStream(values, valueIndex));
+    return *(new vectorStream(values, index));
   }
 
   virtual bool isEmpty() {
-    return (valueIndex >= (int) values.size());
+    return (index >= (int) values.size());
   }
 
   virtual void setNext(output_t &out) {
     const int size = (int) values.size();
-    if (valueIndex < size) {
-      ++this->index;
-      out = values[valueIndex++];
+    if (index < size) {
+      out = values[index++];
     }
   }
 };

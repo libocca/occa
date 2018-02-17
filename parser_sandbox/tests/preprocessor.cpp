@@ -51,6 +51,7 @@ void setStream(const std::string &s) {
 
 void getToken() {
   delete token;
+  token = NULL;
   stream >> token;
 }
 
