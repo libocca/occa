@@ -107,7 +107,6 @@ namespace occa {
       preprocessor &pp;
       identifierToken &thisToken;
 
-      int argCount;
       bool hasVarArgs;
       intTrie argNames;
       macroTokenVector_t macroTokens;
@@ -118,27 +117,31 @@ namespace occa {
       macro_t(preprocessor &pp_,
               const std::string &name_);
 
-      macro_t(const macro_t &other);
-
       virtual ~macro_t();
 
+      inline int argCount() const {
+        return argNames.size();
+      }
+
       inline bool isFunctionLike() const {
-        return ((argCount >= 0) || hasVarArgs);
+        return ((argCount() > 0) || hasVarArgs);
       }
 
       inline const std::string& name() const {
         return thisToken.value;
       }
 
-      void clearMacroTokens();
+      void loadDefinition();
+
+      void loadFunctionLikeDefinition(tokenVector &tokens);
+      bool loadDefinitionArgument(token_t *token);
 
       void setDefinition(tokenVector &tokens);
       void setMacroTokens(tokenVector &tokens);
       void stringifyMacroTokens();
       void concatMacroTokens();
 
-      virtual bool expand(identifierToken &source,
-                          tokenVector &expandedTokens);
+      virtual void expand(identifierToken &source);
 
       bool loadArgs(identifierToken &source,
                     std::vector<tokenVector> &args);

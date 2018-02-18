@@ -228,10 +228,6 @@ namespace occa {
       }
     }
 
-    void preprocessor::expandMacro(macro_t &macro) {
-      // TODO
-    }
-
     void preprocessor::skipToNewline() {
       tokenVector lineTokens;
       getLineTokens(lineTokens);
@@ -243,9 +239,11 @@ namespace occa {
         lineTokens.pop_back();
       }
 
-      freeLineTokens(lineTokens);
+      freeTokenVector(lineTokens);
     }
 
+    // lineTokens might be partially initialized
+    //   so we don't want to clear it
     void preprocessor::getLineTokens(tokenVector &lineTokens) {
       while (!inputIsEmpty()) {
         token_t *token = getSourceToken();
@@ -260,7 +258,7 @@ namespace occa {
       }
     }
 
-    void preprocessor::freeLineTokens(tokenVector &lineTokens) {
+    void preprocessor::freeTokenVector(tokenVector &lineTokens) {
       const int tokens = (int) lineTokens.size();
       for (int i = 0; i < tokens; ++i) {
         delete lineTokens[i];
@@ -276,7 +274,7 @@ namespace occa {
         if (lineTokens[0]->type() != tokenType::newline) {
           lineTokens[0]->printWarning(message);
         }
-        freeLineTokens(lineTokens);
+        freeTokenVector(lineTokens);
       }
     }
 
@@ -290,7 +288,7 @@ namespace occa {
       macro_t *macro = getMacro(token.value);
       if (macro) {
         if (!macro->isFunctionLike()) {
-          expandMacro(*macro);
+          macro->expand(token);
           delete &token;
           return;
         }
@@ -305,7 +303,7 @@ namespace occa {
         if (nextToken->type() & tokenType::op) {
           const opType_t opType = nextToken->to<operatorToken>().op.opType;
           if (opType & operatorType::parenthesesEnd) {
-            expandMacro(*macro);
+            macro->expand(token);
             delete &token;
             delete nextToken;
             return;
@@ -568,12 +566,14 @@ namespace occa {
           errorOn(token,
                   "Expected an identifier");
         }
+        delete token;
         skipToNewline();
         return;
       }
-      // TODO
-      // macro_t *macro;
-      // sourceMacros.add(macro->name(), macro);
+
+      macro_t &macro = *(new macro_t(*this, token->to<identifierToken>()));
+      macro.loadDefinition();
+      sourceMacros.add(macro.name(), &macro);
     }
 
     void preprocessor::processUndef(identifierToken &directive) {

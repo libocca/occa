@@ -421,7 +421,7 @@ namespace occa {
 
   inline primitive tilde(const primitive &p) {
     switch(p.type) {
-    case primitiveType::bool_   : return primitive(~p.value.bool_);
+    case primitiveType::bool_   : return primitive(!p.value.bool_);
     case primitiveType::int8_   : return primitive(~p.value.int8_);
     case primitiveType::uint8_  : return primitive(~p.value.uint8_);
     case primitiveType::int16_  : return primitive(~p.value.int16_);

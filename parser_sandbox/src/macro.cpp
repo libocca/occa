@@ -150,7 +150,6 @@ namespace occa {
       thisToken(thisToken_
                 .clone()
                 ->to<identifierToken>()),
-      argCount(-1),
       hasVarArgs(false) {}
 
 
@@ -158,22 +157,10 @@ namespace occa {
                      const std::string &name_) :
       pp(pp_),
       thisToken(*(new identifierToken(originSource::builtin, name_))),
-      argCount(-1),
       hasVarArgs(false) {}
-
-    macro_t::macro_t(const macro_t &other) :
-      pp(other.pp),
-      thisToken(other.thisToken),
-      argCount(other.argCount),
-      hasVarArgs(other.hasVarArgs),
-      macroTokens(other.macroTokens) {}
 
     macro_t::~macro_t() {
       delete &thisToken;
-      clearMacroTokens();
-    }
-
-    void macro_t::clearMacroTokens() {
       const int tokens = (int) macroTokens.size();
       for (int i = 0; i < tokens; ++i) {
         delete macroTokens[i];
@@ -181,8 +168,122 @@ namespace occa {
       macroTokens.clear();
     }
 
+    void macro_t::loadDefinition() {
+      tokenVector tokens;
+      pp.getLineTokens(tokens);
+
+      // Remove the newline token
+      if (tokens.size()) {
+        tokens.pop_back();
+      }
+      if (!tokens.size()) {
+        return;
+      }
+
+      token_t *token = tokens[0];
+      if (!(token->type() & tokenType::op)) {
+        setDefinition(tokens);
+        return;
+      }
+
+      operatorToken &opToken = token->to<operatorToken>();
+      if (!(opToken.op.opType & operatorType::parenthesesStart)) {
+        setDefinition(tokens);
+        return;
+      }
+
+      // The ( only counts as the start of a function-like
+      //   macro if it's directly after the macro name
+      if (thisToken.origin.file != token->origin.file) {
+        setDefinition(tokens);
+        return;
+      }
+
+      const char *thisPos  = thisToken.origin.position.pos;
+      const char *parenPos = token->origin.position.pos;
+
+      if ((thisPos + name().size()) == parenPos) {
+        delete token;
+        tokens.erase(tokens.begin());
+        loadFunctionLikeDefinition(tokens);
+      } else {
+        setDefinition(tokens);
+      }
+    }
+
+    void macro_t::loadFunctionLikeDefinition(tokenVector &tokens) {
+      const int tokenCount = (int) tokens.size();
+      int index = 0;
+      bool loadedArgs = false;
+
+      while (index < tokenCount) {
+        // Test for arg name
+        token_t *token = tokens[index++];
+        if (!loadDefinitionArgument(token)) {
+          pp.freeTokenVector(tokens);
+          return;
+        }
+
+        // Test for ',' or ')'
+        token = tokens[index++];
+        bool foundOp = (token->type() & tokenType::op);
+        if (foundOp) {
+          opType_t opType = token->to<operatorToken>().op.opType;
+          if (opType & operatorType::comma) {
+            continue;
+          }
+          if (opType & operatorType::parenthesesEnd) {
+            loadedArgs = true;
+            break;
+          }
+          foundOp = false;
+        }
+        if (!foundOp) {
+          token->printError("Expected a , to separate arguments"
+                            " or ) to finish the macro definition");
+          pp.freeTokenVector(tokens);
+          return;
+        }
+      }
+
+      if (loadedArgs) {
+        for (int i = index; i < tokenCount; ++i) {
+          tokens[i - index] = tokens[i];
+        }
+        tokens.resize(tokenCount - index);
+        setDefinition(tokens);
+      }
+    }
+
+    bool macro_t::loadDefinitionArgument(token_t *token) {
+      if (hasVarArgs) {
+        token->printError("Cannot have arguments after ...");
+        return false;
+      }
+
+      bool isArg = (token->type() & tokenType::identifier);
+      if (!isArg &&
+          (token->type() & tokenType::op)) {
+        opType_t opType = token->to<operatorToken>().op.opType;
+        if (opType & operatorType::ellipsis) {
+          isArg = true;
+          hasVarArgs = true;
+        }
+      }
+
+      if (!isArg) {
+        token->printError("Expected an identifier as a macro argument");
+        return false;
+      }
+
+      if (!hasVarArgs) {
+        argNames.add(token->to<identifierToken>().value,
+                     argNames.size());
+      }
+      return true;
+    }
+
     void macro_t::setDefinition(tokenVector &tokens) {
-      clearMacroTokens();
       setMacroTokens(tokens);
       stringifyMacroTokens();
       concatMacroTokens();
@@ -223,22 +324,23 @@ namespace occa {
       for (int i = 0; i < tokenCount; ++i) {
         macroRawToken *mToken = dynamic_cast<macroRawToken*>(macroTokens[i]);
         if (!mToken) {
-          newMacroTokens.push_back(mToken);
+          newMacroTokens.push_back(macroTokens[i]);
           continue;
         }
         token_t *token = mToken->token;
         if (!(token->type() & tokenType::op)) {
-          newMacroTokens.push_back(mToken);
+          newMacroTokens.push_back(macroTokens[i]);
           continue;
         }
         operatorToken &opToken = token->to<operatorToken>();
         if (!(opToken.op.opType & operatorType::hash)) {
-          newMacroTokens.push_back(mToken);
+          newMacroTokens.push_back(macroTokens[i]);
           continue;
         }
-        delete mToken;
         if (i < (tokenCount - 1)) {
           newMacroTokens.push_back(new macroStringify(mToken));
+        } else {
+          delete mToken;
         }
       }
 
@@ -251,9 +353,8 @@ namespace occa {
         return;
       }
 
-      macroTokenVector_t newMacroTokens;
-      macroTokenVector_t concatMacroTokens;
-      macroToken *prevToken = NULL;
+      macroTokenVector_t newMacroTokens, concatMacroTokens;
+      bool concatenating = false;
       for (int i = 0; i < tokenCount; ++i) {
         macroRawToken *mToken = dynamic_cast<macroRawToken*>(macroTokens[i]);
 
@@ -268,9 +369,24 @@ namespace occa {
         // First test the case without ##
         if (!opToken ||
             !(opToken->op.opType & operatorType::hashhash)) {
-          prevToken = mToken;
+
+          bool makeConcat = concatMacroTokens.size();
+          if (!concatenating) {
+            newMacroTokens.push_back(mToken);
+          } else {
+            concatMacroTokens.push_back(mToken);
+            concatenating = false;
+            makeConcat    = (i == (tokenCount - 1));
+          }
+
+          if (makeConcat) {
+            newMacroTokens.push_back(new macroConcat(concatMacroTokens));
+            concatMacroTokens.clear();
+          }
+
           continue;
         }
+
         // Test if ## occurred in the beginning or ending
         if (i == 0) {
           token->printError("Macro definition cannot start with ##");
@@ -282,45 +398,42 @@ namespace occa {
           macroTokens.clear();
           return;
         }
+
         // Add concat tokens
-        concatMacroTokens.push_back(prevToken);
-        delete prevToken;
+        concatenating = true;
+        concatMacroTokens.push_back(macroTokens[i - 1]);
+        newMacroTokens.pop_back();
         delete mToken;
-        prevToken = NULL;
       }
-      // Finish the last token if needed and
-      //   update the macro tokens
-      if (prevToken) {
-        if (concatMacroTokens.size()) {
-          newMacroTokens.push_back(new macroConcat(concatMacroTokens));
-          concatMacroTokens.clear();
-        }
-        newMacroTokens.push_back(prevToken);
-      }
+
       macroTokens = newMacroTokens;
     }
 
     // Assumes ( has already been loaded and verified
-    bool macro_t::expand(identifierToken &source,
-                         tokenVector &expandedTokens) {
+    void macro_t::expand(identifierToken &source) {
       std::vector<tokenVector> args;
       bool succeeded = loadArgs(source, args);
       if (!succeeded) {
-        return false;
+        return;
       }
 
       // Expand tokens
+      tokenVector expandedTokens;
       const int macroTokenCount = (int) macroTokens.size();
       for (int i = 0; i < macroTokenCount; ++i) {
         succeeded = macroTokens[i]->expand(expandedTokens,
                                            &source,
                                            args);
         if (!succeeded) {
-          return false;
+          pp.freeTokenVector(expandedTokens);
+          return;
         }
       }
 
-      return true;
+      int expandedTokenCount = (int) expandedTokens.size();
+      for (int i = 0; i < expandedTokenCount; ++i) {
+        pp.push(expandedTokens[i]);
+      }
     }
 
     bool macro_t::loadArgs(identifierToken &source,
@@ -331,7 +444,8 @@ namespace occa {
 
       // Clear args
       args.clear();
-      for (int i = 0; i < argCount; ++i) {
+      const int argc = argCount();
+      for (int i = 0; i < argc; ++i) {
         args.push_back(tokenVector());
       }
 
@@ -365,11 +479,11 @@ namespace occa {
         // Load next argument and check
         ++argIndex;
         args.push_back(tokenVector());
-        if (!hasVarArgs && (argIndex >= argCount)) {
-          if (argCount) {
+        if (!hasVarArgs && (argIndex >= argc)) {
+          if (argc) {
             std::stringstream ss;
             ss << "Too many arguments, expected "
-               << argCount << " argument(s)";
+               << argc << " argument(s)";
             printError(token, ss.str());
           } else {
             printError(token,

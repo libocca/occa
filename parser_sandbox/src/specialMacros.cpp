@@ -33,77 +33,104 @@ namespace occa {
     // defined()
     definedMacro::definedMacro(preprocessor &pp_) :
       macro_t(pp_, "defined") {
-      argCount = 1;
+      argNames.add("MACRO_NAME", 0);
     }
 
-    bool definedMacro::expand(identifierToken &source,
-                              tokenVector &expandedTokens) {
+    void definedMacro::expand(identifierToken &source) {
       bool isDefined = !!pp.getMacro(source.value);
-      expandedTokens.push_back(
-        new primitiveToken(source.origin,
-                           isDefined,
-                           isDefined ? "true" : "false")
-      );
-      return true;
+      pp.push(new primitiveToken(source.origin,
+                                 isDefined,
+                                 isDefined ? "true" : "false"));
     }
 
     // __has_include()
     hasIncludeMacro::hasIncludeMacro(preprocessor &pp_) :
       macro_t(pp_, "__has_include") {
-      argCount = 1;
+      argNames.add("INCLUDE_PATH", 0);
     }
 
-    bool hasIncludeMacro::expand(identifierToken &source,
-                                 tokenVector &expandedTokens) {
-      if ((expandedTokens.size() != 1) ||
-          !(expandedTokens[0]->type() & tokenType::string)) {
-        source.printError("Expected a string for the header to check");
-        return false;
+    void hasIncludeMacro::expand(identifierToken &source) {
+      // Make sure we have 3 tokens
+      tokenVector tokens;
+      token_t *token;
+      for (int i = 0; i < 3; ++i) {
+        if (pp.inputIsEmpty()) {
+          pp.freeTokenVector(tokens);
+          source.printError("Unfinished directive");
+          return;
+        }
+        tokens.push_back(pp.getSourceToken());
       }
-      const std::string &header = expandedTokens[0]->to<stringToken>().value;
+
+      std::string header;
+
+      // Test for opening (
+      token = tokens[0];
+      bool hasError = true;
+      if (token->type() & tokenType::op) {
+        operatorToken &opToken = token->to<operatorToken>();
+        hasError = (opToken.op.opType & operatorType::parenthesesStart);
+      }
+      if (hasError) {
+        token->printError("Expected a header argument, like (\"header-path\")");
+        pp.freeTokenVector(tokens);
+        return;
+      }
+
+      // Test for string
+      token = tokens[1];
+      if (token->type() & tokenType::string) {
+        header = token->to<stringToken>().value;
+      } else {
+        token->printError("Expected a string with the header path");
+        pp.freeTokenVector(tokens);
+        return;
+      }
+
+      // Test for closing )
+      token = tokens[2];
+      hasError = true;
+      if (token->type() & tokenType::op) {
+        operatorToken &opToken = token->to<operatorToken>();
+        hasError = (opToken.op.opType & operatorType::parenthesesEnd);
+      }
+      if (hasError) {
+        token->printError("Expected a closing )");
+        pp.freeTokenVector(tokens);
+        return;
+      }
+
       bool hasInclude = io::exists(header);
-      expandedTokens.push_back(
-        new primitiveToken(source.origin,
-                           hasInclude,
-                           hasInclude ? "true" : "false")
-      );
-      return true;
+      pp.push(new primitiveToken(source.origin,
+                                 hasInclude,
+                                 hasInclude ? "true" : "false"));
     }
 
     // __FILE__
     fileMacro::fileMacro(preprocessor &pp_) :
       macro_t(pp_, "__FILE__") {}
 
-    bool fileMacro::expand(identifierToken &source,
-                           tokenVector &expandedTokens) {
-      expandedTokens.push_back(
-        new stringToken(source.origin,
-                        source.origin.file->filename)
-      );
-      return true;
+    void fileMacro::expand(identifierToken &source) {
+      pp.push(new stringToken(source.origin,
+                              source.origin.file->filename));
     }
 
     // __LINE__
     lineMacro::lineMacro(preprocessor &pp_) :
       macro_t(pp_, "__LINE__") {}
 
-    bool lineMacro::expand(identifierToken &source,
-                           tokenVector &expandedTokens) {
+    void lineMacro::expand(identifierToken &source) {
       const int line = source.origin.position.line;
-      expandedTokens.push_back(
-        new primitiveToken(source.origin,
-                           line,
-                           occa::toString(line))
-      );
-      return true;
+      pp.push(new primitiveToken(source.origin,
+                                 line,
+                                 occa::toString(line)));
     }
 
     // __DATE__
     dateMacro::dateMacro(preprocessor &pp_) :
       macro_t(pp_, "__DATE__") {}
 
-    bool dateMacro::expand(identifierToken &source,
-                           tokenVector &expandedTokens) {
+    void dateMacro::expand(identifierToken &source) {
       static char month[12][5] = {
         "Jan", "Feb", "Mar", "Apr", "May", "Jun",
         "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
@@ -125,19 +152,15 @@ namespace occa {
            << ct->tm_year + 1900;
       }
 
-      expandedTokens.push_back(
-        new stringToken(source.origin,
-                        ss.str())
-      );
-      return true;
+      pp.push(new stringToken(source.origin,
+                              ss.str()));
     }
 
     // __TIME__
     timeMacro::timeMacro(preprocessor &pp_) :
       macro_t(pp_, "__TIME__") {}
 
-    bool timeMacro::expand(identifierToken &source,
-                           tokenVector &expandedTokens) {
+    void timeMacro::expand(identifierToken &source) {
       time_t t = ::time(NULL);
       struct tm *ct = ::localtime(&t);
 
@@ -159,11 +182,8 @@ namespace occa {
         ss << ct->tm_sec;
       }
 
-      expandedTokens.push_back(
-        new stringToken(source.origin,
-                        ss.str())
-      );
-      return true;
+      pp.push(new stringToken(source.origin,
+                              ss.str()));
     }
 
     // __COUNTER__
@@ -171,15 +191,11 @@ namespace occa {
       macro_t(pp_, "__COUNTER__"),
       counter(0) {}
 
-    bool counterMacro::expand(identifierToken &source,
-                              tokenVector &expandedTokens) {
+    void counterMacro::expand(identifierToken &source) {
       const int value = counter;
-      expandedTokens.push_back(
-        new primitiveToken(source.origin,
-                           value,
-                           occa::toString(value))
-      );
-      return true;
+      pp.push(new primitiveToken(source.origin,
+                                 value,
+                                 occa::toString(value)));
     }
   }
 }

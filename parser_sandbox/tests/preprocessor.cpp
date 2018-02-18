@@ -71,7 +71,7 @@ int getTokenType() {
 
 //---[ Tests ]--------------------------
 int main(const int argc, const char **argv) {
-  // testMacroDefines();
+  testMacroDefines();
   // testCppStandardTests();
   testErrorDefines();
   testSpecialMacros();
@@ -122,6 +122,11 @@ void testMacroDefines() {
     "#define I(A1, A2) # A1 ## A2\n"
     "I(1, 3)\n"
   );
+  while (!stream.isEmpty()) {
+    token_t *token_;
+    stream >> token_;
+    token_->print(std::cout);
+  }
 
   std::cerr << "Testing preprocessor errors:\n";
 }

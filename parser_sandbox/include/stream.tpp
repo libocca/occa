@@ -283,7 +283,8 @@ namespace occa {
     if (!cache.empty()) {
       return false;
     }
-    while (!this->inputIsEmpty()) {
+    while (!this->inputIsEmpty() &&
+           cache.empty()) {
       this->pop();
     }
     return cache.empty();
