@@ -50,7 +50,7 @@ void setStream(const std::string &s) {
 }
 
 void getToken() {
-  // delete token;
+  delete token;
   token = NULL;
   stream >> token;
 }

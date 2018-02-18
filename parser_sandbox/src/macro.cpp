@@ -81,7 +81,7 @@ namespace occa {
       tokenVector &argTokens = args[arg_];
       const int tokenCount = (int) argTokens.size();
       for (int i = 0; i < tokenCount; ++i) {
-        newTokens.push_back(argTokens[i]);
+        newTokens.push_back(argTokens[i]->clone());
       }
     }
 
