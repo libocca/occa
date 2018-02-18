@@ -139,23 +139,24 @@ namespace occa {
     bool macroConcat::expand(tokenVector &newTokens,
                              token_t *source,
                              std::vector<tokenVector> &args) {
-      // Evaluate all parts
+      // Get tokens to concat
+      tokenVector concatTokens;
       const int macroTokenCount = (int) tokens.size();
       for (int i = 0; i < macroTokenCount; ++i) {
-        bool success = tokens[i]->expand(newTokens, source, args);
+        bool success = tokens[i]->expand(concatTokens, source, args);
         if (!success) {
           return false;
         }
       }
 
       // Combine tokens to create one token identifier
-      const std::string newToken = stringifyTokens(newTokens, false);
+      const std::string concatValue = stringifyTokens(concatTokens, false);
 
       // Create token
-      tokenVector concatTokens;
+      concatTokens.clear();
       tokenizer::tokenize(concatTokens,
                           source->origin,
-                          newToken);
+                          concatValue);
 
       if (concatTokens.size() != 1) {
         thisToken->printError("Unable to concat tokens");
@@ -304,7 +305,7 @@ namespace occa {
     void macro_t::setDefinition(tokenVector &tokens) {
       setMacroTokens(tokens);
       stringifyMacroTokens();
-      // concatMacroTokens();
+      concatMacroTokens();
     }
 
     void macro_t::setMacroTokens(tokenVector &tokens) {
@@ -423,21 +424,22 @@ namespace occa {
         }
 
         // Get concat tokens
-        macroTokenVector_t concatMacroTokens;
-        concatMacroTokens.push_back(macroTokens[i - 1]);
+        macroTokenVector_t concatTokens;
+        concatTokens.push_back(macroTokens[i - 1]);
         for (lastIndex = (i + 1); lastIndex < tokenCount; lastIndex += 2) {
           delete macroTokens[lastIndex - 1];
 
           mToken = macroTokens[lastIndex];
+          concatTokens.push_back(mToken);
+
           if ((lastIndex == (tokenCount - 1)) ||
-              !isHashhash(mToken)) {
+              !isHashhash(macroTokens[lastIndex + 1])) {
+            lastIndex += 1;
             i = (lastIndex - 1);
             break;
           }
-          concatMacroTokens.push_back(mToken);
         }
-        newMacroTokens.push_back(new macroConcat(concatMacroTokens));
-        concatMacroTokens.clear();
+        newMacroTokens.push_back(new macroConcat(concatTokens));
       }
 
       // Push last remaining tokens and copy
