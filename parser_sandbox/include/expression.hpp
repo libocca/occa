@@ -55,9 +55,9 @@ namespace occa {
     //==================================
 
     // Using Shunting-Yard algorithm
-    exprNode* getExpression(const tokenVector &tokens);
+    exprNode* getExpression(tokenVector &tokens);
 
-    void getInitialExpression(const tokenVector &tokens,
+    void getInitialExpression(tokenVector &tokens,
                               expressionState &state);
 
     void pushOutputNode(token_t *token,

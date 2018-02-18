@@ -282,14 +282,6 @@ namespace occa {
       }
     }
 
-    void preprocessor::freeTokenVector(tokenVector &lineTokens) {
-      const int tokens = (int) lineTokens.size();
-      for (int i = 0; i < tokens; ++i) {
-        delete lineTokens[i];
-      }
-      lineTokens.clear();
-    }
-
     void preprocessor::warnOnNonEmptyLine(const std::string &message) {
       tokenVector lineTokens;
       getLineTokens(lineTokens);
@@ -370,10 +362,11 @@ namespace occa {
         // Prioritize possible variable if no () is found:
         //   #define FOO()
         //   int FOO;
-        push(&token);
-        // TODO: This token has to be processed
         if (nextToken) {
-          push(nextToken);
+          sourceCache.push_front(&token);
+          sourceCache.push_front(nextToken);
+        } else {
+          push(&token);
         }
         return;
       }
@@ -453,14 +446,19 @@ namespace occa {
         }
       }
 
+      freeTokenVector(lineTokens);
+
       // Default to #if false with error
+      bool isTrue = false;
       if (exprError) {
         pushStatus(ppStatus::ignoring |
                    ppStatus::foundIf);
-        return false;
+      } else {
+        isTrue = expr->evaluate();
       }
 
-      return expr->evaluate();
+      delete expr;
+      return isTrue;
     }
 
     void preprocessor::processIf(identifierToken &directive) {

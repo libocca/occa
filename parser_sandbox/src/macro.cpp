@@ -136,9 +136,11 @@ namespace occa {
           .from(false, thisToken->origin)
           .printError("Unable to stringify token");
 
-        newTokens.clear();
+        freeTokenVector(stringTokens);
+        freeTokenVector(newTokens);
         return false;
       }
+
       newTokens.push_back(stringTokens[0]);
       return true;
     }
@@ -148,11 +150,7 @@ namespace occa {
       tokens(tokens_) {}
 
     macroConcat::~macroConcat() {
-      const int macroTokenCount = (int) tokens.size();
-      for (int i = 0; i < macroTokenCount; ++i) {
-        delete tokens[i];
-      }
-      tokens.clear();
+      freeTokenVector(tokens);
     }
 
     bool macroConcat::expand(tokenVector &newTokens,
@@ -182,11 +180,31 @@ namespace occa {
           .from(false, thisToken->origin)
           .printError("Unable to concat tokens");
 
-        newTokens.clear();
+        freeTokenVector(concatTokens);
+        freeTokenVector(newTokens);
         return false;
       }
+
       newTokens.push_back(concatTokens[0]);
       return true;
+    }
+    //==================================
+
+    //---[ Helper Methods ]-------------
+    void freeTokenVectors(std::vector<tokenVector> &tokenVectors) {
+      const int vectorCount = (int) tokenVectors.size();
+      for (int i = 0; i < vectorCount; ++i) {
+        freeTokenVector(tokenVectors[i]);
+      }
+      tokenVectors.clear();
+    }
+
+    void freeTokenVector(macroTokenVector_t &mTokens) {
+      const int macroTokenCount = (int) mTokens.size();
+      for (int i = 0; i < macroTokenCount; ++i) {
+        delete mTokens[i];
+      }
+      mTokens.clear();
     }
     //==================================
 
@@ -208,11 +226,7 @@ namespace occa {
 
     macro_t::~macro_t() {
       delete &thisToken;
-      const int tokens = (int) macroTokens.size();
-      for (int i = 0; i < tokens; ++i) {
-        delete macroTokens[i];
-      }
-      macroTokens.clear();
+      freeTokenVector(macroTokens);
     }
 
     void macro_t::loadDefinition() {
@@ -261,7 +275,7 @@ namespace occa {
         // Test for arg name
         token_t *token = tokens[index++];
         if (!loadDefinitionArgument(token)) {
-          pp.freeTokenVector(tokens);
+          freeTokenVector(tokens);
           return;
         }
 
@@ -271,9 +285,11 @@ namespace occa {
         if (foundOp) {
           opType_t opType = token->to<operatorToken>().op.opType;
           if (opType & operatorType::comma) {
+            delete token;
             continue;
           }
           if (opType & operatorType::parenthesesEnd) {
+            delete token;
             loadedArgs = true;
             break;
           }
@@ -283,7 +299,7 @@ namespace occa {
           printError(token,
                      "Expected a , to separate arguments"
                      " or ) to finish the macro definition");
-          pp.freeTokenVector(tokens);
+          freeTokenVector(tokens);
           return;
         }
       }
@@ -429,7 +445,7 @@ namespace occa {
 
         printError(macroTokens[i],
                    "Can only stringify macro arguments");
-        macroTokens.clear();
+        freeTokenVector(macroTokens);
         return;
       }
 
@@ -445,14 +461,14 @@ namespace occa {
       if (isHashhash(macroTokens[0])) {
         printError(macroTokens[0],
                    "Macro definition cannot start with ##");
-        macroTokens.clear();
+        freeTokenVector(macroTokens);
         return;
       }
       if ((tokenCount > 1) &&
           isHashhash(macroTokens[tokenCount - 1])) {
         printError(macroTokens[tokenCount - 1],
                    "Macro definition cannot end with ##");
-        macroTokens.clear();
+        freeTokenVector(macroTokens);
         return;
       }
 
@@ -510,7 +526,7 @@ namespace occa {
                                                 &source,
                                                 args);
         if (!succeeded) {
-          pp.freeTokenVector(tokens);
+          freeTokenVector(macroTokens);
           return;
         }
       }
@@ -538,6 +554,7 @@ namespace occa {
         if (token->type() & tokenType::op) {
           opType_t opType = token->to<operatorToken>().op.opType;
           if (opType == operatorType::parenthesesEnd) {
+            delete token;
             return true;
           }
         }
@@ -559,6 +576,7 @@ namespace occa {
               printError(token,
                          "Macro does not take arguments");
             }
+            delete token;
             break;
           }
         }
@@ -576,9 +594,12 @@ namespace occa {
           continue;
         }
 
-        // Load next argument and check
+        // Starting next argument
         ++argIndex;
+        delete token;
       }
+
+      freeTokenVectors(args);
       return false;
     }
 
@@ -601,9 +622,10 @@ namespace occa {
         }
 
         printError(&source, ss.str());
-
+        freeTokenVectors(args);
         return false;
       }
+
       return true;
     }
 
@@ -645,6 +667,7 @@ namespace occa {
       const int tokenCount = (int) tokens.size();
       if (tokenCount == 0) {
         origin.printError("Expected an identifier");
+        freeTokenVector(tokens);
         return NULL;
       }
 

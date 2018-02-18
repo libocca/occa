@@ -63,9 +63,13 @@ namespace occa {
     }
 
     exprNode::exprNode(token_t *token_) :
-      token(token_) {}
+      token(token_
+            ? token_->clone()
+            : NULL) {}
 
-    exprNode::~exprNode() {}
+    exprNode::~exprNode() {
+      delete token;
+    }
 
     bool exprNode::canEvaluate() const {
       return false;

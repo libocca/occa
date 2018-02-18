@@ -24,8 +24,8 @@
 
 #include "occa/tools/io.hpp"
 
-#include "trie.hpp"
 #include "file.hpp"
+#include "trie.hpp"
 #include "type.hpp"
 
 namespace occa {
@@ -47,7 +47,7 @@ namespace occa {
       extern const char operators[];
     }
 
-    operatorTrie& getOperators();
+    void getOperators(operatorTrie &operators);
 
     namespace encodingType {
       extern const int none;
@@ -282,6 +282,10 @@ namespace occa {
 
       virtual void print(std::ostream &out) const;
     };
+    //==================================
+
+    //---[ Helper Methods ]-------------
+    void freeTokenVector(tokenVector &tokens);
     //==================================
   }
 }

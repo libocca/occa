@@ -66,7 +66,7 @@ namespace occa {
       for (int i = 0; i < tokenCount; ++i) {
         if (!(args[i]->type() & tokenType::string)) {
           args[i]->printError("Expected a string with the header path");
-          pp.freeTokenVector(tokens);
+          freeTokenVector(tokens);
           return;
         }
       }

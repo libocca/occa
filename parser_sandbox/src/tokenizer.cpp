@@ -80,25 +80,33 @@ namespace occa {
     tokenizer::tokenizer(const char *root) :
       lastToken(NULL),
       origin(filePosition(root)),
-      fp(origin.position) {}
+      fp(origin.position) {
+      getOperators(operators);
+    }
 
     tokenizer::tokenizer(file_t *file_,
                          const char *root) :
       lastToken(NULL),
       origin(*file_, filePosition(root)),
-      fp(origin.position) {}
+      fp(origin.position) {
+      getOperators(operators);
+    }
 
     tokenizer::tokenizer(fileOrigin origin_) :
       lastToken(NULL),
       origin(origin_),
-      fp(origin.position) {}
+      fp(origin.position) {
+      getOperators(operators);
+    }
 
     tokenizer::tokenizer(const tokenizer &stream) :
       lastToken(stream.lastToken),
       origin(stream.origin),
       fp(origin.position),
       stack(stream.stack),
-      sourceStack(stream.sourceStack) {}
+      sourceStack(stream.sourceStack) {
+      getOperators(operators);
+    }
 
 
     tokenizer& tokenizer::operator = (const tokenizer &stream) {
@@ -376,7 +384,6 @@ namespace occa {
 
     int tokenizer::peekForOperator() {
       push();
-      operatorTrie &operators = getOperators();
       operatorTrie::result_t result = operators.getLongest(fp.start);
       if (!result.success()) {
         printError("Not able to parse operator");
@@ -405,7 +412,6 @@ namespace occa {
       int type = shallowPeek();
       if (type & tokenType::op) {
         push();
-        operatorTrie &operators = getOperators();
         operatorTrie::result_t result = operators.getLongest(fp.start);
         popAndRewind();
         if (result.success() &&
@@ -612,7 +618,6 @@ namespace occa {
 
     token_t* tokenizer::getOperatorToken() {
       push();
-      operatorTrie &operators = getOperators();
       operatorTrie::result_t result = operators.getLongest(fp.start);
       if (!result.success()) {
         printError("Not able to parse operator");

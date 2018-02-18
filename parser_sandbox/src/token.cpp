@@ -20,7 +20,6 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  */
 #include "token.hpp"
-#include "occa/par/tls.hpp"
 
 namespace occa {
   namespace lang {
@@ -43,12 +42,7 @@ namespace occa {
       const char operators[]           = "!#%&()*+,-./:;<=>?[]^{|}~";
     }
 
-    operatorTrie& getOperators() {
-      static tls<operatorTrie> operators_;
-      operatorTrie &operators = operators_.value();
-      if (!operators.isEmpty()) {
-        return operators;
-      }
+    void getOperators(operatorTrie &operators) {
       operators.add(op::not_.str             , &op::not_);
       operators.add(op::tilde.str            , &op::tilde);
       operators.add(op::leftIncrement.str    , &op::leftIncrement);
@@ -116,8 +110,6 @@ namespace occa {
 
       operators.add(op::cudaCallStart.str    , &op::cudaCallStart);
       operators.add(op::cudaCallEnd.str      , &op::cudaCallEnd);
-
-      return operators;
     }
 
     namespace encodingType {
@@ -406,6 +398,17 @@ namespace occa {
       } else {
         out << '"' << value << '"';
       }
+    }
+    //==================================
+
+
+    //---[ Helper Methods ]-------------
+    void freeTokenVector(tokenVector &lineTokens) {
+      const int tokens = (int) lineTokens.size();
+      for (int i = 0; i < tokens; ++i) {
+        delete lineTokens[i];
+      }
+      lineTokens.clear();
     }
     //==================================
   }

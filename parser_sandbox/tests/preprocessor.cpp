@@ -40,9 +40,10 @@ using namespace occa::lang;
 //---[ Util Methods ]-------------------
 std::string source;
 occa::stream<token_t*> stream;
-token_t *token = NULL;
+token_t *token;
 
 void setStream(const std::string &s) {
+  token = NULL;
   ::source = s;
   stream = (tokenizer(source.c_str())
             .map(preprocessor())
@@ -72,7 +73,7 @@ int getTokenType() {
 //---[ Tests ]--------------------------
 int main(const int argc, const char **argv) {
   testMacroDefines();
-  testCppStandardTests();
+  //testCppStandardTests();
   testErrorDefines();
   testSpecialMacros();
   testWeirdCase();
@@ -127,6 +128,7 @@ void testMacroDefines() {
   while (!stream.isEmpty()) {
     getToken();
   }
+  delete token;
 }
 
 void testCppStandardTests() {
@@ -142,6 +144,7 @@ void testCppStandardTests() {
   getToken();
   const std::string output = token->to<stringToken>().value;
   OCCA_ASSERT_EQUAL("x ## y", output);
+  delete token;
   return;
 
   // Test 2 in C++ standard

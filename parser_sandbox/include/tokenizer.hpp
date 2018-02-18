@@ -27,6 +27,7 @@
 #include "file.hpp"
 #include "printer.hpp"
 #include "stream.hpp"
+#include "trie.hpp"
 
 namespace occa {
   namespace lang {
@@ -34,6 +35,7 @@ namespace occa {
 
     typedef std::vector<token_t*> tokenVector;
     typedef std::vector<fileOrigin> originVector;
+    typedef trie<const operator_t*> operatorTrie;
 
     int getEncodingType(const std::string &str);
     int getCharacterEncoding(const std::string &str);
@@ -49,6 +51,8 @@ namespace occa {
 
       originVector stack;
       std::vector<originVector> sourceStack;
+
+      operatorTrie operators;
 
       tokenizer(const char *root);
 

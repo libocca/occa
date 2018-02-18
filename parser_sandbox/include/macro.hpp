@@ -106,6 +106,11 @@ namespace occa {
     };
     //==================================
 
+    //---[ Helper Methods ]-------------
+    void freeTokenVectors(std::vector<tokenVector> &tokenVectors);
+    void freeTokenVector(macroTokenVector_t &mTokens);
+    //==================================
+
     //---[ Macro ]----------------------
     class macro_t {
     public:
@@ -175,6 +180,7 @@ namespace occa {
                              const std::string &name_,
                              const std::string &contents);
     };
+    //==================================
   }
 }
 

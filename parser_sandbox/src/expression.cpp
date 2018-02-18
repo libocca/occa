@@ -19,8 +19,9 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  */
-#include "expression.hpp"
 #include "occa/tools/string.hpp"
+
+#include "expression.hpp"
 
 namespace occa {
   namespace lang {
@@ -48,16 +49,16 @@ namespace occa {
     }
     //==================================
 
-    exprNode* getExpression(const tokenVector &tokens) {
+    exprNode* getExpression(tokenVector &tokens) {
       if (!tokens.size()) {
         return &(noExprNode.clone());
       }
 
-      // TODO: Delete tokens
       // TODO: Ternary operator
       expressionState state;
       getInitialExpression(tokens, state);
       if (state.hasError) {
+        freeTokenVector(tokens);
         return NULL;
       }
 
@@ -67,7 +68,7 @@ namespace occa {
                       state);
 
         if (state.hasError) {
-          // TODO: Clear tokens
+          freeTokenVector(tokens);
           return NULL;
         }
       }
@@ -80,14 +81,17 @@ namespace occa {
       if (outputCount > 1) {
         state.output.pop();
         state.lastOutput().token->printError("Unable to form an expression");
+        freeTokenVector(tokens);
         return NULL;
       }
+
+      freeTokenVector(tokens);
 
       // Return the root node
       return &state.lastOutput();
     }
 
-    void getInitialExpression(const tokenVector &tokens,
+    void getInitialExpression(tokenVector &tokens,
                               expressionState &state) {
 
       const int outputTokenType = (tokenType::identifier |
@@ -393,6 +397,7 @@ namespace occa {
         opToken.printError("Ambiguous operator");
         return false;
       }
+
       return !(prevType & chainable);
     }
 
@@ -405,7 +410,6 @@ namespace occa {
       }
 
       fileOrigin origin = opToken.origin;
-      delete &opToken;
 
       const bool isLeftUnary = operatorIsLeftUnary(opToken, state);
       if (state.hasError) {

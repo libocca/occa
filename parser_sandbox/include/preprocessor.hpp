@@ -111,7 +111,6 @@ namespace occa {
 
       void skipToNewline();
       void getLineTokens(tokenVector &lineTokens);
-      void freeTokenVector(tokenVector &lineTokens);
       void warnOnNonEmptyLine(const std::string &message);
 
       void processToken(token_t *token);
