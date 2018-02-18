@@ -452,6 +452,7 @@ namespace occa {
 
       // Remove the newline token
       if (lineTokens.size()) {
+        delete lineTokens.back();
         lineTokens.pop_back();
       }
 
