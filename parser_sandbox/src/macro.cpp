@@ -35,9 +35,9 @@ namespace occa {
 
     //---[ Macro Tokens ]---------------
     macroToken::macroToken(token_t *thisToken_) :
-      thisToken(thisToken_) {}
+      thisToken(thisToken_->clone()) {}
 
-    macroToken::~macroToken() {
+    macroToken::~macroToken(){
       delete thisToken;
     }
 
@@ -75,6 +75,8 @@ namespace occa {
       arg(arg_),
       argc(argc_) {}
 
+    macroArgument::~macroArgument() {}
+
     void macroArgument::expandArg(tokenVector &newTokens,
                                   std::vector<tokenVector> &args,
                                   const int arg_) {
@@ -101,7 +103,7 @@ namespace occa {
     }
 
     macroStringify::macroStringify(macroToken *token_) :
-      macroToken(token_->thisToken->clone()),
+      macroToken(token_->thisToken),
       token(token_) {}
 
     macroStringify::~macroStringify() {
@@ -115,6 +117,7 @@ namespace occa {
       tokenVector stringTokens;
       bool success = token->expand(stringTokens, source, args);
       if (!success) {
+        freeTokenVector(stringTokens);
         return false;
       }
 
@@ -126,7 +129,7 @@ namespace occa {
       value += '"';
 
       // Create token
-      stringTokens.clear();
+      freeTokenVector(stringTokens);
       tokenizer::tokenize(stringTokens,
                           source->origin,
                           value);
@@ -137,7 +140,6 @@ namespace occa {
           .printError("Unable to stringify token");
 
         freeTokenVector(stringTokens);
-        freeTokenVector(newTokens);
         return false;
       }
 
@@ -146,7 +148,7 @@ namespace occa {
     }
 
     macroConcat::macroConcat(const macroTokenVector_t &tokens_) :
-      macroToken(tokens_[0]->thisToken->clone()),
+      macroToken(tokens_[0]->thisToken),
       tokens(tokens_) {}
 
     macroConcat::~macroConcat() {
@@ -162,6 +164,7 @@ namespace occa {
       for (int i = 0; i < macroTokenCount; ++i) {
         bool success = tokens[i]->expand(concatTokens, source, args);
         if (!success) {
+          freeTokenVector(concatTokens);
           return false;
         }
       }
@@ -170,7 +173,7 @@ namespace occa {
       const std::string concatValue = stringifyTokens(concatTokens, false);
 
       // Create token
-      concatTokens.clear();
+      freeTokenVector(concatTokens);
       tokenizer::tokenize(concatTokens,
                           source->origin,
                           concatValue);
@@ -181,7 +184,6 @@ namespace occa {
           .printError("Unable to concat tokens");
 
         freeTokenVector(concatTokens);
-        freeTokenVector(newTokens);
         return false;
       }
 
@@ -240,8 +242,10 @@ namespace occa {
 
       // Remove the newline token
       if (tokens.size()) {
+        delete tokens.back();
         tokens.pop_back();
       }
+
       if (!tokens.size()) {
         return;
       }
@@ -249,12 +253,14 @@ namespace occa {
       token_t *token = tokens[0];
       if (!(token->type() & tokenType::op)) {
         setDefinition(tokens);
+        freeTokenVector(tokens);
         return;
       }
 
       operatorToken &opToken = token->to<operatorToken>();
       if (!(opToken.op.opType & operatorType::parenthesesStart)) {
         setDefinition(tokens);
+        freeTokenVector(tokens);
         return;
       }
 
@@ -263,12 +269,16 @@ namespace occa {
       dim_t posDistance = thisToken.origin.distanceTo(token->origin);
       if (posDistance != 0) {
         setDefinition(tokens);
+        freeTokenVector(tokens);
         return;
       }
 
+      // Remove ( token
       delete token;
       tokens.erase(tokens.begin());
+
       loadFunctionLikeDefinition(tokens);
+      freeTokenVector(tokens);
     }
 
     void macro_t::loadFunctionLikeDefinition(tokenVector &tokens) {
@@ -280,7 +290,6 @@ namespace occa {
         // Test for arg name
         token_t *token = tokens[index++];
         if (!loadDefinitionArgument(token)) {
-          freeTokenVector(tokens);
           return;
         }
 
@@ -290,11 +299,9 @@ namespace occa {
         if (foundOp) {
           opType_t opType = token->to<operatorToken>().op.opType;
           if (opType & operatorType::comma) {
-            delete token;
             continue;
           }
           if (opType & operatorType::parenthesesEnd) {
-            delete token;
             loadedArgs = true;
             break;
           }
@@ -304,12 +311,14 @@ namespace occa {
           printError(token,
                      "Expected a , to separate arguments"
                      " or ) to finish the macro definition");
-          freeTokenVector(tokens);
           return;
         }
       }
 
       if (loadedArgs) {
+        for (int i = 0; i < index; ++i) {
+          delete tokens[i];
+        }
         for (int i = index; i < tokenCount; ++i) {
           tokens[i - index] = tokens[i];
         }
@@ -422,14 +431,10 @@ namespace occa {
       macroTokenVector_t newMacroTokens;
       for (int i = 0; i < tokenCount; ++i) {
         macroToken *mToken = macroTokens[i];
-        if (!isHash(mToken)) {
+        if (!isHash(mToken) ||
+            (i == (tokenCount - 1))) {
           newMacroTokens.push_back(macroTokens[i]);
           continue;
-        }
-
-        if (i == (tokenCount - 1)) {
-          newMacroTokens.push_back(macroTokens[i]);
-          break;
         }
 
         ++i;
@@ -450,7 +455,11 @@ namespace occa {
 
         printError(macroTokens[i],
                    "Can only stringify macro arguments");
-        freeTokenVector(macroTokens);
+        for (int j = (i - 1); j < tokenCount; ++j) {
+          delete macroTokens[i];
+        }
+        macroTokens.clear();
+        freeTokenVector(newMacroTokens);
         return;
       }
 
@@ -521,6 +530,7 @@ namespace occa {
       std::vector<tokenVector> args;
       if (!loadArgs(source, args) ||
           !checkArgs(source, args)) {
+        freeTokenVectors(args);
         return;
       }
 
@@ -531,10 +541,11 @@ namespace occa {
                                                 &source,
                                                 args);
         if (!succeeded) {
-          freeTokenVector(macroTokens);
-          return;
+          break;
         }
       }
+      freeTokenVector(tokens);
+      freeTokenVectors(args);
     }
 
     bool macro_t::loadArgs(identifierToken &source,
@@ -604,7 +615,6 @@ namespace occa {
         delete token;
       }
 
-      freeTokenVectors(args);
       return false;
     }
 
@@ -627,7 +637,6 @@ namespace occa {
         }
 
         printError(&source, ss.str());
-        freeTokenVectors(args);
         return false;
       }
 
@@ -681,6 +690,7 @@ namespace occa {
 
       macro_t &macro = *(new macro_t(pp_, macroToken));
       macro.setDefinition(tokens);
+      freeTokenVector(tokens);
 
       // Macro clones the token
       delete &macroToken;

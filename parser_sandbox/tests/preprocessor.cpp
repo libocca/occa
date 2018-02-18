@@ -74,21 +74,16 @@ int getTokenType() {
 int main(const int argc, const char **argv) {
   testMacroDefines();
   //testCppStandardTests();
-  // testErrorDefines();
-  // testSpecialMacros();
-  // testWeirdCase();
-  // testIfElse();
-  // testIfElseDefines();
-  // testEval();
+  testErrorDefines();
+  testSpecialMacros();
+  testWeirdCase();
+  testIfElse();
+  testIfElseDefines();
+  testEval();
 }
 
 void testMacroDefines() {
   std::cerr << "Testing preprocessor errors:\n";
-  setStream(
-    // Test #define
-    "#define A\n"
-  );
-#if 0
   setStream(
     // Test #define
     "#define A\n"
@@ -130,7 +125,6 @@ void testMacroDefines() {
     "#define J(A1, A2) # A1 ## A2\n"
     "J(1, 3)\n"
   );
-#endif
   while (!stream.isEmpty()) {
     getToken();
   }

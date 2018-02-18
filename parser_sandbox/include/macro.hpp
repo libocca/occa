@@ -71,6 +71,7 @@ namespace occa {
       macroArgument(token_t *token_,
                     const int arg_,
                     const int argc_);
+      ~macroArgument();
 
       void expandArg(tokenVector &newTokens,
                      std::vector<tokenVector> &args,

@@ -366,6 +366,7 @@ namespace occa {
       if (macro) {
         if (!macro->isFunctionLike()) {
           expandMacro(token, *macro);
+          delete &token;
           return;
         }
 
@@ -380,6 +381,7 @@ namespace occa {
           const opType_t opType = nextToken->to<operatorToken>().op.opType;
           if (opType & operatorType::parenthesesStart) {
             expandMacro(token, *macro);
+            delete &token;
             delete nextToken;
             return;
           }
