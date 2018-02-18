@@ -82,6 +82,7 @@ int main(const int argc, const char **argv) {
 }
 
 void testMacroDefines() {
+#if 0
   setStream(
     // Test #define
     "#define A\n"
@@ -96,31 +97,32 @@ void testMacroDefines() {
     "#define D(A1, A2) A1 A2 A2 A1\n"
     "D(2, 3)\n"
     // Test stringify
-    "#define H(A1) #A1\n"
-    "H(1    2 3     ....   /path/to/somewhere  )\n"
+    "#define E(A1) #A1\n"
+    "E(1    2 3     ....   /path/to/somewhere  )\n"
+    "E(# ## ### #### ### ## #)\n"
     // Test multi-token stringify
-    "#define H(A1, A2) #A1 #A2\n"
-    "H(12, 34)\n"
+    "#define F(A1, A2) #A1 #A2\n"
+    "F(12, 34)\n"
     // Test concat
-    "#define E(A1, A2) A1 ## A2\n"
-    "E(, 6)\n"
-    "E(0, 7)\n"
+    "#define G(A1, A2) A1 ## A2\n"
+    "G(, 6)\n"
+    "G(0, 7)\n"
     // Test varargs
-    "#define F(A1, ...) A1 __VA_ARGS__\n"
-    "F(7,)\n"
-    "F(8, 9, 10,)\n"
+    "#define H(A1, ...) A1 __VA_ARGS__\n"
+    "H(7,)\n"
+    "H(8, 9, 10,)\n"
     // Test only varargs
-    "#define G(...) (X, ##__VA_ARGS__)\n"
-    "G(11,)\n"
-    "G()\n"
+    "#define I(...) (X, ##__VA_ARGS__)\n"
+    "I(11,)\n"
+    "I()\n"
     // Errors:
     // - Argument missing
     "C()\n"
     // - Too many arguments
     "D(4, 5, 6)\n"
     // - Test stringify with concat fail
-    "#define I(A1, A2) # A1 ## A2\n"
-    "I(1, 3)\n"
+    "#define J(A1, A2) # A1 ## A2\n"
+    "J(1, 3)\n"
   );
   while (!stream.isEmpty()) {
     token_t *token_ = NULL;
@@ -137,6 +139,7 @@ void testMacroDefines() {
   }
 
   std::cerr << "Testing preprocessor errors:\n";
+#endif
 }
 
 void testCppStandardTests() {

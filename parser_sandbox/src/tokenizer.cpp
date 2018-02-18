@@ -741,9 +741,7 @@ namespace occa {
       token_t *token;
       while (!tstream.isEmpty()) {
         tstream.setNext(token);
-        if (token) {
-          tokens.push_back(token);
-        }
+        tokens.push_back(token);
       }
     }
   }

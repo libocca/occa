@@ -96,12 +96,13 @@ namespace occa {
                                 token_t *source,
                                 std::vector<tokenVector> &args) {
       // Get tokens to stringify
-      bool success = token->expand(newTokens, source, args);
+      tokenVector stringTokens;
+      bool success = token->expand(stringTokens, source, args);
       if (!success) {
         return false;
       }
 
-      const std::string rawValue = stringifyTokens(newTokens, true);
+      const std::string rawValue = stringifyTokens(stringTokens, true);
 
       // Escape double quotes
       std::string value = "\"";
@@ -109,11 +110,18 @@ namespace occa {
       value += '"';
 
       // Create token
-      newTokens.clear();
-      tokenizer::tokenize(newTokens,
+      stringTokens.clear();
+      tokenizer::tokenize(stringTokens,
                           source->origin,
                           value);
-      return (newTokens.size() == 1);
+
+      if (stringTokens.size() != 1) {
+        thisToken->printError("Unable to stringify token");
+        newTokens.clear();
+        return false;
+      }
+      newTokens.push_back(stringTokens[0]);
+      return true;
     }
 
     macroConcat::macroConcat(const macroTokenVector_t &tokens_) :
@@ -144,11 +152,18 @@ namespace occa {
       const std::string newToken = stringifyTokens(newTokens, false);
 
       // Create token
-      newTokens.clear();
-      tokenizer::tokenize(newTokens,
+      tokenVector concatTokens;
+      tokenizer::tokenize(concatTokens,
                           source->origin,
                           newToken);
-      return (newTokens.size() == 1);
+
+      if (concatTokens.size() != 1) {
+        thisToken->printError("Unable to concat tokens");
+        newTokens.clear();
+        return false;
+      }
+      newTokens.push_back(concatTokens[0]);
+      return true;
     }
     //==================================
 
@@ -318,6 +333,32 @@ namespace occa {
       }
     }
 
+    const operator_t* macro_t::getOperator(macroToken *mToken) {
+      macroRawToken *rawToken = dynamic_cast<macroRawToken*>(mToken);
+      if (!rawToken) {
+        return NULL;
+      }
+
+      token_t *token = rawToken->thisToken;
+      if (!(token->type() & tokenType::op)) {
+        return NULL;
+      }
+
+      return &(token->to<operatorToken>().op);
+    }
+
+    bool macro_t::isHash(macroToken *mToken) {
+      const operator_t *op = getOperator(mToken);
+      return (op &&
+              (op->opType & operatorType::hash));
+    }
+
+    bool macro_t::isHashhash(macroToken *mToken) {
+      const operator_t *op = getOperator(mToken);
+      return (op &&
+              (op->opType & operatorType::hashhash));
+    }
+
     void macro_t::stringifyMacroTokens() {
       const int tokenCount = (int) macroTokens.size();
       if (!tokenCount) {
@@ -326,29 +367,25 @@ namespace occa {
 
       macroTokenVector_t newMacroTokens;
       for (int i = 0; i < tokenCount; ++i) {
-        macroRawToken *mToken = dynamic_cast<macroRawToken*>(macroTokens[i]);
-        if (!mToken) {
+        macroToken *mToken = macroTokens[i];
+        if (!isHash(mToken)) {
           newMacroTokens.push_back(macroTokens[i]);
           continue;
         }
 
-        token_t *token = mToken->thisToken;
-        if (!(token->type() & tokenType::op) ||
-            !(token->to<operatorToken>().op.opType & operatorType::hash)) {
-          newMacroTokens.push_back(mToken);
-          continue;
+        delete mToken;
+        if (i == (tokenCount - 1)) {
+          break;
         }
 
-        delete mToken;
-        if (i < (tokenCount - 1)) {
-          ++i;
-          macroArgument *argToken = dynamic_cast<macroArgument*>(macroTokens[i]);
-          if (argToken) {
-            newMacroTokens.push_back(new macroStringify(argToken));
-          } else {
-            macroTokens[i]->thisToken->printError("Can only stringify macro arguments");
-            return;
-          }
+        ++i;
+        macroArgument *argToken = dynamic_cast<macroArgument*>(macroTokens[i]);
+        if (argToken) {
+          newMacroTokens.push_back(new macroStringify(argToken));
+        } else {
+          macroTokens[i]->thisToken->printError("Can only stringify macro arguments");
+          macroTokens.clear();
+          return;
         }
       }
 
@@ -361,61 +398,52 @@ namespace occa {
         return;
       }
 
-      macroTokenVector_t newMacroTokens, concatMacroTokens;
-      bool concatenating = false;
-      for (int i = 0; i < tokenCount; ++i) {
-        macroRawToken *mToken = dynamic_cast<macroRawToken*>(macroTokens[i]);
-
-        token_t *token = (mToken
-                          ? mToken->thisToken
-                          : NULL);
-
-        operatorToken *opToken = ((token_t::safeType(token) & tokenType::op)
-                                  ? &(token->to<operatorToken>())
-                                  : NULL);
-
-        // First test the case without ##
-        if (!opToken ||
-            !(opToken->op.opType & operatorType::hashhash)) {
-
-          bool makeConcat = concatMacroTokens.size();
-          if (!concatenating) {
-            newMacroTokens.push_back(mToken);
-          } else {
-            concatMacroTokens.push_back(mToken);
-            concatenating = false;
-            makeConcat    = (i == (tokenCount - 1));
-          }
-
-          if (makeConcat) {
-            newMacroTokens.push_back(new macroConcat(concatMacroTokens));
-            concatMacroTokens.clear();
-          }
-
-          continue;
-        }
-
-        // Test if ## occurred in the beginning or ending
-        if (i == 0) {
-          token->printError("Macro definition cannot start with ##");
-          macroTokens.clear();
-          return;
-        }
-        else if (i == (tokenCount - 1)) {
-          token->printError("Macro definition cannot end with ##");
-          macroTokens.clear();
-          return;
-        }
-
-        // Add concat tokens
-        if (!concatenating) {
-          newMacroTokens.pop_back();
-        }
-        concatenating = true;
-        concatMacroTokens.push_back(macroTokens[i - 1]);
-        delete mToken;
+      if (isHashhash(macroTokens[0])) {
+        macroTokens[0]->thisToken->printError("Macro definition cannot start with ##");
+        macroTokens.clear();
+        return;
+      }
+      if ((tokenCount > 1) &&
+          isHashhash(macroTokens[tokenCount - 1])) {
+        macroTokens[tokenCount - 1]->thisToken->printError("Macro definition cannot end with ##");
+        macroTokens.clear();
+        return;
       }
 
+      macroTokenVector_t newMacroTokens;
+      int lastIndex = 0;
+      for (int i = 0; i < tokenCount; ++i) {
+        macroToken *mToken = macroTokens[i];
+        if (!isHashhash(mToken)) {
+          continue;
+        }
+        // Push tokens between concatenations
+        for (int j = lastIndex; j < (i - 1); ++j) {
+          newMacroTokens.push_back(macroTokens[j]);
+        }
+
+        // Get concat tokens
+        macroTokenVector_t concatMacroTokens;
+        concatMacroTokens.push_back(macroTokens[i - 1]);
+        for (lastIndex = (i + 1); lastIndex < tokenCount; lastIndex += 2) {
+          delete macroTokens[lastIndex - 1];
+
+          mToken = macroTokens[lastIndex];
+          if ((lastIndex == (tokenCount - 1)) ||
+              !isHashhash(mToken)) {
+            i = (lastIndex - 1);
+            break;
+          }
+          concatMacroTokens.push_back(mToken);
+        }
+        newMacroTokens.push_back(new macroConcat(concatMacroTokens));
+        concatMacroTokens.clear();
+      }
+
+      // Push last remaining tokens and copy
+      for (int j = lastIndex; j < tokenCount; ++j) {
+        newMacroTokens.push_back(macroTokens[j]);
+      }
       macroTokens = newMacroTokens;
     }
 

@@ -139,6 +139,11 @@ namespace occa {
 
       void setDefinition(tokenVector &tokens);
       void setMacroTokens(tokenVector &tokens);
+
+      const operator_t* getOperator(macroToken *mToken);
+      bool isHash(macroToken *mToken);
+      bool isHashhash(macroToken *mToken);
+
       void stringifyMacroTokens();
       void concatMacroTokens();
 

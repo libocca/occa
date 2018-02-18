@@ -194,6 +194,8 @@ namespace occa {
     }
 
     void preprocessor::pop() {
+      decrementNewline();
+
       token_t *token = getSourceToken();
       const int tokenType = token->type();
 
