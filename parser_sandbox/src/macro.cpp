@@ -682,6 +682,9 @@ namespace occa {
       macro_t &macro = *(new macro_t(pp_, macroToken));
       macro.setDefinition(tokens);
 
+      // Macro clones the token
+      delete &macroToken;
+
       return &macro;
     }
     //==================================

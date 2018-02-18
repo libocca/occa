@@ -658,6 +658,9 @@ namespace occa {
       macro_t &macro = *(new macro_t(*this, token->to<identifierToken>()));
       macro.loadDefinition();
       sourceMacros.add(macro.name(), &macro);
+
+      // Macro clones the token
+      delete token;
     }
 
     void preprocessor::processUndef(identifierToken &directive) {
