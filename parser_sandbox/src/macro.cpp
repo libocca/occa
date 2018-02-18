@@ -69,18 +69,34 @@ namespace occa {
     }
 
     macroArgument::macroArgument(token_t *thisToken_,
-                                 const int arg_) :
+                                 const int arg_,
+                                 const int argc_) :
       macroToken(thisToken_),
-      arg(arg_) {}
+      arg(arg_),
+      argc(argc_) {}
 
-    bool macroArgument::expand(tokenVector &newTokens,
-                               token_t *source,
-                               std::vector<tokenVector> &args) {
-      tokenVector &argTokens = args[arg];
+    void macroArgument::expandArg(tokenVector &newTokens,
+                                  std::vector<tokenVector> &args,
+                                  const int arg_) {
+      tokenVector &argTokens = args[arg_];
       const int tokenCount = (int) argTokens.size();
       for (int i = 0; i < tokenCount; ++i) {
         newTokens.push_back(argTokens[i]);
       }
+    }
+
+    bool macroArgument::expand(tokenVector &newTokens,
+                               token_t *source,
+                               std::vector<tokenVector> &args) {
+      if (arg >= 0) {
+        expandArg(newTokens, args, arg);
+      } else {
+        const int realArgc = (int) args.size();
+        for (int i = argc; i < realArgc; ++i) {
+          expandArg(newTokens, args, i);
+        }
+      }
+
       return true;
     }
 
@@ -298,6 +314,9 @@ namespace occa {
       if (!hasVarArgs) {
         argNames.add(token->to<identifierToken>().value,
                      argNames.size());
+      } else {
+        argNames.add(VA_ARGS,
+                     -1);
       }
       return true;
     }
@@ -314,18 +333,22 @@ namespace occa {
         return;
       }
 
+      const int argc = argCount();
+
       for (int i = 0; i < tokenCount; ++i) {
         token_t *token = tokens[i];
         if (!token) {
           continue;
         }
-        if (token->type() & tokenType::identifier) {
+        const int tokenType = token->type();
+        if (tokenType & tokenType::identifier) {
           const std::string &value = token->to<identifierToken>().value;
           intTrie::result_t result = argNames.get(value);
           if (result.success()) {
             macroTokens.push_back(
               new macroArgument(token,
-                                result.value())
+                                result.value(),
+                                argc)
             );
             continue;
           }
@@ -452,8 +475,8 @@ namespace occa {
     // Assumes ( has already been loaded and verified
     void macro_t::expand(identifierToken &source) {
       std::vector<tokenVector> args;
-      bool succeeded = loadArgs(source, args);
-      if (!succeeded) {
+      if (!loadArgs(source, args) ||
+          !checkArgs(args)) {
         return;
       }
 
@@ -461,9 +484,9 @@ namespace occa {
       tokenVector expandedTokens;
       const int macroTokenCount = (int) macroTokens.size();
       for (int i = 0; i < macroTokenCount; ++i) {
-        succeeded = macroTokens[i]->expand(expandedTokens,
-                                           &source,
-                                           args);
+        bool succeeded = macroTokens[i]->expand(expandedTokens,
+                                                &source,
+                                                args);
         if (!succeeded) {
           pp.freeTokenVector(expandedTokens);
           return;
@@ -482,14 +505,9 @@ namespace occa {
         return true;
       }
 
-      // Clear args
-      args.clear();
       const int argc = argCount();
-      for (int i = 0; i < argc; ++i) {
-        args.push_back(tokenVector());
-      }
-
       int argIndex = 0;
+
       token_t *token = NULL;
       while (true) {
         pp >> token;
@@ -498,20 +516,44 @@ namespace occa {
                      "Not able to find closing )");
           break;
         }
+
+        // Check for closing ) first
+        if (token->type() & tokenType::op) {
+          opType_t opType = token->to<operatorToken>().op.opType;
+          if (opType == operatorType::parenthesesEnd) {
+            return true;
+          }
+        }
+
+        // Make sure we don't go out of bounds
+        if (argIndex >= (int) args.size()) {
+          args.push_back(tokenVector());
+
+          if (!hasVarArgs && (argIndex >= argc)) {
+            if (argc) {
+              std::stringstream ss;
+              ss << "Too many arguments, expected "
+                 << argc << " argument";
+              if (argc > 1) {
+                ss << 's';
+              }
+              printError(token, ss.str());
+            } else {
+              printError(token,
+                         "Macro does not take arguments");
+            }
+            break;
+          }
+        }
+
         if (token->type() != tokenType::op) {
           // Add token to current arg
           args[argIndex].push_back(token);
           continue;
         }
 
-        // Check for closing )
-        opType_t opType = token->to<operatorToken>().op.opType;
-        if (opType == operatorType::parenthesesEnd) {
-          return true;
-        }
-
         // Check for comma
-        if (opType != operatorType::comma) {
+        if (token->to<operatorToken>().op.opType != operatorType::comma) {
           // Add token to current arg
           args[argIndex].push_back(token);
           continue;
@@ -519,24 +561,31 @@ namespace occa {
 
         // Load next argument and check
         ++argIndex;
-        args.push_back(tokenVector());
-        if (!hasVarArgs && (argIndex >= argc)) {
-          if (argc) {
-            std::stringstream ss;
-            ss << "Too many arguments, expected "
-               << argc << " argument";
-            if (argc > 1) {
-              ss << 's';
-            }
-            printError(token, ss.str());
-          } else {
-            printError(token,
-                       "Macro does not take arguments");
-          }
-          break;
-        }
       }
       return false;
+    }
+
+    bool macro_t::checkArgs(std::vector<tokenVector> &args) {
+      // Make sure we dont'
+      const int realArgc = argCount();
+      const int argc     = (int) args.size();
+
+      if (argc < realArgc) {
+        std::stringstream ss;
+        ss << "Expected " << realArgc << " argument";
+        if (realArgc > 1) {
+          ss << 's';
+        }
+        ss << ", instead found ";
+        if (argc) {
+          ss << argc;
+        } else {
+          ss << "none";
+        }
+        thisToken.printError(ss.str());
+        return false;
+      }
+      return true;
     }
 
     void macro_t::printError(token_t *token,

@@ -82,7 +82,7 @@ int main(const int argc, const char **argv) {
 }
 
 void testMacroDefines() {
-#if 0
+  std::cerr << "Testing preprocessor errors:\n";
   setStream(
     // Test #define
     "#define A\n"
@@ -112,7 +112,7 @@ void testMacroDefines() {
     "H(7,)\n"
     "H(8, 9, 10,)\n"
     // Test only varargs
-    "#define I(...) (X, ##__VA_ARGS__)\n"
+    "#define I(...) 5 ##__VA_ARGS__\n"
     "I(11,)\n"
     "I()\n"
     // Errors:
@@ -127,19 +127,7 @@ void testMacroDefines() {
   while (!stream.isEmpty()) {
     token_t *token_ = NULL;
     stream >> token_;
-    if (token_) {
-      if (!(token_->type() & occa::lang::tokenType::newline)) {
-        std::cout << '[';
-        token_->print(std::cout);
-        std::cout << "]\n";
-      } else {
-        std::cout << '\n';
-      }
-    }
   }
-
-  std::cerr << "Testing preprocessor errors:\n";
-#endif
 }
 
 void testCppStandardTests() {

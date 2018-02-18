@@ -66,9 +66,15 @@ namespace occa {
     class macroArgument : public macroToken {
     public:
       int arg;
+      int argc;
 
       macroArgument(token_t *token_,
-                    const int arg_);
+                    const int arg_,
+                    const int argc_);
+
+      void expandArg(tokenVector &newTokens,
+                     std::vector<tokenVector> &args,
+                     const int arg_);
 
       virtual bool expand(tokenVector &newTokens,
                           token_t *source,
@@ -121,7 +127,7 @@ namespace occa {
       virtual ~macro_t();
 
       inline int argCount() const {
-        return argNames.size();
+        return (argNames.size() - hasVarArgs);
       }
 
       inline bool isFunctionLike() const {
@@ -151,6 +157,7 @@ namespace occa {
 
       bool loadArgs(identifierToken &source,
                     std::vector<tokenVector> &args);
+      bool checkArgs(std::vector<tokenVector> &args);
 
       void printError(token_t *token,
                       const std::string &message);

@@ -86,7 +86,7 @@ namespace occa {
       if (!start) {
         return "";
       }
-      return std::string(start, end - start + 1);
+      return std::string(start, end - start);
     }
     //==================================
 
