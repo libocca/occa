@@ -44,14 +44,16 @@ namespace occa {
 
     // TODO: Add actual compiler macros as well
     preprocessor::preprocessor() :
-      errorOnToken(NULL),
-      directives(getDirectiveTrie()) {
+      errorOnToken(NULL) {
 
       // Always start off as if we passed a newline
       incrementNewline();
 
-      const int specialMacroCount = 7;
+      initDirectives();
+
       compilerMacros.autoFreeze = false;
+
+      const int specialMacroCount = 7;
       macro_t *specialMacros[specialMacroCount] = {
         new definedMacro(*this),    // defined()
         new hasIncludeMacro(*this), // __has_include()
@@ -78,20 +80,16 @@ namespace occa {
       compilerMacros.add("xor"   , macro_t::defineBuiltin(*this, "xor"   , "^"));
       compilerMacros.add("xor_eq", macro_t::defineBuiltin(*this, "xor_eq", "^="));
 
-      compilerMacros.autoFreeze = true;
       compilerMacros.freeze();
+      compilerMacros.autoFreeze = true;
 
       pushStatus(ppStatus::reading);
     }
 
     preprocessor::preprocessor(const preprocessor &pp) :
-      cacheMap(pp),
-      statusStack(pp.statusStack),
-      status(pp.status),
-      passedNewline(pp.passedNewline),
-      errorOnToken(pp.errorOnToken),
-      directives(getDirectiveTrie()),
-      sourceMacros(pp.sourceMacros) {}
+      cacheMap(pp) {
+      *this = pp;
+    }
 
     preprocessor::~preprocessor() {
       macroTrie *tries[2] = {
@@ -99,10 +97,8 @@ namespace occa {
         &sourceMacros
       };
 
-      for (int i = 0; i < 2; ++i ) {
+      for (int i = 0; i < 2; ++i) {
         macroTrie &trie = *(tries[i]);
-        trie.freeze();
-
         const int trieSize = trie.size();
         for (int j = 0; j < trieSize; ++j) {
           delete trie.values[j];
@@ -110,29 +106,58 @@ namespace occa {
       }
     }
 
-    preprocessor::directiveTrie& preprocessor::getDirectiveTrie() {
-      static directiveTrie trie;
-      if (trie.isEmpty()) {
-        trie.autoFreeze = false;
-        trie.add("if"     , &preprocessor::processIf);
-        trie.add("ifdef"  , &preprocessor::processIfdef);
-        trie.add("ifndef" , &preprocessor::processIfndef);
-        trie.add("elif"   , &preprocessor::processElif);
-        trie.add("else"   , &preprocessor::processElse);
-        trie.add("endif"  , &preprocessor::processEndif);
+    preprocessor& preprocessor::operator = (const preprocessor &pp) {
+      statusStack   = pp.statusStack;
+      status        = pp.status;
+      passedNewline = pp.passedNewline;
+      errorOnToken  = pp.errorOnToken;
 
-        trie.add("define" , &preprocessor::processDefine);
-        trie.add("undef"  , &preprocessor::processUndef);
+      directives     = pp.directives;
+      compilerMacros = pp.compilerMacros;
+      sourceMacros   = pp.sourceMacros;
 
-        trie.add("error"  , &preprocessor::processError);
-        trie.add("warning", &preprocessor::processWarning);
+      directives.freeze();
+      directives.autoFreeze = true;
 
-        trie.add("include", &preprocessor::processInclude);
-        trie.add("pragma" , &preprocessor::processPragma);
-        trie.add("line"   , &preprocessor::processLine);
-        trie.freeze();
+      macroTrie *tries[2] = {
+        &compilerMacros,
+        &sourceMacros
+      };
+
+      for (int i = 0; i < 2; ++i) {
+        macroTrie &trie = *(tries[i]);
+        const int trieSize = trie.size();
+        for (int j = 0; j < trieSize; ++j) {
+          trie.values[j] = &(trie.values[j]->clone());
+        }
       }
-      return trie;
+
+      compilerMacros.autoFreeze = true;
+      sourceMacros.autoFreeze   = true;
+
+      return *this;
+    }
+
+    void preprocessor::initDirectives() {
+      directives.autoFreeze = false;
+      directives.add("if"     , &preprocessor::processIf);
+      directives.add("ifdef"  , &preprocessor::processIfdef);
+      directives.add("ifndef" , &preprocessor::processIfndef);
+      directives.add("elif"   , &preprocessor::processElif);
+      directives.add("else"   , &preprocessor::processElse);
+      directives.add("endif"  , &preprocessor::processEndif);
+
+      directives.add("define" , &preprocessor::processDefine);
+      directives.add("undef"  , &preprocessor::processUndef);
+
+      directives.add("error"  , &preprocessor::processError);
+      directives.add("warning", &preprocessor::processWarning);
+
+      directives.add("include", &preprocessor::processInclude);
+      directives.add("pragma" , &preprocessor::processPragma);
+      directives.add("line"   , &preprocessor::processLine);
+      directives.freeze();
+      directives.autoFreeze = true;
     }
 
     void preprocessor::preprint(std::ostream &out) {

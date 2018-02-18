@@ -72,8 +72,48 @@ namespace occa {
     valueIndices(NULL) {}
 
   template <class TM>
+  trie<TM>::trie(const trie &other) {
+    *this = other;
+  }
+
+  template <class TM>
   trie<TM>::~trie() {
     clear();
+  }
+
+  template <class TM>
+  trie<TM>& trie<TM>::operator = (const trie &other) {
+    if (this == &other) {
+      return *this;
+    }
+
+    trie &other_ = const_cast<trie&>(other);
+
+    other_.freeze();
+
+    root         = other_.root;
+    defaultValue = other_.defaultValue;
+    values       = other_.values;
+
+    isFrozen   = other_.isFrozen;
+    autoFreeze = other_.autoFreeze;
+
+    nodeCount     = other_.nodeCount;
+    baseNodeCount = other_.baseNodeCount;
+
+    chars        = new char[nodeCount + 1];
+    offsets      = new int[nodeCount + 1];
+    leafCount    = new int[nodeCount + 1];
+    valueIndices = new int[nodeCount + 1];
+
+    for (int i = 0; i < (nodeCount + 1); ++i) {
+      chars[i]        = other_.chars[i];
+      offsets[i]      = other_.offsets[i];
+      leafCount[i]    = other_.leafCount[i];
+      valueIndices[i] = other_.valueIndices[i];
+    }
+
+    return *this;
   }
 
   template <class TM>
@@ -225,9 +265,11 @@ namespace occa {
         const char cmid = chars[offset + OCCA_TRIE_MID];
         if (ci < cmid) {
           end = (OCCA_TRIE_MID - 1);
-        } else if (ci > cmid) {
+        }
+        else if (ci > cmid) {
           start = (OCCA_TRIE_MID + 1);
-        } else {
+        }
+        else {
           ++c;
           if (0 <= valueIndices[offset + OCCA_TRIE_MID]) {
             retLength   = (c - cStart);

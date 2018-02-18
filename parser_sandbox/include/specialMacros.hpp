@@ -31,6 +31,8 @@ namespace occa {
     public:
       definedMacro(preprocessor &pp_);
 
+      virtual macro_t& clone();
+
       virtual void expand(tokenVector &tokens,
                           identifierToken &source);
     };
@@ -39,6 +41,8 @@ namespace occa {
     class hasIncludeMacro : public macro_t {
     public:
       hasIncludeMacro(preprocessor &pp_);
+
+      virtual macro_t& clone();
 
       virtual void expand(tokenVector &tokens,
                           identifierToken &source);
@@ -49,6 +53,8 @@ namespace occa {
     public:
       fileMacro(preprocessor &pp_);
 
+      virtual macro_t& clone();
+
       virtual void expand(tokenVector &tokens,
                           identifierToken &source);
     };
@@ -57,6 +63,8 @@ namespace occa {
     class lineMacro : public macro_t {
     public:
       lineMacro(preprocessor &pp_);
+
+      virtual macro_t& clone();
 
       virtual void expand(tokenVector &tokens,
                           identifierToken &source);
@@ -67,6 +75,8 @@ namespace occa {
     public:
       dateMacro(preprocessor &pp_);
 
+      virtual macro_t& clone();
+
       virtual void expand(tokenVector &tokens,
                           identifierToken &source);
     };
@@ -75,6 +85,8 @@ namespace occa {
     class timeMacro : public macro_t {
     public:
       timeMacro(preprocessor &pp_);
+
+      virtual macro_t& clone();
 
       virtual void expand(tokenVector &tokens,
                           identifierToken &source);
@@ -85,8 +97,11 @@ namespace occa {
     public:
       mutable int counter;
 
+      counterMacro(preprocessor &pp_,
+                   const int counter_ = 0);
 
-      counterMacro(preprocessor &pp_);
+      virtual macro_t& clone();
+
       virtual void expand(tokenVector &tokens,
                           identifierToken &source);
     };

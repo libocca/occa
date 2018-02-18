@@ -143,6 +143,8 @@ namespace occa {
         return thisToken.value;
       }
 
+      virtual macro_t& clone();
+
       void loadDefinition();
 
       void loadFunctionLikeDefinition(tokenVector &tokens);

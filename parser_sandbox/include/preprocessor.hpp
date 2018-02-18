@@ -67,7 +67,7 @@ namespace occa {
       //==================================
 
       //---[ Macros and Directives ]------
-      directiveTrie &directives;
+      directiveTrie directives;
 
       macroTrie compilerMacros;
       macroTrie sourceMacros;
@@ -76,6 +76,8 @@ namespace occa {
       preprocessor();
       preprocessor(const preprocessor &pp);
       ~preprocessor();
+
+      preprocessor& operator = (const preprocessor &pp);
 
       virtual void preprint(std::ostream &out);
 
@@ -86,7 +88,7 @@ namespace occa {
 
       virtual tokenMap& clone_() const;
 
-      static directiveTrie& getDirectiveTrie();
+      void initDirectives();
 
       void addExpandedToken(token_t *token);
 

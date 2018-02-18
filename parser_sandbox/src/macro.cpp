@@ -230,6 +230,10 @@ namespace occa {
       freeTokenVector(macroTokens);
     }
 
+    macro_t& macro_t::clone() {
+      return *(new macro_t(pp, thisToken));
+    }
+
     void macro_t::loadDefinition() {
       tokenVector tokens;
       pp.getLineTokens(tokens);

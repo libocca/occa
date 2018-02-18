@@ -36,6 +36,10 @@ namespace occa {
       argNames.add("MACRO_NAME", 0);
     }
 
+    macro_t& definedMacro::clone() {
+      return *(new definedMacro(pp));
+    }
+
     void definedMacro::expand(tokenVector &tokens,
                               identifierToken &source) {
       bool isDefined = !!pp.getMacro(source.value);
@@ -48,6 +52,10 @@ namespace occa {
     hasIncludeMacro::hasIncludeMacro(preprocessor &pp_) :
       macro_t(pp_, "__has_include") {
       argNames.add("INCLUDE_PATH", 0);
+    }
+
+    macro_t& hasIncludeMacro::clone() {
+      return *(new hasIncludeMacro(pp));
     }
 
     void hasIncludeMacro::expand(tokenVector &tokens,
@@ -89,6 +97,10 @@ namespace occa {
     fileMacro::fileMacro(preprocessor &pp_) :
       macro_t(pp_, "__FILE__") {}
 
+    macro_t& fileMacro::clone() {
+      return *(new fileMacro(pp));
+    }
+
     void fileMacro::expand(tokenVector &tokens,
                            identifierToken &source) {
       tokens.push_back(new stringToken(source.origin,
@@ -98,6 +110,10 @@ namespace occa {
     // __LINE__
     lineMacro::lineMacro(preprocessor &pp_) :
       macro_t(pp_, "__LINE__") {}
+
+    macro_t& lineMacro::clone() {
+      return *(new lineMacro(pp));
+    }
 
     void lineMacro::expand(tokenVector &tokens,
                            identifierToken &source) {
@@ -110,6 +126,10 @@ namespace occa {
     // __DATE__
     dateMacro::dateMacro(preprocessor &pp_) :
       macro_t(pp_, "__DATE__") {}
+
+    macro_t& dateMacro::clone() {
+      return *(new dateMacro(pp));
+    }
 
     void dateMacro::expand(tokenVector &tokens,
                            identifierToken &source) {
@@ -142,6 +162,10 @@ namespace occa {
     timeMacro::timeMacro(preprocessor &pp_) :
       macro_t(pp_, "__TIME__") {}
 
+    macro_t& timeMacro::clone() {
+      return *(new timeMacro(pp));
+    }
+
     void timeMacro::expand(tokenVector &tokens,
                            identifierToken &source) {
       time_t t = ::time(NULL);
@@ -170,9 +194,14 @@ namespace occa {
     }
 
     // __COUNTER__
-    counterMacro::counterMacro(preprocessor &pp_) :
+    counterMacro::counterMacro(preprocessor &pp_,
+                               const int counter_) :
       macro_t(pp_, "__COUNTER__"),
-      counter(0) {}
+      counter(counter_) {}
+
+    macro_t& counterMacro::clone() {
+      return *(new counterMacro(pp, counter));
+    }
 
     void counterMacro::expand(tokenVector &tokens,
                               identifierToken &source) {

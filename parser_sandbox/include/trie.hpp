@@ -118,7 +118,10 @@ namespace occa {
     int *valueIndices;
 
     trie();
+    trie(const trie &other);
     ~trie();
+
+    trie& operator = (const trie &other);
 
     void clear();
     bool isEmpty() const;
