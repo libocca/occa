@@ -46,8 +46,11 @@ namespace occa {
 
   public:
     tls(const TM &val = TM());
+
     template <class TM2>
     tls(const tls<TM2> &t);
+
+    ~tls();
 
     template <class TM2>
     const TM2& operator = (const TM2 &val);

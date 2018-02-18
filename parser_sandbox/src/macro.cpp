@@ -226,6 +226,7 @@ namespace occa {
 
     macro_t::~macro_t() {
       delete &thisToken;
+      argNames.clear();
       freeTokenVector(macroTokens);
     }
 

@@ -43,6 +43,8 @@ occa::stream<occa::lang::token_t*> mergeTokenStream;
 occa::lang::token_t *token = NULL;
 
 void setStream(const std::string &s) {
+  delete token;
+  token = NULL;
   source = s;
   tokenizer = occa::lang::tokenizer(source.c_str());
   mergeTokenStream = tokenizer.map(occa::lang::stringTokenMerger());
@@ -50,11 +52,13 @@ void setStream(const std::string &s) {
 
 void getToken() {
   delete token;
+  token = NULL;
   tokenizer >> token;
 }
 
 void getStringMergeToken() {
   delete token;
+  token = NULL;
   mergeTokenStream >> token;
 }
 
@@ -65,7 +69,6 @@ void setToken(const std::string &s) {
 
 void setHeaderToken(const std::string &s) {
   setStream(s);
-  delete token;
   token = tokenizer.getHeaderToken();
 }
 
@@ -537,12 +540,16 @@ void testPrimitiveMethods() {
 
 void testErrors() {
   setStream("$ test\n\"foo\" \"bar\" ` bar foo");
-  occa::stream<occa::lang::token_t*> streamWithErrors =
-    tokenizer.map(occa::lang::unknownTokenFilter(true));
+  occa::stream<occa::lang::token_t*> streamWithErrors = (
+    tokenizer
+    .map(occa::lang::unknownTokenFilter(true))
+  );
 
   std::cerr << "Testing error outputs:\n";
-  for (int i = 0; i < 5; ++i) {
+  while (!streamWithErrors.isEmpty()) {
+    token = NULL;
     streamWithErrors >> token;
+    delete token;
   }
 }
 //======================================

@@ -51,7 +51,9 @@ namespace occa {
     public:
       hash_t hash;
       std::string tag;
+
       inline hashAndTag() {}
+
       inline hashAndTag(const hash_t &hash_,
                         const std::string &tag_) :
         hash(hash_),

@@ -74,12 +74,12 @@ int getTokenType() {
 int main(const int argc, const char **argv) {
   testMacroDefines();
   //testCppStandardTests();
-  testErrorDefines();
-  testSpecialMacros();
-  testWeirdCase();
-  testIfElse();
-  testIfElseDefines();
-  testEval();
+  // testErrorDefines();
+  // testSpecialMacros();
+  // testWeirdCase();
+  // testIfElse();
+  // testIfElseDefines();
+  // testEval();
 }
 
 void testMacroDefines() {

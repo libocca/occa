@@ -119,6 +119,7 @@ namespace occa {
       }
       if (printError) {
         token->printError("Unknown symbol");
+        delete token;
       }
       return false;
     }
