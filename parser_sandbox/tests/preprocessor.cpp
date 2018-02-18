@@ -82,7 +82,6 @@ int main(const int argc, const char **argv) {
 }
 
 void testMacroDefines() {
-#if 0
   setStream(
     // Test #define
     "#define A\n"
@@ -98,7 +97,7 @@ void testMacroDefines() {
     "D(2, 3)\n"
     // Test stringify
     "#define H(A1) #A1\n"
-    "H(1    2 3   )\n"
+    "H(1    2 3     ....   /path/to/somewhere  )\n"
     // Test multi-token stringify
     "#define H(A1, A2) #A1 #A2\n"
     "H(12, 34)\n"
@@ -124,13 +123,20 @@ void testMacroDefines() {
     "I(1, 3)\n"
   );
   while (!stream.isEmpty()) {
-    token_t *token_;
+    token_t *token_ = NULL;
     stream >> token_;
-    token_->print(std::cout);
+    if (token_) {
+      if (!(token_->type() & occa::lang::tokenType::newline)) {
+        std::cout << '[';
+        token_->print(std::cout);
+        std::cout << "]\n";
+      } else {
+        std::cout << '\n';
+      }
+    }
   }
 
   std::cerr << "Testing preprocessor errors:\n";
-#endif
 }
 
 void testCppStandardTests() {

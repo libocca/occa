@@ -51,7 +51,7 @@ namespace occa {
         // For example, .. would normaly turn to ". ."
         if (addSpaces              &&
             (i < (tokenCount - 1)) &&
-            (tokens[i]->origin.distanceTo(tokens[i + 1]->origin) != 1)) {
+            (tokens[i]->origin.distanceTo(tokens[i + 1]->origin))) {
           ss << ' ';
         }
       }
@@ -204,7 +204,7 @@ namespace occa {
       // The ( only counts as the start of a function-like
       //   macro if it's directly after the macro name
       dim_t posDistance = thisToken.origin.distanceTo(token->origin);
-      if (posDistance != 1) {
+      if (posDistance != 0) {
         setDefinition(tokens);
         return;
       }
@@ -484,6 +484,7 @@ namespace occa {
         if (opType != operatorType::comma) {
           // Add token to current arg
           args[argIndex].push_back(token);
+          continue;
         }
 
         // Load next argument and check
@@ -493,7 +494,10 @@ namespace occa {
           if (argc) {
             std::stringstream ss;
             ss << "Too many arguments, expected "
-               << argc << " argument(s)";
+               << argc << " argument";
+            if (argc > 1) {
+              ss << 's';
+            }
             printError(token, ss.str());
           } else {
             printError(token,
