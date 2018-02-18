@@ -95,10 +95,16 @@ namespace occa {
       void setUp(fileOrigin *up_);
 
       void push(const bool fromInclude_,
+                const fileOrigin &origin);
+
+      void push(const bool fromInclude_,
                 file_t &file_,
                 const filePosition &position_);
 
       void pop();
+
+      fileOrigin from(const bool fromInclude_,
+                      const fileOrigin &origin);
 
       size_t distanceTo(const fileOrigin &origin);
 

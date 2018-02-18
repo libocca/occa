@@ -72,7 +72,7 @@ int getTokenType() {
 //---[ Tests ]--------------------------
 int main(const int argc, const char **argv) {
   testMacroDefines();
-  // testCppStandardTests();
+  testCppStandardTests();
   testErrorDefines();
   testSpecialMacros();
   testWeirdCase();
@@ -139,6 +139,17 @@ void testCppStandardTests() {
     "#define join(c, d) in_between(c hash_hash d)\n"
     "join(x, y)"
   );
+
+  while (!stream.isEmpty()) {
+    token_t *token_ = NULL;
+    stream >> token_;
+    if (token_) {
+      std::cout << '[';
+      token_->print(std::cout);
+      std::cout << "]\n";
+    }
+  }
+  return;
 
   getToken();
   OCCA_ASSERT_EQUAL_BINARY(tokenType::newline,

@@ -172,6 +172,13 @@ namespace occa {
     }
 
     void fileOrigin::push(const bool fromInclude_,
+                          const fileOrigin &origin) {
+      push(fromInclude_,
+           *origin.file,
+           origin.position);
+    }
+
+    void fileOrigin::push(const bool fromInclude_,
                           file_t &file_,
                           const filePosition &position_) {
       setFile(file_);
@@ -190,6 +197,13 @@ namespace occa {
       position    = up->position;
       setFile(*(up->file));
       setUp(up->up);
+    }
+
+    fileOrigin fileOrigin::from(const bool fromInclude_,
+                                const fileOrigin &origin) {
+      fileOrigin fo = origin;
+      fo.push(fromInclude_, *this);
+      return fo;
     }
 
     size_t fileOrigin::distanceTo(const fileOrigin &origin) {

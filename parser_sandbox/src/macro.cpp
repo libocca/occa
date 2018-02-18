@@ -132,7 +132,10 @@ namespace occa {
                           value);
 
       if (stringTokens.size() != 1) {
-        thisToken->printError("Unable to stringify token");
+        source->origin
+          .from(false, thisToken->origin)
+          .printError("Unable to stringify token");
+
         newTokens.clear();
         return false;
       }
@@ -175,7 +178,10 @@ namespace occa {
                           concatValue);
 
       if (concatTokens.size() != 1) {
-        thisToken->printError("Unable to concat tokens");
+        concatTokens[0]->origin
+          .from(false, thisToken->origin)
+          .printError("Unable to concat tokens");
+
         newTokens.clear();
         return false;
       }
@@ -274,8 +280,9 @@ namespace occa {
           foundOp = false;
         }
         if (!foundOp) {
-          token->printError("Expected a , to separate arguments"
-                            " or ) to finish the macro definition");
+          printError(token,
+                     "Expected a , to separate arguments"
+                     " or ) to finish the macro definition");
           pp.freeTokenVector(tokens);
           return;
         }
@@ -292,7 +299,8 @@ namespace occa {
 
     bool macro_t::loadDefinitionArgument(token_t *token) {
       if (hasVarArgs) {
-        token->printError("Cannot have arguments after ...");
+        printError(token,
+                   "Cannot have arguments after ...");
         return false;
       }
 
@@ -307,7 +315,8 @@ namespace occa {
       }
 
       if (!isArg) {
-        token->printError("Expected an identifier as a macro argument");
+        printError(token,
+                   "Expected an identifier as a macro argument");
         return false;
       }
 
@@ -397,20 +406,31 @@ namespace occa {
           continue;
         }
 
-        delete mToken;
         if (i == (tokenCount - 1)) {
+          newMacroTokens.push_back(macroTokens[i]);
           break;
         }
 
         ++i;
         macroArgument *argToken = dynamic_cast<macroArgument*>(macroTokens[i]);
         if (argToken) {
+          delete mToken;
           newMacroTokens.push_back(new macroStringify(argToken));
-        } else {
-          macroTokens[i]->thisToken->printError("Can only stringify macro arguments");
-          macroTokens.clear();
-          return;
+          continue;
         }
+
+        // We're going to concat # instead of using
+        //   it for stringification
+        if (isHashhash(macroTokens[i])) {
+          newMacroTokens.push_back(macroTokens[i - 1]);
+          newMacroTokens.push_back(macroTokens[i]);
+          continue;
+        }
+
+        printError(macroTokens[i],
+                   "Can only stringify macro arguments");
+        macroTokens.clear();
+        return;
       }
 
       macroTokens = newMacroTokens;
@@ -423,13 +443,15 @@ namespace occa {
       }
 
       if (isHashhash(macroTokens[0])) {
-        macroTokens[0]->thisToken->printError("Macro definition cannot start with ##");
+        printError(macroTokens[0],
+                   "Macro definition cannot start with ##");
         macroTokens.clear();
         return;
       }
       if ((tokenCount > 1) &&
           isHashhash(macroTokens[tokenCount - 1])) {
-        macroTokens[tokenCount - 1]->thisToken->printError("Macro definition cannot end with ##");
+        printError(macroTokens[tokenCount - 1],
+                   "Macro definition cannot end with ##");
         macroTokens.clear();
         return;
       }
@@ -476,7 +498,7 @@ namespace occa {
     void macro_t::expand(identifierToken &source) {
       std::vector<tokenVector> args;
       if (!loadArgs(source, args) ||
-          !checkArgs(args)) {
+          !checkArgs(source, args)) {
         return;
       }
 
@@ -565,8 +587,8 @@ namespace occa {
       return false;
     }
 
-    bool macro_t::checkArgs(std::vector<tokenVector> &args) {
-      // Make sure we dont'
+    bool macro_t::checkArgs(identifierToken &source,
+                            std::vector<tokenVector> &args) {
       const int realArgc = argCount();
       const int argc     = (int) args.size();
 
@@ -582,7 +604,9 @@ namespace occa {
         } else {
           ss << "none";
         }
-        thisToken.printError(ss.str());
+
+        printError(&source, ss.str());
+
         return false;
       }
       return true;
@@ -590,11 +614,16 @@ namespace occa {
 
     void macro_t::printError(token_t *token,
                              const std::string &message) {
-      fileOrigin fp = thisToken.origin;
-      fp.push(false,
-              *(token->origin.file),
-              token->origin.position);
-      fp.printError(message);
+      token->origin
+        .from(false, thisToken.origin)
+        .printError(message);
+    }
+
+    void macro_t::printError(macroToken *mToken,
+                             const std::string &message) {
+      mToken->thisToken->origin
+        .from(false, thisToken.origin)
+        .printError(message);
     }
 
     macro_t* macro_t::defineBuiltin(preprocessor &pp_,

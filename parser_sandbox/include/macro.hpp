@@ -157,9 +157,12 @@ namespace occa {
 
       bool loadArgs(identifierToken &source,
                     std::vector<tokenVector> &args);
-      bool checkArgs(std::vector<tokenVector> &args);
+      bool checkArgs(identifierToken &source,
+                     std::vector<tokenVector> &args);
 
       void printError(token_t *token,
+                      const std::string &message);
+      void printError(macroToken *mToken,
                       const std::string &message);
 
       static macro_t* defineBuiltin(preprocessor &pp_,
