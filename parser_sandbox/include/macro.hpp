@@ -153,7 +153,8 @@ namespace occa {
       void stringifyMacroTokens();
       void concatMacroTokens();
 
-      virtual void expand(identifierToken &source);
+      virtual void expand(tokenVector &tokens,
+                          identifierToken &source);
 
       bool loadArgs(identifierToken &source,
                     std::vector<tokenVector> &args);

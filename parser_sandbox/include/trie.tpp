@@ -72,6 +72,11 @@ namespace occa {
     valueIndices(NULL) {}
 
   template <class TM>
+  trie<TM>::~trie() {
+    clear();
+  }
+
+  template <class TM>
   void trie<TM>::clear() {
     root.leaves.clear();
     values.clear();

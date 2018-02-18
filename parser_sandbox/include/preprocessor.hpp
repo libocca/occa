@@ -25,6 +25,7 @@
 #include <ostream>
 #include <vector>
 #include <map>
+#include <deque>
 
 #include "occa/defines.hpp"
 #include "occa/types.hpp"
@@ -39,6 +40,7 @@ namespace occa {
     typedef trie<macro_t*> macroTrie;
     typedef streamMap<token_t*, token_t*> tokenMap;
     typedef cacheMap<token_t*, token_t*> tokenCacheMap;
+    typedef std::deque<token_t*> tokenDeque;
 
     namespace ppStatus {
       extern const int reading;
@@ -54,7 +56,7 @@ namespace occa {
       typedef void (preprocessor::*processDirective_t)(identifierToken &directive);
       typedef trie<processDirective_t> directiveTrie;
 
-      token_t *lastToken;
+      tokenDeque sourceCache;
 
       //---[ Status ]-------------------
       std::vector<int> statusStack;
@@ -73,6 +75,7 @@ namespace occa {
 
       preprocessor();
       preprocessor(const preprocessor &pp);
+      ~preprocessor();
 
       virtual void preprint(std::ostream &out);
 
@@ -97,16 +100,21 @@ namespace occa {
       macro_t* getMacro(const std::string &name);
       macro_t* getSourceMacro();
 
+      bool hasSourceTokens();
       token_t* getSourceToken();
+
+      virtual bool isEmpty();
       virtual void pop();
 
-      void expandMacro(macro_t &macro);
+      void expandMacro(identifierToken &source,
+                       macro_t &macro);
 
       void skipToNewline();
       void getLineTokens(tokenVector &lineTokens);
       void freeTokenVector(tokenVector &lineTokens);
       void warnOnNonEmptyLine(const std::string &message);
 
+      void processToken(token_t *token);
       void processIdentifier(identifierToken &token);
       void processOperator(operatorToken &token);
 

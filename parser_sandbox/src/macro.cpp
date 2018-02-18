@@ -101,7 +101,7 @@ namespace occa {
     }
 
     macroStringify::macroStringify(macroToken *token_) :
-      macroToken(token_->thisToken),
+      macroToken(token_->thisToken->clone()),
       token(token_) {}
 
     macroStringify::~macroStringify() {
@@ -144,7 +144,7 @@ namespace occa {
     }
 
     macroConcat::macroConcat(const macroTokenVector_t &tokens_) :
-      macroToken(tokens_[0]->thisToken),
+      macroToken(tokens_[0]->thisToken->clone()),
       tokens(tokens_) {}
 
     macroConcat::~macroConcat() {
@@ -495,7 +495,8 @@ namespace occa {
     }
 
     // Assumes ( has already been loaded and verified
-    void macro_t::expand(identifierToken &source) {
+    void macro_t::expand(tokenVector &tokens,
+                         identifierToken &source) {
       std::vector<tokenVector> args;
       if (!loadArgs(source, args) ||
           !checkArgs(source, args)) {
@@ -503,21 +504,15 @@ namespace occa {
       }
 
       // Expand tokens
-      tokenVector expandedTokens;
       const int macroTokenCount = (int) macroTokens.size();
       for (int i = 0; i < macroTokenCount; ++i) {
-        bool succeeded = macroTokens[i]->expand(expandedTokens,
+        bool succeeded = macroTokens[i]->expand(tokens,
                                                 &source,
                                                 args);
         if (!succeeded) {
-          pp.freeTokenVector(expandedTokens);
+          pp.freeTokenVector(tokens);
           return;
         }
-      }
-
-      int expandedTokenCount = (int) expandedTokens.size();
-      for (int i = 0; i < expandedTokenCount; ++i) {
-        pp.push(expandedTokens[i]);
       }
     }
 

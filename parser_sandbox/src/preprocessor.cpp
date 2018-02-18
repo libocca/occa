@@ -93,6 +93,23 @@ namespace occa {
       directives(getDirectiveTrie()),
       sourceMacros(pp.sourceMacros) {}
 
+    preprocessor::~preprocessor() {
+      macroTrie *tries[2] = {
+        &compilerMacros,
+        &sourceMacros
+      };
+
+      for (int i = 0; i < 2; ++i ) {
+        macroTrie &trie = *(tries[i]);
+        trie.freeze();
+
+        const int trieSize = trie.size();
+        for (int j = 0; j < trieSize; ++j) {
+          delete trie.values[j];
+        }
+      }
+    }
+
     preprocessor::directiveTrie& preprocessor::getDirectiveTrie() {
       static directiveTrie trie;
       if (trie.isEmpty()) {
@@ -185,18 +202,109 @@ namespace occa {
       return NULL;
     }
 
+    bool preprocessor::hasSourceTokens() {
+      return (!inputIsEmpty() ||
+              !sourceCache.empty());
+    }
+
     token_t* preprocessor::getSourceToken() {
       token_t *token = NULL;
+
+      if (sourceCache.size()) {
+        token = sourceCache.front();
+        sourceCache.pop_front();
+        return token;
+      }
+
       if (!inputIsEmpty()) {
-        *(this->input) >> token;
+        *(input) >> token;
       }
       return token;
     }
 
+    bool preprocessor::isEmpty() {
+      if (!cache.empty()) {
+        return false;
+      }
+
+      while (cache.empty() &&
+             hasSourceTokens()) {
+        pop();
+      }
+
+      return cache.empty();
+    }
+
     void preprocessor::pop() {
+      processToken(getSourceToken());
+    }
+
+    void preprocessor::expandMacro(identifierToken &source,
+                                   macro_t &macro) {
+      tokenVector tokens;
+      macro.expand(tokens, source);
+
+      // Push tokens to the front backwards to
+      //   maintain the same order
+      const int tokenCount = (int) tokens.size();
+      for (int i = (tokenCount - 1); i >= 0; --i) {
+        sourceCache.push_front(tokens[i]);
+      }
+    }
+
+    void preprocessor::skipToNewline() {
+      tokenVector lineTokens;
+      getLineTokens(lineTokens);
+
+      // Push the newline token
+      const int tokens = (int) lineTokens.size();
+      if (tokens) {
+        push(lineTokens[tokens-1]);
+        lineTokens.pop_back();
+      }
+
+      freeTokenVector(lineTokens);
+    }
+
+    // lineTokens might be partially initialized
+    //   so we don't want to clear it
+    void preprocessor::getLineTokens(tokenVector &lineTokens) {
+      while (hasSourceTokens()) {
+        token_t *token = getSourceToken();
+
+        if (token->type() & tokenType::newline) {
+          incrementNewline();
+          lineTokens.push_back(token);
+          break;
+        }
+
+        lineTokens.push_back(token);
+      }
+    }
+
+    void preprocessor::freeTokenVector(tokenVector &lineTokens) {
+      const int tokens = (int) lineTokens.size();
+      for (int i = 0; i < tokens; ++i) {
+        delete lineTokens[i];
+      }
+      lineTokens.clear();
+    }
+
+    void preprocessor::warnOnNonEmptyLine(const std::string &message) {
+      tokenVector lineTokens;
+      getLineTokens(lineTokens);
+      if (lineTokens.size()) {
+        // Don't account for the newline token
+        if (lineTokens[0]->type() != tokenType::newline) {
+          lineTokens[0]->printWarning(message);
+        }
+        freeTokenVector(lineTokens);
+      }
+    }
+
+    void preprocessor::processToken(token_t *token) {
       decrementNewline();
 
-      token_t *token = getSourceToken();
       const int tokenType = token->type();
 
       if (tokenType & tokenType::newline) {
@@ -230,56 +338,6 @@ namespace occa {
       }
     }
 
-    void preprocessor::skipToNewline() {
-      tokenVector lineTokens;
-      getLineTokens(lineTokens);
-
-      // Push the newline token
-      const int tokens = (int) lineTokens.size();
-      if (tokens) {
-        push(lineTokens[tokens-1]);
-        lineTokens.pop_back();
-      }
-
-      freeTokenVector(lineTokens);
-    }
-
-    // lineTokens might be partially initialized
-    //   so we don't want to clear it
-    void preprocessor::getLineTokens(tokenVector &lineTokens) {
-      while (!inputIsEmpty()) {
-        token_t *token = getSourceToken();
-
-        if (token->type() & tokenType::newline) {
-          incrementNewline();
-          lineTokens.push_back(token);
-          break;
-        }
-
-        lineTokens.push_back(token);
-      }
-    }
-
-    void preprocessor::freeTokenVector(tokenVector &lineTokens) {
-      const int tokens = (int) lineTokens.size();
-      for (int i = 0; i < tokens; ++i) {
-        delete lineTokens[i];
-      }
-      lineTokens.clear();
-    }
-
-    void preprocessor::warnOnNonEmptyLine(const std::string &message) {
-      tokenVector lineTokens;
-      getLineTokens(lineTokens);
-      if (lineTokens.size()) {
-        // Don't account for the newline token
-        if (lineTokens[0]->type() != tokenType::newline) {
-          lineTokens[0]->printWarning(message);
-        }
-        freeTokenVector(lineTokens);
-      }
-    }
-
     void preprocessor::processIdentifier(identifierToken &token) {
       // Ignore tokens inside disabled #if/#elif/#else regions
       if (status & ppStatus::ignoring) {
@@ -290,12 +348,11 @@ namespace occa {
       macro_t *macro = getMacro(token.value);
       if (macro) {
         if (!macro->isFunctionLike()) {
-          macro->expand(token);
-          delete &token;
+          expandMacro(token, *macro);
           return;
         }
 
-        if (inputIsEmpty()) {
+        if (!hasSourceTokens()) {
           push(&token);
           return;
         }
@@ -305,8 +362,7 @@ namespace occa {
         if (token_t::safeType(nextToken) & tokenType::op) {
           const opType_t opType = nextToken->to<operatorToken>().op.opType;
           if (opType & operatorType::parenthesesStart) {
-            macro->expand(token);
-            delete &token;
+            expandMacro(token, *macro);
             delete nextToken;
             return;
           }
@@ -333,7 +389,7 @@ namespace occa {
       }
       delete &token;
 
-      if (inputIsEmpty()) {
+      if (!hasSourceTokens()) {
         return;
       }
 

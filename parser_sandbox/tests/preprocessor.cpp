@@ -50,7 +50,7 @@ void setStream(const std::string &s) {
 }
 
 void getToken() {
-  delete token;
+  // delete token;
   token = NULL;
   stream >> token;
 }
@@ -125,8 +125,7 @@ void testMacroDefines() {
     "J(1, 3)\n"
   );
   while (!stream.isEmpty()) {
-    token_t *token_ = NULL;
-    stream >> token_;
+    getToken();
   }
 }
 
@@ -140,25 +139,10 @@ void testCppStandardTests() {
     "join(x, y)"
   );
 
-  while (!stream.isEmpty()) {
-    token_t *token_ = NULL;
-    stream >> token_;
-    if (token_) {
-      std::cout << '[';
-      token_->print(std::cout);
-      std::cout << "]\n";
-    }
-  }
-  return;
-
   getToken();
-  OCCA_ASSERT_EQUAL_BINARY(tokenType::newline,
-                           token->type());
-  OCCA_ASSERT_EQUAL_BINARY(tokenType::string,
-                           token->type());
-
   const std::string output = token->to<stringToken>().value;
   OCCA_ASSERT_EQUAL("x ## y", output);
+  return;
 
   // Test 2 in C++ standard
   setStream(

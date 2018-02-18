@@ -31,7 +31,8 @@ namespace occa {
     public:
       definedMacro(preprocessor &pp_);
 
-      virtual void expand(identifierToken &source);
+      virtual void expand(tokenVector &tokens,
+                          identifierToken &source);
     };
 
     // __has_include()
@@ -39,7 +40,8 @@ namespace occa {
     public:
       hasIncludeMacro(preprocessor &pp_);
 
-      virtual void expand(identifierToken &source);
+      virtual void expand(tokenVector &tokens,
+                          identifierToken &source);
     };
 
     // __FILE__
@@ -47,7 +49,8 @@ namespace occa {
     public:
       fileMacro(preprocessor &pp_);
 
-      virtual void expand(identifierToken &source);
+      virtual void expand(tokenVector &tokens,
+                          identifierToken &source);
     };
 
     // __LINE__
@@ -55,7 +58,8 @@ namespace occa {
     public:
       lineMacro(preprocessor &pp_);
 
-      virtual void expand(identifierToken &source);
+      virtual void expand(tokenVector &tokens,
+                          identifierToken &source);
     };
 
     // __DATE__
@@ -63,7 +67,8 @@ namespace occa {
     public:
       dateMacro(preprocessor &pp_);
 
-      virtual void expand(identifierToken &source);
+      virtual void expand(tokenVector &tokens,
+                          identifierToken &source);
     };
 
     // __TIME__
@@ -71,7 +76,8 @@ namespace occa {
     public:
       timeMacro(preprocessor &pp_);
 
-      virtual void expand(identifierToken &source);
+      virtual void expand(tokenVector &tokens,
+                          identifierToken &source);
     };
 
     // __COUNTER__
@@ -81,7 +87,8 @@ namespace occa {
 
 
       counterMacro(preprocessor &pp_);
-      virtual void expand(identifierToken &source);
+      virtual void expand(tokenVector &tokens,
+                          identifierToken &source);
     };
   }
 }
