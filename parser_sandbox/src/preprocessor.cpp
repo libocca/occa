@@ -300,9 +300,9 @@ namespace occa {
 
         // Make sure that the macro starts with a '('
         token_t *nextToken = getSourceToken();
-        if (nextToken->type() & tokenType::op) {
+        if (token_t::safeType(nextToken) & tokenType::op) {
           const opType_t opType = nextToken->to<operatorToken>().op.opType;
-          if (opType & operatorType::parenthesesEnd) {
+          if (opType & operatorType::parenthesesStart) {
             macro->expand(token);
             delete &token;
             delete nextToken;
@@ -313,7 +313,10 @@ namespace occa {
         //   #define FOO()
         //   int FOO;
         push(&token);
-        push(nextToken);
+        // TODO: This token has to be processed
+        if (nextToken) {
+          push(nextToken);
+        }
         return;
       }
 

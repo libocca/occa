@@ -207,7 +207,7 @@ namespace occa {
     }
 
     void unknownToken::print(std::ostream &out) const {
-      out << origin.position.pos[0];
+      out << origin.position.start[0];
     }
     //==================================
 
@@ -355,6 +355,8 @@ namespace occa {
     }
 
     void stringToken::append(const stringToken &token) {
+      origin.position.end = token.origin.position.end;
+
       encoding = tokenType::mergeEncodings(encoding,
                                            token.encoding);
       value += token.value;

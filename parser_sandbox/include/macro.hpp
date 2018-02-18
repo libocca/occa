@@ -41,6 +41,9 @@ namespace occa {
     //---[ Macro Tokens ]---------------
     class macroToken {
     public:
+      token_t *thisToken;
+
+      macroToken(token_t *thisToken_);
       virtual ~macroToken();
 
       virtual bool expand(tokenVector &newTokens,
@@ -53,10 +56,7 @@ namespace occa {
 
     class macroRawToken : public macroToken {
     public:
-      token_t *token;
-
       macroRawToken(token_t *token_);
-      ~macroRawToken();
 
       virtual bool expand(tokenVector &newTokens,
                           token_t *source,
@@ -67,7 +67,8 @@ namespace occa {
     public:
       int arg;
 
-      macroArgument(const int arg_);
+      macroArgument(token_t *token_,
+                    const int arg_);
 
       virtual bool expand(tokenVector &newTokens,
                           token_t *source,

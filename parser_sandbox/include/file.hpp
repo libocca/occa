@@ -23,6 +23,7 @@
 #define OCCA_PARSER_FILE_HEADER2
 
 #include <iostream>
+
 #include "occa/tools/gc.hpp"
 #include "operator.hpp"
 
@@ -50,7 +51,7 @@ namespace occa {
     public:
       int line;
       const char *lineStart;
-      const char *pos;
+      const char *start, *end;
 
       filePosition();
 
@@ -58,9 +59,13 @@ namespace occa {
 
       filePosition(const int line_,
                    const char *lineStart_,
-                   const char *pos_);
+                   const char *start_,
+                   const char *end_);
 
       filePosition(const filePosition &other);
+
+      size_t size() const;
+      std::string str() const;
     };
 
     class fileOrigin : public withRefs,
@@ -94,6 +99,8 @@ namespace occa {
                 const filePosition &position_);
 
       void pop();
+
+      size_t distanceTo(const fileOrigin &origin);
 
       virtual void preprint(std::ostream &out);
       virtual void postprint(std::ostream &out);

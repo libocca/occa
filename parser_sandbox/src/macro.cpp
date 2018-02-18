@@ -34,7 +34,12 @@ namespace occa {
     const std::string macro_t::VA_ARGS = "__VA_ARGS__";
 
     //---[ Macro Tokens ]---------------
-    macroToken::~macroToken() {}
+    macroToken::macroToken(token_t *thisToken_) :
+      thisToken(thisToken_) {}
+
+    macroToken::~macroToken() {
+      delete thisToken;
+    }
 
     std::string macroToken::stringifyTokens(tokenVector &tokens,
                                             const bool addSpaces) {
@@ -42,28 +47,30 @@ namespace occa {
       const int tokenCount = (int) tokens.size();
       for (int i = 0; i < tokenCount; ++i) {
         tokens[i]->print(ss);
-        if (addSpaces) {
+        // We don't add spaces between adjacent tokens
+        // For example, .. would normaly turn to ". ."
+        if (addSpaces              &&
+            (i < (tokenCount - 1)) &&
+            (tokens[i]->origin.distanceTo(tokens[i + 1]->origin) != 1)) {
           ss << ' ';
         }
       }
       return ss.str();
     }
 
-    macroRawToken::macroRawToken(token_t *token_) :
-      token(token_) {}
-
-    macroRawToken::~macroRawToken() {
-      delete token;
-    }
+    macroRawToken::macroRawToken(token_t *thisToken_) :
+      macroToken(thisToken_) {}
 
     bool macroRawToken::expand(tokenVector &newTokens,
                                token_t *source,
                                std::vector<tokenVector> &args) {
-      newTokens.push_back(token->clone());
+      newTokens.push_back(thisToken->clone());
       return true;
     }
 
-    macroArgument::macroArgument(const int arg_) :
+    macroArgument::macroArgument(token_t *thisToken_,
+                                 const int arg_) :
+      macroToken(thisToken_),
       arg(arg_) {}
 
     bool macroArgument::expand(tokenVector &newTokens,
@@ -78,6 +85,7 @@ namespace occa {
     }
 
     macroStringify::macroStringify(macroToken *token_) :
+      macroToken(token_->thisToken),
       token(token_) {}
 
     macroStringify::~macroStringify() {
@@ -109,6 +117,7 @@ namespace occa {
     }
 
     macroConcat::macroConcat(const macroTokenVector_t &tokens_) :
+      macroToken(tokens_[0]->thisToken),
       tokens(tokens_) {}
 
     macroConcat::~macroConcat() {
@@ -194,21 +203,15 @@ namespace occa {
 
       // The ( only counts as the start of a function-like
       //   macro if it's directly after the macro name
-      if (thisToken.origin.file != token->origin.file) {
+      dim_t posDistance = thisToken.origin.distanceTo(token->origin);
+      if (posDistance != 1) {
         setDefinition(tokens);
         return;
       }
 
-      const char *thisPos  = thisToken.origin.position.pos;
-      const char *parenPos = token->origin.position.pos;
-
-      if ((thisPos + name().size()) == parenPos) {
-        delete token;
-        tokens.erase(tokens.begin());
-        loadFunctionLikeDefinition(tokens);
-      } else {
-        setDefinition(tokens);
-      }
+      delete token;
+      tokens.erase(tokens.begin());
+      loadFunctionLikeDefinition(tokens);
     }
 
     void macro_t::loadFunctionLikeDefinition(tokenVector &tokens) {
@@ -286,7 +289,7 @@ namespace occa {
     void macro_t::setDefinition(tokenVector &tokens) {
       setMacroTokens(tokens);
       stringifyMacroTokens();
-      concatMacroTokens();
+      // concatMacroTokens();
     }
 
     void macro_t::setMacroTokens(tokenVector &tokens) {
@@ -305,7 +308,8 @@ namespace occa {
           intTrie::result_t result = argNames.get(value);
           if (result.success()) {
             macroTokens.push_back(
-              new macroArgument(result.value())
+              new macroArgument(token,
+                                result.value())
             );
             continue;
           }
@@ -327,20 +331,24 @@ namespace occa {
           newMacroTokens.push_back(macroTokens[i]);
           continue;
         }
-        token_t *token = mToken->token;
-        if (!(token->type() & tokenType::op)) {
-          newMacroTokens.push_back(macroTokens[i]);
+
+        token_t *token = mToken->thisToken;
+        if (!(token->type() & tokenType::op) ||
+            !(token->to<operatorToken>().op.opType & operatorType::hash)) {
+          newMacroTokens.push_back(mToken);
           continue;
         }
-        operatorToken &opToken = token->to<operatorToken>();
-        if (!(opToken.op.opType & operatorType::hash)) {
-          newMacroTokens.push_back(macroTokens[i]);
-          continue;
-        }
+
+        delete mToken;
         if (i < (tokenCount - 1)) {
-          newMacroTokens.push_back(new macroStringify(mToken));
-        } else {
-          delete mToken;
+          ++i;
+          macroArgument *argToken = dynamic_cast<macroArgument*>(macroTokens[i]);
+          if (argToken) {
+            newMacroTokens.push_back(new macroStringify(argToken));
+          } else {
+            macroTokens[i]->thisToken->printError("Can only stringify macro arguments");
+            return;
+          }
         }
       }
 
@@ -359,7 +367,7 @@ namespace occa {
         macroRawToken *mToken = dynamic_cast<macroRawToken*>(macroTokens[i]);
 
         token_t *token = (mToken
-                          ? mToken->token
+                          ? mToken->thisToken
                           : NULL);
 
         operatorToken *opToken = ((token_t::safeType(token) & tokenType::op)
@@ -400,9 +408,11 @@ namespace occa {
         }
 
         // Add concat tokens
+        if (!concatenating) {
+          newMacroTokens.pop_back();
+        }
         concatenating = true;
         concatMacroTokens.push_back(macroTokens[i - 1]);
-        newMacroTokens.pop_back();
         delete mToken;
       }
 

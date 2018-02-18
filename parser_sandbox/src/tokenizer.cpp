@@ -128,7 +128,7 @@ namespace occa {
     }
 
     bool tokenizer::reachedTheEnd() const {
-      return ((*fp.pos == '\0') &&
+      return ((*fp.start == '\0') &&
               !stack.size());
     }
 
@@ -182,14 +182,31 @@ namespace occa {
       pop(true);
     }
 
+    fileOrigin tokenizer::popTokenOrigin() {
+      const size_t size = strSize();
+      fileOrigin tokenOrigin = stack.back();
+      tokenOrigin.position.end = tokenOrigin.position.start + size;
+      pop();
+      return tokenOrigin;
+    }
+
+    size_t tokenizer::strSize() {
+      if (stack.size() == 0) {
+        printError("Not able to strSize() without a stack");
+        return 0;
+      }
+      fileOrigin last = stack.back();
+      return (fp.start - last.position.start);
+    }
+
     std::string tokenizer::str() {
       if (stack.size() == 0) {
         printError("Not able to str() without a stack");
         return "";
       }
       fileOrigin last = stack.back();
-      return std::string(last.position.pos,
-                         fp.pos - last.position.pos);
+      return std::string(last.position.start,
+                         fp.start - last.position.start);
     }
 
     void tokenizer::countSkippedLines() {
@@ -202,19 +219,19 @@ namespace occa {
         printError("Trying to countSkippedLines() across different files");
         return;
       }
-      const char *pos = last.position.pos;
-      const char *end = fp.pos;
+      const char *pos = last.position.start;
+      const char *end = fp.start;
       while (pos < end) {
         if (*pos == '\\') {
-          if (fp.pos[1] == '\n') {
-            fp.lineStart = fp.pos + 2;
+          if (fp.start[1] == '\n') {
+            fp.lineStart = fp.start + 2;
             ++fp.line;
           }
           pos += 1 + (pos[1] != '\0');
           continue;
         }
         if (*pos == '\n') {
-          fp.lineStart = fp.pos + 1;
+          fp.lineStart = fp.start + 1;
           ++fp.line;
         }
         ++pos;
@@ -222,65 +239,65 @@ namespace occa {
     }
 
     void tokenizer::skipTo(const char delimiter) {
-      while (*fp.pos != '\0') {
-        if (*fp.pos == '\\') {
-          if (fp.pos[1] == '\n') {
-            fp.lineStart = fp.pos + 2;
+      while (*fp.start != '\0') {
+        if (*fp.start == '\\') {
+          if (fp.start[1] == '\n') {
+            fp.lineStart = fp.start + 2;
             ++fp.line;
           }
-          fp.pos += 1 + (fp.pos[1] != '\0');
+          fp.start += 1 + (fp.start[1] != '\0');
           continue;
         }
-        if (*fp.pos == delimiter) {
+        if (*fp.start == delimiter) {
           return;
         }
-        if (*fp.pos == '\n') {
-          fp.lineStart = fp.pos + 1;
+        if (*fp.start == '\n') {
+          fp.lineStart = fp.start + 1;
           ++fp.line;
         }
-        ++fp.pos;
+        ++fp.start;
       }
     }
 
     void tokenizer::skipTo(const char *delimiters) {
-      while (*fp.pos != '\0') {
-        if (*fp.pos == '\\') {
-          if (fp.pos[1] == '\n') {
-            fp.lineStart = fp.pos + 2;
+      while (*fp.start != '\0') {
+        if (*fp.start == '\\') {
+          if (fp.start[1] == '\n') {
+            fp.lineStart = fp.start + 2;
             ++fp.line;
           }
-          fp.pos += 1 + (fp.pos[1] != '\0');
+          fp.start += 1 + (fp.start[1] != '\0');
           continue;
         }
-        if (lex::charIsIn(*fp.pos, delimiters)) {
+        if (lex::charIsIn(*fp.start, delimiters)) {
           return;
         }
-        if (*fp.pos == '\n') {
-          fp.lineStart = fp.pos + 1;
+        if (*fp.start == '\n') {
+          fp.lineStart = fp.start + 1;
           ++fp.line;
         }
-        ++fp.pos;
+        ++fp.start;
       }
     }
 
     void tokenizer::skipFrom(const char *delimiters) {
-      while (*fp.pos != '\0') {
-        if (*fp.pos == '\\') {
-          if (fp.pos[1] == '\n') {
-            fp.lineStart = fp.pos + 2;
+      while (*fp.start != '\0') {
+        if (*fp.start == '\\') {
+          if (fp.start[1] == '\n') {
+            fp.lineStart = fp.start + 2;
             ++fp.line;
           }
-          fp.pos += 1 + (fp.pos[1] != '\0');
+          fp.start += 1 + (fp.start[1] != '\0');
           continue;
         }
-        if (!lex::charIsIn(*fp.pos, delimiters)) {
+        if (!lex::charIsIn(*fp.start, delimiters)) {
           break;
         }
-        if (*fp.pos == '\n') {
-          fp.lineStart = fp.pos + 1;
+        if (*fp.start == '\n') {
+          fp.lineStart = fp.start + 1;
           ++fp.line;
         }
-        ++fp.pos;
+        ++fp.start;
       }
     }
 
@@ -301,7 +318,7 @@ namespace occa {
     int tokenizer::shallowPeek() {
       skipWhitespace();
 
-      const char c = *fp.pos;
+      const char c = *fp.start;
       if (c == '\0') {
         return tokenType::none;
       }
@@ -309,7 +326,7 @@ namespace occa {
       //   and operators since:
       //   - true/false
       //   - Operators can start with a . (for example, .01)
-      const char *pos = fp.pos;
+      const char *pos = fp.start;
       if (primitive::load(pos, false).type != occa::primitiveType::none) {
         return tokenType::primitive;
       }
@@ -333,7 +350,7 @@ namespace occa {
 
     int tokenizer::peekForIdentifier() {
       push();
-      ++fp.pos;
+      ++fp.start;
       skipFrom(charcodes::identifier);
       const std::string identifier = str();
       int type = shallowPeek();
@@ -359,9 +376,8 @@ namespace occa {
 
     int tokenizer::peekForOperator() {
       push();
-      fileOrigin tokenOrigin = origin;
       operatorTrie &operators = getOperators();
-      operatorTrie::result_t result = operators.getLongest(fp.pos);
+      operatorTrie::result_t result = operators.getLongest(fp.start);
       if (!result.success()) {
         printError("Not able to parse operator");
         popAndRewind();
@@ -390,7 +406,7 @@ namespace occa {
       if (type & tokenType::op) {
         push();
         operatorTrie &operators = getOperators();
-        operatorTrie::result_t result = operators.getLongest(fp.pos);
+        operatorTrie::result_t result = operators.getLongest(fp.start);
         popAndRewind();
         if (result.success() &&
             (result.value()->opType & operatorType::lessThan)) {
@@ -404,11 +420,11 @@ namespace occa {
     }
 
     void tokenizer::getIdentifier(std::string &value) {
-      if (!lex::charIsIn(*fp.pos, charcodes::identifierStart)) {
+      if (!lex::charIsIn(*fp.start, charcodes::identifierStart)) {
         return;
       }
       push();
-      ++fp.pos;
+      ++fp.start;
       skipFrom(charcodes::identifier);
       value = str();
       pop();
@@ -420,14 +436,14 @@ namespace occa {
         getRawString(value);
         return;
       }
-      if (*fp.pos != '"') {
+      if (*fp.start != '"') {
         return;
       }
       push();
-      ++fp.pos;
+      ++fp.start;
       push();
       skipTo("\"\n");
-      if (*fp.pos == '\n') {
+      if (*fp.start == '\n') {
         pop();
         popAndRewind();
         return;
@@ -435,21 +451,21 @@ namespace occa {
       value = unescape(str(), '"');
       pop();
       pop();
-      ++fp.pos;
+      ++fp.start;
     }
 
     void tokenizer::getRawString(std::string &value) {
       // TODO: Keep the delimiter(s)
-      if (*fp.pos != '"') {
+      if (*fp.start != '"') {
         return;
       }
       push();
-      ++fp.pos; // Skip "
+      ++fp.start; // Skip "
       push();
 
       // Find delimiter
       skipTo("(\n");
-      if (*fp.pos == '\n') {
+      if (*fp.start == '\n') {
         pop();
         popAndRewind();
         return;
@@ -461,53 +477,53 @@ namespace occa {
       end += str();
       end += '"';
       pop();
-      ++fp.pos; // Skip (
+      ++fp.start; // Skip (
       push();
 
       // Find end match
       const int chars = (int) end.size();
       const char *m   = end.c_str();
       int mi;
-      while (*fp.pos != '\0') {
+      while (*fp.start != '\0') {
         for (mi = 0; mi < chars; ++mi) {
-          if (fp.pos[mi] != m[mi]) {
+          if (fp.start[mi] != m[mi]) {
             break;
           }
         }
         if (mi == chars) {
           break;
         }
-        if (*fp.pos == '\n') {
-          fp.lineStart = fp.pos + 1;
+        if (*fp.start == '\n') {
+          fp.lineStart = fp.start + 1;
           ++fp.line;
         }
-        ++fp.pos;
+        ++fp.start;
       }
 
       // Make sure we found delimiter
-      if (*fp.pos == '\0') {
+      if (*fp.start == '\0') {
         pop();
         popAndRewind();
         return;
       }
       value = str();
-      fp.pos += chars;
+      fp.start += chars;
     }
 
     int tokenizer::skipLineCommentAndPeek() {
       skipTo('\n');
-      return (fp.pos
+      return (fp.start
               ? tokenType::newline
               : tokenType::none);
     }
 
     int tokenizer::skipBlockCommentAndPeek() {
-      while (*fp.pos != '\0') {
+      while (*fp.start != '\0') {
         skipTo('*');
-        if (*fp.pos == '*') {
-          ++fp.pos;
-          if (*fp.pos == '/') {
-            ++fp.pos;
+        if (*fp.start == '*') {
+          ++fp.start;
+          if (*fp.start == '/') {
+            ++fp.start;
             skipWhitespace();
             return peek();
           }
@@ -525,13 +541,15 @@ namespace occa {
 
       // Check if file finished
       bool finishedSource = false;
-      while ((*fp.pos == '\0') && stack.size()) {
+      while ((*fp.start == '\0') && stack.size()) {
         popSource();
         skipWhitespace();
         finishedSource = true;
       }
       if (finishedSource) {
-        return new newlineToken(origin);
+        push();
+        ++fp.start;
+        return new newlineToken(popTokenOrigin());
       }
 
       int type = peek();
@@ -545,10 +563,11 @@ namespace occa {
         return getOperatorToken();
       }
       if (type & tokenType::newline) {
-        ++fp.pos;
+        push();
+        ++fp.start;
         ++fp.line;
-        fp.lineStart = fp.pos;
-        return new newlineToken(origin);
+        fp.lineStart = fp.start;
+        return new newlineToken(popTokenOrigin());
       }
       if (type & tokenType::char_) {
         return getCharToken(tokenType::getEncoding(type));
@@ -557,27 +576,28 @@ namespace occa {
         return getStringToken(tokenType::getEncoding(type));
       }
 
-      token_t *token = new unknownToken(origin);
-      ++fp.pos;
-      return token;
+      push();
+      ++fp.start;
+      return new unknownToken(popTokenOrigin());
     }
 
     token_t* tokenizer::getIdentifierToken() {
-      fileOrigin tokenOrigin = origin;
-      if (!lex::charIsIn(*fp.pos, charcodes::identifierStart)) {
+      if (!lex::charIsIn(*fp.start, charcodes::identifierStart)) {
         printError("Not able to parse identifier");
         return NULL;
       }
+
+      push();
       std::string value;
       getIdentifier(value);
-      return new identifierToken(tokenOrigin,
+
+      return new identifierToken(popTokenOrigin(),
                                  value);
     }
 
     token_t* tokenizer::getPrimitiveToken() {
-      fileOrigin tokenOrigin = origin;
       push();
-      primitive value = primitive::load(fp.pos);
+      primitive value = primitive::load(fp.start);
       if (value.isNaN()) {
         printError("Not able to parse primitive");
         popAndRewind();
@@ -585,104 +605,121 @@ namespace occa {
       }
       const std::string strValue = str();
       countSkippedLines();
-      pop();
-      return new primitiveToken(tokenOrigin,
+      return new primitiveToken(popTokenOrigin(),
                                 value,
                                 strValue);
     }
 
     token_t* tokenizer::getOperatorToken() {
-      fileOrigin tokenOrigin = origin;
+      push();
       operatorTrie &operators = getOperators();
-      operatorTrie::result_t result = operators.getLongest(fp.pos);
+      operatorTrie::result_t result = operators.getLongest(fp.start);
       if (!result.success()) {
         printError("Not able to parse operator");
         return NULL;
       }
-      fp.pos += result.length; // Skip operator
-      return new operatorToken(tokenOrigin,
+      fp.start += result.length; // Skip operator
+      return new operatorToken(popTokenOrigin(),
                                *(result.value()));
     }
 
     token_t* tokenizer::getStringToken(const int encoding) {
-      fileOrigin tokenOrigin = origin;
+      push();
+
       if (encoding) {
         std::string encodingStr;
         getIdentifier(encodingStr);
       }
-      if (*fp.pos != '"') {
+
+      if (*fp.start != '"') {
         printError("Not able to parse string");
+        pop();
         return NULL;
       }
-      const char *start = fp.pos;
+
+      const char *start = fp.start;
       std::string value, udf;
       getString(value, encoding);
-      if (fp.pos == start) {
+      if (fp.start == start) {
         printError("Not able to find closing \"");
+        pop();
         return NULL;
       }
-      if (*fp.pos == '_') {
+
+      if (*fp.start == '_') {
         getIdentifier(udf);
       }
-      return new stringToken(tokenOrigin,
+
+      return new stringToken(popTokenOrigin(),
                              encoding, value, udf);
     }
 
     token_t* tokenizer::getCharToken(const int encoding) {
-      fileOrigin tokenOrigin = origin;
+      push();
+
       if (encoding) {
         std::string encodingStr;
         getIdentifier(encodingStr);
       }
-      if (*fp.pos != '\'') {
+      if (*fp.start != '\'') {
         printError("Not able to parse char");
+        pop();
         return NULL;
       }
-      ++fp.pos; // Skip '
+
+      ++fp.start; // Skip '
       push();
       skipTo("'\n");
-      if (*fp.pos == '\n') {
+      if (*fp.start == '\n') {
         printError("Not able to find closing '");
         popAndRewind();
+        pop();
         return NULL;
       }
       const std::string value = unescape(str(), '\'');
-      ++fp.pos;
+      ++fp.start;
       pop();
 
       std::string udf;
-      if (*fp.pos == '_') {
+      if (*fp.start == '_') {
         getIdentifier(udf);
       }
-      return new charToken(tokenOrigin,
+
+      return new charToken(popTokenOrigin(),
                            encoding, value, udf);
     }
 
     token_t* tokenizer::getHeaderToken() {
-      fileOrigin tokenOrigin = origin;
       int type = shallowPeek();
+
+      // Push after in case of whitespace
+      push();
       if (type & tokenType::op) {
-        ++fp.pos; // Skip <
+        ++fp.start; // Skip <
         push();
         skipTo(">\n");
-        if (*fp.pos == '\n') {
+        if (*fp.start == '\n') {
           printError("Not able to find closing >");
-          popAndRewind();
+          pop();
+          pop();
           return NULL;
         }
-        token_t *token = new headerToken(tokenOrigin,
-                                         true, str());
-        ++fp.pos; // Skip >
+        const std::string header = str();
         pop();
-        return token;
+        ++fp.start; // Skip >
+        return new headerToken(popTokenOrigin(),
+                               true, header);
       }
+
       if (!(type & tokenType::string)) {
         printError("Not able to parse header");
         return NULL;
       }
+
       std::string value;
       getString(value);
-      return new headerToken(tokenOrigin,
+
+      return new headerToken(popTokenOrigin(),
                              false, value);
     }
 

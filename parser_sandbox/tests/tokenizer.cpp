@@ -155,21 +155,21 @@ void testSkipMethods() {
   const char *c = source.c_str();
 
   tokenizer.skipTo('a');
-  OCCA_ASSERT_EQUAL('a', *tokenizer.fp.pos);
+  OCCA_ASSERT_EQUAL('a', *tokenizer.fp.start);
 
   tokenizer.skipTo('b');
-  OCCA_ASSERT_EQUAL('b', *tokenizer.fp.pos);
+  OCCA_ASSERT_EQUAL('b' , *tokenizer.fp.start);
 
   tokenizer.skipTo('e');
-  OCCA_ASSERT_EQUAL('e', *tokenizer.fp.pos);
+  OCCA_ASSERT_EQUAL('e' , *tokenizer.fp.start);
 
-  tokenizer.fp.pos = c;
+  tokenizer.fp.start = c;
   tokenizer.skipTo("c\n");
-  OCCA_ASSERT_EQUAL(c + 2, tokenizer.fp.pos);
+  OCCA_ASSERT_EQUAL(c + 2, tokenizer.fp.start);
 
-  tokenizer.fp.pos = c + 6;
+  tokenizer.fp.start = c + 6;
   tokenizer.skipFrom("\n");
-  OCCA_ASSERT_EQUAL('d', *tokenizer.fp.pos);
+  OCCA_ASSERT_EQUAL('d' , *tokenizer.fp.start);
 }
 
 void testPushPop() {
@@ -181,12 +181,12 @@ void testPushPop() {
   OCCA_ASSERT_EQUAL(3,
                     tokenizer.fp.line);
   OCCA_ASSERT_EQUAL(c + 4,
-                    tokenizer.fp.pos);
+                    tokenizer.fp.start);
   tokenizer.popAndRewind();
   OCCA_ASSERT_EQUAL(1,
                     tokenizer.fp.line);
   OCCA_ASSERT_EQUAL(c + 0,
-                    tokenizer.fp.pos);
+                    tokenizer.fp.start);
   tokenizer.push();
   tokenizer.push();
   tokenizer.push();
@@ -197,7 +197,7 @@ void testPushPop() {
   OCCA_ASSERT_EQUAL(3,
                     tokenizer.fp.line);
   OCCA_ASSERT_EQUAL(c + 4,
-                    tokenizer.fp.pos);
+                    tokenizer.fp.start);
 }
 
 void testPeekMethods() {

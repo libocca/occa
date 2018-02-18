@@ -82,6 +82,7 @@ int main(const int argc, const char **argv) {
 }
 
 void testMacroDefines() {
+#if 0
   setStream(
     // Test #define
     "#define A\n"
@@ -97,7 +98,7 @@ void testMacroDefines() {
     "D(2, 3)\n"
     // Test stringify
     "#define H(A1) #A1\n"
-    "H(12)\n"
+    "H(1    2 3   )\n"
     // Test multi-token stringify
     "#define H(A1, A2) #A1 #A2\n"
     "H(12, 34)\n"
@@ -129,6 +130,7 @@ void testMacroDefines() {
   }
 
   std::cerr << "Testing preprocessor errors:\n";
+#endif
 }
 
 void testCppStandardTests() {

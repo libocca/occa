@@ -33,23 +33,27 @@ int main(const int argc, const char **argv) {
   const int bar = 12;
   orig.position = filePosition(10,
                                c_line,
-                               c_line + foo);
+                               c_line + foo,
+                               c_line + foo + 3);
   orig.push(true,
             originSource::string,
             filePosition(20,
                          c_line,
-                         c_line + bar));
+                         c_line + bar,
+                         c_line + bar + 3));
   orig2 = orig;
   orig.push(false,
             originSource::string,
             filePosition(30,
                          c_line,
-                         c_line + foo));
+                         c_line + foo,
+                         c_line + foo + 3));
   orig2.push(false,
              originSource::string,
              filePosition(40,
                           c_line,
-                          c_line + bar));
+                          c_line + bar,
+                          c_line + bar + 3));
   orig.print(std::cout);
   std::cout << "Test message\n\n";
   orig2.print(std::cout);

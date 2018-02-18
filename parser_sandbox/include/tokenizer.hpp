@@ -81,6 +81,9 @@ namespace occa {
       void push();
       void pop(const bool rewind = false);
       void popAndRewind();
+      fileOrigin popTokenOrigin();
+
+      size_t strSize();
       std::string str();
 
       void countSkippedLines();

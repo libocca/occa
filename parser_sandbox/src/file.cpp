@@ -54,24 +54,40 @@ namespace occa {
     filePosition::filePosition() :
       line(1),
       lineStart(NULL),
-      pos(NULL) {}
+      start(NULL),
+      end(NULL) {}
 
     filePosition::filePosition(const char *root) :
       line(1),
       lineStart(root),
-      pos(root) {}
+      start(root),
+      end(root) {}
 
     filePosition::filePosition(const int line_,
                                const char *lineStart_,
-                               const char *pos_) :
+                               const char *start_,
+                               const char *end_) :
       line(line_),
       lineStart(lineStart_),
-      pos(pos_) {}
+      start(start_),
+      end(end_) {}
 
     filePosition::filePosition(const filePosition &other) :
       line(other.line),
       lineStart(other.lineStart),
-      pos(other.pos) {}
+      start(other.start),
+      end(other.end) {}
+
+    size_t filePosition::size() const {
+      return (end - start);
+    }
+
+    std::string filePosition::str() const {
+      if (!start) {
+        return "";
+      }
+      return std::string(start, end - start + 1);
+    }
     //==================================
 
     //---[ File Origin ]----------------
@@ -176,6 +192,13 @@ namespace occa {
       setUp(up->up);
     }
 
+    size_t fileOrigin::distanceTo(const fileOrigin &origin) {
+      if (file != origin.file) {
+        return -1;
+      }
+      return (origin.position.start - position.end);
+    }
+
     void fileOrigin::preprint(std::ostream &out) {
       print(out, true);
     }
@@ -183,9 +206,11 @@ namespace occa {
     void fileOrigin::postprint(std::ostream &out) {
       const char *lineEnd = position.lineStart;
       lex::skipTo(lineEnd, '\n');
+
       const std::string line(position.lineStart,
                              lineEnd - position.lineStart);
-      const std::string space(position.pos - position.lineStart, ' ');
+      const std::string space(position.start - position.lineStart, ' ');
+
       out << line << '\n'
           << space << green("^") << '\n';
     }
@@ -198,16 +223,13 @@ namespace occa {
       // Print file location
       out << blue(file->filename)
           << ':' << position.line
-          << ':' << (position.pos - position.lineStart + 1)
+          << ':' << (position.start - position.lineStart + 1)
           << ": ";
       if (!root) {
         if (fromInclude) {
           out << "Included file:\n";
         } else {
-          tokenizer stream(position.pos);
-          std::string macro;
-          stream.getIdentifier(macro);
-          out << "Expanded from macro '" << macro << "':\n";
+          out << "Expanded from macro '" << position.str() << "':\n";
         }
       }
     }
