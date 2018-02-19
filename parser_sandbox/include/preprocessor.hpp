@@ -64,6 +64,7 @@ namespace occa {
       int status;
 
       int passedNewline;
+      bool expandingMacros;
       token_t *errorOnToken;
       //==================================
 

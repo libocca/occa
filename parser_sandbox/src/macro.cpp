@@ -566,6 +566,7 @@ namespace occa {
       token_t *token = NULL;
       while (true) {
         pp >> token;
+
         if (!token) {
           printError(&source,
                      "Not able to find closing )");

@@ -45,6 +45,7 @@ namespace occa {
 
     // TODO: Add actual compiler macros as well
     preprocessor::preprocessor() :
+      expandingMacros(true),
       errorOnToken(NULL) {
 
       // Always start off as if we passed a newline
@@ -108,10 +109,11 @@ namespace occa {
     }
 
     preprocessor& preprocessor::operator = (const preprocessor &pp) {
-      statusStack   = pp.statusStack;
-      status        = pp.status;
-      passedNewline = pp.passedNewline;
-      errorOnToken  = pp.errorOnToken;
+      statusStack     = pp.statusStack;
+      status          = pp.status;
+      passedNewline   = pp.passedNewline;
+      expandingMacros = pp.expandingMacros;
+      errorOnToken    = pp.errorOnToken;
 
       directives     = pp.directives;
       compilerMacros = pp.compilerMacros;
@@ -415,7 +417,9 @@ namespace occa {
         return;
       }
 
-      macro_t *macro = getMacro(token.value);
+      macro_t *macro = (expandingMacros
+                        ? getMacro(token.value)
+                        : NULL);
       if (macro) {
         if (!macro->isFunctionLike()) {
           expandMacro(token, *macro);

@@ -43,10 +43,13 @@ namespace occa {
     void definedMacro::expand(tokenVector &tokens,
                               identifierToken &source) {
       std::vector<tokenVector> allArgs;
+      pp.expandingMacros = false;
       if (!loadArgs(source, allArgs) ||
           !checkArgs(source, allArgs)) {
+        pp.expandingMacros = true;
         return;
       }
+      pp.expandingMacros = true;
 
       // We only expect 1 argument
       tokenVector &args = allArgs[0];
@@ -64,6 +67,7 @@ namespace occa {
         token->origin
           .from(false, thisToken.origin)
           .printError("Expected a token name identifier");
+        throw;
 
         freeTokenVector(args);
         return;

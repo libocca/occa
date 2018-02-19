@@ -91,7 +91,7 @@ int main(const int argc, const char **argv) {
   testMacroDefines();
   testCppStandardTests();
   testIfElse();
-  // testIfElseDefines();
+  testIfElseDefines();
   testErrorDefines();
   testSpecialMacros();
   testIncludeDefine();
