@@ -35,7 +35,7 @@ namespace occa {
     class newlineTokenMerger : public tokenCacheMap {
     public:
       newlineTokenMerger();
-      newlineTokenMerger(const newlineTokenMerger &map);
+      newlineTokenMerger(const newlineTokenMerger &smap);
 
       virtual tokenMap& clone_() const;
       virtual void pop();
@@ -44,7 +44,7 @@ namespace occa {
     class stringTokenMerger : public tokenCacheMap {
     public:
       stringTokenMerger();
-      stringTokenMerger(const stringTokenMerger &map);
+      stringTokenMerger(const stringTokenMerger &smap);
 
       virtual tokenMap& clone_() const;
       virtual void pop();

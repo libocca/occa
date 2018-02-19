@@ -274,9 +274,9 @@ namespace occa {
 
   template <class input_t, class output_t>
   cacheMap<input_t, output_t>::cacheMap(
-    const cacheMap<input_t, output_t> &map
+    const cacheMap<input_t, output_t> &smap
   ) :
-    cache(map.cache) {}
+    cache(smap.cache) {}
 
   template <class input_t, class output_t>
   bool cacheMap<input_t, output_t>::isEmpty() {

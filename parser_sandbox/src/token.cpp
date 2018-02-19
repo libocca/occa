@@ -26,20 +26,32 @@ namespace occa {
     namespace charcodes {
       const char whitespace[]          = " \n\t\r\v\f";
       const char whitespaceNoNewline[] = " \t\r\v\f";
-      const char alpha[]               = ("abcdefghijklmnopqrstuvwxyz"
-                                          "ABCDEFGHIJKLMNOPQRSTUVWXYZ");
-      const char number[]              = "0123456789";
-      const char alphanumber[]         = ("abcdefghijklmnopqrstuvwxyz"
-                                          "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
-                                          "0123456789");
-      const char identifierStart[]     = ("abcdefghijklmnopqrstuvwxyz"
-                                          "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
-                                          "_");
-      const char identifier[]          = ("abcdefghijklmnopqrstuvwxyz"
-                                          "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
-                                          "0123456789"
-                                          "_");
-      const char operators[]           = "!#%&()*+,-./:;<=>?[]^{|}~";
+
+      const char alpha[] =
+        "abcdefghijklmnopqrstuvwxyz"
+        "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+
+      const char number[] =
+        "0123456789";
+
+      const char alphanumber[] =
+        "abcdefghijklmnopqrstuvwxyz"
+        "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+        "0123456789";
+
+      const char identifierStart[] =
+        "abcdefghijklmnopqrstuvwxyz"
+        "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+        "_";
+
+      const char identifier[] =
+        "abcdefghijklmnopqrstuvwxyz"
+        "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+        "0123456789"
+        "_";
+
+      const char operators[] =
+        "!#%&()*+,-./:;<=>?[]^{|}~";
     }
 
     void getOperators(operatorTrie &operators) {

@@ -28,8 +28,8 @@ namespace occa {
     //---[ Newlines ]-------------------
     newlineTokenMerger::newlineTokenMerger() {}
 
-    newlineTokenMerger::newlineTokenMerger(const newlineTokenMerger &map) :
-      cacheMap(map) {}
+    newlineTokenMerger::newlineTokenMerger(const newlineTokenMerger &smap) :
+      cacheMap(smap) {}
 
     tokenMap& newlineTokenMerger::clone_() const {
       return *(new newlineTokenMerger(*this));
@@ -64,8 +64,8 @@ namespace occa {
     //---[ Strings ]--------------------
     stringTokenMerger::stringTokenMerger() {}
 
-    stringTokenMerger::stringTokenMerger(const stringTokenMerger &map) :
-      cacheMap(map) {}
+    stringTokenMerger::stringTokenMerger(const stringTokenMerger &smap) :
+      cacheMap(smap) {}
 
     tokenMap& stringTokenMerger::clone_() const {
       return *(new stringTokenMerger(*this));
