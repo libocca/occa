@@ -33,6 +33,7 @@ namespace occa {
     // defined()
     definedMacro::definedMacro(preprocessor &pp_) :
       macro_t(pp_, "defined") {
+      isFunctionLike = true;
       argNames.add("MACRO_NAME", 0);
     }
 
@@ -84,6 +85,7 @@ namespace occa {
     // __has_include()
     hasIncludeMacro::hasIncludeMacro(preprocessor &pp_) :
       macro_t(pp_, "__has_include") {
+      isFunctionLike = true;
       argNames.add("INCLUDE_PATH", 0);
     }
 

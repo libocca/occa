@@ -196,13 +196,16 @@ namespace occa {
     //---[ Macro ]----------------------
     macro_t::macro_t(preprocessor &pp_,
                      identifierToken &thisToken_,
-                     const bool isBuiltin_) :
+                     const bool isBuiltin_,
+                     const bool isFunctionLike_,
+                     const bool hasVarArgs_) :
       pp(pp_),
       thisToken(thisToken_
                 .clone()
                 ->to<identifierToken>()),
       isBuiltin(isBuiltin_),
-      hasVarArgs(false) {
+      isFunctionLike(isFunctionLike_),
+      hasVarArgs(hasVarArgs_) {
       setupTokenOrigin();
     }
 
@@ -212,6 +215,7 @@ namespace occa {
       pp(pp_),
       thisToken(*(new identifierToken(originSource::builtin, name_))),
       isBuiltin(true),
+      isFunctionLike(false),
       hasVarArgs(false) {
       setupTokenOrigin();
     }
@@ -240,7 +244,11 @@ namespace occa {
     }
 
     macro_t& macro_t::clone(preprocessor &pp_) {
-      return *(new macro_t(pp_, thisToken, isBuiltin));
+      return *(new macro_t(pp_,
+                           thisToken,
+                           isBuiltin,
+                           isFunctionLike,
+                           hasVarArgs));
     }
 
     void macro_t::loadDefinition() {
@@ -284,6 +292,7 @@ namespace occa {
       delete token;
       tokens.erase(tokens.begin());
 
+      isFunctionLike = true;
       loadFunctionLikeDefinition(tokens);
       freeTokenVector(tokens);
     }
@@ -292,6 +301,15 @@ namespace occa {
       const int tokenCount = (int) tokens.size();
       int index = 0;
       bool loadedArgs = false;
+
+      // No arguments
+      if (tokenCount &&
+          (tokens[0]->getOpType() & operatorType::parenthesesEnd)) {
+        delete tokens[0];
+        tokens.erase(tokens.begin());
+        setDefinition(tokens);
+        return;
+      }
 
       while (index < tokenCount) {
         // Test for arg name
@@ -304,7 +322,7 @@ namespace occa {
         token = tokens[index++];
         bool foundOp = (token->type() & tokenType::op);
         if (foundOp) {
-          opType_t opType = token->to<operatorToken>().op.opType;
+          opType_t opType = token->getOpType();
           if (opType & operatorType::comma) {
             continue;
           }
@@ -556,7 +574,7 @@ namespace occa {
 
     bool macro_t::loadArgs(identifierToken &source,
                            std::vector<tokenVector> &args) {
-      if (!isFunctionLike()) {
+      if (!isFunctionLike) {
         return true;
       }
 

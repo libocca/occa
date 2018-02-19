@@ -421,7 +421,7 @@ namespace occa {
                         ? getMacro(token.value)
                         : NULL);
       if (macro) {
-        if (!macro->isFunctionLike()) {
+        if (!macro->isFunctionLike) {
           expandMacro(token, *macro);
           delete &token;
           return;

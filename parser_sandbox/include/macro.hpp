@@ -118,13 +118,17 @@ namespace occa {
       identifierToken &thisToken;
       bool isBuiltin;
 
-      bool hasVarArgs;
+      bool isFunctionLike;
       intTrie argNames;
+      bool hasVarArgs;
+
       macroTokenVector_t macroTokens;
 
       macro_t(preprocessor &pp_,
               identifierToken &thisToken_,
-              const bool isBuiltin_ = false);
+              const bool isBuiltin_ = false,
+              const bool isFunctionLike = false,
+              const bool hasVarArgs = false);
 
       macro_t(preprocessor &pp_,
               const std::string &name_);
@@ -135,10 +139,6 @@ namespace occa {
 
       inline int argCount() const {
         return (argNames.size() - hasVarArgs);
-      }
-
-      inline bool isFunctionLike() const {
-        return ((argCount() > 0) || hasVarArgs);
       }
 
       inline const std::string& name() const {
