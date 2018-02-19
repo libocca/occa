@@ -544,7 +544,6 @@ namespace occa {
           break;
         }
       }
-      freeTokenVector(tokens);
       freeTokenVectors(args);
     }
 

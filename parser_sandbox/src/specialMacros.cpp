@@ -205,7 +205,7 @@ namespace occa {
 
     void counterMacro::expand(tokenVector &tokens,
                               identifierToken &source) {
-      const int value = counter;
+      const int value = counter++;
       tokens.push_back(new primitiveToken(source.origin,
                                           value,
                                           occa::toString(value)));

@@ -31,9 +31,7 @@ void testCppStandardTests();
 void testIfElse();
 void testIfElseDefines();
 void testErrorDefines();
-void testWeirdCase();
 void testSpecialMacros();
-void testEval();
 
 using namespace occa::lang;
 
@@ -43,6 +41,7 @@ occa::stream<token_t*> stream;
 token_t *token;
 
 void setStream(const std::string &s) {
+  delete token;
   token = NULL;
   ::source = s;
   stream = (tokenizer(source.c_str())
@@ -64,6 +63,24 @@ void setToken(const std::string &s) {
 int getTokenType() {
   return token ? token->type() : 0;
 }
+
+occa::primitive nextTokenPrimitiveValue() {
+  getToken();
+  while (token &&
+         (token->type() == tokenType::newline)) {
+    getToken();
+  }
+  return token->to<primitiveToken>().value;
+}
+
+std::string nextTokenStringValue() {
+  getToken();
+  while (token &&
+         (token->type() == tokenType::newline)) {
+    getToken();
+  }
+  return token->to<stringToken>().value;
+}
 //======================================
 
 //---[ Macro Util Methods ]-------------
@@ -73,13 +90,13 @@ int getTokenType() {
 //---[ Tests ]--------------------------
 int main(const int argc, const char **argv) {
   testMacroDefines();
-  //testCppStandardTests();
+  testCppStandardTests();
+  testIfElse();
+  // testIfElseDefines();
   testErrorDefines();
   testSpecialMacros();
-  testWeirdCase();
-  testIfElse();
-  testIfElseDefines();
-  testEval();
+
+  delete token;
 }
 
 void testMacroDefines() {
@@ -128,7 +145,6 @@ void testMacroDefines() {
   while (!stream.isEmpty()) {
     getToken();
   }
-  delete token;
 }
 
 void testCppStandardTests() {
@@ -144,8 +160,6 @@ void testCppStandardTests() {
   getToken();
   const std::string output = token->to<stringToken>().value;
   OCCA_ASSERT_EQUAL("x ## y", output);
-  delete token;
-  return;
 
   // Test 2 in C++ standard
   setStream(
@@ -232,7 +246,7 @@ void testCppStandardTests() {
     "                  */ )\n"
   );
 
-  std::cerr << "Testing wrong macro redefinitions:";
+  std::cerr << "Testing wrong macro redefinitions:\n";
   setStream(
     // Defines
     "#define OBJ_LIKE      (1-1)\n"
@@ -341,69 +355,69 @@ void testIfElse() {
 }
 
 void testIfElseDefines () {
-#if 0
   // Test defines
-  setStream(""
-            // ""
-            "#ifdef FOO\n"
-            "1\n"
-            "#endif\n"
-            // "2"
-            "#ifndef FOO\n"
-            "2\n"
-            "#endif\n"
-            // ""
-            "#if defined(FOO)\n"
-            "3\n"
-            "#endif\n"
-            // "4"
-            "#if !defined(FOO)\n"
-            "4\n"
-            "#endif\n"
-            // Redefine FOO
-            "#define FOO 9\n"
-            // "5"
-            "#ifdef FOO\n"
-            "5\n"
-            "#endif\n"
-            // ""
-            "#ifndef FOO\n"
-            "6\n"
-            "#endif\n"
-            // "7"
-            "#if defined(FOO)\n"
-            "7\n"
-            "#endif\n"
-            // ""
-            "#if !defined(FOO)\n"
-            "8\n"
-            "#endif\n"
-            // "9"
-            "FOO\n"
-            // "10"
-            "#undef FOO\n"
-            "#define FOO 10\n"
-            "FOO"
-            // "11"
-            "#define FOO 11\n"
-            "FOO"
-            "#undef FOO\n"
-            // ""
-            "#ifdef FOO\n"
-            "12\n"
-            "#endif\n"
-            // "13"
-            "#ifndef FOO\n"
-            "13\n"
-            "#endif\n"
-            // ""
-            "#if defined(FOO)\n"
-            "14\n"
-            "#endif\n"
-            // "15"
-            "#if !defined(FOO)\n"
-            "15\n"
-            "#endif\n");
+  setStream(
+    // ""
+    "#ifdef FOO\n"
+    "1\n"
+    "#endif\n"
+    // "2"
+    "#ifndef FOO\n"
+    "2\n"
+    "#endif\n"
+    // ""
+    "#if defined(FOO)\n"
+    "3\n"
+    "#endif\n"
+    // "4"
+    "#if !defined(FOO)\n"
+    "4\n"
+    "#endif\n"
+    // Redefine FOO
+    "#define FOO 9\n"
+    // "5"
+    "#ifdef FOO\n"
+    "5\n"
+    "#endif\n"
+    // ""
+    "#ifndef FOO\n"
+    "6\n"
+    "#endif\n"
+    // "7"
+    "#if defined(FOO)\n"
+    "7\n"
+    "#endif\n"
+    // ""
+    "#if !defined(FOO)\n"
+    "8\n"
+    "#endif\n"
+    // "9"
+    "FOO\n"
+    // "10"
+    "#undef FOO\n"
+    "#define FOO 10\n"
+    "FOO\n"
+    // "11"
+    "#define FOO 11\n"
+    "FOO\n"
+    "#undef FOO\n"
+    // ""
+    "#ifdef FOO\n"
+    "12\n"
+    "#endif\n"
+    // "13"
+    "#ifndef FOO\n"
+    "13\n"
+    "#endif\n"
+    // ""
+    "#if defined(FOO)\n"
+    "14\n"
+    "#endif\n"
+    // "15"
+    "#if !defined(FOO)\n"
+    "15\n"
+    "#endif\n"
+  );
   int values[9] = {
     2, 4, 5, 7, 9, 10, 11, 13, 15
   };
@@ -425,144 +439,68 @@ void testIfElseDefines () {
     OCCA_ASSERT_EQUAL(values[i],
                       (int) pToken.value);
   }
-#endif
-}
-
-void testWeirdCase() {
-#if 0
-  // Should print out "x ## y"
-  // std::string str = pp.processSource("#define hash_hash # ## #\n"
-  //                                              "#define mkstr(a) # a\n"
-  //                                              "#define in_between(a) mkstr(a)\n"
-  //                                              "#define join(c, d) in_between(c hash_hash d)\n"
-  //                                              "join(x, y)\n");
-  // std::cout << "str = " << str << '\n';
-#endif
 }
 
 void testErrorDefines() {
-#if 0
-  std::stringstream ss;
-  pp.exitOnFatalError = false;
-  pp.setOutputStream(ss);
-
-  const bool printOutput = true;
-
-  pp.processSource("#error \"Error\"\n");
-  OCCA_ASSERT_EQUAL(0,
-                    !ss.str().size());
-  if (printOutput) {
-    std::cout << ss.str();
+  std::cout << "Testing error and warning directives\n";
+  setStream(
+    "#error \"Testing #error\"\n"
+    "#warning \"Testing #warning\"\n"
+  );
+  while (!stream.isEmpty()) {
+    getToken();
   }
-  ss.str("");
-
-  pp.clear();
-  pp.exitOnFatalError = false;
-  pp.setOutputStream(ss);
-
-  pp.processSource("#warning \"Warning\"\n");
-  OCCA_ASSERT_EQUAL(0,
-                    !ss.str().size());
-  if (printOutput) {
-    std::cout << ss.str();
-  }
-  ss.str("");
-#endif
 }
 
 void testSpecialMacros() {
-#if 0
-  OCCA_ASSERT_EQUAL("10\n",
-                    pp.processSource("#line 10\n"
-                                     "__LINE__\n"));
+  setStream(
+    "__COUNTER__\n"
+    "__FILE__ __LINE__\n"
+    "__COUNTER__\n"
+    "__FILE__ __LINE__ __LINE__\n"
+    "__COUNTER__\n"
+    "__DATE__ __TIME__\n"
+  );
 
-  OCCA_ASSERT_EQUAL("20\n"
-                    + occa::env::PWD + "foo\n"
-                    "22\n",
-                    pp.processSource("#line 20 \"foo\"\n"
-                                     "__LINE__\n"
-                                     "__FILE__\n"
-                                     "__LINE__\n"));
+  // __COUNTER__
+  OCCA_ASSERT_EQUAL(0,
+                    (int) nextTokenPrimitiveValue());
 
-  OCCA_ASSERT_EQUAL("0\n"
-                    "1\n"
-                    "3\n"
-                    "2\n",
-                    pp.processSource("__COUNTER__\n"
-                                     "__COUNTER__\n"
-                                     "__LINE__\n"
-                                     "__COUNTER__\n"));
+  // __FILE__ __LINE__
+  OCCA_ASSERT_EQUAL("(source)",
+                    nextTokenStringValue());
+  OCCA_ASSERT_EQUAL(2,
+                    (int) nextTokenPrimitiveValue());
 
-  std::cout << pp.processSource("_DATE_ macro: __DATE__\n"
-                                "_TIME_ macro: __TIME__\n");
-#endif
-}
+  // __COUNTER__
+  OCCA_ASSERT_EQUAL(1,
+                    (int) nextTokenPrimitiveValue());
 
-void testEval() {
-#if 0
-  // Types
-  OCCA_ASSERT_EQUAL<int>(1 + 1,
-                         pp.eval<int>("1 + 1"));
-  OCCA_ASSERT_EQUAL<bool>(true,
-                          pp.eval<bool>("1 + 1"));
-  OCCA_ASSERT_EQUAL<double>(0.5 + 1.5,
-                            pp.eval<double>("0.5 + 1.5"));
-  OCCA_ASSERT_EQUAL("2",
-                    pp.eval<std::string>("1 + 1"));
-  OCCA_ASSERT_EQUAL<double>(100000000000L,
-                            pp.eval<long>("100000000000L"));
+  // __FILE__ __LINE__ __LINE__
+  OCCA_ASSERT_EQUAL("(source)",
+                    nextTokenStringValue());
+  OCCA_ASSERT_EQUAL(4,
+                    (int) nextTokenPrimitiveValue());
+  OCCA_ASSERT_EQUAL(4,
+                    (int) nextTokenPrimitiveValue());
 
-  // Unary Operators
-  OCCA_ASSERT_EQUAL<int>(+1,
-                         pp.eval<int>("+1"));
-  OCCA_ASSERT_EQUAL<int>(-1,
-                         pp.eval<int>("-1"));
-  OCCA_ASSERT_EQUAL<int>(!1,
-                         pp.eval<int>("!1"));
-  OCCA_ASSERT_EQUAL<int>(~1,
-                         pp.eval<int>("~1"));
+  // __COUNTER__
+  OCCA_ASSERT_EQUAL(2,
+                    (int) nextTokenPrimitiveValue());
 
-  // Binary Operators
-  OCCA_ASSERT_EQUAL<double>(1 + 2,
-                            pp.eval<double>("1 + 2"));
-  OCCA_ASSERT_EQUAL<double>(1 - 2,
-                            pp.eval<double>("1 - 2"));
-  OCCA_ASSERT_EQUAL<int>(1 / 2,
-                         pp.eval<double>("1 / 2"));
-  OCCA_ASSERT_EQUAL<double>(1 / 2.0,
-                            pp.eval<double>("1 / 2.0"));
-  OCCA_ASSERT_EQUAL<int>(5 % 2,
-                         pp.eval<int>("5 % 2"));
+  // __DATE__ __TIME__
+  getToken();
+  OCCA_ASSERT_EQUAL_BINARY(tokenType::newline,
+                           token->type());
+  getToken();
+  OCCA_ASSERT_EQUAL_BINARY(tokenType::string,
+                           token->type());
+  getToken();
+  OCCA_ASSERT_EQUAL_BINARY(tokenType::string,
+                           token->type());
 
-  // Bit operators
-  OCCA_ASSERT_EQUAL<int>(1 & 3,
-                         pp.eval<int>("1 & 3"));
-  OCCA_ASSERT_EQUAL<int>(1 ^ 3,
-                         pp.eval<int>("1 ^ 3"));
-  OCCA_ASSERT_EQUAL<int>(1 | 3,
-                         pp.eval<int>("1 | 3"));
-
-  // Shift operators
-  OCCA_ASSERT_EQUAL<int>(0,
-                         pp.eval<int>("1 >> 1"));
-  OCCA_ASSERT_EQUAL<int>(2,
-                         pp.eval<int>("1 << 1"));
-
-  // Parentheses
-  OCCA_ASSERT_EQUAL<double>(3*(1 + 1),
-                            pp.eval<int>("3*(1 + 1)"));
-
-  OCCA_ASSERT_EQUAL<double>((3 * 1)*(1 + 1),
-                            pp.eval<int>("(3 * 1)*(1 + 1)"));
-
-  /*
-  // NaN and Inf
-  float x = pp.eval<float>("1/0");
-  OCCA_ASSERT_EQUAL(true, x != x);
-
-  x = pp.eval<float>("0/0");
-  OCCA_ASSERT_EQUAL(true, x != x);
-  */
-#endif
+  while(!stream.isEmpty()) {
+    getToken();
+  }
 }
 //======================================

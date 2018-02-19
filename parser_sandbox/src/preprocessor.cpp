@@ -689,17 +689,41 @@ namespace occa {
     }
 
     void preprocessor::processError(identifierToken &directive) {
-      // TODO
-      const std::string message = "message";
-      directive.printError(message);
-      skipToNewline();
+      tokenVector lineTokens;
+      getLineTokens(lineTokens);
+
+      const int tokenCount = (int) lineTokens.size();
+      if (!tokenCount) {
+        directive.printError("");
+      }
+      else {
+        // Don't include the \n in the message
+        const char *start = lineTokens[0]->origin.position.start;
+        const char *end   = lineTokens[tokenCount - 1]->origin.position.start;
+        const std::string message(start, end - start);
+        lineTokens[0]->printError(message);
+      }
+
+      freeTokenVector(lineTokens);
     }
 
     void preprocessor::processWarning(identifierToken &directive) {
-      // TODO
-      const std::string message = "message";
-      directive.printWarning(message);
-      skipToNewline();
+      tokenVector lineTokens;
+      getLineTokens(lineTokens);
+
+      const int tokenCount = (int) lineTokens.size();
+      if (!tokenCount) {
+        directive.printWarning("");
+      }
+      else {
+        // Don't include the \n in the message
+        const char *start = lineTokens[0]->origin.position.start;
+        const char *end   = lineTokens[tokenCount - 1]->origin.position.start;
+        const std::string message(start, end - start);
+        lineTokens[0]->printWarning(message);
+      }
+
+      freeTokenVector(lineTokens);
     }
 
     void preprocessor::processInclude(identifierToken &directive) {
