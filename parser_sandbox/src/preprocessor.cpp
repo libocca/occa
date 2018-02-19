@@ -45,8 +45,7 @@ namespace occa {
 
     // TODO: Add actual compiler macros as well
     preprocessor::preprocessor() :
-      expandingMacros(true),
-      errorOnToken(NULL) {
+      expandingMacros(true) {
 
       // Always start off as if we passed a newline
       incrementNewline();
@@ -113,7 +112,6 @@ namespace occa {
       status          = pp.status;
       passedNewline   = pp.passedNewline;
       expandingMacros = pp.expandingMacros;
-      errorOnToken    = pp.errorOnToken;
 
       directives     = pp.directives;
       compilerMacros = pp.compilerMacros;
@@ -163,30 +161,14 @@ namespace occa {
       directives.autoFreeze = true;
     }
 
-    void preprocessor::preprint(std::ostream &out) {
-      errorOnToken->preprint(out);
-    }
-
-    void preprocessor::postprint(std::ostream &out) {
-      errorOnToken->postprint(out);
-    }
-
     void preprocessor::warningOn(token_t *token,
                                  const std::string &message) {
-      errorOnToken = token;
-      if (token) {
-        printWarning(message);
-      }
-      errorOnToken = NULL;
+      token->printWarning(message);
     }
 
     void preprocessor::errorOn(token_t *token,
                                const std::string &message) {
-      errorOnToken = token;
-      if (token) {
-        printError(message);
-      }
-      errorOnToken = NULL;
+      token->printError(message);
     }
 
     tokenMap& preprocessor::clone_() const {
@@ -516,7 +498,8 @@ namespace occa {
     }
 
 
-    bool preprocessor::lineIsTrue(identifierToken &directive) {
+    bool preprocessor::lineIsTrue(identifierToken &directive,
+                                  bool &isTrue) {
       tokenVector lineTokens;
       getExpandedLineTokens(lineTokens);
 
@@ -545,16 +528,48 @@ namespace occa {
       }
 
       // Default to #if false with error
-      bool isTrue = false;
       if (exprError) {
         pushStatus(ppStatus::ignoring |
                    ppStatus::foundIf);
-      } else {
-        isTrue = expr->evaluate();
+        return false;
       }
 
+      isTrue = expr->evaluate();
       delete expr;
-      return isTrue;
+
+      return true;
+    }
+
+    bool preprocessor::getIfdef(identifierToken &directive,
+                                bool &isTrue) {
+      token_t *token = getSourceToken();
+      const int tokenType = token_t::safeType(token);
+
+      if (!(tokenType & tokenType::identifier)) {
+          // Print from the directive if we don't
+          //   have a token in the same line
+        token_t *errorToken = &directive;
+        if (tokenType & tokenType::newline) {
+          incrementNewline();
+          push(token);
+        } else if (tokenType & ~tokenType::none) {
+          errorToken = token;
+        }
+        errorOn(errorToken,
+                "Expected an identifier");
+        delete token;
+
+        // Default to false
+        pushStatus(ppStatus::ignoring |
+                   ppStatus::foundIf);
+        return false;
+      }
+
+      const std::string &macroName = token->to<identifierToken>().value;
+      isTrue = getMacro(macroName);
+      delete token;
+
+      return true;
     }
 
     void preprocessor::processIf(identifierToken &directive) {
@@ -567,7 +582,10 @@ namespace occa {
         return;
       }
 
-      const bool isTrue = lineIsTrue(directive);
+      bool isTrue;
+      if (!lineIsTrue(directive, isTrue)) {
+        return;
+      }
 
       pushStatus(ppStatus::foundIf | (isTrue
                                       ? ppStatus::reading
@@ -584,50 +602,38 @@ namespace occa {
         return;
       }
 
-      token_t *token = getSourceToken();
-      const int tokenType = token_t::safeType(token);
-
-      if (!(tokenType & tokenType::identifier)) {
-          // Print from the directive if we don't
-          //   have a token in the same line
-        token_t *errorToken = &directive;
-        if (tokenType & tokenType::newline) {
-          incrementNewline();
-          push(token);
-        } else if (tokenType & ~tokenType::none) {
-          errorToken = token;
-        }
-        errorOn(errorToken,
-                "Expected an identifier");
-
-        // Default to false
-        pushStatus(ppStatus::ignoring |
-                   ppStatus::foundIf);
+      bool isTrue;
+      if (!getIfdef(directive, isTrue)) {
         return;
       }
 
-      const std::string &macroName = token->to<identifierToken>().value;
-      pushStatus(ppStatus::foundIf | (getMacro(macroName)
+      pushStatus(ppStatus::foundIf | (isTrue
                                       ? ppStatus::reading
                                       : ppStatus::ignoring));
 
       warnOnNonEmptyLine("Extra tokens after macro name");
-      delete token;
     }
 
     void preprocessor::processIfndef(identifierToken &directive) {
-      const int oldStatus = status;
-      const int oldErrors = errors;
-      processIfdef(directive);
-      // Keep the ignoring status if ifdef found an error
-      if (oldErrors != errors) {
+      // Nested case
+      if (status & ppStatus::ignoring) {
+        skipToNewline();
+        pushStatus(ppStatus::ignoring |
+                   ppStatus::foundIf  |
+                   ppStatus::finishedIf);
         return;
       }
-      // If we're in a nested #if 0, keep the status
-      if (oldStatus & ppStatus::ignoring) {
+
+      bool isTrue;
+      if (!getIfdef(directive, isTrue)) {
         return;
       }
-      swapReadingStatus();
+
+      pushStatus(ppStatus::foundIf | (isTrue
+                                      ? ppStatus::ignoring
+                                      : ppStatus::reading));
+
+      warnOnNonEmptyLine("Extra tokens after macro name");
     }
 
     void preprocessor::processElif(identifierToken &directive) {
@@ -649,7 +655,10 @@ namespace occa {
       }
 
       // Make sure to test #elif expression is valid
-      const bool isTrue = lineIsTrue(directive);
+      bool isTrue;
+      if (!lineIsTrue(directive, isTrue)) {
+        return;
+      }
 
       // If we already finished, keep old state
       if (status & ppStatus::finishedIf) {

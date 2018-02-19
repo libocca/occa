@@ -95,7 +95,15 @@ int tokenType() {
 #define testStringToken(s, encoding_)                                   \
   setToken(s);                                                          \
   OCCA_ASSERT_EQUAL_BINARY(occa::lang::tokenType::string,               \
-                           tokenType())                                 \
+                           tokenType());                                \
+  OCCA_ASSERT_EQUAL_BINARY(encoding_,                                   \
+                           token->to<occa::lang::stringToken>().encoding)
+
+#define testStringMergeToken(s, encoding_)                              \
+  setStream(s);                                                         \
+  getStringMergeToken();                                                \
+  OCCA_ASSERT_EQUAL_BINARY(occa::lang::tokenType::string,               \
+                           tokenType());                                \
   OCCA_ASSERT_EQUAL_BINARY(encoding_,                                   \
                            token->to<occa::lang::stringToken>().encoding)
 
@@ -145,6 +153,7 @@ int main(const int argc, const char **argv) {
   testTokenMethods();
   testCommentSkipping();
   testStringMethods();
+  testStringMerging();
   testPrimitiveMethods();
   testErrors();
 
@@ -456,57 +465,57 @@ void testStringMerging() {
   testStringMergeValue(s1, ab);
   testStringMergeValue(s2, ab);
   testStringMergeValue(s3, ab);
-  testStringToken(s1, 0);
-  testStringToken(s2, 0);
-  testStringToken(s3, 0);
+  testStringMergeToken(s1, 0);
+  testStringMergeToken(s2, 0);
+  testStringMergeToken(s3, 0);
 
   addEncodingPrefixes(s1, s2, s3, "", "u");
   testStringMergeValue(s1, ab);
   testStringMergeValue(s2, ab);
   testStringMergeValue(s3, ab);
-  testStringToken(s1, 0);
-  testStringToken(s2, occa::lang::encodingType::u);
-  testStringToken(s3, occa::lang::encodingType::u);
+  testStringMergeToken(s1, 0);
+  testStringMergeToken(s2, occa::lang::encodingType::u);
+  testStringMergeToken(s3, occa::lang::encodingType::u);
 
   addEncodingPrefixes(s1, s2, s3, "", "U");
   testStringMergeValue(s1, ab);
   testStringMergeValue(s2, ab);
   testStringMergeValue(s3, ab);
-  testStringToken(s1, 0);
-  testStringToken(s2, occa::lang::encodingType::U);
-  testStringToken(s3, occa::lang::encodingType::U);
+  testStringMergeToken(s1, 0);
+  testStringMergeToken(s2, occa::lang::encodingType::U);
+  testStringMergeToken(s3, occa::lang::encodingType::U);
 
   addEncodingPrefixes(s1, s2, s3, "", "L");
   testStringMergeValue(s1, ab);
   testStringMergeValue(s2, ab);
   testStringMergeValue(s3, ab);
-  testStringToken(s1, 0);
-  testStringToken(s2, occa::lang::encodingType::L);
-  testStringToken(s3, occa::lang::encodingType::L);
+  testStringMergeToken(s1, 0);
+  testStringMergeToken(s2, occa::lang::encodingType::L);
+  testStringMergeToken(s3, occa::lang::encodingType::L);
 
   addEncodingPrefixes(s1, s2, s3, "u", "U");
   testStringMergeValue(s1, ab);
   testStringMergeValue(s2, ab);
   testStringMergeValue(s3, ab);
-  testStringToken(s1, occa::lang::encodingType::u);
-  testStringToken(s2, occa::lang::encodingType::U);
-  testStringToken(s3, occa::lang::encodingType::U);
+  testStringMergeToken(s1, occa::lang::encodingType::u);
+  testStringMergeToken(s2, occa::lang::encodingType::U);
+  testStringMergeToken(s3, occa::lang::encodingType::U);
 
   addEncodingPrefixes(s1, s2, s3, "u", "L");
   testStringMergeValue(s1, ab);
   testStringMergeValue(s2, ab);
   testStringMergeValue(s3, ab);
-  testStringToken(s1, occa::lang::encodingType::u);
-  testStringToken(s2, occa::lang::encodingType::L);
-  testStringToken(s3, occa::lang::encodingType::L);
+  testStringMergeToken(s1, occa::lang::encodingType::u);
+  testStringMergeToken(s2, occa::lang::encodingType::L);
+  testStringMergeToken(s3, occa::lang::encodingType::L);
 
   addEncodingPrefixes(s1, s2, s3, "U", "L");
   testStringMergeValue(s1, ab);
   testStringMergeValue(s2, ab);
   testStringMergeValue(s3, ab);
-  testStringToken(s1, occa::lang::encodingType::U);
-  testStringToken(s2, occa::lang::encodingType::L);
-  testStringToken(s3, occa::lang::encodingType::L);
+  testStringMergeToken(s1, occa::lang::encodingType::U);
+  testStringMergeToken(s2, occa::lang::encodingType::L);
+  testStringMergeToken(s3, occa::lang::encodingType::L);
 }
 
 void testPrimitiveMethods() {

@@ -75,10 +75,10 @@ namespace occa {
       token_t *token = NULL;
 
       *(this->input) >> token;
-      push(token);
 
       // Not a string token
       if (!(token->type() & tokenType::string)) {
+        push(token);
         return;
       }
 

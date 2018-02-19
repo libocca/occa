@@ -51,8 +51,7 @@ namespace occa {
       extern const int finishedIf;
     }
 
-    class preprocessor : public tokenCacheMap,
-                         public errorHandler {
+    class preprocessor : public tokenCacheMap {
     public:
       typedef void (preprocessor::*processDirective_t)(identifierToken &directive);
       typedef trie<processDirective_t> directiveTrie;
@@ -65,7 +64,6 @@ namespace occa {
 
       int passedNewline;
       bool expandingMacros;
-      token_t *errorOnToken;
       //==================================
 
       //---[ Macros and Directives ]------
@@ -80,10 +78,6 @@ namespace occa {
       ~preprocessor();
 
       preprocessor& operator = (const preprocessor &pp);
-
-      virtual void preprint(std::ostream &out);
-
-      virtual void postprint(std::ostream &out);
 
       void warningOn(token_t *token,
                      const std::string &message);
@@ -127,7 +121,11 @@ namespace occa {
       void processIdentifier(identifierToken &token);
       void processOperator(operatorToken &token);
 
-      bool lineIsTrue(identifierToken &directive);
+      bool lineIsTrue(identifierToken &directive,
+                      bool &isTrue);
+      bool getIfdef(identifierToken &directive,
+                    bool &isTrue);
+
       void processIf(identifierToken &directive);
       void processIfdef(identifierToken &directive);
       void processIfndef(identifierToken &directive);
