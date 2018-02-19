@@ -15,17 +15,20 @@ before_install:
 
 install:
   - |
-    if [ "${CXX}" != "clang++" ]; then
-      CXXFLAGS+=" -fprofile-arcs -ftest-coverage -lgcov"
+    if [ "${CXX}" == "g++" ]; then
+      BUILD_CXXFLAGS="${CXXFLAGS} -fprofile-arcs -ftest-coverage"
+      TEST_CXXFLAGS="${CXXFLAGS} -lgcov --coverage"
     fi
 
 script:
   - cd ${TRAVIS_BUILD_DIR}
-  - make
-  - make test
+  - CXXFLAGS="${BUILD_CXXFLAGS}" make -j
   - cd parser_sandbox
-  - make
-  - make test
+  - CXXFLAGS="${BUILD_CXXFLAGS}" make -j
+  - cd ..
+  - CXXFLAGS="${TEST_CXXFLAGS}" make test
+  - cd parser_sandbox
+  - CXXFLAGS="${TEST_CXXFLAGS}" make test
 
 after_success:
   - |
