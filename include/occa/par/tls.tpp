@@ -47,7 +47,7 @@ namespace occa {
   template <class TM>
   tls<TM>::~tls() {
 #if (OCCA_OS & (OCCA_LINUX_OS | OCCA_OSX_OS))
-    delete pthread_getspecific(pkey);
+    delete (TM*) pthread_getspecific(pkey);
     pthread_key_delete(pkey);
 #endif
   }
