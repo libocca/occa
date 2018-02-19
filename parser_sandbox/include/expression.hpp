@@ -29,6 +29,8 @@
 
 namespace occa {
   namespace lang {
+    typedef std::stack<operatorToken*> operatorStack;
+
     //---[ Expression State ]-----------
     class expressionState {
     public:
@@ -42,15 +44,21 @@ namespace occa {
       exprNodeStack output;
       operatorStack operators;
 
+      exprNodeStack usedOutput;
+
       bool hasError;
 
       expressionState();
+      ~expressionState();
 
       int outputCount();
       int operatorCount();
 
       exprNode& lastOutput();
       operatorToken& lastOperator();
+
+      exprNode& popOutput();
+      operatorToken& popOperator();
     };
     //==================================
 

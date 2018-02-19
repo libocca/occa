@@ -544,8 +544,6 @@ namespace occa {
         }
       }
 
-      freeTokenVector(lineTokens);
-
       // Default to #if false with error
       bool isTrue = false;
       if (exprError) {
@@ -730,7 +728,15 @@ namespace occa {
 
       macro_t &macro = *(new macro_t(*this, token->to<identifierToken>()));
       macro.loadDefinition();
-      sourceMacros.add(macro.name(), &macro);
+
+      const std::string &name = macro.name();
+
+      // TODO: Error if the definitions aren't the same
+      if (sourceMacros.has(name)) {
+        delete getMacro(name);
+        sourceMacros.remove(name);
+      }
+      sourceMacros.add(name, &macro);
 
       // Macro clones the token
       delete token;
@@ -754,6 +760,7 @@ namespace occa {
       }
       // Remove macro
       const std::string &macroName = token->to<identifierToken>().value;
+      delete getMacro(macroName);
       sourceMacros.remove(macroName);
       delete token;
     }

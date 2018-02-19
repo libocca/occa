@@ -35,10 +35,9 @@ namespace occa {
   namespace lang {
     class exprNode;
 
-    typedef std::vector<exprNode*>     exprNodeVector;
-    typedef std::stack<exprNode*>      exprNodeStack;
-    typedef std::stack<operatorToken*> operatorStack;
-    typedef std::vector<token_t*>      tokenVector;
+    typedef std::vector<exprNode*> exprNodeVector;
+    typedef std::stack<exprNode*>  exprNodeStack;
+    typedef std::vector<token_t*>  tokenVector;
 
     namespace exprNodeType {
       extern const int empty;
@@ -130,7 +129,7 @@ namespace occa {
     class emptyNode : public exprNode {
     public:
       emptyNode();
-      ~emptyNode();
+      virtual ~emptyNode();
 
       virtual int type() const;
 
@@ -154,7 +153,7 @@ namespace occa {
 
       primitiveNode(const primitiveNode& node);
 
-      ~primitiveNode();
+      virtual ~primitiveNode();
 
       virtual int type() const;
 
@@ -177,7 +176,7 @@ namespace occa {
 
       charNode(const charNode& node);
 
-      ~charNode();
+      virtual ~charNode();
 
       virtual int type() const;
 
@@ -198,7 +197,7 @@ namespace occa {
 
       stringNode(const stringNode& node);
 
-      ~stringNode();
+      virtual ~stringNode();
 
       virtual int type() const;
 
@@ -218,7 +217,7 @@ namespace occa {
 
       identifierNode(const identifierNode& node);
 
-      ~identifierNode();
+      virtual ~identifierNode();
 
       virtual int type() const;
 
@@ -238,7 +237,7 @@ namespace occa {
 
       variableNode(const variableNode& node);
 
-      ~variableNode();
+      virtual ~variableNode();
 
       virtual int type() const;
 
@@ -262,7 +261,7 @@ namespace occa {
 
       leftUnaryOpNode(const leftUnaryOpNode &node);
 
-      ~leftUnaryOpNode();
+      virtual ~leftUnaryOpNode();
 
       virtual int type() const;
       opType_t optype() const;
@@ -291,7 +290,7 @@ namespace occa {
 
       rightUnaryOpNode(const rightUnaryOpNode &node);
 
-      ~rightUnaryOpNode();
+      virtual ~rightUnaryOpNode();
 
       virtual int type() const;
       opType_t optype() const;
@@ -322,7 +321,7 @@ namespace occa {
 
       binaryOpNode(const binaryOpNode &node);
 
-      ~binaryOpNode();
+      virtual ~binaryOpNode();
 
       virtual int type() const;
       opType_t optype() const;
@@ -351,7 +350,7 @@ namespace occa {
                     exprNode &falseValue_);
 
       ternaryOpNode(const ternaryOpNode &node);
-      ~ternaryOpNode();
+      virtual ~ternaryOpNode();
 
       virtual int type() const;
       opType_t optype() const;
@@ -378,7 +377,7 @@ namespace occa {
 
       subscriptNode(const subscriptNode &node);
 
-      ~subscriptNode();
+      virtual ~subscriptNode();
 
       virtual int type() const;
 
@@ -400,7 +399,7 @@ namespace occa {
 
       callNode(const callNode &node);
 
-      ~callNode();
+      virtual ~callNode();
 
       inline int argCount() const {
         return (int) args.size();
@@ -432,7 +431,7 @@ namespace occa {
 
       newNode(const newNode &node);
 
-      ~newNode();
+      virtual ~newNode();
 
       virtual int type() const;
 
@@ -454,7 +453,7 @@ namespace occa {
 
       deleteNode(const deleteNode &node);
 
-      ~deleteNode();
+      virtual ~deleteNode();
 
       virtual int type() const;
 
@@ -474,7 +473,7 @@ namespace occa {
 
       throwNode(const throwNode &node);
 
-      ~throwNode();
+      virtual ~throwNode();
 
       virtual int type() const;
 
@@ -496,7 +495,7 @@ namespace occa {
 
       sizeofNode(const sizeofNode &node);
 
-      ~sizeofNode();
+      virtual ~sizeofNode();
 
       virtual int type() const;
 
@@ -521,7 +520,7 @@ namespace occa {
 
       funcCastNode(const funcCastNode &node);
 
-      ~funcCastNode();
+      virtual ~funcCastNode();
 
       virtual int type() const;
 
@@ -543,7 +542,7 @@ namespace occa {
 
       parenCastNode(const parenCastNode &node);
 
-      ~parenCastNode();
+      virtual ~parenCastNode();
 
       virtual int type() const;
 
@@ -565,7 +564,7 @@ namespace occa {
 
       constCastNode(const constCastNode &node);
 
-      ~constCastNode();
+      virtual ~constCastNode();
 
       virtual int type() const;
 
@@ -587,7 +586,7 @@ namespace occa {
 
       staticCastNode(const staticCastNode &node);
 
-      ~staticCastNode();
+      virtual ~staticCastNode();
 
       virtual int type() const;
 
@@ -609,7 +608,7 @@ namespace occa {
 
       reinterpretCastNode(const reinterpretCastNode &node);
 
-      ~reinterpretCastNode();
+      virtual ~reinterpretCastNode();
 
       virtual int type() const;
 
@@ -631,7 +630,7 @@ namespace occa {
 
       dynamicCastNode(const dynamicCastNode &node);
 
-      ~dynamicCastNode();
+      virtual ~dynamicCastNode();
 
       virtual int type() const;
 
@@ -654,7 +653,7 @@ namespace occa {
 
       pairNode(const pairNode &node);
 
-      ~pairNode();
+      virtual ~pairNode();
 
       virtual int type() const;
 
@@ -677,7 +676,7 @@ namespace occa {
 
       parenthesesNode(const parenthesesNode &node);
 
-      ~parenthesesNode();
+      virtual ~parenthesesNode();
 
       virtual int type() const;
 
@@ -700,7 +699,7 @@ namespace occa {
 
       tupleNode(const tupleNode &node);
 
-      ~tupleNode();
+      virtual ~tupleNode();
 
       inline int argCount() const {
         return (int) args.size();
@@ -729,7 +728,7 @@ namespace occa {
 
       cudaCallNode(const cudaCallNode &node);
 
-      ~cudaCallNode();
+      virtual ~cudaCallNode();
 
       virtual int type() const;
 

@@ -439,6 +439,9 @@ void testIfElseDefines () {
     OCCA_ASSERT_EQUAL(values[i],
                       (int) pToken.value);
   }
+  while (!stream.isEmpty()) {
+    getToken();
+  }
 }
 
 void testErrorDefines() {

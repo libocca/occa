@@ -32,6 +32,21 @@ namespace occa {
       tokenBeforePair(NULL),
       hasError(false) {}
 
+    expressionState::~expressionState() {
+      while (operators.size()) {
+        delete operators.top();
+        operators.pop();
+      }
+      while (output.size()) {
+        delete output.top();
+        output.pop();
+      }
+      while (usedOutput.size()) {
+        delete usedOutput.top();
+        usedOutput.pop();
+      }
+    }
+
     int expressionState::outputCount() {
       return (int) output.size();
     }
@@ -46,6 +61,19 @@ namespace occa {
 
     operatorToken& expressionState::lastOperator() {
       return *(operators.top());
+    }
+
+    exprNode& expressionState::popOutput() {
+      exprNode &ret = *(output.top());
+      usedOutput.push(&ret);
+      output.pop();
+      return ret;
+    }
+
+    operatorToken& expressionState::popOperator() {
+      operatorToken &ret = *(operators.top());
+      operators.pop();
+      return ret;
     }
     //==================================
 
@@ -64,7 +92,7 @@ namespace occa {
 
       // Finish applying operators
       while (state.operatorCount()) {
-        applyOperator(state.lastOperator(),
+        applyOperator(state.popOperator(),
                       state);
 
         if (state.hasError) {
@@ -79,7 +107,7 @@ namespace occa {
         return &(noExprNode.clone());
       }
       if (outputCount > 1) {
-        state.output.pop();
+        state.popOutput();
         state.lastOutput().token->printError("Unable to form an expression");
         freeTokenVector(tokens);
         return NULL;
@@ -87,8 +115,11 @@ namespace occa {
 
       freeTokenVector(tokens);
 
-      // Return the root node
-      return &state.lastOutput();
+      // Pop output before state frees it
+      // Do this manually to prevent freeing it
+      exprNode *ret = state.output.top();
+      state.output.pop();
+      return ret;
     }
 
     void getInitialExpression(tokenVector &tokens,
@@ -172,7 +203,7 @@ namespace occa {
       operatorToken *errorToken = &opToken;
 
       while (state.operatorCount()) {
-        operatorToken &nextOpToken = state.lastOperator();
+        operatorToken &nextOpToken = state.popOperator();
         const opType_t nextOpType = nextOpToken.op.opType;
 
         if (nextOpType & operatorType::pairStart) {
@@ -243,8 +274,7 @@ namespace occa {
     void transformLastPair(operatorToken &opToken,
                            expressionState &state) {
       // Guaranteed to have the pairNode
-      pairNode &pair = state.lastOutput().to<pairNode>();
-      state.output.pop();
+      pairNode &pair = state.popOutput().to<pairNode>();
 
       if (!(pair.op.opType & (operatorType::parentheses |
                               operatorType::braces))) {
@@ -288,10 +318,8 @@ namespace occa {
         }
       }
 
-      pairNode &pair = state.lastOutput().to<pairNode>();
-      state.output.pop();
-      exprNode &value = state.lastOutput();
-      state.output.pop();
+      pairNode &pair  = state.popOutput().to<pairNode>();
+      exprNode &value = state.popOutput();
 
       if (pair.op.opType & operatorType::parentheses) {
         exprNodeVector args;
@@ -329,8 +357,6 @@ namespace occa {
       else {
         opToken.printError("[Waldo] (attachPair) Unsure how you got here...");
       }
-      delete &pair;
-      delete &value;
     }
 
     bool operatorIsLeftUnary(operatorToken &opToken,
@@ -477,7 +503,7 @@ namespace occa {
             ((op.precedence == prevOp.precedence) &&
              op::associativity[prevOp.precedence] == op::leftAssociative)) {
 
-          applyOperator(state.lastOperator(),
+          applyOperator(state.popOperator(),
                         state);
 
           if (state.hasError) {
@@ -501,7 +527,6 @@ namespace occa {
       const operator_t &op = opToken.op;
       const opType_t opType = op.opType;
       const int outputCount = state.outputCount();
-      state.operators.pop();
 
       if (!outputCount) {
         state.hasError = true;
@@ -509,17 +534,14 @@ namespace occa {
         return;
       }
 
-      exprNode &value = state.lastOutput();
-      state.output.pop();
-
+      exprNode &value = state.popOutput();
       if (opType & operatorType::binary) {
         if (!outputCount) {
           state.hasError = true;
           opToken.printError("Unable to apply operator");
           return;
         }
-        exprNode &left = state.lastOutput();
-        state.output.pop();
+        exprNode &left = state.popOutput();
         state.output.push(new binaryOpNode(&opToken,
                                            (const binaryOperator_t&) op,
                                            left,
