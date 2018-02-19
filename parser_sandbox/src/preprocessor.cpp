@@ -754,8 +754,8 @@ namespace occa {
       }
       // Remove macro
       const std::string &macroName = token->to<identifierToken>().value;
-      delete token;
       sourceMacros.remove(macroName);
+      delete token;
     }
 
     void preprocessor::processError(identifierToken &directive) {
