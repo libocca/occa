@@ -462,6 +462,10 @@ void testSpecialMacros() {
     "__FILE__ __LINE__\n"
     "__COUNTER__\n"
     "__FILE__ __LINE__ __LINE__\n"
+    "#line 20\n"
+    "__LINE__\n"
+    "#line 30 \"foobar\"\n"
+    "__FILE__ __LINE__\n"
     "__COUNTER__\n"
     "__DATE__ __TIME__\n"
   );
@@ -486,6 +490,16 @@ void testSpecialMacros() {
   OCCA_ASSERT_EQUAL(4,
                     (int) nextTokenPrimitiveValue());
   OCCA_ASSERT_EQUAL(4,
+                    (int) nextTokenPrimitiveValue());
+
+  // __LINE__
+  OCCA_ASSERT_EQUAL(20,
+                    (int) nextTokenPrimitiveValue());
+
+  // __FILE__ __LINE__
+  OCCA_ASSERT_EQUAL("foobar",
+                    nextTokenStringValue());
+  OCCA_ASSERT_EQUAL(30,
                     (int) nextTokenPrimitiveValue());
 
   // __COUNTER__

@@ -141,6 +141,8 @@ namespace occa {
 
       void processInclude(identifierToken &directive);
       void processPragma(identifierToken &directive);
+
+      int getLineNumber();
       void processLine(identifierToken &directive);
     };
   }

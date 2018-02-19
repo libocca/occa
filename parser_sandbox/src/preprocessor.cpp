@@ -770,10 +770,20 @@ namespace occa {
     }
 
     void preprocessor::processInclude(identifierToken &directive) {
-      const std::string header = getTokenizer().getHeader();
+      tokenizer &tokenizer_ = getTokenizer();
+      const std::string header = tokenizer_.getHeader();
 
       tokenVector lineTokens;
       getLineTokens(lineTokens);
+
+      if (header.size()) {
+        tokenizer_.pushSource(new file_t(header));
+      } else {
+        errorOn(&directive,
+                "Expected a header to include");
+        freeTokenVector(lineTokens);
+        return;
+      }
 
       // Ignore the newline token
       if (lineTokens.size() > 1) {
@@ -781,13 +791,6 @@ namespace occa {
                   "Extra tokens after the #include header");
       }
       freeTokenVector(lineTokens);
-
-      if (header.size()) {
-        getTokenizer().pushSource(new file_t(header));
-      } else {
-        errorOn(&directive,
-                "Expected a header to include");
-      }
     }
 
     void preprocessor::processPragma(identifierToken &directive) {
@@ -795,8 +798,66 @@ namespace occa {
     }
 
     void preprocessor::processLine(identifierToken &directive) {
-      // tokenizer &tokenizer_ = getTokenizer();
-      // TODO
+      tokenizer &tokenizer_ = getTokenizer();
+
+      tokenVector lineTokens;
+      getLineTokens(lineTokens);
+
+      int tokenCount = (int) lineTokens.size();
+      if (tokenCount <= 1) {
+        token_t *source = (tokenCount
+                           ? lineTokens[0]
+                           : (token_t*) &directive);
+        errorOn(source,
+                "Expected a line number");
+        freeTokenVector(lineTokens);
+        return;
+      }
+
+      // Get line number
+      int line = -1;
+      std::string filename = tokenizer_.origin.file->filename;
+
+      token_t *lineToken = lineTokens[0];
+      if (lineToken->type() & tokenType::primitive) {
+        line = lineToken->to<primitiveToken>().value;
+        if (line < 0) {
+          errorOn(lineToken,
+                  "Line number must be greater or equal to 0");
+        }
+      } else {
+        errorOn(lineToken,
+                "Expected a line number");
+      }
+      if (line < 0) {
+        freeTokenVector(lineTokens);
+        return;
+      }
+
+      // Get new filename
+      if (tokenCount > 2) {
+        token_t *filenameToken = lineTokens[1];
+        if (filenameToken->type() & tokenType::string) {
+          filename = filenameToken->to<stringToken>().value;
+        } else {
+          errorOn(filenameToken,
+                  "Expected a filename");
+          freeTokenVector(lineTokens);
+          return;
+        }
+      }
+
+      if (tokenCount > 3) {
+        warningOn(lineTokens[2],
+                  "Extra tokens are unused");
+      }
+
+      // TODO: Needs to create a new file instance to avoid
+      //         renaming all versions of *file
+      tokenizer_.origin.position.line  = line;
+      tokenizer_.origin.file->filename = filename;
+
+      freeTokenVector(lineTokens);
     }
     //====================================
   }
