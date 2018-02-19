@@ -236,9 +236,13 @@ namespace occa {
       }
       // Print file location
       out << blue(file->filename)
-          << ':' << position.line
-          << ':' << (position.start - position.lineStart + 1)
-          << ": ";
+          ;
+      if (file != &originSource::builtin) {
+        out << ':' << position.line
+            << ':' << (position.start - position.lineStart + 1);
+      }
+      out << ": ";
+
       if (!root) {
         if (fromInclude) {
           out << "Included file:\n";

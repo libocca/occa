@@ -195,28 +195,52 @@ namespace occa {
 
     //---[ Macro ]----------------------
     macro_t::macro_t(preprocessor &pp_,
-                     identifierToken &thisToken_) :
+                     identifierToken &thisToken_,
+                     const bool isBuiltin_) :
       pp(pp_),
       thisToken(thisToken_
                 .clone()
                 ->to<identifierToken>()),
-      hasVarArgs(false) {}
+      isBuiltin(isBuiltin_),
+      hasVarArgs(false) {
+      setupTokenOrigin();
+    }
 
 
     macro_t::macro_t(preprocessor &pp_,
                      const std::string &name_) :
       pp(pp_),
       thisToken(*(new identifierToken(originSource::builtin, name_))),
-      hasVarArgs(false) {}
+      isBuiltin(true),
+      hasVarArgs(false) {
+      setupTokenOrigin();
+    }
 
     macro_t::~macro_t() {
+      if (isBuiltin) {
+        delete [] thisToken.origin.position.start;
+      }
       delete &thisToken;
       argNames.clear();
       freeTokenVector(macroTokens);
     }
 
-    macro_t& macro_t::clone() {
-      return *(new macro_t(pp, thisToken));
+    void macro_t::setupTokenOrigin() {
+      if (!isBuiltin) {
+        return;
+      }
+
+      const std::string &name_ = name();
+
+      const int chars = (int) name_.size();
+      char *c = new char[chars + 1];
+      ::memcpy(c, name_.c_str(), chars + 1);
+
+      thisToken.origin.position = filePosition(0, c, c, c + chars);
+    }
+
+    macro_t& macro_t::clone(preprocessor &pp_) {
+      return *(new macro_t(pp_, thisToken, isBuiltin));
     }
 
     void macro_t::loadDefinition() {

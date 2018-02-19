@@ -129,7 +129,7 @@ namespace occa {
         macroTrie &trie = *(tries[i]);
         const int trieSize = trie.size();
         for (int j = 0; j < trieSize; ++j) {
-          trie.values[j] = &(trie.values[j]->clone());
+          trie.values[j] = &(trie.values[j]->clone(*this));
         }
       }
 
@@ -338,6 +338,29 @@ namespace occa {
       }
     }
 
+    // lineTokens might be partially initialized
+    //   so we don't want to clear it
+    void preprocessor::getExpandedLineTokens(tokenVector &lineTokens) {
+      // Make sure we don't ignore these tokens
+      int oldStatus = status;
+      status = ppStatus::reading;
+
+      while (hasSourceTokens()) {
+        token_t *token;
+        (*this) >> token;
+
+        if (token->type() & tokenType::newline) {
+          incrementNewline();
+          lineTokens.push_back(token);
+          status = oldStatus;
+          break;
+        }
+
+        lineTokens.push_back(token);
+      }
+      status = oldStatus;
+    }
+
     void preprocessor::warnOnNonEmptyLine(const std::string &message) {
       tokenVector lineTokens;
       getLineTokens(lineTokens);
@@ -491,7 +514,7 @@ namespace occa {
 
     bool preprocessor::lineIsTrue(identifierToken &directive) {
       tokenVector lineTokens;
-      getLineTokens(lineTokens);
+      getExpandedLineTokens(lineTokens);
 
       // Remove the newline token
       if (lineTokens.size()) {
@@ -733,7 +756,7 @@ namespace occa {
 
     void preprocessor::processError(identifierToken &directive) {
       tokenVector lineTokens;
-      getLineTokens(lineTokens);
+      getExpandedLineTokens(lineTokens);
 
       const int tokenCount = (int) lineTokens.size();
       if (!tokenCount) {
@@ -752,7 +775,7 @@ namespace occa {
 
     void preprocessor::processWarning(identifierToken &directive) {
       tokenVector lineTokens;
-      getLineTokens(lineTokens);
+      getExpandedLineTokens(lineTokens);
 
       const int tokenCount = (int) lineTokens.size();
       if (!tokenCount) {
@@ -774,7 +797,7 @@ namespace occa {
       const std::string header = tokenizer_.getHeader();
 
       tokenVector lineTokens;
-      getLineTokens(lineTokens);
+      getExpandedLineTokens(lineTokens);
 
       if (header.size()) {
         tokenizer_.pushSource(new file_t(header));
@@ -801,7 +824,7 @@ namespace occa {
       tokenizer &tokenizer_ = getTokenizer();
 
       tokenVector lineTokens;
-      getLineTokens(lineTokens);
+      getExpandedLineTokens(lineTokens);
 
       int tokenCount = (int) lineTokens.size();
       if (tokenCount <= 1) {

@@ -86,10 +86,6 @@ std::string nextTokenStringValue() {
 }
 //======================================
 
-//---[ Macro Util Methods ]-------------
-
-//======================================
-
 //---[ Tests ]--------------------------
 int main(const int argc, const char **argv) {
   testMacroDefines();

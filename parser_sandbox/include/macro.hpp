@@ -116,18 +116,22 @@ namespace occa {
 
       preprocessor &pp;
       identifierToken &thisToken;
+      bool isBuiltin;
 
       bool hasVarArgs;
       intTrie argNames;
       macroTokenVector_t macroTokens;
 
       macro_t(preprocessor &pp_,
-              identifierToken &thisToken_);
+              identifierToken &thisToken_,
+              const bool isBuiltin_ = false);
 
       macro_t(preprocessor &pp_,
               const std::string &name_);
 
       virtual ~macro_t();
+
+      void setupTokenOrigin();
 
       inline int argCount() const {
         return (argNames.size() - hasVarArgs);
@@ -141,7 +145,7 @@ namespace occa {
         return thisToken.value;
       }
 
-      virtual macro_t& clone();
+      virtual macro_t& clone(preprocessor &pp_);
 
       void loadDefinition();
 

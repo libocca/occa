@@ -735,6 +735,7 @@ namespace occa {
     void tokenizer::tokenize(tokenVector &tokens,
                              fileOrigin origin,
                              const std::string &source) {
+      // TODO: Make a string 'file'
       fileOrigin fakeOrigin(*origin.file,
                             source.c_str());
 

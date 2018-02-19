@@ -36,16 +36,45 @@ namespace occa {
       argNames.add("MACRO_NAME", 0);
     }
 
-    macro_t& definedMacro::clone() {
-      return *(new definedMacro(pp));
+    macro_t& definedMacro::clone(preprocessor &pp_) {
+      return *(new definedMacro(pp_));
     }
 
     void definedMacro::expand(tokenVector &tokens,
                               identifierToken &source) {
-      bool isDefined = !!pp.getMacro(source.value);
+      std::vector<tokenVector> allArgs;
+      if (!loadArgs(source, allArgs) ||
+          !checkArgs(source, allArgs)) {
+        return;
+      }
+
+      // We only expect 1 argument
+      tokenVector &args = allArgs[0];
+      if (args.size() > 1) {
+        args[1]->origin
+          .from(false, thisToken.origin)
+          .printError("Expected one macro name");
+
+        freeTokenVector(args);
+        return;
+      }
+
+      token_t *token = args[0];
+      if (!(token->type() & tokenType::identifier)) {
+        token->origin
+          .from(false, thisToken.origin)
+          .printError("Expected a token name identifier");
+
+        freeTokenVector(args);
+        return;
+      }
+
+      bool isDefined = !!pp.getMacro(token->to<identifierToken>().value);
       tokens.push_back(new primitiveToken(source.origin,
                                           isDefined,
                                           isDefined ? "true" : "false"));
+
+      freeTokenVector(args);
     }
 
     // __has_include()
@@ -54,8 +83,8 @@ namespace occa {
       argNames.add("INCLUDE_PATH", 0);
     }
 
-    macro_t& hasIncludeMacro::clone() {
-      return *(new hasIncludeMacro(pp));
+    macro_t& hasIncludeMacro::clone(preprocessor &pp_) {
+      return *(new hasIncludeMacro(pp_));
     }
 
     void hasIncludeMacro::expand(tokenVector &tokens,
@@ -97,8 +126,8 @@ namespace occa {
     fileMacro::fileMacro(preprocessor &pp_) :
       macro_t(pp_, "__FILE__") {}
 
-    macro_t& fileMacro::clone() {
-      return *(new fileMacro(pp));
+    macro_t& fileMacro::clone(preprocessor &pp_) {
+      return *(new fileMacro(pp_));
     }
 
     void fileMacro::expand(tokenVector &tokens,
@@ -111,8 +140,8 @@ namespace occa {
     lineMacro::lineMacro(preprocessor &pp_) :
       macro_t(pp_, "__LINE__") {}
 
-    macro_t& lineMacro::clone() {
-      return *(new lineMacro(pp));
+    macro_t& lineMacro::clone(preprocessor &pp_) {
+      return *(new lineMacro(pp_));
     }
 
     void lineMacro::expand(tokenVector &tokens,
@@ -127,8 +156,8 @@ namespace occa {
     dateMacro::dateMacro(preprocessor &pp_) :
       macro_t(pp_, "__DATE__") {}
 
-    macro_t& dateMacro::clone() {
-      return *(new dateMacro(pp));
+    macro_t& dateMacro::clone(preprocessor &pp_) {
+      return *(new dateMacro(pp_));
     }
 
     void dateMacro::expand(tokenVector &tokens,
@@ -162,8 +191,8 @@ namespace occa {
     timeMacro::timeMacro(preprocessor &pp_) :
       macro_t(pp_, "__TIME__") {}
 
-    macro_t& timeMacro::clone() {
-      return *(new timeMacro(pp));
+    macro_t& timeMacro::clone(preprocessor &pp_) {
+      return *(new timeMacro(pp_));
     }
 
     void timeMacro::expand(tokenVector &tokens,
@@ -199,8 +228,8 @@ namespace occa {
       macro_t(pp_, "__COUNTER__"),
       counter(counter_) {}
 
-    macro_t& counterMacro::clone() {
-      return *(new counterMacro(pp, counter));
+    macro_t& counterMacro::clone(preprocessor &pp_) {
+      return *(new counterMacro(pp_, counter));
     }
 
     void counterMacro::expand(tokenVector &tokens,
