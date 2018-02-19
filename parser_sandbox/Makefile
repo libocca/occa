@@ -34,9 +34,9 @@ $(testPath)/bin/%:$(testPath)/%.cpp $(objects) $(headers)
 tests: $(tests)
 
 test: $(tests)
-	@for test in $(tests); do   \
-	    echo "Running: $$test"; \
-	    $$test;                 \
+	@for test in $(tests); do        \
+	    echo -e "\nRunning: $$test"; \
+	    $$test;                      \
 	done
 
 clean:
