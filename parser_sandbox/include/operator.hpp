@@ -113,6 +113,8 @@ namespace occa {
 
 
     namespace operatorType {
+      extern const opType_t none;
+
       extern const opType_t not_;
       extern const opType_t positive;
       extern const opType_t negative;

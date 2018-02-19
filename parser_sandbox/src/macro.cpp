@@ -41,23 +41,6 @@ namespace occa {
       delete thisToken;
     }
 
-    std::string macroToken::stringifyTokens(tokenVector &tokens,
-                                            const bool addSpaces) {
-      std::stringstream ss;
-      const int tokenCount = (int) tokens.size();
-      for (int i = 0; i < tokenCount; ++i) {
-        tokens[i]->print(ss);
-        // We don't add spaces between adjacent tokens
-        // For example, .. would normaly turn to ". ."
-        if (addSpaces              &&
-            (i < (tokenCount - 1)) &&
-            (tokens[i]->origin.distanceTo(tokens[i + 1]->origin))) {
-          ss << ' ';
-        }
-      }
-      return ss.str();
-    }
-
     macroRawToken::macroRawToken(token_t *thisToken_) :
       macroToken(thisToken_) {}
 

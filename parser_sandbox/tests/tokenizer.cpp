@@ -67,9 +67,9 @@ void setToken(const std::string &s) {
   getToken();
 }
 
-void setHeaderToken(const std::string &s) {
+std::string getHeader(const std::string &s) {
   setStream(s);
-  token = tokenizer.getHeaderToken();
+  return tokenizer.getHeader();
 }
 
 int tokenType() {
@@ -282,12 +282,10 @@ void testPeekMethods() {
   testCharPeek("U'\\''" , occa::lang::encodingType::U);
   testCharPeek("L'\\''" , occa::lang::encodingType::L);
 
-  setStream("<foobar>");
-  OCCA_ASSERT_EQUAL_BINARY(occa::lang::tokenType::systemHeader,
-                           tokenizer.peekForHeader());
-  setStream("\"foobar\"");
-  OCCA_ASSERT_EQUAL_BINARY(occa::lang::tokenType::header,
-                           tokenizer.peekForHeader());
+  OCCA_ASSERT_EQUAL("foobar",
+                    getHeader("<foobar>"));
+  OCCA_ASSERT_EQUAL("foobar",
+                    getHeader("\"foobar\""));
 }
 
 void testTokenMethods() {
@@ -381,20 +379,6 @@ void testTokenMethods() {
   testCharToken("u'\\''" , occa::lang::encodingType::u);
   testCharToken("U'\\''" , occa::lang::encodingType::U);
   testCharToken("L'\\''" , occa::lang::encodingType::L);
-
-  // Test this in testPreprocessor (#include tests)
-  setHeaderToken("<foobar>");
-  OCCA_ASSERT_EQUAL_BINARY(
-    occa::lang::tokenType::header,
-    tokenType()
-  );
-  OCCA_ASSERT_TRUE(token->to<occa::lang::headerToken>().systemHeader);
-  setHeaderToken("\"foobar\"");
-  OCCA_ASSERT_EQUAL_BINARY(
-    occa::lang::tokenType::header,
-    tokenType()
-  );
-  OCCA_ASSERT_FALSE(token->to<occa::lang::headerToken>().systemHeader);
 }
 
 void addEncodingPrefixes(std::string &s1,

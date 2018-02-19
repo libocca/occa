@@ -25,7 +25,7 @@
 #include <ostream>
 #include <vector>
 #include <map>
-#include <deque>
+#include <stack>
 
 #include "occa/defines.hpp"
 #include "occa/types.hpp"
@@ -40,7 +40,8 @@ namespace occa {
     typedef trie<macro_t*> macroTrie;
     typedef streamMap<token_t*, token_t*> tokenMap;
     typedef cacheMap<token_t*, token_t*> tokenCacheMap;
-    typedef std::deque<token_t*> tokenDeque;
+    typedef std::stack<token_t*> tokenStack;
+    class tokenizer;
 
     namespace ppStatus {
       extern const int reading;
@@ -56,7 +57,7 @@ namespace occa {
       typedef void (preprocessor::*processDirective_t)(identifierToken &directive);
       typedef trie<processDirective_t> directiveTrie;
 
-      tokenDeque sourceCache;
+      tokenStack sourceCache;
 
       //---[ Status ]-------------------
       std::vector<int> statusStack;
@@ -83,6 +84,9 @@ namespace occa {
 
       virtual void postprint(std::ostream &out);
 
+      void warningOn(token_t *token,
+                     const std::string &message);
+
       void errorOn(token_t *token,
                    const std::string &message);
 
@@ -107,6 +111,8 @@ namespace occa {
 
       virtual bool isEmpty();
       virtual void pop();
+
+      tokenizer& getTokenizer();
 
       void expandMacro(identifierToken &source,
                        macro_t &macro);

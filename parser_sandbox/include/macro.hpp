@@ -49,9 +49,6 @@ namespace occa {
       virtual bool expand(tokenVector &newTokens,
                           token_t *source,
                           std::vector<tokenVector> &args) = 0;
-
-      std::string stringifyTokens(tokenVector &tokens,
-                                  const bool addSpaces);
     };
 
     class macroRawToken : public macroToken {

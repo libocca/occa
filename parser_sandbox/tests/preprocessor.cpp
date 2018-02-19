@@ -19,6 +19,8 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  */
+#include <sstream>
+
 #include "occa/tools/env.hpp"
 #include "occa/tools/testing.hpp"
 
@@ -32,6 +34,7 @@ void testIfElse();
 void testIfElseDefines();
 void testErrorDefines();
 void testSpecialMacros();
+void testIncludeDefine();
 
 using namespace occa::lang;
 
@@ -95,6 +98,7 @@ int main(const int argc, const char **argv) {
   // testIfElseDefines();
   testErrorDefines();
   testSpecialMacros();
+  testIncludeDefine();
 
   delete token;
 }
@@ -499,6 +503,30 @@ void testSpecialMacros() {
   OCCA_ASSERT_EQUAL_BINARY(tokenType::string,
                            token->type());
 
+  while(!stream.isEmpty()) {
+    getToken();
+  }
+}
+
+void testIncludeDefine() {
+  std::string testFile = occa::env::OCCA_DIR + "/parser_sandbox/tests/files/preprocessor.cpp";
+  std::stringstream ss;
+  ss << "#include \"" << testFile << "\"\n"
+     << "#include <"  << testFile << ">\n"
+     << "#define ERROR true\n"
+     << "#include \"" << testFile << "\"\n";
+  setStream(ss.str());
+
+  for (int i = 0; i < 2; ++i) {
+    for (int j = 0; j < 5; ++j) {
+      OCCA_ASSERT_EQUAL(j,
+                        (int) nextTokenPrimitiveValue());
+    }
+    getToken();
+    OCCA_ASSERT_EQUAL_BINARY(tokenType::newline,
+                             token->type());
+  }
+  // Error out in the last include
   while(!stream.isEmpty()) {
     getToken();
   }

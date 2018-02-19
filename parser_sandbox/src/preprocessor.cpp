@@ -31,6 +31,7 @@
 #include "preprocessor.hpp"
 #include "specialMacros.hpp"
 #include "expression.hpp"
+#include "tokenizer.hpp"
 
 namespace occa {
   namespace lang {
@@ -168,6 +169,15 @@ namespace occa {
       errorOnToken->postprint(out);
     }
 
+    void preprocessor::warningOn(token_t *token,
+                                 const std::string &message) {
+      errorOnToken = token;
+      if (token) {
+        printWarning(message);
+      }
+      errorOnToken = NULL;
+    }
+
     void preprocessor::errorOn(token_t *token,
                                const std::string &message) {
       errorOnToken = token;
@@ -236,8 +246,8 @@ namespace occa {
       token_t *token = NULL;
 
       if (sourceCache.size()) {
-        token = sourceCache.front();
-        sourceCache.pop_front();
+        token = sourceCache.top();
+        sourceCache.pop();
         return token;
       }
 
@@ -273,8 +283,29 @@ namespace occa {
       //   maintain the same order
       const int tokenCount = (int) tokens.size();
       for (int i = (tokenCount - 1); i >= 0; --i) {
-        sourceCache.push_front(tokens[i]);
+        sourceCache.push(tokens[i]);
       }
+    }
+
+    tokenizer& preprocessor::getTokenizer() {
+      tokenMap *s = dynamic_cast<tokenMap*>(input);
+      while (s) {
+        tokenMap *s2 = dynamic_cast<tokenMap*>(s->input);
+        if (s2) {
+          s = s2;
+        } else {
+          break;
+        }
+      }
+
+      tokenizer *tokenizer_ = dynamic_cast<tokenizer*>(s ? s : input);
+      if (tokenizer_) {
+        return *tokenizer_;
+      }
+
+      OCCA_FORCE_ERROR("occa::lang::preprocessor must receive"
+                       " it's source from a occa::lang::tokenizer");
+      return *((tokenizer*) s);
     }
 
     void preprocessor::skipToNewline() {
@@ -337,8 +368,7 @@ namespace occa {
           delete token;
           return;
         }
-        const operator_t &op = token->to<operatorToken>().op;
-        if (!(op.opType & operatorType::preprocessor)) {
+        if (!(token->getOpType() & operatorType::preprocessor)) {
           delete token;
           return;
         }
@@ -377,21 +407,19 @@ namespace occa {
 
         // Make sure that the macro starts with a '('
         token_t *nextToken = getSourceToken();
-        if (token_t::safeType(nextToken) & tokenType::op) {
-          const opType_t opType = nextToken->to<operatorToken>().op.opType;
-          if (opType & operatorType::parenthesesStart) {
-            expandMacro(token, *macro);
-            delete &token;
-            delete nextToken;
-            return;
-          }
+        if (nextToken &&
+            (nextToken->getOpType() & operatorType::parenthesesStart)) {
+          expandMacro(token, *macro);
+          delete &token;
+          delete nextToken;
+          return;
         }
         // Prioritize possible variable if no () is found:
         //   #define FOO()
         //   int FOO;
         if (nextToken) {
-          sourceCache.push_front(&token);
-          sourceCache.push_front(nextToken);
+          sourceCache.push(&token);
+          sourceCache.push(nextToken);
         } else {
           push(&token);
         }
@@ -440,7 +468,22 @@ namespace occa {
         return;
       }
 
-      (this->*(result.value()))(directiveToken);
+      processDirective_t processFunc = result.value();
+
+      if ((status & ppStatus::ignoring)                 &&
+          (processFunc != &preprocessor::processIf)     &&
+          (processFunc != &preprocessor::processIfdef)  &&
+          (processFunc != &preprocessor::processIfndef) &&
+          (processFunc != &preprocessor::processElif)   &&
+          (processFunc != &preprocessor::processElse)   &&
+          (processFunc != &preprocessor::processEndif)) {
+
+        delete directive;
+        skipToNewline();
+        return;
+      }
+
+      (this->*(processFunc))(directiveToken);
 
       delete directive;
     }
@@ -727,7 +770,24 @@ namespace occa {
     }
 
     void preprocessor::processInclude(identifierToken &directive) {
-      // TODO
+      const std::string header = getTokenizer().getHeader();
+
+      tokenVector lineTokens;
+      getLineTokens(lineTokens);
+
+      // Ignore the newline token
+      if (lineTokens.size() > 1) {
+        warningOn(lineTokens[0],
+                  "Extra tokens after the #include header");
+      }
+      freeTokenVector(lineTokens);
+
+      if (header.size()) {
+        getTokenizer().pushSource(new file_t(header));
+      } else {
+        errorOn(&directive,
+                "Expected a header to include");
+      }
     }
 
     void preprocessor::processPragma(identifierToken &directive) {
@@ -735,6 +795,7 @@ namespace occa {
     }
 
     void preprocessor::processLine(identifierToken &directive) {
+      // tokenizer &tokenizer_ = getTokenizer();
       // TODO
     }
     //====================================

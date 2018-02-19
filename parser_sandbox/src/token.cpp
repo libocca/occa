@@ -170,6 +170,13 @@ namespace occa {
               : tokenType::none);
     }
 
+    opType_t token_t::getOpType() {
+      if (type() != tokenType::op) {
+        return operatorType::none;
+      }
+      return to<operatorToken>().op.opType;
+    }
+
     void token_t::preprint(std::ostream &out) {
       origin.preprint(out);
     }
@@ -374,33 +381,6 @@ namespace occa {
     }
     //==================================
 
-    //---[ Header ]---------------------
-    headerToken::headerToken(const fileOrigin &origin_,
-                             const bool systemHeader_,
-                             const std::string &value_) :
-      token_t(origin_),
-      systemHeader(systemHeader_),
-      value(value_) {}
-
-    headerToken::~headerToken() {}
-
-    int headerToken::type() const {
-      return tokenType::header;
-    }
-
-    token_t* headerToken::clone() {
-      return new headerToken(origin, systemHeader, value);
-    }
-
-    void headerToken::print(std::ostream &out) const {
-      if (systemHeader) {
-        out << '<' << value << '>';
-      } else {
-        out << '"' << value << '"';
-      }
-    }
-    //==================================
-
 
     //---[ Helper Methods ]-------------
     void freeTokenVector(tokenVector &lineTokens) {
@@ -409,6 +389,23 @@ namespace occa {
         delete lineTokens[i];
       }
       lineTokens.clear();
+    }
+
+    std::string stringifyTokens(tokenVector &tokens,
+                                const bool addSpaces) {
+      std::stringstream ss;
+      const int tokenCount = (int) tokens.size();
+      for (int i = 0; i < tokenCount; ++i) {
+        tokens[i]->print(ss);
+        // We don't add spaces between adjacent tokens
+        // For example, .. would normaly turn to ". ."
+        if (addSpaces              &&
+            (i < (tokenCount - 1)) &&
+            (tokens[i]->origin.distanceTo(tokens[i + 1]->origin))) {
+          ss << ' ';
+        }
+      }
+      return ss.str();
     }
     //==================================
   }

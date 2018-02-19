@@ -181,12 +181,12 @@ namespace occa {
     void fileOrigin::push(const bool fromInclude_,
                           file_t &file_,
                           const filePosition &position_) {
-      setFile(file_);
 
       setUp(new fileOrigin(*this));
       up->fromInclude = fromInclude_;
-
       position = position_;
+
+      setFile(file_);
     }
 
     void fileOrigin::pop() {

@@ -119,6 +119,8 @@ namespace occa {
 
       virtual token_t* clone() = 0;
 
+      opType_t getOpType();
+
       virtual void print(std::ostream &out) const = 0;
 
       void preprint(std::ostream &out);
@@ -264,28 +266,11 @@ namespace occa {
     };
     //==================================
 
-    //---[ Header ]---------------------
-    class headerToken : public token_t {
-    public:
-      bool systemHeader;
-      std::string value;
-
-      headerToken(const fileOrigin &origin_,
-                  const bool systemHeader_,
-                  const std::string &value_);
-
-      virtual ~headerToken();
-
-      virtual int type() const;
-
-      virtual token_t* clone();
-
-      virtual void print(std::ostream &out) const;
-    };
-    //==================================
-
     //---[ Helper Methods ]-------------
     void freeTokenVector(tokenVector &tokens);
+
+    std::string stringifyTokens(tokenVector &tokens,
+                                const bool addSpaces);
     //==================================
   }
 }

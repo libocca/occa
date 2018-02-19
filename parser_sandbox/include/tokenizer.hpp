@@ -77,9 +77,7 @@ namespace occa {
       virtual bool isEmpty();
       virtual void setNext(token_t *&out);
 
-      void pushSource(const bool fromInclude,
-                      file_t *file,
-                      const filePosition &position);
+      void pushSource(file_t *file);
       void popSource();
 
       void push();
@@ -102,7 +100,6 @@ namespace occa {
       int shallowPeek();
       int peekForIdentifier();
       int peekForOperator();
-      int peekForHeader();
 
       void getIdentifier(std::string &value);
       void getString(std::string &value,
@@ -118,7 +115,9 @@ namespace occa {
       token_t* getOperatorToken();
       token_t* getStringToken(const int encoding);
       token_t* getCharToken(const int encoding);
-      token_t* getHeaderToken();
+
+      int peekForHeader();
+      std::string getHeader();
 
       static tokenVector tokenize(const std::string &source);
 
