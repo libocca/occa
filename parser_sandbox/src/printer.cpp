@@ -20,7 +20,6 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  */
 #include "printer.hpp"
-#include "occa/tools/string.hpp"
 
 namespace occa {
   namespace lang {
@@ -134,39 +133,6 @@ namespace occa {
       } else if (lastCharNeedsWhitespace()) {
         *this << ' ';
       }
-    }
-
-    errorHandler::errorHandler() :
-      warnings(0),
-      errors(0) {}
-
-    void errorHandler::preprint(std::ostream &out) {}
-    void errorHandler::postprint(std::ostream &out) {}
-
-    void errorHandler::printNote(std::ostream &out,
-                                 const std::string &message) {
-      preprint(out);
-      out << blue("Note: ")
-          << message << '\n';
-      postprint(out);
-    }
-
-    void errorHandler::printWarning(std::ostream &out,
-                                    const std::string &message) {
-      ++warnings;
-      preprint(out);
-      out << yellow("Warning: ")
-          << message << '\n';
-      postprint(out);
-    }
-
-    void errorHandler::printError(std::ostream &out,
-                                  const std::string &message) {
-      ++errors;
-      preprint(out);
-      out << red("Error: ")
-          << message << '\n';
-      postprint(out);
     }
   }
 }

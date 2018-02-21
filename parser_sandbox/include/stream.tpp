@@ -25,6 +25,18 @@ namespace occa {
   template <class output_t>
   baseStream<output_t>::~baseStream() {}
 
+  template <class output_t>
+  void* baseStream<output_t>::passMessageToInput(const occa::properties &props) {
+    return NULL;
+  }
+
+  template <class output_t>
+  void* baseStream<output_t>::getInput(const std::string &name) {
+    occa::properties props;
+    props["inputName"] = name;
+    return passMessageToInput(props);
+  }
+
   // Map
   template <class output_t>
   template <class newOutput_t>
@@ -104,16 +116,26 @@ namespace occa {
   }
 
   template <class output_t>
-  bool stream<output_t>::isEmpty() {
-    return (!head || head->isEmpty());
-  }
-
-  template <class output_t>
   stream<output_t>& stream<output_t>::clone() const {
     if (!head) {
       return *(new stream());
     }
     return *(new stream(*head));
+  }
+
+  template <class output_t>
+  void* stream<output_t>::passMessageToInput(const occa::properties &props) {
+    return head->passMessageToInput(props);
+  }
+
+  template <class output_t>
+  void* stream<output_t>::getInput(const std::string &name) {
+    return head->getInput(name);
+  }
+
+  template <class output_t>
+  bool stream<output_t>::isEmpty() {
+    return (!head || head->isEmpty());
   }
 
   // Map
@@ -196,6 +218,14 @@ namespace occa {
                   ? &(input->clone())
                   : NULL);
     return smap;
+  }
+
+  template <class input_t, class output_t>
+  void* streamMap<input_t, output_t>::passMessageToInput(const occa::properties &props) {
+    if (input) {
+      return input->passMessageToInput(props);
+    }
+    return NULL;
   }
 
   template <class input_t, class output_t>

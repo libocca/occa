@@ -19,24 +19,42 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  */
-#if 0
-#ifndef OCCA_PARSER_STATEMENTSTREAM_HEADER2
-#define OCCA_PARSER_STATEMENTSTREAM_HEADER2
-
-#include "statement.hpp"
-#include "stream.hpp"
+#ifndef OCCA_PARSER_ERRORHANDLER_HEADER2
+#define OCCA_PARSER_ERRORHANDLER_HEADER2
 
 namespace occa {
   namespace lang {
-    class token_t;
-    typedef streamMap<token_t*, statement*> statementStream_t;
-
-    class statementStream : public statementStream_t {
+    class errorHandler {
     public:
+      int warnings, errors;
 
+      errorHandler();
+
+      virtual void preprint(std::ostream &out);
+      virtual void postprint(std::ostream &out);
+
+      void printNote(std::ostream &out,
+                     const std::string &message);
+
+      inline void printNote(const std::string &message) {
+        printNote(std::cerr, message);
+      }
+
+      void printWarning(std::ostream &out,
+                        const std::string &message);
+
+      inline void printWarning(const std::string &message) {
+        printWarning(std::cerr, message);
+      }
+
+      void printError(std::ostream &out,
+                      const std::string &message);
+
+      inline void printError(const std::string &message) {
+        printError(std::cerr, message);
+      }
     };
   }
 }
 
-#endif
 #endif

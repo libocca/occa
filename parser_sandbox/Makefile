@@ -34,9 +34,13 @@ $(testPath)/bin/%:$(testPath)/%.cpp $(objects) $(headers)
 tests: $(tests)
 
 test: $(tests)
-	@for test in $(tests); do        \
-	    echo -e "\nRunning: $$test"; \
-	    $$test;                      \
+	@for test in $(tests); do                             \
+	   	testname=$$(basename "$$test");                   \
+      chars=$$(echo "$${testname}" | wc -c);            \
+      linechars=$$((60 - $${chars}));                   \
+	    line=$$(printf '%*s' $${linechars} | tr ' ' '-'); \
+	    echo -e "\n---[ $${testname} ]$${line}";          \
+	    $$test;                                           \
 	done
 
 clean:

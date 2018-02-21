@@ -38,13 +38,20 @@ namespace occa {
     typedef std::vector<token_t*>    tokenVector;
     typedef std::vector<macroToken*> macroTokenVector_t;
 
+    void cloneMacroTokenVector(macroTokenVector_t &newTokens,
+                               const macroTokenVector_t &tokens);
+
     //---[ Macro Tokens ]---------------
     class macroToken {
     public:
+      preprocessor &pp;
       token_t *thisToken;
 
-      macroToken(token_t *thisToken_);
+      macroToken(preprocessor &pp_,
+                 token_t *thisToken_);
       virtual ~macroToken();
+
+      virtual macroToken* clone() = 0;
 
       virtual bool expand(tokenVector &newTokens,
                           token_t *source,
@@ -53,7 +60,10 @@ namespace occa {
 
     class macroRawToken : public macroToken {
     public:
-      macroRawToken(token_t *token_);
+      macroRawToken(preprocessor &pp_,
+                    token_t *token_);
+
+      virtual macroToken* clone();
 
       virtual bool expand(tokenVector &newTokens,
                           token_t *source,
@@ -65,7 +75,8 @@ namespace occa {
       int arg;
       int argc;
 
-      macroArgument(token_t *token_,
+      macroArgument(preprocessor &pp_,
+                    token_t *token_,
                     const int arg_,
                     const int argc_);
       ~macroArgument();
@@ -73,6 +84,8 @@ namespace occa {
       void expandArg(tokenVector &newTokens,
                      std::vector<tokenVector> &args,
                      const int arg_);
+
+      virtual macroToken* clone();
 
       virtual bool expand(tokenVector &newTokens,
                           token_t *source,
@@ -83,8 +96,11 @@ namespace occa {
     public:
       macroToken *token;
 
-      macroStringify(macroToken *token_);
+      macroStringify(preprocessor &pp_,
+                     macroToken *token_);
       ~macroStringify();
+
+      virtual macroToken* clone();
 
       virtual bool expand(tokenVector &newTokens,
                           token_t *source,
@@ -95,8 +111,11 @@ namespace occa {
     public:
       macroTokenVector_t tokens;
 
-      macroConcat(const macroTokenVector_t &tokens_);
+      macroConcat(preprocessor &pp_,
+                  const macroTokenVector_t &tokens_);
       ~macroConcat();
+
+      virtual macroToken* clone();
 
       virtual bool expand(tokenVector &newTokens,
                           token_t *source,
@@ -170,10 +189,10 @@ namespace occa {
       bool checkArgs(identifierToken &source,
                      std::vector<tokenVector> &args);
 
-      void printError(token_t *token,
-                      const std::string &message);
-      void printError(macroToken *mToken,
-                      const std::string &message);
+      void errorOn(token_t *token,
+                   const std::string &message);
+      void errorOn(macroToken *mToken,
+                   const std::string &message);
 
       static macro_t* defineBuiltin(preprocessor &pp_,
                                     const std::string &name_,

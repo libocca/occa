@@ -145,6 +145,8 @@ void testMacroDefines() {
   while (!stream.isEmpty()) {
     getToken();
   }
+  preprocessor &pp = *((preprocessor*) stream.getInput("preprocessor"));
+  OCCA_ASSERT_EQUAL(3, pp.errors);
 }
 
 void testCppStandardTests() {

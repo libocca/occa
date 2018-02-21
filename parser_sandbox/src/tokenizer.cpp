@@ -135,6 +135,14 @@ namespace occa {
       return *(new tokenizer(*this));
     }
 
+    void* tokenizer::passMessageToInput(const occa::properties &props) {
+      const std::string inputName = props.get<std::string>("inputName");
+      if (inputName == "tokenizer") {
+        return (void*) this;
+      }
+      return NULL;
+    }
+
     bool tokenizer::reachedTheEnd() const {
       return ((*fp.start == '\0') &&
               !sourceStack.size());

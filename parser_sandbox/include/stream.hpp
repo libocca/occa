@@ -26,6 +26,7 @@
 #include <queue>
 
 #include "occa/types.hpp"
+#include "occa/tools/properties.hpp"
 
 namespace occa {
   template <class output_t>
@@ -41,11 +42,14 @@ namespace occa {
   public:
     virtual ~baseStream();
 
-    virtual bool isEmpty() = 0;
-
     virtual baseStream& clone() const = 0;
 
+    virtual bool isEmpty() = 0;
+
     virtual void setNext(output_t &out) = 0;
+
+    virtual void* passMessageToInput(const occa::properties &props);
+    void* getInput(const std::string &name);
 
     // Map
     template <class newOutput_t>
@@ -83,9 +87,12 @@ namespace occa {
 
     stream& operator = (const stream &other);
 
-    bool isEmpty();
-
     stream& clone() const;
+
+    void* passMessageToInput(const occa::properties &props);
+    void* getInput(const std::string &name);
+
+    bool isEmpty();
 
     // Map
     template <class newOutput_t>
@@ -119,6 +126,8 @@ namespace occa {
 
     virtual streamMap& clone() const;
     virtual streamMap& clone_() const = 0;
+
+    virtual void* passMessageToInput(const occa::properties &props);
   };
 
   template <class input_t,

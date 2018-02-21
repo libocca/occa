@@ -25,6 +25,8 @@
 #include <iostream>
 
 #include "occa/tools/gc.hpp"
+
+#include "errorHandler.hpp"
 #include "operator.hpp"
 
 namespace occa {

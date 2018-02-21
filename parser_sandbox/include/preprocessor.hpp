@@ -56,7 +56,9 @@ namespace occa {
       typedef void (preprocessor::*processDirective_t)(identifierToken &directive);
       typedef trie<processDirective_t> directiveTrie;
 
+      tokenizer *tokenizer_;
       tokenStack sourceCache;
+      int warnings, errors;
 
       //---[ Status ]-------------------
       std::vector<int> statusStack;
@@ -86,6 +88,8 @@ namespace occa {
                    const std::string &message);
 
       virtual tokenMap& clone_() const;
+
+      virtual void* passMessageToInput(const occa::properties &props);
 
       void initDirectives();
 

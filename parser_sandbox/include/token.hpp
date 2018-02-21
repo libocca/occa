@@ -24,6 +24,7 @@
 
 #include "occa/tools/io.hpp"
 
+#include "errorHandler.hpp"
 #include "file.hpp"
 #include "trie.hpp"
 #include "type.hpp"

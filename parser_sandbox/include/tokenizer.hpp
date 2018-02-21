@@ -24,6 +24,7 @@
 
 #include "occa/tools/io.hpp"
 
+#include "errorHandler.hpp"
 #include "file.hpp"
 #include "printer.hpp"
 #include "stream.hpp"
@@ -72,6 +73,8 @@ namespace occa {
       void setLine(const int line);
 
       virtual baseStream<token_t*>& clone() const;
+
+      virtual void* passMessageToInput(const occa::properties &props);
 
       bool reachedTheEnd() const;
       virtual bool isEmpty();

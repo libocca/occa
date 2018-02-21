@@ -45,6 +45,9 @@ namespace occa {
 
     // TODO: Add actual compiler macros as well
     preprocessor::preprocessor() :
+      tokenizer_(NULL),
+      warnings(0),
+      errors(0),
       expandingMacros(true) {
 
       // Always start off as if we passed a newline
@@ -88,7 +91,8 @@ namespace occa {
     }
 
     preprocessor::preprocessor(const preprocessor &pp) :
-      cacheMap(pp) {
+      cacheMap(pp),
+      tokenizer_(NULL) {
       *this = pp;
     }
 
@@ -108,6 +112,10 @@ namespace occa {
     }
 
     preprocessor& preprocessor::operator = (const preprocessor &pp) {
+      sourceCache = pp.sourceCache;
+      warnings    = pp.warnings;
+      errors      = pp.errors;
+
       statusStack     = pp.statusStack;
       status          = pp.status;
       passedNewline   = pp.passedNewline;
@@ -163,16 +171,29 @@ namespace occa {
 
     void preprocessor::warningOn(token_t *token,
                                  const std::string &message) {
+      ++warnings;
       token->printWarning(message);
     }
 
     void preprocessor::errorOn(token_t *token,
                                const std::string &message) {
+      ++errors;
       token->printError(message);
     }
 
     tokenMap& preprocessor::clone_() const {
       return *(new preprocessor(*this));
+    }
+
+    void* preprocessor::passMessageToInput(const occa::properties &props) {
+      const std::string inputName = props.get<std::string>("inputName");
+      if (inputName == "preprocessor") {
+        return (void*) this;
+      }
+      if (input) {
+        return input->passMessageToInput(props);
+      }
+      return NULL;
     }
 
     void preprocessor::pushStatus(const int status_) {
@@ -271,27 +292,6 @@ namespace occa {
       }
     }
 
-    tokenizer& preprocessor::getTokenizer() {
-      tokenMap *s = dynamic_cast<tokenMap*>(input);
-      while (s) {
-        tokenMap *s2 = dynamic_cast<tokenMap*>(s->input);
-        if (s2) {
-          s = s2;
-        } else {
-          break;
-        }
-      }
-
-      tokenizer *tokenizer_ = dynamic_cast<tokenizer*>(s ? s : input);
-      if (tokenizer_) {
-        return *tokenizer_;
-      }
-
-      OCCA_FORCE_ERROR("occa::lang::preprocessor must receive"
-                       " it's source from a occa::lang::tokenizer");
-      return *((tokenizer*) s);
-    }
-
     void preprocessor::skipToNewline() {
       tokenVector lineTokens;
       getLineTokens(lineTokens);
@@ -351,7 +351,8 @@ namespace occa {
       if (lineTokens.size()) {
         // Don't account for the newline token
         if (lineTokens[0]->type() != tokenType::newline) {
-          lineTokens[0]->printWarning(message);
+          warningOn(lineTokens[0],
+                    message);
         }
         freeTokenVector(lineTokens);
       }
@@ -780,14 +781,16 @@ namespace occa {
 
       const int tokenCount = (int) lineTokens.size();
       if (!tokenCount) {
-        directive.printError("");
+        errorOn(&directive,
+                "");
       }
       else {
         // Don't include the \n in the message
         const char *start = lineTokens[0]->origin.position.start;
         const char *end   = lineTokens[tokenCount - 1]->origin.position.start;
         const std::string message(start, end - start);
-        lineTokens[0]->printError(message);
+        errorOn(lineTokens[0],
+                message);
       }
 
       freeTokenVector(lineTokens);
@@ -799,28 +802,39 @@ namespace occa {
 
       const int tokenCount = (int) lineTokens.size();
       if (!tokenCount) {
-        directive.printWarning("");
+        warningOn(&directive,
+                  "");
       }
       else {
         // Don't include the \n in the message
         const char *start = lineTokens[0]->origin.position.start;
         const char *end   = lineTokens[tokenCount - 1]->origin.position.start;
         const std::string message(start, end - start);
-        lineTokens[0]->printWarning(message);
+        warningOn(lineTokens[0],
+                  message);
       }
 
       freeTokenVector(lineTokens);
     }
 
     void preprocessor::processInclude(identifierToken &directive) {
-      tokenizer &tokenizer_ = getTokenizer();
-      const std::string header = tokenizer_.getHeader();
+
+      if (!tokenizer_) {
+        tokenizer_ = (tokenizer*) getInput("tokenizer");
+      }
+      if (!tokenizer_) {
+        warningOn(&directive,
+                  "Unable to apply #include due to the lack of a tokenizer");
+        return;
+      }
+
+      const std::string header = tokenizer_->getHeader();
 
       tokenVector lineTokens;
       getExpandedLineTokens(lineTokens);
 
       if (header.size()) {
-        tokenizer_.pushSource(new file_t(header));
+        tokenizer_->pushSource(new file_t(header));
       } else {
         errorOn(&directive,
                 "Expected a header to include");
@@ -841,10 +855,18 @@ namespace occa {
     }
 
     void preprocessor::processLine(identifierToken &directive) {
-      tokenizer &tokenizer_ = getTokenizer();
-
       tokenVector lineTokens;
       getExpandedLineTokens(lineTokens);
+
+      if (!tokenizer_) {
+        tokenizer_ = (tokenizer*) getInput("tokenizer");
+      }
+      if (!tokenizer_) {
+        warningOn(&directive,
+                  "Unable to apply #line due to the lack of a tokenizer");
+        freeTokenVector(lineTokens);
+        return;
+      }
 
       int tokenCount = (int) lineTokens.size();
       if (tokenCount <= 1) {
@@ -859,7 +881,7 @@ namespace occa {
 
       // Get line number
       int line = -1;
-      std::string filename = tokenizer_.origin.file->filename;
+      std::string filename = tokenizer_->origin.file->filename;
 
       token_t *lineToken = lineTokens[0];
       if (lineToken->type() & tokenType::primitive) {
@@ -897,8 +919,8 @@ namespace occa {
 
       // TODO: Needs to create a new file instance to avoid
       //         renaming all versions of *file
-      tokenizer_.origin.position.line  = line;
-      tokenizer_.origin.file->filename = filename;
+      tokenizer_->origin.position.line  = line;
+      tokenizer_->origin.file->filename = filename;
 
       freeTokenVector(lineTokens);
     }

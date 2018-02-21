@@ -42,6 +42,14 @@ public:
     return *(new vectorStream(values, index));
   }
 
+  virtual void* passMessageToInput(const occa::properties &props) {
+    const std::string inputName = props.get<std::string>("inputName");
+    if (inputName == "vectorStream") {
+      return (void*) this;
+    }
+    return NULL;
+  }
+
   virtual bool isEmpty() {
     return (index >= (int) values.size());
   }
@@ -128,6 +136,22 @@ int main(const int argc, const char **argv) {
   occa::stream<double> sPlusHalf = s.map(addHalfMap<int, double>());
   occa::stream<int> sEven        = s.filter(oddFilter<int>());
   occa::stream<int> sEvenFunc    = s.filter(isEven);
+
+  // Test passMessage
+  OCCA_ASSERT_EQUAL((void*) NULL,
+                    sTimes4.passMessageToInput("inputName: 'test'"));
+  OCCA_ASSERT_EQUAL((void*) NULL,
+                    sTimes4.getInput("test"));
+
+  vectorStream<int> *vs = (vectorStream<int>*) sTimes4.passMessageToInput("inputName: 'vectorStream'");
+  OCCA_ASSERT_NOT_EQUAL((void*) NULL,
+                        (void*) vs);
+  OCCA_ASSERT_EQUAL(4, (int) vs->values.size());
+
+  vs = (vectorStream<int>*) sTimes4.getInput("vectorStream");
+  OCCA_ASSERT_NOT_EQUAL((void*) NULL,
+                        (void*) vs);
+  OCCA_ASSERT_EQUAL(4, (int) vs->values.size());
 
   // Test source
   for (int i = 0; i < N; ++i) {
