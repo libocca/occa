@@ -69,16 +69,10 @@ Arguments:
   COMMAND    Command to run
 ```
 
-#### Linux Autocomplete
+#### Bash Autocomplete
 
 ```bash
 . <(occa autocomplete bash)
-```
-
-#### Mac OSX Autocomplete
-
-```bash
-eval "$(occa autocomplete bash)"
 ```
 
 ### Useful environment variables:
