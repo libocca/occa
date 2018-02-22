@@ -131,16 +131,7 @@ function dirWithLibrary {
     local libName="lib$1.so"
     local result=""
 
-    local mergedLibPaths=""
-
-    mergedLibPaths=$mergedLibPaths:"/usr/local/cuda*/lib*"
-    mergedLibPaths=$mergedLibPaths:$OCCA_LIBRARY_PATH
-    mergedLibPaths=$mergedLibPaths:$LD_LIBRARY_PATH
-    mergedLibPaths=$mergedLibPaths:$DYLD_LIBRARY_PATH
-    mergedLibPaths=$mergedLibPaths:"/lib:/usr/lib:/usr/lib32:/usr/lib64:"
-    mergedLibPaths=$mergedLibPaths:"/usr/lib/*-gnu/"
-
-    result=$(dirWithFileInPath "$mergedLibPaths" "$libName")
+    result=$(dirWithFileInPath "$(defaultLibraryPath)" "$libName")
 
     if [ ! -z "$result" ]; then command echo "$result"; return; fi
 
@@ -168,25 +159,7 @@ function dirWithHeader {
     local filename="$1"
     local result=""
 
-    local mergedPaths=""
-    local mergedLibPaths=""
-
-    mergedPaths=$mergedPaths:"/usr/local/cuda*/include"
-    mergedPaths=$mergedPaths:"/Developer/NVIDIA/CUDA*/include"
-    mergedPaths=$mergedPaths:$OCCA_INCLUDE_PATH
-    mergedPaths=$mergedPaths:$CPLUS_INCLUDE_PATH
-    mergedPaths=$mergedPaths:$C_INCLUDE_PATH
-    mergedPaths=$mergedPaths:$INCLUDEPATH
-    mergedPaths=$mergedPaths:"/usr/include"
-
-    mergedLibPaths=$mergedLibPaths:"/usr/local/cuda*/lib*"
-    mergedLibPaths=$mergedLibPaths:$OCCA_LIBRARY_PATH
-    mergedLibPaths=$mergedLibPaths:$LD_LIBRARY_PATH
-    mergedLibPaths=$mergedLibPaths:$DYLD_LIBRARY_PATH
-    mergedLibPaths=$mergedLibPaths:"/lib:/usr/lib:/usr/lib32:/usr/lib64:"
-    mergedLibPaths=$mergedLibPaths:"/usr/lib/*-gnu/"
-
-    result=$(dirWithFileInPath "$mergedPaths" "$filename")
+    result=$(dirWithFileInPath "$(defaultIncludePath)" "$filename")
     if [ ! -z "$result" ]; then command echo "$result"; return; fi
 
     result=$(dirWithFileInIncludePath "$(defaultLibraryPath)" "$filename")

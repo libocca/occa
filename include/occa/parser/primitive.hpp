@@ -344,7 +344,7 @@ namespace occa {
     friend std::ostream& operator << (std::ostream &out, const primitive &p);
 
     //---[ Misc Methods ]-----------------
-    inline std::size_t sizeof_() {
+    inline uint64_t sizeof_() {
       switch(type) {
       case primitiveType::bool_   : return sizeof(bool);
       case primitiveType::uint8_  : return sizeof(uint8_t);
