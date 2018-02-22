@@ -29,14 +29,14 @@ namespace occa {
   namespace lang {
     class token_t;
 
-    typedef stream<token_t*>        tokenStream;
+    typedef stream<token_t*>          tokenStream;
     typedef std::vector<statement_t*> statementVector;
 
     class parser {
     public:
-      // tokenStream stream;
-      // blockStatement root;
-      // statementVector smntStack;
+      tokenStream stream;
+      blockStatement root;
+      statementVector smntStack;
 
       parser();
     };

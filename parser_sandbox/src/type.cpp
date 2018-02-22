@@ -667,30 +667,28 @@ namespace occa {
     structureType::structureType(const std::string &name_,
                                  const int stype_) :
       type_t(name_),
-      stype(stype_),
-      body(NULL) {}
+      stype(stype_) {}
 
     structureType::structureType(const qualifiers_t &qualifiers_,
                                  const std::string &name_,
                                  const int stype_) :
       type_t(qualifiers_, name_),
-      stype(stype_),
-      body(NULL) {}
+      stype(stype_) {}
 
     structureType::structureType(const std::string &name_,
                                  const int stype_,
-                                 blockStatement &body_) :
+                                 const blockStatement &body_) :
       type_t(name_),
       stype(stype_),
-      body(&(body_.clone().to<blockStatement>())) {}
+      body(body_) {}
 
     structureType::structureType(const qualifiers_t &qualifiers_,
                                  const std::string &name_,
                                  const int stype_,
-                                 blockStatement &body_) :
+                                 const blockStatement &body_) :
       type_t(qualifiers_, name_),
       stype(stype_),
-      body(&(body_.clone().to<blockStatement>())) {}
+      body(body_) {}
 
     structureType::~structureType() {}
 
@@ -699,13 +697,10 @@ namespace occa {
     }
 
     type_t& structureType::clone() const {
-      if (body) {
-        return *(new structureType(qualifiers,
-                                   name,
-                                   stype,
-                                   body->clone().to<blockStatement>()));
-      }
-      return *(new structureType(qualifiers, name, stype));
+      return *(new structureType(qualifiers,
+                                 name,
+                                 stype,
+                                 body));
     }
 
     bool structureType::canBeDereferenced() const {
@@ -734,9 +729,9 @@ namespace occa {
       if (name.size()) {
         pout << ' ' << name;
       }
-      if (body) {
+      if (body.hasChildren()) {
         pout.pushInlined(true);
-        body->print(pout);
+        body.print(pout);
         pout.pushInlined(false);
       } else {
         pout << " {}";

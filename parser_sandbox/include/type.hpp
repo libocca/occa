@@ -29,6 +29,7 @@
 #include "occa/defines.hpp"
 #include "occa/types.hpp"
 #include "occa/tools/sys.hpp"
+#include "baseStatement.hpp"
 #include "printer.hpp"
 #include "trie.hpp"
 
@@ -42,14 +43,13 @@ namespace occa {
     class specifier;
     class variable;
     class exprNode;
-    class blockStatement;
 
     typedef std::vector<const qualifier*> qualifierVector_t;
     typedef std::vector<type_t*>          typeVector_t;
     typedef std::vector<attribute_t>      attributeVector_t;
     typedef trie<const specifier*>        specifierTrie;
 
-    typedef udim_t ktype_t;
+    typedef int ktype_t;
 
     //---[ Types ]----------------------
     namespace specifierType {
@@ -352,6 +352,7 @@ namespace occa {
                          public basePointerType {
     public:
       typeVector_t args;
+      blockStatement body;
 
       functionType(const type_t &returnType);
       functionType(const type_t &returnType,
@@ -412,7 +413,7 @@ namespace occa {
     public:
       std::string name;
       int stype;
-      blockStatement *body;
+      blockStatement body;
 
       static const int class_;
       static const int enum_;
@@ -421,17 +422,19 @@ namespace occa {
 
       structureType(const std::string &name_,
                     const int stype_);
+
       structureType(const qualifiers_t &qualifiers_,
                     const std::string &name_,
                     const int stype_);
 
       structureType(const std::string &name_,
                     const int stype_,
-                    blockStatement &body_);
+                    const blockStatement &body_);
+
       structureType(const qualifiers_t &qualifiers_,
                     const std::string &name_,
                     const int stype_,
-                    blockStatement &body_);
+                    const blockStatement &body_);
 
       virtual ~structureType();
 

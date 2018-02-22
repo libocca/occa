@@ -27,7 +27,6 @@
 #include "occa/tools/sys.hpp"
 
 #include "trie.hpp"
-#include "type.hpp"
 
 namespace occa {
   namespace lang {

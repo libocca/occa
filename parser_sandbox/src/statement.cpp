@@ -24,129 +24,13 @@
 
 namespace occa {
   namespace lang {
-    statement_t::statement_t(scope_t &scope_) :
-      up(NULL),
-      scope(scope_),
-      attributes() {}
-
-    statement_t::~statement_t() {}
-
-    std::string statement_t::toString() const {
-      std::stringstream ss;
-      printer pout(ss);
-      print(pout);
-      return ss.str();
-    }
-
-    statement_t::operator std::string() const {
-      return toString();
-    }
-
-    bool statement_t::hasScope() const {
-      return false;
-    }
-
-    void statement_t::addAttribute(const attribute_t &attribute) {
-      // TODO: Warning if attribute already exists
-      // Override last attribute by default
-      attributes.push_back(attribute);
-    }
-
-    emptyStatement statement_t::newEmptyStatement() {
-      return emptyStatement(scope);
-    }
-
-    pragmaStatement statement_t::newPragmaStatement(const std::string &line) {
-      return pragmaStatement(scope, line);
-    }
-
-    blockStatement statement_t::newBlockStatement() {
-      return blockStatement(scope);
-    }
-
-    typeDeclStatement statement_t::newTypeDeclarationStatement(declarationType &declType) {
-      return typeDeclStatement(scope, declType);
-    }
-
-    classAccessStatement statement_t::newClassAccessStatement(const int access) {
-      return classAccessStatement(scope, access);
-    }
-
-    expressionStatement statement_t::newExpressionStatement(exprNode &expression) {
-      return expressionStatement(scope, expression);
-    }
-
-    declarationStatement statement_t::newDeclarationStatement() {
-      return declarationStatement(scope);
-    }
-
-    gotoStatement statement_t::  newGotoStatement(const std::string &name) {
-      return gotoStatement(scope, name);
-    }
-
-    gotoLabelStatement statement_t::newGotoLabelStatement(const std::string &name) {
-      return gotoLabelStatement(scope, name);
-    }
-
-    namespaceStatement statement_t::newNamespaceStatement(const std::string &name) {
-      return namespaceStatement(scope, name);
-    }
-
-    whileStatement statement_t::newWhileStatement(statement_t &check) {
-      return whileStatement(scope, check, false);
-    }
-
-    whileStatement statement_t::newDoWhileStatement(statement_t &check) {
-      return whileStatement(scope, check, true);
-    }
-
-    forStatement statement_t::newForStatement(statement_t &init,
-                                              statement_t &check,
-                                              statement_t &update) {
-      return forStatement(scope, init, check, update);
-    }
-
-    switchStatement statement_t::newSwitchStatement(statement_t &value) {
-      return switchStatement(scope, value);
-    }
-
-    caseStatement statement_t::newCaseStatement(statement_t &value) {
-      return caseStatement(scope, value);
-    }
-
-    returnStatement statement_t::newReturnStatement(statement_t &value) {
-      return returnStatement(scope, value);
-    }
-
-    void statement_t::print() const {
-      std::cout << toString();
-    }
-
-    //---[ Empty ]------------------------
-    emptyStatement::emptyStatement(scope_t &scope_) :
-      statement_t(scope_) {}
-
-    statement_t& emptyStatement::clone() const {
-      emptyStatement &s = *(new emptyStatement(scope));
-      s.attributes = attributes;
-      return s;
-    }
-
-    int emptyStatement::type() const {
-      return statementType::empty;
-    }
-
-    void emptyStatement::print(printer &pout) const {}
-    //====================================
-
     //---[ Pragma ]--------------------
-    pragmaStatement::pragmaStatement(scope_t &scope_,
-                                     const std::string &line_) :
-      statement_t(scope_),
+    pragmaStatement::pragmaStatement(const std::string &line_) :
+      statement_t(),
       line(line_) {}
 
     statement_t& pragmaStatement::clone() const {
-      pragmaStatement &s = *(new pragmaStatement(scope, line));
+      pragmaStatement &s = *(new pragmaStatement(line));
       s.attributes = attributes;
       return s;
     }
@@ -160,84 +44,14 @@ namespace occa {
     }
     //====================================
 
-    //---[ Block ]------------------------
-    blockStatement::blockStatement(scope_t &scope_) :
-      statement_t(scope_) {}
-
-    statement_t& blockStatement::clone() const {
-      blockStatement &s = *(new blockStatement(scope));
-      s.attributes = attributes;
-      const int childCount = (int) children.size();
-      for (int i = 0; i < childCount; ++i) {
-        s.addChild(children[i]->clone());
-      }
-      return s;
-    }
-
-    int blockStatement::type() const {
-      return statementType::block;
-    }
-
-    bool blockStatement::hasScope() const {
-      return true;
-    }
-
-    void blockStatement::addChild(statement_t &child) {
-      children.push_back(&child);
-      child.up = this;
-    }
-
-    void blockStatement::clearChildren() {
-      const int count = (int) children.size();
-      for (int i = 0; i < count; ++i) {
-        delete children[i];
-      }
-      children.clear();
-    }
-
-    void blockStatement::print(printer &pout) const {
-      // Don't print { } for root statement
-      if (up) {
-        if (pout.isInlined()) {
-          pout << ' ';
-        } else {
-          pout.printIndentation();
-        }
-        pout << '{';
-        if (children.size()) {
-          pout << '\n';
-          pout.addIndentation();
-        } else {
-          pout << ' ';
-        }
-      }
-
-      printChildren(pout);
-
-      if (up) {
-        pout.removeIndentation();
-        pout.printIndentation();
-        pout << "}\n";
-      }
-    }
-
-    void blockStatement::printChildren(printer &pout) const {
-      const int count = (int) children.size();
-      for (int i = 0; i < count; ++i) {
-        children[i]->print(pout);
-      }
-    }
-    //====================================
-
     //---[ Type ]-------------------------
-    typeDeclStatement::typeDeclStatement(scope_t &scope_,
-                                         declarationType &declType_) :
-      statement_t(scope_),
+    typeDeclStatement::typeDeclStatement(declarationType &declType_) :
+      statement_t(),
       declType(declType_) {}
 
 
     statement_t& typeDeclStatement::clone() const {
-      typeDeclStatement &s = *(new typeDeclStatement(scope, declType));
+      typeDeclStatement &s = *(new typeDeclStatement(declType));
       s.attributes = attributes;
       return s;
     }
@@ -246,22 +60,26 @@ namespace occa {
       return statementType::typeDecl;
     }
 
-    bool typeDeclStatement::hasScope() const {
-      return (declType.is<structureType>() ||
-              declType.is<functionType>());
+    scope_t* typeDeclStatement::getScope() {
+      if (declType.is<structureType>()) {
+        return &(declType.to<structureType>().body.scope);
+      }
+      if (declType.is<functionType>()) {
+        return &(declType.to<functionType>().body.scope);
+     }
+      return NULL;
     }
 
     void typeDeclStatement::print(printer &pout) const {
       declType.printDeclaration(pout);
     }
 
-    classAccessStatement::classAccessStatement(scope_t &scope_,
-                                               const int access_) :
-      statement_t(scope_),
+    classAccessStatement::classAccessStatement(const int access_) :
+      statement_t(),
       access(access_) {}
 
     statement_t& classAccessStatement::clone() const {
-      classAccessStatement &s = *(new classAccessStatement(scope, access));
+      classAccessStatement &s = *(new classAccessStatement(access));
       s.attributes = attributes;
       return s;
     }
@@ -289,13 +107,12 @@ namespace occa {
     //====================================
 
     //---[ Expression ]-------------------
-    expressionStatement::expressionStatement(scope_t &scope_,
-                                             exprNode &expression_) :
-      statement_t(scope_),
+    expressionStatement::expressionStatement(exprNode &expression_) :
+      statement_t(),
       expression(expression_) {}
 
     statement_t& expressionStatement::clone() const {
-      expressionStatement &s = *(new expressionStatement(scope, expression));
+      expressionStatement &s = *(new expressionStatement(expression));
       s.attributes = attributes;
       return s;
     }
@@ -307,11 +124,11 @@ namespace occa {
     void expressionStatement::print(printer &pout) const {
     }
 
-    declarationStatement::declarationStatement(scope_t &scope_) :
-      statement_t(scope_) {}
+    declarationStatement::declarationStatement() :
+      statement_t() {}
 
     statement_t& declarationStatement::clone() const {
-      declarationStatement &s = *(new declarationStatement(scope));
+      declarationStatement &s = *(new declarationStatement());
       s.attributes = attributes;
       return s;
     }
@@ -325,13 +142,12 @@ namespace occa {
     //====================================
 
     //---[ Goto ]-------------------------
-    gotoStatement::gotoStatement(scope_t &scope_,
-                                 const std::string &name_) :
-      statement_t(scope_),
+    gotoStatement::gotoStatement(const std::string &name_) :
+      statement_t(),
       name(name_) {}
 
     statement_t& gotoStatement::clone() const {
-      gotoStatement &s = *(new gotoStatement(scope, name));
+      gotoStatement &s = *(new gotoStatement(name));
       s.attributes = attributes;
       return s;
     }
@@ -345,13 +161,12 @@ namespace occa {
       pout << "goto " << name << ";\n";
     }
 
-    gotoLabelStatement::gotoLabelStatement(scope_t &scope_,
-                                           const std::string &name_) :
-      statement_t(scope_),
+    gotoLabelStatement::gotoLabelStatement(const std::string &name_) :
+      statement_t(),
       name(name_) {}
 
     statement_t& gotoLabelStatement::clone() const {
-      gotoLabelStatement &s = *(new gotoLabelStatement(scope, name));
+      gotoLabelStatement &s = *(new gotoLabelStatement(name));
       s.attributes = attributes;
       return s;
     }
@@ -366,23 +181,18 @@ namespace occa {
     //====================================
 
     //---[ Namespace ]--------------------
-    namespaceStatement::namespaceStatement(scope_t &scope_,
-                                           const std::string &name_) :
-      blockStatement(scope_),
+    namespaceStatement::namespaceStatement(const std::string &name_) :
+      blockStatement(),
       name(name_) {}
 
     statement_t& namespaceStatement::clone() const {
-      namespaceStatement &s = *(new namespaceStatement(scope, name));
+      namespaceStatement &s = *(new namespaceStatement(name));
       s.attributes = attributes;
       return s;
     }
 
     int namespaceStatement::type() const {
       return statementType::namespace_;
-    }
-
-    bool namespaceStatement::hasScope() const {
-      return true;
     }
 
     void namespaceStatement::print(printer &pout) const {
@@ -401,25 +211,20 @@ namespace occa {
     //====================================
 
     //---[ While ]------------------------
-    whileStatement::whileStatement(scope_t &scope_,
-                                   statement_t &check_,
+    whileStatement::whileStatement(statement_t &check_,
                                    const bool isDoWhile_) :
-      blockStatement(scope_),
+      blockStatement(),
       check(check_),
       isDoWhile(isDoWhile_) {}
 
     statement_t& whileStatement::clone() const {
-      whileStatement &s = *(new whileStatement(scope, check.clone(), isDoWhile));
+      whileStatement &s = *(new whileStatement(check.clone(), isDoWhile));
       s.attributes = attributes;
       return s;
     }
 
     int whileStatement::type() const {
       return statementType::while_;
-    }
-
-    bool whileStatement::hasScope() const {
-      return true;
     }
 
     void whileStatement::print(printer &pout) const {
@@ -455,18 +260,16 @@ namespace occa {
     //====================================
 
     //---[ For ]--------------------------
-    forStatement::forStatement(scope_t &scope_,
-                               statement_t &init_,
+    forStatement::forStatement(statement_t &init_,
                                statement_t &check_,
                                statement_t &update_) :
-      blockStatement(scope_),
+      blockStatement(),
       init(init_),
       check(check_),
       update(update_) {}
 
     statement_t& forStatement::clone() const {
-      forStatement &s = *(new forStatement(scope,
-                                           init.clone(),
+      forStatement &s = *(new forStatement(init.clone(),
                                            check.clone(),
                                            update.clone()));
       s.attributes = attributes;
@@ -475,10 +278,6 @@ namespace occa {
 
     int forStatement::type() const {
       return statementType::for_;
-    }
-
-    bool forStatement::hasScope() const {
-      return true;
     }
 
     void forStatement::print(printer &pout) const {
@@ -504,23 +303,18 @@ namespace occa {
     //====================================
 
     //---[ Switch ]-----------------------
-    switchStatement::switchStatement(scope_t &scope_,
-                                     statement_t &value_) :
-      blockStatement(scope_),
+    switchStatement::switchStatement(statement_t &value_) :
+      blockStatement(),
       value(value_) {}
 
     statement_t& switchStatement::clone() const {
-      switchStatement &s = *(new switchStatement(scope, value.clone()));
+      switchStatement &s = *(new switchStatement(value.clone()));
       s.attributes = attributes;
       return s;
     }
 
     int switchStatement::type() const {
       return statementType::switch_;
-    }
-
-    bool switchStatement::hasScope() const {
-      return true;
     }
 
     void switchStatement::print(printer &pout) const {
@@ -544,13 +338,12 @@ namespace occa {
     //====================================
 
     //---[ Case ]-------------------------
-    caseStatement::caseStatement(scope_t &scope_,
-                                 statement_t &value_) :
-      statement_t(scope_),
+    caseStatement::caseStatement(statement_t &value_) :
+      statement_t(),
       value(value_) {}
 
     statement_t& caseStatement::clone() const {
-      caseStatement &s = *(new caseStatement(scope, value.clone()));
+      caseStatement &s = *(new caseStatement(value.clone()));
       s.attributes = attributes;
       return s;
     }
@@ -574,11 +367,11 @@ namespace occa {
     //====================================
 
     //---[ Exit ]-------------------------
-    continueStatement::continueStatement(scope_t &scope_) :
-      statement_t(scope_) {}
+    continueStatement::continueStatement() :
+      statement_t() {}
 
     statement_t& continueStatement::clone() const {
-      continueStatement &s = *(new continueStatement(scope));
+      continueStatement &s = *(new continueStatement());
       s.attributes = attributes;
       return s;
     }
@@ -592,11 +385,11 @@ namespace occa {
       pout << "continue;\n";
     }
 
-    breakStatement::breakStatement(scope_t &scope_) :
-      statement_t(scope_) {}
+    breakStatement::breakStatement() :
+      statement_t() {}
 
     statement_t& breakStatement::clone() const {
-      breakStatement &s = *(new breakStatement(scope));
+      breakStatement &s = *(new breakStatement());
       s.attributes = attributes;
       return s;
     }
@@ -610,13 +403,12 @@ namespace occa {
       pout << "break;\n";
     }
 
-    returnStatement::returnStatement(scope_t &scope_,
-                                     statement_t &value_) :
-      statement_t(scope_),
+    returnStatement::returnStatement(statement_t &value_) :
+      statement_t(),
       value(value_) {}
 
     statement_t& returnStatement::clone() const {
-      returnStatement &s = *(new returnStatement(scope, value.clone()));
+      returnStatement &s = *(new returnStatement(value.clone()));
       s.attributes = attributes;
       return s;
     }
