@@ -26,7 +26,6 @@
 
 #include "errorHandler.hpp"
 #include "file.hpp"
-#include "trie.hpp"
 #include "type.hpp"
 
 namespace occa {
@@ -34,7 +33,6 @@ namespace occa {
     class operator_t;
     class token_t;
 
-    typedef trie<const operator_t*> operatorTrie;
     typedef std::vector<token_t*> tokenVector;
 
     namespace charcodes {
@@ -47,8 +45,6 @@ namespace occa {
       extern const char identifier[];
       extern const char operators[];
     }
-
-    void getOperators(operatorTrie &operators);
 
     namespace encodingType {
       extern const int none;
@@ -67,10 +63,14 @@ namespace occa {
 
       extern const int newline;
 
-      extern const int identifier;
-
       extern const int systemHeader;
       extern const int header;
+
+      extern const int identifier;
+
+      extern const int qualifier;
+      extern const int type;
+      extern const int variable;
 
       extern const int primitive;
       extern const int op;

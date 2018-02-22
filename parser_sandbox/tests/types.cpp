@@ -29,11 +29,14 @@
 void testBitfields();
 void testFunction();
 void testCasting();
+void testSpecifiers();
 
 int main(const int argc, const char **argv) {
   testBitfields();
   testFunction();
   testCasting();
+  testSpecifiers();
+
   return 0;
 }
 
@@ -220,4 +223,112 @@ void testCasting() {
   OCCA_ASSERT_FALSE(constIntArray2.canBeCastedToImplicitly(intArray));
   OCCA_ASSERT_FALSE(constIntArray2.canBeCastedToImplicitly(intArray2));
   OCCA_ASSERT_TRUE(constIntArray2.canBeCastedToImplicitly(constIntArray));
+}
+
+#define testSpecifierType(type_, name_)                     \
+  {                                                         \
+    specifierTrie::result_t result = specifiers.get(name_); \
+    OCCA_ASSERT_TRUE(result.success());                     \
+    OCCA_ASSERT_EQUAL_BINARY(type_,                         \
+                             result.value()->type());       \
+    OCCA_ASSERT_EQUAL(name_,                                \
+                      result.value()->name);                \
+  }
+
+
+void testSpecifiers() {
+  specifierTrie specifiers;
+  getSpecifiers(specifiers);
+
+  // Qualifiers
+  testSpecifierType(specifierType::qualifier,
+                    "constexpr");
+
+  testSpecifierType(specifierType::qualifier,
+                    "friend");
+
+  testSpecifierType(specifierType::qualifier,
+                    "typedef");
+
+  testSpecifierType(specifierType::qualifier,
+                    "signed");
+
+  testSpecifierType(specifierType::qualifier,
+                    "unsigned");
+
+  testSpecifierType(specifierType::qualifier,
+                    "volatile");
+
+  testSpecifierType(specifierType::qualifier,
+                    "extern");
+
+  testSpecifierType(specifierType::qualifier,
+                    "mutable");
+
+  testSpecifierType(specifierType::qualifier,
+                    "register");
+
+  testSpecifierType(specifierType::qualifier,
+                    "static");
+
+  testSpecifierType(specifierType::qualifier,
+                    "thread_local");
+
+  testSpecifierType(specifierType::qualifier,
+                    "explicit");
+
+  testSpecifierType(specifierType::qualifier,
+                    "inline");
+
+  testSpecifierType(specifierType::qualifier,
+                    "virtual");
+
+  testSpecifierType(specifierType::qualifier,
+                    "class");
+
+  testSpecifierType(specifierType::qualifier,
+                    "enum");
+
+  testSpecifierType(specifierType::qualifier,
+                    "struct");
+
+  testSpecifierType(specifierType::qualifier,
+                    "union");
+
+  // Primitive
+  testSpecifierType(specifierType::primitive,
+                    "bool");
+
+  testSpecifierType(specifierType::primitive,
+                    "char");
+
+  testSpecifierType(specifierType::primitive,
+                    "char16_t");
+
+  testSpecifierType(specifierType::primitive,
+                    "char32_t");
+
+  testSpecifierType(specifierType::primitive,
+                    "wchar_t");
+
+  testSpecifierType(specifierType::primitive,
+                    "short");
+
+  testSpecifierType(specifierType::primitive,
+                    "int");
+
+  testSpecifierType(specifierType::primitive,
+                    "long");
+
+  testSpecifierType(specifierType::primitive,
+                    "float");
+
+  testSpecifierType(specifierType::primitive,
+                    "double");
+
+  testSpecifierType(specifierType::primitive,
+                    "void");
+
+  testSpecifierType(specifierType::primitive,
+                    "auto");
 }

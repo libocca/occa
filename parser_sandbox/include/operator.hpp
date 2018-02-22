@@ -23,13 +23,19 @@
 #define OCCA_PARSER_OPERATOR_HEADER2
 
 #include "occa/types.hpp"
-#include "printer.hpp"
 #include "occa/parser/primitive.hpp"
+
+#include "printer.hpp"
+#include "trie.hpp"
 
 namespace occa {
   namespace lang {
+    class operator_t;
+
     typedef udim_t   rawOpType_t;
     typedef bitfield opType_t;
+
+    typedef trie<const operator_t*> operatorTrie;
 
     namespace rawOperatorType {
       extern const rawOpType_t not_;
@@ -316,6 +322,7 @@ namespace occa {
 
       // Non-Overloadable
       extern const binaryOperator_t scope;
+      extern const unaryOperator_t  globalScope;
       extern const unaryOperator_t  dereference;
       extern const unaryOperator_t  address;
       extern const binaryOperator_t dot;
@@ -362,6 +369,8 @@ namespace occa {
       extern const int associativity[18];
       //================================
     }
+
+    void getOperators(operatorTrie &operators);
   }
 }
 

@@ -473,6 +473,11 @@ namespace occa {
                        ? (const operator_t*) &op::leftDecrement
                        : (const operator_t*) &op::rightDecrement);
       }
+      else if (opType & operatorType::scope) {     // ::
+        newOperator = (isLeftUnary
+                       ? (const operator_t*) &op::globalScope
+                       : (const operator_t*) &op::scope);
+      }
 
       if (newOperator) {
         return *(new operatorToken(origin, *newOperator));

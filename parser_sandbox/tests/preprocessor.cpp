@@ -145,6 +145,8 @@ void testMacroDefines() {
   while (!stream.isEmpty()) {
     getToken();
   }
+
+  // Test error counting
   preprocessor &pp = *((preprocessor*) stream.getInput("preprocessor"));
   OCCA_ASSERT_EQUAL(3, pp.errors);
 }
@@ -545,5 +547,9 @@ void testIncludeDefine() {
   while(!stream.isEmpty()) {
     getToken();
   }
+
+  preprocessor &pp = *((preprocessor*) stream.getInput("preprocessor"));
+  OCCA_ASSERT_EQUAL(1,
+                    (int) pp.dependencies.size());
 }
 //======================================

@@ -46,9 +46,9 @@ namespace occa {
     // TODO: Add actual compiler macros as well
     preprocessor::preprocessor() :
       tokenizer_(NULL),
+      expandingMacros(true),
       warnings(0),
-      errors(0),
-      expandingMacros(true) {
+      errors(0) {
 
       // Always start off as if we passed a newline
       incrementNewline();
@@ -113,8 +113,6 @@ namespace occa {
 
     preprocessor& preprocessor::operator = (const preprocessor &pp) {
       sourceCache = pp.sourceCache;
-      warnings    = pp.warnings;
-      errors      = pp.errors;
 
       statusStack     = pp.statusStack;
       status          = pp.status;
@@ -124,6 +122,10 @@ namespace occa {
       directives     = pp.directives;
       compilerMacros = pp.compilerMacros;
       sourceMacros   = pp.sourceMacros;
+
+      dependencies = pp.dependencies;
+      warnings     = pp.warnings;
+      errors       = pp.errors;
 
       directives.freeze();
       directives.autoFreeze = true;
@@ -825,10 +827,20 @@ namespace occa {
       if (!tokenizer_) {
         warningOn(&directive,
                   "Unable to apply #include due to the lack of a tokenizer");
+        skipToNewline();
         return;
       }
 
       const std::string header = tokenizer_->getHeader();
+
+      if (!io::exists(header)) {
+        errorOn(&directive,
+                "File does not exist");
+        skipToNewline();
+        return;
+      }
+
+      dependencies[header] = true;
 
       tokenVector lineTokens;
       getExpandedLineTokens(lineTokens);

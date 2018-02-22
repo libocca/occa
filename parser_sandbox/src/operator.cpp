@@ -69,23 +69,24 @@ namespace occa {
 
       const rawOpType_t comma             (1L << 38);
       const rawOpType_t scope             (1L << 39);
-      const rawOpType_t dereference       (1L << 40);
-      const rawOpType_t address           (1L << 41);
-      const rawOpType_t dot               (1L << 42);
-      const rawOpType_t dotStar           (1L << 43);
-      const rawOpType_t arrow             (1L << 44);
-      const rawOpType_t arrowStar         (1L << 45);
+      const rawOpType_t globalScope       (1L << 40);
+      const rawOpType_t dereference       (1L << 41);
+      const rawOpType_t address           (1L << 42);
+      const rawOpType_t dot               (1L << 43);
+      const rawOpType_t dotStar           (1L << 44);
+      const rawOpType_t arrow             (1L << 45);
+      const rawOpType_t arrowStar         (1L << 46);
 
-      const rawOpType_t questionMark      (1L << 46);
-      const rawOpType_t colon             (1L << 47);
+      const rawOpType_t questionMark      (1L << 47);
+      const rawOpType_t colon             (1L << 48);
 
       // End = (Start << 1)
-      const rawOpType_t braceStart        (1L << 48);
-      const rawOpType_t braceEnd          (1L << 49);
-      const rawOpType_t bracketStart      (1L << 50);
-      const rawOpType_t bracketEnd        (1L << 51);
-      const rawOpType_t parenthesesStart  (1L << 52);
-      const rawOpType_t parenthesesEnd    (1L << 53);
+      const rawOpType_t braceStart        (1L << 49);
+      const rawOpType_t braceEnd          (1L << 50);
+      const rawOpType_t bracketStart      (1L << 51);
+      const rawOpType_t bracketEnd        (1L << 52);
+      const rawOpType_t parenthesesStart  (1L << 53);
+      const rawOpType_t parenthesesEnd    (1L << 54);
 
       //---[ Special operators ]--------
       const rawOpType_t lineComment       (1L << 0);
@@ -186,6 +187,7 @@ namespace occa {
                                           rightShiftEq);
 
       const opType_t comma             (0, rawOperatorType::comma);
+      const opType_t globalScope       (0, rawOperatorType::globalScope);
       const opType_t scope             (0, rawOperatorType::scope);
       const opType_t dereference       (0, rawOperatorType::dereference);
       const opType_t address           (0, rawOperatorType::address);
@@ -201,7 +203,8 @@ namespace occa {
                                           leftIncrement |
                                           leftDecrement |
                                           dereference   |
-                                          address);
+                                          address       |
+                                          globalScope);
 
       const opType_t rightUnary        = (rightIncrement |
                                           rightDecrement);
@@ -333,7 +336,8 @@ namespace occa {
                                           increment |
                                           decrement |
                                           ampersand |
-                                          asterisk);
+                                          asterisk  |
+                                          scope);
       //================================
 
       const opType_t overloadable      = (not_           |
@@ -434,6 +438,7 @@ namespace occa {
 
       // Non-Overloadable
       const binaryOperator_t scope          ("::" , operatorType::scope            , 1);
+      const unaryOperator_t  globalScope    ("::" , operatorType::globalScope      , 1);
       const unaryOperator_t  dereference    ("*"  , operatorType::dereference      , 3);
       const unaryOperator_t  address        ("&"  , operatorType::address          , 3);
       const binaryOperator_t dot            ("."  , operatorType::dot              , 2);
@@ -580,6 +585,76 @@ namespace occa {
       default:
         return primitive();
       }
+    }
+
+    void getOperators(operatorTrie &operators) {
+      operators.add(op::not_.str             , &op::not_);
+      operators.add(op::tilde.str            , &op::tilde);
+      operators.add(op::leftIncrement.str    , &op::leftIncrement);
+      operators.add(op::leftDecrement.str    , &op::leftDecrement);
+
+      operators.add(op::add.str              , &op::add);
+      operators.add(op::sub.str              , &op::sub);
+      operators.add(op::mult.str             , &op::mult);
+      operators.add(op::div.str              , &op::div);
+      operators.add(op::mod.str              , &op::mod);
+
+      operators.add(op::lessThan.str         , &op::lessThan);
+      operators.add(op::lessThanEq.str       , &op::lessThanEq);
+      operators.add(op::equal.str            , &op::equal);
+      operators.add(op::notEqual.str         , &op::notEqual);
+      operators.add(op::greaterThan.str      , &op::greaterThan);
+      operators.add(op::greaterThanEq.str    , &op::greaterThanEq);
+
+      operators.add(op::and_.str             , &op::and_);
+      operators.add(op::or_.str              , &op::or_);
+
+      operators.add(op::bitAnd.str           , &op::bitAnd);
+      operators.add(op::bitOr.str            , &op::bitOr);
+      operators.add(op::xor_.str             , &op::xor_);
+      operators.add(op::leftShift.str        , &op::leftShift);
+      operators.add(op::rightShift.str       , &op::rightShift);
+
+      operators.add(op::assign.str           , &op::assign);
+      operators.add(op::addEq.str            , &op::addEq);
+      operators.add(op::subEq.str            , &op::subEq);
+      operators.add(op::multEq.str           , &op::multEq);
+      operators.add(op::divEq.str            , &op::divEq);
+      operators.add(op::modEq.str            , &op::modEq);
+      operators.add(op::andEq.str            , &op::andEq);
+      operators.add(op::orEq.str             , &op::orEq);
+      operators.add(op::xorEq.str            , &op::xorEq);
+      operators.add(op::leftShiftEq.str      , &op::leftShiftEq);
+      operators.add(op::rightShiftEq.str     , &op::rightShiftEq);
+
+      operators.add(op::comma.str            , &op::comma);
+      operators.add(op::scope.str            , &op::scope);
+      operators.add(op::dot.str              , &op::dot);
+      operators.add(op::dotStar.str          , &op::dotStar);
+      operators.add(op::arrow.str            , &op::arrow);
+      operators.add(op::arrowStar.str        , &op::arrowStar);
+      operators.add(op::ternary.str          , &op::ternary);
+      operators.add(op::colon.str            , &op::colon);
+
+      operators.add(op::braceStart.str       , &op::braceStart);
+      operators.add(op::braceEnd.str         , &op::braceEnd);
+      operators.add(op::bracketStart.str     , &op::bracketStart);
+      operators.add(op::bracketEnd.str       , &op::bracketEnd);
+      operators.add(op::parenthesesStart.str , &op::parenthesesStart);
+      operators.add(op::parenthesesEnd.str   , &op::parenthesesEnd);
+
+      operators.add(op::lineComment.str      , &op::lineComment);
+      operators.add(op::blockCommentStart.str, &op::blockCommentStart);
+      operators.add(op::blockCommentEnd.str  , &op::blockCommentEnd);
+
+      operators.add(op::hash.str             , &op::hash);
+      operators.add(op::hashhash.str         , &op::hashhash);
+
+      operators.add(op::semicolon.str        , &op::semicolon);
+      operators.add(op::ellipsis.str         , &op::ellipsis);
+
+      operators.add(op::cudaCallStart.str    , &op::cudaCallStart);
+      operators.add(op::cudaCallEnd.str      , &op::cudaCallEnd);
     }
   }
 }

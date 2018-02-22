@@ -22,14 +22,14 @@
 #ifndef OCCA_PARSER_STATEMENT_HEADER2
 #define OCCA_PARSER_STATEMENT_HEADER2
 
-#include "context.hpp"
-#include "keyword.hpp"
-#include "macro.hpp"
+#include <vector>
+
 #include "scope.hpp"
 #include "trie.hpp"
 
 namespace occa {
   namespace lang {
+    class statement_t;
     class emptyStatement;
     class pragmaStatement;
     class blockStatement;
@@ -47,6 +47,8 @@ namespace occa {
     class continueStatement;
     class breakStatement;
     class returnStatement;
+
+    typedef std::vector<statement_t*> statementPtrVector;
 
     class statementType {
     public:
@@ -74,11 +76,10 @@ namespace occa {
     class statement_t {
     public:
       statement_t *up;
-      context &ctx;
-      scope_t scope;
+      scope_t &scope;
       attributeVector_t attributes;
 
-      statement_t(context &ctx_);
+      statement_t(scope_t &scope_);
 
       virtual ~statement_t();
 
@@ -142,7 +143,7 @@ namespace occa {
     //---[ Empty ]----------------------
     class emptyStatement : public statement_t {
     public:
-      emptyStatement(context &ctx_);
+      emptyStatement(scope_t &scope_);
 
       virtual statement_t& clone() const;
       virtual int type() const;
@@ -156,7 +157,7 @@ namespace occa {
     public:
       std::string line;
 
-      pragmaStatement(context &ctx_,
+      pragmaStatement(scope_t &scope_,
                       const std::string &line_);
 
       virtual statement_t& clone() const;
@@ -171,7 +172,7 @@ namespace occa {
     public:
       statementPtrVector children;
 
-      blockStatement(context &ctx_);
+      blockStatement(scope_t &scope_);
 
       void addChild(statement_t &child);
       void clearChildren();
@@ -191,7 +192,7 @@ namespace occa {
     public:
       declarationType &declType;
 
-      typeDeclStatement(context &ctx_,
+      typeDeclStatement(scope_t &scope_,
                         declarationType &declType_);
 
       virtual statement_t& clone() const;
@@ -206,7 +207,7 @@ namespace occa {
     public:
       int access;
 
-      classAccessStatement(context &ctx_,
+      classAccessStatement(scope_t &scope_,
                            const int access_);
 
       virtual statement_t& clone() const;
@@ -221,7 +222,7 @@ namespace occa {
     public:
       exprNode &expression;
 
-      expressionStatement(context &ctx_,
+      expressionStatement(scope_t &scope_,
                           exprNode &expression_);
 
       virtual statement_t& clone() const;
@@ -232,7 +233,7 @@ namespace occa {
 
     class declarationStatement : public statement_t {
     public:
-      declarationStatement(context &ctx_);
+      declarationStatement(scope_t &scope_);
 
       virtual statement_t& clone() const;
       virtual int type() const;
@@ -246,7 +247,7 @@ namespace occa {
     public:
       std::string name;
 
-      gotoStatement(context &ctx_,
+      gotoStatement(scope_t &scope_,
                     const std::string &name_);
 
       virtual statement_t& clone() const;
@@ -259,7 +260,7 @@ namespace occa {
     public:
       std::string name;
 
-      gotoLabelStatement(context &ctx_,
+      gotoLabelStatement(scope_t &scope_,
                          const std::string &name_);
 
       virtual statement_t& clone() const;
@@ -274,7 +275,7 @@ namespace occa {
     public:
       std::string name;
 
-      namespaceStatement(context &ctx_,
+      namespaceStatement(scope_t &scope_,
                          const std::string &name_);
 
       virtual bool hasScope() const;
@@ -292,7 +293,7 @@ namespace occa {
       statement_t &check;
       bool isDoWhile;
 
-      whileStatement(context &ctx_,
+      whileStatement(scope_t &scope_,
                      statement_t &check_,
                      const bool isDoWhile_ = false);
 
@@ -310,7 +311,7 @@ namespace occa {
     public:
       statement_t &init, &check, &update;
 
-      forStatement(context &ctx_,
+      forStatement(scope_t &scope_,
                    statement_t &init_,
                    statement_t &check_,
                    statement_t &update_);
@@ -329,7 +330,7 @@ namespace occa {
     public:
       statement_t &value;
 
-      switchStatement(context &ctx_,
+      switchStatement(scope_t &scope_,
                       statement_t &value_);
 
       virtual statement_t& clone() const;
@@ -346,7 +347,7 @@ namespace occa {
     public:
       statement_t &value;
 
-      caseStatement(context &ctx_,
+      caseStatement(scope_t &scope_,
                     statement_t &value_);
 
       virtual statement_t& clone() const;
@@ -359,7 +360,7 @@ namespace occa {
     //---[ Exit ]-------------------------
     class continueStatement : public statement_t {
     public:
-      continueStatement(context &ctx_);
+      continueStatement(scope_t &scope_);
 
       virtual statement_t& clone() const;
       virtual int type() const;
@@ -369,7 +370,7 @@ namespace occa {
 
     class breakStatement : public statement_t {
     public:
-      breakStatement(context &ctx_);
+      breakStatement(scope_t &scope_);
 
       virtual statement_t& clone() const;
       virtual int type() const;
@@ -381,7 +382,7 @@ namespace occa {
     public:
       statement_t &value;
 
-      returnStatement(context &ctx_,
+      returnStatement(scope_t &scope_,
                       statement_t &value_);
 
       virtual statement_t& clone() const;

@@ -28,25 +28,12 @@
 
 #include "trie.hpp"
 #include "type.hpp"
-#include "keyword.hpp"
-#include "context.hpp"
 
 namespace occa {
   namespace lang {
     class scope_t {
-      context &ctx;
-      keywordTrie trie;
-
     public:
-      scope_t(context &ctx_);
-
-      void add(typedefType  &value);
-      void add(classType    &value);
-      void add(functionType &value);
-      void add(attribute_t  &value);
-      void add(specifier &value, const int ktype);
-
-      keyword_t get(const std::string &name);
+      int i;
     };
   }
 }

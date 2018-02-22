@@ -32,6 +32,81 @@
 
 namespace occa {
   namespace lang {
+    //---[ Types ]----------------------
+    namespace specifierType {
+      const ktype_t none = 0;
+
+      const ktype_t qualifier = (1 << 0);
+      const ktype_t type      = (1 << 1);
+      const ktype_t primitive = (1 << 2);
+      const ktype_t pointer   = (1 << 3);
+      const ktype_t reference = (1 << 4);
+      const ktype_t array     = (1 << 5);
+      const ktype_t struct_   = (1 << 6);
+      const ktype_t class_    = (1 << 7);
+      const ktype_t typedef_  = (1 << 8);
+      const ktype_t function  = (1 << 9);
+      const ktype_t attribute = (1 << 10);
+    }
+
+    namespace qualifierType {
+      const ktype_t none          = 0;
+
+      const ktype_t auto_         = (1L << 0);
+      const ktype_t const_        = (1L << 1);
+      const ktype_t constexpr_    = (1L << 2);
+      const ktype_t restrict_     = (1L << 3);
+      const ktype_t signed_       = (1L << 4);
+      const ktype_t unsigned_     = (1L << 5);
+      const ktype_t volatile_     = (1L << 6);
+      const ktype_t register_     = (1L << 7);
+      const ktype_t typeInfo      = (const_     |
+                                     constexpr_ |
+                                     signed_    |
+                                     unsigned_  |
+                                     volatile_  |
+                                     register_);
+
+      const ktype_t extern_       = (1L << 8);
+      const ktype_t static_       = (1L << 9);
+      const ktype_t thread_local_ = (1L << 10);
+      const ktype_t globalScope   = (extern_ |
+                                     static_ |
+                                     thread_local_);
+
+      const ktype_t friend_       = (1L << 11);
+      const ktype_t mutable_      = (1L << 12);
+      const ktype_t classInfo     = (friend_ |
+                                     mutable_);
+
+      const ktype_t inline_       = (1L << 13);
+      const ktype_t virtual_      = (1L << 14);
+      const ktype_t explicit_     = (1L << 15);
+      const ktype_t functionInfo  = (typeInfo |
+                                     inline_  |
+                                     virtual_ |
+                                     explicit_);
+
+      const ktype_t builtin_      = (1L << 16);
+      const ktype_t typedef_      = (1L << 17);
+      const ktype_t class_        = (1L << 18);
+      const ktype_t enum_         = (1L << 19);
+      const ktype_t struct_       = (1L << 20);
+      const ktype_t union_        = (1L << 21);
+      const ktype_t newType       = (typedef_ |
+                                     class_   |
+                                     enum_    |
+                                     struct_  |
+                                     union_);
+    }
+
+    namespace classAccess {
+      const int private_   = (1 << 0);
+      const int protected_ = (1 << 1);
+      const int public_    = (1 << 2);
+    }
+    //==================================
+
     //---[ Specifier ]------------------
     specifier::specifier() :
       name() {}
@@ -62,13 +137,13 @@ namespace occa {
 
     //---[ Qualifier ]------------------
     qualifier::qualifier(const std::string &name_,
-                         const qtype_t qtype_) :
+                         const ktype_t ktype_) :
       specifier(name_),
-      qtype(qtype_) {}
+      ktype(ktype_) {}
 
     qualifier::~qualifier() {}
 
-    stype_t qualifier::type() const {
+    ktype_t qualifier::type() const {
       return specifierType::qualifier;
     }
     //==================================
@@ -167,7 +242,7 @@ namespace occa {
       }
     }
 
-    stype_t type_t::type() const {
+    ktype_t type_t::type() const {
       return specifierType::type;
     }
 
@@ -259,7 +334,7 @@ namespace occa {
 
     primitiveType::~primitiveType() {}
 
-    stype_t primitiveType::type() const {
+    ktype_t primitiveType::type() const {
       return specifierType::primitive;
     }
 
@@ -352,7 +427,7 @@ namespace occa {
 
     pointerType::~pointerType() {}
 
-    stype_t pointerType::type() const {
+    ktype_t pointerType::type() const {
       return specifierType::pointer;
     }
 
@@ -407,7 +482,7 @@ namespace occa {
       delete size;
     }
 
-    stype_t arrayType::type() const {
+    ktype_t arrayType::type() const {
       return specifierType::array;
     }
 
@@ -455,7 +530,7 @@ namespace occa {
       }
     }
 
-    stype_t functionType::type() const {
+    ktype_t functionType::type() const {
       return specifierType::function;
     }
 
@@ -549,7 +624,7 @@ namespace occa {
 
     referenceType::~referenceType() {}
 
-    stype_t referenceType::type() const {
+    ktype_t referenceType::type() const {
       return specifierType::reference;
     }
 
@@ -583,73 +658,78 @@ namespace occa {
     }
     //==================================
 
-    //---[ Class ]----------------------
-    classType::classType(const std::string &name_,
-                         const int label_) :
+    //---[ Structure ]------------------
+    const int structureType::class_  = (1 << 0);
+    const int structureType::enum_   = (1 << 1);
+    const int structureType::struct_ = (1 << 2);
+    const int structureType::union_  = (1 << 3);
+
+    structureType::structureType(const std::string &name_,
+                                 const int stype_) :
       type_t(name_),
-      label(label_),
+      stype(stype_),
       body(NULL) {}
 
-    classType::classType(const qualifiers_t &qualifiers_,
-                         const std::string &name_,
-                         const int label_) :
+    structureType::structureType(const qualifiers_t &qualifiers_,
+                                 const std::string &name_,
+                                 const int stype_) :
       type_t(qualifiers_, name_),
-      label(label_),
+      stype(stype_),
       body(NULL) {}
 
-    classType::classType(const std::string &name_,
-                         const int label_,
-                         blockStatement &body_) :
+    structureType::structureType(const std::string &name_,
+                                 const int stype_,
+                                 blockStatement &body_) :
       type_t(name_),
-      label(label_),
+      stype(stype_),
       body(&(body_.clone().to<blockStatement>())) {}
 
-    classType::classType(const qualifiers_t &qualifiers_,
-                         const std::string &name_,
-                         const int label_,
-                         blockStatement &body_) :
+    structureType::structureType(const qualifiers_t &qualifiers_,
+                                 const std::string &name_,
+                                 const int stype_,
+                                 blockStatement &body_) :
       type_t(qualifiers_, name_),
-      label(label_),
+      stype(stype_),
       body(&(body_.clone().to<blockStatement>())) {}
 
-    classType::~classType() {}
+    structureType::~structureType() {}
 
-    stype_t classType::type() const {
+    ktype_t structureType::type() const {
       return specifierType::class_;
     }
 
-    type_t& classType::clone() const {
+    type_t& structureType::clone() const {
       if (body) {
-        return *(new classType(qualifiers,
-                               name,
-                               label,
-                               body->clone().to<blockStatement>()));
+        return *(new structureType(qualifiers,
+                                   name,
+                                   stype,
+                                   body->clone().to<blockStatement>()));
       }
-      return *(new classType(qualifiers, name, label));
+      return *(new structureType(qualifiers, name, stype));
     }
 
-    bool classType::canBeDereferenced() const {
+    bool structureType::canBeDereferenced() const {
       return false;
     }
 
-    bool classType::canBeCastedToExplicitly(const type_t &alias) const {
+    bool structureType::canBeCastedToExplicitly(const type_t &alias) const {
       // TODO: Handle class casting
       return false;
     }
 
-    bool classType::canBeCastedToImplicitly(const type_t &alias) const {
+    bool structureType::canBeCastedToImplicitly(const type_t &alias) const {
       // TODO: Handle class casting
       return false;
     }
 
-    void classType::printDeclaration(printer &pout) const {
+    void structureType::printDeclaration(printer &pout) const {
       pout.printIndentation();
 
-      switch (label) {
-      case classLabel::class_ : pout << "class" ; break;
-      case classLabel::enum_  : pout << "enum"  ; break;
-      case classLabel::struct_: pout << "struct"; break;
-      case classLabel::union_ : pout << "union" ; break;
+      switch (stype) {
+      case structureType::class_ : pout << "class" ; break;
+      case structureType::enum_  : pout << "enum"  ; break;
+      case structureType::struct_: pout << "struct"; break;
+      case structureType::union_ : pout << "union" ; break;
       }
       if (name.size()) {
         pout << ' ' << name;
@@ -677,7 +757,7 @@ namespace occa {
 
     typedefType::~typedefType() {}
 
-    stype_t typedefType::type() const {
+    ktype_t typedefType::type() const {
       return specifierType::typedef_;
     }
 
@@ -723,7 +803,7 @@ namespace occa {
 
     attribute_t::~attribute_t() {}
 
-    stype_t attribute_t::type() const {
+    ktype_t attribute_t::type() const {
       return specifierType::attribute;
     }
 
@@ -731,5 +811,43 @@ namespace occa {
       pout << '@' << name;
     }
     //==================================
+
+    void getSpecifiers(specifierTrie &specifiers) {
+      specifiers.add(const_.name       , &const_);
+      specifiers.add(constexpr_.name   , &constexpr_);
+      specifiers.add(friend_.name      , &friend_);
+      specifiers.add(typedef_.name     , &typedef_);
+      specifiers.add(signed_.name      , &signed_);
+      specifiers.add(unsigned_.name    , &unsigned_);
+      specifiers.add(volatile_.name    , &volatile_);
+
+      specifiers.add(extern_.name      , &extern_);
+      specifiers.add(mutable_.name     , &mutable_);
+      specifiers.add(register_.name    , &register_);
+      specifiers.add(static_.name      , &static_);
+      specifiers.add(thread_local_.name, &thread_local_);
+
+      specifiers.add(explicit_.name    , &explicit_);
+      specifiers.add(inline_.name      , &inline_);
+      specifiers.add(virtual_.name     , &virtual_);
+
+      specifiers.add(class_.name       , &class_);
+      specifiers.add(enum_.name        , &enum_);
+      specifiers.add(struct_.name      , &struct_);
+      specifiers.add(union_.name       , &union_);
+
+      specifiers.add(bool_.name        , &bool_);
+      specifiers.add(char_.name        , &char_);
+      specifiers.add(char16_t_.name    , &char16_t_);
+      specifiers.add(char32_t_.name    , &char32_t_);
+      specifiers.add(wchar_t_.name     , &wchar_t_);
+      specifiers.add(short_.name       , &short_);
+      specifiers.add(int_.name         , &int_);
+      specifiers.add(long_.name        , &long_);
+      specifiers.add(float_.name       , &float_);
+      specifiers.add(double_.name      , &double_);
+      specifiers.add(void_.name        , &void_);
+      specifiers.add(auto_.name        , &auto_);
+    }
   }
 }

@@ -58,7 +58,6 @@ namespace occa {
 
       tokenizer *tokenizer_;
       tokenStack sourceCache;
-      int warnings, errors;
 
       //---[ Status ]-------------------
       std::vector<int> statusStack;
@@ -66,14 +65,19 @@ namespace occa {
 
       int passedNewline;
       bool expandingMacros;
-      //==================================
+      //================================
 
-      //---[ Macros and Directives ]------
+      //---[ Macros and Directives ]----
       directiveTrie directives;
 
       macroTrie compilerMacros;
       macroTrie sourceMacros;
-      //==================================
+      //================================
+
+      //---[ Metadata ]-----------------
+      strToBoolMap dependencies;
+      int warnings, errors;
+      //================================
 
       preprocessor();
       preprocessor(const preprocessor &pp);
