@@ -1,4 +1,7 @@
-sudo:     false
+# Unable to run LeakSanitizer propertly without root
+#   https://github.com/travis-ci/travis-ci/issues/9033
+sudo: true
+
 language: cpp
 
 compiler:
