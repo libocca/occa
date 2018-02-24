@@ -44,16 +44,28 @@ namespace occa {
     }
 
     // TODO: Add actual compiler macros as well
-    preprocessor::preprocessor() :
-      tokenizer_(NULL),
-      expandingMacros(true),
-      warnings(0),
-      errors(0) {
+    preprocessor_t::preprocessor_t() {
+      init();
+      initDirectives();
+    }
 
+    preprocessor_t::preprocessor_t(const preprocessor_t &pp) :
+      cacheMap(pp),
+      tokenizer(NULL) {
+      *this = pp;
+    }
+
+    preprocessor_t::~preprocessor_t() {
+      clear_();
+    }
+
+    void preprocessor_t::init() {
+      tokenizer = NULL;
+
+      pushStatus(ppStatus::reading);
       // Always start off as if we passed a newline
       incrementNewline();
-
-      initDirectives();
+      expandingMacros = true;
 
       compilerMacros.autoFreeze = false;
 
@@ -87,16 +99,21 @@ namespace occa {
       compilerMacros.freeze();
       compilerMacros.autoFreeze = true;
 
-      pushStatus(ppStatus::reading);
+      warnings = 0;
+      errors   = 0;
     }
 
-    preprocessor::preprocessor(const preprocessor &pp) :
-      cacheMap(pp),
-      tokenizer_(NULL) {
-      *this = pp;
+    void preprocessor_t::clear() {
+      clear_();
+      init();
     }
 
-    preprocessor::~preprocessor() {
+    void preprocessor_t::clear_() {
+      while (sourceCache.size()) {
+        sourceCache.pop();
+      }
+      statusStack.clear();
+
       macroTrie *tries[2] = {
         &compilerMacros,
         &sourceMacros
@@ -108,10 +125,12 @@ namespace occa {
         for (int j = 0; j < trieSize; ++j) {
           delete trie.values[j];
         }
+        trie.clear();
       }
+      dependencies.clear();
     }
 
-    preprocessor& preprocessor::operator = (const preprocessor &pp) {
+    preprocessor_t& preprocessor_t::operator = (const preprocessor_t &pp) {
       sourceCache = pp.sourceCache;
 
       statusStack     = pp.statusStack;
@@ -149,47 +168,47 @@ namespace occa {
       return *this;
     }
 
-    void preprocessor::initDirectives() {
+    void preprocessor_t::initDirectives() {
       directives.autoFreeze = false;
-      directives.add("if"     , &preprocessor::processIf);
-      directives.add("ifdef"  , &preprocessor::processIfdef);
-      directives.add("ifndef" , &preprocessor::processIfndef);
-      directives.add("elif"   , &preprocessor::processElif);
-      directives.add("else"   , &preprocessor::processElse);
-      directives.add("endif"  , &preprocessor::processEndif);
+      directives.add("if"     , &preprocessor_t::processIf);
+      directives.add("ifdef"  , &preprocessor_t::processIfdef);
+      directives.add("ifndef" , &preprocessor_t::processIfndef);
+      directives.add("elif"   , &preprocessor_t::processElif);
+      directives.add("else"   , &preprocessor_t::processElse);
+      directives.add("endif"  , &preprocessor_t::processEndif);
 
-      directives.add("define" , &preprocessor::processDefine);
-      directives.add("undef"  , &preprocessor::processUndef);
+      directives.add("define" , &preprocessor_t::processDefine);
+      directives.add("undef"  , &preprocessor_t::processUndef);
 
-      directives.add("error"  , &preprocessor::processError);
-      directives.add("warning", &preprocessor::processWarning);
+      directives.add("error"  , &preprocessor_t::processError);
+      directives.add("warning", &preprocessor_t::processWarning);
 
-      directives.add("include", &preprocessor::processInclude);
-      directives.add("pragma" , &preprocessor::processPragma);
-      directives.add("line"   , &preprocessor::processLine);
+      directives.add("include", &preprocessor_t::processInclude);
+      directives.add("pragma" , &preprocessor_t::processPragma);
+      directives.add("line"   , &preprocessor_t::processLine);
       directives.freeze();
       directives.autoFreeze = true;
     }
 
-    void preprocessor::warningOn(token_t *token,
-                                 const std::string &message) {
+    void preprocessor_t::warningOn(token_t *token,
+                                   const std::string &message) {
       ++warnings;
       token->printWarning(message);
     }
 
-    void preprocessor::errorOn(token_t *token,
-                               const std::string &message) {
+    void preprocessor_t::errorOn(token_t *token,
+                                 const std::string &message) {
       ++errors;
       token->printError(message);
     }
 
-    tokenMap& preprocessor::clone_() const {
-      return *(new preprocessor(*this));
+    tokenMap& preprocessor_t::clone_() const {
+      return *(new preprocessor_t(*this));
     }
 
-    void* preprocessor::passMessageToInput(const occa::properties &props) {
+    void* preprocessor_t::passMessageToInput(const occa::properties &props) {
       const std::string inputName = props.get<std::string>("inputName");
-      if (inputName == "preprocessor") {
+      if (inputName == "preprocessor_t") {
         return (void*) this;
       }
       if (input) {
@@ -198,12 +217,12 @@ namespace occa {
       return NULL;
     }
 
-    void preprocessor::pushStatus(const int status_) {
+    void preprocessor_t::pushStatus(const int status_) {
       statusStack.push_back(status);
       status = status_;
     }
 
-    int preprocessor::popStatus() {
+    int preprocessor_t::popStatus() {
       if (statusStack.size() == 0) {
         return 0;
       }
@@ -212,7 +231,7 @@ namespace occa {
       return status;
     }
 
-    void preprocessor::swapReadingStatus() {
+    void preprocessor_t::swapReadingStatus() {
       if (status & ppStatus::reading) {
         status &= ~ppStatus::reading;
         status |= ppStatus::ignoring;
@@ -222,17 +241,17 @@ namespace occa {
       }
     }
 
-    void preprocessor::incrementNewline() {
+    void preprocessor_t::incrementNewline() {
       // We need to keep passedNewline 'truthy'
       //   until after the next token
       passedNewline = 2;
     }
 
-    void preprocessor::decrementNewline() {
+    void preprocessor_t::decrementNewline() {
       passedNewline -= !!passedNewline;
     }
 
-    macro_t* preprocessor::getMacro(const std::string &name) {
+    macro_t* preprocessor_t::getMacro(const std::string &name) {
       macroTrie::result_t result = sourceMacros.get(name);
       if (result.success()) {
         return result.value();
@@ -244,12 +263,12 @@ namespace occa {
       return NULL;
     }
 
-    bool preprocessor::hasSourceTokens() {
+    bool preprocessor_t::hasSourceTokens() {
       return (!inputIsEmpty() ||
               !sourceCache.empty());
     }
 
-    token_t* preprocessor::getSourceToken() {
+    token_t* preprocessor_t::getSourceToken() {
       token_t *token = NULL;
 
       if (sourceCache.size()) {
@@ -264,7 +283,7 @@ namespace occa {
       return token;
     }
 
-    bool preprocessor::isEmpty() {
+    bool preprocessor_t::isEmpty() {
       if (!cache.empty()) {
         return false;
       }
@@ -277,12 +296,12 @@ namespace occa {
       return cache.empty();
     }
 
-    void preprocessor::pop() {
+    void preprocessor_t::pop() {
       processToken(getSourceToken());
     }
 
-    void preprocessor::expandMacro(identifierToken &source,
-                                   macro_t &macro) {
+    void preprocessor_t::expandMacro(identifierToken &source,
+                                     macro_t &macro) {
       tokenVector tokens;
       macro.expand(tokens, source);
 
@@ -294,7 +313,7 @@ namespace occa {
       }
     }
 
-    void preprocessor::skipToNewline() {
+    void preprocessor_t::skipToNewline() {
       tokenVector lineTokens;
       getLineTokens(lineTokens);
 
@@ -310,7 +329,7 @@ namespace occa {
 
     // lineTokens might be partially initialized
     //   so we don't want to clear it
-    void preprocessor::getLineTokens(tokenVector &lineTokens) {
+    void preprocessor_t::getLineTokens(tokenVector &lineTokens) {
       while (hasSourceTokens()) {
         token_t *token = getSourceToken();
 
@@ -326,7 +345,7 @@ namespace occa {
 
     // lineTokens might be partially initialized
     //   so we don't want to clear it
-    void preprocessor::getExpandedLineTokens(tokenVector &lineTokens) {
+    void preprocessor_t::getExpandedLineTokens(tokenVector &lineTokens) {
       // Make sure we don't ignore these tokens
       int oldStatus = status;
       status = ppStatus::reading;
@@ -347,7 +366,7 @@ namespace occa {
       status = oldStatus;
     }
 
-    void preprocessor::warnOnNonEmptyLine(const std::string &message) {
+    void preprocessor_t::warnOnNonEmptyLine(const std::string &message) {
       tokenVector lineTokens;
       getLineTokens(lineTokens);
       if (lineTokens.size()) {
@@ -360,7 +379,7 @@ namespace occa {
       }
     }
 
-    void preprocessor::processToken(token_t *token) {
+    void preprocessor_t::processToken(token_t *token) {
       decrementNewline();
 
       const int tokenType = token->type();
@@ -395,7 +414,7 @@ namespace occa {
       }
     }
 
-    void preprocessor::processIdentifier(identifierToken &token) {
+    void preprocessor_t::processIdentifier(identifierToken &token) {
       // Ignore tokens inside disabled #if/#elif/#else regions
       if (status & ppStatus::ignoring) {
         delete &token;
@@ -441,8 +460,8 @@ namespace occa {
       push(&token);
     }
 
-    void preprocessor::processOperator(operatorToken &token) {
-      if ((token.op.opType != operatorType::hash) ||
+    void preprocessor_t::processOperator(operatorToken &token) {
+      if ((token.opType() != operatorType::hash) ||
           !passedNewline) {
         push(&token);
         return;
@@ -483,12 +502,12 @@ namespace occa {
       processDirective_t processFunc = result.value();
 
       if ((status & ppStatus::ignoring)                 &&
-          (processFunc != &preprocessor::processIf)     &&
-          (processFunc != &preprocessor::processIfdef)  &&
-          (processFunc != &preprocessor::processIfndef) &&
-          (processFunc != &preprocessor::processElif)   &&
-          (processFunc != &preprocessor::processElse)   &&
-          (processFunc != &preprocessor::processEndif)) {
+          (processFunc != &preprocessor_t::processIf)     &&
+          (processFunc != &preprocessor_t::processIfdef)  &&
+          (processFunc != &preprocessor_t::processIfndef) &&
+          (processFunc != &preprocessor_t::processElif)   &&
+          (processFunc != &preprocessor_t::processElse)   &&
+          (processFunc != &preprocessor_t::processEndif)) {
 
         delete directive;
         skipToNewline();
@@ -501,8 +520,8 @@ namespace occa {
     }
 
 
-    bool preprocessor::lineIsTrue(identifierToken &directive,
-                                  bool &isTrue) {
+    bool preprocessor_t::lineIsTrue(identifierToken &directive,
+                                    bool &isTrue) {
       tokenVector lineTokens;
       getExpandedLineTokens(lineTokens);
 
@@ -543,14 +562,14 @@ namespace occa {
       return true;
     }
 
-    bool preprocessor::getIfdef(identifierToken &directive,
-                                bool &isTrue) {
+    bool preprocessor_t::getIfdef(identifierToken &directive,
+                                  bool &isTrue) {
       token_t *token = getSourceToken();
       const int tokenType = token_t::safeType(token);
 
       if (!(tokenType & tokenType::identifier)) {
-          // Print from the directive if we don't
-          //   have a token in the same line
+        // Print from the directive if we don't
+        //   have a token in the same line
         token_t *errorToken = &directive;
         if (tokenType & tokenType::newline) {
           incrementNewline();
@@ -575,7 +594,7 @@ namespace occa {
       return true;
     }
 
-    void preprocessor::processIf(identifierToken &directive) {
+    void preprocessor_t::processIf(identifierToken &directive) {
       // Nested case
       if (status & ppStatus::ignoring) {
         skipToNewline();
@@ -595,7 +614,7 @@ namespace occa {
                                       : ppStatus::ignoring));
     }
 
-    void preprocessor::processIfdef(identifierToken &directive) {
+    void preprocessor_t::processIfdef(identifierToken &directive) {
       // Nested case
       if (status & ppStatus::ignoring) {
         skipToNewline();
@@ -617,7 +636,7 @@ namespace occa {
       warnOnNonEmptyLine("Extra tokens after macro name");
     }
 
-    void preprocessor::processIfndef(identifierToken &directive) {
+    void preprocessor_t::processIfndef(identifierToken &directive) {
       // Nested case
       if (status & ppStatus::ignoring) {
         skipToNewline();
@@ -639,7 +658,7 @@ namespace occa {
       warnOnNonEmptyLine("Extra tokens after macro name");
     }
 
-    void preprocessor::processElif(identifierToken &directive) {
+    void preprocessor_t::processElif(identifierToken &directive) {
       // Check for errors
       if (!(status & ppStatus::foundIf)) {
         errorOn(&directive,
@@ -677,7 +696,7 @@ namespace occa {
       }
     }
 
-    void preprocessor::processElse(identifierToken &directive) {
+    void preprocessor_t::processElse(identifierToken &directive) {
       warnOnNonEmptyLine("Extra tokens after #else directive");
 
       // Test errors
@@ -711,7 +730,7 @@ namespace occa {
       }
     }
 
-    void preprocessor::processEndif(identifierToken &directive) {
+    void preprocessor_t::processEndif(identifierToken &directive) {
       warnOnNonEmptyLine("Extra tokens after #endif directive");
 
       if (!(status & ppStatus::foundIf)) {
@@ -722,7 +741,7 @@ namespace occa {
       }
     }
 
-    void preprocessor::processDefine(identifierToken &directive) {
+    void preprocessor_t::processDefine(identifierToken &directive) {
       token_t *token = getSourceToken();
       if (token_t::safeType(token) != tokenType::identifier) {
         if (!token || passedNewline) {
@@ -754,7 +773,7 @@ namespace occa {
       delete token;
     }
 
-    void preprocessor::processUndef(identifierToken &directive) {
+    void preprocessor_t::processUndef(identifierToken &directive) {
       token_t *token = getSourceToken();
       const int tokenType = token_t::safeType(token);
       if (tokenType != tokenType::identifier) {
@@ -777,7 +796,7 @@ namespace occa {
       delete token;
     }
 
-    void preprocessor::processError(identifierToken &directive) {
+    void preprocessor_t::processError(identifierToken &directive) {
       tokenVector lineTokens;
       getExpandedLineTokens(lineTokens);
 
@@ -798,7 +817,7 @@ namespace occa {
       freeTokenVector(lineTokens);
     }
 
-    void preprocessor::processWarning(identifierToken &directive) {
+    void preprocessor_t::processWarning(identifierToken &directive) {
       tokenVector lineTokens;
       getExpandedLineTokens(lineTokens);
 
@@ -819,19 +838,19 @@ namespace occa {
       freeTokenVector(lineTokens);
     }
 
-    void preprocessor::processInclude(identifierToken &directive) {
+    void preprocessor_t::processInclude(identifierToken &directive) {
 
-      if (!tokenizer_) {
-        tokenizer_ = (tokenizer*) getInput("tokenizer");
+      if (!tokenizer) {
+        tokenizer = (tokenizer_t*) getInput("tokenizer_t");
       }
-      if (!tokenizer_) {
+      if (!tokenizer) {
         warningOn(&directive,
                   "Unable to apply #include due to the lack of a tokenizer");
         skipToNewline();
         return;
       }
 
-      const std::string header = tokenizer_->getHeader();
+      const std::string header = tokenizer->getHeader();
 
       if (!io::exists(header)) {
         errorOn(&directive,
@@ -846,7 +865,7 @@ namespace occa {
       getExpandedLineTokens(lineTokens);
 
       if (header.size()) {
-        tokenizer_->pushSource(new file_t(header));
+        tokenizer->pushSource(header);
       } else {
         errorOn(&directive,
                 "Expected a header to include");
@@ -862,18 +881,18 @@ namespace occa {
       freeTokenVector(lineTokens);
     }
 
-    void preprocessor::processPragma(identifierToken &directive) {
+    void preprocessor_t::processPragma(identifierToken &directive) {
       // TODO
     }
 
-    void preprocessor::processLine(identifierToken &directive) {
+    void preprocessor_t::processLine(identifierToken &directive) {
       tokenVector lineTokens;
       getExpandedLineTokens(lineTokens);
 
-      if (!tokenizer_) {
-        tokenizer_ = (tokenizer*) getInput("tokenizer");
+      if (!tokenizer) {
+        tokenizer = (tokenizer_t*) getInput("tokenizer_t");
       }
-      if (!tokenizer_) {
+      if (!tokenizer) {
         warningOn(&directive,
                   "Unable to apply #line due to the lack of a tokenizer");
         freeTokenVector(lineTokens);
@@ -893,7 +912,7 @@ namespace occa {
 
       // Get line number
       int line = -1;
-      std::string filename = tokenizer_->origin.file->filename;
+      std::string filename = tokenizer->origin.file->filename;
 
       token_t *lineToken = lineTokens[0];
       if (lineToken->type() & tokenType::primitive) {
@@ -931,8 +950,8 @@ namespace occa {
 
       // TODO: Needs to create a new file instance to avoid
       //         renaming all versions of *file
-      tokenizer_->origin.position.line  = line;
-      tokenizer_->origin.file->filename = filename;
+      tokenizer->origin.position.line  = line;
+      tokenizer->origin.file->filename = filename;
 
       freeTokenVector(lineTokens);
     }

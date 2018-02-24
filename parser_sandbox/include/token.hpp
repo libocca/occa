@@ -203,7 +203,7 @@ namespace occa {
     //---[ Operator ]-------------------
     class operatorToken : public token_t {
     public:
-      const operator_t &op;
+      const operator_t *op;
 
       operatorToken(const fileOrigin &origin_,
                     const operator_t &op_);
@@ -211,6 +211,8 @@ namespace occa {
       virtual ~operatorToken();
 
       virtual int type() const;
+
+      virtual const opType_t& opType() const;
 
       virtual token_t* clone();
 

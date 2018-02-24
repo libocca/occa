@@ -144,7 +144,7 @@ void testOtherNodes() {
 }
 
 exprNode* makeExpression(const std::string &s) {
-  tokenVector tokens = tokenizer::tokenize(s);
+  tokenVector tokens = tokenizer_t::tokenize(s);
   return getExpression(tokens);
 }
 
@@ -174,17 +174,23 @@ void testPairMatching() {
     OCCA_ASSERT_EQUAL(i, (int) arg.value);
   }
 
+  delete expr;
   expr = makeExpression("(0,1,2,3,4)");
   OCCA_ASSERT_EQUAL(exprNodeType::parentheses, expr->type());
 
+  delete expr;
   expr = makeExpression("{0,1,2,3,4}");
   OCCA_ASSERT_EQUAL(exprNodeType::tuple, expr->type());
 
-  expr = makeExpression("func[0 + 1]");
+  delete expr;
+  expr = makeExpression("array[0 + 1]");
   OCCA_ASSERT_EQUAL(exprNodeType::subscript, expr->type());
 
+  delete expr;
   expr = makeExpression("func<<<0,1>>>");
   OCCA_ASSERT_EQUAL(exprNodeType::cudaCall, expr->type());
+
+  delete expr;
 }
 
 void testCanEvaluate() {

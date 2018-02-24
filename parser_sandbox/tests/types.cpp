@@ -33,9 +33,9 @@ void testSpecifiers();
 
 int main(const int argc, const char **argv) {
   testBitfields();
-  testFunction();
-  testCasting();
-  testSpecifiers();
+  // testFunction();
+  // testCasting();
+  // testSpecifiers();
 
   return 0;
 }

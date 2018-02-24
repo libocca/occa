@@ -31,23 +31,29 @@ namespace occa {
     class token_t;
     class identifierToken;
     class macroToken;
-    class preprocessor;
+    class preprocessor_t;
 
     typedef trie<int> intTrie;
 
     typedef std::vector<token_t*>    tokenVector;
     typedef std::vector<macroToken*> macroTokenVector_t;
 
+    //---[ Helper Methods ]-------------
+    void freeTokenVectors(std::vector<tokenVector> &tokenVectors);
+
+    void freeTokenVector(macroTokenVector_t &mTokens);
+
     void cloneMacroTokenVector(macroTokenVector_t &newTokens,
                                const macroTokenVector_t &tokens);
+    //==================================
 
     //---[ Macro Tokens ]---------------
     class macroToken {
     public:
-      preprocessor &pp;
+      preprocessor_t &pp;
       token_t *thisToken;
 
-      macroToken(preprocessor &pp_,
+      macroToken(preprocessor_t &pp_,
                  token_t *thisToken_);
       virtual ~macroToken();
 
@@ -60,7 +66,7 @@ namespace occa {
 
     class macroRawToken : public macroToken {
     public:
-      macroRawToken(preprocessor &pp_,
+      macroRawToken(preprocessor_t &pp_,
                     token_t *token_);
 
       virtual macroToken* clone();
@@ -75,7 +81,7 @@ namespace occa {
       int arg;
       int argc;
 
-      macroArgument(preprocessor &pp_,
+      macroArgument(preprocessor_t &pp_,
                     token_t *token_,
                     const int arg_,
                     const int argc_);
@@ -96,7 +102,7 @@ namespace occa {
     public:
       macroToken *token;
 
-      macroStringify(preprocessor &pp_,
+      macroStringify(preprocessor_t &pp_,
                      macroToken *token_);
       ~macroStringify();
 
@@ -111,7 +117,7 @@ namespace occa {
     public:
       macroTokenVector_t tokens;
 
-      macroConcat(preprocessor &pp_,
+      macroConcat(preprocessor_t &pp_,
                   const macroTokenVector_t &tokens_);
       ~macroConcat();
 
@@ -123,17 +129,12 @@ namespace occa {
     };
     //==================================
 
-    //---[ Helper Methods ]-------------
-    void freeTokenVectors(std::vector<tokenVector> &tokenVectors);
-    void freeTokenVector(macroTokenVector_t &mTokens);
-    //==================================
-
     //---[ Macro ]----------------------
     class macro_t {
     public:
       static const std::string VA_ARGS;
 
-      preprocessor &pp;
+      preprocessor_t &pp;
       identifierToken &thisToken;
       bool isBuiltin;
 
@@ -143,13 +144,13 @@ namespace occa {
 
       macroTokenVector_t macroTokens;
 
-      macro_t(preprocessor &pp_,
+      macro_t(preprocessor_t &pp_,
               identifierToken &thisToken_,
               const bool isBuiltin_ = false,
               const bool isFunctionLike = false,
               const bool hasVarArgs = false);
 
-      macro_t(preprocessor &pp_,
+      macro_t(preprocessor_t &pp_,
               const std::string &name_);
 
       virtual ~macro_t();
@@ -164,7 +165,7 @@ namespace occa {
         return thisToken.value;
       }
 
-      virtual macro_t& clone(preprocessor &pp_);
+      virtual macro_t& clone(preprocessor_t &pp_);
 
       void loadDefinition();
 
@@ -194,11 +195,11 @@ namespace occa {
       void errorOn(macroToken *mToken,
                    const std::string &message);
 
-      static macro_t* defineBuiltin(preprocessor &pp_,
+      static macro_t* defineBuiltin(preprocessor_t &pp_,
                                     const std::string &name_,
                                     const std::string &contents);
 
-      static macro_t* define(preprocessor &pp_,
+      static macro_t* define(preprocessor_t &pp_,
                              fileOrigin origin,
                              const std::string &name_,
                              const std::string &contents);

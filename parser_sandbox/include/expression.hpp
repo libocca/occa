@@ -87,11 +87,11 @@ namespace occa {
     bool operatorIsLeftUnary(operatorToken &opToken,
                              expressionState &state);
 
-    operatorToken& getOperatorToken(operatorToken &opToken,
-                                    expressionState &state);
+    void updateOperatorToken(operatorToken &opToken,
+                             expressionState &state);
 
-    operatorToken& applyFasterOperators(operatorToken &opToken,
-                                        expressionState &state);
+    void applyFasterOperators(operatorToken &opToken,
+                              expressionState &state);
 
     void applyOperator(operatorToken &opToken,
                        expressionState &state);

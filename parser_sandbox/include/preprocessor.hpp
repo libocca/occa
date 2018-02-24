@@ -37,11 +37,11 @@
 
 namespace occa {
   namespace lang {
-    typedef trie<macro_t*> macroTrie;
+    typedef trie<macro_t*>                macroTrie;
     typedef streamMap<token_t*, token_t*> tokenMap;
-    typedef cacheMap<token_t*, token_t*> tokenCacheMap;
-    typedef std::stack<token_t*> tokenStack;
-    class tokenizer;
+    typedef cacheMap<token_t*, token_t*>  tokenCacheMap;
+    typedef std::stack<token_t*>          tokenStack;
+    class tokenizer_t;
 
     namespace ppStatus {
       extern const int reading;
@@ -51,12 +51,12 @@ namespace occa {
       extern const int finishedIf;
     }
 
-    class preprocessor : public tokenCacheMap {
+    class preprocessor_t : public tokenCacheMap {
     public:
-      typedef void (preprocessor::*processDirective_t)(identifierToken &directive);
+      typedef void (preprocessor_t::*processDirective_t)(identifierToken &directive);
       typedef trie<processDirective_t> directiveTrie;
 
-      tokenizer *tokenizer_;
+      tokenizer_t *tokenizer;
       tokenStack sourceCache;
 
       //---[ Status ]-------------------
@@ -79,11 +79,17 @@ namespace occa {
       int warnings, errors;
       //================================
 
-      preprocessor();
-      preprocessor(const preprocessor &pp);
-      ~preprocessor();
+      preprocessor_t();
+      preprocessor_t(const preprocessor_t &pp);
+      ~preprocessor_t();
 
-      preprocessor& operator = (const preprocessor &pp);
+      void init();
+      void clear();
+      void clear_();
+
+      preprocessor_t& operator = (const preprocessor_t &pp);
+
+      void initDirectives();
 
       void warningOn(token_t *token,
                      const std::string &message);
@@ -94,8 +100,6 @@ namespace occa {
       virtual tokenMap& clone_() const;
 
       virtual void* passMessageToInput(const occa::properties &props);
-
-      void initDirectives();
 
       void addExpandedToken(token_t *token);
 
@@ -114,8 +118,6 @@ namespace occa {
 
       virtual bool isEmpty();
       virtual void pop();
-
-      tokenizer& getTokenizer();
 
       void expandMacro(identifierToken &source,
                        macro_t &macro);

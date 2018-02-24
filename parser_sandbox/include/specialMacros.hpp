@@ -29,9 +29,9 @@ namespace occa {
     // defined()
     class definedMacro : public macro_t {
     public:
-      definedMacro(preprocessor &pp_);
+      definedMacro(preprocessor_t &pp_);
 
-      virtual macro_t& clone(preprocessor &pp_);
+      virtual macro_t& clone(preprocessor_t &pp_);
 
       virtual void expand(tokenVector &tokens,
                           identifierToken &source);
@@ -40,9 +40,9 @@ namespace occa {
     // __has_include()
     class hasIncludeMacro : public macro_t {
     public:
-      hasIncludeMacro(preprocessor &pp_);
+      hasIncludeMacro(preprocessor_t &pp_);
 
-      virtual macro_t& clone(preprocessor &pp_);
+      virtual macro_t& clone(preprocessor_t &pp_);
 
       virtual void expand(tokenVector &tokens,
                           identifierToken &source);
@@ -51,9 +51,9 @@ namespace occa {
     // __FILE__
     class fileMacro : public macro_t {
     public:
-      fileMacro(preprocessor &pp_);
+      fileMacro(preprocessor_t &pp_);
 
-      virtual macro_t& clone(preprocessor &pp_);
+      virtual macro_t& clone(preprocessor_t &pp_);
 
       virtual void expand(tokenVector &tokens,
                           identifierToken &source);
@@ -62,9 +62,9 @@ namespace occa {
     // __LINE__
     class lineMacro : public macro_t {
     public:
-      lineMacro(preprocessor &pp_);
+      lineMacro(preprocessor_t &pp_);
 
-      virtual macro_t& clone(preprocessor &pp_);
+      virtual macro_t& clone(preprocessor_t &pp_);
 
       virtual void expand(tokenVector &tokens,
                           identifierToken &source);
@@ -73,9 +73,9 @@ namespace occa {
     // __DATE__
     class dateMacro : public macro_t {
     public:
-      dateMacro(preprocessor &pp_);
+      dateMacro(preprocessor_t &pp_);
 
-      virtual macro_t& clone(preprocessor &pp_);
+      virtual macro_t& clone(preprocessor_t &pp_);
 
       virtual void expand(tokenVector &tokens,
                           identifierToken &source);
@@ -84,9 +84,9 @@ namespace occa {
     // __TIME__
     class timeMacro : public macro_t {
     public:
-      timeMacro(preprocessor &pp_);
+      timeMacro(preprocessor_t &pp_);
 
-      virtual macro_t& clone(preprocessor &pp_);
+      virtual macro_t& clone(preprocessor_t &pp_);
 
       virtual void expand(tokenVector &tokens,
                           identifierToken &source);
@@ -97,10 +97,10 @@ namespace occa {
     public:
       mutable int counter;
 
-      counterMacro(preprocessor &pp_,
+      counterMacro(preprocessor_t &pp_,
                    const int counter_ = 0);
 
-      virtual macro_t& clone(preprocessor &pp_);
+      virtual macro_t& clone(preprocessor_t &pp_);
 
       virtual void expand(tokenVector &tokens,
                           identifierToken &source);

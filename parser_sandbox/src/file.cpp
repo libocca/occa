@@ -29,14 +29,11 @@
 namespace occa {
   namespace lang {
     file_t::file_t(const std::string &filename_) :
-      dirname(io::dirname(filename_)),
-      filename(io::basename(filename_)),
+      filename(io::filename(filename_)),
       content(io::read(filename_)) {}
 
-    file_t::file_t(const std::string &dirname_,
-                   const std::string &filename_,
+    file_t::file_t(const std::string &filename_,
                    const std::string &content_) :
-      dirname(dirname_),
       filename(filename_),
       content(content_) {
       // Local file_t object doesn't require
@@ -46,8 +43,8 @@ namespace occa {
 
 
     namespace originSource {
-      file_t builtin("", "(builtin)", "");
-      file_t string("" , "(source)" , "");
+      file_t builtin("(builtin)", "");
+      file_t string("(source)" , "");
     }
 
     //---[ File Origin ]----------------
@@ -145,17 +142,23 @@ namespace occa {
     }
 
     fileOrigin::~fileOrigin() {
-      if (!file->removeRef()) {
+      clear();
+    }
+
+    void fileOrigin::clear() {
+      if (file && !file->removeRef()) {
         delete file;
       }
       if (up && !up->removeRef()) {
         delete up;
       }
+      file = NULL;
+      up   = NULL;
     }
 
     void fileOrigin::setFile(file_t &file_) {
       file_.addRef();
-      if (!file->removeRef()) {
+      if (file && !file->removeRef()) {
         delete file;
       }
       file = &file_;

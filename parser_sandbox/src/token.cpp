@@ -120,7 +120,7 @@ namespace occa {
       if (type() != tokenType::op) {
         return operatorType::none;
       }
-      return to<operatorToken>().op.opType;
+      return to<operatorToken>().opType();
     }
 
     void token_t::preprint(std::ostream &out) {
@@ -223,7 +223,7 @@ namespace occa {
     operatorToken::operatorToken(const fileOrigin &origin_,
                                  const operator_t &op_) :
       token_t(origin_),
-      op(op_) {}
+      op(&op_) {}
 
     operatorToken::~operatorToken() {}
 
@@ -231,12 +231,16 @@ namespace occa {
       return tokenType::op;
     }
 
+    const opType_t& operatorToken::opType() const {
+      return op->opType;
+    }
+
     token_t* operatorToken::clone() {
-      return new operatorToken(origin, op);
+      return new operatorToken(origin, *op);
     }
 
     void operatorToken::print(std::ostream &out) const {
-      out << op.str;
+      out << op->str;
     }
     //==================================
 

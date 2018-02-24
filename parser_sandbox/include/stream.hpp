@@ -51,17 +51,10 @@ namespace occa {
     virtual void* passMessageToInput(const occa::properties &props);
     void* getInput(const std::string &name);
 
-    // Map
     template <class newOutput_t>
-    stream<newOutput_t> map(const streamMap<output_t, newOutput_t> &smap) const;
+    stream<newOutput_t> map(streamMap<output_t, newOutput_t> &smap);
 
-    template <class newOutput_t>
-    stream<newOutput_t> map(newOutput_t (*func)(const output_t &value)) const;
-
-    // Filter
-    stream<output_t> filter(const streamFilter<output_t> &sfilter) const;
-
-    stream<output_t> filter(bool (*func)(const output_t &value)) const;
+    stream<output_t> filter(streamFilter<output_t> &sfilter);
 
     baseStream& operator >> (output_t &out);
   };
@@ -81,7 +74,7 @@ namespace occa {
 
   public:
     stream();
-    stream(const baseStream<output_t> &head_);
+    stream(baseStream<output_t> &head_);
     stream(const stream &other);
     virtual ~stream();
 
@@ -94,17 +87,10 @@ namespace occa {
 
     bool isEmpty();
 
-    // Map
     template <class newOutput_t>
-    stream<newOutput_t> map(const streamMap<output_t, newOutput_t> &map_) const;
+    stream<newOutput_t> map(streamMap<output_t, newOutput_t> &map_);
 
-    template <class newOutput_t>
-    stream<newOutput_t> map(newOutput_t (*func)(const output_t &value)) const;
-
-    // Filter
-    stream<output_t> filter(const streamFilter<output_t> &filter_) const;
-
-    stream<output_t> filter(bool (*func)(const output_t &value)) const;
+    stream<output_t> filter(streamFilter<output_t> &filter_);
 
     stream& operator >> (output_t &out);
   };

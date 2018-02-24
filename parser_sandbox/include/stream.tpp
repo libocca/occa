@@ -37,44 +37,15 @@ namespace occa {
     return passMessageToInput(props);
   }
 
-  // Map
   template <class output_t>
   template <class newOutput_t>
-  stream<newOutput_t> baseStream<output_t>::map(
-    const streamMap<output_t, newOutput_t> &smap
-  ) const {
-
-    stream<output_t> s(*this);
-    return s.map(smap);
+  stream<newOutput_t> baseStream<output_t>::map(streamMap<output_t, newOutput_t> &smap) {
+    return stream<output_t>(*this).map(smap);
   }
 
   template <class output_t>
-  template <class newOutput_t>
-  stream<newOutput_t> baseStream<output_t>::map(
-    newOutput_t (*func)(const output_t &value)
-  ) const {
-
-    stream<output_t> s(*this);
-    return s.map(func);
-  }
-
-  // Filter
-  template <class output_t>
-  stream<output_t> baseStream<output_t>::filter(
-    const streamFilter<output_t> &sfilter
-  ) const {
-
-    stream<output_t> s(*this);
-    return s.filter(sfilter);
-  }
-
-  template <class output_t>
-  stream<output_t> baseStream<output_t>::filter(
-    bool (*func)(const output_t &value)
-  ) const {
-
-    stream<output_t> s(*this);
-    return s.filter(func);
+  stream<output_t> baseStream<output_t>::filter(streamFilter<output_t> &sfilter) {
+    return stream<output_t>(*this).filter(sfilter);
   }
 
   template <class output_t>
@@ -90,28 +61,19 @@ namespace occa {
     head(NULL) {}
 
   template <class output_t>
-  stream<output_t>::stream(const baseStream<output_t> &head_) :
-    head(&(head_.clone())) {}
+  stream<output_t>::stream(baseStream<output_t> &head_) :
+    head(&head_) {}
 
   template <class output_t>
   stream<output_t>::stream(const stream &other) :
-    head(NULL) {
-    *this = other;
-  }
+    head(other.head) {}
 
   template <class output_t>
-  stream<output_t>::~stream() {
-    delete head;
-  }
+  stream<output_t>::~stream() {}
 
   template <class output_t>
   stream<output_t>& stream<output_t>::operator = (const stream &other) {
-    delete this->head;
-
-    this->head = (other.head
-                  ? &(other.head->clone())
-                  : NULL);
-
+    head = other.head;
     return *this;
   }
 
@@ -120,7 +82,7 @@ namespace occa {
     if (!head) {
       return *(new stream());
     }
-    return *(new stream(*head));
+    return *(new stream(&(head->clone())));
   }
 
   template <class output_t>
@@ -138,12 +100,9 @@ namespace occa {
     return (!head || head->isEmpty());
   }
 
-  // Map
   template <class output_t>
   template <class newOutput_t>
-  stream<newOutput_t> stream<output_t>::map(
-    const streamMap<output_t, newOutput_t> &map_
-  ) const {
+  stream<newOutput_t> stream<output_t>::map(streamMap<output_t, newOutput_t> &map_) {
     if (!head) {
       return stream<newOutput_t>();
     }
@@ -152,33 +111,14 @@ namespace occa {
 
     stream<newOutput_t> s(map_);
     mapType &sHead = *(static_cast<mapType*>(s.head));
-    sHead.input = &(head->clone());
+    sHead.input = head;
 
     return s;
   }
 
   template <class output_t>
-  template <class newOutput_t>
-  stream<newOutput_t> stream<output_t>::map(
-    newOutput_t (*func)(const output_t &value)
-  ) const {
-    return map(streamMapFunc<output_t, newOutput_t>(func));
-  }
-
-  // Filter
-  template <class output_t>
-  stream<output_t> stream<output_t>::filter(
-    const streamFilter<output_t> &filter_
-  ) const {
-
+  stream<output_t> stream<output_t>::filter(streamFilter<output_t> &filter_) {
     return map(filter_);
-  }
-
-  template <class output_t>
-  stream<output_t> stream<output_t>::filter(
-    bool (*func)(const output_t &value)
-  ) const {
-    return map(streamFilterFunc<output_t>(func));
   }
 
   template <class output_t>
@@ -197,9 +137,7 @@ namespace occa {
     input(NULL) {}
 
   template <class input_t, class output_t>
-  streamMap<input_t, output_t>::~streamMap() {
-    delete input;
-  }
+  streamMap<input_t, output_t>::~streamMap() {}
 
   template <class input_t, class output_t>
   bool streamMap<input_t, output_t>::inputIsEmpty() const {

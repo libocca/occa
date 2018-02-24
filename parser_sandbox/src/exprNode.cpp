@@ -334,7 +334,7 @@ namespace occa {
       return exprNodeType::leftUnary;
     }
 
-    opType_t leftUnaryOpNode::optype() const {
+    opType_t leftUnaryOpNode::opType() const {
       return op.opType;
     }
 
@@ -389,7 +389,7 @@ namespace occa {
       return exprNodeType::rightUnary;
     }
 
-    opType_t rightUnaryOpNode::optype() const {
+    opType_t rightUnaryOpNode::opType() const {
       return op.opType;
     }
 
@@ -444,7 +444,7 @@ namespace occa {
       return exprNodeType::binary;
     }
 
-    opType_t binaryOpNode::optype() const {
+    opType_t binaryOpNode::opType() const {
       return op.opType;
     }
 
@@ -513,7 +513,7 @@ namespace occa {
       return exprNodeType::ternary;
     }
 
-    opType_t ternaryOpNode::optype() const {
+    opType_t ternaryOpNode::opType() const {
       return operatorType::ternary;
     }
 
@@ -1096,7 +1096,7 @@ namespace occa {
     pairNode::pairNode(operatorToken &opToken,
                        exprNode &value_) :
       exprNode(&opToken),
-      op(opToken.op),
+      op(*(opToken.op)),
       value(value_.clone()) {}
 
     pairNode::pairNode(const pairNode &node) :
@@ -1110,6 +1110,10 @@ namespace occa {
 
     int pairNode::type() const {
       return exprNodeType::pair;
+    }
+
+    opType_t pairNode::opType() const {
+      return op.opType;
     }
 
     exprNode& pairNode::clone() const {

@@ -33,6 +33,23 @@ namespace occa {
   namespace lang {
     const std::string macro_t::VA_ARGS = "__VA_ARGS__";
 
+    //---[ Helper Methods ]-------------
+    void freeTokenVectors(std::vector<tokenVector> &tokenVectors) {
+      const int vectorCount = (int) tokenVectors.size();
+      for (int i = 0; i < vectorCount; ++i) {
+        freeTokenVector(tokenVectors[i]);
+      }
+      tokenVectors.clear();
+    }
+
+    void freeTokenVector(macroTokenVector_t &mTokens) {
+      const int macroTokenCount = (int) mTokens.size();
+      for (int i = 0; i < macroTokenCount; ++i) {
+        delete mTokens[i];
+      }
+      mTokens.clear();
+    }
+
     void cloneMacroTokenVector(macroTokenVector_t &newTokens,
                                const macroTokenVector_t &tokens) {
       const int count = (int) tokens.size();
@@ -42,9 +59,10 @@ namespace occa {
         newTokens.push_back(tokens[i]->clone());
       }
     }
+    //==================================
 
     //---[ Macro Tokens ]---------------
-    macroToken::macroToken(preprocessor &pp_,
+    macroToken::macroToken(preprocessor_t &pp_,
                            token_t *thisToken_) :
       pp(pp_),
       thisToken(thisToken_->clone()) {}
@@ -53,12 +71,12 @@ namespace occa {
       delete thisToken;
     }
 
-    macroRawToken::macroRawToken(preprocessor &pp_,
+    macroRawToken::macroRawToken(preprocessor_t &pp_,
                                  token_t *thisToken_) :
       macroToken(pp_, thisToken_) {}
 
     macroToken* macroRawToken::clone() {
-      return new macroRawToken(pp, thisToken->clone());
+      return new macroRawToken(pp, thisToken);
     }
 
     bool macroRawToken::expand(tokenVector &newTokens,
@@ -68,7 +86,7 @@ namespace occa {
       return true;
     }
 
-    macroArgument::macroArgument(preprocessor &pp_,
+    macroArgument::macroArgument(preprocessor_t &pp_,
                                  token_t *thisToken_,
                                  const int arg_,
                                  const int argc_) :
@@ -79,7 +97,7 @@ namespace occa {
     macroArgument::~macroArgument() {}
 
     macroToken* macroArgument::clone() {
-      return new macroArgument(pp, thisToken->clone(), arg, argc);
+      return new macroArgument(pp, thisToken, arg, argc);
     }
 
     void macroArgument::expandArg(tokenVector &newTokens,
@@ -107,7 +125,7 @@ namespace occa {
       return true;
     }
 
-    macroStringify::macroStringify(preprocessor &pp_,
+    macroStringify::macroStringify(preprocessor_t &pp_,
                                    macroToken *token_) :
       macroToken(pp_, token_->thisToken),
       token(token_) {}
@@ -117,7 +135,7 @@ namespace occa {
     }
 
     macroToken* macroStringify::clone() {
-      return new macroStringify(pp, token->clone());
+      return new macroStringify(pp, token);
     }
 
     bool macroStringify::expand(tokenVector &newTokens,
@@ -140,9 +158,9 @@ namespace occa {
 
       // Create token
       freeTokenVector(stringTokens);
-      tokenizer::tokenize(stringTokens,
-                          source->origin,
-                          value);
+      tokenizer_t::tokenize(stringTokens,
+                            source->origin,
+                            value);
 
       if (stringTokens.size() != 1) {
         source->origin
@@ -158,7 +176,7 @@ namespace occa {
       return true;
     }
 
-    macroConcat::macroConcat(preprocessor &pp_,
+    macroConcat::macroConcat(preprocessor_t &pp_,
                              const macroTokenVector_t &tokens_) :
       macroToken(pp_, tokens_[0]->thisToken),
       tokens(tokens_) {}
@@ -192,9 +210,9 @@ namespace occa {
 
       // Create token
       freeTokenVector(concatTokens);
-      tokenizer::tokenize(concatTokens,
-                          source->origin,
-                          concatValue);
+      tokenizer_t::tokenize(concatTokens,
+                            source->origin,
+                            concatValue);
 
       if (concatTokens.size() != 1) {
         concatTokens[0]->origin
@@ -211,26 +229,8 @@ namespace occa {
     }
     //==================================
 
-    //---[ Helper Methods ]-------------
-    void freeTokenVectors(std::vector<tokenVector> &tokenVectors) {
-      const int vectorCount = (int) tokenVectors.size();
-      for (int i = 0; i < vectorCount; ++i) {
-        freeTokenVector(tokenVectors[i]);
-      }
-      tokenVectors.clear();
-    }
-
-    void freeTokenVector(macroTokenVector_t &mTokens) {
-      const int macroTokenCount = (int) mTokens.size();
-      for (int i = 0; i < macroTokenCount; ++i) {
-        delete mTokens[i];
-      }
-      mTokens.clear();
-    }
-    //==================================
-
     //---[ Macro ]----------------------
-    macro_t::macro_t(preprocessor &pp_,
+    macro_t::macro_t(preprocessor_t &pp_,
                      identifierToken &thisToken_,
                      const bool isBuiltin_,
                      const bool isFunctionLike_,
@@ -246,7 +246,7 @@ namespace occa {
     }
 
 
-    macro_t::macro_t(preprocessor &pp_,
+    macro_t::macro_t(preprocessor_t &pp_,
                      const std::string &name_) :
       pp(pp_),
       thisToken(*(new identifierToken(originSource::builtin, name_))),
@@ -279,7 +279,7 @@ namespace occa {
       thisToken.origin.position = filePosition(0, c, c, c + chars);
     }
 
-    macro_t& macro_t::clone(preprocessor &pp_) {
+    macro_t& macro_t::clone(preprocessor_t &pp_) {
       macro_t &macro = *(new macro_t(pp_,
                                      thisToken,
                                      isBuiltin,
@@ -312,7 +312,7 @@ namespace occa {
       }
 
       operatorToken &opToken = token->to<operatorToken>();
-      if (!(opToken.op.opType & operatorType::parenthesesStart)) {
+      if (!(opToken.opType() & operatorType::parenthesesStart)) {
         setDefinition(tokens);
         freeTokenVector(tokens);
         return;
@@ -401,7 +401,7 @@ namespace occa {
       bool isArg = (token->type() & tokenType::identifier);
       if (!isArg &&
           (token->type() & tokenType::op)) {
-        opType_t opType = token->to<operatorToken>().op.opType;
+        opType_t opType = token->to<operatorToken>().opType();
         if (opType & operatorType::ellipsis) {
           isArg = true;
           hasVarArgs = true;
@@ -472,7 +472,7 @@ namespace occa {
         return NULL;
       }
 
-      return &(token->to<operatorToken>().op);
+      return token->to<operatorToken>().op;
     }
 
     bool macro_t::isHash(macroToken *mToken) {
@@ -633,7 +633,7 @@ namespace occa {
 
         // Check for closing ) first
         if (token->type() & tokenType::op) {
-          opType_t opType = token->to<operatorToken>().op.opType;
+          opType_t opType = token->to<operatorToken>().opType();
           if (opType == operatorType::parenthesesEnd) {
             delete token;
             return true;
@@ -669,7 +669,7 @@ namespace occa {
         }
 
         // Check for comma
-        if (token->to<operatorToken>().op.opType != operatorType::comma) {
+        if (token->to<operatorToken>().opType() != operatorType::comma) {
           // Add token to current arg
           args[argIndex].push_back(token);
           continue;
@@ -724,7 +724,7 @@ namespace occa {
       ++pp.errors;
     }
 
-    macro_t* macro_t::defineBuiltin(preprocessor &pp_,
+    macro_t* macro_t::defineBuiltin(preprocessor_t &pp_,
                                     const std::string &name_,
                                     const std::string &contents) {
       fileOrigin origin(originSource::builtin,
@@ -732,7 +732,7 @@ namespace occa {
       return define(pp_, origin, name_, contents);
     }
 
-    macro_t* macro_t::define(preprocessor &pp_,
+    macro_t* macro_t::define(preprocessor_t &pp_,
                              fileOrigin origin,
                              const std::string &name_,
                              const std::string &contents) {
@@ -741,9 +741,9 @@ namespace occa {
       source += contents;
 
       tokenVector tokens;
-      tokenizer::tokenize(tokens,
-                          origin,
-                          source);
+      tokenizer_t::tokenize(tokens,
+                            origin,
+                            source);
 
       const int tokenCount = (int) tokens.size();
       if (tokenCount == 0) {

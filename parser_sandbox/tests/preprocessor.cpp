@@ -40,16 +40,20 @@ using namespace occa::lang;
 
 //---[ Util Methods ]-------------------
 std::string source;
-occa::stream<token_t*> stream;
+tokenizer_t tokenizer;
+preprocessor_t preprocessor;
+newlineTokenMerger newlineMerger;
+occa::stream<token_t*> stream = (tokenizer
+                                 .map(preprocessor)
+                                 .map(newlineMerger));
 token_t *token;
 
 void setStream(const std::string &s) {
   delete token;
   token = NULL;
   ::source = s;
-  stream = (tokenizer(source.c_str())
-            .map(preprocessor())
-            .map(newlineTokenMerger()));
+  tokenizer.set(source.c_str());
+  preprocessor.clear();
 }
 
 void getToken() {
@@ -147,7 +151,7 @@ void testMacroDefines() {
   }
 
   // Test error counting
-  preprocessor &pp = *((preprocessor*) stream.getInput("preprocessor"));
+  preprocessor_t &pp = *((preprocessor_t*) stream.getInput("preprocessor_t"));
   OCCA_ASSERT_EQUAL(3, pp.errors);
 }
 
@@ -195,7 +199,7 @@ void testCppStandardTests() {
     f(2 * (2+(3,4)-0,1)) | f(2 * (~ 5)) & f(2 * (0,1))^m(0,1);
     int i[] = { 1, 23, 4, 5, };
     char c[2][6] = { "hello", "" };
-   */
+  */
 
   // Test 3 in C++ standard
   setStream(
@@ -223,7 +227,7 @@ void testCppStandardTests() {
     include "vers2.h"
     "hello";
     "hello, world"
-   */
+  */
 
   // Test 4 in C++ standard
   setStream(
@@ -236,8 +240,8 @@ void testCppStandardTests() {
 
   /*
     int j[] = { 123, 45, 67, 89,
-      10, 11, 12, };
-   */
+    10, 11, 12, };
+  */
 
   // Test 5 in C++ standard
   setStream(
@@ -277,7 +281,7 @@ void testCppStandardTests() {
     fprintf(stderr, "X = %d\n", x);
     puts("The first, second, and third items.");
     ((x>y) ? puts("x>y") : printf("x is %d but y is %d", x, y));
-   */
+  */
 }
 
 void testIfElse() {
@@ -548,7 +552,7 @@ void testIncludeDefine() {
     getToken();
   }
 
-  preprocessor &pp = *((preprocessor*) stream.getInput("preprocessor"));
+  preprocessor_t &pp = *((preprocessor_t*) stream.getInput("preprocessor_t"));
   OCCA_ASSERT_EQUAL(1,
                     (int) pp.dependencies.size());
 }

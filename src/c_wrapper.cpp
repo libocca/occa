@@ -133,6 +133,18 @@ const occaObject occaDefault = nullObject;
 const occaUDim_t occaAllBytes = -1;
 const void *occaEmptyProperties = (void*) new occa::properties();
 
+class cInitializer_t {
+public:
+  cInitializer_t() {};
+
+  ~cInitializer_t() {
+    delete ::nullObject.ptr;
+    delete (occa::properties*) ::occaEmptyProperties;
+  };
+};
+
+const cInitializer_t cInitializer;
+
 void OCCA_RFUNC occaSetVerboseCompilation(const int value) {
   occa::settings()["verboseCompilation"] = (bool) value;
 }

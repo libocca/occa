@@ -152,24 +152,24 @@ namespace occa {
         else if (tokenType & tokenType::op) {
           operatorToken &opToken = token->to<operatorToken>();
 
-          if (opToken.op.opType & operatorType::pairStart) {
+          if (opToken.opType() & operatorType::pairStart) {
             state.tokenBeforePair = state.prevToken;
             state.operators.push(&opToken);
           }
-          else if (opToken.op.opType & operatorType::pairEnd) {
+          else if (opToken.opType() & operatorType::pairEnd) {
             closePair(opToken, state);
             attachPair(opToken, state);
           }
           else {
-            // opToken might have changed from
-            //   ambiguous type (+) to unary or binary
-            token = &applyFasterOperators(opToken, state);
+            applyFasterOperators(opToken, state);
           }
         }
 
         if (state.hasError) {
           return;
         }
+        // Store prevToken at the end since opToken
+        //   might have changed from an ambiguous type
         state.prevToken = token;
       }
     }
@@ -199,12 +199,12 @@ namespace occa {
 
     void closePair(operatorToken &opToken,
                    expressionState &state) {
-      const opType_t opType = opToken.op.opType;
+      const opType_t opType = opToken.opType();
       operatorToken *errorToken = &opToken;
 
       while (state.operatorCount()) {
         operatorToken &nextOpToken = state.popOperator();
-        const opType_t nextOpType = nextOpToken.op.opType;
+        const opType_t nextOpType = nextOpToken.opType();
 
         if (nextOpType & operatorType::pairStart) {
           if (opType == (nextOpType << 1)) {
@@ -225,7 +225,7 @@ namespace occa {
       // Found a pairStart that doesn't match
       state.hasError = true;
 
-      const opType_t errorOpType = errorToken->op.opType;
+      const opType_t errorOpType = errorToken->opType();
       std::stringstream ss;
       ss << "Could not find an opening ";
       if (errorOpType & operatorType::parenthesesStart) {
@@ -252,7 +252,7 @@ namespace occa {
       while (true) {
         if (commaNode->type() & exprNodeType::binary) {
           binaryOpNode &opNode = commaNode->to<binaryOpNode>();
-          if (opNode.op.opType & operatorType::comma) {
+          if (opNode.opType() & operatorType::comma) {
             args.push_back(&opNode.rightValue);
             commaNode = &(opNode.leftValue);
             continue;
@@ -276,14 +276,14 @@ namespace occa {
       // Guaranteed to have the pairNode
       pairNode &pair = state.popOutput().to<pairNode>();
 
-      if (!(pair.op.opType & (operatorType::parentheses |
+      if (!(pair.opType() & (operatorType::parentheses |
                               operatorType::braces))) {
         state.hasError = true;
         opToken.printError("Expected identifier or proper expression before");
         return;
       }
 
-      if (pair.op.opType & operatorType::parentheses) {
+      if (pair.opType() & operatorType::parentheses) {
         state.output.push(new parenthesesNode(pair.token,
                                               pair.value));
       } else {
@@ -312,7 +312,7 @@ namespace occa {
       }
       if (prevTokenType & tokenType::op) {
         operatorToken &prevOpToken = state.tokenBeforePair->to<operatorToken>();
-        if (!(prevOpToken.op.opType & operatorType::pairEnd)) {
+        if (!(prevOpToken.opType() & operatorType::pairEnd)) {
           transformLastPair(opToken, state);
           return;
         }
@@ -321,19 +321,24 @@ namespace occa {
       pairNode &pair  = state.popOutput().to<pairNode>();
       exprNode &value = state.popOutput();
 
-      if (pair.op.opType & operatorType::parentheses) {
+      // func(...)
+      if (pair.opType() & operatorType::parentheses) {
         exprNodeVector args;
         extractArgs(args, pair.value, state);
         state.output.push(new callNode(value.token,
                                        value,
                                        args));
+        return;
       }
-      else if (pair.op.opType & operatorType::brackets) {
+      // array[...]
+      if (pair.opType() & operatorType::brackets) {
         state.output.push(new subscriptNode(value.token,
                                             value,
                                             pair.value));
+        return;
       }
-      else if (pair.op.opType & operatorType::cudaCall) {
+      // func<<<...>>>
+      if (pair.opType() & operatorType::cudaCall) {
         exprNodeVector args;
         extractArgs(args, pair.value, state);
 
@@ -353,15 +358,15 @@ namespace occa {
                                              *args[0],
                                              *args[1]));
         }
+        return;
       }
-      else {
-        opToken.printError("[Waldo] (attachPair) Unsure how you got here...");
-      }
+
+      opToken.printError("[Waldo] (attachPair) Unsure how you got here...");
     }
 
     bool operatorIsLeftUnary(operatorToken &opToken,
                              expressionState &state) {
-      const opType_t opType = opToken.op.opType;
+      const opType_t opType = opToken.opType();
 
       // Test for chaining increments
       // 1 + ++ ++ x
@@ -383,7 +388,7 @@ namespace occa {
       // Test for left unary first
       const bool prevTokenIsOp = (state.prevToken->type() & tokenType::op);
       if (prevTokenIsOp) {
-        opType_t prevType = state.prevToken->to<operatorToken>().op.opType;
+        opType_t prevType = state.prevToken->to<operatorToken>().opType();
         // + + + 1
         if (prevType & operatorType::leftUnary) {
           return true;
@@ -413,8 +418,8 @@ namespace occa {
         return false;
       }
 
-      opType_t prevType = state.prevToken->to<operatorToken>().op.opType;
-      opType_t nextType = state.nextToken->to<operatorToken>().op.opType;
+      opType_t prevType = state.prevToken->to<operatorToken>().opType();
+      opType_t nextType = state.nextToken->to<operatorToken>().opType();
 
       // x ++ ++ ++ y
       if ((prevType & chainable) &&
@@ -427,19 +432,19 @@ namespace occa {
       return !(prevType & chainable);
     }
 
-    operatorToken& getOperatorToken(operatorToken &opToken,
-                                    expressionState &state) {
+    void updateOperatorToken(operatorToken &opToken,
+                             expressionState &state) {
 
-      const opType_t opType = opToken.op.opType;
+      const opType_t opType = opToken.opType();
       if (!(opType & operatorType::ambiguous)) {
-        return opToken;
+        return;
       }
 
       fileOrigin origin = opToken.origin;
 
       const bool isLeftUnary = operatorIsLeftUnary(opToken, state);
       if (state.hasError) {
-        return opToken;
+        return;
       }
 
       const operator_t *newOperator = NULL;
@@ -480,25 +485,25 @@ namespace occa {
       }
 
       if (newOperator) {
-        return *(new operatorToken(origin, *newOperator));
+        opToken.op = newOperator;
+        return;
       }
 
       state.hasError = true;
       opToken.printError("Unable to parse ambiguous token");
-      return opToken;
     }
 
-    operatorToken& applyFasterOperators(operatorToken &opToken,
-                                        expressionState &state) {
+    void applyFasterOperators(operatorToken &opToken,
+                              expressionState &state) {
 
-      operatorToken &opToken_ = getOperatorToken(opToken, state);
+      updateOperatorToken(opToken, state);
       if (state.hasError) {
-        return opToken;
+        return;
       }
 
-      const operator_t &op = opToken_.op;
+      const operator_t &op = *(opToken.op);
       while (state.operatorCount()) {
-        const operator_t &prevOp = state.lastOperator().op;
+        const operator_t &prevOp = *(state.lastOperator().op);
 
         if (prevOp.opType & operatorType::pairStart) {
           break;
@@ -512,7 +517,7 @@ namespace occa {
                         state);
 
           if (state.hasError) {
-            return opToken;
+            return;
           }
           continue;
         }
@@ -522,14 +527,13 @@ namespace occa {
 
       // After applying faster operators,
       //   place opToken in the stack
-      state.operators.push(&opToken_);
-      return opToken_;
+      state.operators.push(&opToken);
     }
 
     void applyOperator(operatorToken &opToken,
                        expressionState &state) {
 
-      const operator_t &op = opToken.op;
+      const operator_t &op = *(opToken.op);
       const opType_t opType = op.opType;
       const int outputCount = state.outputCount();
 

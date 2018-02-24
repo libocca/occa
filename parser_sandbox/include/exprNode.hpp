@@ -264,7 +264,7 @@ namespace occa {
       virtual ~leftUnaryOpNode();
 
       virtual int type() const;
-      opType_t optype() const;
+      opType_t opType() const;
 
       virtual exprNode& clone() const;
 
@@ -293,7 +293,7 @@ namespace occa {
       virtual ~rightUnaryOpNode();
 
       virtual int type() const;
-      opType_t optype() const;
+      opType_t opType() const;
 
       virtual exprNode& clone() const;
 
@@ -324,7 +324,7 @@ namespace occa {
       virtual ~binaryOpNode();
 
       virtual int type() const;
-      opType_t optype() const;
+      opType_t opType() const;
 
       virtual exprNode& clone() const;
 
@@ -353,7 +353,7 @@ namespace occa {
       virtual ~ternaryOpNode();
 
       virtual int type() const;
-      opType_t optype() const;
+      opType_t opType() const;
 
       virtual exprNode& clone() const;
 
@@ -656,6 +656,7 @@ namespace occa {
       virtual ~pairNode();
 
       virtual int type() const;
+      opType_t opType() const;
 
       virtual exprNode& clone() const;
 

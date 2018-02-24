@@ -17,6 +17,12 @@ tests   = $(subst $(testPath)/,$(testPath)/bin/,$(testSources:.cpp=))
 
 flags += -I$(incPath)
 
+ifndef ENABLE_VALGRIND
+  testFlags = $(compilerFlags) -fsanitize=address -fno-omit-frame-pointer
+else
+  testFlags = $(compilerFlags)
+endif
+
 all: $(objects) $(headers)
 
 $(objPath)/%.o:$(srcPath)/%.cpp $(incPath)/%.hpp
@@ -29,10 +35,12 @@ $(objPath)/%.o:$(srcPath)/%.cpp $(incPath)/%.hpp $(incPath)/%.tpp
 
 $(testPath)/bin/%:$(testPath)/%.cpp $(objects) $(headers)
 	@mkdir -p $(testPath)/bin
-	$(compiler) $(compilerFlags) $(pthreadFlag) -o $@ $(flags) -L ${OCCA_DIR}/lib $(objects) $< $(paths) $(links)
+	$(compiler) $(testFlags) $(pthreadFlag) -o $@ $(flags) -L ${OCCA_DIR}/lib $(objects) $< $(paths) $(links)
 
 tests: $(tests)
 
+# ASAN_OPTIONS to ignore cuInit's strange allocations
+#   https://github.com/google/sanitizers/issues/629
 test: $(tests)
 	@for test in $(tests); do                             \
 	   	testname=$$(basename "$$test");                   \
@@ -40,7 +48,7 @@ test: $(tests)
       linechars=$$((60 - $${chars}));                   \
 	    line=$$(printf '%*s' $${linechars} | tr ' ' '-'); \
 	    echo -e "\n---[ $${testname} ]$${line}";          \
-	    $$test;                                           \
+	    ASAN_OPTIONS=protect_shadow_gap=0 $$test;         \
 	done
 
 clean:

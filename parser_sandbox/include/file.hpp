@@ -33,14 +33,12 @@ namespace occa {
   namespace lang {
     class file_t : public withRefs {
     public:
-      std::string dirname;
       std::string filename;
       std::string content;
 
       file_t(const std::string &filename_);
 
-      file_t(const std::string &dirname_,
-             const std::string &filename_,
+      file_t(const std::string &filename_,
              const std::string &content_);
     };
 
@@ -92,6 +90,8 @@ namespace occa {
       fileOrigin& operator = (const fileOrigin &other);
 
       virtual ~fileOrigin();
+
+      void clear();
 
       void setFile(file_t &file_);
       void setUp(fileOrigin *up_);

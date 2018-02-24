@@ -77,78 +77,104 @@ namespace occa {
       return getEncodingType(str);
     }
 
-    tokenizer::tokenizer(const char *root) :
+    tokenizer_t::tokenizer_t() :
       lastToken(NULL),
-      origin(filePosition(root)),
+      origin(originSource::string),
       fp(origin.position) {
       getOperators(operators);
     }
 
-    tokenizer::tokenizer(file_t *file_,
-                         const char *root) :
+    tokenizer_t::tokenizer_t(const char *root) :
+      lastToken(NULL),
+      origin(originSource::string,
+             filePosition(root)),
+      fp(origin.position) {
+      getOperators(operators);
+    }
+
+    tokenizer_t::tokenizer_t(file_t *file_,
+                             const char *root) :
       lastToken(NULL),
       origin(*file_, filePosition(root)),
       fp(origin.position) {
       getOperators(operators);
     }
 
-    tokenizer::tokenizer(fileOrigin origin_) :
+    tokenizer_t::tokenizer_t(fileOrigin origin_) :
       lastToken(NULL),
       origin(origin_),
       fp(origin.position) {
       getOperators(operators);
     }
 
-    tokenizer::tokenizer(const tokenizer &stream) :
+    tokenizer_t::tokenizer_t(const tokenizer_t &stream) :
       lastToken(stream.lastToken),
       origin(stream.origin),
       fp(origin.position),
-      stack(stream.stack),
-      sourceStack(stream.sourceStack) {
+      stack(stream.stack) {
       getOperators(operators);
     }
 
 
-    tokenizer& tokenizer::operator = (const tokenizer &stream) {
-      lastToken   = stream.lastToken;
-      origin      = stream.origin;
-      stack       = stream.stack;
-      sourceStack = stream.sourceStack;
+    tokenizer_t& tokenizer_t::operator = (const tokenizer_t &stream) {
+      lastToken = stream.lastToken;
+      origin    = stream.origin;
+      stack     = stream.stack;
       return *this;
     }
 
-    tokenizer::~tokenizer() {}
-
-    void tokenizer::preprint(std::ostream &out) {
-      origin.preprint(out);
+    tokenizer_t::~tokenizer_t() {
+      clear();
     }
 
-    void tokenizer::postprint(std::ostream &out) {
-      origin.postprint(out);
+    baseStream<token_t*>& tokenizer_t::clone() const {
+      return *(new tokenizer_t(*this));
     }
 
-    void tokenizer::setLine(const int line) {
-      fp.line = line;
-    }
-
-    baseStream<token_t*>& tokenizer::clone() const {
-      return *(new tokenizer(*this));
-    }
-
-    void* tokenizer::passMessageToInput(const occa::properties &props) {
+    void* tokenizer_t::passMessageToInput(const occa::properties &props) {
       const std::string inputName = props.get<std::string>("inputName");
-      if (inputName == "tokenizer") {
+      if (inputName == "tokenizer_t") {
         return (void*) this;
       }
       return NULL;
     }
 
-    bool tokenizer::reachedTheEnd() const {
-      return ((*fp.start == '\0') &&
-              !sourceStack.size());
+    void tokenizer_t::set(const char *root) {
+      clear();
+      origin = fileOrigin(originSource::string,
+                          filePosition(root));
     }
 
-    bool tokenizer::isEmpty() {
+    void tokenizer_t::set(file_t *file_,
+                          const char *root) {
+      clear();
+      origin = fileOrigin(*file_,
+                          filePosition(root));
+    }
+
+    void tokenizer_t::clear() {
+      stack.clear();
+      origin.clear();
+    }
+
+    void tokenizer_t::preprint(std::ostream &out) {
+      origin.preprint(out);
+    }
+
+    void tokenizer_t::postprint(std::ostream &out) {
+      origin.postprint(out);
+    }
+
+    void tokenizer_t::setLine(const int line) {
+      fp.line = line;
+    }
+
+    bool tokenizer_t::reachedTheEnd() const {
+      return ((*fp.start == '\0') &&
+              !origin.up);
+    }
+
+    bool tokenizer_t::isEmpty() {
       while (!reachedTheEnd() &&
              !lastToken) {
         lastToken = getToken();
@@ -156,7 +182,7 @@ namespace occa {
       return !lastToken;
     }
 
-    void tokenizer::setNext(token_t *&out) {
+    void tokenizer_t::setNext(token_t *&out) {
       if (!isEmpty()) {
         out = lastToken;
         lastToken = NULL;
@@ -165,40 +191,39 @@ namespace occa {
       }
     }
 
-    void tokenizer::pushSource(file_t *file) {
-      push();
-      sourceStack.push_back(stack);
+    void tokenizer_t::pushSource(const std::string &filename) {
+      file_t *file = new file_t(filename);
       origin.push(true,
                   *file,
                   file->content.c_str());
     }
 
-    void tokenizer::popSource() {
-      OCCA_ERROR("Unable to call tokenizer::popSource()",
-                 sourceStack.size() > 0);
-      stack = sourceStack.back();
-      sourceStack.pop_back();
-      popAndRewind();
+    void tokenizer_t::popSource() {
+      OCCA_ERROR("Unable to call tokenizer_t::popSource()",
+                 origin.up);
+      origin.pop();
     }
 
-    void tokenizer::push() {
+    void tokenizer_t::push() {
       stack.push_back(origin);
     }
 
-    void tokenizer::pop(const bool rewind) {
-      OCCA_ERROR("Unable to call tokenizer::pop()",
+    void tokenizer_t::pop(const bool rewind) {
+      OCCA_ERROR("Unable to call pop()",
                  stack.size() > 0);
+      OCCA_ERROR("Missed a push() from the previous source",
+                 stack.back().up == origin.up);
       if (rewind) {
         origin = stack.back();
       }
       stack.pop_back();
     }
 
-    void tokenizer::popAndRewind() {
+    void tokenizer_t::popAndRewind() {
       pop(true);
     }
 
-    fileOrigin tokenizer::popTokenOrigin() {
+    fileOrigin tokenizer_t::popTokenOrigin() {
       const size_t size = strSize();
       fileOrigin tokenOrigin = stack.back();
       tokenOrigin.position.end = tokenOrigin.position.start + size;
@@ -206,7 +231,7 @@ namespace occa {
       return tokenOrigin;
     }
 
-    size_t tokenizer::strSize() {
+    size_t tokenizer_t::strSize() {
       if (stack.size() == 0) {
         printError("Not able to strSize() without a stack");
         return 0;
@@ -215,7 +240,7 @@ namespace occa {
       return (fp.start - last.position.start);
     }
 
-    std::string tokenizer::str() {
+    std::string tokenizer_t::str() {
       if (stack.size() == 0) {
         printError("Not able to str() without a stack");
         return "";
@@ -225,7 +250,7 @@ namespace occa {
                          fp.start - last.position.start);
     }
 
-    void tokenizer::countSkippedLines() {
+    void tokenizer_t::countSkippedLines() {
       if (stack.size() == 0) {
         printError("Not able to countSkippedLines() without a stack");
         return;
@@ -254,7 +279,7 @@ namespace occa {
       }
     }
 
-    void tokenizer::skipTo(const char delimiter) {
+    void tokenizer_t::skipTo(const char delimiter) {
       while (*fp.start != '\0') {
         if (*fp.start == '\\') {
           if (fp.start[1] == '\n') {
@@ -275,7 +300,7 @@ namespace occa {
       }
     }
 
-    void tokenizer::skipTo(const char *delimiters) {
+    void tokenizer_t::skipTo(const char *delimiters) {
       while (*fp.start != '\0') {
         if (*fp.start == '\\') {
           if (fp.start[1] == '\n') {
@@ -296,7 +321,7 @@ namespace occa {
       }
     }
 
-    void tokenizer::skipFrom(const char *delimiters) {
+    void tokenizer_t::skipFrom(const char *delimiters) {
       while (*fp.start != '\0') {
         if (*fp.start == '\\') {
           if (fp.start[1] == '\n') {
@@ -317,11 +342,11 @@ namespace occa {
       }
     }
 
-    void tokenizer::skipWhitespace() {
+    void tokenizer_t::skipWhitespace() {
       skipFrom(charcodes::whitespaceNoNewline);
     }
 
-    int tokenizer::peek() {
+    int tokenizer_t::peek() {
       int type = shallowPeek();
       if (type & tokenType::identifier) {
         type = peekForIdentifier();
@@ -331,7 +356,7 @@ namespace occa {
       return type;
     }
 
-    int tokenizer::shallowPeek() {
+    int tokenizer_t::shallowPeek() {
       skipWhitespace();
 
       const char c = *fp.start;
@@ -364,7 +389,7 @@ namespace occa {
       return tokenType::none;
     }
 
-    int tokenizer::peekForIdentifier() {
+    int tokenizer_t::peekForIdentifier() {
       push();
       ++fp.start;
       skipFrom(charcodes::identifier);
@@ -390,7 +415,7 @@ namespace occa {
       return tokenType::identifier;
     }
 
-    int tokenizer::peekForOperator() {
+    int tokenizer_t::peekForOperator() {
       push();
       operatorTrie::result_t result = operators.getLongest(fp.start);
       if (!result.success()) {
@@ -416,7 +441,7 @@ namespace occa {
       return tokenType::op;
     }
 
-    void tokenizer::getIdentifier(std::string &value) {
+    void tokenizer_t::getIdentifier(std::string &value) {
       if (!lex::charIsIn(*fp.start, charcodes::identifierStart)) {
         return;
       }
@@ -427,8 +452,8 @@ namespace occa {
       pop();
     }
 
-    void tokenizer::getString(std::string &value,
-                              const int encoding) {
+    void tokenizer_t::getString(std::string &value,
+                                const int encoding) {
       if (encoding & encodingType::R) {
         getRawString(value);
         return;
@@ -451,7 +476,7 @@ namespace occa {
       ++fp.start;
     }
 
-    void tokenizer::getRawString(std::string &value) {
+    void tokenizer_t::getRawString(std::string &value) {
       // TODO: Keep the delimiter(s)
       if (*fp.start != '"') {
         return;
@@ -507,14 +532,14 @@ namespace occa {
       fp.start += chars;
     }
 
-    int tokenizer::skipLineCommentAndPeek() {
+    int tokenizer_t::skipLineCommentAndPeek() {
       skipTo('\n');
       return (fp.start
               ? tokenType::newline
               : tokenType::none);
     }
 
-    int tokenizer::skipBlockCommentAndPeek() {
+    int tokenizer_t::skipBlockCommentAndPeek() {
       while (*fp.start != '\0') {
         skipTo('*');
         if (*fp.start == '*') {
@@ -529,7 +554,7 @@ namespace occa {
       return tokenType::none;
     }
 
-    token_t* tokenizer::getToken() {
+    token_t* tokenizer_t::getToken() {
       if (reachedTheEnd()) {
         return NULL;
       }
@@ -539,7 +564,7 @@ namespace occa {
       // Check if file finished
       bool finishedSource = false;
       while ((*fp.start == '\0') &&
-             sourceStack.size()) {
+             origin.up) {
         popSource();
         skipWhitespace();
         finishedSource = true;
@@ -578,7 +603,7 @@ namespace occa {
       return new unknownToken(popTokenOrigin());
     }
 
-    token_t* tokenizer::getIdentifierToken() {
+    token_t* tokenizer_t::getIdentifierToken() {
       if (!lex::charIsIn(*fp.start, charcodes::identifierStart)) {
         printError("Not able to parse identifier");
         return NULL;
@@ -592,7 +617,7 @@ namespace occa {
                                  value);
     }
 
-    token_t* tokenizer::getPrimitiveToken() {
+    token_t* tokenizer_t::getPrimitiveToken() {
       push();
       primitive value = primitive::load(fp.start);
       if (value.isNaN()) {
@@ -607,7 +632,7 @@ namespace occa {
                                 strValue);
     }
 
-    token_t* tokenizer::getOperatorToken() {
+    token_t* tokenizer_t::getOperatorToken() {
       push();
       operatorTrie::result_t result = operators.getLongest(fp.start);
       if (!result.success()) {
@@ -619,7 +644,7 @@ namespace occa {
                                *(result.value()));
     }
 
-    token_t* tokenizer::getStringToken(const int encoding) {
+    token_t* tokenizer_t::getStringToken(const int encoding) {
       push();
 
       if (encoding) {
@@ -650,7 +675,7 @@ namespace occa {
                              encoding, value, udf);
     }
 
-    token_t* tokenizer::getCharToken(const int encoding) {
+    token_t* tokenizer_t::getCharToken(const int encoding) {
       push();
 
       if (encoding) {
@@ -685,7 +710,7 @@ namespace occa {
                            encoding, value, udf);
     }
 
-    int tokenizer::peekForHeader() {
+    int tokenizer_t::peekForHeader() {
       int type = shallowPeek();
       if (type & tokenType::op) {
         push();
@@ -702,7 +727,7 @@ namespace occa {
       return tokenType::none;
     }
 
-    std::string tokenizer::getHeader() {
+    std::string tokenizer_t::getHeader() {
       int type = shallowPeek();
 
       // Push after in case of whitespace
@@ -733,21 +758,21 @@ namespace occa {
       return value;
     }
 
-    tokenVector tokenizer::tokenize(const std::string &source) {
+    tokenVector tokenizer_t::tokenize(const std::string &source) {
       tokenVector tokens;
       fileOrigin origin = originSource::string;
       tokenize(tokens, origin, source);
       return tokens;
     }
 
-    void tokenizer::tokenize(tokenVector &tokens,
-                             fileOrigin origin,
-                             const std::string &source) {
+    void tokenizer_t::tokenize(tokenVector &tokens,
+                               fileOrigin origin,
+                               const std::string &source) {
       // TODO: Make a string 'file'
       fileOrigin fakeOrigin(*origin.file,
                             source.c_str());
 
-      tokenizer tstream(fakeOrigin);
+      tokenizer_t tstream(fakeOrigin);
       // Fill tokens
       token_t *token;
       while (!tstream.isEmpty()) {

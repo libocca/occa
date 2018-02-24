@@ -42,7 +42,7 @@ namespace occa {
     int getCharacterEncoding(const std::string &str);
     int getStringEncoding(const std::string &str);
 
-    class tokenizer : public baseStream<token_t*>,
+    class tokenizer_t : public baseStream<token_t*>,
                       public errorHandler {
     public:
       token_t *lastToken;
@@ -51,36 +51,45 @@ namespace occa {
       filePosition &fp;
 
       originVector stack;
-      std::vector<originVector> sourceStack;
 
       operatorTrie operators;
 
-      tokenizer(const char *root);
+      tokenizer_t();
 
-      tokenizer(file_t *file_,
+      tokenizer_t(const char *root);
+
+      tokenizer_t(file_t *file_,
                 const char *root);
 
-      tokenizer(fileOrigin origin_);
+      tokenizer_t(fileOrigin origin_);
 
-      tokenizer(const tokenizer &stream);
-      tokenizer& operator = (const tokenizer &stream);
+      tokenizer_t(const tokenizer_t &stream);
 
-      virtual ~tokenizer();
+      tokenizer_t& operator = (const tokenizer_t &stream);
+
+      virtual ~tokenizer_t();
+
+      virtual baseStream<token_t*>& clone() const;
+
+      virtual void* passMessageToInput(const occa::properties &props);
+
+      void set(const char *root);
+
+      void set(file_t *file_,
+               const char *root);
+
+      void clear();
 
       virtual void preprint(std::ostream &out);
       virtual void postprint(std::ostream &out);
 
       void setLine(const int line);
 
-      virtual baseStream<token_t*>& clone() const;
-
-      virtual void* passMessageToInput(const occa::properties &props);
-
       bool reachedTheEnd() const;
       virtual bool isEmpty();
       virtual void setNext(token_t *&out);
 
-      void pushSource(file_t *file);
+      void pushSource(const std::string &filename);
       void popSource();
 
       void push();
