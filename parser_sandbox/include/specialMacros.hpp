@@ -31,7 +31,7 @@ namespace occa {
     public:
       definedMacro(preprocessor_t &pp_);
 
-      virtual macro_t& clone(preprocessor_t &pp_);
+      virtual macro_t& clone(preprocessor_t &pp_) const;
 
       virtual void expand(tokenVector &tokens,
                           identifierToken &source);
@@ -42,7 +42,7 @@ namespace occa {
     public:
       hasIncludeMacro(preprocessor_t &pp_);
 
-      virtual macro_t& clone(preprocessor_t &pp_);
+      virtual macro_t& clone(preprocessor_t &pp_) const;
 
       virtual void expand(tokenVector &tokens,
                           identifierToken &source);
@@ -53,7 +53,7 @@ namespace occa {
     public:
       fileMacro(preprocessor_t &pp_);
 
-      virtual macro_t& clone(preprocessor_t &pp_);
+      virtual macro_t& clone(preprocessor_t &pp_) const;
 
       virtual void expand(tokenVector &tokens,
                           identifierToken &source);
@@ -64,7 +64,7 @@ namespace occa {
     public:
       lineMacro(preprocessor_t &pp_);
 
-      virtual macro_t& clone(preprocessor_t &pp_);
+      virtual macro_t& clone(preprocessor_t &pp_) const;
 
       virtual void expand(tokenVector &tokens,
                           identifierToken &source);
@@ -75,7 +75,7 @@ namespace occa {
     public:
       dateMacro(preprocessor_t &pp_);
 
-      virtual macro_t& clone(preprocessor_t &pp_);
+      virtual macro_t& clone(preprocessor_t &pp_) const;
 
       virtual void expand(tokenVector &tokens,
                           identifierToken &source);
@@ -86,7 +86,7 @@ namespace occa {
     public:
       timeMacro(preprocessor_t &pp_);
 
-      virtual macro_t& clone(preprocessor_t &pp_);
+      virtual macro_t& clone(preprocessor_t &pp_) const;
 
       virtual void expand(tokenVector &tokens,
                           identifierToken &source);
@@ -100,7 +100,7 @@ namespace occa {
       counterMacro(preprocessor_t &pp_,
                    const int counter_ = 0);
 
-      virtual macro_t& clone(preprocessor_t &pp_);
+      virtual macro_t& clone(preprocessor_t &pp_) const;
 
       virtual void expand(tokenVector &tokens,
                           identifierToken &source);

@@ -29,12 +29,14 @@
 namespace occa {
   namespace lang {
     file_t::file_t(const std::string &filename_) :
-      filename(io::filename(filename_)),
+      filename(filename_),
+      expandedFilename(io::filename(filename_)),
       content(io::read(filename_)) {}
 
     file_t::file_t(const std::string &filename_,
                    const std::string &content_) :
       filename(filename_),
+      expandedFilename(io::filename(filename_)),
       content(content_) {
       // Local file_t object doesn't require
       //   freeing

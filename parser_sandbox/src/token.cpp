@@ -137,6 +137,12 @@ namespace occa {
       return ss.str();
     }
 
+    void token_t::debugPrint() const {
+      std::cerr << '[';
+      print(std::cerr);
+      std::cerr << "]\n";
+    }
+
     //---[ Unknown ]--------------------
     unknownToken::unknownToken(const fileOrigin &origin_) :
       token_t(origin_) {}

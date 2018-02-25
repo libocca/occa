@@ -93,7 +93,7 @@ public:
 };
 
 template <class input_t, class output_t>
-class addHalfMap : public occa::cacheMap<input_t, output_t> {
+class addHalfMap : public occa::withOutputCache<input_t, output_t> {
 public:
   addHalfMap() {}
 
@@ -101,11 +101,11 @@ public:
     return *(new addHalfMap());
   }
 
-  virtual void pop() {
+  virtual void fetchNext() {
     input_t value;
     *(this->input) >> value;
-    this->push(value);
-    this->push(value + 0.5);
+    this->pushOutput(value);
+    this->pushOutput(value + 0.5);
   }
 };
 

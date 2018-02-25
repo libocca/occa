@@ -50,8 +50,8 @@ namespace occa {
     }
 
     preprocessor_t::preprocessor_t(const preprocessor_t &pp) :
-      cacheMap(pp),
-      tokenizer(NULL) {
+      withInputCache(pp),
+      withOutputCache(pp) {
       *this = pp;
     }
 
@@ -60,8 +60,6 @@ namespace occa {
     }
 
     void preprocessor_t::init() {
-      tokenizer = NULL;
-
       pushStatus(ppStatus::reading);
       // Always start off as if we passed a newline
       incrementNewline();
@@ -109,9 +107,15 @@ namespace occa {
     }
 
     void preprocessor_t::clear_() {
-      while (sourceCache.size()) {
-        sourceCache.pop();
+      while (inputCache.size()) {
+        delete inputCache.front();
+        inputCache.pop_front();
       }
+      while (outputCache.size()) {
+        delete outputCache.front();
+        outputCache.pop_front();
+      }
+
       statusStack.clear();
 
       macroTrie *tries[2] = {
@@ -131,7 +135,7 @@ namespace occa {
     }
 
     preprocessor_t& preprocessor_t::operator = (const preprocessor_t &pp) {
-      sourceCache = pp.sourceCache;
+      clear();
 
       statusStack     = pp.statusStack;
       status          = pp.status;
@@ -149,16 +153,33 @@ namespace occa {
       directives.freeze();
       directives.autoFreeze = true;
 
-      macroTrie *tries[2] = {
-        &compilerMacros,
-        &sourceMacros
-      };
-
+      // Copy cache
+      tokenList *caches[2] = { &inputCache, &outputCache };
+      const tokenList *ppCaches[2] = { &pp.inputCache, &pp.outputCache };
       for (int i = 0; i < 2; ++i) {
-        macroTrie &trie = *(tries[i]);
-        const int trieSize = trie.size();
+        tokenList &cache         = *(caches[i]);
+        const tokenList &ppCache = *(ppCaches[i]);
+
+        tokenList::const_iterator it = ppCache.begin();
+        while (it != ppCache.end()) {
+          cache.push_back((*it)->clone());
+          ++it;
+        }
+      }
+
+      // Copy macros
+      compilerMacros.autoFreeze = false;
+      sourceMacros.autoFreeze   = false;
+      macroTrie *tries[2] = { &compilerMacros, &sourceMacros };
+      const macroTrie *ppTries[2] = { &pp.compilerMacros, &pp.sourceMacros };
+      for (int i = 0; i < 2; ++i) {
+        macroTrie &trie         = *(tries[i]);
+        const macroTrie &ppTrie = *(ppTries[i]);
+
+        const int trieSize = ppTrie.size();
         for (int j = 0; j < trieSize; ++j) {
-          trie.values[j] = &(trie.values[j]->clone(*this));
+          const macro_t *macro = ppTrie.values[j];
+          trie.add(macro->name(), &(macro->clone(*this)));
         }
       }
 
@@ -263,40 +284,15 @@ namespace occa {
       return NULL;
     }
 
-    bool preprocessor_t::hasSourceTokens() {
-      return (!inputIsEmpty() ||
-              !sourceCache.empty());
-    }
-
     token_t* preprocessor_t::getSourceToken() {
       token_t *token = NULL;
-
-      if (sourceCache.size()) {
-        token = sourceCache.top();
-        sourceCache.pop();
-        return token;
-      }
-
       if (!inputIsEmpty()) {
-        *(input) >> token;
+        getNextInput(token);
       }
       return token;
     }
 
-    bool preprocessor_t::isEmpty() {
-      if (!cache.empty()) {
-        return false;
-      }
-
-      while (cache.empty() &&
-             hasSourceTokens()) {
-        pop();
-      }
-
-      return cache.empty();
-    }
-
-    void preprocessor_t::pop() {
+    void preprocessor_t::fetchNext() {
       processToken(getSourceToken());
     }
 
@@ -305,11 +301,9 @@ namespace occa {
       tokenVector tokens;
       macro.expand(tokens, source);
 
-      // Push tokens to the front backwards to
-      //   maintain the same order
       const int tokenCount = (int) tokens.size();
       for (int i = (tokenCount - 1); i >= 0; --i) {
-        sourceCache.push(tokens[i]);
+        pushInput(tokens[i]);
       }
     }
 
@@ -320,7 +314,7 @@ namespace occa {
       // Push the newline token
       const int tokens = (int) lineTokens.size();
       if (tokens) {
-        push(lineTokens[tokens-1]);
+        pushOutput(lineTokens[tokens-1]);
         lineTokens.pop_back();
       }
 
@@ -330,7 +324,7 @@ namespace occa {
     // lineTokens might be partially initialized
     //   so we don't want to clear it
     void preprocessor_t::getLineTokens(tokenVector &lineTokens) {
-      while (hasSourceTokens()) {
+      while (!inputIsEmpty()) {
         token_t *token = getSourceToken();
 
         if (token->type() & tokenType::newline) {
@@ -350,7 +344,7 @@ namespace occa {
       int oldStatus = status;
       status = ppStatus::reading;
 
-      while (hasSourceTokens()) {
+      while (!inputIsEmpty()) {
         token_t *token;
         (*this) >> token;
 
@@ -386,7 +380,7 @@ namespace occa {
 
       if (tokenType & tokenType::newline) {
         incrementNewline();
-        push(token);
+        pushOutput(token);
         return;
       }
 
@@ -410,7 +404,7 @@ namespace occa {
         processOperator(token->to<operatorToken>());
       }
       else {
-        push(token);
+        pushOutput(token);
       }
     }
 
@@ -431,15 +425,14 @@ namespace occa {
           return;
         }
 
-        if (!hasSourceTokens()) {
-          push(&token);
+        if (inputIsEmpty()) {
+          pushOutput(&token);
           return;
         }
 
         // Make sure that the macro starts with a '('
         token_t *nextToken = getSourceToken();
-        if (nextToken &&
-            (nextToken->getOpType() & operatorType::parenthesesStart)) {
+        if (nextToken->getOpType() & operatorType::parenthesesStart) {
           expandMacro(token, *macro);
           delete &token;
           delete nextToken;
@@ -449,26 +442,26 @@ namespace occa {
         //   #define FOO()
         //   int FOO;
         if (nextToken) {
-          sourceCache.push(&token);
-          sourceCache.push(nextToken);
+          pushOutput(&token);
+          pushOutput(nextToken);
         } else {
-          push(&token);
+          pushOutput(&token);
         }
         return;
       }
 
-      push(&token);
+      pushOutput(&token);
     }
 
     void preprocessor_t::processOperator(operatorToken &token) {
       if ((token.opType() != operatorType::hash) ||
           !passedNewline) {
-        push(&token);
+        pushOutput(&token);
         return;
       }
       delete &token;
 
-      if (!hasSourceTokens()) {
+      if (inputIsEmpty()) {
         return;
       }
 
@@ -476,7 +469,7 @@ namespace occa {
       token_t *directive = getSourceToken();
       if (directive->type() & tokenType::newline) {
         incrementNewline();
-        push(directive);
+        pushOutput(directive);
         return;
       }
 
@@ -573,7 +566,7 @@ namespace occa {
         token_t *errorToken = &directive;
         if (tokenType & tokenType::newline) {
           incrementNewline();
-          push(token);
+          pushOutput(token);
         } else if (tokenType & ~tokenType::none) {
           errorToken = token;
         }
@@ -839,10 +832,8 @@ namespace occa {
     }
 
     void preprocessor_t::processInclude(identifierToken &directive) {
-
-      if (!tokenizer) {
-        tokenizer = (tokenizer_t*) getInput("tokenizer_t");
-      }
+      // Don't cache since the input might change
+      tokenizer_t *tokenizer = (tokenizer_t*) getInput("tokenizer_t");
       if (!tokenizer) {
         warningOn(&directive,
                   "Unable to apply #include due to the lack of a tokenizer");
@@ -889,6 +880,8 @@ namespace occa {
       tokenVector lineTokens;
       getExpandedLineTokens(lineTokens);
 
+      // Don't cache since the input might change
+      tokenizer_t *tokenizer = (tokenizer_t*) getInput("tokenizer_t");
       if (!tokenizer) {
         tokenizer = (tokenizer_t*) getInput("tokenizer_t");
       }
@@ -948,10 +941,7 @@ namespace occa {
                   "Extra tokens are unused");
       }
 
-      // TODO: Needs to create a new file instance to avoid
-      //         renaming all versions of *file
-      tokenizer->origin.position.line  = line;
-      tokenizer->origin.file->filename = filename;
+      tokenizer->setOrigin(line, filename);
 
       freeTokenVector(lineTokens);
     }

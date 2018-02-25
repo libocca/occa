@@ -28,26 +28,26 @@ namespace occa {
   namespace lang {
     class token_t;
 
-    typedef streamMap<token_t*, token_t*> tokenMap;
-    typedef cacheMap<token_t*, token_t*> tokenCacheMap;
-    typedef streamFilter<token_t*> tokenFilter;
+    typedef streamFilter<token_t*>              tokenFilter;
+    typedef streamMap<token_t*, token_t*>       tokenMap;
+    typedef withOutputCache<token_t*, token_t*> tokenCacheMap;
 
     class newlineTokenMerger : public tokenCacheMap {
     public:
       newlineTokenMerger();
-      newlineTokenMerger(const newlineTokenMerger &smap);
+      newlineTokenMerger(const newlineTokenMerger &other);
 
       virtual tokenMap& clone_() const;
-      virtual void pop();
+      virtual void fetchNext();
     };
 
     class stringTokenMerger : public tokenCacheMap {
     public:
       stringTokenMerger();
-      stringTokenMerger(const stringTokenMerger &smap);
+      stringTokenMerger(const stringTokenMerger &other);
 
       virtual tokenMap& clone_() const;
-      virtual void pop();
+      virtual void fetchNext();
     };
 
     class unknownTokenFilter : public tokenFilter {
@@ -57,6 +57,8 @@ namespace occa {
       unknownTokenFilter(const bool printError_);
 
       tokenMap& clone_() const;
+
+      void setPrintError(const bool printError_);
 
       virtual bool isValid(token_t * const &token);
     };

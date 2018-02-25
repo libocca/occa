@@ -17,7 +17,7 @@ tests   = $(subst $(testPath)/,$(testPath)/bin/,$(testSources:.cpp=))
 
 flags += -I$(incPath)
 
-ifndef ENABLE_VALGRIND
+ifndef VALGRIND_ENABLED
   testFlags = $(compilerFlags) -fsanitize=address -fno-omit-frame-pointer
 else
   testFlags = $(compilerFlags)

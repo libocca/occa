@@ -37,11 +37,14 @@
 
 namespace occa {
   namespace lang {
-    typedef trie<macro_t*>                macroTrie;
-    typedef streamMap<token_t*, token_t*> tokenMap;
-    typedef cacheMap<token_t*, token_t*>  tokenCacheMap;
-    typedef std::stack<token_t*>          tokenStack;
     class tokenizer_t;
+
+    typedef trie<macro_t*>        macroTrie;
+    typedef std::vector<token_t*> tokenVector;
+    typedef std::stack<token_t*>  tokenStack;
+    typedef std::list<token_t*>   tokenList;
+
+    typedef streamMap<token_t*, token_t*> tokenMap;
 
     namespace ppStatus {
       extern const int reading;
@@ -51,13 +54,11 @@ namespace occa {
       extern const int finishedIf;
     }
 
-    class preprocessor_t : public tokenCacheMap {
+    class preprocessor_t : public withInputCache<token_t*, token_t*>,
+                           public withOutputCache<token_t*, token_t*> {
     public:
       typedef void (preprocessor_t::*processDirective_t)(identifierToken &directive);
       typedef trie<processDirective_t> directiveTrie;
-
-      tokenizer_t *tokenizer;
-      tokenStack sourceCache;
 
       //---[ Status ]-------------------
       std::vector<int> statusStack;
@@ -113,11 +114,9 @@ namespace occa {
       macro_t* getMacro(const std::string &name);
       macro_t* getSourceMacro();
 
-      bool hasSourceTokens();
       token_t* getSourceToken();
 
-      virtual bool isEmpty();
-      virtual void pop();
+      virtual void fetchNext();
 
       void expandMacro(identifierToken &source,
                        macro_t &macro);

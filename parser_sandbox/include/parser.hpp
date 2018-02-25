@@ -22,21 +22,31 @@
 #ifndef OCCA_PARSER_PARSER_HEADER2
 #define OCCA_PARSER_PARSER_HEADER2
 
-#include "stream.hpp"
+#include "preprocessor.hpp"
+#include "processingStages.hpp"
 #include "statement.hpp"
+#include "tokenizer.hpp"
 
 namespace occa {
   namespace lang {
-    class token_t;
-
     typedef stream<token_t*>          tokenStream;
     typedef std::vector<statement_t*> statementVector;
 
     class parser {
     public:
+      //---[ Stream ]-------------------
       tokenStream stream;
+      tokenizer_t tokenizer;
+      preprocessor_t preprocessor;
+      stringTokenMerger stringMerger;
+      newlineTokenMerger newlineMerger;
+      unknownTokenFilter unknownFilter;
+      //================================
+
+      //---[ Status ]-------------------
       blockStatement root;
       statementVector smntStack;
+      //================================
 
       parser();
     };

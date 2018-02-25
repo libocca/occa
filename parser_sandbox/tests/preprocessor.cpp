@@ -530,7 +530,9 @@ void testSpecialMacros() {
 }
 
 void testIncludeDefine() {
-  std::string testFile = occa::env::OCCA_DIR + "/parser_sandbox/tests/files/preprocessor.cpp";
+  const std::string testFile = (occa::env::OCCA_DIR
+                                + "parser_sandbox/tests/files/preprocessor.cpp");
+
   std::stringstream ss;
   ss << "#include \"" << testFile << "\"\n"
      << "#include <"  << testFile << ">\n"

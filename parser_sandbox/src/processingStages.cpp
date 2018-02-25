@@ -28,18 +28,18 @@ namespace occa {
     //---[ Newlines ]-------------------
     newlineTokenMerger::newlineTokenMerger() {}
 
-    newlineTokenMerger::newlineTokenMerger(const newlineTokenMerger &smap) :
-      cacheMap(smap) {}
+    newlineTokenMerger::newlineTokenMerger(const newlineTokenMerger &other) :
+      tokenCacheMap(other) {}
 
     tokenMap& newlineTokenMerger::clone_() const {
       return *(new newlineTokenMerger(*this));
     }
 
-    void newlineTokenMerger::pop() {
+    void newlineTokenMerger::fetchNext() {
       token_t *token = NULL;
 
       *(this->input) >> token;
-      push(token);
+      pushOutput(token);
 
       // Not a newline token
       if (!(token->type() & tokenType::newline)) {
@@ -55,7 +55,7 @@ namespace occa {
           continue;
         }
 
-        push(token);
+        pushOutput(token);
         break;
       }
     }
@@ -64,21 +64,21 @@ namespace occa {
     //---[ Strings ]--------------------
     stringTokenMerger::stringTokenMerger() {}
 
-    stringTokenMerger::stringTokenMerger(const stringTokenMerger &smap) :
-      cacheMap(smap) {}
+    stringTokenMerger::stringTokenMerger(const stringTokenMerger &other) :
+      tokenCacheMap(other) {}
 
     tokenMap& stringTokenMerger::clone_() const {
       return *(new stringTokenMerger(*this));
     }
 
-    void stringTokenMerger::pop() {
+    void stringTokenMerger::fetchNext() {
       token_t *token = NULL;
 
       *(this->input) >> token;
 
       // Not a string token
       if (!(token->type() & tokenType::string)) {
-        push(token);
+        pushOutput(token);
         return;
       }
 
@@ -101,7 +101,7 @@ namespace occa {
         }
       }
 
-      push(&strToken);
+      pushOutput(&strToken);
     }
     //==================================
 
@@ -111,6 +111,10 @@ namespace occa {
 
     tokenMap& unknownTokenFilter::clone_() const {
       return *(new unknownTokenFilter(printError));
+    }
+
+    void unknownTokenFilter::setPrintError(const bool printError_) {
+      printError = printError_;
     }
 
     bool unknownTokenFilter::isValid(token_t * const &token) {

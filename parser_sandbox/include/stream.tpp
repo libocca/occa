@@ -235,40 +235,70 @@ namespace occa {
   //====================================
 
 
-  //---[ cacheMap ]---------------------
+  //---[ Cache ]------------------------
   template <class input_t, class output_t>
-  cacheMap<input_t, output_t>::cacheMap() :
-    cache() {}
+  withInputCache<input_t, output_t>::withInputCache() :
+    inputCache() {}
 
   template <class input_t, class output_t>
-  cacheMap<input_t, output_t>::cacheMap(
-    const cacheMap<input_t, output_t> &smap
+  withInputCache<input_t, output_t>::withInputCache(
+    const withInputCache<input_t, output_t> &other
   ) :
-    cache(smap.cache) {}
+    inputCache(other.inputCache) {}
 
   template <class input_t, class output_t>
-  bool cacheMap<input_t, output_t>::isEmpty() {
-    if (!cache.empty()) {
+  bool withInputCache<input_t, output_t>::inputIsEmpty() const {
+    if (inputCache.size()) {
       return false;
     }
+    return streamMap<input_t, output_t>::inputIsEmpty();
+  }
+
+  template <class input_t, class output_t>
+  void withInputCache<input_t, output_t>::pushInput(const input_t &value) {
+    inputCache.push_front(value);
+  }
+
+  template <class input_t, class output_t>
+  void withInputCache<input_t, output_t>::getNextInput(input_t &value) {
+    if (inputCache.size()) {
+      value = inputCache.front();
+      inputCache.pop_front();
+    } else {
+      (*this->input) >> value;
+    }
+  }
+
+  template <class input_t, class output_t>
+  withOutputCache<input_t, output_t>::withOutputCache() :
+    outputCache() {}
+
+  template <class input_t, class output_t>
+  withOutputCache<input_t, output_t>::withOutputCache(
+    const withOutputCache<input_t, output_t> &other
+  ) :
+    outputCache(other.outputCache) {}
+
+  template <class input_t, class output_t>
+  bool withOutputCache<input_t, output_t>::isEmpty() {
     while (!this->inputIsEmpty() &&
-           cache.empty()) {
-      this->pop();
+           outputCache.empty()) {
+      this->fetchNext();
     }
-    return cache.empty();
+    return outputCache.empty();
   }
 
   template <class input_t, class output_t>
-  void cacheMap<input_t, output_t>::setNext(output_t &out) {
+  void withOutputCache<input_t, output_t>::setNext(output_t &out) {
     if (!isEmpty()) {
-      out = cache.front();
-      cache.pop();
+      out = outputCache.front();
+      outputCache.pop_front();
     }
   }
 
   template <class input_t, class output_t>
-  void cacheMap<input_t, output_t>::push(const output_t &value) {
-    cache.push(value);
+  void withOutputCache<input_t, output_t>::pushOutput(const output_t &value) {
+    outputCache.push_back(value);
   }
   //====================================
 }

@@ -78,14 +78,12 @@ namespace occa {
     }
 
     tokenizer_t::tokenizer_t() :
-      lastToken(NULL),
       origin(originSource::string),
       fp(origin.position) {
       getOperators(operators);
     }
 
     tokenizer_t::tokenizer_t(const char *root) :
-      lastToken(NULL),
       origin(originSource::string,
              filePosition(root)),
       fp(origin.position) {
@@ -94,32 +92,29 @@ namespace occa {
 
     tokenizer_t::tokenizer_t(file_t *file_,
                              const char *root) :
-      lastToken(NULL),
       origin(*file_, filePosition(root)),
       fp(origin.position) {
       getOperators(operators);
     }
 
     tokenizer_t::tokenizer_t(fileOrigin origin_) :
-      lastToken(NULL),
       origin(origin_),
       fp(origin.position) {
       getOperators(operators);
     }
 
     tokenizer_t::tokenizer_t(const tokenizer_t &stream) :
-      lastToken(stream.lastToken),
       origin(stream.origin),
       fp(origin.position),
       stack(stream.stack) {
+      // TODO: Copy over outputCache
       getOperators(operators);
     }
 
-
     tokenizer_t& tokenizer_t::operator = (const tokenizer_t &stream) {
-      lastToken = stream.lastToken;
-      origin    = stream.origin;
-      stack     = stream.stack;
+      // TODO: Copy over outputCache
+      origin = stream.origin;
+      stack  = stream.stack;
       return *this;
     }
 
@@ -155,6 +150,13 @@ namespace occa {
     void tokenizer_t::clear() {
       stack.clear();
       origin.clear();
+
+      tokenList::iterator it = outputCache.begin();
+      while (it != outputCache.end()) {
+        delete *it;
+        ++it;
+      }
+      outputCache.clear();
     }
 
     void tokenizer_t::preprint(std::ostream &out) {
@@ -176,22 +178,37 @@ namespace occa {
 
     bool tokenizer_t::isEmpty() {
       while (!reachedTheEnd() &&
-             !lastToken) {
-        lastToken = getToken();
+             outputCache.empty()) {
+        token_t *token = getToken();
+        if (token) {
+          outputCache.push_back(token);
+        }
       }
-      return !lastToken;
+      return outputCache.empty();
     }
 
     void tokenizer_t::setNext(token_t *&out) {
       if (!isEmpty()) {
-        out = lastToken;
-        lastToken = NULL;
+        out = outputCache.front();
+        outputCache.pop_front();
       } else {
         out = NULL;
       }
     }
 
     void tokenizer_t::pushSource(const std::string &filename) {
+      // Delete tokens and rewind
+      if (outputCache.size()) {
+        origin = outputCache.front()->origin;
+      }
+      tokenList::iterator it = outputCache.begin();
+      while (it != outputCache.end()) {
+        delete *it;
+        ++it;
+      }
+      outputCache.clear();
+
+      // TODO: Use a fileCache
       file_t *file = new file_t(filename);
       origin.push(true,
                   *file,
@@ -756,6 +773,22 @@ namespace occa {
       std::string value;
       getString(value);
       return value;
+    }
+
+    void tokenizer_t::setOrigin(const int line,
+                                const std::string &filename) {
+      // TODO: Needs to create a new file instance to avoid
+      //         renaming all versions of *file
+      origin.position.line  = line;
+      origin.file->filename = filename;
+      // Update all cached tokens
+      tokenList::iterator it = outputCache.begin();
+      while (it != outputCache.end()) {
+        token_t *token = *it;
+        token->origin.position.line  = line;
+        token->origin.file->filename = filename;
+        ++it;
+      }
     }
 
     tokenVector tokenizer_t::tokenize(const std::string &source) {

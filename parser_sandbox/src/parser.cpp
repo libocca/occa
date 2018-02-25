@@ -19,18 +19,19 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  */
-#include "token.hpp"
-#include "tokenizer.hpp"
 #include "parser.hpp"
-#include "preprocessor.hpp"
-#include "processingStages.hpp"
 
 namespace occa {
   namespace lang {
-    parser::parser() {
-      // stream = (tokenizer(source.c_str())
-                // .map(preprocessor())
-                // .map(newlineTokenMerger()));
+    parser::parser() :
+      unknownFilter(true) {
+      // Properly implement `identifier-nondigit` for identifiers
+      // Meanwhile, we use the unknownFilter
+      stream = (tokenizer
+                .filter(unknownFilter)
+                .map(preprocessor)
+                .map(stringMerger)
+                .map(newlineMerger));
     }
   }
 }

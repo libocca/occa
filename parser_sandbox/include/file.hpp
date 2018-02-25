@@ -34,6 +34,7 @@ namespace occa {
     class file_t : public withRefs {
     public:
       std::string filename;
+      std::string expandedFilename;
       std::string content;
 
       file_t(const std::string &filename_);

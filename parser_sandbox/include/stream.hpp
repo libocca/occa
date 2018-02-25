@@ -23,7 +23,7 @@
 #define OCCA_STREAM_HEADER2
 
 #include <cstddef>
-#include <queue>
+#include <list>
 
 #include "occa/types.hpp"
 #include "occa/tools/properties.hpp"
@@ -107,7 +107,7 @@ namespace occa {
     streamMap();
     ~streamMap();
 
-    bool inputIsEmpty() const;
+    virtual bool inputIsEmpty() const;
     virtual bool isEmpty();
 
     virtual streamMap& clone() const;
@@ -161,23 +161,37 @@ namespace occa {
   //====================================
 
 
-  //---[ cacheMap ]---------------------
-  template <class input_t,
-            class output_t>
-  class cacheMap : public streamMap<input_t, output_t> {
+  //---[ Cache ]------------------------
+  template <class input_t, class output_t>
+  class withInputCache : virtual public streamMap<input_t, output_t> {
   public:
-    std::queue<output_t> cache;
+    std::list<input_t> inputCache;
 
-    cacheMap();
-    cacheMap(const cacheMap<input_t, output_t> &smap);
+    withInputCache();
+    withInputCache(const withInputCache<input_t, output_t> &other);
+
+    virtual bool inputIsEmpty() const;
+
+    void pushInput(const input_t &value);
+
+    void getNextInput(input_t &value);
+  };
+
+  template <class input_t, class output_t>
+  class withOutputCache : virtual public streamMap<input_t, output_t> {
+  public:
+    std::list<output_t> outputCache;
+
+    withOutputCache();
+    withOutputCache(const withOutputCache<input_t, output_t> &other);
 
     virtual bool isEmpty();
 
     virtual void setNext(output_t &out);
 
-    void push(const output_t &value);
+    void pushOutput(const output_t &value);
 
-    virtual void pop() = 0;
+    virtual void fetchNext() = 0;
   };
   //====================================
 }

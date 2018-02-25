@@ -75,7 +75,7 @@ namespace occa {
                                  token_t *thisToken_) :
       macroToken(pp_, thisToken_) {}
 
-    macroToken* macroRawToken::clone() {
+    macroToken* macroRawToken::clone() const {
       return new macroRawToken(pp, thisToken);
     }
 
@@ -96,7 +96,7 @@ namespace occa {
 
     macroArgument::~macroArgument() {}
 
-    macroToken* macroArgument::clone() {
+    macroToken* macroArgument::clone() const {
       return new macroArgument(pp, thisToken, arg, argc);
     }
 
@@ -134,7 +134,7 @@ namespace occa {
       delete token;
     }
 
-    macroToken* macroStringify::clone() {
+    macroToken* macroStringify::clone() const {
       return new macroStringify(pp, token);
     }
 
@@ -185,7 +185,7 @@ namespace occa {
       freeTokenVector(tokens);
     }
 
-    macroToken* macroConcat::clone() {
+    macroToken* macroConcat::clone() const {
       macroTokenVector_t newTokens;
       cloneMacroTokenVector(newTokens, tokens);
       return new macroConcat(pp, newTokens);
@@ -279,7 +279,7 @@ namespace occa {
       thisToken.origin.position = filePosition(0, c, c, c + chars);
     }
 
-    macro_t& macro_t::clone(preprocessor_t &pp_) {
+    macro_t& macro_t::clone(preprocessor_t &pp_) const {
       macro_t &macro = *(new macro_t(pp_,
                                      thisToken,
                                      isBuiltin,

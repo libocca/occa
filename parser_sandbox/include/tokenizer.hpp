@@ -22,6 +22,9 @@
 #ifndef OCCA_PARSER_SOURCETREAM_HEADER2
 #define OCCA_PARSER_SOURCETREAM_HEADER2
 
+#include <list>
+#include <vector>
+
 #include "occa/tools/io.hpp"
 
 #include "errorHandler.hpp"
@@ -34,7 +37,8 @@ namespace occa {
   namespace lang {
     class token_t;
 
-    typedef std::vector<token_t*> tokenVector;
+    typedef std::vector<token_t*>   tokenVector;
+    typedef std::list<token_t*>     tokenList;
     typedef std::vector<fileOrigin> originVector;
     typedef trie<const operator_t*> operatorTrie;
 
@@ -43,9 +47,9 @@ namespace occa {
     int getStringEncoding(const std::string &str);
 
     class tokenizer_t : public baseStream<token_t*>,
-                      public errorHandler {
+                        public errorHandler {
     public:
-      token_t *lastToken;
+      tokenList outputCache;
 
       fileOrigin origin;
       filePosition &fp;
@@ -130,6 +134,9 @@ namespace occa {
 
       int peekForHeader();
       std::string getHeader();
+
+      void setOrigin(const int line,
+                     const std::string &filename);
 
       static tokenVector tokenize(const std::string &source);
 

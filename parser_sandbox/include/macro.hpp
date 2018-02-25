@@ -57,7 +57,7 @@ namespace occa {
                  token_t *thisToken_);
       virtual ~macroToken();
 
-      virtual macroToken* clone() = 0;
+      virtual macroToken* clone() const = 0;
 
       virtual bool expand(tokenVector &newTokens,
                           token_t *source,
@@ -69,7 +69,7 @@ namespace occa {
       macroRawToken(preprocessor_t &pp_,
                     token_t *token_);
 
-      virtual macroToken* clone();
+      virtual macroToken* clone() const;
 
       virtual bool expand(tokenVector &newTokens,
                           token_t *source,
@@ -91,7 +91,7 @@ namespace occa {
                      std::vector<tokenVector> &args,
                      const int arg_);
 
-      virtual macroToken* clone();
+      virtual macroToken* clone() const;
 
       virtual bool expand(tokenVector &newTokens,
                           token_t *source,
@@ -106,7 +106,7 @@ namespace occa {
                      macroToken *token_);
       ~macroStringify();
 
-      virtual macroToken* clone();
+      virtual macroToken* clone() const;
 
       virtual bool expand(tokenVector &newTokens,
                           token_t *source,
@@ -121,7 +121,7 @@ namespace occa {
                   const macroTokenVector_t &tokens_);
       ~macroConcat();
 
-      virtual macroToken* clone();
+      virtual macroToken* clone() const;
 
       virtual bool expand(tokenVector &newTokens,
                           token_t *source,
@@ -165,7 +165,7 @@ namespace occa {
         return thisToken.value;
       }
 
-      virtual macro_t& clone(preprocessor_t &pp_);
+      virtual macro_t& clone(preprocessor_t &pp_) const;
 
       void loadDefinition();
 

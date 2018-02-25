@@ -128,6 +128,7 @@ namespace occa {
       void postprint(std::ostream &out);
 
       std::string str() const;
+      void debugPrint() const;
     };
 
     //---[ Unknown ]--------------------

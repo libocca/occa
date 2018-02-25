@@ -37,7 +37,7 @@ namespace occa {
       argNames.add("MACRO_NAME", 0);
     }
 
-    macro_t& definedMacro::clone(preprocessor_t &pp_) {
+    macro_t& definedMacro::clone(preprocessor_t &pp_) const {
       return *(new definedMacro(pp_));
     }
 
@@ -89,7 +89,7 @@ namespace occa {
       argNames.add("INCLUDE_PATH", 0);
     }
 
-    macro_t& hasIncludeMacro::clone(preprocessor_t &pp_) {
+    macro_t& hasIncludeMacro::clone(preprocessor_t &pp_) const {
       return *(new hasIncludeMacro(pp_));
     }
 
@@ -132,7 +132,7 @@ namespace occa {
     fileMacro::fileMacro(preprocessor_t &pp_) :
       macro_t(pp_, "__FILE__") {}
 
-    macro_t& fileMacro::clone(preprocessor_t &pp_) {
+    macro_t& fileMacro::clone(preprocessor_t &pp_) const {
       return *(new fileMacro(pp_));
     }
 
@@ -146,7 +146,7 @@ namespace occa {
     lineMacro::lineMacro(preprocessor_t &pp_) :
       macro_t(pp_, "__LINE__") {}
 
-    macro_t& lineMacro::clone(preprocessor_t &pp_) {
+    macro_t& lineMacro::clone(preprocessor_t &pp_) const {
       return *(new lineMacro(pp_));
     }
 
@@ -162,7 +162,7 @@ namespace occa {
     dateMacro::dateMacro(preprocessor_t &pp_) :
       macro_t(pp_, "__DATE__") {}
 
-    macro_t& dateMacro::clone(preprocessor_t &pp_) {
+    macro_t& dateMacro::clone(preprocessor_t &pp_) const {
       return *(new dateMacro(pp_));
     }
 
@@ -197,7 +197,7 @@ namespace occa {
     timeMacro::timeMacro(preprocessor_t &pp_) :
       macro_t(pp_, "__TIME__") {}
 
-    macro_t& timeMacro::clone(preprocessor_t &pp_) {
+    macro_t& timeMacro::clone(preprocessor_t &pp_) const {
       return *(new timeMacro(pp_));
     }
 
@@ -234,7 +234,7 @@ namespace occa {
       macro_t(pp_, "__COUNTER__"),
       counter(counter_) {}
 
-    macro_t& counterMacro::clone(preprocessor_t &pp_) {
+    macro_t& counterMacro::clone(preprocessor_t &pp_) const {
       return *(new counterMacro(pp_, counter));
     }
 
