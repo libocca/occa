@@ -62,8 +62,7 @@ namespace occa {
 
       tokenizer_t(const char *root);
 
-      tokenizer_t(file_t *file_,
-                const char *root);
+      tokenizer_t(file_t *file_);
 
       tokenizer_t(fileOrigin origin_);
 
@@ -79,8 +78,7 @@ namespace occa {
 
       void set(const char *root);
 
-      void set(file_t *file_,
-               const char *root);
+      void set(file_t *file_);
 
       void clear();
 

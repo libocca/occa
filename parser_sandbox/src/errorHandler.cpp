@@ -19,7 +19,7 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  */
-#include "occa/tools/string.hpp"
+#include "occa/tools/sys.hpp"
 
 #include "errorHandler.hpp"
 
@@ -35,8 +35,7 @@ namespace occa {
     void errorHandler::printNote(std::ostream &out,
                                  const std::string &message) {
       preprint(out);
-      out << blue("Note: ")
-          << message << '\n';
+      occa::printNote(out, message);
       postprint(out);
     }
 
@@ -44,8 +43,7 @@ namespace occa {
                                     const std::string &message) {
       ++warnings;
       preprint(out);
-      out << yellow("Warning: ")
-          << message << '\n';
+      occa::printWarning(out, message);
       postprint(out);
     }
 
@@ -53,8 +51,7 @@ namespace occa {
                                   const std::string &message) {
       ++errors;
       preprint(out);
-      out << red("Error: ")
-          << message << '\n';
+      occa::printError(out, message);
       postprint(out);
     }
   }

@@ -36,28 +36,30 @@ namespace occa {
     typedef std::vector<statement_t*> statementPtrVector;
     typedef std::vector<attribute_t>  attributeVector_t;
 
-    class statementType {
-    public:
-      static const int none        = 0;
-      static const int empty       = (1 << 0);
-      static const int pragma      = (1 << 1);
-      static const int block       = (1 << 2);
-      static const int typeDecl    = (1 << 3);
-      static const int classAccess = (1 << 4);
-      static const int expression  = (1 << 5);
-      static const int declaration = (1 << 6);
-      static const int goto_       = (1 << 7);
-      static const int gotoLabel   = (1 << 8);
-      static const int namespace_  = (1 << 9);
-      static const int while_      = (1 << 10);
-      static const int for_        = (1 << 11);
-      static const int switch_     = (1 << 12);
-      static const int case_       = (1 << 13);
-      static const int continue_   = (1 << 14);
-      static const int break_      = (1 << 15);
-      static const int return_     = (1 << 16);
-      static const int attribute   = (1 << 17);
-    };
+    namespace statementType {
+      extern const int none;
+      extern const int empty;
+      extern const int pragma;
+      extern const int block;
+      extern const int typeDecl;
+      extern const int classAccess;
+      extern const int expression;
+      extern const int declaration;
+      extern const int goto_;
+      extern const int gotoLabel;
+      extern const int namespace_;
+      extern const int if_;
+      extern const int elif_;
+      extern const int else_;
+      extern const int for_;
+      extern const int while_;
+      extern const int switch_;
+      extern const int case_;
+      extern const int continue_;
+      extern const int break_;
+      extern const int return_;
+      extern const int attribute;
+    }
 
     class statement_t {
     public:
@@ -89,7 +91,9 @@ namespace occa {
         return *ptr;
       }
 
-      virtual statement_t& clone() const = 0;
+      statement_t& clone() const;
+      virtual statement_t& clone_() const = 0;
+
       virtual int type() const = 0;
 
       virtual scope_t* getScope();
@@ -108,7 +112,7 @@ namespace occa {
     public:
       emptyStatement();
 
-      virtual statement_t& clone() const;
+      virtual statement_t& clone_() const;
       virtual int type() const;
 
       virtual void print(printer &pout) const;
@@ -122,12 +126,13 @@ namespace occa {
       scope_t scope;
 
       blockStatement();
+      blockStatement(const blockStatement &other);
 
       bool hasChildren() const;
       void addChild(statement_t &child);
       void clearChildren();
 
-      virtual statement_t& clone() const;
+      virtual statement_t& clone_() const;
       virtual int type() const;
 
       virtual scope_t* getScope();

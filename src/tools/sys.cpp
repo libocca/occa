@@ -945,6 +945,21 @@ namespace occa {
              filename, function, line, message);
   }
 
+  void printNote(std::ostream &out,
+                 const std::string &message) {
+    out << blue("Note") << ": " << message << '\n';
+  }
+
+  void printWarning(std::ostream &out,
+                    const std::string &message) {
+    out << yellow("Warning") << ": " << message << '\n';
+  }
+
+  void printError(std::ostream &out,
+                  const std::string &message) {
+    out << red("Error") << ": " << message << '\n';
+  }
+
   mutex::mutex() {
 #if (OCCA_OS & (OCCA_LINUX_OS | OCCA_OSX_OS))
     int error = pthread_mutex_init(&mutexHandle, NULL);

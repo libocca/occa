@@ -107,6 +107,9 @@ namespace occa {
     }
 
     void preprocessor_t::clear_() {
+      errors   = 0;
+      warnings = 0;
+
       while (inputCache.size()) {
         delete inputCache.front();
         inputCache.pop_front();

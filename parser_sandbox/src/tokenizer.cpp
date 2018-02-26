@@ -90,9 +90,8 @@ namespace occa {
       getOperators(operators);
     }
 
-    tokenizer_t::tokenizer_t(file_t *file_,
-                             const char *root) :
-      origin(*file_, filePosition(root)),
+    tokenizer_t::tokenizer_t(file_t *file_) :
+      origin(*file_),
       fp(origin.position) {
       getOperators(operators);
     }
@@ -140,14 +139,15 @@ namespace occa {
                           filePosition(root));
     }
 
-    void tokenizer_t::set(file_t *file_,
-                          const char *root) {
+    void tokenizer_t::set(file_t *file_) {
       clear();
-      origin = fileOrigin(*file_,
-                          filePosition(root));
+      origin = fileOrigin(*file_);
     }
 
     void tokenizer_t::clear() {
+      errors   = 0;
+      warnings = 0;
+
       stack.clear();
       origin.clear();
 

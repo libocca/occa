@@ -147,6 +147,27 @@ namespace occa {
              const int line,
              const std::string &message);
 
+  void printNote(std::ostream &out,
+                 const std::string &message);
+
+  inline void printNote(const std::string &message) {
+    printNote(std::cerr, message);
+  }
+
+  void printWarning(std::ostream &out,
+                    const std::string &message);
+
+  inline void printWarning(const std::string &message) {
+    printWarning(std::cerr, message);
+  }
+
+  void printError(std::ostream &out,
+                  const std::string &message);
+
+  inline void printError(const std::string &message) {
+    printError(std::cerr, message);
+  }
+
   class mutex {
   public:
 #if (OCCA_OS & (OCCA_LINUX_OS | OCCA_OSX_OS))

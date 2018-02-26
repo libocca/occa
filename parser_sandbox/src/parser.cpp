@@ -23,8 +23,9 @@
 
 namespace occa {
   namespace lang {
-    parser::parser() :
-      unknownFilter(true) {
+    parser_t::parser_t() :
+      unknownFilter(true),
+      root(NULL) {
       // Properly implement `identifier-nondigit` for identifiers
       // Meanwhile, we use the unknownFilter
       stream = (tokenizer
@@ -32,6 +33,52 @@ namespace occa {
                 .map(preprocessor)
                 .map(stringMerger)
                 .map(newlineMerger));
+    }
+
+    parser_t::~parser_t() {
+      clear();
+    }
+
+    void parser_t::clear() {
+      tokenizer.clear();
+      preprocessor.clear();
+
+      delete root;
+      root = NULL;
+    }
+
+    void parser_t::parseSource(const std::string &source) {
+      tokenizer.set(source.c_str());
+      parse();
+    }
+
+    void parser_t::parseFile(const std::string &filename) {
+      tokenizer.set(new file_t(filename));
+      parse();
+    }
+
+    bool parser_t::inputIsEmpty() {
+      return (stream.isEmpty() &&
+              !inputCache.size());
+    }
+
+    token_t* parser_t::getToken() {
+      token_t *token = NULL;
+      if (inputCache.size()) {
+        token = inputCache.front();
+        inputCache.pop_front();
+      } else {
+        stream >> token;
+      }
+      return token;
+    }
+
+    void parser_t::parse() {
+      root = new blockStatement();
+      loadBlockStatement(*root);
+    }
+
+    void parser_t::loadBlockStatement(blockStatement &smnt) {
     }
   }
 }

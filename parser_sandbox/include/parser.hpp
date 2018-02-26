@@ -22,6 +22,8 @@
 #ifndef OCCA_PARSER_PARSER_HEADER2
 #define OCCA_PARSER_PARSER_HEADER2
 
+#include <list>
+
 #include "preprocessor.hpp"
 #include "processingStages.hpp"
 #include "statement.hpp"
@@ -30,11 +32,14 @@
 namespace occa {
   namespace lang {
     typedef stream<token_t*>          tokenStream;
-    typedef std::vector<statement_t*> statementVector;
+    typedef std::list<statement_t*>   statementList;
+    typedef std::vector<attribute_t*> attributeVector;
 
-    class parser {
+    class parser_t {
     public:
       //---[ Stream ]-------------------
+      tokenList inputCache;
+
       tokenStream stream;
       tokenizer_t tokenizer;
       preprocessor_t preprocessor;
@@ -44,11 +49,38 @@ namespace occa {
       //================================
 
       //---[ Status ]-------------------
-      blockStatement root;
-      statementVector smntStack;
+      blockStatement *root;
+      statementList smntStack;
+      attributeVector attributes;
       //================================
 
-      parser();
+      parser_t();
+      ~parser_t();
+
+      void clear();
+
+      void parseSource(const std::string &source);
+      void parseFile(const std::string &filename);
+
+      bool inputIsEmpty();
+      token_t* getToken();
+
+      void parse();
+
+      void loadBlockStatement(blockStatement &smnt);
+
+      void loadForStatement(forStatement &smnt);
+
+      void loadWhileStatement(whileStatement &smnt);
+
+      void loadIfStatement(ifStatement &smnt);
+      void loadElseIfStatement(elifStatement &smnt);
+      void loadElseStatement(elseStatement &smnt);
+
+      void* getDeclaration();
+      void* getExpression();
+      void* getFunction();
+      void* getAttribute();
     };
   }
 }

@@ -19,6 +19,7 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  */
+#include "expression.hpp"
 #include "statement.hpp"
 #include "type.hpp"
 
@@ -29,10 +30,8 @@ namespace occa {
       statement_t(),
       line(line_) {}
 
-    statement_t& pragmaStatement::clone() const {
-      pragmaStatement &s = *(new pragmaStatement(line));
-      s.attributes = attributes;
-      return s;
+    statement_t& pragmaStatement::clone_() const {
+      return *(new pragmaStatement(line));
     }
 
     int pragmaStatement::type() const {
@@ -42,18 +41,16 @@ namespace occa {
     void pragmaStatement::print(printer &pout) const {
       pout << "#pragma " << line << '\n';
     }
-    //====================================
+    //==================================
 
-    //---[ Type ]-------------------------
+    //---[ Type ]-----------------------
     typeDeclStatement::typeDeclStatement(declarationType &declType_) :
       statement_t(),
       declType(declType_) {}
 
 
-    statement_t& typeDeclStatement::clone() const {
-      typeDeclStatement &s = *(new typeDeclStatement(declType));
-      s.attributes = attributes;
-      return s;
+    statement_t& typeDeclStatement::clone_() const {
+      return *(new typeDeclStatement(declType));
     }
 
     int typeDeclStatement::type() const {
@@ -78,10 +75,8 @@ namespace occa {
       statement_t(),
       access(access_) {}
 
-    statement_t& classAccessStatement::clone() const {
-      classAccessStatement &s = *(new classAccessStatement(access));
-      s.attributes = attributes;
-      return s;
+    statement_t& classAccessStatement::clone_() const {
+      return *(new classAccessStatement(access));
     }
 
     int classAccessStatement::type() const {
@@ -104,17 +99,15 @@ namespace occa {
 
       pout.addIndentation();
     }
-    //====================================
+    //==================================
 
-    //---[ Expression ]-------------------
+    //---[ Expression ]-----------------
     expressionStatement::expressionStatement(exprNode &expression_) :
       statement_t(),
       expression(expression_) {}
 
-    statement_t& expressionStatement::clone() const {
-      expressionStatement &s = *(new expressionStatement(expression));
-      s.attributes = attributes;
-      return s;
+    statement_t& expressionStatement::clone_() const {
+      return *(new expressionStatement(expression));
     }
 
     int expressionStatement::type() const {
@@ -127,10 +120,8 @@ namespace occa {
     declarationStatement::declarationStatement() :
       statement_t() {}
 
-    statement_t& declarationStatement::clone() const {
-      declarationStatement &s = *(new declarationStatement());
-      s.attributes = attributes;
-      return s;
+    statement_t& declarationStatement::clone_() const {
+      return *(new declarationStatement());
     }
 
     int declarationStatement::type() const {
@@ -139,17 +130,15 @@ namespace occa {
 
     void declarationStatement::print(printer &pout) const {
     }
-    //====================================
+    //==================================
 
-    //---[ Goto ]-------------------------
+    //---[ Goto ]-----------------------
     gotoStatement::gotoStatement(const std::string &name_) :
       statement_t(),
       name(name_) {}
 
-    statement_t& gotoStatement::clone() const {
-      gotoStatement &s = *(new gotoStatement(name));
-      s.attributes = attributes;
-      return s;
+    statement_t& gotoStatement::clone_() const {
+      return *(new gotoStatement(name));
     }
 
     int gotoStatement::type() const {
@@ -165,10 +154,8 @@ namespace occa {
       statement_t(),
       name(name_) {}
 
-    statement_t& gotoLabelStatement::clone() const {
-      gotoLabelStatement &s = *(new gotoLabelStatement(name));
-      s.attributes = attributes;
-      return s;
+    statement_t& gotoLabelStatement::clone_() const {
+      return *(new gotoLabelStatement(name));
     }
 
     int gotoLabelStatement::type() const {
@@ -178,17 +165,19 @@ namespace occa {
     void gotoLabelStatement::print(printer &pout) const {
       pout << name << ":\n";
     }
-    //====================================
+    //==================================
 
-    //---[ Namespace ]--------------------
+    //---[ Namespace ]------------------
     namespaceStatement::namespaceStatement(const std::string &name_) :
       blockStatement(),
       name(name_) {}
 
-    statement_t& namespaceStatement::clone() const {
-      namespaceStatement &s = *(new namespaceStatement(name));
-      s.attributes = attributes;
-      return s;
+    namespaceStatement::namespaceStatement(const namespaceStatement &other) :
+      blockStatement(other),
+      name(other.name) {}
+
+    statement_t& namespaceStatement::clone_() const {
+      return *(new namespaceStatement(*this));
     }
 
     int namespaceStatement::type() const {
@@ -197,30 +186,125 @@ namespace occa {
 
     void namespaceStatement::print(printer &pout) const {
       pout.printIndentation();
-      pout << "namespace " << name << " {\n";
+      pout << "namespace " << name;
 
-      pout.pushInlined(false);
-      pout.addIndentation();
-      printChildren(pout);
-      pout.removeIndentation();
-      pout.popInlined();
-
-      pout.printIndentation();
-      pout << "}\n";
+      blockStatement::print(pout);
     }
-    //====================================
+    //==================================
 
-    //---[ While ]------------------------
+    //---[ If ]-------------------------
+    ifStatement::ifStatement(exprNode &condition_) :
+      condition(condition_),
+      elseSmnt(NULL) {}
+
+    ifStatement::ifStatement(const ifStatement &other) :
+      blockStatement(other),
+      condition(other.condition) {
+
+      const int elifCount = (int) other.elifSmnts.size();
+      for (int i = 0; i < elifCount; ++i) {
+        elifStatement &elifSmnt = (elifSmnts[i]->clone()
+                                   .to<elifStatement>());
+        elifSmnts.push_back(&elifSmnt);
+      }
+
+      elseSmnt = (other.elseSmnt
+                  ? &(other.elseSmnt->clone().to<elseStatement>())
+                  : NULL);
+    }
+
+    void ifStatement::addElif(elifStatement &elifSmnt) {
+      elifSmnts.push_back(&elifSmnt);
+    }
+
+    void ifStatement::addElse(elseStatement &elseSmnt_) {
+      elseSmnt = &elseSmnt_;
+    }
+
+    statement_t& ifStatement::clone_() const {
+      return *(new ifStatement(condition.clone()));
+    }
+
+    int ifStatement::type() const {
+      return statementType::if_;
+    }
+
+    void ifStatement::print(printer &pout) const {
+      pout.printStartIndentation();
+      pout << "if (";
+      pout.pushInlined(true);
+      condition.print(pout);
+      pout.popInlined();
+      pout << ')';
+
+      blockStatement::print(pout);
+
+      const int elifCount = (int) elifSmnts.size();
+      for (int i = 0; i < elifCount; ++i) {
+        elifSmnts[i]->print(pout);
+      }
+
+      if (elseSmnt) {
+        elseSmnt->print(pout);
+      }
+    }
+
+    elifStatement::elifStatement(exprNode &condition_) :
+      condition(condition_) {}
+
+    elifStatement::elifStatement(const elifStatement &other) :
+      blockStatement(other),
+      condition(other.condition) {}
+
+    statement_t& elifStatement::clone_() const {
+      return *(new elifStatement(*this));
+    }
+
+    int elifStatement::type() const {
+      return statementType::elif_;
+    }
+
+    void elifStatement::print(printer &pout) const {
+      pout.printStartIndentation();
+      pout << "else if (";
+      pout.pushInlined(true);
+      condition.print(pout);
+      pout.popInlined();
+      pout << ')';
+
+      blockStatement::print(pout);
+    }
+
+    elseStatement::elseStatement() {}
+
+    elseStatement::elseStatement(const elseStatement &other) :
+      blockStatement(other) {}
+
+    statement_t& elseStatement::clone_() const {
+      return *(new elseStatement(*this));
+    }
+
+    int elseStatement::type() const {
+      return statementType::else_;
+    }
+
+    void elseStatement::print(printer &pout) const {
+      pout.printStartIndentation();
+      pout << "else";
+
+      blockStatement::print(pout);
+    }
+    //================================
+
+    //---[ While ]----------------------
     whileStatement::whileStatement(statement_t &check_,
                                    const bool isDoWhile_) :
       blockStatement(),
       check(check_),
       isDoWhile(isDoWhile_) {}
 
-    statement_t& whileStatement::clone() const {
-      whileStatement &s = *(new whileStatement(check.clone(), isDoWhile));
-      s.attributes = attributes;
-      return s;
+    statement_t& whileStatement::clone_() const {
+      return *(new whileStatement(check.clone(), isDoWhile));
     }
 
     int whileStatement::type() const {
@@ -238,42 +322,36 @@ namespace occa {
       } else {
         pout << "do";
       }
-      pout << " {\n";
 
-      pout.pushInlined(false);
-      pout.addIndentation();
-      printChildren(pout);
-      pout.removeIndentation();
-      pout.popInlined();
+      blockStatement::print(pout);
 
-      pout.printIndentation();
-      pout << '}';
       if (isDoWhile) {
         pout << " while (";
         pout.pushInlined(true);
         check.print(pout);
         pout.popInlined();
-        pout << ')';
+        pout << ");";
       }
       pout.printEndNewline();
     }
-    //====================================
+    //==================================
 
-    //---[ For ]--------------------------
+    //---[ For ]------------------------
     forStatement::forStatement(statement_t &init_,
                                statement_t &check_,
                                statement_t &update_) :
-      blockStatement(),
       init(init_),
       check(check_),
       update(update_) {}
 
-    statement_t& forStatement::clone() const {
-      forStatement &s = *(new forStatement(init.clone(),
-                                           check.clone(),
-                                           update.clone()));
-      s.attributes = attributes;
-      return s;
+    forStatement::forStatement(const forStatement &other) :
+      blockStatement(other),
+      init(other.init.clone()),
+      check(other.check.clone()),
+      update(other.update.clone()) {}
+
+    statement_t& forStatement::clone_() const {
+      return *(new forStatement(*this));
     }
 
     int forStatement::type() const {
@@ -282,35 +360,31 @@ namespace occa {
 
     void forStatement::print(printer &pout) const {
       pout.printStartIndentation();
+
       pout << "for (";
+
       pout.pushInlined(true);
       init.print(pout);
       check.print(pout);
       update.print(pout);
       pout.popInlined();
-      pout << ") {\n";
 
-      pout.pushInlined(false);
-      pout.addIndentation();
-      printChildren(pout);
-      pout.removeIndentation();
-      pout.popInlined();
+      pout << ')';
 
-      pout.printIndentation();
-      pout << '}';
-      pout.printEndNewline();
+      blockStatement::print(pout);
     }
-    //====================================
+    //==================================
 
-    //---[ Switch ]-----------------------
+    //---[ Switch ]---------------------
     switchStatement::switchStatement(statement_t &value_) :
-      blockStatement(),
       value(value_) {}
 
-    statement_t& switchStatement::clone() const {
-      switchStatement &s = *(new switchStatement(value.clone()));
-      s.attributes = attributes;
-      return s;
+    switchStatement::switchStatement(const switchStatement& other) :
+      blockStatement(other),
+      value(other.value) {}
+
+    statement_t& switchStatement::clone_() const {
+      return *(new switchStatement(*this));
     }
 
     int switchStatement::type() const {
@@ -325,27 +399,16 @@ namespace occa {
       pout.popInlined();
       pout << ") {\n";
 
-      pout.pushInlined(false);
-      pout.addIndentation();
-      printChildren(pout);
-      pout.removeIndentation();
-      pout.popInlined();
-
-      pout.printIndentation();
-      pout << '}';
-      pout.printEndNewline();
+      blockStatement::print(pout);
     }
-    //====================================
+    //==================================
 
-    //---[ Case ]-------------------------
+    //---[ Case ]-----------------------
     caseStatement::caseStatement(statement_t &value_) :
-      statement_t(),
       value(value_) {}
 
-    statement_t& caseStatement::clone() const {
-      caseStatement &s = *(new caseStatement(value.clone()));
-      s.attributes = attributes;
-      return s;
+    statement_t& caseStatement::clone_() const {
+      return *(new caseStatement(value.clone()));
     }
 
     int caseStatement::type() const {
@@ -364,16 +427,14 @@ namespace occa {
 
       pout.addIndentation();
     }
-    //====================================
+    //==================================
 
-    //---[ Exit ]-------------------------
+    //---[ Exit ]-----------------------
     continueStatement::continueStatement() :
       statement_t() {}
 
-    statement_t& continueStatement::clone() const {
-      continueStatement &s = *(new continueStatement());
-      s.attributes = attributes;
-      return s;
+    statement_t& continueStatement::clone_() const {
+      return *(new continueStatement());
     }
 
     int continueStatement::type() const {
@@ -388,10 +449,8 @@ namespace occa {
     breakStatement::breakStatement() :
       statement_t() {}
 
-    statement_t& breakStatement::clone() const {
-      breakStatement &s = *(new breakStatement());
-      s.attributes = attributes;
-      return s;
+    statement_t& breakStatement::clone_() const {
+      return *(new breakStatement());
     }
 
     int breakStatement::type() const {
@@ -407,10 +466,8 @@ namespace occa {
       statement_t(),
       value(value_) {}
 
-    statement_t& returnStatement::clone() const {
-      returnStatement &s = *(new returnStatement(value.clone()));
-      s.attributes = attributes;
-      return s;
+    statement_t& returnStatement::clone_() const {
+      return *(new returnStatement(value.clone()));
     }
 
     int returnStatement::type() const {
@@ -428,6 +485,6 @@ namespace occa {
       }
       pout << ";\n";
     }
-    //====================================
+    //==================================
   }
 }

@@ -31,6 +31,12 @@
 
 namespace occa {
   namespace lang {
+    class ifStatement;
+    class elifStatement;
+    class elseStatement;
+
+    typedef std::vector<elifStatement*> elifStatementVector;
+
     //---[ Pragma ]---------------------
     class pragmaStatement : public statement_t {
     public:
@@ -38,21 +44,21 @@ namespace occa {
 
       pragmaStatement(const std::string &line_);
 
-      virtual statement_t& clone() const;
+      virtual statement_t& clone_() const;
       virtual int type() const;
 
       virtual void print(printer &pout) const;
     };
-    //====================================
+    //==================================
 
-    //---[ Type ]-------------------------
+    //---[ Type ]-----------------------
     class typeDeclStatement : public statement_t {
     public:
       declarationType &declType;
 
       typeDeclStatement(declarationType &declType_);
 
-      virtual statement_t& clone() const;
+      virtual statement_t& clone_() const;
       virtual int type() const;
 
       virtual scope_t* getScope();
@@ -66,21 +72,21 @@ namespace occa {
 
       classAccessStatement(const int access_);
 
-      virtual statement_t& clone() const;
+      virtual statement_t& clone_() const;
       virtual int type() const;
 
       virtual void print(printer &pout) const;
     };
-    //====================================
+    //==================================
 
-    //---[ Expression ]-------------------
+    //---[ Expression ]-----------------
     class expressionStatement : public statement_t {
     public:
       exprNode &expression;
 
       expressionStatement(exprNode &expression_);
 
-      virtual statement_t& clone() const;
+      virtual statement_t& clone_() const;
       virtual int type() const;
 
       virtual void print(printer &pout) const;
@@ -90,21 +96,21 @@ namespace occa {
     public:
       declarationStatement();
 
-      virtual statement_t& clone() const;
+      virtual statement_t& clone_() const;
       virtual int type() const;
 
       virtual void print(printer &pout) const;
     };
-    //====================================
+    //==================================
 
-    //---[ Goto ]-------------------------
+    //---[ Goto ]-----------------------
     class gotoStatement : public statement_t {
     public:
       std::string name;
 
       gotoStatement(const std::string &name_);
 
-      virtual statement_t& clone() const;
+      virtual statement_t& clone_() const;
       virtual int type() const;
 
       virtual void print(printer &pout) const;
@@ -116,44 +122,75 @@ namespace occa {
 
       gotoLabelStatement(const std::string &name_);
 
-      virtual statement_t& clone() const;
+      virtual statement_t& clone_() const;
       virtual int type() const;
 
       virtual void print(printer &pout) const;
     };
-    //====================================
+    //==================================
 
-    //---[ Namespace ]--------------------
+    //---[ Namespace ]------------------
     class namespaceStatement : public blockStatement {
     public:
       std::string name;
 
       namespaceStatement(const std::string &name_);
+      namespaceStatement(const namespaceStatement &other);
 
-      virtual statement_t& clone() const;
+      virtual statement_t& clone_() const;
       virtual int type() const;
 
       virtual void print(printer &pout) const;
     };
-    //====================================
+    //==================================
 
-    //---[ While ]------------------------
-    class whileStatement : public blockStatement {
+    //---[ If ]-------------------------
+    class ifStatement : public blockStatement {
     public:
-      statement_t &check;
-      bool isDoWhile;
+      exprNode &condition;
 
-      whileStatement(statement_t &check_,
-                     const bool isDoWhile_ = false);
+      elifStatementVector elifSmnts;
+      elseStatement *elseSmnt;
 
-      virtual statement_t& clone() const;
+      ifStatement(exprNode &condition_);
+      ifStatement(const ifStatement &other);
+
+      void addElif(elifStatement &elifSmnt);
+
+      void addElse(elseStatement &elseSmnt_);
+
+      virtual statement_t& clone_() const;
       virtual int type() const;
 
       virtual void print(printer &pout) const;
     };
-    //====================================
 
-    //---[ For ]--------------------------
+    class elifStatement : public blockStatement {
+    public:
+      exprNode &condition;
+
+      elifStatement(exprNode &condition);
+      elifStatement(const elifStatement &other);
+
+      virtual statement_t& clone_() const;
+      virtual int type() const;
+
+      virtual void print(printer &pout) const;
+    };
+
+    class elseStatement : public blockStatement {
+    public:
+      elseStatement();
+      elseStatement(const elseStatement &other);
+
+      virtual statement_t& clone_() const;
+      virtual int type() const;
+
+      virtual void print(printer &pout) const;
+    };
+    //==================================
+
+    //---[ For ]------------------------
     class forStatement : public blockStatement {
     public:
       statement_t &init, &check, &update;
@@ -162,47 +199,66 @@ namespace occa {
                    statement_t &check_,
                    statement_t &update_);
 
-      virtual statement_t& clone() const;
+      forStatement(const forStatement &other);
+
+      virtual statement_t& clone_() const;
       virtual int type() const;
 
       virtual void print(printer &pout) const;
     };
-    //====================================
+    //==================================
 
-    //---[ Switch ]-----------------------
+    //---[ While ]----------------------
+    class whileStatement : public blockStatement {
+    public:
+      statement_t &check;
+      bool isDoWhile;
+
+      whileStatement(statement_t &check_,
+                     const bool isDoWhile_ = false);
+
+      virtual statement_t& clone_() const;
+      virtual int type() const;
+
+      virtual void print(printer &pout) const;
+    };
+    //==================================
+
+    //---[ Switch ]---------------------
     class switchStatement : public blockStatement {
     public:
       statement_t &value;
 
       switchStatement(statement_t &value_);
+      switchStatement(const switchStatement& other);
 
-      virtual statement_t& clone() const;
+      virtual statement_t& clone_() const;
       virtual int type() const;
 
       virtual void print(printer &pout) const;
     };
-    //====================================
+    //==================================
 
-    //---[ Case ]-------------------------
+    //---[ Case ]-----------------------
     class caseStatement : public statement_t {
     public:
       statement_t &value;
 
       caseStatement(statement_t &value_);
 
-      virtual statement_t& clone() const;
+      virtual statement_t& clone_() const;
       virtual int type() const;
 
       virtual void print(printer &pout) const;
     };
-    //====================================
+    //==================================
 
-    //---[ Exit ]-------------------------
+    //---[ Exit ]-----------------------
     class continueStatement : public statement_t {
     public:
       continueStatement();
 
-      virtual statement_t& clone() const;
+      virtual statement_t& clone_() const;
       virtual int type() const;
 
       virtual void print(printer &pout) const;
@@ -212,7 +268,7 @@ namespace occa {
     public:
       breakStatement();
 
-      virtual statement_t& clone() const;
+      virtual statement_t& clone_() const;
       virtual int type() const;
 
       virtual void print(printer &pout) const;
@@ -224,12 +280,12 @@ namespace occa {
 
       returnStatement(statement_t &value_);
 
-      virtual statement_t& clone() const;
+      virtual statement_t& clone_() const;
       virtual int type() const;
 
       virtual void print(printer &pout) const;
     };
-    //====================================
+    //==================================
   }
 }
 
