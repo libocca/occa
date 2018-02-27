@@ -25,7 +25,8 @@ namespace occa {
   namespace lang {
     parser_t::parser_t() :
       unknownFilter(true),
-      root(NULL) {
+      root(NULL),
+      up(NULL) {
       // Properly implement `identifier-nondigit` for identifiers
       // Meanwhile, we use the unknownFilter
       stream = (tokenizer
@@ -75,10 +76,42 @@ namespace occa {
 
     void parser_t::parse() {
       root = new blockStatement();
+      up   = root;
       loadBlockStatement(*root);
     }
 
     void parser_t::loadBlockStatement(blockStatement &smnt) {
+    }
+
+    void parser_t::loadForStatement(forStatement &smnt) {
+    }
+
+    void parser_t::loadWhileStatement(whileStatement &smnt) {
+    }
+
+    void parser_t::loadIfStatement(ifStatement &smnt) {
+    }
+
+    void parser_t::loadElseIfStatement(elifStatement &smnt) {
+    }
+
+    void parser_t::loadElseStatement(elseStatement &smnt) {
+    }
+
+    void* parser_t::getDeclaration() {
+      return NULL;
+    }
+
+    void* parser_t::getExpression() {
+      return NULL;
+    }
+
+    void* parser_t::getFunction() {
+      return NULL;
+    }
+
+    void* parser_t::getAttribute() {
+      return NULL;
     }
   }
 }

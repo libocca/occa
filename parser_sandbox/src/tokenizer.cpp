@@ -216,7 +216,7 @@ namespace occa {
     }
 
     void tokenizer_t::popSource() {
-      OCCA_ERROR("Unable to call tokenizer_t::popSource()",
+      OCCA_ERROR("Unable to call tokenizer_t::popSource",
                  origin.up);
       origin.pop();
     }

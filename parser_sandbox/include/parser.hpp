@@ -28,6 +28,7 @@
 #include "processingStages.hpp"
 #include "statement.hpp"
 #include "tokenizer.hpp"
+#include "tokenContext.hpp"
 
 namespace occa {
   namespace lang {
@@ -49,9 +50,9 @@ namespace occa {
       //================================
 
       //---[ Status ]-------------------
-      blockStatement *root;
-      statementList smntStack;
+      blockStatement *root, *up;
       attributeVector attributes;
+      tokenContext context;
       //================================
 
       parser_t();
