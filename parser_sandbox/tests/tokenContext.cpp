@@ -37,28 +37,51 @@ int main(const int argc, const char **argv) {
 }
 
 void testMethods() {
-  tokenContext ctx;
-  OCCA_ASSERT_EQUAL(0, ctx.tp.start);
-  OCCA_ASSERT_EQUAL(0, ctx.tp.pos);
-  OCCA_ASSERT_EQUAL(0, ctx.tp.end);
+  tokenContext context;
+  OCCA_ASSERT_EQUAL(0, context.tp.start);
+  OCCA_ASSERT_EQUAL(0, context.tp.pos);
+  OCCA_ASSERT_EQUAL(0, context.tp.end);
 
-  tokenVector vec;
-  vec.push_back(NULL);
-  vec.push_back(NULL);
-  vec.push_back(NULL);
+  newlineToken    *newline    = new newlineToken(originSource::string);
+  identifierToken *identifier = new identifierToken(originSource::string,
+                                                    "identifier");
+  primitiveToken  *primitive  = new primitiveToken(originSource::string,
+                                                   1, "1");
 
-  ctx.set(vec);
-  OCCA_ASSERT_EQUAL(0, ctx.tp.start);
-  OCCA_ASSERT_EQUAL(0, ctx.tp.pos);
-  OCCA_ASSERT_EQUAL(3, ctx.tp.end);
+  context.tokens.push_back(newline);
+  context.tokens.push_back(identifier);
+  context.tokens.push_back(primitive);
 
-  ctx.push(1, 2);
-  OCCA_ASSERT_EQUAL(1, ctx.tp.start);
-  OCCA_ASSERT_EQUAL(1, ctx.tp.pos);
-  OCCA_ASSERT_EQUAL(2, ctx.tp.end);
+  OCCA_ASSERT_EQUAL(0, context.tp.start);
+  OCCA_ASSERT_EQUAL(0, context.tp.pos);
+  OCCA_ASSERT_EQUAL(0, context.tp.end);
 
-  ctx.pop();
-  OCCA_ASSERT_EQUAL(0, ctx.tp.start);
-  OCCA_ASSERT_EQUAL(0, ctx.tp.pos);
-  OCCA_ASSERT_EQUAL(3, ctx.tp.end);
+  context.resetPosition();
+  OCCA_ASSERT_EQUAL(0, context.tp.start);
+  OCCA_ASSERT_EQUAL(0, context.tp.pos);
+  OCCA_ASSERT_EQUAL(3, context.tp.end);
+
+  OCCA_ASSERT_EQUAL((token_t*) newline,
+                    context.getNextToken());
+  OCCA_ASSERT_EQUAL((token_t*) identifier,
+                    context.getNextToken());
+  OCCA_ASSERT_EQUAL((token_t*) primitive,
+                    context.getNextToken());
+  OCCA_ASSERT_EQUAL((token_t*) NULL,
+                    context.getNextToken());
+
+  context.push(1, 2);
+  OCCA_ASSERT_EQUAL(1, context.tp.start);
+  OCCA_ASSERT_EQUAL(1, context.tp.pos);
+  OCCA_ASSERT_EQUAL(2, context.tp.end);
+
+  OCCA_ASSERT_EQUAL((token_t*) identifier,
+                    context.getNextToken());
+  OCCA_ASSERT_EQUAL((token_t*) NULL,
+                    context.getNextToken());
+
+  context.pop();
+  OCCA_ASSERT_EQUAL(0, context.tp.start);
+  OCCA_ASSERT_EQUAL(3, context.tp.pos);
+  OCCA_ASSERT_EQUAL(3, context.tp.end);
 }

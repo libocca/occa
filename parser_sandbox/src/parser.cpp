@@ -43,38 +43,39 @@ namespace occa {
     void parser_t::clear() {
       tokenizer.clear();
       preprocessor.clear();
+      context.clear();
 
       delete root;
       root = NULL;
+      up   = NULL;
+
+      attributes.clear();
     }
 
     void parser_t::parseSource(const std::string &source) {
+      clear();
       tokenizer.set(source.c_str());
       parse();
     }
 
     void parser_t::parseFile(const std::string &filename) {
+      clear();
       tokenizer.set(new file_t(filename));
       parse();
     }
 
-    bool parser_t::inputIsEmpty() {
-      return (stream.isEmpty() &&
-              !inputCache.size());
-    }
-
-    token_t* parser_t::getToken() {
-      token_t *token = NULL;
-      if (inputCache.size()) {
-        token = inputCache.front();
-        inputCache.pop_front();
-      } else {
+    void parser_t::loadTokens() {
+      token_t *token;
+      while (!stream.isEmpty()) {
         stream >> token;
+        context.tokens.push_back(token);
       }
-      return token;
+      context.resetPosition();
     }
 
     void parser_t::parse() {
+      loadTokens();
+
       root = new blockStatement();
       up   = root;
       loadBlockStatement(*root);

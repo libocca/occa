@@ -453,12 +453,12 @@ namespace occa {
       //================================
 
       //---[ Pairs ]--------------------
-      const operator_t braceStart           ("{"  , operatorType::braceStart       , 0);
-      const operator_t braceEnd             ("}"  , operatorType::braceEnd         , 0);
-      const operator_t bracketStart         ("["  , operatorType::bracketStart     , 0);
-      const operator_t bracketEnd           ("]"  , operatorType::bracketEnd       , 0);
-      const operator_t parenthesesStart     ("("  , operatorType::parenthesesStart , 0);
-      const operator_t parenthesesEnd       (")"  , operatorType::parenthesesEnd   , 0);
+      const pairOperator_t braceStart       ("{", "}", operatorType::braceStart);
+      const pairOperator_t braceEnd         ("}", "{", operatorType::braceEnd);
+      const pairOperator_t bracketStart     ("[", "]", operatorType::bracketStart);
+      const pairOperator_t bracketEnd       ("]", "[", operatorType::bracketEnd);
+      const pairOperator_t parenthesesStart ("(", ")", operatorType::parenthesesStart);
+      const pairOperator_t parenthesesEnd   (")", "(", operatorType::parenthesesEnd);
       //================================
 
       //---[ Comments ]-----------------
@@ -475,8 +475,8 @@ namespace occa {
       const operator_t ellipsis             ("...", operatorType::ellipsis         , 0);
       const operator_t attribute            ("@"  , operatorType::attribute        , 0);
 
-      const operator_t cudaCallStart        ("<<<", operatorType::cudaCallStart    , 0);
-      const operator_t cudaCallEnd          (">>>", operatorType::cudaCallEnd      , 0);
+      const pairOperator_t cudaCallStart    ("<<<", ">>>", operatorType::cudaCallStart);
+      const pairOperator_t cudaCallEnd      (">>>", "<<<", operatorType::cudaCallEnd);
       //================================
 
       //---[ Associativity ]------------
@@ -516,7 +516,6 @@ namespace occa {
       pout << str;
     }
 
-
     unaryOperator_t::unaryOperator_t(const std::string &str_,
                                      opType_t opType_,
                                      int precedence_) :
@@ -527,6 +526,13 @@ namespace occa {
                                        opType_t opType_,
                                        int precedence_) :
       operator_t(str_, opType_, precedence_) {}
+
+
+    pairOperator_t::pairOperator_t(const std::string &str_,
+                                   const std::string &pairStr_,
+                                   opType_t opType_) :
+      operator_t(str_, opType_, 0),
+      pairStr(pairStr_) {}
 
 
     primitive unaryOperator_t::operator () (primitive &value) const {

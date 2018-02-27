@@ -190,6 +190,12 @@ void testPairMatching() {
   expr = makeExpression("func<<<0,1>>>");
   OCCA_ASSERT_EQUAL(exprNodeType::cudaCall, expr->type());
 
+  std::cerr << "\nTesting pair errors:\n";
+  makeExpression("(0,1,2]");
+  makeExpression("[0,1,2}");
+  makeExpression("{0,1,2)");
+  makeExpression("<<<0,1,2)");
+
   delete expr;
 }
 

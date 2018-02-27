@@ -94,6 +94,13 @@ void testBitfields() {
   OCCA_ASSERT_FALSE(b & c);
 
   OCCA_ASSERT_FALSE(start & end);
+
+  OCCA_ASSERT_TRUE(a1 != a2);
+  OCCA_ASSERT_TRUE(a1 <  a2);
+  OCCA_ASSERT_TRUE(a2 <= a2);
+  OCCA_ASSERT_TRUE(a2 == a2);
+  OCCA_ASSERT_TRUE(a2 >= a2);
+  OCCA_ASSERT_TRUE(a2 >  a1);
 }
 
 void testFunction() {

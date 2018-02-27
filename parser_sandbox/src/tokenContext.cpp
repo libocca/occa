@@ -44,10 +44,6 @@ namespace occa {
 
     tokenContext::tokenContext() {}
 
-    tokenContext::tokenContext(const tokenVector &tokens_) :
-      tokens(tokens_),
-      tp(0, (int) tokens.size()) {}
-
     tokenContext::~tokenContext() {
       clear();
     }
@@ -65,11 +61,7 @@ namespace occa {
       stack.clear();
     }
 
-    void tokenContext::set(const tokenVector &tokens_) {
-      clear();
-
-      tokens = tokens_;
-
+    void tokenContext::resetPosition() {
       tp.start = 0;
       tp.pos   = 0;
       tp.end   = (int) tokens.size();
@@ -89,6 +81,13 @@ namespace occa {
       tp = stack.back();
       stack.pop_back();
       return tp;
+    }
+
+    token_t* tokenContext::getNextToken() {
+      if (tp.pos >= tp.end) {
+        return NULL;
+      }
+      return tokens[tp.pos++];
     }
   }
 }

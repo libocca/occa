@@ -158,7 +158,9 @@ namespace occa {
           }
           else if (opToken.opType() & operatorType::pairEnd) {
             closePair(opToken, state);
-            attachPair(opToken, state);
+            if (!state.hasError) {
+              attachPair(opToken, state);
+            }
           }
           else {
             applyFasterOperators(opToken, state);
@@ -225,21 +227,10 @@ namespace occa {
       // Found a pairStart that doesn't match
       state.hasError = true;
 
-      const opType_t errorOpType = errorToken->opType();
       std::stringstream ss;
-      ss << "Could not find an opening ";
-      if (errorOpType & operatorType::parenthesesStart) {
-        ss << '(';
-      }
-      else if (errorOpType & operatorType::braceStart) {
-        ss << '{';
-      }
-      else if (errorOpType & operatorType::bracketStart) {
-        ss << '[';
-      }
-      else if (errorOpType & operatorType::cudaCallStart) {
-        ss << "<<<";
-      }
+      ss << "Could not find a closing '"
+         << ((pairOperator_t*) errorToken->op)->pairStr
+         << '\'';
       errorToken->printError(ss.str());
     }
 

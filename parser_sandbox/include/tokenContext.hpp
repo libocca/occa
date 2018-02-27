@@ -55,19 +55,18 @@ namespace occa {
       tokenPosition tp;
 
       tokenContext();
-
-      tokenContext(const tokenVector &tokens_);
-
       ~tokenContext();
 
       void clear();
 
-      void set(const tokenVector &tokens_);
+      void resetPosition();
 
       void push(const int start,
                 const int end);
 
       tokenPosition pop();
+
+      token_t* getNextToken();
     };
   }
 }

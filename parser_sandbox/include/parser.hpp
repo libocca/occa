@@ -39,20 +39,19 @@ namespace occa {
     class parser_t {
     public:
       //---[ Stream ]-------------------
-      tokenList inputCache;
-
       tokenStream stream;
       tokenizer_t tokenizer;
       preprocessor_t preprocessor;
       stringTokenMerger stringMerger;
       newlineTokenMerger newlineMerger;
       unknownTokenFilter unknownFilter;
+
+      tokenContext context;
       //================================
 
       //---[ Status ]-------------------
       blockStatement *root, *up;
       attributeVector attributes;
-      tokenContext context;
       //================================
 
       parser_t();
@@ -63,9 +62,7 @@ namespace occa {
       void parseSource(const std::string &source);
       void parseFile(const std::string &filename);
 
-      bool inputIsEmpty();
-      token_t* getToken();
-
+      void loadTokens();
       void parse();
 
       void loadBlockStatement(blockStatement &smnt);

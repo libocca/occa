@@ -124,6 +124,30 @@ namespace occa {
               (b2 != bf.b2));
     }
 
+    inline bool operator < (const bitfield &bf) const {
+      return ((b1 < bf.b1) ||
+              ((b1 == bf.b1) &&
+               (b2 < bf.b2)));
+    }
+
+    inline bool operator <= (const bitfield &bf) const {
+      return ((b1 < bf.b1) ||
+              ((b1 == bf.b1) &&
+               (b2 <= bf.b2)));
+    }
+
+    inline bool operator > (const bitfield &bf) const {
+      return ((b1 > bf.b1) ||
+              ((b1 == bf.b1) &&
+               (b2 > bf.b2)));
+    }
+
+    inline bool operator >= (const bitfield &bf) const {
+      return ((b1 > bf.b1) ||
+              ((b1 == bf.b1) &&
+               (b2 >= bf.b2)));
+    }
+
     inline bitfield operator | (const bitfield &bf) const {
       return bitfield(b1 | bf.b1,
                       b2 | bf.b2);

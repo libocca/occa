@@ -269,6 +269,15 @@ namespace occa {
                              primitive &rightValue) const;
     };
 
+    class pairOperator_t : public operator_t {
+    public:
+      std::string pairStr;
+
+      pairOperator_t(const std::string &str_,
+                     const std::string &pairStr_,
+                     opType_t opType_);
+    };
+
     namespace op {
       //---[ Left Unary ]---------------
       extern const unaryOperator_t not_;
@@ -337,12 +346,12 @@ namespace occa {
       //================================
 
       //---[ Pairs ]--------------------
-      extern const operator_t braceStart;
-      extern const operator_t braceEnd;
-      extern const operator_t bracketStart;
-      extern const operator_t bracketEnd;
-      extern const operator_t parenthesesStart;
-      extern const operator_t parenthesesEnd;
+      extern const pairOperator_t braceStart;
+      extern const pairOperator_t braceEnd;
+      extern const pairOperator_t bracketStart;
+      extern const pairOperator_t bracketEnd;
+      extern const pairOperator_t parenthesesStart;
+      extern const pairOperator_t parenthesesEnd;
       //================================
 
       //---[ Comments ]-----------------
@@ -359,8 +368,8 @@ namespace occa {
       extern const operator_t ellipsis;
       extern const operator_t attribute;
 
-      extern const operator_t cudaCallStart;
-      extern const operator_t cudaCallEnd;
+      extern const pairOperator_t cudaCallStart;
+      extern const pairOperator_t cudaCallEnd;
       //================================
 
       //---[ Associativity ]------------
