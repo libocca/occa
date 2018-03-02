@@ -74,8 +74,8 @@ namespace occa {
 
     void envInitializer_t::initSettings() {
       properties &settings_ = baseSettings();
-      settings_["version"] = "1.0";
-      settings_["parserVersion"] = "20181224";
+      settings_["version"]    = OCCA_VERSION_STR;
+      settings_["oklVersion"] = OKL_VERSION_STR;
       settings_["verboseCompilation"] = env::get("OCCA_VERBOSE", false);
     }
 

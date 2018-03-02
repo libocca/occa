@@ -26,6 +26,11 @@
 
 occa::cli::command occaCommand;
 
+bool runVersion(const occa::cli::command &command,
+                occa::jsonArray order,
+                occa::jsonObject options,
+                occa::jsonArray arguments);
+
 bool runCache(const occa::cli::command &command,
               occa::jsonArray order,
               occa::jsonObject options,
@@ -57,6 +62,15 @@ bool runBashAutocomplete(const occa::cli::command &command,
                          occa::jsonArray arguments);
 
 int main(int argc, char **argv) {
+  occa::cli::command versionCommand;
+  versionCommand
+    .withName("version")
+    .withCallback(runVersion)
+    .withDescription("Prints OCCA library version")
+    .addOption(occa::cli::option('\0', "okl",
+                                 "Print the OKL language version")
+               .stopsExpansion());
+
   occa::cli::command cacheCommand;
   cacheCommand
     .withName("cache")
@@ -129,6 +143,7 @@ int main(int argc, char **argv) {
   occaCommand
     .withDescription("Can be used to display information of cache kernels.")
     .requiresCommand()
+    .addCommand(versionCommand)
     .addCommand(cacheCommand)
     .addCommand(clearCommand)
     .addCommand(envCommand)
@@ -214,6 +229,21 @@ bool runClear(const occa::cli::command &command,
   }
   if (!removedSomething) {
     std::cout << "  Nothing to remove.\n";
+  }
+  return true;
+}
+
+bool runVersion(const occa::cli::command &command,
+                occa::jsonArray order,
+                occa::jsonObject options,
+                occa::jsonArray arguments) {
+
+  occa::cJsonObjectIterator it = options.begin();
+  if (it == options.end()) {
+    std::cout << OCCA_VERSION_STR << '\n';
+  }
+  else if (options.find("okl") != options.end()) {
+    std::cout << OKL_VERSION_STR << '\n';
   }
   return true;
 }
