@@ -19,8 +19,8 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  */
-#ifndef OCCA_PARSER_PARSER_HEADER2
-#define OCCA_PARSER_PARSER_HEADER2
+#ifndef OCCA_LANG_PARSER_HEADER
+#define OCCA_LANG_PARSER_HEADER
 
 #include <list>
 
@@ -52,6 +52,8 @@ namespace occa {
       //---[ Status ]-------------------
       blockStatement *root, *up;
       attributeVector attributes;
+
+      bool success;
       //================================
 
       parser_t();
@@ -64,6 +66,8 @@ namespace occa {
 
       void loadTokens();
       void parse();
+
+      void findPair(operatorToken &opToken);
 
       void loadBlockStatement(blockStatement &smnt);
 
