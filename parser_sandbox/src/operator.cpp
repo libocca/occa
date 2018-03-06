@@ -100,8 +100,13 @@ namespace occa {
       const rawOpType_t ellipsis          (1L << 6);
       const rawOpType_t attribute         (1L << 7);
 
-      const rawOpType_t cudaCallStart     (1L << 8);
-      const rawOpType_t cudaCallEnd       (1L << 9);
+      const rawOpType_t sizeof_           (1L << 8);
+      const rawOpType_t new_              (1L << 9);
+      const rawOpType_t delete_           (1L << 10);
+      const rawOpType_t throw_            (1L << 11);
+
+      const rawOpType_t cudaCallStart     (1L << 12);
+      const rawOpType_t cudaCallEnd       (1L << 13);
       //================================
     }
 
@@ -196,6 +201,12 @@ namespace occa {
       const opType_t arrow             (0, rawOperatorType::arrow);
       const opType_t arrowStar         (0, rawOperatorType::arrowStar);
 
+      // Special
+      const opType_t sizeof_           (rawOperatorType::sizeof_, 0);
+      const opType_t new_              (rawOperatorType::new_   , 0);
+      const opType_t delete_           (rawOperatorType::delete_, 0);
+      const opType_t throw_            (rawOperatorType::throw_ , 0);
+
       const opType_t leftUnary         = (not_          |
                                           positive      |
                                           negative      |
@@ -204,7 +215,11 @@ namespace occa {
                                           leftDecrement |
                                           dereference   |
                                           address       |
-                                          globalScope);
+                                          globalScope   |
+                                          sizeof_       |
+                                          new_          |
+                                          delete_       |
+                                          throw_);
 
       const opType_t rightUnary        = (rightIncrement |
                                           rightDecrement);
@@ -310,11 +325,20 @@ namespace occa {
       const opType_t ellipsis          (rawOperatorType::ellipsis , 0);
       const opType_t attribute         (rawOperatorType::attribute, 0);
 
+      const opType_t funcType          = (sizeof_ |
+                                          new_    |
+                                          delete_ |
+                                          throw_);
+
       const opType_t special           = (hash          |
                                           hashhash      |
                                           semicolon     |
                                           ellipsis      |
                                           attribute     |
+                                          sizeof_       |
+                                          new_          |
+                                          delete_       |
+                                          throw_        |
                                           cudaCallStart |
                                           cudaCallEnd);
 
@@ -474,6 +498,11 @@ namespace occa {
       const operator_t semicolon            (";"  , operatorType::semicolon        , 0);
       const operator_t ellipsis             ("...", operatorType::ellipsis         , 0);
       const operator_t attribute            ("@"  , operatorType::attribute        , 0);
+
+      const unaryOperator_t sizeof_         ("sizeof", operatorType::sizeof_       , 3);
+      const unaryOperator_t new_            ("new"   , operatorType::new_          , 3);
+      const unaryOperator_t delete_         ("delete", operatorType::delete_       , 3);
+      const unaryOperator_t throw_          ("throw" , operatorType::throw_        , 16);
 
       const pairOperator_t cudaCallStart    ("<<<", ">>>", operatorType::cudaCallStart);
       const pairOperator_t cudaCallEnd      (">>>", "<<<", operatorType::cudaCallEnd);
@@ -658,6 +687,11 @@ namespace occa {
 
       operators.add(op::semicolon.str        , &op::semicolon);
       operators.add(op::ellipsis.str         , &op::ellipsis);
+
+      operators.add(op::sizeof_.str          , &op::sizeof_);
+      operators.add(op::new_.str             , &op::new_);
+      operators.add(op::delete_.str          , &op::delete_);
+      operators.add(op::throw_.str           , &op::throw_);
 
       operators.add(op::cudaCallStart.str    , &op::cudaCallStart);
       operators.add(op::cudaCallEnd.str      , &op::cudaCallEnd);

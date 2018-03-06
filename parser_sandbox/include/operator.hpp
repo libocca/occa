@@ -112,6 +112,11 @@ namespace occa {
       extern const rawOpType_t ellipsis;
       extern const rawOpType_t attribute;
 
+      extern const rawOpType_t sizeof_;
+      extern const rawOpType_t new_;
+      extern const rawOpType_t delete_;
+      extern const rawOpType_t throw_;
+
       extern const rawOpType_t cudaCallStart;
       extern const rawOpType_t cudaCallEnd;
       //================================
@@ -217,11 +222,18 @@ namespace occa {
 
       extern const opType_t semicolon;
       extern const opType_t ellipsis;
+      extern const opType_t attribute;
+
+      extern const opType_t sizeof_;
+      extern const opType_t new_;
+      extern const opType_t delete_;
+      extern const opType_t throw_;
 
       extern const opType_t cudaCallStart;
       extern const opType_t cudaCallEnd;
       extern const opType_t cudaCall;
 
+      extern const opType_t funcType;
       extern const opType_t special;
 
       //---[ Ambiguous Symbols ]--------
@@ -367,6 +379,11 @@ namespace occa {
       extern const operator_t semicolon;
       extern const operator_t ellipsis;
       extern const operator_t attribute;
+
+      extern const unaryOperator_t sizeof_;
+      extern const unaryOperator_t new_;
+      extern const unaryOperator_t delete_;
+      extern const unaryOperator_t throw_;
 
       extern const pairOperator_t cudaCallStart;
       extern const pairOperator_t cudaCallEnd;

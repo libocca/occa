@@ -414,6 +414,11 @@ namespace occa {
       int type = shallowPeek();
       popAndRewind();
 
+      // sizeof, new, delete, throw
+      if (operators.has(identifier)) {
+        return tokenType::op;
+      };
+
       // [u8R]"foo" or [u]'foo'
       if (type & tokenType::string) {
         const int encoding = getStringEncoding(identifier);

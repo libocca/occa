@@ -25,10 +25,22 @@
 
 using namespace occa::lang;
 
+void testBuiltins(keywordTrie &keywords);
+void testStatements(keywordTrie &keywords);
+
 int main(const int argc, const char **argv) {
   keywordTrie keywords;
   getKeywords(keywords);
 
+  testBuiltins(keywords);
+  testStatements(keywords);
+
+  freeKeywords(keywords);
+
+  return 0;
+}
+
+void testBuiltins(keywordTrie &keywords) {
   OCCA_ASSERT_EQUAL(keywords.get("const").value().ptr,
                     (void*) &const_);
   OCCA_ASSERT_EQUAL(keywords.get("constexpr").value().ptr,
@@ -95,8 +107,19 @@ int main(const int argc, const char **argv) {
                     (void*) &void_);
   OCCA_ASSERT_EQUAL(keywords.get("auto").value().ptr,
                     (void*) &auto_);
+}
 
-  freeKeywords(keywords);
-
-  return 0;
+void testStatements(keywordTrie &keywords) {
+  OCCA_ASSERT_TRUE(keywords.has("if"));
+  OCCA_ASSERT_TRUE(keywords.has("else"));
+  OCCA_ASSERT_TRUE(keywords.has("switch"));
+  OCCA_ASSERT_TRUE(keywords.has("case"));
+  OCCA_ASSERT_TRUE(keywords.has("default"));
+  OCCA_ASSERT_TRUE(keywords.has("for"));
+  OCCA_ASSERT_TRUE(keywords.has("while"));
+  OCCA_ASSERT_TRUE(keywords.has("do"));
+  OCCA_ASSERT_TRUE(keywords.has("break"));
+  OCCA_ASSERT_TRUE(keywords.has("continue"));
+  OCCA_ASSERT_TRUE(keywords.has("return"));
+  OCCA_ASSERT_TRUE(keywords.has("goto"));
 }

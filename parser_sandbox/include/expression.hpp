@@ -95,6 +95,11 @@ namespace occa {
 
     void applyOperator(operatorToken &opToken,
                        expressionState &state);
+
+    void applyLeftUnaryOperator(operatorToken &opToken,
+                                const unaryOperator_t &op,
+                                exprNode &value,
+                                expressionState &state);
   }
 }
 

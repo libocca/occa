@@ -168,6 +168,10 @@ namespace occa {
         }
 
         if (state.hasError) {
+          // ~state will delete seen tokens
+          for (int j = 0; j <= i; ++j) {
+            tokens[j] = NULL;
+          }
           return;
         }
         // Store prevToken at the end since opToken
@@ -352,6 +356,7 @@ namespace occa {
         return;
       }
 
+      state.hasError = true;
       opToken.printError("[Waldo] (attachPair) Unsure how you got here...");
     }
 
@@ -548,9 +553,10 @@ namespace occa {
                                            value));
       }
       else if (opType & operatorType::leftUnary) {
-        state.output.push(new leftUnaryOpNode(&opToken,
-                                              (const unaryOperator_t&) op,
-                                              value));
+        applyLeftUnaryOperator(opToken,
+                               (const unaryOperator_t&) op,
+                               value,
+                               state);
       }
       else if (opType & operatorType::rightUnary) {
         state.output.push(new rightUnaryOpNode(&opToken,
@@ -563,6 +569,43 @@ namespace occa {
       } else {
         state.hasError = true;
         opToken.printError("Unable to apply operator");
+      }
+    }
+
+    void applyLeftUnaryOperator(operatorToken &opToken,
+                                const unaryOperator_t &op,
+                                exprNode &value,
+                                expressionState &state) {
+
+      const opType_t opType = op.opType;
+      if (!(opType & operatorType::special)) {
+        state.output.push(new leftUnaryOpNode(&opToken,
+                                              (const unaryOperator_t&) op,
+                                              value));
+        return;
+      }
+
+      // Handle new and delete
+      if (opType & operatorType::sizeof_) {
+        state.output.push(new sizeofNode(&opToken,
+                                         value));
+      }
+      else if (opType & operatorType::new_) {
+        state.hasError = true;
+        opToken.printError("'new' not supported yet");
+      }
+      else if (opType & operatorType::delete_) {
+        state.hasError = true;
+        opToken.printError("'delete' not supported yet");
+      }
+      else if (opType & operatorType::throw_) {
+        state.output.push(new throwNode(&opToken,
+                                        value));
+      }
+      else {
+        state.hasError = true;
+        opToken.printError("[Waldo] (applyLeftUnaryOperator)"
+                           " Unsure how you got here...");
       }
     }
   }

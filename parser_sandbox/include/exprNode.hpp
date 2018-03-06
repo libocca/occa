@@ -58,10 +58,10 @@ namespace occa {
 
       extern const int subscript;
       extern const int call;
+      extern const int sizeof_;
       extern const int new_;
       extern const int delete_;
       extern const int throw_;
-      extern const int sizeof_;
       extern const int funcCast;
       extern const int parenCast;
       extern const int constCast;

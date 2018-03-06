@@ -24,6 +24,48 @@
 
 namespace occa {
   namespace lang {
+    namespace keywordType {
+      const int none          = 0;
+      const int qualifier     = (1 << 0);
+      const int primitiveType = (1 << 1);
+
+      const int type          = (1 << 2);
+      const int function      = (1 << 3);
+
+      const int if_           = (1 << 4);
+      const int else_         = (1 << 5);
+      const int switch_       = (1 << 6);
+      const int conditional   = (if_   |
+                                 else_ |
+                                 switch_);
+
+      const int case_         = (1 << 7);
+      const int default_      = (1 << 8);
+      const int switchLabel   = (case_ |
+                                 default_);
+
+      const int for_          = (1 << 9);
+      const int while_        = (1 << 10);
+      const int do_           = (1 << 11);
+      const int iteration     = (for_   |
+                                 while_ |
+                                 do_);
+
+      const int break_        = (1 << 12);
+      const int continue_     = (1 << 13);
+      const int return_       = (1 << 14);
+      const int goto_         = (1 << 15);
+      const int jump          = (break_    |
+                                 continue_ |
+                                 return_   |
+                                 goto_);
+
+      const int statement     = (conditional |
+                                 switchLabel |
+                                 iteration   |
+                                 jump);
+    }
+
     keyword_t::keyword_t() :
       ptr(NULL),
       name(),
@@ -109,6 +151,29 @@ namespace occa {
       addKeyword(keywords, double_);
       addKeyword(keywords, void_);
       addKeyword(keywords, auto_);
+
+      // Conditional statements
+      addKeyword(keywords, "if"      , keywordType::if_);
+      addKeyword(keywords, "else"    , keywordType::else_);
+      addKeyword(keywords, "switch"  , keywordType::switch_);
+      addKeyword(keywords, "case"    , keywordType::case_);
+      addKeyword(keywords, "default" , keywordType::default_);
+      // Iteration statements
+      addKeyword(keywords, "for"     , keywordType::for_);
+      addKeyword(keywords, "while"   , keywordType::while_);
+      addKeyword(keywords, "do"      , keywordType::do_);
+      // Jump statements
+      addKeyword(keywords, "break"   , keywordType::break_);
+      addKeyword(keywords, "continue", keywordType::continue_);
+      addKeyword(keywords, "return"  , keywordType::return_);
+      addKeyword(keywords, "goto"    , keywordType::goto_);
+    }
+
+    void addKeyword(keywordTrie &keywords,
+                    const std::string &name,
+                    const int kType) {
+      keyword_t keyword(NULL, name, kType);
+      keywords.add(keyword.name, keyword);
     }
 
     void freeKeywords(keywordTrie &keywords) {

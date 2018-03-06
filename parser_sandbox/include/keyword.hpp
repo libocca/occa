@@ -32,18 +32,36 @@ namespace occa {
     class type_t;
     class functionType;
 
-    class keywordType {
-    public:
-      static const int none          = 0;
-      static const int qualifier     = (1 << 0);
-      static const int primitiveType = (1 << 1);
-      static const int type          = (1 << 2);
-      static const int function      = (1 << 3);
-      static const int conditional   = (1 << 4);
-      static const int iteration     = (1 << 5);
-      static const int jump          = (1 << 6);
-      static const int cast          = (1 << 7);
-    };
+    namespace keywordType {
+      extern const int none;
+      extern const int qualifier;
+      extern const int primitiveType;
+
+      extern const int type;
+      extern const int function;
+
+      extern const int if_;
+      extern const int else_;
+      extern const int switch_;
+      extern const int conditional;
+
+      extern const int case_;
+      extern const int default_;
+      extern const int switchLabel;
+
+      extern const int for_;
+      extern const int while_;
+      extern const int do_;
+      extern const int iteration;
+
+      extern const int break_;
+      extern const int continue_;
+      extern const int return_;
+      extern const int goto_;
+      extern const int jump;
+
+      extern const int statement;
+    }
 
     class keyword_t {
     public:
@@ -83,6 +101,10 @@ namespace occa {
       keyword_t keyword(value);
       keywords.add(keyword.name, keyword);
     }
+
+    void addKeyword(keywordTrie &keywords,
+                    const std::string &name,
+                    const int kType);
 
     void freeKeywords(keywordTrie &keywords);
   }
