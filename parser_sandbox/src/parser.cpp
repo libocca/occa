@@ -72,7 +72,7 @@ namespace occa {
         stream >> token;
         context.tokens.push_back(token);
       }
-      context.resetPosition();
+      context.setup();
     }
 
     void parser_t::parse() {
@@ -82,23 +82,6 @@ namespace occa {
       up   = root;
       loadBlockStatement(*root);
     }
-
-    // void parser_t::findPairs(intVector &pairs) {
-      // const int tokens = (int) context.tokens.size();
-      // for (int i = 0; i < tokens; ++i) {
-      //   token_t *token = context.tokens[i];
-      //   if (!(token->type() & tokenType::op)) {
-      //     continue;
-      //   }
-      //   operatorToken &opToken = token->to<operatorToken>();
-      //   if (!(opToken->opType() & pair)) {
-      //     continue;
-      //   }
-
-      //   operatorToken &errorToken = *(pairs.back());
-      //   pairs.
-      // }
-    // }
 
     void parser_t::loadBlockStatement(blockStatement &smnt) {
     }

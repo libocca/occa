@@ -53,18 +53,73 @@ namespace occa {
       tp.pos   = 0;
       tp.end   = 0;
 
+      hasError = false;
+
       const int tokenCount = (int) tokens.size();
       for (int i = 0; i < tokenCount; ++i) {
         delete tokens[i];
       }
       tokens.clear();
+      pairs.clear();
       stack.clear();
     }
 
-    void tokenContext::resetPosition() {
+    void tokenContext::setup() {
       tp.start = 0;
       tp.pos   = 0;
       tp.end   = (int) tokens.size();
+
+      findPairs();
+    }
+
+    void tokenContext::findPairs() {
+      intVector pairStack;
+
+      const int tokenCount = (int) tokens.size();
+      for (int i = 0; i < tokenCount; ++i) {
+        token_t *token = tokens[i];
+        opType_t opType = token->getOpType();
+        if (!(opType & operatorType::pair)) {
+          continue;
+        }
+        if (opType & operatorType::pairStart) {
+          pairStack.push_back(i);
+          continue;
+        }
+
+        pairOperator_t &pairEndOp =
+          *((pairOperator_t*) token->to<operatorToken>().op);
+
+        // Make sure we have a proper pair
+        if (!pairStack.size()) {
+          std::stringstream ss;
+          ss << "Could not find an opening '"
+             << pairEndOp.pairStr
+             << '\'';
+          token->printError(ss.str());
+          hasError = true;
+          return;
+        }
+
+        // Make sure we close the pair
+        const int pairIndex = pairStack.back();
+        pairStack.pop_back();
+        pairOperator_t &pairStartOp =
+          *((pairOperator_t*) tokens[pairIndex]->to<operatorToken>().op);
+
+        if (pairStartOp.opType != (pairEndOp.opType >> 1)) {
+          std::stringstream ss;
+          ss << "Could not find a closing '"
+             << pairStartOp.pairStr
+             << '\'';
+          tokens[pairIndex]->printError(ss.str());
+          hasError = true;
+          return;
+        }
+
+        // Store pairs
+        pairs[pairIndex] = i;
+      }
     }
 
     void tokenContext::push(const int start,

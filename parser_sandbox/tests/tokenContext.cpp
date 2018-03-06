@@ -24,14 +24,27 @@
 #include "occa/tools/testing.hpp"
 
 #include "token.hpp"
+#include "tokenizer.hpp"
 #include "tokenContext.hpp"
 
 using namespace occa::lang;
 
 void testMethods();
+void testPairs();
+
+std::string source;
+
+void setupContext(tokenContext &context,
+                  const std::string &source_) {
+  source = source_;
+  context.clear();
+  context.tokens = tokenizer_t::tokenize(source);
+  context.setup();
+}
 
 int main(const int argc, const char **argv) {
   testMethods();
+  testPairs();
 
   return 0;
 }
@@ -56,7 +69,7 @@ void testMethods() {
   OCCA_ASSERT_EQUAL(0, context.tp.pos);
   OCCA_ASSERT_EQUAL(0, context.tp.end);
 
-  context.resetPosition();
+  context.setup();
   OCCA_ASSERT_EQUAL(0, context.tp.start);
   OCCA_ASSERT_EQUAL(0, context.tp.pos);
   OCCA_ASSERT_EQUAL(3, context.tp.end);
@@ -84,4 +97,38 @@ void testMethods() {
   OCCA_ASSERT_EQUAL(0, context.tp.start);
   OCCA_ASSERT_EQUAL(3, context.tp.pos);
   OCCA_ASSERT_EQUAL(3, context.tp.end);
+}
+
+void testPairs() {
+  tokenContext context;
+  // 0  | [<<<] [(]
+  // 2  |   [[]
+  // 3  |     [{] [1] [}] [,] [{] [2] [}]
+  // 10 |   []] [,] [[]
+  // 13 |     [{] [3] [}] [,] [{] [4] [}]
+  // 20 |   []]
+  // 21 | [)] [>>>]
+  setupContext(context, "<<<([{1},{2}], [{3},{4}])>>>");
+  OCCA_ASSERT_EQUAL(8, (int) context.pairs.size());
+  OCCA_ASSERT_EQUAL(22, context.pairs[0]);  // <<<
+  OCCA_ASSERT_EQUAL(21, context.pairs[1]);  //  (
+  OCCA_ASSERT_EQUAL(10, context.pairs[2]);  //   [
+  OCCA_ASSERT_EQUAL(5 , context.pairs[3]);  //    {
+  OCCA_ASSERT_EQUAL(9 , context.pairs[7]);  //    {
+  OCCA_ASSERT_EQUAL(20, context.pairs[12]); //   [
+  OCCA_ASSERT_EQUAL(15, context.pairs[13]); //    {
+  OCCA_ASSERT_EQUAL(19, context.pairs[17]); //    {
+
+  std::cerr << "Testing pair errors:\n";
+
+  setupContext(context, "1, 2)");
+  setupContext(context, "1, 2]");
+  setupContext(context, "1, 2}");
+  setupContext(context, "1, 2>>>");
+
+
+  setupContext(context, "[1, 2)");
+  setupContext(context, "{1, 2]");
+  setupContext(context, "<<<1, 2}");
+  setupContext(context, "(1, 2>>>");
 }

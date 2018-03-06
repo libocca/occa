@@ -22,8 +22,9 @@
 #ifndef OCCA_LANG_TOKENCONTEXT_HEADER
 #define OCCA_LANG_TOKENCONTEXT_HEADER
 
-#include <vector>
 #include <list>
+#include <map>
+#include <vector>
 
 namespace occa {
   namespace lang {
@@ -32,6 +33,7 @@ namespace occa {
 
     typedef std::vector<token_t*>    tokenVector;
     typedef std::list<tokenPosition> tokenPositionList;
+    typedef std::map<int, int>       intIntMap;
 
     class tokenPosition {
     public:
@@ -50,6 +52,8 @@ namespace occa {
     class tokenContext {
     public:
       tokenVector tokens;
+      intIntMap pairs;
+      bool hasError;
 
       tokenPositionList stack;
       tokenPosition tp;
@@ -58,8 +62,8 @@ namespace occa {
       ~tokenContext();
 
       void clear();
-
-      void resetPosition();
+      void setup();
+      void findPairs();
 
       void push(const int start,
                 const int end);

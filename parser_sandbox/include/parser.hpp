@@ -67,8 +67,6 @@ namespace occa {
       void loadTokens();
       void parse();
 
-      void findPair(operatorToken &opToken);
-
       void loadBlockStatement(blockStatement &smnt);
 
       void loadForStatement(forStatement &smnt);
