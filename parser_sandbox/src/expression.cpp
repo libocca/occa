@@ -33,9 +33,12 @@ namespace occa {
       hasError(false) {}
 
     expressionState::~expressionState() {
-      while (operators.size()) {
-        delete operators.top();
-        operators.pop();
+      // Tokens are freed outside in the case of an error
+      if (!hasError) {
+        while (operators.size()) {
+          delete operators.top();
+          operators.pop();
+        }
       }
       while (output.size()) {
         delete output.top();
