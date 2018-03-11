@@ -107,13 +107,9 @@ namespace occa {
 
       // OCCA environment variables
       OCCA_DIR = env::var("OCCA_DIR");
-#ifdef OCCA_COMPILED_DIR
       if (OCCA_DIR.size() == 0) {
-        OCCA_DIR = OCCA_COMPILED_DIR;
+        OCCA_DIR = io::filename(io::dirname(__FILE__) + "/../..");
       }
-#endif
-      OCCA_ERROR("Environment variable [OCCA_DIR] is not set",
-                 0 < OCCA_DIR.size());
 
       initCachePath();
       initIncludePath();

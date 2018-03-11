@@ -25,12 +25,6 @@ rmSlash = $(patsubst %/,%,$1)
 OCCA_DIR := $(call rmSlash,$(dir $(abspath $(lastword $(MAKEFILE_LIST)))))
 PROJ_DIR := $(OCCA_DIR)
 
-ifndef PREFIX
-  OCCA_COMPILED_DIR = $(OCCA_DIR)
-else
-  OCCA_COMPILED_DIR = $(PREFIX)
-endif
-
 include $(OCCA_DIR)/scripts/Makefile
 
 #---[ Working Paths ]-----------------------------
@@ -72,7 +66,6 @@ MAKE_COMPILED_DEFINES := $(shell cp "$(NEW_COMPILED_DEFINES)" "$(OLD_COMPILED_DE
 MAKE_COMPILED_DEFINES := $(shell cat "$(OCCA_DIR)/scripts/compiledDefinesTemplate.hpp" | \
                                  sed "s,@@OCCA_OS@@,$(OCCA_OS),g;\
                                       s,@@OCCA_USING_VS@@,$(OCCA_USING_VS),g;\
-                                      s,@@OCCA_COMPILED_DIR@@,\"$(OCCA_COMPILED_DIR)\",g;\
                                       s,@@OCCA_DEBUG_ENABLED@@,$(OCCA_DEBUG_ENABLED),g;\
                                       s,@@OCCA_CHECK_ENABLED@@,$(OCCA_CHECK_ENABLED),g;\
                                       s,@@OCCA_OPENMP_ENABLED@@,$(OCCA_OPENMP_ENABLED),g;\
@@ -88,7 +81,6 @@ all: $(objects) $(outputs)
 	@echo -e "---[ Compiled With ]--------------------------------------------------------"
 	@echo -e "    OCCA_OS             : $(OCCA_OS)"
 	@echo -e "    OCCA_USING_VS       : $(OCCA_USING_VS)"
-	@echo -e "    OCCA_COMPILED_DIR   : \"$(OCCA_COMPILED_DIR)\"\n"
 	@echo -e "    OCCA_DEBUG_ENABLED  : $(OCCA_DEBUG_ENABLED)"
 	@echo -e "    OCCA_CHECK_ENABLED  : $(OCCA_CHECK_ENABLED)\n"
 	@echo -e "    OCCA_OPENMP_ENABLED : $(OCCA_OPENMP_ENABLED)"

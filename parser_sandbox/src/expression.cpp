@@ -26,20 +26,15 @@
 namespace occa {
   namespace lang {
     //---[ Expression State ]-----------
-    expressionState::expressionState() :
+    expressionState::expressionState(tokenVector &tokens_) :
+      tokens(tokens_),
       prevToken(NULL),
       nextToken(NULL),
       tokenBeforePair(NULL),
       hasError(false) {}
 
     expressionState::~expressionState() {
-      // Tokens are freed outside in the case of an error
-      if (!hasError) {
-        while (operators.size()) {
-          delete operators.top();
-          operators.pop();
-        }
-      }
+      freeTokenVector(tokens);
       while (output.size()) {
         delete output.top();
         output.pop();
@@ -86,10 +81,9 @@ namespace occa {
       }
 
       // TODO: Ternary operator
-      expressionState state;
+      expressionState state(tokens);
       getInitialExpression(tokens, state);
       if (state.hasError) {
-        freeTokenVector(tokens);
         return NULL;
       }
 
@@ -99,7 +93,6 @@ namespace occa {
                       state);
 
         if (state.hasError) {
-          freeTokenVector(tokens);
           return NULL;
         }
       }
@@ -112,11 +105,8 @@ namespace occa {
       if (outputCount > 1) {
         state.popOutput();
         state.lastOutput().token->printError("Unable to form an expression");
-        freeTokenVector(tokens);
         return NULL;
       }
-
-      freeTokenVector(tokens);
 
       // Pop output before state frees it
       // Do this manually to prevent freeing it
@@ -171,10 +161,6 @@ namespace occa {
         }
 
         if (state.hasError) {
-          // ~state will delete seen tokens
-          for (int j = 0; j <= i; ++j) {
-            tokens[j] = NULL;
-          }
           return;
         }
         // Store prevToken at the end since opToken

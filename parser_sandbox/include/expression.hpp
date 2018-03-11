@@ -34,6 +34,8 @@ namespace occa {
     //---[ Expression State ]-----------
     class expressionState {
     public:
+      tokenVector &tokens;
+
       // Keep track of the prev/next tokens
       //   to break ++ and -- left/right
       //   unary ambiguity
@@ -48,7 +50,7 @@ namespace occa {
 
       bool hasError;
 
-      expressionState();
+      expressionState(tokenVector &tokens_);
       ~expressionState();
 
       int outputCount();

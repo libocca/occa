@@ -51,7 +51,7 @@ namespace occa {
 
       attributes.clear();
 
-      success = false;
+      success = true;
     }
 
     void parser_t::parseSource(const std::string &source) {
@@ -72,11 +72,24 @@ namespace occa {
         stream >> token;
         context.tokens.push_back(token);
       }
+
+      if (tokenizer.errors ||
+          preprocessor.errors) {
+        success = false;
+        return;
+      }
+
       context.setup();
+      if (context.hasError) {
+        success = false;
+      }
     }
 
     void parser_t::parse() {
       loadTokens();
+      if (!success) {
+        return;
+      }
 
       root = new blockStatement();
       up   = root;
