@@ -34,70 +34,70 @@ namespace occa {
   namespace lang {
     //---[ Types ]----------------------
     namespace specifierType {
-      const ktype_t none = 0;
+      const int none = 0;
 
-      const ktype_t qualifier = (1 << 0);
-      const ktype_t type      = (1 << 1);
-      const ktype_t primitive = (1 << 2);
-      const ktype_t pointer   = (1 << 3);
-      const ktype_t reference = (1 << 4);
-      const ktype_t array     = (1 << 5);
-      const ktype_t struct_   = (1 << 6);
-      const ktype_t class_    = (1 << 7);
-      const ktype_t typedef_  = (1 << 8);
-      const ktype_t function  = (1 << 9);
-      const ktype_t attribute = (1 << 10);
+      const int qualifier = (1 << 0);
+      const int type      = (1 << 1);
+      const int primitive = (1 << 2);
+      const int pointer   = (1 << 3);
+      const int reference = (1 << 4);
+      const int array     = (1 << 5);
+      const int struct_   = (1 << 6);
+      const int class_    = (1 << 7);
+      const int typedef_  = (1 << 8);
+      const int function  = (1 << 9);
+      const int attribute = (1 << 10);
     }
 
     namespace qualifierType {
-      const ktype_t none          = 0;
+      const int none          = 0;
 
-      const ktype_t auto_         = (1L << 0);
-      const ktype_t const_        = (1L << 1);
-      const ktype_t constexpr_    = (1L << 2);
-      const ktype_t restrict_     = (1L << 3);
-      const ktype_t signed_       = (1L << 4);
-      const ktype_t unsigned_     = (1L << 5);
-      const ktype_t volatile_     = (1L << 6);
-      const ktype_t register_     = (1L << 7);
-      const ktype_t typeInfo      = (const_     |
-                                     constexpr_ |
-                                     signed_    |
-                                     unsigned_  |
-                                     volatile_  |
-                                     register_);
+      const int auto_         = (1L << 0);
+      const int const_        = (1L << 1);
+      const int constexpr_    = (1L << 2);
+      const int restrict_     = (1L << 3);
+      const int signed_       = (1L << 4);
+      const int unsigned_     = (1L << 5);
+      const int volatile_     = (1L << 6);
+      const int register_     = (1L << 7);
+      const int typeInfo      = (const_     |
+                                 constexpr_ |
+                                 signed_    |
+                                 unsigned_  |
+                                 volatile_  |
+                                 register_);
 
-      const ktype_t extern_       = (1L << 8);
-      const ktype_t static_       = (1L << 9);
-      const ktype_t thread_local_ = (1L << 10);
-      const ktype_t globalScope   = (extern_ |
-                                     static_ |
-                                     thread_local_);
+      const int extern_       = (1L << 8);
+      const int static_       = (1L << 9);
+      const int thread_local_ = (1L << 10);
+      const int globalScope   = (extern_ |
+                                 static_ |
+                                 thread_local_);
 
-      const ktype_t friend_       = (1L << 11);
-      const ktype_t mutable_      = (1L << 12);
-      const ktype_t classInfo     = (friend_ |
-                                     mutable_);
+      const int friend_       = (1L << 11);
+      const int mutable_      = (1L << 12);
+      const int classInfo     = (friend_ |
+                                 mutable_);
 
-      const ktype_t inline_       = (1L << 13);
-      const ktype_t virtual_      = (1L << 14);
-      const ktype_t explicit_     = (1L << 15);
-      const ktype_t functionInfo  = (typeInfo |
-                                     inline_  |
-                                     virtual_ |
-                                     explicit_);
+      const int inline_       = (1L << 13);
+      const int virtual_      = (1L << 14);
+      const int explicit_     = (1L << 15);
+      const int functionInfo  = (typeInfo |
+                                 inline_  |
+                                 virtual_ |
+                                 explicit_);
 
-      const ktype_t builtin_      = (1L << 16);
-      const ktype_t typedef_      = (1L << 17);
-      const ktype_t class_        = (1L << 18);
-      const ktype_t enum_         = (1L << 19);
-      const ktype_t struct_       = (1L << 20);
-      const ktype_t union_        = (1L << 21);
-      const ktype_t newType       = (typedef_ |
-                                     class_   |
-                                     enum_    |
-                                     struct_  |
-                                     union_);
+      const int builtin_      = (1L << 16);
+      const int typedef_      = (1L << 17);
+      const int class_        = (1L << 18);
+      const int enum_         = (1L << 19);
+      const int struct_       = (1L << 20);
+      const int union_        = (1L << 21);
+      const int newType       = (typedef_ |
+                                 class_   |
+                                 enum_    |
+                                 struct_  |
+                                 union_);
     }
 
     namespace classAccess {
@@ -136,14 +136,14 @@ namespace occa {
     }
 
     //---[ Qualifier ]------------------
-    qualifier::qualifier(const std::string &name_,
-                         const ktype_t ktype_) :
+    qualifier_t::qualifier_t(const std::string &name_,
+                             const int ktype_) :
       specifier(name_),
       ktype(ktype_) {}
 
-    qualifier::~qualifier() {}
+    qualifier_t::~qualifier_t() {}
 
-    ktype_t qualifier::type() const {
+    int qualifier_t::type() const {
       return specifierType::qualifier;
     }
     //==================================
@@ -151,18 +151,18 @@ namespace occa {
     //---[ Qualifiers ]-----------------
     qualifiers_t::qualifiers_t() {}
 
-    qualifiers_t::qualifiers_t(const qualifier &q) {
-      add(q);
+    qualifiers_t::qualifiers_t(const qualifier_t &qualifier) {
+      add(qualifier);
     }
 
     qualifiers_t::~qualifiers_t() {}
 
-    int qualifiers_t::indexOf(const qualifier &q) const {
+    int qualifiers_t::indexOf(const qualifier_t &qualifier) const {
       const int count = (int) qualifiers.size();
       if (count) {
-        const qualifier * const *qs = &(qualifiers[0]);
+        const qualifier_t * const *qs = &(qualifiers[0]);
         for (int i = 0; i < count; ++i) {
-          if (qs[i] == &q) {
+          if (qs[i] == &qualifier) {
             return i;
           }
         }
@@ -170,16 +170,16 @@ namespace occa {
       return -1;
     }
 
-    bool qualifiers_t::has(const qualifier &q) const {
-      return (indexOf(q) >= 0);
+    bool qualifiers_t::has(const qualifier_t &qualifier) const {
+      return (indexOf(qualifier) >= 0);
     }
 
-    void qualifiers_t::add(const qualifier &q) {
-      qualifiers.push_back(&q);
+    void qualifiers_t::add(const qualifier_t &qualifier) {
+      qualifiers.push_back(&qualifier);
     }
 
-    void qualifiers_t::remove(const qualifier &q) {
-      const int idx = indexOf(q);
+    void qualifiers_t::remove(const qualifier_t &qualifier) {
+      const int idx = indexOf(qualifier);
       if (idx >= 0) {
         qualifiers.erase(qualifiers.begin() + idx);
       }
@@ -220,7 +220,10 @@ namespace occa {
     type_t::type_t(const type_t &baseType_,
                    const std::string &name_) :
       specifier(name_),
-      baseType(&baseType_) {}
+      baseType(NULL) {
+
+      setBaseType(baseType_);
+    }
 
     type_t::type_t(const qualifiers_t &qualifiers_,
                    const std::string &name_) :
@@ -232,28 +235,43 @@ namespace occa {
                    const type_t &baseType_,
                    const std::string &name_) :
       specifier(name_),
-      baseType(&baseType_),
-      qualifiers(qualifiers_) {}
+      baseType(NULL),
+      qualifiers(qualifiers_) {
+
+      setBaseType(baseType_);
+    }
 
     type_t::~type_t() {
-      if (baseType && baseType->isUnnamed()) {
-        // TODO: Fix baseType deletion
-        // delete baseType;
+      shallowFree(baseType);
+    }
+
+    void type_t::setBaseType(const type_t &baseType_) {
+      if (baseType == &baseType_) {
+        return;
+      }
+
+      shallowFree(baseType);
+
+      if (baseType_.isNamed()) {
+        baseType = &baseType_;
+      } else {
+        baseType = &(baseType_.shallowClone());
       }
     }
 
-    ktype_t type_t::type() const {
+    int type_t::type() const {
       return specifierType::type;
     }
 
     type_t& type_t::clone() const {
+      return *(new type_t(qualifiers, *baseType, name));
+    }
+
+    type_t& type_t::shallowClone() const {
       if (isNamed()) {
         return *(const_cast<type_t*>(this));
       }
-      if (baseType) {
-        return *(new type_t(qualifiers, baseType->clone()));
-      }
-      return *(new type_t(qualifiers));
+      return *(new type_t(qualifiers, *baseType));
     }
 
     bool type_t::canBeDereferenced() const {
@@ -304,17 +322,7 @@ namespace occa {
       printRight(pout);
     }
 
-    void type_t::print(printer &pout,
-                       const variable &var) const {
-      printLeft(pout);
-      if (var.name.size()) {
-        if (pout.lastCharNeedsWhitespace()) {
-          pout << ' ';
-        }
-        pout << var.name;
-      }
-      printRight(pout);
-    }
+    declarationType::~declarationType() {}
 
     std::string declarationType::declarationToString() const {
       std::stringstream ss;
@@ -326,27 +334,36 @@ namespace occa {
     void declarationType::declarationDebugPrint() const {
       std::cout << declarationToString();
     }
+
+    void shallowFree(const type_t *&type) {
+      if (type) {
+        if (type->isUnnamed()) {
+          delete type;
+        }
+        type = NULL;
+      }
+    }
     //==================================
 
     //---[ Primitive ]------------------
-    primitiveType::primitiveType(const std::string &name_) :
+    primitive_t::primitive_t(const std::string &name_) :
       type_t(name_) {}
 
-    primitiveType::~primitiveType() {}
+    primitive_t::~primitive_t() {}
 
-    ktype_t primitiveType::type() const {
+    int primitive_t::type() const {
       return specifierType::primitive;
     }
 
-    type_t& primitiveType::clone() const {
-      return *(const_cast<primitiveType*>(this));
+    type_t& primitive_t::clone() const {
+      return *(const_cast<primitive_t*>(this));
     }
 
-    bool primitiveType::canBeDereferenced() const {
+    bool primitive_t::canBeDereferenced() const {
       return false;
     }
 
-    bool primitiveType::canBeCastedToExplicitly(const type_t &alias) const {
+    bool primitive_t::canBeCastedToExplicitly(const type_t &alias) const {
       const int aliasType = alias.type();
       if (aliasType == specifierType::reference) {
         return ((alias.baseType->type() == specifierType::primitive) &&
@@ -359,7 +376,7 @@ namespace occa {
       return true;
     }
 
-    bool primitiveType::canBeCastedToImplicitly(const type_t &alias) const {
+    bool primitive_t::canBeCastedToImplicitly(const type_t &alias) const {
       switch (alias.type()) {
       case specifierType::primitive:
         return true;
@@ -382,18 +399,20 @@ namespace occa {
     //==================================
 
     //---[ Base Pointer ]---------------
-    bool basePointerType::canBeDereferenced() const {
+    basePointer_t::~basePointer_t() {}
+
+    bool basePointer_t::canBeDereferenced() const {
       return true;
     }
 
-    bool basePointerType::canBeCastedToExplicitly(const type_t &alias) const {
+    bool basePointer_t::canBeCastedToExplicitly(const type_t &alias) const {
       // TODO
       //   - Class constructors
       //   - Primitives with the same size
       return alias.canBeDereferenced();
     }
 
-    bool basePointerType::canBeCastedToImplicitly(const type_t &alias) const {
+    bool basePointer_t::canBeCastedToImplicitly(const type_t &alias) const {
       // TODO
       //   - Class constructors
       //   - Primitives with the same size
@@ -415,31 +434,30 @@ namespace occa {
     //==================================
 
     //---[ Pointer ]--------------------
-    pointerType::pointerType(const type_t &baseType_) :
+    pointer_t::pointer_t(const type_t &baseType_) :
       type_t(baseType_) {}
 
-    pointerType::pointerType(const qualifiers_t &qualifiers_,
-                             const type_t &baseType_) :
+    pointer_t::pointer_t(const qualifiers_t &qualifiers_,
+                         const type_t &baseType_) :
       type_t(qualifiers_, baseType_) {}
 
-    pointerType::pointerType(const pointerType &baseType_) :
+    pointer_t::pointer_t(const pointer_t &baseType_) :
       type_t(baseType_) {}
 
-    pointerType::~pointerType() {}
+    pointer_t::~pointer_t() {}
 
-    ktype_t pointerType::type() const {
+    int pointer_t::type() const {
       return specifierType::pointer;
     }
 
-    type_t& pointerType::clone() const {
-      OCCA_ERROR("occa::lang::pointerType has a NULL baseType",
+    type_t& pointer_t::clone() const {
+      OCCA_ERROR("occa::lang::pointer_t has a NULL baseType",
                  baseType);
-      return *(new pointerType(qualifiers,
-                               baseType->clone()));
+      return *(new pointer_t(qualifiers, *baseType));
     }
 
-    void pointerType::printLeft(printer &pout) const {
-      OCCA_ERROR("occa::lang::pointerType has a NULL baseType",
+    void pointer_t::printLeft(printer &pout) const {
+      OCCA_ERROR("occa::lang::pointer_t has a NULL baseType",
                  baseType);
       baseType->printLeft(pout);
       if (pout.lastCharNeedsWhitespace()) {
@@ -454,51 +472,51 @@ namespace occa {
     //==================================
 
     //---[ Array ]----------------------
-    arrayType::arrayType(const type_t &baseType_) :
+    array_t::array_t(const type_t &baseType_) :
       type_t(baseType_),
       size(new emptyNode()) {}
 
-    arrayType::arrayType(const qualifiers_t &qualifiers_,
-                         const type_t &baseType_) :
+    array_t::array_t(const qualifiers_t &qualifiers_,
+                     const type_t &baseType_) :
       type_t(qualifiers_, baseType_),
       size(new emptyNode()) {}
 
-    arrayType::arrayType(const type_t &baseType_,
-                         const exprNode &size_) :
+    array_t::array_t(const type_t &baseType_,
+                     const exprNode &size_) :
       type_t(baseType_),
       size(&(size_.clone())) {}
 
-    arrayType::arrayType(const qualifiers_t &qualifiers_,
-                         const type_t &baseType_,
-                         const exprNode &size_) :
+    array_t::array_t(const qualifiers_t &qualifiers_,
+                     const type_t &baseType_,
+                     const exprNode &size_) :
       type_t(qualifiers_, baseType_),
       size(&(size_.clone())) {}
 
-    arrayType::arrayType(const arrayType &baseType_) :
+    array_t::array_t(const array_t &baseType_) :
       type_t(baseType_),
       size(new emptyNode()) {}
 
-    arrayType::~arrayType() {
+    array_t::~array_t() {
       delete size;
     }
 
-    ktype_t arrayType::type() const {
+    int array_t::type() const {
       return specifierType::array;
     }
 
-    type_t& arrayType::clone() const {
-      OCCA_ERROR("occa::lang::arrayType has a NULL baseType",
+    type_t& array_t::clone() const {
+      OCCA_ERROR("occa::lang::array_t has a NULL baseType",
                  baseType);
-      return *(new arrayType(qualifiers,
-                             baseType->clone(),
-                             size->clone()));
+      return *(new array_t(qualifiers,
+                           *baseType,
+                           size->clone()));
     }
 
-    void arrayType::setSize(exprNode &size_) {
+    void array_t::setSize(exprNode &size_) {
       size = &(size_.clone());
     }
 
-    void arrayType::printRight(printer &pout) const {
+    void array_t::printRight(printer &pout) const {
       baseType->printRight(pout);
       pout << '[';
       size->print(pout);
@@ -507,68 +525,73 @@ namespace occa {
     //==================================
 
     //---[ Function ]-------------------
-    functionType::functionType(const type_t &returnType) :
-      type_t(returnType) {}
+    function_t::function_t(const type_t &returnType) :
+      type_t(returnType) {
+    }
 
-    functionType::functionType(const functionType &returnType) :
-      type_t(returnType) {}
+    function_t::function_t(const type_t &returnType,
+                           const std::string &name_) :
+      type_t(returnType, name_) {
+    }
 
-    functionType::functionType(const type_t &returnType,
-                               const std::string &name_) :
-      type_t(returnType, name_) {}
+    function_t::function_t(const type_t &returnType,
+                           const std::string &name_,
+                           const argVector_t &args_) :
+      type_t(returnType, name_) {
 
-    functionType::~functionType() {
-      const int argCount = argumentCount();
-      if (argCount) {
-        type_t **args_ = &(args[0]);
-        for (int i = 0; i < argCount; ++i) {
-          if (args_[i]->isUnnamed()) {
-            // TODO: Fix args deletion
-            // delete args_[i];
-          }
-        }
+      const int argCount = (int) args_.size();
+      for (int i = 0; i < argCount; ++i) {
+        args.push_back(&(args_[i]->clone()));
       }
     }
 
-    ktype_t functionType::type() const {
+    function_t::~function_t() {
+      const int argCount = (int) args.size();
+      for (int i = 0; i < argCount; ++i) {
+        delete args[i];
+      }
+    }
+
+    int function_t::type() const {
       return specifierType::function;
     }
 
-    type_t& functionType::clone() const {
-      return *(new functionType(baseType->clone(),
-                                name));
+    type_t& function_t::clone() const {
+      return *(new function_t(*baseType, name, args));
     }
 
-    bool functionType::canBeCastedToImplicitly(const type_t &alias) const {
+    bool function_t::canBeCastedToImplicitly(const type_t &alias) const {
       // TODO: Handle function casting
       return false;
     }
 
-    const type_t& functionType::returnType() const {
-      OCCA_ERROR("occa::lang::functionType has a NULL baseType",
+    const type_t& function_t::returnType() const {
+      OCCA_ERROR("occa::lang::function_t has a NULL baseType",
                  baseType);
       return *(baseType);
     }
 
-    void functionType::setReturnType(const type_t &returnType) {
-      baseType = &returnType;
+    void function_t::setReturnType(const type_t &returnType) {
+      setBaseType(returnType);
     }
 
-    void functionType::addArgument(const type_t &argType,
-                                   const std::string &argName) {
-      args.push_back(new type_t(argType, argName));
+    void function_t::addArgument(const type_t &argType,
+                                 const std::string &argName) {
+      args.push_back(new variable(argType, argName));
     }
 
-    void functionType::addArgument(const qualifiers_t &qualifiers_,
-                                   const type_t &argType,
-                                   const std::string &argName) {
-      args.push_back(new type_t(qualifiers_, argType, argName));
+    void function_t::addArgument(const qualifiers_t &qualifiers_,
+                                 const type_t &argType,
+                                 const std::string &argName) {
+
+      args.push_back(new variable(type_t(qualifiers_, argType),
+                                  argName));
     }
 
-    void functionType::printDeclarationLeft(printer &pout) const {
+    void function_t::printDeclarationLeft(printer &pout) const {
       if (baseType->type() & specifierType::function) {
         baseType
-          ->to<functionType>()
+          ->to<function_t>()
           .printDeclarationLeft(pout);
       } else {
         baseType->print(pout);
@@ -580,7 +603,7 @@ namespace occa {
       pout << "(*";
     }
 
-    void functionType::printDeclarationRight(printer &pout) const {
+    void function_t::printDeclarationRight(printer &pout) const {
       pout << ")(";
       const std::string argIndent = pout.indentFromNewline();
       const int argCount = argumentCount();
@@ -588,67 +611,64 @@ namespace occa {
         if (i) {
           pout << ",\n" << argIndent;
         }
-        args[i]->print(pout);
+        args[i]->printDeclaration(pout);
       }
       pout << ')';
       if (baseType->type() & specifierType::function) {
         baseType
-          ->to<functionType>()
+          ->to<function_t>()
           .printDeclarationRight(pout);
       }
       pout << '\n';
     }
 
-    void functionType::printDeclaration(printer &pout) const {
-      OCCA_ERROR("occa::lang::functionType has a NULL baseType",
+    void function_t::printDeclaration(printer &pout) const {
+      OCCA_ERROR("occa::lang::function_t has a NULL baseType",
                  baseType);
       pout.printIndentation();
       printDeclarationLeft(pout);
-      if (isNamed()) {
-        pout << name;
-      }
+      pout << name;
       printDeclarationRight(pout);
     }
     //==================================
 
     //---[ Reference ]------------------
-    referenceType::referenceType(const type_t &baseType_) :
+    reference_t::reference_t(const type_t &baseType_) :
       type_t(baseType_) {}
 
-    referenceType::referenceType(const qualifiers_t &qualifiers_,
-                                 const type_t &baseType_) :
+    reference_t::reference_t(const qualifiers_t &qualifiers_,
+                             const type_t &baseType_) :
       type_t(qualifiers_, baseType_) {}
 
-    referenceType::referenceType(const referenceType &baseType_) :
+    reference_t::reference_t(const reference_t &baseType_) :
       type_t(baseType_) {}
 
-    referenceType::~referenceType() {}
+    reference_t::~reference_t() {}
 
-    ktype_t referenceType::type() const {
+    int reference_t::type() const {
       return specifierType::reference;
     }
 
-    type_t& referenceType::clone() const {
-      OCCA_ERROR("occa::lang::referenceType has a NULL baseType",
+    type_t& reference_t::clone() const {
+      OCCA_ERROR("occa::lang::reference_t has a NULL baseType",
                  baseType);
-      return *(new referenceType(qualifiers,
-                                 baseType->clone()));
+      return *(new reference_t(qualifiers, *baseType));
     }
 
-    bool referenceType::canBeDereferenced() const {
+    bool reference_t::canBeDereferenced() const {
       return false;
     }
 
-    bool referenceType::canBeCastedToExplicitly(const type_t &alias) const {
+    bool reference_t::canBeCastedToExplicitly(const type_t &alias) const {
       return baseType->canBeCastedToExplicitly(alias);
     }
 
-    bool referenceType::canBeCastedToImplicitly(const type_t &alias) const {
+    bool reference_t::canBeCastedToImplicitly(const type_t &alias) const {
       return baseType->canBeCastedToImplicitly(alias);
     }
 
-    void referenceType::printLeft(printer &pout) const {
-      OCCA_ERROR("occa::lang::referenceType has a NULL baseType",
+    void reference_t::printLeft(printer &pout) const {
+      OCCA_ERROR("occa::lang::reference_t has a NULL baseType",
                  baseType);
       baseType->printLeft(pout);
       if (pout.lastCharNeedsWhitespace()) {
@@ -659,72 +679,72 @@ namespace occa {
     //==================================
 
     //---[ Structure ]------------------
-    const int structureType::class_  = (1 << 0);
-    const int structureType::enum_   = (1 << 1);
-    const int structureType::struct_ = (1 << 2);
-    const int structureType::union_  = (1 << 3);
+    const int structure_t::class_  = (1 << 0);
+    const int structure_t::enum_   = (1 << 1);
+    const int structure_t::struct_ = (1 << 2);
+    const int structure_t::union_  = (1 << 3);
 
-    structureType::structureType(const std::string &name_,
-                                 const int stype_) :
+    structure_t::structure_t(const std::string &name_,
+                             const int stype_) :
       type_t(name_),
       stype(stype_) {}
 
-    structureType::structureType(const qualifiers_t &qualifiers_,
-                                 const std::string &name_,
-                                 const int stype_) :
+    structure_t::structure_t(const qualifiers_t &qualifiers_,
+                             const std::string &name_,
+                             const int stype_) :
       type_t(qualifiers_, name_),
       stype(stype_) {}
 
-    structureType::structureType(const std::string &name_,
-                                 const int stype_,
-                                 const blockStatement &body_) :
+    structure_t::structure_t(const std::string &name_,
+                             const int stype_,
+                             const blockStatement &body_) :
       type_t(name_),
       stype(stype_),
       body(body_) {}
 
-    structureType::structureType(const qualifiers_t &qualifiers_,
-                                 const std::string &name_,
-                                 const int stype_,
-                                 const blockStatement &body_) :
+    structure_t::structure_t(const qualifiers_t &qualifiers_,
+                             const std::string &name_,
+                             const int stype_,
+                             const blockStatement &body_) :
       type_t(qualifiers_, name_),
       stype(stype_),
       body(body_) {}
 
-    structureType::~structureType() {}
+    structure_t::~structure_t() {}
 
-    ktype_t structureType::type() const {
+    int structure_t::type() const {
       return specifierType::class_;
     }
 
-    type_t& structureType::clone() const {
-      return *(new structureType(qualifiers,
-                                 name,
-                                 stype,
-                                 body));
+    type_t& structure_t::clone() const {
+      return *(new structure_t(qualifiers,
+                               name,
+                               stype,
+                               body));
     }
 
-    bool structureType::canBeDereferenced() const {
+    bool structure_t::canBeDereferenced() const {
       return false;
     }
 
-    bool structureType::canBeCastedToExplicitly(const type_t &alias) const {
+    bool structure_t::canBeCastedToExplicitly(const type_t &alias) const {
       // TODO: Handle class casting
       return false;
     }
 
-    bool structureType::canBeCastedToImplicitly(const type_t &alias) const {
+    bool structure_t::canBeCastedToImplicitly(const type_t &alias) const {
       // TODO: Handle class casting
       return false;
     }
 
-    void structureType::printDeclaration(printer &pout) const {
+    void structure_t::printDeclaration(printer &pout) const {
       pout.printIndentation();
 
       switch (stype) {
-      case structureType::class_ : pout << "class" ; break;
-      case structureType::enum_  : pout << "enum"  ; break;
-      case structureType::struct_: pout << "struct"; break;
-      case structureType::union_ : pout << "union" ; break;
+      case structure_t::class_ : pout << "class" ; break;
+      case structure_t::enum_  : pout << "enum"  ; break;
+      case structure_t::struct_: pout << "struct"; break;
+      case structure_t::union_ : pout << "union" ; break;
       }
       if (name.size()) {
         pout << ' ' << name;
@@ -741,45 +761,43 @@ namespace occa {
     //==================================
 
     //---[ Typedef ]--------------------
-    typedefType::typedefType(const type_t &baseType_,
-                             const std::string &name_) :
+    typedef_t::typedef_t(const type_t &baseType_,
+                         const std::string &name_) :
       type_t(baseType_, name_) {}
 
-    typedefType::typedefType(const qualifiers_t &qualifiers_,
-                             const type_t &baseType_,
-                             const std::string &name_) :
+    typedef_t::typedef_t(const qualifiers_t &qualifiers_,
+                         const type_t &baseType_,
+                         const std::string &name_) :
       type_t(qualifiers_, baseType_, name_) {}
 
-    typedefType::~typedefType() {}
+    typedef_t::~typedef_t() {}
 
-    ktype_t typedefType::type() const {
+    int typedef_t::type() const {
       return specifierType::typedef_;
     }
 
-    type_t& typedefType::clone() const {
-      return *(new typedefType(qualifiers,
-                               baseType->clone(),
-                               name));
+    type_t& typedef_t::clone() const {
+      return *(new typedef_t(qualifiers, *baseType, name));
     }
 
-    bool typedefType::canBeDereferenced() const {
+    bool typedef_t::canBeDereferenced() const {
       return baseType->canBeDereferenced();
     }
 
-    bool typedefType::canBeCastedToExplicitly(const type_t &alias) const {
+    bool typedef_t::canBeCastedToExplicitly(const type_t &alias) const {
       return baseType->canBeCastedToExplicitly(alias);
     }
 
-    bool typedefType::canBeCastedToImplicitly(const type_t &alias) const {
+    bool typedef_t::canBeCastedToImplicitly(const type_t &alias) const {
       return baseType->canBeCastedToImplicitly(alias);
     }
 
-    void typedefType::printLeft(printer &pout) const {
+    void typedef_t::printLeft(printer &pout) const {
       pout << name;
     }
 
-    void typedefType::printDeclaration(printer &pout) const {
-      OCCA_ERROR("occa::lang::typedefType has a NULL baseType",
+    void typedef_t::printDeclaration(printer &pout) const {
+      OCCA_ERROR("occa::lang::typedef_t has a NULL baseType",
                  baseType);
       pout.printIndentation();
       pout << "typedef ";
@@ -798,7 +816,7 @@ namespace occa {
 
     attribute_t::~attribute_t() {}
 
-    ktype_t attribute_t::type() const {
+    int attribute_t::type() const {
       return specifierType::attribute;
     }
 
@@ -806,43 +824,5 @@ namespace occa {
       pout << '@' << name;
     }
     //==================================
-
-    void getSpecifiers(specifierTrie &specifiers) {
-      specifiers.add(const_.name       , &const_);
-      specifiers.add(constexpr_.name   , &constexpr_);
-      specifiers.add(friend_.name      , &friend_);
-      specifiers.add(typedef_.name     , &typedef_);
-      specifiers.add(signed_.name      , &signed_);
-      specifiers.add(unsigned_.name    , &unsigned_);
-      specifiers.add(volatile_.name    , &volatile_);
-
-      specifiers.add(extern_.name      , &extern_);
-      specifiers.add(mutable_.name     , &mutable_);
-      specifiers.add(register_.name    , &register_);
-      specifiers.add(static_.name      , &static_);
-      specifiers.add(thread_local_.name, &thread_local_);
-
-      specifiers.add(explicit_.name    , &explicit_);
-      specifiers.add(inline_.name      , &inline_);
-      specifiers.add(virtual_.name     , &virtual_);
-
-      specifiers.add(class_.name       , &class_);
-      specifiers.add(enum_.name        , &enum_);
-      specifiers.add(struct_.name      , &struct_);
-      specifiers.add(union_.name       , &union_);
-
-      specifiers.add(bool_.name        , &bool_);
-      specifiers.add(char_.name        , &char_);
-      specifiers.add(char16_t_.name    , &char16_t_);
-      specifiers.add(char32_t_.name    , &char32_t_);
-      specifiers.add(wchar_t_.name     , &wchar_t_);
-      specifiers.add(short_.name       , &short_);
-      specifiers.add(int_.name         , &int_);
-      specifiers.add(long_.name        , &long_);
-      specifiers.add(float_.name       , &float_);
-      specifiers.add(double_.name      , &double_);
-      specifiers.add(void_.name        , &void_);
-      specifiers.add(auto_.name        , &auto_);
-    }
   }
 }

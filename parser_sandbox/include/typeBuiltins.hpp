@@ -26,41 +26,41 @@
 
 namespace occa {
   namespace lang {
-    extern const qualifier const_;
-    extern const qualifier constexpr_;
-    extern const qualifier friend_;
-    extern const qualifier typedef_;
-    extern const qualifier signed_;
-    extern const qualifier unsigned_;
-    extern const qualifier volatile_;
+    extern const qualifier_t const_;
+    extern const qualifier_t constexpr_;
+    extern const qualifier_t friend_;
+    extern const qualifier_t typedef_;
+    extern const qualifier_t signed_;
+    extern const qualifier_t unsigned_;
+    extern const qualifier_t volatile_;
 
-    extern const qualifier extern_;
-    extern const qualifier mutable_;
-    extern const qualifier register_;
-    extern const qualifier static_;
-    extern const qualifier thread_local_;
+    extern const qualifier_t extern_;
+    extern const qualifier_t mutable_;
+    extern const qualifier_t register_;
+    extern const qualifier_t static_;
+    extern const qualifier_t thread_local_;
 
-    extern const qualifier explicit_;
-    extern const qualifier inline_;
-    extern const qualifier virtual_;
+    extern const qualifier_t explicit_;
+    extern const qualifier_t inline_;
+    extern const qualifier_t virtual_;
 
-    extern const qualifier class_;
-    extern const qualifier struct_;
-    extern const qualifier enum_;
-    extern const qualifier union_;
+    extern const qualifier_t class_;
+    extern const qualifier_t struct_;
+    extern const qualifier_t enum_;
+    extern const qualifier_t union_;
 
-    extern const primitiveType bool_;
-    extern const primitiveType char_;
-    extern const primitiveType char16_t_;
-    extern const primitiveType char32_t_;
-    extern const primitiveType wchar_t_;
-    extern const primitiveType short_;
-    extern const primitiveType int_;
-    extern const primitiveType long_;
-    extern const primitiveType float_;
-    extern const primitiveType double_;
-    extern const primitiveType void_;
-    extern const primitiveType auto_;
+    extern const primitive_t bool_;
+    extern const primitive_t char_;
+    extern const primitive_t char16_t_;
+    extern const primitive_t char32_t_;
+    extern const primitive_t wchar_t_;
+    extern const primitive_t short_;
+    extern const primitive_t int_;
+    extern const primitive_t long_;
+    extern const primitive_t float_;
+    extern const primitive_t double_;
+    extern const primitive_t void_;
+    extern const primitive_t auto_;
   }
 }
 #endif

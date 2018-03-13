@@ -24,22 +24,13 @@
 
 namespace occa {
   namespace lang {
-    tokenPosition::tokenPosition() :
+    tokenRange::tokenRange() :
       start(0),
-      pos(0),
       end(0) {}
 
-    tokenPosition::tokenPosition(const int start_,
-                                 const int end_) :
+    tokenRange::tokenRange(const int start_,
+                           const int end_) :
       start(start_),
-      pos(start_),
-      end(end_) {}
-
-    tokenPosition::tokenPosition(const int start_,
-                                 const int pos_,
-                                 const int end_) :
-      start(start_),
-      pos(pos_),
       end(end_) {}
 
     tokenContext::tokenContext() {}
@@ -50,7 +41,6 @@ namespace occa {
 
     void tokenContext::clear() {
       tp.start = 0;
-      tp.pos   = 0;
       tp.end   = 0;
 
       hasError = false;
@@ -66,7 +56,6 @@ namespace occa {
 
     void tokenContext::setup() {
       tp.start = 0;
-      tp.pos   = 0;
       tp.end   = (int) tokens.size();
 
       findPairs();
@@ -122,15 +111,28 @@ namespace occa {
       }
     }
 
+    void tokenContext::set(const int start) {
+      tp.start = start;
+    }
+
+    void tokenContext::set(const int start,
+                           const int end) {
+      tp.start = start;
+      tp.end   = end;
+    }
+
+    void tokenContext::push() {
+      stack.push_back(tp);
+    }
+
     void tokenContext::push(const int start,
                             const int end) {
       stack.push_back(tp);
       tp.start = start;
-      tp.pos   = start;
       tp.end   = end;
     }
 
-    tokenPosition tokenContext::pop() {
+    tokenRange tokenContext::pop() {
       OCCA_ERROR("Unable to call tokenContext::pop",
                  stack.size());
       tp = stack.back();
@@ -138,11 +140,16 @@ namespace occa {
       return tp;
     }
 
-    token_t* tokenContext::getNextToken() {
-      if (tp.pos >= tp.end) {
+    int tokenContext::size() const {
+      return (tp.end - tp.start);
+    }
+
+    token_t* tokenContext::operator [] (const int index) {
+      const int pos = tp.start + index;
+      if ((index < 0) || (tp.end <= pos)) {
         return NULL;
       }
-      return tokens[tp.pos++];
+      return tokens[pos];
     }
   }
 }

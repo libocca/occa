@@ -34,7 +34,8 @@ void testIfElse();
 void testIfElseDefines();
 void testErrorDefines();
 void testSpecialMacros();
-void testIncludeDefine();
+void testInclude();
+void testPragma();
 
 using namespace occa::lang;
 
@@ -98,7 +99,8 @@ int main(const int argc, const char **argv) {
   testIfElseDefines();
   testErrorDefines();
   testSpecialMacros();
-  testIncludeDefine();
+  testInclude();
+  testPragma();
 
   delete token;
 }
@@ -529,7 +531,7 @@ void testSpecialMacros() {
   }
 }
 
-void testIncludeDefine() {
+void testInclude() {
   const std::string testFile = (occa::env::OCCA_DIR
                                 + "parser_sandbox/tests/files/preprocessor.cpp");
 
@@ -557,5 +559,23 @@ void testIncludeDefine() {
   preprocessor_t &pp = *((preprocessor_t*) stream.getInput("preprocessor_t"));
   OCCA_ASSERT_EQUAL(1,
                     (int) pp.dependencies.size());
+}
+
+void testPragma() {
+  setStream("#pragma foo\n");
+  getToken();
+  OCCA_ASSERT_EQUAL_BINARY(tokenType::pragma,
+                           token->type());
+
+  OCCA_ASSERT_EQUAL("foo",
+                    token->to<pragmaToken>().value);
+
+  setStream("#pragma\n");
+  getToken();
+  OCCA_ASSERT_EQUAL_BINARY(tokenType::pragma,
+                           token->type());
+
+  OCCA_ASSERT_EQUAL(0,
+                    (int) token->to<pragmaToken>().value.size());
 }
 //======================================

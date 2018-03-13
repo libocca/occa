@@ -58,11 +58,11 @@ namespace occa {
     }
 
     scope_t* typeDeclStatement::getScope() {
-      if (declType.is<structureType>()) {
-        return &(declType.to<structureType>().body.scope);
+      if (declType.is<structure_t>()) {
+        return &(declType.to<structure_t>().body.scope);
       }
-      if (declType.is<functionType>()) {
-        return &(declType.to<functionType>().body.scope);
+      if (declType.is<function_t>()) {
+        return &(declType.to<function_t>().body.scope);
      }
       return NULL;
     }

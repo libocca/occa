@@ -27,18 +27,18 @@
 namespace occa {
   namespace lang {
     class keyword_t;
-    class qualifier;
-    class primitiveType;
+    class qualifier_t;
     class type_t;
-    class functionType;
+    class variable;
+
+    typedef trie<keyword_t*> keywordTrie;
 
     namespace keywordType {
       extern const int none;
-      extern const int qualifier;
-      extern const int primitiveType;
 
+      extern const int qualifier;
       extern const int type;
-      extern const int function;
+      extern const int variable;
 
       extern const int if_;
       extern const int else_;
@@ -65,48 +65,73 @@ namespace occa {
 
     class keyword_t {
     public:
-      void *ptr;
-      std::string name;
-      int kType;
+      virtual ~keyword_t();
 
-      keyword_t();
-      keyword_t(const qualifier &value);
-      keyword_t(const primitiveType &value);
-      keyword_t(type_t &type);
-      keyword_t(functionType &type);
-      keyword_t(void *ptr_,
-                const std::string &name_,
-                const int kType_);
-
-      void free();
-
-      template <class TM>
-      inline TM& to() {
-        return *((TM*) ptr);
-      }
-
-      template <class TM>
-      inline const TM& to() const {
-        return *((TM*) ptr);
-      }
+      virtual int type() = 0;
+      virtual std::string name() = 0;
     };
 
-    typedef trie<keyword_t> keywordTrie;
+    //---[ Qualifier ]------------------
+    class qualifierKeyword : public keyword_t {
+    public:
+      const qualifier_t &qualifier;
+
+      qualifierKeyword(const qualifier_t &qualifier_);
+
+      virtual int type();
+      virtual std::string name();
+    };
+    //==================================
+
+    //---[ Type ]-----------------------
+    class typeKeyword : public keyword_t {
+    private:
+      const type_t &type_;
+
+    public:
+      typeKeyword(const type_t &type__);
+
+      virtual int type();
+      virtual std::string name();
+    };
+    //==================================
+
+    //---[ Variable ]-------------------
+    class variableKeyword : public keyword_t {
+    private:
+      const variable &var;
+
+    public:
+      variableKeyword(const variable &var_);
+
+      virtual int type();
+      virtual std::string name();
+    };
+    //==================================
+
+    //---[ Statement ]------------------
+    class statementKeyword : public keyword_t {
+    public:
+      int sType;
+      const std::string sName;
+
+      statementKeyword(const int sType_,
+                       const std::string &sName_);
+
+      virtual int type();
+      virtual std::string name();
+    };
+    //==================================
 
     void getKeywords(keywordTrie &keywords);
-
-    template <class TM>
-    void addKeyword(keywordTrie &keywords,
-                    const TM &value) {
-      keyword_t keyword(value);
-      keywords.add(keyword.name, keyword);
-    }
-
-    void addKeyword(keywordTrie &keywords,
-                    const std::string &name,
-                    const int kType);
-
     void freeKeywords(keywordTrie &keywords);
+
+    template <class keywordType>
+    void addKeyword(keywordTrie &keywords,
+                    keywordType *keyword) {
+      keywords.add(keyword->name(),
+                   keyword);
+    }
   }
 }
 #endif

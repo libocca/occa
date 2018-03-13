@@ -21,105 +21,77 @@
  */
 #include "occa/tools/testing.hpp"
 #include "keyword.hpp"
-#include "typeBuiltins.hpp"
 
 using namespace occa::lang;
 
-void testBuiltins(keywordTrie &keywords);
-void testStatements(keywordTrie &keywords);
+void testDefaults(keywordTrie &keywords);
 
 int main(const int argc, const char **argv) {
   keywordTrie keywords;
   getKeywords(keywords);
 
-  testBuiltins(keywords);
-  testStatements(keywords);
+  testDefaults(keywords);
 
   freeKeywords(keywords);
 
   return 0;
 }
 
-void testBuiltins(keywordTrie &keywords) {
-  OCCA_ASSERT_EQUAL(keywords.get("const").value().ptr,
-                    (void*) &const_);
-  OCCA_ASSERT_EQUAL(keywords.get("constexpr").value().ptr,
-                    (void*) &constexpr_);
-  OCCA_ASSERT_EQUAL(keywords.get("friend").value().ptr,
-                    (void*) &friend_);
-  OCCA_ASSERT_EQUAL(keywords.get("typedef").value().ptr,
-                    (void*) &typedef_);
-  OCCA_ASSERT_EQUAL(keywords.get("signed").value().ptr,
-                    (void*) &signed_);
-  OCCA_ASSERT_EQUAL(keywords.get("unsigned").value().ptr,
-                    (void*) &unsigned_);
-  OCCA_ASSERT_EQUAL(keywords.get("volatile").value().ptr,
-                    (void*) &volatile_);
+#define assertKeyword(name_, type_)                             \
+  OCCA_ASSERT_EQUAL_BINARY(type_,                               \
+                           keywords.get(name_).value()->type())
 
-  OCCA_ASSERT_EQUAL(keywords.get("extern").value().ptr,
-                    (void*) &extern_);
-  OCCA_ASSERT_EQUAL(keywords.get("mutable").value().ptr,
-                    (void*) &mutable_);
-  OCCA_ASSERT_EQUAL(keywords.get("register").value().ptr,
-                    (void*) &register_);
-  OCCA_ASSERT_EQUAL(keywords.get("static").value().ptr,
-                    (void*) &static_);
-  OCCA_ASSERT_EQUAL(keywords.get("thread_local").value().ptr,
-                    (void*) &thread_local_);
 
-  OCCA_ASSERT_EQUAL(keywords.get("explicit").value().ptr,
-                    (void*) &explicit_);
-  OCCA_ASSERT_EQUAL(keywords.get("inline").value().ptr,
-                    (void*) &inline_);
-  OCCA_ASSERT_EQUAL(keywords.get("virtual").value().ptr,
-                    (void*) &virtual_);
+void testDefaults(keywordTrie &keywords) {
+  // Qualifiers
+  assertKeyword("const"       , keywordType::qualifier);
+  assertKeyword("constexpr"   , keywordType::qualifier);
+  assertKeyword("friend"      , keywordType::qualifier);
+  assertKeyword("typedef"     , keywordType::qualifier);
+  assertKeyword("signed"      , keywordType::qualifier);
+  assertKeyword("unsigned"    , keywordType::qualifier);
+  assertKeyword("volatile"    , keywordType::qualifier);
 
-  OCCA_ASSERT_EQUAL(keywords.get("class").value().ptr,
-                    (void*) &class_);
-  OCCA_ASSERT_EQUAL(keywords.get("enum").value().ptr,
-                    (void*) &enum_);
-  OCCA_ASSERT_EQUAL(keywords.get("struct").value().ptr,
-                    (void*) &struct_);
-  OCCA_ASSERT_EQUAL(keywords.get("union").value().ptr,
-                    (void*) &union_);
+  assertKeyword("extern"      , keywordType::qualifier);
+  assertKeyword("mutable"     , keywordType::qualifier);
+  assertKeyword("register"    , keywordType::qualifier);
+  assertKeyword("static"      , keywordType::qualifier);
+  assertKeyword("thread_local", keywordType::qualifier);
 
-  OCCA_ASSERT_EQUAL(keywords.get("bool").value().ptr,
-                    (void*) &bool_);
-  OCCA_ASSERT_EQUAL(keywords.get("char").value().ptr,
-                    (void*) &char_);
-  OCCA_ASSERT_EQUAL(keywords.get("char16_t").value().ptr,
-                    (void*) &char16_t_);
-  OCCA_ASSERT_EQUAL(keywords.get("char32_t").value().ptr,
-                    (void*) &char32_t_);
-  OCCA_ASSERT_EQUAL(keywords.get("wchar_t").value().ptr,
-                    (void*) &wchar_t_);
-  OCCA_ASSERT_EQUAL(keywords.get("short").value().ptr,
-                    (void*) &short_);
-  OCCA_ASSERT_EQUAL(keywords.get("int").value().ptr,
-                    (void*) &int_);
-  OCCA_ASSERT_EQUAL(keywords.get("long").value().ptr,
-                    (void*) &long_);
-  OCCA_ASSERT_EQUAL(keywords.get("float").value().ptr,
-                    (void*) &float_);
-  OCCA_ASSERT_EQUAL(keywords.get("double").value().ptr,
-                    (void*) &double_);
-  OCCA_ASSERT_EQUAL(keywords.get("void").value().ptr,
-                    (void*) &void_);
-  OCCA_ASSERT_EQUAL(keywords.get("auto").value().ptr,
-                    (void*) &auto_);
-}
+  assertKeyword("explicit"    , keywordType::qualifier);
+  assertKeyword("inline"      , keywordType::qualifier);
+  assertKeyword("virtual"     , keywordType::qualifier);
 
-void testStatements(keywordTrie &keywords) {
-  OCCA_ASSERT_TRUE(keywords.has("if"));
-  OCCA_ASSERT_TRUE(keywords.has("else"));
-  OCCA_ASSERT_TRUE(keywords.has("switch"));
-  OCCA_ASSERT_TRUE(keywords.has("case"));
-  OCCA_ASSERT_TRUE(keywords.has("default"));
-  OCCA_ASSERT_TRUE(keywords.has("for"));
-  OCCA_ASSERT_TRUE(keywords.has("while"));
-  OCCA_ASSERT_TRUE(keywords.has("do"));
-  OCCA_ASSERT_TRUE(keywords.has("break"));
-  OCCA_ASSERT_TRUE(keywords.has("continue"));
-  OCCA_ASSERT_TRUE(keywords.has("return"));
-  OCCA_ASSERT_TRUE(keywords.has("goto"));
+  assertKeyword("class"       , keywordType::qualifier);
+  assertKeyword("enum"        , keywordType::qualifier);
+  assertKeyword("struct"      , keywordType::qualifier);
+  assertKeyword("union"       , keywordType::qualifier);
+
+  // Types
+  assertKeyword("bool"    , keywordType::type);
+  assertKeyword("char"    , keywordType::type);
+  assertKeyword("char16_t", keywordType::type);
+  assertKeyword("char32_t", keywordType::type);
+  assertKeyword("wchar_t" , keywordType::type);
+  assertKeyword("short"   , keywordType::type);
+  assertKeyword("int"     , keywordType::type);
+  assertKeyword("long"    , keywordType::type);
+  assertKeyword("float"   , keywordType::type);
+  assertKeyword("double"  , keywordType::type);
+  assertKeyword("void"    , keywordType::type);
+  assertKeyword("auto"    , keywordType::type);
+
+  // Statements
+  assertKeyword("if"      , keywordType::if_);
+  assertKeyword("else"    , keywordType::else_);
+  assertKeyword("switch"  , keywordType::switch_);
+  assertKeyword("case"    , keywordType::case_);
+  assertKeyword("default" , keywordType::default_);
+  assertKeyword("for"     , keywordType::for_);
+  assertKeyword("while"   , keywordType::while_);
+  assertKeyword("do"      , keywordType::do_);
+  assertKeyword("break"   , keywordType::break_);
+  assertKeyword("continue", keywordType::continue_);
+  assertKeyword("return"  , keywordType::return_);
+  assertKeyword("goto"    , keywordType::goto_);
 }

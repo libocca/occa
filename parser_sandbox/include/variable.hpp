@@ -28,15 +28,18 @@ namespace occa {
   namespace lang {
     class variable {
     public:
-      type_t *type;
+      const type_t *type;
       std::string name;
 
-      variable(type_t &type_,
+      variable(const type_t &type_,
                const std::string &name_);
+
+      ~variable();
 
       variable& clone() const;
 
       void print(printer &pout) const;
+      void printDeclaration(printer &pout) const;
     };
   }
 }

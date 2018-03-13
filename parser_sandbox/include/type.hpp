@@ -37,71 +37,68 @@
 
 namespace occa {
   namespace lang {
-    class qualifier;
+    class qualifier_t;
     class type_t;
     class attribute_t;
     class specifier;
     class variable;
     class exprNode;
 
-    typedef std::vector<const qualifier*> qualifierVector_t;
-    typedef std::vector<type_t*>          typeVector_t;
-    typedef std::vector<attribute_t>      attributeVector_t;
-    typedef trie<const specifier*>        specifierTrie;
-
-    typedef int ktype_t;
+    typedef std::vector<const qualifier_t*> qualifierVector_t;
+    typedef std::vector<variable*>          argVector_t;
+    typedef std::vector<attribute_t>        attributeVector_t;
 
     //---[ Types ]----------------------
     namespace specifierType {
-      extern const ktype_t none;
+      extern const int none;
 
-      extern const ktype_t qualifier;
-      extern const ktype_t type;
-      extern const ktype_t primitive;
-      extern const ktype_t pointer;
-      extern const ktype_t reference;
-      extern const ktype_t array;
-      extern const ktype_t struct_;
-      extern const ktype_t class_;
-      extern const ktype_t typedef_;
-      extern const ktype_t function;
-      extern const ktype_t attribute;
+      extern const int qualifier;
+      extern const int type;
+      extern const int primitive;
+      extern const int pointer;
+      extern const int reference;
+      extern const int array;
+      extern const int struct_;
+      extern const int class_;
+      extern const int typedef_;
+      extern const int function;
+      extern const int attribute;
     }
 
     namespace qualifierType {
-      extern const ktype_t none;
+      extern const int none;
 
-      extern const ktype_t auto_;
-      extern const ktype_t const_;
-      extern const ktype_t constexpr_;
-      extern const ktype_t restrict_;
-      extern const ktype_t signed_;
-      extern const ktype_t unsigned_;
-      extern const ktype_t volatile_;
-      extern const ktype_t register_;
-      extern const ktype_t typeInfo;
+      extern const int auto_;
+      extern const int const_;
+      extern const int constexpr_;
+      extern const int restrict_;
+      extern const int signed_;
+      extern const int unsigned_;
+      extern const int volatile_;
+      extern const int register_;
+      extern const int typeInfo;
 
-      extern const ktype_t extern_;
-      extern const ktype_t static_;
-      extern const ktype_t thread_local_;
-      extern const ktype_t globalScope;
+      extern const int extern_;
+      extern const int static_;
+      extern const int thread_local_;
+      extern const int globalScope;
 
-      extern const ktype_t friend_;
-      extern const ktype_t mutable_;
-      extern const ktype_t classInfo;
+      extern const int friend_;
+      extern const int mutable_;
+      extern const int classInfo;
 
-      extern const ktype_t inline_;
-      extern const ktype_t virtual_;
-      extern const ktype_t explicit_;
-      extern const ktype_t functionInfo;
+      extern const int inline_;
+      extern const int virtual_;
+      extern const int explicit_;
+      extern const int functionInfo;
 
-      extern const ktype_t builtin_;
-      extern const ktype_t typedef_;
-      extern const ktype_t class_;
-      extern const ktype_t enum_;
-      extern const ktype_t struct_;
-      extern const ktype_t union_;
-      extern const ktype_t newType;
+      extern const int builtin_;
+      extern const int typedef_;
+      extern const int class_;
+      extern const int enum_;
+      extern const int struct_;
+      extern const int union_;
+      extern const int newType;
     }
 
     namespace classAccess {
@@ -120,7 +117,7 @@ namespace occa {
       specifier(const std::string &name_);
       virtual ~specifier();
 
-      virtual ktype_t type() const = 0;
+      virtual int type() const = 0;
 
       template <class TM>
       inline bool is() const {
@@ -144,11 +141,11 @@ namespace occa {
       }
 
       inline bool isNamed() const {
-        return (name.size() != 0);
+        return name.size();
       }
 
       inline bool isUnnamed() const {
-        return (name.size() == 0);
+        return !name.size();
       }
 
       virtual std::string uniqueName() const;
@@ -161,15 +158,15 @@ namespace occa {
     //==================================
 
     //---[ Qualifier ]------------------
-    class qualifier : public specifier {
+    class qualifier_t : public specifier {
     public:
-      const ktype_t ktype;
+      const int ktype;
 
-      qualifier(const std::string &name_,
-                const ktype_t ktype_);
-      virtual ~qualifier();
+      qualifier_t(const std::string &name_,
+                  const int ktype_);
+      virtual ~qualifier_t();
 
-      virtual ktype_t type() const;
+      virtual int type() const;
     };
     //==================================
 
@@ -179,18 +176,20 @@ namespace occa {
       qualifierVector_t qualifiers;
 
       qualifiers_t();
-      qualifiers_t(const qualifier &q);
+
+      qualifiers_t(const qualifier_t &qualifier);
+
       ~qualifiers_t();
 
       inline int size() const {
         return (int) qualifiers.size();
       }
 
-      int indexOf(const qualifier &q) const;
-      bool has(const qualifier &q) const;
+      int indexOf(const qualifier_t &qualifier) const;
+      bool has(const qualifier_t &qualifier) const;
 
-      void add(const qualifier &q);
-      void remove(const qualifier &q);
+      void add(const qualifier_t &qualifier);
+      void remove(const qualifier_t &qualifier);
 
       void print(printer &pout) const;
 
@@ -206,19 +205,26 @@ namespace occa {
       qualifiers_t qualifiers;
 
       type_t();
+
       type_t(const std::string &name_);
+
       type_t(const type_t &baseType_,
              const std::string &name_ = "");
+
       type_t(const qualifiers_t &qualifiers_,
              const std::string &name_ = "");
+
       type_t(const qualifiers_t &qualifiers_,
              const type_t &baseType_,
              const std::string &name_ = "");
 
       virtual ~type_t();
 
-      virtual ktype_t type() const;
+      void setBaseType(const type_t &baseType_);
+
+      virtual int type() const;
       virtual type_t& clone() const;
+      type_t& shallowClone() const;
 
       virtual bool canBeDereferenced() const;
       virtual bool canBeCastedToExplicitly(const type_t &alias) const;
@@ -247,41 +253,44 @@ namespace occa {
 
       void replaceBaseType(type_t &baseType_);
 
-      inline void addQualifier(const qualifier &q) {
-        qualifiers.add(q);
+      inline void addQualifier(const qualifier_t &qualifier) {
+        qualifiers.add(qualifier);
       }
 
-      inline void removeQualifier(const qualifier &q) {
-        qualifiers.remove(q);
+      inline void removeQualifier(const qualifier_t &qualifier) {
+        qualifiers.remove(qualifier);
       }
 
-      inline bool hasQualifier(const qualifier &q) {
-        return qualifiers.has(q);
+      inline bool hasQualifier(const qualifier_t &qualifier) {
+        return qualifiers.has(qualifier);
       }
 
       virtual void printLeft(printer &pout) const;
       virtual void printRight(printer &pout) const;
 
       virtual void print(printer &pout) const;
-      void print(printer &pout, const variable &var) const;
     };
 
     class declarationType : virtual public type_t {
     public:
+      virtual ~declarationType();
+
       virtual void printDeclaration(printer &pout) const = 0;
 
       std::string declarationToString() const;
       void declarationDebugPrint() const;
     };
+
+    void shallowFree(const type_t *&type);
     //==================================
 
-    //---[ PrimitiveType ]--------------
-    class primitiveType : public type_t {
+    //---[ Primitive ]------------------
+    class primitive_t : public type_t {
     public:
-      primitiveType(const std::string &name_);
-      virtual ~primitiveType();
+      primitive_t(const std::string &name_);
+      virtual ~primitive_t();
 
-      virtual ktype_t type() const;
+      virtual int type() const;
       virtual type_t& clone() const;
 
       virtual bool canBeDereferenced() const;
@@ -291,8 +300,10 @@ namespace occa {
     //==================================
 
     //---[ Base Pointer ]---------------
-    class basePointerType : virtual public type_t {
+    class basePointer_t : virtual public type_t {
     public:
+      virtual ~basePointer_t();
+
       virtual bool canBeDereferenced() const;
       virtual bool canBeCastedToExplicitly(const type_t &alias) const;
       virtual bool canBeCastedToImplicitly(const type_t &alias) const;
@@ -300,17 +311,17 @@ namespace occa {
     //==================================
 
     //---[ Pointer ]--------------------
-    class pointerType : public basePointerType {
+    class pointer_t : public basePointer_t {
     public:
-      pointerType(const type_t &baseType_);
-      pointerType(const qualifiers_t &qualifiers_,
-                  const type_t &baseType_);
+      pointer_t(const type_t &baseType_);
+      pointer_t(const qualifiers_t &qualifiers_,
+                const type_t &baseType_);
 
-      pointerType(const pointerType &baseType_);
+      pointer_t(const pointer_t &baseType_);
 
-      virtual ~pointerType();
+      virtual ~pointer_t();
 
-      virtual ktype_t type() const;
+      virtual int type() const;
       virtual type_t& clone() const;
 
       virtual void printLeft(printer &pout) const;
@@ -318,27 +329,27 @@ namespace occa {
     //==================================
 
     //---[ Array ]----------------------
-    class arrayType : public basePointerType {
+    class array_t : public basePointer_t {
     public:
       const exprNode *size;
 
-      arrayType(const type_t &baseType_);
+      array_t(const type_t &baseType_);
 
-      arrayType(const qualifiers_t &qualifiers_,
-                const type_t &baseType_);
+      array_t(const qualifiers_t &qualifiers_,
+              const type_t &baseType_);
 
-      arrayType(const type_t &baseType_,
-                const exprNode &size_);
+      array_t(const type_t &baseType_,
+              const exprNode &size_);
 
-      arrayType(const qualifiers_t &qualifiers_,
-                const type_t &baseType_,
-                const exprNode &size_);
+      array_t(const qualifiers_t &qualifiers_,
+              const type_t &baseType_,
+              const exprNode &size_);
 
-      arrayType(const arrayType &baseType_);
+      array_t(const array_t &baseType_);
 
-      virtual ~arrayType();
+      virtual ~array_t();
 
-      virtual ktype_t type() const;
+      virtual int type() const;
       virtual type_t& clone() const;
 
       void setSize(exprNode &size_);
@@ -348,21 +359,24 @@ namespace occa {
     //==================================
 
     //---[ Function ]-------------------
-    class functionType : public declarationType,
-                         public basePointerType {
+    class function_t : public declarationType,
+                       public basePointer_t {
     public:
-      typeVector_t args;
+      argVector_t args;
       blockStatement body;
 
-      functionType(const type_t &returnType);
-      functionType(const type_t &returnType,
-                   const std::string &name_);
+      function_t(const type_t &returnType);
 
-      functionType(const functionType &returnType);
+      function_t(const type_t &returnType,
+                 const std::string &name_);
 
-      virtual ~functionType();
+      function_t(const type_t &returnType,
+                 const std::string &name_,
+                 const argVector_t &args_);
 
-      virtual ktype_t type() const;
+      virtual ~function_t();
+
+      virtual int type() const;
       virtual type_t& clone() const;
 
       virtual bool canBeCastedToImplicitly(const type_t &alias) const;
@@ -389,15 +403,18 @@ namespace occa {
     //==================================
 
     //---[ Reference ]------------------
-    class referenceType : public type_t {
+    class reference_t : public type_t {
     public:
-      referenceType(const type_t &baseType_);
-      referenceType(const qualifiers_t &qualifiers_,
-                    const type_t &baseType_);
-      referenceType(const referenceType &baseType_);
-      virtual ~referenceType();
+      reference_t(const type_t &baseType_);
 
-      virtual ktype_t type() const;
+      reference_t(const qualifiers_t &qualifiers_,
+                  const type_t &baseType_);
+
+      reference_t(const reference_t &baseType_);
+
+      virtual ~reference_t();
+
+      virtual int type() const;
       virtual type_t& clone() const;
 
       virtual bool canBeDereferenced() const;
@@ -409,7 +426,7 @@ namespace occa {
     //==================================
 
     //---[ Structure ]------------------
-    class structureType : public declarationType {
+    class structure_t : public declarationType {
     public:
       std::string name;
       int stype;
@@ -420,25 +437,25 @@ namespace occa {
       static const int struct_;
       static const int union_;
 
-      structureType(const std::string &name_,
-                    const int stype_);
+      structure_t(const std::string &name_,
+                  const int stype_);
 
-      structureType(const qualifiers_t &qualifiers_,
-                    const std::string &name_,
-                    const int stype_);
+      structure_t(const qualifiers_t &qualifiers_,
+                  const std::string &name_,
+                  const int stype_);
 
-      structureType(const std::string &name_,
-                    const int stype_,
-                    const blockStatement &body_);
+      structure_t(const std::string &name_,
+                  const int stype_,
+                  const blockStatement &body_);
 
-      structureType(const qualifiers_t &qualifiers_,
-                    const std::string &name_,
-                    const int stype_,
-                    const blockStatement &body_);
+      structure_t(const qualifiers_t &qualifiers_,
+                  const std::string &name_,
+                  const int stype_,
+                  const blockStatement &body_);
 
-      virtual ~structureType();
+      virtual ~structure_t();
 
-      virtual ktype_t type() const;
+      virtual int type() const;
       virtual type_t& clone() const;
 
       virtual bool canBeDereferenced() const;
@@ -450,17 +467,18 @@ namespace occa {
     //==================================
 
     //---[ Typedef ]--------------------
-    class typedefType : public declarationType {
+    class typedef_t : public declarationType {
     public:
-      typedefType(const type_t &baseType_,
-                  const std::string &name_);
-      typedefType(const qualifiers_t &qualifiers_,
-                  const type_t &baseType_,
-                  const std::string &name_);
+      typedef_t(const type_t &baseType_,
+                const std::string &name_);
 
-      virtual ~typedefType();
+      typedef_t(const qualifiers_t &qualifiers_,
+                const type_t &baseType_,
+                const std::string &name_);
 
-      virtual ktype_t type() const;
+      virtual ~typedef_t();
+
+      virtual int type() const;
       virtual type_t& clone() const;
 
       virtual bool canBeDereferenced() const;
@@ -478,13 +496,11 @@ namespace occa {
       attribute_t(const std::string &name_);
       virtual ~attribute_t();
 
-      virtual ktype_t type() const;
+      virtual int type() const;
 
       virtual void print(printer &pout) const;
     };
     //==================================
-
-    void getSpecifiers(specifierTrie &specifiers);
   }
 }
 #endif

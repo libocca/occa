@@ -497,7 +497,7 @@ namespace occa {
 
       processDirective_t processFunc = result.value();
 
-      if ((status & ppStatus::ignoring)                 &&
+      if ((status & ppStatus::ignoring)                   &&
           (processFunc != &preprocessor_t::processIf)     &&
           (processFunc != &preprocessor_t::processIfdef)  &&
           (processFunc != &preprocessor_t::processIfndef) &&
@@ -876,7 +876,21 @@ namespace occa {
     }
 
     void preprocessor_t::processPragma(identifierToken &directive) {
-      // TODO
+      tokenVector lineTokens;
+      getExpandedLineTokens(lineTokens);
+
+      // Remove the newline token
+      if (lineTokens.size()) {
+        delete lineTokens.back();
+        lineTokens.pop_back();
+      }
+
+      const std::string value = stringifyTokens(lineTokens, true);
+
+      pushOutput(new pragmaToken(directive.origin,
+                                 value));
+
+      freeTokenVector(lineTokens);
     }
 
     void preprocessor_t::processLine(identifierToken &directive) {

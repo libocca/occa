@@ -28,23 +28,23 @@
 
 namespace occa {
   namespace lang {
-    class tokenPosition;
+    class tokenRange;
     class token_t;
 
     typedef std::vector<token_t*>    tokenVector;
-    typedef std::list<tokenPosition> tokenPositionList;
+    typedef std::list<tokenRange> tokenRangeList;
     typedef std::map<int, int>       intIntMap;
 
-    class tokenPosition {
+    class tokenRange {
     public:
       int start, pos, end;
 
-      tokenPosition();
+      tokenRange();
 
-      tokenPosition(const int start_,
+      tokenRange(const int start_,
                     const int end_);
 
-      tokenPosition(const int start_,
+      tokenRange(const int start_,
                     const int pos_,
                     const int end_);
     };
@@ -55,8 +55,8 @@ namespace occa {
       intIntMap pairs;
       bool hasError;
 
-      tokenPositionList stack;
-      tokenPosition tp;
+      tokenRangeList stack;
+      tokenRange tp;
 
       tokenContext();
       ~tokenContext();
@@ -65,12 +65,17 @@ namespace occa {
       void setup();
       void findPairs();
 
+      void set(const int start);
+      void set(const int start,
+               const int end);
+
+      void push();
       void push(const int start,
                 const int end);
+      tokenRange pop();
 
-      tokenPosition pop();
-
-      token_t* getNextToken();
+      int size() const;
+      token_t* operator [] (const int index);
     };
   }
 }

@@ -49,6 +49,7 @@ namespace occa {
       root = NULL;
       up   = NULL;
 
+      freeKeywords(keywords);
       attributes.clear();
 
       success = true;
@@ -91,43 +92,85 @@ namespace occa {
         return;
       }
 
+      getKeywords(keywords);
+
       root = new blockStatement();
       up   = root;
-      loadBlockStatement(*root);
+      loadChildStatements(*root);
     }
 
-    void parser_t::loadBlockStatement(blockStatement &smnt) {
+    keyword_t* parser_t::getKeyword(token_t *token) {
+      if (!(token->type() & tokenType::identifier)) {
+        return NULL;
+      }
+
+      identifierToken &identifier = token->to<identifierToken>();
+      keywordTrie::result_t result = keywords.get(identifier.value);
+      if (!result.success()) {
+        identifier.printError("Unknown identifier");
+        success = false;
+        return NULL;
+      }
+
+      return result.value();
     }
 
-    void parser_t::loadForStatement(forStatement &smnt) {
+    int parser_t::peek() {
+      return 0;
+#if 0
+      const int tokens = context.size();
+      if (!tokens) {
+        return statementType::empty;
+      }
+
+      token_t *token = context[0];
+      // keyword_t *keyword = getKeyword(token);
+      if (!success) {
+        return statementType::empty;
+      }
+
+      const int kType = keyword.type();
+      if (kType & keywordType::) {
+        return statementType::expression;
+      }
+      if (kType & keywordType::) {
+        return statementType::expression;
+      }
+      if (kType & keywordType::) {
+        return statementType::expression;
+      }
+      if (kType & keywordType::) {
+        return statementType::expression;
+      }
+      if (kType & keywordType::) {
+        return statementType::expression;
+      }
+
+      const int empty       = (1 << 1);
+      const int pragma      = (1 << 2);
+      const int block       = (1 << 3);
+      const int typeDecl    = (1 << 4);
+      const int classAccess = (1 << 5);
+      const int expression  = (1 << 6);
+      const int declaration = (1 << 7);
+      const int goto_       = (1 << 8);
+      const int gotoLabel   = (1 << 9);
+      const int namespace_  = (1 << 10);
+      const int if_         = (1 << 11);
+      const int elif_       = (1 << 12);
+      const int else_       = (1 << 13);
+      const int for_        = (1 << 14);
+      const int while_      = (1 << 15);
+      const int switch_     = (1 << 16);
+      const int case_       = (1 << 17);
+      const int continue_   = (1 << 18);
+      const int break_      = (1 << 19);
+      const int return_     = (1 << 20);
+      const int attribute   = (1 << 21);
+#endif
     }
 
-    void parser_t::loadWhileStatement(whileStatement &smnt) {
-    }
-
-    void parser_t::loadIfStatement(ifStatement &smnt) {
-    }
-
-    void parser_t::loadElseIfStatement(elifStatement &smnt) {
-    }
-
-    void parser_t::loadElseStatement(elseStatement &smnt) {
-    }
-
-    void* parser_t::getDeclaration() {
-      return NULL;
-    }
-
-    void* parser_t::getExpression() {
-      return NULL;
-    }
-
-    void* parser_t::getFunction() {
-      return NULL;
-    }
-
-    void* parser_t::getAttribute() {
-      return NULL;
+    void parser_t::loadChildStatements(blockStatement &smnt) {
     }
   }
 }

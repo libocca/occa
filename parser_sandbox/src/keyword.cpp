@@ -21,166 +21,168 @@
  */
 #include "keyword.hpp"
 #include "typeBuiltins.hpp"
+#include "variable.hpp"
 
 namespace occa {
   namespace lang {
     namespace keywordType {
-      const int none          = 0;
-      const int qualifier     = (1 << 0);
-      const int primitiveType = (1 << 1);
+      const int none        = (1 << 0);
 
-      const int type          = (1 << 2);
-      const int function      = (1 << 3);
+      const int qualifier   = (1 << 1);
+      const int type        = (1 << 2);
+      const int variable    = (1 << 3);
 
-      const int if_           = (1 << 4);
-      const int else_         = (1 << 5);
-      const int switch_       = (1 << 6);
-      const int conditional   = (if_   |
-                                 else_ |
-                                 switch_);
+      const int if_         = (1 << 4);
+      const int else_       = (1 << 5);
+      const int switch_     = (1 << 6);
+      const int conditional = (if_   |
+                               else_ |
+                               switch_);
 
-      const int case_         = (1 << 7);
-      const int default_      = (1 << 8);
-      const int switchLabel   = (case_ |
-                                 default_);
+      const int case_       = (1 << 7);
+      const int default_    = (1 << 8);
+      const int switchLabel = (case_ |
+                               default_);
 
-      const int for_          = (1 << 9);
-      const int while_        = (1 << 10);
-      const int do_           = (1 << 11);
-      const int iteration     = (for_   |
-                                 while_ |
-                                 do_);
+      const int for_        = (1 << 9);
+      const int while_      = (1 << 10);
+      const int do_         = (1 << 11);
+      const int iteration   = (for_   |
+                               while_ |
+                               do_);
 
-      const int break_        = (1 << 12);
-      const int continue_     = (1 << 13);
-      const int return_       = (1 << 14);
-      const int goto_         = (1 << 15);
-      const int jump          = (break_    |
-                                 continue_ |
-                                 return_   |
-                                 goto_);
+      const int break_      = (1 << 12);
+      const int continue_   = (1 << 13);
+      const int return_     = (1 << 14);
+      const int goto_       = (1 << 15);
+      const int jump        = (break_    |
+                               continue_ |
+                               return_   |
+                               goto_);
 
-      const int statement     = (conditional |
-                                 switchLabel |
-                                 iteration   |
-                                 jump);
+      const int statement   = (conditional |
+                               switchLabel |
+                               iteration   |
+                               jump);
     }
 
-    keyword_t::keyword_t() :
-      ptr(NULL),
-      name(),
-      kType(keywordType::none) {}
+    keyword_t::~keyword_t() {}
 
-    keyword_t::keyword_t(const qualifier &value) :
-      ptr(const_cast<void*>((void*) &value)),
-      name(value.name),
-      kType(keywordType::qualifier) {}
+    //---[ Qualifier ]------------------
+    qualifierKeyword::qualifierKeyword(const qualifier_t &qualifier_) :
+      qualifier(qualifier_) {}
 
-    keyword_t::keyword_t(const primitiveType &value) :
-      ptr(const_cast<void*>((void*) &value)),
-      name(value.name),
-      kType(keywordType::primitiveType) {}
-
-    keyword_t::keyword_t(type_t &type) :
-      ptr(&type),
-      name(type.name),
-      kType(keywordType::type) {}
-
-    keyword_t::keyword_t(functionType &type) :
-      ptr(&type),
-      name(type.name),
-      kType(keywordType::function) {}
-
-    keyword_t::keyword_t(void *ptr_,
-                         const std::string &name_,
-                         const int kType_) :
-      ptr(ptr_),
-      name(name_),
-      kType(kType_) {}
-
-    void keyword_t::free() {
-      // Builtins
-      if (kType & (keywordType::type |
-                   keywordType::function)) {
-        // Custom types
-        if (kType & keywordType::type) {
-          delete (type_t*) ptr;
-        }
-        else if (kType & keywordType::function) {
-          delete (functionType*) ptr;
-        }
-      }
-      ptr   = NULL;
-      name  = "";
-      kType = keywordType::none;
+    int qualifierKeyword::type() {
+      return keywordType::qualifier;
     }
+
+    std::string qualifierKeyword::name() {
+      return qualifier.name;
+    }
+    //==================================
+
+    //---[ Type ]-----------------------
+    typeKeyword::typeKeyword(const type_t &type__) :
+      type_(type__) {}
+
+    int typeKeyword::type() {
+      return keywordType::type;
+    }
+
+    std::string typeKeyword::name() {
+      return type_.name;
+    }
+    //==================================
+
+    //---[ Variable ]-------------------
+    variableKeyword::variableKeyword(const variable &var_) :
+      var(var_) {}
+
+    int variableKeyword::type() {
+      return keywordType::variable;
+    }
+
+    std::string variableKeyword::name() {
+      return var.name;
+    }
+    //==================================
+
+    //---[ Statement ]------------------
+    statementKeyword::statementKeyword(const int sType_,
+                                       const std::string &sName_) :
+      sType(sType_),
+      sName(sName_) {}
+
+    int statementKeyword::type() {
+      return sType;
+    }
+
+    std::string statementKeyword::name() {
+      return sName;
+    }
+    //==================================
 
     void getKeywords(keywordTrie &keywords) {
-      addKeyword(keywords, const_);
-      addKeyword(keywords, constexpr_);
-      addKeyword(keywords, friend_);
-      addKeyword(keywords, typedef_);
-      addKeyword(keywords, signed_);
-      addKeyword(keywords, unsigned_);
-      addKeyword(keywords, volatile_);
+      // Qualifiers
+      addKeyword(keywords, new qualifierKeyword(const_));
+      addKeyword(keywords, new qualifierKeyword(constexpr_));
+      addKeyword(keywords, new qualifierKeyword(friend_));
+      addKeyword(keywords, new qualifierKeyword(typedef_));
+      addKeyword(keywords, new qualifierKeyword(signed_));
+      addKeyword(keywords, new qualifierKeyword(unsigned_));
+      addKeyword(keywords, new qualifierKeyword(volatile_));
 
-      addKeyword(keywords, extern_);
-      addKeyword(keywords, mutable_);
-      addKeyword(keywords, register_);
-      addKeyword(keywords, static_);
-      addKeyword(keywords, thread_local_);
+      addKeyword(keywords, new qualifierKeyword(extern_));
+      addKeyword(keywords, new qualifierKeyword(mutable_));
+      addKeyword(keywords, new qualifierKeyword(register_));
+      addKeyword(keywords, new qualifierKeyword(static_));
+      addKeyword(keywords, new qualifierKeyword(thread_local_));
 
-      addKeyword(keywords, explicit_);
-      addKeyword(keywords, inline_);
-      addKeyword(keywords, virtual_);
+      addKeyword(keywords, new qualifierKeyword(explicit_));
+      addKeyword(keywords, new qualifierKeyword(inline_));
+      addKeyword(keywords, new qualifierKeyword(virtual_));
 
-      addKeyword(keywords, class_);
-      addKeyword(keywords, struct_);
-      addKeyword(keywords, enum_);
-      addKeyword(keywords, union_);
+      addKeyword(keywords, new qualifierKeyword(class_));
+      addKeyword(keywords, new qualifierKeyword(struct_));
+      addKeyword(keywords, new qualifierKeyword(enum_));
+      addKeyword(keywords, new qualifierKeyword(union_));
 
-      addKeyword(keywords, bool_);
-      addKeyword(keywords, char_);
-      addKeyword(keywords, char16_t_);
-      addKeyword(keywords, char32_t_);
-      addKeyword(keywords, wchar_t_);
-      addKeyword(keywords, short_);
-      addKeyword(keywords, int_);
-      addKeyword(keywords, long_);
-      addKeyword(keywords, float_);
-      addKeyword(keywords, double_);
-      addKeyword(keywords, void_);
-      addKeyword(keywords, auto_);
+      // Types
+      addKeyword(keywords, new typeKeyword(bool_));
+      addKeyword(keywords, new typeKeyword(char_));
+      addKeyword(keywords, new typeKeyword(char16_t_));
+      addKeyword(keywords, new typeKeyword(char32_t_));
+      addKeyword(keywords, new typeKeyword(wchar_t_));
+      addKeyword(keywords, new typeKeyword(short_));
+      addKeyword(keywords, new typeKeyword(int_));
+      addKeyword(keywords, new typeKeyword(long_));
+      addKeyword(keywords, new typeKeyword(float_));
+      addKeyword(keywords, new typeKeyword(double_));
+      addKeyword(keywords, new typeKeyword(void_));
+      addKeyword(keywords, new typeKeyword(auto_));
 
       // Conditional statements
-      addKeyword(keywords, "if"      , keywordType::if_);
-      addKeyword(keywords, "else"    , keywordType::else_);
-      addKeyword(keywords, "switch"  , keywordType::switch_);
-      addKeyword(keywords, "case"    , keywordType::case_);
-      addKeyword(keywords, "default" , keywordType::default_);
+      addKeyword(keywords, new statementKeyword(keywordType::if_      , "if"));
+      addKeyword(keywords, new statementKeyword(keywordType::else_    , "else"));
+      addKeyword(keywords, new statementKeyword(keywordType::switch_  , "switch"));
+      addKeyword(keywords, new statementKeyword(keywordType::case_    , "case"));
+      addKeyword(keywords, new statementKeyword(keywordType::default_ , "default"));
       // Iteration statements
-      addKeyword(keywords, "for"     , keywordType::for_);
-      addKeyword(keywords, "while"   , keywordType::while_);
-      addKeyword(keywords, "do"      , keywordType::do_);
+      addKeyword(keywords, new statementKeyword(keywordType::for_     , "for"));
+      addKeyword(keywords, new statementKeyword(keywordType::while_   , "while"));
+      addKeyword(keywords, new statementKeyword(keywordType::do_      , "do"));
       // Jump statements
-      addKeyword(keywords, "break"   , keywordType::break_);
-      addKeyword(keywords, "continue", keywordType::continue_);
-      addKeyword(keywords, "return"  , keywordType::return_);
-      addKeyword(keywords, "goto"    , keywordType::goto_);
-    }
-
-    void addKeyword(keywordTrie &keywords,
-                    const std::string &name,
-                    const int kType) {
-      keyword_t keyword(NULL, name, kType);
-      keywords.add(keyword.name, keyword);
+      addKeyword(keywords, new statementKeyword(keywordType::break_   , "break"));
+      addKeyword(keywords, new statementKeyword(keywordType::continue_, "continue"));
+      addKeyword(keywords, new statementKeyword(keywordType::return_  , "return"));
+      addKeyword(keywords, new statementKeyword(keywordType::goto_    , "goto"));
     }
 
     void freeKeywords(keywordTrie &keywords) {
       keywords.freeze();
       const int count = keywords.size();
       for (int i = 0; i < count; ++i) {
-        keywords.values[i].free();
+        delete keywords.values[i];
       }
       keywords.clear();
     }

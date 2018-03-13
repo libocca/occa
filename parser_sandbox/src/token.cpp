@@ -20,6 +20,8 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  */
 #include "token.hpp"
+#include "type.hpp"
+#include "variable.hpp"
 
 namespace occa {
   namespace lang {
@@ -66,29 +68,31 @@ namespace occa {
     }
 
     namespace tokenType {
-      const int none          = 0;
-      const int unknown       = (1 << 0);
+      const int none          = (1 << 0);
+      const int unknown       = (1 << 1);
 
-      const int newline       = (1 << 1);
+      const int newline       = (1 << 2);
 
-      const int systemHeader  = (1 << 2);
-      const int header        = (1 << 3);
+      const int systemHeader  = (1 << 3);
+      const int header        = (1 << 4);
 
-      const int identifier    = (1 << 3);
+      const int pragma        = (1 << 5);
 
-      const int qualifier     = (1 << 4);
-      const int type          = (1 << 5);
-      const int variable      = (1 << 6);
+      const int identifier    = (1 << 6);
 
-      const int primitive     = (1 << 7);
-      const int op            = (1 << 8);
+      const int qualifier     = (1 << 7);
+      const int type          = (1 << 8);
+      const int variable      = (1 << 9);
 
-      const int char_         = (1 << 9);
-      const int string        = (1 << 10);
-      const int withUDF       = (1 << 11);
+      const int primitive     = (1 << 10);
+      const int op            = (1 << 11);
+
+      const int char_         = (1 << 12);
+      const int string        = (1 << 13);
+      const int withUDF       = (1 << 14);
       const int withEncoding  = ((encodingType::ux |
-                                  encodingType::R) << 12);
-      const int encodingShift = 12;
+                                  encodingType::R) << 15);
+      const int encodingShift = 15;
 
       int getEncoding(const int tokenType) {
         return ((tokenType & withEncoding) >> encodingShift);
@@ -181,6 +185,27 @@ namespace occa {
     }
     //==================================
 
+    //---[ Pragma ]---------------------
+    pragmaToken::pragmaToken(const fileOrigin &origin_,
+                             const std::string &value_) :
+      token_t(origin_),
+      value(value_) {}
+
+    pragmaToken::~pragmaToken() {}
+
+    int pragmaToken::type() const {
+      return tokenType::pragma;
+    }
+
+    token_t* pragmaToken::clone() {
+      return new pragmaToken(origin, value);
+    }
+
+    void pragmaToken::print(std::ostream &out) const {
+      out << "#pragma " << value << '\n';
+    }
+    //==================================
+
     //---[ Identifier ]-----------------
     identifierToken::identifierToken(const fileOrigin &origin_,
                                      const std::string &value_) :
@@ -199,6 +224,69 @@ namespace occa {
 
     void identifierToken::print(std::ostream &out) const {
       out << value;
+    }
+    //==================================
+
+    //---[ Qualifier ]------------------
+    qualifierToken::qualifierToken(const fileOrigin &origin_,
+                                   const qualifier_t &qualifier_) :
+      token_t(origin_),
+      qualifier(qualifier_) {}
+
+    qualifierToken::~qualifierToken() {}
+
+    int qualifierToken::type() const {
+      return tokenType::qualifier;
+    }
+
+    token_t* qualifierToken::clone() {
+      return new qualifierToken(origin, qualifier);
+    }
+
+    void qualifierToken::print(std::ostream &out) const {
+      out << qualifier.name;
+    }
+    //==================================
+
+    //---[ Type ]-----------------------
+    typeToken::typeToken(const fileOrigin &origin_,
+                         const type_t &type__) :
+    token_t(origin_),
+    type_(type__) {}
+
+    typeToken::~typeToken() {}
+
+    int typeToken::type() const {
+      return tokenType::type;
+    }
+
+    token_t* typeToken::clone() {
+      return new typeToken(origin, type_);
+    }
+
+    void typeToken::print(std::ostream &out) const {
+      out << type_.name;
+    }
+    //==================================
+
+    //---[ Variable ]-------------------
+    variableToken::variableToken(const fileOrigin &origin_,
+                                 const variable &var_) :
+      token_t(origin_),
+      var(var_) {}
+
+    variableToken::~variableToken() {}
+
+    int variableToken::type() const {
+      return tokenType::variable;
+    }
+
+    token_t* variableToken::clone() {
+      return new variableToken(origin, var);
+    }
+
+    void variableToken::print(std::ostream &out) const {
+      out << var.name;
     }
     //==================================
 

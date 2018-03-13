@@ -25,28 +25,28 @@
 namespace occa {
   namespace lang {
     namespace statementType {
-      const int none        = 0;
-      const int empty       = (1 << 0);
-      const int pragma      = (1 << 1);
-      const int block       = (1 << 2);
-      const int typeDecl    = (1 << 3);
-      const int classAccess = (1 << 4);
-      const int expression  = (1 << 5);
-      const int declaration = (1 << 6);
-      const int goto_       = (1 << 7);
-      const int gotoLabel   = (1 << 8);
-      const int namespace_  = (1 << 9);
-      const int if_         = (1 << 10);
-      const int elif_       = (1 << 11);
-      const int else_       = (1 << 12);
-      const int for_        = (1 << 13);
-      const int while_      = (1 << 14);
-      const int switch_     = (1 << 15);
-      const int case_       = (1 << 16);
-      const int continue_   = (1 << 17);
-      const int break_      = (1 << 18);
-      const int return_     = (1 << 19);
-      const int attribute   = (1 << 20);
+      const int none        = (1 << 0);
+      const int empty       = (1 << 1);
+      const int pragma      = (1 << 2);
+      const int block       = (1 << 3);
+      const int typeDecl    = (1 << 4);
+      const int classAccess = (1 << 5);
+      const int expression  = (1 << 6);
+      const int declaration = (1 << 7);
+      const int goto_       = (1 << 8);
+      const int gotoLabel   = (1 << 9);
+      const int namespace_  = (1 << 10);
+      const int if_         = (1 << 11);
+      const int elif_       = (1 << 12);
+      const int else_       = (1 << 13);
+      const int for_        = (1 << 14);
+      const int while_      = (1 << 15);
+      const int switch_     = (1 << 16);
+      const int case_       = (1 << 17);
+      const int continue_   = (1 << 18);
+      const int break_      = (1 << 19);
+      const int return_     = (1 << 20);
+      const int attribute   = (1 << 21);
     }
 
     statement_t::statement_t() :

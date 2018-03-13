@@ -24,17 +24,32 @@
 
 namespace occa {
   namespace lang {
-    variable::variable(type_t &type_,
+    variable::variable(const type_t &type_,
                        const std::string &name_) :
-      type(&type_),
+      type(&(type_.shallowClone())),
       name(name_) {}
 
+    variable::~variable() {
+      shallowFree(type);
+    }
+
     variable& variable::clone() const {
-      return *(new variable(type->clone(), name));
+      return *(new variable(*type, name));
     }
 
     void variable::print(printer &pout) const {
       pout << name;
+    }
+
+    void variable::printDeclaration(printer &pout) const {
+      type->printLeft(pout);
+      if (name.size()) {
+        if (pout.lastCharNeedsWhitespace()) {
+          pout << ' ';
+        }
+        pout << name;
+      }
+      type->printRight(pout);
     }
   }
 }

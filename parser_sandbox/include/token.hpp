@@ -26,12 +26,14 @@
 
 #include "errorHandler.hpp"
 #include "file.hpp"
-#include "type.hpp"
 
 namespace occa {
   namespace lang {
     class operator_t;
     class token_t;
+    class qualifier_t;
+    class type_t;
+    class variable;
 
     typedef std::vector<token_t*> tokenVector;
 
@@ -65,6 +67,8 @@ namespace occa {
 
       extern const int systemHeader;
       extern const int header;
+
+      extern const int pragma;
 
       extern const int identifier;
 
@@ -163,6 +167,24 @@ namespace occa {
     };
     //==================================
 
+    //---[ Pragma ]---------------------
+    class pragmaToken : public token_t {
+    public:
+      std::string value;
+
+      pragmaToken(const fileOrigin &origin_,
+                  const std::string &value_);
+
+      virtual ~pragmaToken();
+
+      virtual int type() const;
+
+      virtual token_t* clone();
+
+      virtual void print(std::ostream &out) const;
+    };
+    //==================================
+
     //---[ Identifier ]-----------------
     class identifierToken : public token_t {
     public:
@@ -172,6 +194,60 @@ namespace occa {
                       const std::string &value_);
 
       virtual ~identifierToken();
+
+      virtual int type() const;
+
+      virtual token_t* clone();
+
+      virtual void print(std::ostream &out) const;
+    };
+    //==================================
+
+    //---[ Qualifier ]------------------
+    class qualifierToken : public token_t {
+    public:
+      const qualifier_t &qualifier;
+
+      qualifierToken(const fileOrigin &origin_,
+                     const qualifier_t &qualifier_);
+
+      virtual ~qualifierToken();
+
+      virtual int type() const;
+
+      virtual token_t* clone();
+
+      virtual void print(std::ostream &out) const;
+    };
+    //==================================
+
+    //---[ Type ]-----------------------
+    class typeToken : public token_t {
+    public:
+      const type_t &type_;
+
+      typeToken(const fileOrigin &origin_,
+                     const type_t &type__);
+
+      virtual ~typeToken();
+
+      virtual int type() const;
+
+      virtual token_t* clone();
+
+      virtual void print(std::ostream &out) const;
+    };
+    //==================================
+
+    //---[ Variable ]-------------------
+    class variableToken : public token_t {
+    public:
+      const variable &var;
+
+      variableToken(const fileOrigin &origin_,
+                     const variable &var_);
+
+      virtual ~variableToken();
 
       virtual int type() const;
 

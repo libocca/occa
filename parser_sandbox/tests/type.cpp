@@ -29,13 +29,11 @@
 void testBitfields();
 void testFunction();
 void testCasting();
-void testSpecifiers();
 
 int main(const int argc, const char **argv) {
   testBitfields();
-  // testFunction();
+  testFunction();
   // testCasting();
-  // testSpecifiers();
 
   return 0;
 }
@@ -109,18 +107,18 @@ void testFunction() {
 
   type_t t1_0(float_);
   t1_0.addQualifier(const_);
-  pointerType t1_1(const_, t1_0);
-  referenceType t1(t1_1);
-  pointerType t2(t1_1);
-  typedefType td1(t1, "t1");
-  typedefType td2(t2, "t2");
+  pointer_t t1_1(const_, t1_0);
+  reference_t t1(t1_1);
+  pointer_t t2(t1_1);
+  typedef_t td1(t1, "t1");
+  typedef_t td2(t2, "t2");
 
-  pointerType arg3(volatile_, char_);
+  pointer_t arg3(volatile_, char_);
 
   primitiveNode arg4Size(NULL, 1337);
-  arrayType arg4(t2, arg4Size);
+  array_t arg4(t2, arg4Size);
 
-  functionType f(void_, "foo");
+  function_t f(void_, "foo");
   f.addArgument(t1 , "a");
   f.addArgument(td2, "b");
   f.addArgument(volatile_, float_, "c");
@@ -128,7 +126,7 @@ void testFunction() {
   f.addArgument(arg4, "array");
   f.addArgument(double_, "e");
 
-  functionType f2(f, "bar");
+  function_t f2(f, "bar");
 
   std::cout << "q1   = " << q1.toString() << '\n'
             << "t1_0 = " << t1_0.toString() << '\n'
@@ -143,16 +141,16 @@ void testFunction() {
 
 void testCasting() {
   // All primitive can be cast to each other
-  const primitiveType* types[10] = {
+  const primitive_t* types[10] = {
     &bool_,
     &char_, &char16_t_, &char32_t_, &wchar_t_,
     &short_,
     &int_, &long_,
     &float_, &double_ };
   for (int j = 0; j < 10; ++j) {
-    const primitiveType &jType = *types[j];
+    const primitive_t &jType = *types[j];
     for (int i = 0; i < 10; ++i) {
-      const primitiveType &iType = *types[i];
+      const primitive_t &iType = *types[i];
       OCCA_ERROR("Oops, could not cast explicitly ["
                  << jType.uniqueName() << "] to ["
                  << iType.uniqueName() << "]",
@@ -167,11 +165,11 @@ void testCasting() {
   // Test pointer <-> array
   primitiveNode one(NULL, 1);
   type_t constInt(const_, int_);
-  pointerType intPointer(int_);
-  arrayType intArray(int_);
-  arrayType intArray2(int_, one);
-  pointerType constIntArray(const_, constInt);
-  pointerType constIntArray2(constInt);
+  pointer_t intPointer(int_);
+  array_t intArray(int_);
+  array_t intArray2(int_, one);
+  pointer_t constIntArray(const_, constInt);
+  pointer_t constIntArray2(constInt);
 
   std::cout << "intPointer    : " << intPointer.toString() << '\n'
             << "intArray      : " << intArray.toString() << '\n'
@@ -230,112 +228,4 @@ void testCasting() {
   OCCA_ASSERT_FALSE(constIntArray2.canBeCastedToImplicitly(intArray));
   OCCA_ASSERT_FALSE(constIntArray2.canBeCastedToImplicitly(intArray2));
   OCCA_ASSERT_TRUE(constIntArray2.canBeCastedToImplicitly(constIntArray));
-}
-
-#define testSpecifierType(type_, name_)                     \
-  {                                                         \
-    specifierTrie::result_t result = specifiers.get(name_); \
-    OCCA_ASSERT_TRUE(result.success());                     \
-    OCCA_ASSERT_EQUAL_BINARY(type_,                         \
-                             result.value()->type());       \
-    OCCA_ASSERT_EQUAL(name_,                                \
-                      result.value()->name);                \
-  }
-
-
-void testSpecifiers() {
-  specifierTrie specifiers;
-  getSpecifiers(specifiers);
-
-  // Qualifiers
-  testSpecifierType(specifierType::qualifier,
-                    "constexpr");
-
-  testSpecifierType(specifierType::qualifier,
-                    "friend");
-
-  testSpecifierType(specifierType::qualifier,
-                    "typedef");
-
-  testSpecifierType(specifierType::qualifier,
-                    "signed");
-
-  testSpecifierType(specifierType::qualifier,
-                    "unsigned");
-
-  testSpecifierType(specifierType::qualifier,
-                    "volatile");
-
-  testSpecifierType(specifierType::qualifier,
-                    "extern");
-
-  testSpecifierType(specifierType::qualifier,
-                    "mutable");
-
-  testSpecifierType(specifierType::qualifier,
-                    "register");
-
-  testSpecifierType(specifierType::qualifier,
-                    "static");
-
-  testSpecifierType(specifierType::qualifier,
-                    "thread_local");
-
-  testSpecifierType(specifierType::qualifier,
-                    "explicit");
-
-  testSpecifierType(specifierType::qualifier,
-                    "inline");
-
-  testSpecifierType(specifierType::qualifier,
-                    "virtual");
-
-  testSpecifierType(specifierType::qualifier,
-                    "class");
-
-  testSpecifierType(specifierType::qualifier,
-                    "enum");
-
-  testSpecifierType(specifierType::qualifier,
-                    "struct");
-
-  testSpecifierType(specifierType::qualifier,
-                    "union");
-
-  // Primitive
-  testSpecifierType(specifierType::primitive,
-                    "bool");
-
-  testSpecifierType(specifierType::primitive,
-                    "char");
-
-  testSpecifierType(specifierType::primitive,
-                    "char16_t");
-
-  testSpecifierType(specifierType::primitive,
-                    "char32_t");
-
-  testSpecifierType(specifierType::primitive,
-                    "wchar_t");
-
-  testSpecifierType(specifierType::primitive,
-                    "short");
-
-  testSpecifierType(specifierType::primitive,
-                    "int");
-
-  testSpecifierType(specifierType::primitive,
-                    "long");
-
-  testSpecifierType(specifierType::primitive,
-                    "float");
-
-  testSpecifierType(specifierType::primitive,
-                    "double");
-
-  testSpecifierType(specifierType::primitive,
-                    "void");
-
-  testSpecifierType(specifierType::primitive,
-                    "auto");
 }

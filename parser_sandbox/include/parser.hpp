@@ -24,6 +24,7 @@
 
 #include <list>
 
+#include "keyword.hpp"
 #include "preprocessor.hpp"
 #include "processingStages.hpp"
 #include "statement.hpp"
@@ -45,11 +46,12 @@ namespace occa {
       stringTokenMerger stringMerger;
       newlineTokenMerger newlineMerger;
       unknownTokenFilter unknownFilter;
-
-      tokenContext context;
       //================================
 
       //---[ Status ]-------------------
+      tokenContext context;
+      keywordTrie keywords;
+
       blockStatement *root, *up;
       attributeVector attributes;
 
@@ -67,20 +69,11 @@ namespace occa {
       void loadTokens();
       void parse();
 
-      void loadBlockStatement(blockStatement &smnt);
+      keyword_t* getKeyword(token_t *token);
 
-      void loadForStatement(forStatement &smnt);
+      int peek();
 
-      void loadWhileStatement(whileStatement &smnt);
-
-      void loadIfStatement(ifStatement &smnt);
-      void loadElseIfStatement(elifStatement &smnt);
-      void loadElseStatement(elseStatement &smnt);
-
-      void* getDeclaration();
-      void* getExpression();
-      void* getFunction();
-      void* getAttribute();
+      void loadChildStatements(blockStatement &smnt);
     };
   }
 }
