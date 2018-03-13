@@ -31,7 +31,8 @@ script:
   - cd ..
   - CXXFLAGS="${TEST_CXXFLAGS}" make test
   - cd parser_sandbox
-  - CXXFLAGS="${TEST_CXXFLAGS}" make test
+  - CXXFLAGS="${TEST_CXXFLAGS}" make -j tests
+  - make test
 
 after_success:
   - |
