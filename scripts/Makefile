@@ -122,11 +122,7 @@ else
   compilerFlags = $(CXXFLAGS)
 endif
 
-ifndef CC
-  CC = ${CC}
-else
-  CC = gcc
-endif
+CC ?= gcc
 
 ifndef CFLAGS
   ifeq ($(debugEnabled),1)
