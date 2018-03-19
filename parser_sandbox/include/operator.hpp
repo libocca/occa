@@ -132,7 +132,6 @@ namespace occa {
       //================================
     }
 
-
     namespace operatorType {
       extern const opType_t none;
 

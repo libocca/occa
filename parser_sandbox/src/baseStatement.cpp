@@ -123,6 +123,10 @@ namespace occa {
       }
     }
 
+    blockStatement::~blockStatement() {
+      clear();
+    }
+
     statement_t& blockStatement::clone_() const {
       return *(new blockStatement(*this));
     }

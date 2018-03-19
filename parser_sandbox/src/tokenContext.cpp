@@ -51,6 +51,7 @@ namespace occa {
       }
       tokens.clear();
       pairs.clear();
+      semicolons.clear();
       stack.clear();
     }
 
@@ -59,6 +60,7 @@ namespace occa {
       tp.end   = (int) tokens.size();
 
       findPairs();
+      findSemicolons();
     }
 
     void tokenContext::findPairs() {
@@ -111,25 +113,54 @@ namespace occa {
       }
     }
 
+    void tokenContext::findSemicolons() {
+      const int tokenCount = (int) tokens.size();
+      for (int i = 0; i < tokenCount; ++i) {
+        token_t *token = tokens[i];
+        opType_t opType = token->getOpType();
+        if (opType & operatorType::semicolon) {
+          semicolons.push_back(i);
+        }
+      }
+    }
+
+    bool tokenContext::indexInRange(const int index) const {
+      return ((index >= 0) && ((tp.start + index) < tp.end));
+    }
+
     void tokenContext::set(const int start) {
-      tp.start = start;
+      if (indexInRange(start)) {
+        tp.start += start;
+      } else {
+        tp.start = tp.end;
+      }
     }
 
     void tokenContext::set(const int start,
                            const int end) {
-      tp.start = start;
-      tp.end   = end;
+      if (indexInRange(start)) {
+        tp.start += start;
+        if (indexInRange(end - start)) {
+          tp.end = tp.start + (end - start);
+        }
+      } else {
+        tp.start = tp.end;
+      }
     }
 
     void tokenContext::push() {
       stack.push_back(tp);
     }
 
+    void tokenContext::push(const int start) {
+      stack.push_back(tp);
+      set(start);
+    }
+
     void tokenContext::push(const int start,
                             const int end) {
       stack.push_back(tp);
-      tp.start = start;
-      tp.end   = end;
+      set(start, end);
     }
 
     tokenRange tokenContext::pop() {
@@ -145,11 +176,61 @@ namespace occa {
     }
 
     token_t* tokenContext::operator [] (const int index) {
-      const int pos = tp.start + index;
-      if ((index < 0) || (tp.end <= pos)) {
+      if (!indexInRange(index)) {
         return NULL;
       }
-      return tokens[pos];
+      return tokens[tp.start + index];
+    }
+
+    void tokenContext::getTokens(tokenVector &tokens_) {
+      tokens_.clear();
+      tokens_.reserve(tp.end - tp.start);
+      for (int i = tp.start; i < tp.end; ++i) {
+        tokens_.push_back(tokens[i]);
+      }
+    }
+
+    void tokenContext::getAndCloneTokens(tokenVector &tokens_) {
+      tokens_.clear();
+      tokens_.reserve(tp.end - tp.start);
+      for (int i = tp.start; i < tp.end; ++i) {
+        tokens_.push_back(tokens[i]->clone());
+      }
+    }
+
+    int tokenContext::getClosingPair(const int index) {
+      if (!indexInRange(index)) {
+        return -1;
+      }
+
+      intIntMap::iterator it = pairs.find(tp.start + index);
+      if (it != pairs.end()) {
+        return (it->second - tp.start);
+      }
+      return -1;
+    }
+
+    int tokenContext::getNextOperator(const operator_t &op) {
+      const opType_t &opType = op.opType;
+
+      for (int pos = tp.start; pos < tp.end; ++pos) {
+        token_t *token = tokens[pos];
+        if (!(token->type() & tokenType::op)) {
+          continue;
+        }
+        const opType_t tokenOpType = (token
+                                      ->to<operatorToken>()
+                                      .getOpType());
+
+        if (tokenOpType & opType) {
+          return (pos - tp.start);
+        }
+        // Make sure we don't use semicolons inside blocks
+        if (tokenOpType & operatorType::pairStart) {
+          pos = pairs[pos];
+        }
+      }
+      return -1;
     }
   }
 }

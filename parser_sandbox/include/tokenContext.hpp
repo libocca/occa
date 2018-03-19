@@ -31,28 +31,25 @@ namespace occa {
     class tokenRange;
     class token_t;
 
-    typedef std::vector<token_t*>    tokenVector;
+    typedef std::vector<token_t*> tokenVector;
     typedef std::list<tokenRange> tokenRangeList;
-    typedef std::map<int, int>       intIntMap;
+    typedef std::map<int, int>    intIntMap;
 
     class tokenRange {
     public:
-      int start, pos, end;
+      int start, end;
 
       tokenRange();
 
       tokenRange(const int start_,
-                    const int end_);
-
-      tokenRange(const int start_,
-                    const int pos_,
-                    const int end_);
+                 const int end_);
     };
 
     class tokenContext {
     public:
       tokenVector tokens;
       intIntMap pairs;
+      intVector semicolons;
       bool hasError;
 
       tokenRangeList stack;
@@ -63,19 +60,31 @@ namespace occa {
 
       void clear();
       void setup();
+
       void findPairs();
+      void findSemicolons();
+
+      bool indexInRange(const int index) const;
 
       void set(const int start);
       void set(const int start,
                const int end);
 
       void push();
+      void push(const int start);
       void push(const int start,
                 const int end);
+
       tokenRange pop();
 
       int size() const;
       token_t* operator [] (const int index);
+
+      void getTokens(tokenVector &tokens_);
+      void getAndCloneTokens(tokenVector &tokens_);
+
+      int getClosingPair(const int index);
+      int getNextOperator(const operator_t &op);
     };
   }
 }

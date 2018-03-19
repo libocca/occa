@@ -104,8 +104,8 @@ void testMethods() {
 
   context.push();
   context.set(1, 2);
-  OCCA_ASSERT_EQUAL(1, context.tp.start);
-  OCCA_ASSERT_EQUAL(2, context.tp.end);
+  OCCA_ASSERT_EQUAL(2, context.tp.start);
+  OCCA_ASSERT_EQUAL(3, context.tp.end);
 
   context.pop();
   OCCA_ASSERT_EQUAL(1, context.tp.start);

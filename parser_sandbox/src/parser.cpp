@@ -19,6 +19,7 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  */
+#include "expression.hpp"
 #include "parser.hpp"
 
 namespace occa {
@@ -34,12 +35,55 @@ namespace occa {
                 .map(preprocessor)
                 .map(stringMerger)
                 .map(newlineMerger));
+
+      // Setup simple keyword -> statement peeks
+      keywordPeek[keywordType::qualifier]   = statementType::declaration;
+      keywordPeek[keywordType::type]        = statementType::declaration;
+      keywordPeek[keywordType::if_]         = statementType::if_;
+      keywordPeek[keywordType::switch_]     = statementType::switch_;
+      keywordPeek[keywordType::case_]       = statementType::case_;
+      keywordPeek[keywordType::default_]    = statementType::default_;
+      keywordPeek[keywordType::for_]        = statementType::for_;
+      keywordPeek[keywordType::while_]      = statementType::while_;
+      keywordPeek[keywordType::do_]         = statementType::while_;
+      keywordPeek[keywordType::break_]      = statementType::break_;
+      keywordPeek[keywordType::continue_]   = statementType::continue_;
+      keywordPeek[keywordType::return_]     = statementType::return_;
+      keywordPeek[keywordType::public_]     = statementType::classAccess;
+      keywordPeek[keywordType::protected_]  = statementType::classAccess;
+      keywordPeek[keywordType::private_]    = statementType::classAccess;
+      keywordPeek[keywordType::namespace_]  = statementType::namespace_;
+      keywordPeek[keywordType::goto_]       = statementType::goto_;
+
+      // Statement type -> loader function
+      statementLoaders[statementType::expression]  = &parser_t::loadExpressionStatement;
+      statementLoaders[statementType::declaration] = &parser_t::loadDeclarationStatement;
+      statementLoaders[statementType::block]       = &parser_t::loadBlockStatement;
+      statementLoaders[statementType::namespace_]  = &parser_t::loadNamespaceStatement;
+      statementLoaders[statementType::typeDecl]    = &parser_t::loadTypeDeclStatement;
+      statementLoaders[statementType::if_]         = &parser_t::loadIfStatement;
+      statementLoaders[statementType::elif_]       = &parser_t::loadElifStatement;
+      statementLoaders[statementType::else_]       = &parser_t::loadElseStatement;
+      statementLoaders[statementType::for_]        = &parser_t::loadForStatement;
+      statementLoaders[statementType::while_]      = &parser_t::loadWhileStatement;
+      statementLoaders[statementType::switch_]     = &parser_t::loadSwitchStatement;
+      statementLoaders[statementType::case_]       = &parser_t::loadCaseStatement;
+      statementLoaders[statementType::default_]    = &parser_t::loadDefaultStatement;
+      statementLoaders[statementType::continue_]   = &parser_t::loadContinueStatement;
+      statementLoaders[statementType::break_]      = &parser_t::loadBreakStatement;
+      statementLoaders[statementType::return_]     = &parser_t::loadReturnStatement;
+      statementLoaders[statementType::classAccess] = &parser_t::loadClassAccessStatement;
+      statementLoaders[statementType::attribute]   = &parser_t::loadAttributeStatement;
+      statementLoaders[statementType::pragma]      = &parser_t::loadPragmaStatement;
+      statementLoaders[statementType::goto_]       = &parser_t::loadGotoStatement;
+      statementLoaders[statementType::gotoLabel]   = &parser_t::loadGotoLabelStatement;
     }
 
     parser_t::~parser_t() {
       clear();
     }
 
+    //---[ Setup ]----------------------
     void parser_t::clear() {
       tokenizer.clear();
       preprocessor.clear();
@@ -105,7 +149,7 @@ namespace occa {
     }
 
     void parser_t::parseTokens() {
-      loadChildStatements(root);
+      loadAllStatements(root.children);
     }
 
     keyword_t* parser_t::getKeyword(token_t *token) {
@@ -116,18 +160,20 @@ namespace occa {
       identifierToken &identifier = token->to<identifierToken>();
       return keywords.get(identifier.value).value();
     }
+    //==================================
 
+    //---[ Peek ]-----------------------
     int parser_t::peek() {
       const int tokens = context.size();
       if (!tokens) {
-        return statementType::empty;
+        return statementType::none;
       }
 
-      int stype = statementType::empty;
+      int stype = statementType::none;
       int tokenIndex = 0;
 
-      while (success                        &&
-             (stype & statementType::empty) &&
+      while (success                       &&
+             (stype & statementType::none) &&
              (tokenIndex < tokens)) {
 
         token_t *token = context[tokenIndex];
@@ -162,9 +208,9 @@ namespace occa {
     int parser_t::peekIdentifier(const int tokenIndex) {
       token_t *token     = context[tokenIndex];
       keyword_t *keyword = getKeyword(token);
-      // Test for : for it to be a goto label
-      // const int gotoLabel   = (1 << 9);
+
       if (!keyword) {
+        // Test for : for it to be a goto label
         if (isGotoLabel(tokenIndex + 1)) {
           return statementType::gotoLabel;
         }
@@ -175,14 +221,10 @@ namespace occa {
       }
 
       const int kType = keyword->type();
+      const int sType = keywordPeek[kType];
 
-      if (kType & (keywordType::qualifier |
-                   keywordType::type)) {
-        return statementType::declaration;
-      }
-
-      if (kType & keywordType::if_) {
-        return statementType::if_;
+      if (sType) {
+        return sType;
       }
 
       if (kType & keywordType::else_) {
@@ -192,51 +234,6 @@ namespace occa {
           return statementType::elif_;
         }
         return statementType::else_;
-      }
-
-      if (kType & keywordType::switch_) {
-        return statementType::switch_;
-      }
-
-      if (kType & keywordType::case_) {
-        return statementType::case_;
-      }
-
-      if (kType & keywordType::default_) {
-        return statementType::default_;
-      }
-
-      if (kType & keywordType::for_) {
-        return statementType::for_;
-      }
-
-      if (kType & (keywordType::while_ |
-                   keywordType::do_)) {
-        return statementType::while_;
-      }
-
-      if (kType & keywordType::break_) {
-        return statementType::break_;
-      }
-
-      if (kType & keywordType::continue_) {
-        return statementType::continue_;
-      }
-
-      if (kType & keywordType::return_) {
-        return statementType::return_;
-      }
-
-      if (kType & keywordType::classAccess) {
-        return statementType::classAccess;
-      }
-
-      if (kType & keywordType::namespace_) {
-        return statementType::namespace_;
-      }
-
-      if (kType & keywordType::goto_) {
-        return statementType::goto_;
       }
 
       return statementType::expression;
@@ -264,8 +261,155 @@ namespace occa {
       }
       return statementType::expression;
     }
+    //==================================
 
-    void parser_t::loadChildStatements(blockStatement &smnt) {
+    //---[ Loaders ]--------------------
+    void parser_t::loadAllStatements(statementPtrVector &statements) {
+      statement_t *smnt = getNextStatement();
+      while (smnt) {
+        statements.push_back(smnt);
+        smnt = getNextStatement();
+      }
+
+      if (!success) {
+        const int count = (int) statements.size();
+        for (int i = 0; i < count; ++i) {
+          delete statements[i];
+        }
+        statements.clear();
+      }
     }
+
+    statement_t* parser_t::getNextStatement() {
+      const int sType = peek();
+      if ((!success) ||
+          (sType & (statementType::none |
+                    statementType::empty))) {
+        return NULL;
+      }
+
+      statementLoaderMap::iterator it = statementLoaders.find(sType);
+      if (it != statementLoaders.end()) {
+        statementLoader_t loader = it->second;
+        statement_t *smnt = (this->*loader)();
+        if (!success) {
+          delete smnt;
+          smnt = NULL;
+        }
+        return smnt;
+      }
+
+      OCCA_FORCE_ERROR("[Waldo] Oops, forgot to implement a statement loader"
+                       " for [" << stringifySetBits(sType) << "]");
+      return NULL;
+    }
+
+    statement_t* parser_t::loadBlockStatement() {
+      blockStatement *smnt = new blockStatement();
+      loadAllStatements(smnt->children);
+      return smnt;
+    }
+
+    statement_t* parser_t::loadExpressionStatement() {
+      const int end = context.getNextOperator(op::semicolon);
+      if (end < 0) {
+        context[context.size() - 1]->printError("Missing ;");
+        success = false;
+        return NULL;
+      }
+
+      context.push(0, end);
+
+      tokenVector tokens;
+      context.getAndCloneTokens(tokens);
+
+      exprNode *expr = getExpression(tokens);
+      if (!expr) {
+        success = false;
+        return NULL;
+      }
+
+      context.pop();
+      context.set(end + 1);
+
+      return new expressionStatement(*expr);
+    }
+
+    statement_t* parser_t::loadDeclarationStatement() {
+      return NULL;
+    }
+
+    statement_t* parser_t::loadNamespaceStatement() {
+      return NULL;
+    }
+
+    statement_t* parser_t::loadTypeDeclStatement() {
+      return NULL;
+    }
+
+    statement_t* parser_t::loadIfStatement() {
+      return NULL;
+    }
+
+    statement_t* parser_t::loadElifStatement() {
+      return NULL;
+    }
+
+    statement_t* parser_t::loadElseStatement() {
+      return NULL;
+    }
+
+    statement_t* parser_t::loadForStatement() {
+      return NULL;
+    }
+
+    statement_t* parser_t::loadWhileStatement() {
+      return NULL;
+    }
+
+    statement_t* parser_t::loadSwitchStatement() {
+      return NULL;
+    }
+
+    statement_t* parser_t::loadCaseStatement() {
+      return NULL;
+    }
+
+    statement_t* parser_t::loadDefaultStatement() {
+      return NULL;
+    }
+
+    statement_t* parser_t::loadContinueStatement() {
+      return NULL;
+    }
+
+    statement_t* parser_t::loadBreakStatement() {
+      return NULL;
+    }
+
+    statement_t* parser_t::loadReturnStatement() {
+      return NULL;
+    }
+
+    statement_t* parser_t::loadClassAccessStatement() {
+      return NULL;
+    }
+
+    statement_t* parser_t::loadAttributeStatement() {
+      return NULL;
+    }
+
+    statement_t* parser_t::loadPragmaStatement() {
+      return NULL;
+    }
+
+    statement_t* parser_t::loadGotoStatement() {
+      return NULL;
+    }
+
+    statement_t* parser_t::loadGotoLabelStatement() {
+      return NULL;
+    }
+    //==================================
   }
 }

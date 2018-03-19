@@ -25,7 +25,8 @@
 #include "parser.hpp"
 
 void testPeek();
-void testParse();
+void testLoading();
+void testErrors();
 
 using namespace occa::lang;
 
@@ -37,6 +38,16 @@ void setSource(const std::string &s) {
   source = s;
   parser.setSource(s, false);
 }
+
+void parseSource(const std::string &s) {
+  source = s;
+  parser.parseSource(s);
+}
+
+template <class smntType>
+smntType& getStatement(const int index = 0) {
+  return parser.root[index]->to<smntType>();
+}
 //======================================
 
 //---[ Macro Util Methods ]-------------
@@ -46,8 +57,8 @@ void setSource(const std::string &s) {
                            parser.peek());          \
   OCCA_ASSERT_TRUE(parser.success)
 
-#define testStatementParse(str_, type_)             \
-  setSource(str_);                                  \
+#define testStatementLoading(str_, type_)           \
+  parseSource(str_);                                \
   OCCA_ASSERT_EQUAL(1,                              \
                     parser.root.size());            \
   OCCA_ASSERT_EQUAL_BINARY(type_,                   \
@@ -55,32 +66,23 @@ void setSource(const std::string &s) {
   OCCA_ASSERT_TRUE(parser.success)
 //======================================
 
-//---[ Tests ]--------------------------
 int main(const int argc, const char **argv) {
   testPeek();
-  // testParse();
+  testLoading();
+  testErrors();
 
   return 0;
 }
 
+//---[ Peek ]---------------------------
 void testPeek() {
   testStatementPeek("",
-                    statementType::empty);
+                    statementType::none);
 
-  testStatementPeek("#pragma occa test",
-                    statementType::pragma);
   testStatementPeek("#pragma",
                     statementType::pragma);
-
-  testStatementPeek("{}",
-                    statementType::block);
-
-  testStatementPeek("public:",
-                    statementType::classAccess);
-  testStatementPeek("protected:",
-                    statementType::classAccess);
-  testStatementPeek("private:",
-                    statementType::classAccess);
+  testStatementPeek("#pragma occa test",
+                    statementType::pragma);
 
   testStatementPeek("1 + 2;",
                     statementType::expression);
@@ -103,6 +105,9 @@ void testPeek() {
 
   testStatementPeek("foo:",
                     statementType::gotoLabel);
+
+  testStatementPeek("{}",
+                    statementType::block);
 
   testStatementPeek("namespace foo {}",
                     statementType::namespace_);
@@ -138,82 +143,337 @@ void testPeek() {
                     statementType::attribute);
   testStatementPeek("@attr()",
                     statementType::attribute);
+
+  testStatementPeek("public:",
+                    statementType::classAccess);
+  testStatementPeek("protected:",
+                    statementType::classAccess);
+  testStatementPeek("private:",
+                    statementType::classAccess);
+}
+//======================================
+
+//---[ Loading ]------------------------
+void testExpression();
+void testDeclaration();
+void testBlock();
+void testNamespace();
+void testTypeDecl();
+void testIf();
+void testFor();
+void testWhile();
+void testSwitch();
+void testJumps();
+void testClassAccess();
+void testAttribute();
+void testPragma();
+void testGoto();
+
+void testLoading() {
+  testExpression();
+  // testDeclaration();
+  // testBlock();
+  // testNamespace();
+  // testTypeDecl();
+  // testIf();
+  // testFor();
+  // testWhile();
+  // testSwitch();
+  // testJumps();
+  // testClassAccess();
+  // testAttribute();
+  // testPragma();
+  // testGoto();
 }
 
-void testParse() {
-  testStatementParse("",
-                     statementType::empty);
+void testExpression() {
+  testStatementLoading("2 + 3;",
+                       statementType::expression);
+  testStatementLoading("-3;",
+                       statementType::expression);
+  testStatementLoading(";",
+                       statementType::expression);
+  testStatementLoading("sizeof(4);",
+                       statementType::expression);
+  // TODO: Test we captured the proper expression by evaluating it
+}
 
-  testStatementParse("#pragma occa test",
-                     statementType::pragma);
-  testStatementParse("#pragma",
-                     statementType::pragma);
+void testDeclaration() {
+}
 
-  testStatementParse("{}",
-                     statementType::block);
+void testBlock() {
+  testStatementLoading("{}",
+                       statementType::block);
 
-  testStatementParse("public:",
-                     statementType::classAccess);
-  testStatementParse("protected:",
-                     statementType::classAccess);
-  testStatementParse("private:",
-                     statementType::classAccess);
+  OCCA_ASSERT_EQUAL(0,
+                    getStatement<blockStatement>().size());
 
-  testStatementParse("1 + 2;",
-                     statementType::expression);
-  testStatementParse("\"a\";",
-                     statementType::expression);
-  testStatementParse("'a';",
-                     statementType::expression);
-  testStatementParse("sizeof 3;",
-                     statementType::expression);
+  testStatementLoading("{\n"
+                       " const int i = 0;\n"
+                       " ++i:\n"
+                       " namespace foo {}\n"
+                       " if (true) {}\n"
+                       "}\n",
+                       statementType::block);
 
-  testStatementParse("int a = 0;",
-                     statementType::declaration);
-  testStatementParse("const int a = 0;",
-                     statementType::declaration);
-  testStatementParse("long long a, b = 0, *c = 0;",
-                     statementType::declaration);
+  blockStatement &smnt = getStatement<blockStatement>();
+  OCCA_ASSERT_EQUAL(4,
+                    smnt.size());
+  OCCA_ASSERT_EQUAL_BINARY(statementType::declaration,
+                           smnt[0]->type());
+  OCCA_ASSERT_EQUAL_BINARY(statementType::expression,
+                           smnt[1]->type());
+  OCCA_ASSERT_EQUAL_BINARY(statementType::namespace_,
+                           smnt[2]->type());
+  OCCA_ASSERT_EQUAL_BINARY(statementType::if_,
+                           smnt[3]->type());
+}
 
-  testStatementParse("goto foo;",
-                     statementType::goto_);
+void testNamespace() {
+  testStatementLoading("namespace foo {}",
+                       statementType::namespace_);
 
-  testStatementParse("foo:",
-                     statementType::gotoLabel);
+  OCCA_ASSERT_EQUAL("foo",
+                    getStatement<namespaceStatement>().name);
 
-  testStatementParse("namespace foo {}",
-                     statementType::namespace_);
+  testStatementLoading("namespace A::B::C {}",
+                       statementType::namespace_);
 
-  testStatementParse("if (true) {}",
-                     statementType::if_);
-  testStatementParse("else if (true) {}",
-                     statementType::elif_);
-  testStatementParse("else {}",
-                     statementType::else_);
+  namespaceStatement &A = getStatement<namespaceStatement>();
+  OCCA_ASSERT_EQUAL("A",
+                    A.name);
 
-  testStatementParse("for () {}",
-                     statementType::for_);
+  namespaceStatement &B = A[0]->to<namespaceStatement>();
+  OCCA_ASSERT_EQUAL("B",
+                    B.name);
 
-  testStatementParse("while () {}",
-                     statementType::while_);
-  testStatementParse("do {} while ()",
-                     statementType::while_);
+  namespaceStatement &C = B[0]->to<namespaceStatement>();
+  OCCA_ASSERT_EQUAL("C",
+                    C.name);
+}
 
-  testStatementParse("switch () {}",
-                     statementType::switch_);
-  testStatementParse("case foo:",
-                     statementType::case_);
-  testStatementParse("continue;",
-                     statementType::continue_);
-  testStatementParse("break;",
-                     statementType::break_);
+void testTypeDecl() {
+  // TODO: typedef
+  // TODO: struct
+  // TODO: enum
+  // TODO: union
+  // TODO: class
+}
 
-  testStatementParse("return 0;",
-                     statementType::return_);
+void testIf() {
+  testStatementLoading("if (true) {}",
+                       statementType::if_);
 
-  testStatementParse("@attr",
-                     statementType::attribute);
-  testStatementParse("@attr()",
-                     statementType::attribute);
+  testStatementLoading("if (true) {}\n"
+                       "else if (true) {}",
+                       statementType::if_);
+
+  testStatementLoading("if (true) {}\n"
+                       "else if (true) {}\n"
+                       "else if (true) {}",
+                       statementType::if_);
+
+  testStatementLoading("if (true) {}\n"
+                       "else if (true) {}\n"
+                       "else {}",
+                       statementType::if_);
+
+  // Test declaration in conditional
+  testStatementLoading("if (const int i = 1) {}",
+                       statementType::if_);
+
+  // TODO: Test that 'i' exists in the if scope
+}
+
+void testFor() {
+  testStatementLoading("for (;;) {}",
+                       statementType::for_);
+  testStatementLoading("for (;;);",
+                       statementType::for_);
+
+  // Test declaration in conditional
+  testStatementLoading("for (int i = 0; i < 2; ++i) {}",
+                       statementType::for_);
+
+  // TODO: Test that 'i' exists in the if scope
+}
+
+void testWhile() {
+  testStatementLoading("while (true) {}",
+                       statementType::while_);
+  testStatementLoading("while (true);",
+                       statementType::while_);
+
+  // Test declaration in conditional
+  testStatementLoading("while (int i = 0) {}",
+                       statementType::while_);
+
+  // TODO: Test that 'i' exists in the if scope
+
+  // Same tests for do-while
+  testStatementLoading("do {} while (true);",
+                       statementType::while_);
+  testStatementLoading("do ; while (true);",
+                       statementType::while_);
+
+  testStatementLoading("do {} while (int i = 0)",
+                       statementType::while_);
+}
+
+void testSwitch() {
+  testStatementLoading("switch (2) {}",
+                       statementType::switch_);
+  // Weird cases
+  testStatementLoading("switch (2) case 2:",
+                       statementType::switch_);
+  testStatementLoading("switch (2) case 2: 2;",
+                       statementType::switch_);
+
+  // Test declaration in conditional
+  testStatementLoading("switch (int i = 2) {}",
+                       statementType::switch_);
+
+  // TODO: Test that 'i' exists in the if scope
+
+  // Test caseStatement
+  testStatementLoading("case 2:",
+                       statementType::case_);
+  testStatementLoading("case 2: 2;",
+                       statementType::case_);
+
+  // Test defaultStatement
+  testStatementLoading("default:",
+                       statementType::default_);
+  testStatementLoading("default: 2;",
+                       statementType::default_);
+}
+
+void testJumps() {
+  testStatementLoading("continue;",
+                       statementType::continue_);
+  testStatementLoading("break;",
+                       statementType::continue_);
+
+  testStatementLoading("return;",
+                       statementType::continue_);
+  testStatementLoading("return 1 + (2 * 1);",
+                       statementType::continue_);
+  // TODO: Test 'eval' to make sure we capture the return value
+}
+
+void testClassAccess() {
+  testStatementLoading("public:",
+                       statementType::classAccess);
+  testStatementLoading("protected:",
+                       statementType::classAccess);
+  testStatementLoading("private:",
+                       statementType::classAccess);
+}
+
+void testAttribute() {
+  testStatementLoading("@dim",
+                       statementType::attribute);
+  testStatementLoading("@dim(2)",
+                       statementType::attribute);
+  testStatementLoading("@dim(x=2, y=2)",
+                       statementType::attribute);
+  // TODO: Test the argument values
+}
+
+void testPragma() {
+  testStatementLoading("#pragma",
+                       statementType::pragma);
+  testStatementLoading("#pragma occa test",
+                       statementType::pragma);
+  // TODO: Test the pragma source
+}
+
+void testGoto() {
+  testStatementLoading("label:",
+                       statementType::gotoLabel);
+  testStatementLoading("goto label;",
+                       statementType::goto_);
+}
+//======================================
+
+//---[ Errors ]------------------------
+void testExpressionErrors();
+void testDeclarationErrors();
+void testBlockErrors();
+void testNamespaceErrors();
+void testTypeDeclErrors();
+void testIfErrors();
+void testForErrors();
+void testWhileErrors();
+void testSwitchErrors();
+void testJumpsErrors();
+void testClassAccessErrors();
+void testAttributeErrors();
+void testPragmaErrors();
+void testGotoErrors();
+
+void testErrors() {
+  std::cerr << "Testing parser errors:\n";
+
+  testExpressionErrors();
+  // testDeclarationErrors();
+  // testBlockErrors();
+  // testNamespaceErrors();
+  // testTypeDeclErrors();
+  // testIfErrors();
+  // testForErrors();
+  // testWhileErrors();
+  // testSwitchErrors();
+  // testJumpsErrors();
+  // testClassAccessErrors();
+  // testAttributeErrors();
+  // testPragmaErrors();
+  // testGotoErrors();
+}
+
+void testExpressionErrors() {
+  parseSource("2 + 3");
+  parseSource("-2");
+  parseSource("2 = {}");
+  parseSource("sizeof(4)");
+}
+
+void testDeclarationErrors() {
+}
+
+void testBlockErrors() {
+}
+
+void testNamespaceErrors() {
+}
+
+void testTypeDeclErrors() {
+}
+
+void testIfErrors() {
+}
+
+void testForErrors() {
+}
+
+void testWhileErrors() {
+}
+
+void testSwitchErrors() {
+}
+
+void testJumpsErrors() {
+}
+
+void testClassAccessErrors() {
+}
+
+void testAttributeErrors() {
+}
+
+void testPragmaErrors() {
+}
+
+void testGotoErrors() {
 }
 //======================================

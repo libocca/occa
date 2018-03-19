@@ -105,12 +105,16 @@ namespace occa {
     //==================================
 
     //---[ Expression ]-----------------
-    expressionStatement::expressionStatement(exprNode &expression_) :
+    expressionStatement::expressionStatement(exprNode &root_) :
       statement_t(),
-      expression(expression_) {}
+      root(root_) {}
+
+    expressionStatement::~expressionStatement() {
+      delete &root;
+    }
 
     statement_t& expressionStatement::clone_() const {
-      return *(new expressionStatement(expression));
+      return *(new expressionStatement(root.clone()));
     }
 
     int expressionStatement::type() const {
@@ -118,6 +122,7 @@ namespace occa {
     }
 
     void expressionStatement::print(printer &pout) const {
+      root.print(pout);
     }
 
     declarationStatement::declarationStatement() :

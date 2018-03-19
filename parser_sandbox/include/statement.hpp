@@ -84,9 +84,10 @@ namespace occa {
     //---[ Expression ]-----------------
     class expressionStatement : public statement_t {
     public:
-      exprNode &expression;
+      exprNode &root;
 
-      expressionStatement(exprNode &expression_);
+      expressionStatement(exprNode &root_);
+      ~expressionStatement();
 
       virtual statement_t& clone_() const;
       virtual int type() const;

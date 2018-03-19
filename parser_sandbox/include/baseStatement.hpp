@@ -137,6 +137,7 @@ namespace occa {
 
       blockStatement();
       blockStatement(const blockStatement &other);
+      ~blockStatement();
 
       virtual statement_t& clone_() const;
       virtual int type() const;

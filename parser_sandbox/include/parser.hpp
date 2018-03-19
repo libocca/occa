@@ -23,6 +23,8 @@
 #define OCCA_LANG_PARSER_HEADER
 
 #include <list>
+#include <map>
+#include <vector>
 
 #include "keyword.hpp"
 #include "preprocessor.hpp"
@@ -33,9 +35,15 @@
 
 namespace occa {
   namespace lang {
+    class parser_t;
+
     typedef stream<token_t*>          tokenStream;
     typedef std::list<statement_t*>   statementList;
     typedef std::vector<attribute_t*> attributeVector;
+    typedef std::map<int, int>        keywordToStatementMap;
+
+    typedef statement_t* (parser_t::*statementLoader_t)();
+    typedef std::map<int, statementLoader_t> statementLoaderMap;
 
     class parser_t {
     public:
@@ -51,6 +59,8 @@ namespace occa {
       //---[ Status ]-------------------
       tokenContext context;
       keywordTrie keywords;
+      keywordToStatementMap keywordPeek;
+      statementLoaderMap statementLoaders;
 
       blockStatement root;
       blockStatement *up;
@@ -62,6 +72,7 @@ namespace occa {
       parser_t();
       ~parser_t();
 
+      //---[ Setup ]--------------------
       void clear();
 
       void parseSource(const std::string &source);
@@ -73,15 +84,55 @@ namespace occa {
       void parseTokens();
 
       keyword_t* getKeyword(token_t *token);
+      //================================
 
+      //---[ Peek ]---------------------
       int peek();
 
       int peekIdentifier(const int tokenIndex);
       bool isGotoLabel(const int tokenIndex);
 
       int peekOperator(const int tokenIndex);
+      //================================
 
-      void loadChildStatements(blockStatement &smnt);
+      //---[ Loaders ]------------------
+      void loadAllStatements(statementPtrVector &statements);
+
+      statement_t* getNextStatement();
+
+      statement_t *loadBlockStatement();
+
+      statement_t *loadExpressionStatement();
+      statement_t *loadDeclarationStatement();
+
+      statement_t *loadNamespaceStatement();
+
+      statement_t *loadTypeDeclStatement();
+
+      statement_t *loadIfStatement();
+      statement_t *loadElifStatement();
+      statement_t *loadElseStatement();
+
+      statement_t *loadForStatement();
+      statement_t *loadWhileStatement();
+
+      statement_t *loadSwitchStatement();
+      statement_t *loadCaseStatement();
+      statement_t *loadDefaultStatement();
+      statement_t *loadContinueStatement();
+      statement_t *loadBreakStatement();
+
+      statement_t *loadReturnStatement();
+
+      statement_t *loadClassAccessStatement();
+
+      statement_t *loadAttributeStatement();
+
+      statement_t *loadPragmaStatement();
+
+      statement_t *loadGotoStatement();
+      statement_t *loadGotoLabelStatement();
+      //================================
     };
   }
 }
