@@ -33,6 +33,7 @@ namespace occa {
     extern const qualifier_t signed_;
     extern const qualifier_t unsigned_;
     extern const qualifier_t volatile_;
+    extern const qualifier_t longQualifier;
 
     extern const qualifier_t extern_;
     extern const qualifier_t mutable_;

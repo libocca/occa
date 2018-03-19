@@ -76,6 +76,7 @@ namespace occa {
       extern const int unsigned_;
       extern const int volatile_;
       extern const int register_;
+      extern const int long_;
       extern const int typeInfo;
 
       extern const int extern_;
@@ -185,11 +186,18 @@ namespace occa {
         return (int) qualifiers.size();
       }
 
+      void clear();
+
       int indexOf(const qualifier_t &qualifier) const;
       bool has(const qualifier_t &qualifier) const;
 
-      void add(const qualifier_t &qualifier);
-      void remove(const qualifier_t &qualifier);
+      bool operator == (const qualifiers_t &other) const;
+      bool operator != (const qualifiers_t &other) const;
+
+      qualifiers_t& operator += (const qualifier_t &qualifier);
+      qualifiers_t& operator -= (const qualifier_t &qualifier);
+
+      qualifiers_t& operator += (const qualifiers_t &others);
 
       void print(printer &pout) const;
 
@@ -253,15 +261,17 @@ namespace occa {
 
       void replaceBaseType(type_t &baseType_);
 
-      inline void addQualifier(const qualifier_t &qualifier) {
-        qualifiers.add(qualifier);
+      inline type_t& operator += (const qualifier_t &qualifier) {
+        qualifiers += qualifier;
+        return *this;
       }
 
-      inline void removeQualifier(const qualifier_t &qualifier) {
-        qualifiers.remove(qualifier);
+      inline type_t& operator -= (const qualifier_t &qualifier) {
+        qualifiers -= qualifier;
+        return *this;
       }
 
-      inline bool hasQualifier(const qualifier_t &qualifier) {
+      inline bool has(const qualifier_t &qualifier) {
         return qualifiers.has(qualifier);
       }
 
@@ -500,6 +510,16 @@ namespace occa {
 
       virtual void print(printer &pout) const;
     };
+    //==================================
+
+    //---[ Type Checking ]--------------
+    bool typesAreEqual(const type_t *a, const type_t *b);
+
+    bool typesAreEqual(qualifiers_t &aQualifiers, const type_t *a,
+                       qualifiers_t &bQualifiers, const type_t *b);
+
+    const type_t* extractBaseTypes(qualifiers_t &qualifiers,
+                                   const type_t *t);
     //==================================
   }
 }

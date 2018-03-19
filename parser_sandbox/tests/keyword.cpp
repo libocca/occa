@@ -51,6 +51,7 @@ void testDefaults(keywordTrie &keywords) {
   assertKeyword("signed"      , keywordType::qualifier);
   assertKeyword("unsigned"    , keywordType::qualifier);
   assertKeyword("volatile"    , keywordType::qualifier);
+  assertKeyword("long"        , keywordType::qualifier);
 
   assertKeyword("extern"      , keywordType::qualifier);
   assertKeyword("mutable"     , keywordType::qualifier);
@@ -75,7 +76,6 @@ void testDefaults(keywordTrie &keywords) {
   assertKeyword("wchar_t" , keywordType::type);
   assertKeyword("short"   , keywordType::type);
   assertKeyword("int"     , keywordType::type);
-  assertKeyword("long"    , keywordType::type);
   assertKeyword("float"   , keywordType::type);
   assertKeyword("double"  , keywordType::type);
   assertKeyword("void"    , keywordType::type);

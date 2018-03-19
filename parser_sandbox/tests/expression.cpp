@@ -106,10 +106,10 @@ void testOperatorNodes() {
 
 void testOtherNodes() {
   qualifiers_t q1;
-  q1.add(volatile_);
+  q1 += volatile_;
 
   type_t t1_0(float_);
-  t1_0.addQualifier(const_);
+  t1_0 += const_;
   pointer_t t1_1(const_, t1_0);
   pointer_t t1(t1_1);
 

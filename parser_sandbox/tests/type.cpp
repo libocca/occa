@@ -29,11 +29,13 @@
 void testBitfields();
 void testFunction();
 void testCasting();
+void testComparision();
 
 int main(const int argc, const char **argv) {
   testBitfields();
   testFunction();
-  // testCasting();
+  testCasting();
+  testComparision();
 
   return 0;
 }
@@ -103,10 +105,10 @@ void testBitfields() {
 
 void testFunction() {
   qualifiers_t q1;
-  q1.add(volatile_);
+  q1 += (volatile_);
 
   type_t t1_0(float_);
-  t1_0.addQualifier(const_);
+  t1_0 += const_;
   pointer_t t1_1(const_, t1_0);
   reference_t t1(t1_1);
   pointer_t t2(t1_1);
@@ -146,7 +148,8 @@ void testCasting() {
     &char_, &char16_t_, &char32_t_, &wchar_t_,
     &short_,
     &int_, &long_,
-    &float_, &double_ };
+    &float_, &double_
+  };
   for (int j = 0; j < 10; ++j) {
     const primitive_t &jType = *types[j];
     for (int i = 0; i < 10; ++i) {
@@ -228,4 +231,47 @@ void testCasting() {
   OCCA_ASSERT_FALSE(constIntArray2.canBeCastedToImplicitly(intArray));
   OCCA_ASSERT_FALSE(constIntArray2.canBeCastedToImplicitly(intArray2));
   OCCA_ASSERT_TRUE(constIntArray2.canBeCastedToImplicitly(constIntArray));
+}
+
+void testComparision() {
+  // Test primitives
+  const primitive_t* types[10] = {
+    &bool_,
+    &char_, &char16_t_, &char32_t_, &wchar_t_,
+    &short_,
+    &int_, &long_,
+    &float_, &double_
+  };
+  for (int j = 0; j < 10; ++j) {
+    const primitive_t *jType = types[j];
+    for (int i = 0; i < 10; ++i) {
+      const primitive_t *iType = types[i];
+      OCCA_ASSERT_EQUAL((i == j),
+                        typesAreEqual(iType, jType));
+    }
+  }
+
+  // Test wrapped types
+  type_t fakeFloat(float_);
+  OCCA_ASSERT_TRUE(typesAreEqual(&float_,
+                                 &fakeFloat));
+
+  typedef_t typedefFloat(fakeFloat, "foo");
+  OCCA_ASSERT_TRUE(typesAreEqual(&float_,
+                                 &typedefFloat));
+
+  // Test qualifiers
+  qualifiers_t q1, q2;
+  q1 += const_;
+  q1 += volatile_;
+  q2 += volatile_;
+  type_t qType1(q1, float_);
+  type_t qBadType2(q2, float_);
+  OCCA_ASSERT_FALSE(typesAreEqual(&qType1,
+                                  &qBadType2));
+
+  q2 += const_;
+  type_t qGoodType2(q2, float_);
+  OCCA_ASSERT_TRUE(typesAreEqual(&qType1,
+                                 &qGoodType2));
 }

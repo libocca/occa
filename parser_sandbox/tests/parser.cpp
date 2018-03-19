@@ -24,6 +24,7 @@
 
 #include "parser.hpp"
 
+void testTypeMethods();
 void testPeek();
 void testLoading();
 void testErrors();
@@ -67,12 +68,27 @@ smntType& getStatement(const int index = 0) {
 //======================================
 
 int main(const int argc, const char **argv) {
+  testTypeMethods();
   testPeek();
   testLoading();
   testErrors();
 
   return 0;
 }
+
+//---[ Utils ]--------------------------
+void testTypeMethods() {
+  setSource("int a = 0;");
+  setSource("const int *a = 0;");
+
+  // Make sure we can handle [long] and [long long]
+  setSource("long a = 0;");
+  setSource("const long a = 0;");
+
+  setSource("long long a = 0;");
+  setSource("const long long *a = 0;");
+}
+//======================================
 
 //---[ Peek ]---------------------------
 void testPeek() {
@@ -154,39 +170,39 @@ void testPeek() {
 //======================================
 
 //---[ Loading ]------------------------
-void testExpression();
-void testDeclaration();
-void testBlock();
-void testNamespace();
-void testTypeDecl();
-void testIf();
-void testFor();
-void testWhile();
-void testSwitch();
-void testJumps();
-void testClassAccess();
-void testAttribute();
-void testPragma();
-void testGoto();
+void testExpressionLoading();
+void testDeclarationLoading();
+void testBlockLoading();
+void testNamespaceLoading();
+void testTypeDeclLoading();
+void testIfLoading();
+void testForLoading();
+void testWhileLoading();
+void testSwitchLoading();
+void testJumpsLoading();
+void testClassAccessLoading();
+void testAttributeLoading();
+void testPragmaLoading();
+void testGotoLoading();
 
 void testLoading() {
-  testExpression();
-  // testDeclaration();
-  // testBlock();
-  // testNamespace();
-  // testTypeDecl();
-  // testIf();
-  // testFor();
-  // testWhile();
-  // testSwitch();
-  // testJumps();
-  // testClassAccess();
-  // testAttribute();
-  // testPragma();
-  // testGoto();
+  testExpressionLoading();
+  testDeclarationLoading();
+  // testBlockLoading();
+  // testNamespaceLoading();
+  // testTypeDeclLoading();
+  // testIfLoading();
+  // testForLoading();
+  // testWhileLoading();
+  // testSwitchLoading();
+  // testJumpsLoading();
+  // testClassAccessLoading();
+  // testAttributeLoading();
+  // testPragmaLoading();
+  // testGotoLoading();
 }
 
-void testExpression() {
+void testExpressionLoading() {
   testStatementLoading("2 + 3;",
                        statementType::expression);
   testStatementLoading("-3;",
@@ -198,10 +214,11 @@ void testExpression() {
   // TODO: Test we captured the proper expression by evaluating it
 }
 
-void testDeclaration() {
+void testDeclarationLoading() {
+
 }
 
-void testBlock() {
+void testBlockLoading() {
   testStatementLoading("{}",
                        statementType::block);
 
@@ -229,7 +246,7 @@ void testBlock() {
                            smnt[3]->type());
 }
 
-void testNamespace() {
+void testNamespaceLoading() {
   testStatementLoading("namespace foo {}",
                        statementType::namespace_);
 
@@ -252,7 +269,7 @@ void testNamespace() {
                     C.name);
 }
 
-void testTypeDecl() {
+void testTypeDeclLoading() {
   // TODO: typedef
   // TODO: struct
   // TODO: enum
@@ -260,7 +277,7 @@ void testTypeDecl() {
   // TODO: class
 }
 
-void testIf() {
+void testIfLoading() {
   testStatementLoading("if (true) {}",
                        statementType::if_);
 
@@ -285,7 +302,7 @@ void testIf() {
   // TODO: Test that 'i' exists in the if scope
 }
 
-void testFor() {
+void testForLoading() {
   testStatementLoading("for (;;) {}",
                        statementType::for_);
   testStatementLoading("for (;;);",
@@ -298,7 +315,7 @@ void testFor() {
   // TODO: Test that 'i' exists in the if scope
 }
 
-void testWhile() {
+void testWhileLoading() {
   testStatementLoading("while (true) {}",
                        statementType::while_);
   testStatementLoading("while (true);",
@@ -320,7 +337,7 @@ void testWhile() {
                        statementType::while_);
 }
 
-void testSwitch() {
+void testSwitchLoading() {
   testStatementLoading("switch (2) {}",
                        statementType::switch_);
   // Weird cases
@@ -348,7 +365,7 @@ void testSwitch() {
                        statementType::default_);
 }
 
-void testJumps() {
+void testJumpsLoading() {
   testStatementLoading("continue;",
                        statementType::continue_);
   testStatementLoading("break;",
@@ -361,7 +378,7 @@ void testJumps() {
   // TODO: Test 'eval' to make sure we capture the return value
 }
 
-void testClassAccess() {
+void testClassAccessLoading() {
   testStatementLoading("public:",
                        statementType::classAccess);
   testStatementLoading("protected:",
@@ -370,7 +387,7 @@ void testClassAccess() {
                        statementType::classAccess);
 }
 
-void testAttribute() {
+void testAttributeLoading() {
   testStatementLoading("@dim",
                        statementType::attribute);
   testStatementLoading("@dim(2)",
@@ -380,7 +397,7 @@ void testAttribute() {
   // TODO: Test the argument values
 }
 
-void testPragma() {
+void testPragmaLoading() {
   testStatementLoading("#pragma",
                        statementType::pragma);
   testStatementLoading("#pragma occa test",
@@ -388,7 +405,7 @@ void testPragma() {
   // TODO: Test the pragma source
 }
 
-void testGoto() {
+void testGotoLoading() {
   testStatementLoading("label:",
                        statementType::gotoLabel);
   testStatementLoading("goto label;",
@@ -416,7 +433,7 @@ void testErrors() {
   std::cerr << "Testing parser errors:\n";
 
   testExpressionErrors();
-  // testDeclarationErrors();
+  testDeclarationErrors();
   // testBlockErrors();
   // testNamespaceErrors();
   // testTypeDeclErrors();

@@ -59,40 +59,42 @@ namespace occa {
       const int signed_       = (1L << 4);
       const int unsigned_     = (1L << 5);
       const int volatile_     = (1L << 6);
-      const int register_     = (1L << 7);
+      const int long_         = (1L << 7);
+      const int register_     = (1L << 8);
       const int typeInfo      = (const_     |
                                  constexpr_ |
                                  signed_    |
                                  unsigned_  |
                                  volatile_  |
+                                 long_      |
                                  register_);
 
-      const int extern_       = (1L << 8);
-      const int static_       = (1L << 9);
-      const int thread_local_ = (1L << 10);
+      const int extern_       = (1L << 9);
+      const int static_       = (1L << 10);
+      const int thread_local_ = (1L << 11);
       const int globalScope   = (extern_ |
                                  static_ |
                                  thread_local_);
 
-      const int friend_       = (1L << 11);
-      const int mutable_      = (1L << 12);
+      const int friend_       = (1L << 12);
+      const int mutable_      = (1L << 13);
       const int classInfo     = (friend_ |
                                  mutable_);
 
-      const int inline_       = (1L << 13);
-      const int virtual_      = (1L << 14);
-      const int explicit_     = (1L << 15);
+      const int inline_       = (1L << 14);
+      const int virtual_      = (1L << 15);
+      const int explicit_     = (1L << 16);
       const int functionInfo  = (typeInfo |
                                  inline_  |
                                  virtual_ |
                                  explicit_);
 
-      const int builtin_      = (1L << 16);
-      const int typedef_      = (1L << 17);
-      const int class_        = (1L << 18);
-      const int enum_         = (1L << 19);
-      const int struct_       = (1L << 20);
-      const int union_        = (1L << 21);
+      const int builtin_      = (1L << 17);
+      const int typedef_      = (1L << 18);
+      const int class_        = (1L << 19);
+      const int enum_         = (1L << 20);
+      const int struct_       = (1L << 21);
+      const int union_        = (1L << 22);
       const int newType       = (typedef_ |
                                  class_   |
                                  enum_    |
@@ -152,7 +154,7 @@ namespace occa {
     qualifiers_t::qualifiers_t() {}
 
     qualifiers_t::qualifiers_t(const qualifier_t &qualifier) {
-      add(qualifier);
+      *this += qualifier;
     }
 
     qualifiers_t::~qualifiers_t() {}
@@ -170,19 +172,53 @@ namespace occa {
       return -1;
     }
 
+    void qualifiers_t::clear() {
+      qualifiers.clear();
+    }
+
     bool qualifiers_t::has(const qualifier_t &qualifier) const {
       return (indexOf(qualifier) >= 0);
     }
 
-    void qualifiers_t::add(const qualifier_t &qualifier) {
-      qualifiers.push_back(&qualifier);
+    bool qualifiers_t::operator == (const qualifiers_t &other) const {
+      const int count      = (int) qualifiers.size();
+      const int otherCount = (int) other.qualifiers.size();
+      if (count != otherCount) {
+        return false;
+      }
+      for (int i = 0; i < count; ++i) {
+        if (!other.has(*qualifiers[i])) {
+          return false;
+        }
+      }
+      return true;
     }
 
-    void qualifiers_t::remove(const qualifier_t &qualifier) {
+    bool qualifiers_t::operator != (const qualifiers_t &other) const {
+      return !((*this) == other);
+    }
+
+    qualifiers_t& qualifiers_t::operator += (const qualifier_t &qualifier) {
+      if (!has(qualifier)) {
+        qualifiers.push_back(&qualifier);
+      }
+      return *this;
+    }
+
+    qualifiers_t& qualifiers_t::operator -= (const qualifier_t &qualifier) {
       const int idx = indexOf(qualifier);
       if (idx >= 0) {
         qualifiers.erase(qualifiers.begin() + idx);
       }
+      return *this;
+    }
+
+    qualifiers_t& qualifiers_t::operator += (const qualifiers_t &other) {
+      const int count = (int) other.qualifiers.size();
+      for (int i = 0; i < count; ++i) {
+        *this += *(other.qualifiers[i]);
+      }
+      return *this;
     }
 
     void qualifiers_t::print(printer &pout) const {
@@ -822,6 +858,57 @@ namespace occa {
 
     void attribute_t::print(printer &pout) const {
       pout << '@' << name;
+    }
+    //==================================
+
+    //---[ Type Checking ]--------------
+    bool typesAreEqual(const type_t *a, const type_t *b) {
+      qualifiers_t aQualifiers, bQualifiers;
+      return typesAreEqual(aQualifiers, a,
+                           bQualifiers, b);
+    }
+
+    bool typesAreEqual(qualifiers_t &aQualifiers, const type_t *a,
+                       qualifiers_t &bQualifiers, const type_t *b) {
+      // Check NULL case
+      if (!a || !b) {
+        return (a == b);
+      }
+
+      a = extractBaseTypes(aQualifiers, a);
+      b = extractBaseTypes(bQualifiers, b);
+
+      const int aType = a->type();
+
+      // Check qualifiers, type, and existence of baseType
+      if ((aQualifiers != bQualifiers) ||
+          (aType != b->type())         ||
+          ((!a->baseType) != (!b->baseType))) {
+        return false;
+      }
+      if (aType & specifierType::primitive) {
+        return (a == b);
+      }
+      if (!a->baseType) {
+        return true;
+      }
+
+      // Still have types to test
+      aQualifiers.clear();
+      bQualifiers.clear();
+      return typesAreEqual(aQualifiers, a->baseType,
+                           bQualifiers, b->baseType);
+    }
+
+    const type_t* extractBaseTypes(qualifiers_t &qualifiers,
+                                   const type_t *t) {
+      qualifiers += t->qualifiers;
+
+      if (t->type() & (specifierType::type |
+                       specifierType::typedef_)) {
+        return extractBaseTypes(qualifiers, t->baseType);
+      }
+      return t;
     }
     //==================================
   }
