@@ -113,9 +113,19 @@ namespace occa {
       extern const rawOpType_t attribute;
 
       extern const rawOpType_t sizeof_;
+      extern const rawOpType_t sizeof_pack_;
       extern const rawOpType_t new_;
       extern const rawOpType_t delete_;
       extern const rawOpType_t throw_;
+
+      extern const rawOpType_t typeid_;
+      extern const rawOpType_t noexcept_;
+      extern const rawOpType_t alignof_;
+
+      extern const rawOpType_t const_cast_;
+      extern const rawOpType_t dynamic_cast_;
+      extern const rawOpType_t static_cast_;
+      extern const rawOpType_t reinterpret_cast_;
 
       extern const rawOpType_t cudaCallStart;
       extern const rawOpType_t cudaCallEnd;
@@ -225,9 +235,19 @@ namespace occa {
       extern const opType_t attribute;
 
       extern const opType_t sizeof_;
+      extern const opType_t sizeof_pack_;
       extern const opType_t new_;
       extern const opType_t delete_;
       extern const opType_t throw_;
+
+      extern const opType_t typeid_;
+      extern const opType_t noexcept_;
+      extern const opType_t alignof_;
+
+      extern const opType_t const_cast_;
+      extern const opType_t dynamic_cast_;
+      extern const opType_t static_cast_;
+      extern const opType_t reinterpret_cast_;
 
       extern const opType_t cudaCallStart;
       extern const opType_t cudaCallEnd;
@@ -381,9 +401,19 @@ namespace occa {
       extern const operator_t attribute;
 
       extern const unaryOperator_t sizeof_;
+      extern const unaryOperator_t sizeof_pack_;
       extern const unaryOperator_t new_;
       extern const unaryOperator_t delete_;
       extern const unaryOperator_t throw_;
+
+      extern const unaryOperator_t typeid_;
+      extern const unaryOperator_t noexcept_;
+      extern const unaryOperator_t alignof_;
+
+      extern const unaryOperator_t const_cast_;
+      extern const unaryOperator_t dynamic_cast_;
+      extern const unaryOperator_t static_cast_;
+      extern const unaryOperator_t reinterpret_cast_;
 
       extern const pairOperator_t cudaCallStart;
       extern const pairOperator_t cudaCallEnd;

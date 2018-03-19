@@ -80,38 +80,36 @@ namespace occa {
     tokenizer_t::tokenizer_t() :
       origin(originSource::string),
       fp(origin.position) {
-      getOperators(operators);
+      setup();
     }
 
     tokenizer_t::tokenizer_t(const char *root) :
       origin(originSource::string,
              filePosition(root)),
       fp(origin.position) {
-      getOperators(operators);
+      setup();
     }
 
     tokenizer_t::tokenizer_t(file_t *file_) :
       origin(*file_),
       fp(origin.position) {
-      getOperators(operators);
+      setup();
     }
 
     tokenizer_t::tokenizer_t(fileOrigin origin_) :
       origin(origin_),
       fp(origin.position) {
-      getOperators(operators);
+      setup();
     }
 
     tokenizer_t::tokenizer_t(const tokenizer_t &stream) :
       origin(stream.origin),
       fp(origin.position),
       stack(stream.stack) {
-      // TODO: Copy over outputCache
-      getOperators(operators);
+      setup();
     }
 
     tokenizer_t& tokenizer_t::operator = (const tokenizer_t &stream) {
-      // TODO: Copy over outputCache
       origin = stream.origin;
       stack  = stream.stack;
       return *this;
@@ -119,6 +117,36 @@ namespace occa {
 
     tokenizer_t::~tokenizer_t() {
       clear();
+    }
+
+    void tokenizer_t::setup() {
+      getOperators(operators);
+      operators.freeze();
+
+      // Extract the first characters for all operators
+      //   that don't conflict with identifier (e.g. sizeof)
+      //   for the shallowPeek
+      typedef std::map<char, bool> charMap;
+      charMap charcodes;
+
+      const int operatorCount = operators.size();
+      for (int i = 0; i < operatorCount; ++i) {
+        const operator_t &op = *(operators.values[i]);
+        const char c = op.str[0];
+        // Only store chars that don't conflict with identifiers
+        // This check is done in the peekForIdentifier method
+        if (!lex::charIsIn(c, charcodes::identifierStart)) {
+          charcodes[c] = true;
+        }
+      }
+
+      // Store the unique char codes in operatorCharcodes
+      operatorCharcodes = "";
+      charMap::iterator it = charcodes.begin();
+      while (it != charcodes.end()) {
+        operatorCharcodes += (it->first);
+        ++it;
+      }
     }
 
     baseStream<token_t*>& tokenizer_t::clone() const {
@@ -391,7 +419,7 @@ namespace occa {
       if (lex::charIsIn(c, charcodes::identifierStart)) {
         return tokenType::identifier;
       }
-      if (lex::charIsIn(c, charcodes::operators)) {
+      if (lex::charIsIn(c, operatorCharcodes.c_str())) {
         return tokenType::op;
       }
       if (c == '\n') {
@@ -499,7 +527,7 @@ namespace occa {
     }
 
     void tokenizer_t::getRawString(std::string &value) {
-      // TODO: Keep the delimiter(s)
+      // TODO: Keep the raw delimiter(s)
       if (*fp.start != '"') {
         return;
       }
@@ -806,7 +834,7 @@ namespace occa {
     void tokenizer_t::tokenize(tokenVector &tokens,
                                fileOrigin origin,
                                const std::string &source) {
-      // TODO: Make a string 'file'
+      // TODO: Make a string file_t
       fileOrigin fakeOrigin(*origin.file,
                             source.c_str());
 

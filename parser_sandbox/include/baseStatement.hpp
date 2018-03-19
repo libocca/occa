@@ -39,15 +39,22 @@ namespace occa {
     namespace statementType {
       extern const int none;
       extern const int empty;
+
       extern const int pragma;
+
       extern const int block;
+      extern const int namespace_;
+
       extern const int typeDecl;
+
       extern const int classAccess;
+
       extern const int expression;
       extern const int declaration;
+
       extern const int goto_;
       extern const int gotoLabel;
-      extern const int namespace_;
+
       extern const int if_;
       extern const int elif_;
       extern const int else_;
@@ -55,9 +62,12 @@ namespace occa {
       extern const int while_;
       extern const int switch_;
       extern const int case_;
+      extern const int default_;
       extern const int continue_;
       extern const int break_;
+
       extern const int return_;
+
       extern const int attribute;
     }
 
@@ -128,14 +138,16 @@ namespace occa {
       blockStatement();
       blockStatement(const blockStatement &other);
 
-      bool hasChildren() const;
-      void addChild(statement_t &child);
-      void clearChildren();
-
       virtual statement_t& clone_() const;
       virtual int type() const;
 
       virtual scope_t* getScope();
+
+      statement_t* operator [] (const int index);
+
+      int size() const;
+      void add(statement_t &child);
+      void clear();
 
       virtual void print(printer &pout) const;
       void printChildren(printer &pout) const;

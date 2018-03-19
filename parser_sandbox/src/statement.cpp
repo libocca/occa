@@ -26,12 +26,15 @@
 namespace occa {
   namespace lang {
     //---[ Pragma ]--------------------
-    pragmaStatement::pragmaStatement(const std::string &line_) :
-      statement_t(),
-      line(line_) {}
+    pragmaStatement::pragmaStatement(pragmaToken &token_) :
+      token(token_) {}
+
+    pragmaStatement::~pragmaStatement() {
+      delete &token;
+    }
 
     statement_t& pragmaStatement::clone_() const {
-      return *(new pragmaStatement(line));
+      return *(new pragmaStatement(token.clone()->to<pragmaToken>()));
     }
 
     int pragmaStatement::type() const {
@@ -39,7 +42,7 @@ namespace occa {
     }
 
     void pragmaStatement::print(printer &pout) const {
-      pout << "#pragma " << line << '\n';
+      pout << "#pragma " << token.value << '\n';
     }
     //==================================
 
@@ -424,6 +427,25 @@ namespace occa {
       value.print(pout);
       pout.popInlined();
       pout << ":\n";
+
+      pout.addIndentation();
+    }
+
+    defaultStatement::defaultStatement() {}
+
+    statement_t& defaultStatement::clone_() const {
+      return *(new defaultStatement());
+    }
+
+    int defaultStatement::type() const {
+      return statementType::default_;
+    }
+
+    void defaultStatement::print(printer &pout) const {
+      pout.removeIndentation();
+
+      pout.printIndentation();
+      pout << "default:\n";
 
       pout.addIndentation();
     }

@@ -101,12 +101,22 @@ namespace occa {
       const rawOpType_t attribute         (1L << 7);
 
       const rawOpType_t sizeof_           (1L << 8);
-      const rawOpType_t new_              (1L << 9);
-      const rawOpType_t delete_           (1L << 10);
-      const rawOpType_t throw_            (1L << 11);
+      const rawOpType_t sizeof_pack_      (1L << 9);
+      const rawOpType_t new_              (1L << 10);
+      const rawOpType_t delete_           (1L << 11);
+      const rawOpType_t throw_            (1L << 12);
 
-      const rawOpType_t cudaCallStart     (1L << 12);
-      const rawOpType_t cudaCallEnd       (1L << 13);
+      const rawOpType_t typeid_           (1L << 13);
+      const rawOpType_t noexcept_         (1L << 14);
+      const rawOpType_t alignof_          (1L << 15);
+
+      const rawOpType_t const_cast_       (1L << 16);
+      const rawOpType_t dynamic_cast_     (1L << 17);
+      const rawOpType_t static_cast_      (1L << 18);
+      const rawOpType_t reinterpret_cast_ (1L << 19);
+
+      const rawOpType_t cudaCallStart     (1L << 20);
+      const rawOpType_t cudaCallEnd       (1L << 21);
       //================================
     }
 
@@ -202,10 +212,20 @@ namespace occa {
       const opType_t arrowStar         (0, rawOperatorType::arrowStar);
 
       // Special
-      const opType_t sizeof_           (rawOperatorType::sizeof_, 0);
-      const opType_t new_              (rawOperatorType::new_   , 0);
-      const opType_t delete_           (rawOperatorType::delete_, 0);
-      const opType_t throw_            (rawOperatorType::throw_ , 0);
+      const opType_t sizeof_           (rawOperatorType::sizeof_     , 0);
+      const opType_t sizeof_pack_      (rawOperatorType::sizeof_pack_, 0);
+      const opType_t new_              (rawOperatorType::new_        , 0);
+      const opType_t delete_           (rawOperatorType::delete_     , 0);
+      const opType_t throw_            (rawOperatorType::throw_      , 0);
+
+      const opType_t typeid_           (rawOperatorType::typeid_  , 0);
+      const opType_t noexcept_         (rawOperatorType::noexcept_, 0);
+      const opType_t alignof_          (rawOperatorType::alignof_ , 0);
+
+      const opType_t const_cast_       (rawOperatorType::const_cast_      , 0);
+      const opType_t dynamic_cast_     (rawOperatorType::dynamic_cast_    , 0);
+      const opType_t static_cast_      (rawOperatorType::static_cast_     , 0);
+      const opType_t reinterpret_cast_ (rawOperatorType::reinterpret_cast_, 0);
 
       const opType_t leftUnary         = (not_          |
                                           positive      |
@@ -217,9 +237,17 @@ namespace occa {
                                           address       |
                                           globalScope   |
                                           sizeof_       |
+                                          sizeof_pack_  |
                                           new_          |
                                           delete_       |
-                                          throw_);
+                                          throw_        |
+                                          typeid_       |
+                                          noexcept_     |
+                                          alignof_      |
+                                          const_cast_   |
+                                          dynamic_cast_ |
+                                          static_cast_  |
+                                          reinterpret_cast_);
 
       const opType_t rightUnary        = (rightIncrement |
                                           rightDecrement);
@@ -325,20 +353,25 @@ namespace occa {
       const opType_t ellipsis          (rawOperatorType::ellipsis , 0);
       const opType_t attribute         (rawOperatorType::attribute, 0);
 
-      const opType_t funcType          = (sizeof_ |
-                                          new_    |
-                                          delete_ |
-                                          throw_);
+      const opType_t funcType          = (sizeof_       |
+                                          sizeof_pack_  |
+                                          new_          |
+                                          delete_       |
+                                          throw_        |
+                                          typeid_       |
+                                          noexcept_     |
+                                          alignof_      |
+                                          const_cast_   |
+                                          dynamic_cast_ |
+                                          static_cast_  |
+                                          reinterpret_cast_);
 
       const opType_t special           = (hash          |
                                           hashhash      |
                                           semicolon     |
                                           ellipsis      |
                                           attribute     |
-                                          sizeof_       |
-                                          new_          |
-                                          delete_       |
-                                          throw_        |
+                                          funcType      |
                                           cudaCallStart |
                                           cudaCallEnd);
 
@@ -411,101 +444,111 @@ namespace occa {
 
     namespace op {
       //---[ Left Unary ]---------------
-      const unaryOperator_t not_           ("!"  , operatorType::not_              , 3);
-      const unaryOperator_t positive       ("+"  , operatorType::positive          , 3);
-      const unaryOperator_t negative       ("-"  , operatorType::negative          , 3);
-      const unaryOperator_t tilde          ("~"  , operatorType::tilde             , 3);
-      const unaryOperator_t leftIncrement  ("++" , operatorType::leftIncrement     , 3);
-      const unaryOperator_t leftDecrement  ("--" , operatorType::leftDecrement     , 3);
+      const unaryOperator_t not_              ("!"  , operatorType::not_              , 3);
+      const unaryOperator_t positive          ("+"  , operatorType::positive          , 3);
+      const unaryOperator_t negative          ("-"  , operatorType::negative          , 3);
+      const unaryOperator_t tilde             ("~"  , operatorType::tilde             , 3);
+      const unaryOperator_t leftIncrement     ("++" , operatorType::leftIncrement     , 3);
+      const unaryOperator_t leftDecrement     ("--" , operatorType::leftDecrement     , 3);
       //================================
 
       //---[ Right Unary ]--------------
-      const unaryOperator_t rightIncrement ("++" , operatorType::rightIncrement    , 2);
-      const unaryOperator_t rightDecrement ("--" , operatorType::rightDecrement    , 2);
+      const unaryOperator_t rightIncrement    ("++" , operatorType::rightIncrement    , 2);
+      const unaryOperator_t rightDecrement    ("--" , operatorType::rightDecrement    , 2);
       //================================
 
       //---[ Binary ]-------------------
-      const binaryOperator_t add            ("+"  , operatorType::add              , 6);
-      const binaryOperator_t sub            ("-"  , operatorType::sub              , 6);
-      const binaryOperator_t mult           ("*"  , operatorType::mult             , 5);
-      const binaryOperator_t div            ("/"  , operatorType::div              , 5);
-      const binaryOperator_t mod            ("%"  , operatorType::mod              , 5);
+      const binaryOperator_t add              ("+"  , operatorType::add              , 6);
+      const binaryOperator_t sub              ("-"  , operatorType::sub              , 6);
+      const binaryOperator_t mult             ("*"  , operatorType::mult             , 5);
+      const binaryOperator_t div              ("/"  , operatorType::div              , 5);
+      const binaryOperator_t mod              ("%"  , operatorType::mod              , 5);
 
-      const binaryOperator_t lessThan       ("<"  , operatorType::lessThan         , 9);
-      const binaryOperator_t lessThanEq     ("<=" , operatorType::lessThanEq       , 9);
-      const binaryOperator_t equal          ("==" , operatorType::equal            , 10);
-      const binaryOperator_t notEqual       ("!=" , operatorType::notEqual         , 10);
-      const binaryOperator_t greaterThan    (">"  , operatorType::greaterThan      , 9);
-      const binaryOperator_t greaterThanEq  (">=" , operatorType::greaterThanEq    , 9);
+      const binaryOperator_t lessThan         ("<"  , operatorType::lessThan         , 9);
+      const binaryOperator_t lessThanEq       ("<=" , operatorType::lessThanEq       , 9);
+      const binaryOperator_t equal            ("==" , operatorType::equal            , 10);
+      const binaryOperator_t notEqual         ("!=" , operatorType::notEqual         , 10);
+      const binaryOperator_t greaterThan      (">"  , operatorType::greaterThan      , 9);
+      const binaryOperator_t greaterThanEq    (">=" , operatorType::greaterThanEq    , 9);
 
-      const binaryOperator_t and_           ("&&" , operatorType::and_             , 14);
-      const binaryOperator_t or_            ("||" , operatorType::or_              , 15);
-      const binaryOperator_t bitAnd         ("&"  , operatorType::bitAnd           , 11);
-      const binaryOperator_t bitOr          ("|"  , operatorType::bitOr            , 13);
-      const binaryOperator_t xor_           ("^"  , operatorType::xor_             , 12);
-      const binaryOperator_t leftShift      ("<<" , operatorType::leftShift        , 7);
-      const binaryOperator_t rightShift     (">>" , operatorType::rightShift       , 7);
+      const binaryOperator_t and_             ("&&" , operatorType::and_             , 14);
+      const binaryOperator_t or_              ("||" , operatorType::or_              , 15);
+      const binaryOperator_t bitAnd           ("&"  , operatorType::bitAnd           , 11);
+      const binaryOperator_t bitOr            ("|"  , operatorType::bitOr            , 13);
+      const binaryOperator_t xor_             ("^"  , operatorType::xor_             , 12);
+      const binaryOperator_t leftShift        ("<<" , operatorType::leftShift        , 7);
+      const binaryOperator_t rightShift       (">>" , operatorType::rightShift       , 7);
 
-      const binaryOperator_t assign         ("="  , operatorType::assign           , 16);
-      const binaryOperator_t addEq          ("+=" , operatorType::addEq            , 16);
-      const binaryOperator_t subEq          ("-=" , operatorType::subEq            , 16);
-      const binaryOperator_t multEq         ("*=" , operatorType::multEq           , 16);
-      const binaryOperator_t divEq          ("/=" , operatorType::divEq            , 16);
-      const binaryOperator_t modEq          ("%=" , operatorType::modEq            , 16);
-      const binaryOperator_t andEq          ("&=" , operatorType::andEq            , 16);
-      const binaryOperator_t orEq           ("|=" , operatorType::orEq             , 16);
-      const binaryOperator_t xorEq          ("^=" , operatorType::xorEq            , 16);
-      const binaryOperator_t leftShiftEq    ("<<=", operatorType::leftShiftEq      , 16);
-      const binaryOperator_t rightShiftEq   (">>=", operatorType::rightShiftEq     , 16);
+      const binaryOperator_t assign           ("="  , operatorType::assign           , 16);
+      const binaryOperator_t addEq            ("+=" , operatorType::addEq            , 16);
+      const binaryOperator_t subEq            ("-=" , operatorType::subEq            , 16);
+      const binaryOperator_t multEq           ("*=" , operatorType::multEq           , 16);
+      const binaryOperator_t divEq            ("/=" , operatorType::divEq            , 16);
+      const binaryOperator_t modEq            ("%=" , operatorType::modEq            , 16);
+      const binaryOperator_t andEq            ("&=" , operatorType::andEq            , 16);
+      const binaryOperator_t orEq             ("|=" , operatorType::orEq             , 16);
+      const binaryOperator_t xorEq            ("^=" , operatorType::xorEq            , 16);
+      const binaryOperator_t leftShiftEq      ("<<=", operatorType::leftShiftEq      , 16);
+      const binaryOperator_t rightShiftEq     (">>=", operatorType::rightShiftEq     , 16);
 
-      const binaryOperator_t comma          (","  , operatorType::comma            , 17);
+      const binaryOperator_t comma            (","  , operatorType::comma            , 17);
 
       // Non-Overloadable
-      const binaryOperator_t scope          ("::" , operatorType::scope            , 1);
-      const unaryOperator_t  globalScope    ("::" , operatorType::globalScope      , 1);
-      const unaryOperator_t  dereference    ("*"  , operatorType::dereference      , 3);
-      const unaryOperator_t  address        ("&"  , operatorType::address          , 3);
-      const binaryOperator_t dot            ("."  , operatorType::dot              , 2);
-      const binaryOperator_t dotStar        (".*" , operatorType::dotStar          , 4);
-      const binaryOperator_t arrow          ("->" , operatorType::arrow            , 2);
-      const binaryOperator_t arrowStar      ("->*", operatorType::arrowStar        , 4);
+      const binaryOperator_t scope            ("::" , operatorType::scope            , 1);
+      const unaryOperator_t  globalScope      ("::" , operatorType::globalScope      , 1);
+      const unaryOperator_t  dereference      ("*"  , operatorType::dereference      , 3);
+      const unaryOperator_t  address          ("&"  , operatorType::address          , 3);
+      const binaryOperator_t dot              ("."  , operatorType::dot              , 2);
+      const binaryOperator_t dotStar          (".*" , operatorType::dotStar          , 4);
+      const binaryOperator_t arrow            ("->" , operatorType::arrow            , 2);
+      const binaryOperator_t arrowStar        ("->*", operatorType::arrowStar        , 4);
       //================================
 
       //---[ Ternary ]------------------
-      const operator_t ternary              ("?"  , operatorType::ternary          , 16);
-      const operator_t colon                (":"  , operatorType::colon            , 16);
+      const operator_t ternary                ("?"  , operatorType::ternary          , 16);
+      const operator_t colon                  (":"  , operatorType::colon            , 16);
       //================================
 
       //---[ Pairs ]--------------------
-      const pairOperator_t braceStart       ("{", "}", operatorType::braceStart);
-      const pairOperator_t braceEnd         ("}", "{", operatorType::braceEnd);
-      const pairOperator_t bracketStart     ("[", "]", operatorType::bracketStart);
-      const pairOperator_t bracketEnd       ("]", "[", operatorType::bracketEnd);
-      const pairOperator_t parenthesesStart ("(", ")", operatorType::parenthesesStart);
-      const pairOperator_t parenthesesEnd   (")", "(", operatorType::parenthesesEnd);
+      const pairOperator_t braceStart         ("{", "}", operatorType::braceStart);
+      const pairOperator_t braceEnd           ("}", "{", operatorType::braceEnd);
+      const pairOperator_t bracketStart       ("[", "]", operatorType::bracketStart);
+      const pairOperator_t bracketEnd         ("]", "[", operatorType::bracketEnd);
+      const pairOperator_t parenthesesStart   ("(", ")", operatorType::parenthesesStart);
+      const pairOperator_t parenthesesEnd     (")", "(", operatorType::parenthesesEnd);
       //================================
 
       //---[ Comments ]-----------------
-      const operator_t lineComment          ("//" , operatorType::lineComment      , 0);
-      const operator_t blockCommentStart    ("/*" , operatorType::blockCommentStart, 0);
-      const operator_t blockCommentEnd      ("*/" , operatorType::blockCommentEnd  , 0);
+      const operator_t lineComment            ("//" , operatorType::lineComment      , 0);
+      const operator_t blockCommentStart      ("/*" , operatorType::blockCommentStart, 0);
+      const operator_t blockCommentEnd        ("*/" , operatorType::blockCommentEnd  , 0);
       //================================
 
       //---[ Special ]------------------
-      const operator_t hash                 ("#"  , operatorType::hash             , 0);
-      const operator_t hashhash             ("##" , operatorType::hashhash         , 0);
+      const operator_t hash                   ("#"  , operatorType::hash             , 0);
+      const operator_t hashhash               ("##" , operatorType::hashhash         , 0);
 
-      const operator_t semicolon            (";"  , operatorType::semicolon        , 0);
-      const operator_t ellipsis             ("...", operatorType::ellipsis         , 0);
-      const operator_t attribute            ("@"  , operatorType::attribute        , 0);
+      const operator_t semicolon              (";"  , operatorType::semicolon        , 0);
+      const operator_t ellipsis               ("...", operatorType::ellipsis         , 0);
+      const operator_t attribute              ("@"  , operatorType::attribute        , 0);
 
-      const unaryOperator_t sizeof_         ("sizeof", operatorType::sizeof_       , 3);
-      const unaryOperator_t new_            ("new"   , operatorType::new_          , 3);
-      const unaryOperator_t delete_         ("delete", operatorType::delete_       , 3);
-      const unaryOperator_t throw_          ("throw" , operatorType::throw_        , 16);
+      const unaryOperator_t sizeof_           ("sizeof"   , operatorType::sizeof_     , 3);
+      const unaryOperator_t sizeof_pack_      ("sizeof...", operatorType::sizeof_pack_, 3);
+      const unaryOperator_t new_              ("new"      , operatorType::new_        , 3);
+      const unaryOperator_t delete_           ("delete"   , operatorType::delete_     , 3);
+      const unaryOperator_t throw_            ("throw"    , operatorType::throw_      , 16);
 
-      const pairOperator_t cudaCallStart    ("<<<", ">>>", operatorType::cudaCallStart);
-      const pairOperator_t cudaCallEnd      (">>>", "<<<", operatorType::cudaCallEnd);
+      const unaryOperator_t typeid_           ("typeid"   , operatorType::typeid_     , 3);
+      const unaryOperator_t noexcept_         ("noexcept" , operatorType::noexcept_   , 3);
+      const unaryOperator_t alignof_          ("alignof"  , operatorType::alignof_    , 3);
+
+      const unaryOperator_t const_cast_       ("const_cast"      , operatorType::const_cast_      , 3);
+      const unaryOperator_t dynamic_cast_     ("dynamic_cast"    , operatorType::dynamic_cast_    , 3);
+      const unaryOperator_t static_cast_      ("static_cast"     , operatorType::static_cast_     , 3);
+      const unaryOperator_t reinterpret_cast_ ("reinterpret_cast", operatorType::reinterpret_cast_, 3);
+
+      const pairOperator_t cudaCallStart      ("<<<", ">>>", operatorType::cudaCallStart);
+      const pairOperator_t cudaCallEnd        (">>>", "<<<", operatorType::cudaCallEnd);
       //================================
 
       //---[ Associativity ]------------
@@ -687,11 +730,22 @@ namespace occa {
 
       operators.add(op::semicolon.str        , &op::semicolon);
       operators.add(op::ellipsis.str         , &op::ellipsis);
+      operators.add(op::attribute.str        , &op::attribute);
 
       operators.add(op::sizeof_.str          , &op::sizeof_);
+      operators.add(op::sizeof_pack_.str     , &op::sizeof_pack_);
       operators.add(op::new_.str             , &op::new_);
       operators.add(op::delete_.str          , &op::delete_);
       operators.add(op::throw_.str           , &op::throw_);
+
+      operators.add(op::typeid_.str          , &op::typeid_);
+      operators.add(op::noexcept_.str        , &op::noexcept_);
+      operators.add(op::alignof_.str         , &op::alignof_);
+
+      operators.add(op::const_cast_.str      , &op::const_cast_);
+      operators.add(op::dynamic_cast_.str    , &op::dynamic_cast_);
+      operators.add(op::static_cast_.str     , &op::static_cast_);
+      operators.add(op::reinterpret_cast_.str, &op::reinterpret_cast_);
 
       operators.add(op::cudaCallStart.str    , &op::cudaCallStart);
       operators.add(op::cudaCallEnd.str      , &op::cudaCallEnd);

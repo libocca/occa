@@ -45,7 +45,6 @@ namespace occa {
       extern const char alphanumber[];
       extern const char identifierStart[];
       extern const char identifier[];
-      extern const char operators[];
     }
 
     namespace encodingType {

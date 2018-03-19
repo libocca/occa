@@ -25,41 +25,55 @@
 namespace occa {
   namespace lang {
     namespace exprNodeType {
-      const int empty           = (1 << 0);
-      const int primitive       = (1 << 1);
-      const int char_           = (1 << 2);
-      const int string          = (1 << 3);
-      const int identifier      = (1 << 4);
-      const int variable        = (1 << 5);
+      const udim_t empty             = (1L << 0);
+      const udim_t primitive         = (1L << 1);
+      const udim_t char_             = (1L << 2);
+      const udim_t string            = (1L << 3);
+      const udim_t identifier        = (1L << 4);
+      const udim_t variable          = (1L << 5);
 
-      const int value           = (primitive |
-                                   variable);
+      const udim_t value             = (primitive |
+                                        variable);
 
-      const int leftUnary       = (1 << 6);
-      const int rightUnary      = (1 << 7);
-      const int binary          = (1 << 8);
-      const int ternary         = (1 << 9);
-      const int op              = (leftUnary  |
-                                   rightUnary |
-                                   binary     |
-                                   ternary);
+      const udim_t leftUnary         = (1L << 6);
+      const udim_t rightUnary        = (1L << 7);
+      const udim_t binary            = (1L << 8);
+      const udim_t ternary           = (1L << 9);
+      const udim_t op                = (leftUnary  |
+                                        rightUnary |
+                                        binary     |
+                                        ternary);
 
-      const int pair            = (1 << 10);
-      const int subscript       = (1 << 11);
-      const int call            = (1 << 12);
-      const int new_            = (1 << 13);
-      const int delete_         = (1 << 14);
-      const int throw_          = (1 << 15);
-      const int sizeof_         = (1 << 16);
-      const int funcCast        = (1 << 17);
-      const int parenCast       = (1 << 18);
-      const int constCast       = (1 << 19);
-      const int staticCast      = (1 << 20);
-      const int reinterpretCast = (1 << 21);
-      const int dynamicCast     = (1 << 22);
-      const int parentheses     = (1 << 23);
-      const int tuple           = (1 << 24);
-      const int cudaCall        = (1 << 25);
+      const udim_t pair              = (1L << 10);
+
+      const udim_t subscript         = (1L << 11);
+      const udim_t call              = (1L << 12);
+
+      const udim_t sizeof_           = (1L << 13);
+      const udim_t sizeof_pack_      = (1L << 14);
+      const udim_t new_              = (1L << 15);
+      const udim_t delete_           = (1L << 16);
+      const udim_t throw_            = (1L << 17);
+
+      const udim_t typeid_           = (1L << 18);
+      const udim_t noexcept_         = (1L << 19);
+      const udim_t alignof_          = (1L << 20);
+
+      const udim_t const_cast_       = (1L << 21);
+      const udim_t dynamic_cast_     = (1L << 22);
+      const udim_t static_cast_      = (1L << 23);
+      const udim_t reinterpret_cast_ = (1L << 24);
+
+      const udim_t funcCast          = (1L << 25);
+      const udim_t parenCast         = (1L << 26);
+      const udim_t constCast         = (1L << 27);
+      const udim_t staticCast        = (1L << 28);
+      const udim_t reinterpretCast   = (1L << 29);
+      const udim_t dynamicCast       = (1L << 30);
+
+      const udim_t parentheses       = (1L << 31);
+      const udim_t tuple             = (1L << 32);
+      const udim_t cudaCall          = (1L << 33);
     }
 
     exprNode::exprNode(token_t *token_) :
@@ -119,7 +133,7 @@ namespace occa {
 
     emptyNode::~emptyNode() {}
 
-    int emptyNode::type() const {
+    udim_t emptyNode::type() const {
       return exprNodeType::empty;
     }
 
@@ -151,7 +165,7 @@ namespace occa {
 
     primitiveNode::~primitiveNode() {}
 
-    int primitiveNode::type() const {
+    udim_t primitiveNode::type() const {
       return exprNodeType::primitive;
     }
 
@@ -192,7 +206,7 @@ namespace occa {
 
     charNode::~charNode() {}
 
-    int charNode::type() const {
+    udim_t charNode::type() const {
       return exprNodeType::char_;
     }
 
@@ -225,7 +239,7 @@ namespace occa {
 
     stringNode::~stringNode() {}
 
-    int stringNode::type() const {
+    udim_t stringNode::type() const {
       return exprNodeType::string;
     }
 
@@ -258,7 +272,7 @@ namespace occa {
 
     identifierNode::~identifierNode() {}
 
-    int identifierNode::type() const {
+    udim_t identifierNode::type() const {
       return exprNodeType::identifier;
     }
 
@@ -291,7 +305,7 @@ namespace occa {
 
     variableNode::~variableNode() {}
 
-    int variableNode::type() const {
+    udim_t variableNode::type() const {
       return exprNodeType::variable;
     }
 
@@ -330,7 +344,7 @@ namespace occa {
       delete &value;
     }
 
-    int leftUnaryOpNode::type() const {
+    udim_t leftUnaryOpNode::type() const {
       return exprNodeType::leftUnary;
     }
 
@@ -385,7 +399,7 @@ namespace occa {
       delete &value;
     }
 
-    int rightUnaryOpNode::type() const {
+    udim_t rightUnaryOpNode::type() const {
       return exprNodeType::rightUnary;
     }
 
@@ -440,7 +454,7 @@ namespace occa {
       delete &rightValue;
     }
 
-    int binaryOpNode::type() const {
+    udim_t binaryOpNode::type() const {
       return exprNodeType::binary;
     }
 
@@ -509,7 +523,7 @@ namespace occa {
       delete &falseValue;
     }
 
-    int ternaryOpNode::type() const {
+    udim_t ternaryOpNode::type() const {
       return exprNodeType::ternary;
     }
 
@@ -573,7 +587,7 @@ namespace occa {
       delete &index;
     }
 
-    int subscriptNode::type() const {
+    udim_t subscriptNode::type() const {
       return exprNodeType::subscript;
     }
 
@@ -616,7 +630,7 @@ namespace occa {
       freeExprNodeVector(args);
     }
 
-    int callNode::type() const {
+    udim_t callNode::type() const {
       return exprNodeType::call;
     }
 
@@ -677,7 +691,7 @@ namespace occa {
       delete &size;
     }
 
-    int newNode::type() const {
+    udim_t newNode::type() const {
       return exprNodeType::new_;
     }
 
@@ -724,7 +738,7 @@ namespace occa {
       delete &value;
     }
 
-    int deleteNode::type() const {
+    udim_t deleteNode::type() const {
       return exprNodeType::delete_;
     }
 
@@ -765,7 +779,7 @@ namespace occa {
       delete &value;
     }
 
-    int throwNode::type() const {
+    udim_t throwNode::type() const {
       return exprNodeType::throw_;
     }
 
@@ -805,7 +819,7 @@ namespace occa {
       delete &value;
     }
 
-    int sizeofNode::type() const {
+    udim_t sizeofNode::type() const {
       return exprNodeType::sizeof_;
     }
 
@@ -851,7 +865,7 @@ namespace occa {
       delete &value;
     }
 
-    int funcCastNode::type() const {
+    udim_t funcCastNode::type() const {
       return exprNodeType::funcCast;
     }
 
@@ -893,7 +907,7 @@ namespace occa {
       delete &value;
     }
 
-    int parenCastNode::type() const {
+    udim_t parenCastNode::type() const {
       return exprNodeType::parenCast;
     }
 
@@ -935,7 +949,7 @@ namespace occa {
       delete &value;
     }
 
-    int constCastNode::type() const {
+    udim_t constCastNode::type() const {
       return exprNodeType::constCast;
     }
 
@@ -978,7 +992,7 @@ namespace occa {
       delete &value;
     }
 
-    int staticCastNode::type() const {
+    udim_t staticCastNode::type() const {
       return exprNodeType::staticCast;
     }
 
@@ -1021,7 +1035,7 @@ namespace occa {
       delete &value;
     }
 
-    int reinterpretCastNode::type() const {
+    udim_t reinterpretCastNode::type() const {
       return exprNodeType::reinterpretCast;
     }
 
@@ -1064,7 +1078,7 @@ namespace occa {
       delete &value;
     }
 
-    int dynamicCastNode::type() const {
+    udim_t dynamicCastNode::type() const {
       return exprNodeType::dynamicCast;
     }
 
@@ -1108,7 +1122,7 @@ namespace occa {
       delete &value;
     }
 
-    int pairNode::type() const {
+    udim_t pairNode::type() const {
       return exprNodeType::pair;
     }
 
@@ -1157,7 +1171,7 @@ namespace occa {
       delete &value;
     }
 
-    int parenthesesNode::type() const {
+    udim_t parenthesesNode::type() const {
       return exprNodeType::parentheses;
     }
 
@@ -1201,7 +1215,7 @@ namespace occa {
       freeExprNodeVector(args);
     }
 
-    int tupleNode::type() const {
+    udim_t tupleNode::type() const {
       return exprNodeType::tuple;
     }
 
@@ -1253,7 +1267,7 @@ namespace occa {
       delete &threads;
     }
 
-    int cudaCallNode::type() const {
+    udim_t cudaCallNode::type() const {
       return exprNodeType::cudaCall;
     }
 

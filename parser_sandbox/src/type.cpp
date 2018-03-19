@@ -749,7 +749,7 @@ namespace occa {
       if (name.size()) {
         pout << ' ' << name;
       }
-      if (body.hasChildren()) {
+      if (body.size()) {
         pout.pushInlined(true);
         body.print(pout);
         pout.pushInlined(false);

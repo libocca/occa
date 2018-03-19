@@ -60,6 +60,13 @@ namespace occa {
       extern const int goto_;
       extern const int jump;
 
+      extern const int namespace_;
+
+      extern const int public_;
+      extern const int protected_;
+      extern const int private_;
+      extern const int classAccess;
+
       extern const int statement;
     }
 

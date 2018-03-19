@@ -82,10 +82,12 @@ namespace occa {
         return;
       }
 
+      token_t *nextToken = NULL;
       stringToken &strToken = token->to<stringToken>();
       while (!inputIsEmpty()) {
+        nextToken = NULL;
+
         // Merge until no stringToken appears
-        token_t *nextToken = NULL;
         *(this->input) >> nextToken;
 
         if (!(nextToken->type() & tokenType::string)) {
@@ -102,6 +104,9 @@ namespace occa {
       }
 
       pushOutput(&strToken);
+      if (nextToken) {
+        pushOutput(nextToken);
+      }
     }
     //==================================
 

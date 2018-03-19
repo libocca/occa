@@ -51,9 +51,6 @@ namespace occa {
         "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
         "0123456789"
         "_";
-
-      const char operators[] =
-        "!#%&()*+,-./:;<=>?[]^{|}~";
     }
 
     namespace encodingType {

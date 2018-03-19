@@ -52,7 +52,8 @@ namespace occa {
       tokenContext context;
       keywordTrie keywords;
 
-      blockStatement *root, *up;
+      blockStatement root;
+      blockStatement *up;
       attributeVector attributes;
 
       bool success;
@@ -66,12 +67,19 @@ namespace occa {
       void parseSource(const std::string &source);
       void parseFile(const std::string &filename);
 
+      void setSource(const std::string &source,
+                     const bool isFile);
       void loadTokens();
-      void parse();
+      void parseTokens();
 
       keyword_t* getKeyword(token_t *token);
 
       int peek();
+
+      int peekIdentifier(const int tokenIndex);
+      bool isGotoLabel(const int tokenIndex);
+
+      int peekOperator(const int tokenIndex);
 
       void loadChildStatements(blockStatement &smnt);
     };

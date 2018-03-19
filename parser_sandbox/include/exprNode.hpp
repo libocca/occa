@@ -40,37 +40,50 @@ namespace occa {
     typedef std::vector<token_t*>  tokenVector;
 
     namespace exprNodeType {
-      extern const int empty;
-      extern const int primitive;
-      extern const int char_;
-      extern const int string;
-      extern const int identifier;
-      extern const int variable;
-      extern const int value;
+      extern const udim_t empty;
+      extern const udim_t primitive;
+      extern const udim_t char_;
+      extern const udim_t string;
+      extern const udim_t identifier;
+      extern const udim_t variable;
+      extern const udim_t value;
 
-      extern const int leftUnary;
-      extern const int rightUnary;
-      extern const int binary;
-      extern const int ternary;
-      extern const int op;
+      extern const udim_t leftUnary;
+      extern const udim_t rightUnary;
+      extern const udim_t binary;
+      extern const udim_t ternary;
+      extern const udim_t op;
 
-      extern const int pair;
+      extern const udim_t pair;
 
-      extern const int subscript;
-      extern const int call;
-      extern const int sizeof_;
-      extern const int new_;
-      extern const int delete_;
-      extern const int throw_;
-      extern const int funcCast;
-      extern const int parenCast;
-      extern const int constCast;
-      extern const int staticCast;
-      extern const int reinterpretCast;
-      extern const int dynamicCast;
-      extern const int parentheses;
-      extern const int tuple;
-      extern const int cudaCall;
+      extern const udim_t subscript;
+      extern const udim_t call;
+
+      extern const udim_t sizeof_;
+      extern const udim_t sizeof_pack_;
+      extern const udim_t new_;
+      extern const udim_t delete_;
+      extern const udim_t throw_;
+
+      extern const udim_t typeid_;
+      extern const udim_t noexcept_;
+      extern const udim_t alignof_;
+
+      extern const udim_t const_cast_;
+      extern const udim_t dynamic_cast_;
+      extern const udim_t static_cast_;
+      extern const udim_t reinterpret_cast_;
+
+      extern const udim_t funcCast;
+      extern const udim_t parenCast;
+      extern const udim_t constCast;
+      extern const udim_t staticCast;
+      extern const udim_t reinterpretCast;
+      extern const udim_t dynamicCast;
+
+      extern const udim_t parentheses;
+      extern const udim_t tuple;
+      extern const udim_t cudaCall;
     }
 
     class exprNode {
@@ -102,7 +115,7 @@ namespace occa {
         return *ptr;
       }
 
-      virtual int type() const = 0;
+      virtual udim_t type() const = 0;
 
       virtual exprNode& clone() const = 0;
 
@@ -131,7 +144,7 @@ namespace occa {
       emptyNode();
       virtual ~emptyNode();
 
-      virtual int type() const;
+      virtual udim_t type() const;
 
       virtual exprNode& clone() const;
 
@@ -155,7 +168,7 @@ namespace occa {
 
       virtual ~primitiveNode();
 
-      virtual int type() const;
+      virtual udim_t type() const;
 
       virtual exprNode& clone() const;
 
@@ -178,7 +191,7 @@ namespace occa {
 
       virtual ~charNode();
 
-      virtual int type() const;
+      virtual udim_t type() const;
 
       virtual exprNode& clone() const;
 
@@ -199,7 +212,7 @@ namespace occa {
 
       virtual ~stringNode();
 
-      virtual int type() const;
+      virtual udim_t type() const;
 
       virtual exprNode& clone() const;
 
@@ -219,7 +232,7 @@ namespace occa {
 
       virtual ~identifierNode();
 
-      virtual int type() const;
+      virtual udim_t type() const;
 
       virtual exprNode& clone() const;
 
@@ -239,7 +252,7 @@ namespace occa {
 
       virtual ~variableNode();
 
-      virtual int type() const;
+      virtual udim_t type() const;
 
       virtual exprNode& clone() const;
 
@@ -263,7 +276,7 @@ namespace occa {
 
       virtual ~leftUnaryOpNode();
 
-      virtual int type() const;
+      virtual udim_t type() const;
       opType_t opType() const;
 
       virtual exprNode& clone() const;
@@ -292,7 +305,7 @@ namespace occa {
 
       virtual ~rightUnaryOpNode();
 
-      virtual int type() const;
+      virtual udim_t type() const;
       opType_t opType() const;
 
       virtual exprNode& clone() const;
@@ -323,7 +336,7 @@ namespace occa {
 
       virtual ~binaryOpNode();
 
-      virtual int type() const;
+      virtual udim_t type() const;
       opType_t opType() const;
 
       virtual exprNode& clone() const;
@@ -352,7 +365,7 @@ namespace occa {
       ternaryOpNode(const ternaryOpNode &node);
       virtual ~ternaryOpNode();
 
-      virtual int type() const;
+      virtual udim_t type() const;
       opType_t opType() const;
 
       virtual exprNode& clone() const;
@@ -379,7 +392,7 @@ namespace occa {
 
       virtual ~subscriptNode();
 
-      virtual int type() const;
+      virtual udim_t type() const;
 
       virtual exprNode& clone() const;
 
@@ -405,7 +418,7 @@ namespace occa {
         return (int) args.size();
       }
 
-      virtual int type() const;
+      virtual udim_t type() const;
 
       virtual exprNode& clone() const;
 
@@ -433,7 +446,7 @@ namespace occa {
 
       virtual ~newNode();
 
-      virtual int type() const;
+      virtual udim_t type() const;
 
       virtual exprNode& clone() const;
 
@@ -455,7 +468,7 @@ namespace occa {
 
       virtual ~deleteNode();
 
-      virtual int type() const;
+      virtual udim_t type() const;
 
       virtual exprNode& clone() const;
 
@@ -475,7 +488,7 @@ namespace occa {
 
       virtual ~throwNode();
 
-      virtual int type() const;
+      virtual udim_t type() const;
 
       virtual exprNode& clone() const;
 
@@ -497,7 +510,7 @@ namespace occa {
 
       virtual ~sizeofNode();
 
-      virtual int type() const;
+      virtual udim_t type() const;
 
       virtual exprNode& clone() const;
 
@@ -522,7 +535,7 @@ namespace occa {
 
       virtual ~funcCastNode();
 
-      virtual int type() const;
+      virtual udim_t type() const;
 
       virtual exprNode& clone() const;
 
@@ -544,7 +557,7 @@ namespace occa {
 
       virtual ~parenCastNode();
 
-      virtual int type() const;
+      virtual udim_t type() const;
 
       virtual exprNode& clone() const;
 
@@ -566,7 +579,7 @@ namespace occa {
 
       virtual ~constCastNode();
 
-      virtual int type() const;
+      virtual udim_t type() const;
 
       virtual exprNode& clone() const;
 
@@ -588,7 +601,7 @@ namespace occa {
 
       virtual ~staticCastNode();
 
-      virtual int type() const;
+      virtual udim_t type() const;
 
       virtual exprNode& clone() const;
 
@@ -610,7 +623,7 @@ namespace occa {
 
       virtual ~reinterpretCastNode();
 
-      virtual int type() const;
+      virtual udim_t type() const;
 
       virtual exprNode& clone() const;
 
@@ -632,7 +645,7 @@ namespace occa {
 
       virtual ~dynamicCastNode();
 
-      virtual int type() const;
+      virtual udim_t type() const;
 
       virtual exprNode& clone() const;
 
@@ -655,7 +668,7 @@ namespace occa {
 
       virtual ~pairNode();
 
-      virtual int type() const;
+      virtual udim_t type() const;
       opType_t opType() const;
 
       virtual exprNode& clone() const;
@@ -679,7 +692,7 @@ namespace occa {
 
       virtual ~parenthesesNode();
 
-      virtual int type() const;
+      virtual udim_t type() const;
 
       virtual exprNode& clone() const;
 
@@ -706,7 +719,7 @@ namespace occa {
         return (int) args.size();
       }
 
-      virtual int type() const;
+      virtual udim_t type() const;
 
       virtual exprNode& clone() const;
 
@@ -731,7 +744,7 @@ namespace occa {
 
       virtual ~cudaCallNode();
 
-      virtual int type() const;
+      virtual udim_t type() const;
 
       virtual exprNode& clone() const;
 

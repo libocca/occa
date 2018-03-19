@@ -57,6 +57,7 @@ namespace occa {
       originVector stack;
 
       operatorTrie operators;
+      std::string operatorCharcodes;
 
       tokenizer_t();
 
@@ -71,6 +72,8 @@ namespace occa {
       tokenizer_t& operator = (const tokenizer_t &stream);
 
       virtual ~tokenizer_t();
+
+      void setup();
 
       virtual baseStream<token_t*>& clone() const;
 

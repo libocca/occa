@@ -26,6 +26,7 @@
 
 #include "baseStatement.hpp"
 #include "scope.hpp"
+#include "token.hpp"
 #include "trie.hpp"
 #include "type.hpp"
 
@@ -40,9 +41,10 @@ namespace occa {
     //---[ Pragma ]---------------------
     class pragmaStatement : public statement_t {
     public:
-      std::string line;
+      pragmaToken &token;
 
-      pragmaStatement(const std::string &line_);
+      pragmaStatement(pragmaToken &token_);
+      ~pragmaStatement();
 
       virtual statement_t& clone_() const;
       virtual int type() const;
@@ -245,6 +247,16 @@ namespace occa {
       statement_t &value;
 
       caseStatement(statement_t &value_);
+
+      virtual statement_t& clone_() const;
+      virtual int type() const;
+
+      virtual void print(printer &pout) const;
+    };
+
+    class defaultStatement : public statement_t {
+    public:
+      defaultStatement();
 
       virtual statement_t& clone_() const;
       virtual int type() const;

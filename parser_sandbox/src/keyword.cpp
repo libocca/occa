@@ -60,10 +60,21 @@ namespace occa {
                                return_   |
                                goto_);
 
+      const int namespace_  = (1 << 16);
+
+      const int public_     = (1 << 17);
+      const int protected_  = (1 << 18);
+      const int private_    = (1 << 19);
+      const int classAccess = (public_    |
+                               protected_ |
+                               private_);
+
       const int statement   = (conditional |
                                switchLabel |
                                iteration   |
-                               jump);
+                               jump        |
+                               namespace_  |
+                               classAccess);
     }
 
     keyword_t::~keyword_t() {}
@@ -161,21 +172,34 @@ namespace occa {
       addKeyword(keywords, new typeKeyword(void_));
       addKeyword(keywords, new typeKeyword(auto_));
 
+      // TODO: Add builtin functions
+      //  - const_cast, static_cast, dynamic_cast, reinterpret_cast
+      //  - typeid
+      //  - noexcept
+      //  - alignof
+      //  - sizeof...
+
       // Conditional statements
-      addKeyword(keywords, new statementKeyword(keywordType::if_      , "if"));
-      addKeyword(keywords, new statementKeyword(keywordType::else_    , "else"));
-      addKeyword(keywords, new statementKeyword(keywordType::switch_  , "switch"));
-      addKeyword(keywords, new statementKeyword(keywordType::case_    , "case"));
-      addKeyword(keywords, new statementKeyword(keywordType::default_ , "default"));
+      addKeyword(keywords, new statementKeyword(keywordType::if_       , "if"));
+      addKeyword(keywords, new statementKeyword(keywordType::else_     , "else"));
+      addKeyword(keywords, new statementKeyword(keywordType::switch_   , "switch"));
+      addKeyword(keywords, new statementKeyword(keywordType::case_     , "case"));
+      addKeyword(keywords, new statementKeyword(keywordType::default_  , "default"));
       // Iteration statements
-      addKeyword(keywords, new statementKeyword(keywordType::for_     , "for"));
-      addKeyword(keywords, new statementKeyword(keywordType::while_   , "while"));
-      addKeyword(keywords, new statementKeyword(keywordType::do_      , "do"));
+      addKeyword(keywords, new statementKeyword(keywordType::for_      , "for"));
+      addKeyword(keywords, new statementKeyword(keywordType::while_    , "while"));
+      addKeyword(keywords, new statementKeyword(keywordType::do_       , "do"));
       // Jump statements
-      addKeyword(keywords, new statementKeyword(keywordType::break_   , "break"));
-      addKeyword(keywords, new statementKeyword(keywordType::continue_, "continue"));
-      addKeyword(keywords, new statementKeyword(keywordType::return_  , "return"));
-      addKeyword(keywords, new statementKeyword(keywordType::goto_    , "goto"));
+      addKeyword(keywords, new statementKeyword(keywordType::break_    , "break"));
+      addKeyword(keywords, new statementKeyword(keywordType::continue_ , "continue"));
+      addKeyword(keywords, new statementKeyword(keywordType::return_   , "return"));
+      addKeyword(keywords, new statementKeyword(keywordType::goto_     , "goto"));
+      // Misc
+      addKeyword(keywords, new statementKeyword(keywordType::namespace_, "namespace"));
+      // Class access statements
+      addKeyword(keywords, new statementKeyword(keywordType::public_   , "public"));
+      addKeyword(keywords, new statementKeyword(keywordType::protected_, "protected"));
+      addKeyword(keywords, new statementKeyword(keywordType::private_  , "private"));
     }
 
     void freeKeywords(keywordTrie &keywords) {

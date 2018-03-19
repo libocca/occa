@@ -25,8 +25,8 @@ namespace occa {
   namespace lang {
     parser_t::parser_t() :
       unknownFilter(true),
-      root(NULL),
-      up(NULL) {
+      root(),
+      up(&root) {
       // Properly implement `identifier-nondigit` for identifiers
       // Meanwhile, we use the unknownFilter
       stream = (tokenizer
@@ -45,9 +45,8 @@ namespace occa {
       preprocessor.clear();
       context.clear();
 
-      delete root;
-      root = NULL;
-      up   = NULL;
+      root.clear();
+      up = &root;
 
       freeKeywords(keywords);
       attributes.clear();
@@ -56,15 +55,32 @@ namespace occa {
     }
 
     void parser_t::parseSource(const std::string &source) {
-      clear();
-      tokenizer.set(source.c_str());
-      parse();
+      setSource(source, false);
+      if (!success) {
+        return;
+      }
+      parseTokens();
     }
 
     void parser_t::parseFile(const std::string &filename) {
+      setSource(filename, true);
+      if (!success) {
+        return;
+      }
+      parseTokens();
+    }
+
+    void parser_t::setSource(const std::string &source,
+                             const bool isFile) {
       clear();
-      tokenizer.set(new file_t(filename));
-      parse();
+
+      if (isFile) {
+        tokenizer.set(new file_t(source));
+      } else {
+        tokenizer.set(source.c_str());
+      }
+
+      loadTokens();
     }
 
     void parser_t::loadTokens() {
@@ -81,93 +97,172 @@ namespace occa {
       }
 
       context.setup();
-      if (context.hasError) {
-        success = false;
+      success = !context.hasError;
+
+      if (success) {
+        getKeywords(keywords);
       }
     }
 
-    void parser_t::parse() {
-      loadTokens();
-      if (!success) {
-        return;
-      }
-
-      getKeywords(keywords);
-
-      root = new blockStatement();
-      up   = root;
-      loadChildStatements(*root);
+    void parser_t::parseTokens() {
+      loadChildStatements(root);
     }
 
     keyword_t* parser_t::getKeyword(token_t *token) {
-      if (!(token->type() & tokenType::identifier)) {
+      if (!(token_t::safeType(token) & tokenType::identifier)) {
         return NULL;
       }
 
       identifierToken &identifier = token->to<identifierToken>();
-      keywordTrie::result_t result = keywords.get(identifier.value);
-      if (!result.success()) {
-        identifier.printError("Unknown identifier");
-        success = false;
-        return NULL;
-      }
-
-      return result.value();
+      return keywords.get(identifier.value).value();
     }
 
     int parser_t::peek() {
-      return 0;
-#if 0
       const int tokens = context.size();
       if (!tokens) {
         return statementType::empty;
       }
 
-      token_t *token = context[0];
-      // keyword_t *keyword = getKeyword(token);
-      if (!success) {
-        return statementType::empty;
+      int stype = statementType::empty;
+      int tokenIndex = 0;
+
+      while (success                        &&
+             (stype & statementType::empty) &&
+             (tokenIndex < tokens)) {
+
+        token_t *token = context[tokenIndex];
+        const int tokenType = token->type();
+
+        if (tokenType & tokenType::identifier) {
+          return peekIdentifier(tokenIndex);
+        }
+
+        if (tokenType & tokenType::op) {
+          return peekOperator(tokenIndex);
+        }
+
+        if (tokenType & (tokenType::primitive |
+                         tokenType::string    |
+                         tokenType::char_)) {
+          return statementType::expression;
+        }
+
+        if (tokenType & tokenType::pragma) {
+          return statementType::pragma;
+        }
+
+        ++tokenIndex;
       }
 
-      const int kType = keyword.type();
-      if (kType & keywordType::) {
-        return statementType::expression;
-      }
-      if (kType & keywordType::) {
-        return statementType::expression;
-      }
-      if (kType & keywordType::) {
-        return statementType::expression;
-      }
-      if (kType & keywordType::) {
-        return statementType::expression;
-      }
-      if (kType & keywordType::) {
-        return statementType::expression;
+      return (success
+              ? stype
+              : statementType::none);
+    }
+
+    int parser_t::peekIdentifier(const int tokenIndex) {
+      token_t *token     = context[tokenIndex];
+      keyword_t *keyword = getKeyword(token);
+      // Test for : for it to be a goto label
+      // const int gotoLabel   = (1 << 9);
+      if (!keyword) {
+        if (isGotoLabel(tokenIndex + 1)) {
+          return statementType::gotoLabel;
+        }
+        // TODO: Attempt to find error by guessing the keyword type
+        token->printError("Unknown identifier");
+        success = false;
+        return statementType::none;
       }
 
-      const int empty       = (1 << 1);
-      const int pragma      = (1 << 2);
-      const int block       = (1 << 3);
-      const int typeDecl    = (1 << 4);
-      const int classAccess = (1 << 5);
-      const int expression  = (1 << 6);
-      const int declaration = (1 << 7);
-      const int goto_       = (1 << 8);
-      const int gotoLabel   = (1 << 9);
-      const int namespace_  = (1 << 10);
-      const int if_         = (1 << 11);
-      const int elif_       = (1 << 12);
-      const int else_       = (1 << 13);
-      const int for_        = (1 << 14);
-      const int while_      = (1 << 15);
-      const int switch_     = (1 << 16);
-      const int case_       = (1 << 17);
-      const int continue_   = (1 << 18);
-      const int break_      = (1 << 19);
-      const int return_     = (1 << 20);
-      const int attribute   = (1 << 21);
-#endif
+      const int kType = keyword->type();
+
+      if (kType & (keywordType::qualifier |
+                   keywordType::type)) {
+        return statementType::declaration;
+      }
+
+      if (kType & keywordType::if_) {
+        return statementType::if_;
+      }
+
+      if (kType & keywordType::else_) {
+        keyword_t *nextKeyword = getKeyword(context[tokenIndex + 1]);
+        if (nextKeyword &&
+            (nextKeyword->type() & keywordType::if_)) {
+          return statementType::elif_;
+        }
+        return statementType::else_;
+      }
+
+      if (kType & keywordType::switch_) {
+        return statementType::switch_;
+      }
+
+      if (kType & keywordType::case_) {
+        return statementType::case_;
+      }
+
+      if (kType & keywordType::default_) {
+        return statementType::default_;
+      }
+
+      if (kType & keywordType::for_) {
+        return statementType::for_;
+      }
+
+      if (kType & (keywordType::while_ |
+                   keywordType::do_)) {
+        return statementType::while_;
+      }
+
+      if (kType & keywordType::break_) {
+        return statementType::break_;
+      }
+
+      if (kType & keywordType::continue_) {
+        return statementType::continue_;
+      }
+
+      if (kType & keywordType::return_) {
+        return statementType::return_;
+      }
+
+      if (kType & keywordType::classAccess) {
+        return statementType::classAccess;
+      }
+
+      if (kType & keywordType::namespace_) {
+        return statementType::namespace_;
+      }
+
+      if (kType & keywordType::goto_) {
+        return statementType::goto_;
+      }
+
+      return statementType::expression;
+    }
+
+    bool parser_t::isGotoLabel(const int tokenIndex) {
+      token_t *token = context[tokenIndex];
+      if (!(token_t::safeType(token) & tokenType::op)) {
+        return false;
+      }
+      operatorToken &opToken = token->to<operatorToken>();
+      return (opToken.getOpType() & operatorType::colon);
+    }
+
+    int parser_t::peekOperator(const int tokenIndex) {
+      const opType_t opType = (context[tokenIndex]
+                               ->to<operatorToken>()
+                               .getOpType());
+
+      if (opType & operatorType::braceStart) {
+        return statementType::block;
+      }
+      if (opType & operatorType::attribute) {
+        return statementType::attribute;
+      }
+      return statementType::expression;
     }
 
     void parser_t::loadChildStatements(blockStatement &smnt) {
