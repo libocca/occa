@@ -74,8 +74,31 @@ namespace occa {
     public:
       virtual ~keyword_t();
 
+      template <class TM>
+      inline bool is() const {
+        return (dynamic_cast<const TM*>(this) != NULL);
+      }
+
+      template <class TM>
+      inline TM& to() {
+        TM *ptr = dynamic_cast<TM*>(this);
+        OCCA_ERROR("Unable to cast keyword_t::to",
+                   ptr != NULL);
+        return *ptr;
+      }
+
+      template <class TM>
+      inline const TM& to() const {
+        const TM *ptr = dynamic_cast<const TM*>(this);
+        OCCA_ERROR("Unable to cast keyword_t::to",
+                   ptr != NULL);
+        return *ptr;
+      }
+
       virtual int type() = 0;
       virtual std::string name() = 0;
+
+      static int safeType(keyword_t *keyword);
     };
 
     //---[ Qualifier ]------------------
@@ -92,10 +115,9 @@ namespace occa {
 
     //---[ Type ]-----------------------
     class typeKeyword : public keyword_t {
-    private:
+    public:
       const type_t &type_;
 
-    public:
       typeKeyword(const type_t &type__);
 
       virtual int type();
@@ -105,10 +127,9 @@ namespace occa {
 
     //---[ Variable ]-------------------
     class variableKeyword : public keyword_t {
-    private:
+    public:
       const variable &var;
 
-    public:
       variableKeyword(const variable &var_);
 
       virtual int type();

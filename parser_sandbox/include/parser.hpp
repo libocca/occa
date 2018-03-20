@@ -95,7 +95,26 @@ namespace occa {
       int peekOperator(const int tokenIndex);
       //================================
 
-      //---[ Loaders ]------------------
+      //---[ Type Loaders ]-------------
+      type_t* loadType();
+
+      void loadBaseType(qualifiers_t &qualifiers,
+                        const type_t *&type);
+
+      void loadQualifier(token_t *token,
+                         const qualifier_t &qualifier,
+                         qualifiers_t &qualifiers);
+
+      type_t loadClassType();
+      type_t loadStructType();
+      type_t loadEnumType();
+      type_t loadUnionType();
+
+      type_t loadOperatorType(qualifiers_t &qualifiers);
+      type_t tryLoadingFunctionType(qualifiers_t &qualifiers);
+      //================================
+
+      //---[ Statement Loaders ]--------
       void loadAllStatements(statementPtrVector &statements);
 
       statement_t* getNextStatement();
@@ -103,6 +122,7 @@ namespace occa {
       statement_t *loadBlockStatement();
 
       statement_t *loadExpressionStatement();
+
       statement_t *loadDeclarationStatement();
 
       statement_t *loadNamespaceStatement();

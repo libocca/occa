@@ -79,6 +79,12 @@ namespace occa {
 
     keyword_t::~keyword_t() {}
 
+    int keyword_t::safeType(keyword_t *keyword) {
+      return (keyword
+              ? keyword->type()
+              : keywordType::none);
+    }
+
     //---[ Qualifier ]------------------
     qualifierKeyword::qualifierKeyword(const qualifier_t &qualifier_) :
       qualifier(qualifier_) {}
@@ -142,7 +148,8 @@ namespace occa {
       addKeyword(keywords, new qualifierKeyword(signed_));
       addKeyword(keywords, new qualifierKeyword(unsigned_));
       addKeyword(keywords, new qualifierKeyword(volatile_));
-      addKeyword(keywords, new qualifierKeyword(longQualifier));
+      addKeyword(keywords, new qualifierKeyword(long_));
+      addKeyword(keywords, new qualifierKeyword(longlong_));
 
       addKeyword(keywords, new qualifierKeyword(extern_));
       addKeyword(keywords, new qualifierKeyword(mutable_));
@@ -160,8 +167,6 @@ namespace occa {
       addKeyword(keywords, new qualifierKeyword(union_));
 
       // Types
-      // Note: We don't add [long] as a typeKeyword to make
-      //         it easy to handle the [long long] case
       addKeyword(keywords, new typeKeyword(bool_));
       addKeyword(keywords, new typeKeyword(char_));
       addKeyword(keywords, new typeKeyword(char16_t_));

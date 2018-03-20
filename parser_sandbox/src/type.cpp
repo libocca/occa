@@ -60,41 +60,43 @@ namespace occa {
       const int unsigned_     = (1L << 5);
       const int volatile_     = (1L << 6);
       const int long_         = (1L << 7);
-      const int register_     = (1L << 8);
+      const int longlong_     = (1L << 8);
+      const int register_     = (1L << 9);
       const int typeInfo      = (const_     |
                                  constexpr_ |
                                  signed_    |
                                  unsigned_  |
                                  volatile_  |
                                  long_      |
+                                 longlong_  |
                                  register_);
 
-      const int extern_       = (1L << 9);
-      const int static_       = (1L << 10);
-      const int thread_local_ = (1L << 11);
+      const int extern_       = (1L << 10);
+      const int static_       = (1L << 11);
+      const int thread_local_ = (1L << 12);
       const int globalScope   = (extern_ |
                                  static_ |
                                  thread_local_);
 
-      const int friend_       = (1L << 12);
-      const int mutable_      = (1L << 13);
+      const int friend_       = (1L << 13);
+      const int mutable_      = (1L << 14);
       const int classInfo     = (friend_ |
                                  mutable_);
 
-      const int inline_       = (1L << 14);
-      const int virtual_      = (1L << 15);
-      const int explicit_     = (1L << 16);
+      const int inline_       = (1L << 15);
+      const int virtual_      = (1L << 16);
+      const int explicit_     = (1L << 17);
       const int functionInfo  = (typeInfo |
                                  inline_  |
                                  virtual_ |
                                  explicit_);
 
-      const int builtin_      = (1L << 17);
-      const int typedef_      = (1L << 18);
-      const int class_        = (1L << 19);
-      const int enum_         = (1L << 20);
-      const int struct_       = (1L << 21);
-      const int union_        = (1L << 22);
+      const int builtin_      = (1L << 18);
+      const int typedef_      = (1L << 19);
+      const int class_        = (1L << 20);
+      const int enum_         = (1L << 21);
+      const int struct_       = (1L << 22);
+      const int union_        = (1L << 23);
       const int newType       = (typedef_ |
                                  class_   |
                                  enum_    |
@@ -159,6 +161,18 @@ namespace occa {
 
     qualifiers_t::~qualifiers_t() {}
 
+    void qualifiers_t::clear() {
+      qualifiers.clear();
+    }
+
+    const qualifier_t* qualifiers_t::operator [] (const int index) {
+      if ((index < 0) ||
+          (index >= (int) qualifiers.size())) {
+        return NULL;
+      }
+      return qualifiers[index];
+    }
+
     int qualifiers_t::indexOf(const qualifier_t &qualifier) const {
       const int count = (int) qualifiers.size();
       if (count) {
@@ -170,10 +184,6 @@ namespace occa {
         }
       }
       return -1;
-    }
-
-    void qualifiers_t::clear() {
-      qualifiers.clear();
     }
 
     bool qualifiers_t::has(const qualifier_t &qualifier) const {
@@ -562,18 +572,21 @@ namespace occa {
 
     //---[ Function ]-------------------
     function_t::function_t(const type_t &returnType) :
-      type_t(returnType) {
+      type_t(returnType),
+      isBlock(false) {
     }
 
     function_t::function_t(const type_t &returnType,
                            const std::string &name_) :
-      type_t(returnType, name_) {
+      type_t(returnType, name_),
+      isBlock(false) {
     }
 
     function_t::function_t(const type_t &returnType,
                            const std::string &name_,
                            const argVector_t &args_) :
-      type_t(returnType, name_) {
+      type_t(returnType, name_),
+      isBlock(false) {
 
       const int argCount = (int) args_.size();
       for (int i = 0; i < argCount; ++i) {
@@ -636,7 +649,11 @@ namespace occa {
           !(baseType->type() & specifierType::function)) {
         pout << ' ';
       }
-      pout << "(*";
+      if (!isBlock) {
+        pout << "(*";
+      } else {
+        pout << "(^";
+      }
     }
 
     void function_t::printDeclarationRight(printer &pout) const {

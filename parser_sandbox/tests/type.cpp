@@ -143,16 +143,16 @@ void testFunction() {
 
 void testCasting() {
   // All primitive can be cast to each other
-  const primitive_t* types[10] = {
+  const primitive_t* types[9] = {
     &bool_,
     &char_, &char16_t_, &char32_t_, &wchar_t_,
     &short_,
-    &int_, &long_,
+    &int_,
     &float_, &double_
   };
-  for (int j = 0; j < 10; ++j) {
+  for (int j = 0; j < 9; ++j) {
     const primitive_t &jType = *types[j];
-    for (int i = 0; i < 10; ++i) {
+    for (int i = 0; i < 9; ++i) {
       const primitive_t &iType = *types[i];
       OCCA_ERROR("Oops, could not cast explicitly ["
                  << jType.uniqueName() << "] to ["
@@ -235,16 +235,16 @@ void testCasting() {
 
 void testComparision() {
   // Test primitives
-  const primitive_t* types[10] = {
+  const primitive_t* types[9] = {
     &bool_,
     &char_, &char16_t_, &char32_t_, &wchar_t_,
     &short_,
-    &int_, &long_,
+    &int_,
     &float_, &double_
   };
-  for (int j = 0; j < 10; ++j) {
+  for (int j = 0; j < 9; ++j) {
     const primitive_t *jType = types[j];
-    for (int i = 0; i < 10; ++i) {
+    for (int i = 0; i < 9; ++i) {
       const primitive_t *iType = types[i];
       OCCA_ASSERT_EQUAL((i == j),
                         typesAreEqual(iType, jType));

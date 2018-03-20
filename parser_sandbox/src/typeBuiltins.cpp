@@ -30,8 +30,8 @@ namespace occa {
     const qualifier_t signed_       ("signed"      , qualifierType::signed_);
     const qualifier_t unsigned_     ("unsigned"    , qualifierType::unsigned_);
     const qualifier_t volatile_     ("volatile"    , qualifierType::volatile_);
-    // Used to easily handle the 'long long' case
-    const qualifier_t longQualifier ("long"        , qualifierType::long_);
+    const qualifier_t long_         ("long"        , qualifierType::long_);
+    const qualifier_t longlong_     ("long long"   , qualifierType::longlong_);
 
     const qualifier_t extern_       ("extern"      , qualifierType::extern_);
     const qualifier_t mutable_      ("mutable"     , qualifierType::mutable_);
@@ -55,7 +55,6 @@ namespace occa {
     const primitive_t wchar_t_      ("wchar_t");
     const primitive_t short_        ("short");
     const primitive_t int_          ("int");
-    const primitive_t long_         ("long");
     const primitive_t float_        ("float");
     const primitive_t double_       ("double");
     const primitive_t void_         ("void");

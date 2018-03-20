@@ -21,6 +21,7 @@
  */
 #include "expression.hpp"
 #include "parser.hpp"
+#include "typeBuiltins.hpp"
 
 namespace occa {
   namespace lang {
@@ -263,7 +264,145 @@ namespace occa {
     }
     //==================================
 
-    //---[ Loaders ]--------------------
+    //---[ Type Loaders ]---------------
+    type_t* parser_t::loadType() {
+      if (!context.size()) {
+        return NULL;
+      }
+
+      qualifiers_t qualifiers;
+      const type_t *type;
+      loadBaseType(qualifiers, type);
+      if (!type) {
+        return NULL;
+      }
+      return NULL;
+
+      // while (true) {
+        /*
+         * -> pointer
+         & -> reference
+         (* -> function
+         (^ |
+
+         VAR
+
+         []
+
+         */
+
+        /*
+          int *[3] -> int *p[3];
+          int *()  -> int (*p)();
+         */
+      // }
+    }
+
+    void parser_t::loadBaseType(qualifiers_t &qualifiers,
+                                const type_t *&type) {
+      qualifiers.clear();
+
+      const int tokens = context.size();
+      int tokenPos;
+      for (tokenPos = 0; tokenPos < tokens; ++tokenPos) {
+        token_t *token     = context[tokenPos];
+        keyword_t *keyword = getKeyword(token);
+        if (!keyword) {
+          break;
+        }
+
+        const int kType = keyword->type();
+        if (kType & keywordType::qualifier) {
+          loadQualifier(token,
+                        keyword->to<qualifierKeyword>().qualifier,
+                        qualifiers);
+          continue;
+        }
+        if (!type &&
+            (kType & keywordType::type)) {
+          type = &(keyword->to<typeKeyword>().type_);
+          continue;
+        }
+        break;
+      }
+
+      if (tokenPos == 0) {
+        context[0]->printError("Unable to load type");
+        success = false;
+        return;
+      }
+
+      // Store token just in case we didn't load a type
+      token_t *lastToken = context[tokenPos - (tokenPos == tokens)];
+      context.set(tokenPos);
+
+      if (type) {
+        return;
+      }
+
+      if (qualifiers.has(long_) ||
+          qualifiers.has(longlong_)) {
+        type = &int_;
+        return;
+      }
+
+      lastToken->printError("Expected a type");
+      success = false;
+    }
+
+    void parser_t::loadQualifier(token_t *token,
+                                 const qualifier_t &qualifier,
+                                 qualifiers_t &qualifiers) {
+      // Handle long/long long case
+      if (&qualifier == &long_) {
+        if (qualifiers.has(long_)) {
+          qualifiers -= long_;
+          qualifiers += longlong_;
+        }
+        else if (qualifiers.has(longlong_)) {
+          token->printWarning("'long long long' is tooooooo long,"
+                              " ignoring additional longs");
+        }
+        else {
+          qualifiers += long_;
+        }
+        return;
+      }
+
+      // Non-long qualifiers
+      if (!qualifiers.has(qualifier)) {
+        qualifiers += qualifier;
+      } else {
+        token->printWarning("Ignoring duplicate qualifier");
+      }
+    }
+
+    type_t parser_t::loadClassType() {
+      context[0]->printError("Cannot parse classes yet");
+      success = false;
+      return type_t();
+    }
+
+    type_t parser_t::loadStructType() {
+      context[0]->printError("Cannot parse structs yet");
+      success = false;
+      return type_t();
+    }
+
+    type_t parser_t::loadEnumType() {
+      context[0]->printError("Cannot parse enum yet");
+      success = false;
+      return type_t();
+    }
+
+    type_t parser_t::loadUnionType() {
+      context[0]->printError("Cannot parse union yet");
+      success = false;
+      return type_t();
+    }
+    //==================================
+
+    //---[ Statement Loaders ]----------
     void parser_t::loadAllStatements(statementPtrVector &statements) {
       statement_t *smnt = getNextStatement();
       while (smnt) {

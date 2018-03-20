@@ -77,6 +77,7 @@ namespace occa {
       extern const int volatile_;
       extern const int register_;
       extern const int long_;
+      extern const int longlong_;
       extern const int typeInfo;
 
       extern const int extern_;
@@ -182,11 +183,13 @@ namespace occa {
 
       ~qualifiers_t();
 
+      void clear();
+
       inline int size() const {
         return (int) qualifiers.size();
       }
 
-      void clear();
+      const qualifier_t* operator [] (const int index);
 
       int indexOf(const qualifier_t &qualifier) const;
       bool has(const qualifier_t &qualifier) const;
@@ -374,6 +377,9 @@ namespace occa {
     public:
       argVector_t args;
       blockStatement body;
+
+      // Obj-C block found in OSX headers
+      bool isBlock;
 
       function_t(const type_t &returnType);
 
