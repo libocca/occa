@@ -64,6 +64,7 @@ Commands:
   clear           Clears cached files and cache locks
   env             Print environment variables used in OCCA
   info            Prints information about available OCCA modes
+  version         Prints OCCA library version
 
 Arguments:
   COMMAND    Command to run
