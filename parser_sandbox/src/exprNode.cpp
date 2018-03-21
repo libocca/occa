@@ -96,7 +96,7 @@ namespace occa {
     std::string exprNode::toString() const {
       std::stringstream ss;
       printer pout(ss);
-      print(pout);
+      pout << (*this);
       return ss.str();
     }
 
@@ -107,6 +107,12 @@ namespace occa {
 
     void exprNode::childDebugPrint(const std::string &prefix) const {
       debugPrint(prefix + "|   ");
+    }
+
+    printer& operator << (printer &pout,
+                          const exprNode &node) {
+      node.print(pout);
+      return pout;
     }
 
     void cloneExprNodeVector(exprNodeVector &dest,
@@ -141,7 +147,8 @@ namespace occa {
       return *(new emptyNode());
     }
 
-    void emptyNode::print(printer &pout) const {}
+    void emptyNode::print(printer &pout) const {
+    }
 
     void emptyNode::debugPrint(const std::string &prefix) const {
       std::cerr << prefix << "|\n"
@@ -189,7 +196,7 @@ namespace occa {
       printer pout(std::cerr);
       std::cerr << prefix << "|\n"
                 << prefix << "|---[";
-      print(pout);
+      pout << (*this);
       std::cerr << "] (primitive)\n";
     }
     //  |===============================
@@ -222,7 +229,7 @@ namespace occa {
       printer pout(std::cerr);
       std::cerr << prefix << '\n'
                 << prefix << "|---[";
-      print(pout);
+      pout << (*this);
       std::cerr << "] (char)\n";
     }
     //  |===============================
@@ -255,7 +262,7 @@ namespace occa {
       printer pout(std::cerr);
       std::cerr << prefix << "|\n"
                 << prefix << "|---[";
-      print(pout);
+      pout << (*this);
       std::cerr << "] (string)\n";
     }
     //  |===============================
@@ -288,7 +295,7 @@ namespace occa {
       printer pout(std::cerr);
       std::cerr << prefix << '\n'
                 << prefix << "|---[";
-      print(pout);
+      pout << (*this);
       std::cerr << "] (identifier)\n";
     }
     //  |===============================
@@ -314,14 +321,14 @@ namespace occa {
     }
 
     void variableNode::print(printer &pout) const {
-      value.print(pout);
+      pout << value;
     }
 
     void variableNode::debugPrint(const std::string &prefix) const {
       printer pout(std::cerr);
       std::cerr << prefix << "|\n"
                 << prefix << "|---[";
-      print(pout);
+      pout << (*this);
       std::cerr << "] (variable)\n";
     }
     //  |===============================
@@ -370,15 +377,14 @@ namespace occa {
     }
 
     void leftUnaryOpNode::print(printer &pout) const {
-      op.print(pout);
-      value.print(pout);
+      pout << op << value;
     }
 
     void leftUnaryOpNode::debugPrint(const std::string &prefix) const {
       printer pout(std::cerr);
       std::cerr << prefix << "|\n"
                 << prefix << "|---[";
-      op.print(pout);
+      pout << op;
       std::cerr << "] (leftUnary)\n";
       value.childDebugPrint(prefix);
     }
@@ -421,15 +427,14 @@ namespace occa {
     }
 
     void rightUnaryOpNode::print(printer &pout) const {
-      value.print(pout);
-      op.print(pout);
+      pout << value << op;
     }
 
     void rightUnaryOpNode::debugPrint(const std::string &prefix) const {
       printer pout(std::cerr);
       std::cerr << prefix << "|\n"
                 << prefix << "|---[";
-      op.print(pout);
+      pout << op;
       std::cerr << "] (rightUnary)\n";
       value.childDebugPrint(prefix);
     }
@@ -485,18 +490,16 @@ namespace occa {
     }
 
     void binaryOpNode::print(printer &pout) const {
-      leftValue.print(pout);
-      pout << ' ';
-      op.print(pout);
-      pout << ' ';
-      rightValue.print(pout);
+      pout << leftValue
+           << ' ' << op
+           << ' ' << rightValue;
     }
 
     void binaryOpNode::debugPrint(const std::string &prefix) const {
       printer pout(std::cerr);
       std::cerr << prefix << "|\n"
                 << prefix << "|---[";
-      op.print(pout);
+      pout << op;
       std::cerr << "] (binary)\n";
       leftValue.childDebugPrint(prefix);
       rightValue.childDebugPrint(prefix);
@@ -552,11 +555,9 @@ namespace occa {
     }
 
     void ternaryOpNode::print(printer &pout) const {
-      checkValue.print(pout);
-      pout << " ? ";
-      trueValue.print(pout);
-      pout << " : ";
-      falseValue.print(pout);
+      pout << checkValue
+           << " ? " << trueValue
+           << " : " << falseValue;
     }
 
     void ternaryOpNode::debugPrint(const std::string &prefix) const {
@@ -596,17 +597,15 @@ namespace occa {
     }
 
     void subscriptNode::print(printer &pout) const {
-      value.print(pout);
-      pout << '[';
-      index.print(pout);
-      pout << ']';
+      pout << value
+           << '[' << index << ']';
     }
 
     void subscriptNode::debugPrint(const std::string &prefix) const {
       printer pout(std::cerr);
       std::cerr << prefix << "|\n"
                 << prefix << "|---[";
-      index.print(pout);
+      pout << index;
       std::cerr << "] (subscript)\n";
       value.childDebugPrint(prefix);
     }
@@ -639,14 +638,14 @@ namespace occa {
     }
 
     void callNode::print(printer &pout) const {
-      value.print(pout);
-      pout << '(';
+      pout << value
+           << '(';
       const int argCount = (int) args.size();
       for (int i = 0; i < argCount; ++i) {
         if (i) {
           pout << ", ";
         }
-        args[i]->print(pout);
+        pout << *(args[i]);
       }
       pout << ')';
     }
@@ -655,7 +654,7 @@ namespace occa {
       printer pout(std::cerr);
       std::cerr << prefix << "|\n"
                 << prefix << "|---[";
-      value.print(pout);
+      pout << value;
       std::cerr << "] (call)\n";
       for (int i = 0; i < ((int) args.size()); ++i) {
         args[i]->childDebugPrint(prefix);
@@ -663,7 +662,7 @@ namespace occa {
     }
 
     newNode::newNode(token_t *token_,
-                     type_t &valueType_,
+                     vartype_t &valueType_,
                      exprNode &value_) :
       exprNode(token_),
       valueType(valueType_),
@@ -672,7 +671,7 @@ namespace occa {
 
 
     newNode::newNode(token_t *token_,
-                     type_t &valueType_,
+                     vartype_t &valueType_,
                      exprNode &value_,
                      exprNode &size_) :
       exprNode(token_),
@@ -702,13 +701,9 @@ namespace occa {
     void newNode::print(printer &pout) const {
       // TODO: Print type without qualifiers
       //       Also convert [] to *
-      pout << "new ";
-      valueType.print(pout);
-      value.print(pout);
+      pout << "new " << valueType << value;
       if (size.type() != exprNodeType::empty) {
-        pout << '[';
-        size.print(pout);
-        pout << ']';
+        pout << '[' << size << ']';
       }
     }
 
@@ -716,7 +711,7 @@ namespace occa {
       printer pout(std::cerr);
       std::cerr << prefix << "|\n"
                 << prefix << "|---[";
-      valueType.print(pout);
+      pout << valueType;
       std::cerr << "] (new)\n";
       value.childDebugPrint(prefix);
       size.childDebugPrint(prefix);
@@ -751,14 +746,14 @@ namespace occa {
       if (isArray) {
         pout << "[] ";
       }
-      value.print(pout);
+      pout << value;
     }
 
     void deleteNode::debugPrint(const std::string &prefix) const {
       printer pout(std::cerr);
       std::cerr << prefix << '\n'
                 << prefix << "|---[";
-      value.print(pout);
+      pout << value;
       std::cerr << "] (delete";
       if (isArray) {
         std::cerr << " []";
@@ -790,8 +785,7 @@ namespace occa {
     void throwNode::print(printer &pout) const {
       pout << "throw";
       if (value.type() != exprNodeType::empty) {
-        pout << ' ';
-        value.print(pout);
+        pout << ' ' << value;
       }
     }
 
@@ -800,7 +794,7 @@ namespace occa {
       std::cerr << prefix << "|\n"
                 << prefix << "|\n"
                 << prefix << "|---[";
-      value.print(pout);
+      pout << value;
       std::cerr << "] (throw)\n";
     }
     //==================================
@@ -836,21 +830,19 @@ namespace occa {
     }
 
     void sizeofNode::print(printer &pout) const {
-      pout << "sizeof(";
-      value.print(pout);
-      pout << ')';
+      pout << "sizeof(" << value << ')';
     }
 
     void sizeofNode::debugPrint(const std::string &prefix) const {
       printer pout(std::cerr);
       std::cerr << prefix << '\n'
                 << prefix << "|---[";
-      value.print(pout);
+      pout << value;
       std::cerr << "] (sizeof)\n";
     }
 
     funcCastNode::funcCastNode(token_t *token_,
-                               type_t &valueType_,
+                               vartype_t &valueType_,
                                exprNode &value_) :
       exprNode(token_),
       valueType(valueType_),
@@ -876,23 +868,20 @@ namespace occa {
     void funcCastNode::print(printer &pout) const {
       // TODO: Print type without qualifiers
       //       Also convert [] to *
-      valueType.print(pout);
-      pout << '(';
-      value.print(pout);
-      pout << ')';
+      pout << valueType << '(' << value << ')';
     }
 
     void funcCastNode::debugPrint(const std::string &prefix) const {
       printer pout(std::cerr);
       std::cerr << prefix << "|\n"
                 << prefix << "|---[";
-      valueType.print(pout);
+      pout << valueType;
       std::cerr << "] (funcCast)\n";
       value.childDebugPrint(prefix);
     }
 
     parenCastNode::parenCastNode(token_t *token_,
-                                 type_t &valueType_,
+                                 vartype_t &valueType_,
                                  exprNode &value_) :
       exprNode(token_),
       valueType(valueType_),
@@ -918,23 +907,20 @@ namespace occa {
     void parenCastNode::print(printer &pout) const {
       // TODO: Print type without qualifiers
       //       Also convert [] to *
-      pout << '(';
-      valueType.print(pout);
-      pout << ") ";
-      value.print(pout);
+      pout << '(' << valueType << ')' << value;
     }
 
     void parenCastNode::debugPrint(const std::string &prefix) const {
       printer pout(std::cerr);
       std::cerr << prefix << "|\n"
                 << prefix << "|---[";
-      valueType.print(pout);
+      pout << valueType;
       std::cerr << "] (parenCast)\n";
       value.childDebugPrint(prefix);
     }
 
     constCastNode::constCastNode(token_t *token_,
-                                 type_t &valueType_,
+                                 vartype_t &valueType_,
                                  exprNode &value_) :
       exprNode(token_),
       valueType(valueType_),
@@ -960,24 +946,21 @@ namespace occa {
     void constCastNode::print(printer &pout) const {
       // TODO: Print type without qualifiers
       //       Also convert [] to *
-      pout << "const_cast<";
-      valueType.print(pout);
-      pout << ">(";
-      value.print(pout);
-      pout << ')';
+      pout << "const_cast<" << valueType << ">("
+           << value << ')';
     }
 
     void constCastNode::debugPrint(const std::string &prefix) const {
       printer pout(std::cerr);
       std::cerr << prefix << "|\n"
                 << prefix << "|---[";
-      valueType.print(pout);
+      pout << valueType;
       std::cerr << "] (constCast)\n";
       value.childDebugPrint(prefix);
     }
 
     staticCastNode::staticCastNode(token_t *token_,
-                                   type_t &valueType_,
+                                   vartype_t &valueType_,
                                    exprNode &value_) :
       exprNode(token_),
       valueType(valueType_),
@@ -1003,24 +986,21 @@ namespace occa {
     void staticCastNode::print(printer &pout) const {
       // TODO: Print type without qualifiers
       //       Also convert [] to *
-      pout << "static_cast<";
-      valueType.print(pout);
-      pout << ">(";
-      value.print(pout);
-      pout << ')';
+      pout << "static_cast<" << valueType << ">("
+           << value << ')';
     }
 
     void staticCastNode::debugPrint(const std::string &prefix) const {
       printer pout(std::cerr);
       std::cerr << prefix << "|\n"
                 << prefix << "|---[";
-      valueType.print(pout);
+      pout << valueType;
       std::cerr << "] (staticCast)\n";
       value.childDebugPrint(prefix);
     }
 
     reinterpretCastNode::reinterpretCastNode(token_t *token_,
-                                             type_t &valueType_,
+                                             vartype_t &valueType_,
                                              exprNode &value_) :
       exprNode(token_),
       valueType(valueType_),
@@ -1046,24 +1026,21 @@ namespace occa {
     void reinterpretCastNode::print(printer &pout) const {
       // TODO: Print type without qualifiers
       //       Also convert [] to *
-      pout << "reinterpret_cast<";
-      valueType.print(pout);
-      pout << ">(";
-      value.print(pout);
-      pout << ')';
+      pout << "reinterpret_cast<" << valueType << ">("
+           << value << ')';
     }
 
     void reinterpretCastNode::debugPrint(const std::string &prefix) const {
       printer pout(std::cerr);
       std::cerr << prefix << "|\n"
                 << prefix << "|---[";
-      valueType.print(pout);
+      pout << valueType;
       std::cerr << "] (reinterpretCast)\n";
       value.childDebugPrint(prefix);
     }
 
     dynamicCastNode::dynamicCastNode(token_t *token_,
-                                     type_t &valueType_,
+                                     vartype_t &valueType_,
                                      exprNode &value_) :
       exprNode(token_),
       valueType(valueType_),
@@ -1089,18 +1066,15 @@ namespace occa {
     void dynamicCastNode::print(printer &pout) const {
       // TODO: Print type without qualifiers
       //       Also convert [] to *
-      pout << "dynamic_cast<";
-      valueType.print(pout);
-      pout << ">(";
-      value.print(pout);
-      pout << ')';
+      pout << "dynamic_cast<" << valueType << ">("
+           << value << ')';
     }
 
     void dynamicCastNode::debugPrint(const std::string &prefix) const {
       printer pout(std::cerr);
       std::cerr << prefix << "|\n"
                 << prefix << "|---[";
-      valueType.print(pout);
+      pout << valueType;
       std::cerr << "] (dynamicCast)\n";
       value.childDebugPrint(prefix);
     }
@@ -1153,7 +1127,7 @@ namespace occa {
       printer pout(std::cerr);
       std::cerr << prefix << "|\n"
                 << prefix << "|---[";
-      op.print(pout);
+      pout << op;
       std::cerr << "] (pairNode)\n";
       value.childDebugPrint(prefix);
     }
@@ -1188,9 +1162,7 @@ namespace occa {
     }
 
     void parenthesesNode::print(printer &pout) const {
-      pout << '(';
-      value.print(pout);
-      pout << ')';
+      pout << '(' << value << ')';
     }
 
     void parenthesesNode::debugPrint(const std::string &prefix) const {
@@ -1230,7 +1202,7 @@ namespace occa {
         if (i) {
           pout << ", ";
         }
-        args[i]->print(pout);
+        pout << *(args[i]);
       }
       pout << '}';
     }
@@ -1279,12 +1251,10 @@ namespace occa {
     }
 
     void cudaCallNode::print(printer &pout) const {
-      value.print(pout);
-      pout << "<<<";
-      blocks.print(pout);
-      pout << ", ";
-      threads.print(pout);
-      pout << ">>>";
+      pout << value
+           << "<<<"
+           << blocks << ", " << threads
+           << ">>>";
     }
 
     void cudaCallNode::debugPrint(const std::string &prefix) const {

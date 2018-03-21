@@ -71,17 +71,6 @@ namespace occa {
       return s;
     }
 
-    std::string statement_t::toString() const {
-      std::stringstream ss;
-      printer pout(ss);
-      print(pout);
-      return ss.str();
-    }
-
-    statement_t::operator std::string() const {
-      return toString();
-    }
-
     scope_t* statement_t::getScope() {
       return NULL;
     }
@@ -92,8 +81,25 @@ namespace occa {
       attributes.push_back(attribute);
     }
 
+    std::string statement_t::toString() const {
+      std::stringstream ss;
+      printer pout(ss);
+      pout << (*this);
+      return ss.str();
+    }
+
+    statement_t::operator std::string() const {
+      return toString();
+    }
+
     void statement_t::print() const {
       std::cout << toString();
+    }
+
+    printer& operator << (printer &pout,
+                          const statement_t &smnt) {
+      smnt.print(pout);
+      return pout;
     }
 
     //---[ Empty ]------------------------
@@ -108,7 +114,8 @@ namespace occa {
       return statementType::empty;
     }
 
-    void emptyStatement::print(printer &pout) const {}
+    void emptyStatement::print(printer &pout) const {
+    }
     //====================================
 
     //---[ Block ]------------------------
@@ -193,7 +200,7 @@ namespace occa {
     void blockStatement::printChildren(printer &pout) const {
       const int count = (int) children.size();
       for (int i = 0; i < count; ++i) {
-        children[i]->print(pout);
+        pout << *(children[i]);
       }
     }
     //====================================

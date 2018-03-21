@@ -47,33 +47,6 @@ namespace occa {
     //==================================
 
     //---[ Type ]-----------------------
-    typeDeclStatement::typeDeclStatement(declarationType &declType_) :
-      statement_t(),
-      declType(declType_) {}
-
-
-    statement_t& typeDeclStatement::clone_() const {
-      return *(new typeDeclStatement(declType));
-    }
-
-    int typeDeclStatement::type() const {
-      return statementType::typeDecl;
-    }
-
-    scope_t* typeDeclStatement::getScope() {
-      if (declType.is<structure_t>()) {
-        return &(declType.to<structure_t>().body.scope);
-      }
-      if (declType.is<function_t>()) {
-        return &(declType.to<function_t>().body.scope);
-     }
-      return NULL;
-    }
-
-    void typeDeclStatement::print(printer &pout) const {
-      declType.printDeclaration(pout);
-    }
-
     classAccessStatement::classAccessStatement(const int access_) :
       statement_t(),
       access(access_) {}
@@ -107,14 +80,14 @@ namespace occa {
     //---[ Expression ]-----------------
     expressionStatement::expressionStatement(exprNode &root_) :
       statement_t(),
-      root(root_) {}
+      root(&root_) {}
 
     expressionStatement::~expressionStatement() {
-      delete &root;
+      delete root;
     }
 
     statement_t& expressionStatement::clone_() const {
-      return *(new expressionStatement(root.clone()));
+      return *(new expressionStatement(root->clone()));
     }
 
     int expressionStatement::type() const {
@@ -122,7 +95,7 @@ namespace occa {
     }
 
     void expressionStatement::print(printer &pout) const {
-      root.print(pout);
+      pout << (*root);
     }
 
     declarationStatement::declarationStatement() :
@@ -241,7 +214,7 @@ namespace occa {
       pout.printStartIndentation();
       pout << "if (";
       pout.pushInlined(true);
-      condition.print(pout);
+      pout << condition;
       pout.popInlined();
       pout << ')';
 
@@ -249,11 +222,11 @@ namespace occa {
 
       const int elifCount = (int) elifSmnts.size();
       for (int i = 0; i < elifCount; ++i) {
-        elifSmnts[i]->print(pout);
+        pout << *(elifSmnts[i]);
       }
 
       if (elseSmnt) {
-        elseSmnt->print(pout);
+        pout << (*elseSmnt);
       }
     }
 
@@ -276,7 +249,7 @@ namespace occa {
       pout.printStartIndentation();
       pout << "else if (";
       pout.pushInlined(true);
-      condition.print(pout);
+      pout << condition;
       pout.popInlined();
       pout << ')';
 
@@ -324,7 +297,7 @@ namespace occa {
       if (isDoWhile) {
         pout << "while (";
         pout.pushInlined(true);
-        check.print(pout);
+        pout << check;
         pout.popInlined();
         pout << ')';
       } else {
@@ -336,7 +309,7 @@ namespace occa {
       if (isDoWhile) {
         pout << " while (";
         pout.pushInlined(true);
-        check.print(pout);
+        pout << check;
         pout.popInlined();
         pout << ");";
       }
@@ -372,9 +345,7 @@ namespace occa {
       pout << "for (";
 
       pout.pushInlined(true);
-      init.print(pout);
-      check.print(pout);
-      update.print(pout);
+      pout << init << check << update;
       pout.popInlined();
 
       pout << ')';
@@ -403,7 +374,7 @@ namespace occa {
       pout.printStartIndentation();
       pout << "switch (";
       pout.pushInlined(true);
-      value.print(pout);
+      pout << value;
       pout.popInlined();
       pout << ") {\n";
 
@@ -429,7 +400,7 @@ namespace occa {
       pout.printIndentation();
       pout << "case ";
       pout.pushInlined(true);
-      value.print(pout);
+      pout << value;
       pout.popInlined();
       pout << ":\n";
 
@@ -507,7 +478,7 @@ namespace occa {
       if (value.type() != statementType::empty) {
         pout << ' ';
         pout.pushInlined(true);
-        value.print(pout);
+        pout << value;
         pout.popInlined();
       }
       pout << ";\n";

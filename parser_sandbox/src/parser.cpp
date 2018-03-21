@@ -377,29 +377,51 @@ namespace occa {
       }
     }
 
-    type_t parser_t::loadClassType() {
-      context[0]->printError("Cannot parse classes yet");
-      success = false;
-      return type_t();
+    void parser_t::loadPointerQualifiers(qualifiers_t &qualifiers) {
+      qualifiers.clear();
+
+      const int tokens = context.size();
+      for (int i = 0; i < tokens; ++i) {
+        token_t *token     = context[i];
+        keyword_t *keyword = getKeyword(token);
+        if (!(keyword_t::safeType(keyword) & keywordType::qualifier)) {
+          break;
+        }
+
+        const qualifier_t &qualifier = keyword->to<qualifierKeyword>().qualifier;
+        if (!(qualifier.type() & qualifierType::forPointers)) {
+          break;
+        }
+
+        loadQualifier(token,
+                      qualifier,
+                      qualifiers);
+      }
     }
 
-    type_t parser_t::loadStructType() {
-      context[0]->printError("Cannot parse structs yet");
-      success = false;
-      return type_t();
-    }
+    // type_t parser_t::loadClassType() {
+    //   context[0]->printError("Cannot parse classes yet");
+    //   success = false;
+    //   return type_t();
+    // }
 
-    type_t parser_t::loadEnumType() {
-      context[0]->printError("Cannot parse enum yet");
-      success = false;
-      return type_t();
-    }
+    // type_t parser_t::loadStructType() {
+    //   context[0]->printError("Cannot parse structs yet");
+    //   success = false;
+    //   return type_t();
+    // }
 
-    type_t parser_t::loadUnionType() {
-      context[0]->printError("Cannot parse union yet");
-      success = false;
-      return type_t();
-    }
+    // type_t parser_t::loadEnumType() {
+    //   context[0]->printError("Cannot parse enum yet");
+    //   success = false;
+    //   return type_t();
+    // }
+
+    // type_t parser_t::loadUnionType() {
+    //   context[0]->printError("Cannot parse union yet");
+    //   success = false;
+    //   return type_t();
+    // }
     //==================================
 
     //---[ Statement Loaders ]----------

@@ -33,6 +33,8 @@ namespace occa {
     class statement_t;
     class attribute_t;
 
+    class attribute_t {};
+
     typedef std::vector<statement_t*> statementPtrVector;
     typedef std::vector<attribute_t>  attributeVector_t;
 
@@ -116,6 +118,9 @@ namespace occa {
       operator std::string() const;
       void print() const;
     };
+
+    printer& operator << (printer &pout,
+                          const statement_t &smnt);
 
     //---[ Empty ]----------------------
     class emptyStatement : public statement_t {

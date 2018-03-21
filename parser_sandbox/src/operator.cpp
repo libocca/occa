@@ -584,8 +584,10 @@ namespace occa {
       opType(opType_),
       precedence(precedence_) {}
 
-    void operator_t::print(printer &pout) const {
-      pout << str;
+    printer& operator << (printer &pout,
+                          const operator_t &op) {
+      pout << op.str;
+      return pout;
     }
 
     unaryOperator_t::unaryOperator_t(const std::string &str_,

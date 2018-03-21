@@ -183,7 +183,15 @@ void loadBaseType(const std::string &s,
   parser.loadBaseType(qualifiers, type);
 }
 
+void testBaseTypeLoading();
+void testComplexTypeLoading();
+
 void testTypeLoading() {
+  testBaseTypeLoading();
+  testComplexTypeLoading();
+}
+
+void testBaseTypeLoading() {
   qualifiers_t qualifiers;
   const type_t *type;
 
@@ -243,6 +251,9 @@ void testTypeLoading() {
   loadBaseType("long long long",
                qualifiers,
                type);
+}
+
+void testComplexTypeLoading() {
 }
 //======================================
 

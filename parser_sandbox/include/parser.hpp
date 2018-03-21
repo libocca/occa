@@ -105,6 +105,8 @@ namespace occa {
                          const qualifier_t &qualifier,
                          qualifiers_t &qualifiers);
 
+      void loadPointerQualifiers(qualifiers_t &qualifiers);
+
       type_t loadClassType();
       type_t loadStructType();
       type_t loadEnumType();

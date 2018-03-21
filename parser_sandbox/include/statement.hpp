@@ -54,19 +54,7 @@ namespace occa {
     //==================================
 
     //---[ Type ]-----------------------
-    class typeDeclStatement : public statement_t {
-    public:
-      declarationType &declType;
-
-      typeDeclStatement(declarationType &declType_);
-
-      virtual statement_t& clone_() const;
-      virtual int type() const;
-
-      virtual scope_t* getScope();
-
-      virtual void print(printer &pout) const;
-    };
+    // TODO: Type declaration
 
     class classAccessStatement : public statement_t {
     public:
@@ -84,7 +72,7 @@ namespace occa {
     //---[ Expression ]-----------------
     class expressionStatement : public statement_t {
     public:
-      exprNode &root;
+      exprNode *root;
 
       expressionStatement(exprNode &root_);
       ~expressionStatement();

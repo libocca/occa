@@ -133,6 +133,9 @@ namespace occa {
       void childDebugPrint(const std::string &prefix) const;
     };
 
+    printer& operator << (printer &pout,
+                          const exprNode &node);
+
     void cloneExprNodeVector(exprNodeVector &dest,
                              const exprNodeVector &src);
 
@@ -429,16 +432,16 @@ namespace occa {
 
     class newNode : public exprNode {
     public:
-      type_t &valueType;
+      vartype_t &valueType;
       exprNode &value;
       exprNode &size;
 
       newNode(token_t *token_,
-              type_t &valueType_,
+              vartype_t &valueType_,
               exprNode &value_);
 
       newNode(token_t *token_,
-              type_t &valueType_,
+              vartype_t &valueType_,
               exprNode &value_,
               exprNode &size_);
 
@@ -524,11 +527,11 @@ namespace occa {
 
     class funcCastNode : public exprNode {
     public:
-      type_t &valueType;
+      vartype_t &valueType;
       exprNode &value;
 
       funcCastNode(token_t *token_,
-                   type_t &valueType_,
+                   vartype_t &valueType_,
                    exprNode &value_);
 
       funcCastNode(const funcCastNode &node);
@@ -546,11 +549,11 @@ namespace occa {
 
     class parenCastNode : public exprNode {
     public:
-      type_t &valueType;
+      vartype_t &valueType;
       exprNode &value;
 
       parenCastNode(token_t *token_,
-                    type_t &valueType_,
+                    vartype_t &valueType_,
                     exprNode &value_);
 
       parenCastNode(const parenCastNode &node);
@@ -568,11 +571,11 @@ namespace occa {
 
     class constCastNode : public exprNode {
     public:
-      type_t &valueType;
+      vartype_t &valueType;
       exprNode &value;
 
       constCastNode(token_t *token_,
-                    type_t &valueType_,
+                    vartype_t &valueType_,
                     exprNode &value_);
 
       constCastNode(const constCastNode &node);
@@ -590,11 +593,11 @@ namespace occa {
 
     class staticCastNode : public exprNode {
     public:
-      type_t &valueType;
+      vartype_t &valueType;
       exprNode &value;
 
       staticCastNode(token_t *token_,
-                     type_t &valueType_,
+                     vartype_t &valueType_,
                      exprNode &value_);
 
       staticCastNode(const staticCastNode &node);
@@ -612,11 +615,11 @@ namespace occa {
 
     class reinterpretCastNode : public exprNode {
     public:
-      type_t &valueType;
+      vartype_t &valueType;
       exprNode &value;
 
       reinterpretCastNode(token_t *token_,
-                          type_t &valueType_,
+                          vartype_t &valueType_,
                           exprNode &value_);
 
       reinterpretCastNode(const reinterpretCastNode &node);
@@ -634,11 +637,11 @@ namespace occa {
 
     class dynamicCastNode : public exprNode {
     public:
-      type_t &valueType;
+      vartype_t &valueType;
       exprNode &value;
 
       dynamicCastNode(token_t *token_,
-                      type_t &valueType_,
+                      vartype_t &valueType_,
                       exprNode &value_);
 
       dynamicCastNode(const dynamicCastNode &node);

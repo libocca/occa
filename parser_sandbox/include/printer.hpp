@@ -50,6 +50,9 @@ namespace occa {
 
       int size();
 
+      std::string str();
+      void clear();
+
       bool isInlined();
       void pushInlined(const bool inlined);
       void popInlined();
@@ -68,7 +71,7 @@ namespace occa {
       void printEndNewline();
 
       template <class TM>
-      printer& operator << (const TM &t) {
+      void print(const TM &t) {
         ss << t;
         const std::string str = ss.str();
         const char *c_str = str.c_str();
@@ -85,9 +88,14 @@ namespace occa {
           }
           *outputStream << str;
         }
-        return *this;
       }
     };
+
+    printer& operator << (printer &pout,
+                          const std::string &str);
+
+    printer& operator << (printer &pout,
+                          const char c);
   }
 }
 

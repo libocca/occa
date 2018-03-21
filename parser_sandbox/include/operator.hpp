@@ -277,9 +277,10 @@ namespace occa {
       operator_t(const std::string &str_,
                  opType_t opType_,
                  int precedence_);
-
-      void print(printer &pout) const;
     };
+
+    printer& operator << (printer &pout,
+                          const operator_t &op);
 
     class unaryOperator_t : public operator_t {
     public:

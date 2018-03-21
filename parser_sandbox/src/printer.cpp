@@ -36,22 +36,18 @@ namespace occa {
 
     printer::printer() :
       ss(),
-      outputStream(&ss),
-      indent(),
-      inlinedStack(),
-      lastChar('\0'),
-      charsFromNewline(0) {
-      inlinedStack.push_back(false);
+      outputStream(&ss) {
+      clear();
     }
 
     printer::printer(std::ostream &outputStream_) :
       ss(),
-      outputStream(&outputStream_),
-      indent(),
-      inlinedStack(),
-      lastChar('\0'),
-      charsFromNewline(0) {
-      inlinedStack.push_back(false);
+      outputStream(&outputStream_) {
+      clear();
+    }
+
+    void printer::setOutputStream(std::ostream &outputStream_) {
+      outputStream = &outputStream_;
     }
 
     int printer::size() {
@@ -62,8 +58,19 @@ namespace occa {
       return size;
     }
 
-    void printer::setOutputStream(std::ostream &outputStream_) {
-      outputStream = &outputStream_;
+    std::string printer::str() {
+      return ss.str();
+    }
+
+    void printer::clear() {
+      ss.str("");
+      indent = "";
+
+      inlinedStack.clear();
+      inlinedStack.push_back(false);
+
+      lastChar = '\0';
+      charsFromNewline = 0;
     }
 
     bool printer::isInlined() {
@@ -133,6 +140,18 @@ namespace occa {
       } else if (lastCharNeedsWhitespace()) {
         *this << ' ';
       }
+    }
+
+    printer& operator << (printer &pout,
+                          const std::string &str) {
+      pout.print(str);
+      return pout;
+    }
+
+    printer& operator << (printer &pout,
+                          const char c) {
+      pout.print(c);
+      return pout;
     }
   }
 }
