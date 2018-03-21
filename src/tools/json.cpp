@@ -499,7 +499,7 @@ namespace occa {
       break;
     }
     case number_: {
-      out += (std::string) value_.number;
+      out += value_.number.toString();
       break;
     }
     case object_: {

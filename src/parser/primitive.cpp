@@ -237,10 +237,6 @@ namespace occa {
     return str;
   }
 
-  primitive::operator std::string () const {
-    return toString();
-  }
-
   std::ostream& operator << (std::ostream &out, const primitive &p) {
     out << p.toString();
     return out;

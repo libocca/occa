@@ -229,28 +229,38 @@ namespace occa {
     class structure_t : public type_t {
     public:
       blockStatement body;
+
+      structure_t(const std::string &name_);
     };
 
     class class_t : public structure_t {
     public:
+      class_t();
+
       virtual int type() const;
       virtual void printDeclaration(printer &pout) const;
     };
 
     class struct_t : public structure_t {
     public:
-      virtual int type() const;
-      virtual void printDeclaration(printer &pout) const;
-    };
+      struct_t();
 
-    class union_t : public structure_t {
-    public:
       virtual int type() const;
       virtual void printDeclaration(printer &pout) const;
     };
 
     class enum_t : public structure_t {
     public:
+      enum_t();
+
+      virtual int type() const;
+      virtual void printDeclaration(printer &pout) const;
+    };
+
+    class union_t : public structure_t {
+    public:
+      union_t();
+
       virtual int type() const;
       virtual void printDeclaration(printer &pout) const;
     };

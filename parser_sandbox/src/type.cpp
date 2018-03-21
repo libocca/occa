@@ -382,6 +382,49 @@ namespace occa {
       }
       pout << ')';
     }
+
+    structure_t::structure_t(const std::string &name_) :
+      type_t(name_) {}
+
+    class_t::class_t() :
+      structure_t("") {}
+
+    int class_t::type() const {
+      return typeType::class_;
+    }
+
+    void class_t::printDeclaration(printer &pout) const {
+    }
+
+    struct_t::struct_t() :
+      structure_t("") {}
+
+    int struct_t::type() const {
+      return typeType::struct_;
+    }
+
+    void struct_t::printDeclaration(printer &pout) const {
+    }
+
+    enum_t::enum_t() :
+      structure_t("") {}
+
+    int enum_t::type() const {
+      return typeType::enum_;
+    }
+
+    void enum_t::printDeclaration(printer &pout) const {
+    }
+
+    union_t::union_t() :
+      structure_t("") {}
+
+    int union_t::type() const {
+      return typeType::union_;
+    }
+
+    void union_t::printDeclaration(printer &pout) const {
+    }
     //==================================
   }
 }

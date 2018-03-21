@@ -107,13 +107,10 @@ namespace occa {
 
       void loadPointerQualifiers(qualifiers_t &qualifiers);
 
-      type_t loadClassType();
-      type_t loadStructType();
-      type_t loadEnumType();
-      type_t loadUnionType();
-
-      type_t loadOperatorType(qualifiers_t &qualifiers);
-      type_t tryLoadingFunctionType(qualifiers_t &qualifiers);
+      class_t loadClassType();
+      struct_t loadStructType();
+      enum_t loadEnumType();
+      union_t loadUnionType();
       //================================
 
       //---[ Statement Loaders ]--------

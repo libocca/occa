@@ -339,7 +339,6 @@ namespace occa {
     }
 
     std::string toString() const;
-    operator std::string () const;
 
     friend std::ostream& operator << (std::ostream &out, const primitive &p);
 

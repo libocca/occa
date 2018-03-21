@@ -189,7 +189,7 @@ namespace occa {
     }
 
     void primitiveNode::print(printer &pout) const {
-      pout << (std::string) value;
+      pout << value.toString();
     }
 
     void primitiveNode::debugPrint(const std::string &prefix) const {

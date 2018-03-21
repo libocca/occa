@@ -128,8 +128,8 @@ void testBadParsing() {
 
 void testToString() {
   OCCA_ASSERT_EQUAL("68719476735L",
-                    (std::string) occa::primitive("0xFFFFFFFFF"));
+                    occa::primitive("0xFFFFFFFFF").toString());
 
   OCCA_ASSERT_EQUAL("NaN",
-                    (std::string) occa::primitive(""));
+                    occa::primitive("").toString());
 }

@@ -399,29 +399,29 @@ namespace occa {
       }
     }
 
-    // type_t parser_t::loadClassType() {
-    //   context[0]->printError("Cannot parse classes yet");
-    //   success = false;
-    //   return type_t();
-    // }
+    class_t parser_t::loadClassType() {
+      context[0]->printError("Cannot parse classes yet");
+      success = false;
+      return class_t();
+    }
 
-    // type_t parser_t::loadStructType() {
-    //   context[0]->printError("Cannot parse structs yet");
-    //   success = false;
-    //   return type_t();
-    // }
+    struct_t parser_t::loadStructType() {
+      context[0]->printError("Cannot parse structs yet");
+      success = false;
+      return struct_t();
+    }
 
-    // type_t parser_t::loadEnumType() {
-    //   context[0]->printError("Cannot parse enum yet");
-    //   success = false;
-    //   return type_t();
-    // }
+    enum_t parser_t::loadEnumType() {
+      context[0]->printError("Cannot parse enum yet");
+      success = false;
+      return enum_t();
+    }
 
-    // type_t parser_t::loadUnionType() {
-    //   context[0]->printError("Cannot parse union yet");
-    //   success = false;
-    //   return type_t();
-    // }
+    union_t parser_t::loadUnionType() {
+      context[0]->printError("Cannot parse union yet");
+      success = false;
+      return union_t();
+    }
     //==================================
 
     //---[ Statement Loaders ]----------
