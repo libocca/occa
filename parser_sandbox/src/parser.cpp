@@ -491,7 +491,7 @@ namespace occa {
     }
 
     statement_t* parser_t::loadExpressionStatement() {
-      const int end = context.getNextOperator(op::semicolon);
+      const int end = context.getNextOperator(operatorType::semicolon);
       if (end < 0) {
         context[context.size() - 1]->printError("Missing ;");
         success = false;

@@ -84,7 +84,7 @@ namespace occa {
       void getAndCloneTokens(tokenVector &tokens_);
 
       int getClosingPair(const int index);
-      int getNextOperator(const operator_t &op);
+      int getNextOperator(const opType_t &opType);
     };
   }
 }

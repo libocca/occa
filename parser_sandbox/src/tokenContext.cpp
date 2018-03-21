@@ -210,9 +210,7 @@ namespace occa {
       return -1;
     }
 
-    int tokenContext::getNextOperator(const operator_t &op) {
-      const opType_t &opType = op.opType;
-
+    int tokenContext::getNextOperator(const opType_t &opType) {
       for (int pos = tp.start; pos < tp.end; ++pos) {
         token_t *token = tokens[pos];
         if (!(token->type() & tokenType::op)) {
