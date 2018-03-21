@@ -279,6 +279,8 @@ namespace occa {
       setPointers(vartype);
       setReference(vartype);
 
+      // Get variable name
+
       if (willLoadFunctionPointer()) {
         loadFunctionPointer(vartype);
       } else {
@@ -286,23 +288,6 @@ namespace occa {
       }
 
       return vartype;
-
-      // while (true) {
-        /*
-         (* -> function
-         (^ |
-
-         VAR
-
-         []
-
-         */
-
-        /*
-          int *[3] -> int *p[3];
-          int *()  -> int (*p)();
-         */
-      // }
     }
 
     void parser_t::loadBaseType(vartype_t &vartype) {
@@ -442,6 +427,13 @@ namespace occa {
     }
 
     bool parser_t::willLoadFunctionPointer() {
+      /*
+        (* -> function
+        (^ |
+
+        int *[3] -> int *p[3];
+        int *()  -> int (*p)();
+      */
       return false;
     }
 
