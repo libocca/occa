@@ -93,11 +93,8 @@ namespace occa {
     //==================================
 
     //---[ Array ]----------------------
-    array_t::array_t() :
-      size(NULL) {}
-
-    array_t::array_t(exprNode &size_) :
-      size(&(size_.clone())) {}
+    array_t::array_t(exprNode *size_) :
+      size(size_) {}
 
     array_t::array_t(const array_t &other) :
       size(NULL) {
@@ -145,12 +142,19 @@ namespace occa {
       type(&type_),
       isReference(false) {}
 
-    vartype_t::vartype_t(const vartype_t &other) :
-      qualifiers(other.qualifiers),
-      type(other.type),
-      pointers(other.pointers),
-      isReference(other.isReference),
-      arrays(other.arrays) {}
+    vartype_t::vartype_t(const vartype_t &other) {
+      *this = other;
+    }
+
+    vartype_t& vartype_t::operator = (const vartype_t &other) {
+      clear();
+      qualifiers  = other.qualifiers;
+      type        = other.type;
+      pointers    = other.pointers;
+      isReference = other.isReference;
+      arrays      = other.arrays;
+      return *this;
+    }
 
     void vartype_t::clear() {
       qualifiers.clear();

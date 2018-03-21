@@ -181,11 +181,13 @@ vartype_t loadType(const std::string &s) {
 void testBaseTypeLoading();
 void testPointerTypeLoading();
 void testReferenceTypeLoading();
+void testArrayTypeLoading();
 
 void testTypeLoading() {
   testBaseTypeLoading();
   testPointerTypeLoading();
   testReferenceTypeLoading();
+  testArrayTypeLoading();
 }
 
 void testBaseTypeLoading() {
@@ -233,7 +235,6 @@ void testBaseTypeLoading() {
 void testPointerTypeLoading() {
   vartype_t type;
 
-  // Test base type
   type = loadType("int *");
   OCCA_ASSERT_EQUAL(1,
                     (int) type.pointers.size());
@@ -266,7 +267,6 @@ void testPointerTypeLoading() {
 void testReferenceTypeLoading() {
   vartype_t type;
 
-  // Test base type
   type = loadType("int");
   OCCA_ASSERT_FALSE(type.isReference);
   type = loadType("int &");
@@ -281,6 +281,33 @@ void testReferenceTypeLoading() {
   OCCA_ASSERT_FALSE(type.isReference);
   type = loadType("int ***&");
   OCCA_ASSERT_TRUE(type.isReference);
+}
+
+void testArrayTypeLoading() {
+  vartype_t type;
+
+  type = loadType("int[]");
+  OCCA_ASSERT_EQUAL(1,
+                    (int) type.arrays.size());
+
+  type = loadType("int[][]");
+  OCCA_ASSERT_EQUAL(2,
+                    (int) type.arrays.size());
+
+  type = loadType("int[1]");
+  OCCA_ASSERT_EQUAL(1,
+                    (int) type.arrays.size());
+  OCCA_ASSERT_EQUAL(1,
+                    (int) type.arrays[0].evaluateSize());
+
+  type = loadType("int[1 + 3]");
+  OCCA_ASSERT_EQUAL(1,
+                    (int) type.arrays.size());
+  OCCA_ASSERT_EQUAL(4,
+                    (int) type.arrays[0].evaluateSize());
+
+  std::cerr << "Testing array type loading errors:\n";
+  loadType("int[-]");
 }
 //======================================
 

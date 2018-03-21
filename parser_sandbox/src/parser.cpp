@@ -276,16 +276,19 @@ namespace occa {
           !vartype.isValid()) {
         return vartype;
       }
-      // Load pointers
       setPointers(vartype);
-      // Load reference
       setReference(vartype);
+
+      if (willLoadFunctionPointer()) {
+        loadFunctionPointer(vartype);
+      } else {
+        setArrays(vartype);
+      }
 
       return vartype;
 
       // while (true) {
         /*
-         & -> reference
          (* -> function
          (^ |
 
@@ -379,7 +382,8 @@ namespace occa {
     }
 
     void parser_t::setPointers(vartype_t &vartype) {
-      while (context.size()) {
+      while (success &&
+             context.size()) {
         token_t *token = context[0];
         if (!(token_t::safeType(token) & tokenType::op)) {
           break;
@@ -435,6 +439,41 @@ namespace occa {
       }
       context.set(1);
       vartype.isReference = true;
+    }
+
+    bool parser_t::willLoadFunctionPointer() {
+      return false;
+    }
+
+    void parser_t::loadFunctionPointer(vartype_t &vartype) {
+    }
+
+    void parser_t::setArrays(vartype_t &vartype) {
+      while (success &&
+             context.size()) {
+        token_t *token = context[0];
+        if (!(token_t::safeType(token) & tokenType::op)) {
+          break;
+        }
+        operatorToken &opToken = token->to<operatorToken>();
+        if (!(opToken.getOpType() & operatorType::bracketStart)) {
+          break;
+        }
+        const int nextTokenIndex = context.getClosingPair(0);
+        context.push(1, nextTokenIndex);
+
+        tokenVector tokens;
+        context.getAndCloneTokens(tokens);
+        exprNode *size = getExpression(tokens);
+        if (size) {
+          vartype += array_t(size);
+        } else {
+          success = false;
+        }
+
+        context.pop();
+        context.set(nextTokenIndex + 1);
+      }
     }
 
     class_t parser_t::loadClassType() {

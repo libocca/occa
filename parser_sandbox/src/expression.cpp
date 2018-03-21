@@ -221,7 +221,13 @@ namespace occa {
       state.hasError = true;
 
       std::stringstream ss;
-      ss << "Could not find a closing '"
+      ss << "Could not find ";
+      if (errorToken->opType() & operatorType::pairStart) {
+        ss << "a closing";
+      } else {
+        ss << "an opening";
+      }
+      ss << " '"
          << ((pairOperator_t*) errorToken->op)->pairStr
          << '\'';
       errorToken->printError(ss.str());
@@ -366,7 +372,8 @@ namespace occa {
 
       // If this is the first token, it's left unary
       // If this is the last token, it's binary or right unary
-      if ((!state.prevToken) != (!state.nextToken)) {
+      if (!state.prevToken ||
+          !state.nextToken) {
         return !state.prevToken;
       }
 

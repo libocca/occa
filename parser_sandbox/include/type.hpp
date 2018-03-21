@@ -120,8 +120,7 @@ namespace occa {
     public:
       exprNode *size;
 
-      array_t();
-      array_t(exprNode &size_);
+      array_t(exprNode *size_ = NULL);
       array_t(const array_t &other);
       ~array_t();
 
@@ -146,6 +145,8 @@ namespace occa {
       vartype_t();
       vartype_t(const type_t &type_);
       vartype_t(const vartype_t &other);
+
+      vartype_t& operator = (const vartype_t &other);
 
       void clear();
 

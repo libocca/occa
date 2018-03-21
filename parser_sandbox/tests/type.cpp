@@ -128,7 +128,7 @@ void testFunction() {
 
   primitiveNode arg4Size(NULL, 1337);
   vartype_t arg4(t2);
-  arg4 += array_t(arg4Size);
+  arg4 += array_t(&arg4Size);
 
   function_t f(void_, "foo");
   f += argument_t(t1 , "a");
