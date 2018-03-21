@@ -28,6 +28,7 @@ namespace occa {
   namespace lang {
     extern const qualifier_t const_;
     extern const qualifier_t constexpr_;
+    extern const qualifier_t restrict_;
     extern const qualifier_t friend_;
     extern const qualifier_t typedef_;
     extern const qualifier_t signed_;

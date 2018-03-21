@@ -54,10 +54,10 @@ smntType& getStatement(const int index = 0) {
 //======================================
 
 //---[ Macro Util Methods ]-------------
-#define testStatementPeek(str_, type_)              \
-  setSource(str_);                                  \
-  OCCA_ASSERT_EQUAL_BINARY(type_,                   \
-                           parser.peek());          \
+#define testStatementPeek(str_, type_)          \
+  setSource(str_);                              \
+  OCCA_ASSERT_EQUAL_BINARY(type_,               \
+                           parser.peek());      \
   OCCA_ASSERT_TRUE(parser.success)
 
 #define testStatementLoading(str_, type_)           \
@@ -173,33 +173,30 @@ void testPeek() {
 //======================================
 
 //---[ Type Loading ]-------------------
-void loadBaseType(const std::string &s,
-                  vartype_t &type) {
+vartype_t loadType(const std::string &s) {
   setSource(s);
-
-  type.clear();
-  parser.loadBaseType(type);
+  return parser.loadType();
 }
 
 void testBaseTypeLoading();
-void testComplexTypeLoading();
+void testPointerTypeLoading();
 
 void testTypeLoading() {
   testBaseTypeLoading();
-  testComplexTypeLoading();
+  testPointerTypeLoading();
 }
 
 void testBaseTypeLoading() {
   vartype_t type;
 
   // Test base type
-  loadBaseType("int", type);
+  type = loadType("int");
   OCCA_ASSERT_EQUAL(0,
                     type.qualifiers.size());
   OCCA_ASSERT_EQUAL(&int_,
                     type.type);
 
-  loadBaseType("const volatile float", type);
+  type = loadType("const volatile float");
   OCCA_ASSERT_EQUAL(2,
                     type.qualifiers.size());
   OCCA_ASSERT_TRUE(type.has(volatile_));
@@ -207,7 +204,7 @@ void testBaseTypeLoading() {
   OCCA_ASSERT_EQUAL(&float_,
                     type.type);
 
-  loadBaseType("const long long", type);
+  type = loadType("const long long");
   OCCA_ASSERT_EQUAL(2,
                     type.qualifiers.size());
   OCCA_ASSERT_TRUE(type.has(const_));
@@ -216,7 +213,7 @@ void testBaseTypeLoading() {
                     type.type);
 
   // Test weird order declaration
-  loadBaseType("double const long long", type);
+  type = loadType("double const long long");
   OCCA_ASSERT_EQUAL(2,
                     type.qualifiers.size());
   OCCA_ASSERT_TRUE(type.has(const_));
@@ -225,13 +222,43 @@ void testBaseTypeLoading() {
                     type.type);
 
   std::cerr << "Testing type loading errors:\n";
-  loadBaseType("const"         , type);
-  loadBaseType("const foo"     , type);
-  loadBaseType("const const"   , type);
-  loadBaseType("long long long", type);
+  type = loadType("const");
+  type = loadType("const foo");
+  type = loadType("const const");
+  type = loadType("long long long");
 }
 
-void testComplexTypeLoading() {
+void testPointerTypeLoading() {
+  vartype_t type;
+
+  // Test base type
+  type = loadType("int *");
+  OCCA_ASSERT_EQUAL(1,
+                    (int) type.pointers.size());
+  OCCA_ASSERT_EQUAL(0,
+                    type.pointers[0].qualifiers.size());
+
+  type = loadType("const volatile float * const");
+  OCCA_ASSERT_EQUAL(1,
+                    (int) type.pointers.size());
+  OCCA_ASSERT_EQUAL(1,
+                    type.pointers[0].qualifiers.size());
+  OCCA_ASSERT_TRUE(type.pointers[0].has(const_));
+
+  type = loadType("float * const * volatile ** const volatile restrict");
+  OCCA_ASSERT_EQUAL(4,
+                    (int) type.pointers.size());
+  OCCA_ASSERT_TRUE(type.pointers[0].has(const_));
+  OCCA_ASSERT_TRUE(type.pointers[1].has(volatile_));
+  OCCA_ASSERT_EQUAL(0,
+                    type.pointers[2].qualifiers.size());
+  OCCA_ASSERT_TRUE(type.pointers[3].has(const_));
+  OCCA_ASSERT_TRUE(type.pointers[3].has(volatile_));
+  OCCA_ASSERT_TRUE(type.pointers[3].has(restrict_));
+
+  std::cerr << "Testing type loading errors:\n";
+  type = loadType("const *");
+  type = loadType("float * long");
 }
 //======================================
 

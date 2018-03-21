@@ -143,6 +143,7 @@ namespace occa {
       // Qualifiers
       addKeyword(keywords, new qualifierKeyword(const_));
       addKeyword(keywords, new qualifierKeyword(constexpr_));
+      addKeyword(keywords, new qualifierKeyword(restrict_));
       addKeyword(keywords, new qualifierKeyword(friend_));
       addKeyword(keywords, new qualifierKeyword(typedef_));
       addKeyword(keywords, new qualifierKeyword(signed_));
