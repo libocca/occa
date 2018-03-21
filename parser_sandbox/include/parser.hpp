@@ -107,6 +107,8 @@ namespace occa {
       void setPointers(vartype_t &vartype);
       void setPointer(vartype_t &vartype);
 
+      void setReference(vartype_t &vartype);
+
       class_t loadClassType();
       struct_t loadStructType();
       enum_t loadEnumType();

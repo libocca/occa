@@ -276,12 +276,15 @@ namespace occa {
           !vartype.isValid()) {
         return vartype;
       }
+      // Load pointers
       setPointers(vartype);
+      // Load reference
+      setReference(vartype);
+
       return vartype;
 
       // while (true) {
         /*
-         * -> pointer
          & -> reference
          (* -> function
          (^ |
@@ -416,6 +419,22 @@ namespace occa {
       if (success) {
         vartype += pointer;
       }
+    }
+
+    void parser_t::setReference(vartype_t &vartype) {
+      if (!context.size()) {
+        return;
+      }
+      token_t *token = context[0];
+      if (!(token_t::safeType(token) & tokenType::op)) {
+        return;
+      }
+      operatorToken &opToken = token->to<operatorToken>();
+      if (!(opToken.getOpType() & operatorType::bitAnd)) {
+        return;
+      }
+      context.set(1);
+      vartype.isReference = true;
     }
 
     class_t parser_t::loadClassType() {

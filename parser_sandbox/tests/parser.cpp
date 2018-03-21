@@ -180,10 +180,12 @@ vartype_t loadType(const std::string &s) {
 
 void testBaseTypeLoading();
 void testPointerTypeLoading();
+void testReferenceTypeLoading();
 
 void testTypeLoading() {
   testBaseTypeLoading();
   testPointerTypeLoading();
+  testReferenceTypeLoading();
 }
 
 void testBaseTypeLoading() {
@@ -259,6 +261,26 @@ void testPointerTypeLoading() {
   std::cerr << "Testing type loading errors:\n";
   type = loadType("const *");
   type = loadType("float * long");
+}
+
+void testReferenceTypeLoading() {
+  vartype_t type;
+
+  // Test base type
+  type = loadType("int");
+  OCCA_ASSERT_FALSE(type.isReference);
+  type = loadType("int &");
+  OCCA_ASSERT_TRUE(type.isReference);
+
+  type = loadType("int *");
+  OCCA_ASSERT_FALSE(type.isReference);
+  type = loadType("int *&");
+  OCCA_ASSERT_TRUE(type.isReference);
+
+  type = loadType("int ***");
+  OCCA_ASSERT_FALSE(type.isReference);
+  type = loadType("int ***&");
+  OCCA_ASSERT_TRUE(type.isReference);
 }
 //======================================
 
