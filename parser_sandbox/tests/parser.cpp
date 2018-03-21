@@ -174,13 +174,11 @@ void testPeek() {
 
 //---[ Type Loading ]-------------------
 void loadBaseType(const std::string &s,
-                  qualifiers_t &qualifiers,
-                  const type_t *&type) {
+                  vartype_t &type) {
   setSource(s);
 
-  qualifiers.clear();
-  type = NULL;
-  parser.loadBaseType(qualifiers, type);
+  type.clear();
+  parser.loadBaseType(type);
 }
 
 void testBaseTypeLoading();
@@ -192,65 +190,45 @@ void testTypeLoading() {
 }
 
 void testBaseTypeLoading() {
-  qualifiers_t qualifiers;
-  const type_t *type;
+  vartype_t type;
 
   // Test base type
-  loadBaseType("int",
-               qualifiers,
-               type);
+  loadBaseType("int", type);
   OCCA_ASSERT_EQUAL(0,
-                    qualifiers.size());
+                    type.qualifiers.size());
   OCCA_ASSERT_EQUAL(&int_,
-                    type);
+                    type.type);
 
-  loadBaseType("const volatile float",
-               qualifiers,
-               type);
+  loadBaseType("const volatile float", type);
   OCCA_ASSERT_EQUAL(2,
-                    qualifiers.size());
-  OCCA_ASSERT_TRUE(qualifiers.has(volatile_));
-  OCCA_ASSERT_TRUE(qualifiers.has(const_));
+                    type.qualifiers.size());
+  OCCA_ASSERT_TRUE(type.has(volatile_));
+  OCCA_ASSERT_TRUE(type.has(const_));
   OCCA_ASSERT_EQUAL(&float_,
-                    type);
+                    type.type);
 
-  loadBaseType("const long long",
-               qualifiers,
-               type);
+  loadBaseType("const long long", type);
   OCCA_ASSERT_EQUAL(2,
-                    qualifiers.size());
-  OCCA_ASSERT_TRUE(qualifiers.has(const_));
-  OCCA_ASSERT_TRUE(qualifiers.has(longlong_));
+                    type.qualifiers.size());
+  OCCA_ASSERT_TRUE(type.has(const_));
+  OCCA_ASSERT_TRUE(type.has(longlong_));
   OCCA_ASSERT_EQUAL(&int_,
-                    type);
+                    type.type);
 
   // Test weird order declaration
-  loadBaseType("double const long long",
-               qualifiers,
-               type);
+  loadBaseType("double const long long", type);
   OCCA_ASSERT_EQUAL(2,
-                    qualifiers.size());
-  OCCA_ASSERT_TRUE(qualifiers.has(const_));
-  OCCA_ASSERT_TRUE(qualifiers.has(longlong_));
+                    type.qualifiers.size());
+  OCCA_ASSERT_TRUE(type.has(const_));
+  OCCA_ASSERT_TRUE(type.has(longlong_));
   OCCA_ASSERT_EQUAL(&double_,
-                    type);
+                    type.type);
 
   std::cerr << "Testing type loading errors:\n";
-  loadBaseType("const",
-               qualifiers,
-               type);
-
-  loadBaseType("const foo",
-               qualifiers,
-               type);
-
-  loadBaseType("const const",
-               qualifiers,
-               type);
-
-  loadBaseType("long long long",
-               qualifiers,
-               type);
+  loadBaseType("const"         , type);
+  loadBaseType("const foo"     , type);
+  loadBaseType("const const"   , type);
+  loadBaseType("long long long", type);
 }
 
 void testComplexTypeLoading() {

@@ -152,7 +152,23 @@ namespace occa {
       isReference(other.isReference),
       arrays(other.arrays) {}
 
+    void vartype_t::clear() {
+      qualifiers.clear();
+      type = NULL;
+      pointers.clear();
+      isReference = false;
+      arrays.clear();
+    }
+
+    bool vartype_t::isValid() const {
+      return type;
+    }
+
     bool vartype_t::operator == (const vartype_t &other) const {
+      if (!type || !other.type) {
+        return false;
+      }
+
       vartype_t flat      = flatten();
       vartype_t otherFlat = other.flatten();
 
@@ -243,13 +259,15 @@ namespace occa {
     }
 
     vartype_t vartype_t::declarationType() const {
-      vartype_t other(*type);
+      vartype_t other;
+      other.type = type;
       other.qualifiers = qualifiers;
       return other;
     }
 
     vartype_t vartype_t::flatten() const {
-      if (!(type->type() & typeType::typedef_)) {
+      if (!type ||
+          (type->type() != typeType::typedef_)) {
         return *this;
       }
 
@@ -268,6 +286,10 @@ namespace occa {
     void vartype_t::printDeclaration(printer &pout,
                                      const std::string &name,
                                      const bool printType) const {
+      if (!type) {
+        return;
+      }
+
       if (printType) {
         if (qualifiers.size()) {
           pout << qualifiers << ' ';

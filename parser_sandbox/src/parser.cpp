@@ -265,18 +265,19 @@ namespace occa {
     //==================================
 
     //---[ Type Loaders ]---------------
-    type_t* parser_t::loadType() {
+    vartype_t parser_t::loadType() {
+      vartype_t vartype;
       if (!context.size()) {
-        return NULL;
+        return vartype;
       }
 
-      qualifiers_t qualifiers;
-      const type_t *type;
-      loadBaseType(qualifiers, type);
-      if (!type) {
-        return NULL;
+      loadBaseType(vartype);
+      if (!success ||
+          !vartype.isValid()) {
+        return vartype;
       }
-      return NULL;
+      setPointers(vartype);
+      return vartype;
 
       // while (true) {
         /*
@@ -298,10 +299,7 @@ namespace occa {
       // }
     }
 
-    void parser_t::loadBaseType(qualifiers_t &qualifiers,
-                                const type_t *&type) {
-      qualifiers.clear();
-
+    void parser_t::loadBaseType(vartype_t &vartype) {
       const int tokens = context.size();
       int tokenPos;
       for (tokenPos = 0; tokenPos < tokens; ++tokenPos) {
@@ -315,12 +313,12 @@ namespace occa {
         if (kType & keywordType::qualifier) {
           loadQualifier(token,
                         keyword->to<qualifierKeyword>().qualifier,
-                        qualifiers);
+                        vartype);
           continue;
         }
-        if (!type &&
-            (kType & keywordType::type)) {
-          type = &(keyword->to<typeKeyword>().type_);
+        if ((kType & keywordType::type) &&
+            !vartype.isValid()) {
+          vartype.type = &(keyword->to<typeKeyword>().type_);
           continue;
         }
         break;
@@ -336,13 +334,13 @@ namespace occa {
       token_t *lastToken = context[tokenPos - (tokenPos == tokens)];
       context.set(tokenPos);
 
-      if (type) {
+      if (vartype.isValid()) {
         return;
       }
 
-      if (qualifiers.has(long_) ||
-          qualifiers.has(longlong_)) {
-        type = &int_;
+      if (vartype.has(long_) ||
+          vartype.has(longlong_)) {
+        vartype.type = &int_;
         return;
       }
 
@@ -352,37 +350,53 @@ namespace occa {
 
     void parser_t::loadQualifier(token_t *token,
                                  const qualifier_t &qualifier,
-                                 qualifiers_t &qualifiers) {
+                                 vartype_t &vartype) {
       // Handle long/long long case
       if (&qualifier == &long_) {
-        if (qualifiers.has(long_)) {
-          qualifiers -= long_;
-          qualifiers += longlong_;
+        if (vartype.has(long_)) {
+          vartype -= long_;
+          vartype += longlong_;
         }
-        else if (qualifiers.has(longlong_)) {
+        else if (vartype.has(longlong_)) {
           token->printWarning("'long long long' is tooooooo long,"
                               " ignoring additional longs");
         }
         else {
-          qualifiers += long_;
+          vartype += long_;
         }
         return;
       }
 
       // Non-long qualifiers
-      if (!qualifiers.has(qualifier)) {
-        qualifiers += qualifier;
+      if (!vartype.has(qualifier)) {
+        vartype += qualifier;
       } else {
         token->printWarning("Ignoring duplicate qualifier");
       }
     }
 
-    void parser_t::loadPointerQualifiers(qualifiers_t &qualifiers) {
-      qualifiers.clear();
+    void parser_t::setPointers(vartype_t &vartype) {
+      while (context.size()) {
+        token_t *token = context[0];
+        if (!(token_t::safeType(token) & tokenType::op)) {
+          break;
+        }
+        operatorToken &opToken = token->to<operatorToken>();
+        if (!(opToken.getOpType() & operatorType::mult)) {
+          break;
+        }
+        context.set(1);
+        setPointer(vartype);
+      }
+    }
+
+    void parser_t::setPointer(vartype_t &vartype) {
+      pointer_t pointer;
 
       const int tokens = context.size();
-      for (int i = 0; i < tokens; ++i) {
-        token_t *token     = context[i];
+      int tokenPos;
+      for (tokenPos = 0; tokenPos < tokens; ++tokenPos) {
+        token_t *token     = context[tokenPos];
         keyword_t *keyword = getKeyword(token);
         if (!(keyword_t::safeType(keyword) & keywordType::qualifier)) {
           break;
@@ -390,12 +404,17 @@ namespace occa {
 
         const qualifier_t &qualifier = keyword->to<qualifierKeyword>().qualifier;
         if (!(qualifier.type() & qualifierType::forPointers)) {
+          token->printError("Cannot add this qualifier to a pointer");
+          success = false;
           break;
         }
+        pointer += qualifier;
+      }
 
-        loadQualifier(token,
-                      qualifier,
-                      qualifiers);
+      context.set(tokenPos);
+
+      if (success) {
+        vartype += pointer;
       }
     }
 

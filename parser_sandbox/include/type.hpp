@@ -147,6 +147,10 @@ namespace occa {
       vartype_t(const type_t &type_);
       vartype_t(const vartype_t &other);
 
+      void clear();
+
+      bool isValid() const;
+
       bool operator == (const vartype_t &other) const;
       bool operator != (const vartype_t &other) const;
 

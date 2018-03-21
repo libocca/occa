@@ -96,16 +96,16 @@ namespace occa {
       //================================
 
       //---[ Type Loaders ]-------------
-      type_t* loadType();
+      vartype_t loadType();
 
-      void loadBaseType(qualifiers_t &qualifiers,
-                        const type_t *&type);
+      void loadBaseType(vartype_t &vartype);
 
       void loadQualifier(token_t *token,
                          const qualifier_t &qualifier,
-                         qualifiers_t &qualifiers);
+                         vartype_t &vartype);
 
-      void loadPointerQualifiers(qualifiers_t &qualifiers);
+      void setPointers(vartype_t &vartype);
+      void setPointer(vartype_t &vartype);
 
       class_t loadClassType();
       struct_t loadStructType();
