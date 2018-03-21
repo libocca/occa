@@ -300,12 +300,12 @@ void testArrayTypeLoading() {
   OCCA_ASSERT_EQUAL(1,
                     (int) type.arrays[0].evaluateSize());
 
-  type = loadType("int[1 + 3][4]");
+  type = loadType("int[1 + 3][7]");
   OCCA_ASSERT_EQUAL(2,
                     (int) type.arrays.size());
   OCCA_ASSERT_EQUAL(4,
                     (int) type.arrays[0].evaluateSize());
-  OCCA_ASSERT_EQUAL(4,
+  OCCA_ASSERT_EQUAL(7,
                     (int) type.arrays[1].evaluateSize());
 
   std::cerr << "Testing array type loading errors:\n";
