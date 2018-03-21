@@ -305,8 +305,7 @@ namespace occa {
       for (int i = 0; i < pointerCount; ++i) {
         pout << pointers[i];
         // Don't add a space after the last * if possible
-        if ((i < (pointerCount - 1)) ||
-            pointers[i].qualifiers.size()) {
+        if (pointers[i].qualifiers.size()) {
           pout << ' ';
         }
       }
