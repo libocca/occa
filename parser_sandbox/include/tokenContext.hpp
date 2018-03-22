@@ -30,6 +30,7 @@ namespace occa {
   namespace lang {
     class tokenRange;
     class token_t;
+    class exprNode;
 
     typedef std::vector<token_t*>   tokenVector;
     typedef std::list<tokenRange>   tokenRangeList;
@@ -84,11 +85,17 @@ namespace occa {
       int size() const;
       token_t* operator [] (const int index);
 
+      token_t* end();
+
       void getTokens(tokenVector &tokens_);
       void getAndCloneTokens(tokenVector &tokens_);
 
       int getClosingPair(const int index);
       int getNextOperator(const opType_t &opType);
+
+      exprNode* getExpression();
+      exprNode* getExpression(const int start,
+                              const int end);
     };
   }
 }

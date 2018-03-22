@@ -22,6 +22,7 @@
 
 #include "occa/tools/testing.hpp"
 
+#include "exprNode.hpp"
 #include "parser.hpp"
 #include "typeBuiltins.hpp"
 
@@ -60,13 +61,14 @@ smntType& getStatement(const int index = 0) {
                            parser.peek());      \
   OCCA_ASSERT_TRUE(parser.success)
 
-#define testStatementLoading(str_, type_)           \
+#define setStatement(str_, type_)                   \
   parseSource(str_);                                \
   OCCA_ASSERT_EQUAL(1,                              \
                     parser.root.size());            \
   OCCA_ASSERT_EQUAL_BINARY(type_,                   \
                            parser.root[0]->type())  \
-  OCCA_ASSERT_TRUE(parser.success)
+  OCCA_ASSERT_TRUE(parser.success);                 \
+  statement = parser.root[0]
 //======================================
 
 int main(const int argc, const char **argv) {
@@ -186,10 +188,7 @@ vartype_t preloadType(const std::string &s) {
 
 vartype_t loadType(const std::string &s) {
   setSource(s);
-
-  vartype_t vartype = parser.preloadType();
-  parser.loadType(vartype);
-  return vartype;
+  return parser.loadVariable().vartype;
 }
 
 #define assertVariable(str_)                            \
@@ -203,9 +202,9 @@ variable loadVariable(const std::string &s) {
   return parser.loadVariable();
 }
 
-#define assertFunctionPointer(str_)                     \
-  setSource(str_);                                      \
-  parser.preloadType();                                 \
+#define assertFunctionPointer(str_)                   \
+  setSource(str_);                                    \
+  parser.preloadType();                               \
   OCCA_ASSERT_TRUE(parser.isLoadingFunctionPointer())
 
 void testBaseTypeLoading();
@@ -510,37 +509,89 @@ void testLoading() {
 }
 
 void testExpressionLoading() {
-  testStatementLoading("2 + 3;",
-                       statementType::expression);
-  testStatementLoading("-3;",
-                       statementType::expression);
-  testStatementLoading(";",
-                       statementType::expression);
-  testStatementLoading("sizeof(4);",
-                       statementType::expression);
-  // TODO: Test we captured the proper expression by evaluating it
+  statement_t *statement;
+#define expr (*(statement->to<expressionStatement>().root))
+
+  setStatement("2 + 3;",
+               statementType::expression);
+  OCCA_ASSERT_TRUE(expr.canEvaluate());
+  OCCA_ASSERT_EQUAL(5,
+                    (int) expr.evaluate());
+
+  setStatement("-3;",
+               statementType::expression);
+  OCCA_ASSERT_TRUE(expr.canEvaluate());
+  OCCA_ASSERT_EQUAL(-3,
+                    (int) expr.evaluate());
+
+  setStatement("sizeof(4);",
+               statementType::expression);
+  OCCA_ASSERT_TRUE(expr.canEvaluate());
+  OCCA_ASSERT_EQUAL(sizeof(4),
+                    (size_t) expr.evaluate());
+
+  setStatement(";",
+               statementType::expression);
+  OCCA_ASSERT_FALSE(expr.canEvaluate());
+
+#undef exprStatement
 }
 
 void testDeclarationLoading() {
+  statement_t *statement;
 
+#define decl statement->to<declarationStatement>()
+
+  setStatement("int foo;",
+               statementType::declaration);
+  OCCA_ASSERT_EQUAL(1,
+                    (int) decl.declarations.size());
+
+  setStatement("int foo = 3;",
+               statementType::declaration);
+  OCCA_ASSERT_EQUAL(1,
+                    (int) decl.declarations.size())
+  OCCA_ASSERT_EQUAL(3,
+                    (int) decl.declarations[0].value->evaluate());
+
+  setStatement("int foo = 3, bar = 4;",
+               statementType::declaration);
+  OCCA_ASSERT_EQUAL(2,
+                    (int) decl.declarations.size());
+  OCCA_ASSERT_EQUAL(3,
+                    (int) decl.declarations[0].value->evaluate());
+  OCCA_ASSERT_EQUAL(4,
+                    (int) decl.declarations[1].value->evaluate());
+
+  setStatement("int foo = 3, *bar = 4;",
+               statementType::declaration);
+  OCCA_ASSERT_EQUAL(2,
+                    (int) decl.declarations.size());
+  OCCA_ASSERT_EQUAL(3,
+                    (int) decl.declarations[0].value->evaluate());
+  OCCA_ASSERT_EQUAL(4,
+                    (int) decl.declarations[1].value->evaluate());
+
+#undef decl
 }
 
 void testBlockLoading() {
-  testStatementLoading("{}",
-                       statementType::block);
+  statement_t *statement;
+  setStatement("{}",
+               statementType::block);
 
   OCCA_ASSERT_EQUAL(0,
-                    getStatement<blockStatement>().size());
+                    statement->to<blockStatement>().size());
 
-  testStatementLoading("{\n"
-                       " const int i = 0;\n"
-                       " ++i:\n"
-                       " namespace foo {}\n"
-                       " if (true) {}\n"
-                       "}\n",
-                       statementType::block);
+  setStatement("{\n"
+               " const int i = 0;\n"
+               " ++i:\n"
+               " namespace foo {}\n"
+               " if (true) {}\n"
+               "}\n",
+               statementType::block);
 
-  blockStatement &smnt = getStatement<blockStatement>();
+  blockStatement &smnt = statement->to<blockStatement>();
   OCCA_ASSERT_EQUAL(4,
                     smnt.size());
   OCCA_ASSERT_EQUAL_BINARY(statementType::declaration,
@@ -554,16 +605,17 @@ void testBlockLoading() {
 }
 
 void testNamespaceLoading() {
-  testStatementLoading("namespace foo {}",
-                       statementType::namespace_);
+  statement_t *statement;
+  setStatement("namespace foo {}",
+               statementType::namespace_);
 
   OCCA_ASSERT_EQUAL("foo",
-                    getStatement<namespaceStatement>().name);
+                    statement->to<namespaceStatement>().name);
 
-  testStatementLoading("namespace A::B::C {}",
-                       statementType::namespace_);
+  setStatement("namespace A::B::C {}",
+               statementType::namespace_);
 
-  namespaceStatement &A = getStatement<namespaceStatement>();
+  namespaceStatement &A = statement->to<namespaceStatement>();
   OCCA_ASSERT_EQUAL("A",
                     A.name);
 
@@ -577,6 +629,7 @@ void testNamespaceLoading() {
 }
 
 void testTypeDeclLoading() {
+  // statement_t *statement;
   // TODO: typedef
   // TODO: struct
   // TODO: enum
@@ -585,138 +638,165 @@ void testTypeDeclLoading() {
 }
 
 void testIfLoading() {
-  testStatementLoading("if (true) {}",
-                       statementType::if_);
+  statement_t *statement;
+  OCCA_ASSERT_TRUE(statement == NULL);
 
-  testStatementLoading("if (true) {}\n"
-                       "else if (true) {}",
-                       statementType::if_);
+  setStatement("if (true) {}",
+               statementType::if_);
 
-  testStatementLoading("if (true) {}\n"
-                       "else if (true) {}\n"
-                       "else if (true) {}",
-                       statementType::if_);
+  setStatement("if (true) {}\n"
+               "else if (true) {}",
+               statementType::if_);
 
-  testStatementLoading("if (true) {}\n"
-                       "else if (true) {}\n"
-                       "else {}",
-                       statementType::if_);
+  setStatement("if (true) {}\n"
+               "else if (true) {}\n"
+               "else if (true) {}",
+               statementType::if_);
+
+  setStatement("if (true) {}\n"
+               "else if (true) {}\n"
+               "else {}",
+               statementType::if_);
 
   // Test declaration in conditional
-  testStatementLoading("if (const int i = 1) {}",
-                       statementType::if_);
+  setStatement("if (const int i = 1) {}",
+               statementType::if_);
 
   // TODO: Test that 'i' exists in the if scope
 }
 
 void testForLoading() {
-  testStatementLoading("for (;;) {}",
-                       statementType::for_);
-  testStatementLoading("for (;;);",
-                       statementType::for_);
+  statement_t *statement;
+  OCCA_ASSERT_TRUE(statement == NULL);
+
+  setStatement("for (;;) {}",
+               statementType::for_);
+  setStatement("for (;;);",
+               statementType::for_);
 
   // Test declaration in conditional
-  testStatementLoading("for (int i = 0; i < 2; ++i) {}",
-                       statementType::for_);
+  setStatement("for (int i = 0; i < 2; ++i) {}",
+               statementType::for_);
 
   // TODO: Test that 'i' exists in the if scope
 }
 
 void testWhileLoading() {
-  testStatementLoading("while (true) {}",
-                       statementType::while_);
-  testStatementLoading("while (true);",
-                       statementType::while_);
+  statement_t *statement;
+  OCCA_ASSERT_TRUE(statement == NULL);
+
+  setStatement("while (true) {}",
+               statementType::while_);
+  setStatement("while (true);",
+               statementType::while_);
 
   // Test declaration in conditional
-  testStatementLoading("while (int i = 0) {}",
-                       statementType::while_);
+  setStatement("while (int i = 0) {}",
+               statementType::while_);
 
   // TODO: Test that 'i' exists in the if scope
 
   // Same tests for do-while
-  testStatementLoading("do {} while (true);",
-                       statementType::while_);
-  testStatementLoading("do ; while (true);",
-                       statementType::while_);
+  setStatement("do {} while (true);",
+               statementType::while_);
+  setStatement("do ; while (true);",
+               statementType::while_);
 
-  testStatementLoading("do {} while (int i = 0)",
-                       statementType::while_);
+  setStatement("do {} while (int i = 0)",
+               statementType::while_);
 }
 
 void testSwitchLoading() {
-  testStatementLoading("switch (2) {}",
-                       statementType::switch_);
+  statement_t *statement;
+  OCCA_ASSERT_TRUE(statement == NULL);
+
+  setStatement("switch (2) {}",
+               statementType::switch_);
   // Weird cases
-  testStatementLoading("switch (2) case 2:",
-                       statementType::switch_);
-  testStatementLoading("switch (2) case 2: 2;",
-                       statementType::switch_);
+  setStatement("switch (2) case 2:",
+               statementType::switch_);
+  setStatement("switch (2) case 2: 2;",
+               statementType::switch_);
 
   // Test declaration in conditional
-  testStatementLoading("switch (int i = 2) {}",
-                       statementType::switch_);
+  setStatement("switch (int i = 2) {}",
+               statementType::switch_);
 
   // TODO: Test that 'i' exists in the if scope
 
   // Test caseStatement
-  testStatementLoading("case 2:",
-                       statementType::case_);
-  testStatementLoading("case 2: 2;",
-                       statementType::case_);
+  setStatement("case 2:",
+               statementType::case_);
+  setStatement("case 2: 2;",
+               statementType::case_);
 
   // Test defaultStatement
-  testStatementLoading("default:",
-                       statementType::default_);
-  testStatementLoading("default: 2;",
-                       statementType::default_);
+  setStatement("default:",
+               statementType::default_);
+  setStatement("default: 2;",
+               statementType::default_);
 }
 
 void testJumpsLoading() {
-  testStatementLoading("continue;",
-                       statementType::continue_);
-  testStatementLoading("break;",
-                       statementType::continue_);
+  statement_t *statement;
+  OCCA_ASSERT_TRUE(statement == NULL);
 
-  testStatementLoading("return;",
-                       statementType::continue_);
-  testStatementLoading("return 1 + (2 * 1);",
-                       statementType::continue_);
+  setStatement("continue;",
+               statementType::continue_);
+  setStatement("break;",
+               statementType::continue_);
+
+  setStatement("return;",
+               statementType::continue_);
+  setStatement("return 1 + (2 * 1);",
+               statementType::continue_);
   // TODO: Test 'eval' to make sure we capture the return value
 }
 
 void testClassAccessLoading() {
-  testStatementLoading("public:",
-                       statementType::classAccess);
-  testStatementLoading("protected:",
-                       statementType::classAccess);
-  testStatementLoading("private:",
-                       statementType::classAccess);
+  statement_t *statement;
+  OCCA_ASSERT_TRUE(statement == NULL);
+
+  setStatement("public:",
+               statementType::classAccess);
+  setStatement("protected:",
+               statementType::classAccess);
+  setStatement("private:",
+               statementType::classAccess);
 }
 
 void testAttributeLoading() {
-  testStatementLoading("@dim",
-                       statementType::attribute);
-  testStatementLoading("@dim(2)",
-                       statementType::attribute);
-  testStatementLoading("@dim(x=2, y=2)",
-                       statementType::attribute);
+  statement_t *statement;
+  OCCA_ASSERT_TRUE(statement == NULL);
+
+  setStatement("@dim",
+               statementType::attribute);
+  setStatement("@dim(2)",
+               statementType::attribute);
+  setStatement("@dim(x=2, y=2)",
+               statementType::attribute);
   // TODO: Test the argument values
 }
 
 void testPragmaLoading() {
-  testStatementLoading("#pragma",
-                       statementType::pragma);
-  testStatementLoading("#pragma occa test",
-                       statementType::pragma);
+  statement_t *statement;
+  OCCA_ASSERT_TRUE(statement == NULL);
+
+  setStatement("#pragma",
+               statementType::pragma);
+  setStatement("#pragma occa test",
+               statementType::pragma);
   // TODO: Test the pragma source
 }
 
 void testGotoLoading() {
-  testStatementLoading("label:",
-                       statementType::gotoLabel);
-  testStatementLoading("goto label;",
-                       statementType::goto_);
+  statement_t *statement;
+  OCCA_ASSERT_TRUE(statement == NULL);
+
+  setStatement("label:",
+               statementType::gotoLabel);
+  setStatement("goto label;",
+               statementType::goto_);
 }
 //======================================
 

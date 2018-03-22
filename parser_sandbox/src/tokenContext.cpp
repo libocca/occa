@@ -19,6 +19,7 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  */
+#include "expression.hpp"
 #include "token.hpp"
 #include "tokenContext.hpp"
 
@@ -201,6 +202,13 @@ namespace occa {
       return tokens[tp.start + index];
     }
 
+    token_t* tokenContext::end() {
+      if (indexInRange(tp.end - 1)) {
+        return tokens[tp.end - 1];
+      }
+      return NULL;
+    }
+
     void tokenContext::getTokens(tokenVector &tokens_) {
       tokens_.clear();
       tokens_.reserve(tp.end - tp.start);
@@ -248,6 +256,23 @@ namespace occa {
         }
       }
       return -1;
+    }
+
+    exprNode* tokenContext::getExpression() {
+      if (tp.start == tp.end) {
+        return NULL;
+      }
+      tokenVector tokens_;
+      getAndCloneTokens(tokens_);
+      return occa::lang::getExpression(tokens_);
+    }
+
+    exprNode* tokenContext::getExpression(const int start,
+                                          const int end) {
+      push(start, end);
+      exprNode *expr = getExpression();
+      pop();
+      return expr;
     }
   }
 }

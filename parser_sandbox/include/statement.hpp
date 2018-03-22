@@ -35,8 +35,10 @@ namespace occa {
     class ifStatement;
     class elifStatement;
     class elseStatement;
+    class variableDeclaration;
 
-    typedef std::vector<elifStatement*> elifStatementVector;
+    typedef std::vector<elifStatement*>      elifStatementVector;
+    typedef std::vector<variableDeclaration> variableDeclarationVector;
 
     //---[ Pragma ]---------------------
     class pragmaStatement : public statement_t {
@@ -85,7 +87,10 @@ namespace occa {
 
     class declarationStatement : public statement_t {
     public:
+      variableDeclarationVector declarations;
+
       declarationStatement();
+      declarationStatement(const declarationStatement &other);
 
       virtual statement_t& clone_() const;
       virtual int type() const;

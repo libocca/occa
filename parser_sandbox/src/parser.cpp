@@ -177,11 +177,9 @@ namespace occa {
         return statementType::none;
       }
 
-      int stype = statementType::none;
       int tokenIndex = 0;
 
-      while (success                       &&
-             (stype & statementType::none) &&
+      while (success &&
              (tokenIndex < tokens)) {
 
         token_t *token = context[tokenIndex];
@@ -208,9 +206,7 @@ namespace occa {
         ++tokenIndex;
       }
 
-      return (success
-              ? stype
-              : statementType::none);
+      return statementType::none;
     }
 
     int parser_t::peekIdentifier(const int tokenIndex) {
@@ -270,6 +266,51 @@ namespace occa {
         return loadFunctionPointer(vartype);
       }
       return loadVariable(vartype);
+    }
+
+    variableDeclaration parser_t::loadVariableDeclaration(const vartype_t &baseType) {
+      variableDeclaration decl;
+
+      // If partially-defined type, finish parsing it
+      vartype_t vartype = baseType.declarationType();
+      vartype.qualifiers = baseType.qualifiers;
+      setPointers(vartype);
+      if (!success) {
+        return decl;
+      }
+      setReference(vartype);
+      if (!success) {
+        return decl;
+      }
+      // Load the actual variable if it exists
+      if (isLoadingFunctionPointer()) {
+        decl.var = loadFunctionPointer(vartype);
+      } else {
+        decl.var = loadVariable(vartype);
+      }
+
+      if (!context.size() ||
+          !(getOperatorType(context[0]) & operatorType::assign)) {
+        return decl;
+      }
+
+      const int pos = context.getNextOperator(operatorType::comma |
+                                              operatorType::semicolon);
+      if (pos < 0) {
+        context.end()->printError("Expected a ;");
+        success = false;
+        return decl;
+      }
+      if (pos == 1) {
+        context[1]->printError("Expected an expression");
+        success = false;
+        return decl;
+      }
+
+      decl.value = context.getExpression(1, pos);
+      context.set(pos);
+
+      return decl;
     }
 
     vartype_t parser_t::preloadType() {
@@ -517,21 +558,17 @@ namespace occa {
         name = (context[0]
                 ->to<identifierToken>()
                 .value);
+        context.set(1);
       }
 
-      context.set(1);
       setArrays(vartype);
 
       return variable(vartype, name);
     }
 
-    void parser_t::loadType(vartype_t &vartype) {
-      setArrays(vartype);
-    }
-
     bool parser_t::hasArray() {
       return (context.size() &&
-              getOperatorType(context[0]) & operatorType::bracketStart);
+              (getOperatorType(context[0]) & operatorType::bracketStart));
     }
 
     void parser_t::setArrays(vartype_t &vartype) {
@@ -539,14 +576,7 @@ namespace occa {
              hasArray()) {
         context.pushPairRange(0);
 
-        tokenVector tokens;
-        context.getAndCloneTokens(tokens);
-        exprNode *size = getExpression(tokens);
-        if (size) {
-          vartype += array_t(size);
-        } else {
-          success = false;
-        }
+        vartype += array_t(context.getExpression());
 
         tokenRange pairRange = context.pop();
         context.set(pairRange.end + 1);
@@ -677,7 +707,7 @@ namespace occa {
     statement_t* parser_t::loadExpressionStatement() {
       const int end = context.getNextOperator(operatorType::semicolon);
       if (end < 0) {
-        context[context.size() - 1]->printError("Missing ;");
+        context.end()->printError("Missing ;");
         success = false;
         return NULL;
       }
@@ -700,7 +730,35 @@ namespace occa {
     }
 
     statement_t* parser_t::loadDeclarationStatement() {
-      return NULL;
+      vartype_t baseType = preloadType();
+      if (!success) {
+        return NULL;
+      }
+
+      declarationStatement &smnt = *(new declarationStatement());
+      while(success) {
+        smnt.declarations.push_back(loadVariableDeclaration(baseType));
+        if (!success) {
+          break;
+        }
+
+        // Skip the , or ;
+        if (!(getOperatorType(context[0]) & operatorType::comma)) {
+          context.set(1);
+          break;
+        }
+        context.set(1);
+      }
+
+      if (!success) {
+        delete &smnt;
+        return NULL;
+      }
+
+      // Skip the ;
+      context.set(1);
+
+      return &smnt;
     }
 
     statement_t* parser_t::loadNamespaceStatement() {

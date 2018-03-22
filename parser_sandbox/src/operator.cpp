@@ -121,7 +121,7 @@ namespace occa {
     }
 
     namespace operatorType {
-      const opType_t none              (0, 0);
+      const opType_t none              (0, 1);
 
       const opType_t not_              (0, rawOperatorType::not_);
       const opType_t positive          (0, rawOperatorType::positive);

@@ -23,6 +23,7 @@
 
 #include "occa/tools/testing.hpp"
 
+#include "exprNode.hpp"
 #include "token.hpp"
 #include "tokenizer.hpp"
 #include "tokenContext.hpp"
@@ -31,6 +32,7 @@ using namespace occa::lang;
 
 void testMethods();
 void testPairs();
+void testExpression();
 
 std::string source;
 
@@ -45,6 +47,7 @@ void setupContext(tokenContext &context,
 int main(const int argc, const char **argv) {
   testMethods();
   testPairs();
+  testExpression();
 
   return 0;
 }
@@ -178,4 +181,34 @@ void testPairs() {
   setupContext(context, "{1, 2]");
   setupContext(context, "<<<1, 2}");
   setupContext(context, "(1, 2>>>");
+}
+
+void testExpression() {
+  tokenContext context;
+  exprNode *expr;
+
+  setupContext(context, "");
+  OCCA_ASSERT_EQUAL((void*) NULL,
+                    (void*) context.getExpression());
+
+  setupContext(context, "1 + 2 + 3");
+  expr = context.getExpression();
+  OCCA_ASSERT_EQUAL(6,
+                    (int) expr->evaluate());
+  delete expr;
+
+  expr = context.getExpression(0, 3);
+  OCCA_ASSERT_EQUAL(3,
+                    (int) expr->evaluate());
+  delete expr;
+
+  expr = context.getExpression(2, 5);
+  OCCA_ASSERT_EQUAL(5,
+                    (int) expr->evaluate());
+  delete expr;
+
+  expr = context.getExpression(4, 5);
+  OCCA_ASSERT_EQUAL(3,
+                    (int) expr->evaluate());
+  delete expr;
 }

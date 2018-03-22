@@ -26,6 +26,7 @@
 
 namespace occa {
   namespace lang {
+    //---[ Variable ]-------------------
     class variable {
     public:
       vartype_t vartype;
@@ -46,6 +47,31 @@ namespace occa {
 
     printer& operator << (printer &pout,
                           const variable &var);
+    //==================================
+
+    //---[ Variable Declaration ]-------
+    class variableDeclaration {
+    public:
+      variable var;
+      exprNode *value;
+
+      variableDeclaration();
+
+      variableDeclaration(const variable &var_);
+
+      variableDeclaration(const variable &var_,
+                          exprNode &value_);
+
+      variableDeclaration(const variableDeclaration &other);
+
+      ~variableDeclaration();
+
+      bool hasValue() const;
+
+      void print(printer &pout) const;
+      void printAsExtra(printer &pout) const;
+    };
+    //==================================
   }
 }
 

@@ -100,6 +100,8 @@ namespace occa {
       //---[ Type Loaders ]-------------
       variable loadVariable();
 
+      variableDeclaration loadVariableDeclaration(const vartype_t &baseType);
+
       vartype_t preloadType();
 
       void loadBaseType(vartype_t &vartype);
@@ -118,7 +120,6 @@ namespace occa {
 
       variable loadFunctionPointer(vartype_t &vartype);
       variable loadVariable(vartype_t &vartype);
-      void loadType(vartype_t &vartype);
 
       bool hasArray();
       void setArrays(vartype_t &vartype);

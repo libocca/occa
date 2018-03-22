@@ -19,11 +19,13 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  */
-#include "variable.hpp"
+#include "exprNode.hpp"
 #include "statement.hpp"
+#include "variable.hpp"
 
 namespace occa {
   namespace lang {
+    //---[ Variable ]-------------------
     variable::variable() {}
 
     variable::variable(const vartype_t &vartype_,
@@ -60,5 +62,51 @@ namespace occa {
       pout << var.name;
       return pout;
     }
+    //==================================
+
+    //---[ Variable Declaration ]-------
+    variableDeclaration::variableDeclaration() :
+      var(),
+      value(NULL) {}
+
+    variableDeclaration::variableDeclaration(const variable &var_) :
+      var(var_),
+      value(NULL) {}
+
+    variableDeclaration::variableDeclaration(const variable &var_,
+                                             exprNode &value_) :
+      var(var_),
+      value(&value_) {}
+
+    variableDeclaration::variableDeclaration(const variableDeclaration &other) :
+      var(other.var),
+      value(NULL) {
+      if (other.value) {
+        value = &(other.value->clone());
+      }
+    }
+
+    variableDeclaration::~variableDeclaration() {
+      delete value;
+    }
+
+    bool variableDeclaration::hasValue() const {
+      return value;
+    }
+
+    void variableDeclaration::print(printer &pout) const {
+      var.printDeclaration(pout);
+      if (value) {
+        pout << " = " << *value;
+      }
+    }
+
+    void variableDeclaration::printAsExtra(printer &pout) const {
+      var.printExtraDeclaration(pout);
+      if (value) {
+        pout << " = " << *value;
+      }
+    }
+    //==================================
   }
 }

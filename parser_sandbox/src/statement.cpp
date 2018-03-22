@@ -101,8 +101,11 @@ namespace occa {
     declarationStatement::declarationStatement() :
       statement_t() {}
 
+    declarationStatement::declarationStatement(const declarationStatement &other) :
+      declarations(other.declarations) {}
+
     statement_t& declarationStatement::clone_() const {
-      return *(new declarationStatement());
+      return *(new declarationStatement(*this));
     }
 
     int declarationStatement::type() const {
@@ -110,6 +113,17 @@ namespace occa {
     }
 
     void declarationStatement::print(printer &pout) const {
+      const int count = (int) declarations.size();
+      if (!count) {
+        return;
+      }
+      pout.printIndentation();
+      declarations[0].print(pout);
+      for (int i = 1; i < count; ++i) {
+        pout << ", ";
+        declarations[i].printAsExtra(pout);
+      }
+      pout << ";\n";
     }
     //==================================
 
