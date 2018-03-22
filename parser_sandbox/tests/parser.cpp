@@ -223,6 +223,7 @@ void testPointerTypeLoading();
 void testReferenceTypeLoading();
 void testArrayTypeLoading();
 void testVariableLoading();
+void testArgumentLoading();
 void testFunctionPointerLoading();
 
 void testTypeLoading() {
@@ -231,6 +232,7 @@ void testTypeLoading() {
   testReferenceTypeLoading();
   testArrayTypeLoading();
   testVariableLoading();
+  testArgumentLoading();
   testFunctionPointerLoading();
 }
 
@@ -401,6 +403,39 @@ void testVariableLoading() {
   std::cerr << "Testing variable loading errors:\n";
   assertVariable("int varname[-]");
   loadVariable("int varname[-]");
+}
+
+void testArgumentLoading() {
+  // Test argument detection
+  occa::intVector commas;
+
+  setSource("");
+  parser.getArgumentCommas(commas);
+  OCCA_ASSERT_EQUAL(0,
+                    (int) commas.size());
+
+  setSource("a, b");
+  parser.getArgumentCommas(commas);
+  OCCA_ASSERT_EQUAL(1,
+                    (int) commas.size());
+
+  setSource("(,,)");
+  parser.getArgumentCommas(commas);
+  OCCA_ASSERT_EQUAL(0,
+                    (int) commas.size());
+
+  setSource("(,,), (,,), (,,)");
+  parser.getArgumentCommas(commas);
+  OCCA_ASSERT_EQUAL(2,
+                    (int) commas.size());
+
+  // Removes trailing comma
+  setSource("a, b,");
+  parser.getArgumentCommas(commas);
+  OCCA_ASSERT_EQUAL(1,
+                    (int) commas.size());
+
+  // Test arguments
 }
 
 void testFunctionPointerLoading() {

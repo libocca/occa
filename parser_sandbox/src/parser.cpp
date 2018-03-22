@@ -507,6 +507,46 @@ namespace occa {
       }
     }
 
+    void parser_t::setArguments(argumentVector &args) {
+      intVector commas;
+      getArgumentCommas(commas);
+
+      const int argCount = (int) commas.size();
+      if (!argCount) {
+        return;
+      }
+
+      for (int i = 0; i < argCount; ++i) {
+        context.push(0, commas[i]);
+
+        args.push_back(getArgument());
+
+        context.pop();
+        context.set(commas[i] + 1);
+      }
+    }
+
+    void parser_t::getArgumentCommas(intVector &commas) {
+      commas.clear();
+
+      context.push();
+      while (true) {
+        const int pos = context.getNextOperator(operatorType::comma);
+        // No comma found or trailing comma
+        if ((pos < 0) ||
+            (pos == (context.size() - 1))) {
+          break;
+        }
+        commas.push_back(pos);
+        context.set(pos + 1);
+      }
+      context.pop();
+    }
+
+    argument_t parser_t::getArgument() {
+      return argument_t(vartype_t());
+    }
+
     class_t parser_t::loadClassType() {
       context[0]->printError("Cannot parse classes yet");
       success = false;

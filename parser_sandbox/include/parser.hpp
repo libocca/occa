@@ -122,6 +122,10 @@ namespace occa {
       void setArrays(vartype_t &vartype);
       void setArray(vartype_t &vartype);
 
+      void setArguments(argumentVector &args);
+      void getArgumentCommas(intVector &commas);
+      argument_t getArgument();
+
       class_t loadClassType();
       struct_t loadStructType();
       enum_t loadEnumType();
