@@ -468,6 +468,7 @@ namespace occa {
       //       Check for arrays
       context.pushPairRange(0);
 
+      std::string name = "";
       const bool isPointer = (getOperatorType(context[0]) & operatorType::mult);
       context.set(1);
 
@@ -475,15 +476,17 @@ namespace occa {
       func.isPointer = isPointer;
       func.isBlock   = !isPointer;
 
-      variable var(func);
       if (context.size() &&
           (context[0]->type() & tokenType::identifier)) {
-        var.name = (context[0]
-                    ->to<identifierToken>()
-                    .value);
+        name = (context[0]
+                ->to<identifierToken>()
+                .value);
         context.set(1);
       }
-      setArrays(var.vartype);
+
+      // If we have arrays, we don't set them in the return type
+      vartype_t arraytype;
+      setArrays(arraytype);
 
       if (context.size()) {
         context[0]->printError("Unable to parse type");
@@ -492,13 +495,30 @@ namespace occa {
 
       context.popAndSkipPair();
 
-      return var;
+      if (success) {
+        context.pushPairRange(0);
+        setArguments(func.args);
+        context.popAndSkipPair();
+      }
+
+      if (!arraytype.arrays.size()) {
+        return variable(func, name);
+      }
+
+      vartype_t varType(func);
+      varType.arrays = arraytype.arrays;
+      return variable(varType, name);
     }
 
     variable parser_t::loadVariable(vartype_t &vartype) {
-      const std::string name = (context[0]
-                                ->to<identifierToken>()
-                                .value);
+      std::string name = "";
+      if (context.size() &&
+          (context[0]->type() & tokenType::identifier)) {
+        name = (context[0]
+                ->to<identifierToken>()
+                .value);
+      }
+
       context.set(1);
       setArrays(vartype);
 
@@ -509,12 +529,14 @@ namespace occa {
       setArrays(vartype);
     }
 
+    bool parser_t::hasArray() {
+      return (context.size() &&
+              getOperatorType(context[0]) & operatorType::bracketStart);
+    }
+
     void parser_t::setArrays(vartype_t &vartype) {
       while (success &&
-             context.size()) {
-        if (!(getOperatorType(context[0]) & operatorType::bracketStart)) {
-          break;
-        }
+             hasArray()) {
         context.pushPairRange(0);
 
         tokenVector tokens;
@@ -544,7 +566,10 @@ namespace occa {
         context.push(argRanges[i].start,
                      argRanges[i].end);
 
-        args.push_back(getArgument());
+        args.push_back(loadVariable());
+        if (!success) {
+          break;
+        }
 
         context.pop();
         context.set(argRanges[i].end + 1);
@@ -556,20 +581,25 @@ namespace occa {
 
       context.push();
       while (true) {
+        const int tokens = context.size();
+        if (!tokens) {
+          break;
+        }
+
         const int pos = context.getNextOperator(operatorType::comma);
-        // No comma found or trailing comma
-        if ((pos < 0) ||
-            (pos == (context.size() - 1))) {
+        // No comma found
+        if (pos < 0) {
+          argRanges.push_back(tokenRange(0, tokens));
           break;
         }
         argRanges.push_back(tokenRange(0, pos));
+        // Trailing comma found
+        if (pos == (tokens - 1)) {
+          break;
+        }
         context.set(pos + 1);
       }
       context.pop();
-    }
-
-    variable parser_t::getArgument() {
-      return variable();
     }
 
     class_t parser_t::loadClassType() {

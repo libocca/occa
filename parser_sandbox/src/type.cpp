@@ -427,6 +427,7 @@ namespace occa {
     function_t::function_t(const function_t &other) :
       type_t(other.name),
       returnType(other.returnType),
+      args(other.args),
       isPointer(other.isPointer),
       isBlock(other.isBlock) {}
 

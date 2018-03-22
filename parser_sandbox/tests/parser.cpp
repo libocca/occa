@@ -406,23 +406,23 @@ void testArgumentLoading() {
 
   setSource("a, b");
   parser.getArgumentRanges(argRanges);
-  OCCA_ASSERT_EQUAL(1,
+  OCCA_ASSERT_EQUAL(2,
                     (int) argRanges.size());
 
   setSource("(,,)");
   parser.getArgumentRanges(argRanges);
-  OCCA_ASSERT_EQUAL(0,
+  OCCA_ASSERT_EQUAL(1,
                     (int) argRanges.size());
 
   setSource("(,,), (,,), (,,)");
   parser.getArgumentRanges(argRanges);
-  OCCA_ASSERT_EQUAL(2,
+  OCCA_ASSERT_EQUAL(3,
                     (int) argRanges.size());
 
   // Removes trailing comma
   setSource("a, b,");
   parser.getArgumentRanges(argRanges);
-  OCCA_ASSERT_EQUAL(1,
+  OCCA_ASSERT_EQUAL(2,
                     (int) argRanges.size());
 
   // Test arguments
@@ -430,7 +430,9 @@ void testArgumentLoading() {
 
 void testFunctionPointerLoading() {
   variable var;
+#define varFunc var.vartype.type->to<function_t>()
 
+  // Test pointer vs block
   assertFunctionPointer("int (*varname)()");
   var = loadVariable("int (*varname)()");
 
@@ -438,15 +440,39 @@ void testFunctionPointerLoading() {
                            var.vartype.type->type());
   OCCA_ASSERT_EQUAL("varname",
                     var.name);
-  OCCA_ASSERT_TRUE(var.vartype.type->to<function_t>().isPointer);
-  OCCA_ASSERT_FALSE(var.vartype.type->to<function_t>().isBlock);
+  OCCA_ASSERT_TRUE(varFunc.isPointer);
+  OCCA_ASSERT_FALSE(varFunc.isBlock);
 
   assertFunctionPointer("int (^varname)()");
   var = loadVariable("int (^varname)()");
   OCCA_ASSERT_EQUAL("varname",
                     var.name);
-  OCCA_ASSERT_FALSE(var.vartype.type->to<function_t>().isPointer);
-  OCCA_ASSERT_TRUE(var.vartype.type->to<function_t>().isBlock);
+  OCCA_ASSERT_FALSE(varFunc.isPointer);
+  OCCA_ASSERT_TRUE(varFunc.isBlock);
+
+  // Test arguments
+  var = loadVariable("int (*varname)()");
+  OCCA_ASSERT_EQUAL(0,
+                    (int) varFunc.args.size());
+
+  var = loadVariable("int (*varname)(const int i = 0,)");
+  OCCA_ASSERT_EQUAL(1,
+                    (int) varFunc.args.size());
+  OCCA_ASSERT_EQUAL(&int_,
+                    varFunc.args[0].vartype.type);
+  OCCA_ASSERT_TRUE(varFunc.args[0].vartype.has(const_));
+  OCCA_ASSERT_EQUAL("i",
+                    varFunc.args[0].name);
+
+  var = loadVariable("int (*varname)(int, double,)");
+  OCCA_ASSERT_EQUAL(2,
+                    (int) varFunc.args.size());
+  OCCA_ASSERT_EQUAL(&int_,
+                    varFunc.args[0].vartype.type);
+  OCCA_ASSERT_EQUAL(&double_,
+                    varFunc.args[1].vartype.type);
+
+#undef varFunc
 }
 //======================================
 

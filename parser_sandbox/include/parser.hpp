@@ -120,6 +120,7 @@ namespace occa {
       variable loadVariable(vartype_t &vartype);
       void loadType(vartype_t &vartype);
 
+      bool hasArray();
       void setArrays(vartype_t &vartype);
       void setArray(vartype_t &vartype);
 

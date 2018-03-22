@@ -92,6 +92,14 @@ namespace occa {
         return *ptr;
       }
 
+      template <class TM>
+      inline TM& constTo() const {
+        TM *ptr = dynamic_cast<TM*>(const_cast<type_t*>(this));
+        OCCA_ERROR("Unable to cast type_t::to",
+                   ptr != NULL);
+        return *ptr;
+      }
+
       bool operator == (const type_t &other) const;
       bool operator != (const type_t &other) const;
       virtual bool equals(const type_t &other) const;
