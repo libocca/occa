@@ -22,6 +22,7 @@
 
 #include "exprNode.hpp"
 #include "type.hpp"
+#include "variable.hpp"
 
 namespace occa {
   namespace lang {
@@ -51,6 +52,26 @@ namespace occa {
     //---[ Type ]-----------------------
     type_t::type_t(const std::string &name_) :
       name(name_) {}
+
+    type_t::~type_t() {}
+
+    bool type_t::operator == (const type_t &other) const {
+      if (type() != other.type()) {
+        return false;
+      }
+      if (this == &other) {
+        return true;
+      }
+      return equals(other);
+    }
+
+    bool type_t::operator != (const type_t &other) const {
+      return !(*this == other);
+    }
+
+    bool type_t::equals(const type_t &other) const {
+      return false;
+    }
 
     printer& operator << (printer &pout,
                           const type_t &type) {
@@ -141,29 +162,52 @@ namespace occa {
       isReference(false) {}
 
     vartype_t::vartype_t(const type_t &type_) :
-      type(&type_),
-      isReference(false) {}
+      isReference(false) {
+      if (!type_.name.size()) {
+        type = &(type_.clone());
+      } else {
+        type = &type_;
+      }
+    }
 
-    vartype_t::vartype_t(const vartype_t &other) {
+    vartype_t::vartype_t(const vartype_t &other) :
+      type(NULL),
+      isReference(false) {
       *this = other;
+    }
+
+    vartype_t::~vartype_t() {
+      clear();
     }
 
     vartype_t& vartype_t::operator = (const vartype_t &other) {
       clear();
       qualifiers  = other.qualifiers;
-      type        = other.type;
       pointers    = other.pointers;
       isReference = other.isReference;
       arrays      = other.arrays;
+
+      if (other.type &&
+          !other.type->name.size()) {
+        type = &(other.type->clone());
+      } else {
+        type = other.type;
+      }
+
       return *this;
     }
 
     void vartype_t::clear() {
       qualifiers.clear();
-      type = NULL;
       pointers.clear();
       isReference = false;
       arrays.clear();
+
+      if (type &&
+          !type->name.size()) {
+        delete type;
+      }
+      type = NULL;
     }
 
     bool vartype_t::isValid() const {
@@ -178,7 +222,7 @@ namespace occa {
       vartype_t flat      = flatten();
       vartype_t otherFlat = other.flatten();
 
-      if ((flat.type        != otherFlat.type)        ||
+      if (((*flat.type)     != (*otherFlat.type))     ||
           (flat.isReference != otherFlat.isReference) ||
           (flat.qualifiers  != otherFlat.qualifiers)) {
         return false;
@@ -326,29 +370,16 @@ namespace occa {
     }
     //==================================
 
-    //---[ Argument ]-------------------
-    argument_t::argument_t(const vartype_t &type_) :
-      type(type_) {}
-
-    argument_t::argument_t(const vartype_t &type_,
-                           const std::string name_) :
-      type(type_),
-      name(name_) {}
-
-    printer& operator << (printer &pout,
-                          const argument_t &arg) {
-      arg.type.printDeclaration(pout,
-                                arg.name);
-      return pout;
-    }
-    //==================================
-
     //---[ Types ]----------------------
     primitive_t::primitive_t(const std::string &name_) :
       type_t(name_) {}
 
     int primitive_t::type() const {
       return typeType::primitive;
+    }
+
+    type_t& primitive_t::clone() const {
+      return *(const_cast<primitive_t*>(this));
     }
 
     void primitive_t::printDeclaration(printer &pout) const {
@@ -362,6 +393,17 @@ namespace occa {
 
     int typedef_t::type() const {
       return typeType::typedef_;
+    }
+
+    type_t& typedef_t::clone() const {
+      if (name.size()) {
+        return *(const_cast<typedef_t*>(this));
+      }
+      return *(new typedef_t(baseType, name));
+    }
+
+    bool typedef_t::equals(const type_t &other) const {
+      return (baseType == other.to<typedef_t>().baseType);
     }
 
     void typedef_t::printDeclaration(printer &pout) const {
@@ -382,13 +424,55 @@ namespace occa {
       isPointer(false),
       isBlock(false) {}
 
+    function_t::function_t(const function_t &other) :
+      type_t(other.name),
+      returnType(other.returnType),
+      isPointer(other.isPointer),
+      isBlock(other.isBlock) {}
+
     int function_t::type() const {
       return typeType::function;
     }
 
-    function_t& function_t::operator += (const argument_t &arg) {
+    type_t& function_t::clone() const {
+      if (name.size()) {
+        return *(const_cast<function_t*>(this));
+      }
+      return *(new function_t(*this));
+    }
+
+    function_t& function_t::operator += (const variable &arg) {
       args.push_back(arg);
       return *this;
+    }
+
+    function_t& function_t::operator += (const variableVector &args_) {
+      const int count = (int) args_.size();
+      for (int i = 0; i < count; ++i) {
+        args.push_back(args_[i]);
+      }
+      return *this;
+    }
+
+    bool function_t::equals(const type_t &other) const {
+      const function_t &other_ = other.to<function_t>();
+
+      const int argSize = (int) args.size();
+      if ((isPointer != other_.isPointer) ||
+          (isBlock   != other_.isBlock)   ||
+          (argSize   != (int) other_.args.size())) {
+        return false;
+      }
+      if (returnType != other_.returnType) {
+        return false;
+      }
+
+      for (int i = 0; i < argSize; ++i) {
+        if (args[i].vartype != other_.args[i].vartype) {
+          return false;
+        }
+      }
+      return true;
     }
 
     void function_t::printDeclaration(printer &pout) const {
@@ -411,7 +495,7 @@ namespace occa {
         if (i) {
           pout << ",\n" << argIndent;
         }
-        pout << args[i];
+        args[i].printDeclaration(pout);
       }
       pout << ')';
     }
@@ -426,6 +510,10 @@ namespace occa {
       return typeType::class_;
     }
 
+    type_t& class_t::clone() const {
+      return *(new class_t());
+    }
+
     void class_t::printDeclaration(printer &pout) const {
     }
 
@@ -434,6 +522,10 @@ namespace occa {
 
     int struct_t::type() const {
       return typeType::struct_;
+    }
+
+    type_t& struct_t::clone() const {
+      return *(new struct_t());
     }
 
     void struct_t::printDeclaration(printer &pout) const {
@@ -446,6 +538,10 @@ namespace occa {
       return typeType::enum_;
     }
 
+    type_t& enum_t::clone() const {
+      return *(new enum_t());
+    }
+
     void enum_t::printDeclaration(printer &pout) const {
     }
 
@@ -454,6 +550,10 @@ namespace occa {
 
     int union_t::type() const {
       return typeType::union_;
+    }
+
+    type_t& union_t::clone() const {
+      return *(new union_t());
     }
 
     void union_t::printDeclaration(printer &pout) const {

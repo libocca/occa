@@ -26,23 +26,33 @@ namespace occa {
   namespace lang {
     variable::variable() {}
 
-    variable::variable(const vartype_t &type_,
+    variable::variable(const vartype_t &vartype_,
                        const std::string &name_) :
-      type(type_),
+      vartype(vartype_),
       name(name_) {}
 
     variable::variable(const variable &other) :
-      type(other.type),
+      vartype(other.vartype),
       name(other.name) {}
 
     variable::~variable() {}
 
+    bool variable::operator == (const variable &other) const {
+      if (this == &other) {
+        return true;
+      }
+      if (name != other.name) {
+        return false;
+      }
+      return vartype == other.vartype;
+    }
+
     void variable::printDeclaration(printer &pout) const {
-      type.printDeclaration(pout, name);
+      vartype.printDeclaration(pout, name);
     }
 
     void variable::printExtraDeclaration(printer &pout) const {
-      type.printExtraDeclaration(pout, name);
+      vartype.printExtraDeclaration(pout, name);
     }
 
     printer& operator << (printer &pout,

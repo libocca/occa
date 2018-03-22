@@ -98,6 +98,8 @@ namespace occa {
       //================================
 
       //---[ Type Loaders ]-------------
+      variable loadVariable();
+
       vartype_t preloadType();
 
       void loadBaseType(vartype_t &vartype);
@@ -113,18 +115,17 @@ namespace occa {
 
       bool isLoadingFunctionPointer();
       bool isLoadingVariable();
-      bool isLoadingType();
 
-      function_t loadFunctionPointer(vartype_t &vartype);
+      variable loadFunctionPointer(vartype_t &vartype);
       variable loadVariable(vartype_t &vartype);
       void loadType(vartype_t &vartype);
 
       void setArrays(vartype_t &vartype);
       void setArray(vartype_t &vartype);
 
-      void setArguments(argumentVector &args);
+      void setArguments(variableVector &args);
       void getArgumentRanges(tokenRangeVector &argRanges);
-      argument_t getArgument();
+      variable getArgument();
 
       class_t loadClassType();
       struct_t loadStructType();

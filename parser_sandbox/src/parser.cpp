@@ -264,7 +264,20 @@ namespace occa {
     //==================================
 
     //---[ Type Loaders ]---------------
+    variable parser_t::loadVariable() {
+      vartype_t vartype = preloadType();
+      if (isLoadingFunctionPointer()) {
+        return loadFunctionPointer(vartype);
+      }
+      return loadVariable(vartype);
+    }
+
     vartype_t parser_t::preloadType() {
+      // TODO: Handle weird () cases:
+      //        int (*const (*const a))      -> int * const * const a;
+      //        int (*const (*const (*a)))() -> int (* const * const *a)();
+      // Set the name in loadBaseType and look for (*)() or (^)()
+      //   to stop qualifier merging
       vartype_t vartype;
       if (!context.size()) {
         return vartype;
@@ -275,9 +288,13 @@ namespace occa {
           !vartype.isValid()) {
         return vartype;
       }
-      setPointers(vartype);
-      setReference(vartype);
 
+      setPointers(vartype);
+      if (!success) {
+        return vartype;
+      }
+
+      setReference(vartype);
       return vartype;
     }
 
@@ -446,12 +463,7 @@ namespace occa {
               (getOperatorType(context[2]) & operatorType::parenthesesStart));
     }
 
-    bool parser_t::isLoadingType() {
-      return (!context.size() ||
-              (!(context[0]->type() & tokenType::identifier)));
-    }
-
-    function_t parser_t::loadFunctionPointer(vartype_t &vartype) {
+    variable parser_t::loadFunctionPointer(vartype_t &vartype) {
       // TODO: Check for nested function pointers
       //       Check for arrays
       context.pushPairRange(0);
@@ -460,15 +472,27 @@ namespace occa {
       context.set(1);
 
       function_t func(vartype);
-      if (isLoadingVariable()) {
-        func.name = loadVariable(vartype).name;
-      }
       func.isPointer = isPointer;
       func.isBlock   = !isPointer;
 
+      variable var(func);
+      if (context.size() &&
+          (context[0]->type() & tokenType::identifier)) {
+        var.name = (context[0]
+                    ->to<identifierToken>()
+                    .value);
+        context.set(1);
+      }
+      setArrays(var.vartype);
+
+      if (context.size()) {
+        context[0]->printError("Unable to parse type");
+        success = false;
+      }
+
       context.popAndSkipPair();
 
-      return func;
+      return var;
     }
 
     variable parser_t::loadVariable(vartype_t &vartype) {
@@ -507,7 +531,7 @@ namespace occa {
       }
     }
 
-    void parser_t::setArguments(argumentVector &args) {
+    void parser_t::setArguments(variableVector &args) {
       tokenRangeVector argRanges;
       getArgumentRanges(argRanges);
 
@@ -544,8 +568,8 @@ namespace occa {
       context.pop();
     }
 
-    argument_t parser_t::getArgument() {
-      return argument_t(vartype_t());
+    variable parser_t::getArgument() {
+      return variable();
     }
 
     class_t parser_t::loadClassType() {

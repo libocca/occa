@@ -34,11 +34,11 @@ namespace occa {
     class blockStatement;
     class pointer_t;
     class array_t;
-    class argument_t;
+    class variable;
 
-    typedef std::vector<pointer_t>  pointerVector;
-    typedef std::vector<array_t>    arrayVector;
-    typedef std::vector<argument_t> argumentVector;
+    typedef std::vector<pointer_t> pointerVector;
+    typedef std::vector<array_t>   arrayVector;
+    typedef std::vector<variable>  variableVector;
 
     namespace typeType {
       extern const int none;
@@ -66,8 +66,10 @@ namespace occa {
       std::string name;
 
       type_t(const std::string &name_);
+      virtual ~type_t();
 
       virtual int type() const = 0;
+      virtual type_t& clone() const = 0;
 
       template <class TM>
       inline bool is() const {
@@ -89,6 +91,10 @@ namespace occa {
                    ptr != NULL);
         return *ptr;
       }
+
+      bool operator == (const type_t &other) const;
+      bool operator != (const type_t &other) const;
+      virtual bool equals(const type_t &other) const;
 
       virtual void printDeclaration(printer &pout) const = 0;
     };
@@ -147,6 +153,7 @@ namespace occa {
       vartype_t();
       vartype_t(const type_t &type_);
       vartype_t(const vartype_t &other);
+      ~vartype_t();
 
       vartype_t& operator = (const vartype_t &other);
 
@@ -180,20 +187,6 @@ namespace occa {
       void printExtraDeclaration(printer &pout,
                                  const std::string &name) const;
     };
-
-    class argument_t {
-    public:
-      vartype_t type;
-      std::string name;
-
-      argument_t(const vartype_t &type_);
-
-      argument_t(const vartype_t &type_,
-                 const std::string name_);
-    };
-
-    printer& operator << (printer &pout,
-                          const argument_t &arg);
     //==================================
 
     //---[ Types ]----------------------
@@ -202,6 +195,8 @@ namespace occa {
       primitive_t(const std::string &name_);
 
       virtual int type() const;
+      virtual type_t& clone() const;
+
       virtual void printDeclaration(printer &pout) const;
     };
 
@@ -210,16 +205,20 @@ namespace occa {
       vartype_t baseType;
 
       typedef_t(const vartype_t &baseType_,
-                const std::string &name_);
+                const std::string &name_ = "");
 
       virtual int type() const;
+      virtual type_t& clone() const;
+
+      virtual bool equals(const type_t &other) const;
+
       virtual void printDeclaration(printer &pout) const;
     };
 
     class function_t : public type_t {
     public:
       vartype_t returnType;
-      argumentVector args;
+      variableVector args;
 
       // Obj-C block found in OSX headers
       bool isPointer, isBlock;
@@ -227,10 +226,16 @@ namespace occa {
       function_t();
       function_t(const vartype_t &returnType_,
                  const std::string &name_ = "");
+      function_t(const function_t &other);
 
-      function_t& operator += (const argument_t &arg);
+      function_t& operator += (const variable &arg);
+      function_t& operator += (const variableVector &args_);
 
       virtual int type() const;
+      virtual type_t& clone() const;
+
+      virtual bool equals(const type_t &other) const;
+
       virtual void printDeclaration(printer &pout) const;
     };
 
@@ -238,7 +243,7 @@ namespace occa {
     public:
       blockStatement body;
 
-      structure_t(const std::string &name_);
+      structure_t(const std::string &name_ = "");
     };
 
     class class_t : public structure_t {
@@ -246,6 +251,8 @@ namespace occa {
       class_t();
 
       virtual int type() const;
+      virtual type_t& clone() const;
+
       virtual void printDeclaration(printer &pout) const;
     };
 
@@ -254,6 +261,8 @@ namespace occa {
       struct_t();
 
       virtual int type() const;
+      virtual type_t& clone() const;
+
       virtual void printDeclaration(printer &pout) const;
     };
 
@@ -262,6 +271,8 @@ namespace occa {
       enum_t();
 
       virtual int type() const;
+      virtual type_t& clone() const;
+
       virtual void printDeclaration(printer &pout) const;
     };
 
@@ -270,6 +281,8 @@ namespace occa {
       union_t();
 
       virtual int type() const;
+      virtual type_t& clone() const;
+
       virtual void printDeclaration(printer &pout) const;
     };
     //==================================

@@ -28,16 +28,17 @@ namespace occa {
   namespace lang {
     class variable {
     public:
-      vartype_t type;
+      vartype_t vartype;
       std::string name;
 
       variable();
-      variable(const vartype_t &type_,
-               const std::string &name_);
-
+      variable(const vartype_t &vartype_,
+               const std::string &name_ = "");
       variable(const variable &other);
 
       ~variable();
+
+      bool operator == (const variable &other) const;
 
       void printDeclaration(printer &pout) const;
       void printExtraDeclaration(printer &pout) const;

@@ -131,11 +131,11 @@ void testFunction() {
   arg4 += array_t(&arg4Size.clone());
 
   function_t f(void_, "foo");
-  f += argument_t(t1 , "a");
-  f += argument_t(td2, "b");
-  f += argument_t(arg3);
-  f += argument_t(arg4, "array");
-  f += argument_t(double_, "e");
+  f += variable(t1 , "a");
+  f += variable(td2, "b");
+  f += variable(arg3);
+  f += variable(arg4, "array");
+  f += variable(double_, "e");
 
   function_t f2(f, "bar");
 
