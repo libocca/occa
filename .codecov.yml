@@ -1,13 +1,21 @@
 coverage:
+  precision: 2
+  round: down
+  range: "70...100"
+
   status:
     project:
       default: false
       api:
         flags: api
-        target: 90%
       parser:
         flags: parser
-        target: 90%
+    patch:
+      default: false
+      api:
+        flags: api
+      parser:
+        flags: parser
 
 flags:
   api:

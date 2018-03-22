@@ -19,6 +19,7 @@ before_install:
 install:
   - |
     if [ "${CXX}" == "g++" ]; then
+      RUNNING_CODECOV=1
       BUILD_CXXFLAGS="${CXXFLAGS} -fprofile-arcs -ftest-coverage"
       TEST_CXXFLAGS="${CXXFLAGS} -lgcov --coverage"
     fi
@@ -26,19 +27,23 @@ install:
 script:
   - cd ${TRAVIS_BUILD_DIR}
   - CXXFLAGS="${BUILD_CXXFLAGS}" make -j
+
   - cd parser_sandbox
   - CXXFLAGS="${BUILD_CXXFLAGS}" make -j
-  - cd ..
-  - CXXFLAGS="${TEST_CXXFLAGS}" make test
-  - cd parser_sandbox
-  - CXXFLAGS="${TEST_CXXFLAGS}" make -j tests
-  - make test
+  - CXXFLAGS="${TEST_CXXFLAGS}"  make -j tests
 
-after_success:
+  - cd ${TRAVIS_BUILD_DIR}
+  - CXXFLAGS="${TEST_CXXFLAGS}" make test
   - |
-    if [ "${CXX}" != "clang++" ]; then
-      cd ${TRAVIS_BUILD_DIR}
-      bash <(curl -s https://codecov.io/bash)
+    if [ ${RUNNING_CODECOV} ]; then
+      bash <(curl -s https://codecov.io/bash) -c -F api
+    fi
+
+  - cd parser_sandbox
+  - make test
+  - |
+    if [ ${RUNNING_CODECOV} ]; then
+      bash <(curl -s https://codecov.io/bash) -c -F parser
     fi
 
 notifications:
