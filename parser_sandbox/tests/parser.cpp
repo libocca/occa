@@ -173,34 +173,61 @@ void testPeek() {
 //======================================
 
 //---[ Type Loading ]-------------------
+vartype_t preloadType(const std::string &s) {
+  setSource(s);
+  return parser.preloadType();
+}
+
+#define assertType(str_)                        \
+  setSource(str_);                              \
+  parser.preloadType();                         \
+  OCCA_ASSERT_TRUE(parser.isLoadingType())
+
 vartype_t loadType(const std::string &s) {
   setSource(s);
-  return parser.loadType();
+
+  vartype_t vartype = parser.preloadType();
+  parser.loadType(vartype);
+  return vartype;
+}
+
+#define assertVariable(str_)                    \
+  setSource(str_);                              \
+  parser.preloadType();                         \
+  OCCA_ASSERT_TRUE(parser.isLoadingVariable())
+
+variable loadVariable(const std::string &s) {
+  setSource(s);
+
+  vartype_t vartype = parser.preloadType();
+  return parser.loadVariable(vartype);
 }
 
 void testBaseTypeLoading();
 void testPointerTypeLoading();
 void testReferenceTypeLoading();
 void testArrayTypeLoading();
+void testVariableLoading();
 
 void testTypeLoading() {
   testBaseTypeLoading();
   testPointerTypeLoading();
   testReferenceTypeLoading();
   testArrayTypeLoading();
+  testVariableLoading();
 }
 
 void testBaseTypeLoading() {
   vartype_t type;
 
   // Test base type
-  type = loadType("int");
+  type = preloadType("int");
   OCCA_ASSERT_EQUAL(0,
                     type.qualifiers.size());
   OCCA_ASSERT_EQUAL(&int_,
                     type.type);
 
-  type = loadType("const volatile float");
+  type = preloadType("const volatile float");
   OCCA_ASSERT_EQUAL(2,
                     type.qualifiers.size());
   OCCA_ASSERT_TRUE(type.has(volatile_));
@@ -208,7 +235,7 @@ void testBaseTypeLoading() {
   OCCA_ASSERT_EQUAL(&float_,
                     type.type);
 
-  type = loadType("const long long");
+  type = preloadType("const long long");
   OCCA_ASSERT_EQUAL(2,
                     type.qualifiers.size());
   OCCA_ASSERT_TRUE(type.has(const_));
@@ -217,7 +244,7 @@ void testBaseTypeLoading() {
                     type.type);
 
   // Test weird order declaration
-  type = loadType("double const long long");
+  type = preloadType("double const long long");
   OCCA_ASSERT_EQUAL(2,
                     type.qualifiers.size());
   OCCA_ASSERT_TRUE(type.has(const_));
@@ -226,29 +253,29 @@ void testBaseTypeLoading() {
                     type.type);
 
   std::cerr << "Testing type loading errors:\n";
-  type = loadType("const");
-  type = loadType("const foo");
-  type = loadType("const const");
-  type = loadType("long long long");
+  type = preloadType("const");
+  type = preloadType("const foo");
+  type = preloadType("const const");
+  type = preloadType("long long long");
 }
 
 void testPointerTypeLoading() {
   vartype_t type;
 
-  type = loadType("int *");
+  type = preloadType("int *");
   OCCA_ASSERT_EQUAL(1,
                     (int) type.pointers.size());
   OCCA_ASSERT_EQUAL(0,
                     type.pointers[0].qualifiers.size());
 
-  type = loadType("const volatile float * const");
+  type = preloadType("const volatile float * const");
   OCCA_ASSERT_EQUAL(1,
                     (int) type.pointers.size());
   OCCA_ASSERT_EQUAL(1,
                     type.pointers[0].qualifiers.size());
   OCCA_ASSERT_TRUE(type.pointers[0].has(const_));
 
-  type = loadType("float * const * volatile ** const volatile restrict");
+  type = preloadType("float * const * volatile ** const volatile restrict");
   OCCA_ASSERT_EQUAL(4,
                     (int) type.pointers.size());
   OCCA_ASSERT_TRUE(type.pointers[0].has(const_));
@@ -260,46 +287,50 @@ void testPointerTypeLoading() {
   OCCA_ASSERT_TRUE(type.pointers[3].has(restrict_));
 
   std::cerr << "Testing type loading errors:\n";
-  type = loadType("const *");
-  type = loadType("float * long");
+  type = preloadType("const *");
+  type = preloadType("float * long");
 }
 
 void testReferenceTypeLoading() {
   vartype_t type;
 
-  type = loadType("int");
+  type = preloadType("int");
   OCCA_ASSERT_FALSE(type.isReference);
-  type = loadType("int &");
+  type = preloadType("int &");
   OCCA_ASSERT_TRUE(type.isReference);
 
-  type = loadType("int *");
+  type = preloadType("int *");
   OCCA_ASSERT_FALSE(type.isReference);
-  type = loadType("int *&");
+  type = preloadType("int *&");
   OCCA_ASSERT_TRUE(type.isReference);
 
-  type = loadType("int ***");
+  type = preloadType("int ***");
   OCCA_ASSERT_FALSE(type.isReference);
-  type = loadType("int ***&");
+  type = preloadType("int ***&");
   OCCA_ASSERT_TRUE(type.isReference);
 }
 
 void testArrayTypeLoading() {
   vartype_t type;
 
+  assertType("int[]");
   type = loadType("int[]");
   OCCA_ASSERT_EQUAL(1,
                     (int) type.arrays.size());
 
+  assertType("int[][]");
   type = loadType("int[][]");
   OCCA_ASSERT_EQUAL(2,
                     (int) type.arrays.size());
 
+  assertType("int[1]");
   type = loadType("int[1]");
   OCCA_ASSERT_EQUAL(1,
                     (int) type.arrays.size());
   OCCA_ASSERT_EQUAL(1,
                     (int) type.arrays[0].evaluateSize());
 
+  assertType("int[1 + 3][7]");
   type = loadType("int[1 + 3][7]");
   OCCA_ASSERT_EQUAL(2,
                     (int) type.arrays.size());
@@ -309,7 +340,50 @@ void testArrayTypeLoading() {
                     (int) type.arrays[1].evaluateSize());
 
   std::cerr << "Testing array type loading errors:\n";
+  assertType("int[-]");
   loadType("int[-]");
+}
+
+void testVariableLoading() {
+  variable var;
+
+  assertVariable("int varname[]");
+  var = loadVariable("int varname[]");
+  OCCA_ASSERT_EQUAL("varname",
+                    var.name);
+  OCCA_ASSERT_EQUAL(1,
+                    (int) var.type.arrays.size());
+
+  assertVariable("int varname[][]");
+  var = loadVariable("int varname[][]");
+  OCCA_ASSERT_EQUAL("varname",
+                    var.name);
+  OCCA_ASSERT_EQUAL(2,
+                    (int) var.type.arrays.size());
+
+  assertVariable("int varname[1]");
+  var = loadVariable("int varname[1]");
+  OCCA_ASSERT_EQUAL("varname",
+                    var.name);
+  OCCA_ASSERT_EQUAL(1,
+                    (int) var.type.arrays.size());
+  OCCA_ASSERT_EQUAL(1,
+                    (int) var.type.arrays[0].evaluateSize());
+
+  assertVariable("int varname[1 + 3][7]");
+  var = loadVariable("int varname[1 + 3][7]");
+  OCCA_ASSERT_EQUAL("varname",
+                    var.name);
+  OCCA_ASSERT_EQUAL(2,
+                    (int) var.type.arrays.size());
+  OCCA_ASSERT_EQUAL(4,
+                    (int) var.type.arrays[0].evaluateSize());
+  OCCA_ASSERT_EQUAL(7,
+                    (int) var.type.arrays[1].evaluateSize());
+
+  std::cerr << "Testing variable loading errors:\n";
+  assertVariable("int varname[-]");
+  loadVariable("int varname[-]");
 }
 //======================================
 

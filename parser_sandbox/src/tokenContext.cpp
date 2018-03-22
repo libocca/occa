@@ -163,12 +163,27 @@ namespace occa {
       set(start, end);
     }
 
+    void tokenContext::pushPairRange(const int pairStart) {
+      const int pairEnd = getClosingPair(pairStart);
+      if (pairEnd >= 0) {
+        push(pairStart + 1, pairEnd);
+      } else {
+        OCCA_FORCE_ERROR("Trying to push a pair range without a pair");
+      }
+    }
+
     tokenRange tokenContext::pop() {
       OCCA_ERROR("Unable to call tokenContext::pop",
                  stack.size());
+
+      tokenRange prev = tp;
       tp = stack.back();
       stack.pop_back();
-      return tp;
+
+      // Return a relative tokenRange
+      const int prevStart = prev.start - tp.start;
+      return tokenRange(prevStart,
+                        prevStart + (prev.end - prev.start));
     }
 
     int tokenContext::size() const {

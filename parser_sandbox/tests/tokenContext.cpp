@@ -94,9 +94,11 @@ void testMethods() {
   OCCA_ASSERT_EQUAL((token_t*) NULL,
                     context[1]);
 
-  context.pop();
+  tokenRange prev = context.pop();
   OCCA_ASSERT_EQUAL(0, context.tp.start);
   OCCA_ASSERT_EQUAL(3, context.tp.end);
+  OCCA_ASSERT_EQUAL(1, prev.start);
+  OCCA_ASSERT_EQUAL(2, prev.end);
 
   context.set(1);
   OCCA_ASSERT_EQUAL(1, context.tp.start);
@@ -107,9 +109,11 @@ void testMethods() {
   OCCA_ASSERT_EQUAL(2, context.tp.start);
   OCCA_ASSERT_EQUAL(3, context.tp.end);
 
-  context.pop();
+  prev = context.pop();
   OCCA_ASSERT_EQUAL(1, context.tp.start);
   OCCA_ASSERT_EQUAL(3, context.tp.end);
+  OCCA_ASSERT_EQUAL(1, prev.start);
+  OCCA_ASSERT_EQUAL(2, prev.end);
 }
 
 void testPairs() {
@@ -131,6 +135,18 @@ void testPairs() {
   OCCA_ASSERT_EQUAL(20, context.pairs[12]); //   [
   OCCA_ASSERT_EQUAL(15, context.pairs[13]); //    {
   OCCA_ASSERT_EQUAL(19, context.pairs[17]); //    {
+
+  // Test pair range pushes
+  intIntMap::iterator it = context.pairs.begin();
+  while (it != context.pairs.end()) {
+    const int pairStart = it->first;
+    const int pairEnd   = it->second;
+    context.pushPairRange(pairStart);
+    OCCA_ASSERT_EQUAL(pairEnd - pairStart - 1,
+                      context.size());
+    context.pop();
+    ++it;
+  }
 
   std::cerr << "Testing pair errors:\n";
 

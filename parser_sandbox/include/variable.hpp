@@ -31,6 +31,7 @@ namespace occa {
       vartype_t type;
       std::string name;
 
+      variable();
       variable(const vartype_t &type_,
                const std::string &name_);
 

@@ -32,6 +32,7 @@
 #include "statement.hpp"
 #include "tokenizer.hpp"
 #include "tokenContext.hpp"
+#include "variable.hpp"
 
 namespace occa {
   namespace lang {
@@ -84,6 +85,7 @@ namespace occa {
       void parseTokens();
 
       keyword_t* getKeyword(token_t *token);
+      opType_t getOperatorType(token_t *token);
       //================================
 
       //---[ Peek ]---------------------
@@ -96,7 +98,7 @@ namespace occa {
       //================================
 
       //---[ Type Loaders ]-------------
-      vartype_t loadType();
+      vartype_t preloadType();
 
       void loadBaseType(vartype_t &vartype);
 
@@ -109,8 +111,12 @@ namespace occa {
 
       void setReference(vartype_t &vartype);
 
-      bool willLoadFunctionPointer();
-      void loadFunctionPointer(vartype_t &vartype);
+      bool isLoadingFunctionPointer();
+      bool isLoadingVariable();
+      bool isLoadingType();
+
+      variable loadVariable(vartype_t &vartype);
+      void loadType(vartype_t &vartype);
 
       void setArrays(vartype_t &vartype);
       void setArray(vartype_t &vartype);

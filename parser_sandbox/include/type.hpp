@@ -41,6 +41,8 @@ namespace occa {
     typedef std::vector<argument_t> argumentVector;
 
     namespace typeType {
+      extern const int none;
+
       extern const int primitive;
       extern const int typedef_;
       extern const int function;

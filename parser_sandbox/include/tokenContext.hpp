@@ -75,7 +75,10 @@ namespace occa {
       void push(const int start,
                 const int end);
 
+      void pushPairRange(const int pairStart);
+
       tokenRange pop();
+      tokenRange popAfterPair();
 
       int size() const;
       token_t* operator [] (const int index);

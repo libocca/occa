@@ -24,6 +24,8 @@
 
 namespace occa {
   namespace lang {
+    variable::variable() {}
+
     variable::variable(const vartype_t &type_,
                        const std::string &name_) :
       type(type_),

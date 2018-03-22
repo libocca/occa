@@ -161,6 +161,13 @@ namespace occa {
       identifierToken &identifier = token->to<identifierToken>();
       return keywords.get(identifier.value).value();
     }
+
+    opType_t parser_t::getOperatorType(token_t *token) {
+      if (!(token_t::safeType(token) & tokenType::op)) {
+        return operatorType::none;
+      }
+      return token->to<operatorToken>().getOpType();
+    }
     //==================================
 
     //---[ Peek ]-----------------------
@@ -241,19 +248,11 @@ namespace occa {
     }
 
     bool parser_t::isGotoLabel(const int tokenIndex) {
-      token_t *token = context[tokenIndex];
-      if (!(token_t::safeType(token) & tokenType::op)) {
-        return false;
-      }
-      operatorToken &opToken = token->to<operatorToken>();
-      return (opToken.getOpType() & operatorType::colon);
+      return (getOperatorType(context[tokenIndex]) & operatorType::colon);
     }
 
     int parser_t::peekOperator(const int tokenIndex) {
-      const opType_t opType = (context[tokenIndex]
-                               ->to<operatorToken>()
-                               .getOpType());
-
+      const opType_t opType = getOperatorType(context[tokenIndex]);
       if (opType & operatorType::braceStart) {
         return statementType::block;
       }
@@ -265,7 +264,7 @@ namespace occa {
     //==================================
 
     //---[ Type Loaders ]---------------
-    vartype_t parser_t::loadType() {
+    vartype_t parser_t::preloadType() {
       vartype_t vartype;
       if (!context.size()) {
         return vartype;
@@ -278,14 +277,6 @@ namespace occa {
       }
       setPointers(vartype);
       setReference(vartype);
-
-      // Get variable name
-
-      if (willLoadFunctionPointer()) {
-        loadFunctionPointer(vartype);
-      } else {
-        setArrays(vartype);
-      }
 
       return vartype;
     }
@@ -369,12 +360,7 @@ namespace occa {
     void parser_t::setPointers(vartype_t &vartype) {
       while (success &&
              context.size()) {
-        token_t *token = context[0];
-        if (!(token_t::safeType(token) & tokenType::op)) {
-          break;
-        }
-        operatorToken &opToken = token->to<operatorToken>();
-        if (!(opToken.getOpType() & operatorType::mult)) {
+        if (!(getOperatorType(context[0]) & operatorType::mult)) {
           break;
         }
         context.set(1);
@@ -414,45 +400,78 @@ namespace occa {
       if (!context.size()) {
         return;
       }
-      token_t *token = context[0];
-      if (!(token_t::safeType(token) & tokenType::op)) {
-        return;
-      }
-      operatorToken &opToken = token->to<operatorToken>();
-      if (!(opToken.getOpType() & operatorType::bitAnd)) {
+      if (!(getOperatorType(context[0]) & operatorType::bitAnd)) {
         return;
       }
       context.set(1);
       vartype.isReference = true;
     }
 
-    bool parser_t::willLoadFunctionPointer() {
-      /*
-        (* -> function
-        (^ |
+    bool parser_t::isLoadingFunctionPointer() {
+      // TODO: Cover the case 'int *()' -> int (*)()'
+      const int tokens = context.size();
+      // Function pointer starts with (* or (^
+      if (!tokens ||
+          !(getOperatorType(context[0]) & operatorType::parenthesesStart)) {
+        return false;
+      }
 
-        int *[3] -> int *p[3];
-        int *()  -> int (*p)();
-      */
-      return false;
+      context.pushPairRange(0);
+      const bool isFunctionPointer = (
+        context.size()
+        && (getOperatorType(context[0]) & (operatorType::mult |
+                                           operatorType::xor_))
+      );
+      context.pop();
+      return isFunctionPointer;
     }
 
-    void parser_t::loadFunctionPointer(vartype_t &vartype) {
+    bool parser_t::isLoadingVariable() {
+      const int tokens = context.size();
+      // Variable must have an identifier token next
+      if (!tokens ||
+          (!(context[0]->type() & tokenType::identifier))) {
+        return false;
+      }
+      // If nothing else follows, it must be a variable
+      if (tokens == 1) {
+        return true;
+      }
+      // Last check is if the variable is being called
+      //   with a constructor vs defining a function:
+      //   - int foo((...));
+      // Note: We're guaranteed an extra token since we check for
+      //         closing pairs. So there is at least one ')' token
+      return (!(getOperatorType(context[1]) & operatorType::parenthesesStart) ||
+              (getOperatorType(context[2]) & operatorType::parenthesesStart));
+    }
+
+    bool parser_t::isLoadingType() {
+      return (!context.size() ||
+              (!(context[0]->type() & tokenType::identifier)));
+    }
+
+    variable parser_t::loadVariable(vartype_t &vartype) {
+      const std::string name = (context[0]
+                                ->to<identifierToken>()
+                                .value);
+      context.set(1);
+      setArrays(vartype);
+
+      return variable(vartype, name);
+    }
+
+    void parser_t::loadType(vartype_t &vartype) {
+      setArrays(vartype);
     }
 
     void parser_t::setArrays(vartype_t &vartype) {
       while (success &&
              context.size()) {
-        token_t *token = context[0];
-        if (!(token_t::safeType(token) & tokenType::op)) {
+        if (!(getOperatorType(context[0]) & operatorType::bracketStart)) {
           break;
         }
-        operatorToken &opToken = token->to<operatorToken>();
-        if (!(opToken.getOpType() & operatorType::bracketStart)) {
-          break;
-        }
-        const int nextTokenIndex = context.getClosingPair(0);
-        context.push(1, nextTokenIndex);
+        context.pushPairRange(0);
 
         tokenVector tokens;
         context.getAndCloneTokens(tokens);
@@ -463,8 +482,8 @@ namespace occa {
           success = false;
         }
 
-        context.pop();
-        context.set(nextTokenIndex + 1);
+        tokenRange pairRange = context.pop();
+        context.set(pairRange.end + 1);
       }
     }
 

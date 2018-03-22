@@ -26,14 +26,16 @@
 namespace occa {
   namespace lang {
     namespace typeType {
-      const int primitive = (1 << 0);
-      const int typedef_  = (1 << 1);
-      const int function  = (1 << 2);
+      const int none      = (1 << 0);
 
-      const int class_    = (1 << 3);
-      const int struct_   = (1 << 4);
-      const int union_    = (1 << 5);
-      const int enum_     = (1 << 6);
+      const int primitive = (1 << 1);
+      const int typedef_  = (1 << 2);
+      const int function  = (1 << 3);
+
+      const int class_    = (1 << 4);
+      const int struct_   = (1 << 5);
+      const int union_    = (1 << 6);
+      const int enum_     = (1 << 7);
       const int structure = (class_  |
                              struct_ |
                              union_  |
