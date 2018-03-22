@@ -419,17 +419,6 @@ void testFunctionPointerLoading() {
                     func.name);
   OCCA_ASSERT_FALSE(func.isPointer);
   OCCA_ASSERT_TRUE(func.isBlock);
-
-  assertFunctionPointer("int (*varname[])()");
-  func = loadFunctionPointer("int (*varname[])()");
-  OCCA_ASSERT_EQUAL("varname",
-                    func.name);
-  OCCA_ASSERT_EQUAL(1,
-                    (int) func.returnType.arrays.size());
-
-  std::cerr << "Testing function pointer loading errors:\n";
-  assertFunctionPointer("int (*varname[-])()");
-  loadFunctionPointer("int (*varname[-])()");
 }
 //======================================
 

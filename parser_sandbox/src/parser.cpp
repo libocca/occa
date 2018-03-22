@@ -452,21 +452,21 @@ namespace occa {
     }
 
     function_t parser_t::loadFunctionPointer(vartype_t &vartype) {
+      // TODO: Check for nested function pointers
+      //       Check for arrays
       context.pushPairRange(0);
 
       const bool isPointer = (getOperatorType(context[0]) & operatorType::mult);
       context.set(1);
 
-      variable var(vartype, "");
+      function_t func(vartype);
       if (isLoadingVariable()) {
-        var = loadVariable(vartype);
-      } else {
-        setArrays(vartype);
+        func.name = loadVariable(vartype).name;
       }
-
-      function_t func(var.type, var.name);
       func.isPointer = isPointer;
       func.isBlock   = !isPointer;
+
+      context.popAndSkipPair();
 
       return func;
     }
