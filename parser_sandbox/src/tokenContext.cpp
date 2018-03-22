@@ -186,6 +186,10 @@ namespace occa {
                         prevStart + (prev.end - prev.start));
     }
 
+    void tokenContext::popAndSkipPair() {
+      set(pop().end + 1);
+    }
+
     int tokenContext::size() const {
       return (tp.end - tp.start);
     }

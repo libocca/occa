@@ -134,6 +134,8 @@ namespace occa {
       void debugPrint() const;
     };
 
+    std::ostream& operator << (std::ostream &out, token_t &token);
+
     //---[ Unknown ]--------------------
     class unknownToken : public token_t {
     public:

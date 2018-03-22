@@ -144,6 +144,11 @@ namespace occa {
       std::cerr << "]\n";
     }
 
+    std::ostream& operator << (std::ostream &out, token_t &token) {
+      token.print(out);
+      return out;
+    }
+
     //---[ Unknown ]--------------------
     unknownToken::unknownToken(const fileOrigin &origin_) :
       token_t(origin_) {}

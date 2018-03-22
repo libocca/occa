@@ -369,6 +369,12 @@ namespace occa {
       baseType.printDeclaration(pout, name);
     }
 
+    function_t::function_t() :
+      type_t(""),
+      returnType(),
+      isPointer(false),
+      isBlock(false) {}
+
     function_t::function_t(const vartype_t &returnType_,
                            const std::string &name_) :
       type_t(name_),

@@ -115,6 +115,7 @@ namespace occa {
       bool isLoadingVariable();
       bool isLoadingType();
 
+      function_t loadFunctionPointer(vartype_t &vartype);
       variable loadVariable(vartype_t &vartype);
       void loadType(vartype_t &vartype);
 

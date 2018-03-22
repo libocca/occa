@@ -148,6 +148,24 @@ void testPairs() {
     ++it;
   }
 
+  // Test pair range pop
+  // [{1}, {2}]
+  context.pushPairRange(2);
+  // {1}
+  context.pushPairRange(0);
+  // ,
+  context.popAndSkipPair();
+  OCCA_ASSERT_EQUAL_BINARY(tokenType::op,
+                           context[0]->type());
+  OCCA_ASSERT_EQUAL(operatorType::comma,
+                    context[0]->to<operatorToken>().opType());
+  // {2}
+  context.pushPairRange(1);
+  context.popAndSkipPair();
+  OCCA_ASSERT_EQUAL(context.tp.start,
+                    context.tp.end);
+
+
   std::cerr << "Testing pair errors:\n";
 
   setupContext(context, "1, 2)");

@@ -206,11 +206,24 @@ variable loadVariable(const std::string &s) {
   return parser.loadVariable(vartype);
 }
 
+#define assertFunctionPointer(str_)                     \
+  setSource(str_);                                      \
+  parser.preloadType();                                 \
+  OCCA_ASSERT_TRUE(parser.isLoadingFunctionPointer())
+
+function_t loadFunctionPointer(const std::string &s) {
+  setSource(s);
+
+  vartype_t vartype = parser.preloadType();
+  return parser.loadFunctionPointer(vartype);
+}
+
 void testBaseTypeLoading();
 void testPointerTypeLoading();
 void testReferenceTypeLoading();
 void testArrayTypeLoading();
 void testVariableLoading();
+void testFunctionPointerLoading();
 
 void testTypeLoading() {
   testBaseTypeLoading();
@@ -218,6 +231,7 @@ void testTypeLoading() {
   testReferenceTypeLoading();
   testArrayTypeLoading();
   testVariableLoading();
+  testFunctionPointerLoading();
 }
 
 void testBaseTypeLoading() {
@@ -387,6 +401,35 @@ void testVariableLoading() {
   std::cerr << "Testing variable loading errors:\n";
   assertVariable("int varname[-]");
   loadVariable("int varname[-]");
+}
+
+void testFunctionPointerLoading() {
+  function_t func;
+
+  assertFunctionPointer("int (*varname)()");
+  func = loadFunctionPointer("int (*varname)()");
+  OCCA_ASSERT_EQUAL("varname",
+                    func.name);
+  OCCA_ASSERT_TRUE(func.isPointer);
+  OCCA_ASSERT_FALSE(func.isBlock);
+
+  assertFunctionPointer("int (^varname)()");
+  func = loadFunctionPointer("int (^varname)()");
+  OCCA_ASSERT_EQUAL("varname",
+                    func.name);
+  OCCA_ASSERT_FALSE(func.isPointer);
+  OCCA_ASSERT_TRUE(func.isBlock);
+
+  assertFunctionPointer("int (*varname[])()");
+  func = loadFunctionPointer("int (*varname[])()");
+  OCCA_ASSERT_EQUAL("varname",
+                    func.name);
+  OCCA_ASSERT_EQUAL(1,
+                    (int) func.returnType.arrays.size());
+
+  std::cerr << "Testing function pointer loading errors:\n";
+  assertFunctionPointer("int (*varname[-])()");
+  loadFunctionPointer("int (*varname[-])()");
 }
 //======================================
 

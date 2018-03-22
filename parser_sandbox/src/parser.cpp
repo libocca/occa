@@ -451,6 +451,26 @@ namespace occa {
               (!(context[0]->type() & tokenType::identifier)));
     }
 
+    function_t parser_t::loadFunctionPointer(vartype_t &vartype) {
+      context.pushPairRange(0);
+
+      const bool isPointer = (getOperatorType(context[0]) & operatorType::mult);
+      context.set(1);
+
+      variable var(vartype, "");
+      if (isLoadingVariable()) {
+        var = loadVariable(vartype);
+      } else {
+        setArrays(vartype);
+      }
+
+      function_t func(var.type, var.name);
+      func.isPointer = isPointer;
+      func.isBlock   = !isPointer;
+
+      return func;
+    }
+
     variable parser_t::loadVariable(vartype_t &vartype) {
       const std::string name = (context[0]
                                 ->to<identifierToken>()

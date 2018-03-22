@@ -224,8 +224,9 @@ namespace occa {
       // Obj-C block found in OSX headers
       bool isPointer, isBlock;
 
+      function_t();
       function_t(const vartype_t &returnType_,
-                 const std::string &name_);
+                 const std::string &name_ = "");
 
       function_t& operator += (const argument_t &arg);
 
