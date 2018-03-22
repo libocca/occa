@@ -1,0 +1,32 @@
+coverage:
+  status:
+    project:
+      default: false
+      api:
+        flags: api
+        target: 90%
+      parser:
+        flags: parser
+        target: 90%
+
+flags:
+  api:
+    paths:
+      - include/
+      - src/
+    ignore:
+      - examples/
+  parser:
+    paths:
+      - parser_sandbox/include
+      - parser_sandbox/src
+    ignore:
+      - parser_sandbox/tests
+
+comment:
+  layout: 'reach, diff, files'
+  behavior: default
+  require_changes: false
+  require_base: no
+  require_head: yes
+  branches: null
