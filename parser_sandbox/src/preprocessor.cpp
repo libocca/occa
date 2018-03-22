@@ -376,6 +376,18 @@ namespace occa {
       }
     }
 
+    void preprocessor_t::removeNewline(tokenVector &lineTokens) {
+      const int tokens = (int) lineTokens.size();
+      if (!tokens) {
+        return;
+      }
+      token_t *lastToken = lineTokens[tokens - 1];
+      if (lastToken->type() & tokenType::newline) {
+        delete lastToken;
+        lineTokens.pop_back();
+      }
+    }
+
     void preprocessor_t::processToken(token_t *token) {
       decrementNewline();
 
@@ -520,12 +532,7 @@ namespace occa {
                                     bool &isTrue) {
       tokenVector lineTokens;
       getExpandedLineTokens(lineTokens);
-
-      // Remove the newline token
-      if (lineTokens.size()) {
-        delete lineTokens.back();
-        lineTokens.pop_back();
-      }
+      removeNewline(lineTokens);
 
       exprNode *expr = getExpression(lineTokens);
 
@@ -878,12 +885,7 @@ namespace occa {
     void preprocessor_t::processPragma(identifierToken &directive) {
       tokenVector lineTokens;
       getExpandedLineTokens(lineTokens);
-
-      // Remove the newline token
-      if (lineTokens.size()) {
-        delete lineTokens.back();
-        lineTokens.pop_back();
-      }
+      removeNewline(lineTokens);
 
       const std::string value = stringifyTokens(lineTokens, true);
 

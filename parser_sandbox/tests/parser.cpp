@@ -504,7 +504,7 @@ void testLoading() {
   // testJumpsLoading();
   // testClassAccessLoading();
   // testAttributeLoading();
-  // testPragmaLoading();
+  testPragmaLoading();
   // testGotoLoading();
 }
 
@@ -780,13 +780,20 @@ void testAttributeLoading() {
 
 void testPragmaLoading() {
   statement_t *statement;
-  OCCA_ASSERT_TRUE(statement == NULL);
+
+#define pragma_ statement->to<pragmaStatement>()
 
   setStatement("#pragma",
                statementType::pragma);
+  OCCA_ASSERT_EQUAL("",
+                    pragma_.token.value);
+
   setStatement("#pragma occa test",
                statementType::pragma);
-  // TODO: Test the pragma source
+  OCCA_ASSERT_EQUAL("occa test",
+                    pragma_.token.value);
+
+#undef pragma_
 }
 
 void testGotoLoading() {

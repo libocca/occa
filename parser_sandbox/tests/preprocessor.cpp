@@ -562,20 +562,41 @@ void testInclude() {
 }
 
 void testPragma() {
-  setStream("#pragma foo\n");
-  getToken();
-  OCCA_ASSERT_EQUAL_BINARY(tokenType::pragma,
-                           token->type());
-
-  OCCA_ASSERT_EQUAL("foo",
-                    token->to<pragmaToken>().value);
-
   setStream("#pragma\n");
   getToken();
   OCCA_ASSERT_EQUAL_BINARY(tokenType::pragma,
                            token->type());
-
   OCCA_ASSERT_EQUAL(0,
                     (int) token->to<pragmaToken>().value.size());
+
+  setStream("#pragma");
+  getToken();
+  OCCA_ASSERT_EQUAL_BINARY(tokenType::pragma,
+                           token->type());
+  OCCA_ASSERT_EQUAL(0,
+                    (int) token->to<pragmaToken>().value.size());
+
+  setStream("#pragma foo\n");
+  getToken();
+  OCCA_ASSERT_EQUAL_BINARY(tokenType::pragma,
+                           token->type());
+  OCCA_ASSERT_EQUAL("foo",
+                    token->to<pragmaToken>().value);
+
+  setStream("#pragma foo 1 2 3\n");
+  getToken();
+  OCCA_ASSERT_EQUAL_BINARY(tokenType::pragma,
+                           token->type());
+
+  OCCA_ASSERT_EQUAL("foo 1 2 3",
+                    token->to<pragmaToken>().value);
+
+  setStream("#pragma foo 1 2 3");
+  getToken();
+  OCCA_ASSERT_EQUAL_BINARY(tokenType::pragma,
+                           token->type());
+
+  OCCA_ASSERT_EQUAL("foo 1 2 3",
+                    token->to<pragmaToken>().value);
 }
 //======================================

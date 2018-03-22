@@ -822,7 +822,11 @@ namespace occa {
     }
 
     statement_t* parser_t::loadPragmaStatement() {
-      return NULL;
+      pragmaStatement *smnt = new pragmaStatement(context[0]
+                                                  ->clone()
+                                                  ->to<pragmaToken>());
+      context.set(1);
+      return smnt;
     }
 
     statement_t* parser_t::loadGotoStatement() {
