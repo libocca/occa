@@ -178,9 +178,11 @@ vartype_t preloadType(const std::string &s) {
   return parser.preloadType();
 }
 
-#define assertType(str_)                        \
-  setSource(str_);                              \
-  parser.preloadType();                         \
+#define assertType(str_)                                \
+  setSource(str_);                                      \
+  parser.preloadType();                                 \
+  OCCA_ASSERT_FALSE(parser.isLoadingFunctionPointer()); \
+  OCCA_ASSERT_FALSE(parser.isLoadingVariable());        \
   OCCA_ASSERT_TRUE(parser.isLoadingType())
 
 vartype_t loadType(const std::string &s) {
@@ -191,9 +193,10 @@ vartype_t loadType(const std::string &s) {
   return vartype;
 }
 
-#define assertVariable(str_)                    \
-  setSource(str_);                              \
-  parser.preloadType();                         \
+#define assertVariable(str_)                            \
+  setSource(str_);                                      \
+  parser.preloadType();                                 \
+  OCCA_ASSERT_FALSE(parser.isLoadingFunctionPointer()); \
   OCCA_ASSERT_TRUE(parser.isLoadingVariable())
 
 variable loadVariable(const std::string &s) {
