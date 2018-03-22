@@ -123,7 +123,7 @@ namespace occa {
       void setArray(vartype_t &vartype);
 
       void setArguments(argumentVector &args);
-      void getArgumentCommas(intVector &commas);
+      void getArgumentRanges(tokenRangeVector &argRanges);
       argument_t getArgument();
 
       class_t loadClassType();

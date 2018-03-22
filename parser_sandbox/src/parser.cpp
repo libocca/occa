@@ -508,26 +508,27 @@ namespace occa {
     }
 
     void parser_t::setArguments(argumentVector &args) {
-      intVector commas;
-      getArgumentCommas(commas);
+      tokenRangeVector argRanges;
+      getArgumentRanges(argRanges);
 
-      const int argCount = (int) commas.size();
+      const int argCount = (int) argRanges.size();
       if (!argCount) {
         return;
       }
 
       for (int i = 0; i < argCount; ++i) {
-        context.push(0, commas[i]);
+        context.push(argRanges[i].start,
+                     argRanges[i].end);
 
         args.push_back(getArgument());
 
         context.pop();
-        context.set(commas[i] + 1);
+        context.set(argRanges[i].end + 1);
       }
     }
 
-    void parser_t::getArgumentCommas(intVector &commas) {
-      commas.clear();
+    void parser_t::getArgumentRanges(tokenRangeVector &argRanges) {
+      argRanges.clear();
 
       context.push();
       while (true) {
@@ -537,7 +538,7 @@ namespace occa {
             (pos == (context.size() - 1))) {
           break;
         }
-        commas.push_back(pos);
+        argRanges.push_back(tokenRange(0, pos));
         context.set(pos + 1);
       }
       context.pop();

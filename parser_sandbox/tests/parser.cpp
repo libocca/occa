@@ -407,33 +407,33 @@ void testVariableLoading() {
 
 void testArgumentLoading() {
   // Test argument detection
-  occa::intVector commas;
+  tokenRangeVector argRanges;
 
   setSource("");
-  parser.getArgumentCommas(commas);
+  parser.getArgumentRanges(argRanges);
   OCCA_ASSERT_EQUAL(0,
-                    (int) commas.size());
+                    (int) argRanges.size());
 
   setSource("a, b");
-  parser.getArgumentCommas(commas);
+  parser.getArgumentRanges(argRanges);
   OCCA_ASSERT_EQUAL(1,
-                    (int) commas.size());
+                    (int) argRanges.size());
 
   setSource("(,,)");
-  parser.getArgumentCommas(commas);
+  parser.getArgumentRanges(argRanges);
   OCCA_ASSERT_EQUAL(0,
-                    (int) commas.size());
+                    (int) argRanges.size());
 
   setSource("(,,), (,,), (,,)");
-  parser.getArgumentCommas(commas);
+  parser.getArgumentRanges(argRanges);
   OCCA_ASSERT_EQUAL(2,
-                    (int) commas.size());
+                    (int) argRanges.size());
 
   // Removes trailing comma
   setSource("a, b,");
-  parser.getArgumentCommas(commas);
+  parser.getArgumentRanges(argRanges);
   OCCA_ASSERT_EQUAL(1,
-                    (int) commas.size());
+                    (int) argRanges.size());
 
   // Test arguments
 }

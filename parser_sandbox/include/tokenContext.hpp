@@ -31,9 +31,10 @@ namespace occa {
     class tokenRange;
     class token_t;
 
-    typedef std::vector<token_t*> tokenVector;
-    typedef std::list<tokenRange> tokenRangeList;
-    typedef std::map<int, int>    intIntMap;
+    typedef std::vector<token_t*>   tokenVector;
+    typedef std::list<tokenRange>   tokenRangeList;
+    typedef std::vector<tokenRange> tokenRangeVector;
+    typedef std::map<int, int>      intIntMap;
 
     class tokenRange {
     public:
