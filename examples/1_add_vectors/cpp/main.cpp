@@ -25,6 +25,7 @@
 
 int main(int argc, char **argv) {
   occa::printModeInfo();
+
   int entries = 5;
 
   float *a  = new float[entries];
@@ -61,6 +62,7 @@ int main(int argc, char **argv) {
   //              "pinnedCores : [0, 0, 1, 1]");
   //========================================================
 
+  // Allocate memory on the device
   o_a  = device.malloc(entries*sizeof(float));
   o_b  = device.malloc(entries*sizeof(float));
   o_ab = device.malloc(entries*sizeof(float));

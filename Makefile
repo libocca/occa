@@ -104,7 +104,6 @@ $(binPath)/occa:$(OCCA_DIR)/scripts/occa.cpp $(libPath)/libocca.so $(COMPILED_DE
 	$(compiler) $(compilerFlags) -o $(binPath)/occa $(flags) $(OCCA_DIR)/scripts/occa.cpp $(paths) $(links) -L$(OCCA_DIR)/lib -locca
 #  ===========================
 
-#  ---[ C++ ]-----------------
 $(OCCA_DIR)/obj/%.o:$(OCCA_DIR)/src/%.cpp $(OCCA_DIR)/include/occa/%.hpp $(OCCA_DIR)/include/occa/%.tpp $(COMPILED_DEFINES_CHANGED)
 	@mkdir -p $(abspath $(dir $@))
 	$(compiler) $(compilerFlags) -o $@ $(flags) -c $(paths) $<
@@ -113,10 +112,13 @@ $(OCCA_DIR)/obj/%.o:$(OCCA_DIR)/src/%.cpp $(OCCA_DIR)/include/occa/%.hpp $(COMPI
 	@mkdir -p $(abspath $(dir $@))
 	$(compiler) $(compilerFlags) -o $@ $(flags) -c $(paths) $<
 
+$(OCCA_DIR)/obj/%.o:$(OCCA_DIR)/src/%.cpp $(OCCA_DIR)/include/occa/%.h $(COMPILED_DEFINES_CHANGED)
+	@mkdir -p $(abspath $(dir $@))
+	$(compiler) $(compilerFlags) -o $@ $(flags) -c $(paths) $<
+
 $(OCCA_DIR)/obj/%.o:$(OCCA_DIR)/src/%.cpp $(COMPILED_DEFINES_CHANGED)
 	@mkdir -p $(abspath $(dir $@))
 	$(compiler) $(compilerFlags) -o $@ $(flags) -c $(paths) $<
-#  ===========================
 #=================================================
 
 

@@ -150,6 +150,8 @@ namespace occa {
 
 
   //---[ Kernel Properties ]------------
+  occa::properties getKernelProperties();
+
   std::string assembleHeader(const occa::properties &props);
   //====================================
 

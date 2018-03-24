@@ -308,6 +308,10 @@ else
   endif
 endif
 
+ifeq ($(cudaEnabled),1)
+  compilerFlags += -Wno-c++11-long-long
+endif
+
 ifeq ($(checkEnabled),1)
   OCCA_CHECK_ENABLED := 1
 else

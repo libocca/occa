@@ -203,14 +203,20 @@ namespace occa {
 
 
   //---[ Kernel Properties ]------------
-  std::string assembleHeader(const occa::properties &props) {
-    const jsonArray &lines = props["headers"].array();
-    const int lineCount = (int) lines.size();
+  occa::properties getKernelProperties() {
+    occa::properties props;
+    props["defines"].asObject();
+    props["includes"].asArray();
+    props["header"].asArray();
+    return props;
+  }
 
+  std::string assembleHeader(const occa::properties &props) {
+    std::string header;
+
+    // Add defines
     const jsonObject &defines = props["defines"].object();
     cJsonObjectIterator it = defines.begin();
-
-    std::string header;
     while (it != defines.end()) {
       header += "#define ";
       header += ' ';
@@ -225,10 +231,24 @@ namespace occa {
       header += '\n';
       ++it;
     }
+
+    // Add includes
+    const jsonArray &includes = props["includes"].array();
+    const int includeCount = (int) includes.size();
+    for (int i = 0; i < includeCount; ++i) {
+      header += "#include \"";
+      header += includes[i].toString();
+      header += "\"\n";
+    }
+
+    // Add header
+    const jsonArray &lines = props["header"].array();
+    const int lineCount = (int) lines.size();
     for (int i = 0; i < lineCount; ++i) {
       header += lines[i].toString();
-      header += '\n';
+      header += "\n";
     }
+
     return header;
   }
   //====================================
