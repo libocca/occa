@@ -278,8 +278,8 @@ namespace occa {
     strVector dirs = io::directories("occa://" + library);
     const int dirCount = (int) dirs.size();
 
-    const bool isVerbose = settings().get("verboseCompilation", true);
-    settings()["verboseCompilation"] = false;
+    const bool isVerbose = settings().get("verbose-compilation", true);
+    settings()["verbose-compilation"] = false;
     int kernelsLoaded = 0;
 
     for (int d = 0; d < dirCount; ++d) {
@@ -315,7 +315,7 @@ namespace occa {
       }
     }
 
-    settings()["verboseCompilation"] = isVerbose;
+    settings()["verbose-compilation"] = isVerbose;
     if (isVerbose && kernelsLoaded) {
       std::cout << "Loaded " << kernelsLoaded;
       if (library.size()) {
@@ -398,7 +398,7 @@ namespace occa {
 
     // Load nested kernels
     if (metadata.nestedKernels) {
-      const bool vc_f = settings()["verboseCompilation"];
+      const bool vc_f = settings()["verbose-compilation"];
 
       for (int ki = 0; ki < metadata.nestedKernels; ++ki) {
         kernelMetadata sMetadata    = metadata.getNestedKernelMetadata(ki);
@@ -411,10 +411,10 @@ namespace occa {
 
         // Only show compilation the first time
         if (ki == 0) {
-          settings()["verboseCompilation"] = false;
+          settings()["verbose-compilation"] = false;
         }
       }
-      settings()["verboseCompilation"] = vc_f;
+      settings()["verbose-compilation"] = vc_f;
     }
     return occa::kernel(launchKHandle);
   }

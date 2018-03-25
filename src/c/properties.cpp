@@ -39,6 +39,8 @@ void OCCA_RFUNC occaPropertiesSet(occaProperties props,
   occa::properties& props_ = occa::c::properties(props);
 
   switch (value.type) {
+  case occa::c::typeType::bool_:
+    props_[key] = (bool) value.value.int8_; break;
   case occa::c::typeType::int8_:
     props_[key] = value.value.int8_; break;
   case occa::c::typeType::uint8_:

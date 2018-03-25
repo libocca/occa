@@ -66,7 +66,7 @@ namespace occa {
       }
 
       if (foundBinary) {
-        if (settings().get("verboseCompilation", true)) {
+        if (settings().get("verbose-compilation", true)) {
           std::cout << "Found cached binary of [" << io::shortname(filename) << "] in [" << io::shortname(binaryFile) << "]\n";
         }
         return buildFromBinary(binaryFile, kernelName, props);
@@ -128,7 +128,7 @@ namespace occa {
 
       const std::string &sCommand = command.str();
 
-      if (settings().get("verboseCompilation", true)) {
+      if (settings().get("verbose-compilation", true)) {
         std::cout << "Compiling [" << kernelName << "]\n" << sCommand << "\n";
       }
 

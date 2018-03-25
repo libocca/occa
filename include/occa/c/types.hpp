@@ -32,50 +32,28 @@ namespace occa {
 
       static const int ptr        = (1 << 1);
 
-      static const int int8_      = (1 << 2);
-      static const int uint8_     = (1 << 3);
-      static const int int16_     = (1 << 4);
-      static const int uint16_    = (1 << 5);
-      static const int int32_     = (1 << 6);
-      static const int uint32_    = (1 << 7);
-      static const int int64_     = (1 << 8);
-      static const int uint64_    = (1 << 9);
-      static const int float_     = (1 << 10);
-      static const int double_    = (1 << 11);
+      static const int bool_      = (1 << 2);
 
-      static const int struct_    = (1 << 12);
-      static const int string     = (1 << 13);
+      static const int int8_      = (1 << 3);
+      static const int uint8_     = (1 << 4);
+      static const int int16_     = (1 << 5);
+      static const int uint16_    = (1 << 6);
+      static const int int32_     = (1 << 7);
+      static const int uint32_    = (1 << 8);
+      static const int int64_     = (1 << 9);
+      static const int uint64_    = (1 << 10);
+      static const int float_     = (1 << 11);
+      static const int double_    = (1 << 12);
 
-      static const int device     = (1 << 14);
-      static const int kernel     = (1 << 15);
-      static const int memory     = (1 << 16);
+      static const int struct_    = (1 << 13);
+      static const int string     = (1 << 14);
+
+      static const int device     = (1 << 15);
+      static const int kernel     = (1 << 16);
+      static const int memory     = (1 << 17);
 
       static const int properties = (1 << 18);
     }
-
-    template <class TM>
-    int cType() {
-      return typeType::none;
-    }
-
-    template <> int cType<void*>();
-    template <> int cType<int8_t>();
-    template <> int cType<uint8_t>();
-    template <> int cType<int16_t>();
-    template <> int cType<uint16_t>();
-    template <> int cType<int32_t>();
-    template <> int cType<uint32_t>();
-    template <> int cType<int64_t>();
-    template <> int cType<uint64_t>();
-    template <> int cType<float>();
-    template <> int cType<double>();
-    template <> int cType<char*>();
-
-    template <> int cType<occa::device>();
-    template <> int cType<occa::kernel>();
-    template <> int cType<occa::memory>();
-
-    template <> int cType<occa::properties>();
 
     occaType defaultOccaType();
 
@@ -84,6 +62,9 @@ namespace occa {
       OCCA_FORCE_ERROR("Unable to handle type");
       return occaType();
     }
+
+    template <>
+    occaType newOccaType(const bool &value);
 
     template <>
     occaType newOccaType(const int8_t &value);

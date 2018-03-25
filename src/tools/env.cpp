@@ -76,7 +76,7 @@ namespace occa {
       properties &settings_ = baseSettings();
       settings_["version"]    = OCCA_VERSION_STR;
       settings_["oklVersion"] = OKL_VERSION_STR;
-      settings_["verboseCompilation"] = env::get("OCCA_VERBOSE", false);
+      settings_["verbose-compilation"] = env::get("OCCA_VERBOSE", false);
     }
 
     void envInitializer_t::initSignalHandling() {

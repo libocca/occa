@@ -24,30 +24,20 @@
 
 namespace occa {
   namespace c {
-    template <> int cType<void*>()    { return typeType::ptr; }
-    template <> int cType<int8_t>()   { return typeType::int8_; }
-    template <> int cType<uint8_t>()  { return typeType::uint8_; }
-    template <> int cType<int16_t>()  { return typeType::int16_; }
-    template <> int cType<uint16_t>() { return typeType::uint16_; }
-    template <> int cType<int32_t>()  { return typeType::int32_; }
-    template <> int cType<uint32_t>() { return typeType::uint32_; }
-    template <> int cType<int64_t>()  { return typeType::int64_; }
-    template <> int cType<uint64_t>() { return typeType::uint64_; }
-    template <> int cType<float>()    { return typeType::float_; }
-    template <> int cType<double>()   { return typeType::double_; }
-    template <> int cType<char*>()    { return typeType::string; }
-
-    template <> int cType<occa::device>() { return typeType::device; }
-    template <> int cType<occa::kernel>() { return typeType::kernel; }
-    template <> int cType<occa::memory>() { return typeType::memory; }
-
-    template <> int cType<occa::properties>() { return typeType::properties; }
-
     occaType defaultOccaType() {
       occaType type;
       type.type = occa::c::typeType::none;
       type.value.ptr = NULL;
       return type;
+    }
+
+    template <>
+    occaType newOccaType(const bool &value) {
+      occaType oType;
+      oType.type  = typeType::bool_;
+      oType.bytes = sizeof(int8_t);
+      oType.value.int8_ = value;
+      return oType;
     }
 
     template <>
@@ -232,6 +222,8 @@ OCCA_START_EXTERN_C
 //---[ Type Flags ]---------------------
 const int OCCA_PTR        = occa::c::typeType::ptr;
 
+const int OCCA_BOOL       = occa::c::typeType::bool_;
+
 const int OCCA_INT8       = occa::c::typeType::int8_;
 const int OCCA_UINT8      = occa::c::typeType::uint8_;
 const int OCCA_INT16      = occa::c::typeType::int16_;
@@ -260,6 +252,10 @@ const occaUDim_t occaAllBytes = -1;
 //-----[ Known Types ]------------------
 OCCA_LFUNC occaType OCCA_RFUNC occaPtr(void *value) {
   return occa::c::newOccaType(value);
+}
+
+OCCA_LFUNC occaType OCCA_RFUNC occaBool(int value) {
+  return occa::c::newOccaType((bool) value);
 }
 
 OCCA_LFUNC occaType OCCA_RFUNC occaInt8(int8_t value) {

@@ -77,6 +77,7 @@ typedef struct {
 //---[ Type Flags ]---------------------
 extern const int OCCA_PTR;
 
+extern const int OCCA_BOOL;
 extern const int OCCA_INT8;
 extern const int OCCA_UINT8;
 extern const int OCCA_INT16;
@@ -104,6 +105,8 @@ extern const occaUDim_t occaAllBytes;
 
 //-----[ Known Types ]------------------
 OCCA_LFUNC occaType OCCA_RFUNC occaPtr(void *value);
+
+OCCA_LFUNC occaType OCCA_RFUNC occaBool(int value);
 
 OCCA_LFUNC occaType OCCA_RFUNC occaInt8(int8_t value);
 OCCA_LFUNC occaType OCCA_RFUNC occaUInt8(uint8_t value);

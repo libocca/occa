@@ -72,7 +72,7 @@ namespace occa {
       }
 
       if (foundBinary) {
-        if (settings().get("verboseCompilation", true)) {
+        if (settings().get("verbose-compilation", true)) {
           std::cout << "Found cached binary of [" << io::shortname(filename)
                     << "] in [" << io::shortname(binaryFile) << "]\n";
         }
@@ -93,7 +93,7 @@ namespace occa {
                                                          ss.str(),
                                                          properties["footer"]);
 
-      if (settings().get("verboseCompilation", true)) {
+      if (settings().get("verbose-compilation", true)) {
         std::cout << "Compiling [" << kernelName << "]\n";
       }
 
@@ -115,7 +115,7 @@ namespace occa {
               << " -o "       << ptxBinaryFile;
 
       const std::string &ptxCommand = command.str();
-      if (settings().get("verboseCompilation", true)) {
+      if (settings().get("verbose-compilation", true)) {
         std::cout << "Compiling [" << kernelName << "]\n" << ptxCommand << "\n";
       }
 
@@ -139,7 +139,7 @@ namespace occa {
               << " -o "    << binaryFile;
 
       const std::string &sCommand = command.str();
-      if (settings().get("verboseCompilation", true)) {
+      if (settings().get("verbose-compilation", true)) {
         std::cout << sCommand << '\n';
       }
 
