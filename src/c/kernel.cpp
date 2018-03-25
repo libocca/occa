@@ -107,6 +107,9 @@ void OCCA_RFUNC occaKernelRunN(occaKernel kernel,
     occa::kernelArg kArg;
 
     occaType arg = va_arg(args, occaType);
+    OCCA_ERROR("A non-occaType argument was passed",
+               arg.magicHeader == OCCA_C_TYPE_MAGIC_HEADER);
+
     switch (arg.type) {
     case occa::c::typeType::none: {
       kArg.add(NULL, false, false); break;

@@ -25,15 +25,17 @@
 namespace occa {
   namespace c {
     occaType defaultOccaType() {
-      occaType type;
-      type.type = occa::c::typeType::none;
-      type.value.ptr = NULL;
-      return type;
+      occaType oType;
+      oType.magicHeader = OCCA_C_TYPE_MAGIC_HEADER;
+      oType.type = occa::c::typeType::none;
+      oType.value.ptr = NULL;
+      return oType;
     }
 
     template <>
     occaType newOccaType(const bool &value) {
       occaType oType;
+      oType.magicHeader = OCCA_C_TYPE_MAGIC_HEADER;
       oType.type  = typeType::bool_;
       oType.bytes = sizeof(int8_t);
       oType.value.int8_ = value;
@@ -43,6 +45,7 @@ namespace occa {
     template <>
     occaType newOccaType(const int8_t &value) {
       occaType oType;
+      oType.magicHeader = OCCA_C_TYPE_MAGIC_HEADER;
       oType.type  = typeType::int8_;
       oType.bytes = sizeof(int8_t);
       oType.value.int8_ = value;
@@ -52,6 +55,7 @@ namespace occa {
     template <>
     occaType newOccaType(const uint8_t &value) {
       occaType oType;
+      oType.magicHeader = OCCA_C_TYPE_MAGIC_HEADER;
       oType.type  = typeType::uint8_;
       oType.bytes = sizeof(uint8_t);
       oType.value.uint8_ = value;
@@ -61,6 +65,7 @@ namespace occa {
     template <>
     occaType newOccaType(const int16_t &value) {
       occaType oType;
+      oType.magicHeader = OCCA_C_TYPE_MAGIC_HEADER;
       oType.type  = typeType::int16_;
       oType.bytes = sizeof(int16_t);
       oType.value.int16_ = value;
@@ -70,6 +75,7 @@ namespace occa {
     template <>
     occaType newOccaType(const uint16_t &value) {
       occaType oType;
+      oType.magicHeader = OCCA_C_TYPE_MAGIC_HEADER;
       oType.type  = typeType::uint16_;
       oType.bytes = sizeof(uint16_t);
       oType.value.uint16_ = value;
@@ -79,6 +85,7 @@ namespace occa {
     template <>
     occaType newOccaType(const int32_t &value) {
       occaType oType;
+      oType.magicHeader = OCCA_C_TYPE_MAGIC_HEADER;
       oType.type  = typeType::int32_;
       oType.bytes = sizeof(int32_t);
       oType.value.int32_ = value;
@@ -88,6 +95,7 @@ namespace occa {
     template <>
     occaType newOccaType(const uint32_t &value) {
       occaType oType;
+      oType.magicHeader = OCCA_C_TYPE_MAGIC_HEADER;
       oType.type  = typeType::uint32_;
       oType.bytes = sizeof(uint32_t);
       oType.value.uint32_ = value;
@@ -97,6 +105,7 @@ namespace occa {
     template <>
     occaType newOccaType(const int64_t &value) {
       occaType oType;
+      oType.magicHeader = OCCA_C_TYPE_MAGIC_HEADER;
       oType.type  = typeType::int64_;
       oType.bytes = sizeof(int64_t);
       oType.value.int64_ = value;
@@ -106,6 +115,7 @@ namespace occa {
     template <>
     occaType newOccaType(const uint64_t &value) {
       occaType oType;
+      oType.magicHeader = OCCA_C_TYPE_MAGIC_HEADER;
       oType.type  = typeType::uint64_;
       oType.bytes = sizeof(uint64_t);
       oType.value.uint64_ = value;
@@ -115,6 +125,7 @@ namespace occa {
     template <>
     occaType newOccaType(const float &value) {
       occaType oType;
+      oType.magicHeader = OCCA_C_TYPE_MAGIC_HEADER;
       oType.type  = typeType::float_;
       oType.bytes = sizeof(float);
       oType.value.float_ = value;
@@ -124,6 +135,7 @@ namespace occa {
     template <>
     occaType newOccaType(const double &value) {
       occaType oType;
+      oType.magicHeader = OCCA_C_TYPE_MAGIC_HEADER;
       oType.type  = typeType::double_;
       oType.bytes = sizeof(double);
       oType.value.double_ = value;
@@ -132,6 +144,7 @@ namespace occa {
 
     occaType newOccaType(occa::device device) {
       occaType oType;
+      oType.magicHeader = OCCA_C_TYPE_MAGIC_HEADER;
       oType.type  = typeType::device;
       oType.bytes = sizeof(void*);
       oType.value.ptr = (char*) device.getDHandle();
@@ -140,6 +153,7 @@ namespace occa {
 
     occaType newOccaType(occa::kernel kernel) {
       occaType oType;
+      oType.magicHeader = OCCA_C_TYPE_MAGIC_HEADER;
       oType.type  = typeType::kernel;
       oType.bytes = sizeof(void*);
       oType.value.ptr = (char*) kernel.getKHandle();
@@ -148,6 +162,7 @@ namespace occa {
 
     occaType newOccaType(occa::memory memory) {
       occaType oType;
+      oType.magicHeader = OCCA_C_TYPE_MAGIC_HEADER;
       oType.type  = typeType::memory;
       oType.bytes = sizeof(void*);
       oType.value.ptr = (char*) memory.getMHandle();
@@ -156,6 +171,7 @@ namespace occa {
 
     occaType newOccaType(occa::properties &properties) {
       occaType oType;
+      oType.magicHeader = OCCA_C_TYPE_MAGIC_HEADER;
       oType.type  = typeType::properties;
       oType.bytes = sizeof(void*);
       oType.value.ptr = (char*) &properties;
@@ -335,6 +351,7 @@ OCCA_LFUNC occaType OCCA_RFUNC occaDouble(double value) {
 OCCA_LFUNC occaType OCCA_RFUNC occaStruct(void *value,
                                           occaUDim_t bytes) {
   occaType oType;
+  oType.magicHeader = OCCA_C_TYPE_MAGIC_HEADER;
   oType.type  = occa::c::typeType::struct_;
   oType.bytes = bytes;
   oType.value.ptr = (char*) value;
@@ -343,6 +360,7 @@ OCCA_LFUNC occaType OCCA_RFUNC occaStruct(void *value,
 
 OCCA_LFUNC occaType OCCA_RFUNC occaString(const char *str) {
   occaType oType;
+  oType.magicHeader = OCCA_C_TYPE_MAGIC_HEADER;
   oType.type  = occa::c::typeType::string;
   oType.bytes = strlen(str);
   oType.value.ptr = const_cast<char*>(str);

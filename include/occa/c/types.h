@@ -38,6 +38,7 @@ typedef struct {
 } occaDim;
 
 typedef struct {
+  int magicHeader;
   int type;
   occaUDim_t bytes;
 

@@ -38,4 +38,6 @@
 #  endif
 #endif
 
+#define OCCA_C_TYPE_MAGIC_HEADER  0x5514E455
+
 #endif
