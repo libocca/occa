@@ -45,6 +45,8 @@ int main(int argc, char **argv) {
   //---[ Device setup with string flags ]-------------------
   device.setup("mode: 'Serial'");
 
+  std::cout << "device.properties = " << device.properties() << '\n';
+
   // device.setup("mode     : 'OpenMP', "
   //              "schedule : 'compact', "
   //              "chunk    : 10");
@@ -67,16 +69,21 @@ int main(int argc, char **argv) {
   o_b  = device.malloc(entries*sizeof(float));
   o_ab = device.malloc(entries*sizeof(float));
 
+  // Compile the kernel at run-time
   addVectors = device.buildKernel("addVectors.okl",
                                   "addVectors");
 
+  // Copy memory to the device
   o_a.copyFrom(a);
   o_b.copyFrom(b);
 
+  // Launch device kernel
   addVectors(entries, o_a, o_b, o_ab);
 
+  // Copy result to the host
   o_ab.copyTo(ab);
 
+  // Assert values
   for (int i = 0; i < 5; ++i) {
     std::cout << i << ": " << ab[i] << '\n';
   }
@@ -86,6 +93,7 @@ int main(int argc, char **argv) {
     }
   }
 
+  // Free host memory
   delete [] a;
   delete [] b;
   delete [] ab;

@@ -81,7 +81,8 @@ namespace occa {
 
     virtual streamTag tagStream() const = 0;
     virtual void waitFor(streamTag tag) const = 0;
-    virtual double timeBetween(const streamTag &startTag, const streamTag &endTag) const = 0;
+    virtual double timeBetween(const streamTag &startTag,
+                               const streamTag &endTag) const = 0;
 
     virtual stream_t wrapStream(void *handle_,
                                 const occa::properties &props) const = 0;
@@ -171,7 +172,8 @@ namespace occa {
 
     streamTag tagStream();
     void waitFor(streamTag tag);
-    double timeBetween(const streamTag &startTag, const streamTag &endTag);
+    double timeBetween(const streamTag &startTag,
+                       const streamTag &endTag);
     //  |===============================
 
     //  |---[ Kernel ]------------------
@@ -239,8 +241,12 @@ namespace occa {
     stream_t handle;
 
     stream();
-    stream(device_v *dHandle_, stream_t handle_);
+
+    stream(device_v *dHandle_,
+           stream_t handle_);
+
     stream(const stream &s);
+
     stream& operator = (const stream &s);
 
     void* getHandle(const occa::properties &props = occa::properties());
@@ -256,6 +262,10 @@ namespace occa {
   public:
     double tagTime;
     void *handle;
+
+    streamTag();
+    streamTag(const double tagTime_,
+              void *handle_);
   };
   //====================================
 }

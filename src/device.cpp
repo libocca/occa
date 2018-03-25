@@ -537,7 +537,8 @@ namespace occa {
     dHandle(NULL),
     handle(NULL) {}
 
-  stream::stream(device_v *dHandle_, stream_t handle_) :
+  stream::stream(device_v *dHandle_,
+                 stream_t handle_) :
     dHandle(dHandle_),
     handle(handle_) {}
 
@@ -561,5 +562,13 @@ namespace occa {
       device(dHandle).freeStream(*this);
     }
   }
+
+  streamTag::streamTag() :
+    tagTime(0),
+    handle(NULL) {}
+  streamTag::streamTag(const double tagTime_,
+                       void *handle_) :
+    tagTime(tagTime_),
+    handle(handle_) {}
   //====================================
 }

@@ -75,19 +75,24 @@ int main(int argc, char **argv) {
   occaProperties props = occaCreateProperties();
   occaPropertiesSet(props, "defines/TILE_SIZE", occaInt(10));
 
+  // Compile the kernel at run-time
   addVectors = occaDeviceBuildKernel(device,
                                      "addVectors.okl",
                                      "addVectors",
                                      props);
 
+  // Copy memory to the device
   occaCopyPtrToMem(o_a, a, entries*sizeof(float), 0, occaDefault);
   occaCopyPtrToMem(o_b, b, occaAllBytes         , 0, occaDefault);
 
+  // Launch device kernel
   occaKernelRun(addVectors,
                 occaInt(entries), o_a, o_b, o_ab);
 
+  // Copy result to the host
   occaCopyMemToPtr(ab, o_ab, occaAllBytes, 0, occaDefault);
 
+  // Assert values
   for (i = 0; i < 5; ++i) {
     printf("%d = %f\n", i, ab[i]);
   }
@@ -96,14 +101,16 @@ int main(int argc, char **argv) {
       exit(1);
   }
 
+  // Free host memory
   free(a);
   free(b);
   free(ab);
 
-  occaFreeProperties(props);
-  occaFreeKernel(addVectors);
-  occaFreeMemory(o_a);
-  occaFreeMemory(o_b);
-  occaFreeMemory(o_ab);
-  occaFreeDevice(device);
+  // Free device memory and occa objects
+  occaFree(props);
+  occaFree(addVectors);
+  occaFree(o_a);
+  occaFree(o_b);
+  occaFree(o_ab);
+  occaFree(device);
 }

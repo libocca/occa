@@ -97,7 +97,7 @@ namespace occa {
 
     kernelArg();
     ~kernelArg();
-    kernelArg(kernelArgData &arg);
+    kernelArg(const kernelArgData &arg);
     kernelArg(const kernelArg &k);
     kernelArg& operator = (const kernelArg &k);
 

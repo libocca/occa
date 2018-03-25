@@ -62,7 +62,7 @@ namespace occa {
   kernelArg::kernelArg() {}
   kernelArg::~kernelArg() {}
 
-  kernelArg::kernelArg(kernelArgData &arg) {
+  kernelArg::kernelArg(const kernelArgData &arg) {
     args.push_back(arg);
   }
 
@@ -76,61 +76,71 @@ namespace occa {
 
   kernelArg::kernelArg(const uint8_t arg) {
     kernelArgData kArg;
-    kArg.data.uint8_ = arg; kArg.size = sizeof(uint8_t);
+    kArg.data.uint8_ = arg;
+    kArg.size        = sizeof(uint8_t);
     args.push_back(kArg);
   }
 
   kernelArg::kernelArg(const uint16_t arg) {
     kernelArgData kArg;
-    kArg.data.uint16_ = arg; kArg.size = sizeof(uint16_t);
+    kArg.data.uint16_ = arg;
+    kArg.size         = sizeof(uint16_t);
     args.push_back(kArg);
   }
 
   kernelArg::kernelArg(const uint32_t arg) {
     kernelArgData kArg;
-    kArg.data.uint32_ = arg; kArg.size = sizeof(uint32_t);
+    kArg.data.uint32_ = arg;
+    kArg.size         = sizeof(uint32_t);
     args.push_back(kArg);
   }
 
   kernelArg::kernelArg(const uint64_t arg) {
     kernelArgData kArg;
-    kArg.data.uint64_ = arg; kArg.size = sizeof(uint64_t);
+    kArg.data.uint64_ = arg;
+    kArg.size         = sizeof(uint64_t);
     args.push_back(kArg);
   }
 
   kernelArg::kernelArg(const int8_t arg) {
     kernelArgData kArg;
-    kArg.data.int8_ = arg; kArg.size = sizeof(int8_t);
+    kArg.data.int8_ = arg;
+    kArg.size       = sizeof(int8_t);
     args.push_back(kArg);
   }
 
   kernelArg::kernelArg(const int16_t arg) {
     kernelArgData kArg;
-    kArg.data.int16_ = arg; kArg.size = sizeof(int16_t);
+    kArg.data.int16_ = arg;
+    kArg.size        = sizeof(int16_t);
     args.push_back(kArg);
   }
 
   kernelArg::kernelArg(const int32_t arg) {
     kernelArgData kArg;
-    kArg.data.int32_ = arg; kArg.size = sizeof(int32_t);
+    kArg.data.int32_ = arg;
+    kArg.size        = sizeof(int32_t);
     args.push_back(kArg);
   }
 
   kernelArg::kernelArg(const int64_t arg) {
     kernelArgData kArg;
-    kArg.data.int64_ = arg; kArg.size = sizeof(int64_t);
+    kArg.data.int64_ = arg;
+    kArg.size        = sizeof(int64_t);
     args.push_back(kArg);
   }
 
   kernelArg::kernelArg(const float arg) {
     kernelArgData kArg;
-    kArg.data.float_ = arg; kArg.size = sizeof(float);
+    kArg.data.float_ = arg;
+    kArg.size         = sizeof(float);
     args.push_back(kArg);
   }
 
   kernelArg::kernelArg(const double arg) {
     kernelArgData kArg;
-    kArg.data.double_ = arg; kArg.size = sizeof(double);
+    kArg.data.double_ = arg;
+    kArg.size         = sizeof(double);
     args.push_back(kArg);
   }
 
@@ -164,9 +174,9 @@ namespace occa {
       add(mHandle->makeKernelArg());
     } else {
       kernelArgData kArg;
-      kArg.info       = kArgInfo::usePointer;
-      kArg.size       = bytes;
       kArg.data.void_ = arg;
+      kArg.size       = bytes;
+      kArg.info       = kArgInfo::usePointer;
       args.push_back(kArg);
     }
   }
