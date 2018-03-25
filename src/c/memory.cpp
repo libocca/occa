@@ -25,40 +25,67 @@
 
 OCCA_START_EXTERN_C
 
-//---[ Background ]---------------------
-occaMemory OCCA_RFUNC occaMalloc(const occaUDim_t bytes,
-                                 const void *src,
-                                 occaProperties props) {
-  occa::memory memory;
-
-  if (occa::c::isDefault(props)) {
-    memory = occa::malloc(bytes, src);
-  } else {
-    memory = occa::malloc(bytes,
-                          src,
-                          occa::c::properties(props));
-  }
-  memory.dontUseRefs();
-
-  return occa::c::newOccaType(memory);
+int OCCA_RFUNC occaMemoryIsInitialized(occaMemory memory) {
+  return occa::c::memory(memory).isInitialized();
 }
 
-void* OCCA_RFUNC occaUmalloc(const occaUDim_t bytes,
-                             const void *src,
-                             occaProperties props) {
-
-  if (occa::c::isDefault(props)) {
-    return occa::umalloc(bytes, src);
-  }
-  return occa::umalloc(bytes,
-                       src,
-                       occa::c::properties(props));
+void* OCCA_RFUNC occaMemoryPtr(occaMemory memory) {
+  return occa::c::memory(memory).ptr();
 }
-//======================================
+
+occaDevice OCCA_RFUNC occaMemoryGetDevice(occaMemory memory) {
+  occa::device device = occa::c::memory(memory).getDevice();
+  return occa::c::newOccaType(device);
+}
+
+occaProperties OCCA_RFUNC occaMemoryGetProperties(occaMemory memory) {
+  occa::properties &props = occa::c::memory(memory).properties();
+  return occa::c::newOccaType(props);
+}
 
 const char* OCCA_RFUNC occaMemoryMode(occaMemory memory) {
   return occa::c::memory(memory).mode().c_str();
 }
+
+occaUDim_t OCCA_RFUNC occaMemorySize(occaMemory memory) {
+  return occa::c::memory(memory).size();
+}
+
+//---[ UVA ]----------------------------
+int OCCA_RFUNC occaMemoryIsManaged(occaMemory memory) {
+  return (int) occa::c::memory(memory).isManaged();
+}
+
+int OCCA_RFUNC occaMemoryInDevice(occaMemory memory) {
+  return (int) occa::c::memory(memory).inDevice();
+}
+
+int OCCA_RFUNC occaMemoryIsStale(occaMemory memory) {
+  return (int) occa::c::memory(memory).isStale();
+}
+
+void OCCA_RFUNC occaMemoryStartManaging(occaMemory memory) {
+  occa::c::memory(memory).startManaging();
+}
+
+void OCCA_RFUNC occaMemoryStopManaging(occaMemory memory) {
+  occa::c::memory(memory).stopManaging();
+}
+
+void OCCA_RFUNC occaMemorySyncToDevice(occaMemory memory,
+                                       const occaDim_t bytes,
+                                       const occaDim_t offset) {
+
+  occa::c::memory(memory).syncToDevice(bytes, offset);
+}
+
+void OCCA_RFUNC occaMemorySyncToHost(occaMemory memory,
+                                     const occaDim_t bytes,
+                                     const occaDim_t offset) {
+
+  occa::c::memory(memory).syncToHost(bytes, offset);
+}
+//======================================
 
 void OCCA_RFUNC occaMemcpy(void *dest, const void *src,
                            const occaUDim_t bytes,
@@ -128,6 +155,16 @@ void OCCA_RFUNC occaCopyMemToPtr(void *dest, occaMemory src,
                  offset,
                  occa::c::properties(props));
   }
+}
+
+void OCCA_RFUNC occaMemoryDetach(occaMemory memory) {
+  occa::c::memory(memory).detach();
+}
+
+occaMemory OCCA_RFUNC occaWrapCpuMemory(void *ptr,
+                                        occaUDim_t bytes) {
+  occa::memory memory = occa::cpu::wrapMemory(ptr, bytes);
+  return occa::c::newOccaType(memory);
 }
 
 OCCA_END_EXTERN_C

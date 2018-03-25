@@ -25,60 +25,6 @@
 
 OCCA_START_EXTERN_C
 
-//---[ Background ]---------------------
-void OCCA_RFUNC occaSetDevice(occaDevice device) {
-  occa::setDevice(occa::c::device(device));
-}
-
-void OCCA_RFUNC occaSetDeviceFromInfo(const char *infos) {
-  occa::setDevice(infos);
-}
-
-occaDevice OCCA_RFUNC occaGetDevice() {
-  return occa::c::newOccaType(occa::getDevice());
-}
-
-void OCCA_RFUNC occaFinish() {
-  occa::finish();
-}
-
-void OCCA_RFUNC occaWaitFor(occaStreamTag tag) {
-  occa::waitFor(occa::c::streamTag(tag));
-}
-
-occaStream OCCA_RFUNC occaCreateStream() {
-  return occa::c::newOccaType(occa::createStream());
-}
-
-occaStream OCCA_RFUNC occaGetStream() {
-  return occa::c::newOccaType(occa::getStream());
-}
-
-void OCCA_RFUNC occaSetStream(occaStream stream) {
-  occa::setStream(occa::c::stream(stream));
-}
-
-occaStream OCCA_RFUNC occaWrapStream(void *handle_,
-                                     const occaProperties props) {
-  occa::stream stream;
-  if (occa::c::isDefault(props)) {
-    stream = occa::wrapStream(handle_);
-  } else {
-    stream = occa::wrapStream(handle_,
-                              occa::c::properties(props));
-  }
-  return occa::c::newOccaType(stream);
-}
-
-occaStreamTag OCCA_RFUNC occaTagStream() {
-  return occa::c::newOccaType(occa::tagStream());
-}
-//======================================
-
-void OCCA_RFUNC occaPrintModeInfo() {
-  occa::printModeInfo();
-}
-
 occaDevice OCCA_RFUNC occaCreateDevice(occaType info) {
   occa::device device;
   if (info.type == occa::c::typeType::properties) {
@@ -95,8 +41,27 @@ occaDevice OCCA_RFUNC occaCreateDevice(occaType info) {
   return occa::c::newOccaType(device);
 }
 
+int OCCA_RFUNC occaDeviceIsInitialized(occaDevice device) {
+  return (int) occa::c::device(device).isInitialized();
+}
+
 const char* OCCA_RFUNC occaDeviceMode(occaDevice device) {
   return occa::c::device(device).mode().c_str();
+}
+
+occaProperties OCCA_RFUNC occaDeviceGetProperties(occaDevice device) {
+  occa::properties &props = occa::c::device(device).properties();
+  return occa::c::newOccaType(props);
+}
+
+occaProperties OCCA_RFUNC occaDeviceGetKernelProperties(occaDevice device) {
+  occa::properties props = occa::c::device(device).kernelProperties();
+  return occa::c::newOccaType(props);
+}
+
+occaProperties OCCA_RFUNC occaDeviceGetMemoryProperties(occaDevice device) {
+  occa::properties props = occa::c::device(device).memoryProperties();
+  return occa::c::newOccaType(props);
 }
 
 occaUDim_t OCCA_RFUNC occaDeviceMemorySize(occaDevice device) {
@@ -107,6 +72,66 @@ occaUDim_t OCCA_RFUNC occaDeviceMemoryAllocated(occaDevice device) {
   return occa::c::device(device).memoryAllocated();
 }
 
+void OCCA_RFUNC occaDeviceFinish(occaDevice device) {
+  occa::c::device(device).finish();
+}
+
+OCCA_LFUNC int OCCA_RFUNC occaDeviceHasSeparateMemorySpace(occaDevice device) {
+  return (int) occa::c::device(device).hasSeparateMemorySpace();
+}
+
+//---[ Stream ]-------------------------
+occaStream OCCA_RFUNC occaDeviceCreateStream(occaDevice device) {
+  occa::device device_ = occa::c::device(device);
+  return occa::c::newOccaType(device_.createStream());
+}
+
+occaStream OCCA_RFUNC occaDeviceGetStream(occaDevice device) {
+  occa::device device_ = occa::c::device(device);
+  return occa::c::newOccaType(device_.getStream());
+}
+
+void OCCA_RFUNC occaDeviceSetStream(occaDevice device,
+                                    occaStream stream) {
+  occa::device device_ = occa::c::device(device);
+  device_.setStream(occa::c::stream(stream));
+}
+
+occaStream OCCA_RFUNC occaDeviceWrapStream(occaDevice device,
+                                           void *handle_,
+                                           const occaProperties props) {
+  occa::device device_ = occa::c::device(device);
+  occa::stream stream;
+  if (occa::c::isDefault(props)) {
+    stream = device_.wrapStream(handle_);
+  } else {
+    stream = device_.wrapStream(handle_,
+                                occa::c::properties(props));
+  }
+  return occa::c::newOccaType(stream);
+}
+
+occaStreamTag OCCA_RFUNC occaDeviceTagStream(occaDevice device) {
+  occa::device device_ = occa::c::device(device);
+  return occa::c::newOccaType(device_.tagStream());
+}
+
+void OCCA_RFUNC occaDeviceWaitFor(occaDevice device,
+                                  occaStreamTag tag) {
+  occa::device device_ = occa::c::device(device);
+  device_.waitFor(occa::c::streamTag(tag));
+}
+
+double OCCA_RFUNC occaDeviceTimeBetweenTags(occaDevice device,
+                                            occaStreamTag startTag,
+                                            occaStreamTag endTag) {
+  occa::device device_ = occa::c::device(device);
+  return device_.timeBetween(occa::c::streamTag(startTag),
+                             occa::c::streamTag(endTag));
+}
+//======================================
+
+//---[ Kernel ]-------------------------
 occaKernel OCCA_RFUNC occaDeviceBuildKernel(occaDevice device,
                                             const char *filename,
                                             const char *kernelName,
@@ -166,7 +191,9 @@ occaKernel OCCA_RFUNC occaDeviceBuildKernelFromBinary(occaDevice device,
 
   return occa::c::newOccaType(kernel);
 }
+//======================================
 
+//---[ Memory ]-------------------------
 occaMemory OCCA_RFUNC occaDeviceMalloc(occaDevice device,
                                        const occaUDim_t bytes,
                                        const void *src,
@@ -198,58 +225,6 @@ void* OCCA_RFUNC occaDeviceUmalloc(occaDevice device,
                          src,
                          occa::c::properties(props));
 }
-
-void OCCA_RFUNC occaDeviceFinish(occaDevice device) {
-  occa::c::device(device).finish();
-}
-
-occaStream OCCA_RFUNC occaDeviceCreateStream(occaDevice device) {
-  occa::device device_ = occa::c::device(device);
-  return occa::c::newOccaType(device_.createStream());
-}
-
-occaStream OCCA_RFUNC occaDeviceGetStream(occaDevice device) {
-  occa::device device_ = occa::c::device(device);
-  return occa::c::newOccaType(device_.getStream());
-}
-
-void OCCA_RFUNC occaDeviceSetStream(occaDevice device,
-                                    occaStream stream) {
-  occa::device device_ = occa::c::device(device);
-  device_.setStream(occa::c::stream(stream));
-}
-
-occaStream OCCA_RFUNC occaDeviceWrapStream(occaDevice device,
-                                           void *handle_,
-                                           const occaProperties props) {
-  occa::device device_ = occa::c::device(device);
-  occa::stream stream;
-  if (occa::c::isDefault(props)) {
-    stream = device_.wrapStream(handle_);
-  } else {
-    stream = device_.wrapStream(handle_,
-                                occa::c::properties(props));
-  }
-  return occa::c::newOccaType(stream);
-}
-
-occaStreamTag OCCA_RFUNC occaDeviceTagStream(occaDevice device) {
-  occa::device device_ = occa::c::device(device);
-  return occa::c::newOccaType(device_.tagStream());
-}
-
-void OCCA_RFUNC occaDeviceWaitFor(occaDevice device,
-                                  occaStreamTag tag) {
-  occa::device device_ = occa::c::device(device);
-  device_.waitFor(occa::c::streamTag(tag));
-}
-
-double OCCA_RFUNC occaDeviceTimeBetweenTags(occaDevice device,
-                                            occaStreamTag startTag,
-                                            occaStreamTag endTag) {
-  occa::device device_ = occa::c::device(device);
-  return device_.timeBetween(occa::c::streamTag(startTag),
-                             occa::c::streamTag(endTag));
-}
+//======================================
 
 OCCA_END_EXTERN_C

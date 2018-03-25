@@ -154,6 +154,7 @@ namespace occa {
     operator kernelArg() const;
 
     const std::string& mode() const;
+    occa::properties& properties();
 
     udim_t size() const;
 
@@ -165,6 +166,7 @@ namespace occa {
       return (mHandle->size / sizeof(TM));
     }
 
+//---[ UVA ]----------------------------
     bool isManaged() const;
     bool inDevice() const;
     bool isStale() const;
@@ -179,6 +181,7 @@ namespace occa {
     bool uvaIsStale() const;
     void uvaMarkStale();
     void uvaMarkFresh();
+//======================================
 
     bool operator == (const occa::memory &m);
     bool operator != (const occa::memory &m);

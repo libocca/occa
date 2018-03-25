@@ -28,17 +28,37 @@
 
 OCCA_START_EXTERN_C
 
-//---[ Background ]---------------------
-OCCA_LFUNC occaMemory OCCA_RFUNC occaMalloc(const occaUDim_t bytes,
-                                            const void *src,
-                                            occaProperties props);
+OCCA_LFUNC int OCCA_RFUNC occaMemoryIsInitialized(occaMemory memory);
 
-OCCA_LFUNC void* OCCA_RFUNC occaUMalloc(const occaUDim_t bytes,
-                                        const void *src,
-                                        occaProperties props);
-//======================================
+OCCA_LFUNC void* OCCA_RFUNC occaMemoryPtr(occaMemory memory);
+
+OCCA_LFUNC occaDevice OCCA_RFUNC occaMemoryGetDevice(occaMemory memory);
+
+OCCA_LFUNC occaProperties OCCA_RFUNC occaMemoryGetProperties(occaMemory memory);
 
 OCCA_LFUNC const char* OCCA_RFUNC occaMemoryMode(occaMemory memory);
+
+OCCA_LFUNC occaUDim_t OCCA_RFUNC occaMemorySize(occaMemory memory);
+
+//---[ UVA ]----------------------------
+OCCA_LFUNC int OCCA_RFUNC occaMemoryIsManaged(occaMemory memory);
+
+OCCA_LFUNC int OCCA_RFUNC occaMemoryInDevice(occaMemory memory);
+
+OCCA_LFUNC int OCCA_RFUNC occaMemoryIsStale(occaMemory memory);
+
+OCCA_LFUNC void OCCA_RFUNC occaMemoryStartManaging(occaMemory memory);
+
+OCCA_LFUNC void OCCA_RFUNC occaMemoryStopManaging(occaMemory memory);
+
+OCCA_LFUNC void OCCA_RFUNC occaMemorySyncToDevice(occaMemory memory,
+                                                  const occaDim_t bytes,
+                                                  const occaDim_t offset);
+
+OCCA_LFUNC void OCCA_RFUNC occaMemorySyncToHost(occaMemory memory,
+                                                const occaDim_t bytes,
+                                                const occaDim_t offset);
+//======================================
 
 OCCA_LFUNC void OCCA_RFUNC occaMemcpy(void *dest,
                                       const void *src,
@@ -62,6 +82,11 @@ OCCA_LFUNC void OCCA_RFUNC occaCopyMemToPtr(void *dest,
                                             const occaUDim_t bytes,
                                             const occaUDim_t offset,
                                             occaProperties props);
+
+OCCA_LFUNC void OCCA_RFUNC occaMemoryDetach(occaMemory memory);
+
+OCCA_LFUNC occaMemory OCCA_RFUNC occaWrapCpuMemory(void *ptr,
+                                                   occaUDim_t bytes);
 
 OCCA_END_EXTERN_C
 

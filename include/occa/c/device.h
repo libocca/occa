@@ -28,66 +28,27 @@
 
 OCCA_START_EXTERN_C
 
-//---[ Background ]---------------------
-OCCA_LFUNC void OCCA_RFUNC occaSetDevice(occaDevice device);
-
-OCCA_LFUNC void OCCA_RFUNC occaSetDeviceFromInfo(const char *infos);
-
-OCCA_LFUNC void OCCA_RFUNC occaFinish();
-
-OCCA_LFUNC void OCCA_RFUNC occaWaitFor(occaStreamTag tag);
-
-OCCA_LFUNC occaStream OCCA_RFUNC occaCreateStream();
-
-OCCA_LFUNC occaStream OCCA_RFUNC occaGetStream();
-
-OCCA_LFUNC void OCCA_RFUNC occaSetStream(occaStream stream);
-
-OCCA_LFUNC occaStream OCCA_RFUNC occaWrapStream(void *handle_,
-                                                const occaProperties props);
-
-OCCA_LFUNC occaStreamTag OCCA_RFUNC occaTagStream();
-//======================================
-
-OCCA_LFUNC void OCCA_RFUNC occaPrintModeInfo();
-
 OCCA_LFUNC occaDevice OCCA_RFUNC occaCreateDevice(occaType info);
 
+OCCA_LFUNC int OCCA_RFUNC occaDeviceIsInitialized(occaDevice device);
+
 OCCA_LFUNC const char* OCCA_RFUNC occaDeviceMode(occaDevice device);
+
+OCCA_LFUNC occaProperties OCCA_RFUNC occaDeviceGetProperties(occaDevice device);
+
+OCCA_LFUNC occaProperties OCCA_RFUNC occaDeviceGetKernelProperties(occaDevice device);
+
+OCCA_LFUNC occaProperties OCCA_RFUNC occaDeviceGetMemoryProperties(occaDevice device);
 
 OCCA_LFUNC occaUDim_t OCCA_RFUNC occaDeviceMemorySize(occaDevice device);
 
 OCCA_LFUNC occaUDim_t OCCA_RFUNC occaDeviceMemoryAllocated(occaDevice device);
 
-OCCA_LFUNC occaUDim_t OCCA_RFUNC occaDeviceBytesAllocated(occaDevice device);
-
-OCCA_LFUNC occaKernel OCCA_RFUNC occaDeviceBuildKernel(occaDevice device,
-                                                       const char *filename,
-                                                       const char *kernelName,
-                                                       const occaProperties props);
-
-OCCA_LFUNC occaKernel OCCA_RFUNC occaDeviceBuildKernelFromString(occaDevice device,
-                                                                 const char *str,
-                                                                 const char *kernelName,
-                                                                 const occaProperties props);
-
-OCCA_LFUNC occaKernel OCCA_RFUNC occaDeviceBuildKernelFromBinary(occaDevice device,
-                                                                 const char *filename,
-                                                                 const char *kernelName,
-                                                                 const occaProperties props);
-
-OCCA_LFUNC occaMemory OCCA_RFUNC occaDeviceMalloc(occaDevice device,
-                                                  const occaUDim_t bytes,
-                                                  const void *src,
-                                                  occaProperties props);
-
-OCCA_LFUNC void* OCCA_RFUNC occaDeviceUmalloc(occaDevice device,
-                                              const occaUDim_t bytes,
-                                              const void *src,
-                                              occaProperties props);
-
 OCCA_LFUNC void OCCA_RFUNC occaDeviceFinish(occaDevice device);
 
+OCCA_LFUNC int OCCA_RFUNC occaDeviceHasSeparateMemorySpace(occaDevice device);
+
+//---[ Stream ]-------------------------
 OCCA_LFUNC occaStream OCCA_RFUNC occaDeviceCreateStream(occaDevice device);
 
 OCCA_LFUNC occaStream OCCA_RFUNC occaDeviceGetStream(occaDevice device);
@@ -107,6 +68,36 @@ OCCA_LFUNC void OCCA_RFUNC occaDeviceWaitForTag(occaDevice device,
 OCCA_LFUNC double OCCA_RFUNC occaDeviceTimeBetweenTags(occaDevice device,
                                                        occaStreamTag startTag,
                                                        occaStreamTag endTag);
+//======================================
+
+//---[ Kernel ]-------------------------
+OCCA_LFUNC occaKernel OCCA_RFUNC occaDeviceBuildKernel(occaDevice device,
+                                                       const char *filename,
+                                                       const char *kernelName,
+                                                       const occaProperties props);
+
+OCCA_LFUNC occaKernel OCCA_RFUNC occaDeviceBuildKernelFromString(occaDevice device,
+                                                                 const char *str,
+                                                                 const char *kernelName,
+                                                                 const occaProperties props);
+
+OCCA_LFUNC occaKernel OCCA_RFUNC occaDeviceBuildKernelFromBinary(occaDevice device,
+                                                                 const char *filename,
+                                                                 const char *kernelName,
+                                                                 const occaProperties props);
+//======================================
+
+//---[ Memory ]-------------------------
+OCCA_LFUNC occaMemory OCCA_RFUNC occaDeviceMalloc(occaDevice device,
+                                                  const occaUDim_t bytes,
+                                                  const void *src,
+                                                  occaProperties props);
+
+OCCA_LFUNC void* OCCA_RFUNC occaDeviceUmalloc(occaDevice device,
+                                              const occaUDim_t bytes,
+                                              const void *src,
+                                              occaProperties props);
+//======================================
 
 OCCA_END_EXTERN_C
 

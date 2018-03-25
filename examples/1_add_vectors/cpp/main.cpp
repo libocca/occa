@@ -45,8 +45,6 @@ int main(int argc, char **argv) {
   //---[ Device setup with string flags ]-------------------
   device.setup("mode: 'Serial'");
 
-  std::cout << "device.properties = " << device.properties() << '\n';
-
   // device.setup("mode     : 'OpenMP', "
   //              "schedule : 'compact', "
   //              "chunk    : 10");

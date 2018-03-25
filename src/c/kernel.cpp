@@ -26,73 +26,56 @@
 
 OCCA_START_EXTERN_C
 
-//---[ Background ]---------------------
-occaKernel OCCA_RFUNC occaBuildKernel(const char *filename,
-                                      const char *kernelName,
-                                      const occaProperties props) {
-  occa::kernel kernel;
-
-  if (occa::c::isDefault(props)) {
-    kernel = occa::buildKernel(filename,
-                               kernelName);
-  } else {
-    kernel = occa::buildKernel(filename,
-                               kernelName,
-                               occa::c::properties(props));
-  }
-  kernel.dontUseRefs();
-
-  return occa::c::newOccaType(kernel);
+int OCCA_RFUNC occaKernelIsInitialized(occaKernel kernel) {
+  return (int) occa::c::kernel(kernel).isInitialized();
 }
-
-occaKernel OCCA_RFUNC occaBuildKernelFromString(const char *str,
-                                                const char *kernelName,
-                                                const occaProperties props) {
-  occa::kernel kernel;
-
-  if (occa::c::isDefault(props)) {
-    kernel = occa::buildKernelFromString(str,
-                                         kernelName);
-  } else {
-    kernel = occa::buildKernelFromString(str,
-                                         kernelName,
-                                         occa::c::properties(props));
-  }
-  kernel.dontUseRefs();
-
-  return occa::c::newOccaType(kernel);
-}
-
-occaKernel OCCA_RFUNC occaBuildKernelFromBinary(const char *filename,
-                                                const char *kernelName,
-                                                const occaProperties props) {
-  occa::kernel kernel;
-
-  if (occa::c::isDefault(props)) {
-    kernel = occa::buildKernelFromBinary(filename,
-                                         kernelName);
-  } else {
-    kernel = occa::buildKernelFromBinary(filename,
-                                         kernelName,
-                                         occa::c::properties(props));
-  }
-  kernel.dontUseRefs();
-
-  return occa::c::newOccaType(kernel);
-}
-//======================================
 
 const char* OCCA_RFUNC occaKernelMode(occaKernel kernel) {
   return occa::c::kernel(kernel).mode().c_str();
+}
+
+occaProperties OCCA_RFUNC occaKernelGetProperties(occaKernel kernel) {
+  occa::properties &props = occa::c::kernel(kernel).properties();
+  return occa::c::newOccaType(props);
+}
+
+occaDevice OCCA_RFUNC occaKernelGetDevice(occaKernel kernel) {
+  occa::device device = occa::c::kernel(kernel).getDevice();
+  return occa::c::newOccaType(device);
 }
 
 const char* OCCA_RFUNC occaKernelName(occaKernel kernel) {
   return occa::c::kernel(kernel).name().c_str();
 }
 
-occaDevice OCCA_RFUNC occaKernelGetDevice(occaKernel kernel) {
-  occa::device device = occa::c::kernel(kernel).getDevice();
-  return occa::c::newOccaType(device);
+const char* OCCA_RFUNC occaKernelSourceFilename(occaKernel kernel) {
+  return occa::c::kernel(kernel).sourceFilename().c_str();
+}
+
+const char* OCCA_RFUNC occaKernelBinaryFilename(occaKernel kernel) {
+  return occa::c::kernel(kernel).binaryFilename().c_str();
+}
+
+int OCCA_RFUNC occaKernelMaxDims(occaKernel kernel) {
+  return occa::c::kernel(kernel).maxDims();
+}
+
+occaDim OCCA_RFUNC occaKernelMaxOuterDims(occaKernel kernel) {
+  occa::dim dims = occa::c::kernel(kernel).maxOuterDims();
+  occaDim cDims;
+  cDims.x = dims.x;
+  cDims.y = dims.y;
+  cDims.z = dims.z;
+  return cDims;
+}
+
+occaDim OCCA_RFUNC occaKernelMaxInnerDims(occaKernel kernel) {
+  occa::dim dims = occa::c::kernel(kernel).maxInnerDims();
+  occaDim cDims;
+  cDims.x = dims.x;
+  cDims.y = dims.y;
+  cDims.z = dims.z;
+  return cDims;
 }
 
 void OCCA_RFUNC occaKernelSetRunDims(occaKernel kernel,

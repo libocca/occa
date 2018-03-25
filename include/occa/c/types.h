@@ -34,6 +34,10 @@ typedef int64_t  occaDim_t;
 typedef uint64_t occaUDim_t;
 
 typedef struct {
+  occaUDim_t x, y, z;
+} occaDim;
+
+typedef struct {
   int type;
   occaUDim_t bytes;
 
@@ -92,10 +96,6 @@ extern const int OCCA_KERNEL;
 extern const int OCCA_MEMORY;
 extern const int OCCA_PROPERTIES;
 //======================================
-
-typedef struct {
-  occaUDim_t x, y, z;
-} occaDim;
 
 //---[ Globals & Flags ]----------------
 extern const occaType occaDefault;

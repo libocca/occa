@@ -28,24 +28,25 @@
 
 OCCA_START_EXTERN_C
 
-//---[ Background ]---------------------
-OCCA_LFUNC occaKernel OCCA_RFUNC occaBuildKernel(const char *filename,
-                                                 const char *kernelName,
-                                                 const occaProperties props);
-
-OCCA_LFUNC occaKernel OCCA_RFUNC occaBuildKernelFromString(const char *str,
-                                                           const char *kernelName,
-                                                           const occaProperties props);
-
-OCCA_LFUNC occaKernel OCCA_RFUNC occaBuildKernelFromBinary(const char *filename,
-                                                           const char *kernelName,
-                                                           const occaProperties props);
-//======================================
+OCCA_LFUNC int OCCA_RFUNC occaKernelIsInitialized(occaKernel kernel);
 
 OCCA_LFUNC const char* OCCA_RFUNC occaKernelMode(occaKernel kernel);
-OCCA_LFUNC const char* OCCA_RFUNC occaKernelName(occaKernel kernel);
+
+OCCA_LFUNC occaProperties OCCA_RFUNC occaKernelGetProperties(occaKernel kernel);
 
 OCCA_LFUNC occaDevice OCCA_RFUNC occaKernelGetDevice(occaKernel kernel);
+
+OCCA_LFUNC const char* OCCA_RFUNC occaKernelName(occaKernel kernel);
+
+OCCA_LFUNC const char* OCCA_RFUNC occaKernelSourceFilename(occaKernel kernel);
+
+OCCA_LFUNC const char* OCCA_RFUNC occaKernelBinaryFilename(occaKernel kernel);
+
+OCCA_LFUNC int OCCA_RFUNC occaKernelMaxDims(occaKernel kernel);
+
+OCCA_LFUNC occaDim OCCA_RFUNC occaKernelMaxOuterDims(occaKernel kernel);
+
+OCCA_LFUNC occaDim OCCA_RFUNC occaKernelMaxInnerDims(occaKernel kernel);
 
 OCCA_LFUNC void OCCA_RFUNC occaKernelSetRunDims(occaKernel kernel,
                                                 occaDim groups,

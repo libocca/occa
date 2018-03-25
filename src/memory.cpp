@@ -159,6 +159,10 @@ namespace occa {
     return device(mHandle->dHandle).mode();
   }
 
+  occa::properties& memory::properties() {
+    return mHandle->properties;
+  }
+
   udim_t memory::size() const {
     if (mHandle == NULL) {
       return 0;
