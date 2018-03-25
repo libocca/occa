@@ -820,7 +820,6 @@ void testSwitchErrors();
 void testJumpsErrors();
 void testClassAccessErrors();
 void testAttributeErrors();
-void testPragmaErrors();
 void testGotoErrors();
 
 void testErrors() {
@@ -838,7 +837,6 @@ void testErrors() {
   // testJumpsErrors();
   // testClassAccessErrors();
   // testAttributeErrors();
-  // testPragmaErrors();
   // testGotoErrors();
 }
 

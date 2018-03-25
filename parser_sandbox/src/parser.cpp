@@ -794,7 +794,29 @@ namespace occa {
     }
 
     statement_t* parser_t::loadCaseStatement() {
-      return NULL;
+      const int pos = context.getNextOperator(operatorType::colon);
+      // No : found
+      if (pos < 0) {
+        context[0]->printError("Expected a : to close the case statement");
+        success = false;
+        return NULL;
+      }
+      // The case where we see 'case:'
+      if (pos == 1) {
+        context[1]->printError("Expected a constant expression for the case statement");
+        success = false;
+        return NULL;
+      }
+
+      // Load the case expression
+      exprNode *value = context.getExpression(1, pos);
+      if (!value) {
+        success = false;
+        return NULL;
+      }
+
+      context.set(pos + 1);
+      return new caseStatement(*value);
     }
 
     statement_t* parser_t::loadDefaultStatement() {

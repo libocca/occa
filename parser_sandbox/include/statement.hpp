@@ -238,9 +238,10 @@ namespace occa {
     //---[ Case ]-----------------------
     class caseStatement : public statement_t {
     public:
-      statement_t &value;
+      exprNode *value;
 
-      caseStatement(statement_t &value_);
+      caseStatement(exprNode &value_);
+      ~caseStatement();
 
       virtual statement_t& clone_() const;
       virtual int type() const;

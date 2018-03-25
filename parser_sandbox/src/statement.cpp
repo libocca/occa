@@ -397,11 +397,15 @@ namespace occa {
     //==================================
 
     //---[ Case ]-----------------------
-    caseStatement::caseStatement(statement_t &value_) :
-      value(value_) {}
+    caseStatement::caseStatement(exprNode &value_) :
+      value(&value_) {}
+
+    caseStatement::~caseStatement() {
+      delete value;
+    }
 
     statement_t& caseStatement::clone_() const {
-      return *(new caseStatement(value.clone()));
+      return *(new caseStatement(value->clone()));
     }
 
     int caseStatement::type() const {
@@ -414,7 +418,7 @@ namespace occa {
       pout.printIndentation();
       pout << "case ";
       pout.pushInlined(true);
-      pout << value;
+      pout << *value;
       pout.popInlined();
       pout << ":\n";
 

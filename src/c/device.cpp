@@ -55,12 +55,12 @@ occaProperties OCCA_RFUNC occaDeviceGetProperties(occaDevice device) {
 }
 
 occaProperties OCCA_RFUNC occaDeviceGetKernelProperties(occaDevice device) {
-  occa::properties props = occa::c::device(device).kernelProperties();
+  occa::properties &props = occa::c::device(device).kernelProperties();
   return occa::c::newOccaType(props);
 }
 
 occaProperties OCCA_RFUNC occaDeviceGetMemoryProperties(occaDevice device) {
-  occa::properties props = occa::c::device(device).memoryProperties();
+  occa::properties &props = occa::c::device(device).memoryProperties();
   return occa::c::newOccaType(props);
 }
 
