@@ -26,40 +26,65 @@
 namespace occa {
   namespace lang {
     //---[ Variable ]-------------------
-    variable::variable() {}
+    variable::variable() :
+      vartype(),
+      source(new identifierToken(filePosition(), "")) {}
 
     variable::variable(const vartype_t &vartype_,
-                       const std::string &name_) :
+                       identifierToken *source_) :
       vartype(vartype_),
-      name(name_) {}
+      source(NULL) {
+      if (source_) {
+        source = (identifierToken*) source_->clone();
+      } else {
+        source = new identifierToken(filePosition(), "");
+      }
+    }
 
     variable::variable(const variable &other) :
       vartype(other.vartype),
-      name(other.name) {}
+      source((identifierToken*) other.source->clone()) {}
 
-    variable::~variable() {}
+    variable& variable::operator = (const variable &other) {
+      vartype = other.vartype;
+      delete source;
+      source = (identifierToken*) other.source->clone();
+      return *this;
+    }
+
+    variable::~variable() {
+      delete source;
+    }
+
+    bool variable::isNamed() const {
+      return source->value.size();
+    }
+
+    const std::string& variable::name() const {
+      return source->value;
+    }
 
     bool variable::operator == (const variable &other) const {
       if (this == &other) {
         return true;
       }
-      if (name != other.name) {
+      if (name() != other.name()) {
         return false;
       }
       return vartype == other.vartype;
     }
 
     void variable::printDeclaration(printer &pout) const {
-      vartype.printDeclaration(pout, name);
+      vartype.printDeclaration(pout, name());
     }
 
     void variable::printExtraDeclaration(printer &pout) const {
-      vartype.printExtraDeclaration(pout, name);
+      vartype.printExtraDeclaration(pout, name());
     }
 
     printer& operator << (printer &pout,
                           const variable &var) {
-      pout << var.name;
+      pout << var.name();
       return pout;
     }
     //==================================

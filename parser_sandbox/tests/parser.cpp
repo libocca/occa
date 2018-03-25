@@ -303,19 +303,19 @@ void testReferenceTypeLoading() {
   vartype_t type;
 
   type = preloadType("int");
-  OCCA_ASSERT_FALSE(type.isReference);
+  OCCA_ASSERT_FALSE(type.isReference());
   type = preloadType("int &");
-  OCCA_ASSERT_TRUE(type.isReference);
+  OCCA_ASSERT_TRUE(type.isReference());
 
   type = preloadType("int *");
-  OCCA_ASSERT_FALSE(type.isReference);
+  OCCA_ASSERT_FALSE(type.isReference());
   type = preloadType("int *&");
-  OCCA_ASSERT_TRUE(type.isReference);
+  OCCA_ASSERT_TRUE(type.isReference());
 
   type = preloadType("int ***");
-  OCCA_ASSERT_FALSE(type.isReference);
+  OCCA_ASSERT_FALSE(type.isReference());
   type = preloadType("int ***&");
-  OCCA_ASSERT_TRUE(type.isReference);
+  OCCA_ASSERT_TRUE(type.isReference());
 }
 
 void testArrayTypeLoading() {
@@ -354,25 +354,29 @@ void testArrayTypeLoading() {
 
 void testVariableLoading() {
   variable var;
+  std::string varName;
 
   assertVariable("int varname[]");
   var = loadVariable("int varname[]");
+  varName = var.name();
   OCCA_ASSERT_EQUAL("varname",
-                    var.name);
+                    varName);
   OCCA_ASSERT_EQUAL(1,
                     (int) var.vartype.arrays.size());
 
   assertVariable("int varname[][]");
   var = loadVariable("int varname[][]");
+  varName = var.name();
   OCCA_ASSERT_EQUAL("varname",
-                    var.name);
+                    varName);
   OCCA_ASSERT_EQUAL(2,
                     (int) var.vartype.arrays.size());
 
   assertVariable("int varname[1]");
   var = loadVariable("int varname[1]");
+  varName = var.name();
   OCCA_ASSERT_EQUAL("varname",
-                    var.name);
+                    varName);
   OCCA_ASSERT_EQUAL(1,
                     (int) var.vartype.arrays.size());
   OCCA_ASSERT_EQUAL(1,
@@ -380,8 +384,9 @@ void testVariableLoading() {
 
   assertVariable("int varname[1 + 3][7]");
   var = loadVariable("int varname[1 + 3][7]");
+  varName = var.name();
   OCCA_ASSERT_EQUAL("varname",
-                    var.name);
+                    varName);
   OCCA_ASSERT_EQUAL(2,
                     (int) var.vartype.arrays.size());
   OCCA_ASSERT_EQUAL(4,
@@ -429,6 +434,7 @@ void testArgumentLoading() {
 
 void testFunctionPointerLoading() {
   variable var;
+  std::string varName;
 #define varFunc var.vartype.type->to<function_t>()
 
   // Test pointer vs block
@@ -437,15 +443,17 @@ void testFunctionPointerLoading() {
 
   OCCA_ASSERT_EQUAL_BINARY(typeType::function,
                            var.vartype.type->type());
+  varName = var.name();
   OCCA_ASSERT_EQUAL("varname",
-                    var.name);
+                    varName);
   OCCA_ASSERT_TRUE(varFunc.isPointer);
   OCCA_ASSERT_FALSE(varFunc.isBlock);
 
   assertFunctionPointer("int (^varname)()");
   var = loadVariable("int (^varname)()");
+  varName = var.name();
   OCCA_ASSERT_EQUAL("varname",
-                    var.name);
+                    varName);
   OCCA_ASSERT_FALSE(varFunc.isPointer);
   OCCA_ASSERT_TRUE(varFunc.isBlock);
 
@@ -461,7 +469,7 @@ void testFunctionPointerLoading() {
                     varFunc.args[0].vartype.type);
   OCCA_ASSERT_TRUE(varFunc.args[0].vartype.has(const_));
   OCCA_ASSERT_EQUAL("i",
-                    varFunc.args[0].name);
+                    varFunc.args[0].name());
 
   var = loadVariable("int (*varname)(int, double,)");
   OCCA_ASSERT_EQUAL(2,

@@ -25,14 +25,11 @@
 #include <vector>
 
 #include "occa/parser/primitive.hpp"
+#include "file.hpp"
 #include "printer.hpp"
 
 namespace occa {
   namespace lang {
-    class qualifier_t;
-
-    typedef std::vector<const qualifier_t*> qualifierVector_t;
-
     namespace qualifierType {
       extern const int none;
 
@@ -91,12 +88,24 @@ namespace occa {
     //==================================
 
     //---[ Qualifiers ]-----------------
+    class qualifierWithSource {
+    public:
+      fileOrigin origin;
+      const qualifier_t *qualifier;
+
+      qualifierWithSource(const qualifier_t &qualifier_);
+
+      qualifierWithSource(const fileOrigin &origin_,
+                          const qualifier_t &qualifier_);
+    };
+
+    typedef std::vector<qualifierWithSource> qualifierVector_t;
+
     class qualifiers_t {
     public:
       qualifierVector_t qualifiers;
 
       qualifiers_t();
-      qualifiers_t(const qualifier_t &qualifier);
       ~qualifiers_t();
 
       void clear();
@@ -115,8 +124,12 @@ namespace occa {
 
       qualifiers_t& operator += (const qualifier_t &qualifier);
       qualifiers_t& operator -= (const qualifier_t &qualifier);
-
       qualifiers_t& operator += (const qualifiers_t &others);
+
+      qualifiers_t& add(const fileOrigin &origin,
+                        const qualifier_t &qualifier);
+
+      qualifiers_t& add(const qualifierWithSource &qualifier);
     };
 
     printer& operator << (printer &pout,

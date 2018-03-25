@@ -237,6 +237,14 @@ namespace occa {
       return -1;
     }
 
+    token_t* tokenContext::getClosingPairToken(const int index) {
+      const int endIndex = getClosingPair(index);
+      if (endIndex >= 0) {
+        return tokens[tp.start + endIndex];
+      }
+      return NULL;
+    }
+
     int tokenContext::getNextOperator(const opType_t &opType) {
       for (int pos = tp.start; pos < tp.end; ++pos) {
         token_t *token = tokens[pos];

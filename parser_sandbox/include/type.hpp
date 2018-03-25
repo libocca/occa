@@ -30,6 +30,9 @@
 
 namespace occa {
   namespace lang {
+    class token_t;
+    class identifierToken;
+    class operatorToken;
     class exprNode;
     class blockStatement;
     class pointer_t;
@@ -63,9 +66,11 @@ namespace occa {
     //---[ Type ]-----------------------
     class type_t {
     public:
-      std::string name;
+      identifierToken *source;
 
-      type_t(const std::string &name_);
+      type_t(const std::string &name_ = "");
+      type_t(identifierToken &source_);
+      type_t(const type_t &other);
       virtual ~type_t();
 
       virtual int type() const = 0;
@@ -100,6 +105,10 @@ namespace occa {
         return *ptr;
       }
 
+      const std::string& name() const;
+
+      bool isNamed() const;
+
       bool operator == (const type_t &other) const;
       bool operator != (const type_t &other) const;
       virtual bool equals(const type_t &other) const;
@@ -125,6 +134,11 @@ namespace occa {
       void operator += (const qualifier_t &qualifier);
       void operator -= (const qualifier_t &qualifier);
       void operator += (const qualifiers_t &others);
+
+      void add(const fileOrigin &origin,
+               const qualifier_t &qualifier);
+
+      void add(const qualifierWithSource &qualifier);
     };
 
     printer& operator << (printer &pout,
@@ -134,10 +148,17 @@ namespace occa {
     //---[ Array ]----------------------
     class array_t {
     public:
+      operatorToken *start, *end;
       exprNode *size;
 
-      array_t(exprNode *size_ = NULL);
+      array_t();
+
+      array_t(operatorToken &start_,
+              operatorToken &end_,
+              exprNode *size_);
+
       array_t(const array_t &other);
+
       ~array_t();
 
       bool hasSize() const;
@@ -153,14 +174,23 @@ namespace occa {
     class vartype_t {
     public:
       qualifiers_t qualifiers;
+
+      identifierToken *typeToken;
       const type_t *type;
+
       pointerVector pointers;
-      bool isReference;
+      token_t *referenceToken;
       arrayVector arrays;
 
       vartype_t();
+
       vartype_t(const type_t &type_);
+
+      vartype_t(identifierToken &typeToken_,
+                const type_t &type_);
+
       vartype_t(const vartype_t &other);
+
       ~vartype_t();
 
       vartype_t& operator = (const vartype_t &other);
@@ -168,6 +198,11 @@ namespace occa {
       void clear();
 
       bool isValid() const;
+      bool isNamed() const;
+      std::string name() const;
+
+      void setReferenceToken(token_t *token);
+      bool isReference() const;
 
       bool operator == (const vartype_t &other) const;
       bool operator != (const vartype_t &other) const;
@@ -177,6 +212,11 @@ namespace occa {
       void operator += (const qualifier_t &qualifier);
       void operator -= (const qualifier_t &qualifier);
       void operator += (const qualifiers_t &qualifiers_);
+
+      void add(const fileOrigin &origin,
+               const qualifier_t &qualifier);
+
+      void add(const qualifierWithSource &qualifier);
 
       void operator += (const pointer_t &pointer);
       void operator += (const pointerVector &pointers_);
@@ -189,11 +229,11 @@ namespace occa {
       vartype_t flatten() const;
 
       void printDeclaration(printer &pout,
-                            const std::string &name,
+                            const std::string &varName,
                             const bool printType = true) const;
 
       void printExtraDeclaration(printer &pout,
-                                 const std::string &name) const;
+                                 const std::string &varName) const;
     };
     //==================================
 
@@ -212,8 +252,10 @@ namespace occa {
     public:
       vartype_t baseType;
 
+      typedef_t(const vartype_t &baseType_);
+
       typedef_t(const vartype_t &baseType_,
-                const std::string &name_ = "");
+                identifierToken &source_);
 
       virtual int type() const;
       virtual type_t& clone() const;
@@ -232,8 +274,13 @@ namespace occa {
       bool isPointer, isBlock;
 
       function_t();
+
+      function_t(const vartype_t &returnType_,
+                 identifierToken &nameToken);
+
       function_t(const vartype_t &returnType_,
                  const std::string &name_ = "");
+
       function_t(const function_t &other);
 
       function_t& operator += (const variable &arg);

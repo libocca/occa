@@ -111,11 +111,16 @@ namespace occa {
     //==================================
 
     //---[ Qualifiers ]-----------------
-    qualifiers_t::qualifiers_t() {}
+    qualifierWithSource::qualifierWithSource(const qualifier_t &qualifier_) :
+      origin(),
+      qualifier(&qualifier_) {}
 
-    qualifiers_t::qualifiers_t(const qualifier_t &qualifier) {
-      *this += qualifier;
-    }
+    qualifierWithSource::qualifierWithSource(const fileOrigin &origin_,
+                                             const qualifier_t &qualifier_) :
+      origin(origin_),
+      qualifier(&qualifier_) {}
+
+    qualifiers_t::qualifiers_t() {}
 
     qualifiers_t::~qualifiers_t() {}
 
@@ -128,15 +133,14 @@ namespace occa {
           (index >= (int) qualifiers.size())) {
         return NULL;
       }
-      return qualifiers[index];
+      return qualifiers[index].qualifier;
     }
 
     int qualifiers_t::indexOf(const qualifier_t &qualifier) const {
       const int count = (int) qualifiers.size();
       if (count) {
-        const qualifier_t * const *qs = &(qualifiers[0]);
         for (int i = 0; i < count; ++i) {
-          if (qs[i] == &qualifier) {
+          if (qualifiers[i].qualifier == &qualifier) {
             return i;
           }
         }
@@ -155,7 +159,7 @@ namespace occa {
         return false;
       }
       for (int i = 0; i < count; ++i) {
-        if (!other.has(*qualifiers[i])) {
+        if (!other.has(*(qualifiers[i].qualifier))) {
           return false;
         }
       }
@@ -168,7 +172,7 @@ namespace occa {
 
     qualifiers_t& qualifiers_t::operator += (const qualifier_t &qualifier) {
       if (!has(qualifier)) {
-        qualifiers.push_back(&qualifier);
+        qualifiers.push_back(qualifier);
       }
       return *this;
     }
@@ -184,7 +188,22 @@ namespace occa {
     qualifiers_t& qualifiers_t::operator += (const qualifiers_t &other) {
       const int count = (int) other.qualifiers.size();
       for (int i = 0; i < count; ++i) {
-        *this += *(other.qualifiers[i]);
+        this->add(other.qualifiers[i]);
+      }
+      return *this;
+    }
+
+    qualifiers_t& qualifiers_t::add(const fileOrigin &origin,
+                                    const qualifier_t &qualifier) {
+      if (!has(qualifier)) {
+        qualifiers.push_back(qualifierWithSource(origin, qualifier));
+      }
+      return *this;
+    }
+
+    qualifiers_t& qualifiers_t::add(const qualifierWithSource &qualifier) {
+      if (!has(*(qualifier.qualifier))) {
+        qualifiers.push_back(qualifier);
       }
       return *this;
     }
@@ -197,9 +216,9 @@ namespace occa {
       if (!count) {
         return pout;
       }
-      pout << *(quals[0]);
+      pout << *(quals[0].qualifier);
       for (int i = 1; i < count; ++i) {
-        pout << ' ' << *(quals[i]);
+        pout << ' ' << *(quals[i].qualifier);
       }
       return pout;
     }

@@ -107,7 +107,7 @@ namespace occa {
     }
 
     std::string typeKeyword::name() {
-      return type_.name;
+      return type_.name();
     }
     //==================================
 
@@ -120,7 +120,7 @@ namespace occa {
     }
 
     std::string variableKeyword::name() {
-      return var.name;
+      return var.name();
     }
     //==================================
 

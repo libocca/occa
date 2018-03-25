@@ -267,7 +267,7 @@ namespace occa {
     }
 
     void typeToken::print(std::ostream &out) const {
-      out << type_.name;
+      out << type_.name();
     }
     //==================================
 
@@ -288,7 +288,7 @@ namespace occa {
     }
 
     void variableToken::print(std::ostream &out) const {
-      out << var.name;
+      out << var.name();
     }
     //==================================
 

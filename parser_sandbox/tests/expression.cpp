@@ -115,7 +115,9 @@ void testOtherNodes() {
   vartype_t t1(t1_1);
   t1 += pointer_t();
 
-  variable var_(t1, "var");
+  identifierToken varName(fileOrigin(),
+                          "var");
+  variable var_(t1, &varName);
   variableNode var(NULL, var_);
 
   primitiveNode one(NULL, 1);

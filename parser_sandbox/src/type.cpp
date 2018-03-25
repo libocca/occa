@@ -50,10 +50,33 @@ namespace occa {
     }
 
     //---[ Type ]-----------------------
-    type_t::type_t(const std::string &name_) :
-      name(name_) {}
 
-    type_t::~type_t() {}
+    type_t::type_t(const std::string &name_) :
+      source(new identifierToken(fileOrigin(),
+                                 name_)) {}
+
+    type_t::type_t(identifierToken &source_) :
+      source((identifierToken*) source_.clone()) {}
+
+    type_t::type_t(const type_t &other) {
+      if (other.source) {
+        source = (identifierToken*) other.source->clone();
+      } else {
+        source = NULL;
+      }
+    }
+
+    type_t::~type_t() {
+      delete source;
+    }
+
+    const std::string& type_t::name() const {
+      return source->value;
+    }
+
+    bool type_t::isNamed() const {
+      return source->value.size();
+    }
 
     bool type_t::operator == (const type_t &other) const {
       if (type() != other.type()) {
@@ -75,7 +98,7 @@ namespace occa {
 
     printer& operator << (printer &pout,
                           const type_t &type) {
-      pout << type.name;
+      pout << type.name();
       return pout;
     }
     //==================================
@@ -105,6 +128,15 @@ namespace occa {
       qualifiers += qualifiers_;
     }
 
+    void pointer_t::add(const fileOrigin &origin,
+                        const qualifier_t &qualifier) {
+      qualifiers.add(origin, qualifier);
+    }
+
+    void pointer_t::add(const qualifierWithSource &qualifier) {
+      qualifiers.add(qualifier);
+    }
+
     printer& operator << (printer &pout,
                           const pointer_t &pointer) {
       pout << '*';
@@ -116,17 +148,36 @@ namespace occa {
     //==================================
 
     //---[ Array ]----------------------
-    array_t::array_t(exprNode *size_) :
+    array_t::array_t() :
+      start(NULL),
+      end(NULL),
+      size(NULL) {}
+
+    array_t::array_t(operatorToken &start_,
+                     operatorToken &end_,
+                     exprNode *size_) :
+      start((operatorToken*) start_.clone()),
+      end((operatorToken*) end_.clone()),
       size(size_) {}
 
     array_t::array_t(const array_t &other) :
+      start(NULL),
+      end(NULL),
       size(NULL) {
+      if (other.start) {
+        start = (operatorToken*) other.start->clone();
+      }
+      if (other.end) {
+        end = (operatorToken*) other.end->clone();
+      }
       if (other.size) {
         size = &(other.size->clone());
       }
     }
 
     array_t::~array_t() {
+      delete start;
+      delete end;
       delete size;
     }
 
@@ -158,12 +209,27 @@ namespace occa {
 
     //---[ Vartype ]--------------------
     vartype_t::vartype_t() :
-      type(NULL),
-      isReference(false) {}
+      typeToken(NULL),
+      type(),
+      referenceToken(NULL) {}
 
     vartype_t::vartype_t(const type_t &type_) :
-      isReference(false) {
-      if (!type_.name.size()) {
+      typeToken(NULL),
+      referenceToken(NULL) {
+
+      if (!type_.isNamed()) {
+        type = &(type_.clone());
+      } else {
+        type = &type_;
+      }
+    }
+
+    vartype_t::vartype_t(identifierToken &typeToken_,
+                         const type_t &type_) :
+      typeToken((identifierToken*) typeToken_.clone()),
+      referenceToken(NULL) {
+
+      if (!type_.isNamed()) {
         type = &(type_.clone());
       } else {
         type = &type_;
@@ -171,8 +237,9 @@ namespace occa {
     }
 
     vartype_t::vartype_t(const vartype_t &other) :
-      type(NULL),
-      isReference(false) {
+      typeToken(NULL),
+      type(),
+      referenceToken(NULL) {
       *this = other;
     }
 
@@ -184,14 +251,27 @@ namespace occa {
       clear();
       qualifiers  = other.qualifiers;
       pointers    = other.pointers;
-      isReference = other.isReference;
       arrays      = other.arrays;
 
+      delete typeToken;
+      if (other.typeToken) {
+        typeToken = (identifierToken*) other.typeToken->clone();
+      } else {
+        typeToken = NULL;
+      }
+
       if (other.type &&
-          !other.type->name.size()) {
+          !other.type->isNamed()) {
         type = &(other.type->clone());
       } else {
         type = other.type;
+      }
+
+      delete referenceToken;
+      if (other.referenceToken) {
+        referenceToken = other.referenceToken->clone();
+      } else {
+        referenceToken = NULL;
       }
 
       return *this;
@@ -200,18 +280,42 @@ namespace occa {
     void vartype_t::clear() {
       qualifiers.clear();
       pointers.clear();
-      isReference = false;
       arrays.clear();
 
+      delete typeToken;
+      typeToken = NULL;
+
       if (type &&
-          !type->name.size()) {
+          !type->isNamed()) {
         delete type;
       }
       type = NULL;
+
+      delete referenceToken;
+      referenceToken = NULL;
     }
 
     bool vartype_t::isValid() const {
       return type;
+    }
+
+    bool vartype_t::isNamed() const {
+      return typeToken;
+    }
+
+    std::string vartype_t::name() const {
+      if (typeToken) {
+        return typeToken->value;
+      }
+      return "";
+    }
+
+    void vartype_t::setReferenceToken(token_t *token) {
+      referenceToken = token->clone();
+    }
+
+    bool vartype_t::isReference() const {
+      return referenceToken;
     }
 
     bool vartype_t::operator == (const vartype_t &other) const {
@@ -222,9 +326,9 @@ namespace occa {
       vartype_t flat      = flatten();
       vartype_t otherFlat = other.flatten();
 
-      if (((*flat.type)     != (*otherFlat.type))     ||
-          (flat.isReference != otherFlat.isReference) ||
-          (flat.qualifiers  != otherFlat.qualifiers)) {
+      if (((*flat.type)       != (*otherFlat.type))     ||
+          (flat.isReference() != otherFlat.isReference()) ||
+          (flat.qualifiers    != otherFlat.qualifiers)) {
         return false;
       }
 
@@ -286,6 +390,15 @@ namespace occa {
       qualifiers += qualifiers_;
     }
 
+    void vartype_t::add(const fileOrigin &origin,
+                        const qualifier_t &qualifier) {
+      qualifiers.add(origin, qualifier);
+    }
+
+    void vartype_t::add(const qualifierWithSource &qualifier) {
+      qualifiers.add(qualifier);
+    }
+
     void vartype_t::operator += (const pointer_t &pointer) {
       pointers.push_back(pointer);
     }
@@ -334,7 +447,7 @@ namespace occa {
     }
 
     void vartype_t::printDeclaration(printer &pout,
-                                     const std::string &name,
+                                     const std::string &varName,
                                      const bool printType) const {
       if (!type) {
         return;
@@ -356,7 +469,7 @@ namespace occa {
         }
       }
 
-      pout << name;
+      pout << varName;
 
       const int arrayCount = (int) arrays.size();
       for (int i = 0; i < arrayCount; ++i) {
@@ -365,8 +478,8 @@ namespace occa {
     }
 
     void vartype_t::printExtraDeclaration(printer &pout,
-                                          const std::string &name) const {
-      printDeclaration(pout, name, false);
+                                          const std::string &varName) const {
+      printDeclaration(pout, varName, false);
     }
     //==================================
 
@@ -383,12 +496,16 @@ namespace occa {
     }
 
     void primitive_t::printDeclaration(printer &pout) const {
-      pout << name;
+      pout << name();
     }
 
+    typedef_t::typedef_t(const vartype_t &baseType_) :
+      type_t(),
+      baseType(baseType_) {}
+
     typedef_t::typedef_t(const vartype_t &baseType_,
-                         const std::string &name_) :
-      type_t(name_),
+                         identifierToken &source_) :
+      type_t(source_),
       baseType(baseType_) {}
 
     int typedef_t::type() const {
@@ -396,10 +513,10 @@ namespace occa {
     }
 
     type_t& typedef_t::clone() const {
-      if (name.size()) {
+      if (isNamed()) {
         return *(const_cast<typedef_t*>(this));
       }
-      return *(new typedef_t(baseType, name));
+      return *(new typedef_t(baseType, *source));
     }
 
     bool typedef_t::equals(const type_t &other) const {
@@ -408,12 +525,19 @@ namespace occa {
 
     void typedef_t::printDeclaration(printer &pout) const {
       pout << "typedef ";
-      baseType.printDeclaration(pout, name);
+      baseType.printDeclaration(pout, name());
     }
 
     function_t::function_t() :
-      type_t(""),
+      type_t(),
       returnType(),
+      isPointer(false),
+      isBlock(false) {}
+
+    function_t::function_t(const vartype_t &returnType_,
+                           identifierToken &nameToken) :
+      type_t(nameToken),
+      returnType(returnType_),
       isPointer(false),
       isBlock(false) {}
 
@@ -425,7 +549,7 @@ namespace occa {
       isBlock(false) {}
 
     function_t::function_t(const function_t &other) :
-      type_t(other.name),
+      type_t(other),
       returnType(other.returnType),
       args(other.args),
       isPointer(other.isPointer),
@@ -436,7 +560,7 @@ namespace occa {
     }
 
     type_t& function_t::clone() const {
-      if (name.size()) {
+      if (isNamed()) {
         return *(const_cast<function_t*>(this));
       }
       return *(new function_t(*this));
@@ -479,11 +603,11 @@ namespace occa {
     void function_t::printDeclaration(printer &pout) const {
       const bool isPointerType = (isPointer || isBlock);
       if (!isPointerType) {
-        returnType.printDeclaration(pout, name);
+        returnType.printDeclaration(pout, name());
       } else if (isPointer) {
-        returnType.printDeclaration(pout, "(*" + name);
+        returnType.printDeclaration(pout, "(*" + name());
       } else {
-        returnType.printDeclaration(pout, "(^" + name);
+        returnType.printDeclaration(pout, "(^" + name());
       }
       if (isPointerType) {
         pout << ')';

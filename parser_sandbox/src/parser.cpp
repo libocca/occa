@@ -395,21 +395,24 @@ namespace occa {
       if (&qualifier == &long_) {
         if (vartype.has(long_)) {
           vartype -= long_;
-          vartype += longlong_;
+          vartype.add(token->origin,
+                      longlong_);
         }
         else if (vartype.has(longlong_)) {
           token->printWarning("'long long long' is tooooooo long,"
                               " ignoring additional longs");
         }
         else {
-          vartype += long_;
+          vartype.add(token->origin,
+                      long_);
         }
         return;
       }
 
       // Non-long qualifiers
       if (!vartype.has(qualifier)) {
-        vartype += qualifier;
+        vartype.add(token->origin,
+                    qualifier);
       } else {
         token->printWarning("Ignoring duplicate qualifier");
       }
@@ -444,7 +447,8 @@ namespace occa {
           success = false;
           break;
         }
-        pointer += qualifier;
+        pointer.add(token->origin,
+                    qualifier);
       }
 
       context.set(tokenPos);
@@ -461,8 +465,8 @@ namespace occa {
       if (!(getOperatorType(context[0]) & operatorType::bitAnd)) {
         return;
       }
+      vartype.setReferenceToken(context[0]);
       context.set(1);
-      vartype.isReference = true;
     }
 
     bool parser_t::isLoadingFunctionPointer() {
@@ -509,7 +513,7 @@ namespace occa {
       //       Check for arrays
       context.pushPairRange(0);
 
-      std::string name = "";
+      identifierToken *nameToken = NULL;
       const bool isPointer = (getOperatorType(context[0]) & operatorType::mult);
       context.set(1);
 
@@ -519,9 +523,7 @@ namespace occa {
 
       if (context.size() &&
           (context[0]->type() & tokenType::identifier)) {
-        name = (context[0]
-                ->to<identifierToken>()
-                .value);
+        nameToken = (identifierToken*) context[0];
         context.set(1);
       }
 
@@ -543,27 +545,25 @@ namespace occa {
       }
 
       if (!arraytype.arrays.size()) {
-        return variable(func, name);
+        return variable(func, nameToken);
       }
 
       vartype_t varType(func);
       varType.arrays = arraytype.arrays;
-      return variable(varType, name);
+      return variable(varType, nameToken);
     }
 
     variable parser_t::loadVariable(vartype_t &vartype) {
-      std::string name = "";
+      identifierToken *nameToken = NULL;
       if (context.size() &&
           (context[0]->type() & tokenType::identifier)) {
-        name = (context[0]
-                ->to<identifierToken>()
-                .value);
+        nameToken = (identifierToken*) context[0];
         context.set(1);
       }
 
       setArrays(vartype);
 
-      return variable(vartype, name);
+      return variable(vartype, nameToken);
     }
 
     bool parser_t::hasArray() {
@@ -574,9 +574,14 @@ namespace occa {
     void parser_t::setArrays(vartype_t &vartype) {
       while (success &&
              hasArray()) {
+
+        operatorToken &start = context[0]->to<operatorToken>();
+        operatorToken &end   = context.getClosingPairToken(0)->to<operatorToken>();
         context.pushPairRange(0);
 
-        vartype += array_t(context.getExpression());
+        vartype += array_t(start,
+                           end,
+                           context.getExpression());
 
         tokenRange pairRange = context.pop();
         context.set(pairRange.end + 1);

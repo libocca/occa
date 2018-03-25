@@ -22,19 +22,20 @@
 #include "occa/tools/env.hpp"
 #include "occa/tools/testing.hpp"
 
+#include "token.hpp"
 #include "type.hpp"
 #include "typeBuiltins.hpp"
 #include "expression.hpp"
 
 void testBitfields();
 void testFunction();
-// void testCasting();
+void testCasting();
 void testComparision();
 
 int main(const int argc, const char **argv) {
   testBitfields();
   testFunction();
-  // testCasting();
+  testCasting();
   testComparision();
 
   return 0;
@@ -115,27 +116,45 @@ void testFunction() {
   t1_1 += pointer_t();
 
   vartype_t t1 = t1_1;
-  t1.isReference = true;
+  unknownToken dummyReferenceToken((fileOrigin()));
+  t1.setReferenceToken(&dummyReferenceToken);
 
   vartype_t t2 = t1_1;
-  t2 += pointer_t(const_);
+  qualifiers_t t2q;
+  t2q += const_;
+  t2 += pointer_t(t2q);
 
-  typedef_t td1(t1, "t1");
-  typedef_t td2(t2, "t2");
+  identifierToken td1Name(fileOrigin(),
+                          "td1");
+  identifierToken td2Name(fileOrigin(),
+                          "td2");
+  typedef_t td1(t1, td1Name);
+  typedef_t td2(t2, td2Name);
 
   vartype_t arg3(char_);
   arg3 += volatile_;
 
   primitiveNode arg4Size(NULL, 1337);
   vartype_t arg4(t2);
-  arg4 += array_t(&arg4Size.clone());
+
+  operatorToken arg4Start(fileOrigin(),
+                          op::bracketStart);
+  operatorToken arg4End(fileOrigin(),
+                        op::bracketStart);
+  arg4 += array_t(arg4Start,
+                  arg4End,
+                  &arg4Size.clone());
 
   function_t f(void_, "foo");
-  f += variable(t1 , "a");
-  f += variable(td2, "b");
+  identifierToken a(fileOrigin(), "a");
+  identifierToken b(fileOrigin(), "b");
+  identifierToken array(fileOrigin(), "array");
+  identifierToken e(fileOrigin(), "e");
+  f += variable(t1 , &a);
+  f += variable(td2, &b);
   f += variable(arg3);
-  f += variable(arg4, "array");
-  f += variable(double_, "e");
+  f += variable(arg4, &array);
+  f += variable(double_, &e);
 
   function_t f2(f, "bar");
 
@@ -177,9 +196,9 @@ void testFunction() {
   pout << '\n';
 }
 
-#if 0
 // TODO: Reimplement casting checking
 void testCasting() {
+#if 0
   // All primitive can be cast to each other
   const primitive_t* types[9] = {
     &bool_,
@@ -269,8 +288,8 @@ void testCasting() {
   OCCA_ASSERT_FALSE(constIntArray2.canBeCastedToImplicitly(intArray));
   OCCA_ASSERT_FALSE(constIntArray2.canBeCastedToImplicitly(intArray2));
   OCCA_ASSERT_TRUE(constIntArray2.canBeCastedToImplicitly(constIntArray));
-}
 #endif
+}
 
 void testComparision() {
   // Test primitives
@@ -291,8 +310,10 @@ void testComparision() {
   }
 
   // Test wrapped types
+  identifierToken fooName(fileOrigin(),
+                          "foo");
   vartype_t fakeFloat(float_);
-  typedef_t typedefFloat(float_, "foo");
+  typedef_t typedefFloat(float_, fooName);
   OCCA_ASSERT_TRUE(fakeFloat == typedefFloat);
 
   // Test qualifiers

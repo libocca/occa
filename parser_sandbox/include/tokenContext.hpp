@@ -91,6 +91,8 @@ namespace occa {
       void getAndCloneTokens(tokenVector &tokens_);
 
       int getClosingPair(const int index);
+      token_t* getClosingPairToken(const int index);
+
       int getNextOperator(const opType_t &opType);
 
       exprNode* getExpression();

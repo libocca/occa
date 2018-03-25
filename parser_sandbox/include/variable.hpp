@@ -30,14 +30,20 @@ namespace occa {
     class variable {
     public:
       vartype_t vartype;
-      std::string name;
+      identifierToken *source;
 
       variable();
+
       variable(const vartype_t &vartype_,
-               const std::string &name_ = "");
+               identifierToken *source_ = NULL);
+
       variable(const variable &other);
+      variable& operator = (const variable &other);
 
       ~variable();
+
+      bool isNamed() const;
+      const std::string& name() const;
 
       bool operator == (const variable &other) const;
 
