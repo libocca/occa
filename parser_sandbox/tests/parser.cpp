@@ -639,7 +639,6 @@ void testTypeDeclLoading() {
 
 void testIfLoading() {
   statement_t *statement;
-  OCCA_ASSERT_TRUE(statement == NULL);
 
   setStatement("if (true) {}",
                statementType::if_);
@@ -667,7 +666,6 @@ void testIfLoading() {
 
 void testForLoading() {
   statement_t *statement;
-  OCCA_ASSERT_TRUE(statement == NULL);
 
   setStatement("for (;;) {}",
                statementType::for_);
@@ -683,7 +681,6 @@ void testForLoading() {
 
 void testWhileLoading() {
   statement_t *statement;
-  OCCA_ASSERT_TRUE(statement == NULL);
 
   setStatement("while (true) {}",
                statementType::while_);
@@ -708,7 +705,6 @@ void testWhileLoading() {
 
 void testSwitchLoading() {
   statement_t *statement;
-  OCCA_ASSERT_TRUE(statement == NULL);
 
   setStatement("switch (2) {}",
                statementType::switch_);
@@ -739,7 +735,6 @@ void testSwitchLoading() {
 
 void testJumpsLoading() {
   statement_t *statement;
-  OCCA_ASSERT_TRUE(statement == NULL);
 
   setStatement("continue;",
                statementType::continue_);
@@ -755,7 +750,6 @@ void testJumpsLoading() {
 
 void testClassAccessLoading() {
   statement_t *statement;
-  OCCA_ASSERT_TRUE(statement == NULL);
 
   setStatement("public:",
                statementType::classAccess);
@@ -767,7 +761,6 @@ void testClassAccessLoading() {
 
 void testAttributeLoading() {
   statement_t *statement;
-  OCCA_ASSERT_TRUE(statement == NULL);
 
   setStatement("@dim",
                statementType::attribute);
@@ -798,7 +791,6 @@ void testPragmaLoading() {
 
 void testGotoLoading() {
   statement_t *statement;
-  OCCA_ASSERT_TRUE(statement == NULL);
 
   setStatement("label:",
                statementType::gotoLabel);

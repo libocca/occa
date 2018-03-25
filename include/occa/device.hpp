@@ -147,8 +147,11 @@ namespace occa {
     occa::properties& properties();
     const occa::properties& properties() const;
 
-    const occa::json& kernelProperties() const;
-    const occa::json& memoryProperties() const;
+    occa::properties& kernelProperties();
+    const occa::properties& kernelProperties() const;
+
+    occa::properties& memoryProperties();
+    const occa::properties& memoryProperties() const;
 
     device_v* getDHandle() const;
 

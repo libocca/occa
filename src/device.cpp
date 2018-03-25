@@ -142,15 +142,25 @@ namespace occa {
     return dHandle->properties;
   }
 
-  const occa::json& device::kernelProperties() const {
-    occa::json &ret = dHandle->properties["kernel"];
+  occa::properties& device::kernelProperties() {
+    occa::properties &ret = (occa::properties&) dHandle->properties["kernel"];
     ret["mode"] = mode();
     return ret;
   }
 
-  const occa::json& device::memoryProperties() const {
-    occa::json &ret = dHandle->properties["memory"];
+  const occa::properties& device::kernelProperties() const {
+    const occa::properties &ret = (const occa::properties&) dHandle->properties["kernel"];
+    return ret;
+  }
+
+  occa::properties& device::memoryProperties() {
+    occa::properties &ret = (occa::properties&) dHandle->properties["memory"];
     ret["mode"] = mode();
+    return ret;
+  }
+
+  const occa::properties& device::memoryProperties() const {
+    const occa::properties &ret = (const occa::properties&) dHandle->properties["memory"];
     return ret;
   }
 
