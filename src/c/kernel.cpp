@@ -116,7 +116,8 @@ void OCCA_RFUNC occaKernelRunN(occaKernel kernel,
     }
     case occa::c::typeType::ptr: {
       kArg.add(arg.value.ptr,
-               arg.bytes);
+               arg.bytes,
+               false, false);
       break;
     }
     case occa::c::typeType::int8_: {
