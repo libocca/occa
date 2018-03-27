@@ -32,6 +32,15 @@ namespace occa {
       return oType;
     }
 
+    occaType newOccaType(void *value) {
+      occaType oType;
+      oType.magicHeader = OCCA_C_TYPE_MAGIC_HEADER;
+      oType.type  = typeType::ptr;
+      oType.bytes = sizeof(void*);
+      oType.value.ptr = (char*) value;
+      return oType;
+    }
+
     template <>
     occaType newOccaType(const bool &value) {
       occaType oType;
@@ -371,7 +380,6 @@ OCCA_LFUNC occaType OCCA_RFUNC occaString(const char *str) {
 OCCA_LFUNC void OCCA_RFUNC occaFree(occaType value) {
   switch (value.type) {
   case occa::c::typeType::device: {
-    occa::c::device(value).free();
     break;
   }
   case occa::c::typeType::kernel: {

@@ -63,6 +63,8 @@ namespace occa {
       return occaType();
     }
 
+    occaType newOccaType(void *value);
+
     template <>
     occaType newOccaType(const bool &value);
 
