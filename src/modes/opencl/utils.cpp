@@ -264,8 +264,11 @@ namespace occa {
                      const std::string &kernelName,
                      const std::string &flags,
                      hash_t hash,
-                     const std::string &sourceFile) {
+                     const std::string &sourceFile,
+                     const occa::properties &properties) {
       cl_int error;
+
+      const bool verbose = properties.get("verbose", false);
 
       info_.clProgram = clCreateProgramWithSource(info_.clContext, 1,
                                                   (const char **) &content,
@@ -276,7 +279,7 @@ namespace occa {
       if (error && hash.initialized) {
         io::releaseHash(hash, hashTag);
       }
-      if (settings().get("verbose-compilation", true)) {
+      if (verbose) {
         if (hash.initialized) {
           std::cout << "OpenCL compiling " << kernelName
                     << " from [" << sourceFile << "]";
@@ -330,7 +333,7 @@ namespace occa {
       }
       OCCA_OPENCL_ERROR("Kernel (" + kernelName + "): Creating Kernel", error);
 
-      if (settings().get("verbose-compilation", true)) {
+      if (verbose) {
         if (sourceFile.size()) {
           std::cout << "OpenCL compiled " << kernelName << " from [" << sourceFile << "]";
 

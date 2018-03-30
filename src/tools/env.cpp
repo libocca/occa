@@ -74,9 +74,15 @@ namespace occa {
 
     void envInitializer_t::initSettings() {
       properties &settings_ = baseSettings();
-      settings_["version"]    = OCCA_VERSION_STR;
-      settings_["oklVersion"] = OKL_VERSION_STR;
-      settings_["verbose-compilation"] = env::get("OCCA_VERBOSE", false);
+      settings_["version"]     = OCCA_VERSION_STR;
+      settings_["okl-version"] = OKL_VERSION_STR;
+
+      const bool isVerbose = env::get("OCCA_VERBOSE", false);
+      if (isVerbose) {
+        settings_["device/verbose"] = true;
+        settings_["kernel/verbose"] = true;
+        settings_["memory/verbose"] = true;
+      }
     }
 
     void envInitializer_t::initSignalHandling() {

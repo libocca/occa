@@ -69,7 +69,7 @@ namespace occa {
       }
 
       if (foundBinary) {
-        if (settings().get("verbose-compilation", true)) {
+        if (properties.get("verbose", false)) {
           std::cout << "Found cached binary of [" << io::shortname(filename)
                     << "] in [" << io::shortname(binaryFile) << "]\n";
         }
@@ -96,7 +96,9 @@ namespace occa {
                           cFunction.c_str(), cFunction.size(),
                           kernelName,
                           properties["compilerFlags"],
-                          hash, sourceFile);
+                          hash,
+                          sourceFile,
+                          properties);
       clKernel = clInfo.clKernel;
 
       opencl::saveProgramBinary(clInfo, binaryFile, hash, hashTag);

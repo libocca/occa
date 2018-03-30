@@ -642,10 +642,6 @@ namespace occa {
              << " > " << buildLogFilename << " 2>&1";
           const std::string compileLine = ss.str();
 
-          if (settings().get("verbose-compilation", true)) {
-            std::cout << "Finding compiler vendor: " << compileLine << '\n';
-          }
-
           ignoreResult( system(compileLine.c_str()) );
 
           OCCA_ERROR("Could not compile compilerVendorTest.cpp with following command:\n" << compileLine,

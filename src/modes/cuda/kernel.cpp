@@ -48,6 +48,8 @@ namespace occa {
       name = kernelName;
       properties += props;
 
+      const bool verbose = properties.get("verbose", false);
+
       if (properties.get<std::string>("compilerFlags").find("-arch=sm_") == std::string::npos) {
         cuda::device &dev = *((cuda::device*) dHandle);
         const int major = dev.archMajorVersion;
@@ -72,7 +74,7 @@ namespace occa {
       }
 
       if (foundBinary) {
-        if (settings().get("verbose-compilation", true)) {
+        if (verbose) {
           std::cout << "Found cached binary of [" << io::shortname(filename)
                     << "] in [" << io::shortname(binaryFile) << "]\n";
         }
@@ -93,11 +95,11 @@ namespace occa {
                                                          ss.str(),
                                                          properties["footer"]);
 
-      if (settings().get("verbose-compilation", true)) {
+      if (verbose) {
         std::cout << "Compiling [" << kernelName << "]\n";
       }
 
-      //---[ PTX Check Command ]----------
+      //---[ PTX Check Command ]--------
       std::stringstream command;
       if (properties.has("compilerEnvScript")) {
         command << properties["compilerEnvScript"] << " && ";
@@ -114,8 +116,11 @@ namespace occa {
               << " -x cu -c " << cachedSourceFile
               << " -o "       << ptxBinaryFile;
 
+      if (!verbose) {
+        command << " > /dev/null 2>&1";
+      }
       const std::string &ptxCommand = command.str();
-      if (settings().get("verbose-compilation", true)) {
+      if (verbose) {
         std::cout << "Compiling [" << kernelName << "]\n" << ptxCommand << "\n";
       }
 
@@ -124,8 +129,9 @@ namespace occa {
 #else
       ignoreResult( system(("\"" +  ptxCommand + "\"").c_str()) );
 #endif
+      //================================
 
-      //---[ Compiling Command ]----------
+      //---[ Compiling Command ]--------
       command.str("");
       command << properties["compiler"]
               << ' '       << properties["compilerFlags"]
@@ -138,8 +144,11 @@ namespace occa {
               << " -x cu " << cachedSourceFile
               << " -o "    << binaryFile;
 
+      if (!verbose) {
+        command << " > /dev/null 2>&1";
+      }
       const std::string &sCommand = command.str();
-      if (settings().get("verbose-compilation", true)) {
+      if (verbose) {
         std::cout << sCommand << '\n';
       }
 
@@ -150,6 +159,7 @@ namespace occa {
         OCCA_ERROR("Compilation error",
                    false);
       }
+      //================================
 
       const CUresult moduleLoadError = cuModuleLoad(&cuModule,
                                                     binaryFile.c_str());

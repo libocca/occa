@@ -44,6 +44,7 @@ namespace occa {
       properties += props;
 
       const bool isLaunchKernel = props.has("defines/OCCA_LAUNCH_KERNEL");
+      const bool verbose = properties.get("verbose", false);
 
       const std::string sourceFile = (isLaunchKernel
                                       ? getLaunchSourceFilename(filename, hash)
@@ -66,7 +67,7 @@ namespace occa {
       }
 
       if (foundBinary) {
-        if (settings().get("verbose-compilation", true)) {
+        if (verbose) {
           std::cout << "Found cached binary of [" << io::shortname(filename) << "] in [" << io::shortname(binaryFile) << "]\n";
         }
         return buildFromBinary(binaryFile, kernelName, props);
@@ -128,7 +129,7 @@ namespace occa {
 
       const std::string &sCommand = command.str();
 
-      if (settings().get("verbose-compilation", true)) {
+      if (verbose) {
         std::cout << "Compiling [" << kernelName << "]\n" << sCommand << "\n";
       }
 

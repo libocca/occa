@@ -76,14 +76,14 @@ namespace occa {
   }
 
   template <class TM>
-  inline std::string toString(const TM &t) {
+  std::string toString(const TM &t) {
     std::stringstream ss;
     ss << t;
     return ss.str();
   }
 
   template <class TM>
-  inline std::string toString(const std::vector<TM> &v) {
+  std::string toString(const std::vector<TM> &v) {
     const int size = (int) v.size();
     std::stringstream ss;
     ss << '[';
@@ -99,26 +99,16 @@ namespace occa {
   }
 
   template <>
-  inline std::string toString<std::string>(const std::string &t) {
-    return t;
-  }
+  std::string toString<std::string>(const std::string &t);
 
   template <>
-  inline std::string toString<float>(const float &t) {
-    std::stringstream ss;
-    ss << std::scientific << std::setprecision(8) << t << 'f';
-    return ss.str();
-  }
+  std::string toString<float>(const float &t);
 
   template <>
-  inline std::string toString<double>(const double &t) {
-    std::stringstream ss;
-    ss << std::scientific << std::setprecision(16) << t;
-    return ss.str();
-  }
+  std::string toString<double>(const double &t);
 
   template <class TM>
-  inline TM fromString(const std::string &s) {
+  TM fromString(const std::string &s) {
     std::stringstream ss;
     TM t;
     ss << s;
@@ -127,18 +117,13 @@ namespace occa {
   }
 
   template <>
-  inline bool fromString(const std::string &s) {
-    if (s == "0") {
-      return false;
-    }
-    const std::string sUp = uppercase(s);
-    return !((sUp == "N") ||
-             (sUp == "NO") ||
-             (sUp == "FALSE"));
-  }
+  bool fromString(const std::string &s);
+
+  template <>
+  std::string fromString(const std::string &s);
 
   template <class TM>
-  inline std::vector<TM> listFromString(const std::string &s) {
+  std::vector<TM> listFromString(const std::string &s) {
     std::string str = strip(s);
     const int chars = (int) str.size();
     if (chars && str[chars - 1] == ']') {
@@ -157,11 +142,6 @@ namespace occa {
       ret.push_back(occa::fromString<TM>(unescape(parts[i], '\\')));
     }
     return ret;
-  }
-
-  template <>
-  inline std::string fromString(const std::string &s) {
-    return s;
   }
 
   inline bool startsWith(const std::string &s,

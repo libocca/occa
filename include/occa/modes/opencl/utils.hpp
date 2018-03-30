@@ -92,7 +92,8 @@ namespace occa {
                      const std::string &kernelName,
                      const std::string &flags = "",
                      hash_t hash = hash_t(),
-                     const std::string &sourceFile = "");
+                     const std::string &sourceFile = "",
+                     const occa::properties &properties = occa::properties());
 
     void buildKernelFromBinary(info_t &info_,
                                const unsigned char *content,

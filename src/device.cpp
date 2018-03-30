@@ -144,8 +144,6 @@ namespace occa {
       }
     }
 
-    std::cout << defaults << '\n';
-
     setDHandle(occa::newModeDevice(defaults + props));
 
     stream newStream = createStream();
@@ -297,9 +295,6 @@ namespace occa {
     std::string devHash = dHandle->hash().toFullString();
     strVector dirs = io::directories("occa://" + library);
     const int dirCount = (int) dirs.size();
-
-    const bool isVerbose = settings().get("verbose-compilation", true);
-    settings()["verbose-compilation"] = false;
     int kernelsLoaded = 0;
 
     for (int d = 0; d < dirCount; ++d) {
@@ -313,14 +308,19 @@ namespace occa {
       if (info["device/hash"].string() != devHash) {
         continue;
       }
-
       ++kernelsLoaded;
+
+      const std::string sourceFilename = dirs[d] + kc::parsedSourceFile;
 
       json &kInfo = info["kernel"];
       hash_t hash = hash_t::fromString(kInfo["hash"].string());
       jsonArray metadataArray = kInfo["metadata"].array();
       occa::properties kernelProps = kInfo["props"];
-      const std::string sourceFilename = dirs[d] + kc::parsedSourceFile;
+
+      const bool kernelHasVerbose = kernelProps.has("verbose");
+      const bool kernelIsVerbose = (kernelHasVerbose &&
+                                    kernelProps.get("verbose", false));
+      kernelProps["verbose"] = false;
 
       const int kernels = metadataArray.size();
       for (int k = 0; k < kernels; ++k) {
@@ -333,17 +333,22 @@ namespace occa {
                             metadata);
         }
       }
+
+      if (kernelIsVerbose) {
+        kernelProps["verbose"] = true;
+      }
     }
 
-    settings()["verbose-compilation"] = isVerbose;
-    if (isVerbose && kernelsLoaded) {
+    if (properties().get("verbose", false) && kernelsLoaded) {
       std::cout << "Loaded " << kernelsLoaded;
       if (library.size()) {
         std::cout << " ["<< library << "]";
       } else {
         std::cout << " cached";
       }
-      std::cout << ((kernelsLoaded == 1) ? " kernel\n" : " kernels\n");
+      std::cout << ((kernelsLoaded == 1)
+                    ? " kernel\n"
+                    : " kernels\n");
     }
   }
 
@@ -418,8 +423,6 @@ namespace occa {
 
     // Load nested kernels
     if (metadata.nestedKernels) {
-      const bool vc_f = settings()["verbose-compilation"];
-
       for (int ki = 0; ki < metadata.nestedKernels; ++ki) {
         kernelMetadata sMetadata    = metadata.getNestedKernelMetadata(ki);
         const std::string &sKerName = sMetadata.name;
@@ -428,13 +431,7 @@ namespace occa {
         sKer.kHandle->metadata = sMetadata;
 
         launchKHandle->nestedKernels.push_back(sKer);
-
-        // Only show compilation the first time
-        if (ki == 0) {
-          settings()["verbose-compilation"] = false;
-        }
       }
-      settings()["verbose-compilation"] = vc_f;
     }
     return occa::kernel(launchKHandle);
   }

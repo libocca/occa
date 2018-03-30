@@ -139,7 +139,7 @@ test:
 	  cd $(OCCA_DIR)/examples/$$dir &&  \
 	  rm -f main                    &&  \
 	  CXXFLAGS='-g' make            &&  \
-	  ./main;                           \
+	  OCCA_VERBOSE=1 ./main;            \
 	done
 #=================================================
 

@@ -104,6 +104,41 @@ namespace occa {
     return ret;
   }
 
+  template <>
+  std::string toString<std::string>(const std::string &t) {
+    return t;
+  }
+
+  template <>
+  std::string toString<float>(const float &t) {
+    std::stringstream ss;
+    ss << std::scientific << std::setprecision(8) << t << 'f';
+    return ss.str();
+  }
+
+  template <>
+  std::string toString<double>(const double &t) {
+    std::stringstream ss;
+    ss << std::scientific << std::setprecision(16) << t;
+    return ss.str();
+  }
+
+  template <>
+  bool fromString(const std::string &s) {
+    if (s == "0") {
+      return false;
+    }
+    const std::string sUp = uppercase(s);
+    return !((sUp == "N") ||
+             (sUp == "NO") ||
+             (sUp == "FALSE"));
+  }
+
+  template <>
+  std::string fromString(const std::string &s) {
+    return s;
+  }
+
   udim_t atoi(const char *c) {
     udim_t ret = 0;
 
