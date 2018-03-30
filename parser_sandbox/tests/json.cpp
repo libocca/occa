@@ -85,6 +85,17 @@ void testString() {
   j.load("\"\\t\"");
   OCCA_ASSERT_EQUAL(occa::json::string_, j.type);
   OCCA_ASSERT_EQUAL("\t", j.value_.string);
+
+  // Test unicode
+  j.load("\"\\u0123 \\u4567 \\u89AB \\uCDEF\"");
+  OCCA_ASSERT_EQUAL(occa::json::string_, j.type);
+  OCCA_ASSERT_EQUAL("\\u0123 \\u4567 \\u89AB \\uCDEF",
+                    j.value_.string);
+
+  j.load("\"\\u0123 \\u4567 \\u89ab \\ucdef\"");
+  OCCA_ASSERT_EQUAL(occa::json::string_, j.type);
+  OCCA_ASSERT_EQUAL("\\u0123 \\u4567 \\u89ab \\ucdef",
+                    j.value_.string);
 }
 
 void testNumber() {

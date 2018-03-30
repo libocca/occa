@@ -105,22 +105,36 @@ namespace occa {
 
     while (*c != '\0') {
       if (*c == '\\') {
-        ++c;
+        ++c; // Skip '\'
+        OCCA_ERROR("Unclosed string",
+                   *c != '\0');
+
         switch (*c) {
-        case '"':  value_.string += '"';  break;
-        case '\\': value_.string += '\\'; break;
-        case '/':  value_.string += '/';  break;
         case 'b':  value_.string += '\b'; break;
         case 'f':  value_.string += '\f'; break;
         case 'n':  value_.string += '\n'; break;
         case 'r':  value_.string += '\r'; break;
         case 't':  value_.string += '\t'; break;
         case 'u':
-          OCCA_FORCE_ERROR("Unicode is not supported yet");
+          // Found unicode character
+          // Load \uXXXX
+          ++c; // Skip 'u'
+          value_.string += "\\u";
+          for (int i = 0; i < 4; ++i) {
+            const char ci = c[i];
+            OCCA_ERROR("Expected hex value",
+                       (('0' <= ci) && (ci <= '9')) ||
+                       (('a' <= ci) && (ci <= 'f')) ||
+                       (('A' <= ci) && (ci <= 'F')));
+            value_.string += ci;
+          }
+          // Let the ++c increment the last character
+          c += 3;
           break;
         default:
-          OCCA_FORCE_ERROR("Cannot escape character: '" << *c << "'");
+          value_.string += *c;
         }
+        // Skip the last used character
         ++c;
       } else if (*c == quote) {
         ++c;
@@ -485,7 +499,6 @@ namespace occa {
         switch (c) {
         case '"' : out += "\\\"";  break;
         case '\\': out += "\\\\";  break;
-        case '/' : out += "\\/";   break;
         case '\b': out += "\\b";  break;
         case '\f': out += "\\f";  break;
         case '\n': out += "\\n";  break;
