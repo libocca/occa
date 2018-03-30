@@ -124,7 +124,29 @@ namespace occa {
   }
 
   void device::setup(const occa::properties &props) {
-    setDHandle(occa::newModeDevice(props));
+    occa::properties settings_ = settings();
+    occa::properties defaults;
+
+    std::string modePath = "mode/" + props["mode"].string() + "/";
+    std::string paths[2] = {"", modePath};
+
+    for (int i = 0; i < 2; ++i) {
+      const std::string &path = paths[i];
+
+      if (settings_.has(path + "device")) {
+        defaults += settings_[path + "device"];
+      }
+      if (settings_.has(path + "kernel")) {
+        defaults["kernel"] += settings_[path + "kernel"];
+      }
+      if (settings_.has(path + "memory")) {
+        defaults["memory"] += settings_[path + "memory"];
+      }
+    }
+
+    std::cout << defaults << '\n';
+
+    setDHandle(occa::newModeDevice(defaults + props));
 
     stream newStream = createStream();
     dHandle->currentStream = newStream.handle;
@@ -144,7 +166,6 @@ namespace occa {
 
   occa::properties& device::kernelProperties() {
     occa::properties &ret = (occa::properties&) dHandle->properties["kernel"];
-    ret["mode"] = mode();
     return ret;
   }
 
@@ -155,7 +176,6 @@ namespace occa {
 
   occa::properties& device::memoryProperties() {
     occa::properties &ret = (occa::properties&) dHandle->properties["memory"];
-    ret["mode"] = mode();
     return ret;
   }
 
