@@ -273,7 +273,7 @@
 #define OCCA_MINOR_VERSION 0
 #define OCCA_PATCH_VERSION 0
 #define OCCA_VERSION       10000
-#define OCCA_VERSION_STR   "1.0.0"
+#define OCCA_VERSION_STR   "1.0.0-alpha.6"
 
 #define OKL_MAJOR_VERSION 0
 #define OKL_MINOR_VERSION 2

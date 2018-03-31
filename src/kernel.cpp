@@ -342,6 +342,11 @@ namespace occa {
     return *this;
   }
 
+  kernel& kernel::operator = (kernel_v *kHandle_) {
+    setKHandle(kHandle_);
+    return *this;
+  }
+
   kernel::~kernel() {
     removeKHandleRef();
   }
@@ -463,12 +468,18 @@ namespace occa {
     if (kHandle == NULL) {
       return;
     }
+
+    // Remove kernel from cache map
+    kHandle->dHandle->removeCachedKernel(kHandle);
+
+    // Free all kernels
     if (kHandle->nestedKernelCount()) {
       for (int k = 0; k < kHandle->nestedKernelCount(); ++k) {
         kHandle->nestedKernels[k].free();
       }
     }
     kHandle->free();
+    kHandle = NULL;
   }
   //====================================
 

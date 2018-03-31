@@ -233,6 +233,7 @@ namespace occa {
 
     kernel(const kernel &k);
     kernel& operator = (const kernel &k);
+    kernel& operator = (kernel_v *kHandle_);
     ~kernel();
 
   private:

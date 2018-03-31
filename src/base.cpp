@@ -43,6 +43,7 @@ namespace occa {
     static device dev;
     if (!dev.isInitialized()) {
       dev = occa::device(newModeDevice("mode: 'Serial'"));
+      dev.dontUseRefs();
     }
     return dev;
   }

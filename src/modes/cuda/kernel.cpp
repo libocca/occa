@@ -75,7 +75,10 @@ namespace occa {
 
       if (foundBinary) {
         if (verbose) {
-          std::cout << "Found cached binary of [" << io::shortname(filename)
+          std::cout << "Loading cached ["
+                    << kernelName
+                    << "] from ["
+                    << io::shortname(filename)
                     << "] in [" << io::shortname(binaryFile) << "]\n";
         }
         return buildFromBinary(binaryFile, kernelName, props);
@@ -106,7 +109,7 @@ namespace occa {
       }
 
       command << properties["compiler"]
-              << ' '          << properties["compilerFlags"]
+              << ' ' << properties["compilerFlags"]
               << " -Xptxas -v,-dlcm=cg"
 #if (OCCA_OS == OCCA_WINDOWS_OS)
               << " -D OCCA_OS=OCCA_WINDOWS_OS -D _MSC_VER=1800"
@@ -134,7 +137,7 @@ namespace occa {
       //---[ Compiling Command ]--------
       command.str("");
       command << properties["compiler"]
-              << ' '       << properties["compilerFlags"]
+              << ' ' << properties["compilerFlags"]
               << " -ptx"
 #if (OCCA_OS == OCCA_WINDOWS_OS)
               << " -D OCCA_OS=OCCA_WINDOWS_OS -D _MSC_VER=1800"
@@ -156,8 +159,7 @@ namespace occa {
 
       if (compileError) {
         io::releaseHash(hash, hashTag);
-        OCCA_ERROR("Compilation error",
-                   false);
+        OCCA_FORCE_ERROR("Compilation error");
       }
       //================================
 

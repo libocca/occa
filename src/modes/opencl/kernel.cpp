@@ -70,7 +70,10 @@ namespace occa {
 
       if (foundBinary) {
         if (properties.get("verbose", false)) {
-          std::cout << "Found cached binary of [" << io::shortname(filename)
+          std::cout << "Loading cached ["
+                    << kernelName
+                    << "] from ["
+                    << io::shortname(filename)
                     << "] in [" << io::shortname(binaryFile) << "]\n";
         }
         return buildFromBinary(binaryFile, kernelName, props);

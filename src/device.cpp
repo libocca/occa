@@ -38,6 +38,39 @@ namespace occa {
   }
 
   device_v::~device_v() {}
+
+  std::string device_v::getKernelHash(const std::string &fullHash,
+                                      const std::string &kernelName) {
+    return (fullHash + "-" + kernelName);
+  }
+
+  std::string device_v::getKernelHash(const hash_t &kernelHash,
+                                      const std::string &kernelName) {
+    return getKernelHash(kernelHash.toFullString(),
+                         kernelName);
+  }
+
+  std::string device_v::getKernelHash(kernel_v *kernel) {
+    return getKernelHash(kernel->properties["hash"].string(),
+                         kernel->name);
+  }
+
+  kernel& device_v::getCachedKernel(const hash_t &kernelHash,
+                                    const std::string &kernelName) {
+
+    return cachedKernels[getKernelHash(kernelHash, kernelName)];
+  }
+
+  void device_v::removeCachedKernel(kernel_v *kernel) {
+    if (kernel == NULL) {
+      return;
+    }
+
+    cachedKernelMapIterator it = cachedKernels.find(getKernelHash(kernel));
+    if (it != cachedKernels.end()) {
+      cachedKernels.erase(it);
+    }
+  }
   //====================================
 
   //---[ device ]-----------------------
@@ -98,23 +131,6 @@ namespace occa {
     return (dHandle == d.dHandle);
   }
 
-  void device::free() {
-    free(dHandle);
-  }
-
-  void device::free(device_v *&dHandle_) {
-    if (dHandle_ == NULL) {
-      return;
-    }
-    const int streamCount = dHandle_->streams.size();
-
-    for (int i = 0; i < streamCount; ++i) {
-      dHandle_->freeStream(dHandle_->streams[i]);
-    }
-    dHandle_->streams.clear();
-    dHandle_->free();
-  }
-
   bool device::isInitialized() {
     return (dHandle != NULL);
   }
@@ -150,6 +166,23 @@ namespace occa {
     dHandle->currentStream = newStream.handle;
   }
 
+  void device::free() {
+    free(dHandle);
+  }
+
+  void device::free(device_v *&dHandle_) {
+    if (dHandle_ == NULL) {
+      return;
+    }
+    const int streamCount = dHandle_->streams.size();
+
+    for (int i = 0; i < streamCount; ++i) {
+      dHandle_->freeStream(dHandle_->streams[i]);
+    }
+    dHandle_->streams.clear();
+    dHandle_->free();
+  }
+
   const std::string& device::mode() const {
     return dHandle->mode;
   }
@@ -180,6 +213,11 @@ namespace occa {
   const occa::properties& device::memoryProperties() const {
     const occa::properties &ret = (const occa::properties&) dHandle->properties["memory"];
     return ret;
+  }
+
+  hash_t device::hash() const {
+    return (occa::hash(settings()["version"])
+            ^ dHandle->hash());
   }
 
   udim_t device::memorySize() const {
@@ -264,14 +302,14 @@ namespace occa {
 
   //  |---[ Kernel ]--------------------
   void device::storeCacheInfo(const std::string &filename,
-                              const hash_t &hash,
+                              const hash_t &kernelHash,
                               const occa::properties &kernelProps,
                               const kernelMetadataMap &metadataMap) const {
     occa::properties infoProps;
-    infoProps["device"]          = dHandle->properties;
-    infoProps["device/hash"]     = dHandle->hash().toFullString();
-    infoProps["kernel/props"]    = kernelProps;
-    infoProps["kernel/hash"]     = hash.toFullString();
+    infoProps["device"]       = dHandle->properties;
+    infoProps["device/hash"]  = hash().toFullString();
+    infoProps["kernel/props"] = kernelProps;
+    infoProps["kernel/hash"]  = kernelHash.toFullString();
 
     json &metadataJson = infoProps["kernel/metadata"].asArray();
     cKernelMetadataMapIterator kIt = metadataMap.begin();
@@ -280,19 +318,11 @@ namespace occa {
       ++kIt;
     }
 
-    io::storeCacheInfo(filename, hash, infoProps);
-  }
-
-
-  std::string device::cacheHash(const hash_t &hash,
-                                const std::string &kernelName) const {
-    std::string str = hash.toFullString();
-    str += '-';
-    return str + kernelName;
+    io::storeCacheInfo(filename, kernelHash, infoProps);
   }
 
   void device::loadKernels(const std::string &library) {
-    std::string devHash = dHandle->hash().toFullString();
+    std::string devHash = hash().toFullString();
     strVector dirs = io::directories("occa://" + library);
     const int dirCount = (int) dirs.size();
     int kernelsLoaded = 0;
@@ -317,28 +347,19 @@ namespace occa {
       jsonArray metadataArray = kInfo["metadata"].array();
       occa::properties kernelProps = kInfo["props"];
 
-      const bool kernelHasVerbose = kernelProps.has("verbose");
-      const bool kernelIsVerbose = (kernelHasVerbose &&
-                                    kernelProps.get("verbose", false));
+      // Ignore how the kernel was setup, turn off verbose
       kernelProps["verbose"] = false;
 
       const int kernels = metadataArray.size();
       for (int k = 0; k < kernels; ++k) {
-        kernelMetadata metadata = kernelMetadata::fromJson(metadataArray[k]);
-        kernel &ker = dHandle->cachedKernels[cacheHash(hash, metadata.name)];
-        if (!ker.isInitialized()) {
-          ker = buildKernel(sourceFilename,
-                            hash,
-                            kernelProps,
-                            metadata);
-        }
-      }
-
-      if (kernelIsVerbose) {
-        kernelProps["verbose"] = true;
+        buildKernel(sourceFilename,
+                    hash,
+                    kernelProps,
+                    kernelMetadata::fromJson(metadataArray[k]));
       }
     }
 
+    // Print loaded info
     if (properties().get("verbose", false) && kernelsLoaded) {
       std::cout << "Loaded " << kernelsLoaded;
       if (library.size()) {
@@ -359,81 +380,39 @@ namespace occa {
     occa::properties allProps = props + kernelProperties();
     allProps["mode"] = mode();
 
-    hash_t hash = (dHandle->hash()
-                   ^ occa::hash(allProps)
-                   ^ hashFile(filename));
+    hash_t kernelHash = (hash()
+                         ^ occa::hash(allProps)
+                         ^ hashFile(filename));
 
-    kernel &ker = dHandle->cachedKernels[cacheHash(hash, kernelName)];
+    const std::string realFilename = io::filename(filename);
+    const std::string hashDir = io::hashDir(realFilename, kernelHash);
+    std::string sourceFilename = realFilename;
 
-    if (!ker.isInitialized()) {
-      const std::string realFilename = io::filename(filename);
-      const std::string hashDir = io::hashDir(realFilename, hash);
-      std::string sourceFilename = realFilename;
+    kernelMetadata metadata;
+    if (allProps.get("okl", true)) {
+      sourceFilename = hashDir + kc::parsedSourceFile;
 
-      kernelMetadata metadata;
-      if (allProps.get("OKL", true)) {
-        sourceFilename = hashDir + kc::parsedSourceFile;
+      kernelMetadataMap metadataMap = io::parseFile(realFilename,
+                                                    sourceFilename,
+                                                    allProps);
 
-        kernelMetadataMap metadataMap = io::parseFile(realFilename,
-                                                      sourceFilename,
-                                                      allProps);
+      kernelMetadataMapIterator kIt = metadataMap.find(kernelName);
+      OCCA_ERROR("Could not find kernel ["
+                 << kernelName << "] in file ["
+                 << io::shortname(filename) << "]",
+                 kIt != metadataMap.end());
 
-        kernelMetadataMapIterator kIt = metadataMap.find(kernelName);
-        OCCA_ERROR("Could not find kernel ["
-                   << kernelName << "] in file ["
-                   << io::shortname(filename) << "]",
-                   kIt != metadataMap.end());
+      metadata = kIt->second;
 
-        metadata = kIt->second;
-
-        storeCacheInfo(filename, hash, allProps, metadataMap);
-      } else {
-        metadata.name = kernelName;
-      }
-
-      ker = buildKernel(sourceFilename,
-                        hash,
-                        allProps,
-                        metadata);
+      storeCacheInfo(filename, kernelHash, allProps, metadataMap);
+    } else {
+      metadata.name = kernelName;
     }
 
-    return ker;
-  }
-
-  occa::kernel device::buildKernel(const std::string &filename,
-                                   const hash_t &hash,
-                                   const occa::properties &kernelProps,
-                                   const kernelMetadata &metadata) const {
-
-    if (metadata.nestedKernels == 0) {
-      return kernel(dHandle->buildKernel(filename,
-                                         metadata.name,
-                                         hash,
-                                         kernelProps));
-    }
-
-    // Create launch kernel
-    occa::properties launchProps = host().kernelProperties();
-    launchProps["defines/OCCA_LAUNCH_KERNEL"] = 1;
-
-    kernel_v *launchKHandle = host().getDHandle()->buildKernel(filename,
-                                                               metadata.name,
-                                                               hash,
-                                                               launchProps);
-
-    // Load nested kernels
-    if (metadata.nestedKernels) {
-      for (int ki = 0; ki < metadata.nestedKernels; ++ki) {
-        kernelMetadata sMetadata    = metadata.getNestedKernelMetadata(ki);
-        const std::string &sKerName = sMetadata.name;
-
-        kernel sKer(dHandle->buildKernel(filename, sKerName, hash, kernelProps));
-        sKer.kHandle->metadata = sMetadata;
-
-        launchKHandle->nestedKernels.push_back(sKer);
-      }
-    }
-    return occa::kernel(launchKHandle);
+    return buildKernel(sourceFilename,
+                       kernelHash,
+                       allProps,
+                       metadata);
   }
 
   kernel device::buildKernelFromString(const std::string &content,
@@ -443,23 +422,23 @@ namespace occa {
     occa::properties allProps = props + kernelProperties();
     allProps["mode"] = mode();
 
-    hash_t hash = (dHandle->hash()
-                   ^ occa::hash(allProps)
-                   ^ occa::hash(content));
+    hash_t kernelHash = (hash()
+                         ^ occa::hash(allProps)
+                         ^ occa::hash(content));
 
-    const std::string hashDir = io::hashDir(hash);
+    const std::string hashDir = io::hashDir(kernelHash);
     const std::string hashTag = "occa-device";
 
     std::string stringSourceFile = hashDir;
     stringSourceFile += "stringSource.okl";
 
-    if (!io::haveHash(hash, hashTag)) {
-      io::waitForHash(hash, hashTag);
+    if (!io::haveHash(kernelHash, hashTag)) {
+      io::waitForHash(kernelHash, hashTag);
     } else {
       if (!sys::fileExists(stringSourceFile)) {
         io::write(stringSourceFile, content);
       }
-      io::releaseHash(hash, hashTag);
+      io::releaseHash(kernelHash, hashTag);
     }
 
     return buildKernel(stringSourceFile,
@@ -471,7 +450,67 @@ namespace occa {
                                        const std::string &kernelName,
                                        const occa::properties &props) const {
 
-    return kernel(dHandle->buildKernelFromBinary(filename, kernelName, props));
+    return kernel(dHandle->buildKernelFromBinary(filename,
+                                                 kernelName,
+                                                 props));
+  }
+
+  occa::kernel device::buildKernel(const std::string &filename,
+                                   const hash_t &hash,
+                                   const occa::properties &kernelProps,
+                                   const kernelMetadata &metadata) const {
+
+    // Native kernels don't need a host() to launch them
+    device_v *launcherHandle = ((metadata.nestedKernels > 0)
+                                ? host().getDHandle()
+                                : dHandle);
+    // Check cache first
+    kernel &ker = launcherHandle->getCachedKernel(hash, metadata.name);
+    if (ker.isInitialized()) {
+      return ker;
+    }
+
+    // Store hash to clean-up cachedKernels during free()
+    occa::properties allProps = kernelProps;
+    allProps["hash"] = hash.toFullString();
+
+    if (metadata.nestedKernels == 0) {
+      ker = launcherHandle->buildKernel(filename,
+                                        metadata.name,
+                                        hash,
+                                        allProps);
+      return ker;
+    }
+
+    // Create launch kernel
+    occa::properties launchProps = host().kernelProperties();
+    launchProps["defines/OCCA_LAUNCH_KERNEL"] = 1;
+    launchProps["hash"] = hash.toFullString();
+
+    ker = launcherHandle->buildKernel(filename,
+                                      metadata.name,
+                                      hash,
+                                      launchProps);
+
+    // Load nested kernels
+    if (metadata.nestedKernels) {
+      for (int ki = 0; ki < metadata.nestedKernels; ++ki) {
+        kernelMetadata sMetadata    = metadata.getNestedKernelMetadata(ki);
+        const std::string &sKerName = sMetadata.name;
+
+        kernel &sKer = dHandle->getCachedKernel(hash,
+                                                sKerName);
+        sKer = dHandle->buildKernel(filename,
+                                    sKerName,
+                                    hash,
+                                    allProps);
+        sKer.kHandle->metadata = sMetadata;
+
+        ker.kHandle->nestedKernels.push_back(sKer);
+      }
+    }
+
+    return ker;
   }
   //  |=================================
 
@@ -555,7 +594,7 @@ namespace occa {
 
   template <>
   hash_t hash(const occa::device &device) {
-    return device.getDHandle()->hash();
+    return device.hash();
   }
   //====================================
 

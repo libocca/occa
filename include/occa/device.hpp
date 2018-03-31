@@ -89,6 +89,19 @@ namespace occa {
     //  |===============================
 
     //  |---[ Kernel ]------------------
+    std::string getKernelHash(const std::string &fullHash,
+                              const std::string &kernelName);
+
+    std::string getKernelHash(const hash_t &kernelHash,
+                              const std::string &kernelName);
+
+    std::string getKernelHash(kernel_v *kernel);
+
+    kernel& getCachedKernel(const hash_t &kernelHash,
+                            const std::string &kernelName);
+
+    void removeCachedKernel(kernel_v *kernel);
+
     virtual kernel_v* buildKernel(const std::string &filename,
                                   const std::string &kernelName,
                                   const hash_t hash,
@@ -137,10 +150,14 @@ namespace occa {
 
     bool operator == (const occa::device &d) const;
 
+    bool isInitialized();
+
+    device_v* getDHandle() const;
+
+    void setup(const occa::properties &props);
+
     void free();
     static void free(device_v *&dHandle_);
-
-    bool isInitialized();
 
     const std::string& mode() const;
 
@@ -153,9 +170,7 @@ namespace occa {
     occa::properties& memoryProperties();
     const occa::properties& memoryProperties() const;
 
-    device_v* getDHandle() const;
-
-    void setup(const occa::properties &props);
+    hash_t hash() const;
 
     udim_t memorySize() const;
     udim_t memoryAllocated() const;
@@ -185,19 +200,11 @@ namespace occa {
                         const occa::properties &kernelProps,
                         const kernelMetadataMap &metadataMap) const;
 
-    std::string cacheHash(const hash_t &hash,
-                          const std::string &kernelName) const;
-
     void loadKernels(const std::string &library = "");
 
     occa::kernel buildKernel(const std::string &filename,
                              const std::string &kernelName,
                              const occa::properties &props = occa::properties()) const;
-
-    occa::kernel buildKernel(const std::string &filename,
-                             const hash_t &hash,
-                             const occa::properties &kernelProps,
-                             const kernelMetadata &metadata) const;
 
     occa::kernel buildKernelFromString(const std::string &content,
                                        const std::string &kernelName,
@@ -206,6 +213,11 @@ namespace occa {
     occa::kernel buildKernelFromBinary(const std::string &filename,
                                        const std::string &kernelName,
                                        const occa::properties &props = occa::properties()) const;
+
+    occa::kernel buildKernel(const std::string &filename,
+                             const hash_t &hash,
+                             const occa::properties &kernelProps,
+                             const kernelMetadata &metadata) const;
     //  |===============================
 
     //  |---[ Memory ]------------------

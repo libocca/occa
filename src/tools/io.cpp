@@ -54,10 +54,10 @@
 namespace occa {
   // Kernel Caching
   namespace kc {
-    const std::string parsedSourceFile = "parsedSource.cpp";
-    const std::string launchSourceFile = "launchSource.cpp";
+    const std::string parsedSourceFile = "parsed-source.cpp";
+    const std::string launchSourceFile = "launch-source.cpp";
     const std::string launchBinaryFile = "launch-binary";
-    const std::string sourceFile       = "deviceSource.cpp";
+    const std::string sourceFile       = "device-source.cpp";
     const std::string binaryFile       = "device-binary";
     const std::string infoFile         = "build-info.json";
   }
