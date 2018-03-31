@@ -83,6 +83,8 @@ namespace occa {
     bool fileExists(const std::string &filename_,
                     const int flags = 0);
 
+    bool pidExists(const int pid);
+
     int getPID();
     int getTID();
     void pinToCore(const int core);

@@ -22,16 +22,14 @@
 
 #include "occa/defines.hpp"
 
-#if (OCCA_OS & OCCA_LINUX_OS)
-#  include <dirent.h>
-#  include <unistd.h>
-#  include <errno.h>
-#  include <sys/types.h>
-#  include <sys/dir.h>
-#elif (OCCA_OS & OCCA_OSX_OS)
-#  include <dirent.h>
-#  include <sys/types.h>
-#  include <sys/dir.h>
+#if (OCCA_OS & (OCCA_LINUX_OS | OCCA_OSX_OS))
+#    include <dirent.h>
+#    include <sys/types.h>
+#    include <sys/dir.h>
+#    include <unistd.h>
+#  if (OCCA_OS & OCCA_LINUX_OS)
+#    include <errno.h>
+#  endif
 #else
 #  ifndef NOMINMAX
 #    define NOMINMAX  // Clear min/max macros
@@ -448,7 +446,8 @@ namespace occa {
       fileLocks().clear();
     }
 
-    bool haveHash(const hash_t &hash, const std::string &tag) {
+    bool haveHash(const hash_t &hash,
+                  const std::string &tag) {
       std::string lockDir = getFileLock(hash, tag);
 
       sys::mkpath(env::OCCA_CACHE_DIR + "locks/");
@@ -464,31 +463,29 @@ namespace occa {
       return true;
     }
 
-    void waitForHash(const hash_t &hash, const std::string &tag) {
+    void waitForHash(const hash_t &hash,
+                     const std::string &tag) {
       struct stat buffer;
 
       std::string lockDir   = getFileLock(hash, tag);
       const char *c_lockDir = lockDir.c_str();
 
-      if (stat(c_lockDir, &buffer) == 0) {
-        double start = sys::currentTime();
-        bool printedMessage = false;
-        while(stat(c_lockDir, &buffer) == 0) {
-          double now = sys::currentTime();
-          if ((now - start) > 10) {
-            if (printedMessage) {
-              std::cout << "Still waiting on lock [" << lockDir << "]";
-              printedMessage = true;
-            } else {
-              std::cout << " .";
-            }
-            start -= 10;
-          }
+      bool printedMessage = false;
+
+      while(!stat(c_lockDir, &buffer)) {
+        // Wait 0.5 seconds before trying again
+        ::usleep(500000);
+        if (printedMessage) {
+          std::cerr << "Still waiting on lock [" << lockDir << "]";
+          printedMessage = true;
+        } else {
+          std::cerr << " .";
         }
       }
     }
 
-    void releaseHash(const hash_t &hash, const std::string &tag) {
+    void releaseHash(const hash_t &hash,
+                     const std::string &tag) {
       releaseHashLock(getFileLock(hash, tag));
     }
 

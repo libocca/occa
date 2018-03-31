@@ -51,7 +51,6 @@ namespace occa {
     }
 
     void signalExit(int sig) {
-      // io::clearLocks();
       ::exit(sig);
     }
 
@@ -155,13 +154,6 @@ namespace occa {
 #endif
         env::OCCA_CACHE_DIR = ss.str();
       }
-
-      const int chars = env::OCCA_CACHE_DIR.size();
-
-      OCCA_ERROR("Path to the OCCA caching directory is not set properly, "
-                 "unset OCCA_CACHE_DIR to use default directory [~/.occa]",
-                 0 < chars);
-
       env::OCCA_CACHE_DIR = io::filename(env::OCCA_CACHE_DIR);
 
       if (!sys::dirExists(env::OCCA_CACHE_DIR)) {

@@ -22,35 +22,31 @@
 
 #include "occa/defines.hpp"
 
-#if   (OCCA_OS & OCCA_LINUX_OS)
+#if (OCCA_OS & (OCCA_LINUX_OS | OCCA_OSX_OS))
 #  include <ctime>
 #  include <cxxabi.h>
 #  include <dlfcn.h>
-#  include <errno.h>
 #  include <execinfo.h>
-#  include <sys/time.h>
+#  include <pthread.h>
+#  include <signal.h>
 #  include <sys/syscall.h>
 #  include <sys/sysctl.h>
 #  include <sys/sysinfo.h>
-#  include <pthread.h>
+#  include <sys/time.h>
 #  include <unistd.h>
-#elif (OCCA_OS & OCCA_OSX_OS)
-#  include <ctime>
-#  include <cxxabi.h>
-#  include <dlfcn.h>
-#  include <execinfo.h>
-#  include <mach/mach_host.h>
-#  include <sys/syscall.h>
-#  include <sys/sysctl.h>
-#  include <unistd.h>
-#  ifdef __clang__
-#    include <CoreServices/CoreServices.h>
-#    include <mach/mach_time.h>
-#  else
-#    include <mach/clock.h>
-#    include <mach/mach.h>
+#  if (OCCA_OS & OCCA_LINUX_OS)
+#    include <errno.h>
+#  else // OCCA_OSX_OS
+#    include <mach/mach_host.h>
+#    ifdef __clang__
+#      include <CoreServices/CoreServices.h>
+#      include <mach/mach_time.h>
+#    else
+#      include <mach/clock.h>
+#      include <mach/mach.h>
+#    endif
 #  endif
-#else
+#else // OCCA_WINDOWS_OS
 #  ifndef NOMINMAX
 #    define NOMINMAX // Clear min/max macros
 #  endif
@@ -333,6 +329,18 @@ namespace occa {
       struct stat statInfo;
 
       return (stat(filename.c_str(), &statInfo) == 0);
+    }
+
+    bool pidExists(const int pid) {
+#if (OCCA_OS & (OCCA_LINUX_OS | OCCA_OSX_OS))
+      return !::kill(pid, 0);
+#else
+      DWORD exitCode;
+      if(GetExitCodeProcess(pid, &exitCode)) {
+        return (exitCode == STILL_ACTIVE);
+      }
+      return false;
+#endif
     }
 
     int getPID() {
