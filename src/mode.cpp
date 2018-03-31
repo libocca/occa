@@ -22,8 +22,6 @@
 
 #include "occa/mode.hpp"
 #include "occa/device.hpp"
-#include "occa/kernel.hpp"
-#include "occa/memory.hpp"
 
 namespace occa {
   strToModeMap& modeMap() {
@@ -55,26 +53,6 @@ namespace occa {
 
   device_v* newModeDevice(const occa::properties &props) {
     return getMode(props)->newDevice(props);
-  }
-
-  kernel_v* newModeKernel(const occa::properties &props) {
-    return getMode(props)->newKernel(props);
-  }
-
-  memory_v* newModeMemory(const occa::properties &props) {
-    return getMode(props)->newMemory(props);
-  }
-
-  void freeModeDevice(device_v *dHandle) {
-    delete dHandle;
-  }
-
-  void freeModeKernel(kernel_v *kHandle) {
-    delete kHandle;
-  }
-
-  void freeModeMemory(memory_v *mHandle) {
-    delete mHandle;
   }
 
   modeInfo_v::modeInfo_v() {}

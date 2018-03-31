@@ -44,9 +44,7 @@ namespace occa {
     };
 
     extern occa::mode<openmp::modeInfo,
-                      openmp::device,
-                      openmp::kernel,
-                      serial::memory> mode;
+                      openmp::device> mode;
   }
 }
 

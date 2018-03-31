@@ -43,9 +43,7 @@ namespace occa {
     };
 
     extern occa::mode<serial::modeInfo,
-                      serial::device,
-                      serial::kernel,
-                      serial::memory> mode;
+                      serial::device> mode;
   }
 }
 

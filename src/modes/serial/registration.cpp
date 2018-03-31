@@ -100,8 +100,6 @@ namespace occa {
     }
 
     occa::mode<serial::modeInfo,
-               serial::device,
-               serial::kernel,
-               serial::memory> mode("Serial");
+               serial::device> mode("Serial");
   }
 }

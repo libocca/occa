@@ -45,9 +45,7 @@ namespace occa {
     };
 
     extern occa::mode<opencl::modeInfo,
-                      opencl::device,
-                      opencl::kernel,
-                      opencl::memory> mode;
+                      opencl::device> mode;
   }
 }
 
