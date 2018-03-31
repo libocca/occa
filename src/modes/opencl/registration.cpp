@@ -63,9 +63,7 @@ namespace occa {
     }
 
     occa::mode<opencl::modeInfo,
-               opencl::device,
-               opencl::kernel,
-               opencl::memory> mode("OpenCL");
+               opencl::device> mode("OpenCL");
   }
 }
 

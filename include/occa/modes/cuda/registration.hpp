@@ -45,9 +45,7 @@ namespace occa {
     };
 
     extern occa::mode<cuda::modeInfo,
-                      cuda::device,
-                      cuda::kernel,
-                      cuda::memory> mode;
+                      cuda::device> mode;
   }
 }
 

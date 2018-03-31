@@ -32,8 +32,6 @@
 #include "occa/device.hpp"
 
 namespace occa {
-  class kernel_v; class kernel;
-  class memory_v; class memory;
   class device_v; class device;
 
   class mode_v;
@@ -48,12 +46,8 @@ namespace occa {
   mode_v* getMode(const occa::properties &props);
 
   device_v* newModeDevice(const occa::properties &props = occa::properties());
-  kernel_v* newModeKernel(const occa::properties &props = occa::properties());
-  memory_v* newModeMemory(const occa::properties &props = occa::properties());
 
   void freeModeDevice(device_v *dHandle);
-  void freeModeKernel(kernel_v *kHandle);
-  void freeModeMemory(memory_v *mHandle);
 
   class modeInfo_v {
   public:
@@ -72,14 +66,10 @@ namespace occa {
     std::string& name();
     virtual styling::section &getDescription() = 0;
     virtual device_v* newDevice(const occa::properties &props = occa::properties()) = 0;
-    virtual kernel_v* newKernel(const occa::properties &props = occa::properties()) = 0;
-    virtual memory_v* newMemory(const occa::properties &props = occa::properties()) = 0;
   };
 
   template <class modeInfo_t,
-            class device_t,
-            class kernel_t,
-            class memory_t>
+            class device_t>
   class mode : public mode_v {
   public:
     mode(std::string modeName_) {
@@ -96,18 +86,6 @@ namespace occa {
       occa::properties allProps = props;
       allProps["mode"] = modeName;
       return new device_t(allProps);
-    }
-
-    kernel_v* newKernel(const occa::properties &props) {
-      occa::properties allProps = props;
-      allProps["mode"] = modeName;
-      return new kernel_t(allProps);
-    }
-
-    memory_v* newMemory(const occa::properties &props) {
-      occa::properties allProps = props;
-      allProps["mode"] = modeName;
-      return new memory_t(allProps);
     }
 
     template <class TM>

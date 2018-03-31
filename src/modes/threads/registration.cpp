@@ -34,8 +34,6 @@ namespace occa {
     }
 
     occa::mode<threads::modeInfo,
-               threads::device,
-               threads::kernel,
-               serial::memory> mode("Threads");
+               threads::device> mode("Threads");
   }
 }
