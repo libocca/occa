@@ -43,48 +43,51 @@ namespace occa {
       cl_device_id clDevice;
       cl_context clContext;
 
-      device(const occa::properties &properties_ = occa::properties());
-      ~device();
-      void free();
+      device(const occa::properties &properties_);
+      virtual ~device();
 
-      void finish() const;
+      virtual void free();
 
-      bool hasSeparateMemorySpace() const;
+      virtual void finish() const;
 
-      hash_t hash() const;
+      virtual bool hasSeparateMemorySpace() const;
+
+      virtual hash_t hash() const;
 
       //  |---[ Stream ]----------------
-      stream_t createStream() const;
-      void freeStream(stream_t s) const;
+      virtual stream_t createStream() const;
+      virtual void freeStream(stream_t s) const;
 
-      streamTag tagStream() const;
-      void waitFor(streamTag tag) const;
-      double timeBetween(const streamTag &startTag, const streamTag &endTag) const;
+      virtual streamTag tagStream() const;
+      virtual void waitFor(streamTag tag) const;
+      virtual double timeBetween(const streamTag &startTag,
+                                 const streamTag &endTag) const;
 
-      stream_t wrapStream(void *handle_, const occa::properties &props) const;
+      virtual stream_t wrapStream(void *handle_,
+                                  const occa::properties &props) const;
       //  |=============================
 
       //  |---[ Kernel ]----------------
-      kernel_v* buildKernel(const std::string &filename,
-                            const std::string &kernelName,
-                            const hash_t kernelHash,
-                            const occa::properties &props);
+      virtual kernel_v* buildKernel(const std::string &filename,
+                                    const std::string &kernelName,
+                                    const hash_t kernelHash,
+                                    const occa::properties &props);
 
-      kernel_v* buildKernelFromBinary(const std::string &filename,
-                                      const std::string &kernelName,
-                                      const occa::properties &props);
+      virtual kernel_v* buildKernelFromBinary(const std::string &filename,
+                                              const std::string &kernelName,
+                                              const occa::properties &props);
       //  |=============================
 
       //  |---[ Memory ]----------------
-      memory_v* malloc(const udim_t bytes,
-                       const void *src,
-                       const occa::properties &props);
+      virtual memory_v* malloc(const udim_t bytes,
+                               const void *src,
+                               const occa::properties &props);
 
-      memory_v* mappedAlloc(const udim_t bytes,
-                            const void *src,
-                            const occa::properties &props);
+      virtual memory_v* mappedAlloc(const udim_t bytes,
+                                    const void *src,
+                                    const occa::properties &props);
 
-      udim_t memorySize() const;
+      virtual udim_t memorySize() const;
       //  |=============================
     };
   }

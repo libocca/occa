@@ -41,17 +41,15 @@ namespace occa {
       CUmodule   cuModule;
       CUfunction cuFunction;
 
-      kernel(const occa::properties &properties_ = occa::properties());
+      kernel(const occa::properties &properties_);
       ~kernel();
 
       void build(const std::string &filename,
                  const std::string &kernelName,
-                 const hash_t hash,
-                 const occa::properties &props);
+                 const hash_t hash);
 
       void buildFromBinary(const std::string &filename,
-                           const std::string &kernelName,
-                           const occa::properties &props);
+                           const std::string &kernelName);
 
       int maxDims() const;
       dim maxOuterDims() const;

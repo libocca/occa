@@ -204,12 +204,10 @@ namespace occa {
 
     virtual void build(const std::string &filename,
                        const std::string &kernelName,
-                       const hash_t hash,
-                       const occa::properties &props) = 0;
+                       const hash_t hash) = 0;
 
     virtual void buildFromBinary(const std::string &filename,
-                                 const std::string &kernelName,
-                                 const occa::properties &props) = 0;
+                                 const std::string &kernelName) = 0;
 
     virtual int maxDims() const = 0;
     virtual dim maxOuterDims() const = 0;

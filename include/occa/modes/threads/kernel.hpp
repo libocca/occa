@@ -33,7 +33,7 @@ namespace occa {
     public:
       int threads;
 
-      kernel(const occa::properties &properties_ = occa::properties());
+      kernel(const occa::properties &properties_);
       ~kernel();
 
       void runFromArguments(const int kArgc, const kernelArg *kArgs) const;

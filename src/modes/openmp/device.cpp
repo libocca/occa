@@ -37,27 +37,42 @@ namespace occa {
       serial::device(properties_) {
       // Generate an OpenMP library dependency (so it doesn't crash when dlclose())
       omp_get_num_threads();
-
-      const std::string openmpFlag = openmp::compilerFlag(properties.get<int>("kernel/vendor"),
-                                                          properties["kernel/compiler"]);
-
-      if (openmpFlag != openmp::notSupported) {
-        std::string &compilerFlags = properties["kernel/compilerFlags"].string();
-        compilerFlags += ' ';
-        compilerFlags += openmpFlag;
-      } else {
-        std::cout << "Compiler [" << properties["kernel/compiler"].string()
-                  << "] does not support OpenMP, defaulting to [Serial] mode\n";
-      }
     }
 
     kernel_v* device::buildKernel(const std::string &filename,
                                   const std::string &kernelName,
                                   const hash_t kernelHash,
                                   const occa::properties &props) {
-      kernel *k = new kernel(props);
+
+      occa::properties kernelProps = props;
+      kernel_v *k;
+
+      const std::string &compiler = kernelProps["compiler"].string();
+      if (compiler != lastCompiler) {
+        lastCompiler = compiler;
+
+        lastCompilerOpenMPFlag = openmp::compilerFlag(
+          kernelProps.get<int>("vendor"),
+          compiler
+        );
+
+        if (lastCompilerOpenMPFlag == openmp::notSupported) {
+          std::cerr << "Compiler [" << kernelProps["compiler"].string()
+                    << "] does not support OpenMP, defaulting to [Serial] mode\n";
+        }
+      }
+
+      if (lastCompilerOpenMPFlag != openmp::notSupported) {
+        std::string &compilerFlags = kernelProps["compilerFlags"].string();
+        compilerFlags += ' ';
+        compilerFlags += lastCompilerOpenMPFlag;
+
+        k = new kernel(kernelProps);
+      } else {
+        k = new serial::kernel(kernelProps);
+      }
       k->setDHandle(this);
-      k->build(filename, kernelName, kernelHash, props);
+      k->build(filename, kernelName, kernelHash);
       return k;
     }
   }

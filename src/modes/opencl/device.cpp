@@ -185,7 +185,7 @@ namespace occa {
       opencl::kernel *k = new opencl::kernel(props);
       k->setDHandle(this);
       k->clDevice = clDevice;
-      k->build(filename, kernelName, kernelHash, props);
+      k->build(filename, kernelName, kernelHash);
       return k;
     }
 
@@ -193,12 +193,9 @@ namespace occa {
                                             const std::string &kernelName,
                                             const occa::properties &props) {
       opencl::kernel *k = new opencl::kernel(props);
-
       k->dHandle = this;
       k->clDevice = clDevice;
-
-      k->buildFromBinary(filename, kernelName, props);
-
+      k->buildFromBinary(filename, kernelName);
       return k;
     }
     //  |===============================

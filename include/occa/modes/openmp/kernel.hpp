@@ -32,7 +32,7 @@ namespace occa {
   namespace openmp {
     class kernel : public serial::kernel {
     public:
-      kernel(const occa::properties &properties_ = occa::properties());
+      kernel(const occa::properties &properties_);
     };
   }
 }

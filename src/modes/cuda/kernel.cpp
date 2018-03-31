@@ -42,11 +42,9 @@ namespace occa {
 
     void kernel::build(const std::string &filename,
                        const std::string &kernelName,
-                       const hash_t hash,
-                       const occa::properties &props) {
+                       const hash_t hash) {
 
       name = kernelName;
-      properties += props;
 
       const bool verbose = properties.get("verbose", false);
 
@@ -81,7 +79,7 @@ namespace occa {
                     << io::shortname(filename)
                     << "] in [" << io::shortname(binaryFile) << "]\n";
         }
-        return buildFromBinary(binaryFile, kernelName, props);
+        return buildFromBinary(binaryFile, kernelName);
       }
 
       const std::string kernelDefines =
@@ -188,11 +186,9 @@ namespace occa {
     }
 
     void kernel::buildFromBinary(const std::string &filename,
-                                 const std::string &kernelName,
-                                 const occa::properties &props) {
+                                 const std::string &kernelName) {
 
       name = kernelName;
-      properties += props;
 
       OCCA_CUDA_ERROR("Kernel (" + kernelName + ") : Loading Module",
                       cuModuleLoad(&cuModule, filename.c_str()));

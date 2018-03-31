@@ -48,15 +48,16 @@ namespace occa {
 
       mutex jobMutex;
 
-      device(const occa::properties &properties_ = occa::properties());
-      ~device();
+      device(const occa::properties &properties_);
+      virtual ~device();
 
-      void finish() const;
+      virtual void finish() const;
 
       //---[ Stream ]-------------------
-      streamTag tagStream() const;
-      void waitFor(streamTag tag) const;
-      double timeBetween(const streamTag &startTag, const streamTag &endTag) const;
+      virtual streamTag tagStream() const;
+      virtual void waitFor(streamTag tag) const;
+      virtual double timeBetween(const streamTag &startTag,
+                                 const streamTag &endTag) const;
       //================================
 
       //---[ Custom ]-------------------

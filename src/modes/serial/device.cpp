@@ -154,7 +154,7 @@ namespace occa {
                                   const occa::properties &props) {
       kernel *k = new kernel(props);
       k->setDHandle(this);
-      k->build(filename, kernelName, kernelHash, props);
+      k->build(filename, kernelName, kernelHash);
       return k;
     }
 
@@ -163,7 +163,7 @@ namespace occa {
                                             const occa::properties &props) {
       kernel *k = new kernel(props);
       k->dHandle = this;
-      k->buildFromBinary(filename, kernelName, props);
+      k->buildFromBinary(filename, kernelName);
       return k;
     }
 

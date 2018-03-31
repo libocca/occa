@@ -176,18 +176,17 @@ namespace occa {
                                   const occa::properties &props) {
       cuda::kernel *k = new cuda::kernel(props);
       k->setDHandle(this);
-      k->build(filename, kernelName, kernelHash, props);
+      k->build(filename, kernelName, kernelHash);
       return k;
     }
 
     kernel_v* device::buildKernelFromBinary(const std::string &filename,
                                             const std::string &kernelName,
                                             const occa::properties &props) {
+
       cuda::kernel *k = new cuda::kernel(props);
-
       k->dHandle = this;
-      k->buildFromBinary(filename, kernelName, props);
-
+      k->buildFromBinary(filename, kernelName);
       return k;
     }
     //  |===============================
