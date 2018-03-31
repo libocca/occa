@@ -27,6 +27,14 @@
 int main(int argc, char **argv) {
   occaPrintModeInfo();
 
+  /*
+    Try running with OCCA_VERBOSE=1 or set
+    verbose at run-time with:
+    occaPropertiesSet(occaSettings(),
+                      "kernel/verbose,
+                      occaBool(1));
+  */
+
   int entries = 5;
   int i;
 

@@ -25,6 +25,11 @@
 
 int main(int argc, char **argv) {
   occa::printModeInfo();
+  /*
+    Try running with OCCA_VERBOSE=1 or set
+    verbose at run-time with:
+    occa::settings()["kernel/verbose"] = true;
+  */
 
   int entries = 5;
 
