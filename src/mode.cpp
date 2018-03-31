@@ -46,9 +46,9 @@ namespace occa {
       } else {
         std::cerr << "[" << mode << "] mode is not enabled, defaulting to [Serial] mode\n";
       }
-      return modeMap()["Serial"];
+      mode = "Serial";
     }
-    return modeMap()[props["mode"]];
+    return modeMap()[mode];
   }
 
   device_v* newModeDevice(const occa::properties &props) {
