@@ -98,6 +98,17 @@ namespace occa {
       description = description_;
     }
 
+    option::option(const std::string &name_,
+                   const std::string &description_) :
+      shortname('\0'),
+      flags(0),
+      requiredArgs(0),
+      expansionFunction("") {
+
+      name = name_;
+      description = description_;
+    }
+
     option option::isRequired() {
       option opt = *this;
       opt.flags |= flags_t::isRequired;

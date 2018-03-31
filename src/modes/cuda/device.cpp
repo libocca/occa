@@ -65,15 +65,7 @@ namespace occa {
       }
 
       if (!compilerFlags.size()) {
-        if (env::var("OCCA_CUDA_COMPILER_FLAGS").size()) {
-          compilerFlags = env::var("OCCA_CUDA_COMPILER_FLAGS");
-        } else {
-#if OCCA_DEBUG_ENABLED
-          compilerFlags = "-g";
-#else
-          compilerFlags = "";
-#endif
-        }
+        compilerFlags = env::var("OCCA_CUDA_COMPILER_FLAGS");
       }
 
       properties["kernel/compiler"]      = compiler;

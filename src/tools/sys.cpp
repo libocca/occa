@@ -698,11 +698,7 @@ namespace occa {
       } else if (vendor_ & sys::vendor::HP) {
         return "+z -b";
       } else if (vendor_ & sys::vendor::VisualStudio) {
-#if OCCA_DEBUG_ENABLED
         return "/TP /LD /MDd";
-#else
-        return "/TP /LD /MD";
-#endif
       }
       OCCA_FORCE_ERROR("Could not find compiler flags for creating a shared object");
       return "";

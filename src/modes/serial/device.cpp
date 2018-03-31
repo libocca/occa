@@ -62,11 +62,7 @@ namespace occa {
 #if (OCCA_OS & (OCCA_LINUX_OS | OCCA_OSX_OS))
         compilerFlags = "-g";
 #else
-#  if OCCA_DEBUG_ENABLED
         compilerFlags = " /Od";
-#  else
-        compilerFlags = " /O2";
-#  endif
 #endif
       }
 

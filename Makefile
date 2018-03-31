@@ -77,17 +77,8 @@ MAKE_COMPILED_DEFINES := $(shell rm $(OLD_COMPILED_DEFINES))
 
 all: $(objects) $(outputs)
 	@(. $(OCCA_DIR)/scripts/shellTools.sh && installOcca)
-	@echo -e ""
-	@echo -e "---[ Compiled With ]--------------------------------------------------------"
-	@echo -e "    OCCA_OS             : $(OCCA_OS)"
-	@echo -e "    OCCA_USING_VS       : $(OCCA_USING_VS)"
-	@echo -e "    OCCA_DEBUG_ENABLED  : $(OCCA_DEBUG_ENABLED)"
-	@echo -e "    OCCA_CHECK_ENABLED  : $(OCCA_CHECK_ENABLED)\n"
-	@echo -e "    OCCA_OPENMP_ENABLED : $(OCCA_OPENMP_ENABLED)"
-	@echo -e "    OCCA_OPENCL_ENABLED : $(OCCA_OPENCL_ENABLED)"
-	@echo -e "    OCCA_CUDA_ENABLED   : $(OCCA_CUDA_ENABLED)"
-	@echo -e "    OCCA_MPI_ENABLED    : $(OCCA_MPI_ENABLED)"
-	@echo -e "============================================================================"
+	@echo "> occa info"
+	@$(OCCA_DIR)/bin/occa info
 
 $(COMPILED_DEFINES_CHANGED):
 #=================================================

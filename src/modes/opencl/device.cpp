@@ -64,11 +64,7 @@ namespace occa {
       } else if (env::var("OCCA_OPENCL_COMPILER_FLAGS").size()) {
         compilerFlags = env::var("OCCA_OPENCL_COMPILER_FLAGS");
       } else {
-#if OCCA_DEBUG_ENABLED
         compilerFlags = "-cl-opt-disable";
-#else
-        compilerFlags = "";
-#endif
       }
 
       properties["kernel/compilerFlags"] = compilerFlags;

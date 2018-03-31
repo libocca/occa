@@ -110,12 +110,6 @@ namespace occa {
               << " -L"  << env::OCCA_DIR << "lib -locca"
               << std::endl;
 #else
-#  if (OCCA_DEBUG_ENABLED)
-      const std::string occaLib = env::OCCA_DIR + "lib/libocca_d.lib ";
-#  else
-      const std::string occaLib = env::OCCA_DIR + "lib/libocca.lib ";
-#  endif
-
       command << properties["compiler"]
               << " /D MC_CL_EXE"
               << " /D OCCA_OS=OCCA_WINDOWS_OS"
@@ -124,7 +118,7 @@ namespace occa {
               << ' '       << properties["compilerFlags"]
               << " /I"     << env::OCCA_DIR << "/include"
               << ' '       << sourceFile
-              << " /link " << occaLib
+              << " /link " << env::OCCA_DIR << "lib/libocca.lib",
               << " /OUT:"  << binaryFile
               << std::endl;
 #endif

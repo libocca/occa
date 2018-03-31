@@ -31,12 +31,5 @@
 #define OCCA_CUDA_ENABLED      0
 //======================================
 
-//---[ Build Config ]-------------------
-#ifdef _DEBUG
-#  define OCCA_DEBUG_ENABLED   1
-#else
-#  define OCCA_DEBUG_ENABLED   0
-#endif
-//======================================
 #  endif
 #endif

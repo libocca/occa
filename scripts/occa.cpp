@@ -67,7 +67,7 @@ int main(int argc, char **argv) {
     .withName("version")
     .withCallback(runVersion)
     .withDescription("Prints OCCA library version")
-    .addOption(occa::cli::option('\0', "okl",
+    .addOption(occa::cli::option("okl",
                                  "Print the OKL language version")
                .stopsExpansion());
 
@@ -91,14 +91,14 @@ int main(int argc, char **argv) {
     .addOption(occa::cli::option('a', "all",
                                  "Clear cached kernels, cached libraries, and locks.")
                .stopsExpansion())
-    .addOption(occa::cli::option('\0', "kernels",
+    .addOption(occa::cli::option("kernels",
                                  "Clear cached kernels."))
     .addOption(occa::cli::option('l', "lib",
                                  "Clear cached library.")
                .reusable()
                .withArgs(1)
                .expandsFunction("ls ${OCCA_CACHE_DIR:-${HOME}/.occa}/libraries"))
-    .addOption(occa::cli::option('\0', "libraries",
+    .addOption(occa::cli::option("libraries",
                                  "Clear cached libraries."))
     .addOption(occa::cli::option('o', "locks",
                                  "Clear cache locks"))
@@ -288,10 +288,11 @@ bool runEnv(const occa::cli::command &command,
             occa::jsonArray order,
             occa::jsonObject options,
             occa::jsonArray arguments) {
+
   std::cout << "  Basic:\n"
             << "    - OCCA_DIR                   : " << envEcho("OCCA_DIR") << "\n"
             << "    - OCCA_CACHE_DIR             : " << envEcho("OCCA_CACHE_DIR") << "\n"
-            << "    - OCCA_PATH                  : " << envEcho("OCCA_PATH") << "\n"
+            << "    - OCCA_VERBOSE               : " << envEcho("OCCA_VERBOSE") << "\n"
 
             << "  Makefile:\n"
             << "    - CXX                        : " << envEcho("CXX") << "\n"
@@ -308,10 +309,11 @@ bool runEnv(const occa::cli::command &command,
             << "  Run-Time Options:\n"
             << "    - OCCA_CXX                   : " << envEcho("OCCA_CXX") << "\n"
             << "    - OCCA_CXXFLAGS              : " << envEcho("OCCA_CXXFLAGS") << "\n"
+            << "    - OCCA_INCLUDE_PATH          : " << envEcho("OCCA_INCLUDE_PATH") << "\n"
+            << "    - OCCA_LIBRARY_PATH          : " << envEcho("OCCA_LIBRARY_PATH") << "\n"
             << "    - OCCA_OPENCL_COMPILER_FLAGS : " << envEcho("OCCA_OPENCL_COMPILER_FLAGS") << "\n"
             << "    - OCCA_CUDA_COMPILER         : " << envEcho("OCCA_CUDA_COMPILER") << "\n"
             << "    - OCCA_CUDA_COMPILER_FLAGS   : " << envEcho("OCCA_CUDA_COMPILER_FLAGS") << "\n";
-  ::exit(0);
   return true;
 }
 
@@ -320,7 +322,6 @@ bool runInfo(const occa::cli::command &command,
              occa::jsonObject options,
              occa::jsonArray arguments) {
   occa::printModeInfo();
-  ::exit(0);
   return true;
 }
 
@@ -329,6 +330,5 @@ bool runBashAutocomplete(const occa::cli::command &command,
                          occa::jsonObject options,
                          occa::jsonArray arguments) {
   occaCommand.printBashAutocomplete();
-  ::exit(0);
   return true;
 }

@@ -141,19 +141,24 @@ namespace occa {
       return valueWidth;
     }
 
-    std::string section::toString(const int sectionWidth,
+    std::string section::toString(const int indent,
+                                  const int sectionWidth,
                                   const int fieldWidth,
                                   const int valueWidth,
                                   const bool isFirstSection) const {
+      const std::string indentStr(indent, ' ');
+
       std::stringstream ss;
-      ss << std::string(sectionWidth + 2, '=') << 'o'
-         << std::string(fieldWidth   + 2, '=') << 'o'
+      ss << indentStr
+         << std::string(sectionWidth + 2, '=') << '+'
+         << std::string(fieldWidth   + 2, '=') << '+'
          << std::string(valueWidth   + 2, '=') << '\n';
       const std::string sectionDivider = ss.str();
       ss.str("");
 
-      ss << std::string(sectionWidth + 2, ' ') << '|'
-         << std::string(fieldWidth   + 2, '-') << '|'
+      ss << indentStr
+         << std::string(sectionWidth + 2, ' ') << '|'
+         << std::string(fieldWidth   + 2, '-') << '+'
          << std::string(valueWidth   + 2, '-') << '\n';
       const std::string groupDivider = ss.str();
       ss.str("");
@@ -172,11 +177,14 @@ namespace occa {
 
         for (int j = 0; j < fieldCount; ++j) {
           const field& jField = iGroup.fields[j];
+
+          ss << indentStr;
           if (i == 0 && j == 0) {
             ss << left(name, sectionWidth, true);
           } else {
             ss << std::string(sectionWidth + 2, ' ');
           }
+
           ss << '|'
              << left(jField.name, fieldWidth, true)
              << '|'
@@ -201,7 +209,7 @@ namespace occa {
       sections.push_back(section);
     }
 
-    std::string table::toString() const {
+    std::string table::toString(const int indent) const {
       const int sectionCount = (int) sections.size();
       std::string str;
 
@@ -215,7 +223,11 @@ namespace occa {
 
       for (int i = 0; i < sectionCount; ++i) {
         if (sections[i].size()) {
-          str += sections[i].toString(sectionWidth, fieldWidth, valueWidth, i == 0);
+          str += sections[i].toString(indent,
+                                      sectionWidth,
+                                      fieldWidth,
+                                      valueWidth,
+                                      i == 0);
         }
       }
 

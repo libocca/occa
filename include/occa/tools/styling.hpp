@@ -70,7 +70,8 @@ namespace occa {
       int getFieldWidth() const;
       int getValueWidth() const;
 
-      std::string toString(const int sectionWidth,
+      std::string toString(const int indent,
+                           const int sectionWidth,
                            const int fieldWidth,
                            const int valueWidth,
                            const bool isFirstSection) const;
@@ -83,7 +84,7 @@ namespace occa {
       table();
 
       void add(section &section);
-      std::string toString() const;
+      std::string toString(const int indent = 4) const;
       friend std::ostream& operator << (std::ostream &out, const table &ppt);
     };
     std::ostream& operator << (std::ostream &out, const table &ppt);

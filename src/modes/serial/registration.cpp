@@ -29,7 +29,7 @@ namespace occa {
     void modeInfo::init() {}
 
     styling::section& modeInfo::getDescription() {
-      static styling::section section("CPU Info");
+      static styling::section section("CPU(s)");
       if (section.size() == 0) {
         std::stringstream ss;
 

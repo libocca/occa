@@ -127,6 +127,9 @@ namespace occa {
              const std::string &name_,
              const std::string &description_);
 
+      option(const std::string &name_,
+             const std::string &description_);
+
       option isRequired();
       option reusable();
       option withArgs(const int requiredArgs_);
