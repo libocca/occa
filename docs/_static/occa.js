@@ -36,32 +36,14 @@ occa.tokensToMarkdown = (tokens) => (
   tokens.map(occa.tokenToMarkdown).join('\n')
 );
 
-occa.getOSTab = ({ content, os }) => (
-  `      <md-tab id="${os}" md-label="${occa.label[os]}">\n`
+occa.getTab = ({ tab, content }) => (
+  `      <md-tab id="${tab}" md-label="${occa.label[tab]}">\n`
     + occa.tokensToMarkdown(content)
     + '      </md-tab>'
 );
 
-occa.getOSTabs = (tabs) => (
-  occa.getTabs(tabs,
-               occa.getOSTab,
-               'os')
-);
-
-occa.getLanguageTab = ({ language, content }) => (
-  `      <md-tab id="${language}" md-label="${occa.label[language]}">\n`
-    + occa.codeToMarkdown(language, content)
-    + '      </md-tab>'
-);
-
-occa.getLanguageTabs = (tabs) => (
-  occa.getTabs(tabs,
-               occa.getLanguageTab,
-               'language')
-);
-
-occa.getTabs = (tabs, getTab, tabKey) => {
-  const content = tabs.map(getTab).join('\n');
+occa.getTabs = (tabKey, tabs) => {
+  const content = tabs.map(occa.getTab).join('\n');
 
   return (
     '<template>\n'
@@ -77,16 +59,7 @@ occa.getTabs = (tabs, getTab, tabKey) => {
   );
 };
 
-occa.parseLanguageTabs = (content) => (
-  occa.getLanguageTabs(
-    marked.lexer(content)
-      .map(({ text: content, lang: language }) => (
-        { content, language }
-      ))
-  )
-);
-
-occa.parseOSTabs = (content) => {
+occa.parseTabs = (style, content) => {
   const parts = marked.lexer(content);
   const newParts = [];
 
@@ -94,25 +67,22 @@ occa.parseOSTabs = (content) => {
   for (var i = 1; i < (parts.length - 1); ++i) {
     // Skip loose_item_start;
     ++i;
-    const os = parts[i++].text;
+    const tab = parts[i++].text;
     const start = i++;
     while (parts[i].type !== 'list_item_end') {
       ++i;
     }
     newParts.push({
-      os,
+      tab,
       content: parts.slice(start, i),
     });
   }
 
-  return occa.getOSTabs(newParts);
-};
+  const tabKey = ((style === 'language-tabs')
+                  ? 'language'
+                  : 'os');
 
-occa.parseTabs = (style, content) => {
-  if (style === 'language-tabs') {
-    return occa.parseLanguageTabs(content);
-  }
-  return occa.parseOSTabs(content);
+  return occa.getTabs(tabKey, newParts);
 };
 
 occa.parse = (content) => {
