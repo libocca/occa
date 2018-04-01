@@ -1,5 +1,32 @@
 var occa = occa || {};
 
+//---[ Header & Footer ]----------------
+// Credit to QingWei-Li/docsify for the template
+occa.addHeader = (vm, content) => {
+  const url = `https://github.com/libocca/occa/blob/master/docs/${vm.route.file}`;
+  return (
+    '<div\n'
+      + '  style="position: absolute; top: 0"'
+      + '>\n'
+      + `  [Edit Source](${url})\n`
+      + '</div>\n'
+      + content
+  );
+};
+
+occa.addFooter = (content) => (
+  content
+    + '\n'
+    + '---\n'
+    + '<span\n'
+    + '  style="color: #B2B3BA; position: absolute; bottom: 2em;"\n'
+    + '>\n'
+    + `  © Copyright 2014 - ${(new Date()).getFullYear()}, David Medina and Tim Warburton.\n`
+    + '</span>\n'
+);
+//======================================
+
+//---[ Tabs ]---------------------------
 occa.label = {
   cpp: 'C++',
   c: 'C',
@@ -85,7 +112,7 @@ occa.parseTabs = (style, content) => {
   return occa.getTabs(tabKey, newParts);
 };
 
-occa.parse = (content) => {
+occa.addTabs = (content) => {
   const re = /\n::: (language-tabs|os-tabs)\n([\s\S]*?)\n:::\n/g;
   const parts = [];
   var lastIndex = 0;
@@ -100,4 +127,14 @@ occa.parse = (content) => {
   parts.push(content.substring(lastIndex));
 
   return parts.join('\n');
+};
+//======================================
+
+occa.docsifyPlugin = (hook, vm) => {
+  hook.beforeEach((content) => {
+    content = occa.addHeader(vm, content);
+    content = occa.addTabs(content);
+    content = occa.addFooter(content);
+    return content;
+  });
 };

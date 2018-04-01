@@ -40,6 +40,9 @@
   </head>
   <body>
     <div id="app"></div>
+    <script src="./_static/occa.js"></script>
+    <script src="//unpkg.com/vue/dist/vue.min.js"></script>
+    <script src="//unpkg.com/vue-material@beta"></script>
     <script>
      window.$docsify = {
        name: 'OCCA',
@@ -53,22 +56,10 @@
        subMaxLevel: 2,
 
        plugins: [
-         (hook) => {
-           hook.beforeEach((content) => (
-             occa.parse(content)
-           ));
-         },
+         occa.docsifyPlugin,
        ],
-     };
+      };
 
-    </script>
-    <script src="./_static/occa.js"></script>
-    <script src="//unpkg.com/vue/dist/vue.min.js"></script>
-    <script src="//unpkg.com/vue-material@beta"></script>
-    <script src="//unpkg.com/docsify/lib/docsify.min.js"></script>
-    <script src="//unpkg.com/docsify/lib/plugins/search.min.js"></script>
-    <script src="//unpkg.com/docsify-edit-on-github@1.0.1/index.js"></script>
-    <script>
      Vue.use(VueMaterial.default)
 
      var vm = new Vue({
@@ -87,5 +78,8 @@
        },
      })
     </script>
+    <script src="//unpkg.com/docsify/lib/docsify.min.js"></script>
+    <script src="//unpkg.com/docsify/lib/plugins/search.min.js"></script>
+    <script src="//unpkg.com/docsify-edit-on-github@1.0.1/index.js"></script>
   </body>
 </html>
