@@ -251,7 +251,7 @@ The simplest example is to create and add two vectors together
               | Memory               | 1 GB
     ==========+======================+==========================================
     Compiling [addVectors]
-    clang++ -x c++ -fPIC -shared -I. -D__extern_always_inline=inline -O3 -mtune=native -ftree-vectorize -funroll-loops -ffast-math /Users/dsm5/.occa/cache/4c38ebbf648a4b23/source.occa -o /Users/dsm5/.occa/cache/4c38ebbf648a4b23/binary -I/Users/dsm5/git/night/include -L/Users/dsm5/git/night/lib -locca
+    clang++ -x c++ -fPIC -shared -I. -D__extern_always_inline=inline -O3 -mtune=native -ftree-vectorize -funroll-loops -ffast-math /home/david/.occa/cache/4c38ebbf648a4b23/source.occa -o /home/david/.occa/cache/4c38ebbf648a4b23/binary -I/home/david/git/night/include -L/home/david/git/night/lib -locca
     0: 1
     1: 1
     2: 1
@@ -293,7 +293,7 @@ Compiled kernels are cached and its binaries are reused if nothing changed in th
 
     ```bash
     Compiling [addVectors]
-    clang++ -x c++ -fPIC -shared -I. -D__extern_always_inline=inline -O3 -mtune=native -ftree-vectorize -funroll-loops -ffast-math /Users/dsm5/.occa/cache/4c38ebbf648a4b23/source.occa -o /Users/dsm5/.occa/cache/4c38ebbf648a4b23/binary -I/Users/dsm5/git/night/include -L/Users/dsm5/git/night/lib -locca
+    clang++ -x c++ -fPIC -shared -I. -D__extern_always_inline=inline -O3 -mtune=native -ftree-vectorize -funroll-loops -ffast-math /home/david/.occa/cache/4c38ebbf648a4b23/source.occa -o /home/david/.occa/cache/4c38ebbf648a4b23/binary -I/home/david/git/night/include -L/home/david/git/night/lib -locca
     ```
 
     Second run

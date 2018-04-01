@@ -1,5 +1,15 @@
-- [**Getting Started**](/getting-started?id=getting-started)
-- OCCA
-- OKL
-- API
-- Extending OCCA
+- **User Guide**
+  - [Getting Started](/user-guide/getting-started)
+  - [Command-Line Interface](/user-guide/command-line-interface)
+- **OCCA**
+  - [Introduction](/occa/introduction)
+  - [Device](/occa/device.md)
+  - [Memory](/occa/memory.md)
+  - [Kernel](/occa/kernel.md)
+  - [Asynchronous Computing](/occa/asynchronous-computing)
+  - [Device Streams](/occa/stream)
+  - [Background Devices](/occa/device-streams)
+  - [Unified Memory](/occa/univied-memory)
+- **OKL**
+- **API Documentation**
+- **Extending OCCA**

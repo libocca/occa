@@ -2,6 +2,10 @@
     color: #2b7fb9;
 }
 
+.app-sub-sidebar li:before {
+    display: none;
+}
+
 #edit-source {
     position: absolute;
     top: 0;
