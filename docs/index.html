@@ -62,14 +62,14 @@
 
      Vue.use(VueMaterial.default)
 
-     var globalVM = new Vue({
+     var vm = new Vue({
        el: '#app',
        data: {
          tabNamespaces: {},
        },
        methods: {
          onTabChange: (namespace, tab) => {
-           globalVM.$data.tabNamespaces[namespace] = tab;
+           vm.$data.tabNamespaces[namespace] = tab;
          }
        },
      })

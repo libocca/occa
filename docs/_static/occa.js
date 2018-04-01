@@ -62,8 +62,8 @@ occa.getTab = ({ tab, content }) => (
 occa.getTabs = (namespace, tabs) => {
   const content = tabs.map(occa.getTab).join('\n');
 
-  const tab     = `globalVM.$data.tabNamespaces['${namespace}']`;
-  const onClick = `(tab) => globalVM.onTabChange('${namespace}', tab)`;
+  const tab     = `vm.$data.tabNamespaces['${namespace}']`;
+  const onClick = `(tab) => vm.onTabChange('${namespace}', tab)`;
 
   return (
     '<template>\n'
@@ -102,8 +102,8 @@ occa.parseTabs = (namespace, content) => {
     return [];
   }
 
-  if (!(namespace in globalVM.$data.tabNamespaces)) {
-    Vue.set(globalVM.tabNamespaces, namespace, newParts[0].tab);
+  if (!(namespace in vm.$data.tabNamespaces)) {
+    Vue.set(vm.tabNamespaces, namespace, newParts[0].tab);
   }
 
   return occa.getTabs(namespace, newParts);
