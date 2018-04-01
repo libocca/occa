@@ -5,9 +5,7 @@ var occa = occa || {};
 occa.addHeader = (vm, content) => {
   const url = `https://github.com/libocca/occa/blob/master/docs/${vm.route.file}`;
   return (
-    '<div\n'
-      + '  style="position: absolute; top: 0"\n'
-      + '>\n'
+    '<div id="edit-source">\n'
       + `  [Edit Source](${url})\n`
       + '</div>\n'
       + content
@@ -18,9 +16,7 @@ occa.addFooter = (content) => (
   content
     + '\n'
     + '---\n'
-    + '<span\n'
-    + '  style="color: #B2B3BA; position: absolute; bottom: 2em;"\n'
-    + '>\n'
+    + '<span id="copyright">\n'
     + `  © Copyright 2014 - ${(new Date()).getFullYear()}, David Medina and Tim Warburton.\n`
     + '</span>\n'
 );

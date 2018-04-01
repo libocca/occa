@@ -4,405 +4,317 @@ The OCCA source code can be found in |Github Link| under an MIT License
 
 Below are the list of dependencies
 
-::: tabs language
-
-- C++
-
-  ```cpp
-  for (int i = 0; i < 10; ++i) {
-  }
-  ```
-
-- C
-  ```c
-  for (int i = 0; i < 10; ++i) {
-  }
-  ```
-
-:::
-
-::: tabs language
-
-- C++
-  ```cpp
-  for (int i = 0; i < 20; ++i) {
-  }
-  ```
-
-- C
-  ```c
-  for (int i = 0; i < 20; ++i) {
-  }
-  ```
-
-:::
-
 ::: tabs os
 
 - Linux
-  ```cpp
-  for (int i = 0; i < 10; ++i) {
-  }
-  ```
+
+    - C++ compiler
+    - `make`
 
 - MacOS
-  ```c
-  for (int i = 0; i < 10; ++i) {
-  }
-  ```
 
-- Windows
-  ```python
-  for (int i = 0; i < 10; ++i) {
-  }
-  ```
+    - C++ compiler
+    - `make`
 
 :::
-
-
-- C++
-
-  hi
-  foo
-
-  ```cpp
-  for (int i = 0; i < 10; ++i) {
-  }
-  ```
-
-  test
-
-  - a
-  - b
-
-.. tabs::
-
-   .. group-tab:: Linux
-
-      - C++ compiler
-      - The :code:`make` command (in the :code:`build-essential` package)
-
-   .. group-tab:: Mac OSX
-
-      - C++ compiler
-      - The :code:`make` command (in the :code:`build-essential` package)
-
-   .. group-tab:: Windows
-
-      - Visual Studio
 
 
 # Download and Installation
 
-Use git to download OCCA or download the latest release :code:`.tar.gz` from |Github Release Link|
+Use git to download OCCA or download the latest release `.tar.gz` from |Github Release Link|
 
-.. tabs::
+::: tabs os
 
-   .. code-tab:: bash Linux
+- Linux
 
-      git clone https://github.com/libocca/occa.git
-      cd occa
-      make -j4
+    ```bash
+    git clone https://github.com/libocca/occa.git
+    cd occa
+    make -j4
+    ```
 
-   .. code-tab:: bash Mac OSX
+- MacOS
 
-      git clone https://github.com/libocca/occa.git
-      cd occa
-      make -j4
+    ```bash
+    git clone https://github.com/libocca/occa.git
+    cd occa
+    make -j4
+    ```
 
-   .. code-tab:: bash Windows
-
-      ???
+:::
 
 
 # Testing Installation
 
-OCCA comes with a command called :code:`occa`, found inside the :code:`bin` directory.
-The purpose of :code:`occa` is to help gather device information as well as other useful utilities
+OCCA comes with a command called `occa`, found inside the `bin` directory.
+The purpose of `occa` is to help gather device information as well as other useful utilities
 
-For more information, please see the section on `Command-Line Interface <../cli.html>`_
+For more information, please see the [Command-Line Interface](getting-started) section. <!-- TODO -->
 
-.. tabs::
+::: tabs os
 
-   .. group-tab:: Linux
+- Linux
 
-      .. code-block:: bash
+    ```bash
+    export LD_LIBRARY_PATH="${LD_LIBRARY_PATH}:${PWD}/lib"
+    PATH+=":${PWD}/bin"
+    occa info
+    ```
 
-         export LD_LIBRARY_PATH="${LD_LIBRARY_PATH}:${PWD}/lib"
-         PATH+=":${PWD}/bin"
-         occa info
+    Output:
 
-      Output
+    ```bash
+    ==========+======================+==========================================
+     CPU Info | Cores                | 16
+              | Memory (RAM)         | 31 GB
+              | Clock Frequency      | 32.623 GHz
+              | SIMD Instruction Set | SSE2
+              | SIMD Width           | 128 bits
+    ==========+======================+==========================================
+     OpenCL   | Device Name          | GeForce GTX 980
+              | Driver Vendor        | NVIDIA
+              | Platform ID          | 0
+              | Device ID            | 0
+              | Memory               | 3 GB
+              |----------------------+------------------------------------------
+              | Device Name          | GeForce GTX 980
+              | Driver Vendor        | NVIDIA
+              | Platform ID          | 0
+              | Device ID            | 1
+              | Memory               | 3 GB
+              |----------------------+------------------------------------------
+              | Device Name          | GeForce GTX 980
+              | Driver Vendor        | NVIDIA
+              | Platform ID          | 0
+              | Device ID            | 2
+              | Memory               | 3 GB
+              |----------------------+------------------------------------------
+              | Device Name          | Intel(R) Core(TM) i7-5960X CPU @ 3.00GHz
+              | Driver Vendor        | Intel
+              | Platform ID          | 1
+              | Device ID            | 0
+              | Memory               | 31 GB
+    ==========+======================+==========================================
+     CUDA     | Device ID            | 0
+              | Device Name          | GeForce GTX 980
+              | Memory               | 3 GB
+              |----------------------+------------------------------------------
+              | Device ID            | 1
+              | Device Name          | GeForce GTX 980
+              | Memory               | 3 GB
+              |----------------------+------------------------------------------
+              | Device ID            | 2
+              | Device Name          | GeForce GTX 980
+              | Memory               | 3 GB
+    ==========+======================+==========================================
+    ```
 
-      .. code-block:: bash
+- MacOS
 
-         ==========o======================o==========================================
-          CPU Info | Cores                | 16
-                   | Memory (RAM)         | 31 GB
-                   | Clock Frequency      | 32.623 GHz
-                   | SIMD Instruction Set | SSE2
-                   | SIMD Width           | 128 bits
-         ==========o======================o==========================================
-          OpenCL   | Device Name          | GeForce GTX 980
-                   | Driver Vendor        | NVIDIA
-                   | Platform ID          | 0
-                   | Device ID            | 0
-                   | Memory               | 3 GB
-                   |----------------------|------------------------------------------
-                   | Device Name          | GeForce GTX 980
-                   | Driver Vendor        | NVIDIA
-                   | Platform ID          | 0
-                   | Device ID            | 1
-                   | Memory               | 3 GB
-                   |----------------------|------------------------------------------
-                   | Device Name          | GeForce GTX 980
-                   | Driver Vendor        | NVIDIA
-                   | Platform ID          | 0
-                   | Device ID            | 2
-                   | Memory               | 3 GB
-                   |----------------------|------------------------------------------
-                   | Device Name          | Intel(R) Core(TM) i7-5960X CPU @ 3.00GHz
-                   | Driver Vendor        | Intel
-                   | Platform ID          | 1
-                   | Device ID            | 0
-                   | Memory               | 31 GB
-         ==========o======================o==========================================
-          CUDA     | Device ID            | 0
-                   | Device Name          | GeForce GTX 980
-                   | Memory               | 3 GB
-                   |----------------------|------------------------------------------
-                   | Device ID            | 1
-                   | Device Name          | GeForce GTX 980
-                   | Memory               | 3 GB
-                   |----------------------|------------------------------------------
-                   | Device ID            | 2
-                   | Device Name          | GeForce GTX 980
-                   | Memory               | 3 GB
-         ==========o======================o==========================================
+    ```bash
+    export DYLD_LIBRARY_PATH="${DYLD_LIBRARY_PATH}:${PWD}/lib"
+    PATH+=":${PWD}/bin"
+    occa info
+    ```
 
-   .. group-tab:: Mac OSX
+    Output
 
-      .. code-block:: bash
+    ```bash
+    ==========+======================+==========================================
+     CPU Info | Processor Name       | Intel(R) Core(TM) i5-4260U CPU @ 1.40GHz
+              | Cores                | 4
+              | Memory (RAM)         | 4 GB
+              | Clock Frequency      | 1.4 GHz
+              | SIMD Instruction Set | SSE4
+              | SIMD Width           | 128 bits
+              | L1 Cache Size (d)    |  32 KB
+              | L2 Cache Size        | 256 KB
+              | L3 Cache Size        |   3 MB
+    ==========+======================+==========================================
+     OpenCL   | Device Name          | Intel(R) Core(TM) i5-4260U CPU @ 1.40GHz
+              | Driver Vendor        | Intel
+              | Platform ID          | 0
+              | Device ID            | 0
+              | Memory               | 4 GB
+              |----------------------+------------------------------------------
+              | Device Name          | HD Graphics 5000
+              | Driver Vendor        | Intel
+              | Platform ID          | 0
+              | Device ID            | 1
+              | Memory               | 1 GB
+    ==========+======================+==========================================
+    ```
 
-         export DYLD_LIBRARY_PATH="${DYLD_LIBRARY_PATH}:${PWD}/lib"
-         PATH+=":${PWD}/bin"
-         occa info
+:::
 
-      Output
+# Example
 
-      .. code-block:: bash
+The simplest example is to create and add two vectors together
 
-         ==========o======================o==========================================
-          CPU Info | Processor Name       | Intel(R) Core(TM) i5-4260U CPU @ 1.40GHz
-                   | Cores                | 4
-                   | Memory (RAM)         | 4 GB
-                   | Clock Frequency      | 1.4 GHz
-                   | SIMD Instruction Set | SSE4
-                   | SIMD Width           | 128 bits
-                   | L1 Cache Size (d)    |  32 KB
-                   | L2 Cache Size        | 256 KB
-                   | L3 Cache Size        |   3 MB
-         ==========o======================o==========================================
-          OpenCL   | Device Name          | Intel(R) Core(TM) i5-4260U CPU @ 1.40GHz
-                   | Driver Vendor        | Intel
-                   | Platform ID          | 0
-                   | Device ID            | 0
-                   | Memory               | 4 GB
-                   |----------------------|------------------------------------------
-                   | Device Name          | HD Graphics 5000
-                   | Driver Vendor        | Intel
-                   | Platform ID          | 0
-                   | Device ID            | 1
-                   | Memory               | 1 GB
-         ==========o======================o==========================================
+::: tabs os
 
-# Run Example
+- Linux
 
-The simplest example we have is called AddVectors where two vectors are instantiated and added in a device
+    ```bash
+    cd examples/1_add_vectors/cpp
+    make
+    OCCA_VERBOSE=1 ./main
+    ```
 
-.. tabs::
+    Output
 
-   .. group-tab:: Linux
+    ```bash
+    ==========+======================+==========================================
+     CPU Info | Cores                | 16
+              | Memory (RAM)         | 31 GB
+              | Clock Frequency      | 32.684 GHz
+              | SIMD Instruction Set | SSE2
+              | SIMD Width           | 128 bits
+    ==========+======================+==========================================
+     OpenCL   | Device Name          | GeForce GTX 980
+              | Driver Vendor        | NVIDIA
+              | Platform ID          | 0
+              | Device ID            | 0
+              | Memory               | 3 GB
+              |----------------------+------------------------------------------
+              | Device Name          | GeForce GTX 980
+              | Driver Vendor        | NVIDIA
+              | Platform ID          | 0
+              | Device ID            | 1
+              | Memory               | 3 GB
+              |----------------------+------------------------------------------
+              | Device Name          | GeForce GTX 980
+              | Driver Vendor        | NVIDIA
+              | Platform ID          | 0
+              | Device ID            | 2
+              | Memory               | 3 GB
+              |----------------------+------------------------------------------
+              | Device Name          | Intel(R) Core(TM) i7-5960X CPU @ 3.00GHz
+              | Driver Vendor        | Intel
+              | Platform ID          | 1
+              | Device ID            | 0
+              | Memory               | 31 GB
+    ==========+======================+==========================================
+     CUDA     | Device ID            | 0
+              | Device Name          | GeForce GTX 980
+              | Memory               | 3 GB
+              |----------------------+------------------------------------------
+              | Device ID            | 1
+              | Device Name          | GeForce GTX 980
+              | Memory               | 3 GB
+              |----------------------+------------------------------------------
+              | Device ID            | 2
+              | Device Name          | GeForce GTX 980
+              | Memory               | 3 GB
+    ==========+======================+==========================================
+    Compiling [addVectors]
+    clang++ -x c++ -fPIC -shared -g /home/dsm5/.occa/cache/e60679bfca62c2f2/source.occa -o /home/dsm5/.occa/cache/e60679bfca62c2f2/binary -I/home/dsm5/git/night/include -L/home/dsm5/git/night/lib -locca
+    0: 1
+    1: 1
+    2: 1
+    3: 1
+    4: 1
+    ```
 
-      .. code-block:: bash
+- MacOS
 
-         cd examples/addVectors/cpp
-         make
-         ./main
+    ```bash
+    cd examples/1_add_vectors/cpp
+    make
+    OCCA_VERBOSE=1 ./main
+    ```
 
-      Output
+    Output
 
-      .. code-block:: bash
+    ```bash
+    ==========+======================+==========================================
+     CPU Info | Processor Name       | Intel(R) Core(TM) i5-4260U CPU @ 1.40GHz
+              | Cores                | 4
+              | Memory (RAM)         | 4 GB
+              | Clock Frequency      | 1.4 GHz
+              | SIMD Instruction Set | SSE4
+              | SIMD Width           | 128 bits
+              | L1 Cache Size (d)    |  32 KB
+              | L2 Cache Size        | 256 KB
+              | L3 Cache Size        |   3 MB
+    ==========+======================+==========================================
+     OpenCL   | Device Name          | Intel(R) Core(TM) i5-4260U CPU @ 1.40GHz
+              | Driver Vendor        | Intel
+              | Platform ID          | 0
+              | Device ID            | 0
+              | Memory               | 4 GB
+              |----------------------+------------------------------------------
+              | Device Name          | HD Graphics 5000
+              | Driver Vendor        | Intel
+              | Platform ID          | 0
+              | Device ID            | 1
+              | Memory               | 1 GB
+    ==========+======================+==========================================
+    Compiling [addVectors]
+    clang++ -x c++ -fPIC -shared -I. -D__extern_always_inline=inline -O3 -mtune=native -ftree-vectorize -funroll-loops -ffast-math /Users/dsm5/.occa/cache/4c38ebbf648a4b23/source.occa -o /Users/dsm5/.occa/cache/4c38ebbf648a4b23/binary -I/Users/dsm5/git/night/include -L/Users/dsm5/git/night/lib -locca
+    0: 1
+    1: 1
+    2: 1
+    3: 1
+    4: 1
+    ```
 
-         ==========o======================o==========================================
-          CPU Info | Cores                | 16
-                   | Memory (RAM)         | 31 GB
-                   | Clock Frequency      | 32.684 GHz
-                   | SIMD Instruction Set | SSE2
-                   | SIMD Width           | 128 bits
-         ==========o======================o==========================================
-          OpenCL   | Device Name          | GeForce GTX 980
-                   | Driver Vendor        | NVIDIA
-                   | Platform ID          | 0
-                   | Device ID            | 0
-                   | Memory               | 3 GB
-                   |----------------------|------------------------------------------
-                   | Device Name          | GeForce GTX 980
-                   | Driver Vendor        | NVIDIA
-                   | Platform ID          | 0
-                   | Device ID            | 1
-                   | Memory               | 3 GB
-                   |----------------------|------------------------------------------
-                   | Device Name          | GeForce GTX 980
-                   | Driver Vendor        | NVIDIA
-                   | Platform ID          | 0
-                   | Device ID            | 2
-                   | Memory               | 3 GB
-                   |----------------------|------------------------------------------
-                   | Device Name          | Intel(R) Core(TM) i7-5960X CPU @ 3.00GHz
-                   | Driver Vendor        | Intel
-                   | Platform ID          | 1
-                   | Device ID            | 0
-                   | Memory               | 31 GB
-         ==========o======================o==========================================
-          CUDA     | Device ID            | 0
-                   | Device Name          | GeForce GTX 980
-                   | Memory               | 3 GB
-                   |----------------------|------------------------------------------
-                   | Device ID            | 1
-                   | Device Name          | GeForce GTX 980
-                   | Memory               | 3 GB
-                   |----------------------|------------------------------------------
-                   | Device ID            | 2
-                   | Device Name          | GeForce GTX 980
-                   | Memory               | 3 GB
-         ==========o======================o==========================================
-         Compiling [addVectors]
-         clang++ -x c++ -fPIC -shared -g /home/dsm5/.occa/cache/e60679bfca62c2f2/source.occa -o /home/dsm5/.occa/cache/e60679bfca62c2f2/binary -I/home/dsm5/git/night/include -L/home/dsm5/git/night/lib -locca
+:::
 
-         Compiling [addVectors0]
-         clang++ -x c++ -fPIC -shared -g /home/dsm5/.occa/cache/94976c92c3964442/source.occa -o /home/dsm5/.occa/cache/94976c92c3964442/binary -I/home/dsm5/git/night/include -L/home/dsm5/git/night/lib -locca
 
-         0: 1
-         1: 1
-         2: 1
-         3: 1
-         4: 1
+# Kernel Caching
 
-   .. group-tab:: Mac OSX
+?> Compiled kernels are cached for fast consecutive builds!
 
-      .. code-block:: bash
-
-         cd examples/addVectors/cpp
-         make
-         ./main
-
-      Output
-
-      .. code-block:: bash
-
-         ==========o======================o==========================================
-          CPU Info | Processor Name       | Intel(R) Core(TM) i5-4260U CPU @ 1.40GHz
-                   | Cores                | 4
-                   | Memory (RAM)         | 4 GB
-                   | Clock Frequency      | 1.4 GHz
-                   | SIMD Instruction Set | SSE4
-                   | SIMD Width           | 128 bits
-                   | L1 Cache Size (d)    |  32 KB
-                   | L2 Cache Size        | 256 KB
-                   | L3 Cache Size        |   3 MB
-         ==========o======================o==========================================
-          OpenCL   | Device Name          | Intel(R) Core(TM) i5-4260U CPU @ 1.40GHz
-                   | Driver Vendor        | Intel
-                   | Platform ID          | 0
-                   | Device ID            | 0
-                   | Memory               | 4 GB
-                   |----------------------|------------------------------------------
-                   | Device Name          | HD Graphics 5000
-                   | Driver Vendor        | Intel
-                   | Platform ID          | 0
-                   | Device ID            | 1
-                   | Memory               | 1 GB
-         ==========o======================o==========================================
-         Compiling [addVectors]
-         clang++ -x c++ -fPIC -shared -I. -D__extern_always_inline=inline -O3 -mtune=native -ftree-vectorize -funroll-loops -ffast-math /Users/dsm5/.occa/cache/4c38ebbf648a4b23/source.occa -o /Users/dsm5/.occa/cache/4c38ebbf648a4b23/binary -I/Users/dsm5/git/night/include -L/Users/dsm5/git/night/lib -locca
-
-         Compiling [addVectors0]
-         clang++ -x c++ -fPIC -shared -I. -D__extern_always_inline=inline -O3 -mtune=native -ftree-vectorize -funroll-loops -ffast-math /Users/dsm5/.occa/cache/3ea9fe9264150348/source.occa -o /Users/dsm5/.occa/cache/3ea9fe9264150348/binary -I/Users/dsm5/git/night/include -L/Users/dsm5/git/night/lib -locca
-
-         0: 1
-         1: 1
-         2: 1
-         3: 1
-         4: 1
-
-   .. code-tab:: bash Windows
-
-      ???
-
-.. note::
-
-   Compiled kernels are cached for fast consecutive builds
-
-Note that when running addVectors is run a second time, the compilation info changes.
+Note that when running `addVectors` is run a second time, the compilation info changes.
 Compiled kernels are cached and its binaries are reused if nothing changed in the compilation step (e.g. device information, kernel defines, etc)
 
 
-.. tabs::
+::: tabs os
 
-   .. group-tab:: Linux
+- Linux
 
-      First run
+    First run
 
-      .. code-block:: bash
+    ```bash
+    Compiling [addVectors]
+    clang++ -x c++ -fPIC -shared -g /home/dsm5/.occa/cache/e60679bfca62c2f2/source.occa -o /home/dsm5/.occa/cache/e60679bfca62c2f2/binary -I/home/dsm5/git/night/include -L/home/dsm5/git/night/lib -locca
+    ```
 
-         Compiling [addVectors]
-         clang++ -x c++ -fPIC -shared -g /home/dsm5/.occa/cache/e60679bfca62c2f2/source.occa -o /home/dsm5/.occa/cache/e60679bfca62c2f2/binary -I/home/dsm5/git/night/include -L/home/dsm5/git/night/lib -locca
+    Second run
 
-         Compiling [addVectors0]
-         clang++ -x c++ -fPIC -shared -g /home/dsm5/.occa/cache/94976c92c3964442/source.occa -o /home/dsm5/.occa/cache/94976c92c3964442/binary -I/home/dsm5/git/night/include -L/home/dsm5/git/night/lib -locca
+    ```bash
+    Loading cached [addVectors0] from [2d38aae833d7e36a/parsed-source.cpp] in [e60679bfca62c2f2/device-binary]
+    ```
 
-      Second run
+- MacOS
 
-      .. code-block:: bash
+    First run
 
-         Found cached binary of [2d38aae833d7e36a/parsedSource.occa] in [e60679bfca62c2f2/binary]
-         Found cached binary of [2d38aae833d7e36a/parsedSource.occa] in [94976c92c3964442/binary]
+    ```bash
+    Compiling [addVectors]
+    clang++ -x c++ -fPIC -shared -I. -D__extern_always_inline=inline -O3 -mtune=native -ftree-vectorize -funroll-loops -ffast-math /Users/dsm5/.occa/cache/4c38ebbf648a4b23/source.occa -o /Users/dsm5/.occa/cache/4c38ebbf648a4b23/binary -I/Users/dsm5/git/night/include -L/Users/dsm5/git/night/lib -locca
+    ```
 
-   .. group-tab:: Mac OSX
+    Second run
 
-      First run
+    ```bash
+    Loading cached [addVectors0] from [2d38aae833d7e36a/parsed-source.cpp] in [e60679bfca62c2f2/device-binary]
+    ```
 
-      .. code-block:: bash
-
-         Compiling [addVectors]
-         clang++ -x c++ -fPIC -shared -I. -D__extern_always_inline=inline -O3 -mtune=native -ftree-vectorize -funroll-loops -ffast-math /Users/dsm5/.occa/cache/4c38ebbf648a4b23/source.occa -o /Users/dsm5/.occa/cache/4c38ebbf648a4b23/binary -I/Users/dsm5/git/night/include -L/Users/dsm5/git/night/lib -locca
-
-         Compiling [addVectors0]
-         clang++ -x c++ -fPIC -shared -I. -D__extern_always_inline=inline -O3 -mtune=native -ftree-vectorize -funroll-loops -ffast-math /Users/dsm5/.occa/cache/3ea9fe9264150348/source.occa -o /Users/dsm5/.occa/cache/3ea9fe9264150348/binary -I/Users/dsm5/git/night/include -L/Users/dsm5/git/night/lib -locca
-
-      Second run
-
-      .. code-block:: bash
-
-         Found cached binary of [2d38aae833d7e36a/parsedSource.occa] in [4c38ebbf648a4b23/binary]
-         Found cached binary of [2d38aae833d7e36a/parsedSource.occa] in [3ea9fe9264150348/binary]
-
-   .. code-tab:: bash Windows
-
-      ???
+:::
 
 
-.. |Github Link| raw:: html
+<!-- .. |Github Link| raw:: html -->
 
-   <a href="https://github.com/libocca/occa" target="_blank">
-      <i class="github icon" style="margin-right: 0;"></i>
-      Github
-   </a>
+<!--    <a href="https://github.com/libocca/occa" target="_blank"> -->
+<!--       <i class="github icon" style="margin-right: 0;"></i> -->
+<!--       Github -->
+<!--    </a> -->
 
-.. |Github Release Link| raw:: html
+<!-- .. |Github Release Link| raw:: html -->
 
-   <a href="https://github.com/libocca/occa/releases" target="_blank">
-      <i class="github icon" style="margin-right: 0;"></i>
-      Github
-   </a>
+<!--    <a href="https://github.com/libocca/occa/releases" target="_blank"> -->
+<!--       <i class="github icon" style="margin-right: 0;"></i> -->
+<!--       Github -->
+<!--    </a> -->
