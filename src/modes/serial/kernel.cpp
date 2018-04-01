@@ -101,7 +101,7 @@ namespace occa {
         command << compilerEnvScript << " && ";
       }
 
-#if (OCCA_OS & (OCCA_LINUX_OS | OCCA_OSX_OS))
+#if (OCCA_OS & (OCCA_LINUX_OS | OCCA_MACOS_OS))
       command << properties["compiler"].string()
               << ' '    << properties["compilerFlags"].string()
               << ' '    << cachedSourceFile
@@ -129,7 +129,7 @@ namespace occa {
         std::cout << "Compiling [" << kernelName << "]\n" << sCommand << "\n";
       }
 
-#if (OCCA_OS & (OCCA_LINUX_OS | OCCA_OSX_OS))
+#if (OCCA_OS & (OCCA_LINUX_OS | OCCA_MACOS_OS))
       const int compileError = system(sCommand.c_str());
 #else
       const int compileError = system(("\"" +  sCommand + "\"").c_str());

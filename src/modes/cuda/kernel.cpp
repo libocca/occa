@@ -125,7 +125,7 @@ namespace occa {
         std::cout << "Compiling [" << kernelName << "]\n" << ptxCommand << "\n";
       }
 
-#if (OCCA_OS & (OCCA_LINUX_OS | OCCA_OSX_OS))
+#if (OCCA_OS & (OCCA_LINUX_OS | OCCA_MACOS_OS))
       ignoreResult( system(ptxCommand.c_str()) );
 #else
       ignoreResult( system(("\"" +  ptxCommand + "\"").c_str()) );

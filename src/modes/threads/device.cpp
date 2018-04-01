@@ -91,7 +91,7 @@ namespace occa {
         args->jobs = &(jobs[t]);
         args->jobMutex = &(jobMutex);
 
-#if (OCCA_OS & (OCCA_LINUX_OS | OCCA_OSX_OS))
+#if (OCCA_OS & (OCCA_LINUX_OS | OCCA_MACOS_OS))
         pthread_create(&tid[t], NULL, threads::limbo, args);
 #else
         CreateThread(NULL, 0, (LPTHREAD_START_ROUTINE) threads::limbo, args, 0, &tid[t]);

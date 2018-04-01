@@ -43,7 +43,7 @@ namespace occa {
       } else if (env::var("CXX").size()) {
         compiler = env::var("CXX");
       } else {
-#if (OCCA_OS & (OCCA_LINUX_OS | OCCA_OSX_OS))
+#if (OCCA_OS & (OCCA_LINUX_OS | OCCA_MACOS_OS))
         compiler = "g++";
 #else
         compiler = "cl.exe";
@@ -59,7 +59,7 @@ namespace occa {
       } else if (env::var("CXXFLAGS").size()) {
         compilerFlags = env::var("CXXFLAGS");
       } else {
-#if (OCCA_OS & (OCCA_LINUX_OS | OCCA_OSX_OS))
+#if (OCCA_OS & (OCCA_LINUX_OS | OCCA_MACOS_OS))
         compilerFlags = "-g";
 #else
         compilerFlags = " /Od";

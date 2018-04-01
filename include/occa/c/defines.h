@@ -24,7 +24,7 @@
 
 #include "occa/defines.hpp"
 
-#if (OCCA_OS & (OCCA_LINUX_OS | OCCA_OSX_OS))
+#if (OCCA_OS & (OCCA_LINUX_OS | OCCA_MACOS_OS))
 #  define OCCA_RFUNC
 #  define OCCA_LFUNC
 #else

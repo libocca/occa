@@ -27,8 +27,8 @@
 #  define OCCA_LINUX_OS 1
 #endif
 
-#ifndef OCCA_OSX_OS
-#  define OCCA_OSX_OS 2
+#ifndef OCCA_MACOS_OS
+#  define OCCA_MACOS_OS 2
 #endif
 
 #ifndef OCCA_WINDOWS_OS

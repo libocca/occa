@@ -89,7 +89,7 @@ namespace occa {
       ::signal(SIGTERM, env::signalExit);
       ::signal(SIGINT , env::signalExit);
       ::signal(SIGABRT, env::signalExit);
-#if (OCCA_OS & (OCCA_LINUX_OS | OCCA_OSX_OS))
+#if (OCCA_OS & (OCCA_LINUX_OS | OCCA_MACOS_OS))
       ::signal(SIGQUIT, env::signalExit);
       ::signal(SIGUSR1, env::signalExit);
       ::signal(SIGUSR2, env::signalExit);
@@ -98,7 +98,7 @@ namespace occa {
 
     void envInitializer_t::initEnvironment() {
       // Standard environment variables
-#if (OCCA_OS & (OCCA_LINUX_OS | OCCA_OSX_OS))
+#if (OCCA_OS & (OCCA_LINUX_OS | OCCA_MACOS_OS))
       HOME            = env::var("HOME");
       PWD             = env::var("PWD");
       PATH            = env::var("PATH");
@@ -141,7 +141,7 @@ namespace occa {
       if (env::OCCA_CACHE_DIR.size() == 0) {
         std::stringstream ss;
 
-#if (OCCA_OS & (OCCA_LINUX_OS | OCCA_OSX_OS))
+#if (OCCA_OS & (OCCA_LINUX_OS | OCCA_MACOS_OS))
         ss << env::var("HOME") << "/.occa";
 #else
         ss << env::var("USERPROFILE") << "/AppData/Local/OCCA";
@@ -171,7 +171,7 @@ namespace occa {
 
       while(cStart[0] != '\0') {
         cEnd = cStart;
-#if (OCCA_OS & (OCCA_LINUX_OS | OCCA_OSX_OS))
+#if (OCCA_OS & (OCCA_LINUX_OS | OCCA_MACOS_OS))
         skipTo(cEnd, ':');
 #else
         skipTo(cEnd, ';');

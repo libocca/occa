@@ -285,7 +285,7 @@ namespace occa {
 
   double atod(const char *c) {
     double ret;
-#if (OCCA_OS & (OCCA_LINUX_OS | OCCA_OSX_OS))
+#if (OCCA_OS & (OCCA_LINUX_OS | OCCA_MACOS_OS))
     sscanf(c, "%lf", &ret);
 #else
     sscanf_s(c, "%lf", &ret);

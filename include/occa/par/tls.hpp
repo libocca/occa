@@ -27,7 +27,7 @@
 
 #include <iostream>
 
-#if (OCCA_OS & (OCCA_LINUX_OS | OCCA_OSX_OS))
+#if (OCCA_OS & (OCCA_LINUX_OS | OCCA_MACOS_OS))
 #  include <pthread.h>
 #else
 #  include <windows.h>
@@ -38,7 +38,7 @@ namespace occa {
   template <class TM>
   class tls {
   private:
-#if (OCCA_OS & (OCCA_LINUX_OS | OCCA_OSX_OS))
+#if (OCCA_OS & (OCCA_LINUX_OS | OCCA_MACOS_OS))
     pthread_key_t pkey;
 #else
     __declspec(thread) TM value_;

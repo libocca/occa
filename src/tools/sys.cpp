@@ -22,7 +22,7 @@
 
 #include "occa/defines.hpp"
 
-#if (OCCA_OS & (OCCA_LINUX_OS | OCCA_OSX_OS))
+#if (OCCA_OS & (OCCA_LINUX_OS | OCCA_MACOS_OS))
 #  include <ctime>
 #  include <cxxabi.h>
 #  include <dlfcn.h>
@@ -36,7 +36,7 @@
 #  include <unistd.h>
 #  if (OCCA_OS & OCCA_LINUX_OS)
 #    include <errno.h>
-#  else // OCCA_OSX_OS
+#  else // OCCA_MACOS_OS
 #    include <mach/mach_host.h>
 #    ifdef __clang__
 #      include <CoreServices/CoreServices.h>
@@ -82,7 +82,7 @@ namespace occa {
       clock_gettime(CLOCK_MONOTONIC, &ct);
 
       return (double) (ct.tv_sec + (1.0e-9 * ct.tv_nsec));
-#elif (OCCA_OS == OCCA_OSX_OS)
+#elif (OCCA_OS == OCCA_MACOS_OS)
 #  ifdef __clang__
       uint64_t ct;
       ct = mach_absolute_time();
@@ -181,7 +181,7 @@ namespace occa {
 
     //---[ System Calls ]---------------
     int call(const std::string &cmdline) {
-#if (OCCA_OS & (OCCA_LINUX_OS | OCCA_OSX_OS))
+#if (OCCA_OS & (OCCA_LINUX_OS | OCCA_MACOS_OS))
       FILE *fp = popen(cmdline.c_str(), "r");
       return pclose(fp);
 #else
@@ -191,7 +191,7 @@ namespace occa {
     }
 
     int call(const std::string &cmdline, std::string &output) {
-#if (OCCA_OS & (OCCA_LINUX_OS | OCCA_OSX_OS))
+#if (OCCA_OS & (OCCA_LINUX_OS | OCCA_MACOS_OS))
       FILE *fp = popen(cmdline.c_str(), "r");
 #else
       FILE *fp = _popen(cmdline.c_str(), "r");
@@ -204,7 +204,7 @@ namespace occa {
         output += lineBuffer;
       }
 
-#if (OCCA_OS & (OCCA_LINUX_OS | OCCA_OSX_OS))
+#if (OCCA_OS & (OCCA_LINUX_OS | OCCA_MACOS_OS))
       return pclose(fp);
 #else
       return _pclose(fp);
@@ -217,7 +217,7 @@ namespace occa {
       std::string expstr;
 
       while (*c != '\0') {
-#if (OCCA_OS & (OCCA_LINUX_OS | OCCA_OSX_OS))
+#if (OCCA_OS & (OCCA_LINUX_OS | OCCA_MACOS_OS))
         if ((*c == '$') && ((c0 < c) || (*(c - 1) != '\\'))) {
           if (*(c + 1) == '{') {
             const char *cStart = c + 2;
@@ -250,7 +250,7 @@ namespace occa {
     }
 
     void rmdir(const std::string &dir) {
-#if (OCCA_OS & (OCCA_LINUX_OS | OCCA_OSX_OS))
+#if (OCCA_OS & (OCCA_LINUX_OS | OCCA_MACOS_OS))
       ::rmdir(dir.c_str());
 #else
       ::_rmdir(dir.c_str());
@@ -260,7 +260,7 @@ namespace occa {
     int mkdir(const std::string &dir) {
       errno = 0;
 
-#if (OCCA_OS & (OCCA_LINUX_OS | OCCA_OSX_OS))
+#if (OCCA_OS & (OCCA_LINUX_OS | OCCA_MACOS_OS))
       return ::mkdir(dir.c_str(), 0755);
 #else
       return ::_mkdir(dir.c_str());
@@ -274,7 +274,7 @@ namespace occa {
       std::string sPath;
       int makeFrom = -1;
 
-#if (OCCA_OS & (OCCA_LINUX_OS | OCCA_OSX_OS))
+#if (OCCA_OS & (OCCA_LINUX_OS | OCCA_MACOS_OS))
       const int firstDir = 0;
       if (dirCount == 0)
         return;
@@ -332,7 +332,7 @@ namespace occa {
     }
 
     bool pidExists(const int pid) {
-#if (OCCA_OS & (OCCA_LINUX_OS | OCCA_OSX_OS))
+#if (OCCA_OS & (OCCA_LINUX_OS | OCCA_MACOS_OS))
       return !::kill(pid, 0);
 #else
       DWORD exitCode;
@@ -344,7 +344,7 @@ namespace occa {
     }
 
     int getPID() {
-#if (OCCA_OS & (OCCA_LINUX_OS | OCCA_OSX_OS))
+#if (OCCA_OS & (OCCA_LINUX_OS | OCCA_MACOS_OS))
       return getpid();
 #else
       return GetCurrentProcessId();
@@ -352,7 +352,7 @@ namespace occa {
     }
 
     int getTID() {
-#if (OCCA_OS & (OCCA_LINUX_OS | OCCA_OSX_OS))
+#if (OCCA_OS & (OCCA_LINUX_OS | OCCA_MACOS_OS))
       return syscall(SYS_gettid);
 #else
       return GetCurrentThreadId();
@@ -428,7 +428,7 @@ namespace occa {
     std::string getProcessorName() {
 #if   (OCCA_OS & OCCA_LINUX_OS)
       return getFieldFrom("getCPUINFOField", "model name");
-#elif (OCCA_OS == OCCA_OSX_OS)
+#elif (OCCA_OS == OCCA_MACOS_OS)
       size_t bufferSize = 100;
       char buffer[100];
 
@@ -448,7 +448,7 @@ namespace occa {
     }
 
     int getCoreCount() {
-#if (OCCA_OS & (OCCA_LINUX_OS | OCCA_OSX_OS))
+#if (OCCA_OS & (OCCA_LINUX_OS | OCCA_MACOS_OS))
       return sysconf(_SC_NPROCESSORS_ONLN);
 #elif (OCCA_OS == OCCA_WINDOWS_OS)
       SYSTEM_INFO sysinfo;
@@ -467,7 +467,7 @@ namespace occa {
       ss >> freq;
 
       return freq;
-#elif (OCCA_OS == OCCA_OSX_OS)
+#elif (OCCA_OS == OCCA_MACOS_OS)
       uint64_t frequency = 0;
       size_t size = sizeof(frequency);
 
@@ -497,7 +497,7 @@ namespace occa {
       field << " cache";
 
       return getFieldFrom("getLSCPUField", field.str());
-#elif (OCCA_OS == OCCA_OSX_OS)
+#elif (OCCA_OS == OCCA_MACOS_OS)
       std::stringstream ss;
       ss << "hw.l" << level;
 
@@ -571,7 +571,7 @@ namespace occa {
         return 0;
 
       return info.totalram;
-#elif (OCCA_OS == OCCA_OSX_OS)
+#elif (OCCA_OS == OCCA_MACOS_OS)
       int64_t ram;
 
       int mib[2]   = {CTL_HW, HW_MEMSIZE};
@@ -595,7 +595,7 @@ namespace occa {
         return 0;
 
       return info.freeram;
-#elif (OCCA_OS == OCCA_OSX_OS)
+#elif (OCCA_OS == OCCA_MACOS_OS)
       mach_msg_type_number_t infoCount = HOST_VM_INFO_COUNT;
       mach_port_t hostPort = mach_host_self();
 
@@ -623,7 +623,7 @@ namespace occa {
     }
 
     int compilerVendor(const std::string &compiler) {
-#if (OCCA_OS & (OCCA_LINUX_OS | OCCA_OSX_OS))
+#if (OCCA_OS & (OCCA_LINUX_OS | OCCA_MACOS_OS))
       const std::string safeCompiler = io::removeSlashes(compiler);
       int vendor_ = sys::vendor::notFound;
       std::stringstream ss;
@@ -731,7 +731,7 @@ namespace occa {
     void* malloc(udim_t bytes) {
       void* ptr;
 
-#if   (OCCA_OS & (OCCA_LINUX_OS | OCCA_OSX_OS))
+#if   (OCCA_OS & (OCCA_LINUX_OS | OCCA_MACOS_OS))
       ignoreResult( posix_memalign(&ptr, env::OCCA_MEM_BYTE_ALIGN, bytes) );
 #elif (OCCA_OS == OCCA_WINDOWS_OS)
       ptr = ::malloc(bytes);
@@ -748,7 +748,7 @@ namespace occa {
                  const hash_t &hash,
                  const std::string &hashTag) {
 
-#if (OCCA_OS & (OCCA_LINUX_OS | OCCA_OSX_OS))
+#if (OCCA_OS & (OCCA_LINUX_OS | OCCA_MACOS_OS))
       void *dlHandle = ::dlopen(filename.c_str(), RTLD_NOW);
 
       if ((dlHandle == NULL) && hash.initialized) {
@@ -776,7 +776,7 @@ namespace occa {
                            const hash_t &hash,
                            const std::string &hashTag) {
 
-#if (OCCA_OS & (OCCA_LINUX_OS | OCCA_OSX_OS))
+#if (OCCA_OS & (OCCA_LINUX_OS | OCCA_MACOS_OS))
       void *sym = ::dlsym(dlHandle, functionName.c_str());
 
       char *dlError;
@@ -805,7 +805,7 @@ namespace occa {
     }
 
     void dlclose(void *dlHandle) {
-#if (OCCA_OS & (OCCA_LINUX_OS | OCCA_OSX_OS))
+#if (OCCA_OS & (OCCA_LINUX_OS | OCCA_MACOS_OS))
       ::dlclose(dlHandle);
 #else
       FreeLibrary((HMODULE) (dlHandle));
@@ -817,7 +817,7 @@ namespace occa {
     }
 
     void printStacktrace(const int frameStart, const std::string indent) {
-#if (OCCA_OS & (OCCA_LINUX_OS | OCCA_OSX_OS))
+#if (OCCA_OS & (OCCA_LINUX_OS | OCCA_MACOS_OS))
       static const int maxFrames = 1024;
       static void *frames[maxFrames];
 
@@ -841,7 +841,7 @@ namespace occa {
       static char prettyBuffer[1024];
       std::stringstream ss;
 
-#if (OCCA_OS == OCCA_OSX_OS)
+#if (OCCA_OS == OCCA_MACOS_OS)
       const char *c = symbol;
       // Skip stack depth
       lex::skipBetweenWhitespaces(c);
@@ -961,7 +961,7 @@ namespace occa {
   }
 
   mutex::mutex() {
-#if (OCCA_OS & (OCCA_LINUX_OS | OCCA_OSX_OS))
+#if (OCCA_OS & (OCCA_LINUX_OS | OCCA_MACOS_OS))
     int error = pthread_mutex_init(&mutexHandle, NULL);
 
     OCCA_ERROR("Error initializing mutex",
@@ -972,7 +972,7 @@ namespace occa {
   }
 
   void mutex::free() {
-#if (OCCA_OS & (OCCA_LINUX_OS | OCCA_OSX_OS))
+#if (OCCA_OS & (OCCA_LINUX_OS | OCCA_MACOS_OS))
     int error = pthread_mutex_destroy(&mutexHandle);
 
     OCCA_ERROR("Error freeing mutex",
@@ -983,7 +983,7 @@ namespace occa {
   }
 
   void mutex::lock() {
-#if (OCCA_OS & (OCCA_LINUX_OS | OCCA_OSX_OS))
+#if (OCCA_OS & (OCCA_LINUX_OS | OCCA_MACOS_OS))
     pthread_mutex_lock(&mutexHandle);
 #else
     WaitForSingleObject(mutexHandle, INFINITE);
@@ -991,7 +991,7 @@ namespace occa {
   }
 
   void mutex::unlock() {
-#if (OCCA_OS & (OCCA_LINUX_OS | OCCA_OSX_OS))
+#if (OCCA_OS & (OCCA_LINUX_OS | OCCA_MACOS_OS))
     pthread_mutex_unlock(&mutexHandle);
 #else
     ReleaseMutex(mutexHandle);

@@ -172,7 +172,7 @@ namespace occa {
 
   class mutex {
   public:
-#if (OCCA_OS & (OCCA_LINUX_OS | OCCA_OSX_OS))
+#if (OCCA_OS & (OCCA_LINUX_OS | OCCA_MACOS_OS))
     pthread_mutex_t mutexHandle;
 #else
     HANDLE mutexHandle;

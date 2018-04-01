@@ -6,7 +6,7 @@ occa.label = {
   python: 'Python',
 
   linux: 'Linux',
-  osx: 'OSX',
+  macos: 'MacOS',
   windows: 'Windows',
 };
 

@@ -126,7 +126,7 @@ using namespace occa;
 #define occaPointer
 #define occaVariable &
 
-#if (OCCA_OS & (OCCA_LINUX_OS | OCCA_OSX_OS))
+#if (OCCA_OS & (OCCA_LINUX_OS | OCCA_MACOS_OS))
 #  define occaRestrict __restrict__
 #  define occaVolatile volatile
 #  define occaAligned  __attribute__ ((aligned (OCCA_MEM_BYTE_ALIGN)))
@@ -150,7 +150,7 @@ using namespace occa;
 #define occaFunctionInfoArg occa::serial::kernelInfoArg_t &occaKernelInfoArg_
 #define occaFunctionInfo    occaKernelInfoArg_
 // - - - - - - - - - - - - - - - - - - - - - - - -
-#if (OCCA_OS & (OCCA_LINUX_OS | OCCA_OSX_OS))
+#if (OCCA_OS & (OCCA_LINUX_OS | OCCA_MACOS_OS))
 #  define occaKernel extern "C"
 #else
 // branch for Microsoft cl.exe - compiler: each symbol that a dll (shared object) should export must be decorated with __declspec(dllexport)
@@ -160,7 +160,7 @@ using namespace occa;
 #define occaFunction
 #define occaDeviceFunction
 
-#if (OCCA_OS & (OCCA_LINUX_OS | OCCA_OSX_OS))
+#if (OCCA_OS & (OCCA_LINUX_OS | OCCA_MACOS_OS))
 #  define OCCA_PRAGMA(STR) _Pragma(STR)
 #else
 #  define OCCA_PRAGMA(STR) __pragma(STR)

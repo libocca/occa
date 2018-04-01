@@ -36,7 +36,7 @@
 #  include <GL/glew.h>
 #  include <GL/gl.h>
 #  include <GL/glut.h>
-#elif (OCCA_OS == OCCA_OSX_OS)
+#elif (OCCA_OS == OCCA_MACOS_OS)
 #  include <OpenGL/gl.h>
 #  include <GLUT/glut.h>
 #elif (OCCA_OS == OCCA_WINDOWS_OS)

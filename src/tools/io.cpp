@@ -22,7 +22,7 @@
 
 #include "occa/defines.hpp"
 
-#if (OCCA_OS & (OCCA_LINUX_OS | OCCA_OSX_OS))
+#if (OCCA_OS & (OCCA_LINUX_OS | OCCA_MACOS_OS))
 #    include <dirent.h>
 #    include <sys/types.h>
 #    include <sys/dir.h>
@@ -199,7 +199,7 @@ namespace occa {
     }
 
     bool isAbsolutePath(const std::string &filename) {
-#if (OCCA_OS & (OCCA_LINUX_OS | OCCA_OSX_OS))
+#if (OCCA_OS & (OCCA_LINUX_OS | OCCA_MACOS_OS))
       return ((0 < filename.size()) &&
               (filename[0] == '/'));
 #else
@@ -214,7 +214,7 @@ namespace occa {
       const char *c = filename.c_str();
       std::string expFilename = sys::expandEnvVariables(filename);
 
-#if (OCCA_OS & (OCCA_LINUX_OS | OCCA_OSX_OS))
+#if (OCCA_OS & (OCCA_LINUX_OS | OCCA_MACOS_OS))
       if (*c == '~') {
         expFilename += env::HOME;
         c += 1 + (*c != '\0');
@@ -260,7 +260,7 @@ namespace occa {
     }
 
     std::string binaryName(const std::string &filename) {
-#if (OCCA_OS & (OCCA_LINUX_OS | OCCA_OSX_OS))
+#if (OCCA_OS & (OCCA_LINUX_OS | OCCA_MACOS_OS))
       return filename;
 #else
       return (filename + ".dll");

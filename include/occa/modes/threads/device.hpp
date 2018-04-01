@@ -38,7 +38,7 @@ namespace occa {
       int threads;
       schedule_t schedule;
 
-#if (OCCA_OS & (OCCA_LINUX_OS | OCCA_OSX_OS))
+#if (OCCA_OS & (OCCA_LINUX_OS | OCCA_MACOS_OS))
       pthread_t tid[50];
 #else
       DWORD tid[50];

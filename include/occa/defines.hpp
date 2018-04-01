@@ -42,7 +42,7 @@
 #      define OCCA_OS OCCA_WINUX_OS
 #    endif
 #  elif __APPLE__
-#    define OCCA_OS OCCA_OSX_OS
+#    define OCCA_OS OCCA_MACOS_OS
 #  else
 #    define OCCA_OS OCCA_LINUX_OS
 #  endif
@@ -68,7 +68,7 @@
 #  define OCCA_END_EXTERN_C
 #endif
 
-#if   (OCCA_OS == OCCA_LINUX_OS) || (OCCA_OS == OCCA_OSX_OS)
+#if   (OCCA_OS == OCCA_LINUX_OS) || (OCCA_OS == OCCA_MACOS_OS)
 #  define OCCA_INLINE inline __attribute__ ((always_inline))
 #elif (OCCA_OS == OCCA_WINDOWS_OS)
 #  define OCCA_INLINE __forceinline
