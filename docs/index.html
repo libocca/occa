@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <title>OCCA</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+    <meta name="description" content="Description">
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Roboto:300,400,500,700,400italic|Material+Icons">
+    <link rel="stylesheet" href="//unpkg.com/vue-material@beta/dist/vue-material.min.css">
+    <link rel="stylesheet" href="//unpkg.com/docsify/lib/themes/vue.css">
+    <style>
+     :root {
+       --theme-color: #2980B9;
+     }
+     .md-button.md-focused:before,
+     .md-button:active:before,
+     .md-button:hover:before {
+       background-color: var(--theme-color);
+       opacity: .12;
+     }
+     .md-tabs.md-theme-default .md-tabs-navigation .md-button.md-active {
+       color: var(--theme-color);
+     }
+     .md-tabs-indicator {
+       background-color: var(--theme-color);
+     }
+     .md-ripple .md-ripple-wave {
+       background-color: var(--theme-color);
+     }
+     .md-tabs pre {
+       margin-top: 0;
+       margin-bottom: 0;
+     }
+     .md-tabs pre > code {
+       margin-top: -1.8em;
+       margin-bottom: -4em;
+     }
+    </style>
+  </head>
+  <body>
+    <div id="app"></div>
+    <script>
+     window.$docsify = {
+       name: 'OCCA',
+       repo: 'libocca/occa',
+       themeColor: '#2980B9',
+
+       auto2top: true,
+       loadSidebar: true,
+       maxLevel: 2,
+       search: 'auto',
+       subMaxLevel: 2,
+
+       plugins: [
+         (hook) => {
+           hook.beforeEach((content) => (
+             occa.parse(content)
+           ));
+         },
+       ],
+     };
+
+    </script>
+    <script src="./_static/occa.js"></script>
+    <script src="//unpkg.com/vue/dist/vue.min.js"></script>
+    <script src="//unpkg.com/vue-material@beta"></script>
+    <script src="//unpkg.com/docsify/lib/docsify.min.js"></script>
+    <script src="//unpkg.com/docsify/lib/plugins/search.min.js"></script>
+    <script src="//unpkg.com/docsify-edit-on-github@1.0.1/index.js"></script>
+    <script>
+     Vue.use(VueMaterial.default)
+
+     var vm = new Vue({
+       el: '#app',
+       data: {
+         os: 'linux',
+         language: 'cpp',
+       },
+       methods: {
+         onLanguageChange: (language) => {
+           vm.$data.language = language;
+         },
+         onOSChange: (os) => {
+           vm.$data.os = os;
+         }
+       },
+     })
+    </script>
+  </body>
+</html>
