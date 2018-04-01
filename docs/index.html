@@ -10,17 +10,20 @@
     <link rel="stylesheet" href="//unpkg.com/vue-material@beta/dist/vue-material.min.css">
     <link rel="stylesheet" href="//unpkg.com/docsify/lib/themes/vue.css">
     <link rel="stylesheet" href="./assets/occa.css">
-    <!-- <link rel="stylesheet" href="/occa/assets/occa.css"> -->
   </head>
   <body>
     <div id="app"></div>
     <script src="./assets/occa.js"></script>
-    <!-- <script src="/occa/assets/occa.js"></script> -->
     <script src="//unpkg.com/vue/dist/vue.min.js"></script>
     <script src="//unpkg.com/vue-material@beta"></script>
     <script>
      window.$docsify = {
-       name: 'OCCA',
+       name: (
+         '<img'
+         + '  src="./_images/blue-logo.svg"'
+         + '  width="100"'
+         + '/>'
+       ),
        repo: 'libocca/occa',
        themeColor: '#2980B9',
 
@@ -34,6 +37,14 @@
        mergeNavbar: true,
        search: 'auto',
        subMaxLevel: 2,
+
+       markdown: {
+         renderer: {
+           code: (text, lang) => (
+             occa.markdown.code({ lang, text })
+           ),
+         }
+       },
 
        plugins: [
          occa.docsifyPlugin,

@@ -1,11 +1,4 @@
-.sidebar > h1 > a.app-name-link {
-    color: #2b7fb9;
-}
-
-.app-sub-sidebar li:before {
-    display: none;
-}
-
+/*---[ Header & Footer ]--------------*/
 #edit-source {
     position: absolute;
     top: 0;
@@ -16,8 +9,32 @@
     position: absolute;
     bottom: 2em;
 }
+/*====================================*/
+
+
+/*---[ Sidebar ]----------------------*/
+.sidebar > h1 > a.app-name-link {
+    color: #2b7fb9;
+}
+
+.app-sub-sidebar li:before {
+    display: none;
+}
+/*====================================*/
+
+
+/*---[ Headers ]----------------------*/
+.markdown-section h1:not(:first-of-type) {
+    margin-top: 1em;
+}
+/*====================================*/
+
 
 /*---[ Tabs ]-------------------------*/
+.md-tabs .md-tabs-content {
+    margin-bottom: -1em;
+}
+
 .md-button.md-focused:before,
 .md-button:active:before,
 .md-button:hover:before {
@@ -38,8 +55,8 @@
 }
 
 /* Code Blocks */
-.md-tabs-content {
-    margin-bottom: 1em;
+.md-tabs pre:not(:first-of-type) {
+    margin-top: 1em;
 }
 
 .md-tabs pre {
@@ -47,8 +64,8 @@
     margin-bottom: 0;
 }
 
-.md-tabs pre > code {
-    margin-top: -1.8em;
-    margin-bottom: -4em;
+pre:after {
+    font-size: 0.9em !important;
+    font-family: Source Sans Pro, Helvetica Neue, Arial, sans-serif;
 }
 /*====================================*/

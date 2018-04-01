@@ -1,5 +1,13 @@
 var occa = occa || {};
 
+occa.languageLabels = {
+  cpp: 'C++',
+};
+
+occa.getLanguageLabel = (language) => (
+  occa.languageLabels[language] || language.toUpperCase()
+);
+
 //---[ Header & Footer ]----------------
 // Credit to QingWei-Li/docsify for the template
 occa.addHeader = (vm, content) => {
@@ -49,10 +57,10 @@ occa.markdown.code = ({ lang, text }) => {
                                      Prism.languages[lang],
                                      lang);
   return (
-    `    <pre data-lang="${lang}">`
-      + `  <code class="lang-${lang}">`
-      + `${styledCode}\n\n`
-      + '  </code>'
+    `<pre data-lang="${occa.getLanguageLabel(lang)}">`
+      + `<code class="lang-${lang}">`
+      + `${styledCode}\n`
+      + '</code>'
       + '</pre>'
   );
 }

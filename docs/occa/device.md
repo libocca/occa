@@ -1,121 +1,114 @@
-Connecting to a Device
-========================================
+# Connecting to a Device
 
 We start off by connecting to a physical device through an OCCA device object.
 
-.. tabs::
+::: tabs language
 
-   .. code-tab:: c++
+- C++
 
-      #include "occa.hpp"
+    ```cpp
+    #include "occa.hpp"
+    occa::device device("mode: 'Serial'");
+    ```
 
-      occa::device device("mode: 'Serial'");
+- C
 
-   .. code-tab:: c
+    ```c
+    #include "occa.h"
+    occaDevice device = occaCreateDevice("mode: 'Serial'");
+    ```
 
-      #include "occa_c.h"
+:::
 
-      occaDevice device = occaCreateDevice("mode: 'Serial'");
+The string used to initialize the device
 
-   .. code-tab:: py
+```cpp
+"mode: 'Serial'"
+```
 
-      import occa
-      import np
+creates an `occa::properties` object which is then passed to the device. <!-- TODO -->
+Properties uses JSON format with some shorthand notations found in JavaScript.
 
-      device = occa.Device("mode: 'Serial'")
+```js
+{
+  mode: 'Serial'
+}
+```
 
-   .. code-tab:: fortran
+The only property field required by OCCA when creating a device is `mode`.
+However, each `mode` has its own requirements, such as CUDA requiring a `deviceID`.
+In this case, we're initializing a device that runs code serially.
 
-      use occa
-
-      type(occaDevice) :: device
-      device = occaCreateDevice("mode: 'Serial'")
-
-The initialization string passed to the device constructor
-
-.. code-block:: c++
-
-   "mode: 'Serial'"
-
-creates a `properties <../api/properties.html>`_ object.
-Properties are handled as a JSON object, using shorthand notations found in JavaScript.
-
-.. code-block:: js
-
-   {
-     mode: 'Serial'
-   }
-
-The only property field required by OCCA when creating a device is :code:`mode`.
-However, each :code:`mode` has its own requirements such as :code:`deviceID` for CUDA.
-In this case, we're initializing a device that runs code serially (usually useful for debugging).
+?> _Serial_ mode is useful for debugging buggy kernel code
 
 Here are examples for the all core modes supported in OCCA.
 
-.. tabs::
+::: tabs backend
 
-   .. tab:: Serial
+- Serial
 
-      .. code-block:: c++
+    ```cpp
+    "mode: 'Serial'"
+    ```
 
-         "mode: 'Serial'"
+    ```js
+    {
+      mode: 'Serial'
+    }
+    ```
 
-      .. code-block:: js
+- OpenMP
 
-         {
-           mode: 'Serial'
-         }
+    ```cpp
+    "mode: 'OpenMP', threads: 4"
+    ```
 
-   .. tab:: OpenMP
+    ```js
+    {
+      mode: 'OpenMP',
+      threads: 4
+    }
+    ```
 
-      .. code-block:: c++
+- Threads
 
-         "mode: 'OpenMP', threads: 4"
+    ```cpp
+    "mode: 'Serial', threads: 4, pinnedCores: [0, 1, 2, 3]"
+    ```
 
-      .. code-block:: js
+    ```js
+    {
+      mode: 'Serial',
+      threads: 4,
+      pinnedCores: [0, 1, 2, 3]
+    }
+    ```
 
-         {
-           mode: 'OpenMP',
-           threads: 4
-         }
+- OpenCL
 
-   .. tab:: Threads
+    ```cpp
+    "mode: 'OpenCL', deviceID: 0, platformID: 0"
+    ```
 
-      .. code-block:: c++
+    ```js
+    {
+      mode: 'OpenCL',
+      deviceID: 0,
+      platformID: 0
+    }
+    ```
 
-         "mode: 'Serial', threads: 4, pinnedCores: [0, 1, 2, 3]"
+- CUDA
 
-      .. code-block:: js
+    ```cpp
+    "mode: 'CUDA', deviceID: 0"
+    ```
 
-         {
-           mode: 'Serial',
-           threads: 4,
-           pinnedCores: [0, 1, 2, 3]
-         }
+    ```js
+    {
+      mode: 'CUDA',
+      deviceID: 0
+    }
+    ```
 
-   .. tab:: OpenCL
-
-      .. code-block:: c++
-
-         "mode: 'OpenCL', deviceID: 0, platformID: 0"
-
-      .. code-block:: js
-
-         {
-           mode: 'OpenCL',
-           deviceID: 0,
-           platformID: 0
-         }
-
-   .. tab:: CUDA
-
-      .. code-block:: c++
-
-         "mode: 'CUDA', deviceID: 0"
-
-      .. code-block:: js
-
-         {
-           mode: 'CUDA',
-           deviceID: 0
-         }
+:::
