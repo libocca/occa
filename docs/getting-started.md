@@ -7,56 +7,73 @@ Below are the list of dependencies
 ::: tabs language
 
 - C++
-```cpp
-for (int i = 0; i < 10; ++i) {
-}
-```
+
+  ```cpp
+  for (int i = 0; i < 10; ++i) {
+  }
+  ```
 
 - C
-```c
-for (int i = 0; i < 10; ++i) {
-}
-```
+  ```c
+  for (int i = 0; i < 10; ++i) {
+  }
+  ```
 
 :::
 
 ::: tabs language
 
 - C++
-```cpp
-for (int i = 0; i < 20; ++i) {
-}
-```
+  ```cpp
+  for (int i = 0; i < 20; ++i) {
+  }
+  ```
 
 - C
-```c
-for (int i = 0; i < 20; ++i) {
-}
-```
+  ```c
+  for (int i = 0; i < 20; ++i) {
+  }
+  ```
 
 :::
 
 ::: tabs os
 
 - Linux
-```cpp
-for (int i = 0; i < 10; ++i) {
-}
-```
+  ```cpp
+  for (int i = 0; i < 10; ++i) {
+  }
+  ```
 
 - MacOS
-```c
-for (int i = 0; i < 10; ++i) {
-}
-```
+  ```c
+  for (int i = 0; i < 10; ++i) {
+  }
+  ```
 
 - Windows
-```python
-for (int i = 0; i < 10; ++i) {
-}
-```
+  ```python
+  for (int i = 0; i < 10; ++i) {
+  }
+  ```
 
 :::
+
+
+- C++
+
+  hi
+  foo
+
+  ```cpp
+  for (int i = 0; i < 10; ++i) {
+  }
+  ```
+
+  test
+
+  - a
+  - b
 
 .. tabs::
 

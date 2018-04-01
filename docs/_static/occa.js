@@ -6,7 +6,7 @@ occa.addHeader = (vm, content) => {
   const url = `https://github.com/libocca/occa/blob/master/docs/${vm.route.file}`;
   return (
     '<div\n'
-      + '  style="position: absolute; top: 0"'
+      + '  style="position: absolute; top: 0"\n'
       + '>\n'
       + `  [Edit Source](${url})\n`
       + '</div>\n'
@@ -27,31 +27,85 @@ occa.addFooter = (content) => (
 //======================================
 
 //---[ Tabs ]---------------------------
-occa.codeToMarkdown = (language, code) => {
-  const styledCode = Prism.highlight(code,
-                                     Prism.languages[language],
-                                     language);
+occa.markdown = {
+  space: () => (
+    ''
+  ),
+  text: ({ text }) => (
+    `<p>${text}</p>`
+  ),
+  list_start: () => (
+    '<ul>'
+  ),
+  list_end: () => (
+    '</ul>'
+  ),
+  list_item_start: () => (
+    '<li>'
+  ),
+  list_item_end: () => (
+    '</li>'
+  ),
+};
+
+occa.markdown.code = ({ lang, text }) => {
+  const styledCode = Prism.highlight(text,
+                                     Prism.languages[lang],
+                                     lang);
   return (
-    `        <pre data-lang="${language}">`
-      + `          <code class="lang-${language}">`
-      + `${styledCode}\n`
-      + '          </code>'
-      + '        </pre>'
+    `    <pre data-lang="${lang}">`
+      + `  <code class="lang-${lang}">`
+      + `${styledCode}\n\n`
+      + '  </code>'
+      + '</pre>'
   );
 }
 
 occa.tokenToMarkdown = (token) => {
-  switch (token.type) {
-  case 'code':
-    return occa.codeToMarkdown(token.lang, token.text);
-  default:
-    return '';
+  const { type } = token;
+  if (type in occa.markdown) {
+    return occa.markdown[token.type](token);
   }
+  console.error(`Missing token format for: ${token.type}`);
+  return '';
 };
 
-occa.tokensToMarkdown = (tokens) => (
-  tokens.map(occa.tokenToMarkdown).join('\n')
-);
+occa.mergeTextTokens = (tokens) => {
+  const newTokens = [];
+  let texts = [];
+  for (var i = 0; i < tokens.length; ++i) {
+    const token = tokens[i];
+    if (token.type === 'text') {
+      texts.push(token.text);
+      continue;
+    }
+    if (texts.length) {
+      newTokens.push({
+        type: 'text',
+        text: texts.join(' '),
+      });
+      texts = [];
+    }
+    newTokens.push(token);
+  }
+  // Join the tail texts
+  if (texts.length) {
+    newTokens.push({
+      type: 'text',
+      text: texts.join(' '),
+    });
+  }
+  return newTokens;
+};
+
+occa.tokensToMarkdown = (tokens) => {
+  tokens = occa.mergeTextTokens(tokens);
+  return (
+    tokens
+      .map(occa.tokenToMarkdown)
+      .join('\n')
+  );
+};
 
 occa.getTab = ({ tab, content }) => (
   `      <md-tab id="${tab}" md-label="${tab}">\n`
@@ -85,13 +139,28 @@ occa.parseTabs = (namespace, content) => {
 
   // Skip begin/end of list
   for (var i = 1; i < (parts.length - 1); ++i) {
+    var stackSize = 1;
+
     // Skip loose_item_start;
     ++i;
     const tab = parts[i++].text;
     const start = i++;
-    while (parts[i].type !== 'list_item_end') {
+
+    while ((i < (parts.length - 1)) && (stackSize > 0)) {
+      switch (parts[i].type) {
+      case 'list_item_start':
+        ++stackSize;
+        break;
+      case 'list_item_end':
+        --stackSize;
+        break;
+      }
       ++i;
     }
+
+    // Don't take the token after list_item_end
+    --i;
+
     newParts.push({
       tab,
       content: parts.slice(start, i),
