@@ -4,15 +4,15 @@ The OCCA source code can be found in |Github Link| under an MIT License
 
 Below are the list of dependencies
 
-::: language-tabs
+::: tabs language
 
-- cpp
+- C++
 ```cpp
 for (int i = 0; i < 10; ++i) {
 }
 ```
 
-- c
+- C
 ```c
 for (int i = 0; i < 10; ++i) {
 }
@@ -20,15 +20,15 @@ for (int i = 0; i < 10; ++i) {
 
 :::
 
-::: language-tabs
+::: tabs language
 
-- cpp
+- C++
 ```cpp
 for (int i = 0; i < 20; ++i) {
 }
 ```
 
-- c
+- C
 ```c
 for (int i = 0; i < 20; ++i) {
 }
@@ -36,21 +36,21 @@ for (int i = 0; i < 20; ++i) {
 
 :::
 
-::: os-tabs
+::: tabs os
 
-- linux
+- Linux
 ```cpp
 for (int i = 0; i < 10; ++i) {
 }
 ```
 
-- macos
+- MacOS
 ```c
 for (int i = 0; i < 10; ++i) {
 }
 ```
 
-- windows
+- Windows
 ```python
 for (int i = 0; i < 10; ++i) {
 }

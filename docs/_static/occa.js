@@ -27,28 +27,18 @@ occa.addFooter = (content) => (
 //======================================
 
 //---[ Tabs ]---------------------------
-occa.label = {
-  cpp: 'C++',
-  c: 'C',
-  python: 'Python',
-
-  linux: 'Linux',
-  macos: 'MacOS',
-  windows: 'Windows',
-};
-
-occa.onChange = {
-  language: 'onLanguageChange',
-  os: 'onOSChange',
+occa.codeToMarkdown = (language, code) => {
+  const styledCode = Prism.highlight(code,
+                                     Prism.languages[language],
+                                     language);
+  return (
+    `        <pre data-lang="${language}">`
+      + `          <code class="lang-${language}">`
+      + `${styledCode}\n`
+      + '          </code>'
+      + '        </pre>'
+  );
 }
-
-occa.codeToMarkdown = (language, content) => (
-  `        <pre data-lang="${language}">`
-    + `          <code class="lang-${language}">`
-    + `${content}\n`
-    + '          </code>'
-    + '        </pre>'
-);
 
 occa.tokenToMarkdown = (token) => {
   switch (token.type) {
@@ -64,20 +54,23 @@ occa.tokensToMarkdown = (tokens) => (
 );
 
 occa.getTab = ({ tab, content }) => (
-  `      <md-tab id="${tab}" md-label="${occa.label[tab]}">\n`
+  `      <md-tab id="${tab}" md-label="${tab}">\n`
     + occa.tokensToMarkdown(content)
     + '      </md-tab>'
 );
 
-occa.getTabs = (tabKey, tabs) => {
+occa.getTabs = (namespace, tabs) => {
   const content = tabs.map(occa.getTab).join('\n');
+
+  const tab     = `globalVM.$data.tabNamespaces['${namespace}']`;
+  const onClick = `(tab) => globalVM.onTabChange('${namespace}', tab)`;
 
   return (
     '<template>\n'
       + '  <div>\n'
       + '    <md-tabs\n'
-      + `      v-bind:md-active-tab="vm.$data.${tabKey}"\n`
-      + `      @md-changed="vm.${occa.onChange[tabKey]}"\n`
+      + `      v-bind:md-active-tab="${tab}"\n`
+      + `      @md-changed="${onClick}"\n`
       + '    >\n'
       + `${content}\n`
       + '    </md-tabs>\n'
@@ -86,7 +79,7 @@ occa.getTabs = (tabKey, tabs) => {
   );
 };
 
-occa.parseTabs = (style, content) => {
+occa.parseTabs = (namespace, content) => {
   const parts = marked.lexer(content);
   const newParts = [];
 
@@ -105,22 +98,26 @@ occa.parseTabs = (style, content) => {
     });
   }
 
-  const tabKey = ((style === 'language-tabs')
-                  ? 'language'
-                  : 'os');
+  if (!newParts.length) {
+    return [];
+  }
 
-  return occa.getTabs(tabKey, newParts);
+  if (!(namespace in globalVM.$data.tabNamespaces)) {
+    Vue.set(globalVM.tabNamespaces, namespace, newParts[0].tab);
+  }
+
+  return occa.getTabs(namespace, newParts);
 };
 
 occa.addTabs = (content) => {
-  const re = /\n::: (language-tabs|os-tabs)\n([\s\S]*?)\n:::\n/g;
+  const re = /\n::: tabs (.*)\n([\s\S]*?)\n:::\n/g;
   const parts = [];
   var lastIndex = 0;
   while ((match = re.exec(content)) != null) {
-    const [fullMatch, tabStyle, tabContent] = match;
+    const [fullMatch, namespace, tabContent] = match;
 
     parts.push(content.substring(lastIndex, match.index));
-    parts.push(occa.parseTabs(tabStyle, tabContent));
+    parts.push(occa.parseTabs(namespace, tabContent));
 
     lastIndex = match.index + fullMatch.length;
   }
@@ -131,6 +128,7 @@ occa.addTabs = (content) => {
 //======================================
 
 occa.docsifyPlugin = (hook, vm) => {
+  vm.$data = { foo: 'hi' };
   hook.beforeEach((content) => {
     content = occa.addHeader(vm, content);
     content = occa.addTabs(content);

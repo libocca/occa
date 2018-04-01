@@ -62,18 +62,14 @@
 
      Vue.use(VueMaterial.default)
 
-     var vm = new Vue({
+     var globalVM = new Vue({
        el: '#app',
        data: {
-         os: 'linux',
-         language: 'cpp',
+         tabNamespaces: {},
        },
        methods: {
-         onLanguageChange: (language) => {
-           vm.$data.language = language;
-         },
-         onOSChange: (os) => {
-           vm.$data.os = os;
+         onTabChange: (namespace, tab) => {
+           globalVM.$data.tabNamespaces[namespace] = tab;
          }
        },
      })
@@ -81,5 +77,9 @@
     <script src="//unpkg.com/docsify/lib/docsify.min.js"></script>
     <script src="//unpkg.com/docsify/lib/plugins/search.min.js"></script>
     <script src="//unpkg.com/docsify-edit-on-github@1.0.1/index.js"></script>
+    <script src="//unpkg.com/prismjs@1.13.0/components/prism-bash.min.js"></script>
+    <script src="//unpkg.com/prismjs@1.13.0/components/prism-c.min.js"></script>
+    <script src="//unpkg.com/prismjs@1.13.0/components/prism-cpp.min.js"></script>
+    <script src="//unpkg.com/prismjs@1.13.0/components/prism-python.min.js"></script>
   </body>
 </html>
