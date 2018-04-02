@@ -57,16 +57,21 @@ occa.markdown.code = ({ lang, text }) => {
                                      Prism.languages[lang],
                                      lang);
   return (
-    `<pre data-lang="${occa.getLanguageLabel(lang)}">`
-      + `<code class="lang-${lang}">`
-      + `${styledCode}\n`
-      + '</code>'
-      + '</pre>'
+    (
+      `<pre data-lang="${occa.getLanguageLabel(lang)}">`
+        + `<code class="lang-${lang}">`
+        + `${styledCode}\n`
+        + '</code>'
+        + '</pre>'
+    )
+      .replace(/\*/g, '\\*')
+      .replace(/\_/g, '\\_')
   );
 }
 
 occa.tokenToMarkdown = (token) => {
   const { type } = token;
+  console.log(token);
   if (type in occa.markdown) {
     return occa.markdown[token.type](token);
   }

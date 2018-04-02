@@ -1,4 +1,4 @@
-# Connecting to a Device
+# Device
 
 We start off by connecting to a physical device through an OCCA device object.
 
