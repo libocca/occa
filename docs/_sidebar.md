@@ -3,13 +3,9 @@
   - [Command-Line Interface](/user-guide/command-line-interface)
 - **OCCA**
   - [Introduction](/occa/introduction)
-  - [Device](/occa/device.md)
-  - [Memory](/occa/memory.md)
-  - [Kernel](/occa/kernel.md)
-  - [Asynchronous Computing](/occa/asynchronous-computing)
-  - [Device Streams](/occa/stream)
-  - [Background Devices](/occa/device-streams)
-  - [Unified Memory](/occa/univied-memory)
+  - [Device Streams](/occa/device-streams)
+  - [Background Device](/occa/background-device)
+  - [Unified Memory](/occa/unified-memory)
 - **OKL**
 - **API Documentation**
 - **Extending OCCA**

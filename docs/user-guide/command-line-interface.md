@@ -79,7 +79,7 @@ Environment variables override compiled-time defines.
     - OCCA_CUDA_COMPILER_FLAGS   : -I. --compiler-options -O3 --use_fast_math
 ```
 
-# Clearing Cache
+# Cache
 
 Compiled kernels are cached in `${OCCA_CACHE_DIR}`, defaulting to `${HOME}/.occa`.
 It is safe to clear the cache directory at anytime.

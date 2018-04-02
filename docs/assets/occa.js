@@ -71,7 +71,6 @@ occa.markdown.code = ({ lang, text }) => {
 
 occa.tokenToMarkdown = (token) => {
   const { type } = token;
-  console.log(token);
   if (type in occa.markdown) {
     return occa.markdown[token.type](token);
   }
