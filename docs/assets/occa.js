@@ -131,6 +131,7 @@ occa.getTabs = (namespace, tabs) => {
     '<template>\n'
       + '  <div>\n'
       + '    <md-tabs\n'
+      + '      md-dynamic-height="true"\n'
       + `      v-bind:md-active-tab="${tab}"\n`
       + `      @md-changed="${onClick}"\n`
       + '    >\n'
@@ -205,7 +206,6 @@ occa.addTabs = (content) => {
 //======================================
 
 occa.docsifyPlugin = (hook, vm) => {
-  vm.$data = { foo: 'hi' };
   hook.beforeEach((content) => {
     content = occa.addHeader(vm, content);
     content = occa.addTabs(content);

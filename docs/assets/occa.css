@@ -14,7 +14,7 @@
 
 /*---[ Sidebar ]----------------------*/
 .sidebar > h1 > a.app-name-link {
-    color: #2b7fb9;
+    color: #2B7FB9;
 }
 
 .app-sub-sidebar li:before {
@@ -67,5 +67,58 @@
 pre:after {
     font-size: 0.8em !important;
     font-family: Source Sans Pro, Helvetica Neue, Arial, sans-serif;
+}
+/*====================================*/
+
+
+/*---[ Headers ]----------------------*/
+a:not(.md-button):hover {
+    text-decoration-color: #F7D096;
+}
+/*====================================*/
+
+/*---[ API ]--------------------------*/
+#api-container h2 {
+    margin-top: 0.5em;
+}
+
+#api-container h2 a {
+    text-decoration: none;
+}
+
+#api-container h2 a span {
+    font-size: 1rem;
+    font-family: Roboto Mono,Monaco,courier,monospace;
+    font-weight: lighter;
+    margin-left: 1.2em;
+}
+
+#api-container h2 a span:before {
+    content: "#";
+    color: #2980B9;
+    position: absolute;
+    left: 1em;
+    margin-top: 0.25em;
+    font-size: 1em;
+}
+
+#api-container hr {
+    margin-bottom: 0;
+}
+
+#api-container hr:not(:first-of-type) {
+    margin-top: 0;
+}
+
+#api-container ul {
+    list-style-type: none;
+}
+
+#api-container li p:first-child {
+    margin-bottom: 0.3em;
+}
+
+#api-container li p:nth-child(2) {
+    margin-top: 0.3em;
 }
 /*====================================*/

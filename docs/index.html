@@ -16,6 +16,7 @@
     <script src="./assets/occa.js"></script>
     <script src="//unpkg.com/vue/dist/vue.min.js"></script>
     <script src="//unpkg.com/vue-material@beta"></script>
+    <script src="//unpkg.com/jquery@3.3.1/dist/jquery.js"></script>
     <script>
      window.$docsify = {
        name: (
@@ -28,7 +29,7 @@
        themeColor: '#2980B9',
 
        alias: {
-         '/^(?!api)/_sidebar.md': '/_sidebar.md',
+         '/.*/_sidebar.md': '/_sidebar.md',
        },
 
        auto2top: true,
@@ -36,7 +37,7 @@
        maxLevel: 2,
        mergeNavbar: true,
        search: 'auto',
-       subMaxLevel: 1,
+       subMaxLevel: 2,
 
        markdown: {
          renderer: {
@@ -60,6 +61,9 @@
        },
        methods: {
          onTabChange: (namespace, tab) => {
+           if (tab === vm.$data.tabNamespaces[namespace]) {
+             return;
+           }
            vm.$data.tabNamespaces[namespace] = tab;
          }
        },
