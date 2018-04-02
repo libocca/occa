@@ -346,3 +346,21 @@ In this case, we'll use the `memcpy` approach to sync the host and look at `o_ab
     ```
 
 :::
+
+# Garbage Collection
+
+?> In C++, each `occa` object uses reference counting to automatically free itself.
+Manually freeing an object won't cause a double free.
+
+Freeing must be done manually in C since there is no concept of an automatic destructor.
+However, we tried to make it as easy as possible to free `occa` objects.
+
+```c
+occaFree(device);
+occaFree(kernel);
+occaFree(memory);
+occaFree(properties);
+occaFree(stream);
+```
+
+For more information, checkout the [C API](/occa/introduction) section. <!-- TODO -->
