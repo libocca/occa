@@ -21,7 +21,7 @@
     display: none;
 }
 
-.content {
+body.close .content, .content {
     left: 50px;
 }
 /*====================================*/
