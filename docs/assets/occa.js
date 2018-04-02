@@ -188,7 +188,7 @@ occa.parseTabs = (namespace, content) => {
 };
 
 occa.addTabs = (content) => {
-  const re = /\n::: tabs (.*)\n([\s\S]*?)\n:::\n/g;
+  const re = /\n::: tabs (.*)\n([\s\S]*?)\n:::(\n|$)/g;
   const parts = [];
   var lastIndex = 0;
   while ((match = re.exec(content)) != null) {
@@ -211,5 +211,14 @@ occa.docsifyPlugin = (hook, vm) => {
     content = occa.addTabs(content);
     content = occa.addFooter(content);
     return content;
+  });
+
+  hook.doneEach(() => {
+    // Add API styling
+    if (!vm.route.file.startsWith('api/')) {
+      return;
+    }
+    const dom = document.querySelector('#main');
+    dom.classList.add('api-container');
   });
 };

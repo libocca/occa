@@ -78,22 +78,22 @@ a:not(.md-button):hover {
 /*====================================*/
 
 /*---[ API ]--------------------------*/
-#api-container h2 {
+.api-container h2 {
     margin-top: 0.5em;
 }
 
-#api-container h2 a {
+.api-container h2 a {
     text-decoration: none;
 }
 
-#api-container h2 a span {
+.api-container h2 a span {
     font-size: 1rem;
     font-family: Roboto Mono,Monaco,courier,monospace;
     font-weight: lighter;
     margin-left: 1.2em;
 }
 
-#api-container h2 a span:before {
+.api-container h2 a span:before {
     content: "#";
     color: #2980B9;
     position: absolute;
@@ -102,23 +102,23 @@ a:not(.md-button):hover {
     font-size: 1em;
 }
 
-#api-container hr {
+.api-container hr {
     margin-bottom: 0;
 }
 
-#api-container hr:not(:first-of-type) {
+.api-container hr:not(:first-of-type) {
     margin-top: 0;
 }
 
-#api-container ul {
+.api-container ul {
     list-style-type: none;
 }
 
-#api-container li p:first-child {
+.api-container li p:first-child {
     margin-bottom: 0.3em;
 }
 
-#api-container li p:nth-child(2) {
+.api-container li p:nth-child(2) {
     margin-top: 0.3em;
 }
 /*====================================*/
