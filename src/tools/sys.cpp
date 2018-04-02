@@ -31,11 +31,11 @@
 #  include <signal.h>
 #  include <sys/syscall.h>
 #  include <sys/sysctl.h>
-#  include <sys/sysinfo.h>
 #  include <sys/time.h>
 #  include <unistd.h>
 #  if (OCCA_OS & OCCA_LINUX_OS)
 #    include <errno.h>
+#    include <sys/sysinfo.h>
 #  else // OCCA_MACOS_OS
 #    include <mach/mach_host.h>
 #    ifdef __clang__
