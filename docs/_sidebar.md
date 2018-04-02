@@ -1,11 +1,27 @@
 - **User Guide**
   - [Getting Started](/user-guide/getting-started)
   - [Command-Line Interface](/user-guide/command-line-interface)
+  - [Need Help?](/user-guide/need-help)
 - **OCCA**
   - [Introduction](/occa/introduction)
   - [Device Streams](/occa/device-streams)
   - [Background Device](/occa/background-device)
   - [Unified Memory](/occa/unified-memory)
 - **OKL**
-- **API Documentation**
-- **Extending OCCA**
+  - [Introduction](/okl/introduction)
+  - [Loop Parallelism](/okl/loop-parallelism)
+  - [Memory Spaces](/okl/memory-spaces)
+  - [Atomics](/okl/atomics)
+  - [Tips](/okl/tips)
+  - [Common Mistakes](/okl/common-mistakes)
+- **API**
+  - [Properties](/api/properties)
+  - [Device](/api/device)
+  - [Memory](/api/memory)
+  - [Kernel](/api/kernel)
+  - [Stream](/api/stream)
+  - [Background Device](/api/background-device)
+- **Customization**
+  - [Backends](/customization/backends)
+  - [Attributes](/customization/attributes)
+  - [Code Transformations](/customization/code-transformations)
