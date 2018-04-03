@@ -20,10 +20,6 @@
 .app-sub-sidebar li:before {
     display: none;
 }
-
-body.close .content, .content {
-    left: 50px;
-}
 /*====================================*/
 
 
