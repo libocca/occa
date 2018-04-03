@@ -64,9 +64,23 @@
     margin-bottom: 0;
 }
 
+.markdown-section pre {
+    margin: 0 !important;
+    padding: 1.5em !important;
+}
+
+.markdown-section pre:not(:first-child) {
+    margin-top: 1em !important;
+}
+
 pre:after {
     font-size: 0.8em !important;
     font-family: Source Sans Pro, Helvetica Neue, Arial, sans-serif;
+}
+
+.markdown-section code {
+    margin: 0 !important;
+    padding: 0 !important;
 }
 /*====================================*/
 
@@ -76,6 +90,14 @@ a:not(.md-button):hover {
     text-decoration-color: #F7D096;
 }
 /*====================================*/
+
+
+/*---[ Markdown ]---------------------*/
+.markdown-section p.warn {
+    border-left: 3px solid #A7CEC0;
+}
+/*====================================*/
+
 
 /*---[ API ]--------------------------*/
 .api-container h2 {
@@ -122,6 +144,7 @@ a:not(.md-button):hover {
     margin-top: 0.3em;
 }
 /*====================================*/
+
 
 /*---[ Print ]------------------------*/
 @media print {

@@ -53,9 +53,28 @@ occa.markdown = {
 };
 
 occa.markdown.code = ({ lang, text }) => {
+  // Remove indentation
+  const initIndent = text.match(/^\s*/)[0];
+  if (initIndent.length) {
+    const lines = text .split(/\r?\n/);
+    const isIndented = lines.every((line) => (
+      !line.length
+      || line.startsWith(initIndent)
+    ));
+
+    if (isIndented) {
+      text = lines.map((line) => (
+        line.substring(initIndent.length)
+      )).join('\n');
+    }
+  }
+
+  // Generate highlighted HTML
   const styledCode = Prism.highlight(text,
                                      Prism.languages[lang],
                                      lang);
+
+  // Wrap around pre + code
   return (
     (
       `<pre data-lang="${occa.getLanguageLabel(lang)}">`
@@ -64,8 +83,7 @@ occa.markdown.code = ({ lang, text }) => {
         + '</code>'
         + '</pre>'
     )
-      .replace(/\*/g, '\\*')
-      .replace(/\_/g, '\\_')
+      .replace(/([\s>])([*_])/g, '$1\\$2')
   );
 }
 

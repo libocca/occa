@@ -72,7 +72,7 @@ The only property field required by OCCA when creating a device is `mode`.
 However, each `mode` has its own requirements, such as CUDA requiring a `deviceID`.
 In this case, we're initializing a device that runs code serially.
 
-?> _Serial_ mode is useful for debugging buggy kernel code
+?> **Serial** mode is useful for debugging kernel code by enabling the use of debuggers such as _lldb_ or _gdb_
 
 Here are examples for the all core modes supported in OCCA.
 
