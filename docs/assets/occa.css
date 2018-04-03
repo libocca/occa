@@ -94,7 +94,36 @@ a:not(.md-button):hover {
 
 /*---[ Markdown ]---------------------*/
 .markdown-section p.warn {
-    border-left: 3px solid #A7CEC0;
+    border-left: 4px solid #A7CEC0;
+}
+
+.markdown-section p.tip {
+    background-color: #FEF7F7;
+    padding: 1rem !important;
+}
+
+.markdown-section p.tip:before {
+    display: none !important;
+}
+
+.markdown-section blockquote {
+    padding: 1rem !important;
+    background-color: #DDECF4;
+}
+
+.markdown-section blockquote > p {
+    margin: 0 !important;
+    font-weight: normal !important;
+    color: #34495E !important;
+}
+
+.markdown-section p > code {
+    background-color: transparent !important;
+    font-size: 0.85em !important;
+}
+
+.markdown-section p.warn > code {
+    color: #F54D4D !important;
 }
 /*====================================*/
 
