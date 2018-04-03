@@ -93,8 +93,35 @@ a:not(.md-button):hover {
 
 
 /*---[ Markdown ]---------------------*/
+
+p.warn, p.tip, blockquote {
+    position: relative !important;
+}
+
+p.warn:before,
+p.tip:before,
+blockquote:before {
+    border-radius: 100% !important;
+    font-family: Dosis,Source Sans Pro,Helvetica Neue,Arial,sans-serif !important;
+    font-size: 14px !important;
+    font-weight: 700 !important;
+    left: -12px !important;
+    line-height: 20px !important;
+    position: absolute !important;
+    height: 20px !important;
+    width: 20px !important;
+    text-align: center !important;
+    top: 17px !important;
+}
+
 .markdown-section p.warn {
     border-left: 4px solid #A7CEC0;
+}
+
+.markdown-section p.warn:before {
+    color: white;
+    content: "!" !important;
+    background-color: #A7CEC0 !important;
 }
 
 .markdown-section p.tip {
@@ -103,7 +130,7 @@ a:not(.md-button):hover {
 }
 
 .markdown-section p.tip:before {
-    display: none !important;
+    top: 17px !important;
 }
 
 .markdown-section blockquote {
@@ -115,6 +142,12 @@ a:not(.md-button):hover {
     margin: 0 !important;
     font-weight: normal !important;
     color: #34495E !important;
+}
+
+.markdown-section blockquote:before {
+    color: white;
+    content: "#" !important;
+    background-color: #2A7FB9 !important;
 }
 
 .markdown-section p > code {
