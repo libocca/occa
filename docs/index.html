@@ -10,9 +10,6 @@
     <link rel="stylesheet" href="//unpkg.com/vue-material@beta/dist/vue-material.min.css">
     <link rel="stylesheet" href="//unpkg.com/docsify/lib/themes/vue.css">
     <link rel="stylesheet" href="./assets/occa.css">
-
-    <!-- Algolia -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/docsearch.js@2/dist/cdn/docsearch.min.css" />
   </head>
   <body>
     <div id="app"></div>
@@ -36,10 +33,10 @@
        },
 
        auto2top: true,
-       loadNavbar: true,
        loadSidebar: true,
        maxLevel: 2,
        mergeNavbar: true,
+       search: 'auto',
        subMaxLevel: 2,
 
        markdown: {
@@ -73,33 +70,11 @@
      })
     </script>
     <script src="//unpkg.com/docsify/lib/docsify.min.js"></script>
+    <script src="//unpkg.com/docsify/lib/plugins/search.min.js"></script>
     <script src="//unpkg.com/docsify-edit-on-github@1.0.1/index.js"></script>
     <script src="//unpkg.com/prismjs@1.13.0/components/prism-bash.min.js"></script>
     <script src="//unpkg.com/prismjs@1.13.0/components/prism-c.min.js"></script>
     <script src="//unpkg.com/prismjs@1.13.0/components/prism-cpp.min.js"></script>
     <script src="//unpkg.com/prismjs@1.13.0/components/prism-python.min.js"></script>
-
-    <!-- Algolia -->
-    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/docsearch.js@2/dist/cdn/docsearch.min.js"></script>
-    <script type="text/javascript">
-     setTimeout(() => {
-       docsearch({
-         debug: false,
-         apiKey: 'cd495abee77b4285c2f59304c232c4f1',
-         indexName: 'occa',
-         inputSelector: '#search',
-         transformData: (hits) => {
-           hits.map((hit) => {
-             const { url } = hit;
-             const anchorIndex = url.lastIndexOf('#');
-             return Object.assign(hit, {
-               url: `${url.substring(0, anchorIndex)}?id=${url.substring(anchorIndex + 1)}`,
-             })
-           });
-           return hits;
-         },
-       });
-     }, 2000);
-    </script>
   </body>
 </html>
