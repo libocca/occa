@@ -128,10 +128,14 @@ namespace occa {
     //---[ Namespace ]------------------
     class namespaceStatement : public blockStatement {
     public:
-      std::string name;
+      identifierToken &nameToken;
 
-      namespaceStatement(const std::string &name_);
+      namespaceStatement(identifierToken &nameToken_);
       namespaceStatement(const namespaceStatement &other);
+      ~namespaceStatement();
+
+      std::string& name();
+      const std::string& name() const;
 
       virtual statement_t& clone_() const;
       virtual int type() const;
@@ -143,13 +147,14 @@ namespace occa {
     //---[ If ]-------------------------
     class ifStatement : public blockStatement {
     public:
-      exprNode &condition;
+      statement_t *condition;
 
       elifStatementVector elifSmnts;
       elseStatement *elseSmnt;
 
-      ifStatement(exprNode &condition_);
+      ifStatement(statement_t *condition_);
       ifStatement(const ifStatement &other);
+      ~ifStatement();
 
       void addElif(elifStatement &elifSmnt);
 

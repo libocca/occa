@@ -163,16 +163,28 @@ namespace occa {
     //==================================
 
     //---[ Namespace ]------------------
-    namespaceStatement::namespaceStatement(const std::string &name_) :
+    namespaceStatement::namespaceStatement(identifierToken &nameToken_) :
       blockStatement(),
-      name(name_) {}
+      nameToken(nameToken_) {}
 
     namespaceStatement::namespaceStatement(const namespaceStatement &other) :
       blockStatement(other),
-      name(other.name) {}
+      nameToken(other.nameToken.clone()->to<identifierToken>()) {}
+
+    namespaceStatement::~namespaceStatement() {
+      delete &nameToken;
+    }
 
     statement_t& namespaceStatement::clone_() const {
       return *(new namespaceStatement(*this));
+    }
+
+    std::string& namespaceStatement::name() {
+      return nameToken.value;
+    }
+
+    const std::string& namespaceStatement::name() const {
+      return nameToken.value;
     }
 
     int namespaceStatement::type() const {
@@ -181,20 +193,20 @@ namespace occa {
 
     void namespaceStatement::print(printer &pout) const {
       pout.printIndentation();
-      pout << "namespace " << name;
+      pout << "namespace " << name();
 
       blockStatement::print(pout);
     }
     //==================================
 
     //---[ If ]-------------------------
-    ifStatement::ifStatement(exprNode &condition_) :
+    ifStatement::ifStatement(statement_t *condition_) :
       condition(condition_),
       elseSmnt(NULL) {}
 
     ifStatement::ifStatement(const ifStatement &other) :
       blockStatement(other),
-      condition(other.condition) {
+      condition(&(other.condition->clone())) {
 
       const int elifCount = (int) other.elifSmnts.size();
       for (int i = 0; i < elifCount; ++i) {
@@ -208,6 +220,10 @@ namespace occa {
                   : NULL);
     }
 
+    ifStatement::~ifStatement() {
+      delete condition;
+    }
+
     void ifStatement::addElif(elifStatement &elifSmnt) {
       elifSmnts.push_back(&elifSmnt);
     }
@@ -217,7 +233,7 @@ namespace occa {
     }
 
     statement_t& ifStatement::clone_() const {
-      return *(new ifStatement(condition.clone()));
+      return *(new ifStatement(*this));
     }
 
     int ifStatement::type() const {
@@ -228,7 +244,7 @@ namespace occa {
       pout.printStartIndentation();
       pout << "if (";
       pout.pushInlined(true);
-      pout << condition;
+      condition->print(pout);
       pout.popInlined();
       pout << ')';
 

@@ -268,7 +268,8 @@ namespace occa {
       return loadVariable(vartype);
     }
 
-    variableDeclaration parser_t::loadVariableDeclaration(const vartype_t &baseType) {
+    variableDeclaration parser_t::loadVariableDeclaration(const vartype_t &baseType,
+                                                          const bool checkSemicolon) {
       variableDeclaration decl;
 
       // If partially-defined type, finish parsing it
@@ -294,12 +295,16 @@ namespace occa {
         return decl;
       }
 
-      const int pos = context.getNextOperator(operatorType::comma |
-                                              operatorType::semicolon);
+      int pos = context.getNextOperator(operatorType::comma |
+                                        operatorType::semicolon);
       if (pos < 0) {
-        context.end()->printError("Expected a ;");
-        success = false;
-        return decl;
+        if (checkSemicolon) {
+          context.end()->printError("Expected a ;");
+          success = false;
+          return decl;
+        } else {
+          pos = context.size();
+        }
       }
       if (pos == 1) {
         context[1]->printError("Expected an expression");
@@ -703,6 +708,20 @@ namespace occa {
       return NULL;
     }
 
+    statement_t* parser_t::getConditionStatement() {
+      const int sType = peek();
+      if ((!success) ||
+          !(sType & (statementType::expression |
+                     statementType::declaration))) {
+        return NULL;
+      }
+
+      if (sType & statementType::expression) {
+        return loadExpressionStatement(false);
+      }
+      return loadDeclarationStatement(false);
+    }
+
     statement_t* parser_t::loadBlockStatement() {
       blockStatement *smnt = new blockStatement();
       loadAllStatements(smnt->children);
@@ -710,13 +729,19 @@ namespace occa {
     }
 
     statement_t* parser_t::loadExpressionStatement() {
-      const int end = context.getNextOperator(operatorType::semicolon);
-      if (end < 0) {
-        context.end()->printError("Missing ;");
-        success = false;
-        return NULL;
-      }
+      return loadExpressionStatement(true);
+    }
 
+    statement_t* parser_t::loadExpressionStatement(const bool checkSemicolon) {
+      int end = context.size();
+      if (checkSemicolon) {
+        end = context.getNextOperator(operatorType::semicolon);
+        if (end < 0) {
+          context.end()->printError("Missing ;");
+          success = false;
+          return NULL;
+        }
+      }
       context.push(0, end);
 
       tokenVector tokens;
@@ -735,6 +760,10 @@ namespace occa {
     }
 
     statement_t* parser_t::loadDeclarationStatement() {
+      return loadDeclarationStatement(true);
+    }
+
+    statement_t* parser_t::loadDeclarationStatement(const bool checkSemicolon) {
       vartype_t baseType = preloadType();
       if (!success) {
         return NULL;
@@ -742,12 +771,16 @@ namespace occa {
 
       declarationStatement &smnt = *(new declarationStatement());
       while(success) {
-        smnt.declarations.push_back(loadVariableDeclaration(baseType));
+        smnt.declarations.push_back(
+          loadVariableDeclaration(baseType, checkSemicolon)
+        );
         if (!success) {
           break;
         }
-
         // Skip the , or ;
+        if (!context.size()) {
+          break;
+        }
         if (!(getOperatorType(context[0]) & operatorType::comma)) {
           context.set(1);
           break;
@@ -767,7 +800,75 @@ namespace occa {
     }
 
     statement_t* parser_t::loadNamespaceStatement() {
-      return NULL;
+      if (context.size() == 1) {
+        context[0]->printError("Expected a namespace name");
+        return NULL;
+      }
+
+      // Skip namespace
+      context.set(1);
+      tokenVector names;
+
+      while (true) {
+        // Get the namespace name
+        if (!(context[0]->type() & tokenType::identifier)) {
+          context[0]->printError("Expected a namespace name");
+          success = false;
+          return NULL;
+        }
+        names.push_back(context[0]);
+
+        // Check we still have a token for {
+        if (context.size() == 1) {
+          context[0]->printError("Missing namespace body {}");
+          success = false;
+          return NULL;
+        }
+        context.set(1);
+
+        // Find { or ::
+        const opType_t opType = getOperatorType(context[0]);
+        if (!(opType & (operatorType::braceStart |
+                        operatorType::scope))) {
+          context[0]->printError("Expected namespace body {}");
+          success = false;
+          return NULL;
+        }
+
+        if (opType & operatorType::braceStart) {
+          break;
+        }
+        if (context.size() == 1) {
+          context[0]->printError("Missing namespace body {}");
+          success = false;
+          return NULL;
+        }
+        context.set(1);
+      }
+
+      namespaceStatement *smnt = NULL;
+      namespaceStatement *currentSmnt = NULL;
+
+      const int levels = (int) names.size();
+      for (int i = 0; i < levels; ++i) {
+        namespaceStatement *nextSmnt = new namespaceStatement(names[i]
+                                                              ->clone()
+                                                              ->to<identifierToken>());
+        if (!smnt) {
+          smnt = nextSmnt;
+          currentSmnt = nextSmnt;
+        } else {
+          currentSmnt->add(*nextSmnt);
+          currentSmnt = nextSmnt;
+        }
+      }
+
+      // Load block content
+      context.pushPairRange(0);
+      loadAllStatements(currentSmnt->children);
+      context.popAndSkipPair();
+
+      return smnt;
     }
 
     statement_t* parser_t::loadTypeDeclStatement() {
@@ -775,7 +876,59 @@ namespace occa {
     }
 
     statement_t* parser_t::loadIfStatement() {
-      return NULL;
+      // Need to test for (
+      if (context.size() == 1) {
+        context[0]->printError("Expected an if condition");
+        success = false;
+        return NULL;
+      }
+      context.set(1);
+
+      if (!(getOperatorType(context[0]) & operatorType::parenthesesStart)) {
+        context[0]->printError("Expected an if condition");
+        success = false;
+        return NULL;
+      }
+
+      // Load expression/declaration
+      token_t *parenBegin = context[0];
+      token_t *parenEnd   = context.getClosingPairToken(0);
+      context.pushPairRange(0);
+      statement_t *condition = getConditionStatement();
+      context.popAndSkipPair();
+      if (!success) {
+        return NULL;
+      }
+
+      if (!condition) {
+        parenBegin->printError("Expected an expression or declaration statement");
+        success = false;
+        return NULL;
+      }
+
+      // Check we still have a token for {
+      if (!context.size()) {
+        parenEnd->printError("Missing if body {}");
+        success = false;
+        delete condition;
+        return NULL;
+      }
+      const opType_t opType = getOperatorType(context[0]);
+      if (!(opType & operatorType::braceStart)) {
+        context[0]->printError("Missing if body {}");
+        success = false;
+        delete condition;
+        return NULL;
+      }
+
+      ifStatement &ifSmnt = *(new ifStatement(condition));
+
+      // Load block content
+      context.pushPairRange(0);
+      loadAllStatements(ifSmnt.children);
+      context.popAndSkipPair();
+
+      return &ifSmnt;
     }
 
     statement_t* parser_t::loadElifStatement() {

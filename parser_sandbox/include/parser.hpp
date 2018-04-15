@@ -100,7 +100,8 @@ namespace occa {
       //---[ Type Loaders ]-------------
       variable loadVariable();
 
-      variableDeclaration loadVariableDeclaration(const vartype_t &baseType);
+      variableDeclaration loadVariableDeclaration(const vartype_t &baseType,
+                                                  const bool checkSemicolon);
 
       vartype_t preloadType();
 
@@ -139,12 +140,15 @@ namespace occa {
       void loadAllStatements(statementPtrVector &statements);
 
       statement_t* getNextStatement();
+      statement_t* getConditionStatement();
 
       statement_t *loadBlockStatement();
 
       statement_t *loadExpressionStatement();
+      statement_t *loadExpressionStatement(const bool checkSemicolon);
 
       statement_t *loadDeclarationStatement();
+      statement_t *loadDeclarationStatement(const bool checkSemicolon);
 
       statement_t *loadNamespaceStatement();
 

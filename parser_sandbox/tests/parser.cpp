@@ -260,7 +260,7 @@ void testBaseTypeLoading() {
   OCCA_ASSERT_EQUAL(&double_,
                     type.type);
 
-  std::cerr << "Testing type loading errors:\n";
+  std::cerr << "\n---[ Testing type loading errors ]--------------------\n\n";
   type = preloadType("const");
   type = preloadType("const foo");
   type = preloadType("const const");
@@ -294,7 +294,7 @@ void testPointerTypeLoading() {
   OCCA_ASSERT_TRUE(type.pointers[3].has(volatile_));
   OCCA_ASSERT_TRUE(type.pointers[3].has(restrict_));
 
-  std::cerr << "Testing type loading errors:\n";
+  std::cerr << "\n---[ Testing type loading errors ]--------------------\n\n";
   type = preloadType("const *");
   type = preloadType("float * long");
 }
@@ -347,7 +347,7 @@ void testArrayTypeLoading() {
   OCCA_ASSERT_EQUAL(7,
                     (int) type.arrays[1].evaluateSize());
 
-  std::cerr << "Testing array type loading errors:\n";
+  std::cerr << "\n---[ Testing array type loading errors ]--------------------\n\n";
   assertType("int[-]");
   loadType("int[-]");
 }
@@ -394,7 +394,7 @@ void testVariableLoading() {
   OCCA_ASSERT_EQUAL(7,
                     (int) var.vartype.arrays[1].evaluateSize());
 
-  std::cerr << "Testing variable loading errors:\n";
+  std::cerr << "\n---[ Testing variable loading errors ]--------------------\n\n";
   assertVariable("int varname[-]");
   loadVariable("int varname[-]");
 }
@@ -486,7 +486,6 @@ void testFunctionPointerLoading() {
 //---[ Loading ]------------------------
 void testExpressionLoading();
 void testDeclarationLoading();
-void testBlockLoading();
 void testNamespaceLoading();
 void testTypeDeclLoading();
 void testIfLoading();
@@ -498,22 +497,23 @@ void testClassAccessLoading();
 void testAttributeLoading();
 void testPragmaLoading();
 void testGotoLoading();
+void testBlockLoading();
 
 void testLoading() {
   testExpressionLoading();
   testDeclarationLoading();
-  // testBlockLoading();
-  // testNamespaceLoading();
+  testNamespaceLoading();
   // testTypeDeclLoading();
-  // testIfLoading();
+  testIfLoading();
   // testForLoading();
   // testWhileLoading();
   // testSwitchLoading();
   // testJumpsLoading();
   // testClassAccessLoading();
   // testAttributeLoading();
-  testPragmaLoading();
+  // testPragmaLoading();
   // testGotoLoading();
+  // testBlockLoading();
 }
 
 void testExpressionLoading() {
@@ -535,8 +535,8 @@ void testExpressionLoading() {
   setStatement("sizeof(4);",
                statementType::expression);
   OCCA_ASSERT_TRUE(expr.canEvaluate());
-  OCCA_ASSERT_EQUAL(sizeof(4),
-                    (size_t) expr.evaluate());
+  OCCA_ASSERT_EQUAL((uint64_t) sizeof(4),
+                    (uint64_t) expr.evaluate());
 
   setStatement(";",
                statementType::expression);
@@ -558,7 +558,7 @@ void testDeclarationLoading() {
   setStatement("int foo = 3;",
                statementType::declaration);
   OCCA_ASSERT_EQUAL(1,
-                    (int) decl.declarations.size())
+                    (int) decl.declarations.size());
   OCCA_ASSERT_EQUAL(3,
                     (int) decl.declarations[0].value->evaluate());
 
@@ -583,57 +583,28 @@ void testDeclarationLoading() {
 #undef decl
 }
 
-void testBlockLoading() {
-  statement_t *statement;
-  setStatement("{}",
-               statementType::block);
-
-  OCCA_ASSERT_EQUAL(0,
-                    statement->to<blockStatement>().size());
-
-  setStatement("{\n"
-               " const int i = 0;\n"
-               " ++i:\n"
-               " namespace foo {}\n"
-               " if (true) {}\n"
-               "}\n",
-               statementType::block);
-
-  blockStatement &smnt = statement->to<blockStatement>();
-  OCCA_ASSERT_EQUAL(4,
-                    smnt.size());
-  OCCA_ASSERT_EQUAL_BINARY(statementType::declaration,
-                           smnt[0]->type());
-  OCCA_ASSERT_EQUAL_BINARY(statementType::expression,
-                           smnt[1]->type());
-  OCCA_ASSERT_EQUAL_BINARY(statementType::namespace_,
-                           smnt[2]->type());
-  OCCA_ASSERT_EQUAL_BINARY(statementType::if_,
-                           smnt[3]->type());
-}
-
 void testNamespaceLoading() {
   statement_t *statement;
   setStatement("namespace foo {}",
                statementType::namespace_);
 
   OCCA_ASSERT_EQUAL("foo",
-                    statement->to<namespaceStatement>().name);
+                    statement->to<namespaceStatement>().name());
 
   setStatement("namespace A::B::C {}",
                statementType::namespace_);
 
   namespaceStatement &A = statement->to<namespaceStatement>();
   OCCA_ASSERT_EQUAL("A",
-                    A.name);
+                    A.name());
 
   namespaceStatement &B = A[0]->to<namespaceStatement>();
   OCCA_ASSERT_EQUAL("B",
-                    B.name);
+                    B.name());
 
   namespaceStatement &C = B[0]->to<namespaceStatement>();
   OCCA_ASSERT_EQUAL("C",
-                    C.name);
+                    C.name());
 }
 
 void testTypeDeclLoading() {
@@ -648,28 +619,49 @@ void testTypeDeclLoading() {
 void testIfLoading() {
   statement_t *statement;
 
+#define ifsmnt statement->to<ifStatement>()
+#define condition (*ifsmnt.condition)
+#define decl condition.to<declarationStatement>()
+
   setStatement("if (true) {}",
                statementType::if_);
+  OCCA_ASSERT_EQUAL_BINARY(statementType::expression,
+                           condition.type());
 
   setStatement("if (true) {}\n"
                "else if (true) {}",
                statementType::if_);
+  OCCA_ASSERT_EQUAL_BINARY(statementType::expression,
+                           condition.type());
 
   setStatement("if (true) {}\n"
                "else if (true) {}\n"
                "else if (true) {}",
                statementType::if_);
+  OCCA_ASSERT_EQUAL_BINARY(statementType::expression,
+                           condition.type());
 
   setStatement("if (true) {}\n"
                "else if (true) {}\n"
                "else {}",
                statementType::if_);
+  OCCA_ASSERT_EQUAL_BINARY(statementType::expression,
+                           condition.type());
 
   // Test declaration in conditional
-  setStatement("if (const int i = 1) {}",
+  setStatement("if (const int i = 3) {}",
                statementType::if_);
+  OCCA_ASSERT_EQUAL_BINARY(statementType::declaration,
+                           condition.type());
+  OCCA_ASSERT_EQUAL(1,
+                    (int) decl.declarations.size());
+  OCCA_ASSERT_EQUAL(3,
+                    (int) decl.declarations[0].value->evaluate());
 
   // TODO: Test that 'i' exists in the if scope
+#undef ifsmnt
+#undef condition
+#undef decl
 }
 
 void testForLoading() {
@@ -805,12 +797,40 @@ void testGotoLoading() {
   setStatement("goto label;",
                statementType::goto_);
 }
+
+void testBlockLoading() {
+  statement_t *statement;
+  setStatement("{}",
+               statementType::block);
+
+  OCCA_ASSERT_EQUAL(0,
+                    statement->to<blockStatement>().size());
+
+  setStatement("{\n"
+               " const int i = 0;\n"
+               " ++i:\n"
+               " namespace foo {}\n"
+               " if (true) {}\n"
+               "}\n",
+               statementType::block);
+
+  blockStatement &smnt = statement->to<blockStatement>();
+  OCCA_ASSERT_EQUAL(4,
+                    smnt.size());
+  OCCA_ASSERT_EQUAL_BINARY(statementType::declaration,
+                           smnt[0]->type());
+  OCCA_ASSERT_EQUAL_BINARY(statementType::expression,
+                           smnt[1]->type());
+  OCCA_ASSERT_EQUAL_BINARY(statementType::namespace_,
+                           smnt[2]->type());
+  OCCA_ASSERT_EQUAL_BINARY(statementType::if_,
+                           smnt[3]->type());
+}
 //======================================
 
 //---[ Errors ]------------------------
 void testExpressionErrors();
 void testDeclarationErrors();
-void testBlockErrors();
 void testNamespaceErrors();
 void testTypeDeclErrors();
 void testIfErrors();
@@ -823,14 +843,13 @@ void testAttributeErrors();
 void testGotoErrors();
 
 void testErrors() {
-  std::cerr << "Testing parser errors:\n";
+  std::cerr << "\n---[ Testing parser errors ]--------------------\n\n";
 
   testExpressionErrors();
   testDeclarationErrors();
-  // testBlockErrors();
-  // testNamespaceErrors();
+  testNamespaceErrors();
   // testTypeDeclErrors();
-  // testIfErrors();
+  testIfErrors();
   // testForErrors();
   // testWhileErrors();
   // testSwitchErrors();
@@ -848,18 +867,26 @@ void testExpressionErrors() {
 }
 
 void testDeclarationErrors() {
-}
-
-void testBlockErrors() {
+  parseSource("int foo");
+  parseSource("int foo = 3");
+  parseSource("int foo = 3, bar = 4");
+  parseSource("int foo = 3, *bar = 4");
 }
 
 void testNamespaceErrors() {
+  parseSource("namespace foo");
+  parseSource("namespace foo::");
+  parseSource("namespace foo::bar::");
+  parseSource("namespace foo + {}");
 }
 
 void testTypeDeclErrors() {
 }
 
 void testIfErrors() {
+  parseSource("if (true)");
+  parseSource("if () {}");
+  parseSource("if (if (true) {}) {}");
 }
 
 void testForErrors() {

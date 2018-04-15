@@ -203,7 +203,7 @@ namespace occa {
     }
 
     token_t* tokenContext::end() {
-      if (indexInRange(tp.end - 1)) {
+      if (indexInRange(tp.end - tp.start - 1)) {
         return tokens[tp.end - 1];
       }
       return NULL;
