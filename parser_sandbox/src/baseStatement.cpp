@@ -163,6 +163,17 @@ namespace occa {
       child.up = this;
     }
 
+    void blockStatement::set(statement_t &child) {
+      blockStatement *body = dynamic_cast<blockStatement*>(&child);
+      if (body) {
+        children = body->children;
+        scope = body->scope;
+        delete body;
+      } else {
+        add(child);
+      }
+    }
+
     void blockStatement::clear() {
       const int count = (int) children.size();
       for (int i = 0; i < count; ++i) {

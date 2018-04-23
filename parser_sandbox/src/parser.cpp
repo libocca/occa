@@ -90,6 +90,8 @@ namespace occa {
       preprocessor.clear();
       context.clear();
 
+      lastPeek = 0;
+
       root.clear();
       up = &root;
 
@@ -172,6 +174,13 @@ namespace occa {
 
     //---[ Peek ]-----------------------
     int parser_t::peek() {
+      if (!lastPeek) {
+        lastPeek = uncachedPeek();
+      }
+      return lastPeek;
+    }
+
+    int parser_t::uncachedPeek() {
       const int tokens = context.size();
       if (!tokens) {
         return statementType::none;
@@ -684,13 +693,24 @@ namespace occa {
       }
     }
 
-    statement_t* parser_t::getNextStatement() {
+    bool parser_t::isEmpty() {
       const int sType = peek();
-      if ((!success) ||
-          (sType & (statementType::none |
-                    statementType::empty))) {
+      return (!success ||
+              (sType & (statementType::none |
+                        statementType::empty)));
+    }
+
+    statement_t* parser_t::getNextStatement() {
+      // We use the peek to create a statement (or error out)
+      //   so we reset lastPeek for the next peek() to change
+
+      if (isEmpty()) {
+        lastPeek = 0;
         return NULL;
       }
+
+      const int sType = peek();
+      lastPeek = 0;
 
       statementLoaderMap::iterator it = statementLoaders.find(sType);
       if (it != statementLoaders.end()) {
@@ -708,23 +728,18 @@ namespace occa {
       return NULL;
     }
 
-    statement_t* parser_t::getConditionStatement() {
-      const int sType = peek();
-      if ((!success) ||
-          !(sType & (statementType::expression |
-                     statementType::declaration))) {
+    statement_t* parser_t::loadBlockStatement() {
+      context.pushPairRange(0);
+
+      blockStatement *smnt = new blockStatement();
+      loadAllStatements(smnt->children);
+
+      context.popAndSkipPair();
+      if (!success) {
+        delete smnt;
         return NULL;
       }
 
-      if (sType & statementType::expression) {
-        return loadExpressionStatement(false);
-      }
-      return loadDeclarationStatement(false);
-    }
-
-    statement_t* parser_t::loadBlockStatement() {
-      blockStatement *smnt = new blockStatement();
-      loadAllStatements(smnt->children);
       return smnt;
     }
 
@@ -875,6 +890,20 @@ namespace occa {
       return NULL;
     }
 
+    statement_t* parser_t::loadConditionStatement() {
+      const int sType = uncachedPeek();
+      if ((!success) ||
+          !(sType & (statementType::expression |
+                     statementType::declaration))) {
+        return NULL;
+      }
+
+      if (sType & statementType::expression) {
+        return loadExpressionStatement(false);
+      }
+      return loadDeclarationStatement(false);
+    }
+
     statement_t* parser_t::loadIfStatement() {
       // Need to test for (
       if (context.size() == 1) {
@@ -894,7 +923,7 @@ namespace occa {
       token_t *parenBegin = context[0];
       token_t *parenEnd   = context.getClosingPairToken(0);
       context.pushPairRange(0);
-      statement_t *condition = getConditionStatement();
+      statement_t *condition = loadConditionStatement();
       context.popAndSkipPair();
       if (!success) {
         return NULL;
@@ -906,28 +935,16 @@ namespace occa {
         return NULL;
       }
 
-      // Check we still have a token for {
-      if (!context.size()) {
-        parenEnd->printError("Missing if body {}");
-        success = false;
-        delete condition;
-        return NULL;
-      }
-      const opType_t opType = getOperatorType(context[0]);
-      if (!(opType & operatorType::braceStart)) {
-        context[0]->printError("Missing if body {}");
-        success = false;
-        delete condition;
-        return NULL;
-      }
-
       ifStatement &ifSmnt = *(new ifStatement(condition));
+      statement_t *content = getNextStatement();
+      if (!content) {
+        parenEnd->printError("Missing if body");
+        success = false;
+        delete &ifSmnt;
+        return NULL;
+      }
 
-      // Load block content
-      context.pushPairRange(0);
-      loadAllStatements(ifSmnt.children);
-      context.popAndSkipPair();
-
+      ifSmnt.set(*content);
       return &ifSmnt;
     }
 

@@ -63,6 +63,8 @@ namespace occa {
       keywordToStatementMap keywordPeek;
       statementLoaderMap statementLoaders;
 
+      int lastPeek;
+
       blockStatement root;
       blockStatement *up;
       attributeVector attributes;
@@ -90,6 +92,7 @@ namespace occa {
 
       //---[ Peek ]---------------------
       int peek();
+      int uncachedPeek();
 
       int peekIdentifier(const int tokenIndex);
       bool isGotoLabel(const int tokenIndex);
@@ -139,8 +142,8 @@ namespace occa {
       //---[ Statement Loaders ]--------
       void loadAllStatements(statementPtrVector &statements);
 
+      bool isEmpty();
       statement_t* getNextStatement();
-      statement_t* getConditionStatement();
 
       statement_t *loadBlockStatement();
 
@@ -153,6 +156,8 @@ namespace occa {
       statement_t *loadNamespaceStatement();
 
       statement_t *loadTypeDeclStatement();
+
+      statement_t* loadConditionStatement();
 
       statement_t *loadIfStatement();
       statement_t *loadElifStatement();
