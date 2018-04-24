@@ -102,6 +102,7 @@ namespace occa {
       if (!outputCount) {
         return &(noExprNode.clone());
       }
+
       if (outputCount > 1) {
         state.popOutput();
         state.lastOutput().token->printError("Unable to form an expression");
@@ -378,7 +379,8 @@ namespace occa {
       }
 
       // Test for left unary first
-      const bool prevTokenIsOp = (state.prevToken->type() & tokenType::op);
+      const bool prevTokenIsOp = (state.prevToken->getOpType() & (operatorType::unary |
+                                                                  operatorType::binary));
       if (prevTokenIsOp) {
         opType_t prevType = state.prevToken->to<operatorToken>().opType();
         // + + + 1
@@ -390,7 +392,8 @@ namespace occa {
         }
       }
 
-      const bool nextTokenIsOp = (state.nextToken->type() & tokenType::op);
+      const bool nextTokenIsOp = (state.nextToken->getOpType() & (operatorType::unary |
+                                                                  operatorType::binary));
 
       //   v check right
       // 1 + ++ x

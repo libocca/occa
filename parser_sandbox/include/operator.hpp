@@ -196,9 +196,8 @@ namespace occa {
       extern const opType_t arrowStar;
 
       extern const opType_t leftUnary;
-
       extern const opType_t rightUnary;
-
+      extern const opType_t unary;
       extern const opType_t binary;
 
       extern const opType_t questionMark;

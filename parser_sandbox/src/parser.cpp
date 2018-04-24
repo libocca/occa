@@ -1186,19 +1186,61 @@ namespace occa {
     }
 
     statement_t* parser_t::loadDefaultStatement() {
-      return NULL;
+      context.set(1);
+      if (!(getOperatorType(context[0]) & operatorType::colon)) {
+        context.printError("Expected a :");
+        success = false;
+        return NULL;
+      }
+      context.set(1);
+      return new defaultStatement();
     }
 
     statement_t* parser_t::loadContinueStatement() {
-      return NULL;
+      context.set(1);
+      if (!(getOperatorType(context[0]) & operatorType::semicolon)) {
+        context.printError("Expected a ;");
+        success = false;
+        return NULL;
+      }
+      context.set(1);
+      return new continueStatement();
     }
 
     statement_t* parser_t::loadBreakStatement() {
-      return NULL;
+      context.set(1);
+      if (!(getOperatorType(context[0]) & operatorType::semicolon)) {
+        context.printError("Expected a ;");
+        success = false;
+        return NULL;
+      }
+      context.set(1);
+      return new breakStatement();
     }
 
     statement_t* parser_t::loadReturnStatement() {
-      return NULL;
+      // Skip [return] token
+      context.set(1);
+
+      const int pos = context.getNextOperator(operatorType::semicolon);
+      // No ; found
+      if (pos < 0) {
+        context.printError("Expected a ;");
+        success = false;
+        return NULL;
+      }
+      exprNode *value = NULL;
+      // The case where we see 'return;'
+      if (0 < pos) {
+        // Load the return value
+        value = context.getExpression(0, pos);
+      }
+      if (!success) {
+        return NULL;
+      }
+
+      context.set(pos + 1);
+      return new returnStatement(value);
     }
 
     statement_t* parser_t::loadClassAccessStatement() {

@@ -508,7 +508,7 @@ void testLoading() {
   // testForLoading();
   testWhileLoading();
   testSwitchLoading();
-  // testJumpsLoading();
+  testJumpsLoading();
   // testClassAccessLoading();
   // testAttributeLoading();
   // testPragmaLoading();
@@ -766,16 +766,25 @@ void testSwitchLoading() {
 void testJumpsLoading() {
   statement_t *statement;
 
+#define returnValue statement->to<returnStatement>().value
+
   setStatement("continue;",
                statementType::continue_);
+
   setStatement("break;",
-               statementType::continue_);
+               statementType::break_);
 
   setStatement("return;",
-               statementType::continue_);
-  setStatement("return 1 + (2 * 1);",
-               statementType::continue_);
-  // TODO: Test 'eval' to make sure we capture the return value
+               statementType::return_);
+  OCCA_ASSERT_EQUAL((void*) NULL,
+                    (void*) returnValue);
+
+  setStatement("return 1 + (2 * 3);",
+               statementType::return_);
+  OCCA_ASSERT_EQUAL(7,
+                    (int) returnValue->evaluate());
+
+#undef returnValue
 }
 
 void testClassAccessLoading() {
@@ -883,7 +892,7 @@ void testErrors() {
   // testForErrors();
   testWhileErrors();
   testSwitchErrors();
-  // testJumpsErrors();
+  testJumpsErrors();
   // testClassAccessErrors();
   // testAttributeErrors();
   // testGotoErrors();
@@ -934,6 +943,10 @@ void testSwitchErrors() {
 }
 
 void testJumpsErrors() {
+  parseSource("continue");
+  parseSource("break");
+  parseSource("return");
+  parseSource("return 1 + 2");
 }
 
 void testClassAccessErrors() {

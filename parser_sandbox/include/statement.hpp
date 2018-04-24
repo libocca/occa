@@ -292,9 +292,11 @@ namespace occa {
 
     class returnStatement : public statement_t {
     public:
-      statement_t &value;
+      exprNode *value;
 
-      returnStatement(statement_t &value_);
+      returnStatement(exprNode *value_);
+      returnStatement(const returnStatement &other);
+      ~returnStatement();
 
       virtual statement_t& clone_() const;
       virtual int type() const;

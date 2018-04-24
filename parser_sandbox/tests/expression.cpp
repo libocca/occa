@@ -241,6 +241,9 @@ void testCanEvaluate() {
 }
 
 void testEval() {
+  OCCA_ASSERT_EQUAL((int) (1 + (2 * 3)),
+                    (int) eval("1 + (2 * 3)"));
+
   OCCA_ASSERT_EQUAL((int) (1 + 2 / (3)),
                     (int) eval("1 + 2 / (3)"));
 

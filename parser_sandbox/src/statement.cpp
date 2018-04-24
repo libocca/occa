@@ -512,12 +512,22 @@ namespace occa {
       pout << "break;\n";
     }
 
-    returnStatement::returnStatement(statement_t &value_) :
-      statement_t(),
+    returnStatement::returnStatement(exprNode *value_) :
       value(value_) {}
 
+    returnStatement::returnStatement(const returnStatement &other) :
+      value(NULL) {
+      if (other.value) {
+        value = &(other.value->clone());
+      }
+    }
+
+    returnStatement::~returnStatement() {
+      delete value;
+    }
+
     statement_t& returnStatement::clone_() const {
-      return *(new returnStatement(value.clone()));
+      return *(new returnStatement(*this));
     }
 
     int returnStatement::type() const {
@@ -527,10 +537,10 @@ namespace occa {
     void returnStatement::print(printer &pout) const {
       pout.printIndentation();
       pout << "return";
-      if (value.type() != statementType::empty) {
+      if (value) {
         pout << ' ';
         pout.pushInlined(true);
-        pout << value;
+        pout << *value;
         pout.popInlined();
       }
       pout << ";\n";

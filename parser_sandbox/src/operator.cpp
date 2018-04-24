@@ -252,6 +252,9 @@ namespace occa {
       const opType_t rightUnary        = (rightIncrement |
                                           rightDecrement);
 
+      const opType_t unary             = (leftUnary |
+                                          rightUnary);
+
       const opType_t binary            = (add           |
                                           sub           |
                                           mult          |
