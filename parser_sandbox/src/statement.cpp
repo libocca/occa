@@ -260,12 +260,16 @@ namespace occa {
       }
     }
 
-    elifStatement::elifStatement(exprNode &condition_) :
+    elifStatement::elifStatement(statement_t *condition_) :
       condition(condition_) {}
 
     elifStatement::elifStatement(const elifStatement &other) :
       blockStatement(other),
-      condition(other.condition) {}
+      condition(&(other.condition->clone())) {}
+
+    elifStatement::~elifStatement() {
+      delete condition;
+    }
 
     statement_t& elifStatement::clone_() const {
       return *(new elifStatement(*this));
@@ -279,7 +283,7 @@ namespace occa {
       pout.printStartIndentation();
       pout << "else if (";
       pout.pushInlined(true);
-      pout << condition;
+      condition->print(pout);
       pout.popInlined();
       pout << ')';
 

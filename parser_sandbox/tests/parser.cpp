@@ -619,20 +619,26 @@ void testTypeDeclLoading() {
 void testIfLoading() {
   statement_t *statement;
 
-#define ifsmnt statement->to<ifStatement>()
-#define condition (*ifsmnt.condition)
+#define ifSmnt statement->to<ifStatement>()
+#define condition (*ifSmnt.condition)
 #define decl condition.to<declarationStatement>()
 
   setStatement("if (true) {}",
                statementType::if_);
   OCCA_ASSERT_EQUAL_BINARY(statementType::expression,
                            condition.type());
+  OCCA_ASSERT_EQUAL(0,
+                    (int) ifSmnt.elifSmnts.size());
+  OCCA_ASSERT_FALSE(!!ifSmnt.elseSmnt);
 
   setStatement("if (true) {}\n"
                "else if (true) {}",
                statementType::if_);
   OCCA_ASSERT_EQUAL_BINARY(statementType::expression,
                            condition.type());
+  OCCA_ASSERT_EQUAL(1,
+                    (int) ifSmnt.elifSmnts.size());
+  OCCA_ASSERT_FALSE(!!ifSmnt.elseSmnt);
 
   setStatement("if (true) {}\n"
                "else if (true) {}\n"
@@ -640,6 +646,9 @@ void testIfLoading() {
                statementType::if_);
   OCCA_ASSERT_EQUAL_BINARY(statementType::expression,
                            condition.type());
+  OCCA_ASSERT_EQUAL(2,
+                    (int) ifSmnt.elifSmnts.size());
+  OCCA_ASSERT_FALSE(!!ifSmnt.elseSmnt);
 
   setStatement("if (true) {}\n"
                "else if (true) {}\n"
@@ -647,6 +656,9 @@ void testIfLoading() {
                statementType::if_);
   OCCA_ASSERT_EQUAL_BINARY(statementType::expression,
                            condition.type());
+  OCCA_ASSERT_EQUAL(1,
+                    (int) ifSmnt.elifSmnts.size());
+  OCCA_ASSERT_TRUE(!!ifSmnt.elseSmnt);
 
   // Test declaration in conditional
   setStatement("if (const int i = 3) {}",
@@ -659,7 +671,7 @@ void testIfLoading() {
                     (int) decl.declarations[0].value->evaluate());
 
   // TODO: Test that 'i' exists in the if scope
-#undef ifsmnt
+#undef ifSmnt
 #undef condition
 #undef decl
 }

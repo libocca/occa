@@ -157,6 +157,7 @@ namespace occa {
 
       statement_t *loadTypeDeclStatement();
 
+      void checkIfConditionStatementExists();
       statement_t* loadConditionStatement();
 
       statement_t *loadIfStatement();

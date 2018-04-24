@@ -712,6 +712,18 @@ namespace occa {
       const int sType = peek();
       lastPeek = 0;
 
+      // Skip newlines
+      const int end = context.size();
+      int start = 0;
+      for (start = 0; start < end; ++start) {
+        if (!(context[start]->type() & tokenType::newline)) {
+          break;
+        }
+      }
+      if (start) {
+        context.set(start);
+      }
+
       statementLoaderMap::iterator it = statementLoaders.find(sType);
       if (it != statementLoaders.end()) {
         statementLoader_t loader = it->second;
@@ -890,70 +902,143 @@ namespace occa {
       return NULL;
     }
 
+    void parser_t::checkIfConditionStatementExists() {
+      // Called when checking:
+      //     if (...), for (...), while (...), switch (...)
+      // when the context is at
+      //     if, for, while, switch
+
+      // Need to make sure we have another token (even if it's not '(')
+      bool error = (context.size() == 1);
+      if (!error) {
+        context.set(1);
+        error = !(getOperatorType(context[0]) & operatorType::parenthesesStart);
+      }
+
+      if (error) {
+        context[0]->printError("Expected a condition statement");
+        success = false;
+      }
+    }
+
     statement_t* parser_t::loadConditionStatement() {
+      // Load expression/declaration
+      token_t *parenBegin = context[0];
+      context.pushPairRange(0);
+
       const int sType = uncachedPeek();
       if ((!success) ||
           !(sType & (statementType::expression |
                      statementType::declaration))) {
+        parenBegin->printError("Expected an expression or declaration statement");
+        context.popAndSkipPair();
+        success = false;
         return NULL;
       }
 
+      statement_t *condition = NULL;
       if (sType & statementType::expression) {
-        return loadExpressionStatement(false);
+        condition = loadExpressionStatement(false);
+      } else {
+        condition = loadDeclarationStatement(false);
       }
-      return loadDeclarationStatement(false);
+
+      context.popAndSkipPair();
+      return condition;
     }
 
     statement_t* parser_t::loadIfStatement() {
-      // Need to test for (
-      if (context.size() == 1) {
-        context[0]->printError("Expected an if condition");
-        success = false;
-        return NULL;
-      }
-      context.set(1);
-
-      if (!(getOperatorType(context[0]) & operatorType::parenthesesStart)) {
-        context[0]->printError("Expected an if condition");
-        success = false;
-        return NULL;
-      }
-
-      // Load expression/declaration
-      token_t *parenBegin = context[0];
-      token_t *parenEnd   = context.getClosingPairToken(0);
-      context.pushPairRange(0);
-      statement_t *condition = loadConditionStatement();
-      context.popAndSkipPair();
+      checkIfConditionStatementExists();
       if (!success) {
         return NULL;
       }
 
+      token_t *parenEnd = context.getClosingPairToken(0);
+      statement_t *condition = loadConditionStatement();
       if (!condition) {
-        parenBegin->printError("Expected an expression or declaration statement");
-        success = false;
         return NULL;
       }
 
       ifStatement &ifSmnt = *(new ifStatement(condition));
       statement_t *content = getNextStatement();
       if (!content) {
-        parenEnd->printError("Missing if body");
-        success = false;
+        if (success) {
+          parenEnd->printError("Missing content for if statement");
+          success = false;
+        }
         delete &ifSmnt;
         return NULL;
       }
 
       ifSmnt.set(*content);
+
+      int sType;
+      while ((sType = peek()) & (statementType::elif_ |
+                                 statementType::else_)) {
+        statement_t *elSmnt = getNextStatement();
+        if (!elSmnt) {
+          // Peek is not none/empty so this error
+          //   was reported 'else'where (badum-psh)
+          success = false;
+          delete &ifSmnt;
+          return NULL;
+        }
+        if (sType & statementType::elif_) {
+          ifSmnt.addElif(elSmnt->to<elifStatement>());
+        } else {
+          ifSmnt.addElse(elSmnt->to<elseStatement>());
+          break;
+        }
+      }
+
       return &ifSmnt;
     }
 
     statement_t* parser_t::loadElifStatement() {
-      return NULL;
+      // Skip 'else' since checkIfConditionStatementExists
+      //   expects 1 token before the condition
+      // This is basically the same code as loadIfStatement
+      //   but with an elif class
+      context.set(1);
+      checkIfConditionStatementExists();
+      if (!success) {
+        return NULL;
+      }
+
+      token_t *parenEnd = context.getClosingPairToken(0);
+      statement_t *condition = loadConditionStatement();
+      if (!condition) {
+        return NULL;
+      }
+
+      elifStatement &elifSmnt = *(new elifStatement(condition));
+      statement_t *content = getNextStatement();
+      if (!content) {
+        parenEnd->printError("Missing content for if statement");
+        success = false;
+        delete &elifSmnt;
+        return NULL;
+      }
+
+      elifSmnt.set(*content);
+      return &elifSmnt;
     }
 
     statement_t* parser_t::loadElseStatement() {
-      return NULL;
+      token_t *elseToken = context[0];
+      context.set(1);
+
+      elseStatement &elseSmnt = *(new elseStatement());
+      statement_t *content = getNextStatement();
+      if (!content) {
+        elseToken->printError("Missing content for else statement");
+        success = false;
+        delete &elseSmnt;
+        return NULL;
+      }
+
+      elseSmnt.set(*content);
+      return &elseSmnt;
     }
 
     statement_t* parser_t::loadForStatement() {

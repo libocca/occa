@@ -168,10 +168,11 @@ namespace occa {
 
     class elifStatement : public blockStatement {
     public:
-      exprNode &condition;
+      statement_t *condition;
 
-      elifStatement(exprNode &condition);
+      elifStatement(statement_t *condition_);
       elifStatement(const elifStatement &other);
+      ~elifStatement();
 
       virtual statement_t& clone_() const;
       virtual int type() const;
