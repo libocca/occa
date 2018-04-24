@@ -308,7 +308,7 @@ namespace occa {
                                         operatorType::semicolon);
       if (pos < 0) {
         if (checkSemicolon) {
-          context.end()->printError("Expected a ;");
+          context.printErrorAtEnd("Expected a ;");
           success = false;
           return decl;
         } else {
@@ -764,7 +764,7 @@ namespace occa {
       if (checkSemicolon) {
         end = context.getNextOperator(operatorType::semicolon);
         if (end < 0) {
-          context.end()->printError("Expected a ;");
+          context.printErrorAtEnd("Expected a ;");
           success = false;
           return NULL;
         }
@@ -1226,7 +1226,7 @@ namespace occa {
       const int pos = context.getNextOperator(operatorType::semicolon);
       // No ; found
       if (pos < 0) {
-        context.printError("Expected a ;");
+        context.printErrorAtEnd("Expected a ;");
         success = false;
         return NULL;
       }
@@ -1261,11 +1261,40 @@ namespace occa {
     }
 
     statement_t* parser_t::loadGotoStatement() {
-      return NULL;
+      // Skip [goto] token
+      context.set(1);
+      if (!(token_t::safeType(context[0]) & tokenType::identifier)) {
+        context.printError("Expected goto label identifier");
+        success = false;
+        return NULL;
+      }
+      if (!(getOperatorType(context[1]) & operatorType::semicolon)) {
+        context.printError("Expected a ;");
+        success = false;
+        return NULL;
+      }
+
+      identifierToken &labelToken = (context[0]
+                                     ->clone()
+                                     ->to<identifierToken>());
+      context.set(2);
+
+      return new gotoStatement(labelToken);
     }
 
     statement_t* parser_t::loadGotoLabelStatement() {
-      return NULL;
+      if (!(getOperatorType(context[1]) & operatorType::colon)) {
+        context.printError("Expected a :");
+        success = false;
+        return NULL;
+      }
+
+      identifierToken &labelToken = (context[0]
+                                     ->clone()
+                                     ->to<identifierToken>());
+      context.set(2);
+
+      return new gotoLabelStatement(labelToken);
     }
     //==================================
   }

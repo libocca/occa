@@ -220,6 +220,13 @@ namespace occa {
       tokens[tp.start + offset]->printError(message);
     }
 
+    void tokenContext::printErrorAtEnd(const std::string &message) {
+      const int start = tp.start;
+      tp.start = tp.end;
+      printError(message);
+      tp.start = start;
+    }
+
     void tokenContext::getTokens(tokenVector &tokens_) {
       tokens_.clear();
       tokens_.reserve(tp.end - tp.start);

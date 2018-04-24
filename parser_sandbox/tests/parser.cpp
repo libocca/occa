@@ -355,6 +355,7 @@ void testArrayTypeLoading() {
 }
 
 void testVariableLoading() {
+  return;
   variable var;
   std::string varName;
 
@@ -514,7 +515,7 @@ void testLoading() {
   // testClassAccessLoading();
   // testAttributeLoading();
   testPragmaLoading();
-  // testGotoLoading();
+  testGotoLoading();
   testBlockLoading();
 }
 
@@ -920,7 +921,7 @@ void testErrors() {
   testJumpsErrors();
   // testClassAccessErrors();
   // testAttributeErrors();
-  // testGotoErrors();
+  testGotoErrors();
 }
 
 void testExpressionErrors() {
@@ -981,5 +982,7 @@ void testAttributeErrors() {
 }
 
 void testGotoErrors() {
+  parseSource("goto");
+  parseSource("goto;");
 }
 //======================================

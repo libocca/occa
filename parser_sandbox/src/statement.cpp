@@ -128,12 +128,26 @@ namespace occa {
     //==================================
 
     //---[ Goto ]-----------------------
-    gotoStatement::gotoStatement(const std::string &name_) :
-      statement_t(),
-      name(name_) {}
+    gotoStatement::gotoStatement(identifierToken &labelToken_) :
+      labelToken(labelToken_) {}
+
+    gotoStatement::gotoStatement(const gotoStatement &other) :
+      labelToken(other.labelToken.clone()->to<identifierToken>()) {}
+
+    gotoStatement::~gotoStatement() {
+      delete &labelToken;
+    }
 
     statement_t& gotoStatement::clone_() const {
-      return *(new gotoStatement(name));
+      return *(new gotoStatement(*this));
+    }
+
+    std::string& gotoStatement::label() {
+      return labelToken.value;
+    }
+
+    const std::string& gotoStatement::label() const {
+      return labelToken.value;
     }
 
     int gotoStatement::type() const {
@@ -142,15 +156,29 @@ namespace occa {
 
     void gotoStatement::print(printer &pout) const {
       pout.printIndentation();
-      pout << "goto " << name << ";\n";
+      pout << "goto " << label() << ';';
     }
 
-    gotoLabelStatement::gotoLabelStatement(const std::string &name_) :
-      statement_t(),
-      name(name_) {}
+    gotoLabelStatement::gotoLabelStatement(identifierToken &labelToken_) :
+      labelToken(labelToken_) {}
+
+    gotoLabelStatement::gotoLabelStatement(const gotoLabelStatement &other) :
+      labelToken(other.labelToken.clone()->to<identifierToken>()) {}
+
+    gotoLabelStatement::~gotoLabelStatement() {
+      delete &labelToken;
+    }
 
     statement_t& gotoLabelStatement::clone_() const {
-      return *(new gotoLabelStatement(name));
+      return *(new gotoLabelStatement(*this));
+    }
+
+    std::string& gotoLabelStatement::label() {
+      return labelToken.value;
+    }
+
+    const std::string& gotoLabelStatement::label() const {
+      return labelToken.value;
     }
 
     int gotoLabelStatement::type() const {
@@ -158,7 +186,8 @@ namespace occa {
     }
 
     void gotoLabelStatement::print(printer &pout) const {
-      pout << name << ":\n";
+      pout.printIndentation();
+      pout << label() << ":\n";
     }
     //==================================
 

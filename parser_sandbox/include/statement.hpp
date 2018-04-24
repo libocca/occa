@@ -102,9 +102,14 @@ namespace occa {
     //---[ Goto ]-----------------------
     class gotoStatement : public statement_t {
     public:
-      std::string name;
+      identifierToken &labelToken;
 
-      gotoStatement(const std::string &name_);
+      gotoStatement(identifierToken &labelToken_);
+      gotoStatement(const gotoStatement &other);
+      ~gotoStatement();
+
+      std::string& label();
+      const std::string& label() const;
 
       virtual statement_t& clone_() const;
       virtual int type() const;
@@ -114,9 +119,14 @@ namespace occa {
 
     class gotoLabelStatement : public statement_t {
     public:
-      std::string name;
+      identifierToken &labelToken;
 
-      gotoLabelStatement(const std::string &name_);
+      gotoLabelStatement(identifierToken &labelToken_);
+      gotoLabelStatement(const gotoLabelStatement &other);
+      ~gotoLabelStatement();
+
+      std::string& label();
+      const std::string& label() const;
 
       virtual statement_t& clone_() const;
       virtual int type() const;
