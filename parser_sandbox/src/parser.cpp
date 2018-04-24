@@ -764,7 +764,7 @@ namespace occa {
       if (checkSemicolon) {
         end = context.getNextOperator(operatorType::semicolon);
         if (end < 0) {
-          context.end()->printError("Missing ;");
+          context.end()->printError("Expected a ;");
           success = false;
           return NULL;
         }

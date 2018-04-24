@@ -513,9 +513,9 @@ void testLoading() {
   testJumpsLoading();
   // testClassAccessLoading();
   // testAttributeLoading();
-  // testPragmaLoading();
+  testPragmaLoading();
   // testGotoLoading();
-  // testBlockLoading();
+  testBlockLoading();
 }
 
 void testExpressionLoading() {
@@ -863,23 +863,32 @@ void testBlockLoading() {
 
   setStatement("{\n"
                " const int i = 0;\n"
-               " ++i:\n"
-               " namespace foo {}\n"
+               " ++i;\n"
                " if (true) {}\n"
+               " if (true) {} else {}\n"
+               " while (true) {}\n"
+               " do {} while (true);\n"
+               " switch (1) default:;\n"
                "}\n",
                statementType::block);
 
   blockStatement &smnt = statement->to<blockStatement>();
-  OCCA_ASSERT_EQUAL(4,
+  OCCA_ASSERT_EQUAL(7,
                     smnt.size());
   OCCA_ASSERT_EQUAL_BINARY(statementType::declaration,
                            smnt[0]->type());
   OCCA_ASSERT_EQUAL_BINARY(statementType::expression,
                            smnt[1]->type());
-  OCCA_ASSERT_EQUAL_BINARY(statementType::namespace_,
+  OCCA_ASSERT_EQUAL_BINARY(statementType::if_,
                            smnt[2]->type());
   OCCA_ASSERT_EQUAL_BINARY(statementType::if_,
                            smnt[3]->type());
+  OCCA_ASSERT_EQUAL_BINARY(statementType::while_,
+                           smnt[4]->type());
+  OCCA_ASSERT_EQUAL_BINARY(statementType::while_,
+                           smnt[5]->type());
+  OCCA_ASSERT_EQUAL_BINARY(statementType::switch_,
+                           smnt[6]->type());
 }
 //======================================
 
@@ -969,9 +978,6 @@ void testClassAccessErrors() {
 }
 
 void testAttributeErrors() {
-}
-
-void testPragmaErrors() {
 }
 
 void testGotoErrors() {
