@@ -87,6 +87,8 @@ namespace occa {
 
       token_t* end();
 
+      void printError(const std::string &message);
+
       void getTokens(tokenVector &tokens_);
       void getAndCloneTokens(tokenVector &tokens_);
 

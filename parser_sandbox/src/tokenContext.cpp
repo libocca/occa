@@ -209,6 +209,17 @@ namespace occa {
       return NULL;
     }
 
+    void tokenContext::printError(const std::string &message) {
+      int offset = 0;
+      // Only case it fails if context is empty, but
+      //   that shouldn't be the case...
+      if (!indexInRange(offset) &&
+          (0 < tp.start)) {
+        offset = -1;
+      }
+      tokens[tp.start + offset]->printError(message);
+    }
+
     void tokenContext::getTokens(tokenVector &tokens_) {
       tokens_.clear();
       tokens_.reserve(tp.end - tp.start);

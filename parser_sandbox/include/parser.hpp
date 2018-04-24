@@ -166,6 +166,7 @@ namespace occa {
 
       statement_t *loadForStatement();
       statement_t *loadWhileStatement();
+      statement_t *loadDoWhileStatement();
 
       statement_t *loadSwitchStatement();
       statement_t *loadCaseStatement();

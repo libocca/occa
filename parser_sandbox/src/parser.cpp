@@ -379,7 +379,7 @@ namespace occa {
       }
 
       if (tokenPos == 0) {
-        context[0]->printError("Unable to load type");
+        context.printError("Unable to load type");
         success = false;
         return;
       }
@@ -546,7 +546,7 @@ namespace occa {
       setArrays(arraytype);
 
       if (context.size()) {
-        context[0]->printError("Unable to parse type");
+        context.printError("Unable to parse type");
         success = false;
       }
 
@@ -652,25 +652,25 @@ namespace occa {
     }
 
     class_t parser_t::loadClassType() {
-      context[0]->printError("Cannot parse classes yet");
+      context.printError("Cannot parse classes yet");
       success = false;
       return class_t();
     }
 
     struct_t parser_t::loadStructType() {
-      context[0]->printError("Cannot parse structs yet");
+      context.printError("Cannot parse structs yet");
       success = false;
       return struct_t();
     }
 
     enum_t parser_t::loadEnumType() {
-      context[0]->printError("Cannot parse enum yet");
+      context.printError("Cannot parse enum yet");
       success = false;
       return enum_t();
     }
 
     union_t parser_t::loadUnionType() {
-      context[0]->printError("Cannot parse union yet");
+      context.printError("Cannot parse union yet");
       success = false;
       return union_t();
     }
@@ -828,7 +828,7 @@ namespace occa {
 
     statement_t* parser_t::loadNamespaceStatement() {
       if (context.size() == 1) {
-        context[0]->printError("Expected a namespace name");
+        context.printError("Expected a namespace name");
         return NULL;
       }
 
@@ -839,7 +839,7 @@ namespace occa {
       while (true) {
         // Get the namespace name
         if (!(context[0]->type() & tokenType::identifier)) {
-          context[0]->printError("Expected a namespace name");
+          context.printError("Expected a namespace name");
           success = false;
           return NULL;
         }
@@ -847,7 +847,7 @@ namespace occa {
 
         // Check we still have a token for {
         if (context.size() == 1) {
-          context[0]->printError("Missing namespace body {}");
+          context.printError("Missing namespace body {}");
           success = false;
           return NULL;
         }
@@ -857,7 +857,7 @@ namespace occa {
         const opType_t opType = getOperatorType(context[0]);
         if (!(opType & (operatorType::braceStart |
                         operatorType::scope))) {
-          context[0]->printError("Expected namespace body {}");
+          context.printError("Expected namespace body {}");
           success = false;
           return NULL;
         }
@@ -866,7 +866,7 @@ namespace occa {
           break;
         }
         if (context.size() == 1) {
-          context[0]->printError("Missing namespace body {}");
+          context.printError("Missing namespace body {}");
           success = false;
           return NULL;
         }
@@ -916,7 +916,7 @@ namespace occa {
       }
 
       if (error) {
-        context[0]->printError("Expected a condition statement");
+        context.printError("Expected a condition statement");
         success = false;
       }
     }
@@ -953,7 +953,6 @@ namespace occa {
         return NULL;
       }
 
-      token_t *parenEnd = context.getClosingPairToken(0);
       statement_t *condition = loadConditionStatement();
       if (!condition) {
         return NULL;
@@ -963,7 +962,7 @@ namespace occa {
       statement_t *content = getNextStatement();
       if (!content) {
         if (success) {
-          parenEnd->printError("Missing content for if statement");
+          context.printError("Missing content for if statement");
           success = false;
         }
         delete &ifSmnt;
@@ -995,7 +994,7 @@ namespace occa {
     }
 
     statement_t* parser_t::loadElifStatement() {
-      // Skip 'else' since checkIfConditionStatementExists
+      // Skip [else] since checkIfConditionStatementExists
       //   expects 1 token before the condition
       // This is basically the same code as loadIfStatement
       //   but with an elif class
@@ -1005,7 +1004,6 @@ namespace occa {
         return NULL;
       }
 
-      token_t *parenEnd = context.getClosingPairToken(0);
       statement_t *condition = loadConditionStatement();
       if (!condition) {
         return NULL;
@@ -1014,7 +1012,7 @@ namespace occa {
       elifStatement &elifSmnt = *(new elifStatement(condition));
       statement_t *content = getNextStatement();
       if (!content) {
-        parenEnd->printError("Missing content for if statement");
+        context.printError("Missing content for if statement");
         success = false;
         delete &elifSmnt;
         return NULL;
@@ -1025,13 +1023,13 @@ namespace occa {
     }
 
     statement_t* parser_t::loadElseStatement() {
-      token_t *elseToken = context[0];
+      // Skip [else] token
       context.set(1);
 
       elseStatement &elseSmnt = *(new elseStatement());
       statement_t *content = getNextStatement();
       if (!content) {
-        elseToken->printError("Missing content for else statement");
+        context.printError("Missing content for else statement");
         success = false;
         delete &elseSmnt;
         return NULL;
@@ -1046,31 +1044,139 @@ namespace occa {
     }
 
     statement_t* parser_t::loadWhileStatement() {
-      return NULL;
+      if (getKeyword(context[0])->type() & keywordType::do_) {
+        return loadDoWhileStatement();
+      }
+
+      checkIfConditionStatementExists();
+      if (!success) {
+        return NULL;
+      }
+
+      statement_t *condition = loadConditionStatement();
+      if (!condition) {
+        return NULL;
+      }
+
+      whileStatement &whileSmnt = *(new whileStatement(condition));
+      statement_t *content = getNextStatement();
+      if (!content) {
+        context.printError("Missing content for while statement");
+        success = false;
+        delete &whileSmnt;
+        return NULL;
+      }
+
+      whileSmnt.set(*content);
+      return &whileSmnt;
+    }
+
+    statement_t* parser_t::loadDoWhileStatement() {
+      // Skip [do] token
+      context.set(1);
+
+      statement_t *content = getNextStatement();
+      if (!content) {
+        if (success) {
+          context.printError("Missing content for do-while statement");
+          success = false;
+        }
+        return NULL;
+      }
+
+      keyword_t *nextKeyword = getKeyword(context[0]);
+      if (!nextKeyword ||
+          !(nextKeyword->type() & keywordType::while_)) {
+        context.printError("Expected 'while' condition after 'do'");
+        success = false;
+        delete content;
+        return NULL;
+      }
+
+      checkIfConditionStatementExists();
+      if (!success) {
+        delete content;
+        return NULL;
+      }
+
+      statement_t *condition = loadConditionStatement();
+      if (!condition) {
+        delete content;
+        return NULL;
+      }
+
+      if (!(getOperatorType(context[0]) & operatorType::semicolon)) {
+        context.printError("Expected a ;");
+        success = false;
+        delete content;
+        delete condition;
+        return NULL;
+      }
+      context.set(1);
+
+      whileStatement &whileSmnt = *(new whileStatement(condition, true));
+      whileSmnt.set(*content);
+      return &whileSmnt;
     }
 
     statement_t* parser_t::loadSwitchStatement() {
-      return NULL;
+      checkIfConditionStatementExists();
+      if (!success) {
+        return NULL;
+      }
+
+      token_t *parenEnd = context.getClosingPairToken(0);
+      statement_t *condition = loadConditionStatement();
+      if (!condition) {
+        return NULL;
+      }
+
+      switchStatement &switchSmnt = *(new switchStatement(condition));
+      statement_t *content = getNextStatement();
+      if (!content) {
+        parenEnd->printError("Missing content for switch statement");
+        success = false;
+        delete &switchSmnt;
+        return NULL;
+      }
+
+      if (!(content->type() & statementType::case_)) {
+        switchSmnt.set(*content);
+      } else {
+        switchSmnt.add(*content);
+
+        content = getNextStatement();
+        if (!content) {
+          parenEnd->printError("Missing statement for switch case");
+          success = false;
+          delete &switchSmnt;
+          return NULL;
+        }
+        switchSmnt.add(*content);
+      }
+
+      return &switchSmnt;
     }
 
     statement_t* parser_t::loadCaseStatement() {
+      // Skip [case] token
+      context.set(1);
+
       const int pos = context.getNextOperator(operatorType::colon);
       // No : found
       if (pos < 0) {
-        context[0]->printError("Expected a : to close the case statement");
+        context.printError("Expected a : to close the case statement");
         success = false;
         return NULL;
       }
+      exprNode *value = NULL;
       // The case where we see 'case:'
-      if (pos == 1) {
-        context[1]->printError("Expected a constant expression for the case statement");
-        success = false;
-        return NULL;
+      if (0 < pos) {
+        // Load the case expression
+        value = context.getExpression(0, pos);
       }
-
-      // Load the case expression
-      exprNode *value = context.getExpression(1, pos);
       if (!value) {
+        context.printError("Expected a constant expression for the case statement");
         success = false;
         return NULL;
       }

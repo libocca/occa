@@ -312,14 +312,23 @@ namespace occa {
     //================================
 
     //---[ While ]----------------------
-    whileStatement::whileStatement(statement_t &check_,
+    whileStatement::whileStatement(statement_t *condition_,
                                    const bool isDoWhile_) :
       blockStatement(),
-      check(check_),
+      condition(condition_),
       isDoWhile(isDoWhile_) {}
 
+    whileStatement::whileStatement(const whileStatement &other) :
+      blockStatement(other),
+      condition(other.condition),
+      isDoWhile(other.isDoWhile) {}
+
+    whileStatement::~whileStatement() {
+      delete condition;
+    }
+
     statement_t& whileStatement::clone_() const {
-      return *(new whileStatement(check.clone(), isDoWhile));
+      return *(new whileStatement(*this));
     }
 
     int whileStatement::type() const {
@@ -328,10 +337,10 @@ namespace occa {
 
     void whileStatement::print(printer &pout) const {
       pout.printStartIndentation();
-      if (isDoWhile) {
+      if (!isDoWhile) {
         pout << "while (";
         pout.pushInlined(true);
-        pout << check;
+        condition->print(pout);
         pout.popInlined();
         pout << ')';
       } else {
@@ -343,7 +352,7 @@ namespace occa {
       if (isDoWhile) {
         pout << " while (";
         pout.pushInlined(true);
-        pout << check;
+        condition->print(pout);
         pout.popInlined();
         pout << ");";
       }
@@ -389,12 +398,17 @@ namespace occa {
     //==================================
 
     //---[ Switch ]---------------------
-    switchStatement::switchStatement(statement_t &value_) :
-      value(value_) {}
+    switchStatement::switchStatement(statement_t *condition_) :
+      blockStatement(),
+      condition(condition_) {}
 
     switchStatement::switchStatement(const switchStatement& other) :
       blockStatement(other),
-      value(other.value) {}
+      condition(other.condition) {}
+
+    switchStatement::~switchStatement() {
+      delete condition;
+    }
 
     statement_t& switchStatement::clone_() const {
       return *(new switchStatement(*this));
@@ -408,7 +422,7 @@ namespace occa {
       pout.printStartIndentation();
       pout << "switch (";
       pout.pushInlined(true);
-      pout << value;
+      condition->print(pout);
       pout.popInlined();
       pout << ") {\n";
 

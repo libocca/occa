@@ -213,11 +213,13 @@ namespace occa {
     //---[ While ]----------------------
     class whileStatement : public blockStatement {
     public:
-      statement_t &check;
+      statement_t *condition;
       bool isDoWhile;
 
-      whileStatement(statement_t &check_,
+      whileStatement(statement_t *condition_,
                      const bool isDoWhile_ = false);
+      whileStatement(const whileStatement &other);
+      ~whileStatement();
 
       virtual statement_t& clone_() const;
       virtual int type() const;
@@ -229,10 +231,11 @@ namespace occa {
     //---[ Switch ]---------------------
     class switchStatement : public blockStatement {
     public:
-      statement_t &value;
+      statement_t *condition;
 
-      switchStatement(statement_t &value_);
+      switchStatement(statement_t *condition_);
       switchStatement(const switchStatement& other);
+      ~switchStatement();
 
       virtual statement_t& clone_() const;
       virtual int type() const;

@@ -506,8 +506,8 @@ void testLoading() {
   // testTypeDeclLoading();
   testIfLoading();
   // testForLoading();
-  // testWhileLoading();
-  // testSwitchLoading();
+  testWhileLoading();
+  testSwitchLoading();
   // testJumpsLoading();
   // testClassAccessLoading();
   // testAttributeLoading();
@@ -711,38 +711,56 @@ void testWhileLoading() {
   setStatement("do ; while (true);",
                statementType::while_);
 
-  setStatement("do {} while (int i = 0)",
+  setStatement("do {} while (int i = 0);",
                statementType::while_);
 }
 
 void testSwitchLoading() {
   statement_t *statement;
 
+#define switchSmnt statement->to<switchStatement>()
+#define condition (*switchSmnt.condition)
+#define decl condition.to<declarationStatement>()
+
   setStatement("switch (2) {}",
                statementType::switch_);
+  OCCA_ASSERT_EQUAL_BINARY(statementType::expression,
+                           condition.type());
+  OCCA_ASSERT_EQUAL(0,
+                    switchSmnt.size())
+
   // Weird cases
-  setStatement("switch (2) case 2:",
+  setStatement("switch (2) case 2:;",
                statementType::switch_);
+  OCCA_ASSERT_EQUAL_BINARY(statementType::expression,
+                           condition.type());
+  OCCA_ASSERT_EQUAL(2,
+                    switchSmnt.size())
+
   setStatement("switch (2) case 2: 2;",
                statementType::switch_);
+  OCCA_ASSERT_EQUAL_BINARY(statementType::expression,
+                           condition.type());
+  OCCA_ASSERT_EQUAL(2,
+                    switchSmnt.size())
 
   // Test declaration in conditional
   setStatement("switch (int i = 2) {}",
                statementType::switch_);
+  OCCA_ASSERT_EQUAL_BINARY(statementType::declaration,
+                           condition.type());
+  OCCA_ASSERT_EQUAL(0,
+                    switchSmnt.size());
+  OCCA_ASSERT_EQUAL(1,
+                    (int) decl.declarations.size());
+  OCCA_ASSERT_EQUAL(2,
+                    (int) decl.declarations[0].value->evaluate());
 
   // TODO: Test that 'i' exists in the if scope
 
-  // Test caseStatement
-  setStatement("case 2:",
-               statementType::case_);
-  setStatement("case 2: 2;",
-               statementType::case_);
-
-  // Test defaultStatement
-  setStatement("default:",
-               statementType::default_);
-  setStatement("default: 2;",
-               statementType::default_);
+#undef switchSmnt
+#undef condition
+#undef decl
 }
 
 void testJumpsLoading() {
@@ -863,8 +881,8 @@ void testErrors() {
   // testTypeDeclErrors();
   testIfErrors();
   // testForErrors();
-  // testWhileErrors();
-  // testSwitchErrors();
+  testWhileErrors();
+  testSwitchErrors();
   // testJumpsErrors();
   // testClassAccessErrors();
   // testAttributeErrors();
@@ -905,6 +923,11 @@ void testForErrors() {
 }
 
 void testWhileErrors() {
+  parseSource("do {};");
+  parseSource("do;");
+  parseSource("do {} while (true)");
+  parseSource("do ; while (true)");
+  parseSource("do {} while (int i = 0)");
 }
 
 void testSwitchErrors() {
