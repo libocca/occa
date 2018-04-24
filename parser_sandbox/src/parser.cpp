@@ -1245,7 +1245,22 @@ namespace occa {
     }
 
     statement_t* parser_t::loadClassAccessStatement() {
-      return NULL;
+      if (!(getOperatorType(context[1]) & operatorType::colon)) {
+        context.printError("Expected a :");
+        success = false;
+        return NULL;
+      }
+      const int kType = getKeyword(context[0])->type();
+      context.set(2);
+
+      int access = classAccess::private_;
+      if (kType == keywordType::public_) {
+        access = classAccess::public_;
+      } else if (kType == keywordType::protected_) {
+        access = classAccess::protected_;
+      }
+
+      return new classAccessStatement(access);
     }
 
     statement_t* parser_t::loadAttributeStatement() {

@@ -355,7 +355,6 @@ void testArrayTypeLoading() {
 }
 
 void testVariableLoading() {
-  return;
   variable var;
   std::string varName;
 
@@ -512,7 +511,7 @@ void testLoading() {
   testWhileLoading();
   testSwitchLoading();
   testJumpsLoading();
-  // testClassAccessLoading();
+  testClassAccessLoading();
   // testAttributeLoading();
   testPragmaLoading();
   testGotoLoading();
@@ -807,12 +806,24 @@ void testJumpsLoading() {
 void testClassAccessLoading() {
   statement_t *statement;
 
+#define access statement->to<classAccessStatement>().access
+
   setStatement("public:",
                statementType::classAccess);
+  OCCA_ASSERT_EQUAL(classAccess::public_,
+                    access);
+
   setStatement("protected:",
                statementType::classAccess);
+  OCCA_ASSERT_EQUAL(classAccess::protected_,
+                    access);
+
   setStatement("private:",
                statementType::classAccess);
+  OCCA_ASSERT_EQUAL(classAccess::private_,
+                    access);
+
+#undef access
 }
 
 void testAttributeLoading() {
@@ -919,7 +930,7 @@ void testErrors() {
   testWhileErrors();
   testSwitchErrors();
   testJumpsErrors();
-  // testClassAccessErrors();
+  testClassAccessErrors();
   // testAttributeErrors();
   testGotoErrors();
 }
@@ -976,6 +987,9 @@ void testJumpsErrors() {
 }
 
 void testClassAccessErrors() {
+  parseSource("public");
+  parseSource("protected");
+  parseSource("private");
 }
 
 void testAttributeErrors() {
