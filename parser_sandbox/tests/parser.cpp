@@ -152,6 +152,8 @@ void testPeek() {
                     statementType::switch_);
   testStatementPeek("case foo:",
                     statementType::case_);
+  testStatementPeek("default:",
+                    statementType::default_);
   testStatementPeek("continue;",
                     statementType::continue_);
   testStatementPeek("break;",
@@ -737,7 +739,21 @@ void testSwitchLoading() {
   OCCA_ASSERT_EQUAL(2,
                     switchSmnt.size())
 
+  setStatement("switch (2) default:;",
+               statementType::switch_);
+  OCCA_ASSERT_EQUAL_BINARY(statementType::expression,
+                           condition.type());
+  OCCA_ASSERT_EQUAL(2,
+                    switchSmnt.size())
+
   setStatement("switch (2) case 2: 2;",
+               statementType::switch_);
+  OCCA_ASSERT_EQUAL_BINARY(statementType::expression,
+                           condition.type());
+  OCCA_ASSERT_EQUAL(2,
+                    switchSmnt.size())
+
+  setStatement("switch (2) default: 2;",
                statementType::switch_);
   OCCA_ASSERT_EQUAL_BINARY(statementType::expression,
                            condition.type());

@@ -1140,7 +1140,8 @@ namespace occa {
         return NULL;
       }
 
-      if (!(content->type() & statementType::case_)) {
+      if (!(content->type() & (statementType::case_ |
+                               statementType::default_))) {
         switchSmnt.set(*content);
       } else {
         switchSmnt.add(*content);
