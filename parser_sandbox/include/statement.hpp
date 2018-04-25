@@ -205,13 +205,13 @@ namespace occa {
     //---[ For ]------------------------
     class forStatement : public blockStatement {
     public:
-      statement_t &init, &check, &update;
+      statement_t *init, *check, *update;
 
-      forStatement(statement_t &init_,
-                   statement_t &check_,
-                   statement_t &update_);
-
+      forStatement(statement_t *init_,
+                   statement_t *check_,
+                   statement_t *update_);
       forStatement(const forStatement &other);
+      ~forStatement();
 
       virtual statement_t& clone_() const;
       virtual int type() const;

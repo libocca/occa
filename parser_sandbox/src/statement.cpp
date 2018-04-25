@@ -390,18 +390,24 @@ namespace occa {
     //==================================
 
     //---[ For ]------------------------
-    forStatement::forStatement(statement_t &init_,
-                               statement_t &check_,
-                               statement_t &update_) :
+    forStatement::forStatement(statement_t *init_,
+                               statement_t *check_,
+                               statement_t *update_) :
       init(init_),
       check(check_),
       update(update_) {}
 
     forStatement::forStatement(const forStatement &other) :
       blockStatement(other),
-      init(other.init.clone()),
-      check(other.check.clone()),
-      update(other.update.clone()) {}
+      init(&(other.init->clone())),
+      check(&(other.check->clone())),
+      update(&(other.update->clone())) {}
+
+    forStatement::~forStatement() {
+      delete init;
+      delete check;
+      delete update;
+    }
 
     statement_t& forStatement::clone_() const {
       return *(new forStatement(*this));
@@ -417,7 +423,7 @@ namespace occa {
       pout << "for (";
 
       pout.pushInlined(true);
-      pout << init << check << update;
+      pout << *init << *check << *update;
       pout.popInlined();
 
       pout << ')';

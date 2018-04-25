@@ -540,7 +540,7 @@ namespace occa {
 
       exprNode &value = state.popOutput();
       if (opType & operatorType::binary) {
-        if (!outputCount) {
+        if (outputCount < 2) {
           state.hasError = true;
           opToken.printError("Unable to apply operator");
           return;

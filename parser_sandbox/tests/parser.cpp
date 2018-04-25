@@ -507,7 +507,7 @@ void testLoading() {
   testNamespaceLoading();
   // testTypeDeclLoading();
   testIfLoading();
-  // testForLoading();
+  testForLoading();
   testWhileLoading();
   testSwitchLoading();
   testJumpsLoading();
@@ -681,16 +681,51 @@ void testIfLoading() {
 void testForLoading() {
   statement_t *statement;
 
+#define forSmnt statement->to<forStatement>()
+#define init (*forSmnt.init)
+#define check (*forSmnt.check)
+#define update (*forSmnt.update)
+#define initDecl init.to<declarationStatement>()
+
   setStatement("for (;;) {}",
                statementType::for_);
+  OCCA_ASSERT_EQUAL_BINARY(statementType::expression,
+                           init.type());
+  OCCA_ASSERT_EQUAL_BINARY(statementType::expression,
+                           check.type());
+  OCCA_ASSERT_EQUAL_BINARY(statementType::expression,
+                           update.type());
+  OCCA_ASSERT_EQUAL(0,
+                    (int) forSmnt.children.size());
+
   setStatement("for (;;);",
                statementType::for_);
+  OCCA_ASSERT_EQUAL_BINARY(statementType::expression,
+                           init.type());
+  OCCA_ASSERT_EQUAL_BINARY(statementType::expression,
+                           check.type());
+  OCCA_ASSERT_EQUAL_BINARY(statementType::expression,
+                           update.type());
+  OCCA_ASSERT_EQUAL(1,
+                    (int) forSmnt.children.size());
 
   // Test declaration in conditional
   setStatement("for (int i = 0; i < 2; ++i) {}",
                statementType::for_);
+  OCCA_ASSERT_EQUAL_BINARY(statementType::declaration,
+                           init.type());
+  OCCA_ASSERT_EQUAL_BINARY(statementType::expression,
+                           check.type());
+  OCCA_ASSERT_EQUAL_BINARY(statementType::expression,
+                           update.type());
 
   // TODO: Test that 'i' exists in the if scope
+
+#undef forSmnt
+#undef init
+#undef check
+#undef update
+#undef initDecl
 }
 
 void testWhileLoading() {
@@ -729,6 +764,14 @@ void testSwitchLoading() {
   OCCA_ASSERT_EQUAL_BINARY(statementType::expression,
                            condition.type());
   OCCA_ASSERT_EQUAL(0,
+                    switchSmnt.size())
+
+  // Weird cases
+  setStatement("switch (2) ;",
+               statementType::switch_);
+  OCCA_ASSERT_EQUAL_BINARY(statementType::expression,
+                           condition.type());
+  OCCA_ASSERT_EQUAL(1,
                     switchSmnt.size())
 
   // Weird cases
@@ -926,7 +969,7 @@ void testErrors() {
   testNamespaceErrors();
   // testTypeDeclErrors();
   testIfErrors();
-  // testForErrors();
+  testForErrors();
   testWhileErrors();
   testSwitchErrors();
   testJumpsErrors();
@@ -966,6 +1009,9 @@ void testIfErrors() {
 }
 
 void testForErrors() {
+  parseSource("for () {}");
+  parseSource("for (;) {}");
+  parseSource("for (;;)");
 }
 
 void testWhileErrors() {
@@ -977,6 +1023,10 @@ void testWhileErrors() {
 }
 
 void testSwitchErrors() {
+  parseSource("switch ()");
+  parseSource("switch (true)");
+  parseSource("switch (true) case 2:");
+  parseSource("switch (true) default:");
 }
 
 void testJumpsErrors() {

@@ -39,7 +39,7 @@ namespace occa {
     class parser_t;
 
     typedef stream<token_t*>          tokenStream;
-    typedef std::list<statement_t*>   statementList;
+    typedef std::vector<statement_t*> statementVector;
     typedef std::vector<attribute_t*> attributeVector;
     typedef std::map<int, int>        keywordToStatementMap;
 
@@ -158,6 +158,8 @@ namespace occa {
       statement_t *loadTypeDeclStatement();
 
       void checkIfConditionStatementExists();
+      void loadConditionStatements(statementVector &statements,
+                                   const int expectedCount);
       statement_t* loadConditionStatement();
 
       statement_t *loadIfStatement();

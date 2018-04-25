@@ -227,10 +227,8 @@ namespace occa {
         if (isGotoLabel(tokenIndex + 1)) {
           return statementType::gotoLabel;
         }
-        // TODO: Attempt to find error by guessing the keyword type
-        token->printError("Unknown identifier");
-        success = false;
-        return statementType::none;
+        // TODO: Make sure it's a defined variable
+        return statementType::expression;
       }
 
       const int kType = keyword->type();
@@ -311,9 +309,8 @@ namespace occa {
           context.printErrorAtEnd("Expected a ;");
           success = false;
           return decl;
-        } else {
-          pos = context.size();
         }
+        pos = context.size();
       }
       if (pos == 1) {
         context[1]->printError("Expected an expression");
@@ -760,15 +757,16 @@ namespace occa {
     }
 
     statement_t* parser_t::loadExpressionStatement(const bool checkSemicolon) {
-      int end = context.size();
-      if (checkSemicolon) {
-        end = context.getNextOperator(operatorType::semicolon);
-        if (end < 0) {
+      int end = context.getNextOperator(operatorType::semicolon);
+      if (end < 0) {
+        if (checkSemicolon) {
           context.printErrorAtEnd("Expected a ;");
           success = false;
           return NULL;
         }
+        end = context.size();
       }
+
       context.push(0, end);
 
       tokenVector tokens;
@@ -819,10 +817,6 @@ namespace occa {
         delete &smnt;
         return NULL;
       }
-
-      // Skip the ;
-      context.set(1);
-
       return &smnt;
     }
 
@@ -921,30 +915,56 @@ namespace occa {
       }
     }
 
-    statement_t* parser_t::loadConditionStatement() {
+    void parser_t::loadConditionStatements(statementVector &statements,
+                                           const int expectedCount) {
       // Load expression/declaration
       token_t *parenBegin = context[0];
       context.pushPairRange(0);
 
-      const int sType = uncachedPeek();
-      if ((!success) ||
-          !(sType & (statementType::expression |
-                     statementType::declaration))) {
-        parenBegin->printError("Expected an expression or declaration statement");
-        context.popAndSkipPair();
+      int count = 0;
+      bool error = true;
+      while (true) {
+        const int sType = uncachedPeek();
+        if (success &&
+            (sType & statementType::none)) {
+          error = false;
+          break;
+        }
+
+        if ((!success) ||
+            !(sType & (statementType::expression |
+                       statementType::declaration))) {
+          parenBegin->printError("Expected an expression or declaration statement");
+          break;
+        }
+
+        ++count;
+        statement_t *smnt = NULL;
+        if (sType & statementType::expression) {
+          smnt = loadExpressionStatement(count < expectedCount);
+        } else {
+          smnt = loadDeclarationStatement(count < expectedCount);
+        }
+        statements.push_back(smnt);
+      }
+      context.popAndSkipPair();
+
+      if (error) {
         success = false;
+        const int smntCount = (int) statements.size();
+        for (int i = 0; i < smntCount; ++i) {
+          delete statements[i];
+        }
+      }
+    }
+
+    statement_t* parser_t::loadConditionStatement() {
+      statementVector statements;
+      loadConditionStatements(statements, 1);
+      if (!statements.size()) {
         return NULL;
       }
-
-      statement_t *condition = NULL;
-      if (sType & statementType::expression) {
-        condition = loadExpressionStatement(false);
-      } else {
-        condition = loadDeclarationStatement(false);
-      }
-
-      context.popAndSkipPair();
-      return condition;
+      return statements[0];
     }
 
     statement_t* parser_t::loadIfStatement() {
@@ -955,6 +975,7 @@ namespace occa {
 
       statement_t *condition = loadConditionStatement();
       if (!condition) {
+        context.printError("Missing condition for [if] statement");
         return NULL;
       }
 
@@ -962,7 +983,7 @@ namespace occa {
       statement_t *content = getNextStatement();
       if (!content) {
         if (success) {
-          context.printError("Missing content for if statement");
+          context.printError("Missing content for [if] statement");
           success = false;
         }
         delete &ifSmnt;
@@ -1006,13 +1027,14 @@ namespace occa {
 
       statement_t *condition = loadConditionStatement();
       if (!condition) {
+        context.printError("Missing condition for [else if] statement");
         return NULL;
       }
 
       elifStatement &elifSmnt = *(new elifStatement(condition));
       statement_t *content = getNextStatement();
       if (!content) {
-        context.printError("Missing content for if statement");
+        context.printError("Missing content for [else if] statement");
         success = false;
         delete &elifSmnt;
         return NULL;
@@ -1029,7 +1051,7 @@ namespace occa {
       elseStatement &elseSmnt = *(new elseStatement());
       statement_t *content = getNextStatement();
       if (!content) {
-        context.printError("Missing content for else statement");
+        context.printError("Missing content for [else] statement");
         success = false;
         delete &elseSmnt;
         return NULL;
@@ -1040,7 +1062,57 @@ namespace occa {
     }
 
     statement_t* parser_t::loadForStatement() {
-      return NULL;
+      checkIfConditionStatementExists();
+      if (!success) {
+        return NULL;
+      }
+
+      token_t *parenEnd = context.getClosingPairToken(0);
+
+      statementVector statements;
+      loadConditionStatements(statements, 3);
+      int count = (int) statements.size();
+      // Last statement is optional
+      if (count == 2) {
+        ++count;
+        statements.push_back(
+          new expressionStatement(*(new emptyNode()))
+        );
+      }
+      if (count < 3) {
+        std::string message;
+        if (count == 0) {
+          message = "Expected [for] init and check statements";
+        } else {
+          message = "Expected [for] check statement";
+        }
+        if (parenEnd) {
+          parenEnd->printError(message);
+        } else {
+          context.printError(message);
+        }
+        for (int i = 0; i < count; ++i) {
+          delete statements[i];
+        }
+        success = false;
+        return NULL;
+      }
+
+      forStatement &forSmnt = *(new forStatement(statements[0],
+                                                 statements[1],
+                                                 statements[2]));
+      statement_t *content = getNextStatement();
+      if (!content) {
+        if (success) {
+          context.printError("Missing content for [for] statement");
+          success = false;
+        }
+        delete &forSmnt;
+        return NULL;
+      }
+
+      forSmnt.set(*content);
+      return &forSmnt;
     }
 
     statement_t* parser_t::loadWhileStatement() {
@@ -1055,13 +1127,14 @@ namespace occa {
 
       statement_t *condition = loadConditionStatement();
       if (!condition) {
+        context.printError("Missing condition for [while] statement");
         return NULL;
       }
 
       whileStatement &whileSmnt = *(new whileStatement(condition));
       statement_t *content = getNextStatement();
       if (!content) {
-        context.printError("Missing content for while statement");
+        context.printError("Missing content for [while] statement");
         success = false;
         delete &whileSmnt;
         return NULL;
@@ -1078,7 +1151,7 @@ namespace occa {
       statement_t *content = getNextStatement();
       if (!content) {
         if (success) {
-          context.printError("Missing content for do-while statement");
+          context.printError("Missing content for [do-while] statement");
           success = false;
         }
         return NULL;
@@ -1087,7 +1160,7 @@ namespace occa {
       keyword_t *nextKeyword = getKeyword(context[0]);
       if (!nextKeyword ||
           !(nextKeyword->type() & keywordType::while_)) {
-        context.printError("Expected 'while' condition after 'do'");
+        context.printError("Expected [while] condition after [do]");
         success = false;
         delete content;
         return NULL;
@@ -1101,6 +1174,7 @@ namespace occa {
 
       statement_t *condition = loadConditionStatement();
       if (!condition) {
+        context.printError("Missing condition for [do-while] statement");
         delete content;
         return NULL;
       }
@@ -1128,13 +1202,14 @@ namespace occa {
       token_t *parenEnd = context.getClosingPairToken(0);
       statement_t *condition = loadConditionStatement();
       if (!condition) {
+        context.printError("Missing condition for [switch] statement");
         return NULL;
       }
 
       switchStatement &switchSmnt = *(new switchStatement(condition));
       statement_t *content = getNextStatement();
       if (!content) {
-        parenEnd->printError("Missing content for switch statement");
+        parenEnd->printError("Missing content for [switch] statement");
         success = false;
         delete &switchSmnt;
         return NULL;
@@ -1148,7 +1223,7 @@ namespace occa {
 
         content = getNextStatement();
         if (!content) {
-          parenEnd->printError("Missing statement for switch case");
+          parenEnd->printError("Missing statement for switch's [case]");
           success = false;
           delete &switchSmnt;
           return NULL;
@@ -1166,7 +1241,7 @@ namespace occa {
       const int pos = context.getNextOperator(operatorType::colon);
       // No : found
       if (pos < 0) {
-        context.printError("Expected a : to close the case statement");
+        context.printError("Expected a : to close the [case] statement");
         success = false;
         return NULL;
       }
@@ -1177,7 +1252,7 @@ namespace occa {
         value = context.getExpression(0, pos);
       }
       if (!value) {
-        context.printError("Expected a constant expression for the case statement");
+        context.printError("Expected a constant expression for the [case] statement");
         success = false;
         return NULL;
       }
@@ -1279,7 +1354,7 @@ namespace occa {
       // Skip [goto] token
       context.set(1);
       if (!(token_t::safeType(context[0]) & tokenType::identifier)) {
-        context.printError("Expected goto label identifier");
+        context.printError("Expected [goto label] identifier");
         success = false;
         return NULL;
       }
