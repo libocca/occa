@@ -29,6 +29,7 @@
 void testTypeMethods();
 void testPeek();
 void testTypeLoading();
+void testTypeErrors();
 void testLoading();
 void testErrors();
 
@@ -74,7 +75,10 @@ smntType& getStatement(const int index = 0) {
 int main(const int argc, const char **argv) {
   testTypeMethods();
   testPeek();
+
   testTypeLoading();
+  testTypeErrors();
+
   testLoading();
   testErrors();
 
@@ -99,6 +103,9 @@ void testTypeMethods() {
 void testPeek() {
   testStatementPeek("",
                     statementType::none);
+
+  testStatementPeek(";",
+                    statementType::empty);
 
   testStatementPeek("#pragma",
                     statementType::pragma);
@@ -261,12 +268,6 @@ void testBaseTypeLoading() {
   OCCA_ASSERT_TRUE(type.has(longlong_));
   OCCA_ASSERT_EQUAL(&double_,
                     type.type);
-
-  std::cerr << "\n---[ Testing type loading errors ]--------------------\n\n";
-  type = preloadType("const");
-  type = preloadType("const foo");
-  type = preloadType("const const");
-  type = preloadType("long long long");
 }
 
 void testPointerTypeLoading() {
@@ -295,10 +296,6 @@ void testPointerTypeLoading() {
   OCCA_ASSERT_TRUE(type.pointers[3].has(const_));
   OCCA_ASSERT_TRUE(type.pointers[3].has(volatile_));
   OCCA_ASSERT_TRUE(type.pointers[3].has(restrict_));
-
-  std::cerr << "\n---[ Testing type loading errors ]--------------------\n\n";
-  type = preloadType("const *");
-  type = preloadType("float * long");
 }
 
 void testReferenceTypeLoading() {
@@ -348,10 +345,6 @@ void testArrayTypeLoading() {
                     (int) type.arrays[0].evaluateSize());
   OCCA_ASSERT_EQUAL(7,
                     (int) type.arrays[1].evaluateSize());
-
-  std::cerr << "\n---[ Testing array type loading errors ]--------------------\n\n";
-  assertType("int[-]");
-  loadType("int[-]");
 }
 
 void testVariableLoading() {
@@ -395,10 +388,6 @@ void testVariableLoading() {
                     (int) var.vartype.arrays[0].evaluateSize());
   OCCA_ASSERT_EQUAL(7,
                     (int) var.vartype.arrays[1].evaluateSize());
-
-  std::cerr << "\n---[ Testing variable loading errors ]--------------------\n\n";
-  assertVariable("int varname[-]");
-  loadVariable("int varname[-]");
 }
 
 void testArgumentLoading() {
@@ -483,6 +472,44 @@ void testFunctionPointerLoading() {
 
 #undef varFunc
 }
+
+void testBaseTypeErrors();
+void testPointerTypeErrors();
+void testArrayTypeErrors();
+void testVariableErrors();
+
+void testTypeErrors() {
+  std::cerr << "\n---[ Testing type errors ]----------------------\n\n";
+  testBaseTypeErrors();
+  testPointerTypeErrors();
+  testArrayTypeErrors();
+  testVariableErrors();
+  std::cerr << "================================================\n\n";
+}
+
+void testBaseTypeErrors() {
+  vartype_t type;
+  type = preloadType("const");
+  type = preloadType("const foo");
+  type = preloadType("const const");
+  type = preloadType("long long long");
+}
+
+void testPointerTypeErrors() {
+  vartype_t type;
+  type = preloadType("const *");
+  type = preloadType("float * long");
+}
+
+void testArrayTypeErrors() {
+  assertType("int[-]");
+  loadType("int[-]");
+}
+
+void testVariableErrors() {
+  assertVariable("int varname[-]");
+  loadVariable("int varname[-]");
+}
 //======================================
 
 //---[ Loading ]------------------------
@@ -512,10 +539,10 @@ void testLoading() {
   testSwitchLoading();
   testJumpsLoading();
   testClassAccessLoading();
-  // testAttributeLoading();
   testPragmaLoading();
   testGotoLoading();
   testBlockLoading();
+  // testAttributeLoading();
 }
 
 void testExpressionLoading() {
@@ -539,10 +566,6 @@ void testExpressionLoading() {
   OCCA_ASSERT_TRUE(expr.canEvaluate());
   OCCA_ASSERT_EQUAL((uint64_t) sizeof(4),
                     (uint64_t) expr.evaluate());
-
-  setStatement(";",
-               statementType::expression);
-  OCCA_ASSERT_FALSE(expr.canEvaluate());
 
 #undef exprStatement
 }
@@ -689,22 +712,22 @@ void testForLoading() {
 
   setStatement("for (;;) {}",
                statementType::for_);
-  OCCA_ASSERT_EQUAL_BINARY(statementType::expression,
+  OCCA_ASSERT_EQUAL_BINARY(statementType::empty,
                            init.type());
-  OCCA_ASSERT_EQUAL_BINARY(statementType::expression,
+  OCCA_ASSERT_EQUAL_BINARY(statementType::empty,
                            check.type());
-  OCCA_ASSERT_EQUAL_BINARY(statementType::expression,
+  OCCA_ASSERT_EQUAL_BINARY(statementType::empty,
                            update.type());
   OCCA_ASSERT_EQUAL(0,
                     (int) forSmnt.children.size());
 
   setStatement("for (;;);",
                statementType::for_);
-  OCCA_ASSERT_EQUAL_BINARY(statementType::expression,
+  OCCA_ASSERT_EQUAL_BINARY(statementType::empty,
                            init.type());
-  OCCA_ASSERT_EQUAL_BINARY(statementType::expression,
+  OCCA_ASSERT_EQUAL_BINARY(statementType::empty,
                            check.type());
-  OCCA_ASSERT_EQUAL_BINARY(statementType::expression,
+  OCCA_ASSERT_EQUAL_BINARY(statementType::empty,
                            update.type());
   OCCA_ASSERT_EQUAL(1,
                     (int) forSmnt.children.size());
@@ -869,18 +892,6 @@ void testClassAccessLoading() {
 #undef access
 }
 
-void testAttributeLoading() {
-  statement_t *statement;
-
-  setStatement("@dim",
-               statementType::attribute);
-  setStatement("@dim(2)",
-               statementType::attribute);
-  setStatement("@dim(x=2, y=2)",
-               statementType::attribute);
-  // TODO: Test the argument values
-}
-
 void testPragmaLoading() {
   statement_t *statement;
 
@@ -945,6 +956,18 @@ void testBlockLoading() {
   OCCA_ASSERT_EQUAL_BINARY(statementType::switch_,
                            smnt[6]->type());
 }
+
+void testAttributeLoading() {
+  statement_t *statement;
+
+  setStatement("@dim",
+               statementType::attribute);
+  setStatement("@dim(2)",
+               statementType::attribute);
+  setStatement("@dim(x=2, y=2)",
+               statementType::attribute);
+  // TODO: Test the argument values
+}
 //======================================
 
 //---[ Errors ]------------------------
@@ -963,7 +986,6 @@ void testGotoErrors();
 
 void testErrors() {
   std::cerr << "\n---[ Testing parser errors ]--------------------\n\n";
-
   testExpressionErrors();
   testDeclarationErrors();
   testNamespaceErrors();
@@ -974,8 +996,9 @@ void testErrors() {
   testSwitchErrors();
   testJumpsErrors();
   testClassAccessErrors();
-  // testAttributeErrors();
   testGotoErrors();
+  // testAttributeErrors();
+  std::cerr << "==============================================\n\n";
 }
 
 void testExpressionErrors() {
@@ -1006,17 +1029,21 @@ void testIfErrors() {
   parseSource("if (true)");
   parseSource("if () {}");
   parseSource("if (if (true) {}) {}");
+  parseSource("if (;;) {}");
 }
 
 void testForErrors() {
   parseSource("for () {}");
   parseSource("for (;) {}");
   parseSource("for (;;)");
+  parseSource("for (;;;;) {}");
 }
 
 void testWhileErrors() {
+  parseSource("while (;;) {}");
   parseSource("do {};");
   parseSource("do;");
+  parseSource("do {} while (;;);");
   parseSource("do {} while (true)");
   parseSource("do ; while (true)");
   parseSource("do {} while (int i = 0)");
@@ -1027,6 +1054,7 @@ void testSwitchErrors() {
   parseSource("switch (true)");
   parseSource("switch (true) case 2:");
   parseSource("switch (true) default:");
+  parseSource("switch (;;) {}");
 }
 
 void testJumpsErrors() {
@@ -1042,11 +1070,11 @@ void testClassAccessErrors() {
   parseSource("private");
 }
 
-void testAttributeErrors() {
-}
-
 void testGotoErrors() {
   parseSource("goto");
   parseSource("goto;");
+}
+
+void testAttributeErrors() {
 }
 //======================================

@@ -147,6 +147,8 @@ namespace occa {
 
       statement_t *loadBlockStatement();
 
+      statement_t *loadEmptyStatement();
+
       statement_t *loadExpressionStatement();
       statement_t *loadExpressionStatement(const bool checkSemicolon);
 

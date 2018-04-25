@@ -115,6 +115,7 @@ namespace occa {
     }
 
     void emptyStatement::print(printer &pout) const {
+      pout << ';';
     }
     //====================================
 

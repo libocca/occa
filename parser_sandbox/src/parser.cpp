@@ -57,6 +57,7 @@ namespace occa {
       keywordPeek[keywordType::goto_]       = statementType::goto_;
 
       // Statement type -> loader function
+      statementLoaders[statementType::empty]       = &parser_t::loadEmptyStatement;
       statementLoaders[statementType::expression]  = &parser_t::loadExpressionStatement;
       statementLoaders[statementType::declaration] = &parser_t::loadDeclarationStatement;
       statementLoaders[statementType::block]       = &parser_t::loadBlockStatement;
@@ -261,6 +262,9 @@ namespace occa {
       }
       if (opType & operatorType::attribute) {
         return statementType::attribute;
+      }
+      if (opType & operatorType::semicolon) {
+        return statementType::empty;
       }
       return statementType::expression;
     }
@@ -693,8 +697,7 @@ namespace occa {
     bool parser_t::isEmpty() {
       const int sType = peek();
       return (!success ||
-              (sType & (statementType::none |
-                        statementType::empty)));
+              (sType & statementType::none));
     }
 
     statement_t* parser_t::getNextStatement() {
@@ -750,6 +753,12 @@ namespace occa {
       }
 
       return smnt;
+    }
+
+    statement_t* parser_t::loadEmptyStatement() {
+      // Skip [;] token
+      context.set(1);
+      return new emptyStatement();
     }
 
     statement_t* parser_t::loadExpressionStatement() {
@@ -826,7 +835,7 @@ namespace occa {
         return NULL;
       }
 
-      // Skip namespace
+      // Skip [namespace] token
       context.set(1);
       tokenVector names;
 
@@ -932,15 +941,25 @@ namespace occa {
         }
 
         if ((!success) ||
-            !(sType & (statementType::expression |
+            !(sType & (statementType::empty      |
+                       statementType::expression |
                        statementType::declaration))) {
           parenBegin->printError("Expected an expression or declaration statement");
           break;
         }
 
         ++count;
+        if (count > expectedCount) {
+          std::string message = "Too many statements, expected ";
+          message += ('0' + (char) expectedCount);
+          context.printError(message);
+          error = true;
+        }
+
         statement_t *smnt = NULL;
-        if (sType & statementType::expression) {
+        if (sType & statementType::empty) {
+          smnt = loadEmptyStatement();
+        } else if (sType & statementType::expression) {
           smnt = loadExpressionStatement(count < expectedCount);
         } else {
           smnt = loadDeclarationStatement(count < expectedCount);
@@ -1075,9 +1094,7 @@ namespace occa {
       // Last statement is optional
       if (count == 2) {
         ++count;
-        statements.push_back(
-          new expressionStatement(*(new emptyNode()))
-        );
+        statements.push_back(new emptyStatement());
       }
       if (count < 3) {
         std::string message;
