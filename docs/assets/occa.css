@@ -115,22 +115,19 @@ blockquote:before {
 }
 
 .markdown-section p.warn {
-    border-left: 4px solid #A7CEC0;
-}
-
-.markdown-section p.warn:before {
-    color: white;
-    content: "!" !important;
-    background-color: #A7CEC0 !important;
+    background-color: transparent;
+    border: 1px solid #E9692F;
+    padding: 1.5rem 1rem;
 }
 
 .markdown-section p.tip {
-    background-color: #FEF7F7;
-    padding: 1rem !important;
+    background-color: #F8F8F8;
+    border-left: 3px solid #FF6666;
+    padding: 1.5rem 1rem !important;
 }
 
 .markdown-section p.tip:before {
-    top: 17px !important;
+    top: 27px !important;
 }
 
 .markdown-section blockquote {

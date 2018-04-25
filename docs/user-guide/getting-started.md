@@ -264,11 +264,10 @@ The simplest example is to create and add two vectors together
 
 # Kernel Caching
 
-?> Compiled kernels are cached for fast consecutive builds!
-
 Note that when running `addVectors` is run a second time, the compilation info changes.
 Compiled kernels are cached and its binaries are reused if nothing changed in the compilation step (e.g. device information, kernel defines, etc)
 
+?> Compiled kernels are cached for fast consecutive builds!
 
 ::: tabs os
 
@@ -303,18 +302,3 @@ Compiled kernels are cached and its binaries are reused if nothing changed in th
     ```
 
 :::
-
-
-<!-- .. |Github Link| raw:: html -->
-
-<!--    <a href="https://github.com/libocca/occa" target="_blank"> -->
-<!--       <i class="github icon" style="margin-right: 0;"></i> -->
-<!--       Github -->
-<!--    </a> -->
-
-<!-- .. |Github Release Link| raw:: html -->
-
-<!--    <a href="https://github.com/libocca/occa/releases" target="_blank"> -->
-<!--       <i class="github icon" style="margin-right: 0;"></i> -->
-<!--       Github -->
-<!--    </a> -->

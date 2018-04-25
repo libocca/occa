@@ -9,7 +9,6 @@
   - [Unified Memory](/occa/unified-memory)
 - **OKL**
   - [Introduction](/okl/introduction)
-  - [Loop Parallelism](/okl/loop-parallelism)
   - [Memory Spaces](/okl/memory-spaces)
   - [Atomics](/okl/atomics)
   - [Tips](/okl/tips)

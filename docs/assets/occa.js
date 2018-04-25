@@ -74,6 +74,8 @@ occa.markdown.code = ({ lang, text }) => {
                                      Prism.languages[lang],
                                      lang);
 
+  console.log({ styledCode });
+
   // Wrap around pre + code
   return (
     (
@@ -83,7 +85,8 @@ occa.markdown.code = ({ lang, text }) => {
         + '</code>'
         + '</pre>'
     )
-      .replace(/([\s>])([*_])/g, '$1\\$2')
+      .replace(/[*]/g, '&#42;')
+      .replace(/[_]/g, '&#95;')
   );
 }
 
