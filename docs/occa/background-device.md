@@ -38,8 +38,7 @@ For example, this is how we would compile kernels using the _background device_
 - C
 
     ```c
-    occaKernel addVectors = occaBuildKernel(device,
-                                            "addVectors.okl",
+    occaKernel addVectors = occaBuildKernel("addVectors.okl",
                                             "addVectors");
     ```
 
