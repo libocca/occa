@@ -86,6 +86,11 @@ void testString() {
   OCCA_ASSERT_EQUAL(occa::json::string_, j.type);
   OCCA_ASSERT_EQUAL("\t", j.value_.string);
 
+  // Escape newline
+  j.load("\"A\\\nB\"");
+  OCCA_ASSERT_EQUAL(occa::json::string_, j.type);
+  OCCA_ASSERT_EQUAL("AB", j.value_.string);
+
   // Test unicode
   j.load("\"\\u0123 \\u4567 \\u89AB \\uCDEF\"");
   OCCA_ASSERT_EQUAL(occa::json::string_, j.type);

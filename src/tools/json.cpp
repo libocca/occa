@@ -110,6 +110,8 @@ namespace occa {
                    *c != '\0');
 
         switch (*c) {
+          // Escape newline character
+        case '\n': ++c; continue;
         case 'b':  value_.string += '\b'; break;
         case 'f':  value_.string += '\f'; break;
         case 'n':  value_.string += '\n'; break;
