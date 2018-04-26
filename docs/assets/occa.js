@@ -229,7 +229,8 @@ occa.docsifyPlugin = (hook, vm) => {
   hook.init(() => {
     Prism.languages.okl = Prism.languages.extend('cpp', {
       annotation: {
-		    pattern: /@[a-zA-Z][a-zA-Z0-9_]*\w/,
+        pattern: /@[a-zA-Z][a-zA-Z0-9_]*/,
+        greedy: true,
       },
     });
   });
