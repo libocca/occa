@@ -158,6 +158,10 @@ blockquote:before {
 
 
 /*---[ Attributes ]-------------------*/
+code .token.annotation {
+    color: #2980B9;
+}
+
 .transform-arrow {
     width: 1em;
     margin: 1em auto -0.5em auto;

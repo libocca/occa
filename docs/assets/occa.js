@@ -1,17 +1,9 @@
 var occa = occa || {};
 
-occa.languages = {
-  okl: 'cpp',
-};
-
 occa.languageLabels = {
   cpp: 'C++',
   okl: 'OKL',
 };
-
-occa.getLanguage = (language) => (
-  occa.languages[language] || language
-);
 
 occa.getLanguageLabel = (language) => (
   occa.languageLabels[language] || language.toUpperCase()
@@ -62,8 +54,6 @@ occa.markdown = {
 };
 
 occa.markdown.code = ({ lang, text }) => {
-  const language = occa.getLanguage(lang);
-
   // Remove indentation
   const initIndent = text.match(/^\s*/)[0];
   if (initIndent.length) {
@@ -82,14 +72,14 @@ occa.markdown.code = ({ lang, text }) => {
 
   // Generate highlighted HTML
   const styledCode = Prism.highlight(text,
-                                     Prism.languages[language],
-                                     language);
+                                     Prism.languages[lang],
+                                     lang);
 
   // Wrap around pre + code
   return (
     (
       `<pre data-lang="${occa.getLanguageLabel(lang)}">`
-        + `<code class="lang-${language}">`
+        + `<code class="lang-${lang}">`
         + `${styledCode}\n`
         + '</code>'
         + '</pre>'
@@ -236,6 +226,14 @@ occa.addTabs = (content) => {
 //======================================
 
 occa.docsifyPlugin = (hook, vm) => {
+  hook.init(() => {
+    Prism.languages.okl = Prism.languages.extend('cpp', {
+      annotation: {
+		    pattern: /@[a-zA-Z][a-zA-Z0-9_]*\w/,
+      },
+    });
+  });
+
   hook.beforeEach((content) => {
     content = occa.addHeader(vm, content);
     content = occa.addTabs(content);
