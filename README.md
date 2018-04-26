@@ -22,6 +22,8 @@ OCCA gives developers the ability to target devices at run-time by using run-tim
 
 * [Documentation](http://www.libocca.org)
 
+&nbsp;
+
 ### Installing
 
 ```bash
@@ -29,6 +31,8 @@ git clone https://github.com/libocca/occa.git
 cd occa
 make -j 4
 ```
+
+&nbsp;
 
 ### Environment
 
@@ -48,6 +52,8 @@ export PATH+=":${PWD}/bin"
 export DYLD_LIBRARY_PATH+=":${PWD}/lib"
 ```
 
+&nbsp;
+
 ### Hello World
 
 ```bash
@@ -55,6 +61,8 @@ cd examples/1_add_vectors/cpp
 make
 ./main
 ```
+
+&nbsp;
 
 ### CLI
 
@@ -79,6 +87,8 @@ Commands:
 Arguments:
   COMMAND    Command to run
 ```
+
+&nbsp;
 
 ### Bash Autocomplete
 
