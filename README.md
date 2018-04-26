@@ -21,6 +21,9 @@ OCCA gives developers the ability to target devices at run-time by using run-tim
 ### Links
 
 * [Documentation](http://libocca.org)
+* **Want to contribute?** Checkout the ['Good First Issue' issues](https://github.com/libocca/occa/issues?q=is%3Aopen+is%3Aissue+label%3A%22Good+First+Issue%22)
+* **More of a challenge?** Checkout the ['Help Needed' issues](https://github.com/libocca/occa/issues?utf8=%E2%9C%93&q=is%3Aopen+is%3Aissue+label%3A%22Help+Wanted%22)
+* [🌟 Who's using OCCA?](https://github.com/libocca/occa/issues/105)
 
 &nbsp;
 
