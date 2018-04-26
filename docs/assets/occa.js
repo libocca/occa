@@ -1,8 +1,17 @@
 var occa = occa || {};
 
+occa.languages = {
+  okl: 'cpp',
+};
+
 occa.languageLabels = {
   cpp: 'C++',
+  okl: 'OKL',
 };
+
+occa.getLanguage = (language) => (
+  occa.languages[language] || language
+);
 
 occa.getLanguageLabel = (language) => (
   occa.languageLabels[language] || language.toUpperCase()
@@ -53,6 +62,8 @@ occa.markdown = {
 };
 
 occa.markdown.code = ({ lang, text }) => {
+  const language = occa.getLanguage(lang);
+
   // Remove indentation
   const initIndent = text.match(/^\s*/)[0];
   if (initIndent.length) {
@@ -71,16 +82,14 @@ occa.markdown.code = ({ lang, text }) => {
 
   // Generate highlighted HTML
   const styledCode = Prism.highlight(text,
-                                     Prism.languages[lang],
-                                     lang);
-
-  console.log({ styledCode });
+                                     Prism.languages[language],
+                                     language);
 
   // Wrap around pre + code
   return (
     (
       `<pre data-lang="${occa.getLanguageLabel(lang)}">`
-        + `<code class="lang-${lang}">`
+        + `<code class="lang-${language}">`
         + `${styledCode}\n`
         + '</code>'
         + '</pre>'

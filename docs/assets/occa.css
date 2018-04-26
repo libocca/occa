@@ -81,6 +81,11 @@ pre:after {
 .markdown-section code {
     margin: 0 !important;
     padding: 0 !important;
+    background-color: transparent !important;
+}
+
+blockquote pre {
+    border: 1px solid #F0B794 !important;
 }
 /*====================================*/
 
@@ -132,19 +137,13 @@ blockquote:before {
 
 .markdown-section blockquote {
     padding: 1rem !important;
-    background-color: #DDECF4;
+    background-color: #F8F8F8;
 }
 
 .markdown-section blockquote > p {
     margin: 0 !important;
     font-weight: normal !important;
     color: #34495E !important;
-}
-
-.markdown-section blockquote:before {
-    color: white;
-    content: "#" !important;
-    background-color: #2A7FB9 !important;
 }
 
 .markdown-section p > code {
@@ -154,6 +153,15 @@ blockquote:before {
 
 .markdown-section p.warn > code {
     color: #F54D4D !important;
+}
+/*====================================*/
+
+
+/*---[ Attributes ]-------------------*/
+.transform-arrow {
+    width: 1em;
+    margin: 1em auto -0.5em auto;
+    color: #2980B9;
 }
 /*====================================*/
 

@@ -9,10 +9,9 @@
   - [Unified Memory](/occa/unified-memory)
 - **OKL**
   - [Introduction](/okl/introduction)
-  - [Memory Spaces](/okl/memory-spaces)
+  - [Attributes](/okl/attributes)
+  - [Loops in Depth](/okl/loops-in-depth)
   - [Atomics](/okl/atomics)
-  - [Tips](/okl/tips)
-  - [Common Mistakes](/okl/common-mistakes)
 - **API**
   - [Properties](/api/properties)
   - [Device](/api/device)

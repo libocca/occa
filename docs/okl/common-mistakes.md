@@ -1,3 +1,0 @@
-# Common Mistakes
-
-!> TODO: Missing
