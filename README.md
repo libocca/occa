@@ -1,16 +1,26 @@
-<a name="OCCA"></a>
-# OCCA
+<p align="center">
+  <a href="https://libocca.org">
+    <img alt="occa" src="./docs/_images/blue-logo.svg" width=250>
+  </a>
+</p>
 
-[![Build Status](https://travis-ci.org/libocca/occa.svg)](https://travis-ci.org/libocca/occa)
-[![codecov.io](https://codecov.io/github/libocca/occa/coverage.svg)](https://codecov.io/github/libocca/occa)
-[![Documentation](https://readthedocs.org/projects/occa/badge/?version=latest)](https://occa.readthedocs.io/en/latest/?badge=latest)
-[![Join the chat at https://gitter.im/libocca/occa](https://badges.gitter.im/libocca/occa.svg)](https://gitter.im/libocca/occa?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+<p align="center">
+  <a href="https://travis-ci.org/libocca/occa"><img alt="Build Status" src="https://travis-ci.org/libocca/occa.svg"></a>
+  <a href="https://codecov.io/github/libocca/occa"><img alt="codecov.io" src="https://codecov.io/github/libocca/occa/coverage.svg"></a>
+  <a href="https://gitter.im/libocca/occa?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge"><img alt="Gitter" src="https://badges.gitter.im/libocca/occa.svg"></a>
+</p>
+
+---
 
 OCCA is an open-source (MIT license) library used to program current multi-core/many-core architectures.
 Devices (such as CPUs, GPUs, Intel's Xeon Phi, FPGAs, etc) are abstracted using an offload-model for application development and programming for the devices is done through a C-based (OKL) kernel.
 OCCA gives developers the ability to target devices at run-time by using run-time compilation for device kernels.
 
-### Installing
+## Links
+
+* [Documentation](https://libocca.org)
+
+## Installing
 
 ```bash
 git clone https://github.com/libocca/occa.git
@@ -18,37 +28,35 @@ cd occa
 make -j 4
 ```
 
-### Environment
+## Environment
 
 Setup environment variables inside the `occa` directory
 
-#### Linux
+### Linux
 
 ```bash
-export OCCA_DIR="${PWD}"
-export PATH+=":${OCCA_DIR}"
-export LD_LIBRARY_PATH+=":${OCCA_DIR}/lib"
+export PATH+=":${PWD}/bin"
+export LD_LIBRARY_PATH+=":${PWD}/lib"
 ```
 
-#### Mac OSX
+## Mac OSX
 
 ```bash
-export OCCA_DIR="${PWD}"
-export PATH+=":${OCCA_DIR}"
-export DYLD_LIBRARY_PATH+=":${OCCA_DIR}/lib"
+export PATH+=":${PWD}/bin"
+export DYLD_LIBRARY_PATH+=":${PWD}/lib"
 ```
 
-### Hello World
+## Hello World
 
 ```bash
-cd ${OCCA_DIR}/examples/1_add_vectors/cpp
+cd examples/1_add_vectors/cpp
 make
 ./main
 ```
 
-### occa Command
+## CLI
 
-There is an executable `occa` provided inside `${OCCA_DIR}/bin`
+There is an executable `occa` provided inside `bin`
 
 ```bash
 > occa --help
@@ -70,22 +78,8 @@ Arguments:
   COMMAND    Command to run
 ```
 
-#### Bash Autocomplete
+## Bash Autocomplete
 
 ```bash
 . <(occa autocomplete bash)
 ```
-
-### Useful environment variables:
-| Environment Variable       | Description                                                                         |
-|----------------------------|-------------------------------------------------------------------------------------|
-| OCCA_DIR                   | Directory where OCCA is installed, overwrites `occa::OCCA_DIR` set at compile-time  |
-| OCCA_CACHE_DIR             | Directory where kernels get cached (Default: `${HOME}/.occa`)                       |
-| OCCA_INCLUDE_PATH          | Path to find headers, such as CUDA and OpenCL headers (`:` delimited)               |
-| OCCA_LIBRARY_PATH          | Path to find .so libraries (`:` delimited)                                          |
-| OCCA_CXX                   | C++ compiler used for run-time kernel compilation                                   |
-| OCCA_CXXFLAGS              | C++ compiler flags used for run-time kernel compilation                             |
-| OCCA_OPENCL_COMPILER_FLAGS | Additional OpenCL flags when compiling kernels                                      |
-| OCCA_CUDA_COMPILER         | Compiler used for run-time CUDA kernel compilation                                  |
-| OCCA_CUDA_COMPILER_FLAGS   | CUDA compiler flags used for run-time kernel compilation                            |
-| OCCA_VERBOSE               | Verbose logging is suppresed if set to either: `0, n, no, false` (Default: `false`) |
