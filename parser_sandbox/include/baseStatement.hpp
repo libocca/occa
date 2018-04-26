@@ -27,13 +27,11 @@
 #include "printer.hpp"
 #include "scope.hpp"
 #include "trie.hpp"
+#include "attribute.hpp"
 
 namespace occa {
   namespace lang {
     class statement_t;
-    class attribute_t;
-
-    class attribute_t {};
 
     typedef std::vector<statement_t*> statementPtrVector;
     typedef std::vector<attribute_t>  attributeVector_t;
