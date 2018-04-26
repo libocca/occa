@@ -76,6 +76,10 @@ yx[2 + (1 * 3)] = 0;
 
 `@tile` is used for auto-tiling loops
 
+!>
+    Tiling can cause the iterator to go **out of bounds**.
+    To automatically add a check, use `@safeTile`.
+
 ```okl
 for (int i = 0; i < N; ++i; @tile(16)) {
   // work
@@ -96,16 +100,34 @@ for (int iTile = 0; iTile < N; iTile += 16) {
 }
 ```
 
-!>
-    Tiling can cause the iterator to go **out of bounds**.
-    To automatically add a check, use `@safeTile`.
+Attributes to split loops can be passed as additional arguments
+
+```okl
+for (int i = 0; i < N; ++i; @tile(16, @outer, @inner)) {
+  // work
+}
+```
+
+<template>
+  <div class="transform-arrow">
+    <v-icon>arrow_downward</v-icon>
+  </div>
+</template>
+
+```okl
+for (int iTile = 0; iTile < N; iTile += 16; @outer) {
+  for (int i = iTile; i < (iTile + 16); ++i; @inner) {
+    // work
+  }
+}
+```
 
 ## @safeTile
 
-Similar to `@tile`, `@safeTile` auto-tiles a loop but also adds a check in the inner loop
+`@safeTile` is the same as `@tile` but adds a check in the inner loop to prevent **out-of-bounds** accesses
 
 ```okl
-for (int i = 0; i < N; ++i; @tile(16)) {
+for (int i = 0; i < N; ++i; @safeTile(16)) {
   // work
 }
 ```

@@ -64,6 +64,8 @@ workgroup / workitem
 <div style="width: 26px; display: inline-block"></div>
 `@outer` / `@inner`
 
+?> Checkout the [Loops in Depth](/okl/loops-in-depth) section for more details about outer and inner loops
+
 ## Outer Loops
 
 Outer loops (for-loops tagged with an `@outer` attribute) make the assumption that all work inside can be completely parallelized.

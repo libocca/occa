@@ -59,7 +59,7 @@ The string used to initialize the device
 "mode: 'Serial'"
 ```
 
-creates an `occa::properties` object which is then passed to the device. <!-- TODO -->
+creates an `occa::properties` object which is then passed to the device.
 Properties uses JSON format with some shorthand notations found in JavaScript.
 
 ```js
@@ -363,4 +363,4 @@ occaFree(properties);
 occaFree(stream);
 ```
 
-For more information, checkout the [C API](/occa/introduction) section. <!-- TODO -->
+For more information, checkout the API sections.

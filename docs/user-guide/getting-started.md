@@ -49,7 +49,7 @@ Use git to download OCCA or download the latest release `.tar.gz` from |Github R
 OCCA comes with a command called `occa`, found inside the `bin` directory.
 The purpose of `occa` is to help gather device information as well as other useful utilities
 
-For more information, please see the [Command-Line Interface](getting-started) section. <!-- TODO -->
+For more information, please see the [Command-Line Interface](user-guide/command-line-interface) section.
 
 ::: tabs os
 
