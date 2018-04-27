@@ -101,6 +101,14 @@ namespace occa {
       int peek();
       int uncachedPeek();
 
+      void setupPeek();
+
+      void skipNewlines();
+      void loadAttributes();
+      void loadAttribute();
+
+      void addAttributesTo(statement_t *smnt);
+
       int peekIdentifier(const int tokenIndex);
       bool isGotoLabel(const int tokenIndex);
 
@@ -148,13 +156,6 @@ namespace occa {
       //---[ Loader Helpers ]-----------
       bool isEmpty();
       statement_t* getNextStatement();
-
-      void setupStatementLoad();
-      void skipNewlines();
-      void loadAttributes();
-      void loadAttribute();
-
-      void addAttributesTo(statement_t *smnt);
       //================================
 
       //---[ Statement Loaders ]--------

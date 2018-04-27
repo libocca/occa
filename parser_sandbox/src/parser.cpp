@@ -193,6 +193,7 @@ namespace occa {
     int parser_t::peek() {
       const int contextPosition = context.position();
       if (lastPeekPosition != contextPosition) {
+        setupPeek();
         lastPeek         = uncachedPeek();
         lastPeekPosition = contextPosition;
       }
@@ -237,6 +238,94 @@ namespace occa {
       return statementType::none;
     }
 
+    void parser_t::setupPeek() {
+      int contextPos = -1;
+      while (success &&
+             context.size() &&
+             (contextPos != context.position())) {
+        contextPos = context.position();
+        skipNewlines();
+        loadAttributes();
+      }
+      if (success) {
+        const int attributeCount = (int) attributes.size();
+        for (int i = 0; i < attributeCount; ++i) {
+          attributes[i]->beforeStatementLoad(*this);
+        }
+      }
+    }
+
+    void parser_t::skipNewlines() {
+      const int end = context.size();
+      int start = 0;
+      for (start = 0; start < end; ++start) {
+        if (!(context[start]->type() & tokenType::newline)) {
+          break;
+        }
+      }
+      if (start) {
+        context.set(start);
+      }
+    }
+
+    void parser_t::loadAttributes() {
+      while (success &&
+             (getOperatorType(context[0]) & operatorType::attribute)) {
+        loadAttribute();
+      }
+    }
+
+    void parser_t::loadAttribute() {
+      // Skip [@] token
+      context.set(1);
+
+      if (!(context[0]->type() & tokenType::identifier)) {
+        context.printError("Expected a namespace name");
+        success = false;
+        return;
+      }
+
+      identifierToken &nameToken = (context[0]
+                                    ->clone()
+                                    ->to<identifierToken>());
+      context.set(1);
+
+      nameToAttributeMap::iterator it = attributeMap.find(nameToken.value);
+      if (it == attributeMap.end()) {
+        nameToken.printError("Unknown attribute");
+        success = false;
+        return;
+      }
+
+      tokenRangeVector argRanges;
+      if (getOperatorType(context[0]) & operatorType::parenthesesStart) {
+        context.pushPairRange(0);
+        getArgumentRanges(argRanges);
+        context.popAndSkipPair();
+      }
+      if (!success) {
+        return;
+      }
+
+      attribute_t *attr = it->second->create(*this, argRanges);
+      attributes.push_back(attr);
+
+      attr->onAttributeLoad(*this);
+    }
+
+    void parser_t::addAttributesTo(statement_t *smnt) {
+      if (!smnt) {
+        return;
+      }
+
+      const int attributeCount = (int) attributes.size();
+      for (int i = 0; i < attributeCount; ++i) {
+        attribute_t *attr = attributes[i];
+        smnt->addAttribute(*attr);
+        attr->onStatementLoad(*this, *smnt);
+      }
+    }
+
     int parser_t::peekIdentifier(const int tokenIndex) {
       token_t *token     = context[tokenIndex];
       keyword_t *keyword = getKeyword(token);
@@ -277,9 +366,6 @@ namespace occa {
       const opType_t opType = getOperatorType(context[tokenIndex]);
       if (opType & operatorType::braceStart) {
         return statementType::block;
-      }
-      if (opType & operatorType::attribute) {
-        return statementType::attribute;
       }
       if (opType & operatorType::semicolon) {
         return statementType::empty;
@@ -707,8 +793,6 @@ namespace occa {
         return NULL;
       }
 
-      setupStatementLoad();
-
       const int sType = peek();
 
       statementLoaderMap::iterator it = statementLoaders.find(sType);
@@ -730,94 +814,6 @@ namespace occa {
       OCCA_FORCE_ERROR("[Waldo] Oops, forgot to implement a statement loader"
                        " for [" << stringifySetBits(sType) << "]");
       return NULL;
-    }
-
-    void parser_t::setupStatementLoad() {
-      int contextPos = 0;
-      while (success &&
-             context.size() &&
-             (contextPos != context.position())) {
-        contextPos = context.position();
-        skipNewlines();
-        loadAttributes();
-      }
-      if (success) {
-        const int attributeCount = (int) attributes.size();
-        for (int i = 0; i < attributeCount; ++i) {
-          attributes[i]->beforeStatementLoad(*this);
-        }
-      }
-    }
-
-    void parser_t::skipNewlines() {
-      const int end = context.size();
-      int start = 0;
-      for (start = 0; start < end; ++start) {
-        if (!(context[start]->type() & tokenType::newline)) {
-          break;
-        }
-      }
-      if (start) {
-        context.set(start);
-      }
-    }
-
-    void parser_t::loadAttributes() {
-      while (success &&
-             (getOperatorType(context[0]) & operatorType::attribute)) {
-        loadAttribute();
-      }
-    }
-
-    void parser_t::loadAttribute() {
-      // Skip [@] token
-      context.set(1);
-
-      if (!(context[0]->type() & tokenType::identifier)) {
-        context.printError("Expected a namespace name");
-        success = false;
-        return;
-      }
-
-      identifierToken &nameToken = (context[0]
-                                    ->clone()
-                                    ->to<identifierToken>());
-      context.set(1);
-
-      nameToAttributeMap::iterator it = attributeMap.find(nameToken.value);
-      if (it == attributeMap.end()) {
-        nameToken.printError("Unknown attribute");
-        success = false;
-        return;
-      }
-
-      tokenRangeVector argRanges;
-      if (getOperatorType(context[0]) & operatorType::parenthesesStart) {
-        context.pushPairRange(0);
-        getArgumentRanges(argRanges);
-        context.popAndSkipPair();
-      }
-      if (!success) {
-        return;
-      }
-
-      attribute_t *attr = it->second->create(*this, argRanges);
-      attributes.push_back(attr);
-
-      attr->onAttributeLoad(*this);
-    }
-
-    void parser_t::addAttributesTo(statement_t *smnt) {
-      if (!smnt) {
-        return;
-      }
-
-      const int attributeCount = (int) attributes.size();
-      for (int i = 0; i < attributeCount; ++i) {
-        attribute_t *attr = attributes[i];
-        smnt->addAttribute(*attr);
-        attr->onStatementLoad(*this, *smnt);
-      }
     }
     //==================================
 

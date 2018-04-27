@@ -169,11 +169,6 @@ void testPeek() {
   testStatementPeek("return 0;",
                     statementType::return_);
 
-  testStatementPeek("@attr",
-                    statementType::attribute);
-  testStatementPeek("@attr()",
-                    statementType::attribute);
-
   testStatementPeek("public:",
                     statementType::classAccess);
   testStatementPeek("protected:",
@@ -542,7 +537,7 @@ void testLoading() {
   testPragmaLoading();
   testGotoLoading();
   testBlockLoading();
-  // testAttributeLoading();
+  testAttributeLoading();
 }
 
 void testExpressionLoading() {
@@ -958,15 +953,9 @@ void testBlockLoading() {
 }
 
 void testAttributeLoading() {
-  statement_t *statement;
-
-  setStatement("@dim",
-               statementType::attribute);
-  setStatement("@dim(2)",
-               statementType::attribute);
-  setStatement("@dim(x=2, y=2)",
-               statementType::attribute);
-  // TODO: Test the argument values
+  parseSource("@dim");
+  parseSource("@dim(2)");
+  parseSource("@dim(x=2, y=2)");
 }
 //======================================
 
@@ -997,7 +986,7 @@ void testErrors() {
   testJumpsErrors();
   testClassAccessErrors();
   testGotoErrors();
-  // testAttributeErrors();
+  testAttributeErrors();
   std::cerr << "==============================================\n\n";
 }
 
@@ -1090,5 +1079,7 @@ void testGotoErrors() {
 }
 
 void testAttributeErrors() {
+  parseBadSource("@attr");
+  parseBadSource("@attr()");
 }
 //======================================
