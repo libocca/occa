@@ -244,10 +244,11 @@ occa.docsifyPlugin = (hook, vm) => {
 
   hook.doneEach(() => {
     // Add API styling
-    if (!vm.route.file.startsWith('api/')) {
-      return;
-    }
     const dom = document.querySelector('#main');
-    dom.classList.add('api-container');
+    if (!vm.route.file.startsWith('api/')) {
+      dom.classList.remove('api-container');
+    } else {
+      dom.classList.add('api-container');
+    }
   });
 };
