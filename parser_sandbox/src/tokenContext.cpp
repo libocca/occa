@@ -149,6 +149,10 @@ namespace occa {
       }
     }
 
+    void tokenContext::set(const tokenRange &range) {
+      set(range.start, range.end);
+    }
+
     void tokenContext::push() {
       stack.push_back(tp);
     }
@@ -162,6 +166,10 @@ namespace occa {
                             const int end) {
       stack.push_back(tp);
       set(start, end);
+    }
+
+    void tokenContext::push(const tokenRange &range) {
+      push(range.start, range.end);
     }
 
     void tokenContext::pushPairRange(const int pairStart) {

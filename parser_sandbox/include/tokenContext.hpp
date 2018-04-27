@@ -26,11 +26,15 @@
 #include <map>
 #include <vector>
 
+#include "occa/types.hpp"
+
 namespace occa {
   namespace lang {
     class tokenRange;
     class token_t;
     class exprNode;
+
+    typedef bitfield opType_t;
 
     typedef std::vector<token_t*>   tokenVector;
     typedef std::list<tokenRange>   tokenRangeList;
@@ -71,11 +75,13 @@ namespace occa {
       void set(const int start);
       void set(const int start,
                const int end);
+      void set(const tokenRange &range);
 
       void push();
       void push(const int start);
       void push(const int start,
                 const int end);
+      void push(const tokenRange &range);
 
       void pushPairRange(const int pairStart);
 

@@ -38,13 +38,13 @@ namespace occa {
   namespace lang {
     class parser_t;
 
-    typedef stream<token_t*>          tokenStream;
-    typedef std::vector<statement_t*> statementVector;
-    typedef std::vector<attribute_t*> attributeVector;
-    typedef std::map<int, int>        keywordToStatementMap;
+    typedef stream<token_t*>   tokenStream;
+    typedef std::map<int, int> keywordToStatementMap;
 
     typedef statement_t* (parser_t::*statementLoader_t)();
     typedef std::map<int, statementLoader_t> statementLoaderMap;
+
+    typedef std::map<std::string, attribute_t*> nameToAttributeMap;
 
     class parser_t {
     public:
@@ -62,6 +62,7 @@ namespace occa {
       keywordTrie keywords;
       keywordToStatementMap keywordPeek;
       statementLoaderMap statementLoaders;
+      nameToAttributeMap attributeMap;
 
       int lastPeek;
       int lastPeekPosition;
@@ -69,7 +70,7 @@ namespace occa {
 
       blockStatement root;
       blockStatement *up;
-      attributeVector attributes;
+      attributePtrVector attributes;
 
       bool success;
       //================================
@@ -90,6 +91,10 @@ namespace occa {
 
       keyword_t* getKeyword(token_t *token);
       opType_t getOperatorType(token_t *token);
+      //================================
+
+      //---[ Customization ]------------
+      void addAttribute(attribute_t *attr);
       //================================
 
       //---[ Peek ]---------------------
@@ -144,8 +149,12 @@ namespace occa {
       bool isEmpty();
       statement_t* getNextStatement();
 
+      void setupStatementLoad();
       void skipNewlines();
       void loadAttributes();
+      void loadAttribute();
+
+      void addAttributesTo(statement_t *smnt);
       //================================
 
       //---[ Statement Loaders ]--------
@@ -164,7 +173,7 @@ namespace occa {
       statement_t *loadTypeDeclStatement();
 
       void checkIfConditionStatementExists();
-      void loadConditionStatements(statementVector &statements,
+      void loadConditionStatements(statementPtrVector &statements,
                                    const int expectedCount);
       statement_t* loadConditionStatement();
 

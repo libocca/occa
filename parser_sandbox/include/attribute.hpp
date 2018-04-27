@@ -22,9 +22,30 @@
 #ifndef OCCA_LANG_ATTRIBUTE_HEADER
 #define OCCA_LANG_ATTRIBUTE_HEADER
 
+#include <iostream>
+
+#include "tokenContext.hpp"
+
 namespace occa {
   namespace lang {
+    class parser_t;
+    class statement_t;
+
     class attribute_t {
+    public:
+      virtual ~attribute_t();
+
+      virtual std::string name() const = 0;
+
+      virtual attribute_t* create(parser_t &parser,
+                                  const tokenRangeVector &argRanges) = 0;
+
+      virtual void onAttributeLoad(parser_t &parser);
+
+      virtual void beforeStatementLoad(parser_t &parser);
+
+      virtual void onStatementLoad(parser_t &parser,
+                                   statement_t &smnt);
     };
   }
 }

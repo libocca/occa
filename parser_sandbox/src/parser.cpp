@@ -19,6 +19,7 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  */
+#include "attribute.hpp"
 #include "expression.hpp"
 #include "parser.hpp"
 #include "typeBuiltins.hpp"
@@ -92,6 +93,13 @@ namespace occa {
       tokenizer.clear();
       preprocessor.clear();
       context.clear();
+
+      nameToAttributeMap::iterator it = attributeMap.begin();
+      while (it != attributeMap.end()) {
+        delete it->second;
+        ++it;
+      }
+      attributeMap.clear();
 
       lastPeek = 0;
       lastPeekPosition = -1;
@@ -172,6 +180,12 @@ namespace occa {
         return operatorType::none;
       }
       return token->to<operatorToken>().getOpType();
+    }
+    //==================================
+
+    //---[ Customization ]--------------
+    void parser_t::addAttribute(attribute_t *attr) {
+      attributeMap[attr->name()] = attr;
     }
     //==================================
 
@@ -693,10 +707,9 @@ namespace occa {
         return NULL;
       }
 
-      const int sType = peek();
+      setupStatementLoad();
 
-      skipNewlines();
-      loadAttributes();
+      const int sType = peek();
 
       statementLoaderMap::iterator it = statementLoaders.find(sType);
       if (it != statementLoaders.end()) {
@@ -706,14 +719,34 @@ namespace occa {
           delete smnt;
           smnt = NULL;
         }
+
         // [checkSemicolon] is only valid for one statement
         checkSemicolon = true;
+        addAttributesTo(smnt);
+
         return smnt;
       }
 
       OCCA_FORCE_ERROR("[Waldo] Oops, forgot to implement a statement loader"
                        " for [" << stringifySetBits(sType) << "]");
       return NULL;
+    }
+
+    void parser_t::setupStatementLoad() {
+      int contextPos = 0;
+      while (success &&
+             context.size() &&
+             (contextPos != context.position())) {
+        contextPos = context.position();
+        skipNewlines();
+        loadAttributes();
+      }
+      if (success) {
+        const int attributeCount = (int) attributes.size();
+        for (int i = 0; i < attributeCount; ++i) {
+          attributes[i]->beforeStatementLoad(*this);
+        }
+      }
     }
 
     void parser_t::skipNewlines() {
@@ -730,6 +763,61 @@ namespace occa {
     }
 
     void parser_t::loadAttributes() {
+      while (success &&
+             (getOperatorType(context[0]) & operatorType::attribute)) {
+        loadAttribute();
+      }
+    }
+
+    void parser_t::loadAttribute() {
+      // Skip [@] token
+      context.set(1);
+
+      if (!(context[0]->type() & tokenType::identifier)) {
+        context.printError("Expected a namespace name");
+        success = false;
+        return;
+      }
+
+      identifierToken &nameToken = (context[0]
+                                    ->clone()
+                                    ->to<identifierToken>());
+      context.set(1);
+
+      nameToAttributeMap::iterator it = attributeMap.find(nameToken.value);
+      if (it == attributeMap.end()) {
+        nameToken.printError("Unknown attribute");
+        success = false;
+        return;
+      }
+
+      tokenRangeVector argRanges;
+      if (getOperatorType(context[0]) & operatorType::parenthesesStart) {
+        context.pushPairRange(0);
+        getArgumentRanges(argRanges);
+        context.popAndSkipPair();
+      }
+      if (!success) {
+        return;
+      }
+
+      attribute_t *attr = it->second->create(*this, argRanges);
+      attributes.push_back(attr);
+
+      attr->onAttributeLoad(*this);
+    }
+
+    void parser_t::addAttributesTo(statement_t *smnt) {
+      if (!smnt) {
+        return;
+      }
+
+      const int attributeCount = (int) attributes.size();
+      for (int i = 0; i < attributeCount; ++i) {
+        attribute_t *attr = attributes[i];
+        smnt->addAttribute(*attr);
+        attr->onStatementLoad(*this, *smnt);
+      }
     }
     //==================================
 
@@ -928,7 +1016,7 @@ namespace occa {
       }
     }
 
-    void parser_t::loadConditionStatements(statementVector &statements,
+    void parser_t::loadConditionStatements(statementPtrVector &statements,
                                            const int expectedCount) {
       // Load expression/declaration
       token_t *parenBegin = context[0];
@@ -992,7 +1080,7 @@ namespace occa {
     }
 
     statement_t* parser_t::loadConditionStatement() {
-      statementVector statements;
+      statementPtrVector statements;
       loadConditionStatements(statements, 1);
       if (!statements.size()) {
         return NULL;
@@ -1108,7 +1196,7 @@ namespace occa {
 
       token_t *parenEnd = context.getClosingPairToken(0);
 
-      statementVector statements;
+      statementPtrVector statements;
       loadConditionStatements(statements, 3);
       int count = (int) statements.size();
       // Last statement is optional

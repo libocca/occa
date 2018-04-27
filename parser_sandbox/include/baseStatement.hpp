@@ -34,7 +34,7 @@ namespace occa {
     class statement_t;
 
     typedef std::vector<statement_t*> statementPtrVector;
-    typedef std::vector<attribute_t>  attributeVector_t;
+    typedef std::vector<attribute_t*> attributePtrVector;
 
     namespace statementType {
       extern const int none;
@@ -74,7 +74,7 @@ namespace occa {
     class statement_t {
     public:
       statement_t *up;
-      attributeVector_t attributes;
+      attributePtrVector attributes;
 
       statement_t();
 
@@ -108,7 +108,7 @@ namespace occa {
 
       virtual scope_t* getScope();
 
-      void addAttribute(const attribute_t &attribute);
+      void addAttribute(attribute_t &attribute);
 
       virtual void print(printer &pout) const = 0;
 

@@ -75,10 +75,10 @@ namespace occa {
       return NULL;
     }
 
-    void statement_t::addAttribute(const attribute_t &attribute) {
+    void statement_t::addAttribute(attribute_t &attribute) {
       // TODO: Warning if attribute already exists
       // Override last attribute by default
-      attributes.push_back(attribute);
+      attributes.push_back(&attribute);
     }
 
     std::string statement_t::toString() const {

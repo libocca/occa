@@ -20,8 +20,17 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  */
 #include "attribute.hpp"
+#include "parser.hpp"
 
 namespace occa {
   namespace lang {
+    attribute_t::~attribute_t() {}
+
+    void attribute_t::onAttributeLoad(parser_t &parser) {}
+
+    void attribute_t::beforeStatementLoad(parser_t &parser) {}
+
+    void attribute_t::onStatementLoad(parser_t &parser,
+                                      statement_t &smnt) {}
   }
 }
