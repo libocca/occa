@@ -108,18 +108,16 @@ namespace occa {
 
     void parser_t::parseSource(const std::string &source) {
       setSource(source, false);
-      if (!success) {
-        return;
+      if (success) {
+        parseTokens();
       }
-      parseTokens();
     }
 
     void parser_t::parseFile(const std::string &filename) {
       setSource(filename, true);
-      if (!success) {
-        return;
+      if (success) {
+        parseTokens();
       }
-      parseTokens();
     }
 
     void parser_t::setSource(const std::string &source,
@@ -815,12 +813,14 @@ namespace occa {
         if (!success) {
           break;
         }
-        // Skip the , or ;
-        if (!context.size()) {
-          break;
-        }
-        if (!(getOperatorType(context[0]) & operatorType::comma)) {
-          context.set(1);
+        const opType_t opType = getOperatorType(context[0]);
+        if (!(opType & operatorType::comma)) {
+          if (opType & operatorType::semicolon) {
+            context.set(1);
+          } else if (checkSemicolon) {
+            context.printErrorAtEnd("Expected a ;");
+            success = false;
+          }
           break;
         }
         context.set(1);
@@ -1008,7 +1008,10 @@ namespace occa {
 
       statement_t *condition = loadConditionStatement();
       if (!condition) {
-        context.printError("Missing condition for [if] statement");
+        if (success) {
+          success = false;
+          context.printError("Missing condition for [if] statement");
+        }
         return NULL;
       }
 
@@ -1060,7 +1063,10 @@ namespace occa {
 
       statement_t *condition = loadConditionStatement();
       if (!condition) {
-        context.printError("Missing condition for [else if] statement");
+        if (success) {
+          success = false;
+          context.printError("Missing condition for [else if] statement");
+        }
         return NULL;
       }
 
@@ -1158,7 +1164,10 @@ namespace occa {
 
       statement_t *condition = loadConditionStatement();
       if (!condition) {
-        context.printError("Missing condition for [while] statement");
+        if (success) {
+          success = false;
+          context.printError("Missing condition for [while] statement");
+        }
         return NULL;
       }
 
@@ -1205,7 +1214,10 @@ namespace occa {
 
       statement_t *condition = loadConditionStatement();
       if (!condition) {
-        context.printError("Missing condition for [do-while] statement");
+        if (success) {
+          success = false;
+          context.printError("Missing condition for [do-while] statement");
+        }
         delete content;
         return NULL;
       }
@@ -1233,7 +1245,10 @@ namespace occa {
       token_t *parenEnd = context.getClosingPairToken(0);
       statement_t *condition = loadConditionStatement();
       if (!condition) {
-        context.printError("Missing condition for [switch] statement");
+        if (success) {
+          success = false;
+          context.printError("Missing condition for [switch] statement");
+        }
         return NULL;
       }
 

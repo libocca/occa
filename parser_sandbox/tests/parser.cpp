@@ -1001,78 +1001,92 @@ void testErrors() {
   std::cerr << "==============================================\n\n";
 }
 
+#define parseBadSource(str_)                    \
+  parseSource(str_);                            \
+  OCCA_ASSERT_FALSE(parser.success)
+
 void testExpressionErrors() {
-  parseSource("2 + 3");
-  parseSource("-2");
-  parseSource("2 = {}");
-  parseSource("sizeof(4)");
+  parseBadSource("2 + 3");
+  parseBadSource("-2");
+  parseBadSource("2 = {}");
+  parseBadSource("sizeof(4)");
 }
 
 void testDeclarationErrors() {
-  parseSource("int foo");
-  parseSource("int foo = 3");
-  parseSource("int foo = 3, bar = 4");
-  parseSource("int foo = 3, *bar = 4");
+  parseBadSource("int foo");
+  parseBadSource("int foo = 3");
+  parseBadSource("int foo = 3, bar = 4");
+  parseBadSource("int foo = 3, *bar = 4");
 }
 
 void testNamespaceErrors() {
-  parseSource("namespace foo");
-  parseSource("namespace foo::");
-  parseSource("namespace foo::bar::");
-  parseSource("namespace foo + {}");
+  parseBadSource("namespace foo");
+  parseBadSource("namespace foo::");
+  parseBadSource("namespace foo::bar::");
+  parseBadSource("namespace foo + {}");
 }
 
 void testTypeDeclErrors() {
 }
 
 void testIfErrors() {
-  parseSource("if (true)");
-  parseSource("if () {}");
-  parseSource("if (if (true) {}) {}");
-  parseSource("if (;;) {}");
+  parseBadSource("if (true)");
+  parseBadSource("if () {}");
+  parseBadSource("if (if (true) {}) {}");
+  parseBadSource("if (;;) {}");
+
+  parseBadSource("if (;) @attr {}");
 }
 
 void testForErrors() {
-  parseSource("for () {}");
-  parseSource("for (;) {}");
-  parseSource("for (;;)");
-  parseSource("for (;;;;) {}");
+  parseBadSource("for () {}");
+  parseBadSource("for (;) {}");
+  parseBadSource("for (;;)");
+  parseBadSource("for (;;;;) {}");
+
+  parseBadSource("for (;;) @attr {}");
 }
 
 void testWhileErrors() {
-  parseSource("while (;;) {}");
-  parseSource("do {};");
-  parseSource("do;");
-  parseSource("do {} while (;;);");
-  parseSource("do {} while (true)");
-  parseSource("do ; while (true)");
-  parseSource("do {} while (int i = 0)");
+  parseBadSource("while (;;) {}");
+  parseBadSource("do {};");
+  parseBadSource("do;");
+  parseBadSource("do {} while (;;);");
+  parseBadSource("do {} while (true)");
+  parseBadSource("do ; while (true)");
+  parseBadSource("do {} while (int i = 0)");
+
+  parseBadSource("while (;) @attr {}");
+  parseBadSource("do {} while (int i = 0) @attr;");
 }
 
 void testSwitchErrors() {
-  parseSource("switch ()");
-  parseSource("switch (true)");
-  parseSource("switch (true) case 2:");
-  parseSource("switch (true) default:");
-  parseSource("switch (;;) {}");
+  parseBadSource("switch ()");
+  parseBadSource("switch (true)");
+  parseBadSource("switch (true) case 2:");
+  parseBadSource("switch (true) default:");
+  parseBadSource("switch (;;) {}");
+
+  parseBadSource("switch (true) @attr {}");
+  parseBadSource("switch (true) @attr default:;");
 }
 
 void testJumpsErrors() {
-  parseSource("continue");
-  parseSource("break");
-  parseSource("return");
-  parseSource("return 1 + 2");
+  parseBadSource("continue");
+  parseBadSource("break");
+  parseBadSource("return");
+  parseBadSource("return 1 + 2");
 }
 
 void testClassAccessErrors() {
-  parseSource("public");
-  parseSource("protected");
-  parseSource("private");
+  parseBadSource("public");
+  parseBadSource("protected");
+  parseBadSource("private");
 }
 
 void testGotoErrors() {
-  parseSource("goto");
-  parseSource("goto;");
+  parseBadSource("goto");
+  parseBadSource("goto;");
 }
 
 void testAttributeErrors() {
