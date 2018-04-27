@@ -41,12 +41,12 @@ parser_t parser;
 
 void setSource(const std::string &s) {
   source = s;
-  parser.setSource(s, false);
+  parser.setSource(source, false);
 }
 
 void parseSource(const std::string &s) {
   source = s;
-  parser.parseSource(s);
+  parser.parseSource(source);
 }
 
 template <class smntType>

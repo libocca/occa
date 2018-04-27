@@ -64,6 +64,8 @@ namespace occa {
       statementLoaderMap statementLoaders;
 
       int lastPeek;
+      int lastPeekPosition;
+      bool checkSemicolon;
 
       blockStatement root;
       blockStatement *up;
@@ -103,8 +105,7 @@ namespace occa {
       //---[ Type Loaders ]-------------
       variable loadVariable();
 
-      variableDeclaration loadVariableDeclaration(const vartype_t &baseType,
-                                                  const bool checkSemicolon);
+      variableDeclaration loadVariableDeclaration(const vartype_t &baseType);
 
       vartype_t preloadType();
 
@@ -139,21 +140,24 @@ namespace occa {
       union_t loadUnionType();
       //================================
 
-      //---[ Statement Loaders ]--------
-      void loadAllStatements(statementPtrVector &statements);
-
+      //---[ Loader Helpers ]-----------
       bool isEmpty();
       statement_t* getNextStatement();
+
+      void skipNewlines();
+      void loadAttributes();
+      //================================
+
+      //---[ Statement Loaders ]--------
+      void loadAllStatements(statementPtrVector &statements);
 
       statement_t *loadBlockStatement();
 
       statement_t *loadEmptyStatement();
 
       statement_t *loadExpressionStatement();
-      statement_t *loadExpressionStatement(const bool checkSemicolon);
 
       statement_t *loadDeclarationStatement();
-      statement_t *loadDeclarationStatement(const bool checkSemicolon);
 
       statement_t *loadNamespaceStatement();
 
@@ -181,8 +185,6 @@ namespace occa {
       statement_t *loadReturnStatement();
 
       statement_t *loadClassAccessStatement();
-
-      statement_t *loadAttributeStatement();
 
       statement_t *loadPragmaStatement();
 

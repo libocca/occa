@@ -191,6 +191,10 @@ namespace occa {
       set(pop().end + 1);
     }
 
+    int tokenContext::position() const {
+      return tp.start;
+    }
+
     int tokenContext::size() const {
       return (tp.end - tp.start);
     }
@@ -210,9 +214,11 @@ namespace occa {
     }
 
     void tokenContext::printError(const std::string &message) {
+      if (tokens.size() == 0) {
+        occa::printError(std::cerr, "[No Token] " + message);
+        return;
+      }
       int offset = 0;
-      // Only case it fails if context is empty, but
-      //   that shouldn't be the case...
       if (!indexInRange(offset) &&
           (0 < tp.start)) {
         offset = -1;

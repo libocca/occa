@@ -82,6 +82,7 @@ namespace occa {
       tokenRange pop();
       void popAndSkipPair();
 
+      int position() const;
       int size() const;
       token_t* operator [] (const int index);
 

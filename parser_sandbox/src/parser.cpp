@@ -27,6 +27,9 @@ namespace occa {
   namespace lang {
     parser_t::parser_t() :
       unknownFilter(true),
+      lastPeek(0),
+      lastPeekPosition(-1),
+      checkSemicolon(true),
       root(),
       up(&root) {
       // Properly implement `identifier-nondigit` for identifiers
@@ -75,7 +78,6 @@ namespace occa {
       statementLoaders[statementType::break_]      = &parser_t::loadBreakStatement;
       statementLoaders[statementType::return_]     = &parser_t::loadReturnStatement;
       statementLoaders[statementType::classAccess] = &parser_t::loadClassAccessStatement;
-      statementLoaders[statementType::attribute]   = &parser_t::loadAttributeStatement;
       statementLoaders[statementType::pragma]      = &parser_t::loadPragmaStatement;
       statementLoaders[statementType::goto_]       = &parser_t::loadGotoStatement;
       statementLoaders[statementType::gotoLabel]   = &parser_t::loadGotoLabelStatement;
@@ -92,6 +94,8 @@ namespace occa {
       context.clear();
 
       lastPeek = 0;
+      lastPeekPosition = -1;
+      checkSemicolon = true;
 
       root.clear();
       up = &root;
@@ -175,8 +179,10 @@ namespace occa {
 
     //---[ Peek ]-----------------------
     int parser_t::peek() {
-      if (!lastPeek) {
-        lastPeek = uncachedPeek();
+      const int contextPosition = context.position();
+      if (lastPeekPosition != contextPosition) {
+        lastPeek         = uncachedPeek();
+        lastPeekPosition = contextPosition;
       }
       return lastPeek;
     }
@@ -279,8 +285,7 @@ namespace occa {
       return loadVariable(vartype);
     }
 
-    variableDeclaration parser_t::loadVariableDeclaration(const vartype_t &baseType,
-                                                          const bool checkSemicolon) {
+    variableDeclaration parser_t::loadVariableDeclaration(const vartype_t &baseType) {
       variableDeclaration decl;
 
       // If partially-defined type, finish parsing it
@@ -677,6 +682,59 @@ namespace occa {
     }
     //==================================
 
+    //---[ Loader Helpers ]-------------
+    bool parser_t::isEmpty() {
+      const int sType = peek();
+      return (!success ||
+              (sType & statementType::none));
+    }
+
+    statement_t* parser_t::getNextStatement() {
+      if (isEmpty()) {
+        checkSemicolon = true;
+        return NULL;
+      }
+
+      const int sType = peek();
+
+      skipNewlines();
+      loadAttributes();
+
+      statementLoaderMap::iterator it = statementLoaders.find(sType);
+      if (it != statementLoaders.end()) {
+        statementLoader_t loader = it->second;
+        statement_t *smnt = (this->*loader)();
+        if (!success) {
+          delete smnt;
+          smnt = NULL;
+        }
+        // [checkSemicolon] is only valid for one statement
+        checkSemicolon = true;
+        return smnt;
+      }
+
+      OCCA_FORCE_ERROR("[Waldo] Oops, forgot to implement a statement loader"
+                       " for [" << stringifySetBits(sType) << "]");
+      return NULL;
+    }
+
+    void parser_t::skipNewlines() {
+      const int end = context.size();
+      int start = 0;
+      for (start = 0; start < end; ++start) {
+        if (!(context[start]->type() & tokenType::newline)) {
+          break;
+        }
+      }
+      if (start) {
+        context.set(start);
+      }
+    }
+
+    void parser_t::loadAttributes() {
+    }
+    //==================================
+
     //---[ Statement Loaders ]----------
     void parser_t::loadAllStatements(statementPtrVector &statements) {
       statement_t *smnt = getNextStatement();
@@ -692,52 +750,6 @@ namespace occa {
         }
         statements.clear();
       }
-    }
-
-    bool parser_t::isEmpty() {
-      const int sType = peek();
-      return (!success ||
-              (sType & statementType::none));
-    }
-
-    statement_t* parser_t::getNextStatement() {
-      // We use the peek to create a statement (or error out)
-      //   so we reset lastPeek for the next peek() to change
-
-      if (isEmpty()) {
-        lastPeek = 0;
-        return NULL;
-      }
-
-      const int sType = peek();
-      lastPeek = 0;
-
-      // Skip newlines
-      const int end = context.size();
-      int start = 0;
-      for (start = 0; start < end; ++start) {
-        if (!(context[start]->type() & tokenType::newline)) {
-          break;
-        }
-      }
-      if (start) {
-        context.set(start);
-      }
-
-      statementLoaderMap::iterator it = statementLoaders.find(sType);
-      if (it != statementLoaders.end()) {
-        statementLoader_t loader = it->second;
-        statement_t *smnt = (this->*loader)();
-        if (!success) {
-          delete smnt;
-          smnt = NULL;
-        }
-        return smnt;
-      }
-
-      OCCA_FORCE_ERROR("[Waldo] Oops, forgot to implement a statement loader"
-                       " for [" << stringifySetBits(sType) << "]");
-      return NULL;
     }
 
     statement_t* parser_t::loadBlockStatement() {
@@ -762,10 +774,6 @@ namespace occa {
     }
 
     statement_t* parser_t::loadExpressionStatement() {
-      return loadExpressionStatement(true);
-    }
-
-    statement_t* parser_t::loadExpressionStatement(const bool checkSemicolon) {
       int end = context.getNextOperator(operatorType::semicolon);
       if (end < 0) {
         if (checkSemicolon) {
@@ -794,10 +802,6 @@ namespace occa {
     }
 
     statement_t* parser_t::loadDeclarationStatement() {
-      return loadDeclarationStatement(true);
-    }
-
-    statement_t* parser_t::loadDeclarationStatement(const bool checkSemicolon) {
       vartype_t baseType = preloadType();
       if (!success) {
         return NULL;
@@ -806,7 +810,7 @@ namespace occa {
       declarationStatement &smnt = *(new declarationStatement());
       while(success) {
         smnt.declarations.push_back(
-          loadVariableDeclaration(baseType, checkSemicolon)
+          loadVariableDeclaration(baseType)
         );
         if (!success) {
           break;
@@ -933,7 +937,7 @@ namespace occa {
       int count = 0;
       bool error = true;
       while (true) {
-        const int sType = uncachedPeek();
+        const int sType = peek();
         if (success &&
             (sType & statementType::none)) {
           error = false;
@@ -945,6 +949,7 @@ namespace occa {
                        statementType::expression |
                        statementType::declaration))) {
           parenBegin->printError("Expected an expression or declaration statement");
+          error = true;
           break;
         }
 
@@ -954,19 +959,27 @@ namespace occa {
           message += ('0' + (char) expectedCount);
           context.printError(message);
           error = true;
+          break;
         }
 
-        statement_t *smnt = NULL;
-        if (sType & statementType::empty) {
-          smnt = loadEmptyStatement();
-        } else if (sType & statementType::expression) {
-          smnt = loadExpressionStatement(count < expectedCount);
-        } else {
-          smnt = loadDeclarationStatement(count < expectedCount);
-        }
+        checkSemicolon = (count < expectedCount);
+        statement_t *smnt = getNextStatement();
         statements.push_back(smnt);
+        if (!smnt || !success) {
+          error = true;
+          break;
+        }
       }
       context.popAndSkipPair();
+
+      if (!error &&
+          (peek() & statementType::attribute)) {
+        // TODO: Support multi-location errors and point to
+        //         parenEnd as a suggestion
+        context.printError("Attributes should be placed as an additional statement"
+                           " (e.g. [for (;;; @attr)] or [if (; @attr)])");
+        error = true;
+      }
 
       if (error) {
         success = false;
@@ -974,6 +987,7 @@ namespace occa {
         for (int i = 0; i < smntCount; ++i) {
           delete statements[i];
         }
+        statements.clear();
       }
     }
 
@@ -1016,9 +1030,9 @@ namespace occa {
                                  statementType::else_)) {
         statement_t *elSmnt = getNextStatement();
         if (!elSmnt) {
-          // Peek is not none/empty so this error
-          //   was reported 'else'where (badum-psh)
-          success = false;
+          if (success) {
+            break;
+          }
           delete &ifSmnt;
           return NULL;
         }
@@ -1353,10 +1367,6 @@ namespace occa {
       }
 
       return new classAccessStatement(access);
-    }
-
-    statement_t* parser_t::loadAttributeStatement() {
-      return NULL;
     }
 
     statement_t* parser_t::loadPragmaStatement() {

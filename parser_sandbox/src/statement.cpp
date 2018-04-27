@@ -34,7 +34,9 @@ namespace occa {
     }
 
     statement_t& pragmaStatement::clone_() const {
-      return *(new pragmaStatement(token.clone()->to<pragmaToken>()));
+      return *(new pragmaStatement(token
+                                   .clone()
+                                   ->to<pragmaToken>()));
     }
 
     int pragmaStatement::type() const {
@@ -132,7 +134,9 @@ namespace occa {
       labelToken(labelToken_) {}
 
     gotoStatement::gotoStatement(const gotoStatement &other) :
-      labelToken(other.labelToken.clone()->to<identifierToken>()) {}
+      labelToken(other.labelToken
+                 .clone()
+                 ->to<identifierToken>()) {}
 
     gotoStatement::~gotoStatement() {
       delete &labelToken;
@@ -163,7 +167,9 @@ namespace occa {
       labelToken(labelToken_) {}
 
     gotoLabelStatement::gotoLabelStatement(const gotoLabelStatement &other) :
-      labelToken(other.labelToken.clone()->to<identifierToken>()) {}
+      labelToken(other.labelToken
+                 .clone()
+                 ->to<identifierToken>()) {}
 
     gotoLabelStatement::~gotoLabelStatement() {
       delete &labelToken;
@@ -198,7 +204,9 @@ namespace occa {
 
     namespaceStatement::namespaceStatement(const namespaceStatement &other) :
       blockStatement(other),
-      nameToken(other.nameToken.clone()->to<identifierToken>()) {}
+      nameToken(other.nameToken
+                .clone()
+                ->to<identifierToken>()) {}
 
     namespaceStatement::~namespaceStatement() {
       delete &nameToken;
@@ -239,13 +247,16 @@ namespace occa {
 
       const int elifCount = (int) other.elifSmnts.size();
       for (int i = 0; i < elifCount; ++i) {
-        elifStatement &elifSmnt = (elifSmnts[i]->clone()
+        elifStatement &elifSmnt = (elifSmnts[i]
+                                   ->clone()
                                    .to<elifStatement>());
         elifSmnts.push_back(&elifSmnt);
       }
 
       elseSmnt = (other.elseSmnt
-                  ? &(other.elseSmnt->clone().to<elseStatement>())
+                  ? &(other.elseSmnt
+                      ->clone()
+                      .to<elseStatement>())
                   : NULL);
     }
 
