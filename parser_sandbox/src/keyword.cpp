@@ -20,8 +20,8 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  */
 #include "keyword.hpp"
-#include "typeBuiltins.hpp"
 #include "variable.hpp"
+#include "builtins/types.hpp"
 
 namespace occa {
   namespace lang {

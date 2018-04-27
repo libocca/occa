@@ -44,6 +44,8 @@ namespace occa {
     };
 
     namespace originSource {
+      file_t makeOriginSource(const std::string &name);
+
       extern file_t builtin;
       extern file_t string;
     }

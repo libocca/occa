@@ -25,10 +25,10 @@
 #include "occa/tools/sys.hpp"
 
 #include "type.hpp"
-#include "typeBuiltins.hpp"
 #include "statement.hpp"
 #include "variable.hpp"
 #include "expression.hpp"
+#include "builtins/types.hpp"
 
 namespace occa {
   namespace lang {

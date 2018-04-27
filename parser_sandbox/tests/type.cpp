@@ -24,8 +24,8 @@
 
 #include "token.hpp"
 #include "type.hpp"
-#include "typeBuiltins.hpp"
 #include "expression.hpp"
+#include "builtins/types.hpp"
 
 void testBitfields();
 void testFunction();

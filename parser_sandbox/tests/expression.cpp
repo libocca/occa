@@ -22,9 +22,9 @@
 #include "occa/tools/env.hpp"
 #include "occa/tools/testing.hpp"
 
-#include "typeBuiltins.hpp"
 #include "expression.hpp"
 #include "tokenizer.hpp"
+#include "builtins/types.hpp"
 
 void testOperatorNodes();
 void testOtherNodes();

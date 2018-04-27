@@ -24,7 +24,7 @@
 
 #include "exprNode.hpp"
 #include "parser.hpp"
-#include "typeBuiltins.hpp"
+#include "builtins/types.hpp"
 
 void testTypeMethods();
 void testPeek();

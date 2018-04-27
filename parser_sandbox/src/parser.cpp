@@ -22,7 +22,8 @@
 #include "attribute.hpp"
 #include "expression.hpp"
 #include "parser.hpp"
-#include "typeBuiltins.hpp"
+#include "builtins/attributes.hpp"
+#include "builtins/types.hpp"
 
 namespace occa {
   namespace lang {
@@ -82,17 +83,16 @@ namespace occa {
       statementLoaders[statementType::pragma]      = &parser_t::loadPragmaStatement;
       statementLoaders[statementType::goto_]       = &parser_t::loadGotoStatement;
       statementLoaders[statementType::gotoLabel]   = &parser_t::loadGotoLabelStatement;
+
+      addAttribute(new dim());
+      addAttribute(new dimOrder());
+      addAttribute(new tile());
+      addAttribute(new safeTile());
     }
 
     parser_t::~parser_t() {
       clear();
-    }
 
-    //---[ Setup ]----------------------
-    void parser_t::clear() {
-      tokenizer.clear();
-      preprocessor.clear();
-      context.clear();
 
       nameToAttributeMap::iterator it = attributeMap.begin();
       while (it != attributeMap.end()) {
@@ -100,6 +100,13 @@ namespace occa {
         ++it;
       }
       attributeMap.clear();
+    }
+
+    //---[ Setup ]----------------------
+    void parser_t::clear() {
+      tokenizer.clear();
+      preprocessor.clear();
+      context.clear();
 
       lastPeek = 0;
       lastPeekPosition = -1;
