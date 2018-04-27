@@ -92,7 +92,7 @@ $(libPath)/libocca.so:$(objects) $(headers) $(COMPILED_DEFINES_CHANGED)
 
 $(binPath)/occa:$(OCCA_DIR)/scripts/occa.cpp $(libPath)/libocca.so $(COMPILED_DEFINES_CHANGED)
 	@mkdir -p $(binPath)
-	$(compiler) $(compilerFlags) -o $(binPath)/occa -rpath $(libPath) $(flags) $(OCCA_DIR)/scripts/occa.cpp $(paths) $(links) -L$(OCCA_DIR)/lib -locca
+	$(compiler) $(compilerFlags) -o $(binPath)/occa -Wl,-rpath,$(libPath) $(flags) $(OCCA_DIR)/scripts/occa.cpp $(paths) $(links) -L$(OCCA_DIR)/lib -locca
 #  ===========================
 
 $(OCCA_DIR)/obj/%.o:$(OCCA_DIR)/src/%.cpp $(OCCA_DIR)/include/occa/%.hpp $(OCCA_DIR)/include/occa/%.tpp $(COMPILED_DEFINES_CHANGED)
