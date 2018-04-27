@@ -26,7 +26,7 @@ for (int i = 0; i < N; ++i; @outer) {
 Similar to outer loops, writing multiple inner loops is completely legal.
 **However**, there is a restriction that all inner loops must have the same iteration count.
 
-**Correct**
+#### <span class="correct">Correct</span>
 
 ```okl
 for (...; @outer) {
@@ -37,7 +37,7 @@ for (...; @outer) {
 }
 ```
 
-**Incorrect**
+#### <span class="incorrect">Incorrect</span>
 
 ```okl
 for (...; @outer) {
@@ -48,7 +48,7 @@ for (...; @outer) {
 }
 ```
 
-#### Future Plans
+### Future Plans
 We plan on making it simpler for users in the future, such as
 
 ```okl
@@ -82,4 +82,68 @@ for (...; @outer) {
 }
 ```
 
-## Variable Declarations
+## Using Host inside Kernel
+
+To remove some of the _magic_ inside OKL, here's an explicit list of what runs on the _host_ and what runs on the _device_ inside a `@kernel`
+
+<span style="font-size: 1.1em">_Compute_</span>
+<template><div style="margin-top: -0.8em; padding-left: 1em;">
+**Host**: Used for computing everything outside of outer loops, including calculating outer loop bounds
+<br />
+**Device**: Computes outer loops
+</div></template>
+
+<span style="font-size: 1.1em">_Arguments_</span>
+<template><div style="margin-top: -0.8em; padding-left: 1em;">
+**Host**: Can use non-pointer arguments for computation (_Good_&nbsp;: &nbsp; `const int N`, &nbsp; _Bad_&nbsp;: &nbsp; `const int *array`)
+<br />
+**Device**: Can use all arguments for computation
+</div></template>
+
+Few examples include
+
+#### <span class="incorrect">Incorrect</span>
+
+```okl
+@kernel void myKernel(const int *N) {
+  const int N2 = 2 * (*N); // [Error] Can't access device memory
+  for (int i = 0; i < N2; ++i; @outer) {
+    // Work
+  }
+}
+```
+
+#### <span class="correct">Correct</span>
+
+```okl
+@kernel void myKernel(const int N) {
+  const int N2 = 2 * N;
+  for (int i = 0; i < N2; ++i; @outer) {
+    // Work
+  }
+}
+```
+
+---
+
+#### <span class="incorrect">Incorrect</span>
+
+```okl
+@kernel void myKernel(const int N) {
+  int foo;
+  for (int i = 0; i < N; ++i; @outer) {
+    foo = i; // [Error] Can't write back to host memory
+  }
+}
+```
+
+#### <span class="correct">Correct</span>
+
+```okl
+@kernel void myKernel(const int N) {
+  int foo = 2;
+  for (int i = 0; i < N; ++i; @outer) {
+    const int foo_i = foo * i;
+  }
+}
+```

@@ -98,7 +98,6 @@ a:not(.md-button):hover {
 
 
 /*---[ Markdown ]---------------------*/
-
 p.warn, p.tip, blockquote {
     position: relative !important;
 }
