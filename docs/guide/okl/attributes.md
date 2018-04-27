@@ -15,11 +15,9 @@ int *xy @dim(X, Y);
 xy(1, 2) = 0;
 ```
 
-<template>
-  <div class="transform-arrow">
-    <v-icon>arrow_downward</v-icon>
-  </div>
-</template>
+<div class="transform-arrow">
+  <md-icon>arrow_downward</md-icon>
+</div>
 
 ```cpp
 int *xy;
@@ -34,11 +32,9 @@ mat3 xy;
 xy(1, 2) = 0;
 ```
 
-<template>
-  <div class="transform-arrow">
-    <v-icon>arrow_downward</v-icon>
-  </div>
-</template>
+<div class="transform-arrow">
+  <md-icon>arrow_downward</md-icon>
+</div>
 
 ```cpp
 typedef int* mat3;
@@ -58,11 +54,9 @@ xy(1, 2) = 0;
 yx(1, 2) = 0;
 ```
 
-<template>
-  <div class="transform-arrow">
-    <v-icon>arrow_downward</v-icon>
-  </div>
-</template>
+<div class="transform-arrow">
+    <micon>arrow_downward</md-icon>
+  </di
 
 ```cpp
 typedef int* mat23;
@@ -86,11 +80,9 @@ for (int i = 0; i < N; ++i; @tile(16)) {
 }
 ```
 
-<template>
-  <div class="transform-arrow">
-    <v-icon>arrow_downward</v-icon>
-  </div>
-</template>
+<div class="transform-arrow">
+  <md-icon>arrow_downward</md-icon>
+</div>
 
 ```cpp
 for (int iTile = 0; iTile < N; iTile += 16) {
@@ -108,11 +100,9 @@ for (int i = 0; i < N; ++i; @tile(16, @outer, @inner)) {
 }
 ```
 
-<template>
-  <div class="transform-arrow">
-    <v-icon>arrow_downward</v-icon>
-  </div>
-</template>
+<div class="transform-arrow">
+  <md-icon>arrow_downward</md-icon>
+</div>
 
 ```okl
 for (int iTile = 0; iTile < N; iTile += 16; @outer) {
@@ -132,11 +122,9 @@ for (int i = 0; i < N; ++i; @safeTile(16)) {
 }
 ```
 
-<template>
-  <div class="transform-arrow">
-    <v-icon>arrow_downward</v-icon>
-  </div>
-</template>
+<div class="transform-arrow">
+  <micon>arrow_downward</md-icon>
+</div>
 
 ```cpp
 for (int iTile = 0; iTile < N; iTile += 16) {

@@ -16,7 +16,7 @@ occa.addHeader = (vm, content) => {
   return (
     '<div id="edit-source">\n'
       + `  [Edit Source](${url})\n`
-      + '</div>\n'
+      + '</div>\n\n'
       + content
   );
 };
@@ -29,6 +29,12 @@ occa.addFooter = (content) => (
     + `  © Copyright 2014 - ${(new Date()).getFullYear()}, David Medina and Tim Warburton.\n`
     + '</span>\n'
 );
+//======================================
+
+//---[ Include ]------------------------
+occa.addIncludes = (vm, content) => {
+  return content;
+}
 //======================================
 
 //---[ Tabs ]---------------------------
@@ -225,6 +231,12 @@ occa.addTabs = (content) => {
 };
 //======================================
 
+occa.mainPages = new Set([
+  'README.md',
+  'team.md',
+  'gallery.md',
+]);
+
 occa.docsifyPlugin = (hook, vm) => {
   hook.init(() => {
     Prism.languages.okl = Prism.languages.extend('cpp', {
@@ -237,18 +249,26 @@ occa.docsifyPlugin = (hook, vm) => {
 
   hook.beforeEach((content) => {
     content = occa.addHeader(vm, content);
+    content = occa.addIncludes(vm, content);
     content = occa.addTabs(content);
     content = occa.addFooter(content);
     return content;
   });
 
   hook.doneEach(() => {
+    const dom = document.querySelector('body');
+    const file = vm.route.file;
     // Add API styling
-    const dom = document.querySelector('#main');
-    if (!vm.route.file.startsWith('api/')) {
+    if (!file.startsWith('api/')) {
       dom.classList.remove('api-container');
     } else {
       dom.classList.add('api-container');
+    }
+    // Close sidebar
+    if (occa.mainPages.has(file)) {
+      dom.classList.add('close');
+    } else {
+      dom.classList.remove('close');
     }
   });
 };

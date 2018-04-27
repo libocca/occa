@@ -13,11 +13,11 @@
   </head>
   <body>
     <div id="app"></div>
+
     <script src="./assets/occa.js"></script>
     <script src="//unpkg.com/vue/dist/vue.min.js"></script>
     <script src="//unpkg.com/vue-material@beta"></script>
     <script src="//unpkg.com/jquery@3.3.1/dist/jquery.js"></script>
-    <script src="//unpkg.com/vuetify/dist/vuetify.min.js"></script>
     <script>
      window.$docsify = {
        name: (
@@ -30,12 +30,15 @@
        themeColor: '#2980B9',
 
        alias: {
-         '/.*/_sidebar.md': '/_sidebar.md',
+         '/.*/_navbar.md': '/_navbar.md',
+         '/guide/.*/_sidebar.md': '/guide/_sidebar.md',
+         '/api/.*/_sidebar.md': '/api/_sidebar.md',
        },
 
        auto2top: true,
        loadSidebar: true,
        maxLevel: 2,
+       loadNavbar: true,
        mergeNavbar: true,
        search: 'auto',
        subMaxLevel: 2,

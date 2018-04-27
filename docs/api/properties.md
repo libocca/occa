@@ -1,5 +1,3 @@
-<div id="api-container">
-
 # Properties
 
 ---
@@ -106,7 +104,3 @@
 - **Usage**
 
     test test
-
----
-
-</div>

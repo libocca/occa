@@ -9,6 +9,35 @@
     position: absolute;
     bottom: 2em;
 }
+
+#main {
+    padding-top: 50px !important;
+}
+
+.markdown-section h1:not(:first-of-type) {
+    margin-top: 1em;
+}
+
+a:not(.md-button):hover {
+    text-decoration-color: #F7D096;
+}
+/*====================================*/
+
+
+/*---[ Navbar ]----------------------*/
+.app-nav {
+    margin-right: 100px;
+}
+
+.app-nav > ul > li > a {
+    color: inherit;
+    text-decoration: none;
+    transition: color .3s;
+}
+
+.app-nav a:hover {
+    text-decoration: none !important;
+}
 /*====================================*/
 
 
@@ -19,13 +48,6 @@
 
 .app-sub-sidebar li:before {
     display: none;
-}
-/*====================================*/
-
-
-/*---[ Headers ]----------------------*/
-.markdown-section h1:not(:first-of-type) {
-    margin-top: 1em;
 }
 /*====================================*/
 
@@ -86,13 +108,6 @@ pre:after {
 
 blockquote pre {
     border: 1px solid #F0B794 !important;
-}
-/*====================================*/
-
-
-/*---[ Headers ]----------------------*/
-a:not(.md-button):hover {
-    text-decoration-color: #F7D096;
 }
 /*====================================*/
 
@@ -163,7 +178,7 @@ code .token.annotation {
 
 .transform-arrow {
     width: 1em;
-    margin: 1em auto -0.5em auto;
+    margin: 0.5em auto -0.5em auto;
     color: #2980B9;
 }
 /*====================================*/
@@ -195,11 +210,7 @@ code .token.annotation {
 }
 
 .api-container hr {
-    margin-bottom: 0;
-}
-
-.api-container hr:not(:first-of-type) {
-    margin-top: 0;
+    margin: 5px 0;
 }
 
 .api-container ul {
