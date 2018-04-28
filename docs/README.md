@@ -1,5 +1,5 @@
 <img
-    src="./_images/blue-logo.svg"
+    src="./assets/images/logo/blue.svg"
     width="250"
     style="display: block; width: 250px; margin: auto; margin-bottom: 3em"
 />

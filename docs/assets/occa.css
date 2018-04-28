@@ -244,6 +244,90 @@ code .token.annotation {
 /*====================================*/
 
 
+/*---[ Team ]-------------------------*/
+.member {
+    display: flex;
+    margin-top: 2em;
+}
+
+.first.member {
+    margin-top: 4em;
+}
+
+.member .avatar {
+    flex: 0 0 80px;
+}
+
+.member .avatar .md-avatar {
+    width: 80px;
+    height: 80px;
+}
+
+.member .profile {
+    padding-left: 26px;
+    flex: 1;
+}
+
+.member .profile h3 {
+    margin-top: 0;
+}
+
+.member .profile dt {
+    font-size: 0.84em;
+}
+
+.member .profile dt,
+.member .profile dd {
+    display: inline;
+    padding: 0;
+    margin: 0;
+    line-height: 1.3;
+    font-weight: 600;
+}
+
+.member .profile dt::after {
+    content: "";
+    margin-right: 7px;
+}
+
+.member .profile dd::after {
+    display: block;
+    content: " ";
+    margin-top: 0.6em;
+}
+
+.member .profile dt i {
+    width: 14px;
+    text-align: center;
+}
+
+
+.member .profile dt i.fa-map-marker {
+    font-size: 1.15em;
+}
+
+.member .social a:not(:first-child) {
+    margin-left: 5px;
+}
+
+.member .social .fa-github {
+    color: #2C3E50;
+}
+
+.member .social .fa-twitter {
+    color: #1DA1F3;
+}
+
+.member .social .fa-google {
+    color: #4285f4;
+}
+
+.team-header-gap {
+    height: 20px;
+}
+/*====================================*/
+
+
 /*---[ Print ]------------------------*/
 @media print {
     .sidebar {
