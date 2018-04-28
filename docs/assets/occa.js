@@ -10,17 +10,6 @@ occa.getLanguageLabel = (language) => (
 );
 
 //---[ Header & Footer ]----------------
-// Credit to QingWei-Li/docsify for the template
-occa.addHeader = (vm, content) => {
-  const url = `https://github.com/libocca/occa/blob/master/docs/${vm.route.file}`;
-  return (
-    '<div id="edit-source">\n'
-      + `  [Edit Source](${url})\n`
-      + '</div>\n\n'
-      + content
-  );
-};
-
 occa.addFooter = (content) => (
   content
     + '\n'
@@ -248,7 +237,6 @@ occa.docsifyPlugin = (hook, vm) => {
   });
 
   hook.beforeEach((content) => {
-    content = occa.addHeader(vm, content);
     content = occa.addIncludes(vm, content);
     content = occa.addTabs(content);
     content = occa.addFooter(content);
@@ -266,9 +254,9 @@ occa.docsifyPlugin = (hook, vm) => {
     }
     // Close sidebar
     if (occa.mainPages.has(file)) {
-      dom.classList.add('close');
+      dom.classList.add('no-sidebar');
     } else {
-      dom.classList.remove('close');
+      dom.classList.remove('no-sidebar');
     }
   });
 };

@@ -49,6 +49,19 @@ a:not(.md-button):hover {
 .app-sub-sidebar li:before {
     display: none;
 }
+
+body.no-sidebar .sidebar,
+body.no-sidebar .sidebar-toggle {
+    display: none !important;
+}
+
+body.no-sidebar .content {
+    left: 0px !important;
+}
+
+.github-corner {
+    display: block !important;
+}
 /*====================================*/
 
 
