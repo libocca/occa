@@ -953,9 +953,27 @@ void testBlockLoading() {
 }
 
 void testAttributeLoading() {
-  parseSource("@dim");
-  parseSource("@dim(2)");
-  parseSource("@dim(x=2, y=2)");
+  statement_t *statement;
+
+#define attr(n) statement->attributes[n]->name()
+
+  setStatement("@dim;",
+               statementType::empty);
+  OCCA_ASSERT_EQUAL(1,
+                    (int) statement->attributes.size());
+  OCCA_ASSERT_EQUAL("dim",
+                    attr(0));
+
+  setStatement("@dim(2, 3) @dimOrder(1, 0);",
+               statementType::empty);
+  OCCA_ASSERT_EQUAL(2,
+                    (int) statement->attributes.size());
+  OCCA_ASSERT_EQUAL("dim",
+                    attr(0));
+  OCCA_ASSERT_EQUAL("dimOrder",
+                    attr(1));
+
+#undef attr
 }
 //======================================
 
