@@ -28,6 +28,9 @@ a:not(.md-button):hover {
 .app-nav {
     margin-right: 100px;
 }
+.app-nav > ul {
+    padding-left: 0px !important;
+}
 
 .app-nav > ul > li > a {
     color: inherit;
