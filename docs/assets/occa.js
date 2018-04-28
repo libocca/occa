@@ -222,6 +222,7 @@ occa.addTabs = (content) => {
 
 occa.mainPages = new Set([
   'README.md',
+  'history.md',
   'team.md',
   'gallery.md',
 ]);

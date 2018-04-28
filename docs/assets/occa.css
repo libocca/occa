@@ -193,8 +193,9 @@ code .token.annotation {
 }
 
 .transform-arrow {
+    display: block;
     width: 1em;
-    margin: 0.5em auto -0.5em auto;
+    margin: -0.3em auto;
     color: #2980B9;
 }
 /*====================================*/

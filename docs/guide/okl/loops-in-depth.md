@@ -62,9 +62,7 @@ for (...; @outer) {
 }
 ```
 
-<div class="transform-arrow">
-  <micon>arrow_downward</md-icon>
-</div>
+<md-icon class="transform-arrow">arrow_downward</md-icon>
 
 ```okl
 for (...; @outer) {

@@ -1,6 +1,6 @@
 # Getting Started
 
-The OCCA source code can be found in |Github Link| under an MIT License
+The OCCA source code can be found in [Github](https://github.com/libocca/occa) under an MIT License
 
 Below are the list of dependencies
 
@@ -10,7 +10,7 @@ Below are the list of dependencies
 
 # Download and Installation
 
-Use git to download OCCA or download the latest release `.tar.gz` from |Github Release Link|
+Use git to download OCCA or download the latest release `.tar.gz` from the [Github releases](https://github.com/libocca/occa/releases)
 
 ```bash
 git clone https://github.com/libocca/occa.git

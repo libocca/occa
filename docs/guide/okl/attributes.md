@@ -15,9 +15,7 @@ int *xy @dim(X, Y);
 xy(1, 2) = 0;
 ```
 
-<div class="transform-arrow">
-  <md-icon>arrow_downward</md-icon>
-</div>
+<md-icon class="transform-arrow">arrow_downward</md-icon>
 
 ```cpp
 int *xy;
@@ -32,9 +30,7 @@ mat3 xy;
 xy(1, 2) = 0;
 ```
 
-<div class="transform-arrow">
-  <md-icon>arrow_downward</md-icon>
-</div>
+<md-icon class="transform-arrow">arrow_downward</md-icon>
 
 ```cpp
 typedef int* mat3;
@@ -54,9 +50,7 @@ xy(1, 2) = 0;
 yx(1, 2) = 0;
 ```
 
-<div class="transform-arrow">
-    <micon>arrow_downward</md-icon>
-  </di
+<md-icon class="transform-arrow">arrow_downward</md-icon>
 
 ```cpp
 typedef int* mat23;
@@ -80,9 +74,7 @@ for (int i = 0; i < N; ++i; @tile(16)) {
 }
 ```
 
-<div class="transform-arrow">
-  <md-icon>arrow_downward</md-icon>
-</div>
+<md-icon class="transform-arrow">arrow_downward</md-icon>
 
 ```cpp
 for (int iTile = 0; iTile < N; iTile += 16) {
@@ -100,9 +92,7 @@ for (int i = 0; i < N; ++i; @tile(16, @outer, @inner)) {
 }
 ```
 
-<div class="transform-arrow">
-  <md-icon>arrow_downward</md-icon>
-</div>
+<md-icon class="transform-arrow">arrow_downward</md-icon>
 
 ```okl
 for (int iTile = 0; iTile < N; iTile += 16; @outer) {
@@ -122,9 +112,7 @@ for (int i = 0; i < N; ++i; @safeTile(16)) {
 }
 ```
 
-<div class="transform-arrow">
-  <micon>arrow_downward</md-icon>
-</div>
+<md-icon class="transform-arrow">arrow_downward</md-icon>
 
 ```cpp
 for (int iTile = 0; iTile < N; iTile += 16) {

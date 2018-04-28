@@ -1,9 +1,10 @@
 - [Home](/)
 - Learn
-  - [Guide](/guide/)
+  - [Guide](/guide/occa/introduction)
   - [API](/api/)
   - [Examples](/examples/)
 
-- [Team](/team)
-
-- [Gallery](/gallery)
+- About
+  - [History](/history)
+  - [Team](/team)
+  - [Gallery](/gallery)
