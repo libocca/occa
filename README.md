@@ -30,7 +30,7 @@ OCCA gives developers the ability to target devices at run-time by using run-tim
 ### Installing
 
 ```bash
-git clone https://github.com/libocca/occa.git
+git clone --depth 1 https://github.com/libocca/occa.git
 cd occa
 make -j 4
 ```
