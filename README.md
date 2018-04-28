@@ -1,6 +1,6 @@
 <p align="center">
   <a href="http://libocca.org">
-    <img alt="occa" src="./docs/assets/images/logo/blue.svg" width=250>
+    <img alt="occa" src="http://libocca.org/assets/images/logo/blue.svg" width=250>
   </a>
 </p>
 

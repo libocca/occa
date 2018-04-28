@@ -1,3 +1,0 @@
-# Background Device
-
-!> TODO: Missing
