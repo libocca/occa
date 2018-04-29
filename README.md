@@ -12,18 +12,25 @@
 
 &nbsp;
 
-OCCA is an open-source (MIT license) library used to program current multi-core/many-core architectures.
-Devices (such as CPUs, GPUs, Intel's Xeon Phi, FPGAs, etc) are abstracted using an offload-model for application development and programming for the devices is done through a C-based (OKL) kernel.
-OCCA gives developers the ability to target devices at run-time by using run-time compilation for device kernels.
+### What is OCCA?
+
+In a nutshell, OCCA (like *oca*-rina) is an open-source library which aims to
+
+- Make it easy to program different types of devices (e.g. _CPU_, _GPU_, _FPGA_)
+- Provide a [unified API](/guide/occa/introduction) for interacting with backend device APIs (e.g. _OpenMP_, _CUDA_, _OpenCL_)
+- Use just-in-time compilation to build backend kernels
+- Provide a [kernel language](/guide/okl/introduction), a minor extension to C, to abstract programming for each backend
 
 &nbsp;
 
 ### Links
 
-* [Documentation](http://libocca.org)
-* **Want to contribute?** Checkout the ['Good First Issue' issues](https://github.com/libocca/occa/issues?q=is%3Aopen+is%3Aissue+label%3A%22Good+First+Issue%22)
-* **More of a challenge?** Checkout the ['Help Needed' issues](https://github.com/libocca/occa/issues?utf8=%E2%9C%93&q=is%3Aopen+is%3Aissue+label%3A%22Help+Wanted%22)
-* [🌟 Who's using OCCA?](https://github.com/libocca/occa/issues/105)
+- [Documentation](http://libocca.org)
+- **Want to contribute?** Checkout the ['Good First Issue' issues](https://github.com/libocca/occa/issues?q=is%3Aopen+is%3Aissue+label%3A%22Good+First+Issue%22)
+- **More of a challenge?** Checkout the ['Help Needed' issues](https://github.com/libocca/occa/issues?utf8=%E2%9C%93&q=is%3Aopen+is%3Aissue+label%3A%22Help+Wanted%22)
+- 🌟 Who is using OCCA?
+  - [Gallery](http://libocca.org/#/gallery)
+  - [Publications](http://libocca.org/#/publications)
 
 &nbsp;
 
