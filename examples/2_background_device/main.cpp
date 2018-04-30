@@ -72,11 +72,5 @@ int main(int argc, char **argv) {
   occa::free(b);
   occa::free(ab);
 
-  occa::free(addVectors);
-
-  // The user can also free the device
-  occa::free(occa::getDevice());
-
-
   return 0;
 }
