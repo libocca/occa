@@ -321,6 +321,34 @@ namespace occa {
     return *this;
   }
 
+  occa::memory memory::slice(const dim_t offset,
+                             const dim_t bytes) const {
+    udim_t bytes_ = ((bytes == -1)
+                     ? (mHandle->size - offset)
+                     : bytes);
+
+    OCCA_ERROR("Trying to allocate negative bytes (" << bytes << ")",
+               bytes >= -1);
+    OCCA_ERROR("Cannot have a negative offset (" << offset << ")",
+               offset >= 0);
+    OCCA_ERROR("Cannot have offset and bytes greater than the memory size ("
+               << offset << " + " << bytes_ << " > " << size() << ")",
+               (offset + (dim_t) bytes_) <= (dim_t) size());
+
+    bool needsFree;
+    occa::memory m(mHandle->addOffset(offset, needsFree));
+    memory_v &mv = *(m.mHandle);
+    mv.dHandle = mHandle->dHandle;
+    mv.size = bytes_;
+    if (mHandle->uvaPtr) {
+      mv.uvaPtr = (mHandle->uvaPtr + offset);
+    }
+    if (!needsFree) {
+      m.dontUseRefs();
+    }
+    return m;
+  }
+
   void memory::copyFrom(const void *src,
                         const dim_t bytes,
                         const dim_t offset,

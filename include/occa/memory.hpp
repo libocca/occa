@@ -72,7 +72,8 @@ namespace occa {
 
     virtual kernelArg makeKernelArg() const = 0;
 
-    virtual memory_v* addOffset(const dim_t offset, bool &needsFree) = 0;
+    virtual memory_v* addOffset(const dim_t offset,
+                                bool &needsFree) = 0;
 
     virtual void copyTo(void *dest,
                         const udim_t bytes,
@@ -188,6 +189,9 @@ namespace occa {
 
     occa::memory operator + (const dim_t offset) const;
     occa::memory& operator += (const dim_t offset);
+
+    occa::memory slice(const dim_t offset,
+                       const dim_t bytes = -1) const;
 
     void copyFrom(const void *src,
                   const dim_t bytes = -1,
