@@ -296,28 +296,11 @@ namespace occa {
   }
 
   occa::memory memory::operator + (const dim_t offset) const {
-    OCCA_ERROR("Cannot have a negative offset (" << offset << ")",
-               offset >= 0);
-    OCCA_ERROR("Cannot have an offset greater than the memory size ("
-               << offset << " >= " << size() << ")",
-               offset < (dim_t) size());
-
-    bool needsFree;
-    occa::memory m(mHandle->addOffset(offset, needsFree));
-    memory_v &mv = *(m.mHandle);
-    mv.dHandle = mHandle->dHandle;
-    mv.size = size() - offset;
-    if (mHandle->uvaPtr) {
-      mv.uvaPtr = (mHandle->uvaPtr + offset);
-    }
-    if (!needsFree) {
-      m.dontUseRefs();
-    }
-    return m;
+    return slice(offset);
   }
 
   occa::memory& memory::operator += (const dim_t offset) {
-    *this = (*this + offset);
+    *this = slice(offset);
     return *this;
   }
 
