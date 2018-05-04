@@ -40,6 +40,10 @@ OCCA_LFUNC const char* OCCA_RFUNC occaMemoryMode(occaMemory memory);
 
 OCCA_LFUNC occaUDim_t OCCA_RFUNC occaMemorySize(occaMemory memory);
 
+OCCA_LFUNC occaMemory OCCA_RFUNC occaMemorySlice(occaMemory memory,
+                                                 const occaDim_t offset,
+                                                 const occaDim_t bytes);
+
 //---[ UVA ]----------------------------
 OCCA_LFUNC int OCCA_RFUNC occaMemoryIsManaged(occaMemory memory);
 
