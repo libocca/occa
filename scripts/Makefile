@@ -191,6 +191,7 @@ pthreadFlag  = $(call compilerPthreadFlag)
 
 #---[ Flags and Libraries ]-----------------------
 OCCA_USING_VS := 0
+OCCA_UNSAFE   ?= 0
 
 ifeq ($(usingLinux),1)
 

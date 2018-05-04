@@ -357,7 +357,9 @@ namespace occa {
   }
 
   json& json::operator [] (const char *c) {
+#if !OCCA_UNSAFE
     const char *c0 = c;
+#endif
     json *j = this;
 
     if (type == none_) {

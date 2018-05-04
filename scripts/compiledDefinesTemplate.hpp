@@ -41,6 +41,7 @@
 
 #define OCCA_OS             @@OCCA_OS@@
 #define OCCA_USING_VS       @@OCCA_USING_VS@@
+#define OCCA_UNSAFE         @@OCCA_UNSAFE@@
 
 #define OCCA_MPI_ENABLED    @@OCCA_MPI_ENABLED@@
 #define OCCA_OPENMP_ENABLED @@OCCA_OPENMP_ENABLED@@

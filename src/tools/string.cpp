@@ -200,7 +200,9 @@ namespace occa {
   udim_t atoiBase2(const char*c) {
     udim_t ret = 0;
 
+#if !OCCA_UNSAFE
     const char *c0 = c;
+#endif
 
     bool negative     = false;
     int bits          = 3;

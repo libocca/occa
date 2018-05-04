@@ -92,7 +92,7 @@
 #endif
 
 //---[ Checks and Info ]----------------
-#define OCCA_TEMPLATE_CHECK(checkFunction, expr, filename, function, line, message) \
+#define OCCA_TEMPLATE_CHECK_(checkFunction, expr, filename, function, line, message) \
   do {                                                                  \
     const bool isOK = (bool) (expr);                                    \
     if (!isOK) {                                                        \
@@ -102,16 +102,22 @@
     }                                                                   \
   } while(0)
 
+#if !OCCA_UNSAFE
+#  define OCCA_TEMPLATE_CHECK(a,b,c,d,e,f) OCCA_TEMPLATE_CHECK_(a,b,c,d,e,f)
+#else
+#  define OCCA_TEMPLATE_CHECK(a,b,c,d,e,f)
+#endif
+
 #define OCCA_ERROR3(expr, filename, function, line, message) OCCA_TEMPLATE_CHECK(occa::error, expr, filename, function, line, message)
 #define OCCA_ERROR2(expr, filename, function, line, message) OCCA_ERROR3(expr, filename, function, line, message)
-#define OCCA_ERROR(message, expr) OCCA_ERROR2(expr, __FILE__, __PRETTY_FUNCTION__, __LINE__, message)
+#define OCCA_ERROR(message, expr)                            OCCA_ERROR2(expr, __FILE__, __PRETTY_FUNCTION__, __LINE__, message)
 
 #define OCCA_WARNING3(expr, filename, function, line, message) OCCA_TEMPLATE_CHECK(occa::warn, expr, filename, function, line, message)
 #define OCCA_WARNING2(expr, filename, function, line, message) OCCA_WARNING3(expr, filename, function, line, message)
-#define OCCA_WARNING(message, expr) OCCA_WARNING2(expr, __FILE__, __PRETTY_FUNCTION__, __LINE__, message)
+#define OCCA_WARNING(message, expr)                            OCCA_WARNING2(expr, __FILE__, __PRETTY_FUNCTION__, __LINE__, message)
 
-#define OCCA_FORCE_ERROR(message) OCCA_ERROR(message, false)
-#define OCCA_FORCE_WARNING(message)  OCCA_WARNING(message, false)
+#define OCCA_FORCE_ERROR(message)   OCCA_ERROR(message, false)
+#define OCCA_FORCE_WARNING(message) OCCA_WARNING(message, false)
 
 #define OCCA_DEFAULT_MEM_BYTE_ALIGN 32
 

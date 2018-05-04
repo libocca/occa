@@ -361,6 +361,9 @@ namespace occa {
 
     void pinToCore(const int core) {
       const int coreCount = getCoreCount();
+#if OCCA_UNSAFE
+    ignoreResult(coreCount);
+#endif
       OCCA_ERROR("Core to pin (" << core << ") is not in range: [0, "
                  << coreCount << "]",
                  (0 <= core) && (core < coreCount));
@@ -472,6 +475,9 @@ namespace occa {
       size_t size = sizeof(frequency);
 
       int error = sysctlbyname("hw.cpufrequency", &frequency, &size, NULL, 0);
+#if OCCA_UNSAFE
+    ignoreResult(error);
+#endif
 
       OCCA_ERROR("Error getting CPU Frequency.\n",
                  error != ENOMEM);
@@ -512,6 +518,9 @@ namespace occa {
       size_t size = sizeof(cache);
 
       int error = sysctlbyname(field.c_str(), &cache, &size, NULL, 0);
+#if OCCA_UNSAFE
+    ignoreResult(error);
+#endif
 
       OCCA_ERROR("Error getting L" << level << " Cache Size.\n",
                  error != ENOMEM);
@@ -963,6 +972,9 @@ namespace occa {
   mutex::mutex() {
 #if (OCCA_OS & (OCCA_LINUX_OS | OCCA_MACOS_OS))
     int error = pthread_mutex_init(&mutexHandle, NULL);
+#if OCCA_UNSAFE
+    ignoreResult(error);
+#endif
 
     OCCA_ERROR("Error initializing mutex",
                error == 0);
@@ -974,6 +986,9 @@ namespace occa {
   void mutex::free() {
 #if (OCCA_OS & (OCCA_LINUX_OS | OCCA_MACOS_OS))
     int error = pthread_mutex_destroy(&mutexHandle);
+#if OCCA_UNSAFE
+    ignoreResult(error);
+#endif
 
     OCCA_ERROR("Error freeing mutex",
                error == 0);

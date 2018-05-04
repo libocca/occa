@@ -1035,7 +1035,9 @@ namespace occa {
 
       // Get iter var name
       const std::string &iter = leaves[1]->value;
+#if !OCCA_UNSAFE
       varInfo *var = sInfo->hasVariableInScope(iter);
+#endif
 
       OCCA_ERROR("Error: Iterator [" << iter
                  << "] is not defined before [" << *this << "]",
@@ -5531,7 +5533,9 @@ namespace occa {
         return;
       }
 
+#if !OCCA_UNSAFE
       varInfo *scopeVar = scope->hasLocalVariable(var.name);
+#endif
 
       OCCA_ERROR("Variable [" << var.name << "] defined in:\n"
                  << *origin

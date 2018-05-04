@@ -144,7 +144,8 @@ namespace occa {
 
     void setupForKernelCall(const bool isConst) const;
 
-    static int argumentCount(const int argc, const kernelArg *args);
+    static int argumentCount(const int argc,
+                             const kernelArg *args);
   };
   //====================================
 
@@ -213,7 +214,8 @@ namespace occa {
     virtual dim maxOuterDims() const = 0;
     virtual dim maxInnerDims() const = 0;
 
-    virtual void runFromArguments(const int kArgc, const kernelArg *kArgs) const = 0;
+    virtual void runFromArguments(const int kArgc,
+                                  const kernelArg *kArgs) const = 0;
     //==================================
   };
   //====================================

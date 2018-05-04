@@ -194,13 +194,17 @@ namespace occa {
   }
 
   void free(void *ptr) {
+    if (!ptr) {
+      return;
+    }
+
     ptrRangeMap::iterator it = uvaMap.find(ptr);
 
     if ((it != uvaMap.end()) &&
         (((void*) it->first.start) != ((void*) it->second))) {
       occa::memory(it->second).free();
-    } else {
-      ::free(ptr);
+      return;
     }
+    OCCA_FORCE_ERROR("Freeing a non-uva pointer");
   }
 }

@@ -518,10 +518,13 @@ namespace occa {
   memory device::malloc(const dim_t bytes,
                         const void *src,
                         const occa::properties &props) {
+    if (bytes == 0) {
+      return memory();
+    }
 
     OCCA_ERROR("Trying to allocate "
-               << (bytes ? "negative" : "zero") << " bytes (" << bytes << ")",
-               bytes > 0);
+               << "negative bytes (" << bytes << ")",
+               bytes >= 0);
 
     occa::properties memProps = props + memoryProperties();
 
@@ -538,7 +541,7 @@ namespace occa {
                         const occa::properties &props) {
 
     memory mem = malloc(bytes, NULL, props);
-    if (src.size()) {
+    if (bytes && src.size()) {
       mem.copyFrom(src);
     }
     return mem;
@@ -564,10 +567,13 @@ namespace occa {
   void* device::umalloc(const dim_t bytes,
                         const occa::memory src,
                         const occa::properties &props) {
+    if (bytes == 0) {
+      return NULL;
+    }
 
     OCCA_ERROR("Trying to allocate "
-               << (bytes ? "negative" : "zero") << " bytes (" << bytes << ")",
-               bytes > 0);
+               << "negative bytes (" << bytes << ")",
+               bytes >= 0);
 
     occa::properties memProps = props + memoryProperties();
 

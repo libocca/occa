@@ -368,7 +368,9 @@ namespace occa {
 
     template <class TM>
     TM get(const char *c, const TM &default_ = TM()) const {
+#if !OCCA_UNSAFE
       const char *c0 = c;
+#endif
       const json *j = this;
       while (*c != '\0') {
         OCCA_ERROR("Path '" << std::string(c0, c - c0) << "' is not an object",
@@ -406,7 +408,9 @@ namespace occa {
     template <class TM>
     std::vector<TM> getArray(const char *c,
                              const std::vector<TM> &default_ = std::vector<TM>()) const {
+#if !OCCA_UNSAFE
       const char *c0 = c;
+#endif
       const json *j = this;
       while (*c) {
         OCCA_ERROR("Path '" << std::string(c0, c - c0) << "' is not an object",

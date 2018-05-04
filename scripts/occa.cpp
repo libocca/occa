@@ -293,6 +293,7 @@ bool runEnv(const occa::cli::command &command,
             << "    - OCCA_DIR                   : " << envEcho("OCCA_DIR") << "\n"
             << "    - OCCA_CACHE_DIR             : " << envEcho("OCCA_CACHE_DIR") << "\n"
             << "    - OCCA_VERBOSE               : " << envEcho("OCCA_VERBOSE") << "\n"
+            << "    - OCCA_UNSAFE                : " << OCCA_UNSAFE << "\n"
 
             << "  Makefile:\n"
             << "    - CXX                        : " << envEcho("CXX") << "\n"

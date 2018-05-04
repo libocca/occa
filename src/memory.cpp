@@ -152,6 +152,9 @@ namespace occa {
   }
 
   memory::operator kernelArg() const {
+    if (!mHandle) {
+      return kernelArg((void*) NULL);
+    }
     return mHandle->makeKernelArg();
   }
 

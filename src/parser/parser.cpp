@@ -1532,9 +1532,11 @@ namespace occa {
       OCCA_ERROR("Only 1D, 2D, and 3D tiling are supported:\n" << s.onlyThisToString(),
                  (1 <= tileDim) && (tileDim <= 3));
 
+#if !OCCA_UNSAFE
       int varsInInit = ((initNode.info & expType::declaration) ?
                         initNode.getVariableCount()            :
                         initNode.getUpdatedVariableCount());
+#endif
 
       OCCA_ERROR("Only one iterator can be initialized:\n" << s.onlyThisToString(),
                  varsInInit == 1);
@@ -1581,7 +1583,9 @@ namespace occa {
                  0 < varType.size());
 
       //  ---[ Proper check vars ]----
+#if !OCCA_UNSAFE
       int varsInCheck = csvCheckNode.leafCount;
+#endif
 
       OCCA_ERROR("Only one variable can be checked:\n" << s.onlyThisToString(),
                  varsInCheck == tileDim);
@@ -1646,7 +1650,9 @@ namespace occa {
       }
 
       //  ---[ Proper update vars ]---
+#if !OCCA_UNSAFE
       int varsInUpdate = csvUpdateNode.leafCount;
+#endif
 
       OCCA_ERROR("Only one variable can be updated:\n" << s.onlyThisToString(),
                  varsInUpdate == tileDim);
@@ -4555,8 +4561,10 @@ namespace occa {
       setIterDefaultValues();
 
       expNode &node1   = *(sInfo->getForStatement(0));
+#if !OCCA_UNSAFE
       expNode &node2   = *(sInfo->getForStatement(1));
       expNode &node3   = *(sInfo->getForStatement(2));
+#endif
 
       //---[ Node 1 Check ]---
       OCCA_ERROR("Wrong 1st statement for:\n  " << sInfo->expRoot,
@@ -4566,10 +4574,13 @@ namespace occa {
 
       varInfo &iterVar = node1.getVariableInfoNode(0)->getVarInfo();
 
+#if !OCCA_UNSAFE
       std::string &iter = iterVar.name;
+#endif
 
-      if ( !iterVar.hasQualifier("occaConst") )
+      if ( !iterVar.hasQualifier("occaConst") ) {
         iterVar.addQualifier("occaConst");
+      }
 
       //---[ Node 2 Check ]---
       OCCA_ERROR("Wrong 2nd statement for:\n  " << sInfo->expRoot,
