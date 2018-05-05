@@ -413,7 +413,7 @@ namespace occa {
 
           for (int j = 0; j < optCount; ++j) {
             if (!opts[j]) {
-              std::cerr << "Unknown option: " << arg_i << '\n';
+              std::cerr << red("Error") << ": Unknown option [" << arg_i << "]\n";
               printUsage(name, std::cerr);
               ::exit(1);
             }
@@ -440,7 +440,8 @@ namespace occa {
           jsonArray optArgs_i = jOptions[opt_i.name].array();
           for (int j = 0; j < (int) optArgs_i.size(); ++j) {
             if (opt_i.requiredArgs != (int) optArgs_i[j].array().size()) {
-              std::cerr << "Option " << opt_i << " requires "
+              std::cerr << red("Error")
+                        << ": Option [" << opt_i << "] requires "
                         << opt_i.requiredArgs << " argument"
                         << ((opt_i.requiredArgs > 1) ? "s\n" : "\n");
               printUsage(name, std::cerr);
@@ -448,7 +449,7 @@ namespace occa {
             }
           }
         } else if (opt_i.getIsRequired()) {
-          std::cerr << "Option " << opt_i << " is required and missing\n";
+          std::cerr << red("Error") << ": Option [" << opt_i << "] is required and missing\n";
           printUsage(name, std::cerr);
           ::exit(1);
         }
@@ -458,7 +459,9 @@ namespace occa {
       const int reqArgCount = (int) arguments.size() - hasOptionalArg();
 
       if (argCount < reqArgCount) {
-        std::cerr << "Incorrect number of arguments\n";
+        if (argCount) {
+          std::cerr << red("Error") << ": Incorrect number of arguments\n";
+        }
         printUsage(name, std::cerr);
         ::exit(1);
       }
@@ -649,7 +652,7 @@ namespace occa {
       if (comm) {
         comm->run(inputArgs, this);
       } else if (commandIsRequired) {
-        std::cerr << "Unknown command: " << commandName << '\n';
+        std::cerr << red("Error") << ": Unknown command [" << commandName << "]\n";
         printUsage(std::cerr);
         ::exit(1);
       }
