@@ -162,7 +162,7 @@ namespace occa {
     return device(mHandle->dHandle).mode();
   }
 
-  occa::properties& memory::properties() {
+  const occa::properties& memory::properties() const {
     return mHandle->properties;
   }
 
@@ -430,6 +430,12 @@ namespace occa {
   void memory::copyTo(const memory dest,
                       const occa::properties &props) const {
     copyTo(dest, -1, 0, 0, props);
+  }
+
+  occa::memory memory::clone() const {
+    return device(mHandle->dHandle).malloc(size(),
+                                           *this,
+                                           properties());
   }
 
   void memory::free() {

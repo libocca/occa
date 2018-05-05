@@ -35,13 +35,15 @@ const char* OCCA_RFUNC occaKernelMode(occaKernel kernel) {
 }
 
 occaProperties OCCA_RFUNC occaKernelGetProperties(occaKernel kernel) {
-  occa::properties &props = occa::c::kernel(kernel).properties();
-  return occa::c::newOccaType(props);
+  return occa::c::newOccaType(
+    occa::c::kernel(kernel).properties()
+  );
 }
 
 occaDevice OCCA_RFUNC occaKernelGetDevice(occaKernel kernel) {
-  occa::device device = occa::c::kernel(kernel).getDevice();
-  return occa::c::newOccaType(device);
+  return occa::c::newOccaType(
+    occa::c::kernel(kernel).getDevice()
+  );
 }
 
 const char* OCCA_RFUNC occaKernelName(occaKernel kernel) {

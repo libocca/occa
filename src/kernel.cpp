@@ -378,11 +378,11 @@ namespace occa {
     return (kHandle != NULL);
   }
 
-  const std::string& kernel::mode() {
+  const std::string& kernel::mode() const {
     return kHandle->dHandle->mode;
   }
 
-  occa::properties& kernel::properties() {
+  const occa::properties& kernel::properties() const {
     return kHandle->properties;
   }
 

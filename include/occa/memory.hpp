@@ -155,7 +155,7 @@ namespace occa {
     operator kernelArg() const;
 
     const std::string& mode() const;
-    occa::properties& properties();
+    const occa::properties& properties() const;
 
     udim_t size() const;
 
@@ -226,6 +226,8 @@ namespace occa {
 
     void copyTo(const memory dest,
                 const occa::properties &props) const;
+
+    occa::memory clone() const;
 
     void free();
     void detach();

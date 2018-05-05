@@ -34,13 +34,15 @@ void* OCCA_RFUNC occaMemoryPtr(occaMemory memory) {
 }
 
 occaDevice OCCA_RFUNC occaMemoryGetDevice(occaMemory memory) {
-  occa::device device = occa::c::memory(memory).getDevice();
-  return occa::c::newOccaType(device);
+  return occa::c::newOccaType(
+    occa::c::memory(memory).getDevice()
+  );
 }
 
 occaProperties OCCA_RFUNC occaMemoryGetProperties(occaMemory memory) {
-  occa::properties &props = occa::c::memory(memory).properties();
-  return occa::c::newOccaType(props);
+  return occa::c::newOccaType(
+    occa::c::memory(memory).properties()
+  );
 }
 
 const char* OCCA_RFUNC occaMemoryMode(occaMemory memory) {
@@ -165,14 +167,21 @@ void OCCA_RFUNC occaCopyMemToPtr(void *dest, occaMemory src,
   }
 }
 
+occaMemory OCCA_RFUNC occaMemoryClone(occaMemory memory) {
+  return occa::c::newOccaType(
+    occa::c::memory(memory).clone()
+  );
+}
+
 void OCCA_RFUNC occaMemoryDetach(occaMemory memory) {
   occa::c::memory(memory).detach();
 }
 
 occaMemory OCCA_RFUNC occaWrapCpuMemory(void *ptr,
                                         occaUDim_t bytes) {
-  occa::memory memory = occa::cpu::wrapMemory(ptr, bytes);
-  return occa::c::newOccaType(memory);
+  return occa::c::newOccaType(
+    occa::cpu::wrapMemory(ptr, bytes)
+  );
 }
 
 OCCA_END_EXTERN_C

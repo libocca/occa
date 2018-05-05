@@ -87,6 +87,8 @@ OCCA_LFUNC void OCCA_RFUNC occaCopyMemToPtr(void *dest,
                                             const occaUDim_t offset,
                                             occaProperties props);
 
+OCCA_LFUNC occaMemory OCCA_RFUNC occaMemoryClone(occaMemory memory);
+
 OCCA_LFUNC void OCCA_RFUNC occaMemoryDetach(occaMemory memory);
 
 OCCA_LFUNC occaMemory OCCA_RFUNC occaWrapCpuMemory(void *ptr,
