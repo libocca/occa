@@ -1,6 +1,6 @@
 <p align="center">
-  <a href="http://libocca.org">
-    <img alt="occa" src="http://libocca.org/assets/images/logo/blue.svg" width=250>
+  <a href="https://libocca.org">
+    <img alt="occa" src="https://libocca.org/assets/images/logo/blue.svg" width=250>
   </a>
 </p>
 
@@ -17,20 +17,20 @@
 In a nutshell, OCCA (like *oca*-rina) is an open-source library which aims to
 
 - Make it easy to program different types of devices (e.g. _CPU_, _GPU_, _FPGA_)
-- Provide a [unified API](http://libocca.org/#/guide/occa/introduction) for interacting with backend device APIs (e.g. _OpenMP_, _CUDA_, _OpenCL_)
+- Provide a [unified API](https://libocca.org/#/guide/occa/introduction) for interacting with backend device APIs (e.g. _OpenMP_, _CUDA_, _OpenCL_)
 - Use just-in-time compilation to build backend kernels
-- Provide a [kernel language](http://libocca.org/#/guide/okl/introduction), a minor extension to C, to abstract programming for each backend
+- Provide a [kernel language](https://libocca.org/#/guide/okl/introduction), a minor extension to C, to abstract programming for each backend
 
 &nbsp;
 
 ### Links
 
-- [Documentation](http://libocca.org)
+- [Documentation](https://libocca.org)
 - **Want to contribute?** Checkout the ['Good First Issue' issues](https://github.com/libocca/occa/issues?q=is%3Aopen+is%3Aissue+label%3A%22Good+First+Issue%22)
 - **More of a challenge?** Checkout the ['Help Needed' issues](https://github.com/libocca/occa/issues?utf8=%E2%9C%93&q=is%3Aopen+is%3Aissue+label%3A%22Help+Wanted%22)
 - 🌟 Who is using OCCA?
-  - [Gallery](http://libocca.org/#/gallery)
-  - [Publications](http://libocca.org/#/publications)
+  - [Gallery](https://libocca.org/#/gallery)
+  - [Publications](https://libocca.org/#/publications)
 
 &nbsp;
 
