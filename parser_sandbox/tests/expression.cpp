@@ -31,7 +31,6 @@ using namespace occa;
 using namespace occa::lang;
 
 void testPrint();
-void testOtherNodes();
 void testPairMatching();
 void testSpecialOperators();
 void testCanEvaluate();
@@ -39,7 +38,6 @@ void testEval();
 
 int main(const int argc, const char **argv) {
   testPrint();
-  testOtherNodes();
   testPairMatching();
   testSpecialOperators();
   testCanEvaluate();
@@ -63,55 +61,100 @@ void testStreamPrint() {
   primitiveNode b(NULL, 2.0);
   primitiveNode c(NULL, false);
 
+  qualifiers_t q1;
+  q1 += volatile_;
+
+  vartype_t t1_0(float_);
+  t1_0 += const_;
+  vartype_t t1_1(t1_0);
+  t1_1 += pointer_t();
+  vartype_t t1(t1_1);
+  t1 += pointer_t();
+
+  identifierToken varName(fileOrigin(),
+                          "var");
+  variable_t var_(t1, &varName);
+  variableNode var(NULL, var_);
+
+  primitiveNode one(NULL, 1);
+  primitiveNode two(NULL, 2);
+  primitiveNode three(NULL, 3);
+
+  exprNodeVector args;
+  args.push_back(&one);
+  args.push_back(&two);
+  args.push_back(&three);
+
   std::cerr
     << "\n---[ Testing << Printing ]------------------------\n"
     //---[ Left Unary ]---------------
-    << "not_           : " << leftUnaryOpNode(NULL, op::not_, a).toString() << '\n'
-    << "positive       : " << leftUnaryOpNode(NULL, op::positive, a).toString() << '\n'
-    << "negative       : " << leftUnaryOpNode(NULL, op::negative, a).toString() << '\n'
-    << "tilde          : " << leftUnaryOpNode(NULL, op::tilde, a).toString() << '\n'
-    << "leftIncrement  : " << leftUnaryOpNode(NULL, op::leftIncrement, a).toString() << '\n'
-    << "leftDecrement  : " << leftUnaryOpNode(NULL, op::leftDecrement, a).toString() << '\n'
+    << "not_                : " << leftUnaryOpNode(NULL, op::not_, a).toString() << '\n'
+    << "positive            : " << leftUnaryOpNode(NULL, op::positive, a).toString() << '\n'
+    << "negative            : " << leftUnaryOpNode(NULL, op::negative, a).toString() << '\n'
+    << "tilde               : " << leftUnaryOpNode(NULL, op::tilde, a).toString() << '\n'
+    << "leftIncrement       : " << leftUnaryOpNode(NULL, op::leftIncrement, a).toString() << '\n'
+    << "leftDecrement       : " << leftUnaryOpNode(NULL, op::leftDecrement, a).toString() << '\n'
     //================================
 
     //---[ Right Unary ]--------------
-    << "rightIncrement : " << rightUnaryOpNode(NULL, op::rightIncrement, a).toString() << '\n'
-    << "rightDecrement : " << rightUnaryOpNode(NULL, op::rightDecrement, a).toString() << '\n'
+    << "rightIncrement      : " << rightUnaryOpNode(NULL, op::rightIncrement, a).toString() << '\n'
+    << "rightDecrement      : " << rightUnaryOpNode(NULL, op::rightDecrement, a).toString() << '\n'
     //================================
 
     //---[ Binary ]-------------------
-    << "add            : " << binaryOpNode(NULL, op::add, a, b).toString() << '\n'
-    << "sub            : " << binaryOpNode(NULL, op::sub, a, b).toString() << '\n'
-    << "mult           : " << binaryOpNode(NULL, op::mult, a, b).toString() << '\n'
-    << "div            : " << binaryOpNode(NULL, op::div, a, b).toString() << '\n'
-    << "mod            : " << binaryOpNode(NULL, op::mod, a, b).toString() << '\n'
-    << "lessThan       : " << binaryOpNode(NULL, op::lessThan, a, b).toString() << '\n'
-    << "lessThanEq     : " << binaryOpNode(NULL, op::lessThanEq, a, b).toString() << '\n'
-    << "equal          : " << binaryOpNode(NULL, op::equal, a, b).toString() << '\n'
-    << "notEqual       : " << binaryOpNode(NULL, op::notEqual, a, b).toString() << '\n'
-    << "greaterThan    : " << binaryOpNode(NULL, op::greaterThan, a, b).toString() << '\n'
-    << "greaterThanEq  : " << binaryOpNode(NULL, op::greaterThanEq, a, b).toString() << '\n'
-    << "and_           : " << binaryOpNode(NULL, op::and_, a, b).toString() << '\n'
-    << "or_            : " << binaryOpNode(NULL, op::or_, a, b).toString() << '\n'
-    << "bitAnd         : " << binaryOpNode(NULL, op::bitAnd, a, b).toString() << '\n'
-    << "bitOr          : " << binaryOpNode(NULL, op::bitOr, a, b).toString() << '\n'
-    << "xor_           : " << binaryOpNode(NULL, op::xor_, a, b).toString() << '\n'
-    << "leftShift      : " << binaryOpNode(NULL, op::leftShift, a, b).toString() << '\n'
-    << "rightShift     : " << binaryOpNode(NULL, op::rightShift, a, b).toString() << '\n'
-    << "addEq          : " << binaryOpNode(NULL, op::addEq, a, b).toString() << '\n'
-    << "subEq          : " << binaryOpNode(NULL, op::subEq, a, b).toString() << '\n'
-    << "multEq         : " << binaryOpNode(NULL, op::multEq, a, b).toString() << '\n'
-    << "divEq          : " << binaryOpNode(NULL, op::divEq, a, b).toString() << '\n'
-    << "modEq          : " << binaryOpNode(NULL, op::modEq, a, b).toString() << '\n'
-    << "andEq          : " << binaryOpNode(NULL, op::andEq, a, b).toString() << '\n'
-    << "orEq           : " << binaryOpNode(NULL, op::orEq, a, b).toString() << '\n'
-    << "xorEq          : " << binaryOpNode(NULL, op::xorEq, a, b).toString() << '\n'
-    << "leftShiftEq    : " << binaryOpNode(NULL, op::leftShiftEq, a, b).toString() << '\n'
-    << "rightShiftEq   : " << binaryOpNode(NULL, op::rightShiftEq, a, b).toString() << '\n'
+    << "add                 : " << binaryOpNode(NULL, op::add, a, b).toString() << '\n'
+    << "sub                 : " << binaryOpNode(NULL, op::sub, a, b).toString() << '\n'
+    << "mult                : " << binaryOpNode(NULL, op::mult, a, b).toString() << '\n'
+    << "div                 : " << binaryOpNode(NULL, op::div, a, b).toString() << '\n'
+    << "mod                 : " << binaryOpNode(NULL, op::mod, a, b).toString() << '\n'
+    << "lessThan            : " << binaryOpNode(NULL, op::lessThan, a, b).toString() << '\n'
+    << "lessThanEq          : " << binaryOpNode(NULL, op::lessThanEq, a, b).toString() << '\n'
+    << "equal               : " << binaryOpNode(NULL, op::equal, a, b).toString() << '\n'
+    << "notEqual            : " << binaryOpNode(NULL, op::notEqual, a, b).toString() << '\n'
+    << "greaterThan         : " << binaryOpNode(NULL, op::greaterThan, a, b).toString() << '\n'
+    << "greaterThanEq       : " << binaryOpNode(NULL, op::greaterThanEq, a, b).toString() << '\n'
+    << "and_                : " << binaryOpNode(NULL, op::and_, a, b).toString() << '\n'
+    << "or_                 : " << binaryOpNode(NULL, op::or_, a, b).toString() << '\n'
+    << "bitAnd              : " << binaryOpNode(NULL, op::bitAnd, a, b).toString() << '\n'
+    << "bitOr               : " << binaryOpNode(NULL, op::bitOr, a, b).toString() << '\n'
+    << "xor_                : " << binaryOpNode(NULL, op::xor_, a, b).toString() << '\n'
+    << "leftShift           : " << binaryOpNode(NULL, op::leftShift, a, b).toString() << '\n'
+    << "rightShift          : " << binaryOpNode(NULL, op::rightShift, a, b).toString() << '\n'
+    << "addEq               : " << binaryOpNode(NULL, op::addEq, a, b).toString() << '\n'
+    << "subEq               : " << binaryOpNode(NULL, op::subEq, a, b).toString() << '\n'
+    << "multEq              : " << binaryOpNode(NULL, op::multEq, a, b).toString() << '\n'
+    << "divEq               : " << binaryOpNode(NULL, op::divEq, a, b).toString() << '\n'
+    << "modEq               : " << binaryOpNode(NULL, op::modEq, a, b).toString() << '\n'
+    << "andEq               : " << binaryOpNode(NULL, op::andEq, a, b).toString() << '\n'
+    << "orEq                : " << binaryOpNode(NULL, op::orEq, a, b).toString() << '\n'
+    << "xorEq               : " << binaryOpNode(NULL, op::xorEq, a, b).toString() << '\n'
+    << "leftShiftEq         : " << binaryOpNode(NULL, op::leftShiftEq, a, b).toString() << '\n'
+    << "rightShiftEq        : " << binaryOpNode(NULL, op::rightShiftEq, a, b).toString() << '\n'
     //================================
 
     //---[ Ternary ]------------------
-    << "ternary        : " << ternaryOpNode(NULL, a, b, c).toString() << '\n'
+    << "ternary             : " << ternaryOpNode(NULL, a, b, c).toString() << '\n'
+    //================================
+
+    //---[ Other Nodes ]--------------
+    << "one                 : " << one.toString() << '\n'
+    << "var                 : " << var.toString() << '\n'
+    << "subscript           : " << subscriptNode(NULL, var, one).toString() << '\n'
+    << "callNode            : " << callNode(NULL, var, args).toString() << '\n'
+    << "newNode             : " << newNode(NULL, t1, var, three).toString() << '\n'
+    << "newNode             : " << newNode(NULL, t1, var).toString() << '\n'
+    << "deleteNode          : " << deleteNode(NULL, var, false).toString() << '\n'
+    << "deleteNode          : " << deleteNode(NULL, var, true).toString() << '\n'
+    << "throwNode           : " << throwNode(NULL, one).toString() << '\n'
+    << "sizeofNode          : " << sizeofNode(NULL, var).toString() << '\n'
+    << "funcCastNode        : " << funcCastNode(NULL, t1, var).toString() << '\n'
+    << "parenCastNode       : " << parenCastNode(NULL, t1, var).toString() << '\n'
+    << "constCastNode       : " << constCastNode(NULL, t1, var).toString() << '\n'
+    << "staticCastNode      : " << staticCastNode(NULL, t1, var).toString() << '\n'
+    << "reinterpretCastNode : " << reinterpretCastNode(NULL, t1, var).toString() << '\n'
+    << "dynamicCastNode     : " << dynamicCastNode(NULL, t1, var).toString() << '\n'
+    << "parenthesesNode     : " << parenthesesNode(NULL, var).toString() << '\n'
+    << "cudaCallNode        : " << cudaCallNode(NULL, var, one, two).toString() << '\n'
     //================================
     ;
 }
@@ -120,6 +163,30 @@ void testPoutPrint() {
   primitiveNode a(NULL, 1);
   primitiveNode b(NULL, 2.0);
   primitiveNode c(NULL, false);
+
+  qualifiers_t q1;
+  q1 += volatile_;
+
+  vartype_t t1_0(float_);
+  t1_0 += const_;
+  vartype_t t1_1(t1_0);
+  t1_1 += pointer_t();
+  vartype_t t1(t1_1);
+  t1 += pointer_t();
+
+  identifierToken varName(fileOrigin(),
+                          "var");
+  variable_t var_(t1, &varName);
+  variableNode var(NULL, var_);
+
+  primitiveNode one(NULL, 1);
+  primitiveNode two(NULL, 2);
+  primitiveNode three(NULL, 3);
+
+  exprNodeVector args;
+  args.push_back(&one);
+  args.push_back(&two);
+  args.push_back(&three);
 
   printer pout(std::cerr);
 
@@ -173,12 +240,57 @@ void testPoutPrint() {
   //---[ Ternary ]------------------
   ternaryOpNode(NULL, a, b, c).print(pout); pout << '\n';
   //================================
+
+  //---[ Other Nodes ]--------------
+  one.print(pout); pout << '\n';
+  var.print(pout); pout << '\n';
+  subscriptNode(NULL, var, one).print(pout); pout << '\n';
+  callNode(NULL, var, args).print(pout); pout << '\n';
+  newNode(NULL, t1, var, three).print(pout); pout << '\n';
+  newNode(NULL, t1, var).print(pout); pout << '\n';
+  deleteNode(NULL, var, false).print(pout); pout << '\n';
+  deleteNode(NULL, var, true).print(pout); pout << '\n';
+  throwNode(NULL, one).print(pout); pout << '\n';
+  sizeofNode(NULL, var).print(pout); pout << '\n';
+  funcCastNode(NULL, t1, var).print(pout); pout << '\n';
+  parenCastNode(NULL, t1, var).print(pout); pout << '\n';
+  constCastNode(NULL, t1, var).print(pout); pout << '\n';
+  staticCastNode(NULL, t1, var).print(pout); pout << '\n';
+  reinterpretCastNode(NULL, t1, var).print(pout); pout << '\n';
+  dynamicCastNode(NULL, t1, var).print(pout); pout << '\n';
+  parenthesesNode(NULL, var).print(pout); pout << '\n';
+  cudaCallNode(NULL, var, one, two).print(pout); pout << '\n';
+  //================================
 }
 
 void testDebugPrint() {
   primitiveNode a(NULL, 1);
   primitiveNode b(NULL, 2.0);
   primitiveNode c(NULL, false);
+
+  qualifiers_t q1;
+  q1 += volatile_;
+
+  vartype_t t1_0(float_);
+  t1_0 += const_;
+  vartype_t t1_1(t1_0);
+  t1_1 += pointer_t();
+  vartype_t t1(t1_1);
+  t1 += pointer_t();
+
+  identifierToken varName(fileOrigin(),
+                          "var");
+  variable_t var_(t1, &varName);
+  variableNode var(NULL, var_);
+
+  primitiveNode one(NULL, 1);
+  primitiveNode two(NULL, 2);
+  primitiveNode three(NULL, 3);
+
+  exprNodeVector args;
+  args.push_back(&one);
+  args.push_back(&two);
+  args.push_back(&three);
 
   std::cerr << "\n---[ Testing Debug Printing ]---------------------\n";
 
@@ -230,51 +342,27 @@ void testDebugPrint() {
   //---[ Ternary ]------------------
   ternaryOpNode(NULL, a, b, c).debugPrint("");
   //================================
-}
 
-void testOtherNodes() {
-  qualifiers_t q1;
-  q1 += volatile_;
-
-  vartype_t t1_0(float_);
-  t1_0 += const_;
-  vartype_t t1_1(t1_0);
-  t1_1 += pointer_t();
-  vartype_t t1(t1_1);
-  t1 += pointer_t();
-
-  identifierToken varName(fileOrigin(),
-                          "var");
-  variable_t var_(t1, &varName);
-  variableNode var(NULL, var_);
-
-  primitiveNode one(NULL, 1);
-  primitiveNode two(NULL, 2);
-  primitiveNode three(NULL, 3);
-
-  exprNodeVector args;
-  args.push_back(&one);
-  args.push_back(&two);
-  args.push_back(&three);
-
-  std::cout << "one                 : " << one.toString() << '\n'
-            << "var                 : " << var.toString() << '\n'
-            << "subscript           : " << subscriptNode(NULL, var, one).toString() << '\n'
-            << "callNode            : " << callNode(NULL, var, args).toString() << '\n'
-            << "newNode             : " << newNode(NULL, t1, var, three).toString() << '\n'
-            << "newNode             : " << newNode(NULL, t1, var).toString() << '\n'
-            << "deleteNode          : " << deleteNode(NULL, var, false).toString() << '\n'
-            << "deleteNode          : " << deleteNode(NULL, var, true).toString() << '\n'
-            << "throwNode           : " << throwNode(NULL, one).toString() << '\n'
-            << "sizeofNode          : " << sizeofNode(NULL, var).toString() << '\n'
-            << "funcCastNode        : " << funcCastNode(NULL, t1, var).toString() << '\n'
-            << "parenCastNode       : " << parenCastNode(NULL, t1, var).toString() << '\n'
-            << "constCastNode       : " << constCastNode(NULL, t1, var).toString() << '\n'
-            << "staticCastNode      : " << staticCastNode(NULL, t1, var).toString() << '\n'
-            << "reinterpretCastNode : " << reinterpretCastNode(NULL, t1, var).toString() << '\n'
-            << "dynamicCastNode     : " << dynamicCastNode(NULL, t1, var).toString() << '\n'
-            << "parenthesesNode     : " << parenthesesNode(NULL, var).toString() << '\n'
-            << "cudaCallNode        : " << cudaCallNode(NULL, var, one, two).toString() << '\n';
+  //---[ Other Nodes ]--------------
+  one.debugPrint("");
+  var.debugPrint("");
+  subscriptNode(NULL, var, one).debugPrint("");
+  callNode(NULL, var, args).debugPrint("");
+  newNode(NULL, t1, var, three).debugPrint("");
+  newNode(NULL, t1, var).debugPrint("");
+  deleteNode(NULL, var, false).debugPrint("");
+  deleteNode(NULL, var, true).debugPrint("");
+  throwNode(NULL, one).debugPrint("");
+  sizeofNode(NULL, var).debugPrint("");
+  funcCastNode(NULL, t1, var).debugPrint("");
+  parenCastNode(NULL, t1, var).debugPrint("");
+  constCastNode(NULL, t1, var).debugPrint("");
+  staticCastNode(NULL, t1, var).debugPrint("");
+  reinterpretCastNode(NULL, t1, var).debugPrint("");
+  dynamicCastNode(NULL, t1, var).debugPrint("");
+  parenthesesNode(NULL, var).debugPrint("");
+  cudaCallNode(NULL, var, one, two).debugPrint("");
+  //================================
 }
 
 exprNode* makeExpression(const std::string &s) {
