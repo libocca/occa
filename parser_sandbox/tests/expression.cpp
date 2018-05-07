@@ -27,7 +27,10 @@
 #include "builtins/types.hpp"
 #include "variable.hpp"
 
-void testOperatorNodes();
+using namespace occa;
+using namespace occa::lang;
+
+void testPrint();
 void testOtherNodes();
 void testPairMatching();
 void testSpecialOperators();
@@ -35,7 +38,7 @@ void testCanEvaluate();
 void testEval();
 
 int main(const int argc, const char **argv) {
-  testOperatorNodes();
+  testPrint();
   testOtherNodes();
   testPairMatching();
   testSpecialOperators();
@@ -45,15 +48,23 @@ int main(const int argc, const char **argv) {
   return 0;
 }
 
-using namespace occa;
-using namespace occa::lang;
+void testStreamPrint();
+void testPoutPrint();
+void testDebugPrint();
 
-void testOperatorNodes() {
+void testPrint() {
+  testStreamPrint();
+  testPoutPrint();
+  testDebugPrint();
+}
+
+void testStreamPrint() {
   primitiveNode a(NULL, 1);
   primitiveNode b(NULL, 2.0);
   primitiveNode c(NULL, false);
 
-  std::cout
+  std::cerr
+    << "\n---[ Testing << Printing ]------------------------\n"
     //---[ Left Unary ]---------------
     << "not_           : " << leftUnaryOpNode(NULL, op::not_, a).toString() << '\n'
     << "positive       : " << leftUnaryOpNode(NULL, op::positive, a).toString() << '\n'
@@ -103,6 +114,122 @@ void testOperatorNodes() {
     << "ternary        : " << ternaryOpNode(NULL, a, b, c).toString() << '\n'
     //================================
     ;
+}
+
+void testPoutPrint() {
+  primitiveNode a(NULL, 1);
+  primitiveNode b(NULL, 2.0);
+  primitiveNode c(NULL, false);
+
+  printer pout(std::cerr);
+
+  std::cerr << "\n---[ Testing pout Printing ]----------------------\n";
+
+  //---[ Left Unary ]---------------
+  leftUnaryOpNode(NULL, op::not_, a).print(pout); pout << '\n';
+  leftUnaryOpNode(NULL, op::positive, a).print(pout); pout << '\n';
+  leftUnaryOpNode(NULL, op::negative, a).print(pout); pout << '\n';
+  leftUnaryOpNode(NULL, op::tilde, a).print(pout); pout << '\n';
+  leftUnaryOpNode(NULL, op::leftIncrement, a).print(pout); pout << '\n';
+  leftUnaryOpNode(NULL, op::leftDecrement, a).print(pout); pout << '\n';
+  //================================
+
+  //---[ Right Unary ]--------------
+  rightUnaryOpNode(NULL, op::rightIncrement, a).print(pout); pout << '\n';
+  rightUnaryOpNode(NULL, op::rightDecrement, a).print(pout); pout << '\n';
+  //================================
+
+  //---[ Binary ]-------------------
+  binaryOpNode(NULL, op::add, a, b).print(pout); pout << '\n';
+  binaryOpNode(NULL, op::sub, a, b).print(pout); pout << '\n';
+  binaryOpNode(NULL, op::mult, a, b).print(pout); pout << '\n';
+  binaryOpNode(NULL, op::div, a, b).print(pout); pout << '\n';
+  binaryOpNode(NULL, op::mod, a, b).print(pout); pout << '\n';
+  binaryOpNode(NULL, op::lessThan, a, b).print(pout); pout << '\n';
+  binaryOpNode(NULL, op::lessThanEq, a, b).print(pout); pout << '\n';
+  binaryOpNode(NULL, op::equal, a, b).print(pout); pout << '\n';
+  binaryOpNode(NULL, op::notEqual, a, b).print(pout); pout << '\n';
+  binaryOpNode(NULL, op::greaterThan, a, b).print(pout); pout << '\n';
+  binaryOpNode(NULL, op::greaterThanEq, a, b).print(pout); pout << '\n';
+  binaryOpNode(NULL, op::and_, a, b).print(pout); pout << '\n';
+  binaryOpNode(NULL, op::or_, a, b).print(pout); pout << '\n';
+  binaryOpNode(NULL, op::bitAnd, a, b).print(pout); pout << '\n';
+  binaryOpNode(NULL, op::bitOr, a, b).print(pout); pout << '\n';
+  binaryOpNode(NULL, op::xor_, a, b).print(pout); pout << '\n';
+  binaryOpNode(NULL, op::leftShift, a, b).print(pout); pout << '\n';
+  binaryOpNode(NULL, op::rightShift, a, b).print(pout); pout << '\n';
+  binaryOpNode(NULL, op::addEq, a, b).print(pout); pout << '\n';
+  binaryOpNode(NULL, op::subEq, a, b).print(pout); pout << '\n';
+  binaryOpNode(NULL, op::multEq, a, b).print(pout); pout << '\n';
+  binaryOpNode(NULL, op::divEq, a, b).print(pout); pout << '\n';
+  binaryOpNode(NULL, op::modEq, a, b).print(pout); pout << '\n';
+  binaryOpNode(NULL, op::andEq, a, b).print(pout); pout << '\n';
+  binaryOpNode(NULL, op::orEq, a, b).print(pout); pout << '\n';
+  binaryOpNode(NULL, op::xorEq, a, b).print(pout); pout << '\n';
+  binaryOpNode(NULL, op::leftShiftEq, a, b).print(pout); pout << '\n';
+  binaryOpNode(NULL, op::rightShiftEq, a, b).print(pout); pout << '\n';
+  //================================
+
+  //---[ Ternary ]------------------
+  ternaryOpNode(NULL, a, b, c).print(pout); pout << '\n';
+  //================================
+}
+
+void testDebugPrint() {
+  primitiveNode a(NULL, 1);
+  primitiveNode b(NULL, 2.0);
+  primitiveNode c(NULL, false);
+
+  std::cerr << "\n---[ Testing Debug Printing ]---------------------\n";
+
+  //---[ Left Unary ]---------------
+  leftUnaryOpNode(NULL, op::not_, a).debugPrint("");
+  leftUnaryOpNode(NULL, op::positive, a).debugPrint("");
+  leftUnaryOpNode(NULL, op::negative, a).debugPrint("");
+  leftUnaryOpNode(NULL, op::tilde, a).debugPrint("");
+  leftUnaryOpNode(NULL, op::leftIncrement, a).debugPrint("");
+  leftUnaryOpNode(NULL, op::leftDecrement, a).debugPrint("");
+  //================================
+
+  //---[ Right Unary ]--------------
+  rightUnaryOpNode(NULL, op::rightIncrement, a).debugPrint("");
+  rightUnaryOpNode(NULL, op::rightDecrement, a).debugPrint("");
+  //================================
+
+  //---[ Binary ]-------------------
+  binaryOpNode(NULL, op::add, a, b).debugPrint("");
+  binaryOpNode(NULL, op::sub, a, b).debugPrint("");
+  binaryOpNode(NULL, op::mult, a, b).debugPrint("");
+  binaryOpNode(NULL, op::div, a, b).debugPrint("");
+  binaryOpNode(NULL, op::mod, a, b).debugPrint("");
+  binaryOpNode(NULL, op::lessThan, a, b).debugPrint("");
+  binaryOpNode(NULL, op::lessThanEq, a, b).debugPrint("");
+  binaryOpNode(NULL, op::equal, a, b).debugPrint("");
+  binaryOpNode(NULL, op::notEqual, a, b).debugPrint("");
+  binaryOpNode(NULL, op::greaterThan, a, b).debugPrint("");
+  binaryOpNode(NULL, op::greaterThanEq, a, b).debugPrint("");
+  binaryOpNode(NULL, op::and_, a, b).debugPrint("");
+  binaryOpNode(NULL, op::or_, a, b).debugPrint("");
+  binaryOpNode(NULL, op::bitAnd, a, b).debugPrint("");
+  binaryOpNode(NULL, op::bitOr, a, b).debugPrint("");
+  binaryOpNode(NULL, op::xor_, a, b).debugPrint("");
+  binaryOpNode(NULL, op::leftShift, a, b).debugPrint("");
+  binaryOpNode(NULL, op::rightShift, a, b).debugPrint("");
+  binaryOpNode(NULL, op::addEq, a, b).debugPrint("");
+  binaryOpNode(NULL, op::subEq, a, b).debugPrint("");
+  binaryOpNode(NULL, op::multEq, a, b).debugPrint("");
+  binaryOpNode(NULL, op::divEq, a, b).debugPrint("");
+  binaryOpNode(NULL, op::modEq, a, b).debugPrint("");
+  binaryOpNode(NULL, op::andEq, a, b).debugPrint("");
+  binaryOpNode(NULL, op::orEq, a, b).debugPrint("");
+  binaryOpNode(NULL, op::xorEq, a, b).debugPrint("");
+  binaryOpNode(NULL, op::leftShiftEq, a, b).debugPrint("");
+  binaryOpNode(NULL, op::rightShiftEq, a, b).debugPrint("");
+  //================================
+
+  //---[ Ternary ]------------------
+  ternaryOpNode(NULL, a, b, c).debugPrint("");
+  //================================
 }
 
 void testOtherNodes() {
