@@ -53,15 +53,15 @@ namespace occa {
       void attributeOccaLoop(forStatement &loop);
 
       void verifyOccaLoopInit(forStatement &loop,
-                              variable *&initVar);
+                              variable_t *&initVar);
 
       void verifyOccaLoopCheck(forStatement &loop,
-                               variable &initVar,
+                               variable_t &initVar,
                                operator_t *&checkOp,
                                exprNode *&checkExpression);
 
       void verifyOccaLoopUpdate(forStatement &loop,
-                                variable &initVar,
+                                variable_t &initVar,
                                 operator_t *&updateOp,
                                 exprNode *&updateExpression);
 

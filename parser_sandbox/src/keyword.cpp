@@ -112,7 +112,7 @@ namespace occa {
     //==================================
 
     //---[ Variable ]-------------------
-    variableKeyword::variableKeyword(const variable &var_) :
+    variableKeyword::variableKeyword(const variable_t &var_) :
       var(var_) {}
 
     int variableKeyword::type() {

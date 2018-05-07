@@ -21,6 +21,7 @@
  */
 #include "attribute.hpp"
 #include "expression.hpp"
+#include "variable.hpp"
 #include "parser.hpp"
 #include "builtins/attributes.hpp"
 #include "builtins/types.hpp"
@@ -93,7 +94,6 @@ namespace occa {
     parser_t::~parser_t() {
       clear();
 
-
       nameToAttributeMap::iterator it = attributeMap.begin();
       while (it != attributeMap.end()) {
         delete it->second;
@@ -116,7 +116,7 @@ namespace occa {
       up = &root;
 
       freeKeywords(keywords);
-      attributes.clear();
+      freeAttributes(attributes);
 
       success = true;
     }
@@ -252,13 +252,7 @@ namespace occa {
              (contextPos != context.position())) {
         contextPos = context.position();
         skipNewlines();
-        loadAttributes();
-      }
-      if (success) {
-        const int attributeCount = (int) attributes.size();
-        for (int i = 0; i < attributeCount; ++i) {
-          attributes[i]->beforeStatementLoad(*this);
-        }
+        loadAttributes(attributes);
       }
     }
 
@@ -275,14 +269,14 @@ namespace occa {
       }
     }
 
-    void parser_t::loadAttributes() {
+    void parser_t::loadAttributes(attributePtrVector &attrs) {
       while (success &&
              (getOperatorType(context[0]) & operatorType::attribute)) {
-        loadAttribute();
+        loadAttribute(attrs);
       }
     }
 
-    void parser_t::loadAttribute() {
+    void parser_t::loadAttribute(attributePtrVector &attrs) {
       // Skip [@] token
       context.set(1);
 
@@ -314,23 +308,37 @@ namespace occa {
         return;
       }
 
-      attribute_t *attr = it->second->create(*this, argRanges);
-      attributes.push_back(attr);
-
-      attr->onAttributeLoad(*this);
+      attribute_t *attr = it->second->create(*this, nameToken, argRanges);
+      attrs.push_back(attr);
     }
 
-    void parser_t::addAttributesTo(statement_t *smnt) {
+    void parser_t::addAttributesTo(attributePtrVector &attrs,
+                                   statement_t *smnt) {
       if (!smnt) {
+        freeAttributes(attrs);
         return;
       }
 
-      const int attributeCount = (int) attributes.size();
+      const bool isDecl = (smnt->type() & statementType::declaration);
+
+      const int attributeCount = (int) attrs.size();
       for (int i = 0; i < attributeCount; ++i) {
-        attribute_t *attr = attributes[i];
-        smnt->addAttribute(*attr);
-        attr->onStatementLoad(*this, *smnt);
+        attribute_t *attr = attrs[i];
+        bool keep = attr->isStatementAttribute(smnt->type());
+        if (keep) {
+          keep = attr->onStatementLoad(*this, *smnt);
+        }
+        else if (!isDecl || !attr->isVariableAttribute()) {
+          attr->printError("Cannot apply attribute to this type of statement");
+          success = false;
+        }
+        if (keep) {
+          smnt->addAttribute(*attr);
+        } else {
+          delete attr;
+        }
       }
+      attrs.clear();
     }
 
     int parser_t::peekIdentifier(const int tokenIndex) {
@@ -382,7 +390,7 @@ namespace occa {
     //==================================
 
     //---[ Type Loaders ]---------------
-    variable parser_t::loadVariable() {
+    variable_t parser_t::loadVariable() {
       vartype_t vartype = preloadType();
       if (isLoadingFunctionPointer()) {
         return loadFunctionPointer(vartype);
@@ -411,11 +419,17 @@ namespace occa {
         decl.var = loadVariable(vartype);
       }
 
-      if (!context.size() ||
-          !(getOperatorType(context[0]) & operatorType::assign)) {
+      loadDeclarationAttributes(decl);
+      if (!success) {
         return decl;
       }
 
+      // Check for [=] to continue parsing value
+      if (!(getOperatorType(context[0]) & operatorType::assign)) {
+        return decl;
+      }
+
+      // Parse until [,] or [;]
       int pos = context.getNextOperator(operatorType::comma |
                                         operatorType::semicolon);
       if (pos < 0) {
@@ -436,6 +450,46 @@ namespace occa {
       context.set(pos);
 
       return decl;
+    }
+
+
+    void parser_t::loadDeclarationAttributes(variableDeclaration &decl) {
+      attributePtrVector &varAttributes = decl.var.attributes;
+
+      // Copy statement attributes to each variable
+      // Variable attributes should override statement attributes
+      const int attrCount = (int) attributes.size();
+      for (int i = 0; i < attrCount; ++i) {
+        attribute_t *attr = attributes[i];
+        if (attr->isVariableAttribute()) {
+          varAttributes.push_back(attr->clone());
+        }
+      }
+
+      loadAttributes(varAttributes);
+      if (!success) {
+        return;
+      }
+
+      // Call variable attributes
+      const int varAttrCount = (int) varAttributes.size();
+      int newAttrCount = 0;
+      for (int i = 0; i < varAttrCount; ++i) {
+        attribute_t *attr = varAttributes[i];
+        bool keep = attr->isVariableAttribute();
+        if (keep) {
+          keep = attr->onVariableLoad(*this, decl.var);
+        } else {
+          attr->printError("Cannot apply attribute to variables");
+          success = false;
+        }
+        if (keep) {
+          varAttributes[newAttrCount++] = attr;
+        } else {
+          delete attr;
+        }
+      }
+      varAttributes.resize(newAttrCount);
     }
 
     vartype_t parser_t::preloadType() {
@@ -633,7 +687,7 @@ namespace occa {
               (getOperatorType(context[2]) & operatorType::parenthesesStart));
     }
 
-    variable parser_t::loadFunctionPointer(vartype_t &vartype) {
+    variable_t parser_t::loadFunctionPointer(vartype_t &vartype) {
       // TODO: Check for nested function pointers
       //       Check for arrays
       context.pushPairRange(0);
@@ -670,15 +724,15 @@ namespace occa {
       }
 
       if (!arraytype.arrays.size()) {
-        return variable(func, nameToken);
+        return variable_t(func, nameToken);
       }
 
       vartype_t varType(func);
       varType.arrays = arraytype.arrays;
-      return variable(varType, nameToken);
+      return variable_t(varType, nameToken);
     }
 
-    variable parser_t::loadVariable(vartype_t &vartype) {
+    variable_t parser_t::loadVariable(vartype_t &vartype) {
       identifierToken *nameToken = NULL;
       if (context.size() &&
           (context[0]->type() & tokenType::identifier)) {
@@ -688,7 +742,7 @@ namespace occa {
 
       setArrays(vartype);
 
-      return variable(vartype, nameToken);
+      return variable_t(vartype, nameToken);
     }
 
     bool parser_t::hasArray() {
@@ -813,7 +867,11 @@ namespace occa {
 
         // [checkSemicolon] is only valid for one statement
         checkSemicolon = true;
-        addAttributesTo(smnt);
+        addAttributesTo(attributes, smnt);
+        if (!success) {
+          delete smnt;
+          return NULL;
+        }
 
         return smnt;
       }
@@ -898,6 +956,7 @@ namespace occa {
 
       declarationStatement &smnt = *(new declarationStatement());
       while(success) {
+        // TODO: Pass decl as argument to prevent a copy
         smnt.declarations.push_back(
           loadVariableDeclaration(baseType)
         );
@@ -921,6 +980,7 @@ namespace occa {
         delete &smnt;
         return NULL;
       }
+
       return &smnt;
     }
 

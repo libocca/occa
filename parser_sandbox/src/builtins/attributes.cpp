@@ -20,12 +20,17 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  */
 #include "builtins/attributes.hpp"
+#include "statement.hpp"
+#include "variable.hpp"
 
 namespace occa {
   namespace lang {
     //---[ @dim ]-----------------------
-    dim::dim() {
-    }
+    dim::dim() :
+      attribute_t() {}
+
+    dim::dim(identifierToken &source_) :
+      attribute_t(source_) {}
 
     dim::~dim() {
     }
@@ -34,25 +39,35 @@ namespace occa {
       return "dim";
     }
 
+    bool dim::isVariableAttribute() const {
+      return true;
+    }
+
     attribute_t* dim::create(parser_t &parser,
+                             identifierToken &source_,
                              const tokenRangeVector &argRanges) {
+      return new dim(source_);
+    }
+
+    attribute_t* dim::clone() {
+      if (source) {
+        return new dim(source->clone()->to<identifierToken>());
+      }
       return new dim();
     }
 
-    void dim::onAttributeLoad(parser_t &parser) {
-    }
-
-    void dim::beforeStatementLoad(parser_t &parser) {
-    }
-
-    void dim::onStatementLoad(parser_t &parser,
-                              statement_t &smnt) {
+    bool dim::onVariableLoad(parser_t &parser,
+                             variable_t &var) {
+      return true;
     }
     //==================================
 
     //---[ @dimOrder ]------------------
-    dimOrder::dimOrder() {
-    }
+    dimOrder::dimOrder() :
+      attribute_t() {}
+
+    dimOrder::dimOrder(identifierToken &source_) :
+      attribute_t(source_) {}
 
     dimOrder::~dimOrder() {
     }
@@ -61,25 +76,35 @@ namespace occa {
       return "dimOrder";
     }
 
+    bool dimOrder::isVariableAttribute() const {
+      return true;
+    }
+
     attribute_t* dimOrder::create(parser_t &parser,
+                                  identifierToken &source_,
                                   const tokenRangeVector &argRanges) {
+      return new dimOrder(source_);
+    }
+
+    attribute_t* dimOrder::clone() {
+      if (source) {
+        return new dimOrder(source->clone()->to<identifierToken>());
+      }
       return new dimOrder();
     }
 
-    void dimOrder::onAttributeLoad(parser_t &parser) {
-    }
-
-    void dimOrder::beforeStatementLoad(parser_t &parser) {
-    }
-
-    void dimOrder::onStatementLoad(parser_t &parser,
-                                   statement_t &smnt) {
+    bool dimOrder::onVariableLoad(parser_t &parser,
+                                  variable_t &var) {
+      return true;
     }
     //==================================
 
     //---[ @tile ]----------------------
-    tile::tile() {
-    }
+    tile::tile() :
+      attribute_t() {}
+
+    tile::tile(identifierToken &source_) :
+      attribute_t(source_) {}
 
     tile::~tile() {
     }
@@ -89,24 +114,34 @@ namespace occa {
     }
 
     attribute_t* tile::create(parser_t &parser,
+                              identifierToken &source_,
                               const tokenRangeVector &argRanges) {
+      return new tile(source_);
+    }
+
+    attribute_t* tile::clone() {
+      if (source) {
+        return new tile(source->clone()->to<identifierToken>());
+      }
       return new tile();
     }
 
-    void tile::onAttributeLoad(parser_t &parser) {
+    bool tile::isStatementAttribute(const int stype) const {
+      return (stype & statementType::for_);
     }
 
-    void tile::beforeStatementLoad(parser_t &parser) {
-    }
-
-    void tile::onStatementLoad(parser_t &parser,
+    bool tile::onStatementLoad(parser_t &parser,
                                statement_t &smnt) {
+      return true;
     }
     //==================================
 
     //---[ @safeTile ]------------------
-    safeTile::safeTile() {
-    }
+    safeTile::safeTile() :
+      attribute_t() {}
+
+    safeTile::safeTile(identifierToken &source_) :
+      attribute_t(source_) {}
 
     safeTile::~safeTile() {
     }
@@ -116,18 +151,25 @@ namespace occa {
     }
 
     attribute_t* safeTile::create(parser_t &parser,
+                                  identifierToken &source_,
                                   const tokenRangeVector &argRanges) {
+      return new safeTile(source_);
+    }
+
+    attribute_t* safeTile::clone() {
+      if (source) {
+        return new safeTile(source->clone()->to<identifierToken>());
+      }
       return new safeTile();
     }
 
-    void safeTile::onAttributeLoad(parser_t &parser) {
+    bool safeTile::isStatementAttribute(const int stype) const {
+      return (stype & statementType::for_);
     }
 
-    void safeTile::beforeStatementLoad(parser_t &parser) {
-    }
-
-    void safeTile::onStatementLoad(parser_t &parser,
+    bool safeTile::onStatementLoad(parser_t &parser,
                                    statement_t &smnt) {
+      return true;
     }
     //==================================
   }

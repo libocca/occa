@@ -29,7 +29,7 @@ namespace occa {
     class keyword_t;
     class qualifier_t;
     class type_t;
-    class variable;
+    class variable_t;
 
     typedef trie<keyword_t*> keywordTrie;
 
@@ -128,9 +128,9 @@ namespace occa {
     //---[ Variable ]-------------------
     class variableKeyword : public keyword_t {
     public:
-      const variable &var;
+      const variable_t &var;
 
-      variableKeyword(const variable &var_);
+      variableKeyword(const variable_t &var_);
 
       virtual int type();
       virtual std::string name();

@@ -25,6 +25,7 @@
 #include "expression.hpp"
 #include "tokenizer.hpp"
 #include "builtins/types.hpp"
+#include "variable.hpp"
 
 void testOperatorNodes();
 void testOtherNodes();
@@ -117,7 +118,7 @@ void testOtherNodes() {
 
   identifierToken varName(fileOrigin(),
                           "var");
-  variable var_(t1, &varName);
+  variable_t var_(t1, &varName);
   variableNode var(NULL, var_);
 
   primitiveNode one(NULL, 1);

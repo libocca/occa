@@ -104,10 +104,11 @@ namespace occa {
       void setupPeek();
 
       void skipNewlines();
-      void loadAttributes();
-      void loadAttribute();
 
-      void addAttributesTo(statement_t *smnt);
+      void loadAttributes(attributePtrVector &attrs);
+      void loadAttribute(attributePtrVector &attrs);
+      void addAttributesTo(attributePtrVector &attrs,
+                           statement_t *smnt);
 
       int peekIdentifier(const int tokenIndex);
       bool isGotoLabel(const int tokenIndex);
@@ -116,9 +117,10 @@ namespace occa {
       //================================
 
       //---[ Type Loaders ]-------------
-      variable loadVariable();
+      variable_t loadVariable();
 
       variableDeclaration loadVariableDeclaration(const vartype_t &baseType);
+      void loadDeclarationAttributes(variableDeclaration &decl);
 
       vartype_t preloadType();
 
@@ -136,8 +138,8 @@ namespace occa {
       bool isLoadingFunctionPointer();
       bool isLoadingVariable();
 
-      variable loadFunctionPointer(vartype_t &vartype);
-      variable loadVariable(vartype_t &vartype);
+      variable_t loadFunctionPointer(vartype_t &vartype);
+      variable_t loadVariable(vartype_t &vartype);
 
       bool hasArray();
       void setArrays(vartype_t &vartype);
@@ -145,7 +147,7 @@ namespace occa {
 
       void setArguments(variableVector &args);
       void getArgumentRanges(tokenRangeVector &argRanges);
-      variable getArgument();
+      variable_t getArgument();
 
       class_t loadClassType();
       struct_t loadStructType();

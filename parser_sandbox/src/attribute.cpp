@@ -24,13 +24,78 @@
 
 namespace occa {
   namespace lang {
-    attribute_t::~attribute_t() {}
+    attribute_t::attribute_t() :
+      source(NULL) {}
 
-    void attribute_t::onAttributeLoad(parser_t &parser) {}
+    attribute_t::attribute_t(identifierToken &source_) :
+      source(&source_) {}
 
-    void attribute_t::beforeStatementLoad(parser_t &parser) {}
+    attribute_t::~attribute_t() {
+      delete source;
+    }
 
-    void attribute_t::onStatementLoad(parser_t &parser,
-                                      statement_t &smnt) {}
+    bool attribute_t::isVariableAttribute() const {
+      return false;
+    }
+
+    bool attribute_t::isFunctionAttribute() const {
+      return false;
+    }
+
+    bool attribute_t::isStatementAttribute(const int stype) const {
+      return false;
+    }
+
+    bool attribute_t::onVariableLoad(parser_t &parser,
+                                     variable_t &var) {
+      return false;
+    }
+
+    bool attribute_t::onFunctionLoad(parser_t &parser,
+                                     function_t &func) {
+      return false;
+    }
+
+    bool attribute_t::onStatementLoad(parser_t &parser,
+                                      statement_t &smnt) {
+      return false;
+    }
+
+    void attribute_t::onUse(parser_t &parser,
+                            statement_t &smnt,
+                            exprNode &expr) {}
+
+    void attribute_t::printWarning(const std::string &message) {
+      if (source) {
+        source->printWarning(message);
+      } else {
+        occa::printWarning(std::cerr, message);
+      }
+    }
+
+    void attribute_t::printError(const std::string &message) {
+      if (source) {
+        source->printError(message);
+      } else {
+        occa::printError(std::cerr, message);
+      }
+    }
+
+    void copyAttributes(attributePtrVector &dest,
+                        const attributePtrVector &src) {
+      freeAttributes(dest);
+      const int count = (int) src.size();
+      for (int i = 0; i < count; ++i) {
+        dest.push_back(src[i]->clone());
+      }
+    }
+
+    void freeAttributes(attributePtrVector &attributes) {
+      const int count = (int) attributes.size();
+      for (int i = 0; i < count; ++i) {
+        delete attributes[i];
+      }
+      attributes.clear();
+    }
   }
 }

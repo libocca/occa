@@ -26,46 +26,49 @@
 
 namespace occa {
   namespace lang {
+    class attribute_t;
+
     //---[ Variable ]-------------------
-    class variable {
+    class variable_t {
     public:
       vartype_t vartype;
       identifierToken *source;
+      attributePtrVector attributes;
 
-      variable();
+      variable_t();
 
-      variable(const vartype_t &vartype_,
-               identifierToken *source_ = NULL);
+      variable_t(const vartype_t &vartype_,
+                 identifierToken *source_ = NULL);
 
-      variable(const variable &other);
-      variable& operator = (const variable &other);
+      variable_t(const variable_t &other);
+      variable_t& operator = (const variable_t &other);
 
-      ~variable();
+      ~variable_t();
 
       bool isNamed() const;
       const std::string& name() const;
 
-      bool operator == (const variable &other) const;
+      bool operator == (const variable_t &other) const;
 
       void printDeclaration(printer &pout) const;
       void printExtraDeclaration(printer &pout) const;
     };
 
     printer& operator << (printer &pout,
-                          const variable &var);
+                          const variable_t &var);
     //==================================
 
     //---[ Variable Declaration ]-------
     class variableDeclaration {
     public:
-      variable var;
+      variable_t var;
       exprNode *value;
 
       variableDeclaration();
 
-      variableDeclaration(const variable &var_);
+      variableDeclaration(const variable_t &var_);
 
-      variableDeclaration(const variable &var_,
+      variableDeclaration(const variable_t &var_,
                           exprNode &value_);
 
       variableDeclaration(const variableDeclaration &other);

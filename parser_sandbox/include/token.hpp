@@ -33,7 +33,7 @@ namespace occa {
     class token_t;
     class qualifier_t;
     class type_t;
-    class variable;
+    class variable_t;
 
     typedef std::vector<token_t*> tokenVector;
 
@@ -243,10 +243,10 @@ namespace occa {
     //---[ Variable ]-------------------
     class variableToken : public token_t {
     public:
-      const variable &var;
+      const variable_t &var;
 
       variableToken(const fileOrigin &origin_,
-                     const variable &var_);
+                     const variable_t &var_);
 
       virtual ~variableToken();
 

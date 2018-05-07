@@ -34,7 +34,6 @@ namespace occa {
     class statement_t;
 
     typedef std::vector<statement_t*> statementPtrVector;
-    typedef std::vector<attribute_t*> attributePtrVector;
 
     namespace statementType {
       extern const int none;

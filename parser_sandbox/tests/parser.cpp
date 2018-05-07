@@ -201,7 +201,7 @@ vartype_t loadType(const std::string &s) {
   OCCA_ASSERT_FALSE(parser.isLoadingFunctionPointer()); \
   OCCA_ASSERT_TRUE(parser.isLoadingVariable())
 
-variable loadVariable(const std::string &s) {
+variable_t loadVariable(const std::string &s) {
   setSource(s);
   return parser.loadVariable();
 }
@@ -343,7 +343,7 @@ void testArrayTypeLoading() {
 }
 
 void testVariableLoading() {
-  variable var;
+  variable_t var;
   std::string varName;
 
   assertVariable("int varname[]");
@@ -419,7 +419,7 @@ void testArgumentLoading() {
 }
 
 void testFunctionPointerLoading() {
-  variable var;
+  variable_t var;
   std::string varName;
 #define varFunc var.vartype.type->to<function_t>()
 
@@ -568,39 +568,55 @@ void testExpressionLoading() {
 void testDeclarationLoading() {
   statement_t *statement;
 
-#define decl statement->to<declarationStatement>()
+#define decl         statement->to<declarationStatement>()
+#define decls        decl.declarations
+#define declVar(N)   decls[N].var
+#define declValue(N) (*(decls[N].value))
 
   setStatement("int foo;",
                statementType::declaration);
   OCCA_ASSERT_EQUAL(1,
-                    (int) decl.declarations.size());
+                    (int) decls.size());
 
   setStatement("int foo = 3;",
                statementType::declaration);
   OCCA_ASSERT_EQUAL(1,
-                    (int) decl.declarations.size());
+                    (int) decls.size());
+  OCCA_ASSERT_EQUAL("foo",
+                    declVar(0).name());
   OCCA_ASSERT_EQUAL(3,
-                    (int) decl.declarations[0].value->evaluate());
+                    (int) declValue(0).evaluate());
 
   setStatement("int foo = 3, bar = 4;",
                statementType::declaration);
   OCCA_ASSERT_EQUAL(2,
-                    (int) decl.declarations.size());
+                    (int) decls.size());
+  OCCA_ASSERT_EQUAL("foo",
+                    declVar(0).name());
   OCCA_ASSERT_EQUAL(3,
-                    (int) decl.declarations[0].value->evaluate());
+                    (int) declValue(0).evaluate());
+  OCCA_ASSERT_EQUAL("bar",
+                    declVar(1).name());
   OCCA_ASSERT_EQUAL(4,
-                    (int) decl.declarations[1].value->evaluate());
+                    (int) declValue(1).evaluate());
 
   setStatement("int foo = 3, *bar = 4;",
                statementType::declaration);
   OCCA_ASSERT_EQUAL(2,
-                    (int) decl.declarations.size());
+                    (int) decls.size());
+  OCCA_ASSERT_EQUAL("foo",
+                    declVar(0).name());
   OCCA_ASSERT_EQUAL(3,
-                    (int) decl.declarations[0].value->evaluate());
+                    (int) declValue(0).evaluate());
+  OCCA_ASSERT_EQUAL("bar",
+                    declVar(1).name());
   OCCA_ASSERT_EQUAL(4,
-                    (int) decl.declarations[1].value->evaluate());
+                    (int) declValue(1).evaluate());
 
 #undef decl
+#undef decls
+#undef declVar
+#undef declValue
 }
 
 void testNamespaceLoading() {
@@ -639,9 +655,12 @@ void testTypeDeclLoading() {
 void testIfLoading() {
   statement_t *statement;
 
-#define ifSmnt statement->to<ifStatement>()
-#define condition (*ifSmnt.condition)
-#define decl condition.to<declarationStatement>()
+#define ifSmnt       statement->to<ifStatement>()
+#define condition    (*ifSmnt.condition)
+#define decl         condition.to<declarationStatement>()
+#define decls        decl.declarations
+#define declVar(N)   decls[N].var
+#define declValue(N) (*(decls[N].value))
 
   setStatement("if (true) {}",
                statementType::if_);
@@ -686,14 +705,20 @@ void testIfLoading() {
   OCCA_ASSERT_EQUAL_BINARY(statementType::declaration,
                            condition.type());
   OCCA_ASSERT_EQUAL(1,
-                    (int) decl.declarations.size());
+                    (int) decls.size());
+  OCCA_ASSERT_EQUAL("i",
+                    declVar(0).name());
   OCCA_ASSERT_EQUAL(3,
-                    (int) decl.declarations[0].value->evaluate());
+                    (int) declValue(0).evaluate());
 
   // TODO: Test that 'i' exists in the if scope
+
 #undef ifSmnt
 #undef condition
 #undef decl
+#undef decls
+#undef declVar
+#undef declValue
 }
 
 void testForLoading() {
@@ -955,25 +980,35 @@ void testBlockLoading() {
 void testAttributeLoading() {
   statement_t *statement;
 
-#define attr(n) statement->attributes[n]->name()
+#define smntAttr(N)       statement->attributes[N]->name()
+#define decl              statement->to<declarationStatement>()
+#define decls             decl.declarations
+#define declVar(N)        decls[N].var
+#define declVarAttr(N, A) declVar(N).attributes[A]->name()
 
-  setStatement("@dim;",
-               statementType::empty);
+  setStatement("const int *x @dim(2, 3);",
+               statementType::declaration);
+  OCCA_ASSERT_EQUAL(0,
+                    (int) statement->attributes.size());
   OCCA_ASSERT_EQUAL(1,
-                    (int) statement->attributes.size());
+                    (int) declVar(0).attributes.size());
   OCCA_ASSERT_EQUAL("dim",
-                    attr(0));
+                    declVarAttr(0, 0));
 
-  setStatement("@dim(2, 3) @dimOrder(1, 0);",
-               statementType::empty);
-  OCCA_ASSERT_EQUAL(2,
+  setStatement("@dim(2, 3) const int *x;",
+               statementType::declaration);
+  OCCA_ASSERT_EQUAL(0,
                     (int) statement->attributes.size());
+  OCCA_ASSERT_EQUAL(1,
+                    (int) declVar(0).attributes.size());
   OCCA_ASSERT_EQUAL("dim",
-                    attr(0));
-  OCCA_ASSERT_EQUAL("dimOrder",
-                    attr(1));
+                    declVarAttr(0, 0));
 
-#undef attr
+#undef smntAttr
+#undef decl
+#undef decls
+#undef declVar
+#undef declVarAttr
 }
 //======================================
 
@@ -1099,5 +1134,10 @@ void testGotoErrors() {
 void testAttributeErrors() {
   parseBadSource("@attr");
   parseBadSource("@attr()");
+
+  parseBadSource("@dim;");
+  parseBadSource("@dimOrder(1, 0);");
+  parseBadSource("@tile(16);");
+  parseBadSource("@safeTile(16);");
 }
 //======================================

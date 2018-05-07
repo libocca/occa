@@ -20,6 +20,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  */
 #include "expression.hpp"
+#include "variable.hpp"
 #include "occa/tools/string.hpp"
 
 namespace occa {
@@ -302,7 +303,7 @@ namespace occa {
 
     //  |---[ Variable ]----------------
     variableNode::variableNode(token_t *token_,
-                               variable &value_) :
+                               variable_t &value_) :
       exprNode(token_),
       value(value_) {}
 

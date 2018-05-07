@@ -22,6 +22,7 @@
 #include "expression.hpp"
 #include "statement.hpp"
 #include "type.hpp"
+#include "variable.hpp"
 
 namespace occa {
   namespace lang {

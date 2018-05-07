@@ -26,6 +26,7 @@
 #include "type.hpp"
 #include "expression.hpp"
 #include "builtins/types.hpp"
+#include "variable.hpp"
 
 void testBitfields();
 void testFunction();
@@ -150,11 +151,11 @@ void testFunction() {
   identifierToken b(fileOrigin(), "b");
   identifierToken array(fileOrigin(), "array");
   identifierToken e(fileOrigin(), "e");
-  f += variable(t1 , &a);
-  f += variable(td2, &b);
-  f += variable(arg3);
-  f += variable(arg4, &array);
-  f += variable(double_, &e);
+  f += variable_t(t1 , &a);
+  f += variable_t(td2, &b);
+  f += variable_t(arg3);
+  f += variable_t(arg4, &array);
+  f += variable_t(double_, &e);
 
   function_t f2(f, "bar");
 

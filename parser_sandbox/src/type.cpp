@@ -566,7 +566,7 @@ namespace occa {
       return *(new function_t(*this));
     }
 
-    function_t& function_t::operator += (const variable &arg) {
+    function_t& function_t::operator += (const variable_t &arg) {
       args.push_back(arg);
       return *this;
     }

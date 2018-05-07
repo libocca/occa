@@ -23,30 +23,64 @@
 #define OCCA_LANG_ATTRIBUTE_HEADER
 
 #include <iostream>
+#include <vector>
 
 #include "tokenContext.hpp"
 
 namespace occa {
   namespace lang {
     class parser_t;
+    class identifierToken;
+    class attribute_t;
+    class vartype_t;
+    class variable_t;
+    class function_t;
     class statement_t;
+    class expressionStatement;
+
+    typedef std::vector<attribute_t*> attributePtrVector;
 
     class attribute_t {
+    protected:
+      identifierToken *source;
+
     public:
+      attribute_t();
+      attribute_t(identifierToken &source_);
       virtual ~attribute_t();
 
       virtual std::string name() const = 0;
 
       virtual attribute_t* create(parser_t &parser,
+                                  identifierToken &source_,
                                   const tokenRangeVector &argRanges) = 0;
 
-      virtual void onAttributeLoad(parser_t &parser);
+      virtual attribute_t* clone() = 0;
 
-      virtual void beforeStatementLoad(parser_t &parser);
+      virtual bool isVariableAttribute() const;
+      virtual bool isFunctionAttribute() const;
+      virtual bool isStatementAttribute(const int stype) const;
 
-      virtual void onStatementLoad(parser_t &parser,
+      virtual bool onVariableLoad(parser_t &parser,
+                                  variable_t &var);
+
+      virtual bool onFunctionLoad(parser_t &parser,
+                                  function_t &func);
+
+      virtual bool onStatementLoad(parser_t &parser,
                                    statement_t &smnt);
+
+      virtual void onUse(parser_t &parser,
+                         statement_t &smnt,
+                         exprNode &expr);
+
+      void printWarning(const std::string &message);
+      void printError(const std::string &message);
     };
+
+    void copyAttributes(attributePtrVector &dest,
+                        const attributePtrVector &src);
+    void freeAttributes(attributePtrVector &attributes);
   }
 }
 

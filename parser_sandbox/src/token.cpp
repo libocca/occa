@@ -273,7 +273,7 @@ namespace occa {
 
     //---[ Variable ]-------------------
     variableToken::variableToken(const fileOrigin &origin_,
-                                 const variable &var_) :
+                                 const variable_t &var_) :
       token_t(origin_),
       var(var_) {}
 

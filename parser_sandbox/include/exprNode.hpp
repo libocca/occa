@@ -28,12 +28,13 @@
 #include "occa/parser/primitive.hpp"
 #include "token.hpp"
 #include "operator.hpp"
-#include "variable.hpp"
 #include "printer.hpp"
 
 namespace occa {
   namespace lang {
     class exprNode;
+    class vartype_t;
+    class variable_t;
 
     typedef std::vector<exprNode*> exprNodeVector;
     typedef std::stack<exprNode*>  exprNodeStack;
@@ -246,10 +247,10 @@ namespace occa {
 
     class variableNode : public exprNode {
     public:
-      variable &value;
+      variable_t &value;
 
       variableNode(token_t *token_,
-                   variable &value_);
+                   variable_t &value_);
 
       variableNode(const variableNode& node);
 

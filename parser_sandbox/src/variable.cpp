@@ -19,6 +19,7 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  */
+#include "attribute.hpp"
 #include "exprNode.hpp"
 #include "statement.hpp"
 #include "variable.hpp"
@@ -26,12 +27,12 @@
 namespace occa {
   namespace lang {
     //---[ Variable ]-------------------
-    variable::variable() :
+    variable_t::variable_t() :
       vartype(),
       source(new identifierToken(filePosition(), "")) {}
 
-    variable::variable(const vartype_t &vartype_,
-                       identifierToken *source_) :
+    variable_t::variable_t(const vartype_t &vartype_,
+                           identifierToken *source_) :
       vartype(vartype_),
       source(NULL) {
       if (source_) {
@@ -41,30 +42,36 @@ namespace occa {
       }
     }
 
-    variable::variable(const variable &other) :
+    variable_t::variable_t(const variable_t &other) :
       vartype(other.vartype),
-      source((identifierToken*) other.source->clone()) {}
+      source((identifierToken*) other.source->clone()) {
+      copyAttributes(attributes, other.attributes);
+    }
 
-    variable& variable::operator = (const variable &other) {
+    variable_t& variable_t::operator = (const variable_t &other) {
       vartype = other.vartype;
       delete source;
       source = (identifierToken*) other.source->clone();
+
+      copyAttributes(attributes, other.attributes);
+
       return *this;
     }
 
-    variable::~variable() {
+    variable_t::~variable_t() {
       delete source;
+      freeAttributes(attributes);
     }
 
-    bool variable::isNamed() const {
+    bool variable_t::isNamed() const {
       return source->value.size();
     }
 
-    const std::string& variable::name() const {
+    const std::string& variable_t::name() const {
       return source->value;
     }
 
-    bool variable::operator == (const variable &other) const {
+    bool variable_t::operator == (const variable_t &other) const {
       if (this == &other) {
         return true;
       }
@@ -74,16 +81,16 @@ namespace occa {
       return vartype == other.vartype;
     }
 
-    void variable::printDeclaration(printer &pout) const {
+    void variable_t::printDeclaration(printer &pout) const {
       vartype.printDeclaration(pout, name());
     }
 
-    void variable::printExtraDeclaration(printer &pout) const {
+    void variable_t::printExtraDeclaration(printer &pout) const {
       vartype.printExtraDeclaration(pout, name());
     }
 
     printer& operator << (printer &pout,
-                          const variable &var) {
+                          const variable_t &var) {
       pout << var.name();
       return pout;
     }
@@ -94,11 +101,11 @@ namespace occa {
       var(),
       value(NULL) {}
 
-    variableDeclaration::variableDeclaration(const variable &var_) :
+    variableDeclaration::variableDeclaration(const variable_t &var_) :
       var(var_),
       value(NULL) {}
 
-    variableDeclaration::variableDeclaration(const variable &var_,
+    variableDeclaration::variableDeclaration(const variable_t &var_,
                                              exprNode &value_) :
       var(var_),
       value(&value_) {}

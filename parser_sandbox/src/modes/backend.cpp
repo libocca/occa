@@ -104,7 +104,7 @@ namespace occa {
         return;
       }
 
-      variable *initVar;
+      variable_t *initVar;
       operator_t *checkOp, *updateOp;
       exprNode *checkExpression, *updateExpression;
       verifyOccaLoopInit(loop, initVar);
@@ -127,7 +127,7 @@ namespace occa {
     }
 
     void verifyOccaLoopInit(forStatement &loop,
-                            variable *&initVar) {
+                            variable_t *&initVar) {
 #if 0
       expressionStatement &init = loop.init.to<expressionStatement>();
       type_t *initType;
@@ -155,7 +155,7 @@ namespace occa {
     }
 
     void verifyOccaLoopCheck(forStatement &loop,
-                             variable &initVar,
+                             variable_t &initVar,
                              operator_t *&checkOp,
                              exprNode *&checkExpression) {
 #if 0
@@ -179,7 +179,7 @@ namespace occa {
     }
 
     void verifyOccaLoopUpdate(forStatement &loop,
-                              variable &initVar,
+                              variable_t &initVar,
                               operator_t *&updateOp,
                               exprNode *&updateExpression) {
 #if 0
@@ -214,7 +214,7 @@ namespace occa {
       forStatement &outerLoop = loop.clone().to<forStatement>();
       // Change the update value:
       //   for (int i2 = INIT; i2 OP CHECK   ; i2 OP (UPDATE * TILESIZE)) {}
-      variable &outerInitVar = info.initVar.clone();
+      variable_t &outerInitVar = info.initVar.clone();
       outerLoop.initVar = &outerInitVar;
       // Update the init variable
       //   for (int i = i2   ; i OP CHECK    ; i OP UPDATE) {}

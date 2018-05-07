@@ -37,11 +37,11 @@ namespace occa {
     class blockStatement;
     class pointer_t;
     class array_t;
-    class variable;
+    class variable_t;
 
-    typedef std::vector<pointer_t> pointerVector;
-    typedef std::vector<array_t>   arrayVector;
-    typedef std::vector<variable>  variableVector;
+    typedef std::vector<pointer_t>  pointerVector;
+    typedef std::vector<array_t>    arrayVector;
+    typedef std::vector<variable_t> variableVector;
 
     namespace typeType {
       extern const int none;
@@ -283,7 +283,7 @@ namespace occa {
 
       function_t(const function_t &other);
 
-      function_t& operator += (const variable &arg);
+      function_t& operator += (const variable_t &arg);
       function_t& operator += (const variableVector &args_);
 
       virtual int type() const;
