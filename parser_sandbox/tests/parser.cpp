@@ -987,7 +987,7 @@ void testAttributeLoading() {
 #define declVar(N)        decls[N].var
 #define declVarAttr(N, A) declVar(N).attributes[A]
 
-  setStatement("const int *x @dim(2, 3);",
+  setStatement("const int *x @dim(2, 3), *y;",
                statementType::declaration);
   OCCA_ASSERT_EQUAL(0,
                     (int) statement->attributes.size());
@@ -995,6 +995,8 @@ void testAttributeLoading() {
                     (int) declVar(0).attributes.size());
   OCCA_ASSERT_EQUAL("dim",
                     declVarAttr(0, 0)->name());
+  OCCA_ASSERT_EQUAL(0,
+                    (int) declVar(1).attributes.size());
 
   dim &xDim1 = *((dim*) declVarAttr(0, 0));
   OCCA_ASSERT_EQUAL(2,
@@ -1010,6 +1012,10 @@ void testAttributeLoading() {
                     (int) declVar(0).attributes.size());
   OCCA_ASSERT_EQUAL("dim",
                     declVarAttr(0, 0)->name());
+  OCCA_ASSERT_EQUAL(1,
+                    (int) declVar(1).attributes.size());
+  OCCA_ASSERT_EQUAL("dim",
+                    declVarAttr(1, 0)->name());
 
   dim &xDim2 = *((dim*) declVarAttr(0, 0));
   OCCA_ASSERT_EQUAL(4,
