@@ -26,11 +26,17 @@
 
 namespace occa {
   namespace lang {
+    typedef std::vector<exprNode*> exprNodeVector;
+
     //---[ @dim ]-----------------------
     class dim : public attribute_t {
+      exprNodeVector dimSizes;
+
     public:
       dim();
-      dim(identifierToken &source_);
+      dim(identifierToken &source_,
+          exprNodeVector &dimSizes_);
+      dim(const dim &other);
       virtual ~dim();
 
       virtual std::string name() const;
@@ -45,11 +51,16 @@ namespace occa {
 
       virtual bool onVariableLoad(parser_t &parser,
                                   variable_t &var);
+
+      int size();
+      exprNode* operator [] (const int index);
     };
     //==================================
 
     //---[ @dimOrder ]------------------
     class dimOrder : public attribute_t {
+      intVector order;
+
     public:
       dimOrder();
       dimOrder(identifierToken &source_);

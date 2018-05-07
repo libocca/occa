@@ -299,17 +299,24 @@ namespace occa {
       }
 
       tokenRangeVector argRanges;
-      if (getOperatorType(context[0]) & operatorType::parenthesesStart) {
+      const bool hasArgs = (getOperatorType(context[0]) & operatorType::parenthesesStart);
+      if (hasArgs) {
         context.pushPairRange(0);
         getArgumentRanges(argRanges);
-        context.popAndSkipPair();
       }
       if (!success) {
+        if (hasArgs) {
+          context.popAndSkipPair();
+        }
         return;
       }
 
       attribute_t *attr = it->second->create(*this, nameToken, argRanges);
       attrs.push_back(attr);
+
+      if (hasArgs) {
+        context.popAndSkipPair();
+      }
     }
 
     void parser_t::addAttributesTo(attributePtrVector &attrs,
@@ -781,11 +788,11 @@ namespace occa {
                      argRanges[i].end);
 
         args.push_back(loadVariable());
+
+        context.pop();
         if (!success) {
           break;
         }
-
-        context.pop();
         context.set(argRanges[i].end + 1);
       }
     }
@@ -937,12 +944,12 @@ namespace occa {
       context.getAndCloneTokens(tokens);
 
       exprNode *expr = getExpression(tokens);
+      context.pop();
       if (!expr) {
         success = false;
         return NULL;
       }
 
-      context.pop();
       context.set(end + 1);
 
       return new expressionStatement(*expr);

@@ -25,6 +25,7 @@
 #include "exprNode.hpp"
 #include "parser.hpp"
 #include "builtins/types.hpp"
+#include "builtins/attributes.hpp"
 
 void testTypeMethods();
 void testPeek();
@@ -984,7 +985,7 @@ void testAttributeLoading() {
 #define decl              statement->to<declarationStatement>()
 #define decls             decl.declarations
 #define declVar(N)        decls[N].var
-#define declVarAttr(N, A) declVar(N).attributes[A]->name()
+#define declVarAttr(N, A) declVar(N).attributes[A]
 
   setStatement("const int *x @dim(2, 3);",
                statementType::declaration);
@@ -993,16 +994,34 @@ void testAttributeLoading() {
   OCCA_ASSERT_EQUAL(1,
                     (int) declVar(0).attributes.size());
   OCCA_ASSERT_EQUAL("dim",
-                    declVarAttr(0, 0));
+                    declVarAttr(0, 0)->name());
 
-  setStatement("@dim(2, 3) const int *x;",
+  dim &xDim1 = *((dim*) declVarAttr(0, 0));
+  OCCA_ASSERT_EQUAL(2,
+                    (int) xDim1[0]->evaluate());
+  OCCA_ASSERT_EQUAL(3,
+                    (int) xDim1[1]->evaluate());
+
+  setStatement("@dim(2 + 2, 10 - 5) const int *x, *y;",
                statementType::declaration);
   OCCA_ASSERT_EQUAL(0,
                     (int) statement->attributes.size());
   OCCA_ASSERT_EQUAL(1,
                     (int) declVar(0).attributes.size());
   OCCA_ASSERT_EQUAL("dim",
-                    declVarAttr(0, 0));
+                    declVarAttr(0, 0)->name());
+
+  dim &xDim2 = *((dim*) declVarAttr(0, 0));
+  OCCA_ASSERT_EQUAL(4,
+                    (int) xDim2[0]->evaluate());
+  OCCA_ASSERT_EQUAL(5,
+                    (int) xDim2[1]->evaluate());
+
+  dim &xDim3 = *((dim*) declVarAttr(1, 0));
+  OCCA_ASSERT_EQUAL(4,
+                    (int) xDim3[0]->evaluate());
+  OCCA_ASSERT_EQUAL(5,
+                    (int) xDim3[1]->evaluate());
 
 #undef smntAttr
 #undef decl

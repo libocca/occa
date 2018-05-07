@@ -20,6 +20,8 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  */
 #include "builtins/attributes.hpp"
+#include "exprNode.hpp"
+#include "parser.hpp"
 #include "statement.hpp"
 #include "variable.hpp"
 
@@ -29,8 +31,21 @@ namespace occa {
     dim::dim() :
       attribute_t() {}
 
-    dim::dim(identifierToken &source_) :
-      attribute_t(source_) {}
+    dim::dim(identifierToken &source_,
+             exprNodeVector &dimSizes_) :
+      attribute_t(source_),
+      dimSizes(dimSizes_) {}
+
+    dim::dim(const dim &other) {
+      if (other.source) {
+        source = (identifierToken*) other.source->clone();
+      }
+
+      const int count = (int) other.dimSizes.size();
+      for (int i = 0; i < count; ++i) {
+        dimSizes.push_back(&(other.dimSizes[i]->clone()));
+      }
+    }
 
     dim::~dim() {
     }
@@ -46,19 +61,41 @@ namespace occa {
     attribute_t* dim::create(parser_t &parser,
                              identifierToken &source_,
                              const tokenRangeVector &argRanges) {
-      return new dim(source_);
+
+      exprNodeVector dimSizes_;
+      const int args = (int) argRanges.size();
+      for (int i = 0; i < args; ++i) {
+        parser.context.push(argRanges[i].start,
+                            argRanges[i].end);
+
+        dimSizes_.push_back(parser.context.getExpression());
+
+        parser.context.pop();
+        parser.context.set(argRanges[i].end + 1);
+      }
+
+      return new dim(source_, dimSizes_);
     }
 
     attribute_t* dim::clone() {
-      if (source) {
-        return new dim(source->clone()->to<identifierToken>());
-      }
-      return new dim();
+      return new dim(*this);
     }
 
     bool dim::onVariableLoad(parser_t &parser,
                              variable_t &var) {
       return true;
+    }
+
+    int dim::size() {
+      return (int) dimSizes.size();
+    }
+
+    exprNode* dim::operator [] (const int index) {
+      const int size_ = (int) dimSizes.size();
+      if ((index < 0)  || (index >= size_)) {
+        return NULL;
+      }
+      return dimSizes[index];
     }
     //==================================
 
