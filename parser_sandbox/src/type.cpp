@@ -211,11 +211,13 @@ namespace occa {
     vartype_t::vartype_t() :
       typeToken(NULL),
       type(),
-      referenceToken(NULL) {}
+      referenceToken(NULL),
+      bitfield(-1) {}
 
     vartype_t::vartype_t(const type_t &type_) :
       typeToken(NULL),
-      referenceToken(NULL) {
+      referenceToken(NULL),
+      bitfield(-1) {
 
       if (!type_.isNamed()) {
         type = &(type_.clone());
@@ -227,7 +229,8 @@ namespace occa {
     vartype_t::vartype_t(identifierToken &typeToken_,
                          const type_t &type_) :
       typeToken((identifierToken*) typeToken_.clone()),
-      referenceToken(NULL) {
+      referenceToken(NULL),
+      bitfield(-1) {
 
       if (!type_.isNamed()) {
         type = &(type_.clone());
@@ -239,7 +242,8 @@ namespace occa {
     vartype_t::vartype_t(const vartype_t &other) :
       typeToken(NULL),
       type(),
-      referenceToken(NULL) {
+      referenceToken(NULL),
+      bitfield(-1) {
       *this = other;
     }
 
@@ -274,6 +278,8 @@ namespace occa {
         referenceToken = NULL;
       }
 
+      bitfield = other.bitfield;
+
       return *this;
     }
 
@@ -281,6 +287,7 @@ namespace occa {
       qualifiers.clear();
       pointers.clear();
       arrays.clear();
+      bitfield = -1;
 
       delete typeToken;
       typeToken = NULL;
@@ -474,6 +481,10 @@ namespace occa {
       const int arrayCount = (int) arrays.size();
       for (int i = 0; i < arrayCount; ++i) {
         pout << arrays[i];
+      }
+
+      if (bitfield >= 0) {
+        pout << " : " << bitfield;
       }
     }
 

@@ -431,30 +431,11 @@ namespace occa {
         return decl;
       }
 
-      // Check for [=] to continue parsing value
-      if (!(getOperatorType(context[0]) & operatorType::assign)) {
-        return decl;
+      loadDeclarationBitfield(decl);
+      loadDeclarationAssignment(decl);
+      if (!decl.value) {
+        loadDeclarationBraceInitializer(decl);
       }
-
-      // Parse until [,] or [;]
-      int pos = context.getNextOperator(operatorType::comma |
-                                        operatorType::semicolon);
-      if (pos < 0) {
-        if (checkSemicolon) {
-          context.printErrorAtEnd("Expected a ;");
-          success = false;
-          return decl;
-        }
-        pos = context.size();
-      }
-      if (pos == 1) {
-        context[1]->printError("Expected an expression");
-        success = false;
-        return decl;
-      }
-
-      decl.value = context.getExpression(1, pos);
-      context.set(pos);
 
       return decl;
     }
@@ -497,6 +478,84 @@ namespace occa {
         }
       }
       varAttributes.resize(newAttrCount);
+    }
+
+    int parser_t::declarationNextCheck(const opType_t opCheck) {
+      int pos = context.getNextOperator(opCheck);
+      if (pos < 0) {
+        if (checkSemicolon) {
+          context.printErrorAtEnd("Expected a ;");
+          success = false;
+        }
+        pos = context.size();
+      }
+      return pos;
+    }
+
+    void parser_t::loadDeclarationBitfield(variableDeclaration &decl) {
+      if (!(getOperatorType(context[0]) & operatorType::colon)) {
+        return;
+      }
+
+      int pos = declarationNextCheck(operatorType::assign     |
+                                     operatorType::braceStart |
+                                     operatorType::comma      |
+                                     operatorType::semicolon);
+      if (pos == 1) {
+        context[1]->printError("Expected an expression");
+        success = false;
+      }
+      if (!success) {
+        return;
+      }
+
+      exprNode *value = context.getExpression(1, pos);
+      decl.var.vartype.bitfield = (int) value->evaluate();
+      context.set(pos);
+    }
+
+    void parser_t::loadDeclarationAssignment(variableDeclaration &decl) {
+      if (!(getOperatorType(context[0]) & operatorType::assign)) {
+        return;
+      }
+
+      int pos = declarationNextCheck(operatorType::comma |
+                                     operatorType::semicolon);
+      if (pos == 1) {
+        context[1]->printError("Expected an expression");
+        success = false;
+      }
+      if (!success) {
+        return;
+      }
+
+      decl.value = context.getExpression(1, pos);
+      context.set(pos);
+    }
+
+    // TODO: Store brace initializer propertly, maybe in value with an extra flag
+    void parser_t::loadDeclarationBraceInitializer(variableDeclaration &decl) {
+      if (!(getOperatorType(context[0]) & operatorType::braceStart)) {
+        return;
+      }
+
+      context.push(context.getClosingPair(0) + 1);
+      int pos = declarationNextCheck(operatorType::comma |
+                                     operatorType::semicolon);
+      if ((pos != 0) &&
+          (pos != context.size())) {
+        context.printError("Expected a [,] for another variable"
+                           " or a stopping [;]");
+        success = false;
+      }
+      if (!success) {
+        return;
+      }
+      context.pop();
+
+      context.pushPairRange(0);
+      decl.value = context.getExpression();
+      context.popAndSkipPair();
     }
 
     vartype_t parser_t::preloadType() {

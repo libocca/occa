@@ -20,12 +20,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  */
 
-#include "occa/tools/testing.hpp"
-
-#include "exprNode.hpp"
-#include "parser.hpp"
-#include "builtins/types.hpp"
-#include "builtins/attributes.hpp"
+#include "parserUtils.hpp"
 
 void testTypeMethods();
 void testPeek();
@@ -33,45 +28,6 @@ void testTypeLoading();
 void testTypeErrors();
 void testLoading();
 void testErrors();
-
-using namespace occa::lang;
-
-//---[ Util Methods ]-------------------
-std::string source;
-parser_t parser;
-
-void setSource(const std::string &s) {
-  source = s;
-  parser.setSource(source, false);
-}
-
-void parseSource(const std::string &s) {
-  source = s;
-  parser.parseSource(source);
-}
-
-template <class smntType>
-smntType& getStatement(const int index = 0) {
-  return parser.root[index]->to<smntType>();
-}
-//======================================
-
-//---[ Macro Util Methods ]-------------
-#define testStatementPeek(str_, type_)          \
-  setSource(str_);                              \
-  OCCA_ASSERT_EQUAL_BINARY(type_,               \
-                           parser.peek());      \
-  OCCA_ASSERT_TRUE(parser.success)
-
-#define setStatement(str_, type_)                   \
-  parseSource(str_);                                \
-  OCCA_ASSERT_EQUAL(1,                              \
-                    parser.root.size());            \
-  OCCA_ASSERT_EQUAL_BINARY(type_,                   \
-                           parser.root[0]->type())  \
-  OCCA_ASSERT_TRUE(parser.success);                 \
-  statement = parser.root[0]
-//======================================
 
 int main(const int argc, const char **argv) {
   testTypeMethods();
@@ -613,6 +569,32 @@ void testDeclarationLoading() {
                     declVar(1).name());
   OCCA_ASSERT_EQUAL(4,
                     (int) declValue(1).evaluate());
+
+  setStatement("int foo { 3 }, *bar { 4 };",
+               statementType::declaration);
+  OCCA_ASSERT_EQUAL(2,
+                    (int) decls.size());
+  OCCA_ASSERT_EQUAL("foo",
+                    declVar(0).name());
+  OCCA_ASSERT_EQUAL(3,
+                    (int) declValue(0).evaluate());
+  OCCA_ASSERT_EQUAL("bar",
+                    declVar(1).name());
+  OCCA_ASSERT_EQUAL(4,
+                    (int) declValue(1).evaluate());
+
+  setStatement("int foo : 1 = 3, bar : 2 = 4;",
+               statementType::declaration);
+  OCCA_ASSERT_EQUAL(2,
+                    (int) decls.size());
+  OCCA_ASSERT_EQUAL("foo",
+                    declVar(0).name());
+  OCCA_ASSERT_EQUAL(1,
+                    declVar(0).vartype.bitfield);
+  OCCA_ASSERT_EQUAL("bar",
+                    declVar(1).name());
+  OCCA_ASSERT_EQUAL(2,
+                    declVar(1).vartype.bitfield);
 
 #undef decl
 #undef decls

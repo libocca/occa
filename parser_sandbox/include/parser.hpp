@@ -121,6 +121,10 @@ namespace occa {
 
       variableDeclaration loadVariableDeclaration(const vartype_t &baseType);
       void loadDeclarationAttributes(variableDeclaration &decl);
+      int declarationNextCheck(const opType_t opCheck);
+      void loadDeclarationBitfield(variableDeclaration &decl);
+      void loadDeclarationAssignment(variableDeclaration &decl);
+      void loadDeclarationBraceInitializer(variableDeclaration &decl);
 
       vartype_t preloadType();
 

@@ -182,6 +182,8 @@ namespace occa {
       token_t *referenceToken;
       arrayVector arrays;
 
+      int bitfield;
+
       vartype_t();
 
       vartype_t(const type_t &type_);
