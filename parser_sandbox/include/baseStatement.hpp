@@ -45,7 +45,7 @@ namespace occa {
       extern const int namespace_;
 
       extern const int typeDecl;
-
+      extern const int function;
       extern const int classAccess;
 
       extern const int expression;

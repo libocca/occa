@@ -50,6 +50,24 @@ namespace occa {
     //==================================
 
     //---[ Type ]-----------------------
+    functionStatement::functionStatement(const function_t &function_) :
+      function(function_) {}
+
+    statement_t& functionStatement::clone_() const {
+      return *(new functionStatement(function));
+    }
+
+    int functionStatement::type() const {
+      return statementType::function;
+    }
+
+    void functionStatement::print(printer &pout) const {
+      pout.printStartIndentation();
+      pout << function;
+      blockStatement::print(pout);
+      pout.printEndNewline();
+    }
+
     classAccessStatement::classAccessStatement(const int access_) :
       statement_t(),
       access(access_) {}

@@ -1015,7 +1015,8 @@ namespace occa {
     }
 
     statement_t* parser_t::loadDeclarationStatement() {
-      vartype_t baseType = preloadType();
+      vartype_t baseType;
+      loadBaseType(baseType);
       if (!success) {
         return NULL;
       }

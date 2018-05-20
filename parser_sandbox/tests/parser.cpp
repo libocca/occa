@@ -378,6 +378,7 @@ void testArgumentLoading() {
 void testFunctionPointerLoading() {
   variable_t var;
   std::string varName;
+
 #define varFunc var.vartype.type->to<function_t>()
 
   // Test pointer vs block
@@ -563,10 +564,31 @@ void testDeclarationLoading() {
                     (int) decls.size());
   OCCA_ASSERT_EQUAL("foo",
                     declVar(0).name());
+  OCCA_ASSERT_EQUAL(0,
+                    (int) declVar(0).vartype.pointers.size());
   OCCA_ASSERT_EQUAL(3,
                     (int) declValue(0).evaluate());
   OCCA_ASSERT_EQUAL("bar",
                     declVar(1).name());
+  OCCA_ASSERT_EQUAL(1,
+                    (int) declVar(1).vartype.pointers.size());
+  OCCA_ASSERT_EQUAL(4,
+                    (int) declValue(1).evaluate());
+
+  setStatement("int *foo = 3, bar = 4;",
+               statementType::declaration);
+  OCCA_ASSERT_EQUAL(2,
+                    (int) decls.size());
+  OCCA_ASSERT_EQUAL("foo",
+                    declVar(0).name());
+  OCCA_ASSERT_EQUAL(1,
+                    (int) declVar(0).vartype.pointers.size());
+  OCCA_ASSERT_EQUAL(3,
+                    (int) declValue(0).evaluate());
+  OCCA_ASSERT_EQUAL("bar",
+                    declVar(1).name());
+  OCCA_ASSERT_EQUAL(0,
+                    (int) declVar(1).vartype.pointers.size());
   OCCA_ASSERT_EQUAL(4,
                     (int) declValue(1).evaluate());
 

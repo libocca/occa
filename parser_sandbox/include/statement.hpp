@@ -57,6 +57,17 @@ namespace occa {
 
     //---[ Type ]-----------------------
     // TODO: Type declaration
+    class functionStatement : public blockStatement {
+    public:
+      function_t function;
+
+      functionStatement(const function_t &function_);
+
+      virtual statement_t& clone_() const;
+      virtual int type() const;
+
+      virtual void print(printer &pout) const;
+    };
 
     class classAccessStatement : public statement_t {
     public:
