@@ -637,7 +637,8 @@ namespace occa {
     }
 
     structure_t::structure_t(const std::string &name_) :
-      type_t(name_) {}
+      type_t(name_),
+      body(NULL) {}
 
     class_t::class_t() :
       structure_t("") {}

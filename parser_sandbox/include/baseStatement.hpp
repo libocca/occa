@@ -76,7 +76,7 @@ namespace occa {
       statement_t *up;
       attributePtrVector attributes;
 
-      statement_t();
+      statement_t(statement_t *up_);
 
       virtual ~statement_t();
 
@@ -123,7 +123,7 @@ namespace occa {
     //---[ Empty ]----------------------
     class emptyStatement : public statement_t {
     public:
-      emptyStatement();
+      emptyStatement(statement_t *up_);
 
       virtual statement_t& clone_() const;
       virtual int type() const;
@@ -138,7 +138,7 @@ namespace occa {
       statementPtrVector children;
       scope_t scope;
 
-      blockStatement();
+      blockStatement(statement_t *up_);
       blockStatement(const blockStatement &other);
       virtual ~blockStatement();
 

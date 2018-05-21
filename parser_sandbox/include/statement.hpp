@@ -45,7 +45,8 @@ namespace occa {
     public:
       pragmaToken &token;
 
-      pragmaStatement(pragmaToken &token_);
+      pragmaStatement(statement_t *up_,
+                      pragmaToken &token_);
       ~pragmaStatement();
 
       virtual statement_t& clone_() const;
@@ -61,7 +62,8 @@ namespace occa {
     public:
       function_t function;
 
-      functionStatement(const function_t &function_);
+      functionStatement(statement_t *up_,
+                        const function_t &function_);
 
       virtual statement_t& clone_() const;
       virtual int type() const;
@@ -73,7 +75,8 @@ namespace occa {
     public:
       function_t function;
 
-      functionDeclStatement(const function_t &function_);
+      functionDeclStatement(statement_t *up_,
+                            const function_t &function_);
       functionDeclStatement(const functionDeclStatement &other);
 
       virtual statement_t& clone_() const;
@@ -86,7 +89,8 @@ namespace occa {
     public:
       int access;
 
-      classAccessStatement(const int access_);
+      classAccessStatement(statement_t *up_,
+                           const int access_);
 
       virtual statement_t& clone_() const;
       virtual int type() const;
@@ -100,7 +104,8 @@ namespace occa {
     public:
       exprNode *root;
 
-      expressionStatement(exprNode &root_);
+      expressionStatement(statement_t *up_,
+                          exprNode &root_);
       ~expressionStatement();
 
       virtual statement_t& clone_() const;
@@ -113,7 +118,7 @@ namespace occa {
     public:
       variableDeclarationVector declarations;
 
-      declarationStatement();
+      declarationStatement(statement_t *up_);
       declarationStatement(const declarationStatement &other);
 
       virtual statement_t& clone_() const;
@@ -128,7 +133,8 @@ namespace occa {
     public:
       identifierToken &labelToken;
 
-      gotoStatement(identifierToken &labelToken_);
+      gotoStatement(statement_t *up_,
+                    identifierToken &labelToken_);
       gotoStatement(const gotoStatement &other);
       ~gotoStatement();
 
@@ -145,7 +151,8 @@ namespace occa {
     public:
       identifierToken &labelToken;
 
-      gotoLabelStatement(identifierToken &labelToken_);
+      gotoLabelStatement(statement_t *up_,
+                         identifierToken &labelToken_);
       gotoLabelStatement(const gotoLabelStatement &other);
       ~gotoLabelStatement();
 
@@ -164,7 +171,8 @@ namespace occa {
     public:
       identifierToken &nameToken;
 
-      namespaceStatement(identifierToken &nameToken_);
+      namespaceStatement(statement_t *up_,
+                         identifierToken &nameToken_);
       namespaceStatement(const namespaceStatement &other);
       ~namespaceStatement();
 
@@ -186,7 +194,8 @@ namespace occa {
       elifStatementVector elifSmnts;
       elseStatement *elseSmnt;
 
-      ifStatement(statement_t *condition_);
+      ifStatement(statement_t *up_,
+                  statement_t *condition_);
       ifStatement(const ifStatement &other);
       ~ifStatement();
 
@@ -204,7 +213,8 @@ namespace occa {
     public:
       statement_t *condition;
 
-      elifStatement(statement_t *condition_);
+      elifStatement(statement_t *up_,
+                    statement_t *condition_);
       elifStatement(const elifStatement &other);
       ~elifStatement();
 
@@ -216,7 +226,7 @@ namespace occa {
 
     class elseStatement : public blockStatement {
     public:
-      elseStatement();
+      elseStatement(statement_t *up_);
       elseStatement(const elseStatement &other);
 
       virtual statement_t& clone_() const;
@@ -231,7 +241,8 @@ namespace occa {
     public:
       statement_t *init, *check, *update;
 
-      forStatement(statement_t *init_,
+      forStatement(statement_t *up_,
+                   statement_t *init_,
                    statement_t *check_,
                    statement_t *update_);
       forStatement(const forStatement &other);
@@ -250,7 +261,8 @@ namespace occa {
       statement_t *condition;
       bool isDoWhile;
 
-      whileStatement(statement_t *condition_,
+      whileStatement(statement_t *up_,
+                     statement_t *condition_,
                      const bool isDoWhile_ = false);
       whileStatement(const whileStatement &other);
       ~whileStatement();
@@ -267,7 +279,8 @@ namespace occa {
     public:
       statement_t *condition;
 
-      switchStatement(statement_t *condition_);
+      switchStatement(statement_t *up_,
+                      statement_t *condition_);
       switchStatement(const switchStatement& other);
       ~switchStatement();
 
@@ -283,7 +296,8 @@ namespace occa {
     public:
       exprNode *value;
 
-      caseStatement(exprNode &value_);
+      caseStatement(statement_t *up_,
+                    exprNode &value_);
       ~caseStatement();
 
       virtual statement_t& clone_() const;
@@ -294,7 +308,7 @@ namespace occa {
 
     class defaultStatement : public statement_t {
     public:
-      defaultStatement();
+      defaultStatement(statement_t *up_);
 
       virtual statement_t& clone_() const;
       virtual int type() const;
@@ -306,7 +320,7 @@ namespace occa {
     //---[ Exit ]-----------------------
     class continueStatement : public statement_t {
     public:
-      continueStatement();
+      continueStatement(statement_t *up_);
 
       virtual statement_t& clone_() const;
       virtual int type() const;
@@ -316,7 +330,7 @@ namespace occa {
 
     class breakStatement : public statement_t {
     public:
-      breakStatement();
+      breakStatement(statement_t *up_);
 
       virtual statement_t& clone_() const;
       virtual int type() const;
@@ -328,7 +342,8 @@ namespace occa {
     public:
       exprNode *value;
 
-      returnStatement(exprNode *value_);
+      returnStatement(statement_t *up_,
+                      exprNode *value_);
       returnStatement(const returnStatement &other);
       ~returnStatement();
 

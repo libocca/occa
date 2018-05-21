@@ -27,7 +27,9 @@
 namespace occa {
   namespace lang {
     //---[ Pragma ]--------------------
-    pragmaStatement::pragmaStatement(pragmaToken &token_) :
+    pragmaStatement::pragmaStatement(statement_t *up_,
+                                     pragmaToken &token_) :
+      statement_t(up_),
       token(token_) {}
 
     pragmaStatement::~pragmaStatement() {
@@ -35,7 +37,8 @@ namespace occa {
     }
 
     statement_t& pragmaStatement::clone_() const {
-      return *(new pragmaStatement(token
+      return *(new pragmaStatement(NULL,
+                                   token
                                    .clone()
                                    ->to<pragmaToken>()));
     }
@@ -50,11 +53,13 @@ namespace occa {
     //==================================
 
     //---[ Type ]-----------------------
-    functionStatement::functionStatement(const function_t &function_) :
+    functionStatement::functionStatement(statement_t *up_,
+                                         const function_t &function_) :
+      statement_t(up_),
       function(function_) {}
 
     statement_t& functionStatement::clone_() const {
-      return *(new functionStatement(function));
+      return *(new functionStatement(NULL, function));
     }
 
     int functionStatement::type() const {
@@ -67,7 +72,9 @@ namespace occa {
       pout << ";\n";
     }
 
-    functionDeclStatement::functionDeclStatement(const function_t &function_) :
+    functionDeclStatement::functionDeclStatement(statement_t *up_,
+                                                 const function_t &function_) :
+      blockStatement(up_),
       function(function_) {}
 
     functionDeclStatement::functionDeclStatement(
@@ -91,12 +98,13 @@ namespace occa {
       pout.printEndNewline();
     }
 
-    classAccessStatement::classAccessStatement(const int access_) :
-      statement_t(),
+    classAccessStatement::classAccessStatement(statement_t *up_,
+                                               const int access_) :
+      statement_t(up_),
       access(access_) {}
 
     statement_t& classAccessStatement::clone_() const {
-      return *(new classAccessStatement(access));
+      return *(new classAccessStatement(NULL, access));
     }
 
     int classAccessStatement::type() const {
@@ -122,8 +130,9 @@ namespace occa {
     //==================================
 
     //---[ Expression ]-----------------
-    expressionStatement::expressionStatement(exprNode &root_) :
-      statement_t(),
+    expressionStatement::expressionStatement(statement_t *up_,
+                                             exprNode &root_) :
+      statement_t(up_),
       root(&root_) {}
 
     expressionStatement::~expressionStatement() {
@@ -131,7 +140,7 @@ namespace occa {
     }
 
     statement_t& expressionStatement::clone_() const {
-      return *(new expressionStatement(root->clone()));
+      return *(new expressionStatement(NULL, root->clone()));
     }
 
     int expressionStatement::type() const {
@@ -142,10 +151,11 @@ namespace occa {
       pout << (*root);
     }
 
-    declarationStatement::declarationStatement() :
-      statement_t() {}
+    declarationStatement::declarationStatement(statement_t *up_) :
+      statement_t(up_) {}
 
     declarationStatement::declarationStatement(const declarationStatement &other) :
+      statement_t(NULL),
       declarations(other.declarations) {}
 
     statement_t& declarationStatement::clone_() const {
@@ -172,10 +182,13 @@ namespace occa {
     //==================================
 
     //---[ Goto ]-----------------------
-    gotoStatement::gotoStatement(identifierToken &labelToken_) :
+    gotoStatement::gotoStatement(statement_t *up_,
+                                 identifierToken &labelToken_) :
+      statement_t(up_),
       labelToken(labelToken_) {}
 
     gotoStatement::gotoStatement(const gotoStatement &other) :
+      statement_t(NULL),
       labelToken(other.labelToken
                  .clone()
                  ->to<identifierToken>()) {}
@@ -205,10 +218,13 @@ namespace occa {
       pout << "goto " << label() << ';';
     }
 
-    gotoLabelStatement::gotoLabelStatement(identifierToken &labelToken_) :
+    gotoLabelStatement::gotoLabelStatement(statement_t *up_,
+                                           identifierToken &labelToken_) :
+      statement_t(up_),
       labelToken(labelToken_) {}
 
     gotoLabelStatement::gotoLabelStatement(const gotoLabelStatement &other) :
+      statement_t(NULL),
       labelToken(other.labelToken
                  .clone()
                  ->to<identifierToken>()) {}
@@ -240,8 +256,9 @@ namespace occa {
     //==================================
 
     //---[ Namespace ]------------------
-    namespaceStatement::namespaceStatement(identifierToken &nameToken_) :
-      blockStatement(),
+    namespaceStatement::namespaceStatement(statement_t *up_,
+                                           identifierToken &nameToken_) :
+      blockStatement(up_),
       nameToken(nameToken_) {}
 
     namespaceStatement::namespaceStatement(const namespaceStatement &other) :
@@ -279,7 +296,9 @@ namespace occa {
     //==================================
 
     //---[ If ]-------------------------
-    ifStatement::ifStatement(statement_t *condition_) :
+    ifStatement::ifStatement(statement_t *up_,
+                             statement_t *condition_) :
+      blockStatement(up_),
       condition(condition_),
       elseSmnt(NULL) {}
 
@@ -342,7 +361,9 @@ namespace occa {
       }
     }
 
-    elifStatement::elifStatement(statement_t *condition_) :
+    elifStatement::elifStatement(statement_t *up_,
+                                 statement_t *condition_) :
+      blockStatement(up_),
       condition(condition_) {}
 
     elifStatement::elifStatement(const elifStatement &other) :
@@ -372,7 +393,8 @@ namespace occa {
       blockStatement::print(pout);
     }
 
-    elseStatement::elseStatement() {}
+    elseStatement::elseStatement(statement_t *up_) :
+      blockStatement(up_) {}
 
     elseStatement::elseStatement(const elseStatement &other) :
       blockStatement(other) {}
@@ -394,9 +416,10 @@ namespace occa {
     //================================
 
     //---[ While ]----------------------
-    whileStatement::whileStatement(statement_t *condition_,
+    whileStatement::whileStatement(statement_t *up_,
+                                   statement_t *condition_,
                                    const bool isDoWhile_) :
-      blockStatement(),
+      blockStatement(up_),
       condition(condition_),
       isDoWhile(isDoWhile_) {}
 
@@ -443,9 +466,11 @@ namespace occa {
     //==================================
 
     //---[ For ]------------------------
-    forStatement::forStatement(statement_t *init_,
+    forStatement::forStatement(statement_t *up_,
+                               statement_t *init_,
                                statement_t *check_,
                                statement_t *update_) :
+      blockStatement(up_),
       init(init_),
       check(check_),
       update(update_) {}
@@ -486,8 +511,9 @@ namespace occa {
     //==================================
 
     //---[ Switch ]---------------------
-    switchStatement::switchStatement(statement_t *condition_) :
-      blockStatement(),
+    switchStatement::switchStatement(statement_t *up_,
+                                     statement_t *condition_) :
+      blockStatement(up_),
       condition(condition_) {}
 
     switchStatement::switchStatement(const switchStatement& other) :
@@ -519,7 +545,9 @@ namespace occa {
     //==================================
 
     //---[ Case ]-----------------------
-    caseStatement::caseStatement(exprNode &value_) :
+    caseStatement::caseStatement(statement_t *up_,
+                                 exprNode &value_) :
+      statement_t(up_),
       value(&value_) {}
 
     caseStatement::~caseStatement() {
@@ -527,7 +555,7 @@ namespace occa {
     }
 
     statement_t& caseStatement::clone_() const {
-      return *(new caseStatement(value->clone()));
+      return *(new caseStatement(NULL, value->clone()));
     }
 
     int caseStatement::type() const {
@@ -547,10 +575,11 @@ namespace occa {
       pout.addIndentation();
     }
 
-    defaultStatement::defaultStatement() {}
+    defaultStatement::defaultStatement(statement_t *up_) :
+      statement_t (up_) {}
 
     statement_t& defaultStatement::clone_() const {
-      return *(new defaultStatement());
+      return *(new defaultStatement(NULL));
     }
 
     int defaultStatement::type() const {
@@ -568,11 +597,11 @@ namespace occa {
     //==================================
 
     //---[ Exit ]-----------------------
-    continueStatement::continueStatement() :
-      statement_t() {}
+    continueStatement::continueStatement(statement_t *up_) :
+      statement_t(up_) {}
 
     statement_t& continueStatement::clone_() const {
-      return *(new continueStatement());
+      return *(new continueStatement(NULL));
     }
 
     int continueStatement::type() const {
@@ -584,11 +613,11 @@ namespace occa {
       pout << "continue;\n";
     }
 
-    breakStatement::breakStatement() :
-      statement_t() {}
+    breakStatement::breakStatement(statement_t *up_) :
+      statement_t(up_) {}
 
     statement_t& breakStatement::clone_() const {
-      return *(new breakStatement());
+      return *(new breakStatement(NULL));
     }
 
     int breakStatement::type() const {
@@ -600,10 +629,13 @@ namespace occa {
       pout << "break;\n";
     }
 
-    returnStatement::returnStatement(exprNode *value_) :
+    returnStatement::returnStatement(statement_t *up_,
+                                     exprNode *value_) :
+      statement_t(up_),
       value(value_) {}
 
     returnStatement::returnStatement(const returnStatement &other) :
+      statement_t(NULL),
       value(NULL) {
       if (other.value) {
         value = &(other.value->clone());

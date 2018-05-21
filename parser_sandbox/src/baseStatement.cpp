@@ -60,8 +60,8 @@ namespace occa {
       const int attribute    = (1 << 24);
     }
 
-    statement_t::statement_t() :
-      up(NULL),
+    statement_t::statement_t(statement_t *up_) :
+      up(up_),
       attributes() {}
 
     statement_t::~statement_t() {}
@@ -104,11 +104,11 @@ namespace occa {
     }
 
     //---[ Empty ]------------------------
-    emptyStatement::emptyStatement() :
-      statement_t() {}
+    emptyStatement::emptyStatement(statement_t *up_) :
+      statement_t(up_) {}
 
     statement_t& emptyStatement::clone_() const {
-      return *(new emptyStatement());
+      return *(new emptyStatement(NULL));
     }
 
     int emptyStatement::type() const {
@@ -121,10 +121,11 @@ namespace occa {
     //====================================
 
     //---[ Block ]------------------------
-    blockStatement::blockStatement() :
-      statement_t() {}
+    blockStatement::blockStatement(statement_t *up_) :
+      statement_t(up_) {}
 
-    blockStatement::blockStatement(const blockStatement &other) {
+    blockStatement::blockStatement(const blockStatement &other) :
+      statement_t(NULL) {
       attributes = other.attributes;
       const int childCount = (int) other.children.size();
       for (int i = 0; i < childCount; ++i) {

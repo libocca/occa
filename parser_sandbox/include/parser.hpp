@@ -41,7 +41,7 @@ namespace occa {
     typedef stream<token_t*>   tokenStream;
     typedef std::map<int, int> keywordToStatementMap;
 
-    typedef statement_t* (parser_t::*statementLoader_t)();
+    typedef statement_t* (parser_t::*statementLoader_t)(blockStatement &blockSmnt);
     typedef std::map<int, statementLoader_t> statementLoaderMap;
 
     typedef std::map<std::string, attribute_t*> nameToAttributeMap;
@@ -69,7 +69,6 @@ namespace occa {
       bool checkSemicolon;
 
       blockStatement root;
-      blockStatement *up;
       attributePtrVector attributes;
 
       bool success;
@@ -162,53 +161,54 @@ namespace occa {
 
       //---[ Loader Helpers ]-----------
       bool isEmpty();
-      statement_t* getNextStatement();
+      statement_t* getNextStatement(blockStatement &blockSmnt);
       //================================
 
       //---[ Statement Loaders ]--------
-      void loadAllStatements(statementPtrVector &statements);
+      void loadAllStatements(blockStatement &blockSmnt);
 
-      statement_t* loadBlockStatement();
+      statement_t* loadBlockStatement(blockStatement &up);
 
-      statement_t* loadEmptyStatement();
+      statement_t* loadEmptyStatement(blockStatement &up);
 
-      statement_t* loadExpressionStatement();
+      statement_t* loadExpressionStatement(blockStatement &up);
 
-      statement_t* loadDeclarationStatement();
+      statement_t* loadDeclarationStatement(blockStatement &up);
 
-      statement_t* loadNamespaceStatement();
+      statement_t* loadNamespaceStatement(blockStatement &up);
 
-      statement_t* loadTypeDeclStatement();
+      statement_t* loadTypeDeclStatement(blockStatement &up);
 
-      statement_t* loadFunctionStatement();
+      statement_t* loadFunctionStatement(blockStatement &up);
 
       void checkIfConditionStatementExists();
-      void loadConditionStatements(statementPtrVector &statements,
+      void loadConditionStatements(blockStatement &up,
+                                   statementPtrVector &statements,
                                    const int expectedCount);
-      statement_t* loadConditionStatement();
+      statement_t* loadConditionStatement(blockStatement &up);
 
-      statement_t* loadIfStatement();
-      statement_t* loadElifStatement();
-      statement_t* loadElseStatement();
+      statement_t* loadIfStatement(blockStatement &up);
+      statement_t* loadElifStatement(blockStatement &up);
+      statement_t* loadElseStatement(blockStatement &up);
 
-      statement_t* loadForStatement();
-      statement_t* loadWhileStatement();
-      statement_t* loadDoWhileStatement();
+      statement_t* loadForStatement(blockStatement &up);
+      statement_t* loadWhileStatement(blockStatement &up);
+      statement_t* loadDoWhileStatement(blockStatement &up);
 
-      statement_t* loadSwitchStatement();
-      statement_t* loadCaseStatement();
-      statement_t* loadDefaultStatement();
-      statement_t* loadContinueStatement();
-      statement_t* loadBreakStatement();
+      statement_t* loadSwitchStatement(blockStatement &up);
+      statement_t* loadCaseStatement(blockStatement &up);
+      statement_t* loadDefaultStatement(blockStatement &up);
+      statement_t* loadContinueStatement(blockStatement &up);
+      statement_t* loadBreakStatement(blockStatement &up);
 
-      statement_t* loadReturnStatement();
+      statement_t* loadReturnStatement(blockStatement &up);
 
-      statement_t* loadClassAccessStatement();
+      statement_t* loadClassAccessStatement(blockStatement &up);
 
-      statement_t* loadPragmaStatement();
+      statement_t* loadPragmaStatement(blockStatement &up);
 
-      statement_t* loadGotoStatement();
-      statement_t* loadGotoLabelStatement();
+      statement_t* loadGotoStatement(blockStatement &up);
+      statement_t* loadGotoLabelStatement(blockStatement &up);
       //================================
     };
   }

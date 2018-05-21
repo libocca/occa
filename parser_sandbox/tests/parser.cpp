@@ -28,6 +28,7 @@ void testTypeLoading();
 void testTypeErrors();
 void testLoading();
 void testErrors();
+void testScope();
 
 int main(const int argc, const char **argv) {
   testTypeMethods();
@@ -38,6 +39,8 @@ int main(const int argc, const char **argv) {
 
   testLoading();
   testErrors();
+
+  testScope();
 
   return 0;
 }
@@ -1226,5 +1229,47 @@ void testAttributeErrors() {
   parseBadSource("@dimOrder(1, 0);");
   parseBadSource("@tile(16);");
   parseBadSource("@safeTile(16);");
+}
+//======================================
+
+//---[ Scope ]--------------------------
+void testScope() {
+  parseSource("int x;\n"
+              "void foo() {\n"
+              "  int x;\n"
+              "  {\n"
+              "    int x;\n"
+              "  }\n"
+              "  int b;\n"
+              "}\n"
+              "int main(const int argc, const char **argv) {\n"
+              "  int x = argc;\n"
+              "  int a;\n"
+              "  if (true) {\n"
+              "    int x = 0;\n"
+              "    int b;\n"
+              "    if (true) {\n"
+              "      int x = 1;\n"
+              "      int c;\n"
+              "      if (true) {\n"
+              "        int x = 2;\n"
+              "        int d;\n"
+              "      }\n"
+              "    }\n"
+              "  }\n"
+              "}\n");
+
+  OCCA_ASSERT_EQUAL(3,
+                    parser.root.size());
+  statement_t *x    = parser.root[0];
+  statement_t *foo  = parser.root[1];
+  statement_t *main = parser.root[2];
+
+  OCCA_ASSERT_EQUAL(&parser.root,
+                    x->up);
+  OCCA_ASSERT_EQUAL(&parser.root,
+                    foo->up);
+  OCCA_ASSERT_EQUAL(&parser.root,
+                    main->up);
 }
 //======================================
