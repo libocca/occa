@@ -470,6 +470,7 @@ void testExpressionLoading();
 void testDeclarationLoading();
 void testNamespaceLoading();
 void testTypeDeclLoading();
+void testFunctionLoading();
 void testIfLoading();
 void testForLoading();
 void testWhileLoading();
@@ -486,6 +487,7 @@ void testLoading() {
   testDeclarationLoading();
   testNamespaceLoading();
   // testTypeDeclLoading();
+  testFunctionLoading();
   testIfLoading();
   testForLoading();
   testWhileLoading();
@@ -655,6 +657,56 @@ void testTypeDeclLoading() {
   // TODO: enum
   // TODO: union
   // TODO: class
+}
+
+void testFunctionLoading() {
+  statement_t *statement;
+
+#define funcSmnt     statement->to<functionStatement>()
+#define funcDeclSmnt statement->to<functionDeclStatement>()
+#define func         funcSmnt.function
+#define funcDecl     funcDeclSmnt.function
+
+  setStatement("void foo();",
+               statementType::function);
+  OCCA_ASSERT_EQUAL("foo",
+                    func.name());
+  OCCA_ASSERT_EQUAL(&void_,
+                    func.returnType.type);
+
+  setStatement("int* bar();",
+               statementType::function);
+  OCCA_ASSERT_EQUAL("bar",
+                    func.name());
+  OCCA_ASSERT_EQUAL(&int_,
+                    func.returnType.type);
+  OCCA_ASSERT_EQUAL(1,
+                    (int) func.returnType.pointers.size());
+
+  setStatement("void foo2(int a) {}",
+               statementType::functionDecl);
+  OCCA_ASSERT_EQUAL("foo2",
+                    funcDecl.name());
+  OCCA_ASSERT_EQUAL(&void_,
+                    funcDecl.returnType.type);
+  OCCA_ASSERT_EQUAL(1,
+                    (int) funcDecl.args.size());
+  OCCA_ASSERT_EQUAL(0,
+                    funcDeclSmnt.size());
+
+  setStatement("void foo3(int a, int b) { int x; int y; }",
+               statementType::functionDecl);
+  OCCA_ASSERT_EQUAL("foo3",
+                    funcDecl.name());
+  OCCA_ASSERT_EQUAL(&void_,
+                    funcDecl.returnType.type);
+  OCCA_ASSERT_EQUAL(2,
+                    (int) funcDecl.args.size());
+  OCCA_ASSERT_EQUAL(2,
+                    funcDeclSmnt.size());
+
+#undef funcSmnt
+#undef func
 }
 
 void testIfLoading() {
@@ -1046,6 +1098,7 @@ void testExpressionErrors();
 void testDeclarationErrors();
 void testNamespaceErrors();
 void testTypeDeclErrors();
+void testFunctionErrors();
 void testIfErrors();
 void testForErrors();
 void testWhileErrors();
@@ -1061,6 +1114,7 @@ void testErrors() {
   testDeclarationErrors();
   testNamespaceErrors();
   // testTypeDeclErrors();
+  testFunctionErrors();
   testIfErrors();
   testForErrors();
   testWhileErrors();
@@ -1098,6 +1152,10 @@ void testNamespaceErrors() {
 }
 
 void testTypeDeclErrors() {
+}
+
+void testFunctionErrors() {
+  parseBadSource("int foo()");
 }
 
 void testIfErrors() {

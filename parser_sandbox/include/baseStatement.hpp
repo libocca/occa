@@ -46,6 +46,7 @@ namespace occa {
 
       extern const int typeDecl;
       extern const int function;
+      extern const int functionDecl;
       extern const int classAccess;
 
       extern const int expression;
@@ -139,7 +140,7 @@ namespace occa {
 
       blockStatement();
       blockStatement(const blockStatement &other);
-      ~blockStatement();
+      virtual ~blockStatement();
 
       virtual statement_t& clone_() const;
       virtual int type() const;

@@ -157,14 +157,14 @@ void testPairs() {
   // {1}
   context.pushPairRange(0);
   // ,
-  context.popAndSkipPair();
+  context.popAndSkip();
   OCCA_ASSERT_EQUAL_BINARY(tokenType::op,
                            context[0]->type());
   OCCA_ASSERT_EQUAL(operatorType::comma,
                     context[0]->to<operatorToken>().opType());
   // {2}
   context.pushPairRange(1);
-  context.popAndSkipPair();
+  context.popAndSkip();
   OCCA_ASSERT_EQUAL(context.tp.start,
                     context.tp.end);
 

@@ -195,7 +195,7 @@ namespace occa {
                         prevStart + (prev.end - prev.start));
     }
 
-    void tokenContext::popAndSkipPair() {
+    void tokenContext::popAndSkip() {
       set(pop().end + 1);
     }
 

@@ -306,7 +306,7 @@ namespace occa {
       }
       if (!success) {
         if (hasArgs) {
-          context.popAndSkipPair();
+          context.popAndSkip();
         }
         return;
       }
@@ -315,7 +315,7 @@ namespace occa {
       attrs.push_back(attr);
 
       if (hasArgs) {
-        context.popAndSkipPair();
+        context.popAndSkip();
       }
     }
 
@@ -484,7 +484,7 @@ namespace occa {
       int pos = context.getNextOperator(opCheck);
       if (pos < 0) {
         if (checkSemicolon) {
-          context.printErrorAtEnd("Expected a ;");
+          context.printErrorAtEnd("Expected a [;]");
           success = false;
         }
         pos = context.size();
@@ -555,7 +555,7 @@ namespace occa {
 
       context.pushPairRange(0);
       decl.value = context.getExpression();
-      context.popAndSkipPair();
+      context.popAndSkip();
     }
 
     vartype_t parser_t::preloadType() {
@@ -585,6 +585,11 @@ namespace occa {
     }
 
     void parser_t::loadBaseType(vartype_t &vartype) {
+      // Type was already loaded
+      if (vartype.type) {
+        return;
+      }
+
       const int tokens = context.size();
       int tokenPos;
       for (tokenPos = 0; tokenPos < tokens; ++tokenPos) {
@@ -753,6 +758,26 @@ namespace occa {
               (getOperatorType(context[2]) & operatorType::parenthesesStart));
     }
 
+    bool parser_t::isLoadingFunction() {
+      context.push();
+
+      vartype_t vartype = preloadType();
+      if (!success) {
+        context.popAndSkip();
+        return false;
+      }
+
+      if (!(token_t::safeType(context[0]) & tokenType::identifier)) {
+        context.popAndSkip();
+        return false;
+      }
+
+      const bool isFunction = (getOperatorType(context[1])
+                               & operatorType::parenthesesStart);
+      context.pop();
+      return isFunction;
+    }
+
     variable_t parser_t::loadFunctionPointer(vartype_t &vartype) {
       // TODO: Check for nested function pointers
       //       Check for arrays
@@ -781,12 +806,12 @@ namespace occa {
         success = false;
       }
 
-      context.popAndSkipPair();
+      context.popAndSkip();
 
       if (success) {
         context.pushPairRange(0);
         setArguments(func.args);
-        context.popAndSkipPair();
+        context.popAndSkip();
       }
 
       if (!arraytype.arrays.size()) {
@@ -971,7 +996,7 @@ namespace occa {
       blockStatement *smnt = new blockStatement();
       loadAllStatements(smnt->children);
 
-      context.popAndSkipPair();
+      context.popAndSkip();
       if (!success) {
         delete smnt;
         return NULL;
@@ -990,7 +1015,7 @@ namespace occa {
       int end = context.getNextOperator(operatorType::semicolon);
       if (end < 0) {
         if (checkSemicolon) {
-          context.printErrorAtEnd("Expected a ;");
+          context.printErrorAtEnd("Expected a [;]");
           success = false;
           return NULL;
         }
@@ -1015,6 +1040,13 @@ namespace occa {
     }
 
     statement_t* parser_t::loadDeclarationStatement() {
+      if (isLoadingFunction()) {
+        return loadFunctionStatement();
+      }
+      if (!success) {
+        return NULL;
+      }
+
       vartype_t baseType;
       loadBaseType(baseType);
       if (!success) {
@@ -1035,7 +1067,7 @@ namespace occa {
           if (opType & operatorType::semicolon) {
             context.set(1);
           } else if (checkSemicolon) {
-            context.printErrorAtEnd("Expected a ;");
+            context.printErrorAtEnd("Expected a [;]");
             success = false;
           }
           break;
@@ -1118,13 +1150,56 @@ namespace occa {
       // Load block content
       context.pushPairRange(0);
       loadAllStatements(currentSmnt->children);
-      context.popAndSkipPair();
+      context.popAndSkip();
 
       return smnt;
     }
 
     statement_t* parser_t::loadTypeDeclStatement() {
       return NULL;
+    }
+
+    statement_t* parser_t::loadFunctionStatement() {
+      vartype_t returnType = preloadType();
+
+      if (!(token_t::safeType(context[0]) & tokenType::identifier)) {
+        context.printError("Expected function name identifier");
+        success = false;
+        return NULL;
+      }
+      if (!(getOperatorType(context[1]) & operatorType::parenthesesStart)) {
+        context.printError("Expected parenetheses with function arguments");
+        success = false;
+        return NULL;
+      }
+
+      function_t func(returnType, context[0]->to<identifierToken>());
+      context.pushPairRange(1);
+      setArguments(func.args);
+      context.popAndSkip();
+
+      const opType_t opType = getOperatorType(context[0]);
+      if (!(opType & (operatorType::semicolon |
+                      operatorType::braceStart))) {
+        context.printError("Expected a [;]");
+        success = false;
+        return NULL;
+      }
+
+      if (opType & operatorType::semicolon) {
+        context.set(1);
+        return new functionStatement(func);
+      }
+
+      functionDeclStatement &funcSmnt = *(new functionDeclStatement(func));
+      statement_t *content = getNextStatement();
+      if (!success) {
+        delete &funcSmnt;
+        return NULL;
+      }
+      funcSmnt.set(*content);
+
+      return &funcSmnt;
     }
 
     void parser_t::checkIfConditionStatementExists() {
@@ -1188,7 +1263,7 @@ namespace occa {
           break;
         }
       }
-      context.popAndSkipPair();
+      context.popAndSkip();
 
       if (!error &&
           (peek() & statementType::attribute)) {
@@ -1243,7 +1318,6 @@ namespace occa {
         delete &ifSmnt;
         return NULL;
       }
-
       ifSmnt.set(*content);
 
       int sType;
@@ -1441,7 +1515,7 @@ namespace occa {
       }
 
       if (!(getOperatorType(context[0]) & operatorType::semicolon)) {
-        context.printError("Expected a ;");
+        context.printError("Expected a [;]");
         success = false;
         delete content;
         delete condition;
@@ -1505,7 +1579,7 @@ namespace occa {
       const int pos = context.getNextOperator(operatorType::colon);
       // No : found
       if (pos < 0) {
-        context.printError("Expected a : to close the [case] statement");
+        context.printError("Expected a [:] to close the [case] statement");
         success = false;
         return NULL;
       }
@@ -1528,7 +1602,7 @@ namespace occa {
     statement_t* parser_t::loadDefaultStatement() {
       context.set(1);
       if (!(getOperatorType(context[0]) & operatorType::colon)) {
-        context.printError("Expected a :");
+        context.printError("Expected a [:]");
         success = false;
         return NULL;
       }
@@ -1539,7 +1613,7 @@ namespace occa {
     statement_t* parser_t::loadContinueStatement() {
       context.set(1);
       if (!(getOperatorType(context[0]) & operatorType::semicolon)) {
-        context.printError("Expected a ;");
+        context.printError("Expected a [;]");
         success = false;
         return NULL;
       }
@@ -1550,7 +1624,7 @@ namespace occa {
     statement_t* parser_t::loadBreakStatement() {
       context.set(1);
       if (!(getOperatorType(context[0]) & operatorType::semicolon)) {
-        context.printError("Expected a ;");
+        context.printError("Expected a [;]");
         success = false;
         return NULL;
       }
@@ -1565,7 +1639,7 @@ namespace occa {
       const int pos = context.getNextOperator(operatorType::semicolon);
       // No ; found
       if (pos < 0) {
-        context.printErrorAtEnd("Expected a ;");
+        context.printErrorAtEnd("Expected a [;]");
         success = false;
         return NULL;
       }
@@ -1585,7 +1659,7 @@ namespace occa {
 
     statement_t* parser_t::loadClassAccessStatement() {
       if (!(getOperatorType(context[1]) & operatorType::colon)) {
-        context.printError("Expected a :");
+        context.printError("Expected a [:]");
         success = false;
         return NULL;
       }
@@ -1619,7 +1693,7 @@ namespace occa {
         return NULL;
       }
       if (!(getOperatorType(context[1]) & operatorType::semicolon)) {
-        context.printError("Expected a ;");
+        context.printError("Expected a [;]");
         success = false;
         return NULL;
       }
@@ -1634,7 +1708,7 @@ namespace occa {
 
     statement_t* parser_t::loadGotoLabelStatement() {
       if (!(getOperatorType(context[1]) & operatorType::colon)) {
-        context.printError("Expected a :");
+        context.printError("Expected a [:]");
         success = false;
         return NULL;
       }

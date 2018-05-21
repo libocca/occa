@@ -64,6 +64,29 @@ namespace occa {
     void functionStatement::print(printer &pout) const {
       pout.printStartIndentation();
       pout << function;
+      pout << ";\n";
+    }
+
+    functionDeclStatement::functionDeclStatement(const function_t &function_) :
+      function(function_) {}
+
+    functionDeclStatement::functionDeclStatement(
+      const functionDeclStatement &other
+    ) :
+      blockStatement(other),
+      function(other.function) {}
+
+    statement_t& functionDeclStatement::clone_() const {
+      return *(new functionDeclStatement(*this));
+    }
+
+    int functionDeclStatement::type() const {
+      return statementType::functionDecl;
+    }
+
+    void functionDeclStatement::print(printer &pout) const {
+      pout.printStartIndentation();
+      pout << function << ' ';
       blockStatement::print(pout);
       pout.printEndNewline();
     }

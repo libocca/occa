@@ -141,6 +141,7 @@ namespace occa {
 
       bool isLoadingFunctionPointer();
       bool isLoadingVariable();
+      bool isLoadingFunction();
 
       variable_t loadFunctionPointer(vartype_t &vartype);
       variable_t loadVariable(vartype_t &vartype);
@@ -167,45 +168,47 @@ namespace occa {
       //---[ Statement Loaders ]--------
       void loadAllStatements(statementPtrVector &statements);
 
-      statement_t *loadBlockStatement();
+      statement_t* loadBlockStatement();
 
-      statement_t *loadEmptyStatement();
+      statement_t* loadEmptyStatement();
 
-      statement_t *loadExpressionStatement();
+      statement_t* loadExpressionStatement();
 
-      statement_t *loadDeclarationStatement();
+      statement_t* loadDeclarationStatement();
 
-      statement_t *loadNamespaceStatement();
+      statement_t* loadNamespaceStatement();
 
-      statement_t *loadTypeDeclStatement();
+      statement_t* loadTypeDeclStatement();
+
+      statement_t* loadFunctionStatement();
 
       void checkIfConditionStatementExists();
       void loadConditionStatements(statementPtrVector &statements,
                                    const int expectedCount);
       statement_t* loadConditionStatement();
 
-      statement_t *loadIfStatement();
-      statement_t *loadElifStatement();
-      statement_t *loadElseStatement();
+      statement_t* loadIfStatement();
+      statement_t* loadElifStatement();
+      statement_t* loadElseStatement();
 
-      statement_t *loadForStatement();
-      statement_t *loadWhileStatement();
-      statement_t *loadDoWhileStatement();
+      statement_t* loadForStatement();
+      statement_t* loadWhileStatement();
+      statement_t* loadDoWhileStatement();
 
-      statement_t *loadSwitchStatement();
-      statement_t *loadCaseStatement();
-      statement_t *loadDefaultStatement();
-      statement_t *loadContinueStatement();
-      statement_t *loadBreakStatement();
+      statement_t* loadSwitchStatement();
+      statement_t* loadCaseStatement();
+      statement_t* loadDefaultStatement();
+      statement_t* loadContinueStatement();
+      statement_t* loadBreakStatement();
 
-      statement_t *loadReturnStatement();
+      statement_t* loadReturnStatement();
 
-      statement_t *loadClassAccessStatement();
+      statement_t* loadClassAccessStatement();
 
-      statement_t *loadPragmaStatement();
+      statement_t* loadPragmaStatement();
 
-      statement_t *loadGotoStatement();
-      statement_t *loadGotoLabelStatement();
+      statement_t* loadGotoStatement();
+      statement_t* loadGotoLabelStatement();
       //================================
     };
   }

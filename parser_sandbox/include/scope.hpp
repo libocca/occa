@@ -33,6 +33,10 @@ namespace occa {
     class scope_t {
     public:
       int i;
+
+      scope_t();
+
+      void clear();
     };
   }
 }

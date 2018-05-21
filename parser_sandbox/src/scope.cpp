@@ -23,5 +23,8 @@
 
 namespace occa {
   namespace lang {
+    scope_t::scope_t() {}
+
+    void scope_t::clear() {}
   }
 }
