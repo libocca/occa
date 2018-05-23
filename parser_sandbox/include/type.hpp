@@ -114,6 +114,8 @@ namespace occa {
       virtual bool equals(const type_t &other) const;
 
       virtual void printDeclaration(printer &pout) const = 0;
+
+      void printError(const std::string &message) const;
     };
 
     printer& operator << (printer &pout,

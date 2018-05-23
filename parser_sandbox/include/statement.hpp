@@ -124,7 +124,7 @@ namespace occa {
       virtual statement_t& clone_() const;
       virtual int type() const;
 
-      void addDeclarationsToScope();
+      bool addDeclarationsToScope();
 
       virtual void print(printer &pout) const;
     };

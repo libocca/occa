@@ -96,6 +96,14 @@ namespace occa {
       return false;
     }
 
+    void type_t::printError(const std::string &message) const {
+      if (!source) {
+        occa::printError(std::cerr, "[No Token] " + message);
+      } else {
+        source->printError(message);
+      }
+    }
+
     printer& operator << (printer &pout,
                           const type_t &type) {
       pout << type.name();

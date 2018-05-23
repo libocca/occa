@@ -1074,13 +1074,13 @@ namespace occa {
         }
         context.set(1);
       }
-
+      if (success) {
+        success = smnt.addDeclarationsToScope();
+      }
       if (!success) {
         delete &smnt;
         return NULL;
       }
-
-      smnt.addDeclarationsToScope();
 
       return &smnt;
     }
@@ -1196,12 +1196,14 @@ namespace occa {
 
       functionDeclStatement &funcSmnt = *(new functionDeclStatement(&up, func));
       statement_t *content = getNextStatement(funcSmnt);
+      if (success) {
+        funcSmnt.set(*content);
+        success = up.scope.add(funcSmnt.function);
+      }
       if (!success) {
         delete &funcSmnt;
         return NULL;
       }
-      funcSmnt.set(*content);
-      up.scope.add(funcSmnt.function);
 
       return &funcSmnt;
     }

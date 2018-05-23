@@ -1264,10 +1264,13 @@ const std::string scopeTestSource = (
 
 void testScopeUp();
 void testScopeKeywords();
+void testScopeErrors();
 
 void testScope() {
   testScopeUp();
   testScopeKeywords();
+
+  testScopeErrors();
 }
 
 void testScopeUp() {
@@ -1324,5 +1327,22 @@ void testScopeKeywords() {
   // Test types
   OCCA_ASSERT_TRUE(root.getScopeKeyword("myInt").isType());
   OCCA_ASSERT_TRUE(foo.getScopeKeyword("myInt").isType());
+}
+
+void testScopeErrors() {
+  std::cerr << "\n---[ Testing scope errors ]---------------------\n\n";
+  const std::string var = "int x;\n";
+  const std::string type = "typedef int x;\n";
+  const std::string func = "void x() {}\n";
+  std::string sources[3] = { var, type, func };
+
+  for (int j = 0; j < 3; ++j) {
+    for (int i = 0; i < 3; ++i) {
+      parseBadSource(sources[j] + sources[i]);
+    }
+  }
+
+  parseBadSource("int x, x;\n");
+  std::cerr << "==============================================\n\n";
 }
 //======================================

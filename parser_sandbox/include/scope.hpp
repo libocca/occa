@@ -82,9 +82,9 @@ namespace occa {
       bool has(const std::string &name);
       scopeKeyword_t get(const std::string &name);
 
-      void add(const type_t &type);
-      void add(const function_t &func);
-      void add(const variable_t &var);
+      bool add(const type_t &type);
+      bool add(const function_t &func);
+      bool add(const variable_t &var);
     };
   }
 }

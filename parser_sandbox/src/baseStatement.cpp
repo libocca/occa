@@ -221,6 +221,7 @@ namespace occa {
         delete children[i];
       }
       children.clear();
+      scope.clear();
     }
 
     void blockStatement::print(printer &pout) const {

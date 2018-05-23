@@ -167,23 +167,25 @@ namespace occa {
       return statementType::declaration;
     }
 
-    void declarationStatement::addDeclarationsToScope() {
+    bool declarationStatement::addDeclarationsToScope() {
       if (!up) {
-        return;
+        return false;
       }
+      bool success = true;
       const int count = (int) declarations.size();
       for (int i = 0; i < count; ++i) {
         variable_t &var = declarations[i].var;
         if (!var.vartype.has(typedef_)) {
-          up->scope.add(var);
+          success &= up->scope.add(var);
         } else if (var.source) {
           typedef_t type(var.vartype, *var.source);
-          up->scope.add(type);
+          success &= up->scope.add(type);
         } else {
           typedef_t type(var.vartype);
-          up->scope.add(type);
+          success &= up->scope.add(type);
         }
       }
+      return success;
     }
 
     void declarationStatement::print(printer &pout) const {

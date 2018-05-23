@@ -95,7 +95,7 @@ namespace occa {
       return pout;
     }
 
-    void variable_t::printError(const std::string &message) {
+    void variable_t::printError(const std::string &message) const {
       if (!source) {
         occa::printError(std::cerr, "[No Token] " + message);
       } else {

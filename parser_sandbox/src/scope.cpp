@@ -100,6 +100,7 @@ namespace occa {
         }
         ++it;
       }
+      keywordMap.clear();
     }
 
     int scope_t::size() {
@@ -118,25 +119,46 @@ namespace occa {
       return scopeKeyword_t();
     }
 
-    void scope_t::add(const type_t &type) {
+    bool scope_t::add(const type_t &type) {
       const std::string &name = type.name();
-      if (name.size()) {
+      if (!name.size()) {
+        return true;
+      }
+      scopeKeywordMapIterator it = keywordMap.find(name);
+      if (it == keywordMap.end()) {
         keywordMap[name] = scopeKeyword_t(type.clone());
+        return true;
       }
+      type.printError("[" + name + "] is already defined");
+      return false;
     }
 
-    void scope_t::add(const function_t &func) {
+    bool scope_t::add(const function_t &func) {
       const std::string &name = func.name();
-      if (name.size()) {
-        keywordMap[name] = scopeKeyword_t(func.clone().to<function_t>());
+      if (!name.size()) {
+        return true;
       }
+      scopeKeywordMapIterator it = keywordMap.find(name);
+      if (it == keywordMap.end()) {
+        keywordMap[name] = scopeKeyword_t(func.clone().to<function_t>());
+        return true;
+      }
+      func.printError("[" + name + "] is already defined");
+      return false;
     }
 
-    void scope_t::add(const variable_t &var) {
+    bool scope_t::add(const variable_t &var) {
       const std::string &name = var.name();
-      if (name.size()) {
-        keywordMap[name] = scopeKeyword_t(*(new variable_t(var)));
+      if (!name.size()) {
+        return true;
       }
+      scopeKeywordMapIterator it = keywordMap.find(name);
+      if (it == keywordMap.end()) {
+        keywordMap[name] = scopeKeyword_t(*(new variable_t(var)));
+        return true;
+      }
+      var.printError("[" + name + "] is already defined");
+      return false;
     }
   }
 }
