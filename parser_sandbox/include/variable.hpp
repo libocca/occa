@@ -52,6 +52,8 @@ namespace occa {
 
       void printDeclaration(printer &pout) const;
       void printExtraDeclaration(printer &pout) const;
+
+      void printError(const std::string &message);
     };
 
     printer& operator << (printer &pout,

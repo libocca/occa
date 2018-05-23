@@ -524,9 +524,6 @@ namespace occa {
     }
 
     type_t& typedef_t::clone() const {
-      if (isNamed()) {
-        return *(const_cast<typedef_t*>(this));
-      }
       return *(new typedef_t(baseType, *source));
     }
 
@@ -571,9 +568,6 @@ namespace occa {
     }
 
     type_t& function_t::clone() const {
-      if (isNamed()) {
-        return *(const_cast<function_t*>(this));
-      }
       return *(new function_t(*this));
     }
 

@@ -1201,6 +1201,7 @@ namespace occa {
         return NULL;
       }
       funcSmnt.set(*content);
+      up.scope.add(funcSmnt.function);
 
       return &funcSmnt;
     }

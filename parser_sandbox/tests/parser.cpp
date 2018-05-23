@@ -1233,53 +1233,69 @@ void testAttributeErrors() {
 //======================================
 
 //---[ Scope ]--------------------------
+const std::string scopeTestSource = (
+  "int x;\n"
+  "typedef int myInt;\n"
+  "\n"
+  "void foo() {\n"
+  "  int x;\n"
+  "  {\n"
+  "    int x;\n"
+  "  }\n"
+  "  typedef int myInt;\n"
+  "}\n"
+  "\n"
+  "int main(const int argc, const char **argv) {\n"
+  "  int x = argc;\n"
+  "  int a;\n"
+  "  if (true) {\n"
+  "    int x = 0;\n"
+  "    int b;\n"
+  "    if (true) {\n"
+  "      int x = 1;\n"
+  "      int c;\n"
+  "      if (true) {\n"
+  "        int x = 2;\n"
+  "        int d;\n"
+  "      }\n"
+  "    }\n"
+  "  }\n"
+  "}\n");
+
+void testScopeUp();
+void testScopeKeywords();
+
 void testScope() {
-  parseSource("int x;\n"
-              "void foo() {\n"
-              "  int x;\n"
-              "  {\n"
-              "    int x;\n"
-              "  }\n"
-              "  int b;\n"
-              "}\n"
-              "int main(const int argc, const char **argv) {\n"
-              "  int x = argc;\n"
-              "  int a;\n"
-              "  if (true) {\n"
-              "    int x = 0;\n"
-              "    int b;\n"
-              "    if (true) {\n"
-              "      int x = 1;\n"
-              "      int c;\n"
-              "      if (true) {\n"
-              "        int x = 2;\n"
-              "        int d;\n"
-              "      }\n"
-              "    }\n"
-              "  }\n"
-              "}\n");
+  testScopeUp();
+  testScopeKeywords();
+}
+
+void testScopeUp() {
+  parseSource(scopeTestSource);
 
   blockStatement &root = parser.root;
 
-  OCCA_ASSERT_EQUAL(3,
-                    root.size());
-  statement_t *x       = root[0];
-  blockStatement &foo  = root[1]->to<blockStatement>();
-  blockStatement &main = root[2]->to<blockStatement>();
+  statement_t *x           = root[0];
+  blockStatement &foo      = root[2]->to<blockStatement>();
+  blockStatement &main     = root[3]->to<blockStatement>();
+  blockStatement &fooBlock = foo[1]->to<blockStatement>();
 
-  // Test scope parents
   OCCA_ASSERT_EQUAL(&root,
                     x->up);
   OCCA_ASSERT_EQUAL(&root,
                     foo.up);
   OCCA_ASSERT_EQUAL(&root,
                     main.up);
-
-  OCCA_ASSERT_EQUAL(3,
-                    foo.size());
-  blockStatement &fooBlock = foo[1]->to<blockStatement>();
   OCCA_ASSERT_EQUAL(&foo,
                     fooBlock.up);
+}
+
+void testScopeKeywords() {
+  parseSource(scopeTestSource);
+
+  blockStatement &root     = parser.root;
+  blockStatement &foo      = root[2]->to<blockStatement>();
+  blockStatement &fooBlock = foo[1]->to<blockStatement>();
 
   // Make sure we can find variables 'x'
   OCCA_ASSERT_TRUE(root.inScope("x"));
@@ -1287,12 +1303,9 @@ void testScope() {
   OCCA_ASSERT_TRUE(fooBlock.inScope("x"));
 
   // Make sure variables 'x' exist
-  OCCA_ASSERT_NOT_EQUAL((void*) NULL,
-                        &root.getScopeKeyword("x").variable());
-  OCCA_ASSERT_NOT_EQUAL((void*) NULL,
-                        &foo.getScopeKeyword("x").variable());
-  OCCA_ASSERT_NOT_EQUAL((void*) NULL,
-                        &fooBlock.getScopeKeyword("x").variable());
+  OCCA_ASSERT_TRUE(root.getScopeKeyword("x").isVariable());
+  OCCA_ASSERT_TRUE(foo.getScopeKeyword("x").isVariable());
+  OCCA_ASSERT_TRUE(fooBlock.getScopeKeyword("x").isVariable());
 
   // Make sure all instances are different
   OCCA_ASSERT_NOT_EQUAL(&root.getScopeKeyword("x").variable(),
@@ -1303,5 +1316,13 @@ void testScope() {
 
   OCCA_ASSERT_NOT_EQUAL(&foo.getScopeKeyword("x").variable(),
                         &fooBlock.getScopeKeyword("x").variable());
+
+  // Test function
+  OCCA_ASSERT_TRUE(root.getScopeKeyword("foo").isFunction());
+  OCCA_ASSERT_TRUE(root.getScopeKeyword("main").isFunction());
+
+  // Test types
+  OCCA_ASSERT_TRUE(root.getScopeKeyword("myInt").isType());
+  OCCA_ASSERT_TRUE(foo.getScopeKeyword("myInt").isType());
 }
 //======================================

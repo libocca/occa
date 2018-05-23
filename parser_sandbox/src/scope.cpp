@@ -48,10 +48,6 @@ namespace occa {
       sktype(scopeKeywordType::variable),
       ptr(&var) {}
 
-    scopeKeyword_t::scopeKeyword_t(const scopeKeyword_t &other) :
-      sktype(other.sktype),
-      ptr(other.ptr) {}
-
     bool scopeKeyword_t::exists() const {
       return (sktype != scopeKeywordType::none);
     }
@@ -82,9 +78,6 @@ namespace occa {
 
     scope_t::scope_t() {}
 
-    scope_t::scope_t(const scope_t &other) :
-      keywordMap(other.keywordMap) {}
-
     scope_t::~scope_t() {
       clear();
     }
@@ -94,12 +87,16 @@ namespace occa {
       while (it != keywordMap.end()) {
         scopeKeyword_t &keyword = it->second;
         switch (keyword.sktype) {
-        case scopeKeywordType::type:
-          delete &(keyword.type()); break;
+        case scopeKeywordType::type: {
+          delete (type_t*) keyword.ptr;
+          break;
+        }
         case scopeKeywordType::function:
-          delete &(keyword.function()); break;
+          delete (function_t*) keyword.ptr;
+          break;
         case scopeKeywordType::variable:
-          delete &(keyword.variable()); break;
+          delete (variable_t*) keyword.ptr;
+          break;
         }
         ++it;
       }

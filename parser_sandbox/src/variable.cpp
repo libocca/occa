@@ -94,6 +94,14 @@ namespace occa {
       pout << var.name();
       return pout;
     }
+
+    void variable_t::printError(const std::string &message) {
+      if (!source) {
+        occa::printError(std::cerr, "[No Token] " + message);
+      } else {
+        source->printError(message);
+      }
+    }
     //==================================
 
     //---[ Variable Declaration ]-------

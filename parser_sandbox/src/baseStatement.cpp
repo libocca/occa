@@ -201,7 +201,8 @@ namespace occa {
 
       // Swap body contents
       children = body->children;
-      scope = body->scope;
+      scope    = body->scope;
+
       // Update children's up statement
       const int childCount = (int) children.size();
       for (int i = 0; i < childCount; ++i) {

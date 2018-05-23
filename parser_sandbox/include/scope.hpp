@@ -44,7 +44,7 @@ namespace occa {
     }
 
     class scopeKeyword_t {
-    public:
+    private:
       int sktype;
       void *ptr;
 
@@ -53,7 +53,8 @@ namespace occa {
       scopeKeyword_t(type_t &t);
       scopeKeyword_t(function_t &func);
       scopeKeyword_t(variable_t &var);
-      scopeKeyword_t(const scopeKeyword_t &other);
+
+      scopeKeyword_t clone();
 
       bool exists() const;
       bool isType() const;
@@ -72,7 +73,6 @@ namespace occa {
       scopeKeywordMap_t keywordMap;
 
       scope_t();
-      scope_t(const scope_t &other);
       ~scope_t();
 
       void clear();

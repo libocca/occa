@@ -22,6 +22,7 @@
 #include "expression.hpp"
 #include "statement.hpp"
 #include "type.hpp"
+#include "builtins/types.hpp"
 #include "variable.hpp"
 
 namespace occa {
@@ -167,10 +168,20 @@ namespace occa {
     }
 
     void declarationStatement::addDeclarationsToScope() {
-      if (up) {
-        const int count = (int) declarations.size();
-        for (int i = 0; i < count; ++i) {
-          up->scope.add(declarations[i].var);
+      if (!up) {
+        return;
+      }
+      const int count = (int) declarations.size();
+      for (int i = 0; i < count; ++i) {
+        variable_t &var = declarations[i].var;
+        if (!var.vartype.has(typedef_)) {
+          up->scope.add(var);
+        } else if (var.source) {
+          typedef_t type(var.vartype, *var.source);
+          up->scope.add(type);
+        } else {
+          typedef_t type(var.vartype);
+          up->scope.add(type);
         }
       }
     }
