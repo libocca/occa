@@ -534,10 +534,14 @@ namespace occa {
           out += "\": ";
           it->second.toString(out, indent, newIndent);
           ++it;
-          if (indent.size()) {
-            out += ",\n";
-          } else if (it != value_.object.end()) {
-            out += ", ";
+          if (it != value_.object.end()) {
+            if (indent.size()) {
+              out += ",\n";
+            } else {
+              out += ", ";
+            }
+          } else if (indent.size()) {
+            out += '\n';
           }
         }
       }
@@ -558,10 +562,14 @@ namespace occa {
         for (int i = 0; i < arraySize; ++i) {
           out += newIndent;
           value_.array[i].toString(out, indent, newIndent);
-          if (indent.size()) {
-            out += ",\n";
-          } else if (i < (arraySize - 1)) {
-            out += ", ";
+          if (i < (arraySize - 1)) {
+            if (indent.size()) {
+              out += ",\n";
+            } else {
+              out += ", ";
+            }
+          } else if (indent.size()) {
+            out += '\n';
           }
         }
         out += currentIndent;
