@@ -60,7 +60,7 @@ namespace occa {
       const int attribute    = (1 << 24);
     }
 
-    statement_t::statement_t(statement_t *up_) :
+    statement_t::statement_t(blockStatement *up_) :
       up(up_),
       attributes() {}
 
@@ -72,8 +72,18 @@ namespace occa {
       return s;
     }
 
-    scope_t* statement_t::getScope() {
-      return NULL;
+    bool statement_t::inScope(const std::string &name) {
+      if (up) {
+        return up->inScope(name);
+      }
+      return false;
+    }
+
+    scopeKeyword_t statement_t::getScopeKeyword(const std::string &name) {
+      if (up) {
+        return up->getScopeKeyword(name);
+      }
+      return scopeKeyword_t();
     }
 
     void statement_t::addAttribute(attribute_t &attribute) {
@@ -104,7 +114,7 @@ namespace occa {
     }
 
     //---[ Empty ]------------------------
-    emptyStatement::emptyStatement(statement_t *up_) :
+    emptyStatement::emptyStatement(blockStatement *up_) :
       statement_t(up_) {}
 
     statement_t& emptyStatement::clone_() const {
@@ -121,7 +131,7 @@ namespace occa {
     //====================================
 
     //---[ Block ]------------------------
-    blockStatement::blockStatement(statement_t *up_) :
+    blockStatement::blockStatement(blockStatement *up_) :
       statement_t(up_) {}
 
     blockStatement::blockStatement(const blockStatement &other) :
@@ -145,8 +155,24 @@ namespace occa {
       return statementType::block;
     }
 
-    scope_t* blockStatement::getScope() {
-      return &scope;
+    bool blockStatement::inScope(const std::string &name) {
+      if (scope.has(name)) {
+        return true;
+      }
+      return (up
+              ? up->inScope(name)
+              : false);
+    }
+
+    scopeKeyword_t blockStatement::getScopeKeyword(const std::string &name) {
+      scopeKeyword_t keyword = scope.get(name);
+      if (keyword.exists()) {
+        return keyword;
+      }
+      if (up) {
+        return up->getScopeKeyword(name);
+      }
+      return scopeKeyword_t();
     }
 
     statement_t* blockStatement::operator [] (const int index) {
@@ -168,15 +194,24 @@ namespace occa {
 
     void blockStatement::set(statement_t &child) {
       blockStatement *body = dynamic_cast<blockStatement*>(&child);
-      if (body) {
-        children = body->children;
-        scope = body->scope;
-        body->children.clear();
-        body->scope = scope_t();
-        delete body;
-      } else {
+      if (!body) {
         add(child);
+        return;
       }
+
+      // Swap body contents
+      children = body->children;
+      scope = body->scope;
+      // Update children's up statement
+      const int childCount = (int) children.size();
+      for (int i = 0; i < childCount; ++i) {
+        children[i]->up = this;
+      }
+
+      // Clear old body statement
+      body->children.clear();
+      body->scope.keywordMap.clear();
+      delete body;
     }
 
     void blockStatement::clear() {

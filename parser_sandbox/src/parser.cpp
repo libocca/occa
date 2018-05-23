@@ -1080,6 +1080,8 @@ namespace occa {
         return NULL;
       }
 
+      smnt.addDeclarationsToScope();
+
       return &smnt;
     }
 

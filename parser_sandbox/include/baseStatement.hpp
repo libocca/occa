@@ -32,6 +32,7 @@
 namespace occa {
   namespace lang {
     class statement_t;
+    class blockStatement;
 
     typedef std::vector<statement_t*> statementPtrVector;
 
@@ -73,10 +74,10 @@ namespace occa {
 
     class statement_t {
     public:
-      statement_t *up;
+      blockStatement *up;
       attributePtrVector attributes;
 
-      statement_t(statement_t *up_);
+      statement_t(blockStatement *up_);
 
       virtual ~statement_t();
 
@@ -106,7 +107,8 @@ namespace occa {
 
       virtual int type() const = 0;
 
-      virtual scope_t* getScope();
+      virtual bool inScope(const std::string &name);
+      virtual scopeKeyword_t getScopeKeyword(const std::string &name);
 
       void addAttribute(attribute_t &attribute);
 
@@ -123,7 +125,7 @@ namespace occa {
     //---[ Empty ]----------------------
     class emptyStatement : public statement_t {
     public:
-      emptyStatement(statement_t *up_);
+      emptyStatement(blockStatement *up_);
 
       virtual statement_t& clone_() const;
       virtual int type() const;
@@ -138,14 +140,15 @@ namespace occa {
       statementPtrVector children;
       scope_t scope;
 
-      blockStatement(statement_t *up_);
+      blockStatement(blockStatement *up_);
       blockStatement(const blockStatement &other);
       virtual ~blockStatement();
 
       virtual statement_t& clone_() const;
       virtual int type() const;
 
-      virtual scope_t* getScope();
+      virtual bool inScope(const std::string &name);
+      virtual scopeKeyword_t getScopeKeyword(const std::string &name);
 
       statement_t* operator [] (const int index);
 

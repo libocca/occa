@@ -1259,17 +1259,49 @@ void testScope() {
               "  }\n"
               "}\n");
 
-  OCCA_ASSERT_EQUAL(3,
-                    parser.root.size());
-  statement_t *x    = parser.root[0];
-  statement_t *foo  = parser.root[1];
-  statement_t *main = parser.root[2];
+  blockStatement &root = parser.root;
 
-  OCCA_ASSERT_EQUAL(&parser.root,
+  OCCA_ASSERT_EQUAL(3,
+                    root.size());
+  statement_t *x       = root[0];
+  blockStatement &foo  = root[1]->to<blockStatement>();
+  blockStatement &main = root[2]->to<blockStatement>();
+
+  // Test scope parents
+  OCCA_ASSERT_EQUAL(&root,
                     x->up);
-  OCCA_ASSERT_EQUAL(&parser.root,
-                    foo->up);
-  OCCA_ASSERT_EQUAL(&parser.root,
-                    main->up);
+  OCCA_ASSERT_EQUAL(&root,
+                    foo.up);
+  OCCA_ASSERT_EQUAL(&root,
+                    main.up);
+
+  OCCA_ASSERT_EQUAL(3,
+                    foo.size());
+  blockStatement &fooBlock = foo[1]->to<blockStatement>();
+  OCCA_ASSERT_EQUAL(&foo,
+                    fooBlock.up);
+
+  // Make sure we can find variables 'x'
+  OCCA_ASSERT_TRUE(root.inScope("x"));
+  OCCA_ASSERT_TRUE(foo.inScope("x"));
+  OCCA_ASSERT_TRUE(fooBlock.inScope("x"));
+
+  // Make sure variables 'x' exist
+  OCCA_ASSERT_NOT_EQUAL((void*) NULL,
+                        &root.getScopeKeyword("x").variable());
+  OCCA_ASSERT_NOT_EQUAL((void*) NULL,
+                        &foo.getScopeKeyword("x").variable());
+  OCCA_ASSERT_NOT_EQUAL((void*) NULL,
+                        &fooBlock.getScopeKeyword("x").variable());
+
+  // Make sure all instances are different
+  OCCA_ASSERT_NOT_EQUAL(&root.getScopeKeyword("x").variable(),
+                        &foo.getScopeKeyword("x").variable());
+
+  OCCA_ASSERT_NOT_EQUAL(&root.getScopeKeyword("x").variable(),
+                        &fooBlock.getScopeKeyword("x").variable());
+
+  OCCA_ASSERT_NOT_EQUAL(&foo.getScopeKeyword("x").variable(),
+                        &fooBlock.getScopeKeyword("x").variable());
 }
 //======================================

@@ -22,21 +22,69 @@
 #ifndef OCCA_LANG_SCOPE_HEADER
 #define OCCA_LANG_SCOPE_HEADER
 
-#include "occa/defines.hpp"
-#include "occa/types.hpp"
-#include "occa/tools/sys.hpp"
+#include <map>
 
-#include "trie.hpp"
+#include "occa/defines.hpp"
 
 namespace occa {
   namespace lang {
+    class type_t;
+    class function_t;
+    class variable_t;
+    class scopeKeyword_t;
+
+    typedef std::map<std::string, scopeKeyword_t> scopeKeywordMap_t;
+    typedef scopeKeywordMap_t::iterator           scopeKeywordMapIterator;
+
+    namespace scopeKeywordType {
+      extern const int none;
+      extern const int type;
+      extern const int function;
+      extern const int variable;
+    }
+
+    class scopeKeyword_t {
+    public:
+      int sktype;
+      void *ptr;
+
+    public:
+      scopeKeyword_t();
+      scopeKeyword_t(type_t &t);
+      scopeKeyword_t(function_t &func);
+      scopeKeyword_t(variable_t &var);
+      scopeKeyword_t(const scopeKeyword_t &other);
+
+      bool exists() const;
+      bool isType() const;
+      bool isFunction() const;
+      bool isVariable() const;
+
+      type_t& type();
+      function_t& function();
+      variable_t& variable();
+
+      friend class scope_t;
+    };
+
     class scope_t {
     public:
-      int i;
+      scopeKeywordMap_t keywordMap;
 
       scope_t();
+      scope_t(const scope_t &other);
+      ~scope_t();
 
       void clear();
+
+      int size();
+
+      bool has(const std::string &name);
+      scopeKeyword_t get(const std::string &name);
+
+      void add(const type_t &type);
+      void add(const function_t &func);
+      void add(const variable_t &var);
     };
   }
 }
