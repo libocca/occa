@@ -76,6 +76,21 @@ namespace occa {
       return *((variable_t*) ptr);
     }
 
+    void scopeKeyword_t::printError(const std::string &message) const {
+      switch (sktype) {
+      case scopeKeywordType::type: {
+        ((type_t*) ptr)->printError(message);
+        break;
+      }
+      case scopeKeywordType::function:
+        ((function_t*) ptr)->printError(message);
+        break;
+      case scopeKeywordType::variable:
+        ((variable_t*) ptr)->printError(message);
+        break;
+      }
+    }
+
     scope_t::scope_t() {}
 
     scope_t::~scope_t() {
@@ -130,6 +145,7 @@ namespace occa {
         return true;
       }
       type.printError("[" + name + "] is already defined");
+      it->second.printError("[" + name + "] was first defined here");
       return false;
     }
 
@@ -144,6 +160,7 @@ namespace occa {
         return true;
       }
       func.printError("[" + name + "] is already defined");
+      it->second.printError("[" + name + "] was first defined here");
       return false;
     }
 
@@ -158,6 +175,7 @@ namespace occa {
         return true;
       }
       var.printError("[" + name + "] is already defined");
+      it->second.printError("[" + name + "] was first defined here");
       return false;
     }
   }

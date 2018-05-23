@@ -89,18 +89,14 @@ namespace occa {
       vartype.printExtraDeclaration(pout, name());
     }
 
+    void variable_t::printError(const std::string &message) const {
+      source->printError(message);
+    }
+
     printer& operator << (printer &pout,
                           const variable_t &var) {
       pout << var.name();
       return pout;
-    }
-
-    void variable_t::printError(const std::string &message) const {
-      if (!source) {
-        occa::printError(std::cerr, "[No Token] " + message);
-      } else {
-        source->printError(message);
-      }
     }
     //==================================
 

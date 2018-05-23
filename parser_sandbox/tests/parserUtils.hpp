@@ -45,6 +45,10 @@ void parseSource(const std::string &s) {
   parser.parseSource(source);
 }
 
+#define parseBadSource(str_)                    \
+  parseSource(str_);                            \
+  OCCA_ASSERT_FALSE(parser.success)
+
 template <class smntType>
 smntType& getStatement(const int index = 0) {
   return parser.root[index]->to<smntType>();

@@ -1129,10 +1129,6 @@ void testErrors() {
   std::cerr << "==============================================\n\n";
 }
 
-#define parseBadSource(str_)                    \
-  parseSource(str_);                            \
-  OCCA_ASSERT_FALSE(parser.success)
-
 void testExpressionErrors() {
   parseBadSource("2 + 3");
   parseBadSource("-2");
@@ -1339,6 +1335,7 @@ void testScopeErrors() {
   for (int j = 0; j < 3; ++j) {
     for (int i = 0; i < 3; ++i) {
       parseBadSource(sources[j] + sources[i]);
+      std::cout << '\n';
     }
   }
 

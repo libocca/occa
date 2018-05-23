@@ -65,6 +65,8 @@ namespace occa {
       function_t& function();
       variable_t& variable();
 
+      void printError(const std::string &message) const;
+
       friend class scope_t;
     };
 
