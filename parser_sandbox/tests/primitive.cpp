@@ -66,6 +66,8 @@ void testLoad() {
 
   OCCA_ASSERT_EQUAL(1e-16,
                     (double) occa::primitive("1e-16"));
+  OCCA_ASSERT_EQUAL(1.e-16,
+                    (double) occa::primitive("1.e-16"));
   OCCA_ASSERT_EQUAL(15.01,
                     (double) occa::primitive("1.501e1"));
   OCCA_ASSERT_EQUAL(-15.01,
@@ -75,6 +77,10 @@ void testLoad() {
   OCCA_ASSERT_EQUAL(-15.01,
                     (double) occa::primitive("-1.501E1"));
 
+  OCCA_ASSERT_EQUAL(1e-15,
+                    (double) occa::primitive("1e-15"));
+  OCCA_ASSERT_EQUAL(1.e-15,
+                    (double) occa::primitive("1.e-15"));
   OCCA_ASSERT_EQUAL(15.01,
                     (double) occa::primitive("1.501e+1"));
   OCCA_ASSERT_EQUAL(-15.01,
