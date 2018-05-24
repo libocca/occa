@@ -196,13 +196,13 @@ namespace occa {
       elifStatementVector elifSmnts;
       elseStatement *elseSmnt;
 
-      ifStatement(blockStatement *up_,
-                  statement_t *condition_);
+      ifStatement(blockStatement *up_);
       ifStatement(const ifStatement &other);
       ~ifStatement();
 
-      void addElif(elifStatement &elifSmnt);
+      void setCondition(statement_t *condition_);
 
+      void addElif(elifStatement &elifSmnt);
       void addElse(elseStatement &elseSmnt_);
 
       virtual statement_t& clone_() const;
@@ -215,10 +215,11 @@ namespace occa {
     public:
       statement_t *condition;
 
-      elifStatement(blockStatement *up_,
-                    statement_t *condition_);
+      elifStatement(blockStatement *up_);
       elifStatement(const elifStatement &other);
       ~elifStatement();
+
+      void setCondition(statement_t *condition_);
 
       virtual statement_t& clone_() const;
       virtual int type() const;
@@ -243,12 +244,13 @@ namespace occa {
     public:
       statement_t *init, *check, *update;
 
-      forStatement(blockStatement *up_,
-                   statement_t *init_,
-                   statement_t *check_,
-                   statement_t *update_);
+      forStatement(blockStatement *up_);
       forStatement(const forStatement &other);
       ~forStatement();
+
+      void setLoopStatements(statement_t *init_,
+                             statement_t *check_,
+                             statement_t *update_);
 
       virtual statement_t& clone_() const;
       virtual int type() const;
@@ -264,10 +266,11 @@ namespace occa {
       bool isDoWhile;
 
       whileStatement(blockStatement *up_,
-                     statement_t *condition_,
                      const bool isDoWhile_ = false);
       whileStatement(const whileStatement &other);
       ~whileStatement();
+
+      void setCondition(statement_t *condition_);
 
       virtual statement_t& clone_() const;
       virtual int type() const;
@@ -281,10 +284,11 @@ namespace occa {
     public:
       statement_t *condition;
 
-      switchStatement(blockStatement *up_,
-                      statement_t *condition_);
+      switchStatement(blockStatement *up_);
       switchStatement(const switchStatement& other);
       ~switchStatement();
+
+      void setCondition(statement_t *condition_);
 
       virtual statement_t& clone_() const;
       virtual int type() const;

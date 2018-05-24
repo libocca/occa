@@ -415,11 +415,9 @@ namespace occa {
       }
 
       if (!hasVarArgs) {
-        argNames.add(token->to<identifierToken>().value,
-                     argNames.size());
+        argNames[token->to<identifierToken>().value] = argNames.size();
       } else {
-        argNames.add(VA_ARGS,
-                     -1);
+        argNames[VA_ARGS] = -1;
       }
       return true;
     }
@@ -446,12 +444,12 @@ namespace occa {
         const int tokenType = token->type();
         if (tokenType & tokenType::identifier) {
           const std::string &value = token->to<identifierToken>().value;
-          intTrie::result_t result = argNames.get(value);
-          if (result.success()) {
+          intMapIterator it = argNames.find(value);
+          if (it != argNames.end()) {
             macroTokens.push_back(
               new macroArgument(pp,
                                 token,
-                                result.value(),
+                                it->second,
                                 argc)
             );
             continue;

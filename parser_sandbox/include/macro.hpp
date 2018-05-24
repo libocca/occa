@@ -23,8 +23,9 @@
 #define OCCA_LANG_MACRO_HEADER
 
 #include <vector>
+#include <map>
+
 #include "token.hpp"
-#include "trie.hpp"
 
 namespace occa {
   namespace lang {
@@ -33,7 +34,8 @@ namespace occa {
     class macroToken;
     class preprocessor_t;
 
-    typedef trie<int> intTrie;
+    typedef std::map<std::string, int> intMap;
+    typedef intMap::iterator           intMapIterator;
 
     typedef std::vector<token_t*>    tokenVector;
     typedef std::vector<macroToken*> macroTokenVector_t;
@@ -139,7 +141,7 @@ namespace occa {
       bool isBuiltin;
 
       bool isFunctionLike;
-      intTrie argNames;
+      intMap argNames;
       bool hasVarArgs;
 
       macroTokenVector_t macroTokens;
@@ -158,7 +160,7 @@ namespace occa {
       void setupTokenOrigin();
 
       inline int argCount() const {
-        return (argNames.size() - hasVarArgs);
+        return (((int) argNames.size()) - hasVarArgs);
       }
 
       inline const std::string& name() const {

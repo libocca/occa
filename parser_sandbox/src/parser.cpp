@@ -1318,25 +1318,28 @@ namespace occa {
         return NULL;
       }
 
+      ifStatement &ifSmnt = *(new ifStatement(up));
+      pushUp(ifSmnt);
+
       statement_t *condition = loadConditionStatement();
       if (!condition) {
         if (success) {
           success = false;
           context.printError("Missing condition for [if] statement");
         }
+        popUp();
         return NULL;
       }
 
-      ifStatement &ifSmnt = *(new ifStatement(up, condition));
-      pushUp(ifSmnt);
+      ifSmnt.setCondition(condition);
       statement_t *content = getNextStatement();
-      popUp();
       if (!content) {
         if (success) {
           context.printError("Missing content for [if] statement");
           success = false;
         }
         delete &ifSmnt;
+        popUp();
         return NULL;
       }
       ifSmnt.set(*content);
@@ -1352,6 +1355,7 @@ namespace occa {
             break;
           }
           delete &ifSmnt;
+          popUp();
           return NULL;
         }
         if (sType & statementType::elif_) {
@@ -1362,6 +1366,7 @@ namespace occa {
         }
       }
 
+      popUp();
       return &ifSmnt;
     }
 
@@ -1376,27 +1381,32 @@ namespace occa {
         return NULL;
       }
 
+      elifStatement &elifSmnt = *(new elifStatement(up));
+      pushUp(elifSmnt);
+
       statement_t *condition = loadConditionStatement();
       if (!condition) {
         if (success) {
           success = false;
           context.printError("Missing condition for [else if] statement");
         }
+        popUp();
         return NULL;
       }
 
-      elifStatement &elifSmnt = *(new elifStatement(up, condition));
-      pushUp(elifSmnt);
+      elifSmnt.setCondition(condition);
       statement_t *content = getNextStatement();
       popUp();
       if (!content) {
         context.printError("Missing content for [else if] statement");
         success = false;
+        popUp();
         delete &elifSmnt;
         return NULL;
       }
 
       elifSmnt.set(*content);
+      popUp();
       return &elifSmnt;
     }
 
@@ -1425,10 +1435,18 @@ namespace occa {
         return NULL;
       }
 
+      forStatement &forSmnt = *(new forStatement(up));
+      pushUp(forSmnt);
+
       token_t *parenEnd = context.getClosingPairToken(0);
 
       statementPtrVector statements;
       loadConditionStatements(statements, 3);
+      if (!success) {
+        popUp();
+        return NULL;
+      }
+
       int count = (int) statements.size();
       // Last statement is optional
       if (count == 2) {
@@ -1451,14 +1469,14 @@ namespace occa {
           delete statements[i];
         }
         success = false;
+        popUp();
         return NULL;
       }
 
-      forStatement &forSmnt = *(new forStatement(up,
-                                                 statements[0],
-                                                 statements[1],
-                                                 statements[2]));
-      pushUp(forSmnt);
+      forSmnt.setLoopStatements(statements[0],
+                                statements[1],
+                                statements[2]);
+
       statement_t *content = getNextStatement();
       popUp();
       if (!content) {
@@ -1484,17 +1502,20 @@ namespace occa {
         return NULL;
       }
 
+      whileStatement &whileSmnt = *(new whileStatement(up));
+      pushUp(whileSmnt);
+
       statement_t *condition = loadConditionStatement();
       if (!condition) {
         if (success) {
           success = false;
           context.printError("Missing condition for [while] statement");
         }
+        popUp();
         return NULL;
       }
 
-      whileStatement &whileSmnt = *(new whileStatement(up, condition));
-      pushUp(whileSmnt);
+      whileSmnt.setCondition(condition);
       statement_t *content = getNextStatement();
       popUp();
       if (!content) {
@@ -1512,12 +1533,16 @@ namespace occa {
       // Skip [do] token
       context.set(1);
 
+      whileStatement &whileSmnt = *(new whileStatement(up, true));
+      pushUp(whileSmnt);
+
       statement_t *content = getNextStatement();
       if (!content) {
         if (success) {
           context.printError("Missing content for [do-while] statement");
           success = false;
         }
+        popUp();
         return NULL;
       }
 
@@ -1532,6 +1557,7 @@ namespace occa {
       checkIfConditionStatementExists();
       if (!success) {
         delete content;
+        popUp();
         return NULL;
       }
 
@@ -1542,19 +1568,21 @@ namespace occa {
           context.printError("Missing condition for [do-while] statement");
         }
         delete content;
+        popUp();
         return NULL;
       }
 
       if (!(getOperatorType(context[0]) & operatorType::semicolon)) {
         context.printError("Expected a [;]");
         success = false;
+        popUp();
         delete content;
         delete condition;
         return NULL;
       }
       context.set(1);
 
-      whileStatement &whileSmnt = *(new whileStatement(up, condition, true));
+      whileSmnt.setCondition(condition);
       whileSmnt.set(*content);
       return &whileSmnt;
     }
@@ -1565,6 +1593,9 @@ namespace occa {
         return NULL;
       }
 
+      switchStatement &switchSmnt = *(new switchStatement(up));
+      pushUp(switchSmnt);
+
       token_t *parenEnd = context.getClosingPairToken(0);
       statement_t *condition = loadConditionStatement();
       if (!condition) {
@@ -1572,11 +1603,11 @@ namespace occa {
           success = false;
           context.printError("Missing condition for [switch] statement");
         }
+        popUp();
         return NULL;
       }
 
-      switchStatement &switchSmnt = *(new switchStatement(up, condition));
-      pushUp(switchSmnt);
+      switchSmnt.setCondition(condition);
       statement_t *content = getNextStatement();
       popUp();
       if (!content) {

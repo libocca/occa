@@ -34,7 +34,7 @@ namespace occa {
     definedMacro::definedMacro(preprocessor_t &pp_) :
       macro_t(pp_, "defined") {
       isFunctionLike = true;
-      argNames.add("MACRO_NAME", 0);
+      argNames["MACRO_NAME"] = 0;
     }
 
     macro_t& definedMacro::clone(preprocessor_t &pp_) const {
@@ -86,7 +86,7 @@ namespace occa {
     hasIncludeMacro::hasIncludeMacro(preprocessor_t &pp_) :
       macro_t(pp_, "__has_include") {
       isFunctionLike = true;
-      argNames.add("INCLUDE_PATH", 0);
+      argNames["INCLUDE_PATH"] = 0;
     }
 
     macro_t& hasIncludeMacro::clone(preprocessor_t &pp_) const {

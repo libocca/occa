@@ -318,10 +318,9 @@ namespace occa {
     //==================================
 
     //---[ If ]-------------------------
-    ifStatement::ifStatement(blockStatement *up_,
-                             statement_t *condition_) :
+    ifStatement::ifStatement(blockStatement *up_) :
       blockStatement(up_),
-      condition(condition_),
+      condition(NULL),
       elseSmnt(NULL) {}
 
     ifStatement::ifStatement(const ifStatement &other) :
@@ -345,6 +344,10 @@ namespace occa {
 
     ifStatement::~ifStatement() {
       delete condition;
+    }
+
+    void ifStatement::setCondition(statement_t *condition_) {
+      condition = condition_;
     }
 
     void ifStatement::addElif(elifStatement &elifSmnt) {
@@ -383,10 +386,9 @@ namespace occa {
       }
     }
 
-    elifStatement::elifStatement(blockStatement *up_,
-                                 statement_t *condition_) :
+    elifStatement::elifStatement(blockStatement *up_) :
       blockStatement(up_),
-      condition(condition_) {}
+      condition(NULL) {}
 
     elifStatement::elifStatement(const elifStatement &other) :
       blockStatement(other),
@@ -394,6 +396,10 @@ namespace occa {
 
     elifStatement::~elifStatement() {
       delete condition;
+    }
+
+    void elifStatement::setCondition(statement_t *condition_) {
+      condition = condition_;
     }
 
     statement_t& elifStatement::clone_() const {
@@ -439,10 +445,9 @@ namespace occa {
 
     //---[ While ]----------------------
     whileStatement::whileStatement(blockStatement *up_,
-                                   statement_t *condition_,
                                    const bool isDoWhile_) :
       blockStatement(up_),
-      condition(condition_),
+      condition(NULL),
       isDoWhile(isDoWhile_) {}
 
     whileStatement::whileStatement(const whileStatement &other) :
@@ -452,6 +457,10 @@ namespace occa {
 
     whileStatement::~whileStatement() {
       delete condition;
+    }
+
+    void whileStatement::setCondition(statement_t *condition_) {
+      condition = condition_;
     }
 
     statement_t& whileStatement::clone_() const {
@@ -488,14 +497,11 @@ namespace occa {
     //==================================
 
     //---[ For ]------------------------
-    forStatement::forStatement(blockStatement *up_,
-                               statement_t *init_,
-                               statement_t *check_,
-                               statement_t *update_) :
+    forStatement::forStatement(blockStatement *up_) :
       blockStatement(up_),
-      init(init_),
-      check(check_),
-      update(update_) {}
+      init(NULL),
+      check(NULL),
+      update(NULL) {}
 
     forStatement::forStatement(const forStatement &other) :
       blockStatement(other),
@@ -507,6 +513,14 @@ namespace occa {
       delete init;
       delete check;
       delete update;
+    }
+
+    void forStatement::setLoopStatements(statement_t *init_,
+                                         statement_t *check_,
+                                         statement_t *update_) {
+      init   = init_;
+      check  = check_;
+      update = update_;
     }
 
     statement_t& forStatement::clone_() const {
@@ -533,10 +547,9 @@ namespace occa {
     //==================================
 
     //---[ Switch ]---------------------
-    switchStatement::switchStatement(blockStatement *up_,
-                                     statement_t *condition_) :
+    switchStatement::switchStatement(blockStatement *up_) :
       blockStatement(up_),
-      condition(condition_) {}
+      condition(NULL) {}
 
     switchStatement::switchStatement(const switchStatement& other) :
       blockStatement(other),
@@ -544,6 +557,10 @@ namespace occa {
 
     switchStatement::~switchStatement() {
       delete condition;
+    }
+
+    void switchStatement::setCondition(statement_t *condition_) {
+      condition = condition_;
     }
 
     statement_t& switchStatement::clone_() const {

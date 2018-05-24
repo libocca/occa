@@ -853,7 +853,6 @@ namespace occa {
       }
 
       const std::string header = io::filename(tokenizer->getHeader());
-      std::cout << "header = " << header << '\n';
 
       if (!io::exists(header)) {
         errorOn(&directive,
