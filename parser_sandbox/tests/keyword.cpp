@@ -24,10 +24,10 @@
 
 using namespace occa::lang;
 
-void testDefaults(keywordTrie &keywords);
+void testDefaults(keywordMap &keywords);
 
 int main(const int argc, const char **argv) {
-  keywordTrie keywords;
+  keywordMap keywords;
   getKeywords(keywords);
 
   testDefaults(keywords);
@@ -37,12 +37,12 @@ int main(const int argc, const char **argv) {
   return 0;
 }
 
-#define assertKeyword(name_, type_)                             \
-  OCCA_ASSERT_EQUAL_BINARY(type_,                               \
-                           keywords.get(name_).value()->type())
+#define assertKeyword(name_, type_)                 \
+  OCCA_ASSERT_EQUAL_BINARY(type_,                   \
+                           keywords[name_]->type())
 
 
-void testDefaults(keywordTrie &keywords) {
+void testDefaults(keywordMap &keywords) {
   // Qualifiers
   assertKeyword("const"       , keywordType::qualifier);
   assertKeyword("constexpr"   , keywordType::qualifier);

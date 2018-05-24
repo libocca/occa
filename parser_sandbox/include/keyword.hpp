@@ -22,7 +22,11 @@
 #ifndef OCCA_LANG_KEYWORD_HEADER
 #define OCCA_LANG_KEYWORD_HEADER
 
-#include "trie.hpp"
+#include <map>
+#include <string>
+
+#include "occa/defines.hpp"
+#include "occa/tools/sys.hpp"
 
 namespace occa {
   namespace lang {
@@ -31,7 +35,8 @@ namespace occa {
     class type_t;
     class variable_t;
 
-    typedef trie<keyword_t*> keywordTrie;
+    typedef std::map<std::string, keyword_t*> keywordMap;
+    typedef keywordMap::iterator              keywordMapIterator;
 
     namespace keywordType {
       extern const int none;
@@ -95,8 +100,8 @@ namespace occa {
         return *ptr;
       }
 
-      virtual int type() = 0;
-      virtual std::string name() = 0;
+      virtual int type();
+      virtual std::string name();
 
       static int safeType(keyword_t *keyword);
     };
@@ -151,14 +156,13 @@ namespace occa {
     };
     //==================================
 
-    void getKeywords(keywordTrie &keywords);
-    void freeKeywords(keywordTrie &keywords);
+    void getKeywords(keywordMap &keywords);
+    void freeKeywords(keywordMap &keywords);
 
     template <class keywordType>
-    void addKeyword(keywordTrie &keywords,
+    void addKeyword(keywordMap &keywords,
                     keywordType *keyword) {
-      keywords.add(keyword->name(),
-                   keyword);
+      keywords[keyword->name()] = keyword;
     }
   }
 }

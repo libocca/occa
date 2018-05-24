@@ -53,13 +53,13 @@ namespace occa {
       tokenizer_t tokenizer;
       preprocessor_t preprocessor;
       stringTokenMerger stringMerger;
-      newlineTokenMerger newlineMerger;
+      newlineTokenFilter newlineFilter;
       unknownTokenFilter unknownFilter;
       //================================
 
       //---[ Status ]-------------------
       tokenContext context;
-      keywordTrie keywords;
+      keywordMap keywords;
       keywordToStatementMap keywordPeek;
       statementLoaderMap statementLoaders;
       nameToAttributeMap attributeMap;
@@ -88,7 +88,7 @@ namespace occa {
       void loadTokens();
       void parseTokens();
 
-      keyword_t* getKeyword(token_t *token);
+      keyword_t& getKeyword(token_t *token);
       opType_t getOperatorType(token_t *token);
       //================================
 
@@ -101,8 +101,6 @@ namespace occa {
       int uncachedPeek();
 
       void setupPeek();
-
-      void skipNewlines();
 
       void loadAttributes(attributePtrVector &attrs);
       void loadAttribute(attributePtrVector &attrs);

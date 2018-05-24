@@ -509,6 +509,7 @@ namespace occa {
 
       processDirective_t processFunc = result.value();
 
+      // TODO: Bits for two comparisons?
       if ((status & ppStatus::ignoring)                   &&
           (processFunc != &preprocessor_t::processIf)     &&
           (processFunc != &preprocessor_t::processIfdef)  &&
@@ -852,6 +853,7 @@ namespace occa {
       }
 
       const std::string header = io::filename(tokenizer->getHeader());
+      std::cout << "header = " << header << '\n';
 
       if (!io::exists(header)) {
         errorOn(&directive,
@@ -865,9 +867,7 @@ namespace occa {
       tokenVector lineTokens;
       getExpandedLineTokens(lineTokens);
 
-      if (header.size()) {
-        tokenizer->pushSource(header);
-      } else {
+      if (!header.size()) {
         errorOn(&directive,
                 "Expected a header to include");
         freeTokenVector(lineTokens);
@@ -875,11 +875,24 @@ namespace occa {
       }
 
       // Ignore the newline token
-      if (lineTokens.size() > 1) {
+      const int lineTokenCount = (int) lineTokens.size();
+      if (lineTokenCount > 1) {
         warningOn(lineTokens[0],
                   "Extra tokens after the #include header");
       }
+      // In case we read too many tokens, rewind to [\n] token
+      if (lineTokenCount) {
+        tokenizer->origin = lineTokens[lineTokenCount - 1]->origin;
+        // Clear input cache due to rewind
+        while (inputCache.size()) {
+          delete inputCache.front();
+          inputCache.pop_front();
+        }
+      }
       freeTokenVector(lineTokens);
+
+      // Push source after updating origin to the [\n] token
+      tokenizer->pushSource(header);
     }
 
     void preprocessor_t::processPragma(identifierToken &directive) {

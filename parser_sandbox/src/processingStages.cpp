@@ -26,38 +26,14 @@
 namespace occa {
   namespace lang {
     //---[ Newlines ]-------------------
-    newlineTokenMerger::newlineTokenMerger() {}
+    newlineTokenFilter::newlineTokenFilter() {}
 
-    newlineTokenMerger::newlineTokenMerger(const newlineTokenMerger &other) :
-      tokenCacheMap(other) {}
-
-    tokenMap& newlineTokenMerger::clone_() const {
-      return *(new newlineTokenMerger(*this));
+    tokenMap& newlineTokenFilter::clone_() const {
+      return *(new newlineTokenFilter());
     }
 
-    void newlineTokenMerger::fetchNext() {
-      token_t *token = NULL;
-
-      *(this->input) >> token;
-      pushOutput(token);
-
-      // Not a newline token
-      if (!(token->type() & tokenType::newline)) {
-        return;
-      }
-
-      while (!inputIsEmpty()) {
-        *(this->input) >> token;
-
-        if (token->type() & tokenType::newline) {
-          delete token;
-          token = NULL;
-          continue;
-        }
-
-        pushOutput(token);
-        break;
-      }
+    bool newlineTokenFilter::isValid(token_t * const &token) {
+      return !(token->type() & tokenType::newline);
     }
     //==================================
 

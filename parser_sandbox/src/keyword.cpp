@@ -79,6 +79,14 @@ namespace occa {
 
     keyword_t::~keyword_t() {}
 
+    int keyword_t::type() {
+      return keywordType::none;
+    }
+
+    std::string keyword_t::name() {
+      return "";
+    }
+
     int keyword_t::safeType(keyword_t *keyword) {
       return (keyword
               ? keyword->type()
@@ -139,7 +147,7 @@ namespace occa {
     }
     //==================================
 
-    void getKeywords(keywordTrie &keywords) {
+    void getKeywords(keywordMap &keywords) {
       // Qualifiers
       addKeyword(keywords, new qualifierKeyword(const_));
       addKeyword(keywords, new qualifierKeyword(constexpr_));
@@ -210,11 +218,11 @@ namespace occa {
       addKeyword(keywords, new statementKeyword(keywordType::private_  , "private"));
     }
 
-    void freeKeywords(keywordTrie &keywords) {
-      keywords.freeze();
-      const int count = keywords.size();
-      for (int i = 0; i < count; ++i) {
-        delete keywords.values[i];
+    void freeKeywords(keywordMap &keywords) {
+      keywordMapIterator it = keywords.begin();
+      while (it != keywords.end()) {
+        delete it->second;
+        ++it;
       }
       keywords.clear();
     }

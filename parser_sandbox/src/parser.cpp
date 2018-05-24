@@ -40,7 +40,7 @@ namespace occa {
                 .filter(unknownFilter)
                 .map(preprocessor)
                 .map(stringMerger)
-                .map(newlineMerger));
+                .map(newlineFilter));
 
       // Setup simple keyword -> statement peeks
       keywordPeek[keywordType::qualifier]   = statementType::declaration;
@@ -171,13 +171,19 @@ namespace occa {
       loadAllStatements(root);
     }
 
-    keyword_t* parser_t::getKeyword(token_t *token) {
+    keyword_t& parser_t::getKeyword(token_t *token) {
+      static keyword_t noKeyword;
+
       if (!(token_t::safeType(token) & tokenType::identifier)) {
-        return NULL;
+        return noKeyword;
       }
 
       identifierToken &identifier = token->to<identifierToken>();
-      return keywords.get(identifier.value).value();
+      keywordMapIterator it = keywords.find(identifier.value);
+      if (it == keywords.end()) {
+        return noKeyword;
+      }
+      return *(it->second);
     }
 
     opType_t parser_t::getOperatorType(token_t *token) {
@@ -249,21 +255,7 @@ namespace occa {
              context.size() &&
              (contextPos != context.position())) {
         contextPos = context.position();
-        skipNewlines();
         loadAttributes(attributes);
-      }
-    }
-
-    void parser_t::skipNewlines() {
-      const int end = context.size();
-      int start = 0;
-      for (start = 0; start < end; ++start) {
-        if (!(context[start]->type() & tokenType::newline)) {
-          break;
-        }
-      }
-      if (start) {
-        context.set(start);
       }
     }
 
@@ -347,10 +339,10 @@ namespace occa {
     }
 
     int parser_t::peekIdentifier(const int tokenIndex) {
-      token_t *token     = context[tokenIndex];
-      keyword_t *keyword = getKeyword(token);
+      token_t *token = context[tokenIndex];
+      int kType = getKeyword(token).type();
 
-      if (!keyword) {
+      if (kType & keywordType::none) {
         // Test for : for it to be a goto label
         if (isGotoLabel(tokenIndex + 1)) {
           return statementType::gotoLabel;
@@ -359,17 +351,14 @@ namespace occa {
         return statementType::expression;
       }
 
-      const int kType = keyword->type();
       const int sType = keywordPeek[kType];
-
       if (sType) {
         return sType;
       }
 
       if (kType & keywordType::else_) {
-        keyword_t *nextKeyword = getKeyword(context[tokenIndex + 1]);
-        if (nextKeyword &&
-            (nextKeyword->type() & keywordType::if_)) {
+        keyword_t &nextKeyword = getKeyword(context[tokenIndex + 1]);
+        if ((nextKeyword.type() & keywordType::if_)) {
           return statementType::elif_;
         }
         return statementType::else_;
@@ -592,21 +581,21 @@ namespace occa {
       int tokenPos;
       for (tokenPos = 0; tokenPos < tokens; ++tokenPos) {
         token_t *token     = context[tokenPos];
-        keyword_t *keyword = getKeyword(token);
-        if (!keyword) {
+        keyword_t &keyword = getKeyword(token);
+        const int kType    = keyword.type();
+        if (kType & keywordType::none) {
           break;
         }
 
-        const int kType = keyword->type();
         if (kType & keywordType::qualifier) {
           loadQualifier(token,
-                        keyword->to<qualifierKeyword>().qualifier,
+                        keyword.to<qualifierKeyword>().qualifier,
                         vartype);
           continue;
         }
         if ((kType & keywordType::type) &&
             !vartype.isValid()) {
-          vartype.type = &(keyword->to<typeKeyword>().type_);
+          vartype.type = &(keyword.to<typeKeyword>().type_);
           continue;
         }
         break;
@@ -684,12 +673,12 @@ namespace occa {
       int tokenPos;
       for (tokenPos = 0; tokenPos < tokens; ++tokenPos) {
         token_t *token     = context[tokenPos];
-        keyword_t *keyword = getKeyword(token);
-        if (!(keyword_t::safeType(keyword) & keywordType::qualifier)) {
+        keyword_t &keyword = getKeyword(token);
+        if (!(keyword.type() & keywordType::qualifier)) {
           break;
         }
 
-        const qualifier_t &qualifier = keyword->to<qualifierKeyword>().qualifier;
+        const qualifier_t &qualifier = keyword.to<qualifierKeyword>().qualifier;
         if (!(qualifier.type() & qualifierType::forPointers)) {
           token->printError("Cannot add this qualifier to a pointer");
           success = false;
@@ -1453,7 +1442,7 @@ namespace occa {
     }
 
     statement_t* parser_t::loadWhileStatement(blockStatement &up) {
-      if (getKeyword(context[0])->type() & keywordType::do_) {
+      if (getKeyword(context[0]).type() & keywordType::do_) {
         return loadDoWhileStatement(up);
       }
 
@@ -1497,9 +1486,8 @@ namespace occa {
         return NULL;
       }
 
-      keyword_t *nextKeyword = getKeyword(context[0]);
-      if (!nextKeyword ||
-          !(nextKeyword->type() & keywordType::while_)) {
+      keyword_t &nextKeyword = getKeyword(context[0]);
+      if (!(nextKeyword.type() & keywordType::while_)) {
         context.printError("Expected [while] condition after [do]");
         success = false;
         delete content;
@@ -1671,7 +1659,7 @@ namespace occa {
         success = false;
         return NULL;
       }
-      const int kType = getKeyword(context[0])->type();
+      const int kType = getKeyword(context[0]).type();
       context.set(2);
 
       int access = classAccess::private_;

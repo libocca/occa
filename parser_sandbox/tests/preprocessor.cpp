@@ -43,10 +43,10 @@ using namespace occa::lang;
 std::string source;
 tokenizer_t tokenizer;
 preprocessor_t preprocessor;
-newlineTokenMerger newlineMerger;
+newlineTokenFilter newlineFilter;
 occa::stream<token_t*> stream = (tokenizer
                                  .map(preprocessor)
-                                 .map(newlineMerger));
+                                 .map(newlineFilter));
 token_t *token;
 
 void setStream(const std::string &s) {
@@ -74,10 +74,6 @@ int getTokenType() {
 
 occa::primitive nextTokenPrimitiveValue() {
   getToken();
-  while (token &&
-         (token->type() == tokenType::newline)) {
-    getToken();
-  }
   return token->to<primitiveToken>().value;
 }
 
@@ -455,7 +451,7 @@ void testIfElseDefines () {
 }
 
 void testErrorDefines() {
-  std::cout << "Testing error and warning directives\n";
+  std::cerr << "Testing error and warning directives\n";
   setStream(
     "#error \"Testing #error\"\n"
     "#warning \"Testing #warning\"\n"
@@ -517,9 +513,6 @@ void testSpecialMacros() {
 
   // __DATE__ __TIME__
   getToken();
-  OCCA_ASSERT_EQUAL_BINARY(tokenType::newline,
-                           token->type());
-  getToken();
   OCCA_ASSERT_EQUAL_BINARY(tokenType::string,
                            token->type());
   getToken();
@@ -547,9 +540,6 @@ void testInclude() {
       OCCA_ASSERT_EQUAL(j,
                         (int) nextTokenPrimitiveValue());
     }
-    getToken();
-    OCCA_ASSERT_EQUAL_BINARY(tokenType::newline,
-                             token->type());
   }
   // Error out in the last include
   while(!stream.isEmpty()) {

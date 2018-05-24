@@ -228,13 +228,13 @@ namespace occa {
       // Delete tokens and rewind
       if (outputCache.size()) {
         origin = outputCache.front()->origin;
+        tokenList::iterator it = outputCache.begin();
+        while (it != outputCache.end()) {
+          delete *it;
+          ++it;
+        }
+        outputCache.clear();
       }
-      tokenList::iterator it = outputCache.begin();
-      while (it != outputCache.end()) {
-        delete *it;
-        ++it;
-      }
-      outputCache.clear();
 
       // TODO: Use a fileCache
       file_t *file = new file_t(filename);
