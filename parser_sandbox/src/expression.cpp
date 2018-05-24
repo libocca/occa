@@ -30,7 +30,6 @@ namespace occa {
       tokens(tokens_),
       prevToken(NULL),
       nextToken(NULL),
-      tokenBeforePair(NULL),
       hasError(false) {}
 
     expressionState::~expressionState() {
@@ -43,6 +42,13 @@ namespace occa {
         delete usedOutput.top();
         usedOutput.pop();
       }
+    }
+
+    token_t* expressionState::tokenBeforePair() {
+      if (!tokensBeforePair.size()) {
+        return NULL;
+      }
+      return tokensBeforePair.top();
     }
 
     int expressionState::outputCount() {
@@ -147,7 +153,7 @@ namespace occa {
           operatorToken &opToken = token->to<operatorToken>();
 
           if (opToken.opType() & operatorType::pairStart) {
-            state.tokenBeforePair = state.prevToken;
+            state.tokensBeforePair.push(state.prevToken);
             state.operators.push(&opToken);
           }
           else if (opToken.opType() & operatorType::pairEnd) {
@@ -155,6 +161,7 @@ namespace occa {
             if (!state.hasError) {
               attachPair(opToken, state);
             }
+            state.tokensBeforePair.pop();
           }
           else {
             applyFasterOperators(opToken, state);
@@ -287,7 +294,7 @@ namespace occa {
 
     void attachPair(operatorToken &opToken,
                     expressionState &state) {
-      if (state.outputCount() < 2) {
+      if ((state.outputCount() < 2)) {
         transformLastPair(opToken, state);
         return;
       }
@@ -295,14 +302,14 @@ namespace occa {
       // Only consider () as a function call if preceeded by:
       //   - identifier
       //   - pairEnd
-      const int prevTokenType = state.tokenBeforePair->type();
+      const int prevTokenType = state.tokenBeforePair()->type();
       if (!(prevTokenType & (tokenType::identifier |
                              tokenType::op))) {
         transformLastPair(opToken, state);
         return;
       }
       if (prevTokenType & tokenType::op) {
-        operatorToken &prevOpToken = state.tokenBeforePair->to<operatorToken>();
+        operatorToken &prevOpToken = state.tokenBeforePair()->to<operatorToken>();
         if (!(prevOpToken.opType() & operatorType::pairEnd)) {
           transformLastPair(opToken, state);
           return;
@@ -384,7 +391,10 @@ namespace occa {
       if (prevTokenIsOp) {
         opType_t prevType = state.prevToken->to<operatorToken>().opType();
         // + + + 1
-        if (prevType & operatorType::leftUnary) {
+        // a = + 1
+        if ((prevType & operatorType::leftUnary) ||
+            ((prevType & operatorType::binary) &&
+             !(prevType & operatorType::unary))) {
           return true;
         }
         if (!onlyUnary) {
@@ -534,7 +544,7 @@ namespace occa {
 
       if (!outputCount) {
         state.hasError = true;
-        opToken.printError("Unable to apply operator");
+        opToken.printError("Unable to apply operator [1]");
         return;
       }
 
@@ -542,7 +552,7 @@ namespace occa {
       if (opType & operatorType::binary) {
         if (outputCount < 2) {
           state.hasError = true;
-          opToken.printError("Unable to apply operator");
+          opToken.printError("Unable to apply operator [2]");
           return;
         }
         exprNode &left = state.popOutput();
@@ -567,7 +577,7 @@ namespace occa {
                                        value));
       } else {
         state.hasError = true;
-        opToken.printError("Unable to apply operator");
+        opToken.printError("Unable to apply operator [3]");
       }
     }
 

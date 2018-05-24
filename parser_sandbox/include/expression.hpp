@@ -29,6 +29,7 @@
 
 namespace occa {
   namespace lang {
+    typedef std::stack<token_t*>       tokenStack;
     typedef std::stack<operatorToken*> operatorStack;
 
     //---[ Expression State ]-----------
@@ -42,7 +43,7 @@ namespace occa {
       token_t *prevToken;
       token_t *nextToken;
 
-      token_t *tokenBeforePair;
+      tokenStack tokensBeforePair;
       exprNodeStack output;
       operatorStack operators;
 
@@ -52,6 +53,8 @@ namespace occa {
 
       expressionState(tokenVector &tokens_);
       ~expressionState();
+
+      token_t* tokenBeforePair();
 
       int outputCount();
       int operatorCount();
