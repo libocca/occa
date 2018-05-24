@@ -108,7 +108,7 @@ namespace occa {
       virtual int type() const = 0;
 
       virtual bool inScope(const std::string &name);
-      virtual scopeKeyword_t getScopeKeyword(const std::string &name);
+      virtual keyword_t& getScopeKeyword(const std::string &name);
 
       void addAttribute(attribute_t &attribute);
 
@@ -148,7 +148,7 @@ namespace occa {
       virtual int type() const;
 
       virtual bool inScope(const std::string &name);
-      virtual scopeKeyword_t getScopeKeyword(const std::string &name);
+      virtual keyword_t& getScopeKeyword(const std::string &name);
 
       statement_t* operator [] (const int index);
 

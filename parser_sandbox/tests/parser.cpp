@@ -1302,27 +1302,34 @@ void testScopeKeywords() {
   OCCA_ASSERT_TRUE(fooBlock.inScope("x"));
 
   // Make sure variables 'x' exist
-  OCCA_ASSERT_TRUE(root.getScopeKeyword("x").isVariable());
-  OCCA_ASSERT_TRUE(foo.getScopeKeyword("x").isVariable());
-  OCCA_ASSERT_TRUE(fooBlock.getScopeKeyword("x").isVariable());
+  OCCA_ASSERT_EQUAL_BINARY(keywordType::variable,
+                           root.getScopeKeyword("x").type());
+  OCCA_ASSERT_EQUAL_BINARY(keywordType::variable,
+                           foo.getScopeKeyword("x").type());
+  OCCA_ASSERT_EQUAL_BINARY(keywordType::variable,
+                           fooBlock.getScopeKeyword("x").type());
 
   // Make sure all instances are different
-  OCCA_ASSERT_NOT_EQUAL(&root.getScopeKeyword("x").variable(),
-                        &foo.getScopeKeyword("x").variable());
+  OCCA_ASSERT_NOT_EQUAL(&root.getScopeKeyword("x").to<variableKeyword>().variable,
+                        &foo.getScopeKeyword("x").to<variableKeyword>().variable);
 
-  OCCA_ASSERT_NOT_EQUAL(&root.getScopeKeyword("x").variable(),
-                        &fooBlock.getScopeKeyword("x").variable());
+  OCCA_ASSERT_NOT_EQUAL(&root.getScopeKeyword("x").to<variableKeyword>().variable,
+                        &fooBlock.getScopeKeyword("x").to<variableKeyword>().variable);
 
-  OCCA_ASSERT_NOT_EQUAL(&foo.getScopeKeyword("x").variable(),
-                        &fooBlock.getScopeKeyword("x").variable());
+  OCCA_ASSERT_NOT_EQUAL(&foo.getScopeKeyword("x").to<variableKeyword>().variable,
+                        &fooBlock.getScopeKeyword("x").to<variableKeyword>().variable);
 
   // Test function
-  OCCA_ASSERT_TRUE(root.getScopeKeyword("foo").isFunction());
-  OCCA_ASSERT_TRUE(root.getScopeKeyword("main").isFunction());
+  OCCA_ASSERT_EQUAL_BINARY(keywordType::function,
+                           root.getScopeKeyword("foo").type());
+  OCCA_ASSERT_EQUAL_BINARY(keywordType::function,
+                           root.getScopeKeyword("main").type());
 
   // Test types
-  OCCA_ASSERT_TRUE(root.getScopeKeyword("myInt").isType());
-  OCCA_ASSERT_TRUE(foo.getScopeKeyword("myInt").isType());
+  OCCA_ASSERT_EQUAL_BINARY(keywordType::type,
+                           root.getScopeKeyword("myInt").type());
+  OCCA_ASSERT_EQUAL_BINARY(keywordType::type,
+                           foo.getScopeKeyword("myInt").type());
 }
 
 void testScopeErrors() {

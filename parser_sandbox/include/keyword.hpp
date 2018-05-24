@@ -34,6 +34,7 @@ namespace occa {
     class qualifier_t;
     class type_t;
     class variable_t;
+    class function_t;
 
     typedef std::map<std::string, keyword_t*> keywordMap;
     typedef keywordMap::iterator              keywordMapIterator;
@@ -44,6 +45,7 @@ namespace occa {
       extern const int qualifier;
       extern const int type;
       extern const int variable;
+      extern const int function;
 
       extern const int if_;
       extern const int else_;
@@ -101,7 +103,9 @@ namespace occa {
       }
 
       virtual int type();
-      virtual std::string name();
+      virtual const std::string& name();
+
+      virtual void printError(const std::string &message);
 
       static int safeType(keyword_t *keyword);
     };
@@ -114,7 +118,7 @@ namespace occa {
       qualifierKeyword(const qualifier_t &qualifier_);
 
       virtual int type();
-      virtual std::string name();
+      virtual const std::string& name();
     };
     //==================================
 
@@ -126,19 +130,37 @@ namespace occa {
       typeKeyword(const type_t &type__);
 
       virtual int type();
-      virtual std::string name();
+      virtual const std::string& name();
+
+      virtual void printError(const std::string &message);
     };
     //==================================
 
     //---[ Variable ]-------------------
     class variableKeyword : public keyword_t {
     public:
-      const variable_t &var;
+      const variable_t &variable;
 
-      variableKeyword(const variable_t &var_);
+      variableKeyword(const variable_t &variable_);
 
       virtual int type();
-      virtual std::string name();
+      virtual const std::string& name();
+
+      virtual void printError(const std::string &message);
+    };
+    //==================================
+
+    //---[ Function ]-------------------
+    class functionKeyword : public keyword_t {
+    public:
+      const function_t &function;
+
+      functionKeyword(const function_t &function_);
+
+      virtual int type();
+      virtual const std::string& name();
+
+      virtual void printError(const std::string &message);
     };
     //==================================
 
@@ -152,7 +174,7 @@ namespace occa {
                        const std::string &sName_);
 
       virtual int type();
-      virtual std::string name();
+      virtual const std::string& name();
     };
     //==================================
 

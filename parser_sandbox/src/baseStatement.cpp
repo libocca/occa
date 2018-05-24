@@ -79,11 +79,8 @@ namespace occa {
       return false;
     }
 
-    scopeKeyword_t statement_t::getScopeKeyword(const std::string &name) {
-      if (up) {
-        return up->getScopeKeyword(name);
-      }
-      return scopeKeyword_t();
+    keyword_t& statement_t::getScopeKeyword(const std::string &name) {
+      return up->getScopeKeyword(name);
     }
 
     void statement_t::addAttribute(attribute_t &attribute) {
@@ -164,15 +161,13 @@ namespace occa {
               : false);
     }
 
-    scopeKeyword_t blockStatement::getScopeKeyword(const std::string &name) {
-      scopeKeyword_t keyword = scope.get(name);
-      if (keyword.exists()) {
-        return keyword;
-      }
-      if (up) {
+    keyword_t& blockStatement::getScopeKeyword(const std::string &name) {
+      keyword_t &keyword = scope.get(name);
+      if ((keyword.type() == keywordType::none)
+          && up) {
         return up->getScopeKeyword(name);
       }
-      return scopeKeyword_t();
+      return keyword;
     }
 
     statement_t* blockStatement::operator [] (const int index) {
@@ -211,7 +206,7 @@ namespace occa {
 
       // Clear old body statement
       body->children.clear();
-      body->scope.keywordMap.clear();
+      body->scope.keywords.clear();
       delete body;
     }
 

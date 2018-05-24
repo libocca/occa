@@ -31,40 +31,41 @@ namespace occa {
       const int qualifier   = (1 << 1);
       const int type        = (1 << 2);
       const int variable    = (1 << 3);
+      const int function    = (1 << 4);
 
-      const int if_         = (1 << 4);
-      const int else_       = (1 << 5);
-      const int switch_     = (1 << 6);
+      const int if_         = (1 << 5);
+      const int else_       = (1 << 6);
+      const int switch_     = (1 << 7);
       const int conditional = (if_   |
                                else_ |
                                switch_);
 
-      const int case_       = (1 << 7);
-      const int default_    = (1 << 8);
+      const int case_       = (1 << 8);
+      const int default_    = (1 << 9);
       const int switchLabel = (case_ |
                                default_);
 
-      const int for_        = (1 << 9);
-      const int while_      = (1 << 10);
-      const int do_         = (1 << 11);
+      const int for_        = (1 << 10);
+      const int while_      = (1 << 11);
+      const int do_         = (1 << 12);
       const int iteration   = (for_   |
                                while_ |
                                do_);
 
-      const int break_      = (1 << 12);
-      const int continue_   = (1 << 13);
-      const int return_     = (1 << 14);
-      const int goto_       = (1 << 15);
+      const int break_      = (1 << 13);
+      const int continue_   = (1 << 14);
+      const int return_     = (1 << 15);
+      const int goto_       = (1 << 16);
       const int jump        = (break_    |
                                continue_ |
                                return_   |
                                goto_);
 
-      const int namespace_  = (1 << 16);
+      const int namespace_  = (1 << 17);
 
-      const int public_     = (1 << 17);
-      const int protected_  = (1 << 18);
-      const int private_    = (1 << 19);
+      const int public_     = (1 << 18);
+      const int protected_  = (1 << 19);
+      const int private_    = (1 << 20);
       const int classAccess = (public_    |
                                protected_ |
                                private_);
@@ -83,8 +84,13 @@ namespace occa {
       return keywordType::none;
     }
 
-    std::string keyword_t::name() {
-      return "";
+    const std::string& keyword_t::name() {
+      static std::string empty;
+      return empty;
+    }
+
+    void keyword_t::printError(const std::string &message) {
+      occa::printError(std::cerr, message);
     }
 
     int keyword_t::safeType(keyword_t *keyword) {
@@ -101,7 +107,7 @@ namespace occa {
       return keywordType::qualifier;
     }
 
-    std::string qualifierKeyword::name() {
+    const std::string& qualifierKeyword::name() {
       return qualifier.name;
     }
     //==================================
@@ -114,21 +120,46 @@ namespace occa {
       return keywordType::type;
     }
 
-    std::string typeKeyword::name() {
+    const std::string& typeKeyword::name() {
       return type_.name();
+    }
+
+    void typeKeyword::printError(const std::string &message) {
+      type_.printError(message);
     }
     //==================================
 
     //---[ Variable ]-------------------
-    variableKeyword::variableKeyword(const variable_t &var_) :
-      var(var_) {}
+    variableKeyword::variableKeyword(const variable_t &variable_) :
+      variable(variable_) {}
 
     int variableKeyword::type() {
       return keywordType::variable;
     }
 
-    std::string variableKeyword::name() {
-      return var.name();
+    const std::string& variableKeyword::name() {
+      return variable.name();
+    }
+
+    void variableKeyword::printError(const std::string &message) {
+      variable.printError(message);
+    }
+    //==================================
+
+    //---[ Function ]-------------------
+    functionKeyword::functionKeyword(const function_t &function_) :
+      function(function_) {}
+
+    int functionKeyword::type() {
+      return keywordType::function;
+    }
+
+    const std::string& functionKeyword::name() {
+      return function.name();
+    }
+
+    void functionKeyword::printError(const std::string &message) {
+      function.printError(message);
     }
     //==================================
 
@@ -142,7 +173,7 @@ namespace occa {
       return sType;
     }
 
-    std::string statementKeyword::name() {
+    const std::string& statementKeyword::name() {
       return sName;
     }
     //==================================
