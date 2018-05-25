@@ -344,14 +344,14 @@ namespace occa {
         // |   |
         // |   |---[argName] (identifier)
         // |   |
-        // |   |---[arg] ...
+        // |   |---[arg] (?)
         if (arg->type() & exprNodeType::binary) {
-          binaryOpNode &opNode = arg->to<binaryOpNode>();
-          if ((opNode.opType() & operatorType::assign) &&
-              (opNode.leftValue.type() & exprNodeType::identifier)) {
-            argName = opNode.leftValue.to<identifierNode>().value;
-            arg = &(opNode.rightValue.clone());
-            delete arg;
+          binaryOpNode &equalsNode = arg->to<binaryOpNode>();
+          if ((equalsNode.opType() & operatorType::assign) &&
+              (equalsNode.leftValue.type() & exprNodeType::identifier)) {
+            argName = equalsNode.leftValue.to<identifierNode>().value;
+            arg = &(equalsNode.rightValue.clone());
+            delete &equalsNode;
           }
         }
 
