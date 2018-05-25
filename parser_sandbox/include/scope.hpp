@@ -44,6 +44,8 @@ namespace occa {
       bool add(const type_t &type);
       bool add(const function_t &func);
       bool add(const variable_t &var);
+
+      void debugPrint();
     };
   }
 }

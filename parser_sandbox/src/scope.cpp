@@ -96,5 +96,16 @@ namespace occa {
       it->second->printError("[" + name + "] was first defined here");
       return false;
     }
+
+    void scope_t::debugPrint() {
+      keywordMapIterator it = keywords.begin();
+      while (it != keywords.end()) {
+        std::cout << '['
+                  << stringifySetBits(it->second->type())
+                  << "] "
+                  << it->first << '\n';
+        ++it;
+      }
+    }
   }
 }

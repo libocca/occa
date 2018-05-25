@@ -26,34 +26,17 @@
 
 namespace occa {
   namespace lang {
-    typedef std::vector<exprNode*> exprNodeVector;
-
     //---[ @dim ]-----------------------
     class dim : public attribute_t {
       exprNodeVector dimSizes;
 
     public:
       dim();
-      dim(identifierToken &source_,
-          exprNodeVector &dimSizes_);
-      dim(const dim &other);
-      virtual ~dim();
 
       virtual std::string name() const;
 
-      virtual attribute_t* create(parser_t &parser,
-                                  identifierToken &source_,
-                                  const tokenRangeVector &argRanges);
-
-      virtual attribute_t* clone();
-
-      virtual bool isVariableAttribute() const;
-
-      virtual bool onVariableLoad(parser_t &parser,
-                                  variable_t &var);
-
-      int size();
-      exprNode* operator [] (const int index);
+      virtual bool forVariable() const;
+      virtual bool forStatement(const int sType) const;
     };
     //==================================
 
@@ -63,21 +46,11 @@ namespace occa {
 
     public:
       dimOrder();
-      dimOrder(identifierToken &source_);
-      virtual ~dimOrder();
 
       virtual std::string name() const;
 
-      virtual attribute_t* create(parser_t &parser,
-                                  identifierToken &source_,
-                                  const tokenRangeVector &argRanges);
-
-      virtual attribute_t* clone();
-
-      virtual bool isVariableAttribute() const;
-
-      virtual bool onVariableLoad(parser_t &parser,
-                                  variable_t &var);
+      virtual bool forVariable() const;
+      virtual bool forStatement(const int sType) const;
     };
     //==================================
 
@@ -85,21 +58,10 @@ namespace occa {
     class tile : public attribute_t {
     public:
       tile();
-      tile(identifierToken &source_);
-      virtual ~tile();
 
       virtual std::string name() const;
 
-      virtual attribute_t* create(parser_t &parser,
-                                  identifierToken &source_,
-                                  const tokenRangeVector &argRanges);
-
-      virtual attribute_t* clone();
-
-      virtual bool isStatementAttribute(const int stype) const;
-
-      virtual bool onStatementLoad(parser_t &parser,
-                                   statement_t &smnt);
+      virtual bool forStatement(const int sType) const;
     };
     //==================================
 
@@ -107,21 +69,10 @@ namespace occa {
     class safeTile : public attribute_t {
     public:
       safeTile();
-      safeTile(identifierToken &source_);
-      virtual ~safeTile();
 
       virtual std::string name() const;
 
-      virtual attribute_t* create(parser_t &parser,
-                                  identifierToken &source_,
-                                  const tokenRangeVector &argRanges);
-
-      virtual attribute_t* clone();
-
-      virtual bool isStatementAttribute(const int stype) const;
-
-      virtual bool onStatementLoad(parser_t &parser,
-                                   statement_t &smnt);
+      virtual bool forStatement(const int sType) const;
     };
     //==================================
   }

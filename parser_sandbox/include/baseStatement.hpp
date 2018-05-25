@@ -75,7 +75,7 @@ namespace occa {
     class statement_t {
     public:
       blockStatement *up;
-      attributePtrVector attributes;
+      attributeTokenVector attributes;
 
       statement_t(blockStatement *up_);
 
@@ -110,7 +110,7 @@ namespace occa {
       virtual bool inScope(const std::string &name);
       virtual keyword_t& getScopeKeyword(const std::string &name);
 
-      void addAttribute(attribute_t &attribute);
+      void addAttribute(const attributeToken_t &attribute);
 
       virtual void print(printer &pout) const = 0;
 

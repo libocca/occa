@@ -24,6 +24,7 @@
 
 #include <iostream>
 #include <vector>
+#include <map>
 
 #include "tokenContext.hpp"
 
@@ -32,55 +33,57 @@ namespace occa {
     class parser_t;
     class identifierToken;
     class attribute_t;
+    class attributeToken_t;
     class vartype_t;
     class variable_t;
     class function_t;
     class statement_t;
     class expressionStatement;
 
-    typedef std::vector<attribute_t*> attributePtrVector;
+    typedef std::vector<attributeToken_t>    attributeTokenVector;
+    typedef std::vector<exprNode*>           exprNodeVector;
+    typedef std::map<std::string, exprNode*> exprNodeMap;
 
+    //---[ Attribute Type ]-------------
     class attribute_t {
-    protected:
-      identifierToken *source;
-
     public:
-      attribute_t();
-      attribute_t(identifierToken &source_);
       virtual ~attribute_t();
 
       virtual std::string name() const = 0;
 
-      virtual attribute_t* create(parser_t &parser,
-                                  identifierToken &source_,
-                                  const tokenRangeVector &argRanges) = 0;
+      virtual bool forVariable() const;
+      virtual bool forFunction() const;
+      virtual bool forStatement(const int sType) const = 0;
+    };
+    //==================================
 
-      virtual attribute_t* clone() = 0;
+    //---[ Attribute ]------------------
+    class attributeToken_t {
+    public:
+      const attribute_t *attrType;
+      identifierToken *source;
+      exprNodeVector args;
+      exprNodeMap kwargs;
 
-      virtual bool isVariableAttribute() const;
-      virtual bool isFunctionAttribute() const;
-      virtual bool isStatementAttribute(const int stype) const;
+      attributeToken_t(const attribute_t &attrType_,
+                       identifierToken &source_);
+      attributeToken_t(const attributeToken_t &other);
+      attributeToken_t& operator = (const attributeToken_t &other);
+      virtual ~attributeToken_t();
 
-      virtual bool onVariableLoad(parser_t &parser,
-                                  variable_t &var);
+      const std::string& name() const;
 
-      virtual bool onFunctionLoad(parser_t &parser,
-                                  function_t &func);
+      bool forVariable() const;
+      bool forFunction() const;
+      bool forStatement(const int sType) const;
 
-      virtual bool onStatementLoad(parser_t &parser,
-                                   statement_t &smnt);
-
-      virtual void onUse(parser_t &parser,
-                         statement_t &smnt,
-                         exprNode &expr);
+      exprNode* operator [] (const int index);
+      exprNode* operator [] (const std::string &arg);
 
       void printWarning(const std::string &message);
       void printError(const std::string &message);
     };
-
-    void copyAttributes(attributePtrVector &dest,
-                        const attributePtrVector &src);
-    void freeAttributes(attributePtrVector &attributes);
+    //==================================
   }
 }
 

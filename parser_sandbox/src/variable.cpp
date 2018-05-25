@@ -44,23 +44,21 @@ namespace occa {
 
     variable_t::variable_t(const variable_t &other) :
       vartype(other.vartype),
-      source((identifierToken*) other.source->clone()) {
-      copyAttributes(attributes, other.attributes);
-    }
+      source((identifierToken*) other.source->clone()),
+      attributes(other.attributes) {}
 
     variable_t& variable_t::operator = (const variable_t &other) {
       vartype = other.vartype;
+      attributes = other.attributes;
+
       delete source;
       source = (identifierToken*) other.source->clone();
-
-      copyAttributes(attributes, other.attributes);
 
       return *this;
     }
 
     variable_t::~variable_t() {
       delete source;
-      freeAttributes(attributes);
     }
 
     bool variable_t::isNamed() const {

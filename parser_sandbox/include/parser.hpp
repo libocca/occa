@@ -45,7 +45,7 @@ namespace occa {
     typedef std::map<int, statementLoader_t> statementLoaderMap;
 
     typedef std::map<std::string, attribute_t*> nameToAttributeMap;
-    typedef std::list<blockStatement*>        blockStatementList;
+    typedef std::list<blockStatement*>          blockStatementList;
 
     class parser_t {
     public:
@@ -72,7 +72,7 @@ namespace occa {
       blockStatement root;
       blockStatement *up;
       blockStatementList upStack;
-      attributePtrVector attributes;
+      attributeTokenVector attributes;
 
       bool success;
       //================================
@@ -99,7 +99,16 @@ namespace occa {
       //================================
 
       //---[ Customization ]------------
-      void addAttribute(attribute_t *attr);
+      template <class attributeType>
+      void addAttribute() {
+        attributeType *attr = new attributeType();
+        const std::string name = attr->name();
+
+        OCCA_ERROR("Attribute [" << name << "] already exists",
+                   attributeMap.find(name) == attributeMap.end());
+
+        attributeMap[name] = attr;
+      }
       //================================
 
       //---[ Peek ]---------------------
@@ -108,9 +117,11 @@ namespace occa {
 
       void setupPeek();
 
-      void loadAttributes(attributePtrVector &attrs);
-      void loadAttribute(attributePtrVector &attrs);
-      void addAttributesTo(attributePtrVector &attrs,
+      void loadAttributes(attributeTokenVector &attrs);
+      void loadAttribute(attributeTokenVector &attrs);
+      void setAttributeArgs(attributeToken_t &attr,
+                            tokenRangeVector &argRanges);
+      void addAttributesTo(attributeTokenVector &attrs,
                            statement_t *smnt);
 
       int peekIdentifier(const int tokenIndex);

@@ -24,6 +24,7 @@
 
 #include <vector>
 
+#include "attribute.hpp"
 #include "baseStatement.hpp"
 #include "printer.hpp"
 #include "qualifier.hpp"
@@ -67,6 +68,7 @@ namespace occa {
     class type_t {
     public:
       identifierToken *source;
+      attributeTokenVector attributes;
 
       type_t(const std::string &name_ = "");
       type_t(identifierToken &source_);

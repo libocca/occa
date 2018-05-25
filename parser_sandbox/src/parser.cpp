@@ -85,10 +85,10 @@ namespace occa {
       statementLoaders[statementType::goto_]       = &parser_t::loadGotoStatement;
       statementLoaders[statementType::gotoLabel]   = &parser_t::loadGotoLabelStatement;
 
-      addAttribute(new dim());
-      addAttribute(new dimOrder());
-      addAttribute(new tile());
-      addAttribute(new safeTile());
+      addAttribute<dim>();
+      addAttribute<dimOrder>();
+      addAttribute<tile>();
+      addAttribute<safeTile>();
     }
 
     parser_t::~parser_t() {
@@ -117,7 +117,7 @@ namespace occa {
       upStack.clear();
 
       freeKeywords(keywords);
-      freeAttributes(attributes);
+      attributes.clear();
 
       success = true;
     }
@@ -212,12 +212,6 @@ namespace occa {
     }
     //==================================
 
-    //---[ Customization ]--------------
-    void parser_t::addAttribute(attribute_t *attr) {
-      attributeMap[attr->name()] = attr;
-    }
-    //==================================
-
     //---[ Peek ]-----------------------
     int parser_t::peek() {
       const int contextPosition = context.position();
@@ -277,14 +271,14 @@ namespace occa {
       }
     }
 
-    void parser_t::loadAttributes(attributePtrVector &attrs) {
+    void parser_t::loadAttributes(attributeTokenVector &attrs) {
       while (success &&
              (getOperatorType(context[0]) & operatorType::attribute)) {
         loadAttribute(attrs);
       }
     }
 
-    void parser_t::loadAttribute(attributePtrVector &attrs) {
+    void parser_t::loadAttribute(attributeTokenVector &attrs) {
       // Skip [@] token
       context.set(1);
 
@@ -319,7 +313,8 @@ namespace occa {
         return;
       }
 
-      attribute_t *attr = it->second->create(*this, nameToken, argRanges);
+      attributeToken_t attr(*(it->second), nameToken);
+      setAttributeArgs(attr, argRanges);
       attrs.push_back(attr);
 
       if (hasArgs) {
@@ -327,30 +322,74 @@ namespace occa {
       }
     }
 
-    void parser_t::addAttributesTo(attributePtrVector &attrs,
+    void parser_t::setAttributeArgs(attributeToken_t &attr,
+                                    tokenRangeVector &argRanges) {
+      const int args = (int) argRanges.size();
+      bool foundNamedArg = false;
+      for (int i = 0; i < args; ++i) {
+        context.push(argRanges[i].start,
+                     argRanges[i].end);
+
+        // Get argument
+        exprNode *arg = context.getExpression();
+        if (!arg) {
+          success = false;
+          context.pop();
+          return;
+        }
+
+        std::string argName;
+        // Check for
+        // |---[=] (binary)
+        // |   |
+        // |   |---[argName] (identifier)
+        // |   |
+        // |   |---[arg] ...
+        if (arg->type() & exprNodeType::binary) {
+          binaryOpNode &opNode = arg->to<binaryOpNode>();
+          if ((opNode.opType() & operatorType::assign) &&
+              (opNode.leftValue.type() & exprNodeType::identifier)) {
+            argName = opNode.leftValue.to<identifierNode>().value;
+            arg = &(opNode.rightValue.clone());
+            delete arg;
+          }
+        }
+
+        if (!argName.size() &&
+            foundNamedArg) {
+          context.printError("All arguments after a named argument"
+                             " must also be named");
+          success = false;
+          delete arg;
+          context.pop();
+          return;
+        }
+
+        if (!argName.size()) {
+          attr.args.push_back(arg);
+        } else {
+          attr.kwargs[argName] = arg;
+        }
+
+        context.popAndSkip();
+      }
+    }
+
+    void parser_t::addAttributesTo(attributeTokenVector &attrs,
                                    statement_t *smnt) {
       if (!smnt) {
-        freeAttributes(attrs);
+        attrs.clear();
         return;
       }
 
-      const bool isDecl = (smnt->type() & statementType::declaration);
-
       const int attributeCount = (int) attrs.size();
       for (int i = 0; i < attributeCount; ++i) {
-        attribute_t *attr = attrs[i];
-        bool keep = attr->isStatementAttribute(smnt->type());
-        if (keep) {
-          keep = attr->onStatementLoad(*this, *smnt);
-        }
-        else if (!isDecl || !attr->isVariableAttribute()) {
-          attr->printError("Cannot apply attribute to this type of statement");
-          success = false;
-        }
-        if (keep) {
-          smnt->addAttribute(*attr);
+        attributeToken_t &attr = attrs[i];
+        if (attr.forStatement(smnt->type())) {
+          smnt->addAttribute(attr);
         } else {
-          delete attr;
+          attr.printError("Cannot apply attribute to this type of statement");
+          success = false;
         }
       }
       attrs.clear();
@@ -447,42 +486,24 @@ namespace occa {
 
 
     void parser_t::loadDeclarationAttributes(variableDeclaration &decl) {
-      attributePtrVector &varAttributes = decl.var.attributes;
-
+      attributeTokenVector &varAttributes = decl.var.attributes;
       // Copy statement attributes to each variable
       // Variable attributes should override statement attributes
-      const int attrCount = (int) attributes.size();
-      for (int i = 0; i < attrCount; ++i) {
-        attribute_t *attr = attributes[i];
-        if (attr->isVariableAttribute()) {
-          varAttributes.push_back(attr->clone());
-        }
-      }
-
+      varAttributes = attributes;
       loadAttributes(varAttributes);
       if (!success) {
         return;
       }
 
-      // Call variable attributes
-      const int varAttrCount = (int) varAttributes.size();
-      int newAttrCount = 0;
-      for (int i = 0; i < varAttrCount; ++i) {
-        attribute_t *attr = varAttributes[i];
-        bool keep = attr->isVariableAttribute();
-        if (keep) {
-          keep = attr->onVariableLoad(*this, decl.var);
-        } else {
-          attr->printError("Cannot apply attribute to variables");
+      // Make sure all attributes are meant for variables
+      const int attrCount = (int) varAttributes.size();
+      for (int i = 0; i < attrCount; ++i) {
+        attributeToken_t &attr = varAttributes[i];
+        if (!attr.forVariable()) {
+          attr.printError("Cannot apply attribute to this type of statement");
           success = false;
         }
-        if (keep) {
-          varAttributes[newAttrCount++] = attr;
-        } else {
-          delete attr;
-        }
       }
-      varAttributes.resize(newAttrCount);
     }
 
     int parser_t::declarationNextCheck(const opType_t opCheck) {
@@ -1091,6 +1112,8 @@ namespace occa {
         return NULL;
       }
 
+      // We pass the attributes to the variables
+      attributes.clear();
       return &smnt;
     }
 
@@ -1217,6 +1240,10 @@ namespace occa {
         delete &funcSmnt;
         return NULL;
       }
+
+      // We pass the attributes to the variables
+      funcSmnt.function.attributes = attributes;
+      attributes.clear();
 
       return &funcSmnt;
     }

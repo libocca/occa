@@ -1053,11 +1053,13 @@ void testAttributeLoading() {
   OCCA_ASSERT_EQUAL(1,
                     (int) declVar(0).attributes.size());
   OCCA_ASSERT_EQUAL("dim",
-                    declVarAttr(0, 0)->name());
+                    declVarAttr(0, 0).name());
   OCCA_ASSERT_EQUAL(0,
                     (int) declVar(1).attributes.size());
 
-  dim &xDim1 = *((dim*) declVarAttr(0, 0));
+  attributeToken_t &xDim1 = declVarAttr(0, 0);
+  OCCA_ASSERT_EQUAL(2,
+                    (int) xDim1.args.size());
   OCCA_ASSERT_EQUAL(2,
                     (int) xDim1[0]->evaluate());
   OCCA_ASSERT_EQUAL(3,
@@ -1070,19 +1072,23 @@ void testAttributeLoading() {
   OCCA_ASSERT_EQUAL(1,
                     (int) declVar(0).attributes.size());
   OCCA_ASSERT_EQUAL("dim",
-                    declVarAttr(0, 0)->name());
+                    declVarAttr(0, 0).name());
   OCCA_ASSERT_EQUAL(1,
                     (int) declVar(1).attributes.size());
   OCCA_ASSERT_EQUAL("dim",
-                    declVarAttr(1, 0)->name());
+                    declVarAttr(1, 0).name());
 
-  dim &xDim2 = *((dim*) declVarAttr(0, 0));
+  attributeToken_t &xDim2 = declVarAttr(0, 0);
+  OCCA_ASSERT_EQUAL(2,
+                    (int) xDim2.args.size());
   OCCA_ASSERT_EQUAL(4,
                     (int) xDim2[0]->evaluate());
   OCCA_ASSERT_EQUAL(5,
                     (int) xDim2[1]->evaluate());
 
-  dim &xDim3 = *((dim*) declVarAttr(1, 0));
+  attributeToken_t &xDim3 = declVarAttr(1, 0);
+  OCCA_ASSERT_EQUAL(2,
+                    (int) xDim3.args.size());
   OCCA_ASSERT_EQUAL(4,
                     (int) xDim3[0]->evaluate());
   OCCA_ASSERT_EQUAL(5,

@@ -20,82 +20,105 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  */
 #include "attribute.hpp"
+#include "exprNode.hpp"
 #include "parser.hpp"
 
 namespace occa {
   namespace lang {
-    attribute_t::attribute_t() :
-      source(NULL) {}
+    //---[ Attribute Type ]-------------
+    attribute_t::~attribute_t() {}
 
-    attribute_t::attribute_t(identifierToken &source_) :
-      source(&source_) {}
+    bool attribute_t::forVariable() const {
+      return false;
+    }
 
-    attribute_t::~attribute_t() {
+    bool attribute_t::forFunction() const {
+      return false;
+    }
+    //==================================
+
+    //---[ Attribute ]------------------
+    attributeToken_t::attributeToken_t(const attribute_t &attrType_,
+                                       identifierToken &source_) :
+      attrType(&attrType_),
+      source((identifierToken*) source_.clone()) {}
+
+    attributeToken_t::attributeToken_t(const attributeToken_t &other) {
+      *this = other;
+    }
+
+    attributeToken_t& attributeToken_t::operator = (const attributeToken_t &other) {
+      attrType = other.attrType;
+      source   = (identifierToken*) other.source->clone();
+
+      // Copy args
+      const int argCount = (int) other.args.size();
+      for (int i = 0; i < argCount; ++i) {
+        args.push_back(&(other.args[i]->clone()));
+      }
+      // Copy kwargs
+      exprNodeMap::const_iterator it = other.kwargs.begin();
+      while (it != other.kwargs.end()) {
+        kwargs[it->first] = &(it->second->clone());
+        ++it;
+      }
+
+      return *this;
+    }
+
+    attributeToken_t::~attributeToken_t() {
       delete source;
-    }
-
-    bool attribute_t::isVariableAttribute() const {
-      return false;
-    }
-
-    bool attribute_t::isFunctionAttribute() const {
-      return false;
-    }
-
-    bool attribute_t::isStatementAttribute(const int stype) const {
-      return false;
-    }
-
-    bool attribute_t::onVariableLoad(parser_t &parser,
-                                     variable_t &var) {
-      return false;
-    }
-
-    bool attribute_t::onFunctionLoad(parser_t &parser,
-                                     function_t &func) {
-      return false;
-    }
-
-    bool attribute_t::onStatementLoad(parser_t &parser,
-                                      statement_t &smnt) {
-      return false;
-    }
-
-    void attribute_t::onUse(parser_t &parser,
-                            statement_t &smnt,
-                            exprNode &expr) {}
-
-    void attribute_t::printWarning(const std::string &message) {
-      if (source) {
-        source->printWarning(message);
-      } else {
-        occa::printWarning(std::cerr, message);
+      // Free args
+      const int argCount = (int) args.size();
+      for (int i = 0; i < argCount; ++i) {
+        delete args[i];
+      }
+      // Free kwargs
+      exprNodeMap::iterator it = kwargs.begin();
+      while (it != kwargs.end()) {
+        delete it->second;
+        ++it;
       }
     }
 
-    void attribute_t::printError(const std::string &message) {
-      if (source) {
-        source->printError(message);
-      } else {
-        occa::printError(std::cerr, message);
-      }
+    const std::string& attributeToken_t::name() const {
+      return source->value;
     }
 
-    void copyAttributes(attributePtrVector &dest,
-                        const attributePtrVector &src) {
-      freeAttributes(dest);
-      const int count = (int) src.size();
-      for (int i = 0; i < count; ++i) {
-        dest.push_back(src[i]->clone());
-      }
+    bool attributeToken_t::forVariable() const {
+      return attrType->forVariable();
     }
 
-    void freeAttributes(attributePtrVector &attributes) {
-      const int count = (int) attributes.size();
-      for (int i = 0; i < count; ++i) {
-        delete attributes[i];
-      }
-      attributes.clear();
+    bool attributeToken_t::forFunction() const {
+      return attrType->forFunction();
     }
+
+    bool attributeToken_t::forStatement(const int sType) const {
+      return attrType->forStatement(sType);
+    }
+
+    exprNode* attributeToken_t::operator [] (const int index) {
+      if ((0 <= index) && (index < ((int) args.size()))) {
+        return args[index];
+      }
+      return NULL;
+    }
+
+    exprNode* attributeToken_t::operator [] (const std::string &arg) {
+      exprNodeMap::iterator it = kwargs.find(arg);
+      if (it != kwargs.end()) {
+        return it->second;
+      }
+      return NULL;
+    }
+
+    void attributeToken_t::printWarning(const std::string &message) {
+      source->printWarning(message);
+    }
+
+    void attributeToken_t::printError(const std::string &message) {
+      source->printError(message);
+    }
+    //==================================
   }
 }
