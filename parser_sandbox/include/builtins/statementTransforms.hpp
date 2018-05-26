@@ -20,51 +20,44 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  */
 
-#ifndef OCCA_LANG_TRANSFORM_HEADER
-#define OCCA_LANG_TRANSFORM_HEADER
+#ifndef OCCA_LANG_BUILTINS_TRANSFORMS_HEADER
+#define OCCA_LANG_BUILTINS_TRANSFORMS_HEADER
+
+#include "exprTransform.hpp"
+#include "statementTransform.hpp"
 
 namespace occa {
   namespace lang {
-    class parser_t;
-    class statement_t;
-    class blockStatement;
-
-    typedef statement_t* (*statementTransform_t)(statement_t &smnt);
-
-    enum transformOrder {
-      upToDown, downToUp
-    };
-
-    class statementTransform {
+    //---[ @tile ]----------------------
+    class tileLoopTransform : public statementTransform {
     public:
-      parser_t &parser;
-      transformOrder order;
-      int validStatementTypes;
+      tileLoopTransform(parser_t &parser_);
 
-      statementTransform(parser_t &parser_);
-
-      virtual statement_t* transformStatement(statement_t &smnt) = 0;
-
-      statement_t* transform(statement_t &smnt);
-
-      statement_t* transformBlockStatement(blockStatement &smnt);
-
-      bool transformChildrenStatements(blockStatement &smnt);
-
-      bool transformStatementInPlace(statement_t *&smnt);
-
-      bool transformInnerStatements(blockStatement &smnt);
-
-      bool transformForInnerStatements(forStatement &smnt);
-
-      bool transformIfInnerStatements(ifStatement &smnt);
-
-      bool transformElifInnerStatements(elifStatement &smnt);
-
-      bool transformWhileInnerStatements(whileStatement &smnt);
-
-      bool transformSwitchInnerStatements(switchStatement &smnt);
+      virtual statement_t* transformStatement(statement_t &smnt);
     };
+    //==================================
+
+    //---[ @dim ]-----------------------
+    class dimArrayTransform : public statementTransform {
+    private:
+      class eT : public exprTransform {
+      public:
+        eT();
+
+        virtual exprNode* transformExprNode(exprNode &node);
+      };
+
+    public:
+      eT eTransform;
+
+      dimArrayTransform(parser_t &parser_);
+
+      virtual statement_t* transformStatement(statement_t &smnt);
+
+      bool applyToDeclStatement(declarationStatement &smnt);
+      bool apply(exprNode *&expr);
+    };
+    //==================================
   }
 }
 

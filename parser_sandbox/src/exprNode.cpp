@@ -148,8 +148,9 @@ namespace occa {
       return new emptyNode();
     }
 
-    void emptyNode::print(printer &pout) const {
-    }
+    void emptyNode::setChildren(exprNodeRefVector &children) {}
+
+    void emptyNode::print(printer &pout) const {}
 
     void emptyNode::debugPrint(const std::string &prefix) const {
       std::cerr << prefix << "|\n"
@@ -189,6 +190,8 @@ namespace occa {
       return value;
     }
 
+    void primitiveNode::setChildren(exprNodeRefVector &children) {}
+
     void primitiveNode::print(printer &pout) const {
       pout << value.toString();
     }
@@ -221,6 +224,8 @@ namespace occa {
     exprNode* charNode::clone() const {
       return new charNode(token, value);
     }
+
+    void charNode::setChildren(exprNodeRefVector &children) {}
 
     void charNode::print(printer &pout) const {
       pout << "'" << escape(value, '\'') << '"';
@@ -255,6 +260,8 @@ namespace occa {
       return new stringNode(token, value);
     }
 
+    void stringNode::setChildren(exprNodeRefVector &children) {}
+
     void stringNode::print(printer &pout) const {
       pout << "\"" << escape(value, '"') << "\"";
     }
@@ -288,6 +295,8 @@ namespace occa {
       return new identifierNode(token, value);
     }
 
+    void identifierNode::setChildren(exprNodeRefVector &children) {}
+
     void identifierNode::print(printer &pout) const {
       pout << value;
     }
@@ -320,6 +329,8 @@ namespace occa {
     exprNode* variableNode::clone() const {
       return new variableNode(token, value);
     }
+
+    void variableNode::setChildren(exprNodeRefVector &children) {}
 
     void variableNode::print(printer &pout) const {
       pout << value;
@@ -377,6 +388,10 @@ namespace occa {
       return op(pValue);
     }
 
+    void leftUnaryOpNode::setChildren(exprNodeRefVector &children) {
+      children.push_back(&value);
+    }
+
     void leftUnaryOpNode::print(printer &pout) const {
       pout << op << *value;
     }
@@ -425,6 +440,10 @@ namespace occa {
     primitive rightUnaryOpNode::evaluate() const {
       primitive pValue = value->evaluate();
       return op(pValue);
+    }
+
+    void rightUnaryOpNode::setChildren(exprNodeRefVector &children) {
+      children.push_back(&value);
     }
 
     void rightUnaryOpNode::print(printer &pout) const {
@@ -493,6 +512,11 @@ namespace occa {
       return op(pLeft, pRight);
     }
 
+    void binaryOpNode::setChildren(exprNodeRefVector &children) {
+      children.push_back(&leftValue);
+      children.push_back(&rightValue);
+    }
+
     void binaryOpNode::print(printer &pout) const {
       pout << *leftValue
            << ' ' << op
@@ -558,6 +582,12 @@ namespace occa {
       return falseValue->evaluate();
     }
 
+    void ternaryOpNode::setChildren(exprNodeRefVector &children) {
+      children.push_back(&checkValue);
+      children.push_back(&trueValue);
+      children.push_back(&falseValue);
+    }
+
     void ternaryOpNode::print(printer &pout) const {
       pout << *checkValue
            << " ? " << *trueValue
@@ -600,6 +630,10 @@ namespace occa {
       return new subscriptNode(token, *value, *index);
     }
 
+    void subscriptNode::setChildren(exprNodeRefVector &children) {
+      children.push_back(&value);
+    }
+
     void subscriptNode::print(printer &pout) const {
       pout << *value
            << '[' << *index << ']';
@@ -639,6 +673,16 @@ namespace occa {
 
     exprNode* callNode::clone() const {
       return new callNode(token, *value, args);
+    }
+
+    void callNode::setChildren(exprNodeRefVector &children) {
+      const int argCount = (int) args.size();
+      children.reserve(1 + argCount);
+
+      children.push_back(&value);
+      for (int i = 0; i < argCount; ++i) {
+        children.push_back(&(args[i]));
+      }
     }
 
     void callNode::print(printer &pout) const {
@@ -702,6 +746,11 @@ namespace occa {
       return new newNode(token, valueType, *value, *size);
     }
 
+    void newNode::setChildren(exprNodeRefVector &children) {
+      children.push_back(&value);
+      children.push_back(&size);
+    }
+
     void newNode::print(printer &pout) const {
       // TODO: Print type without qualifiers
       //       Also convert [] to *
@@ -745,6 +794,10 @@ namespace occa {
       return new deleteNode(token, *value, isArray);
     }
 
+    void deleteNode::setChildren(exprNodeRefVector &children) {
+      children.push_back(&value);
+    }
+
     void deleteNode::print(printer &pout) const {
       pout << "delete ";
       if (isArray) {
@@ -784,6 +837,10 @@ namespace occa {
 
     exprNode* throwNode::clone() const {
       return new throwNode(token, *value);
+    }
+
+    void throwNode::setChildren(exprNodeRefVector &children) {
+      children.push_back(&value);
     }
 
     void throwNode::print(printer &pout) const {
@@ -833,6 +890,10 @@ namespace occa {
       return value->evaluate().sizeof_();
     }
 
+    void sizeofNode::setChildren(exprNodeRefVector &children) {
+      children.push_back(&value);
+    }
+
     void sizeofNode::print(printer &pout) const {
       pout << "sizeof(" << *value << ')';
     }
@@ -867,6 +928,10 @@ namespace occa {
 
     exprNode* funcCastNode::clone() const {
       return new funcCastNode(token, valueType, *value);
+    }
+
+    void funcCastNode::setChildren(exprNodeRefVector &children) {
+      children.push_back(&value);
     }
 
     void funcCastNode::print(printer &pout) const {
@@ -908,6 +973,10 @@ namespace occa {
       return new parenCastNode(token, valueType, *value);
     }
 
+    void parenCastNode::setChildren(exprNodeRefVector &children) {
+      children.push_back(&value);
+    }
+
     void parenCastNode::print(printer &pout) const {
       // TODO: Print type without qualifiers
       //       Also convert [] to *
@@ -945,6 +1014,10 @@ namespace occa {
 
     exprNode* constCastNode::clone() const {
       return new constCastNode(token, valueType, *value);
+    }
+
+    void constCastNode::setChildren(exprNodeRefVector &children) {
+      children.push_back(&value);
     }
 
     void constCastNode::print(printer &pout) const {
@@ -987,6 +1060,10 @@ namespace occa {
       return new staticCastNode(token, valueType, *value);
     }
 
+    void staticCastNode::setChildren(exprNodeRefVector &children) {
+      children.push_back(&value);
+    }
+
     void staticCastNode::print(printer &pout) const {
       // TODO: Print type without qualifiers
       //       Also convert [] to *
@@ -1027,6 +1104,10 @@ namespace occa {
       return new reinterpretCastNode(token, valueType, *value);
     }
 
+    void reinterpretCastNode::setChildren(exprNodeRefVector &children) {
+      children.push_back(&value);
+    }
+
     void reinterpretCastNode::print(printer &pout) const {
       // TODO: Print type without qualifiers
       //       Also convert [] to *
@@ -1065,6 +1146,10 @@ namespace occa {
 
     exprNode* dynamicCastNode::clone() const {
       return new dynamicCastNode(token, valueType, *value);
+    }
+
+    void dynamicCastNode::setChildren(exprNodeRefVector &children) {
+      children.push_back(&value);
     }
 
     void dynamicCastNode::print(printer &pout) const {
@@ -1123,6 +1208,10 @@ namespace occa {
       return primitive();
     }
 
+    void pairNode::setChildren(exprNodeRefVector &children) {
+      children.push_back(&value);
+    }
+
     void pairNode::print(printer &pout) const {
       token->printError("[Waldo] (pairNode) Unsure how you got here...");
     }
@@ -1165,6 +1254,10 @@ namespace occa {
       return value->evaluate();
     }
 
+    void parenthesesNode::setChildren(exprNodeRefVector &children) {
+      children.push_back(&value);
+    }
+
     void parenthesesNode::print(printer &pout) const {
       pout << '(' << *value << ')';
     }
@@ -1197,6 +1290,18 @@ namespace occa {
 
     exprNode* tupleNode::clone() const {
       return new tupleNode(token, args);
+    }
+
+    void tupleNode::setChildren(exprNodeRefVector &children) {
+      const int argCount = (int) args.size();
+      if (!argCount) {
+        return;
+      }
+
+      children.reserve(argCount);
+      for (int i = 0; i < argCount; ++i) {
+        children.push_back(&(args[i]));
+      }
     }
 
     void tupleNode::print(printer &pout) const {
@@ -1252,6 +1357,12 @@ namespace occa {
                               *value,
                               *blocks,
                               *threads);
+    }
+
+    void cudaCallNode::setChildren(exprNodeRefVector &children) {
+      children.push_back(&value);
+      children.push_back(&blocks);
+      children.push_back(&threads);
     }
 
     void cudaCallNode::print(printer &pout) const {

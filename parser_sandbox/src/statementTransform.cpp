@@ -21,13 +21,15 @@
  */
 #include "attribute.hpp"
 #include "statement.hpp"
-#include "transform.hpp"
+#include "statementTransform.hpp"
 #include "parser.hpp"
 
 namespace occa {
   namespace lang {
     statementTransform::statementTransform(parser_t &parser_) :
-      parser(parser_) {}
+      parser(parser_),
+      downToUp(true),
+      validStatementTypes(statementType::none) {}
 
     statement_t* statementTransform::transform(statement_t &smnt) {
       if (!(smnt.type() & validStatementTypes)) {
@@ -37,7 +39,7 @@ namespace occa {
     }
 
     statement_t* statementTransform::transformBlockStatement(blockStatement &smnt) {
-      if (order == downToUp) {
+      if (downToUp) {
         if (!transformChildrenStatements(smnt)
             || !transformInnerStatements(smnt)) {
           return NULL;

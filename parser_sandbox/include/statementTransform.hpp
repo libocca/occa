@@ -20,28 +20,49 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  */
 
-#ifndef OCCA_LANG_BUILTINS_TRANSFORMS_HEADER
-#define OCCA_LANG_BUILTINS_TRANSFORMS_HEADER
-
-#include "transform.hpp"
+#ifndef OCCA_LANG_STATEMENTTRANSFORM_HEADER
+#define OCCA_LANG_STATEMENTTRANSFORM_HEADER
 
 namespace occa {
   namespace lang {
-    class tileLoopTransform : public statementTransform {
+    class parser_t;
+    class statement_t;
+    class blockStatement;
+    class forStatement;
+    class ifStatement;
+    class elifStatement;
+    class whileStatement;
+    class switchStatement;
+
+    class statementTransform {
     public:
-      tileLoopTransform(parser_t &parser_);
+      parser_t &parser;
+      bool downToUp;
+      int validStatementTypes;
 
-      virtual statement_t* transformStatement(statement_t &smnt);
-    };
+      statementTransform(parser_t &parser_);
 
-    class dimArrayTransform : public statementTransform {
-    public:
-      dimArrayTransform(parser_t &parser_);
+      virtual statement_t* transformStatement(statement_t &smnt) = 0;
 
-      virtual statement_t* transformStatement(statement_t &smnt);
+      statement_t* transform(statement_t &smnt);
 
-      bool applyToDeclStatement(declarationStatement &smnt);
-      bool apply(exprNode *&expr);
+      statement_t* transformBlockStatement(blockStatement &smnt);
+
+      bool transformChildrenStatements(blockStatement &smnt);
+
+      bool transformStatementInPlace(statement_t *&smnt);
+
+      bool transformInnerStatements(blockStatement &smnt);
+
+      bool transformForInnerStatements(forStatement &smnt);
+
+      bool transformIfInnerStatements(ifStatement &smnt);
+
+      bool transformElifInnerStatements(elifStatement &smnt);
+
+      bool transformWhileInnerStatements(whileStatement &smnt);
+
+      bool transformSwitchInnerStatements(switchStatement &smnt);
     };
   }
 }

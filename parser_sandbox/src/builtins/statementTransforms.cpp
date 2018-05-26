@@ -19,25 +19,39 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  */
+#include "exprNode.hpp"
 #include "statement.hpp"
 #include "variable.hpp"
-#include "builtins/transforms.hpp"
+#include "builtins/statementTransforms.hpp"
 
 namespace occa {
   namespace lang {
+    //---[ @tile ]----------------------
     tileLoopTransform::tileLoopTransform(parser_t &parser_) :
       statementTransform(parser_) {
-      order = upToDown;
+      downToUp = false;
       validStatementTypes = statementType::for_;
     }
 
     statement_t* tileLoopTransform::transformStatement(statement_t &smnt) {
       return &smnt;
     }
+    //==================================
+
+    //---[ @dim ]-----------------------
+    dimArrayTransform::eT::eT() {
+      downToUp = true;
+      validExprNodeTypes = exprNodeType::call;
+    }
+
+    exprNode* dimArrayTransform::eT::transformExprNode(exprNode &node) {
+      callNode &call = (callNode&) node;
+
+      return &node;
+    }
 
     dimArrayTransform::dimArrayTransform(parser_t &parser_) :
       statementTransform(parser_) {
-      order = downToUp;
       validStatementTypes = (statementType::expression |
                              statementType::declaration);
     }
@@ -67,7 +81,9 @@ namespace occa {
       if (expr == NULL) {
         return true;
       }
-      return true;
+      expr = eTransform.transform(*expr);
+      return expr;
     }
+    //==================================
   }
 }

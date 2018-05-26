@@ -24,8 +24,8 @@
 #include "parser.hpp"
 #include "variable.hpp"
 #include "builtins/attributes.hpp"
-#include "builtins/transforms.hpp"
 #include "builtins/types.hpp"
+#include "builtins/statementTransforms.hpp"
 
 namespace occa {
   namespace lang {
