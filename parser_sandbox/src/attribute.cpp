@@ -54,12 +54,12 @@ namespace occa {
       // Copy args
       const int argCount = (int) other.args.size();
       for (int i = 0; i < argCount; ++i) {
-        args.push_back(&(other.args[i]->clone()));
+        args.push_back(other.args[i]->clone());
       }
       // Copy kwargs
       exprNodeMap::const_iterator it = other.kwargs.begin();
       while (it != other.kwargs.end()) {
-        kwargs[it->first] = &(it->second->clone());
+        kwargs[it->first] = it->second->clone();
         ++it;
       }
 

@@ -118,7 +118,7 @@ namespace occa {
 
       virtual udim_t type() const = 0;
 
-      virtual exprNode& clone() const = 0;
+      virtual exprNode* clone() const = 0;
 
       virtual bool canEvaluate() const;
       virtual primitive evaluate() const;
@@ -150,7 +150,7 @@ namespace occa {
 
       virtual udim_t type() const;
 
-      virtual exprNode& clone() const;
+      virtual exprNode* clone() const;
 
       virtual void print(printer &pout) const;
 
@@ -174,7 +174,7 @@ namespace occa {
 
       virtual udim_t type() const;
 
-      virtual exprNode& clone() const;
+      virtual exprNode* clone() const;
 
       virtual bool canEvaluate() const;
       virtual primitive evaluate() const;
@@ -197,7 +197,7 @@ namespace occa {
 
       virtual udim_t type() const;
 
-      virtual exprNode& clone() const;
+      virtual exprNode* clone() const;
 
       virtual void print(printer &pout) const;
 
@@ -218,7 +218,7 @@ namespace occa {
 
       virtual udim_t type() const;
 
-      virtual exprNode& clone() const;
+      virtual exprNode* clone() const;
 
       virtual void print(printer &pout) const;
 
@@ -238,7 +238,7 @@ namespace occa {
 
       virtual udim_t type() const;
 
-      virtual exprNode& clone() const;
+      virtual exprNode* clone() const;
 
       virtual void print(printer &pout) const;
 
@@ -258,7 +258,7 @@ namespace occa {
 
       virtual udim_t type() const;
 
-      virtual exprNode& clone() const;
+      virtual exprNode* clone() const;
 
       virtual void print(printer &pout) const;
 
@@ -270,7 +270,7 @@ namespace occa {
     class leftUnaryOpNode : public exprNode {
     public:
       const unaryOperator_t &op;
-      exprNode &value;
+      exprNode *value;
 
       leftUnaryOpNode(token_t *token_,
                       const unaryOperator_t &op_,
@@ -283,7 +283,7 @@ namespace occa {
       virtual udim_t type() const;
       opType_t opType() const;
 
-      virtual exprNode& clone() const;
+      virtual exprNode* clone() const;
 
       virtual bool canEvaluate() const;
       virtual primitive evaluate() const;
@@ -296,7 +296,7 @@ namespace occa {
     class rightUnaryOpNode : public exprNode {
     public:
       const unaryOperator_t &op;
-      exprNode &value;
+      exprNode *value;
 
       rightUnaryOpNode(const unaryOperator_t &op_,
                        exprNode &value_);
@@ -312,7 +312,7 @@ namespace occa {
       virtual udim_t type() const;
       opType_t opType() const;
 
-      virtual exprNode& clone() const;
+      virtual exprNode* clone() const;
 
       virtual bool canEvaluate() const;
       virtual primitive evaluate() const;
@@ -325,7 +325,7 @@ namespace occa {
     class binaryOpNode : public exprNode {
     public:
       const binaryOperator_t &op;
-      exprNode &leftValue, &rightValue;
+      exprNode *leftValue, *rightValue;
 
       binaryOpNode(const binaryOperator_t &op_,
                    exprNode &leftValue_,
@@ -343,7 +343,7 @@ namespace occa {
       virtual udim_t type() const;
       opType_t opType() const;
 
-      virtual exprNode& clone() const;
+      virtual exprNode* clone() const;
 
       virtual bool canEvaluate() const;
       virtual primitive evaluate() const;
@@ -355,7 +355,7 @@ namespace occa {
 
     class ternaryOpNode : public exprNode {
     public:
-      exprNode &checkValue, &trueValue, &falseValue;
+      exprNode *checkValue, *trueValue, *falseValue;
 
       ternaryOpNode(exprNode &checkValue_,
                     exprNode &trueValue_,
@@ -372,7 +372,7 @@ namespace occa {
       virtual udim_t type() const;
       opType_t opType() const;
 
-      virtual exprNode& clone() const;
+      virtual exprNode* clone() const;
 
       virtual bool canEvaluate() const;
       virtual primitive evaluate() const;
@@ -386,7 +386,7 @@ namespace occa {
     //---[ Pseudo Operators ]-----------
     class subscriptNode : public exprNode {
     public:
-      exprNode &value, &index;
+      exprNode *value, *index;
 
       subscriptNode(token_t *token_,
                     exprNode &value_,
@@ -398,7 +398,7 @@ namespace occa {
 
       virtual udim_t type() const;
 
-      virtual exprNode& clone() const;
+      virtual exprNode* clone() const;
 
       virtual void print(printer &pout) const;
 
@@ -407,7 +407,7 @@ namespace occa {
 
     class callNode : public exprNode {
     public:
-      exprNode &value;
+      exprNode *value;
       exprNodeVector args;
 
       callNode(token_t *token_,
@@ -424,7 +424,7 @@ namespace occa {
 
       virtual udim_t type() const;
 
-      virtual exprNode& clone() const;
+      virtual exprNode* clone() const;
 
       virtual void print(printer &pout) const;
 
@@ -434,8 +434,8 @@ namespace occa {
     class newNode : public exprNode {
     public:
       vartype_t &valueType;
-      exprNode &value;
-      exprNode &size;
+      exprNode *value;
+      exprNode *size;
 
       newNode(token_t *token_,
               vartype_t &valueType_,
@@ -452,7 +452,7 @@ namespace occa {
 
       virtual udim_t type() const;
 
-      virtual exprNode& clone() const;
+      virtual exprNode* clone() const;
 
       virtual void print(printer &pout) const;
 
@@ -461,7 +461,7 @@ namespace occa {
 
     class deleteNode : public exprNode {
     public:
-      exprNode &value;
+      exprNode *value;
       bool isArray;
 
       deleteNode(token_t *token_,
@@ -474,7 +474,7 @@ namespace occa {
 
       virtual udim_t type() const;
 
-      virtual exprNode& clone() const;
+      virtual exprNode* clone() const;
 
       virtual void print(printer &pout) const;
 
@@ -483,7 +483,7 @@ namespace occa {
 
     class throwNode : public exprNode {
     public:
-      exprNode &value;
+      exprNode *value;
 
       throwNode(token_t *token_,
                 exprNode &value_);
@@ -494,7 +494,7 @@ namespace occa {
 
       virtual udim_t type() const;
 
-      virtual exprNode& clone() const;
+      virtual exprNode* clone() const;
 
       virtual void print(printer &pout) const;
 
@@ -505,7 +505,7 @@ namespace occa {
     //---[ Builtins ]-------------------
     class sizeofNode : public exprNode {
     public:
-      exprNode &value;
+      exprNode *value;
 
       sizeofNode(token_t *token_,
                  exprNode &value_);
@@ -516,7 +516,7 @@ namespace occa {
 
       virtual udim_t type() const;
 
-      virtual exprNode& clone() const;
+      virtual exprNode* clone() const;
 
       virtual bool canEvaluate() const;
       virtual primitive evaluate() const;
@@ -529,7 +529,7 @@ namespace occa {
     class funcCastNode : public exprNode {
     public:
       vartype_t &valueType;
-      exprNode &value;
+      exprNode *value;
 
       funcCastNode(token_t *token_,
                    vartype_t &valueType_,
@@ -541,7 +541,7 @@ namespace occa {
 
       virtual udim_t type() const;
 
-      virtual exprNode& clone() const;
+      virtual exprNode* clone() const;
 
       virtual void print(printer &pout) const;
 
@@ -551,7 +551,7 @@ namespace occa {
     class parenCastNode : public exprNode {
     public:
       vartype_t &valueType;
-      exprNode &value;
+      exprNode *value;
 
       parenCastNode(token_t *token_,
                     vartype_t &valueType_,
@@ -563,7 +563,7 @@ namespace occa {
 
       virtual udim_t type() const;
 
-      virtual exprNode& clone() const;
+      virtual exprNode* clone() const;
 
       virtual void print(printer &pout) const;
 
@@ -573,7 +573,7 @@ namespace occa {
     class constCastNode : public exprNode {
     public:
       vartype_t &valueType;
-      exprNode &value;
+      exprNode *value;
 
       constCastNode(token_t *token_,
                     vartype_t &valueType_,
@@ -585,7 +585,7 @@ namespace occa {
 
       virtual udim_t type() const;
 
-      virtual exprNode& clone() const;
+      virtual exprNode* clone() const;
 
       virtual void print(printer &pout) const;
 
@@ -595,7 +595,7 @@ namespace occa {
     class staticCastNode : public exprNode {
     public:
       vartype_t &valueType;
-      exprNode &value;
+      exprNode *value;
 
       staticCastNode(token_t *token_,
                      vartype_t &valueType_,
@@ -607,7 +607,7 @@ namespace occa {
 
       virtual udim_t type() const;
 
-      virtual exprNode& clone() const;
+      virtual exprNode* clone() const;
 
       virtual void print(printer &pout) const;
 
@@ -617,7 +617,7 @@ namespace occa {
     class reinterpretCastNode : public exprNode {
     public:
       vartype_t &valueType;
-      exprNode &value;
+      exprNode *value;
 
       reinterpretCastNode(token_t *token_,
                           vartype_t &valueType_,
@@ -629,7 +629,7 @@ namespace occa {
 
       virtual udim_t type() const;
 
-      virtual exprNode& clone() const;
+      virtual exprNode* clone() const;
 
       virtual void print(printer &pout) const;
 
@@ -639,7 +639,7 @@ namespace occa {
     class dynamicCastNode : public exprNode {
     public:
       vartype_t &valueType;
-      exprNode &value;
+      exprNode *value;
 
       dynamicCastNode(token_t *token_,
                       vartype_t &valueType_,
@@ -651,7 +651,7 @@ namespace occa {
 
       virtual udim_t type() const;
 
-      virtual exprNode& clone() const;
+      virtual exprNode* clone() const;
 
       virtual void print(printer &pout) const;
 
@@ -663,7 +663,7 @@ namespace occa {
     class pairNode : public exprNode {
     public:
       const operator_t &op;
-      exprNode &value;
+      exprNode *value;
 
       pairNode(operatorToken &opToken,
                exprNode &value_);
@@ -675,7 +675,7 @@ namespace occa {
       virtual udim_t type() const;
       opType_t opType() const;
 
-      virtual exprNode& clone() const;
+      virtual exprNode* clone() const;
 
       virtual bool canEvaluate() const;
       virtual primitive evaluate() const;
@@ -687,7 +687,7 @@ namespace occa {
 
     class parenthesesNode : public exprNode {
     public:
-      exprNode &value;
+      exprNode *value;
 
       parenthesesNode(token_t *token_,
                       exprNode &value_);
@@ -698,7 +698,7 @@ namespace occa {
 
       virtual udim_t type() const;
 
-      virtual exprNode& clone() const;
+      virtual exprNode* clone() const;
 
       virtual bool canEvaluate() const;
       virtual primitive evaluate() const;
@@ -725,7 +725,7 @@ namespace occa {
 
       virtual udim_t type() const;
 
-      virtual exprNode& clone() const;
+      virtual exprNode* clone() const;
 
       virtual void print(printer &pout) const;
 
@@ -736,8 +736,8 @@ namespace occa {
     //---[ Extensions ]-----------------
     class cudaCallNode : public exprNode {
     public:
-      exprNode &value;
-      exprNode &blocks, &threads;
+      exprNode *value;
+      exprNode *blocks, *threads;
 
       cudaCallNode(token_t *token_,
                    exprNode &value_,
@@ -750,7 +750,7 @@ namespace occa {
 
       virtual udim_t type() const;
 
-      virtual exprNode& clone() const;
+      virtual exprNode* clone() const;
 
       virtual void print(printer &pout) const;
 

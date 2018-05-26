@@ -224,6 +224,12 @@ namespace occa {
       statement_t* loadGotoStatement();
       statement_t* loadGotoLabelStatement();
       //================================
+
+      template <class transformType>
+      bool applyTransform() {
+        transformType transform(*this);
+        return transform.transformBlockStatement(root);
+      }
     };
   }
 }

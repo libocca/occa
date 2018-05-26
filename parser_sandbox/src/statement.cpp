@@ -140,7 +140,7 @@ namespace occa {
 
     expressionStatement::expressionStatement(const expressionStatement &other) :
       statement_t(NULL),
-      root(&(other.root->clone())),
+      root(other.root->clone()),
       hasSemicolon(other.hasSemicolon) {}
 
     expressionStatement::~expressionStatement() {
@@ -605,7 +605,7 @@ namespace occa {
     }
 
     statement_t& caseStatement::clone_() const {
-      return *(new caseStatement(NULL, value->clone()));
+      return *(new caseStatement(NULL, *(value->clone())));
     }
 
     int caseStatement::type() const {
@@ -688,7 +688,7 @@ namespace occa {
       statement_t(NULL),
       value(NULL) {
       if (other.value) {
-        value = &(other.value->clone());
+        value = other.value->clone();
       }
     }
 

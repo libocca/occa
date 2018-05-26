@@ -116,7 +116,7 @@ namespace occa {
       var(other.var),
       value(NULL) {
       if (other.value) {
-        value = &(other.value->clone());
+        value = other.value->clone();
       }
     }
 

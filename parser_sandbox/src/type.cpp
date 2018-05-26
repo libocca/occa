@@ -179,7 +179,7 @@ namespace occa {
         end = (operatorToken*) other.end->clone();
       }
       if (other.size) {
-        size = &(other.size->clone());
+        size = other.size->clone();
       }
     }
 

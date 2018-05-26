@@ -21,9 +21,10 @@
  */
 #include "attribute.hpp"
 #include "expression.hpp"
-#include "variable.hpp"
 #include "parser.hpp"
+#include "variable.hpp"
 #include "builtins/attributes.hpp"
+#include "builtins/transforms.hpp"
 #include "builtins/types.hpp"
 
 namespace occa {
@@ -186,6 +187,10 @@ namespace occa {
 
     void parser_t::parseTokens() {
       loadAllStatements();
+      if (!success) return;
+      success = applyTransform<dimArrayTransform>();
+      if (!success) return;
+      success = applyTransform<tileLoopTransform>();
     }
 
     keyword_t& parser_t::getKeyword(token_t *token) {
@@ -348,9 +353,9 @@ namespace occa {
         if (arg->type() & exprNodeType::binary) {
           binaryOpNode &equalsNode = arg->to<binaryOpNode>();
           if ((equalsNode.opType() & operatorType::assign) &&
-              (equalsNode.leftValue.type() & exprNodeType::identifier)) {
-            argName = equalsNode.leftValue.to<identifierNode>().value;
-            arg = &(equalsNode.rightValue.clone());
+              (equalsNode.leftValue->type() & exprNodeType::identifier)) {
+            argName = equalsNode.leftValue->to<identifierNode>().value;
+            arg = equalsNode.rightValue->clone();
             delete &equalsNode;
           }
         }

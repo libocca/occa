@@ -390,7 +390,7 @@ void testPairMatching() {
                            expr->type());
   callNode &func = expr->to<callNode>();
 
-  OCCA_ASSERT_EQUAL("func", func.value.to<identifierNode>().value);
+  OCCA_ASSERT_EQUAL("func", func.value->to<identifierNode>().value);
   OCCA_ASSERT_EQUAL(5, (int) func.args.size());
   for (int i = 0; i < 5; ++i) {
     primitiveNode &arg = func.args[i]->to<primitiveNode>();

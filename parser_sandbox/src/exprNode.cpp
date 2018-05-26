@@ -122,7 +122,7 @@ namespace occa {
       dest.clear();
       dest.reserve(nodes);
       for (int i = 0; i < nodes; ++i) {
-        dest.push_back(&(src[i]->clone()));
+        dest.push_back(src[i]->clone());
       }
     }
 
@@ -144,8 +144,8 @@ namespace occa {
       return exprNodeType::empty;
     }
 
-    exprNode& emptyNode::clone() const {
-      return *(new emptyNode());
+    exprNode* emptyNode::clone() const {
+      return new emptyNode();
     }
 
     void emptyNode::print(printer &pout) const {
@@ -177,8 +177,8 @@ namespace occa {
       return exprNodeType::primitive;
     }
 
-    exprNode& primitiveNode::clone() const {
-      return *(new primitiveNode(token, value));
+    exprNode* primitiveNode::clone() const {
+      return new primitiveNode(token, value);
     }
 
     bool primitiveNode::canEvaluate() const {
@@ -218,8 +218,8 @@ namespace occa {
       return exprNodeType::char_;
     }
 
-    exprNode& charNode::clone() const {
-      return *(new charNode(token, value));
+    exprNode* charNode::clone() const {
+      return new charNode(token, value);
     }
 
     void charNode::print(printer &pout) const {
@@ -251,8 +251,8 @@ namespace occa {
       return exprNodeType::string;
     }
 
-    exprNode& stringNode::clone() const {
-      return *(new stringNode(token, value));
+    exprNode* stringNode::clone() const {
+      return new stringNode(token, value);
     }
 
     void stringNode::print(printer &pout) const {
@@ -284,8 +284,8 @@ namespace occa {
       return exprNodeType::identifier;
     }
 
-    exprNode& identifierNode::clone() const {
-      return *(new identifierNode(token, value));
+    exprNode* identifierNode::clone() const {
+      return new identifierNode(token, value);
     }
 
     void identifierNode::print(printer &pout) const {
@@ -317,8 +317,8 @@ namespace occa {
       return exprNodeType::variable;
     }
 
-    exprNode& variableNode::clone() const {
-      return *(new variableNode(token, value));
+    exprNode* variableNode::clone() const {
+      return new variableNode(token, value);
     }
 
     void variableNode::print(printer &pout) const {
@@ -346,10 +346,10 @@ namespace occa {
     leftUnaryOpNode::leftUnaryOpNode(const leftUnaryOpNode &node) :
       exprNode(node.token),
       op(node.op),
-      value(node.value.clone()) {}
+      value(node.value->clone()) {}
 
     leftUnaryOpNode::~leftUnaryOpNode() {
-      delete &value;
+      delete value;
     }
 
     udim_t leftUnaryOpNode::type() const {
@@ -360,8 +360,8 @@ namespace occa {
       return op.opType;
     }
 
-    exprNode& leftUnaryOpNode::clone() const {
-      return *(new leftUnaryOpNode(token, op, value));
+    exprNode* leftUnaryOpNode::clone() const {
+      return new leftUnaryOpNode(token, op, *value);
     }
 
     bool leftUnaryOpNode::canEvaluate() const {
@@ -369,16 +369,16 @@ namespace occa {
                        operatorType::address)) {
         return false;
       }
-      return value.canEvaluate();
+      return value->canEvaluate();
     }
 
     primitive leftUnaryOpNode::evaluate() const {
-      primitive pValue = value.evaluate();
+      primitive pValue = value->evaluate();
       return op(pValue);
     }
 
     void leftUnaryOpNode::print(printer &pout) const {
-      pout << op << value;
+      pout << op << *value;
     }
 
     void leftUnaryOpNode::debugPrint(const std::string &prefix) const {
@@ -387,7 +387,7 @@ namespace occa {
                 << prefix << "|---[";
       pout << op;
       std::cerr << "] (leftUnary)\n";
-      value.childDebugPrint(prefix);
+      value->childDebugPrint(prefix);
     }
 
     rightUnaryOpNode::rightUnaryOpNode(token_t *token_,
@@ -400,10 +400,10 @@ namespace occa {
     rightUnaryOpNode::rightUnaryOpNode(const rightUnaryOpNode &node) :
       exprNode(node.token),
       op(node.op),
-      value(node.value.clone()) {}
+      value(node.value->clone()) {}
 
     rightUnaryOpNode::~rightUnaryOpNode() {
-      delete &value;
+      delete value;
     }
 
     udim_t rightUnaryOpNode::type() const {
@@ -414,21 +414,21 @@ namespace occa {
       return op.opType;
     }
 
-    exprNode& rightUnaryOpNode::clone() const {
-      return *(new rightUnaryOpNode(token, op, value));
+    exprNode* rightUnaryOpNode::clone() const {
+      return new rightUnaryOpNode(token, op, *value);
     }
 
     bool rightUnaryOpNode::canEvaluate() const {
-      return value.canEvaluate();
+      return value->canEvaluate();
     }
 
     primitive rightUnaryOpNode::evaluate() const {
-      primitive pValue = value.evaluate();
+      primitive pValue = value->evaluate();
       return op(pValue);
     }
 
     void rightUnaryOpNode::print(printer &pout) const {
-      pout << value << op;
+      pout << *value << op;
     }
 
     void rightUnaryOpNode::debugPrint(const std::string &prefix) const {
@@ -437,7 +437,7 @@ namespace occa {
                 << prefix << "|---[";
       pout << op;
       std::cerr << "] (rightUnary)\n";
-      value.childDebugPrint(prefix);
+      value->childDebugPrint(prefix);
     }
 
     binaryOpNode::binaryOpNode(token_t *token_,
@@ -452,12 +452,12 @@ namespace occa {
     binaryOpNode::binaryOpNode(const binaryOpNode &node) :
       exprNode(node.token),
       op(node.op),
-      leftValue(node.leftValue.clone()),
-      rightValue(node.rightValue.clone()) {}
+      leftValue(node.leftValue->clone()),
+      rightValue(node.rightValue->clone()) {}
 
     binaryOpNode::~binaryOpNode() {
-      delete &leftValue;
-      delete &rightValue;
+      delete leftValue;
+      delete rightValue;
     }
 
     udim_t binaryOpNode::type() const {
@@ -468,8 +468,11 @@ namespace occa {
       return op.opType;
     }
 
-    exprNode& binaryOpNode::clone() const {
-      return *(new binaryOpNode(token, op, leftValue, rightValue));
+    exprNode* binaryOpNode::clone() const {
+      return new binaryOpNode(token,
+                              op,
+                              *leftValue,
+                              *rightValue);
     }
 
     bool binaryOpNode::canEvaluate() const {
@@ -480,20 +483,20 @@ namespace occa {
                        operatorType::arrowStar)) {
         return false;
       }
-      return (leftValue.canEvaluate() &&
-              rightValue.canEvaluate());
+      return (leftValue->canEvaluate() &&
+              rightValue->canEvaluate());
     }
 
     primitive binaryOpNode::evaluate() const {
-      primitive pLeft  = leftValue.evaluate();
-      primitive pRight = rightValue.evaluate();
+      primitive pLeft  = leftValue->evaluate();
+      primitive pRight = rightValue->evaluate();
       return op(pLeft, pRight);
     }
 
     void binaryOpNode::print(printer &pout) const {
-      pout << leftValue
+      pout << *leftValue
            << ' ' << op
-           << ' ' << rightValue;
+           << ' ' << *rightValue;
     }
 
     void binaryOpNode::debugPrint(const std::string &prefix) const {
@@ -502,8 +505,8 @@ namespace occa {
                 << prefix << "|---[";
       pout << op;
       std::cerr << "] (binary)\n";
-      leftValue.childDebugPrint(prefix);
-      rightValue.childDebugPrint(prefix);
+      leftValue->childDebugPrint(prefix);
+      rightValue->childDebugPrint(prefix);
     }
 
     ternaryOpNode::ternaryOpNode(token_t *token_,
@@ -517,14 +520,14 @@ namespace occa {
 
     ternaryOpNode::ternaryOpNode(const ternaryOpNode &node) :
       exprNode(node.token),
-      checkValue(node.checkValue.clone()),
-      trueValue(node.trueValue.clone()),
-      falseValue(node.falseValue.clone()) {}
+      checkValue(node.checkValue->clone()),
+      trueValue(node.trueValue->clone()),
+      falseValue(node.falseValue->clone()) {}
 
     ternaryOpNode::~ternaryOpNode() {
-      delete &checkValue;
-      delete &trueValue;
-      delete &falseValue;
+      delete checkValue;
+      delete trueValue;
+      delete falseValue;
     }
 
     udim_t ternaryOpNode::type() const {
@@ -535,39 +538,39 @@ namespace occa {
       return operatorType::ternary;
     }
 
-    exprNode& ternaryOpNode::clone() const {
-      return *(new ternaryOpNode(token,
-                                 checkValue,
-                                 trueValue,
-                                 falseValue));
+    exprNode* ternaryOpNode::clone() const {
+      return new ternaryOpNode(token,
+                               *checkValue,
+                               *trueValue,
+                               *falseValue);
     }
 
     bool ternaryOpNode::canEvaluate() const {
-      return (checkValue.canEvaluate() &&
-              trueValue.canEvaluate()  &&
-              falseValue.canEvaluate());
+      return (checkValue->canEvaluate() &&
+              trueValue->canEvaluate()  &&
+              falseValue->canEvaluate());
     }
 
     primitive ternaryOpNode::evaluate() const {
-      if ((bool) checkValue.evaluate()) {
-        return trueValue.evaluate();
+      if ((bool) checkValue->evaluate()) {
+        return trueValue->evaluate();
       }
-      return falseValue.evaluate();
+      return falseValue->evaluate();
     }
 
     void ternaryOpNode::print(printer &pout) const {
-      pout << checkValue
-           << " ? " << trueValue
-           << " : " << falseValue;
+      pout << *checkValue
+           << " ? " << *trueValue
+           << " : " << *falseValue;
     }
 
     void ternaryOpNode::debugPrint(const std::string &prefix) const {
       printer pout(std::cerr);
       std::cerr << prefix << "|\n"
                 << prefix << "|---[?:] (ternary)\n";
-      checkValue.childDebugPrint(prefix);
-      trueValue.childDebugPrint(prefix);
-      falseValue.childDebugPrint(prefix);
+      checkValue->childDebugPrint(prefix);
+      trueValue->childDebugPrint(prefix);
+      falseValue->childDebugPrint(prefix);
     }
     //==================================
 
@@ -581,34 +584,34 @@ namespace occa {
 
     subscriptNode::subscriptNode(const subscriptNode &node) :
       exprNode(node.token),
-      value(node.value.clone()),
-      index(node.index.clone()) {}
+      value(node.value->clone()),
+      index(node.index->clone()) {}
 
     subscriptNode::~subscriptNode() {
-      delete &value;
-      delete &index;
+      delete value;
+      delete index;
     }
 
     udim_t subscriptNode::type() const {
       return exprNodeType::subscript;
     }
 
-    exprNode& subscriptNode::clone() const {
-      return *(new subscriptNode(token, value, index));
+    exprNode* subscriptNode::clone() const {
+      return new subscriptNode(token, *value, *index);
     }
 
     void subscriptNode::print(printer &pout) const {
-      pout << value
-           << '[' << index << ']';
+      pout << *value
+           << '[' << *index << ']';
     }
 
     void subscriptNode::debugPrint(const std::string &prefix) const {
       printer pout(std::cerr);
       std::cerr << prefix << "|\n"
                 << prefix << "|---[";
-      pout << index;
+      pout << *index;
       std::cerr << "] (subscript)\n";
-      value.childDebugPrint(prefix);
+      value->childDebugPrint(prefix);
     }
 
     callNode::callNode(token_t *token_,
@@ -621,12 +624,12 @@ namespace occa {
 
     callNode::callNode(const callNode &node) :
       exprNode(node.token),
-      value(node.value.clone()) {
+      value(node.value->clone()) {
       cloneExprNodeVector(args, node.args);
     }
 
     callNode::~callNode() {
-      delete &value;
+      delete value;
       freeExprNodeVector(args);
     }
 
@@ -634,12 +637,12 @@ namespace occa {
       return exprNodeType::call;
     }
 
-    exprNode& callNode::clone() const {
-      return *(new callNode(token, value, args));
+    exprNode* callNode::clone() const {
+      return new callNode(token, *value, args);
     }
 
     void callNode::print(printer &pout) const {
-      pout << value
+      pout << *value
            << '(';
       const int argCount = (int) args.size();
       for (int i = 0; i < argCount; ++i) {
@@ -655,7 +658,7 @@ namespace occa {
       printer pout(std::cerr);
       std::cerr << prefix << "|\n"
                 << prefix << "|---[";
-      pout << value;
+      pout << *value;
       std::cerr << "] (call)\n";
       for (int i = 0; i < ((int) args.size()); ++i) {
         args[i]->childDebugPrint(prefix);
@@ -683,28 +686,28 @@ namespace occa {
     newNode::newNode(const newNode &node) :
       exprNode(node.token),
       valueType(node.valueType),
-      value(node.value.clone()),
-      size(node.size.clone()) {}
+      value(node.value->clone()),
+      size(node.size->clone()) {}
 
     newNode::~newNode() {
-      delete &value;
-      delete &size;
+      delete value;
+      delete size;
     }
 
     udim_t newNode::type() const {
       return exprNodeType::new_;
     }
 
-    exprNode& newNode::clone() const {
-      return *(new newNode(token, valueType, value, size));
+    exprNode* newNode::clone() const {
+      return new newNode(token, valueType, *value, *size);
     }
 
     void newNode::print(printer &pout) const {
       // TODO: Print type without qualifiers
       //       Also convert [] to *
-      pout << "new " << valueType << value;
-      if (size.type() != exprNodeType::empty) {
-        pout << '[' << size << ']';
+      pout << "new " << valueType << *value;
+      if (size->type() != exprNodeType::empty) {
+        pout << '[' << *size << ']';
       }
     }
 
@@ -714,8 +717,8 @@ namespace occa {
                 << prefix << "|---[";
       pout << valueType;
       std::cerr << "] (new)\n";
-      value.childDebugPrint(prefix);
-      size.childDebugPrint(prefix);
+      value->childDebugPrint(prefix);
+      size->childDebugPrint(prefix);
     }
 
     deleteNode::deleteNode(token_t *token_,
@@ -727,19 +730,19 @@ namespace occa {
 
     deleteNode::deleteNode(const deleteNode &node) :
       exprNode(node.token),
-      value(node.value.clone()),
+      value(node.value->clone()),
       isArray(node.isArray) {}
 
     deleteNode::~deleteNode() {
-      delete &value;
+      delete value;
     }
 
     udim_t deleteNode::type() const {
       return exprNodeType::delete_;
     }
 
-    exprNode& deleteNode::clone() const {
-      return *(new deleteNode(token, value, isArray));
+    exprNode* deleteNode::clone() const {
+      return new deleteNode(token, *value, isArray);
     }
 
     void deleteNode::print(printer &pout) const {
@@ -747,14 +750,14 @@ namespace occa {
       if (isArray) {
         pout << "[] ";
       }
-      pout << value;
+      pout << *value;
     }
 
     void deleteNode::debugPrint(const std::string &prefix) const {
       printer pout(std::cerr);
       std::cerr << prefix << '\n'
                 << prefix << "|---[";
-      pout << value;
+      pout << *value;
       std::cerr << "] (delete";
       if (isArray) {
         std::cerr << " []";
@@ -769,24 +772,24 @@ namespace occa {
 
     throwNode::throwNode(const throwNode &node) :
       exprNode(node.token),
-      value(node.value.clone()) {}
+      value(node.value->clone()) {}
 
     throwNode::~throwNode() {
-      delete &value;
+      delete value;
     }
 
     udim_t throwNode::type() const {
       return exprNodeType::throw_;
     }
 
-    exprNode& throwNode::clone() const {
-      return *(new throwNode(token, value));
+    exprNode* throwNode::clone() const {
+      return new throwNode(token, *value);
     }
 
     void throwNode::print(printer &pout) const {
       pout << "throw";
-      if (value.type() != exprNodeType::empty) {
-        pout << ' ' << value;
+      if (value->type() != exprNodeType::empty) {
+        pout << ' ' << *value;
       }
     }
 
@@ -795,7 +798,7 @@ namespace occa {
       std::cerr << prefix << "|\n"
                 << prefix << "|\n"
                 << prefix << "|---[";
-      pout << value;
+      pout << *value;
       std::cerr << "] (throw)\n";
     }
     //==================================
@@ -808,37 +811,37 @@ namespace occa {
 
     sizeofNode::sizeofNode(const sizeofNode &node) :
       exprNode(node.token),
-      value(node.value.clone()) {}
+      value(node.value->clone()) {}
 
     sizeofNode::~sizeofNode() {
-      delete &value;
+      delete value;
     }
 
     udim_t sizeofNode::type() const {
       return exprNodeType::sizeof_;
     }
 
-    exprNode& sizeofNode::clone() const {
-      return *(new sizeofNode(token, value));
+    exprNode* sizeofNode::clone() const {
+      return new sizeofNode(token, *value);
     }
 
     bool sizeofNode::canEvaluate() const {
-      return value.canEvaluate();
+      return value->canEvaluate();
     }
 
     primitive sizeofNode::evaluate() const {
-      return value.evaluate().sizeof_();
+      return value->evaluate().sizeof_();
     }
 
     void sizeofNode::print(printer &pout) const {
-      pout << "sizeof(" << value << ')';
+      pout << "sizeof(" << *value << ')';
     }
 
     void sizeofNode::debugPrint(const std::string &prefix) const {
       printer pout(std::cerr);
       std::cerr << prefix << '\n'
                 << prefix << "|---[";
-      pout << value;
+      pout << *value;
       std::cerr << "] (sizeof)\n";
     }
 
@@ -852,24 +855,24 @@ namespace occa {
     funcCastNode::funcCastNode(const funcCastNode &node) :
       exprNode(node.token),
       valueType(node.valueType),
-      value(node.value.clone()) {}
+      value(node.value->clone()) {}
 
     funcCastNode::~funcCastNode() {
-      delete &value;
+      delete value;
     }
 
     udim_t funcCastNode::type() const {
       return exprNodeType::funcCast;
     }
 
-    exprNode& funcCastNode::clone() const {
-      return *(new funcCastNode(token, valueType, value));
+    exprNode* funcCastNode::clone() const {
+      return new funcCastNode(token, valueType, *value);
     }
 
     void funcCastNode::print(printer &pout) const {
       // TODO: Print type without qualifiers
       //       Also convert [] to *
-      pout << valueType << '(' << value << ')';
+      pout << valueType << '(' << *value << ')';
     }
 
     void funcCastNode::debugPrint(const std::string &prefix) const {
@@ -878,7 +881,7 @@ namespace occa {
                 << prefix << "|---[";
       pout << valueType;
       std::cerr << "] (funcCast)\n";
-      value.childDebugPrint(prefix);
+      value->childDebugPrint(prefix);
     }
 
     parenCastNode::parenCastNode(token_t *token_,
@@ -891,24 +894,24 @@ namespace occa {
     parenCastNode::parenCastNode(const parenCastNode &node) :
       exprNode(node.token),
       valueType(node.valueType),
-      value(node.value.clone()) {}
+      value(node.value->clone()) {}
 
     parenCastNode::~parenCastNode() {
-      delete &value;
+      delete value;
     }
 
     udim_t parenCastNode::type() const {
       return exprNodeType::parenCast;
     }
 
-    exprNode& parenCastNode::clone() const {
-      return *(new parenCastNode(token, valueType, value));
+    exprNode* parenCastNode::clone() const {
+      return new parenCastNode(token, valueType, *value);
     }
 
     void parenCastNode::print(printer &pout) const {
       // TODO: Print type without qualifiers
       //       Also convert [] to *
-      pout << '(' << valueType << ')' << value;
+      pout << '(' << valueType << ')' << *value;
     }
 
     void parenCastNode::debugPrint(const std::string &prefix) const {
@@ -917,7 +920,7 @@ namespace occa {
                 << prefix << "|---[";
       pout << valueType;
       std::cerr << "] (parenCast)\n";
-      value.childDebugPrint(prefix);
+      value->childDebugPrint(prefix);
     }
 
     constCastNode::constCastNode(token_t *token_,
@@ -930,25 +933,25 @@ namespace occa {
     constCastNode::constCastNode(const constCastNode &node) :
       exprNode(node.token),
       valueType(node.valueType),
-      value(node.value.clone()) {}
+      value(node.value->clone()) {}
 
     constCastNode::~constCastNode() {
-      delete &value;
+      delete value;
     }
 
     udim_t constCastNode::type() const {
       return exprNodeType::constCast;
     }
 
-    exprNode& constCastNode::clone() const {
-      return *(new constCastNode(token, valueType, value));
+    exprNode* constCastNode::clone() const {
+      return new constCastNode(token, valueType, *value);
     }
 
     void constCastNode::print(printer &pout) const {
       // TODO: Print type without qualifiers
       //       Also convert [] to *
       pout << "const_cast<" << valueType << ">("
-           << value << ')';
+           << *value << ')';
     }
 
     void constCastNode::debugPrint(const std::string &prefix) const {
@@ -957,7 +960,7 @@ namespace occa {
                 << prefix << "|---[";
       pout << valueType;
       std::cerr << "] (constCast)\n";
-      value.childDebugPrint(prefix);
+      value->childDebugPrint(prefix);
     }
 
     staticCastNode::staticCastNode(token_t *token_,
@@ -970,25 +973,25 @@ namespace occa {
     staticCastNode::staticCastNode(const staticCastNode &node) :
       exprNode(node.token),
       valueType(node.valueType),
-      value(node.value.clone()) {}
+      value(node.value->clone()) {}
 
     staticCastNode::~staticCastNode() {
-      delete &value;
+      delete value;
     }
 
     udim_t staticCastNode::type() const {
       return exprNodeType::staticCast;
     }
 
-    exprNode& staticCastNode::clone() const {
-      return *(new staticCastNode(token, valueType, value));
+    exprNode* staticCastNode::clone() const {
+      return new staticCastNode(token, valueType, *value);
     }
 
     void staticCastNode::print(printer &pout) const {
       // TODO: Print type without qualifiers
       //       Also convert [] to *
       pout << "static_cast<" << valueType << ">("
-           << value << ')';
+           << *value << ')';
     }
 
     void staticCastNode::debugPrint(const std::string &prefix) const {
@@ -997,7 +1000,7 @@ namespace occa {
                 << prefix << "|---[";
       pout << valueType;
       std::cerr << "] (staticCast)\n";
-      value.childDebugPrint(prefix);
+      value->childDebugPrint(prefix);
     }
 
     reinterpretCastNode::reinterpretCastNode(token_t *token_,
@@ -1010,25 +1013,25 @@ namespace occa {
     reinterpretCastNode::reinterpretCastNode(const reinterpretCastNode &node) :
       exprNode(node.token),
       valueType(node.valueType),
-      value(node.value.clone()) {}
+      value(node.value->clone()) {}
 
     reinterpretCastNode::~reinterpretCastNode() {
-      delete &value;
+      delete value;
     }
 
     udim_t reinterpretCastNode::type() const {
       return exprNodeType::reinterpretCast;
     }
 
-    exprNode& reinterpretCastNode::clone() const {
-      return *(new reinterpretCastNode(token, valueType, value));
+    exprNode* reinterpretCastNode::clone() const {
+      return new reinterpretCastNode(token, valueType, *value);
     }
 
     void reinterpretCastNode::print(printer &pout) const {
       // TODO: Print type without qualifiers
       //       Also convert [] to *
       pout << "reinterpret_cast<" << valueType << ">("
-           << value << ')';
+           << *value << ')';
     }
 
     void reinterpretCastNode::debugPrint(const std::string &prefix) const {
@@ -1037,7 +1040,7 @@ namespace occa {
                 << prefix << "|---[";
       pout << valueType;
       std::cerr << "] (reinterpretCast)\n";
-      value.childDebugPrint(prefix);
+      value->childDebugPrint(prefix);
     }
 
     dynamicCastNode::dynamicCastNode(token_t *token_,
@@ -1050,25 +1053,25 @@ namespace occa {
     dynamicCastNode::dynamicCastNode(const dynamicCastNode &node) :
       exprNode(node.token),
       valueType(node.valueType),
-      value(node.value.clone()) {}
+      value(node.value->clone()) {}
 
     dynamicCastNode::~dynamicCastNode() {
-      delete &value;
+      delete value;
     }
 
     udim_t dynamicCastNode::type() const {
       return exprNodeType::dynamicCast;
     }
 
-    exprNode& dynamicCastNode::clone() const {
-      return *(new dynamicCastNode(token, valueType, value));
+    exprNode* dynamicCastNode::clone() const {
+      return new dynamicCastNode(token, valueType, *value);
     }
 
     void dynamicCastNode::print(printer &pout) const {
       // TODO: Print type without qualifiers
       //       Also convert [] to *
       pout << "dynamic_cast<" << valueType << ">("
-           << value << ')';
+           << *value << ')';
     }
 
     void dynamicCastNode::debugPrint(const std::string &prefix) const {
@@ -1077,7 +1080,7 @@ namespace occa {
                 << prefix << "|---[";
       pout << valueType;
       std::cerr << "] (dynamicCast)\n";
-      value.childDebugPrint(prefix);
+      value->childDebugPrint(prefix);
     }
     //==================================
 
@@ -1091,10 +1094,10 @@ namespace occa {
     pairNode::pairNode(const pairNode &node) :
       exprNode(node.token),
       op(node.op),
-      value(node.value.clone()) {}
+      value(node.value->clone()) {}
 
     pairNode::~pairNode() {
-      delete &value;
+      delete value;
     }
 
     udim_t pairNode::type() const {
@@ -1105,9 +1108,9 @@ namespace occa {
       return op.opType;
     }
 
-    exprNode& pairNode::clone() const {
-      return *(new pairNode(token->to<operatorToken>(),
-                            value.clone()));
+    exprNode* pairNode::clone() const {
+      return new pairNode(token->to<operatorToken>(),
+                          *value);
     }
 
     bool pairNode::canEvaluate() const {
@@ -1130,7 +1133,7 @@ namespace occa {
                 << prefix << "|---[";
       pout << op;
       std::cerr << "] (pairNode)\n";
-      value.childDebugPrint(prefix);
+      value->childDebugPrint(prefix);
     }
 
     parenthesesNode::parenthesesNode(token_t *token_,
@@ -1140,37 +1143,37 @@ namespace occa {
 
     parenthesesNode::parenthesesNode(const parenthesesNode &node) :
       exprNode(node.token),
-      value(node.value.clone()) {}
+      value(node.value->clone()) {}
 
     parenthesesNode::~parenthesesNode() {
-      delete &value;
+      delete value;
     }
 
     udim_t parenthesesNode::type() const {
       return exprNodeType::parentheses;
     }
 
-    exprNode& parenthesesNode::clone() const {
-      return *(new parenthesesNode(token, value));
+    exprNode* parenthesesNode::clone() const {
+      return new parenthesesNode(token, *value);
     }
 
     bool parenthesesNode::canEvaluate() const {
-      return value.canEvaluate();
+      return value->canEvaluate();
     }
 
     primitive parenthesesNode::evaluate() const {
-      return value.evaluate();
+      return value->evaluate();
     }
 
     void parenthesesNode::print(printer &pout) const {
-      pout << '(' << value << ')';
+      pout << '(' << *value << ')';
     }
 
     void parenthesesNode::debugPrint(const std::string &prefix) const {
       printer pout(std::cerr);
       std::cerr << prefix << "|\n"
                 << prefix << "|---[()] (parentheses)\n";
-      value.childDebugPrint(prefix);
+      value->childDebugPrint(prefix);
     }
 
     tupleNode::tupleNode(token_t *token_,
@@ -1192,8 +1195,8 @@ namespace occa {
       return exprNodeType::tuple;
     }
 
-    exprNode& tupleNode::clone() const {
-      return *(new tupleNode(token, args));
+    exprNode* tupleNode::clone() const {
+      return new tupleNode(token, args);
     }
 
     void tupleNode::print(printer &pout) const {
@@ -1230,31 +1233,31 @@ namespace occa {
 
     cudaCallNode::cudaCallNode(const cudaCallNode &node) :
       exprNode(node.token),
-      value(node.value.clone()),
-      blocks(node.blocks.clone()),
-      threads(node.threads.clone()) {}
+      value(node.value->clone()),
+      blocks(node.blocks->clone()),
+      threads(node.threads->clone()) {}
 
     cudaCallNode::~cudaCallNode() {
-      delete &value;
-      delete &blocks;
-      delete &threads;
+      delete value;
+      delete blocks;
+      delete threads;
     }
 
     udim_t cudaCallNode::type() const {
       return exprNodeType::cudaCall;
     }
 
-    exprNode& cudaCallNode::clone() const {
-      return *(new cudaCallNode(token,
-                                value,
-                                blocks,
-                                threads));
+    exprNode* cudaCallNode::clone() const {
+      return new cudaCallNode(token,
+                              *value,
+                              *blocks,
+                              *threads);
     }
 
     void cudaCallNode::print(printer &pout) const {
-      pout << value
+      pout << *value
            << "<<<"
-           << blocks << ", " << threads
+           << *blocks << ", " << *threads
            << ">>>";
     }
 
@@ -1263,9 +1266,9 @@ namespace occa {
       std::cerr << prefix << "|\n"
                 << prefix << "|---[<<<...>>>";
       std::cerr << "] (cudaCall)\n";
-      value.childDebugPrint(prefix);
-      blocks.childDebugPrint(prefix);
-      threads.childDebugPrint(prefix);
+      value->childDebugPrint(prefix);
+      blocks->childDebugPrint(prefix);
+      threads->childDebugPrint(prefix);
     }
     //==================================
   }

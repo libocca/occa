@@ -83,7 +83,7 @@ namespace occa {
 
     exprNode* getExpression(tokenVector &tokens) {
       if (!tokens.size()) {
-        return &(noExprNode.clone());
+        return noExprNode.clone();
       }
 
       // TODO: Ternary operator
@@ -106,7 +106,7 @@ namespace occa {
       // Make sure we only have 1 root node
       const int outputCount = state.outputCount();
       if (!outputCount) {
-        return &(noExprNode.clone());
+        return noExprNode.clone();
       }
 
       if (outputCount > 1) {
@@ -251,8 +251,8 @@ namespace occa {
         if (commaNode->type() & exprNodeType::binary) {
           binaryOpNode &opNode = commaNode->to<binaryOpNode>();
           if (opNode.opType() & operatorType::comma) {
-            args.push_back(&opNode.rightValue);
-            commaNode = &(opNode.leftValue);
+            args.push_back(opNode.rightValue);
+            commaNode = opNode.leftValue;
             continue;
           }
         }
@@ -283,10 +283,10 @@ namespace occa {
 
       if (pair.opType() & operatorType::parentheses) {
         state.output.push(new parenthesesNode(pair.token,
-                                              pair.value));
+                                              *pair.value));
       } else {
         exprNodeVector args;
-        extractArgs(args, pair.value, state);
+        extractArgs(args, *pair.value, state);
         state.output.push(new tupleNode(pair.token,
                                         args));
       }
@@ -322,7 +322,7 @@ namespace occa {
       // func(...)
       if (pair.opType() & operatorType::parentheses) {
         exprNodeVector args;
-        extractArgs(args, pair.value, state);
+        extractArgs(args, *pair.value, state);
         state.output.push(new callNode(value.token,
                                        value,
                                        args));
@@ -332,13 +332,13 @@ namespace occa {
       if (pair.opType() & operatorType::brackets) {
         state.output.push(new subscriptNode(value.token,
                                             value,
-                                            pair.value));
+                                            *pair.value));
         return;
       }
       // func<<<...>>>
       if (pair.opType() & operatorType::cudaCall) {
         exprNodeVector args;
-        extractArgs(args, pair.value, state);
+        extractArgs(args, *pair.value, state);
 
         const int argCount = (int) args.size();
         if (argCount == 1) {

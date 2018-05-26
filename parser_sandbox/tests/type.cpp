@@ -144,7 +144,7 @@ void testFunction() {
                         op::bracketStart);
   arg4 += array_t(arg4Start,
                   arg4End,
-                  &arg4Size.clone());
+                  arg4Size.clone());
 
   function_t f(void_, "foo");
   identifierToken a(fileOrigin(), "a");
