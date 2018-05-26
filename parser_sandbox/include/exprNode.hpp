@@ -34,7 +34,9 @@ namespace occa {
   namespace lang {
     class exprNode;
     class vartype_t;
+    class type_t;
     class variable_t;
+    class function_t;
 
     typedef std::vector<exprNode*>  exprNodeVector;
     typedef std::vector<exprNode**> exprNodeRefVector;
@@ -47,7 +49,9 @@ namespace occa {
       extern const udim_t char_;
       extern const udim_t string;
       extern const udim_t identifier;
+      extern const udim_t type;
       extern const udim_t variable;
+      extern const udim_t function;
       extern const udim_t value;
 
       extern const udim_t leftUnary;
@@ -258,6 +262,28 @@ namespace occa {
       virtual void debugPrint(const std::string &prefix) const;
     };
 
+    class typeNode : public exprNode {
+    public:
+      type_t &value;
+
+      typeNode(token_t *token_,
+               type_t &value_);
+
+      typeNode(const typeNode& node);
+
+      virtual ~typeNode();
+
+      virtual udim_t type() const;
+
+      virtual exprNode* clone() const;
+
+      virtual void setChildren(exprNodeRefVector &children);
+
+      virtual void print(printer &pout) const;
+
+      virtual void debugPrint(const std::string &prefix) const;
+    };
+
     class variableNode : public exprNode {
     public:
       variable_t &value;
@@ -268,6 +294,28 @@ namespace occa {
       variableNode(const variableNode& node);
 
       virtual ~variableNode();
+
+      virtual udim_t type() const;
+
+      virtual exprNode* clone() const;
+
+      virtual void setChildren(exprNodeRefVector &children);
+
+      virtual void print(printer &pout) const;
+
+      virtual void debugPrint(const std::string &prefix) const;
+    };
+
+    class functionNode : public exprNode {
+    public:
+      function_t &value;
+
+      functionNode(token_t *token_,
+                   function_t &value_);
+
+      functionNode(const functionNode& node);
+
+      virtual ~functionNode();
 
       virtual udim_t type() const;
 

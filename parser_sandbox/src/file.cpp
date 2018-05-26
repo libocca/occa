@@ -212,7 +212,7 @@ namespace occa {
       return fo;
     }
 
-    size_t fileOrigin::distanceTo(const fileOrigin &origin) {
+    dim_t fileOrigin::distanceTo(const fileOrigin &origin) {
       if (file != origin.file) {
         return -1;
       }

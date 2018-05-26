@@ -33,7 +33,7 @@ namespace occa {
     public:
       vartype_t vartype;
       identifierToken *source;
-      attributeTokenVector attributes;
+      attributeTokenMap attributes;
 
       variable_t();
 

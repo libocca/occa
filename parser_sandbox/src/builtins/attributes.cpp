@@ -41,6 +41,18 @@ namespace occa {
     bool dim::forStatement(const int sType) const {
       return (sType & statementType::declaration);
     }
+
+    bool dim::isValid(const attributeToken_t &attr) const {
+      if (attr.kwargs.size()) {
+        attr.printError("@dim does not take kwargs");
+        return false;
+      }
+      if (!attr.args.size()) {
+        attr.printError("@dim expects at least one dimension argument");
+        return false;
+      }
+      return true;
+    }
     //==================================
 
     //---[ @dimOrder ]------------------
@@ -57,6 +69,10 @@ namespace occa {
     bool dimOrder::forStatement(const int sType) const {
       return (sType & statementType::declaration);
     }
+
+    bool dimOrder::isValid(const attributeToken_t &attr) const {
+      return true;
+    }
     //==================================
 
     //---[ @tile ]----------------------
@@ -69,6 +85,10 @@ namespace occa {
     bool tile::forStatement(const int sType) const {
       return (sType & statementType::for_);
     }
+
+    bool tile::isValid(const attributeToken_t &attr) const {
+      return true;
+    }
     //==================================
 
     //---[ @safeTile ]------------------
@@ -80,6 +100,10 @@ namespace occa {
 
     bool safeTile::forStatement(const int sType) const {
       return (sType & statementType::for_);
+    }
+
+    bool safeTile::isValid(const attributeToken_t &attr) const {
+      return true;
     }
     //==================================
 
@@ -98,6 +122,10 @@ namespace occa {
       return (sType & (statementType::function |
                        statementType::functionDecl));
     }
+
+    bool kernel::isValid(const attributeToken_t &attr) const {
+      return true;
+    }
     //==================================
 
     //---[ @outer ]---------------------
@@ -110,6 +138,10 @@ namespace occa {
     bool outer::forStatement(const int sType) const {
       return (sType & statementType::for_);
     }
+
+    bool outer::isValid(const attributeToken_t &attr) const {
+      return true;
+    }
     //==================================
 
     //---[ @inner ]---------------------
@@ -121,6 +153,10 @@ namespace occa {
 
     bool inner::forStatement(const int sType) const {
       return (sType & statementType::for_);
+    }
+
+    bool inner::isValid(const attributeToken_t &attr) const {
+      return true;
     }
     //==================================
 
@@ -138,6 +174,10 @@ namespace occa {
     bool shared::forStatement(const int sType) const {
       return (sType & statementType::declaration);
     }
+
+    bool shared::isValid(const attributeToken_t &attr) const {
+      return true;
+    }
     //==================================
 
     //---[ @exclusive ]---------------------
@@ -153,6 +193,10 @@ namespace occa {
 
     bool exclusive::forStatement(const int sType) const {
       return (sType & statementType::declaration);
+    }
+
+    bool exclusive::isValid(const attributeToken_t &attr) const {
+      return true;
     }
     //==================================
   }

@@ -35,6 +35,8 @@ namespace occa {
 
       virtual bool forVariable() const;
       virtual bool forStatement(const int sType) const;
+
+      virtual bool isValid(const attributeToken_t &attr) const;
     };
     //==================================
 
@@ -47,6 +49,8 @@ namespace occa {
 
       virtual bool forVariable() const;
       virtual bool forStatement(const int sType) const;
+
+      virtual bool isValid(const attributeToken_t &attr) const;
     };
     //==================================
 
@@ -58,6 +62,8 @@ namespace occa {
       virtual std::string name() const;
 
       virtual bool forStatement(const int sType) const;
+
+      virtual bool isValid(const attributeToken_t &attr) const;
     };
 
     class safeTile : public attribute_t {
@@ -67,6 +73,8 @@ namespace occa {
       virtual std::string name() const;
 
       virtual bool forStatement(const int sType) const;
+
+      virtual bool isValid(const attributeToken_t &attr) const;
     };
     //==================================
 
@@ -80,6 +88,8 @@ namespace occa {
 
       virtual bool forFunction() const;
       virtual bool forStatement(const int sType) const;
+
+      virtual bool isValid(const attributeToken_t &attr) const;
     };
     //==================================
 
@@ -91,6 +101,8 @@ namespace occa {
       virtual std::string name() const;
 
       virtual bool forStatement(const int sType) const;
+
+      virtual bool isValid(const attributeToken_t &attr) const;
     };
     //==================================
 
@@ -102,6 +114,8 @@ namespace occa {
       virtual std::string name() const;
 
       virtual bool forStatement(const int sType) const;
+
+      virtual bool isValid(const attributeToken_t &attr) const;
     };
     //==================================
 
@@ -114,6 +128,8 @@ namespace occa {
 
       virtual bool forVariable() const;
       virtual bool forStatement(const int sType) const;
+
+      virtual bool isValid(const attributeToken_t &attr) const;
     };
     //==================================
 
@@ -126,6 +142,8 @@ namespace occa {
 
       virtual bool forVariable() const;
       virtual bool forStatement(const int sType) const;
+
+      virtual bool isValid(const attributeToken_t &attr) const;
     };
     //==================================
   }

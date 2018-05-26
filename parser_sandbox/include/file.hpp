@@ -111,7 +111,7 @@ namespace occa {
       fileOrigin from(const bool fromInclude_,
                       const fileOrigin &origin);
 
-      size_t distanceTo(const fileOrigin &origin);
+      dim_t distanceTo(const fileOrigin &origin);
 
       virtual void preprint(std::ostream &out);
       virtual void postprint(std::ostream &out);

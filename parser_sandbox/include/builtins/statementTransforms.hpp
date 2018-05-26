@@ -42,7 +42,10 @@ namespace occa {
     private:
       class eT : public exprTransform {
       public:
-        eT();
+        parser_t &parser;
+        statement_t *scopeSmnt;
+
+        eT(parser_t &parser_);
 
         virtual exprNode* transformExprNode(exprNode &node);
       };
@@ -55,7 +58,8 @@ namespace occa {
       virtual statement_t* transformStatement(statement_t &smnt);
 
       bool applyToDeclStatement(declarationStatement &smnt);
-      bool apply(exprNode *&expr);
+      bool apply(statement_t &smnt,
+                 exprNode *&expr);
     };
     //==================================
   }

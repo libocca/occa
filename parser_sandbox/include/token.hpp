@@ -34,6 +34,7 @@ namespace occa {
     class qualifier_t;
     class type_t;
     class variable_t;
+    class function_t;
 
     typedef std::vector<token_t*> tokenVector;
 
@@ -74,6 +75,7 @@ namespace occa {
       extern const int qualifier;
       extern const int type;
       extern const int variable;
+      extern const int function;
 
       extern const int primitive;
       extern const int op;
@@ -225,10 +227,10 @@ namespace occa {
     //---[ Type ]-----------------------
     class typeToken : public token_t {
     public:
-      const type_t &type_;
+      type_t &value;
 
       typeToken(const fileOrigin &origin_,
-                     const type_t &type__);
+                type_t &type_);
 
       virtual ~typeToken();
 
@@ -243,12 +245,30 @@ namespace occa {
     //---[ Variable ]-------------------
     class variableToken : public token_t {
     public:
-      const variable_t &var;
+      variable_t &value;
 
       variableToken(const fileOrigin &origin_,
-                     const variable_t &var_);
+                    variable_t &variable);
 
       virtual ~variableToken();
+
+      virtual int type() const;
+
+      virtual token_t* clone();
+
+      virtual void print(std::ostream &out) const;
+    };
+    //==================================
+
+    //---[ Function ]-------------------
+    class functionToken : public token_t {
+    public:
+      function_t &value;
+
+      functionToken(const fileOrigin &origin_,
+                    function_t &function);
+
+      virtual ~functionToken();
 
       virtual int type() const;
 

@@ -1053,11 +1053,11 @@ void testAttributeLoading() {
   OCCA_ASSERT_EQUAL(1,
                     (int) declVar(0).attributes.size());
   OCCA_ASSERT_EQUAL("dim",
-                    declVarAttr(0, 0).name());
+                    declVarAttr(0, "dim").name());
   OCCA_ASSERT_EQUAL(0,
                     (int) declVar(1).attributes.size());
 
-  attributeToken_t &xDim1 = declVarAttr(0, 0);
+  attributeToken_t &xDim1 = declVarAttr(0, "dim");
   OCCA_ASSERT_EQUAL(2,
                     (int) xDim1.args.size());
   OCCA_ASSERT_EQUAL(2,
@@ -1065,24 +1065,24 @@ void testAttributeLoading() {
   OCCA_ASSERT_EQUAL(3,
                     (int) xDim1[1]->evaluate());
 
-  setStatement("const int *x @dim(x=2, y=3), *y;",
+  setStatement("const int *x @dimOrder(x=2, y=3), *y;",
                statementType::declaration);
   OCCA_ASSERT_EQUAL(0,
                     (int) statement->attributes.size());
   OCCA_ASSERT_EQUAL(1,
                     (int) declVar(0).attributes.size());
-  OCCA_ASSERT_EQUAL("dim",
-                    declVarAttr(0, 0).name());
+  OCCA_ASSERT_EQUAL("dimOrder",
+                    declVarAttr(0, "dimOrder").name());
   OCCA_ASSERT_EQUAL(0,
                     (int) declVar(1).attributes.size());
 
-  attributeToken_t &xDim2 = declVarAttr(0, 0);
+  attributeToken_t &xDimOrder = declVarAttr(0, "dimOrder");
   OCCA_ASSERT_EQUAL(2,
-                    (int) xDim2.kwargs.size());
+                    (int) xDimOrder.kwargs.size());
   OCCA_ASSERT_EQUAL(2,
-                    (int) xDim2["x"]->evaluate());
+                    (int) xDimOrder["x"]->evaluate());
   OCCA_ASSERT_EQUAL(3,
-                    (int) xDim2["y"]->evaluate());
+                    (int) xDimOrder["y"]->evaluate());
 
   setStatement("@dim(2 + 2, 10 - 5) const int *x, *y;",
                statementType::declaration);
@@ -1091,13 +1091,13 @@ void testAttributeLoading() {
   OCCA_ASSERT_EQUAL(1,
                     (int) declVar(0).attributes.size());
   OCCA_ASSERT_EQUAL("dim",
-                    declVarAttr(0, 0).name());
+                    declVarAttr(0, "dim").name());
   OCCA_ASSERT_EQUAL(1,
                     (int) declVar(1).attributes.size());
   OCCA_ASSERT_EQUAL("dim",
-                    declVarAttr(1, 0).name());
+                    declVarAttr(1, "dim").name());
 
-  attributeToken_t &xDim3 = declVarAttr(0, 0);
+  attributeToken_t &xDim3 = declVarAttr(0, "dim");
   OCCA_ASSERT_EQUAL(2,
                     (int) xDim3.args.size());
   OCCA_ASSERT_EQUAL(4,
@@ -1105,7 +1105,7 @@ void testAttributeLoading() {
   OCCA_ASSERT_EQUAL(5,
                     (int) xDim3[1]->evaluate());
 
-  attributeToken_t &xDim4 = declVarAttr(1, 0);
+  attributeToken_t &xDim4 = declVarAttr(1, "dim");
   OCCA_ASSERT_EQUAL(2,
                     (int) xDim4.args.size());
   OCCA_ASSERT_EQUAL(4,
@@ -1247,6 +1247,10 @@ void testAttributeErrors() {
   parseBadSource("@attr()");
 
   parseBadSource("@dim;");
+  parseBadSource("@dim int x;");
+  parseBadSource("@dim() int x;");
+  parseBadSource("@dim(x=1) int x;");
+
   parseBadSource("@dimOrder(1, 0);");
   parseBadSource("@tile(16);");
   parseBadSource("@safeTile(16);");

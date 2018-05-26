@@ -75,7 +75,7 @@ namespace occa {
     class statement_t {
     public:
       blockStatement *up;
-      attributeTokenVector attributes;
+      attributeTokenMap attributes;
 
       statement_t(blockStatement *up_);
 

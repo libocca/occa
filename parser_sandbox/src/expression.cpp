@@ -25,6 +25,14 @@
 
 namespace occa {
   namespace lang {
+    static const int outputTokenType = (tokenType::identifier |
+                                        tokenType::type       |
+                                        tokenType::variable   |
+                                        tokenType::function   |
+                                        tokenType::primitive  |
+                                        tokenType::char_      |
+                                        tokenType::string);
+
     //---[ Expression State ]-----------
     expressionState::expressionState(tokenVector &tokens_) :
       tokens(tokens_),
@@ -124,12 +132,6 @@ namespace occa {
 
     void getInitialExpression(tokenVector &tokens,
                               expressionState &state) {
-
-      const int outputTokenType = (tokenType::identifier |
-                                   tokenType::primitive  |
-                                   tokenType::char_      |
-                                   tokenType::string);
-
       const int count = (int) tokens.size();
       for (int i = 0; i < count; ++i) {
         token_t *token = tokens[i];
@@ -183,6 +185,18 @@ namespace occa {
       if (tokenType & tokenType::identifier) {
         identifierToken &t = token->to<identifierToken>();
         state.output.push(new identifierNode(token, t.value));
+      }
+      else if (tokenType & tokenType::variable) {
+        variableToken &t = token->to<variableToken>();
+        state.output.push(new variableNode(token, t.value));
+      }
+      else if (tokenType & tokenType::function) {
+        functionToken &t = token->to<functionToken>();
+        state.output.push(new functionNode(token, t.value));
+      }
+      else if (tokenType & tokenType::type) {
+        typeToken &t = token->to<typeToken>();
+        state.output.push(new typeNode(token, t.value));
       }
       else if (tokenType & tokenType::primitive) {
         primitiveToken &t = token->to<primitiveToken>();
@@ -303,7 +317,7 @@ namespace occa {
       //   - identifier
       //   - pairEnd
       const int prevTokenType = state.tokenBeforePair()->type();
-      if (!(prevTokenType & (tokenType::identifier |
+      if (!(prevTokenType & (outputTokenType |
                              tokenType::op))) {
         transformLastPair(opToken, state);
         return;

@@ -29,13 +29,22 @@
 
 namespace occa {
   namespace lang {
+    identifierReplacer_t::identifierReplacer_t(parser_t &parser_) :
+      parser(parser_),
+      scopeSmnt(NULL) {}
+
+    exprNode* identifierReplacer_t::transformExprNode(exprNode &node) {
+      return &node;
+    }
+
     parser_t::parser_t() :
       unknownFilter(true),
       lastPeek(0),
       lastPeekPosition(-1),
       checkSemicolon(true),
       root(NULL),
-      up(&root) {
+      up(&root),
+      identifierReplacer(*this) {
       // Properly implement `identifier-nondigit` for identifiers
       // Meanwhile, we use the unknownFilter
       stream = (tokenizer
@@ -217,6 +226,180 @@ namespace occa {
     }
     //==================================
 
+    //---[ Helper Methods ]-------------
+    exprNode* parser_t::getExpression() {
+      return getExpression(0, context.size());
+    }
+
+    exprNode* parser_t::getExpression(const int start,
+                                      const int end) {
+      if (!up) {
+        return context.getExpression(start, end);
+      }
+
+      for (int i = start; i < end; ++i) {
+        token_t *token = context[i];
+        if (token->type() & tokenType::identifier) {
+          context.setToken(i,
+                           replaceIdentifier((identifierToken&) *token));
+        }
+      }
+      return context.getExpression(start, end);
+    }
+
+    token_t* parser_t::replaceIdentifier(identifierToken &identifier) {
+      keyword_t &keyword = up->getScopeKeyword(identifier.value);
+      const int kType = keyword.type();
+      if (!(kType & (keywordType::type     |
+                     keywordType::variable |
+                     keywordType::function))) {
+        return &identifier;
+      }
+
+      if (kType & keywordType::variable) {
+        return new variableToken(identifier.origin,
+                                 ((variableKeyword&) keyword).variable);
+      }
+      if (kType & keywordType::function) {
+        return new functionToken(identifier.origin,
+                                 ((functionKeyword&) keyword).function);
+      }
+      // keywordType::type
+      return new typeToken(identifier.origin,
+                           ((typeKeyword&) keyword).type_);
+    }
+
+    void parser_t::loadAttributes(attributeTokenMap &attrs) {
+      while (success &&
+             (getOperatorType(context[0]) & operatorType::attribute)) {
+        loadAttribute(attrs);
+      }
+    }
+
+    void parser_t::loadAttribute(attributeTokenMap &attrs) {
+      // Skip [@] token
+      context.set(1);
+
+      if (!(context[0]->type() & tokenType::identifier)) {
+        context.printError("Expected a namespace name");
+        success = false;
+        return;
+      }
+
+      identifierToken &nameToken = (context[0]
+                                    ->clone()
+                                    ->to<identifierToken>());
+      context.set(1);
+
+      nameToAttributeMap::iterator it = attributeMap.find(nameToken.value);
+      if (it == attributeMap.end()) {
+        nameToken.printError("Unknown attribute");
+        success = false;
+        return;
+      }
+      attribute_t &attribute = *(it->second);
+
+      tokenRangeVector argRanges;
+      const bool hasArgs = (getOperatorType(context[0]) & operatorType::parenthesesStart);
+      if (hasArgs) {
+        context.pushPairRange(0);
+        getArgumentRanges(argRanges);
+      }
+      if (!success) {
+        if (hasArgs) {
+          context.popAndSkip();
+        }
+        return;
+      }
+
+      attributeToken_t attr(*(it->second), nameToken);
+      setAttributeArgs(attr, argRanges);
+      attrs[nameToken.value] = attr;
+
+      if (hasArgs) {
+        context.popAndSkip();
+      }
+
+      success = attribute.isValid(attr);
+    }
+
+    void parser_t::setAttributeArgs(attributeToken_t &attr,
+                                    tokenRangeVector &argRanges) {
+      const int args = (int) argRanges.size();
+      bool foundNamedArg = false;
+      for (int i = 0; i < args; ++i) {
+        context.push(argRanges[i].start,
+                     argRanges[i].end);
+
+        // Get argument
+        exprNode *arg = getExpression();
+        if (!arg) {
+          success = false;
+          context.pop();
+          return;
+        }
+
+        std::string argName;
+        // Check for
+        // |---[=] (binary)
+        // |   |
+        // |   |---[argName] (identifier)
+        // |   |
+        // |   |---[arg] (?)
+        if (arg->type() & exprNodeType::binary) {
+          binaryOpNode &equalsNode = arg->to<binaryOpNode>();
+          if ((equalsNode.opType() & operatorType::assign) &&
+              (equalsNode.leftValue->type() & exprNodeType::identifier)) {
+            argName = equalsNode.leftValue->to<identifierNode>().value;
+            arg = equalsNode.rightValue->clone();
+            delete &equalsNode;
+          }
+        }
+
+        if (!argName.size() &&
+            foundNamedArg) {
+          context.printError("All arguments after a named argument"
+                             " must also be named");
+          success = false;
+          delete arg;
+          context.pop();
+          return;
+        }
+
+        if (!argName.size()) {
+          attr.args.push_back(arg);
+        } else {
+          attr.kwargs[argName] = arg;
+        }
+
+        context.popAndSkip();
+      }
+
+    }
+
+    void parser_t::addAttributesTo(attributeTokenMap &attrs,
+                                   statement_t *smnt) {
+      if (!smnt) {
+        attrs.clear();
+        return;
+      }
+
+      const int sType = smnt->type();
+      attributeTokenMap::iterator it = attrs.begin();
+      while (it != attrs.end()) {
+        attributeToken_t &attr = it->second;
+        if (attr.forStatement(sType)) {
+          smnt->addAttribute(attr);
+        } else {
+          attr.printError("Cannot apply attribute to this type of statement");
+          success = false;
+        }
+        ++it;
+      }
+      attrs.clear();
+    }
+    //==================================
+
     //---[ Peek ]-----------------------
     int parser_t::peek() {
       const int contextPosition = context.position();
@@ -274,135 +457,6 @@ namespace occa {
         contextPos = context.position();
         loadAttributes(attributes);
       }
-    }
-
-    void parser_t::loadAttributes(attributeTokenVector &attrs) {
-      while (success &&
-             (getOperatorType(context[0]) & operatorType::attribute)) {
-        loadAttribute(attrs);
-      }
-    }
-
-    void parser_t::loadAttribute(attributeTokenVector &attrs) {
-      // Skip [@] token
-      context.set(1);
-
-      if (!(context[0]->type() & tokenType::identifier)) {
-        context.printError("Expected a namespace name");
-        success = false;
-        return;
-      }
-
-      identifierToken &nameToken = (context[0]
-                                    ->clone()
-                                    ->to<identifierToken>());
-      context.set(1);
-
-      nameToAttributeMap::iterator it = attributeMap.find(nameToken.value);
-      if (it == attributeMap.end()) {
-        nameToken.printError("Unknown attribute");
-        success = false;
-        return;
-      }
-
-      tokenRangeVector argRanges;
-      const bool hasArgs = (getOperatorType(context[0]) & operatorType::parenthesesStart);
-      if (hasArgs) {
-        context.pushPairRange(0);
-        getArgumentRanges(argRanges);
-      }
-      if (!success) {
-        if (hasArgs) {
-          context.popAndSkip();
-        }
-        return;
-      }
-
-      attributeToken_t attr(*(it->second), nameToken);
-      setAttributeArgs(attr, argRanges);
-      attrs.push_back(attr);
-
-      if (hasArgs) {
-        context.popAndSkip();
-      }
-    }
-
-    void parser_t::setAttributeArgs(attributeToken_t &attr,
-                                    tokenRangeVector &argRanges) {
-      const int args = (int) argRanges.size();
-      bool foundNamedArg = false;
-      for (int i = 0; i < args; ++i) {
-        context.push(argRanges[i].start,
-                     argRanges[i].end);
-
-        // Get argument
-        exprNode *arg = context.getExpression();
-        if (!arg) {
-          success = false;
-          context.pop();
-          return;
-        }
-
-        std::string argName;
-        // Check for
-        // |---[=] (binary)
-        // |   |
-        // |   |---[argName] (identifier)
-        // |   |
-        // |   |---[arg] (?)
-        if (arg->type() & exprNodeType::binary) {
-          binaryOpNode &equalsNode = arg->to<binaryOpNode>();
-          if ((equalsNode.opType() & operatorType::assign) &&
-              (equalsNode.leftValue->type() & exprNodeType::identifier)) {
-            argName = equalsNode.leftValue->to<identifierNode>().value;
-            arg = equalsNode.rightValue->clone();
-            delete &equalsNode;
-          }
-        }
-
-        if (!argName.size() &&
-            foundNamedArg) {
-          context.printError("All arguments after a named argument"
-                             " must also be named");
-          success = false;
-          delete arg;
-          context.pop();
-          return;
-        }
-
-        if (!argName.size()) {
-          attr.args.push_back(arg);
-        } else {
-          attr.kwargs[argName] = arg;
-        }
-
-        context.popAndSkip();
-      }
-    }
-
-    void parser_t::addAttributesTo(attributeTokenVector &attrs,
-                                   statement_t *smnt) {
-      if (!smnt) {
-        attrs.clear();
-        return;
-      }
-
-      const int attributeCount = (int) attrs.size();
-      if (!attributeCount) {
-        return;
-      }
-
-      const int sType = smnt->type();
-      for (int i = 0; i < attributeCount; ++i) {
-        attributeToken_t &attr = attrs[i];
-        if (attr.forStatement(sType)) {
-          smnt->addAttribute(attr);
-        } else {
-          attr.printError("Cannot apply attribute to this type of statement");
-          success = false;
-        }
-      }
-      attrs.clear();
     }
 
     int parser_t::peekIdentifier(const int tokenIndex) {
@@ -496,7 +550,7 @@ namespace occa {
 
 
     void parser_t::loadDeclarationAttributes(variableDeclaration &decl) {
-      attributeTokenVector &varAttributes = decl.var.attributes;
+      attributeTokenMap &varAttributes = decl.var.attributes;
       // Copy statement attributes to each variable
       // Variable attributes should override statement attributes
       varAttributes = attributes;
@@ -505,14 +559,14 @@ namespace occa {
         return;
       }
 
-      // Make sure all attributes are meant for variables
-      const int attrCount = (int) varAttributes.size();
-      for (int i = 0; i < attrCount; ++i) {
-        attributeToken_t &attr = varAttributes[i];
+      attributeTokenMap::iterator it = varAttributes.begin();
+      while (it != varAttributes.end()) {
+        attributeToken_t &attr = it->second;
         if (!attr.forVariable()) {
           attr.printError("Cannot apply attribute to variables");
           success = false;
         }
+        ++it;
       }
     }
 
@@ -545,7 +599,7 @@ namespace occa {
         return;
       }
 
-      exprNode *value = context.getExpression(1, pos);
+      exprNode *value = getExpression(1, pos);
       decl.var.vartype.bitfield = (int) value->evaluate();
       context.set(pos);
     }
@@ -565,7 +619,7 @@ namespace occa {
         return;
       }
 
-      decl.value = context.getExpression(1, pos);
+      decl.value = getExpression(1, pos);
       context.set(pos);
     }
 
@@ -590,7 +644,7 @@ namespace occa {
       context.pop();
 
       context.pushPairRange(0);
-      decl.value = context.getExpression();
+      decl.value = getExpression();
       context.popAndSkip();
     }
 
@@ -887,7 +941,7 @@ namespace occa {
 
         vartype += array_t(start,
                            end,
-                           context.getExpression());
+                           getExpression());
 
         tokenRange pairRange = context.pop();
         context.set(pairRange.end + 1);
@@ -1066,11 +1120,7 @@ namespace occa {
       }
 
       context.push(0, end);
-
-      tokenVector tokens;
-      context.getAndCloneTokens(tokens);
-
-      exprNode *expr = getExpression(tokens);
+      exprNode *expr = getExpression();
       context.pop();
       if (!expr) {
         success = false;
@@ -1237,24 +1287,25 @@ namespace occa {
         success = false;
         return NULL;
       }
-
       if (opType & operatorType::semicolon) {
         context.set(1);
         return new functionStatement(up, func);
       }
 
       functionDeclStatement &funcSmnt = *(new functionDeclStatement(up, func));
+      funcSmnt.addArgumentsToScope();
 
       // Set and clear attributes before continuing
       funcSmnt.function.attributes = attributes;
       // Make sure all attributes are meant for functions
-      const int attrCount = (int) attributes.size();
-      for (int i = 0; i < attrCount; ++i) {
-        attributeToken_t &attr = attributes[i];
+      attributeTokenMap::iterator it = attributes.begin();
+      while (it != attributes.end()) {
+        attributeToken_t &attr = it->second;
         if (!attr.forFunction()) {
           attr.printError("Cannot apply attribute to function");
           success = false;
         }
+        ++it;
       }
       funcSmnt.function.attributes = attributes;
       attributes.clear();
@@ -1724,7 +1775,7 @@ namespace occa {
       // The case where we see 'case:'
       if (0 < pos) {
         // Load the case expression
-        value = context.getExpression(0, pos);
+        value = getExpression(0, pos);
       }
       if (!value) {
         context.printError("Expected a constant expression for the [case] statement");
@@ -1784,7 +1835,7 @@ namespace occa {
       // The case where we see 'return;'
       if (0 < pos) {
         // Load the return value
-        value = context.getExpression(0, pos);
+        value = getExpression(0, pos);
       }
       if (!success) {
         return NULL;

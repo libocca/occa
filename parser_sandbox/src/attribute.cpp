@@ -38,6 +38,10 @@ namespace occa {
     //==================================
 
     //---[ Attribute ]------------------
+    attributeToken_t::attributeToken_t() :
+      attrType(NULL),
+      source(NULL) {}
+
     attributeToken_t::attributeToken_t(const attribute_t &attrType_,
                                        identifierToken &source_) :
       attrType(&attrType_),
@@ -112,11 +116,11 @@ namespace occa {
       return NULL;
     }
 
-    void attributeToken_t::printWarning(const std::string &message) {
+    void attributeToken_t::printWarning(const std::string &message) const {
       source->printWarning(message);
     }
 
-    void attributeToken_t::printError(const std::string &message) {
+    void attributeToken_t::printError(const std::string &message) const {
       source->printError(message);
     }
     //==================================

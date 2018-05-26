@@ -82,6 +82,8 @@ namespace occa {
       virtual statement_t& clone_() const;
       virtual int type() const;
 
+      void addArgumentsToScope();
+
       virtual void print(printer &pout) const;
     };
 

@@ -39,19 +39,32 @@ namespace occa {
     //==================================
 
     //---[ @dim ]-----------------------
-    dimArrayTransform::eT::eT() {
-      downToUp = true;
+    dimArrayTransform::eT::eT(parser_t &parser_) :
+      parser(parser_),
+      scopeSmnt(NULL) {
       validExprNodeTypes = exprNodeType::call;
     }
 
     exprNode* dimArrayTransform::eT::transformExprNode(exprNode &node) {
       callNode &call = (callNode&) node;
+      if (!(call.value->type() & exprNodeType::variable)) {
+        return &node;
+      }
+
+      variable_t &var = ((variableNode*) call.value)->value;
+      attributeTokenMap::iterator it = var.attributes.find("dim");
+      if (it == var.attributes.end()) {
+        return &node;
+      }
+
+      std::cout << "var = " << var.name() << '\n';
 
       return &node;
     }
 
     dimArrayTransform::dimArrayTransform(parser_t &parser_) :
-      statementTransform(parser_) {
+      statementTransform(parser_),
+      eTransform(parser_) {
       validStatementTypes = (statementType::expression |
                              statementType::declaration);
     }
@@ -59,7 +72,7 @@ namespace occa {
     statement_t* dimArrayTransform::transformStatement(statement_t &smnt) {
       bool success = true;
       if (smnt.type() & statementType::expression) {
-        success = apply(((expressionStatement&) smnt).root);
+        success = apply(smnt, ((expressionStatement&) smnt).root);
       } else {
         success = applyToDeclStatement((declarationStatement&) smnt);
       }
@@ -70,17 +83,19 @@ namespace occa {
     bool dimArrayTransform::applyToDeclStatement(declarationStatement &smnt) {
       const int declCount = (int) smnt.declarations.size();
       for (int i = 0; i < declCount; ++i) {
-        if (!apply(smnt.declarations[i].value)) {
+        if (!apply(smnt, smnt.declarations[i].value)) {
           return false;
         }
       }
       return true;
     }
 
-    bool dimArrayTransform::apply(exprNode *&expr) {
+    bool dimArrayTransform::apply(statement_t &smnt,
+                                  exprNode *&expr) {
       if (expr == NULL) {
         return true;
       }
+      eTransform.scopeSmnt = &smnt;
       expr = eTransform.transform(*expr);
       return expr;
     }

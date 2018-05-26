@@ -91,6 +91,8 @@ namespace occa {
       int position() const;
       int size() const;
       token_t* operator [] (const int index);
+      void setToken(const int index,
+                    token_t *value);
 
       token_t* end();
 

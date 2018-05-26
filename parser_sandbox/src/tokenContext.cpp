@@ -214,6 +214,18 @@ namespace occa {
       return tokens[tp.start + index];
     }
 
+    void tokenContext::setToken(const int index,
+                                token_t *value) {
+      if (!indexInRange(index)) {
+        return;
+      }
+      const int pos = tp.start + index;
+      if (tokens[pos] != value) {
+        delete tokens[pos];
+        tokens[pos] = value;
+      }
+    }
+
     token_t* tokenContext::end() {
       if (indexInRange(tp.end - tp.start - 1)) {
         return tokens[tp.end - 1];

@@ -40,9 +40,9 @@ namespace occa {
     class statement_t;
     class expressionStatement;
 
-    typedef std::vector<attributeToken_t>    attributeTokenVector;
-    typedef std::vector<exprNode*>           exprNodeVector;
-    typedef std::map<std::string, exprNode*> exprNodeMap;
+    typedef std::vector<exprNode*>                  exprNodeVector;
+    typedef std::map<std::string, exprNode*>        exprNodeMap;
+    typedef std::map<std::string, attributeToken_t> attributeTokenMap;
 
     //---[ Attribute Type ]-------------
     class attribute_t {
@@ -54,6 +54,8 @@ namespace occa {
       virtual bool forVariable() const;
       virtual bool forFunction() const;
       virtual bool forStatement(const int sType) const = 0;
+
+      virtual bool isValid(const attributeToken_t &attr) const = 0;
     };
     //==================================
 
@@ -65,6 +67,7 @@ namespace occa {
       exprNodeVector args;
       exprNodeMap kwargs;
 
+      attributeToken_t();
       attributeToken_t(const attribute_t &attrType_,
                        identifierToken &source_);
       attributeToken_t(const attributeToken_t &other);
@@ -80,8 +83,8 @@ namespace occa {
       exprNode* operator [] (const int index);
       exprNode* operator [] (const std::string &arg);
 
-      void printWarning(const std::string &message);
-      void printError(const std::string &message);
+      void printWarning(const std::string &message) const;
+      void printError(const std::string &message) const;
     };
     //==================================
   }

@@ -26,6 +26,7 @@
 #include <map>
 #include <vector>
 
+#include "exprTransform.hpp"
 #include "keyword.hpp"
 #include "preprocessor.hpp"
 #include "processingStages.hpp"
@@ -46,6 +47,16 @@ namespace occa {
 
     typedef std::map<std::string, attribute_t*> nameToAttributeMap;
     typedef std::list<blockStatement*>          blockStatementList;
+
+    class identifierReplacer_t : public exprTransform {
+    public:
+      parser_t &parser;
+      statement_t *scopeSmnt;
+
+      identifierReplacer_t(parser_t &parser_);
+
+      virtual exprNode* transformExprNode(exprNode &node);
+    };
 
     class parser_t {
     public:
@@ -72,9 +83,13 @@ namespace occa {
       blockStatement root;
       blockStatement *up;
       blockStatementList upStack;
-      attributeTokenVector attributes;
+      attributeTokenMap attributes;
 
       bool success;
+      //================================
+
+      //---[ Misc ]---------------------
+      identifierReplacer_t identifierReplacer;
       //================================
 
       parser_t();
@@ -98,17 +113,18 @@ namespace occa {
       opType_t getOperatorType(token_t *token);
       //================================
 
-      //---[ Customization ]------------
-      template <class attributeType>
-      void addAttribute() {
-        attributeType *attr = new attributeType();
-        const std::string name = attr->name();
+      //---[ Helper Methods ]-----------
+      exprNode* getExpression();
+      exprNode* getExpression(const int start,
+                              const int end);
+      token_t* replaceIdentifier(identifierToken &identifier);
 
-        OCCA_ERROR("Attribute [" << name << "] already exists",
-                   attributeMap.find(name) == attributeMap.end());
-
-        attributeMap[name] = attr;
-      }
+      void loadAttributes(attributeTokenMap &attrs);
+      void loadAttribute(attributeTokenMap &attrs);
+      void setAttributeArgs(attributeToken_t &attr,
+                            tokenRangeVector &argRanges);
+      void addAttributesTo(attributeTokenMap &attrs,
+                           statement_t *smnt);
       //================================
 
       //---[ Peek ]---------------------
@@ -116,13 +132,6 @@ namespace occa {
       int uncachedPeek();
 
       void setupPeek();
-
-      void loadAttributes(attributeTokenVector &attrs);
-      void loadAttribute(attributeTokenVector &attrs);
-      void setAttributeArgs(attributeToken_t &attr,
-                            tokenRangeVector &argRanges);
-      void addAttributesTo(attributeTokenVector &attrs,
-                           statement_t *smnt);
 
       int peekIdentifier(const int tokenIndex);
       bool isGotoLabel(const int tokenIndex);
@@ -225,11 +234,24 @@ namespace occa {
       statement_t* loadGotoLabelStatement();
       //================================
 
+      //---[ Customization ]------------
+      template <class attributeType>
+      void addAttribute() {
+        attributeType *attr = new attributeType();
+        const std::string name = attr->name();
+
+        OCCA_ERROR("Attribute [" << name << "] already exists",
+                   attributeMap.find(name) == attributeMap.end());
+
+        attributeMap[name] = attr;
+      }
+
       template <class transformType>
       bool applyTransform() {
         transformType transform(*this);
         return transform.transformBlockStatement(root);
       }
+      //================================
     };
   }
 }

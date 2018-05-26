@@ -25,26 +25,12 @@
 namespace occa {
   namespace lang {
     exprTransform::exprTransform() :
-      downToUp(true),
       validExprNodeTypes(0) {}
 
     exprNode* exprTransform::transform(exprNode &node) {
-      exprNode *newNode = &node;
-      udim_t nType = node.type();
-
-      if (!downToUp &&
-          (nType & validExprNodeTypes)) {
-        newNode = transformExprNode(node);
-        if (!newNode) {
-          return NULL;
-        }
-        if (newNode != &node) {
-          delete &node;
-        }
-      }
-
+      // Apply transform to children
       exprNodeRefVector children;
-      newNode->setChildren(children);
+      node.setChildren(children);
       const int childCount = (int) children.size();
       for (int i = 0; i < childCount; ++i) {
         exprNode *&child = *(children[i]);
@@ -55,8 +41,9 @@ namespace occa {
         child = newChild;
       }
 
-      if (downToUp &&
-          (nType & validExprNodeTypes)) {
+      // Apply transform to self
+      exprNode *newNode = &node;
+      if (node.type() & validExprNodeTypes) {
         newNode = transformExprNode(node);
         if (newNode != &node) {
           delete &node;

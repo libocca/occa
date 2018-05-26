@@ -113,7 +113,7 @@ namespace occa {
     //==================================
 
     //---[ Type ]-----------------------
-    typeKeyword::typeKeyword(const type_t &type__) :
+    typeKeyword::typeKeyword(type_t &type__) :
       type_(type__) {}
 
     int typeKeyword::type() {
@@ -130,7 +130,7 @@ namespace occa {
     //==================================
 
     //---[ Variable ]-------------------
-    variableKeyword::variableKeyword(const variable_t &variable_) :
+    variableKeyword::variableKeyword(variable_t &variable_) :
       variable(variable_) {}
 
     int variableKeyword::type() {
@@ -147,7 +147,7 @@ namespace occa {
     //==================================
 
     //---[ Function ]-------------------
-    functionKeyword::functionKeyword(const function_t &function_) :
+    functionKeyword::functionKeyword(function_t &function_) :
       function(function_) {}
 
     int functionKeyword::type() {
@@ -207,17 +207,17 @@ namespace occa {
       addKeyword(keywords, new qualifierKeyword(union_));
 
       // Types
-      addKeyword(keywords, new typeKeyword(bool_));
-      addKeyword(keywords, new typeKeyword(char_));
-      addKeyword(keywords, new typeKeyword(char16_t_));
-      addKeyword(keywords, new typeKeyword(char32_t_));
-      addKeyword(keywords, new typeKeyword(wchar_t_));
-      addKeyword(keywords, new typeKeyword(short_));
-      addKeyword(keywords, new typeKeyword(int_));
-      addKeyword(keywords, new typeKeyword(float_));
-      addKeyword(keywords, new typeKeyword(double_));
-      addKeyword(keywords, new typeKeyword(void_));
-      addKeyword(keywords, new typeKeyword(auto_));
+      addKeyword(keywords, new typeKeyword(const_cast<primitive_t&>(bool_)));
+      addKeyword(keywords, new typeKeyword(const_cast<primitive_t&>(char_)));
+      addKeyword(keywords, new typeKeyword(const_cast<primitive_t&>(char16_t_)));
+      addKeyword(keywords, new typeKeyword(const_cast<primitive_t&>(char32_t_)));
+      addKeyword(keywords, new typeKeyword(const_cast<primitive_t&>(wchar_t_)));
+      addKeyword(keywords, new typeKeyword(const_cast<primitive_t&>(short_)));
+      addKeyword(keywords, new typeKeyword(const_cast<primitive_t&>(int_)));
+      addKeyword(keywords, new typeKeyword(const_cast<primitive_t&>(float_)));
+      addKeyword(keywords, new typeKeyword(const_cast<primitive_t&>(double_)));
+      addKeyword(keywords, new typeKeyword(const_cast<primitive_t&>(void_)));
+      addKeyword(keywords, new typeKeyword(const_cast<primitive_t&>(auto_)));
 
       // TODO: Add builtin functions
       //  - const_cast, static_cast, dynamic_cast, reinterpret_cast

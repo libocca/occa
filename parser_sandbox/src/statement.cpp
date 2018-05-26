@@ -92,6 +92,13 @@ namespace occa {
       return statementType::functionDecl;
     }
 
+    void functionDeclStatement::addArgumentsToScope() {
+      const int count = (int) function.args.size();
+      for (int i = 0; i < count; ++i) {
+        scope.add(function.args[i]);
+      }
+    }
+
     void functionDeclStatement::print(printer &pout) const {
       // Double newlines to make it look cleaner
       pout << '\n';

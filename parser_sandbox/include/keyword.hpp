@@ -125,9 +125,9 @@ namespace occa {
     //---[ Type ]-----------------------
     class typeKeyword : public keyword_t {
     public:
-      const type_t &type_;
+      type_t &type_;
 
-      typeKeyword(const type_t &type__);
+      typeKeyword(type_t &type__);
 
       virtual int type();
       virtual const std::string& name();
@@ -139,9 +139,9 @@ namespace occa {
     //---[ Variable ]-------------------
     class variableKeyword : public keyword_t {
     public:
-      const variable_t &variable;
+      variable_t &variable;
 
-      variableKeyword(const variable_t &variable_);
+      variableKeyword(variable_t &variable_);
 
       virtual int type();
       virtual const std::string& name();
@@ -153,9 +153,9 @@ namespace occa {
     //---[ Function ]-------------------
     class functionKeyword : public keyword_t {
     public:
-      const function_t &function;
+      function_t &function;
 
-      functionKeyword(const function_t &function_);
+      functionKeyword(function_t &function_);
 
       virtual int type();
       virtual const std::string& name();

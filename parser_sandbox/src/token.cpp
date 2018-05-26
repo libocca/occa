@@ -80,16 +80,17 @@ namespace occa {
       const int qualifier     = (1 << 7);
       const int type          = (1 << 8);
       const int variable      = (1 << 9);
+      const int function      = (1 << 10);
 
-      const int primitive     = (1 << 10);
-      const int op            = (1 << 11);
+      const int primitive     = (1 << 11);
+      const int op            = (1 << 12);
 
-      const int char_         = (1 << 12);
-      const int string        = (1 << 13);
-      const int withUDF       = (1 << 14);
+      const int char_         = (1 << 13);
+      const int string        = (1 << 14);
+      const int withUDF       = (1 << 15);
       const int withEncoding  = ((encodingType::ux |
-                                  encodingType::R) << 15);
-      const int encodingShift = 15;
+                                  encodingType::R) << 16);
+      const int encodingShift = 16;
 
       int getEncoding(const int tokenType) {
         return ((tokenType & withEncoding) >> encodingShift);
@@ -252,9 +253,9 @@ namespace occa {
 
     //---[ Type ]-----------------------
     typeToken::typeToken(const fileOrigin &origin_,
-                         const type_t &type__) :
+                         type_t &type_) :
     token_t(origin_),
-    type_(type__) {}
+    value(type_) {}
 
     typeToken::~typeToken() {}
 
@@ -263,19 +264,19 @@ namespace occa {
     }
 
     token_t* typeToken::clone() {
-      return new typeToken(origin, type_);
+      return new typeToken(origin, value);
     }
 
     void typeToken::print(std::ostream &out) const {
-      out << type_.name();
+      out << value.name();
     }
     //==================================
 
     //---[ Variable ]-------------------
     variableToken::variableToken(const fileOrigin &origin_,
-                                 const variable_t &var_) :
+                                 variable_t &variable) :
       token_t(origin_),
-      var(var_) {}
+      value(variable) {}
 
     variableToken::~variableToken() {}
 
@@ -284,11 +285,32 @@ namespace occa {
     }
 
     token_t* variableToken::clone() {
-      return new variableToken(origin, var);
+      return new variableToken(origin, value);
     }
 
     void variableToken::print(std::ostream &out) const {
-      out << var.name();
+      out << value.name();
+    }
+    //==================================
+
+    //---[ Function ]-------------------
+    functionToken::functionToken(const fileOrigin &origin_,
+                                 function_t &function) :
+      token_t(origin_),
+      value(function) {}
+
+    functionToken::~functionToken() {}
+
+    int functionToken::type() const {
+      return tokenType::function;
+    }
+
+    token_t* functionToken::clone() {
+      return new functionToken(origin, value);
+    }
+
+    void functionToken::print(std::ostream &out) const {
+      out << value.name();
     }
     //==================================
 

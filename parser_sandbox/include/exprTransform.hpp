@@ -29,7 +29,6 @@ namespace occa {
 
     class exprTransform {
     public:
-      bool downToUp;
       udim_t validExprNodeTypes;
 
       exprTransform();

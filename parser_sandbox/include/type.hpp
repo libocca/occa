@@ -68,7 +68,7 @@ namespace occa {
     class type_t {
     public:
       identifierToken *source;
-      attributeTokenVector attributes;
+      attributeTokenMap attributes;
 
       type_t(const std::string &name_ = "");
       type_t(identifierToken &source_);
