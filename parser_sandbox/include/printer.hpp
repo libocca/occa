@@ -68,6 +68,7 @@ namespace occa {
 
       void printIndentation();
       void printStartIndentation();
+      void printNewline();
       void printEndNewline();
 
       template <class TM>

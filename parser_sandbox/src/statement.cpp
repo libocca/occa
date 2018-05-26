@@ -69,7 +69,7 @@ namespace occa {
 
     void functionStatement::print(printer &pout) const {
       pout.printStartIndentation();
-      pout << function;
+      function.printDeclaration(pout);
       pout << ";\n";
     }
 
@@ -93,10 +93,11 @@ namespace occa {
     }
 
     void functionDeclStatement::print(printer &pout) const {
+      // Double newlines to make it look cleaner
+      pout << '\n';
       pout.printStartIndentation();
-      pout << function << ' ';
+      function.printDeclaration(pout);
       blockStatement::print(pout);
-      pout.printEndNewline();
     }
 
     classAccessStatement::classAccessStatement(blockStatement *up_,
@@ -134,14 +135,20 @@ namespace occa {
     expressionStatement::expressionStatement(blockStatement *up_,
                                              exprNode &root_) :
       statement_t(up_),
-      root(&root_) {}
+      root(&root_),
+      hasSemicolon(true) {}
+
+    expressionStatement::expressionStatement(const expressionStatement &other) :
+      statement_t(NULL),
+      root(&(other.root->clone())),
+      hasSemicolon(other.hasSemicolon) {}
 
     expressionStatement::~expressionStatement() {
       delete root;
     }
 
     statement_t& expressionStatement::clone_() const {
-      return *(new expressionStatement(NULL, root->clone()));
+      return *(new expressionStatement(*this));
     }
 
     int expressionStatement::type() const {
@@ -149,7 +156,12 @@ namespace occa {
     }
 
     void expressionStatement::print(printer &pout) const {
+      pout.printStartIndentation();
       pout << (*root);
+      if (hasSemicolon) {
+        pout << ';';
+        pout.printEndNewline();
+      }
     }
 
     declarationStatement::declarationStatement(blockStatement *up_) :
@@ -193,13 +205,14 @@ namespace occa {
       if (!count) {
         return;
       }
-      pout.printIndentation();
+      pout.printStartIndentation();
       declarations[0].print(pout);
       for (int i = 1; i < count; ++i) {
         pout << ", ";
         declarations[i].printAsExtra(pout);
       }
-      pout << ";\n";
+      pout << ';';
+      pout.printEndNewline();
     }
     //==================================
 
@@ -371,10 +384,10 @@ namespace occa {
       pout << "if (";
       pout.pushInlined(true);
       condition->print(pout);
-      pout.popInlined();
       pout << ')';
 
       blockStatement::print(pout);
+      pout.popInlined();
 
       const int elifCount = (int) elifSmnts.size();
       for (int i = 0; i < elifCount; ++i) {
@@ -415,10 +428,10 @@ namespace occa {
       pout << "else if (";
       pout.pushInlined(true);
       condition->print(pout);
-      pout.popInlined();
       pout << ')';
 
       blockStatement::print(pout);
+      pout.popInlined();
     }
 
     elseStatement::elseStatement(blockStatement *up_) :
@@ -477,7 +490,6 @@ namespace occa {
         pout << "while (";
         pout.pushInlined(true);
         condition->print(pout);
-        pout.popInlined();
         pout << ')';
       } else {
         pout << "do";
@@ -486,6 +498,7 @@ namespace occa {
       blockStatement::print(pout);
 
       if (isDoWhile) {
+        pout.popInlined();
         pout << " while (";
         pout.pushInlined(true);
         condition->print(pout);
@@ -535,14 +548,12 @@ namespace occa {
       pout.printStartIndentation();
 
       pout << "for (";
-
       pout.pushInlined(true);
       pout << *init << *check << *update;
-      pout.popInlined();
-
       pout << ')';
 
       blockStatement::print(pout);
+      pout.popInlined();
     }
     //==================================
 
@@ -576,10 +587,10 @@ namespace occa {
       pout << "switch (";
       pout.pushInlined(true);
       condition->print(pout);
-      pout.popInlined();
       pout << ") {\n";
 
       blockStatement::print(pout);
+      pout.popInlined();
     }
     //==================================
 

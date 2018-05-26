@@ -1341,13 +1341,21 @@ namespace occa {
         error = true;
       }
 
+      const int smntCount = (int) statements.size();
       if (error) {
         success = false;
-        const int smntCount = (int) statements.size();
         for (int i = 0; i < smntCount; ++i) {
           delete statements[i];
         }
         statements.clear();
+        return;
+      }
+      if (!smntCount) {
+        return;
+      }
+      statement_t *lastStatement = statements[smntCount - 1];
+      if (lastStatement->type() & statementType::expression) {
+        lastStatement->to<expressionStatement>().hasSemicolon = false;
       }
     }
 

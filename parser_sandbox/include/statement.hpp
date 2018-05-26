@@ -103,9 +103,11 @@ namespace occa {
     class expressionStatement : public statement_t {
     public:
       exprNode *root;
+      bool hasSemicolon;
 
       expressionStatement(blockStatement *up_,
                           exprNode &root_);
+      expressionStatement(const expressionStatement &other);
       ~expressionStatement();
 
       virtual statement_t& clone_() const;

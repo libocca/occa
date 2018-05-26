@@ -129,14 +129,22 @@ namespace occa {
     void printer::printStartIndentation() {
       if (!isInlined()) {
         *this << indent;
-      } if (lastCharNeedsWhitespace()) {
+      } else if (lastCharNeedsWhitespace()) {
         *this << ' ';
+      }
+    }
+
+    void printer::printNewline() {
+      if (lastChar != '\n') {
+        *this << '\n';
       }
     }
 
     void printer::printEndNewline() {
       if (!isInlined()) {
-        *this << '\n';
+        if (lastChar != '\n') {
+          *this << '\n';
+        }
       } else if (lastCharNeedsWhitespace()) {
         *this << ' ';
       }

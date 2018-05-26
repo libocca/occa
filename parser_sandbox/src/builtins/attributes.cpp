@@ -95,7 +95,8 @@ namespace occa {
     }
 
     bool kernel::forStatement(const int sType) const {
-      return (sType & statementType::function);
+      return (sType & (statementType::function |
+                       statementType::functionDecl));
     }
     //==================================
 
