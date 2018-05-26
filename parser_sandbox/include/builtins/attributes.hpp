@@ -28,8 +28,6 @@ namespace occa {
   namespace lang {
     //---[ @dim ]-----------------------
     class dim : public attribute_t {
-      exprNodeVector dimSizes;
-
     public:
       dim();
 
@@ -42,8 +40,6 @@ namespace occa {
 
     //---[ @dimOrder ]------------------
     class dimOrder : public attribute_t {
-      intVector order;
-
     public:
       dimOrder();
 
@@ -63,15 +59,72 @@ namespace occa {
 
       virtual bool forStatement(const int sType) const;
     };
-    //==================================
 
-    //---[ @safeTile ]------------------
     class safeTile : public attribute_t {
     public:
       safeTile();
 
       virtual std::string name() const;
 
+      virtual bool forStatement(const int sType) const;
+    };
+    //==================================
+
+    // OKL
+    //---[ @kernel ]-----------------------
+    class kernel : public attribute_t {
+    public:
+      kernel();
+
+      virtual std::string name() const;
+
+      virtual bool forFunction() const;
+      virtual bool forStatement(const int sType) const;
+    };
+    //==================================
+
+    //---[ @outer ]---------------------
+    class outer : public attribute_t {
+    public:
+      outer();
+
+      virtual std::string name() const;
+
+      virtual bool forStatement(const int sType) const;
+    };
+    //==================================
+
+    //---[ @inner ]---------------------
+    class inner : public attribute_t {
+    public:
+      inner();
+
+      virtual std::string name() const;
+
+      virtual bool forStatement(const int sType) const;
+    };
+    //==================================
+
+    //---[ @shared ]--------------------
+    class shared : public attribute_t {
+    public:
+      shared();
+
+      virtual std::string name() const;
+
+      virtual bool forVariable() const;
+      virtual bool forStatement(const int sType) const;
+    };
+    //==================================
+
+    //---[ @exclusive ]-----------------
+    class exclusive : public attribute_t {
+    public:
+      exclusive();
+
+      virtual std::string name() const;
+
+      virtual bool forVariable() const;
       virtual bool forStatement(const int sType) const;
     };
     //==================================

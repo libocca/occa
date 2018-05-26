@@ -218,7 +218,7 @@ namespace occa {
     //---[ Vartype ]--------------------
     vartype_t::vartype_t() :
       typeToken(NULL),
-      type(),
+      type(NULL),
       referenceToken(NULL),
       bitfield(-1) {}
 

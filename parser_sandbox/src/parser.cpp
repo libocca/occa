@@ -383,9 +383,14 @@ namespace occa {
       }
 
       const int attributeCount = (int) attrs.size();
+      if (!attributeCount) {
+        return;
+      }
+
+      const int sType = smnt->type();
       for (int i = 0; i < attributeCount; ++i) {
         attributeToken_t &attr = attrs[i];
-        if (attr.forStatement(smnt->type())) {
+        if (attr.forStatement(sType)) {
           smnt->addAttribute(attr);
         } else {
           attr.printError("Cannot apply attribute to this type of statement");
@@ -500,7 +505,7 @@ namespace occa {
       for (int i = 0; i < attrCount; ++i) {
         attributeToken_t &attr = varAttributes[i];
         if (!attr.forVariable()) {
-          attr.printError("Cannot apply attribute to this type of statement");
+          attr.printError("Cannot apply attribute to variables");
           success = false;
         }
       }
@@ -985,6 +990,7 @@ namespace occa {
         // [checkSemicolon] is only valid for one statement
         checkSemicolon = true;
         addAttributesTo(attributes, smnt);
+        attributes.clear();
         if (!success) {
           delete smnt;
           return NULL;
@@ -1022,6 +1028,8 @@ namespace occa {
       context.pushPairRange(0);
 
       blockStatement *smnt = new blockStatement(up);
+      addAttributesTo(attributes, smnt);
+
       pushUp(*smnt);
       loadAllStatements();
       popUp();
@@ -1182,6 +1190,8 @@ namespace occa {
         }
       }
 
+      addAttributesTo(attributes, currentSmnt);
+
       // Load block content
       context.pushPairRange(0);
       pushUp(*currentSmnt);
@@ -1229,6 +1239,21 @@ namespace occa {
       }
 
       functionDeclStatement &funcSmnt = *(new functionDeclStatement(up, func));
+
+      // Set and clear attributes before continuing
+      funcSmnt.function.attributes = attributes;
+      // Make sure all attributes are meant for functions
+      const int attrCount = (int) attributes.size();
+      for (int i = 0; i < attrCount; ++i) {
+        attributeToken_t &attr = attributes[i];
+        if (!attr.forFunction()) {
+          attr.printError("Cannot apply attribute to function");
+          success = false;
+        }
+      }
+      funcSmnt.function.attributes = attributes;
+      attributes.clear();
+
       pushUp(funcSmnt);
       statement_t *content = getNextStatement();
       popUp();
@@ -1240,10 +1265,6 @@ namespace occa {
         delete &funcSmnt;
         return NULL;
       }
-
-      // We pass the attributes to the variables
-      funcSmnt.function.attributes = attributes;
-      attributes.clear();
 
       return &funcSmnt;
     }
@@ -1359,6 +1380,8 @@ namespace occa {
       }
 
       ifSmnt.setCondition(condition);
+      addAttributesTo(attributes, &ifSmnt);
+
       statement_t *content = getNextStatement();
       if (!content) {
         if (success) {
@@ -1422,6 +1445,8 @@ namespace occa {
       }
 
       elifSmnt.setCondition(condition);
+      addAttributesTo(attributes, &elifSmnt);
+
       statement_t *content = getNextStatement();
       popUp();
       if (!content) {
@@ -1442,6 +1467,8 @@ namespace occa {
       context.set(1);
 
       elseStatement &elseSmnt = *(new elseStatement(up));
+      addAttributesTo(attributes, &elseSmnt);
+
       pushUp(elseSmnt);
       statement_t *content = getNextStatement();
       popUp();
@@ -1503,6 +1530,7 @@ namespace occa {
       forSmnt.setLoopStatements(statements[0],
                                 statements[1],
                                 statements[2]);
+      addAttributesTo(attributes, &forSmnt);
 
       statement_t *content = getNextStatement();
       popUp();
@@ -1543,6 +1571,8 @@ namespace occa {
       }
 
       whileSmnt.setCondition(condition);
+      addAttributesTo(attributes, &whileSmnt);
+
       statement_t *content = getNextStatement();
       popUp();
       if (!content) {
@@ -1561,6 +1591,7 @@ namespace occa {
       context.set(1);
 
       whileStatement &whileSmnt = *(new whileStatement(up, true));
+      addAttributesTo(attributes, &whileSmnt);
       pushUp(whileSmnt);
 
       statement_t *content = getNextStatement();
@@ -1635,6 +1666,8 @@ namespace occa {
       }
 
       switchSmnt.setCondition(condition);
+      addAttributesTo(attributes, &switchSmnt);
+
       statement_t *content = getNextStatement();
       popUp();
       if (!content) {

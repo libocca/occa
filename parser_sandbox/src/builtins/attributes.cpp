@@ -82,5 +82,77 @@ namespace occa {
       return (sType & statementType::for_);
     }
     //==================================
+
+    //---[ @kernel ]------------------
+    kernel::kernel() {}
+
+    std::string kernel::name() const {
+      return "kernel";
+    }
+
+    bool kernel::forFunction() const {
+      return true;
+    }
+
+    bool kernel::forStatement(const int sType) const {
+      return (sType & statementType::function);
+    }
+    //==================================
+
+    //---[ @outer ]---------------------
+    outer::outer() {}
+
+    std::string outer::name() const {
+      return "outer";
+    }
+
+    bool outer::forStatement(const int sType) const {
+      return (sType & statementType::for_);
+    }
+    //==================================
+
+    //---[ @inner ]---------------------
+    inner::inner() {}
+
+    std::string inner::name() const {
+      return "inner";
+    }
+
+    bool inner::forStatement(const int sType) const {
+      return (sType & statementType::for_);
+    }
+    //==================================
+
+    //---[ @shared ]---------------------
+    shared::shared() {}
+
+    std::string shared::name() const {
+      return "shared";
+    }
+
+    bool shared::forVariable() const {
+      return true;
+    }
+
+    bool shared::forStatement(const int sType) const {
+      return (sType & statementType::declaration);
+    }
+    //==================================
+
+    //---[ @exclusive ]---------------------
+    exclusive::exclusive() {}
+
+    std::string exclusive::name() const {
+      return "exclusive";
+    }
+
+    bool exclusive::forVariable() const {
+      return true;
+    }
+
+    bool exclusive::forStatement(const int sType) const {
+      return (sType & statementType::declaration);
+    }
+    //==================================
   }
 }
