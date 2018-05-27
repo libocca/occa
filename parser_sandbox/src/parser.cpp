@@ -559,15 +559,15 @@ namespace occa {
       if (!success) {
         return decl;
       }
+
       // Load the actual variable if it exists
-      if (isLoadingFunctionPointer()) {
-        decl.var = loadFunctionPointer(vartype);
-      } else {
-        decl.var = loadVariable(vartype);
-      }
+      decl.variable_ = &(!isLoadingFunctionPointer()
+                         ? loadVariable(vartype).clone()
+                         : loadFunctionPointer(vartype).clone());
 
       loadDeclarationAttributes(decl);
       if (!success) {
+        decl.clear();
         return decl;
       }
 
@@ -582,7 +582,7 @@ namespace occa {
 
 
     void parser_t::loadDeclarationAttributes(variableDeclaration &decl) {
-      attributeTokenMap &varAttributes = decl.var.attributes;
+      attributeTokenMap &varAttributes = decl.variable_->attributes;
       // Copy statement attributes to each variable
       // Variable attributes should override statement attributes
       varAttributes.insert(attributes.begin(),
@@ -633,7 +633,7 @@ namespace occa {
       }
 
       exprNode *value = getExpression(1, pos);
-      decl.var.vartype.bitfield = (int) value->evaluate();
+      decl.variable_->vartype.bitfield = (int) value->evaluate();
       context.set(pos);
     }
 
@@ -1306,7 +1306,8 @@ namespace occa {
         return NULL;
       }
 
-      function_t func(returnType, context[0]->to<identifierToken>());
+      function_t &func = *(new function_t(returnType,
+                                          context[0]->to<identifierToken>()));
       context.pushPairRange(1);
       setArguments(func.args);
       context.popAndSkip();
@@ -1316,6 +1317,7 @@ namespace occa {
                       operatorType::braceStart))) {
         context.printError("Expected a [;]");
         success = false;
+        delete &func;
         return NULL;
       }
       if (opType & operatorType::semicolon) {
@@ -1324,7 +1326,12 @@ namespace occa {
       }
 
       functionDeclStatement &funcSmnt = *(new functionDeclStatement(up, func));
-      funcSmnt.addArgumentsToScope();
+      success = funcSmnt.updateScope();
+      if (!success) {
+        success = false;
+        delete &funcSmnt;
+        return NULL;
+      }
 
       // Set and clear attributes before continuing
       funcSmnt.function.attributes = attributes;
@@ -1346,7 +1353,6 @@ namespace occa {
       popUp();
       if (success) {
         funcSmnt.set(*content);
-        success = up->scope.add(funcSmnt.function);
       }
       if (!success) {
         delete &funcSmnt;

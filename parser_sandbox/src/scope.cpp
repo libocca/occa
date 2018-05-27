@@ -52,49 +52,19 @@ namespace occa {
       return noKeyword;
     }
 
-    bool scope_t::add(const type_t &type) {
-      const std::string &name = type.name();
-      if (!name.size()) {
-        return true;
-      }
-      keywordMapIterator it = keywords.find(name);
-      if (it == keywords.end()) {
-        keywords[name] = new typeKeyword(type.clone());
-        return true;
-      }
-      type.printError("[" + name + "] is already defined");
-      it->second->printError("[" + name + "] was first defined here");
-      return false;
+    bool scope_t::add(type_t &type,
+                      const bool force) {
+      return add<typeKeyword>(type, force);
     }
 
-    bool scope_t::add(const function_t &func) {
-      const std::string &name = func.name();
-      if (!name.size()) {
-        return true;
-      }
-      keywordMapIterator it = keywords.find(name);
-      if (it == keywords.end()) {
-        keywords[name] = new functionKeyword(func.clone().to<function_t>());
-        return true;
-      }
-      func.printError("[" + name + "] is already defined");
-      it->second->printError("[" + name + "] was first defined here");
-      return false;
+    bool scope_t::add(function_t &func,
+                      const bool force) {
+      return add<functionKeyword>(func, force);
     }
 
-    bool scope_t::add(const variable_t &var) {
-      const std::string &name = var.name();
-      if (!name.size()) {
-        return true;
-      }
-      keywordMapIterator it = keywords.find(name);
-      if (it == keywords.end()) {
-        keywords[name] = new variableKeyword(*(new variable_t(var)));
-        return true;
-      }
-      var.printError("[" + name + "] is already defined");
-      it->second->printError("[" + name + "] was first defined here");
-      return false;
+    bool scope_t::add(variable_t &var,
+                      const bool force) {
+      return add<variableKeyword>(var, force);
     }
 
     void scope_t::debugPrint() {

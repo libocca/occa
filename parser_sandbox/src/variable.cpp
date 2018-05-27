@@ -69,6 +69,10 @@ namespace occa {
       return source->value;
     }
 
+    variable_t& variable_t::clone() const {
+      return *(new variable_t(*this));
+    }
+
     bool variable_t::operator == (const variable_t &other) const {
       if (this == &other) {
         return true;
@@ -104,28 +108,45 @@ namespace occa {
 
     //---[ Variable Declaration ]-------
     variableDeclaration::variableDeclaration() :
-      var(),
+      variable_(NULL),
       value(NULL) {}
 
-    variableDeclaration::variableDeclaration(const variable_t &var_) :
-      var(var_),
+    variableDeclaration::variableDeclaration(variable_t &variable__) :
+      variable_(&variable__),
       value(NULL) {}
 
-    variableDeclaration::variableDeclaration(const variable_t &var_,
+    variableDeclaration::variableDeclaration(variable_t &variable__,
                                              exprNode &value_) :
-      var(var_),
+      variable_(&variable__),
       value(&value_) {}
 
     variableDeclaration::variableDeclaration(const variableDeclaration &other) :
-      var(other.var),
-      value(NULL) {
-      if (other.value) {
-        value = other.value->clone();
+      variable_(other.variable_),
+      value(other.value) {}
+
+    variableDeclaration::~variableDeclaration() {}
+
+    variableDeclaration variableDeclaration::clone() const {
+      if (value) {
+        return variableDeclaration(variable_->clone(),
+                                   *(value->clone()));
       }
+      return variableDeclaration(variable_->clone());
     }
 
-    variableDeclaration::~variableDeclaration() {
+    void variableDeclaration::clear() {
+      delete variable_;
       delete value;
+      variable_ = NULL;
+      value = NULL;
+    }
+
+    variable_t& variableDeclaration::variable() {
+      return *variable_;
+    }
+
+    const variable_t& variableDeclaration::variable() const {
+      return *variable_;
     }
 
     bool variableDeclaration::hasValue() const {
@@ -133,25 +154,25 @@ namespace occa {
     }
 
     void variableDeclaration::print(printer &pout) const {
-      var.printDeclaration(pout);
+      variable_->printDeclaration(pout);
       if (value) {
         pout << " = " << *value;
       }
     }
 
     void variableDeclaration::printAsExtra(printer &pout) const {
-      var.printExtraDeclaration(pout);
+      variable_->printExtraDeclaration(pout);
       if (value) {
         pout << " = " << *value;
       }
     }
 
     void variableDeclaration::printWarning(const std::string &message) const {
-      var.printWarning(message);
+      variable_->printWarning(message);
     }
 
     void variableDeclaration::printError(const std::string &message) const {
-      var.printError(message);
+      variable_->printError(message);
     }
     //==================================
   }

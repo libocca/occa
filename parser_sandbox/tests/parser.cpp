@@ -533,7 +533,7 @@ void testDeclarationLoading() {
 
 #define decl         statement->to<declarationStatement>()
 #define decls        decl.declarations
-#define declVar(N)   decls[N].var
+#define declVar(N)   decls[N].variable()
 #define declValue(N) (*(decls[N].value))
 
   setStatement("int foo;",
@@ -719,7 +719,7 @@ void testIfLoading() {
 #define condition    (*ifSmnt.condition)
 #define decl         condition.to<declarationStatement>()
 #define decls        decl.declarations
-#define declVar(N)   decls[N].var
+#define declVar(N)   decls[N].variable()
 #define declValue(N) (*(decls[N].value))
 
   setStatement("if (true) {}",
@@ -1043,7 +1043,7 @@ void testAttributeLoading() {
 #define smntAttr(N)       statement->attributes[N]->name()
 #define decl              statement->to<declarationStatement>()
 #define decls             decl.declarations
-#define declVar(N)        decls[N].var
+#define declVar(N)        decls[N].variable()
 #define declVarAttr(N, A) declVar(N).attributes[A]
 
   setStatement("const int *x @dim(2, 3), *y;",

@@ -46,7 +46,7 @@ namespace occa {
         }
         variable_t &var = (((declarationStatement*) forSmnt.init)
                            ->declarations[0]
-                           .var);
+                           .variable());
         if (!isValidCheck(var, *forSmnt.check) ||
             !isValidUpdate(var, *forSmnt.update)) {
           return NULL;
@@ -74,7 +74,7 @@ namespace occa {
           return false;
         }
         // Valid types: {char, short, int, long}
-        variable_t &var = declSmnt.declarations[0].var;
+        variable_t &var = declSmnt.declarations[0].variable();
         const type_t *type = var.vartype.type;
         if (!type ||
             ((*type != char_)  &&
@@ -210,7 +210,6 @@ namespace occa {
         }
         return true;
       }
-      //==================================
     }
   }
 }

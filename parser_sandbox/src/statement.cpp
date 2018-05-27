@@ -90,15 +90,15 @@ namespace occa {
     }
 
     functionDeclStatement::functionDeclStatement(blockStatement *up_,
-                                                 const function_t &function_) :
+                                                 function_t &function_) :
       blockStatement(up_, function_.source),
       function(function_) {}
 
-    functionDeclStatement::functionDeclStatement(
-      const functionDeclStatement &other
-    ) :
+    functionDeclStatement::functionDeclStatement(const functionDeclStatement &other) :
       blockStatement(other),
-      function(other.function) {}
+      function((function_t&) other.function.clone()) {
+      updateScope(true);
+    }
 
     statement_t& functionDeclStatement::clone_() const {
       return *(new functionDeclStatement(*this));
@@ -108,10 +108,20 @@ namespace occa {
       return statementType::functionDecl;
     }
 
-    void functionDeclStatement::addArgumentsToScope() {
+    bool functionDeclStatement::updateScope(const bool force) {
+      if (up &&
+          !up->scope.add(function, force)) {
+        return false;
+      }
+      addArgumentsToScope(force);
+      return true;
+    }
+
+    void functionDeclStatement::addArgumentsToScope(const bool force) {
       const int count = (int) function.args.size();
       for (int i = 0; i < count; ++i) {
-        scope.add(function.args[i]);
+        scope.add(function.args[i],
+                  force);
       }
     }
 
@@ -213,8 +223,26 @@ namespace occa {
       statement_t(up_) {}
 
     declarationStatement::declarationStatement(const declarationStatement &other) :
-      statement_t(NULL),
-      declarations(other.declarations) {}
+      statement_t(NULL) {
+      const int count = (int) other.declarations.size();
+      if (!count) {
+        return;
+      }
+      declarations.reserve(count);
+      for (int i = 0; i < count; ++i) {
+        declarations.push_back(
+          other.declarations[i].clone()
+        );
+      }
+    }
+
+    declarationStatement::~declarationStatement() {
+      const int count = (int) declarations.size();
+      for (int i = 0; i < count; ++i) {
+        declarations[i].clear();
+      }
+      declarations.clear();
+    }
 
     statement_t& declarationStatement::clone_() const {
       return *(new declarationStatement(*this));
@@ -224,21 +252,21 @@ namespace occa {
       return statementType::declaration;
     }
 
-    bool declarationStatement::addDeclarationsToScope() {
+    bool declarationStatement::addDeclarationsToScope(const bool force) {
       if (!up) {
         return false;
       }
       bool success = true;
       const int count = (int) declarations.size();
       for (int i = 0; i < count; ++i) {
-        variable_t &var = declarations[i].var;
+        variable_t &var = declarations[i].variable();
         // Variable
         if (!var.vartype.has(typedef_)) {
-          success &= up->scope.add(var);
+          success &= up->scope.add(var, force);
           continue;
         }
         // Typedef
-        typedef_t type(var.vartype);
+        typedef_t &type = *(new typedef_t(var.vartype));
         if (var.source) {
           type.setSource(*var.source);
         }
@@ -249,7 +277,7 @@ namespace occa {
         type.attributes.insert(var.attributes.begin(),
                                var.attributes.end());
 
-        success &= up->scope.add(type);
+        success &= up->scope.add(type, force);
       }
       return success;
     }

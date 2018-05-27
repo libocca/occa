@@ -41,10 +41,37 @@ namespace occa {
       bool has(const std::string &name);
       keyword_t& get(const std::string &name);
 
-      bool add(const type_t &type);
-      bool add(const function_t &func);
-      bool add(const variable_t &var);
+      bool add(type_t &type,
+               const bool force = false);
+      bool add(function_t &func,
+               const bool force = false);
+      bool add(variable_t &var,
+               const bool force = false);
+    private:
+      template <class keywordType_,
+                class valueType>
+      bool add(valueType &value,
+               const bool force) {
+        const std::string &name = value.name();
+        if (!name.size()) {
+          return true;
+        }
+        keywordMapIterator it = keywords.find(name);
+        if (it == keywords.end()) {
+          keywords[name] = new keywordType_(value);
+          return true;
+        }
+        if (force) {
+          delete it->second;
+          it->second = new keywordType_(value);
+          return true;
+        }
+        value.printError("[" + name + "] is already defined");
+        it->second->printError("[" + name + "] was first defined here");
+        return false;
+      }
 
+    public:
       void debugPrint();
     };
   }

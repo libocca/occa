@@ -48,6 +48,8 @@ namespace occa {
       bool isNamed() const;
       const std::string& name() const;
 
+      variable_t& clone() const;
+
       bool operator == (const variable_t &other) const;
 
       void printDeclaration(printer &pout) const;
@@ -63,21 +65,29 @@ namespace occa {
 
     //---[ Variable Declaration ]-------
     class variableDeclaration {
+      // Note: Feeing of variable and value are delegated
+      //         to the declarationStatement
     public:
-      variable_t var;
+      variable_t *variable_;
       exprNode *value;
 
       variableDeclaration();
 
-      variableDeclaration(const variable_t &var_);
+      variableDeclaration(variable_t &variable__);
 
-      variableDeclaration(const variable_t &var_,
+      variableDeclaration(variable_t &variable__,
                           exprNode &value_);
 
       variableDeclaration(const variableDeclaration &other);
 
       ~variableDeclaration();
 
+      variableDeclaration clone() const;
+
+      void clear();
+
+      variable_t& variable();
+      const variable_t& variable() const;
       bool hasValue() const;
 
       void print(printer &pout) const;

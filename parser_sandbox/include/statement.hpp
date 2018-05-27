@@ -79,16 +79,17 @@ namespace occa {
 
     class functionDeclStatement : public blockStatement {
     public:
-      function_t function;
+      function_t &function;
 
       functionDeclStatement(blockStatement *up_,
-                            const function_t &function_);
+                            function_t &function_);
       functionDeclStatement(const functionDeclStatement &other);
 
       virtual statement_t& clone_() const;
       virtual int type() const;
 
-      void addArgumentsToScope();
+      bool updateScope(const bool force = false);
+      void addArgumentsToScope(const bool force = false);
 
       virtual void print(printer &pout) const;
     };
@@ -139,11 +140,12 @@ namespace occa {
 
       declarationStatement(blockStatement *up_);
       declarationStatement(const declarationStatement &other);
+      ~declarationStatement();
 
       virtual statement_t& clone_() const;
       virtual int type() const;
 
-      bool addDeclarationsToScope();
+      bool addDeclarationsToScope(const bool force = false);
 
       virtual void print(printer &pout) const;
 
