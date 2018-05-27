@@ -24,8 +24,8 @@
 #include "parser.hpp"
 #include "variable.hpp"
 #include "builtins/attributes.hpp"
+#include "builtins/transforms.hpp"
 #include "builtins/types.hpp"
-#include "builtins/statementTransforms.hpp"
 
 namespace occa {
   namespace lang {
@@ -196,9 +196,9 @@ namespace occa {
     void parser_t::parseTokens() {
       loadAllStatements();
       if (!success) return;
-      success = applyTransform<dimArrayTransform>();
+      success = applyTransform<transforms::dim>();
       if (!success) return;
-      success = applyTransform<tileLoopTransform>();
+      success = applyTransform<transforms::tile>();
     }
 
     keyword_t& parser_t::getKeyword(token_t *token) {
@@ -313,6 +313,11 @@ namespace occa {
 
       attributeToken_t attr(*(it->second), nameToken);
       setAttributeArgs(attr, argRanges);
+      if (!success) {
+        context.popAndSkip();
+        return;
+      }
+
       attrs[nameToken.value] = attr;
 
       if (hasArgs) {
@@ -329,6 +334,25 @@ namespace occa {
       for (int i = 0; i < args; ++i) {
         context.push(argRanges[i].start,
                      argRanges[i].end);
+
+        if (!context.size()) {
+          attr.args.push_back(new emptyNode());
+          context.popAndSkip();
+          continue;
+        }
+
+        // Load args
+        attributeTokenMap attrs;
+        loadAttributes(attrs);
+
+        if (!context.size()) {
+          attr.args.push_back(
+            attributeArg_t(new emptyNode(),
+                           attrs)
+          );
+          context.popAndSkip();
+          continue;
+        }
 
         // Get argument
         exprNode *arg = getExpression();

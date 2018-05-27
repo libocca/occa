@@ -20,23 +20,21 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  */
 
-#ifndef OCCA_LANG_BUILTINS_TRANSFORMS_HEADER
-#define OCCA_LANG_BUILTINS_TRANSFORMS_HEADER
+#ifndef OCCA_LANG_BUILTINS_TRANSFORMS_DIM_HEADER
+#define OCCA_LANG_BUILTINS_TRANSFORMS_DIM_HEADER
 
 #include "exprTransform.hpp"
 #include "statementTransform.hpp"
 
 namespace occa {
   namespace lang {
-    //---[ @dim ]-----------------------
-    class dimArrayTransform : public statementTransform {
-    private:
-      class eT : public exprTransform {
+    namespace transforms {
+      class dimExprTransform : public exprTransform {
       public:
         parser_t &parser;
         statement_t *scopeSmnt;
 
-        eT(parser_t &parser_);
+        dimExprTransform(parser_t &parser_);
 
         virtual exprNode* transformExprNode(exprNode &node);
 
@@ -47,44 +45,19 @@ namespace occa {
                              attributeToken_t &dimOrderAttr);
       };
 
-    public:
-      eT eTransform;
+      class dim : public statementTransform {
+      public:
+        dimExprTransform exprTransform;
 
-      dimArrayTransform(parser_t &parser_);
+        dim(parser_t &parser_);
 
-      virtual statement_t* transformStatement(statement_t &smnt);
+        virtual statement_t* transformStatement(statement_t &smnt);
 
-      bool applyToDeclStatement(declarationStatement &smnt);
-      bool apply(statement_t &smnt,
-                 exprNode *&expr);
-    };
-    //==================================
-
-    //---[ @tile ]----------------------
-    class tileLoopTransform : public statementTransform {
-    public:
-      tileLoopTransform(parser_t &parser_);
-
-      virtual statement_t* transformStatement(statement_t &smnt);
-
-      bool isValidInit(statement_t &smnt);
-
-      bool isValidCheck(variable_t &var,
-                        statement_t &smnt);
-
-      bool isValidUpdate(variable_t &var,
-                         statement_t &smnt);
-
-      bool sameVariable(variable_t &var,
-                        leftUnaryOpNode &opNode);
-
-      bool sameVariable(variable_t &var,
-                        rightUnaryOpNode &opNode);
-
-      bool sameVariable(variable_t &var,
-                        binaryOpNode &opNode);
-    };
-    //==================================
+        bool applyToDeclStatement(declarationStatement &smnt);
+        bool apply(statement_t &smnt,
+                   exprNode *&expr);
+      };
+    }
   }
 }
 

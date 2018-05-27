@@ -525,7 +525,7 @@ void testExpressionLoading() {
   OCCA_ASSERT_EQUAL((uint64_t) sizeof(4),
                     (uint64_t) expr.evaluate());
 
-#undef exprStatement
+#undef expr
 }
 
 void testDeclarationLoading() {
@@ -1061,9 +1061,9 @@ void testAttributeLoading() {
   OCCA_ASSERT_EQUAL(2,
                     (int) xDim1.args.size());
   OCCA_ASSERT_EQUAL(2,
-                    (int) xDim1[0]->evaluate());
+                    (int) xDim1[0]->expr->evaluate());
   OCCA_ASSERT_EQUAL(3,
-                    (int) xDim1[1]->evaluate());
+                    (int) xDim1[1]->expr->evaluate());
 
   setStatement("const int *x @dimOrder(x=2, y=3), *y;",
                statementType::declaration);
@@ -1080,9 +1080,9 @@ void testAttributeLoading() {
   OCCA_ASSERT_EQUAL(2,
                     (int) xDimOrder.kwargs.size());
   OCCA_ASSERT_EQUAL(2,
-                    (int) xDimOrder["x"]->evaluate());
+                    (int) xDimOrder["x"]->expr->evaluate());
   OCCA_ASSERT_EQUAL(3,
-                    (int) xDimOrder["y"]->evaluate());
+                    (int) xDimOrder["y"]->expr->evaluate());
 
   setStatement("@dim(2 + 2, 10 - 5) const int *x, *y;",
                statementType::declaration);
@@ -1101,17 +1101,17 @@ void testAttributeLoading() {
   OCCA_ASSERT_EQUAL(2,
                     (int) xDim3.args.size());
   OCCA_ASSERT_EQUAL(4,
-                    (int) xDim3[0]->evaluate());
+                    (int) xDim3[0]->expr->evaluate());
   OCCA_ASSERT_EQUAL(5,
-                    (int) xDim3[1]->evaluate());
+                    (int) xDim3[1]->expr->evaluate());
 
   attributeToken_t &xDim4 = declVarAttr(1, "dim");
   OCCA_ASSERT_EQUAL(2,
                     (int) xDim4.args.size());
   OCCA_ASSERT_EQUAL(4,
-                    (int) xDim4[0]->evaluate());
+                    (int) xDim4[0]->expr->evaluate());
   OCCA_ASSERT_EQUAL(5,
-                    (int) xDim4[1]->evaluate());
+                    (int) xDim4[1]->expr->evaluate());
 
 #undef smntAttr
 #undef decl

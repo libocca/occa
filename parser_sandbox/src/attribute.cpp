@@ -37,6 +37,29 @@ namespace occa {
     }
     //==================================
 
+    //---[ Attribute Arg ]--------------
+    attributeArg_t::attributeArg_t() :
+      expr(NULL) {}
+
+    attributeArg_t::attributeArg_t(exprNode *expr_) :
+      expr(expr_) {}
+
+    attributeArg_t::attributeArg_t(exprNode *expr_,
+                                   attributeTokenMap attributes_) :
+      expr(expr_),
+      attributes(attributes_) {}
+
+    attributeArg_t::attributeArg_t(const attributeArg_t &other) :
+      expr(other.expr),
+      attributes(other.attributes) {}
+
+    attributeArg_t::~attributeArg_t() {}
+
+    bool attributeArg_t::exists() const {
+      return expr;
+    }
+    //==================================
+
     //---[ Attribute ]------------------
     attributeToken_t::attributeToken_t() :
       attrType(NULL),
@@ -58,12 +81,20 @@ namespace occa {
       // Copy args
       const int argCount = (int) other.args.size();
       for (int i = 0; i < argCount; ++i) {
-        args.push_back(other.args[i]->clone());
+        const attributeArg_t &attr = other.args[i];
+        args.push_back(
+          attributeArg_t(attr.expr->clone(),
+                         attr.attributes)
+        );
       }
       // Copy kwargs
-      exprNodeMap::const_iterator it = other.kwargs.begin();
+      attributeArgMap::const_iterator it = other.kwargs.begin();
       while (it != other.kwargs.end()) {
-        kwargs[it->first] = it->second->clone();
+        const attributeArg_t &attr = it->second;
+        kwargs[it->first] = (
+          attributeArg_t(attr.expr->clone(),
+                         attr.attributes)
+        );
         ++it;
       }
 
@@ -75,12 +106,12 @@ namespace occa {
       // Free args
       const int argCount = (int) args.size();
       for (int i = 0; i < argCount; ++i) {
-        delete args[i];
+        delete args[i].expr;
       }
       // Free kwargs
-      exprNodeMap::iterator it = kwargs.begin();
+      attributeArgMap::iterator it = kwargs.begin();
       while (it != kwargs.end()) {
-        delete it->second;
+        delete it->second.expr;
         ++it;
       }
     }
@@ -101,17 +132,17 @@ namespace occa {
       return attrType->forStatement(sType);
     }
 
-    exprNode* attributeToken_t::operator [] (const int index) {
+    attributeArg_t* attributeToken_t::operator [] (const int index) {
       if ((0 <= index) && (index < ((int) args.size()))) {
-        return args[index];
+        return &(args[index]);
       }
       return NULL;
     }
 
-    exprNode* attributeToken_t::operator [] (const std::string &arg) {
-      exprNodeMap::iterator it = kwargs.find(arg);
+    attributeArg_t* attributeToken_t::operator [] (const std::string &arg) {
+      attributeArgMap::iterator it = kwargs.find(arg);
       if (it != kwargs.end()) {
-        return it->second;
+        return &(it->second);
       }
       return NULL;
     }

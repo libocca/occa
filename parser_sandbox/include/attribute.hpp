@@ -34,14 +34,15 @@ namespace occa {
     class identifierToken;
     class attribute_t;
     class attributeToken_t;
+    class attributeArg_t;
     class vartype_t;
     class variable_t;
     class function_t;
     class statement_t;
     class expressionStatement;
 
-    typedef std::vector<exprNode*>                  exprNodeVector;
-    typedef std::map<std::string, exprNode*>        exprNodeMap;
+    typedef std::vector<attributeArg_t>             attributeArgVector;
+    typedef std::map<std::string, attributeArg_t>   attributeArgMap;
     typedef std::map<std::string, attributeToken_t> attributeTokenMap;
 
     //---[ Attribute Type ]-------------
@@ -59,13 +60,34 @@ namespace occa {
     };
     //==================================
 
+    //---[ Attribute Arg ]--------------
+    class attributeArg_t {
+    public:
+      exprNode *expr;
+      attributeTokenMap attributes;
+
+      attributeArg_t();
+
+      attributeArg_t(exprNode *expr_);
+
+      attributeArg_t(exprNode *expr_,
+                     attributeTokenMap attributes_);
+
+      attributeArg_t(const attributeArg_t &other);
+
+      ~attributeArg_t();
+
+      bool exists() const;
+    };
+    //==================================
+
     //---[ Attribute ]------------------
     class attributeToken_t {
     public:
       const attribute_t *attrType;
       identifierToken *source;
-      exprNodeVector args;
-      exprNodeMap kwargs;
+      attributeArgVector args;
+      attributeArgMap kwargs;
 
       attributeToken_t();
       attributeToken_t(const attribute_t &attrType_,
@@ -80,8 +102,8 @@ namespace occa {
       bool forFunction() const;
       bool forStatement(const int sType) const;
 
-      exprNode* operator [] (const int index);
-      exprNode* operator [] (const std::string &arg);
+      attributeArg_t* operator [] (const int index);
+      attributeArg_t* operator [] (const std::string &arg);
 
       void printWarning(const std::string &message) const;
       void printError(const std::string &message) const;

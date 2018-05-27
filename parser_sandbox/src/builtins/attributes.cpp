@@ -87,17 +87,19 @@ namespace occa {
     }
 
     bool tile::isValid(const attributeToken_t &attr) const {
-      exprNodeMap::const_iterator it = attr.kwargs.begin();
+      attributeArgMap::const_iterator it = attr.kwargs.begin();
       while (it != attr.kwargs.end()) {
         if (it->first != "safe") {
           it->second
+            .expr
             ->startNode()
             ->printError("[@tile] does not take this kwarg");
           return false;
         }
-        exprNode *value = it->second;
+        exprNode *value = it->second.expr;
         if (!value->canEvaluate()) {
           it->second
+            .expr
             ->startNode()
             ->printError("[@tile] 'safe' argument must be true or false");
           return false;
