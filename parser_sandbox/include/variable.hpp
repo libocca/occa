@@ -46,6 +46,7 @@ namespace occa {
       ~variable_t();
 
       bool isNamed() const;
+      std::string& name();
       const std::string& name() const;
 
       variable_t& clone() const;

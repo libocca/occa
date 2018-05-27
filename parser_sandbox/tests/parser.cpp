@@ -505,7 +505,7 @@ void testLoading() {
 
 void testExpressionLoading() {
   statement_t *statement;
-#define expr (*(statement->to<expressionStatement>().root))
+#define expr (*(statement->to<expressionStatement>().expr))
 
   setStatement("2 + 3;",
                statementType::expression);

@@ -29,13 +29,14 @@
 namespace occa {
   namespace lang {
     namespace transforms {
-      class dimExprTransform : public exprTransform {
+      class dim : public statementTransform,
+                  public exprTransform {
       public:
-        parser_t &parser;
         statement_t *scopeSmnt;
 
-        dimExprTransform(parser_t &parser_);
+        dim(parser_t &parser_);
 
+        virtual statement_t* transformStatement(statement_t &smnt);
         virtual exprNode* transformExprNode(exprNode &node);
 
         bool isValidDim(callNode &call,
@@ -43,19 +44,10 @@ namespace occa {
 
         bool isValidDimOrder(attributeToken_t &dimAttr,
                              attributeToken_t &dimOrderAttr);
-      };
-
-      class dim : public statementTransform {
-      public:
-        dimExprTransform exprTransform;
-
-        dim(parser_t &parser_);
-
-        virtual statement_t* transformStatement(statement_t &smnt);
 
         bool applyToDeclStatement(declarationStatement &smnt);
-        bool apply(statement_t &smnt,
-                   exprNode *&expr);
+        bool applyToExpr(statement_t &smnt,
+                         exprNode *&expr);
       };
     }
   }

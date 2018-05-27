@@ -28,13 +28,25 @@
 namespace occa {
   namespace lang {
     namespace transforms {
-      dimExprTransform::dimExprTransform(parser_t &parser_) :
-        parser(parser_),
+      dim::dim(parser_t &parser_) :
+        statementTransform(parser_),
         scopeSmnt(NULL) {
+        validStatementTypes = (statementType::expression |
+                               statementType::declaration);
         validExprNodeTypes = exprNodeType::call;
       }
 
-      exprNode* dimExprTransform::transformExprNode(exprNode &node) {
+      statement_t* dim::transformStatement(statement_t &smnt) {
+        bool success = true;
+        if (smnt.type() & statementType::expression) {
+          success = applyToExpr(smnt, ((expressionStatement&) smnt).expr);
+        } else {
+          success = applyToDeclStatement((declarationStatement&) smnt);
+        }
+        return success ? &smnt : NULL;
+      }
+
+      exprNode* dim::transformExprNode(exprNode &node) {
         callNode &call = (callNode&) node;
         if (!(call.value->type() & exprNodeType::variable)) {
           return &node;
@@ -87,8 +99,8 @@ namespace occa {
         return newValue;
       }
 
-      bool dimExprTransform::isValidDim(callNode &call,
-                                        attributeToken_t &dimAttr) {
+      bool dim::isValidDim(callNode &call,
+                           attributeToken_t &dimAttr) {
         const int dimCount = (int) dimAttr.args.size();
         const int argCount = (int) call.args.size();
         if (dimCount == argCount) {
@@ -107,8 +119,8 @@ namespace occa {
         return false;
       }
 
-      bool dimExprTransform::isValidDimOrder(attributeToken_t &dimAttr,
-                                             attributeToken_t &dimOrderAttr) {
+      bool dim::isValidDimOrder(attributeToken_t &dimAttr,
+                                attributeToken_t &dimOrderAttr) {
         // const int dimCount   = (int) dimAttr.args.size();
         // const int orderCount = (int) dimOrderAttr.args.size();
         // if (dimCount < orderCount) {
@@ -126,41 +138,23 @@ namespace occa {
         return true;
       }
 
-      dim::dim(parser_t &parser_) :
-        statementTransform(parser_),
-        exprTransform(parser_) {
-        validStatementTypes = (statementType::expression |
-                               statementType::declaration);
-      }
-
-      statement_t* dim::transformStatement(statement_t &smnt) {
-        bool success = true;
-        if (smnt.type() & statementType::expression) {
-          success = apply(smnt, ((expressionStatement&) smnt).root);
-        } else {
-          success = applyToDeclStatement((declarationStatement&) smnt);
-        }
-
-        return success ? &smnt : NULL;
-      }
-
       bool dim::applyToDeclStatement(declarationStatement &smnt) {
         const int declCount = (int) smnt.declarations.size();
         for (int i = 0; i < declCount; ++i) {
-          if (!apply(smnt, smnt.declarations[i].value)) {
+          if (!applyToExpr(smnt, smnt.declarations[i].value)) {
             return false;
           }
         }
         return true;
       }
 
-      bool dim::apply(statement_t &smnt,
-                      exprNode *&expr) {
+      bool dim::applyToExpr(statement_t &smnt,
+                            exprNode *&expr) {
         if (expr == NULL) {
           return true;
         }
-        exprTransform.scopeSmnt = &smnt;
-        expr = exprTransform.transform(*expr);
+        scopeSmnt = &smnt;
+        expr = exprTransform::apply(*expr);
         return expr;
       }
     }

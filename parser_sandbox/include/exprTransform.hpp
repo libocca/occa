@@ -35,7 +35,7 @@ namespace occa {
 
       virtual exprNode* transformExprNode(exprNode &node) = 0;
 
-      exprNode* transform(exprNode &node);
+      exprNode* apply(exprNode &node);
     };
   }
 }

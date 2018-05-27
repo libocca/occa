@@ -29,37 +29,9 @@ namespace occa {
   namespace lang {
     namespace transforms {
       tile::tile(parser_t &parser_) :
-        statementTransform(parser_) {
+        statementTransform(parser_),
+        variableReplacer(parser_) {
         validStatementTypes = statementType::for_;
-      }
-
-      statement_t* tile::transformStatement(statement_t &smnt) {
-        forStatement &forSmnt = (forStatement&) smnt;
-        attributeTokenMap::iterator it = forSmnt.attributes.find("tile");
-        if (it == forSmnt.attributes.end()) {
-          return &smnt;
-        }
-        // attributeToken_t &attr = it->second;
-
-        if (!isValidInit(*forSmnt.init)) {
-          return NULL;
-        }
-        variable_t &var = (((declarationStatement*) forSmnt.init)
-                           ->declarations[0]
-                           .variable());
-        if (!isValidCheck(var, *forSmnt.check) ||
-            !isValidUpdate(var, *forSmnt.update)) {
-          return NULL;
-        }
-
-        /*
-          (x = START; x < END; x += INC)
-
-          (xTile = START; xTile < END; xTile += (INC * TILE))
-          (x = xTile; x < (xTile + TILE); x += INC)
-        */
-
-        return &smnt;
       }
 
       bool tile::isValidInit(statement_t &smnt) {
@@ -96,7 +68,7 @@ namespace occa {
           return false;
         }
         // Check valid operator (<, <=, >=, >)
-        exprNode &expr = *(((expressionStatement&) smnt).root);
+        exprNode &expr = *(((expressionStatement&) smnt).expr);
         if (expr.type() != exprNodeType::binary) {
           smnt.printError("[@tile] Expected to compare ["
                           + var.name()
@@ -131,7 +103,7 @@ namespace occa {
           return false;
         }
         // Check valid operator (++, --, +=, -=)
-        exprNode &expr = *(((expressionStatement&) smnt).root);
+        exprNode &expr = *(((expressionStatement&) smnt).expr);
         udim_t eType = expr.type();
         if (!(eType & (exprNodeType::leftUnary  |
                        exprNodeType::rightUnary |
@@ -182,7 +154,7 @@ namespace occa {
           return false;
         }
         variable_t &var2 = ((variableNode*) opNode.value)->value;
-        return (var.name() == var2.name());
+        return (&var == &var2);
       }
 
       bool tile::sameVariable(variable_t &var,
@@ -191,7 +163,7 @@ namespace occa {
           return false;
         }
         variable_t &var2 = ((variableNode*) opNode.value)->value;
-        return (var.name() == var2.name());
+        return (&var == &var2);
       }
 
       bool tile::sameVariable(variable_t &var,
@@ -204,10 +176,100 @@ namespace occa {
           checkVar = &(((variableNode*) opNode.rightValue)->value);
         }
         // Check matching variables
-        if (!checkVar ||
-            (checkVar->name() != var.name())) {
-          return false;
+        return (checkVar
+                && (checkVar == &var));
+      }
+
+      statement_t* tile::transformStatement(statement_t &smnt) {
+        forStatement &forSmnt = (forStatement&) smnt;
+        attributeTokenMap::iterator it = forSmnt.attributes.find("tile");
+        if (it == forSmnt.attributes.end()) {
+          return &smnt;
         }
+
+        if (!isValidInit(*forSmnt.init)) {
+          return NULL;
+        }
+        variable_t &iter = (((declarationStatement*) forSmnt.init)
+                            ->declarations[0]
+                            .variable());
+        if (!isValidCheck(iter, *forSmnt.check) ||
+            !isValidUpdate(iter, *forSmnt.update)) {
+          return NULL;
+        }
+
+        // Create the block and inner-block for-loops
+        forStatement &blockForSmnt = *(new forStatement(forSmnt.up,
+                                                        forSmnt.source->clone()));
+        forStatement &innerForSmnt = *(new forStatement(&blockForSmnt,
+                                                        forSmnt.source->clone()));
+
+        // Rename the block interator
+        variable_t &blockIter = iter.clone();
+        blockIter.name() = "_occa_tiled_" + iter.name();
+
+        if (!setupNewForStatements(forSmnt,
+                                   iter, blockIter,
+                                   blockForSmnt, innerForSmnt)
+            || !setupBlockForStatement(forSmnt,
+                                       blockIter,
+                                       blockForSmnt)
+            || !setupInnerForStatement(forSmnt,
+                                       iter, blockIter,
+                                       innerForSmnt)) {
+          delete &blockForSmnt;
+          delete &innerForSmnt;
+          return NULL;
+        }
+        return &blockForSmnt;
+      }
+
+      bool tile::setupNewForStatements(forStatement &forSmnt,
+                                       variable_t &iter,
+                                       variable_t &blockIter,
+                                       forStatement &blockForSmnt,
+                                       forStatement &innerForSmnt) {
+        innerForSmnt.swap(forSmnt);
+        // Remove @tile to prevent recursive updates
+        innerForSmnt.attributes.erase("tile");
+
+        // Setup initial statements
+        blockForSmnt.setLoopStatements(forSmnt.init, forSmnt.check, NULL);
+        innerForSmnt.setLoopStatements(NULL, NULL, forSmnt.update);
+        forSmnt.setLoopStatements(NULL, NULL, NULL);
+
+        variableReplacer.set(iter, blockIter);
+
+        // Replace instances of x with _occa_tiled_x
+        return (variableReplacer.statementTransform::apply(*blockForSmnt.init)
+                && variableReplacer.statementTransform::apply(*blockForSmnt.check));
+      }
+
+      bool tile::setupBlockForStatement(forStatement &forSmnt,
+                                        variable_t &blockIter,
+                                        forStatement &blockForSmnt) {
+        /*
+          for (x = START; x < END; x += INC)
+          ->
+          for (xTile = START; xTile < END; NULL )
+          for (xTile = START; xTile < END; xTile += (INC * TILE))
+        */
+        blockForSmnt.update = new emptyStatement(&blockForSmnt, NULL);
+        return true;
+      }
+
+      bool tile::setupInnerForStatement(forStatement &forSmnt,
+                                        variable_t &iter,
+                                        variable_t &blockIter,
+                                        forStatement &innerForSmnt) {
+        /*
+          for (x = START; x < END; x += INC)
+          ->
+          for (NULL; NULL; x += INC)
+          for (x = xTile; x < (xTile + TILE); x += INC)
+        */
+        innerForSmnt.init  = new emptyStatement(&innerForSmnt, NULL);
+        innerForSmnt.check = new emptyStatement(&innerForSmnt, NULL);
         return true;
       }
     }

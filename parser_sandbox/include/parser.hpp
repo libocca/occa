@@ -249,7 +249,7 @@ namespace occa {
       template <class transformType>
       bool applyTransform() {
         transformType transform(*this);
-        return transform.transformBlockStatement(root);
+        return transform.statementTransform::apply(root);
       }
       //================================
     };

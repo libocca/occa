@@ -27,184 +27,214 @@
 
 namespace occa {
   namespace lang {
-    //---[ @dim ]-----------------------
-    dim::dim() {}
+    namespace attributes {
+      //---[ @dim ]-----------------------
+      dim::dim() {}
 
-    std::string dim::name() const {
-      return "dim";
-    }
-
-    bool dim::forVariable() const {
-      return true;
-    }
-
-    bool dim::forStatement(const int sType) const {
-      return (sType & statementType::declaration);
-    }
-
-    bool dim::isValid(const attributeToken_t &attr) const {
-      if (attr.kwargs.size()) {
-        attr.printError("@dim does not take kwargs");
-        return false;
+      std::string dim::name() const {
+        return "dim";
       }
-      if (!attr.args.size()) {
-        attr.printError("@dim expects at least one argument");
-        return false;
+
+      bool dim::forVariable() const {
+        return true;
       }
-      return true;
-    }
-    //==================================
 
-    //---[ @dimOrder ]------------------
-    dimOrder::dimOrder() {}
+      bool dim::forStatement(const int sType) const {
+        return (sType & statementType::declaration);
+      }
 
-    std::string dimOrder::name() const {
-      return "dimOrder";
-    }
-
-    bool dimOrder::forVariable() const {
-      return true;
-    }
-
-    bool dimOrder::forStatement(const int sType) const {
-      return (sType & statementType::declaration);
-    }
-
-    bool dimOrder::isValid(const attributeToken_t &attr) const {
-      return true;
-    }
-    //==================================
-
-    //---[ @tile ]----------------------
-    tile::tile() {}
-
-    std::string tile::name() const {
-      return "tile";
-    }
-
-    bool tile::forStatement(const int sType) const {
-      return (sType & statementType::for_);
-    }
-
-    bool tile::isValid(const attributeToken_t &attr) const {
-      attributeArgMap::const_iterator it = attr.kwargs.begin();
-      while (it != attr.kwargs.end()) {
-        if (it->first != "safe") {
-          it->second
-            .expr
-            ->startNode()
-            ->printError("[@tile] does not take this kwarg");
+      bool dim::isValid(const attributeToken_t &attr) const {
+        if (attr.kwargs.size()) {
+          attr.printError("@dim does not take kwargs");
           return false;
         }
-        exprNode *value = it->second.expr;
-        if (!value->canEvaluate()) {
-          it->second
-            .expr
-            ->startNode()
-            ->printError("[@tile] 'safe' argument must be true or false");
+        if (!attr.args.size()) {
+          attr.printError("@dim expects at least one argument");
           return false;
         }
-        ++it;
+        return true;
       }
-      if (!attr.args.size()) {
-        attr.printError("@tile expects at least one argument");
-        return false;
+      //==================================
+
+      //---[ @dimOrder ]------------------
+      dimOrder::dimOrder() {}
+
+      std::string dimOrder::name() const {
+        return "dimOrder";
       }
-      return true;
+
+      bool dimOrder::forVariable() const {
+        return true;
+      }
+
+      bool dimOrder::forStatement(const int sType) const {
+        return (sType & statementType::declaration);
+      }
+
+      bool dimOrder::isValid(const attributeToken_t &attr) const {
+        return true;
+      }
+      //==================================
+
+      //---[ @tile ]----------------------
+      tile::tile() {}
+
+      std::string tile::name() const {
+        return "tile";
+      }
+
+      bool tile::forStatement(const int sType) const {
+        return (sType & statementType::for_);
+      }
+
+      bool tile::isValid(const attributeToken_t &attr) const {
+        return (validArgs(attr)
+                && validKwargs(attr));
+      }
+
+      bool tile::validArgs(const attributeToken_t &attr) const {
+        const int argCount = (int) attr.args.size();
+        if (!argCount) {
+          attr.printError("@tile expects at least one argument");
+          return false;
+        }
+        if (argCount > 3) {
+          attr.printError("@tile takes 1-3 arguments, the last 2 being attributes"
+                          " for the block and in-block loops respectively");
+          return false;
+        }
+        if (attr.args[0].expr->type() == exprNodeType::empty) {
+          attr.printError("@tile expects a non-empty first argument");
+          return false;
+        }
+        for (int i = 1; i < argCount; ++i) {
+          if (attr.args[i].expr->type() != exprNodeType::empty) {
+            attr.args[i]
+              .expr
+              ->startNode()
+              ->printError("@tile can only take attributes for the 2nd and 3rd arguments");
+            return false;
+          }
+        }
+        return true;
+      }
+
+      bool tile::validKwargs(const attributeToken_t &attr) const {
+        attributeArgMap::const_iterator it = attr.kwargs.begin();
+        while (it != attr.kwargs.end()) {
+          if (it->first != "safe") {
+            it->second
+              .expr
+              ->startNode()
+              ->printError("[@tile] does not take this kwarg");
+            return false;
+          }
+          exprNode *value = it->second.expr;
+          if (!value->canEvaluate()) {
+            it->second
+              .expr
+              ->startNode()
+              ->printError("[@tile] 'safe' argument must be true or false");
+            return false;
+          }
+          ++it;
+        }
+        return true;
+      }
+      //==================================
+
+      //---[ @kernel ]------------------
+      kernel::kernel() {}
+
+      std::string kernel::name() const {
+        return "kernel";
+      }
+
+      bool kernel::forFunction() const {
+        return true;
+      }
+
+      bool kernel::forStatement(const int sType) const {
+        return (sType & (statementType::function |
+                         statementType::functionDecl));
+      }
+
+      bool kernel::isValid(const attributeToken_t &attr) const {
+        return true;
+      }
+      //==================================
+
+      //---[ @outer ]---------------------
+      outer::outer() {}
+
+      std::string outer::name() const {
+        return "outer";
+      }
+
+      bool outer::forStatement(const int sType) const {
+        return (sType & statementType::for_);
+      }
+
+      bool outer::isValid(const attributeToken_t &attr) const {
+        return true;
+      }
+      //==================================
+
+      //---[ @inner ]---------------------
+      inner::inner() {}
+
+      std::string inner::name() const {
+        return "inner";
+      }
+
+      bool inner::forStatement(const int sType) const {
+        return (sType & statementType::for_);
+      }
+
+      bool inner::isValid(const attributeToken_t &attr) const {
+        return true;
+      }
+      //==================================
+
+      //---[ @shared ]---------------------
+      shared::shared() {}
+
+      std::string shared::name() const {
+        return "shared";
+      }
+
+      bool shared::forVariable() const {
+        return true;
+      }
+
+      bool shared::forStatement(const int sType) const {
+        return (sType & statementType::declaration);
+      }
+
+      bool shared::isValid(const attributeToken_t &attr) const {
+        return true;
+      }
+      //==================================
+
+      //---[ @exclusive ]---------------------
+      exclusive::exclusive() {}
+
+      std::string exclusive::name() const {
+        return "exclusive";
+      }
+
+      bool exclusive::forVariable() const {
+        return true;
+      }
+
+      bool exclusive::forStatement(const int sType) const {
+        return (sType & statementType::declaration);
+      }
+
+      bool exclusive::isValid(const attributeToken_t &attr) const {
+        return true;
+      }
+      //==================================
     }
-    //==================================
-
-    //---[ @kernel ]------------------
-    kernel::kernel() {}
-
-    std::string kernel::name() const {
-      return "kernel";
-    }
-
-    bool kernel::forFunction() const {
-      return true;
-    }
-
-    bool kernel::forStatement(const int sType) const {
-      return (sType & (statementType::function |
-                       statementType::functionDecl));
-    }
-
-    bool kernel::isValid(const attributeToken_t &attr) const {
-      return true;
-    }
-    //==================================
-
-    //---[ @outer ]---------------------
-    outer::outer() {}
-
-    std::string outer::name() const {
-      return "outer";
-    }
-
-    bool outer::forStatement(const int sType) const {
-      return (sType & statementType::for_);
-    }
-
-    bool outer::isValid(const attributeToken_t &attr) const {
-      return true;
-    }
-    //==================================
-
-    //---[ @inner ]---------------------
-    inner::inner() {}
-
-    std::string inner::name() const {
-      return "inner";
-    }
-
-    bool inner::forStatement(const int sType) const {
-      return (sType & statementType::for_);
-    }
-
-    bool inner::isValid(const attributeToken_t &attr) const {
-      return true;
-    }
-    //==================================
-
-    //---[ @shared ]---------------------
-    shared::shared() {}
-
-    std::string shared::name() const {
-      return "shared";
-    }
-
-    bool shared::forVariable() const {
-      return true;
-    }
-
-    bool shared::forStatement(const int sType) const {
-      return (sType & statementType::declaration);
-    }
-
-    bool shared::isValid(const attributeToken_t &attr) const {
-      return true;
-    }
-    //==================================
-
-    //---[ @exclusive ]---------------------
-    exclusive::exclusive() {}
-
-    std::string exclusive::name() const {
-      return "exclusive";
-    }
-
-    bool exclusive::forVariable() const {
-      return true;
-    }
-
-    bool exclusive::forStatement(const int sType) const {
-      return (sType & statementType::declaration);
-    }
-
-    bool exclusive::isValid(const attributeToken_t &attr) const {
-      return true;
-    }
-    //==================================
   }
 }

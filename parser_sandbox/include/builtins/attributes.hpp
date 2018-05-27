@@ -26,115 +26,120 @@
 
 namespace occa {
   namespace lang {
-    //---[ @dim ]-----------------------
-    class dim : public attribute_t {
-    public:
-      dim();
+    namespace attributes {
+      //---[ @dim ]-----------------------
+      class dim : public attribute_t {
+      public:
+        dim();
 
-      virtual std::string name() const;
+        virtual std::string name() const;
 
-      virtual bool forVariable() const;
-      virtual bool forStatement(const int sType) const;
+        virtual bool forVariable() const;
+        virtual bool forStatement(const int sType) const;
 
-      virtual bool isValid(const attributeToken_t &attr) const;
-    };
-    //==================================
+        virtual bool isValid(const attributeToken_t &attr) const;
+      };
+      //==================================
 
-    //---[ @dimOrder ]------------------
-    class dimOrder : public attribute_t {
-    public:
-      dimOrder();
+      //---[ @dimOrder ]------------------
+      class dimOrder : public attribute_t {
+      public:
+        dimOrder();
 
-      virtual std::string name() const;
+        virtual std::string name() const;
 
-      virtual bool forVariable() const;
-      virtual bool forStatement(const int sType) const;
+        virtual bool forVariable() const;
+        virtual bool forStatement(const int sType) const;
 
-      virtual bool isValid(const attributeToken_t &attr) const;
-    };
-    //==================================
+        virtual bool isValid(const attributeToken_t &attr) const;
+      };
+      //==================================
 
-    //---[ @tile ]----------------------
-    class tile : public attribute_t {
-    public:
-      tile();
+      //---[ @tile ]----------------------
+      class tile : public attribute_t {
+      public:
+        tile();
 
-      virtual std::string name() const;
+        virtual std::string name() const;
 
-      virtual bool forStatement(const int sType) const;
+        virtual bool forStatement(const int sType) const;
 
-      virtual bool isValid(const attributeToken_t &attr) const;
-    };
-    //==================================
+        virtual bool isValid(const attributeToken_t &attr) const;
+        bool validArgs(const attributeToken_t &attr) const;
+        bool validKwargs(const attributeToken_t &attr) const;
+      };
+      //==================================
 
-    // OKL
-    //---[ @kernel ]-----------------------
-    class kernel : public attribute_t {
-    public:
-      kernel();
+      // OKL
+      //---[ @kernel ]-----------------------
+      class kernel : public attribute_t {
+      public:
+        kernel();
 
-      virtual std::string name() const;
+        virtual std::string name() const;
 
-      virtual bool forFunction() const;
-      virtual bool forStatement(const int sType) const;
+        virtual bool forFunction() const;
+        virtual bool forStatement(const int sType) const;
 
-      virtual bool isValid(const attributeToken_t &attr) const;
-    };
-    //==================================
+        virtual bool isValid(const attributeToken_t &attr) const;
+      };
+      //==================================
 
-    //---[ @outer ]---------------------
-    class outer : public attribute_t {
-    public:
-      outer();
+      //---[ @outer ]---------------------
+      class outer : public attribute_t {
+      public:
+        outer();
 
-      virtual std::string name() const;
+        virtual std::string name() const;
 
-      virtual bool forStatement(const int sType) const;
+        virtual bool forStatement(const int sType) const;
 
-      virtual bool isValid(const attributeToken_t &attr) const;
-    };
-    //==================================
+        virtual bool isValid(const attributeToken_t &attr) const;
+      };
+      //==================================
 
-    //---[ @inner ]---------------------
-    class inner : public attribute_t {
-    public:
-      inner();
+      //---[ @inner ]---------------------
+      class inner : public attribute_t {
+      public:
+        inner();
 
-      virtual std::string name() const;
+        virtual std::string name() const;
 
-      virtual bool forStatement(const int sType) const;
+        virtual bool forStatement(const int sType) const;
 
-      virtual bool isValid(const attributeToken_t &attr) const;
-    };
-    //==================================
+        virtual bool isValid(const attributeToken_t &attr) const;
+      };
+      //==================================
 
-    //---[ @shared ]--------------------
-    class shared : public attribute_t {
-    public:
-      shared();
+      //---[ @shared ]--------------------
+      class shared : public attribute_t {
+      public:
+        shared();
 
-      virtual std::string name() const;
+        virtual std::string name() const;
 
-      virtual bool forVariable() const;
-      virtual bool forStatement(const int sType) const;
+        virtual bool forVariable() const;
+        virtual bool forStatement(const int sType) const;
 
-      virtual bool isValid(const attributeToken_t &attr) const;
-    };
-    //==================================
+        virtual bool isValid(const attributeToken_t &attr) const;
+      };
+      //==================================
 
-    //---[ @exclusive ]-----------------
-    class exclusive : public attribute_t {
-    public:
-      exclusive();
+      //---[ @exclusive ]-----------------
+      class exclusive : public attribute_t {
+      public:
+        exclusive();
 
-      virtual std::string name() const;
+        virtual std::string name() const;
 
-      virtual bool forVariable() const;
-      virtual bool forStatement(const int sType) const;
+        virtual bool forVariable() const;
+        virtual bool forStatement(const int sType) const;
 
-      virtual bool isValid(const attributeToken_t &attr) const;
-    };
-    //==================================
+        virtual bool isValid(const attributeToken_t &attr) const;
+      };
+      //==================================
+    }
   }
 }
+
 #endif

@@ -168,6 +168,7 @@ namespace occa {
       int size() const;
       void add(statement_t &child);
       void set(statement_t &child);
+      void swap(blockStatement &other);
       void clear();
 
       virtual void print(printer &pout) const;

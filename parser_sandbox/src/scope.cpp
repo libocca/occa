@@ -35,6 +35,10 @@ namespace occa {
       freeKeywords(keywords);
     }
 
+    void scope_t::swap(scope_t &other) {
+      keywords.swap(other.keywords);
+    }
+
     int scope_t::size() {
       return (int) keywords.size();
     }

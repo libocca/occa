@@ -42,6 +42,8 @@ namespace occa {
 
       statementTransform(parser_t &parser_);
 
+      bool apply(statement_t &smnt);
+
       virtual statement_t* transformStatement(statement_t &smnt) = 0;
 
       statement_t* transform(statement_t &smnt);

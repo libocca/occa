@@ -23,17 +23,17 @@
 #ifndef OCCA_LANG_BUILTINS_TRANSFORMS_TILE_HEADER
 #define OCCA_LANG_BUILTINS_TRANSFORMS_TILE_HEADER
 
-#include "exprTransform.hpp"
 #include "statementTransform.hpp"
+#include "builtins/transforms/variableReplacer.hpp"
 
 namespace occa {
   namespace lang {
     namespace transforms {
       class tile : public statementTransform {
       public:
-        tile(parser_t &parser_);
+        variableReplacer_t variableReplacer;
 
-        virtual statement_t* transformStatement(statement_t &smnt);
+        tile(parser_t &parser_);
 
         bool isValidInit(statement_t &smnt);
 
@@ -51,6 +51,23 @@ namespace occa {
 
         bool sameVariable(variable_t &var,
                           binaryOpNode &opNode);
+
+        virtual statement_t* transformStatement(statement_t &smnt);
+
+        bool setupNewForStatements(forStatement &forSmnt,
+                                   variable_t &iter,
+                                   variable_t &blockIter,
+                                   forStatement &blockForSmnt,
+                                   forStatement &innerForSmnt);
+
+        bool setupBlockForStatement(forStatement &forSmnt,
+                                    variable_t &blockIter,
+                                    forStatement &blockForSmnt);
+
+        bool setupInnerForStatement(forStatement &forSmnt,
+                                    variable_t &iter,
+                                    variable_t &blockIter,
+                                    forStatement &innerForSmnt);
       };
     }
   }

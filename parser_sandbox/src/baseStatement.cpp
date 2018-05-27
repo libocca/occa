@@ -212,20 +212,22 @@ namespace occa {
         return;
       }
 
-      // Swap body contents
-      children = body->children;
-      scope    = body->scope;
+      swap(*body);
+      delete body;
+    }
 
-      // Update children's up statement
-      const int childCount = (int) children.size();
+    void blockStatement::swap(blockStatement &other) {
+      scope.swap(other.scope);
+      children.swap(other.children);
+
+      const int childCount      = (int) children.size();
       for (int i = 0; i < childCount; ++i) {
         children[i]->up = this;
       }
-
-      // Clear old body statement
-      body->children.clear();
-      body->scope.keywords.clear();
-      delete body;
+      const int otherChildCount = (int) other.children.size();
+      for (int i = 0; i < otherChildCount; ++i) {
+        other.children[i]->up = &other;
+      }
     }
 
     void blockStatement::clear() {

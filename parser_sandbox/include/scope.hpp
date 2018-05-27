@@ -36,6 +36,8 @@ namespace occa {
 
       void clear();
 
+      void swap(scope_t &other);
+
       int size();
 
       bool has(const std::string &name);

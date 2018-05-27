@@ -65,6 +65,10 @@ namespace occa {
       return source->value.size();
     }
 
+    std::string& variable_t::name() {
+      return source->value;
+    }
+
     const std::string& variable_t::name() const {
       return source->value;
     }
@@ -135,7 +139,7 @@ namespace occa {
     }
 
     void variableDeclaration::clear() {
-      delete variable_;
+      // Variable gets deleted in the scope
       delete value;
       variable_ = NULL;
       value = NULL;

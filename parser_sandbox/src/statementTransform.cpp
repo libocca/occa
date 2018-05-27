@@ -31,6 +31,11 @@ namespace occa {
       downToUp(true),
       validStatementTypes(statementType::none) {}
 
+    bool statementTransform::apply(statement_t &smnt) {
+      statement_t *smntPtr = &smnt;
+      return transformStatementInPlace(smntPtr);
+    }
+
     statement_t* statementTransform::transform(statement_t &smnt) {
       if (!(smnt.type() & validStatementTypes)) {
         return &smnt;
@@ -67,7 +72,9 @@ namespace occa {
       // Transform children
       const int count = (int) smnt.children.size();
       for (int i = 0; i < count; ++i) {
-        if (!transformStatementInPlace(smnt.children[i])) {
+        statement_t *&child = smnt.children[i];
+        if (child
+            && !transformStatementInPlace(child)) {
           return false;
         }
       }
@@ -75,6 +82,9 @@ namespace occa {
     }
 
     bool statementTransform::transformStatementInPlace(statement_t *&smnt) {
+      if (!smnt) {
+        return true;
+      }
       statement_t *newSmnt = NULL;
 
       // Treat blockStatements differently

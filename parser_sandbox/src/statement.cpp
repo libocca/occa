@@ -180,18 +180,18 @@ namespace occa {
 
     //---[ Expression ]-----------------
     expressionStatement::expressionStatement(blockStatement *up_,
-                                             exprNode &root_) :
+                                             exprNode &expr_) :
       statement_t(up_),
-      root(&root_),
+      expr(&expr_),
       hasSemicolon(true) {}
 
     expressionStatement::expressionStatement(const expressionStatement &other) :
       statement_t(NULL),
-      root(other.root->clone()),
+      expr(other.expr->clone()),
       hasSemicolon(other.hasSemicolon) {}
 
     expressionStatement::~expressionStatement() {
-      delete root;
+      delete expr;
     }
 
     statement_t& expressionStatement::clone_() const {
@@ -204,7 +204,7 @@ namespace occa {
 
     void expressionStatement::print(printer &pout) const {
       pout.printStartIndentation();
-      pout << (*root);
+      pout << (*expr);
       if (hasSemicolon) {
         pout << ';';
         pout.printEndNewline();
@@ -212,11 +212,11 @@ namespace occa {
     }
 
     void expressionStatement::printWarning(const std::string &message) const {
-      root->startNode()->printWarning(message);
+      expr->startNode()->printWarning(message);
     }
 
     void expressionStatement::printError(const std::string &message) const {
-      root->startNode()->printError(message);
+      expr->startNode()->printError(message);
     }
 
     declarationStatement::declarationStatement(blockStatement *up_) :
@@ -645,6 +645,15 @@ namespace occa {
       init   = init_;
       check  = check_;
       update = update_;
+      if (init) {
+        init->up = this;
+      }
+      if (check) {
+        check->up = this;
+      }
+      if (update) {
+        update->up = this;
+      }
     }
 
     statement_t& forStatement::clone_() const {

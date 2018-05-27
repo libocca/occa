@@ -95,9 +95,9 @@ namespace occa {
       statementLoaders[statementType::goto_]       = &parser_t::loadGotoStatement;
       statementLoaders[statementType::gotoLabel]   = &parser_t::loadGotoLabelStatement;
 
-      addAttribute<dim>();
-      addAttribute<dimOrder>();
-      addAttribute<tile>();
+      addAttribute<attributes::dim>();
+      addAttribute<attributes::dimOrder>();
+      addAttribute<attributes::tile>();
     }
 
     parser_t::~parser_t() {

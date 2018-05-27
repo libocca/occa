@@ -27,14 +27,14 @@ namespace occa {
     exprTransform::exprTransform() :
       validExprNodeTypes(0) {}
 
-    exprNode* exprTransform::transform(exprNode &node) {
+    exprNode* exprTransform::apply(exprNode &node) {
       // Apply transform to children
       exprNodeRefVector children;
       node.setChildren(children);
       const int childCount = (int) children.size();
       for (int i = 0; i < childCount; ++i) {
         exprNode *&child = *(children[i]);
-        exprNode *newChild = transform(*child);
+        exprNode *newChild = apply(*child);
         if (!newChild) {
           return NULL;
         }
