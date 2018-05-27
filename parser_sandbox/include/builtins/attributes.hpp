@@ -65,17 +65,6 @@ namespace occa {
 
       virtual bool isValid(const attributeToken_t &attr) const;
     };
-
-    class safeTile : public attribute_t {
-    public:
-      safeTile();
-
-      virtual std::string name() const;
-
-      virtual bool forStatement(const int sType) const;
-
-      virtual bool isValid(const attributeToken_t &attr) const;
-    };
     //==================================
 
     // OKL

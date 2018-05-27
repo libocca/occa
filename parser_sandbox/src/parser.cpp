@@ -98,7 +98,6 @@ namespace occa {
       addAttribute<dim>();
       addAttribute<dimOrder>();
       addAttribute<tile>();
-      addAttribute<safeTile>();
     }
 
     parser_t::~parser_t() {

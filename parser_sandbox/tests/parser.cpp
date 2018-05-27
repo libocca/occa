@@ -1252,6 +1252,8 @@ void testAttributeErrors() {
   parseBadSource("@dim(x=1) int x;");
 
   parseBadSource("@tile(16);");
+  parseBadSource("@tile(16, x=1);");
+  parseBadSource("@tile(16, safe='o');");
   parseBadSource("for (i = 0;;; @tile(16)) {}");
   parseBadSource("for (float i = 0;;; @tile(16)) {}");
   parseBadSource("for (int i = 0, j = 0;;; @tile(16)) {}");
@@ -1263,7 +1265,6 @@ void testAttributeErrors() {
   parseBadSource("for (int i = 0; i < 2; ++j; @tile(16)) {}");
 
   parseBadSource("@dimOrder(1, 0);");
-  parseBadSource("@safeTile(16);");
 }
 //======================================
 

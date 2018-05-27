@@ -87,30 +87,27 @@ namespace occa {
     }
 
     bool tile::isValid(const attributeToken_t &attr) const {
-      if (attr.kwargs.size()) {
-        attr.printError("@tile does not take kwargs");
-        return false;
+      exprNodeMap::const_iterator it = attr.kwargs.begin();
+      while (it != attr.kwargs.end()) {
+        if (it->first != "safe") {
+          it->second
+            ->startNode()
+            ->printError("[@tile] does not take this kwarg");
+          return false;
+        }
+        exprNode *value = it->second;
+        if (!value->canEvaluate()) {
+          it->second
+            ->startNode()
+            ->printError("[@tile] 'safe' argument must be true or false");
+          return false;
+        }
+        ++it;
       }
       if (!attr.args.size()) {
         attr.printError("@tile expects at least one argument");
         return false;
       }
-      return true;
-    }
-    //==================================
-
-    //---[ @safeTile ]------------------
-    safeTile::safeTile() {}
-
-    std::string safeTile::name() const {
-      return "safeTile";
-    }
-
-    bool safeTile::forStatement(const int sType) const {
-      return (sType & statementType::for_);
-    }
-
-    bool safeTile::isValid(const attributeToken_t &attr) const {
       return true;
     }
     //==================================
