@@ -506,11 +506,20 @@ namespace occa {
 
     //---[ Type Loaders ]---------------
     variable_t parser_t::loadVariable() {
+      attributeTokenMap attrs;
+      loadAttributes(attrs);
+
       vartype_t vartype = preloadType();
-      if (isLoadingFunctionPointer()) {
-        return loadFunctionPointer(vartype);
+      variable_t var = (!isLoadingFunctionPointer()
+                        ? loadVariable(vartype)
+                        : loadFunctionPointer(vartype));
+
+      if (var.vartype.type) {
+        var.attributes = var.vartype.type->attributes;
       }
-      return loadVariable(vartype);
+      var.attributes.insert(attrs.begin(), attrs.end());
+
+      return var;
     }
 
     variableDeclaration parser_t::loadVariableDeclaration(const vartype_t &baseType) {
@@ -553,7 +562,8 @@ namespace occa {
       attributeTokenMap &varAttributes = decl.var.attributes;
       // Copy statement attributes to each variable
       // Variable attributes should override statement attributes
-      varAttributes = attributes;
+      varAttributes.insert(attributes.begin(),
+                           attributes.end());
       loadAttributes(varAttributes);
       if (!success) {
         return;
@@ -1126,7 +1136,6 @@ namespace occa {
         success = false;
         return NULL;
       }
-
       context.set(end + 1);
 
       return new expressionStatement(up, *expr);

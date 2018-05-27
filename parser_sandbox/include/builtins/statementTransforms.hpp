@@ -48,6 +48,9 @@ namespace occa {
         eT(parser_t &parser_);
 
         virtual exprNode* transformExprNode(exprNode &node);
+
+        bool isValid(callNode &call,
+                     attributeToken_t &attr);
       };
 
     public:

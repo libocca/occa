@@ -58,7 +58,8 @@ namespace occa {
     type_t::type_t(identifierToken &source_) :
       source((identifierToken*) source_.clone()) {}
 
-    type_t::type_t(const type_t &other) {
+    type_t::type_t(const type_t &other) :
+      attributes(other.attributes) {
       if (other.source) {
         source = (identifierToken*) other.source->clone();
       } else {
@@ -68,6 +69,10 @@ namespace occa {
 
     type_t::~type_t() {
       delete source;
+    }
+
+    void type_t::setSource(identifierToken &source_) {
+      source = (identifierToken*) source_.clone();
     }
 
     const std::string& type_t::name() const {
@@ -527,12 +532,16 @@ namespace occa {
       type_t(source_),
       baseType(baseType_) {}
 
+    typedef_t::typedef_t(const typedef_t &other) :
+      type_t(other),
+      baseType(other.baseType) {}
+
     int typedef_t::type() const {
       return typeType::typedef_;
     }
 
     type_t& typedef_t::clone() const {
-      return *(new typedef_t(baseType, *source));
+      return *(new typedef_t(*this));
     }
 
     bool typedef_t::equals(const type_t &other) const {

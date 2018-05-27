@@ -52,14 +52,43 @@ namespace occa {
       }
 
       variable_t &var = ((variableNode*) call.value)->value;
+      std::cout << "1. var = " << var.name() << '\n';
       attributeTokenMap::iterator it = var.attributes.find("dim");
       if (it == var.attributes.end()) {
         return &node;
       }
+      attributeToken_t &attr = it->second;
 
-      std::cout << "var = " << var.name() << '\n';
+      if (!isValid(call, attr)) {
+        return NULL;
+      }
 
-      return &node;
+      std::cout << "2. var = " << var.name() << '\n';
+
+      // TODO: Fix
+      return new subscriptNode(call.token,
+                               *(call.value),
+                               *(call.args[0]));
+    }
+
+    bool dimArrayTransform::eT::isValid(callNode &call,
+                                        attributeToken_t &attr) {
+      const int dimCount = (int) attr.args.size();
+      const int argCount = call.args.size();
+      if (dimCount == argCount) {
+        return true;
+      }
+
+      if (dimCount < argCount) {
+        call.args[dimCount]->token->printError("Too many dimensions, expected "
+                                               + occa::toString(dimCount)
+                                               + " argument(s)");
+      } else {
+        call.value->token->printError("Missing dimensions, expected "
+                                      + occa::toString(dimCount)
+                                      + " argument(s)");
+      }
+      return false;
     }
 
     dimArrayTransform::dimArrayTransform(parser_t &parser_) :

@@ -107,6 +107,8 @@ namespace occa {
         return *ptr;
       }
 
+      void setSource(identifierToken &source_);
+
       const std::string& name() const;
 
       bool isNamed() const;
@@ -262,6 +264,8 @@ namespace occa {
 
       typedef_t(const vartype_t &baseType_,
                 identifierToken &source_);
+
+      typedef_t(const typedef_t &other);
 
       virtual int type() const;
       virtual type_t& clone() const;

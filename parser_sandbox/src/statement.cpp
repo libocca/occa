@@ -194,15 +194,24 @@ namespace occa {
       const int count = (int) declarations.size();
       for (int i = 0; i < count; ++i) {
         variable_t &var = declarations[i].var;
+        // Variable
         if (!var.vartype.has(typedef_)) {
           success &= up->scope.add(var);
-        } else if (var.source) {
-          typedef_t type(var.vartype, *var.source);
-          success &= up->scope.add(type);
-        } else {
-          typedef_t type(var.vartype);
-          success &= up->scope.add(type);
+          continue;
         }
+        // Typedef
+        typedef_t type(var.vartype);
+        if (var.source) {
+          type.setSource(*var.source);
+        }
+
+        if (var.vartype.type) {
+          type.attributes = var.vartype.type->attributes;
+        }
+        type.attributes.insert(var.attributes.begin(),
+                               var.attributes.end());
+
+        success &= up->scope.add(type);
       }
       return success;
     }
