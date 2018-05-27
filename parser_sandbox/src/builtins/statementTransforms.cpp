@@ -52,7 +52,6 @@ namespace occa {
       }
 
       variable_t &var = ((variableNode*) call.value)->value;
-      std::cout << "1. var = " << var.name() << '\n';
       attributeTokenMap::iterator it = var.attributes.find("dim");
       if (it == var.attributes.end()) {
         return &node;
@@ -63,18 +62,46 @@ namespace occa {
         return NULL;
       }
 
-      std::cout << "2. var = " << var.name() << '\n';
+      // TODO: Delete token propertly
+      const int dimCount = (int) call.args.size();
+      exprNode *index = call.args[dimCount - 1];
+      for (int i = (dimCount - 2); i >= 0; --i) {
+        binaryOpNode mult(new operatorToken(fileOrigin(),
+                                            op::mult),
+                          op::mult,
+                          *(attr.args[i]),
+                          *index);
+        // Don't delete the initial call.args[...]
+        if (i < (dimCount - 2)) {
+          delete index;
+        }
 
-      // TODO: Fix
-      return new subscriptNode(call.token,
-                               *(call.value),
-                               *(call.args[0]));
+        parenthesesNode paren(new operatorToken(fileOrigin(),
+                                                op::parenthesesStart),
+                              mult);
+
+        index = new binaryOpNode(new operatorToken(fileOrigin(),
+                                                   op::add),
+                                 op::add,
+                                 *(call.args[i]),
+                                 paren);
+      }
+      exprNode *newValue = new subscriptNode(call.token,
+                                             *(call.value),
+                                             *index);
+
+      // Don't delete the initial call.args[...]
+      if (dimCount > 1) {
+        delete index;
+      }
+
+      return newValue;
     }
 
     bool dimArrayTransform::eT::isValid(callNode &call,
                                         attributeToken_t &attr) {
       const int dimCount = (int) attr.args.size();
-      const int argCount = call.args.size();
+      const int argCount = (int) call.args.size();
       if (dimCount == argCount) {
         return true;
       }
