@@ -28,15 +28,6 @@
 
 namespace occa {
   namespace lang {
-    //---[ @tile ]----------------------
-    class tileLoopTransform : public statementTransform {
-    public:
-      tileLoopTransform(parser_t &parser_);
-
-      virtual statement_t* transformStatement(statement_t &smnt);
-    };
-    //==================================
-
     //---[ @dim ]-----------------------
     class dimArrayTransform : public statementTransform {
     private:
@@ -63,6 +54,32 @@ namespace occa {
       bool applyToDeclStatement(declarationStatement &smnt);
       bool apply(statement_t &smnt,
                  exprNode *&expr);
+    };
+    //==================================
+
+    //---[ @tile ]----------------------
+    class tileLoopTransform : public statementTransform {
+    public:
+      tileLoopTransform(parser_t &parser_);
+
+      virtual statement_t* transformStatement(statement_t &smnt);
+
+      bool isValidInit(statement_t &smnt);
+
+      bool isValidCheck(variable_t &var,
+                        statement_t &smnt);
+
+      bool isValidUpdate(variable_t &var,
+                         statement_t &smnt);
+
+      bool sameVariable(variable_t &var,
+                        leftUnaryOpNode &opNode);
+
+      bool sameVariable(variable_t &var,
+                        rightUnaryOpNode &opNode);
+
+      bool sameVariable(variable_t &var,
+                        binaryOpNode &opNode);
     };
     //==================================
   }

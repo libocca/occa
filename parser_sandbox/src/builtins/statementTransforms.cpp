@@ -22,22 +22,11 @@
 #include "exprNode.hpp"
 #include "statement.hpp"
 #include "variable.hpp"
+#include "builtins/types.hpp"
 #include "builtins/statementTransforms.hpp"
 
 namespace occa {
   namespace lang {
-    //---[ @tile ]----------------------
-    tileLoopTransform::tileLoopTransform(parser_t &parser_) :
-      statementTransform(parser_) {
-      downToUp = false;
-      validStatementTypes = statementType::for_;
-    }
-
-    statement_t* tileLoopTransform::transformStatement(statement_t &smnt) {
-      return &smnt;
-    }
-    //==================================
-
     //---[ @dim ]-----------------------
     dimArrayTransform::eT::eT(parser_t &parser_) :
       parser(parser_),
@@ -154,6 +143,184 @@ namespace occa {
       eTransform.scopeSmnt = &smnt;
       expr = eTransform.transform(*expr);
       return expr;
+    }
+    //==================================
+
+    //---[ @tile ]----------------------
+    tileLoopTransform::tileLoopTransform(parser_t &parser_) :
+      statementTransform(parser_) {
+      validStatementTypes = statementType::for_;
+    }
+
+    statement_t* tileLoopTransform::transformStatement(statement_t &smnt) {
+      forStatement &forSmnt = (forStatement&) smnt;
+      attributeTokenMap::iterator it = forSmnt.attributes.find("tile");
+      if (it == forSmnt.attributes.end()) {
+        return &smnt;
+      }
+      // attributeToken_t &attr = it->second;
+
+      if (!isValidInit(*forSmnt.init)) {
+        return NULL;
+      }
+      variable_t &var = (((declarationStatement*) forSmnt.init)
+                         ->declarations[0]
+                         .var);
+      if (!isValidCheck(var, *forSmnt.check) ||
+          !isValidUpdate(var, *forSmnt.update)) {
+        return NULL;
+      }
+
+      return &smnt;
+    }
+
+    bool tileLoopTransform::isValidInit(statement_t &smnt) {
+      if (smnt.type() != statementType::declaration) {
+        smnt.printError("[@tile] Expected a declaration statement");
+        return false;
+      }
+      // Can only have one declaration
+      declarationStatement &declSmnt = (declarationStatement&) smnt;
+      if (declSmnt.declarations.size() > 1) {
+        declSmnt.declarations[1].printError("[@tile] Can only transform 1 iterator variable");
+        return false;
+      }
+      // Valid types: {char, short, int, long}
+      variable_t &var = declSmnt.declarations[0].var;
+      const type_t *type = var.vartype.type;
+      if (!type ||
+          ((*type != char_)  &&
+           (*type != short_) &&
+           (*type != int_))) {
+        var.printError("[@tile] Iterator variable needs to be of type"
+                       " [char, short, int, long]");
+        return false;
+      }
+      return true;
+    }
+
+    bool tileLoopTransform::isValidCheck(variable_t &var,
+                                         statement_t &smnt) {
+      if (smnt.type() != statementType::expression) {
+        smnt.printError("[@tile] Expected comparing ["
+                        + var.name()
+                        + "] with some bound");
+        return false;
+      }
+      // Check valid operator (<, <=, >=, >)
+      exprNode &expr = *(((expressionStatement&) smnt).root);
+      if (expr.type() != exprNodeType::binary) {
+        smnt.printError("[@tile] Expected to compare ["
+                        + var.name()
+                        + "] with one of these operators [<, <=, >=, >]");
+        return false;
+      }
+      binaryOpNode &opNode = (binaryOpNode&) expr;
+      if (!(opNode.opType() & (operatorType::lessThan      |
+                               operatorType::lessThanEq    |
+                               operatorType::greaterThanEq |
+                               operatorType::greaterThan))) {
+        smnt.printError("[@tile] Expected to compare ["
+                        + var.name()
+                        + "] with one of these operators [<, <=, >=, >]");
+        return false;
+      }
+      if (!sameVariable(var, opNode)) {
+        smnt.printError("[@tile] Expected to compare ["
+                        + var.name()
+                        + "] with one of these operators [<, <=, >=, >]");
+        return false;
+      }
+      return true;
+    }
+
+    bool tileLoopTransform::isValidUpdate(variable_t &var,
+                                          statement_t &smnt) {
+      if (smnt.type() != statementType::expression) {
+        smnt.printError("[@tile] Expected to update ["
+                        + var.name()
+                        + "]");
+        return false;
+      }
+      // Check valid operator (++, --, +=, -=)
+      exprNode &expr = *(((expressionStatement&) smnt).root);
+      udim_t eType = expr.type();
+      if (!(eType & (exprNodeType::leftUnary  |
+                     exprNodeType::rightUnary |
+                     exprNodeType::binary))) {
+        smnt.printError("[@tile] Expected update ["
+                        + var.name()
+                        + "] with one of these operators [++, --, +=, -=]");
+        return false;
+      }
+      bool validOp  = false;
+      bool validVar = false;
+      if (eType == exprNodeType::leftUnary) {
+        leftUnaryOpNode &opNode = (leftUnaryOpNode&) expr;
+        validOp = (opNode.opType() & (operatorType::leftIncrement |
+                                      operatorType::leftDecrement));
+        validVar = sameVariable(var, opNode);
+      }
+      else if (eType == exprNodeType::rightUnary) {
+        rightUnaryOpNode &opNode = (rightUnaryOpNode&) expr;
+        validOp = (opNode.opType() & (operatorType::rightIncrement |
+                                      operatorType::rightDecrement));
+        validVar = sameVariable(var, opNode);
+      }
+      else { // eType == exprNodeType::binary
+        binaryOpNode &opNode = (binaryOpNode&) expr;
+        validOp = (opNode.opType() & (operatorType::addEq |
+                                      operatorType::subEq));
+        validVar = sameVariable(var, opNode);
+      }
+      if (!validOp) {
+        expr.token->printError("[@tile] Expected update ["
+                               + var.name()
+                               + "] with one of these operators [++, --, +=, -=]");
+        return false;
+      }
+      if (!validVar) {
+        smnt.printError("[@tile] Expected update ["
+                        + var.name()
+                        + "] with one of these operators [++, --, +=, -=]");
+        return false;
+      }
+      return true;
+    }
+
+    bool tileLoopTransform::sameVariable(variable_t &var,
+                                         leftUnaryOpNode &opNode) {
+      if (opNode.value->type() != exprNodeType::variable) {
+        return false;
+      }
+      variable_t &var2 = ((variableNode*) opNode.value)->value;
+      return (var.name() == var2.name());
+    }
+
+    bool tileLoopTransform::sameVariable(variable_t &var,
+                                         rightUnaryOpNode &opNode) {
+      if (opNode.value->type() != exprNodeType::variable) {
+        return false;
+      }
+      variable_t &var2 = ((variableNode*) opNode.value)->value;
+      return (var.name() == var2.name());
+    }
+
+    bool tileLoopTransform::sameVariable(variable_t &var,
+                                         binaryOpNode &opNode) {
+      variable_t *checkVar = NULL;
+      if (opNode.leftValue->type() == exprNodeType::variable) {
+        checkVar = &(((variableNode*) opNode.leftValue)->value);
+      }
+      if (opNode.rightValue->type() == exprNodeType::variable) {
+        checkVar = &(((variableNode*) opNode.rightValue)->value);
+      }
+      // Check matching variables
+      if (!checkVar ||
+          (checkVar->name() != var.name())) {
+        return false;
+      }
+      return true;
     }
     //==================================
   }

@@ -101,6 +101,14 @@ namespace occa {
       return false;
     }
 
+    void type_t::printWarning(const std::string &message) const {
+      if (!source) {
+        occa::printWarning(std::cerr, "[No Token] " + message);
+      } else {
+        source->printWarning(message);
+      }
+    }
+
     void type_t::printError(const std::string &message) const {
       if (!source) {
         occa::printError(std::cerr, "[No Token] " + message);
@@ -505,6 +513,22 @@ namespace occa {
                                           const std::string &varName) const {
       printDeclaration(pout, varName, false);
     }
+
+    void vartype_t::printWarning(const std::string &message) const {
+      if (qualifiers.size()) {
+        qualifiers.qualifiers[0].printWarning(message);
+      } else if (type) {
+        type->printWarning(message);
+      }
+    }
+
+    void vartype_t::printError(const std::string &message) const {
+      if (qualifiers.size()) {
+        qualifiers.qualifiers[0].printError(message);
+      } else if (type) {
+        type->printError(message);
+      }
+    }
     //==================================
 
     //---[ Types ]----------------------
@@ -647,9 +671,10 @@ namespace occa {
       pout << ')';
     }
 
+    // TODO: Fix body source (!NULL)
     structure_t::structure_t(const std::string &name_) :
       type_t(name_),
-      body(NULL) {}
+      body(NULL, NULL) {}
 
     class_t::class_t() :
       structure_t("") {}

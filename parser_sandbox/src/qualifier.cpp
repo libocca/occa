@@ -120,6 +120,13 @@ namespace occa {
       origin(origin_),
       qualifier(&qualifier_) {}
 
+    void qualifierWithSource::printWarning(const std::string &message) const {
+      origin.printWarning(message);
+    }
+    void qualifierWithSource::printError(const std::string &message) const {
+      origin.printError(message);
+    }
+
     qualifiers_t::qualifiers_t() {}
 
     qualifiers_t::~qualifiers_t() {}
@@ -128,7 +135,7 @@ namespace occa {
       qualifiers.clear();
     }
 
-    const qualifier_t* qualifiers_t::operator [] (const int index) {
+    const qualifier_t* qualifiers_t::operator [] (const int index) const {
       if ((index < 0) ||
           (index >= (int) qualifiers.size())) {
         return NULL;

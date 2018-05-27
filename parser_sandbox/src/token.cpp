@@ -118,6 +118,13 @@ namespace occa {
               : tokenType::none);
     }
 
+    token_t* token_t::clone(token_t *token) {
+      if (token) {
+        return token->clone();
+      }
+      return token;
+    }
+
     opType_t token_t::getOpType() {
       if (type() != tokenType::op) {
         return operatorType::none;

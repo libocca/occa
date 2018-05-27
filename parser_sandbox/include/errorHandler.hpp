@@ -26,7 +26,7 @@ namespace occa {
   namespace lang {
     class errorHandler {
     public:
-      int warnings, errors;
+      mutable int warnings, errors;
 
       errorHandler();
 
@@ -36,7 +36,7 @@ namespace occa {
       void printNote(std::ostream &out,
                      const std::string &message);
 
-      inline void printNote(const std::string &message) {
+      inline void printNote(const std::string &message){
         printNote(std::cerr, message);
       }
 

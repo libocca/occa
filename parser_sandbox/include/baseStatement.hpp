@@ -117,6 +117,9 @@ namespace occa {
       std::string toString() const;
       operator std::string() const;
       void print() const;
+
+      virtual void printWarning(const std::string &message) const = 0;
+      virtual void printError(const std::string &message) const = 0;
     };
 
     printer& operator << (printer &pout,
@@ -125,22 +128,32 @@ namespace occa {
     //---[ Empty ]----------------------
     class emptyStatement : public statement_t {
     public:
-      emptyStatement(blockStatement *up_);
+      token_t *source;
+
+      emptyStatement(blockStatement *up_,
+                     token_t *source_);
+
+      ~emptyStatement();
 
       virtual statement_t& clone_() const;
       virtual int type() const;
 
       virtual void print(printer &pout) const;
+
+      virtual void printWarning(const std::string &message) const;
+      virtual void printError(const std::string &message) const;
     };
     //==================================
 
     //---[ Block ]------------------------
     class blockStatement : public statement_t {
     public:
+      token_t *source;
       statementPtrVector children;
       scope_t scope;
 
-      blockStatement(blockStatement *up_);
+      blockStatement(blockStatement *up_,
+                     token_t *source_);
       blockStatement(const blockStatement &other);
       virtual ~blockStatement();
 
@@ -159,6 +172,9 @@ namespace occa {
 
       virtual void print(printer &pout) const;
       void printChildren(printer &pout) const;
+
+      virtual void printWarning(const std::string &message) const;
+      virtual void printError(const std::string &message) const;
     };
     //====================================
   }

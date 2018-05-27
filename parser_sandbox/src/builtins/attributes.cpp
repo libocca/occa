@@ -48,7 +48,7 @@ namespace occa {
         return false;
       }
       if (!attr.args.size()) {
-        attr.printError("@dim expects at least one dimension argument");
+        attr.printError("@dim expects at least one argument");
         return false;
       }
       return true;
@@ -87,6 +87,14 @@ namespace occa {
     }
 
     bool tile::isValid(const attributeToken_t &attr) const {
+      if (attr.kwargs.size()) {
+        attr.printError("@tile does not take kwargs");
+        return false;
+      }
+      if (!attr.args.size()) {
+        attr.printError("@tile expects at least one argument");
+        return false;
+      }
       return true;
     }
     //==================================

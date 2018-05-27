@@ -51,6 +51,14 @@ namespace occa {
     void pragmaStatement::print(printer &pout) const {
       pout << "#pragma " << token.value << '\n';
     }
+
+    void pragmaStatement::printWarning(const std::string &message) const {
+      token.printWarning(message);
+    }
+
+    void pragmaStatement::printError(const std::string &message) const {
+      token.printError(message);
+    }
     //==================================
 
     //---[ Type ]-----------------------
@@ -73,9 +81,17 @@ namespace occa {
       pout << ";\n";
     }
 
+    void functionStatement::printWarning(const std::string &message) const {
+      function.printWarning(message);
+    }
+
+    void functionStatement::printError(const std::string &message) const {
+      function.printError(message);
+    }
+
     functionDeclStatement::functionDeclStatement(blockStatement *up_,
                                                  const function_t &function_) :
-      blockStatement(up_),
+      blockStatement(up_, function_.source),
       function(function_) {}
 
     functionDeclStatement::functionDeclStatement(
@@ -108,12 +124,18 @@ namespace occa {
     }
 
     classAccessStatement::classAccessStatement(blockStatement *up_,
+                                               token_t *source_,
                                                const int access_) :
       statement_t(up_),
+      source(token_t::clone(source_)),
       access(access_) {}
 
+    classAccessStatement::~classAccessStatement() {
+      delete source;
+    }
+
     statement_t& classAccessStatement::clone_() const {
-      return *(new classAccessStatement(NULL, access));
+      return *(new classAccessStatement(NULL, source, access));
     }
 
     int classAccessStatement::type() const {
@@ -136,21 +158,33 @@ namespace occa {
 
       pout.addIndentation();
     }
+
+    void classAccessStatement::printWarning(const std::string &message) const {
+      source->printWarning(message);
+    }
+
+    void classAccessStatement::printError(const std::string &message) const {
+      source->printError(message);
+    }
     //==================================
 
     //---[ Expression ]-----------------
     expressionStatement::expressionStatement(blockStatement *up_,
+                                             token_t *source_,
                                              exprNode &root_) :
       statement_t(up_),
+      source(token_t::clone(source_)),
       root(&root_),
       hasSemicolon(true) {}
 
     expressionStatement::expressionStatement(const expressionStatement &other) :
       statement_t(NULL),
+      source(token_t::clone(other.source)),
       root(other.root->clone()),
       hasSemicolon(other.hasSemicolon) {}
 
     expressionStatement::~expressionStatement() {
+      delete source;
       delete root;
     }
 
@@ -169,6 +203,14 @@ namespace occa {
         pout << ';';
         pout.printEndNewline();
       }
+    }
+
+    void expressionStatement::printWarning(const std::string &message) const {
+      source->printWarning(message);
+    }
+
+    void expressionStatement::printError(const std::string &message) const {
+      source->printError(message);
     }
 
     declarationStatement::declarationStatement(blockStatement *up_) :
@@ -230,6 +272,14 @@ namespace occa {
       pout << ';';
       pout.printEndNewline();
     }
+
+    void declarationStatement::printWarning(const std::string &message) const {
+      declarations[0].printWarning(message);
+    }
+
+    void declarationStatement::printError(const std::string &message) const {
+      declarations[0].printError(message);
+    }
     //==================================
 
     //---[ Goto ]-----------------------
@@ -269,6 +319,14 @@ namespace occa {
       pout << "goto " << label() << ';';
     }
 
+    void gotoStatement::printWarning(const std::string &message) const {
+      labelToken.printWarning(message);
+    }
+
+    void gotoStatement::printError(const std::string &message) const {
+      labelToken.printError(message);
+    }
+
     gotoLabelStatement::gotoLabelStatement(blockStatement *up_,
                                            identifierToken &labelToken_) :
       statement_t(up_),
@@ -304,12 +362,20 @@ namespace occa {
       pout.printIndentation();
       pout << label() << ":\n";
     }
+
+    void gotoLabelStatement::printWarning(const std::string &message) const {
+      labelToken.printWarning(message);
+    }
+
+    void gotoLabelStatement::printError(const std::string &message) const {
+      labelToken.printError(message);
+    }
     //==================================
 
     //---[ Namespace ]------------------
     namespaceStatement::namespaceStatement(blockStatement *up_,
                                            identifierToken &nameToken_) :
-      blockStatement(up_),
+      blockStatement(up_, &nameToken_),
       nameToken(nameToken_) {}
 
     namespaceStatement::namespaceStatement(const namespaceStatement &other) :
@@ -347,8 +413,9 @@ namespace occa {
     //==================================
 
     //---[ If ]-------------------------
-    ifStatement::ifStatement(blockStatement *up_) :
-      blockStatement(up_),
+    ifStatement::ifStatement(blockStatement *up_,
+                             token_t *source_) :
+      blockStatement(up_, source_),
       condition(NULL),
       elseSmnt(NULL) {}
 
@@ -415,8 +482,9 @@ namespace occa {
       }
     }
 
-    elifStatement::elifStatement(blockStatement *up_) :
-      blockStatement(up_),
+    elifStatement::elifStatement(blockStatement *up_,
+                                 token_t *source_) :
+      blockStatement(up_, source_),
       condition(NULL) {}
 
     elifStatement::elifStatement(const elifStatement &other) :
@@ -450,8 +518,9 @@ namespace occa {
       pout.popInlined();
     }
 
-    elseStatement::elseStatement(blockStatement *up_) :
-      blockStatement(up_) {}
+    elseStatement::elseStatement(blockStatement *up_,
+                                 token_t *source_) :
+      blockStatement(up_, source_) {}
 
     elseStatement::elseStatement(const elseStatement &other) :
       blockStatement(other) {}
@@ -474,8 +543,9 @@ namespace occa {
 
     //---[ While ]----------------------
     whileStatement::whileStatement(blockStatement *up_,
+                                   token_t *source_,
                                    const bool isDoWhile_) :
-      blockStatement(up_),
+      blockStatement(up_, source_),
       condition(NULL),
       isDoWhile(isDoWhile_) {}
 
@@ -526,8 +596,9 @@ namespace occa {
     //==================================
 
     //---[ For ]------------------------
-    forStatement::forStatement(blockStatement *up_) :
-      blockStatement(up_),
+    forStatement::forStatement(blockStatement *up_,
+                               token_t *source_) :
+      blockStatement(up_, source_),
       init(NULL),
       check(NULL),
       update(NULL) {}
@@ -574,8 +645,9 @@ namespace occa {
     //==================================
 
     //---[ Switch ]---------------------
-    switchStatement::switchStatement(blockStatement *up_) :
-      blockStatement(up_),
+    switchStatement::switchStatement(blockStatement *up_,
+                                     token_t *source_) :
+      blockStatement(up_, source_),
       condition(NULL) {}
 
     switchStatement::switchStatement(const switchStatement& other) :
@@ -612,8 +684,10 @@ namespace occa {
 
     //---[ Case ]-----------------------
     caseStatement::caseStatement(blockStatement *up_,
+                                 token_t *source_,
                                  exprNode &value_) :
       statement_t(up_),
+      source(token_t::clone(source_)),
       value(&value_) {}
 
     caseStatement::~caseStatement() {
@@ -621,7 +695,7 @@ namespace occa {
     }
 
     statement_t& caseStatement::clone_() const {
-      return *(new caseStatement(NULL, *(value->clone())));
+      return *(new caseStatement(NULL, source, *(value->clone())));
     }
 
     int caseStatement::type() const {
@@ -641,11 +715,25 @@ namespace occa {
       pout.addIndentation();
     }
 
-    defaultStatement::defaultStatement(blockStatement *up_) :
-      statement_t (up_) {}
+    void caseStatement::printWarning(const std::string &message) const {
+      source->printWarning(message);
+    }
+
+    void caseStatement::printError(const std::string &message) const {
+      source->printError(message);
+    }
+
+    defaultStatement::defaultStatement(blockStatement *up_,
+                                       token_t *source_) :
+      statement_t(up_),
+      source(token_t::clone(source_)) {}
+
+    defaultStatement::~defaultStatement() {
+      delete source;
+    }
 
     statement_t& defaultStatement::clone_() const {
-      return *(new defaultStatement(NULL));
+      return *(new defaultStatement(NULL, source));
     }
 
     int defaultStatement::type() const {
@@ -660,14 +748,28 @@ namespace occa {
 
       pout.addIndentation();
     }
+
+    void defaultStatement::printWarning(const std::string &message) const {
+      source->printWarning(message);
+    }
+
+    void defaultStatement::printError(const std::string &message) const {
+      source->printError(message);
+    }
     //==================================
 
     //---[ Exit ]-----------------------
-    continueStatement::continueStatement(blockStatement *up_) :
-      statement_t(up_) {}
+    continueStatement::continueStatement(blockStatement *up_,
+                                         token_t *source_) :
+      statement_t(up_),
+      source(token_t::clone(source_)) {}
+
+    continueStatement::~continueStatement() {
+      delete source;
+    }
 
     statement_t& continueStatement::clone_() const {
-      return *(new continueStatement(NULL));
+      return *(new continueStatement(NULL, source));
     }
 
     int continueStatement::type() const {
@@ -679,11 +781,25 @@ namespace occa {
       pout << "continue;\n";
     }
 
-    breakStatement::breakStatement(blockStatement *up_) :
-      statement_t(up_) {}
+    void continueStatement::printWarning(const std::string &message) const {
+      source->printWarning(message);
+    }
+
+    void continueStatement::printError(const std::string &message) const {
+      source->printError(message);
+    }
+
+    breakStatement::breakStatement(blockStatement *up_,
+                                   token_t *source_) :
+      statement_t(up_),
+      source(token_t::clone(source_)) {}
+
+    breakStatement::~breakStatement() {
+      delete source;
+    }
 
     statement_t& breakStatement::clone_() const {
-      return *(new breakStatement(NULL));
+      return *(new breakStatement(NULL, source));
     }
 
     int breakStatement::type() const {
@@ -695,13 +811,24 @@ namespace occa {
       pout << "break;\n";
     }
 
+    void breakStatement::printWarning(const std::string &message) const {
+      source->printWarning(message);
+    }
+
+    void breakStatement::printError(const std::string &message) const {
+      source->printError(message);
+    }
+
     returnStatement::returnStatement(blockStatement *up_,
+                                     token_t *source_,
                                      exprNode *value_) :
       statement_t(up_),
+      source(token_t::clone(source_)),
       value(value_) {}
 
     returnStatement::returnStatement(const returnStatement &other) :
       statement_t(NULL),
+      source(token_t::clone(other.source)),
       value(NULL) {
       if (other.value) {
         value = other.value->clone();
@@ -709,6 +836,7 @@ namespace occa {
     }
 
     returnStatement::~returnStatement() {
+      delete source;
       delete value;
     }
 
@@ -730,6 +858,14 @@ namespace occa {
         pout.popInlined();
       }
       pout << ";\n";
+    }
+
+    void returnStatement::printWarning(const std::string &message) const {
+      source->printWarning(message);
+    }
+
+    void returnStatement::printError(const std::string &message) const {
+      source->printError(message);
     }
     //==================================
   }

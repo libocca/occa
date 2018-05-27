@@ -124,6 +124,7 @@ namespace occa {
       virtual int type() const = 0;
 
       virtual token_t* clone() = 0;
+      static token_t* clone(token_t *token);
 
       opType_t getOpType();
 

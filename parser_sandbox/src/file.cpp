@@ -257,6 +257,20 @@ namespace occa {
         }
       }
     }
+
+    void fileOrigin::printWarning(const std::string &message) const {
+      fileOrigin &this_ = const_cast<fileOrigin&>(*this);
+      this_.preprint(std::cerr);
+      occa::printWarning(std::cerr, message);
+      this_.postprint(std::cerr);
+    }
+
+    void fileOrigin::printError(const std::string &message) const {
+      fileOrigin &this_ = const_cast<fileOrigin&>(*this);
+      this_.preprint(std::cerr);
+      occa::printError(std::cerr, message);
+      this_.postprint(std::cerr);
+    }
     //==================================
   }
 }

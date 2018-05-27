@@ -122,6 +122,9 @@ namespace occa {
       inline void print(const bool root = true) const {
         print(std::cerr, root);
       }
+
+      void printWarning(const std::string &message) const;
+      void printError(const std::string &message) const;
     };
   }
 }

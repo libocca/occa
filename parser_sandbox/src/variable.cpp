@@ -87,6 +87,10 @@ namespace occa {
       vartype.printExtraDeclaration(pout, name());
     }
 
+    void variable_t::printWarning(const std::string &message) const {
+      source->printWarning(message);
+    }
+
     void variable_t::printError(const std::string &message) const {
       source->printError(message);
     }
@@ -140,6 +144,14 @@ namespace occa {
       if (value) {
         pout << " = " << *value;
       }
+    }
+
+    void variableDeclaration::printWarning(const std::string &message) const {
+      var.printWarning(message);
+    }
+
+    void variableDeclaration::printError(const std::string &message) const {
+      var.printError(message);
     }
     //==================================
   }

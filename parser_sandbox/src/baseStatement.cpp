@@ -20,6 +20,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  */
 #include "baseStatement.hpp"
+#include "token.hpp"
 #include "type.hpp"
 
 namespace occa {
@@ -109,11 +110,18 @@ namespace occa {
     }
 
     //---[ Empty ]------------------------
-    emptyStatement::emptyStatement(blockStatement *up_) :
-      statement_t(up_) {}
+    emptyStatement::emptyStatement(blockStatement *up_,
+                                   token_t *source_) :
+      statement_t(up_),
+      source(token_t::clone(source_)) {}
+
+    emptyStatement::~emptyStatement() {
+      delete source;
+    }
 
     statement_t& emptyStatement::clone_() const {
-      return *(new emptyStatement(NULL));
+      return *(new emptyStatement(NULL,
+                                  source));
     }
 
     int emptyStatement::type() const {
@@ -123,14 +131,25 @@ namespace occa {
     void emptyStatement::print(printer &pout) const {
       pout << ';';
     }
+
+    void emptyStatement::printWarning(const std::string &message) const {
+      source->printWarning(message);
+    }
+
+    void emptyStatement::printError(const std::string &message) const {
+      source->printError(message);
+    }
     //====================================
 
     //---[ Block ]------------------------
-    blockStatement::blockStatement(blockStatement *up_) :
-      statement_t(up_) {}
+    blockStatement::blockStatement(blockStatement *up_,
+                                   token_t *source_) :
+      statement_t(up_),
+      source(token_t::clone(source_)) {}
 
     blockStatement::blockStatement(const blockStatement &other) :
-      statement_t(NULL) {
+      statement_t(NULL),
+      source(token_t::clone(other.source)) {
       attributes = other.attributes;
       const int childCount = (int) other.children.size();
       for (int i = 0; i < childCount; ++i) {
@@ -140,6 +159,7 @@ namespace occa {
 
     blockStatement::~blockStatement() {
       clear();
+      delete source;
     }
 
     statement_t& blockStatement::clone_() const {
@@ -251,6 +271,12 @@ namespace occa {
       for (int i = 0; i < count; ++i) {
         pout << *(children[i]);
       }
+    }
+
+    void blockStatement::printWarning(const std::string &message) const {
+    }
+
+    void blockStatement::printError(const std::string &message) const {
     }
     //====================================
   }

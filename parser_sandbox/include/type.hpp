@@ -119,6 +119,7 @@ namespace occa {
 
       virtual void printDeclaration(printer &pout) const = 0;
 
+      void printWarning(const std::string &message) const;
       void printError(const std::string &message) const;
     };
 
@@ -242,6 +243,9 @@ namespace occa {
 
       void printExtraDeclaration(printer &pout,
                                  const std::string &varName) const;
+
+      void printWarning(const std::string &message) const;
+      void printError(const std::string &message) const;
     };
     //==================================
 

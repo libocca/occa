@@ -97,6 +97,9 @@ namespace occa {
 
       qualifierWithSource(const fileOrigin &origin_,
                           const qualifier_t &qualifier_);
+
+      void printWarning(const std::string &message) const;
+      void printError(const std::string &message) const;
     };
 
     typedef std::vector<qualifierWithSource> qualifierVector_t;
@@ -114,7 +117,7 @@ namespace occa {
         return (int) qualifiers.size();
       }
 
-      const qualifier_t* operator [] (const int index);
+      const qualifier_t* operator [] (const int index) const;
 
       int indexOf(const qualifier_t &qualifier) const;
       bool has(const qualifier_t &qualifier) const;

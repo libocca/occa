@@ -1251,8 +1251,18 @@ void testAttributeErrors() {
   parseBadSource("@dim() int x;");
   parseBadSource("@dim(x=1) int x;");
 
-  parseBadSource("@dimOrder(1, 0);");
   parseBadSource("@tile(16);");
+  parseBadSource("for (i = 0;;; @tile(16)) {}");
+  parseBadSource("for (float i = 0;;; @tile(16)) {}");
+  parseBadSource("for (int i = 0, j = 0;;; @tile(16)) {}");
+  parseBadSource("for (int i = 0;;; @tile(16)) {}");
+  parseBadSource("for (int i = 0; i + 2;; @tile(16)) {}");
+  parseBadSource("for (int i = 0; j < 2;; @tile(16)) {}");
+  parseBadSource("for (int i = 0; i < 2;; @tile(16)) {}");
+  parseBadSource("for (int i = 0; i < 2; i *= 2; @tile(16)) {}");
+  parseBadSource("for (int i = 0; i < 2; ++j; @tile(16)) {}");
+
+  parseBadSource("@dimOrder(1, 0);");
   parseBadSource("@safeTile(16);");
 }
 //======================================

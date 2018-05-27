@@ -53,6 +53,7 @@ namespace occa {
       void printDeclaration(printer &pout) const;
       void printExtraDeclaration(printer &pout) const;
 
+      void printWarning(const std::string &message) const;
       void printError(const std::string &message) const;
     };
 
@@ -81,6 +82,9 @@ namespace occa {
 
       void print(printer &pout) const;
       void printAsExtra(printer &pout) const;
+
+      void printWarning(const std::string &message) const;
+      void printError(const std::string &message) const;
     };
     //==================================
   }
