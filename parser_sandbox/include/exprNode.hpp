@@ -128,11 +128,17 @@ namespace occa {
       virtual bool canEvaluate() const;
       virtual primitive evaluate() const;
 
+      virtual exprNode* startNode();
+      virtual exprNode* endNode();
+
       virtual void setChildren(exprNodeRefVector &children) = 0;
 
       virtual void print(printer &pout) const = 0;
 
       std::string toString() const;
+
+      void printWarning(const std::string &message) const;
+      void printError(const std::string &message) const;
 
       void debugPrint() const;
 
@@ -351,6 +357,8 @@ namespace occa {
       virtual bool canEvaluate() const;
       virtual primitive evaluate() const;
 
+      virtual exprNode* endNode();
+
       virtual void setChildren(exprNodeRefVector &children);
 
       virtual void print(printer &pout) const;
@@ -381,6 +389,8 @@ namespace occa {
 
       virtual bool canEvaluate() const;
       virtual primitive evaluate() const;
+
+      virtual exprNode* startNode();
 
       virtual void setChildren(exprNodeRefVector &children);
 
@@ -415,6 +425,9 @@ namespace occa {
       virtual bool canEvaluate() const;
       virtual primitive evaluate() const;
 
+      virtual exprNode* startNode();
+      virtual exprNode* endNode();
+
       virtual void setChildren(exprNodeRefVector &children);
 
       virtual void print(printer &pout) const;
@@ -446,6 +459,9 @@ namespace occa {
       virtual bool canEvaluate() const;
       virtual primitive evaluate() const;
 
+      virtual exprNode* startNode();
+      virtual exprNode* endNode();
+
       virtual void setChildren(exprNodeRefVector &children);
 
       virtual void print(printer &pout) const;
@@ -470,6 +486,9 @@ namespace occa {
       virtual udim_t type() const;
 
       virtual exprNode* clone() const;
+
+      virtual exprNode* startNode();
+      virtual exprNode* endNode();
 
       virtual void setChildren(exprNodeRefVector &children);
 
@@ -498,6 +517,9 @@ namespace occa {
       virtual udim_t type() const;
 
       virtual exprNode* clone() const;
+
+      virtual exprNode* startNode();
+      virtual exprNode* endNode();
 
       virtual void setChildren(exprNodeRefVector &children);
 
@@ -529,6 +551,8 @@ namespace occa {
 
       virtual exprNode* clone() const;
 
+      virtual exprNode* endNode();
+
       virtual void setChildren(exprNodeRefVector &children);
 
       virtual void print(printer &pout) const;
@@ -553,6 +577,8 @@ namespace occa {
 
       virtual exprNode* clone() const;
 
+      virtual exprNode* endNode();
+
       virtual void setChildren(exprNodeRefVector &children);
 
       virtual void print(printer &pout) const;
@@ -574,6 +600,8 @@ namespace occa {
       virtual udim_t type() const;
 
       virtual exprNode* clone() const;
+
+      virtual exprNode* endNode();
 
       virtual void setChildren(exprNodeRefVector &children);
 
@@ -598,6 +626,8 @@ namespace occa {
       virtual udim_t type() const;
 
       virtual exprNode* clone() const;
+
+      virtual exprNode* endNode();
 
       virtual bool canEvaluate() const;
       virtual primitive evaluate() const;
@@ -626,6 +656,9 @@ namespace occa {
 
       virtual exprNode* clone() const;
 
+      virtual exprNode* startNode();
+      virtual exprNode* endNode();
+
       virtual void setChildren(exprNodeRefVector &children);
 
       virtual void print(printer &pout) const;
@@ -649,6 +682,9 @@ namespace occa {
       virtual udim_t type() const;
 
       virtual exprNode* clone() const;
+
+      virtual exprNode* startNode();
+      virtual exprNode* endNode();
 
       virtual void setChildren(exprNodeRefVector &children);
 
@@ -674,6 +710,8 @@ namespace occa {
 
       virtual exprNode* clone() const;
 
+      virtual exprNode* endNode();
+
       virtual void setChildren(exprNodeRefVector &children);
 
       virtual void print(printer &pout) const;
@@ -697,6 +735,8 @@ namespace occa {
       virtual udim_t type() const;
 
       virtual exprNode* clone() const;
+
+      virtual exprNode* endNode();
 
       virtual void setChildren(exprNodeRefVector &children);
 
@@ -722,6 +762,8 @@ namespace occa {
 
       virtual exprNode* clone() const;
 
+      virtual exprNode* endNode();
+
       virtual void setChildren(exprNodeRefVector &children);
 
       virtual void print(printer &pout) const;
@@ -745,6 +787,8 @@ namespace occa {
       virtual udim_t type() const;
 
       virtual exprNode* clone() const;
+
+      virtual exprNode* endNode();
 
       virtual void setChildren(exprNodeRefVector &children);
 
@@ -772,6 +816,9 @@ namespace occa {
 
       virtual exprNode* clone() const;
 
+      virtual exprNode* startNode();
+      virtual exprNode* endNode();
+
       virtual bool canEvaluate() const;
       virtual primitive evaluate() const;
 
@@ -796,6 +843,9 @@ namespace occa {
       virtual udim_t type() const;
 
       virtual exprNode* clone() const;
+
+      virtual exprNode* startNode();
+      virtual exprNode* endNode();
 
       virtual bool canEvaluate() const;
       virtual primitive evaluate() const;
@@ -826,6 +876,9 @@ namespace occa {
 
       virtual exprNode* clone() const;
 
+      virtual exprNode* startNode();
+      virtual exprNode* endNode();
+
       virtual void setChildren(exprNodeRefVector &children);
 
       virtual void print(printer &pout) const;
@@ -852,6 +905,9 @@ namespace occa {
       virtual udim_t type() const;
 
       virtual exprNode* clone() const;
+
+      virtual exprNode* startNode();
+      virtual exprNode* endNode();
 
       virtual void setChildren(exprNodeRefVector &children);
 

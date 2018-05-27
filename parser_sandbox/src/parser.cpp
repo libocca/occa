@@ -1135,12 +1135,9 @@ namespace occa {
         success = false;
         return NULL;
       }
-      // Incase the token is an identifier and replaced,
-      //   read the token after making the expression
-      token_t *source = context[0];
       context.set(end + 1);
 
-      return new expressionStatement(up, source, *expr);
+      return new expressionStatement(up, *expr);
     }
 
     statement_t* parser_t::loadDeclarationStatement() {

@@ -170,21 +170,17 @@ namespace occa {
 
     //---[ Expression ]-----------------
     expressionStatement::expressionStatement(blockStatement *up_,
-                                             token_t *source_,
                                              exprNode &root_) :
       statement_t(up_),
-      source(token_t::clone(source_)),
       root(&root_),
       hasSemicolon(true) {}
 
     expressionStatement::expressionStatement(const expressionStatement &other) :
       statement_t(NULL),
-      source(token_t::clone(other.source)),
       root(other.root->clone()),
       hasSemicolon(other.hasSemicolon) {}
 
     expressionStatement::~expressionStatement() {
-      delete source;
       delete root;
     }
 
@@ -206,11 +202,11 @@ namespace occa {
     }
 
     void expressionStatement::printWarning(const std::string &message) const {
-      source->printWarning(message);
+      root->startNode()->printWarning(message);
     }
 
     void expressionStatement::printError(const std::string &message) const {
-      source->printError(message);
+      root->startNode()->printError(message);
     }
 
     declarationStatement::declarationStatement(blockStatement *up_) :

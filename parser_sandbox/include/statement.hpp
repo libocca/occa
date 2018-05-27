@@ -116,12 +116,10 @@ namespace occa {
     //---[ Expression ]-----------------
     class expressionStatement : public statement_t {
     public:
-      token_t *source;
       exprNode *root;
       bool hasSemicolon;
 
       expressionStatement(blockStatement *up_,
-                          token_t *source_,
                           exprNode &root_);
       expressionStatement(const expressionStatement &other);
       ~expressionStatement();

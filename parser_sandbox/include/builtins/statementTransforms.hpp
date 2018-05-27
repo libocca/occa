@@ -40,8 +40,11 @@ namespace occa {
 
         virtual exprNode* transformExprNode(exprNode &node);
 
-        bool isValid(callNode &call,
-                     attributeToken_t &attr);
+        bool isValidDim(callNode &call,
+                        attributeToken_t &dimAttr);
+
+        bool isValidDimOrder(attributeToken_t &dimAttr,
+                             attributeToken_t &dimOrderAttr);
       };
 
     public:

@@ -45,9 +45,9 @@ namespace occa {
       if (it == var.attributes.end()) {
         return &node;
       }
-      attributeToken_t &attr = it->second;
+      attributeToken_t &dimAttr = it->second;
 
-      if (!isValid(call, attr)) {
+      if (!isValidDim(call, dimAttr)) {
         return NULL;
       }
 
@@ -58,7 +58,7 @@ namespace occa {
         binaryOpNode mult(new operatorToken(fileOrigin(),
                                             op::mult),
                           op::mult,
-                          *(attr.args[i]),
+                          *(dimAttr.args[i]),
                           *index);
         // Don't delete the initial call.args[...]
         if (i < (dimCount - 2)) {
@@ -87,9 +87,9 @@ namespace occa {
       return newValue;
     }
 
-    bool dimArrayTransform::eT::isValid(callNode &call,
-                                        attributeToken_t &attr) {
-      const int dimCount = (int) attr.args.size();
+    bool dimArrayTransform::eT::isValidDim(callNode &call,
+                                           attributeToken_t &dimAttr) {
+      const int dimCount = (int) dimAttr.args.size();
       const int argCount = (int) call.args.size();
       if (dimCount == argCount) {
         return true;
@@ -105,6 +105,25 @@ namespace occa {
                                       + " argument(s)");
       }
       return false;
+    }
+
+    bool dimArrayTransform::eT::isValidDimOrder(attributeToken_t &dimAttr,
+                                                attributeToken_t &dimOrderAttr) {
+      // const int dimCount   = (int) dimAttr.args.size();
+      // const int orderCount = (int) dimOrderAttr.args.size();
+      // if (dimCount < orderCount) {
+      //   call.args[dimCount]->token->printError("Too many dimensions, expected "
+      //                                          + occa::toString(dimCount)
+      //                                          + " argument(s)");
+      //   return false;
+      // }
+      // if (dimCount > orderCount) {
+      //   call.value->token->printError("Missing dimensions, expected "
+      //                                 + occa::toString(dimCount)
+      //                                 + " argument(s)");
+      //   return false;
+      // }
+      return true;
     }
 
     dimArrayTransform::dimArrayTransform(parser_t &parser_) :
@@ -170,6 +189,13 @@ namespace occa {
           !isValidUpdate(var, *forSmnt.update)) {
         return NULL;
       }
+
+      /*
+        (x = START; x < END; x += INC)
+
+        (xTile = START; xTile < END; xTile += (INC * TILE))
+        (x = xTile; x < (xTile + TILE); x += INC)
+       */
 
       return &smnt;
     }
@@ -274,15 +300,15 @@ namespace occa {
         validVar = sameVariable(var, opNode);
       }
       if (!validOp) {
-        expr.token->printError("[@tile] Expected update ["
-                               + var.name()
-                               + "] with one of these operators [++, --, +=, -=]");
+        expr.printError("[@tile] Expected update ["
+                        + var.name()
+                        + "] with one of these operators [++, --, +=, -=]");
         return false;
       }
       if (!validVar) {
-        smnt.printError("[@tile] Expected update ["
-                        + var.name()
-                        + "] with one of these operators [++, --, +=, -=]");
+        expr.startNode()->printError("[@tile] Expected update ["
+                                     + var.name()
+                                     + "] with one of these operators [++, --, +=, -=]");
         return false;
       }
       return true;
