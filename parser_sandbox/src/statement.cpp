@@ -180,10 +180,11 @@ namespace occa {
 
     //---[ Expression ]-----------------
     expressionStatement::expressionStatement(blockStatement *up_,
-                                             exprNode &expr_) :
+                                             exprNode &expr_,
+                                             const bool hasSemicolon_) :
       statement_t(up_),
       expr(&expr_),
-      hasSemicolon(true) {}
+      hasSemicolon(hasSemicolon_) {}
 
     expressionStatement::expressionStatement(const expressionStatement &other) :
       statement_t(NULL),

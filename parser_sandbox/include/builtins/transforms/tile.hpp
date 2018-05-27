@@ -54,19 +54,22 @@ namespace occa {
 
         virtual statement_t* transformStatement(statement_t &smnt);
 
-        bool setupNewForStatements(forStatement &forSmnt,
+        bool setupNewForStatements(attributeToken_t &attr,
+                                   forStatement &forSmnt,
                                    variable_t &iter,
                                    variable_t &blockIter,
                                    forStatement &blockForSmnt,
                                    forStatement &innerForSmnt);
 
-        bool setupBlockForStatement(forStatement &forSmnt,
+        bool setupBlockForStatement(exprNode &tileSize,
                                     variable_t &blockIter,
-                                    forStatement &blockForSmnt);
+                                    forStatement &blockForSmnt,
+                                    forStatement &innerForSmnt);
 
-        bool setupInnerForStatement(forStatement &forSmnt,
+        bool setupInnerForStatement(exprNode &tileSize,
                                     variable_t &iter,
                                     variable_t &blockIter,
+                                    forStatement &blockForSmnt,
                                     forStatement &innerForSmnt);
       };
     }

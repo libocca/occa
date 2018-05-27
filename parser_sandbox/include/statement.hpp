@@ -121,7 +121,8 @@ namespace occa {
       bool hasSemicolon;
 
       expressionStatement(blockStatement *up_,
-                          exprNode &expr_);
+                          exprNode &expr_,
+                          const bool hasSemicolon_ = true);
       expressionStatement(const expressionStatement &other);
       ~expressionStatement();
 

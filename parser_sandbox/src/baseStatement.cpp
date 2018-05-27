@@ -206,14 +206,14 @@ namespace occa {
     }
 
     void blockStatement::set(statement_t &child) {
-      blockStatement *body = dynamic_cast<blockStatement*>(&child);
-      if (!body) {
+      if (child.type() != statementType::block) {
         add(child);
         return;
       }
 
-      swap(*body);
-      delete body;
+      blockStatement &body = (blockStatement&) child;
+      swap(body);
+      delete &body;
     }
 
     void blockStatement::swap(blockStatement &other) {

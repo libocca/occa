@@ -336,9 +336,18 @@ namespace occa {
     //==================================
 
     //---[ Operators ]------------------
-    class leftUnaryOpNode : public exprNode {
+    class exprOpNode : public exprNode {
     public:
-      const unaryOperator_t &op;
+      const operator_t &op;
+
+      exprOpNode(token_t *token_,
+                 const operator_t &op_);
+
+      opType_t opType() const;
+    };
+
+    class leftUnaryOpNode : public exprOpNode {
+    public:
       exprNode *value;
 
       leftUnaryOpNode(token_t *token_,
@@ -350,7 +359,6 @@ namespace occa {
       virtual ~leftUnaryOpNode();
 
       virtual udim_t type() const;
-      opType_t opType() const;
 
       virtual exprNode* clone() const;
 
@@ -366,9 +374,8 @@ namespace occa {
       virtual void debugPrint(const std::string &prefix) const;
     };
 
-    class rightUnaryOpNode : public exprNode {
+    class rightUnaryOpNode : public exprOpNode {
     public:
-      const unaryOperator_t &op;
       exprNode *value;
 
       rightUnaryOpNode(const unaryOperator_t &op_,
@@ -383,7 +390,6 @@ namespace occa {
       virtual ~rightUnaryOpNode();
 
       virtual udim_t type() const;
-      opType_t opType() const;
 
       virtual exprNode* clone() const;
 
@@ -399,9 +405,8 @@ namespace occa {
       virtual void debugPrint(const std::string &prefix) const;
     };
 
-    class binaryOpNode : public exprNode {
+    class binaryOpNode : public exprOpNode {
     public:
-      const binaryOperator_t &op;
       exprNode *leftValue, *rightValue;
 
       binaryOpNode(const binaryOperator_t &op_,
@@ -418,7 +423,6 @@ namespace occa {
       virtual ~binaryOpNode();
 
       virtual udim_t type() const;
-      opType_t opType() const;
 
       virtual exprNode* clone() const;
 

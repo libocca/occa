@@ -437,16 +437,23 @@ namespace occa {
     //==================================
 
     //---[ Operators ]------------------
+    exprOpNode::exprOpNode(token_t *token_,
+                           const operator_t &op_) :
+      exprNode(token_),
+      op(op_) {}
+
+    opType_t exprOpNode::opType() const {
+      return op.opType;
+    }
+
     leftUnaryOpNode::leftUnaryOpNode(token_t *token_,
                                      const unaryOperator_t &op_,
                                      exprNode &value_) :
-      exprNode(token_),
-      op(op_),
+      exprOpNode(token_, op_),
       value(value_.clone()) {}
 
     leftUnaryOpNode::leftUnaryOpNode(const leftUnaryOpNode &node) :
-      exprNode(node.token),
-      op(node.op),
+      exprOpNode(node.token, node.op),
       value(node.value->clone()) {}
 
     leftUnaryOpNode::~leftUnaryOpNode() {
@@ -457,12 +464,10 @@ namespace occa {
       return exprNodeType::leftUnary;
     }
 
-    opType_t leftUnaryOpNode::opType() const {
-      return op.opType;
-    }
-
     exprNode* leftUnaryOpNode::clone() const {
-      return new leftUnaryOpNode(token, op, *value);
+      return new leftUnaryOpNode(token,
+                                 (const unaryOperator_t&) op,
+                                 *value);
     }
 
     bool leftUnaryOpNode::canEvaluate() const {
@@ -475,7 +480,7 @@ namespace occa {
 
     primitive leftUnaryOpNode::evaluate() const {
       primitive pValue = value->evaluate();
-      return op(pValue);
+      return ((unaryOperator_t&) op)(pValue);
     }
 
     exprNode* leftUnaryOpNode::endNode() {
@@ -502,13 +507,11 @@ namespace occa {
     rightUnaryOpNode::rightUnaryOpNode(token_t *token_,
                                        const unaryOperator_t &op_,
                                        exprNode &value_) :
-      exprNode(token_),
-      op(op_),
+      exprOpNode(token_, op_),
       value(value_.clone()) {}
 
     rightUnaryOpNode::rightUnaryOpNode(const rightUnaryOpNode &node) :
-      exprNode(node.token),
-      op(node.op),
+      exprOpNode(node.token, node.op),
       value(node.value->clone()) {}
 
     rightUnaryOpNode::~rightUnaryOpNode() {
@@ -519,12 +522,10 @@ namespace occa {
       return exprNodeType::rightUnary;
     }
 
-    opType_t rightUnaryOpNode::opType() const {
-      return op.opType;
-    }
-
     exprNode* rightUnaryOpNode::clone() const {
-      return new rightUnaryOpNode(token, op, *value);
+      return new rightUnaryOpNode(token,
+                                  (const unaryOperator_t&) op,
+                                  *value);
     }
 
     bool rightUnaryOpNode::canEvaluate() const {
@@ -533,7 +534,7 @@ namespace occa {
 
     primitive rightUnaryOpNode::evaluate() const {
       primitive pValue = value->evaluate();
-      return op(pValue);
+      return ((unaryOperator_t&) op)(pValue);
     }
 
     exprNode* rightUnaryOpNode::startNode() {
@@ -561,14 +562,12 @@ namespace occa {
                                const binaryOperator_t &op_,
                                exprNode &leftValue_,
                                exprNode &rightValue_) :
-      exprNode(token_),
-      op(op_),
+      exprOpNode(token_, op_),
       leftValue(leftValue_.clone()),
       rightValue(rightValue_.clone()) {}
 
     binaryOpNode::binaryOpNode(const binaryOpNode &node) :
-      exprNode(node.token),
-      op(node.op),
+      exprOpNode(node.token, node.op),
       leftValue(node.leftValue->clone()),
       rightValue(node.rightValue->clone()) {}
 
@@ -581,13 +580,9 @@ namespace occa {
       return exprNodeType::binary;
     }
 
-    opType_t binaryOpNode::opType() const {
-      return op.opType;
-    }
-
     exprNode* binaryOpNode::clone() const {
       return new binaryOpNode(token,
-                              op,
+                              (const binaryOperator_t&) op,
                               *leftValue,
                               *rightValue);
     }
@@ -607,7 +602,7 @@ namespace occa {
     primitive binaryOpNode::evaluate() const {
       primitive pLeft  = leftValue->evaluate();
       primitive pRight = rightValue->evaluate();
-      return op(pLeft, pRight);
+      return ((binaryOperator_t&) op)(pLeft, pRight);
     }
 
     exprNode* binaryOpNode::startNode() {
