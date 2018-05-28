@@ -54,6 +54,7 @@ namespace occa {
                 class valueType>
       bool add(valueType &value,
                const bool force) {
+        // TODO: Use unique name
         const std::string &name = value.name();
         if (!name.size()) {
           return true;
@@ -63,17 +64,23 @@ namespace occa {
           keywords[name] = new keywordType_(value);
           return true;
         }
+        keyword_t *&keyword = it->second;
         if (force) {
-          delete it->second;
-          it->second = new keywordType_(value);
+          keyword->deleteSource();
+          delete keyword;
+          keyword = new keywordType_(value);
           return true;
         }
         value.printError("[" + name + "] is already defined");
-        it->second->printError("[" + name + "] was first defined here");
+        keyword->printError("[" + name + "] was first defined here");
         return false;
       }
 
     public:
+      void remove(const std::string &name);
+
+      void moveTo(scope_t &scope);
+
       void debugPrint();
     };
   }

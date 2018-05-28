@@ -34,25 +34,21 @@ namespace occa {
     variable_t::variable_t(const vartype_t &vartype_,
                            identifierToken *source_) :
       vartype(vartype_),
-      source(NULL) {
-      if (source_) {
-        source = (identifierToken*) source_->clone();
-      } else {
-        source = new identifierToken(filePosition(), "");
-      }
-    }
+      source((identifierToken*) token_t::clone(source_)) {}
 
     variable_t::variable_t(const variable_t &other) :
       vartype(other.vartype),
-      source((identifierToken*) other.source->clone()),
+      source((identifierToken*) token_t::clone(other.source)),
       attributes(other.attributes) {}
 
     variable_t& variable_t::operator = (const variable_t &other) {
       vartype = other.vartype;
       attributes = other.attributes;
 
-      delete source;
-      source = (identifierToken*) other.source->clone();
+      if (source != other.source) {
+        delete source;
+        source = (identifierToken*) token_t::clone(other.source);
+      }
 
       return *this;
     }
@@ -66,11 +62,19 @@ namespace occa {
     }
 
     std::string& variable_t::name() {
-      return source->value;
+      static std::string noName;
+      if (source) {
+        return source->value;
+      }
+      return noName;
     }
 
     const std::string& variable_t::name() const {
-      return source->value;
+      static std::string noName;
+      if (source) {
+        return source->value;
+      }
+      return noName;
     }
 
     variable_t& variable_t::clone() const {
@@ -131,6 +135,9 @@ namespace occa {
     variableDeclaration::~variableDeclaration() {}
 
     variableDeclaration variableDeclaration::clone() const {
+      if (!variable) {
+        return variableDeclaration();
+      }
       if (value) {
         return variableDeclaration(variable->clone(),
                                    *(value->clone()));

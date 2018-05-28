@@ -73,6 +73,13 @@ namespace occa {
       return s;
     }
 
+    statement_t* statement_t::clone(statement_t *smnt) {
+      if (smnt) {
+        return &(smnt->clone());
+      }
+      return NULL;
+    }
+
     bool statement_t::inScope(const std::string &name) {
       if (up) {
         return up->inScope(name);
@@ -213,6 +220,7 @@ namespace occa {
 
       blockStatement &body = (blockStatement&) child;
       swap(body);
+      body.scope.moveTo(scope);
       delete &body;
     }
 

@@ -76,29 +76,28 @@ namespace occa {
         }
         // 3
         // 2 + (2 * 3)
-        // TODO: Delete token propertly
         exprNode *index = call.args[order[dimCount - 1]];
         for (int i = (dimCount - 2); i >= 0; --i) {
           const int i2 = order[i];
           token_t *source = call.args[i2]->token;
-          parenthesesNode indexInParen(source->clone(),
+          parenthesesNode indexInParen(source,
                                        *index);
           // Don't delete the initial call.args[...]
           if (i < (dimCount - 2)) {
             delete index;
           }
-          parenthesesNode dimInParen(source->clone(),
+          parenthesesNode dimInParen(source,
                                      *(dimAttr.args[i2].expr));
-          binaryOpNode mult(source->clone(),
+          binaryOpNode mult(source,
                             op::mult,
                             dimInParen,
                             indexInParen);
-          parenthesesNode multInParen(source->clone(),
+          parenthesesNode multInParen(source,
                                       mult);
-          parenthesesNode argInParen(source->clone(),
+          parenthesesNode argInParen(source,
                                      *(call.args[i2]));
 
-          index = new binaryOpNode(source->clone(),
+          index = new binaryOpNode(source,
                                    op::add,
                                    argInParen,
                                    multInParen);

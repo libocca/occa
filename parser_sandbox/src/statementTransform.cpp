@@ -65,6 +65,9 @@ namespace occa {
         }
         return NULL;
       }
+      if (newSmnt != &smnt) {
+        delete &smnt;
+      }
       return newSmnt;
     }
 

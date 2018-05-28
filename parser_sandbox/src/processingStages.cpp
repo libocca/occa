@@ -33,7 +33,11 @@ namespace occa {
     }
 
     bool newlineTokenFilter::isValid(token_t * const &token) {
-      return !(token->type() & tokenType::newline);
+      if (token->type() & tokenType::newline) {
+        delete token;
+        return false;
+      }
+      return true;
     }
     //==================================
 

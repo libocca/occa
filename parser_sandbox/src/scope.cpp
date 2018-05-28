@@ -32,7 +32,7 @@ namespace occa {
     }
 
     void scope_t::clear() {
-      freeKeywords(keywords);
+      freeKeywords(keywords, true);
     }
 
     void scope_t::swap(scope_t &other) {
@@ -69,6 +69,22 @@ namespace occa {
     bool scope_t::add(variable_t &var,
                       const bool force) {
       return add<variableKeyword>(var, force);
+    }
+
+    void scope_t::remove(const std::string &name) {
+      keywordMapIterator it = keywords.find(name);
+      if (it != keywords.end()) {
+        keyword_t &keyword = *(it->second);
+        keyword.deleteSource();
+        delete &keyword;
+        keywords.erase(it);
+      }
+    }
+
+    void scope_t::moveTo(scope_t &scope) {
+      scope.keywords.insert(keywords.begin(),
+                            keywords.end());
+      keywords.clear();
     }
 
     void scope_t::debugPrint() {

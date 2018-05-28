@@ -105,6 +105,8 @@ namespace occa {
       statement_t& clone() const;
       virtual statement_t& clone_() const = 0;
 
+      static statement_t* clone(statement_t *smnt);
+
       virtual int type() const = 0;
 
       virtual bool inScope(const std::string &name);

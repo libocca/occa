@@ -40,15 +40,17 @@ namespace occa {
     class array_t;
     class variable_t;
 
-    typedef std::vector<pointer_t>  pointerVector;
-    typedef std::vector<array_t>    arrayVector;
-    typedef std::vector<variable_t> variableVector;
+    typedef std::vector<pointer_t>   pointerVector;
+    typedef std::vector<array_t>     arrayVector;
+    typedef std::vector<variable_t>  variableVector;
+    typedef std::vector<variable_t*> variablePtrVector;
 
     namespace typeType {
       extern const int none;
 
       extern const int primitive;
       extern const int typedef_;
+      extern const int functionPtr;
       extern const int function;
 
       extern const int class_;
@@ -247,6 +249,9 @@ namespace occa {
       void printWarning(const std::string &message) const;
       void printError(const std::string &message) const;
     };
+
+    printer& operator << (printer &pout,
+                          const vartype_t &type);
     //==================================
 
     //---[ Types ]----------------------
@@ -279,13 +284,39 @@ namespace occa {
       virtual void printDeclaration(printer &pout) const;
     };
 
-    class function_t : public type_t {
+    class functionPtr_t : public type_t {
     public:
       vartype_t returnType;
       variableVector args;
 
       // Obj-C block found in OSX headers
-      bool isPointer, isBlock;
+      bool isBlock;
+
+      functionPtr_t();
+
+      functionPtr_t(const vartype_t &returnType_,
+                        identifierToken &nameToken);
+
+      functionPtr_t(const vartype_t &returnType_,
+                        const std::string &name_ = "");
+
+      functionPtr_t(const functionPtr_t &other);
+
+      functionPtr_t& operator += (const variable_t &arg);
+      functionPtr_t& operator += (const variableVector &args_);
+
+      virtual int type() const;
+      virtual type_t& clone() const;
+
+      virtual bool equals(const type_t &other) const;
+
+      virtual void printDeclaration(printer &pout) const;
+    };
+
+    class function_t : public type_t {
+    public:
+      vartype_t returnType;
+      variablePtrVector args;
 
       function_t();
 
@@ -297,11 +328,13 @@ namespace occa {
 
       function_t(const function_t &other);
 
-      function_t& operator += (const variable_t &arg);
-      function_t& operator += (const variableVector &args_);
+      void free();
 
       virtual int type() const;
       virtual type_t& clone() const;
+
+      function_t& operator += (const variable_t &arg);
+      function_t& operator += (const variableVector &args_);
 
       virtual bool equals(const type_t &other) const;
 

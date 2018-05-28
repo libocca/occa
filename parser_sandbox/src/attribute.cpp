@@ -53,7 +53,24 @@ namespace occa {
       expr(other.expr),
       attributes(other.attributes) {}
 
+    attributeArg_t& attributeArg_t::operator = (const attributeArg_t &other) {
+      expr = other.expr;
+      attributes = other.attributes;
+      return *this;
+    }
+
     attributeArg_t::~attributeArg_t() {}
+
+    void attributeArg_t::clear() {
+      delete expr;
+      expr = NULL;
+      attributeTokenMap::iterator it = attributes.begin();
+      while (it != attributes.end()) {
+        it->second.clear();
+        ++it;
+      }
+      attributes.clear();
+    }
 
     bool attributeArg_t::exists() const {
       return expr;
@@ -68,22 +85,39 @@ namespace occa {
     attributeToken_t::attributeToken_t(const attribute_t &attrType_,
                                        identifierToken &source_) :
       attrType(&attrType_),
-      source((identifierToken*) source_.clone()) {}
+      source((identifierToken*) token_t::clone(&source_)) {}
 
-    attributeToken_t::attributeToken_t(const attributeToken_t &other) {
-      *this = other;
+    attributeToken_t::attributeToken_t(const attributeToken_t &other) :
+      attrType(NULL),
+      source(NULL) {
+      copyFrom(other);
     }
 
     attributeToken_t& attributeToken_t::operator = (const attributeToken_t &other) {
+      clear();
+      copyFrom(other);
+      return *this;
+    }
+
+    attributeToken_t::~attributeToken_t() {
+      clear();
+    }
+
+    void attributeToken_t::copyFrom(const attributeToken_t &other) {
+      // Copying an empty attributeToken
+      if (!other.source) {
+        return;
+      }
+
       attrType = other.attrType;
-      source   = (identifierToken*) other.source->clone();
+      source   = (identifierToken*) token_t::clone(other.source);
 
       // Copy args
       const int argCount = (int) other.args.size();
       for (int i = 0; i < argCount; ++i) {
         const attributeArg_t &attr = other.args[i];
         args.push_back(
-          attributeArg_t(attr.expr->clone(),
+          attributeArg_t(exprNode::clone(attr.expr),
                          attr.attributes)
         );
       }
@@ -92,28 +126,29 @@ namespace occa {
       while (it != other.kwargs.end()) {
         const attributeArg_t &attr = it->second;
         kwargs[it->first] = (
-          attributeArg_t(attr.expr->clone(),
+          attributeArg_t(exprNode::clone(attr.expr),
                          attr.attributes)
         );
         ++it;
       }
-
-      return *this;
     }
 
-    attributeToken_t::~attributeToken_t() {
+    void attributeToken_t::clear() {
       delete source;
+      source = NULL;
       // Free args
       const int argCount = (int) args.size();
       for (int i = 0; i < argCount; ++i) {
-        delete args[i].expr;
+        args[i].clear();
       }
+      args.clear();
       // Free kwargs
       attributeArgMap::iterator it = kwargs.begin();
       while (it != kwargs.end()) {
-        delete it->second.expr;
+        it->second.clear();
         ++it;
       }
+      kwargs.clear();
     }
 
     const std::string& attributeToken_t::name() const {

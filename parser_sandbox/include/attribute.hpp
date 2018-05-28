@@ -75,7 +75,11 @@ namespace occa {
 
       attributeArg_t(const attributeArg_t &other);
 
+      attributeArg_t& operator = (const attributeArg_t &other);
+
       ~attributeArg_t();
+
+      void clear();
 
       bool exists() const;
     };
@@ -95,6 +99,9 @@ namespace occa {
       attributeToken_t(const attributeToken_t &other);
       attributeToken_t& operator = (const attributeToken_t &other);
       virtual ~attributeToken_t();
+
+      void copyFrom(const attributeToken_t &other);
+      void clear();
 
       const std::string& name() const;
 

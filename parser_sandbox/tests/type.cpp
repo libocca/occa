@@ -157,7 +157,12 @@ void testFunction() {
   f += variable_t(arg4, &array);
   f += variable_t(double_, &e);
 
-  function_t f2(f, "bar");
+  functionPtr_t f2(f, "bar");
+  f2 += variable_t(t1 , &a);
+  f2 += variable_t(td2, &b);
+  f2 += variable_t(arg3);
+  f2 += variable_t(arg4, &array);
+  f2 += variable_t(double_, &e);
 
   printer pout(std::cerr);
 
@@ -181,18 +186,7 @@ void testFunction() {
   f2.printDeclaration(pout);
   pout << '\n';
 
-  f.isPointer = f2.isPointer = true;
-  f.printDeclaration(pout);
-  pout << '\n';
-
-  f2.printDeclaration(pout);
-  pout << '\n';
-
-  f.isPointer = f2.isPointer = false;
-  f.isBlock   = f2.isBlock   = true;
-  f.printDeclaration(pout);
-  pout << '\n';
-
+  f2.isBlock = true;
   f2.printDeclaration(pout);
   pout << '\n';
 }

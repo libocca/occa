@@ -89,6 +89,8 @@ namespace occa {
       return empty;
     }
 
+    void keyword_t::deleteSource() {}
+
     void keyword_t::printError(const std::string &message) {
       occa::printError(std::cerr, message);
     }
@@ -124,6 +126,12 @@ namespace occa {
       return type_.name();
     }
 
+    void typeKeyword::deleteSource() {
+      if (type_.type() & typeType::typedef_) {
+        delete &type_;
+      }
+    }
+
     void typeKeyword::printError(const std::string &message) {
       type_.printError(message);
     }
@@ -141,6 +149,10 @@ namespace occa {
       return variable.name();
     }
 
+    void variableKeyword::deleteSource() {
+      delete &variable;
+    }
+
     void variableKeyword::printError(const std::string &message) {
       variable.printError(message);
     }
@@ -156,6 +168,10 @@ namespace occa {
 
     const std::string& functionKeyword::name() {
       return function.name();
+    }
+
+    void functionKeyword::deleteSource() {
+      delete &function;
     }
 
     void functionKeyword::printError(const std::string &message) {
@@ -249,10 +265,15 @@ namespace occa {
       addKeyword(keywords, new statementKeyword(keywordType::private_  , "private"));
     }
 
-    void freeKeywords(keywordMap &keywords) {
+    void freeKeywords(keywordMap &keywords,
+                      const bool deleteSource) {
       keywordMapIterator it = keywords.begin();
       while (it != keywords.end()) {
-        delete it->second;
+        keyword_t &keyword = *(it->second);
+        if (deleteSource) {
+          keyword.deleteSource();
+        }
+        delete &keyword;
         ++it;
       }
       keywords.clear();

@@ -73,7 +73,7 @@ namespace occa {
         if (&var != from) {
           return &node;
         }
-        return new variableNode(node.token->clone(), *to);
+        return new variableNode(node.token, *to);
       }
 
       bool variableReplacer_t::applyToExpr(exprNode *&expr) {

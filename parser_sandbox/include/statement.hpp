@@ -63,10 +63,11 @@ namespace occa {
     // TODO: Type declaration
     class functionStatement : public statement_t {
     public:
-      function_t function;
+      function_t &function;
 
       functionStatement(blockStatement *up_,
-                        const function_t &function_);
+                        function_t &function_);
+      ~functionStatement();
 
       virtual statement_t& clone_() const;
       virtual int type() const;
@@ -143,10 +144,13 @@ namespace occa {
       declarationStatement(const declarationStatement &other);
       ~declarationStatement();
 
+      void freeDeclarations();
+
       virtual statement_t& clone_() const;
       virtual int type() const;
 
-      bool addDeclarationsToScope(const bool force = false);
+      bool addDeclaration(const variableDeclaration &decl,
+                          const bool force = false);
 
       virtual void print(printer &pout) const;
 

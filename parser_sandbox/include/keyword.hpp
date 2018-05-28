@@ -105,6 +105,8 @@ namespace occa {
       virtual int type();
       virtual const std::string& name();
 
+      virtual void deleteSource();
+
       virtual void printError(const std::string &message);
 
       static int safeType(keyword_t *keyword);
@@ -132,6 +134,8 @@ namespace occa {
       virtual int type();
       virtual const std::string& name();
 
+      virtual void deleteSource();
+
       virtual void printError(const std::string &message);
     };
     //==================================
@@ -146,6 +150,8 @@ namespace occa {
       virtual int type();
       virtual const std::string& name();
 
+      virtual void deleteSource();
+
       virtual void printError(const std::string &message);
     };
     //==================================
@@ -159,6 +165,8 @@ namespace occa {
 
       virtual int type();
       virtual const std::string& name();
+
+      virtual void deleteSource();
 
       virtual void printError(const std::string &message);
     };
@@ -179,7 +187,8 @@ namespace occa {
     //==================================
 
     void getKeywords(keywordMap &keywords);
-    void freeKeywords(keywordMap &keywords);
+    void freeKeywords(keywordMap &keywords,
+                      const bool deleteSource = false);
 
     template <class keywordType>
     void addKeyword(keywordMap &keywords,

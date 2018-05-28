@@ -98,6 +98,8 @@ namespace occa {
 
       //---[ Setup ]--------------------
       void clear();
+      void clearAttributes();
+      void clearAttributes(attributeTokenMap &attrs);
 
       void pushUp(blockStatement &newUp);
       void popUp();
@@ -174,7 +176,14 @@ namespace occa {
       void setArrays(vartype_t &vartype);
       void setArray(vartype_t &vartype);
 
-      void setArguments(variableVector &args);
+      void setArguments(functionPtr_t &func);
+      void setArguments(function_t &func);
+
+    private:
+      template <class funcType>
+      void setArgumentsFor(funcType &func);
+
+    public:
       void getArgumentRanges(tokenRangeVector &argRanges);
       variable_t getArgument();
 
@@ -237,23 +246,15 @@ namespace occa {
 
       //---[ Customization ]------------
       template <class attributeType>
-      void addAttribute() {
-        attributeType *attr = new attributeType();
-        const std::string name = attr->name();
-
-        OCCA_ERROR("Attribute [" << name << "] already exists",
-                   attributeMap.find(name) == attributeMap.end());
-
-        attributeMap[name] = attr;
-      }
+      void addAttribute();
 
       template <class transformType>
-      bool applyTransform() {
-        transformType transform(*this);
-        return transform.statementTransform::apply(root);
-      }
+      bool applyTransform();
       //================================
     };
   }
 }
+
+#include "parser.tpp"
+
 #endif

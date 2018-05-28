@@ -63,12 +63,18 @@ namespace occa {
 
     //---[ Type ]-----------------------
     functionStatement::functionStatement(blockStatement *up_,
-                                         const function_t &function_) :
+                                         function_t &function_) :
       statement_t(up_),
       function(function_) {}
 
+    functionStatement::~functionStatement() {
+      // TODO: Add to scope with uniqueName() as the key
+      function.free();
+      delete &function;
+    }
+
     statement_t& functionStatement::clone_() const {
-      return *(new functionStatement(NULL, function));
+      return *(new functionStatement(NULL, (function_t&) function.clone()));
     }
 
     int functionStatement::type() const {
@@ -120,7 +126,7 @@ namespace occa {
     void functionDeclStatement::addArgumentsToScope(const bool force) {
       const int count = (int) function.args.size();
       for (int i = 0; i < count; ++i) {
-        scope.add(function.args[i],
+        scope.add(*(function.args[i]),
                   force);
       }
     }
@@ -238,8 +244,38 @@ namespace occa {
     }
 
     declarationStatement::~declarationStatement() {
+      if (!up) {
+        freeDeclarations();
+        return;
+      }
       const int count = (int) declarations.size();
       for (int i = 0; i < count; ++i) {
+        declarations[i].clear();
+      }
+      declarations.clear();
+    }
+
+    void declarationStatement::freeDeclarations() {
+      const int count = (int) declarations.size();
+      for (int i = 0; i < count; ++i) {
+        variable_t *var = declarations[i].variable;
+        // Delete keyword if variable is in scope
+        if (up
+            && var
+            && var->name().size()) {
+          keyword_t &keyword = up->scope.get(var->name());
+          variable_t *kvar = NULL;
+          if (keyword.type() & keywordType::variable) {
+            kvar = &(((variableKeyword*) &keyword)->variable);
+          }
+          // Make sure the variables match (even if the name matches)
+          // If so, the scope will delete the variable
+          if (kvar == var) {
+            up->scope.remove(var->name());
+            var = NULL;
+          }
+        }
+        delete var;
         declarations[i].clear();
       }
       declarations.clear();
@@ -253,34 +289,32 @@ namespace occa {
       return statementType::declaration;
     }
 
-    bool declarationStatement::addDeclarationsToScope(const bool force) {
+    bool declarationStatement::addDeclaration(const variableDeclaration &decl,
+                                              const bool force) {
+      declarations.push_back(decl);
       if (!up) {
         return false;
       }
-      bool success = true;
-      const int count = (int) declarations.size();
-      for (int i = 0; i < count; ++i) {
-        variable_t &var = *(declarations[i].variable);
-        // Variable
-        if (!var.vartype.has(typedef_)) {
-          success &= up->scope.add(var, force);
-          continue;
-        }
-        // Typedef
-        typedef_t &type = *(new typedef_t(var.vartype));
-        if (var.source) {
-          type.setSource(*var.source);
-        }
 
-        if (var.vartype.type) {
-          type.attributes = var.vartype.type->attributes;
-        }
-        type.attributes.insert(var.attributes.begin(),
-                               var.attributes.end());
-
-        success &= up->scope.add(type, force);
+      // Variable
+      variable_t &var = *(decl.variable);
+      if (!var.vartype.has(typedef_)) {
+        return up->scope.add(var, force);
       }
-      return success;
+
+      // Typedef
+      typedef_t &type = *(new typedef_t(var.vartype));
+      if (var.source) {
+        type.setSource(*var.source);
+      }
+
+      if (var.vartype.type) {
+        type.attributes = var.vartype.type->attributes;
+      }
+      type.attributes.insert(var.attributes.begin(),
+                             var.attributes.end());
+
+      return up->scope.add(type, force);
     }
 
     void declarationStatement::print(printer &pout) const {
@@ -465,6 +499,12 @@ namespace occa {
 
     ifStatement::~ifStatement() {
       delete condition;
+      delete elseSmnt;
+
+      const int elifCount = (int) elifSmnts.size();
+      for (int i = 0; i < elifCount; ++i) {
+        delete elifSmnts[i];
+      }
     }
 
     void ifStatement::setCondition(statement_t *condition_) {
@@ -630,9 +670,9 @@ namespace occa {
 
     forStatement::forStatement(const forStatement &other) :
       blockStatement(other),
-      init(&(other.init->clone())),
-      check(&(other.check->clone())),
-      update(&(other.update->clone())) {}
+      init(statement_t::clone(other.init)),
+      check(statement_t::clone(other.check)),
+      update(statement_t::clone(other.update)) {}
 
     forStatement::~forStatement() {
       delete init;
@@ -725,6 +765,7 @@ namespace occa {
       value(&value_) {}
 
     caseStatement::~caseStatement() {
+      delete source;
       delete value;
     }
 

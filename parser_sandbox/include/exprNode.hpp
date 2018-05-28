@@ -124,6 +124,7 @@ namespace occa {
       virtual udim_t type() const = 0;
 
       virtual exprNode* clone() const = 0;
+      static exprNode* clone(exprNode *expr);
 
       virtual bool canEvaluate() const;
       virtual primitive evaluate() const;

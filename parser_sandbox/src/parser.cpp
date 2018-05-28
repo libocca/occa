@@ -42,9 +42,12 @@ namespace occa {
       lastPeek(0),
       lastPeekPosition(-1),
       checkSemicolon(true),
-      root(NULL, new newlineToken(filePosition())),
+      root(NULL, NULL),
       up(&root),
       identifierReplacer(*this) {
+      // Manually set source to avoid a dangling token pointer
+      root.source = new newlineToken(filePosition());
+
       // Properly implement `identifier-nondigit` for identifiers
       // Meanwhile, we use the unknownFilter
       stream = (tokenizer
@@ -125,9 +128,22 @@ namespace occa {
       upStack.clear();
 
       freeKeywords(keywords);
-      attributes.clear();
+      clearAttributes();
 
       success = true;
+    }
+
+    void parser_t::clearAttributes() {
+      clearAttributes(attributes);
+    }
+
+    void parser_t::clearAttributes(attributeTokenMap &attrs) {
+      attributeTokenMap::iterator it = attrs.begin();
+      while (it != attrs.end()) {
+        it->second.clear();
+        ++it;
+      }
+      attrs.clear();
     }
 
     void parser_t::pushUp(blockStatement &newUp) {
@@ -271,6 +287,9 @@ namespace occa {
       while (success &&
              (getOperatorType(context[0]) & operatorType::attribute)) {
         loadAttribute(attrs);
+        if (!success) {
+          break;
+        }
       }
     }
 
@@ -284,9 +303,7 @@ namespace occa {
         return;
       }
 
-      identifierToken &nameToken = (context[0]
-                                    ->clone()
-                                    ->to<identifierToken>());
+      identifierToken &nameToken = *((identifierToken*) context[0]);
       context.set(1);
 
       nameToAttributeMap::iterator it = attributeMap.find(nameToken.value);
@@ -402,7 +419,7 @@ namespace occa {
     void parser_t::addAttributesTo(attributeTokenMap &attrs,
                                    statement_t *smnt) {
       if (!smnt) {
-        attrs.clear();
+        clearAttributes(attrs);
         return;
       }
 
@@ -414,7 +431,10 @@ namespace occa {
           smnt->addAttribute(attr);
         } else {
           attr.printError("Cannot apply attribute to this type of statement");
+          smnt->attributes.clear();
+          clearAttributes(attrs);
           success = false;
+          break;
         }
         ++it;
       }
@@ -427,7 +447,9 @@ namespace occa {
       const int contextPosition = context.position();
       if (lastPeekPosition != contextPosition) {
         setupPeek();
-        lastPeek         = uncachedPeek();
+        lastPeek = (success
+                    ? uncachedPeek()
+                    : statementType::none);
         lastPeekPosition = contextPosition;
       }
       return lastPeek;
@@ -566,7 +588,6 @@ namespace occa {
 
       loadDeclarationAttributes(decl);
       if (!success) {
-        decl.clear();
         return decl;
       }
 
@@ -633,6 +654,7 @@ namespace occa {
 
       exprNode *value = getExpression(1, pos);
       decl.variable->vartype.bitfield = (int) value->evaluate();
+      delete value;
       context.set(pos);
     }
 
@@ -905,14 +927,11 @@ namespace occa {
       //       Check for arrays
       context.pushPairRange(0);
 
-      identifierToken *nameToken = NULL;
-      const bool isPointer = (getOperatorType(context[0]) & operatorType::mult);
+      functionPtr_t func(vartype);
+      func.isBlock = (getOperatorType(context[0]) & operatorType::xor_);
       context.set(1);
 
-      function_t func(vartype);
-      func.isPointer = isPointer;
-      func.isBlock   = !isPointer;
-
+      identifierToken *nameToken = NULL;
       if (context.size() &&
           (context[0]->type() & tokenType::identifier)) {
         nameToken = (identifierToken*) context[0];
@@ -932,7 +951,7 @@ namespace occa {
 
       if (success) {
         context.pushPairRange(0);
-        setArguments(func.args);
+        setArguments(func);
         context.popAndSkip();
       }
 
@@ -980,27 +999,12 @@ namespace occa {
       }
     }
 
-    void parser_t::setArguments(variableVector &args) {
-      tokenRangeVector argRanges;
-      getArgumentRanges(argRanges);
+    void parser_t::setArguments(functionPtr_t &func) {
+      setArgumentsFor(func);
+    }
 
-      const int argCount = (int) argRanges.size();
-      if (!argCount) {
-        return;
-      }
-
-      for (int i = 0; i < argCount; ++i) {
-        context.push(argRanges[i].start,
-                     argRanges[i].end);
-
-        args.push_back(loadVariable());
-
-        context.pop();
-        if (!success) {
-          break;
-        }
-        context.set(argRanges[i].end + 1);
-      }
+    void parser_t::setArguments(function_t &func) {
+      setArgumentsFor(func);
     }
 
     void parser_t::getArgumentRanges(tokenRangeVector &argRanges) {
@@ -1073,15 +1077,17 @@ namespace occa {
       if (it != statementLoaders.end()) {
         statementLoader_t loader = it->second;
         statement_t *smnt = (this->*loader)();
+        if (!smnt) {
+          return NULL;
+        }
         if (!success) {
           delete smnt;
-          smnt = NULL;
+          return NULL;
         }
 
         // [checkSemicolon] is only valid for one statement
         checkSemicolon = true;
         addAttributesTo(attributes, smnt);
-        attributes.clear();
         if (!success) {
           delete smnt;
           return NULL;
@@ -1104,14 +1110,6 @@ namespace occa {
       while (smnt) {
         statements.push_back(smnt);
         smnt = getNextStatement();
-      }
-
-      if (!success) {
-        const int count = (int) statements.size();
-        for (int i = 0; i < count; ++i) {
-          delete statements[i];
-        }
-        statements.clear();
       }
     }
 
@@ -1179,7 +1177,7 @@ namespace occa {
       declarationStatement &smnt = *(new declarationStatement(up));
       while(success) {
         // TODO: Pass decl as argument to prevent a copy
-        smnt.declarations.push_back(
+        success = smnt.addDeclaration(
           loadVariableDeclaration(baseType)
         );
         if (!success) {
@@ -1197,16 +1195,14 @@ namespace occa {
         }
         context.set(1);
       }
-      if (success) {
-        success = smnt.addDeclarationsToScope();
-      }
       if (!success) {
+        smnt.freeDeclarations();
         delete &smnt;
         return NULL;
       }
 
       // We pass the attributes to the variables
-      attributes.clear();
+      clearAttributes();
       return &smnt;
     }
 
@@ -1308,7 +1304,7 @@ namespace occa {
       function_t &func = *(new function_t(returnType,
                                           context[0]->to<identifierToken>()));
       context.pushPairRange(1);
-      setArguments(func.args);
+      setArguments(func);
       context.popAndSkip();
 
       const opType_t opType = getOperatorType(context[0]);
@@ -1345,7 +1341,7 @@ namespace occa {
         ++it;
       }
       funcSmnt.function.attributes = attributes;
-      attributes.clear();
+      clearAttributes();
 
       pushUp(funcSmnt);
       statement_t *content = getNextStatement();
@@ -1427,7 +1423,7 @@ namespace occa {
         checkSemicolon = (count < expectedCount);
         statement_t *smnt = getNextStatement();
         statements.push_back(smnt);
-        if (!smnt || !success) {
+        if (!success) {
           error = true;
           break;
         }
@@ -1444,7 +1440,7 @@ namespace occa {
       }
 
       const int smntCount = (int) statements.size();
-      if (error) {
+      if (!success || error) {
         success = false;
         for (int i = 0; i < smntCount; ++i) {
           delete statements[i];
@@ -1452,12 +1448,11 @@ namespace occa {
         statements.clear();
         return;
       }
-      if (!smntCount) {
-        return;
-      }
-      statement_t *lastStatement = statements[smntCount - 1];
-      if (lastStatement->type() & statementType::expression) {
-        lastStatement->to<expressionStatement>().hasSemicolon = false;
+      if (smntCount) {
+        statement_t *lastStatement = statements[smntCount - 1];
+        if (lastStatement->type() & statementType::expression) {
+          lastStatement->to<expressionStatement>().hasSemicolon = false;
+        }
       }
     }
 
@@ -1487,6 +1482,7 @@ namespace occa {
           context.printError("Missing condition for [if] statement");
         }
         popUp();
+        delete &ifSmnt;
         return NULL;
       }
 
@@ -1611,6 +1607,7 @@ namespace occa {
       loadConditionStatements(statements, 3);
       if (!success) {
         popUp();
+        delete &forSmnt;
         return NULL;
       }
 
@@ -1637,6 +1634,7 @@ namespace occa {
         }
         success = false;
         popUp();
+        delete &forSmnt;
         return NULL;
       }
 
@@ -1644,6 +1642,10 @@ namespace occa {
                                 statements[1],
                                 statements[2]);
       addAttributesTo(attributes, &forSmnt);
+      if (!success) {
+        delete &forSmnt;
+        return NULL;
+      }
 
       statement_t *content = getNextStatement();
       popUp();
@@ -1681,6 +1683,7 @@ namespace occa {
           context.printError("Missing condition for [while] statement");
         }
         popUp();
+        delete &whileSmnt;
         return NULL;
       }
 
@@ -1715,20 +1718,22 @@ namespace occa {
           success = false;
         }
         popUp();
+        delete &whileSmnt;
         return NULL;
       }
+      whileSmnt.set(*content);
 
       keyword_t &nextKeyword = getKeyword(context[0]);
       if (!(nextKeyword.type() & keywordType::while_)) {
         context.printError("Expected [while] condition after [do]");
         success = false;
-        delete content;
+        delete &whileSmnt;
         return NULL;
       }
 
       checkIfConditionStatementExists();
       if (!success) {
-        delete content;
+        delete &whileSmnt;
         popUp();
         return NULL;
       }
@@ -1739,23 +1744,21 @@ namespace occa {
           success = false;
           context.printError("Missing condition for [do-while] statement");
         }
-        delete content;
+        delete &whileSmnt;
         popUp();
         return NULL;
       }
+      whileSmnt.setCondition(condition);
 
       if (!(getOperatorType(context[0]) & operatorType::semicolon)) {
         context.printError("Expected a [;]");
         success = false;
         popUp();
-        delete content;
-        delete condition;
+        delete &whileSmnt;
         return NULL;
       }
       context.set(1);
 
-      whileSmnt.setCondition(condition);
-      whileSmnt.set(*content);
       return &whileSmnt;
     }
 
@@ -1777,6 +1780,7 @@ namespace occa {
           context.printError("Missing condition for [switch] statement");
         }
         popUp();
+        delete &switchSmnt;
         return NULL;
       }
 

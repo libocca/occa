@@ -209,14 +209,15 @@ namespace occa {
 
         // Create the block and inner-block for-loops
         forStatement &blockForSmnt = *(new forStatement(forSmnt.up,
-                                                        forSmnt.source->clone()));
+                                                        forSmnt.source));
         forStatement &innerForSmnt = *(new forStatement(&blockForSmnt,
-                                                        forSmnt.source->clone()));
+                                                        forSmnt.source));
         blockForSmnt.add(innerForSmnt);
 
         // Rename the block interator
         variable_t &blockIter = iter.clone();
         blockIter.name() = "_occa_tiled_" + iter.name();
+        blockForSmnt.scope.add(blockIter);
 
         setupNewForStatements(attr,
                               forSmnt,
@@ -274,7 +275,6 @@ namespace occa {
                                         variable_t &blockIter,
                                         forStatement &blockForSmnt,
                                         forStatement &innerForSmnt) {
-        // TODO: Free tokens
         /*
           for (x = START; x < END; x += INC)
           ->
@@ -298,23 +298,23 @@ namespace occa {
           // INC
           exprNode *updateSize = ((binaryOpNode&) updateExpr).rightValue;
           // (INC)
-          parenthesesNode updateInParen(updateToken->clone(),
+          parenthesesNode updateInParen(updateToken,
                                         *updateSize);
           // TILE * (INC)
-          binaryOpNode mult(updateToken->clone(),
+          binaryOpNode mult(updateToken,
                             op::mult,
                             tileSize,
                             updateInParen);
           // (TILE * (INC))
-          updateSizeExpr = new parenthesesNode(updateToken->clone(),
+          updateSizeExpr = new parenthesesNode(updateToken,
                                                mult);
           if (opType & operatorType::subEq) {
             updateOp = &op::subEq;
           }
         }
         // VAR += (TILE * (INC))
-        variableNode varNode(updateToken->clone(), blockIter);
-        exprNode *newUpdateExpr = new binaryOpNode(updateToken->clone(),
+        variableNode varNode(updateToken, blockIter);
+        exprNode *newUpdateExpr = new binaryOpNode(updateToken,
                                                    *updateOp,
                                                    varNode,
                                                    *updateSizeExpr);
@@ -344,8 +344,8 @@ namespace occa {
         variableDeclaration &decl = (((declarationStatement*) blockForSmnt.init)
                                      ->declarations[0]);
         token_t *initToken = decl.variable->source;
-        variableNode iterNode(initToken->clone(), iter);
-        variableNode blockIterNode(initToken->clone(), blockIter);
+        variableNode iterNode(initToken, iter);
+        variableNode blockIterNode(initToken, blockIter);
 
         // Check variables
         binaryOpNode &checkExpr = ((binaryOpNode&)
@@ -371,15 +371,15 @@ namespace occa {
         );
 
         // Create check
-        binaryOpNode checkValueNode(checkToken->clone(),
+        binaryOpNode checkValueNode(checkToken,
                                     addUpdate ? op::add : op::sub,
                                     blockIterNode,
                                     tileSize);
-        parenthesesNode checkInParen(checkToken->clone(),
+        parenthesesNode checkInParen(checkToken,
                                      checkValueNode);
         binaryOpNode &newCheckNode = *(
           new binaryOpNode(
-            checkToken->clone(),
+            checkToken,
             (const binaryOperator_t&) checkExpr.op,
             varInLeft ? (exprNode&) iterNode : (exprNode&) checkInParen,
             varInLeft ? (exprNode&) checkInParen : (exprNode&) iterNode
@@ -417,11 +417,11 @@ namespace occa {
         token_t *iterToken = (varInLeft
                               ? checkExpr.leftValue->token
                               : checkExpr.rightValue->token);
-        variableNode iterNode(iterToken->clone(),
+        variableNode iterNode(iterToken,
                               iter);
         binaryOpNode &newCheckNode = *(
           new binaryOpNode(
-            checkExpr.token->clone(),
+            checkExpr.token,
             (const binaryOperator_t&) checkExpr.op,
             varInLeft ? (exprNode&) iterNode : *(checkExpr.leftValue),
             varInLeft ? (exprNode&) *(checkExpr.rightValue) : (exprNode&) iterNode
