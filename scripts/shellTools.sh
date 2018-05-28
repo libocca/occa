@@ -524,7 +524,7 @@ function getFieldFrom {
 
     if hash grep 2> /dev/null; then
         command echo $(LC_ALL=C; "$command_" | \
-                           command grep -m 1 "^$field" | \
+                           command grep -i -m 1 "^$field" | \
                            sed "s/.*:[ \t]*\(.*\)/\1/g")
         return
     fi

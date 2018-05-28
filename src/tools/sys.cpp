@@ -465,7 +465,7 @@ namespace occa {
       std::stringstream ss;
       int freq;
 
-      ss << getFieldFrom("getCPUINFOField", "cpu MHz");
+      ss << getFieldFrom("getLSCPUField", "cpu mhz");
 
       ss >> freq;
 
@@ -482,7 +482,7 @@ namespace occa {
       OCCA_ERROR("Error getting CPU Frequency.\n",
                  error != ENOMEM);
 
-      return frequency/1.0e6;
+      return frequency / 1.0e6;
 #elif (OCCA_OS == OCCA_WINDOWS_OS)
       LARGE_INTEGER performanceFrequency;
       QueryPerformanceFrequency(&performanceFrequency);
@@ -576,8 +576,9 @@ namespace occa {
 
       const int error = sysinfo(&info);
 
-      if (error != 0)
+      if (error != 0) {
         return 0;
+      }
 
       return info.totalram;
 #elif (OCCA_OS == OCCA_MACOS_OS)
@@ -600,8 +601,9 @@ namespace occa {
 
       const int error = sysinfo(&info);
 
-      if (error != 0)
+      if (error != 0) {
         return 0;
+      }
 
       return info.freeram;
 #elif (OCCA_OS == OCCA_MACOS_OS)
