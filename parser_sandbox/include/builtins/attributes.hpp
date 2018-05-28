@@ -52,6 +52,8 @@ namespace occa {
         virtual bool forStatement(const int sType) const;
 
         virtual bool isValid(const attributeToken_t &attr) const;
+
+        std::string inRangeMessage(const int count) const;
       };
       //==================================
 

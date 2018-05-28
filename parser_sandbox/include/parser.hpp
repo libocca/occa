@@ -98,7 +98,6 @@ namespace occa {
 
       //---[ Setup ]--------------------
       void clear();
-      void clearAttributes();
 
       void pushUp(blockStatement &newUp);
       void popUp();

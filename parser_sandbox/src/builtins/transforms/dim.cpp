@@ -52,50 +52,64 @@ namespace occa {
           return &node;
         }
 
+        // Check @dim
         variable_t &var = ((variableNode*) call.value)->value;
         attributeTokenMap::iterator it = var.attributes.find("dim");
         if (it == var.attributes.end()) {
           return &node;
         }
         attributeToken_t &dimAttr = it->second;
-
         if (!isValidDim(call, dimAttr)) {
           return NULL;
         }
-
-        // TODO: Delete token propertly
         const int dimCount = (int) call.args.size();
-        exprNode *index = call.args[dimCount - 1];
+
+        // Check @dimOrder
+        intVector order(dimCount);
+        it = var.attributes.find("dimOrder");
+        if (it == var.attributes.end()) {
+          for (int i = 0; i < dimCount; ++i) {
+            order[i] = i;
+          }
+        } else if (!getDimOrder(dimAttr, it->second, order)) {
+          return NULL;
+        }
+        // 3
+        // 2 + (2 * 3)
+        // TODO: Delete token propertly
+        exprNode *index = call.args[order[dimCount - 1]];
         for (int i = (dimCount - 2); i >= 0; --i) {
-          binaryOpNode mult(new operatorToken(fileOrigin(),
-                                              op::mult),
-                            op::mult,
-                            *(dimAttr.args[i].expr),
-                            *index);
+          const int i2 = order[i];
+          token_t *source = call.args[i2]->token;
+          parenthesesNode indexInParen(source->clone(),
+                                       *index);
           // Don't delete the initial call.args[...]
           if (i < (dimCount - 2)) {
             delete index;
           }
+          parenthesesNode dimInParen(source->clone(),
+                                     *(dimAttr.args[i2].expr));
+          binaryOpNode mult(source->clone(),
+                            op::mult,
+                            dimInParen,
+                            indexInParen);
+          parenthesesNode multInParen(source->clone(),
+                                      mult);
+          parenthesesNode argInParen(source->clone(),
+                                     *(call.args[i2]));
 
-          parenthesesNode paren(new operatorToken(fileOrigin(),
-                                                  op::parenthesesStart),
-                                mult);
-
-          index = new binaryOpNode(new operatorToken(fileOrigin(),
-                                                     op::add),
+          index = new binaryOpNode(source->clone(),
                                    op::add,
-                                   *(call.args[i]),
-                                   paren);
+                                   argInParen,
+                                   multInParen);
         }
         exprNode *newValue = new subscriptNode(call.token,
                                                *(call.value),
                                                *index);
-
         // Don't delete the initial call.args[...]
         if (dimCount > 1) {
           delete index;
         }
-
         return newValue;
       }
 
@@ -119,22 +133,26 @@ namespace occa {
         return false;
       }
 
-      bool dim::isValidDimOrder(attributeToken_t &dimAttr,
-                                attributeToken_t &dimOrderAttr) {
-        // const int dimCount   = (int) dimAttr.args.size();
-        // const int orderCount = (int) dimOrderAttr.args.size();
-        // if (dimCount < orderCount) {
-        //   call.args[dimCount]->token->printError("Too many dimensions, expected "
-        //                                          + occa::toString(dimCount)
-        //                                          + " argument(s)");
-        //   return false;
-        // }
-        // if (dimCount > orderCount) {
-        //   call.value->token->printError("Missing dimensions, expected "
-        //                                 + occa::toString(dimCount)
-        //                                 + " argument(s)");
-        //   return false;
-        // }
+      bool dim::getDimOrder(attributeToken_t &dimAttr,
+                            attributeToken_t &dimOrderAttr,
+                            intVector &order) {
+        const int dimCount   = (int) dimAttr.args.size();
+        const int orderCount = (int) dimOrderAttr.args.size();
+        if (dimCount < orderCount) {
+          dimAttr.printError("Too many dimensions, expected "
+                             + occa::toString(dimCount)
+                             + " argument(s)");
+          return false;
+        }
+        if (dimCount > orderCount) {
+          dimAttr.printError("Missing dimensions, expected "
+                             + occa::toString(dimCount)
+                             + " argument(s)");
+          return false;
+        }
+        for (int i = 0; i < orderCount; ++i) {
+          order[i] = (int) dimOrderAttr.args[i].expr->evaluate();
+        }
         return true;
       }
 

@@ -30,7 +30,29 @@ void testLoading();
 void testErrors();
 void testScope();
 
+class dummy : public attribute_t {
+public:
+  dummy() {}
+
+  virtual std::string name() const {
+    return "dummy";
+  }
+
+  virtual bool forVariable() const {
+    return true;
+  }
+
+  virtual bool forStatement(const int sType) const {
+    return true;
+  }
+
+  virtual bool isValid(const attributeToken_t &attr) const {
+    return true;
+  }
+};
+
 int main(const int argc, const char **argv) {
+  parser.addAttribute<dummy>();
   parser.addAttribute<attributes::kernel>();
   parser.addAttribute<attributes::outer>();
   parser.addAttribute<attributes::inner>();
@@ -1071,24 +1093,24 @@ void testAttributeLoading() {
   OCCA_ASSERT_EQUAL(3,
                     (int) xDim1[1]->expr->evaluate());
 
-  setStatement("const int *x @dimOrder(x=2, y=3), *y;",
+  setStatement("const int *x @dummy(x=2, y=3), *y;",
                statementType::declaration);
   OCCA_ASSERT_EQUAL(0,
                     (int) statement->attributes.size());
   OCCA_ASSERT_EQUAL(1,
                     (int) declVar(0).attributes.size());
-  OCCA_ASSERT_EQUAL("dimOrder",
-                    declVarAttr(0, "dimOrder").name());
+  OCCA_ASSERT_EQUAL("dummy",
+                    declVarAttr(0, "dummy").name());
   OCCA_ASSERT_EQUAL(0,
                     (int) declVar(1).attributes.size());
 
-  attributeToken_t &xDimOrder = declVarAttr(0, "dimOrder");
+  attributeToken_t &xDummy = declVarAttr(0, "dummy");
   OCCA_ASSERT_EQUAL(2,
-                    (int) xDimOrder.kwargs.size());
+                    (int) xDummy.kwargs.size());
   OCCA_ASSERT_EQUAL(2,
-                    (int) xDimOrder["x"]->expr->evaluate());
+                    (int) xDummy["x"]->expr->evaluate());
   OCCA_ASSERT_EQUAL(3,
-                    (int) xDimOrder["y"]->expr->evaluate());
+                    (int) xDummy["y"]->expr->evaluate());
 
   setStatement("@dim(2 + 2, 10 - 5) const int *x, *y;",
                statementType::declaration);
@@ -1119,7 +1141,16 @@ void testAttributeLoading() {
   OCCA_ASSERT_EQUAL(5,
                     (int) xDim4[1]->expr->evaluate());
 
-  std::cerr << "\n---[ @tile Transformations ]--------------------\n\n";
+  std::cerr << "\n---[ @dim Transformations ]---------------------\n";
+  parseAndPrintSource("@dim(1,2,3) int *x; x(1,2,3);");
+  parseAndPrintSource("@dim(3,2,1) int *x; x(1,2,3);");
+  parseAndPrintSource("@dim(1,2,3) @dimOrder(0,1,2) int *x; x(1,2,3);");
+  parseAndPrintSource("@dim(1,2,3) @dimOrder(1,2,0) int *x; x(1,2,3);");
+  parseAndPrintSource("@dim(1,2,3) @dimOrder(2,0,1) int *x; x(1,2,3);");
+  parseAndPrintSource("@dim(1,2,3) @dimOrder(2,1,0) int *x; x(1,2,3);");
+  std::cerr << "==============================================\n";
+
+  std::cerr << "\n---[ @tile Transformations ]--------------------\n";
   parseAndPrintSource("for (int i = 0; i < (1 + 2 + N + 6); ++i; @tile(16, @outer, @inner)) {}");
   parseAndPrintSource("for (int i = 0; i > (1 + 2 + N + 6); --i; @tile(16, @outer, @inner)) {}");
   parseAndPrintSource("for (int i = 0; i <= (1 + 2 + N + 6); i++; @tile(16, @outer, @inner)) {}");
@@ -1280,6 +1311,12 @@ void testAttributeErrors() {
   parseBadSource("for (int i = 0; i < 2; ++j; @tile(16)) {}");
 
   parseBadSource("@dimOrder(1, 0);");
+  parseBadSource("@dimOrder() int x;");
+  parseBadSource("@dimOrder(,) int x;");
+  parseBadSource("@dimOrder(1,x,0) int x;");
+  parseBadSource("@dimOrder(0,1,2,4) int x;");
+  parseBadSource("@dimOrder(-1,1,2,4) int x;");
+  parseBadSource("@dimOrder(11) int x;");
 }
 //======================================
 

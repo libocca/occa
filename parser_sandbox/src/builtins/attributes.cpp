@@ -45,11 +45,11 @@ namespace occa {
 
       bool dim::isValid(const attributeToken_t &attr) const {
         if (attr.kwargs.size()) {
-          attr.printError("@dim does not take kwargs");
+          attr.printError("[@dim] does not take kwargs");
           return false;
         }
         if (!attr.args.size()) {
-          attr.printError("@dim expects at least one argument");
+          attr.printError("[@dim] expects at least one argument");
           return false;
         }
         return true;
@@ -72,7 +72,63 @@ namespace occa {
       }
 
       bool dimOrder::isValid(const attributeToken_t &attr) const {
+        if (attr.kwargs.size()) {
+          attr.printError("[@dimOrder] does not take kwargs");
+          return false;
+        }
+        const int argCount = (int) attr.args.size();
+        if (!argCount) {
+          attr.printError("[@dimOrder] expects at least one argument");
+          return false;
+        }
+        // Test valid numbers
+        int *order = new int[argCount];
+        ::memset(order, 0, argCount * sizeof(int));
+        for (int i = 0; i < argCount; ++i) {
+          // Test arg value
+          exprNode *expr = attr.args[i].expr;
+          if (!expr
+              || !expr->canEvaluate()) {
+            if (expr
+                && (expr->type() != exprNodeType::empty)) {
+              expr->startNode()->printError(inRangeMessage(argCount));
+            } else {
+              attr.printError(inRangeMessage(argCount));
+            }
+            delete [] order;
+            return false;
+          }
+          // Test proper arg value
+          const int i2 = (int) expr->evaluate();
+          if ((i2 < 0) || (argCount <= i2)) {
+            expr->startNode()->printError(inRangeMessage(argCount));
+            delete [] order;
+            return false;
+          }
+          if (order[i2]) {
+            expr->startNode()->printError("[@dimOrder] Duplicate index");
+            delete [] order;
+            return false;
+          }
+          order[i2] = 1;
+        }
+        delete [] order;
         return true;
+      }
+
+      std::string dimOrder::inRangeMessage(const int count) const {
+        std::string message = (
+          "[@dimOrder] arguments must be known at compile-time"
+          " and an ordering of ["
+        );
+        for (int i = 0; i < count; ++i) {
+          if (i) {
+            message += ", ";
+          }
+          message += occa::toString(i);
+        }
+        message += ']';
+        return message;
       }
       //==================================
 
@@ -95,16 +151,16 @@ namespace occa {
       bool tile::validArgs(const attributeToken_t &attr) const {
         const int argCount = (int) attr.args.size();
         if (!argCount) {
-          attr.printError("@tile expects at least one argument");
+          attr.printError("[@tile] expects at least one argument");
           return false;
         }
         if (argCount > 3) {
-          attr.printError("@tile takes 1-3 arguments, the last 2 being attributes"
+          attr.printError("[@tile] takes 1-3 arguments, the last 2 being attributes"
                           " for the block and in-block loops respectively");
           return false;
         }
         if (attr.args[0].expr->type() == exprNodeType::empty) {
-          attr.printError("@tile expects a non-empty first argument");
+          attr.printError("[@tile] expects a non-empty first argument");
           return false;
         }
         for (int i = 1; i < argCount; ++i) {
@@ -112,7 +168,7 @@ namespace occa {
             attr.args[i]
               .expr
               ->startNode()
-              ->printError("@tile can only take attributes for the 2nd and 3rd arguments");
+              ->printError("[@tile] can only take attributes for the 2nd and 3rd arguments");
             return false;
           }
         }

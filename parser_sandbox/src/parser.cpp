@@ -102,7 +102,12 @@ namespace occa {
 
     parser_t::~parser_t() {
       clear();
-      clearAttributes();
+      nameToAttributeMap::iterator it = attributeMap.begin();
+      while (it != attributeMap.end()) {
+        delete it->second;
+        ++it;
+      }
+      attributeMap.clear();
     }
 
     //---[ Setup ]----------------------
@@ -123,15 +128,6 @@ namespace occa {
       attributes.clear();
 
       success = true;
-    }
-
-    void parser_t::clearAttributes() {
-      nameToAttributeMap::iterator it = attributeMap.begin();
-      while (it != attributeMap.end()) {
-        delete it->second;
-        ++it;
-      }
-      attributeMap.clear();
     }
 
     void parser_t::pushUp(blockStatement &newUp) {

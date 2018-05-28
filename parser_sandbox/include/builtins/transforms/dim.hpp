@@ -42,8 +42,9 @@ namespace occa {
         bool isValidDim(callNode &call,
                         attributeToken_t &dimAttr);
 
-        bool isValidDimOrder(attributeToken_t &dimAttr,
-                             attributeToken_t &dimOrderAttr);
+        bool getDimOrder(attributeToken_t &dimAttr,
+                         attributeToken_t &dimOrderAttr,
+                         intVector &order);
 
         bool applyToDeclStatement(declarationStatement &smnt);
         bool applyToExpr(statement_t &smnt,
