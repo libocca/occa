@@ -859,6 +859,7 @@ void testForLoading() {
 
 void testWhileLoading() {
   statement_t *statement;
+  (void) statement;
 
   setStatement("while (true) {}",
                statementType::while_);
@@ -1018,6 +1019,7 @@ void testPragmaLoading() {
 
 void testGotoLoading() {
   statement_t *statement;
+  (void) statement;
 
   setStatement("label:",
                statementType::gotoLabel);

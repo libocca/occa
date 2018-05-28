@@ -116,6 +116,7 @@ namespace occa {
       if (arg >= 0) {
         expandArg(newTokens, args, arg);
       } else {
+        // __VA_ARGS__
         const int realArgc = (int) args.size();
         for (int i = argc; i < realArgc; ++i) {
           expandArg(newTokens, args, i);
@@ -415,7 +416,8 @@ namespace occa {
       }
 
       if (!hasVarArgs) {
-        argNames[token->to<identifierToken>().value] = argNames.size();
+        const int arg = (int) argNames.size();
+        argNames[token->to<identifierToken>().value] = arg;
       } else {
         argNames[VA_ARGS] = -1;
       }
@@ -686,7 +688,8 @@ namespace occa {
       const int realArgc = argCount();
       const int argc     = (int) args.size();
 
-      if (argc < realArgc) {
+      if ((argc < realArgc) ||
+          ((argc > realArgc) && !hasVarArgs)) {
         std::stringstream ss;
         ss << "Expected " << realArgc << " argument";
         if (realArgc > 1) {
