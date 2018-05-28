@@ -19,15 +19,28 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  */
-#ifndef OCCA_LANG_BUILTINS_ATTRIBUTES_HEADER
-#define OCCA_LANG_BUILTINS_ATTRIBUTES_HEADER
+#ifndef OCCA_LANG_BUILTINS_ATTRIBUTES_TILE_HEADER
+#define OCCA_LANG_BUILTINS_ATTRIBUTES_TILE_HEADER
 
-#include "builtins/attributes/dim.hpp"
-#include "builtins/attributes/tile.hpp"
-#include "builtins/attributes/kernel.hpp"
-#include "builtins/attributes/outer.hpp"
-#include "builtins/attributes/inner.hpp"
-#include "builtins/attributes/shared.hpp"
-#include "builtins/attributes/exclusive.hpp"
+#include "attribute.hpp"
+
+namespace occa {
+  namespace lang {
+    namespace attributes {
+      class tile : public attribute_t {
+      public:
+        tile();
+
+        virtual std::string name() const;
+
+        virtual bool forStatement(const int sType) const;
+
+        virtual bool isValid(const attributeToken_t &attr) const;
+        bool validArgs(const attributeToken_t &attr) const;
+        bool validKwargs(const attributeToken_t &attr) const;
+      };
+    }
+  }
+}
 
 #endif

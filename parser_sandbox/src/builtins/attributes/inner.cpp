@@ -19,15 +19,28 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  */
-#ifndef OCCA_LANG_BUILTINS_ATTRIBUTES_HEADER
-#define OCCA_LANG_BUILTINS_ATTRIBUTES_HEADER
-
-#include "builtins/attributes/dim.hpp"
-#include "builtins/attributes/tile.hpp"
-#include "builtins/attributes/kernel.hpp"
-#include "builtins/attributes/outer.hpp"
+#include "exprNode.hpp"
+#include "parser.hpp"
+#include "statement.hpp"
+#include "variable.hpp"
 #include "builtins/attributes/inner.hpp"
-#include "builtins/attributes/shared.hpp"
-#include "builtins/attributes/exclusive.hpp"
 
-#endif
+namespace occa {
+  namespace lang {
+    namespace attributes {
+      inner::inner() {}
+
+      std::string inner::name() const {
+        return "inner";
+      }
+
+      bool inner::forStatement(const int sType) const {
+        return (sType & statementType::for_);
+      }
+
+      bool inner::isValid(const attributeToken_t &attr) const {
+        return true;
+      }
+    }
+  }
+}

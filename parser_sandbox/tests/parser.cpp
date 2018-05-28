@@ -1151,13 +1151,13 @@ void testAttributeLoading() {
   std::cerr << "==============================================\n";
 
   std::cerr << "\n---[ @tile Transformations ]--------------------\n";
-  parseAndPrintSource("for (int i = 0; i < (1 + 2 + N + 6); ++i; @tile(16, @outer, @inner)) {"
+  parseAndPrintSource("for (int i = 0; i < (1 + 2 + N + 6); ++i; @tile(16, @outer, @inner, safe=false)) {"
                       "  int x;"
                       "}");
-  parseAndPrintSource("for (int i = 0; i > (1 + 2 + N + 6); --i; @tile(16, @outer, @inner)) {"
+  parseAndPrintSource("for (int i = 0; i > (1 + 2 + N + 6); --i; @tile(16, @outer, @inner, safe=false)) {"
                       "  int x;"
                       "}");
-  parseAndPrintSource("for (int i = 0; i <= (1 + 2 + N + 6); i++; @tile(16, @outer, @inner)) {"
+  parseAndPrintSource("for (int i = 0; i <= (1 + 2 + N + 6); i++; @tile(16, @outer, @inner, safe=false)) {"
                       "  int x;"
                       "}");
   parseAndPrintSource("for (int i = 0; i >= (1 + 2 + N + 6); i--; @tile(16, @outer, @inner, safe=true)) {"

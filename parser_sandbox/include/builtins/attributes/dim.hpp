@@ -19,15 +19,45 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  */
-#ifndef OCCA_LANG_BUILTINS_ATTRIBUTES_HEADER
-#define OCCA_LANG_BUILTINS_ATTRIBUTES_HEADER
+#ifndef OCCA_LANG_BUILTINS_ATTRIBUTES_DIM_HEADER
+#define OCCA_LANG_BUILTINS_ATTRIBUTES_DIM_HEADER
 
-#include "builtins/attributes/dim.hpp"
-#include "builtins/attributes/tile.hpp"
-#include "builtins/attributes/kernel.hpp"
-#include "builtins/attributes/outer.hpp"
-#include "builtins/attributes/inner.hpp"
-#include "builtins/attributes/shared.hpp"
-#include "builtins/attributes/exclusive.hpp"
+#include "attribute.hpp"
+
+namespace occa {
+  namespace lang {
+    namespace attributes {
+      //---[ @dim ]-----------------------
+      class dim : public attribute_t {
+      public:
+        dim();
+
+        virtual std::string name() const;
+
+        virtual bool forVariable() const;
+        virtual bool forStatement(const int sType) const;
+
+        virtual bool isValid(const attributeToken_t &attr) const;
+      };
+      //==================================
+
+      //---[ @dimOrder ]------------------
+      class dimOrder : public attribute_t {
+      public:
+        dimOrder();
+
+        virtual std::string name() const;
+
+        virtual bool forVariable() const;
+        virtual bool forStatement(const int sType) const;
+
+        virtual bool isValid(const attributeToken_t &attr) const;
+
+        std::string inRangeMessage(const int count) const;
+      };
+      //==================================
+    }
+  }
+}
 
 #endif
