@@ -29,13 +29,11 @@
 #include "variable.hpp"
 
 void testBitfields();
-void testFunction();
 void testCasting();
 void testComparision();
 
 int main(const int argc, const char **argv) {
   testBitfields();
-  testFunction();
   testCasting();
   testComparision();
 
@@ -103,92 +101,6 @@ void testBitfields() {
   OCCA_ASSERT_TRUE(a2 == a2);
   OCCA_ASSERT_TRUE(a2 >= a2);
   OCCA_ASSERT_TRUE(a2 >  a1);
-}
-
-void testFunction() {
-  qualifiers_t q1;
-  q1 += (volatile_);
-
-  vartype_t t1_0(float_);
-  t1_0 += const_;
-
-  vartype_t t1_1 = t1_0;
-  t1_1 += const_;
-  t1_1 += pointer_t();
-
-  vartype_t t1 = t1_1;
-  unknownToken dummyReferenceToken((fileOrigin()));
-  t1.setReferenceToken(&dummyReferenceToken);
-
-  vartype_t t2 = t1_1;
-  qualifiers_t t2q;
-  t2q += const_;
-  t2 += pointer_t(t2q);
-
-  identifierToken td1Name(fileOrigin(),
-                          "td1");
-  identifierToken td2Name(fileOrigin(),
-                          "td2");
-  typedef_t td1(t1, td1Name);
-  typedef_t td2(t2, td2Name);
-
-  vartype_t arg3(char_);
-  arg3 += volatile_;
-
-  primitiveNode arg4Size(NULL, 1337);
-  vartype_t arg4(t2);
-
-  operatorToken arg4Start(fileOrigin(),
-                          op::bracketStart);
-  operatorToken arg4End(fileOrigin(),
-                        op::bracketStart);
-  arg4 += array_t(arg4Start,
-                  arg4End,
-                  arg4Size.clone());
-
-  function_t f(void_, "foo");
-  identifierToken a(fileOrigin(), "a");
-  identifierToken b(fileOrigin(), "b");
-  identifierToken array(fileOrigin(), "array");
-  identifierToken e(fileOrigin(), "e");
-  f += variable_t(t1 , &a);
-  f += variable_t(td2, &b);
-  f += variable_t(arg3);
-  f += variable_t(arg4, &array);
-  f += variable_t(double_, &e);
-
-  functionPtr_t f2(f, "bar");
-  f2 += variable_t(t1 , &a);
-  f2 += variable_t(td2, &b);
-  f2 += variable_t(arg3);
-  f2 += variable_t(arg4, &array);
-  f2 += variable_t(double_, &e);
-
-  printer pout(std::cerr);
-
-  pout << "q1   = " << q1 << '\n'
-       << "t1_0 = " << t1_0 << '\n'
-       << "t1_1 = " << t1_1 << '\n'
-       << "t1   = " << t1 << '\n'
-       << "t2   = " << t2 << '\n';
-
-  pout << "td1  = ";
-  td1.printDeclaration(pout);
-  pout << '\n';
-
-  pout << "td2  = ";
-  td2.printDeclaration(pout);
-  pout << '\n';
-
-  f.printDeclaration(pout);
-  pout << '\n';
-
-  f2.printDeclaration(pout);
-  pout << '\n';
-
-  f2.isBlock = true;
-  f2.printDeclaration(pout);
-  pout << '\n';
 }
 
 // TODO: Reimplement casting checking
