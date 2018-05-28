@@ -10,7 +10,7 @@ srcToObject  = $(subst $(PROJ_DIR)/src,$(PROJ_DIR)/obj,$(1:.cpp=.o))
 
 headers     = $(realpath $(shell find $(PROJ_DIR)/include -type f -name '*.hpp'))
 sources     = $(realpath $(shell find $(PROJ_DIR)/src     -type f -name '*.cpp'))
-testSources = $(wildcard $(testPath)/*.cpp)
+testSources = $(realpath $(shell find $(PROJ_DIR)/tests   -type f -name '*.cpp'))
 
 objects = $(call srcToObject,$(sources))
 tests   = $(subst $(testPath)/,$(testPath)/bin/,$(testSources:.cpp=))
