@@ -31,6 +31,7 @@
 #include "preprocessor.hpp"
 #include "processingStages.hpp"
 #include "statement.hpp"
+#include "statementTransform.hpp"
 #include "tokenizer.hpp"
 #include "tokenContext.hpp"
 #include "variable.hpp"
@@ -97,6 +98,7 @@ namespace occa {
 
       //---[ Setup ]--------------------
       void clear();
+      void clearAttributes();
 
       void pushUp(blockStatement &newUp);
       void popUp();

@@ -31,6 +31,12 @@ void testErrors();
 void testScope();
 
 int main(const int argc, const char **argv) {
+  parser.addAttribute<attributes::kernel>();
+  parser.addAttribute<attributes::outer>();
+  parser.addAttribute<attributes::inner>();
+  parser.addAttribute<attributes::shared>();
+  parser.addAttribute<attributes::exclusive>();
+
   testTypeMethods();
   testPeek();
 
@@ -533,7 +539,7 @@ void testDeclarationLoading() {
 
 #define decl         statement->to<declarationStatement>()
 #define decls        decl.declarations
-#define declVar(N)   decls[N].variable()
+#define declVar(N)   (*decls[N].variable)
 #define declValue(N) (*(decls[N].value))
 
   setStatement("int foo;",
@@ -719,7 +725,7 @@ void testIfLoading() {
 #define condition    (*ifSmnt.condition)
 #define decl         condition.to<declarationStatement>()
 #define decls        decl.declarations
-#define declVar(N)   decls[N].variable()
+#define declVar(N)   (*decls[N].variable)
 #define declValue(N) (*(decls[N].value))
 
   setStatement("if (true) {}",
@@ -1043,7 +1049,7 @@ void testAttributeLoading() {
 #define smntAttr(N)       statement->attributes[N]->name()
 #define decl              statement->to<declarationStatement>()
 #define decls             decl.declarations
-#define declVar(N)        decls[N].variable()
+#define declVar(N)        (*decls[N].variable)
 #define declVarAttr(N, A) declVar(N).attributes[A]
 
   setStatement("const int *x @dim(2, 3), *y;",
@@ -1112,6 +1118,15 @@ void testAttributeLoading() {
                     (int) xDim4[0]->expr->evaluate());
   OCCA_ASSERT_EQUAL(5,
                     (int) xDim4[1]->expr->evaluate());
+
+  std::cerr << "\n---[ @tile Transformations ]--------------------\n\n";
+  parseAndPrintSource("for (int i = 0; i < (1 + 2 + N + 6); ++i; @tile(16, @outer, @inner)) {}");
+  parseAndPrintSource("for (int i = 0; i > (1 + 2 + N + 6); --i; @tile(16, @outer, @inner)) {}");
+  parseAndPrintSource("for (int i = 0; i <= (1 + 2 + N + 6); i++; @tile(16, @outer, @inner)) {}");
+  parseAndPrintSource("for (int i = 0; i >= (1 + 2 + N + 6); i--; @tile(16, @outer, @inner)) {}");
+  parseAndPrintSource("for (int i = 0; (1 + 2 + N + 6) > i; i += 3; @tile(16, @outer, @inner)) {}");
+  parseAndPrintSource("for (int i = 0; (1 + 2 + N + 6) <= i; i -= 2 + 3; @tile(16, @outer, @inner)) {}");
+  std::cerr << "==============================================\n\n";
 
 #undef smntAttr
 #undef decl

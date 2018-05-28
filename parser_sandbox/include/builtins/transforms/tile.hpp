@@ -49,24 +49,24 @@ namespace occa {
         bool sameVariable(variable_t &var,
                           rightUnaryOpNode &opNode);
 
-        bool sameVariable(variable_t &var,
-                          binaryOpNode &opNode);
+        int sameVariable(variable_t &var,
+                         binaryOpNode &opNode);
 
         virtual statement_t* transformStatement(statement_t &smnt);
 
-        bool setupNewForStatements(attributeToken_t &attr,
+        void setupNewForStatements(attributeToken_t &attr,
                                    forStatement &forSmnt,
                                    variable_t &iter,
                                    variable_t &blockIter,
                                    forStatement &blockForSmnt,
                                    forStatement &innerForSmnt);
 
-        bool setupBlockForStatement(exprNode &tileSize,
+        void setupBlockForStatement(exprNode &tileSize,
                                     variable_t &blockIter,
                                     forStatement &blockForSmnt,
                                     forStatement &innerForSmnt);
 
-        bool setupInnerForStatement(exprNode &tileSize,
+        void setupInnerForStatement(exprNode &tileSize,
                                     variable_t &iter,
                                     variable_t &blockIter,
                                     forStatement &blockForSmnt,

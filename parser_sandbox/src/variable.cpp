@@ -112,45 +112,37 @@ namespace occa {
 
     //---[ Variable Declaration ]-------
     variableDeclaration::variableDeclaration() :
-      variable_(NULL),
+      variable(NULL),
       value(NULL) {}
 
-    variableDeclaration::variableDeclaration(variable_t &variable__) :
-      variable_(&variable__),
+    variableDeclaration::variableDeclaration(variable_t &variable_) :
+      variable(&variable_),
       value(NULL) {}
 
-    variableDeclaration::variableDeclaration(variable_t &variable__,
+    variableDeclaration::variableDeclaration(variable_t &variable_,
                                              exprNode &value_) :
-      variable_(&variable__),
+      variable(&variable_),
       value(&value_) {}
 
     variableDeclaration::variableDeclaration(const variableDeclaration &other) :
-      variable_(other.variable_),
+      variable(other.variable),
       value(other.value) {}
 
     variableDeclaration::~variableDeclaration() {}
 
     variableDeclaration variableDeclaration::clone() const {
       if (value) {
-        return variableDeclaration(variable_->clone(),
+        return variableDeclaration(variable->clone(),
                                    *(value->clone()));
       }
-      return variableDeclaration(variable_->clone());
+      return variableDeclaration(variable->clone());
     }
 
     void variableDeclaration::clear() {
       // Variable gets deleted in the scope
       delete value;
-      variable_ = NULL;
+      variable = NULL;
       value = NULL;
-    }
-
-    variable_t& variableDeclaration::variable() {
-      return *variable_;
-    }
-
-    const variable_t& variableDeclaration::variable() const {
-      return *variable_;
     }
 
     bool variableDeclaration::hasValue() const {
@@ -158,25 +150,25 @@ namespace occa {
     }
 
     void variableDeclaration::print(printer &pout) const {
-      variable_->printDeclaration(pout);
+      variable->printDeclaration(pout);
       if (value) {
         pout << " = " << *value;
       }
     }
 
     void variableDeclaration::printAsExtra(printer &pout) const {
-      variable_->printExtraDeclaration(pout);
+      variable->printExtraDeclaration(pout);
       if (value) {
         pout << " = " << *value;
       }
     }
 
     void variableDeclaration::printWarning(const std::string &message) const {
-      variable_->printWarning(message);
+      variable->printWarning(message);
     }
 
     void variableDeclaration::printError(const std::string &message) const {
-      variable_->printError(message);
+      variable->printError(message);
     }
     //==================================
   }

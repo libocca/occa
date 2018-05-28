@@ -45,6 +45,16 @@ void parseSource(const std::string &s) {
   parser.parseSource(source);
 }
 
+#define parseAndPrintSource(str_)               \
+  parseSource(str_);                            \
+  OCCA_ASSERT_TRUE(parser.success)              \
+  {                                             \
+    printer pout;                               \
+    parser.root.print(pout);                    \
+    std::cout << pout.str();                    \
+  }
+
+
 #define parseBadSource(str_)                    \
   parseSource(str_);                            \
   OCCA_ASSERT_FALSE(parser.success)

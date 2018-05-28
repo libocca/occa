@@ -69,14 +69,14 @@ namespace occa {
       // Note: Feeing of variable and value are delegated
       //         to the declarationStatement
     public:
-      variable_t *variable_;
+      variable_t *variable;
       exprNode *value;
 
       variableDeclaration();
 
-      variableDeclaration(variable_t &variable__);
+      variableDeclaration(variable_t &variable_);
 
-      variableDeclaration(variable_t &variable__,
+      variableDeclaration(variable_t &variable_,
                           exprNode &value_);
 
       variableDeclaration(const variableDeclaration &other);
@@ -87,8 +87,6 @@ namespace occa {
 
       void clear();
 
-      variable_t& variable();
-      const variable_t& variable() const;
       bool hasValue() const;
 
       void print(printer &pout) const;

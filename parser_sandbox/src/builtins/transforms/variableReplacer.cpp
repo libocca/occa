@@ -55,8 +55,8 @@ namespace occa {
         const int declCount = (int) declSmnt.declarations.size();
         for (int i = 0; i < declCount; ++i) {
           variableDeclaration &decl = declSmnt.declarations[i];
-          if (decl.variable_ == from) {
-            decl.variable_ = to;
+          if (decl.variable == from) {
+            decl.variable = to;
           }
           if (!applyToExpr(decl.value)) {
             return NULL;

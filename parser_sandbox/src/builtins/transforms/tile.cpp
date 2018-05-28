@@ -42,11 +42,14 @@ namespace occa {
         // Can only have one declaration
         declarationStatement &declSmnt = (declarationStatement&) smnt;
         if (declSmnt.declarations.size() > 1) {
-          declSmnt.declarations[1].printError("[@tile] Can only transform 1 iterator variable");
+          declSmnt.declarations[1].printError(
+            "[@tile] Can only transform 1 iterator variable"
+          );
           return false;
         }
+        variableDeclaration &decl = declSmnt.declarations[0];
         // Valid types: {char, short, int, long}
-        variable_t &var = declSmnt.declarations[0].variable();
+        variable_t &var = *decl.variable;
         const type_t *type = var.vartype.type;
         if (!type ||
             ((*type != char_)  &&
@@ -166,18 +169,22 @@ namespace occa {
         return (&var == &var2);
       }
 
-      bool tile::sameVariable(variable_t &var,
+      int tile::sameVariable(variable_t &var,
                               binaryOpNode &opNode) {
         variable_t *checkVar = NULL;
         if (opNode.leftValue->type() == exprNodeType::variable) {
           checkVar = &(((variableNode*) opNode.leftValue)->value);
+          if (checkVar && (checkVar == &var)) {
+            return -1;
+          }
         }
         if (opNode.rightValue->type() == exprNodeType::variable) {
           checkVar = &(((variableNode*) opNode.rightValue)->value);
+          if (checkVar && (checkVar == &var)) {
+            return 1;
+          }
         }
-        // Check matching variables
-        return (checkVar
-                && (checkVar == &var));
+        return 0;
       }
 
       statement_t* tile::transformStatement(statement_t &smnt) {
@@ -192,9 +199,9 @@ namespace occa {
         if (!isValidInit(*forSmnt.init)) {
           return NULL;
         }
-        variable_t &iter = (((declarationStatement*) forSmnt.init)
-                            ->declarations[0]
-                            .variable());
+        variable_t &iter = *(((declarationStatement*) forSmnt.init)
+                             ->declarations[0]
+                             .variable);
         if (!isValidCheck(iter, *forSmnt.check) ||
             !isValidUpdate(iter, *forSmnt.update)) {
           return NULL;
@@ -211,24 +218,23 @@ namespace occa {
         variable_t &blockIter = iter.clone();
         blockIter.name() = "_occa_tiled_" + iter.name();
 
-        if (!setupNewForStatements(attr,
-                                   forSmnt,
-                                   iter, blockIter,
-                                   blockForSmnt, innerForSmnt)
-            || !setupBlockForStatement(tileSize,
-                                       blockIter,
-                                       blockForSmnt, innerForSmnt)
-            || !setupInnerForStatement(tileSize,
-                                       iter, blockIter,
-                                       blockForSmnt, innerForSmnt)) {
-          delete &blockForSmnt;
-          delete &innerForSmnt;
-          return NULL;
-        }
+        setupNewForStatements(attr,
+                              forSmnt,
+                              iter, blockIter,
+                              blockForSmnt, innerForSmnt);
+
+        setupBlockForStatement(tileSize,
+                               blockIter,
+                               blockForSmnt, innerForSmnt);
+
+        setupInnerForStatement(tileSize,
+                               iter, blockIter,
+                               blockForSmnt, innerForSmnt);
+
         return &blockForSmnt;
       }
 
-      bool tile::setupNewForStatements(attributeToken_t &attr,
+      void tile::setupNewForStatements(attributeToken_t &attr,
                                        forStatement &forSmnt,
                                        variable_t &iter,
                                        variable_t &blockIter,
@@ -256,11 +262,11 @@ namespace occa {
 
         // Replace instances of x with _occa_tiled_x
         variableReplacer.set(iter, blockIter);
-        return (variableReplacer.statementTransform::apply(*blockForSmnt.init)
-                && variableReplacer.statementTransform::apply(*blockForSmnt.check));
+        variableReplacer.statementTransform::apply(*blockForSmnt.init);
+        variableReplacer.statementTransform::apply(*blockForSmnt.check);
       }
 
-      bool tile::setupBlockForStatement(exprNode &tileSize,
+      void tile::setupBlockForStatement(exprNode &tileSize,
                                         variable_t &blockIter,
                                         forStatement &blockForSmnt,
                                         forStatement &innerForSmnt) {
@@ -316,10 +322,9 @@ namespace occa {
         blockForSmnt.update = new expressionStatement(&blockForSmnt,
                                                       *newUpdateExpr,
                                                       false);
-        return true;
       }
 
-      bool tile::setupInnerForStatement(exprNode &tileSize,
+      void tile::setupInnerForStatement(exprNode &tileSize,
                                         variable_t &iter,
                                         variable_t &blockIter,
                                         forStatement &blockForSmnt,
@@ -328,11 +333,55 @@ namespace occa {
           for (x = START; x < END; x += INC)
           ->
           for (NULL; NULL; x += INC)
+          ->
           for (x = xTile; x < (xTile + TILE); x += INC)
         */
-        innerForSmnt.init  = new emptyStatement(&innerForSmnt, NULL);
-        innerForSmnt.check = new emptyStatement(&innerForSmnt, NULL);
-        return true;
+        // Init variables
+        variableDeclaration &decl = (((declarationStatement*) blockForSmnt.init)
+                                     ->declarations[0]);
+        token_t *initToken = decl.variable->source;
+        variableNode iterNode(initToken->clone(), iter);
+        variableNode blockIterNode(initToken->clone(), blockIter);
+
+        // Check variables
+        binaryOpNode &checkExpr = ((binaryOpNode&)
+                                   *(((expressionStatement*) blockForSmnt.check)->expr));
+        token_t *checkToken = checkExpr.startNode()->token;
+        const bool varInLeft = sameVariable(blockIter, checkExpr) < 0;
+
+        // Update variables
+        const operator_t &updateOp = (
+          ((binaryOpNode&)
+           *(((expressionStatement*) blockForSmnt.update)->expr)
+          ).op);
+        const bool addUpdate = (updateOp.opType & operatorType::addEq);
+
+        // Create init
+        innerForSmnt.init = new declarationStatement(&innerForSmnt);
+        variableDeclarationVector &decls = (
+          ((declarationStatement*) innerForSmnt.init)
+          ->declarations
+        );
+        decls.push_back(
+          variableDeclaration(iter, *(blockIterNode.clone()))
+        );
+
+        // Create check
+        binaryOpNode checkValueNode(checkToken->clone(),
+                                    addUpdate ? op::add : op::sub,
+                                    blockIterNode,
+                                    tileSize);
+        parenthesesNode checkInParen(checkToken->clone(),
+                                     checkValueNode);
+        binaryOpNode &newCheckNode = *(
+          new binaryOpNode(
+            checkToken->clone(),
+            (const binaryOperator_t&) checkExpr.op,
+            varInLeft ? (exprNode&) iterNode : (exprNode&) checkInParen,
+            varInLeft ? (exprNode&) checkInParen : (exprNode&) iterNode
+          ));
+        innerForSmnt.check = new expressionStatement(&innerForSmnt,
+                                                     newCheckNode);
       }
     }
   }

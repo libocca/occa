@@ -260,7 +260,7 @@ namespace occa {
       bool success = true;
       const int count = (int) declarations.size();
       for (int i = 0; i < count; ++i) {
-        variable_t &var = declarations[i].variable();
+        variable_t &var = *(declarations[i].variable);
         // Variable
         if (!var.vartype.has(typedef_)) {
           success &= up->scope.add(var, force);

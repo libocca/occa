@@ -102,13 +102,7 @@ namespace occa {
 
     parser_t::~parser_t() {
       clear();
-
-      nameToAttributeMap::iterator it = attributeMap.begin();
-      while (it != attributeMap.end()) {
-        delete it->second;
-        ++it;
-      }
-      attributeMap.clear();
+      clearAttributes();
     }
 
     //---[ Setup ]----------------------
@@ -129,6 +123,15 @@ namespace occa {
       attributes.clear();
 
       success = true;
+    }
+
+    void parser_t::clearAttributes() {
+      nameToAttributeMap::iterator it = attributeMap.begin();
+      while (it != attributeMap.end()) {
+        delete it->second;
+        ++it;
+      }
+      attributeMap.clear();
     }
 
     void parser_t::pushUp(blockStatement &newUp) {
@@ -561,9 +564,9 @@ namespace occa {
       }
 
       // Load the actual variable if it exists
-      decl.variable_ = &(!isLoadingFunctionPointer()
-                         ? loadVariable(vartype).clone()
-                         : loadFunctionPointer(vartype).clone());
+      decl.variable = &(!isLoadingFunctionPointer()
+                        ? loadVariable(vartype).clone()
+                        : loadFunctionPointer(vartype).clone());
 
       loadDeclarationAttributes(decl);
       if (!success) {
@@ -582,7 +585,7 @@ namespace occa {
 
 
     void parser_t::loadDeclarationAttributes(variableDeclaration &decl) {
-      attributeTokenMap &varAttributes = decl.variable_->attributes;
+      attributeTokenMap &varAttributes = decl.variable->attributes;
       // Copy statement attributes to each variable
       // Variable attributes should override statement attributes
       varAttributes.insert(attributes.begin(),
@@ -633,7 +636,7 @@ namespace occa {
       }
 
       exprNode *value = getExpression(1, pos);
-      decl.variable_->vartype.bitfield = (int) value->evaluate();
+      decl.variable->vartype.bitfield = (int) value->evaluate();
       context.set(pos);
     }
 
