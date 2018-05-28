@@ -1365,10 +1365,10 @@ void testScopeKeywords();
 void testScopeErrors();
 
 void testScope() {
-  // testScopeUp();
-  // testScopeKeywords();
+  testScopeUp();
+  testScopeKeywords();
 
-  // testScopeErrors();
+  testScopeErrors();
 }
 
 void testScopeUp() {

@@ -250,6 +250,13 @@ namespace occa {
       }
       const int count = (int) declarations.size();
       for (int i = 0; i < count; ++i) {
+        variableDeclaration &decl = declarations[i];
+        variable_t &var = *(decl.variable);
+        // The scope has its own typedef copy
+        // We have to delete the variable-typedef
+        if (var.vartype.has(typedef_)) {
+          delete &var;
+        }
         declarations[i].clear();
       }
       declarations.clear();
@@ -259,21 +266,12 @@ namespace occa {
       const int count = (int) declarations.size();
       for (int i = 0; i < count; ++i) {
         variable_t *var = declarations[i].variable;
-        // Delete keyword if variable is in scope
+        // The scope has its own typedef copy
+        // We have to delete the variable-typedef
         if (up
-            && var
-            && var->name().size()) {
-          keyword_t &keyword = up->scope.get(var->name());
-          variable_t *kvar = NULL;
-          if (keyword.type() & keywordType::variable) {
-            kvar = &(((variableKeyword*) &keyword)->variable);
-          }
-          // Make sure the variables match (even if the name matches)
-          // If so, the scope will delete the variable
-          if (kvar == var) {
-            up->scope.remove(var->name());
-            var = NULL;
-          }
+            && up->scope.has(var->name())) {
+          up->scope.remove(var->name());
+          var = NULL;
         }
         delete var;
         declarations[i].clear();
@@ -291,30 +289,39 @@ namespace occa {
 
     bool declarationStatement::addDeclaration(const variableDeclaration &decl,
                                               const bool force) {
-      declarations.push_back(decl);
+      variable_t &var = *(decl.variable);
+      bool success = true;
       if (!up) {
+        delete &var;
         return false;
       }
-
       // Variable
-      variable_t &var = *(decl.variable);
       if (!var.vartype.has(typedef_)) {
-        return up->scope.add(var, force);
-      }
+        success = up->scope.add(var, force);
+      } else {
+        // Typedef
+        typedef_t &type = *(new typedef_t(var.vartype));
+        if (var.source) {
+          type.setSource(*var.source);
+        }
 
-      // Typedef
-      typedef_t &type = *(new typedef_t(var.vartype));
-      if (var.source) {
-        type.setSource(*var.source);
-      }
+        if (var.vartype.type) {
+          type.attributes = var.vartype.type->attributes;
+        }
+        type.attributes.insert(var.attributes.begin(),
+                               var.attributes.end());
 
-      if (var.vartype.type) {
-        type.attributes = var.vartype.type->attributes;
+        success = up->scope.add(type, force);
+        if (!success) {
+          delete &type;
+        }
       }
-      type.attributes.insert(var.attributes.begin(),
-                             var.attributes.end());
-
-      return up->scope.add(type, force);
+      if (success) {
+        declarations.push_back(decl);
+      } else {
+        delete &var;
+      }
+      return success;
     }
 
     void declarationStatement::print(printer &pout) const {

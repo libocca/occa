@@ -1325,6 +1325,8 @@ namespace occa {
       if (!success) {
         success = false;
         delete &funcSmnt;
+        // func wasn't added to scope, free it manually
+        delete &func;
         return NULL;
       }
 
