@@ -71,6 +71,12 @@ namespace occa {
                                     variable_t &blockIter,
                                     forStatement &blockForSmnt,
                                     forStatement &innerForSmnt);
+
+        void setupSafeStatement(attributeToken_t &attr,
+                                variable_t &iter,
+                                variable_t &blockIter,
+                                forStatement &blockForSmnt,
+                                forStatement &innerForSmnt);
       };
     }
   }

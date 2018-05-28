@@ -231,6 +231,10 @@ namespace occa {
                                iter, blockIter,
                                blockForSmnt, innerForSmnt);
 
+        setupSafeStatement(attr,
+                           iter, blockIter,
+                           blockForSmnt, innerForSmnt);
+
         return &blockForSmnt;
       }
 
@@ -382,6 +386,50 @@ namespace occa {
           ));
         innerForSmnt.check = new expressionStatement(&innerForSmnt,
                                                      newCheckNode);
+      }
+
+      void tile::setupSafeStatement(attributeToken_t &attr,
+                                    variable_t &iter,
+                                    variable_t &blockIter,
+                                    forStatement &blockForSmnt,
+                                    forStatement &innerForSmnt) {
+        attributeArgMap::iterator it = attr.kwargs.find("safe");
+        if (it == attr.kwargs.end()) {
+          return;
+        }
+        // Check if safe=true
+        const bool safe = (bool) it->second.expr->evaluate();
+        if (!safe) {
+          return;
+        }
+        // Check variables
+        binaryOpNode &checkExpr = ((binaryOpNode&)
+                                   *(((expressionStatement*) blockForSmnt.check)->expr));
+        token_t *checkToken = checkExpr.startNode()->token;
+        const bool varInLeft = sameVariable(blockIter, checkExpr) < 0;
+        // Make ifStatement
+        ifStatement &ifSmnt = *(new ifStatement(&innerForSmnt,
+                                                checkToken));
+        innerForSmnt.swap(ifSmnt);
+        innerForSmnt.scope.swap(ifSmnt.scope);
+        innerForSmnt.add(ifSmnt);
+        // Get global check
+        token_t *iterToken = (varInLeft
+                              ? checkExpr.leftValue->token
+                              : checkExpr.rightValue->token);
+        variableNode iterNode(iterToken->clone(),
+                              iter);
+        binaryOpNode &newCheckNode = *(
+          new binaryOpNode(
+            checkExpr.token->clone(),
+            (const binaryOperator_t&) checkExpr.op,
+            varInLeft ? (exprNode&) iterNode : *(checkExpr.leftValue),
+            varInLeft ? (exprNode&) *(checkExpr.rightValue) : (exprNode&) iterNode
+          ));
+
+        ifSmnt.setCondition(new expressionStatement(&ifSmnt,
+                                                    newCheckNode,
+                                                    false));
       }
     }
   }

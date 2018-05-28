@@ -1151,12 +1151,24 @@ void testAttributeLoading() {
   std::cerr << "==============================================\n";
 
   std::cerr << "\n---[ @tile Transformations ]--------------------\n";
-  parseAndPrintSource("for (int i = 0; i < (1 + 2 + N + 6); ++i; @tile(16, @outer, @inner)) {}");
-  parseAndPrintSource("for (int i = 0; i > (1 + 2 + N + 6); --i; @tile(16, @outer, @inner)) {}");
-  parseAndPrintSource("for (int i = 0; i <= (1 + 2 + N + 6); i++; @tile(16, @outer, @inner)) {}");
-  parseAndPrintSource("for (int i = 0; i >= (1 + 2 + N + 6); i--; @tile(16, @outer, @inner)) {}");
-  parseAndPrintSource("for (int i = 0; (1 + 2 + N + 6) > i; i += 3; @tile(16, @outer, @inner)) {}");
-  parseAndPrintSource("for (int i = 0; (1 + 2 + N + 6) <= i; i -= 2 + 3; @tile(16, @outer, @inner)) {}");
+  parseAndPrintSource("for (int i = 0; i < (1 + 2 + N + 6); ++i; @tile(16, @outer, @inner)) {"
+                      "  int x;"
+                      "}");
+  parseAndPrintSource("for (int i = 0; i > (1 + 2 + N + 6); --i; @tile(16, @outer, @inner)) {"
+                      "  int x;"
+                      "}");
+  parseAndPrintSource("for (int i = 0; i <= (1 + 2 + N + 6); i++; @tile(16, @outer, @inner)) {"
+                      "  int x;"
+                      "}");
+  parseAndPrintSource("for (int i = 0; i >= (1 + 2 + N + 6); i--; @tile(16, @outer, @inner, safe=true)) {"
+                      "  int x;"
+                      "}");
+  parseAndPrintSource("for (int i = 0; (1 + 2 + N + 6) > i; i += 3; @tile(16, @outer, @inner, safe=true)) {"
+                      "  int x;"
+                      "}");
+  parseAndPrintSource("for (int i = 0; (1 + 2 + N + 6) <= i; i -= 2 + 3; @tile(16, @outer, @inner, safe=true)) {"
+                      "  int x;"
+                      "}");
   std::cerr << "==============================================\n\n";
 
 #undef smntAttr
