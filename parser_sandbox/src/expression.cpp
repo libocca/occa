@@ -556,42 +556,53 @@ namespace occa {
       const opType_t opType = op.opType;
       const int outputCount = state.outputCount();
 
-      if (!outputCount) {
-        state.hasError = true;
-        opToken.printError("Unable to apply operator [1]");
-        return;
-      }
-
-      exprNode &value = state.popOutput();
       if (opType & operatorType::binary) {
-        if (outputCount < 2) {
-          state.hasError = true;
-          opToken.printError("Unable to apply operator [2]");
+        if (outputCount >= 2) {
+          exprNode &right = state.popOutput();
+          exprNode &left = state.popOutput();
+          state.output.push(new binaryOpNode(&opToken,
+                                             (const binaryOperator_t&) op,
+                                             left,
+                                             right));
           return;
         }
-        exprNode &left = state.popOutput();
-        state.output.push(new binaryOpNode(&opToken,
-                                           (const binaryOperator_t&) op,
-                                           left,
-                                           value));
+        state.hasError = true;
       }
       else if (opType & operatorType::leftUnary) {
-        applyLeftUnaryOperator(opToken,
-                               (const unaryOperator_t&) op,
-                               value,
-                               state);
+        if (outputCount >= 1) {
+          exprNode &value = state.popOutput();
+          applyLeftUnaryOperator(opToken,
+                                 (const unaryOperator_t&) op,
+                                 value,
+                                 state);
+          return;
+        }
+        state.hasError = true;
       }
       else if (opType & operatorType::rightUnary) {
-        state.output.push(new rightUnaryOpNode(&opToken,
-                                               (const unaryOperator_t&) op,
-                                               value));
+        if (outputCount >= 1) {
+          exprNode &value = state.popOutput();
+          state.output.push(new rightUnaryOpNode(&opToken,
+                                                 (const unaryOperator_t&) op,
+                                                 value));
+          return;
+        }
+        state.hasError = true;
       }
       else if (opType & operatorType::pair) {
+        exprNode *value = NULL;
+        // Make sure we have content in the parentheses
+        if ((outputCount >= 1)
+            && !(state.prevToken->getOpType() & operatorType::pairStart)) {
+          value = &(state.popOutput());
+        } else {
+          value = new emptyNode();
+        }
         state.output.push(new pairNode(opToken,
-                                       value));
-      } else {
-        state.hasError = true;
-        opToken.printError("Unable to apply operator [3]");
+                                       *value));
+      }
+      if (state.hasError) {
+        opToken.printError("Unable to apply operator");
       }
     }
 

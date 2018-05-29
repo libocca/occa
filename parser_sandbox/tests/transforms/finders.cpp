@@ -23,6 +23,9 @@
 #include "../parserUtils.hpp"
 #include "builtins/transforms/finders.hpp"
 
+void testStatementFinder();
+void testExprNodeFinder();
+
 int main(const int argc, const char **argv) {
   parser.addAttribute<dummy>();
   parser.addAttribute<attributes::kernel>();
@@ -31,6 +34,13 @@ int main(const int argc, const char **argv) {
   parser.addAttribute<attributes::shared>();
   parser.addAttribute<attributes::exclusive>();
 
+  testStatementFinder();
+  testExprNodeFinder();
+
+  return 0;
+}
+
+void testStatementFinder() {
   statementPtrVector statements;
   parseSource(
     "@dummy int d1;\n"
@@ -53,45 +63,83 @@ int main(const int argc, const char **argv) {
     "}\n"
   );
 
-  transforms::findStatements(statementType::block,
-                             "dummy",
-                             parser.root,
-                             statements);
+  transforms::findStatementsByAttr(statementType::block,
+                                   "dummy",
+                                   parser.root,
+                                   statements);
   OCCA_ASSERT_EQUAL(2,
                     (int) statements.size());
   statements.clear();
 
-  transforms::findStatements(statementType::expression,
-                             "dummy",
-                             parser.root,
-                             statements);
+  transforms::findStatementsByAttr(statementType::expression,
+                                   "dummy",
+                                   parser.root,
+                                   statements);
   OCCA_ASSERT_EQUAL(5,
                     (int) statements.size());
   statements.clear();
 
-  transforms::findStatements(statementType::declaration,
-                             "dummy",
-                             parser.root,
-                             statements);
+  transforms::findStatementsByAttr(statementType::declaration,
+                                   "dummy",
+                                   parser.root,
+                                   statements);
   OCCA_ASSERT_EQUAL(4,
                     (int) statements.size());
   statements.clear();
 
-  transforms::findStatements(statementType::function,
-                             "dummy",
-                             parser.root,
-                             statements);
+  transforms::findStatementsByAttr(statementType::function,
+                                   "dummy",
+                                   parser.root,
+                                   statements);
   OCCA_ASSERT_EQUAL(3,
                     (int) statements.size());
   statements.clear();
 
-  transforms::findStatements(statementType::functionDecl,
-                             "dummy",
-                             parser.root,
-                             statements);
+  transforms::findStatementsByAttr(statementType::functionDecl,
+                                   "dummy",
+                                   parser.root,
+                                   statements);
   OCCA_ASSERT_EQUAL(2,
                     (int) statements.size());
   statements.clear();
+}
 
-  return 0;
+
+void testExprNodeFinder() {
+  exprNodeVector exprNodes;
+  parseAndPrintSource(
+    "@dummy typedef int t1;\n"
+    "@dummy int foo() {}\n"
+    "@dummy int bar() {}\n"
+    "@dummy int d1, d2, d3;\n"
+    "(t1) (d1 * d2 * d3 + foo() + bar());\n"
+  );
+
+#define exprRoot (*(((expressionStatement*) parser.root.children[4])->expr))
+
+  transforms::findExprNodesByAttr(exprNodeType::type,
+                                  "dummy",
+                                  exprRoot,
+                                  exprNodes);
+  OCCA_ASSERT_EQUAL(1,
+                    (int) exprNodes.size());
+  exprNodes.clear();
+
+  transforms::findExprNodesByAttr(exprNodeType::variable,
+                                  "dummy",
+                                  exprRoot,
+                                  exprNodes);
+  OCCA_ASSERT_EQUAL(3,
+                    (int) exprNodes.size());
+  exprNodes.clear();
+
+  transforms::findExprNodesByAttr(exprNodeType::function,
+                                  "dummy",
+                                  exprRoot,
+                                  exprNodes);
+  OCCA_ASSERT_EQUAL(2,
+                    (int) exprNodes.size());
+  exprNodes.clear();
+
+#undef exprRoot
 }

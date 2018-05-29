@@ -61,10 +61,10 @@ namespace occa {
         virtual bool matches(statement_t &smnt);
       };
 
-      void findStatements(const int validStatementTypes,
-                          const std::string &attr,
-                          statement_t &smnt,
-                          statementPtrVector &statements);
+      void findStatementsByAttr(const int validStatementTypes,
+                                const std::string &attr,
+                                statement_t &smnt,
+                                statementPtrVector &statements);
       //================================
 
       //---[ Expr Node ]----------------
@@ -75,12 +75,40 @@ namespace occa {
       public:
         exprNodeFinder();
 
-        void getExprNodes(exprNodeVector &exprNodes_);
+        void getExprNodes(exprNode &node,
+                          exprNodeVector &exprNodes_);
 
-        virtual exprNode* transformExprNode(exprNode &node);
+        virtual exprNode* transformExprNode(exprNode &expr);
 
         virtual bool matches(exprNode &expr) = 0;
       };
+
+      class exprNodeTypeFinder : public exprNodeFinder {
+      public:
+        exprNodeTypeFinder(const int validExprNodeTypes_);
+
+        virtual bool matches(exprNode &expr);
+      };
+
+      class exprNodeAttrFinder : public exprNodeFinder {
+      private:
+        std::string attr;
+
+      public:
+        exprNodeAttrFinder(const int validExprNodeTypes_,
+                           const std::string &attr_);
+
+        virtual bool matches(exprNode &expr);
+      };
+
+      void findExprNodesByType(const int validExprNodeTypes,
+                               exprNode &expr,
+                               exprNodeVector &exprNodes);
+
+      void findExprNodesByAttr(const int validExprNodeTypes,
+                               const std::string &attr,
+                               exprNode &expr,
+                               exprNodeVector &exprNodes);
       //================================
     }
   }

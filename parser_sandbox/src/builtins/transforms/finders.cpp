@@ -20,7 +20,9 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  */
 
+#include "exprNode.hpp"
 #include "statement.hpp"
+#include "variable.hpp"
 #include "builtins/transforms/finders.hpp"
 
 namespace occa {
@@ -54,10 +56,10 @@ namespace occa {
         return (it != smnt.attributes.end());
       }
 
-      void findStatements(const int validStatementTypes,
-                          const std::string &attr,
-                          statement_t &smnt,
-                          statementPtrVector &statements) {
+      void findStatementsByAttr(const int validStatementTypes,
+                                const std::string &attr,
+                                statement_t &smnt,
+                                statementPtrVector &statements) {
 
         statementAttrFinder finder(validStatementTypes, attr);
         finder.getStatements(smnt, statements);
@@ -67,8 +69,10 @@ namespace occa {
       //---[ Expr Node ]----------------
       exprNodeFinder::exprNodeFinder() {}
 
-      void exprNodeFinder::getExprNodes(exprNodeVector &exprNodes_) {
+      void exprNodeFinder::getExprNodes(exprNode &expr,
+                                        exprNodeVector &exprNodes_) {
         exprNodes = &exprNodes_;
+        apply(expr);
       }
 
       exprNode* exprNodeFinder::transformExprNode(exprNode &expr) {
@@ -76,6 +80,54 @@ namespace occa {
           exprNodes->push_back(&expr);
         }
         return &expr;
+      }
+
+      exprNodeTypeFinder::exprNodeTypeFinder(const int validExprNodeTypes_) {
+        validExprNodeTypes = validExprNodeTypes_;
+      }
+
+      bool exprNodeTypeFinder::matches(exprNode &expr) {
+        return true;
+      }
+
+      exprNodeAttrFinder::exprNodeAttrFinder(const int validExprNodeTypes_,
+                                             const std::string &attr_) :
+        attr(attr_) {
+        validExprNodeTypes = (validExprNodeTypes_
+                              & (exprNodeType::type     |
+                                 exprNodeType::variable |
+                                 exprNodeType::function));
+      }
+
+      bool exprNodeAttrFinder::matches(exprNode &expr) {
+        const int eType = expr.type();
+        attributeTokenMap *attributes;
+        if (eType & exprNodeType::type) {
+          attributes = &(((typeNode&) expr).value.attributes);
+        } else if (eType & exprNodeType::variable) {
+          attributes = &(((variableNode&) expr).value.attributes);
+        } else {
+          attributes = &(((functionNode&) expr).value.attributes);
+        }
+        attributeTokenMap::iterator it = attributes->find(attr);
+        return (it != attributes->end());
+      }
+
+      void findExprNodesByType(const int validExprNodeTypes,
+                               exprNode &expr,
+                               exprNodeVector &exprNodes) {
+
+        exprNodeTypeFinder finder(validExprNodeTypes);
+        finder.getExprNodes(expr, exprNodes);
+      }
+
+      void findExprNodesByAttr(const int validExprNodeTypes,
+                               const std::string &attr,
+                               exprNode &expr,
+                               exprNodeVector &exprNodes) {
+
+        exprNodeAttrFinder finder(validExprNodeTypes, attr);
+        finder.getExprNodes(expr, exprNodes);
       }
       //================================
     }
