@@ -19,42 +19,25 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  */
-#include "exprNode.hpp"
-#include "parser.hpp"
-#include "statement.hpp"
-#include "variable.hpp"
-#include "builtins/attributes/inner.hpp"
+#include "../parserUtils.hpp"
 
-namespace occa {
-  namespace lang {
-    namespace attributes {
-      inner::inner() {}
+void testPragma();
 
-      std::string inner::name() const {
-        return "inner";
-      }
+int main(const int argc, const char **argv) {
+  parser.addAttribute<dummy>();
+  parser.addAttribute<attributes::kernel>();
+  parser.addAttribute<attributes::outer>();
+  parser.addAttribute<attributes::inner>();
+  parser.addAttribute<attributes::shared>();
+  parser.addAttribute<attributes::exclusive>();
 
-      bool inner::forStatement(const int sType) const {
-        return (sType & statementType::for_);
-      }
+  testPragma();
 
-      bool inner::isValid(const attributeToken_t &attr) const {
-        if (attr.kwargs.size()) {
-          attr.printError("[@inner] does not take kwargs");
-          return false;
-        }
-        const int argCount = (int) attr.args.size();
-        if (argCount > 1) {
-          attr.printError("[@inner] doesn't take any arguments");
-          return false;
-        }
-        if (argCount == 1) {
-          attr.printError("[@inner] doesn't take the index argument ... yet"
-                          " (how did you find this? =O)");
-          return false;
-        }
-        return true;
-      }
-    }
-  }
+  return 0;
 }
+
+//---[ Pragma ]-------------------------
+void testPragma() {
+  // @outer -> #pragma omp
+}
+//======================================

@@ -43,6 +43,11 @@ namespace occa {
       }
 
       bool shared::isValid(const attributeToken_t &attr) const {
+        if (attr.kwargs.size() ||
+            attr.args.size()) {
+          attr.printError("[@shared] does not take arguments");
+          return false;
+        }
         return true;
       }
     }

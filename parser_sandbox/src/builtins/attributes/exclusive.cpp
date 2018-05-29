@@ -43,6 +43,11 @@ namespace occa {
       }
 
       bool exclusive::isValid(const attributeToken_t &attr) const {
+        if (attr.kwargs.size() ||
+            attr.args.size()) {
+          attr.printError("[@exclusive] does not take arguments");
+          return false;
+        }
         return true;
       }
     }

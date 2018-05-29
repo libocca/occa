@@ -44,6 +44,11 @@ namespace occa {
       }
 
       bool kernel::isValid(const attributeToken_t &attr) const {
+        if (attr.kwargs.size() ||
+            attr.args.size()) {
+          attr.printError("[@kernel] does not take arguments");
+          return false;
+        }
         return true;
       }
     }

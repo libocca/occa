@@ -39,6 +39,20 @@ namespace occa {
       }
 
       bool outer::isValid(const attributeToken_t &attr) const {
+        if (attr.kwargs.size()) {
+          attr.printError("[@outer] does not take kwargs");
+          return false;
+        }
+        const int argCount = (int) attr.args.size();
+        if (argCount > 1) {
+          attr.printError("[@outer] doesn't take any arguments");
+          return false;
+        }
+        if (argCount == 1) {
+          attr.printError("[@outer] doesn't take the index argument ... yet"
+                          " (how did you find this? =O)");
+          return false;
+        }
         return true;
       }
     }

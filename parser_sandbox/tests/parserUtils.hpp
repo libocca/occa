@@ -82,4 +82,25 @@ smntType& getStatement(const int index = 0) {
   statement = parser.root[0]
 //======================================
 
+class dummy : public attribute_t {
+public:
+  dummy() {}
+
+  virtual std::string name() const {
+    return "dummy";
+  }
+
+  virtual bool forVariable() const {
+    return true;
+  }
+
+  virtual bool forStatement(const int sType) const {
+    return true;
+  }
+
+  virtual bool isValid(const attributeToken_t &attr) const {
+    return true;
+  }
+};
+
 #endif

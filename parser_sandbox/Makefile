@@ -34,7 +34,7 @@ $(objPath)/%.o:$(srcPath)/%.cpp $(incPath)/%.hpp $(incPath)/%.tpp
 	$(compiler) $(compilerFlags) -o $@ $(flags) -c $(paths) $<
 
 $(testPath)/bin/%:$(testPath)/%.cpp $(objects) $(headers)
-	@mkdir -p $(testPath)/bin
+	@mkdir -p $(abspath $(dir $@))
 	$(compiler) $(testFlags) $(pthreadFlag) -o $@ $(flags) -L ${OCCA_DIR}/lib $(objects) $< $(paths) $(links)
 
 tests: $(tests)
