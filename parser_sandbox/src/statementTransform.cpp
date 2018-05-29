@@ -26,8 +26,7 @@
 
 namespace occa {
   namespace lang {
-    statementTransform::statementTransform(parser_t &parser_) :
-      parser(parser_),
+    statementTransform::statementTransform() :
       downToUp(true),
       validStatementTypes(statementType::none) {}
 

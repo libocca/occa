@@ -36,11 +36,10 @@ namespace occa {
 
     class statementTransform {
     public:
-      parser_t &parser;
       bool downToUp;
       int validStatementTypes;
 
-      statementTransform(parser_t &parser_);
+      statementTransform();
 
       bool apply(statement_t &smnt);
 

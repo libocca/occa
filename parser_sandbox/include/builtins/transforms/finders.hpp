@@ -20,31 +20,66 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  */
 
-#ifndef OCCA_LANG_BUILTINS_TRANSFORMS_VARIABLEREPLACE_HEADER
-#define OCCA_LANG_BUILTINS_TRANSFORMS_VARIABLEREPLACE_HEADER
+#ifndef OCCA_LANG_BUILTINS_TRANSFORMS_STATEMENTFINDER_HEADER
+#define OCCA_LANG_BUILTINS_TRANSFORMS_STATEMENTFINDER_HEADER
 
-#include "exprTransform.hpp"
+#include <vector>
+
 #include "statementTransform.hpp"
+#include "exprTransform.hpp"
 
 namespace occa {
   namespace lang {
+    typedef std::vector<statement_t*> statementPtrVector;
+    typedef std::vector<exprNode*>    exprNodeVector;
+
     namespace transforms {
-      class variableReplacer_t : public statementTransform,
-                                 public exprTransform {
+      //---[ Statement ]----------------
+      class statementFinder : public statementTransform {
       private:
-        variable_t *from, *to;
+        statementPtrVector *statements;
 
       public:
-        variableReplacer_t();
+        statementFinder();
 
-        void set(variable_t &from_,
-                 variable_t &to_);
+        void getStatements(statementPtrVector &statements_);
 
         virtual statement_t* transformStatement(statement_t &smnt);
+
+        virtual bool matches(statement_t &smnt) = 0;
+      };
+
+      class statementAttrFinder : public statementFinder {
+      private:
+        std::string attr;
+
+      public:
+        statementAttrFinder(const int validStatementTypes_,
+                            const std::string &attr_);
+
+        virtual bool matches(statement_t &smnt);
+      };
+
+      void findStatements(const int validStatementTypes,
+                          const std::string &attr,
+                          statementPtrVector &statements);
+      //================================
+
+      //---[ Expr Node ]----------------
+      class exprNodeFinder : public exprTransform {
+      private:
+        exprNodeVector *exprNodes;
+
+      public:
+        exprNodeFinder();
+
+        void getExprNodes(exprNodeVector &exprNodes_);
+
         virtual exprNode* transformExprNode(exprNode &node);
 
-        bool applyToExpr(exprNode *&expr);
+        virtual bool matches(exprNode &expr) = 0;
       };
+      //================================
     }
   }
 }

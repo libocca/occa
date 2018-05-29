@@ -28,8 +28,7 @@
 namespace occa {
   namespace lang {
     namespace transforms {
-      dim::dim(parser_t &parser_) :
-        statementTransform(parser_),
+      dim::dim() :
         scopeSmnt(NULL) {
         validStatementTypes = (statementType::expression |
                                statementType::declaration);
@@ -173,6 +172,11 @@ namespace occa {
         scopeSmnt = &smnt;
         expr = exprTransform::apply(*expr);
         return expr;
+      }
+
+      bool applyDimTransforms(statement_t &smnt) {
+        dim dimTransform;
+        return dimTransform.statementTransform::apply(smnt);
       }
     }
   }

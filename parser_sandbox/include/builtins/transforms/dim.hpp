@@ -34,7 +34,7 @@ namespace occa {
       public:
         statement_t *scopeSmnt;
 
-        dim(parser_t &parser_);
+        dim();
 
         virtual statement_t* transformStatement(statement_t &smnt);
         virtual exprNode* transformExprNode(exprNode &node);
@@ -50,6 +50,8 @@ namespace occa {
         bool applyToExpr(statement_t &smnt,
                          exprNode *&expr);
       };
+
+      bool applyDimTransforms(statement_t &smnt);
     }
   }
 }

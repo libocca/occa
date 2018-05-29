@@ -56,11 +56,5 @@ namespace occa {
 
       attributeMap[name] = attr;
     }
-
-    template <class transformType>
-    bool parser_t::applyTransform() {
-      transformType transform(*this);
-      return transform.statementTransform::apply(root);
-    }
   }
 }

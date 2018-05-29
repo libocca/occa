@@ -27,8 +27,7 @@
 namespace occa {
   namespace lang {
     namespace transforms {
-      variableReplacer_t::variableReplacer_t(parser_t &parser_) :
-        statementTransform(parser_),
+      variableReplacer_t::variableReplacer_t() :
         from(NULL),
         to(NULL) {
         validStatementTypes = (statementType::declaration |

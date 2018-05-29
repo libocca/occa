@@ -28,9 +28,8 @@
 namespace occa {
   namespace lang {
     namespace transforms {
-      tile::tile(parser_t &parser_) :
-        statementTransform(parser_),
-        variableReplacer(parser_) {
+      tile::tile() :
+        variableReplacer() {
         validStatementTypes = statementType::for_;
       }
 
@@ -430,6 +429,11 @@ namespace occa {
         ifSmnt.setCondition(new expressionStatement(&ifSmnt,
                                                     newCheckNode,
                                                     false));
+      }
+
+      bool applyTileTransforms(statement_t &smnt) {
+        tile tileTransform;
+        return tileTransform.apply(smnt);
       }
     }
   }

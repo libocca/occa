@@ -247,9 +247,6 @@ namespace occa {
       //---[ Customization ]------------
       template <class attributeType>
       void addAttribute();
-
-      template <class transformType>
-      bool applyTransform();
       //================================
     };
   }

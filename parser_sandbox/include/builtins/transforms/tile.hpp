@@ -33,7 +33,7 @@ namespace occa {
       public:
         variableReplacer_t variableReplacer;
 
-        tile(parser_t &parser_);
+        tile();
 
         bool isValidInit(statement_t &smnt);
 
@@ -78,6 +78,8 @@ namespace occa {
                                 forStatement &blockForSmnt,
                                 forStatement &innerForSmnt);
       };
+
+      bool applyTileTransforms(statement_t &smnt);
     }
   }
 }

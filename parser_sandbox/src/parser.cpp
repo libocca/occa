@@ -211,9 +211,9 @@ namespace occa {
     void parser_t::parseTokens() {
       loadAllStatements();
       if (!success) return;
-      success = applyTransform<transforms::dim>();
+      success = transforms::applyDimTransforms(root);
       if (!success) return;
-      success = applyTransform<transforms::tile>();
+      success = transforms::applyTileTransforms(root);
     }
 
     keyword_t& parser_t::getKeyword(token_t *token) {

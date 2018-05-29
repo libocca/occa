@@ -19,34 +19,12 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  */
-
-#ifndef OCCA_LANG_BUILTINS_TRANSFORMS_VARIABLEREPLACE_HEADER
-#define OCCA_LANG_BUILTINS_TRANSFORMS_VARIABLEREPLACE_HEADER
-
-#include "exprTransform.hpp"
-#include "statementTransform.hpp"
+#include "modes/okl.hpp"
 
 namespace occa {
   namespace lang {
-    namespace transforms {
-      class variableReplacer_t : public statementTransform,
-                                 public exprTransform {
-      private:
-        variable_t *from, *to;
+    namespace okl {
 
-      public:
-        variableReplacer_t();
-
-        void set(variable_t &from_,
-                 variable_t &to_);
-
-        virtual statement_t* transformStatement(statement_t &smnt);
-        virtual exprNode* transformExprNode(exprNode &node);
-
-        bool applyToExpr(exprNode *&expr);
-      };
     }
   }
 }
-
-#endif

@@ -19,25 +19,27 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  */
-#ifndef OCCA_PARSER_MODES_CUDA_HEADER2
-#define OCCA_PARSER_MODES_CUDA_HEADER2
+#ifndef OCCA_PARSER_MODES_CUDA_HEADER
+#define OCCA_PARSER_MODES_CUDA_HEADER
 
 #include "modes/backend.hpp"
 
 namespace occa {
   namespace lang {
-    class cudaBackend : public oklBackend {
-    public:
-      virtual void backendTransform(statement_t &root);
+    namespace okl {
+      class cudaBackend : public oklBackend {
+      public:
+        virtual void backendTransform(statement_t &root);
 
-      void updateConstToConstant(statement_t &root);
+        void updateConstToConstant(statement_t &root);
 
-      void addOccaFors(statement_t &root);
+        void addOccaFors(statement_t &root);
 
-      void setupKernelArgs(statement_t &root);
+        void setupKernelArgs(statement_t &root);
 
-      void setupLaunchKernel(statement_t &root);
-    };
+        void setupLaunchKernel(statement_t &root);
+      };
+    }
   }
 }
 
