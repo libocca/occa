@@ -1200,9 +1200,6 @@ namespace occa {
         delete &smnt;
         return NULL;
       }
-
-      // We pass the attributes to the variables
-      clearAttributes();
       return &smnt;
     }
 
@@ -1315,23 +1312,9 @@ namespace occa {
         delete &func;
         return NULL;
       }
-      if (opType & operatorType::semicolon) {
-        context.set(1);
-        return new functionStatement(up, func);
-      }
 
-      functionDeclStatement &funcSmnt = *(new functionDeclStatement(up, func));
-      success = funcSmnt.updateScope();
-      if (!success) {
-        success = false;
-        delete &funcSmnt;
-        // func wasn't added to scope, free it manually
-        delete &func;
-        return NULL;
-      }
-
-      // Set and clear attributes before continuing
-      funcSmnt.function.attributes = attributes;
+      // Copy attributes to the function itself
+      func.attributes = attributes;
       // Make sure all attributes are meant for functions
       attributeTokenMap::iterator it = attributes.begin();
       while (it != attributes.end()) {
@@ -1342,8 +1325,23 @@ namespace occa {
         }
         ++it;
       }
-      funcSmnt.function.attributes = attributes;
-      clearAttributes();
+
+      // func(); <-- function
+      if (opType & operatorType::semicolon) {
+        context.set(1);
+        return new functionStatement(up, func);
+      }
+      // func() {...} <-- function declaration
+      functionDeclStatement &funcSmnt = *(new functionDeclStatement(up, func));
+      success = funcSmnt.updateScope();
+      if (!success) {
+        success = false;
+        delete &funcSmnt;
+        // func wasn't added to scope, free it manually
+        delete &func;
+        return NULL;
+      }
+      addAttributesTo(attributes, &funcSmnt);
 
       pushUp(funcSmnt);
       statement_t *content = getNextStatement();
@@ -1355,7 +1353,6 @@ namespace occa {
         delete &funcSmnt;
         return NULL;
       }
-
       return &funcSmnt;
     }
 

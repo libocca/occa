@@ -30,8 +30,10 @@ namespace occa {
       statementFinder::statementFinder() :
         statementTransform() {}
 
-      void statementFinder::getStatements(statementPtrVector &statements_) {
+      void statementFinder::getStatements(statement_t &smnt,
+                                          statementPtrVector &statements_) {
         statements = &statements_;
+        apply(smnt);
       }
 
       statement_t* statementFinder::transformStatement(statement_t &smnt) {
@@ -54,10 +56,11 @@ namespace occa {
 
       void findStatements(const int validStatementTypes,
                           const std::string &attr,
+                          statement_t &smnt,
                           statementPtrVector &statements) {
 
         statementAttrFinder finder(validStatementTypes, attr);
-        finder.getStatements(statements);
+        finder.getStatements(smnt, statements);
       }
       //================================
 

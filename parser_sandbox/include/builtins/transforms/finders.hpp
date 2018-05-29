@@ -42,7 +42,8 @@ namespace occa {
       public:
         statementFinder();
 
-        void getStatements(statementPtrVector &statements_);
+        void getStatements(statement_t &smnt,
+                           statementPtrVector &statements_);
 
         virtual statement_t* transformStatement(statement_t &smnt);
 
@@ -62,6 +63,7 @@ namespace occa {
 
       void findStatements(const int validStatementTypes,
                           const std::string &attr,
+                          statement_t &smnt,
                           statementPtrVector &statements);
       //================================
 

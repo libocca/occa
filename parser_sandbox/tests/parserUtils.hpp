@@ -94,6 +94,10 @@ public:
     return true;
   }
 
+  virtual bool forFunction() const {
+    return true;
+  }
+
   virtual bool forStatement(const int sType) const {
     return true;
   }

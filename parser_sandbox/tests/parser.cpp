@@ -1093,7 +1093,7 @@ void testAttributeLoading() {
 
   setStatement("@dim(2 + 2, 10 - 5) const int *x, *y;",
                statementType::declaration);
-  OCCA_ASSERT_EQUAL(0,
+  OCCA_ASSERT_EQUAL(1,
                     (int) statement->attributes.size());
   OCCA_ASSERT_EQUAL(1,
                     (int) declVar(0).attributes.size());
