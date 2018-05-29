@@ -20,8 +20,6 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  */
 
-#include "exprNode.hpp"
-#include "statement.hpp"
 #include "variable.hpp"
 #include "builtins/transforms/finders.hpp"
 
@@ -54,15 +52,6 @@ namespace occa {
       bool statementAttrFinder::matches(statement_t &smnt) {
         attributeTokenMap::iterator it = smnt.attributes.find(attr);
         return (it != smnt.attributes.end());
-      }
-
-      void findStatementsByAttr(const int validStatementTypes,
-                                const std::string &attr,
-                                statement_t &smnt,
-                                statementPtrVector &statements) {
-
-        statementAttrFinder finder(validStatementTypes, attr);
-        finder.getStatements(smnt, statements);
       }
       //================================
 
@@ -112,24 +101,34 @@ namespace occa {
         attributeTokenMap::iterator it = attributes->find(attr);
         return (it != attributes->end());
       }
-
-      void findExprNodesByType(const int validExprNodeTypes,
-                               exprNode &expr,
-                               exprNodeVector &exprNodes) {
-
-        exprNodeTypeFinder finder(validExprNodeTypes);
-        finder.getExprNodes(expr, exprNodes);
-      }
-
-      void findExprNodesByAttr(const int validExprNodeTypes,
-                               const std::string &attr,
-                               exprNode &expr,
-                               exprNodeVector &exprNodes) {
-
-        exprNodeAttrFinder finder(validExprNodeTypes, attr);
-        finder.getExprNodes(expr, exprNodes);
-      }
       //================================
     }
+    //---[ Helper Methods ]-------------
+    void findStatementsByAttr(const int validStatementTypes,
+                              const std::string &attr,
+                              statement_t &smnt,
+                              statementPtrVector &statements) {
+
+      transforms::statementAttrFinder finder(validStatementTypes, attr);
+      finder.getStatements(smnt, statements);
+    }
+
+    void findExprNodesByType(const int validExprNodeTypes,
+                             exprNode &expr,
+                             exprNodeVector &exprNodes) {
+
+      transforms::exprNodeTypeFinder finder(validExprNodeTypes);
+      finder.getExprNodes(expr, exprNodes);
+    }
+
+    void findExprNodesByAttr(const int validExprNodeTypes,
+                             const std::string &attr,
+                             exprNode &expr,
+                             exprNodeVector &exprNodes) {
+
+      transforms::exprNodeAttrFinder finder(validExprNodeTypes, attr);
+      finder.getExprNodes(expr, exprNodes);
+    }
+    //==================================
   }
 }

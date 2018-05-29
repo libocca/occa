@@ -20,7 +20,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  */
 #include "exprNode.hpp"
-#include "statement.hpp"
+#include "modes/okl.hpp"
 #include "variable.hpp"
 #include "builtins/types.hpp"
 #include "builtins/transforms/tile.hpp"
@@ -33,159 +33,6 @@ namespace occa {
         validStatementTypes = statementType::for_;
       }
 
-      bool tile::isValidInit(statement_t &smnt) {
-        if (smnt.type() != statementType::declaration) {
-          smnt.printError("[@tile] Expected a declaration statement");
-          return false;
-        }
-        // Can only have one declaration
-        declarationStatement &declSmnt = (declarationStatement&) smnt;
-        if (declSmnt.declarations.size() > 1) {
-          declSmnt.declarations[1].printError(
-            "[@tile] Can only transform 1 iterator variable"
-          );
-          return false;
-        }
-        variableDeclaration &decl = declSmnt.declarations[0];
-        // Valid types: {char, short, int, long}
-        variable_t &var = *decl.variable;
-        const type_t *type = var.vartype.type;
-        if (!type ||
-            ((*type != char_)  &&
-             (*type != short_) &&
-             (*type != int_))) {
-          var.printError("[@tile] Iterator variable needs to be of type"
-                         " [char, short, int, long]");
-          return false;
-        }
-        return true;
-      }
-
-      bool tile::isValidCheck(variable_t &var,
-                              statement_t &smnt) {
-        if (smnt.type() != statementType::expression) {
-          smnt.printError("[@tile] Expected comparing ["
-                          + var.name()
-                          + "] with some bound");
-          return false;
-        }
-        // Check valid operator (<, <=, >=, >)
-        exprNode &expr = *(((expressionStatement&) smnt).expr);
-        if (expr.type() != exprNodeType::binary) {
-          smnt.printError("[@tile] Expected to compare ["
-                          + var.name()
-                          + "] with one of these operators [<, <=, >=, >]");
-          return false;
-        }
-        binaryOpNode &opNode = (binaryOpNode&) expr;
-        if (!(opNode.opType() & (operatorType::lessThan      |
-                                 operatorType::lessThanEq    |
-                                 operatorType::greaterThanEq |
-                                 operatorType::greaterThan))) {
-          smnt.printError("[@tile] Expected to compare ["
-                          + var.name()
-                          + "] with one of these operators [<, <=, >=, >]");
-          return false;
-        }
-        if (!sameVariable(var, opNode)) {
-          smnt.printError("[@tile] Expected to compare ["
-                          + var.name()
-                          + "] with one of these operators [<, <=, >=, >]");
-          return false;
-        }
-        return true;
-      }
-
-      bool tile::isValidUpdate(variable_t &var,
-                               statement_t &smnt) {
-        if (smnt.type() != statementType::expression) {
-          smnt.printError("[@tile] Expected to update ["
-                          + var.name()
-                          + "]");
-          return false;
-        }
-        // Check valid operator (++, --, +=, -=)
-        exprNode &expr = *(((expressionStatement&) smnt).expr);
-        udim_t eType = expr.type();
-        if (!(eType & (exprNodeType::leftUnary  |
-                       exprNodeType::rightUnary |
-                       exprNodeType::binary))) {
-          smnt.printError("[@tile] Expected update ["
-                          + var.name()
-                          + "] with one of these operators [++, --, +=, -=]");
-          return false;
-        }
-        bool validOp  = false;
-        bool validVar = false;
-        if (eType == exprNodeType::leftUnary) {
-          leftUnaryOpNode &opNode = (leftUnaryOpNode&) expr;
-          validOp = (opNode.opType() & (operatorType::leftIncrement |
-                                        operatorType::leftDecrement));
-          validVar = sameVariable(var, opNode);
-        }
-        else if (eType == exprNodeType::rightUnary) {
-          rightUnaryOpNode &opNode = (rightUnaryOpNode&) expr;
-          validOp = (opNode.opType() & (operatorType::rightIncrement |
-                                        operatorType::rightDecrement));
-          validVar = sameVariable(var, opNode);
-        }
-        else { // eType == exprNodeType::binary
-          binaryOpNode &opNode = (binaryOpNode&) expr;
-          validOp = (opNode.opType() & (operatorType::addEq |
-                                        operatorType::subEq));
-          validVar = sameVariable(var, opNode);
-        }
-        if (!validOp) {
-          expr.printError("[@tile] Expected update ["
-                          + var.name()
-                          + "] with one of these operators [++, --, +=, -=]");
-          return false;
-        }
-        if (!validVar) {
-          expr.startNode()->printError("[@tile] Expected update ["
-                                       + var.name()
-                                       + "] with one of these operators [++, --, +=, -=]");
-          return false;
-        }
-        return true;
-      }
-
-      bool tile::sameVariable(variable_t &var,
-                              leftUnaryOpNode &opNode) {
-        if (opNode.value->type() != exprNodeType::variable) {
-          return false;
-        }
-        variable_t &var2 = ((variableNode*) opNode.value)->value;
-        return (&var == &var2);
-      }
-
-      bool tile::sameVariable(variable_t &var,
-                              rightUnaryOpNode &opNode) {
-        if (opNode.value->type() != exprNodeType::variable) {
-          return false;
-        }
-        variable_t &var2 = ((variableNode*) opNode.value)->value;
-        return (&var == &var2);
-      }
-
-      int tile::sameVariable(variable_t &var,
-                              binaryOpNode &opNode) {
-        variable_t *checkVar = NULL;
-        if (opNode.leftValue->type() == exprNodeType::variable) {
-          checkVar = &(((variableNode*) opNode.leftValue)->value);
-          if (checkVar && (checkVar == &var)) {
-            return -1;
-          }
-        }
-        if (opNode.rightValue->type() == exprNodeType::variable) {
-          checkVar = &(((variableNode*) opNode.rightValue)->value);
-          if (checkVar && (checkVar == &var)) {
-            return 1;
-          }
-        }
-        return 0;
-      }
-
       statement_t* tile::transformStatement(statement_t &smnt) {
         forStatement &forSmnt = (forStatement&) smnt;
         attributeTokenMap::iterator it = forSmnt.attributes.find("tile");
@@ -195,16 +42,11 @@ namespace occa {
         attributeToken_t &attr = it->second;
         exprNode &tileSize = *(attr.args[0].expr);
 
-        if (!isValidInit(*forSmnt.init)) {
+        variable_t *iterPtr;
+        if (!okl::isSimpleForSmnt("tile", forSmnt, iterPtr)) {
           return NULL;
         }
-        variable_t &iter = *(((declarationStatement*) forSmnt.init)
-                             ->declarations[0]
-                             .variable);
-        if (!isValidCheck(iter, *forSmnt.check) ||
-            !isValidUpdate(iter, *forSmnt.update)) {
-          return NULL;
-        }
+        variable_t &iter = *iterPtr;
 
         // Create the block and inner-block for-loops
         forStatement &blockForSmnt = *(new forStatement(forSmnt.up,
@@ -350,7 +192,7 @@ namespace occa {
         binaryOpNode &checkExpr = ((binaryOpNode&)
                                    *(((expressionStatement*) blockForSmnt.check)->expr));
         token_t *checkToken = checkExpr.startNode()->token;
-        const bool varInLeft = sameVariable(blockIter, checkExpr) < 0;
+        const bool varInLeft = okl::hasSameVariable(blockIter, checkExpr) < 0;
 
         // Update variables
         const operator_t &updateOp = (
@@ -405,7 +247,7 @@ namespace occa {
         binaryOpNode &checkExpr = ((binaryOpNode&)
                                    *(((expressionStatement*) blockForSmnt.check)->expr));
         token_t *checkToken = checkExpr.startNode()->token;
-        const bool varInLeft = sameVariable(blockIter, checkExpr) < 0;
+        const bool varInLeft = okl::hasSameVariable(blockIter, checkExpr) < 0;
         // Make ifStatement
         ifStatement &ifSmnt = *(new ifStatement(&innerForSmnt,
                                                 checkToken));

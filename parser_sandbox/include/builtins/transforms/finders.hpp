@@ -25,6 +25,8 @@
 
 #include <vector>
 
+#include "exprNode.hpp"
+#include "statement.hpp"
 #include "statementTransform.hpp"
 #include "exprTransform.hpp"
 
@@ -60,11 +62,6 @@ namespace occa {
 
         virtual bool matches(statement_t &smnt);
       };
-
-      void findStatementsByAttr(const int validStatementTypes,
-                                const std::string &attr,
-                                statement_t &smnt,
-                                statementPtrVector &statements);
       //================================
 
       //---[ Expr Node ]----------------
@@ -100,17 +97,24 @@ namespace occa {
 
         virtual bool matches(exprNode &expr);
       };
-
-      void findExprNodesByType(const int validExprNodeTypes,
-                               exprNode &expr,
-                               exprNodeVector &exprNodes);
-
-      void findExprNodesByAttr(const int validExprNodeTypes,
-                               const std::string &attr,
-                               exprNode &expr,
-                               exprNodeVector &exprNodes);
       //================================
     }
+
+    //---[ Helper Methods ]-------------
+    void findStatementsByAttr(const int validStatementTypes,
+                              const std::string &attr,
+                              statement_t &smnt,
+                              statementPtrVector &statements);
+
+    void findExprNodesByType(const int validExprNodeTypes,
+                             exprNode &expr,
+                             exprNodeVector &exprNodes);
+
+    void findExprNodesByAttr(const int validExprNodeTypes,
+                             const std::string &attr,
+                             exprNode &expr,
+                             exprNodeVector &exprNodes);
+    //==================================
   }
 }
 

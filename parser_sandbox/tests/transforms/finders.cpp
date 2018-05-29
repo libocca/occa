@@ -63,42 +63,42 @@ void testStatementFinder() {
     "}\n"
   );
 
-  transforms::findStatementsByAttr(statementType::block,
-                                   "dummy",
-                                   parser.root,
-                                   statements);
+  findStatementsByAttr(statementType::block,
+                       "dummy",
+                       parser.root,
+                       statements);
   OCCA_ASSERT_EQUAL(2,
                     (int) statements.size());
   statements.clear();
 
-  transforms::findStatementsByAttr(statementType::expression,
-                                   "dummy",
-                                   parser.root,
-                                   statements);
+  findStatementsByAttr(statementType::expression,
+                       "dummy",
+                       parser.root,
+                       statements);
   OCCA_ASSERT_EQUAL(5,
                     (int) statements.size());
   statements.clear();
 
-  transforms::findStatementsByAttr(statementType::declaration,
-                                   "dummy",
-                                   parser.root,
-                                   statements);
+  findStatementsByAttr(statementType::declaration,
+                       "dummy",
+                       parser.root,
+                       statements);
   OCCA_ASSERT_EQUAL(4,
                     (int) statements.size());
   statements.clear();
 
-  transforms::findStatementsByAttr(statementType::function,
-                                   "dummy",
-                                   parser.root,
-                                   statements);
+  findStatementsByAttr(statementType::function,
+                       "dummy",
+                       parser.root,
+                       statements);
   OCCA_ASSERT_EQUAL(3,
                     (int) statements.size());
   statements.clear();
 
-  transforms::findStatementsByAttr(statementType::functionDecl,
-                                   "dummy",
-                                   parser.root,
-                                   statements);
+  findStatementsByAttr(statementType::functionDecl,
+                       "dummy",
+                       parser.root,
+                       statements);
   OCCA_ASSERT_EQUAL(2,
                     (int) statements.size());
   statements.clear();
@@ -117,26 +117,26 @@ void testExprNodeFinder() {
 
 #define exprRoot (*(((expressionStatement*) parser.root.children[4])->expr))
 
-  transforms::findExprNodesByAttr(exprNodeType::type,
-                                  "dummy",
-                                  exprRoot,
-                                  exprNodes);
+  findExprNodesByAttr(exprNodeType::type,
+                      "dummy",
+                      exprRoot,
+                      exprNodes);
   OCCA_ASSERT_EQUAL(1,
                     (int) exprNodes.size());
   exprNodes.clear();
 
-  transforms::findExprNodesByAttr(exprNodeType::variable,
-                                  "dummy",
-                                  exprRoot,
-                                  exprNodes);
+  findExprNodesByAttr(exprNodeType::variable,
+                      "dummy",
+                      exprRoot,
+                      exprNodes);
   OCCA_ASSERT_EQUAL(3,
                     (int) exprNodes.size());
   exprNodes.clear();
 
-  transforms::findExprNodesByAttr(exprNodeType::function,
-                                  "dummy",
-                                  exprRoot,
-                                  exprNodes);
+  findExprNodesByAttr(exprNodeType::function,
+                      "dummy",
+                      exprRoot,
+                      exprNodes);
   OCCA_ASSERT_EQUAL(2,
                     (int) exprNodes.size());
   exprNodes.clear();

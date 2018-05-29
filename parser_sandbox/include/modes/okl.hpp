@@ -22,18 +22,58 @@
 #ifndef OCCA_TESTS_PARSER_MODES_OKL_HEADER
 #define OCCA_TESTS_PARSER_MODES_OKL_HEADER
 
+#include "statement.hpp"
+
 namespace occa {
   namespace lang {
+    class leftUnaryOpNode;
+    class rightUnaryOpNode;
+    class binaryOpNode;
+
     namespace okl {
-      // @outer + @inner exist
-      // Proper loops (decl, update, inc)
-      // @outer > @inner
-      // Same # of @inner in each @outer
-      // @outer > @shared > @inner
-      // @outer > @exclusive > @inner
-      // @shared has an array with evaluable sizes
-      // No break in @outer/@inner (ok inside regular loops inside @outer/@inner)
-      // No continue in @inner (ok inside regular loops inside @outer/@inner)
+      bool checkKernels(statement_t &root);
+
+      bool checkKernel(statement_t &kernelSmnt);
+
+      bool checkLoops(statement_t &kernelSmnt,
+                      statementPtrVector &outerSmnts,
+                      statementPtrVector &innerSmnts);
+
+      bool checkForDeclarations(statement_t &kernelSmnt,
+                                statementPtrVector &forSmnts,
+                                const std::string &attrName);
+
+      //---[ Declaration ]--------------
+      bool isSimpleForSmnt(const std::string &attrName,
+                           forStatement &forSmnt);
+
+      bool isSimpleForSmnt(const std::string &attrName,
+                           forStatement &forSmnt,
+                           variable_t *&iter);
+
+      bool isSimpleForInit(const std::string &attrName,
+                           statement_t &smnt);
+
+      bool isSimpleForCheck(const std::string &attrName,
+                            variable_t &var,
+                            statement_t &smnt);
+
+      bool isSimpleForUpdate(const std::string &attrName,
+                             variable_t &var,
+                             statement_t &smnt);
+
+      bool hasSameVariable(variable_t &var,
+                           leftUnaryOpNode &opNode);
+
+      bool hasSameVariable(variable_t &var,
+                           rightUnaryOpNode &opNode);
+
+      int hasSameVariable(variable_t &var,
+                          binaryOpNode &opNode);
+      //================================
+
+      // bool testSharedAndExclusive();
+      // bool testBreakAndContinue();
     }
   }
 }

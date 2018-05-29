@@ -35,23 +35,6 @@ namespace occa {
 
         tile();
 
-        bool isValidInit(statement_t &smnt);
-
-        bool isValidCheck(variable_t &var,
-                          statement_t &smnt);
-
-        bool isValidUpdate(variable_t &var,
-                           statement_t &smnt);
-
-        bool sameVariable(variable_t &var,
-                          leftUnaryOpNode &opNode);
-
-        bool sameVariable(variable_t &var,
-                          rightUnaryOpNode &opNode);
-
-        int sameVariable(variable_t &var,
-                         binaryOpNode &opNode);
-
         virtual statement_t* transformStatement(statement_t &smnt);
 
         void setupNewForStatements(attributeToken_t &attr,
