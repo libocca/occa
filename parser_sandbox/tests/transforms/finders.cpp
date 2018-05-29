@@ -107,7 +107,7 @@ void testStatementFinder() {
 
 void testExprNodeFinder() {
   exprNodeVector exprNodes;
-  parseAndPrintSource(
+  parseSource(
     "@dummy typedef int t1;\n"
     "@dummy int foo() {}\n"
     "@dummy int bar() {}\n"

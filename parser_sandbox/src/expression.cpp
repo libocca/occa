@@ -590,16 +590,16 @@ namespace occa {
         state.hasError = true;
       }
       else if (opType & operatorType::pair) {
-        exprNode *value = NULL;
         // Make sure we have content in the parentheses
         if ((outputCount >= 1)
             && !(state.prevToken->getOpType() & operatorType::pairStart)) {
-          value = &(state.popOutput());
+          exprNode &value = state.popOutput();
+          state.output.push(new pairNode(opToken,
+                                         value));
         } else {
-          value = new emptyNode();
+          state.output.push(new pairNode(opToken,
+                                         noExprNode));
         }
-        state.output.push(new pairNode(opToken,
-                                       *value));
       }
       if (state.hasError) {
         opToken.printError("Unable to apply operator");

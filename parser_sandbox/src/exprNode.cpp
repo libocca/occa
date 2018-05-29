@@ -453,7 +453,7 @@ namespace occa {
 
     leftUnaryOpNode::leftUnaryOpNode(token_t *token_,
                                      const unaryOperator_t &op_,
-                                     exprNode &value_) :
+                                     const exprNode &value_) :
       exprOpNode(token_, op_),
       value(value_.clone()) {}
 
@@ -511,7 +511,7 @@ namespace occa {
 
     rightUnaryOpNode::rightUnaryOpNode(token_t *token_,
                                        const unaryOperator_t &op_,
-                                       exprNode &value_) :
+                                       const exprNode &value_) :
       exprOpNode(token_, op_),
       value(value_.clone()) {}
 
@@ -565,8 +565,8 @@ namespace occa {
 
     binaryOpNode::binaryOpNode(token_t *token_,
                                const binaryOperator_t &op_,
-                               exprNode &leftValue_,
-                               exprNode &rightValue_) :
+                               const exprNode &leftValue_,
+                               const exprNode &rightValue_) :
       exprOpNode(token_, op_),
       leftValue(leftValue_.clone()),
       rightValue(rightValue_.clone()) {}
@@ -640,9 +640,9 @@ namespace occa {
     }
 
     ternaryOpNode::ternaryOpNode(token_t *token_,
-                                 exprNode &checkValue_,
-                                 exprNode &trueValue_,
-                                 exprNode &falseValue_) :
+                                 const exprNode &checkValue_,
+                                 const exprNode &trueValue_,
+                                 const exprNode &falseValue_) :
       exprNode(token_),
       checkValue(checkValue_.clone()),
       trueValue(trueValue_.clone()),
@@ -720,8 +720,8 @@ namespace occa {
 
     //---[ Pseudo Operators ]-----------
     subscriptNode::subscriptNode(token_t *token_,
-                                 exprNode &value_,
-                                 exprNode &index_) :
+                                 const exprNode &value_,
+                                 const exprNode &index_) :
       exprNode(token_),
       value(value_.clone()),
       index(index_.clone()) {}
@@ -771,7 +771,7 @@ namespace occa {
     }
 
     callNode::callNode(token_t *token_,
-                       exprNode &value_,
+                       const exprNode &value_,
                        const exprNodeVector &args_) :
       exprNode(token_),
       value(value_.clone()) {
@@ -845,7 +845,7 @@ namespace occa {
 
     newNode::newNode(token_t *token_,
                      vartype_t &valueType_,
-                     exprNode &value_) :
+                     const exprNode &value_) :
       exprNode(token_),
       valueType(valueType_),
       value(value_.clone()),
@@ -853,8 +853,8 @@ namespace occa {
 
     newNode::newNode(token_t *token_,
                      vartype_t &valueType_,
-                     exprNode &value_,
-                     exprNode &size_) :
+                     const exprNode &value_,
+                     const exprNode &size_) :
       exprNode(token_),
       valueType(valueType_),
       value(value_.clone()),
@@ -908,7 +908,7 @@ namespace occa {
     }
 
     deleteNode::deleteNode(token_t *token_,
-                           exprNode &value_,
+                           const exprNode &value_,
                            const bool isArray_) :
       exprNode(token_),
       value(value_.clone()),
@@ -960,7 +960,7 @@ namespace occa {
     }
 
     throwNode::throwNode(token_t *token_,
-                         exprNode &value_) :
+                         const exprNode &value_) :
       exprNode(token_),
       value(value_.clone()) {}
 
@@ -1007,7 +1007,7 @@ namespace occa {
 
     //---[ Builtins ]-------------------
     sizeofNode::sizeofNode(token_t *token_,
-                           exprNode &value_) :
+                           const exprNode &value_) :
       exprNode(token_),
       value(value_.clone()) {}
 
@@ -1057,7 +1057,7 @@ namespace occa {
 
     funcCastNode::funcCastNode(token_t *token_,
                                vartype_t &valueType_,
-                               exprNode &value_) :
+                               const exprNode &value_) :
       exprNode(token_),
       valueType(valueType_),
       value(value_.clone()) {}
@@ -1108,7 +1108,7 @@ namespace occa {
 
     parenCastNode::parenCastNode(token_t *token_,
                                  vartype_t &valueType_,
-                                 exprNode &value_) :
+                                 const exprNode &value_) :
       exprNode(token_),
       valueType(valueType_),
       value(value_.clone()) {}
@@ -1159,7 +1159,7 @@ namespace occa {
 
     constCastNode::constCastNode(token_t *token_,
                                  vartype_t &valueType_,
-                                 exprNode &value_) :
+                                 const exprNode &value_) :
       exprNode(token_),
       valueType(valueType_),
       value(value_.clone()) {}
@@ -1207,7 +1207,7 @@ namespace occa {
 
     staticCastNode::staticCastNode(token_t *token_,
                                    vartype_t &valueType_,
-                                   exprNode &value_) :
+                                   const exprNode &value_) :
       exprNode(token_),
       valueType(valueType_),
       value(value_.clone()) {}
@@ -1255,7 +1255,7 @@ namespace occa {
 
     reinterpretCastNode::reinterpretCastNode(token_t *token_,
                                              vartype_t &valueType_,
-                                             exprNode &value_) :
+                                             const exprNode &value_) :
       exprNode(token_),
       valueType(valueType_),
       value(value_.clone()) {}
@@ -1303,7 +1303,7 @@ namespace occa {
 
     dynamicCastNode::dynamicCastNode(token_t *token_,
                                      vartype_t &valueType_,
-                                     exprNode &value_) :
+                                     const exprNode &value_) :
       exprNode(token_),
       valueType(valueType_),
       value(value_.clone()) {}
@@ -1352,7 +1352,7 @@ namespace occa {
 
     //---[ Misc ]-----------------------
     pairNode::pairNode(operatorToken &opToken,
-                       exprNode &value_) :
+                       const exprNode &value_) :
       exprNode(&opToken),
       op(*(opToken.op)),
       value(value_.clone()) {}
@@ -1415,7 +1415,7 @@ namespace occa {
     }
 
     parenthesesNode::parenthesesNode(token_t *token_,
-                                     exprNode &value_) :
+                                     const exprNode &value_) :
       exprNode(token_),
       value(value_.clone()) {}
 
@@ -1535,9 +1535,9 @@ namespace occa {
 
     //---[ Extensions ]-----------------
     cudaCallNode::cudaCallNode(token_t *token_,
-                               exprNode &value_,
-                               exprNode &blocks_,
-                               exprNode &threads_) :
+                               const exprNode &value_,
+                               const exprNode &blocks_,
+                               const exprNode &threads_) :
       exprNode(token_),
       value(value_.clone()),
       blocks(blocks_.clone()),

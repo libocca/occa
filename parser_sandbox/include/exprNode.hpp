@@ -353,7 +353,7 @@ namespace occa {
 
       leftUnaryOpNode(token_t *token_,
                       const unaryOperator_t &op_,
-                      exprNode &value_);
+                      const exprNode &value_);
 
       leftUnaryOpNode(const leftUnaryOpNode &node);
 
@@ -380,11 +380,11 @@ namespace occa {
       exprNode *value;
 
       rightUnaryOpNode(const unaryOperator_t &op_,
-                       exprNode &value_);
+                       const exprNode &value_);
 
       rightUnaryOpNode(token_t *token,
                        const unaryOperator_t &op_,
-                       exprNode &value_);
+                       const exprNode &value_);
 
       rightUnaryOpNode(const rightUnaryOpNode &node);
 
@@ -411,13 +411,13 @@ namespace occa {
       exprNode *leftValue, *rightValue;
 
       binaryOpNode(const binaryOperator_t &op_,
-                   exprNode &leftValue_,
-                   exprNode &rightValue_);
+                   const exprNode &leftValue_,
+                   const exprNode &rightValue_);
 
       binaryOpNode(token_t *token,
                    const binaryOperator_t &op_,
-                   exprNode &leftValue_,
-                   exprNode &rightValue_);
+                   const exprNode &leftValue_,
+                   const exprNode &rightValue_);
 
       binaryOpNode(const binaryOpNode &node);
 
@@ -444,14 +444,14 @@ namespace occa {
     public:
       exprNode *checkValue, *trueValue, *falseValue;
 
-      ternaryOpNode(exprNode &checkValue_,
-                    exprNode &trueValue_,
-                    exprNode &falseValue_);
+      ternaryOpNode(const exprNode &checkValue_,
+                    const exprNode &trueValue_,
+                    const exprNode &falseValue_);
 
       ternaryOpNode(token_t *token,
-                    exprNode &checkValue_,
-                    exprNode &trueValue_,
-                    exprNode &falseValue_);
+                    const exprNode &checkValue_,
+                    const exprNode &trueValue_,
+                    const exprNode &falseValue_);
 
       ternaryOpNode(const ternaryOpNode &node);
       virtual ~ternaryOpNode();
@@ -481,8 +481,8 @@ namespace occa {
       exprNode *value, *index;
 
       subscriptNode(token_t *token_,
-                    exprNode &value_,
-                    exprNode &index_);
+                    const exprNode &value_,
+                    const exprNode &index_);
 
       subscriptNode(const subscriptNode &node);
 
@@ -508,7 +508,7 @@ namespace occa {
       exprNodeVector args;
 
       callNode(token_t *token_,
-               exprNode &value_,
+               const exprNode &value_,
                const exprNodeVector &args_);
 
       callNode(const callNode &node);
@@ -541,12 +541,12 @@ namespace occa {
 
       newNode(token_t *token_,
               vartype_t &valueType_,
-              exprNode &value_);
+              const exprNode &value_);
 
       newNode(token_t *token_,
               vartype_t &valueType_,
-              exprNode &value_,
-              exprNode &size_);
+              const exprNode &value_,
+              const exprNode &size_);
 
       newNode(const newNode &node);
 
@@ -571,7 +571,7 @@ namespace occa {
       bool isArray;
 
       deleteNode(token_t *token_,
-                 exprNode &value_,
+                 const exprNode &value_,
                  const bool isArray_);
 
       deleteNode(const deleteNode &node);
@@ -596,7 +596,7 @@ namespace occa {
       exprNode *value;
 
       throwNode(token_t *token_,
-                exprNode &value_);
+                const exprNode &value_);
 
       throwNode(const throwNode &node);
 
@@ -622,7 +622,7 @@ namespace occa {
       exprNode *value;
 
       sizeofNode(token_t *token_,
-                 exprNode &value_);
+                 const exprNode &value_);
 
       sizeofNode(const sizeofNode &node);
 
@@ -651,7 +651,7 @@ namespace occa {
 
       funcCastNode(token_t *token_,
                    vartype_t &valueType_,
-                   exprNode &value_);
+                   const exprNode &value_);
 
       funcCastNode(const funcCastNode &node);
 
@@ -678,7 +678,7 @@ namespace occa {
 
       parenCastNode(token_t *token_,
                     vartype_t &valueType_,
-                    exprNode &value_);
+                    const exprNode &value_);
 
       parenCastNode(const parenCastNode &node);
 
@@ -705,7 +705,7 @@ namespace occa {
 
       constCastNode(token_t *token_,
                     vartype_t &valueType_,
-                    exprNode &value_);
+                    const exprNode &value_);
 
       constCastNode(const constCastNode &node);
 
@@ -731,7 +731,7 @@ namespace occa {
 
       staticCastNode(token_t *token_,
                      vartype_t &valueType_,
-                     exprNode &value_);
+                     const exprNode &value_);
 
       staticCastNode(const staticCastNode &node);
 
@@ -757,7 +757,7 @@ namespace occa {
 
       reinterpretCastNode(token_t *token_,
                           vartype_t &valueType_,
-                          exprNode &value_);
+                          const exprNode &value_);
 
       reinterpretCastNode(const reinterpretCastNode &node);
 
@@ -783,7 +783,7 @@ namespace occa {
 
       dynamicCastNode(token_t *token_,
                       vartype_t &valueType_,
-                      exprNode &value_);
+                      const exprNode &value_);
 
       dynamicCastNode(const dynamicCastNode &node);
 
@@ -810,7 +810,7 @@ namespace occa {
       exprNode *value;
 
       pairNode(operatorToken &opToken,
-               exprNode &value_);
+               const exprNode &value_);
 
       pairNode(const pairNode &node);
 
@@ -839,7 +839,7 @@ namespace occa {
       exprNode *value;
 
       parenthesesNode(token_t *token_,
-                      exprNode &value_);
+                      const exprNode &value_);
 
       parenthesesNode(const parenthesesNode &node);
 
@@ -899,9 +899,9 @@ namespace occa {
       exprNode *blocks, *threads;
 
       cudaCallNode(token_t *token_,
-                   exprNode &value_,
-                   exprNode &blocks_,
-                   exprNode &threads_);
+                   const exprNode &value_,
+                   const exprNode &blocks_,
+                   const exprNode &threads_);
 
       cudaCallNode(const cudaCallNode &node);
 
