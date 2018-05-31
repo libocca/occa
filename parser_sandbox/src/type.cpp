@@ -106,6 +106,10 @@ namespace occa {
       return false;
     }
 
+    bool type_t::hasAttribute(const std::string &attr) const {
+      return (attributes.find(attr) != attributes.end());
+    }
+
     void type_t::printWarning(const std::string &message) const {
       if (!source) {
         occa::printWarning(std::cerr, "[No Token] " + message);

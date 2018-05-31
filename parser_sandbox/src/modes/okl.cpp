@@ -50,19 +50,28 @@ namespace occa {
       }
 
       bool checkKernel(statement_t &kernelSmnt) {
-        statementPtrVector outerSmnts, innerSmnts;
-        findStatementsByAttr(statementType::for_,
-                             "outer",
-                             kernelSmnt,
-                             outerSmnts);
-        findStatementsByAttr(statementType::for_,
-                             "inner",
-                             kernelSmnt,
-                             innerSmnts);
-        if (!checkLoops(kernelSmnt,
-                        outerSmnts, innerSmnts)) {
+        if (!checkLoops(kernelSmnt)) {
           return false;
         }
+        transforms::smntTreeNode root;
+        findStatementTree(statementType::for_,
+                          kernelSmnt,
+                          oklLoopMatcher,
+                          root);
+
+        root.free();
+        findStatementTree((statementType::for_ |
+                           statementType::declaration),
+                          kernelSmnt,
+                          oklLoopAndTypeDeclMatcher,
+                          root);
+
+        root.free();
+        findStatementTree((statementType::for_ |
+                           statementType::expression),
+                          kernelSmnt,
+                          oklLoopAndTypeExprMatcher,
+                          root);
         // Order @outer and @inner loops
         // @outer > @shared > @inner
         // @outer > @exclusive > @inner
@@ -76,9 +85,17 @@ namespace occa {
         return true;
       }
 
-      bool checkLoops(statement_t &kernelSmnt,
-                      statementPtrVector &outerSmnts,
-                      statementPtrVector &innerSmnts) {
+      //---[ Declaration ]--------------
+      bool checkLoops(statement_t &kernelSmnt) {
+        statementPtrVector outerSmnts, innerSmnts;
+        findStatementsByAttr(statementType::for_,
+                             "outer",
+                             kernelSmnt,
+                             outerSmnts);
+        findStatementsByAttr(statementType::for_,
+                             "inner",
+                             kernelSmnt,
+                             innerSmnts);
         if (!checkForDeclarations(kernelSmnt, outerSmnts, "outer")
             || !checkForDeclarations(kernelSmnt, innerSmnts, "inner")) {
           return false;
@@ -285,6 +302,58 @@ namespace occa {
         }
         return 0;
       }
+      //================================
+
+      //---[ Loop Logic ]---------------
+      bool oklLoopMatcher(statement_t &smnt) {
+        return (smnt.hasAttribute("outer")
+                || smnt.hasAttribute("inner"));
+      }
+
+      bool oklLoopAndTypeDeclMatcher(statement_t &smnt) {
+        if (oklLoopMatcher(smnt)) {
+          return true;
+        }
+        if (!(smnt.type() & statementType::declaration)) {
+          return false;
+        }
+        declarationStatement &declSmnt = (declarationStatement&) smnt;
+        const int declCount = (int) declSmnt.declarations.size();
+        for (int i = 0; i < declCount; ++i) {
+          variableDeclaration &decl = declSmnt.declarations[i];
+          variable_t &var = *(decl.variable);
+          if (var.hasAttribute("shared")
+              || var.hasAttribute("exclusive")) {
+            return true;
+          }
+        }
+        return false;
+      }
+
+      bool oklLoopAndTypeExprMatcher(statement_t &smnt) {
+        if (oklLoopMatcher(smnt)) {
+          return true;
+        }
+        if (!(smnt.type() & statementType::expression)) {
+          return false;
+        }
+        // TODO: Custom expr matcher
+        exprNode *expr = ((expressionStatement&) smnt).expr;
+        exprNodeVector nodes;
+        findExprNodesByAttr(exprNodeType::variable,
+                            "shared",
+                            *expr,
+                            nodes);
+        if (nodes.size()) {
+          return true;
+        }
+        findExprNodesByAttr(exprNodeType::variable,
+                            "exclusive",
+                            *expr,
+                            nodes);
+        return nodes.size();
+      }
+      //================================
     }
   }
 }

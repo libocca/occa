@@ -27,6 +27,8 @@ namespace occa {
   namespace lang {
     namespace statementType {
       const int none         = (1 << 0);
+      const int all          = -1;
+
       const int empty        = (1 << 1);
 
       const int pragma       = (1 << 2);
@@ -93,6 +95,10 @@ namespace occa {
 
     void statement_t::addAttribute(const attributeToken_t &attribute) {
       attributes[attribute.name()] = attribute;
+    }
+
+    bool statement_t::hasAttribute(const std::string &attr) const {
+      return (attributes.find(attr) != attributes.end());
     }
 
     std::string statement_t::toString() const {

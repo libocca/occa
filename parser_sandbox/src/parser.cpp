@@ -59,6 +59,8 @@ namespace occa {
       // Setup simple keyword -> statement peeks
       keywordPeek[keywordType::qualifier]   = statementType::declaration;
       keywordPeek[keywordType::type]        = statementType::declaration;
+      keywordPeek[keywordType::variable]    = statementType::expression;
+      keywordPeek[keywordType::function]    = statementType::expression;
       keywordPeek[keywordType::if_]         = statementType::if_;
       keywordPeek[keywordType::switch_]     = statementType::switch_;
       keywordPeek[keywordType::case_]       = statementType::case_;
@@ -529,7 +531,9 @@ namespace occa {
         return statementType::else_;
       }
 
-      return statementType::expression;
+      token->printError("Unknown identifier");
+      success = false;
+      return statementType::none;
     }
 
     bool parser_t::isGotoLabel(const int tokenIndex) {

@@ -119,6 +119,8 @@ namespace occa {
       bool operator != (const type_t &other) const;
       virtual bool equals(const type_t &other) const;
 
+      bool hasAttribute(const std::string &attr) const;
+
       virtual void printDeclaration(printer &pout) const = 0;
 
       void printWarning(const std::string &message) const;

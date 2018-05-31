@@ -38,6 +38,8 @@ namespace occa {
 
     namespace statementType {
       extern const int none;
+      extern const int all;
+
       extern const int empty;
 
       extern const int pragma;
@@ -113,6 +115,7 @@ namespace occa {
       virtual keyword_t& getScopeKeyword(const std::string &name);
 
       void addAttribute(const attributeToken_t &attribute);
+      bool hasAttribute(const std::string &attr) const;
 
       virtual void print(printer &pout) const = 0;
 

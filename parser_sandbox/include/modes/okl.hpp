@@ -22,6 +22,8 @@
 #ifndef OCCA_TESTS_PARSER_MODES_OKL_HEADER
 #define OCCA_TESTS_PARSER_MODES_OKL_HEADER
 
+#include <vector>
+
 #include "statement.hpp"
 
 namespace occa {
@@ -35,15 +37,13 @@ namespace occa {
 
       bool checkKernel(statement_t &kernelSmnt);
 
-      bool checkLoops(statement_t &kernelSmnt,
-                      statementPtrVector &outerSmnts,
-                      statementPtrVector &innerSmnts);
+      //---[ Declaration ]--------------
+      bool checkLoops(statement_t &kernelSmnt);
 
       bool checkForDeclarations(statement_t &kernelSmnt,
                                 statementPtrVector &forSmnts,
                                 const std::string &attrName);
 
-      //---[ Declaration ]--------------
       bool isSimpleForSmnt(const std::string &attrName,
                            forStatement &forSmnt);
 
@@ -70,6 +70,12 @@ namespace occa {
 
       int hasSameVariable(variable_t &var,
                           binaryOpNode &opNode);
+      //================================
+
+      //---[ Loop Logic ]---------------
+      bool oklLoopMatcher(statement_t &smnt);
+      bool oklLoopAndTypeDeclMatcher(statement_t &smnt);
+      bool oklLoopAndTypeExprMatcher(statement_t &smnt);
       //================================
 
       // bool testSharedAndExclusive();

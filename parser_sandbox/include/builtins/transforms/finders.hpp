@@ -20,9 +20,10 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  */
 
-#ifndef OCCA_LANG_BUILTINS_TRANSFORMS_STATEMENTFINDER_HEADER
-#define OCCA_LANG_BUILTINS_TRANSFORMS_STATEMENTFINDER_HEADER
+#ifndef OCCA_LANG_BUILTINS_TRANSFORMS_FINDER_HEADER
+#define OCCA_LANG_BUILTINS_TRANSFORMS_FINDER_HEADER
 
+#include <list>
 #include <vector>
 
 #include "exprNode.hpp"
@@ -34,6 +35,8 @@ namespace occa {
   namespace lang {
     typedef std::vector<statement_t*> statementPtrVector;
     typedef std::vector<exprNode*>    exprNodeVector;
+
+    typedef bool (*statementMatcher)(statement_t &smnt);
 
     namespace transforms {
       //---[ Statement ]----------------
@@ -98,6 +101,59 @@ namespace occa {
         virtual bool matches(exprNode &expr);
       };
       //================================
+
+      //---[ Statement Tree ]-----------
+      class smntTreeNode;
+      class smntTreeHistory;
+
+      typedef std::list<statement_t*>    statementPtrList;
+      typedef std::vector<smntTreeNode*> smntTreeNodeVector;
+      typedef std::list<smntTreeHistory> smntTreeHistoryList;
+
+      class smntTreeNode {
+      public:
+        statement_t *smnt;
+        smntTreeNodeVector children;
+
+        smntTreeNode(statement_t *smnt_ = NULL);
+        ~smntTreeNode();
+
+        void free();
+
+        int size();
+        smntTreeNode* operator [] (const int index);
+
+        void add(smntTreeNode *node);
+      };
+
+      class smntTreeHistory {
+      public:
+        smntTreeNode *node;
+        statement_t *smnt;
+
+        smntTreeHistory(smntTreeNode *node_,
+                        statement_t *smnt_);
+      };
+
+      class smntTreeFinder : public statementTransform {
+      public:
+        smntTreeNode &root;
+        statementMatcher matcher;
+        smntTreeHistoryList history;
+        int validSmntTypes;
+
+        smntTreeFinder(const int validStatementTypes_,
+                       smntTreeNode &root_,
+                       statementMatcher matcher_);
+
+        virtual statement_t* transformStatement(statement_t &smnt);
+
+        void updateHistory(statement_t &smnt);
+
+        void getStatementPath(statement_t &smnt,
+                              statementPtrList &path);
+      };
+      //================================
     }
 
     //---[ Helper Methods ]-------------
@@ -114,6 +170,11 @@ namespace occa {
                              const std::string &attr,
                              exprNode &expr,
                              exprNodeVector &exprNodes);
+
+    void findStatementTree(const int validStatementTypes,
+                           statement_t &smnt,
+                           statementMatcher matcher,
+                           transforms::smntTreeNode &root);
     //==================================
   }
 }

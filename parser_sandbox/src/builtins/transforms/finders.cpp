@@ -50,8 +50,7 @@ namespace occa {
       }
 
       bool statementAttrFinder::matches(statement_t &smnt) {
-        attributeTokenMap::iterator it = smnt.attributes.find(attr);
-        return (it != smnt.attributes.end());
+        return smnt.hasAttribute(attr);
       }
       //================================
 
@@ -89,17 +88,108 @@ namespace occa {
       }
 
       bool exprNodeAttrFinder::matches(exprNode &expr) {
-        const int eType = expr.type();
-        attributeTokenMap *attributes;
-        if (eType & exprNodeType::type) {
-          attributes = &(((typeNode&) expr).value.attributes);
-        } else if (eType & exprNodeType::variable) {
-          attributes = &(((variableNode&) expr).value.attributes);
-        } else {
-          attributes = &(((functionNode&) expr).value.attributes);
+        return expr.hasAttribute(attr);
+      }
+      //================================
+
+      //---[ Statement Tree ]-----------
+      smntTreeNode::smntTreeNode(statement_t *smnt_) :
+        smnt(smnt_) {}
+
+      smntTreeNode::~smntTreeNode() {
+        const int count = (int) children.size();
+        for (int i = 0; i < count; ++i) {
+          delete children[i];
         }
-        attributeTokenMap::iterator it = attributes->find(attr);
-        return (it != attributes->end());
+      }
+
+      void smntTreeNode::free() {
+        const int count = (int) children.size();
+        for (int i = 0; i < count; ++i) {
+          delete children[i];
+        }
+        children.clear();
+      }
+
+      int smntTreeNode::size() {
+        return (int) children.size();
+      }
+
+      smntTreeNode* smntTreeNode::operator [] (const int index) {
+        const int count = (int) children.size();
+        if ((0 <= index) && (index < count)) {
+          return children[index];
+        }
+        return NULL;
+      }
+
+      void smntTreeNode::add(smntTreeNode *node) {
+        children.push_back(node);
+      }
+
+      smntTreeHistory::smntTreeHistory(smntTreeNode *node_,
+                                       statement_t *smnt_) :
+        node(node_),
+        smnt(smnt_) {}
+
+      smntTreeFinder::smntTreeFinder(const int validStatementTypes_,
+                                     smntTreeNode &root_,
+                                     statementMatcher matcher_) :
+        root(root_),
+        matcher(matcher_),
+        validSmntTypes(validStatementTypes_) {
+
+        downToUp = false;
+        validStatementTypes = statementType::all;
+        history.push_back(
+          smntTreeHistory(&root, NULL)
+        );
+      }
+
+      statement_t* smntTreeFinder::transformStatement(statement_t &smnt) {
+        updateHistory(smnt);
+
+        smntTreeNode *node = NULL;
+        if ((smnt.type() & validSmntTypes)
+            && matcher(smnt)) {
+          node = new smntTreeNode(&smnt);
+          history.back().node->add(node);
+        }
+        history.push_back(
+          smntTreeHistory(node, &smnt)
+        );
+        return &smnt;
+      }
+
+      void smntTreeFinder::updateHistory(statement_t &smnt) {
+        statementPtrList path;
+        getStatementPath(smnt, path);
+
+        statementPtrList::iterator pathIt = path.begin();
+        smntTreeHistoryList::iterator historyIt = history.begin();
+        while ((pathIt != path.end())
+               && (historyIt != history.end())) {
+          statement_t *pathSmnt = *pathIt;
+          statement_t *historySmnt = historyIt->smnt;
+          if (pathSmnt != historySmnt) {
+            break;
+          }
+          ++pathIt;
+          ++historyIt;
+        }
+        // Erase forked path
+        history.erase(historyIt, history.end());
+      }
+
+      void smntTreeFinder::getStatementPath(statement_t &smnt,
+                                            statementPtrList &path) {
+        statement_t *node = smnt.up;
+        while (node) {
+          path.push_front(node);
+          node = node->up;
+        }
+        // Push the root node (NULL)
+        path.push_front(NULL);
       }
       //================================
     }
@@ -128,6 +218,16 @@ namespace occa {
 
       transforms::exprNodeAttrFinder finder(validExprNodeTypes, attr);
       finder.getExprNodes(expr, exprNodes);
+    }
+
+    void findStatementTree(const int validStatementTypes,
+                           statement_t &smnt,
+                           statementMatcher matcher,
+                           transforms::smntTreeNode &root) {
+      transforms::smntTreeFinder finder(validStatementTypes,
+                                        root,
+                                        matcher);
+      finder.apply(smnt);
     }
     //==================================
   }

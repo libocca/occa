@@ -111,6 +111,10 @@ namespace occa {
       return this;
     }
 
+    bool exprNode::hasAttribute(const std::string &attr) const {
+      return false;
+    }
+
     std::string exprNode::toString() const {
       std::stringstream ss;
       printer pout(ss);
@@ -357,6 +361,10 @@ namespace occa {
 
     void typeNode::setChildren(exprNodeRefVector &children) {}
 
+    bool typeNode::hasAttribute(const std::string &attr) const {
+      return value.hasAttribute(attr);
+    }
+
     void typeNode::print(printer &pout) const {
       pout << value;
     }
@@ -392,6 +400,10 @@ namespace occa {
 
     void variableNode::setChildren(exprNodeRefVector &children) {}
 
+    bool variableNode::hasAttribute(const std::string &attr) const {
+      return value.hasAttribute(attr);
+    }
+
     void variableNode::print(printer &pout) const {
       pout << value;
     }
@@ -426,6 +438,10 @@ namespace occa {
     }
 
     void functionNode::setChildren(exprNodeRefVector &children) {}
+
+    bool functionNode::hasAttribute(const std::string &attr) const {
+      return value.hasAttribute(attr);
+    }
 
     void functionNode::print(printer &pout) const {
       pout << value;

@@ -25,6 +25,7 @@
 
 void testStatementFinder();
 void testExprNodeFinder();
+void testStatementTreeFinder();
 
 int main(const int argc, const char **argv) {
   parser.addAttribute<dummy>();
@@ -36,6 +37,7 @@ int main(const int argc, const char **argv) {
 
   testStatementFinder();
   testExprNodeFinder();
+  testStatementTreeFinder();
 
   return 0;
 }
@@ -142,4 +144,50 @@ void testExprNodeFinder() {
   exprNodes.clear();
 
 #undef exprRoot
+}
+
+bool blockMatcher(statement_t &smnt) {
+  return true;
+}
+
+void testStatementTreeFinder() {
+  parseSource(
+    "{\n"
+    "  {}\n"
+    "  {\n"
+    "    {}{}{}\n"
+    "  }\n"
+    "  {}\n"
+    "}"
+  );
+  transforms::smntTreeNode root;
+  findStatementTree(statementType::block,
+                    parser.root,
+                    blockMatcher,
+                    root);
+
+  OCCA_ASSERT_EQUAL(1,
+                    root.size());
+
+  transforms::smntTreeNode &r0 = *(root[0]);
+  OCCA_ASSERT_EQUAL(1,
+                    r0.size());
+
+  transforms::smntTreeNode &r00 = *(r0[0]);
+  OCCA_ASSERT_EQUAL(3,
+                    r00.size());
+
+  OCCA_ASSERT_EQUAL(0,
+                    r00[0]->size());
+  OCCA_ASSERT_EQUAL(3,
+                    r00[1]->size());
+  OCCA_ASSERT_EQUAL(0,
+                    r00[2]->size());
+
+  transforms::smntTreeNode &r001 = *(r00[1]);
+  for (int i = 0; i < 3; ++i) {
+    OCCA_ASSERT_EQUAL(0,
+                      r001[i]->size());
+  }
+  root.free();
 }

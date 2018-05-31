@@ -134,6 +134,8 @@ namespace occa {
 
       virtual void setChildren(exprNodeRefVector &children) = 0;
 
+      virtual bool hasAttribute(const std::string &attr) const;
+
       virtual void print(printer &pout) const = 0;
 
       std::string toString() const;
@@ -286,6 +288,8 @@ namespace occa {
 
       virtual void setChildren(exprNodeRefVector &children);
 
+      virtual bool hasAttribute(const std::string &attr) const;
+
       virtual void print(printer &pout) const;
 
       virtual void debugPrint(const std::string &prefix) const;
@@ -308,6 +312,8 @@ namespace occa {
 
       virtual void setChildren(exprNodeRefVector &children);
 
+      virtual bool hasAttribute(const std::string &attr) const;
+
       virtual void print(printer &pout) const;
 
       virtual void debugPrint(const std::string &prefix) const;
@@ -329,6 +335,8 @@ namespace occa {
       virtual exprNode* clone() const;
 
       virtual void setChildren(exprNodeRefVector &children);
+
+      virtual bool hasAttribute(const std::string &attr) const;
 
       virtual void print(printer &pout) const;
 

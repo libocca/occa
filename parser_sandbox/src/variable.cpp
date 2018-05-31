@@ -91,6 +91,10 @@ namespace occa {
       return vartype == other.vartype;
     }
 
+    bool variable_t::hasAttribute(const std::string &attr) const {
+      return (attributes.find(attr) != attributes.end());
+    }
+
     void variable_t::printDeclaration(printer &pout) const {
       vartype.printDeclaration(pout, name());
     }

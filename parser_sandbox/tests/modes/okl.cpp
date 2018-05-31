@@ -20,10 +20,15 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  */
 #include "../parserUtils.hpp"
+#include "modes/okl.hpp"
 
 void testLoops();
 void testTypes();
 void testLoopSkips();
+
+void testLoopsErrors();
+void testTypesErrors();
+void testLoopSkipsErrors();
 
 int main(const int argc, const char **argv) {
   parser.addAttribute<dummy>();
@@ -33,12 +38,22 @@ int main(const int argc, const char **argv) {
   parser.addAttribute<attributes::shared>();
   parser.addAttribute<attributes::exclusive>();
 
-  // testLoops();
+  testLoops();
   // testTypes();
   // testLoopSkips();
 
+  // testLoopsErrors();
+  // testTypesErrors();
+  // testLoopSkipsErrors();
+
   return 0;
 }
+
+#define parseBadOKLSource(src_)                     \
+  parseSource(src_);                                \
+  OCCA_ASSERT_FALSE(okl::checkKernels(parser.root))
+
+
 
 //---[ Loop ]---------------------------
 void testOKLLoopExists();
@@ -49,25 +64,25 @@ void testSameInnerLoopCount();
 void testLoops() {
   testOKLLoopExists();
   testProperOKLLoops();
-  testInnerInsideOuter();
-  testSameInnerLoopCount();
+  // testInnerInsideOuter();
+  // testSameInnerLoopCount();
 }
 
 void testOKLLoopExists() {
   // @outer + @inner exist
-  parseBadSource("@kernel foo() {}");
-  parseBadSource("@kernel foo() {\n"
-                 "  for (;;; @outer) {}\n"
-                 "}");
-  parseBadSource("@kernel foo() {\n"
-                 "  for (;;; @inner) {}\n"
-                 "}");
+  parseBadOKLSource("@kernel void foo() {}");
+  parseBadOKLSource("@kernel void foo() {\n"
+                    "  for (;;; @outer) {}\n"
+                    "}");
+  parseBadOKLSource("@kernel void foo() {\n"
+                    "  for (;;; @inner) {}\n"
+                    "}");
 }
 
 void testProperOKLLoops() {
   // Proper loops (decl, update, inc)
   const std::string oStart = (
-    "@kernel foo() {\n"
+    "@kernel void foo() {\n"
   );
   const std::string oMid = (
     "\nfor (int i = 0; i < 2; ++i; @inner) {}\n"
@@ -77,7 +92,7 @@ void testProperOKLLoops() {
   );
 
   const std::string iStart = (
-    "@kernel foo() {\n"
+    "@kernel void foo() {\n"
     "for (int o = 0; o < 2; ++o; @outer) {\n"
   );
   const std::string iEnd = (
@@ -85,31 +100,31 @@ void testProperOKLLoops() {
     "}\n"
   );
 
-  parseBadSource(oStart + "for (o = 0;;; @outer) {" + oMid + "}" + oEnd);
-  parseBadSource(oStart + "for (float o = 0;;; @outer) {" + oMid + "}" + oEnd);
-  parseBadSource(oStart + "for (int o = 0, j = 0;;; @outer) {" + oMid + "}" + oEnd);
-  parseBadSource(oStart + "for (int o = 0;;; @outer) {" + oMid + "}" + oEnd);
-  parseBadSource(oStart + "for (int o = 0; o + 2;; @outer) {" + oMid + "}" + oEnd);
-  parseBadSource(oStart + "for (int o = 0; j < 2;; @outer) {" + oMid + "}" + oEnd);
-  parseBadSource(oStart + "for (int o = 0; o < 2;; @outer) {" + oMid + "}" + oEnd);
-  parseBadSource(oStart + "for (int o = 0; o < 2; o *= 2; @outer) {" + oMid + "}" + oEnd);
-  parseBadSource(oStart + "for (int o = 0; o < 2; ++j; @outer) {" + oMid + "}" + oEnd);
+  parseBadOKLSource(oStart + "for (o = 0;;; @outer) {" + oMid + "}" + oEnd);
+  parseBadOKLSource(oStart + "for (float o = 0;;; @outer) {" + oMid + "}" + oEnd);
+  parseBadOKLSource(oStart + "for (int o = 0, j = 0;;; @outer) {" + oMid + "}" + oEnd);
+  parseBadOKLSource(oStart + "for (int o = 0;;; @outer) {" + oMid + "}" + oEnd);
+  parseBadOKLSource(oStart + "for (int o = 0; o + 2;; @outer) {" + oMid + "}" + oEnd);
+  parseBadOKLSource(oStart + "for (int o = 0; j < 2;; @outer) {" + oMid + "}" + oEnd);
+  parseBadOKLSource(oStart + "for (int o = 0; o < 2;; @outer) {" + oMid + "}" + oEnd);
+  parseBadOKLSource(oStart + "for (int o = 0; o < 2; o *= 2; @outer) {" + oMid + "}" + oEnd);
+  parseBadOKLSource(oStart + "for (int o = 0; o < 2; ++j; @outer) {" + oMid + "}" + oEnd);
 
-  parseBadSource(iStart + "for (i = 0;;; @inner) {}" + iEnd);
-  parseBadSource(iStart + "for (float i = 0;;; @inner) {}" + iEnd);
-  parseBadSource(iStart + "for (int i = 0, j = 0;;; @inner) {}" + iEnd);
-  parseBadSource(iStart + "for (int i = 0;;; @inner) {}" + iEnd);
-  parseBadSource(iStart + "for (int i = 0; i + 2;; @inner) {}" + iEnd);
-  parseBadSource(iStart + "for (int i = 0; j < 2;; @inner) {}" + iEnd);
-  parseBadSource(iStart + "for (int i = 0; i < 2;; @inner) {}" + iEnd);
-  parseBadSource(iStart + "for (int i = 0; i < 2; i *= 2; @inner) {}" + iEnd);
-  parseBadSource(iStart + "for (int i = 0; i < 2; ++j; @inner) {}" + iEnd);
+  parseBadOKLSource(iStart + "for (i = 0;;; @inner) {}" + iEnd);
+  parseBadOKLSource(iStart + "for (float i = 0;;; @inner) {}" + iEnd);
+  parseBadOKLSource(iStart + "for (int i = 0, j = 0;;; @inner) {}" + iEnd);
+  parseBadOKLSource(iStart + "for (int i = 0;;; @inner) {}" + iEnd);
+  parseBadOKLSource(iStart + "for (int i = 0; i + 2;; @inner) {}" + iEnd);
+  parseBadOKLSource(iStart + "for (int i = 0; j < 2;; @inner) {}" + iEnd);
+  parseBadOKLSource(iStart + "for (int i = 0; i < 2;; @inner) {}" + iEnd);
+  parseBadOKLSource(iStart + "for (int i = 0; i < 2; i *= 2; @inner) {}" + iEnd);
+  parseBadOKLSource(iStart + "for (int i = 0; i < 2; ++j; @inner) {}" + iEnd);
 }
 
 void testInnerInsideOuter() {
   // @outer > @inner
-  parseBadSource(
-    "@kernel foo() {\n"
+  parseBadOKLSource(
+    "@kernel void foo() {\n"
     "  for (int i = 0; i < 2; ++i; @inner) {\n"
     "    for (int o = 0; o < 2; ++o; @outer) {}\n"
     "  }\n"
@@ -119,8 +134,8 @@ void testInnerInsideOuter() {
 
 void testSameInnerLoopCount() {
   // Same # of @inner in each @outer
-  parseBadSource(
-    "@kernel foo() {\n"
+  parseBadOKLSource(
+    "@kernel void foo() {\n"
     "  for (int o = 0; o < 2; ++o; @outer) {\n"
     "    for (int i = 0; i < 2; ++i; @inner) {}\n"
     "    for (int i = 0; i < 2; ++i; @inner) {\n"
@@ -147,8 +162,8 @@ void testTypes() {
 
 void testSharedLocation() {
   // @outer > @shared > @inner
-  parseBadSource(
-    "@kernel foo() {\n"
+  parseBadOKLSource(
+    "@kernel void foo() {\n"
     "  @shared int s[10];\n"
     "  for (int o = 0; o < 2; ++o; @outer) {\n"
     "    for (int i = 0; i < 2; ++i; @inner) {\n"
@@ -156,8 +171,8 @@ void testSharedLocation() {
     "  }\n"
     "}\n"
   );
-  parseBadSource(
-    "@kernel foo() {\n"
+  parseBadOKLSource(
+    "@kernel void foo() {\n"
     "  for (int o = 0; o < 2; ++o; @outer) {\n"
     "    for (int i = 0; i < 2; ++i; @inner) {\n"
     "      @shared int s[10];\n"
@@ -169,8 +184,8 @@ void testSharedLocation() {
 
 void testExclusiveLocation() {
   // @outer > @exclusive > @inner
-  parseBadSource(
-    "@kernel foo() {\n"
+  parseBadOKLSource(
+    "@kernel void foo() {\n"
     "  @exclusive int x;\n"
     "  for (int o = 0; o < 2; ++o; @outer) {\n"
     "    for (int i = 0; i < 2; ++i; @inner) {\n"
@@ -178,8 +193,8 @@ void testExclusiveLocation() {
     "  }\n"
     "}\n"
   );
-  parseBadSource(
-    "@kernel foo() {\n"
+  parseBadOKLSource(
+    "@kernel void foo() {\n"
     "  for (int o = 0; o < 2; ++o; @outer) {\n"
     "    for (int i = 0; i < 2; ++i; @inner) {\n"
     "      @exclusive int x;\n"
@@ -191,8 +206,8 @@ void testExclusiveLocation() {
 
 void testValidSharedArray() {
   // @shared has an array with evaluable sizes
-  parseBadSource(
-    "@kernel foo() {\n"
+  parseBadOKLSource(
+    "@kernel void foo() {\n"
     "  for (int o = 0; o < 2; ++o; @outer) {\n"
     "    @shared int s[o];\n"
     "    for (int i = 0; i < 2; ++i; @inner) {\n"
@@ -200,8 +215,84 @@ void testValidSharedArray() {
     "  }\n"
     "}\n"
   );
-  parseBadSource(
-    "@kernel foo() {\n"
+  parseBadOKLSource(
+    "@kernel void foo() {\n"
+    "  for (int o = 0; o < 2; ++o; @outer) {\n"
+    "    @shared int s[2][o];\n"
+    "    for (int i = 0; i < 2; ++i; @inner) {\n"
+    "    }\n"
+    "  }\n"
+    "}\n"
+  );
+}
+
+void testSharedLocationErrors();
+void testExclusiveLocationErrors();
+void testValidSharedArrayErrors();
+
+void testTypesErrors() {
+  testSharedLocationErrors();
+  testExclusiveLocationErrors();
+  testValidSharedArrayErrors();
+}
+
+void testSharedLocationErrors() {
+  // @outer > @shared > @inner
+  parseBadOKLSource(
+    "@kernel void foo() {\n"
+    "  @shared int s[10];\n"
+    "  for (int o = 0; o < 2; ++o; @outer) {\n"
+    "    for (int i = 0; i < 2; ++i; @inner) {\n"
+    "    }\n"
+    "  }\n"
+    "}\n"
+  );
+  parseBadOKLSource(
+    "@kernel void foo() {\n"
+    "  for (int o = 0; o < 2; ++o; @outer) {\n"
+    "    for (int i = 0; i < 2; ++i; @inner) {\n"
+    "      @shared int s[10];\n"
+    "    }\n"
+    "  }\n"
+    "}\n"
+  );
+}
+
+void testExclusiveLocationErrors() {
+  // @outer > @exclusive > @inner
+  parseBadOKLSource(
+    "@kernel void foo() {\n"
+    "  @exclusive int x;\n"
+    "  for (int o = 0; o < 2; ++o; @outer) {\n"
+    "    for (int i = 0; i < 2; ++i; @inner) {\n"
+    "    }\n"
+    "  }\n"
+    "}\n"
+  );
+  parseBadOKLSource(
+    "@kernel void foo() {\n"
+    "  for (int o = 0; o < 2; ++o; @outer) {\n"
+    "    for (int i = 0; i < 2; ++i; @inner) {\n"
+    "      @exclusive int x;\n"
+    "    }\n"
+    "  }\n"
+    "}\n"
+  );
+}
+
+void testValidSharedArrayErrors() {
+  // @shared has an array with evaluable sizes
+  parseBadOKLSource(
+    "@kernel void foo() {\n"
+    "  for (int o = 0; o < 2; ++o; @outer) {\n"
+    "    @shared int s[o];\n"
+    "    for (int i = 0; i < 2; ++i; @inner) {\n"
+    "    }\n"
+    "  }\n"
+    "}\n"
+  );
+  parseBadOKLSource(
+    "@kernel void foo() {\n"
     "  for (int o = 0; o < 2; ++o; @outer) {\n"
     "    @shared int s[2][o];\n"
     "    for (int i = 0; i < 2; ++i; @inner) {\n"
@@ -223,8 +314,8 @@ void testLoopSkips() {
 
 void testValidBreaks() {
   // No break in @outer/@inner (ok inside regular loops inside @outer/@inner)
-  parseBadSource(
-    "@kernel foo() {\n"
+  parseBadOKLSource(
+    "@kernel void foo() {\n"
     "  for (int o = 0; o < 2; ++o; @outer) {\n"
     "    for (int i = 0; i < 2; ++i; @inner) {\n"
     "    }\n"
@@ -232,8 +323,8 @@ void testValidBreaks() {
     "  }\n"
     "}\n"
   );
-  parseBadSource(
-    "@kernel foo() {\n"
+  parseBadOKLSource(
+    "@kernel void foo() {\n"
     "  for (int o = 0; o < 2; ++o; @outer) {\n"
     "    for (int i = 0; i < 2; ++i; @inner) {\n"
     "      break;"
@@ -245,8 +336,8 @@ void testValidBreaks() {
 
 void testValidContinues() {
   // No continue in @inner (ok inside regular loops inside @outer/@inner)
-  parseBadSource(
-    "@kernel foo() {\n"
+  parseBadOKLSource(
+    "@kernel void foo() {\n"
     "  for (int o = 0; o < 2; ++o; @outer) {\n"
     "    for (int i = 0; i < 2; ++i; @inner) {\n"
     "    }\n"
@@ -254,8 +345,8 @@ void testValidContinues() {
     "  }\n"
     "}\n"
   );
-  parseBadSource(
-    "@kernel foo() {\n"
+  parseBadOKLSource(
+    "@kernel void foo() {\n"
     "  for (int o = 0; o < 2; ++o; @outer) {\n"
     "    for (int i = 0; i < 2; ++i; @inner) {\n"
     "      continue;"

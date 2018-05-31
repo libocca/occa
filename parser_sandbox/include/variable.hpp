@@ -53,6 +53,8 @@ namespace occa {
 
       bool operator == (const variable_t &other) const;
 
+      bool hasAttribute(const std::string &attr) const;
+
       void printDeclaration(printer &pout) const;
       void printExtraDeclaration(printer &pout) const;
 
