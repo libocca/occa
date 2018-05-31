@@ -22,6 +22,16 @@
 #include "../parserUtils.hpp"
 #include "modes/okl.hpp"
 
+
+#define parseOKLSource(src_)                        \
+  parseSource(src_);                                \
+  OCCA_ASSERT_TRUE(okl::checkKernels(parser.root))
+
+#define parseBadOKLSource(src_)                     \
+  parseSource(src_);                                \
+  OCCA_ASSERT_FALSE(okl::checkKernels(parser.root))
+
+
 void testLoops();
 void testTypes();
 void testLoopSkips();
@@ -40,12 +50,6 @@ int main(const int argc, const char **argv) {
 
   return 0;
 }
-
-#define parseBadOKLSource(src_)                     \
-  parseSource(src_);                                \
-  OCCA_ASSERT_FALSE(okl::checkKernels(parser.root))
-
-
 
 //---[ Loop ]---------------------------
 void testOKLLoopExists();
@@ -111,6 +115,33 @@ void testProperOKLLoops() {
   parseBadOKLSource(iStart + "for (int i = 0; i < 2;; @inner) {}" + iEnd);
   parseBadOKLSource(iStart + "for (int i = 0; i < 2; i *= 2; @inner) {}" + iEnd);
   parseBadOKLSource(iStart + "for (int i = 0; i < 2; ++j; @inner) {}" + iEnd);
+
+  // No double @outer + @inner
+  parseBadOKLSource(
+    "@kernel void foo() {\n"
+    "  for (int i = 0; i < 2; ++i; @outer @inner) {\n"
+    "  }\n"
+    "}\n"
+  );
+  parseBadOKLSource(
+    "@kernel void foo() {\n"
+    "  for (int i = 0; i < 2; ++i; @tile(1, @outer @inner)) {\n"
+    "  }\n"
+    "}\n"
+  );
+  // Make sure @tile distributes the attributes properly
+  parseBadOKLSource(
+    "@kernel void foo() {\n"
+    "  for (int i = 0; i < 2; ++i; @tile(1, @inner, @outer)) {\n"
+    "  }\n"
+    "}\n"
+  );
+  parseOKLSource(
+    "@kernel void foo() {\n"
+    "  for (int i = 0; i < 2; ++i; @tile(1, @outer, @inner)) {\n"
+    "  }\n"
+    "}\n"
+  );
 }
 
 void testInnerInsideOuter() {

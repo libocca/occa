@@ -93,7 +93,7 @@ namespace occa {
           blockForSmnt.attributes.insert(blockAttrs.begin(), blockAttrs.end());
           if (attrArgCount > 2) {
             attributeTokenMap &innerAttrs = attr.args[2].attributes;
-            blockForSmnt.attributes.insert(innerAttrs.begin(), innerAttrs.end());
+            innerForSmnt.attributes.insert(innerAttrs.begin(), innerAttrs.end());
           }
         }
         // Remove @tile to prevent recursive updates

@@ -307,7 +307,7 @@ namespace occa {
       context.set(1);
 
       if (!(context[0]->type() & tokenType::identifier)) {
-        context.printError("Expected a namespace name");
+        context.printError("Expected an attribute name");
         success = false;
         return;
       }
@@ -338,18 +338,13 @@ namespace occa {
 
       attributeToken_t attr(*(it->second), nameToken);
       setAttributeArgs(attr, argRanges);
-      if (!success) {
-        context.popAndSkip();
-        return;
-      }
-
-      attrs[nameToken.value] = attr;
-
       if (hasArgs) {
         context.popAndSkip();
       }
-
-      success = attribute.isValid(attr);
+      if (success) {
+        attrs[nameToken.value] = attr;
+        success = attribute.isValid(attr);
+      }
     }
 
     void parser_t::setAttributeArgs(attributeToken_t &attr,
@@ -357,33 +352,32 @@ namespace occa {
       const int args = (int) argRanges.size();
       bool foundNamedArg = false;
       for (int i = 0; i < args; ++i) {
+        attributeArg_t arg;
         context.push(argRanges[i].start,
                      argRanges[i].end);
 
         if (!context.size()) {
-          attr.args.push_back(new emptyNode());
+          arg.expr = new emptyNode();
+          attr.args.push_back(arg);
           context.popAndSkip();
           continue;
         }
 
         // Load args
-        attributeTokenMap attrs;
-        loadAttributes(attrs);
-
+        loadAttributes(arg.attributes);
         if (!context.size()) {
-          attr.args.push_back(
-            attributeArg_t(new emptyNode(),
-                           attrs)
-          );
+          arg.expr = new emptyNode();
+          attr.args.push_back(arg);
           context.popAndSkip();
           continue;
         }
 
         // Get argument
-        exprNode *arg = getExpression();
-        if (!arg) {
+        arg.expr = getExpression();
+        if (!arg.expr) {
           success = false;
           context.pop();
+          arg.clear();
           return;
         }
 
@@ -394,12 +388,12 @@ namespace occa {
         // |   |---[argName] (identifier)
         // |   |
         // |   |---[arg] (?)
-        if (arg->type() & exprNodeType::binary) {
-          binaryOpNode &equalsNode = arg->to<binaryOpNode>();
+        if (arg.expr->type() & exprNodeType::binary) {
+          binaryOpNode &equalsNode = arg.expr->to<binaryOpNode>();
           if ((equalsNode.opType() & operatorType::assign) &&
               (equalsNode.leftValue->type() & exprNodeType::identifier)) {
             argName = equalsNode.leftValue->to<identifierNode>().value;
-            arg = equalsNode.rightValue->clone();
+            arg.expr = equalsNode.rightValue->clone();
             delete &equalsNode;
           }
         }
@@ -409,8 +403,8 @@ namespace occa {
           context.printError("All arguments after a named argument"
                              " must also be named");
           success = false;
-          delete arg;
           context.pop();
+          arg.clear();
           return;
         }
 
@@ -419,10 +413,8 @@ namespace occa {
         } else {
           attr.kwargs[argName] = arg;
         }
-
         context.popAndSkip();
       }
-
     }
 
     void parser_t::addAttributesTo(attributeTokenMap &attrs,
