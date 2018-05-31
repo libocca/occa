@@ -51,14 +51,8 @@ namespace occa {
 
       bool checkKernel(statement_t &kernelSmnt) {
         return (checkLoops(kernelSmnt)
-                && checkLoopOrders(kernelSmnt));
-        // @shared has an array with evaluable sizes
-        // if (!testSharedAndExclusive()) {
-        //   return false;
-        // }
-        // No break in @outer/@inner (ok inside regular loops inside @outer/@inner)
-        // No continue in @inner (ok inside regular loops inside @outer/@inner)
-        // return testBreakAndContinue();
+                && checkLoopOrders(kernelSmnt)
+                && checkBreakAndContinue(kernelSmnt));
       }
 
       //---[ Declaration ]--------------
@@ -429,7 +423,9 @@ namespace occa {
         innerCount = lastInnerCount;
         return true;
       }
+      //================================
 
+      //---[ Type Logic ]---------------
       bool checkSharedOrder(transforms::smntTreeNode &root) {
         // Decl: @outer > @shared > @inner
         //     : Array with evaluable sizes
@@ -512,6 +508,46 @@ namespace occa {
               array.printError("[@shared] variables must have sizes known at compile-time");
               return false;
             }
+          }
+        }
+        return true;
+      }
+      //================================
+
+      //---[ Skip Logic ]---------------
+      bool checkBreakAndContinue(statement_t &kernelSmnt) {
+        // No break or continue directly inside @outer/@inner loops
+        // It's ok inside regular loops inside @outer/@inner
+        statementPtrVector skipStatements;
+        findStatementsByType((statementType::continue_ |
+                              statementType::break_),
+                             kernelSmnt,
+                             skipStatements);
+
+        const int count = (int) skipStatements.size();
+        for (int i = 0; i < count; ++i) {
+          statement_t &skipSmnt = *(skipStatements[i]);
+          statement_t *s = skipSmnt.up;
+          while (s) {
+            const int sType = s->type();
+            if (sType & (statementType::while_ |
+                         statementType::switch_)) {
+              break;
+            }
+            if (sType & statementType::for_) {
+              if (s->hasAttribute("inner")) {
+                skipSmnt.printError("Statement cannot be directly inside an [@inner] loop");
+                s->printError("[@inner] loop is here");
+                return false;
+              }
+              if (s->hasAttribute("outer")) {
+                skipSmnt.printError("Statement cannot be directly inside an [@outer] loop");
+                s->printError("[@outer] loop is here");
+                return false;
+              }
+              break;
+            }
+            s = s->up;
           }
         }
         return true;

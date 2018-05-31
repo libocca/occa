@@ -56,6 +56,13 @@ namespace occa {
         virtual bool matches(statement_t &smnt) = 0;
       };
 
+      class statementTypeFinder : public statementFinder {
+      public:
+        statementTypeFinder(const int validStatementTypes_);
+
+        virtual bool matches(statement_t &smnt);
+      };
+
       class statementAttrFinder : public statementFinder {
       private:
         std::string attr;
@@ -161,6 +168,10 @@ namespace occa {
     }
 
     //---[ Helper Methods ]-------------
+    void findStatementsByType(const int validStatementTypes,
+                              statement_t &smnt,
+                              statementPtrVector &statements);
+
     void findStatementsByAttr(const int validStatementTypes,
                               const std::string &attr,
                               statement_t &smnt,

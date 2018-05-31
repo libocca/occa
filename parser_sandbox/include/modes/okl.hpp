@@ -94,7 +94,9 @@ namespace occa {
       bool checkLoopType(transforms::smntTreeNode &node,
                          int &outerCount,
                          int &innerCount);
+      //================================
 
+      //---[ Type Logic ]---------------
       bool checkSharedOrder(transforms::smntTreeNode &root);
       bool checkExclusiveOrder(transforms::smntTreeNode &root);
       bool checkOKLTypeInstance(statement_t &typeSmnt,
@@ -102,7 +104,9 @@ namespace occa {
       bool checkValidSharedArray(statement_t &smnt);
       //================================
 
-      // bool testBreakAndContinue();
+      //---[ Skip Logic ]---------------
+      bool checkBreakAndContinue(statement_t &kernelSmnt);
+      //================================
     }
   }
 }

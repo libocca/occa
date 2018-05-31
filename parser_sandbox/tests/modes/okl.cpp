@@ -241,8 +241,8 @@ void testValidBreaks();
 void testValidContinues();
 
 void testLoopSkips() {
-  // testValidBreaks();
-  // testValidContinues();
+  testValidBreaks();
+  testValidContinues();
 }
 
 void testValidBreaks() {

@@ -43,6 +43,14 @@ namespace occa {
         return &smnt;
       }
 
+      statementTypeFinder::statementTypeFinder(const int validStatementTypes_) {
+        validStatementTypes = validStatementTypes_;
+      }
+
+      bool statementTypeFinder::matches(statement_t &smnt) {
+        return true;
+      }
+
       statementAttrFinder::statementAttrFinder(const int validStatementTypes_,
                                                const std::string &attr_) :
         attr(attr_) {
@@ -218,6 +226,14 @@ namespace occa {
       //================================
     }
     //---[ Helper Methods ]-------------
+    void findStatementsByType(const int validStatementTypes,
+                              statement_t &smnt,
+                              statementPtrVector &statements) {
+
+      transforms::statementTypeFinder finder(validStatementTypes);
+      finder.getStatements(smnt, statements);
+    }
+
     void findStatementsByAttr(const int validStatementTypes,
                               const std::string &attr,
                               statement_t &smnt,
