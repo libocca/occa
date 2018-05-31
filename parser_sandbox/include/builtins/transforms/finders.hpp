@@ -37,6 +37,7 @@ namespace occa {
     typedef std::vector<exprNode*>    exprNodeVector;
 
     typedef bool (*statementMatcher)(statement_t &smnt);
+    typedef bool (*exprNodeMatcher)(exprNode &expr);
 
     namespace transforms {
       //---[ Statement ]----------------
@@ -173,6 +174,11 @@ namespace occa {
                              const std::string &attr,
                              exprNode &expr,
                              exprNodeVector &exprNodes);
+
+    void findStatementsByExpr(const int validExprNodeTypes,
+                              statement_t &smnt,
+                              exprNodeMatcher matcher,
+                              transforms::smntTreeNode &root);
 
     void findStatementTree(const int validStatementTypes,
                            statement_t &smnt,

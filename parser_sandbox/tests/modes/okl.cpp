@@ -26,10 +26,6 @@ void testLoops();
 void testTypes();
 void testLoopSkips();
 
-void testLoopsErrors();
-void testTypesErrors();
-void testLoopSkipsErrors();
-
 int main(const int argc, const char **argv) {
   parser.addAttribute<dummy>();
   parser.addAttribute<attributes::kernel>();
@@ -39,12 +35,8 @@ int main(const int argc, const char **argv) {
   parser.addAttribute<attributes::exclusive>();
 
   testLoops();
-  // testTypes();
-  // testLoopSkips();
-
-  // testLoopsErrors();
-  // testTypesErrors();
-  // testLoopSkipsErrors();
+  testTypes();
+  testLoopSkips();
 
   return 0;
 }
@@ -155,7 +147,6 @@ void testSameInnerLoopCount() {
     "}\n"
   );
 }
-
 //======================================
 
 //---[ Types ]--------------------------
@@ -233,77 +224,10 @@ void testValidSharedArray() {
     "  }\n"
     "}\n"
   );
-}
-
-void testSharedLocationErrors();
-void testExclusiveLocationErrors();
-void testValidSharedArrayErrors();
-
-void testTypesErrors() {
-  testSharedLocationErrors();
-  testExclusiveLocationErrors();
-  testValidSharedArrayErrors();
-}
-
-void testSharedLocationErrors() {
-  // @outer > @shared > @inner
-  parseBadOKLSource(
-    "@kernel void foo() {\n"
-    "  @shared int s[10];\n"
-    "  for (int o = 0; o < 2; ++o; @outer) {\n"
-    "    for (int i = 0; i < 2; ++i; @inner) {\n"
-    "    }\n"
-    "  }\n"
-    "}\n"
-  );
   parseBadOKLSource(
     "@kernel void foo() {\n"
     "  for (int o = 0; o < 2; ++o; @outer) {\n"
-    "    for (int i = 0; i < 2; ++i; @inner) {\n"
-    "      @shared int s[10];\n"
-    "    }\n"
-    "  }\n"
-    "}\n"
-  );
-}
-
-void testExclusiveLocationErrors() {
-  // @outer > @exclusive > @inner
-  parseBadOKLSource(
-    "@kernel void foo() {\n"
-    "  @exclusive int x;\n"
-    "  for (int o = 0; o < 2; ++o; @outer) {\n"
-    "    for (int i = 0; i < 2; ++i; @inner) {\n"
-    "    }\n"
-    "  }\n"
-    "}\n"
-  );
-  parseBadOKLSource(
-    "@kernel void foo() {\n"
-    "  for (int o = 0; o < 2; ++o; @outer) {\n"
-    "    for (int i = 0; i < 2; ++i; @inner) {\n"
-    "      @exclusive int x;\n"
-    "    }\n"
-    "  }\n"
-    "}\n"
-  );
-}
-
-void testValidSharedArrayErrors() {
-  // @shared has an array with evaluable sizes
-  parseBadOKLSource(
-    "@kernel void foo() {\n"
-    "  for (int o = 0; o < 2; ++o; @outer) {\n"
-    "    @shared int s[o];\n"
-    "    for (int i = 0; i < 2; ++i; @inner) {\n"
-    "    }\n"
-    "  }\n"
-    "}\n"
-  );
-  parseBadOKLSource(
-    "@kernel void foo() {\n"
-    "  for (int o = 0; o < 2; ++o; @outer) {\n"
-    "    @shared int s[2][o];\n"
+    "    @shared int s[2][];\n"
     "    for (int i = 0; i < 2; ++i; @inner) {\n"
     "    }\n"
     "  }\n"
@@ -317,8 +241,8 @@ void testValidBreaks();
 void testValidContinues();
 
 void testLoopSkips() {
-  testValidBreaks();
-  testValidContinues();
+  // testValidBreaks();
+  // testValidContinues();
 }
 
 void testValidBreaks() {

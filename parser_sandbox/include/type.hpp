@@ -175,6 +175,9 @@ namespace occa {
       bool hasSize() const;
       bool canEvaluateSize() const;
       primitive evaluateSize() const;
+
+      void printWarning(const std::string &message) const;
+      void printError(const std::string &message) const;
     };
 
     printer& operator << (printer &pout,

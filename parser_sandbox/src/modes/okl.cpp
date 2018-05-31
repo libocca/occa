@@ -63,6 +63,9 @@ namespace occa {
 
       //---[ Declaration ]--------------
       bool checkLoops(statement_t &kernelSmnt) {
+        // Make sure @outer and @inner loops exist
+        // No @outer + @inner combo in for-loops
+        // Proper simple declarations
         statementPtrVector outerSmnts, innerSmnts;
         findStatementsByAttr(statementType::for_,
                              "outer",
@@ -73,15 +76,10 @@ namespace occa {
                              kernelSmnt,
                              innerSmnts);
 
-        if (!checkForDoubleLoops(outerSmnts, "inner")
-            || !checkForDoubleLoops(innerSmnts, "outer")
-            || !checkForDeclarations(kernelSmnt, outerSmnts, "outer")
-            || !checkForDeclarations(kernelSmnt, innerSmnts, "inner")) {
-          return false;
-        }
-        // @outer > @inner
-        // Same # of @inner in each @outer
-        return true;
+        return (checkForDoubleLoops(outerSmnts, "inner")
+                && checkForDoubleLoops(innerSmnts, "outer")
+                && checkForDeclarations(kernelSmnt, outerSmnts, "outer")
+                && checkForDeclarations(kernelSmnt, innerSmnts, "inner"));
       }
 
       bool checkForDoubleLoops(statementPtrVector &loopSmnts,
@@ -302,51 +300,46 @@ namespace occa {
                 || smnt.hasAttribute("inner"));
       }
 
-      bool oklLoopAndTypeDeclMatcher(statement_t &smnt) {
-        if (oklLoopMatcher(smnt)) {
-          return true;
-        }
-        if (!(smnt.type() & statementType::declaration)) {
-          return false;
-        }
+      bool oklDeclAttrMatcher(statement_t &smnt,
+                              const std::string &attr) {
         declarationStatement &declSmnt = (declarationStatement&) smnt;
         const int declCount = (int) declSmnt.declarations.size();
         for (int i = 0; i < declCount; ++i) {
           variableDeclaration &decl = declSmnt.declarations[i];
           variable_t &var = *(decl.variable);
-          if (var.hasAttribute("shared")
-              || var.hasAttribute("exclusive")) {
+          if (var.hasAttribute(attr)) {
             return true;
           }
         }
         return false;
       }
 
-      bool oklLoopAndTypeExprMatcher(statement_t &smnt) {
-        if (oklLoopMatcher(smnt)) {
-          return true;
+      bool oklAttrMatcher(statement_t &smnt,
+                          const std::string &attr) {
+        // TODO: Custom expr matcher for statements
+        if (smnt.type() & statementType::declaration) {
+          return oklDeclAttrMatcher(smnt, attr);
         }
-        if (!(smnt.type() & statementType::expression)) {
-          return false;
-        }
-        // TODO: Custom expr matcher
         exprNode *expr = ((expressionStatement&) smnt).expr;
         exprNodeVector nodes;
         findExprNodesByAttr(exprNodeType::variable,
-                            "shared",
-                            *expr,
-                            nodes);
-        if (nodes.size()) {
-          return true;
-        }
-        findExprNodesByAttr(exprNodeType::variable,
-                            "exclusive",
+                            attr,
                             *expr,
                             nodes);
         return nodes.size();
       }
 
+      bool oklSharedMatcher(statement_t &smnt) {
+        return oklAttrMatcher(smnt, "shared");
+      }
+
+      bool oklExclusiveMatcher(statement_t &smnt) {
+        return oklAttrMatcher(smnt, "exclusive");
+      }
+
       bool checkLoopOrders(statement_t &kernelSmnt) {
+        // @outer > @inner
+        // Same # of @inner in each @outer
         transforms::smntTreeNode root;
         bool success;
 
@@ -360,29 +353,29 @@ namespace occa {
           return false;
         }
 
-        findStatementTree((statementType::for_ |
-                           statementType::declaration),
+        findStatementTree((statementType::declaration |
+                           statementType::expression),
                           kernelSmnt,
-                          oklLoopAndTypeDeclMatcher,
+                          oklSharedMatcher,
                           root);
-        success = checkTypeDeclOrder(root);
+        success = checkSharedOrder(root);
         root.free();
         if (!success) {
           return false;
         }
 
-        findStatementTree((statementType::for_ |
+        findStatementTree((statementType::declaration |
                            statementType::expression),
                           kernelSmnt,
-                          oklLoopAndTypeExprMatcher,
+                          oklExclusiveMatcher,
                           root);
-        success = checkTypeExprOrder(root);
+        success = checkExclusiveOrder(root);
         root.free();
-
         return success;
       }
 
       bool checkLoopOrder(transforms::smntTreeNode &root) {
+        // Keep track of @outer/@inner stack and report errors
         int outerCount = 0;
         int innerCount = 0;
         return checkLoopType(root, outerCount, innerCount);
@@ -437,13 +430,90 @@ namespace occa {
         return true;
       }
 
-      bool checkTypeDeclOrder(transforms::smntTreeNode &root) {
-        // @outer > @shared, @exclusive > @inner
+      bool checkSharedOrder(transforms::smntTreeNode &root) {
+        // Decl: @outer > @shared > @inner
+        //     : Array with evaluable sizes
+        // Expr: @outer > @inner  > @shared
+        const int children = (int) root.size();
+        for (int i = 0; i < children; ++i) {
+          transforms::smntTreeNode &node = *(root[i]);
+          if (!checkOKLTypeInstance(*node.smnt, "shared")
+              || !checkValidSharedArray(*node.smnt)) {
+            return false;
+          }
+        }
         return true;
       }
 
-      bool checkTypeExprOrder(transforms::smntTreeNode &root) {
-        // @inner > @shared, @exclusive
+      bool checkExclusiveOrder(transforms::smntTreeNode &root) {
+        // Decl: @outer > @exclusive > @inner
+        // Expr: @outer > @inner     > @exclusive
+        const int children = (int) root.size();
+        for (int i = 0; i < children; ++i) {
+          transforms::smntTreeNode &node = *(root[i]);
+          if (!checkOKLTypeInstance(*node.smnt, "exclusive")) {
+            return false;
+          }
+        }
+        return true;
+      }
+
+      bool checkOKLTypeInstance(statement_t &typeSmnt,
+                                const std::string &attr) {
+        bool inOuter = false;
+        bool inInner = false;
+        statement_t *smnt = &typeSmnt;
+        while (smnt) {
+          if (smnt->type() & statementType::for_) {
+            inInner |= smnt->hasAttribute("inner");
+            inOuter |= smnt->hasAttribute("outer");
+          }
+          smnt = smnt->up;
+        }
+
+        const bool isExpr = (typeSmnt.type() == statementType::expression);
+        if (!isExpr) {
+          if (inInner) {
+            typeSmnt.printError("Cannot define [@" + attr + "] variables inside"
+                                " an [@inner] loop");
+            return false;
+          }
+          if (!inOuter) {
+            typeSmnt.printError("Must define [@" + attr + "] variables between"
+                                " [@outer] and [@inner] loops");
+            return false;
+          }
+        } else if (!inInner) {
+          typeSmnt.printError("Cannot use [@" + attr + "] variables outside"
+                              " an [@inner] loop");
+          return false;
+        }
+        return true;
+      }
+
+      bool checkValidSharedArray(statement_t &smnt) {
+        if (!(smnt.type() == statementType::declaration)) {
+          return true;
+        }
+        declarationStatement &declSmnt = (declarationStatement&) smnt;
+        const int declCount = (int) declSmnt.declarations.size();
+        for (int i = 0; i < declCount; ++i) {
+          variableDeclaration &decl = declSmnt.declarations[i];
+          vartype_t &vartype = decl.variable->vartype;
+          const int arrayCount = vartype.arrays.size();
+          if (!arrayCount) {
+            decl.printError("[@shared] variables must be arrays");
+            return false;
+          }
+          for (int ai = 0; ai < arrayCount; ++ai) {
+            array_t &array = vartype.arrays[ai];
+            if (!array.size ||
+                !array.size->canEvaluate()) {
+              array.printError("[@shared] variables must have sizes known at compile-time");
+              return false;
+            }
+          }
+        }
         return true;
       }
       //================================

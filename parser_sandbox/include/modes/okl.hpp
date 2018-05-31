@@ -81,8 +81,12 @@ namespace occa {
 
       //---[ Loop Logic ]---------------
       bool oklLoopMatcher(statement_t &smnt);
-      bool oklLoopAndTypeDeclMatcher(statement_t &smnt);
-      bool oklLoopAndTypeExprMatcher(statement_t &smnt);
+      bool oklDeclAttrMatcher(statement_t &smnt,
+                              const std::string &attr);
+      bool oklAttrMatcher(statement_t &smnt,
+                          const std::string &attr);
+      bool oklSharedMatcher(statement_t &smnt);
+      bool oklExclusiveMatcher(statement_t &smnt);
 
       bool checkLoopOrders(statement_t &kernelSmnt);
 
@@ -91,11 +95,13 @@ namespace occa {
                          int &outerCount,
                          int &innerCount);
 
-      bool checkTypeDeclOrder(transforms::smntTreeNode &root);
-      bool checkTypeExprOrder(transforms::smntTreeNode &root);
+      bool checkSharedOrder(transforms::smntTreeNode &root);
+      bool checkExclusiveOrder(transforms::smntTreeNode &root);
+      bool checkOKLTypeInstance(statement_t &typeSmnt,
+                                const std::string &attr);
+      bool checkValidSharedArray(statement_t &smnt);
       //================================
 
-      // bool testSharedAndExclusive();
       // bool testBreakAndContinue();
     }
   }

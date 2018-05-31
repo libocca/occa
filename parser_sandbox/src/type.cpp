@@ -226,6 +226,14 @@ namespace occa {
               : primitive());
     }
 
+    void array_t::printWarning(const std::string &message) const {
+      start->printWarning(message);
+    }
+
+    void array_t::printError(const std::string &message) const {
+      start->printError(message);
+    }
+
     printer& operator << (printer &pout,
                           const array_t &array) {
       if (array.size) {
