@@ -32,6 +32,10 @@ namespace occa {
     class rightUnaryOpNode;
     class binaryOpNode;
 
+    namespace transforms {
+      class smntTreeNode;
+    }
+
     namespace okl {
       bool checkKernels(statement_t &root);
 
@@ -39,6 +43,9 @@ namespace occa {
 
       //---[ Declaration ]--------------
       bool checkLoops(statement_t &kernelSmnt);
+
+      bool checkForDoubleLoops(statementPtrVector &loopSmnts,
+                               const std::string &badAttr);
 
       bool checkForDeclarations(statement_t &kernelSmnt,
                                 statementPtrVector &forSmnts,
@@ -76,6 +83,16 @@ namespace occa {
       bool oklLoopMatcher(statement_t &smnt);
       bool oklLoopAndTypeDeclMatcher(statement_t &smnt);
       bool oklLoopAndTypeExprMatcher(statement_t &smnt);
+
+      bool checkLoopOrders(statement_t &kernelSmnt);
+
+      bool checkLoopOrder(transforms::smntTreeNode &root);
+      bool checkLoopType(transforms::smntTreeNode &node,
+                         int &outerCount,
+                         int &innerCount);
+
+      bool checkTypeDeclOrder(transforms::smntTreeNode &root);
+      bool checkTypeExprOrder(transforms::smntTreeNode &root);
       //================================
 
       // bool testSharedAndExclusive();

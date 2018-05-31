@@ -57,8 +57,15 @@ namespace occa {
         return NULL;
       }
 
-      if (!transformChildrenStatements(smnt)
-          && !transformInnerStatements(smnt)) {
+      if ((newSmnt != &smnt)
+          && !newSmnt->is<blockStatement>()) {
+        delete &smnt;
+        return newSmnt;
+      }
+      blockStatement &newBlockSmnt = *((blockStatement*) newSmnt);
+
+      if (!transformInnerStatements(newBlockSmnt)
+          || !transformChildrenStatements(newBlockSmnt)) {
         if (newSmnt != &smnt) {
           delete newSmnt;
         }

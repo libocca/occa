@@ -143,6 +143,7 @@ namespace occa {
         int validSmntTypes;
 
         smntTreeFinder(const int validStatementTypes_,
+                       statement_t &smnt,
                        smntTreeNode &root_,
                        statementMatcher matcher_);
 
@@ -152,6 +153,8 @@ namespace occa {
 
         void getStatementPath(statement_t &smnt,
                               statementPtrList &path);
+
+        void addNode(smntTreeNode &node);
       };
       //================================
     }

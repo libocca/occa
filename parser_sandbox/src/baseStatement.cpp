@@ -255,29 +255,27 @@ namespace occa {
 
     void blockStatement::print(printer &pout) const {
       bool hasChildren = children.size();
+      if (!hasChildren) {
+        pout.printStartIndentation();
+        pout << "{}\n";
+        return;
+      }
 
       // Don't print { } for root statement
       if (up) {
         pout.printStartIndentation();
         pout.pushInlined(false);
-        pout << '{';
-        if (hasChildren) {
-          pout << '\n';
-          pout.addIndentation();
-        } else {
-          pout << ' ';
-        }
+        pout << "{\n";
+        pout.addIndentation();
       }
 
       printChildren(pout);
 
       if (up) {
+        pout.removeIndentation();
         pout.popInlined();
-        if (hasChildren) {
-          pout.removeIndentation();
-          pout.printNewline();
-          pout.printIndentation();
-        }
+        pout.printNewline();
+        pout.printIndentation();
         pout << "}\n";
       }
     }
@@ -290,9 +288,11 @@ namespace occa {
     }
 
     void blockStatement::printWarning(const std::string &message) const {
+      source->printWarning(message);
     }
 
     void blockStatement::printError(const std::string &message) const {
+      source->printError(message);
     }
     //====================================
   }

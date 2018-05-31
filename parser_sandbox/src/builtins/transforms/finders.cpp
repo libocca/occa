@@ -133,6 +133,7 @@ namespace occa {
         smnt(smnt_) {}
 
       smntTreeFinder::smntTreeFinder(const int validStatementTypes_,
+                                     statement_t &smnt,
                                      smntTreeNode &root_,
                                      statementMatcher matcher_) :
         root(root_),
@@ -141,9 +142,19 @@ namespace occa {
 
         downToUp = false;
         validStatementTypes = statementType::all;
-        history.push_back(
-          smntTreeHistory(&root, NULL)
+
+        // Fill the whole ancestry with NULL
+        // Every statement comes from smnt so it's safe
+        history.push_front(
+          smntTreeHistory(&root, smnt.up)
         );
+        statement_t *s = &smnt;
+        while (s->up) {
+          history.push_front(
+            smntTreeHistory(NULL, s->up->up)
+          );
+          s = s->up;
+        }
       }
 
       statement_t* smntTreeFinder::transformStatement(statement_t &smnt) {
@@ -153,11 +164,12 @@ namespace occa {
         if ((smnt.type() & validSmntTypes)
             && matcher(smnt)) {
           node = new smntTreeNode(&smnt);
-          history.back().node->add(node);
+          addNode(*node);
         }
         history.push_back(
           smntTreeHistory(node, &smnt)
         );
+
         return &smnt;
       }
 
@@ -188,8 +200,20 @@ namespace occa {
           path.push_front(node);
           node = node->up;
         }
-        // Push the root node (NULL)
+        // Add root's parent
         path.push_front(NULL);
+      }
+
+      void smntTreeFinder::addNode(smntTreeNode &node) {
+        // Add to first real node in our ancestry path
+        smntTreeHistoryList::reverse_iterator it = history.rbegin();
+        while (it != history.rend()) {
+          if (it->node) {
+            it->node->add(&node);
+            break;
+          }
+          ++it;
+        }
       }
       //================================
     }
@@ -225,6 +249,7 @@ namespace occa {
                            statementMatcher matcher,
                            transforms::smntTreeNode &root) {
       transforms::smntTreeFinder finder(validStatementTypes,
+                                        smnt,
                                         root,
                                         matcher);
       finder.apply(smnt);

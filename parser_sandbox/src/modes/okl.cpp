@@ -50,31 +50,8 @@ namespace occa {
       }
 
       bool checkKernel(statement_t &kernelSmnt) {
-        if (!checkLoops(kernelSmnt)) {
-          return false;
-        }
-        transforms::smntTreeNode root;
-        findStatementTree(statementType::for_,
-                          kernelSmnt,
-                          oklLoopMatcher,
-                          root);
-
-        root.free();
-        findStatementTree((statementType::for_ |
-                           statementType::declaration),
-                          kernelSmnt,
-                          oklLoopAndTypeDeclMatcher,
-                          root);
-
-        root.free();
-        findStatementTree((statementType::for_ |
-                           statementType::expression),
-                          kernelSmnt,
-                          oklLoopAndTypeExprMatcher,
-                          root);
-        // Order @outer and @inner loops
-        // @outer > @shared > @inner
-        // @outer > @exclusive > @inner
+        return (checkLoops(kernelSmnt)
+                && checkLoopOrders(kernelSmnt));
         // @shared has an array with evaluable sizes
         // if (!testSharedAndExclusive()) {
         //   return false;
@@ -82,7 +59,6 @@ namespace occa {
         // No break in @outer/@inner (ok inside regular loops inside @outer/@inner)
         // No continue in @inner (ok inside regular loops inside @outer/@inner)
         // return testBreakAndContinue();
-        return true;
       }
 
       //---[ Declaration ]--------------
@@ -96,12 +72,28 @@ namespace occa {
                              "inner",
                              kernelSmnt,
                              innerSmnts);
-        if (!checkForDeclarations(kernelSmnt, outerSmnts, "outer")
+
+        if (!checkForDoubleLoops(outerSmnts, "inner")
+            || !checkForDoubleLoops(innerSmnts, "outer")
+            || !checkForDeclarations(kernelSmnt, outerSmnts, "outer")
             || !checkForDeclarations(kernelSmnt, innerSmnts, "inner")) {
           return false;
         }
         // @outer > @inner
         // Same # of @inner in each @outer
+        return true;
+      }
+
+      bool checkForDoubleLoops(statementPtrVector &loopSmnts,
+                               const std::string &badAttr) {
+        int loopCount = (int) loopSmnts.size();
+        for (int i = 0; i < loopCount; ++i) {
+          statement_t &smnt = *(loopSmnts[i]);
+          if (smnt.hasAttribute(badAttr)) {
+            smnt.printError("for-loop cannot have both [@outer] and [@inner] attributes");
+            return false;
+          }
+        }
         return true;
       }
 
@@ -352,6 +344,107 @@ namespace occa {
                             *expr,
                             nodes);
         return nodes.size();
+      }
+
+      bool checkLoopOrders(statement_t &kernelSmnt) {
+        transforms::smntTreeNode root;
+        bool success;
+
+        findStatementTree(statementType::for_,
+                          kernelSmnt,
+                          oklLoopMatcher,
+                          root);
+        success = checkLoopOrder(root);
+        root.free();
+        if (!success) {
+          return false;
+        }
+
+        findStatementTree((statementType::for_ |
+                           statementType::declaration),
+                          kernelSmnt,
+                          oklLoopAndTypeDeclMatcher,
+                          root);
+        success = checkTypeDeclOrder(root);
+        root.free();
+        if (!success) {
+          return false;
+        }
+
+        findStatementTree((statementType::for_ |
+                           statementType::expression),
+                          kernelSmnt,
+                          oklLoopAndTypeExprMatcher,
+                          root);
+        success = checkTypeExprOrder(root);
+        root.free();
+
+        return success;
+      }
+
+      bool checkLoopOrder(transforms::smntTreeNode &root) {
+        int outerCount = 0;
+        int innerCount = 0;
+        return checkLoopType(root, outerCount, innerCount);
+      }
+
+      bool checkLoopType(transforms::smntTreeNode &node,
+                         int &outerCount,
+                         int &innerCount) {
+        const int children = (int) node.size();
+        if (!children) {
+          return true;
+        }
+
+        int lastOuterCount, lastInnerCount;
+        for (int i = 0; i < children; ++i) {
+          forStatement &forSmnt = *((forStatement*) node[i]->smnt);
+          const bool isOuter = forSmnt.hasAttribute("outer");
+
+          if (!outerCount && !isOuter) {
+            forSmnt.printError("[@inner] loops should be contained inside [@outer] loops");
+            return false;
+          }
+          if (isOuter && innerCount) {
+            forSmnt.printError("[@outer] loops shouldn't be contained inside [@inner] loops");
+            return false;
+          }
+
+          int childOuterCount = outerCount + isOuter;
+          int childInnerCount = innerCount + !isOuter;
+          if (!checkLoopType(*node[i], childOuterCount, childInnerCount)) {
+            return false;
+          }
+
+          // Make sure we have consistent counts
+          if (i) {
+            if (childOuterCount != lastOuterCount) {
+              forSmnt.printError("Inconsistent number of [@outer] loops");
+              node[i-1]->smnt->printError("Compared to this [@outer] loop");
+              return false;
+            }
+            if (childInnerCount != lastInnerCount) {
+              forSmnt.printError("Inconsistent number of [@inner] loops");
+              node[i-1]->smnt->printError("Compared to this [@inner] loop");
+              return false;
+            }
+          }
+          lastOuterCount = childOuterCount;
+          lastInnerCount = childInnerCount;
+        }
+        outerCount = lastOuterCount;
+        innerCount = lastInnerCount;
+        return true;
+      }
+
+      bool checkTypeDeclOrder(transforms::smntTreeNode &root) {
+        // @outer > @shared, @exclusive > @inner
+        return true;
+      }
+
+      bool checkTypeExprOrder(transforms::smntTreeNode &root) {
+        // @inner > @shared, @exclusive
+        return true;
       }
       //================================
     }

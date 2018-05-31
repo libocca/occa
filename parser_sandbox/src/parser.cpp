@@ -45,9 +45,6 @@ namespace occa {
       root(NULL, NULL),
       up(&root),
       identifierReplacer(*this) {
-      // Manually set source to avoid a dangling token pointer
-      root.source = new newlineToken(filePosition());
-
       // Properly implement `identifier-nondigit` for identifiers
       // Meanwhile, we use the unknownFilter
       stream = (tokenizer
@@ -126,6 +123,9 @@ namespace occa {
       checkSemicolon = true;
 
       root.clear();
+      delete root.source;
+      root.source = NULL;
+
       up = &root;
       upStack.clear();
 
@@ -187,6 +187,13 @@ namespace occa {
       }
 
       loadTokens();
+
+      delete root.source;
+      root.source = (
+        context.size()
+        ? context[0]->clone()
+        : NULL
+      );
     }
 
     void parser_t::loadTokens() {

@@ -152,13 +152,13 @@ bool blockMatcher(statement_t &smnt) {
 
 void testStatementTreeFinder() {
   parseSource(
-    "{\n"
+    "{ while(true) {\n"
     "  {}\n"
     "  {\n"
-    "    {}{}{}\n"
+    "    if(true){{}{}{}}\n"
     "  }\n"
     "  {}\n"
-    "}"
+    "}}"
   );
   transforms::smntTreeNode root;
   findStatementTree(statementType::block,
