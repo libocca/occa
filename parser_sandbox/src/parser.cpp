@@ -42,6 +42,7 @@ namespace occa {
       lastPeek(0),
       lastPeekPosition(-1),
       checkSemicolon(true),
+      defaultRootToken(originSource::builtin),
       root(NULL, NULL),
       up(&root),
       identifierReplacer(*this) {
@@ -199,7 +200,7 @@ namespace occa {
       root.source = (
         context.size()
         ? context[0]->clone()
-        : NULL
+        : defaultRootToken.clone()
       );
     }
 
@@ -1939,9 +1940,7 @@ namespace occa {
 
     statement_t* parser_t::loadPragmaStatement() {
       pragmaStatement *smnt = new pragmaStatement(up,
-                                                  context[0]
-                                                  ->clone()
-                                                  ->to<pragmaToken>());
+                                                  *((pragmaToken*) context[0]));
       context.set(1);
       return smnt;
     }

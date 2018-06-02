@@ -19,6 +19,9 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  */
+#define OCCA_TEST_PARSER_TYPE okl::openclParser
+
+#include "modes/opencl.hpp"
 #include "../parserUtils.hpp"
 
 void testPragma();
@@ -30,14 +33,10 @@ void testSharedAnnotation();
 void testBarriers();
 
 int main(const int argc, const char **argv) {
-  parser.addAttribute<dummy>();
-  parser.addAttribute<attributes::kernel>();
-  parser.addAttribute<attributes::outer>();
-  parser.addAttribute<attributes::inner>();
-  parser.addAttribute<attributes::shared>();
-  parser.addAttribute<attributes::exclusive>();
-
+  parser.settings["okl/validate"] = false;
   testPragma();
+
+  parser.settings["okl/validate"] = true;
   testLoopExtraction();
   testGlobalConst();
   testKernelAnnotation();
@@ -50,7 +49,30 @@ int main(const int argc, const char **argv) {
 
 //---[ Pragma ]-------------------------
 void testPragma() {
-  // #pragma OPENCL EXTENSION cl_khr_fp64 : enable
+  parseAndPrintSource("");
+  OCCA_ASSERT_EQUAL(1,
+                    parser.root.size());
+
+  OCCA_ASSERT_EQUAL("OPENCL EXTENSION cl_khr_fp64 : enable",
+                    parser.root[0]
+                    ->to<pragmaStatement>()
+                    .value());
+
+  parser.settings["opencl/extensions/cl_khr_fp64"] = false;
+  parseAndPrintSource("");
+  OCCA_ASSERT_EQUAL(0,
+                    parser.root.size());
+
+
+  parser.settings["opencl/extensions/foobar"] = true;
+  parseAndPrintSource("");
+  OCCA_ASSERT_EQUAL(1,
+                    parser.root.size());
+
+  OCCA_ASSERT_EQUAL("OPENCL EXTENSION foobar : enable",
+                    parser.root[0]
+                    ->to<pragmaStatement>()
+                    .value());
 }
 //======================================
 

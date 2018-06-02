@@ -46,7 +46,7 @@ namespace occa {
       pragmaToken &token;
 
       pragmaStatement(blockStatement *up_,
-                      pragmaToken &token_);
+                      const pragmaToken &token_);
       ~pragmaStatement();
 
       virtual statement_t& clone_() const;

@@ -325,8 +325,10 @@ namespace occa {
     void blockStatement::print(printer &pout) const {
       bool hasChildren = children.size();
       if (!hasChildren) {
-        pout.printStartIndentation();
-        pout << "{}\n";
+        if (up) {
+          pout.printStartIndentation();
+          pout << "{}\n";
+        }
         return;
       }
 

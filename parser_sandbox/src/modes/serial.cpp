@@ -92,8 +92,10 @@ namespace occa {
         if (settings.get("okl/validate", true)) {
           checkKernels(root);
         }
+
         if (!success) return;
         setupKernels();
+
         if (!success) return;
         setupExclusives();
       }

@@ -46,13 +46,10 @@ namespace occa {
           // Add OpenMP Pragma
           blockStatement &outerBlock  = (blockStatement&) outerSmnt;
           blockStatement &parentBlock = *((blockStatement*) parent);
-          pragmaToken *token = (
-            new pragmaToken(outerBlock.source->origin,
-                            "omp parallel for")
-          );
           pragmaStatement *pragmaSmnt = (
             new pragmaStatement((blockStatement*) parent,
-                                *token)
+                                pragmaToken(outerBlock.source->origin,
+                                            "omp parallel for"))
           );
           parentBlock.addBefore(outerSmnt,
                                 *pragmaSmnt);

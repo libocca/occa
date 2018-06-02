@@ -46,7 +46,7 @@ namespace occa {
 
         void setupKernels();
 
-        void setupKernel(functionDeclStatement &kernelSmnt);
+        static void setupKernel(functionDeclStatement &kernelSmnt);
 
         void setupExclusives();
 

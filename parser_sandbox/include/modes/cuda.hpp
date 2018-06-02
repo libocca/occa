@@ -22,22 +22,27 @@
 #ifndef OCCA_PARSER_MODES_CUDA_HEADER
 #define OCCA_PARSER_MODES_CUDA_HEADER
 
-#include "modes/backend.hpp"
+#include "parser.hpp"
+#include "builtins/transforms/finders.hpp"
 
 namespace occa {
   namespace lang {
     namespace okl {
-      class cudaBackend : public oklBackend {
+      class cudaParser : public parser_t {
       public:
-        virtual void backendTransform(statement_t &root);
+        cudaParser();
 
-        void updateConstToConstant(statement_t &root);
+        virtual void afterParsing();
 
-        void addOccaFors(statement_t &root);
+        void addFunctionPrototypes();
 
-        void setupKernelArgs(statement_t &root);
+        void updateConstToConstant();
 
-        void setupLaunchKernel(statement_t &root);
+        void addOccaFors();
+
+        void setupKernelArgs();
+
+        void setupLaunchKernel();
       };
     }
   }

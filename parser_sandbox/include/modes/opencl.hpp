@@ -22,24 +22,31 @@
 #ifndef OCCA_PARSER_MODES_OPENCL_HEADER
 #define OCCA_PARSER_MODES_OPENCL_HEADER
 
-#include "modes/backend.hpp"
+#include "parser.hpp"
+#include "builtins/transforms/finders.hpp"
 
 namespace occa {
   namespace lang {
-    class openclBackend : public oklBackend {
-    public:
-      virtual void backendTransform(statement_t &root);
+    namespace okl {
+      class openclParser : public parser_t {
+      public:
+        openclParser();
 
-      void addFunctionPrototypes(statement_t &root);
+        virtual void afterParsing();
 
-      void updateConstToConstant(statement_t &root);
+        void addExtensions();
 
-      void addOccaFors(statement_t &root);
+        void addFunctionPrototypes();
 
-      void setupKernelArgs(statement_t &root);
+        void updateConstToConstant();
 
-      void setupLaunchKernel(statement_t &root);
-    };
+        void addOccaFors();
+
+        void setupKernelArgs();
+
+        void setupLaunchKernel();
+      };
+    }
   }
 }
 

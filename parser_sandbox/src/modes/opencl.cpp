@@ -20,30 +20,89 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  */
 #include "modes/opencl.hpp"
+#include "modes/okl.hpp"
+#include "builtins/attributes.hpp"
 
 namespace occa {
   namespace lang {
-    void openclBackend::backendTransform(statement_t &root) {
-      addFunctionPrototypes(root);
-      updateConstToConstant(root);
-      addOccaFors(root);
-      setupKernelArgs(root);
-      setupLaunchKernel(root);
-    }
+    namespace okl {
+      openclParser::openclParser() {
+        addAttribute<attributes::kernel>();
+        addAttribute<attributes::outer>();
+        addAttribute<attributes::inner>();
+        addAttribute<attributes::shared>();
+        addAttribute<attributes::exclusive>();
 
-    void openclBackend::addFunctionPrototypes(statement_t &root) {
-    }
+        settings["opencl/extensions/cl_khr_fp64"] = true;
+      }
 
-    void openclBackend::updateConstToConstant(statement_t &root) {
-    }
+      void openclParser::afterParsing() {
+        if (!success) return;
+        if (settings.get("okl/validate", true)) {
+          checkKernels(root);
+        }
 
-    void openclBackend::addOccaFors(statement_t &root) {
-    }
+        if (!success) return;
+        addExtensions();
 
-    void openclBackend::setupKernelArgs(statement_t &root) {
-    }
+        if (!success) return;
+        addFunctionPrototypes();
 
-    void openclBackend::setupLaunchKernel(statement_t &root) {
+        if (!success) return;
+        updateConstToConstant();
+
+        if (!success) return;
+        addOccaFors();
+
+        if (!success) return;
+        setupKernelArgs();
+
+        if (!success) return;
+        setupLaunchKernel();
+      }
+
+      void openclParser::addExtensions() {
+        if (!settings.has("opencl/extensions")) {
+          return;
+        }
+
+        occa::json &extensions = settings["opencl/extensions"];
+        if (!extensions.isObject()) {
+          return;
+        }
+
+        jsonObject &extensionObj = extensions.object();
+        jsonObject::iterator it = extensionObj.begin();
+        while (it != extensionObj.end()) {
+          const std::string &extension = it->first;
+          const bool enabled = it->second;
+          if (enabled) {
+            root.addFirst(
+              *(new pragmaStatement(
+                  &root,
+                  pragmaToken(root.source->origin,
+                              "OPENCL EXTENSION "+ extension + " : enable")
+                ))
+            );
+          }
+          ++it;
+        }
+      }
+
+      void openclParser::addFunctionPrototypes() {
+      }
+
+      void openclParser::updateConstToConstant() {
+      }
+
+      void openclParser::addOccaFors() {
+      }
+
+      void openclParser::setupKernelArgs() {
+      }
+
+      void openclParser::setupLaunchKernel() {
+      }
     }
   }
 }

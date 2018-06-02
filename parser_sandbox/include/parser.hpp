@@ -83,6 +83,7 @@ namespace occa {
       int lastPeekPosition;
       bool checkSemicolon;
 
+      unknownToken defaultRootToken;
       blockStatement root;
       blockStatement *up;
       blockStatementList upStack;

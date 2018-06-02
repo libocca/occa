@@ -29,19 +29,16 @@ namespace occa {
   namespace lang {
     //---[ Pragma ]--------------------
     pragmaStatement::pragmaStatement(blockStatement *up_,
-                                     pragmaToken &token_) :
+                                     const pragmaToken &token_) :
       statement_t(up_),
-      token(token_) {}
+      token(*((pragmaToken*) token_.clone())) {}
 
     pragmaStatement::~pragmaStatement() {
       delete &token;
     }
 
     statement_t& pragmaStatement::clone_() const {
-      return *(new pragmaStatement(NULL,
-                                   token
-                                   .clone()
-                                   ->to<pragmaToken>()));
+      return *(new pragmaStatement(NULL, token));
     }
 
     int pragmaStatement::type() const {
