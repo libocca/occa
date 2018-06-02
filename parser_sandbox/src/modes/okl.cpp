@@ -479,6 +479,7 @@ namespace occa {
           smnt = smnt->up;
         }
 
+        // TODO: Make sure it's in the inner-most @inner loop
         const bool isExpr = (typeSmnt.type() == statementType::expression);
         if (!isExpr) {
           if (inInner) {

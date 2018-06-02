@@ -181,6 +181,10 @@ namespace occa {
       bool add(statement_t &child,
                const int index);
 
+      bool addFirst(statement_t &child);
+
+      bool addLast(statement_t &child);
+
       bool addBefore(statement_t &child,
                      statement_t &newChild);
 

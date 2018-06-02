@@ -25,6 +25,7 @@
 
 void testStatementFinder();
 void testExprNodeFinder();
+void testStatementExprFinder();
 void testStatementTreeFinder();
 
 int main(const int argc, const char **argv) {
@@ -37,6 +38,7 @@ int main(const int argc, const char **argv) {
 
   testStatementFinder();
   testExprNodeFinder();
+  testStatementExprFinder();
   testStatementTreeFinder();
 
   return 0;
@@ -144,6 +146,54 @@ void testExprNodeFinder() {
   exprNodes.clear();
 
 #undef exprRoot
+}
+
+bool exclusiveMatcher(exprNode &expr) {
+  variable_t &var = ((variableNode&) expr).value;
+  return var.hasAttribute("exclusive");
+}
+
+void testStatementExprFinder() {
+  parseSource(
+    "@exclusive int x;\n"
+    "for (int i = 0; i < N; ++i) {\n"
+    "  x = (x + x + x) * x;\n"
+    "  @exclusive int y = x, z;\n"
+    "}"
+  );
+  statementExprMap exprMap;
+  findStatements(exprNodeType::variable,
+                 parser.root,
+                 exclusiveMatcher,
+                 exprMap);
+
+  OCCA_ASSERT_EQUAL(3,
+                    (int) exprMap.size());
+
+  statementExprMap::iterator it = exprMap.begin();
+  while (it != exprMap.end()) {
+    statement_t *smnt = it->first;
+    exprNodeVector *exprNodes = &(it->second);
+
+    if (smnt->type() & statementType::expression) {
+      // x = (x + x + x) * x
+      OCCA_ASSERT_EQUAL(5,
+                        (int) exprNodes->size());
+    } else {
+      declarationStatement &declSmnt = *((declarationStatement*) smnt);
+      if (declSmnt.declarations.size() == 1) {
+        // x; (x doesn't 'count' since it's not in an variableNode)
+        OCCA_ASSERT_EQUAL(0,
+                          (int) exprNodes->size());
+      } else {
+        // y = x, z; (y doesn't 'count' since it's not in an variableNode)
+        OCCA_ASSERT_EQUAL(1,
+                          (int) exprNodes->size());
+      }
+    }
+
+    ++it;
+  }
 }
 
 bool blockMatcher(statement_t &smnt) {

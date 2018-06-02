@@ -118,11 +118,11 @@ namespace occa {
               : tokenType::none);
     }
 
-    token_t* token_t::clone(token_t *token) {
+    token_t* token_t::clone(const token_t *token) {
       if (token) {
         return token->clone();
       }
-      return token;
+      return NULL;
     }
 
     opType_t token_t::getOpType() {
@@ -167,7 +167,7 @@ namespace occa {
       return tokenType::unknown;
     }
 
-    token_t* unknownToken::clone() {
+    token_t* unknownToken::clone() const {
       return new unknownToken(origin);
     }
 
@@ -186,7 +186,7 @@ namespace occa {
       return tokenType::newline;
     }
 
-    token_t* newlineToken::clone() {
+    token_t* newlineToken::clone() const {
       return new newlineToken(origin);
     }
 
@@ -207,7 +207,7 @@ namespace occa {
       return tokenType::pragma;
     }
 
-    token_t* pragmaToken::clone() {
+    token_t* pragmaToken::clone() const {
       return new pragmaToken(origin, value);
     }
 
@@ -228,7 +228,7 @@ namespace occa {
       return tokenType::identifier;
     }
 
-    token_t* identifierToken::clone() {
+    token_t* identifierToken::clone() const {
       return new identifierToken(origin, value);
     }
 
@@ -249,7 +249,7 @@ namespace occa {
       return tokenType::qualifier;
     }
 
-    token_t* qualifierToken::clone() {
+    token_t* qualifierToken::clone() const {
       return new qualifierToken(origin, qualifier);
     }
 
@@ -270,7 +270,7 @@ namespace occa {
       return tokenType::type;
     }
 
-    token_t* typeToken::clone() {
+    token_t* typeToken::clone() const {
       return new typeToken(origin, value);
     }
 
@@ -291,7 +291,7 @@ namespace occa {
       return tokenType::variable;
     }
 
-    token_t* variableToken::clone() {
+    token_t* variableToken::clone() const {
       return new variableToken(origin, value);
     }
 
@@ -312,7 +312,7 @@ namespace occa {
       return tokenType::function;
     }
 
-    token_t* functionToken::clone() {
+    token_t* functionToken::clone() const {
       return new functionToken(origin, value);
     }
 
@@ -335,7 +335,7 @@ namespace occa {
       return tokenType::primitive;
     }
 
-    token_t* primitiveToken::clone() {
+    token_t* primitiveToken::clone() const {
       return new primitiveToken(origin, value, strValue);
     }
 
@@ -360,7 +360,7 @@ namespace occa {
       return op->opType;
     }
 
-    token_t* operatorToken::clone() {
+    token_t* operatorToken::clone() const {
       return new operatorToken(origin, *op);
     }
 
@@ -385,7 +385,7 @@ namespace occa {
       return tokenType::char_;
     }
 
-    token_t* charToken::clone() {
+    token_t* charToken::clone() const {
       return new charToken(origin, encoding, value, udf);
     }
 
@@ -424,7 +424,7 @@ namespace occa {
       return tokenType::string;
     }
 
-    token_t* stringToken::clone() {
+    token_t* stringToken::clone() const {
       return new stringToken(origin, encoding, value, udf);
     }
 

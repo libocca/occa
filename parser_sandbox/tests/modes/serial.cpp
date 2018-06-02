@@ -113,9 +113,43 @@ void testArgs() {
 
 //---[ @exclusive ]---------------------
 void testExclusives() {
-  // @exclusive ->
-  //   - std::vector<value>
-  //   - vec.reserve(loopIterations)
-  //   - Add iterator index to inner-most @inner loop
+  // TODO:
+  //   @exclusive ->
+  //     - std::vector<value>
+  //     - vec.reserve(loopIterations)
+  //     - Add iterator index to inner-most @inner loop
+  parseAndPrintSource(
+    "@kernel void foo() {\n"
+    "  for (int o1 = 0; o1 < O1; ++o1; @outer) {\n"
+    "    for (int o0 = 0; o0 < O0; ++o0; @outer) {\n"
+    "      @exclusive int excl;\n"
+    "      if (true) {\n"
+    "        for (int i0 = 0; i0 < I0; ++i0; @inner) {\n"
+    "          for (;;) {\n"
+    "             excl = i0;\n"
+    "          }\n"
+    "        }\n"
+    "      }\n"
+    "    }\n"
+    "  }\n"
+    "  for (int o1 = 0; o1 < O1; ++o1; @outer) {\n"
+    "    for (int o0 = 0; o0 < O0; ++o0; @outer) {\n"
+    "      @exclusive int excl;\n"
+    "      if (true) {\n"
+    "        for (int i1 = 0; i1 < I1; ++i1; @inner) {\n"
+    "          for (int i0 = 0; i0 < I0; ++i0; @inner) {\n"
+    "            for (;;) {\n"
+    "               excl = i0;\n"
+    "            }\n"
+    "            for (;;) {\n"
+    "               excl = i0;\n"
+    "            }\n"
+    "          }\n"
+    "        }\n"
+    "      }\n"
+    "    }\n"
+    "  }\n"
+    "}\n"
+  );
 }
 //======================================

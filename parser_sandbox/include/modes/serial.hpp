@@ -23,14 +23,21 @@
 #define OCCA_PARSER_MODES_SERIAL_HEADER
 
 #include "parser.hpp"
+#include "builtins/transforms/finders.hpp"
 
 namespace occa {
   namespace lang {
+    namespace transforms {
+      class smntTreeNode;
+    }
+
     namespace okl {
       class serialParser : public parser_t {
       public:
         bool useRestrict;
         qualifier_t restrict_;
+
+        static const std::string exclusiveIndexName;
 
         serialParser();
 
@@ -45,6 +52,22 @@ namespace occa {
         void setupKernel(functionDeclStatement &kernelSmnt);
 
         void setupExclusives();
+
+        void setupExclusiveDeclarations(statementExprMap &exprMap);
+        void setupExclusiveDeclaration(declarationStatement &declSmnt);
+        bool exclusiveIsDeclared(declarationStatement &declSmnt);
+
+        void setupExclusiveIndices();
+
+        static bool exclusiveVariableMatcher(exprNode &expr);
+
+        static bool exclusiveInnerLoopMatcher(statement_t &smnt);
+
+        void getInnerMostLoops(transforms::smntTreeNode &innerRoot,
+                               statementPtrVector &loopSmnts);
+
+
+        void setupExclusiveExpressions();
       };
     }
   }

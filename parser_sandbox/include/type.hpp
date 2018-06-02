@@ -73,7 +73,7 @@ namespace occa {
       attributeTokenMap attributes;
 
       type_t(const std::string &name_ = "");
-      type_t(identifierToken &source_);
+      type_t(const identifierToken &source_);
       type_t(const type_t &other);
       virtual ~type_t();
 
@@ -109,7 +109,7 @@ namespace occa {
         return *ptr;
       }
 
-      void setSource(identifierToken &source_);
+      void setSource(const identifierToken &source_);
 
       const std::string& name() const;
 
@@ -164,8 +164,8 @@ namespace occa {
 
       array_t();
 
-      array_t(operatorToken &start_,
-              operatorToken &end_,
+      array_t(const operatorToken &start_,
+              const operatorToken &end_,
               exprNode *size_);
 
       array_t(const array_t &other);
@@ -202,7 +202,7 @@ namespace occa {
 
       vartype_t(const type_t &type_);
 
-      vartype_t(identifierToken &typeToken_,
+      vartype_t(const identifierToken &typeToken_,
                 const type_t &type_);
 
       vartype_t(const vartype_t &other);

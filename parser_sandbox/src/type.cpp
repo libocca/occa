@@ -55,7 +55,7 @@ namespace occa {
       source(new identifierToken(fileOrigin(),
                                  name_)) {}
 
-    type_t::type_t(identifierToken &source_) :
+    type_t::type_t(const identifierToken &source_) :
       source((identifierToken*) token_t::clone(&source_)) {}
 
     type_t::type_t(const type_t &other) :
@@ -66,7 +66,7 @@ namespace occa {
       delete source;
     }
 
-    void type_t::setSource(identifierToken &source_) {
+    void type_t::setSource(const identifierToken &source_) {
       if (source != &source_ ) {
         delete source;
         source = (identifierToken*) source_.clone();
@@ -183,8 +183,8 @@ namespace occa {
       end(NULL),
       size(NULL) {}
 
-    array_t::array_t(operatorToken &start_,
-                     operatorToken &end_,
+    array_t::array_t(const operatorToken &start_,
+                     const operatorToken &end_,
                      exprNode *size_) :
       start((operatorToken*) start_.clone()),
       end((operatorToken*) end_.clone()),
@@ -264,7 +264,7 @@ namespace occa {
       }
     }
 
-    vartype_t::vartype_t(identifierToken &typeToken_,
+    vartype_t::vartype_t(const identifierToken &typeToken_,
                          const type_t &type_) :
       typeToken((identifierToken*) typeToken_.clone()),
       referenceToken(NULL),

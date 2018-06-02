@@ -123,8 +123,8 @@ namespace occa {
 
       virtual int type() const = 0;
 
-      virtual token_t* clone() = 0;
-      static token_t* clone(token_t *token);
+      virtual token_t* clone() const = 0;
+      static token_t* clone(const token_t *token);
 
       opType_t getOpType();
 
@@ -150,7 +150,7 @@ namespace occa {
 
       virtual int type() const;
 
-      virtual token_t* clone();
+      virtual token_t* clone() const;
 
       virtual void print(std::ostream &out) const;
     };
@@ -165,7 +165,7 @@ namespace occa {
 
       virtual int type() const;
 
-      virtual token_t* clone();
+      virtual token_t* clone() const;
 
       virtual void print(std::ostream &out) const;
     };
@@ -183,7 +183,7 @@ namespace occa {
 
       virtual int type() const;
 
-      virtual token_t* clone();
+      virtual token_t* clone() const;
 
       virtual void print(std::ostream &out) const;
     };
@@ -201,7 +201,7 @@ namespace occa {
 
       virtual int type() const;
 
-      virtual token_t* clone();
+      virtual token_t* clone() const;
 
       virtual void print(std::ostream &out) const;
     };
@@ -219,7 +219,7 @@ namespace occa {
 
       virtual int type() const;
 
-      virtual token_t* clone();
+      virtual token_t* clone() const;
 
       virtual void print(std::ostream &out) const;
     };
@@ -237,7 +237,7 @@ namespace occa {
 
       virtual int type() const;
 
-      virtual token_t* clone();
+      virtual token_t* clone() const;
 
       virtual void print(std::ostream &out) const;
     };
@@ -255,7 +255,7 @@ namespace occa {
 
       virtual int type() const;
 
-      virtual token_t* clone();
+      virtual token_t* clone() const;
 
       virtual void print(std::ostream &out) const;
     };
@@ -273,7 +273,7 @@ namespace occa {
 
       virtual int type() const;
 
-      virtual token_t* clone();
+      virtual token_t* clone() const;
 
       virtual void print(std::ostream &out) const;
     };
@@ -293,7 +293,7 @@ namespace occa {
 
       virtual int type() const;
 
-      virtual token_t* clone();
+      virtual token_t* clone() const;
 
       virtual void print(std::ostream &out) const;
     };
@@ -313,7 +313,7 @@ namespace occa {
 
       virtual const opType_t& opType() const;
 
-      virtual token_t* clone();
+      virtual token_t* clone() const;
 
       virtual void print(std::ostream &out) const;
     };
@@ -335,7 +335,7 @@ namespace occa {
 
       virtual int type() const;
 
-      virtual token_t* clone();
+      virtual token_t* clone() const;
 
       virtual void print(std::ostream &out) const;
     };
@@ -360,7 +360,7 @@ namespace occa {
 
       virtual int type() const;
 
-      virtual token_t* clone();
+      virtual token_t* clone() const;
 
       void append(const stringToken &token);
 

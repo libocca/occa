@@ -240,7 +240,7 @@ namespace occa {
     bool blockStatement::add(statement_t &child,
                              const int index) {
       const int count = (int) children.size();
-      if ((index < 0) || (count <= index)) {
+      if ((index < 0) || (count < index)) {
         child.printError("Unable to add to parent with given index ["
                          + occa::toString(index) + "]");
         return false;
@@ -249,6 +249,14 @@ namespace occa {
                       &child);
       child.up = this;
       return true;
+    }
+
+    bool blockStatement::addFirst(statement_t &child) {
+      return add(child, 0);
+    }
+
+    bool blockStatement::addLast(statement_t &child) {
+      return add(child, (int) children.size());
     }
 
     bool blockStatement::addBefore(statement_t &child,
