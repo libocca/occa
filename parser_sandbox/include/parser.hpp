@@ -26,6 +26,7 @@
 #include <map>
 #include <vector>
 
+#include "occa/tools/properties.hpp"
 #include "exprTransform.hpp"
 #include "keyword.hpp"
 #include "preprocessor.hpp"
@@ -66,6 +67,7 @@ namespace occa {
       tokenizer_t tokenizer;
       preprocessor_t preprocessor;
       stringTokenMerger stringMerger;
+      externTokenMerger externMerger;
       newlineTokenFilter newlineFilter;
       unknownTokenFilter unknownFilter;
       //================================
@@ -90,6 +92,7 @@ namespace occa {
       //================================
 
       //---[ Misc ]---------------------
+      occa::properties settings;
       identifierReplacer_t identifierReplacer;
       //================================
 
@@ -247,6 +250,9 @@ namespace occa {
       //---[ Customization ]------------
       template <class attributeType>
       void addAttribute();
+
+      virtual void onClear();
+      virtual void onPostParse();
       //================================
     };
   }

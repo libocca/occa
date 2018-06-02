@@ -42,7 +42,7 @@ namespace occa {
       tokenVectors.clear();
     }
 
-    void freeTokenVector(macroTokenVector_t &mTokens) {
+    void freeTokenVector(macroTokenVector &mTokens) {
       const int macroTokenCount = (int) mTokens.size();
       for (int i = 0; i < macroTokenCount; ++i) {
         delete mTokens[i];
@@ -50,8 +50,8 @@ namespace occa {
       mTokens.clear();
     }
 
-    void cloneMacroTokenVector(macroTokenVector_t &newTokens,
-                               const macroTokenVector_t &tokens) {
+    void cloneMacroTokenVector(macroTokenVector &newTokens,
+                               const macroTokenVector &tokens) {
       const int count = (int) tokens.size();
       newTokens.reserve(count);
 
@@ -178,7 +178,7 @@ namespace occa {
     }
 
     macroConcat::macroConcat(preprocessor_t &pp_,
-                             const macroTokenVector_t &tokens_) :
+                             const macroTokenVector &tokens_) :
       macroToken(pp_, tokens_[0]->thisToken),
       tokens(tokens_) {}
 
@@ -187,7 +187,7 @@ namespace occa {
     }
 
     macroToken* macroConcat::clone() const {
-      macroTokenVector_t newTokens;
+      macroTokenVector newTokens;
       cloneMacroTokenVector(newTokens, tokens);
       return new macroConcat(pp, newTokens);
     }
@@ -493,7 +493,7 @@ namespace occa {
         return;
       }
 
-      macroTokenVector_t newMacroTokens;
+      macroTokenVector newMacroTokens;
       for (int i = 0; i < tokenCount; ++i) {
         macroToken *mToken = macroTokens[i];
         if (!isHash(mToken) ||
@@ -551,7 +551,7 @@ namespace occa {
         return;
       }
 
-      macroTokenVector_t newMacroTokens;
+      macroTokenVector newMacroTokens;
       int lastIndex = 0;
       for (int i = 0; i < tokenCount; ++i) {
         macroToken *mToken = macroTokens[i];
@@ -564,7 +564,7 @@ namespace occa {
         }
 
         // Get concat tokens
-        macroTokenVector_t concatTokens;
+        macroTokenVector concatTokens;
         concatTokens.push_back(macroTokens[i - 1]);
         for (lastIndex = (i + 1); lastIndex < tokenCount; lastIndex += 2) {
           delete macroTokens[lastIndex - 1];

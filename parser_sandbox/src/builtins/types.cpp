@@ -23,31 +23,33 @@
 
 namespace occa {
   namespace lang {
-    const qualifier_t const_        ("const"       , qualifierType::const_);
-    const qualifier_t constexpr_    ("constexpr"   , qualifierType::constexpr_);
-    const qualifier_t restrict_     ("restrict"    , qualifierType::restrict_);
-    const qualifier_t friend_       ("friend"      , qualifierType::friend_);
-    const qualifier_t typedef_      ("typedef"     , qualifierType::typedef_);
-    const qualifier_t signed_       ("signed"      , qualifierType::signed_);
-    const qualifier_t unsigned_     ("unsigned"    , qualifierType::unsigned_);
-    const qualifier_t volatile_     ("volatile"    , qualifierType::volatile_);
-    const qualifier_t long_         ("long"        , qualifierType::long_);
-    const qualifier_t longlong_     ("long long"   , qualifierType::longlong_);
+    const qualifier_t const_        ("const"         , qualifierType::const_);
+    const qualifier_t constexpr_    ("constexpr"     , qualifierType::constexpr_);
+    const qualifier_t restrict_     ("restrict"      , qualifierType::restrict_);
+    const qualifier_t friend_       ("friend"        , qualifierType::friend_);
+    const qualifier_t typedef_      ("typedef"       , qualifierType::typedef_);
+    const qualifier_t signed_       ("signed"        , qualifierType::signed_);
+    const qualifier_t unsigned_     ("unsigned"      , qualifierType::unsigned_);
+    const qualifier_t volatile_     ("volatile"      , qualifierType::volatile_);
+    const qualifier_t long_         ("long"          , qualifierType::long_);
+    const qualifier_t longlong_     ("long long"     , qualifierType::longlong_);
 
-    const qualifier_t extern_       ("extern"      , qualifierType::extern_);
-    const qualifier_t mutable_      ("mutable"     , qualifierType::mutable_);
-    const qualifier_t register_     ("register"    , qualifierType::register_);
-    const qualifier_t static_       ("static"      , qualifierType::static_);
-    const qualifier_t thread_local_ ("thread_local", qualifierType::thread_local_);
+    const qualifier_t extern_       ("extern"        , qualifierType::extern_);
+    const qualifier_t externC       ("extern \"C\""  , qualifierType::externC);
+    const qualifier_t externCpp     ("extern \"C++\"", qualifierType::externCpp);
+    const qualifier_t mutable_      ("mutable"       , qualifierType::mutable_);
+    const qualifier_t register_     ("register"      , qualifierType::register_);
+    const qualifier_t static_       ("static"        , qualifierType::static_);
+    const qualifier_t thread_local_ ("thread_local"  , qualifierType::thread_local_);
 
-    const qualifier_t explicit_     ("explicit"    , qualifierType::explicit_);
-    const qualifier_t inline_       ("inline"      , qualifierType::inline_);
-    const qualifier_t virtual_      ("virtual"     , qualifierType::virtual_);
+    const qualifier_t explicit_     ("explicit"      , qualifierType::explicit_);
+    const qualifier_t inline_       ("inline"        , qualifierType::inline_);
+    const qualifier_t virtual_      ("virtual"       , qualifierType::virtual_);
 
-    const qualifier_t class_        ("class"       , qualifierType::class_);
-    const qualifier_t enum_         ("enum"        , qualifierType::enum_);
-    const qualifier_t struct_       ("struct"      , qualifierType::struct_);
-    const qualifier_t union_        ("union"       , qualifierType::union_);
+    const qualifier_t class_        ("class"         , qualifierType::class_);
+    const qualifier_t enum_         ("enum"          , qualifierType::enum_);
+    const qualifier_t struct_       ("struct"        , qualifierType::struct_);
+    const qualifier_t union_        ("union"         , qualifierType::union_);
 
     const primitive_t bool_         ("bool");
     const primitive_t char_         ("char");

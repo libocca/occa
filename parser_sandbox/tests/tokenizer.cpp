@@ -33,6 +33,7 @@ void testTokenMethods();
 void testCommentSkipping();
 void testStringMethods();
 void testStringMerging();
+void testExternMerging();
 void testPrimitiveMethods();
 void testErrors();
 
@@ -42,7 +43,12 @@ using namespace occa::lang;
 std::string source;
 tokenizer_t tokenizer;
 stringTokenMerger stringMerger;
-occa::stream<token_t*> mergeTokenStream = tokenizer.map(stringMerger);
+externTokenMerger externMerger;
+occa::stream<token_t*> mergeTokenStream = (
+  tokenizer
+  .map(stringMerger)
+  .map(externMerger)
+);
 token_t *token = NULL;
 
 void setStream(const std::string &s) {
@@ -58,7 +64,7 @@ void getToken() {
   tokenizer >> token;
 }
 
-void getStringMergeToken() {
+void getMergedToken() {
   delete token;
   token = NULL;
   mergeTokenStream >> token;
@@ -103,7 +109,7 @@ int getTokenType() {
 
 #define testStringMergeToken(s, encoding_)                    \
   setStream(s);                                               \
-  getStringMergeToken();                                      \
+  getMergedToken();                                           \
   OCCA_ASSERT_EQUAL_BINARY(tokenType::string,                 \
                            getTokenType());                   \
   OCCA_ASSERT_EQUAL_BINARY(encoding_,                         \
@@ -123,7 +129,7 @@ int getTokenType() {
 
 #define testStringMergeValue(s, value_)         \
   setStream(s);                                 \
-  getStringMergeToken();                        \
+  getMergedToken();                             \
   testNextStringValue(value_)
 
 #define testNextStringValue(value_)             \
@@ -156,6 +162,7 @@ int main(const int argc, const char **argv) {
   testCommentSkipping();
   testStringMethods();
   testStringMerging();
+  testExternMerging();
   testPrimitiveMethods();
   testErrors();
 
@@ -518,6 +525,39 @@ void testStringMerging() {
   testStringMergeToken(s1, encodingType::U);
   testStringMergeToken(s2, encodingType::L);
   testStringMergeToken(s3, encodingType::L);
+}
+
+void testExternMerging() {
+  setStream("extern"
+            " extern \"C\""
+            " extern \"C++\""
+            " extern \"Cpp\"");
+  getMergedToken();
+  OCCA_ASSERT_EQUAL_BINARY(tokenType::identifier,
+                           getTokenType());
+  OCCA_ASSERT_EQUAL("extern",
+                    token->to<identifierToken>().value);
+
+  getMergedToken();
+  OCCA_ASSERT_EQUAL_BINARY(tokenType::identifier,
+                           getTokenType());
+  OCCA_ASSERT_EQUAL("extern \"C\"",
+                    token->to<identifierToken>().value);
+
+  getMergedToken();
+  OCCA_ASSERT_EQUAL_BINARY(tokenType::identifier,
+                           getTokenType());
+  OCCA_ASSERT_EQUAL("extern \"C++\"",
+                    token->to<identifierToken>().value);
+
+  getMergedToken();
+  OCCA_ASSERT_EQUAL_BINARY(tokenType::identifier,
+                           getTokenType());
+  OCCA_ASSERT_EQUAL("extern",
+                    token->to<identifierToken>().value);
+
+  getMergedToken();
+  testNextStringValue("Cpp");
 }
 
 void testPrimitiveMethods() {

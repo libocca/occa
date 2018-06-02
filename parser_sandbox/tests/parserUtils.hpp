@@ -33,7 +33,11 @@ using namespace occa::lang;
 
 //---[ Util Methods ]-------------------
 std::string source;
-parser_t parser;
+
+#ifndef OCCA_TEST_PARSER_TYPE
+#  define OCCA_TEST_PARSER_TYPE parser_t
+#endif
+OCCA_TEST_PARSER_TYPE parser;
 
 void setSource(const std::string &s) {
   source = s;

@@ -31,7 +31,6 @@
 #include "occa/types.hpp"
 
 #include "macro.hpp"
-#include "trie.hpp"
 #include "stream.hpp"
 #include "token.hpp"
 
@@ -39,10 +38,14 @@ namespace occa {
   namespace lang {
     class tokenizer_t;
 
-    typedef trie<macro_t*>        macroTrie;
     typedef std::vector<token_t*> tokenVector;
     typedef std::stack<token_t*>  tokenStack;
     typedef std::list<token_t*>   tokenList;
+
+    typedef std::map<std::string, macro_t*> macroMap;
+    typedef std::map<macro_t*, bool>        macroSet;
+    typedef std::vector<macro_t*>           macroVector;
+    typedef std::map<token_t*, macroVector> macroEndMap;
 
     typedef streamMap<token_t*, token_t*> tokenMap;
 
@@ -58,7 +61,7 @@ namespace occa {
                            public withOutputCache<token_t*, token_t*> {
     public:
       typedef void (preprocessor_t::*processDirective_t)(identifierToken &directive);
-      typedef trie<processDirective_t> directiveTrie;
+      typedef std::map<std::string, processDirective_t> directiveMap;
 
       //---[ Status ]-------------------
       std::vector<int> statusStack;
@@ -66,13 +69,16 @@ namespace occa {
 
       int passedNewline;
       bool expandingMacros;
+
+      macroSet expandedMacros;
+      macroEndMap expandedMacroEnd;
       //================================
 
       //---[ Macros and Directives ]----
-      directiveTrie directives;
+      directiveMap directives;
 
-      macroTrie compilerMacros;
-      macroTrie sourceMacros;
+      macroMap compilerMacros;
+      macroMap sourceMacros;
       //================================
 
       //---[ Metadata ]-----------------
@@ -81,7 +87,7 @@ namespace occa {
       //================================
 
       preprocessor_t();
-      preprocessor_t(const preprocessor_t &pp);
+      preprocessor_t(const preprocessor_t &other);
       ~preprocessor_t();
 
       void init();
@@ -120,6 +126,7 @@ namespace occa {
 
       void expandMacro(identifierToken &source,
                        macro_t &macro);
+      void clearExpandedMacros(token_t *token);
 
       void skipToNewline();
       void getLineTokens(tokenVector &lineTokens);

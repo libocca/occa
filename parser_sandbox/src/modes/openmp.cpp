@@ -23,11 +23,11 @@
 
 namespace occa {
   namespace lang {
-    void openmpBackend::backendTransform(statement_t &root) {
-      serialBackend::backendTransform(root);
-      addPragmas(root);
-    }
-    void openmpBackend::addPragmas(statement_t &root) {
-    }
+    // void openmpBackend::backendTransform(statement_t &root) {
+    //   serialBackend::backendTransform(root);
+    //   addPragmas(root);
+    // }
+    // void openmpBackend::addPragmas(statement_t &root) {
+    // }
   }
 }

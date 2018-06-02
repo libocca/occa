@@ -22,18 +22,31 @@
 #ifndef OCCA_PARSER_MODES_SERIAL_HEADER
 #define OCCA_PARSER_MODES_SERIAL_HEADER
 
-#include "modes/backend.hpp"
+#include "parser.hpp"
 
 namespace occa {
   namespace lang {
-    class serialBackend : public oklBackend {
-    public:
-      virtual void backendTransform(statement_t &root);
+    namespace okl {
+      class serialParser : public parser_t {
+      public:
+        bool useRestrict;
+        qualifier_t restrict_;
 
-      void setupKernelArgs(statement_t &root);
+        serialParser();
 
-      void modifyExclusiveVariables(statement_t &root);
-    };
+        void setupPreprocessor();
+
+        virtual void onClear();
+
+        virtual void onPostParse();
+
+        void setupKernels();
+
+        void setupKernel(functionDeclStatement &kernelSmnt);
+
+        void setupExclusives();
+      };
+    }
   }
 }
 

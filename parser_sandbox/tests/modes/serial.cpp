@@ -19,6 +19,10 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  */
+
+#define OCCA_TEST_PARSER_TYPE okl::serialParser
+
+#include "modes/serial.hpp"
 #include "../parserUtils.hpp"
 
 void testPreprocessor();
@@ -26,13 +30,6 @@ void testKernel();
 void testExclusives();
 
 int main(const int argc, const char **argv) {
-  parser.addAttribute<dummy>();
-  parser.addAttribute<attributes::kernel>();
-  parser.addAttribute<attributes::outer>();
-  parser.addAttribute<attributes::inner>();
-  parser.addAttribute<attributes::shared>();
-  parser.addAttribute<attributes::exclusive>();
-
   testPreprocessor();
   testKernel();
   testExclusives();
@@ -42,7 +39,13 @@ int main(const int argc, const char **argv) {
 
 //---[ Preprocessor ]-------------------
 void testPreprocessor() {
+  statement_t *statement;
+
   // #define restrict __restrict__
+  setStatement("const restrict int a;",
+               statementType::declaration);
+  OCCA_ASSERT_EQUAL("__restrict__",
+                    parser.restrict_.name);
 }
 //======================================
 
@@ -56,11 +59,55 @@ void testKernel() {
 }
 
 void testExtern() {
-  // @kernel -> extern
+  // @kernel -> extern "C"
+
+#define func (statement->to<functionDeclStatement>().function)
+
+  statement_t *statement;
+  setStatement("@kernel void foo() {}",
+               statementType::functionDecl);
+
+  OCCA_ASSERT_TRUE(func.returnType.has(externC));
+
+#undef func
 }
 
 void testArgs() {
   // @kernel args -> by reference
+#define func       (statement->to<functionDeclStatement>().function)
+#define arg(N)     (*(args[N]))
+#define argType(N) (arg(N).vartype)
+
+  statement_t *statement;
+  setStatement("@kernel void foo(\n"
+               "const int A,\n"
+               "const int *B,\n"
+               "const int &C,\n"
+               ") {}",
+               statementType::functionDecl);
+
+  variablePtrVector &args = func.args;
+  const int argCount = (int) args.size();
+  OCCA_ASSERT_EQUAL(3,
+                    argCount);
+
+  OCCA_ASSERT_EQUAL("A",
+                    arg(0).name());
+  OCCA_ASSERT_NOT_EQUAL((void*) NULL,
+                        argType(0).referenceToken);
+
+  OCCA_ASSERT_EQUAL("B",
+                    arg(1).name());
+  OCCA_ASSERT_EQUAL((void*) NULL,
+                    argType(1).referenceToken);
+
+  OCCA_ASSERT_EQUAL("C",
+                    arg(2).name());
+  OCCA_ASSERT_NOT_EQUAL((void*) NULL,
+                        argType(2).referenceToken);
+
+#undef func
+#undef arg
 }
 //======================================
 

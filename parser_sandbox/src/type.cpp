@@ -512,6 +512,10 @@ namespace occa {
         }
       }
 
+      if (referenceToken) {
+        pout << '&';
+      }
+
       pout << varName;
 
       const int arrayCount = (int) arrays.size();
@@ -532,6 +536,8 @@ namespace occa {
     void vartype_t::printWarning(const std::string &message) const {
       if (qualifiers.size()) {
         qualifiers.qualifiers[0].printWarning(message);
+      } else if (typeToken) {
+        typeToken->printWarning(message);
       } else if (type) {
         type->printWarning(message);
       }
@@ -540,7 +546,9 @@ namespace occa {
     void vartype_t::printError(const std::string &message) const {
       if (qualifiers.size()) {
         qualifiers.qualifiers[0].printError(message);
-      } else if (type) {
+      } else if (typeToken) {
+        typeToken->printError(message);
+      }else if (type) {
         type->printError(message);
       }
     }

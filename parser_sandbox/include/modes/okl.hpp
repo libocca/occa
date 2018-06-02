@@ -39,15 +39,15 @@ namespace occa {
     namespace okl {
       bool checkKernels(statement_t &root);
 
-      bool checkKernel(statement_t &kernelSmnt);
+      bool checkKernel(functionDeclStatement &kernelSmnt);
 
       //---[ Declaration ]--------------
-      bool checkLoops(statement_t &kernelSmnt);
+      bool checkLoops(functionDeclStatement &kernelSmnt);
 
       bool checkForDoubleLoops(statementPtrVector &loopSmnts,
                                const std::string &badAttr);
 
-      bool checkForDeclarations(statement_t &kernelSmnt,
+      bool checkForDeclarations(functionDeclStatement &kernelSmnt,
                                 statementPtrVector &forSmnts,
                                 const std::string &attrName);
 
@@ -88,7 +88,7 @@ namespace occa {
       bool oklSharedMatcher(statement_t &smnt);
       bool oklExclusiveMatcher(statement_t &smnt);
 
-      bool checkLoopOrders(statement_t &kernelSmnt);
+      bool checkLoopOrders(functionDeclStatement &kernelSmnt);
 
       bool checkLoopOrder(transforms::smntTreeNode &root);
       bool checkLoopType(transforms::smntTreeNode &node,
@@ -105,7 +105,7 @@ namespace occa {
       //================================
 
       //---[ Skip Logic ]---------------
-      bool checkBreakAndContinue(statement_t &kernelSmnt);
+      bool checkBreakAndContinue(functionDeclStatement &kernelSmnt);
       //================================
     }
   }

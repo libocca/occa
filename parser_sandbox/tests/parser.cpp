@@ -1048,8 +1048,8 @@ void testAttributeLoading() {
   statement_t *statement;
 
 #define smntAttr(N)       statement->attributes[N]->name()
-#define decl              statement->to<declarationStatement>()
-#define decls             decl.declarations
+#define declSmnt          statement->to<declarationStatement>()
+#define decls             declSmnt.declarations
 #define declVar(N)        (*decls[N].variable)
 #define declVarAttr(N, A) declVar(N).attributes[A]
 
@@ -1151,7 +1151,7 @@ void testAttributeLoading() {
   std::cerr << "==============================================\n\n";
 
 #undef smntAttr
-#undef decl
+#undef declSmnt
 #undef decls
 #undef declVar
 #undef declVarAttr

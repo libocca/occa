@@ -48,6 +48,8 @@ namespace occa {
       extern const int forPointers;
 
       extern const int extern_;
+      extern const int externC;
+      extern const int externCpp;
       extern const int static_;
       extern const int thread_local_;
       extern const int globalScope;
@@ -68,6 +70,8 @@ namespace occa {
       extern const int struct_;
       extern const int union_;
       extern const int newType;
+
+      extern const int custom;
     }
 
     //---[ Qualifier ]------------------
@@ -133,6 +137,11 @@ namespace occa {
                         const qualifier_t &qualifier);
 
       qualifiers_t& add(const qualifierWithSource &qualifier);
+
+      qualifiers_t& addFirst(const fileOrigin &origin,
+                             const qualifier_t &qualifier);
+
+      qualifiers_t& addFirst(const qualifierWithSource &qualifier);
     };
 
     printer& operator << (printer &pout,

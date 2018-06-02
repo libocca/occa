@@ -208,6 +208,8 @@ namespace occa {
       addKeyword(keywords, new qualifierKeyword(longlong_));
 
       addKeyword(keywords, new qualifierKeyword(extern_));
+      addKeyword(keywords, new qualifierKeyword(externC));
+      addKeyword(keywords, new qualifierKeyword(externCpp));
       addKeyword(keywords, new qualifierKeyword(mutable_));
       addKeyword(keywords, new qualifierKeyword(register_));
       addKeyword(keywords, new qualifierKeyword(static_));

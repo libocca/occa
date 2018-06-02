@@ -23,6 +23,8 @@
 #ifndef OCCA_LANG_EXPRTRANSFORM_HEADER
 #define OCCA_LANG_EXPRTRANSFORM_HEADER
 
+#include "occa/types.hpp"
+
 namespace occa {
   namespace lang {
     class exprNode;

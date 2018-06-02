@@ -28,11 +28,13 @@
 #include "builtins/types.hpp"
 #include "variable.hpp"
 
+void testQualifiers();
 void testBitfields();
 void testCasting();
 void testComparision();
 
 int main(const int argc, const char **argv) {
+  testQualifiers();
   testBitfields();
   testCasting();
   testComparision();
@@ -41,6 +43,17 @@ int main(const int argc, const char **argv) {
 }
 
 using namespace occa::lang;
+
+void testQualifiers() {
+  qualifiers_t q1, q2;
+  for (int i = 0; i < 10; ++i) {
+    q1.add(const_);
+    q1.addFirst(extern_);
+    q2.addFirst(externC);
+  }
+  OCCA_ASSERT_EQUAL(2, q1.size());
+  OCCA_ASSERT_EQUAL(1, q2.size());
+}
 
 void testBitfields() {
   occa::bitfield bf1(0, 1 << 0);

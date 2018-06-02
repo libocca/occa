@@ -150,7 +150,33 @@ void testMacroDefines() {
 
   // Test error counting
   preprocessor_t &pp = *((preprocessor_t*) stream.getInput("preprocessor_t"));
-  OCCA_ASSERT_EQUAL(3, pp.errors);
+  OCCA_ASSERT_EQUAL(3,
+                    pp.errors);
+
+  // Make sure we can handle recursive macros
+#define identifier (token->to<identifierToken>().value)
+  setStream(
+    "#define foo foo\n"
+    "foo"
+  );
+  getToken();
+  setStream(
+    "#define foo3 foo2\n"
+    "#define foo2 foo1\n"
+    "#define foo1 foo2\n"
+    "foo1"
+    " foo2"
+    " foo3"
+  );
+  getToken();
+  OCCA_ASSERT_EQUAL("foo1",
+                    identifier);
+  getToken();
+  OCCA_ASSERT_EQUAL("foo2",
+                    identifier);
+  getToken();
+  OCCA_ASSERT_EQUAL("foo2",
+                    identifier);
 }
 
 void testCppStandardTests() {
@@ -165,7 +191,8 @@ void testCppStandardTests() {
 
   getToken();
   const std::string output = token->to<stringToken>().value;
-  OCCA_ASSERT_EQUAL("x ## y", output);
+  OCCA_ASSERT_EQUAL("x ## y",
+                    output);
 
   // Test 2 in C++ standard
   setStream(

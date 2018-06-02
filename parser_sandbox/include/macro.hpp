@@ -32,21 +32,22 @@ namespace occa {
     class token_t;
     class identifierToken;
     class macroToken;
+    class macro_t;
     class preprocessor_t;
 
     typedef std::map<std::string, int> intMap;
     typedef intMap::iterator           intMapIterator;
 
     typedef std::vector<token_t*>    tokenVector;
-    typedef std::vector<macroToken*> macroTokenVector_t;
+    typedef std::vector<macroToken*> macroTokenVector;
 
     //---[ Helper Methods ]-------------
     void freeTokenVectors(std::vector<tokenVector> &tokenVectors);
 
-    void freeTokenVector(macroTokenVector_t &mTokens);
+    void freeTokenVector(macroTokenVector &mTokens);
 
-    void cloneMacroTokenVector(macroTokenVector_t &newTokens,
-                               const macroTokenVector_t &tokens);
+    void cloneMacroTokenVector(macroTokenVector &newTokens,
+                               const macroTokenVector &tokens);
     //==================================
 
     //---[ Macro Tokens ]---------------
@@ -117,10 +118,10 @@ namespace occa {
 
     class macroConcat : public macroToken {
     public:
-      macroTokenVector_t tokens;
+      macroTokenVector tokens;
 
       macroConcat(preprocessor_t &pp_,
-                  const macroTokenVector_t &tokens_);
+                  const macroTokenVector &tokens_);
       ~macroConcat();
 
       virtual macroToken* clone() const;
@@ -144,7 +145,7 @@ namespace occa {
       intMap argNames;
       bool hasVarArgs;
 
-      macroTokenVector_t macroTokens;
+      macroTokenVector macroTokens;
 
       macro_t(preprocessor_t &pp_,
               identifierToken &thisToken_,

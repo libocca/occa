@@ -45,7 +45,7 @@ namespace occa {
     stringTokenMerger::stringTokenMerger() {}
 
     stringTokenMerger::stringTokenMerger(const stringTokenMerger &other) :
-      tokenCacheMap(other) {}
+      tokenOutputCacheMap(other) {}
 
     tokenMap& stringTokenMerger::clone_() const {
       return *(new stringTokenMerger(*this));
@@ -85,6 +85,54 @@ namespace occa {
 
       pushOutput(&strToken);
       if (nextToken) {
+        pushOutput(nextToken);
+      }
+    }
+    //==================================
+
+    //---[ Extern ]---------------------
+    externTokenMerger::externTokenMerger() {}
+
+    externTokenMerger::externTokenMerger(const externTokenMerger &other) :
+      tokenInputCacheMap(other),
+      tokenOutputCacheMap(other) {}
+
+    tokenMap& externTokenMerger::clone_() const {
+      return *(new externTokenMerger(*this));
+    }
+
+    void externTokenMerger::fetchNext() {
+      token_t *token = NULL;
+      getNextInput(token);
+
+      if ((token->type() != tokenType::identifier)
+          || (((identifierToken*) token)->value != "extern")
+          || inputIsEmpty()) {
+        pushOutput(token);
+        return;
+      }
+
+      token_t *nextToken = NULL;
+      getNextInput(nextToken);
+
+      if (nextToken->type() != tokenType::string) {
+        pushOutput(token);
+        pushInput(nextToken);
+        return;
+      }
+
+      const std::string &value = ((stringToken*) nextToken)->value;
+      const bool isC   = (value == "C");
+      const bool isCpp = !isC && (value == "C++");
+      if (isC || isCpp) {
+        pushOutput(
+          new identifierToken(token->origin,
+                              "extern \"" + value + "\"")
+        );
+        delete token;
+        delete nextToken;
+      } else {
+        pushOutput(token);
         pushOutput(nextToken);
       }
     }

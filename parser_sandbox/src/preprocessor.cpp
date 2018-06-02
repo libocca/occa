@@ -65,8 +65,6 @@ namespace occa {
       incrementNewline();
       expandingMacros = true;
 
-      compilerMacros.autoFreeze = false;
-
       const int specialMacroCount = 7;
       macro_t *specialMacros[specialMacroCount] = {
         new definedMacro(*this),    // defined()
@@ -78,24 +76,21 @@ namespace occa {
         new counterMacro(*this)     // __COUNTER__
       };
       for (int i = 0; i < specialMacroCount; ++i) {
-        compilerMacros.add(specialMacros[i]->name(), specialMacros[i]);
+        compilerMacros[specialMacros[i]->name()] = specialMacros[i];
       }
 
       // Alternative representations
-      compilerMacros.add("and"   , macro_t::defineBuiltin(*this, "and"   , "&&"));
-      compilerMacros.add("and_eq", macro_t::defineBuiltin(*this, "and_eq", "&="));
-      compilerMacros.add("bitand", macro_t::defineBuiltin(*this, "bitand", "&"));
-      compilerMacros.add("bitor" , macro_t::defineBuiltin(*this, "bitor" , "|"));
-      compilerMacros.add("compl" , macro_t::defineBuiltin(*this, "compl" , "~"));
-      compilerMacros.add("not"   , macro_t::defineBuiltin(*this, "not"   , "!"));
-      compilerMacros.add("not_eq", macro_t::defineBuiltin(*this, "not_eq", "!="));
-      compilerMacros.add("or"    , macro_t::defineBuiltin(*this, "or"    , "||"));
-      compilerMacros.add("or_eq" , macro_t::defineBuiltin(*this, "or_eq" , "|="));
-      compilerMacros.add("xor"   , macro_t::defineBuiltin(*this, "xor"   , "^"));
-      compilerMacros.add("xor_eq", macro_t::defineBuiltin(*this, "xor_eq", "^="));
-
-      compilerMacros.freeze();
-      compilerMacros.autoFreeze = true;
+      compilerMacros["and"]    = macro_t::defineBuiltin(*this, "and"   , "&&");
+      compilerMacros["and_eq"] = macro_t::defineBuiltin(*this, "and_eq", "&=");
+      compilerMacros["bitand"] = macro_t::defineBuiltin(*this, "bitand", "&");
+      compilerMacros["bitor"]  = macro_t::defineBuiltin(*this, "bitor" , "|");
+      compilerMacros["compl"]  = macro_t::defineBuiltin(*this, "compl" , "~");
+      compilerMacros["not"]    = macro_t::defineBuiltin(*this, "not"   , "!");
+      compilerMacros["not_eq"] = macro_t::defineBuiltin(*this, "not_eq", "!=");
+      compilerMacros["or"]     = macro_t::defineBuiltin(*this, "or"    , "||");
+      compilerMacros["or_eq"]  = macro_t::defineBuiltin(*this, "or_eq" , "|=");
+      compilerMacros["xor"]    = macro_t::defineBuiltin(*this, "xor"   , "^");
+      compilerMacros["xor_eq"] = macro_t::defineBuiltin(*this, "xor_eq", "^=");
 
       warnings = 0;
       errors   = 0;
@@ -121,97 +116,86 @@ namespace occa {
 
       statusStack.clear();
 
-      macroTrie *tries[2] = {
-        &compilerMacros,
-        &sourceMacros
-      };
-
-      for (int i = 0; i < 2; ++i) {
-        macroTrie &trie = *(tries[i]);
-        const int trieSize = trie.size();
-        for (int j = 0; j < trieSize; ++j) {
-          delete trie.values[j];
-        }
-        trie.clear();
+      macroMap::iterator it = compilerMacros.begin();
+      while (it != compilerMacros.end()) {
+        delete it->second;
+        ++it;
       }
+      compilerMacros.clear();
+
+      it = sourceMacros.begin();
+      while (it != sourceMacros.end()) {
+        delete it->second;
+        ++it;
+      }
+      sourceMacros.clear();
+
       dependencies.clear();
     }
 
-    preprocessor_t& preprocessor_t::operator = (const preprocessor_t &pp) {
+    preprocessor_t& preprocessor_t::operator = (const preprocessor_t &other) {
       clear();
 
-      statusStack     = pp.statusStack;
-      status          = pp.status;
-      passedNewline   = pp.passedNewline;
-      expandingMacros = pp.expandingMacros;
+      statusStack     = other.statusStack;
+      status          = other.status;
+      passedNewline   = other.passedNewline;
+      expandingMacros = other.expandingMacros;
 
-      directives     = pp.directives;
-      compilerMacros = pp.compilerMacros;
-      sourceMacros   = pp.sourceMacros;
+      directives     = other.directives;
+      compilerMacros = other.compilerMacros;
+      sourceMacros   = other.sourceMacros;
 
-      dependencies = pp.dependencies;
-      warnings     = pp.warnings;
-      errors       = pp.errors;
-
-      directives.freeze();
-      directives.autoFreeze = true;
+      dependencies = other.dependencies;
+      warnings     = other.warnings;
+      errors       = other.errors;
 
       // Copy cache
       tokenList *caches[2] = { &inputCache, &outputCache };
-      const tokenList *ppCaches[2] = { &pp.inputCache, &pp.outputCache };
+      const tokenList *otherCaches[2] = { &other.inputCache, &other.outputCache };
       for (int i = 0; i < 2; ++i) {
-        tokenList &cache         = *(caches[i]);
-        const tokenList &ppCache = *(ppCaches[i]);
+        tokenList &cache            = *(caches[i]);
+        const tokenList &otherCache = *(otherCaches[i]);
 
-        tokenList::const_iterator it = ppCache.begin();
-        while (it != ppCache.end()) {
+        tokenList::const_iterator it = otherCache.begin();
+        while (it != otherCache.end()) {
           cache.push_back((*it)->clone());
           ++it;
         }
       }
 
       // Copy macros
-      compilerMacros.autoFreeze = false;
-      sourceMacros.autoFreeze   = false;
-      macroTrie *tries[2] = { &compilerMacros, &sourceMacros };
-      const macroTrie *ppTries[2] = { &pp.compilerMacros, &pp.sourceMacros };
-      for (int i = 0; i < 2; ++i) {
-        macroTrie &trie         = *(tries[i]);
-        const macroTrie &ppTrie = *(ppTries[i]);
-
-        const int trieSize = ppTrie.size();
-        for (int j = 0; j < trieSize; ++j) {
-          const macro_t *macro = ppTrie.values[j];
-          trie.add(macro->name(), &(macro->clone(*this)));
-        }
+      compilerMacros = other.compilerMacros;
+      sourceMacros   = other.sourceMacros;
+      macroMap::iterator it = compilerMacros.begin();
+      while (it != compilerMacros.end()) {
+        it->second = &(it->second->clone(*this));
+        ++it;
       }
-
-      compilerMacros.autoFreeze = true;
-      sourceMacros.autoFreeze   = true;
-
+      it = sourceMacros.begin();
+      while (it != compilerMacros.end()) {
+        it->second = &(it->second->clone(*this));
+        ++it;
+      }
       return *this;
     }
 
     void preprocessor_t::initDirectives() {
-      directives.autoFreeze = false;
-      directives.add("if"     , &preprocessor_t::processIf);
-      directives.add("ifdef"  , &preprocessor_t::processIfdef);
-      directives.add("ifndef" , &preprocessor_t::processIfndef);
-      directives.add("elif"   , &preprocessor_t::processElif);
-      directives.add("else"   , &preprocessor_t::processElse);
-      directives.add("endif"  , &preprocessor_t::processEndif);
+      directives["if"]      = &preprocessor_t::processIf;
+      directives["ifdef"]   = &preprocessor_t::processIfdef;
+      directives["ifndef"]  = &preprocessor_t::processIfndef;
+      directives["elif"]    = &preprocessor_t::processElif;
+      directives["else"]    = &preprocessor_t::processElse;
+      directives["endif"]   = &preprocessor_t::processEndif;
 
-      directives.add("define" , &preprocessor_t::processDefine);
-      directives.add("undef"  , &preprocessor_t::processUndef);
+      directives["define"]  = &preprocessor_t::processDefine;
+      directives["undef"]   = &preprocessor_t::processUndef;
 
-      directives.add("error"  , &preprocessor_t::processError);
-      directives.add("warning", &preprocessor_t::processWarning);
+      directives["error"]   = &preprocessor_t::processError;
+      directives["warning"] = &preprocessor_t::processWarning;
 
-      directives.add("include", &preprocessor_t::processInclude);
-      directives.add("pragma" , &preprocessor_t::processPragma);
-      directives.add("line"   , &preprocessor_t::processLine);
-      directives.freeze();
-      directives.autoFreeze = true;
+      directives["include"] = &preprocessor_t::processInclude;
+      directives["pragma"]  = &preprocessor_t::processPragma;
+      directives["line"]    = &preprocessor_t::processLine;
     }
 
     void preprocessor_t::warningOn(token_t *token,
@@ -276,13 +260,13 @@ namespace occa {
     }
 
     macro_t* preprocessor_t::getMacro(const std::string &name) {
-      macroTrie::result_t result = sourceMacros.get(name);
-      if (result.success()) {
-        return result.value();
+      macroMap::iterator it = sourceMacros.find(name);
+      if (it != sourceMacros.end()) {
+        return it->second;
       }
-      result = compilerMacros.get(name);
-      if (result.success()) {
-        return result.value();
+      it = compilerMacros.find(name);
+      if (it != compilerMacros.end()) {
+        return it->second;
       }
       return NULL;
     }
@@ -305,9 +289,39 @@ namespace occa {
       macro.expand(tokens, source);
 
       const int tokenCount = (int) tokens.size();
+      if (!tokenCount) {
+        return;
+      }
+
+      macroVector &tokenMacros = expandedMacroEnd[tokens[tokenCount - 1]];
+      // Move tokens that would have ended here to the end of its expansion
+      macroEndMap::iterator it = expandedMacroEnd.find(&source);
+      if (it != expandedMacroEnd.end()) {
+        tokenMacros = it->second;
+        expandedMacroEnd.erase(it);
+      }
+      // Set expanded macro info
+      expandedMacros[&macro] = true;
+      tokenMacros.push_back(&macro);
+
+      // Insert tokens backwards into input cache
       for (int i = (tokenCount - 1); i >= 0; --i) {
         pushInput(tokens[i]);
       }
+    }
+
+    void preprocessor_t::clearExpandedMacros(token_t *token) {
+      macroEndMap::iterator it = expandedMacroEnd.find(token);
+      if (it == expandedMacroEnd.end()) {
+        return;
+      }
+      // Remove expanded macros at the end token
+      macroVector &macros = it->second;
+      const int count = (int) macros.size();
+      for (int i = 0; i < count; ++i) {
+        expandedMacros.erase(macros[i]);
+      }
+      expandedMacroEnd.erase(it);
     }
 
     void preprocessor_t::skipToNewline() {
@@ -396,17 +410,16 @@ namespace occa {
       if (tokenType & tokenType::newline) {
         incrementNewline();
         pushOutput(token);
+        clearExpandedMacros(token);
         return;
       }
 
       // Only process operators when ignoring
       //   for potential #
       if (status & ppStatus::ignoring) {
-        if (!(tokenType & tokenType::op)) {
-          delete token;
-          return;
-        }
-        if (!(token->getOpType() & operatorType::preprocessor)) {
+        if (!(tokenType & tokenType::op) ||
+            !(token->getOpType() & operatorType::preprocessor)) {
+          clearExpandedMacros(token);
           delete token;
           return;
         }
@@ -421,6 +434,8 @@ namespace occa {
       else {
         pushOutput(token);
       }
+
+      clearExpandedMacros(token);
     }
 
     void preprocessor_t::processIdentifier(identifierToken &token) {
@@ -433,39 +448,38 @@ namespace occa {
       macro_t *macro = (expandingMacros
                         ? getMacro(token.value)
                         : NULL);
-      if (macro) {
-        if (!macro->isFunctionLike) {
-          expandMacro(token, *macro);
-          delete &token;
-          return;
-        }
-
-        if (inputIsEmpty()) {
-          pushOutput(&token);
-          return;
-        }
-
-        // Make sure that the macro starts with a '('
-        token_t *nextToken = getSourceToken();
-        if (nextToken->getOpType() & operatorType::parenthesesStart) {
-          expandMacro(token, *macro);
-          delete &token;
-          delete nextToken;
-          return;
-        }
-        // Prioritize possible variable if no () is found:
-        //   #define FOO()
-        //   int FOO;
-        if (nextToken) {
-          pushOutput(&token);
-          pushOutput(nextToken);
-        } else {
-          pushOutput(&token);
-        }
+      // Don't allow for recursive expansion
+      if (!macro
+          || (expandedMacros.find(macro) != expandedMacros.end())) {
+        pushOutput(&token);
         return;
       }
-
+      // Check for the type of macro
+      if (!macro->isFunctionLike) {
+        expandMacro(token, *macro);
+        delete &token;
+        return;
+      }
+      // Function-like macro is not called
+      if (inputIsEmpty()) {
+        pushOutput(&token);
+        return;
+      }
+      // Make sure that the macro starts with a '('
+      token_t *nextToken = getSourceToken();
+      if (nextToken->getOpType() & operatorType::parenthesesStart) {
+        expandMacro(token, *macro);
+        delete &token;
+        delete nextToken;
+        return;
+      }
+      // Prioritize possible variable if no () is found:
+      //   #define FOO()
+      //   int FOO;
       pushOutput(&token);
+      if (nextToken) {
+        pushOutput(nextToken);
+      }
     }
 
     void preprocessor_t::processOperator(operatorToken &token) {
@@ -498,8 +512,8 @@ namespace occa {
 
       identifierToken &directiveToken = directive->to<identifierToken>();
       const std::string &directiveStr = directiveToken.value;
-      directiveTrie::result_t result  = directives.get(directiveStr);
-      if (!result.success()) {
+      directiveMap::iterator it = directives.find(directiveStr);
+      if (it == directives.end()) {
         errorOn(directive,
                 "Unknown preprocessor directive");
         delete directive;
@@ -507,7 +521,7 @@ namespace occa {
         return;
       }
 
-      processDirective_t processFunc = result.value();
+      processDirective_t processFunc = it->second;
 
       // TODO: Bits for two comparisons?
       if ((status & ppStatus::ignoring)                   &&
@@ -767,11 +781,12 @@ namespace occa {
       const std::string &name = macro.name();
 
       // TODO: Error if the definitions aren't the same
-      if (sourceMacros.has(name)) {
+      macroMap::iterator it = sourceMacros.find(name);
+      if (it != sourceMacros.end()) {
         delete getMacro(name);
-        sourceMacros.remove(name);
+        sourceMacros.erase(it);
       }
-      sourceMacros.add(name, &macro);
+      sourceMacros[name] = &macro;
 
       // Macro clones the token
       delete token;
@@ -796,7 +811,10 @@ namespace occa {
       // Remove macro
       const std::string &macroName = token->to<identifierToken>().value;
       delete getMacro(macroName);
-      sourceMacros.remove(macroName);
+      macroMap::iterator it = sourceMacros.find(macroName);
+      if (it != sourceMacros.end()) {
+        sourceMacros.erase(it);
+      }
       delete token;
     }
 

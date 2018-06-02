@@ -38,6 +38,8 @@ namespace occa {
     extern const qualifier_t longlong_;
 
     extern const qualifier_t extern_;
+    extern const qualifier_t externC;
+    extern const qualifier_t externCpp;
     extern const qualifier_t mutable_;
     extern const qualifier_t register_;
     extern const qualifier_t static_;

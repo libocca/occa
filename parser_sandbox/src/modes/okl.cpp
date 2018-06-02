@@ -38,25 +38,37 @@ namespace occa {
         // Get @outer and @inner
         const int kernelCount = (int) kernelSmnts.size();
         if (kernelCount == 0) {
-          occa::printError("No @kernels found");
+          occa::printError("No [@kernel] functions found");
           return false;
         }
         for (int i = 0; i < kernelCount; ++i) {
-          if (!checkKernel(*(kernelSmnts[i]))) {
+          statement_t *kernelSmnt = kernelSmnts[i];
+          if (kernelSmnt->type() != statementType::functionDecl) {
+            continue;
+          }
+          if (!checkKernel(*((functionDeclStatement*) kernelSmnt))) {
             return false;
           }
         }
         return true;
       }
 
-      bool checkKernel(statement_t &kernelSmnt) {
+      bool checkKernel(functionDeclStatement &kernelSmnt) {
+        vartype_t &returnType = kernelSmnt.function.returnType;
+        if (returnType.qualifiers.size()
+            || (*returnType.type != void_)) {
+          returnType.printError("[@kernel] functions must have a"
+                                " [void] return type");
+          return false;
+        }
+
         return (checkLoops(kernelSmnt)
                 && checkLoopOrders(kernelSmnt)
                 && checkBreakAndContinue(kernelSmnt));
       }
 
       //---[ Declaration ]--------------
-      bool checkLoops(statement_t &kernelSmnt) {
+      bool checkLoops(functionDeclStatement &kernelSmnt) {
         // Make sure @outer and @inner loops exist
         // No @outer + @inner combo in for-loops
         // Proper simple declarations
@@ -89,7 +101,7 @@ namespace occa {
         return true;
       }
 
-      bool checkForDeclarations(statement_t &kernelSmnt,
+      bool checkForDeclarations(functionDeclStatement &kernelSmnt,
                                 statementPtrVector &forSmnts,
                                 const std::string &attrName) {
         const int count = (int) forSmnts.size();
@@ -331,7 +343,7 @@ namespace occa {
         return oklAttrMatcher(smnt, "exclusive");
       }
 
-      bool checkLoopOrders(statement_t &kernelSmnt) {
+      bool checkLoopOrders(functionDeclStatement &kernelSmnt) {
         // @outer > @inner
         // Same # of @inner in each @outer
         transforms::smntTreeNode root;
@@ -515,7 +527,7 @@ namespace occa {
       //================================
 
       //---[ Skip Logic ]---------------
-      bool checkBreakAndContinue(statement_t &kernelSmnt) {
+      bool checkBreakAndContinue(functionDeclStatement &kernelSmnt) {
         // No break or continue directly inside @outer/@inner loops
         // It's ok inside regular loops inside @outer/@inner
         statementPtrVector skipStatements;

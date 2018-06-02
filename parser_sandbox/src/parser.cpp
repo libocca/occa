@@ -51,6 +51,7 @@ namespace occa {
                 .filter(unknownFilter)
                 .map(preprocessor)
                 .map(stringMerger)
+                .map(externMerger)
                 .map(newlineFilter));
 
       // Setup simple keyword -> statement peeks
@@ -97,6 +98,8 @@ namespace occa {
       statementLoaders[statementType::goto_]       = &parser_t::loadGotoStatement;
       statementLoaders[statementType::gotoLabel]   = &parser_t::loadGotoLabelStatement;
 
+      getKeywords(keywords);
+
       addAttribute<attributes::dim>();
       addAttribute<attributes::dimOrder>();
       addAttribute<attributes::tile>();
@@ -104,6 +107,9 @@ namespace occa {
 
     parser_t::~parser_t() {
       clear();
+
+      freeKeywords(keywords);
+
       nameToAttributeMap::iterator it = attributeMap.begin();
       while (it != attributeMap.end()) {
         delete it->second;
@@ -129,8 +135,9 @@ namespace occa {
       up = &root;
       upStack.clear();
 
-      freeKeywords(keywords);
       clearAttributes();
+
+      onClear();
 
       success = true;
     }
@@ -211,10 +218,6 @@ namespace occa {
 
       context.setup();
       success = !context.hasError;
-
-      if (success) {
-        getKeywords(keywords);
-      }
     }
 
     void parser_t::parseTokens() {
@@ -223,6 +226,8 @@ namespace occa {
       success = transforms::applyDimTransforms(root);
       if (!success) return;
       success = transforms::applyTileTransforms(root);
+      if (!success) return;
+      onPostParse();
     }
 
     keyword_t& parser_t::getKeyword(token_t *token) {
@@ -712,10 +717,6 @@ namespace occa {
       // Set the name in loadBaseType and look for (*)() or (^)()
       //   to stop qualifier merging
       vartype_t vartype;
-      if (!context.size()) {
-        return vartype;
-      }
-
       loadBaseType(vartype);
       if (!success ||
           !vartype.isValid()) {
@@ -756,6 +757,7 @@ namespace occa {
         if ((kType & keywordType::type) &&
             !vartype.isValid()) {
           vartype.type = &(keyword.to<typeKeyword>().type_);
+          vartype.typeToken = (identifierToken*) token->clone();
           continue;
         }
         break;
@@ -1969,6 +1971,11 @@ namespace occa {
 
       return new gotoLabelStatement(up, labelToken);
     }
+    //==================================
+
+    //---[ Customization ]--------------
+    void parser_t::onClear() {}
+    void parser_t::onPostParse() {}
     //==================================
   }
 }

@@ -59,36 +59,42 @@ namespace occa {
                                  volatile_);
 
       const int extern_       = (1L << 10);
-      const int static_       = (1L << 11);
-      const int thread_local_ = (1L << 12);
-      const int globalScope   = (extern_ |
-                                 static_ |
+      const int externC       = (1L << 11);
+      const int externCpp     = (1L << 12);
+      const int static_       = (1L << 13);
+      const int thread_local_ = (1L << 14);
+      const int globalScope   = (extern_   |
+                                 externC   |
+                                 externCpp |
+                                 static_   |
                                  thread_local_);
 
-      const int friend_       = (1L << 13);
-      const int mutable_      = (1L << 14);
+      const int friend_       = (1L << 15);
+      const int mutable_      = (1L << 16);
       const int classInfo     = (friend_ |
                                  mutable_);
 
-      const int inline_       = (1L << 15);
-      const int virtual_      = (1L << 16);
-      const int explicit_     = (1L << 17);
+      const int inline_       = (1L << 17);
+      const int virtual_      = (1L << 18);
+      const int explicit_     = (1L << 19);
       const int functionInfo  = (typeInfo |
                                  inline_  |
                                  virtual_ |
                                  explicit_);
 
-      const int builtin_      = (1L << 18);
-      const int typedef_      = (1L << 19);
-      const int class_        = (1L << 20);
-      const int enum_         = (1L << 21);
-      const int struct_       = (1L << 22);
-      const int union_        = (1L << 23);
+      const int builtin_      = (1L << 20);
+      const int typedef_      = (1L << 21);
+      const int class_        = (1L << 22);
+      const int enum_         = (1L << 23);
+      const int struct_       = (1L << 24);
+      const int union_        = (1L << 25);
       const int newType       = (typedef_ |
                                  class_   |
                                  enum_    |
                                  struct_  |
                                  union_);
+
+      const int custom        = (1L << 26);
     }
 
     //---[ Qualifier ]------------------
@@ -203,7 +209,9 @@ namespace occa {
     qualifiers_t& qualifiers_t::add(const fileOrigin &origin,
                                     const qualifier_t &qualifier) {
       if (!has(qualifier)) {
-        qualifiers.push_back(qualifierWithSource(origin, qualifier));
+        qualifiers.push_back(
+          qualifierWithSource(origin, qualifier)
+        );
       }
       return *this;
     }
@@ -212,6 +220,31 @@ namespace occa {
       if (!has(*(qualifier.qualifier))) {
         qualifiers.push_back(qualifier);
       }
+      return *this;
+    }
+
+    qualifiers_t& qualifiers_t::addFirst(const fileOrigin &origin,
+                                         const qualifier_t &qualifier) {
+      return addFirst(
+        qualifierWithSource(origin, qualifier)
+      );
+    }
+
+    qualifiers_t& qualifiers_t::addFirst(const qualifierWithSource &qualifier) {
+      if (has(*(qualifier.qualifier))) {
+        return *this;
+      }
+      const int count = (int) qualifiers.size();
+      if (!count) {
+        qualifiers.push_back(qualifier);
+        return *this;
+      }
+
+      qualifiers.push_back(qualifiers[count - 1]);
+      for (int i = 0; i < (count - 1); ++i) {
+        qualifiers[i + 1] = qualifiers[i];
+      }
+      qualifiers[0] = qualifier;
       return *this;
     }
 

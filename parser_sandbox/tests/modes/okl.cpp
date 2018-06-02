@@ -32,6 +32,7 @@
   OCCA_ASSERT_FALSE(okl::checkKernels(parser.root))
 
 
+void testKernel();
 void testLoops();
 void testTypes();
 void testLoopSkips();
@@ -44,11 +45,16 @@ int main(const int argc, const char **argv) {
   parser.addAttribute<attributes::shared>();
   parser.addAttribute<attributes::exclusive>();
 
+  testKernel();
   testLoops();
   testTypes();
   testLoopSkips();
 
   return 0;
+}
+
+void testKernel() {
+  parseBadOKLSource("@kernel int foo() {}");
 }
 
 //---[ Loop ]---------------------------
