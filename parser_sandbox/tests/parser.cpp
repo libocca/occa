@@ -76,8 +76,9 @@ void testPeek() {
 
   testStatementPeek("#pragma",
                     statementType::pragma);
-  testStatementPeek("#pragma occa test",
-                    statementType::pragma);
+  testStatementPeek("#pragma occa @dim(5)\n"
+                    "int *x;",
+                    statementType::declaration);
 
   testStatementPeek("1 + 2;",
                     statementType::expression);
@@ -988,9 +989,9 @@ void testPragmaLoading() {
   OCCA_ASSERT_EQUAL("",
                     pragma_.token.value);
 
-  setStatement("#pragma occa test",
+  setStatement("#pragma omp parallel for",
                statementType::pragma);
-  OCCA_ASSERT_EQUAL("occa test",
+  OCCA_ASSERT_EQUAL("omp parallel for",
                     pragma_.token.value);
 
 #undef pragma_
