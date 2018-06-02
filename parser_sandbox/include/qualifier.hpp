@@ -31,60 +31,69 @@
 namespace occa {
   namespace lang {
     namespace qualifierType {
-      extern const int none;
+      extern const udim_t none;
 
-      extern const int auto_;
-      extern const int const_;
-      extern const int constexpr_;
-      extern const int restrict_;
-      extern const int signed_;
-      extern const int unsigned_;
-      extern const int volatile_;
-      extern const int register_;
-      extern const int long_;
-      extern const int longlong_;
-      extern const int typeInfo;
+      extern const udim_t auto_;
+      extern const udim_t const_;
+      extern const udim_t constexpr_;
+      extern const udim_t restrict_;
+      extern const udim_t signed_;
+      extern const udim_t unsigned_;
+      extern const udim_t volatile_;
+      extern const udim_t register_;
+      extern const udim_t long_;
+      extern const udim_t longlong_;
+      extern const udim_t typeInfo;
 
-      extern const int forPointers;
+      extern const udim_t forPointers_;
+      extern const udim_t forPointers;
 
-      extern const int extern_;
-      extern const int externC;
-      extern const int externCpp;
-      extern const int static_;
-      extern const int thread_local_;
-      extern const int globalScope;
+      extern const udim_t extern_;
+      extern const udim_t externC;
+      extern const udim_t externCpp;
+      extern const udim_t static_;
+      extern const udim_t thread_local_;
 
-      extern const int friend_;
-      extern const int mutable_;
-      extern const int classInfo;
+      extern const udim_t globalScope_;
+      extern const udim_t globalScope;
 
-      extern const int inline_;
-      extern const int virtual_;
-      extern const int explicit_;
-      extern const int functionInfo;
+      extern const udim_t friend_;
+      extern const udim_t mutable_;
 
-      extern const int builtin_;
-      extern const int typedef_;
-      extern const int class_;
-      extern const int enum_;
-      extern const int struct_;
-      extern const int union_;
-      extern const int newType;
+      extern const udim_t classInfo_;
+      extern const udim_t classInfo;
 
-      extern const int custom;
+      extern const udim_t inline_;
+      extern const udim_t virtual_;
+      extern const udim_t explicit_;
+
+      extern const udim_t functionInfo_;
+      extern const udim_t functionInfo;
+
+      extern const udim_t builtin_;
+      extern const udim_t typedef_;
+      extern const udim_t class_;
+      extern const udim_t enum_;
+      extern const udim_t struct_;
+      extern const udim_t union_;
+
+      extern const udim_t newType_;
+      extern const udim_t newType;
+
+      extern const udim_t custom;
     }
 
     //---[ Qualifier ]------------------
     class qualifier_t {
     public:
       std::string name;
-      const int qtype;
+      const udim_t qtype;
 
       qualifier_t(const std::string &name_,
-                  const int qtype_);
+                  const udim_t qtype_);
       ~qualifier_t();
 
-      int type() const;
+      udim_t type() const;
     };
 
     printer& operator << (printer &pout,

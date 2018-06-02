@@ -30,8 +30,11 @@ void testKernel();
 void testExclusives();
 
 int main(const int argc, const char **argv) {
+  parser.settings["okl/validate"] = false;
   testPreprocessor();
   testKernel();
+
+  parser.settings["okl/validate"] = true;
   testExclusives();
 
   return 0;
@@ -39,13 +42,19 @@ int main(const int argc, const char **argv) {
 
 //---[ Preprocessor ]-------------------
 void testPreprocessor() {
+  // #define restrict __restrict__
   statement_t *statement;
 
-  // #define restrict __restrict__
-  setStatement("const restrict int a;",
-               statementType::declaration);
-  OCCA_ASSERT_EQUAL("__restrict__",
-                    parser.restrict_.name);
+  parseAndPrintSource("@kernel void foo(const int * restrict a) {}");
+  setStatement("@kernel void foo(const int * restrict a) {}",
+               statementType::functionDecl);
+
+  parser.settings["serial/restrict"] = false;
+  parseAndPrintSource("@kernel void foo(const int * restrict a) {}");
+  setStatement("@kernel void foo(const int * restrict a) {}",
+               statementType::functionDecl);
+
+  parser.settings["serial/restrict"] = true;
 }
 //======================================
 
@@ -119,7 +128,7 @@ void testExclusives() {
   //     - vec.reserve(loopIterations)
   //     - Add iterator index to inner-most @inner loop
   parseAndPrintSource(
-    "@kernel void foo() {\n"
+    "@kernel void foo(int * restrict arg) {\n"
     "  for (int o1 = 0; o1 < O1; ++o1; @outer) {\n"
     "    for (int o0 = 0; o0 < O0; ++o0; @outer) {\n"
     "      @exclusive int excl;\n"

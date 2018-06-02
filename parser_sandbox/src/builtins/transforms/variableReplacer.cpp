@@ -28,40 +28,14 @@ namespace occa {
   namespace lang {
     namespace transforms {
       variableReplacer_t::variableReplacer_t() :
+        statementExprTransform(exprNodeType::variable),
         from(NULL),
-        to(NULL) {
-        validStatementTypes = (statementType::declaration |
-                               statementType::expression);
-        validExprNodeTypes = exprNodeType::variable;
-      }
+        to(NULL) {}
 
       void variableReplacer_t::set(variable_t &from_,
                                    variable_t &to_) {
         from = &from_;
         to   = &to_;
-      }
-
-      statement_t* variableReplacer_t::transformStatement(statement_t &smnt) {
-        // Expression
-        if (smnt.type() & statementType::expression) {
-          if (applyToExpr(((expressionStatement&) smnt).expr)) {
-            return &smnt;
-          }
-          return NULL;
-        }
-        // Declaration
-        declarationStatement &declSmnt = (declarationStatement&) smnt;
-        const int declCount = (int) declSmnt.declarations.size();
-        for (int i = 0; i < declCount; ++i) {
-          variableDeclaration &decl = declSmnt.declarations[i];
-          if (decl.variable == from) {
-            decl.variable = to;
-          }
-          if (!applyToExpr(decl.value)) {
-            return NULL;
-          }
-        }
-        return &smnt;
       }
 
       exprNode* variableReplacer_t::transformExprNode(exprNode &node) {
@@ -73,14 +47,6 @@ namespace occa {
           return &node;
         }
         return new variableNode(node.token, *to);
-      }
-
-      bool variableReplacer_t::applyToExpr(exprNode *&expr) {
-        if (expr == NULL) {
-          return true;
-        }
-        expr = exprTransform::apply(*expr);
-        return expr;
       }
     }
   }

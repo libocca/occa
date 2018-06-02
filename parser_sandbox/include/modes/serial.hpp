@@ -34,18 +34,15 @@ namespace occa {
     namespace okl {
       class serialParser : public parser_t {
       public:
-        bool useRestrict;
         qualifier_t restrict_;
 
         static const std::string exclusiveIndexName;
 
         serialParser();
 
-        void setupPreprocessor();
-
         virtual void onClear();
-
-        virtual void onPostParse();
+        virtual void beforePreprocessing();
+        virtual void afterParsing();
 
         void setupKernels();
 
@@ -67,7 +64,9 @@ namespace occa {
                                statementPtrVector &loopSmnts);
 
 
-        void setupExclusiveExpressions();
+        static exprNode* updateExclusiveExprNodes(statement_t &smnt,
+                                                  exprNode &expr,
+                                                  const bool isBeingDeclared);
       };
     }
   }

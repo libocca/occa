@@ -381,10 +381,21 @@ namespace occa {
       }
 
       bool checkLoopOrder(transforms::smntTreeNode &root) {
-        // Keep track of @outer/@inner stack and report errors
-        int outerCount = 0;
-        int innerCount = 0;
-        return checkLoopType(root, outerCount, innerCount);
+        const int loops = (int) root.size();
+        for (int i = 0; i < loops; ++i) {
+          transforms::smntTreeNode &loopNode = *(root[i]);
+          forStatement &forSmnt = *((forStatement*) loopNode.smnt);
+          const bool isOuter = forSmnt.hasAttribute("outer");
+          // Keep track of @outer/@inner stack and report errors
+          int outerCount = isOuter;
+          int innerCount = !isOuter;
+          if (!checkLoopType(loopNode,
+                             outerCount,
+                             innerCount)) {
+            return false;
+          }
+        }
+        return true;
       }
 
       bool checkLoopType(transforms::smntTreeNode &node,

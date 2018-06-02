@@ -20,6 +20,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  */
 #include "modes/serial.hpp"
+#include "modes/okl.hpp"
 #include "builtins/types.hpp"
 #include "builtins/attributes.hpp"
 
@@ -29,46 +30,68 @@ namespace occa {
       const std::string serialParser::exclusiveIndexName = "_occa_exclusive_index";
 
       serialParser::serialParser() :
-        useRestrict(true),
-        restrict_("__restrict__", qualifierType::custom) {
+        restrict_("__restrict__", (qualifierType::forPointers_ |
+                                   qualifierType::custom)) {
         addAttribute<attributes::kernel>();
         addAttribute<attributes::outer>();
         addAttribute<attributes::inner>();
         addAttribute<attributes::shared>();
         addAttribute<attributes::exclusive>();
+      }
 
+      void serialParser::onClear() {
+        macroMap::iterator mIt = preprocessor.compilerMacros.find("restrict");
+        if (mIt != preprocessor.compilerMacros.end()) {
+          preprocessor.compilerMacros.erase(mIt);
+        }
+      }
+
+      void serialParser::beforePreprocessing() {
+        std::string oldRestrict = restrict_.name;
         if (settings.has("serial/restrict")) {
           occa::json r = settings["serial/restrict"];
           if (r.isString()) {
             restrict_.name = r.string();
-          } else if (r.isBoolean()
-                     && !r.boolean()) {
-            useRestrict = false;
+          } else if (r.isBoolean()) {
+            if (r.boolean()) {
+              restrict_.name = "__restrict__";
+            } else {
+              restrict_.name = "";
+            }
           }
         }
-        if (useRestrict) {
+
+        keywordMap::iterator it = keywords.find(oldRestrict);
+        bool hasKeyword = (it != keywords.end());
+        if (hasKeyword
+            && (oldRestrict != restrict_.name)) {
+          delete it->second;
+          keywords.erase(it);
+          hasKeyword = false;
+        }
+        if (!hasKeyword
+            && restrict_.name.size()) {
           addKeyword(keywords,
                      new qualifierKeyword(restrict_));
         }
 
-        setupPreprocessor();
-      }
-
-      void serialParser::setupPreprocessor() {
-        if (useRestrict) {
-          preprocessor.compilerMacros["restrict"] = (
-            macro_t::defineBuiltin(preprocessor,
-                                   "restrict",
-                                   restrict_.name)
-          );
+        macroMap::iterator mIt = preprocessor.compilerMacros.find("restrict");
+        if (mIt != preprocessor.compilerMacros.end()) {
+          delete mIt->second;
+          preprocessor.compilerMacros.erase(mIt);
         }
+        preprocessor.compilerMacros["restrict"] = (
+          macro_t::defineBuiltin(preprocessor,
+                                 "restrict",
+                                 restrict_.name)
+        );
       }
 
-      void serialParser::onClear() {
-        setupPreprocessor();
-      }
-
-      void serialParser::onPostParse() {
+      void serialParser::afterParsing() {
+        if (!success) return;
+        if (settings.get("okl/validate", true)) {
+          checkKernels(root);
+        }
         if (!success) return;
         setupKernels();
         if (!success) return;
@@ -115,8 +138,9 @@ namespace occa {
                type.referenceToken)) {
             continue;
           }
-          type.referenceToken = new operatorToken(arg.source->origin,
-                                                  op::bitAnd);
+          operatorToken opToken(arg.source->origin,
+                                op::bitAnd);
+          type.setReferenceToken(&opToken);
         }
       }
 
@@ -132,6 +156,9 @@ namespace occa {
         if (!success) return;
         setupExclusiveIndices();
         if (!success) return;
+        transformExprNodes(exprNodeType::variable,
+                           root,
+                           updateExclusiveExprNodes);
       }
 
       void serialParser::setupExclusiveDeclarations(statementExprMap &exprMap) {
@@ -287,7 +314,35 @@ namespace occa {
         }
       }
 
-      void serialParser::setupExclusiveExpressions() {
+      exprNode* serialParser::updateExclusiveExprNodes(statement_t &smnt,
+                                                       exprNode &expr,
+                                                       const bool isBeingDeclared) {
+        variable_t &var = ((variableNode&) expr).value;
+        if (!var.hasAttribute("exclusive")) {
+          return &expr;
+        }
+
+        if (isBeingDeclared) {
+          operatorToken startToken(var.source->origin,
+                                   op::bracketStart);
+          operatorToken endToken(var.source->origin,
+                                 op::bracketEnd);
+          var.vartype += array_t(startToken,
+                                 endToken,
+                                 new primitiveNode(var.source,
+                                                   256));
+          return &expr;
+        }
+
+        keyword_t &keyword = smnt.getScopeKeyword(exclusiveIndexName);
+        variable_t &indexVar = ((variableKeyword&) keyword).variable;
+
+        variableNode indexVarNode(var.source,
+                                  indexVar);
+
+        return new subscriptNode(var.source,
+                                 expr,
+                                 indexVarNode);
       }
     }
   }

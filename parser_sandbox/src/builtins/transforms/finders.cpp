@@ -121,6 +121,58 @@ namespace occa {
       //================================
 
       //---[ Statement + Expr ]---------
+      statementExprTransform::statementExprTransform(const int validExprNodeTypes_,
+                                                     smntExprTransform transform_) :
+        transform(transform_) {
+        validStatementTypes = (statementType::declaration |
+                               statementType::expression);
+        validExprNodeTypes = validExprNodeTypes_;
+      }
+
+      statement_t* statementExprTransform::transformStatement(statement_t &smnt) {
+        currentSmnt = &smnt;
+        nextExprIsBeingDeclared = false;
+
+        // Expression
+        if (smnt.type() & statementType::expression) {
+          expressionStatement &exprSmnt = (expressionStatement&) smnt;
+          exprTransform::apply(*(exprSmnt.expr));
+          return &smnt;
+        }
+
+        // Declaration
+        declarationStatement &declSmnt = (declarationStatement&) smnt;
+        const int declCount = (int) declSmnt.declarations.size();
+        for (int di = 0; di < declCount; ++di) {
+          variableDeclaration &decl = declSmnt.declarations[di];
+          variableNode *varNode = new variableNode(decl.variable->source,
+                                                   *decl.variable);
+          nextExprIsBeingDeclared = true;
+          exprNode *newNode = exprTransform::apply(*varNode);
+          nextExprIsBeingDeclared = false;
+          // Update variable
+          if (newNode->type() & exprNodeType::variable) {
+            decl.variable = &(((variableNode*) newNode)->value);
+          }
+          delete newNode;
+          // Update value exprNodes
+          if (decl.value) {
+            decl.value = exprTransform::apply(*(decl.value));
+          }
+        }
+
+        return &smnt;
+      }
+
+      exprNode* statementExprTransform::transformExprNode(exprNode &node) {
+        if (transform) {
+          return transform(*currentSmnt,
+                           node,
+                           nextExprIsBeingDeclared);
+        }
+        return &node;
+      }
+
       statementExprFinder::statementExprFinder(const int validExprNodeTypes_,
                                                exprNodeMatcher matcher_) :
         statementTypeFinder(statementType::declaration |
@@ -302,6 +354,14 @@ namespace occa {
       //================================
     }
     //---[ Helper Methods ]-------------
+    void transformExprNodes(const int validExprNodeTypes,
+                            statement_t &smnt,
+                            smntExprTransform transform) {
+      transforms::statementExprTransform seTransform(validExprNodeTypes,
+                                                     transform);
+      seTransform.statementTransform::apply(smnt);
+    }
+
     void findStatements(const int validStatementTypes,
                         statement_t &smnt,
                         statementMatcher matcher,

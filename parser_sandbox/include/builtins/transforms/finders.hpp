@@ -40,6 +40,9 @@ namespace occa {
 
     typedef bool (*statementMatcher)(statement_t &smnt);
     typedef bool (*exprNodeMatcher)(exprNode &expr);
+    typedef exprNode* (*smntExprTransform)(statement_t &smnt,
+                                           exprNode &expr,
+                                           const bool isBeingDeclared);
 
     namespace transforms {
       //---[ Statement ]----------------
@@ -133,6 +136,21 @@ namespace occa {
       //================================
 
       //---[ Statement + Expr ]---------
+      class statementExprTransform : public statementTransform,
+                                     public exprTransform {
+      public:
+        smntExprTransform transform;
+        statement_t *currentSmnt;
+        bool nextExprIsBeingDeclared;
+
+        statementExprTransform(const int validExprNodeTypes_,
+                               smntExprTransform transform_ = NULL);
+
+        virtual statement_t* transformStatement(statement_t &smnt);
+
+        virtual exprNode* transformExprNode(exprNode &node);
+      };
+
       class statementExprFinder : public statementTypeFinder,
                                   public exprNodeMatcherFinder {
       public:
@@ -204,6 +222,10 @@ namespace occa {
     }
 
     //---[ Helper Methods ]-------------
+    void transformExprNodes(const int validExprNodeTypes,
+                            statement_t &smnt,
+                            smntExprTransform transform);
+
     void findStatements(const int validStatementTypes,
                         statement_t &smnt,
                         statementMatcher matcher,

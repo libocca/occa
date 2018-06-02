@@ -31,7 +31,7 @@ namespace occa {
       public:
         openmpParser();
 
-        virtual void onPostParse();
+        virtual void afterParsing();
 
         void findOuterMostLoops(statementPtrVector &outerMostSmnts);
       };

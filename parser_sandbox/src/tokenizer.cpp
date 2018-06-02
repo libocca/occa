@@ -612,7 +612,7 @@ namespace occa {
       skipWhitespace();
 
       // Check if file finished
-      bool finishedSource = false;
+      bool finishedSource = (*fp.start == '\0');
       while ((*fp.start == '\0') &&
              origin.up) {
         popSource();

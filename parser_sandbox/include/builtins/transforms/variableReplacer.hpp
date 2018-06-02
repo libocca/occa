@@ -24,24 +24,22 @@
 #define OCCA_LANG_BUILTINS_TRANSFORMS_VARIABLEREPLACE_HEADER
 
 #include "exprTransform.hpp"
-#include "statementTransform.hpp"
+#include "builtins/transforms/finders.hpp"
 
 namespace occa {
   namespace lang {
     namespace transforms {
-      class variableReplacer_t : public statementTransform,
-                                 public exprTransform {
+      class variableReplacer_t : public statementExprTransform {
       private:
         variable_t *from, *to;
 
       public:
         variableReplacer_t();
 
+        virtual exprNode* transformExprNode(exprNode &node);
+
         void set(variable_t &from_,
                  variable_t &to_);
-
-        virtual statement_t* transformStatement(statement_t &smnt);
-        virtual exprNode* transformExprNode(exprNode &node);
 
         bool applyToExpr(exprNode *&expr);
       };

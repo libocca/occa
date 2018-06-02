@@ -204,6 +204,8 @@ namespace occa {
     }
 
     void parser_t::loadTokens() {
+      beforePreprocessing();
+
       token_t *token;
       while (!stream.isEmpty()) {
         stream >> token;
@@ -221,13 +223,15 @@ namespace occa {
     }
 
     void parser_t::parseTokens() {
+      beforeParsing();
+      if (!success) return;
       loadAllStatements();
       if (!success) return;
       success = transforms::applyDimTransforms(root);
       if (!success) return;
       success = transforms::applyTileTransforms(root);
       if (!success) return;
-      onPostParse();
+      afterParsing();
     }
 
     keyword_t& parser_t::getKeyword(token_t *token) {
@@ -1980,7 +1984,9 @@ namespace occa {
 
     //---[ Customization ]--------------
     void parser_t::onClear() {}
-    void parser_t::onPostParse() {}
+    void parser_t::beforePreprocessing() {}
+    void parser_t::beforeParsing() {}
+    void parser_t::afterParsing() {}
     //==================================
   }
 }

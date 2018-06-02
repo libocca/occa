@@ -33,79 +33,96 @@
 namespace occa {
   namespace lang {
     namespace qualifierType {
-      const int none          = 0;
+      const udim_t none          = (1L << 0);
 
-      const int auto_         = (1L << 0);
-      const int const_        = (1L << 1);
-      const int constexpr_    = (1L << 2);
-      const int restrict_     = (1L << 3);
-      const int signed_       = (1L << 4);
-      const int unsigned_     = (1L << 5);
-      const int volatile_     = (1L << 6);
-      const int long_         = (1L << 7);
-      const int longlong_     = (1L << 8);
-      const int register_     = (1L << 9);
-      const int typeInfo      = (const_     |
-                                 constexpr_ |
-                                 signed_    |
-                                 unsigned_  |
-                                 volatile_  |
-                                 long_      |
-                                 longlong_  |
-                                 register_);
+      const udim_t auto_         = (1L << 1);
+      const udim_t const_        = (1L << 2);
+      const udim_t constexpr_    = (1L << 3);
+      const udim_t restrict_     = (1L << 4);
+      const udim_t signed_       = (1L << 5);
+      const udim_t unsigned_     = (1L << 6);
+      const udim_t volatile_     = (1L << 7);
+      const udim_t long_         = (1L << 8);
+      const udim_t longlong_     = (1L << 9);
+      const udim_t register_     = (1L << 10);
 
-      const int forPointers   = (const_    |
-                                 restrict_ |
-                                 volatile_);
+      const udim_t typeInfo_     = (1L << 11);
+      const udim_t typeInfo      = (const_     |
+                                    constexpr_ |
+                                    signed_    |
+                                    unsigned_  |
+                                    volatile_  |
+                                    long_      |
+                                    longlong_  |
+                                    register_  |
+                                    typeInfo_);
 
-      const int extern_       = (1L << 10);
-      const int externC       = (1L << 11);
-      const int externCpp     = (1L << 12);
-      const int static_       = (1L << 13);
-      const int thread_local_ = (1L << 14);
-      const int globalScope   = (extern_   |
-                                 externC   |
-                                 externCpp |
-                                 static_   |
-                                 thread_local_);
+      const udim_t forPointers_  = (1L << 12);
+      const udim_t forPointers   = (const_    |
+                                    restrict_ |
+                                    volatile_ |
+                                    forPointers_);
 
-      const int friend_       = (1L << 15);
-      const int mutable_      = (1L << 16);
-      const int classInfo     = (friend_ |
-                                 mutable_);
+      const udim_t extern_       = (1L << 13);
+      const udim_t externC       = (1L << 14);
+      const udim_t externCpp     = (1L << 15);
+      const udim_t static_       = (1L << 16);
+      const udim_t thread_local_ = (1L << 17);
 
-      const int inline_       = (1L << 17);
-      const int virtual_      = (1L << 18);
-      const int explicit_     = (1L << 19);
-      const int functionInfo  = (typeInfo |
-                                 inline_  |
-                                 virtual_ |
-                                 explicit_);
+      const udim_t globalScope_  = (1L << 18);
+      const udim_t globalScope   = (extern_       |
+                                    externC       |
+                                    externCpp     |
+                                    static_       |
+                                    thread_local_ |
+                                    globalScope_);
 
-      const int builtin_      = (1L << 20);
-      const int typedef_      = (1L << 21);
-      const int class_        = (1L << 22);
-      const int enum_         = (1L << 23);
-      const int struct_       = (1L << 24);
-      const int union_        = (1L << 25);
-      const int newType       = (typedef_ |
-                                 class_   |
-                                 enum_    |
-                                 struct_  |
-                                 union_);
+      const udim_t friend_       = (1L << 19);
+      const udim_t mutable_      = (1L << 20);
 
-      const int custom        = (1L << 26);
+      const udim_t classInfo_    = (1L << 21);
+      const udim_t classInfo     = (friend_  |
+                                    mutable_ |
+                                    classInfo_);
+
+      const udim_t inline_       = (1L << 22);
+      const udim_t virtual_      = (1L << 23);
+      const udim_t explicit_     = (1L << 24);
+
+      const udim_t functionInfo_ = (1L << 25);
+      const udim_t functionInfo  = (typeInfo  |
+                                    inline_   |
+                                    virtual_  |
+                                    explicit_ |
+                                    functionInfo_);
+
+      const udim_t builtin_      = (1L << 26);
+      const udim_t typedef_      = (1L << 27);
+      const udim_t class_        = (1L << 28);
+      const udim_t enum_         = (1L << 29);
+      const udim_t struct_       = (1L << 30);
+      const udim_t union_        = (1L << 31);
+
+      const udim_t newType_      = (1L << 32);
+      const udim_t newType       = (typedef_ |
+                                    class_   |
+                                    enum_    |
+                                    struct_  |
+                                    union_   |
+                                    newType_);
+
+      const udim_t custom        = (1L << 33);
     }
 
     //---[ Qualifier ]------------------
     qualifier_t::qualifier_t(const std::string &name_,
-                             const int qtype_) :
+                             const udim_t qtype_) :
       name(name_),
       qtype(qtype_) {}
 
     qualifier_t::~qualifier_t() {}
 
-    int qualifier_t::type() const {
+    udim_t qualifier_t::type() const {
       return qtype;
     }
 

@@ -252,7 +252,9 @@ namespace occa {
       void addAttribute();
 
       virtual void onClear();
-      virtual void onPostParse();
+      virtual void beforePreprocessing();
+      virtual void beforeParsing();
+      virtual void afterParsing();
       //================================
     };
   }

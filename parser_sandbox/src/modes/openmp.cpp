@@ -27,8 +27,8 @@ namespace occa {
     namespace okl {
       openmpParser::openmpParser() {}
 
-      void openmpParser::onPostParse() {
-        serialParser::onPostParse();
+      void openmpParser::afterParsing() {
+        serialParser::afterParsing();
 
         statementPtrVector outerSmnts;
         findOuterMostLoops(outerSmnts);
