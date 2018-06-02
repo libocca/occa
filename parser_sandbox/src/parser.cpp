@@ -1457,7 +1457,8 @@ namespace occa {
         return;
       }
 
-      if (smntCount) {
+      if (smntCount &&
+          (smntCount == expectedCount)) {
         statement_t *lastStatement = statements[smntCount - 1];
         const int lastType = lastStatement->type();
         if (lastType & statementType::expression) {
