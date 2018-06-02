@@ -917,12 +917,31 @@ namespace occa {
       getExpandedLineTokens(lineTokens);
       removeNewline(lineTokens);
 
+      const int tokenCount = (int) lineTokens.size();
+      if (tokenCount
+          && (lineTokens[0]->type() & tokenType::identifier)
+          && (((identifierToken*) lineTokens[0])->value == "occa")) {
+        processOccaPragma(directive, lineTokens);
+        return;
+      }
+
       const std::string value = stringifyTokens(lineTokens, true);
 
       pushOutput(new pragmaToken(directive.origin,
                                  value));
 
       freeTokenVector(lineTokens);
+    }
+
+    void preprocessor_t::processOccaPragma(identifierToken &directive,
+                                           tokenVector &lineTokens) {
+      const int tokenCount = (int) lineTokens.size();
+      // Insert tokens backwards into input cache, ignoring [occa] token
+      for (int i = (tokenCount - 1); i >= 1; --i) {
+        pushInput(lineTokens[i]);
+      }
+      // Remove the [occa] token
+      delete lineTokens[0];
     }
 
     void preprocessor_t::processLine(identifierToken &directive) {

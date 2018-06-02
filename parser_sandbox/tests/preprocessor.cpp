@@ -36,6 +36,7 @@ void testErrorDefines();
 void testSpecialMacros();
 void testInclude();
 void testPragma();
+void testOccaPragma();
 
 using namespace occa::lang;
 
@@ -97,6 +98,7 @@ int main(const int argc, const char **argv) {
   testSpecialMacros();
   testInclude();
   testPragma();
+  testOccaPragma();
 
   delete token;
 }
@@ -177,6 +179,8 @@ void testMacroDefines() {
   getToken();
   OCCA_ASSERT_EQUAL("foo2",
                     identifier);
+
+#undef identifier
 }
 
 void testCppStandardTests() {
@@ -615,5 +619,57 @@ void testPragma() {
 
   OCCA_ASSERT_EQUAL("foo 1 2 3",
                     token->to<pragmaToken>().value);
+}
+
+void testOccaPragma() {
+#define checkOp(op_)                            \
+  getToken();                                   \
+  OCCA_ASSERT_EQUAL_BINARY(tokenType::op,       \
+                           token->type());      \
+  OCCA_ASSERT_EQUAL(op_,                        \
+                    token->getOpType())
+
+#define checkIdentifier(identifier_)                    \
+  getToken();                                           \
+  OCCA_ASSERT_EQUAL_BINARY(tokenType::identifier,       \
+                           token->type());              \
+  OCCA_ASSERT_EQUAL(identifier_,                        \
+                    ((identifierToken*) token)->value)
+
+#define checkPrimitive(primitive_)                          \
+  getToken();                                               \
+  OCCA_ASSERT_EQUAL_BINARY(tokenType::primitive,            \
+                           token->type());                  \
+  OCCA_ASSERT_EQUAL(primitive_,                             \
+                    (int) ((primitiveToken*) token)->value)
+
+
+  setStream("#pragma occa @tile(16, @outer, @inner)");
+  // @
+  checkOp(operatorType::attribute);
+  // tile
+  checkIdentifier("tile");
+  // (
+  checkOp(operatorType::parenthesesStart);
+  // 16
+  checkPrimitive(16)
+  // ,
+  checkOp(operatorType::comma);
+  // @
+  checkOp(operatorType::attribute);
+  // outer
+  checkIdentifier("outer");
+  // ,
+  checkOp(operatorType::comma);
+  // @
+  checkOp(operatorType::attribute);
+  // inner
+  checkIdentifier("inner");
+  // )
+  checkOp(operatorType::parenthesesEnd);
+
+#undef checkOp
+#undef checkIdentifier
+#undef checkPrimitive
 }
 //======================================
