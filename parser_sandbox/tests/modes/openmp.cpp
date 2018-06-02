@@ -19,17 +19,16 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  */
+
+#define OCCA_TEST_PARSER_TYPE okl::openmpParser
+
+#include "modes/openmp.hpp"
 #include "../parserUtils.hpp"
 
 void testPragma();
 
 int main(const int argc, const char **argv) {
   parser.addAttribute<dummy>();
-  parser.addAttribute<attributes::kernel>();
-  parser.addAttribute<attributes::outer>();
-  parser.addAttribute<attributes::inner>();
-  parser.addAttribute<attributes::shared>();
-  parser.addAttribute<attributes::exclusive>();
 
   testPragma();
 
@@ -39,5 +38,21 @@ int main(const int argc, const char **argv) {
 //---[ Pragma ]-------------------------
 void testPragma() {
   // @outer -> #pragma omp
+  parseSource(
+    "@kernel void foo() {\n"
+    "  for (;;; @outer) {}\n"
+    "}"
+  );
+
+  OCCA_ASSERT_EQUAL(1,
+                    parser.root.size());
+
+  functionDeclStatement &foo = parser.root[0]->to<functionDeclStatement>();
+  OCCA_ASSERT_EQUAL(2,
+                    foo.size());
+
+  pragmaStatement &ompPragma = foo[0]->to<pragmaStatement>();
+  OCCA_ASSERT_EQUAL("omp parallel for",
+                    ompPragma.value());
 }
 //======================================

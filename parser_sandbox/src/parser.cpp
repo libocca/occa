@@ -1452,10 +1452,15 @@ namespace occa {
         statements.clear();
         return;
       }
+
       if (smntCount) {
         statement_t *lastStatement = statements[smntCount - 1];
-        if (lastStatement->type() & statementType::expression) {
+        const int lastType = lastStatement->type();
+        if (lastType & statementType::expression) {
           lastStatement->to<expressionStatement>().hasSemicolon = false;
+        }
+        else if (lastType & statementType::empty) {
+          lastStatement->to<emptyStatement>().hasSemicolon = false;
         }
       }
     }
@@ -1619,7 +1624,7 @@ namespace occa {
       // Last statement is optional
       if (count == 2) {
         ++count;
-        statements.push_back(new emptyStatement(up, parenEnd));
+        statements.push_back(new emptyStatement(up, parenEnd, false));
       }
       if (count < 3) {
         std::string message;

@@ -117,6 +117,8 @@ namespace occa {
       void addAttribute(const attributeToken_t &attribute);
       bool hasAttribute(const std::string &attr) const;
 
+      int childIndex() const;
+
       virtual void print(printer &pout) const = 0;
 
       std::string toString() const;
@@ -134,9 +136,11 @@ namespace occa {
     class emptyStatement : public statement_t {
     public:
       token_t *source;
+      bool hasSemicolon;
 
       emptyStatement(blockStatement *up_,
-                     token_t *source_);
+                     token_t *source_,
+                     const bool hasSemicolon_ = true);
 
       ~emptyStatement();
 
@@ -171,9 +175,22 @@ namespace occa {
       statement_t* operator [] (const int index);
 
       int size() const;
+
       void add(statement_t &child);
+
+      bool add(statement_t &child,
+               const int index);
+
+      bool addBefore(statement_t &child,
+                     statement_t &newChild);
+
+      bool addAfter(statement_t &child,
+                    statement_t &newChild);
+
       void set(statement_t &child);
+
       void swap(blockStatement &other);
+
       void clear();
 
       virtual void print(printer &pout) const;

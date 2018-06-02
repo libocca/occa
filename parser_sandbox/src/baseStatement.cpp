@@ -112,6 +112,21 @@ namespace occa {
       return toString();
     }
 
+    int statement_t::childIndex() const {
+      if (!up ||
+          !up->is<blockStatement>()) {
+        return -1;
+      }
+      blockStatement &upBlock = *((blockStatement*) up);
+      const int childrenCount = (int) upBlock.children.size();
+      for (int i = 0; i < childrenCount; ++i) {
+        if (upBlock.children[i] == this) {
+          return i;
+        }
+      }
+      return -1;
+    }
+
     void statement_t::print() const {
       std::cout << toString();
     }
@@ -124,9 +139,11 @@ namespace occa {
 
     //---[ Empty ]------------------------
     emptyStatement::emptyStatement(blockStatement *up_,
-                                   token_t *source_) :
+                                   token_t *source_,
+                                   const bool hasSemicolon_) :
       statement_t(up_),
-      source(token_t::clone(source_)) {}
+      source(token_t::clone(source_)),
+      hasSemicolon(hasSemicolon_) {}
 
     emptyStatement::~emptyStatement() {
       delete source;
@@ -142,7 +159,9 @@ namespace occa {
     }
 
     void emptyStatement::print(printer &pout) const {
-      pout << ';';
+      if (hasSemicolon) {
+        pout << ';';
+      }
     }
 
     void emptyStatement::printWarning(const std::string &message) const {
@@ -216,6 +235,48 @@ namespace occa {
     void blockStatement::add(statement_t &child) {
       children.push_back(&child);
       child.up = this;
+    }
+
+    bool blockStatement::add(statement_t &child,
+                             const int index) {
+      const int count = (int) children.size();
+      if ((index < 0) || (count <= index)) {
+        child.printError("Unable to add to parent with given index ["
+                         + occa::toString(index) + "]");
+        return false;
+      }
+      children.insert(children.begin() + index,
+                      &child);
+      child.up = this;
+      return true;
+    }
+
+    bool blockStatement::addBefore(statement_t &child,
+                                   statement_t &newChild) {
+      const int index = child.childIndex();
+      if (index < 0) {
+        child.printError("Not a child statement");
+        printError("Expected parent of child statement");
+        return false;
+      }
+      children.insert(children.begin() + index,
+                      &newChild);
+      newChild.up = this;
+      return true;
+    }
+
+    bool blockStatement::addAfter(statement_t &child,
+                                  statement_t &newChild) {
+      const int index = child.childIndex();
+      if (index < 0) {
+        child.printError("Not a child statement");
+        printError("Expected parent of child statement");
+        return false;
+      }
+      children.insert(children.begin() + index + 1,
+                      &newChild);
+      newChild.up = this;
+      return true;
     }
 
     void blockStatement::set(statement_t &child) {

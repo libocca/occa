@@ -52,6 +52,9 @@ namespace occa {
       virtual statement_t& clone_() const;
       virtual int type() const;
 
+      std::string& value();
+      const std::string& value() const;
+
       virtual void print(printer &pout) const;
 
       virtual void printWarning(const std::string &message) const;

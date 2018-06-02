@@ -20,14 +20,67 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  */
 #include "modes/openmp.hpp"
+#include "builtins/transforms/finders.hpp"
 
 namespace occa {
   namespace lang {
-    // void openmpBackend::backendTransform(statement_t &root) {
-    //   serialBackend::backendTransform(root);
-    //   addPragmas(root);
-    // }
-    // void openmpBackend::addPragmas(statement_t &root) {
-    // }
+    namespace okl {
+      openmpParser::openmpParser() {}
+
+      void openmpParser::onPostParse() {
+        serialParser::onPostParse();
+
+        statementPtrVector outerSmnts;
+        findOuterMostLoops(outerSmnts);
+
+        const int count = (int) outerSmnts.size();
+        for (int i = 0; i < count; ++i) {
+          statement_t &outerSmnt = *(outerSmnts[i]);
+          statement_t *parent = outerSmnt.up;
+          if (!parent
+              || !parent->is<blockStatement>()) {
+            success = false;
+            outerSmnt.printError("Unable to add [#pragma omp]");
+            return;
+          }
+          // Add OpenMP Pragma
+          blockStatement &outerBlock  = (blockStatement&) outerSmnt;
+          blockStatement &parentBlock = *((blockStatement*) parent);
+          pragmaToken *token = (
+            new pragmaToken(outerBlock.source->origin,
+                            "omp parallel for")
+          );
+          pragmaStatement *pragmaSmnt = (
+            new pragmaStatement((blockStatement*) parent,
+                                *token)
+          );
+          parentBlock.addBefore(outerSmnt,
+                                *pragmaSmnt);
+        }
+      }
+
+      void openmpParser::findOuterMostLoops(statementPtrVector &outerMostSmnts) {
+        statementPtrVector outerSmnts;
+        findStatementsByAttr(statementType::for_,
+                             "outer",
+                             root,
+                             outerSmnts);
+
+        const int count = (int) outerSmnts.size();
+        for (int i = 0; i < count; ++i) {
+          statement_t *outerSmnt = outerSmnts[i];
+          statement_t *smnt = outerSmnt->up;
+          while (smnt) {
+            if (smnt->hasAttribute("outer")) {
+              break;
+            }
+            smnt = smnt->up;
+          }
+          if (!smnt) {
+            outerMostSmnts.push_back(outerSmnt);
+          }
+        }
+      }
+    }
   }
 }

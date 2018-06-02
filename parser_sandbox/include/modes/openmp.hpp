@@ -26,12 +26,16 @@
 
 namespace occa {
   namespace lang {
-    // class openmpBackend : public serialBackend {
-    // public:
-    //   virtual void backendTransform(statement_t &root);
+    namespace okl {
+      class openmpParser : public serialParser {
+      public:
+        openmpParser();
 
-    //   void addPragmas(statement_t &root);
-    // };
+        virtual void onPostParse();
+
+        void findOuterMostLoops(statementPtrVector &outerMostSmnts);
+      };
+    }
   }
 }
 

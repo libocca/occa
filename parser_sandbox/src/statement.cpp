@@ -48,6 +48,14 @@ namespace occa {
       return statementType::pragma;
     }
 
+    std::string& pragmaStatement::value() {
+      return token.value;
+    }
+
+    const std::string& pragmaStatement::value() const {
+      return token.value;
+    }
+
     void pragmaStatement::print(printer &pout) const {
       pout << "#pragma " << token.value << '\n';
     }
@@ -136,6 +144,7 @@ namespace occa {
       pout << '\n';
       pout.printStartIndentation();
       function.printDeclaration(pout);
+      pout << ' ';
       blockStatement::print(pout);
     }
 
