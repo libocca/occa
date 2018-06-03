@@ -49,11 +49,11 @@ public:
 
     std::stringstream ss;
 
-    ss << "kernel void map(const int entries,\n"
-       << "                const " << inType  << " *red_input ,\n"
-       << "                      " << outType << " *red_output) {\n"
-       << "  for (int group = 0; group < entries; group += 128; outer) {\n"
-       << "    for (int item = group; item < (group + 128); ++item; inner) {\n"
+    ss << "@kernel void map(const int entries,\n"
+       << "                 const " << inType  << " *red_input ,\n"
+       << "                       " << outType << " *red_output) {\n"
+       << "  for (int group = 0; group < entries; group += 128; @outer) {\n"
+       << "    for (int item = group; item < (group + 128); ++item; @inner) {\n"
        << "      const int n = item;\n\n"
 
        << "      if (n < entries) {\n"
