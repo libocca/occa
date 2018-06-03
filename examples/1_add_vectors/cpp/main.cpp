@@ -48,8 +48,7 @@ int main(int argc, char **argv) {
   occa::memory o_a, o_b, o_ab;
 
   //---[ Device setup with string flags ]-------------------
-  device.setup("mode: 'OpenMP'");
-  // device.setup("mode: 'Serial'");
+  device.setup("mode: 'Serial'");
 
   // device.setup("mode     : 'OpenMP', "
   //              "schedule : 'compact', "
