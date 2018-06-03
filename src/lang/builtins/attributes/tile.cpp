@@ -73,7 +73,7 @@ namespace occa {
       bool tile::validKwargs(const attributeToken_t &attr) const {
         attributeArgMap::const_iterator it = attr.kwargs.begin();
         while (it != attr.kwargs.end()) {
-          if (it->first != "safe") {
+          if (it->first != "check") {
             it->second
               .expr
               ->startNode()
@@ -85,7 +85,7 @@ namespace occa {
             it->second
               .expr
               ->startNode()
-              ->printError("[@tile] 'safe' argument must be true or false");
+              ->printError("[@tile] 'check' argument must be true or false");
             return false;
           }
           ++it;

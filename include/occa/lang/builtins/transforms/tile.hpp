@@ -55,11 +55,11 @@ namespace occa {
                                     forStatement &blockForSmnt,
                                     forStatement &innerForSmnt);
 
-        void setupSafeStatement(attributeToken_t &attr,
-                                variable_t &iter,
-                                variable_t &blockIter,
-                                forStatement &blockForSmnt,
-                                forStatement &innerForSmnt);
+        void setupCheckStatement(attributeToken_t &attr,
+                                 variable_t &iter,
+                                 variable_t &blockIter,
+                                 forStatement &blockForSmnt,
+                                 forStatement &innerForSmnt);
       };
 
       bool applyTileTransforms(statement_t &smnt);

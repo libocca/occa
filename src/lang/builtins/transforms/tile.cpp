@@ -73,9 +73,9 @@ namespace occa {
                                iter, blockIter,
                                blockForSmnt, innerForSmnt);
 
-        setupSafeStatement(attr,
-                           iter, blockIter,
-                           blockForSmnt, innerForSmnt);
+        setupCheckStatement(attr,
+                            iter, blockIter,
+                            blockForSmnt, innerForSmnt);
 
         return &blockForSmnt;
       }
@@ -229,17 +229,17 @@ namespace occa {
                                                      newCheckNode);
       }
 
-      void tile::setupSafeStatement(attributeToken_t &attr,
-                                    variable_t &iter,
-                                    variable_t &blockIter,
-                                    forStatement &blockForSmnt,
-                                    forStatement &innerForSmnt) {
-        attributeArgMap::iterator it = attr.kwargs.find("safe");
-        bool safe = true;
+      void tile::setupCheckStatement(attributeToken_t &attr,
+                                     variable_t &iter,
+                                     variable_t &blockIter,
+                                     forStatement &blockForSmnt,
+                                     forStatement &innerForSmnt) {
+        attributeArgMap::iterator it = attr.kwargs.find("check");
+        bool check = true;
         if (it != attr.kwargs.end()) {
-          safe = (bool) it->second.expr->evaluate();
+          check = (bool) it->second.expr->evaluate();
         }
-        if (!safe) {
+        if (!check) {
           return;
         }
         // Check variables

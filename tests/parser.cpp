@@ -1131,22 +1131,22 @@ void testAttributeLoading() {
   std::cerr << "==============================================\n";
 
   std::cerr << "\n---[ @tile Transformations ]--------------------\n";
-  parseAndPrintSource("for (int i = 0; i < (1 + 2 + N + 6); ++i; @tile(16, @outer, @inner, safe=false)) {"
+  parseAndPrintSource("for (int i = 0; i < (1 + 2 + N + 6); ++i; @tile(16, @outer, @inner, check=false)) {"
                       "  int x;"
                       "}");
-  parseAndPrintSource("for (int i = 0; i > (1 + 2 + N + 6); --i; @tile(16, @outer, @inner, safe=false)) {"
+  parseAndPrintSource("for (int i = 0; i > (1 + 2 + N + 6); --i; @tile(16, @outer, @inner, check=false)) {"
                       "  int x;"
                       "}");
-  parseAndPrintSource("for (int i = 0; i <= (1 + 2 + N + 6); i++; @tile(16, @outer, @inner, safe=false)) {"
+  parseAndPrintSource("for (int i = 0; i <= (1 + 2 + N + 6); i++; @tile(16, @outer, @inner, check=false)) {"
                       "  int x;"
                       "}");
-  parseAndPrintSource("for (int i = 0; i >= (1 + 2 + N + 6); i--; @tile(16, @outer, @inner, safe=true)) {"
+  parseAndPrintSource("for (int i = 0; i >= (1 + 2 + N + 6); i--; @tile(16, @outer, @inner, check=true)) {"
                       "  int x;"
                       "}");
-  parseAndPrintSource("for (int i = 0; (1 + 2 + N + 6) > i; i += 3; @tile(16, @outer, @inner, safe=true)) {"
+  parseAndPrintSource("for (int i = 0; (1 + 2 + N + 6) > i; i += 3; @tile(16, @outer, @inner, check=true)) {"
                       "  int x;"
                       "}");
-  parseAndPrintSource("for (int i = 0; (1 + 2 + N + 6) <= i; i -= 2 + 3; @tile(16, @outer, @inner, safe=true)) {"
+  parseAndPrintSource("for (int i = 0; (1 + 2 + N + 6) <= i; i -= 2 + 3; @tile(16, @outer, @inner, check=true)) {"
                       "  int x;"
                       "}");
   std::cerr << "==============================================\n\n";
@@ -1291,7 +1291,7 @@ void testAttributeErrors() {
 
   parseBadSource("@tile(16);");
   parseBadSource("@tile(16, x=1);");
-  parseBadSource("@tile(16, safe='o');");
+  parseBadSource("@tile(16, check='o');");
   parseBadSource("for (i = 0;;; @tile(16)) {}");
   parseBadSource("for (float i = 0;;; @tile(16)) {}");
   parseBadSource("for (int i = 0, j = 0;;; @tile(16)) {}");
