@@ -62,6 +62,9 @@ namespace occa {
       exprNode& lastOutput();
       operatorToken& lastOperator();
 
+      void pushOutput(exprNode *expr);
+      void pushOperator(operatorToken *token);
+
       exprNode& popOutput();
       operatorToken& popOperator();
     };
@@ -105,6 +108,8 @@ namespace occa {
                                 const unaryOperator_t &op,
                                 exprNode &value,
                                 expressionState &state);
+
+    bool applyTernary(expressionState &state);
   }
 }
 

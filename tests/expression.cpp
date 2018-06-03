@@ -31,13 +31,34 @@ using namespace occa;
 using namespace occa::lang;
 
 void testPrint();
+void testTernary();
 void testPairMatching();
 void testSpecialOperators();
 void testCanEvaluate();
 void testEval();
 
+exprNode* makeExpression(const std::string &s) {
+  tokenVector tokens = tokenizer_t::tokenize(s);
+  return getExpression(tokens);
+}
+
+bool canEvaluate(const std::string &s) {
+  exprNode *expr = makeExpression(s);
+  bool ret = expr->canEvaluate();
+  delete expr;
+  return ret;
+}
+
+primitive eval(const std::string &s) {
+  exprNode *expr = makeExpression(s);
+  primitive value = expr->evaluate();
+  delete expr;
+  return value;
+}
+
 int main(const int argc, const char **argv) {
   testPrint();
+  testTernary();
   testPairMatching();
   testSpecialOperators();
   testCanEvaluate();
@@ -133,7 +154,7 @@ void testStreamPrint() {
     //================================
 
     //---[ Ternary ]------------------
-    << "ternary             : " << ternaryOpNode(NULL, a, b, c).toString() << '\n'
+    << "ternary             : " << ternaryOpNode(a, b, c).toString() << '\n'
     //================================
 
     //---[ Other Nodes ]--------------
@@ -238,7 +259,7 @@ void testPoutPrint() {
   //================================
 
   //---[ Ternary ]------------------
-  ternaryOpNode(NULL, a, b, c).print(pout); pout << '\n';
+  ternaryOpNode(a, b, c).print(pout); pout << '\n';
   //================================
 
   //---[ Other Nodes ]--------------
@@ -340,7 +361,7 @@ void testDebugPrint() {
   //================================
 
   //---[ Ternary ]------------------
-  ternaryOpNode(NULL, a, b, c).debugPrint("");
+  ternaryOpNode(a, b, c).debugPrint("");
   //================================
 
   //---[ Other Nodes ]--------------
@@ -365,23 +386,16 @@ void testDebugPrint() {
   //================================
 }
 
-exprNode* makeExpression(const std::string &s) {
-  tokenVector tokens = tokenizer_t::tokenize(s);
-  return getExpression(tokens);
-}
+void testTernary() {
+  exprNode *expr;
 
-bool canEvaluate(const std::string &s) {
-  exprNode *expr = makeExpression(s);
-  bool ret = expr->canEvaluate();
+  expr = makeExpression("a = true ? 1 : 2");
+  expr->debugPrint();
   delete expr;
-  return ret;
-}
 
-primitive eval(const std::string &s) {
-  exprNode *expr = makeExpression(s);
-  primitive value = expr->evaluate();
+  expr = makeExpression("a = true ? (false ? 1 : (false ? 2 : 3)) : 4");
+  expr->debugPrint();
   delete expr;
-  return value;
 }
 
 void testPairMatching() {

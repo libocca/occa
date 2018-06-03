@@ -79,14 +79,15 @@ namespace occa {
 
       const rawOpType_t questionMark      (1L << 47);
       const rawOpType_t colon             (1L << 48);
+      const rawOpType_t ternary           (1L << 49);
 
-      // End = (Start << 1)
-      const rawOpType_t braceStart        (1L << 49);
-      const rawOpType_t braceEnd          (1L << 50);
-      const rawOpType_t bracketStart      (1L << 51);
-      const rawOpType_t bracketEnd        (1L << 52);
-      const rawOpType_t parenthesesStart  (1L << 53);
-      const rawOpType_t parenthesesEnd    (1L << 54);
+      // End = (Start << 50)
+      const rawOpType_t braceStart        (1L << 51);
+      const rawOpType_t braceEnd          (1L << 52);
+      const rawOpType_t bracketStart      (1L << 53);
+      const rawOpType_t bracketEnd        (1L << 54);
+      const rawOpType_t parenthesesStart  (1L << 55);
+      const rawOpType_t parenthesesEnd    (1L << 56);
 
       //---[ Special operators ]--------
       const rawOpType_t lineComment       (1L << 0);
@@ -211,6 +212,9 @@ namespace occa {
       const opType_t arrow             (0, rawOperatorType::arrow);
       const opType_t arrowStar         (0, rawOperatorType::arrowStar);
 
+      const opType_t questionMark      (0, rawOperatorType::questionMark);
+      const opType_t colon             (0, rawOperatorType::colon);
+
       // Special
       const opType_t sizeof_           (rawOperatorType::sizeof_     , 0);
       const opType_t sizeof_pack_      (rawOperatorType::sizeof_pack_, 0);
@@ -250,7 +254,9 @@ namespace occa {
                                           reinterpret_cast_);
 
       const opType_t rightUnary        = (rightIncrement |
-                                          rightDecrement);
+                                          rightDecrement |
+                                          questionMark   |
+                                          colon);
 
       const opType_t unary             = (leftUnary |
                                           rightUnary);
@@ -296,10 +302,7 @@ namespace occa {
                                           arrow         |
                                           arrowStar);
 
-      const opType_t questionMark      (0, rawOperatorType::questionMark);
-      const opType_t colon             (0, rawOperatorType::colon);
-      const opType_t ternary           = (questionMark |
-                                          colon);
+      const opType_t ternary           (0, rawOperatorType::ternary);
 
       // End = (Start << 1)
       const opType_t braceStart        (0, rawOperatorType::braceStart);
@@ -482,19 +485,19 @@ namespace occa {
       const binaryOperator_t leftShift        ("<<" , operatorType::leftShift        , 7);
       const binaryOperator_t rightShift       (">>" , operatorType::rightShift       , 7);
 
-      const binaryOperator_t assign           ("="  , operatorType::assign           , 16);
-      const binaryOperator_t addEq            ("+=" , operatorType::addEq            , 16);
-      const binaryOperator_t subEq            ("-=" , operatorType::subEq            , 16);
-      const binaryOperator_t multEq           ("*=" , operatorType::multEq           , 16);
-      const binaryOperator_t divEq            ("/=" , operatorType::divEq            , 16);
-      const binaryOperator_t modEq            ("%=" , operatorType::modEq            , 16);
-      const binaryOperator_t andEq            ("&=" , operatorType::andEq            , 16);
-      const binaryOperator_t orEq             ("|=" , operatorType::orEq             , 16);
-      const binaryOperator_t xorEq            ("^=" , operatorType::xorEq            , 16);
-      const binaryOperator_t leftShiftEq      ("<<=", operatorType::leftShiftEq      , 16);
-      const binaryOperator_t rightShiftEq     (">>=", operatorType::rightShiftEq     , 16);
+      const binaryOperator_t assign           ("="  , operatorType::assign           , 17);
+      const binaryOperator_t addEq            ("+=" , operatorType::addEq            , 17);
+      const binaryOperator_t subEq            ("-=" , operatorType::subEq            , 17);
+      const binaryOperator_t multEq           ("*=" , operatorType::multEq           , 17);
+      const binaryOperator_t divEq            ("/=" , operatorType::divEq            , 17);
+      const binaryOperator_t modEq            ("%=" , operatorType::modEq            , 17);
+      const binaryOperator_t andEq            ("&=" , operatorType::andEq            , 17);
+      const binaryOperator_t orEq             ("|=" , operatorType::orEq             , 17);
+      const binaryOperator_t xorEq            ("^=" , operatorType::xorEq            , 17);
+      const binaryOperator_t leftShiftEq      ("<<=", operatorType::leftShiftEq      , 17);
+      const binaryOperator_t rightShiftEq     (">>=", operatorType::rightShiftEq     , 17);
 
-      const binaryOperator_t comma            (","  , operatorType::comma            , 17);
+      const binaryOperator_t comma            (","  , operatorType::comma            , 18);
 
       // Non-Overloadable
       const binaryOperator_t scope            ("::" , operatorType::scope            , 1);
@@ -508,8 +511,9 @@ namespace occa {
       //================================
 
       //---[ Ternary ]------------------
-      const operator_t ternary                ("?"  , operatorType::ternary          , 16);
-      const operator_t colon                  (":"  , operatorType::colon            , 16);
+      const unaryOperator_t questionMark      ("?"  , operatorType::questionMark     , 16);
+      const unaryOperator_t colon             (":"  , operatorType::colon            , 16);
+      const operator_t ternary                ("?:" , operatorType::ternary          , 16);
       //================================
 
       //---[ Pairs ]--------------------
@@ -539,7 +543,7 @@ namespace occa {
       const unaryOperator_t sizeof_pack_      ("sizeof...", operatorType::sizeof_pack_, 3);
       const unaryOperator_t new_              ("new"      , operatorType::new_        , 3);
       const unaryOperator_t delete_           ("delete"   , operatorType::delete_     , 3);
-      const unaryOperator_t throw_            ("throw"    , operatorType::throw_      , 16);
+      const unaryOperator_t throw_            ("throw"    , operatorType::throw_      , 17);
 
       const unaryOperator_t typeid_           ("typeid"   , operatorType::typeid_     , 3);
       const unaryOperator_t noexcept_         ("noexcept" , operatorType::noexcept_   , 3);
@@ -557,7 +561,7 @@ namespace occa {
       //---[ Associativity ]------------
       const int leftAssociative  = 0;
       const int rightAssociative = 1;
-      const int associativity[18] = {
+      const int associativity[19] = {
         leftAssociative,  // 0
         leftAssociative,  // 1
         leftAssociative,  // 2
@@ -574,8 +578,9 @@ namespace occa {
         leftAssociative,  // 13
         leftAssociative,  // 14
         leftAssociative,  // 15
-        rightAssociative, // 16 [?:, throw, assignment]
-        leftAssociative,  // 17
+        rightAssociative, // 16 [?:]
+        rightAssociative, // 17 [assignment, throw]
+        leftAssociative  // 18 [,]
       };
       //================================
     }
@@ -716,7 +721,7 @@ namespace occa {
       operators.add(op::dotStar.str          , &op::dotStar);
       operators.add(op::arrow.str            , &op::arrow);
       operators.add(op::arrowStar.str        , &op::arrowStar);
-      operators.add(op::ternary.str          , &op::ternary);
+      operators.add(op::questionMark.str     , &op::questionMark);
       operators.add(op::colon.str            , &op::colon);
 
       operators.add(op::braceStart.str       , &op::braceStart);

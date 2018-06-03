@@ -135,16 +135,7 @@ tests: $(tests)
 
 test: unit-tests e2e-tests
 
-e2e-tests:
-	@for dir in $(examples); do                           \
-	  echo "Compiling example [$$dir]";                   \
-	  cd $(OCCA_DIR)/examples/$$dir &&                    \
-	  rm -f main                    &&                    \
-	  CXXFLAGS='-g' make            &&                    \
-	  OCCA_VERBOSE=1 ./main;                              \
-	done
-
-unit-tests:
+unit-tests: $(tests)
 	@for test in $(tests); do                             \
 	   	testname=$$(basename "$$test");                   \
       chars=$$(echo "$${testname}" | wc -c);            \
@@ -152,6 +143,15 @@ unit-tests:
 	    line=$$(printf '%*s' $${linechars} | tr ' ' '-'); \
 	    echo -e "\n---[ $${testname} ]$${line}";          \
 	    ASAN_OPTIONS=protect_shadow_gap=0 $$test;         \
+	done
+
+e2e-tests: unit-tests
+	@for dir in $(examples); do                           \
+	  echo "Compiling example [$$dir]";                   \
+	  cd $(OCCA_DIR)/examples/$$dir &&                    \
+	  rm -f main                    &&                    \
+	  CXXFLAGS='-g' make            &&                    \
+	  OCCA_VERBOSE=1 ./main;                              \
 	done
 
 $(testPath)/bin/%:$(testPath)/%.cpp $(libPath)/libocca.so

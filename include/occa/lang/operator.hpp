@@ -371,8 +371,9 @@ namespace occa {
       //================================
 
       //---[ Ternary ]------------------
+      extern const unaryOperator_t questionMark;
+      extern const unaryOperator_t colon;
       extern const operator_t ternary;
-      extern const operator_t colon;
       //================================
 
       //---[ Pairs ]--------------------
@@ -420,7 +421,7 @@ namespace occa {
       //---[ Associativity ]------------
       extern const int leftAssociative;
       extern const int rightAssociative;
-      extern const int associativity[18];
+      extern const int associativity[19];
       //================================
     }
 

@@ -75,6 +75,14 @@ namespace occa {
       return *(operators.top());
     }
 
+    void expressionState::pushOutput(exprNode *expr) {
+      output.push(expr);
+    }
+
+    void expressionState::pushOperator(operatorToken *token) {
+      operators.push(token);
+    }
+
     exprNode& expressionState::popOutput() {
       exprNode &ret = *(output.top());
       usedOutput.push(&ret);
@@ -103,6 +111,10 @@ namespace occa {
 
       // Finish applying operators
       while (state.operatorCount()) {
+        if (applyTernary(state)) {
+          continue;
+        }
+
         applyOperator(state.popOperator(),
                       state);
 
@@ -116,6 +128,8 @@ namespace occa {
       if (!outputCount) {
         return noExprNode.clone();
       }
+
+      applyTernary(state);
 
       if (outputCount > 1) {
         state.popOutput();
@@ -156,7 +170,7 @@ namespace occa {
 
           if (opToken.opType() & operatorType::pairStart) {
             state.tokensBeforePair.push(state.prevToken);
-            state.operators.push(&opToken);
+            state.pushOperator(&opToken);
           }
           else if (opToken.opType() & operatorType::pairEnd) {
             closePair(opToken, state);
@@ -184,33 +198,33 @@ namespace occa {
       const int tokenType = token->type();
       if (tokenType & tokenType::identifier) {
         identifierToken &t = token->to<identifierToken>();
-        state.output.push(new identifierNode(token, t.value));
+        state.pushOutput(new identifierNode(token, t.value));
       }
       else if (tokenType & tokenType::variable) {
         variableToken &t = token->to<variableToken>();
-        state.output.push(new variableNode(token, t.value));
+        state.pushOutput(new variableNode(token, t.value));
       }
       else if (tokenType & tokenType::function) {
         functionToken &t = token->to<functionToken>();
-        state.output.push(new functionNode(token, t.value));
+        state.pushOutput(new functionNode(token, t.value));
       }
       else if (tokenType & tokenType::type) {
         typeToken &t = token->to<typeToken>();
-        state.output.push(new typeNode(token, t.value));
+        state.pushOutput(new typeNode(token, t.value));
       }
       else if (tokenType & tokenType::primitive) {
         primitiveToken &t = token->to<primitiveToken>();
-        state.output.push(new primitiveNode(token, t.value));
+        state.pushOutput(new primitiveNode(token, t.value));
       }
       else if (tokenType & tokenType::char_) {
         // TODO: Handle char udfs here
         charToken &t = token->to<charToken>();
-        state.output.push(new charNode(token, t.value));
+        state.pushOutput(new charNode(token, t.value));
       }
       else if (tokenType & tokenType::string) {
         // TODO: Handle string udfs here
         stringToken &t = token->to<stringToken>();
-        state.output.push(new stringNode(token, t.value));
+        state.pushOutput(new stringNode(token, t.value));
       }
     }
 
@@ -220,6 +234,10 @@ namespace occa {
       operatorToken *errorToken = &opToken;
 
       while (state.operatorCount()) {
+        if (applyTernary(state)) {
+          continue;
+        }
+
         operatorToken &nextOpToken = state.popOperator();
         const opType_t nextOpType = nextOpToken.opType();
 
@@ -289,20 +307,24 @@ namespace occa {
       pairNode &pair = state.popOutput().to<pairNode>();
 
       if (!(pair.opType() & (operatorType::parentheses |
-                              operatorType::braces))) {
+                             operatorType::braces))) {
         state.hasError = true;
         opToken.printError("Expected identifier or proper expression before");
         return;
       }
 
       if (pair.opType() & operatorType::parentheses) {
-        state.output.push(new parenthesesNode(pair.token,
-                                              *pair.value));
+        state.pushOutput(
+          new parenthesesNode(pair.token,
+                              *pair.value)
+        );
       } else {
         exprNodeVector args;
         extractArgs(args, *pair.value, state);
-        state.output.push(new tupleNode(pair.token,
-                                        args));
+        state.pushOutput(
+          new tupleNode(pair.token,
+                        args)
+        );
       }
     }
 
@@ -337,16 +359,20 @@ namespace occa {
       if (pair.opType() & operatorType::parentheses) {
         exprNodeVector args;
         extractArgs(args, *pair.value, state);
-        state.output.push(new callNode(value.token,
-                                       value,
-                                       args));
+        state.pushOutput(
+          new callNode(value.token,
+                       value,
+                       args)
+        );
         return;
       }
       // array[...]
       if (pair.opType() & operatorType::brackets) {
-        state.output.push(new subscriptNode(value.token,
-                                            value,
-                                            *pair.value));
+        state.pushOutput(
+          new subscriptNode(value.token,
+                            value,
+                            *pair.value)
+        );
         return;
       }
       // func<<<...>>>
@@ -365,10 +391,12 @@ namespace occa {
         }
 
         if (!state.hasError) {
-          state.output.push(new cudaCallNode(value.token,
-                                             value,
-                                             *args[0],
-                                             *args[1]));
+          state.pushOutput(
+            new cudaCallNode(value.token,
+                             value,
+                             *args[0],
+                             *args[1])
+          );
         }
         return;
       }
@@ -400,8 +428,10 @@ namespace occa {
       }
 
       // Test for left unary first
-      const bool prevTokenIsOp = (state.prevToken->getOpType() & (operatorType::unary |
-                                                                  operatorType::binary));
+      const bool prevTokenIsOp = (
+        state.prevToken->getOpType() & (operatorType::unary |
+                                        operatorType::binary)
+      );
       if (prevTokenIsOp) {
         opType_t prevType = state.prevToken->to<operatorToken>().opType();
         // + + + 1
@@ -416,8 +446,10 @@ namespace occa {
         }
       }
 
-      const bool nextTokenIsOp = (state.nextToken->getOpType() & (operatorType::unary |
-                                                                  operatorType::binary));
+      const bool nextTokenIsOp = (
+        state.nextToken->getOpType() & (operatorType::unary |
+                                        operatorType::binary)
+      );
 
       //   v check right
       // 1 + ++ x
@@ -461,9 +493,25 @@ namespace occa {
 
       fileOrigin origin = opToken.origin;
 
-      const bool isLeftUnary = operatorIsLeftUnary(opToken, state);
-      if (state.hasError) {
-        return;
+      bool isLeftUnary = true;
+      bool stillAmbiguous = true;
+
+      // Test if in ternary
+      if (state.outputCount()
+          && (state.lastOutput().type() & exprNodeType::rightUnary)) {
+
+        rightUnaryOpNode &lastOutput = (rightUnaryOpNode&) state.lastOutput();
+        if (lastOutput.opType() & (operatorType::questionMark |
+                                   operatorType::colon)) {
+          stillAmbiguous = false;
+        }
+      }
+
+      if (stillAmbiguous) {
+        isLeftUnary = operatorIsLeftUnary(opToken, state);
+        if (state.hasError) {
+          return;
+        }
       }
 
       const operator_t *newOperator = NULL;
@@ -546,7 +594,14 @@ namespace occa {
 
       // After applying faster operators,
       //   place opToken in the stack
-      state.operators.push(&opToken);
+      state.pushOperator(&opToken);
+
+      // Apply ternary operators immediately
+      if (op.opType & (operatorType::questionMark |
+                       operatorType::colon)) {
+        applyOperator(state.popOperator(),
+                      state);
+      }
     }
 
     void applyOperator(operatorToken &opToken,
@@ -560,10 +615,12 @@ namespace occa {
         if (outputCount >= 2) {
           exprNode &right = state.popOutput();
           exprNode &left = state.popOutput();
-          state.output.push(new binaryOpNode(&opToken,
-                                             (const binaryOperator_t&) op,
-                                             left,
-                                             right));
+          state.pushOutput(
+            new binaryOpNode(&opToken,
+                             (const binaryOperator_t&) op,
+                             left,
+                             right)
+          );
           return;
         }
         state.hasError = true;
@@ -582,9 +639,11 @@ namespace occa {
       else if (opType & operatorType::rightUnary) {
         if (outputCount >= 1) {
           exprNode &value = state.popOutput();
-          state.output.push(new rightUnaryOpNode(&opToken,
-                                                 (const unaryOperator_t&) op,
-                                                 value));
+          state.pushOutput(
+            new rightUnaryOpNode(&opToken,
+                                 (const unaryOperator_t&) op,
+                                 value)
+          );
           return;
         }
         state.hasError = true;
@@ -594,11 +653,13 @@ namespace occa {
         if ((outputCount >= 1)
             && !(state.prevToken->getOpType() & operatorType::pairStart)) {
           exprNode &value = state.popOutput();
-          state.output.push(new pairNode(opToken,
-                                         value));
+          state.pushOutput(
+            new pairNode(opToken, value)
+          );
         } else {
-          state.output.push(new pairNode(opToken,
-                                         noExprNode));
+          state.pushOutput(
+            new pairNode(opToken, noExprNode)
+          );
         }
       }
       if (state.hasError) {
@@ -613,16 +674,17 @@ namespace occa {
 
       const opType_t opType = op.opType;
       if (!(opType & operatorType::special)) {
-        state.output.push(new leftUnaryOpNode(&opToken,
-                                              (const unaryOperator_t&) op,
-                                              value));
+        state.pushOutput(new leftUnaryOpNode(&opToken,
+                                             (const unaryOperator_t&) op,
+                                             value));
         return;
       }
 
       // Handle new and delete
       if (opType & operatorType::sizeof_) {
-        state.output.push(new sizeofNode(&opToken,
-                                         value));
+        state.pushOutput(
+          new sizeofNode(&opToken, value)
+        );
       }
       else if (opType & operatorType::new_) {
         state.hasError = true;
@@ -633,14 +695,59 @@ namespace occa {
         opToken.printError("'delete' not supported yet");
       }
       else if (opType & operatorType::throw_) {
-        state.output.push(new throwNode(&opToken,
-                                        value));
+        state.pushOutput(
+          new throwNode(&opToken, value)
+        );
       }
       else {
         state.hasError = true;
         opToken.printError("[Waldo] (applyLeftUnaryOperator)"
                            " Unsure how you got here...");
       }
+    }
+
+    bool applyTernary(expressionState &state) {
+      if (state.outputCount() < 3) {
+        return false;
+      }
+      exprNode &falseValue = state.popOutput();
+      exprNode &trueValue  = state.popOutput();
+      exprNode &checkValue = state.popOutput();
+      // Don't use state's garbage collection yet
+      state.usedOutput.pop();
+      state.usedOutput.pop();
+      state.usedOutput.pop();
+
+      if ((checkValue.type() & exprNodeType::rightUnary)
+          && (trueValue.type() & exprNodeType::rightUnary)) {
+
+        rightUnaryOpNode &checkOpValue = (rightUnaryOpNode&) checkValue;
+        rightUnaryOpNode &trueOpValue  = (rightUnaryOpNode&) trueValue;
+
+        opType_t op1 = checkOpValue.opType();
+        opType_t op2 = trueOpValue.opType();
+
+        if ((op1 == operatorType::questionMark)
+            && (op2 == operatorType::colon)) {
+
+          state.pushOutput(
+            new ternaryOpNode(*(checkOpValue.value),
+                              *(trueOpValue.value),
+                              falseValue)
+          );
+          // Manually delete since we're avoiding garbage collection
+          delete &checkValue;
+          delete &trueValue;
+          delete &falseValue;
+
+          return true;
+        }
+      }
+
+      state.pushOutput(&checkValue);
+      state.pushOutput(&trueValue);
+      state.pushOutput(&falseValue);
+      return false;
     }
   }
 }

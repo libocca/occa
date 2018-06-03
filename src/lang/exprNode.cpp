@@ -663,17 +663,16 @@ namespace occa {
       rightValue->childDebugPrint(prefix);
     }
 
-    ternaryOpNode::ternaryOpNode(token_t *token_,
-                                 const exprNode &checkValue_,
+    ternaryOpNode::ternaryOpNode(const exprNode &checkValue_,
                                  const exprNode &trueValue_,
                                  const exprNode &falseValue_) :
-      exprNode(token_),
+      exprOpNode(checkValue_.token, op::ternary),
       checkValue(checkValue_.clone()),
       trueValue(trueValue_.clone()),
       falseValue(falseValue_.clone()) {}
 
     ternaryOpNode::ternaryOpNode(const ternaryOpNode &node) :
-      exprNode(node.token),
+      exprOpNode(node.token, op::ternary),
       checkValue(node.checkValue->clone()),
       trueValue(node.trueValue->clone()),
       falseValue(node.falseValue->clone()) {}
@@ -693,8 +692,7 @@ namespace occa {
     }
 
     exprNode* ternaryOpNode::clone() const {
-      return new ternaryOpNode(token,
-                               *checkValue,
+      return new ternaryOpNode(*checkValue,
                                *trueValue,
                                *falseValue);
     }

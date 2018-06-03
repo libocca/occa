@@ -452,16 +452,11 @@ namespace occa {
       virtual void debugPrint(const std::string &prefix) const;
     };
 
-    class ternaryOpNode : public exprNode {
+    class ternaryOpNode : public exprOpNode {
     public:
       exprNode *checkValue, *trueValue, *falseValue;
 
       ternaryOpNode(const exprNode &checkValue_,
-                    const exprNode &trueValue_,
-                    const exprNode &falseValue_);
-
-      ternaryOpNode(token_t *token,
-                    const exprNode &checkValue_,
                     const exprNode &trueValue_,
                     const exprNode &falseValue_);
 
