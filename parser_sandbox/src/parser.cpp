@@ -29,15 +29,7 @@
 
 namespace occa {
   namespace lang {
-    identifierReplacer_t::identifierReplacer_t(parser_t &parser_) :
-      parser(parser_),
-      scopeSmnt(NULL) {}
-
-    exprNode* identifierReplacer_t::transformExprNode(exprNode &node) {
-      return &node;
-    }
-
-    parser_t::parser_t() :
+    parser_t::parser_t(const occa::properties &settings_) :
       unknownFilter(true),
       lastPeek(0),
       lastPeekPosition(-1),
@@ -45,7 +37,7 @@ namespace occa {
       defaultRootToken(originSource::builtin),
       root(NULL, NULL),
       up(&root),
-      identifierReplacer(*this) {
+      settings(settings_) {
       // Properly implement `identifier-nondigit` for identifiers
       // Meanwhile, we use the unknownFilter
       stream = (tokenizer

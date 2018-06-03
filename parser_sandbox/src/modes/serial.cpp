@@ -29,7 +29,8 @@ namespace occa {
     namespace okl {
       const std::string serialParser::exclusiveIndexName = "_occa_exclusive_index";
 
-      serialParser::serialParser() :
+      serialParser::serialParser(const occa::properties &settings_) :
+        parser_t(settings_),
         restrict_("__restrict__", (qualifierType::forPointers_ |
                                    qualifierType::custom)) {
         addAttribute<attributes::kernel>();
@@ -37,44 +38,26 @@ namespace occa {
         addAttribute<attributes::inner>();
         addAttribute<attributes::shared>();
         addAttribute<attributes::exclusive>();
-      }
 
-      void serialParser::onClear() {
-        macroMap::iterator mIt = preprocessor.compilerMacros.find("restrict");
-        if (mIt != preprocessor.compilerMacros.end()) {
-          preprocessor.compilerMacros.erase(mIt);
-        }
-      }
-
-      void serialParser::beforePreprocessing() {
-        std::string oldRestrict = restrict_.name;
         if (settings.has("serial/restrict")) {
-          occa::json r = settings["serial/restrict"];
+          occa::json &r = settings["serial/restrict"];
           if (r.isString()) {
             restrict_.name = r.string();
-          } else if (r.isBoolean()) {
-            if (r.boolean()) {
-              restrict_.name = "__restrict__";
-            } else {
-              restrict_.name = "";
-            }
+          } else if (r.isBoolean()
+                     && !r.boolean()) {
+            restrict_.name = "";
           }
         }
 
-        keywordMap::iterator it = keywords.find(oldRestrict);
-        bool hasKeyword = (it != keywords.end());
-        if (hasKeyword
-            && (oldRestrict != restrict_.name)) {
-          delete it->second;
-          keywords.erase(it);
-          hasKeyword = false;
+        if (restrict_.name.size()) {
+          replaceKeyword(keywords,
+                         new qualifierKeyword(restrict_));
         }
-        if (!hasKeyword
-            && restrict_.name.size()) {
-          addKeyword(keywords,
-                     new qualifierKeyword(restrict_));
-        }
+      }
 
+      void serialParser::onClear() {}
+
+      void serialParser::beforePreprocessing() {
         macroMap::iterator mIt = preprocessor.compilerMacros.find("restrict");
         if (mIt != preprocessor.compilerMacros.end()) {
           delete mIt->second;

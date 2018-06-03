@@ -22,6 +22,7 @@
 #include "baseStatement.hpp"
 #include "token.hpp"
 #include "type.hpp"
+#include "builtins/transforms/fillExprIdentifiers.hpp"
 
 namespace occa {
   namespace lang {
@@ -320,6 +321,14 @@ namespace occa {
       }
       children.clear();
       scope.clear();
+    }
+
+    exprNode* blockStatement::replaceIdentifiers(exprNode *expr) {
+      if (!expr) {
+        return NULL;
+      }
+      transforms::fillExprIdentifiers_t replacer(this);
+      return replacer.apply(*expr);
     }
 
     void blockStatement::print(printer &pout) const {

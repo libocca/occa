@@ -19,21 +19,25 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  */
-#ifndef OCCA_PARSER_MODES_OPENMP_HEADER
-#define OCCA_PARSER_MODES_OPENMP_HEADER
 
-#include "modes/serial.hpp"
+#ifndef OCCA_LANG_BUILTINS_TRANSFORMS_FILLEXPRIDENTIFIERS_HEADER
+#define OCCA_LANG_BUILTINS_TRANSFORMS_FILLEXPRIDENTIFIERS_HEADER
+
+#include "exprTransform.hpp"
+#include "builtins/transforms/finders.hpp"
 
 namespace occa {
   namespace lang {
-    namespace okl {
-      class openmpParser : public serialParser {
+    class blockStatement;
+
+    namespace transforms {
+      class fillExprIdentifiers_t : public exprTransform {
       public:
-        openmpParser(const occa::properties &settings_ = occa::properties());
+        blockStatement *scopeSmnt;
 
-        virtual void afterParsing();
+        fillExprIdentifiers_t(blockStatement *scopeSmnt_);
 
-        void findOuterMostLoops(statementPtrVector &outerMostSmnts);
+        virtual exprNode* transformExprNode(exprNode &node);
       };
     }
   }

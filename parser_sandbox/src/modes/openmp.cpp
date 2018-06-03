@@ -25,7 +25,8 @@
 namespace occa {
   namespace lang {
     namespace okl {
-      openmpParser::openmpParser() {}
+      openmpParser::openmpParser(const occa::properties &settings_) :
+        serialParser(settings_) {}
 
       void openmpParser::afterParsing() {
         serialParser::afterParsing();

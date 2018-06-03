@@ -48,13 +48,6 @@ void testPreprocessor() {
   parseAndPrintSource("@kernel void foo(const int * restrict a) {}");
   setStatement("@kernel void foo(const int * restrict a) {}",
                statementType::functionDecl);
-
-  parser.settings["serial/restrict"] = false;
-  parseAndPrintSource("@kernel void foo(const int * restrict a) {}");
-  setStatement("@kernel void foo(const int * restrict a) {}",
-               statementType::functionDecl);
-
-  parser.settings["serial/restrict"] = true;
 }
 //======================================
 

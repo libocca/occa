@@ -197,6 +197,8 @@ namespace occa {
 
       void clear();
 
+      exprNode* replaceIdentifiers(exprNode *expr);
+
       virtual void print(printer &pout) const;
       void printChildren(printer &pout) const;
 

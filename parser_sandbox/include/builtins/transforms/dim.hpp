@@ -32,7 +32,7 @@ namespace occa {
       class dim : public statementTransform,
                   public exprTransform {
       public:
-        statement_t *scopeSmnt;
+        blockStatement *scopeSmnt;
 
         dim();
 

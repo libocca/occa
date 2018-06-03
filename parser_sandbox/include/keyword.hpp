@@ -195,6 +195,10 @@ namespace occa {
                     keywordType *keyword) {
       keywords[keyword->name()] = keyword;
     }
+
+    void replaceKeyword(keywordMap &keywords,
+                        keyword_t *keyword,
+                        const bool deleteSource = false);
   }
 }
 #endif

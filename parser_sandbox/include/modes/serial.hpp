@@ -38,7 +38,7 @@ namespace occa {
 
         static const std::string exclusiveIndexName;
 
-        serialParser();
+        serialParser(const occa::properties &settings_ = occa::properties());
 
         virtual void onClear();
         virtual void beforePreprocessing();

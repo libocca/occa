@@ -136,6 +136,8 @@ namespace occa {
 
       virtual bool hasAttribute(const std::string &attr) const;
 
+      virtual exprNode* wrapInParentheses();
+
       virtual void print(printer &pout) const = 0;
 
       std::string toString() const;
@@ -353,6 +355,8 @@ namespace occa {
                  const operator_t &op_);
 
       opType_t opType() const;
+
+      virtual exprNode* wrapInParentheses();
     };
 
     class leftUnaryOpNode : public exprOpNode {
@@ -568,6 +572,8 @@ namespace occa {
 
       virtual void setChildren(exprNodeRefVector &children);
 
+      virtual exprNode* wrapInParentheses();
+
       virtual void print(printer &pout) const;
 
       virtual void debugPrint(const std::string &prefix) const;
@@ -594,6 +600,8 @@ namespace occa {
 
       virtual void setChildren(exprNodeRefVector &children);
 
+      virtual exprNode* wrapInParentheses();
+
       virtual void print(printer &pout) const;
 
       virtual void debugPrint(const std::string &prefix) const;
@@ -617,6 +625,8 @@ namespace occa {
       virtual exprNode* endNode();
 
       virtual void setChildren(exprNodeRefVector &children);
+
+      virtual exprNode* wrapInParentheses();
 
       virtual void print(printer &pout) const;
 
@@ -700,6 +710,8 @@ namespace occa {
       virtual exprNode* endNode();
 
       virtual void setChildren(exprNodeRefVector &children);
+
+      virtual exprNode* wrapInParentheses();
 
       virtual void print(printer &pout) const;
 

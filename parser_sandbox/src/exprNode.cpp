@@ -115,6 +115,10 @@ namespace occa {
       return false;
     }
 
+    exprNode* exprNode::wrapInParentheses() {
+      return clone();
+    }
+
     std::string exprNode::toString() const {
       std::stringstream ss;
       printer pout(ss);
@@ -465,6 +469,10 @@ namespace occa {
 
     opType_t exprOpNode::opType() const {
       return op.opType;
+    }
+
+    exprNode* exprOpNode::wrapInParentheses() {
+      return new parenthesesNode(token, *this);
     }
 
     leftUnaryOpNode::leftUnaryOpNode(token_t *token_,
@@ -904,6 +912,10 @@ namespace occa {
       children.push_back(&size);
     }
 
+    exprNode* newNode::wrapInParentheses() {
+      return new parenthesesNode(token, *this);
+    }
+
     void newNode::print(printer &pout) const {
       // TODO: Print type without qualifiers
       //       Also convert [] to *
@@ -955,6 +967,10 @@ namespace occa {
       children.push_back(&value);
     }
 
+    exprNode* deleteNode::wrapInParentheses() {
+      return new parenthesesNode(token, *this);
+    }
+
     void deleteNode::print(printer &pout) const {
       pout << "delete ";
       if (isArray) {
@@ -1002,6 +1018,10 @@ namespace occa {
 
     void throwNode::setChildren(exprNodeRefVector &children) {
       children.push_back(&value);
+    }
+
+    exprNode* throwNode::wrapInParentheses() {
+      return new parenthesesNode(token, *this);
     }
 
     void throwNode::print(printer &pout) const {
@@ -1156,6 +1176,10 @@ namespace occa {
 
     void parenCastNode::setChildren(exprNodeRefVector &children) {
       children.push_back(&value);
+    }
+
+    exprNode* parenCastNode::wrapInParentheses() {
+      return new parenthesesNode(token, *this);
     }
 
     void parenCastNode::print(printer &pout) const {

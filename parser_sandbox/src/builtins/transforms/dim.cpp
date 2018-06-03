@@ -79,27 +79,27 @@ namespace occa {
         for (int i = (dimCount - 2); i >= 0; --i) {
           const int i2 = order[i];
           token_t *source = call.args[i2]->token;
-          parenthesesNode indexInParen(source,
-                                       *index);
+          exprNode *indexInParen = index->wrapInParentheses();
           // Don't delete the initial call.args[...]
           if (i < (dimCount - 2)) {
             delete index;
           }
-          parenthesesNode dimInParen(source,
-                                     *(dimAttr.args[i2].expr));
+          exprNode *dimInParen = dimAttr.args[i2].expr->wrapInParentheses();
           binaryOpNode mult(source,
                             op::mult,
-                            dimInParen,
-                            indexInParen);
+                            *dimInParen,
+                            *indexInParen);
+          delete dimInParen;
+          delete indexInParen;
           parenthesesNode multInParen(source,
                                       mult);
-          parenthesesNode argInParen(source,
-                                     *(call.args[i2]));
+          exprNode *argInParen = call.args[i2]->wrapInParentheses();
 
           index = new binaryOpNode(source,
                                    op::add,
-                                   argInParen,
+                                   *argInParen,
                                    multInParen);
+          delete argInParen;
         }
         exprNode *newValue = new subscriptNode(call.token,
                                                *(call.value),
@@ -108,7 +108,7 @@ namespace occa {
         if (dimCount > 1) {
           delete index;
         }
-        return newValue;
+        return scopeSmnt->replaceIdentifiers(newValue);
       }
 
       bool dim::isValidDim(callNode &call,
@@ -169,7 +169,11 @@ namespace occa {
         if (expr == NULL) {
           return true;
         }
-        scopeSmnt = &smnt;
+        if (smnt.is<blockStatement>()) {
+          scopeSmnt = (blockStatement*) &smnt;
+        } else {
+          scopeSmnt = smnt.up;
+        }
         expr = exprTransform::apply(*expr);
         return expr;
       }

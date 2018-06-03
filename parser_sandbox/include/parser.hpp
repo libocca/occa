@@ -47,18 +47,8 @@ namespace occa {
     typedef statement_t* (parser_t::*statementLoader_t)();
     typedef std::map<int, statementLoader_t> statementLoaderMap;
 
-    typedef std::map<std::string, attribute_t*> nameToAttributeMap;
     typedef std::list<blockStatement*>          blockStatementList;
-
-    class identifierReplacer_t : public exprTransform {
-    public:
-      parser_t &parser;
-      statement_t *scopeSmnt;
-
-      identifierReplacer_t(parser_t &parser_);
-
-      virtual exprNode* transformExprNode(exprNode &node);
-    };
+    typedef std::map<std::string, attribute_t*> nameToAttributeMap;
 
     class parser_t {
     public:
@@ -94,10 +84,9 @@ namespace occa {
 
       //---[ Misc ]---------------------
       occa::properties settings;
-      identifierReplacer_t identifierReplacer;
       //================================
 
-      parser_t();
+      parser_t(const occa::properties &settings_ = occa::properties());
       ~parser_t();
 
       //---[ Setup ]--------------------

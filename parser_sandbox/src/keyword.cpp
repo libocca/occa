@@ -280,5 +280,32 @@ namespace occa {
       }
       keywords.clear();
     }
+
+    void replaceKeyword(keywordMap &keywords,
+                        keyword_t *keyword,
+                        const bool deleteSource) {
+      if (!keyword) {
+        return;
+      }
+      // Ignore keywords without names
+      const std::string &name = keyword->name();
+      if (!name.size()) {
+        delete keyword;
+        return;
+      }
+      keywordMap::iterator it = keywords.find(name);
+      if (it != keywords.end()) {
+        // Make sure we aren't overriding ourselves
+        if (it->second == keyword) {
+          return;
+        }
+        // Free last keyword
+        if (deleteSource) {
+          it->second->deleteSource();
+        }
+        delete it->second;
+      }
+      keywords[name] = keyword;
+    }
   }
 }
