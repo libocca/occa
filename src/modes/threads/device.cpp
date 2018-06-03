@@ -130,6 +130,14 @@ namespace occa {
     }
     //==================================
 
+    //---[ Kernel ]---------------------
+    lang::kernelMetadataMap device::parseFile(const std::string &filename,
+                                              const std::string &outputFile,
+                                              const occa::properties &props) {
+      return lang::kernelMetadataMap();
+    }
+    //==================================
+
     //---[ Custom ]---------------------
     void device::addJob(job_t &job) {
       jobMutex.lock();

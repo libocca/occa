@@ -184,10 +184,6 @@ namespace occa {
                      const std::string &tag);
     void releaseHashLock(const std::string &lockDir);
 
-    lang::kernelMetadataMap parseFile(const std::string &filename,
-                                      const std::string &outputFile,
-                                      const occa::properties &props);
-
     std::string removeSlashes(const std::string &str);
 
     void cache(const std::string &filename,

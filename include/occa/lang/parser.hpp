@@ -89,6 +89,15 @@ namespace occa {
       parser_t(const occa::properties &settings_ = occa::properties());
       ~parser_t();
 
+      //---[ Public ]-------------------
+      bool succeeded() const;
+
+      std::string str() const;
+      void str(std::string &s) const;
+
+      void writeToFile(const std::string &filename) const;
+      //================================
+
       //---[ Setup ]--------------------
       void clear();
       void clearAttributes();
@@ -250,6 +259,6 @@ namespace occa {
   }
 }
 
-#include "parser.tpp"
+#include "occa/lang/parser.tpp"
 
 #endif

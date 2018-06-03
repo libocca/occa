@@ -95,6 +95,54 @@ namespace occa {
       return (attributes.find(attr) != attributes.end());
     }
 
+    bool variable_t::has(const qualifier_t &qualifier) const {
+      return vartype.has(qualifier);
+    }
+
+    variable_t& variable_t::operator += (const qualifier_t &qualifier) {
+      vartype += qualifier;
+      return *this;
+    }
+
+    variable_t& variable_t::operator -= (const qualifier_t &qualifier) {
+      vartype -= qualifier;
+      return *this;
+    }
+
+    variable_t& variable_t::operator += (const qualifiers_t &qualifiers) {
+      vartype += qualifiers;
+      return *this;
+    }
+
+    void variable_t::add(const fileOrigin &origin,
+                         const qualifier_t &qualifier) {
+      vartype.add(origin, qualifier);
+    }
+
+    void variable_t::add(const qualifierWithSource &qualifier) {
+      vartype.add(qualifier);
+    }
+
+    variable_t& variable_t::operator += (const pointer_t &pointer) {
+      vartype += pointer;
+      return *this;
+    }
+
+    variable_t& variable_t::operator += (const pointerVector &pointers) {
+      vartype += pointers;
+      return *this;
+    }
+
+    variable_t& variable_t::operator += (const array_t &array) {
+      vartype += array;
+      return *this;
+    }
+
+    variable_t& variable_t::operator += (const arrayVector &arrays) {
+      vartype += arrays;
+      return *this;
+    }
+
     void variable_t::printDeclaration(printer &pout) const {
       vartype.printDeclaration(pout, name());
     }

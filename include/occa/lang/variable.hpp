@@ -55,6 +55,23 @@ namespace occa {
 
       bool hasAttribute(const std::string &attr) const;
 
+      bool has(const qualifier_t &qualifier) const;
+
+      variable_t& operator += (const qualifier_t &qualifier);
+      variable_t& operator -= (const qualifier_t &qualifier);
+      variable_t& operator += (const qualifiers_t &qualifiers);
+
+      void add(const fileOrigin &origin,
+               const qualifier_t &qualifier);
+
+      void add(const qualifierWithSource &qualifier);
+
+      variable_t& operator += (const pointer_t &pointer);
+      variable_t& operator += (const pointerVector &pointers);
+
+      variable_t& operator += (const array_t &array);
+      variable_t& operator += (const arrayVector &arrays);
+
       void printDeclaration(printer &pout) const;
       void printExtraDeclaration(printer &pout) const;
 

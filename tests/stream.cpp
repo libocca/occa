@@ -20,16 +20,16 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  */
 #include "occa/tools/testing.hpp"
-#include "occa/tools/stream.hpp"
+#include "occa/lang/stream.hpp"
 
 template <class output_t>
-class vectorStream : public occa::baseStream<output_t> {
+class vectorStream : public occa::lang::baseStream<output_t> {
 public:
   std::vector<output_t> values;
   int index;
 
   vectorStream() :
-    occa::baseStream<output_t>(),
+    occa::lang::baseStream<output_t>(),
     values(),
     index(0) {}
 
@@ -38,7 +38,7 @@ public:
     values(values_),
     index(index_) {}
 
-  virtual occa::baseStream<output_t>& clone() const {
+  virtual occa::lang::baseStream<output_t>& clone() const {
     return *(new vectorStream(values, index));
   }
 
@@ -69,15 +69,15 @@ public:
 
 template <class input_t,
           class output_t>
-class multMap : public occa::streamMap<input_t, output_t> {
+class multMap : public occa::lang::streamMap<input_t, output_t> {
 public:
   output_t factor;
 
   multMap(const output_t &factor_) :
-    occa::streamMap<input_t, output_t>(),
+    occa::lang::streamMap<input_t, output_t>(),
     factor(factor_) {}
 
-  virtual occa::streamMap<input_t, output_t>& clone_() const {
+  virtual occa::lang::streamMap<input_t, output_t>& clone_() const {
     return *(new multMap(factor));
   }
 
@@ -93,11 +93,11 @@ public:
 };
 
 template <class input_t, class output_t>
-class addHalfMap : public occa::withOutputCache<input_t, output_t> {
+class addHalfMap : public occa::lang::withOutputCache<input_t, output_t> {
 public:
   addHalfMap() {}
 
-  virtual occa::streamMap<input_t, output_t>& clone_() const {
+  virtual occa::lang::streamMap<input_t, output_t>& clone_() const {
     return *(new addHalfMap());
   }
 
@@ -110,11 +110,11 @@ public:
 };
 
 template <class input_t>
-class oddNumberFilter : public occa::streamFilter<input_t> {
+class oddNumberFilter : public occa::lang::streamFilter<input_t> {
 public:
   oddNumberFilter() {}
 
-  virtual occa::streamMap<input_t, input_t>& clone_() const {
+  virtual occa::lang::streamMap<input_t, input_t>& clone_() const {
     return *(new oddNumberFilter());
   }
 
@@ -139,15 +139,15 @@ int main(const int argc, const char **argv) {
   }
 
   vectorStream<int> source(values);
-  occa::stream<int> sInt;
-  occa::stream<double> sDouble;
+  occa::lang::stream<int> sInt;
+  occa::lang::stream<double> sDouble;
 
   multMap<int, double> times4(4);
   multMap<double, double> timesQ(0.25);
   addHalfMap<int, double> addHalf;
   oddNumberFilter<int> oddFilter;
-  occa::streamMapFunc<double, double> times2(mult2);
-  occa::streamFilterFunc<int> evenFilter(isEven);
+  occa::lang::streamMapFunc<double, double> times2(mult2);
+  occa::lang::streamFilterFunc<int> evenFilter(isEven);
 
   sDouble = source.map(times4);
 

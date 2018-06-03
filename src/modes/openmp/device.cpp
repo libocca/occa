@@ -30,6 +30,7 @@
 #include "occa/modes/openmp/device.hpp"
 #include "occa/modes/openmp/kernel.hpp"
 #include "occa/modes/openmp/utils.hpp"
+#include "occa/lang/modes/openmp.hpp"
 
 namespace occa {
   namespace openmp {
@@ -37,6 +38,31 @@ namespace occa {
       serial::device(properties_) {
       // Generate an OpenMP library dependency (so it doesn't crash when dlclose())
       omp_get_num_threads();
+    }
+
+    lang::kernelMetadataMap device::parseFile(const std::string &filename,
+                                              const std::string &outputFile,
+                                              const occa::properties &props) {
+
+      lang::okl::openmpParser parser(props);
+      parser.parseFile(filename);
+
+      OCCA_ERROR("Unable to transform OKL kernel",
+                 parser.succeeded());
+
+      if (!sys::fileExists(outputFile)) {
+        hash_t hash = occa::hash(outputFile);
+        const std::string hashTag = "parse-file";
+
+        if (io::haveHash(hash, hashTag)) {
+          parser.writeToFile(outputFile);
+          io::releaseHash(hash, hashTag);
+        } else {
+          io::waitForHash(hash, hashTag);
+        }
+      }
+
+      return getKernelMetadata(parser);
     }
 
     kernel_v* device::buildKernel(const std::string &filename,

@@ -225,20 +225,20 @@ namespace occa {
 
       bool has(const qualifier_t &qualifier) const;
 
-      void operator += (const qualifier_t &qualifier);
-      void operator -= (const qualifier_t &qualifier);
-      void operator += (const qualifiers_t &qualifiers_);
+      vartype_t& operator += (const qualifier_t &qualifier);
+      vartype_t& operator -= (const qualifier_t &qualifier);
+      vartype_t& operator += (const qualifiers_t &qualifiers_);
 
       void add(const fileOrigin &origin,
                const qualifier_t &qualifier);
 
       void add(const qualifierWithSource &qualifier);
 
-      void operator += (const pointer_t &pointer);
-      void operator += (const pointerVector &pointers_);
+      vartype_t& operator += (const pointer_t &pointer);
+      vartype_t& operator += (const pointerVector &pointers_);
 
-      void operator += (const array_t &array);
-      void operator += (const arrayVector &arrays_);
+      vartype_t& operator += (const array_t &array);
+      vartype_t& operator += (const arrayVector &arrays_);
 
       vartype_t declarationType() const;
 

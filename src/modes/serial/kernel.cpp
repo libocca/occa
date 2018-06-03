@@ -41,18 +41,11 @@ namespace occa {
 
       name = kernelName;
 
-      const bool isLaunchKernel = properties.has("defines/OCCA_LAUNCH_KERNEL");
       const bool verbose = properties.get("verbose", false);
 
-      const std::string sourceFile = (isLaunchKernel
-                                      ? getLaunchSourceFilename(filename, hash)
-                                      : getSourceFilename(filename, hash));
-      const std::string binaryFile = (isLaunchKernel
-                                      ? getLaunchBinaryFilename(filename, hash)
-                                      : getBinaryFilename(filename, hash));
-      const std::string sourceBasename = (isLaunchKernel
-                                          ? kc::launchSourceFile
-                                          : kc::sourceFile);
+      const std::string sourceFile = getSourceFilename(filename, hash);
+      const std::string binaryFile = getBinaryFilename(filename, hash);
+      const std::string sourceBasename = kc::sourceFile;
       bool foundBinary = true;
 
       const std::string hashTag = "serial-kernel";
@@ -157,16 +150,6 @@ namespace occa {
 
     void kernel::runFromArguments(const int kArgc, const kernelArg *kArgs) const {
       int argc = 0;
-      kernelInfoArg_t info;
-
-      if (properties.get("OKL", true)) {
-        info.outerDim0 = outer.x; info.innerDim0 = inner.x;
-        info.outerDim1 = outer.y; info.innerDim1 = inner.y;
-        info.outerDim2 = outer.z; info.innerDim2 = inner.z;
-
-        info.innerId0 = info.innerId1 = info.innerId2 = 0;
-        vArgs[argc++] = &info;
-      }
 
       for (int i = 0; i < kArgc; ++i) {
         const int argCount = (int) kArgs[i].args.size();

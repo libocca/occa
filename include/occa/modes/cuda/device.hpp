@@ -71,6 +71,10 @@ namespace occa {
       //  |=============================
 
       //  |---[ Kernel ]----------------
+      virtual lang::kernelMetadataMap parseFile(const std::string &filename,
+                                                const std::string &outputFile,
+                                                const occa::properties &props);
+
       virtual kernel_v* buildKernel(const std::string &filename,
                                     const std::string &kernelName,
                                     const hash_t kernelHash,

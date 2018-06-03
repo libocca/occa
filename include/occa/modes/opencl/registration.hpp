@@ -44,8 +44,8 @@ namespace occa {
       occa::properties& getProperties();
     };
 
-    extern occa::mode<opencl::modeInfo,
-                      opencl::device> mode;
+    // extern occa::mode<opencl::modeInfo,
+    //                   opencl::device> mode;
   }
 }
 

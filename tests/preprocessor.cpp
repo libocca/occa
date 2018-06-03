@@ -45,9 +45,11 @@ std::string source;
 tokenizer_t tokenizer;
 preprocessor_t preprocessor;
 newlineTokenFilter newlineFilter;
-occa::stream<token_t*> stream = (tokenizer
-                                 .map(preprocessor)
-                                 .map(newlineFilter));
+occa::lang::stream<token_t*> tokenStream = (
+  tokenizer
+  .map(preprocessor)
+  .map(newlineFilter)
+);
 token_t *token;
 
 void setStream(const std::string &s) {
@@ -61,7 +63,7 @@ void setStream(const std::string &s) {
 void getToken() {
   delete token;
   token = NULL;
-  stream >> token;
+  tokenStream >> token;
 }
 
 void setToken(const std::string &s) {
@@ -146,12 +148,12 @@ void testMacroDefines() {
     "#define J(A1, A2) # A1 ## A2\n"
     "J(1, 3)\n"
   );
-  while (!stream.isEmpty()) {
+  while (!tokenStream.isEmpty()) {
     getToken();
   }
 
   // Test error counting
-  preprocessor_t &pp = *((preprocessor_t*) stream.getInput("preprocessor_t"));
+  preprocessor_t &pp = *((preprocessor_t*) tokenStream.getInput("preprocessor_t"));
   OCCA_ASSERT_EQUAL(3,
                     pp.errors);
 
@@ -476,7 +478,7 @@ void testIfElseDefines () {
     OCCA_ASSERT_EQUAL(values[i],
                       (int) pToken.value);
   }
-  while (!stream.isEmpty()) {
+  while (!tokenStream.isEmpty()) {
     getToken();
   }
 }
@@ -487,7 +489,7 @@ void testErrorDefines() {
     "#error \"Testing #error\"\n"
     "#warning \"Testing #warning\"\n"
   );
-  while (!stream.isEmpty()) {
+  while (!tokenStream.isEmpty()) {
     getToken();
   }
 }
@@ -550,7 +552,7 @@ void testSpecialMacros() {
   OCCA_ASSERT_EQUAL_BINARY(tokenType::string,
                            token->type());
 
-  while(!stream.isEmpty()) {
+  while(!tokenStream.isEmpty()) {
     getToken();
   }
 }
@@ -573,11 +575,11 @@ void testInclude() {
     }
   }
   // Error out in the last include
-  while(!stream.isEmpty()) {
+  while(!tokenStream.isEmpty()) {
     getToken();
   }
 
-  preprocessor_t &pp = *((preprocessor_t*) stream.getInput("preprocessor_t"));
+  preprocessor_t &pp = *((preprocessor_t*) tokenStream.getInput("preprocessor_t"));
   OCCA_ASSERT_EQUAL(1,
                     (int) pp.dependencies.size());
 }

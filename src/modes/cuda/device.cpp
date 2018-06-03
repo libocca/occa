@@ -109,7 +109,7 @@ namespace occa {
       return hash_;
     }
 
-    //  |---[ Stream ]----------------
+    //---[ Stream ]---------------------
     stream_t device::createStream() const {
       CUstream *retStream = new CUstream;
 
@@ -159,9 +159,15 @@ namespace occa {
     stream_t device::wrapStream(void *handle_, const occa::properties &props) const {
       return handle_;
     }
-    //  |===============================
+    //==================================
 
-    //  |---[ Kernel ]------------------
+    //---[ Kernel ]---------------------
+    lang::kernelMetadataMap device::parseFile(const std::string &filename,
+                                              const std::string &outputFile,
+                                              const occa::properties &props) {
+      return lang::kernelMetadataMap();
+    }
+
     kernel_v* device::buildKernel(const std::string &filename,
                                   const std::string &kernelName,
                                   const hash_t kernelHash,
@@ -181,9 +187,9 @@ namespace occa {
       k->buildFromBinary(filename, kernelName);
       return k;
     }
-    //  |===============================
+    //==================================
 
-    //  |---[ Memory ]------------------
+    //---[ Memory ]---------------------
     memory_v* device::malloc(const udim_t bytes,
                              const void *src,
                              const occa::properties &props) {
@@ -266,7 +272,7 @@ namespace occa {
     udim_t device::memorySize() const {
       return cuda::getDeviceMemorySize(cuDevice);
     }
-    //  |===============================
+    //==================================
   }
 }
 

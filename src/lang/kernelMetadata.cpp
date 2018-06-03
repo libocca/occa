@@ -24,31 +24,15 @@
 
 namespace occa {
   namespace lang {
-    argumentInfo::argumentInfo() :
-      pos(0),
-      isConst(false) {}
-
-    argumentInfo::argumentInfo(const argumentInfo &info) :
-      pos(info.pos),
-      isConst(info.isConst) {}
-
-    argumentInfo& argumentInfo::operator = (const argumentInfo &info) {
-      pos     = info.pos;
-      isConst = info.isConst;
-
-      return *this;
-    }
+    argumentInfo::argumentInfo(const bool isConst_) :
+      isConst(isConst_) {}
 
     argumentInfo argumentInfo::fromJson(const json &j) {
-      argumentInfo info;
-      info.pos     = j["pos"];
-      info.isConst = j["isConst"];
-      return info;
+      return argumentInfo(j["isConst"].boolean());
     }
 
     json argumentInfo::toJson() const {
       json j;
-      j["pos"] = pos;
       j["isConst"] = isConst;
       return j;
     }
@@ -74,10 +58,17 @@ namespace occa {
       return *this;
     }
 
-    void kernelMetadata::removeArg(const int pos) {
-      argumentInfos.erase(argumentInfos.begin() + pos);
+    kernelMetadata& kernelMetadata::operator += (const argumentInfo &argInfo) {
+      argumentInfos.push_back(argInfo);
+      return *this;
     }
 
+    bool kernelMetadata::argIsConst(const int pos) const {
+      if (pos < (int) argumentInfos.size()) {
+        return argumentInfos[pos].isConst;
+      }
+      return false;
+    }
 
     kernelMetadata kernelMetadata::getNestedKernelMetadata(const int kIdx) const {
       kernelMetadata meta;

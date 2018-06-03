@@ -495,38 +495,6 @@ namespace occa {
       fileLocks().erase(lockDir);
     }
 
-    lang::kernelMetadataMap parseFile(const std::string &filename,
-                                      const std::string &outputFile,
-                                      const occa::properties &props) {
-
-      // TODO 1.0: Replace parser
-      // parser fileParser;
-
-      // std::string parsedContent = fileParser.parseFile(io::filename(filename),
-      //                                                  props);
-
-      // if (!sys::fileExists(outputFile)) {
-      //   hash_t hash = occa::hash(outputFile);
-      //   const std::string hashTag = "parse-file";
-
-      //   if (io::haveHash(hash, hashTag)) {
-      //     write(outputFile, parsedContent);
-      //     io::releaseHash(hash, hashTag);
-      //   } else {
-      //     io::waitForHash(hash, hashTag);
-      //   }
-      // }
-
-      lang::kernelMetadataMap metadataMap;
-      // lang::kernelInfoMap::iterator kIt = fileParser.kernelInfoMap.begin();
-      // while (kIt != fileParser.kernelInfoMap.end()) {
-      //   metadataMap[kIt->first] = kIt->second->metadata();
-      //   ++kIt;
-      // }
-
-      return metadataMap;
-    }
-
     std::string removeSlashes(const std::string &str) {
       std::string ret = str;
       const size_t chars = str.size();

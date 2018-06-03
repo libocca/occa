@@ -421,16 +421,19 @@ namespace occa {
       return qualifiers.has(qualifier);
     }
 
-    void vartype_t::operator += (const qualifier_t &qualifier) {
+    vartype_t& vartype_t::operator += (const qualifier_t &qualifier) {
       qualifiers += qualifier;
+      return *this;
     }
 
-    void vartype_t::operator -= (const qualifier_t &qualifier) {
+    vartype_t& vartype_t::operator -= (const qualifier_t &qualifier) {
       qualifiers -= qualifier;
+      return *this;
     }
 
-    void vartype_t::operator += (const qualifiers_t &qualifiers_) {
+    vartype_t& vartype_t::operator += (const qualifiers_t &qualifiers_) {
       qualifiers += qualifiers_;
+      return *this;
     }
 
     void vartype_t::add(const fileOrigin &origin,
@@ -442,26 +445,30 @@ namespace occa {
       qualifiers.add(qualifier);
     }
 
-    void vartype_t::operator += (const pointer_t &pointer) {
+    vartype_t& vartype_t::operator += (const pointer_t &pointer) {
       pointers.push_back(pointer);
+      return *this;
     }
 
-    void vartype_t::operator += (const pointerVector &pointers_) {
+    vartype_t& vartype_t::operator += (const pointerVector &pointers_) {
       const int pointerCount = (int) pointers_.size();
       for (int i = 0; i < pointerCount; ++i) {
         pointers.push_back(pointers_[i]);
       }
+      return *this;
     }
 
-    void vartype_t::operator += (const array_t &array) {
+    vartype_t& vartype_t::operator += (const array_t &array) {
       arrays.push_back(array);
+      return *this;
     }
 
-    void vartype_t::operator += (const arrayVector &arrays_) {
+    vartype_t& vartype_t::operator += (const arrayVector &arrays_) {
       const int arrayCount = (int) arrays_.size();
       for (int i = 0; i < arrayCount; ++i) {
         arrays.push_back(arrays_[i]);
       }
+      return *this;
     }
 
     vartype_t vartype_t::declarationType() const {

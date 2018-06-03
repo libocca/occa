@@ -58,16 +58,7 @@ namespace occa {
       void serialParser::onClear() {}
 
       void serialParser::beforePreprocessing() {
-        macroMap::iterator mIt = preprocessor.compilerMacros.find("restrict");
-        if (mIt != preprocessor.compilerMacros.end()) {
-          delete mIt->second;
-          preprocessor.compilerMacros.erase(mIt);
-        }
-        preprocessor.compilerMacros["restrict"] = (
-          macro_t::defineBuiltin(preprocessor,
-                                 "restrict",
-                                 restrict_.name)
-        );
+        preprocessor.addCompilerDefine("restrict", restrict_.name);
       }
 
       void serialParser::afterParsing() {

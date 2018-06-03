@@ -20,13 +20,14 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  */
 
-#include "occa/modes/serial/device.hpp"
-#include "occa/modes/serial/kernel.hpp"
-#include "occa/modes/serial/memory.hpp"
+#include "occa/base.hpp"
 #include "occa/tools/env.hpp"
 #include "occa/tools/io.hpp"
 #include "occa/tools/sys.hpp"
-#include "occa/base.hpp"
+#include "occa/modes/serial/device.hpp"
+#include "occa/modes/serial/kernel.hpp"
+#include "occa/modes/serial/memory.hpp"
+#include "occa/lang/modes/serial.hpp"
 
 namespace occa {
   namespace serial {
@@ -109,6 +110,8 @@ namespace occa {
 
     device::~device() {}
 
+    void device::free() {}
+
     void device::finish() const {}
 
     bool device::hasSeparateMemorySpace() const {
@@ -122,17 +125,12 @@ namespace occa {
       return hash_;
     }
 
-    void device::waitFor(streamTag tag) const {}
-
+    //---[ Stream ]---------------------
     stream_t device::createStream() const {
       return NULL;
     }
 
     void device::freeStream(stream_t s) const {}
-
-    stream_t device::wrapStream(void *handle_, const occa::properties &props) const {
-      return NULL;
-    }
 
     streamTag device::tagStream() const {
       streamTag ret;
@@ -140,8 +138,43 @@ namespace occa {
       return ret;
     }
 
-    double device::timeBetween(const streamTag &startTag, const streamTag &endTag) const {
+    void device::waitFor(streamTag tag) const {}
+
+    double device::timeBetween(const streamTag &startTag,
+                               const streamTag &endTag) const {
       return (endTag.tagTime - startTag.tagTime);
+    }
+
+    stream_t device::wrapStream(void *handle_,
+                                const occa::properties &props) const {
+      return NULL;
+    }
+    //==================================
+
+    //---[ Kernel ]---------------------
+    lang::kernelMetadataMap device::parseFile(const std::string &filename,
+                                              const std::string &outputFile,
+                                              const occa::properties &props) {
+
+      lang::okl::serialParser parser(props);
+      parser.parseFile(filename);
+
+      OCCA_ERROR("Unable to transform OKL kernel",
+                 parser.succeeded());
+
+      if (!sys::fileExists(outputFile)) {
+        hash_t hash = occa::hash(outputFile);
+        const std::string hashTag = "parse-file";
+
+        if (io::haveHash(hash, hashTag)) {
+          parser.writeToFile(outputFile);
+          io::releaseHash(hash, hashTag);
+        } else {
+          io::waitForHash(hash, hashTag);
+        }
+      }
+
+      return getKernelMetadata(parser);
     }
 
     kernel_v* device::buildKernel(const std::string &filename,
@@ -162,7 +195,9 @@ namespace occa {
       k->buildFromBinary(filename, kernelName);
       return k;
     }
+    //==================================
 
+      //---[ Memory ]-------------------
     memory_v* device::malloc(const udim_t bytes,
                              const void *src,
                              const occa::properties &props) {
@@ -182,7 +217,6 @@ namespace occa {
     udim_t device::memorySize() const {
       return sys::installedRAM();
     }
-
-    void device::free() {}
+    //==================================
   }
 }

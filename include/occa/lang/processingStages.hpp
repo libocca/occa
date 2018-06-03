@@ -22,7 +22,7 @@
 #ifndef OCCA_LANG_PROCESSINGSTAGES_HEADER
 #define OCCA_LANG_PROCESSINGSTAGES_HEADER
 
-#include "occa/tools/stream.hpp"
+#include "occa/lang/stream.hpp"
 
 namespace occa {
   namespace lang {

@@ -44,8 +44,8 @@ namespace occa {
       occa::properties& getProperties();
     };
 
-    extern occa::mode<cuda::modeInfo,
-                      cuda::device> mode;
+    // extern occa::mode<cuda::modeInfo,
+    //                   cuda::device> mode;
   }
 }
 

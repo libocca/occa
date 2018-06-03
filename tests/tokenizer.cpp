@@ -44,7 +44,7 @@ std::string source;
 tokenizer_t tokenizer;
 stringTokenMerger stringMerger;
 externTokenMerger externMerger;
-occa::stream<token_t*> mergeTokenStream = (
+occa::lang::stream<token_t*> mergeTokenStream = (
   tokenizer
   .map(stringMerger)
   .map(externMerger)
@@ -575,7 +575,7 @@ void testErrors() {
   unknownTokenFilter unknownFilter(true);
 
   setStream("$ test\n\"foo\" \"bar\" ` bar foo");
-  occa::stream<token_t*> streamWithErrors = (
+  occa::lang::stream<token_t*> streamWithErrors = (
     tokenizer.filter(unknownFilter)
   );
 

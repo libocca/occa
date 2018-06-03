@@ -29,9 +29,9 @@
 
 #include "occa/defines.hpp"
 #include "occa/types.hpp"
-#include "occa/tools/stream.hpp"
 #include "occa/lang/macro.hpp"
 #include "occa/lang/token.hpp"
+#include "occa/lang/stream.hpp"
 
 namespace occa {
   namespace lang {
@@ -107,8 +107,6 @@ namespace occa {
 
       virtual void* passMessageToInput(const occa::properties &props);
 
-      void addExpandedToken(token_t *token);
-
       void pushStatus(const int status_);
       int popStatus();
       void swapReadingStatus();
@@ -122,6 +120,18 @@ namespace occa {
       token_t* getSourceToken();
 
       virtual void fetchNext();
+
+      //---[ Public ]-------------------
+      void addCompilerDefine(const std::string &name,
+                             const std::string &value);
+
+      void removeCompilerDefine(const std::string &name);
+
+      void addSourceDefine(const std::string &name,
+                           const std::string &value);
+
+      void removeSourceDefine(const std::string &name);
+      //================================
 
       void expandMacro(identifierToken &source,
                        macro_t &macro);

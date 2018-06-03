@@ -60,6 +60,12 @@ namespace occa {
                                  const streamTag &endTag) const;
       //================================
 
+      //---[ Kernel ]-------------------
+      virtual lang::kernelMetadataMap parseFile(const std::string &filename,
+                                                const std::string &outputFile,
+                                                const occa::properties &props);
+      //================================
+
       //---[ Custom ]-------------------
       void addJob(job_t &job);
       //================================

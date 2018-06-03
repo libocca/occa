@@ -33,13 +33,9 @@ namespace occa {
 
     class argumentInfo {
     public:
-      int pos;
       bool isConst;
 
-      argumentInfo();
-
-      argumentInfo(const argumentInfo &info);
-      argumentInfo& operator = (const argumentInfo &info);
+      argumentInfo(const bool isConst_ = false);
 
       static argumentInfo fromJson(const json &j);
       json toJson() const;
@@ -57,14 +53,9 @@ namespace occa {
       kernelMetadata(const kernelMetadata & kInfo);
       kernelMetadata& operator = (const kernelMetadata & kInfo);
 
-      void removeArg(const int pos);
+      kernelMetadata& operator += (const argumentInfo &argInfo);
 
-      inline bool argIsConst(const int pos) const {
-        if (((size_t) pos) < argumentInfos.size())
-          return argumentInfos[pos].isConst;
-
-        return false;
-      }
+      bool argIsConst(const int pos) const;
 
       kernelMetadata getNestedKernelMetadata(const int pos) const;
 

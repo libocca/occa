@@ -25,6 +25,9 @@
 #include "occa/mode.hpp"
 #include "occa/tools/sys.hpp"
 #include "occa/tools/io.hpp"
+#include "occa/lang/parser.hpp"
+#include "occa/lang/builtins/types.hpp"
+#include "occa/lang/builtins/transforms/finders.hpp"
 
 namespace occa {
   //---[ device_v ]---------------------
@@ -69,6 +72,36 @@ namespace occa {
     if (it != cachedKernels.end()) {
       cachedKernels.erase(it);
     }
+  }
+
+  lang::kernelMetadataMap device_v::getKernelMetadata(lang::parser_t &parser) {
+    lang::kernelMetadataMap metadataMap;
+
+    lang::statementPtrVector kernelSmnts;
+    lang::findStatementsByAttr(lang::statementType::functionDecl,
+                               "kernel",
+                               parser.root,
+                               kernelSmnts);
+
+    const int kernelCount = (int) kernelSmnts.size();
+    for (int i = 0; i < kernelCount; ++i) {
+      lang::functionDeclStatement &declSmnt = *((lang::functionDeclStatement*) kernelSmnts[i]);
+      lang::function_t &func = declSmnt.function;
+
+      lang::kernelMetadata &metadata = metadataMap[func.name()];
+      metadata.name = func.name();
+      metadata.baseName = metadata.name;
+      metadata.nestedKernels = 0;
+
+      int args = (int) func.args.size();
+      for (int ai = 0; ai < args; ++ai) {
+        metadata += lang::argumentInfo(
+          func.args[ai]->has(lang::const_)
+        );
+      }
+    }
+
+    return metadataMap;
   }
   //====================================
 
@@ -391,9 +424,9 @@ namespace occa {
     if (allProps.get("okl", true)) {
       sourceFilename = hashDir + kc::parsedSourceFile;
 
-      lang::kernelMetadataMap metadataMap = io::parseFile(realFilename,
-                                                          sourceFilename,
-                                                          allProps);
+      lang::kernelMetadataMap metadataMap = dHandle->parseFile(realFilename,
+                                                               sourceFilename,
+                                                               allProps);
 
       lang::kernelMetadataMap::iterator kIt = metadataMap.find(kernelName);
       OCCA_ERROR("Could not find kernel ["
@@ -483,7 +516,6 @@ namespace occa {
 
     // Create launch kernel
     occa::properties launchProps = host().kernelProperties();
-    launchProps["defines/OCCA_LAUNCH_KERNEL"] = 1;
     launchProps["hash"] = hash.toFullString();
 
     ker = launcherHandle->buildKernel(filename,

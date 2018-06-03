@@ -80,17 +80,17 @@ namespace occa {
       }
 
       // Alternative representations
-      compilerMacros["and"]    = macro_t::defineBuiltin(*this, "and"   , "&&");
-      compilerMacros["and_eq"] = macro_t::defineBuiltin(*this, "and_eq", "&=");
-      compilerMacros["bitand"] = macro_t::defineBuiltin(*this, "bitand", "&");
-      compilerMacros["bitor"]  = macro_t::defineBuiltin(*this, "bitor" , "|");
-      compilerMacros["compl"]  = macro_t::defineBuiltin(*this, "compl" , "~");
-      compilerMacros["not"]    = macro_t::defineBuiltin(*this, "not"   , "!");
-      compilerMacros["not_eq"] = macro_t::defineBuiltin(*this, "not_eq", "!=");
-      compilerMacros["or"]     = macro_t::defineBuiltin(*this, "or"    , "||");
-      compilerMacros["or_eq"]  = macro_t::defineBuiltin(*this, "or_eq" , "|=");
-      compilerMacros["xor"]    = macro_t::defineBuiltin(*this, "xor"   , "^");
-      compilerMacros["xor_eq"] = macro_t::defineBuiltin(*this, "xor_eq", "^=");
+      addCompilerDefine("and"   , "&&");
+      addCompilerDefine("and_eq", "&=");
+      addCompilerDefine("bitand", "&");
+      addCompilerDefine("bitor" , "|");
+      addCompilerDefine("compl" , "~");
+      addCompilerDefine("not"   , "!");
+      addCompilerDefine("not_eq", "!=");
+      addCompilerDefine("or"    , "||");
+      addCompilerDefine("or_eq" , "|=");
+      addCompilerDefine("xor"   , "^");
+      addCompilerDefine("xor_eq", "^=");
 
       warnings = 0;
       errors   = 0;
@@ -282,6 +282,39 @@ namespace occa {
     void preprocessor_t::fetchNext() {
       processToken(getSourceToken());
     }
+
+    //---[ Public ]---------------------
+    void preprocessor_t::addCompilerDefine(const std::string &name,
+                                           const std::string &value) {
+      removeCompilerDefine(name);
+      compilerMacros[name] = macro_t::defineBuiltin(*this,
+                                                    name,
+                                                    value);
+    }
+
+    void preprocessor_t::removeCompilerDefine(const std::string &name) {
+      macroMap::iterator mIt = compilerMacros.find(name);
+      if (mIt != compilerMacros.end()) {
+        delete mIt->second;
+        compilerMacros.erase(mIt);
+      }
+    }
+
+    void preprocessor_t::addSourceDefine(const std::string &name,
+                                         const std::string &value) {
+      sourceMacros[name] = macro_t::defineBuiltin(*this,
+                                                  name,
+                                                  value);
+    }
+
+    void preprocessor_t::removeSourceDefine(const std::string &name) {
+      macroMap::iterator mIt = sourceMacros.find(name);
+      if (mIt != sourceMacros.end()) {
+        delete mIt->second;
+        sourceMacros.erase(mIt);
+      }
+    }
+    //==================================
 
     void preprocessor_t::expandMacro(identifierToken &source,
                                      macro_t &macro) {

@@ -19,6 +19,7 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  */
+#include "occa/tools/io.hpp"
 #include "occa/lang/attribute.hpp"
 #include "occa/lang/expression.hpp"
 #include "occa/lang/parser.hpp"
@@ -111,11 +112,41 @@ namespace occa {
       attributeMap.clear();
     }
 
+    //---[ Public ]---------------------
+    bool parser_t::succeeded() const {
+      return success;
+    }
+
+    std::string parser_t::str() const {
+      return root.toString();
+    }
+
+    void parser_t::str(std::string &s) const {
+      s = root.toString();
+    }
+
+    void parser_t::writeToFile(const std::string &filename) const {
+      io::write(filename,
+                root.toString());
+    }
+    //==================================
+
     //---[ Setup ]----------------------
     void parser_t::clear() {
       tokenizer.clear();
-      preprocessor.clear();
       context.clear();
+
+      preprocessor.clear();
+      json &defines = settings["defines"];
+      if (defines.isObject()) {
+        jsonObject &defineMap = defines.object();
+        jsonObject::iterator it = defineMap.begin();
+        while (it != defineMap.end()) {
+          preprocessor.addSourceDefine(it->first,
+                                       it->second.toString());
+          ++it;
+        }
+      }
 
       lastPeek = 0;
       lastPeekPosition = -1;

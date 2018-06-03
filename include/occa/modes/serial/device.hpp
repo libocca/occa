@@ -43,7 +43,7 @@ namespace occa {
 
       virtual hash_t hash() const;
 
-      //  |---[ Stream ]----------------
+      //---[ Stream ]-------------------
       virtual stream_t createStream() const;
       virtual void freeStream(stream_t s) const;
 
@@ -52,9 +52,13 @@ namespace occa {
       virtual double timeBetween(const streamTag &startTag, const streamTag &endTag) const;
 
       virtual stream_t wrapStream(void *handle_, const occa::properties &props) const;
-      //  |=============================
+      //================================
 
-      //  |---[ Kernel ]----------------
+      //---[ Kernel ]-------------------
+      virtual lang::kernelMetadataMap parseFile(const std::string &filename,
+                                                const std::string &outputFile,
+                                                const occa::properties &props);
+
       virtual kernel_v* buildKernel(const std::string &filename,
                                     const std::string &kernelName,
                                     const hash_t kernelHash,
@@ -63,15 +67,15 @@ namespace occa {
       virtual kernel_v* buildKernelFromBinary(const std::string &filename,
                                               const std::string &kernelName,
                                               const occa::properties &props);
-      //  |=============================
+      //================================
 
-      //  |---[ Kernel ]----------------
+      //---[ Memory ]-------------------
       virtual memory_v* malloc(const udim_t bytes,
                                const void *src,
                                const occa::properties &props);
 
       virtual udim_t memorySize() const;
-      //  |=============================
+      //================================
     };
   }
 }
