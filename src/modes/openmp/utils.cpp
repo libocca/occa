@@ -66,7 +66,7 @@ namespace occa {
       std::string flag = openmp::notSupported;
       std::stringstream ss;
 
-      const std::string openmpTest = env::OCCA_DIR + "/scripts/openmpTest.cpp";
+      const std::string openmpTest = env::OCCA_DIR + "scripts/openmpTest.cpp";
       hash_t hash = occa::hashFile(openmpTest);
       hash ^= occa::hash(vendor_);
       hash ^= occa::hash(compiler);

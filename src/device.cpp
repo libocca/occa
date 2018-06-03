@@ -90,8 +90,6 @@ namespace occa {
 
       lang::kernelMetadata &metadata = metadataMap[func.name()];
       metadata.name = func.name();
-      metadata.baseName = metadata.name;
-      metadata.nestedKernels = 0;
 
       int args = (int) func.args.size();
       for (int ai = 0; ai < args; ++ai) {
@@ -491,13 +489,8 @@ namespace occa {
                                    const hash_t &hash,
                                    const occa::properties &kernelProps,
                                    const lang::kernelMetadata &metadata) const {
-
-    // Native kernels don't need a host() to launch them
-    device_v *launcherHandle = ((metadata.nestedKernels > 0)
-                                ? host().getDHandle()
-                                : dHandle);
     // Check cache first
-    kernel &ker = launcherHandle->getCachedKernel(hash, metadata.name);
+    kernel &ker = dHandle->getCachedKernel(hash, metadata.name);
     if (ker.isInitialized()) {
       return ker;
     }
@@ -506,41 +499,10 @@ namespace occa {
     occa::properties allProps = kernelProps;
     allProps["hash"] = hash.toFullString();
 
-    if (metadata.nestedKernels == 0) {
-      ker = launcherHandle->buildKernel(filename,
-                                        metadata.name,
-                                        hash,
-                                        allProps);
-      return ker;
-    }
-
-    // Create launch kernel
-    occa::properties launchProps = host().kernelProperties();
-    launchProps["hash"] = hash.toFullString();
-
-    ker = launcherHandle->buildKernel(filename,
-                                      metadata.name,
-                                      hash,
-                                      launchProps);
-
-    // Load nested kernels
-    if (metadata.nestedKernels) {
-      for (int ki = 0; ki < metadata.nestedKernels; ++ki) {
-        lang::kernelMetadata sMetadata = metadata.getNestedKernelMetadata(ki);
-        const std::string &sKerName    = sMetadata.name;
-
-        kernel &sKer = dHandle->getCachedKernel(hash,
-                                                sKerName);
-        sKer = dHandle->buildKernel(filename,
-                                    sKerName,
-                                    hash,
-                                    allProps);
-        sKer.kHandle->metadata = sMetadata;
-
-        ker.kHandle->nestedKernels.push_back(sKer);
-      }
-    }
-
+    ker = dHandle->buildKernel(filename,
+                               metadata.name,
+                               hash,
+                               allProps);
     return ker;
   }
   //  |=================================

@@ -26,10 +26,10 @@ flags:
       - examples/
   parser:
     paths:
-      - parser_sandbox/include
-      - parser_sandbox/src
+      - include/occa/lang
+      - src/lang
     ignore:
-      - parser_sandbox/tests
+      - tests
 
 comment:
   layout: 'reach, diff, files'

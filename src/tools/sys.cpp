@@ -21,6 +21,8 @@
  */
 #include "occa/defines.hpp"
 
+#include <fstream>
+
 #if (OCCA_OS & (OCCA_LINUX_OS | OCCA_MACOS_OS))
 #  include <ctime>
 #  include <cxxabi.h>
@@ -382,18 +384,22 @@ namespace occa {
     //---[ Processor Info ]-------------
     std::string getFieldFrom(const std::string &command,
                              const std::string &field) {
-#if (OCCA_OS & LINUX)
+#if (OCCA_OS & OCCA_LINUX_OS)
       std::string shellToolsFile = io::filename("occa://occa/scripts/shellTools.sh");
 
       if (!sys::fileExists(shellToolsFile)) {
-        sys::mkpath(dirname(shellToolsFile));
+        mkpath(io::dirname(shellToolsFile));
+        std::string localFile = env::OCCA_DIR + "scripts/shellTools.sh";
 
-        std::ofstream fs2;
-        fs2.open(shellToolsFile.c_str());
+        std::ifstream src(localFile.c_str(),
+                          std::ios::binary);
+        std::ofstream dest(shellToolsFile.c_str(),
+                           std::ios::binary);
 
-        fs2 << getCachedScript("shellTools.sh");
+        dest << src.rdbuf();
 
-        fs2.close();
+        src.close();
+        dest.close();
       }
 
       std::stringstream ss;
@@ -464,13 +470,12 @@ namespace occa {
     int getProcessorFrequency() {
 #if   (OCCA_OS & OCCA_LINUX_OS)
       std::stringstream ss;
-      int freq;
+      float freq = 0;
 
-      ss << getFieldFrom("getLSCPUField", "cpu mhz");
-
+      ss << getFieldFrom("getLSCPUField", "cpu.*mhz");
       ss >> freq;
 
-      return freq;
+      return (int) freq;
 #elif (OCCA_OS == OCCA_MACOS_OS)
       uint64_t frequency = 0;
       size_t size = sizeof(frequency);
@@ -640,13 +645,13 @@ namespace occa {
       int vendor_ = sys::vendor::notFound;
       std::stringstream ss;
 
-      const std::string compilerVendorTest = env::OCCA_DIR + "/scripts/compilerVendorTest.cpp";
+      const std::string compilerVendorTest = env::OCCA_DIR + "scripts/compilerVendorTest.cpp";
       hash_t hash = occa::hashFile(compilerVendorTest);
       hash ^= occa::hash(vendor_);
       hash ^= occa::hash(compiler);
 
-      const std::string srcFilename = io::cacheFile(compilerVendorTest, "compilerVendorTest.cpp", hash);
-      const std::string hashDir = io::dirname(srcFilename);
+      const std::string srcFilename      = io::cacheFile(compilerVendorTest, "compilerVendorTest.cpp", hash);
+      const std::string hashDir          = io::dirname(srcFilename);
       const std::string binaryFilename   = hashDir + "binary";
       const std::string outFilename      = hashDir + "output";
       const std::string buildLogFilename = hashDir + "build.log";

@@ -41,11 +41,13 @@ namespace occa {
 
       file_t(const std::string &filename_,
              const std::string &content_);
+
+      // Used for originSource
+      file_t(const bool,
+             const std::string &name);
     };
 
     namespace originSource {
-      file_t makeOriginSource(const std::string &name);
-
       extern file_t builtin;
       extern file_t string;
     }

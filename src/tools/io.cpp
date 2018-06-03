@@ -539,7 +539,11 @@ namespace occa {
                           const std::string &header,
                           const std::string &footer) {
 
-      return cacheFile(filename, cachedName, occa::hashFile(filename), header, footer);
+      return cacheFile(filename,
+                       cachedName,
+                       occa::hashFile(filename),
+                       header,
+                       footer);
     }
 
     std::string cacheFile(const std::string &filename,

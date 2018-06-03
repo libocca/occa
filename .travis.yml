@@ -1,50 +1,110 @@
 # Unable to run LeakSanitizer propertly without root
 #   https://github.com/travis-ci/travis-ci/issues/9033
 sudo: true
-
 language: cpp
+notifications:
+  email: false
 
-compiler:
-  - gcc
-  - clang
+# Use Linux + gcc unless specified
+os: linux
+dist: trusty
+compiler: gcc
+
+matrix:
+  include:
+    - env: MATRIX_INIT="CC=gcc-4.9 && CXX=g++-4.9"
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+          packages:
+            - g++-4.9
+    - env: MATRIX_INIT="CC=gcc-5 && CXX=g++-5"
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+          packages:
+            - g++-5
+    - env: MATRIX_INIT="CC=gcc-6 && CXX=g++-6"
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+          packages:
+            - g++-6
+    - env: MATRIX_INIT="CC=gcc-7 && CXX=g++-7"
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+          packages:
+            - g++-7
+    - env: MATRIX_INIT="CC=clang-3.6 && CXX=clang++-3.6"
+      compiler: clang
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+            - llvm-toolchain-precise-3.6
+          packages:
+            - clang-3.6
+    - env: MATRIX_INIT="CC=clang-4.0 && CXX=clang++-4.0"
+      compiler: clang
+      addons:
+        apt:
+          sources:
+            - llvm-toolchain-trusty-4.0
+          packages:
+            - clang-4.0
+    - env: MATRIX_INIT="CC=clang-5.0 && CXX=clang++-5.0"
+      compiler: clang
+      addons:
+        apt:
+          sources:
+            - llvm-toolchain-trusty-5.0
+          packages:
+            - clang-5.0
+    - os: osx
+      osx_image: xcode8
+      env: MATRIX_INIT="brew install gcc6 && CC=gcc-6 && CXX=g++-6"
+    - os: osx
+      osx_image: xcode8
+      env: MATRIX_INIT="brew install gcc@7 && CC=gcc-7 && CXX=g++-7"
+    - os: osx
+      osx_image: xcode8
+      compiler: clang
+      env: MATRIX_INIT="CC=clang && CXX=clang++"
 
 env:
   global:
     - LD_LIBRARY_PATH="${TRAVIS_BUILD_DIR}/lib:${LD_LIBRARY_PATH}"
-    - CXXFLAGS="-g"
+    - CXXFLAGS="-g -O0"
+
 
 before_install:
-  - if [ "${TRAVIS_OS_NAME}" = "osx" ]; then brew update; fi
-
-install:
   - |
-    if [ "${CXX}" == "g++" ]; then
+    if [ "${TRAVIS_OS_NAME}" = "osx" ]; then
+      brew update;
+    fi
+  - eval "${MATRIX_INIT}"
+  - |
+    if [[ "${CXX}" =~ g++.* ]]; then
       RUNNING_CODECOV=1
-      BUILD_CXXFLAGS="${CXXFLAGS} -fprofile-arcs -ftest-coverage"
-      TEST_CXXFLAGS="${CXXFLAGS} -lgcov --coverage"
+      BUILD_CXXFLAGS="${CXXFLAGS} -fuse-ld=gold -fprofile-arcs -ftest-coverage"
+      TEST_CXXFLAGS="${CXXFLAGS} -fuse-ld=gold -lgcov --coverage"
+    else
+      BUILD_CXXFLAGS="${CXXFLAGS}"
+      TEST_CXXFLAGS="${CXXFLAGS}"
     fi
 
 script:
   - cd ${TRAVIS_BUILD_DIR}
   - CXXFLAGS="${BUILD_CXXFLAGS}" make -j
 
-  - cd parser_sandbox
-  - CXXFLAGS="${BUILD_CXXFLAGS}" make -j
-  - CXXFLAGS="${TEST_CXXFLAGS}"  make -j tests
-
   - cd ${TRAVIS_BUILD_DIR}
-  - CXXFLAGS="${TEST_CXXFLAGS}" make test
+  - CXXFLAGS="${TEST_CXXFLAGS}" make -j test
   - |
     if [ ${RUNNING_CODECOV} ]; then
-      bash <(curl -s https://codecov.io/bash) -c -F api
+      bash <(curl -s https://codecov.io/bash)
     fi
-
-  - cd parser_sandbox
-  - make test
-  - |
-    if [ ${RUNNING_CODECOV} ]; then
-      bash <(curl -s https://codecov.io/bash) -c -F parser
-    fi
-
-notifications:
-  email: false

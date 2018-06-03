@@ -43,21 +43,15 @@ namespace occa {
 
     class kernelMetadata {
     public:
-      std::string name, baseName;
-      int nestedKernels;
+      std::string name;
 
       std::vector<argumentInfo> argumentInfos;
 
       kernelMetadata();
 
-      kernelMetadata(const kernelMetadata & kInfo);
-      kernelMetadata& operator = (const kernelMetadata & kInfo);
-
       kernelMetadata& operator += (const argumentInfo &argInfo);
 
       bool argIsConst(const int pos) const;
-
-      kernelMetadata getNestedKernelMetadata(const int pos) const;
 
       static kernelMetadata fromJson(const json &j);
       json toJson() const;

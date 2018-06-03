@@ -37,26 +37,7 @@ namespace occa {
       return j;
     }
 
-    kernelMetadata::kernelMetadata() :
-      name(""),
-      baseName(""),
-      nestedKernels(0) {}
-
-    kernelMetadata::kernelMetadata(const kernelMetadata &kInfo) :
-      name(kInfo.name),
-      baseName(kInfo.baseName),
-      nestedKernels(kInfo.nestedKernels),
-      argumentInfos(kInfo.argumentInfos) {}
-
-    kernelMetadata& kernelMetadata::operator = (const kernelMetadata &kInfo) {
-      name     = kInfo.name;
-      baseName = kInfo.baseName;
-
-      nestedKernels = kInfo.nestedKernels;
-      argumentInfos = kInfo.argumentInfos;
-
-      return *this;
-    }
+    kernelMetadata::kernelMetadata() {}
 
     kernelMetadata& kernelMetadata::operator += (const argumentInfo &argInfo) {
       argumentInfos.push_back(argInfo);
@@ -70,27 +51,10 @@ namespace occa {
       return false;
     }
 
-    kernelMetadata kernelMetadata::getNestedKernelMetadata(const int kIdx) const {
-      kernelMetadata meta;
-      meta.name     = baseName + toString(kIdx);
-      meta.baseName = baseName;
-
-      const int argumentCount = (int) argumentInfos.size();
-      for (int i = 0; i < argumentCount; ++i) {
-        // Don't pass nestedKernels** argument
-        if (i != 1) {
-          meta.argumentInfos.push_back(argumentInfos[i]);
-        }
-      }
-      return meta;
-    }
-
     kernelMetadata kernelMetadata::fromJson(const json &j) {
       kernelMetadata meta;
 
-      meta.name          = j["name"].string();
-      meta.baseName      = j["baseName"].string();
-      meta.nestedKernels = j["nestedKernels"].number();
+      meta.name = j["name"].string();
 
       const jsonArray &argInfos = j["argumentInfos"].array();
       const int argumentCount = (int) argInfos.size();
@@ -104,9 +68,7 @@ namespace occa {
     json kernelMetadata::toJson() const {
       json j;
 
-      j["name"]          = name;
-      j["baseName"]      = baseName;
-      j["nestedKernels"] = nestedKernels;
+      j["name"] = name;
 
       const int argumentCount = (int) argumentInfos.size();
       json &argInfos = j["argumentInfos"].asArray();

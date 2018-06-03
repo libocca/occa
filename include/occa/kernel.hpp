@@ -168,7 +168,6 @@ namespace occa {
 
     dim inner, outer;
 
-    std::vector<kernel> nestedKernels;
     std::vector<kernelArg> arguments;
 
     lang::kernelMetadata metadata;
@@ -177,9 +176,6 @@ namespace occa {
 
     // This should only be called in the very first reference
     void setDHandle(device_v *dHandle_);
-
-    kernel* nestedKernelsPtr();
-    int nestedKernelCount();
 
     kernelArg* argumentsPtr();
     int argumentCount();

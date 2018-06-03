@@ -670,32 +670,32 @@ namespace occa {
                 << funcName << "() {\n";
       // Setup global variables in the root command
       if (isRoot) {
-        std::cout <<
-          ("    __occa_debug_echo \"\"\n"
-           "    __occa_debug_echo \"COMP_CWORD      : [${COMP_CWORD}]\"\n"
-           "    __occa_debug_echo \"COMP_LINE       : [${COMP_LINE}]\"\n"
-           "    __occa_debug_echo \"COMP_POINT      : [${COMP_POINT}]\"\n"
-           "    __occa_debug_echo \"COMP_WORDBREAKS : [${COMP_WORDBREAKS}]\"\n"
-           "    __occa_debug_echo \"COMP_WORDS      : [${COMP_WORDS}]\"\n"
-           "\n"
-           "    # Global variables\n"
-           "    local command=(") << name << (")\n"
-                                              "    local prevCommand=(") << name << (")\n"
-                                                                                     "    local inputs=(\"${COMP_WORDS[@]:1}\")\n"
-                                                                                     "    local nextInput=$(__occa_next_input)\n"
-                                                                                     "    local options=()\n"
-                                                                                     "    local flags=()\n"
-                                                                                     "    local allUsedArgs=()\n"
-                                                                                     "    local usedFlags=()\n"
-                                                                                     "    local usedArgs=()\n"
-                                                                                     "    local expansions=(args)\n"
-                                                                                     "    local epansionFunction=\"\"\n"
-                                                                                     "    local commandOptions=()\n"
-                                                                                     "    local commandFlags=()\n"
-                                                                                     "    local currentFlag=\"\"\n"
-                                                                                     "    local compIsDone=false\n"
-                                                                                     "\n"
-                                                                                     "    # Real command info\n");
+        std::cout
+          << "    __occa_debug_echo \"\"\n"
+          << "    __occa_debug_echo \"COMP_CWORD      : [${COMP_CWORD}]\"\n"
+          << "    __occa_debug_echo \"COMP_LINE       : [${COMP_LINE}]\"\n"
+          << "    __occa_debug_echo \"COMP_POINT      : [${COMP_POINT}]\"\n"
+          << "    __occa_debug_echo \"COMP_WORDBREAKS : [${COMP_WORDBREAKS}]\"\n"
+          << "    __occa_debug_echo \"COMP_WORDS      : [${COMP_WORDS}]\"\n"
+          << "\n"
+          << "    # Global variables\n"
+          << "    local command=(" << name << ")\n"
+          << "    local prevCommand=(" << name << ")\n"
+          << "    local inputs=(\"${COMP_WORDS[@]:1}\")\n"
+          << "    local nextInput=$(__occa_next_input)\n"
+          << "    local options=()\n"
+          << "    local flags=()\n"
+          << "    local allUsedArgs=()\n"
+          << "    local usedFlags=()\n"
+          << "    local usedArgs=()\n"
+          << "    local expansions=(args)\n"
+          << "    local epansionFunction=\"\"\n"
+          << "    local commandOptions=()\n"
+          << "    local commandFlags=()\n"
+          << "    local currentFlag=\"\"\n"
+          << "    local compIsDone=false\n"
+          << "\n"
+          << "    # Real command info\n";
       }
 
       // Terminology mixup...
@@ -738,16 +738,17 @@ namespace occa {
       } else if (options.size()) {
         // If the next input is an unused flag, use the (args) expansion to
         //   continue the autocomplete
-        std::cout <<
-          ("    local unusedFlags=$(__occa_unused_flags)\n"
-           "\n"
-           "    if [ $(__occa_input_in \"${unusedFlags[@]}\") ]; then\n"
-           "        expansions=(args)\n"
-           "        __occa_compgen\n"
-           "    else\n"
-           "        __occa_autocomplete \"${unusedFlags[@]}\"\n"
-           "        compIsDone=true\n"
-           "    fi\n");
+        std::cout << (
+          "    local unusedFlags=$(__occa_unused_flags)\n"
+          "\n"
+          "    if [ $(__occa_input_in \"${unusedFlags[@]}\") ]; then\n"
+          "        expansions=(args)\n"
+          "        __occa_compgen\n"
+          "    else\n"
+          "        __occa_autocomplete \"${unusedFlags[@]}\"\n"
+          "        compIsDone=true\n"
+           "    fi\n"
+        );
       } else {
         // Otherwise, use expansion type
         if (expansionFunction.size()) {

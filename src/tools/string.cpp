@@ -211,12 +211,12 @@ namespace occa {
 
 #if !OCCA_UNSAFE
     const char *c0 = c;
-#endif
-
-    bool negative     = false;
-    int bits          = 3;
     int maxDigitValue = 10;
     char maxDigitChar = '9';
+#endif
+
+    bool negative = false;
+    int bits = 3;
 
     lex::skipWhitespace(c);
 
@@ -233,15 +233,17 @@ namespace occa {
       if (C == 'X') {
         bits = 4;
         ++c;
-
+#if !OCCA_UNSAFE
         maxDigitValue = 16;
         maxDigitChar  = 'F';
+#endif
       } else if (C == 'B') {
         bits = 1;
         ++c;
-
+#if !OCCA_UNSAFE
         maxDigitValue = 2;
         maxDigitChar  = '1';
+#endif
       }
     }
 

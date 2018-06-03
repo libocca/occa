@@ -37,7 +37,7 @@ function uniqueAddToPath {
         path="$dir"
     fi
 
-    command echo "$path"
+    echo "$path"
 }
 
 function removeDuplicatesInPath {
@@ -49,17 +49,17 @@ function removeDuplicatesInPath {
         fi
     done
 
-    command echo "$path"
+    echo "$path"
 }
 
 function getIncludePath {
     local path="$1"
 
-    path=$(command echo "$path:" | command sed 's/\/lib[^:]*:/\/include:/g')
+    path=$(echo "$path:" | sed 's/\/lib[^:]*:/\/include:/g')
 
     path=$(removeDuplicatesInPath "$path")
 
-    command echo "$path"
+    echo "$path"
 }
 
 function dirWithFileInPath {
@@ -69,13 +69,13 @@ function dirWithFileInPath {
     if [ ! -z "$path" ]; then
         for dir_ in ${path//:/ }; do
             if ls "$dir_/$filename" > /dev/null 2>&1; then
-                command echo "$dir_"
+                echo "$dir_"
                 return
             fi
         done
     fi
 
-    command echo ""
+    echo ""
 }
 
 function dirWithFileInIncludePath {
@@ -85,13 +85,13 @@ function dirWithFileInIncludePath {
     if [ ! -z "$path" ]; then
         for dir_ in ${path//:/ }; do
             if ls "$dir_/$filename" > /dev/null 2>&1; then
-                command echo "$dir_"
+                echo "$dir_"
                 return
             fi
         done
     fi
 
-    command echo ""
+    echo ""
 }
 
 function defaultIncludePath {
@@ -133,26 +133,26 @@ function dirWithLibrary {
 
     result=$(dirWithFileInPath "$(defaultLibraryPath)" "$libName")
 
-    if [ ! -z "$result" ]; then command echo "$result"; return; fi
+    if [ ! -z "$result" ]; then echo "$result"; return; fi
 
     if hash ldconfig 2> /dev/null; then
-        command echo $(command ldconfig -p | command grep -m 1 "$libName" | command sed 's/.*=>\(.*\/\).*/\1/g')
+        echo $(ldconfig -p | grep -m 1 "$libName" | sed 's/.*=>\(.*\/\).*/\1/g')
         return
     fi
 
     case "$(uname)" in
         Darwin)
             if ls "/System/Library/Frameworks/$1.framework" > /dev/null 2>&1; then
-                command echo "Is A System/Library Framework"
+                echo "Is A System/Library Framework"
                 return
             fi
             if ls /Library/Frameworks/$1.framework > /dev/null 2>&1; then
-                command echo "Is A Library Framework"
+                echo "Is A Library Framework"
                 return
             fi;;
     esac
 
-    command echo ""
+    echo ""
 }
 
 function dirWithHeader {
@@ -160,13 +160,13 @@ function dirWithHeader {
     local result=""
 
     result=$(dirWithFileInPath "$(defaultIncludePath)" "$filename")
-    if [ ! -z "$result" ]; then command echo "$result"; return; fi
+    if [ ! -z "$result" ]; then echo "$result"; return; fi
 
     result=$(dirWithFileInIncludePath "$(defaultLibraryPath)" "$filename")
 
-    if [ ! -z "$result" ]; then command echo "$result"; return; fi
+    if [ ! -z "$result" ]; then echo "$result"; return; fi
 
-    command echo ""
+    echo ""
 }
 
 function dirsWithHeaders {
@@ -180,13 +180,13 @@ function dirsWithHeaders {
             if [ ! -z $inc ]; then
                 path=$(uniqueAddToPath $path $inc)
             else
-                command echo ""
+                echo ""
                 return
             fi
         done
     fi
 
-    command echo "$path"
+    echo "$path"
 }
 
 function libraryFlags {
@@ -196,7 +196,7 @@ function libraryFlags {
     local flags=""
     local isAFramework=0
 
-    if [ -z "$libDir" ]; then command echo ""; return; fi
+    if [ -z "$libDir" ]; then echo ""; return; fi
 
     if [ "$libDir" == "Is A System/Library Framework" ]; then
         flags="-framework $libName"
@@ -208,7 +208,7 @@ function libraryFlags {
         flags="-L$libDir -l$libName"
     fi
 
-    command echo "$flags"
+    echo "$flags"
 }
 
 
@@ -221,24 +221,24 @@ function headerFlags {
     if [ ! -z "$headers" ]; then
         incDirs=$(dirsWithHeaders "$headers")
 
-        if [ -z "$incDirs" ]; then command echo ""; return; fi
+        if [ -z "$incDirs" ]; then echo ""; return; fi
 
         incDirs="${incDirs%?}"      # Remove the last :
         flags="-I${incDirs//:/ -I}" # : -> -I
     fi
 
-    command echo "$flags"
+    echo "$flags"
 }
 #=======================================
 
 
 #---[ Compiler Information ]------------
 function getPath {
-    command echo "${1%/*}"
+    echo "${1%/*}"
 }
 
 function stripPath {
-    command echo "${1##*/}"
+    echo "${1##*/}"
 }
 
 function resolveRelativePath {
@@ -268,12 +268,12 @@ function manualReadlink {
 function manualWhich {
     local input="$1"
 
-    local typeOutput=$(command type "$input" 2> /dev/null)
+    local typeOutput=$(type "$input" 2> /dev/null)
 
     if [[ $typeOutput == *" is hashed "* ]]; then
-        local mWhich=$(command type "$input" 2> /dev/null | sed "s/.*(\(.*\)).*/\1/g")
+        local mWhich=$(type "$input" 2> /dev/null | sed "s/.*(\(.*\)).*/\1/g")
     else
-        local mWhich=$(command type "$input" 2> /dev/null | sed "s/.* is \(.*\)/\1/g")
+        local mWhich=$(type "$input" 2> /dev/null | sed "s/.* is \(.*\)/\1/g")
     fi
 
     if [ ! -z "$mWhich" ]; then
@@ -293,7 +293,7 @@ function realCommand {
     esac
 
     if [ -z "$b" ]; then
-        command echo "$a"
+        echo "$a"
         return
     fi
 
@@ -307,25 +307,25 @@ function realCommand {
         esac
 
         if [ -z "$b" ]; then
-            command echo "$a"
+            echo "$a"
             return
         fi
     done
 
-    command echo "$a"
+    echo "$a"
 }
 
 function unaliasCommand {
-    typeOutput=$(command type "$1" 2> /dev/null)
+    typeOutput=$(type "$1" 2> /dev/null)
 
-    aliasedTo=$(command echo "$typeOutput" | command grep -m 1 "$1 is aliased to" | command sed "s/[^\`]*\`\([^ \t']*\)[ \t']/\1/g")
+    aliasedTo=$(echo "$typeOutput" | grep -m 1 "$1 is aliased to" | sed "s/[^\`]*\`\([^ \t']*\)[ \t']/\1/g")
 
     if [ ! -z "$aliasedTo" ]; then
-        command echo "$aliasedTo"
+        echo "$aliasedTo"
         return
     fi
 
-    command echo "$1"
+    echo "$1"
 }
 
 function compilerName {
@@ -333,7 +333,7 @@ function compilerName {
     local realCompiler=$(realCommand "$chosenCompiler")
     local unaliasedCompiler=$(unaliasCommand "$realCompiler")
     local strippedCompiler=$(stripPath "$unaliasedCompiler")
-    command echo "$strippedCompiler"
+    echo "$strippedCompiler"
 }
 
 function compilerVendor {
@@ -342,12 +342,12 @@ function compilerVendor {
 
     # Fortran Compilers
     case "$compiler" in
-        gfortran*)         command echo GCC      ; return;;
-        ifort*)            command echo INTEL    ; return;;
-        ftn*)              command echo CRAY     ; return;;
-        xlf*)              command echo IBM      ; return;;
-        pgfortran*)        command echo PGI      ; return;;
-        pathf9*)           command echo PATHSCALE; return;;
+        gfortran*)  echo GCC      ; return;;
+        ifort*)     echo INTEL    ; return;;
+        ftn*)       echo CRAY     ; return;;
+        xlf*)       echo IBM      ; return;;
+        pgfortran*) echo PGI      ; return;;
+        pathf9*)    echo PATHSCALE; return;;
     esac
 
     local b_GNU=0
@@ -369,16 +369,16 @@ function compilerVendor {
 
     # C/C++ Compilers
     case "$bit" in
-        "${b_GNU}")          command echo GCC          ;;
-        "${b_LLVM}")         command echo LLVM         ;;
-        "${b_Intel}")        command echo INTEL        ;;
-        "${b_IBM}")          command echo IBM          ;;
-        "${b_PGI}")          command echo PGI          ;;
-        "${b_Pathscale}")    command echo PATHSCALE    ;;
-        "${b_HP}")           command echo HP           ;;
-        "${b_Cray}")         command echo CRAY         ;;
-        "${b_VisualStudio}") command echo VISUALSTUDIO ;;
-        *)                   command echo N/A          ;;
+        "${b_GNU}")          echo GCC          ;;
+        "${b_LLVM}")         echo LLVM         ;;
+        "${b_Intel}")        echo INTEL        ;;
+        "${b_IBM}")          echo IBM          ;;
+        "${b_PGI}")          echo PGI          ;;
+        "${b_Pathscale}")    echo PATHSCALE    ;;
+        "${b_HP}")           echo HP           ;;
+        "${b_Cray}")         echo CRAY         ;;
+        "${b_VisualStudio}") echo VISUALSTUDIO ;;
+        *)                   echo N/A          ;;
     esac
 }
 
@@ -386,14 +386,14 @@ function compilerReleaseFlags {
     local vendor=$(compilerVendor "$1")
 
     case "$vendor" in
-        GCC|LLVM)   command echo "-O3 -D __extern_always_inline=inline"     ;;
-        INTEL)      command echo "-O3 -xHost"                               ;;
-        CRAY)       command echo "-O3 -h intrinsics -fast"                  ;;
-        IBM)        command echo "-O3 -qhot=simd"                           ;;
-        PGI)        command echo "-O3 -fast -Mipa=fast,inline -Msmartalloc" ;;
-        PATHSCALE)  command echo "-O3 -march=auto"                          ;;
-        HP)         command echo "+O3"                                      ;;
-        *)          command echo ""                                         ;;
+        GCC|LLVM)   echo "-O3 -D __extern_always_inline=inline"     ;;
+        INTEL)      echo "-O3 -xHost"                               ;;
+        CRAY)       echo "-O3 -h intrinsics -fast"                  ;;
+        IBM)        echo "-O3 -qhot=simd"                           ;;
+        PGI)        echo "-O3 -fast -Mipa=fast,inline -Msmartalloc" ;;
+        PATHSCALE)  echo "-O3 -march=auto"                          ;;
+        HP)         echo "+O3"                                      ;;
+        *)          echo ""                                         ;;
     esac
 }
 
@@ -402,7 +402,7 @@ function compilerDebugFlags {
 
     case "$vendor" in
         N/A)                   ;;
-        *)   command echo "-g" ;;
+        *)   echo "-g" ;;
     esac
 }
 
@@ -411,10 +411,10 @@ function compilerPicFlag {
 
     case "$vendor" in
         GCC|LLVM|INTEL|PATHSCALE|CRAY|PGI)
-             command echo "-fPIC";;
-        IBM) command echo "-qpic";;
-        HP)  command echo "+z";;
-        *)   command echo ""  ;;
+            echo "-fPIC";;
+        IBM) echo "-qpic";;
+        HP)  echo "+z";;
+        *)   echo ""  ;;
     esac
 }
 
@@ -423,28 +423,28 @@ function compilerSharedFlag {
 
     case "$vendor" in
         GCC|LLVM|INTEL|PATHSCALE|CRAY|PGI)
-             command echo "-shared";;
-        IBM) command echo "-qmkshrobj";;
-        HP)  command echo "-b"     ;;
-        *)   command echo ""       ;;
+            echo "-shared";;
+        IBM) echo "-qmkshrobj";;
+        HP)  echo "-b"     ;;
+        *)   echo ""       ;;
     esac
 }
 
 function compilerPthreadFlag {
-    command echo "-lpthread"
+    echo "-lpthread"
 }
 
 function compilerOpenMPFlag {
     local vendor=$(compilerVendor $1)
 
     case "$vendor" in
-        GCC|LLVM)        command echo "-fopenmp" ;;
-        INTEL|PATHSCALE) command echo "-openmp"  ;;
-        CRAY)            command echo ""         ;;
-        IBM)             command echo "-qsmp"    ;;
-        PGI)             command echo "-mp"      ;;
-        HP)              command echo "+Oopenmp" ;;
-        *)               command echo ""         ;;
+        GCC|LLVM)        echo "-fopenmp" ;;
+        INTEL|PATHSCALE) echo "-openmp"  ;;
+        CRAY)            echo ""         ;;
+        IBM)             echo "-qsmp"    ;;
+        PGI)             echo "-mp"      ;;
+        HP)              echo "+Oopenmp" ;;
+        *)               echo ""         ;;
     esac
 }
 
@@ -452,10 +452,10 @@ function fCompilerModuleDirFlag {
     local vendor=$(compilerVendor "$1")
 
     case "$vendor" in
-        GCC|CRAY)            command echo "-J"       ;;
-        INTEL|PGI|PATHSCALE) command echo "-module"  ;;
-        IBM)                 command echo "-qmoddir" ;;
-        *)                   command echo ""         ;;
+        GCC|CRAY)            echo "-J"       ;;
+        INTEL|PGI|PATHSCALE) echo "-module"  ;;
+        IBM)                 echo "-qmoddir" ;;
+        *)                   echo ""         ;;
     esac
 }
 
@@ -473,7 +473,7 @@ function compilerSupportsOpenMP {
     "${compiler}" "${ompFlag}" "${filename}" -o "${binary}" > /dev/null 2>&1
 
     if [[ ! -a "${binary}" ]]; then
-        command echo 0
+        echo 0
         return
     fi
 
@@ -482,12 +482,12 @@ function compilerSupportsOpenMP {
         "${binary}"
 
         if [[ "$?" -eq 0 ]]; then
-            command echo 1
+            echo 1
         else
-            command echo 0
+            echo 0
         fi
     else
-        command echo 0
+        echo 0
     fi
 
     if [ ! -z "${binary}" ]; then
@@ -507,12 +507,12 @@ function compilerSupportsMPI {
     "${compiler}" "${filename}" -o "${binary}" > /dev/null 2>&1
 
     if [[ ! -a "${binary}" ]]; then
-        command echo 0
+        echo 0
         return
     fi
 
     rm -f "${binary}"
-    command echo 1
+    echo 1
 }
 #=======================================
 
@@ -520,12 +520,13 @@ function compilerSupportsMPI {
 #---[ System Information ]--------------
 function getFieldFrom {
     local command_="$1"
-    local field="$2"
+    shift;
+    local field="$@"
 
     if hash grep 2> /dev/null; then
-        command echo $(LC_ALL=C; "$command_" | \
-                           command grep -i -m 1 "^$field" | \
-                           sed "s/.*:[ \t]*\(.*\)/\1/g")
+        echo $(LC_ALL=C; $command_ | \
+                   grep -i -m 1 "^$field" | \
+                   sed "s/.*:[ \t]*\(.*\)/\1/g")
         return
     fi
 
@@ -533,10 +534,10 @@ function getFieldFrom {
 }
 
 function getLSCPUField {
-    local field="$1"
+    local field="$@"
 
     if hash lscpu 2> /dev/null; then
-        getFieldFrom "command lscpu" "$field"
+        getFieldFrom "lscpu" "$field"
         return
     fi
 
@@ -544,10 +545,10 @@ function getLSCPUField {
 }
 
 function getCPUINFOField {
-    local field="$1"
+    local field="$@"
 
     if hash cat 2> /dev/null; then
-        getFieldFrom "command cat /proc/cpuinfo" "$field"
+        getFieldFrom "cat /proc/cpuinfo" "$field"
         return
     fi
 

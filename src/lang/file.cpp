@@ -39,15 +39,17 @@ namespace occa {
       expandedFilename(io::filename(filename_)),
       content(content_) {}
 
-    namespace originSource {
-      file_t makeOriginSource(const std::string &name) {
-        file_t source(name, "");
-        source.dontUseRefs();
-        return source;
-      }
+    file_t::file_t(const bool,
+                   const std::string &name) :
+      filename(name),
+      expandedFilename(name),
+      content("") {
+      dontUseRefs();
+    }
 
-      file_t builtin = makeOriginSource("(builtin)");
-      file_t string  = makeOriginSource("(source)" );
+    namespace originSource {
+      file_t builtin(true, "(builtin)");
+      file_t string(true, "(source)" );
     }
 
     //---[ File Origin ]----------------

@@ -28,7 +28,7 @@
 void testPragma();
 
 int main(const int argc, const char **argv) {
-  parser.addAttribute<dummy>();
+  parser.settings["serial/include-cmath"] = false;
 
   testPragma();
 

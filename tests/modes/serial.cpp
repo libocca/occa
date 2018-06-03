@@ -30,6 +30,8 @@ void testKernel();
 void testExclusives();
 
 int main(const int argc, const char **argv) {
+  parser.settings["serial/include-cmath"] = false;
+
   parser.settings["okl/validate"] = false;
   testPreprocessor();
   testKernel();

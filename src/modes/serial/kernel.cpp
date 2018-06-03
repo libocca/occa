@@ -97,7 +97,7 @@ namespace occa {
               << " /EHsc"
               << " /wd4244 /wd4800 /wd4804 /wd4018"
               << ' '       << properties["compilerFlags"]
-              << " /I"     << env::OCCA_DIR << "/include"
+              << " /I"     << env::OCCA_DIR << "include"
               << ' '       << sourceFile
               << " /link " << env::OCCA_DIR << "lib/libocca.lib",
               << " /OUT:"  << binaryFile

@@ -282,14 +282,6 @@ namespace occa {
     dHandle->addRef();
   }
 
-  kernel* kernel_v::nestedKernelsPtr() {
-    return &(nestedKernels[0]);
-  }
-
-  int kernel_v::nestedKernelCount() {
-    return (int) nestedKernels.size();
-  }
-
   kernelArg* kernel_v::argumentsPtr() {
     return &(arguments[0]);
   }
@@ -442,20 +434,8 @@ namespace occa {
       kHandle->arguments[i].setupForKernelCall(argIsConst);
     }
 
-    // Add nestedKernels
-    const bool hasNestedKernels = kHandle->nestedKernelCount();
-    if (hasNestedKernels) {
-      kHandle->arguments.insert(kHandle->arguments.begin(),
-                                kHandle->nestedKernelsPtr());
-    }
-
     kHandle->runFromArguments(kHandle->argumentCount(),
                               kHandle->argumentsPtr());
-
-    // Remove nestedKernels
-    if (hasNestedKernels) {
-      kHandle->arguments.erase(kHandle->arguments.begin());
-    }
   }
 
   void kernel::clearArgumentList() {
@@ -472,12 +452,6 @@ namespace occa {
     // Remove kernel from cache map
     kHandle->dHandle->removeCachedKernel(kHandle);
 
-    // Free all kernels
-    if (kHandle->nestedKernelCount()) {
-      for (int k = 0; k < kHandle->nestedKernelCount(); ++k) {
-        kHandle->nestedKernels[k].free();
-      }
-    }
     kHandle->free();
     kHandle = NULL;
   }

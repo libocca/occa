@@ -78,13 +78,15 @@ namespace occa {
       }
 
       void serialParser::setupHeaders() {
-        // TODO 1.1: Remove hack after methods are properly added
-        directiveToken token(root.source->origin,
-                             "include <cmath>\n"
-                             "using namespace std;");
-        root.addFirst(
-          *(new directiveStatement(&root, token))
-        );
+        if (settings.get("serial/include-cmath", true)) {
+          // TODO 1.1: Remove hack after methods are properly added
+          directiveToken token(root.source->origin,
+                               "include <cmath>\n"
+                               "using namespace std;");
+          root.addFirst(
+            *(new directiveStatement(&root, token))
+          );
+        }
       }
 
       void serialParser::setupKernels() {

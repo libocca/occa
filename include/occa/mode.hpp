@@ -87,11 +87,6 @@ namespace occa {
       allProps["mode"] = modeName;
       return new device_t(allProps);
     }
-
-    template <class TM>
-    TM getProperty(const std::string &prop, const TM &default_) const {
-      return modeInfo_t().getProperties().get(prop, default_);
-    }
   };
 }
 
