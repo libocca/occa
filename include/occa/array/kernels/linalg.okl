@@ -32,7 +32,7 @@
 #  define VTYPE_Y float
 #endif
 
-#define CPU_CHUNK ((entries + CPU_DOT_OUTER - 1)/ CPU_DOT_OUTER)
+#define CPU_CHUNK ((entries + CPU_DOT_OUTER - 1) / CPU_DOT_OUTER)
 #define CPU_REDUCTION_BODY(INIT, OPERATION, RED_OPERATION)  \
   for (int oi = 0; oi < CPU_DOT_OUTER; ++oi; @outer) {      \
     VTYPE r_red = INIT(oi);                                 \
@@ -43,7 +43,6 @@
     }                                                       \
     vecReduction[oi] = r_red;                               \
   }
-#else
 
 #define GPU_DOT_BLOCK (GPU_DOT_OUTER * GPU_DOT_INNER)
 
@@ -148,15 +147,15 @@
     }                                                                   \
   }
 
-#if OCCA_USING_CPU
-#  define REDUCTION_BODY CPU_REDUCTION_BODY
-#else
+#ifdef OCCA_USING_GPU
 #  define REDUCTION_BODY GPU_REDUCTION_BODY
+#else
+#  define REDUCTION_BODY CPU_REDUCTION_BODY
 #endif
 
 #define INIT_ZERO(i) 0
 #define INIT_FIRST(i) vec[0]
-#define INIT_ABS_FIRST(i) occaFabs(vec[0])
+#define INIT_ABS_FIRST(i) abs(vec[0])
 
 #define SUM_RED_OPERATION(red, part)            \
   red += part
@@ -175,7 +174,7 @@
                     const VTYPE * vec,
                     RETTYPE * vecReduction) {
 #define L1_NORM_OPERATION(out, idx)             \
-  out += occaFabs(vec[idx])
+  out += abs(vec[idx])
   REDUCTION_BODY(INIT_ZERO, L1_NORM_OPERATION, SUM_RED_OPERATION);
 }
 
@@ -194,7 +193,7 @@
                     RETTYPE * vecReduction) {
 #define LP_NORM_OPERATION(out, idx)             \
   const VTYPE vec_i = vec[idx];                 \
-  out += occaPow(vec_i, p)
+  out += pow(vec_i, p)
   REDUCTION_BODY(INIT_ZERO, LP_NORM_OPERATION, SUM_RED_OPERATION);
 }
 
@@ -202,7 +201,7 @@
                       const VTYPE * vec,
                       RETTYPE * vecReduction) {
 #define LINF_NORM_OPERATION(out, idx)           \
-  const VTYPE vec_i = occaFabs(vec[idx]);       \
+  const VTYPE vec_i = abs(vec[idx]);       \
   if (out < vec_i) {                            \
     out = vec_i;                                \
   }
@@ -259,9 +258,7 @@
                   const TYPE_A alpha,
                   const VTYPE_X * x,
                   VTYPE_Y * y) {
-  for (int i = 0; i < entries; ++i; tile(TILESIZE)) {
-    if (i < entries) {
-      y[i] += alpha * x[i];
-    }
+  for (int i = 0; i < entries; ++i; @tile(TILESIZE, @outer, @inner)) {
+    y[i] += alpha * x[i];
   }
 }

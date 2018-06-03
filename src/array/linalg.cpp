@@ -109,9 +109,9 @@ namespace occa {
       std::stringstream ss;
 
       // Setup arguments
-      ss << "kernel void " << kernelName << "(const int entries,\n";
+      ss << "@kernel void " << kernelName << "(const int entries,\n";
       for (int i = 0; i < constantCount; ++i) {
-        ss << "                 const CTYPE" << i << " c" << i;
+        ss << "                  const CTYPE" << i << " c" << i;
         if ((i < (constantCount - 1)) || inputCount) {
           ss << ",\n";
         }
@@ -126,10 +126,8 @@ namespace occa {
       }
       // Setup body
       ss << ") {\n"
-        "  for (int i = 0; i < entries; ++i; tile(TILESIZE)) {\n"
-        "    if (i < entries) {\n"
-        "      " << formula << "\n"
-        "    }\n"
+        "  for (int i = 0; i < entries; ++i; @tile(TILESIZE, @outer, @inner)) {\n"
+        "    " << formula << "\n"
         "  }\n"
         "}\n";
 

@@ -117,11 +117,11 @@ namespace occa {
       return success;
     }
 
-    std::string parser_t::str() const {
+    std::string parser_t::toString() const {
       return root.toString();
     }
 
-    void parser_t::str(std::string &s) const {
+    void parser_t::toString(std::string &s) const {
       s = root.toString();
     }
 
@@ -137,16 +137,7 @@ namespace occa {
       context.clear();
 
       preprocessor.clear();
-      json &defines = settings["defines"];
-      if (defines.isObject()) {
-        jsonObject &defineMap = defines.object();
-        jsonObject::iterator it = defineMap.begin();
-        while (it != defineMap.end()) {
-          preprocessor.addSourceDefine(it->first,
-                                       it->second.toString());
-          ++it;
-        }
-      }
+      addSettingDefines();
 
       lastPeek = 0;
       lastPeekPosition = -1;
@@ -177,6 +168,28 @@ namespace occa {
         ++it;
       }
       attrs.clear();
+    }
+
+    void parser_t::addSettingDefines() {
+      json &defines = settings["defines"];
+      if (defines.isObject()) {
+        jsonObject &defineMap = defines.object();
+        jsonObject::iterator it = defineMap.begin();
+        while (it != defineMap.end()) {
+          const std::string &define = it->first;
+          json &value = it->second;
+
+          std::string valueStr;
+          if (value.isString()) {
+            valueStr = value.string();
+          } else {
+            valueStr = value.toString();
+          }
+          preprocessor.addSourceDefine(define, valueStr);
+
+          ++it;
+        }
+      }
     }
 
     void parser_t::pushUp(blockStatement &newUp) {
@@ -797,8 +810,6 @@ namespace occa {
         return;
       }
 
-      // Store token just in case we didn't load a type
-      token_t *lastToken = context[tokenPos - (tokenPos == tokens)];
       context.set(tokenPos);
 
       if (vartype.isValid()) {
@@ -811,7 +822,7 @@ namespace occa {
         return;
       }
 
-      lastToken->printError("Expected a type");
+      context.printError("Expected a type");
       success = false;
     }
 
@@ -1194,11 +1205,12 @@ namespace occa {
     }
 
     statement_t* parser_t::loadDeclarationStatement() {
-      if (isLoadingFunction()) {
-        return loadFunctionStatement();
-      }
+      bool isFunction = isLoadingFunction();
       if (!success) {
         return NULL;
+      }
+      if (isFunction) {
+        return loadFunctionStatement();
       }
 
       vartype_t baseType;

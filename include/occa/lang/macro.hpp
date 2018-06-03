@@ -62,6 +62,9 @@ namespace occa {
 
       virtual macroToken* clone() const = 0;
 
+      token_t* cloneToken(token_t *token,
+                          token_t *sourceToken);
+
       virtual bool expand(tokenVector &newTokens,
                           token_t *source,
                           std::vector<tokenVector> &args) = 0;
@@ -91,6 +94,7 @@ namespace occa {
       ~macroArgument();
 
       void expandArg(tokenVector &newTokens,
+                     token_t *source,
                      std::vector<tokenVector> &args,
                      const int arg_);
 

@@ -233,24 +233,60 @@ namespace occa {
       return NULL;
     }
 
-    void tokenContext::printError(const std::string &message) {
+    token_t* tokenContext::getPrintToken(const bool atEnd) {
       if (tokens.size() == 0) {
-        occa::printError(std::cerr, "[No Token] " + message);
-        return;
+        return NULL;
+      }
+      const int start = tp.start;
+      if (atEnd) {
+        tp.start = tp.end;
       }
       int offset = 0;
       if (!indexInRange(offset) &&
           (0 < tp.start)) {
         offset = -1;
       }
-      tokens[tp.start + offset]->printError(message);
+      token_t *token = tokens[tp.start + offset];
+      if (atEnd) {
+        tp.start = start;
+      }
+      return token;
+    }
+
+    void tokenContext::printWarning(const std::string &message) {
+      token_t *token = getPrintToken(false);
+      if (!token) {
+        occa::printWarning(std::cerr, "[No Token] " + message);
+      } else {
+        token->printWarning(message);
+      }
+    }
+
+    void tokenContext::printWarningAtEnd(const std::string &message) {
+      token_t *token = getPrintToken(true);
+      if (!token) {
+        occa::printWarning(std::cerr, "[No Token] " + message);
+      } else {
+        token->printWarning(message);
+      }
+    }
+
+    void tokenContext::printError(const std::string &message) {
+      token_t *token = getPrintToken(false);
+      if (!token) {
+        occa::printError(std::cerr, "[No Token] " + message);
+      } else {
+        token->printError(message);
+      }
     }
 
     void tokenContext::printErrorAtEnd(const std::string &message) {
-      const int start = tp.start;
-      tp.start = tp.end;
-      printError(message);
-      tp.start = start;
+      token_t *token = getPrintToken(true);
+      if (!token) {
+        occa::printError(std::cerr, "[No Token] " + message);
+      } else {
+        token->printError(message);
+      }
     }
 
     void tokenContext::getTokens(tokenVector &tokens_) {
@@ -325,6 +361,12 @@ namespace occa {
       exprNode *expr = getExpression();
       pop();
       return expr;
+    }
+
+    void tokenContext::debugPrint() {
+      for (int i = tp.start; i < tp.end; ++i) {
+        std::cout << '[' << *tokens[i] << "]\n";
+      }
     }
   }
 }

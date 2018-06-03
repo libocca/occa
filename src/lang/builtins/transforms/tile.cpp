@@ -235,11 +235,10 @@ namespace occa {
                                     forStatement &blockForSmnt,
                                     forStatement &innerForSmnt) {
         attributeArgMap::iterator it = attr.kwargs.find("safe");
-        if (it == attr.kwargs.end()) {
-          return;
+        bool safe = true;
+        if (it != attr.kwargs.end()) {
+          safe = (bool) it->second.expr->evaluate();
         }
-        // Check if safe=true
-        const bool safe = (bool) it->second.expr->evaluate();
         if (!safe) {
           return;
         }

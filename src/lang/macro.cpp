@@ -71,6 +71,16 @@ namespace occa {
       delete thisToken;
     }
 
+    token_t* macroToken::cloneToken(token_t *token,
+                                    token_t *sourceToken) {
+      if (!token) {
+        return NULL;
+      }
+      token_t *newToken = token->clone();
+      newToken->origin.push(false, sourceToken->origin);
+      return newToken;
+    }
+
     macroRawToken::macroRawToken(preprocessor_t &pp_,
                                  token_t *thisToken_) :
       macroToken(pp_, thisToken_) {}
@@ -82,7 +92,9 @@ namespace occa {
     bool macroRawToken::expand(tokenVector &newTokens,
                                token_t *source,
                                std::vector<tokenVector> &args) {
-      newTokens.push_back(thisToken->clone());
+      newTokens.push_back(
+        cloneToken(thisToken, source)
+      );
       return true;
     }
 
@@ -101,12 +113,15 @@ namespace occa {
     }
 
     void macroArgument::expandArg(tokenVector &newTokens,
+                                  token_t *source,
                                   std::vector<tokenVector> &args,
                                   const int arg_) {
       tokenVector &argTokens = args[arg_];
       const int tokenCount = (int) argTokens.size();
       for (int i = 0; i < tokenCount; ++i) {
-        newTokens.push_back(argTokens[i]->clone());
+        newTokens.push_back(
+          cloneToken(argTokens[i], source)
+        );
       }
     }
 
@@ -114,12 +129,12 @@ namespace occa {
                                token_t *source,
                                std::vector<tokenVector> &args) {
       if (arg >= 0) {
-        expandArg(newTokens, args, arg);
+        expandArg(newTokens, source, args, arg);
       } else {
         // __VA_ARGS__
         const int realArgc = (int) args.size();
         for (int i = argc; i < realArgc; ++i) {
-          expandArg(newTokens, args, i);
+          expandArg(newTokens, source, args, i);
         }
       }
 
@@ -621,6 +636,9 @@ namespace occa {
       const int argc = argCount();
       int argIndex = 0;
 
+      // Count the initial [(] token
+      int parenthesesCount = 1;
+
       token_t *token = NULL;
       while (true) {
         pp >> token;
@@ -634,9 +652,17 @@ namespace occa {
         // Check for closing ) first
         if (token->type() & tokenType::op) {
           opType_t opType = token->to<operatorToken>().opType();
-          if (opType == operatorType::parenthesesEnd) {
-            delete token;
-            return true;
+          if (opType & (operatorType::parenthesesStart |
+                        operatorType::parenthesesEnd)) {
+            if (opType & operatorType::parenthesesStart) {
+              ++parenthesesCount;
+            } else {
+              --parenthesesCount;
+              if (!parenthesesCount) {
+                delete token;
+                return true;
+              }
+            }
           }
         }
 

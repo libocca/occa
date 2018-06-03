@@ -7,7 +7,7 @@
 @kernel void eq_const(const int entries,
                       const VTYPE_OUT value,
                       VTYPE_OUT * out) {
-  for (int i = 0; i < entries; ++i; @tile(TILESIZE, @outer, @inner, safe=true)) {
+  for (int i = 0; i < entries; ++i; @tile(TILESIZE, @outer, @inner)) {
     out[i] = value;
   }
 }
@@ -15,7 +15,7 @@
 @kernel void plus_eq(const int entries,
                      const VTYPE_IN * in,
                      VTYPE_OUT * out) {
-  for (int i = 0; i < entries; ++i; @tile(TILESIZE, @outer, @inner, safe=true)) {
+  for (int i = 0; i < entries; ++i; @tile(TILESIZE, @outer, @inner)) {
     out[i] += in[i];
   }
 }
@@ -23,7 +23,7 @@
 @kernel void plus_eq_const(const int entries,
                            const VTYPE_OUT value,
                            VTYPE_OUT * out) {
-  for (int i = 0; i < entries; ++i; @tile(TILESIZE, @outer, @inner, safe=true)) {
+  for (int i = 0; i < entries; ++i; @tile(TILESIZE, @outer, @inner)) {
     out[i] += value;
   }
 }
@@ -31,7 +31,7 @@
 @kernel void sub_eq(const int entries,
                     const VTYPE_IN * in,
                     VTYPE_OUT * out) {
-  for (int i = 0; i < entries; ++i; @tile(TILESIZE, @outer, @inner, safe=true)) {
+  for (int i = 0; i < entries; ++i; @tile(TILESIZE, @outer, @inner)) {
     out[i] -= in[i];
   }
 }
@@ -39,7 +39,7 @@
 @kernel void sub_eq_const(const int entries,
                           const VTYPE_OUT value,
                           VTYPE_OUT * out) {
-  for (int i = 0; i < entries; ++i; @tile(TILESIZE, @outer, @inner, safe=true)) {
+  for (int i = 0; i < entries; ++i; @tile(TILESIZE, @outer, @inner)) {
     out[i] -= value;
   }
 }
@@ -47,7 +47,7 @@
 @kernel void mult_eq(const int entries,
                      const VTYPE_IN * in,
                      VTYPE_OUT * out) {
-  for (int i = 0; i < entries; ++i; @tile(TILESIZE, @outer, @inner, safe=true)) {
+  for (int i = 0; i < entries; ++i; @tile(TILESIZE, @outer, @inner)) {
     out[i] *= in[i];
   }
 }
@@ -55,7 +55,7 @@
 @kernel void mult_eq_const(const int entries,
                            const VTYPE_OUT value,
                            VTYPE_OUT * out) {
-  for (int i = 0; i < entries; ++i; @tile(TILESIZE, @outer, @inner, safe=true)) {
+  for (int i = 0; i < entries; ++i; @tile(TILESIZE, @outer, @inner)) {
     out[i] *= value;
   }
 }
@@ -63,7 +63,7 @@
 @kernel void div_eq(const int entries,
                     const VTYPE_IN * in,
                     VTYPE_OUT * out) {
-  for (int i = 0; i < entries; ++i; @tile(TILESIZE, @outer, @inner, safe=true)) {
+  for (int i = 0; i < entries; ++i; @tile(TILESIZE, @outer, @inner)) {
     out[i] /= in[i];
   }
 }
@@ -71,7 +71,7 @@
 @kernel void div_eq_const(const int entries,
                           const VTYPE_OUT value,
                           VTYPE_OUT * out) {
-  for (int i = 0; i < entries; ++i; @tile(TILESIZE, @outer, @inner, safe=true)) {
+  for (int i = 0; i < entries; ++i; @tile(TILESIZE, @outer, @inner)) {
     out[i] /= value;
   }
 }

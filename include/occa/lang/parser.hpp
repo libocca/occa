@@ -92,8 +92,8 @@ namespace occa {
       //---[ Public ]-------------------
       bool succeeded() const;
 
-      std::string str() const;
-      void str(std::string &s) const;
+      std::string toString() const;
+      void toString(std::string &s) const;
 
       void writeToFile(const std::string &filename) const;
       //================================
@@ -102,6 +102,8 @@ namespace occa {
       void clear();
       void clearAttributes();
       void clearAttributes(attributeTokenMap &attrs);
+
+      void addSettingDefines();
 
       void pushUp(blockStatement &newUp);
       void popUp();

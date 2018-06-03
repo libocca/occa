@@ -96,6 +96,11 @@ namespace occa {
 
       token_t* end();
 
+      token_t* getPrintToken(const bool atEnd);
+
+      void printWarning(const std::string &message);
+      void printWarningAtEnd(const std::string &message);
+
       void printError(const std::string &message);
       void printErrorAtEnd(const std::string &message);
 
@@ -110,6 +115,8 @@ namespace occa {
       exprNode* getExpression();
       exprNode* getExpression(const int start,
                               const int end);
+
+      void debugPrint();
     };
   }
 }
