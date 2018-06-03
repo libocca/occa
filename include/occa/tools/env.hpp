@@ -50,8 +50,6 @@ namespace occa {
       return fromString<TM>(var);
     }
 
-    void signalExit(int sig);
-
     class envInitializer_t {
     public:
       envInitializer_t();
@@ -61,7 +59,6 @@ namespace occa {
       bool isInitialized;
 
       void initSettings();
-      void initSignalHandling();
       void initEnvironment();
       void initCachePath();
       void initIncludePath();

@@ -32,15 +32,22 @@
 
 namespace occa {
   namespace styling {
-    std::string left(const std::string &str, const int width, const bool pad = false);
-    std::string right(const std::string &str, const int width, const bool pad = false);
-    std::string center(const std::string &str, const int width, const bool pad = false);
+    std::string left(const std::string &str,
+                     const int width,
+                     const bool pad = false);
+    std::string right(const std::string &str,
+                      const int width,
+                      const bool pad = false);
+    std::string center(const std::string &str,
+                       const int width,
+                       const bool pad = false);
 
     class field {
     public:
       std::string name, value;
 
-      field(const std::string &name_, const std::string &value_ = "");
+      field(const std::string &name_,
+            const std::string &value_ = "");
     };
 
     class fieldGroup {
@@ -50,7 +57,8 @@ namespace occa {
       fieldGroup();
 
       udim_t size() const;
-      fieldGroup& add(const std::string &field, const std::string &value = "");
+      fieldGroup& add(const std::string &field,
+                      const std::string &value = "");
 
       int getFieldWidth() const;
       int getValueWidth() const;
@@ -64,7 +72,8 @@ namespace occa {
       section(const std::string &name_ = "");
 
       udim_t size() const;
-      section& add(const std::string &field, const std::string &value = "");
+      section& add(const std::string &field,
+                   const std::string &value = "");
       section& addDivider();
 
       int getFieldWidth() const;

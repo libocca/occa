@@ -20,7 +20,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  */
 
-#include <signal.h>
+#include <cstdlib>
 
 #include "occa/base.hpp"
 #include "occa/tools/io.hpp"
@@ -49,10 +49,6 @@ namespace occa {
       return "";
     }
 
-    void signalExit(int sig) {
-      ::exit(sig);
-    }
-
     envInitializer_t::envInitializer_t() :
       isInitialized(false) {
       if (isInitialized) {
@@ -63,7 +59,6 @@ namespace occa {
       io::fileLocks();
 
       initSettings();
-      initSignalHandling();
       initEnvironment();
       registerFileOpeners();
 
@@ -81,18 +76,6 @@ namespace occa {
         settings_["kernel/verbose"] = true;
         settings_["memory/verbose"] = true;
       }
-    }
-
-    void envInitializer_t::initSignalHandling() {
-      // Signal handling
-      ::signal(SIGTERM, env::signalExit);
-      ::signal(SIGINT , env::signalExit);
-      ::signal(SIGABRT, env::signalExit);
-#if (OCCA_OS & (OCCA_LINUX_OS | OCCA_MACOS_OS))
-      ::signal(SIGQUIT, env::signalExit);
-      ::signal(SIGUSR1, env::signalExit);
-      ::signal(SIGUSR2, env::signalExit);
-#endif
     }
 
     void envInitializer_t::initEnvironment() {

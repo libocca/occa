@@ -24,7 +24,9 @@
 
 namespace occa {
   namespace styling {
-    std::string left(const std::string &str, const int width, const bool pad) {
+    std::string left(const std::string &str,
+                     const int width,
+                     const bool pad) {
       const int chars = (int) str.size();
       if (chars == 0 || width == 0) {
         return "";
@@ -33,7 +35,9 @@ namespace occa {
       return (pad ? " " : "") + str + std::string(spaces + pad, ' ');
     }
 
-    std::string right(const std::string &str, const int width, const bool pad) {
+    std::string right(const std::string &str,
+                      const int width,
+                      const bool pad) {
       const int chars = (int) str.size();
       if (chars == 0 || width == 0) {
         return "";
@@ -42,7 +46,9 @@ namespace occa {
       return std::string(spaces + pad, ' ') + str + (pad ? " " : "");
     }
 
-    std::string center(const std::string &str, const int width, const bool pad) {
+    std::string center(const std::string &str,
+                       const int width,
+                       const bool pad) {
       const int chars = (int) str.size();
       if (chars == 0 || width == 0) {
         return "";
@@ -55,7 +61,8 @@ namespace occa {
     }
 
     //---[ field ]----------------------
-    field::field(const std::string &name_, const std::string &value_) :
+    field::field(const std::string &name_,
+                 const std::string &value_) :
       name(name_),
       value(value_) {}
     //==================================
@@ -112,7 +119,8 @@ namespace occa {
       return fields;
     }
 
-    section& section::add(const std::string &field, const std::string &value) {
+    section& section::add(const std::string &field,
+                          const std::string &value) {
       fieldGroup &fg = groups[groups.size() - 1];
       fg.add(field, value);
       return *this;
