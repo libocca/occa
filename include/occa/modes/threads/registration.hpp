@@ -40,8 +40,8 @@ namespace occa {
       occa::properties& getProperties();
     };
 
-    extern occa::mode<threads::modeInfo,
-                      threads::device> mode;
+    // extern occa::mode<threads::modeInfo,
+    //                   threads::device> mode;
   }
 }
 

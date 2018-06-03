@@ -77,18 +77,10 @@ namespace occa {
         return buildFromBinary(binaryFile, kernelName);
       }
 
-      const std::string kernelDefines =
-        io::cacheFile(env::OCCA_DIR + "/include/occa/modes/opencl/kernelDefines.hpp",
-                      "openclKernelDefines.hpp");
-
-      std::stringstream ss;
-      ss << "#include \"" << kernelDefines << "\"\n"
-         << assembleHeader(properties);
-
       io::cacheFile(filename,
                     kc::sourceFile,
                     hash,
-                    ss.str(),
+                    assembleHeader(properties),
                     properties["footer"]);
 
       std::string cFunction = io::read(sourceFile);

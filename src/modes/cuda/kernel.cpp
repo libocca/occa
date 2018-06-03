@@ -82,19 +82,13 @@ namespace occa {
         return buildFromBinary(binaryFile, kernelName);
       }
 
-      const std::string kernelDefines =
-        io::cacheFile(env::OCCA_DIR + "/include/occa/modes/cuda/kernelDefines.hpp",
-                      "cudaKernelDefines.hpp");
-
-      std::stringstream ss;
-      ss << "#include \"" << kernelDefines << "\"\n"
-         << assembleHeader(properties);
-
-      const std::string cachedSourceFile = io::cacheFile(filename,
-                                                         kc::sourceFile,
-                                                         hash,
-                                                         ss.str(),
-                                                         properties["footer"]);
+      const std::string cachedSourceFile = (
+        io::cacheFile(filename,
+                      kc::sourceFile,
+                      hash,
+                      assembleHeader(properties),
+                      properties["footer"])
+      );
 
       if (verbose) {
         std::cout << "Compiling [" << kernelName << "]\n";

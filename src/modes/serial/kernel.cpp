@@ -75,27 +75,15 @@ namespace occa {
         return buildFromBinary(binaryFile, kernelName);
       }
 
-      std::string kernelDefines;
-      if (properties.has("occa/kernel/defines")) {
-        kernelDefines = properties["occa/kernel/defines"].string();
-      } else {
-        kernelDefines = io::cacheFile(env::OCCA_DIR + "/include/occa/modes/serial/kernelDefines.hpp",
-                                      "serialKernelDefines.hpp");
-      }
+      const std::string cachedSourceFile = (
+        io::cacheFile(filename,
+                      sourceBasename,
+                      hash,
+                      assembleHeader(properties),
+                      properties["footer"].string())
+      );
 
-      std::stringstream ss, command;
-      ss << "#include \"" << kernelDefines << "\"\n"
-         << assembleHeader(properties) << '\n'
-         << "#if defined(OCCA_IN_KERNEL) && !OCCA_IN_KERNEL\n"
-         << "using namespace occa;\n"
-         << "#endif\n";
-
-      const std::string cachedSourceFile = io::cacheFile(filename,
-                                                         sourceBasename,
-                                                         hash,
-                                                         ss.str(),
-                                                         properties["footer"].string());
-
+      std::stringstream command;
       const std::string &compilerEnvScript = properties["compilerEnvScript"].string();
       if (compilerEnvScript.size()) {
         command << compilerEnvScript << " && ";

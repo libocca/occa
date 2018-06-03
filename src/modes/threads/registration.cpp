@@ -33,7 +33,7 @@ namespace occa {
       return properties;
     }
 
-    occa::mode<threads::modeInfo,
-               threads::device> mode("Threads");
+    // occa::mode<threads::modeInfo,
+    //            threads::device> mode("Threads");
   }
 }
