@@ -45,13 +45,21 @@ links := $(filter-out -locca,$(links))
 #---[ variables ]---------------------------------
 srcToObject  = $(subst $(PROJ_DIR)/src,$(PROJ_DIR)/obj,$(1:.cpp=.o))
 
-sources  = $(realpath $(shell find $(PROJ_DIR)/src     -type f -name '*.cpp'))
-headers  = $(realpath $(shell find $(PROJ_DIR)/include -type f -name '*.hpp'))
-sources := $(filter-out $(OCCA_DIR)/src/operators/%,$(sources))
+sources     = $(realpath $(shell find $(PROJ_DIR)/src     -type f -name '*.cpp'))
+headers     = $(realpath $(shell find $(PROJ_DIR)/include -type f -name '*.hpp'))
+sources    := $(filter-out $(OCCA_DIR)/src/operators/%,$(sources))
+testSources = $(realpath $(shell find $(PROJ_DIR)/tests   -type f -name '*.cpp'))
+tests       = $(subst $(testPath)/,$(testPath)/bin/,$(testSources:.cpp=))
 
 objects = $(call srcToObject,$(sources))
 
 outputs = $(libPath)/libocca.so $(binPath)/occa
+
+ifndef VALGRIND_ENABLED
+  testFlags = $(compilerFlags) -fsanitize=address -fno-omit-frame-pointer
+else
+  testFlags = $(compilerFlags)
+endif
 #=================================================
 
 
@@ -123,14 +131,32 @@ examples =                 \
   6_arrays                 \
   7_streams
 
-test:
-	@for dir in $(examples); do         \
-	  echo "Compiling example [$$dir]"; \
-	  cd $(OCCA_DIR)/examples/$$dir &&  \
-	  rm -f main                    &&  \
-	  CXXFLAGS='-g' make            &&  \
-	  OCCA_VERBOSE=1 ./main;            \
+tests: $(tests)
+
+test: unit-tests e2e-tests
+
+e2e-tests:
+	@for dir in $(examples); do                           \
+	  echo "Compiling example [$$dir]";                   \
+	  cd $(OCCA_DIR)/examples/$$dir &&                    \
+	  rm -f main                    &&                    \
+	  CXXFLAGS='-g' make            &&                    \
+	  OCCA_VERBOSE=1 ./main;                              \
 	done
+
+unit-tests:
+	@for test in $(tests); do                             \
+	   	testname=$$(basename "$$test");                   \
+      chars=$$(echo "$${testname}" | wc -c);            \
+      linechars=$$((60 - $${chars}));                   \
+	    line=$$(printf '%*s' $${linechars} | tr ' ' '-'); \
+	    echo -e "\n---[ $${testname} ]$${line}";          \
+	    ASAN_OPTIONS=protect_shadow_gap=0 $$test;         \
+	done
+
+$(testPath)/bin/%:$(testPath)/%.cpp $(libPath)/libocca.so
+	@mkdir -p $(abspath $(dir $@))
+	$(compiler) $(testFlags) $(pthreadFlag) -o $@ $(flags) $< $(paths) $(links) -L$(OCCA_DIR)/lib -locca
 #=================================================
 
 
@@ -138,6 +164,7 @@ test:
 clean:
 	rm -rf $(objPath)/*
 	rm -rf $(binPath)/*
+	rm -rf $(testPath)/bin/*;
 	rm  -f $(libPath)/libocca.so
 	rm  -f $(OCCA_DIR)/scripts/main
 #=================================================

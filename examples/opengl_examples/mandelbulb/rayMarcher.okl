@@ -5,6 +5,11 @@ const tFloat DEPTH_OF_FIELD = 2.5;
 const tFloat EYE_DISTANCE_FROM_NEAR_FIELD = 2.2;
 const tFloat DEG_TO_RAD = (OCCA_PI / 180.0);
 
+#ifndef tFloat
+#  define tFloat  float
+#  define tFloat3 float3
+#endif
+
 tFloat sphere(const tFloat3 pos) {
   return length(pos) - 1.5;
 }
@@ -16,9 +21,9 @@ tFloat mandelbulb(const tFloat3 pos) {
 
   for (int i = 0; i < ITERATIONS; ++i) {
     r = length(z);
-    if (r > DEPTH_OF_FIELD)
+    if (r > DEPTH_OF_FIELD) {
       break;
-
+    }
     const tFloat theta    = POWER * acos(z.z / r);
     const tFloat phi      = POWER * atan2(z.y, z.x);
     const tFloat rPm1     = pow((tFloat) r, (tFloat) POWER - 1);
@@ -37,43 +42,46 @@ tFloat mandelbulb(const tFloat3 pos) {
 
 tFloat castShadow(const tFloat3 rayLocation,
                   const tFloat3 lightDirection,
-                  const tFloat min, const tFloat max, const tFloat k) {
+                  const tFloat min,
+                  const tFloat max,
+                  const tFloat k) {
   tFloat ret = 1.0f;
   tFloat t = min;
 
   while (t < max) {
-      const tFloat h = SHAPE_FUNCTION(rayLocation - (t * lightDirection));
-      if (h < 0.001f)
-        return 0.0f;
+    const tFloat h = SHAPE_FUNCTION(rayLocation - (t * lightDirection));
+    if (h < 0.001f)
+      return 0.0f;
 
-      const tFloat kht = (k * h / t);
-      if (kht < ret)
-        ret = kht;
+    const tFloat kht = (k * h / t);
+    if (kht < ret)
+      ret = kht;
 
-      t += h;
+    t += h;
   }
 
   return ret;
 }
 
-kernel void rayMarcher(char *rgba @arrayArg(dims = 3),
-                       const tFloat3 lightDirection,
-                       const tFloat3 viewDirectionY,
-                       const tFloat3 viewDirectionX,
-                       const tFloat3 nearFieldLocation,
-                       const tFloat3 eyeLocation) {
+@kernel void rayMarcher(char *rgba @dim(4, WIDTH, HEIGHT),
+                        const tFloat3 lightDirection,
+                        const tFloat3 viewDirectionY,
+                        const tFloat3 viewDirectionX,
+                        const tFloat3 nearFieldLocation,
+                        const tFloat3 eyeLocation) {
 
-  for (int y = 0; y < HEIGHT; ++y; outer1) {
+  for (int y = 0; y < HEIGHT; ++y; @outer) {
     const tFloat ny = y - (0.5 * HEIGHT);
     const tFloat3 p_viewDirectionY = (ny * PIXEL) * viewDirectionY;
 
-    for (int xg = 0; xg < WIDTH; xg += BATCH_SIZE; outer0) {
-      for (int x = xg; x < (xg + BATCH_SIZE); ++x; inner0) {
+    for (int xg = 0; xg < WIDTH; xg += BATCH_SIZE; @outer) {
+      for (int x = xg; x < (xg + BATCH_SIZE); ++x; @inner) {
         const tFloat nx = x - (0.5 * WIDTH);
         const tFloat3 p_viewDirectionX = (nx*PIXEL) * viewDirectionX;
 
-        if (WIDTH <= x)
+        if (WIDTH <= x) {
           continue;
+        }
 
         tFloat3 rayLocation = (nearFieldLocation + p_viewDirectionY + p_viewDirectionX);
         const tFloat3 rayDirection = normalize(rayLocation - eyeLocation);

@@ -30,7 +30,7 @@
 #include "occa/uva.hpp"
 #include "occa/kernel.hpp"
 #include "occa/tools/gc.hpp"
-#include "occa/parser/tools.hpp"
+#include "occa/lang/kernelMetadata.hpp"
 
 namespace occa {
   class kernel_v; class kernel;
@@ -198,7 +198,7 @@ namespace occa {
     void storeCacheInfo(const std::string &filename,
                         const hash_t &hash,
                         const occa::properties &kernelProps,
-                        const kernelMetadataMap &metadataMap) const;
+                        const lang::kernelMetadataMap &metadataMap) const;
 
     void loadKernels(const std::string &library = "");
 
@@ -217,7 +217,7 @@ namespace occa {
     occa::kernel buildKernel(const std::string &filename,
                              const hash_t &hash,
                              const occa::properties &kernelProps,
-                             const kernelMetadata &metadata) const;
+                             const lang::kernelMetadata &metadata) const;
     //  |===============================
 
     //  |---[ Memory ]------------------

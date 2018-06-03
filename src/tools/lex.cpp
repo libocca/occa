@@ -44,6 +44,7 @@ namespace occa {
       return false;
     }
 
+    //---[ Skip ]-----------------------
     void skipTo(const char *&c, const char delimiter) {
       while (*c != '\0') {
         if (*c == delimiter) {
@@ -208,7 +209,53 @@ namespace occa {
     void skipFrom(const char *&c, const std::string &delimiters, const char escapeChar) {
       skipFrom(c, delimiters.c_str(), escapeChar);
     }
+    //==================================
 
+    //---[ Lower/Upper ]----------------
+    char upChar(const char c) {
+      if (('a' <= c) && (c <= 'z')) {
+        return ((c + 'A') - 'a');
+      }
+      return c;
+    }
+
+    char downChar(const char c) {
+      if (('A' <= c) && (c <= 'Z')) {
+        return ((c + 'a') - 'A');
+      }
+      return c;
+    }
+
+    std::string upString(const char *c, const int chars) {
+      std::string ret(c, chars);
+      for (int i = 0; i < chars; ++i) {
+        ret[i] = upChar(ret[i]);
+      }
+      return ret;
+    }
+
+    std::string upString(const std::string &s) {
+      return upString(s.c_str(), s.size());
+    }
+
+    bool upStringCheck(const std::string &a,
+                       const std::string &b) {
+      const int aSize = a.size();
+      const int bSize = b.size();
+
+      if (aSize != bSize) {
+        return false;
+      }
+      for (int i = 0; i < aSize; ++i) {
+        if (upChar(a[i]) != upChar(b[i])) {
+          return false;
+        }
+      }
+      return true;
+    }
+    //==================================
+
+    //---[ Whitespace ]-----------------
     bool isWhitespace(const char c) {
       return charIsIn(c, whitespaceChars);
     }

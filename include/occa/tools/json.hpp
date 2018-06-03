@@ -26,7 +26,7 @@
 #include <vector>
 #include <map>
 
-#include "occa/parser/primitive.hpp"
+#include "occa/lang/primitive.hpp"
 #include "occa/tools/hash.hpp"
 #include "occa/tools/lex.hpp"
 

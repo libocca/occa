@@ -29,7 +29,7 @@
 #include "occa/types.hpp"
 #include "occa/tools/hash.hpp"
 #include "occa/tools/properties.hpp"
-#include "occa/parser/types.hpp"
+#include "occa/lang/kernelMetadata.hpp"
 
 namespace occa {
   // Kernel Caching
@@ -184,9 +184,9 @@ namespace occa {
                      const std::string &tag);
     void releaseHashLock(const std::string &lockDir);
 
-    kernelMetadataMap parseFile(const std::string &filename,
-                                const std::string &outputFile,
-                                const occa::properties &props);
+    lang::kernelMetadataMap parseFile(const std::string &filename,
+                                      const std::string &outputFile,
+                                      const occa::properties &props);
 
     std::string removeSlashes(const std::string &str);
 

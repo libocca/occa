@@ -1,0 +1,53 @@
+/* The MIT License (MIT)
+ *
+ * Copyright (c) 2014-2018 David Medina and Tim Warburton
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ */
+#include "occa/lang/exprNode.hpp"
+#include "occa/lang/statement.hpp"
+#include "occa/lang/variable.hpp"
+#include "occa/lang/builtins/transforms/variableReplacer.hpp"
+
+namespace occa {
+  namespace lang {
+    namespace transforms {
+      variableReplacer_t::variableReplacer_t() :
+        statementExprTransform(exprNodeType::variable),
+        from(NULL),
+        to(NULL) {}
+
+      void variableReplacer_t::set(variable_t &from_,
+                                   variable_t &to_) {
+        from = &from_;
+        to   = &to_;
+      }
+
+      exprNode* variableReplacer_t::transformExprNode(exprNode &node) {
+        if (!from || !to) {
+          return &node;
+        }
+        variable_t &var = ((variableNode&) node).value;
+        if (&var != from) {
+          return &node;
+        }
+        return new variableNode(node.token, *to);
+      }
+    }
+  }
+}

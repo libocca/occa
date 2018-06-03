@@ -88,7 +88,8 @@ int main(int argc, char **argv) {
   while(true) {
     const double startTime = occa::currentTime();
 
-    rayMarcher(rgba.arrayArg(),
+    rayMarcher(rgba,
+               width, height
                lightDirection,
                viewDirectionY, viewDirectionX,
                nearFieldLocation, eyeLocation);

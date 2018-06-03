@@ -19,15 +19,14 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  */
-typedef int *iMatrix  @arrayArg(dims = 2);
-typedef int *iTMatrix @(arrayArg(dims = 2), idxOrder(1,0));
+typedef int *iMatrix  @dim(entries, entries)
+typedef int *iTMatrix @dim(entries, entries) dimOrder(1,0);
 
-kernel void smallTranspose(const int entries,
-                           iMatrix  A,
-                           iTMatrix B) {
-
-  for (int j = 0; j < entries; ++j; outer0) {
-    for (int i = 0; i < entries; ++i; inner0) {
+@kernel void smallTranspose(const int entries,
+                            iMatrix  A,
+                            iTMatrix B) {
+  for (int j = 0; j < entries; ++j; @outer) {
+    for (int i = 0; i < entries; ++i; @inner) {
       if (i < j) {
         const int Aij = A(i,j);
         A(i,j)        = A(j,i);

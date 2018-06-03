@@ -25,7 +25,6 @@
 #include "occa/mode.hpp"
 #include "occa/tools/sys.hpp"
 #include "occa/tools/io.hpp"
-#include "occa/parser/parser.hpp"
 
 namespace occa {
   //---[ device_v ]---------------------
@@ -304,7 +303,7 @@ namespace occa {
   void device::storeCacheInfo(const std::string &filename,
                               const hash_t &kernelHash,
                               const occa::properties &kernelProps,
-                              const kernelMetadataMap &metadataMap) const {
+                              const lang::kernelMetadataMap &metadataMap) const {
     occa::properties infoProps;
     infoProps["device"]       = dHandle->properties;
     infoProps["device/hash"]  = hash().toFullString();
@@ -312,7 +311,7 @@ namespace occa {
     infoProps["kernel/hash"]  = kernelHash.toFullString();
 
     json &metadataJson = infoProps["kernel/metadata"].asArray();
-    cKernelMetadataMapIterator kIt = metadataMap.begin();
+    lang::kernelMetadataMap::const_iterator kIt = metadataMap.begin();
     while (kIt != metadataMap.end()) {
       metadataJson += (kIt->second).toJson();
       ++kIt;
@@ -355,7 +354,7 @@ namespace occa {
         buildKernel(sourceFilename,
                     hash,
                     kernelProps,
-                    kernelMetadata::fromJson(metadataArray[k]));
+                    lang::kernelMetadata::fromJson(metadataArray[k]));
       }
     }
 
@@ -388,15 +387,15 @@ namespace occa {
     const std::string hashDir = io::hashDir(realFilename, kernelHash);
     std::string sourceFilename = realFilename;
 
-    kernelMetadata metadata;
+    lang::kernelMetadata metadata;
     if (allProps.get("okl", true)) {
       sourceFilename = hashDir + kc::parsedSourceFile;
 
-      kernelMetadataMap metadataMap = io::parseFile(realFilename,
-                                                    sourceFilename,
-                                                    allProps);
+      lang::kernelMetadataMap metadataMap = io::parseFile(realFilename,
+                                                          sourceFilename,
+                                                          allProps);
 
-      kernelMetadataMapIterator kIt = metadataMap.find(kernelName);
+      lang::kernelMetadataMap::iterator kIt = metadataMap.find(kernelName);
       OCCA_ERROR("Could not find kernel ["
                  << kernelName << "] in file ["
                  << io::shortname(filename) << "]",
@@ -458,7 +457,7 @@ namespace occa {
   occa::kernel device::buildKernel(const std::string &filename,
                                    const hash_t &hash,
                                    const occa::properties &kernelProps,
-                                   const kernelMetadata &metadata) const {
+                                   const lang::kernelMetadata &metadata) const {
 
     // Native kernels don't need a host() to launch them
     device_v *launcherHandle = ((metadata.nestedKernels > 0)
@@ -495,8 +494,8 @@ namespace occa {
     // Load nested kernels
     if (metadata.nestedKernels) {
       for (int ki = 0; ki < metadata.nestedKernels; ++ki) {
-        kernelMetadata sMetadata    = metadata.getNestedKernelMetadata(ki);
-        const std::string &sKerName = sMetadata.name;
+        lang::kernelMetadata sMetadata = metadata.getNestedKernelMetadata(ki);
+        const std::string &sKerName    = sMetadata.name;
 
         kernel &sKer = dHandle->getCachedKernel(hash,
                                                 sKerName);

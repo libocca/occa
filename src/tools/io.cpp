@@ -23,10 +23,11 @@
 #include "occa/defines.hpp"
 
 #if (OCCA_OS & (OCCA_LINUX_OS | OCCA_MACOS_OS))
-#    include <dirent.h>
-#    include <sys/types.h>
-#    include <sys/dir.h>
-#    include <unistd.h>
+#  include <dirent.h>
+#  include <sys/stat.h>
+#  include <sys/types.h>
+#  include <sys/dir.h>
+#  include <unistd.h>
 #  if (OCCA_OS & OCCA_LINUX_OS)
 #    include <errno.h>
 #  endif
@@ -42,12 +43,12 @@
 #include <fstream>
 #include <stddef.h>
 
-#include "occa/parser/parser.hpp"
 #include "occa/tools/env.hpp"
 #include "occa/tools/io.hpp"
 #include "occa/tools/string.hpp"
 #include "occa/tools/sys.hpp"
 #include "occa/par/tls.hpp"
+#include "occa/lang/kernelMetadata.hpp"
 
 namespace occa {
   // Kernel Caching
@@ -494,34 +495,34 @@ namespace occa {
       fileLocks().erase(lockDir);
     }
 
-    kernelMetadataMap parseFile(const std::string &filename,
-                                const std::string &outputFile,
-                                const occa::properties &props) {
+    lang::kernelMetadataMap parseFile(const std::string &filename,
+                                      const std::string &outputFile,
+                                      const occa::properties &props) {
 
-      const std::string ext = extension(filename);
-      parser fileParser;
+      // TODO 1.0: Replace parser
+      // parser fileParser;
 
-      std::string parsedContent = fileParser.parseFile(io::filename(filename),
-                                                       props);
+      // std::string parsedContent = fileParser.parseFile(io::filename(filename),
+      //                                                  props);
 
-      if (!sys::fileExists(outputFile)) {
-        hash_t hash = occa::hash(outputFile);
-        const std::string hashTag = "parse-file";
+      // if (!sys::fileExists(outputFile)) {
+      //   hash_t hash = occa::hash(outputFile);
+      //   const std::string hashTag = "parse-file";
 
-        if (io::haveHash(hash, hashTag)) {
-          write(outputFile, parsedContent);
-          io::releaseHash(hash, hashTag);
-        } else {
-          io::waitForHash(hash, hashTag);
-        }
-      }
+      //   if (io::haveHash(hash, hashTag)) {
+      //     write(outputFile, parsedContent);
+      //     io::releaseHash(hash, hashTag);
+      //   } else {
+      //     io::waitForHash(hash, hashTag);
+      //   }
+      // }
 
-      kernelMetadataMap metadataMap;
-      kernelInfoMapIterator kIt = fileParser.kernelInfoMap.begin();
-      while (kIt != fileParser.kernelInfoMap.end()) {
-        metadataMap[kIt->first] = kIt->second->metadata();
-        ++kIt;
-      }
+      lang::kernelMetadataMap metadataMap;
+      // lang::kernelInfoMap::iterator kIt = fileParser.kernelInfoMap.begin();
+      // while (kIt != fileParser.kernelInfoMap.end()) {
+      //   metadataMap[kIt->first] = kIt->second->metadata();
+      //   ++kIt;
+      // }
 
       return metadataMap;
     }

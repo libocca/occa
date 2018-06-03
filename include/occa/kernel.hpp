@@ -29,7 +29,7 @@
 #include "occa/defines.hpp"
 #include "occa/tools/gc.hpp"
 #include "occa/tools/properties.hpp"
-#include "occa/parser/types.hpp"
+#include "occa/lang/kernelMetadata.hpp"
 
 namespace occa {
   class kernel_v; class kernel;
@@ -171,7 +171,7 @@ namespace occa {
     std::vector<kernel> nestedKernels;
     std::vector<kernelArg> arguments;
 
-    kernelMetadata metadata;
+    lang::kernelMetadata metadata;
 
     kernel_v(const occa::properties &properties_);
 

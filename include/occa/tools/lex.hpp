@@ -135,6 +135,17 @@ namespace occa {
     }
     //==================================
 
+    //---[ Lower/Upper ]----------------
+    char upChar(const char c);
+    char downChar(const char c);
+
+    std::string upString(const char *c, const int chars);
+    std::string upString(const std::string &s);
+
+    bool upStringCheck(const std::string &a,
+                       const std::string &b);
+    //==================================
+
     //---[ Whitespace ]-----------------
     bool isWhitespace(const char c);
 

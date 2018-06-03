@@ -19,11 +19,20 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  */
+#include "occa/defines.hpp"
+
+#if (OCCA_OS & (OCCA_LINUX_OS | OCCA_MACOS_OS))
+#  include <stdio.h>
+#else // OCCA_WINDOWS_OS
+#  ifndef NOMINMAX
+#    define NOMINMAX // Clear min/max macros
+#  endif
+#  include <windows.h>
+#endif
 
 #include "occa/tools/lex.hpp"
 #include "occa/tools/string.hpp"
 #include "occa/tools/sys.hpp"
-#include "occa/parser/tools.hpp"
 
 namespace occa {
   std::string strip(const std::string &str) {
@@ -76,7 +85,7 @@ namespace occa {
 
     while (*c != '\0') {
       const char *cStart = c;
-      skipTo(c, delimeter, escapeChar);
+      lex::skipTo(c, delimeter, escapeChar);
       sv.push_back(std::string(cStart, c - cStart));
       if (*c != '\0') {
         ++c;
@@ -148,7 +157,7 @@ namespace occa {
     bool unsigned_ = false;
     int longs      = 0;
 
-    skipWhitespace(c);
+    lex::skipWhitespace(c);
 
     if ((*c == '+') || (*c == '-')) {
       negative = (*c == '-');
@@ -164,7 +173,7 @@ namespace occa {
     }
 
     while(*c != '\0') {
-      const char C = upChar(*c);
+      const char C = lex::upChar(*c);
 
       if (C == 'L') {
         ++longs;
@@ -209,7 +218,7 @@ namespace occa {
     int maxDigitValue = 10;
     char maxDigitChar = '9';
 
-    skipWhitespace(c);
+    lex::skipWhitespace(c);
 
     if ((*c == '+') || (*c == '-')) {
       negative = (*c == '-');
@@ -219,7 +228,7 @@ namespace occa {
     if (*c == '0') {
       ++c;
 
-      const char C = upChar(*c);
+      const char C = lex::upChar(*c);
 
       if (C == 'X') {
         bits = 4;
@@ -248,7 +257,7 @@ namespace occa {
         ret <<= bits;
         ret += digitValue;
       } else {
-        const char C = upChar(*c);
+        const char C = lex::upChar(*c);
 
         if (('A' <= C) && (C <= 'F')) {
           const char digitValue = 10 + (C - 'A');

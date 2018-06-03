@@ -19,7 +19,6 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  */
-
 #include "occa/defines.hpp"
 
 #if (OCCA_OS & (OCCA_LINUX_OS | OCCA_MACOS_OS))
@@ -29,6 +28,9 @@
 #  include <execinfo.h>
 #  include <pthread.h>
 #  include <signal.h>
+#  include <stdio.h>
+#  include <sys/types.h>
+#  include <sys/stat.h>
 #  include <sys/syscall.h>
 #  include <sys/sysctl.h>
 #  include <sys/time.h>
@@ -67,7 +69,6 @@
 #include "occa/tools/misc.hpp"
 #include "occa/tools/string.hpp"
 #include "occa/tools/sys.hpp"
-#include "occa/parser/tools.hpp"
 
 namespace occa {
   namespace flags {
@@ -221,7 +222,7 @@ namespace occa {
         if ((*c == '$') && ((c0 < c) || (*(c - 1) != '\\'))) {
           if (*(c + 1) == '{') {
             const char *cStart = c + 2;
-            skipTo(c, '}');
+            lex::skipTo(c, '}');
 
             if (*c == '\0')
               return expstr;
@@ -229,14 +230,14 @@ namespace occa {
             expstr += env::var(std::string(cStart, c - cStart));
           } else {
             const char *cStart = c + 1;
-            skipTo(c, '/');
+            lex::skipTo(c, '/');
             expstr += env::var(std::string(cStart, c - cStart));
           }
         }
 #else
         if (*c == '%') {
           const char *cStart = (++c);
-          skipTo(c, '%');
+          lex::skipTo(c, '%');
           expstr += env::var(std::string(cStart, c - cStart));
         }
 #endif

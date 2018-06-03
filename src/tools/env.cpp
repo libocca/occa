@@ -26,7 +26,6 @@
 #include "occa/tools/io.hpp"
 #include "occa/tools/env.hpp"
 #include "occa/tools/sys.hpp"
-#include "occa/parser/tools.hpp"
 
 namespace occa {
   namespace env {
@@ -172,9 +171,9 @@ namespace occa {
       while(cStart[0] != '\0') {
         cEnd = cStart;
 #if (OCCA_OS & (OCCA_LINUX_OS | OCCA_MACOS_OS))
-        skipTo(cEnd, ':');
+        lex::skipTo(cEnd, ':');
 #else
-        skipTo(cEnd, ';');
+        lex::skipTo(cEnd, ';');
 #endif
 
         if (0 < (cEnd - cStart)) {

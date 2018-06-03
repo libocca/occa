@@ -19,13 +19,11 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  */
-kernel void addVectors(const int entries,
-                       const float *a,
-                       float *b,
-                       float *ab) {
-
-  for (int i = 0; i < entries; ++i; tile(16)) {
-    if (i < entries)
-      ab[i] = a[i] + b[i];
+@kernel void addVectors(const int entries,
+                        const float *a,
+                        const float *b,
+                        float *ab) {
+  for (int i = 0; i < entries; ++i; @tile(16, @outer, @inner, safe=true)) {
+    ab[i] = a[i] + b[i];
   }
 }
