@@ -676,7 +676,7 @@ namespace occa {
       int pos = context.getNextOperator(opCheck);
       if (pos < 0) {
         if (checkSemicolon) {
-          context.printErrorAtEnd("Expected a [;]");
+          context.printErrorAtEnd("[1] Expected a [;]");
           success = false;
         }
         pos = context.size();
@@ -1185,7 +1185,7 @@ namespace occa {
       int end = context.getNextOperator(operatorType::semicolon);
       if (end < 0) {
         if (checkSemicolon) {
-          context.printErrorAtEnd("Expected a [;]");
+          context.printErrorAtEnd("[2] Expected a [;]");
           success = false;
           return NULL;
         }
@@ -1233,7 +1233,7 @@ namespace occa {
           if (opType & operatorType::semicolon) {
             context.set(1);
           } else if (checkSemicolon) {
-            context.printErrorAtEnd("Expected a [;]");
+            context.printError("[3] Expected a [;]");
             success = false;
           }
           break;
@@ -1352,7 +1352,7 @@ namespace occa {
       const opType_t opType = getOperatorType(context[0]);
       if (!(opType & (operatorType::semicolon |
                       operatorType::braceStart))) {
-        context.printError("Expected a [;]");
+        context.printError("[4] Expected a [;]");
         success = false;
         delete &func;
         return NULL;
@@ -1801,7 +1801,7 @@ namespace occa {
       whileSmnt.setCondition(condition);
 
       if (!(getOperatorType(context[0]) & operatorType::semicolon)) {
-        context.printError("Expected a [;]");
+        context.printError("[5] Expected a [;]");
         success = false;
         popUp();
         delete &whileSmnt;
@@ -1908,7 +1908,7 @@ namespace occa {
       token_t *continueToken = context[0];
       context.set(1);
       if (!(getOperatorType(context[0]) & operatorType::semicolon)) {
-        context.printError("Expected a [;]");
+        context.printError("[6] Expected a [;]");
         success = false;
         return NULL;
       }
@@ -1920,7 +1920,7 @@ namespace occa {
       token_t *breakToken = context[0];
       context.set(1);
       if (!(getOperatorType(context[0]) & operatorType::semicolon)) {
-        context.printError("Expected a [;]");
+        context.printError("[7] Expected a [;]");
         success = false;
         return NULL;
       }
@@ -1935,7 +1935,7 @@ namespace occa {
       const int pos = context.getNextOperator(operatorType::semicolon);
       // No ; found
       if (pos < 0) {
-        context.printErrorAtEnd("Expected a [;]");
+        context.printErrorAtEnd("[8] Expected a [;]");
         success = false;
         return NULL;
       }
@@ -1988,7 +1988,7 @@ namespace occa {
         return NULL;
       }
       if (!(getOperatorType(context[1]) & operatorType::semicolon)) {
-        context.printError("Expected a [;]");
+        context.printError("[9] Expected a [;]");
         success = false;
         return NULL;
       }

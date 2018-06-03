@@ -68,10 +68,23 @@ namespace occa {
         }
 
         if (!success) return;
+        setupHeaders();
+
+        if (!success) return;
         setupKernels();
 
         if (!success) return;
         setupExclusives();
+      }
+
+      void serialParser::setupHeaders() {
+        // TODO 1.1: Remove hack after methods are properly added
+        directiveToken token(root.source->origin,
+                             "include <cmath>\n"
+                             "using namespace std;");
+        root.addFirst(
+          *(new directiveStatement(&root, token))
+        );
       }
 
       void serialParser::setupKernels() {
@@ -110,7 +123,7 @@ namespace occa {
         for (int i = 0; i < argCount; ++i) {
           variable_t &arg = *(func.args[i]);
           vartype_t &type = arg.vartype;
-          if ((type.pointers.size() ||
+          if ((type.isPointerType() ||
                type.referenceToken)) {
             continue;
           }

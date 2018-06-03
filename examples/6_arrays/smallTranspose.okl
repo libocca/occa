@@ -19,8 +19,8 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  */
-typedef int *iMatrix  @dim(entries, entries)
-typedef int *iTMatrix @dim(entries, entries) dimOrder(1,0);
+typedef int *iMatrix  @dim(entries, entries);
+typedef int *iTMatrix @dim(entries, entries) @dimOrder(1,0);
 
 @kernel void smallTranspose(const int entries,
                             iMatrix  A,

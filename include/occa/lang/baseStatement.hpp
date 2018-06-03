@@ -41,6 +41,7 @@ namespace occa {
 
       extern const int empty;
 
+      extern const int directive;
       extern const int pragma;
 
       extern const int block;

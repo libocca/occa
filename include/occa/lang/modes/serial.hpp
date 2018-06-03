@@ -44,6 +44,8 @@ namespace occa {
         virtual void beforePreprocessing();
         virtual void afterParsing();
 
+        void setupHeaders();
+
         void setupKernels();
 
         static void setupKernel(functionDeclStatement &kernelSmnt);

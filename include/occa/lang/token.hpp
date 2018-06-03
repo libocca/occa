@@ -68,6 +68,7 @@ namespace occa {
       extern const int systemHeader;
       extern const int header;
 
+      extern const int directive;
       extern const int pragma;
 
       extern const int identifier;
@@ -162,6 +163,24 @@ namespace occa {
       newlineToken(const fileOrigin &origin_);
 
       virtual ~newlineToken();
+
+      virtual int type() const;
+
+      virtual token_t* clone() const;
+
+      virtual void print(std::ostream &out) const;
+    };
+    //==================================
+
+    //---[ Directive ]------------------
+    class directiveToken : public token_t {
+    public:
+      std::string value;
+
+      directiveToken(const fileOrigin &origin_,
+                     const std::string &value_);
+
+      virtual ~directiveToken();
 
       virtual int type() const;
 

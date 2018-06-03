@@ -27,7 +27,44 @@
 
 namespace occa {
   namespace lang {
-    //---[ Pragma ]--------------------
+    //---[ Preprocessor ]---------------
+    directiveStatement::directiveStatement(blockStatement *up_,
+                                           const directiveToken &token_) :
+      statement_t(up_),
+      token(*((directiveToken*) token_.clone())) {}
+
+    directiveStatement::~directiveStatement() {
+      delete &token;
+    }
+
+    statement_t& directiveStatement::clone_() const {
+      return *(new directiveStatement(NULL, token));
+    }
+
+    int directiveStatement::type() const {
+      return statementType::directive;
+    }
+
+    std::string& directiveStatement::value() {
+      return token.value;
+    }
+
+    const std::string& directiveStatement::value() const {
+      return token.value;
+    }
+
+    void directiveStatement::print(printer &pout) const {
+      pout << '#' << token.value << '\n';
+    }
+
+    void directiveStatement::printWarning(const std::string &message) const {
+      token.printWarning(message);
+    }
+
+    void directiveStatement::printError(const std::string &message) const {
+      token.printError(message);
+    }
+
     pragmaStatement::pragmaStatement(blockStatement *up_,
                                      const pragmaToken &token_) :
       statement_t(up_),

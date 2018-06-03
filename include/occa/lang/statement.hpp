@@ -39,7 +39,27 @@ namespace occa {
     typedef std::vector<elifStatement*>      elifStatementVector;
     typedef std::vector<variableDeclaration> variableDeclarationVector;
 
-    //---[ Pragma ]---------------------
+    //---[ Preprocessor ]---------------
+    class directiveStatement : public statement_t {
+    public:
+      directiveToken &token;
+
+      directiveStatement(blockStatement *up_,
+                         const directiveToken &token_);
+      ~directiveStatement();
+
+      virtual statement_t& clone_() const;
+      virtual int type() const;
+
+      std::string& value();
+      const std::string& value() const;
+
+      virtual void print(printer &pout) const;
+
+      virtual void printWarning(const std::string &message) const;
+      virtual void printError(const std::string &message) const;
+    };
+
     class pragmaStatement : public statement_t {
     public:
       pragmaToken &token;

@@ -32,36 +32,37 @@ namespace occa {
 
       const int empty        = (1 << 1);
 
-      const int pragma       = (1 << 2);
+      const int directive    = (1 << 2);
+      const int pragma       = (1 << 3);
 
-      const int block        = (1 << 3);
-      const int namespace_   = (1 << 4);
+      const int block        = (1 << 4);
+      const int namespace_   = (1 << 5);
 
-      const int typeDecl     = (1 << 5);
-      const int function     = (1 << 6);
-      const int functionDecl = (1 << 7);
-      const int classAccess  = (1 << 8);
+      const int typeDecl     = (1 << 6);
+      const int function     = (1 << 7);
+      const int functionDecl = (1 << 8);
+      const int classAccess  = (1 << 9);
 
-      const int expression   = (1 << 9);
-      const int declaration  = (1 << 10);
+      const int expression   = (1 << 10);
+      const int declaration  = (1 << 11);
 
-      const int goto_        = (1 << 11);
-      const int gotoLabel    = (1 << 12);
+      const int goto_        = (1 << 12);
+      const int gotoLabel    = (1 << 13);
 
-      const int if_          = (1 << 13);
-      const int elif_        = (1 << 14);
-      const int else_        = (1 << 15);
-      const int for_         = (1 << 16);
-      const int while_       = (1 << 17);
-      const int switch_      = (1 << 18);
-      const int case_        = (1 << 19);
-      const int default_     = (1 << 20);
-      const int continue_    = (1 << 21);
-      const int break_       = (1 << 22);
+      const int if_          = (1 << 14);
+      const int elif_        = (1 << 15);
+      const int else_        = (1 << 16);
+      const int for_         = (1 << 17);
+      const int while_       = (1 << 18);
+      const int switch_      = (1 << 19);
+      const int case_        = (1 << 20);
+      const int default_     = (1 << 21);
+      const int continue_    = (1 << 22);
+      const int break_       = (1 << 23);
 
-      const int return_      = (1 << 23);
+      const int return_      = (1 << 24);
 
-      const int attribute    = (1 << 24);
+      const int attribute    = (1 << 25);
     }
 
     statement_t::statement_t(blockStatement *up_) :

@@ -114,6 +114,7 @@ namespace occa {
       const std::string& name() const;
 
       bool isNamed() const;
+      virtual bool isPointerType() const;
 
       bool operator == (const type_t &other) const;
       bool operator != (const type_t &other) const;
@@ -217,6 +218,8 @@ namespace occa {
       bool isNamed() const;
       std::string name() const;
 
+      bool isPointerType() const;
+
       void setReferenceToken(token_t *token);
       bool isReference() const;
 
@@ -284,6 +287,8 @@ namespace occa {
       virtual int type() const;
       virtual type_t& clone() const;
 
+      virtual bool isPointerType() const;
+
       virtual bool equals(const type_t &other) const;
 
       virtual void printDeclaration(printer &pout) const;
@@ -312,6 +317,8 @@ namespace occa {
 
       virtual int type() const;
       virtual type_t& clone() const;
+
+      virtual bool isPointerType() const;
 
       virtual bool equals(const type_t &other) const;
 

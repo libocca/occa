@@ -88,6 +88,10 @@ namespace occa {
       return false;
     }
 
+    bool type_t::isPointerType() const {
+      return false;
+    }
+
     bool type_t::operator == (const type_t &other) const {
       if (type() != other.type()) {
         return false;
@@ -349,6 +353,15 @@ namespace occa {
       return "";
     }
 
+    bool vartype_t::isPointerType() const {
+      if (pointers.size()
+          || arrays.size()) {
+        return true;
+      }
+      return (type
+              && type->isPointerType());
+    }
+
     void vartype_t::setReferenceToken(token_t *token) {
       if (referenceToken
           && (referenceToken != token)) {
@@ -604,6 +617,10 @@ namespace occa {
       return *(new typedef_t(*this));
     }
 
+    bool typedef_t::isPointerType() const {
+      return baseType.isPointerType();
+    }
+
     bool typedef_t::equals(const type_t &other) const {
       return (baseType == other.to<typedef_t>().baseType);
     }
@@ -642,6 +659,10 @@ namespace occa {
 
     type_t& functionPtr_t::clone() const {
       return *(new functionPtr_t(*this));
+    }
+
+    bool functionPtr_t::isPointerType() const {
+      return true;
     }
 
     functionPtr_t& functionPtr_t::operator += (const variable_t &arg) {

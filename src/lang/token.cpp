@@ -73,24 +73,25 @@ namespace occa {
       const int systemHeader  = (1 << 3);
       const int header        = (1 << 4);
 
-      const int pragma        = (1 << 5);
+      const int directive     = (1 << 5);
+      const int pragma        = (1 << 6);
 
-      const int identifier    = (1 << 6);
+      const int identifier    = (1 << 7);
 
-      const int qualifier     = (1 << 7);
-      const int type          = (1 << 8);
-      const int variable      = (1 << 9);
-      const int function      = (1 << 10);
+      const int qualifier     = (1 << 8);
+      const int type          = (1 << 9);
+      const int variable      = (1 << 10);
+      const int function      = (1 << 11);
 
-      const int primitive     = (1 << 11);
-      const int op            = (1 << 12);
+      const int primitive     = (1 << 12);
+      const int op            = (1 << 13);
 
-      const int char_         = (1 << 13);
-      const int string        = (1 << 14);
-      const int withUDF       = (1 << 15);
+      const int char_         = (1 << 14);
+      const int string        = (1 << 15);
+      const int withUDF       = (1 << 16);
       const int withEncoding  = ((encodingType::ux |
-                                  encodingType::R) << 16);
-      const int encodingShift = 16;
+                                  encodingType::R) << 17);
+      const int encodingShift = 17;
 
       int getEncoding(const int tokenType) {
         return ((tokenType & withEncoding) >> encodingShift);
@@ -192,6 +193,27 @@ namespace occa {
 
     void newlineToken::print(std::ostream &out) const {
       out << '\n';
+    }
+    //==================================
+
+    //---[ Directive ]------------------
+    directiveToken::directiveToken(const fileOrigin &origin_,
+                                   const std::string &value_) :
+      token_t(origin_),
+      value(value_) {}
+
+    directiveToken::~directiveToken() {}
+
+    int directiveToken::type() const {
+      return tokenType::directive;
+    }
+
+    token_t* directiveToken::clone() const {
+      return new directiveToken(origin, value);
+    }
+
+    void directiveToken::print(std::ostream &out) const {
+      out << '#' << value << '\n';
     }
     //==================================
 
