@@ -38,6 +38,7 @@ namespace occa {
       defaultRootToken(originSource::builtin),
       root(NULL, NULL),
       up(&root),
+      success(true),
       settings(settings_) {
       // Properly implement `identifier-nondigit` for identifiers
       // Meanwhile, we use the unknownFilter

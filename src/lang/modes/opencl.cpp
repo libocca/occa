@@ -83,6 +83,7 @@ namespace occa {
         addAttribute<attributes::exclusive>();
 
         settings["opencl/extensions/cl_khr_fp64"] = true;
+        hostParser.settings["okl/validate"] = false;
       }
 
       void openclParser::onClear() {
@@ -98,6 +99,7 @@ namespace occa {
         blockStatement &rootClone = (blockStatement&) root.clone();
         hostParser.root.swap(rootClone);
         delete &rootClone;
+        hostParser.setupKernels();
         std::cout << "hostParser.toString() = \n"
                   << "--------------------------------------------------\n"
                   << hostParser.toString()
