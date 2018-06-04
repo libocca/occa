@@ -75,6 +75,9 @@ void testPragma() {
                     parser.root[0]
                     ->to<pragmaStatement>()
                     .value());
+
+  parser.settings["opencl/extensions/foobar"] = false;
+  parser.settings["opencl/extensions/cl_khr_fp64"] = true;
 }
 //======================================
 

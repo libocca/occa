@@ -204,7 +204,7 @@ namespace occa {
         int outerCount = 0;
         int innerCount = 0;
 
-        // TODO 1.1: Properly fix this
+        // **TODO 1.1: Properly fix this
         const int pathCount = (int) path.size();
         for (int i = 0; i < pathCount; ++i) {
           forStatement &pathSmnt = *((forStatement*) path[i]);
