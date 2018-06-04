@@ -90,6 +90,7 @@ namespace occa {
 
       bool checkLoopOrders(functionDeclStatement &kernelSmnt);
 
+      bool singleOuterLoop(functionDeclStatement &kernelSmnt);
       bool checkLoopOrder(transforms::smntTreeNode &root);
       bool checkLoopType(transforms::smntTreeNode &node,
                          int &outerCount,

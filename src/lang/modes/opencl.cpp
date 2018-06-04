@@ -23,6 +23,48 @@
 #include "occa/lang/modes/okl.hpp"
 #include "occa/lang/builtins/attributes.hpp"
 
+/*
+//---[ Loop Info ]--------------------------------
+#define occaOuterDim2 (get_num_groups(2))
+#define occaOuterId2  (get_group_id(2))
+
+#define occaOuterDim1 (get_num_groups(1))
+#define occaOuterId1  (get_group_id(1))
+
+#define occaOuterDim0 (get_num_groups(0))
+#define occaOuterId0  (get_group_id(0))
+// - - - - - - - - - - - - - - - - - - - - - - - -
+#define occaInnerDim2 (get_local_size(2))
+#define occaInnerId2  (get_local_id(2))
+
+#define occaInnerDim1 (get_local_size(1))
+#define occaInnerId1  (get_local_id(1))
+
+#define occaInnerDim0 (get_local_size(0))
+#define occaInnerId0  (get_local_id(0))
+//================================================
+
+
+//---[ Standard Functions ]-----------------------
+@barrier("local")  -> barrier(CLK_LOCAL_MEM_FENCE)
+@barrier("global") -> barrier(CLK_GLOBAL_MEM_FENCE)
+//================================================
+
+
+//---[ Attributes ]-------------------------------
+#define occaShared   __local
+#define occaPointer  __global
+#define occaConstant __constant
+//================================================
+
+
+//---[ Kernel Info ]------------------------------
+#define occaKernel         __kernel
+#define occaFunction
+#define occaDeviceFunction
+//================================================
+ */
+
 namespace occa {
   namespace lang {
     namespace okl {
@@ -93,6 +135,7 @@ namespace occa {
       }
 
       void openclParser::updateConstToConstant() {
+        // TODO 1.1
       }
 
       void openclParser::addOccaFors() {

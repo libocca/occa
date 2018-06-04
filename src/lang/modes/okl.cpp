@@ -349,6 +349,11 @@ namespace occa {
         transforms::smntTreeNode root;
         bool success;
 
+        success = singleOuterLoop(kernelSmnt);
+        if (!success) {
+          return false;
+        }
+
         findStatementTree(statementType::for_,
                           kernelSmnt,
                           oklLoopMatcher,
@@ -378,6 +383,32 @@ namespace occa {
         success = checkExclusiveOrder(root);
         root.free();
         return success;
+      }
+
+      bool singleOuterLoop(functionDeclStatement &kernelSmnt) {
+        int childCount = (int) kernelSmnt.children.size();
+        int loopCount = 0;
+        for (int i = 0; i < childCount; ++i) {
+          statement_t &child = *(kernelSmnt.children[i]);
+          const int sType = child.type();
+          if (!(sType & (statementType::directive |
+                         statementType::pragma    |
+                         statementType::empty     |
+                         statementType::for_))) {
+            child.printError("Only [@outer] loops are allowed"
+                             " directly inside [@kernel]s for now");
+            return false;
+          }
+          if (sType != statementType::for_) {
+            continue;
+          }
+          loopCount += child.hasAttribute("outer");
+          if (loopCount > 1) {
+            child.printError("Only one [@outer] loop is allowed for now");
+            return false;
+          }
+        }
+        return true;
       }
 
       bool checkLoopOrder(transforms::smntTreeNode &root) {

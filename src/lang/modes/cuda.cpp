@@ -21,6 +21,48 @@
  */
 #include "occa/lang/modes/cuda.hpp"
 
+/*
+//---[ Loop Info ]--------------------------------
+#define occaOuterDim2 gridDim.z
+#define occaOuterId2  blockIdx.z
+
+#define occaOuterDim1 gridDim.y
+#define occaOuterId1  blockIdx.y
+
+#define occaOuterDim0 gridDim.x
+#define occaOuterId0  blockIdx.x
+// - - - - - - - - - - - - - - - - - - - - - - - -
+#define occaInnerDim2 blockDim.z
+#define occaInnerId2  threadIdx.z
+
+#define occaInnerDim1 blockDim.y
+#define occaInnerId1  threadIdx.y
+
+#define occaInnerDim0 blockDim.x
+#define occaInnerId0  threadIdx.x
+//================================================
+
+
+//---[ Standard Functions ]-----------------------
+@barrier("local")  __syncthreads()
+@barrier("global") __syncthreads()
+//================================================
+
+
+//---[ Attributes ]-------------------------------
+#define occaShared   __shared__
+#define occaRestrict __restrict__
+#define occaConstant __constant__
+//================================================
+
+
+//---[ Kernel Info ]------------------------------
+#define occaKernel         extern "C" __global__
+#define occaFunction       __device__
+#define occaDeviceFunction __device__
+//================================================
+ */
+
 namespace occa {
   namespace lang {
     namespace okl {
