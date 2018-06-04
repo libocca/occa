@@ -71,15 +71,16 @@ namespace occa {
 
     statement_t::~statement_t() {}
 
-    statement_t& statement_t::clone() const {
-      statement_t &s = clone_();
+    statement_t& statement_t::clone(blockStatement *up_) const {
+      statement_t &s = clone_(up_);
       s.attributes = attributes;
       return s;
     }
 
-    statement_t* statement_t::clone(statement_t *smnt) {
+    statement_t* statement_t::clone(blockStatement *up_,
+                                    statement_t *smnt) {
       if (smnt) {
-        return &(smnt->clone());
+        return &(smnt->clone(up_));
       }
       return NULL;
     }
@@ -151,8 +152,8 @@ namespace occa {
       delete source;
     }
 
-    statement_t& emptyStatement::clone_() const {
-      return *(new emptyStatement(NULL,
+    statement_t& emptyStatement::clone_(blockStatement *up_) const {
+      return *(new emptyStatement(up_,
                                   source));
     }
 
@@ -181,13 +182,14 @@ namespace occa {
       statement_t(up_),
       source(token_t::clone(source_)) {}
 
-    blockStatement::blockStatement(const blockStatement &other) :
-      statement_t(NULL),
+    blockStatement::blockStatement(blockStatement *up_,
+                                   const blockStatement &other) :
+      statement_t(up_),
       source(token_t::clone(other.source)) {
       attributes = other.attributes;
       const int childCount = (int) other.children.size();
       for (int i = 0; i < childCount; ++i) {
-        add(other.children[i]->clone());
+        add(other.children[i]->clone(this));
       }
     }
 
@@ -196,8 +198,8 @@ namespace occa {
       delete source;
     }
 
-    statement_t& blockStatement::clone_() const {
-      return *(new blockStatement(*this));
+    statement_t& blockStatement::clone_(blockStatement *up_) const {
+      return *(new blockStatement(up_, *this));
     }
 
     int blockStatement::type() const {

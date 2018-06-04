@@ -31,6 +31,7 @@ void testKernelAnnotation();
 void testKernelArgs();
 void testSharedAnnotation();
 void testBarriers();
+void testSource();
 
 int main(const int argc, const char **argv) {
   parser.settings["okl/validate"] = false;
@@ -43,6 +44,7 @@ int main(const int argc, const char **argv) {
   testKernelArgs();
   testSharedAnnotation();
   testBarriers();
+  testSource();
 
   return 0;
 }
@@ -111,3 +113,34 @@ void testBarriers() {
   // Add barriers barrier(CLK_LOCAL_MEM_FENCE)
 }
 //======================================
+
+void testSource() {
+  // TODO:
+  //   @exclusive ->
+  //     - std::vector<value>
+  //     - vec.reserve(loopIterations)
+  //     - Add iterator index to inner-most @inner loop
+  parseAndPrintSource(
+    "const int var[10];\n"
+    "@kernel void foo(int * restrict arg) {\n"
+    "  for (int o1 = 0; o1 < O1; ++o1; @outer) {\n"
+    "    for (int o0 = 0; o0 < O0; ++o0; @outer) {\n"
+    "      @shared int shr[3];\n"
+    "      @exclusive int excl;\n"
+    "      if (true) {\n"
+    "        for (int i1 = 0; i1 < I1; ++i1; @inner) {\n"
+    "          for (int i0 = 0; i0 < I0; ++i0; @inner) {\n"
+    "            for (;;) {\n"
+    "               excl = i0;\n"
+    "            }\n"
+    "            for (;;) {\n"
+    "               excl = i0;\n"
+    "            }\n"
+    "          }\n"
+    "        }\n"
+    "      }\n"
+    "    }\n"
+    "  }\n"
+    "}\n"
+  );
+}

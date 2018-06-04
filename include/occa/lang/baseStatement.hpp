@@ -104,10 +104,11 @@ namespace occa {
         return *ptr;
       }
 
-      statement_t& clone() const;
-      virtual statement_t& clone_() const = 0;
+      statement_t& clone(blockStatement *up_ = NULL) const;
+      virtual statement_t& clone_(blockStatement *up_) const = 0;
 
-      static statement_t* clone(statement_t *smnt);
+      static statement_t* clone(blockStatement *up_,
+                                statement_t *smnt);
 
       virtual int type() const = 0;
 
@@ -144,7 +145,7 @@ namespace occa {
 
       ~emptyStatement();
 
-      virtual statement_t& clone_() const;
+      virtual statement_t& clone_(blockStatement *up_) const;
       virtual int type() const;
 
       virtual void print(printer &pout) const;
@@ -163,10 +164,11 @@ namespace occa {
 
       blockStatement(blockStatement *up_,
                      token_t *source_);
-      blockStatement(const blockStatement &other);
+      blockStatement(blockStatement *up_,
+                     const blockStatement &other);
       virtual ~blockStatement();
 
-      virtual statement_t& clone_() const;
+      virtual statement_t& clone_(blockStatement *up_) const;
       virtual int type() const;
 
       virtual bool inScope(const std::string &name);

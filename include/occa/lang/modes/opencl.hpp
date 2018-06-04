@@ -23,6 +23,7 @@
 #define OCCA_PARSER_MODES_OPENCL_HEADER
 
 #include "occa/lang/parser.hpp"
+#include "occa/lang/modes/serial.hpp"
 #include "occa/lang/builtins/transforms/finders.hpp"
 
 namespace occa {
@@ -30,21 +31,33 @@ namespace occa {
     namespace okl {
       class openclParser : public parser_t {
       public:
+        serialParser hostParser;
+
+        qualifier_t constant;
+        qualifier_t kernel;
+        qualifier_t global;
+        qualifier_t local;
+
         openclParser();
 
+        virtual void onClear();
         virtual void afterParsing();
 
         void addExtensions();
 
-        void addFunctionPrototypes();
-
         void updateConstToConstant();
+
+        void setQualifiers();
+        void setKernelQualifiers();
+        void setLocalQualifiers();
+
+        static bool sharedVariableMatcher(exprNode &expr);
 
         void addOccaFors();
 
-        void setupKernelArgs();
-
         void setupLaunchKernel();
+
+        void addFunctionPrototypes();
       };
     }
   }

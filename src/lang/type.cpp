@@ -734,7 +734,15 @@ namespace occa {
 
     function_t::function_t(const function_t &other) :
       type_t(other),
-      returnType(other.returnType) {}
+      returnType(other.returnType) {
+
+      const int count = (int) other.args.size();
+      for (int i = 0; i < count; ++i) {
+        args.push_back(
+          &(other.args[i]->clone())
+        );
+      }
+    }
 
     void function_t::free() {
       const int count = (int) args.size();

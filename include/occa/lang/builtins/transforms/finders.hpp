@@ -146,6 +146,10 @@ namespace occa {
         statementExprTransform(const int validExprNodeTypes_,
                                smntExprTransform transform_ = NULL);
 
+        statementExprTransform(const int validStatementTypes_,
+                               const int validExprNodeTypes_,
+                               smntExprTransform transform_ = NULL);
+
         virtual statement_t* transformStatement(statement_t &smnt);
 
         virtual exprNode* transformExprNode(exprNode &node);
@@ -155,6 +159,10 @@ namespace occa {
                                   public exprNodeMatcherFinder {
       public:
         statementExprFinder(const int validExprNodeTypes_,
+                            exprNodeMatcher matcher_);
+
+        statementExprFinder(const int validStatementTypes_,
+                            const int validExprNodeTypes_,
                             exprNodeMatcher matcher_);
 
         void getExprNodes(statement_t &smnt,
@@ -232,6 +240,13 @@ namespace occa {
                         statementPtrVector &statements);
 
     void findStatements(const int validExprNodeTypes,
+                        statement_t &smnt,
+                        exprNodeMatcher matcher,
+                        statementExprMap &exprMap);
+
+
+    void findStatements(const int validStatementTypes,
+                        const int validExprNodeTypes,
                         statement_t &smnt,
                         exprNodeMatcher matcher,
                         statementExprMap &exprMap);

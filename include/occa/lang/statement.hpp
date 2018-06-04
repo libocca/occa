@@ -48,7 +48,7 @@ namespace occa {
                          const directiveToken &token_);
       ~directiveStatement();
 
-      virtual statement_t& clone_() const;
+      virtual statement_t& clone_(blockStatement *up_) const;
       virtual int type() const;
 
       std::string& value();
@@ -68,7 +68,7 @@ namespace occa {
                       const pragmaToken &token_);
       ~pragmaStatement();
 
-      virtual statement_t& clone_() const;
+      virtual statement_t& clone_(blockStatement *up_) const;
       virtual int type() const;
 
       std::string& value();
@@ -91,7 +91,7 @@ namespace occa {
                         function_t &function_);
       ~functionStatement();
 
-      virtual statement_t& clone_() const;
+      virtual statement_t& clone_(blockStatement *up_) const;
       virtual int type() const;
 
       virtual void print(printer &pout) const;
@@ -106,9 +106,10 @@ namespace occa {
 
       functionDeclStatement(blockStatement *up_,
                             function_t &function_);
-      functionDeclStatement(const functionDeclStatement &other);
+      functionDeclStatement(blockStatement *up_,
+                            const functionDeclStatement &other);
 
-      virtual statement_t& clone_() const;
+      virtual statement_t& clone_(blockStatement *up_) const;
       virtual int type() const;
 
       bool updateScope(const bool force = false);
@@ -127,7 +128,7 @@ namespace occa {
                            const int access_);
       ~classAccessStatement();
 
-      virtual statement_t& clone_() const;
+      virtual statement_t& clone_(blockStatement *up_) const;
       virtual int type() const;
 
       virtual void print(printer &pout) const;
@@ -146,10 +147,11 @@ namespace occa {
       expressionStatement(blockStatement *up_,
                           exprNode &expr_,
                           const bool hasSemicolon_ = true);
-      expressionStatement(const expressionStatement &other);
+      expressionStatement(blockStatement *up_,
+                          const expressionStatement &other);
       ~expressionStatement();
 
-      virtual statement_t& clone_() const;
+      virtual statement_t& clone_(blockStatement *up_) const;
       virtual int type() const;
 
       virtual void print(printer &pout) const;
@@ -163,12 +165,13 @@ namespace occa {
       variableDeclarationVector declarations;
 
       declarationStatement(blockStatement *up_);
-      declarationStatement(const declarationStatement &other);
+      declarationStatement(blockStatement *up_,
+                           const declarationStatement &other);
       ~declarationStatement();
 
       void freeDeclarations();
 
-      virtual statement_t& clone_() const;
+      virtual statement_t& clone_(blockStatement *up_) const;
       virtual int type() const;
 
       bool addDeclaration(const variableDeclaration &decl,
@@ -188,13 +191,14 @@ namespace occa {
 
       gotoStatement(blockStatement *up_,
                     identifierToken &labelToken_);
-      gotoStatement(const gotoStatement &other);
+      gotoStatement(blockStatement *up_,
+                    const gotoStatement &other);
       ~gotoStatement();
 
       std::string& label();
       const std::string& label() const;
 
-      virtual statement_t& clone_() const;
+      virtual statement_t& clone_(blockStatement *up_) const;
       virtual int type() const;
 
       virtual void print(printer &pout) const;
@@ -209,13 +213,14 @@ namespace occa {
 
       gotoLabelStatement(blockStatement *up_,
                          identifierToken &labelToken_);
-      gotoLabelStatement(const gotoLabelStatement &other);
+      gotoLabelStatement(blockStatement *up_,
+                         const gotoLabelStatement &other);
       ~gotoLabelStatement();
 
       std::string& label();
       const std::string& label() const;
 
-      virtual statement_t& clone_() const;
+      virtual statement_t& clone_(blockStatement *up_) const;
       virtual int type() const;
 
       virtual void print(printer &pout) const;
@@ -232,13 +237,14 @@ namespace occa {
 
       namespaceStatement(blockStatement *up_,
                          identifierToken &nameToken_);
-      namespaceStatement(const namespaceStatement &other);
+      namespaceStatement(blockStatement *up_,
+                         const namespaceStatement &other);
       ~namespaceStatement();
 
       std::string& name();
       const std::string& name() const;
 
-      virtual statement_t& clone_() const;
+      virtual statement_t& clone_(blockStatement *up_) const;
       virtual int type() const;
 
       virtual void print(printer &pout) const;
@@ -255,7 +261,8 @@ namespace occa {
 
       ifStatement(blockStatement *up_,
                   token_t *source_);
-      ifStatement(const ifStatement &other);
+      ifStatement(blockStatement *up_,
+                  const ifStatement &other);
       ~ifStatement();
 
       void setCondition(statement_t *condition_);
@@ -263,7 +270,7 @@ namespace occa {
       void addElif(elifStatement &elifSmnt);
       void addElse(elseStatement &elseSmnt_);
 
-      virtual statement_t& clone_() const;
+      virtual statement_t& clone_(blockStatement *up_) const;
       virtual int type() const;
 
       virtual void print(printer &pout) const;
@@ -275,12 +282,13 @@ namespace occa {
 
       elifStatement(blockStatement *up_,
                     token_t *source_);
-      elifStatement(const elifStatement &other);
+      elifStatement(blockStatement *up_,
+                    const elifStatement &other);
       ~elifStatement();
 
       void setCondition(statement_t *condition_);
 
-      virtual statement_t& clone_() const;
+      virtual statement_t& clone_(blockStatement *up_) const;
       virtual int type() const;
 
       virtual void print(printer &pout) const;
@@ -290,9 +298,10 @@ namespace occa {
     public:
       elseStatement(blockStatement *up_,
                     token_t *source_);
-      elseStatement(const elseStatement &other);
+      elseStatement(blockStatement *up_,
+                    const elseStatement &other);
 
-      virtual statement_t& clone_() const;
+      virtual statement_t& clone_(blockStatement *up_) const;
       virtual int type() const;
 
       virtual void print(printer &pout) const;
@@ -306,14 +315,15 @@ namespace occa {
 
       forStatement(blockStatement *up_,
                    token_t *source_);
-      forStatement(const forStatement &other);
+      forStatement(blockStatement *up_,
+                   const forStatement &other);
       ~forStatement();
 
       void setLoopStatements(statement_t *init_,
                              statement_t *check_,
                              statement_t *update_);
 
-      virtual statement_t& clone_() const;
+      virtual statement_t& clone_(blockStatement *up_) const;
       virtual int type() const;
 
       virtual void print(printer &pout) const;
@@ -329,12 +339,13 @@ namespace occa {
       whileStatement(blockStatement *up_,
                      token_t *source_,
                      const bool isDoWhile_ = false);
-      whileStatement(const whileStatement &other);
+      whileStatement(blockStatement *up_,
+                     const whileStatement &other);
       ~whileStatement();
 
       void setCondition(statement_t *condition_);
 
-      virtual statement_t& clone_() const;
+      virtual statement_t& clone_(blockStatement *up_) const;
       virtual int type() const;
 
       virtual void print(printer &pout) const;
@@ -348,12 +359,13 @@ namespace occa {
 
       switchStatement(blockStatement *up_,
                       token_t *source_);
-      switchStatement(const switchStatement& other);
+      switchStatement(blockStatement *up_,
+                      const switchStatement& other);
       ~switchStatement();
 
       void setCondition(statement_t *condition_);
 
-      virtual statement_t& clone_() const;
+      virtual statement_t& clone_(blockStatement *up_) const;
       virtual int type() const;
 
       virtual void print(printer &pout) const;
@@ -371,7 +383,7 @@ namespace occa {
                     exprNode &value_);
       ~caseStatement();
 
-      virtual statement_t& clone_() const;
+      virtual statement_t& clone_(blockStatement *up_) const;
       virtual int type() const;
 
       virtual void print(printer &pout) const;
@@ -388,7 +400,7 @@ namespace occa {
                        token_t *source_);
       ~defaultStatement();
 
-      virtual statement_t& clone_() const;
+      virtual statement_t& clone_(blockStatement *up_) const;
       virtual int type() const;
 
       virtual void print(printer &pout) const;
@@ -407,7 +419,7 @@ namespace occa {
                         token_t *source_);
       ~continueStatement();
 
-      virtual statement_t& clone_() const;
+      virtual statement_t& clone_(blockStatement *up_) const;
       virtual int type() const;
 
       virtual void print(printer &pout) const;
@@ -424,7 +436,7 @@ namespace occa {
                      token_t *source_);
       ~breakStatement();
 
-      virtual statement_t& clone_() const;
+      virtual statement_t& clone_(blockStatement *up_) const;
       virtual int type() const;
 
       virtual void print(printer &pout) const;
@@ -441,10 +453,11 @@ namespace occa {
       returnStatement(blockStatement *up_,
                       token_t *source_,
                       exprNode *value_);
-      returnStatement(const returnStatement &other);
+      returnStatement(blockStatement *up_,
+                      const returnStatement &other);
       ~returnStatement();
 
-      virtual statement_t& clone_() const;
+      virtual statement_t& clone_(blockStatement *up_) const;
       virtual int type() const;
 
       virtual void print(printer &pout) const;

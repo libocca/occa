@@ -129,6 +129,16 @@ namespace occa {
         validExprNodeTypes = validExprNodeTypes_;
       }
 
+      statementExprTransform::statementExprTransform(const int validStatementTypes_,
+                                                     const int validExprNodeTypes_,
+                                                     smntExprTransform transform_) :
+        transform(transform_) {
+        validStatementTypes = (validStatementTypes_
+                               & (statementType::declaration |
+                                  statementType::expression));
+        validExprNodeTypes = validExprNodeTypes_;
+      }
+
       statement_t* statementExprTransform::transformStatement(statement_t &smnt) {
         currentSmnt = &smnt;
         nextExprIsBeingDeclared = false;
@@ -178,9 +188,16 @@ namespace occa {
         statementTypeFinder(statementType::declaration |
                             statementType::expression),
         exprNodeMatcherFinder(validExprNodeTypes_,
-                              matcher_) {
+                              matcher_) {}
 
-      }
+      statementExprFinder::statementExprFinder(const int validStatementTypes_,
+                                               const int validExprNodeTypes_,
+                                               exprNodeMatcher matcher_) :
+        statementTypeFinder(validStatementTypes_
+                            & (statementType::declaration |
+                               statementType::expression)),
+        exprNodeMatcherFinder(validExprNodeTypes_,
+                              matcher_) {}
 
       void statementExprFinder::getExprNodes(statement_t &smnt,
                                              statementExprMap &exprMap) {
@@ -377,6 +394,17 @@ namespace occa {
                         exprNodeMatcher matcher,
                         statementExprMap &exprMap) {
       transforms::statementExprFinder finder(validExprNodeTypes,
+                                             matcher);
+      finder.getExprNodes(smnt, exprMap);
+    }
+
+    void findStatements(const int validStatementTypes,
+                        const int validExprNodeTypes,
+                        statement_t &smnt,
+                        exprNodeMatcher matcher,
+                        statementExprMap &exprMap) {
+      transforms::statementExprFinder finder(validStatementTypes,
+                                             validExprNodeTypes,
                                              matcher);
       finder.getExprNodes(smnt, exprMap);
     }
