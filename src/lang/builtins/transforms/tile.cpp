@@ -20,7 +20,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  */
 #include "occa/lang/exprNode.hpp"
-#include "occa/lang/modes/okl.hpp"
+#include "occa/lang/modes/oklForStatement.hpp"
 #include "occa/lang/variable.hpp"
 #include "occa/lang/builtins/types.hpp"
 #include "occa/lang/builtins/transforms/tile.hpp"
@@ -42,11 +42,11 @@ namespace occa {
         attributeToken_t &attr = it->second;
         exprNode &tileSize = *(attr.args[0].expr);
 
-        variable_t *iterPtr;
-        if (!okl::isSimpleForSmnt("tile", forSmnt, iterPtr)) {
+        okl::oklForStatement oklForSmnt(forSmnt,
+                                        "@tile");
+        if (!oklForSmnt.isValid()) {
           return NULL;
         }
-        variable_t &iter = *iterPtr;
 
         // Create the block and inner-block for-loops
         forStatement &blockForSmnt = *(new forStatement(forSmnt.up,
@@ -56,33 +56,36 @@ namespace occa {
         blockForSmnt.add(innerForSmnt);
 
         // Rename the block interator
+        variable_t &iter = *(oklForSmnt.iterator);
         variable_t &blockIter = iter.clone();
         blockIter.name() = "_occa_tiled_" + iter.name();
         blockForSmnt.scope.add(blockIter);
 
         setupNewForStatements(attr,
-                              forSmnt,
-                              iter, blockIter,
+                              oklForSmnt,
+                              blockIter,
                               blockForSmnt, innerForSmnt);
 
-        setupBlockForStatement(tileSize,
+        setupBlockForStatement(oklForSmnt,
+                               tileSize,
                                blockIter,
                                blockForSmnt, innerForSmnt);
 
-        setupInnerForStatement(tileSize,
-                               iter, blockIter,
+        setupInnerForStatement(oklForSmnt,
+                               tileSize,
+                               blockIter,
                                blockForSmnt, innerForSmnt);
 
         setupCheckStatement(attr,
-                            iter, blockIter,
+                            oklForSmnt,
+                            blockIter,
                             blockForSmnt, innerForSmnt);
 
         return &blockForSmnt;
       }
 
       void tile::setupNewForStatements(attributeToken_t &attr,
-                                       forStatement &forSmnt,
-                                       variable_t &iter,
+                                       okl::oklForStatement &oklForSmnt,
                                        variable_t &blockIter,
                                        forStatement &blockForSmnt,
                                        forStatement &innerForSmnt) {
@@ -99,6 +102,7 @@ namespace occa {
         // Remove @tile to prevent recursive updates
         innerForSmnt.attributes.erase("tile");
 
+        forStatement &forSmnt = oklForSmnt.forSmnt;
         innerForSmnt.swap(forSmnt);
 
         // Setup initial statements
@@ -107,12 +111,14 @@ namespace occa {
         forSmnt.setLoopStatements(NULL, NULL, NULL);
 
         // Replace instances of x with _occa_tiled_x
-        variableReplacer.set(iter, blockIter);
+        variableReplacer.set(*oklForSmnt.iterator,
+                             blockIter);
         variableReplacer.statementTransform::apply(*blockForSmnt.init);
         variableReplacer.statementTransform::apply(*blockForSmnt.check);
       }
 
-      void tile::setupBlockForStatement(exprNode &tileSize,
+      void tile::setupBlockForStatement(okl::oklForStatement &oklForSmnt,
+                                        exprNode &tileSize,
                                         variable_t &blockIter,
                                         forStatement &blockForSmnt,
                                         forStatement &innerForSmnt) {
@@ -169,8 +175,8 @@ namespace occa {
                                                       false);
       }
 
-      void tile::setupInnerForStatement(exprNode &tileSize,
-                                        variable_t &iter,
+      void tile::setupInnerForStatement(okl::oklForStatement &oklForSmnt,
+                                        exprNode &tileSize,
                                         variable_t &blockIter,
                                         forStatement &blockForSmnt,
                                         forStatement &innerForSmnt) {
@@ -185,14 +191,14 @@ namespace occa {
         variableDeclaration &decl = (((declarationStatement*) blockForSmnt.init)
                                      ->declarations[0]);
         token_t *initToken = decl.variable->source;
-        variableNode iterNode(initToken, iter);
+        variableNode iterNode(initToken,
+                              *oklForSmnt.iterator);
         variableNode blockIterNode(initToken, blockIter);
 
         // Check variables
         binaryOpNode &checkExpr = ((binaryOpNode&)
                                    *(((expressionStatement*) blockForSmnt.check)->expr));
         token_t *checkToken = checkExpr.startNode()->token;
-        const bool varInLeft = okl::hasSameVariable(blockIter, checkExpr) < 0;
 
         // Update variables
         const operator_t &updateOp = (
@@ -208,7 +214,8 @@ namespace occa {
           ->declarations
         );
         decls.push_back(
-          variableDeclaration(iter, *(blockIterNode.clone()))
+          variableDeclaration(*oklForSmnt.iterator,
+                              *(blockIterNode.clone()))
         );
 
         // Create check
@@ -218,6 +225,8 @@ namespace occa {
                                     tileSize);
         parenthesesNode checkInParen(checkToken,
                                      checkValueNode);
+
+        const bool varInLeft = oklForSmnt.checkValueOnRight;
         binaryOpNode &newCheckNode = *(
           new binaryOpNode(
             checkToken,
@@ -230,7 +239,7 @@ namespace occa {
       }
 
       void tile::setupCheckStatement(attributeToken_t &attr,
-                                     variable_t &iter,
+                                     okl::oklForStatement &oklForSmnt,
                                      variable_t &blockIter,
                                      forStatement &blockForSmnt,
                                      forStatement &innerForSmnt) {
@@ -246,7 +255,7 @@ namespace occa {
         binaryOpNode &checkExpr = ((binaryOpNode&)
                                    *(((expressionStatement*) blockForSmnt.check)->expr));
         token_t *checkToken = checkExpr.startNode()->token;
-        const bool varInLeft = okl::hasSameVariable(blockIter, checkExpr) < 0;
+        const bool varInLeft = oklForSmnt.checkValueOnRight;
         // Make ifStatement
         ifStatement &ifSmnt = *(new ifStatement(&innerForSmnt,
                                                 checkToken));
@@ -258,7 +267,7 @@ namespace occa {
                               ? checkExpr.leftValue->token
                               : checkExpr.rightValue->token);
         variableNode iterNode(iterToken,
-                              iter);
+                              *oklForSmnt.iterator);
         binaryOpNode &newCheckNode = *(
           new binaryOpNode(
             checkExpr.token,

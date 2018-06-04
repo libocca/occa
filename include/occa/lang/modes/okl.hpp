@@ -47,36 +47,9 @@ namespace occa {
       bool checkForDoubleLoops(statementPtrVector &loopSmnts,
                                const std::string &badAttr);
 
-      bool checkForDeclarations(functionDeclStatement &kernelSmnt,
-                                statementPtrVector &forSmnts,
-                                const std::string &attrName);
-
-      bool isSimpleForSmnt(const std::string &attrName,
-                           forStatement &forSmnt);
-
-      bool isSimpleForSmnt(const std::string &attrName,
-                           forStatement &forSmnt,
-                           variable_t *&iter);
-
-      bool isSimpleForInit(const std::string &attrName,
-                           statement_t &smnt);
-
-      bool isSimpleForCheck(const std::string &attrName,
-                            variable_t &var,
-                            statement_t &smnt);
-
-      bool isSimpleForUpdate(const std::string &attrName,
-                             variable_t &var,
-                             statement_t &smnt);
-
-      bool hasSameVariable(variable_t &var,
-                           leftUnaryOpNode &opNode);
-
-      bool hasSameVariable(variable_t &var,
-                           rightUnaryOpNode &opNode);
-
-      int hasSameVariable(variable_t &var,
-                          binaryOpNode &opNode);
+      bool checkOklForStatements(functionDeclStatement &kernelSmnt,
+                                 statementPtrVector &forSmnts,
+                                 const std::string &attrName);
       //================================
 
       //---[ Loop Logic ]---------------

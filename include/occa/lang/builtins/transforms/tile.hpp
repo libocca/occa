@@ -28,6 +28,10 @@
 
 namespace occa {
   namespace lang {
+    namespace okl {
+      class oklForStatement;
+    }
+
     namespace transforms {
       class tile : public statementTransform {
       public:
@@ -38,25 +42,25 @@ namespace occa {
         virtual statement_t* transformStatement(statement_t &smnt);
 
         void setupNewForStatements(attributeToken_t &attr,
-                                   forStatement &forSmnt,
-                                   variable_t &iter,
+                                   okl::oklForStatement &oklForSmnt,
                                    variable_t &blockIter,
                                    forStatement &blockForSmnt,
                                    forStatement &innerForSmnt);
 
-        void setupBlockForStatement(exprNode &tileSize,
+        void setupBlockForStatement(okl::oklForStatement &oklForSmnt,
+                                    exprNode &tileSize,
                                     variable_t &blockIter,
                                     forStatement &blockForSmnt,
                                     forStatement &innerForSmnt);
 
-        void setupInnerForStatement(exprNode &tileSize,
-                                    variable_t &iter,
+        void setupInnerForStatement(okl::oklForStatement &oklForSmnt,
+                                    exprNode &tileSize,
                                     variable_t &blockIter,
                                     forStatement &blockForSmnt,
                                     forStatement &innerForSmnt);
 
         void setupCheckStatement(attributeToken_t &attr,
-                                 variable_t &iter,
+                                 okl::oklForStatement &oklForSmnt,
                                  variable_t &blockIter,
                                  forStatement &blockForSmnt,
                                  forStatement &innerForSmnt);
