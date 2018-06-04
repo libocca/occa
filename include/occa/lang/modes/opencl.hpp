@@ -43,6 +43,18 @@ namespace occa {
         virtual void onClear();
         virtual void afterParsing();
 
+        void setupHostParser();
+
+        void removeHostOuterLoops(functionDeclStatement &kernelSmnt);
+        bool isOuterMostOuterLoop(forStatement &forSmnt);
+
+        void setKernelLaunch(forStatement &forSmnt);
+        int getInnerLoopLevel(forStatement &forSmnt);
+        forStatement* getInnerMostInnerLoop(forStatement &forSmnt);
+
+        void getOKLLoopPath(forStatement &innerSmnt,
+                            statementPtrVector &path);
+
         void addExtensions();
 
         void updateConstToConstant();

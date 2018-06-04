@@ -36,6 +36,8 @@ namespace occa {
 
       void clear();
 
+      scope_t clone() const;
+
       void swap(scope_t &other);
 
       int size();
@@ -77,11 +79,12 @@ namespace occa {
       }
 
     public:
-      void remove(const std::string &name);
+      void remove(const std::string &name,
+                  const bool deleteSource = true);
 
       void moveTo(scope_t &scope);
 
-      void debugPrint();
+      void debugPrint() const;
     };
   }
 }

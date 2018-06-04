@@ -93,7 +93,8 @@ namespace occa {
 
       variableDeclaration();
 
-      variableDeclaration(variable_t &variable_);
+      variableDeclaration(variable_t &variable_,
+                          exprNode *value_ = NULL);
 
       variableDeclaration(variable_t &variable_,
                           exprNode &value_);

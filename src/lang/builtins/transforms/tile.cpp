@@ -24,12 +24,12 @@
 #include "occa/lang/variable.hpp"
 #include "occa/lang/builtins/types.hpp"
 #include "occa/lang/builtins/transforms/tile.hpp"
+#include "occa/lang/builtins/transforms/replacer.hpp"
 
 namespace occa {
   namespace lang {
     namespace transforms {
-      tile::tile() :
-        variableReplacer() {
+      tile::tile() {
         validStatementTypes = statementType::for_;
       }
 
@@ -111,10 +111,13 @@ namespace occa {
         forSmnt.setLoopStatements(NULL, NULL, NULL);
 
         // Replace instances of x with _occa_tiled_x
-        variableReplacer.set(*oklForSmnt.iterator,
-                             blockIter);
-        variableReplacer.statementTransform::apply(*blockForSmnt.init);
-        variableReplacer.statementTransform::apply(*blockForSmnt.check);
+        replaceVariables(*blockForSmnt.init,
+                         *oklForSmnt.iterator,
+                         blockIter);
+
+        replaceVariables(*blockForSmnt.check,
+                         *oklForSmnt.iterator,
+                         blockIter);
       }
 
       void tile::setupBlockForStatement(okl::oklForStatement &oklForSmnt,

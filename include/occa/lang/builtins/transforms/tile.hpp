@@ -24,7 +24,6 @@
 #define OCCA_LANG_BUILTINS_TRANSFORMS_TILE_HEADER
 
 #include "occa/lang/statementTransform.hpp"
-#include "occa/lang/builtins/transforms/variableReplacer.hpp"
 
 namespace occa {
   namespace lang {
@@ -35,8 +34,6 @@ namespace occa {
     namespace transforms {
       class tile : public statementTransform {
       public:
-        variableReplacer_t variableReplacer;
-
         tile();
 
         virtual statement_t* transformStatement(statement_t &smnt);

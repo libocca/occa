@@ -21,6 +21,7 @@
  */
 #include "occa/lang/modes/opencl.hpp"
 #include "occa/lang/modes/okl.hpp"
+#include "occa/lang/modes/oklForStatement.hpp"
 #include "occa/lang/builtins/attributes.hpp"
 #include "occa/lang/builtins/types.hpp"
 
@@ -96,14 +97,8 @@ namespace occa {
           checkKernels(root);
         }
 
-        blockStatement &rootClone = (blockStatement&) root.clone();
-        hostParser.root.swap(rootClone);
-        delete &rootClone;
-        hostParser.setupKernels();
-        std::cout << "hostParser.toString() = \n"
-                  << "--------------------------------------------------\n"
-                  << hostParser.toString()
-                  << "==================================================\n";
+        if (!success) return;
+        setupHostParser();
 
         if (!success) return;
         addExtensions();
@@ -119,6 +114,176 @@ namespace occa {
 
         if (!success) return;
         addFunctionPrototypes();
+      }
+
+      void openclParser::setupHostParser() {
+        // Clone source
+        blockStatement &rootClone = (blockStatement&) root.clone();
+        hostParser.root.swap(rootClone);
+        delete &rootClone;
+        hostParser.setupKernels();
+
+        // Remove outer loops
+        statementPtrVector kernelSmnts;
+        findStatementsByAttr(statementType::functionDecl,
+                             "kernel",
+                             hostParser.root,
+                             kernelSmnts);
+
+        const int kernelCount = (int) kernelSmnts.size();
+        for (int i = 0; i < kernelCount; ++i) {
+          statement_t *kernelSmnt = kernelSmnts[i];
+          if (kernelSmnt->type() != statementType::functionDecl) {
+            continue;
+          }
+          removeHostOuterLoops(*((functionDeclStatement*) kernelSmnt));
+          if (!success) {
+            return;
+          }
+        }
+      }
+
+      void openclParser::removeHostOuterLoops(functionDeclStatement &kernelSmnt) {
+        statementPtrVector outerSmnts;
+        findStatementsByAttr(statementType::for_,
+                             "outer",
+                             kernelSmnt,
+                             outerSmnts);
+
+        const int outerCount = (int) outerSmnts.size();
+        for (int i = 0; i < outerCount; ++i) {
+          forStatement &forSmnt = *((forStatement*) outerSmnts[i]);
+          if (!isOuterMostOuterLoop(forSmnt)) {
+            continue;
+          }
+          setKernelLaunch(forSmnt);
+        }
+
+        std::cout << "hostParser.toString() = \n"
+                  << "--------------------------------------------------\n"
+                  << hostParser.toString()
+                  << "==================================================\n";
+
+        std::cout << "parser.toString() = \n"
+                  << "--------------------------------------------------\n"
+                  << toString()
+                  << "==================================================\n";
+      }
+
+      bool openclParser::isOuterMostOuterLoop(forStatement &forSmnt) {
+        statement_t *up = forSmnt.up;
+        while (up) {
+          if ((up->type() & statementType::for_)
+              && up->hasAttribute("outer")) {
+            return false;
+          }
+          up = up->up;
+        }
+        return true;
+      }
+
+      void openclParser::setKernelLaunch(forStatement &forSmnt) {
+        forStatement *innerSmnt = getInnerMostInnerLoop(forSmnt);
+        if (!innerSmnt) {
+          success = false;
+          forSmnt.printError("No [@inner] for-loop found");
+          return;
+        }
+
+        statementPtrVector path;
+        getOKLLoopPath(*innerSmnt, path);
+
+        // Create block in case there are duplicate variable names
+        blockStatement &launchBlock = (
+          *new blockStatement(forSmnt.up, forSmnt.source)
+        );
+        forSmnt.up->addBefore(forSmnt, launchBlock);
+
+        const int pathCount = (int) path.size();
+        for (int i = 0; i < pathCount; ++i) {
+          forStatement &pathSmnt = *((forStatement*) path[i]);
+          oklForStatement oklForSmnt(pathSmnt);
+          if (!oklForSmnt.isValid()) {
+            success = false;
+            return;
+          }
+
+          // Create and add iterator
+          declarationStatement &declSmnt = (
+            *new declarationStatement(&launchBlock)
+          );
+          declSmnt.addDeclaration(
+            variableDeclaration(*oklForSmnt.iterator,
+                                *oklForSmnt.getIterationCount())
+          );
+          launchBlock.add(declSmnt);
+
+          // Make sure we don't free our iterator variable
+          ((declarationStatement*) pathSmnt.init)->clearDeclarations();
+          pathSmnt.scope.remove(oklForSmnt.iterator->name(),
+                                false);
+        }
+
+        forSmnt.removeFromParent();
+        delete &forSmnt;
+      }
+
+      int openclParser::getInnerLoopLevel(forStatement &forSmnt) {
+        statement_t *up = forSmnt.up;
+        int level = 0;
+        while (up) {
+          if ((up->type() & statementType::for_)
+              && up->hasAttribute("inner")) {
+            ++level;
+          }
+          up = up->up;
+        }
+        return level;
+      }
+
+      forStatement* openclParser::getInnerMostInnerLoop(forStatement &forSmnt) {
+        statementPtrVector innerSmnts;
+        findStatementsByAttr(statementType::for_,
+                             "inner",
+                             forSmnt,
+                             innerSmnts);
+
+        int maxLevel = -1;
+        forStatement *innerMostInnerLoop = NULL;
+
+        const int innerCount = (int) innerSmnts.size();
+        for (int i = 0; i < innerCount; ++i) {
+          forStatement &innerSmnt = *((forStatement*) innerSmnts[i]);
+          const int level = getInnerLoopLevel(innerSmnt);
+          if (level > maxLevel) {
+            maxLevel = level;
+            innerMostInnerLoop = &innerSmnt;
+          }
+        }
+
+        return innerMostInnerLoop;
+      }
+
+      void openclParser::getOKLLoopPath(forStatement &innerSmnt,
+                                        statementPtrVector &path) {
+        path.push_back(&innerSmnt);
+        // Fill in path
+        statement_t *up = innerSmnt.up;
+        while (up) {
+          if ((up->type() & statementType::for_)
+              && (up->hasAttribute("inner")
+                  || up->hasAttribute("outer"))) {
+            path.push_back(up);
+          }
+          up = up->up;
+        }
+        // Reverse
+        const int pathCount = (int) path.size();
+        for (int i = 0; i < (pathCount / 2); ++i) {
+          statement_t *pi = path[i];
+          path[i] = path[pathCount - i - 1];
+          path[pathCount - i - 1] = pi;
+        }
       }
 
       void openclParser::addExtensions() {

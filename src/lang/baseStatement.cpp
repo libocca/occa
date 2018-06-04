@@ -23,6 +23,7 @@
 #include "occa/lang/token.hpp"
 #include "occa/lang/type.hpp"
 #include "occa/lang/builtins/transforms/fillExprIdentifiers.hpp"
+#include "occa/lang/builtins/transforms/replacer.hpp"
 
 namespace occa {
   namespace lang {
@@ -130,6 +131,12 @@ namespace occa {
       return -1;
     }
 
+    void statement_t::removeFromParent() {
+      if (up) {
+        up->remove(*this);
+      }
+    }
+
     void statement_t::print() const {
       std::cout << toString();
     }
@@ -186,11 +193,7 @@ namespace occa {
                                    const blockStatement &other) :
       statement_t(up_),
       source(token_t::clone(other.source)) {
-      attributes = other.attributes;
-      const int childCount = (int) other.children.size();
-      for (int i = 0; i < childCount; ++i) {
-        add(other.children[i]->clone(this));
-      }
+      copyFrom(other);
     }
 
     blockStatement::~blockStatement() {
@@ -200,6 +203,36 @@ namespace occa {
 
     statement_t& blockStatement::clone_(blockStatement *up_) const {
       return *(new blockStatement(up_, *this));
+    }
+
+    // Block statements such as for/if/while/etc need to replace
+    //   variables after their inner-children statements are set
+    void blockStatement::copyFrom(const blockStatement &other) {
+      attributes = other.attributes;
+
+      // Copy children
+      const int childCount = (int) other.children.size();
+      for (int i = 0; i < childCount; ++i) {
+        add(other.children[i]->clone(this));
+      }
+
+      // Replace keywords
+      keywordMap &keywords = scope.keywords;
+      const keywordMap &otherKeywords = other.scope.keywords;
+
+      keywordMap::iterator it = keywords.begin();
+      while (it != keywords.end()) {
+        const std::string &name = it->first;
+        keyword_t &keyword = *(it->second);
+
+        keywordMap::const_iterator oit = otherKeywords.find(name);
+        if (oit != otherKeywords.end()) {
+          replaceKeywords(*this,
+                          *(oit->second),
+                          keyword);
+        }
+        ++it;
+      }
     }
 
     int blockStatement::type() const {
@@ -289,6 +322,16 @@ namespace occa {
                       &newChild);
       newChild.up = this;
       return true;
+    }
+
+    void blockStatement::remove(statement_t &child) {
+      const int childCount = (int) children.size();
+      for (int i = 0; i < childCount; ++i) {
+        if (children[i] == &child) {
+          children.erase(children.begin() + i);
+          return;
+        }
+      }
     }
 
     void blockStatement::set(statement_t &child) {

@@ -169,6 +169,7 @@ namespace occa {
                            const declarationStatement &other);
       ~declarationStatement();
 
+      void clearDeclarations();
       void freeDeclarations();
 
       virtual statement_t& clone_(blockStatement *up_) const;

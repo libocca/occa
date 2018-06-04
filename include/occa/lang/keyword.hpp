@@ -102,8 +102,10 @@ namespace occa {
         return *ptr;
       }
 
-      virtual int type();
+      virtual int type() const;
       virtual const std::string& name();
+
+      virtual keyword_t* clone() const;
 
       virtual void deleteSource();
 
@@ -119,8 +121,10 @@ namespace occa {
 
       qualifierKeyword(const qualifier_t &qualifier_);
 
-      virtual int type();
+      virtual int type() const;
       virtual const std::string& name();
+
+      virtual keyword_t* clone() const;
     };
     //==================================
 
@@ -131,8 +135,10 @@ namespace occa {
 
       typeKeyword(type_t &type__);
 
-      virtual int type();
+      virtual int type() const;
       virtual const std::string& name();
+
+      virtual keyword_t* clone() const;
 
       virtual void deleteSource();
 
@@ -147,8 +153,10 @@ namespace occa {
 
       variableKeyword(variable_t &variable_);
 
-      virtual int type();
+      virtual int type() const;
       virtual const std::string& name();
+
+      virtual keyword_t* clone() const;
 
       virtual void deleteSource();
 
@@ -163,8 +171,10 @@ namespace occa {
 
       functionKeyword(function_t &function_);
 
-      virtual int type();
+      virtual int type() const;
       virtual const std::string& name();
+
+      virtual keyword_t* clone() const;
 
       virtual void deleteSource();
 
@@ -181,8 +191,10 @@ namespace occa {
       statementKeyword(const int sType_,
                        const std::string &sName_);
 
-      virtual int type();
+      virtual int type() const;
       virtual const std::string& name();
+
+      virtual keyword_t* clone() const;
     };
     //==================================
 

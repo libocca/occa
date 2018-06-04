@@ -42,6 +42,10 @@ namespace occa {
       attributes(other.attributes) {}
 
     variable_t& variable_t::operator = (const variable_t &other) {
+      if (this == &other) {
+        return *this;
+      }
+
       vartype = other.vartype;
       attributes = other.attributes;
 
@@ -171,9 +175,10 @@ namespace occa {
       variable(NULL),
       value(NULL) {}
 
-    variableDeclaration::variableDeclaration(variable_t &variable_) :
+    variableDeclaration::variableDeclaration(variable_t &variable_,
+                                             exprNode *value_) :
       variable(&variable_),
-      value(NULL) {}
+      value(value_) {}
 
     variableDeclaration::variableDeclaration(variable_t &variable_,
                                              exprNode &value_) :

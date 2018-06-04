@@ -80,13 +80,17 @@ namespace occa {
 
     keyword_t::~keyword_t() {}
 
-    int keyword_t::type() {
+    int keyword_t::type() const {
       return keywordType::none;
     }
 
     const std::string& keyword_t::name() {
       static std::string empty;
       return empty;
+    }
+
+    keyword_t* keyword_t::clone() const {
+      return new keyword_t();
     }
 
     void keyword_t::deleteSource() {}
@@ -105,12 +109,16 @@ namespace occa {
     qualifierKeyword::qualifierKeyword(const qualifier_t &qualifier_) :
       qualifier(qualifier_) {}
 
-    int qualifierKeyword::type() {
+    int qualifierKeyword::type() const {
       return keywordType::qualifier;
     }
 
     const std::string& qualifierKeyword::name() {
       return qualifier.name;
+    }
+
+    keyword_t* qualifierKeyword::clone() const {
+      return new qualifierKeyword(qualifier);
     }
     //==================================
 
@@ -118,12 +126,16 @@ namespace occa {
     typeKeyword::typeKeyword(type_t &type__) :
       type_(type__) {}
 
-    int typeKeyword::type() {
+    int typeKeyword::type() const {
       return keywordType::type;
     }
 
     const std::string& typeKeyword::name() {
       return type_.name();
+    }
+
+    keyword_t* typeKeyword::clone() const {
+      return new typeKeyword(type_.clone());
     }
 
     void typeKeyword::deleteSource() {
@@ -141,12 +153,16 @@ namespace occa {
     variableKeyword::variableKeyword(variable_t &variable_) :
       variable(variable_) {}
 
-    int variableKeyword::type() {
+    int variableKeyword::type() const {
       return keywordType::variable;
     }
 
     const std::string& variableKeyword::name() {
       return variable.name();
+    }
+
+    keyword_t* variableKeyword::clone() const {
+      return new variableKeyword(variable.clone());
     }
 
     void variableKeyword::deleteSource() {
@@ -162,12 +178,16 @@ namespace occa {
     functionKeyword::functionKeyword(function_t &function_) :
       function(function_) {}
 
-    int functionKeyword::type() {
+    int functionKeyword::type() const {
       return keywordType::function;
     }
 
     const std::string& functionKeyword::name() {
       return function.name();
+    }
+
+    keyword_t* functionKeyword::clone() const {
+      return new functionKeyword((function_t&) function.clone());
     }
 
     void functionKeyword::deleteSource() {
@@ -185,12 +205,16 @@ namespace occa {
       sType(sType_),
       sName(sName_) {}
 
-    int statementKeyword::type() {
+    int statementKeyword::type() const {
       return sType;
     }
 
     const std::string& statementKeyword::name() {
       return sName;
+    }
+
+    keyword_t* statementKeyword::clone() const {
+      return new statementKeyword(sType, sName);
     }
     //==================================
 

@@ -35,6 +35,16 @@ namespace occa {
       freeKeywords(keywords, true);
     }
 
+    scope_t scope_t::clone() const {
+      scope_t other;
+      keywordMap::const_iterator it = keywords.begin();
+      while (it != keywords.end()) {
+        other.keywords[it->first] = it->second->clone();
+        ++it;
+      }
+      return other;
+    }
+
     void scope_t::swap(scope_t &other) {
       keywords.swap(other.keywords);
     }
@@ -71,11 +81,14 @@ namespace occa {
       return add<variableKeyword>(var, force);
     }
 
-    void scope_t::remove(const std::string &name) {
+    void scope_t::remove(const std::string &name,
+                         const bool deleteSource) {
       keywordMapIterator it = keywords.find(name);
       if (it != keywords.end()) {
         keyword_t &keyword = *(it->second);
-        keyword.deleteSource();
+        if (deleteSource) {
+          keyword.deleteSource();
+        }
         delete &keyword;
         keywords.erase(it);
       }
@@ -87,8 +100,8 @@ namespace occa {
       keywords.clear();
     }
 
-    void scope_t::debugPrint() {
-      keywordMapIterator it = keywords.begin();
+    void scope_t::debugPrint() const {
+      keywordMap::const_iterator it = keywords.begin();
       while (it != keywords.end()) {
         std::cout << '['
                   << stringifySetBits(it->second->type())

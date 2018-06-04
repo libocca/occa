@@ -119,6 +119,7 @@ namespace occa {
       bool hasAttribute(const std::string &attr) const;
 
       int childIndex() const;
+      void removeFromParent();
 
       virtual void print(printer &pout) const = 0;
 
@@ -168,6 +169,8 @@ namespace occa {
                      const blockStatement &other);
       virtual ~blockStatement();
 
+      void copyFrom(const blockStatement &other);
+
       virtual statement_t& clone_(blockStatement *up_) const;
       virtual int type() const;
 
@@ -192,6 +195,8 @@ namespace occa {
 
       bool addAfter(statement_t &child,
                     statement_t &newChild);
+
+      void remove(statement_t &child);
 
       void set(statement_t &child);
 

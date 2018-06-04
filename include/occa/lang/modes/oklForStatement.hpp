@@ -49,9 +49,11 @@ namespace occa {
         binaryOpNode *checkOp;
         exprNode *checkValue;
         bool checkValueOnRight;
+        bool checkIsInclusive;
 
         exprOpNode *updateOp;
         exprNode *updateValue;
+        bool positiveUpdate;
 
         bool valid;
 
@@ -77,6 +79,12 @@ namespace occa {
 
         int usesIterator(binaryOpNode &opNode,
                          exprNode *&value);
+
+        exprNode* getIterationCount();
+
+        exprNode* makeDeclarationValue(exprNode &magicIterator);
+
+        std::string sourceStr();
 
         void printWarning(const std::string &message);
         void printError(const std::string &message);

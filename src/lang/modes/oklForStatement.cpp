@@ -39,6 +39,7 @@ namespace occa {
         checkOp(NULL),
         checkValue(NULL),
         updateOp(NULL),
+        updateValue(NULL),
         valid(false) {
 
         valid = (
@@ -67,7 +68,7 @@ namespace occa {
         // Check for declaration
         if (initSmnt.type() != statementType::declaration) {
           if (printErrors) {
-            initSmnt.printError("[" + source + "] Expected a declaration statement");
+            initSmnt.printError(sourceStr() + "Expected a declaration statement");
           }
           return false;
         }
@@ -76,7 +77,7 @@ namespace occa {
         if (declSmnt.declarations.size() > 1) {
           if (printErrors) {
             declSmnt.declarations[1].printError(
-              "[" + source + "] Can only have 1 iterator variable"
+              sourceStr() + "Can only have 1 iterator variable"
             );
           }
           return false;
@@ -92,7 +93,7 @@ namespace occa {
              (*type != short_) &&
              (*type != int_))) {
           if (printErrors) {
-            iterator->printError("[" + source + "] Iterator variable needs to be of type"
+            iterator->printError(sourceStr() + "Iterator variable needs to be of type"
                                  " [char, short, int, long]");
           }
           return false;
@@ -105,7 +106,7 @@ namespace occa {
         // Check an expression statement exists
         if (checkSmnt.type() != statementType::expression) {
           if (printErrors) {
-            checkSmnt.printError("[" + source + "] Expected comparing ["
+            checkSmnt.printError(sourceStr() + "Expected comparing ["
                                  + iterator->name()
                                  + "] with some bound");
           }
@@ -115,7 +116,7 @@ namespace occa {
         exprNode &expr = *(((expressionStatement&) checkSmnt).expr);
         if (expr.type() != exprNodeType::binary) {
           if (printErrors) {
-            checkSmnt.printError("[" + source + "] Expected to compare ["
+            checkSmnt.printError(sourceStr() + "{0} Expected to compare ["
                                  + iterator->name()
                                  + "] with one of these operators [<, <=, >=, >]");
           }
@@ -123,23 +124,28 @@ namespace occa {
         }
         // Set check operator
         checkOp = (binaryOpNode*) &expr;
-        if (!(checkOp->opType() & (operatorType::lessThan      |
-                                   operatorType::lessThanEq    |
-                                   operatorType::greaterThanEq |
-                                   operatorType::greaterThan))) {
+        opType_t checkOpType = checkOp->opType();
+        if (!(checkOpType & (operatorType::lessThan      |
+                             operatorType::lessThanEq    |
+                             operatorType::greaterThanEq |
+                             operatorType::greaterThan))) {
           if (printErrors) {
-            checkSmnt.printError("[" + source + "] Expected to compare ["
+            checkSmnt.printError(sourceStr() + "{1} Expected to compare ["
                                  + iterator->name()
                                  + "] with one of these operators [<, <=, >=, >]");
           }
           return false;
         }
+        checkIsInclusive = (
+          checkOpType & (operatorType::lessThanEq    |
+                         operatorType::greaterThanEq)
+        );
         // Set check value
         int checkOrder = usesIterator(*checkOp,
                                       checkValue);
         if (!checkOrder) {
           if (printErrors) {
-            checkSmnt.printError("[" + source + "] Expected to compare ["
+            checkSmnt.printError(sourceStr() + "{2} Expected to compare ["
                                  + iterator->name()
                                  + "] with one of these operators [<, <=, >=, >]");
           }
@@ -154,7 +160,7 @@ namespace occa {
         // Check an expression statement exists
         if (updateSmnt.type() != statementType::expression) {
           if (printErrors) {
-            updateSmnt.printError("[" + source + "] Expected to update ["
+            updateSmnt.printError(sourceStr() + "Expected to update ["
                                   + iterator->name()
                                   + "]");
           }
@@ -167,7 +173,7 @@ namespace occa {
                        exprNodeType::rightUnary |
                        exprNodeType::binary))) {
           if (printErrors) {
-            updateSmnt.printError("[" + source + "] Expected update ["
+            updateSmnt.printError(sourceStr() + "Expected update ["
                                   + iterator->name()
                                   + "] with one of these operators [++, --, +=, -=]");
           }
@@ -179,25 +185,31 @@ namespace occa {
         updateOp = (exprOpNode*) updateExpr;
         if (eType == exprNodeType::leftUnary) {
           leftUnaryOpNode &opNode = (leftUnaryOpNode&) *updateOp;
-          validOp = (opNode.opType() & (operatorType::leftIncrement |
-                                        operatorType::leftDecrement));
+          opType_t opType = opNode.opType();
+          validOp = (opType & (operatorType::leftIncrement |
+                               operatorType::leftDecrement));
           validVar = usesIterator(opNode);
+          positiveUpdate = (opType & operatorType::leftIncrement);
         }
         else if (eType == exprNodeType::rightUnary) {
           rightUnaryOpNode &opNode = (rightUnaryOpNode&) *updateOp;
-          validOp = (opNode.opType() & (operatorType::rightIncrement |
-                                        operatorType::rightDecrement));
+          opType_t opType = opNode.opType();
+          validOp = (opType & (operatorType::rightIncrement |
+                               operatorType::rightDecrement));
           validVar = usesIterator(opNode);
+          positiveUpdate = (opType & operatorType::rightIncrement);
         }
         else { // eType == exprNodeType::binary
           binaryOpNode &opNode = (binaryOpNode&) *updateOp;
-          validOp = (opNode.opType() & (operatorType::addEq |
-                                        operatorType::subEq));
+          opType_t opType = opNode.opType();
+          validOp = (opType & (operatorType::addEq |
+                               operatorType::subEq));
           validVar = usesIterator(opNode, updateValue);
+          positiveUpdate = (opType & operatorType::addEq);
         }
         if (!validOp) {
           if (printErrors) {
-            updateOp->printError("[" + source + "] Expected update ["
+            updateOp->printError(sourceStr() + "Expected update ["
                                  + iterator->name()
                                  + "] with one of these operators [++, --, +=, -=]");
           }
@@ -205,7 +217,7 @@ namespace occa {
         }
         if (!validVar) {
           if (printErrors) {
-            updateOp->startNode()->printError("[" + source + "] Expected update ["
+            updateOp->startNode()->printError(sourceStr() + "Expected update ["
                                               + iterator->name()
                                               + "] with one of these operators [++, --, +=, -=]");
           }
@@ -241,6 +253,7 @@ namespace occa {
           }
         }
         if (opNode.rightValue->type() == exprNodeType::variable) {
+          std::cout << "A2\n";
           variable_t &var = ((variableNode*) opNode.rightValue)->value;
           if (&var == iterator) {
             value = opNode.leftValue;
@@ -248,6 +261,89 @@ namespace occa {
           }
         }
         return 0;
+      }
+
+      exprNode* oklForStatement::getIterationCount() {
+        if (!valid) {
+          return NULL;
+        }
+
+        exprNode *initInParen = initValue->wrapInParentheses();
+        exprNode *count = (
+          new binaryOpNode(iterator->source,
+                           positiveUpdate ? op::sub : op::add,
+                           *checkValue,
+                           *initInParen)
+        );
+        delete initInParen;
+
+        if (checkIsInclusive) {
+          primitiveNode inc(iterator->source, 1);
+
+          exprNode *countWithInc = (
+            new binaryOpNode(iterator->source,
+                             positiveUpdate ? op::sub : op::add,
+                             *count,
+                             inc)
+          );
+          delete count;
+          count = countWithInc;
+        }
+
+        if (updateValue) {
+          exprNode *countInParen  = count->wrapInParentheses();
+          exprNode *updateInParen = updateValue->wrapInParentheses();
+          exprNode *countWithUpdate = (
+            new binaryOpNode(iterator->source,
+                             positiveUpdate ? op::sub : op::add,
+                             *countInParen,
+                             *updateInParen)
+          );
+          delete count;
+          delete countInParen;
+          delete updateInParen;
+          count = countWithUpdate;
+        }
+
+        return count;
+      }
+
+      exprNode* oklForStatement::makeDeclarationValue(exprNode &magicIterator) {
+        if (!valid) {
+          return NULL;
+        }
+
+        exprNode *blockValue = magicIterator.wrapInParentheses();
+        if (updateValue) {
+          exprNode *updateInParen = updateValue->wrapInParentheses();
+          binaryOpNode mult(iterator->source,
+                            op::mult,
+                            *updateInParen,
+                            *blockValue);
+          delete updateInParen;
+          delete blockValue;
+          blockValue = mult.wrapInParentheses();
+        }
+
+        exprNode *initInParen = initValue->wrapInParentheses();
+        binaryOpNode *value = (
+          new binaryOpNode(iterator->source,
+                           positiveUpdate ? op::add : op::sub,
+                           *initInParen,
+                           *blockValue)
+        );
+
+        delete blockValue;
+        delete initInParen;
+
+        return value;
+      }
+
+      std::string oklForStatement::sourceStr() {
+        if (source.size()) {
+          return ("[" + source + "] ");
+        }
+        return "";
       }
 
       void oklForStatement::printWarning(const std::string &message) {

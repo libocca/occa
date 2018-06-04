@@ -286,16 +286,19 @@ namespace occa {
       }
       declarations.reserve(count);
       for (int i = 0; i < count; ++i) {
-        addDeclaration(other.declarations[i].clone(),
-                       true);
+        addDeclaration(other.declarations[i].clone());
       }
     }
 
     declarationStatement::~declarationStatement() {
-      if (!up) {
+      if (up) {
+        clearDeclarations();
+      } else {
         freeDeclarations();
-        return;
       }
+    }
+
+    void declarationStatement::clearDeclarations() {
       const int count = (int) declarations.size();
       for (int i = 0; i < count; ++i) {
         variableDeclaration &decl = declarations[i];
@@ -538,20 +541,22 @@ namespace occa {
 
     ifStatement::ifStatement(blockStatement *up_,
                              const ifStatement &other) :
-      blockStatement(up_, other),
-      condition(&(other.condition->clone())) {
+      blockStatement(up_, other.source),
+      condition(&(other.condition->clone(this))) {
+
+      copyFrom(other);
 
       const int elifCount = (int) other.elifSmnts.size();
       for (int i = 0; i < elifCount; ++i) {
         elifStatement &elifSmnt = (elifSmnts[i]
-                                   ->clone()
+                                   ->clone(this)
                                    .to<elifStatement>());
         elifSmnts.push_back(&elifSmnt);
       }
 
       elseSmnt = (other.elseSmnt
                   ? &(other.elseSmnt
-                      ->clone()
+                      ->clone(this)
                       .to<elseStatement>())
                   : NULL);
     }
@@ -613,8 +618,10 @@ namespace occa {
 
     elifStatement::elifStatement(blockStatement *up_,
                                  const elifStatement &other) :
-      blockStatement(up_, other),
-      condition(&(other.condition->clone())) {}
+      blockStatement(up_, other.source),
+      condition(&(other.condition->clone(this))) {
+      copyFrom(other);
+    }
 
     elifStatement::~elifStatement() {
       delete condition;
@@ -677,9 +684,11 @@ namespace occa {
 
     whileStatement::whileStatement(blockStatement *up_,
                                    const whileStatement &other) :
-      blockStatement(up_, other),
+      blockStatement(up_, other.source),
       condition(other.condition),
-      isDoWhile(other.isDoWhile) {}
+      isDoWhile(other.isDoWhile) {
+      copyFrom(other);
+    }
 
     whileStatement::~whileStatement() {
       delete condition;
@@ -732,10 +741,13 @@ namespace occa {
 
     forStatement::forStatement(blockStatement *up_,
                                const forStatement &other) :
-      blockStatement(up_, other),
-      init(statement_t::clone(up_, other.init)),
-      check(statement_t::clone(up_, other.check)),
-      update(statement_t::clone(up_, other.update)) {}
+      blockStatement(up_, other.source),
+      init(statement_t::clone(this, other.init)),
+      check(statement_t::clone(this, other.check)),
+      update(statement_t::clone(this, other.update)) {
+
+      copyFrom(other);
+    }
 
     forStatement::~forStatement() {
       delete init;
@@ -789,8 +801,10 @@ namespace occa {
 
     switchStatement::switchStatement(blockStatement *up_,
                                      const switchStatement& other) :
-      blockStatement(up_, other),
-      condition(other.condition) {}
+      blockStatement(up_, other.source),
+      condition(other.condition) {
+      copyFrom(other);
+    }
 
     switchStatement::~switchStatement() {
       delete condition;

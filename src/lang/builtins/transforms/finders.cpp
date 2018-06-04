@@ -125,7 +125,8 @@ namespace occa {
                                                      smntExprTransform transform_) :
         transform(transform_) {
         validStatementTypes = (statementType::declaration |
-                               statementType::expression);
+                               statementType::expression  |
+                               statementType::functionDecl);
         validExprNodeTypes = validExprNodeTypes_;
       }
 
@@ -135,7 +136,8 @@ namespace occa {
         transform(transform_) {
         validStatementTypes = (validStatementTypes_
                                & (statementType::declaration |
-                                  statementType::expression));
+                                  statementType::expression  |
+                                  statementType::functionDecl));
         validExprNodeTypes = validExprNodeTypes_;
       }
 
@@ -146,7 +148,29 @@ namespace occa {
         // Expression
         if (smnt.type() & statementType::expression) {
           expressionStatement &exprSmnt = (expressionStatement&) smnt;
-          exprTransform::apply(*(exprSmnt.expr));
+          exprSmnt.expr = exprTransform::apply(*(exprSmnt.expr));
+          return &smnt;
+        }
+
+        // Function Declaration
+        if (smnt.type() & statementType::functionDecl) {
+          functionDeclStatement &declSmnt = (functionDeclStatement&) smnt;
+          functionNode *funcNode = new functionNode(declSmnt.function.source,
+                                                    declSmnt.function);
+          nextExprIsBeingDeclared = true;
+          exprNode *newNode = exprTransform::apply(*funcNode);
+          nextExprIsBeingDeclared = false;
+          // Update variable
+          if (newNode != funcNode) {
+            if (newNode->type() & exprNodeType::function) {
+              function_t &newFunc = ((functionNode*) newNode)->value;
+              delete newNode;
+              functionDeclStatement *newSmnt = new functionDeclStatement(smnt.up, newFunc);
+              newSmnt->updateScope(true);
+              return newSmnt;
+            }
+          }
+          delete newNode;
           return &smnt;
         }
 
@@ -161,8 +185,10 @@ namespace occa {
           exprNode *newNode = exprTransform::apply(*varNode);
           nextExprIsBeingDeclared = false;
           // Update variable
-          if (newNode->type() & exprNodeType::variable) {
-            decl.variable = &(((variableNode*) newNode)->value);
+          if (newNode != varNode) {
+            if (newNode->type() & exprNodeType::variable) {
+              decl.variable = &(((variableNode*) newNode)->value);
+            }
           }
           delete newNode;
           // Update value exprNodes
