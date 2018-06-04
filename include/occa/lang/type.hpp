@@ -305,10 +305,10 @@ namespace occa {
       functionPtr_t();
 
       functionPtr_t(const vartype_t &returnType_,
-                        identifierToken &nameToken);
+                    identifierToken &nameToken);
 
       functionPtr_t(const vartype_t &returnType_,
-                        const std::string &name_ = "");
+                    const std::string &name_ = "");
 
       functionPtr_t(const functionPtr_t &other);
 

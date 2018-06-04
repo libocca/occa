@@ -46,14 +46,23 @@ namespace occa {
         void setupHostParser();
 
         void removeHostOuterLoops(functionDeclStatement &kernelSmnt);
+
         bool isOuterMostOuterLoop(forStatement &forSmnt);
 
-        void setKernelLaunch(forStatement &forSmnt);
+        void setKernelLaunch(functionDeclStatement &kernelSmnt,
+                             forStatement &forSmnt);
+
         int getInnerLoopLevel(forStatement &forSmnt);
+
         forStatement* getInnerMostInnerLoop(forStatement &forSmnt);
 
         void getOKLLoopPath(forStatement &innerSmnt,
                             statementPtrVector &path);
+
+        exprNode& setDim(token_t *source,
+                         const std::string &name,
+                         const int index,
+                         exprNode *value);
 
         void addExtensions();
 

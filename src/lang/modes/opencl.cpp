@@ -19,6 +19,7 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  */
+#include "occa/tools/string.hpp"
 #include "occa/lang/modes/opencl.hpp"
 #include "occa/lang/modes/okl.hpp"
 #include "occa/lang/modes/oklForStatement.hpp"
@@ -156,7 +157,7 @@ namespace occa {
           if (!isOuterMostOuterLoop(forSmnt)) {
             continue;
           }
-          setKernelLaunch(forSmnt);
+          setKernelLaunch(kernelSmnt, forSmnt);
         }
 
         std::cout << "hostParser.toString() = \n"
@@ -182,7 +183,8 @@ namespace occa {
         return true;
       }
 
-      void openclParser::setKernelLaunch(forStatement &forSmnt) {
+      void openclParser::setKernelLaunch(functionDeclStatement &kernelSmnt,
+                                         forStatement &forSmnt) {
         forStatement *innerSmnt = getInnerMostInnerLoop(forSmnt);
         if (!innerSmnt) {
           success = false;
@@ -199,6 +201,10 @@ namespace occa {
         );
         forSmnt.up->addBefore(forSmnt, launchBlock);
 
+        int outerCount = 0;
+        int innerCount = 0;
+
+        // TODO 1.1: Properly fix this
         const int pathCount = (int) path.size();
         for (int i = 0; i < pathCount; ++i) {
           forStatement &pathSmnt = *((forStatement*) path[i]);
@@ -208,21 +214,81 @@ namespace occa {
             return;
           }
 
-          // Create and add iterator
-          declarationStatement &declSmnt = (
-            *new declarationStatement(&launchBlock)
+          const bool isOuter = pathSmnt.hasAttribute("outer");
+          const int index = (isOuter
+                             ? outerCount
+                             : innerCount);
+          token_t *source = pathSmnt.source;
+          const std::string &name = (isOuter
+                                     ? "outer.dims"
+                                     : "inner.dims");
+          launchBlock.add(
+            *(new expressionStatement(
+                &launchBlock,
+                setDim(source, name, index,
+                       oklForSmnt.getIterationCount())
+              ))
           );
-          declSmnt.addDeclaration(
-            variableDeclaration(*oklForSmnt.iterator,
-                                *oklForSmnt.getIterationCount())
-          );
-          launchBlock.add(declSmnt);
 
-          // Make sure we don't free our iterator variable
-          ((declarationStatement*) pathSmnt.init)->clearDeclarations();
-          pathSmnt.scope.remove(oklForSmnt.iterator->name(),
-                                false);
+          outerCount += isOuter;
+          innerCount += !isOuter;
         }
+
+        launchBlock.addFirst(
+          *(new expressionStatement(
+              &launchBlock,
+              *(new identifierNode(forSmnt.source,
+                                   "inner.dims = " + occa::toString(innerCount)))
+            ))
+        );
+        launchBlock.addFirst(
+          *(new expressionStatement(
+              &launchBlock,
+              *(new identifierNode(forSmnt.source,
+                                   "outer.dims = " + occa::toString(outerCount)))
+            ))
+        );
+        launchBlock.addFirst(
+          *(new expressionStatement(
+              &launchBlock,
+              *(new identifierNode(forSmnt.source,
+                                   "occa::dim outer, inner"))
+            ))
+        );
+        // Set run dims
+        launchBlock.add(
+          *(new expressionStatement(
+              &launchBlock,
+              *(new identifierNode(forSmnt.source,
+                                   "deviceKernel.setRunDims(outer, inner)"))
+            ))
+        );
+        // launch kernel
+        std::string kernelCall = "deviceKernel(";
+        function_t &func = kernelSmnt.function;
+        const int argCount = (int) func.args.size();
+        for (int i = 0; i < argCount; ++i) {
+          if (i) {
+            kernelCall += ", ";
+          }
+          kernelCall += func.args[i]->name();
+        }
+        kernelCall += ')';
+        launchBlock.add(
+          *(new expressionStatement(
+              &launchBlock,
+              *(new identifierNode(forSmnt.source,
+                                   kernelCall))
+            ))
+        );
+        // Add kernel argument
+        type_t &kernelType = *(new primitive_t("occa::kernel"));
+        identifierToken kernelVarSource(forSmnt.source->origin,
+                                        "&deviceKernel");
+        variable_t *kernelVar = new variable_t(kernelType,
+                                               &kernelVarSource);
+        func.args.insert(func.args.begin(),
+                         kernelVar);
 
         forSmnt.removeFromParent();
         delete &forSmnt;
@@ -284,6 +350,23 @@ namespace occa {
           path[i] = path[pathCount - i - 1];
           path[pathCount - i - 1] = pi;
         }
+      }
+
+      exprNode& openclParser::setDim(token_t *source,
+                                     const std::string &name,
+                                     const int index,
+                                     exprNode *value) {
+        identifierNode var(source, name);
+        primitiveNode idx(source, index);
+        subscriptNode access(source, var, idx);
+        exprNode &assign = (
+          *(new binaryOpNode(source,
+                             op::assign,
+                             access,
+                             *value))
+        );
+        delete value;
+        return assign;
       }
 
       void openclParser::addExtensions() {
