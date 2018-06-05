@@ -71,6 +71,14 @@ namespace occa {
   kernelArg::kernelArg(const kernelArg &k) :
     args(k.args) {}
 
+  int kernelArg::size() {
+    return (int) args.size();
+  }
+
+  kernelArgData& kernelArg::operator [] (const int index) {
+    return args[index];
+  }
+
   kernelArg& kernelArg::operator = (const kernelArg &k) {
     args = k.args;
     return *this;
@@ -271,7 +279,8 @@ namespace occa {
     dHandle(NULL),
     properties(properties_),
     valid(false),
-    launcherKernel(NULL) {}
+    launcherKernel(NULL),
+    isLaunched(false) {}
 
   kernel_v::~kernel_v() {}
 
@@ -281,8 +290,8 @@ namespace occa {
     dHandle->addRef();
   }
 
-  kernel* kernel_v::nestedKernelsPtr() {
-    return &(nestedKernels[0]);
+  kernel_v* kernel_v::nestedKernelsPtr() {
+    return nestedKernels[0];
   }
 
   int kernel_v::nestedKernelCount() {
@@ -460,25 +469,15 @@ namespace occa {
   }
 
   void kernel::addArgument(const int argPos, const kernelArg &arg) {
-    kernel_v *launcher = kHandle->launcherKernel;
-
     if (kHandle->argumentCount() <= argPos) {
       OCCA_ERROR("Kernels can only have at most [" << OCCA_MAX_ARGS << "] arguments,"
                  << " [" << argPos << "] arguments were set",
                  argPos < OCCA_MAX_ARGS);
 
-      kHandle->arguments.reserve(argPos + 1);
-      if (launcher) {
-        launcher->arguments.reserve(argPos + 2);
-      }
+      kHandle->arguments.resize(argPos + 1);
     }
 
-    kHandle->arguments.insert(kHandle->arguments.begin() + argPos,
-                              arg);
-    if (launcher) {
-      launcher->arguments.insert(launcher->arguments.begin() + argPos + 1,
-                                 arg);
-    }
+    kHandle->arguments[argPos] = arg;
   }
 
   void kernel::runFromArguments() const {
@@ -488,15 +487,24 @@ namespace occa {
       kHandle->arguments[i].setupForKernelCall(argIsConst);
     }
 
-    kernel_v *launcher = kHandle->launcherKernel;
-    if (launcher) {
-      launcher->arguments[0] = kHandle->nestedKernelsPtr();
-    } else {
-      launcher = kHandle;
+    // TODO 1.1: Clean up isLaunched
+    kernel_v *launcher = kHandle;
+    bool useLauncher = (kHandle->launcherKernel &&
+                        !kHandle->isLaunched);
+    if (useLauncher) {
+      launcher = kHandle->launcherKernel;
+      launcher->arguments = kHandle->arguments;
+      launcher->arguments.insert(launcher->arguments.begin(),
+                                 kHandle->nestedKernelsPtr());
+      kHandle->isLaunched = true;
     }
 
     launcher->runFromArguments(launcher->argumentCount(),
                                launcher->argumentsPtr());
+
+    if (useLauncher) {
+      kHandle->isLaunched = false;
+    }
   }
 
   void kernel::clearArgumentList() {
@@ -528,7 +536,7 @@ namespace occa {
     // Free all kernels
     if (kHandle->nestedKernelCount()) {
       for (int k = 0; k < kHandle->nestedKernelCount(); ++k) {
-        kHandle->nestedKernels[k].free();
+        kHandle->nestedKernels[k]->free();
       }
     }
 

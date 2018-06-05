@@ -48,6 +48,7 @@ namespace occa {
         virtual void afterParsing();
 
         void setupHostParser();
+        void setupHostHeaders();
 
         void removeHostOuterLoops(functionDeclStatement &kernelSmnt);
 

@@ -291,16 +291,26 @@ namespace occa {
         }
 
         if (updateValue) {
-          exprNode *countInParen  = count->wrapInParentheses();
           exprNode *updateInParen = updateValue->wrapInParentheses();
+
+          primitiveNode one(iterator->source, 1);
+          binaryOpNode boundCheck(iterator->source,
+                                  positiveUpdate ? op::add : op::sub,
+                                  *count,
+                                  *updateInParen);
+          binaryOpNode boundCheck2(iterator->source,
+                                   positiveUpdate ? op::sub : op::add,
+                                   boundCheck,
+                                   one);
+          exprNode *boundCheckInParen = boundCheck2.wrapInParentheses();
+
           exprNode *countWithUpdate = (
             new binaryOpNode(iterator->source,
-                             positiveUpdate ? op::sub : op::add,
-                             *countInParen,
+                             op::div,
+                             *boundCheckInParen,
                              *updateInParen)
           );
           delete count;
-          delete countInParen;
           delete updateInParen;
           count = countWithUpdate;
         }
@@ -386,7 +396,7 @@ namespace occa {
           }
         }
         // Include this
-        return maxCount + 1;
+        return maxCount;
       }
 
       int oklForStatement::oklLoopReverseIndex(forStatement &forSmnt,

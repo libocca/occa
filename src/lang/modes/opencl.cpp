@@ -148,6 +148,25 @@ namespace occa {
             return;
           }
         }
+
+        setupHostHeaders();
+      }
+
+      void openclParser::setupHostHeaders() {
+        // TODO 1.1: Remove hack after methods are properly added
+        const int headerCount = 2;
+        std::string headers[headerCount] = {
+          "include <occa/base.hpp>",
+          "include <occa/modes/serial/kernel.hpp>"
+        };
+        for (int i = 0; i < headerCount; ++i) {
+          std::string header = headers[i];
+          directiveToken token(root.source->origin,
+                               header);
+          hostParser.root.addFirst(
+            *(new directiveStatement(&root, token))
+          );
+        }
       }
 
       void openclParser::removeHostOuterLoops(functionDeclStatement &kernelSmnt) {
@@ -216,8 +235,8 @@ namespace occa {
                              : innerCount);
           token_t *source = pathSmnt.source;
           const std::string &name = (isOuter
-                                     ? "outer.dims"
-                                     : "inner.dims");
+                                     ? "outer"
+                                     : "inner");
           launchBlock.add(
             *(new expressionStatement(
                 &launchBlock,
@@ -251,16 +270,24 @@ namespace occa {
                                    "occa::dim outer, inner"))
             ))
         );
+        // Wrap kernel
+        launchBlock.add(
+          *(new expressionStatement(
+              &launchBlock,
+              *(new identifierNode(forSmnt.source,
+                                   "occa::kernel kernel(deviceKernel)"))
+            ))
+        );
         // Set run dims
         launchBlock.add(
           *(new expressionStatement(
               &launchBlock,
               *(new identifierNode(forSmnt.source,
-                                   "deviceKernel.setRunDims(outer, inner)"))
+                                   "kernel.setRunDims(outer, inner)"))
             ))
         );
         // launch kernel
-        std::string kernelCall = "deviceKernel(";
+        std::string kernelCall = "kernel(";
         function_t &func = kernelSmnt.function;
         const int argCount = (int) func.args.size();
         for (int i = 0; i < argCount; ++i) {
@@ -279,11 +306,11 @@ namespace occa {
         );
         // Add kernel argument
         identifierToken kernelTypeSource(forSmnt.source->origin,
-                                         "occa::kernel");
+                                         "occa::kernel_v");
         type_t &kernelType = *(new typedef_t(vartype_t(),
                                              kernelTypeSource));
         identifierToken kernelVarSource(forSmnt.source->origin,
-                                        "&deviceKernel");
+                                        "*deviceKernel");
         variable_t &kernelVar = *(new variable_t(kernelType,
                                                  &kernelVarSource));
         func.args.insert(func.args.begin(),

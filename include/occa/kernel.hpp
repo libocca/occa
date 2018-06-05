@@ -138,6 +138,10 @@ namespace occa {
       add((void*) const_cast<TM*>(arg), true, false);
     }
 
+    int size();
+
+    kernelArgData& operator [] (const int index);
+
     void add(const kernelArg &arg);
 
     void add(void *arg,
@@ -174,7 +178,9 @@ namespace occa {
     dim inner, outer;
 
     kernel_v *launcherKernel;
-    std::vector<kernel> nestedKernels;
+    bool isLaunched;
+
+    std::vector<kernel_v*> nestedKernels;
     std::vector<kernelArg> arguments;
 
     lang::kernelMetadata metadata;
@@ -184,7 +190,7 @@ namespace occa {
     // This should only be called in the very first reference
     void setDHandle(device_v *dHandle_);
 
-    kernel* nestedKernelsPtr();
+    kernel_v* nestedKernelsPtr();
     int nestedKernelCount();
 
     kernelArg* argumentsPtr();

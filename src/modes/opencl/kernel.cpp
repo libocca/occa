@@ -103,9 +103,11 @@ namespace occa {
         occa::kernel hostKernel = host().buildKernel(hostOutputFile,
                                                      kernelName,
                                                      "okl: false");
+        // TODO 1.1: Store metadata in the build.json
+
         launcherKernel = hostKernel.getKHandle();
         launcherKernel->dontUseRefs();
-        // TODO 1.1: Store metadata in the build.json
+        nestedKernels.push_back(this);
       }
 
       std::string cFunction = io::read(sourceFile);
@@ -246,25 +248,21 @@ namespace occa {
       size_t inner_[3] = { inner.x, inner.y, inner.z };
 
       int argc = 0;
-
-      if (properties.get("OKL", true)) {
-        OCCA_OPENCL_ERROR("Kernel (" + metadata.name + ") : Setting Kernel Argument [0]",
-                          clSetKernelArg(clKernel, argc++, sizeof(void*), NULL));
-      }
-
       for (int i = 0; i < kArgc; ++i) {
         const int argCount = (int) kArgs[i].args.size();
         if (argCount) {
           const kernelArgData *kArgs_i = &(kArgs[i].args[0]);
           for (int j = 0; j < argCount; ++j) {
             const kernelArgData &kArg_j = kArgs_i[j];
-            OCCA_OPENCL_ERROR("Kernel (" + metadata.name + ") : Setting Kernel Argument [" << (i + 1) << "]",
+            OCCA_OPENCL_ERROR("Kernel [" + name + "]"
+                              << ": Setting Kernel Argument [" << (i + 1) << "]",
                               clSetKernelArg(clKernel, argc++, kArg_j.size, kArg_j.ptr()));
           }
         }
       }
 
-      OCCA_OPENCL_ERROR("Kernel (" + metadata.name + ") : Kernel Run",
+      OCCA_OPENCL_ERROR("Kernel [" + name + "]"
+                        << " : Kernel Run",
                         clEnqueueNDRangeKernel(*((cl_command_queue*) dHandle->currentStream),
                                                clKernel,
                                                (cl_int) fullOuter.dims,
@@ -276,7 +274,7 @@ namespace occa {
 
     void kernel::free() {
       if (clKernel) {
-        OCCA_OPENCL_ERROR("Kernel: Free",
+        OCCA_OPENCL_ERROR("Kernel [" + name + "]: Free",
                           clReleaseKernel(clKernel));
         clKernel = NULL;
       }
