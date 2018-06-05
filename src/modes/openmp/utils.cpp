@@ -63,7 +63,6 @@ namespace occa {
 
 #if (OCCA_OS & (OCCA_LINUX_OS | OCCA_MACOS_OS))
       const std::string safeCompiler = io::removeSlashes(compiler);
-      std::string flag = openmp::notSupported;
       std::stringstream ss;
 
       const std::string openmpTest = env::OCCA_DIR + "scripts/openmpTest.cpp";
@@ -76,11 +75,9 @@ namespace occa {
       const std::string outFilename = io::dirname(srcFilename) + "output";
 
       const std::string hashTag = "openmp-compiler";
-      if (!io::haveHash(hash, hashTag)) {
-        io::waitForHash(hash, hashTag);
-      } else {
+      if (io::haveHash(hash, hashTag)) {
         if (!sys::fileExists(outFilename)) {
-          flag = baseCompilerFlag(vendor_);
+          std::string flag = baseCompilerFlag(vendor_);
           ss << compiler
              << ' '    << flag
              << ' '    << srcFilename
@@ -102,6 +99,7 @@ namespace occa {
         io::releaseHash(hash, hashTag);
       }
 
+      std::string flag = openmp::notSupported;
       ss << io::read(outFilename);
       ss >> flag;
 

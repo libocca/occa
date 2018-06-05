@@ -657,9 +657,7 @@ namespace occa {
       const std::string buildLogFilename = hashDir + "build.log";
 
       const std::string hashTag = "compiler";
-      if (!io::haveHash(hash, hashTag)) {
-        io::waitForHash(hash, hashTag);
-      } else {
+      if (io::haveHash(hash, hashTag)) {
         if (!sys::fileExists(outFilename)) {
           ss << compiler
              << ' '    << srcFilename

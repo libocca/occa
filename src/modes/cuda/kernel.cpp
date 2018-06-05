@@ -63,12 +63,12 @@ namespace occa {
       bool foundBinary = true;
 
       const std::string hashTag = "cuda-kernel";
-      if (!io::haveHash(hash, hashTag)) {
-        io::waitForHash(hash, hashTag);
-      } else if (sys::fileExists(binaryFile)) {
-        io::releaseHash(hash, hashTag);
-      } else {
-        foundBinary = false;
+      if (io::haveHash(hash, hashTag)) {
+        if (sys::fileExists(binaryFile)) {
+          io::releaseHash(hash, hashTag);
+        } else {
+          foundBinary = false;
+        }
       }
 
       if (foundBinary) {

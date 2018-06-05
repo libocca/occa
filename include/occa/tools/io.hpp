@@ -178,10 +178,13 @@ namespace occa {
 
     bool haveHash(const hash_t &hash,
                   const std::string &tag);
-    void waitForHash(const hash_t &hash,
-                     const std::string &tag);
+
+    bool hashWasReleased(const hash_t &hash,
+                         const std::string &tag);
+
     void releaseHash(const hash_t &hash,
                      const std::string &tag);
+
     void releaseHashLock(const std::string &lockDir);
 
     std::string removeSlashes(const std::string &str);

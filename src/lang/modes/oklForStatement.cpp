@@ -253,7 +253,6 @@ namespace occa {
           }
         }
         if (opNode.rightValue->type() == exprNodeType::variable) {
-          std::cout << "A2\n";
           variable_t &var = ((variableNode*) opNode.rightValue)->value;
           if (&var == iterator) {
             value = opNode.leftValue;

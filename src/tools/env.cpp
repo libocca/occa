@@ -55,9 +55,6 @@ namespace occa {
         return;
       }
 
-      // Initialize file locks first to place it last in the destructor list
-      io::fileLocks();
-
       initSettings();
       initEnvironment();
       registerFileOpeners();

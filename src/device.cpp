@@ -226,23 +226,19 @@ namespace occa {
   }
 
   occa::properties& device::kernelProperties() {
-    occa::properties &ret = (occa::properties&) dHandle->properties["kernel"];
-    return ret;
+    return (occa::properties&) dHandle->properties["kernel"];
   }
 
   const occa::properties& device::kernelProperties() const {
-    const occa::properties &ret = (const occa::properties&) dHandle->properties["kernel"];
-    return ret;
+    return (const occa::properties&) dHandle->properties["kernel"];
   }
 
   occa::properties& device::memoryProperties() {
-    occa::properties &ret = (occa::properties&) dHandle->properties["memory"];
-    return ret;
+    return (occa::properties&) dHandle->properties["memory"];
   }
 
   const occa::properties& device::memoryProperties() const {
-    const occa::properties &ret = (const occa::properties&) dHandle->properties["memory"];
-    return ret;
+    return (const occa::properties&) dHandle->properties["memory"];
   }
 
   hash_t device::hash() const {
@@ -462,9 +458,7 @@ namespace occa {
     std::string stringSourceFile = hashDir;
     stringSourceFile += "stringSource.okl";
 
-    if (!io::haveHash(kernelHash, hashTag)) {
-      io::waitForHash(kernelHash, hashTag);
-    } else {
+    if (io::haveHash(kernelHash, hashTag)) {
       if (!sys::fileExists(stringSourceFile)) {
         io::write(stringSourceFile, content);
       }

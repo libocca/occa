@@ -169,8 +169,6 @@ namespace occa {
         if (io::haveHash(hash, hashTag)) {
           parser.writeToFile(outputFile);
           io::releaseHash(hash, hashTag);
-        } else {
-          io::waitForHash(hash, hashTag);
         }
       }
 

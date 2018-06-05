@@ -23,10 +23,12 @@
 #include "occa/defines.hpp"
 
 #if (OCCA_OS & (OCCA_LINUX_OS | OCCA_MACOS_OS))
+#  include <cmath>
 #  include <dirent.h>
 #  include <sys/stat.h>
 #  include <sys/types.h>
 #  include <sys/dir.h>
+#  include <time.h>
 #  include <unistd.h>
 #  if (OCCA_OS & OCCA_LINUX_OS)
 #    include <errno.h>
@@ -36,13 +38,16 @@
 #    define NOMINMAX  // Clear min/max macros
 #  endif
 #  include <windows.h>
-#  include <string>
+#  include <cmath>
 #  include <direct.h> // rmdir _rmdir
+#  include <string>
+#  include <time.h>
 #endif
 
 #include <fstream>
 #include <stddef.h>
 
+#include "occa/base.hpp"
 #include "occa/tools/env.hpp"
 #include "occa/tools/io.hpp"
 #include "occa/tools/string.hpp"
@@ -62,11 +67,6 @@ namespace occa {
   }
 
   namespace io {
-    hashMap& fileLocks() {
-      static tls<hashMap> locks;
-      return locks.value();
-    }
-
     //---[ File Openers ]---------------
     fileOpener::~fileOpener() {}
 
@@ -437,52 +437,68 @@ namespace occa {
       return ret;
     }
 
-    void clearLocks() {
-      hashMap::iterator it = fileLocks().begin();
-      while (it != fileLocks().end()) {
-        hashAndTag &ht = it->second;
-        releaseHash(ht.hash, ht.tag);
-        ++it;
-      }
-      fileLocks().clear();
-    }
-
     bool haveHash(const hash_t &hash,
                   const std::string &tag) {
       std::string lockDir = getFileLock(hash, tag);
 
       sys::mkpath(env::OCCA_CACHE_DIR + "locks/");
 
-      int mkdirStatus = sys::mkdir(lockDir);
+      while (true) {
+        int mkdirStatus = sys::mkdir(lockDir);
 
-      if (mkdirStatus && (errno == EEXIST)) {
-        return false;
+        if (!mkdirStatus
+            || (errno != EEXIST)) {
+          return true;
+        }
+
+        if (hashWasReleased(hash, tag)) {
+          break;
+        }
       }
-
-      fileLocks()[lockDir] = hashAndTag(hash, tag);
-
-      return true;
+      return false;
     }
 
-    void waitForHash(const hash_t &hash,
-                     const std::string &tag) {
+    bool hashWasReleased(const hash_t &hash,
+                         const std::string &tag) {
       struct stat buffer;
 
       std::string lockDir   = getFileLock(hash, tag);
       const char *c_lockDir = lockDir.c_str();
 
-      bool printedMessage = false;
+      occa::json &lockSettings = settings()["locks"];
+      float staleWarning = lockSettings.get("stale-warning",
+                                            (float) 10.0);
+      float staleAge = lockSettings.get("stale-age",
+                                        (float) 20.0);
+      bool isStale = false;
 
+      double startTime = sys::currentTime();
       while(!stat(c_lockDir, &buffer)) {
+        const double age = ::difftime(::time(NULL),
+                                      buffer.st_ctime);
+        if (std::abs(age) >= staleAge) {
+          isStale = true;
+          break;
+        }
+        // Print warning only once
+        if ((sys::currentTime() - startTime) > staleWarning) {
+          std::cerr << "Located possible stale hash: ["
+                    << lockDir
+                    << "]\n";
+          staleWarning = staleAge + 10;
+        }
+
         // Wait 0.5 seconds before trying again
         ::usleep(500000);
-        if (printedMessage) {
-          std::cerr << "Still waiting on lock [" << lockDir << "]";
-          printedMessage = true;
-        } else {
-          std::cerr << " .";
-        }
       }
+
+      // Other process released the hash
+      if (!isStale) {
+        return true;
+      }
+      // Delete lock
+      releaseHashLock(lockDir);
+      return false;
     }
 
     void releaseHash(const hash_t &hash,
@@ -492,7 +508,6 @@ namespace occa {
 
     void releaseHashLock(const std::string &lockDir) {
       sys::rmdir(lockDir);
-      fileLocks().erase(lockDir);
     }
 
     std::string removeSlashes(const std::string &str) {
@@ -521,9 +536,7 @@ namespace occa {
 
       const std::string expFilename = io::filename(filename);
       const std::string hashTag = "cache";
-      if (!io::haveHash(hash, hashTag)) {
-        io::waitForHash(hash, hashTag);
-      } else {
+      if (io::haveHash(hash, hashTag)) {
         if (!sys::fileExists(expFilename)) {
           write(expFilename, source);
         }
@@ -575,20 +588,17 @@ namespace occa {
       const std::string infoFile = hashDir + kc::infoFile;
 
       const std::string hashTag = "kernel-info";
-      if (!io::haveHash(hash, hashTag)) {
-        return;
-      } else if (sys::fileExists(infoFile)) {
+      if (io::haveHash(hash, hashTag)) {
+        if (!sys::fileExists(infoFile)) {
+          occa::properties info;
+          info["date"]      = sys::date();
+          info["humanDate"] = sys::humanDate();
+          info["info"]      = props;
+
+          write(infoFile, info.toString());
+        }
         io::releaseHash(hash, hashTag);
-        return;
       }
-
-      occa::properties info;
-      info["date"]      = sys::date();
-      info["humanDate"] = sys::humanDate();
-      info["info"]      = props;
-
-      write(infoFile, info.toString());
-      io::releaseHash(hash, hashTag);
     }
 
     std::string getLibraryName(const std::string &filename) {
