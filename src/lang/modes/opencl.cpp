@@ -105,10 +105,13 @@ namespace occa {
         addExtensions();
 
         if (!success) return;
-        setQualifiers();
+        updateConstToConstant();
 
         if (!success) return;
-        addOccaFors();
+        setLocalQualifiers();
+
+        if (!success) return;
+        setupKernels();
 
         if (!success) return;
         addFunctionPrototypes();
@@ -140,11 +143,10 @@ namespace occa {
 
         const int kernelCount = (int) kernelSmnts.size();
         for (int i = 0; i < kernelCount; ++i) {
-          statement_t *kernelSmnt = kernelSmnts[i];
-          if (kernelSmnt->type() != statementType::functionDecl) {
-            continue;
-          }
-          removeHostOuterLoops(*((functionDeclStatement*) kernelSmnt));
+          functionDeclStatement &kernelSmnt = (
+            *((functionDeclStatement*) kernelSmnts[i])
+          );
+          removeHostOuterLoops(kernelSmnt);
           if (!success) {
             return;
           }
@@ -190,7 +192,7 @@ namespace occa {
         }
 
         statementPtrVector path;
-        getOKLLoopPath(*innerSmnt, path);
+        oklForStatement::getOKLLoopPath(*innerSmnt, path);
 
         // Create block in case there are duplicate variable names
         blockStatement &launchBlock = (
@@ -333,28 +335,6 @@ namespace occa {
         return innerMostInnerLoop;
       }
 
-      void openclParser::getOKLLoopPath(forStatement &innerSmnt,
-                                        statementPtrVector &path) {
-        path.push_back(&innerSmnt);
-        // Fill in path
-        statement_t *smnt = innerSmnt.up;
-        while (smnt) {
-          if ((smnt->type() & statementType::for_)
-              && (smnt->hasAttribute("inner")
-                  || smnt->hasAttribute("outer"))) {
-            path.push_back(smnt);
-          }
-          smnt = smnt->up;
-        }
-        // Reverse
-        const int pathCount = (int) path.size();
-        for (int i = 0; i < (pathCount / 2); ++i) {
-          statement_t *pi = path[i];
-          path[i] = path[pathCount - i - 1];
-          path[pathCount - i - 1] = pi;
-        }
-      }
-
       exprNode& openclParser::setDim(token_t *source,
                                      const std::string &name,
                                      const int index,
@@ -419,37 +399,6 @@ namespace occa {
         }
       }
 
-      void openclParser::setQualifiers() {
-        updateConstToConstant();
-
-        if (!success) return;
-        setLocalQualifiers();
-
-        if (!success) return;
-        setKernelQualifiers();
-      }
-
-      void openclParser::setKernelQualifiers() {
-        statementPtrVector kernelSmnts;
-        findStatementsByAttr(statementType::functionDecl,
-                             "kernel",
-                             root,
-                             kernelSmnts);
-        const int kernelCount = (int) kernelSmnts.size();
-        for (int i = 0; i < kernelCount; ++i) {
-          function_t &func = ((functionDeclStatement*) kernelSmnts[i])->function;
-          func.returnType += kernel;
-
-          const int argCount = (int) func.args.size();
-          for (int ai = 0; ai < argCount; ++ai) {
-            variable_t &arg = *(func.args[ai]);
-            if (arg.vartype.isPointerType()) {
-              arg += global;
-            }
-          }
-        }
-      }
-
       void openclParser::setLocalQualifiers() {
         statementExprMap exprMap;
         findStatements(statementType::declaration,
@@ -473,11 +422,104 @@ namespace occa {
         }
       }
 
-      bool openclParser::sharedVariableMatcher(exprNode &expr) {
-        return expr.hasAttribute("shared");
+      void openclParser::setupKernels() {
+        statementPtrVector kernelSmnts;
+        findStatementsByAttr(statementType::functionDecl,
+                             "kernel",
+                             root,
+                             kernelSmnts);
+
+        const int kernelCount = (int) kernelSmnts.size();
+        for (int i = 0; i < kernelCount; ++i) {
+          functionDeclStatement &kernelSmnt = (
+            *((functionDeclStatement*) kernelSmnts[i])
+          );
+          setKernelQualifiers(kernelSmnt);
+          if (!success) return;
+
+          replaceOccaFors(kernelSmnt);
+          if (!success) return;
+        }
       }
 
-      void openclParser::addOccaFors() {
+      void openclParser::setKernelQualifiers(functionDeclStatement &kernelSmnt) {
+        function_t &func = kernelSmnt.function;
+        func.returnType += kernel;
+
+        const int argCount = (int) func.args.size();
+        for (int ai = 0; ai < argCount; ++ai) {
+          variable_t &arg = *(func.args[ai]);
+          if (arg.vartype.isPointerType()) {
+            arg += global;
+          }
+        }
+      }
+
+      void openclParser::replaceOccaFors(functionDeclStatement &kernelSmnt) {
+        statementPtrVector outerSmnts, innerSmnts;
+        findStatementsByAttr(statementType::for_,
+                             "outer",
+                             kernelSmnt,
+                             outerSmnts);
+        findStatementsByAttr(statementType::for_,
+                             "inner",
+                             kernelSmnt,
+                             innerSmnts);
+
+        const int outerCount = (int) outerSmnts.size();
+        for (int i = 0; i < outerCount; ++i) {
+          replaceOccaFor(*((forStatement*) outerSmnts[i]));
+        }
+
+        const int innerCount = (int) innerSmnts.size();
+        for (int i = 0; i < innerCount; ++i) {
+          replaceOccaFor(*((forStatement*) innerSmnts[i]));
+        }
+      }
+
+
+      void openclParser::replaceOccaFor(forStatement &forSmnt) {
+        oklForStatement oklForSmnt(forSmnt);
+
+        // Replace for-loops with blocks
+        const int childIndex = forSmnt.childIndex();
+        blockStatement &blockSmnt = *(new blockStatement(forSmnt.up,
+                                                         forSmnt.source));
+        blockSmnt.swap(forSmnt);
+        blockSmnt.up->children[childIndex] = &blockSmnt;
+
+        // Get OpenCL iterator
+        std::string clIteratorName;
+        if (oklForSmnt.isOuterLoop()) {
+          clIteratorName = "get_group_id(";
+        } else {
+          clIteratorName = "get_local_id(";
+        }
+        clIteratorName += occa::toString(oklForSmnt.oklLoopIndex());
+        clIteratorName += ')';
+
+        identifierToken clIteratorSource(oklForSmnt.iterator->source->origin,
+                                         clIteratorName);
+        identifierNode clIterator(&clIteratorSource,
+                                  clIteratorName);
+
+        // Create iterator declaration
+        variableDeclaration decl;
+        decl.variable = oklForSmnt.iterator;
+        decl.value = oklForSmnt.makeDeclarationValue(clIterator);
+
+        // Add declaration before block
+        declarationStatement &declSmnt = (
+          *(new declarationStatement(blockSmnt.up))
+        );
+        declSmnt.declarations.push_back(decl);
+
+        blockSmnt.addFirst(declSmnt);
+        delete &forSmnt;
+      }
+
+      bool openclParser::sharedVariableMatcher(exprNode &expr) {
+        return expr.hasAttribute("shared");
       }
 
       void openclParser::addFunctionPrototypes() {

@@ -19,11 +19,12 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  */
-#include "occa/lang/modes/oklForStatement.hpp"
 #include "occa/lang/exprNode.hpp"
 #include "occa/lang/statement.hpp"
 #include "occa/lang/variable.hpp"
 #include "occa/lang/builtins/types.hpp"
+#include "occa/lang/modes/oklForStatement.hpp"
+#include "occa/lang/builtins/transforms/finders.hpp"
 
 namespace occa {
   namespace lang {
@@ -336,6 +337,95 @@ namespace occa {
         delete initInParen;
 
         return value;
+      }
+
+      bool oklForStatement::isInnerLoop() {
+        return forSmnt.hasAttribute("inner");
+      }
+
+      bool oklForStatement::isOuterLoop() {
+        return forSmnt.hasAttribute("outer");
+      }
+
+      int oklForStatement::oklLoopIndex() {
+        return oklLoopIndex(forSmnt);
+      }
+
+      int oklForStatement::oklLoopIndex(forStatement &forSmnt) {
+        std::string attr;
+        if (forSmnt.hasAttribute("inner")) {
+          attr = "inner";
+        } else if (forSmnt.hasAttribute("outer")) {
+          attr = "outer";
+        } else {
+          return -1;
+        }
+
+        return (oklNestedLoopCount(forSmnt, attr)
+                - oklLoopReverseIndex(forSmnt, attr));
+      }
+
+      int oklForStatement::oklNestedLoopCount(forStatement &forSmnt,
+                                              const std::string &attr) {
+        statementPtrVector smnts;
+        findStatementsByAttr(statementType::for_,
+                             attr,
+                             forSmnt,
+                             smnts);
+        int smntCount = (int) smnts.size();
+        int maxCount = 0;
+        for (int i = 0; i < smntCount; ++i) {
+          forStatement &ismnt = *((forStatement*) smnts[i]);
+          if (&ismnt == &forSmnt) {
+            continue;
+          }
+
+          int iCount = oklLoopReverseIndex(ismnt, attr);
+          if (iCount > maxCount) {
+            maxCount = iCount;
+          }
+        }
+        // Include this
+        return maxCount + 1;
+      }
+
+      int oklForStatement::oklLoopReverseIndex(forStatement &forSmnt,
+                                               const std::string &attr) {
+        int count = 0;
+        statement_t *smnt = forSmnt.up;
+        while (smnt) {
+          if ((smnt->type() & statementType::for_)
+              && smnt->hasAttribute(attr)) {
+            ++count;
+          }
+          smnt = smnt->up;
+        }
+        return count;
+      }
+
+      void oklForStatement::getOKLLoopPath(statementPtrVector &path) {
+        getOKLLoopPath(forSmnt, path);
+      }
+
+      void oklForStatement::getOKLLoopPath(forStatement &forSmnt,
+                                           statementPtrVector &path) {
+        // Fill in path
+        statement_t *smnt = &forSmnt;
+        while (smnt) {
+          if ((smnt->type() & statementType::for_)
+              && (smnt->hasAttribute("inner")
+                  || smnt->hasAttribute("outer"))) {
+            path.push_back(smnt);
+          }
+          smnt = smnt->up;
+        }
+        // Reverse
+        const int pathCount = (int) path.size();
+        for (int i = 0; i < (pathCount / 2); ++i) {
+          statement_t *pi = path[i];
+          path[i] = path[pathCount - i - 1];
+          path[pathCount - i - 1] = pi;
+        }
       }
 
       std::string oklForStatement::sourceStr() {

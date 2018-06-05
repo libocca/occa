@@ -131,7 +131,7 @@ void testSource() {
     "      @shared int shr[3];\n"
     "      @exclusive int excl;\n"
     "      if (true) {\n"
-    "        for (int i1 = 0; i1 < I1; ++i1; @inner) {\n"
+    "        for (int i1 = 10; i1 < (I1 + 4); i1 += 3; @inner) {\n"
     "          for (int i0 = 0; i0 < I0; ++i0; @inner) {\n"
     "            for (;;) {\n"
     "               excl = i0;\n"

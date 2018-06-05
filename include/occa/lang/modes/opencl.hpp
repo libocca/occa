@@ -56,9 +56,6 @@ namespace occa {
 
         forStatement* getInnerMostInnerLoop(forStatement &forSmnt);
 
-        void getOKLLoopPath(forStatement &innerSmnt,
-                            statementPtrVector &path);
-
         exprNode& setDim(token_t *source,
                          const std::string &name,
                          const int index,
@@ -68,13 +65,14 @@ namespace occa {
 
         void updateConstToConstant();
 
-        void setQualifiers();
-        void setKernelQualifiers();
         void setLocalQualifiers();
 
-        static bool sharedVariableMatcher(exprNode &expr);
+        void setupKernels();
+        void setKernelQualifiers(functionDeclStatement &kernelSmnt);
+        void replaceOccaFors(functionDeclStatement &kernelSmnt);
+        void replaceOccaFor(forStatement &forSmnt);
 
-        void addOccaFors();
+        static bool sharedVariableMatcher(exprNode &expr);
 
         void addFunctionPrototypes();
       };
