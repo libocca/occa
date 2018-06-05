@@ -51,27 +51,27 @@ int main(const int argc, const char **argv) {
 
 //---[ Pragma ]-------------------------
 void testPragma() {
-  parseAndPrintSource("");
+  parseSource("");
   OCCA_ASSERT_EQUAL(1,
                     parser.root.size());
 
-  OCCA_ASSERT_EQUAL("OPENCL EXTENSION cl_khr_fp64 : enable",
+  OCCA_ASSERT_EQUAL("OPENCL EXTENSION cl_khr_fp64 : enable\n",
                     parser.root[0]
                     ->to<pragmaStatement>()
                     .value());
 
   parser.settings["opencl/extensions/cl_khr_fp64"] = false;
-  parseAndPrintSource("");
+  parseSource("");
   OCCA_ASSERT_EQUAL(0,
                     parser.root.size());
 
 
   parser.settings["opencl/extensions/foobar"] = true;
-  parseAndPrintSource("");
+  parseSource("");
   OCCA_ASSERT_EQUAL(1,
                     parser.root.size());
 
-  OCCA_ASSERT_EQUAL("OPENCL EXTENSION foobar : enable",
+  OCCA_ASSERT_EQUAL("OPENCL EXTENSION foobar : enable\n",
                     parser.root[0]
                     ->to<pragmaStatement>()
                     .value());
@@ -123,7 +123,7 @@ void testSource() {
   //     - std::vector<value>
   //     - vec.reserve(loopIterations)
   //     - Add iterator index to inner-most @inner loop
-  parseAndPrintSource(
+  parseSource(
     "const int var[10];\n"
     "@kernel void foo(int * restrict arg, const int bar) {\n"
     "  for (int o1 = 0; o1 < O1; ++o1; @outer) {\n"

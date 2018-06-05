@@ -76,8 +76,6 @@ namespace occa {
 
         void addOccaFors();
 
-        void setupLaunchKernel();
-
         void addFunctionPrototypes();
       };
     }

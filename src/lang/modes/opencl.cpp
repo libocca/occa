@@ -111,10 +111,17 @@ namespace occa {
         addOccaFors();
 
         if (!success) return;
-        setupLaunchKernel();
-
-        if (!success) return;
         addFunctionPrototypes();
+
+        std::cout << "hostParser.toString() = \n"
+                  << "--------------------------------------------------\n"
+                  << hostParser.toString()
+                  << "==================================================\n";
+
+        std::cout << "parser.toString() = \n"
+                  << "--------------------------------------------------\n"
+                  << toString()
+                  << "==================================================\n";
       }
 
       void openclParser::setupHostParser() {
@@ -159,16 +166,6 @@ namespace occa {
           }
           setKernelLaunch(kernelSmnt, forSmnt);
         }
-
-        std::cout << "hostParser.toString() = \n"
-                  << "--------------------------------------------------\n"
-                  << hostParser.toString()
-                  << "==================================================\n";
-
-        std::cout << "parser.toString() = \n"
-                  << "--------------------------------------------------\n"
-                  << toString()
-                  << "==================================================\n";
       }
 
       bool openclParser::isOuterMostOuterLoop(forStatement &forSmnt) {
@@ -282,13 +279,19 @@ namespace occa {
             ))
         );
         // Add kernel argument
-        type_t &kernelType = *(new primitive_t("occa::kernel"));
+        identifierToken kernelTypeSource(forSmnt.source->origin,
+                                         "occa::kernel");
+        type_t &kernelType = *(new typedef_t(vartype_t(),
+                                             kernelTypeSource));
         identifierToken kernelVarSource(forSmnt.source->origin,
                                         "&deviceKernel");
-        variable_t *kernelVar = new variable_t(kernelType,
-                                               &kernelVarSource);
+        variable_t &kernelVar = *(new variable_t(kernelType,
+                                                 &kernelVarSource));
         func.args.insert(func.args.begin(),
-                         kernelVar);
+                         &kernelVar);
+
+        kernelSmnt.scope.add(kernelType);
+        kernelSmnt.scope.add(kernelVar);
 
         forSmnt.removeFromParent();
         delete &forSmnt;
@@ -389,7 +392,7 @@ namespace occa {
               *(new pragmaStatement(
                   &root,
                   pragmaToken(root.source->origin,
-                              "OPENCL EXTENSION "+ extension + " : enable")
+                              "OPENCL EXTENSION "+ extension + " : enable\n")
                 ))
             );
           }
@@ -475,9 +478,6 @@ namespace occa {
       }
 
       void openclParser::addOccaFors() {
-      }
-
-      void openclParser::setupLaunchKernel() {
       }
 
       void openclParser::addFunctionPrototypes() {
