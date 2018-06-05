@@ -3,7 +3,7 @@
     <img alt="occa" src="https://libocca.org/assets/images/logo/blue.svg" width=250>
   </a>
 </p>
-
+&nbsp;
 <p align="center">
   <a href="https://travis-ci.org/libocca/occa"><img alt="Build Status" src="https://travis-ci.org/libocca/occa.svg?branch=master"></a>
   <a href="https://codecov.io/github/libocca/occa"><img alt="codecov.io" src="https://codecov.io/github/libocca/occa/coverage.svg"></a>
