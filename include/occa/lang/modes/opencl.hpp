@@ -38,7 +38,11 @@ namespace occa {
         qualifier_t global;
         qualifier_t local;
 
-        openclParser();
+        openclParser(const occa::properties &settings_ = occa::properties());
+
+        //---[ Public ]-----------------
+        void writeHostSourceToFile(const std::string &filename) const;
+        //==============================
 
         virtual void onClear();
         virtual void afterParsing();

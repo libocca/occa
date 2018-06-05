@@ -24,13 +24,14 @@
 
 #if OCCA_OPENCL_ENABLED
 
-#include "occa/modes/opencl/kernel.hpp"
-#include "occa/modes/opencl/device.hpp"
-#include "occa/modes/opencl/utils.hpp"
+#include "occa/base.hpp"
 #include "occa/tools/env.hpp"
 #include "occa/tools/io.hpp"
 #include "occa/tools/sys.hpp"
-#include "occa/base.hpp"
+#include "occa/modes/opencl/kernel.hpp"
+#include "occa/modes/opencl/device.hpp"
+#include "occa/modes/opencl/utils.hpp"
+#include "occa/lang/modes/opencl.hpp"
 
 namespace occa {
   namespace opencl {
@@ -52,36 +53,60 @@ namespace occa {
                        const hash_t hash) {
 
       name = kernelName;
-
-      const std::string sourceFile = getSourceFilename(filename, hash);
-      const std::string binaryFile = getBinaryFilename(filename, hash);
+      sourceFilename = filename;
+      binaryFilename = getBinaryFilename(filename, hash);
       bool foundBinary = true;
 
       const std::string hashTag = "opencl-kernel";
       if (io::haveHash(hash, hashTag)) {
-        if (sys::fileExists(binaryFile)) {
+        if (sys::fileExists(binaryFilename)) {
           io::releaseHash(hash, hashTag);
         } else {
           foundBinary = false;
         }
       }
 
+      const bool verbose = properties.get("verbose", false);
       if (foundBinary) {
-        if (properties.get("verbose", false)) {
-          std::cout << "Loading cached ["
-                    << kernelName
-                    << "] from ["
-                    << io::shortname(filename)
-                    << "] in [" << io::shortname(binaryFile) << "]\n";
+        if (verbose) {
+           std::cout << "Loading cached ["
+                     << kernelName
+                     << "] from ["
+                     << io::shortname(filename)
+                     << "] in [" << io::shortname(binaryFilename) << "]\n";
         }
-        return buildFromBinary(binaryFile, kernelName);
+        return buildFromBinary(binaryFilename, kernelName);
       }
 
-      io::cacheFile(filename,
-                    kc::sourceFile,
-                    hash,
-                    assembleHeader(properties),
-                    properties["footer"]);
+      // Cache raw origin
+      std::string sourceFile = (
+        io::cacheFile(sourceFilename,
+                      kc::rawSourceFile,
+                      hash,
+                      assembleHeader(properties),
+                      properties["footer"].string())
+      );
+
+      valid = true;
+      if (properties.get("okl", true)) {
+        const std::string outputFile = getSourceFilename(filename, hash);
+        const std::string hostOutputFile = getLaunchSourceFilename(filename, hash);
+        parseFile(sourceFile,
+                  outputFile,
+                  hostOutputFile,
+                  properties["parser"]);
+        if (!valid) {
+          return;
+        }
+        sourceFile = outputFile;
+
+        occa::kernel hostKernel = host().buildKernel(hostOutputFile,
+                                                     kernelName,
+                                                     "okl: false");
+        launcherKernel = hostKernel.getKHandle();
+        launcherKernel->dontUseRefs();
+        // TODO 1.1: Store metadata in the build.json
+      }
 
       std::string cFunction = io::read(sourceFile);
       info_t clInfo = makeCLInfo();
@@ -94,7 +119,10 @@ namespace occa {
                           properties);
       clKernel = clInfo.clKernel;
 
-      opencl::saveProgramBinary(clInfo, binaryFile, hash, hashTag);
+      opencl::saveProgramBinary(clInfo,
+                                binaryFilename,
+                                hash,
+                                hashTag);
 
       io::releaseHash(hash, hashTag);
     }
@@ -112,6 +140,45 @@ namespace occa {
                                     kernelName,
                                     ((opencl::device*) dHandle)->properties["compilerFlags"]);
       clKernel = clInfo.clKernel;
+    }
+
+    void kernel::parseFile(const std::string &filename,
+                           const std::string &outputFile,
+                           const std::string &hostOutputFile,
+                           const occa::properties &props) {
+      lang::okl::openclParser parser(props);
+      parser.parseFile(filename);
+
+      // Verify if parsing succeeded
+      valid = parser.succeeded();
+      if (!valid) {
+        if (!props.get("silent", false)) {
+          OCCA_FORCE_ERROR("Unable to transform OKL kernel");
+        }
+        return;
+      }
+
+      if (!sys::fileExists(outputFile)) {
+        hash_t hash = occa::hash(outputFile);
+        const std::string hashTag = "parse-file";
+
+        if (io::haveHash(hash, hashTag)) {
+          parser.writeToFile(outputFile);
+          io::releaseHash(hash, hashTag);
+        }
+      }
+
+      if (!sys::fileExists(hostOutputFile)) {
+        hash_t hash = occa::hash(hostOutputFile);
+        const std::string hashTag = "parse-host-file";
+
+        if (io::haveHash(hash, hashTag)) {
+          parser.writeHostSourceToFile(hostOutputFile);
+          io::releaseHash(hash, hashTag);
+        }
+      }
+
+      setMetadata(parser);
     }
 
     int kernel::maxDims() const {

@@ -71,8 +71,9 @@
 namespace occa {
   namespace lang {
     namespace okl {
-      openclParser::openclParser() :
-        hostParser(settings),
+      openclParser::openclParser(const occa::properties &settings_) :
+        parser_t(settings_),
+        hostParser(settings["host"]),
         constant("__constant", qualifierType::custom),
         kernel("__kernel", qualifierType::custom),
         global("__global", qualifierType::custom),
@@ -87,6 +88,12 @@ namespace occa {
         settings["opencl/extensions/cl_khr_fp64"] = true;
         hostParser.settings["okl/validate"] = false;
       }
+
+      //---[ Public ]-------------------
+      void openclParser::writeHostSourceToFile(const std::string &filename) const {
+        hostParser.writeToFile(filename);
+      }
+      //================================
 
       void openclParser::onClear() {
         hostParser.onClear();
@@ -115,16 +122,6 @@ namespace occa {
 
         if (!success) return;
         addFunctionPrototypes();
-
-        std::cout << "hostParser.toString() = \n"
-                  << "--------------------------------------------------\n"
-                  << hostParser.toString()
-                  << "==================================================\n";
-
-        std::cout << "parser.toString() = \n"
-                  << "--------------------------------------------------\n"
-                  << toString()
-                  << "==================================================\n";
       }
 
       void openclParser::setupHostParser() {
