@@ -151,7 +151,7 @@ namespace occa {
           }
           return false;
         }
-        checkValueOnRight = (checkOrder > 0);
+        checkValueOnRight = (checkOrder < 0);
         return true;
       }
 

@@ -152,29 +152,6 @@ namespace occa {
     //==================================
 
     //---[ Kernel ]---------------------
-    lang::kernelMetadataMap device::parseFile(const std::string &filename,
-                                              const std::string &outputFile,
-                                              const occa::properties &props) {
-
-      lang::okl::serialParser parser(props);
-      parser.parseFile(filename);
-
-      OCCA_ERROR("Unable to transform OKL kernel",
-                 parser.succeeded());
-
-      if (!sys::fileExists(outputFile)) {
-        hash_t hash = occa::hash(outputFile);
-        const std::string hashTag = "parse-file";
-
-        if (io::haveHash(hash, hashTag)) {
-          parser.writeToFile(outputFile);
-          io::releaseHash(hash, hashTag);
-        }
-      }
-
-      return getKernelMetadata(parser);
-    }
-
     kernel_v* device::buildKernel(const std::string &filename,
                                   const std::string &kernelName,
                                   const hash_t kernelHash,

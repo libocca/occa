@@ -172,13 +172,13 @@ namespace occa {
       }
 
       bool openclParser::isOuterMostOuterLoop(forStatement &forSmnt) {
-        statement_t *up = forSmnt.up;
-        while (up) {
-          if ((up->type() & statementType::for_)
-              && up->hasAttribute("outer")) {
+        statement_t *smnt = forSmnt.up;
+        while (smnt) {
+          if ((smnt->type() & statementType::for_)
+              && smnt->hasAttribute("outer")) {
             return false;
           }
-          up = up->up;
+          smnt = smnt->up;
         }
         return true;
       }
@@ -295,14 +295,14 @@ namespace occa {
       }
 
       int openclParser::getInnerLoopLevel(forStatement &forSmnt) {
-        statement_t *up = forSmnt.up;
+        statement_t *smnt = forSmnt.up;
         int level = 0;
-        while (up) {
-          if ((up->type() & statementType::for_)
-              && up->hasAttribute("inner")) {
+        while (smnt) {
+          if ((smnt->type() & statementType::for_)
+              && smnt->hasAttribute("inner")) {
             ++level;
           }
-          up = up->up;
+          smnt = smnt->up;
         }
         return level;
       }
@@ -334,14 +334,14 @@ namespace occa {
                                         statementPtrVector &path) {
         path.push_back(&innerSmnt);
         // Fill in path
-        statement_t *up = innerSmnt.up;
-        while (up) {
-          if ((up->type() & statementType::for_)
-              && (up->hasAttribute("inner")
-                  || up->hasAttribute("outer"))) {
-            path.push_back(up);
+        statement_t *smnt = innerSmnt.up;
+        while (smnt) {
+          if ((smnt->type() & statementType::for_)
+              && (smnt->hasAttribute("inner")
+                  || smnt->hasAttribute("outer"))) {
+            path.push_back(smnt);
           }
-          up = up->up;
+          smnt = smnt->up;
         }
         // Reverse
         const int pathCount = (int) path.size();

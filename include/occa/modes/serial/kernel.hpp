@@ -55,6 +55,10 @@ namespace occa {
       void buildFromBinary(const std::string &filename,
                            const std::string &kernelName);
 
+      virtual void parseFile(const std::string &filename,
+                             const std::string &outputFile,
+                             const occa::properties &props);
+
       int maxDims() const;
       dim maxOuterDims() const;
       dim maxInnerDims() const;

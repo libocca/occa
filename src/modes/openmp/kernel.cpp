@@ -26,14 +26,43 @@
 
 #include <omp.h>
 
-#include "occa/modes/openmp/kernel.hpp"
 #include "occa/tools/env.hpp"
 #include "occa/tools/io.hpp"
+#include "occa/modes/openmp/kernel.hpp"
+#include "occa/lang/modes/openmp.hpp"
 
 namespace occa {
   namespace openmp {
     kernel::kernel(const occa::properties &properties_) :
       serial::kernel(properties_) {}
+
+    void kernel::parseFile(const std::string &filename,
+                           const std::string &outputFile,
+                           const occa::properties &props) {
+      lang::okl::openmpParser parser(props);
+      parser.parseFile(filename);
+
+      // Verify if parsing succeeded
+      valid = parser.succeeded();
+      if (!valid) {
+        if (!props.get("silent", false)) {
+          OCCA_FORCE_ERROR("Unable to transform OKL kernel");
+        }
+        return;
+      }
+
+      if (!sys::fileExists(outputFile)) {
+        hash_t hash = occa::hash(outputFile);
+        const std::string hashTag = "parse-file";
+
+        if (io::haveHash(hash, hashTag)) {
+          parser.writeToFile(outputFile);
+          io::releaseHash(hash, hashTag);
+        }
+      }
+
+      setMetadata(parser);
+    }
   }
 }
 

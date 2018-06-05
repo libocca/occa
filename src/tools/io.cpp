@@ -58,12 +58,12 @@
 namespace occa {
   // Kernel Caching
   namespace kc {
-    const std::string parsedSourceFile = "parsed-source.cpp";
-    const std::string launchSourceFile = "launch-source.cpp";
-    const std::string launchBinaryFile = "launch-binary";
-    const std::string sourceFile       = "device-source.cpp";
-    const std::string binaryFile       = "device-binary";
-    const std::string infoFile         = "build-info.json";
+    const std::string rawSourceFile    = "raw_source.cpp";
+    const std::string launchSourceFile = "launch_source.cpp";
+    const std::string launchBinaryFile = "launch_binary";
+    const std::string sourceFile       = "device_source.cpp";
+    const std::string binaryFile       = "device_binary";
+    const std::string buildFile        = "build.json";
   }
 
   namespace io {
@@ -567,7 +567,7 @@ namespace occa {
 
       const std::string expFilename = io::filename(filename);
       const std::string hashDir     = io::hashDir(expFilename, hash);
-      const std::string infoFile    = hashDir + kc::infoFile;
+      const std::string buildFile   = hashDir + kc::buildFile;
       const std::string sourceFile  = hashDir + cachedName;
 
       if (!sys::fileExists(sourceFile)) {
@@ -584,18 +584,18 @@ namespace occa {
     void storeCacheInfo(const std::string &filename,
                         const hash_t &hash,
                         const occa::properties &props) {
-      const std::string hashDir  = io::hashDir(filename, hash);
-      const std::string infoFile = hashDir + kc::infoFile;
+      const std::string hashDir   = io::hashDir(filename, hash);
+      const std::string buildFile = hashDir + kc::buildFile;
 
       const std::string hashTag = "kernel-info";
       if (io::haveHash(hash, hashTag)) {
-        if (!sys::fileExists(infoFile)) {
+        if (!sys::fileExists(buildFile)) {
           occa::properties info;
           info["date"]      = sys::date();
           info["humanDate"] = sys::humanDate();
           info["info"]      = props;
 
-          write(infoFile, info.toString());
+          write(buildFile, info.toString());
         }
         io::releaseHash(hash, hashTag);
       }

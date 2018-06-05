@@ -30,7 +30,6 @@
 #include "occa/uva.hpp"
 #include "occa/kernel.hpp"
 #include "occa/tools/gc.hpp"
-#include "occa/lang/kernelMetadata.hpp"
 
 namespace occa {
   class kernel_v; class kernel;
@@ -41,10 +40,6 @@ namespace occa {
   typedef void* stream_t;
   class stream;
   class streamTag;
-
-  namespace lang {
-    class parser_t;
-  }
 
   typedef std::map<std::string, kernel>   cachedKernelMap;
   typedef cachedKernelMap::iterator       cachedKernelMapIterator;
@@ -105,12 +100,6 @@ namespace occa {
                             const std::string &kernelName);
 
     void removeCachedKernel(kernel_v *kernel);
-
-    lang::kernelMetadataMap getKernelMetadata(lang::parser_t &parser);
-
-    virtual lang::kernelMetadataMap parseFile(const std::string &filename,
-                                              const std::string &outputFile,
-                                              const occa::properties &props) = 0;
 
     virtual kernel_v* buildKernel(const std::string &filename,
                                   const std::string &kernelName,
@@ -205,13 +194,6 @@ namespace occa {
     //  |===============================
 
     //  |---[ Kernel ]------------------
-    void storeCacheInfo(const std::string &filename,
-                        const hash_t &hash,
-                        const occa::properties &kernelProps,
-                        const lang::kernelMetadataMap &metadataMap) const;
-
-    void loadKernels(const std::string &library = "");
-
     occa::kernel buildKernel(const std::string &filename,
                              const std::string &kernelName,
                              const occa::properties &props = occa::properties()) const;
@@ -224,10 +206,12 @@ namespace occa {
                                        const std::string &kernelName,
                                        const occa::properties &props = occa::properties()) const;
 
-    occa::kernel buildKernel(const std::string &filename,
-                             const hash_t &hash,
-                             const occa::properties &kernelProps,
-                             const lang::kernelMetadata &metadata) const;
+    void storeCacheInfo(const std::string &filename,
+                        const hash_t &hash,
+                        const occa::properties &kernelProps,
+                        const lang::kernelMetadataMap &metadataMap) const;
+
+    void loadKernels(const std::string &library = "");
     //  |===============================
 
     //  |---[ Memory ]------------------

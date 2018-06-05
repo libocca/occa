@@ -33,6 +33,10 @@ namespace occa {
     class kernel : public serial::kernel {
     public:
       kernel(const occa::properties &properties_);
+
+      virtual void parseFile(const std::string &filename,
+                             const std::string &outputFile,
+                             const occa::properties &props);
     };
   }
 }

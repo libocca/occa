@@ -78,11 +78,25 @@ namespace occa {
       }
 
       void serialParser::setupHeaders() {
-        if (settings.get("serial/include-cmath", true)) {
+        if (!settings.get("serial/include-std", true)) {
+          return;
+        }
+
+        const int headerCount = 4;
+        std::string headers[headerCount] = {
+          "include <stdint.h>",
+          "include <cstdlib>",
+          "include <cstdio>",
+          "include <cmath>"
+        };
+        for (int i = 0; i < headerCount; ++i) {
+          std::string header = headers[i];
           // TODO 1.1: Remove hack after methods are properly added
+          if (i == 0) {
+            header += "\nusing namespace std;";
+          }
           directiveToken token(root.source->origin,
-                               "include <cmath>\n"
-                               "using namespace std;");
+                               header);
           root.addFirst(
             *(new directiveStatement(&root, token))
           );

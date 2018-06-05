@@ -38,6 +38,10 @@ namespace occa {
   class kernelArgData;
   class kernelBuilder;
 
+  namespace lang {
+    class parser_t;
+  }
+
   typedef std::vector<kernelArgData>          kArgVector;
   typedef kArgVector::iterator                kArgVectorIterator;
   typedef kArgVector::const_iterator          cKArgVectorIterator;
@@ -165,9 +169,12 @@ namespace occa {
     std::string name;
     std::string sourceFilename, binaryFilename;
     occa::properties properties;
+    bool valid;
 
     dim inner, outer;
 
+    kernel_v *launcherKernel;
+    std::vector<kernel> nestedKernels;
     std::vector<kernelArg> arguments;
 
     lang::kernelMetadata metadata;
@@ -176,6 +183,9 @@ namespace occa {
 
     // This should only be called in the very first reference
     void setDHandle(device_v *dHandle_);
+
+    kernel* nestedKernelsPtr();
+    int nestedKernelCount();
 
     kernelArg* argumentsPtr();
     int argumentCount();
@@ -194,8 +204,11 @@ namespace occa {
     std::string getBinaryFilename(const std::string &filename,
                                   const hash_t &hash);
 
+    void setMetadata(lang::parser_t &parser);
+
     //---[ Virtual Methods ]------------
     virtual ~kernel_v() = 0;
+
     // Must be able to be called multiple times safely
     virtual void free() = 0;
 

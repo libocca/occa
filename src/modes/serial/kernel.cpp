@@ -20,10 +20,11 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  */
 
-#include "occa/modes/serial/kernel.hpp"
+#include "occa/base.hpp"
 #include "occa/tools/env.hpp"
 #include "occa/tools/io.hpp"
-#include "occa/base.hpp"
+#include "occa/lang/modes/serial.hpp"
+#include "occa/modes/serial/kernel.hpp"
 
 namespace occa {
   namespace serial {
@@ -38,43 +39,54 @@ namespace occa {
     void kernel::build(const std::string &filename,
                        const std::string &kernelName,
                        const hash_t hash) {
-
+      // Initialize
       name = kernelName;
-
-      const bool verbose = properties.get("verbose", false);
-
-      const std::string sourceFile = getSourceFilename(filename, hash);
-      const std::string binaryFile = getBinaryFilename(filename, hash);
-      const std::string sourceBasename = kc::sourceFile;
+      sourceFilename = filename;
+      binaryFilename = getBinaryFilename(filename, hash);
       bool foundBinary = true;
 
       const std::string hashTag = "serial-kernel";
       if (io::haveHash(hash, hashTag)) {
-        if (sys::fileExists(binaryFile)) {
+        if (sys::fileExists(binaryFilename)) {
           io::releaseHash(hash, hashTag);
         } else {
           foundBinary = false;
         }
       }
 
+      const bool verbose = properties.get("verbose", false);
       if (foundBinary) {
         if (verbose) {
            std::cout << "Loading cached ["
                      << kernelName
                      << "] from ["
                      << io::shortname(filename)
-                     << "] in [" << io::shortname(binaryFile) << "]\n";
+                     << "] in [" << io::shortname(binaryFilename) << "]\n";
         }
-        return buildFromBinary(binaryFile, kernelName);
+        return buildFromBinary(binaryFilename, kernelName);
       }
 
-      const std::string cachedSourceFile = (
-        io::cacheFile(filename,
-                      sourceBasename,
+      // Cache raw origin
+      std::string sourceFile = (
+        io::cacheFile(sourceFilename,
+                      kc::rawSourceFile,
                       hash,
                       assembleHeader(properties),
                       properties["footer"].string())
       );
+
+      valid = true;
+      if (properties.get("okl", true)) {
+        const std::string outputFile = getSourceFilename(filename, hash);
+        parseFile(sourceFile,
+                  outputFile,
+                  properties["parser"]);
+        sourceFile = outputFile;
+        if (!valid) {
+          return;
+        }
+        // TODO 1.1: Store metadata in the build.json
+      }
 
       std::stringstream command;
       const std::string &compilerEnvScript = properties["compilerEnvScript"].string();
@@ -85,8 +97,8 @@ namespace occa {
 #if (OCCA_OS & (OCCA_LINUX_OS | OCCA_MACOS_OS))
       command << properties["compiler"].string()
               << ' '    << properties["compilerFlags"].string()
-              << ' '    << cachedSourceFile
-              << " -o " << binaryFile
+              << ' '    << sourceFile
+              << " -o " << binaryFilename
               << " -I"  << env::OCCA_DIR << "include"
               << " -L"  << env::OCCA_DIR << "lib -locca"
               << std::endl;
@@ -100,7 +112,7 @@ namespace occa {
               << " /I"     << env::OCCA_DIR << "include"
               << ' '       << sourceFile
               << " /link " << env::OCCA_DIR << "lib/libocca.lib",
-              << " /OUT:"  << binaryFile
+              << " /OUT:"  << binaryFilename
               << std::endl;
 #endif
 
@@ -121,7 +133,7 @@ namespace occa {
         OCCA_ERROR("Compilation error", compileError);
       }
 
-      dlHandle = sys::dlopen(binaryFile, hash, hashTag);
+      dlHandle = sys::dlopen(binaryFilename, hash, hashTag);
       handle   = sys::dlsym(dlHandle, kernelName, hash, hashTag);
 
       io::releaseHash(hash, hashTag);
@@ -134,6 +146,34 @@ namespace occa {
 
       dlHandle = sys::dlopen(filename);
       handle   = sys::dlsym(dlHandle, kernelName);
+    }
+
+    void kernel::parseFile(const std::string &filename,
+                           const std::string &outputFile,
+                           const occa::properties &props) {
+      lang::okl::serialParser parser(props);
+      parser.parseFile(filename);
+
+      // Verify if parsing succeeded
+      valid = parser.succeeded();
+      if (!valid) {
+        if (!props.get("silent", false)) {
+          OCCA_FORCE_ERROR("Unable to transform OKL kernel");
+        }
+        return;
+      }
+
+      if (!sys::fileExists(outputFile)) {
+        hash_t hash = occa::hash(outputFile);
+        const std::string hashTag = "parse-file";
+
+        if (io::haveHash(hash, hashTag)) {
+          parser.writeToFile(outputFile);
+          io::releaseHash(hash, hashTag);
+        }
+      }
+
+      setMetadata(parser);
     }
 
     int kernel::maxDims() const {

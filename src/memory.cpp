@@ -107,8 +107,9 @@ namespace occa {
 
   void memory::removeMHandleRef() {
     if (mHandle && !mHandle->removeRef()) {
+      device_v *dHandle = mHandle->dHandle;
       free();
-      device::removeDHandleRefFrom(mHandle->dHandle);
+      device::removeDHandleRefFrom(dHandle);
       delete mHandle;
       mHandle = NULL;
     }
