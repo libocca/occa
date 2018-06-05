@@ -24,6 +24,23 @@
 #include "occa/lang/modes/opencl.hpp"
 #include "../parserUtils.hpp"
 
+#undef parseAndPrintSource
+#define parseAndPrintSource(str_)                                       \
+  parseSource(str_);                                                    \
+  OCCA_ASSERT_TRUE(parser.success)                                      \
+  {                                                                     \
+    printer pout;                                                       \
+    parser.hostParser.root.print(pout);                                 \
+    std::cout << "---[ Host ]-----------------------------------\n";    \
+    std::cout << pout.str();                                            \
+    std::cout << "==============================================\n\n";  \
+    pout.clear();                                                       \
+    parser.root.print(pout);                                            \
+    std::cout << "---[ Device ]---------------------------------\n";    \
+    std::cout << pout.str();                                            \
+    std::cout << "==============================================\n\n";  \
+  }
+
 void testPragma();
 void testLoopExtraction();
 void testGlobalConst();
@@ -123,7 +140,7 @@ void testSource() {
   //     - std::vector<value>
   //     - vec.reserve(loopIterations)
   //     - Add iterator index to inner-most @inner loop
-  parseSource(
+  parseAndPrintSource(
     "const int var[10];\n"
     "@kernel void foo(int * restrict arg, const int bar) {\n"
     "  for (int o1 = 0; o1 < O1; ++o1; @outer) {\n"
@@ -143,6 +160,16 @@ void testSource() {
     "        }\n"
     "      }\n"
     "    }\n"
+    "  }\n"
+    "}\n"
+  );
+  parseAndPrintSource(
+    "@kernel void addVectors(const int entries,\n"
+    "                        const float *a,\n"
+    "                        const float *b,\n"
+    "                        float *ab) {\n"
+    "  for (int i = 0; i < entries; ++i; @tile(16, @outer, @inner)) {\n"
+    "    ab[i] = a[i] + b[i];\n"
     "  }\n"
     "}\n"
   );
