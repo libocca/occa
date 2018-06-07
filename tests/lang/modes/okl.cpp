@@ -59,14 +59,12 @@ void testKernel() {
 
 //---[ Loop ]---------------------------
 void testOKLLoopExists();
-void testSingleOuterLoop();
 void testProperOKLLoops();
 void testInnerInsideOuter();
 void testSameInnerLoopCount();
 
 void testLoops() {
   testOKLLoopExists();
-  testSingleOuterLoop();
   testProperOKLLoops();
   testInnerInsideOuter();
   testSameInnerLoopCount();
@@ -81,33 +79,6 @@ void testOKLLoopExists() {
   parseBadOKLSource("@kernel void foo() {\n"
                     "  for (;;; @inner) {}\n"
                     "}");
-}
-
-void testSingleOuterLoop() {
-  parseBadOKLSource(
-    "@kernel void foo() {\n"
-    "  for (;;; @outer) {}\n"
-    "  for (;;; @outer) {}\n"
-    "}\n"
-  );
-  parseBadOKLSource(
-    "@kernel void foo() {\n"
-    "  int N = 0;\n"
-    "  for (int o = 0; o < 2; ++o; @outer) {\n"
-    "    for (int i = 0; i < 2; ++i; @inner) {\n"
-    "    }\n"
-    "  }\n"
-    "}\n"
-  );
-  parseBadOKLSource(
-    "@kernel void foo() {\n"
-    "  for (int o = 0; o < 2; ++o; @outer) {\n"
-    "    for (int i = 0; i < 2; ++i; @inner) {\n"
-    "    }\n"
-    "  }\n"
-    "  int N = 0;\n"
-    "}\n"
-  );
 }
 
 void testProperOKLLoops() {

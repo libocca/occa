@@ -28,7 +28,8 @@
 void testPragma();
 
 int main(const int argc, const char **argv) {
-  parser.settings["serial/include-cmath"] = false;
+  parser.settings["okl/validate"] = false;
+  parser.settings["serial/include-std"] = false;
 
   testPragma();
 
