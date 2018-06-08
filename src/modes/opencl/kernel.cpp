@@ -57,10 +57,10 @@ namespace occa {
       binaryFilename = getBinaryFilename(filename, hash);
       bool foundBinary = true;
 
-      const std::string hashTag = "opencl-kernel";
-      if (io::haveHash(hash, hashTag)) {
+      io::lock_t lock(hash, "opencl-kernel");
+      if (lock.isMine()) {
         if (sys::fileExists(binaryFilename)) {
-          io::releaseHash(hash, hashTag);
+          lock.release();
         } else {
           foundBinary = false;
         }
@@ -116,17 +116,15 @@ namespace occa {
                           cFunction.c_str(), cFunction.size(),
                           kernelName,
                           properties["compilerFlags"],
-                          hash,
                           sourceFile,
-                          properties);
+                          properties,
+                          lock);
+
       clKernel = clInfo.clKernel;
 
       opencl::saveProgramBinary(clInfo,
                                 binaryFilename,
-                                hash,
-                                hashTag);
-
-      io::releaseHash(hash, hashTag);
+                                lock);
     }
 
     void kernel::buildFromBinary(const std::string &filename,
@@ -162,21 +160,17 @@ namespace occa {
 
       if (!sys::fileExists(outputFile)) {
         hash_t hash = occa::hash(outputFile);
-        const std::string hashTag = "parse-file";
-
-        if (io::haveHash(hash, hashTag)) {
+        io::lock_t lock(hash, "opencl-parser-device");
+        if (lock.isMine()) {
           parser.writeToFile(outputFile);
-          io::releaseHash(hash, hashTag);
         }
       }
 
       if (!sys::fileExists(hostOutputFile)) {
         hash_t hash = occa::hash(hostOutputFile);
-        const std::string hashTag = "parse-host-file";
-
-        if (io::haveHash(hash, hashTag)) {
-          parser.writeHostSourceToFile(hostOutputFile);
-          io::releaseHash(hash, hashTag);
+        io::lock_t lock(hash, "opencl-parser-host");
+        if (lock.isMine()) {
+          parser.writeToFile(hostOutputFile);
         }
       }
 

@@ -74,29 +74,26 @@ namespace occa {
       const std::string binaryFilename = io::dirname(srcFilename) + "binary";
       const std::string outFilename = io::dirname(srcFilename) + "output";
 
-      const std::string hashTag = "openmp-compiler";
-      if (io::haveHash(hash, hashTag)) {
-        if (!sys::fileExists(outFilename)) {
-          std::string flag = baseCompilerFlag(vendor_);
-          ss << compiler
-             << ' '    << flag
-             << ' '    << srcFilename
-             << " -o " << binaryFilename
-             << " > /dev/null 2>&1";
+      io::lock_t lock(hash, "openmp-compiler");
+      if (lock.isMine()
+          && !sys::fileExists(outFilename)) {
+        std::string flag = baseCompilerFlag(vendor_);
+        ss << compiler
+           << ' '    << flag
+           << ' '    << srcFilename
+           << " -o " << binaryFilename
+           << " > /dev/null 2>&1";
 
-          const std::string compileLine = ss.str();
-          const int compileError = system(compileLine.c_str());
+        const std::string compileLine = ss.str();
+        const int compileError = system(compileLine.c_str());
 
-          if (compileError) {
-            flag = openmp::notSupported;
-          }
-
-          io::write(outFilename, flag);
-          io::releaseHash(hash, hashTag);
-
-          return flag;
+        if (compileError) {
+          flag = openmp::notSupported;
         }
-        io::releaseHash(hash, hashTag);
+
+        io::write(outFilename, flag);
+
+        return flag;
       }
 
       std::string flag = openmp::notSupported;

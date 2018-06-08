@@ -265,9 +265,9 @@ namespace occa {
                      const size_t contentBytes,
                      const std::string &kernelName,
                      const std::string &flags,
-                     hash_t hash,
                      const std::string &sourceFile,
-                     const occa::properties &properties) {
+                     const occa::properties &properties,
+                     const io::lock_t &lock) {
       cl_int error;
 
       const bool verbose = properties.get("verbose", false);
@@ -277,12 +277,11 @@ namespace occa {
                                                   &contentBytes,
                                                   &error);
 
-      const std::string hashTag = "opencl-kernel";
-      if (error && hash.initialized) {
-        io::releaseHash(hash, hashTag);
+      if (error) {
+        lock.release();
       }
       if (verbose) {
-        if (hash.initialized) {
+        if (lock.isInitialized()) {
           std::cout << "OpenCL compiling " << kernelName
                     << " from [" << sourceFile << "]";
 
@@ -295,7 +294,8 @@ namespace occa {
         }
       }
 
-      OCCA_OPENCL_ERROR("Kernel [" + kernelName + "] : Constructing Program", error);
+      OCCA_OPENCL_ERROR("Kernel [" + kernelName + "] : Constructing Program",
+                        error);
 
       error = clBuildProgram(info_.clProgram,
                              1, &info_.clDevice,
@@ -307,12 +307,18 @@ namespace occa {
         char *log;
         size_t logSize;
 
-        clGetProgramBuildInfo(info_.clProgram, info_.clDevice, CL_PROGRAM_BUILD_LOG, 0, NULL, &logSize);
+        clGetProgramBuildInfo(info_.clProgram,
+                              info_.clDevice,
+                              CL_PROGRAM_BUILD_LOG,
+                              0, NULL, &logSize);
 
         if (logSize > 2) {
           log = new char[logSize+1];
 
-          logError = clGetProgramBuildInfo(info_.clProgram, info_.clDevice, CL_PROGRAM_BUILD_LOG, logSize, log, NULL);
+          logError = clGetProgramBuildInfo(info_.clProgram,
+                                           info_.clDevice,
+                                           CL_PROGRAM_BUILD_LOG,
+                                           logSize, log, NULL);
           OCCA_OPENCL_ERROR("Kernel [" + kernelName + "] : Building Program", logError);
           log[logSize] = '\0';
 
@@ -323,18 +329,17 @@ namespace occa {
 
           delete [] log;
         }
-
-        if (hash.initialized) {
-          io::releaseHash(hash, hashTag);
-        }
+        lock.release();
       }
 
       OCCA_OPENCL_ERROR("Kernel [" + kernelName + "] : Building Program", error);
 
-      info_.clKernel = clCreateKernel(info_.clProgram, kernelName.c_str(), &error);
+      info_.clKernel = clCreateKernel(info_.clProgram,
+                                      kernelName.c_str(),
+                                      &error);
 
-      if (error && hash.initialized) {
-        io::releaseHash(hash, hashTag);
+      if (error) {
+        lock.release();
       }
       OCCA_OPENCL_ERROR("Kernel [" + kernelName + "]: Creating Kernel", error);
 
@@ -377,12 +382,18 @@ namespace occa {
         char *log;
         size_t logSize;
 
-        clGetProgramBuildInfo(info_.clProgram, info_.clDevice, CL_PROGRAM_BUILD_LOG, 0, NULL, &logSize);
+        clGetProgramBuildInfo(info_.clProgram,
+                              info_.clDevice,
+                              CL_PROGRAM_BUILD_LOG,
+                              0, NULL, &logSize);
 
         if (logSize > 2) {
           log = new char[logSize+1];
 
-          logError = clGetProgramBuildInfo(info_.clProgram, info_.clDevice, CL_PROGRAM_BUILD_LOG, logSize, log, NULL);
+          logError = clGetProgramBuildInfo(info_.clProgram,
+                                           info_.clDevice,
+                                           CL_PROGRAM_BUILD_LOG,
+                                           logSize, log, NULL);
           OCCA_OPENCL_ERROR("Kernel [" + kernelName + "] : Building Program", logError);
           log[logSize] = '\0';
 
@@ -403,27 +414,30 @@ namespace occa {
 
     void saveProgramBinary(info_t &info_,
                            const std::string &binaryFile,
-                           const hash_t &hash,
-                           const std::string &hashTag) {
+                           const io::lock_t &lock) {
       size_t binarySize;
       char *binary;
 
-      cl_int error = clGetProgramInfo(info_.clProgram, CL_PROGRAM_BINARY_SIZES, sizeof(size_t), &binarySize, NULL);
+      cl_int error = clGetProgramInfo(info_.clProgram,
+                                      CL_PROGRAM_BINARY_SIZES,
+                                      sizeof(size_t), &binarySize, NULL);
 
-
-      if (error && hash.initialized) {
-        io::releaseHash(hash, hashTag);
+      if (error) {
+        lock.release();
       }
       OCCA_OPENCL_ERROR("saveProgramBinary: Getting Binary Sizes", error);
 
       binary = new char[binarySize + 1];
 
-      error = clGetProgramInfo(info_.clProgram, CL_PROGRAM_BINARIES, sizeof(char*), &binary, NULL);
+      error = clGetProgramInfo(info_.clProgram,
+                               CL_PROGRAM_BINARIES,
+                               sizeof(char*), &binary, NULL);
 
-      if (error && hash.initialized) {
-        io::releaseHash(hash, hashTag);
+      if (error) {
+        lock.release();
       }
-      OCCA_OPENCL_ERROR("saveProgramBinary: Getting Binary", error);
+      OCCA_OPENCL_ERROR("saveProgramBinary: Getting Binary",
+                        error);
 
       FILE *fp = fopen(binaryFile.c_str(), "wb");
       fwrite(binary, 1, binarySize, fp);

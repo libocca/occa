@@ -31,17 +31,55 @@
 
 namespace occa {
   namespace io {
-    std::string getFileLock(const hash_t &hash, const std::string &tag) {
-      std::string ret = (env::OCCA_CACHE_DIR + "locks/" + hash.toString());
-      ret += '_';
-      ret += tag;
-      return ret;
+    lock_t::lock_t() :
+      released(true) {}
+
+    lock_t::lock_t(const hash_t &hash,
+                   const std::string &tag,
+                   const int staleAge_) :
+      staleAge(staleAge_),
+      released(false) {
+
+      lockDir = env::OCCA_CACHE_DIR;
+      lockDir += "locks/";
+      lockDir += hash.toString();
+      lockDir += '_';
+      lockDir += tag;
+
+      occa::json &lockSettings = settings()["locks"];
+      staleWarning = lockSettings.get("stale-warning",
+                                      (float) 10.0);
+      if (staleAge <= 0) {
+        staleAge = lockSettings.get("stale-age",
+                                    (float) 20.0);
+      }
     }
 
-    bool haveHash(const hash_t &hash,
-                  const std::string &tag) {
-      std::string lockDir = getFileLock(hash, tag);
+    lock_t::~lock_t() {
+      release();
+    }
 
+    bool lock_t::isInitialized() const {
+      return lockDir.size();
+    }
+
+    const std::string& lock_t::dir() const {
+      return lockDir;
+    }
+
+    void lock_t::release() const {
+      if (!released) {
+        sys::rmdir(lockDir);
+        released = true;
+      }
+    }
+
+    void lock_t::release(const hash_t &hash,
+                         const std::string &tag) {
+      lock_t(hash, tag).release();
+    }
+
+    bool lock_t::isMine() {
       sys::mkpath(env::OCCA_CACHE_DIR + "locks/");
 
       while (true) {
@@ -52,25 +90,18 @@ namespace occa {
           return true;
         }
 
-        if (hashWasReleased(hash, tag)) {
+        if (isReleased()) {
           break;
         }
       }
       return false;
     }
 
-    bool hashWasReleased(const hash_t &hash,
-                         const std::string &tag) {
+    bool lock_t::isReleased() {
       struct stat buffer;
 
-      std::string lockDir   = getFileLock(hash, tag);
       const char *c_lockDir = lockDir.c_str();
 
-      occa::json &lockSettings = settings()["locks"];
-      float staleWarning = lockSettings.get("stale-warning",
-                                            (float) 10.0);
-      float staleAge = lockSettings.get("stale-age",
-                                        (float) 20.0);
       bool isStale = false;
 
       double startTime = sys::currentTime();
@@ -97,18 +128,11 @@ namespace occa {
       if (!isStale) {
         return true;
       }
-      // Delete lock
-      releaseHashLock(lockDir);
+      // Delete lock and recreate it
+      release();
+      released = false;
+
       return false;
-    }
-
-    void releaseHash(const hash_t &hash,
-                     const std::string &tag) {
-      releaseHashLock(getFileLock(hash, tag));
-    }
-
-    void releaseHashLock(const std::string &lockDir) {
-      sys::rmdir(lockDir);
     }
   }
 }

@@ -336,17 +336,15 @@ namespace occa {
                          ^ occa::hash(allProps)
                          ^ occa::hash(content));
 
-    const std::string hashDir = io::hashDir(kernelHash);
-    const std::string hashTag = "occa-device";
-
-    std::string stringSourceFile = hashDir;
+    io::lock_t lock(kernelHash, "occa-device");
+    std::string stringSourceFile = io::hashDir(kernelHash);
     stringSourceFile += "stringSource.okl";
 
-    if (io::haveHash(kernelHash, hashTag)) {
+    if (lock.isMine()) {
       if (!sys::fileExists(stringSourceFile)) {
         io::write(stringSourceFile, content);
       }
-      io::releaseHash(kernelHash, hashTag);
+      lock.release();
     }
 
     return buildKernel(stringSourceFile,

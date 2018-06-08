@@ -29,19 +29,35 @@ namespace occa {
   class hash_t;
 
   namespace io {
-    std::string getFileLock(const std::string &filename,
-                            const std::string &tag);
+    class lock_t {
+    private:
+      mutable std::string lockDir;
+      float staleWarning;
+      float staleAge;
+      mutable bool released;
 
-    bool haveHash(const hash_t &hash,
-                  const std::string &tag);
+    public:
+      lock_t();
 
-    bool hashWasReleased(const hash_t &hash,
-                         const std::string &tag);
+      lock_t(const hash_t &hash,
+             const std::string &tag,
+             const int staleAge_ = 0);
 
-    void releaseHash(const hash_t &hash,
-                     const std::string &tag);
+      ~lock_t();
 
-    void releaseHashLock(const std::string &lockDir);
+      bool isInitialized() const;
+
+      const std::string& dir() const;
+
+      void release() const;
+
+      static void release(const hash_t &hash,
+                          const std::string &tag);
+
+      bool isMine();
+
+      bool isReleased();
+    };
   }
 }
 

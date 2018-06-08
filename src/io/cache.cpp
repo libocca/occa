@@ -43,12 +43,10 @@ namespace occa {
                const bool deleteSource) {
 
       const std::string expFilename = io::filename(filename);
-      const std::string hashTag = "cache";
-      if (io::haveHash(hash, hashTag)) {
-        if (!sys::fileExists(expFilename)) {
-          write(expFilename, source);
-        }
-        io::releaseHash(hash, hashTag);
+      io::lock_t lock(hash, "cache");
+      if (lock.isMine()
+          && !sys::fileExists(expFilename)) {
+        write(expFilename, source);
       }
       if (deleteSource) {
         delete [] source;
@@ -92,20 +90,19 @@ namespace occa {
     void storeCacheInfo(const std::string &filename,
                         const hash_t &hash,
                         const occa::properties &props) {
-      const std::string hashDir   = io::hashDir(filename, hash);
-      const std::string buildFile = hashDir + kc::buildFile;
 
-      const std::string hashTag = "kernel-info";
-      if (io::haveHash(hash, hashTag)) {
-        if (!sys::fileExists(buildFile)) {
-          occa::properties info;
-          info["date"]      = sys::date();
-          info["humanDate"] = sys::humanDate();
-          info["info"]      = props;
+      io::lock_t lock(hash, "kernel-info");
+      std::string buildFile = hashDir(filename, hash);
+      buildFile += kc::buildFile;
 
-          write(buildFile, info.toString());
-        }
-        io::releaseHash(hash, hashTag);
+      if (lock.isMine()
+          && !sys::fileExists(buildFile)) {
+        occa::properties info;
+        info["date"]      = sys::date();
+        info["humanDate"] = sys::humanDate();
+        info["info"]      = props;
+
+        write(buildFile, info.toString());
       }
     }
 

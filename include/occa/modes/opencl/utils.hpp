@@ -30,6 +30,7 @@
 
 #include <occa/modes/opencl/headers.hpp>
 #include <occa/device.hpp>
+#include <occa/io/lock.hpp>
 
 namespace occa {
   class streamTag;
@@ -91,9 +92,9 @@ namespace occa {
                      const size_t contentBytes,
                      const std::string &kernelName,
                      const std::string &flags = "",
-                     hash_t hash = hash_t(),
                      const std::string &sourceFile = "",
-                     const occa::properties &properties = occa::properties());
+                     const occa::properties &properties = occa::properties(),
+                     const io::lock_t &lock = io::lock_t());
 
     void buildKernelFromBinary(info_t &info_,
                                const unsigned char *content,
@@ -103,8 +104,7 @@ namespace occa {
 
     void saveProgramBinary(info_t &info_,
                            const std::string &binaryFile,
-                           const hash_t &hash,
-                           const std::string &hashTag);
+                           const io::lock_t &lock = io::lock_t());
 
     cl_context getContext(occa::device device);
     cl_mem getMem(occa::memory memory);

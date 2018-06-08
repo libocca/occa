@@ -45,10 +45,10 @@ namespace occa {
       binaryFilename = getBinaryFilename(filename, hash);
       bool foundBinary = true;
 
-      const std::string hashTag = "serial-kernel";
-      if (io::haveHash(hash, hashTag)) {
+      io::lock_t lock(hash, "serial-kernel");
+      if (lock.isMine()) {
         if (sys::fileExists(binaryFilename)) {
-          io::releaseHash(hash, hashTag);
+          lock.release();
         } else {
           foundBinary = false;
         }
@@ -129,14 +129,12 @@ namespace occa {
 #endif
 
       if (compileError) {
-        io::releaseHash(hash, hashTag);
+        lock.release();
         OCCA_ERROR("Compilation error", compileError);
       }
 
-      dlHandle = sys::dlopen(binaryFilename, hash, hashTag);
-      handle   = sys::dlsym(dlHandle, kernelName, hash, hashTag);
-
-      io::releaseHash(hash, hashTag);
+      dlHandle = sys::dlopen(binaryFilename, lock);
+      handle   = sys::dlsym(dlHandle, kernelName, lock);
     }
 
     void kernel::buildFromBinary(const std::string &filename,
@@ -165,11 +163,9 @@ namespace occa {
 
       if (!sys::fileExists(outputFile)) {
         hash_t hash = occa::hash(outputFile);
-        const std::string hashTag = "parse-file";
-
-        if (io::haveHash(hash, hashTag)) {
+        io::lock_t lock(hash, "serial-parser");
+        if (lock.isMine()) {
           parser.writeToFile(outputFile);
-          io::releaseHash(hash, hashTag);
         }
       }
 

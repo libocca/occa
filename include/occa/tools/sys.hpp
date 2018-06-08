@@ -28,6 +28,7 @@
 
 #include <occa/defines.hpp>
 #include <occa/types.hpp>
+#include <occa/io/lock.hpp>
 #include <occa/tools/hash.hpp>
 
 namespace occa {
@@ -115,13 +116,11 @@ namespace occa {
     void free(void *ptr);
 
     void* dlopen(const std::string &filename,
-                 const hash_t &hash = hash_t(),
-                 const std::string &hashTag = "");
+                 const io::lock_t &lock = io::lock_t());
 
     handleFunction_t dlsym(void *dlHandle,
                            const std::string &functionName,
-                           const hash_t &hash = hash_t(),
-                           const std::string &hashTag = "");
+                           const io::lock_t &lock = io::lock_t());
 
     void dlclose(void *dlHandle);
 

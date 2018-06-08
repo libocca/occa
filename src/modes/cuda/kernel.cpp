@@ -62,10 +62,10 @@ namespace occa {
       const std::string ptxBinaryFile = io::hashDir(filename, hash) + "ptxBinary.o";
       bool foundBinary = true;
 
-      const std::string hashTag = "cuda-kernel";
-      if (io::haveHash(hash, hashTag)) {
+      io::lock_t lock(hash, "cuda-kernel");
+      if (lock.isMine()) {
         if (sys::fileExists(binaryFile)) {
-          io::releaseHash(hash, hashTag);
+          lock.release();
         } else {
           foundBinary = false;
         }
@@ -150,7 +150,7 @@ namespace occa {
       const int compileError = system(sCommand.c_str());
 
       if (compileError) {
-        io::releaseHash(hash, hashTag);
+        lock.release();
         OCCA_FORCE_ERROR("Compilation error");
       }
       //================================
@@ -159,24 +159,20 @@ namespace occa {
                                                     binaryFile.c_str());
 
       if (moduleLoadError) {
-        io::releaseHash(hash, hashTag);
+        lock.release();
+        OCCA_CUDA_ERROR("Kernel (" + name + ") : Loading Module",
+                        moduleLoadError);
       }
-
-      OCCA_CUDA_ERROR("Kernel (" + name + ") : Loading Module",
-                      moduleLoadError);
 
       const CUresult moduleGetFunctionError = cuModuleGetFunction(&cuFunction,
                                                                   cuModule,
                                                                   name.c_str());
 
       if (moduleGetFunctionError) {
-        io::releaseHash(hash, hashTag);
+        lock.release();
+        OCCA_CUDA_ERROR("Kernel (" + name + ") : Loading Function",
+                        moduleGetFunctionError);
       }
-
-      OCCA_CUDA_ERROR("Kernel (" + name + ") : Loading Function",
-                      moduleGetFunctionError);
-
-      io::releaseHash(hash, hashTag);
     }
 
     void kernel::buildFromBinary(const std::string &filename,

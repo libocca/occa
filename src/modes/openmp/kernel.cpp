@@ -53,11 +53,9 @@ namespace occa {
 
       if (!sys::fileExists(outputFile)) {
         hash_t hash = occa::hash(outputFile);
-        const std::string hashTag = "parse-file";
-
-        if (io::haveHash(hash, hashTag)) {
+        io::lock_t lock(hash, "openmp-parse");
+        if (lock.isMine()) {
           parser.writeToFile(outputFile);
-          io::releaseHash(hash, hashTag);
         }
       }
 

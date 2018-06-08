@@ -647,42 +647,41 @@ namespace occa {
       hash ^= occa::hash(vendor_);
       hash ^= occa::hash(compiler);
 
-      const std::string srcFilename      = io::cacheFile(compilerVendorTest, "compilerVendorTest.cpp", hash);
-      const std::string hashDir          = io::dirname(srcFilename);
+      const std::string srcFilename = io::cacheFile(compilerVendorTest,
+                                                    "compilerVendorTest.cpp",
+                                                    hash);
+      const std::string &hashDir = io::dirname(srcFilename);
       const std::string binaryFilename   = hashDir + "binary";
       const std::string outFilename      = hashDir + "output";
       const std::string buildLogFilename = hashDir + "build.log";
 
-      const std::string hashTag = "compiler";
-      if (io::haveHash(hash, hashTag)) {
-        if (!sys::fileExists(outFilename)) {
-          ss << compiler
-             << ' '    << srcFilename
-             << " -o " << binaryFilename
-             << " > " << buildLogFilename << " 2>&1";
-          const std::string compileLine = ss.str();
+      io::lock_t lock(hash, "compiler");
+      if (lock.isMine()
+          && !sys::fileExists(outFilename)) {
+        ss << compiler
+           << ' '    << srcFilename
+           << " -o " << binaryFilename
+           << " > " << buildLogFilename << " 2>&1";
+        const std::string compileLine = ss.str();
 
-          ignoreResult( system(compileLine.c_str()) );
+        ignoreResult( system(compileLine.c_str()) );
 
-          OCCA_ERROR("Could not compile compilerVendorTest.cpp with following command:\n" << compileLine,
-                     sys::fileExists(binaryFilename));
+        OCCA_ERROR("Could not compile compilerVendorTest.cpp with following command:\n" << compileLine,
+                   sys::fileExists(binaryFilename));
 
-          int exitStatus = system(binaryFilename.c_str());
-          int vendorBit  = WEXITSTATUS(exitStatus);
+        int exitStatus = system(binaryFilename.c_str());
+        int vendorBit  = WEXITSTATUS(exitStatus);
 
-          if (vendorBit < sys::vendor::b_max) {
-            vendor_ = (1 << vendorBit);
-          }
-
-          ss.str("");
-          ss << vendor_;
-
-          io::write(outFilename, ss.str());
-          io::releaseHash(hash, hashTag);
-
-          return vendor_;
+        if (vendorBit < sys::vendor::b_max) {
+          vendor_ = (1 << vendorBit);
         }
-        io::releaseHash(hash, hashTag);
+
+        ss.str("");
+        ss << vendor_;
+
+        io::write(outFilename, ss.str());
+
+        return vendor_;
       }
 
       ss << io::read(outFilename);
@@ -757,24 +756,21 @@ namespace occa {
     }
 
     void* dlopen(const std::string &filename,
-                 const hash_t &hash,
-                 const std::string &hashTag) {
+                 const io::lock_t &lock) {
 
 #if (OCCA_OS & (OCCA_LINUX_OS | OCCA_MACOS_OS))
       void *dlHandle = ::dlopen(filename.c_str(), RTLD_NOW);
 
-      if ((dlHandle == NULL) && hash.initialized) {
-        io::releaseHash(hash, hashTag);
-
+      if (dlHandle == NULL) {
+        lock.release();
         OCCA_ERROR("Error loading binary [" << io::shortname(filename) << "] with dlopen",
                    false);
       }
 #else
       void *dlHandle = LoadLibraryA(filename.c_str());
 
-      if ((dlHandle == NULL) && hash.initialized) {
-        io::releaseHash(hash, hashTag);
-
+      if (dlHandle == NULL) {
+        lock.release();
         OCCA_ERROR("Error loading dll [" << io::shortname(filename) << "] (WIN32 error: " << GetLastError() << ")",
                    dlHandle != NULL);
       }
@@ -785,25 +781,23 @@ namespace occa {
 
     handleFunction_t dlsym(void *dlHandle,
                            const std::string &functionName,
-                           const hash_t &hash,
-                           const std::string &hashTag) {
+                           const io::lock_t &lock) {
 
 #if (OCCA_OS & (OCCA_LINUX_OS | OCCA_MACOS_OS))
       void *sym = ::dlsym(dlHandle, functionName.c_str());
 
       char *dlError;
 
-      if (((dlError = dlerror()) != NULL) && hash.initialized) {
-        io::releaseHash(hash, hashTag);
-
+      if ((dlError = dlerror()) != NULL) {
+        lock.release();
         OCCA_ERROR("Error loading symbol from binary with dlsym (DL Error: " << dlError << ")",
                    false);
       }
 #else
       void *sym = GetProcAddress((HMODULE) dlHandle, functionName.c_str());
 
-      if ((sym == NULL) && hash.initialized) {
-
+      if (sym == NULL) {
+        lock.release();
         OCCA_ERROR("Error loading symbol from binary with GetProcAddress",
                    false);
       }
