@@ -22,12 +22,12 @@
 
 #include <map>
 
-#include "occa/base.hpp"
-#include "occa/memory.hpp"
-#include "occa/device.hpp"
-#include "occa/modes/serial/memory.hpp"
-#include "occa/uva.hpp"
-#include "occa/tools/sys.hpp"
+#include <occa/base.hpp>
+#include <occa/memory.hpp>
+#include <occa/device.hpp>
+#include <occa/modes/serial/memory.hpp>
+#include <occa/uva.hpp>
+#include <occa/tools/sys.hpp>
 
 namespace occa {
   //---[ memory_v ]---------------------

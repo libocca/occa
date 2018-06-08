@@ -22,9 +22,9 @@
 #ifndef OCCA_PARSER_MODES_OPENCL_HEADER
 #define OCCA_PARSER_MODES_OPENCL_HEADER
 
-#include "occa/lang/parser.hpp"
-#include "occa/lang/modes/serial.hpp"
-#include "occa/lang/builtins/transforms/finders.hpp"
+#include <occa/lang/parser.hpp>
+#include <occa/lang/modes/serial.hpp>
+#include <occa/lang/builtins/transforms/finders.hpp>
 
 namespace occa {
   namespace lang {

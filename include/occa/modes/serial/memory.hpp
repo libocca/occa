@@ -23,8 +23,8 @@
 #ifndef OCCA_SERIAL_MEMORY_HEADER
 #define OCCA_SERIAL_MEMORY_HEADER
 
-#include "occa/defines.hpp"
-#include "occa/memory.hpp"
+#include <occa/defines.hpp>
+#include <occa/memory.hpp>
 
 namespace occa {
   namespace serial {

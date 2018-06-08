@@ -23,9 +23,9 @@
 #ifndef OCCA_HEADER
 #define OCCA_HEADER
 
-#include "occa/base.hpp"
-#include "occa/array.hpp"
-#include "occa/io.hpp"
-#include "occa/tools.hpp"
+#include <occa/base.hpp>
+#include <occa/array.hpp>
+#include <occa/io.hpp>
+#include <occa/tools.hpp>
 
 #endif

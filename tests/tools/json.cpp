@@ -21,10 +21,10 @@
  */
 #include <sstream>
 
-#include "occa/io.hpp"
-#include "occa/tools/json.hpp"
-#include "occa/tools/string.hpp"
-#include "occa/tools/testing.hpp"
+#include <occa/io.hpp>
+#include <occa/tools/json.hpp>
+#include <occa/tools/string.hpp>
+#include <occa/tools/testing.hpp>
 
 void testString();
 void testNumber();

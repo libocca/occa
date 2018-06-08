@@ -27,11 +27,11 @@
 #include <map>
 #include <stack>
 
-#include "occa/defines.hpp"
-#include "occa/types.hpp"
-#include "occa/lang/macro.hpp"
-#include "occa/lang/token.hpp"
-#include "occa/lang/stream.hpp"
+#include <occa/defines.hpp>
+#include <occa/types.hpp>
+#include <occa/lang/macro.hpp>
+#include <occa/lang/token.hpp>
+#include <occa/lang/stream.hpp>
 
 namespace occa {
   namespace lang {

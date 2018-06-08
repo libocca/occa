@@ -24,8 +24,8 @@
 #  ifndef OCCA_CUDA_DEVICE_HEADER
 #  define OCCA_CUDA_DEVICE_HEADER
 
-#include "occa/defines.hpp"
-#include "occa/device.hpp"
+#include <occa/defines.hpp>
+#include <occa/device.hpp>
 
 #include <cuda.h>
 

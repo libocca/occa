@@ -19,9 +19,9 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  */
-#include "occa/lang/expression.hpp"
-#include "occa/lang/token.hpp"
-#include "occa/lang/tokenContext.hpp"
+#include <occa/lang/expression.hpp>
+#include <occa/lang/token.hpp>
+#include <occa/lang/tokenContext.hpp>
 
 namespace occa {
   namespace lang {

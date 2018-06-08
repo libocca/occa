@@ -29,8 +29,8 @@
 
 #include <cstring>
 
-#include "occa/defines.hpp"
-#include "occa/types.hpp"
+#include <occa/defines.hpp>
+#include <occa/types.hpp>
 
 namespace occa {
   std::string strip(const std::string &str);

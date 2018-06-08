@@ -24,10 +24,10 @@
 
 #include <vector>
 
-#include "occa/lang/attribute.hpp"
-#include "occa/lang/baseStatement.hpp"
-#include "occa/lang/printer.hpp"
-#include "occa/lang/qualifier.hpp"
+#include <occa/lang/attribute.hpp>
+#include <occa/lang/baseStatement.hpp>
+#include <occa/lang/printer.hpp>
+#include <occa/lang/qualifier.hpp>
 
 namespace occa {
   namespace lang {

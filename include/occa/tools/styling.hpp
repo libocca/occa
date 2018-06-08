@@ -23,8 +23,8 @@
 #ifndef OCCA_TOOLS_STYLING_HEADER
 #define OCCA_TOOLS_STYLING_HEADER
 
-#include "occa/defines.hpp"
-#include "occa/types.hpp"
+#include <occa/defines.hpp>
+#include <occa/types.hpp>
 
 #include <iostream>
 #include <sstream>

@@ -23,8 +23,8 @@
 
 #include <alloca.h>
 
-#include "occa/defines.hpp"
-#include "occa/tools/sys.hpp"
+#include <occa/defines.hpp>
+#include <occa/tools/sys.hpp>
 
 namespace occa {
   //---[ Trie ]-------------------------

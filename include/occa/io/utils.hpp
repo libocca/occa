@@ -25,7 +25,7 @@
 
 #include <iostream>
 
-#include "occa/types.hpp"
+#include <occa/types.hpp>
 
 namespace occa {
   // Kernel Caching

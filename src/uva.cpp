@@ -22,10 +22,10 @@
 
 #include <map>
 
-#include "occa/tools/misc.hpp"
-#include "occa/tools/sys.hpp"
-#include "occa/base.hpp"
-#include "occa/uva.hpp"
+#include <occa/tools/misc.hpp>
+#include <occa/tools/sys.hpp>
+#include <occa/base.hpp>
+#include <occa/uva.hpp>
 
 namespace occa {
   ptrRangeMap uvaMap;

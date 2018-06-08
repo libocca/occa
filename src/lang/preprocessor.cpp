@@ -22,16 +22,16 @@
 #include <sstream>
 #include <stdlib.h>
 
-#include "occa/tools/hash.hpp"
-#include "occa/io.hpp"
-#include "occa/tools/lex.hpp"
-#include "occa/tools/string.hpp"
-#include "occa/lang/primitive.hpp"
+#include <occa/tools/hash.hpp>
+#include <occa/io.hpp>
+#include <occa/tools/lex.hpp>
+#include <occa/tools/string.hpp>
+#include <occa/lang/primitive.hpp>
 
-#include "occa/lang/preprocessor.hpp"
-#include "occa/lang/specialMacros.hpp"
-#include "occa/lang/expression.hpp"
-#include "occa/lang/tokenizer.hpp"
+#include <occa/lang/preprocessor.hpp>
+#include <occa/lang/specialMacros.hpp>
+#include <occa/lang/expression.hpp>
+#include <occa/lang/tokenizer.hpp>
 
 namespace occa {
   namespace lang {

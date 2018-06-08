@@ -24,10 +24,10 @@
 
 #include <iostream>
 
-#include "occa/tools/gc.hpp"
+#include <occa/tools/gc.hpp>
 
-#include "occa/lang/errorHandler.hpp"
-#include "occa/lang/operator.hpp"
+#include <occa/lang/errorHandler.hpp>
+#include <occa/lang/operator.hpp>
 
 namespace occa {
   namespace lang {

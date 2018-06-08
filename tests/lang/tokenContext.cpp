@@ -21,12 +21,12 @@
  */
 #include <sstream>
 
-#include "occa/tools/testing.hpp"
+#include <occa/tools/testing.hpp>
 
-#include "occa/lang/exprNode.hpp"
-#include "occa/lang/token.hpp"
-#include "occa/lang/tokenizer.hpp"
-#include "occa/lang/tokenContext.hpp"
+#include <occa/lang/exprNode.hpp>
+#include <occa/lang/token.hpp>
+#include <occa/lang/tokenizer.hpp>
+#include <occa/lang/tokenContext.hpp>
 
 using namespace occa::lang;
 

@@ -25,12 +25,12 @@
 #include <list>
 #include <vector>
 
-#include "occa/io.hpp"
-#include "occa/tools/trie.hpp"
-#include "occa/lang/errorHandler.hpp"
-#include "occa/lang/file.hpp"
-#include "occa/lang/printer.hpp"
-#include "occa/lang/stream.hpp"
+#include <occa/io.hpp>
+#include <occa/tools/trie.hpp>
+#include <occa/lang/errorHandler.hpp>
+#include <occa/lang/file.hpp>
+#include <occa/lang/printer.hpp>
+#include <occa/lang/stream.hpp>
 
 namespace occa {
   namespace lang {

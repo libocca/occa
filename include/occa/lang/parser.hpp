@@ -26,16 +26,16 @@
 #include <map>
 #include <vector>
 
-#include "occa/tools/properties.hpp"
-#include "occa/lang/exprTransform.hpp"
-#include "occa/lang/keyword.hpp"
-#include "occa/lang/preprocessor.hpp"
-#include "occa/lang/processingStages.hpp"
-#include "occa/lang/statement.hpp"
-#include "occa/lang/statementTransform.hpp"
-#include "occa/lang/tokenizer.hpp"
-#include "occa/lang/tokenContext.hpp"
-#include "occa/lang/variable.hpp"
+#include <occa/tools/properties.hpp>
+#include <occa/lang/exprTransform.hpp>
+#include <occa/lang/keyword.hpp>
+#include <occa/lang/preprocessor.hpp>
+#include <occa/lang/processingStages.hpp>
+#include <occa/lang/statement.hpp>
+#include <occa/lang/statementTransform.hpp>
+#include <occa/lang/tokenizer.hpp>
+#include <occa/lang/tokenContext.hpp>
+#include <occa/lang/variable.hpp>
 
 namespace occa {
   namespace lang {
@@ -261,6 +261,6 @@ namespace occa {
   }
 }
 
-#include "occa/lang/parser.tpp"
+#include <occa/lang/parser.tpp>
 
 #endif

@@ -19,14 +19,14 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  */
-#include "occa/io.hpp"
-#include "occa/lang/attribute.hpp"
-#include "occa/lang/expression.hpp"
-#include "occa/lang/parser.hpp"
-#include "occa/lang/variable.hpp"
-#include "occa/lang/builtins/attributes.hpp"
-#include "occa/lang/builtins/transforms.hpp"
-#include "occa/lang/builtins/types.hpp"
+#include <occa/io.hpp>
+#include <occa/lang/attribute.hpp>
+#include <occa/lang/expression.hpp>
+#include <occa/lang/parser.hpp>
+#include <occa/lang/variable.hpp>
+#include <occa/lang/builtins/attributes.hpp>
+#include <occa/lang/builtins/transforms.hpp>
+#include <occa/lang/builtins/types.hpp>
 
 namespace occa {
   namespace lang {

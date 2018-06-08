@@ -25,9 +25,9 @@
 
 #include <iostream>
 
-#include "occa/defines.hpp"
-#include "occa/tools/gc.hpp"
-#include "occa/tools/properties.hpp"
+#include <occa/defines.hpp>
+#include <occa/tools/gc.hpp>
+#include <occa/tools/properties.hpp>
 
 namespace occa {
   class kernel_v; class kernel;

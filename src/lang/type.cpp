@@ -20,9 +20,9 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  */
 
-#include "occa/lang/exprNode.hpp"
-#include "occa/lang/type.hpp"
-#include "occa/lang/variable.hpp"
+#include <occa/lang/exprNode.hpp>
+#include <occa/lang/type.hpp>
+#include <occa/lang/variable.hpp>
 
 namespace occa {
   namespace lang {

@@ -19,11 +19,11 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  */
-#include "occa/lang/baseStatement.hpp"
-#include "occa/lang/token.hpp"
-#include "occa/lang/type.hpp"
-#include "occa/lang/builtins/transforms/fillExprIdentifiers.hpp"
-#include "occa/lang/builtins/transforms/replacer.hpp"
+#include <occa/lang/baseStatement.hpp>
+#include <occa/lang/token.hpp>
+#include <occa/lang/type.hpp>
+#include <occa/lang/builtins/transforms/fillExprIdentifiers.hpp>
+#include <occa/lang/builtins/transforms/replacer.hpp>
 
 namespace occa {
   namespace lang {

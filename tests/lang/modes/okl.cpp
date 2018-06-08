@@ -20,7 +20,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  */
 #include "../parserUtils.hpp"
-#include "occa/lang/modes/okl.hpp"
+#include <occa/lang/modes/okl.hpp>
 
 
 #define parseOKLSource(src_)                        \

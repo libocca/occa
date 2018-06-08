@@ -23,13 +23,13 @@
 #ifndef OCCA_SERIAL_REGISTRATION_HEADER
 #define OCCA_SERIAL_REGISTRATION_HEADER
 
-#include "occa/defines.hpp"
-#include "occa/mode.hpp"
-#include "occa/modes/serial/device.hpp"
-#include "occa/modes/serial/kernel.hpp"
-#include "occa/modes/serial/memory.hpp"
-#include "occa/tools/styling.hpp"
-#include "occa/base.hpp"
+#include <occa/defines.hpp>
+#include <occa/mode.hpp>
+#include <occa/modes/serial/device.hpp>
+#include <occa/modes/serial/kernel.hpp>
+#include <occa/modes/serial/memory.hpp>
+#include <occa/tools/styling.hpp>
+#include <occa/base.hpp>
 
 namespace occa {
   namespace serial {

@@ -25,8 +25,8 @@
 #include <map>
 #include <string>
 
-#include "occa/defines.hpp"
-#include "occa/tools/sys.hpp"
+#include <occa/defines.hpp>
+#include <occa/tools/sys.hpp>
 
 namespace occa {
   namespace lang {

@@ -22,7 +22,7 @@
 
 #include <fstream>
 
-#include "occa.hpp"
+#include <occa.hpp>
 
 occa::cli::command occaCommand;
 

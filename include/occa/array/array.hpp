@@ -23,10 +23,10 @@
 #ifndef OCCA_ARRAY_ARRAY_HEADER
 #define OCCA_ARRAY_ARRAY_HEADER
 
-#include "occa/defines.hpp"
-#include "occa/base.hpp"
-#include "occa/tools/misc.hpp"
-#include "occa/array/linalg.hpp"
+#include <occa/defines.hpp>
+#include <occa/base.hpp>
+#include <occa/tools/misc.hpp>
+#include <occa/array/linalg.hpp>
 
 namespace occa {
   static const int copyOnHost          = (1 << 0);
@@ -464,6 +464,6 @@ namespace occa {
   };
 }
 
-#include "occa/array/array.tpp"
+#include <occa/array/array.tpp>
 
 #endif

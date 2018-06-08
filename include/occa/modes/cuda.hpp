@@ -20,13 +20,13 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  */
 
-#include "occa/defines.hpp"
+#include <occa/defines.hpp>
 
 #if OCCA_CUDA_ENABLED
 #  ifndef OCCA_CUDA_HEADER
 #  define OCCA_CUDA_HEADER
 
-#include "occa/modes/cuda/utils.hpp"
+#include <occa/modes/cuda/utils.hpp>
 
 #  endif
 #endif

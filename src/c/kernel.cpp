@@ -21,8 +21,8 @@
  */
 #include <stdarg.h>
 
-#include "occa/c/types.hpp"
-#include "occa/c/kernel.h"
+#include <occa/c/types.hpp>
+#include <occa/c/kernel.h>
 
 OCCA_START_EXTERN_C
 

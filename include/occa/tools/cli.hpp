@@ -27,8 +27,8 @@
 #include <vector>
 #include <map>
 
-#include "occa/types.hpp"
-#include "occa/tools/json.hpp"
+#include <occa/types.hpp>
+#include <occa/tools/json.hpp>
 
 namespace occa {
   namespace cli {

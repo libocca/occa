@@ -23,8 +23,8 @@
 #ifndef OCCA_TOOLS_MISC_HEADER
 #define OCCA_TOOLS_MISC_HEADER
 
-#include "occa/defines.hpp"
-#include "occa/types.hpp"
+#include <occa/defines.hpp>
+#include <occa/types.hpp>
 
 namespace occa {
   int maxBase2Bit(const int value);

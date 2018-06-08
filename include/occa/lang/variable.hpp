@@ -22,7 +22,7 @@
 #ifndef OCCA_LANG_VARIABLE_HEADER
 #define OCCA_LANG_VARIABLE_HEADER
 
-#include "occa/lang/type.hpp"
+#include <occa/lang/type.hpp>
 
 namespace occa {
   namespace lang {

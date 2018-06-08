@@ -22,7 +22,7 @@
 #ifndef OCCA_LANG_BUILTINS_ATTRIBUTES_TILE_HEADER
 #define OCCA_LANG_BUILTINS_ATTRIBUTES_TILE_HEADER
 
-#include "occa/lang/attribute.hpp"
+#include <occa/lang/attribute.hpp>
 
 namespace occa {
   namespace lang {

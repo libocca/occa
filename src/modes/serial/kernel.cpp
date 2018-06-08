@@ -20,11 +20,11 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  */
 
-#include "occa/base.hpp"
-#include "occa/tools/env.hpp"
-#include "occa/io.hpp"
-#include "occa/modes/serial/kernel.hpp"
-#include "occa/lang/modes/serial.hpp"
+#include <occa/base.hpp>
+#include <occa/tools/env.hpp>
+#include <occa/io.hpp>
+#include <occa/modes/serial/kernel.hpp>
+#include <occa/lang/modes/serial.hpp>
 
 namespace occa {
   namespace serial {

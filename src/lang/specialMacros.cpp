@@ -22,11 +22,11 @@
 #include <sstream>
 #include <ctime>
 
-#include "occa/tools/string.hpp"
-#include "occa/io.hpp"
+#include <occa/tools/string.hpp>
+#include <occa/io.hpp>
 
-#include "occa/lang/preprocessor.hpp"
-#include "occa/lang/specialMacros.hpp"
+#include <occa/lang/preprocessor.hpp>
+#include <occa/lang/specialMacros.hpp>
 
 namespace occa {
   namespace lang {

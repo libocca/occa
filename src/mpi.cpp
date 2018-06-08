@@ -20,13 +20,13 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  */
 
-#include "occa/defines.hpp"
+#include <occa/defines.hpp>
 
 #if OCCA_MPI_ENABLED
 
-#include "occa/base.hpp"
-#include "occa/mpi.hpp"
-#include "occa/tools/tls.hpp"
+#include <occa/base.hpp>
+#include <occa/mpi.hpp>
+#include <occa/tools/tls.hpp>
 
 namespace occa {
   namespace mpi {

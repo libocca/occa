@@ -23,7 +23,7 @@
 #ifndef OCCA_LANG_KERNELMETADATA_HEADER
 #define OCCA_LANG_KERNELMETADATA_HEADER
 
-#include "occa/tools/json.hpp"
+#include <occa/tools/json.hpp>
 
 namespace occa {
   namespace lang {

@@ -20,15 +20,15 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  */
 
-#include "occa/defines.hpp"
+#include <occa/defines.hpp>
 
 #if OCCA_OPENCL_ENABLED
 #  ifndef OCCA_OPENCL_KERNEL_HEADER
 #  define OCCA_OPENCL_KERNEL_HEADER
 
-#include "occa/kernel.hpp"
-#include "occa/modes/opencl/headers.hpp"
-#include "occa/modes/opencl/utils.hpp"
+#include <occa/kernel.hpp>
+#include <occa/modes/opencl/headers.hpp>
+#include <occa/modes/opencl/utils.hpp>
 
 namespace occa {
   namespace opencl {

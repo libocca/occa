@@ -22,7 +22,7 @@
 #ifndef OCCA_LANG_SCOPE_HEADER
 #define OCCA_LANG_SCOPE_HEADER
 
-#include "occa/lang/keyword.hpp"
+#include <occa/lang/keyword.hpp>
 
 namespace occa {
   namespace lang {

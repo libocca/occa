@@ -25,7 +25,7 @@
 #include <stack>
 #include <vector>
 
-#include "occa/lang/exprNode.hpp"
+#include <occa/lang/exprNode.hpp>
 
 namespace occa {
   namespace lang {

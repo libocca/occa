@@ -23,7 +23,7 @@
 #ifndef OCCA_VECTOR_DEFINE_HEADER
 #define OCCA_VECTOR_DEFINE_HEADER
 
-#include "occa/defines.hpp"
+#include <occa/defines.hpp>
 
 #if OCCA_MMX
 #  include <mmintrin.h>

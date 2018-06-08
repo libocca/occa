@@ -28,16 +28,16 @@
 
 #include <stdint.h>
 
-#include "occa/defines.hpp"
-#include "occa/types.hpp"
+#include <occa/defines.hpp>
+#include <occa/types.hpp>
 
 #if OCCA_SSE
 #  include <xmmintrin.h>
 #endif
 
-#include "occa/device.hpp"
-#include "occa/kernel.hpp"
-#include "occa/memory.hpp"
+#include <occa/device.hpp>
+#include <occa/kernel.hpp>
+#include <occa/memory.hpp>
 
 namespace occa {
   //---[ Device Functions ]-------------

@@ -22,10 +22,10 @@
 #ifndef OCCA_LANG_OPERATOR_HEADER
 #define OCCA_LANG_OPERATOR_HEADER
 
-#include "occa/types.hpp"
-#include "occa/tools/trie.hpp"
-#include "occa/lang/primitive.hpp"
-#include "occa/lang/printer.hpp"
+#include <occa/types.hpp>
+#include <occa/tools/trie.hpp>
+#include <occa/lang/primitive.hpp>
+#include <occa/lang/printer.hpp>
 
 namespace occa {
   namespace lang {

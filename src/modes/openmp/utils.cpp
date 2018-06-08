@@ -20,15 +20,15 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  */
 
-#include "occa/defines.hpp"
+#include <occa/defines.hpp>
 
 #if OCCA_OPENMP_ENABLED
 
 #include <iostream>
 
-#include "occa/tools/env.hpp"
-#include "occa/io.hpp"
-#include "occa/tools/sys.hpp"
+#include <occa/tools/env.hpp>
+#include <occa/io.hpp>
+#include <occa/tools/sys.hpp>
 
 namespace occa {
   namespace openmp {

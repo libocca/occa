@@ -20,7 +20,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  */
 
-#include "occa/tools/gc.hpp"
+#include <occa/tools/gc.hpp>
 #include <iostream>
 
 namespace occa {

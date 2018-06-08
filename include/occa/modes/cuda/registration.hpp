@@ -20,18 +20,18 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  */
 
-#include "occa/defines.hpp"
+#include <occa/defines.hpp>
 
 #if OCCA_CUDA_ENABLED
 #  ifndef OCCA_CUDA_REGISTRATION_HEADER
 #  define OCCA_CUDA_REGISTRATION_HEADER
 
-#include "occa/mode.hpp"
-#include "occa/modes/cuda/device.hpp"
-#include "occa/modes/cuda/kernel.hpp"
-#include "occa/modes/cuda/memory.hpp"
-#include "occa/tools/styling.hpp"
-#include "occa/base.hpp"
+#include <occa/mode.hpp>
+#include <occa/modes/cuda/device.hpp>
+#include <occa/modes/cuda/kernel.hpp>
+#include <occa/modes/cuda/memory.hpp>
+#include <occa/tools/styling.hpp>
+#include <occa/base.hpp>
 
 namespace occa {
   namespace cuda {

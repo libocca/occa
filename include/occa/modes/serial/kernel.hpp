@@ -23,9 +23,9 @@
 #ifndef OCCA_SERIAL_KERNEL_HEADER
 #define OCCA_SERIAL_KERNEL_HEADER
 
-#include "occa/defines.hpp"
-#include "occa/kernel.hpp"
-#include "occa/tools/sys.hpp"
+#include <occa/defines.hpp>
+#include <occa/kernel.hpp>
+#include <occa/tools/sys.hpp>
 
 namespace occa {
   namespace serial {

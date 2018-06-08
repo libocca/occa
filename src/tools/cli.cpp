@@ -24,11 +24,11 @@
 #include <iomanip>
 #include <sstream>
 
-#include "occa/tools/cli.hpp"
-#include "occa/tools/env.hpp"
-#include "occa/io.hpp"
-#include "occa/tools/lex.hpp"
-#include "occa/tools/string.hpp"
+#include <occa/tools/cli.hpp>
+#include <occa/tools/env.hpp>
+#include <occa/io.hpp>
+#include <occa/tools/lex.hpp>
+#include <occa/tools/string.hpp>
 
 namespace occa {
   namespace cli {

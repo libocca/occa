@@ -25,10 +25,10 @@
 #include <stack>
 #include <vector>
 
-#include "occa/lang/primitive.hpp"
-#include "occa/lang/token.hpp"
-#include "occa/lang/operator.hpp"
-#include "occa/lang/printer.hpp"
+#include <occa/lang/primitive.hpp>
+#include <occa/lang/token.hpp>
+#include <occa/lang/operator.hpp>
+#include <occa/lang/printer.hpp>
 
 namespace occa {
   namespace lang {

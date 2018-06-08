@@ -20,11 +20,11 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  */
 
-#include "occa/tools/testing.hpp"
+#include <occa/tools/testing.hpp>
 
-#include "occa/lang/token.hpp"
-#include "occa/lang/tokenizer.hpp"
-#include "occa/lang/processingStages.hpp"
+#include <occa/lang/token.hpp>
+#include <occa/lang/tokenizer.hpp>
+#include <occa/lang/processingStages.hpp>
 
 void testSkipMethods();
 void testPushPop();

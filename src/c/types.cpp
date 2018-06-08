@@ -20,7 +20,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  */
 
-#include "occa/c/types.hpp"
+#include <occa/c/types.hpp>
 
 namespace occa {
   namespace c {

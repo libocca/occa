@@ -19,7 +19,7 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  */
-#include "occa/defines.hpp"
+#include <occa/defines.hpp>
 
 #if (OCCA_OS & (OCCA_LINUX_OS | OCCA_MACOS_OS))
 #  include <stdio.h>
@@ -27,9 +27,9 @@
 #  include <windows.h>
 #endif
 
-#include "occa/tools/lex.hpp"
-#include "occa/tools/string.hpp"
-#include "occa/tools/sys.hpp"
+#include <occa/tools/lex.hpp>
+#include <occa/tools/string.hpp>
+#include <occa/tools/sys.hpp>
 
 namespace occa {
   std::string strip(const std::string &str) {

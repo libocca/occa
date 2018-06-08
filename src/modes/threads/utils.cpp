@@ -20,9 +20,9 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  */
 
-#include "occa/tools/sys.hpp"
-#include "occa/modes/serial/kernel.hpp"
-#include "occa/modes/threads/utils.hpp"
+#include <occa/tools/sys.hpp>
+#include <occa/modes/serial/kernel.hpp>
+#include <occa/modes/threads/utils.hpp>
 
 namespace occa {
   namespace threads {

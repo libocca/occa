@@ -20,7 +20,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  */
 
-#include "occa/defines.hpp"
+#include <occa/defines.hpp>
 
 #if OCCA_MPI_ENABLED
 #  ifndef OCCA_MPI_HEADER
@@ -29,7 +29,7 @@
 #include <mpi.h>
 #include <vector>
 
-#include "occa/tools/json.hpp"
+#include <occa/tools/json.hpp>
 
 namespace occa {
   namespace mpi {

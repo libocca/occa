@@ -20,8 +20,8 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  */
 
-#include "occa/defines.hpp"
-#include "occa/tools/sys.hpp"
+#include <occa/defines.hpp>
+#include <occa/tools/sys.hpp>
 
 namespace occa {
   template <class TM, const int idxType>

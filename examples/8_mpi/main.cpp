@@ -21,8 +21,8 @@
  */
 #include <iostream>
 
-#include "occa.hpp"
-#include "occa/mpi.hpp"
+#include <occa.hpp>
+#include <occa/mpi.hpp>
 
 int main(int argc, char **argv) {
   MPI_Init(&argc, &argv);

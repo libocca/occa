@@ -20,10 +20,10 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  */
 
-#include "occa/modes/threads/kernel.hpp"
-#include "occa/modes/threads/device.hpp"
-#include "occa/modes/threads/utils.hpp"
-#include "occa/base.hpp"
+#include <occa/modes/threads/kernel.hpp>
+#include <occa/modes/threads/device.hpp>
+#include <occa/modes/threads/utils.hpp>
+#include <occa/base.hpp>
 
 namespace occa {
   namespace threads {

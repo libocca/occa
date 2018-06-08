@@ -22,7 +22,7 @@
 #ifndef OCCA_PARSER_MODES_OPENMP_HEADER
 #define OCCA_PARSER_MODES_OPENMP_HEADER
 
-#include "occa/lang/modes/serial.hpp"
+#include <occa/lang/modes/serial.hpp>
 
 namespace occa {
   namespace lang {

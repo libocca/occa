@@ -20,8 +20,8 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  */
 
-#include "occa/lang/variable.hpp"
-#include "occa/lang/builtins/transforms/finders.hpp"
+#include <occa/lang/variable.hpp>
+#include <occa/lang/builtins/transforms/finders.hpp>
 
 namespace occa {
   namespace lang {

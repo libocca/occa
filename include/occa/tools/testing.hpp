@@ -20,9 +20,9 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  */
 
-#include "occa/defines.hpp"
-#include "occa/tools/string.hpp"
-#include "occa/tools/sys.hpp"
+#include <occa/defines.hpp>
+#include <occa/tools/string.hpp>
+#include <occa/tools/sys.hpp>
 
 #define OCCA_ASSERT_EQUAL(a, b)                 \
   OCCA_ERROR("Comparison Failed",               \

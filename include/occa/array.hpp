@@ -20,4 +20,4 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  */
 
-#include "occa/array/array.hpp"
+#include <occa/array/array.hpp>

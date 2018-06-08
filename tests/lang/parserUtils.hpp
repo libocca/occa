@@ -22,12 +22,12 @@
 #ifndef OCCA_TESTS_PARSER_PARSERUTILS_HEADER
 #define OCCA_TESTS_PARSER_PARSERUTILS_HEADER
 
-#include "occa/tools/testing.hpp"
+#include <occa/tools/testing.hpp>
 
-#include "occa/lang/exprNode.hpp"
-#include "occa/lang/parser.hpp"
-#include "occa/lang/builtins/types.hpp"
-#include "occa/lang/builtins/attributes.hpp"
+#include <occa/lang/exprNode.hpp>
+#include <occa/lang/parser.hpp>
+#include <occa/lang/builtins/types.hpp>
+#include <occa/lang/builtins/attributes.hpp>
 
 using namespace occa::lang;
 

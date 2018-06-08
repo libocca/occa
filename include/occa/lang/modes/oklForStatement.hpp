@@ -22,7 +22,7 @@
 #ifndef OCCA_TESTS_PARSER_MODES_OKLFORSTATEMENT_HEADER
 #define OCCA_TESTS_PARSER_MODES_OKLFORSTATEMENT_HEADER
 
-#include "occa/lang/statement.hpp"
+#include <occa/lang/statement.hpp>
 
 namespace occa {
   namespace lang {

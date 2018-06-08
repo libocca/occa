@@ -20,8 +20,8 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  */
 
-#include "occa/tools/properties.hpp"
-#include "occa/tools/string.hpp"
+#include <occa/tools/properties.hpp>
+#include <occa/tools/string.hpp>
 
 namespace occa {
   properties::properties() {

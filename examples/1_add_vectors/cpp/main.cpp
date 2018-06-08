@@ -21,7 +21,7 @@
  */
 #include <iostream>
 
-#include "occa.hpp"
+#include <occa.hpp>
 
 int main(int argc, char **argv) {
   occa::printModeInfo();

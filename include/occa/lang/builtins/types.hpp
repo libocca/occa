@@ -22,7 +22,7 @@
 #ifndef OCCA_LANG_BUILTINS_TYPES_HEADER
 #define OCCA_LANG_BUILTINS_TYPES_HEADER
 
-#include "occa/lang/type.hpp"
+#include <occa/lang/type.hpp>
 
 namespace occa {
   namespace lang {

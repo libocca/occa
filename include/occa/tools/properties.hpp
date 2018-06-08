@@ -23,7 +23,7 @@
 #ifndef OCCA_TOOLS_PROPERTIES_HEADER
 #define OCCA_TOOLS_PROPERTIES_HEADER
 
-#include "occa/tools/json.hpp"
+#include <occa/tools/json.hpp>
 
 namespace occa {
   class properties: public json {

@@ -20,18 +20,18 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  */
 
-#include "occa/defines.hpp"
+#include <occa/defines.hpp>
 
 #if OCCA_OPENCL_ENABLED
 #  ifndef OCCA_OPENCL_REGISTRATION_HEADER
 #  define OCCA_OPENCL_REGISTRATION_HEADER
 
-#include "occa/mode.hpp"
-#include "occa/modes/opencl/device.hpp"
-#include "occa/modes/opencl/kernel.hpp"
-#include "occa/modes/opencl/memory.hpp"
-#include "occa/tools/styling.hpp"
-#include "occa/base.hpp"
+#include <occa/mode.hpp>
+#include <occa/modes/opencl/device.hpp>
+#include <occa/modes/opencl/kernel.hpp>
+#include <occa/modes/opencl/memory.hpp>
+#include <occa/tools/styling.hpp>
+#include <occa/base.hpp>
 
 namespace occa {
   namespace opencl {

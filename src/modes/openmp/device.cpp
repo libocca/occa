@@ -20,16 +20,16 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  */
 
-#include "occa/defines.hpp"
+#include <occa/defines.hpp>
 
 #if OCCA_OPENMP_ENABLED
 
 #include <omp.h>
 
-#include "occa/modes/serial/device.hpp"
-#include "occa/modes/openmp/device.hpp"
-#include "occa/modes/openmp/kernel.hpp"
-#include "occa/modes/openmp/utils.hpp"
+#include <occa/modes/serial/device.hpp>
+#include <occa/modes/openmp/device.hpp>
+#include <occa/modes/openmp/kernel.hpp>
+#include <occa/modes/openmp/utils.hpp>
 
 namespace occa {
   namespace openmp {

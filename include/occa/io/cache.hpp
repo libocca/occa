@@ -25,7 +25,7 @@
 
 #include <iostream>
 
-#include "occa/tools/hash.hpp"
+#include <occa/tools/hash.hpp>
 
 namespace occa {
   class properties;

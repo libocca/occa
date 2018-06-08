@@ -20,7 +20,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  */
 
-#include "occa/defines.hpp"
+#include <occa/defines.hpp>
 
 #if OCCA_OPENCL_ENABLED
 #  ifndef OCCA_OPENCL_UTILS_HEADER
@@ -28,8 +28,8 @@
 
 #include <iostream>
 
-#include "occa/modes/opencl/headers.hpp"
-#include "occa/device.hpp"
+#include <occa/modes/opencl/headers.hpp>
+#include <occa/device.hpp>
 
 namespace occa {
   class streamTag;

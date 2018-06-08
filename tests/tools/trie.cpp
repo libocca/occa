@@ -22,10 +22,10 @@
 #include <time.h>
 #include <stdlib.h>
 
-#include "occa/tools/testing.hpp"
-#include "occa/tools/trie.hpp"
-#include "occa/io.hpp"
-#include "occa/tools/lex.hpp"
+#include <occa/tools/testing.hpp>
+#include <occa/tools/trie.hpp>
+#include <occa/io.hpp>
+#include <occa/tools/lex.hpp>
 
 void testInsert(occa::trie<std::string> &trie);
 void testSearch(occa::trie<std::string> &trie);

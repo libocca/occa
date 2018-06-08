@@ -26,7 +26,7 @@
 #include <map>
 #include <vector>
 
-#include "occa/types.hpp"
+#include <occa/types.hpp>
 
 namespace occa {
   namespace lang {

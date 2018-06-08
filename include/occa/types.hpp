@@ -28,8 +28,8 @@
 #include <map>
 #include <stdint.h>
 
-#include "occa/defines.hpp"
-#include "occa/vector.hpp"
+#include <occa/defines.hpp>
+#include <occa/vector.hpp>
 
 namespace occa {
   typedef int64_t dim_t;

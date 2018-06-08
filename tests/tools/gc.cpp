@@ -19,9 +19,9 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  */
-#include "occa/defines.hpp"
-#include "occa/tools/sys.hpp"
-#include "occa/tools/gc.hpp"
+#include <occa/defines.hpp>
+#include <occa/tools/sys.hpp>
+#include <occa/tools/gc.hpp>
 
 class test : public occa::withRef {
 public:

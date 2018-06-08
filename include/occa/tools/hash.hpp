@@ -25,8 +25,8 @@
 
 #include <iostream>
 
-#include "occa/defines.hpp"
-#include "occa/types.hpp"
+#include <occa/defines.hpp>
+#include <occa/types.hpp>
 
 namespace occa {
   // Uses FNV hashing

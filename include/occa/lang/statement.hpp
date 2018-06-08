@@ -24,10 +24,10 @@
 
 #include <vector>
 
-#include "occa/lang/baseStatement.hpp"
-#include "occa/lang/scope.hpp"
-#include "occa/lang/token.hpp"
-#include "occa/lang/type.hpp"
+#include <occa/lang/baseStatement.hpp>
+#include <occa/lang/scope.hpp>
+#include <occa/lang/token.hpp>
+#include <occa/lang/type.hpp>
 
 namespace occa {
   namespace lang {

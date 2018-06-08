@@ -26,10 +26,10 @@
 #include <iostream>
 #include <sstream>
 
-#include "occa/defines.hpp"
-#include "occa/uva.hpp"
-#include "occa/kernel.hpp"
-#include "occa/tools/gc.hpp"
+#include <occa/defines.hpp>
+#include <occa/uva.hpp>
+#include <occa/kernel.hpp>
+#include <occa/tools/gc.hpp>
 
 namespace occa {
   class kernel_v; class kernel;

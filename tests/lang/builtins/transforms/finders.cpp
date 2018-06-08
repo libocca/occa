@@ -21,7 +21,7 @@
  */
 
 #include "../../parserUtils.hpp"
-#include "occa/lang/builtins/transforms/finders.hpp"
+#include <occa/lang/builtins/transforms/finders.hpp>
 
 void testStatementFinder();
 void testExprNodeFinder();

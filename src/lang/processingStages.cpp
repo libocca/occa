@@ -20,8 +20,8 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  */
 
-#include "occa/lang/token.hpp"
-#include "occa/lang/processingStages.hpp"
+#include <occa/lang/token.hpp>
+#include <occa/lang/processingStages.hpp>
 
 namespace occa {
   namespace lang {

@@ -23,9 +23,9 @@
 #include <algorithm>
 #include <sstream>
 
-#include "occa/types.hpp"
-#include "occa/array/linalg.hpp"
-#include "occa/tools/lex.hpp"
+#include <occa/types.hpp>
+#include <occa/array/linalg.hpp>
+#include <occa/tools/lex.hpp>
 
 namespace occa {
   namespace linalg {

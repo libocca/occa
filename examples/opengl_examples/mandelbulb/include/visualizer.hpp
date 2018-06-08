@@ -30,7 +30,7 @@
 #include <math.h>
 #include <ctime>
 
-#include "occa.hpp"
+#include <occa.hpp>
 
 #if   (OCCA_OS == OCCA_LINUX_OS)
 #  include <GL/glew.h>

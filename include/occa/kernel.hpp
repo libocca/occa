@@ -26,10 +26,10 @@
 #include <iostream>
 #include <stdint.h>
 
-#include "occa/defines.hpp"
-#include "occa/tools/gc.hpp"
-#include "occa/tools/properties.hpp"
-#include "occa/lang/kernelMetadata.hpp"
+#include <occa/defines.hpp>
+#include <occa/tools/gc.hpp>
+#include <occa/tools/properties.hpp>
+#include <occa/lang/kernelMetadata.hpp>
 
 namespace occa {
   class kernel_v; class kernel;
@@ -281,7 +281,7 @@ namespace occa {
     void runFromArguments() const;
     void clearArgumentList();
 
-#include "occa/operators/declarations.hpp"
+#include <occa/operators/declarations.hpp>
 
     void free();
   };

@@ -20,9 +20,9 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  */
 
-#include "occa/c/types.hpp"
-#include "occa/c/base.h"
-#include "occa/tools/env.hpp"
+#include <occa/c/types.hpp>
+#include <occa/c/base.h>
+#include <occa/tools/env.hpp>
 
 OCCA_START_EXTERN_C
 

@@ -20,7 +20,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  */
 
-#include "occa/tools/misc.hpp"
+#include <occa/tools/misc.hpp>
 
 namespace occa {
   //---[ Misc Functions ]---------------

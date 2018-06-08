@@ -24,9 +24,9 @@
 
 #include <vector>
 
-#include "occa/lang/primitive.hpp"
-#include "occa/lang/file.hpp"
-#include "occa/lang/printer.hpp"
+#include <occa/lang/primitive.hpp>
+#include <occa/lang/file.hpp>
+#include <occa/lang/printer.hpp>
 
 namespace occa {
   namespace lang {

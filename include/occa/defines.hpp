@@ -23,7 +23,7 @@
 #ifndef OCCA_DEFINES_HEADER
 #define OCCA_DEFINES_HEADER
 
-#include "occa/defines/compiledDefines.hpp"
+#include <occa/defines/compiledDefines.hpp>
 
 #ifndef OCCA_USING_VS
 #  ifdef _MSC_VER

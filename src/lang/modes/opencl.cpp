@@ -19,12 +19,12 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  */
-#include "occa/tools/string.hpp"
-#include "occa/lang/modes/opencl.hpp"
-#include "occa/lang/modes/okl.hpp"
-#include "occa/lang/modes/oklForStatement.hpp"
-#include "occa/lang/builtins/attributes.hpp"
-#include "occa/lang/builtins/types.hpp"
+#include <occa/tools/string.hpp>
+#include <occa/lang/modes/opencl.hpp>
+#include <occa/lang/modes/okl.hpp>
+#include <occa/lang/modes/oklForStatement.hpp>
+#include <occa/lang/builtins/attributes.hpp>
+#include <occa/lang/builtins/types.hpp>
 
 /*
 //---[ Loop Info ]--------------------------------

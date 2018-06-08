@@ -25,7 +25,7 @@
 #include <vector>
 #include <map>
 
-#include "occa/lang/token.hpp"
+#include <occa/lang/token.hpp>
 
 namespace occa {
   namespace lang {

@@ -26,9 +26,9 @@
 #include <iostream>
 #include <sstream>
 
-#include "occa/defines.hpp"
-#include "occa/types.hpp"
-#include "occa/tools/hash.hpp"
+#include <occa/defines.hpp>
+#include <occa/types.hpp>
+#include <occa/tools/hash.hpp>
 
 namespace occa {
   typedef void (*handleFunction_t)(...);

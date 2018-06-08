@@ -20,11 +20,11 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  */
 
-#include "occa/defines.hpp"
+#include <occa/defines.hpp>
 
 #if OCCA_OPENCL_ENABLED
 
-#include "occa/modes/opencl/registration.hpp"
+#include <occa/modes/opencl/registration.hpp>
 
 namespace occa {
   namespace opencl {

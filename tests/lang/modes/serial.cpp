@@ -22,7 +22,7 @@
 
 #define OCCA_TEST_PARSER_TYPE okl::serialParser
 
-#include "occa/lang/modes/serial.hpp"
+#include <occa/lang/modes/serial.hpp>
 #include "../parserUtils.hpp"
 
 void testPreprocessor();

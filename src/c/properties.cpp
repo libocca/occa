@@ -20,8 +20,8 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  */
 
-#include "occa/c/types.hpp"
-#include "occa/c/properties.h"
+#include <occa/c/types.hpp>
+#include <occa/c/properties.h>
 
 OCCA_START_EXTERN_C
 

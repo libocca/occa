@@ -20,7 +20,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  */
 
-#include "occa/lang/kernelMetadata.hpp"
+#include <occa/lang/kernelMetadata.hpp>
 
 namespace occa {
   namespace lang {

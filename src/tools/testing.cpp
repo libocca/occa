@@ -23,7 +23,7 @@
 #include <cstdio>
 #include <cmath>
 
-#include "occa/tools/testing.hpp"
+#include <occa/tools/testing.hpp>
 
 namespace occa {
   namespace test {

@@ -27,7 +27,7 @@
 
 #include "visualizer.hpp"
 
-#include "occa.hpp"
+#include <occa.hpp>
 
 #if OCCA_GL_ENABLED
 visualizer vis;

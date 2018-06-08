@@ -20,15 +20,15 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  */
 
-#include "occa/kernel.hpp"
-#include "occa/device.hpp"
-#include "occa/memory.hpp"
-#include "occa/uva.hpp"
-#include "occa/io.hpp"
-#include "occa/tools/sys.hpp"
-#include "occa/lang/parser.hpp"
-#include "occa/lang/builtins/types.hpp"
-#include "occa/lang/builtins/transforms/finders.hpp"
+#include <occa/kernel.hpp>
+#include <occa/device.hpp>
+#include <occa/memory.hpp>
+#include <occa/uva.hpp>
+#include <occa/io.hpp>
+#include <occa/tools/sys.hpp>
+#include <occa/lang/parser.hpp>
+#include <occa/lang/builtins/types.hpp>
+#include <occa/lang/builtins/transforms/finders.hpp>
 
 namespace occa {
   //---[ KernelArg ]--------------------

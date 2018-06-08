@@ -26,7 +26,7 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 
-#include "occa/defines.hpp"
+#include <occa/defines.hpp>
 
 #if (OCCA_OS & (OCCA_LINUX_OS | OCCA_MACOS_OS))
 #    include <dirent.h>
@@ -36,10 +36,10 @@
 #  include <direct.h> // rmdir _rmdir
 #endif
 
-#include "occa/io/cache.hpp"
-#include "occa/io/fileOpener.hpp"
-#include "occa/io/utils.hpp"
-#include "occa/tools/env.hpp"
+#include <occa/io/cache.hpp>
+#include <occa/io/fileOpener.hpp>
+#include <occa/io/utils.hpp>
+#include <occa/tools/env.hpp>
 
 namespace occa {
   // Kernel Caching

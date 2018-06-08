@@ -25,9 +25,9 @@
 #include <sys/types.h>
 #include <unistd.h>
 
-#include "occa/defines.hpp"
-#include "occa/io/lock.hpp"
-#include "occa/tools/env.hpp"
+#include <occa/defines.hpp>
+#include <occa/io/lock.hpp>
+#include <occa/tools/env.hpp>
 
 namespace occa {
   namespace io {

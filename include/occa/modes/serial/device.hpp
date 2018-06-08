@@ -23,8 +23,8 @@
 #ifndef OCCA_SERIAL_DEVICE_HEADER
 #define OCCA_SERIAL_DEVICE_HEADER
 
-#include "occa/defines.hpp"
-#include "occa/device.hpp"
+#include <occa/defines.hpp>
+#include <occa/device.hpp>
 
 namespace occa {
   namespace serial {

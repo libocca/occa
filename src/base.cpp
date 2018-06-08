@@ -20,11 +20,11 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  */
 
-#include "occa/base.hpp"
-#include "occa/mode.hpp"
-#include "occa/tools/env.hpp"
-#include "occa/tools/sys.hpp"
-#include "occa/tools/tls.hpp"
+#include <occa/base.hpp>
+#include <occa/mode.hpp>
+#include <occa/tools/env.hpp>
+#include <occa/tools/sys.hpp>
+#include <occa/tools/tls.hpp>
 
 namespace occa {
   //---[ Device Functions ]-------------

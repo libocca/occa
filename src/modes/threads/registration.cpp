@@ -20,7 +20,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  */
 
-#include "occa/modes/threads/registration.hpp"
+#include <occa/modes/threads/registration.hpp>
 
 namespace occa {
   namespace threads {

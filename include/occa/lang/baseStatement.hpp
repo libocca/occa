@@ -24,9 +24,9 @@
 
 #include <vector>
 
-#include "occa/lang/printer.hpp"
-#include "occa/lang/scope.hpp"
-#include "occa/lang/attribute.hpp"
+#include <occa/lang/printer.hpp>
+#include <occa/lang/scope.hpp>
+#include <occa/lang/attribute.hpp>
 
 namespace occa {
   namespace lang {

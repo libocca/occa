@@ -26,10 +26,10 @@
 #include <iostream>
 #include <map>
 
-#include "occa/defines.hpp"
-#include "occa/tools/properties.hpp"
-#include "occa/tools/styling.hpp"
-#include "occa/device.hpp"
+#include <occa/defines.hpp>
+#include <occa/tools/properties.hpp>
+#include <occa/tools/styling.hpp>
+#include <occa/device.hpp>
 
 namespace occa {
   class device_v; class device;

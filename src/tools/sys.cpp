@@ -19,7 +19,7 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  */
-#include "occa/defines.hpp"
+#include <occa/defines.hpp>
 
 #include <fstream>
 
@@ -60,14 +60,14 @@
 #include <sys/types.h>
 #include <fcntl.h>
 
-#include "occa/base.hpp"
-#include "occa/tools/env.hpp"
-#include "occa/tools/hash.hpp"
-#include "occa/io.hpp"
-#include "occa/tools/lex.hpp"
-#include "occa/tools/misc.hpp"
-#include "occa/tools/string.hpp"
-#include "occa/tools/sys.hpp"
+#include <occa/base.hpp>
+#include <occa/tools/env.hpp>
+#include <occa/tools/hash.hpp>
+#include <occa/io.hpp>
+#include <occa/tools/lex.hpp>
+#include <occa/tools/misc.hpp>
+#include <occa/tools/string.hpp>
+#include <occa/tools/sys.hpp>
 
 namespace occa {
   namespace flags {

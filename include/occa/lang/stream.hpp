@@ -25,8 +25,8 @@
 #include <cstddef>
 #include <list>
 
-#include "occa/types.hpp"
-#include "occa/tools/properties.hpp"
+#include <occa/types.hpp>
+#include <occa/tools/properties.hpp>
 
 namespace occa {
   namespace lang {
@@ -198,6 +198,6 @@ namespace occa {
   }
 }
 
-#include "occa/lang/stream.tpp"
+#include <occa/lang/stream.tpp>
 
 #endif

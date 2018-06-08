@@ -22,8 +22,8 @@
 #ifndef OCCA_PARSER_MODES_SERIAL_HEADER
 #define OCCA_PARSER_MODES_SERIAL_HEADER
 
-#include "occa/lang/parser.hpp"
-#include "occa/lang/builtins/transforms/finders.hpp"
+#include <occa/lang/parser.hpp>
+#include <occa/lang/builtins/transforms/finders.hpp>
 
 namespace occa {
   namespace lang {

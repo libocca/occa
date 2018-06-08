@@ -25,9 +25,9 @@
 
 #include <cmath>
 
-#include "occa/defines.hpp"
-#include "occa/base.hpp"
-#include "occa/tools/env.hpp"
+#include <occa/defines.hpp>
+#include <occa/base.hpp>
+#include <occa/tools/env.hpp>
 
 namespace occa {
   namespace linalg {
@@ -169,6 +169,6 @@ namespace occa {
   }
 }
 
-#include "occa/array/linalg.tpp"
+#include <occa/array/linalg.tpp>
 
 #endif

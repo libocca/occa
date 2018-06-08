@@ -23,7 +23,7 @@
 #ifndef OCCA_TOOLS_TLS_HEADER
 #define OCCA_TOOLS_TLS_HEADER
 
-#include "occa/defines.hpp"
+#include <occa/defines.hpp>
 
 #include <iostream>
 
@@ -68,6 +68,6 @@ namespace occa {
   std::ostream& operator << (std::ostream &out, const tls<TM> &t);
 }
 
-#include "occa/tools/tls.tpp"
+#include <occa/tools/tls.tpp>
 
 #endif

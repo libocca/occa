@@ -172,6 +172,6 @@ namespace occa {
   //====================================
 }
 
-#include "occa/tools/trie.tpp"
+#include <occa/tools/trie.tpp>
 
 #endif

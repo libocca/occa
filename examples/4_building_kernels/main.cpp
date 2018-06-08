@@ -21,7 +21,7 @@
  */
 #include <iostream>
 
-#include "occa.hpp"
+#include <occa.hpp>
 
 class map {
 public:

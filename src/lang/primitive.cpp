@@ -22,8 +22,8 @@
 
 #include <cstring>
 
-#include "occa/lang/primitive.hpp"
-#include "occa/tools/lex.hpp"
+#include <occa/lang/primitive.hpp>
+#include <occa/tools/lex.hpp>
 
 namespace occa {
   primitive::primitive(const char *c) {

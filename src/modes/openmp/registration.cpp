@@ -20,11 +20,11 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  */
 
-#include "occa/defines.hpp"
+#include <occa/defines.hpp>
 
 #if OCCA_OPENMP_ENABLED
 
-#include "occa/modes/openmp/registration.hpp"
+#include <occa/modes/openmp/registration.hpp>
 
 namespace occa {
   namespace openmp {

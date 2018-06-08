@@ -26,8 +26,8 @@
 #include <vector>
 #include "math.h"
 
-#include "occa.hpp"
-#include "occa/tools/json.hpp"
+#include <occa.hpp>
+#include <occa/tools/json.hpp>
 
 #include "visualizer.hpp"
 

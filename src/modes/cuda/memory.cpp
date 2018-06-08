@@ -20,13 +20,13 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  */
 
-#include "occa/defines.hpp"
+#include <occa/defines.hpp>
 
 #if OCCA_CUDA_ENABLED
 
-#include "occa/modes/cuda/memory.hpp"
-#include "occa/modes/cuda/device.hpp"
-#include "occa/modes/cuda/utils.hpp"
+#include <occa/modes/cuda/memory.hpp>
+#include <occa/modes/cuda/device.hpp>
+#include <occa/modes/cuda/utils.hpp>
 
 namespace occa {
   namespace cuda {

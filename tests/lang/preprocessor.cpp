@@ -21,12 +21,12 @@
  */
 #include <sstream>
 
-#include "occa/tools/env.hpp"
-#include "occa/tools/testing.hpp"
+#include <occa/tools/env.hpp>
+#include <occa/tools/testing.hpp>
 
-#include "occa/lang/tokenizer.hpp"
-#include "occa/lang/processingStages.hpp"
-#include "occa/lang/preprocessor.hpp"
+#include <occa/lang/tokenizer.hpp>
+#include <occa/lang/processingStages.hpp>
+#include <occa/lang/preprocessor.hpp>
 
 void testMacroDefines();
 void testCppStandardTests();

@@ -21,13 +21,13 @@
  */
 #include <cstring>
 
-#include "occa/defines.hpp"
-#include "occa/types.hpp"
+#include <occa/defines.hpp>
+#include <occa/types.hpp>
 
-#include "occa/tools/string.hpp"
-#include "occa/lang/macro.hpp"
-#include "occa/lang/tokenizer.hpp"
-#include "occa/lang/preprocessor.hpp"
+#include <occa/tools/string.hpp>
+#include <occa/lang/macro.hpp>
+#include <occa/lang/tokenizer.hpp>
+#include <occa/lang/preprocessor.hpp>
 
 namespace occa {
   namespace lang {

@@ -22,9 +22,9 @@
 
 #include <cstring>
 
-#include "occa/defines.hpp"
-#include "occa/io.hpp"
-#include "occa/tools/json.hpp"
+#include <occa/defines.hpp>
+#include <occa/io.hpp>
+#include <occa/tools/json.hpp>
 
 namespace occa {
   const char json::objectKeyEndChars[] = " \t\r\n\v\f:";

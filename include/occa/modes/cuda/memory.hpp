@@ -20,7 +20,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  */
 
-#include "occa/defines.hpp"
+#include <occa/defines.hpp>
 
 #if OCCA_CUDA_ENABLED
 #  ifndef OCCA_CUDA_MEMORY_HEADER
@@ -28,7 +28,7 @@
 
 #include <cuda.h>
 
-#include "occa/memory.hpp"
+#include <occa/memory.hpp>
 
 namespace occa {
   namespace cuda {

@@ -20,7 +20,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  */
 
-#include "occa/tools/styling.hpp"
+#include <occa/tools/styling.hpp>
 
 namespace occa {
   namespace styling {
