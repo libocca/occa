@@ -25,7 +25,7 @@
 #include <list>
 #include <vector>
 
-#include "occa/tools/io.hpp"
+#include "occa/io.hpp"
 #include "occa/tools/trie.hpp"
 #include "occa/lang/errorHandler.hpp"
 #include "occa/lang/file.hpp"

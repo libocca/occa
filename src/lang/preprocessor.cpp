@@ -23,7 +23,7 @@
 #include <stdlib.h>
 
 #include "occa/tools/hash.hpp"
-#include "occa/tools/io.hpp"
+#include "occa/io.hpp"
 #include "occa/tools/lex.hpp"
 #include "occa/tools/string.hpp"
 #include "occa/lang/primitive.hpp"

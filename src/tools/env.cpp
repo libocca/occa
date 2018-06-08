@@ -23,11 +23,21 @@
 #include <cstdlib>
 
 #include "occa/base.hpp"
-#include "occa/tools/io.hpp"
+#include "occa/io.hpp"
 #include "occa/tools/env.hpp"
 #include "occa/tools/sys.hpp"
+#include "occa/tools/tls.hpp"
 
 namespace occa {
+  properties& settings() {
+    static tls<properties> settings_;
+    properties& props = settings_.value();
+    if (!props.isInitialized()) {
+      props = env::baseSettings();
+    }
+    return props;
+  }
+
   namespace env {
     std::string HOME, PWD;
     std::string PATH, LD_LIBRARY_PATH;

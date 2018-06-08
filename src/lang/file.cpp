@@ -19,7 +19,7 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  */
-#include "occa/tools/io.hpp"
+#include "occa/io.hpp"
 #include "occa/tools/string.hpp"
 #include "occa/tools/lex.hpp"
 

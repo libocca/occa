@@ -22,22 +22,11 @@
 
 #include "occa/base.hpp"
 #include "occa/mode.hpp"
-#include "occa/par/tls.hpp"
 #include "occa/tools/env.hpp"
 #include "occa/tools/sys.hpp"
+#include "occa/tools/tls.hpp"
 
 namespace occa {
-  //---[ Globals & Flags ]--------------
-  properties& settings() {
-    static tls<properties> settings_;
-    properties& props = settings_.value();
-    if (!props.isInitialized()) {
-      props = env::baseSettings();
-    }
-    return props;
-  }
-  //====================================
-
   //---[ Device Functions ]-------------
   device host() {
     static device dev;

@@ -22,6 +22,7 @@
 
 #include "occa/c/types.hpp"
 #include "occa/c/base.h"
+#include "occa/tools/env.hpp"
 
 OCCA_START_EXTERN_C
 

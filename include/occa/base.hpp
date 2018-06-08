@@ -40,10 +40,6 @@
 #include "occa/memory.hpp"
 
 namespace occa {
-  //---[ Globals & Flags ]--------------
-  properties& settings();
-  //====================================
-
   //---[ Device Functions ]-------------
   device host();
   device& getDevice();

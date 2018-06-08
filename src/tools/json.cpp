@@ -23,7 +23,7 @@
 #include <cstring>
 
 #include "occa/defines.hpp"
-#include "occa/tools/io.hpp"
+#include "occa/io.hpp"
 #include "occa/tools/json.hpp"
 
 namespace occa {

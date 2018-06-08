@@ -24,9 +24,6 @@
 #if (OCCA_OS & (OCCA_LINUX_OS | OCCA_MACOS_OS))
 #  include <stdio.h>
 #else // OCCA_WINDOWS_OS
-#  ifndef NOMINMAX
-#    define NOMINMAX // Clear min/max macros
-#  endif
 #  include <windows.h>
 #endif
 

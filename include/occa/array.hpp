@@ -20,12 +20,4 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  */
 
-#ifndef OCCA_HEADER
-#define OCCA_HEADER
-
-#include "occa/base.hpp"
-#include "occa/array.hpp"
-#include "occa/io.hpp"
-#include "occa/tools.hpp"
-
-#endif
+#include "occa/array/array.hpp"

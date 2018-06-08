@@ -29,6 +29,8 @@
 #include "occa/tools/properties.hpp"
 
 namespace occa {
+  properties& settings();
+
   namespace env {
     extern std::string HOME, PWD;
     extern std::string PATH, LD_LIBRARY_PATH;

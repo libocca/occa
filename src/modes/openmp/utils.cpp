@@ -27,7 +27,7 @@
 #include <iostream>
 
 #include "occa/tools/env.hpp"
-#include "occa/tools/io.hpp"
+#include "occa/io.hpp"
 #include "occa/tools/sys.hpp"
 
 namespace occa {

@@ -26,7 +26,7 @@
 #include "occa/types.hpp"
 #include "occa/tools/hash.hpp"
 #include "occa/tools/env.hpp"
-#include "occa/tools/io.hpp"
+#include "occa/io.hpp"
 
 namespace occa {
   hash_t::hash_t() {

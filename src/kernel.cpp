@@ -24,7 +24,7 @@
 #include "occa/device.hpp"
 #include "occa/memory.hpp"
 #include "occa/uva.hpp"
-#include "occa/tools/io.hpp"
+#include "occa/io.hpp"
 #include "occa/tools/sys.hpp"
 #include "occa/lang/parser.hpp"
 #include "occa/lang/builtins/types.hpp"

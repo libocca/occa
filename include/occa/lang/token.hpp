@@ -22,7 +22,7 @@
 #ifndef OCCA_LANG_TOKEN_HEADER
 #define OCCA_LANG_TOKEN_HEADER
 
-#include "occa/tools/io.hpp"
+#include "occa/io.hpp"
 
 #include "occa/lang/errorHandler.hpp"
 #include "occa/lang/file.hpp"

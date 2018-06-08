@@ -21,7 +21,7 @@
  */
 #include <sstream>
 
-#include "occa/tools/io.hpp"
+#include "occa/io.hpp"
 #include "occa/tools/json.hpp"
 #include "occa/tools/string.hpp"
 #include "occa/tools/testing.hpp"

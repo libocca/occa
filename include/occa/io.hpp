@@ -20,9 +20,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  */
 
-#ifndef OCCA_ARRAY_INCLUDES_HEADER
-#define OCCA_ARRAY_INCLUDES_HEADER
-
-#include "occa/array/array.hpp"
-
-#endif
+#include "occa/io/cache.hpp"
+#include "occa/io/fileOpener.hpp"
+#include "occa/io/lock.hpp"
+#include "occa/io/utils.hpp"

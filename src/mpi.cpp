@@ -26,7 +26,7 @@
 
 #include "occa/base.hpp"
 #include "occa/mpi.hpp"
-#include "occa/par/tls.hpp"
+#include "occa/tools/tls.hpp"
 
 namespace occa {
   namespace mpi {

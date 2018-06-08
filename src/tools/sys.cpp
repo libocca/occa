@@ -51,9 +51,6 @@
 #    endif
 #  endif
 #else // OCCA_WINDOWS_OS
-#  ifndef NOMINMAX
-#    define NOMINMAX // Clear min/max macros
-#  endif
 #  include <windows.h>
 #endif
 
@@ -66,7 +63,7 @@
 #include "occa/base.hpp"
 #include "occa/tools/env.hpp"
 #include "occa/tools/hash.hpp"
-#include "occa/tools/io.hpp"
+#include "occa/io.hpp"
 #include "occa/tools/lex.hpp"
 #include "occa/tools/misc.hpp"
 #include "occa/tools/string.hpp"

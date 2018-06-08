@@ -27,7 +27,7 @@
 #include <omp.h>
 
 #include "occa/tools/env.hpp"
-#include "occa/tools/io.hpp"
+#include "occa/io.hpp"
 #include "occa/modes/openmp/kernel.hpp"
 #include "occa/lang/modes/openmp.hpp"
 

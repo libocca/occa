@@ -28,7 +28,7 @@
 #include "occa/modes/cuda/device.hpp"
 #include "occa/modes/cuda/utils.hpp"
 #include "occa/tools/env.hpp"
-#include "occa/tools/io.hpp"
+#include "occa/io.hpp"
 #include "occa/tools/misc.hpp"
 #include "occa/tools/sys.hpp"
 #include "occa/base.hpp"

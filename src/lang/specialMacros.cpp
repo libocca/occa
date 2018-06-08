@@ -23,7 +23,7 @@
 #include <ctime>
 
 #include "occa/tools/string.hpp"
-#include "occa/tools/io.hpp"
+#include "occa/io.hpp"
 
 #include "occa/lang/preprocessor.hpp"
 #include "occa/lang/specialMacros.hpp"

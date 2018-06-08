@@ -20,16 +20,29 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  */
 
-#include "occa/tools/cli.hpp"
-#include "occa/tools/env.hpp"
-#include "occa/tools/gc.hpp"
-#include "occa/tools/hash.hpp"
-#include "occa/tools/io.hpp"
-#include "occa/tools/json.hpp"
-#include "occa/tools/lex.hpp"
-#include "occa/tools/misc.hpp"
-#include "occa/tools/properties.hpp"
-#include "occa/tools/string.hpp"
-#include "occa/tools/styling.hpp"
-#include "occa/tools/sys.hpp"
-#include "occa/tools/testing.hpp"
+#ifndef OCCA_TOOLS_IO_LOCK_HEADER
+#define OCCA_TOOLS_IO_LOCK_HEADER
+
+#include <iostream>
+
+namespace occa {
+  class hash_t;
+
+  namespace io {
+    std::string getFileLock(const std::string &filename,
+                            const std::string &tag);
+
+    bool haveHash(const hash_t &hash,
+                  const std::string &tag);
+
+    bool hashWasReleased(const hash_t &hash,
+                         const std::string &tag);
+
+    void releaseHash(const hash_t &hash,
+                     const std::string &tag);
+
+    void releaseHashLock(const std::string &lockDir);
+  }
+}
+
+#endif

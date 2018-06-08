@@ -20,8 +20,8 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  */
 
-#ifndef OCCA_PAR_TLS_HEADER
-#define OCCA_PAR_TLS_HEADER
+#ifndef OCCA_TOOLS_TLS_HEADER
+#define OCCA_TOOLS_TLS_HEADER
 
 #include "occa/defines.hpp"
 
@@ -68,6 +68,6 @@ namespace occa {
   std::ostream& operator << (std::ostream &out, const tls<TM> &t);
 }
 
-#include "occa/par/tls.tpp"
+#include "occa/tools/tls.tpp"
 
 #endif

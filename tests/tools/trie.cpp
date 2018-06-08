@@ -24,7 +24,7 @@
 
 #include "occa/tools/testing.hpp"
 #include "occa/tools/trie.hpp"
-#include "occa/tools/io.hpp"
+#include "occa/io.hpp"
 #include "occa/tools/lex.hpp"
 
 void testInsert(occa::trie<std::string> &trie);

@@ -22,7 +22,7 @@
 
 #include "occa/base.hpp"
 #include "occa/tools/env.hpp"
-#include "occa/tools/io.hpp"
+#include "occa/io.hpp"
 #include "occa/modes/serial/kernel.hpp"
 #include "occa/lang/modes/serial.hpp"
 
