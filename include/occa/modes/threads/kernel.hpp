@@ -20,8 +20,9 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  */
 
-#ifndef OCCA_THREADS_KERNEL_HEADER
-#define OCCA_THREADS_KERNEL_HEADER
+#if 0
+#  ifndef OCCA_THREADS_KERNEL_HEADER
+#  define OCCA_THREADS_KERNEL_HEADER
 
 #include <occa/defines.hpp>
 #include <occa/modes/threads/headers.hpp>
@@ -41,4 +42,5 @@ namespace occa {
   }
 }
 
+#  endif
 #endif

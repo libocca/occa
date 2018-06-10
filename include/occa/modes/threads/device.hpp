@@ -20,8 +20,9 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  */
 
-#ifndef OCCA_THREADS_DEVICE_HEADER
-#define OCCA_THREADS_DEVICE_HEADER
+#if 0
+#  ifndef OCCA_THREADS_DEVICE_HEADER
+#  define OCCA_THREADS_DEVICE_HEADER
 
 #include <occa/defines.hpp>
 #include <occa/modes/serial/device.hpp>
@@ -73,4 +74,5 @@ namespace occa {
   }
 }
 
+#  endif
 #endif

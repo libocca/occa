@@ -28,8 +28,8 @@
 
 #include <occa/modes/serial/device.hpp>
 #include <occa/modes/openmp/device.hpp>
-#include <occa/modes/openmp/kernel.hpp>
 #include <occa/modes/openmp/utils.hpp>
+#include <occa/lang/modes/openmp.hpp>
 
 namespace occa {
   namespace openmp {
@@ -39,40 +39,73 @@ namespace occa {
       omp_get_num_threads();
     }
 
+    bool device::parseFile(const std::string &filename,
+                           const std::string &outputFile,
+                           const occa::properties &parserProps) {
+      lang::okl::openmpParser parser(parserProps);
+      parser.parseFile(filename);
+
+      // Verify if parsing succeeded
+      if (!parser.succeeded()) {
+        if (!parserProps.get("silent", false)) {
+          OCCA_FORCE_ERROR("Unable to transform OKL kernel");
+        }
+        return false;
+      }
+
+      if (!sys::fileExists(outputFile)) {
+        hash_t hash = occa::hash(outputFile);
+        io::lock_t lock(hash, "serial-parser");
+        if (lock.isMine()) {
+          parser.writeToFile(outputFile);
+        }
+      }
+
+      return true;
+    }
+
     kernel_v* device::buildKernel(const std::string &filename,
                                   const std::string &kernelName,
                                   const hash_t kernelHash,
-                                  const occa::properties &props) {
+                                  const occa::properties &kernelProps) {
 
-      occa::properties kernelProps = props;
-      kernel_v *k;
+      occa::properties allKernelProps = properties + kernelProps;
 
-      const std::string &compiler = kernelProps["compiler"].string();
+      std::string compiler = allKernelProps["compiler"].string();
+      int vendor = allKernelProps["vendor"].number();
+      // Check if we need to re-compute the vendor
+      if (kernelProps.has("compiler")) {
+        vendor = sys::compilerVendor(compiler);
+      }
+
       if (compiler != lastCompiler) {
         lastCompiler = compiler;
-
-        lastCompilerOpenMPFlag = openmp::compilerFlag(
-          kernelProps.get<int>("vendor"),
-          compiler
-        );
+        lastCompilerOpenMPFlag = openmp::compilerFlag(vendor, compiler);
 
         if (lastCompilerOpenMPFlag == openmp::notSupported) {
-          std::cerr << "Compiler [" << kernelProps["compiler"].string()
+          std::cerr << "Compiler [" << allKernelProps["compiler"].string()
                     << "] does not support OpenMP, defaulting to [Serial] mode\n";
         }
       }
 
-      if (lastCompilerOpenMPFlag != openmp::notSupported) {
-        std::string &compilerFlags = kernelProps["compilerFlags"].string();
+      const bool usingOpenMP = (lastCompilerOpenMPFlag != openmp::notSupported);
+      if (usingOpenMP) {
+        std::string &compilerFlags = allKernelProps["compilerFlags"].string();
         compilerFlags += ' ';
         compilerFlags += lastCompilerOpenMPFlag;
-
-        k = new kernel(kernelProps);
-      } else {
-        k = new serial::kernel(kernelProps);
       }
-      k->setDHandle(this);
-      k->build(filename, kernelName, kernelHash);
+
+      kernel_v *k = serial::device::buildKernel(filename,
+                                                kernelName,
+                                                kernelHash,
+                                                allKernelProps);
+
+      if (k && usingOpenMP) {
+        k->dHandle->removeRef();
+        k->dHandle = this;
+        addRef();
+      }
+
       return k;
     }
   }

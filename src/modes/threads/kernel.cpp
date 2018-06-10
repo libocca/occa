@@ -19,6 +19,7 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  */
+#if 0
 
 #include <occa/modes/threads/kernel.hpp>
 #include <occa/modes/threads/device.hpp>
@@ -61,3 +62,5 @@ namespace occa {
     }
   }
 }
+
+#endif

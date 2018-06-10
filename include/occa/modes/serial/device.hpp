@@ -49,20 +49,26 @@ namespace occa {
 
       virtual streamTag tagStream() const;
       virtual void waitFor(streamTag tag) const;
-      virtual double timeBetween(const streamTag &startTag, const streamTag &endTag) const;
+      virtual double timeBetween(const streamTag &startTag,
+                                 const streamTag &endTag) const;
 
-      virtual stream_t wrapStream(void *handle_, const occa::properties &props) const;
+      virtual stream_t wrapStream(void *handle_,
+                                  const occa::properties &props) const;
       //================================
 
       //---[ Kernel ]-------------------
+      virtual bool parseFile(const std::string &filename,
+                             const std::string &outputFile,
+                             const occa::properties &parserProps);
+
       virtual kernel_v* buildKernel(const std::string &filename,
                                     const std::string &kernelName,
                                     const hash_t kernelHash,
-                                    const occa::properties &props);
+                                    const occa::properties &kernelProps);
 
       virtual kernel_v* buildKernelFromBinary(const std::string &filename,
                                               const std::string &kernelName,
-                                              const occa::properties &props);
+                                              const occa::properties &kernelProps);
       //================================
 
       //---[ Memory ]-------------------

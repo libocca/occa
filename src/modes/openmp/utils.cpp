@@ -37,11 +37,9 @@ namespace occa {
     std::string baseCompilerFlag(const int vendor_) {
       if (vendor_ & (sys::vendor::GNU |
                      sys::vendor::LLVM)) {
-
         return "-fopenmp";
       } else if (vendor_ & (sys::vendor::Intel |
                             sys::vendor::Pathscale)) {
-
         return "-openmp";
       } else if (vendor_ & sys::vendor::IBM) {
         return "-qsmp";

@@ -65,7 +65,6 @@ namespace occa {
     if (kernel == NULL) {
       return;
     }
-
     cachedKernelMapIterator it = cachedKernels.find(getKernelHash(kernel));
     if (it != cachedKernels.end()) {
       cachedKernels.erase(it);

@@ -30,10 +30,6 @@ int OCCA_RFUNC occaKernelIsInitialized(occaKernel kernel) {
   return (int) occa::c::kernel(kernel).isInitialized();
 }
 
-const char* OCCA_RFUNC occaKernelMode(occaKernel kernel) {
-  return occa::c::kernel(kernel).mode().c_str();
-}
-
 occaProperties OCCA_RFUNC occaKernelGetProperties(occaKernel kernel) {
   return occa::c::newOccaType(
     occa::c::kernel(kernel).properties()
@@ -42,7 +38,7 @@ occaProperties OCCA_RFUNC occaKernelGetProperties(occaKernel kernel) {
 
 occaDevice OCCA_RFUNC occaKernelGetDevice(occaKernel kernel) {
   return occa::c::newOccaType(
-    occa::c::kernel(kernel).getDevice()
+    occa::c::kernel(kernel).device()
   );
 }
 

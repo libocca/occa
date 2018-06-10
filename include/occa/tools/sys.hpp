@@ -32,7 +32,7 @@
 #include <occa/tools/hash.hpp>
 
 namespace occa {
-  typedef void (*handleFunction_t)(...);
+  typedef void (*functionPtr_t)(...);
 
   namespace flags {
     extern const int checkCacheDir;
@@ -118,13 +118,13 @@ namespace occa {
     void* dlopen(const std::string &filename,
                  const io::lock_t &lock = io::lock_t());
 
-    handleFunction_t dlsym(void *dlHandle,
-                           const std::string &functionName,
-                           const io::lock_t &lock = io::lock_t());
+    functionPtr_t dlsym(void *dlHandle,
+                        const std::string &functionName,
+                        const io::lock_t &lock = io::lock_t());
 
     void dlclose(void *dlHandle);
 
-    void runFunction(handleFunction_t f, const int argc, void **args);
+    void runFunction(functionPtr_t f, const int argc, void **args);
 
     void printStacktrace(const int frameStart = 0, const std::string indent = "");
     std::string prettyStackSymbol(void *frame, const char *symbol);

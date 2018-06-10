@@ -87,34 +87,11 @@ namespace occa {
     }
 
     void run(job_t &job) {
-      handleFunction_t tmpKernel = (handleFunction_t) job.handle;
+      functionPtr_t tmpKernel = (functionPtr_t) job.handle;
 
-      int dp           = job.dims - 1;
-      occa::dim &outer = job.outer;
-      occa::dim &inner = job.inner;
-
-      occa::dim start(0,0,0), end(outer);
-
-      int loops     = (outer[dp] / job.count);
-      int coolRanks = (outer[dp] - loops*job.count);
-
-      if (job.rank < coolRanks) {
-        start[dp] = (job.rank)*(loops + 1);
-        end[dp]   = start[dp] + (loops + 1);
-      } else {
-        start[dp] = job.rank*loops + coolRanks;
-        end[dp]   = start[dp] + loops;
-      }
-
-      serial::kernelInfoArg_t info;
-      info.outerDim0 = outer.x; info.innerDim0 = inner.x;
-      info.outerDim1 = outer.y; info.innerDim1 = inner.y;
-      info.outerDim2 = outer.z; info.innerDim2 = inner.z;
-
-      info.innerId0 = info.innerId1 = info.innerId2 = 0;
-      job.args.push_back(&info);
-
-      sys::runFunction(tmpKernel, (int) job.args.size(), &(job.args[0]));
+      sys::runFunction(tmpKernel,
+                       (int) job.args.size(),
+                       &(job.args[0]));
     }
     //==================================
   }

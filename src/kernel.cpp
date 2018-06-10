@@ -275,28 +275,14 @@ namespace occa {
 
 
   //---[ kernel_v ]---------------------
-  kernel_v::kernel_v(const occa::properties &properties_) :
-    dHandle(NULL),
-    properties(properties_),
-    valid(false),
-    launcherKernel(NULL),
-    isLaunched(false) {}
-
-  kernel_v::~kernel_v() {}
-
-  // This should only be called in the very first reference
-  void kernel_v::setDHandle(device_v *dHandle_) {
-    dHandle = dHandle_;
+  kernel_v::kernel_v(device_v *dHandle_,
+                     const occa::properties &properties_) :
+    dHandle(dHandle_),
+    properties(properties_) {
     dHandle->addRef();
   }
 
-  kernel_v* kernel_v::nestedKernelsPtr() {
-    return nestedKernels[0];
-  }
-
-  int kernel_v::nestedKernelCount() {
-    return (int) nestedKernels.size();
-  }
+  kernel_v::~kernel_v() {}
 
   kernelArg* kernel_v::argumentsPtr() {
     return &(arguments[0]);
@@ -304,63 +290,6 @@ namespace occa {
 
   int kernel_v::argumentCount() {
     return (int) arguments.size();
-  }
-
-  std::string kernel_v::binaryName(const std::string &filename) {
-    return filename;
-  }
-
-  std::string kernel_v::getLaunchSourceFilename(const std::string &filename,
-                                                const hash_t &hash) {
-    return io::hashDir(filename, hash) + kc::launchSourceFile;
-  }
-
-  std::string kernel_v::getLaunchBinaryFilename(const std::string &filename,
-                                                const hash_t &hash) {
-    return io::hashDir(filename, hash) + binaryName(kc::launchBinaryFile);
-  }
-
-  std::string kernel_v::getSourceFilename(const std::string &filename,
-                                          const hash_t &hash) {
-    return io::hashDir(filename, hash) + kc::sourceFile;
-  }
-
-  std::string kernel_v::getBinaryFilename(const std::string &filename,
-                                          const hash_t &hash) {
-    return io::hashDir(filename, hash) + binaryName(kc::binaryFile);
-  }
-
-  void kernel_v::setMetadata(lang::parser_t &parser) {
-    lang::kernelMetadataMap metadataMap;
-
-    lang::statementPtrVector kernelSmnts;
-    lang::findStatementsByAttr(lang::statementType::functionDecl,
-                               "kernel",
-                               parser.root,
-                               kernelSmnts);
-
-    const int kernelCount = (int) kernelSmnts.size();
-    for (int i = 0; i < kernelCount; ++i) {
-      lang::functionDeclStatement &declSmnt = *((lang::functionDeclStatement*) kernelSmnts[i]);
-      lang::function_t &func = declSmnt.function;
-
-      if (func.name() != name) {
-        continue;
-      }
-
-      metadata.name = name;
-      int args = (int) func.args.size();
-      for (int ai = 0; ai < args; ++ai) {
-        metadata += lang::argumentInfo(
-          func.args[ai]->has(lang::const_)
-        );
-      }
-      return;
-    }
-
-    OCCA_FORCE_ERROR("Could not find kernel ["
-                     << name << "] in file ["
-                     << io::shortname(sourceFilename) << "]");
   }
   //====================================
 
@@ -419,12 +348,7 @@ namespace occa {
   }
 
   bool kernel::isInitialized() {
-    return ((kHandle != NULL)
-            && kHandle->valid);
-  }
-
-  const std::string& kernel::mode() const {
-    return kHandle->dHandle->mode;
+    return (kHandle != NULL);
   }
 
   const occa::properties& kernel::properties() const {
@@ -435,7 +359,7 @@ namespace occa {
     return kHandle;
   }
 
-  occa::device kernel::getDevice() {
+  occa::device kernel::device() {
     return occa::device(kHandle->dHandle);
   }
 
@@ -487,33 +411,12 @@ namespace occa {
       kHandle->arguments[i].setupForKernelCall(argIsConst);
     }
 
-    // TODO 1.1: Clean up isLaunched
-    kernel_v *launcher = kHandle;
-    bool useLauncher = (kHandle->launcherKernel &&
-                        !kHandle->isLaunched);
-    if (useLauncher) {
-      launcher = kHandle->launcherKernel;
-      launcher->arguments = kHandle->arguments;
-      launcher->arguments.insert(launcher->arguments.begin(),
-                                 kHandle->nestedKernelsPtr());
-      kHandle->isLaunched = true;
-    }
-
-    launcher->runFromArguments(launcher->argumentCount(),
-                               launcher->argumentsPtr());
-
-    if (useLauncher) {
-      kHandle->isLaunched = false;
-    }
+    kHandle->runFromArguments(kHandle->argumentCount(),
+                              kHandle->argumentsPtr());
   }
 
   void kernel::clearArgumentList() {
     kHandle->arguments.clear();
-
-    kernel_v *launcher = kHandle->launcherKernel;
-    if (launcher) {
-      launcher->arguments.clear();
-    }
   }
 
 #include "operators/definitions.cpp"
@@ -525,20 +428,6 @@ namespace occa {
 
     // Remove kernel from cache map
     kHandle->dHandle->removeCachedKernel(kHandle);
-
-    kernel_v *launcher = kHandle->launcherKernel;
-    if (launcher) {
-      launcher->free();
-      delete launcher;
-      kHandle->launcherKernel = NULL;
-    }
-
-    // Free all kernels
-    if (kHandle->nestedKernelCount()) {
-      for (int k = 0; k < kHandle->nestedKernelCount(); ++k) {
-        kHandle->nestedKernels[k]->free();
-      }
-    }
 
     kHandle->free();
     kHandle = NULL;

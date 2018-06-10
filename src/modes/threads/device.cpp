@@ -20,6 +20,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  */
 
+#if 0
 #include <occa/modes/threads/device.hpp>
 #include <occa/modes/threads/kernel.hpp>
 #include <occa/modes/serial/memory.hpp>
@@ -147,3 +148,5 @@ namespace occa {
     //==================================
   }
 }
+
+#endif

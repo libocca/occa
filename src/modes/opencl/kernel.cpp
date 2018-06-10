@@ -103,7 +103,6 @@ namespace occa {
         occa::kernel hostKernel = host().buildKernel(hostOutputFile,
                                                      kernelName,
                                                      "okl: false");
-        // TODO 1.1: Store metadata in the build.json
 
         launcherKernel = hostKernel.getKHandle();
         launcherKernel->dontUseRefs();

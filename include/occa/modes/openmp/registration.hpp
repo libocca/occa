@@ -28,7 +28,6 @@
 
 #include <occa/mode.hpp>
 #include <occa/modes/openmp/device.hpp>
-#include <occa/modes/openmp/kernel.hpp>
 #include <occa/modes/serial/memory.hpp>
 #include <occa/base.hpp>
 

@@ -29,43 +29,30 @@
 
 namespace occa {
   namespace serial {
-    struct kernelInfoArg_t {
-      int outerDim2, outerDim1, outerDim0;
-      int innerDim2, innerDim1, innerDim0;
-      int innerId2, innerId1, innerId0;
-    };
+    class device;
 
     class kernel : public occa::kernel_v {
     protected:
       void *dlHandle;
-      handleFunction_t handle;
+      functionPtr_t function;
 
       mutable void *vArgs[2*OCCA_MAX_ARGS];
 
     public:
-      kernel(const occa::properties &properties_);
+      kernel(device_v *dHandle_,
+             const occa::properties &properties_);
       ~kernel();
-
-      std::string binaryName(const std::string &filename) const;
-
-      void build(const std::string &filename,
-                 const std::string &kernelName,
-                 const hash_t hash);
-
-      void buildFromBinary(const std::string &filename,
-                           const std::string &kernelName);
-
-      virtual void parseFile(const std::string &filename,
-                             const std::string &outputFile,
-                             const occa::properties &props);
 
       int maxDims() const;
       dim maxOuterDims() const;
       dim maxInnerDims() const;
 
-      void runFromArguments(const int kArgc, const kernelArg *kArgs) const;
+      void runFromArguments(const int kArgc,
+                            const kernelArg *kArgs) const;
 
       void free();
+
+      friend class device;
     };
   }
 }

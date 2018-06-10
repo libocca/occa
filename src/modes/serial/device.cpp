@@ -152,23 +152,149 @@ namespace occa {
     //==================================
 
     //---[ Kernel ]---------------------
+    bool device::parseFile(const std::string &filename,
+                           const std::string &outputFile,
+                           const occa::properties &parserProps) {
+      lang::okl::serialParser parser(parserProps);
+      parser.parseFile(filename);
+
+      // Verify if parsing succeeded
+      if (!parser.succeeded()) {
+        if (!parserProps.get("silent", false)) {
+          OCCA_FORCE_ERROR("Unable to transform OKL kernel");
+        }
+        return false;
+      }
+
+      if (!sys::fileExists(outputFile)) {
+        hash_t hash = occa::hash(outputFile);
+        io::lock_t lock(hash, "serial-parser");
+        if (lock.isMine()) {
+          parser.writeToFile(outputFile);
+        }
+      }
+
+      return true;
+    }
+
     kernel_v* device::buildKernel(const std::string &filename,
                                   const std::string &kernelName,
                                   const hash_t kernelHash,
-                                  const occa::properties &props) {
-      kernel *k = new kernel(props);
-      k->setDHandle(this);
-      k->build(filename, kernelName, kernelHash);
+                                  const occa::properties &kernelProps) {
+      const std::string hashDir = io::hashDir(filename, kernelHash);
+      const std::string binaryFilename = hashDir + kc::binaryFile;
+      bool foundBinary = true;
+
+      io::lock_t lock(kernelHash, "serial-kernel");
+      if (lock.isMine()) {
+        if (sys::fileExists(binaryFilename)) {
+          lock.release();
+        } else {
+          foundBinary = false;
+        }
+      }
+
+      const bool verbose = kernelProps.get("verbose", false);
+      if (foundBinary) {
+        if (verbose) {
+          std::cout << "Loading cached ["
+                    << kernelName
+                    << "] from ["
+                    << io::shortname(filename)
+                    << "] in [" << io::shortname(binaryFilename) << "]\n";
+        }
+        return buildKernelFromBinary(binaryFilename,
+                                     kernelName,
+                                     kernelProps);
+      }
+
+      // Cache raw origin
+      std::string sourceFilename = (
+        io::cacheFile(filename,
+                      kc::rawSourceFile,
+                      kernelHash,
+                      assembleHeader(kernelProps),
+                      kernelProps["footer"].string())
+      );
+
+      if (kernelProps.get("okl", true)) {
+        const std::string outputFile = hashDir + kc::sourceFile;
+        bool valid = parseFile(sourceFilename,
+                               outputFile,
+                               kernelProps["parser"]);
+        if (!valid) {
+          return NULL;
+        }
+        sourceFilename = outputFile;
+        // TODO 1.1: Store metadata in the build.json
+      }
+
+      std::stringstream command;
+      const std::string &compilerEnvScript = kernelProps["compilerEnvScript"].string();
+      if (compilerEnvScript.size()) {
+        command << compilerEnvScript << " && ";
+      }
+
+#if (OCCA_OS & (OCCA_LINUX_OS | OCCA_MACOS_OS))
+      command << kernelProps["compiler"].string()
+              << ' '    << kernelProps["compilerFlags"].string()
+              << ' '    << sourceFilename
+              << " -o " << binaryFilename
+              << " -I"  << env::OCCA_DIR << "include"
+              << " -L"  << env::OCCA_DIR << "lib -locca"
+              << std::endl;
+#else
+      command << kernelProps["compiler"]
+              << " /D MC_CL_EXE"
+              << " /D OCCA_OS=OCCA_WINDOWS_OS"
+              << " /EHsc"
+              << " /wd4244 /wd4800 /wd4804 /wd4018"
+              << ' '       << kernelProps["compilerFlags"]
+              << " /I"     << env::OCCA_DIR << "include"
+              << ' '       << sourceFilename
+              << " /link " << env::OCCA_DIR << "lib/libocca.lib",
+              << " /OUT:"  << binaryFilename
+              << std::endl;
+#endif
+
+      const std::string &sCommand = command.str();
+
+      if (verbose) {
+        std::cout << "Compiling [" << kernelName << "]\n" << sCommand << "\n";
+      }
+
+#if (OCCA_OS & (OCCA_LINUX_OS | OCCA_MACOS_OS))
+      const int compileError = system(sCommand.c_str());
+#else
+      const int compileError = system(("\"" +  sCommand + "\"").c_str());
+#endif
+
+      lock.release();
+      if (compileError) {
+        OCCA_ERROR("Compilation error", compileError);
+      }
+
+      kernel_v *k = buildKernelFromBinary(binaryFilename,
+                                          kernelName,
+                                          kernelProps);
+      if (k) {
+        k->sourceFilename = sourceFilename;
+      }
       return k;
     }
 
     kernel_v* device::buildKernelFromBinary(const std::string &filename,
                                             const std::string &kernelName,
-                                            const occa::properties &props) {
-      kernel *k = new kernel(props);
-      k->dHandle = this;
-      k->buildFromBinary(filename, kernelName);
-      return k;
+                                            const occa::properties &kernelProps) {
+      kernel &k = *(new kernel(this, kernelProps));
+
+      k.name = kernelName;
+      k.binaryFilename = filename;
+
+      k.dlHandle = sys::dlopen(filename);
+      k.function = sys::dlsym(k.dlHandle, kernelName);
+
+      return &k;
     }
     //==================================
 

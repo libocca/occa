@@ -30,8 +30,6 @@ OCCA_START_EXTERN_C
 
 OCCA_LFUNC int OCCA_RFUNC occaKernelIsInitialized(occaKernel kernel);
 
-OCCA_LFUNC const char* OCCA_RFUNC occaKernelMode(occaKernel kernel);
-
 OCCA_LFUNC occaProperties OCCA_RFUNC occaKernelGetProperties(occaKernel kernel);
 
 OCCA_LFUNC occaDevice OCCA_RFUNC occaKernelGetDevice(occaKernel kernel);

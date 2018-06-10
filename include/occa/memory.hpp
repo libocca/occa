@@ -150,11 +150,10 @@ namespace occa {
     memory_v* getMHandle() const;
     device_v* getDHandle() const;
 
-    occa::device getDevice() const;
+    occa::device device() const;
 
     operator kernelArg() const;
 
-    const std::string& mode() const;
     const occa::properties& properties() const;
 
     udim_t size() const;

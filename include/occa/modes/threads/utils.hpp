@@ -44,7 +44,7 @@ namespace occa {
       int rank, count;
       schedule_t schedule;
 
-      handleFunction_t handle;
+      functionPtr_t handle;
 
       int dims;
       occa::dim inner, outer;

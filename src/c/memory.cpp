@@ -35,7 +35,7 @@ void* OCCA_RFUNC occaMemoryPtr(occaMemory memory) {
 
 occaDevice OCCA_RFUNC occaMemoryGetDevice(occaMemory memory) {
   return occa::c::newOccaType(
-    occa::c::memory(memory).getDevice()
+    occa::c::memory(memory).device()
   );
 }
 
@@ -43,10 +43,6 @@ occaProperties OCCA_RFUNC occaMemoryGetProperties(occaMemory memory) {
   return occa::c::newOccaType(
     occa::c::memory(memory).properties()
   );
-}
-
-const char* OCCA_RFUNC occaMemoryMode(occaMemory memory) {
-  return occa::c::memory(memory).mode().c_str();
 }
 
 occaUDim_t OCCA_RFUNC occaMemorySize(occaMemory memory) {

@@ -173,42 +173,17 @@ namespace occa {
     std::string name;
     std::string sourceFilename, binaryFilename;
     occa::properties properties;
-    bool valid;
 
     dim inner, outer;
 
-    kernel_v *launcherKernel;
-    bool isLaunched;
-
-    std::vector<kernel_v*> nestedKernels;
     std::vector<kernelArg> arguments;
-
     lang::kernelMetadata metadata;
 
-    kernel_v(const occa::properties &properties_);
-
-    // This should only be called in the very first reference
-    void setDHandle(device_v *dHandle_);
-
-    kernel_v* nestedKernelsPtr();
-    int nestedKernelCount();
+    kernel_v(device_v *dHandle_,
+             const occa::properties &properties_);
 
     kernelArg* argumentsPtr();
     int argumentCount();
-
-    std::string binaryName(const std::string &filename);
-
-    std::string getLaunchSourceFilename(const std::string &filename,
-                                        const hash_t &hash);
-
-    std::string getLaunchBinaryFilename(const std::string &filename,
-                                        const hash_t &hash);
-
-    std::string getSourceFilename(const std::string &filename,
-                                  const hash_t &hash);
-
-    std::string getBinaryFilename(const std::string &filename,
-                                  const hash_t &hash);
 
     void setMetadata(lang::parser_t &parser);
 
@@ -217,13 +192,6 @@ namespace occa {
 
     // Must be able to be called multiple times safely
     virtual void free() = 0;
-
-    virtual void build(const std::string &filename,
-                       const std::string &kernelName,
-                       const hash_t hash) = 0;
-
-    virtual void buildFromBinary(const std::string &filename,
-                                 const std::string &kernelName) = 0;
 
     virtual int maxDims() const = 0;
     virtual dim maxOuterDims() const = 0;
@@ -260,12 +228,11 @@ namespace occa {
 
     bool isInitialized();
 
-    const std::string& mode() const;
     const occa::properties& properties() const;
 
     kernel_v* getKHandle();
 
-    occa::device getDevice();
+    occa::device device();
 
     const std::string& name();
     const std::string& sourceFilename();

@@ -36,8 +36,6 @@ OCCA_LFUNC occaDevice OCCA_RFUNC occaMemoryGetDevice(occaMemory memory);
 
 OCCA_LFUNC occaProperties OCCA_RFUNC occaMemoryGetProperties(occaMemory memory);
 
-OCCA_LFUNC const char* OCCA_RFUNC occaMemoryMode(occaMemory memory);
-
 OCCA_LFUNC occaUDim_t OCCA_RFUNC occaMemorySize(occaMemory memory);
 
 OCCA_LFUNC occaMemory OCCA_RFUNC occaMemorySlice(occaMemory memory,

@@ -148,7 +148,7 @@ namespace occa {
     return mHandle->dHandle;
   }
 
-  occa::device memory::getDevice() const {
+  occa::device memory::device() const {
     return occa::device(mHandle->dHandle);
   }
 
@@ -157,10 +157,6 @@ namespace occa {
       return kernelArg((void*) NULL);
     }
     return mHandle->makeKernelArg();
-  }
-
-  const std::string& memory::mode() const {
-    return device(mHandle->dHandle).mode();
   }
 
   const occa::properties& memory::properties() const {
@@ -434,9 +430,9 @@ namespace occa {
   }
 
   occa::memory memory::clone() const {
-    return device(mHandle->dHandle).malloc(size(),
-                                           *this,
-                                           properties());
+    return occa::device(mHandle->dHandle).malloc(size(),
+                                                 *this,
+                                                 properties());
   }
 
   void memory::free() {

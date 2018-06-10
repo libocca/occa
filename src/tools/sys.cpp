@@ -644,7 +644,6 @@ namespace occa {
 
       const std::string compilerVendorTest = env::OCCA_DIR + "scripts/compilerVendorTest.cpp";
       hash_t hash = occa::hashFile(compilerVendorTest);
-      hash ^= occa::hash(vendor_);
       hash ^= occa::hash(compiler);
 
       const std::string srcFilename = io::cacheFile(compilerVendorTest,
@@ -779,9 +778,9 @@ namespace occa {
       return dlHandle;
     }
 
-    handleFunction_t dlsym(void *dlHandle,
-                           const std::string &functionName,
-                           const io::lock_t &lock) {
+    functionPtr_t dlsym(void *dlHandle,
+                        const std::string &functionName,
+                        const io::lock_t &lock) {
 
 #if (OCCA_OS & (OCCA_LINUX_OS | OCCA_MACOS_OS))
       void *sym = ::dlsym(dlHandle, functionName.c_str());
@@ -803,7 +802,7 @@ namespace occa {
       }
 #endif
 
-      handleFunction_t sym2;
+      functionPtr_t sym2;
 
       ::memcpy(&sym2, &sym, sizeof(sym));
 
@@ -818,7 +817,7 @@ namespace occa {
 #endif
     }
 
-    void runFunction(handleFunction_t f, const int argc, void **args) {
+    void runFunction(functionPtr_t f, const int argc, void **args) {
 #include "operators/runFunctionFromArguments.cpp"
     }
 
