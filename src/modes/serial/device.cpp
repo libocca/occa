@@ -154,13 +154,13 @@ namespace occa {
     //---[ Kernel ]---------------------
     bool device::parseFile(const std::string &filename,
                            const std::string &outputFile,
-                           const occa::properties &parserProps) {
-      lang::okl::serialParser parser(parserProps);
+                           const occa::properties &kernelProps) {
+      lang::okl::serialParser parser(kernelProps);
       parser.parseFile(filename);
 
       // Verify if parsing succeeded
       if (!parser.succeeded()) {
-        if (!parserProps.get("silent", false)) {
+        if (!kernelProps.get("silent", false)) {
           OCCA_FORCE_ERROR("Unable to transform OKL kernel");
         }
         return false;
@@ -227,7 +227,7 @@ namespace occa {
         const std::string outputFile = hashDir + kc::sourceFile;
         bool valid = parseFile(sourceFilename,
                                outputFile,
-                               kernelProps["parser"]);
+                               kernelProps);
         if (!valid) {
           return NULL;
         }

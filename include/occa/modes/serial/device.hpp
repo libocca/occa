@@ -59,7 +59,7 @@ namespace occa {
       //---[ Kernel ]-------------------
       virtual bool parseFile(const std::string &filename,
                              const std::string &outputFile,
-                             const occa::properties &parserProps);
+                             const occa::properties &kernelProps);
 
       virtual kernel_v* buildKernel(const std::string &filename,
                                     const std::string &kernelName,

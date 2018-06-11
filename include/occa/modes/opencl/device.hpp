@@ -73,7 +73,7 @@ namespace occa {
       bool parseFile(const std::string &filename,
                      const std::string &outputFile,
                      const std::string &hostOutputFile,
-                     const occa::properties &parserProps,
+                     const occa::properties &kernelProps,
                      lang::kernelMetadataMap &hostMetadata,
                      lang::kernelMetadataMap &deviceMetadata);
 
