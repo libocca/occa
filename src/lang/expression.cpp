@@ -427,18 +427,22 @@ namespace occa {
         return !state.prevToken;
       }
 
+      opType_t prevOpType = state.prevToken->getOpType();
+      if (prevOpType & (operatorType::pairStart |
+                        operatorType::colon     |
+                        operatorType::questionMark)) {
+        return true;
+      }
+
       // Test for left unary first
-      const bool prevTokenIsOp = (
-        state.prevToken->getOpType() & (operatorType::unary |
-                                        operatorType::binary)
-      );
+      const bool prevTokenIsOp = prevOpType & (operatorType::unary |
+                                             operatorType::binary);
       if (prevTokenIsOp) {
-        opType_t prevType = state.prevToken->to<operatorToken>().opType();
         // + + + 1
         // a = + 1
-        if ((prevType & operatorType::leftUnary) ||
-            ((prevType & operatorType::binary) &&
-             !(prevType & operatorType::unary))) {
+        if ((prevOpType & operatorType::leftUnary) ||
+            ((prevOpType & operatorType::binary) &&
+             !(prevOpType & operatorType::unary))) {
           return true;
         }
         if (!onlyUnary) {
@@ -469,18 +473,17 @@ namespace occa {
         return false;
       }
 
-      opType_t prevType = state.prevToken->to<operatorToken>().opType();
-      opType_t nextType = state.nextToken->to<operatorToken>().opType();
+      opType_t nextOpType = state.nextToken->to<operatorToken>().opType();
 
       // x ++ ++ ++ y
-      if ((prevType & chainable) &&
-          (nextType & chainable)) {
+      if ((prevOpType & chainable) &&
+          (nextOpType & chainable)) {
         state.hasError = true;
         opToken.printError("Ambiguous operator");
         return false;
       }
 
-      return !(prevType & chainable);
+      return !(prevOpType & chainable);
     }
 
     void updateOperatorToken(operatorToken &opToken,

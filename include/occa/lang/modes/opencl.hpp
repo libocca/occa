@@ -38,6 +38,8 @@ namespace occa {
 
         virtual void onClear();
 
+        virtual void beforePreprocessing();
+
         virtual void beforeKernelSplit();
 
         virtual void afterKernelSplit();

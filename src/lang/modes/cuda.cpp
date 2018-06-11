@@ -63,6 +63,9 @@ namespace occa {
       void cudaParser::beforePreprocessing() {
         preprocessor.addCompilerDefine("restrict",
                                        restrict_.name);
+
+        preprocessor.addCompilerDefine("OCCA_USING_GPU",
+                                       "1");
       }
 
       void cudaParser::beforeKernelSplit() {

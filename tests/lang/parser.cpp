@@ -531,6 +531,8 @@ void testExpressionLoading() {
   OCCA_ASSERT_EQUAL((uint64_t) sizeof(4),
                     (uint64_t) expr.evaluate());
 
+  parseAndPrintSource("a[i] = b >= 0 ? c[i] : -d[-e - 1];");
+
 #undef expr
 }
 

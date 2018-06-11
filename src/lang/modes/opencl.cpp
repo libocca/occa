@@ -45,6 +45,11 @@ namespace occa {
         hostClear();
       }
 
+      void openclParser::beforePreprocessing() {
+        preprocessor.addCompilerDefine("OCCA_USING_GPU",
+                                       "1");
+      }
+
       void openclParser::beforeKernelSplit() {
         if (!success) return;
         addExtensions();
