@@ -184,6 +184,8 @@ namespace occa {
             return;
           }
 
+          launchBlock.add(pathSmnt.init->clone(&launchBlock));
+
           const bool isOuter = pathSmnt.hasAttribute("outer");
           const int index = (isOuter
                              ? outerCount
@@ -265,7 +267,9 @@ namespace occa {
         );
 
         forSmnt.removeFromParent();
-        delete &forSmnt;
+
+        // TODO 1.1: Delete after properly cloning the declaration statement
+        // delete &forSmnt;
       }
 
       void withLauncher::setupHostKernelArgs(functionDeclStatement &kernelSmnt) {

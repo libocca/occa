@@ -137,14 +137,14 @@ void testSource() {
     "  }\n"
     "}\n"
   );
-  // parseAndPrintSource(
-  //   "@kernel void addVectors(const int entries,\n"
-  //   "                        const float *a,\n"
-  //   "                        const float *b,\n"
-  //   "                        float *ab) {\n"
-  //   "  for (int i = 0; i < entries; ++i; @tile(16, @outer, @inner)) {\n"
-  //   "    ab[i] = a[i] + b[i];\n"
-  //   "  }\n"
-  //   "}\n"
-  // );
+  parseAndPrintSource(
+    "@kernel void addVectors(const int entries,\n"
+    "                        const float *a,\n"
+    "                        const float *b,\n"
+    "                        float *ab) {\n"
+    "  for (int i = 0; i < entries; ++i; @tile(16, @outer, @inner)) {\n"
+    "    ab[i] = a[i] + b[i];\n"
+    "  }\n"
+    "}\n"
+  );
 }

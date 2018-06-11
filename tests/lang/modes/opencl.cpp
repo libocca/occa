@@ -51,7 +51,6 @@ void testBarriers();
 void testSource();
 
 int main(const int argc, const char **argv) {
-// #if 0
   parser.settings["okl/validate"] = false;
   testPragma();
 
@@ -63,7 +62,6 @@ int main(const int argc, const char **argv) {
   testSharedAnnotation();
   testBarriers();
   testSource();
-// #endif
 
   return 0;
 }
@@ -175,14 +173,14 @@ void testSource() {
     "  }\n"
     "}\n"
   );
-  // parseAndPrintSource(
-  //   "@kernel void addVectors(const int entries,\n"
-  //   "                        const float *a,\n"
-  //   "                        const float *b,\n"
-  //   "                        float *ab) {\n"
-  //   "  for (int i = 0; i < entries; ++i; @tile(16, @outer, @inner)) {\n"
-  //   "    ab[i] = a[i] + b[i];\n"
-  //   "  }\n"
-  //   "}\n"
-  // );
+  parseAndPrintSource(
+    "@kernel void addVectors(const int entries,\n"
+    "                        const float *a,\n"
+    "                        const float *b,\n"
+    "                        float *ab) {\n"
+    "  for (int i = 0; i < entries; ++i; @tile(16, @outer, @inner)) {\n"
+    "    ab[i] = a[i] + b[i];\n"
+    "  }\n"
+    "}\n"
+  );
 }
