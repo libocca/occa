@@ -228,6 +228,7 @@ namespace occa {
 
     bool isInitialized();
 
+    const std::string& mode() const;
     const occa::properties& properties() const;
 
     kernel_v* getKHandle();

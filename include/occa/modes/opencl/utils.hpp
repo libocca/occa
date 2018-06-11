@@ -39,9 +39,11 @@ namespace occa {
     class info_t {
     public:
       cl_device_id clDevice;
-      cl_context   clContext;
-      cl_program   clProgram;
-      cl_kernel    clKernel;
+      cl_context clContext;
+      cl_program clProgram;
+      cl_kernel clKernel;
+
+      info_t();
     };
 
     namespace info {
@@ -99,7 +101,8 @@ namespace occa {
     void buildProgramFromBinary(info_t &info,
                                 const std::string &source,
                                 const std::string &kernelName,
-                                const std::string &compilerFlags = "");
+                                const std::string &compilerFlags = "",
+                                const io::lock_t &lock = io::lock_t());
 
     void buildProgram(info_t &info,
                       const std::string &kernelName,

@@ -353,6 +353,17 @@ namespace occa {
       return "";
     }
 
+    fileOrigin vartype_t::origin() const {
+      if (qualifiers.size()) {
+        return qualifiers.qualifiers[0].origin;
+      } else if (typeToken) {
+        return typeToken->origin;
+      } else if (type) {
+        return type->source->origin;
+      }
+      return fileOrigin();
+    }
+
     bool vartype_t::isPointerType() const {
       if (pointers.size()
           || arrays.size()) {
@@ -554,22 +565,16 @@ namespace occa {
     }
 
     void vartype_t::printWarning(const std::string &message) const {
-      if (qualifiers.size()) {
-        qualifiers.qualifiers[0].printWarning(message);
-      } else if (typeToken) {
-        typeToken->printWarning(message);
-      } else if (type) {
-        type->printWarning(message);
+      fileOrigin origin_ = origin();
+      if (origin_.isValid()) {
+        origin_.printWarning(message);
       }
     }
 
     void vartype_t::printError(const std::string &message) const {
-      if (qualifiers.size()) {
-        qualifiers.qualifiers[0].printError(message);
-      } else if (typeToken) {
-        typeToken->printError(message);
-      }else if (type) {
-        type->printError(message);
+      fileOrigin origin_ = origin();
+      if (origin_.isValid()) {
+        origin_.printError(message);
       }
     }
 

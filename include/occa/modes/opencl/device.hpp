@@ -56,7 +56,7 @@ namespace occa {
 
       virtual hash_t hash() const;
 
-      //  |---[ Stream ]----------------
+      //---[ Stream ]-------------------
       virtual stream_t createStream() const;
       virtual void freeStream(stream_t s) const;
 
@@ -67,15 +67,15 @@ namespace occa {
 
       virtual stream_t wrapStream(void *handle_,
                                   const occa::properties &props) const;
-      //  |=============================
+      //================================
 
-      //  |---[ Kernel ]----------------
-      virtual bool parseFile(const std::string &filename,
-                             const std::string &outputFile,
-                             const std::string &hostOutputFile,
-                             const occa::properties &parserProps,
-                             lang::kernelMetadataMap &hostMetadata,
-                             lang::kernelMetadataMap &deviceMetadata);
+      //---[ Kernel ]-------------------
+      bool parseFile(const std::string &filename,
+                     const std::string &outputFile,
+                     const std::string &hostOutputFile,
+                     const occa::properties &parserProps,
+                     lang::kernelMetadataMap &hostMetadata,
+                     lang::kernelMetadataMap &deviceMetadata);
 
       virtual kernel_v* buildKernel(const std::string &filename,
                                     const std::string &kernelName,
@@ -87,7 +87,8 @@ namespace occa {
                                          const std::string &kernelName,
                                          lang::kernelMetadataMap &hostMetadata,
                                          lang::kernelMetadataMap &deviceMetadata,
-                                         const occa::properties &kernelProps);
+                                         const occa::properties &kernelProps,
+                                         io::lock_t lock);
 
       kernel_v* buildLauncherKernel(const std::string &hashDir,
                                     const std::string &kernelName,
@@ -96,9 +97,9 @@ namespace occa {
       virtual kernel_v* buildKernelFromBinary(const std::string &filename,
                                               const std::string &kernelName,
                                               const occa::properties &kernelProps);
-      //  |=============================
+      //================================
 
-      //  |---[ Memory ]----------------
+      //---[ Memory ]-------------------
       virtual memory_v* malloc(const udim_t bytes,
                                const void *src,
                                const occa::properties &props);
@@ -108,7 +109,7 @@ namespace occa {
                                     const occa::properties &props);
 
       virtual udim_t memorySize() const;
-      //  |=============================
+      //================================
     };
   }
 }

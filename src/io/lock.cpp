@@ -32,11 +32,13 @@
 namespace occa {
   namespace io {
     lock_t::lock_t() :
+      isMineCached(false),
       released(true) {}
 
     lock_t::lock_t(const hash_t &hash,
                    const std::string &tag,
                    const int staleAge_) :
+      isMineCached(false),
       staleAge(staleAge_),
       released(false) {
 
@@ -80,6 +82,9 @@ namespace occa {
     }
 
     bool lock_t::isMine() {
+      if (isMineCached) {
+        return true;
+      }
       sys::mkpath(env::OCCA_CACHE_DIR + "locks/");
 
       while (true) {
@@ -87,6 +92,7 @@ namespace occa {
 
         if (!mkdirStatus
             || (errno != EEXIST)) {
+          isMineCached = true;
           return true;
         }
 

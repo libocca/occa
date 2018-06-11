@@ -58,7 +58,8 @@ namespace occa {
       void serialParser::onClear() {}
 
       void serialParser::beforePreprocessing() {
-        preprocessor.addCompilerDefine("restrict", restrict_.name);
+        preprocessor.addCompilerDefine("restrict",
+                                       restrict_.name);
       }
 
       void serialParser::afterParsing() {

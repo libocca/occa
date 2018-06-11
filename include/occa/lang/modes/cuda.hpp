@@ -22,25 +22,44 @@
 #ifndef OCCA_PARSER_MODES_CUDA_HEADER
 #define OCCA_PARSER_MODES_CUDA_HEADER
 
-#include <occa/lang/parser.hpp>
-#include <occa/lang/builtins/transforms/finders.hpp>
+#include <occa/lang/modes/withLauncher.hpp>
 
 namespace occa {
   namespace lang {
     namespace okl {
-      class cudaParser : public parser_t {
+      class cudaParser : public withLauncher {
       public:
-        cudaParser();
+        qualifier_t restrict_;
+        qualifier_t constant;
+        qualifier_t global;
+        qualifier_t device;
+        qualifier_t shared;
 
-        virtual void afterParsing();
+        cudaParser(const occa::properties &settings_ = occa::properties());
+
+        virtual void onClear();
+
+        virtual void beforePreprocessing();
+
+        virtual void beforeKernelSplit();
+
+        virtual void afterKernelSplit();
+
+        virtual std::string getOuterIterator(const int loopIndex);
+
+        virtual std::string getInnerIterator(const int loopIndex);
 
         void updateConstToConstant();
 
-        void addOccaFors();
+        void setFunctionQualifiers();
 
-        void setupKernelArgs();
+        void setSharedQualifiers();
 
-        void setupLaunchKernel();
+        void setupKernels();
+
+        void setKernelQualifiers(functionDeclStatement &kernelSmnt);
+
+        static bool sharedVariableMatcher(exprNode &expr);
       };
     }
   }

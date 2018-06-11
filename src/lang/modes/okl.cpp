@@ -399,6 +399,48 @@ namespace occa {
         return true;
       }
       //================================
+
+      //---[ Transformations ]----------
+      void setLoopIndices(functionDeclStatement &kernelSmnt) {
+        statementPtrVector outerSmnts, innerSmnts;
+        findStatementsByAttr(statementType::for_,
+                             "outer",
+                             kernelSmnt,
+                             outerSmnts);
+        findStatementsByAttr(statementType::for_,
+                             "inner",
+                             kernelSmnt,
+                             innerSmnts);
+
+        const int outerCount = (int) outerSmnts.size();
+        for (int i = 0; i < outerCount; ++i) {
+          setForLoopIndex(*((forStatement*) outerSmnts[i]),
+                          "outer");
+        }
+
+        const int innerCount = (int) innerSmnts.size();
+        for (int i = 0; i < innerCount; ++i) {
+          setForLoopIndex(*((forStatement*) innerSmnts[i]),
+                          "inner");
+        }
+      }
+
+      void setForLoopIndex(forStatement &forSmnt,
+                           const std::string &attr) {
+        attributeToken_t &oklAttr = forSmnt.attributes[attr];
+        if (oklAttr.args.size()) {
+          return;
+        }
+
+        oklForStatement oklForSmnt(forSmnt);
+        const int loopIndex = oklForSmnt.oklLoopIndex();
+
+        oklAttr.args.push_back(
+          new primitiveNode(oklAttr.source->clone(),
+                            loopIndex)
+        );
+      }
+      //================================
     }
   }
 }

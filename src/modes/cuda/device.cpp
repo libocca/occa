@@ -24,13 +24,17 @@
 
 #if OCCA_CUDA_ENABLED
 
+#include <occa/base.hpp>
+#include <occa/tools/env.hpp>
+#include <occa/tools/misc.hpp>
+#include <occa/tools/sys.hpp>
 #include <occa/modes/cuda/device.hpp>
 #include <occa/modes/cuda/kernel.hpp>
 #include <occa/modes/cuda/memory.hpp>
 #include <occa/modes/cuda/utils.hpp>
-#include <occa/tools/env.hpp>
-#include <occa/tools/sys.hpp>
-#include <occa/base.hpp>
+#include <occa/lang/kernelMetadata.hpp>
+#include <occa/lang/primitive.hpp>
+#include <occa/lang/modes/cuda.hpp>
 
 namespace occa {
   namespace cuda {
@@ -78,6 +82,8 @@ namespace occa {
 
       archMajorVersion = properties.get("cuda/arch/major", archMajorVersion);
       archMinorVersion = properties.get("cuda/arch/minor", archMinorVersion);
+
+      properties["kernel/verbose"] = properties.get("verbose", false);
     }
 
     device::~device() {}
@@ -145,7 +151,8 @@ namespace occa {
                       cuEventSynchronize(cuda::event(tag)));
     }
 
-    double device::timeBetween(const streamTag &startTag, const streamTag &endTag) const {
+    double device::timeBetween(const streamTag &startTag,
+                               const streamTag &endTag) const {
       OCCA_CUDA_ERROR("Device: Waiting for endTag",
                       cuEventSynchronize(cuda::event(endTag)));
 
@@ -156,36 +163,399 @@ namespace occa {
       return (double) (1.0e-3 * (double) msTimeTaken);
     }
 
-    stream_t device::wrapStream(void *handle_, const occa::properties &props) const {
+    stream_t device::wrapStream(void *handle_,
+                                const occa::properties &props) const {
       return handle_;
     }
     //==================================
 
     //---[ Kernel ]---------------------
-    lang::kernelMetadataMap device::parseFile(const std::string &filename,
-                                              const std::string &outputFile,
-                                              const occa::properties &props) {
-      return lang::kernelMetadataMap();
+    bool device::parseFile(const std::string &filename,
+                           const std::string &outputFile,
+                           const std::string &hostOutputFile,
+                           const occa::properties &parserProps,
+                           lang::kernelMetadataMap &hostMetadata,
+                           lang::kernelMetadataMap &deviceMetadata) {
+      lang::okl::cudaParser parser(parserProps);
+      parser.parseFile(filename);
+
+      // Verify if parsing succeeded
+      if (!parser.succeeded()) {
+        if (!parserProps.get("silent", false)) {
+          OCCA_FORCE_ERROR("Unable to transform OKL kernel");
+        }
+        return false;
+      }
+
+      if (!sys::fileExists(outputFile)) {
+        hash_t hash = occa::hash(outputFile);
+        io::lock_t lock(hash, "cuda-parser-device");
+        if (lock.isMine()) {
+          parser.writeToFile(outputFile);
+        }
+      }
+
+      if (!sys::fileExists(hostOutputFile)) {
+        hash_t hash = occa::hash(hostOutputFile);
+        io::lock_t lock(hash, "cuda-parser-host");
+        if (lock.isMine()) {
+          parser.hostParser.writeToFile(hostOutputFile);
+        }
+      }
+
+      parser.hostParser.setMetadata(hostMetadata);
+      parser.setMetadata(deviceMetadata);
+
+      return true;
     }
 
     kernel_v* device::buildKernel(const std::string &filename,
                                   const std::string &kernelName,
                                   const hash_t kernelHash,
-                                  const occa::properties &props) {
-      cuda::kernel *k = new cuda::kernel(props);
-      k->setDHandle(this);
-      k->build(filename, kernelName, kernelHash);
-      return k;
+                                  const occa::properties &kernelProps) {
+
+      occa::properties allProps = properties["kernel"] + kernelProps;
+
+      const std::string hashDir = io::hashDir(filename, kernelHash);
+      const std::string binaryFilename = hashDir + kc::binaryFile;
+      bool foundBinary = true;
+      bool usingOKL = allProps.get("okl", true);
+
+      io::lock_t lock(kernelHash, "cuda-kernel");
+      if (lock.isMine()) {
+        if (sys::fileExists(binaryFilename)) {
+          lock.release();
+        } else {
+          foundBinary = false;
+        }
+      }
+
+      const bool verbose = allProps.get("verbose", false);
+      if (foundBinary) {
+        if (verbose) {
+           std::cout << "Loading cached ["
+                     << kernelName
+                     << "] from ["
+                     << io::shortname(filename)
+                     << "] in [" << io::shortname(binaryFilename) << "]\n";
+        }
+        if (usingOKL) {
+          lang::kernelMetadataMap hostMetadata = (
+            lang::getBuildFileMetadata(hashDir + kc::hostBuildFile)
+          );
+          lang::kernelMetadataMap deviceMetadata = (
+            lang::getBuildFileMetadata(hashDir + kc::buildFile)
+          );
+          return buildOKLKernelFromBinary(hashDir,
+                                          kernelName,
+                                          hostMetadata,
+                                          deviceMetadata,
+                                          allProps,
+                                          lock);
+        } else {
+          return buildKernelFromBinary(binaryFilename,
+                                       kernelName,
+                                       kernelProps);
+        }
+      }
+
+      // Cache raw origin
+      std::string sourceFilename = (
+        io::cacheFile(filename,
+                      kc::rawSourceFile,
+                      kernelHash,
+                      assembleHeader(allProps),
+                      allProps["footer"].string())
+      );
+
+      kernel_v *launcherKernel = NULL;
+      lang::kernelMetadataMap hostMetadata, deviceMetadata;
+      if (usingOKL) {
+        const std::string outputFile = hashDir + kc::sourceFile;
+        const std::string hostOutputFile = hashDir + kc::hostSourceFile;
+        bool valid = parseFile(sourceFilename,
+                               outputFile,
+                               hostOutputFile,
+                               allProps["parser"],
+                               hostMetadata,
+                               deviceMetadata);
+        if (!valid) {
+          return NULL;
+        }
+        sourceFilename = outputFile;
+
+        launcherKernel = buildLauncherKernel(hashDir,
+                                             kernelName,
+                                             hostMetadata[kernelName]);
+
+        // No OKL means no build file is generated,
+        //   so we need to build it
+        host()
+          .getDHandle()
+          ->writeKernelBuildFile(hashDir + kc::hostBuildFile,
+                                 kernelHash,
+                                 occa::properties(),
+                                 hostMetadata);
+
+        writeKernelBuildFile(hashDir + kc::buildFile,
+                             kernelHash,
+                             allProps,
+                             deviceMetadata);
+      }
+
+      compileKernel(hashDir,
+                    kernelName,
+                    allProps,
+                    lock);
+
+      // Regular CUDA Kernel
+      if (!launcherKernel) {
+        CUmodule cuModule;
+        CUfunction cuFunction;
+        CUresult error;
+
+        error = cuModuleLoad(&cuModule, binaryFilename.c_str());
+        if (error) {
+          lock.release();
+          OCCA_CUDA_ERROR("Kernel [" + kernelName + "]: Loading Module",
+                          error);
+        }
+        error = cuModuleGetFunction(&cuFunction,
+                                    cuModule,
+                                    kernelName.c_str());
+        if (error) {
+          lock.release();
+          OCCA_CUDA_ERROR("Kernel [" + kernelName + "]: Loading Function",
+                          error);
+        }
+        return new kernel(this,
+                          kernelName,
+                          sourceFilename,
+                          cuModule,
+                          cuFunction,
+                          allProps);
+      }
+
+      return buildOKLKernelFromBinary(hashDir,
+                                      kernelName,
+                                      hostMetadata,
+                                      deviceMetadata,
+                                      allProps,
+                                      lock);
+    }
+
+    void device::setArchCompilerFlags(occa::properties &kernelProps) {
+      if (kernelProps.get<std::string>("compilerFlags").find("-arch=sm_") == std::string::npos) {
+        const int major = archMajorVersion;
+        const int minor = archMinorVersion;
+        std::stringstream ss;
+        ss << " -arch=sm_" << major << minor << ' ';
+        kernelProps["compilerFlags"].string() += ss.str();
+      }
+    }
+
+    void device::compileKernel(const std::string &hashDir,
+                               const std::string &kernelName,
+                               occa::properties &kernelProps,
+                               io::lock_t &lock) {
+
+      const bool verbose = kernelProps.get("verbose", false);
+
+      std::string sourceFilename = hashDir + kc::sourceFile;
+      std::string binaryFilename = hashDir + kc::binaryFile;
+      const std::string ptxBinaryFilename = hashDir + "ptx_binary.o";
+
+      setArchCompilerFlags(kernelProps);
+
+      //---[ PTX Check Command ]--------
+      std::stringstream command;
+      if (kernelProps.has("compilerEnvScript")) {
+        command << kernelProps["compilerEnvScript"] << " && ";
+      }
+
+      command << kernelProps["compiler"]
+              << ' ' << kernelProps["compilerFlags"]
+              << " -Xptxas -v,-dlcm=cg"
+#if (OCCA_OS == OCCA_WINDOWS_OS)
+              << " -D OCCA_OS=OCCA_WINDOWS_OS -D _MSC_VER=1800"
+#endif
+              << " -I"        << env::OCCA_DIR << "include"
+              << " -L"        << env::OCCA_DIR << "lib -locca"
+              << " -x cu -c " << sourceFilename
+              << " -o "       << ptxBinaryFilename;
+
+      if (!verbose) {
+        command << " > /dev/null 2>&1";
+      }
+      const std::string &ptxCommand = command.str();
+      if (verbose) {
+        std::cout << "Compiling [" << kernelName << "]\n" << ptxCommand << "\n";
+      }
+
+#if (OCCA_OS & (OCCA_LINUX_OS | OCCA_MACOS_OS))
+      ignoreResult( system(ptxCommand.c_str()) );
+#else
+      ignoreResult( system(("\"" +  ptxCommand + "\"").c_str()) );
+#endif
+      //================================
+
+      //---[ Compiling Command ]--------
+      command.str("");
+      command << kernelProps["compiler"]
+              << ' ' << kernelProps["compilerFlags"]
+              << " -ptx"
+#if (OCCA_OS == OCCA_WINDOWS_OS)
+              << " -D OCCA_OS=OCCA_WINDOWS_OS -D _MSC_VER=1800"
+#endif
+              << " -I"        << env::OCCA_DIR << "include"
+              << " -L"        << env::OCCA_DIR << "lib -locca"
+              << " -x cu " << sourceFilename
+              << " -o "    << binaryFilename;
+
+      if (!verbose) {
+        command << " > /dev/null 2>&1";
+      }
+      const std::string &sCommand = command.str();
+      if (verbose) {
+        std::cout << sCommand << '\n';
+      }
+
+      const int compileError = system(sCommand.c_str());
+
+      if (compileError) {
+        lock.release();
+        OCCA_FORCE_ERROR("Compilation error");
+      }
+      //================================
+    }
+
+    kernel_v* device::buildOKLKernelFromBinary(const std::string &hashDir,
+                                               const std::string &kernelName,
+                                               lang::kernelMetadataMap &hostMetadata,
+                                               lang::kernelMetadataMap &deviceMetadata,
+                                               const occa::properties &kernelProps,
+                                               const io::lock_t &lock) {
+
+      const std::string sourceFilename = hashDir + kc::sourceFile;
+      const std::string binaryFilename = hashDir + kc::binaryFile;
+
+      CUmodule cuModule;
+      CUresult error;
+
+      error = cuModuleLoad(&cuModule, binaryFilename.c_str());
+      if (error) {
+        lock.release();
+        OCCA_CUDA_ERROR("Kernel [" + kernelName + "]: Loading Module",
+                        error);
+      }
+
+      // Create wrapper kernel and set launcherKernel
+      kernel &k = *(new kernel(this,
+                               kernelName,
+                               sourceFilename,
+                               kernelProps));
+
+      k.launcherKernel = buildLauncherKernel(hashDir,
+                                             kernelName,
+                                             hostMetadata[kernelName]);
+
+      // Find clKernels
+      typedef std::map<int, lang::kernelMetadata> kernelOrderMap;
+      kernelOrderMap clKernelMetadata;
+
+#if 1
+      // For now, assume there is only one @outer loop
+      clKernelMetadata[0] = deviceMetadata[kernelName];
+#else
+      const std::string prefix = "_occa_" + kernelName + "_";
+
+      lang::kernelMetadataMap::iterator it = deviceMetadata.begin();
+      while (it != deviceMetadata.end()) {
+        const std::string &name = it->first;
+        lang::kernelMetadata &metadata = it->second;
+        ++it;
+        if (!startsWith(name, prefix)) {
+          continue;
+        }
+        std::string suffix = name.substr(0, prefix.size());
+        const char *c = suffix.c_str();
+        primitive number = primitive::load(c, false);
+        // Make sure we reached the end ['\0']
+        //   and have a number
+        if (*c || number.isNaN()) {
+          continue;
+        }
+        clKernelMetadata[number] = metadata;
+      }
+#endif
+
+      kernelOrderMap::iterator oit = clKernelMetadata.begin();
+      while (oit != clKernelMetadata.end()) {
+        lang::kernelMetadata &metadata = oit->second;
+
+        CUfunction cuFunction;
+        error = cuModuleGetFunction(&cuFunction,
+                                    cuModule,
+                                    metadata.name.c_str());
+        if (error) {
+          lock.release();
+          OCCA_CUDA_ERROR("Kernel [" + metadata.name + "]: Loading Function",
+                          error);
+        }
+
+        k.cuKernels.push_back(
+          new kernel(this,
+                     metadata.name,
+                     sourceFilename,
+                     cuModule,
+                     cuFunction,
+                     kernelProps)
+        );
+        ++oit;
+      }
+
+      return &k;
+    }
+
+    kernel_v* device::buildLauncherKernel(const std::string &hashDir,
+                                          const std::string &kernelName,
+                                          lang::kernelMetadata &hostMetadata) {
+      const std::string hostOutputFile = hashDir + kc::hostSourceFile;
+
+      occa::kernel hostKernel = host().buildKernel(hostOutputFile,
+                                                   kernelName,
+                                                   "okl: false");
+
+      // Launcher and clKernels use the same refs as the wrapper kernel
+      kernel_v *launcherKernel = hostKernel.getKHandle();
+      launcherKernel->dontUseRefs();
+
+      launcherKernel->metadata = hostMetadata;
+
+      return launcherKernel;
     }
 
     kernel_v* device::buildKernelFromBinary(const std::string &filename,
                                             const std::string &kernelName,
-                                            const occa::properties &props) {
+                                            const occa::properties &kernelProps) {
 
-      cuda::kernel *k = new cuda::kernel(props);
-      k->dHandle = this;
-      k->buildFromBinary(filename, kernelName);
-      return k;
+      occa::properties allProps = properties["kernel"] + kernelProps;
+
+      CUmodule cuModule;
+      CUfunction cuFunction;
+
+      OCCA_CUDA_ERROR("Kernel [" + kernelName + "]: Loading Module",
+                      cuModuleLoad(&cuModule, filename.c_str()));
+
+      OCCA_CUDA_ERROR("Kernel [" + kernelName + "]: Loading Function",
+                      cuModuleGetFunction(&cuFunction, cuModule, kernelName.c_str()));
+
+      return new kernel(this,
+                        kernelName,
+                        filename,
+                        cuModule,
+                        cuFunction,
+                        allProps);
     }
     //==================================
 

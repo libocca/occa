@@ -159,6 +159,10 @@ namespace occa {
     return mHandle->makeKernelArg();
   }
 
+  const std::string& memory::mode() const {
+    return mHandle->dHandle->mode;
+  }
+
   const occa::properties& memory::properties() const {
     return mHandle->properties;
   }

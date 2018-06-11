@@ -178,11 +178,25 @@ namespace occa {
     }
 
     void kernel::free() {
-      if (clKernel) {
-        OCCA_OPENCL_ERROR("Kernel [" + name + "]: Free",
-                          clReleaseKernel(clKernel));
-        clKernel = NULL;
+      if (!launcherKernel) {
+        if (clKernel) {
+          OCCA_OPENCL_ERROR("Kernel [" + name + "]: Free",
+                            clReleaseKernel(clKernel));
+          clKernel = NULL;
+        }
+        return;
       }
+
+      launcherKernel->free();
+      delete launcherKernel;
+      launcherKernel = NULL;
+
+      int kernelCount = (int) clKernels.size();
+      for (int i = 0; i < kernelCount; ++i) {
+        clKernels[i]->free();
+        delete clKernels[i];
+      }
+      clKernels.clear();
     }
   }
 }

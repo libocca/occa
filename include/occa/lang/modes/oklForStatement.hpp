@@ -88,11 +88,8 @@ namespace occa {
         bool isOuterLoop();
 
         int oklLoopIndex();
+
         static int oklLoopIndex(forStatement &forSmnt);
-        static int oklNestedLoopCount(forStatement &forSmnt,
-                                      const std::string &attr);
-        static int oklLoopReverseIndex(forStatement &forSmnt,
-                                       const std::string &attr);
 
         void getOKLLoopPath(statementPtrVector &path);
 

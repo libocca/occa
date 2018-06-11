@@ -137,7 +137,7 @@ namespace occa {
       }
     }
 
-    void statement_t::print() const {
+    void statement_t::debugPrint() const {
       std::cout << toString();
     }
 

@@ -32,6 +32,7 @@ namespace occa {
     class lock_t {
     private:
       mutable std::string lockDir;
+      mutable bool isMineCached;
       float staleWarning;
       float staleAge;
       mutable bool released;

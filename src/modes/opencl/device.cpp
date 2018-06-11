@@ -259,7 +259,8 @@ namespace occa {
                                           kernelName,
                                           hostMetadata,
                                           deviceMetadata,
-                                          kernelProps);
+                                          kernelProps,
+                                          lock);
         } else {
           return buildKernelFromBinary(binaryFilename,
                                        kernelName,
@@ -329,7 +330,8 @@ namespace occa {
       // Regular OpenCL Kernel
       if (!launcherKernel) {
         opencl::buildKernelFromProgram(clInfo,
-                                       kernelName);
+                                       kernelName,
+                                       lock);
         return new kernel(this,
                           kernelName,
                           sourceFilename,
@@ -343,7 +345,8 @@ namespace occa {
                                       kernelName,
                                       hostMetadata,
                                       deviceMetadata,
-                                      kernelProps);
+                                      kernelProps,
+                                      lock);
     }
 
     kernel_v* device::buildOKLKernelFromBinary(info_t &clInfo,
@@ -351,7 +354,8 @@ namespace occa {
                                                const std::string &kernelName,
                                                lang::kernelMetadataMap &hostMetadata,
                                                lang::kernelMetadataMap &deviceMetadata,
-                                               const occa::properties &kernelProps) {
+                                               const occa::properties &kernelProps,
+                                               io::lock_t lock) {
 
       const std::string sourceFilename = hashDir + kc::sourceFile;
       const std::string binaryFilename = hashDir + kc::binaryFile;
@@ -360,7 +364,8 @@ namespace occa {
         opencl::buildProgramFromBinary(clInfo,
                                        io::read(binaryFilename),
                                        kernelName,
-                                       properties["compilerFlags"].string());
+                                       properties["compilerFlags"].string(),
+                                       lock);
       }
 
       // Create wrapper kernel and set launcherKernel
@@ -372,6 +377,10 @@ namespace occa {
       k.launcherKernel = buildLauncherKernel(hashDir,
                                              kernelName,
                                              hostMetadata[kernelName]);
+      if (!k.launcherKernel) {
+        delete &k;
+        return NULL;
+      }
 
       // Find clKernels
       typedef std::map<int, lang::kernelMetadata> kernelOrderMap;
@@ -407,7 +416,8 @@ namespace occa {
       while (oit != clKernelMetadata.end()) {
         lang::kernelMetadata &metadata = oit->second;
         opencl::buildKernelFromProgram(clInfo,
-                                       metadata.name);
+                                       metadata.name,
+                                       lock);
 
         k.clKernels.push_back(
           new kernel(this,
@@ -434,6 +444,10 @@ namespace occa {
 
       // Launcher and clKernels use the same refs as the wrapper kernel
       kernel_v *launcherKernel = hostKernel.getKHandle();
+      if (!launcherKernel) {
+        return NULL;
+      }
+
       launcherKernel->dontUseRefs();
 
       launcherKernel->metadata = hostMetadata;

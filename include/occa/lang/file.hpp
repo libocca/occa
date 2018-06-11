@@ -98,6 +98,8 @@ namespace occa {
 
       void clear();
 
+      bool isValid() const;
+
       void setFile(file_t &file_);
       void setUp(fileOrigin *up_);
 

@@ -218,6 +218,8 @@ namespace occa {
       bool isNamed() const;
       std::string name() const;
 
+      fileOrigin origin() const;
+
       bool isPointerType() const;
 
       void setReferenceToken(token_t *token);

@@ -80,6 +80,13 @@ namespace occa {
       //---[ Skip Logic ]---------------
       bool checkBreakAndContinue(functionDeclStatement &kernelSmnt);
       //================================
+
+      //---[ Transformations ]----------
+      void setLoopIndices(functionDeclStatement &kernelSmnt);
+
+      void setForLoopIndex(forStatement &forSmnt,
+                           const std::string &attr);
+      //================================
     }
   }
 }

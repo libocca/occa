@@ -45,13 +45,24 @@ namespace occa {
         }
         const int argCount = (int) attr.args.size();
         if (argCount > 1) {
-          attr.printError("[@outer] doesn't take any arguments");
+          attr.printError("[@outer] takes at most one index");
           return false;
         }
         if (argCount == 1) {
-          attr.printError("[@outer] doesn't take the index argument ... yet"
-                          " (how did you find this? =O)");
-          return false;
+          exprNode *expr = attr.args[0].expr;
+          bool error = (!expr || !expr->canEvaluate());
+          if (!error) {
+            primitive value = expr->evaluate();
+            error = !value.isInteger();
+            if (!error) {
+              int intValue = value;
+              error = (intValue < 0) || (2 < intValue);
+            }
+          }
+          if (error) {
+            attr.printError("[@outer] argument must be 0, 1, or 2");
+            return false;
+          }
         }
         return true;
       }

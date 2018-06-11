@@ -22,17 +22,13 @@
 #ifndef OCCA_PARSER_MODES_OPENCL_HEADER
 #define OCCA_PARSER_MODES_OPENCL_HEADER
 
-#include <occa/lang/parser.hpp>
-#include <occa/lang/modes/serial.hpp>
-#include <occa/lang/builtins/transforms/finders.hpp>
+#include <occa/lang/modes/withLauncher.hpp>
 
 namespace occa {
   namespace lang {
     namespace okl {
-      class openclParser : public parser_t {
+      class openclParser : public withLauncher {
       public:
-        serialParser hostParser;
-
         qualifier_t constant;
         qualifier_t kernel;
         qualifier_t global;
@@ -40,34 +36,15 @@ namespace occa {
 
         openclParser(const occa::properties &settings_ = occa::properties());
 
-        //---[ Public ]-----------------
-        void writeHostSourceToFile(const std::string &filename) const;
-        //==============================
-
         virtual void onClear();
-        virtual void afterParsing();
 
-        void setupHostParser();
+        virtual void beforeKernelSplit();
 
-        void removeHostOuterLoops(functionDeclStatement &kernelSmnt);
+        virtual void afterKernelSplit();
 
-        bool isOuterMostOuterLoop(forStatement &forSmnt);
+        virtual std::string getOuterIterator(const int loopIndex);
 
-        void setKernelLaunch(functionDeclStatement &kernelSmnt,
-                             forStatement &forSmnt,
-                             const int kernelIndex);
-
-        void setupHostKernelArgs(functionDeclStatement &kernelSmnt);
-        void setupHostHeaders();
-
-        int getInnerLoopLevel(forStatement &forSmnt);
-
-        forStatement* getInnerMostInnerLoop(forStatement &forSmnt);
-
-        exprNode& setDim(token_t *source,
-                         const std::string &name,
-                         const int index,
-                         exprNode *value);
+        virtual std::string getInnerIterator(const int loopIndex);
 
         void addExtensions();
 
@@ -76,9 +53,8 @@ namespace occa {
         void setLocalQualifiers();
 
         void setupKernels();
+
         void setKernelQualifiers(functionDeclStatement &kernelSmnt);
-        void replaceOccaFors(functionDeclStatement &kernelSmnt);
-        void replaceOccaFor(forStatement &forSmnt);
 
         static bool sharedVariableMatcher(exprNode &expr);
 

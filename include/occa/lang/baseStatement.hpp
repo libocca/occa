@@ -125,7 +125,7 @@ namespace occa {
 
       std::string toString() const;
       operator std::string() const;
-      void print() const;
+      void debugPrint() const;
 
       virtual void printWarning(const std::string &message) const = 0;
       virtual void printError(const std::string &message) const = 0;

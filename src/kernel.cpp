@@ -356,6 +356,10 @@ namespace occa {
     return (kHandle != NULL);
   }
 
+  const std::string& kernel::mode() const {
+    return kHandle->dHandle->mode;
+  }
+
   const occa::properties& kernel::properties() const {
     return kHandle->properties;
   }

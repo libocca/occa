@@ -154,6 +154,7 @@ namespace occa {
 
     operator kernelArg() const;
 
+    const std::string& mode() const;
     const occa::properties& properties() const;
 
     udim_t size() const;

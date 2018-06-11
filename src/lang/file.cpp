@@ -161,6 +161,10 @@ namespace occa {
       up   = NULL;
     }
 
+    bool fileOrigin::isValid() const {
+      return file;
+    }
+
     void fileOrigin::setFile(file_t &file_) {
       file_.addRef();
       if (file && !file->removeRef()) {

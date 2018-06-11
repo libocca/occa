@@ -37,15 +37,23 @@ namespace occa {
     class kernel : public occa::kernel_v {
       friend class device;
 
-    public:
-      CUmodule   cuModule;
+    private:
+      CUmodule cuModule;
       CUfunction cuFunction;
-      std::vector<void*> vArgs;
 
       occa::kernel_v *launcherKernel;
       std::vector<kernel*> cuKernels;
+      mutable std::vector<void*> vArgs;
+
+    public:
+      kernel(device_v *dHandle_,
+             const std::string &name_,
+             const std::string &sourceFilename_,
+             const occa::properties &properties_);
 
       kernel(device_v *dHandle_,
+             const std::string &name_,
+             const std::string &sourceFilename_,
              CUmodule cuModule_,
              CUfunction cuFunction_,
              const occa::properties &properties_);

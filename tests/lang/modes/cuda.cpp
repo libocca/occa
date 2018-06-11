@@ -19,40 +19,48 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  */
+#define OCCA_TEST_PARSER_TYPE okl::cudaParser
+
+#include <occa/lang/modes/cuda.hpp>
 #include "../parserUtils.hpp"
 
-void testPreprocessor();
+#undef parseAndPrintSource
+#define parseAndPrintSource(str_)                                       \
+  parseSource(str_);                                                    \
+  OCCA_ASSERT_TRUE(parser.success)                                      \
+  {                                                                     \
+    printer pout;                                                       \
+    parser.hostParser.root.print(pout);                                 \
+    std::cout << "---[ Host ]-----------------------------------\n";    \
+    std::cout << pout.str();                                            \
+    std::cout << "==============================================\n\n";  \
+    pout.clear();                                                       \
+    parser.root.print(pout);                                            \
+    std::cout << "---[ Device ]---------------------------------\n";    \
+    std::cout << pout.str();                                            \
+    std::cout << "==============================================\n\n";  \
+  }
+
 void testLoopExtraction();
 void testGlobalConst();
-void testDeviceFunctions();
 void testKernelAnnotation();
+void testKernelArgs();
 void testSharedAnnotation();
 void testBarriers();
+void testSource();
 
 int main(const int argc, const char **argv) {
-  parser.addAttribute<dummy>();
-  parser.addAttribute<attributes::kernel>();
-  parser.addAttribute<attributes::outer>();
-  parser.addAttribute<attributes::inner>();
-  parser.addAttribute<attributes::shared>();
-  parser.addAttribute<attributes::exclusive>();
-
-  testPreprocessor();
+  parser.settings["okl/validate"] = true;
   testLoopExtraction();
   testGlobalConst();
-  testDeviceFunctions();
   testKernelAnnotation();
+  testKernelArgs();
   testSharedAnnotation();
   testBarriers();
+  testSource();
 
   return 0;
 }
-
-//---[ Preprocessor ]-------------------
-void testPreprocessor() {
-  // #define restrict __restrict__
-}
-//======================================
 
 //---[ Loops ]--------------------------
 void testLoopExtraction() {
@@ -62,30 +70,81 @@ void testLoopExtraction() {
 
 //---[ Constant ]-----------------------
 void testGlobalConst() {
-  // Global const -> __constant__
-}
-//======================================
-
-//---[ Device Functions ]---------------
-void testDeviceFunctions() {
-  // Non-@kernel function [N/A, __device__]
+  // Global const -> __constant
 }
 //======================================
 
 //---[ Kernel ]-------------------------
 void testKernelAnnotation() {
-  // @kernel -> extern "C" __global__
+  // @kernel -> __kernel
+}
+//======================================
+
+//---[ Kernel Args ]--------------------
+void testKernelArgs() {
+  // @kernel arg -> __global
 }
 //======================================
 
 //---[ Shared ]-------------------------
 void testSharedAnnotation() {
-  // @shared -> __shared__
+  // @shared -> __local
 }
 //======================================
 
 //---[ Barriers ]-----------------------
 void testBarriers() {
-  // Add barriers __syncthreads()
+  // Add barriers barrier(CLK_LOCAL_MEM_FENCE)
 }
 //======================================
+
+void testSource() {
+  // TODO:
+  //   @exclusive ->
+  //     - std::vector<value>
+  //     - vec.reserve(loopIterations)
+  //     - Add iterator index to inner-most @inner loop
+  parseAndPrintSource(
+    "const int var[10];\n"
+    "void foo() {}\n"
+    "int bar(int i) {}\n"
+    "@kernel void kernel(int * restrict arg, const int bar) {\n"
+    "  for (int o1 = 0; o1 < O1; ++o1; @outer) {\n"
+    "    for (int o0 = 0; o0 < O0; ++o0; @outer) {\n"
+    "      @shared int shr[3];\n"
+    "      @exclusive int excl;\n"
+    "      if (true) {\n"
+    "        for (int i1 = 10; i1 < (I1 + 4); i1 += 3; @inner) {\n"
+    "          for (int i0 = 0; i0 < I0; ++i0; @inner) {\n"
+    "            for (;;) {\n"
+    "               excl = i0;\n"
+    "            }\n"
+    "            for (;;) {\n"
+    "               excl = i0;\n"
+    "            }\n"
+    "          }\n"
+    "        }\n"
+    "      }\n"
+    "    }\n"
+    "  }\n"
+    "  for (int ib = 0; ib < entries; ib += 16; @outer) {\n"
+    "    for (int it = 0; it < 16; ++it; @inner) {\n"
+    "      const int i = ib + it;\n"
+    "      if (i < entries) {\n"
+    "        ab[i] = a[i] + b[i];\n"
+    "      }\n"
+    "    }\n"
+    "  }\n"
+    "}\n"
+  );
+  // parseAndPrintSource(
+  //   "@kernel void addVectors(const int entries,\n"
+  //   "                        const float *a,\n"
+  //   "                        const float *b,\n"
+  //   "                        float *ab) {\n"
+  //   "  for (int i = 0; i < entries; ++i; @tile(16, @outer, @inner)) {\n"
+  //   "    ab[i] = a[i] + b[i];\n"
+  //   "  }\n"
+  //   "}\n"
+  // );
+}

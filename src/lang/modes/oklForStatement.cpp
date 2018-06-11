@@ -371,46 +371,35 @@ namespace occa {
           return -1;
         }
 
-        return (oklNestedLoopCount(forSmnt, attr)
-                - oklLoopReverseIndex(forSmnt, attr));
-      }
+        attributeToken_t &oklAttr = forSmnt.attributes[attr];
+        if (oklAttr.args.size()) {
+          return (int) oklAttr.args[0].expr->evaluate();
+        }
 
-      int oklForStatement::oklNestedLoopCount(forStatement &forSmnt,
-                                              const std::string &attr) {
         statementPtrVector smnts;
         findStatementsByAttr(statementType::for_,
                              attr,
                              forSmnt,
                              smnts);
         int smntCount = (int) smnts.size();
-        int maxCount = 0;
+        int maxIndex = 0;
         for (int i = 0; i < smntCount; ++i) {
-          forStatement &ismnt = *((forStatement*) smnts[i]);
-          if (&ismnt == &forSmnt) {
+          forStatement &iSmnt = *((forStatement*) smnts[i]);
+          if (&iSmnt == &forSmnt) {
             continue;
           }
 
-          int iCount = oklLoopReverseIndex(ismnt, attr);
-          if (iCount > maxCount) {
-            maxCount = iCount;
+          int index = 1;
+          statement_t *up = iSmnt.up;
+          while (up != &forSmnt) {
+            index += up->hasAttribute(attr);
+            up = up->up;
+          }
+          if (index > maxIndex) {
+            maxIndex = index;
           }
         }
-        // Include this
-        return maxCount;
-      }
-
-      int oklForStatement::oklLoopReverseIndex(forStatement &forSmnt,
-                                               const std::string &attr) {
-        int count = 0;
-        statement_t *smnt = forSmnt.up;
-        while (smnt) {
-          if ((smnt->type() & statementType::for_)
-              && smnt->hasAttribute(attr)) {
-            ++count;
-          }
-          smnt = smnt->up;
-        }
-        return count;
+        return maxIndex;
       }
 
       void oklForStatement::getOKLLoopPath(statementPtrVector &path) {

@@ -36,6 +36,12 @@
 
 namespace occa {
   namespace opencl {
+    info_t::info_t() :
+      clDevice(NULL),
+      clContext(NULL),
+      clProgram(NULL),
+      clKernel(NULL) {}
+
     namespace info {
       std::string deviceType(int type) {
         if (type & CPU)     return "CPU";
@@ -307,7 +313,8 @@ namespace occa {
     void buildProgramFromBinary(info_t &info,
                                 const std::string &source,
                                 const std::string &kernelName,
-                                const std::string &compilerFlags) {
+                                const std::string &compilerFlags,
+                                const io::lock_t &lock) {
       cl_int error, binaryError;
 
       const char *c_source = source.c_str();
@@ -318,6 +325,9 @@ namespace occa {
                                                  (const unsigned char**) &c_source,
                                                  &binaryError, &error);
 
+      if (binaryError || error) {
+        lock.release();
+      }
       OCCA_OPENCL_ERROR("Kernel [" + kernelName + "]: Creating Program",
                         binaryError);
       OCCA_OPENCL_ERROR("Kernel [" + kernelName + "]: Creating Program",
@@ -325,7 +335,8 @@ namespace occa {
 
       buildProgram(info,
                    kernelName,
-                   compilerFlags);
+                   compilerFlags,
+                   lock);
     }
 
     void buildProgram(info_t &info,
