@@ -28,6 +28,7 @@
 
 #include <occa/tools/properties.hpp>
 #include <occa/lang/exprTransform.hpp>
+#include <occa/lang/kernelMetadata.hpp>
 #include <occa/lang/keyword.hpp>
 #include <occa/lang/preprocessor.hpp>
 #include <occa/lang/processingStages.hpp>
@@ -96,6 +97,8 @@ namespace occa {
       void toString(std::string &s) const;
 
       void writeToFile(const std::string &filename) const;
+
+      void setMetadata(kernelMetadataMap &metadataMap) const;
       //================================
 
       //---[ Setup ]--------------------

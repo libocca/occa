@@ -34,10 +34,13 @@ namespace occa {
     public:
       int threads;
 
-      kernel(const occa::properties &properties_);
+      kernel(device_v *dHandle_,
+             const std::string &name_,
+             const std::string &sourceFilename_,
+             const occa::properties &properties_);
       ~kernel();
 
-      void runFromArguments(const int kArgc, const kernelArg *kArgs) const;
+      void run() const;
     };
   }
 }

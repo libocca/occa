@@ -21,6 +21,8 @@
  */
 
 #include <occa/lang/kernelMetadata.hpp>
+#include <occa/io/utils.hpp>
+#include <occa/tools/properties.hpp>
 
 namespace occa {
   namespace lang {
@@ -40,13 +42,13 @@ namespace occa {
     kernelMetadata::kernelMetadata() {}
 
     kernelMetadata& kernelMetadata::operator += (const argumentInfo &argInfo) {
-      argumentInfos.push_back(argInfo);
+      arguments.push_back(argInfo);
       return *this;
     }
 
     bool kernelMetadata::argIsConst(const int pos) const {
-      if (pos < (int) argumentInfos.size()) {
-        return argumentInfos[pos].isConst;
+      if (pos < (int) arguments.size()) {
+        return arguments[pos].isConst;
       }
       return false;
     }
@@ -56,10 +58,10 @@ namespace occa {
 
       meta.name = j["name"].string();
 
-      const jsonArray &argInfos = j["argumentInfos"].array();
+      const jsonArray &argInfos = j["arguments"].array();
       const int argumentCount = (int) argInfos.size();
       for (int i = 0; i < argumentCount; ++i) {
-        meta.argumentInfos.push_back(argumentInfo::fromJson(argInfos[i]));
+        meta.arguments.push_back(argumentInfo::fromJson(argInfos[i]));
       }
 
       return meta;
@@ -70,13 +72,31 @@ namespace occa {
 
       j["name"] = name;
 
-      const int argumentCount = (int) argumentInfos.size();
-      json &argInfos = j["argumentInfos"].asArray();
+      const int argumentCount = (int) arguments.size();
+      json &argInfos = j["arguments"].asArray();
       for (int k = 0; k < argumentCount; ++k) {
-        argInfos += argumentInfos[k].toJson();
+        argInfos += arguments[k].toJson();
       }
 
       return j;
+    }
+
+    kernelMetadataMap getBuildFileMetadata(const std::string &filename) {
+      kernelMetadataMap metadataMap;
+      if (!io::exists(filename)) {
+        return metadataMap;
+      }
+
+      properties props = properties::read(filename);
+      jsonArray &metadata = props["kernel/metadata"].array();
+
+      const int kernelCount = (int) metadata.size();
+      for (int i = 0; i < kernelCount; ++i) {
+        kernelMetadata kernel = kernelMetadata::fromJson(metadata[i]);
+        metadataMap[kernel.name] = kernel;
+      }
+
+      return metadataMap;
     }
   }
 }

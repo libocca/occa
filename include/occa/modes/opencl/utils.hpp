@@ -36,7 +36,8 @@ namespace occa {
   class streamTag;
 
   namespace opencl {
-    struct info_t {
+    class info_t {
+    public:
       cl_device_id clDevice;
       cl_context   clContext;
       cl_program   clProgram;
@@ -87,28 +88,39 @@ namespace occa {
     udim_t getDeviceMemorySize(cl_device_id dID);
     udim_t getDeviceMemorySize(int pID, int dID);
 
-    void buildKernel(info_t &info_,
-                     const char *content,
-                     const size_t contentBytes,
-                     const std::string &kernelName,
-                     const std::string &flags = "",
-                     const std::string &sourceFile = "",
-                     const occa::properties &properties = occa::properties(),
-                     const io::lock_t &lock = io::lock_t());
+    void buildProgramFromSource(info_t &info,
+                                const std::string &source,
+                                const std::string &kernelName,
+                                const std::string &compilerFlags = "",
+                                const std::string &sourceFile = "",
+                                const occa::properties &properties = occa::properties(),
+                                const io::lock_t &lock = io::lock_t());
 
-    void buildKernelFromBinary(info_t &info_,
-                               const unsigned char *content,
-                               const size_t contentBytes,
-                               const std::string &kernelName,
-                               const std::string &flags = "");
+    void buildProgramFromBinary(info_t &info,
+                                const std::string &source,
+                                const std::string &kernelName,
+                                const std::string &compilerFlags = "");
 
-    void saveProgramBinary(info_t &info_,
+    void buildProgram(info_t &info,
+                      const std::string &kernelName,
+                      const std::string &compilerFlags,
+                      const io::lock_t &lock = io::lock_t());
+
+    void buildKernelFromProgram(info_t &info,
+                                const std::string &kernelName,
+                                const io::lock_t &lock = io::lock_t());
+
+    void saveProgramBinary(cl_program &clProgram,
                            const std::string &binaryFile,
                            const io::lock_t &lock = io::lock_t());
 
-    cl_context getContext(occa::device device);
-    cl_mem getMem(occa::memory memory);
-    cl_kernel getKernel(occa::kernel kernel);
+    cl_context getCLContext(occa::device device);
+
+    cl_mem getCLMemory(occa::memory memory);
+
+    void* getCLMappedPtr(occa::memory memory);
+
+    cl_kernel getCLKernel(occa::kernel kernel);
 
     occa::device wrapDevice(cl_device_id clDevice,
                             cl_context context,

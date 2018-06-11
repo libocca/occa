@@ -30,7 +30,7 @@
     kHandle->arguments.clear();
     kHandle->arguments.reserve(1);
     kHandle->arguments.insert(kHandle->arguments.begin(), args, args + 1);
-    runFromArguments();
+    run();
   }
 
   void kernel::operator() (const kernelArg &arg0,  const kernelArg &arg1) const {
@@ -38,7 +38,7 @@
     kHandle->arguments.clear();
     kHandle->arguments.reserve(2);
     kHandle->arguments.insert(kHandle->arguments.begin(), args, args + 2);
-    runFromArguments();
+    run();
   }
 
   void kernel::operator() (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2) const {
@@ -46,7 +46,7 @@
     kHandle->arguments.clear();
     kHandle->arguments.reserve(3);
     kHandle->arguments.insert(kHandle->arguments.begin(), args, args + 3);
-    runFromArguments();
+    run();
   }
 
   void kernel::operator() (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2,
@@ -55,7 +55,7 @@
     kHandle->arguments.clear();
     kHandle->arguments.reserve(4);
     kHandle->arguments.insert(kHandle->arguments.begin(), args, args + 4);
-    runFromArguments();
+    run();
   }
 
   void kernel::operator() (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2,
@@ -64,7 +64,7 @@
     kHandle->arguments.clear();
     kHandle->arguments.reserve(5);
     kHandle->arguments.insert(kHandle->arguments.begin(), args, args + 5);
-    runFromArguments();
+    run();
   }
 
   void kernel::operator() (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2,
@@ -73,7 +73,7 @@
     kHandle->arguments.clear();
     kHandle->arguments.reserve(6);
     kHandle->arguments.insert(kHandle->arguments.begin(), args, args + 6);
-    runFromArguments();
+    run();
   }
 
   void kernel::operator() (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2,
@@ -83,7 +83,7 @@
     kHandle->arguments.clear();
     kHandle->arguments.reserve(7);
     kHandle->arguments.insert(kHandle->arguments.begin(), args, args + 7);
-    runFromArguments();
+    run();
   }
 
   void kernel::operator() (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2,
@@ -93,7 +93,7 @@
     kHandle->arguments.clear();
     kHandle->arguments.reserve(8);
     kHandle->arguments.insert(kHandle->arguments.begin(), args, args + 8);
-    runFromArguments();
+    run();
   }
 
   void kernel::operator() (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2,
@@ -103,7 +103,7 @@
     kHandle->arguments.clear();
     kHandle->arguments.reserve(9);
     kHandle->arguments.insert(kHandle->arguments.begin(), args, args + 9);
-    runFromArguments();
+    run();
   }
 
   void kernel::operator() (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2,
@@ -114,7 +114,7 @@
     kHandle->arguments.clear();
     kHandle->arguments.reserve(10);
     kHandle->arguments.insert(kHandle->arguments.begin(), args, args + 10);
-    runFromArguments();
+    run();
   }
 
   void kernel::operator() (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2,
@@ -125,7 +125,7 @@
     kHandle->arguments.clear();
     kHandle->arguments.reserve(11);
     kHandle->arguments.insert(kHandle->arguments.begin(), args, args + 11);
-    runFromArguments();
+    run();
   }
 
   void kernel::operator() (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2,
@@ -136,7 +136,7 @@
     kHandle->arguments.clear();
     kHandle->arguments.reserve(12);
     kHandle->arguments.insert(kHandle->arguments.begin(), args, args + 12);
-    runFromArguments();
+    run();
   }
 
   void kernel::operator() (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2,
@@ -148,7 +148,7 @@
     kHandle->arguments.clear();
     kHandle->arguments.reserve(13);
     kHandle->arguments.insert(kHandle->arguments.begin(), args, args + 13);
-    runFromArguments();
+    run();
   }
 
   void kernel::operator() (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2,
@@ -160,7 +160,7 @@
     kHandle->arguments.clear();
     kHandle->arguments.reserve(14);
     kHandle->arguments.insert(kHandle->arguments.begin(), args, args + 14);
-    runFromArguments();
+    run();
   }
 
   void kernel::operator() (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2,
@@ -172,7 +172,7 @@
     kHandle->arguments.clear();
     kHandle->arguments.reserve(15);
     kHandle->arguments.insert(kHandle->arguments.begin(), args, args + 15);
-    runFromArguments();
+    run();
   }
 
   void kernel::operator() (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2,
@@ -185,7 +185,7 @@
     kHandle->arguments.clear();
     kHandle->arguments.reserve(16);
     kHandle->arguments.insert(kHandle->arguments.begin(), args, args + 16);
-    runFromArguments();
+    run();
   }
 
   void kernel::operator() (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2,
@@ -198,7 +198,7 @@
     kHandle->arguments.clear();
     kHandle->arguments.reserve(17);
     kHandle->arguments.insert(kHandle->arguments.begin(), args, args + 17);
-    runFromArguments();
+    run();
   }
 
   void kernel::operator() (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2,
@@ -211,7 +211,7 @@
     kHandle->arguments.clear();
     kHandle->arguments.reserve(18);
     kHandle->arguments.insert(kHandle->arguments.begin(), args, args + 18);
-    runFromArguments();
+    run();
   }
 
   void kernel::operator() (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2,
@@ -225,7 +225,7 @@
     kHandle->arguments.clear();
     kHandle->arguments.reserve(19);
     kHandle->arguments.insert(kHandle->arguments.begin(), args, args + 19);
-    runFromArguments();
+    run();
   }
 
   void kernel::operator() (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2,
@@ -239,7 +239,7 @@
     kHandle->arguments.clear();
     kHandle->arguments.reserve(20);
     kHandle->arguments.insert(kHandle->arguments.begin(), args, args + 20);
-    runFromArguments();
+    run();
   }
 
   void kernel::operator() (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2,
@@ -253,7 +253,7 @@
     kHandle->arguments.clear();
     kHandle->arguments.reserve(21);
     kHandle->arguments.insert(kHandle->arguments.begin(), args, args + 21);
-    runFromArguments();
+    run();
   }
 
   void kernel::operator() (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2,
@@ -268,7 +268,7 @@
     kHandle->arguments.clear();
     kHandle->arguments.reserve(22);
     kHandle->arguments.insert(kHandle->arguments.begin(), args, args + 22);
-    runFromArguments();
+    run();
   }
 
   void kernel::operator() (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2,
@@ -283,7 +283,7 @@
     kHandle->arguments.clear();
     kHandle->arguments.reserve(23);
     kHandle->arguments.insert(kHandle->arguments.begin(), args, args + 23);
-    runFromArguments();
+    run();
   }
 
   void kernel::operator() (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2,
@@ -298,7 +298,7 @@
     kHandle->arguments.clear();
     kHandle->arguments.reserve(24);
     kHandle->arguments.insert(kHandle->arguments.begin(), args, args + 24);
-    runFromArguments();
+    run();
   }
 
   void kernel::operator() (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2,
@@ -314,7 +314,7 @@
     kHandle->arguments.clear();
     kHandle->arguments.reserve(25);
     kHandle->arguments.insert(kHandle->arguments.begin(), args, args + 25);
-    runFromArguments();
+    run();
   }
 
   void kernel::operator() (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2,
@@ -330,7 +330,7 @@
     kHandle->arguments.clear();
     kHandle->arguments.reserve(26);
     kHandle->arguments.insert(kHandle->arguments.begin(), args, args + 26);
-    runFromArguments();
+    run();
   }
 
   void kernel::operator() (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2,
@@ -346,7 +346,7 @@
     kHandle->arguments.clear();
     kHandle->arguments.reserve(27);
     kHandle->arguments.insert(kHandle->arguments.begin(), args, args + 27);
-    runFromArguments();
+    run();
   }
 
   void kernel::operator() (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2,
@@ -363,7 +363,7 @@
     kHandle->arguments.clear();
     kHandle->arguments.reserve(28);
     kHandle->arguments.insert(kHandle->arguments.begin(), args, args + 28);
-    runFromArguments();
+    run();
   }
 
   void kernel::operator() (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2,
@@ -380,7 +380,7 @@
     kHandle->arguments.clear();
     kHandle->arguments.reserve(29);
     kHandle->arguments.insert(kHandle->arguments.begin(), args, args + 29);
-    runFromArguments();
+    run();
   }
 
   void kernel::operator() (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2,
@@ -397,7 +397,7 @@
     kHandle->arguments.clear();
     kHandle->arguments.reserve(30);
     kHandle->arguments.insert(kHandle->arguments.begin(), args, args + 30);
-    runFromArguments();
+    run();
   }
 
   void kernel::operator() (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2,
@@ -415,7 +415,7 @@
     kHandle->arguments.clear();
     kHandle->arguments.reserve(31);
     kHandle->arguments.insert(kHandle->arguments.begin(), args, args + 31);
-    runFromArguments();
+    run();
   }
 
   void kernel::operator() (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2,
@@ -433,7 +433,7 @@
     kHandle->arguments.clear();
     kHandle->arguments.reserve(32);
     kHandle->arguments.insert(kHandle->arguments.begin(), args, args + 32);
-    runFromArguments();
+    run();
   }
 
   void kernel::operator() (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2,
@@ -451,7 +451,7 @@
     kHandle->arguments.clear();
     kHandle->arguments.reserve(33);
     kHandle->arguments.insert(kHandle->arguments.begin(), args, args + 33);
-    runFromArguments();
+    run();
   }
 
   void kernel::operator() (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2,
@@ -470,7 +470,7 @@
     kHandle->arguments.clear();
     kHandle->arguments.reserve(34);
     kHandle->arguments.insert(kHandle->arguments.begin(), args, args + 34);
-    runFromArguments();
+    run();
   }
 
   void kernel::operator() (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2,
@@ -489,7 +489,7 @@
     kHandle->arguments.clear();
     kHandle->arguments.reserve(35);
     kHandle->arguments.insert(kHandle->arguments.begin(), args, args + 35);
-    runFromArguments();
+    run();
   }
 
   void kernel::operator() (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2,
@@ -508,7 +508,7 @@
     kHandle->arguments.clear();
     kHandle->arguments.reserve(36);
     kHandle->arguments.insert(kHandle->arguments.begin(), args, args + 36);
-    runFromArguments();
+    run();
   }
 
   void kernel::operator() (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2,
@@ -528,7 +528,7 @@
     kHandle->arguments.clear();
     kHandle->arguments.reserve(37);
     kHandle->arguments.insert(kHandle->arguments.begin(), args, args + 37);
-    runFromArguments();
+    run();
   }
 
   void kernel::operator() (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2,
@@ -548,7 +548,7 @@
     kHandle->arguments.clear();
     kHandle->arguments.reserve(38);
     kHandle->arguments.insert(kHandle->arguments.begin(), args, args + 38);
-    runFromArguments();
+    run();
   }
 
   void kernel::operator() (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2,
@@ -568,7 +568,7 @@
     kHandle->arguments.clear();
     kHandle->arguments.reserve(39);
     kHandle->arguments.insert(kHandle->arguments.begin(), args, args + 39);
-    runFromArguments();
+    run();
   }
 
   void kernel::operator() (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2,
@@ -589,7 +589,7 @@
     kHandle->arguments.clear();
     kHandle->arguments.reserve(40);
     kHandle->arguments.insert(kHandle->arguments.begin(), args, args + 40);
-    runFromArguments();
+    run();
   }
 
   void kernel::operator() (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2,
@@ -610,7 +610,7 @@
     kHandle->arguments.clear();
     kHandle->arguments.reserve(41);
     kHandle->arguments.insert(kHandle->arguments.begin(), args, args + 41);
-    runFromArguments();
+    run();
   }
 
   void kernel::operator() (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2,
@@ -631,7 +631,7 @@
     kHandle->arguments.clear();
     kHandle->arguments.reserve(42);
     kHandle->arguments.insert(kHandle->arguments.begin(), args, args + 42);
-    runFromArguments();
+    run();
   }
 
   void kernel::operator() (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2,
@@ -653,7 +653,7 @@
     kHandle->arguments.clear();
     kHandle->arguments.reserve(43);
     kHandle->arguments.insert(kHandle->arguments.begin(), args, args + 43);
-    runFromArguments();
+    run();
   }
 
   void kernel::operator() (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2,
@@ -675,7 +675,7 @@
     kHandle->arguments.clear();
     kHandle->arguments.reserve(44);
     kHandle->arguments.insert(kHandle->arguments.begin(), args, args + 44);
-    runFromArguments();
+    run();
   }
 
   void kernel::operator() (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2,
@@ -697,7 +697,7 @@
     kHandle->arguments.clear();
     kHandle->arguments.reserve(45);
     kHandle->arguments.insert(kHandle->arguments.begin(), args, args + 45);
-    runFromArguments();
+    run();
   }
 
   void kernel::operator() (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2,
@@ -720,7 +720,7 @@
     kHandle->arguments.clear();
     kHandle->arguments.reserve(46);
     kHandle->arguments.insert(kHandle->arguments.begin(), args, args + 46);
-    runFromArguments();
+    run();
   }
 
   void kernel::operator() (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2,
@@ -743,7 +743,7 @@
     kHandle->arguments.clear();
     kHandle->arguments.reserve(47);
     kHandle->arguments.insert(kHandle->arguments.begin(), args, args + 47);
-    runFromArguments();
+    run();
   }
 
   void kernel::operator() (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2,
@@ -766,7 +766,7 @@
     kHandle->arguments.clear();
     kHandle->arguments.reserve(48);
     kHandle->arguments.insert(kHandle->arguments.begin(), args, args + 48);
-    runFromArguments();
+    run();
   }
 
   void kernel::operator() (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2,
@@ -790,7 +790,7 @@
     kHandle->arguments.clear();
     kHandle->arguments.reserve(49);
     kHandle->arguments.insert(kHandle->arguments.begin(), args, args + 49);
-    runFromArguments();
+    run();
   }
 
   void kernel::operator() (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2,
@@ -814,7 +814,7 @@
     kHandle->arguments.clear();
     kHandle->arguments.reserve(50);
     kHandle->arguments.insert(kHandle->arguments.begin(), args, args + 50);
-    runFromArguments();
+    run();
   }
 
   void kernel::operator() (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2,
@@ -838,7 +838,7 @@
     kHandle->arguments.clear();
     kHandle->arguments.reserve(51);
     kHandle->arguments.insert(kHandle->arguments.begin(), args, args + 51);
-    runFromArguments();
+    run();
   }
 
   void kernel::operator() (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2,
@@ -863,7 +863,7 @@
     kHandle->arguments.clear();
     kHandle->arguments.reserve(52);
     kHandle->arguments.insert(kHandle->arguments.begin(), args, args + 52);
-    runFromArguments();
+    run();
   }
 
   void kernel::operator() (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2,
@@ -888,7 +888,7 @@
     kHandle->arguments.clear();
     kHandle->arguments.reserve(53);
     kHandle->arguments.insert(kHandle->arguments.begin(), args, args + 53);
-    runFromArguments();
+    run();
   }
 
   void kernel::operator() (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2,
@@ -913,7 +913,7 @@
     kHandle->arguments.clear();
     kHandle->arguments.reserve(54);
     kHandle->arguments.insert(kHandle->arguments.begin(), args, args + 54);
-    runFromArguments();
+    run();
   }
 
   void kernel::operator() (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2,
@@ -939,7 +939,7 @@
     kHandle->arguments.clear();
     kHandle->arguments.reserve(55);
     kHandle->arguments.insert(kHandle->arguments.begin(), args, args + 55);
-    runFromArguments();
+    run();
   }
 
   void kernel::operator() (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2,
@@ -965,7 +965,7 @@
     kHandle->arguments.clear();
     kHandle->arguments.reserve(56);
     kHandle->arguments.insert(kHandle->arguments.begin(), args, args + 56);
-    runFromArguments();
+    run();
   }
 
   void kernel::operator() (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2,
@@ -991,7 +991,7 @@
     kHandle->arguments.clear();
     kHandle->arguments.reserve(57);
     kHandle->arguments.insert(kHandle->arguments.begin(), args, args + 57);
-    runFromArguments();
+    run();
   }
 
   void kernel::operator() (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2,
@@ -1018,7 +1018,7 @@
     kHandle->arguments.clear();
     kHandle->arguments.reserve(58);
     kHandle->arguments.insert(kHandle->arguments.begin(), args, args + 58);
-    runFromArguments();
+    run();
   }
 
   void kernel::operator() (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2,
@@ -1045,7 +1045,7 @@
     kHandle->arguments.clear();
     kHandle->arguments.reserve(59);
     kHandle->arguments.insert(kHandle->arguments.begin(), args, args + 59);
-    runFromArguments();
+    run();
   }
 
   void kernel::operator() (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2,
@@ -1072,7 +1072,7 @@
     kHandle->arguments.clear();
     kHandle->arguments.reserve(60);
     kHandle->arguments.insert(kHandle->arguments.begin(), args, args + 60);
-    runFromArguments();
+    run();
   }
 
   void kernel::operator() (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2,
@@ -1100,7 +1100,7 @@
     kHandle->arguments.clear();
     kHandle->arguments.reserve(61);
     kHandle->arguments.insert(kHandle->arguments.begin(), args, args + 61);
-    runFromArguments();
+    run();
   }
 
   void kernel::operator() (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2,
@@ -1128,7 +1128,7 @@
     kHandle->arguments.clear();
     kHandle->arguments.reserve(62);
     kHandle->arguments.insert(kHandle->arguments.begin(), args, args + 62);
-    runFromArguments();
+    run();
   }
 
   void kernel::operator() (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2,
@@ -1156,7 +1156,7 @@
     kHandle->arguments.clear();
     kHandle->arguments.reserve(63);
     kHandle->arguments.insert(kHandle->arguments.begin(), args, args + 63);
-    runFromArguments();
+    run();
   }
 
   void kernel::operator() (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2,
@@ -1185,7 +1185,7 @@
     kHandle->arguments.clear();
     kHandle->arguments.reserve(64);
     kHandle->arguments.insert(kHandle->arguments.begin(), args, args + 64);
-    runFromArguments();
+    run();
   }
 
   void kernel::operator() (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2,
@@ -1214,7 +1214,7 @@
     kHandle->arguments.clear();
     kHandle->arguments.reserve(65);
     kHandle->arguments.insert(kHandle->arguments.begin(), args, args + 65);
-    runFromArguments();
+    run();
   }
 
   void kernel::operator() (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2,
@@ -1243,7 +1243,7 @@
     kHandle->arguments.clear();
     kHandle->arguments.reserve(66);
     kHandle->arguments.insert(kHandle->arguments.begin(), args, args + 66);
-    runFromArguments();
+    run();
   }
 
   void kernel::operator() (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2,
@@ -1273,7 +1273,7 @@
     kHandle->arguments.clear();
     kHandle->arguments.reserve(67);
     kHandle->arguments.insert(kHandle->arguments.begin(), args, args + 67);
-    runFromArguments();
+    run();
   }
 
   void kernel::operator() (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2,
@@ -1303,7 +1303,7 @@
     kHandle->arguments.clear();
     kHandle->arguments.reserve(68);
     kHandle->arguments.insert(kHandle->arguments.begin(), args, args + 68);
-    runFromArguments();
+    run();
   }
 
   void kernel::operator() (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2,
@@ -1333,7 +1333,7 @@
     kHandle->arguments.clear();
     kHandle->arguments.reserve(69);
     kHandle->arguments.insert(kHandle->arguments.begin(), args, args + 69);
-    runFromArguments();
+    run();
   }
 
   void kernel::operator() (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2,
@@ -1364,7 +1364,7 @@
     kHandle->arguments.clear();
     kHandle->arguments.reserve(70);
     kHandle->arguments.insert(kHandle->arguments.begin(), args, args + 70);
-    runFromArguments();
+    run();
   }
 
   void kernel::operator() (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2,
@@ -1395,7 +1395,7 @@
     kHandle->arguments.clear();
     kHandle->arguments.reserve(71);
     kHandle->arguments.insert(kHandle->arguments.begin(), args, args + 71);
-    runFromArguments();
+    run();
   }
 
   void kernel::operator() (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2,
@@ -1426,7 +1426,7 @@
     kHandle->arguments.clear();
     kHandle->arguments.reserve(72);
     kHandle->arguments.insert(kHandle->arguments.begin(), args, args + 72);
-    runFromArguments();
+    run();
   }
 
   void kernel::operator() (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2,
@@ -1458,7 +1458,7 @@
     kHandle->arguments.clear();
     kHandle->arguments.reserve(73);
     kHandle->arguments.insert(kHandle->arguments.begin(), args, args + 73);
-    runFromArguments();
+    run();
   }
 
   void kernel::operator() (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2,
@@ -1490,7 +1490,7 @@
     kHandle->arguments.clear();
     kHandle->arguments.reserve(74);
     kHandle->arguments.insert(kHandle->arguments.begin(), args, args + 74);
-    runFromArguments();
+    run();
   }
 
   void kernel::operator() (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2,
@@ -1522,7 +1522,7 @@
     kHandle->arguments.clear();
     kHandle->arguments.reserve(75);
     kHandle->arguments.insert(kHandle->arguments.begin(), args, args + 75);
-    runFromArguments();
+    run();
   }
 
   void kernel::operator() (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2,
@@ -1555,7 +1555,7 @@
     kHandle->arguments.clear();
     kHandle->arguments.reserve(76);
     kHandle->arguments.insert(kHandle->arguments.begin(), args, args + 76);
-    runFromArguments();
+    run();
   }
 
   void kernel::operator() (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2,
@@ -1588,7 +1588,7 @@
     kHandle->arguments.clear();
     kHandle->arguments.reserve(77);
     kHandle->arguments.insert(kHandle->arguments.begin(), args, args + 77);
-    runFromArguments();
+    run();
   }
 
   void kernel::operator() (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2,
@@ -1621,7 +1621,7 @@
     kHandle->arguments.clear();
     kHandle->arguments.reserve(78);
     kHandle->arguments.insert(kHandle->arguments.begin(), args, args + 78);
-    runFromArguments();
+    run();
   }
 
   void kernel::operator() (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2,
@@ -1655,7 +1655,7 @@
     kHandle->arguments.clear();
     kHandle->arguments.reserve(79);
     kHandle->arguments.insert(kHandle->arguments.begin(), args, args + 79);
-    runFromArguments();
+    run();
   }
 
   void kernel::operator() (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2,
@@ -1689,7 +1689,7 @@
     kHandle->arguments.clear();
     kHandle->arguments.reserve(80);
     kHandle->arguments.insert(kHandle->arguments.begin(), args, args + 80);
-    runFromArguments();
+    run();
   }
 
   void kernel::operator() (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2,
@@ -1723,7 +1723,7 @@
     kHandle->arguments.clear();
     kHandle->arguments.reserve(81);
     kHandle->arguments.insert(kHandle->arguments.begin(), args, args + 81);
-    runFromArguments();
+    run();
   }
 
   void kernel::operator() (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2,
@@ -1758,7 +1758,7 @@
     kHandle->arguments.clear();
     kHandle->arguments.reserve(82);
     kHandle->arguments.insert(kHandle->arguments.begin(), args, args + 82);
-    runFromArguments();
+    run();
   }
 
   void kernel::operator() (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2,
@@ -1793,7 +1793,7 @@
     kHandle->arguments.clear();
     kHandle->arguments.reserve(83);
     kHandle->arguments.insert(kHandle->arguments.begin(), args, args + 83);
-    runFromArguments();
+    run();
   }
 
   void kernel::operator() (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2,
@@ -1828,7 +1828,7 @@
     kHandle->arguments.clear();
     kHandle->arguments.reserve(84);
     kHandle->arguments.insert(kHandle->arguments.begin(), args, args + 84);
-    runFromArguments();
+    run();
   }
 
   void kernel::operator() (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2,
@@ -1864,7 +1864,7 @@
     kHandle->arguments.clear();
     kHandle->arguments.reserve(85);
     kHandle->arguments.insert(kHandle->arguments.begin(), args, args + 85);
-    runFromArguments();
+    run();
   }
 
   void kernel::operator() (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2,
@@ -1900,7 +1900,7 @@
     kHandle->arguments.clear();
     kHandle->arguments.reserve(86);
     kHandle->arguments.insert(kHandle->arguments.begin(), args, args + 86);
-    runFromArguments();
+    run();
   }
 
   void kernel::operator() (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2,
@@ -1936,7 +1936,7 @@
     kHandle->arguments.clear();
     kHandle->arguments.reserve(87);
     kHandle->arguments.insert(kHandle->arguments.begin(), args, args + 87);
-    runFromArguments();
+    run();
   }
 
   void kernel::operator() (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2,
@@ -1973,7 +1973,7 @@
     kHandle->arguments.clear();
     kHandle->arguments.reserve(88);
     kHandle->arguments.insert(kHandle->arguments.begin(), args, args + 88);
-    runFromArguments();
+    run();
   }
 
   void kernel::operator() (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2,
@@ -2010,7 +2010,7 @@
     kHandle->arguments.clear();
     kHandle->arguments.reserve(89);
     kHandle->arguments.insert(kHandle->arguments.begin(), args, args + 89);
-    runFromArguments();
+    run();
   }
 
   void kernel::operator() (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2,
@@ -2047,7 +2047,7 @@
     kHandle->arguments.clear();
     kHandle->arguments.reserve(90);
     kHandle->arguments.insert(kHandle->arguments.begin(), args, args + 90);
-    runFromArguments();
+    run();
   }
 
   void kernel::operator() (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2,
@@ -2085,7 +2085,7 @@
     kHandle->arguments.clear();
     kHandle->arguments.reserve(91);
     kHandle->arguments.insert(kHandle->arguments.begin(), args, args + 91);
-    runFromArguments();
+    run();
   }
 
   void kernel::operator() (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2,
@@ -2123,7 +2123,7 @@
     kHandle->arguments.clear();
     kHandle->arguments.reserve(92);
     kHandle->arguments.insert(kHandle->arguments.begin(), args, args + 92);
-    runFromArguments();
+    run();
   }
 
   void kernel::operator() (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2,
@@ -2161,7 +2161,7 @@
     kHandle->arguments.clear();
     kHandle->arguments.reserve(93);
     kHandle->arguments.insert(kHandle->arguments.begin(), args, args + 93);
-    runFromArguments();
+    run();
   }
 
   void kernel::operator() (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2,
@@ -2200,7 +2200,7 @@
     kHandle->arguments.clear();
     kHandle->arguments.reserve(94);
     kHandle->arguments.insert(kHandle->arguments.begin(), args, args + 94);
-    runFromArguments();
+    run();
   }
 
   void kernel::operator() (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2,
@@ -2239,7 +2239,7 @@
     kHandle->arguments.clear();
     kHandle->arguments.reserve(95);
     kHandle->arguments.insert(kHandle->arguments.begin(), args, args + 95);
-    runFromArguments();
+    run();
   }
 
   void kernel::operator() (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2,
@@ -2278,7 +2278,7 @@
     kHandle->arguments.clear();
     kHandle->arguments.reserve(96);
     kHandle->arguments.insert(kHandle->arguments.begin(), args, args + 96);
-    runFromArguments();
+    run();
   }
 
   void kernel::operator() (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2,
@@ -2318,7 +2318,7 @@
     kHandle->arguments.clear();
     kHandle->arguments.reserve(97);
     kHandle->arguments.insert(kHandle->arguments.begin(), args, args + 97);
-    runFromArguments();
+    run();
   }
 
   void kernel::operator() (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2,
@@ -2358,7 +2358,7 @@
     kHandle->arguments.clear();
     kHandle->arguments.reserve(98);
     kHandle->arguments.insert(kHandle->arguments.begin(), args, args + 98);
-    runFromArguments();
+    run();
   }
 
   void kernel::operator() (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2,
@@ -2398,7 +2398,7 @@
     kHandle->arguments.clear();
     kHandle->arguments.reserve(99);
     kHandle->arguments.insert(kHandle->arguments.begin(), args, args + 99);
-    runFromArguments();
+    run();
   }
 
   void kernel::operator() (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2,
@@ -2439,5 +2439,5 @@
     kHandle->arguments.clear();
     kHandle->arguments.reserve(100);
     kHandle->arguments.insert(kHandle->arguments.begin(), args, args + 100);
-    runFromArguments();
+    run();
   }

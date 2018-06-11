@@ -40,22 +40,24 @@ namespace occa {
     public:
       CUmodule   cuModule;
       CUfunction cuFunction;
+      std::vector<void*> vArgs;
 
-      kernel(const occa::properties &properties_);
+      occa::kernel_v *launcherKernel;
+      std::vector<kernel*> cuKernels;
+
+      kernel(device_v *dHandle_,
+             CUmodule cuModule_,
+             CUfunction cuFunction_,
+             const occa::properties &properties_);
+
       ~kernel();
-
-      void build(const std::string &filename,
-                 const std::string &kernelName,
-                 const hash_t hash);
-
-      void buildFromBinary(const std::string &filename,
-                           const std::string &kernelName);
 
       int maxDims() const;
       dim maxOuterDims() const;
       dim maxInnerDims() const;
 
-      void runFromArguments(const int kArgc, const kernelArg *kArgs) const;
+      void run() const;
+      void launcherRun() const;
 
       void free();
     };

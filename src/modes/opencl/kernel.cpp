@@ -31,152 +31,33 @@
 #include <occa/modes/opencl/kernel.hpp>
 #include <occa/modes/opencl/device.hpp>
 #include <occa/modes/opencl/utils.hpp>
-#include <occa/lang/modes/opencl.hpp>
 
 namespace occa {
   namespace opencl {
-    kernel::kernel(const occa::properties &properties_) :
-      occa::kernel_v(properties_) {}
+    kernel::kernel(device_v *dHandle_,
+                   const std::string &name_,
+                   const std::string &sourceFilename_,
+                   const occa::properties &properties_) :
+      occa::kernel_v(dHandle_, name_, sourceFilename_, properties_),
+      clDevice(NULL),
+      clKernel(NULL),
+      launcherKernel(NULL) {}
+
+    kernel::kernel(device_v *dHandle_,
+                   const std::string &name_,
+                   const std::string &sourceFilename_,
+                   cl_device_id clDevice_,
+                   cl_kernel clKernel_,
+                   const occa::properties &properties_) :
+      occa::kernel_v(dHandle_, name_, sourceFilename_, properties_),
+      clDevice(clDevice_),
+      clKernel(clKernel_),
+      launcherKernel(NULL) {}
 
     kernel::~kernel() {}
 
-    info_t kernel::makeCLInfo() const {
-      info_t info;
-      info.clDevice  = clDevice;
-      info.clContext = ((device*) dHandle)->clContext;
-      info.clKernel  = clKernel;
-      return info;
-    }
-
-    void kernel::build(const std::string &filename,
-                       const std::string &kernelName,
-                       const hash_t hash) {
-
-      name = kernelName;
-      sourceFilename = filename;
-      binaryFilename = getBinaryFilename(filename, hash);
-      bool foundBinary = true;
-
-      io::lock_t lock(hash, "opencl-kernel");
-      if (lock.isMine()) {
-        if (sys::fileExists(binaryFilename)) {
-          lock.release();
-        } else {
-          foundBinary = false;
-        }
-      }
-
-      const bool verbose = properties.get("verbose", false);
-      if (foundBinary) {
-        if (verbose) {
-           std::cout << "Loading cached ["
-                     << kernelName
-                     << "] from ["
-                     << io::shortname(filename)
-                     << "] in [" << io::shortname(binaryFilename) << "]\n";
-        }
-        return buildFromBinary(binaryFilename, kernelName);
-      }
-
-      // Cache raw origin
-      std::string sourceFile = (
-        io::cacheFile(sourceFilename,
-                      kc::rawSourceFile,
-                      hash,
-                      assembleHeader(properties),
-                      properties["footer"].string())
-      );
-
-      valid = true;
-      if (properties.get("okl", true)) {
-        const std::string outputFile = getSourceFilename(filename, hash);
-        const std::string hostOutputFile = getLaunchSourceFilename(filename, hash);
-        parseFile(sourceFile,
-                  outputFile,
-                  hostOutputFile,
-                  properties["parser"]);
-        if (!valid) {
-          return;
-        }
-        sourceFile = outputFile;
-
-        occa::kernel hostKernel = host().buildKernel(hostOutputFile,
-                                                     kernelName,
-                                                     "okl: false");
-
-        launcherKernel = hostKernel.getKHandle();
-        launcherKernel->dontUseRefs();
-        nestedKernels.push_back(this);
-      }
-
-      std::string cFunction = io::read(sourceFile);
-      info_t clInfo = makeCLInfo();
-      opencl::buildKernel(clInfo,
-                          cFunction.c_str(), cFunction.size(),
-                          kernelName,
-                          properties["compilerFlags"],
-                          sourceFile,
-                          properties,
-                          lock);
-
-      clKernel = clInfo.clKernel;
-
-      opencl::saveProgramBinary(clInfo,
-                                binaryFilename,
-                                lock);
-    }
-
-    void kernel::buildFromBinary(const std::string &filename,
-                                 const std::string &kernelName) {
-
-      name = kernelName;
-
-      std::string cFile = io::read(filename);
-      info_t clInfo = makeCLInfo();
-      opencl::buildKernelFromBinary(clInfo,
-                                    (const unsigned char*) cFile.c_str(),
-                                    cFile.size(),
-                                    kernelName,
-                                    ((opencl::device*) dHandle)->properties["compilerFlags"]);
-      clKernel = clInfo.clKernel;
-    }
-
-    void kernel::parseFile(const std::string &filename,
-                           const std::string &outputFile,
-                           const std::string &hostOutputFile,
-                           const occa::properties &props) {
-      lang::okl::openclParser parser(props);
-      parser.parseFile(filename);
-
-      // Verify if parsing succeeded
-      valid = parser.succeeded();
-      if (!valid) {
-        if (!props.get("silent", false)) {
-          OCCA_FORCE_ERROR("Unable to transform OKL kernel");
-        }
-        return;
-      }
-
-      if (!sys::fileExists(outputFile)) {
-        hash_t hash = occa::hash(outputFile);
-        io::lock_t lock(hash, "opencl-parser-device");
-        if (lock.isMine()) {
-          parser.writeToFile(outputFile);
-        }
-      }
-
-      if (!sys::fileExists(hostOutputFile)) {
-        hash_t hash = occa::hash(hostOutputFile);
-        io::lock_t lock(hash, "opencl-parser-host");
-        if (lock.isMine()) {
-          parser.writeToFile(hostOutputFile);
-        }
-      }
-
-      setMetadata(parser);
-    }
-
     int kernel::maxDims() const {
+      // TODO 1.1: This should be in the device, not the kernel
       static cl_uint dims_ = 0;
       if (dims_ == 0) {
         size_t bytes;
@@ -193,6 +74,7 @@ namespace occa {
     }
 
     dim kernel::maxOuterDims() const {
+      // TODO 1.1: This should be in the device, not the kernel
       static occa::dim outerDims(0);
       if (outerDims.x == 0) {
         int dims_ = maxDims();
@@ -215,6 +97,7 @@ namespace occa {
     }
 
     dim kernel::maxInnerDims() const {
+      // TODO 1.1: This should be in the device, not the kernel
       static occa::dim innerDims(0);
       if (innerDims.x == 0) {
         size_t dims_;
@@ -234,23 +117,37 @@ namespace occa {
       return innerDims;
     }
 
-    void kernel::runFromArguments(const int kArgc, const kernelArg *kArgs) const {
-      occa::dim fullOuter = outer*inner;
+    void kernel::run() const {
+      if (launcherKernel) {
+        return launcherRun();
+      }
 
-      size_t fullOuter_[3] = { fullOuter.x, fullOuter.y, fullOuter.z };
-      size_t inner_[3] = { inner.x, inner.y, inner.z };
+      // Setup kernel dimensions
+      occa::dim fullOuter = (outer * inner);
+
+      size_t fullOuter_[3] = {
+        fullOuter.x, fullOuter.y, fullOuter.z
+      };
+      size_t inner_[3] = {
+        inner.x, inner.y, inner.z
+      };
+
+      // Set arguments
+      const int kArgCount = (int) arguments.size();
 
       int argc = 0;
-      for (int i = 0; i < kArgc; ++i) {
-        const int argCount = (int) kArgs[i].args.size();
-        if (argCount) {
-          const kernelArgData *kArgs_i = &(kArgs[i].args[0]);
-          for (int j = 0; j < argCount; ++j) {
-            const kernelArgData &kArg_j = kArgs_i[j];
-            OCCA_OPENCL_ERROR("Kernel [" + name + "]"
-                              << ": Setting Kernel Argument [" << (i + 1) << "]",
-                              clSetKernelArg(clKernel, argc++, kArg_j.size, kArg_j.ptr()));
-          }
+      for (int i = 0; i < kArgCount; ++i) {
+        const kArgVector &iArgs = arguments[i].args;
+        const int argCount = (int) iArgs.size();
+        if (!argCount) {
+          continue;
+        }
+
+        for (int ai = 0; ai < argCount; ++ai) {
+          const kernelArgData &kArg = iArgs[ai];
+          OCCA_OPENCL_ERROR("Kernel [" + name + "]"
+                            << ": Setting Kernel Argument [" << (i + 1) << "]",
+                            clSetKernelArg(clKernel, argc++, kArg.size, kArg.ptr()));
         }
       }
 
@@ -263,6 +160,21 @@ namespace occa {
                                                (size_t*) &fullOuter_,
                                                (size_t*) &inner_,
                                                0, NULL, NULL));
+    }
+
+    void kernel::launcherRun() const {
+      launcherKernel->arguments = arguments;
+      launcherKernel->arguments.insert(
+        launcherKernel->arguments.begin(),
+        &(clKernels[0])
+      );
+
+      int kernelCount = (int) clKernels.size();
+      for (int i = 0; i < kernelCount; ++i) {
+        clKernels[i]->arguments = arguments;
+      }
+
+      launcherKernel->run();
     }
 
     void kernel::free() {

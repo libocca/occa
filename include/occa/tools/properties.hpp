@@ -38,6 +38,8 @@ namespace occa {
     void load(const char *&c);
     void load(const std::string &s);
 
+    static properties read(const std::string &filename);
+
     inline properties operator + (const properties &p) const {
       properties ret = *this;
       ret.mergeWithObject(p.value_.object);

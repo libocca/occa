@@ -23,6 +23,8 @@
 #ifndef OCCA_SERIAL_KERNEL_HEADER
 #define OCCA_SERIAL_KERNEL_HEADER
 
+#include <vector>
+
 #include <occa/defines.hpp>
 #include <occa/kernel.hpp>
 #include <occa/tools/sys.hpp>
@@ -35,11 +37,12 @@ namespace occa {
     protected:
       void *dlHandle;
       functionPtr_t function;
-
-      mutable void *vArgs[2*OCCA_MAX_ARGS];
+      mutable std::vector<void*> vArgs;
 
     public:
       kernel(device_v *dHandle_,
+             const std::string &name_,
+             const std::string &sourceFilename_,
              const occa::properties &properties_);
       ~kernel();
 
@@ -47,8 +50,7 @@ namespace occa {
       dim maxOuterDims() const;
       dim maxInnerDims() const;
 
-      void runFromArguments(const int kArgc,
-                            const kernelArg *kArgs) const;
+      void run() const;
 
       void free();
 

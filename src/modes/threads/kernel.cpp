@@ -28,15 +28,18 @@
 
 namespace occa {
   namespace threads {
-    kernel::kernel(const occa::properties &properties_) :
-      serial::kernel(properties_) {
+    kernel::kernel(device_v *dHandle_,
+                   const std::string &name_,
+                   const std::string &sourceFilename_,
+                   const occa::properties &properties_) :
+      serial::kernel(dHandle_, name_, sourceFilename_, properties_) {
 
       threads = properties.get("threads", sys::getCoreCount());
     }
 
     kernel::~kernel() {}
 
-    void kernel::runFromArguments(const int kArgc, const kernelArg *kArgs) const {
+    void kernel::run() const {
       job_t job;
 
       job.count  = threads;

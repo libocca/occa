@@ -23,7 +23,12 @@
                         const float *a,
                         const float *b,
                         float *ab) {
-  for (int i = 0; i < entries; ++i; @tile(16, @outer, @inner)) {
-    ab[i] = a[i] + b[i];
+  for (int ib = 0; ib < entries; ib += 16; @outer) {
+    for (int it = 0; it < 16; ++it; @inner) {
+      const int i = ib + it;
+      if (i < entries) {
+        ab[i] = a[i] + b[i];
+      }
+    }
   }
 }

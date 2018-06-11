@@ -36,35 +36,36 @@ namespace occa {
 
     class kernel : public occa::kernel_v {
       friend class device;
-      friend cl_kernel getKernel(occa::kernel kernel);
+      friend cl_kernel getCLKernel(occa::kernel kernel);
 
     private:
       cl_device_id clDevice;
       cl_kernel    clKernel;
 
+      occa::kernel_v *launcherKernel;
+      std::vector<kernel*> clKernels;
+
     public:
-      kernel(const occa::properties &properties_);
+      kernel(device_v *dHandle_,
+             const std::string &name_,
+             const std::string &sourceFilename_,
+             const occa::properties &properties_);
+
+      kernel(device_v *dHandle_,
+             const std::string &name_,
+             const std::string &sourceFilename_,
+             cl_device_id clDevice_,
+             cl_kernel clKernel_,
+             const occa::properties &properties_);
+
       ~kernel();
-
-      info_t makeCLInfo() const;
-
-      void build(const std::string &filename,
-                 const std::string &kernelName,
-                 const hash_t hash);
-
-      void buildFromBinary(const std::string &filename,
-                           const std::string &kernelName);
-
-      void parseFile(const std::string &filename,
-                     const std::string &outputFile,
-                     const std::string &hostOutputFile,
-                     const occa::properties &props);
 
       int maxDims() const;
       dim maxOuterDims() const;
       dim maxInnerDims() const;
 
-      void runFromArguments(const int kArgc, const kernelArg *kArgs) const;
+      void run() const;
+      void launcherRun() const;
 
       void free();
     };

@@ -31,6 +31,8 @@
 
 namespace occa {
   namespace opencl {
+    class info_t;
+
     class device : public occa::device_v {
       friend cl_context getContext(occa::device device);
 
@@ -68,18 +70,32 @@ namespace occa {
       //  |=============================
 
       //  |---[ Kernel ]----------------
-      virtual lang::kernelMetadataMap parseFile(const std::string &filename,
-                                                const std::string &outputFile,
-                                                const occa::properties &props);
+      virtual bool parseFile(const std::string &filename,
+                             const std::string &outputFile,
+                             const std::string &hostOutputFile,
+                             const occa::properties &parserProps,
+                             lang::kernelMetadataMap &hostMetadata,
+                             lang::kernelMetadataMap &deviceMetadata);
 
       virtual kernel_v* buildKernel(const std::string &filename,
                                     const std::string &kernelName,
                                     const hash_t kernelHash,
-                                    const occa::properties &props);
+                                    const occa::properties &kernelProps);
+
+      kernel_v* buildOKLKernelFromBinary(info_t &clInfo,
+                                         const std::string &hashDir,
+                                         const std::string &kernelName,
+                                         lang::kernelMetadataMap &hostMetadata,
+                                         lang::kernelMetadataMap &deviceMetadata,
+                                         const occa::properties &kernelProps);
+
+      kernel_v* buildLauncherKernel(const std::string &hashDir,
+                                    const std::string &kernelName,
+                                    lang::kernelMetadata &hostMetadata);
 
       virtual kernel_v* buildKernelFromBinary(const std::string &filename,
                                               const std::string &kernelName,
-                                              const occa::properties &props);
+                                              const occa::properties &kernelProps);
       //  |=============================
 
       //  |---[ Memory ]----------------

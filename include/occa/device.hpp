@@ -72,6 +72,7 @@ namespace occa {
 
     virtual bool hasSeparateMemorySpace() const = 0;
 
+    hash_t versionedHash() const;
     virtual hash_t hash() const = 0;
 
     //  |---[ Stream ]------------------
@@ -88,6 +89,11 @@ namespace occa {
     //  |===============================
 
     //  |---[ Kernel ]------------------
+    void writeKernelBuildFile(const std::string &filename,
+                              const hash_t &kernelHash,
+                              const occa::properties &kernelProps,
+                              const lang::kernelMetadataMap &metadataMap) const;
+
     std::string getKernelHash(const std::string &fullHash,
                               const std::string &kernelName);
 
@@ -205,11 +211,6 @@ namespace occa {
     occa::kernel buildKernelFromBinary(const std::string &filename,
                                        const std::string &kernelName,
                                        const occa::properties &props = occa::properties()) const;
-
-    void storeCacheInfo(const std::string &filename,
-                        const hash_t &hash,
-                        const occa::properties &kernelProps,
-                        const lang::kernelMetadataMap &metadataMap) const;
 
     void loadKernels(const std::string &library = "");
     //  |===============================

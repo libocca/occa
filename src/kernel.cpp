@@ -212,10 +212,11 @@ namespace occa {
     }
   }
 
-  int kernelArg::argumentCount(const int kArgc, const kernelArg *kArgs) {
+  int kernelArg::argumentCount(const std::vector<kernelArg> &arguments) {
+    const int kArgCount = (int) arguments.size();
     int argc = 0;
-    for (int i = 0; i < kArgc; ++i) {
-      argc += kArgs[i].args.size();
+    for (int i = 0; i < kArgCount; ++i) {
+      argc += arguments[i].args.size();
     }
     return argc;
   }
@@ -276,8 +277,12 @@ namespace occa {
 
   //---[ kernel_v ]---------------------
   kernel_v::kernel_v(device_v *dHandle_,
+                     const std::string &name_,
+                     const std::string &sourceFilename_,
                      const occa::properties &properties_) :
     dHandle(dHandle_),
+    name(name_),
+    sourceFilename(sourceFilename_),
     properties(properties_) {
     dHandle->addRef();
   }
@@ -404,15 +409,14 @@ namespace occa {
     kHandle->arguments[argPos] = arg;
   }
 
-  void kernel::runFromArguments() const {
+  void kernel::run() const {
     const int argc = (int) kHandle->arguments.size();
     for (int i = 0; i < argc; ++i) {
       const bool argIsConst = kHandle->metadata.argIsConst(i);
       kHandle->arguments[i].setupForKernelCall(argIsConst);
     }
 
-    kHandle->runFromArguments(kHandle->argumentCount(),
-                              kHandle->argumentsPtr());
+    kHandle->run();
   }
 
   void kernel::clearArgumentList() {

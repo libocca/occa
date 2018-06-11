@@ -520,6 +520,10 @@ namespace occa {
       break;
     }
     case object_: {
+      if (!value_.object.size()) {
+        out += "{}";
+        break;
+      }
       cJsonObjectIterator it = value_.object.begin();
       out += '{';
       if (it != value_.object.end()) {

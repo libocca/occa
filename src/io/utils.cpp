@@ -44,10 +44,13 @@
 namespace occa {
   // Kernel Caching
   namespace kc {
-    const std::string rawSourceFile    = "raw_source.cpp";
-    const std::string sourceFile       = "source.cpp";
-    const std::string binaryFile       = "binary";
-    const std::string buildFile        = "build.json";
+    const std::string rawSourceFile  = "raw_source.cpp";
+    const std::string sourceFile     = "source.cpp";
+    const std::string binaryFile     = "binary";
+    const std::string buildFile      = "build.json";
+    const std::string hostSourceFile = "host_source.cpp";
+    const std::string hostBinaryFile = "host_binary";
+    const std::string hostBuildFile  = "host_build.json";
   }
 
   namespace io {

@@ -51,7 +51,7 @@ namespace occa {
                           const std::string &header = "",
                           const std::string &footer = "");
 
-    void storeCacheInfo(const std::string &filename,
+    void writeBuildFile(const std::string &filename,
                         const hash_t &hash,
                         const occa::properties &props);
 

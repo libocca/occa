@@ -209,25 +209,27 @@ namespace occa {
       return innerDims;
     }
 
-    void kernel::runFromArguments(const int kArgc, const kernelArg *kArgs) const {
-      int occaKernelInfoArgs = 0;
-      int argc = 0;
-
-      const bool addInfoArgs = properties.get("OKL", true);
-
-      void **vArgs = new void*[addInfoArgs + kernelArg::argumentCount(kArgc, kArgs)];
-
-      if (addInfoArgs) {
-        vArgs[argc++] = &occaKernelInfoArgs;
+    void kernel::run() const {
+      if (launcherKernel) {
+        return launcherRun();
       }
 
-      for (int i = 0; i < kArgc; ++i) {
-        const int argCount = (int) kArgs[i].args.size();
-        if (argCount) {
-          const kernelArgData *kArgs_i = &(kArgs[i].args[0]);
-          for (int j = 0; j < argCount; ++j) {
-            vArgs[argc++] = kArgs_i[j].ptr();
-          }
+      const int totalArgCount = kernelArg::argumentCount(arguments);
+      if (vArgs.size() < totalArgCount) {
+        vArgs.resize(totalArgCount);
+      }
+
+      const int kArgCount = (int) arguments.size();
+
+      int argc = 0;
+      for (int i = 0; i < kArgCount; ++i) {
+        kArgVector &iArgs = arguments[i].args;
+        const int argCount = (int) iArgs.size();
+        if (!argCount) {
+          continue;
+        }
+        for (int ai = 0; ai < argCount; ++ai) {
+          vArgs[argc++] = iArgs[ai].ptr();
         }
       }
 
@@ -236,8 +238,22 @@ namespace occa {
                                      outer.x, outer.y, outer.z,
                                      inner.x, inner.y, inner.z,
                                      0, *((CUstream*) dHandle->currentStream),
-                                     vArgs, 0));
-      delete [] vArgs;
+                                     &(vArgs[0]), 0));
+    }
+
+    void kernel::launcherRun() const {
+      launcherKernel->arguments = arguments;
+      launcherKernel->arguments.insert(
+        launcherKernel->arguments.begin(),
+        &(cuKernels[0]),
+      );
+
+      int kernelCount = (int) cuKernels.size();
+      for (int i = 0; i < kernelCount; ++i) {
+        cuKernels[i]->arguments = arguments;
+      }
+
+      launcherKernel->run();
     }
 
     void kernel::free() {

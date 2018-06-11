@@ -48,14 +48,17 @@ namespace occa {
         virtual void afterParsing();
 
         void setupHostParser();
-        void setupHostHeaders();
 
         void removeHostOuterLoops(functionDeclStatement &kernelSmnt);
 
         bool isOuterMostOuterLoop(forStatement &forSmnt);
 
         void setKernelLaunch(functionDeclStatement &kernelSmnt,
-                             forStatement &forSmnt);
+                             forStatement &forSmnt,
+                             const int kernelIndex);
+
+        void setupHostKernelArgs(functionDeclStatement &kernelSmnt);
+        void setupHostHeaders();
 
         int getInnerLoopLevel(forStatement &forSmnt);
 

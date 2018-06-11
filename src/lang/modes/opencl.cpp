@@ -26,48 +26,6 @@
 #include <occa/lang/builtins/attributes.hpp>
 #include <occa/lang/builtins/types.hpp>
 
-/*
-//---[ Loop Info ]--------------------------------
-#define occaOuterDim2 (get_num_groups(2))
-#define occaOuterId2  (get_group_id(2))
-
-#define occaOuterDim1 (get_num_groups(1))
-#define occaOuterId1  (get_group_id(1))
-
-#define occaOuterDim0 (get_num_groups(0))
-#define occaOuterId0  (get_group_id(0))
-// - - - - - - - - - - - - - - - - - - - - - - - -
-#define occaInnerDim2 (get_local_size(2))
-#define occaInnerId2  (get_local_id(2))
-
-#define occaInnerDim1 (get_local_size(1))
-#define occaInnerId1  (get_local_id(1))
-
-#define occaInnerDim0 (get_local_size(0))
-#define occaInnerId0  (get_local_id(0))
-//================================================
-
-
-//---[ Standard Functions ]-----------------------
-@barrier("local")  -> barrier(CLK_LOCAL_MEM_FENCE)
-@barrier("global") -> barrier(CLK_GLOBAL_MEM_FENCE)
-//================================================
-
-
-//---[ Attributes ]-------------------------------
-#define occaShared   __local
-#define occaPointer  __global
-#define occaConstant __constant
-//================================================
-
-
-//---[ Kernel Info ]------------------------------
-#define occaKernel         __kernel
-#define occaFunction
-#define occaDeviceFunction
-//================================================
- */
-
 namespace occa {
   namespace lang {
     namespace okl {
@@ -144,29 +102,12 @@ namespace occa {
             *((functionDeclStatement*) kernelSmnts[i])
           );
           removeHostOuterLoops(kernelSmnt);
-          if (!success) {
-            return;
-          }
+          if (!success) return;
+          setupHostKernelArgs(kernelSmnt);
+          if (!success) return;
         }
 
         setupHostHeaders();
-      }
-
-      void openclParser::setupHostHeaders() {
-        // TODO 1.1: Remove hack after methods are properly added
-        const int headerCount = 2;
-        std::string headers[headerCount] = {
-          "include <occa/base.hpp>",
-          "include <occa/modes/serial/kernel.hpp>"
-        };
-        for (int i = 0; i < headerCount; ++i) {
-          std::string header = headers[i];
-          directiveToken token(root.source->origin,
-                               header);
-          hostParser.root.addFirst(
-            *(new directiveStatement(&root, token))
-          );
-        }
       }
 
       void openclParser::removeHostOuterLoops(functionDeclStatement &kernelSmnt) {
@@ -177,12 +118,15 @@ namespace occa {
                              outerSmnts);
 
         const int outerCount = (int) outerSmnts.size();
+        int kernelIndex = 0;
         for (int i = 0; i < outerCount; ++i) {
           forStatement &forSmnt = *((forStatement*) outerSmnts[i]);
           if (!isOuterMostOuterLoop(forSmnt)) {
             continue;
           }
-          setKernelLaunch(kernelSmnt, forSmnt);
+          setKernelLaunch(kernelSmnt,
+                          forSmnt,
+                          kernelIndex++);
         }
       }
 
@@ -199,7 +143,8 @@ namespace occa {
       }
 
       void openclParser::setKernelLaunch(functionDeclStatement &kernelSmnt,
-                                         forStatement &forSmnt) {
+                                         forStatement &forSmnt,
+                                         const int kernelIndex) {
         forStatement *innerSmnt = getInnerMostInnerLoop(forSmnt);
         if (!innerSmnt) {
           success = false;
@@ -271,11 +216,15 @@ namespace occa {
             ))
         );
         // Wrap kernel
+        std::stringstream ss;
+        ss << "occa::kernel kernel(deviceKernel["
+           << kernelIndex
+           << "])";
         launchBlock.add(
           *(new expressionStatement(
               &launchBlock,
               *(new identifierNode(forSmnt.source,
-                                   "occa::kernel kernel(deviceKernel)"))
+                                   ss.str()))
             ))
         );
         // Set run dims
@@ -304,23 +253,46 @@ namespace occa {
                                    kernelCall))
             ))
         );
+
+        forSmnt.removeFromParent();
+        delete &forSmnt;
+      }
+
+      void openclParser::setupHostKernelArgs(functionDeclStatement &kernelSmnt) {
         // Add kernel argument
-        identifierToken kernelTypeSource(forSmnt.source->origin,
+        identifierToken kernelTypeSource(kernelSmnt.source->origin,
                                          "occa::kernel_v");
         type_t &kernelType = *(new typedef_t(vartype_t(),
                                              kernelTypeSource));
-        identifierToken kernelVarSource(forSmnt.source->origin,
+        identifierToken kernelVarSource(kernelSmnt.source->origin,
                                         "*deviceKernel");
         variable_t &kernelVar = *(new variable_t(kernelType,
                                                  &kernelVarSource));
+        kernelVar += pointer_t();
+
+        function_t &func = kernelSmnt.function;
         func.args.insert(func.args.begin(),
                          &kernelVar);
 
         kernelSmnt.scope.add(kernelType);
         kernelSmnt.scope.add(kernelVar);
+      }
 
-        forSmnt.removeFromParent();
-        delete &forSmnt;
+      void openclParser::setupHostHeaders() {
+        // TODO 1.1: Remove hack after methods are properly added
+        const int headerCount = 2;
+        std::string headers[headerCount] = {
+          "include <occa/base.hpp>",
+          "include <occa/modes/serial/kernel.hpp>"
+        };
+        for (int i = 0; i < headerCount; ++i) {
+          std::string header = headers[i];
+          directiveToken token(root.source->origin,
+                               header);
+          hostParser.root.addFirst(
+            *(new directiveStatement(&root, token))
+          );
+        }
       }
 
       int openclParser::getInnerLoopLevel(forStatement &forSmnt) {

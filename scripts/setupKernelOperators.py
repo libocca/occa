@@ -73,7 +73,7 @@ def operatorDefinition(N):
     kHandle->arguments.clear();
     kHandle->arguments.reserve({N});
     kHandle->arguments.insert(kHandle->arguments.begin(), args, args + {N});
-    runFromArguments();
+    run();
   }}""".format(
       N=N,
       args=' '.join('const kernelArg &arg' + str(n) + nlc(n, N) for n in range(N)),

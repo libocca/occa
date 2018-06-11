@@ -44,8 +44,7 @@ namespace occa {
     class kernelMetadata {
     public:
       std::string name;
-
-      std::vector<argumentInfo> argumentInfos;
+      std::vector<argumentInfo> arguments;
 
       kernelMetadata();
 
@@ -56,6 +55,8 @@ namespace occa {
       static kernelMetadata fromJson(const json &j);
       json toJson() const;
     };
+
+    kernelMetadataMap getBuildFileMetadata(const std::string &filename);
   }
 }
 

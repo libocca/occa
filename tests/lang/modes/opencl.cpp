@@ -163,6 +163,9 @@ void testSource() {
     "      }\n"
     "    }\n"
     "  }\n"
+    "  for (int i = 0; i < entries; ++i; @tile(16, @outer, @inner)) {\n"
+    "    ab[i] = a[i] + b[i];\n"
+    "  }\n"
     "}\n"
   );
   parseAndPrintSource(

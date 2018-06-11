@@ -152,8 +152,7 @@ namespace occa {
 
     void setupForKernelCall(const bool isConst) const;
 
-    static int argumentCount(const int argc,
-                             const kernelArg *args);
+    static int argumentCount(const std::vector<kernelArg> &arguments);
   };
   //====================================
 
@@ -180,6 +179,8 @@ namespace occa {
     lang::kernelMetadata metadata;
 
     kernel_v(device_v *dHandle_,
+             const std::string &name_,
+             const std::string &sourceFilename_,
              const occa::properties &properties_);
 
     kernelArg* argumentsPtr();
@@ -197,8 +198,7 @@ namespace occa {
     virtual dim maxOuterDims() const = 0;
     virtual dim maxInnerDims() const = 0;
 
-    virtual void runFromArguments(const int kArgc,
-                                  const kernelArg *kArgs) const = 0;
+    virtual void run() const = 0;
     //==================================
   };
   //====================================
@@ -245,7 +245,7 @@ namespace occa {
     void setRunDims(dim outer, dim inner);
 
     void addArgument(const int argPos, const kernelArg &arg);
-    void runFromArguments() const;
+    void run() const;
     void clearArgumentList();
 
 #include <occa/operators/declarations.hpp>

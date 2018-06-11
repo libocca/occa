@@ -130,6 +130,30 @@ namespace occa {
       io::write(filename,
                 root.toString());
     }
+
+    void parser_t::setMetadata(kernelMetadataMap &metadataMap) const {
+      statementPtrVector kernelSmnts;
+      findStatementsByAttr(statementType::functionDecl,
+                           "kernel",
+                           const_cast<blockStatement&>(root),
+                           kernelSmnts);
+
+      const int kernelCount = (int) kernelSmnts.size();
+      for (int i = 0; i < kernelCount; ++i) {
+        functionDeclStatement &declSmnt = *((functionDeclStatement*) kernelSmnts[i]);
+        function_t &func = declSmnt.function;
+
+        kernelMetadata &metadata = metadataMap[func.name()];
+        metadata.name = func.name();
+
+        int args = (int) func.args.size();
+        for (int ai = 0; ai < args; ++ai) {
+          metadata += argumentInfo(
+            func.args[ai]->has(const_)
+          );
+        }
+      }
+    }
     //==================================
 
     //---[ Setup ]----------------------

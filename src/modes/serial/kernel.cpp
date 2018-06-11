@@ -29,8 +29,10 @@
 namespace occa {
   namespace serial {
     kernel::kernel(device_v *dHandle_,
+                   const std::string &name_,
+                   const std::string &sourceFilename_,
                    const occa::properties &properties_) :
-      occa::kernel_v(dHandle_, properties_) {
+      occa::kernel_v(dHandle_, name_, sourceFilename_, properties_) {
       dlHandle = NULL;
       function = NULL;
     }
@@ -49,21 +51,27 @@ namespace occa {
       return dim(-1,-1,-1);
     }
 
-    void kernel::runFromArguments(const int kArgc,
-                                  const kernelArg *kArgs) const {
-      int argc = 0;
+    void kernel::run() const {
+      const int totalArgCount = kernelArg::argumentCount(arguments);
+      if ((int) vArgs.size() < totalArgCount) {
+        vArgs.resize(totalArgCount);
+      }
 
-      for (int i = 0; i < kArgc; ++i) {
-        const int argCount = (int) kArgs[i].args.size();
-        if (argCount) {
-          const kernelArgData *kArgs_i = &(kArgs[i].args[0]);
-          for (int j = 0; j < argCount; ++j) {
-            vArgs[argc++] = kArgs_i[j].ptr();
-          }
+      const int kArgCount = (int) arguments.size();
+
+      int argc = 0;
+      for (int i = 0; i < kArgCount; ++i) {
+        const kArgVector &iArgs = arguments[i].args;
+        const int argCount = (int) iArgs.size();
+        if (!argCount) {
+          continue;
+        }
+        for (int ai = 0; ai < argCount; ++ai) {
+          vArgs[argc++] = iArgs[ai].ptr();
         }
       }
 
-      sys::runFunction(function, argc, vArgs);
+      sys::runFunction(function, argc, &(vArgs[0]));
     }
 
     void kernel::free() {

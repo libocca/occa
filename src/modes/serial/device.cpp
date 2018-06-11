@@ -182,8 +182,14 @@ namespace occa {
                                   const hash_t kernelHash,
                                   const occa::properties &kernelProps) {
       const std::string hashDir = io::hashDir(filename, kernelHash);
-      const std::string binaryFilename = hashDir + kc::binaryFile;
+       std::string binaryFilename = hashDir + kc::binaryFile;
       bool foundBinary = true;
+
+      // This is a launcher kernel
+      // TODO: Clean this up
+      if (startsWith(filename, hashDir)) {
+        binaryFilename = io::dirname(filename) + kc::hostBinaryFile;
+      }
 
       io::lock_t lock(kernelHash, "serial-kernel");
       if (lock.isMine()) {
@@ -226,7 +232,6 @@ namespace occa {
           return NULL;
         }
         sourceFilename = outputFile;
-        // TODO 1.1: Store metadata in the build.json
       }
 
       std::stringstream command;
@@ -286,9 +291,11 @@ namespace occa {
     kernel_v* device::buildKernelFromBinary(const std::string &filename,
                                             const std::string &kernelName,
                                             const occa::properties &kernelProps) {
-      kernel &k = *(new kernel(this, kernelProps));
+      kernel &k = *(new kernel(this,
+                               filename,
+                               kernelName,
+                               kernelProps));
 
-      k.name = kernelName;
       k.binaryFilename = filename;
 
       k.dlHandle = sys::dlopen(filename);

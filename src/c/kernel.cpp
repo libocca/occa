@@ -184,7 +184,7 @@ void OCCA_RFUNC occaKernelRunN(occaKernel kernel,
     kHandle.arguments.push_back(kArg);
   }
 
-  kernel_.runFromArguments();
+  kernel_.run();
 }
 
 OCCA_END_EXTERN_C

@@ -35,7 +35,11 @@ namespace occa {
 
     class memory : public occa::memory_v {
       friend class opencl::device;
-      friend cl_mem getMem(occa::memory memory);
+
+      friend cl_mem getCLMemory(occa::memory memory);
+
+      friend void* getCLMappedPtr(occa::memory memory);
+
       friend occa::memory wrapMemory(occa::device device,
                                      cl_mem clMem,
                                      const udim_t bytes,

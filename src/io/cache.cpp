@@ -57,7 +57,6 @@ namespace occa {
                           const std::string &cachedName,
                           const std::string &header,
                           const std::string &footer) {
-
       return cacheFile(filename,
                        cachedName,
                        occa::hashFile(filename),
@@ -70,6 +69,10 @@ namespace occa {
                           const hash_t &hash,
                           const std::string &header,
                           const std::string &footer) {
+      // File is already cached
+      if (startsWith(filename, cachePath())) {
+        return filename;
+      }
 
       const std::string expFilename = io::filename(filename);
       const std::string hashDir     = io::hashDir(expFilename, hash);
@@ -87,22 +90,19 @@ namespace occa {
       return sourceFile;
     }
 
-    void storeCacheInfo(const std::string &filename,
+    void writeBuildFile(const std::string &filename,
                         const hash_t &hash,
                         const occa::properties &props) {
 
       io::lock_t lock(hash, "kernel-info");
-      std::string buildFile = hashDir(filename, hash);
-      buildFile += kc::buildFile;
-
       if (lock.isMine()
-          && !sys::fileExists(buildFile)) {
-        occa::properties info;
-        info["date"]      = sys::date();
-        info["humanDate"] = sys::humanDate();
-        info["info"]      = props;
+          && !sys::fileExists(filename)) {
+        occa::properties info = props;
+        json &build = info["build"];
+        build["date"]      = sys::date();
+        build["humanDate"] = sys::humanDate();
 
-        write(buildFile, info.toString());
+        write(filename, info.toString());
       }
     }
 
@@ -110,7 +110,7 @@ namespace occa {
       std::string expFilename = io::filename(filename);
       const std::string cacheLibraryPath = (env::OCCA_CACHE_DIR + "libraries/");
 
-      if (expFilename.find(cacheLibraryPath) != 0) {
+      if (!startsWith(expFilename, cacheLibraryPath)) {
         return "";
       }
       const int chars = (int) expFilename.size();
@@ -150,26 +150,52 @@ namespace occa {
       return hashDir("", hash);
     }
 
-    std::string hashDir(const std::string &filename, const hash_t &hash) {
+    std::string hashDir(const std::string &filename,
+                        const hash_t &hash) {
+      const std::string &cpath = cachePath();
+
+      // Directory, not file
       if (filename.size() == 0) {
         if (hash.initialized) {
-          return (cachePath() + hash.toString() + "/");
+          return (cpath + hash.toString() + "/");
         } else {
-          return cachePath();
+          return cpath;
         }
+      }
+
+      // File is already cached
+      if (startsWith(filename, cpath)) {
+        const char *c = filename.c_str() + cpath.size();
+        lex::skipTo(c, '/', '\\');
+        if (!c) {
+          return filename;
+        }
+        return filename.substr(0, c - filename.c_str() + 1);
       }
 
       std::string occaLibName = getLibraryName(filename);
 
       if (occaLibName.size() == 0) {
         if (hash.initialized) {
-          return (cachePath() + hash.toString() + "/");
+          return (cpath + hash.toString() + "/");
         } else {
-          return (cachePath());
+          return cpath;
         }
       }
 
-      return (libraryPath() + occaLibName + "/" + hash.toString() + "/");
+      const std::string lpath = libraryPath() + occaLibName + "/cache";
+
+      // File is already cached
+      if (startsWith(filename, lpath)) {
+        const char *c = filename.c_str() + lpath.size();
+        lex::skipTo(c, '/', '\\');
+        if (!c) {
+          return filename;
+        }
+        return filename.substr(0, c - filename.c_str() + 1);
+      }
+
+      return (lpath + hash.toString() + "/");
     }
   }
 }

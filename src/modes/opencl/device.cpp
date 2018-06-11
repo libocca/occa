@@ -24,13 +24,16 @@
 
 #if OCCA_OPENCL_ENABLED
 
+#include <occa/base.hpp>
+#include <occa/tools/env.hpp>
+#include <occa/tools/sys.hpp>
 #include <occa/modes/opencl/device.hpp>
 #include <occa/modes/opencl/kernel.hpp>
 #include <occa/modes/opencl/memory.hpp>
 #include <occa/modes/opencl/utils.hpp>
-#include <occa/tools/env.hpp>
-#include <occa/tools/sys.hpp>
-#include <occa/base.hpp>
+#include <occa/lang/kernelMetadata.hpp>
+#include <occa/lang/primitive.hpp>
+#include <occa/lang/modes/opencl.hpp>
 
 namespace occa {
   namespace opencl {
@@ -174,31 +177,294 @@ namespace occa {
     //==================================
 
     //---[ Kernel ]---------------------
-    lang::kernelMetadataMap device::parseFile(const std::string &filename,
-                                              const std::string &outputFile,
-                                              const occa::properties &props) {
-      return lang::kernelMetadataMap();
+    bool device::parseFile(const std::string &filename,
+                           const std::string &outputFile,
+                           const std::string &hostOutputFile,
+                           const occa::properties &parserProps,
+                           lang::kernelMetadataMap &hostMetadata,
+                           lang::kernelMetadataMap &deviceMetadata) {
+      lang::okl::openclParser parser(parserProps);
+      parser.parseFile(filename);
+
+      // Verify if parsing succeeded
+      if (!parser.succeeded()) {
+        if (!parserProps.get("silent", false)) {
+          OCCA_FORCE_ERROR("Unable to transform OKL kernel");
+        }
+        return false;
+      }
+
+      if (!sys::fileExists(outputFile)) {
+        hash_t hash = occa::hash(outputFile);
+        io::lock_t lock(hash, "opencl-parser-device");
+        if (lock.isMine()) {
+          parser.writeToFile(outputFile);
+        }
+      }
+
+      if (!sys::fileExists(hostOutputFile)) {
+        hash_t hash = occa::hash(hostOutputFile);
+        io::lock_t lock(hash, "opencl-parser-host");
+        if (lock.isMine()) {
+          parser.hostParser.writeToFile(hostOutputFile);
+        }
+      }
+
+      parser.hostParser.setMetadata(hostMetadata);
+      parser.setMetadata(deviceMetadata);
+
+      return true;
     }
 
     kernel_v* device::buildKernel(const std::string &filename,
                                   const std::string &kernelName,
                                   const hash_t kernelHash,
-                                  const occa::properties &props) {
-      opencl::kernel *k = new opencl::kernel(props);
-      k->setDHandle(this);
-      k->clDevice = clDevice;
-      k->build(filename, kernelName, kernelHash);
-      return k;
+                                  const occa::properties &kernelProps) {
+      const std::string hashDir = io::hashDir(filename, kernelHash);
+      const std::string binaryFilename = hashDir + kc::binaryFile;
+      bool foundBinary = true;
+      bool usingOKL = kernelProps.get("okl", true);
+
+      info_t clInfo;
+      clInfo.clDevice  = clDevice;
+      clInfo.clContext = clContext;
+
+      io::lock_t lock(kernelHash, "opencl-kernel");
+      if (lock.isMine()) {
+        if (sys::fileExists(binaryFilename)) {
+          lock.release();
+        } else {
+          foundBinary = false;
+        }
+      }
+
+      const bool verbose = properties.get("verbose", false);
+      if (foundBinary) {
+        if (verbose) {
+           std::cout << "Loading cached ["
+                     << kernelName
+                     << "] from ["
+                     << io::shortname(filename)
+                     << "] in [" << io::shortname(binaryFilename) << "]\n";
+        }
+        if (usingOKL) {
+          lang::kernelMetadataMap hostMetadata = (
+            lang::getBuildFileMetadata(hashDir + kc::hostBuildFile)
+          );
+          lang::kernelMetadataMap deviceMetadata = (
+            lang::getBuildFileMetadata(hashDir + kc::buildFile)
+          );
+          return buildOKLKernelFromBinary(clInfo,
+                                          hashDir,
+                                          kernelName,
+                                          hostMetadata,
+                                          deviceMetadata,
+                                          kernelProps);
+        } else {
+          return buildKernelFromBinary(binaryFilename,
+                                       kernelName,
+                                       kernelProps);
+        }
+      }
+
+      // Cache raw origin
+      std::string sourceFilename = (
+        io::cacheFile(filename,
+                      kc::rawSourceFile,
+                      kernelHash,
+                      assembleHeader(properties),
+                      properties["footer"].string())
+      );
+
+      kernel_v *launcherKernel = NULL;
+      lang::kernelMetadataMap hostMetadata, deviceMetadata;
+      if (usingOKL) {
+        const std::string outputFile = hashDir + kc::sourceFile;
+        const std::string hostOutputFile = hashDir + kc::hostSourceFile;
+        bool valid = parseFile(sourceFilename,
+                               outputFile,
+                               hostOutputFile,
+                               properties["parser"],
+                               hostMetadata,
+                               deviceMetadata);
+        if (!valid) {
+          return NULL;
+        }
+        sourceFilename = outputFile;
+
+        launcherKernel = buildLauncherKernel(hashDir,
+                                             kernelName,
+                                             hostMetadata[kernelName]);
+
+        // No OKL means no build file is generated,
+        //   so we need to build it
+        host()
+          .getDHandle()
+          ->writeKernelBuildFile(hashDir + kc::hostBuildFile,
+                                 kernelHash,
+                                 occa::properties(),
+                                 hostMetadata);
+
+        writeKernelBuildFile(hashDir + kc::buildFile,
+                             kernelHash,
+                             kernelProps,
+                             deviceMetadata);
+      }
+
+      // Build OpenCL program
+      std::string source = io::read(sourceFilename);
+
+      opencl::buildProgramFromSource(clInfo,
+                                     source,
+                                     kernelName,
+                                     properties["compilerFlags"].string(),
+                                     sourceFilename,
+                                     properties,
+                                     lock);
+
+      opencl::saveProgramBinary(clInfo.clProgram,
+                                binaryFilename,
+                                lock);
+
+      // Regular OpenCL Kernel
+      if (!launcherKernel) {
+        opencl::buildKernelFromProgram(clInfo,
+                                       kernelName);
+        return new kernel(this,
+                          kernelName,
+                          sourceFilename,
+                          clDevice,
+                          clInfo.clKernel,
+                          kernelProps);
+      }
+
+      return buildOKLKernelFromBinary(clInfo,
+                                      hashDir,
+                                      kernelName,
+                                      hostMetadata,
+                                      deviceMetadata,
+                                      kernelProps);
+    }
+
+    kernel_v* device::buildOKLKernelFromBinary(info_t &clInfo,
+                                               const std::string &hashDir,
+                                               const std::string &kernelName,
+                                               lang::kernelMetadataMap &hostMetadata,
+                                               lang::kernelMetadataMap &deviceMetadata,
+                                               const occa::properties &kernelProps) {
+
+      const std::string sourceFilename = hashDir + kc::sourceFile;
+      const std::string binaryFilename = hashDir + kc::binaryFile;
+
+      if (!clInfo.clProgram) {
+        opencl::buildProgramFromBinary(clInfo,
+                                       io::read(binaryFilename),
+                                       kernelName,
+                                       properties["compilerFlags"].string());
+      }
+
+      // Create wrapper kernel and set launcherKernel
+      kernel &k = *(new kernel(this,
+                               kernelName,
+                               sourceFilename,
+                               kernelProps));
+
+      k.launcherKernel = buildLauncherKernel(hashDir,
+                                             kernelName,
+                                             hostMetadata[kernelName]);
+
+      // Find clKernels
+      typedef std::map<int, lang::kernelMetadata> kernelOrderMap;
+      kernelOrderMap clKernelMetadata;
+
+#if 1
+      // For now, assume there is only one @outer loop
+      clKernelMetadata[0] = deviceMetadata[kernelName];
+#else
+      const std::string prefix = "_occa_" + kernelName + "_";
+
+      lang::kernelMetadataMap::iterator it = deviceMetadata.begin();
+      while (it != deviceMetadata.end()) {
+        const std::string &name = it->first;
+        lang::kernelMetadata &metadata = it->second;
+        ++it;
+        if (!startsWith(name, prefix)) {
+          continue;
+        }
+        std::string suffix = name.substr(0, prefix.size());
+        const char *c = suffix.c_str();
+        primitive number = primitive::load(c, false);
+        // Make sure we reached the end ['\0']
+        //   and have a number
+        if (*c || number.isNaN()) {
+          continue;
+        }
+        clKernelMetadata[number] = metadata;
+      }
+#endif
+
+      kernelOrderMap::iterator oit = clKernelMetadata.begin();
+      while (oit != clKernelMetadata.end()) {
+        lang::kernelMetadata &metadata = oit->second;
+        opencl::buildKernelFromProgram(clInfo,
+                                       metadata.name);
+
+        k.clKernels.push_back(
+          new kernel(this,
+                     metadata.name,
+                     sourceFilename,
+                     clDevice,
+                     clInfo.clKernel,
+                     kernelProps)
+        );
+        ++oit;
+      }
+
+      return &k;
+    }
+
+    kernel_v* device::buildLauncherKernel(const std::string &hashDir,
+                                          const std::string &kernelName,
+                                          lang::kernelMetadata &hostMetadata) {
+      const std::string hostOutputFile = hashDir + kc::hostSourceFile;
+
+      occa::kernel hostKernel = host().buildKernel(hostOutputFile,
+                                                   kernelName,
+                                                   "okl: false");
+
+      // Launcher and clKernels use the same refs as the wrapper kernel
+      kernel_v *launcherKernel = hostKernel.getKHandle();
+      launcherKernel->dontUseRefs();
+
+      launcherKernel->metadata = hostMetadata;
+
+      return launcherKernel;
     }
 
     kernel_v* device::buildKernelFromBinary(const std::string &filename,
                                             const std::string &kernelName,
-                                            const occa::properties &props) {
-      opencl::kernel *k = new opencl::kernel(props);
-      k->dHandle = this;
-      k->clDevice = clDevice;
-      k->buildFromBinary(filename, kernelName);
-      return k;
+                                            const occa::properties &kernelProps) {
+
+      std::string source = io::read(filename);
+
+      info_t clInfo;
+      clInfo.clDevice  = clDevice;
+      clInfo.clContext = clContext;
+
+      opencl::buildProgramFromBinary(clInfo,
+                                     source,
+                                     kernelName,
+                                     properties["compilerFlags"].string());
+
+      opencl::buildKernelFromProgram(clInfo,
+                                     kernelName);
+
+      return new kernel(this,
+                        filename,
+                        kernelName,
+                        clDevice,
+                        clInfo.clKernel,
+                        kernelProps);
     }
     //==================================
 

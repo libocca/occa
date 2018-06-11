@@ -39,6 +39,32 @@ namespace occa {
 
   device_v::~device_v() {}
 
+  hash_t device_v::versionedHash() const {
+    return (occa::hash(settings()["version"])
+            ^ hash());
+  }
+
+  void device_v::writeKernelBuildFile(const std::string &filename,
+                                      const hash_t &kernelHash,
+                                      const occa::properties &kernelProps,
+                                      const lang::kernelMetadataMap &metadataMap) const {
+    occa::properties infoProps;
+
+    infoProps["device"]       = properties;
+    infoProps["device/hash"]  = versionedHash().toFullString();
+    infoProps["kernel/props"] = kernelProps;
+    infoProps["kernel/hash"]  = kernelHash.toFullString();
+
+    json &metadataJson = infoProps["kernel/metadata"].asArray();
+    lang::kernelMetadataMap::const_iterator kIt = metadataMap.begin();
+    while (kIt != metadataMap.end()) {
+      metadataJson += (kIt->second).toJson();
+      ++kIt;
+    }
+
+    io::writeBuildFile(filename, kernelHash, infoProps);
+  }
+
   std::string device_v::getKernelHash(const std::string &fullHash,
                                       const std::string &kernelName) {
     return (fullHash + "-" + kernelName);
@@ -183,7 +209,11 @@ namespace occa {
   }
 
   const std::string& device::mode() const {
-    return dHandle->mode;
+    static std::string noMode = "No Mode";
+    if (dHandle) {
+      return dHandle->mode;
+    }
+    return noMode;
   }
 
   occa::properties& device::properties() {
@@ -211,19 +241,30 @@ namespace occa {
   }
 
   hash_t device::hash() const {
-    return (occa::hash(settings()["version"])
-            ^ dHandle->hash());
+    if (dHandle) {
+      return dHandle->versionedHash();
+    }
+    return hash_t();
   }
 
   udim_t device::memorySize() const {
-    return dHandle->memorySize();
+    if (dHandle) {
+      return dHandle->memorySize();
+    }
+    return 0;
   }
 
   udim_t device::memoryAllocated() const {
-    return dHandle->bytesAllocated;
+    if (dHandle) {
+      return dHandle->bytesAllocated;
+    }
+    return 0;
   }
 
   void device::finish() {
+    if (!dHandle) {
+      return;
+    }
     if (dHandle->hasSeparateMemorySpace()) {
       const size_t staleEntries = uvaStaleMemory.size();
       for (size_t i = 0; i < staleEntries; ++i) {
@@ -243,7 +284,10 @@ namespace occa {
   }
 
   bool device::hasSeparateMemorySpace() {
-    return dHandle->hasSeparateMemorySpace();
+    if (dHandle) {
+      return dHandle->hasSeparateMemorySpace();
+    }
+    return false;
   }
 
   //  |---[ Stream ]--------------------
@@ -358,26 +402,6 @@ namespace occa {
     return kernel(dHandle->buildKernelFromBinary(filename,
                                                  kernelName,
                                                  props));
-  }
-
-  void device::storeCacheInfo(const std::string &filename,
-                              const hash_t &kernelHash,
-                              const occa::properties &kernelProps,
-                              const lang::kernelMetadataMap &metadataMap) const {
-    occa::properties infoProps;
-    infoProps["device"]       = dHandle->properties;
-    infoProps["device/hash"]  = hash().toFullString();
-    infoProps["kernel/props"] = kernelProps;
-    infoProps["kernel/hash"]  = kernelHash.toFullString();
-
-    json &metadataJson = infoProps["kernel/metadata"].asArray();
-    lang::kernelMetadataMap::const_iterator kIt = metadataMap.begin();
-    while (kIt != metadataMap.end()) {
-      metadataJson += (kIt->second).toJson();
-      ++kIt;
-    }
-
-    io::storeCacheInfo(filename, kernelHash, infoProps);
   }
 
   void device::loadKernels(const std::string &library) {

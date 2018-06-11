@@ -20,6 +20,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  */
 
+#include <occa/io/utils.hpp>
 #include <occa/tools/properties.hpp>
 #include <occa/tools/string.hpp>
 
@@ -52,6 +53,12 @@ namespace occa {
   void properties::load(const std::string &s) {
     const char *c = s.c_str();
     loadObject(c);
+  }
+
+  properties properties::read(const std::string &filename) {
+    properties props;
+    props.load(io::read(filename));
+    return props;
   }
 
   template <>
