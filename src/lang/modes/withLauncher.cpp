@@ -531,8 +531,6 @@ namespace occa {
                            barrierToken)
         );
 
-        forSmnt.debugPrint();
-
         forSmnt.up->addAfter(forSmnt,
                              barrierSmnt);
       }

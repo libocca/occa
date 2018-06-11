@@ -30,6 +30,30 @@
 
 namespace occa {
   namespace io {
+    bool isCached(const std::string &filename) {
+      // Directory, not file
+      if (filename.size() == 0) {
+        return false;
+      }
+
+      const std::string &cpath = cachePath();
+
+      // File is already cached
+      if (startsWith(filename, cpath)) {
+        return true;
+      }
+
+      std::string occaLibName = getLibraryName(filename);
+
+      if (occaLibName.size() == 0) {
+        return false;
+      }
+
+      // File is already cached in the library cache
+      const std::string lpath = libraryPath() + occaLibName + "/cache/";
+      return startsWith(filename, lpath);
+    }
+
     void cache(const std::string &filename,
                std::string source,
                const hash_t &hash) {
@@ -70,7 +94,7 @@ namespace occa {
                           const std::string &header,
                           const std::string &footer) {
       // File is already cached
-      if (startsWith(filename, cachePath())) {
+      if (isCached(filename)) {
         return filename;
       }
 
@@ -152,6 +176,8 @@ namespace occa {
 
     std::string hashDir(const std::string &filename,
                         const hash_t &hash) {
+      bool fileIsCached = isCached(filename);
+
       const std::string &cpath = cachePath();
 
       // Directory, not file
@@ -164,7 +190,8 @@ namespace occa {
       }
 
       // File is already cached
-      if (startsWith(filename, cpath)) {
+      if (fileIsCached &&
+          startsWith(filename, cpath)) {
         const char *c = filename.c_str() + cpath.size();
         lex::skipTo(c, '/', '\\');
         if (!c) {
@@ -183,10 +210,11 @@ namespace occa {
         }
       }
 
-      const std::string lpath = libraryPath() + occaLibName + "/cache";
+      const std::string lpath = libraryPath() + occaLibName + "/cache/";
 
       // File is already cached
-      if (startsWith(filename, lpath)) {
+      if (fileIsCached &&
+          startsWith(filename, lpath)) {
         const char *c = filename.c_str() + lpath.size();
         lex::skipTo(c, '/', '\\');
         if (!c) {

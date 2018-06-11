@@ -31,6 +31,8 @@ namespace occa {
   class properties;
 
   namespace io {
+    bool isCached(const std::string &filename);
+
     void cache(const std::string &filename,
                std::string source,
                const hash_t &hash);
