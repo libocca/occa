@@ -148,7 +148,7 @@ namespace occa {
     return mHandle->dHandle;
   }
 
-  occa::device memory::device() const {
+  occa::device memory::getDevice() const {
     return occa::device(mHandle->dHandle);
   }
 

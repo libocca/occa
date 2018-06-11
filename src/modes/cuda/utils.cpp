@@ -165,7 +165,7 @@ namespace occa {
     }
 
     void advise(occa::memory mem, advice_t advice, const dim_t bytes) {
-      advise(mem, advice, bytes, mem.device());
+      advise(mem, advice, bytes, mem.getDevice());
     }
 
     void advise(occa::memory mem, advice_t advice, occa::device device) {
@@ -191,7 +191,7 @@ namespace occa {
     }
 
     void prefetch(occa::memory mem, const dim_t bytes) {
-      prefetch(mem, bytes, mem.device());
+      prefetch(mem, bytes, mem.getDevice());
     }
 
     void prefetch(occa::memory mem, occa::device device) {

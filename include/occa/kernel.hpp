@@ -233,7 +233,7 @@ namespace occa {
 
     kernel_v* getKHandle();
 
-    occa::device device();
+    occa::device getDevice();
 
     const std::string& name();
     const std::string& sourceFilename();

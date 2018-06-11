@@ -150,7 +150,7 @@ namespace occa {
     memory_v* getMHandle() const;
     device_v* getDHandle() const;
 
-    occa::device device() const;
+    occa::device getDevice() const;
 
     operator kernelArg() const;
 

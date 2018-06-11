@@ -368,7 +368,7 @@ namespace occa {
     return kHandle;
   }
 
-  occa::device kernel::device() {
+  occa::device kernel::getDevice() {
     return occa::device(kHandle->dHandle);
   }
 

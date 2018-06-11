@@ -82,7 +82,7 @@ namespace occa {
 
       const int entries = vec.size() / sizeof(VTYPE_OUT);
       getTiledKernel(builders,
-                     vec.device(),
+                     vec.getDevice(),
                      tileSize)(entries, value, vec);
     }
 
@@ -95,7 +95,7 @@ namespace occa {
 
       const int entries = vec.size() / sizeof(VTYPE_OUT);
       getTiledKernel(builders,
-                     vec.device(),
+                     vec.getDevice(),
                      tileSize)(entries, value, vec);
     }
 
@@ -108,7 +108,7 @@ namespace occa {
 
       const int entries = in.size() / sizeof(VTYPE_OUT);
       getTiledKernel(builders,
-                     in.device(),
+                     in.getDevice(),
                      tileSize)(entries, in, out);
     }
 
@@ -121,7 +121,7 @@ namespace occa {
 
       const int entries = vec.size() / sizeof(VTYPE_OUT);
       getTiledKernel(builders,
-                     vec.device(),
+                     vec.getDevice(),
                      tileSize)(entries, value, vec);
     }
 
@@ -134,7 +134,7 @@ namespace occa {
 
       const int entries = in.size() / sizeof(VTYPE_OUT);
       getTiledKernel(builders,
-                     in.device(),
+                     in.getDevice(),
                      tileSize)(entries, in, out);
     }
 
@@ -147,7 +147,7 @@ namespace occa {
 
       const int entries = vec.size() / sizeof(VTYPE_OUT);
       getTiledKernel(builders,
-                     vec.device(),
+                     vec.getDevice(),
                      tileSize)(entries, value, vec);
     }
 
@@ -160,7 +160,7 @@ namespace occa {
 
       const int entries = in.size() / sizeof(VTYPE_OUT);
       getTiledKernel(builders,
-                     in.device(),
+                     in.getDevice(),
                      tileSize)(entries, in, out);
     }
 
@@ -173,7 +173,7 @@ namespace occa {
 
       const int entries = vec.size() / sizeof(VTYPE_OUT);
       getTiledKernel(builders,
-                     vec.device(),
+                     vec.getDevice(),
                      tileSize)(entries, value, vec);
     }
 
@@ -186,7 +186,7 @@ namespace occa {
 
       const int entries = in.size() / sizeof(VTYPE_OUT);
       getTiledKernel(builders,
-                     in.device(),
+                     in.getDevice(),
                      tileSize)(entries, in, out);
     }
     //==================================
@@ -219,7 +219,7 @@ namespace occa {
                     occa::kernelBuilder &builder,
                     const int bufferSize) {
 
-      device dev = vec.device();
+      device dev = vec.getDevice();
       RETTYPE *hostBuffer = hostReductionBuffer<RETTYPE>(bufferSize);
       memory deviceBuffer = deviceReductionBuffer<RETTYPE>(dev, bufferSize);
       const int entries = vec.size() / sizeof(VTYPE);
@@ -264,7 +264,7 @@ namespace occa {
         makeLinalgBuilder<VTYPE, RETTYPE>("lpNorm");
 
 
-      device dev = vec.device();
+      device dev = vec.getDevice();
       const int bufferSize = 1024;
       RETTYPE *hostBuffer = hostReductionBuffer<RETTYPE>(bufferSize);
       memory deviceBuffer = deviceReductionBuffer<RETTYPE>(dev, bufferSize);
@@ -334,9 +334,9 @@ namespace occa {
         makeLinalgBuilder<VTYPE1, VTYPE2, RETTYPE>("dot");
 
       OCCA_ERROR("Vectors must be in the same device",
-                 vec1.device() == vec2.device());
+                 vec1.getDevice() == vec2.getDevice());
 
-      device dev = vec1.device();
+      device dev = vec1.getDevice();
       const int bufferSize = 1024;
       RETTYPE *hostBuffer = hostReductionBuffer<RETTYPE>(bufferSize);
       memory deviceBuffer = deviceReductionBuffer<RETTYPE>(dev, bufferSize);
@@ -360,9 +360,9 @@ namespace occa {
         makeLinalgBuilder<VTYPE1, VTYPE2, RETTYPE>("distance");
 
       OCCA_ERROR("Vectors must be in the same device",
-                 vec1.device() == vec2.device());
+                 vec1.getDevice() == vec2.getDevice());
 
-      device dev = vec1.device();
+      device dev = vec1.getDevice();
       const int bufferSize = 1024;
       RETTYPE *hostBuffer = hostReductionBuffer<RETTYPE>(bufferSize);
       memory deviceBuffer = deviceReductionBuffer<RETTYPE>(dev, bufferSize);
@@ -417,7 +417,7 @@ namespace occa {
 
       const int entries = y.size() / sizeof(VTYPE_Y);
       getTiledKernel(builders,
-                     y.device(),
+                     y.getDevice(),
                      tileSize)(entries, alpha, y, x);
     }
     //==================================

@@ -38,7 +38,7 @@ occaProperties OCCA_RFUNC occaKernelGetProperties(occaKernel kernel) {
 
 occaDevice OCCA_RFUNC occaKernelGetDevice(occaKernel kernel) {
   return occa::c::newOccaType(
-    occa::c::kernel(kernel).device()
+    occa::c::kernel(kernel).getDevice()
   );
 }
 

@@ -279,13 +279,13 @@
 #define OCCA_MINOR_VERSION 0
 #define OCCA_PATCH_VERSION 0
 #define OCCA_VERSION       10000
-#define OCCA_VERSION_STR   "1.0.0-alpha.6"
+#define OCCA_VERSION_STR   "1.0.0"
 
 #define OKL_MAJOR_VERSION 0
 #define OKL_MINOR_VERSION 2
 #define OKL_PATCH_VERSION 0
-#define OKL_VERSION       200
-#define OKL_VERSION_STR   "0.2.0"
+#define OKL_VERSION       10000
+#define OKL_VERSION_STR   "1.0.0"
 
 #define OCCA_MAX_ARGS 50
 //======================================

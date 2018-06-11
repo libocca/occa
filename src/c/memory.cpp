@@ -35,7 +35,7 @@ void* OCCA_RFUNC occaMemoryPtr(occaMemory memory) {
 
 occaDevice OCCA_RFUNC occaMemoryGetDevice(occaMemory memory) {
   return occa::c::newOccaType(
-    occa::c::memory(memory).device()
+    occa::c::memory(memory).getDevice()
   );
 }
 
