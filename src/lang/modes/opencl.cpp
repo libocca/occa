@@ -151,28 +151,31 @@ namespace occa {
 
       void openclParser::setupKernels() {
         statementPtrVector kernelSmnts;
-        findStatementsByAttr(statementType::functionDecl,
+        findStatementsByAttr((statementType::functionDecl |
+                              statementType::function),
                              "kernel",
                              root,
                              kernelSmnts);
 
         const int kernelCount = (int) kernelSmnts.size();
         for (int i = 0; i < kernelCount; ++i) {
-          functionDeclStatement &kernelSmnt = (
-            *((functionDeclStatement*) kernelSmnts[i])
-          );
-          setKernelQualifiers(kernelSmnt);
+          function_t *function;
+          if (kernelSmnts[i]->type() & statementType::functionDecl) {
+            function = &(((functionDeclStatement*) kernelSmnts[i])->function);
+          } else {
+            function = &(((functionStatement*) kernelSmnts[i])->function);
+          }
+          setKernelQualifiers(*function);
           if (!success) return;
         }
       }
 
-      void openclParser::setKernelQualifiers(functionDeclStatement &kernelSmnt) {
-        function_t &func = kernelSmnt.function;
-        func.returnType += kernel;
+      void openclParser::setKernelQualifiers(function_t &function) {
+        function.returnType += kernel;
 
-        const int argCount = (int) func.args.size();
+        const int argCount = (int) function.args.size();
         for (int ai = 0; ai < argCount; ++ai) {
-          variable_t &arg = *(func.args[ai]);
+          variable_t &arg = *(function.args[ai]);
           if (arg.vartype.isPointerType()) {
             arg += global;
           }
@@ -197,6 +200,8 @@ namespace occa {
             new functionStatement(&root,
                                   (function_t&) func.clone())
           );
+          funcSmnt->attributes = child.attributes;
+
           root.add(*funcSmnt, index - 1);
           ++index;
         }

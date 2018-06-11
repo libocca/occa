@@ -386,10 +386,6 @@ namespace occa {
       typedef std::map<int, lang::kernelMetadata> kernelOrderMap;
       kernelOrderMap clKernelMetadata;
 
-#if 1
-      // For now, assume there is only one @outer loop
-      clKernelMetadata[0] = deviceMetadata[kernelName];
-#else
       const std::string prefix = "_occa_" + kernelName + "_";
 
       lang::kernelMetadataMap::iterator it = deviceMetadata.begin();
@@ -400,7 +396,7 @@ namespace occa {
         if (!startsWith(name, prefix)) {
           continue;
         }
-        std::string suffix = name.substr(0, prefix.size());
+        std::string suffix = name.substr(prefix.size());
         const char *c = suffix.c_str();
         primitive number = primitive::load(c, false);
         // Make sure we reached the end ['\0']
@@ -410,7 +406,6 @@ namespace occa {
         }
         clKernelMetadata[number] = metadata;
       }
-#endif
 
       kernelOrderMap::iterator oit = clKernelMetadata.begin();
       while (oit != clKernelMetadata.end()) {
@@ -419,14 +414,15 @@ namespace occa {
                                        metadata.name,
                                        lock);
 
-        k.clKernels.push_back(
-          new kernel(this,
-                     metadata.name,
-                     sourceFilename,
-                     clDevice,
-                     clInfo.clKernel,
-                     kernelProps)
-        );
+        kernel *clKernel = new kernel(this,
+                                      metadata.name,
+                                      sourceFilename,
+                                      clDevice,
+                                      clInfo.clKernel,
+                                      kernelProps);
+        clKernel->dontUseRefs();
+        k.clKernels.push_back(clKernel);
+
         ++oit;
       }
 

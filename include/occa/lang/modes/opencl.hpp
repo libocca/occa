@@ -54,7 +54,7 @@ namespace occa {
 
         void setupKernels();
 
-        void setKernelQualifiers(functionDeclStatement &kernelSmnt);
+        void setKernelQualifiers(function_t &function);
 
         static bool sharedVariableMatcher(exprNode &expr);
 

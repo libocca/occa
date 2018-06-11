@@ -25,6 +25,7 @@
 #include <occa/lang/modes/oklForStatement.hpp>
 #include <occa/lang/builtins/attributes.hpp>
 #include <occa/lang/builtins/types.hpp>
+#include <occa/lang/builtins/transforms/replacer.hpp>
 
 namespace occa {
   namespace lang {
@@ -59,6 +60,9 @@ namespace occa {
 
         if (!success) return;
         beforeKernelSplit();
+
+        if (!success) return;
+        splitKernels();
 
         if (!success) return;
         setupKernels();
@@ -352,6 +356,91 @@ namespace occa {
         );
         delete value;
         return assign;
+      }
+
+      void withLauncher::splitKernels() {
+        statementPtrVector kernelSmnts;
+        findStatementsByAttr(statementType::functionDecl,
+                             "kernel",
+                             root,
+                             kernelSmnts);
+
+        const int kernelCount = (int) kernelSmnts.size();
+        for (int i = 0; i < kernelCount; ++i) {
+          functionDeclStatement &kernelSmnt = (
+            *((functionDeclStatement*) kernelSmnts[i])
+          );
+          splitKernel(kernelSmnt);
+          if (!success) return;
+        }
+      }
+
+      void withLauncher::splitKernel(functionDeclStatement &kernelSmnt) {
+        statementPtrVector outerSmnts;
+        findStatementsByAttr(statementType::for_,
+                             "outer",
+                             kernelSmnt,
+                             outerSmnts);
+
+        statementPtrVector newKernelSmnts;
+
+        const int outerCount = (int) outerSmnts.size();
+        int kernelIndex = 0;
+        for (int i = 0; i < outerCount; ++i) {
+          forStatement &forSmnt = *((forStatement*) outerSmnts[i]);
+          if (!isOuterMostOuterLoop(forSmnt)) {
+            continue;
+          }
+          newKernelSmnts.push_back(
+            extractLoopAsKernel(kernelSmnt,
+                                forSmnt,
+                                kernelIndex++)
+          );
+        }
+
+        int smntIndex = kernelSmnt.childIndex();
+        for (int i = (kernelIndex - 1); i >= 0; --i) {
+          root.add(*(newKernelSmnts[i]),
+                   smntIndex);
+        }
+
+        root.remove(kernelSmnt);
+        root.scope.remove(kernelSmnt.function.name(),
+                          true);
+
+        // TODO 1.1: Find out what causes segfault here
+        // delete &kernelSmnt;
+      }
+
+      statement_t* withLauncher::extractLoopAsKernel(functionDeclStatement &kernelSmnt,
+                                                     forStatement &forSmnt,
+                                                     const int kernelIndex) {
+
+        function_t &oldFunction = kernelSmnt.function;
+        function_t &newFunction = (function_t&) oldFunction.clone();
+        std::stringstream ss;
+        ss << +"_occa_" << newFunction.name() << "_" << kernelIndex;
+        newFunction.source->value = ss.str();
+
+        functionDeclStatement &newKernelSmnt = *(
+          new functionDeclStatement(&root,
+                                    newFunction)
+        );
+        newKernelSmnt.attributes = kernelSmnt.attributes;
+
+        // Clone for-loop and replace argument variables
+        statement_t &newForSmnt = forSmnt.clone();
+        const int argc = (int) newFunction.args.size();
+        for (int i = 0; i < argc; ++i) {
+          replaceVariables(newForSmnt,
+                           *oldFunction.args[i],
+                           *newFunction.args[i]);
+        }
+
+        newKernelSmnt.set(newForSmnt);
+        root.scope.add(newFunction);
+
+        return &newKernelSmnt;
       }
 
       void withLauncher::setupKernels() {

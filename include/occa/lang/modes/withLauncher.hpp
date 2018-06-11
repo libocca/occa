@@ -70,6 +70,14 @@ namespace occa {
                          const int index,
                          exprNode *value);
 
+        void splitKernels();
+
+        void splitKernel(functionDeclStatement &kernelSmnt);
+
+        statement_t* extractLoopAsKernel(functionDeclStatement &kernelSmnt,
+                                         forStatement &forSmnt,
+                                         const int kernelIndex);
+
         void setupKernels();
 
         void replaceOccaFors(functionDeclStatement &kernelSmnt);

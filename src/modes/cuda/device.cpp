@@ -461,12 +461,8 @@ namespace occa {
 
       // Find clKernels
       typedef std::map<int, lang::kernelMetadata> kernelOrderMap;
-      kernelOrderMap clKernelMetadata;
+      kernelOrderMap cuKernelMetadata;
 
-#if 1
-      // For now, assume there is only one @outer loop
-      clKernelMetadata[0] = deviceMetadata[kernelName];
-#else
       const std::string prefix = "_occa_" + kernelName + "_";
 
       lang::kernelMetadataMap::iterator it = deviceMetadata.begin();
@@ -477,7 +473,7 @@ namespace occa {
         if (!startsWith(name, prefix)) {
           continue;
         }
-        std::string suffix = name.substr(0, prefix.size());
+        std::string suffix = name.substr(prefix.size());
         const char *c = suffix.c_str();
         primitive number = primitive::load(c, false);
         // Make sure we reached the end ['\0']
@@ -485,12 +481,11 @@ namespace occa {
         if (*c || number.isNaN()) {
           continue;
         }
-        clKernelMetadata[number] = metadata;
+        cuKernelMetadata[number] = metadata;
       }
-#endif
 
-      kernelOrderMap::iterator oit = clKernelMetadata.begin();
-      while (oit != clKernelMetadata.end()) {
+      kernelOrderMap::iterator oit = cuKernelMetadata.begin();
+      while (oit != cuKernelMetadata.end()) {
         lang::kernelMetadata &metadata = oit->second;
 
         CUfunction cuFunction;
@@ -503,14 +498,15 @@ namespace occa {
                           error);
         }
 
-        k.cuKernels.push_back(
-          new kernel(this,
-                     metadata.name,
-                     sourceFilename,
-                     cuModule,
-                     cuFunction,
-                     kernelProps)
-        );
+        kernel *cuKernel = new kernel(this,
+                                      metadata.name,
+                                      sourceFilename,
+                                      cuModule,
+                                      cuFunction,
+                                      kernelProps);
+        cuKernel->dontUseRefs();
+        k.cuKernels.push_back(cuKernel);
+
         ++oit;
       }
 
