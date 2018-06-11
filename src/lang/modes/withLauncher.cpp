@@ -141,10 +141,19 @@ namespace occa {
       }
 
       bool withLauncher::isOuterMostOuterLoop(forStatement &forSmnt) {
+        return isOuterMostOklLoop(forSmnt, "outer");
+      }
+
+      bool withLauncher::isOuterMostInnerLoop(forStatement &forSmnt) {
+        return isOuterMostOklLoop(forSmnt, "inner");
+      }
+
+      bool withLauncher::isOuterMostOklLoop(forStatement &forSmnt,
+                                            const std::string &attr) {
         statement_t *smnt = forSmnt.up;
         while (smnt) {
           if ((smnt->type() & statementType::for_)
-              && smnt->hasAttribute("outer")) {
+              && smnt->hasAttribute(attr)) {
             return false;
           }
           smnt = smnt->up;
@@ -459,12 +468,12 @@ namespace occa {
           functionDeclStatement &kernelSmnt = (
             *((functionDeclStatement*) kernelSmnts[i])
           );
-          replaceOccaFors(kernelSmnt);
+          setupOccaFors(kernelSmnt);
           if (!success) return;
         }
       }
 
-      void withLauncher::replaceOccaFors(functionDeclStatement &kernelSmnt) {
+      void withLauncher::setupOccaFors(functionDeclStatement &kernelSmnt) {
         statementPtrVector outerSmnts, innerSmnts;
         findStatementsByAttr(statementType::for_,
                              "outer",
@@ -480,12 +489,67 @@ namespace occa {
           replaceOccaFor(*((forStatement*) outerSmnts[i]));
         }
 
+        const bool applyBarriers = usesBarriers();
+
         const int innerCount = (int) innerSmnts.size();
         for (int i = 0; i < innerCount; ++i) {
-          replaceOccaFor(*((forStatement*) innerSmnts[i]));
+          forStatement &innerSmnt = *((forStatement*) innerSmnts[i]);
+          // TODO 1.1: Only apply barriers when needed in the last inner-loop
+          if (applyBarriers &&
+              isOuterMostInnerLoop(innerSmnt)) {
+            addBarriersAfterInnerLoop(innerSmnt);
+            if (!success) return;
+          }
+
+          replaceOccaFor(innerSmnt);
+          if (!success) return;
         }
       }
 
+      void withLauncher::addBarriersAfterInnerLoop(forStatement &forSmnt) {
+        statementExprMap exprMap;
+        findStatements(exprNodeType::op,
+                       forSmnt,
+                       writesToShared,
+                       exprMap);
+
+        // No need to add barriers
+        if (!exprMap.size()) {
+          return;
+        }
+
+        statement_t &barrierSmnt = (
+          *(new emptyStatement(forSmnt.up,
+                               forSmnt.source))
+        );
+
+        identifierToken barrierToken(forSmnt.source->origin,
+                                     "barrier");
+
+        barrierSmnt.attributes["barrier"] = (
+          attributeToken_t(*(getAttribute("barrier")),
+                           barrierToken)
+        );
+
+        forSmnt.debugPrint();
+
+        forSmnt.up->addAfter(forSmnt,
+                             barrierSmnt);
+      }
+
+      bool withLauncher::writesToShared(exprNode &expr) {
+        exprOpNode &opNode = (exprOpNode&) expr;
+        if (!(opNode.opType() & (operatorType::increment |
+                                 operatorType::decrement |
+                                 operatorType::assignment))) {
+          return false;
+        }
+
+        // Get updated variable
+        variable_t *var = expr.getVariable();
+        return (var &&
+                var->hasAttribute("shared"));
+      }
 
       void withLauncher::replaceOccaFor(forStatement &forSmnt) {
         oklForStatement oklForSmnt(forSmnt);
@@ -523,6 +587,10 @@ namespace occa {
 
         blockSmnt.addFirst(declSmnt);
         delete &forSmnt;
+      }
+
+      bool withLauncher::usesBarriers() {
+        return true;
       }
     }
   }

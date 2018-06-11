@@ -29,5 +29,6 @@
 #include <occa/lang/builtins/attributes/inner.hpp>
 #include <occa/lang/builtins/attributes/shared.hpp>
 #include <occa/lang/builtins/attributes/exclusive.hpp>
+#include <occa/lang/builtins/attributes/barrier.hpp>
 
 #endif

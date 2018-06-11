@@ -19,49 +19,23 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  */
-#ifndef OCCA_PARSER_MODES_CUDA_HEADER
-#define OCCA_PARSER_MODES_CUDA_HEADER
+#ifndef OCCA_LANG_BUILTINS_ATTRIBUTES_BARRIER_HEADER
+#define OCCA_LANG_BUILTINS_ATTRIBUTES_BARRIER_HEADER
 
-#include <occa/lang/modes/withLauncher.hpp>
+#include <occa/lang/attribute.hpp>
 
 namespace occa {
   namespace lang {
-    namespace okl {
-      class cudaParser : public withLauncher {
+    namespace attributes {
+      class barrier : public attribute_t {
       public:
-        qualifier_t restrict_;
-        qualifier_t constant;
-        qualifier_t global;
-        qualifier_t device;
-        qualifier_t shared;
+        barrier();
 
-        cudaParser(const occa::properties &settings_ = occa::properties());
+        virtual std::string name() const;
 
-        virtual void onClear();
+        virtual bool forStatement(const int sType) const;
 
-        virtual void beforePreprocessing();
-
-        virtual void beforeKernelSplit();
-
-        virtual void afterKernelSplit();
-
-        virtual std::string getOuterIterator(const int loopIndex);
-
-        virtual std::string getInnerIterator(const int loopIndex);
-
-        void updateConstToConstant();
-
-        void setFunctionQualifiers();
-
-        void setSharedQualifiers();
-
-        void addBarriers();
-
-        void setupKernels();
-
-        void setKernelQualifiers(functionDeclStatement &kernelSmnt);
-
-        static bool sharedVariableMatcher(exprNode &expr);
+        virtual bool isValid(const attributeToken_t &attr) const;
       };
     }
   }

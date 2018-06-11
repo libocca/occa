@@ -170,7 +170,9 @@ namespace occa {
 
     void emptyStatement::print(printer &pout) const {
       if (hasSemicolon) {
+        pout.printStartIndentation();
         pout << ';';
+        pout.printEndNewline();
       }
     }
 

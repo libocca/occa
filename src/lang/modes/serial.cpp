@@ -22,7 +22,6 @@
 #include <occa/lang/modes/serial.hpp>
 #include <occa/lang/modes/okl.hpp>
 #include <occa/lang/builtins/types.hpp>
-#include <occa/lang/builtins/attributes.hpp>
 
 namespace occa {
   namespace lang {
@@ -33,11 +32,8 @@ namespace occa {
         parser_t(settings_),
         restrict_("__restrict__", (qualifierType::forPointers_ |
                                    qualifierType::custom)) {
-        addAttribute<attributes::kernel>();
-        addAttribute<attributes::outer>();
-        addAttribute<attributes::inner>();
-        addAttribute<attributes::shared>();
-        addAttribute<attributes::exclusive>();
+
+        okl::addAttributes(*this);
 
         if (settings.has("serial/restrict")) {
           occa::json &r = settings["serial/restrict"];

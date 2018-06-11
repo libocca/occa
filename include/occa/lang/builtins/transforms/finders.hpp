@@ -260,6 +260,11 @@ namespace occa {
                               statement_t &smnt,
                               statementPtrVector &statements);
 
+    void findExprNodes(const int validExprNodeTypes,
+                       exprNode &expr,
+                       exprNodeMatcher matcher,
+                       exprNodeVector &exprNodes);
+
     void findExprNodesByType(const int validExprNodeTypes,
                              exprNode &expr,
                              exprNodeVector &exprNodes);

@@ -52,13 +52,15 @@ namespace occa {
 
         void setLocalQualifiers();
 
+        static bool sharedVariableMatcher(exprNode &expr);
+
+        void addBarriers();
+
+        void addFunctionPrototypes();
+
         void setupKernels();
 
         void setKernelQualifiers(function_t &function);
-
-        static bool sharedVariableMatcher(exprNode &expr);
-
-        void addFunctionPrototypes();
       };
     }
   }

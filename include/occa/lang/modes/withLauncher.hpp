@@ -54,6 +54,11 @@ namespace occa {
 
         bool isOuterMostOuterLoop(forStatement &forSmnt);
 
+        bool isOuterMostInnerLoop(forStatement &forSmnt);
+
+        bool isOuterMostOklLoop(forStatement &forSmnt,
+                                const std::string &attr);
+
         void setKernelLaunch(functionDeclStatement &kernelSmnt,
                              forStatement &forSmnt,
                              const int kernelIndex);
@@ -80,9 +85,15 @@ namespace occa {
 
         void setupKernels();
 
-        void replaceOccaFors(functionDeclStatement &kernelSmnt);
+        void setupOccaFors(functionDeclStatement &kernelSmnt);
+
+        void addBarriersAfterInnerLoop(forStatement &forSmnt);
+
+        static bool writesToShared(exprNode &expr);
 
         void replaceOccaFor(forStatement &forSmnt);
+
+        virtual bool usesBarriers();
 
         virtual std::string getOuterIterator(const int loopIndex) = 0;
         virtual std::string getInnerIterator(const int loopIndex) = 0;

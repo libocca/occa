@@ -82,6 +82,8 @@ namespace occa {
       //================================
 
       //---[ Transformations ]----------
+      void addAttributes(parser_t &parser);
+
       void setLoopIndices(functionDeclStatement &kernelSmnt);
 
       void setForLoopIndex(forStatement &forSmnt,

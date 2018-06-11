@@ -26,48 +26,6 @@
 #include <occa/lang/builtins/attributes.hpp>
 #include <occa/lang/builtins/types.hpp>
 
-/*
-//---[ Loop Info ]--------------------------------
-#define occaOuterDim2 gridDim.z
-#define occaOuterId2  blockIdx.z
-
-#define occaOuterDim1 gridDim.y
-#define occaOuterId1  blockIdx.y
-
-#define occaOuterDim0 gridDim.x
-#define occaOuterId0  blockIdx.x
-// - - - - - - - - - - - - - - - - - - - - - - - -
-#define occaInnerDim2 blockDim.z
-#define occaInnerId2  threadIdx.z
-
-#define occaInnerDim1 blockDim.y
-#define occaInnerId1  threadIdx.y
-
-#define occaInnerDim0 blockDim.x
-#define occaInnerId0  threadIdx.x
-//================================================
-
-
-//---[ Standard Functions ]-----------------------
-@barrier("local")  __syncthreads()
-@barrier("global") __syncthreads()
-//================================================
-
-
-//---[ Attributes ]-------------------------------
-#define occaShared   __shared__
-#define occaRestrict __restrict__
-#define occaConstant __constant__
-//================================================
-
-
-//---[ Kernel Info ]------------------------------
-#define occaKernel         extern "C" __global__
-#define occaFunction       __device__
-#define occaDeviceFunction __device__
-//================================================
- */
-
 namespace occa {
   namespace lang {
     namespace okl {
@@ -80,11 +38,7 @@ namespace occa {
         device("__device__", qualifierType::custom),
         shared("__shared__", qualifierType::custom) {
 
-        addAttribute<attributes::kernel>();
-        addAttribute<attributes::outer>();
-        addAttribute<attributes::inner>();
-        addAttribute<attributes::shared>();
-        addAttribute<attributes::exclusive>();
+        okl::addAttributes(*this);
 
         if (settings.has("cuda/restrict")) {
           occa::json &r = settings["cuda/restrict"];
@@ -112,7 +66,6 @@ namespace occa {
       }
 
       void cudaParser::beforeKernelSplit() {
-        if (!success) return;
         updateConstToConstant();
 
         if (!success) return;
@@ -123,6 +76,9 @@ namespace occa {
       }
 
       void cudaParser::afterKernelSplit() {
+        addBarriers();
+
+        if (!success) return;
         setupKernels();
       }
 
@@ -197,6 +153,34 @@ namespace occa {
             var += shared;
           }
           ++it;
+        }
+      }
+
+      void cudaParser::addBarriers() {
+        statementPtrVector statements;
+        findStatementsByAttr(statementType::empty,
+                             "barrier",
+                             root,
+                             statements);
+
+        const int count = (int) statements.size();
+        for (int i = 0; i < count; ++i) {
+          // TODO 1.1: Implement proper barriers
+          emptyStatement &smnt = *((emptyStatement*) statements[i]);
+
+          statement_t &barrierSmnt = (
+            *(new expressionStatement(
+                smnt.up,
+                *(new identifierNode(smnt.source,
+                                     " __syncthreads()"))
+              ))
+          );
+
+          smnt.up->addBefore(smnt,
+                             barrierSmnt);
+
+          smnt.up->remove(smnt);
+          delete &smnt;
         }
       }
 

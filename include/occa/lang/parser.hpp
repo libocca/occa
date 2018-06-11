@@ -129,6 +129,8 @@ namespace occa {
                               const int end);
       token_t* replaceIdentifier(identifierToken &identifier);
 
+      attribute_t* getAttribute(const std::string &name);
+
       void loadAttributes(attributeTokenMap &attrs);
       void loadAttribute(attributeTokenMap &attrs);
       void setAttributeArgs(attributeToken_t &attr,

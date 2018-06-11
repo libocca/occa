@@ -136,6 +136,8 @@ namespace occa {
 
       virtual bool hasAttribute(const std::string &attr) const;
 
+      virtual variable_t* getVariable();
+
       virtual exprNode* wrapInParentheses();
 
       virtual void print(printer &pout) const = 0;
@@ -316,6 +318,8 @@ namespace occa {
 
       virtual bool hasAttribute(const std::string &attr) const;
 
+      virtual variable_t* getVariable();
+
       virtual void print(printer &pout) const;
 
       virtual void debugPrint(const std::string &prefix) const;
@@ -382,6 +386,8 @@ namespace occa {
 
       virtual void setChildren(exprNodeRefVector &children);
 
+      virtual variable_t* getVariable();
+
       virtual void print(printer &pout) const;
 
       virtual void debugPrint(const std::string &prefix) const;
@@ -412,6 +418,8 @@ namespace occa {
       virtual exprNode* startNode();
 
       virtual void setChildren(exprNodeRefVector &children);
+
+      virtual variable_t* getVariable();
 
       virtual void print(printer &pout) const;
 
@@ -446,6 +454,8 @@ namespace occa {
       virtual exprNode* endNode();
 
       virtual void setChildren(exprNodeRefVector &children);
+
+      virtual variable_t* getVariable();
 
       virtual void print(printer &pout) const;
 
@@ -503,6 +513,8 @@ namespace occa {
       virtual exprNode* endNode();
 
       virtual void setChildren(exprNodeRefVector &children);
+
+      virtual variable_t* getVariable();
 
       virtual void print(printer &pout) const;
 
@@ -871,6 +883,8 @@ namespace occa {
       virtual primitive evaluate() const;
 
       virtual void setChildren(exprNodeRefVector &children);
+
+      virtual variable_t* getVariable();
 
       virtual void print(printer &pout) const;
 

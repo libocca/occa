@@ -19,52 +19,44 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  */
-#ifndef OCCA_PARSER_MODES_CUDA_HEADER
-#define OCCA_PARSER_MODES_CUDA_HEADER
-
-#include <occa/lang/modes/withLauncher.hpp>
+#include <occa/lang/exprNode.hpp>
+#include <occa/lang/parser.hpp>
+#include <occa/lang/statement.hpp>
+#include <occa/lang/variable.hpp>
+#include <occa/lang/builtins/attributes/barrier.hpp>
 
 namespace occa {
   namespace lang {
-    namespace okl {
-      class cudaParser : public withLauncher {
-      public:
-        qualifier_t restrict_;
-        qualifier_t constant;
-        qualifier_t global;
-        qualifier_t device;
-        qualifier_t shared;
+    namespace attributes {
+      barrier::barrier() {}
 
-        cudaParser(const occa::properties &settings_ = occa::properties());
+      std::string barrier::name() const {
+        return "barrier";
+      }
 
-        virtual void onClear();
+      bool barrier::forStatement(const int sType) const {
+        return (sType & statementType::empty);
+      }
 
-        virtual void beforePreprocessing();
-
-        virtual void beforeKernelSplit();
-
-        virtual void afterKernelSplit();
-
-        virtual std::string getOuterIterator(const int loopIndex);
-
-        virtual std::string getInnerIterator(const int loopIndex);
-
-        void updateConstToConstant();
-
-        void setFunctionQualifiers();
-
-        void setSharedQualifiers();
-
-        void addBarriers();
-
-        void setupKernels();
-
-        void setKernelQualifiers(functionDeclStatement &kernelSmnt);
-
-        static bool sharedVariableMatcher(exprNode &expr);
-      };
+      bool barrier::isValid(const attributeToken_t &attr) const {
+        if (attr.kwargs.size()) {
+          attr.printError("[@barrier] does not take kwargs");
+          return false;
+        }
+        const int argCount = (int) attr.args.size();
+        if (argCount > 1) {
+          attr.printError("[@barrier] takes at most one argument");
+          return false;
+        }
+        if ((argCount == 1) &&
+            (!attr.args[0].expr ||
+             attr.args[0].expr->type() != exprNodeType::string)) {
+          attr.printError("[@barrier] must have no arguments"
+                          " or have one string argument");
+          return false;
+        }
+        return true;
+      }
     }
   }
 }
-
-#endif

@@ -363,6 +363,14 @@ namespace occa {
                            ((typeKeyword&) keyword).type_);
     }
 
+    attribute_t* parser_t::getAttribute(const std::string &name) {
+      nameToAttributeMap::iterator it = attributeMap.find(name);
+      if (it == attributeMap.end()) {
+        return NULL;
+      }
+      return it->second;
+    }
+
     void parser_t::loadAttributes(attributeTokenMap &attrs) {
       while (success &&
              (getOperatorType(context[0]) & operatorType::attribute)) {
@@ -386,13 +394,12 @@ namespace occa {
       identifierToken &nameToken = *((identifierToken*) context[0]);
       context.set(1);
 
-      nameToAttributeMap::iterator it = attributeMap.find(nameToken.value);
-      if (it == attributeMap.end()) {
+      attribute_t *attribute = getAttribute(nameToken.value);
+      if (!attribute) {
         nameToken.printError("Unknown attribute");
         success = false;
         return;
       }
-      attribute_t &attribute = *(it->second);
 
       tokenRangeVector argRanges;
       const bool hasArgs = (getOperatorType(context[0]) & operatorType::parenthesesStart);
@@ -407,14 +414,14 @@ namespace occa {
         return;
       }
 
-      attributeToken_t attr(*(it->second), nameToken);
+      attributeToken_t attr(*attribute, nameToken);
       setAttributeArgs(attr, argRanges);
       if (hasArgs) {
         context.popAndSkip();
       }
       if (success) {
         attrs[nameToken.value] = attr;
-        success = attribute.isValid(attr);
+        success = attribute->isValid(attr);
       }
     }
 

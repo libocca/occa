@@ -115,6 +115,10 @@ namespace occa {
       return false;
     }
 
+    variable_t* exprNode::getVariable() {
+      return NULL;
+    }
+
     exprNode* exprNode::wrapInParentheses() {
       return clone();
     }
@@ -408,6 +412,10 @@ namespace occa {
       return value.hasAttribute(attr);
     }
 
+    variable_t* variableNode::getVariable() {
+      return &value;
+    }
+
     void variableNode::print(printer &pout) const {
       pout << value;
     }
@@ -520,6 +528,10 @@ namespace occa {
       children.push_back(&value);
     }
 
+    variable_t* leftUnaryOpNode::getVariable() {
+      return value->getVariable();
+    }
+
     void leftUnaryOpNode::print(printer &pout) const {
       pout << op << *value;
     }
@@ -572,6 +584,10 @@ namespace occa {
 
     void rightUnaryOpNode::setChildren(exprNodeRefVector &children) {
       children.push_back(&value);
+    }
+
+    variable_t* rightUnaryOpNode::getVariable() {
+      return value->getVariable();
     }
 
     void rightUnaryOpNode::print(printer &pout) const {
@@ -645,6 +661,10 @@ namespace occa {
     void binaryOpNode::setChildren(exprNodeRefVector &children) {
       children.push_back(&leftValue);
       children.push_back(&rightValue);
+    }
+
+    variable_t* binaryOpNode::getVariable() {
+      return leftValue->getVariable();
     }
 
     void binaryOpNode::print(printer &pout) const {
@@ -776,6 +796,10 @@ namespace occa {
 
     void subscriptNode::setChildren(exprNodeRefVector &children) {
       children.push_back(&value);
+    }
+
+    variable_t* subscriptNode::getVariable() {
+      return value->getVariable();
     }
 
     void subscriptNode::print(printer &pout) const {
@@ -1491,6 +1515,10 @@ namespace occa {
 
     void parenthesesNode::setChildren(exprNodeRefVector &children) {
       children.push_back(&value);
+    }
+
+    variable_t* parenthesesNode::getVariable() {
+      return value->getVariable();
     }
 
     void parenthesesNode::print(printer &pout) const {

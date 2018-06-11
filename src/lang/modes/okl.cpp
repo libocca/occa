@@ -21,6 +21,8 @@
  */
 #include <occa/lang/modes/okl.hpp>
 #include <occa/lang/variable.hpp>
+#include <occa/lang/parser.hpp>
+#include <occa/lang/builtins/attributes.hpp>
 #include <occa/lang/builtins/types.hpp>
 #include <occa/lang/builtins/transforms/finders.hpp>
 #include <occa/lang/modes/oklForStatement.hpp>
@@ -401,6 +403,15 @@ namespace occa {
       //================================
 
       //---[ Transformations ]----------
+      void addAttributes(parser_t &parser) {
+        parser.addAttribute<attributes::kernel>();
+        parser.addAttribute<attributes::outer>();
+        parser.addAttribute<attributes::inner>();
+        parser.addAttribute<attributes::shared>();
+        parser.addAttribute<attributes::exclusive>();
+        parser.addAttribute<attributes::barrier>();
+      }
+
       void setLoopIndices(functionDeclStatement &kernelSmnt) {
         statementPtrVector outerSmnts, innerSmnts;
         findStatementsByAttr(statementType::for_,

@@ -36,11 +36,7 @@ namespace occa {
         global("__global", qualifierType::custom),
         local("__local", qualifierType::custom) {
 
-        addAttribute<attributes::kernel>();
-        addAttribute<attributes::outer>();
-        addAttribute<attributes::inner>();
-        addAttribute<attributes::shared>();
-        addAttribute<attributes::exclusive>();
+        okl::addAttributes(*this);
 
         settings["opencl/extensions/cl_khr_fp64"] = true;
       }
@@ -61,7 +57,12 @@ namespace occa {
       }
 
       void openclParser::afterKernelSplit() {
+        addBarriers();
+
+        if (!success) return;
         addFunctionPrototypes();
+
+        if (!success) return;
         setupKernels();
       }
 
@@ -149,6 +150,59 @@ namespace occa {
         }
       }
 
+      bool openclParser::sharedVariableMatcher(exprNode &expr) {
+        return expr.hasAttribute("shared");
+      }
+
+      void openclParser::addBarriers() {
+        statementPtrVector statements;
+        findStatementsByAttr(statementType::empty,
+                             "barrier",
+                             root,
+                             statements);
+
+        const int count = (int) statements.size();
+        for (int i = 0; i < count; ++i) {
+          // TODO 1.1: Implement proper barriers
+          emptyStatement &smnt = *((emptyStatement*) statements[i]);
+
+          statement_t &barrierSmnt = (
+            *(new expressionStatement(
+                smnt.up,
+                *(new identifierNode(smnt.source,
+                                     "barrier(CLK_LOCAL_MEM_FENCE)"))
+              ))
+          );
+
+          smnt.up->addBefore(smnt,
+                             barrierSmnt);
+
+          smnt.up->remove(smnt);
+          delete &smnt;
+        }
+      }
+
+      void openclParser::addFunctionPrototypes() {
+        const int childCount = (int) root.children.size();
+        int index = 0;
+        for (int i = 0; i < childCount; ++i) {
+          statement_t &child = *(root.children[index]);
+          ++index;
+          if (child.type() != statementType::functionDecl) {
+            continue;
+          }
+          function_t &func = ((functionDeclStatement&) child).function;
+          functionStatement *funcSmnt = (
+            new functionStatement(&root,
+                                  (function_t&) func.clone())
+          );
+          funcSmnt->attributes = child.attributes;
+
+          root.add(*funcSmnt, index - 1);
+          ++index;
+        }
+      }
+
       void openclParser::setupKernels() {
         statementPtrVector kernelSmnts;
         findStatementsByAttr((statementType::functionDecl |
@@ -179,31 +233,6 @@ namespace occa {
           if (arg.vartype.isPointerType()) {
             arg += global;
           }
-        }
-      }
-
-      bool openclParser::sharedVariableMatcher(exprNode &expr) {
-        return expr.hasAttribute("shared");
-      }
-
-      void openclParser::addFunctionPrototypes() {
-        const int childCount = (int) root.children.size();
-        int index = 0;
-        for (int i = 0; i < childCount; ++i) {
-          statement_t &child = *(root.children[index]);
-          ++index;
-          if (child.type() != statementType::functionDecl) {
-            continue;
-          }
-          function_t &func = ((functionDeclStatement&) child).function;
-          functionStatement *funcSmnt = (
-            new functionStatement(&root,
-                                  (function_t&) func.clone())
-          );
-          funcSmnt->attributes = child.attributes;
-
-          root.add(*funcSmnt, index - 1);
-          ++index;
         }
       }
     }
