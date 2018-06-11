@@ -220,10 +220,13 @@ namespace occa {
                                   const std::string &kernelName,
                                   const hash_t kernelHash,
                                   const occa::properties &kernelProps) {
+
+      occa::properties allProps = properties["kernel"] + kernelProps;
+
       const std::string hashDir = io::hashDir(filename, kernelHash);
       const std::string binaryFilename = hashDir + kc::binaryFile;
       bool foundBinary = true;
-      bool usingOKL = kernelProps.get("okl", true);
+      bool usingOKL = allProps.get("okl", true);
 
       info_t clInfo;
       clInfo.clDevice  = clDevice;
@@ -238,7 +241,7 @@ namespace occa {
         }
       }
 
-      const bool verbose = properties.get("verbose", false);
+      const bool verbose = allProps.get("verbose", false);
       if (foundBinary) {
         if (verbose) {
            std::cout << "Loading cached ["
@@ -259,7 +262,7 @@ namespace occa {
                                           kernelName,
                                           hostMetadata,
                                           deviceMetadata,
-                                          kernelProps,
+                                          allProps,
                                           lock);
         } else {
           return buildKernelFromBinary(binaryFilename,
@@ -273,8 +276,8 @@ namespace occa {
         io::cacheFile(filename,
                       kc::rawSourceFile,
                       kernelHash,
-                      assembleHeader(properties),
-                      properties["footer"].string())
+                      assembleHeader(allProps),
+                      allProps["footer"].string())
       );
 
       kernel_v *launcherKernel = NULL;
@@ -285,7 +288,7 @@ namespace occa {
         bool valid = parseFile(sourceFilename,
                                outputFile,
                                hostOutputFile,
-                               properties,
+                               allProps,
                                hostMetadata,
                                deviceMetadata);
         if (!valid) {
@@ -318,9 +321,9 @@ namespace occa {
       opencl::buildProgramFromSource(clInfo,
                                      source,
                                      kernelName,
-                                     properties["compilerFlags"].string(),
+                                     allProps["compilerFlags"].string(),
                                      sourceFilename,
-                                     properties,
+                                     allProps,
                                      lock);
 
       opencl::saveProgramBinary(clInfo.clProgram,

@@ -31,29 +31,12 @@ namespace occa {
     namespace okl {
       cudaParser::cudaParser(const occa::properties &settings_) :
         withLauncher(settings_),
-        restrict_("__restrict__", (qualifierType::forPointers_ |
-                                   qualifierType::custom)),
         constant("__constant__", qualifierType::custom),
         global("__global__", qualifierType::custom),
         device("__device__", qualifierType::custom),
         shared("__shared__", qualifierType::custom) {
 
         okl::addAttributes(*this);
-
-        if (settings.has("cuda/restrict")) {
-          occa::json &r = settings["cuda/restrict"];
-          if (r.isString()) {
-            restrict_.name = r.string();
-          } else if (r.isBoolean()
-                     && !r.boolean()) {
-            restrict_.name = "";
-          }
-        }
-
-        if (restrict_.name.size()) {
-          replaceKeyword(keywords,
-                         new qualifierKeyword(restrict_));
-        }
       }
 
       void cudaParser::onClear() {
@@ -61,9 +44,6 @@ namespace occa {
       }
 
       void cudaParser::beforePreprocessing() {
-        preprocessor.addCompilerDefine("restrict",
-                                       restrict_.name);
-
         preprocessor.addCompilerDefine("OCCA_USING_GPU",
                                        "1");
       }
@@ -79,6 +59,9 @@ namespace occa {
       }
 
       void cudaParser::afterKernelSplit() {
+        setupHeaders();
+
+        if (!success) return;
         addBarriers();
 
         if (!success) return;
@@ -157,6 +140,18 @@ namespace occa {
           }
           ++it;
         }
+      }
+
+      void cudaParser::setupHeaders() {
+        const std::string restrictDefine = (
+          "define restrict " + settings.get<std::string>("serial/restrict", "__restrict__")
+        );
+
+        directiveToken token(root.source->origin,
+                             restrictDefine);
+        root.addFirst(
+          *(new directiveStatement(&root, token))
+        );
       }
 
       void cudaParser::addBarriers() {

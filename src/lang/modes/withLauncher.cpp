@@ -95,6 +95,9 @@ namespace occa {
       void withLauncher::setupHostParser() {
         // Clone source
         blockStatement &rootClone = (blockStatement&) root.clone();
+
+        hostParser.root.source = root.source->clone();
+
         hostParser.root.swap(rootClone);
         delete &rootClone;
         hostParser.setupKernels();

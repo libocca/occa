@@ -34,14 +34,12 @@ namespace occa {
     namespace okl {
       class serialParser : public parser_t {
       public:
-        qualifier_t restrict_;
-
         static const std::string exclusiveIndexName;
 
         serialParser(const occa::properties &settings_ = occa::properties());
 
         virtual void onClear();
-        virtual void beforePreprocessing();
+
         virtual void afterParsing();
 
         void setupHeaders();

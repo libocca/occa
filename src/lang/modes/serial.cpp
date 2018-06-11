@@ -29,43 +29,18 @@ namespace occa {
       const std::string serialParser::exclusiveIndexName = "_occa_exclusive_index";
 
       serialParser::serialParser(const occa::properties &settings_) :
-        parser_t(settings_),
-        restrict_("__restrict__", (qualifierType::forPointers_ |
-                                   qualifierType::custom)) {
+        parser_t(settings_) {
 
         okl::addAttributes(*this);
-
-        if (settings.has("serial/restrict")) {
-          occa::json &r = settings["serial/restrict"];
-          if (r.isString()) {
-            restrict_.name = r.string();
-          } else if (r.isBoolean()
-                     && !r.boolean()) {
-            restrict_.name = "";
-          }
-        }
-
-        if (restrict_.name.size()) {
-          replaceKeyword(keywords,
-                         new qualifierKeyword(restrict_));
-        }
       }
 
       void serialParser::onClear() {}
-
-      void serialParser::beforePreprocessing() {
-        preprocessor.addCompilerDefine("restrict",
-                                       restrict_.name);
-      }
 
       void serialParser::afterParsing() {
         if (!success) return;
         if (settings.get("okl/validate", true)) {
           checkKernels(root);
         }
-
-        if (!success) return;
-        setupHeaders();
 
         if (!success) return;
         setupKernels();
@@ -75,17 +50,19 @@ namespace occa {
       }
 
       void serialParser::setupHeaders() {
-        if (!settings.get("serial/include-std", true)) {
-          return;
+        strVector headers;
+        headers.push_back(
+          "define restrict " + settings.get<std::string>("serial/restrict", "__restrict__")
+        );
+
+        if (settings.get("serial/include-std", true)) {
+          headers.push_back("include <stdint.h>");
+          headers.push_back("include <cstdlib>");
+          headers.push_back("include <cstdio>");
+          headers.push_back("include <cmath>");
         }
 
-        const int headerCount = 4;
-        std::string headers[headerCount] = {
-          "include <stdint.h>",
-          "include <cstdlib>",
-          "include <cstdio>",
-          "include <cmath>"
-        };
+        const int headerCount = (int) headers.size();
         for (int i = 0; i < headerCount; ++i) {
           std::string header = headers[i];
           // TODO 1.1: Remove hack after methods are properly added
@@ -101,6 +78,9 @@ namespace occa {
       }
 
       void serialParser::setupKernels() {
+        setupHeaders();
+        if (!success) return;
+
         // Get @kernels
         statementPtrVector kernelSmnts;
         findStatementsByAttr(statementType::functionDecl,

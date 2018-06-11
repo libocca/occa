@@ -32,12 +32,12 @@ void testExclusives();
 int main(const int argc, const char **argv) {
   parser.settings["serial/include-std"] = false;
 
-  parser.settings["okl/validate"] = false;
-  testPreprocessor();
-  testKernel();
+  // parser.settings["okl/validate"] = false;
+  // testPreprocessor();
+  // testKernel();
 
-  parser.settings["okl/validate"] = true;
-  testExclusives();
+  // parser.settings["okl/validate"] = true;
+  // testExclusives();
 
   return 0;
 }

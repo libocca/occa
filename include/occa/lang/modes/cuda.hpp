@@ -29,7 +29,6 @@ namespace occa {
     namespace okl {
       class cudaParser : public withLauncher {
       public:
-        qualifier_t restrict_;
         qualifier_t constant;
         qualifier_t global;
         qualifier_t device;
@@ -54,6 +53,8 @@ namespace occa {
         void setFunctionQualifiers();
 
         void setSharedQualifiers();
+
+        void setupHeaders();
 
         void addBarriers();
 
