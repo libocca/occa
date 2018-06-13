@@ -100,10 +100,10 @@ before_install:
 
 script:
   - cd ${TRAVIS_BUILD_DIR}
-  - CXXFLAGS="${BUILD_CXXFLAGS}" make -j
+  - CXXFLAGS="${BUILD_CXXFLAGS}" make -j 4
 
   - cd ${TRAVIS_BUILD_DIR}
-  - CXXFLAGS="${TEST_CXXFLAGS}" make -j test
+  - CXXFLAGS="${TEST_CXXFLAGS}" make -j 4 test
   - |
     if [ ${RUNNING_CODECOV} ]; then
       bash <(curl -s https://codecov.io/bash)

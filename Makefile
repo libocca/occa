@@ -142,7 +142,7 @@ unit-tests: $(tests)
       linechars=$$((60 - $${chars}));                   \
 	    line=$$(printf '%*s' $${linechars} | tr ' ' '-'); \
 	    echo -e "\n---[ $${testname} ]$${line}";          \
-	    ASAN_OPTIONS=protect_shadow_gap=0 $$test;         \
+	    ASAN_OPTIONS=protect_shadow_gap=0 $$test 2>&1 | head -n 100; \
 	done
 
 e2e-tests: unit-tests
