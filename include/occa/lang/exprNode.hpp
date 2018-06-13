@@ -25,15 +25,15 @@
 #include <stack>
 #include <vector>
 
-#include <occa/lang/primitive.hpp>
-#include <occa/lang/token.hpp>
 #include <occa/lang/operator.hpp>
+#include <occa/lang/primitive.hpp>
 #include <occa/lang/printer.hpp>
+#include <occa/lang/token.hpp>
+#include <occa/lang/type.hpp>
 
 namespace occa {
   namespace lang {
     class exprNode;
-    class vartype_t;
     class type_t;
     class variable_t;
     class function_t;
@@ -355,12 +355,24 @@ namespace occa {
     public:
       const operator_t &op;
 
+      exprOpNode(operatorToken &token_);
+
       exprOpNode(token_t *token_,
                  const operator_t &op_);
 
       opType_t opType() const;
 
+      virtual udim_t type() const;
+
+      virtual exprNode* clone() const;
+
+      virtual void setChildren(exprNodeRefVector &children);
+
       virtual exprNode* wrapInParentheses();
+
+      virtual void print(printer &pout) const;
+
+      virtual void debugPrint(const std::string &prefix) const;
     };
 
     class leftUnaryOpNode : public exprOpNode {
@@ -554,16 +566,16 @@ namespace occa {
 
     class newNode : public exprNode {
     public:
-      vartype_t &valueType;
+      vartype_t valueType;
       exprNode *value;
       exprNode *size;
 
       newNode(token_t *token_,
-              vartype_t &valueType_,
+              const vartype_t &valueType_,
               const exprNode &value_);
 
       newNode(token_t *token_,
-              vartype_t &valueType_,
+              const vartype_t &valueType_,
               const exprNode &value_,
               const exprNode &size_);
 
@@ -671,11 +683,11 @@ namespace occa {
 
     class funcCastNode : public exprNode {
     public:
-      vartype_t &valueType;
+      vartype_t valueType;
       exprNode *value;
 
       funcCastNode(token_t *token_,
-                   vartype_t &valueType_,
+                   const vartype_t &valueType_,
                    const exprNode &value_);
 
       funcCastNode(const funcCastNode &node);
@@ -698,11 +710,11 @@ namespace occa {
 
     class parenCastNode : public exprNode {
     public:
-      vartype_t &valueType;
+      vartype_t valueType;
       exprNode *value;
 
       parenCastNode(token_t *token_,
-                    vartype_t &valueType_,
+                    const vartype_t &valueType_,
                     const exprNode &value_);
 
       parenCastNode(const parenCastNode &node);
@@ -727,11 +739,11 @@ namespace occa {
 
     class constCastNode : public exprNode {
     public:
-      vartype_t &valueType;
+      vartype_t valueType;
       exprNode *value;
 
       constCastNode(token_t *token_,
-                    vartype_t &valueType_,
+                    const vartype_t &valueType_,
                     const exprNode &value_);
 
       constCastNode(const constCastNode &node);
@@ -753,11 +765,11 @@ namespace occa {
 
     class staticCastNode : public exprNode {
     public:
-      vartype_t &valueType;
+      vartype_t valueType;
       exprNode *value;
 
       staticCastNode(token_t *token_,
-                     vartype_t &valueType_,
+                     const vartype_t &valueType_,
                      const exprNode &value_);
 
       staticCastNode(const staticCastNode &node);
@@ -779,11 +791,11 @@ namespace occa {
 
     class reinterpretCastNode : public exprNode {
     public:
-      vartype_t &valueType;
+      vartype_t valueType;
       exprNode *value;
 
       reinterpretCastNode(token_t *token_,
-                          vartype_t &valueType_,
+                          const vartype_t &valueType_,
                           const exprNode &value_);
 
       reinterpretCastNode(const reinterpretCastNode &node);
@@ -805,11 +817,11 @@ namespace occa {
 
     class dynamicCastNode : public exprNode {
     public:
-      vartype_t &valueType;
+      vartype_t valueType;
       exprNode *value;
 
       dynamicCastNode(token_t *token_,
-                      vartype_t &valueType_,
+                      const vartype_t &valueType_,
                       const exprNode &value_);
 
       dynamicCastNode(const dynamicCastNode &node);

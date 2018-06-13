@@ -9,6 +9,11 @@
 #ifndef VTYPE2
 #  define VTYPE2 float
 #endif
+
+#ifndef ABS_FUNC
+#  define ABS_FUNC fabs
+#endif
+
 #ifndef CPU_DOT_OUTER
 #  define CPU_DOT_OUTER 1
 #endif
@@ -155,7 +160,7 @@
 
 #define INIT_ZERO(i) 0
 #define INIT_FIRST(i) vec[0]
-#define INIT_ABS_FIRST(i) abs(vec[0])
+#define INIT_ABS_FIRST(i) ABS_FUNC((VTYPE) vec[0])
 
 #define SUM_RED_OPERATION(red, part)            \
   red += part
@@ -171,10 +176,10 @@
   red = r_red2 < r_part2 ? r_red2 : r_part2
 
 @kernel void l1Norm(const int entries,
-                    const VTYPE * vec,
+                      const VTYPE * vec,
                     RETTYPE * vecReduction) {
 #define L1_NORM_OPERATION(out, idx)             \
-  out += abs(vec[idx])
+  out += ABS_FUNC((VTYPE) vec[idx])
   REDUCTION_BODY(INIT_ZERO, L1_NORM_OPERATION, SUM_RED_OPERATION);
 }
 
@@ -200,10 +205,10 @@
 @kernel void lInfNorm(const int entries,
                       const VTYPE * vec,
                       RETTYPE * vecReduction) {
-#define LINF_NORM_OPERATION(out, idx)           \
-  const VTYPE vec_i = abs(vec[idx]);       \
-  if (out < vec_i) {                            \
-    out = vec_i;                                \
+#define LINF_NORM_OPERATION(out, idx)             \
+  const VTYPE vec_i = ABS_FUNC((VTYPE) vec[idx]); \
+  if (out < vec_i) {                              \
+    out = vec_i;                                  \
   }
 
   REDUCTION_BODY(INIT_ABS_FIRST, LINF_NORM_OPERATION, MAX_RED_OPERATION);

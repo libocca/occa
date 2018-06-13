@@ -33,67 +33,148 @@ namespace occa {
                                         tokenType::char_      |
                                         tokenType::string);
 
+    //---[ Expression Scoped State ]----
+    expressionScopedState::expressionScopedState(token_t *beforePairToken_) :
+      beforePairToken(beforePairToken_) {}
+
+    void expressionScopedState::free() {
+      exprNodeList::iterator it = output.begin();
+      while (it != output.end()) {
+        delete *it;
+        ++it;
+      }
+      output.clear();
+    }
+
+    void expressionScopedState::debugPrint() {
+      std::cout << "Outputs:\n";
+      exprNodeList::iterator it = output.begin();
+      while (it != output.end()) {
+        (*it)->debugPrint();
+        ++it;
+      }
+
+      std::cout << "Operators:\n";
+      operatorList::iterator itOp = operators.begin();
+      while (itOp != operators.end()) {
+        std::cout << '[' << *((*itOp)->token) << "]\n";
+        ++itOp;
+      }
+    }
+    //==================================
+
     //---[ Expression State ]-----------
     expressionState::expressionState(tokenVector &tokens_) :
       tokens(tokens_),
       prevToken(NULL),
       nextToken(NULL),
-      hasError(false) {}
+      beforePairToken(NULL),
+      hasError(false) {
+      scopedStates.push_back(expressionScopedState());
+      scopedState = &(scopedStates.back());
+    }
 
     expressionState::~expressionState() {
       freeTokenVector(tokens);
-      while (output.size()) {
-        delete output.top();
-        output.pop();
+      while (scopedStates.size()) {
+        scopedStates.back().free();
+        scopedStates.pop_back();
       }
       while (usedOutput.size()) {
-        delete usedOutput.top();
-        usedOutput.pop();
+        delete usedOutput.back();
+        usedOutput.pop_back();
       }
-    }
-
-    token_t* expressionState::tokenBeforePair() {
-      if (!tokensBeforePair.size()) {
-        return NULL;
+      while (usedOperators.size()) {
+        delete usedOperators.back();
+        usedOperators.pop_back();
       }
-      return tokensBeforePair.top();
     }
 
     int expressionState::outputCount() {
-      return (int) output.size();
+      return (int) scopedState->output.size();
     }
 
     int expressionState::operatorCount() {
-      return (int) operators.size();
+      return (int) scopedState->operators.size();
     }
 
     exprNode& expressionState::lastOutput() {
-      return *(output.top());
+      return *(scopedState->output.back());
     }
 
-    operatorToken& expressionState::lastOperator() {
-      return *(operators.top());
+    exprOpNode& expressionState::lastOperator() {
+      return *(scopedState->operators.back());
     }
 
     void expressionState::pushOutput(exprNode *expr) {
-      output.push(expr);
+      scopedState->output.push_back(expr);
     }
 
     void expressionState::pushOperator(operatorToken *token) {
-      operators.push(token);
+      scopedState->operators.push_back(
+        new exprOpNode(*token)
+      );
+    }
+
+    void expressionState::pushOperator(exprOpNode *expr) {
+      scopedState->operators.push_back(expr);
+    }
+
+    exprNode& expressionState::unsafePopOutput() {
+      exprNode &ret = *(scopedState->output.back());
+      scopedState->output.pop_back();
+      return ret;
     }
 
     exprNode& expressionState::popOutput() {
-      exprNode &ret = *(output.top());
-      usedOutput.push(&ret);
-      output.pop();
+      exprNode &ret = *(scopedState->output.back());
+      usedOutput.push_back(&ret);
+      scopedState->output.pop_back();
       return ret;
     }
 
-    operatorToken& expressionState::popOperator() {
-      operatorToken &ret = *(operators.top());
-      operators.pop();
+    exprOpNode& expressionState::popOperator() {
+      exprOpNode &ret = *(scopedState->operators.back());
+      usedOperators.push_back(&ret);
+      scopedState->operators.pop_back();
       return ret;
+    }
+
+    void expressionState::pushPair(token_t *beforePairToken_) {
+      scopedStates.push_back(expressionScopedState(beforePairToken_));
+      scopedState = &(scopedStates.back());
+
+      beforePairToken = beforePairToken_;
+    }
+
+    void expressionState::popPair() {
+      beforePairToken = scopedState->beforePairToken;
+
+      expressionScopedState prevScopedState = scopedStates.back();
+      scopedStates.pop_back();
+      scopedState = &(scopedStates.back());
+
+      // Copy left-overs
+      scopedState->output.insert(scopedState->output.end(),
+                                 prevScopedState.output.begin(),
+                                 prevScopedState.output.end());
+
+      scopedState->operators.insert(scopedState->operators.end(),
+                                    prevScopedState.operators.begin(),
+                                    prevScopedState.operators.end());
+    }
+
+    void expressionState::debugPrint() {
+      std::cout << "\n---[ Scopes ]---------------------------\n";
+      scopedStateList::iterator it = scopedStates.begin();
+      while (it != scopedStates.end()) {
+        it->debugPrint();
+        ++it;
+        if (it != scopedStates.end()) {
+          std::cout << " - - - - - - - - - - - - - - - - - - - -\n";
+        }
+      }
+      std::cout << "========================================\n";
     }
     //==================================
 
@@ -102,7 +183,6 @@ namespace occa {
         return noExprNode.clone();
       }
 
-      // TODO: Ternary operator
       expressionState state(tokens);
       getInitialExpression(tokens, state);
       if (state.hasError) {
@@ -132,16 +212,13 @@ namespace occa {
       applyTernary(state);
 
       if (outputCount > 1) {
+        state.debugPrint();
         state.popOutput();
         state.lastOutput().token->printError("Unable to form an expression");
         return NULL;
       }
 
-      // Pop output before state frees it
-      // Do this manually to prevent freeing it
-      exprNode *ret = state.output.top();
-      state.output.pop();
-      return ret;
+      return &(state.unsafePopOutput());
     }
 
     void getInitialExpression(tokenVector &tokens,
@@ -169,15 +246,17 @@ namespace occa {
           operatorToken &opToken = token->to<operatorToken>();
 
           if (opToken.opType() & operatorType::pairStart) {
-            state.tokensBeforePair.push(state.prevToken);
+            state.pushPair(state.prevToken);
             state.pushOperator(&opToken);
           }
           else if (opToken.opType() & operatorType::pairEnd) {
-            closePair(opToken, state);
+            state.pushOperator(&opToken);
+            state.popPair();
+            closePair(state);
             if (!state.hasError) {
               attachPair(opToken, state);
             }
-            state.tokensBeforePair.pop();
+            applyTernary(state);
           }
           else {
             applyFasterOperators(opToken, state);
@@ -228,29 +307,30 @@ namespace occa {
       }
     }
 
-    void closePair(operatorToken &opToken,
-                   expressionState &state) {
-      const opType_t opType = opToken.opType();
-      operatorToken *errorToken = &opToken;
+    void closePair(expressionState &state) {
+      exprOpNode &opNode = state.popOperator();
+      const operator_t &op = opNode.op;
+      const opType_t opType = op.opType;
+      operatorToken *errorToken = (operatorToken*) opNode.token;
 
       while (state.operatorCount()) {
         if (applyTernary(state)) {
           continue;
         }
 
-        operatorToken &nextOpToken = state.popOperator();
-        const opType_t nextOpType = nextOpToken.opType();
+        exprOpNode &nextOpNode = state.popOperator();
+        const opType_t nextOpType = nextOpNode.opType();
 
         if (nextOpType & operatorType::pairStart) {
           if (opType == (nextOpType << 1)) {
-            applyOperator(opToken, state);
+            applyOperator(opNode, state);
             return;
           }
-          errorToken = &nextOpToken;
+          errorToken = (operatorToken*) nextOpNode.token;
           break;
         }
 
-        applyOperator(nextOpToken, state);
+        applyOperator(nextOpNode, state);
 
         if (state.hasError) {
           return;
@@ -309,15 +389,24 @@ namespace occa {
       if (!(pair.opType() & (operatorType::parentheses |
                              operatorType::braces))) {
         state.hasError = true;
+        state.debugPrint();
         opToken.printError("Expected identifier or proper expression before");
         return;
       }
 
       if (pair.opType() & operatorType::parentheses) {
-        state.pushOutput(
-          new parenthesesNode(pair.token,
-                              *pair.value)
-        );
+        if (pair.value->type() & exprNodeType::type) {
+          state.pushOperator(
+            new leftUnaryOpNode(&opToken,
+                                op::parenCast,
+                                *(pair.value))
+          );
+        } else {
+          state.pushOutput(
+            new parenthesesNode(pair.token,
+                                *pair.value)
+          );
+        }
       } else {
         exprNodeVector args;
         extractArgs(args, *pair.value, state);
@@ -338,14 +427,14 @@ namespace occa {
       // Only consider () as a function call if preceeded by:
       //   - identifier
       //   - pairEnd
-      const int prevTokenType = state.tokenBeforePair()->type();
+      const int prevTokenType = state.beforePairToken->type();
       if (!(prevTokenType & (outputTokenType |
                              tokenType::op))) {
         transformLastPair(opToken, state);
         return;
       }
       if (prevTokenType & tokenType::op) {
-        operatorToken &prevOpToken = state.tokenBeforePair()->to<operatorToken>();
+        operatorToken &prevOpToken = state.beforePairToken->to<operatorToken>();
         if (!(prevOpToken.opType() & operatorType::pairEnd)) {
           transformLastPair(opToken, state);
           return;
@@ -573,7 +662,7 @@ namespace occa {
 
       const operator_t &op = *(opToken.op);
       while (state.operatorCount()) {
-        const operator_t &prevOp = *(state.lastOperator().op);
+        const operator_t &prevOp = state.lastOperator().op;
 
         if (prevOp.opType & operatorType::pairStart) {
           break;
@@ -607,10 +696,11 @@ namespace occa {
       }
     }
 
-    void applyOperator(operatorToken &opToken,
+    void applyOperator(exprOpNode &opNode,
                        expressionState &state) {
 
-      const operator_t &op = *(opToken.op);
+      operatorToken &opToken = *((operatorToken*) opNode.token);
+      const operator_t &op = opNode.op;
       const opType_t opType = op.opType;
       const int outputCount = state.outputCount();
 
@@ -631,8 +721,7 @@ namespace occa {
       else if (opType & operatorType::leftUnary) {
         if (outputCount >= 1) {
           exprNode &value = state.popOutput();
-          applyLeftUnaryOperator(opToken,
-                                 (const unaryOperator_t&) op,
+          applyLeftUnaryOperator(opNode,
                                  value,
                                  state);
           return;
@@ -670,12 +759,14 @@ namespace occa {
       }
     }
 
-    void applyLeftUnaryOperator(operatorToken &opToken,
-                                const unaryOperator_t &op,
+    void applyLeftUnaryOperator(exprOpNode &opNode,
                                 exprNode &value,
                                 expressionState &state) {
 
+      operatorToken &opToken = *((operatorToken*) opNode.token);
+      const unaryOperator_t &op = (unaryOperator_t&) opNode.op;
       const opType_t opType = op.opType;
+
       if (!(opType & operatorType::special)) {
         state.pushOutput(new leftUnaryOpNode(&opToken,
                                              (const unaryOperator_t&) op,
@@ -683,8 +774,16 @@ namespace occa {
         return;
       }
 
-      // Handle new and delete
-      if (opType & operatorType::sizeof_) {
+      if (opType & operatorType::parenCast) {
+        leftUnaryOpNode &parenOpNode = (leftUnaryOpNode&) opNode;
+        type_t &type = ((typeNode*) parenOpNode.value)->value;
+        state.pushOutput(
+          new parenCastNode(parenOpNode.token,
+                            type,
+                            value)
+        );
+      }
+      else if (opType & operatorType::sizeof_) {
         state.pushOutput(
           new sizeofNode(&opToken, value)
         );
@@ -713,13 +812,10 @@ namespace occa {
       if (state.outputCount() < 3) {
         return false;
       }
-      exprNode &falseValue = state.popOutput();
-      exprNode &trueValue  = state.popOutput();
-      exprNode &checkValue = state.popOutput();
       // Don't use state's garbage collection yet
-      state.usedOutput.pop();
-      state.usedOutput.pop();
-      state.usedOutput.pop();
+      exprNode &falseValue = state.unsafePopOutput();
+      exprNode &trueValue  = state.unsafePopOutput();
+      exprNode &checkValue = state.unsafePopOutput();
 
       if ((checkValue.type() & exprNodeType::rightUnary)
           && (trueValue.type() & exprNodeType::rightUnary)) {

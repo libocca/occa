@@ -527,14 +527,20 @@ namespace occa {
         return;
       }
 
+      bool spaceAfterName = false;
       if (printType) {
         if (qualifiers.size()) {
           pout << qualifiers << ' ';
         }
-        pout << *type << ' ';
+        pout << *type;
       }
 
       const int pointerCount = (int) pointers.size();
+      if (printType && pointerCount) {
+        spaceAfterName = true;
+        pout << ' ';
+      }
+
       for (int i = 0; i < pointerCount; ++i) {
         pout << pointers[i];
         // Don't add a space after the last * if possible
@@ -544,10 +550,20 @@ namespace occa {
       }
 
       if (referenceToken) {
+        if (printType && !spaceAfterName) {
+          spaceAfterName = true;
+          pout << ' ';
+        }
         pout << '&';
       }
 
-      pout << varName;
+      if (varName.size()) {
+        if (printType && !spaceAfterName) {
+          spaceAfterName = true;
+          pout << ' ';
+        }
+        pout << varName;
+      }
 
       const int arrayCount = (int) arrays.size();
       for (int i = 0; i < arrayCount; ++i) {
@@ -587,7 +603,16 @@ namespace occa {
 
     //---[ Types ]----------------------
     primitive_t::primitive_t(const std::string &name_) :
-      type_t(name_) {}
+      type_t(name_),
+      pname(name_) {}
+
+    const std::string& primitive_t::name() const {
+      return pname;
+    }
+
+    bool primitive_t::isNamed() const {
+      return true;
+    }
 
     int primitive_t::type() const {
       return typeType::primitive;

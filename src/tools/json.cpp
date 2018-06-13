@@ -288,7 +288,7 @@ namespace occa {
       break;
     }
     case number_: {
-      addEq(value_.number, j.value_.number);
+      primitive::addEq(value_.number, j.value_.number);
       break;
     }
     case object_: {

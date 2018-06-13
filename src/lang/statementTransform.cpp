@@ -148,17 +148,22 @@ namespace occa {
 
       // Elif statements
       const int elifCount = (int) smnt.elifSmnts.size();
+      int newCount = 0;
       for (int i = 0; i < elifCount; ++i) {
         statement_t *elifSmnt = smnt.elifSmnts[i];
         if (!transformStatementInPlace(elifSmnt)) {
           return false;
         }
-        if (!elifSmnt->is<elifStatement>()) {
+        if (elifSmnt &&
+            !elifSmnt->is<elifStatement>()) {
           printError("Elif transform became a non-elif statement");
           return false;
         }
-        smnt.elifSmnts[i] = (elifStatement*) elifSmnt;
+        if (elifSmnt) {
+          smnt.elifSmnts[newCount++] = (elifStatement*) elifSmnt;
+        }
       }
+      smnt.elifSmnts.resize(newCount);
 
       // Else statement
       statement_t *elseSmnt = smnt.elseSmnt;
@@ -168,7 +173,8 @@ namespace occa {
       if (!transformStatementInPlace(elseSmnt)) {
         return false;
       }
-      if (!elseSmnt->is<elseStatement>()) {
+      if (elseSmnt &&
+          !elseSmnt->is<elseStatement>()) {
         printError("Else transform became a non-else statement");
         return false;
       }

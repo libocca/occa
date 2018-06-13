@@ -22,17 +22,35 @@
 #ifndef OCCA_LANG_EXPRESSION_HEADER
 #define OCCA_LANG_EXPRESSION_HEADER
 
-#include <stack>
+#include <list>
 #include <vector>
 
 #include <occa/lang/exprNode.hpp>
 
 namespace occa {
   namespace lang {
-    typedef std::stack<token_t*>       tokenStack;
-    typedef std::stack<operatorToken*> operatorStack;
+    class expressionScopedState;
+
+    typedef std::list<exprNode*>             exprNodeList;
+    typedef std::list<token_t*>              tokenList;
+    typedef std::list<exprOpNode*>           operatorList;
+    typedef std::list<expressionScopedState> scopedStateList;
 
     //---[ Expression State ]-----------
+    class expressionScopedState {
+    public:
+      token_t *beforePairToken;
+
+      exprNodeList output;
+      operatorList operators;
+
+      expressionScopedState(token_t *beforePairToken_ = NULL);
+
+      void free();
+
+      void debugPrint();
+    };
+
     class expressionState {
     public:
       tokenVector &tokens;
@@ -43,30 +61,39 @@ namespace occa {
       token_t *prevToken;
       token_t *nextToken;
 
-      tokenStack tokensBeforePair;
-      exprNodeStack output;
-      operatorStack operators;
+      // Token before the pair started
+      token_t *beforePairToken;
 
-      exprNodeStack usedOutput;
+      scopedStateList scopedStates;
+      expressionScopedState *scopedState;
+
+      exprNodeList usedOutput;
+      operatorList usedOperators;
 
       bool hasError;
 
       expressionState(tokenVector &tokens_);
       ~expressionState();
 
-      token_t* tokenBeforePair();
-
       int outputCount();
       int operatorCount();
 
       exprNode& lastOutput();
-      operatorToken& lastOperator();
+      exprOpNode& lastOperator();
 
       void pushOutput(exprNode *expr);
       void pushOperator(operatorToken *token);
+      void pushOperator(exprOpNode *expr);
+
+      exprNode& unsafePopOutput();
 
       exprNode& popOutput();
-      operatorToken& popOperator();
+      exprOpNode& popOperator();
+
+      void pushPair(token_t *beforePairToken_);
+      void popPair();
+
+      void debugPrint();
     };
     //==================================
 
@@ -79,8 +106,7 @@ namespace occa {
     void pushOutputNode(token_t *token,
                         expressionState &state);
 
-    void closePair(operatorToken &opToken,
-                   expressionState &state);
+    void closePair(expressionState &state);
 
     void extractArgs(exprNodeVector &args,
                      exprNode &node,
@@ -101,11 +127,10 @@ namespace occa {
     void applyFasterOperators(operatorToken &opToken,
                               expressionState &state);
 
-    void applyOperator(operatorToken &opToken,
+    void applyOperator(exprOpNode &opNode,
                        expressionState &state);
 
-    void applyLeftUnaryOperator(operatorToken &opToken,
-                                const unaryOperator_t &op,
+    void applyLeftUnaryOperator(exprOpNode &opNode,
                                 exprNode &value,
                                 expressionState &state);
 

@@ -55,6 +55,7 @@ namespace occa {
       extern const rawOpType_t lessThan;
       extern const rawOpType_t lessThanEq;
       extern const rawOpType_t equal;
+      extern const rawOpType_t compare;
       extern const rawOpType_t notEqual;
       extern const rawOpType_t greaterThan;
       extern const rawOpType_t greaterThanEq;
@@ -121,10 +122,7 @@ namespace occa {
       extern const rawOpType_t noexcept_;
       extern const rawOpType_t alignof_;
 
-      extern const rawOpType_t const_cast_;
-      extern const rawOpType_t dynamic_cast_;
-      extern const rawOpType_t static_cast_;
-      extern const rawOpType_t reinterpret_cast_;
+      extern const rawOpType_t parenCast;
 
       extern const rawOpType_t cudaCallStart;
       extern const rawOpType_t cudaCallEnd;
@@ -155,6 +153,7 @@ namespace occa {
       extern const opType_t lessThan;
       extern const opType_t lessThanEq;
       extern const opType_t equal;
+      extern const opType_t compare;
       extern const opType_t notEqual;
       extern const opType_t greaterThan;
       extern const opType_t greaterThanEq;
@@ -241,10 +240,7 @@ namespace occa {
       extern const opType_t noexcept_;
       extern const opType_t alignof_;
 
-      extern const opType_t const_cast_;
-      extern const opType_t dynamic_cast_;
-      extern const opType_t static_cast_;
-      extern const opType_t reinterpret_cast_;
+      extern const opType_t parenCast;
 
       extern const opType_t cudaCallStart;
       extern const opType_t cudaCallEnd;
@@ -333,6 +329,7 @@ namespace occa {
       extern const binaryOperator_t lessThan;
       extern const binaryOperator_t lessThanEq;
       extern const binaryOperator_t equal;
+      extern const binaryOperator_t compare;
       extern const binaryOperator_t notEqual;
       extern const binaryOperator_t greaterThan;
       extern const binaryOperator_t greaterThanEq;
@@ -409,10 +406,7 @@ namespace occa {
       extern const unaryOperator_t noexcept_;
       extern const unaryOperator_t alignof_;
 
-      extern const unaryOperator_t const_cast_;
-      extern const unaryOperator_t dynamic_cast_;
-      extern const unaryOperator_t static_cast_;
-      extern const unaryOperator_t reinterpret_cast_;
+      extern const unaryOperator_t parenCast;
 
       extern const pairOperator_t cudaCallStart;
       extern const pairOperator_t cudaCallEnd;

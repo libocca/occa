@@ -319,6 +319,7 @@ namespace occa {
     void preprocessor_t::expandMacro(identifierToken &source,
                                      macro_t &macro) {
       tokenVector tokens;
+
       macro.expand(tokens, source);
 
       const int tokenCount = (int) tokens.size();
@@ -395,7 +396,7 @@ namespace occa {
       status = ppStatus::reading;
 
       while (!inputIsEmpty()) {
-        token_t *token;
+        token_t *token = NULL;
         (*this) >> token;
 
         if (token->type() & tokenType::newline) {
@@ -481,6 +482,7 @@ namespace occa {
       macro_t *macro = (expandingMacros
                         ? getMacro(token.value)
                         : NULL);
+
       // Don't allow for recursive expansion
       if (!macro
           || (expandedMacros.find(macro) != expandedMacros.end())) {
@@ -499,7 +501,8 @@ namespace occa {
         return;
       }
       // Make sure that the macro starts with a '('
-      token_t *nextToken = getSourceToken();
+      token_t *nextToken = NULL;
+      (*this) >> nextToken;
       if (nextToken->getOpType() & operatorType::parenthesesStart) {
         expandMacro(token, *macro);
         delete &token;
@@ -511,7 +514,7 @@ namespace occa {
       //   int FOO;
       pushOutput(&token);
       if (nextToken) {
-        pushOutput(nextToken);
+        pushInput(nextToken);
       }
     }
 

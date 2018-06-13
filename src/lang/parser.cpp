@@ -327,23 +327,24 @@ namespace occa {
 
     exprNode* parser_t::getExpression(const int start,
                                       const int end) {
-      if (!up) {
-        return context.getExpression(start, end);
-      }
-
-      for (int i = start; i < end; ++i) {
-        token_t *token = context[i];
-        if (token->type() & tokenType::identifier) {
-          context.setToken(i,
-                           replaceIdentifier((identifierToken&) *token));
+      if (up) {
+        for (int i = start; i < end; ++i) {
+          token_t *token = context[i];
+          if (token->type() & tokenType::identifier) {
+            context.setToken(i,
+                             replaceIdentifier((identifierToken&) *token));
+          }
         }
       }
-      return context.getExpression(start, end);
+      exprNode *expr = context.getExpression(start, end);
+      success &= !!expr;
+      return expr;
     }
 
     token_t* parser_t::replaceIdentifier(identifierToken &identifier) {
-      keyword_t &keyword = up->getScopeKeyword(identifier.value);
+      keyword_t &keyword = getKeyword(&identifier);
       const int kType = keyword.type();
+
       if (!(kType & (keywordType::type     |
                      keywordType::variable |
                      keywordType::function))) {
@@ -452,8 +453,7 @@ namespace occa {
 
         // Get argument
         arg.expr = getExpression();
-        if (!arg.expr) {
-          success = false;
+        if (!success) {
           context.pop();
           arg.clear();
           return;
@@ -677,7 +677,6 @@ namespace occa {
       if (!decl.value) {
         loadDeclarationBraceInitializer(decl);
       }
-
       return decl;
     }
 
@@ -734,6 +733,9 @@ namespace occa {
       }
 
       exprNode *value = getExpression(1, pos);
+      if (!success) {
+        return;
+      }
       decl.variable->vartype.bitfield = (int) value->evaluate();
       delete value;
       context.set(pos);
@@ -755,6 +757,9 @@ namespace occa {
       }
 
       decl.value = getExpression(1, pos);
+      if (!success) {
+        return;
+      }
       context.set(pos);
     }
 
@@ -1066,9 +1071,16 @@ namespace occa {
         operatorToken &end   = context.getClosingPairToken(0)->to<operatorToken>();
         context.pushPairRange(0);
 
+        exprNode *value = NULL;
+        if (context.size()) {
+          value = getExpression();
+          if (!success) {
+            return;
+          }
+        }
         vartype += array_t(start,
                            end,
-                           getExpression());
+                           value);
 
         tokenRange pairRange = context.pop();
         context.set(pairRange.end + 1);
@@ -1227,8 +1239,7 @@ namespace occa {
       context.push(0, end);
       exprNode *expr = getExpression();
       context.pop();
-      if (!expr) {
-        success = false;
+      if (!success) {
         return NULL;
       }
       context.set(end + 1);
@@ -1976,9 +1987,9 @@ namespace occa {
       if (0 < pos) {
         // Load the return value
         value = getExpression(0, pos);
-      }
-      if (!success) {
-        return NULL;
+        if (!success) {
+          return NULL;
+        }
       }
 
       context.set(pos + 1);

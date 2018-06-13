@@ -639,8 +639,8 @@ namespace occa {
       // Count the initial [(] token
       int parenthesesCount = 1;
 
-      token_t *token = NULL;
       while (true) {
+        token_t *token = NULL;
         pp >> token;
 
         if (!token) {

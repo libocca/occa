@@ -131,6 +131,7 @@ void testStreamPrint() {
     << "lessThan            : " << binaryOpNode(NULL, op::lessThan, a, b).toString() << '\n'
     << "lessThanEq          : " << binaryOpNode(NULL, op::lessThanEq, a, b).toString() << '\n'
     << "equal               : " << binaryOpNode(NULL, op::equal, a, b).toString() << '\n'
+    << "compare             : " << binaryOpNode(NULL, op::compare, a, b).toString() << '\n'
     << "notEqual            : " << binaryOpNode(NULL, op::notEqual, a, b).toString() << '\n'
     << "greaterThan         : " << binaryOpNode(NULL, op::greaterThan, a, b).toString() << '\n'
     << "greaterThanEq       : " << binaryOpNode(NULL, op::greaterThanEq, a, b).toString() << '\n'
@@ -236,6 +237,7 @@ void testPoutPrint() {
   binaryOpNode(NULL, op::lessThan, a, b).print(pout); pout << '\n';
   binaryOpNode(NULL, op::lessThanEq, a, b).print(pout); pout << '\n';
   binaryOpNode(NULL, op::equal, a, b).print(pout); pout << '\n';
+  binaryOpNode(NULL, op::compare, a, b).print(pout); pout << '\n';
   binaryOpNode(NULL, op::notEqual, a, b).print(pout); pout << '\n';
   binaryOpNode(NULL, op::greaterThan, a, b).print(pout); pout << '\n';
   binaryOpNode(NULL, op::greaterThanEq, a, b).print(pout); pout << '\n';
@@ -338,6 +340,7 @@ void testDebugPrint() {
   binaryOpNode(NULL, op::lessThan, a, b).debugPrint("");
   binaryOpNode(NULL, op::lessThanEq, a, b).debugPrint("");
   binaryOpNode(NULL, op::equal, a, b).debugPrint("");
+  binaryOpNode(NULL, op::compare, a, b).debugPrint("");
   binaryOpNode(NULL, op::notEqual, a, b).debugPrint("");
   binaryOpNode(NULL, op::greaterThan, a, b).debugPrint("");
   binaryOpNode(NULL, op::greaterThanEq, a, b).debugPrint("");

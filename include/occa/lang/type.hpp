@@ -111,9 +111,9 @@ namespace occa {
 
       void setSource(const identifierToken &source_);
 
-      const std::string& name() const;
+      virtual const std::string& name() const;
+      virtual bool isNamed() const;
 
-      bool isNamed() const;
       virtual bool isPointerType() const;
 
       bool operator == (const type_t &other) const;
@@ -267,7 +267,12 @@ namespace occa {
     //---[ Types ]----------------------
     class primitive_t : public type_t {
     public:
+      const std::string pname;
+
       primitive_t(const std::string &name_);
+
+      virtual const std::string& name() const;
+      virtual bool isNamed() const;
 
       virtual int type() const;
       virtual type_t& clone() const;

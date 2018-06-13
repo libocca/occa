@@ -40,45 +40,46 @@ namespace occa {
                                         variable  |
                                         function);
 
-      const udim_t leftUnary         = (1L << 8);
-      const udim_t rightUnary        = (1L << 9);
-      const udim_t binary            = (1L << 10);
-      const udim_t ternary           = (1L << 11);
+      const udim_t rawOp             = (1L << 8);
+      const udim_t leftUnary         = (1L << 9);
+      const udim_t rightUnary        = (1L << 10);
+      const udim_t binary            = (1L << 11);
+      const udim_t ternary           = (1L << 12);
       const udim_t op                = (leftUnary  |
                                         rightUnary |
                                         binary     |
                                         ternary);
 
-      const udim_t pair              = (1L << 12);
+      const udim_t pair              = (1L << 13);
 
-      const udim_t subscript         = (1L << 13);
-      const udim_t call              = (1L << 14);
+      const udim_t subscript         = (1L << 14);
+      const udim_t call              = (1L << 15);
 
-      const udim_t sizeof_           = (1L << 15);
-      const udim_t sizeof_pack_      = (1L << 16);
-      const udim_t new_              = (1L << 17);
-      const udim_t delete_           = (1L << 18);
-      const udim_t throw_            = (1L << 19);
+      const udim_t sizeof_           = (1L << 16);
+      const udim_t sizeof_pack_      = (1L << 17);
+      const udim_t new_              = (1L << 18);
+      const udim_t delete_           = (1L << 19);
+      const udim_t throw_            = (1L << 20);
 
-      const udim_t typeid_           = (1L << 20);
-      const udim_t noexcept_         = (1L << 21);
-      const udim_t alignof_          = (1L << 22);
+      const udim_t typeid_           = (1L << 21);
+      const udim_t noexcept_         = (1L << 22);
+      const udim_t alignof_          = (1L << 23);
 
-      const udim_t const_cast_       = (1L << 23);
-      const udim_t dynamic_cast_     = (1L << 24);
-      const udim_t static_cast_      = (1L << 25);
-      const udim_t reinterpret_cast_ = (1L << 26);
+      const udim_t const_cast_       = (1L << 24);
+      const udim_t dynamic_cast_     = (1L << 25);
+      const udim_t static_cast_      = (1L << 26);
+      const udim_t reinterpret_cast_ = (1L << 27);
 
-      const udim_t funcCast          = (1L << 27);
-      const udim_t parenCast         = (1L << 28);
-      const udim_t constCast         = (1L << 29);
-      const udim_t staticCast        = (1L << 30);
-      const udim_t reinterpretCast   = (1L << 31);
-      const udim_t dynamicCast       = (1L << 32);
+      const udim_t funcCast          = (1L << 28);
+      const udim_t parenCast         = (1L << 29);
+      const udim_t constCast         = (1L << 30);
+      const udim_t staticCast        = (1L << 31);
+      const udim_t reinterpretCast   = (1L << 32);
+      const udim_t dynamicCast       = (1L << 33);
 
-      const udim_t parentheses       = (1L << 33);
-      const udim_t tuple             = (1L << 34);
-      const udim_t cudaCall          = (1L << 35);
+      const udim_t parentheses       = (1L << 34);
+      const udim_t tuple             = (1L << 35);
+      const udim_t cudaCall          = (1L << 36);
     }
 
     exprNode::exprNode(token_t *token_) :
@@ -470,6 +471,10 @@ namespace occa {
     //==================================
 
     //---[ Operators ]------------------
+    exprOpNode::exprOpNode(operatorToken &token_) :
+      exprNode(&token_),
+      op(*(token_.op)) {}
+
     exprOpNode::exprOpNode(token_t *token_,
                            const operator_t &op_) :
       exprNode(token_),
@@ -479,8 +484,30 @@ namespace occa {
       return op.opType;
     }
 
+    udim_t exprOpNode::type() const {
+      return exprNodeType::rawOp;
+    }
+
+    exprNode* exprOpNode::clone() const {
+      return new exprOpNode(token, op);
+    }
+
+    void exprOpNode::setChildren(exprNodeRefVector &children) {}
+
     exprNode* exprOpNode::wrapInParentheses() {
       return new parenthesesNode(token, *this);
+    }
+
+    void exprOpNode::print(printer &pout) const {
+      token->printError("[Waldo] (exprOpNode) Unsure how you got here...");
+    }
+
+    void exprOpNode::debugPrint(const std::string &prefix) const {
+      printer pout(std::cerr);
+      std::cerr << prefix << "|\n"
+                << prefix << "|---[";
+      pout << op;
+      std::cerr << "] (exprOpNode)\n";
     }
 
     leftUnaryOpNode::leftUnaryOpNode(token_t *token_,
@@ -890,7 +917,7 @@ namespace occa {
     }
 
     newNode::newNode(token_t *token_,
-                     vartype_t &valueType_,
+                     const vartype_t &valueType_,
                      const exprNode &value_) :
       exprNode(token_),
       valueType(valueType_),
@@ -898,7 +925,7 @@ namespace occa {
       size(noExprNode.clone()) {}
 
     newNode::newNode(token_t *token_,
-                     vartype_t &valueType_,
+                     const vartype_t &valueType_,
                      const exprNode &value_,
                      const exprNode &size_) :
       exprNode(token_),
@@ -1114,7 +1141,7 @@ namespace occa {
     }
 
     funcCastNode::funcCastNode(token_t *token_,
-                               vartype_t &valueType_,
+                               const vartype_t &valueType_,
                                const exprNode &value_) :
       exprNode(token_),
       valueType(valueType_),
@@ -1165,7 +1192,7 @@ namespace occa {
     }
 
     parenCastNode::parenCastNode(token_t *token_,
-                                 vartype_t &valueType_,
+                                 const vartype_t &valueType_,
                                  const exprNode &value_) :
       exprNode(token_),
       valueType(valueType_),
@@ -1207,7 +1234,7 @@ namespace occa {
     void parenCastNode::print(printer &pout) const {
       // TODO: Print type without qualifiers
       //       Also convert [] to *
-      pout << '(' << valueType << ')' << *value;
+      pout << '(' << valueType << ") " << *value;
     }
 
     void parenCastNode::debugPrint(const std::string &prefix) const {
@@ -1220,7 +1247,7 @@ namespace occa {
     }
 
     constCastNode::constCastNode(token_t *token_,
-                                 vartype_t &valueType_,
+                                 const vartype_t &valueType_,
                                  const exprNode &value_) :
       exprNode(token_),
       valueType(valueType_),
@@ -1268,7 +1295,7 @@ namespace occa {
     }
 
     staticCastNode::staticCastNode(token_t *token_,
-                                   vartype_t &valueType_,
+                                   const vartype_t &valueType_,
                                    const exprNode &value_) :
       exprNode(token_),
       valueType(valueType_),
@@ -1316,7 +1343,7 @@ namespace occa {
     }
 
     reinterpretCastNode::reinterpretCastNode(token_t *token_,
-                                             vartype_t &valueType_,
+                                             const vartype_t &valueType_,
                                              const exprNode &value_) :
       exprNode(token_),
       valueType(valueType_),
@@ -1364,7 +1391,7 @@ namespace occa {
     }
 
     dynamicCastNode::dynamicCastNode(token_t *token_,
-                                     vartype_t &valueType_,
+                                     const vartype_t &valueType_,
                                      const exprNode &value_) :
       exprNode(token_),
       valueType(valueType_),

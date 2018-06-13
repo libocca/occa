@@ -542,7 +542,8 @@ namespace occa {
     ifStatement::ifStatement(blockStatement *up_,
                              const ifStatement &other) :
       blockStatement(up_, other.source),
-      condition(&(other.condition->clone(this))) {
+      condition(&(other.condition->clone(this))),
+      elseSmnt(NULL) {
 
       copyFrom(other);
 
@@ -554,11 +555,9 @@ namespace occa {
         elifSmnts.push_back(&elifSmnt);
       }
 
-      elseSmnt = (other.elseSmnt
-                  ? &(other.elseSmnt
-                      ->clone(this)
-                      .to<elseStatement>())
-                  : NULL);
+      if (other.elseSmnt) {
+        elseSmnt = &((elseStatement&) other.elseSmnt->clone(this));
+      }
     }
 
     ifStatement::~ifStatement() {
@@ -580,6 +579,7 @@ namespace occa {
     }
 
     void ifStatement::addElse(elseStatement &elseSmnt_) {
+      delete elseSmnt;
       elseSmnt = &elseSmnt_;
     }
 
