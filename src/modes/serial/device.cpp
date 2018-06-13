@@ -276,7 +276,8 @@ namespace occa {
 
       lock.release();
       if (compileError) {
-        OCCA_ERROR("Compilation error", compileError);
+        OCCA_FORCE_ERROR("Error compiling [" << kernelName << "],"
+                         " Command: [" << sCommand << ']');
       }
 
       kernel_v *k = buildKernelFromBinary(binaryFilename,

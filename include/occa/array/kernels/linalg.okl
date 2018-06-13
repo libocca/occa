@@ -198,7 +198,7 @@
                     RETTYPE * vecReduction) {
 #define LP_NORM_OPERATION(out, idx)             \
   const VTYPE vec_i = vec[idx];                 \
-  out += pow(vec_i, p)
+  out += pow((VTYPE) vec_i, (VTYPE) p)
   REDUCTION_BODY(INIT_ZERO, LP_NORM_OPERATION, SUM_RED_OPERATION);
 }
 

@@ -422,9 +422,10 @@ namespace occa {
 
       const int compileError = system(sCommand.c_str());
 
+      lock.release();
       if (compileError) {
-        lock.release();
-        OCCA_FORCE_ERROR("Compilation error");
+        OCCA_FORCE_ERROR("Error compiling [" << kernelName << "],"
+                         " Command: [" << sCommand << ']');
       }
       //================================
     }
