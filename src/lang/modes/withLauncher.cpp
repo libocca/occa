@@ -183,10 +183,9 @@ namespace occa {
         );
         forSmnt.up->addBefore(forSmnt, launchBlock);
 
+        // Get max count
         int outerCount = 0;
         int innerCount = 0;
-
-        // **TODO 1.1: Properly fix this
         const int pathCount = (int) path.size();
         for (int i = 0; i < pathCount; ++i) {
           forStatement &pathSmnt = *((forStatement*) path[i]);
@@ -195,10 +194,22 @@ namespace occa {
             success = false;
             return;
           }
+          const bool isOuter = pathSmnt.hasAttribute("outer");
+          outerCount += isOuter;
+          innerCount += !isOuter;
+        }
+
+        // TODO 1.1: Properly fix this
+        for (int i = 0; i < pathCount; ++i) {
+          forStatement &pathSmnt = *((forStatement*) path[i]);
+          oklForStatement oklForSmnt(pathSmnt);
 
           launchBlock.add(pathSmnt.init->clone(&launchBlock));
 
           const bool isOuter = pathSmnt.hasAttribute("outer");
+          outerCount -= isOuter;
+          innerCount -= !isOuter;
+
           const int index = (isOuter
                              ? outerCount
                              : innerCount);
@@ -213,9 +224,6 @@ namespace occa {
                        oklForSmnt.getIterationCount())
               ))
           );
-
-          outerCount += isOuter;
-          innerCount += !isOuter;
         }
 
         launchBlock.addFirst(
@@ -539,12 +547,13 @@ namespace occa {
       }
 
       bool withLauncher::writesToShared(exprNode &expr) {
-        exprOpNode &opNode = (exprOpNode&) expr;
-        if (!(opNode.opType() & (operatorType::increment |
-                                 operatorType::decrement |
-                                 operatorType::assignment))) {
-          return false;
-        }
+        // TODO 1.1: Propertly check read<-->write or write<-->write ordering
+        // exprOpNode &opNode = (exprOpNode&) expr;
+        // if (!(opNode.opType() & (operatorType::increment |
+        //                          operatorType::decrement |
+        //                          operatorType::assignment))) {
+        //   return false;
+        // }
 
         // Get updated variable
         variable_t *var = expr.getVariable();
