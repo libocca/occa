@@ -100,41 +100,43 @@ namespace occa {
     // Using Shunting-Yard algorithm
     exprNode* getExpression(tokenVector &tokens);
 
-    void getInitialExpression(tokenVector &tokens,
-                              expressionState &state);
-
-    void pushOutputNode(token_t *token,
-                        expressionState &state);
-
-    void closePair(expressionState &state);
-
-    void extractArgs(exprNodeVector &args,
-                     exprNode &node,
-                     expressionState &state);
-
-    void transformLastPair(operatorToken &opToken,
-                           expressionState &state);
-
-    void attachPair(operatorToken &opToken,
-                    expressionState &state);
-
-    bool operatorIsLeftUnary(operatorToken &opToken,
-                             expressionState &state);
-
-    void updateOperatorToken(operatorToken &opToken,
-                             expressionState &state);
-
-    void applyFasterOperators(operatorToken &opToken,
-                              expressionState &state);
-
-    void applyOperator(exprOpNode &opNode,
-                       expressionState &state);
-
-    void applyLeftUnaryOperator(exprOpNode &opNode,
-                                exprNode &value,
+    namespace expr {
+      void getInitialExpression(tokenVector &tokens,
                                 expressionState &state);
 
-    bool applyTernary(expressionState &state);
+      void pushOutputNode(token_t *token,
+                          expressionState &state);
+
+      void closePair(expressionState &state);
+
+      void extractArgs(exprNodeVector &args,
+                       exprNode &node,
+                       expressionState &state);
+
+      void transformLastPair(operatorToken &opToken,
+                             expressionState &state);
+
+      void attachPair(operatorToken &opToken,
+                      expressionState &state);
+
+      bool operatorIsLeftUnary(operatorToken &opToken,
+                               expressionState &state);
+
+      void updateOperatorToken(operatorToken &opToken,
+                               expressionState &state);
+
+      void applyFasterOperators(operatorToken &opToken,
+                                expressionState &state);
+
+      void applyOperator(exprOpNode &opNode,
+                         expressionState &state);
+
+      void applyLeftUnaryOperator(exprOpNode &opNode,
+                                  exprNode &value,
+                                  expressionState &state);
+
+      bool applyTernary(expressionState &state);
+    }
   }
 }
 
