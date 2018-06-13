@@ -191,10 +191,6 @@ namespace occa {
 
       // Finish applying operators
       while (state.operatorCount()) {
-        if (expr::applyTernary(state)) {
-          continue;
-        }
-
         expr::applyOperator(state.popOperator(),
                             state);
 
@@ -257,7 +253,6 @@ namespace occa {
               if (!state.hasError) {
                 attachPair(opToken, state);
               }
-              applyTernary(state);
             }
             else {
               applyFasterOperators(opToken, state);
@@ -315,15 +310,12 @@ namespace occa {
         operatorToken *errorToken = (operatorToken*) opNode.token;
 
         while (state.operatorCount()) {
-          if (applyTernary(state)) {
-            continue;
-          }
-
           exprOpNode &nextOpNode = state.popOperator();
           const opType_t nextOpType = nextOpNode.opType();
 
           if (nextOpType & operatorType::pairStart) {
             if (opType == (nextOpType << 1)) {
+              applyTernary(state);
               applyOperator(opNode, state);
               return;
             }
@@ -518,9 +510,7 @@ namespace occa {
         }
 
         opType_t prevOpType = state.prevToken->getOpType();
-        if (prevOpType & (operatorType::pairStart |
-                          operatorType::colon     |
-                          operatorType::questionMark)) {
+        if (prevOpType & operatorType::pairStart) {
           return true;
         }
 
@@ -586,25 +576,9 @@ namespace occa {
 
         fileOrigin origin = opToken.origin;
 
-        bool isLeftUnary = true;
-        bool stillAmbiguous = true;
-
-        // Test if in ternary
-        if (state.outputCount()
-            && (state.lastOutput().type() & exprNodeType::rightUnary)) {
-
-          rightUnaryOpNode &lastOutput = (rightUnaryOpNode&) state.lastOutput();
-          if (lastOutput.opType() & (operatorType::questionMark |
-                                     operatorType::colon)) {
-            stillAmbiguous = false;
-          }
-        }
-
-        if (stillAmbiguous) {
-          isLeftUnary = operatorIsLeftUnary(opToken, state);
-          if (state.hasError) {
-            return;
-          }
+        bool isLeftUnary = operatorIsLeftUnary(opToken, state);
+        if (state.hasError) {
+          return;
         }
 
         const operator_t *newOperator = NULL;
@@ -688,13 +662,6 @@ namespace occa {
         // After applying faster operators,
         //   place opToken in the stack
         state.pushOperator(&opToken);
-
-        // Apply ternary operators immediately
-        if (op.opType & (operatorType::questionMark |
-                         operatorType::colon)) {
-          applyOperator(state.popOperator(),
-                        state);
-        }
       }
 
       void applyOperator(exprOpNode &opNode,
@@ -725,6 +692,9 @@ namespace occa {
             applyLeftUnaryOperator(opNode,
                                    value,
                                    state);
+            if (opType & operatorType::colon) {
+              applyTernary(state);
+            }
             return;
           }
           state.hasError = true;
@@ -818,22 +788,22 @@ namespace occa {
         exprNode &trueValue  = state.unsafePopOutput();
         exprNode &checkValue = state.unsafePopOutput();
 
-        if ((checkValue.type() & exprNodeType::rightUnary)
-            && (trueValue.type() & exprNodeType::rightUnary)) {
+        if ((trueValue.type() & exprNodeType::leftUnary)
+            && (falseValue.type() & exprNodeType::leftUnary)) {
 
-          rightUnaryOpNode &checkOpValue = (rightUnaryOpNode&) checkValue;
-          rightUnaryOpNode &trueOpValue  = (rightUnaryOpNode&) trueValue;
+          leftUnaryOpNode &trueOpValue  = (leftUnaryOpNode&) trueValue;
+          leftUnaryOpNode &falseOpValue = (leftUnaryOpNode&) falseValue;
 
-          opType_t op1 = checkOpValue.opType();
-          opType_t op2 = trueOpValue.opType();
+          opType_t op1 = trueOpValue.opType();
+          opType_t op2 = falseOpValue.opType();
 
           if ((op1 == operatorType::questionMark)
               && (op2 == operatorType::colon)) {
 
             state.pushOutput(
-              new ternaryOpNode(*(checkOpValue.value),
+              new ternaryOpNode(checkValue,
                                 *(trueOpValue.value),
-                                falseValue)
+                                *(falseOpValue.value))
             );
             // Manually delete since we're avoiding garbage collection
             delete &checkValue;

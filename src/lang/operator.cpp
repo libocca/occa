@@ -236,6 +236,8 @@ namespace occa {
                                           leftDecrement |
                                           dereference   |
                                           address       |
+                                          questionMark  |
+                                          colon         |
                                           globalScope   |
                                           sizeof_       |
                                           sizeof_pack_  |
@@ -248,9 +250,7 @@ namespace occa {
                                           parenCast);
 
       const opType_t rightUnary        = (rightIncrement |
-                                          rightDecrement |
-                                          questionMark   |
-                                          colon);
+                                          rightDecrement);
 
       const opType_t unary             = (leftUnary |
                                           rightUnary);
@@ -569,7 +569,7 @@ namespace occa {
         leftAssociative,  // 13
         leftAssociative,  // 14
         leftAssociative,  // 15
-        rightAssociative, // 16 [?:]
+        leftAssociative, // 16 [?:]
         rightAssociative, // 17 [assignment, throw]
         leftAssociative  // 18 [,]
       };
