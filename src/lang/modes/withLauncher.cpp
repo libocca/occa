@@ -198,6 +198,8 @@ namespace occa {
           outerCount += isOuter;
           innerCount += !isOuter;
         }
+        const int outerDims = outerCount;
+        const int innerDims = innerCount;
 
         // TODO 1.1: Properly fix this
         for (int i = 0; i < pathCount; ++i) {
@@ -230,14 +232,14 @@ namespace occa {
           *(new expressionStatement(
               &launchBlock,
               *(new identifierNode(forSmnt.source,
-                                   "inner.dims = " + occa::toString(innerCount)))
+                                   "inner.dims = " + occa::toString(innerDims)))
             ))
         );
         launchBlock.addFirst(
           *(new expressionStatement(
               &launchBlock,
               *(new identifierNode(forSmnt.source,
-                                   "outer.dims = " + occa::toString(outerCount)))
+                                   "outer.dims = " + occa::toString(outerDims)))
             ))
         );
         launchBlock.addFirst(
