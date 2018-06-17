@@ -259,6 +259,22 @@ void testMethods() {
   ASSERT_EQ(true,
             (bool) j);
 
+  // operator += without value
+  j = occa::json();
+  j += 10;
+  ASSERT_EQ((int) 10,
+            (int) j);
+
+  j = occa::json();
+ j += "1";
+  ASSERT_EQ("1",
+            j.string());
+
+  j = occa::json();
+  j += true;
+  ASSERT_EQ(true,
+            (bool) j);
+
   // Default get
   j = occa::json();
   ASSERT_EQ(occa::json::none_,
