@@ -4,32 +4,17 @@ coverage:
   range: "70...100"
 
   status:
-    project:
-      default: false
-      api:
-        flags: api
-      parser:
-        flags: parser
-    patch:
-      default: false
-      api:
-        flags: api
-      parser:
-        flags: parser
+    project: yes
+    patch: yes
+    changes: no
 
 flags:
-  api:
-    paths:
-      - include/
-      - src/
-    ignore:
-      - examples/
-  parser:
-    paths:
-      - include/occa/lang
-      - src/lang
-    ignore:
-      - tests
+  paths:
+    - include
+    - src
+  ignore:
+    - examples
+    - tests
 
 comment:
   layout: 'reach, diff, files'
