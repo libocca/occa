@@ -403,36 +403,36 @@ void testTernary() {
 
 void testPairMatching() {
   exprNode *expr = makeExpression("func(0,1,2,3,4)");
-  OCCA_ASSERT_EQUAL_BINARY(exprNodeType::call,
-                           expr->type());
+  ASSERT_EQ_BINARY(exprNodeType::call,
+                   expr->type());
   callNode &func = expr->to<callNode>();
 
-  OCCA_ASSERT_EQUAL("func", func.value->to<identifierNode>().value);
-  OCCA_ASSERT_EQUAL(5, (int) func.args.size());
+  ASSERT_EQ("func", func.value->to<identifierNode>().value);
+  ASSERT_EQ(5, (int) func.args.size());
   for (int i = 0; i < 5; ++i) {
     primitiveNode &arg = func.args[i]->to<primitiveNode>();
-    OCCA_ASSERT_EQUAL(i, (int) arg.value);
+    ASSERT_EQ(i, (int) arg.value);
   }
 
   delete expr;
   expr = makeExpression("(0,1,2,3,4)");
-  OCCA_ASSERT_EQUAL_BINARY(exprNodeType::parentheses,
-                           expr->type());
+  ASSERT_EQ_BINARY(exprNodeType::parentheses,
+                   expr->type());
 
   delete expr;
   expr = makeExpression("{0,1,2,3,4}");
-  OCCA_ASSERT_EQUAL_BINARY(exprNodeType::tuple,
-                           expr->type());
+  ASSERT_EQ_BINARY(exprNodeType::tuple,
+                   expr->type());
 
   delete expr;
   expr = makeExpression("array[0 + 1]");
-  OCCA_ASSERT_EQUAL_BINARY(exprNodeType::subscript,
-                           expr->type());
+  ASSERT_EQ_BINARY(exprNodeType::subscript,
+                   expr->type());
 
   delete expr;
   expr = makeExpression("func<<<0,1>>>");
-  OCCA_ASSERT_EQUAL_BINARY(exprNodeType::cudaCall,
-                           expr->type());
+  ASSERT_EQ_BINARY(exprNodeType::cudaCall,
+                   expr->type());
 
   delete expr;
 
@@ -445,13 +445,13 @@ void testPairMatching() {
 
 void testSpecialOperators() {
   exprNode *expr = makeExpression("sizeof(int)");
-  OCCA_ASSERT_EQUAL_BINARY(exprNodeType::sizeof_,
-                           expr->type());
+  ASSERT_EQ_BINARY(exprNodeType::sizeof_,
+                   expr->type());
 
   delete expr;
   expr = makeExpression("throw 2 + 2");
-  OCCA_ASSERT_EQUAL_BINARY(exprNodeType::throw_,
-                           expr->type());
+  ASSERT_EQ_BINARY(exprNodeType::throw_,
+                   expr->type());
 
   delete expr;
 
@@ -462,57 +462,57 @@ void testSpecialOperators() {
 }
 
 void testCanEvaluate() {
-  OCCA_ASSERT_TRUE(canEvaluate("1 + 2 / (3)"));
-  OCCA_ASSERT_FALSE(canEvaluate("1 + 2 / (3) + '1'"));
-  OCCA_ASSERT_FALSE(canEvaluate("&1"));
-  OCCA_ASSERT_FALSE(canEvaluate("*1"));
-  OCCA_ASSERT_FALSE(canEvaluate("1::2"));
-  OCCA_ASSERT_FALSE(canEvaluate("(1).(2)"));
-  OCCA_ASSERT_FALSE(canEvaluate("(1).*(2)"));
-  OCCA_ASSERT_FALSE(canEvaluate("1->2"));
-  OCCA_ASSERT_FALSE(canEvaluate("1->*2"));
+  ASSERT_TRUE(canEvaluate("1 + 2 / (3)"));
+  ASSERT_FALSE(canEvaluate("1 + 2 / (3) + '1'"));
+  ASSERT_FALSE(canEvaluate("&1"));
+  ASSERT_FALSE(canEvaluate("*1"));
+  ASSERT_FALSE(canEvaluate("1::2"));
+  ASSERT_FALSE(canEvaluate("(1).(2)"));
+  ASSERT_FALSE(canEvaluate("(1).*(2)"));
+  ASSERT_FALSE(canEvaluate("1->2"));
+  ASSERT_FALSE(canEvaluate("1->*2"));
 }
 
 void testEval() {
-  OCCA_ASSERT_EQUAL((int) (1 + (2 * 3)),
-                    (int) eval("1 + (2 * 3)"));
+  ASSERT_EQ((int) (1 + (2 * 3)),
+            (int) eval("1 + (2 * 3)"));
 
-  OCCA_ASSERT_EQUAL((int) (1 + 2 / (3)),
-                    (int) eval("1 + 2 / (3)"));
+  ASSERT_EQ((int) (1 + 2 / (3)),
+            (int) eval("1 + 2 / (3)"));
 
-  OCCA_ASSERT_EQUAL((double) ((1 + 2 / 3.1 * 4.4) / 1.2),
-                    (double) eval("(1 + 2 / 3.1 * 4.4) / 1.2"));
+  ASSERT_EQ((double) ((1 + 2 / 3.1 * 4.4) / 1.2),
+            (double) eval("(1 + 2 / 3.1 * 4.4) / 1.2"));
 
-  OCCA_ASSERT_EQUAL((int) 3,
-                    (int) eval("++++1"));
+  ASSERT_EQ((int) 3,
+            (int) eval("++++1"));
 
-  OCCA_ASSERT_EQUAL((int) 1,
-                    (int) eval("1++++"));
+  ASSERT_EQ((int) 1,
+            (int) eval("1++++"));
 
-  OCCA_ASSERT_EQUAL((int) 4,
-                    (int) eval("1 ++ + ++ 2"));
+  ASSERT_EQ((int) 4,
+            (int) eval("1 ++ + ++ 2"));
 
-  OCCA_ASSERT_EQUAL((int) 5,
-                    (int) eval("1 ++ + ++ + ++ 2"));
+  ASSERT_EQ((int) 5,
+            (int) eval("1 ++ + ++ + ++ 2"));
 
-  OCCA_ASSERT_EQUAL((int) -1,
-                    (int) eval("----1"));
+  ASSERT_EQ((int) -1,
+            (int) eval("----1"));
 
-  OCCA_ASSERT_EQUAL((int) 1,
-                    (int) eval("1----"));
+  ASSERT_EQ((int) 1,
+            (int) eval("1----"));
 
-  OCCA_ASSERT_EQUAL((int) 2,
-                    (int) eval("1 -- + -- 2"));
+  ASSERT_EQ((int) 2,
+            (int) eval("1 -- + -- 2"));
 
-  OCCA_ASSERT_EQUAL((int) 1,
-                    (int) eval("1 -- + -- + -- 2"));
+  ASSERT_EQ((int) 1,
+            (int) eval("1 -- + -- + -- 2"));
 
-  OCCA_ASSERT_EQUAL((int) 1,
-                    (int) eval("+ + + + + + 1"));
+  ASSERT_EQ((int) 1,
+            (int) eval("+ + + + + + 1"));
 
-  OCCA_ASSERT_EQUAL((int) -1,
-                    (int) eval("- - - - - 1"));
+  ASSERT_EQ((int) -1,
+            (int) eval("- - - - - 1"));
 
-  OCCA_ASSERT_EQUAL((int) 1,
-                    (int) eval("- - - - - - 1"));
+  ASSERT_EQ((int) 1,
+            (int) eval("- - - - - - 1"));
 }

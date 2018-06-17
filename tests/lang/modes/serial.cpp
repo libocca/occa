@@ -71,7 +71,7 @@ void testExtern() {
   setStatement("@kernel void foo() {}",
                statementType::functionDecl);
 
-  OCCA_ASSERT_TRUE(func.returnType.has(externC));
+  ASSERT_TRUE(func.returnType.has(externC));
 
 #undef func
 }
@@ -92,23 +92,23 @@ void testArgs() {
 
   variablePtrVector &args = func.args;
   const int argCount = (int) args.size();
-  OCCA_ASSERT_EQUAL(3,
-                    argCount);
+  ASSERT_EQ(3,
+            argCount);
 
-  OCCA_ASSERT_EQUAL("A",
-                    arg(0).name());
-  OCCA_ASSERT_NOT_EQUAL((void*) NULL,
-                        argType(0).referenceToken);
+  ASSERT_EQ("A",
+            arg(0).name());
+  ASSERT_NEQ((void*) NULL,
+             argType(0).referenceToken);
 
-  OCCA_ASSERT_EQUAL("B",
-                    arg(1).name());
-  OCCA_ASSERT_EQUAL((void*) NULL,
-                    argType(1).referenceToken);
+  ASSERT_EQ("B",
+            arg(1).name());
+  ASSERT_EQ((void*) NULL,
+            argType(1).referenceToken);
 
-  OCCA_ASSERT_EQUAL("C",
-                    arg(2).name());
-  OCCA_ASSERT_NOT_EQUAL((void*) NULL,
-                        argType(2).referenceToken);
+  ASSERT_EQ("C",
+            arg(2).name());
+  ASSERT_NEQ((void*) NULL,
+             argType(2).referenceToken);
 
 #undef func
 #undef arg

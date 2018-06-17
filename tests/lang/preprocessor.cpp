@@ -154,8 +154,8 @@ void testMacroDefines() {
 
   // Test error counting
   preprocessor_t &pp = *((preprocessor_t*) tokenStream.getInput("preprocessor_t"));
-  OCCA_ASSERT_EQUAL(3,
-                    pp.errors);
+  ASSERT_EQ(3,
+            pp.errors);
 
   // Make sure we can handle recursive macros
 #define identifier (token->to<identifierToken>().value)
@@ -173,14 +173,14 @@ void testMacroDefines() {
     " foo3"
   );
   getToken();
-  OCCA_ASSERT_EQUAL("foo1",
-                    identifier);
+  ASSERT_EQ("foo1",
+            identifier);
   getToken();
-  OCCA_ASSERT_EQUAL("foo2",
-                    identifier);
+  ASSERT_EQ("foo2",
+            identifier);
   getToken();
-  OCCA_ASSERT_EQUAL("foo2",
-                    identifier);
+  ASSERT_EQ("foo2",
+            identifier);
 
 #undef identifier
 }
@@ -197,8 +197,8 @@ void testCppStandardTests() {
 
   getToken();
   const std::string output = token->to<stringToken>().value;
-  OCCA_ASSERT_EQUAL("x ## y",
-                    output);
+  ASSERT_EQ("x ## y",
+            output);
 
   // Test 2 in C++ standard
   setStream(
@@ -382,15 +382,15 @@ void testIfElse() {
     }
     if (token) {
       ++tokensFound;
-      OCCA_ASSERT_EQUAL_BINARY(tokenType::primitive,
-                               token->type());
-      OCCA_ASSERT_EQUAL(1,
-                        (int) token->to<primitiveToken>().value);
+      ASSERT_EQ_BINARY(tokenType::primitive,
+                       token->type());
+      ASSERT_EQ(1,
+                (int) token->to<primitiveToken>().value);
     }
   } while (token);
 
-  OCCA_ASSERT_EQUAL(6,
-                    tokensFound);
+  ASSERT_EQ(6,
+            tokensFound);
 }
 
 void testIfElseDefines () {
@@ -475,8 +475,8 @@ void testIfElseDefines () {
       }
     }
     primitiveToken &pToken = *((primitiveToken*) token);
-    OCCA_ASSERT_EQUAL(values[i],
-                      (int) pToken.value);
+    ASSERT_EQ(values[i],
+              (int) pToken.value);
   }
   while (!tokenStream.isEmpty()) {
     getToken();
@@ -509,48 +509,48 @@ void testSpecialMacros() {
   );
 
   // __COUNTER__
-  OCCA_ASSERT_EQUAL(0,
-                    (int) nextTokenPrimitiveValue());
+  ASSERT_EQ(0,
+            (int) nextTokenPrimitiveValue());
 
   // __FILE__ __LINE__
-  OCCA_ASSERT_EQUAL("(source)",
-                    nextTokenStringValue());
-  OCCA_ASSERT_EQUAL(2,
-                    (int) nextTokenPrimitiveValue());
+  ASSERT_EQ("(source)",
+            nextTokenStringValue());
+  ASSERT_EQ(2,
+            (int) nextTokenPrimitiveValue());
 
   // __COUNTER__
-  OCCA_ASSERT_EQUAL(1,
-                    (int) nextTokenPrimitiveValue());
+  ASSERT_EQ(1,
+            (int) nextTokenPrimitiveValue());
 
   // __FILE__ __LINE__ __LINE__
-  OCCA_ASSERT_EQUAL("(source)",
-                    nextTokenStringValue());
-  OCCA_ASSERT_EQUAL(4,
-                    (int) nextTokenPrimitiveValue());
-  OCCA_ASSERT_EQUAL(4,
-                    (int) nextTokenPrimitiveValue());
+  ASSERT_EQ("(source)",
+            nextTokenStringValue());
+  ASSERT_EQ(4,
+            (int) nextTokenPrimitiveValue());
+  ASSERT_EQ(4,
+            (int) nextTokenPrimitiveValue());
 
   // __LINE__
-  OCCA_ASSERT_EQUAL(20,
-                    (int) nextTokenPrimitiveValue());
+  ASSERT_EQ(20,
+            (int) nextTokenPrimitiveValue());
 
   // __FILE__ __LINE__
-  OCCA_ASSERT_EQUAL("foobar",
-                    nextTokenStringValue());
-  OCCA_ASSERT_EQUAL(30,
-                    (int) nextTokenPrimitiveValue());
+  ASSERT_EQ("foobar",
+            nextTokenStringValue());
+  ASSERT_EQ(30,
+            (int) nextTokenPrimitiveValue());
 
   // __COUNTER__
-  OCCA_ASSERT_EQUAL(2,
-                    (int) nextTokenPrimitiveValue());
+  ASSERT_EQ(2,
+            (int) nextTokenPrimitiveValue());
 
   // __DATE__ __TIME__
   getToken();
-  OCCA_ASSERT_EQUAL_BINARY(tokenType::string,
-                           token->type());
+  ASSERT_EQ_BINARY(tokenType::string,
+                   token->type());
   getToken();
-  OCCA_ASSERT_EQUAL_BINARY(tokenType::string,
-                           token->type());
+  ASSERT_EQ_BINARY(tokenType::string,
+                   token->type());
 
   while(!tokenStream.isEmpty()) {
     getToken();
@@ -570,8 +570,8 @@ void testInclude() {
 
   for (int i = 0; i < 2; ++i) {
     for (int j = 0; j < 5; ++j) {
-      OCCA_ASSERT_EQUAL(j,
-                        (int) nextTokenPrimitiveValue());
+      ASSERT_EQ(j,
+                (int) nextTokenPrimitiveValue());
     }
   }
   // Error out in the last include
@@ -580,70 +580,70 @@ void testInclude() {
   }
 
   preprocessor_t &pp = *((preprocessor_t*) tokenStream.getInput("preprocessor_t"));
-  OCCA_ASSERT_EQUAL(1,
-                    (int) pp.dependencies.size());
+  ASSERT_EQ(1,
+            (int) pp.dependencies.size());
 }
 
 void testPragma() {
   setStream("#pragma\n");
   getToken();
-  OCCA_ASSERT_EQUAL_BINARY(tokenType::pragma,
-                           token->type());
-  OCCA_ASSERT_EQUAL(0,
-                    (int) token->to<pragmaToken>().value.size());
+  ASSERT_EQ_BINARY(tokenType::pragma,
+                   token->type());
+  ASSERT_EQ(0,
+            (int) token->to<pragmaToken>().value.size());
 
   setStream("#pragma");
   getToken();
-  OCCA_ASSERT_EQUAL_BINARY(tokenType::pragma,
-                           token->type());
-  OCCA_ASSERT_EQUAL(0,
-                    (int) token->to<pragmaToken>().value.size());
+  ASSERT_EQ_BINARY(tokenType::pragma,
+                   token->type());
+  ASSERT_EQ(0,
+            (int) token->to<pragmaToken>().value.size());
 
   setStream("#pragma foo\n");
   getToken();
-  OCCA_ASSERT_EQUAL_BINARY(tokenType::pragma,
-                           token->type());
-  OCCA_ASSERT_EQUAL("foo",
-                    token->to<pragmaToken>().value);
+  ASSERT_EQ_BINARY(tokenType::pragma,
+                   token->type());
+  ASSERT_EQ("foo",
+            token->to<pragmaToken>().value);
 
   setStream("#pragma foo 1 2 3\n");
   getToken();
-  OCCA_ASSERT_EQUAL_BINARY(tokenType::pragma,
-                           token->type());
+  ASSERT_EQ_BINARY(tokenType::pragma,
+                   token->type());
 
-  OCCA_ASSERT_EQUAL("foo 1 2 3",
-                    token->to<pragmaToken>().value);
+  ASSERT_EQ("foo 1 2 3",
+            token->to<pragmaToken>().value);
 
   setStream("#pragma foo 1 2 3");
   getToken();
-  OCCA_ASSERT_EQUAL_BINARY(tokenType::pragma,
-                           token->type());
+  ASSERT_EQ_BINARY(tokenType::pragma,
+                   token->type());
 
-  OCCA_ASSERT_EQUAL("foo 1 2 3",
-                    token->to<pragmaToken>().value);
+  ASSERT_EQ("foo 1 2 3",
+            token->to<pragmaToken>().value);
 }
 
 void testOccaPragma() {
 #define checkOp(op_)                            \
   getToken();                                   \
-  OCCA_ASSERT_EQUAL_BINARY(tokenType::op,       \
-                           token->type());      \
-  OCCA_ASSERT_EQUAL(op_,                        \
-                    token->getOpType())
+  ASSERT_EQ_BINARY(tokenType::op,               \
+                   token->type());              \
+  ASSERT_EQ(op_,                                \
+            token->getOpType())
 
-#define checkIdentifier(identifier_)                    \
-  getToken();                                           \
-  OCCA_ASSERT_EQUAL_BINARY(tokenType::identifier,       \
-                           token->type());              \
-  OCCA_ASSERT_EQUAL(identifier_,                        \
-                    ((identifierToken*) token)->value)
+#define checkIdentifier(identifier_)            \
+  getToken();                                   \
+  ASSERT_EQ_BINARY(tokenType::identifier,       \
+                   token->type());              \
+  ASSERT_EQ(identifier_,                        \
+            ((identifierToken*) token)->value)
 
-#define checkPrimitive(primitive_)                          \
-  getToken();                                               \
-  OCCA_ASSERT_EQUAL_BINARY(tokenType::primitive,            \
-                           token->type());                  \
-  OCCA_ASSERT_EQUAL(primitive_,                             \
-                    (int) ((primitiveToken*) token)->value)
+#define checkPrimitive(primitive_)                  \
+  getToken();                                       \
+  ASSERT_EQ_BINARY(tokenType::primitive,            \
+                   token->type());                  \
+  ASSERT_EQ(primitive_,                             \
+            (int) ((primitiveToken*) token)->value)
 
 
   setStream("#pragma occa @tile(16, @outer, @inner)");
@@ -655,8 +655,8 @@ void testOccaPragma() {
   checkOp(operatorType::parenthesesStart);
   // 16
   checkPrimitive(16)
-  // ,
-  checkOp(operatorType::comma);
+    // ,
+    checkOp(operatorType::comma);
   // @
   checkOp(operatorType::attribute);
   // outer

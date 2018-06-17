@@ -24,26 +24,26 @@
 #include <occa/tools/string.hpp>
 #include <occa/tools/sys.hpp>
 
-#define OCCA_ASSERT_EQUAL(a, b)                 \
+#define ASSERT_EQ(a, b)                         \
   OCCA_ERROR("Comparison Failed",               \
              occa::test::assertEqual(a, b));
 
-#define OCCA_ASSERT_NOT_EQUAL(a, b)             \
+#define ASSERT_NEQ(a, b)                        \
   OCCA_ERROR("Comparison Failed",               \
              occa::test::assertNotEqual(a, b));
 
-#define OCCA_ASSERT_EQUAL_BINARY(a, b)              \
+#define ASSERT_EQ_BINARY(a, b)                      \
   OCCA_ERROR("Comparison Failed",                   \
              occa::test::assertEqualBinary(a, b));
 
-#define OCCA_ASSERT_NOT_EQUAL_BINARY(a, b)            \
+#define ASSERT_NEQ_BINARY(a, b)                       \
   OCCA_ERROR("Comparison Failed",                     \
              occa::test::assertNotEqualBinary(a, b));
 
-#define OCCA_ASSERT_TRUE(value)                 \
+#define ASSERT_TRUE(value)                          \
   OCCA_ERROR("Comparison Failed", (bool) (value));
 
-#define OCCA_ASSERT_FALSE(value)                \
+#define ASSERT_FALSE(value)                           \
   OCCA_ERROR("Comparison Failed", !((bool) (value)));
 
 namespace occa {

@@ -37,9 +37,9 @@ int main(const int argc, const char **argv) {
   return 0;
 }
 
-#define assertKeyword(name_, type_)                 \
-  OCCA_ASSERT_EQUAL_BINARY(type_,                   \
-                           keywords[name_]->type())
+#define assertKeyword(name_, type_)             \
+  ASSERT_EQ_BINARY(type_,                       \
+                   keywords[name_]->type())
 
 
 void testDefaults(keywordMap &keywords) {

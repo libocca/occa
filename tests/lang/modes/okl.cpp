@@ -23,13 +23,13 @@
 #include <occa/lang/modes/okl.hpp>
 
 
-#define parseOKLSource(src_)                        \
-  parseSource(src_);                                \
-  OCCA_ASSERT_TRUE(okl::checkKernels(parser.root))
+#define parseOKLSource(src_)                    \
+  parseSource(src_);                            \
+  ASSERT_TRUE(okl::checkKernels(parser.root))
 
-#define parseBadOKLSource(src_)                     \
-  parseSource(src_);                                \
-  OCCA_ASSERT_FALSE(okl::checkKernels(parser.root))
+#define parseBadOKLSource(src_)                 \
+  parseSource(src_);                            \
+  ASSERT_FALSE(okl::checkKernels(parser.root))
 
 
 void testKernel();

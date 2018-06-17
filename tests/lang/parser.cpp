@@ -152,32 +152,32 @@ vartype_t preloadType(const std::string &s) {
   return parser.preloadType();
 }
 
-#define assertType(str_)                                \
-  setSource(str_);                                      \
-  parser.preloadType();                                 \
-  OCCA_ASSERT_FALSE(parser.isLoadingFunctionPointer()); \
-  OCCA_ASSERT_FALSE(parser.isLoadingVariable())
+#define assertType(str_)                            \
+  setSource(str_);                                  \
+  parser.preloadType();                             \
+  ASSERT_FALSE(parser.isLoadingFunctionPointer());  \
+  ASSERT_FALSE(parser.isLoadingVariable())
 
 vartype_t loadType(const std::string &s) {
   setSource(s);
   return parser.loadVariable().vartype;
 }
 
-#define assertVariable(str_)                            \
-  setSource(str_);                                      \
-  parser.preloadType();                                 \
-  OCCA_ASSERT_FALSE(parser.isLoadingFunctionPointer()); \
-  OCCA_ASSERT_TRUE(parser.isLoadingVariable())
+#define assertVariable(str_)                        \
+  setSource(str_);                                  \
+  parser.preloadType();                             \
+  ASSERT_FALSE(parser.isLoadingFunctionPointer());  \
+  ASSERT_TRUE(parser.isLoadingVariable())
 
 variable_t loadVariable(const std::string &s) {
   setSource(s);
   return parser.loadVariable();
 }
 
-#define assertFunctionPointer(str_)                   \
-  setSource(str_);                                    \
-  parser.preloadType();                               \
-  OCCA_ASSERT_TRUE(parser.isLoadingFunctionPointer())
+#define assertFunctionPointer(str_)               \
+  setSource(str_);                                \
+  parser.preloadType();                           \
+  ASSERT_TRUE(parser.isLoadingFunctionPointer())
 
 void testBaseTypeLoading();
 void testPointerTypeLoading();
@@ -202,82 +202,82 @@ void testBaseTypeLoading() {
 
   // Test base type
   type = preloadType("int");
-  OCCA_ASSERT_EQUAL(0,
-                    type.qualifiers.size());
-  OCCA_ASSERT_EQUAL(&int_,
-                    type.type);
+  ASSERT_EQ(0,
+            type.qualifiers.size());
+  ASSERT_EQ(&int_,
+            type.type);
 
   type = preloadType("const volatile float");
-  OCCA_ASSERT_EQUAL(2,
-                    type.qualifiers.size());
-  OCCA_ASSERT_TRUE(type.has(volatile_));
-  OCCA_ASSERT_TRUE(type.has(const_));
-  OCCA_ASSERT_EQUAL(&float_,
-                    type.type);
+  ASSERT_EQ(2,
+            type.qualifiers.size());
+  ASSERT_TRUE(type.has(volatile_));
+  ASSERT_TRUE(type.has(const_));
+  ASSERT_EQ(&float_,
+            type.type);
 
   type = preloadType("const long long");
-  OCCA_ASSERT_EQUAL(2,
-                    type.qualifiers.size());
-  OCCA_ASSERT_TRUE(type.has(const_));
-  OCCA_ASSERT_TRUE(type.has(longlong_));
-  OCCA_ASSERT_EQUAL(&int_,
-                    type.type);
+  ASSERT_EQ(2,
+            type.qualifiers.size());
+  ASSERT_TRUE(type.has(const_));
+  ASSERT_TRUE(type.has(longlong_));
+  ASSERT_EQ(&int_,
+            type.type);
 
   // Test weird order declaration
   type = preloadType("double const long long");
-  OCCA_ASSERT_EQUAL(2,
-                    type.qualifiers.size());
-  OCCA_ASSERT_TRUE(type.has(const_));
-  OCCA_ASSERT_TRUE(type.has(longlong_));
-  OCCA_ASSERT_EQUAL(&double_,
-                    type.type);
+  ASSERT_EQ(2,
+            type.qualifiers.size());
+  ASSERT_TRUE(type.has(const_));
+  ASSERT_TRUE(type.has(longlong_));
+  ASSERT_EQ(&double_,
+            type.type);
 }
 
 void testPointerTypeLoading() {
   vartype_t type;
 
   type = preloadType("int *");
-  OCCA_ASSERT_EQUAL(1,
-                    (int) type.pointers.size());
-  OCCA_ASSERT_EQUAL(0,
-                    type.pointers[0].qualifiers.size());
+  ASSERT_EQ(1,
+            (int) type.pointers.size());
+  ASSERT_EQ(0,
+            type.pointers[0].qualifiers.size());
 
   type = preloadType("const volatile float * const");
-  OCCA_ASSERT_EQUAL(1,
-                    (int) type.pointers.size());
-  OCCA_ASSERT_EQUAL(1,
-                    type.pointers[0].qualifiers.size());
-  OCCA_ASSERT_TRUE(type.pointers[0].has(const_));
+  ASSERT_EQ(1,
+            (int) type.pointers.size());
+  ASSERT_EQ(1,
+            type.pointers[0].qualifiers.size());
+  ASSERT_TRUE(type.pointers[0].has(const_));
 
   type = preloadType("float * const * volatile ** const volatile restrict");
-  OCCA_ASSERT_EQUAL(4,
-                    (int) type.pointers.size());
-  OCCA_ASSERT_TRUE(type.pointers[0].has(const_));
-  OCCA_ASSERT_TRUE(type.pointers[1].has(volatile_));
-  OCCA_ASSERT_EQUAL(0,
-                    type.pointers[2].qualifiers.size());
-  OCCA_ASSERT_TRUE(type.pointers[3].has(const_));
-  OCCA_ASSERT_TRUE(type.pointers[3].has(volatile_));
-  OCCA_ASSERT_TRUE(type.pointers[3].has(restrict_));
+  ASSERT_EQ(4,
+            (int) type.pointers.size());
+  ASSERT_TRUE(type.pointers[0].has(const_));
+  ASSERT_TRUE(type.pointers[1].has(volatile_));
+  ASSERT_EQ(0,
+            type.pointers[2].qualifiers.size());
+  ASSERT_TRUE(type.pointers[3].has(const_));
+  ASSERT_TRUE(type.pointers[3].has(volatile_));
+  ASSERT_TRUE(type.pointers[3].has(restrict_));
 }
 
 void testReferenceTypeLoading() {
   vartype_t type;
 
   type = preloadType("int");
-  OCCA_ASSERT_FALSE(type.isReference());
+  ASSERT_FALSE(type.isReference());
   type = preloadType("int &");
-  OCCA_ASSERT_TRUE(type.isReference());
+  ASSERT_TRUE(type.isReference());
 
   type = preloadType("int *");
-  OCCA_ASSERT_FALSE(type.isReference());
+  ASSERT_FALSE(type.isReference());
   type = preloadType("int *&");
-  OCCA_ASSERT_TRUE(type.isReference());
+  ASSERT_TRUE(type.isReference());
 
   type = preloadType("int ***");
-  OCCA_ASSERT_FALSE(type.isReference());
+  ASSERT_FALSE(type.isReference());
   type = preloadType("int ***&");
-  OCCA_ASSERT_TRUE(type.isReference());
+  ASSERT_TRUE(type.isReference());
 }
 
 void testArrayTypeLoading() {
@@ -285,29 +285,29 @@ void testArrayTypeLoading() {
 
   assertType("int[]");
   type = loadType("int[]");
-  OCCA_ASSERT_EQUAL(1,
-                    (int) type.arrays.size());
+  ASSERT_EQ(1,
+            (int) type.arrays.size());
 
   assertType("int[][]");
   type = loadType("int[][]");
-  OCCA_ASSERT_EQUAL(2,
-                    (int) type.arrays.size());
+  ASSERT_EQ(2,
+            (int) type.arrays.size());
 
   assertType("int[1]");
   type = loadType("int[1]");
-  OCCA_ASSERT_EQUAL(1,
-                    (int) type.arrays.size());
-  OCCA_ASSERT_EQUAL(1,
-                    (int) type.arrays[0].evaluateSize());
+  ASSERT_EQ(1,
+            (int) type.arrays.size());
+  ASSERT_EQ(1,
+            (int) type.arrays[0].evaluateSize());
 
   assertType("int[1 + 3][7]");
   type = loadType("int[1 + 3][7]");
-  OCCA_ASSERT_EQUAL(2,
-                    (int) type.arrays.size());
-  OCCA_ASSERT_EQUAL(4,
-                    (int) type.arrays[0].evaluateSize());
-  OCCA_ASSERT_EQUAL(7,
-                    (int) type.arrays[1].evaluateSize());
+  ASSERT_EQ(2,
+            (int) type.arrays.size());
+  ASSERT_EQ(4,
+            (int) type.arrays[0].evaluateSize());
+  ASSERT_EQ(7,
+            (int) type.arrays[1].evaluateSize());
 }
 
 void testVariableLoading() {
@@ -317,40 +317,40 @@ void testVariableLoading() {
   assertVariable("int varname[]");
   var = loadVariable("int varname[]");
   varName = var.name();
-  OCCA_ASSERT_EQUAL("varname",
-                    varName);
-  OCCA_ASSERT_EQUAL(1,
-                    (int) var.vartype.arrays.size());
+  ASSERT_EQ("varname",
+            varName);
+  ASSERT_EQ(1,
+            (int) var.vartype.arrays.size());
 
   assertVariable("int varname[][]");
   var = loadVariable("int varname[][]");
   varName = var.name();
-  OCCA_ASSERT_EQUAL("varname",
-                    varName);
-  OCCA_ASSERT_EQUAL(2,
-                    (int) var.vartype.arrays.size());
+  ASSERT_EQ("varname",
+            varName);
+  ASSERT_EQ(2,
+            (int) var.vartype.arrays.size());
 
   assertVariable("int varname[1]");
   var = loadVariable("int varname[1]");
   varName = var.name();
-  OCCA_ASSERT_EQUAL("varname",
-                    varName);
-  OCCA_ASSERT_EQUAL(1,
-                    (int) var.vartype.arrays.size());
-  OCCA_ASSERT_EQUAL(1,
-                    (int) var.vartype.arrays[0].evaluateSize());
+  ASSERT_EQ("varname",
+            varName);
+  ASSERT_EQ(1,
+            (int) var.vartype.arrays.size());
+  ASSERT_EQ(1,
+            (int) var.vartype.arrays[0].evaluateSize());
 
   assertVariable("int varname[1 + 3][7]");
   var = loadVariable("int varname[1 + 3][7]");
   varName = var.name();
-  OCCA_ASSERT_EQUAL("varname",
-                    varName);
-  OCCA_ASSERT_EQUAL(2,
-                    (int) var.vartype.arrays.size());
-  OCCA_ASSERT_EQUAL(4,
-                    (int) var.vartype.arrays[0].evaluateSize());
-  OCCA_ASSERT_EQUAL(7,
-                    (int) var.vartype.arrays[1].evaluateSize());
+  ASSERT_EQ("varname",
+            varName);
+  ASSERT_EQ(2,
+            (int) var.vartype.arrays.size());
+  ASSERT_EQ(4,
+            (int) var.vartype.arrays[0].evaluateSize());
+  ASSERT_EQ(7,
+            (int) var.vartype.arrays[1].evaluateSize());
 }
 
 void testArgumentLoading() {
@@ -359,29 +359,29 @@ void testArgumentLoading() {
 
   setSource("");
   parser.getArgumentRanges(argRanges);
-  OCCA_ASSERT_EQUAL(0,
-                    (int) argRanges.size());
+  ASSERT_EQ(0,
+            (int) argRanges.size());
 
   setSource("a, b");
   parser.getArgumentRanges(argRanges);
-  OCCA_ASSERT_EQUAL(2,
-                    (int) argRanges.size());
+  ASSERT_EQ(2,
+            (int) argRanges.size());
 
   setSource("(,,)");
   parser.getArgumentRanges(argRanges);
-  OCCA_ASSERT_EQUAL(1,
-                    (int) argRanges.size());
+  ASSERT_EQ(1,
+            (int) argRanges.size());
 
   setSource("(,,), (,,), (,,)");
   parser.getArgumentRanges(argRanges);
-  OCCA_ASSERT_EQUAL(3,
-                    (int) argRanges.size());
+  ASSERT_EQ(3,
+            (int) argRanges.size());
 
   // Removes trailing comma
   setSource("a, b,");
   parser.getArgumentRanges(argRanges);
-  OCCA_ASSERT_EQUAL(2,
-                    (int) argRanges.size());
+  ASSERT_EQ(2,
+            (int) argRanges.size());
 
   // Test arguments
 }
@@ -396,41 +396,41 @@ void testFunctionPointerLoading() {
   assertFunctionPointer("int (*varname)()");
   var = loadVariable("int (*varname)()");
 
-  OCCA_ASSERT_EQUAL_BINARY(typeType::functionPtr,
-                           var.vartype.type->type());
+  ASSERT_EQ_BINARY(typeType::functionPtr,
+                   var.vartype.type->type());
   varName = var.name();
-  OCCA_ASSERT_EQUAL("varname",
-                    varName);
-  OCCA_ASSERT_FALSE(varFunc.isBlock);
+  ASSERT_EQ("varname",
+            varName);
+  ASSERT_FALSE(varFunc.isBlock);
 
   assertFunctionPointer("int (^varname)()");
   var = loadVariable("int (^varname)()");
   varName = var.name();
-  OCCA_ASSERT_EQUAL("varname",
-                    varName);
-  OCCA_ASSERT_TRUE(varFunc.isBlock);
+  ASSERT_EQ("varname",
+            varName);
+  ASSERT_TRUE(varFunc.isBlock);
 
   // Test arguments
   var = loadVariable("int (*varname)()");
-  OCCA_ASSERT_EQUAL(0,
-                    (int) varFunc.args.size());
+  ASSERT_EQ(0,
+            (int) varFunc.args.size());
 
   var = loadVariable("int (*varname)(const int i = 0,)");
-  OCCA_ASSERT_EQUAL(1,
-                    (int) varFunc.args.size());
-  OCCA_ASSERT_EQUAL(&int_,
-                    varFunc.args[0].vartype.type);
-  OCCA_ASSERT_TRUE(varFunc.args[0].vartype.has(const_));
-  OCCA_ASSERT_EQUAL("i",
-                    varFunc.args[0].name());
+  ASSERT_EQ(1,
+            (int) varFunc.args.size());
+  ASSERT_EQ(&int_,
+            varFunc.args[0].vartype.type);
+  ASSERT_TRUE(varFunc.args[0].vartype.has(const_));
+  ASSERT_EQ("i",
+            varFunc.args[0].name());
 
   var = loadVariable("int (*varname)(int, double,)");
-  OCCA_ASSERT_EQUAL(2,
-                    (int) varFunc.args.size());
-  OCCA_ASSERT_EQUAL(&int_,
-                    varFunc.args[0].vartype.type);
-  OCCA_ASSERT_EQUAL(&double_,
-                    varFunc.args[1].vartype.type);
+  ASSERT_EQ(2,
+            (int) varFunc.args.size());
+  ASSERT_EQ(&int_,
+            varFunc.args[0].vartype.type);
+  ASSERT_EQ(&double_,
+            varFunc.args[1].vartype.type);
 
 #undef varFunc
 }
@@ -515,21 +515,21 @@ void testExpressionLoading() {
 
   setStatement("2 + 3;",
                statementType::expression);
-  OCCA_ASSERT_TRUE(expr.canEvaluate());
-  OCCA_ASSERT_EQUAL(5,
-                    (int) expr.evaluate());
+  ASSERT_TRUE(expr.canEvaluate());
+  ASSERT_EQ(5,
+            (int) expr.evaluate());
 
   setStatement("-3;",
                statementType::expression);
-  OCCA_ASSERT_TRUE(expr.canEvaluate());
-  OCCA_ASSERT_EQUAL(-3,
-                    (int) expr.evaluate());
+  ASSERT_TRUE(expr.canEvaluate());
+  ASSERT_EQ(-3,
+            (int) expr.evaluate());
 
   setStatement("sizeof(4);",
                statementType::expression);
-  OCCA_ASSERT_TRUE(expr.canEvaluate());
-  OCCA_ASSERT_EQUAL((uint64_t) sizeof(4),
-                    (uint64_t) expr.evaluate());
+  ASSERT_TRUE(expr.canEvaluate());
+  ASSERT_EQ((uint64_t) sizeof(4),
+            (uint64_t) expr.evaluate());
 
   parseAndPrintSource("a[i] = b >= 0 ? c[i] : -d[-e - 1];");
 
@@ -546,90 +546,90 @@ void testDeclarationLoading() {
 
   setStatement("int foo;",
                statementType::declaration);
-  OCCA_ASSERT_EQUAL(1,
-                    (int) decls.size());
+  ASSERT_EQ(1,
+            (int) decls.size());
 
   setStatement("int foo = 3;",
                statementType::declaration);
-  OCCA_ASSERT_EQUAL(1,
-                    (int) decls.size());
-  OCCA_ASSERT_EQUAL("foo",
-                    declVar(0).name());
-  OCCA_ASSERT_EQUAL(3,
-                    (int) declValue(0).evaluate());
+  ASSERT_EQ(1,
+            (int) decls.size());
+  ASSERT_EQ("foo",
+            declVar(0).name());
+  ASSERT_EQ(3,
+            (int) declValue(0).evaluate());
 
   setStatement("int foo = 3, bar = 4;",
                statementType::declaration);
-  OCCA_ASSERT_EQUAL(2,
-                    (int) decls.size());
-  OCCA_ASSERT_EQUAL("foo",
-                    declVar(0).name());
-  OCCA_ASSERT_EQUAL(3,
-                    (int) declValue(0).evaluate());
-  OCCA_ASSERT_EQUAL("bar",
-                    declVar(1).name());
-  OCCA_ASSERT_EQUAL(4,
-                    (int) declValue(1).evaluate());
+  ASSERT_EQ(2,
+            (int) decls.size());
+  ASSERT_EQ("foo",
+            declVar(0).name());
+  ASSERT_EQ(3,
+            (int) declValue(0).evaluate());
+  ASSERT_EQ("bar",
+            declVar(1).name());
+  ASSERT_EQ(4,
+            (int) declValue(1).evaluate());
 
   setStatement("int foo = 3, *bar = 4;",
                statementType::declaration);
-  OCCA_ASSERT_EQUAL(2,
-                    (int) decls.size());
-  OCCA_ASSERT_EQUAL("foo",
-                    declVar(0).name());
-  OCCA_ASSERT_EQUAL(0,
-                    (int) declVar(0).vartype.pointers.size());
-  OCCA_ASSERT_EQUAL(3,
-                    (int) declValue(0).evaluate());
-  OCCA_ASSERT_EQUAL("bar",
-                    declVar(1).name());
-  OCCA_ASSERT_EQUAL(1,
-                    (int) declVar(1).vartype.pointers.size());
-  OCCA_ASSERT_EQUAL(4,
-                    (int) declValue(1).evaluate());
+  ASSERT_EQ(2,
+            (int) decls.size());
+  ASSERT_EQ("foo",
+            declVar(0).name());
+  ASSERT_EQ(0,
+            (int) declVar(0).vartype.pointers.size());
+  ASSERT_EQ(3,
+            (int) declValue(0).evaluate());
+  ASSERT_EQ("bar",
+            declVar(1).name());
+  ASSERT_EQ(1,
+            (int) declVar(1).vartype.pointers.size());
+  ASSERT_EQ(4,
+            (int) declValue(1).evaluate());
 
   setStatement("int *foo = 3, bar = 4;",
                statementType::declaration);
-  OCCA_ASSERT_EQUAL(2,
-                    (int) decls.size());
-  OCCA_ASSERT_EQUAL("foo",
-                    declVar(0).name());
-  OCCA_ASSERT_EQUAL(1,
-                    (int) declVar(0).vartype.pointers.size());
-  OCCA_ASSERT_EQUAL(3,
-                    (int) declValue(0).evaluate());
-  OCCA_ASSERT_EQUAL("bar",
-                    declVar(1).name());
-  OCCA_ASSERT_EQUAL(0,
-                    (int) declVar(1).vartype.pointers.size());
-  OCCA_ASSERT_EQUAL(4,
-                    (int) declValue(1).evaluate());
+  ASSERT_EQ(2,
+            (int) decls.size());
+  ASSERT_EQ("foo",
+            declVar(0).name());
+  ASSERT_EQ(1,
+            (int) declVar(0).vartype.pointers.size());
+  ASSERT_EQ(3,
+            (int) declValue(0).evaluate());
+  ASSERT_EQ("bar",
+            declVar(1).name());
+  ASSERT_EQ(0,
+            (int) declVar(1).vartype.pointers.size());
+  ASSERT_EQ(4,
+            (int) declValue(1).evaluate());
 
   setStatement("int foo { 3 }, *bar { 4 };",
                statementType::declaration);
-  OCCA_ASSERT_EQUAL(2,
-                    (int) decls.size());
-  OCCA_ASSERT_EQUAL("foo",
-                    declVar(0).name());
-  OCCA_ASSERT_EQUAL(3,
-                    (int) declValue(0).evaluate());
-  OCCA_ASSERT_EQUAL("bar",
-                    declVar(1).name());
-  OCCA_ASSERT_EQUAL(4,
-                    (int) declValue(1).evaluate());
+  ASSERT_EQ(2,
+            (int) decls.size());
+  ASSERT_EQ("foo",
+            declVar(0).name());
+  ASSERT_EQ(3,
+            (int) declValue(0).evaluate());
+  ASSERT_EQ("bar",
+            declVar(1).name());
+  ASSERT_EQ(4,
+            (int) declValue(1).evaluate());
 
   setStatement("int foo : 1 = 3, bar : 2 = 4;",
                statementType::declaration);
-  OCCA_ASSERT_EQUAL(2,
-                    (int) decls.size());
-  OCCA_ASSERT_EQUAL("foo",
-                    declVar(0).name());
-  OCCA_ASSERT_EQUAL(1,
-                    declVar(0).vartype.bitfield);
-  OCCA_ASSERT_EQUAL("bar",
-                    declVar(1).name());
-  OCCA_ASSERT_EQUAL(2,
-                    declVar(1).vartype.bitfield);
+  ASSERT_EQ(2,
+            (int) decls.size());
+  ASSERT_EQ("foo",
+            declVar(0).name());
+  ASSERT_EQ(1,
+            declVar(0).vartype.bitfield);
+  ASSERT_EQ("bar",
+            declVar(1).name());
+  ASSERT_EQ(2,
+            declVar(1).vartype.bitfield);
 
 #undef decl
 #undef decls
@@ -642,23 +642,23 @@ void testNamespaceLoading() {
   setStatement("namespace foo {}",
                statementType::namespace_);
 
-  OCCA_ASSERT_EQUAL("foo",
-                    statement->to<namespaceStatement>().name());
+  ASSERT_EQ("foo",
+            statement->to<namespaceStatement>().name());
 
   setStatement("namespace A::B::C {}",
                statementType::namespace_);
 
   namespaceStatement &A = statement->to<namespaceStatement>();
-  OCCA_ASSERT_EQUAL("A",
-                    A.name());
+  ASSERT_EQ("A",
+            A.name());
 
   namespaceStatement &B = A[0]->to<namespaceStatement>();
-  OCCA_ASSERT_EQUAL("B",
-                    B.name());
+  ASSERT_EQ("B",
+            B.name());
 
   namespaceStatement &C = B[0]->to<namespaceStatement>();
-  OCCA_ASSERT_EQUAL("C",
-                    C.name());
+  ASSERT_EQ("C",
+            C.name());
 }
 
 void testTypeDeclLoading() {
@@ -680,41 +680,41 @@ void testFunctionLoading() {
 
   setStatement("void foo();",
                statementType::function);
-  OCCA_ASSERT_EQUAL("foo",
-                    func.name());
-  OCCA_ASSERT_EQUAL(&void_,
-                    func.returnType.type);
+  ASSERT_EQ("foo",
+            func.name());
+  ASSERT_EQ(&void_,
+            func.returnType.type);
 
   setStatement("int* bar();",
                statementType::function);
-  OCCA_ASSERT_EQUAL("bar",
-                    func.name());
-  OCCA_ASSERT_EQUAL(&int_,
-                    func.returnType.type);
-  OCCA_ASSERT_EQUAL(1,
-                    (int) func.returnType.pointers.size());
+  ASSERT_EQ("bar",
+            func.name());
+  ASSERT_EQ(&int_,
+            func.returnType.type);
+  ASSERT_EQ(1,
+            (int) func.returnType.pointers.size());
 
   setStatement("void foo2(int a) {}",
                statementType::functionDecl);
-  OCCA_ASSERT_EQUAL("foo2",
-                    funcDecl.name());
-  OCCA_ASSERT_EQUAL(&void_,
-                    funcDecl.returnType.type);
-  OCCA_ASSERT_EQUAL(1,
-                    (int) funcDecl.args.size());
-  OCCA_ASSERT_EQUAL(0,
-                    funcDeclSmnt.size());
+  ASSERT_EQ("foo2",
+            funcDecl.name());
+  ASSERT_EQ(&void_,
+            funcDecl.returnType.type);
+  ASSERT_EQ(1,
+            (int) funcDecl.args.size());
+  ASSERT_EQ(0,
+            funcDeclSmnt.size());
 
   setStatement("void foo3(int a, int b) { int x; int y; }",
                statementType::functionDecl);
-  OCCA_ASSERT_EQUAL("foo3",
-                    funcDecl.name());
-  OCCA_ASSERT_EQUAL(&void_,
-                    funcDecl.returnType.type);
-  OCCA_ASSERT_EQUAL(2,
-                    (int) funcDecl.args.size());
-  OCCA_ASSERT_EQUAL(2,
-                    funcDeclSmnt.size());
+  ASSERT_EQ("foo3",
+            funcDecl.name());
+  ASSERT_EQ(&void_,
+            funcDecl.returnType.type);
+  ASSERT_EQ(2,
+            (int) funcDecl.args.size());
+  ASSERT_EQ(2,
+            funcDeclSmnt.size());
 
 #undef funcSmnt
 #undef func
@@ -732,52 +732,52 @@ void testIfLoading() {
 
   setStatement("if (true) {}",
                statementType::if_);
-  OCCA_ASSERT_EQUAL_BINARY(statementType::expression,
-                           condition.type());
-  OCCA_ASSERT_EQUAL(0,
-                    (int) ifSmnt.elifSmnts.size());
-  OCCA_ASSERT_FALSE(!!ifSmnt.elseSmnt);
+  ASSERT_EQ_BINARY(statementType::expression,
+                   condition.type());
+  ASSERT_EQ(0,
+            (int) ifSmnt.elifSmnts.size());
+  ASSERT_FALSE(!!ifSmnt.elseSmnt);
 
   setStatement("if (true) {}\n"
                "else if (true) {}",
                statementType::if_);
-  OCCA_ASSERT_EQUAL_BINARY(statementType::expression,
-                           condition.type());
-  OCCA_ASSERT_EQUAL(1,
-                    (int) ifSmnt.elifSmnts.size());
-  OCCA_ASSERT_FALSE(!!ifSmnt.elseSmnt);
+  ASSERT_EQ_BINARY(statementType::expression,
+                   condition.type());
+  ASSERT_EQ(1,
+            (int) ifSmnt.elifSmnts.size());
+  ASSERT_FALSE(!!ifSmnt.elseSmnt);
 
   setStatement("if (true) {}\n"
                "else if (true) {}\n"
                "else if (true) {}",
                statementType::if_);
-  OCCA_ASSERT_EQUAL_BINARY(statementType::expression,
-                           condition.type());
-  OCCA_ASSERT_EQUAL(2,
-                    (int) ifSmnt.elifSmnts.size());
-  OCCA_ASSERT_FALSE(!!ifSmnt.elseSmnt);
+  ASSERT_EQ_BINARY(statementType::expression,
+                   condition.type());
+  ASSERT_EQ(2,
+            (int) ifSmnt.elifSmnts.size());
+  ASSERT_FALSE(!!ifSmnt.elseSmnt);
 
   setStatement("if (true) {}\n"
                "else if (true) {}\n"
                "else {}",
                statementType::if_);
-  OCCA_ASSERT_EQUAL_BINARY(statementType::expression,
-                           condition.type());
-  OCCA_ASSERT_EQUAL(1,
-                    (int) ifSmnt.elifSmnts.size());
-  OCCA_ASSERT_TRUE(!!ifSmnt.elseSmnt);
+  ASSERT_EQ_BINARY(statementType::expression,
+                   condition.type());
+  ASSERT_EQ(1,
+            (int) ifSmnt.elifSmnts.size());
+  ASSERT_TRUE(!!ifSmnt.elseSmnt);
 
   // Test declaration in conditional
   setStatement("if (const int i = 3) {}",
                statementType::if_);
-  OCCA_ASSERT_EQUAL_BINARY(statementType::declaration,
-                           condition.type());
-  OCCA_ASSERT_EQUAL(1,
-                    (int) decls.size());
-  OCCA_ASSERT_EQUAL("i",
-                    declVar(0).name());
-  OCCA_ASSERT_EQUAL(3,
-                    (int) declValue(0).evaluate());
+  ASSERT_EQ_BINARY(statementType::declaration,
+                   condition.type());
+  ASSERT_EQ(1,
+            (int) decls.size());
+  ASSERT_EQ("i",
+            declVar(0).name());
+  ASSERT_EQ(3,
+            (int) declValue(0).evaluate());
 
   // TODO: Test that 'i' exists in the if scope
 
@@ -800,35 +800,35 @@ void testForLoading() {
 
   setStatement("for (;;) {}",
                statementType::for_);
-  OCCA_ASSERT_EQUAL_BINARY(statementType::empty,
-                           init.type());
-  OCCA_ASSERT_EQUAL_BINARY(statementType::empty,
-                           check.type());
-  OCCA_ASSERT_EQUAL_BINARY(statementType::empty,
-                           update.type());
-  OCCA_ASSERT_EQUAL(0,
-                    (int) forSmnt.children.size());
+  ASSERT_EQ_BINARY(statementType::empty,
+                   init.type());
+  ASSERT_EQ_BINARY(statementType::empty,
+                   check.type());
+  ASSERT_EQ_BINARY(statementType::empty,
+                   update.type());
+  ASSERT_EQ(0,
+            (int) forSmnt.children.size());
 
   setStatement("for (;;);",
                statementType::for_);
-  OCCA_ASSERT_EQUAL_BINARY(statementType::empty,
-                           init.type());
-  OCCA_ASSERT_EQUAL_BINARY(statementType::empty,
-                           check.type());
-  OCCA_ASSERT_EQUAL_BINARY(statementType::empty,
-                           update.type());
-  OCCA_ASSERT_EQUAL(1,
-                    (int) forSmnt.children.size());
+  ASSERT_EQ_BINARY(statementType::empty,
+                   init.type());
+  ASSERT_EQ_BINARY(statementType::empty,
+                   check.type());
+  ASSERT_EQ_BINARY(statementType::empty,
+                   update.type());
+  ASSERT_EQ(1,
+            (int) forSmnt.children.size());
 
   // Test declaration in conditional
   setStatement("for (int i = 0; i < 2; ++i) {}",
                statementType::for_);
-  OCCA_ASSERT_EQUAL_BINARY(statementType::declaration,
-                           init.type());
-  OCCA_ASSERT_EQUAL_BINARY(statementType::expression,
-                           check.type());
-  OCCA_ASSERT_EQUAL_BINARY(statementType::expression,
-                           update.type());
+  ASSERT_EQ_BINARY(statementType::declaration,
+                   init.type());
+  ASSERT_EQ_BINARY(statementType::expression,
+                   check.type());
+  ASSERT_EQ_BINARY(statementType::expression,
+                   update.type());
 
   // TODO: Test that 'i' exists in the if scope
 
@@ -873,59 +873,59 @@ void testSwitchLoading() {
 
   setStatement("switch (2) {}",
                statementType::switch_);
-  OCCA_ASSERT_EQUAL_BINARY(statementType::expression,
-                           condition.type());
-  OCCA_ASSERT_EQUAL(0,
-                    switchSmnt.size())
+  ASSERT_EQ_BINARY(statementType::expression,
+                   condition.type());
+  ASSERT_EQ(0,
+            switchSmnt.size())
 
-  // Weird cases
-  setStatement("switch (2) ;",
-               statementType::switch_);
-  OCCA_ASSERT_EQUAL_BINARY(statementType::expression,
-                           condition.type());
-  OCCA_ASSERT_EQUAL(1,
-                    switchSmnt.size())
+    // Weird cases
+    setStatement("switch (2) ;",
+                 statementType::switch_);
+  ASSERT_EQ_BINARY(statementType::expression,
+                   condition.type());
+  ASSERT_EQ(1,
+            switchSmnt.size())
 
-  // Weird cases
-  setStatement("switch (2) case 2:;",
-               statementType::switch_);
-  OCCA_ASSERT_EQUAL_BINARY(statementType::expression,
-                           condition.type());
-  OCCA_ASSERT_EQUAL(2,
-                    switchSmnt.size())
+    // Weird cases
+    setStatement("switch (2) case 2:;",
+                 statementType::switch_);
+  ASSERT_EQ_BINARY(statementType::expression,
+                   condition.type());
+  ASSERT_EQ(2,
+            switchSmnt.size())
 
-  setStatement("switch (2) default:;",
-               statementType::switch_);
-  OCCA_ASSERT_EQUAL_BINARY(statementType::expression,
-                           condition.type());
-  OCCA_ASSERT_EQUAL(2,
-                    switchSmnt.size())
+    setStatement("switch (2) default:;",
+                 statementType::switch_);
+  ASSERT_EQ_BINARY(statementType::expression,
+                   condition.type());
+  ASSERT_EQ(2,
+            switchSmnt.size())
 
-  setStatement("switch (2) case 2: 2;",
-               statementType::switch_);
-  OCCA_ASSERT_EQUAL_BINARY(statementType::expression,
-                           condition.type());
-  OCCA_ASSERT_EQUAL(2,
-                    switchSmnt.size())
+    setStatement("switch (2) case 2: 2;",
+                 statementType::switch_);
+  ASSERT_EQ_BINARY(statementType::expression,
+                   condition.type());
+  ASSERT_EQ(2,
+            switchSmnt.size())
 
-  setStatement("switch (2) default: 2;",
-               statementType::switch_);
-  OCCA_ASSERT_EQUAL_BINARY(statementType::expression,
-                           condition.type());
-  OCCA_ASSERT_EQUAL(2,
-                    switchSmnt.size())
+    setStatement("switch (2) default: 2;",
+                 statementType::switch_);
+  ASSERT_EQ_BINARY(statementType::expression,
+                   condition.type());
+  ASSERT_EQ(2,
+            switchSmnt.size())
 
-  // Test declaration in conditional
-  setStatement("switch (int i = 2) {}",
-               statementType::switch_);
-  OCCA_ASSERT_EQUAL_BINARY(statementType::declaration,
-                           condition.type());
-  OCCA_ASSERT_EQUAL(0,
-                    switchSmnt.size());
-  OCCA_ASSERT_EQUAL(1,
-                    (int) decl.declarations.size());
-  OCCA_ASSERT_EQUAL(2,
-                    (int) decl.declarations[0].value->evaluate());
+    // Test declaration in conditional
+    setStatement("switch (int i = 2) {}",
+                 statementType::switch_);
+  ASSERT_EQ_BINARY(statementType::declaration,
+                   condition.type());
+  ASSERT_EQ(0,
+            switchSmnt.size());
+  ASSERT_EQ(1,
+            (int) decl.declarations.size());
+  ASSERT_EQ(2,
+            (int) decl.declarations[0].value->evaluate());
 
   // TODO: Test that 'i' exists in the if scope
 
@@ -947,13 +947,13 @@ void testJumpsLoading() {
 
   setStatement("return;",
                statementType::return_);
-  OCCA_ASSERT_EQUAL((void*) NULL,
-                    (void*) returnValue);
+  ASSERT_EQ((void*) NULL,
+            (void*) returnValue);
 
   setStatement("return 1 + (2 * 3);",
                statementType::return_);
-  OCCA_ASSERT_EQUAL(7,
-                    (int) returnValue->evaluate());
+  ASSERT_EQ(7,
+            (int) returnValue->evaluate());
 
 #undef returnValue
 }
@@ -965,18 +965,18 @@ void testClassAccessLoading() {
 
   setStatement("public:",
                statementType::classAccess);
-  OCCA_ASSERT_EQUAL(classAccess::public_,
-                    access);
+  ASSERT_EQ(classAccess::public_,
+            access);
 
   setStatement("protected:",
                statementType::classAccess);
-  OCCA_ASSERT_EQUAL(classAccess::protected_,
-                    access);
+  ASSERT_EQ(classAccess::protected_,
+            access);
 
   setStatement("private:",
                statementType::classAccess);
-  OCCA_ASSERT_EQUAL(classAccess::private_,
-                    access);
+  ASSERT_EQ(classAccess::private_,
+            access);
 
 #undef access
 }
@@ -988,13 +988,13 @@ void testPragmaLoading() {
 
   setStatement("#pragma",
                statementType::pragma);
-  OCCA_ASSERT_EQUAL("",
-                    pragma_.token.value);
+  ASSERT_EQ("",
+            pragma_.token.value);
 
   setStatement("#pragma omp parallel for",
                statementType::pragma);
-  OCCA_ASSERT_EQUAL("omp parallel for",
-                    pragma_.token.value);
+  ASSERT_EQ("omp parallel for",
+            pragma_.token.value);
 
 #undef pragma_
 }
@@ -1014,8 +1014,8 @@ void testBlockLoading() {
   setStatement("{}",
                statementType::block);
 
-  OCCA_ASSERT_EQUAL(0,
-                    statement->to<blockStatement>().size());
+  ASSERT_EQ(0,
+            statement->to<blockStatement>().size());
 
   setStatement("{\n"
                " const int i = 0;\n"
@@ -1029,22 +1029,22 @@ void testBlockLoading() {
                statementType::block);
 
   blockStatement &smnt = statement->to<blockStatement>();
-  OCCA_ASSERT_EQUAL(7,
-                    smnt.size());
-  OCCA_ASSERT_EQUAL_BINARY(statementType::declaration,
-                           smnt[0]->type());
-  OCCA_ASSERT_EQUAL_BINARY(statementType::expression,
-                           smnt[1]->type());
-  OCCA_ASSERT_EQUAL_BINARY(statementType::if_,
-                           smnt[2]->type());
-  OCCA_ASSERT_EQUAL_BINARY(statementType::if_,
-                           smnt[3]->type());
-  OCCA_ASSERT_EQUAL_BINARY(statementType::while_,
-                           smnt[4]->type());
-  OCCA_ASSERT_EQUAL_BINARY(statementType::while_,
-                           smnt[5]->type());
-  OCCA_ASSERT_EQUAL_BINARY(statementType::switch_,
-                           smnt[6]->type());
+  ASSERT_EQ(7,
+            smnt.size());
+  ASSERT_EQ_BINARY(statementType::declaration,
+                   smnt[0]->type());
+  ASSERT_EQ_BINARY(statementType::expression,
+                   smnt[1]->type());
+  ASSERT_EQ_BINARY(statementType::if_,
+                   smnt[2]->type());
+  ASSERT_EQ_BINARY(statementType::if_,
+                   smnt[3]->type());
+  ASSERT_EQ_BINARY(statementType::while_,
+                   smnt[4]->type());
+  ASSERT_EQ_BINARY(statementType::while_,
+                   smnt[5]->type());
+  ASSERT_EQ_BINARY(statementType::switch_,
+                   smnt[6]->type());
 }
 
 void testAttributeLoading() {
@@ -1058,70 +1058,70 @@ void testAttributeLoading() {
 
   setStatement("const int *x @dim(2, 3), *y;",
                statementType::declaration);
-  OCCA_ASSERT_EQUAL(0,
-                    (int) statement->attributes.size());
-  OCCA_ASSERT_EQUAL(1,
-                    (int) declVar(0).attributes.size());
-  OCCA_ASSERT_EQUAL("dim",
-                    declVarAttr(0, "dim").name());
-  OCCA_ASSERT_EQUAL(0,
-                    (int) declVar(1).attributes.size());
+  ASSERT_EQ(0,
+            (int) statement->attributes.size());
+  ASSERT_EQ(1,
+            (int) declVar(0).attributes.size());
+  ASSERT_EQ("dim",
+            declVarAttr(0, "dim").name());
+  ASSERT_EQ(0,
+            (int) declVar(1).attributes.size());
 
   attributeToken_t &xDim1 = declVarAttr(0, "dim");
-  OCCA_ASSERT_EQUAL(2,
-                    (int) xDim1.args.size());
-  OCCA_ASSERT_EQUAL(2,
-                    (int) xDim1[0]->expr->evaluate());
-  OCCA_ASSERT_EQUAL(3,
-                    (int) xDim1[1]->expr->evaluate());
+  ASSERT_EQ(2,
+            (int) xDim1.args.size());
+  ASSERT_EQ(2,
+            (int) xDim1[0]->expr->evaluate());
+  ASSERT_EQ(3,
+            (int) xDim1[1]->expr->evaluate());
 
   setStatement("const int *x @dummy(x=2, y=3), *y;",
                statementType::declaration);
-  OCCA_ASSERT_EQUAL(0,
-                    (int) statement->attributes.size());
-  OCCA_ASSERT_EQUAL(1,
-                    (int) declVar(0).attributes.size());
-  OCCA_ASSERT_EQUAL("dummy",
-                    declVarAttr(0, "dummy").name());
-  OCCA_ASSERT_EQUAL(0,
-                    (int) declVar(1).attributes.size());
+  ASSERT_EQ(0,
+            (int) statement->attributes.size());
+  ASSERT_EQ(1,
+            (int) declVar(0).attributes.size());
+  ASSERT_EQ("dummy",
+            declVarAttr(0, "dummy").name());
+  ASSERT_EQ(0,
+            (int) declVar(1).attributes.size());
 
   attributeToken_t &xDummy = declVarAttr(0, "dummy");
-  OCCA_ASSERT_EQUAL(2,
-                    (int) xDummy.kwargs.size());
-  OCCA_ASSERT_EQUAL(2,
-                    (int) xDummy["x"]->expr->evaluate());
-  OCCA_ASSERT_EQUAL(3,
-                    (int) xDummy["y"]->expr->evaluate());
+  ASSERT_EQ(2,
+            (int) xDummy.kwargs.size());
+  ASSERT_EQ(2,
+            (int) xDummy["x"]->expr->evaluate());
+  ASSERT_EQ(3,
+            (int) xDummy["y"]->expr->evaluate());
 
   setStatement("@dim(2 + 2, 10 - 5) const int *x, *y;",
                statementType::declaration);
-  OCCA_ASSERT_EQUAL(1,
-                    (int) statement->attributes.size());
-  OCCA_ASSERT_EQUAL(1,
-                    (int) declVar(0).attributes.size());
-  OCCA_ASSERT_EQUAL("dim",
-                    declVarAttr(0, "dim").name());
-  OCCA_ASSERT_EQUAL(1,
-                    (int) declVar(1).attributes.size());
-  OCCA_ASSERT_EQUAL("dim",
-                    declVarAttr(1, "dim").name());
+  ASSERT_EQ(1,
+            (int) statement->attributes.size());
+  ASSERT_EQ(1,
+            (int) declVar(0).attributes.size());
+  ASSERT_EQ("dim",
+            declVarAttr(0, "dim").name());
+  ASSERT_EQ(1,
+            (int) declVar(1).attributes.size());
+  ASSERT_EQ("dim",
+            declVarAttr(1, "dim").name());
 
   attributeToken_t &xDim3 = declVarAttr(0, "dim");
-  OCCA_ASSERT_EQUAL(2,
-                    (int) xDim3.args.size());
-  OCCA_ASSERT_EQUAL(4,
-                    (int) xDim3[0]->expr->evaluate());
-  OCCA_ASSERT_EQUAL(5,
-                    (int) xDim3[1]->expr->evaluate());
+  ASSERT_EQ(2,
+            (int) xDim3.args.size());
+  ASSERT_EQ(4,
+            (int) xDim3[0]->expr->evaluate());
+  ASSERT_EQ(5,
+            (int) xDim3[1]->expr->evaluate());
 
   attributeToken_t &xDim4 = declVarAttr(1, "dim");
-  OCCA_ASSERT_EQUAL(2,
-                    (int) xDim4.args.size());
-  OCCA_ASSERT_EQUAL(4,
-                    (int) xDim4[0]->expr->evaluate());
-  OCCA_ASSERT_EQUAL(5,
-                    (int) xDim4[1]->expr->evaluate());
+  ASSERT_EQ(2,
+            (int) xDim4.args.size());
+  ASSERT_EQ(4,
+            (int) xDim4[0]->expr->evaluate());
+  ASSERT_EQ(5,
+            (int) xDim4[1]->expr->evaluate());
 
   std::cerr << "\n---[ @dim Transformations ]---------------------\n";
   parseAndPrintSource("@dim(1,2,3) int *x; x(1,2,3);");
@@ -1365,14 +1365,14 @@ void testScopeUp() {
   blockStatement &main     = root[3]->to<blockStatement>();
   blockStatement &fooBlock = foo[1]->to<blockStatement>();
 
-  OCCA_ASSERT_EQUAL(&root,
-                    x->up);
-  OCCA_ASSERT_EQUAL(&root,
-                    foo.up);
-  OCCA_ASSERT_EQUAL(&root,
-                    main.up);
-  OCCA_ASSERT_EQUAL(&foo,
-                    fooBlock.up);
+  ASSERT_EQ(&root,
+            x->up);
+  ASSERT_EQ(&root,
+            foo.up);
+  ASSERT_EQ(&root,
+            main.up);
+  ASSERT_EQ(&foo,
+            fooBlock.up);
 }
 
 void testScopeKeywords() {
@@ -1383,39 +1383,39 @@ void testScopeKeywords() {
   blockStatement &fooBlock = foo[1]->to<blockStatement>();
 
   // Make sure we can find variables 'x'
-  OCCA_ASSERT_TRUE(root.inScope("x"));
-  OCCA_ASSERT_TRUE(foo.inScope("x"));
-  OCCA_ASSERT_TRUE(fooBlock.inScope("x"));
+  ASSERT_TRUE(root.inScope("x"));
+  ASSERT_TRUE(foo.inScope("x"));
+  ASSERT_TRUE(fooBlock.inScope("x"));
 
   // Make sure variables 'x' exist
-  OCCA_ASSERT_EQUAL_BINARY(keywordType::variable,
-                           root.getScopeKeyword("x").type());
-  OCCA_ASSERT_EQUAL_BINARY(keywordType::variable,
-                           foo.getScopeKeyword("x").type());
-  OCCA_ASSERT_EQUAL_BINARY(keywordType::variable,
-                           fooBlock.getScopeKeyword("x").type());
+  ASSERT_EQ_BINARY(keywordType::variable,
+                   root.getScopeKeyword("x").type());
+  ASSERT_EQ_BINARY(keywordType::variable,
+                   foo.getScopeKeyword("x").type());
+  ASSERT_EQ_BINARY(keywordType::variable,
+                   fooBlock.getScopeKeyword("x").type());
 
   // Make sure all instances are different
-  OCCA_ASSERT_NOT_EQUAL(&root.getScopeKeyword("x").to<variableKeyword>().variable,
-                        &foo.getScopeKeyword("x").to<variableKeyword>().variable);
+  ASSERT_NEQ(&root.getScopeKeyword("x").to<variableKeyword>().variable,
+             &foo.getScopeKeyword("x").to<variableKeyword>().variable);
 
-  OCCA_ASSERT_NOT_EQUAL(&root.getScopeKeyword("x").to<variableKeyword>().variable,
-                        &fooBlock.getScopeKeyword("x").to<variableKeyword>().variable);
+  ASSERT_NEQ(&root.getScopeKeyword("x").to<variableKeyword>().variable,
+             &fooBlock.getScopeKeyword("x").to<variableKeyword>().variable);
 
-  OCCA_ASSERT_NOT_EQUAL(&foo.getScopeKeyword("x").to<variableKeyword>().variable,
-                        &fooBlock.getScopeKeyword("x").to<variableKeyword>().variable);
+  ASSERT_NEQ(&foo.getScopeKeyword("x").to<variableKeyword>().variable,
+             &fooBlock.getScopeKeyword("x").to<variableKeyword>().variable);
 
   // Test function
-  OCCA_ASSERT_EQUAL_BINARY(keywordType::function,
-                           root.getScopeKeyword("foo").type());
-  OCCA_ASSERT_EQUAL_BINARY(keywordType::function,
-                           root.getScopeKeyword("main").type());
+  ASSERT_EQ_BINARY(keywordType::function,
+                   root.getScopeKeyword("foo").type());
+  ASSERT_EQ_BINARY(keywordType::function,
+                   root.getScopeKeyword("main").type());
 
   // Test types
-  OCCA_ASSERT_EQUAL_BINARY(keywordType::type,
-                           root.getScopeKeyword("myInt").type());
-  OCCA_ASSERT_EQUAL_BINARY(keywordType::type,
-                           foo.getScopeKeyword("myInt").type());
+  ASSERT_EQ_BINARY(keywordType::type,
+                   root.getScopeKeyword("myInt").type());
+  ASSERT_EQ_BINARY(keywordType::type,
+                   foo.getScopeKeyword("myInt").type());
 }
 
 void testScopeErrors() {

@@ -36,106 +36,106 @@ int main(const int argc, const char **argv) {
 }
 
 void testLoad() {
-  OCCA_ASSERT_EQUAL(15,
-                    (int) occa::primitive("15"));
-  OCCA_ASSERT_EQUAL(-15,
-                    (int) occa::primitive("-15"));
+  ASSERT_EQ(15,
+            (int) occa::primitive("15"));
+  ASSERT_EQ(-15,
+            (int) occa::primitive("-15"));
 
-  OCCA_ASSERT_EQUAL(15,
-                    (int) occa::primitive("0xF"));
-  OCCA_ASSERT_EQUAL(15,
-                    (int) occa::primitive("0XF"));
-  OCCA_ASSERT_EQUAL(-15,
-                    (int) occa::primitive("-0xF"));
-  OCCA_ASSERT_EQUAL(-15,
-                    (int) occa::primitive("-0XF"));
+  ASSERT_EQ(15,
+            (int) occa::primitive("0xF"));
+  ASSERT_EQ(15,
+            (int) occa::primitive("0XF"));
+  ASSERT_EQ(-15,
+            (int) occa::primitive("-0xF"));
+  ASSERT_EQ(-15,
+            (int) occa::primitive("-0XF"));
 
-  OCCA_ASSERT_EQUAL(15,
-                    (int) occa::primitive("0b1111"));
-  OCCA_ASSERT_EQUAL(15,
-                    (int) occa::primitive("0B1111"));
-  OCCA_ASSERT_EQUAL(-15,
-                    (int) occa::primitive("-0b1111"));
-  OCCA_ASSERT_EQUAL(-15,
-                    (int) occa::primitive("-0B1111"));
+  ASSERT_EQ(15,
+            (int) occa::primitive("0b1111"));
+  ASSERT_EQ(15,
+            (int) occa::primitive("0B1111"));
+  ASSERT_EQ(-15,
+            (int) occa::primitive("-0b1111"));
+  ASSERT_EQ(-15,
+            (int) occa::primitive("-0B1111"));
 
-  OCCA_ASSERT_EQUAL(15.01,
-                    (double) occa::primitive("15.01"));
-  OCCA_ASSERT_EQUAL(-15.01,
-                    (double) occa::primitive("-15.01"));
+  ASSERT_EQ(15.01,
+            (double) occa::primitive("15.01"));
+  ASSERT_EQ(-15.01,
+            (double) occa::primitive("-15.01"));
 
-  OCCA_ASSERT_EQUAL(1e-16,
-                    (double) occa::primitive("1e-16"));
-  OCCA_ASSERT_EQUAL(1.e-16,
-                    (double) occa::primitive("1.e-16"));
-  OCCA_ASSERT_EQUAL(15.01,
-                    (double) occa::primitive("1.501e1"));
-  OCCA_ASSERT_EQUAL(-15.01,
-                    (double) occa::primitive("-1.501e1"));
-  OCCA_ASSERT_EQUAL(15.01,
-                    (double) occa::primitive("1.501E1"));
-  OCCA_ASSERT_EQUAL(-15.01,
-                    (double) occa::primitive("-1.501E1"));
+  ASSERT_EQ(1e-16,
+            (double) occa::primitive("1e-16"));
+  ASSERT_EQ(1.e-16,
+            (double) occa::primitive("1.e-16"));
+  ASSERT_EQ(15.01,
+            (double) occa::primitive("1.501e1"));
+  ASSERT_EQ(-15.01,
+            (double) occa::primitive("-1.501e1"));
+  ASSERT_EQ(15.01,
+            (double) occa::primitive("1.501E1"));
+  ASSERT_EQ(-15.01,
+            (double) occa::primitive("-1.501E1"));
 
-  OCCA_ASSERT_EQUAL(1e-15,
-                    (double) occa::primitive("1e-15"));
-  OCCA_ASSERT_EQUAL(1.e-15,
-                    (double) occa::primitive("1.e-15"));
-  OCCA_ASSERT_EQUAL(15.01,
-                    (double) occa::primitive("1.501e+1"));
-  OCCA_ASSERT_EQUAL(-15.01,
-                    (double) occa::primitive("-1.501e+1"));
-  OCCA_ASSERT_EQUAL(15.01,
-                    (double) occa::primitive("1.501E+1"));
-  OCCA_ASSERT_EQUAL(-15.01,
-                    (double) occa::primitive("-1.501E+1"));
+  ASSERT_EQ(1e-15,
+            (double) occa::primitive("1e-15"));
+  ASSERT_EQ(1.e-15,
+            (double) occa::primitive("1.e-15"));
+  ASSERT_EQ(15.01,
+            (double) occa::primitive("1.501e+1"));
+  ASSERT_EQ(-15.01,
+            (double) occa::primitive("-1.501e+1"));
+  ASSERT_EQ(15.01,
+            (double) occa::primitive("1.501E+1"));
+  ASSERT_EQ(-15.01,
+            (double) occa::primitive("-1.501E+1"));
 
-  OCCA_ASSERT_EQUAL(15.01,
-                    (double) occa::primitive("150.1e-1"));
-  OCCA_ASSERT_EQUAL(-15.01,
-                    (double) occa::primitive("-150.1e-1"));
-  OCCA_ASSERT_EQUAL(15.01,
-                    (double) occa::primitive("150.1E-1"));
-  OCCA_ASSERT_EQUAL(-15.01,
-                    (double) occa::primitive("-150.1E-1"));
+  ASSERT_EQ(15.01,
+            (double) occa::primitive("150.1e-1"));
+  ASSERT_EQ(-15.01,
+            (double) occa::primitive("-150.1e-1"));
+  ASSERT_EQ(15.01,
+            (double) occa::primitive("150.1E-1"));
+  ASSERT_EQ(-15.01,
+            (double) occa::primitive("-150.1E-1"));
 }
 
 void testBadParsing() {
-  OCCA_ASSERT_EQUAL(occa::primitiveType::none,
-                    occa::primitive("").type);
+  ASSERT_EQ(occa::primitiveType::none,
+            occa::primitive("").type);
 
-  OCCA_ASSERT_EQUAL(occa::primitiveType::none,
-                    occa::primitive(" ").type);
+  ASSERT_EQ(occa::primitiveType::none,
+            occa::primitive(" ").type);
 
-  OCCA_ASSERT_EQUAL(occa::primitiveType::none,
-                    occa::primitive("-").type);
+  ASSERT_EQ(occa::primitiveType::none,
+            occa::primitive("-").type);
 
-  OCCA_ASSERT_EQUAL(occa::primitiveType::none,
-                    occa::primitive("+").type);
+  ASSERT_EQ(occa::primitiveType::none,
+            occa::primitive("+").type);
 
-  OCCA_ASSERT_EQUAL(occa::primitiveType::none,
-                    occa::primitive("-   ").type);
+  ASSERT_EQ(occa::primitiveType::none,
+            occa::primitive("-   ").type);
 
-  OCCA_ASSERT_EQUAL(occa::primitiveType::none,
-                    occa::primitive("+   ").type);
+  ASSERT_EQ(occa::primitiveType::none,
+            occa::primitive("+   ").type);
 
-  OCCA_ASSERT_EQUAL(occa::primitiveType::none,
-                    occa::primitive("0x").type);
+  ASSERT_EQ(occa::primitiveType::none,
+            occa::primitive("0x").type);
 
-  OCCA_ASSERT_EQUAL(occa::primitiveType::none,
-                    occa::primitive("0b").type);
+  ASSERT_EQ(occa::primitiveType::none,
+            occa::primitive("0b").type);
 
-  OCCA_ASSERT_EQUAL(occa::primitiveType::none,
-                    occa::primitive("A").type);
+  ASSERT_EQ(occa::primitiveType::none,
+            occa::primitive("A").type);
 
-  OCCA_ASSERT_EQUAL(occa::primitiveType::none,
-                    occa::primitive("*").type);
+  ASSERT_EQ(occa::primitiveType::none,
+            occa::primitive("*").type);
 }
 
 void testToString() {
-  OCCA_ASSERT_EQUAL("68719476735L",
-                    occa::primitive("0xFFFFFFFFF").toString());
+  ASSERT_EQ("68719476735L",
+            occa::primitive("0xFFFFFFFFF").toString());
 
-  OCCA_ASSERT_EQUAL("NaN",
-                    occa::primitive("").toString());
+  ASSERT_EQ("NaN",
+            occa::primitive("").toString());
 }

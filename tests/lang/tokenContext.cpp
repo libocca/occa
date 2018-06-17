@@ -54,8 +54,8 @@ int main(const int argc, const char **argv) {
 
 void testMethods() {
   tokenContext context;
-  OCCA_ASSERT_EQUAL(0, context.tp.start);
-  OCCA_ASSERT_EQUAL(0, context.tp.end);
+  ASSERT_EQ(0, context.tp.start);
+  ASSERT_EQ(0, context.tp.end);
 
   newlineToken    *newline    = new newlineToken(originSource::string);
   identifierToken *identifier = new identifierToken(originSource::string,
@@ -67,56 +67,56 @@ void testMethods() {
   context.tokens.push_back(identifier);
   context.tokens.push_back(primitive);
 
-  OCCA_ASSERT_EQUAL(0, context.tp.start);
-  OCCA_ASSERT_EQUAL(0, context.tp.end);
+  ASSERT_EQ(0, context.tp.start);
+  ASSERT_EQ(0, context.tp.end);
 
   context.setup();
-  OCCA_ASSERT_EQUAL(0, context.tp.start);
-  OCCA_ASSERT_EQUAL(3, context.tp.end);
+  ASSERT_EQ(0, context.tp.start);
+  ASSERT_EQ(3, context.tp.end);
 
-  OCCA_ASSERT_EQUAL(3, context.size());
-  OCCA_ASSERT_EQUAL((token_t*) newline,
-                    context[0]);
-  OCCA_ASSERT_EQUAL((token_t*) identifier,
-                    context[1]);
-  OCCA_ASSERT_EQUAL((token_t*) primitive,
-                    context[2]);
+  ASSERT_EQ(3, context.size());
+  ASSERT_EQ((token_t*) newline,
+            context[0]);
+  ASSERT_EQ((token_t*) identifier,
+            context[1]);
+  ASSERT_EQ((token_t*) primitive,
+            context[2]);
 
   // Out-of-bounds
-  OCCA_ASSERT_EQUAL((token_t*) NULL,
-                    context[-1]);
-  OCCA_ASSERT_EQUAL((token_t*) NULL,
-                    context[3]);
+  ASSERT_EQ((token_t*) NULL,
+            context[-1]);
+  ASSERT_EQ((token_t*) NULL,
+            context[3]);
 
   context.push(1, 2);
-  OCCA_ASSERT_EQUAL(1, context.tp.start);
-  OCCA_ASSERT_EQUAL(2, context.tp.end);
+  ASSERT_EQ(1, context.tp.start);
+  ASSERT_EQ(2, context.tp.end);
 
-  OCCA_ASSERT_EQUAL((token_t*) identifier,
-                    context[0]);
-  OCCA_ASSERT_EQUAL((token_t*) NULL,
-                    context[1]);
+  ASSERT_EQ((token_t*) identifier,
+            context[0]);
+  ASSERT_EQ((token_t*) NULL,
+            context[1]);
 
   tokenRange prev = context.pop();
-  OCCA_ASSERT_EQUAL(0, context.tp.start);
-  OCCA_ASSERT_EQUAL(3, context.tp.end);
-  OCCA_ASSERT_EQUAL(1, prev.start);
-  OCCA_ASSERT_EQUAL(2, prev.end);
+  ASSERT_EQ(0, context.tp.start);
+  ASSERT_EQ(3, context.tp.end);
+  ASSERT_EQ(1, prev.start);
+  ASSERT_EQ(2, prev.end);
 
   context.set(1);
-  OCCA_ASSERT_EQUAL(1, context.tp.start);
-  OCCA_ASSERT_EQUAL(3, context.tp.end);
+  ASSERT_EQ(1, context.tp.start);
+  ASSERT_EQ(3, context.tp.end);
 
   context.push();
   context.set(1, 2);
-  OCCA_ASSERT_EQUAL(2, context.tp.start);
-  OCCA_ASSERT_EQUAL(3, context.tp.end);
+  ASSERT_EQ(2, context.tp.start);
+  ASSERT_EQ(3, context.tp.end);
 
   prev = context.pop();
-  OCCA_ASSERT_EQUAL(1, context.tp.start);
-  OCCA_ASSERT_EQUAL(3, context.tp.end);
-  OCCA_ASSERT_EQUAL(1, prev.start);
-  OCCA_ASSERT_EQUAL(2, prev.end);
+  ASSERT_EQ(1, context.tp.start);
+  ASSERT_EQ(3, context.tp.end);
+  ASSERT_EQ(1, prev.start);
+  ASSERT_EQ(2, prev.end);
 }
 
 void testPairs() {
@@ -129,15 +129,15 @@ void testPairs() {
   // 20 |   []]
   // 21 | [)] [>>>]
   setupContext(context, "<<<([{1},{2}], [{3},{4}])>>>");
-  OCCA_ASSERT_EQUAL(8, (int) context.pairs.size());
-  OCCA_ASSERT_EQUAL(22, context.pairs[0]);  // <<<
-  OCCA_ASSERT_EQUAL(21, context.pairs[1]);  //  (
-  OCCA_ASSERT_EQUAL(10, context.pairs[2]);  //   [
-  OCCA_ASSERT_EQUAL(5 , context.pairs[3]);  //    {
-  OCCA_ASSERT_EQUAL(9 , context.pairs[7]);  //    {
-  OCCA_ASSERT_EQUAL(20, context.pairs[12]); //   [
-  OCCA_ASSERT_EQUAL(15, context.pairs[13]); //    {
-  OCCA_ASSERT_EQUAL(19, context.pairs[17]); //    {
+  ASSERT_EQ(8, (int) context.pairs.size());
+  ASSERT_EQ(22, context.pairs[0]);  // <<<
+  ASSERT_EQ(21, context.pairs[1]);  //  (
+  ASSERT_EQ(10, context.pairs[2]);  //   [
+  ASSERT_EQ(5 , context.pairs[3]);  //    {
+  ASSERT_EQ(9 , context.pairs[7]);  //    {
+  ASSERT_EQ(20, context.pairs[12]); //   [
+  ASSERT_EQ(15, context.pairs[13]); //    {
+  ASSERT_EQ(19, context.pairs[17]); //    {
 
   // Test pair range pushes
   intIntMap::iterator it = context.pairs.begin();
@@ -145,8 +145,8 @@ void testPairs() {
     const int pairStart = it->first;
     const int pairEnd   = it->second;
     context.pushPairRange(pairStart);
-    OCCA_ASSERT_EQUAL(pairEnd - pairStart - 1,
-                      context.size());
+    ASSERT_EQ(pairEnd - pairStart - 1,
+              context.size());
     context.pop();
     ++it;
   }
@@ -158,15 +158,15 @@ void testPairs() {
   context.pushPairRange(0);
   // ,
   context.popAndSkip();
-  OCCA_ASSERT_EQUAL_BINARY(tokenType::op,
-                           context[0]->type());
-  OCCA_ASSERT_EQUAL(operatorType::comma,
-                    context[0]->to<operatorToken>().opType());
+  ASSERT_EQ_BINARY(tokenType::op,
+                   context[0]->type());
+  ASSERT_EQ(operatorType::comma,
+            context[0]->to<operatorToken>().opType());
   // {2}
   context.pushPairRange(1);
   context.popAndSkip();
-  OCCA_ASSERT_EQUAL(context.tp.start,
-                    context.tp.end);
+  ASSERT_EQ(context.tp.start,
+            context.tp.end);
 
 
   std::cerr << "Testing pair errors:\n";
@@ -188,27 +188,27 @@ void testExpression() {
   exprNode *expr;
 
   setupContext(context, "");
-  OCCA_ASSERT_EQUAL((void*) NULL,
-                    (void*) context.getExpression());
+  ASSERT_EQ((void*) NULL,
+            (void*) context.getExpression());
 
   setupContext(context, "1 + 2 + 3");
   expr = context.getExpression();
-  OCCA_ASSERT_EQUAL(6,
-                    (int) expr->evaluate());
+  ASSERT_EQ(6,
+            (int) expr->evaluate());
   delete expr;
 
   expr = context.getExpression(0, 3);
-  OCCA_ASSERT_EQUAL(3,
-                    (int) expr->evaluate());
+  ASSERT_EQ(3,
+            (int) expr->evaluate());
   delete expr;
 
   expr = context.getExpression(2, 5);
-  OCCA_ASSERT_EQUAL(5,
-                    (int) expr->evaluate());
+  ASSERT_EQ(5,
+            (int) expr->evaluate());
   delete expr;
 
   expr = context.getExpression(4, 5);
-  OCCA_ASSERT_EQUAL(3,
-                    (int) expr->evaluate());
+  ASSERT_EQ(3,
+            (int) expr->evaluate());
   delete expr;
 }

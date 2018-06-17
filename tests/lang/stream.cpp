@@ -152,28 +152,28 @@ int main(const int argc, const char **argv) {
   sDouble = source.map(times4);
 
   // Test passMessage
-  OCCA_ASSERT_EQUAL((void*) NULL,
-                    sDouble.passMessageToInput("inputName: 'test'"));
-  OCCA_ASSERT_EQUAL((void*) NULL,
-                    sDouble.getInput("test"));
+  ASSERT_EQ((void*) NULL,
+            sDouble.passMessageToInput("inputName: 'test'"));
+  ASSERT_EQ((void*) NULL,
+            sDouble.getInput("test"));
 
   vectorStream<int> *vs = (vectorStream<int>*) sDouble.passMessageToInput("inputName: 'vectorStream'");
-  OCCA_ASSERT_NOT_EQUAL((void*) NULL,
-                        (void*) vs);
-  OCCA_ASSERT_EQUAL(4, (int) vs->values.size());
+  ASSERT_NEQ((void*) NULL,
+             (void*) vs);
+  ASSERT_EQ(4, (int) vs->values.size());
 
   vs = (vectorStream<int>*) sDouble.getInput("vectorStream");
-  OCCA_ASSERT_NOT_EQUAL((void*) NULL,
-                        (void*) vs);
-  OCCA_ASSERT_EQUAL(4, (int) vs->values.size());
+  ASSERT_NEQ((void*) NULL,
+             (void*) vs);
+  ASSERT_EQ(4, (int) vs->values.size());
 
   // Test source
   for (int i = 0; i < N; ++i) {
     int value = -1;
     source >> value;
-    OCCA_ASSERT_EQUAL(i, value);
+    ASSERT_EQ(i, value);
   }
-  OCCA_ASSERT_TRUE(source.isEmpty());
+  ASSERT_TRUE(source.isEmpty());
 
   // Test map
   source.set(values);
@@ -181,7 +181,7 @@ int main(const int argc, const char **argv) {
   for (int i = 0; i < N; ++i) {
     double value;
     sDouble >> value;
-    OCCA_ASSERT_EQUAL(4.0 * i, value);
+    ASSERT_EQ(4.0 * i, value);
   }
 
   // Test map composition
@@ -190,7 +190,7 @@ int main(const int argc, const char **argv) {
   for (int i = 0; i < N; ++i) {
     double value;
     sDouble >> value;
-    OCCA_ASSERT_EQUAL((i * 4.0) * 0.25, value);
+    ASSERT_EQ((i * 4.0) * 0.25, value);
   }
 
   // Test function map
@@ -199,7 +199,7 @@ int main(const int argc, const char **argv) {
   for (int i = 0; i < N; ++i) {
     double value;
     sDouble >> value;
-    OCCA_ASSERT_EQUAL(((i * 4.0) * 0.25) * 2.0, value);
+    ASSERT_EQ(((i * 4.0) * 0.25) * 2.0, value);
   }
 
   // Test cache map
@@ -208,7 +208,7 @@ int main(const int argc, const char **argv) {
   for (int i = 0; i < (2 * N); ++i) {
     double value;
     sDouble >> value;
-    OCCA_ASSERT_EQUAL(i * 0.5, value);
+    ASSERT_EQ(i * 0.5, value);
   }
 
   // Test filter
@@ -217,7 +217,7 @@ int main(const int argc, const char **argv) {
   for (int i = 0; i < (N / 2); ++i) {
     int value;
     sInt >> value;
-    OCCA_ASSERT_EQUAL(2 * i, value);
+    ASSERT_EQ(2 * i, value);
   }
 
   // Test function filter
@@ -226,7 +226,7 @@ int main(const int argc, const char **argv) {
   for (int i = 0; i < (N / 2); ++i) {
     int value;
     sInt >> value;
-    OCCA_ASSERT_EQUAL(2 * i, value);
+    ASSERT_EQ(2 * i, value);
   }
 
   return 0;

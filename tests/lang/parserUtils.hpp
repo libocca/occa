@@ -51,7 +51,7 @@ void parseSource(const std::string &s) {
 
 #define parseAndPrintSource(str_)               \
   parseSource(str_);                            \
-  OCCA_ASSERT_TRUE(parser.success)              \
+  ASSERT_TRUE(parser.success)                   \
   {                                             \
     printer pout;                               \
     parser.root.print(pout);                    \
@@ -61,7 +61,7 @@ void parseSource(const std::string &s) {
 
 #define parseBadSource(str_)                    \
   parseSource(str_);                            \
-  OCCA_ASSERT_FALSE(parser.success)
+  ASSERT_FALSE(parser.success)
 
 template <class smntType>
 smntType& getStatement(const int index = 0) {
@@ -72,17 +72,17 @@ smntType& getStatement(const int index = 0) {
 //---[ Macro Util Methods ]-------------
 #define testStatementPeek(str_, type_)          \
   setSource(str_);                              \
-  OCCA_ASSERT_EQUAL_BINARY(type_,               \
-                           parser.peek());      \
-  OCCA_ASSERT_TRUE(parser.success)
+  ASSERT_EQ_BINARY(type_,                       \
+                   parser.peek());              \
+  ASSERT_TRUE(parser.success)
 
-#define setStatement(str_, type_)                   \
-  parseSource(str_);                                \
-  OCCA_ASSERT_EQUAL(1,                              \
-                    parser.root.size());            \
-  OCCA_ASSERT_EQUAL_BINARY(type_,                   \
-                           parser.root[0]->type())  \
-  OCCA_ASSERT_TRUE(parser.success);                 \
+#define setStatement(str_, type_)               \
+  parseSource(str_);                            \
+  ASSERT_EQ(1,                                  \
+            parser.root.size());                \
+  ASSERT_EQ_BINARY(type_,                       \
+                   parser.root[0]->type())      \
+  ASSERT_TRUE(parser.success);                  \
   statement = parser.root[0]
 //======================================
 

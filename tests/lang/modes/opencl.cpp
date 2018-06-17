@@ -27,7 +27,7 @@
 #undef parseAndPrintSource
 #define parseAndPrintSource(str_)                                       \
   parseSource(str_);                                                    \
-  OCCA_ASSERT_TRUE(parser.success)                                      \
+  ASSERT_TRUE(parser.success)                                           \
   {                                                                     \
     printer pout;                                                       \
     parser.hostParser.root.print(pout);                                 \
@@ -69,29 +69,29 @@ int main(const int argc, const char **argv) {
 //---[ Pragma ]-------------------------
 void testPragma() {
   parseSource("");
-  OCCA_ASSERT_EQUAL(1,
-                    parser.root.size());
+  ASSERT_EQ(1,
+            parser.root.size());
 
-  OCCA_ASSERT_EQUAL("OPENCL EXTENSION cl_khr_fp64 : enable\n",
-                    parser.root[0]
-                    ->to<pragmaStatement>()
-                    .value());
+  ASSERT_EQ("OPENCL EXTENSION cl_khr_fp64 : enable\n",
+            parser.root[0]
+            ->to<pragmaStatement>()
+            .value());
 
   parser.settings["opencl/extensions/cl_khr_fp64"] = false;
   parseSource("");
-  OCCA_ASSERT_EQUAL(0,
-                    parser.root.size());
+  ASSERT_EQ(0,
+            parser.root.size());
 
 
   parser.settings["opencl/extensions/foobar"] = true;
   parseSource("");
-  OCCA_ASSERT_EQUAL(1,
-                    parser.root.size());
+  ASSERT_EQ(1,
+            parser.root.size());
 
-  OCCA_ASSERT_EQUAL("OPENCL EXTENSION foobar : enable\n",
-                    parser.root[0]
-                    ->to<pragmaStatement>()
-                    .value());
+  ASSERT_EQ("OPENCL EXTENSION foobar : enable\n",
+            parser.root[0]
+            ->to<pragmaStatement>()
+            .value());
 
   parser.settings["opencl/extensions/foobar"] = false;
   parser.settings["opencl/extensions/cl_khr_fp64"] = true;

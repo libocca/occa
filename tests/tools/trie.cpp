@@ -53,124 +53,124 @@ void testInsert(occa::trie<std::string> &trie) {
   trie.add("glue"    , "glue");
   trie.add("good"    , "good");
 
-  OCCA_ASSERT_EQUAL(5, trie.size());
+  ASSERT_EQ(5, trie.size());
 }
 
 void testSearch(occa::trie<std::string> &trie) {
-  OCCA_ASSERT_TRUE(trie.has("blue"));
-  OCCA_ASSERT_TRUE(trie.has("boring"));
-  OCCA_ASSERT_TRUE(trie.has("glue"));
-  OCCA_ASSERT_TRUE(trie.has("good"));
+  ASSERT_TRUE(trie.has("blue"));
+  ASSERT_TRUE(trie.has("boring"));
+  ASSERT_TRUE(trie.has("glue"));
+  ASSERT_TRUE(trie.has("good"));
 
-  OCCA_ASSERT_FALSE(trie.has("red"));
-  OCCA_ASSERT_FALSE(trie.has("goo"));
-  OCCA_ASSERT_FALSE(trie.has("goods"));
+  ASSERT_FALSE(trie.has("red"));
+  ASSERT_FALSE(trie.has("goo"));
+  ASSERT_FALSE(trie.has("goods"));
 
-  OCCA_ASSERT_EQUAL("blue"  , trie.getLongest("blue").value());
-  OCCA_ASSERT_EQUAL("boring", trie.getLongest("boring").value());
-  OCCA_ASSERT_EQUAL("glue"  , trie.getLongest("glue").value());
-  OCCA_ASSERT_EQUAL("good"  , trie.getLongest("good").value());
+  ASSERT_EQ("blue"  , trie.getLongest("blue").value());
+  ASSERT_EQ("boring", trie.getLongest("boring").value());
+  ASSERT_EQ("glue"  , trie.getLongest("glue").value());
+  ASSERT_EQ("good"  , trie.getLongest("good").value());
 
-  OCCA_ASSERT_EQUAL("blueblue", trie.getLongest("blueblue").value());
-  OCCA_ASSERT_EQUAL(""        , trie.getLongest("red").value());
-  OCCA_ASSERT_EQUAL(""        , trie.getLongest("goo").value());
-  OCCA_ASSERT_EQUAL("good"    , trie.getLongest("goods").value());
+  ASSERT_EQ("blueblue", trie.getLongest("blueblue").value());
+  ASSERT_EQ(""        , trie.getLongest("red").value());
+  ASSERT_EQ(""        , trie.getLongest("goo").value());
+  ASSERT_EQ("good"    , trie.getLongest("goods").value());
 
-  OCCA_ASSERT_EQUAL("blue"  , trie.get("blue").value());
-  OCCA_ASSERT_EQUAL("boring", trie.get("boring").value());
-  OCCA_ASSERT_EQUAL("glue"  , trie.get("glue").value());
-  OCCA_ASSERT_EQUAL("good"  , trie.get("good").value());
+  ASSERT_EQ("blue"  , trie.get("blue").value());
+  ASSERT_EQ("boring", trie.get("boring").value());
+  ASSERT_EQ("glue"  , trie.get("glue").value());
+  ASSERT_EQ("good"  , trie.get("good").value());
 
-  OCCA_ASSERT_EQUAL("blueblue", trie.get("blueblue").value());
-  OCCA_ASSERT_EQUAL(""        , trie.get("red").value());
-  OCCA_ASSERT_EQUAL(""        , trie.get("goo").value());
-  OCCA_ASSERT_EQUAL(""        , trie.get("goods").value());
+  ASSERT_EQ("blueblue", trie.get("blueblue").value());
+  ASSERT_EQ(""        , trie.get("red").value());
+  ASSERT_EQ(""        , trie.get("goo").value());
+  ASSERT_EQ(""        , trie.get("goods").value());
 }
 
 void testFrozenSearch(occa::trie<std::string> &trie) {
   trie.freeze();
-  OCCA_ASSERT_TRUE(trie.has("blue"));
-  OCCA_ASSERT_TRUE(trie.has("boring"));
-  OCCA_ASSERT_TRUE(trie.has("glue"));
-  OCCA_ASSERT_TRUE(trie.has("good"));
+  ASSERT_TRUE(trie.has("blue"));
+  ASSERT_TRUE(trie.has("boring"));
+  ASSERT_TRUE(trie.has("glue"));
+  ASSERT_TRUE(trie.has("good"));
 
-  OCCA_ASSERT_FALSE(trie.has("red"));
-  OCCA_ASSERT_FALSE(trie.has("goo"));
-  OCCA_ASSERT_FALSE(trie.has("goods"));
+  ASSERT_FALSE(trie.has("red"));
+  ASSERT_FALSE(trie.has("goo"));
+  ASSERT_FALSE(trie.has("goods"));
 
-  OCCA_ASSERT_EQUAL("blue"  , trie.getLongest("blue").value());
-  OCCA_ASSERT_EQUAL("boring", trie.getLongest("boring").value());
-  OCCA_ASSERT_EQUAL("glue"  , trie.getLongest("glue").value());
-  OCCA_ASSERT_EQUAL("good"  , trie.getLongest("good").value());
+  ASSERT_EQ("blue"  , trie.getLongest("blue").value());
+  ASSERT_EQ("boring", trie.getLongest("boring").value());
+  ASSERT_EQ("glue"  , trie.getLongest("glue").value());
+  ASSERT_EQ("good"  , trie.getLongest("good").value());
 
-  OCCA_ASSERT_EQUAL("blueblue", trie.getLongest("blueblue").value());
-  OCCA_ASSERT_EQUAL(""        , trie.getLongest("red").value());
-  OCCA_ASSERT_EQUAL(""        , trie.getLongest("goo").value());
-  OCCA_ASSERT_EQUAL("good"    , trie.getLongest("goods").value());
+  ASSERT_EQ("blueblue", trie.getLongest("blueblue").value());
+  ASSERT_EQ(""        , trie.getLongest("red").value());
+  ASSERT_EQ(""        , trie.getLongest("goo").value());
+  ASSERT_EQ("good"    , trie.getLongest("goods").value());
 
-  OCCA_ASSERT_EQUAL("blue"  , trie.get("blue").value());
-  OCCA_ASSERT_EQUAL("boring", trie.get("boring").value());
-  OCCA_ASSERT_EQUAL("glue"  , trie.get("glue").value());
-  OCCA_ASSERT_EQUAL("good"  , trie.get("good").value());
+  ASSERT_EQ("blue"  , trie.get("blue").value());
+  ASSERT_EQ("boring", trie.get("boring").value());
+  ASSERT_EQ("glue"  , trie.get("glue").value());
+  ASSERT_EQ("good"  , trie.get("good").value());
 
-  OCCA_ASSERT_EQUAL("blueblue", trie.get("blueblue").value());
-  OCCA_ASSERT_EQUAL(""        , trie.get("red").value());
-  OCCA_ASSERT_EQUAL(""        , trie.get("goo").value());
-  OCCA_ASSERT_EQUAL(""        , trie.get("goods").value());
+  ASSERT_EQ("blueblue", trie.get("blueblue").value());
+  ASSERT_EQ(""        , trie.get("red").value());
+  ASSERT_EQ(""        , trie.get("goo").value());
+  ASSERT_EQ(""        , trie.get("goods").value());
 }
 
 void testRemoval(occa::trie<std::string> &trie) {
-  OCCA_ASSERT_EQUAL(5, trie.size());
+  ASSERT_EQ(5, trie.size());
 
-  OCCA_ASSERT_TRUE(trie.has("blue"));
+  ASSERT_TRUE(trie.has("blue"));
   trie.remove("blue");
-  OCCA_ASSERT_FALSE(trie.has("blue"));
+  ASSERT_FALSE(trie.has("blue"));
 
-  OCCA_ASSERT_TRUE(trie.has("blueblue"));
+  ASSERT_TRUE(trie.has("blueblue"));
   trie.remove("blueblue");
-  OCCA_ASSERT_FALSE(trie.has("blueblue"));
+  ASSERT_FALSE(trie.has("blueblue"));
 
-  OCCA_ASSERT_TRUE(trie.has("boring"));
+  ASSERT_TRUE(trie.has("boring"));
   trie.remove("boring");
-  OCCA_ASSERT_FALSE(trie.has("boring"));
+  ASSERT_FALSE(trie.has("boring"));
 
-  OCCA_ASSERT_TRUE(trie.has("glue"));
+  ASSERT_TRUE(trie.has("glue"));
   trie.remove("glue");
-  OCCA_ASSERT_FALSE(trie.has("glue"));
+  ASSERT_FALSE(trie.has("glue"));
 
-  OCCA_ASSERT_TRUE(trie.has("good"));
+  ASSERT_TRUE(trie.has("good"));
   trie.remove("good");
-  OCCA_ASSERT_FALSE(trie.has("good"));
+  ASSERT_FALSE(trie.has("good"));
 
-  OCCA_ASSERT_EQUAL(0, trie.size());
+  ASSERT_EQ(0, trie.size());
 }
 
 void testRefreeze(occa::trie<std::string> &trie) {
   trie.clear();
-  OCCA_ASSERT_EQUAL(0, trie.size());
+  ASSERT_EQ(0, trie.size());
 
   trie.freeze();
-  OCCA_ASSERT_TRUE(trie.isFrozen);
-  OCCA_ASSERT_FALSE(trie.has("red"));
+  ASSERT_TRUE(trie.isFrozen);
+  ASSERT_FALSE(trie.has("red"));
 
   trie.add("red", "red");
-  OCCA_ASSERT_FALSE(trie.isFrozen);
-  OCCA_ASSERT_TRUE(trie.has("red"));
+  ASSERT_FALSE(trie.isFrozen);
+  ASSERT_TRUE(trie.has("red"));
 
-  OCCA_ASSERT_EQUAL("red", trie.get("red").value());
+  ASSERT_EQ("red", trie.get("red").value());
 
   trie.autoFreeze = true;
   trie.add("blue", "red");
-  OCCA_ASSERT_TRUE(trie.isFrozen);
-  OCCA_ASSERT_TRUE(trie.has("blue"));
+  ASSERT_TRUE(trie.isFrozen);
+  ASSERT_TRUE(trie.has("blue"));
 
-  OCCA_ASSERT_EQUAL("red", trie.get("red").value());
-  OCCA_ASSERT_EQUAL("red", trie.get("blue").value());
+  ASSERT_EQ("red", trie.get("red").value());
+  ASSERT_EQ("red", trie.get("blue").value());
 
-  OCCA_ASSERT_EQUAL(2, trie.size());
+  ASSERT_EQ(2, trie.size());
 
   trie.remove("red");
   trie.remove("blue");
-  OCCA_ASSERT_EQUAL(0, trie.size());
-  OCCA_ASSERT_TRUE(trie.isFrozen);
+  ASSERT_EQ(0, trie.size());
+  ASSERT_TRUE(trie.isFrozen);
 }

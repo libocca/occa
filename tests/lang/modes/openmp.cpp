@@ -45,15 +45,15 @@ void testPragma() {
     "}"
   );
 
-  OCCA_ASSERT_EQUAL(1,
-                    parser.root.size());
+  ASSERT_EQ(1,
+            parser.root.size());
 
   functionDeclStatement &foo = parser.root[0]->to<functionDeclStatement>();
-  OCCA_ASSERT_EQUAL(2,
-                    foo.size());
+  ASSERT_EQ(2,
+            foo.size());
 
   pragmaStatement &ompPragma = foo[0]->to<pragmaStatement>();
-  OCCA_ASSERT_EQUAL("omp parallel for",
-                    ompPragma.value());
+  ASSERT_EQ("omp parallel for",
+            ompPragma.value());
 }
 //======================================

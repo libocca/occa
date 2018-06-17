@@ -71,40 +71,40 @@ void testStatementFinder() {
                        "dummy",
                        parser.root,
                        statements);
-  OCCA_ASSERT_EQUAL(2,
-                    (int) statements.size());
+  ASSERT_EQ(2,
+            (int) statements.size());
   statements.clear();
 
   findStatementsByAttr(statementType::expression,
                        "dummy",
                        parser.root,
                        statements);
-  OCCA_ASSERT_EQUAL(5,
-                    (int) statements.size());
+  ASSERT_EQ(5,
+            (int) statements.size());
   statements.clear();
 
   findStatementsByAttr(statementType::declaration,
                        "dummy",
                        parser.root,
                        statements);
-  OCCA_ASSERT_EQUAL(4,
-                    (int) statements.size());
+  ASSERT_EQ(4,
+            (int) statements.size());
   statements.clear();
 
   findStatementsByAttr(statementType::function,
                        "dummy",
                        parser.root,
                        statements);
-  OCCA_ASSERT_EQUAL(3,
-                    (int) statements.size());
+  ASSERT_EQ(3,
+            (int) statements.size());
   statements.clear();
 
   findStatementsByAttr(statementType::functionDecl,
                        "dummy",
                        parser.root,
                        statements);
-  OCCA_ASSERT_EQUAL(2,
-                    (int) statements.size());
+  ASSERT_EQ(2,
+            (int) statements.size());
   statements.clear();
 }
 
@@ -127,7 +127,7 @@ void testExprNodeFinder() {
   //                     "dummy",
   //                     exprRoot,
   //                     exprNodes);
-  // OCCA_ASSERT_EQUAL(1,
+  // ASSERT_EQ(1,
   //                   (int) exprNodes.size());
   // exprNodes.clear();
 
@@ -135,16 +135,16 @@ void testExprNodeFinder() {
                       "dummy",
                       exprRoot,
                       exprNodes);
-  OCCA_ASSERT_EQUAL(3,
-                    (int) exprNodes.size());
+  ASSERT_EQ(3,
+            (int) exprNodes.size());
   exprNodes.clear();
 
   findExprNodesByAttr(exprNodeType::function,
                       "dummy",
                       exprRoot,
                       exprNodes);
-  OCCA_ASSERT_EQUAL(2,
-                    (int) exprNodes.size());
+  ASSERT_EQ(2,
+            (int) exprNodes.size());
   exprNodes.clear();
 
 #undef exprRoot
@@ -169,8 +169,8 @@ void testStatementExprFinder() {
                  exclusiveMatcher,
                  exprMap);
 
-  OCCA_ASSERT_EQUAL(3,
-                    (int) exprMap.size());
+  ASSERT_EQ(3,
+            (int) exprMap.size());
 
   statementExprMap::iterator it = exprMap.begin();
   while (it != exprMap.end()) {
@@ -179,18 +179,18 @@ void testStatementExprFinder() {
 
     if (smnt->type() & statementType::expression) {
       // x = (x + x + x) * x
-      OCCA_ASSERT_EQUAL(5,
-                        (int) exprNodes->size());
+      ASSERT_EQ(5,
+                (int) exprNodes->size());
     } else {
       declarationStatement &declSmnt = *((declarationStatement*) smnt);
       if (declSmnt.declarations.size() == 1) {
         // x; (x doesn't 'count' since it's not in an variableNode)
-        OCCA_ASSERT_EQUAL(0,
-                          (int) exprNodes->size());
+        ASSERT_EQ(0,
+                  (int) exprNodes->size());
       } else {
         // y = x, z; (y doesn't 'count' since it's not in an variableNode)
-        OCCA_ASSERT_EQUAL(1,
-                          (int) exprNodes->size());
+        ASSERT_EQ(1,
+                  (int) exprNodes->size());
       }
     }
 
@@ -218,28 +218,28 @@ void testStatementTreeFinder() {
                     blockMatcher,
                     root);
 
-  OCCA_ASSERT_EQUAL(1,
-                    root.size());
+  ASSERT_EQ(1,
+            root.size());
 
   transforms::smntTreeNode &r0 = *(root[0]);
-  OCCA_ASSERT_EQUAL(1,
-                    r0.size());
+  ASSERT_EQ(1,
+            r0.size());
 
   transforms::smntTreeNode &r00 = *(r0[0]);
-  OCCA_ASSERT_EQUAL(3,
-                    r00.size());
+  ASSERT_EQ(3,
+            r00.size());
 
-  OCCA_ASSERT_EQUAL(0,
-                    r00[0]->size());
-  OCCA_ASSERT_EQUAL(3,
-                    r00[1]->size());
-  OCCA_ASSERT_EQUAL(0,
-                    r00[2]->size());
+  ASSERT_EQ(0,
+            r00[0]->size());
+  ASSERT_EQ(3,
+            r00[1]->size());
+  ASSERT_EQ(0,
+            r00[2]->size());
 
   transforms::smntTreeNode &r001 = *(r00[1]);
   for (int i = 0; i < 3; ++i) {
-    OCCA_ASSERT_EQUAL(0,
-                      r001[i]->size());
+    ASSERT_EQ(0,
+              r001[i]->size());
   }
   root.free();
 }

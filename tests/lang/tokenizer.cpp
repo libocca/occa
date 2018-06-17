@@ -88,39 +88,39 @@ int getTokenType() {
 //---[ Macro Util Methods ]-------------
 #define testStringPeek(s, encoding_)            \
   setStream(s);                                 \
-  OCCA_ASSERT_EQUAL_BINARY(                     \
+  ASSERT_EQ_BINARY(                             \
     (encoding_ << tokenType::encodingShift) |   \
     tokenType::string,                          \
     tokenizer.peek())
 
 #define testCharPeek(s, encoding_)              \
   setStream(s);                                 \
-  OCCA_ASSERT_EQUAL_BINARY(                     \
+  ASSERT_EQ_BINARY(                             \
     (encoding_ << tokenType::encodingShift) |   \
     tokenType::char_,                           \
     tokenizer.peek())
 
-#define testStringToken(s, encoding_)                         \
-  setToken(s);                                                \
-  OCCA_ASSERT_EQUAL_BINARY(tokenType::string,                 \
-                           getTokenType());                   \
-  OCCA_ASSERT_EQUAL_BINARY(encoding_,                         \
-                           token->to<stringToken>().encoding)
+#define testStringToken(s, encoding_)                 \
+  setToken(s);                                        \
+  ASSERT_EQ_BINARY(tokenType::string,                 \
+                   getTokenType());                   \
+  ASSERT_EQ_BINARY(encoding_,                         \
+                   token->to<stringToken>().encoding)
 
-#define testStringMergeToken(s, encoding_)                    \
-  setStream(s);                                               \
-  getMergedToken();                                           \
-  OCCA_ASSERT_EQUAL_BINARY(tokenType::string,                 \
-                           getTokenType());                   \
-  OCCA_ASSERT_EQUAL_BINARY(encoding_,                         \
-                           token->to<stringToken>().encoding)
+#define testStringMergeToken(s, encoding_)            \
+  setStream(s);                                       \
+  getMergedToken();                                   \
+  ASSERT_EQ_BINARY(tokenType::string,                 \
+                   getTokenType());                   \
+  ASSERT_EQ_BINARY(encoding_,                         \
+                   token->to<stringToken>().encoding)
 
-#define testCharToken(s, encoding_)                         \
-  setToken(s);                                              \
-  OCCA_ASSERT_EQUAL_BINARY(tokenType::char_,                \
-                           getTokenType())                  \
-  OCCA_ASSERT_EQUAL_BINARY(encoding_,                       \
-                           token->to<charToken>().encoding)
+#define testCharToken(s, encoding_)                 \
+  setToken(s);                                      \
+  ASSERT_EQ_BINARY(tokenType::char_,                \
+                   getTokenType())                  \
+  ASSERT_EQ_BINARY(encoding_,                       \
+                   token->to<charToken>().encoding)
 
 #define testStringValue(s, value_)              \
   setStream(s);                                 \
@@ -133,21 +133,21 @@ int getTokenType() {
   testNextStringValue(value_)
 
 #define testNextStringValue(value_)             \
-  OCCA_ASSERT_EQUAL_BINARY(                     \
+  ASSERT_EQ_BINARY(                             \
     tokenType::string,                          \
     getTokenType()                              \
   );                                            \
-  OCCA_ASSERT_EQUAL(                            \
+  ASSERT_EQ(                                    \
     value_,                                     \
     token->to<stringToken>().value              \
   )
 
 #define testPrimitiveToken(type_, value_)       \
   getToken();                                   \
-  OCCA_ASSERT_EQUAL_BINARY(                     \
+  ASSERT_EQ_BINARY(                             \
     tokenType::primitive,                       \
     getTokenType());                            \
-  OCCA_ASSERT_EQUAL(                            \
+  ASSERT_EQ(                                    \
     value_,                                     \
     (type_) token->to<primitiveToken>().value   \
   )
@@ -174,21 +174,21 @@ void testSkipMethods() {
   const char *c = source.c_str();
 
   tokenizer.skipTo('a');
-  OCCA_ASSERT_EQUAL('a', *tokenizer.fp.start);
+  ASSERT_EQ('a', *tokenizer.fp.start);
 
   tokenizer.skipTo('b');
-  OCCA_ASSERT_EQUAL('b' , *tokenizer.fp.start);
+  ASSERT_EQ('b' , *tokenizer.fp.start);
 
   tokenizer.skipTo('e');
-  OCCA_ASSERT_EQUAL('e' , *tokenizer.fp.start);
+  ASSERT_EQ('e' , *tokenizer.fp.start);
 
   tokenizer.fp.start = c;
   tokenizer.skipTo("c\n");
-  OCCA_ASSERT_EQUAL(c + 2, tokenizer.fp.start);
+  ASSERT_EQ(c + 2, tokenizer.fp.start);
 
   tokenizer.fp.start = c + 6;
   tokenizer.skipFrom("\n");
-  OCCA_ASSERT_EQUAL('d' , *tokenizer.fp.start);
+  ASSERT_EQ('d' , *tokenizer.fp.start);
 }
 
 void testPushPop() {
@@ -197,15 +197,15 @@ void testPushPop() {
 
   tokenizer.push();
   tokenizer.skipTo('c');
-  OCCA_ASSERT_EQUAL(3,
-                    tokenizer.fp.line);
-  OCCA_ASSERT_EQUAL(c + 4,
-                    tokenizer.fp.start);
+  ASSERT_EQ(3,
+            tokenizer.fp.line);
+  ASSERT_EQ(c + 4,
+            tokenizer.fp.start);
   tokenizer.popAndRewind();
-  OCCA_ASSERT_EQUAL(1,
-                    tokenizer.fp.line);
-  OCCA_ASSERT_EQUAL(c + 0,
-                    tokenizer.fp.start);
+  ASSERT_EQ(1,
+            tokenizer.fp.line);
+  ASSERT_EQ(c + 0,
+            tokenizer.fp.start);
   tokenizer.push();
   tokenizer.push();
   tokenizer.push();
@@ -213,67 +213,67 @@ void testPushPop() {
   tokenizer.pop();
   tokenizer.pop();
   tokenizer.pop();
-  OCCA_ASSERT_EQUAL(3,
-                    tokenizer.fp.line);
-  OCCA_ASSERT_EQUAL(c + 4,
-                    tokenizer.fp.start);
+  ASSERT_EQ(3,
+            tokenizer.fp.line);
+  ASSERT_EQ(c + 4,
+            tokenizer.fp.start);
 }
 
 void testPeekMethods() {
   setStream("abcd");
-  OCCA_ASSERT_EQUAL_BINARY(
+  ASSERT_EQ_BINARY(
     tokenType::identifier,
     tokenizer.peek()
   );
   setStream("_abcd");
-  OCCA_ASSERT_EQUAL_BINARY(
+  ASSERT_EQ_BINARY(
     tokenType::identifier,
     tokenizer.peek()
   );
   setStream("_abcd020230");
-  OCCA_ASSERT_EQUAL_BINARY(
+  ASSERT_EQ_BINARY(
     tokenType::identifier,
     tokenizer.peek()
   );
 
   setStream("1");
-  OCCA_ASSERT_EQUAL_BINARY(
+  ASSERT_EQ_BINARY(
     tokenType::primitive,
     tokenizer.peek()
   );
   setStream("2.0");
-  OCCA_ASSERT_EQUAL_BINARY(
+  ASSERT_EQ_BINARY(
     tokenType::primitive,
     tokenizer.peek()
   );
   setStream("2.0e10");
-  OCCA_ASSERT_EQUAL_BINARY(
+  ASSERT_EQ_BINARY(
     tokenType::primitive,
     tokenizer.peek()
   );
   setStream(".0e10-10");
-  OCCA_ASSERT_EQUAL_BINARY(
+  ASSERT_EQ_BINARY(
     tokenType::primitive,
     tokenizer.peek()
   );
 
   setStream("+");
-  OCCA_ASSERT_EQUAL_BINARY(
+  ASSERT_EQ_BINARY(
     tokenType::op,
     tokenizer.peek()
   );
   setStream("<");
-  OCCA_ASSERT_EQUAL_BINARY(
+  ASSERT_EQ_BINARY(
     tokenType::op,
     tokenizer.peek()
   );
   setStream("->*");
-  OCCA_ASSERT_EQUAL_BINARY(
+  ASSERT_EQ_BINARY(
     tokenType::op,
     tokenizer.peek()
   );
   setStream("==");
-  OCCA_ASSERT_EQUAL_BINARY(
+  ASSERT_EQ_BINARY(
     tokenType::op,
     tokenizer.peek()
   );
@@ -300,78 +300,78 @@ void testPeekMethods() {
   testCharPeek("U'\\''" , encodingType::U);
   testCharPeek("L'\\''" , encodingType::L);
 
-  OCCA_ASSERT_EQUAL("foobar",
-                    getHeader("<foobar>"));
-  OCCA_ASSERT_EQUAL("foobar",
-                    getHeader("\"foobar\""));
+  ASSERT_EQ("foobar",
+            getHeader("<foobar>"));
+  ASSERT_EQ("foobar",
+            getHeader("\"foobar\""));
 }
 
 void testTokenMethods() {
   setToken("abcd");
-  OCCA_ASSERT_EQUAL_BINARY(
+  ASSERT_EQ_BINARY(
     tokenType::identifier,
     getTokenType()
   );
   setToken("_abcd");
-  OCCA_ASSERT_EQUAL_BINARY(
+  ASSERT_EQ_BINARY(
     tokenType::identifier,
     getTokenType()
   );
   setToken("_abcd020230");
-  OCCA_ASSERT_EQUAL_BINARY(
+  ASSERT_EQ_BINARY(
     tokenType::identifier,
     getTokenType()
   );
 
   setToken("true");
-  OCCA_ASSERT_EQUAL_BINARY(
+  ASSERT_EQ_BINARY(
     tokenType::primitive,
     getTokenType()
   );
   setToken("false");
-  OCCA_ASSERT_EQUAL_BINARY(
+  ASSERT_EQ_BINARY(
     tokenType::primitive,
     getTokenType()
   );
 
   setToken("1");
-  OCCA_ASSERT_EQUAL_BINARY(
+  ASSERT_EQ_BINARY(
     tokenType::primitive,
     getTokenType()
   );
   setToken("2.0");
-  OCCA_ASSERT_EQUAL_BINARY(
+  ASSERT_EQ_BINARY(
     tokenType::primitive,
     getTokenType()
   );
   setToken("2.0e10");
-  OCCA_ASSERT_EQUAL_BINARY(
+  ASSERT_EQ_BINARY(
     tokenType::primitive,
     getTokenType()
   );
   setToken(".0e10-10");
-  OCCA_ASSERT_EQUAL_BINARY(
+  ASSERT_EQ_BINARY(
     tokenType::primitive,
     getTokenType()
   );
 
   setToken("+");
-  OCCA_ASSERT_EQUAL_BINARY(
+  ASSERT_EQ_BINARY(
     tokenType::op,
     getTokenType()
   );
   setToken("<");
-  OCCA_ASSERT_EQUAL_BINARY(
+  ASSERT_EQ_BINARY(
     tokenType::op,
     getTokenType()
   );
   setToken("->*");
-  OCCA_ASSERT_EQUAL_BINARY(
+  ASSERT_EQ_BINARY(
     tokenType::op,
     getTokenType()
   );
   setToken("==");
-  OCCA_ASSERT_EQUAL_BINARY(
+  ASSERT_EQ_BINARY(
     tokenType::op,
     getTokenType()
   );
@@ -414,24 +414,24 @@ void addEncodingPrefixes(std::string &s1,
 void testCommentSkipping() {
   setStream("// test    \n"
             "1.0");
-  OCCA_ASSERT_EQUAL_BINARY(
+  ASSERT_EQ_BINARY(
     tokenType::newline,
     tokenizer.peek()
   );
   getToken();
-  OCCA_ASSERT_EQUAL_BINARY(
+  ASSERT_EQ_BINARY(
     tokenType::primitive,
     tokenizer.peek()
   );
   setStream("/* 2.0 */ foo");
-  OCCA_ASSERT_EQUAL_BINARY(
+  ASSERT_EQ_BINARY(
     tokenType::identifier,
     tokenizer.peek()
   );
   setStream("/*         \n"
             "2.0        \n"
             "*/ foo");
-  OCCA_ASSERT_EQUAL_BINARY(
+  ASSERT_EQ_BINARY(
     tokenType::identifier,
     tokenizer.peek()
   );
@@ -533,28 +533,28 @@ void testExternMerging() {
             " extern \"C++\""
             " extern \"Cpp\"");
   getMergedToken();
-  OCCA_ASSERT_EQUAL_BINARY(tokenType::identifier,
-                           getTokenType());
-  OCCA_ASSERT_EQUAL("extern",
-                    token->to<identifierToken>().value);
+  ASSERT_EQ_BINARY(tokenType::identifier,
+                   getTokenType());
+  ASSERT_EQ("extern",
+            token->to<identifierToken>().value);
 
   getMergedToken();
-  OCCA_ASSERT_EQUAL_BINARY(tokenType::identifier,
-                           getTokenType());
-  OCCA_ASSERT_EQUAL("extern \"C\"",
-                    token->to<identifierToken>().value);
+  ASSERT_EQ_BINARY(tokenType::identifier,
+                   getTokenType());
+  ASSERT_EQ("extern \"C\"",
+            token->to<identifierToken>().value);
 
   getMergedToken();
-  OCCA_ASSERT_EQUAL_BINARY(tokenType::identifier,
-                           getTokenType());
-  OCCA_ASSERT_EQUAL("extern \"C++\"",
-                    token->to<identifierToken>().value);
+  ASSERT_EQ_BINARY(tokenType::identifier,
+                   getTokenType());
+  ASSERT_EQ("extern \"C++\"",
+            token->to<identifierToken>().value);
 
   getMergedToken();
-  OCCA_ASSERT_EQUAL_BINARY(tokenType::identifier,
-                           getTokenType());
-  OCCA_ASSERT_EQUAL("extern",
-                    token->to<identifierToken>().value);
+  ASSERT_EQ_BINARY(tokenType::identifier,
+                   getTokenType());
+  ASSERT_EQ("extern",
+            token->to<identifierToken>().value);
 
   getMergedToken();
   testNextStringValue("Cpp");
