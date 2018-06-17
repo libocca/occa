@@ -37,6 +37,10 @@ namespace occa {
       }
 
       //---[ Public ]-------------------
+      bool withLauncher::succeeded() const {
+        return (success && hostParser.success);
+      }
+
       void withLauncher::writeHostSourceToFile(const std::string &filename) const {
         hostParser.writeToFile(filename);
       }

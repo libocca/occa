@@ -36,6 +36,8 @@ namespace occa {
         withLauncher(const occa::properties &settings_ = occa::properties());
 
         //---[ Public ]-----------------
+        virtual bool succeeded() const;
+
         void writeHostSourceToFile(const std::string &filename) const;
         //==============================
 

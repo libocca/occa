@@ -91,7 +91,7 @@ namespace occa {
       ~parser_t();
 
       //---[ Public ]-------------------
-      bool succeeded() const;
+      virtual bool succeeded() const;
 
       std::string toString() const;
       void toString(std::string &s) const;
