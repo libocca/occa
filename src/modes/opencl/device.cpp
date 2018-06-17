@@ -276,8 +276,7 @@ namespace occa {
         io::cacheFile(filename,
                       kc::rawSourceFile,
                       kernelHash,
-                      assembleHeader(allProps),
-                      allProps["footer"].string())
+                      assembleHeader(allProps))
       );
 
       kernel_v *launcherKernel = NULL;

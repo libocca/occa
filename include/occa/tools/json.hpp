@@ -129,6 +129,11 @@ namespace occa {
       value_.number = value;
     }
 
+    inline json(const char *value) :
+      type(string_) {
+      value_.string = value;
+    }
+
     inline json(const std::string &value) :
       type(string_) {
       value_.string = value;
@@ -285,6 +290,10 @@ namespace occa {
       return (type == boolean_);
     }
 
+    inline bool isNull() const {
+      return (type == null_);
+    }
+
     inline json& asString() {
       type = string_;
       return *this;
@@ -307,6 +316,11 @@ namespace occa {
 
     inline json& asBoolean() {
       type = boolean_;
+      return *this;
+    }
+
+    inline json& asNull() {
+      type = null_;
       return *this;
     }
 
@@ -367,85 +381,23 @@ namespace occa {
     int size() const;
 
     template <class TM>
-    TM get(const char *c, const TM &default_ = TM()) const {
-#if !OCCA_UNSAFE
-      const char *c0 = c;
-#endif
-      const json *j = this;
-      while (*c != '\0') {
-        OCCA_ERROR("Path '" << std::string(c0, c - c0) << "' is not an object",
-                   j->type == object_);
-
-        const char *cStart = c;
-        lex::skipTo(c, '/');
-        std::string key(cStart, c - cStart);
-        if (*c == '/') {
-          ++c;
-        }
-
-        cJsonObjectIterator it = j->value_.object.find(key);
-        if (it == j->value_.object.end()) {
-          return default_;
-        }
-        j = &(it->second);
-      }
-      return *j;
-    }
+    TM get(const char *c,
+           const TM &default_ = TM()) const;
 
     template <class TM>
-    inline TM get(const std::string &s, const TM &default_ = TM()) const {
-      return get<TM>(s.c_str(), default_);
-    }
+    TM get(const std::string &s,
+           const TM &default_ = TM()) const;
 
     template <class TM>
-    std::vector<TM> getArray(const std::vector<TM> &default_ = std::vector<TM>()) const {
-      std::string empty;
-      return getArray(empty.c_str(), default_);
-    }
-
-    friend std::ostream& operator << (std::ostream &out, const json &j);
+    std::vector<TM> getArray(const std::vector<TM> &default_ = std::vector<TM>()) const;
 
     template <class TM>
     std::vector<TM> getArray(const char *c,
-                             const std::vector<TM> &default_ = std::vector<TM>()) const {
-#if !OCCA_UNSAFE
-      const char *c0 = c;
-#endif
-      const json *j = this;
-      while (*c) {
-        OCCA_ERROR("Path '" << std::string(c0, c - c0) << "' is not an object",
-                   j->type == object_);
-
-        const char *cStart = c;
-        lex::skipTo(c, '/');
-        std::string key(cStart, c - cStart);
-        if (*c == '/') {
-          ++c;
-        }
-
-        cJsonObjectIterator it = j->value_.object.find(key);
-        if (it == j->value_.object.end()) {
-          return default_;
-        }
-        j = &(it->second);
-      }
-      if (j->type != array_) {
-        return default_;
-      }
-
-      const int entries = (int) j->value_.array.size();
-      std::vector<TM> ret;
-      for (int i = 0; i < entries; ++i) {
-        ret.push_back((TM) j->value_.array[i]);
-      }
-      return ret;
-    }
+                             const std::vector<TM> &default_ = std::vector<TM>()) const;
 
     template <class TM>
     std::vector<TM> getArray(const std::string &s,
-                             const std::vector<TM> &default_ = std::vector<TM>()) const {
-      return get<TM>(s.c_str(), default_);
-    }
+                             const std::vector<TM> &default_ = std::vector<TM>()) const;
 
     strVector keys() const;
     jsonArray values();
@@ -462,7 +414,7 @@ namespace occa {
       if (type != j.type) {
         return false;
       }
-      switch(type) {
+      switch (type) {
       case none_:
         return true;
       case string_:
@@ -483,47 +435,132 @@ namespace occa {
     }
 
     inline operator bool () const {
-      return value_.boolean;
+      switch (type) {
+      case none_:
+        return false;
+      case string_:
+        return value_.string.size();
+      case number_:
+        return value_.number;
+      case object_:
+        return value_.object.size();
+      case array_:
+        return value_.array.size();
+      case boolean_:
+        return value_.boolean;
+      default:
+        return false;
+      }
     }
 
     inline operator uint8_t () const {
-      return (uint8_t) value_.number;
+      switch (type) {
+      case number_:
+        return (uint8_t) value_.number;
+      case boolean_:
+        return value_.boolean;
+      default:
+        return 0;
+      }
     }
 
     inline operator uint16_t () const {
-      return (uint16_t) value_.number;
+      switch (type) {
+      case number_:
+        return (uint16_t) value_.number;
+      case boolean_:
+        return value_.boolean;
+      default:
+        return 0;
+      }
     }
 
     inline operator uint32_t () const {
-      return (uint32_t) value_.number;
+      switch (type) {
+      case number_:
+        return (uint32_t) value_.number;
+      case boolean_:
+        return value_.boolean;
+      default:
+        return 0;
+      }
     }
 
     inline operator uint64_t () const {
-      return (uint64_t) value_.number;
+      switch (type) {
+      case number_:
+        return (uint64_t) value_.number;
+      case boolean_:
+        return value_.boolean;
+      default:
+        return 0;
+      }
     }
 
     inline operator int8_t () const {
-      return (int8_t) value_.number;
+      switch (type) {
+      case number_:
+        return (int8_t) value_.number;
+      case boolean_:
+        return value_.boolean;
+      default:
+        return 0;
+      }
     }
 
     inline operator int16_t () const {
-      return (int16_t) value_.number;
+      switch (type) {
+      case number_:
+        return (int16_t) value_.number;
+      case boolean_:
+        return value_.boolean;
+      default:
+        return 0;
+      }
     }
 
     inline operator int32_t () const {
-      return (int32_t) value_.number;
+      switch (type) {
+      case number_:
+        return (int32_t) value_.number;
+      case boolean_:
+        return value_.boolean;
+      default:
+        return 0;
+      }
     }
 
     inline operator int64_t () const {
-      return (int64_t) value_.number;
+      switch (type) {
+      case number_:
+        return (int64_t) value_.number;
+      case boolean_:
+        return value_.boolean;
+      default:
+        return 0;
+      }
     }
 
     inline operator float () const {
-      return (float) value_.number;
+      switch (type) {
+      case number_:
+        return (float) value_.number;
+      case boolean_:
+        return value_.boolean;
+      default:
+        return 0;
+      }
     }
 
     inline operator double () const {
-      return (double) value_.number;
+      switch (type) {
+      case number_:
+        return (double) value_.number;
+      case boolean_:
+        return value_.boolean;
+      default:
+        return 0;
+      }
     }
 
     inline operator std::string () const {
@@ -533,15 +570,22 @@ namespace occa {
     hash_t hash() const;
 
     std::string toString(const int indent = 2) const;
+
     void toString(std::string &out,
                   const std::string &indent = "  ",
                   const std::string &currentIndent = "") const;
+
+    friend std::ostream& operator << (std::ostream &out,
+                                      const json &j);
   };
 
   template <>
   hash_t hash(const occa::json &json);
 
-  std::ostream& operator << (std::ostream &out, const json &j);
+  std::ostream& operator << (std::ostream &out,
+                             const json &j);
 }
+
+#include <occa/tools/json.tpp>
 
 #endif

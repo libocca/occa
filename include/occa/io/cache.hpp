@@ -44,14 +44,12 @@ namespace occa {
 
     std::string cacheFile(const std::string &filename,
                           const std::string &cachedName,
-                          const std::string &header = "",
-                          const std::string &footer = "");
+                          const std::string &header = "");
 
     std::string cacheFile(const std::string &filename,
                           const std::string &cachedName,
                           const hash_t &hash,
-                          const std::string &header = "",
-                          const std::string &footer = "");
+                          const std::string &header = "");
 
     void writeBuildFile(const std::string &filename,
                         const hash_t &hash,

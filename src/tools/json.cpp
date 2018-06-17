@@ -275,6 +275,10 @@ namespace occa {
   }
 
   json& json::operator += (const json &j) {
+    // We're not defined, treat this as an = operator
+    if (type == none_) {
+      type = j.type;
+    }
     OCCA_ERROR("Cannot apply operator + with different JSON types",
                (type == array_) ||
                (type == j.type));
@@ -300,7 +304,7 @@ namespace occa {
       break;
     }
     case boolean_: {
-      value_.boolean += j.value_.boolean;
+      value_.boolean |= j.value_.boolean;
       break;
     }
     case null_: {
@@ -361,9 +365,11 @@ namespace occa {
     const char *c0 = c;
 #endif
     json *j = this;
+    bool exists = true;
 
     if (type == none_) {
       type = object_;
+      exists = false;
     }
 
     while (*c != '\0') {
@@ -380,7 +386,11 @@ namespace occa {
       j = &(j->value_.object[key]);
       if (j->type == none_) {
         j->type = object_;
+        exists = false;
       }
+    }
+    if (!exists) {
+      j->type = none_;
     }
     return *j;
   }
@@ -412,6 +422,13 @@ namespace occa {
   json& json::operator [] (const int n) {
     OCCA_ERROR("Can only apply operator [] with JSON arrays",
                type == array_);
+    const int arraySize = (int) value_.array.size();
+    if (arraySize < n) {
+      value_.array.resize(n + 1);
+      for (int i = arraySize; i < n; ++i) {
+        value_.array[i].asNull();
+      }
+    }
     return value_.array[n];
   }
 
@@ -532,11 +549,20 @@ namespace occa {
           out += '\n';
         }
         while (it != value_.object.end()) {
+          const std::string &key = it->first;
+          const json &value = it->second;
+
           out += newIndent;
           out += '"';
-          out += it->first;
+          out += key;
           out += "\": ";
-          it->second.toString(out, indent, newIndent);
+          if (value.type != none_) {
+            value.toString(out, indent, newIndent);
+          } else {
+            // Temporary until jsonRef
+            out += "{}";
+          }
+
           ++it;
           if (it != value_.object.end()) {
             if (indent.size()) {

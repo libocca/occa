@@ -79,20 +79,17 @@ namespace occa {
 
     std::string cacheFile(const std::string &filename,
                           const std::string &cachedName,
-                          const std::string &header,
-                          const std::string &footer) {
+                          const std::string &header) {
       return cacheFile(filename,
                        cachedName,
                        occa::hashFile(filename),
-                       header,
-                       footer);
+                       header);
     }
 
     std::string cacheFile(const std::string &filename,
                           const std::string &cachedName,
                           const hash_t &hash,
-                          const std::string &header,
-                          const std::string &footer) {
+                          const std::string &header) {
       // File is already cached
       if (isCached(filename)) {
         return filename;
@@ -105,9 +102,8 @@ namespace occa {
 
       if (!sys::fileExists(sourceFile)) {
         std::stringstream ss;
-        ss << header                << '\n'
-           << io::read(expFilename) << '\n'
-           << footer;
+        ss << header << '\n'
+           << io::read(expFilename);
         write(sourceFile, ss.str());
       }
 
@@ -126,7 +122,7 @@ namespace occa {
         build["date"]      = sys::date();
         build["humanDate"] = sys::humanDate();
 
-        write(filename, info.toString());
+        info.write(filename);
       }
     }
 

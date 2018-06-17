@@ -72,7 +72,7 @@ namespace occa {
       occa::properties allKernelProps = properties + kernelProps;
 
       std::string compiler = allKernelProps["compiler"].string();
-      int vendor = allKernelProps["vendor"].number();
+      int vendor = allKernelProps["vendor"];
       // Check if we need to re-compute the vendor
       if (kernelProps.has("compiler")) {
         vendor = sys::compilerVendor(compiler);

@@ -32,6 +32,8 @@ void testObject();
 void testArray();
 void testKeywords();
 void testMethods();
+void testSize();
+void testConversions();
 
 int main(const int argc, const char **argv) {
   testString();
@@ -40,179 +42,343 @@ int main(const int argc, const char **argv) {
   testArray();
   testKeywords();
   testMethods();
+  testSize();
+  testConversions();
+
   return 0;
 }
 
 void testString() {
+#define checkString(str_, expected_str_)        \
+  j.load(str_);                                 \
+  ASSERT_EQ_BINARY(occa::json::string_,         \
+                   j.type);                     \
+  ASSERT_EQ(expected_str_,                      \
+            j.value_.string)
+
   occa::json j;
 
   // Normal strings
-  j.load("\"A\"");
-  ASSERT_EQ(occa::json::string_, j.type);
-  ASSERT_EQ("A", j.value_.string);
-  j.load("'A'");
-  ASSERT_EQ(occa::json::string_, j.type);
-  ASSERT_EQ("A", j.value_.string);
-  j.load("\"A'\"");
-  ASSERT_EQ(occa::json::string_, j.type);
-  ASSERT_EQ("A'", j.value_.string);
-  j.load("'A\"'");
-  ASSERT_EQ(occa::json::string_, j.type);
-  ASSERT_EQ("A\"", j.value_.string);
+  checkString("\"A\"",
+              "A");
+  checkString("'A'",
+              "A");
+  checkString("\"A'\"",
+              "A'");
+  checkString("'A\"'",
+              "A\"");
 
   // Special chars
-  j.load("\"\\\"\"");
-  ASSERT_EQ(occa::json::string_, j.type);
-  ASSERT_EQ("\"", j.value_.string);
-  j.load("\"\\\\\"");
-  ASSERT_EQ(occa::json::string_, j.type);
-  ASSERT_EQ("\\", j.value_.string);
-  j.load("\"\\/\"");
-  ASSERT_EQ(occa::json::string_, j.type);
-  ASSERT_EQ("/", j.value_.string);
-  j.load("\"\\b\"");
-  ASSERT_EQ(occa::json::string_, j.type);
-  ASSERT_EQ("\b", j.value_.string);
-  j.load("\"\\f\"");
-  ASSERT_EQ(occa::json::string_, j.type);
-  ASSERT_EQ("\f", j.value_.string);
-  j.load("\"\\n\"");
-  ASSERT_EQ(occa::json::string_, j.type);
-  ASSERT_EQ("\n", j.value_.string);
-  j.load("\"\\r\"");
-  ASSERT_EQ(occa::json::string_, j.type);
-  ASSERT_EQ("\r", j.value_.string);
-  j.load("\"\\t\"");
-  ASSERT_EQ(occa::json::string_, j.type);
-  ASSERT_EQ("\t", j.value_.string);
+  checkString("\"\\\"\"",
+              "\"");
+  checkString("\"\\\\\"",
+              "\\");
+  checkString("\"\\/\"",
+              "/");
+  checkString("\"\\b\"",
+              "\b");
+  checkString("\"\\f\"",
+              "\f");
+  checkString("\"\\n\"",
+              "\n");
+  checkString("\"\\r\"",
+              "\r");
+  checkString("\"\\t\"",
+              "\t");
 
   // Escape newline
-  j.load("\"A\\\nB\"");
-  ASSERT_EQ(occa::json::string_, j.type);
-  ASSERT_EQ("AB", j.value_.string);
+  checkString("\"A\\\nB\"",
+              "AB");
 
   // Test unicode
-  j.load("\"\\u0123 \\u4567 \\u89AB \\uCDEF\"");
-  ASSERT_EQ(occa::json::string_, j.type);
-  ASSERT_EQ("\\u0123 \\u4567 \\u89AB \\uCDEF",
-            j.value_.string);
+  checkString("\"\\u0123 \\u4567 \\u89AB \\uCDEF\"",
+              "\\u0123 \\u4567 \\u89AB \\uCDEF");
+  checkString("\"\\u0123 \\u4567 \\u89ab \\ucdef\"",
+              "\\u0123 \\u4567 \\u89ab \\ucdef");
 
-  j.load("\"\\u0123 \\u4567 \\u89ab \\ucdef\"");
-  ASSERT_EQ(occa::json::string_, j.type);
-  ASSERT_EQ("\\u0123 \\u4567 \\u89ab \\ucdef",
-            j.value_.string);
+#undef checkString
 }
 
 void testNumber() {
+#define checkNumber(str_, type_, expected_number_) \
+  j.load(str_);                                    \
+  ASSERT_EQ_BINARY(occa::json::number_,            \
+                   j.type);                        \
+  ASSERT_EQ(expected_number_,                      \
+            (type_) j.value_.number)
+
   occa::json j;
 
-  j.load("-10");
-  ASSERT_EQ(occa::json::number_, j.type);
-  ASSERT_EQ(-10, (int) j.value_.number);
-  j.load("10");
-  ASSERT_EQ(occa::json::number_, j.type);
-  ASSERT_EQ(10, (int) j.value_.number);
-  j.load("0.1");
-  ASSERT_EQ(occa::json::number_, j.type);
-  ASSERT_EQ(0.1, (double) j.value_.number);
-  j.load("0.1e10");
-  ASSERT_EQ(occa::json::number_, j.type);
-  ASSERT_EQ(0.1e10, (double) j.value_.number);
-  j.load("0.1E10");
-  ASSERT_EQ(occa::json::number_, j.type);
-  ASSERT_EQ(0.1E10, (double) j.value_.number);
-  j.load("0.1e-10");
-  ASSERT_EQ(occa::json::number_, j.type);
-  ASSERT_EQ(0.1e-10, (double) j.value_.number);
-  j.load("0.1E-10");
-  ASSERT_EQ(occa::json::number_, j.type);
-  ASSERT_EQ(0.1E-10, (double) j.value_.number);
-  j.load("0.1e+10");
-  ASSERT_EQ(occa::json::number_, j.type);
-  ASSERT_EQ(0.1e+10, (double) j.value_.number);
-  j.load("0.1E+10");
-  ASSERT_EQ(occa::json::number_, j.type);
-  ASSERT_EQ(0.1E+10, (double) j.value_.number);
+  checkNumber("-10",
+              int, -10);
+
+  checkNumber("10",
+              int, 10);
+
+  checkNumber("0.1",
+              double, 0.1);
+
+  checkNumber("0.1e10",
+              double, 0.1e10);
+
+  checkNumber("0.1E10",
+              double, 0.1E10);
+
+  checkNumber("0.1e-10",
+              double, 0.1e-10);
+
+  checkNumber("0.1E-10",
+              double, 0.1E-10);
+
+  checkNumber("0.1e+10",
+              double, 0.1e+10);
+
+  checkNumber("0.1E+10",
+              double, 0.1E+10);
+
+#undef checkNumber
 }
 
 void testObject() {
+#define loadObject(str_, expected_size_)        \
+  j.load(str_);                                 \
+  ASSERT_EQ_BINARY(occa::json::object_,         \
+                   j.type);                     \
+  ASSERT_EQ(expected_size_,                     \
+            (int) j.value_.object.size())
+
+#define checkNumber(key_, type_, expected_number_)      \
+  ASSERT_EQ(occa::json::number_,                        \
+            j.value_.object[key_].type);                \
+  ASSERT_EQ(expected_number_,                           \
+            (type_) j.value_.object[key_].value_.number)
+
   occa::json j;
 
-  j.load("{\"0\":0, \"1\":1}");
-  ASSERT_EQ(occa::json::object_, j.type);
-  ASSERT_EQ(2, (int) j.value_.object.size());
-  ASSERT_EQ(0, (int) j.value_.object["0"]);
-  ASSERT_EQ(1, (int) j.value_.object["1"]);
+  loadObject("{\"0\":0, \"1\":1}", 2);
+  checkNumber("0", int, 0);
+  checkNumber("1", int, 1);
 
-  j.load("{\"0\":0, \"1\":1,}");
-  ASSERT_EQ(occa::json::object_, j.type);
-  ASSERT_EQ(2, (int) j.value_.object.size());
-  ASSERT_EQ(occa::json::number_, j.value_.object["0"].type);
-  ASSERT_EQ(occa::json::number_, j.value_.object["1"].type);
-  ASSERT_EQ(0, (int) j.value_.object["0"]);
-  ASSERT_EQ(1, (int) j.value_.object["1"]);
+  loadObject("{\"0\":0, \"1\":1,}", 2);
+  checkNumber("0", int, 0);
+  checkNumber("1", int, 1);
 
   // Short-hand notation
-  j.load("{0:0, 1:1}");
-  ASSERT_EQ(occa::json::object_, j.type);
-  ASSERT_EQ(2, (int) j.value_.object.size());
-  ASSERT_EQ(0, (int) j.value_.object["0"]);
-  ASSERT_EQ(1, (int) j.value_.object["1"]);
+  loadObject("{0:0, 1:1}", 2);
+  checkNumber("0", int, 0);
+  checkNumber("1", int, 1);
 
-  j.load("{0:0, 1:1,}");
-  ASSERT_EQ(occa::json::object_, j.type);
-  ASSERT_EQ(2, (int) j.value_.object.size());
-  ASSERT_EQ(occa::json::number_, j.value_.object["0"].type);
-  ASSERT_EQ(occa::json::number_, j.value_.object["1"].type);
-  ASSERT_EQ(0, (int) j.value_.object["0"]);
-  ASSERT_EQ(1, (int) j.value_.object["1"]);
+  loadObject("{0:0, 1:1,}", 2);
+  checkNumber("0", int, 0);
+  checkNumber("1", int, 1);
 
   // Test path
-  j.load("{0: {1: {2: {3: 3}}}}");
+  loadObject("{0: {1: {2: {3: 3}}}}", 1);
   ASSERT_EQ(3, (int) j["0/1/2/3"]);
+
+#undef loadObject
+#undef checkNumber
 }
 
 void testArray() {
+#define loadArray(str_, expected_size_)         \
+  j.load(str_);                                 \
+  ASSERT_EQ(occa::json::array_,                 \
+            j.type);                            \
+  ASSERT_EQ(expected_size_,                     \
+            (int) j.value_.array.size())
+
+#define checkNumber(index_, type_, expected_number_)  \
+  ASSERT_EQ(occa::json::number_,                      \
+            j.value_.array[index_].type);             \
+  ASSERT_EQ(expected_number_,                         \
+            (type_) j.value_.array[index_].value_.number)
+
   occa::json j;
 
-  j.load("[1, 2]");
-  ASSERT_EQ(occa::json::array_, j.type);
-  ASSERT_EQ(2, (int) j.value_.array.size());
+  loadArray("[1, 2]", 2);
+  checkNumber(0, int, 1);
+  checkNumber(1, int, 2);
 
-  ASSERT_EQ(occa::json::number_, j.value_.array[0].type);
-  ASSERT_EQ(occa::json::number_, j.value_.array[1].type);
-  ASSERT_EQ(1, (int) j.value_.array[0]);
-  ASSERT_EQ(2, (int) j.value_.array[1]);
+  loadArray("[1, 2,]", 2);
+  checkNumber(0, int, 1);
+  checkNumber(1, int, 2);
 
-  j.load("[1, 2,]");
-  ASSERT_EQ(occa::json::array_, j.type);
-  ASSERT_EQ(2, (int) j.value_.array.size());
-
-  ASSERT_EQ(occa::json::number_, j.value_.array[0].type);
-  ASSERT_EQ(occa::json::number_, j.value_.array[1].type);
-  ASSERT_EQ(1, (int) j.value_.array[0]);
-  ASSERT_EQ(2, (int) j.value_.array[1]);
+#undef loadArray
+#undef checkNumber
 }
 
 void testKeywords() {
   occa::json j;
 
   j.load("true");
-  ASSERT_EQ(occa::json::boolean_, j.type);
-  ASSERT_EQ(true, j.value_.boolean);
+  ASSERT_EQ(occa::json::boolean_,
+            j.type);
+  ASSERT_EQ(true,
+            j.value_.boolean);
+
   j.load("false");
-  ASSERT_EQ(occa::json::boolean_, j.type);
-  ASSERT_EQ(false, j.value_.boolean);
+  ASSERT_EQ(occa::json::boolean_,
+            j.type);
+  ASSERT_EQ(false,
+            j.value_.boolean);
+
   j.load("null");
-  ASSERT_EQ(occa::json::null_, j.type);
+  ASSERT_EQ(occa::json::null_,
+            j.type);
 }
 
 void testMethods() {
   occa::json j;
 
+  // Initialize
+  ASSERT_FALSE(j.isInitialized());
+  j = occa::json::parse("1");
+  ASSERT_TRUE(j.isInitialized());
+
+  // Key method
   j.load("{ a: 1, b: 2 }");
   occa::strVector keys = j.keys();
   ASSERT_EQ(2, (int) keys.size());
   ASSERT_EQ("a", keys[0]);
   ASSERT_EQ("b", keys[1]);
+
+  // operator +=
+  j.load("1");
+  j += 10;
+  ASSERT_EQ((int) 11,
+            (int) j);
+
+  j.load("'1'");
+  j += "1";
+  ASSERT_EQ("11",
+            j.string());
+
+  j.load("false");
+  j += true;
+  ASSERT_EQ(true,
+            (bool) j);
+
+  // Default get
+  j = occa::json();
+  ASSERT_EQ(occa::json::none_,
+            j["hi"].type);
+}
+
+void testSize() {
+  occa::json j = occa::json::parse(
+    "{"
+    "  string: 'string',"
+    "  number: 1,"
+    "  object: { a:0, b:1 },"
+    "  array: [0, 1, 2],"
+    "  boolean: true,"
+    "  null: null,"
+    "}"
+  );
+
+  ASSERT_EQ(0,
+            j["none"].size());
+  ASSERT_EQ(1,
+            j["string"].size());
+  ASSERT_EQ(1,
+            j["number"].size());
+  ASSERT_EQ(2,
+            j["object"].size());
+  ASSERT_EQ(3,
+            j["array"].size());
+  ASSERT_EQ(1,
+            j["boolean"].size());
+  ASSERT_EQ(1,
+            j["null"].size());
+}
+
+void testConversions() {
+  occa::json j;
+  j.load("{"
+         "  zero: 0,"
+         "  one: 1,"
+         "  two: 2.0,"
+         "  false: false,"
+         "  true: true,"
+         "  null: null,"
+         "}");
+
+  // Test 0
+  ASSERT_EQ((bool) false,
+            (bool) j["zero"]);
+
+  ASSERT_EQ((int) 0,
+            (int) j["zero"]);
+
+  ASSERT_EQ((float) 0,
+            (float) j["zero"]);
+
+  ASSERT_EQ((double) 0,
+            (double) j["zero"]);
+
+  // Test 1
+  ASSERT_EQ((bool) true,
+            (bool) j["one"]);
+
+  ASSERT_EQ((int) 1,
+            (int) j["one"]);
+
+  ASSERT_EQ((float) 1,
+            (float) j["one"]);
+
+  ASSERT_EQ((double) 1,
+            (double) j["one"]);
+
+  // Test 2.0
+  ASSERT_EQ((bool) true,
+            (bool) j["two"]);
+
+  ASSERT_EQ((int) 2,
+            (int) j["two"]);
+
+  ASSERT_EQ((float) 2,
+            (float) j["two"]);
+
+  ASSERT_EQ((double) 2,
+            (double) j["two"]);
+
+  // Test true
+  ASSERT_EQ((bool) true,
+            (bool) j["true"]);
+
+  ASSERT_EQ((int) 1,
+            (int) j["true"]);
+
+  ASSERT_EQ((float) 1,
+            (float) j["true"]);
+
+  ASSERT_EQ((double) 1,
+            (double) j["true"]);
+
+  // Test false
+  ASSERT_EQ((bool) false,
+            (bool) j["false"]);
+
+  ASSERT_EQ((int) 0,
+            (int) j["false"]);
+
+  ASSERT_EQ((float) 0,
+            (float) j["false"]);
+
+  ASSERT_EQ((double) 0,
+            (double) j["false"]);
+
+  // Test null
+  ASSERT_EQ((bool) false,
+            (bool) j["null"]);
+
+  ASSERT_EQ((int) 0,
+            (int) j["null"]);
+
+  ASSERT_EQ((float) 0,
+            (float) j["null"]);
+
+  ASSERT_EQ((double) 0,
+            (double) j["null"]);
 }

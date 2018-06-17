@@ -219,8 +219,7 @@ namespace occa {
         io::cacheFile(filename,
                       kc::rawSourceFile,
                       kernelHash,
-                      assembleHeader(kernelProps),
-                      kernelProps["footer"].string())
+                      assembleHeader(kernelProps))
       );
 
       if (kernelProps.get("okl", true)) {

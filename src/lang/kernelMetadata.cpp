@@ -30,7 +30,7 @@ namespace occa {
       isConst(isConst_) {}
 
     argumentInfo argumentInfo::fromJson(const json &j) {
-      return argumentInfo(j["isConst"].boolean());
+      return argumentInfo((bool) j["isConst"]);
     }
 
     json argumentInfo::toJson() const {
