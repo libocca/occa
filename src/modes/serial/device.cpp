@@ -38,7 +38,7 @@ namespace occa {
       std::string compiler, compilerFlags, compilerEnvScript;
 
       if (properties.get<std::string>("kernel/compiler").size()) {
-        compiler = properties["kernel/compiler"].string();
+        compiler = (std::string) properties["kernel/compiler"];
       } else if (env::var("OCCA_CXX").size()) {
         compiler = env::var("OCCA_CXX");
       } else if (env::var("CXX").size()) {
@@ -54,7 +54,7 @@ namespace occa {
       vendor = sys::compilerVendor(compiler);
 
       if (properties.get<std::string>("kernel/compilerFlags").size()) {
-        compilerFlags = properties["kernel/compilerFlags"].string();
+        compilerFlags = (std::string) properties["kernel/compilerFlags"];
       } else if (env::var("OCCA_CXXFLAGS").size()) {
         compilerFlags = env::var("OCCA_CXXFLAGS");
       } else if (env::var("CXXFLAGS").size()) {
@@ -68,7 +68,7 @@ namespace occa {
       }
 
       if (properties.get<std::string>("kernel/compilerEnvScript").size()) {
-        compilerEnvScript = properties["kernel/compilerEnvScript"].string();
+        compilerEnvScript = (std::string) properties["kernel/compilerEnvScript"];
       } else {
 #if (OCCA_OS == OCCA_WINDOWS_OS)
         std::string byteness;
@@ -234,14 +234,14 @@ namespace occa {
       }
 
       std::stringstream command;
-      const std::string &compilerEnvScript = kernelProps["compilerEnvScript"].string();
+      std::string compilerEnvScript = kernelProps["compilerEnvScript"];
       if (compilerEnvScript.size()) {
         command << compilerEnvScript << " && ";
       }
 
 #if (OCCA_OS & (OCCA_LINUX_OS | OCCA_MACOS_OS))
-      command << kernelProps["compiler"].string()
-              << ' '    << kernelProps["compilerFlags"].string()
+      command << (std::string) kernelProps["compiler"]
+              << ' '    << (std::string) kernelProps["compilerFlags"]
               << ' '    << sourceFilename
               << " -o " << binaryFilename
               << " -I"  << env::OCCA_DIR << "include"

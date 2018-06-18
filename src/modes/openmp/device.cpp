@@ -71,7 +71,7 @@ namespace occa {
 
       occa::properties allKernelProps = properties + kernelProps;
 
-      std::string compiler = allKernelProps["compiler"].string();
+      std::string compiler = allKernelProps["compiler"];
       int vendor = allKernelProps["vendor"];
       // Check if we need to re-compute the vendor
       if (kernelProps.has("compiler")) {
@@ -83,16 +83,14 @@ namespace occa {
         lastCompilerOpenMPFlag = openmp::compilerFlag(vendor, compiler);
 
         if (lastCompilerOpenMPFlag == openmp::notSupported) {
-          std::cerr << "Compiler [" << allKernelProps["compiler"].string()
+          std::cerr << "Compiler [" << (std::string) allKernelProps["compiler"]
                     << "] does not support OpenMP, defaulting to [Serial] mode\n";
         }
       }
 
       const bool usingOpenMP = (lastCompilerOpenMPFlag != openmp::notSupported);
       if (usingOpenMP) {
-        std::string &compilerFlags = allKernelProps["compilerFlags"].string();
-        compilerFlags += ' ';
-        compilerFlags += lastCompilerOpenMPFlag;
+        allKernelProps["compilerFlags"] += " " + lastCompilerOpenMPFlag;
       }
 
       kernel_v *k = serial::device::buildKernel(filename,

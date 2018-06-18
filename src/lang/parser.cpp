@@ -204,13 +204,7 @@ namespace occa {
           const std::string &define = it->first;
           json &value = it->second;
 
-          std::string valueStr;
-          if (value.isString()) {
-            valueStr = value.string();
-          } else {
-            valueStr = value.toString();
-          }
-          preprocessor.addSourceDefine(define, valueStr);
+          preprocessor.addSourceDefine(define, value);
 
           ++it;
         }

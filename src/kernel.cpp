@@ -237,18 +237,13 @@ namespace occa {
 
     // Add defines
     const jsonObject &defines = props["defines"].object();
-    cJsonObjectIterator it = defines.begin();
+    jsonObject::const_iterator it = defines.begin();
     while (it != defines.end()) {
       header += "#define ";
       header += ' ';
       header += it->first;
       header += ' ';
-      // Avoid the quotes wrapping the string
-      if (it->second.isString()) {
-        header += it->second.string();
-      } else {
-        header += it->second.toString();
-      }
+      header += (std::string) it->second;
       header += '\n';
       ++it;
     }
@@ -259,7 +254,7 @@ namespace occa {
     for (int i = 0; i < includeCount; ++i) {
       if (includes[i].isString()) {
         header += "#include \"";
-        header += includes[i].string();
+        header += (std::string) includes[i];
         header += "\"\n";
       }
     }
@@ -269,7 +264,7 @@ namespace occa {
     const int lineCount = (int) lines.size();
     for (int i = 0; i < lineCount; ++i) {
       if (includes[i].isString()) {
-        header += lines[i].string();
+        header += (std::string) lines[i];
         header += "\n";
       }
     }

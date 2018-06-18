@@ -56,7 +56,7 @@ namespace occa {
     kernelMetadata kernelMetadata::fromJson(const json &j) {
       kernelMetadata meta;
 
-      meta.name = j["name"].string();
+      meta.name = (std::string) j["name"];
 
       const jsonArray &argInfos = j["arguments"].array();
       const int argumentCount = (int) argInfos.size();

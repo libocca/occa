@@ -57,8 +57,8 @@ namespace occa {
 
       p2pEnabled = false;
 
-      std::string compiler = properties["kernel/compiler"].string();
-      std::string compilerFlags = properties["kernel/compilerFlags"].string();
+      std::string compiler = properties["kernel/compiler"];
+      std::string compilerFlags = properties["kernel/compilerFlags"];
 
       if (!compiler.size()) {
         if (env::var("OCCA_CUDA_COMPILER").size()) {
@@ -349,7 +349,7 @@ namespace occa {
         const int minor = archMinorVersion;
         std::stringstream ss;
         ss << " -arch=sm_" << major << minor << ' ';
-        kernelProps["compilerFlags"].string() += ss.str();
+        kernelProps["compilerFlags"] += ss.str();
       }
     }
 

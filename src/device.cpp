@@ -30,7 +30,7 @@
 namespace occa {
   //---[ device_v ]---------------------
   device_v::device_v(const occa::properties &properties_) {
-    mode = properties_["mode"].string();
+    mode = (std::string) properties_["mode"];
     properties = properties_;
 
     currentStream = NULL;
@@ -77,7 +77,7 @@ namespace occa {
   }
 
   std::string device_v::getKernelHash(kernel_v *kernel) {
-    return getKernelHash(kernel->properties["hash"].string(),
+    return getKernelHash(kernel->properties["hash"],
                          kernel->name);
   }
 
@@ -168,8 +168,10 @@ namespace occa {
     occa::properties settings_ = settings();
     occa::properties defaults;
 
-    std::string modePath = "mode/" + props["mode"].string() + "/";
-    std::string paths[2] = {"", modePath};
+    std::string paths[2] = {"", ""};
+    paths[1] = "mode/";
+    paths[1] += (std::string) props["mode"];
+    paths[1] += '/';
 
     for (int i = 0; i < 2; ++i) {
       const std::string &path = paths[i];
@@ -420,7 +422,7 @@ namespace occa {
       }
 
       json info = json::read(buildFile)["info"];
-      if (info["device/hash"].string() != devHash) {
+      if ((std::string) info["device/hash"] != devHash) {
         continue;
       }
       ++kernelsLoaded;
@@ -428,7 +430,7 @@ namespace occa {
       const std::string sourceFilename = dirs[d] + kc::parsedSourceFile;
 
       json &kInfo = info["kernel"];
-      hash_t hash = hash_t::fromString(kInfo["hash"].string());
+      hash_t hash = hash_t::fromString(kInfo["hash"]);
       jsonArray metadataArray = kInfo["metadata"].array();
       occa::properties kernelProps = kInfo["props"];
 

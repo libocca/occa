@@ -37,7 +37,7 @@ namespace occa {
         ++c;
       }
 
-      cJsonObjectIterator it = j->value_.object.find(key);
+      jsonObject::const_iterator it = j->value_.object.find(key);
       if (it == j->value_.object.end()) {
         return default_;
       }
@@ -74,7 +74,7 @@ namespace occa {
         ++c;
       }
 
-      cJsonObjectIterator it = j->value_.object.find(key);
+      jsonObject::const_iterator it = j->value_.object.find(key);
       if (it == j->value_.object.end()) {
         return default_;
       }

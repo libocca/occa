@@ -63,7 +63,7 @@ namespace occa {
       std::string compilerFlags;
 
       if (properties.has("kernel/compilerFlags")) {
-        compilerFlags = properties["kernel/compilerFlags"].string();
+        compilerFlags = (std::string) properties["kernel/compilerFlags"];
       } else if (env::var("OCCA_OPENCL_COMPILER_FLAGS").size()) {
         compilerFlags = env::var("OCCA_OPENCL_COMPILER_FLAGS");
       } else {
@@ -320,7 +320,7 @@ namespace occa {
       opencl::buildProgramFromSource(clInfo,
                                      source,
                                      kernelName,
-                                     allProps["compilerFlags"].string(),
+                                     allProps["compilerFlags"],
                                      sourceFilename,
                                      allProps,
                                      lock);
@@ -366,7 +366,7 @@ namespace occa {
         opencl::buildProgramFromBinary(clInfo,
                                        io::read(binaryFilename),
                                        kernelName,
-                                       properties["compilerFlags"].string(),
+                                       properties["compilerFlags"],
                                        lock);
       }
 
@@ -466,7 +466,7 @@ namespace occa {
       opencl::buildProgramFromBinary(clInfo,
                                      source,
                                      kernelName,
-                                     properties["compilerFlags"].string());
+                                     properties["compilerFlags"]);
 
       opencl::buildKernelFromProgram(clInfo,
                                      kernelName);

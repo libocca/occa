@@ -65,12 +65,9 @@ endif
 
 #---[ Compile Library ]---------------------------
 # Setup compiled defines and force rebuild if defines changed
-NEW_COMPILED_DEFINES     := $(OCCA_DIR)/include/occa/defines/compiledDefines.hpp
-OLD_COMPILED_DEFINES     := $(OCCA_DIR)/.old_compiledDefines
-COMPILED_DEFINES_CHANGED := $(OCCA_DIR)/.compiledDefinesChanged
+COMPILED_DEFINES     := $(OCCA_DIR)/include/occa/defines/compiledDefines.hpp
+NEW_COMPILED_DEFINES := $(OCCA_DIR)/.compiledDefines
 
-MAKE_COMPILED_DEFINES := $(shell touch "$(NEW_COMPILED_DEFINES)")
-MAKE_COMPILED_DEFINES := $(shell cp "$(NEW_COMPILED_DEFINES)" "$(OLD_COMPILED_DEFINES)")
 MAKE_COMPILED_DEFINES := $(shell cat "$(OCCA_DIR)/scripts/compiledDefinesTemplate.hpp" | \
                                  sed "s,@@OCCA_OS@@,$(OCCA_OS),g;\
                                       s,@@OCCA_USING_VS@@,$(OCCA_USING_VS),g;\
@@ -79,8 +76,8 @@ MAKE_COMPILED_DEFINES := $(shell cat "$(OCCA_DIR)/scripts/compiledDefinesTemplat
                                       s,@@OCCA_OPENMP_ENABLED@@,$(OCCA_OPENMP_ENABLED),g;\
                                       s,@@OCCA_OPENCL_ENABLED@@,$(OCCA_OPENCL_ENABLED),g;\
                                       s,@@OCCA_CUDA_ENABLED@@,$(OCCA_CUDA_ENABLED),g;" > "$(NEW_COMPILED_DEFINES)")
-MAKE_COMPILED_DEFINES := $(shell [ -n "$(shell diff -q $(OLD_COMPILED_DEFINES) $(NEW_COMPILED_DEFINES))" ] && touch "$(COMPILED_DEFINES_CHANGED)")
-MAKE_COMPILED_DEFINES := $(shell rm $(OLD_COMPILED_DEFINES))
+MAKE_COMPILED_DEFINES := $(shell [ -n "$(shell diff -q $(COMPILED_DEFINES) $(NEW_COMPILED_DEFINES))" ] && cp "$(NEW_COMPILED_DEFINES)" "$(COMPILED_DEFINES)")
+# MAKE_COMPILED_DEFINES := $(shell rm $(NEW_COMPILED_DEFINES))
 
 all: $(objects) $(outputs)
 	@(. $(OCCA_DIR)/scripts/shellTools.sh && installOcca)
@@ -93,7 +90,7 @@ $(COMPILED_DEFINES_CHANGED):
 
 #---[ Builds ]------------------------------------
 #  ---[ libocca ]-------------
-$(libPath)/libocca.so:$(objects) $(headers) $(COMPILED_DEFINES_CHANGED)
+$(libPath)/libocca.so:$(objects) $(headers) $(COMPILED_DEFINES)
 	mkdir -p $(libPath)
 	$(compiler) $(compilerFlags) $(sharedFlag) $(pthreadFlag) -o $(libPath)/libocca.so $(flags) $(objects) $(paths) $(filter-out -locca, $(links))
 

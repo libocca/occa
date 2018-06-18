@@ -34,18 +34,14 @@ namespace occa {
   class json;
 
   typedef std::map<std::string, json> jsonObject;
-  typedef jsonObject::iterator        jsonObjectIterator;
-  typedef jsonObject::const_iterator  cJsonObjectIterator;
-
-  typedef std::vector<json>       jsonArray;
-  typedef std::vector<const json> cJsonArray_t;
+  typedef std::vector<json>           jsonArray;
 
   typedef struct {
-    std::string string;
-    primitive number;
-    jsonObject object;
-    jsonArray array;
     bool boolean;
+    primitive number;
+    std::string string;
+    jsonArray array;
+    jsonObject object;
   } jsonValue_t;
 
   class json {
@@ -54,12 +50,12 @@ namespace occa {
 
     enum type_t {
       none_    = (1 << 0),
-      string_  = (1 << 1),
-      number_  = (1 << 2),
-      object_  = (1 << 3),
-      array_   = (1 << 4),
-      boolean_ = (1 << 5),
-      null_    = (1 << 6)
+      null_    = (1 << 1),
+      boolean_ = (1 << 2),
+      number_  = (1 << 3),
+      string_  = (1 << 4),
+      array_   = (1 << 5),
+      object_  = (1 << 6)
     };
 
     type_t type;
@@ -248,6 +244,12 @@ namespace occa {
     json& load(const char *&c);
     json& load(const std::string &s);
 
+    std::string dump(const int indent = 2) const;
+
+    void dumpToString(std::string &out,
+                      const std::string &indent = "",
+                      const std::string &currentIndent = "") const;
+
     static json parse(const char *&c);
     static json parse(const std::string &s);
 
@@ -294,74 +296,92 @@ namespace occa {
       return (type == null_);
     }
 
-    inline json& asString() {
-      type = string_;
-      return *this;
-    }
-
-    inline json& asNumber() {
-      type = number_;
-      return *this;
-    }
-
-    inline json& asObject() {
-      type = object_;
-      return *this;
-    }
-
-    inline json& asArray() {
-      type = array_;
-      return *this;
-    }
-
-    inline json& asBoolean() {
-      type = boolean_;
-      return *this;
-    }
-
     inline json& asNull() {
+      if (type & ~(none_ | null_)) {
+        clear();
+      }
       type = null_;
       return *this;
     }
 
-    inline std::string& string() {
-      return value_.string;
+    inline json& asBoolean() {
+      if (type & ~(none_ | boolean_)) {
+        clear();
+      }
+      type = boolean_;
+      return *this;
     }
 
-    inline primitive& number() {
-      return value_.number;
+    inline json& asNumber() {
+      if (type & ~(none_ | number_)) {
+        clear();
+      }
+      type = number_;
+      return *this;
     }
 
-    inline jsonObject& object() {
-      return value_.object;
+    inline json& asString() {
+      if (type & ~(none_ | string_)) {
+        clear();
+      }
+      type = string_;
+      return *this;
     }
 
-    inline jsonArray& array() {
-      return value_.array;
+    inline json& asArray() {
+      if (type & ~(none_ | array_)) {
+        clear();
+      }
+      type = array_;
+      return *this;
+    }
+
+    inline json& asObject() {
+      if (type & ~(none_ | object_)) {
+        clear();
+      }
+      type = object_;
+      return *this;
     }
 
     inline bool& boolean() {
       return value_.boolean;
     }
 
-    inline const std::string& string() const {
+    inline primitive& number() {
+      return value_.number;
+    }
+
+    inline std::string& string() {
       return value_.string;
+    }
+
+    inline jsonArray& array() {
+      return value_.array;
+    }
+
+    inline jsonObject& object() {
+      return value_.object;
+    }
+
+    inline bool boolean() const {
+      return value_.boolean;
     }
 
     inline const primitive& number() const {
       return value_.number;
     }
 
-    inline const jsonObject& object() const {
-      return value_.object;
+    inline const std::string& string() const {
+      return value_.string;
     }
 
     inline const jsonArray& array() const {
       return value_.array;
     }
 
-    inline bool boolean() const {
-      return value_.boolean;
+    inline const jsonObject& object() const {
+      return value_.object;
     }
 
     json& operator [] (const char *c);
@@ -417,18 +437,18 @@ namespace occa {
       switch (type) {
       case none_:
         return true;
-      case string_:
-        return value_.string == j.value_.string;
-      case number_:
-        return primitive::equal(value_.number, j.value_.number);
-      case object_:
-        return value_.object == j.value_.object;
-      case array_:
-        return value_.array == j.value_.array;
-      case boolean_:
-        return value_.boolean == j.value_.boolean;
       case null_:
         return true;
+      case boolean_:
+        return value_.boolean == j.value_.boolean;
+      case number_:
+        return primitive::equal(value_.number, j.value_.number);
+      case string_:
+        return value_.string == j.value_.string;
+      case array_:
+        return value_.array == j.value_.array;
+      case object_:
+        return value_.object == j.value_.object;
       default:
         return false;
       }
@@ -438,16 +458,16 @@ namespace occa {
       switch (type) {
       case none_:
         return false;
-      case string_:
-        return value_.string.size();
-      case number_:
-        return value_.number;
-      case object_:
-        return value_.object.size();
-      case array_:
-        return value_.array.size();
       case boolean_:
         return value_.boolean;
+      case number_:
+        return value_.number;
+      case string_:
+        return value_.string.size();
+      case object_:
+        return true;
+      case array_:
+        return true;
       default:
         return false;
       }
@@ -455,10 +475,10 @@ namespace occa {
 
     inline operator uint8_t () const {
       switch (type) {
-      case number_:
-        return (uint8_t) value_.number;
       case boolean_:
         return value_.boolean;
+      case number_:
+        return (uint8_t) value_.number;
       default:
         return 0;
       }
@@ -466,10 +486,10 @@ namespace occa {
 
     inline operator uint16_t () const {
       switch (type) {
-      case number_:
-        return (uint16_t) value_.number;
       case boolean_:
         return value_.boolean;
+      case number_:
+        return (uint16_t) value_.number;
       default:
         return 0;
       }
@@ -477,10 +497,10 @@ namespace occa {
 
     inline operator uint32_t () const {
       switch (type) {
-      case number_:
-        return (uint32_t) value_.number;
       case boolean_:
         return value_.boolean;
+      case number_:
+        return (uint32_t) value_.number;
       default:
         return 0;
       }
@@ -488,10 +508,10 @@ namespace occa {
 
     inline operator uint64_t () const {
       switch (type) {
-      case number_:
-        return (uint64_t) value_.number;
       case boolean_:
         return value_.boolean;
+      case number_:
+        return (uint64_t) value_.number;
       default:
         return 0;
       }
@@ -499,10 +519,10 @@ namespace occa {
 
     inline operator int8_t () const {
       switch (type) {
-      case number_:
-        return (int8_t) value_.number;
       case boolean_:
         return value_.boolean;
+      case number_:
+        return (int8_t) value_.number;
       default:
         return 0;
       }
@@ -510,10 +530,10 @@ namespace occa {
 
     inline operator int16_t () const {
       switch (type) {
-      case number_:
-        return (int16_t) value_.number;
       case boolean_:
         return value_.boolean;
+      case number_:
+        return (int16_t) value_.number;
       default:
         return 0;
       }
@@ -521,10 +541,10 @@ namespace occa {
 
     inline operator int32_t () const {
       switch (type) {
-      case number_:
-        return (int32_t) value_.number;
       case boolean_:
         return value_.boolean;
+      case number_:
+        return (int32_t) value_.number;
       default:
         return 0;
       }
@@ -532,10 +552,10 @@ namespace occa {
 
     inline operator int64_t () const {
       switch (type) {
-      case number_:
-        return (int64_t) value_.number;
       case boolean_:
         return value_.boolean;
+      case number_:
+        return (int64_t) value_.number;
       default:
         return 0;
       }
@@ -543,10 +563,10 @@ namespace occa {
 
     inline operator float () const {
       switch (type) {
-      case number_:
-        return (float) value_.number;
       case boolean_:
         return value_.boolean;
+      case number_:
+        return (float) value_.number;
       default:
         return 0;
       }
@@ -554,26 +574,22 @@ namespace occa {
 
     inline operator double () const {
       switch (type) {
-      case number_:
-        return (double) value_.number;
       case boolean_:
         return value_.boolean;
+      case number_:
+        return (double) value_.number;
       default:
         return 0;
       }
     }
 
     inline operator std::string () const {
-      return value_.string;
+      return toString();
     }
 
     hash_t hash() const;
 
-    std::string toString(const int indent = 2) const;
-
-    void toString(std::string &out,
-                  const std::string &indent = "  ",
-                  const std::string &currentIndent = "") const;
+    std::string toString() const;
 
     friend std::ostream& operator << (std::ostream &out,
                                       const json &j);

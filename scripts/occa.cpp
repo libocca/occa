@@ -197,7 +197,7 @@ bool runClear(const occa::cli::command &command,
               occa::jsonObject options,
               occa::jsonArray arguments) {
 
-  occa::cJsonObjectIterator it = options.begin();
+  occa::jsonObject::const_iterator it = options.begin();
 
   if (it == options.end()) {
     return false;
@@ -213,7 +213,7 @@ bool runClear(const occa::cli::command &command,
         const occa::jsonArray &libs = libGroups[i].array();
         for (int j = 0; j < (int) libs.size(); ++j) {
           removedSomething |= removeDir(occa::io::libraryPath() +
-                                        libs[j].string(),
+                                        (std::string) libs[j],
                                         promptCheck);
         }
       }
@@ -238,7 +238,7 @@ bool runVersion(const occa::cli::command &command,
                 occa::jsonObject options,
                 occa::jsonArray arguments) {
 
-  occa::cJsonObjectIterator it = options.begin();
+  occa::jsonObject::const_iterator it = options.begin();
   if (it == options.end()) {
     std::cout << OCCA_VERSION_STR << '\n';
   }
@@ -252,12 +252,14 @@ bool runCache(const occa::cli::command &command,
               occa::jsonArray order,
               occa::jsonObject options,
               occa::jsonArray arguments) {
-  std::string libDir = occa::io::libraryPath() + arguments[0].string() + "/";
+  std::string libDir = (occa::io::libraryPath()
+                        + (std::string) arguments[0]
+                        + "/");
   occa::sys::mkpath(libDir);
 
   const int fileCount = arguments.size();
   for (int i = 1; i < fileCount; ++i) {
-    const std::string &srcFile = arguments[i].string();
+    const std::string srcFile = arguments[i];
     const std::string destFile = libDir + occa::io::basename(srcFile);
 
     if (!occa::sys::fileExists(srcFile)) {

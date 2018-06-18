@@ -38,7 +38,7 @@ namespace occa {
   }
 
   mode_v* getMode(const occa::properties &props) {
-    std::string mode = props["mode"].string();
+    std::string mode = props["mode"];
     const bool noMode = !mode.size();
     if (noMode || !modeIsEnabled(mode)) {
       if (noMode) {

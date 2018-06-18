@@ -295,18 +295,18 @@ void testSize() {
 
   ASSERT_EQ(0,
             j["none"].size());
-  ASSERT_EQ(1,
-            j["string"].size());
-  ASSERT_EQ(1,
+  ASSERT_EQ(0,
+            j["null"].size());
+  ASSERT_EQ(0,
+            j["boolean"].size());
+  ASSERT_EQ(0,
             j["number"].size());
-  ASSERT_EQ(2,
-            j["object"].size());
+  ASSERT_EQ(6,
+            j["string"].size());
   ASSERT_EQ(3,
             j["array"].size());
-  ASSERT_EQ(1,
-            j["boolean"].size());
-  ASSERT_EQ(1,
-            j["null"].size());
+  ASSERT_EQ(2,
+            j["object"].size());
 }
 
 void testConversions() {

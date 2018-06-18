@@ -75,6 +75,127 @@ namespace occa {
     return *this;
   }
 
+  std::string json::dump(const int indent) const {
+    const int indent_ = indent >= 0 ? indent : 2;
+
+    std::string out;
+    std::string indentStr(indent_, ' ');
+    dumpToString(out, indentStr);
+    return out;
+  }
+
+  void json::dumpToString(std::string &out,
+                          const std::string &indent,
+                          const std::string &currentIndent) const {
+    switch(type) {
+    case none_: {
+      return;
+    }
+    case null_: {
+      out += "null";
+      break;
+    }
+    case boolean_: {
+      out += value_.boolean ? "true" : "false";
+      break;
+    }
+    case number_: {
+      out += value_.number.toString();
+      break;
+    }
+    case string_: {
+      out += '"';
+      const int chars = (int) value_.string.size();
+      for (int i = 0; i < chars; ++i) {
+        const char c = value_.string[i];
+        switch (c) {
+        case '"' : out += "\\\"";  break;
+        case '\\': out += "\\\\";  break;
+        case '\b': out += "\\b";  break;
+        case '\f': out += "\\f";  break;
+        case '\n': out += "\\n";  break;
+        case '\r': out += "\\r";  break;
+        case '\t': out += "\\t";  break;
+        default:
+          out += c;
+        }
+      }
+      out += '"';
+      break;
+    }
+    case array_: {
+      out += '[';
+      const int arraySize = (int) value_.array.size();
+      if (arraySize) {
+        std::string newIndent = currentIndent + indent;
+        if (indent.size()) {
+          out += '\n';
+        }
+        for (int i = 0; i < arraySize; ++i) {
+          out += newIndent;
+          value_.array[i].dumpToString(out, indent, newIndent);
+          if (i < (arraySize - 1)) {
+            if (indent.size()) {
+              out += ",\n";
+            } else {
+              out += ", ";
+            }
+          } else if (indent.size()) {
+            out += '\n';
+          }
+        }
+        out += currentIndent;
+      }
+      out += ']';
+      break;
+    }
+    case object_: {
+      if (!value_.object.size()) {
+        out += "{}";
+        break;
+      }
+      jsonObject::const_iterator it = value_.object.begin();
+      out += '{';
+      if (it != value_.object.end()) {
+        std::string newIndent = currentIndent + indent;
+        if (indent.size()) {
+          out += '\n';
+        }
+        while (it != value_.object.end()) {
+          const std::string &key = it->first;
+          const json &value = it->second;
+
+          out += newIndent;
+          out += '"';
+          out += key;
+          out += "\": ";
+          if (value.type != none_) {
+            value.dumpToString(out, indent, newIndent);
+          } else {
+            // Temporary until jsonRef
+            out += "{}";
+          }
+
+          ++it;
+          if (it != value_.object.end()) {
+            if (indent.size()) {
+              out += ",\n";
+            } else {
+              out += ", ";
+            }
+          } else if (indent.size()) {
+            out += '\n';
+          }
+        }
+      }
+      if (indent.size()) {
+        out += currentIndent;
+      }
+      out += '}';
+      break;
+    }}
+  }
+
   json json::parse(const char *&c) {
     json j;
     j.load(c);
@@ -94,7 +215,7 @@ namespace occa {
   }
 
   void json::write(const std::string &filename) {
-    io::write(filename, toString());
+    io::write(filename, dump());
   }
 
   void json::loadString(const char *&c) {
@@ -284,37 +405,33 @@ namespace occa {
                (type == j.type));
 
     switch(type) {
-    case none_: {
-      break;
-    }
-    case string_: {
-      value_.string += j.value_.string;
+    case none_: break;
+    case null_: break;
+    case boolean_: {
+      value_.boolean |= j.value_.boolean;
       break;
     }
     case number_: {
       primitive::addEq(value_.number, j.value_.number);
       break;
     }
-    case object_: {
-      mergeWithObject(j.value_.object);
+    case string_: {
+      value_.string += j.value_.string;
       break;
     }
     case array_: {
       value_.array.push_back(j);
       break;
     }
-    case boolean_: {
-      value_.boolean |= j.value_.boolean;
-      break;
-    }
-    case null_: {
+    case object_: {
+      mergeWithObject(j.value_.object);
       break;
     }}
     return *this;
   }
 
   void json::mergeWithObject(const jsonObject &obj) {
-    cJsonObjectIterator it = obj.begin();
+    jsonObject::const_iterator it = obj.begin();
     while (it != obj.end()) {
       const std::string &key = it->first;
       const json &val = it->second;
@@ -351,7 +468,7 @@ namespace occa {
         ++c;
       }
 
-      cJsonObjectIterator it = j->value_.object.find(key);
+      jsonObject::const_iterator it = j->value_.object.find(key);
       if (it == j->value_.object.end()) {
         return false;
       }
@@ -410,7 +527,7 @@ namespace occa {
         ++c;
       }
 
-      cJsonObjectIterator it = j->value_.object.find(key);
+      jsonObject::const_iterator it = j->value_.object.find(key);
       if (it == j->value_.object.end()) {
         return default_;
       }
@@ -443,23 +560,23 @@ namespace occa {
     case none_: {
       return 0;
     }
-    case string_: {
-      return 1;
+    case null_: {
+      return 0;
+    }
+    case boolean_: {
+      return 0;
     }
     case number_: {
-      return 1;
+      return 0;
     }
-    case object_: {
-      return (int) value_.object.size();
+    case string_: {
+      return (int) value_.string.size();
     }
     case array_: {
       return (int) value_.array.size();
     }
-    case boolean_: {
-      return 1;
-    }
-    case null_: {
-      return 1;
+    case object_: {
+      return (int) value_.object.size();
     }}
     return 0;
   }
@@ -483,7 +600,7 @@ namespace occa {
         return *this;
       }
 
-      jsonObjectIterator it = j->value_.object.find(key);
+      jsonObject::iterator it = j->value_.object.find(key);
       if (it == j->value_.object.end()) {
         return *this;
       }
@@ -494,133 +611,22 @@ namespace occa {
 
   hash_t json::hash() const {
     std::string out;
-    toString(out);
+    dumpToString(out);
     return occa::hash(out);
   }
 
-  std::string json::toString(const int indent) const {
-    std::string out;
-    std::string indentStr(indent, ' ');
-    toString(out, indentStr);
-    return out;
-  }
-
-  void json::toString(std::string &out,
-                      const std::string &indent,
-                      const std::string &currentIndent) const {
-    switch(type) {
-    case none_: {
-      return;
+  std::string json::toString() const {
+    if (type == string_) {
+      return value_.string;
     }
-    case string_: {
-      out += '"';
-      const int chars = (int) value_.string.size();
-      for (int i = 0; i < chars; ++i) {
-        const char c = value_.string[i];
-        switch (c) {
-        case '"' : out += "\\\"";  break;
-        case '\\': out += "\\\\";  break;
-        case '\b': out += "\\b";  break;
-        case '\f': out += "\\f";  break;
-        case '\n': out += "\\n";  break;
-        case '\r': out += "\\r";  break;
-        case '\t': out += "\\t";  break;
-        default:
-          out += c;
-        }
-      }
-      out += '"';
-      break;
-    }
-    case number_: {
-      out += value_.number.toString();
-      break;
-    }
-    case object_: {
-      if (!value_.object.size()) {
-        out += "{}";
-        break;
-      }
-      cJsonObjectIterator it = value_.object.begin();
-      out += '{';
-      if (it != value_.object.end()) {
-        std::string newIndent = currentIndent + indent;
-        if (indent.size()) {
-          out += '\n';
-        }
-        while (it != value_.object.end()) {
-          const std::string &key = it->first;
-          const json &value = it->second;
-
-          out += newIndent;
-          out += '"';
-          out += key;
-          out += "\": ";
-          if (value.type != none_) {
-            value.toString(out, indent, newIndent);
-          } else {
-            // Temporary until jsonRef
-            out += "{}";
-          }
-
-          ++it;
-          if (it != value_.object.end()) {
-            if (indent.size()) {
-              out += ",\n";
-            } else {
-              out += ", ";
-            }
-          } else if (indent.size()) {
-            out += '\n';
-          }
-        }
-      }
-      if (indent.size()) {
-        out += currentIndent;
-      }
-      out += '}';
-      break;
-    }
-    case array_: {
-      out += '[';
-      const int arraySize = (int) value_.array.size();
-      if (arraySize) {
-        std::string newIndent = currentIndent + indent;
-        if (indent.size()) {
-          out += '\n';
-        }
-        for (int i = 0; i < arraySize; ++i) {
-          out += newIndent;
-          value_.array[i].toString(out, indent, newIndent);
-          if (i < (arraySize - 1)) {
-            if (indent.size()) {
-              out += ",\n";
-            } else {
-              out += ", ";
-            }
-          } else if (indent.size()) {
-            out += '\n';
-          }
-        }
-        out += currentIndent;
-      }
-      out += ']';
-      break;
-    }
-    case boolean_: {
-      out += value_.boolean ? "true" : "false";
-      break;
-    }
-    case null_: {
-      out += "null";
-    }}
+    return dump();
   }
 
   strVector json::keys() const {
     strVector vec;
     if (type == object_) {
       const jsonObject &obj = value_.object;
-      cJsonObjectIterator it = obj.begin();
+      jsonObject::const_iterator it = obj.begin();
       while (it != obj.end()) {
         vec.push_back(it->first);
         ++it;
@@ -633,7 +639,7 @@ namespace occa {
     jsonArray vec;
     if (type == object_) {
       jsonObject &obj = value_.object;
-      jsonObjectIterator it = obj.begin();
+      jsonObject::iterator it = obj.begin();
       while (it != obj.end()) {
         vec.push_back(it->second);
         ++it;
@@ -646,7 +652,7 @@ namespace occa {
     jsonArray vec;
     if (type == object_) {
       const jsonObject &obj = value_.object;
-      cJsonObjectIterator it = obj.begin();
+      jsonObject::const_iterator it = obj.begin();
       while (it != obj.end()) {
         vec.push_back(it->second);
         ++it;

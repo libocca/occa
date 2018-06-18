@@ -5,7 +5,7 @@ lib/
 obj/
 /include/occa/defines/compiledDefines.hpp
 /scripts/compilerVendorTest
-.compiledDefinesChanged
+.compiledDefines
 
 *.obj
 *.pyc
