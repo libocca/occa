@@ -257,17 +257,21 @@ namespace occa {
     const jsonArray &includes = props["includes"].array();
     const int includeCount = (int) includes.size();
     for (int i = 0; i < includeCount; ++i) {
-      header += "#include \"";
-      header += includes[i].toString();
-      header += "\"\n";
+      if (includes[i].isString()) {
+        header += "#include \"";
+        header += includes[i].string();
+        header += "\"\n";
+      }
     }
 
     // Add header
     const jsonArray &lines = props["header"].array();
     const int lineCount = (int) lines.size();
     for (int i = 0; i < lineCount; ++i) {
-      header += lines[i].toString();
-      header += "\n";
+      if (includes[i].isString()) {
+        header += lines[i].string();
+        header += "\n";
+      }
     }
 
     return header;
