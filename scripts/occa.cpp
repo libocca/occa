@@ -157,6 +157,23 @@ bool runCache(const cli::command &command,
   return true;
 }
 
+properties getOptionProperties(jsonObject &options,
+                               const std::string optionName) {
+  properties props;
+
+  jsonObject::iterator it = options.find(optionName);
+  if (it == options.end()) {
+    return props;
+  }
+
+  json &propsList = it->second;
+  const int propsCount = propsList.size();
+  for (int i = 0; i < propsCount; ++i) {
+    props += occa::properties((std::string) propsList[i][0]);
+  }
+  return props;
+}
+
 bool runTranslate(const cli::command &command,
                   jsonArray order,
                   jsonObject options,
@@ -170,22 +187,17 @@ bool runTranslate(const cli::command &command,
     ::exit(1);
   }
 
-  properties props;
-  json &propsList = options["props"];
-  const int propsCount = propsList.size();
-  for (int i = 0; i < propsCount; ++i) {
-    props += occa::properties((std::string) propsList[i][0]);
-  }
+  properties kernelProps = getOptionProperties(options, "kernel-props");
 
   lang::parser_t *parser = NULL;
   if (mode == "Serial") {
-    parser = new lang::okl::serialParser(props);
+    parser = new lang::okl::serialParser(kernelProps);
   } else if (mode == "OpenMP") {
-    parser = new lang::okl::openmpParser(props);
+    parser = new lang::okl::openmpParser(kernelProps);
   } else if (mode == "OpenCL") {
-    parser = new lang::okl::openclParser(props);
+    parser = new lang::okl::openclParser(kernelProps);
   } else if (mode == "CUDA") {
-    parser = new lang::okl::cudaParser(props);
+    parser = new lang::okl::cudaParser(kernelProps);
   }
 
   if (!parser) {
@@ -201,6 +213,29 @@ bool runTranslate(const cli::command &command,
   }
   delete parser;
   return success;
+}
+
+bool runCompile(const cli::command &command,
+                jsonArray order,
+                jsonObject options,
+                jsonArray arguments) {
+
+  const std::string filename = arguments[0];
+  const std::string kernelName = arguments[1];
+
+  if (!io::exists(filename)) {
+    occa::printError("File [" + filename + "] doesn't exist" );
+    ::exit(1);
+  }
+
+  properties deviceProps = getOptionProperties(options, "device-props");
+  properties kernelProps = getOptionProperties(options, "kernel-props");
+  kernelProps["verbose"] = true;
+
+  occa::device device(deviceProps);
+  device.buildKernel(filename, kernelName, kernelProps);
+
+  return true;
 }
 
 bool runEnv(const cli::command &command,
@@ -320,12 +355,32 @@ int main(const int argc, const char **argv) {
                .isRequired()
                .withArgs(1)
                .expandsFunction("occa modes"))
-    .addOption(cli::option('p', "props",
+    .addOption(cli::option('k', "kernel-props",
                            "Kernel properties")
                .reusable()
                .withArgs(1))
     .addArgument("FILE",
                  "An .okl file",
+                 true);
+
+  cli::command compileCommand;
+  compileCommand
+    .withName("compile")
+    .withCallback(runCompile)
+    .withDescription("Compile kernels")
+    .addOption(cli::option('d', "device-props",
+                           "Device properties")
+               .reusable()
+               .withArgs(1))
+    .addOption(cli::option('k', "kernel-props",
+                           "Kernel properties")
+               .reusable()
+               .withArgs(1))
+    .addArgument("FILE",
+                 "An .okl file",
+                 true)
+    .addArgument("KERNEL",
+                 "Kernel name",
                  true);
 
   cli::command envCommand;
@@ -366,6 +421,7 @@ int main(const int argc, const char **argv) {
     .addCommand(cacheCommand)
     .addCommand(clearCommand)
     .addCommand(translateCommand)
+    .addCommand(compileCommand)
     .addCommand(envCommand)
     .addCommand(infoCommand)
     .addCommand(modesCommand)
