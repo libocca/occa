@@ -64,7 +64,7 @@ namespace occa {
     case 'f': loadFalse(c);  break;
     case 'n': loadNull(c);   break;
     default: {
-      OCCA_FORCE_ERROR("Cannot load JSON");
+      OCCA_FORCE_ERROR("Cannot load JSON: " << c);
     }}
     return *this;
   }

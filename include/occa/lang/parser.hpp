@@ -88,7 +88,7 @@ namespace occa {
       //================================
 
       parser_t(const occa::properties &settings_ = occa::properties());
-      ~parser_t();
+      virtual ~parser_t();
 
       //---[ Public ]-------------------
       virtual bool succeeded() const;
