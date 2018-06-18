@@ -318,10 +318,11 @@ namespace occa {
     }
 
     void write(const std::string &filename, const std::string &content) {
-      sys::mkpath(dirname(filename));
+      std::string expFilename = io::filename(filename);
+      sys::mkpath(dirname(expFilename));
 
-      FILE *fp = fopen(filename.c_str(), "w");
-      OCCA_ERROR("Failed to open [" << io::shortname(filename) << "]",
+      FILE *fp = fopen(expFilename.c_str(), "w");
+      OCCA_ERROR("Failed to open [" << io::shortname(expFilename) << "]",
                  fp != 0);
 
       fputs(content.c_str(), fp);
