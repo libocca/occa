@@ -20,29 +20,29 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  */
 #include <occa/lang/statement.hpp>
-#include <occa/lang/builtins/attributes/shared.hpp>
+#include <occa/lang/builtins/attributes/restrict.hpp>
 
 namespace occa {
   namespace lang {
     namespace attributes {
-      shared::shared() {}
+      restrict::restrict() {}
 
-      std::string shared::name() const {
-        return "shared";
+      std::string restrict::name() const {
+        return "restrict";
       }
 
-      bool shared::forVariable() const {
+      bool restrict::forVariable() const {
         return true;
       }
 
-      bool shared::forStatement(const int sType) const {
+      bool restrict::forStatement(const int sType) const {
         return (sType & statementType::declaration);
       }
 
-      bool shared::isValid(const attributeToken_t &attr) const {
+      bool restrict::isValid(const attributeToken_t &attr) const {
         if (attr.kwargs.size() ||
             attr.args.size()) {
-          attr.printError("[@shared] does not take arguments");
+          attr.printError("[@restrict] does not take arguments");
           return false;
         }
         return true;

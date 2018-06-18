@@ -19,34 +19,27 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  */
-#include <occa/lang/statement.hpp>
-#include <occa/lang/builtins/attributes/shared.hpp>
+#ifndef OCCA_LANG_BUILTINS_ATTRIBUTES_RESTRICT_HEADER
+#define OCCA_LANG_BUILTINS_ATTRIBUTES_RESTRICT_HEADER
+
+#include <occa/lang/attribute.hpp>
 
 namespace occa {
   namespace lang {
     namespace attributes {
-      shared::shared() {}
+      class restrict : public attribute_t {
+      public:
+        restrict();
 
-      std::string shared::name() const {
-        return "shared";
-      }
+        virtual std::string name() const;
 
-      bool shared::forVariable() const {
-        return true;
-      }
+        virtual bool forVariable() const;
+        virtual bool forStatement(const int sType) const;
 
-      bool shared::forStatement(const int sType) const {
-        return (sType & statementType::declaration);
-      }
-
-      bool shared::isValid(const attributeToken_t &attr) const {
-        if (attr.kwargs.size() ||
-            attr.args.size()) {
-          attr.printError("[@shared] does not take arguments");
-          return false;
-        }
-        return true;
-      }
+        virtual bool isValid(const attributeToken_t &attr) const;
+      };
     }
   }
 }
+
+#endif

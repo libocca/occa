@@ -51,10 +51,6 @@ namespace occa {
 
       void serialParser::setupHeaders() {
         strVector headers;
-        headers.push_back(
-          "define restrict " + settings.get<std::string>("serial/restrict", "__restrict__")
-        );
-
         if (settings.get("serial/include-std", true)) {
           headers.push_back("include <stdint.h>");
           headers.push_back("include <cstdlib>");

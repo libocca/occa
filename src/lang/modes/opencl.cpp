@@ -46,8 +46,7 @@ namespace occa {
       }
 
       void openclParser::beforePreprocessing() {
-        preprocessor.addCompilerDefine("OCCA_USING_GPU",
-                                       "1");
+        preprocessor.addCompilerDefine("OCCA_USING_GPU", "1");
       }
 
       void openclParser::beforeKernelSplit() {

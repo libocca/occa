@@ -25,7 +25,6 @@ namespace occa {
   namespace lang {
     const qualifier_t const_        ("const"         , qualifierType::const_);
     const qualifier_t constexpr_    ("constexpr"     , qualifierType::constexpr_);
-    const qualifier_t restrict_     ("restrict"      , qualifierType::restrict_);
     const qualifier_t friend_       ("friend"        , qualifierType::friend_);
     const qualifier_t typedef_      ("typedef"       , qualifierType::typedef_);
     const qualifier_t signed_       ("signed"        , qualifierType::signed_);

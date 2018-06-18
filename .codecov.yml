@@ -8,13 +8,10 @@ coverage:
     patch: yes
     changes: no
 
-flags:
-  paths:
-    - include
-    - src
-  ignore:
-    - examples
-    - tests
+ignore:
+  - examples
+  - tests
+  - scripts
 
 comment:
   layout: 'reach, diff, files'

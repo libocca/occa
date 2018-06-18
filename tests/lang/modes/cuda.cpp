@@ -108,7 +108,7 @@ void testSource() {
     "const int var[10];\n"
     "void foo() {}\n"
     "int bar(int i) {}\n"
-    "@kernel void kernel(int * restrict arg, const int bar) {\n"
+    "@kernel void kernel(@restrict int * arg, const int bar) {\n"
     "  for (int o1 = 0; o1 < O1; ++o1; @outer) {\n"
     "    for (int o0 = 0; o0 < O0; ++o0; @outer) {\n"
     "      @shared int shr[3];\n"

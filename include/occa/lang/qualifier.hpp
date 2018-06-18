@@ -36,7 +36,6 @@ namespace occa {
       extern const udim_t auto_;
       extern const udim_t const_;
       extern const udim_t constexpr_;
-      extern const udim_t restrict_;
       extern const udim_t signed_;
       extern const udim_t unsigned_;
       extern const udim_t volatile_;

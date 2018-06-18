@@ -44,8 +44,7 @@ namespace occa {
       }
 
       void cudaParser::beforePreprocessing() {
-        preprocessor.addCompilerDefine("OCCA_USING_GPU",
-                                       "1");
+        preprocessor.addCompilerDefine("OCCA_USING_GPU", "1");
       }
 
       void cudaParser::beforeKernelSplit() {
@@ -59,9 +58,6 @@ namespace occa {
       }
 
       void cudaParser::afterKernelSplit() {
-        setupHeaders();
-
-        if (!success) return;
         addBarriers();
 
         if (!success) return;
@@ -140,18 +136,6 @@ namespace occa {
           }
           ++it;
         }
-      }
-
-      void cudaParser::setupHeaders() {
-        const std::string restrictDefine = (
-          "define restrict " + settings.get<std::string>("serial/restrict", "__restrict__")
-        );
-
-        directiveToken token(root.source->origin,
-                             restrictDefine);
-        root.addFirst(
-          *(new directiveStatement(&root, token))
-        );
       }
 
       void cudaParser::addBarriers() {

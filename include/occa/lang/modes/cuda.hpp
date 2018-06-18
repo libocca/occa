@@ -54,8 +54,6 @@ namespace occa {
 
         void setSharedQualifiers();
 
-        void setupHeaders();
-
         void addBarriers();
 
         void setupKernels();

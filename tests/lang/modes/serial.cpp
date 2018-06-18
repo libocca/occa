@@ -44,11 +44,11 @@ int main(const int argc, const char **argv) {
 
 //---[ Preprocessor ]-------------------
 void testPreprocessor() {
-  // #define restrict __restrict__
+  // @restrict -> __restrict__
   statement_t *statement;
 
-  parseAndPrintSource("@kernel void foo(const int * restrict a) {}");
-  setStatement("@kernel void foo(const int * restrict a) {}",
+  parseAndPrintSource("@kernel void foo(@restrict const int * a) {}");
+  setStatement("@kernel void foo(@restrict const int * a) {}",
                statementType::functionDecl);
 }
 //======================================
@@ -124,7 +124,7 @@ void testExclusives() {
   //     - Add iterator index to inner-most @inner loop
   parseAndPrintSource(
     "const int var[10];\n"
-    "@kernel void foo(int * restrict arg) {\n"
+    "@kernel void foo(@restrict int * arg) {\n"
     "  for (int o1 = 0; o1 < O1; ++o1; @outer) {\n"
     "    for (int o0 = 0; o0 < O0; ++o0; @outer) {\n"
     "      @shared int shr[3];\n"

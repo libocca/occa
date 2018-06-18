@@ -249,7 +249,7 @@ void testPointerTypeLoading() {
             type.pointers[0].qualifiers.size());
   ASSERT_TRUE(type.pointers[0].has(const_));
 
-  type = preloadType("float * const * volatile ** const volatile restrict");
+  type = preloadType("float * const * volatile ** const volatile");
   ASSERT_EQ(4,
             (int) type.pointers.size());
   ASSERT_TRUE(type.pointers[0].has(const_));
@@ -258,7 +258,6 @@ void testPointerTypeLoading() {
             type.pointers[2].qualifiers.size());
   ASSERT_TRUE(type.pointers[3].has(const_));
   ASSERT_TRUE(type.pointers[3].has(volatile_));
-  ASSERT_TRUE(type.pointers[3].has(restrict_));
 }
 
 void testReferenceTypeLoading() {
