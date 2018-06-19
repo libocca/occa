@@ -266,7 +266,7 @@ void testMethods() {
             (int) j);
 
   j = occa::json();
- j += "1";
+  j += "1";
   ASSERT_EQ("1",
             j.string());
 
