@@ -549,7 +549,7 @@ namespace occa {
 
       const int elifCount = (int) other.elifSmnts.size();
       for (int i = 0; i < elifCount; ++i) {
-        elifStatement &elifSmnt = (elifSmnts[i]
+        elifStatement &elifSmnt = (other.elifSmnts[i]
                                    ->clone(this)
                                    .to<elifStatement>());
         elifSmnts.push_back(&elifSmnt);
