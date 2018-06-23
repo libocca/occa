@@ -412,6 +412,7 @@ void addEncodingPrefixes(std::string &s1,
 }
 
 void testCommentSkipping() {
+  // [1.0]
   setStream("// test    \n"
             "1.0");
   ASSERT_EQ_BINARY(
@@ -423,14 +424,35 @@ void testCommentSkipping() {
     tokenType::primitive,
     tokenizer.peek()
   );
+
+  // [ foo]
   setStream("/* 2.0 */ foo");
   ASSERT_EQ_BINARY(
     tokenType::identifier,
     tokenizer.peek()
   );
+
+  // [ foo]
   setStream("/*         \n"
             "2.0        \n"
             "*/ foo");
+  ASSERT_EQ_BINARY(
+    tokenType::identifier,
+    tokenizer.peek()
+  );
+
+  // [*/b]
+  setStream("/*a*/*/b/*c*/");
+  ASSERT_EQ_BINARY(
+    tokenType::op,
+    tokenizer.peek()
+  );
+  getToken();
+  ASSERT_EQ_BINARY(
+    tokenType::op,
+    tokenizer.peek()
+  );
+  getToken();
   ASSERT_EQ_BINARY(
     tokenType::identifier,
     tokenizer.peek()

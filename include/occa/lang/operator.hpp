@@ -103,7 +103,6 @@ namespace occa {
       //---[ Special operators ]--------
       extern const rawOpType_t lineComment;
       extern const rawOpType_t blockCommentStart;
-      extern const rawOpType_t blockCommentEnd;
 
       extern const rawOpType_t hash;
       extern const rawOpType_t hashhash;
@@ -219,7 +218,6 @@ namespace occa {
 
       extern const opType_t lineComment;
       extern const opType_t blockCommentStart;
-      extern const opType_t blockCommentEnd;
       extern const opType_t comment;
 
       extern const opType_t hash;
@@ -385,7 +383,6 @@ namespace occa {
       //---[ Comments ]-----------------
       extern const operator_t lineComment;
       extern const operator_t blockCommentStart;
-      extern const operator_t blockCommentEnd;
       //================================
 
       //---[ Special ]------------------

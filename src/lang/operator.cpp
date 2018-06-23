@@ -93,29 +93,28 @@ namespace occa {
       //---[ Special operators ]--------
       const rawOpType_t lineComment       (1L << 0);
       const rawOpType_t blockCommentStart (1L << 1);
-      const rawOpType_t blockCommentEnd   (1L << 2);
 
-      const rawOpType_t hash              (1L << 3);
-      const rawOpType_t hashhash          (1L << 4);
+      const rawOpType_t hash              (1L << 2);
+      const rawOpType_t hashhash          (1L << 3);
 
-      const rawOpType_t semicolon         (1L << 5);
-      const rawOpType_t ellipsis          (1L << 6);
-      const rawOpType_t attribute         (1L << 7);
+      const rawOpType_t semicolon         (1L << 4);
+      const rawOpType_t ellipsis          (1L << 5);
+      const rawOpType_t attribute         (1L << 6);
 
-      const rawOpType_t sizeof_           (1L << 8);
-      const rawOpType_t sizeof_pack_      (1L << 9);
-      const rawOpType_t new_              (1L << 10);
-      const rawOpType_t delete_           (1L << 11);
-      const rawOpType_t throw_            (1L << 12);
+      const rawOpType_t sizeof_           (1L << 7);
+      const rawOpType_t sizeof_pack_      (1L << 8);
+      const rawOpType_t new_              (1L << 9);
+      const rawOpType_t delete_           (1L << 10);
+      const rawOpType_t throw_            (1L << 11);
 
-      const rawOpType_t typeid_           (1L << 13);
-      const rawOpType_t noexcept_         (1L << 14);
-      const rawOpType_t alignof_          (1L << 15);
+      const rawOpType_t typeid_           (1L << 12);
+      const rawOpType_t noexcept_         (1L << 13);
+      const rawOpType_t alignof_          (1L << 14);
 
-      const rawOpType_t parenCast         (1L << 16);
+      const rawOpType_t parenCast         (1L << 15);
 
-      const rawOpType_t cudaCallStart     (1L << 17);
-      const rawOpType_t cudaCallEnd       (1L << 18);
+      const rawOpType_t cudaCallStart     (1L << 16);
+      const rawOpType_t cudaCallEnd       (1L << 17);
       //================================
     }
 
@@ -340,10 +339,8 @@ namespace occa {
       // Special operators
       const opType_t lineComment       (rawOperatorType::lineComment      , 0);
       const opType_t blockCommentStart (rawOperatorType::blockCommentStart, 0);
-      const opType_t blockCommentEnd   (rawOperatorType::blockCommentEnd  , 0);
-      const opType_t comment           = (lineComment       |
-                                          blockCommentStart |
-                                          blockCommentEnd);
+      const opType_t comment           = (lineComment |
+                                          blockCommentStart);
 
       const opType_t hash              (rawOperatorType::hash    , 0);
       const opType_t hashhash          (rawOperatorType::hashhash, 0);
@@ -522,7 +519,6 @@ namespace occa {
       //---[ Comments ]-----------------
       const operator_t lineComment            ("//" , operatorType::lineComment      , 0);
       const operator_t blockCommentStart      ("/*" , operatorType::blockCommentStart, 0);
-      const operator_t blockCommentEnd        ("*/" , operatorType::blockCommentEnd  , 0);
       //================================
 
       //---[ Special ]------------------
@@ -725,7 +721,6 @@ namespace occa {
 
       operators.add(op::lineComment.str      , &op::lineComment);
       operators.add(op::blockCommentStart.str, &op::blockCommentStart);
-      operators.add(op::blockCommentEnd.str  , &op::blockCommentEnd);
 
       operators.add(op::hash.str             , &op::hash);
       operators.add(op::hashhash.str         , &op::hashhash);

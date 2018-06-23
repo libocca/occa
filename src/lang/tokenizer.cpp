@@ -482,10 +482,6 @@ namespace occa {
         else if (op.opType == operatorType::blockCommentStart) {
           return skipBlockCommentAndPeek();
         }
-        else {
-          printError("Couldn't find an opening /*");
-          return peek();
-        }
       }
       popAndRewind();
       return tokenType::op;

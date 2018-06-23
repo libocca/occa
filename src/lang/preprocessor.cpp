@@ -936,13 +936,14 @@ namespace occa {
       // In case we read too many tokens, rewind to [\n] token
       if (lineTokenCount) {
         tokenizer->origin = lineTokens[lineTokenCount - 1]->origin;
-        // Clear input cache due to rewind
-        while (inputCache.size()) {
-          delete inputCache.front();
-          inputCache.pop_front();
-        }
       }
       freeTokenVector(lineTokens);
+
+      // Clear input cache due to rewind
+      while (inputCache.size()) {
+        delete inputCache.front();
+        inputCache.pop_front();
+      }
 
       // Push source after updating origin to the [\n] token
       tokenizer->pushSource(header);
