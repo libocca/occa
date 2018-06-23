@@ -823,6 +823,7 @@ namespace occa {
 
     void subscriptNode::setChildren(exprNodeRefVector &children) {
       children.push_back(&value);
+      children.push_back(&index);
     }
 
     variable_t* subscriptNode::getVariable() {
