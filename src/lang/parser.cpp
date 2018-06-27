@@ -1157,6 +1157,11 @@ namespace occa {
 
       statementLoaderMap::iterator it = statementLoaders.find(sType);
       if (it != statementLoaders.end()) {
+        // Copy attributes before continuing to avoid passing them to
+        //   nested statements
+        attributeTokenMap smntAttributes = attributes;
+        attributes.clear();
+
         statementLoader_t loader = it->second;
         statement_t *smnt = (this->*loader)();
         if (!smnt) {
@@ -1169,7 +1174,7 @@ namespace occa {
 
         // [checkSemicolon] is only valid for one statement
         checkSemicolon = true;
-        addAttributesTo(attributes, smnt);
+        addAttributesTo(smntAttributes, smnt);
         if (!success) {
           delete smnt;
           return NULL;
