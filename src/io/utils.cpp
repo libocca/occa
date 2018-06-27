@@ -112,16 +112,14 @@ namespace occa {
 
     std::string expandEnvVariables(const std::string &filename) {
       const char *c = filename.c_str();
-      std::string expFilename = sys::expandEnvVariables(filename);
 
 #if (OCCA_OS & (OCCA_LINUX_OS | OCCA_MACOS_OS))
-      if (*c == '~') {
-        expFilename += env::HOME;
-        c += 1 + (*c != '\0');
+      if ((c[0] == '~') && (c[1] == '/')) {
+        std::string localPath = filename.substr(2, filename.size() - 1);
+        return env::HOME + sys::expandEnvVariables(localPath);
       }
 #endif
-
-      return expFilename;
+      return sys::expandEnvVariables(filename);
     }
 
     std::string convertSlashes(const std::string &filename) {
