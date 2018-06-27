@@ -51,19 +51,24 @@ namespace occa {
 
       void serialParser::setupHeaders() {
         strVector headers;
-        if (settings.get("serial/include-std", true)) {
+        const bool includingStd = settings.get("serial/include-std", true);
+        if (includingStd) {
           headers.push_back("include <stdint.h>");
           headers.push_back("include <cstdlib>");
           headers.push_back("include <cstdio>");
           headers.push_back("include <cmath>");
         }
+        headers.push_back("include <occa.hpp>");
 
         const int headerCount = (int) headers.size();
         for (int i = 0; i < headerCount; ++i) {
           std::string header = headers[i];
           // TODO 1.1: Remove hack after methods are properly added
           if (i == 0) {
-            header += "\nusing namespace std;";
+            if (includingStd) {
+              header += "\nusing namespace std;";
+            }
+            header += "\nusing namespace occa;";
           }
           directiveToken token(root.source->origin,
                                header);

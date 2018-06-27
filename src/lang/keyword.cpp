@@ -260,6 +260,47 @@ namespace occa {
       addKeyword(keywords, new typeKeyword(const_cast<primitive_t&>(void_)));
       addKeyword(keywords, new typeKeyword(const_cast<primitive_t&>(auto_)));
 
+      // OKL Types
+      addKeyword(keywords, new typeKeyword(const_cast<primitive_t&>(uchar2)));
+      addKeyword(keywords, new typeKeyword(const_cast<primitive_t&>(uchar3)));
+      addKeyword(keywords, new typeKeyword(const_cast<primitive_t&>(uchar4)));
+
+      addKeyword(keywords, new typeKeyword(const_cast<primitive_t&>(char2)));
+      addKeyword(keywords, new typeKeyword(const_cast<primitive_t&>(char3)));
+      addKeyword(keywords, new typeKeyword(const_cast<primitive_t&>(char4)));
+
+      addKeyword(keywords, new typeKeyword(const_cast<primitive_t&>(ushort2)));
+      addKeyword(keywords, new typeKeyword(const_cast<primitive_t&>(ushort3)));
+      addKeyword(keywords, new typeKeyword(const_cast<primitive_t&>(ushort4)));
+
+      addKeyword(keywords, new typeKeyword(const_cast<primitive_t&>(short2)));
+      addKeyword(keywords, new typeKeyword(const_cast<primitive_t&>(short3)));
+      addKeyword(keywords, new typeKeyword(const_cast<primitive_t&>(short4)));
+
+      addKeyword(keywords, new typeKeyword(const_cast<primitive_t&>(uint2)));
+      addKeyword(keywords, new typeKeyword(const_cast<primitive_t&>(uint3)));
+      addKeyword(keywords, new typeKeyword(const_cast<primitive_t&>(uint4)));
+
+      addKeyword(keywords, new typeKeyword(const_cast<primitive_t&>(int2)));
+      addKeyword(keywords, new typeKeyword(const_cast<primitive_t&>(int3)));
+      addKeyword(keywords, new typeKeyword(const_cast<primitive_t&>(int4)));
+
+      addKeyword(keywords, new typeKeyword(const_cast<primitive_t&>(ulong2)));
+      addKeyword(keywords, new typeKeyword(const_cast<primitive_t&>(ulong3)));
+      addKeyword(keywords, new typeKeyword(const_cast<primitive_t&>(ulong4)));
+
+      addKeyword(keywords, new typeKeyword(const_cast<primitive_t&>(long2)));
+      addKeyword(keywords, new typeKeyword(const_cast<primitive_t&>(long3)));
+      addKeyword(keywords, new typeKeyword(const_cast<primitive_t&>(long4)));
+
+      addKeyword(keywords, new typeKeyword(const_cast<primitive_t&>(float2)));
+      addKeyword(keywords, new typeKeyword(const_cast<primitive_t&>(float3)));
+      addKeyword(keywords, new typeKeyword(const_cast<primitive_t&>(float4)));
+
+      addKeyword(keywords, new typeKeyword(const_cast<primitive_t&>(double2)));
+      addKeyword(keywords, new typeKeyword(const_cast<primitive_t&>(double3)));
+      addKeyword(keywords, new typeKeyword(const_cast<primitive_t&>(double4)));
+
       // TODO: Add builtin functions
       //  - const_cast, static_cast, dynamic_cast, reinterpret_cast
       //  - typeid

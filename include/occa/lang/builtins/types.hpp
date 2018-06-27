@@ -64,6 +64,47 @@ namespace occa {
     extern const primitive_t double_;
     extern const primitive_t void_;
     extern const primitive_t auto_;
+
+    // OKL Primitives
+    extern const primitive_t uchar2;
+    extern const primitive_t uchar3;
+    extern const primitive_t uchar4;
+
+    extern const primitive_t char2;
+    extern const primitive_t char3;
+    extern const primitive_t char4;
+
+    extern const primitive_t ushort2;
+    extern const primitive_t ushort3;
+    extern const primitive_t ushort4;
+
+    extern const primitive_t short2;
+    extern const primitive_t short3;
+    extern const primitive_t short4;
+
+    extern const primitive_t uint2;
+    extern const primitive_t uint3;
+    extern const primitive_t uint4;
+
+    extern const primitive_t int2;
+    extern const primitive_t int3;
+    extern const primitive_t int4;
+
+    extern const primitive_t ulong2;
+    extern const primitive_t ulong3;
+    extern const primitive_t ulong4;
+
+    extern const primitive_t long2;
+    extern const primitive_t long3;
+    extern const primitive_t long4;
+
+    extern const primitive_t float2;
+    extern const primitive_t float3;
+    extern const primitive_t float4;
+
+    extern const primitive_t double2;
+    extern const primitive_t double3;
+    extern const primitive_t double4;
   }
 }
 #endif

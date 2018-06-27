@@ -61,5 +61,46 @@ namespace occa {
     const primitive_t double_       ("double");
     const primitive_t void_         ("void");
     const primitive_t auto_         ("auto");
+
+    // OKL Primitives
+    const primitive_t uchar2        ("uchar2");
+    const primitive_t uchar3        ("uchar3");
+    const primitive_t uchar4        ("uchar4");
+
+    const primitive_t char2         ("char2");
+    const primitive_t char3         ("char3");
+    const primitive_t char4         ("char4");
+
+    const primitive_t ushort2       ("ushort2");
+    const primitive_t ushort3       ("ushort3");
+    const primitive_t ushort4       ("ushort4");
+
+    const primitive_t short2        ("short2");
+    const primitive_t short3        ("short3");
+    const primitive_t short4        ("short4");
+
+    const primitive_t uint2         ("uint2");
+    const primitive_t uint3         ("uint3");
+    const primitive_t uint4         ("uint4");
+
+    const primitive_t int2          ("int2");
+    const primitive_t int3          ("int3");
+    const primitive_t int4          ("int4");
+
+    const primitive_t ulong2        ("ulong2");
+    const primitive_t ulong3        ("ulong3");
+    const primitive_t ulong4        ("ulong4");
+
+    const primitive_t long2         ("long2");
+    const primitive_t long3         ("long3");
+    const primitive_t long4         ("long4");
+
+    const primitive_t float2        ("float2");
+    const primitive_t float3        ("float3");
+    const primitive_t float4        ("float4");
+
+    const primitive_t double2       ("double2");
+    const primitive_t double3       ("double3");
+    const primitive_t double4       ("double4");
   }
 }
