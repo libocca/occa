@@ -131,6 +131,13 @@ namespace occa {
       }
     }
 
+    std::ostream& operator << (std::ostream &out,
+                               const type_t &type) {
+      printer pout(out);
+      pout << type;
+      return out;
+    }
+
     printer& operator << (printer &pout,
                           const type_t &type) {
       pout << type.name();
@@ -170,6 +177,13 @@ namespace occa {
 
     void pointer_t::add(const qualifierWithSource &qualifier) {
       qualifiers.add(qualifier);
+    }
+
+    std::ostream& operator << (std::ostream &out,
+                               const pointer_t &pointer) {
+      printer pout(out);
+      pout << pointer;
+      return out;
     }
 
     printer& operator << (printer &pout,
@@ -237,6 +251,13 @@ namespace occa {
 
     void array_t::printError(const std::string &message) const {
       start->printError(message);
+    }
+
+    std::ostream& operator << (std::ostream &out,
+                               const array_t &array) {
+      printer pout(out);
+      pout << array;
+      return out;
     }
 
     printer& operator << (printer &pout,
@@ -496,6 +517,12 @@ namespace occa {
       return *this;
     }
 
+    bool vartype_t::hasAttribute(const std::string &attr) const {
+      return (type
+              ? type->hasAttribute(attr)
+              : false);
+    }
+
     vartype_t vartype_t::declarationType() const {
       vartype_t other;
       other.type = type;
@@ -596,6 +623,13 @@ namespace occa {
       if (origin_.isValid()) {
         origin_.printError(message);
       }
+    }
+
+    std::ostream& operator << (std::ostream &out,
+                               const vartype_t &type) {
+      printer pout(out);
+      pout << type;
+      return out;
     }
 
     printer& operator << (printer &pout,

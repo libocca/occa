@@ -26,15 +26,14 @@
 
 #include <occa/lang/errorHandler.hpp>
 #include <occa/lang/file.hpp>
+#include <occa/lang/type.hpp>
 
 namespace occa {
   namespace lang {
     class operator_t;
     class token_t;
     class qualifier_t;
-    class type_t;
     class variable_t;
-    class function_t;
 
     typedef std::vector<token_t*> tokenVector;
 
@@ -75,6 +74,7 @@ namespace occa {
 
       extern const int qualifier;
       extern const int type;
+      extern const int vartype;
       extern const int variable;
       extern const int function;
 
@@ -138,7 +138,8 @@ namespace occa {
       void debugPrint() const;
     };
 
-    std::ostream& operator << (std::ostream &out, token_t &token);
+    std::ostream& operator << (std::ostream &out,
+                               token_t &token);
 
     //---[ Unknown ]--------------------
     class unknownToken : public token_t {
@@ -253,6 +254,24 @@ namespace occa {
                 type_t &type_);
 
       virtual ~typeToken();
+
+      virtual int type() const;
+
+      virtual token_t* clone() const;
+
+      virtual void print(std::ostream &out) const;
+    };
+    //==================================
+
+    //---[ Vartype ]--------------------
+    class vartypeToken : public token_t {
+    public:
+      vartype_t value;
+
+      vartypeToken(const fileOrigin &origin_,
+                   const vartype_t &value_);
+
+      virtual ~vartypeToken();
 
       virtual int type() const;
 

@@ -27,6 +27,7 @@ namespace occa {
   namespace lang {
     static const int outputTokenType = (tokenType::identifier |
                                         tokenType::type       |
+                                        tokenType::vartype    |
                                         tokenType::variable   |
                                         tokenType::function   |
                                         tokenType::primitive  |
@@ -287,6 +288,10 @@ namespace occa {
           typeToken &t = token->to<typeToken>();
           state.pushOutput(new typeNode(token, t.value));
         }
+        else if (tokenType & tokenType::vartype) {
+          vartypeToken &t = token->to<vartypeToken>();
+          state.pushOutput(new vartypeNode(token, t.value));
+        }
         else if (tokenType & tokenType::primitive) {
           primitiveToken &t = token->to<primitiveToken>();
           state.pushOutput(new primitiveNode(token, t.value));
@@ -388,7 +393,8 @@ namespace occa {
         }
 
         if (pair.opType() & operatorType::parentheses) {
-          if (pair.value->type() & exprNodeType::type) {
+          if (pair.value->type() & (exprNodeType::type |
+                                    exprNodeType::vartype)) {
             state.pushOperator(
               new leftUnaryOpNode(&opToken,
                                   op::parenCast,
@@ -747,12 +753,20 @@ namespace occa {
 
         if (opType & operatorType::parenCast) {
           leftUnaryOpNode &parenOpNode = (leftUnaryOpNode&) opNode;
-          type_t &type = ((typeNode*) parenOpNode.value)->value;
-          state.pushOutput(
-            new parenCastNode(parenOpNode.token,
-                              type,
-                              value)
-          );
+          exprNode *valueNode = parenOpNode.value;
+          if (valueNode->type() & exprNodeType::type) {
+            state.pushOutput(
+              new parenCastNode(parenOpNode.token,
+                                ((typeNode*) valueNode)->value,
+                                value)
+            );
+          } else {
+            state.pushOutput(
+              new parenCastNode(parenOpNode.token,
+                                ((vartypeNode*) valueNode)->value,
+                                value)
+            );
+          }
         }
         else if (opType & operatorType::sizeof_) {
           state.pushOutput(

@@ -80,18 +80,19 @@ namespace occa {
 
       const int qualifier     = (1 << 8);
       const int type          = (1 << 9);
-      const int variable      = (1 << 10);
-      const int function      = (1 << 11);
+      const int vartype       = (1 << 10);
+      const int variable      = (1 << 11);
+      const int function      = (1 << 12);
 
-      const int primitive     = (1 << 12);
-      const int op            = (1 << 13);
+      const int primitive     = (1 << 13);
+      const int op            = (1 << 14);
 
-      const int char_         = (1 << 14);
-      const int string        = (1 << 15);
-      const int withUDF       = (1 << 16);
+      const int char_         = (1 << 15);
+      const int string        = (1 << 16);
+      const int withUDF       = (1 << 17);
       const int withEncoding  = ((encodingType::ux |
-                                  encodingType::R) << 17);
-      const int encodingShift = 17;
+                                  encodingType::R) << 18);
+      const int encodingShift = 18;
 
       int getEncoding(const int tokenType) {
         return ((tokenType & withEncoding) >> encodingShift);
@@ -298,6 +299,27 @@ namespace occa {
 
     void typeToken::print(std::ostream &out) const {
       out << value.name();
+    }
+    //==================================
+
+    //---[ Vartype ]--------------------
+    vartypeToken::vartypeToken(const fileOrigin &origin_,
+                               const vartype_t &value_) :
+      token_t(origin_),
+      value(value_) {}
+
+    vartypeToken::~vartypeToken() {}
+
+    int vartypeToken::type() const {
+      return tokenType::vartype;
+    }
+
+    token_t* vartypeToken::clone() const {
+      return new vartypeToken(origin, value);
+    }
+
+    void vartypeToken::print(std::ostream &out) const {
+      out << value;
     }
     //==================================
 

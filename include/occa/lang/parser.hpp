@@ -163,7 +163,7 @@ namespace occa {
       void loadDeclarationAssignment(variableDeclaration &decl);
       void loadDeclarationBraceInitializer(variableDeclaration &decl);
 
-      vartype_t preloadType();
+      vartype_t loadType();
 
       void loadBaseType(vartype_t &vartype);
 

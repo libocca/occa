@@ -346,23 +346,6 @@ namespace occa {
       return -1;
     }
 
-    exprNode* tokenContext::getExpression() {
-      if (tp.start == tp.end) {
-        return NULL;
-      }
-      tokenVector tokens_;
-      getAndCloneTokens(tokens_);
-      return occa::lang::getExpression(tokens_);
-    }
-
-    exprNode* tokenContext::getExpression(const int start,
-                                          const int end) {
-      push(start, end);
-      exprNode *expr = getExpression();
-      pop();
-      return expr;
-    }
-
     void tokenContext::debugPrint() {
       for (int i = tp.start; i < tp.end; ++i) {
         std::cout << '[' << *tokens[i] << "]\n";

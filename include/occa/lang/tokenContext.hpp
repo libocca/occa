@@ -112,10 +112,6 @@ namespace occa {
 
       int getNextOperator(const opType_t &opType);
 
-      exprNode* getExpression();
-      exprNode* getExpression(const int start,
-                              const int end);
-
       void debugPrint();
     };
   }

@@ -292,17 +292,40 @@ namespace occa {
 
     keyword_t& parser_t::getKeyword(token_t *token) {
       static keyword_t noKeyword;
-
-      if (!(token_t::safeType(token) & tokenType::identifier)) {
+      if (!token) {
         return noKeyword;
       }
 
-      std::string &identifier = token->to<identifierToken>().value;
+      const int tType = token->type();
+      if (!(tType & (tokenType::identifier |
+                     tokenType::qualifier  |
+                     tokenType::type       |
+                     tokenType::variable   |
+                     tokenType::function))) {
+        return noKeyword;
+      }
+
+      std::string identifier;
+      if (tType & tokenType::identifier) {
+        identifier = token->to<identifierToken>().value;
+      }
+      else if (tType & tokenType::qualifier) {
+        identifier = token->to<qualifierToken>().qualifier.name;
+      }
+      else if (tType & tokenType::type) {
+        identifier = token->to<typeToken>().value.name();
+      }
+      else if (tType & tokenType::variable) {
+        identifier = token->to<variableToken>().value.name();
+      }
+      else if (tType & tokenType::function) {
+        identifier = token->to<functionToken>().value.name();
+      }
+
       keywordMapIterator it = keywords.find(identifier);
       if (it != keywords.end()) {
         return *(it->second);
       }
-
       return up->getScopeKeyword(identifier);
     }
 
@@ -321,16 +344,42 @@ namespace occa {
 
     exprNode* parser_t::getExpression(const int start,
                                       const int end) {
+      context.push(start, end);
+      const int tokenCount = context.size();
+      tokenVector tokens;
+      tokens.reserve(tokenCount);
+
       if (up) {
-        for (int i = start; i < end; ++i) {
+        // Replace identifier tokens with keywords if they exist
+        for (int i = 0; i < tokenCount; ++i) {
           token_t *token = context[i];
           if (token->type() & tokenType::identifier) {
-            context.setToken(i,
-                             replaceIdentifier((identifierToken&) *token));
+            context.setToken(i, replaceIdentifier((identifierToken&) *token));
           }
         }
+        while (context.size()) {
+          token_t *token = context[0];
+          if (!(token->type() & (tokenType::qualifier |
+                                 tokenType::type))) {
+            context.set(1);
+            tokens.push_back(token->clone());
+            continue;
+          }
+
+          vartype_t vartype = loadType();
+          if (!success) {
+            context.pop();
+            freeTokenVector(tokens);
+            return NULL;
+          }
+
+          tokens.push_back(new vartypeToken(token->origin,
+                                            vartype));
+        }
       }
-      exprNode *expr = context.getExpression(start, end);
+      context.pop();
+
+      exprNode *expr = occa::lang::getExpression(tokens);
       success &= !!expr;
       return expr;
     }
@@ -339,12 +388,17 @@ namespace occa {
       keyword_t &keyword = getKeyword(&identifier);
       const int kType = keyword.type();
 
-      if (!(kType & (keywordType::type     |
-                     keywordType::variable |
+      if (!(kType & (keywordType::qualifier |
+                     keywordType::type      |
+                     keywordType::variable  |
                      keywordType::function))) {
         return &identifier;
       }
 
+      if (kType & keywordType::qualifier) {
+        return new qualifierToken(identifier.origin,
+                                  ((qualifierKeyword&) keyword).qualifier);
+      }
       if (kType & keywordType::variable) {
         return new variableToken(identifier.origin,
                                  ((variableKeyword&) keyword).variable);
@@ -629,7 +683,7 @@ namespace occa {
       attributeTokenMap attrs;
       loadAttributes(attrs);
 
-      vartype_t vartype = preloadType();
+      vartype_t vartype = loadType();
       variable_t var = (!isLoadingFunctionPointer()
                         ? loadVariable(vartype)
                         : loadFunctionPointer(vartype));
@@ -785,7 +839,7 @@ namespace occa {
       context.popAndSkip();
     }
 
-    vartype_t parser_t::preloadType() {
+    vartype_t parser_t::loadType() {
       // TODO: Handle weird () cases:
       //        int (*const (*const a))      -> int * const * const a;
       //        int (*const (*const (*a)))() -> int (* const * const *a)();
@@ -983,7 +1037,7 @@ namespace occa {
     bool parser_t::isLoadingFunction() {
       context.push();
 
-      vartype_t vartype = preloadType();
+      vartype_t vartype = loadType();
       if (!success) {
         context.popAndSkip();
         return false;
@@ -1381,7 +1435,7 @@ namespace occa {
     }
 
     statement_t* parser_t::loadFunctionStatement(attributeTokenMap &smntAttributes) {
-      vartype_t returnType = preloadType();
+      vartype_t returnType = loadType();
 
       if (!(token_t::safeType(context[0]) & tokenType::identifier)) {
         context.printError("Expected function name identifier");
