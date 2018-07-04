@@ -196,18 +196,18 @@ namespace occa {
     for (int i = 0; i < argCount; ++i) {
       occa::memory_v *mHandle = args[i].mHandle;
 
-      if (mHandle              &&
-          mHandle->isManaged() &&
-          mHandle->dHandle->hasSeparateMemorySpace()) {
-
-        if (!mHandle->inDevice()) {
-          mHandle->copyFrom(mHandle->uvaPtr, mHandle->size);
-          mHandle->memInfo |= uvaFlag::inDevice;
-        }
-        if (!isConst && !mHandle->isStale()) {
-          uvaStaleMemory.push_back(mHandle);
-          mHandle->memInfo |= uvaFlag::isStale;
-        }
+      if (!mHandle              ||
+          !mHandle->isManaged() ||
+          !mHandle->dHandle->hasSeparateMemorySpace()) {
+        continue;
+      }
+      if (!mHandle->inDevice()) {
+        mHandle->copyFrom(mHandle->uvaPtr, mHandle->size);
+        mHandle->memInfo |= uvaFlag::inDevice;
+      }
+      if (!isConst && !mHandle->isStale()) {
+        uvaStaleMemory.push_back(mHandle);
+        mHandle->memInfo |= uvaFlag::isStale;
       }
     }
   }

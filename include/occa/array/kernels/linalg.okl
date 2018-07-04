@@ -40,7 +40,7 @@
 #define CPU_CHUNK ((entries + CPU_DOT_OUTER - 1) / CPU_DOT_OUTER)
 #define CPU_REDUCTION_BODY(INIT, OPERATION, RED_OPERATION)  \
   for (int oi = 0; oi < CPU_DOT_OUTER; ++oi; @outer) {      \
-    VTYPE r_red = INIT(oi);                                 \
+    RETTYPE r_red = INIT(oi);                               \
     for (int i = 0; i < CPU_CHUNK; ++i; @inner) {           \
       if ((oi * CPU_CHUNK + i) < entries) {                 \
         OPERATION(r_red, oi * CPU_CHUNK + i);               \
@@ -125,10 +125,10 @@
 
 #define GPU_REDUCTION_BODY(INIT, OPERATION, RED_OPERATION)              \
   for (int oi = 0; oi < GPU_DOT_OUTER; ++oi; @outer) {                  \
-    @shared VTYPE s_red[GPU_DOT_INNER];                                 \
+    @shared RETTYPE s_red[GPU_DOT_INNER];                               \
                                                                         \
     for (int i = 0; i < GPU_DOT_INNER; ++i; @inner) {                   \
-      VTYPE r_red = INIT(oi);                                           \
+      RETTYPE r_red = INIT(oi);                                         \
       for (int j = (oi*GPU_DOT_INNER + i); j < entries; j += GPU_DOT_BLOCK) { \
         OPERATION(r_red, j);                                            \
       }                                                                 \
@@ -166,17 +166,17 @@
   red += part
 
 #define MAX_RED_OPERATION(red, part)            \
-  const VTYPE r_red2 = red;                     \
-  const VTYPE r_part2 = part;                   \
+  const RETTYPE r_red2 = red;                   \
+  const RETTYPE r_part2 = part;                 \
   red = r_red2 > r_part2 ? r_red2 : r_part2
 
 #define MIN_RED_OPERATION(red, part)            \
-  const VTYPE r_red2 = red;                     \
-  const VTYPE r_part2 = part;                   \
+  const RETTYPE r_red2 = red;                   \
+  const RETTYPE r_part2 = part;                 \
   red = r_red2 < r_part2 ? r_red2 : r_part2
 
 @kernel void l1Norm(const int entries,
-                      const VTYPE * vec,
+                    const VTYPE * vec,
                     RETTYPE * vecReduction) {
 #define L1_NORM_OPERATION(out, idx)             \
   out += ABS_FUNC((VTYPE) vec[idx])
@@ -187,7 +187,7 @@
                     const VTYPE * vec,
                     RETTYPE * vecReduction) {
 #define L2_NORM_OPERATION(out, idx)             \
-  const VTYPE vec_i = vec[idx];                 \
+  const RETTYPE vec_i = vec[idx];               \
   out += vec_i * vec_i;
   REDUCTION_BODY(INIT_ZERO, L2_NORM_OPERATION, SUM_RED_OPERATION);
 }
@@ -197,7 +197,7 @@
                     const VTYPE * vec,
                     RETTYPE * vecReduction) {
 #define LP_NORM_OPERATION(out, idx)             \
-  const VTYPE vec_i = vec[idx];                 \
+  const RETTYPE vec_i = vec[idx];               \
   out += pow((VTYPE) vec_i, (VTYPE) p)
   REDUCTION_BODY(INIT_ZERO, LP_NORM_OPERATION, SUM_RED_OPERATION);
 }
@@ -205,10 +205,10 @@
 @kernel void lInfNorm(const int entries,
                       const VTYPE * vec,
                       RETTYPE * vecReduction) {
-#define LINF_NORM_OPERATION(out, idx)             \
-  const VTYPE vec_i = ABS_FUNC((VTYPE) vec[idx]); \
-  if (out < vec_i) {                              \
-    out = vec_i;                                  \
+#define LINF_NORM_OPERATION(out, idx)               \
+  const RETTYPE vec_i = ABS_FUNC((VTYPE) vec[idx]); \
+  if (out < vec_i) {                                \
+    out = vec_i;                                    \
   }
 
   REDUCTION_BODY(INIT_ABS_FIRST, LINF_NORM_OPERATION, MAX_RED_OPERATION);
@@ -218,7 +218,7 @@
                     const VTYPE * vec,
                     RETTYPE * vecReduction) {
 #define MAX_OPERATION(out, idx)                 \
-  const VTYPE vec_i = vec[idx];                 \
+  const RETTYPE vec_i = vec[idx];               \
   out = out > vec_i ? out : vec_i
   REDUCTION_BODY(INIT_FIRST, MAX_OPERATION, MAX_RED_OPERATION);
 }
@@ -227,7 +227,7 @@
                     const VTYPE * vec,
                     RETTYPE * vecReduction) {
 #define MIN_OPERATION(out, idx)                 \
-  const VTYPE vec_i = vec[idx];                 \
+  const RETTYPE vec_i = vec[idx];               \
   out = out < vec_i ? out : vec_i
   REDUCTION_BODY(INIT_FIRST, MIN_OPERATION, MIN_RED_OPERATION);
 }

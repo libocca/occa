@@ -194,24 +194,13 @@ namespace occa {
     //---[ Linear Algebra ]-------------
     template <class TM>
     TM *hostReductionBuffer(const int size) {
-      std::map<int, TM*> &bufferMap = hostBufferMap<TM>();
-      TM *&buffer = bufferMap[size];
-      if (!buffer) {
-        buffer = new TM[size];
-      }
-      return buffer;
+      return new TM[size];
     }
 
     template <class TM>
     occa::memory deviceReductionBuffer(occa::device device,
                                        const int size) {
-
-      hashedMemoryMap &bufferMap = deviceBufferMap<TM>();
-      occa::memory &buffer = bufferMap[hash(device) ^ size];
-      if (!buffer.isInitialized()) {
-        buffer = device.malloc(size * sizeof(TM));
-      }
-      return buffer;
+      return device.malloc(size * sizeof(TM));
     }
 
     template <class VTYPE, class RETTYPE>
@@ -226,7 +215,6 @@ namespace occa {
       builder.build(dev)(entries,
                          vec,
                          deviceBuffer);
-      dev.finish();
       deviceBuffer.copyTo(hostBuffer);
       return hostBuffer;
     }
@@ -241,6 +229,7 @@ namespace occa {
       for (int i = 0; i < 1024; ++i) {
         ret += partialReduction[i];
       }
+      delete partialReduction;
       return ret;
     }
 
@@ -254,6 +243,7 @@ namespace occa {
       for (int i = 0; i < 1024; ++i) {
         ret += partialReduction[i];
       }
+      delete partialReduction;
       return sqrt(ret);
     }
 
@@ -279,6 +269,7 @@ namespace occa {
       for (int i = 0; i < 1024; ++i) {
         ret += hostBuffer[i];
       }
+      delete hostBuffer;
       return pow(ret, 1.0/p);
     }
 
@@ -295,6 +286,7 @@ namespace occa {
           ret = abs_i;
         }
       }
+      delete partialReduction;
       return ret;
     }
 
@@ -310,6 +302,7 @@ namespace occa {
           ret = partialReduction[i];
         }
       }
+      delete partialReduction;
       return ret;
     }
 
@@ -325,6 +318,7 @@ namespace occa {
           ret = partialReduction[i];
         }
       }
+      delete partialReduction;
       return ret;
     }
 
@@ -351,6 +345,7 @@ namespace occa {
       for (int i = 0; i < 1024; ++i) {
         ret += hostBuffer[i];
       }
+      delete hostBuffer;
       return ret;
     }
 
@@ -377,6 +372,7 @@ namespace occa {
       for (int i = 0; i < 1024; ++i) {
         ret += hostBuffer[i];
       }
+      delete hostBuffer;
       return sqrt(ret);
     }
 
@@ -390,6 +386,7 @@ namespace occa {
       for (int i = 0; i < 1024; ++i) {
         ret += partialReduction[i];
       }
+      delete partialReduction;
       return ret;
     }
 
