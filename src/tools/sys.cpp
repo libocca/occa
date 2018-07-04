@@ -762,15 +762,19 @@ namespace occa {
 
       if (dlHandle == NULL) {
         lock.release();
-        OCCA_ERROR("Error loading binary [" << io::shortname(filename) << "] with dlopen",
-                   false);
+        char *error = dlerror();
+        if (error) {
+          OCCA_FORCE_ERROR("Error loading binary [" << io::shortname(filename) << "] with dlopen: " << error);
+        } else {
+          OCCA_FORCE_ERROR("Error loading binary [" << io::shortname(filename) << "] with dlopen");
+        }
       }
 #else
       void *dlHandle = LoadLibraryA(filename.c_str());
 
       if (dlHandle == NULL) {
         lock.release();
-        OCCA_ERROR("Error loading dll [" << io::shortname(filename) << "] (WIN32 error: " << GetLastError() << ")",
+        OCCA_ERROR("Error loading .dll [" << io::shortname(filename) << "]: " << GetLastError(),
                    dlHandle != NULL);
       }
 #endif
@@ -781,35 +785,39 @@ namespace occa {
     functionPtr_t dlsym(void *dlHandle,
                         const std::string &functionName,
                         const io::lock_t &lock) {
+      OCCA_ERROR("dl handle is NULL",
+                 dlHandle);
 
 #if (OCCA_OS & (OCCA_LINUX_OS | OCCA_MACOS_OS))
       void *sym = ::dlsym(dlHandle, functionName.c_str());
 
-      char *dlError;
-
-      if ((dlError = dlerror()) != NULL) {
+      if (!sym) {
         lock.release();
-        OCCA_ERROR("Error loading symbol from binary with dlsym (DL Error: " << dlError << ")",
-                   false);
+        char *error = dlerror();
+        if (error) {
+          OCCA_FORCE_ERROR("Error loading symbol [" << functionName << "] from binary with dlsym: " << error << "");
+        } else {
+          OCCA_FORCE_ERROR("Error loading symbol [" << functionName << "] from binary with dlsym");
+        }
       }
 #else
       void *sym = GetProcAddress((HMODULE) dlHandle, functionName.c_str());
 
       if (sym == NULL) {
         lock.release();
-        OCCA_ERROR("Error loading symbol from binary with GetProcAddress",
-                   false);
+        OCCA_FORCE_ERROR("Error loading symbol [" << functionName << "] from binary with GetProcAddress");
       }
 #endif
 
       functionPtr_t sym2;
-
       ::memcpy(&sym2, &sym, sizeof(sym));
-
       return sym2;
     }
 
     void dlclose(void *dlHandle) {
+      if (!dlHandle) {
+        return;
+      }
 #if (OCCA_OS & (OCCA_LINUX_OS | OCCA_MACOS_OS))
       ::dlclose(dlHandle);
 #else
