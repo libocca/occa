@@ -23,6 +23,7 @@
 #include <occa/lang/exprNode.hpp>
 #include <occa/lang/type.hpp>
 #include <occa/lang/variable.hpp>
+#include <occa/lang/builtins/types.hpp>
 
 namespace occa {
   namespace lang {
@@ -516,6 +517,9 @@ namespace occa {
       flat += qualifiers;
       flat += pointers;
       flat += arrays;
+
+      // Remove typedef if it exists
+      flat -= typedef_;
 
       return flat;
     }

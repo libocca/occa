@@ -234,6 +234,7 @@ namespace occa {
         const int argCount = (int) function.args.size();
         for (int ai = 0; ai < argCount; ++ai) {
           variable_t &arg = *(function.args[ai]);
+          arg.vartype = arg.vartype.flatten();
           if (arg.vartype.isPointerType()) {
             arg += global;
           }
