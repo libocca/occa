@@ -90,8 +90,11 @@ Commands:
                   commands and arguments
   cache           Cache kernels
   clear           Clears cached files and cache locks
+  compile         Compile kernels
   env             Print environment variables used in OCCA
-  info            Prints information about available OCCA modes
+  info            Prints information about available backend modes
+  modes           Prints available backend modes
+  translate       Translate kernels
   version         Prints OCCA library version
 
 Arguments:
