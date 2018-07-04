@@ -45,7 +45,7 @@ namespace occa {
     typedef stream<token_t*>   tokenStream;
     typedef std::map<int, int> keywordToStatementMap;
 
-    typedef statement_t* (parser_t::*statementLoader_t)();
+    typedef statement_t* (parser_t::*statementLoader_t)(attributeTokenMap &smntAttributes);
     typedef std::map<int, statementLoader_t> statementLoaderMap;
 
     typedef std::list<blockStatement*>          blockStatementList;
@@ -154,8 +154,10 @@ namespace occa {
       //---[ Type Loaders ]-------------
       variable_t loadVariable();
 
-      variableDeclaration loadVariableDeclaration(const vartype_t &baseType);
-      void loadDeclarationAttributes(variableDeclaration &decl);
+      variableDeclaration loadVariableDeclaration(attributeTokenMap &smntAttributes,
+                                                  const vartype_t &baseType);
+      void loadDeclarationAttributes(attributeTokenMap &smntAttributes,
+                                     variableDeclaration &decl);
       int declarationNextCheck(const opType_t opCheck);
       void loadDeclarationBitfield(variableDeclaration &decl);
       void loadDeclarationAssignment(variableDeclaration &decl);
@@ -210,47 +212,47 @@ namespace occa {
       //---[ Statement Loaders ]--------
       void loadAllStatements();
 
-      statement_t* loadBlockStatement();
+      statement_t* loadBlockStatement(attributeTokenMap &smntAttributes);
 
-      statement_t* loadEmptyStatement();
+      statement_t* loadEmptyStatement(attributeTokenMap &smntAttributes);
 
-      statement_t* loadExpressionStatement();
+      statement_t* loadExpressionStatement(attributeTokenMap &smntAttributes);
 
-      statement_t* loadDeclarationStatement();
+      statement_t* loadDeclarationStatement(attributeTokenMap &smntAttributes);
 
-      statement_t* loadNamespaceStatement();
+      statement_t* loadNamespaceStatement(attributeTokenMap &smntAttributes);
 
-      statement_t* loadTypeDeclStatement();
+      statement_t* loadTypeDeclStatement(attributeTokenMap &smntAttributes);
 
-      statement_t* loadFunctionStatement();
+      statement_t* loadFunctionStatement(attributeTokenMap &smntAttributes);
 
       void checkIfConditionStatementExists();
       void loadConditionStatements(statementPtrVector &statements,
                                    const int expectedCount);
       statement_t* loadConditionStatement();
 
-      statement_t* loadIfStatement();
-      statement_t* loadElifStatement();
-      statement_t* loadElseStatement();
+      statement_t* loadIfStatement(attributeTokenMap &smntAttributes);
+      statement_t* loadElifStatement(attributeTokenMap &smntAttributes);
+      statement_t* loadElseStatement(attributeTokenMap &smntAttributes);
 
-      statement_t* loadForStatement();
-      statement_t* loadWhileStatement();
-      statement_t* loadDoWhileStatement();
+      statement_t* loadForStatement(attributeTokenMap &smntAttributes);
+      statement_t* loadWhileStatement(attributeTokenMap &smntAttributes);
+      statement_t* loadDoWhileStatement(attributeTokenMap &smntAttributes);
 
-      statement_t* loadSwitchStatement();
-      statement_t* loadCaseStatement();
-      statement_t* loadDefaultStatement();
-      statement_t* loadContinueStatement();
-      statement_t* loadBreakStatement();
+      statement_t* loadSwitchStatement(attributeTokenMap &smntAttributes);
+      statement_t* loadCaseStatement(attributeTokenMap &smntAttributes);
+      statement_t* loadDefaultStatement(attributeTokenMap &smntAttributes);
+      statement_t* loadContinueStatement(attributeTokenMap &smntAttributes);
+      statement_t* loadBreakStatement(attributeTokenMap &smntAttributes);
 
-      statement_t* loadReturnStatement();
+      statement_t* loadReturnStatement(attributeTokenMap &smntAttributes);
 
-      statement_t* loadClassAccessStatement();
+      statement_t* loadClassAccessStatement(attributeTokenMap &smntAttributes);
 
-      statement_t* loadPragmaStatement();
+      statement_t* loadPragmaStatement(attributeTokenMap &smntAttributes);
 
-      statement_t* loadGotoStatement();
-      statement_t* loadGotoLabelStatement();
+      statement_t* loadGotoStatement(attributeTokenMap &smntAttributes);
+      statement_t* loadGotoLabelStatement(attributeTokenMap &smntAttributes);
       //================================
 
       //---[ Customization ]------------

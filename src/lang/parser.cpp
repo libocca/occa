@@ -504,6 +504,7 @@ namespace occa {
           smnt->addAttribute(attr);
         } else {
           attr.printError("Cannot apply attribute to this type of statement");
+          smnt->printError("Trying to add @" + attr.name() + " to this statement");
           smnt->attributes.clear();
           clearAttributes(attrs);
           success = false;
@@ -641,7 +642,8 @@ namespace occa {
       return var;
     }
 
-    variableDeclaration parser_t::loadVariableDeclaration(const vartype_t &baseType) {
+    variableDeclaration parser_t::loadVariableDeclaration(attributeTokenMap &smntAttributes,
+                                                          const vartype_t &baseType) {
       variableDeclaration decl;
 
       // If partially-defined type, finish parsing it
@@ -661,7 +663,7 @@ namespace occa {
                         ? loadVariable(vartype).clone()
                         : loadFunctionPointer(vartype).clone());
 
-      loadDeclarationAttributes(decl);
+      loadDeclarationAttributes(smntAttributes, decl);
       if (!success) {
         return decl;
       }
@@ -675,12 +677,13 @@ namespace occa {
     }
 
 
-    void parser_t::loadDeclarationAttributes(variableDeclaration &decl) {
+    void parser_t::loadDeclarationAttributes(attributeTokenMap &smntAttributes,
+                                             variableDeclaration &decl) {
       attributeTokenMap &varAttributes = decl.variable->attributes;
       // Copy statement attributes to each variable
       // Variable attributes should override statement attributes
-      varAttributes.insert(attributes.begin(),
-                           attributes.end());
+      varAttributes.insert(smntAttributes.begin(),
+                           smntAttributes.end());
       loadAttributes(varAttributes);
       if (!success) {
         return;
@@ -1163,7 +1166,7 @@ namespace occa {
         attributes.clear();
 
         statementLoader_t loader = it->second;
-        statement_t *smnt = (this->*loader)();
+        statement_t *smnt = (this->*loader)(smntAttributes);
         if (!smnt) {
           return NULL;
         }
@@ -1200,9 +1203,9 @@ namespace occa {
       }
     }
 
-    statement_t* parser_t::loadBlockStatement() {
+    statement_t* parser_t::loadBlockStatement(attributeTokenMap &smntAttributes) {
       blockStatement *smnt = new blockStatement(up, context[0]);
-      addAttributesTo(attributes, smnt);
+      addAttributesTo(smntAttributes, smnt);
 
       context.pushPairRange(0);
       pushUp(*smnt);
@@ -1217,14 +1220,16 @@ namespace occa {
       return smnt;
     }
 
-    statement_t* parser_t::loadEmptyStatement() {
+    statement_t* parser_t::loadEmptyStatement(attributeTokenMap &smntAttributes) {
       statement_t *smnt = new emptyStatement(up, context[0]);
+      addAttributesTo(smntAttributes, smnt);
+
       // Skip [;] token
       context.set(1);
       return smnt;
     }
 
-    statement_t* parser_t::loadExpressionStatement() {
+    statement_t* parser_t::loadExpressionStatement(attributeTokenMap &smntAttributes) {
       int end = context.getNextOperator(operatorType::semicolon);
       if (end < 0) {
         if (checkSemicolon) {
@@ -1243,16 +1248,18 @@ namespace occa {
       }
       context.set(end + 1);
 
-      return new expressionStatement(up, *expr);
+      expressionStatement *smnt = new expressionStatement(up, *expr);
+      addAttributesTo(smntAttributes, smnt);
+      return smnt;
     }
 
-    statement_t* parser_t::loadDeclarationStatement() {
+    statement_t* parser_t::loadDeclarationStatement(attributeTokenMap &smntAttributes) {
       bool isFunction = isLoadingFunction();
       if (!success) {
         return NULL;
       }
       if (isFunction) {
-        return loadFunctionStatement();
+        return loadFunctionStatement(smntAttributes);
       }
 
       vartype_t baseType;
@@ -1262,10 +1269,11 @@ namespace occa {
       }
 
       declarationStatement &smnt = *(new declarationStatement(up));
+      addAttributesTo(smntAttributes, &smnt);
       while(success) {
         // TODO: Pass decl as argument to prevent a copy
         success = smnt.addDeclaration(
-          loadVariableDeclaration(baseType)
+          loadVariableDeclaration(smnt.attributes, baseType)
         );
         if (!success) {
           break;
@@ -1290,7 +1298,7 @@ namespace occa {
       return &smnt;
     }
 
-    statement_t* parser_t::loadNamespaceStatement() {
+    statement_t* parser_t::loadNamespaceStatement(attributeTokenMap &smntAttributes) {
       if (context.size() == 1) {
         context.printError("Expected a namespace name");
         return NULL;
@@ -1354,8 +1362,9 @@ namespace occa {
           currentSmnt = nextSmnt;
         }
       }
-
-      addAttributesTo(attributes, currentSmnt);
+      // Add attributes to the most-nested namespace
+      // TODO: Should this be the attribute logic?
+      addAttributesTo(smntAttributes, currentSmnt);
 
       // Load block content
       context.pushPairRange(0);
@@ -1367,11 +1376,11 @@ namespace occa {
       return smnt;
     }
 
-    statement_t* parser_t::loadTypeDeclStatement() {
+    statement_t* parser_t::loadTypeDeclStatement(attributeTokenMap &smntAttributes) {
       return NULL;
     }
 
-    statement_t* parser_t::loadFunctionStatement() {
+    statement_t* parser_t::loadFunctionStatement(attributeTokenMap &smntAttributes) {
       vartype_t returnType = preloadType();
 
       if (!(token_t::safeType(context[0]) & tokenType::identifier)) {
@@ -1401,10 +1410,10 @@ namespace occa {
       }
 
       // Copy attributes to the function itself
-      func.attributes = attributes;
+      func.attributes = smntAttributes;
       // Make sure all attributes are meant for functions
-      attributeTokenMap::iterator it = attributes.begin();
-      while (it != attributes.end()) {
+      attributeTokenMap::iterator it = smntAttributes.begin();
+      while (it != smntAttributes.end()) {
         attributeToken_t &attr = it->second;
         if (!attr.forFunction()) {
           attr.printError("Cannot apply attribute to function");
@@ -1428,7 +1437,7 @@ namespace occa {
         delete &func;
         return NULL;
       }
-      addAttributesTo(attributes, &funcSmnt);
+      addAttributesTo(smntAttributes, &funcSmnt);
 
       pushUp(funcSmnt);
       statement_t *content = getNextStatement();
@@ -1557,7 +1566,7 @@ namespace occa {
       return statements[0];
     }
 
-    statement_t* parser_t::loadIfStatement() {
+    statement_t* parser_t::loadIfStatement(attributeTokenMap &smntAttributes) {
       token_t *ifToken = context[0];
       checkIfConditionStatementExists();
       if (!success) {
@@ -1566,6 +1575,7 @@ namespace occa {
 
       ifStatement &ifSmnt = *(new ifStatement(up, ifToken));
       pushUp(ifSmnt);
+      addAttributesTo(smntAttributes, &ifSmnt);
 
       statement_t *condition = loadConditionStatement();
       if (!condition) {
@@ -1579,7 +1589,6 @@ namespace occa {
       }
 
       ifSmnt.setCondition(condition);
-      addAttributesTo(attributes, &ifSmnt);
 
       statement_t *content = getNextStatement();
       if (!content) {
@@ -1619,7 +1628,7 @@ namespace occa {
       return &ifSmnt;
     }
 
-    statement_t* parser_t::loadElifStatement() {
+    statement_t* parser_t::loadElifStatement(attributeTokenMap &smntAttributes) {
       // Skip [else] since checkIfConditionStatementExists
       //   expects 1 token before the condition
       // This is basically the same code as loadIfStatement
@@ -1633,6 +1642,7 @@ namespace occa {
 
       elifStatement &elifSmnt = *(new elifStatement(up, elifToken));
       pushUp(elifSmnt);
+      addAttributesTo(smntAttributes, &elifSmnt);
 
       statement_t *condition = loadConditionStatement();
       if (!condition) {
@@ -1645,7 +1655,6 @@ namespace occa {
       }
 
       elifSmnt.setCondition(condition);
-      addAttributesTo(attributes, &elifSmnt);
 
       statement_t *content = getNextStatement();
       popUp();
@@ -1662,14 +1671,14 @@ namespace occa {
       return &elifSmnt;
     }
 
-    statement_t* parser_t::loadElseStatement() {
+    statement_t* parser_t::loadElseStatement(attributeTokenMap &smntAttributes) {
       token_t *elseToken = context[0];
       context.set(1);
 
       elseStatement &elseSmnt = *(new elseStatement(up, elseToken));
-      addAttributesTo(attributes, &elseSmnt);
-
       pushUp(elseSmnt);
+      addAttributesTo(smntAttributes, &elseSmnt);
+
       statement_t *content = getNextStatement();
       popUp();
       if (!content) {
@@ -1683,7 +1692,7 @@ namespace occa {
       return &elseSmnt;
     }
 
-    statement_t* parser_t::loadForStatement() {
+    statement_t* parser_t::loadForStatement(attributeTokenMap &smntAttributes) {
       token_t *forToken = context[0];
       checkIfConditionStatementExists();
       if (!success) {
@@ -1692,6 +1701,7 @@ namespace occa {
 
       forStatement &forSmnt = *(new forStatement(up, forToken));
       pushUp(forSmnt);
+      addAttributesTo(smntAttributes, &forSmnt);
 
       token_t *parenEnd = context.getClosingPairToken(0);
 
@@ -1733,11 +1743,12 @@ namespace occa {
       forSmnt.setLoopStatements(statements[0],
                                 statements[1],
                                 statements[2]);
-      addAttributesTo(attributes, &forSmnt);
       if (!success) {
         delete &forSmnt;
         return NULL;
       }
+      // If the last statement had attributes, we need to pass them now
+      addAttributesTo(attributes, &forSmnt);
 
       statement_t *content = getNextStatement();
       popUp();
@@ -1754,10 +1765,10 @@ namespace occa {
       return &forSmnt;
     }
 
-    statement_t* parser_t::loadWhileStatement() {
+    statement_t* parser_t::loadWhileStatement(attributeTokenMap &smntAttributes) {
       token_t *whileToken = context[0];
       if (getKeyword(context[0]).type() & keywordType::do_) {
-        return loadDoWhileStatement();
+        return loadDoWhileStatement(smntAttributes);
       }
 
       checkIfConditionStatementExists();
@@ -1767,6 +1778,7 @@ namespace occa {
 
       whileStatement &whileSmnt = *(new whileStatement(up, whileToken));
       pushUp(whileSmnt);
+      addAttributesTo(smntAttributes, &whileSmnt);
 
       statement_t *condition = loadConditionStatement();
       if (!condition) {
@@ -1780,7 +1792,6 @@ namespace occa {
       }
 
       whileSmnt.setCondition(condition);
-      addAttributesTo(attributes, &whileSmnt);
 
       statement_t *content = getNextStatement();
       popUp();
@@ -1795,13 +1806,13 @@ namespace occa {
       return &whileSmnt;
     }
 
-    statement_t* parser_t::loadDoWhileStatement() {
+    statement_t* parser_t::loadDoWhileStatement(attributeTokenMap &smntAttributes) {
       token_t *doToken = context[0];
       context.set(1);
 
       whileStatement &whileSmnt = *(new whileStatement(up, doToken, true));
-      addAttributesTo(attributes, &whileSmnt);
       pushUp(whileSmnt);
+      addAttributesTo(smntAttributes, &whileSmnt);
 
       statement_t *content = getNextStatement();
       if (!content) {
@@ -1854,7 +1865,7 @@ namespace occa {
       return &whileSmnt;
     }
 
-    statement_t* parser_t::loadSwitchStatement() {
+    statement_t* parser_t::loadSwitchStatement(attributeTokenMap &smntAttributes) {
       token_t *switchToken = context[0];
       checkIfConditionStatementExists();
       if (!success) {
@@ -1863,6 +1874,7 @@ namespace occa {
 
       switchStatement &switchSmnt = *(new switchStatement(up, switchToken));
       pushUp(switchSmnt);
+      addAttributesTo(smntAttributes, &switchSmnt);
 
       token_t *parenEnd = context.getClosingPairToken(0);
       statement_t *condition = loadConditionStatement();
@@ -1877,7 +1889,6 @@ namespace occa {
       }
 
       switchSmnt.setCondition(condition);
-      addAttributesTo(attributes, &switchSmnt);
 
       statement_t *content = getNextStatement();
       popUp();
@@ -1907,7 +1918,7 @@ namespace occa {
       return &switchSmnt;
     }
 
-    statement_t* parser_t::loadCaseStatement() {
+    statement_t* parser_t::loadCaseStatement(attributeTokenMap &smntAttributes) {
       token_t *caseToken = context[0];
       context.set(1);
 
@@ -1931,10 +1942,13 @@ namespace occa {
       }
 
       context.set(pos + 1);
-      return new caseStatement(up, caseToken, *value);
+
+      caseStatement *smnt = new caseStatement(up, caseToken, *value);
+      addAttributesTo(smntAttributes, smnt);
+      return smnt;
     }
 
-    statement_t* parser_t::loadDefaultStatement() {
+    statement_t* parser_t::loadDefaultStatement(attributeTokenMap &smntAttributes) {
       token_t *defaultToken = context[0];
       context.set(1);
       if (!(getOperatorType(context[0]) & operatorType::colon)) {
@@ -1943,10 +1957,13 @@ namespace occa {
         return NULL;
       }
       context.set(1);
-      return new defaultStatement(up, defaultToken);
+
+      defaultStatement *smnt = new defaultStatement(up, defaultToken);
+      addAttributesTo(smntAttributes, smnt);
+      return smnt;
     }
 
-    statement_t* parser_t::loadContinueStatement() {
+    statement_t* parser_t::loadContinueStatement(attributeTokenMap &smntAttributes) {
       token_t *continueToken = context[0];
       context.set(1);
       if (!(getOperatorType(context[0]) & operatorType::semicolon)) {
@@ -1955,10 +1972,13 @@ namespace occa {
         return NULL;
       }
       context.set(1);
-      return new continueStatement(up, continueToken);
+
+      continueStatement *smnt = new continueStatement(up, continueToken);
+      addAttributesTo(smntAttributes, smnt);
+      return smnt;
     }
 
-    statement_t* parser_t::loadBreakStatement() {
+    statement_t* parser_t::loadBreakStatement(attributeTokenMap &smntAttributes) {
       token_t *breakToken = context[0];
       context.set(1);
       if (!(getOperatorType(context[0]) & operatorType::semicolon)) {
@@ -1967,10 +1987,13 @@ namespace occa {
         return NULL;
       }
       context.set(1);
-      return new breakStatement(up, breakToken);
+
+      breakStatement *smnt = new breakStatement(up, breakToken);
+      addAttributesTo(smntAttributes, smnt);
+      return smnt;
     }
 
-    statement_t* parser_t::loadReturnStatement() {
+    statement_t* parser_t::loadReturnStatement(attributeTokenMap &smntAttributes) {
       token_t *returnToken = context[0];
       context.set(1);
 
@@ -1992,10 +2015,13 @@ namespace occa {
       }
 
       context.set(pos + 1);
-      return new returnStatement(up, returnToken, value);
+
+      returnStatement *smnt = new returnStatement(up, returnToken, value);
+      addAttributesTo(smntAttributes, smnt);
+      return smnt;
     }
 
-    statement_t* parser_t::loadClassAccessStatement() {
+    statement_t* parser_t::loadClassAccessStatement(attributeTokenMap &smntAttributes) {
       token_t *accessToken = context[0];
       if (!(getOperatorType(context[1]) & operatorType::colon)) {
         context.printError("Expected a [:]");
@@ -2012,17 +2038,22 @@ namespace occa {
         access = classAccess::protected_;
       }
 
-      return new classAccessStatement(up, accessToken, access);
-    }
-
-    statement_t* parser_t::loadPragmaStatement() {
-      pragmaStatement *smnt = new pragmaStatement(up,
-                                                  *((pragmaToken*) context[0]));
-      context.set(1);
+      classAccessStatement *smnt = new classAccessStatement(up, accessToken, access);
+      addAttributesTo(smntAttributes, smnt);
       return smnt;
     }
 
-    statement_t* parser_t::loadGotoStatement() {
+    statement_t* parser_t::loadPragmaStatement(attributeTokenMap &smntAttributes) {
+      pragmaStatement *smnt = new pragmaStatement(up,
+                                                  *((pragmaToken*) context[0]));
+      addAttributesTo(smntAttributes, smnt);
+
+      context.set(1);
+
+      return smnt;
+    }
+
+    statement_t* parser_t::loadGotoStatement(attributeTokenMap &smntAttributes) {
       context.set(1);
       if (!(token_t::safeType(context[0]) & tokenType::identifier)) {
         context.printError("Expected [goto label] identifier");
@@ -2040,10 +2071,12 @@ namespace occa {
                                      ->to<identifierToken>());
       context.set(2);
 
-      return new gotoStatement(up, labelToken);
+      gotoStatement *smnt = new gotoStatement(up, labelToken);
+      addAttributesTo(smntAttributes, smnt);
+      return smnt;
     }
 
-    statement_t* parser_t::loadGotoLabelStatement() {
+    statement_t* parser_t::loadGotoLabelStatement(attributeTokenMap &smntAttributes) {
       if (!(getOperatorType(context[1]) & operatorType::colon)) {
         context.printError("Expected a [:]");
         success = false;
@@ -2055,7 +2088,9 @@ namespace occa {
                                      ->to<identifierToken>());
       context.set(2);
 
-      return new gotoLabelStatement(up, labelToken);
+      gotoLabelStatement *smnt = new gotoLabelStatement(up, labelToken);
+      addAttributesTo(smntAttributes, smnt);
+      return smnt;
     }
     //==================================
 
