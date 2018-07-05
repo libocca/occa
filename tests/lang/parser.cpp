@@ -147,25 +147,25 @@ void testPeek() {
 //======================================
 
 //---[ Type Loading ]-------------------
-vartype_t preloadType(const std::string &s) {
+vartype_t loadType(const std::string &s) {
   setSource(s);
-  return parser.preloadType();
+  return parser.loadType();
 }
 
 #define assertType(str_)                            \
   setSource(str_);                                  \
-  parser.preloadType();                             \
+  parser.loadType();                                \
   ASSERT_FALSE(parser.isLoadingFunctionPointer());  \
   ASSERT_FALSE(parser.isLoadingVariable())
 
-vartype_t loadType(const std::string &s) {
+vartype_t loadVariableType(const std::string &s) {
   setSource(s);
   return parser.loadVariable().vartype;
 }
 
 #define assertVariable(str_)                        \
   setSource(str_);                                  \
-  parser.preloadType();                             \
+  parser.loadType();                                \
   ASSERT_FALSE(parser.isLoadingFunctionPointer());  \
   ASSERT_TRUE(parser.isLoadingVariable())
 
@@ -176,7 +176,7 @@ variable_t loadVariable(const std::string &s) {
 
 #define assertFunctionPointer(str_)               \
   setSource(str_);                                \
-  parser.preloadType();                           \
+  parser.loadType();                              \
   ASSERT_TRUE(parser.isLoadingFunctionPointer())
 
 void testBaseTypeLoading();
@@ -201,13 +201,13 @@ void testBaseTypeLoading() {
   vartype_t type;
 
   // Test base type
-  type = preloadType("int");
+  type = loadType("int");
   ASSERT_EQ(0,
             type.qualifiers.size());
   ASSERT_EQ(&int_,
             type.type);
 
-  type = preloadType("const volatile float");
+  type = loadType("const volatile float");
   ASSERT_EQ(2,
             type.qualifiers.size());
   ASSERT_TRUE(type.has(volatile_));
@@ -215,7 +215,7 @@ void testBaseTypeLoading() {
   ASSERT_EQ(&float_,
             type.type);
 
-  type = preloadType("const long long");
+  type = loadType("const long long");
   ASSERT_EQ(2,
             type.qualifiers.size());
   ASSERT_TRUE(type.has(const_));
@@ -224,7 +224,7 @@ void testBaseTypeLoading() {
             type.type);
 
   // Test weird order declaration
-  type = preloadType("double const long long");
+  type = loadType("double const long long");
   ASSERT_EQ(2,
             type.qualifiers.size());
   ASSERT_TRUE(type.has(const_));
@@ -236,20 +236,20 @@ void testBaseTypeLoading() {
 void testPointerTypeLoading() {
   vartype_t type;
 
-  type = preloadType("int *");
+  type = loadType("int *");
   ASSERT_EQ(1,
             (int) type.pointers.size());
   ASSERT_EQ(0,
             type.pointers[0].qualifiers.size());
 
-  type = preloadType("const volatile float * const");
+  type = loadType("const volatile float * const");
   ASSERT_EQ(1,
             (int) type.pointers.size());
   ASSERT_EQ(1,
             type.pointers[0].qualifiers.size());
   ASSERT_TRUE(type.pointers[0].has(const_));
 
-  type = preloadType("float * const * volatile ** const volatile");
+  type = loadType("float * const * volatile ** const volatile");
   ASSERT_EQ(4,
             (int) type.pointers.size());
   ASSERT_TRUE(type.pointers[0].has(const_));
@@ -263,19 +263,19 @@ void testPointerTypeLoading() {
 void testReferenceTypeLoading() {
   vartype_t type;
 
-  type = preloadType("int");
+  type = loadType("int");
   ASSERT_FALSE(type.isReference());
-  type = preloadType("int &");
+  type = loadType("int &");
   ASSERT_TRUE(type.isReference());
 
-  type = preloadType("int *");
+  type = loadType("int *");
   ASSERT_FALSE(type.isReference());
-  type = preloadType("int *&");
+  type = loadType("int *&");
   ASSERT_TRUE(type.isReference());
 
-  type = preloadType("int ***");
+  type = loadType("int ***");
   ASSERT_FALSE(type.isReference());
-  type = preloadType("int ***&");
+  type = loadType("int ***&");
   ASSERT_TRUE(type.isReference());
 }
 
@@ -283,24 +283,24 @@ void testArrayTypeLoading() {
   vartype_t type;
 
   assertType("int[]");
-  type = loadType("int[]");
+  type = loadVariableType("int[]");
   ASSERT_EQ(1,
             (int) type.arrays.size());
 
   assertType("int[][]");
-  type = loadType("int[][]");
+  type = loadVariableType("int[][]");
   ASSERT_EQ(2,
             (int) type.arrays.size());
 
   assertType("int[1]");
-  type = loadType("int[1]");
+  type = loadVariableType("int[1]");
   ASSERT_EQ(1,
             (int) type.arrays.size());
   ASSERT_EQ(1,
             (int) type.arrays[0].evaluateSize());
 
   assertType("int[1 + 3][7]");
-  type = loadType("int[1 + 3][7]");
+  type = loadVariableType("int[1 + 3][7]");
   ASSERT_EQ(2,
             (int) type.arrays.size());
   ASSERT_EQ(4,
@@ -450,21 +450,21 @@ void testTypeErrors() {
 
 void testBaseTypeErrors() {
   vartype_t type;
-  type = preloadType("const");
-  type = preloadType("const foo");
-  type = preloadType("const const");
-  type = preloadType("long long long");
+  type = loadType("const");
+  type = loadType("const foo");
+  type = loadType("const const");
+  type = loadType("long long long");
 }
 
 void testPointerTypeErrors() {
   vartype_t type;
-  type = preloadType("const *");
-  type = preloadType("float * long");
+  type = loadType("const *");
+  type = loadType("float * long");
 }
 
 void testArrayTypeErrors() {
   assertType("int[-]");
-  loadType("int[-]");
+  loadVariableType("int[-]");
 }
 
 void testVariableErrors() {

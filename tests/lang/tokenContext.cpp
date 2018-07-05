@@ -32,7 +32,6 @@ using namespace occa::lang;
 
 void testMethods();
 void testPairs();
-void testExpression();
 
 std::string source;
 
@@ -47,7 +46,6 @@ void setupContext(tokenContext &context,
 int main(const int argc, const char **argv) {
   testMethods();
   testPairs();
-  testExpression();
 
   return 0;
 }
@@ -181,34 +179,4 @@ void testPairs() {
   setupContext(context, "{1, 2]");
   setupContext(context, "<<<1, 2}");
   setupContext(context, "(1, 2>>>");
-}
-
-void testExpression() {
-  tokenContext context;
-  exprNode *expr;
-
-  setupContext(context, "");
-  ASSERT_EQ((void*) NULL,
-            (void*) context.getExpression());
-
-  setupContext(context, "1 + 2 + 3");
-  expr = context.getExpression();
-  ASSERT_EQ(6,
-            (int) expr->evaluate());
-  delete expr;
-
-  expr = context.getExpression(0, 3);
-  ASSERT_EQ(3,
-            (int) expr->evaluate());
-  delete expr;
-
-  expr = context.getExpression(2, 5);
-  ASSERT_EQ(5,
-            (int) expr->evaluate());
-  delete expr;
-
-  expr = context.getExpression(4, 5);
-  ASSERT_EQ(3,
-            (int) expr->evaluate());
-  delete expr;
 }
