@@ -88,7 +88,7 @@ namespace occa {
         iterator  = decl.variable;
         initValue = decl.value;
         // Valid types: {char, short, int, long}
-        const type_t *type = iterator->vartype.type;
+        const type_t *type = iterator->vartype.flatten().type;
         if (!type ||
             ((*type != char_)  &&
              (*type != short_) &&
