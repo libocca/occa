@@ -24,6 +24,7 @@
 
 #include <occa/tools/hash.hpp>
 #include <occa/io.hpp>
+#include <occa/tools/env.hpp>
 #include <occa/tools/lex.hpp>
 #include <occa/tools/string.hpp>
 #include <occa/lang/primitive.hpp>
@@ -44,9 +45,26 @@ namespace occa {
     }
 
     // TODO: Add actual compiler macros as well
-    preprocessor_t::preprocessor_t() {
+    preprocessor_t::preprocessor_t(const occa::properties &settings_) {
       init();
       initDirectives();
+      if (!settings_.has("include-paths")) {
+        return;
+      }
+      json paths = settings_["include-paths"];
+      if (!paths.isArray()) {
+        return;
+      }
+      jsonArray pathArray = paths.array();
+      const int pathCount = (int) pathArray.size();
+      for (int i = 0; i < pathCount; ++i) {
+        json path = pathArray[i];
+        if (path.isString()) {
+          std::string pathStr = path;
+          io::endWithSlash(pathStr);
+          includePaths.push_back(pathStr);
+        }
+      }
     }
 
     preprocessor_t::preprocessor_t(const preprocessor_t &pp) :
@@ -148,6 +166,8 @@ namespace occa {
       dependencies = other.dependencies;
       warnings     = other.warnings;
       errors       = other.errors;
+
+      includePaths = other.includePaths;
 
       // Copy cache
       tokenList *caches[2] = { &inputCache, &outputCache };
@@ -906,8 +926,22 @@ namespace occa {
         return;
       }
 
-      const std::string header = io::filename(tokenizer->getHeader());
-
+      // Expand non-absolute path
+      std::string header = io::filename(tokenizer->getHeader(), false);
+      // Test includePaths until one exists
+      // Default to a relative path if none are found
+      if (!io::isAbsolutePath(header)) {
+        const int pathCount = (int) includePaths.size();
+        for (int i = 0; i < pathCount; ++i) {
+          const std::string path = includePaths[i];
+          if (io::exists(path + header)) {
+            header = path + header;
+            break;
+          } else if (i == (pathCount - 1)) {
+            header = env::PWD + header;
+          }
+        }
+      }
       if (!io::exists(header)) {
         errorOn(&directive,
                 "File does not exist");

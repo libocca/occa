@@ -374,7 +374,8 @@ namespace occa {
           if (startsWith(arg_i, "--")) {
             opt = getOption(arg_i.substr(2));
             gotOpt = true;
-          } else if (startsWith(arg_i, "-")) {
+          }
+          else if (startsWith(arg_i, "-")) {
             std::string args_i = arg_i.substr(1);
             const int shortArgs = (int) args_i.size();
             for (int j = 0; j < (shortArgs - 1); ++j) {
@@ -384,7 +385,8 @@ namespace occa {
               opt = getShortOption(std::string(1, args_i[shortArgs - 1]));
             }
             gotOpt = true;
-          } else {
+          }
+          else {
             const int optArgCount = (int) optArgs->array().size();
             if (opt &&
                 (opt->requiredArgs >= 0) &&
