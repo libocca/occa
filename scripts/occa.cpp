@@ -281,7 +281,11 @@ bool runTranslate(const cli::command &command,
 
   bool success = parser->succeeded();
   if (success) {
-    std::cout << parser->toString();
+    std::cout
+      << "/* Kernel Props:\n"
+      << kernelProps
+      << "*/\n"
+      << parser->toString();
   }
   delete parser;
   return success;
