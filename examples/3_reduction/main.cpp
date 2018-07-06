@@ -27,6 +27,7 @@ int main(int argc, char **argv) {
   occa::setDevice("mode: 'Serial'");
   // occa::setDevice("mode: 'OpenMP'");
   // occa::setDevice("mode: 'CUDA'  , deviceID: 0");
+  // occa::setDevice("mode: 'HIP'  , deviceID: 0");
   // occa::setDevice("mode: 'OpenCL', platformID: 0, deviceID: 0");
 
   occa::kernel reduction;

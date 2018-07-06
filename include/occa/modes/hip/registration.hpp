@@ -20,33 +20,34 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  */
 
-#ifndef OCCA_DEFINES_COMPILEDDEFINES_HEADER
-#define OCCA_DEFINES_COMPILEDDEFINES_HEADER
+#include <occa/defines.hpp>
 
-#ifndef OCCA_LINUX_OS
-#  define OCCA_LINUX_OS 1
-#endif
+#if OCCA_HIP_ENABLED
+#  ifndef OCCA_HIP_REGISTRATION_HEADER
+#  define OCCA_HIP_REGISTRATION_HEADER
 
-#ifndef OCCA_MACOS_OS
-#  define OCCA_MACOS_OS 2
-#endif
+#include <occa/mode.hpp>
+#include <occa/modes/hip/device.hpp>
+#include <occa/modes/hip/kernel.hpp>
+#include <occa/modes/hip/memory.hpp>
+#include <occa/tools/styling.hpp>
+#include <occa/base.hpp>
 
-#ifndef OCCA_WINDOWS_OS
-#  define OCCA_WINDOWS_OS 4
-#endif
+namespace occa {
+  namespace hip {
+    class modeInfo : public modeInfo_v {
+    public:
+      modeInfo();
 
-#ifndef OCCA_WINUX_OS
-#  define OCCA_WINUX_OS (OCCA_LINUX_OS | OCCA_WINDOWS_OS)
-#endif
+      void init();
+      styling::section& getDescription();
+      occa::properties& getProperties();
+    };
 
-#define OCCA_OS             @@OCCA_OS@@
-#define OCCA_USING_VS       @@OCCA_USING_VS@@
-#define OCCA_UNSAFE         @@OCCA_UNSAFE@@
+    extern occa::mode<hip::modeInfo,
+                      hip::device> mode;
+  }
+}
 
-#define OCCA_MPI_ENABLED    @@OCCA_MPI_ENABLED@@
-#define OCCA_OPENMP_ENABLED @@OCCA_OPENMP_ENABLED@@
-#define OCCA_OPENCL_ENABLED @@OCCA_OPENCL_ENABLED@@
-#define OCCA_CUDA_ENABLED   @@OCCA_CUDA_ENABLED@@
-#define OCCA_HIP_ENABLED    @@OCCA_HIP_ENABLED@@
-
+#  endif
 #endif

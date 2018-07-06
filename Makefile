@@ -75,7 +75,9 @@ MAKE_COMPILED_DEFINES := $(shell cat "$(OCCA_DIR)/scripts/compiledDefinesTemplat
                                       s,@@OCCA_MPI_ENABLED@@,$(OCCA_MPI_ENABLED),g; \
                                       s,@@OCCA_OPENMP_ENABLED@@,$(OCCA_OPENMP_ENABLED),g;\
                                       s,@@OCCA_OPENCL_ENABLED@@,$(OCCA_OPENCL_ENABLED),g;\
-                                      s,@@OCCA_CUDA_ENABLED@@,$(OCCA_CUDA_ENABLED),g;" > "$(NEW_COMPILED_DEFINES)")
+                                      s,@@OCCA_CUDA_ENABLED@@,$(OCCA_CUDA_ENABLED),g;\
+                                      s,@@OCCA_HIP_ENABLED@@,$(OCCA_HIP_ENABLED),g;" > "$(NEW_COMPILED_DEFINES)")
+
 MAKE_COMPILED_DEFINES := $(shell \
  [ ! -f "$(COMPILED_DEFINES)" -o -n "$(shell diff -q $(COMPILED_DEFINES) $(NEW_COMPILED_DEFINES))" ] \
  && cp "$(NEW_COMPILED_DEFINES)" "$(COMPILED_DEFINES)" \

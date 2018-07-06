@@ -61,6 +61,9 @@ int main(int argc, char **argv) {
   // device.setup("mode     : 'CUDA', "
   //              "deviceID : 0");
 
+  // device.setup("mode     : 'HIP', "
+  //              "deviceID : 0");
+
   // device.setup("mode        : 'Threads', "
   //              "threadCount : 4, "
   //              "schedule    : 'compact', "

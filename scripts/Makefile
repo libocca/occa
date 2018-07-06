@@ -229,6 +229,7 @@ mpiEnabled    = 0
 openmpEnabled = 0
 openclEnabled = 0
 cudaEnabled   = 0
+hipEnabled    = 0
 
 ifdef OCCA_MPI_ENABLED
   mpiEnabled = $(OCCA_MPI_ENABLED)
@@ -292,7 +293,7 @@ ifdef OCCA_CUDA_ENABLED
   endif
 else
   cudaIncFlags = $(call includeFlagsFor,cuda.h)
-
+  
   ifneq (,$(cudaIncFlags))
 
     ifeq ($(usingLinux),1)
@@ -305,6 +306,41 @@ else
       cudaEnabled = 1
       paths += $(cudaIncFlags)
       links += $(cudaLibFlags)
+    endif
+  endif
+endif
+
+ifdef OCCA_HIP_ENABLED
+  hipEnabled = $(OCCA_HIP_ENABLED)
+
+  ifeq ($(hipEnabled),1)
+    ifeq ($(usingLinux),1)
+      links += -lhip_hcc
+    #else ifeq ($(usingMacOS),1)
+      #links += -framework HIP
+    endif
+  endif
+else
+  hipIncFlags = $(call includeFlagsFor,hip/hip_runtime_api.h)
+  
+  ifneq (,$(hipIncFlags))
+    ifndef HIP_PATH
+      HIP_PATH = ${hipIncFlags:-I%=%}/../..
+    endif 
+
+    hipconfig = $(shell $(HIP_PATH)/bin/hipconfig --cpp_config)
+
+    ifeq ($(usingLinux),1)
+      hipLibFlags = $(call libraryFlagsFor,hip_hcc)
+    #else ifeq ($(usingMacOS),1)
+      #hipLibFlags = $(call libraryFlagsFor,HPI_HCC)
+    endif
+
+    ifneq (,$(hipLibFlags))
+      hipEnabled = 1
+      paths += $(hipconfig)
+      paths += $(hipIncFlags)
+      links += $(hipLibFlags)
     endif
   endif
 endif
@@ -323,4 +359,5 @@ OCCA_MPI_ENABLED    := $(mpiEnabled)
 OCCA_OPENMP_ENABLED := $(openmpEnabled)
 OCCA_OPENCL_ENABLED := $(openclEnabled)
 OCCA_CUDA_ENABLED   := $(cudaEnabled)
+OCCA_HIP_ENABLED    := $(hipEnabled)
 #=================================================

@@ -27,6 +27,7 @@
 #include <occa/lang/modes/openmp.hpp>
 #include <occa/lang/modes/opencl.hpp>
 #include <occa/lang/modes/cuda.hpp>
+#include <occa/lang/modes/hip.hpp>
 
 using namespace occa;
 
@@ -198,6 +199,8 @@ bool runTranslate(const cli::command &command,
     parser = new lang::okl::openclParser(kernelProps);
   } else if (mode == "CUDA") {
     parser = new lang::okl::cudaParser(kernelProps);
+  } else if (mode == "HIP") {
+    parser = new lang::okl::hipParser(kernelProps);
   }
 
   if (!parser) {
@@ -260,6 +263,7 @@ bool runEnv(const cli::command &command,
             << "    - OCCA_OPENMP_ENABLED        : " << envEcho("OCCA_OPENMP_ENABLED", OCCA_OPENMP_ENABLED) << "\n"
             << "    - OCCA_OPENCL_ENABLED        : " << envEcho("OCCA_OPENCL_ENABLED", OCCA_OPENCL_ENABLED) << "\n"
             << "    - OCCA_CUDA_ENABLED          : " << envEcho("OCCA_CUDA_ENABLED", OCCA_CUDA_ENABLED) << "\n"
+            << "    - OCCA_HIP_ENABLED           : " << envEcho("OCCA_HIP_ENABLED", OCCA_HIP_ENABLED) << "\n"
 
             << "  Run-Time Options:\n"
             << "    - OCCA_CXX                   : " << envEcho("OCCA_CXX") << "\n"
@@ -268,7 +272,9 @@ bool runEnv(const cli::command &command,
             << "    - OCCA_LIBRARY_PATH          : " << envEcho("OCCA_LIBRARY_PATH") << "\n"
             << "    - OCCA_OPENCL_COMPILER_FLAGS : " << envEcho("OCCA_OPENCL_COMPILER_FLAGS") << "\n"
             << "    - OCCA_CUDA_COMPILER         : " << envEcho("OCCA_CUDA_COMPILER") << "\n"
-            << "    - OCCA_CUDA_COMPILER_FLAGS   : " << envEcho("OCCA_CUDA_COMPILER_FLAGS") << "\n";
+            << "    - OCCA_CUDA_COMPILER_FLAGS   : " << envEcho("OCCA_CUDA_COMPILER_FLAGS") << "\n"
+            << "    - OCCA_HIP_COMPILER          : " << envEcho("OCCA_HIP_COMPILER") << "\n"
+            << "    - OCCA_HIP_COMPILER_FLAGS    : " << envEcho("OCCA_HIP_COMPILER_FLAGS") << "\n";
   return true;
 }
 
