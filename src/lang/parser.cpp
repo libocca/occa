@@ -31,6 +31,7 @@
 namespace occa {
   namespace lang {
     parser_t::parser_t(const occa::properties &settings_) :
+      preprocessor(settings_),
       unknownFilter(true),
       lastPeek(0),
       lastPeekPosition(-1),

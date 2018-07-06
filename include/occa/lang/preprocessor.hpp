@@ -85,7 +85,11 @@ namespace occa {
       int warnings, errors;
       //================================
 
-      preprocessor_t();
+      //---[ Misc ]---------------------
+      strVector includePaths;
+      //================================
+
+      preprocessor_t(const occa::properties &settings_ = occa::properties());
       preprocessor_t(const preprocessor_t &other);
       ~preprocessor_t();
 

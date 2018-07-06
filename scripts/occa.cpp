@@ -44,6 +44,24 @@ std::string envEcho(const std::string &arg, const TM &defaultValue) {
   return (ret.size() ? ret : toString(defaultValue));
 }
 
+void flattenArray(const jsonArray &array, jsonArray &flatArray) {
+  const int count = (int) array.size();
+  for (int i = 0; i < count; ++i) {
+    json value = array[i];
+    if (!value.isArray()) {
+      flatArray.push_back(value);
+    } else {
+      flattenArray(value.array(), flatArray);
+    }
+  }
+}
+
+jsonArray flattenArray(const jsonArray &array) {
+  jsonArray flatArray;
+  flattenArray(array, flatArray);
+  return flatArray;
+}
+
 bool removeDir(const std::string &dir, const bool promptCheck = true) {
   if (!sys::dirExists(dir)) {
     return false;
@@ -70,6 +88,53 @@ bool removeDir(const std::string &dir, const bool promptCheck = true) {
   return true;
 }
 
+jsonArray getOptionIncludePaths(jsonObject &options,
+                                const std::string optionName) {
+  jsonObject::const_iterator it = options.find(optionName);
+  if (it == options.end()) {
+    return jsonArray();
+  }
+  jsonArray paths = flattenArray(it->second.array());
+  int pathCount = 0;
+  for (int i = 0; i < (int) paths.size(); ++i) {
+    if (paths[i].isString()) {
+      paths[pathCount++] = paths[i];
+    }
+  }
+  paths.resize(pathCount);
+  return paths;
+}
+
+jsonObject getOptionDefines(jsonObject &options,
+                            const std::string optionName) {
+  jsonObject::const_iterator it = options.find(optionName);
+  if (it == options.end()) {
+    return jsonObject();
+  }
+  jsonArray definesArray = flattenArray(it->second.array());
+  jsonObject defines;
+  for (int i = 0; i < (int) definesArray.size(); ++i) {
+    if (!definesArray[i].isString()) {
+      continue;
+    }
+    const std::string defineStr = definesArray[i];
+    strVector parts = split(defineStr, '=', '\\');
+    const int partCount = (int) parts.size();
+    // Empty define
+    if (partCount == 1) {
+      defines[defineStr] = "";
+    }
+    if (partCount < 2) {
+      continue;
+    }
+    // Split key and value on first = found
+    const std::string define = parts[0];
+    parts.erase(parts.begin());
+    defines[define] = join(parts, "=");
+  }
+  return defines;
+}
+
 bool runClear(const cli::command &command,
               jsonArray order,
               jsonObject options,
@@ -86,14 +151,11 @@ bool runClear(const cli::command &command,
     if (it->first == "all") {
       removedSomething |= removeDir(env::OCCA_CACHE_DIR, promptCheck);
     } else if (it->first == "lib") {
-      const jsonArray &libGroups = it->second.array();
-      for (int i = 0; i < (int) libGroups.size(); ++i) {
-        const jsonArray &libs = libGroups[i].array();
-        for (int j = 0; j < (int) libs.size(); ++j) {
-          removedSomething |= removeDir(io::libraryPath() +
-                                        (std::string) libs[j],
-                                        promptCheck);
-        }
+      jsonArray libs = flattenArray(it->second.array());
+      for (int i = 0; i < (int) libs.size(); ++i) {
+        removedSomething |= removeDir(io::libraryPath() +
+                                      (std::string) libs[i],
+                                      promptCheck);
       }
     } else if (it->first == "libraries") {
       removedSomething |= removeDir(io::libraryPath(), promptCheck);
@@ -189,6 +251,16 @@ bool runTranslate(const cli::command &command,
 
   properties kernelProps = getOptionProperties(options, "kernel-props");
 
+  // Add include-paths
+  kernelProps["include-paths"] = (
+    getOptionIncludePaths(options, "include-path")
+  );
+
+  // Add defines
+  kernelProps["defines"].asObject() += (
+    getOptionDefines(options, "define")
+  );
+
   lang::parser_t *parser = NULL;
   if (mode == "Serial") {
     parser = new lang::okl::serialParser(kernelProps);
@@ -231,6 +303,16 @@ bool runCompile(const cli::command &command,
   properties deviceProps = getOptionProperties(options, "device-props");
   properties kernelProps = getOptionProperties(options, "kernel-props");
   kernelProps["verbose"] = true;
+
+  // Add include-paths
+  kernelProps["include-paths"] = (
+    getOptionIncludePaths(options, "include-path")
+  );
+
+  // Add defines
+  kernelProps["defines"].asObject() += (
+    getOptionDefines(options, "define")
+  );
 
   occa::device device(deviceProps);
   device.buildKernel(filename, kernelName, kernelProps);
@@ -359,6 +441,14 @@ int main(const int argc, const char **argv) {
                            "Kernel properties")
                .reusable()
                .withArgs(1))
+    .addOption(cli::option('I', "include-path",
+                           "Add additional include path")
+               .reusable()
+               .withArgs(1))
+    .addOption(cli::option('D', "define",
+                           "Add additional define")
+               .reusable()
+               .withArgs(1))
     .addArgument("FILE",
                  "An .okl file",
                  true);
@@ -374,6 +464,14 @@ int main(const int argc, const char **argv) {
                .withArgs(1))
     .addOption(cli::option('k', "kernel-props",
                            "Kernel properties")
+               .reusable()
+               .withArgs(1))
+    .addOption(cli::option('I', "include-path",
+                           "Add additional include path")
+               .reusable()
+               .withArgs(1))
+    .addOption(cli::option('D', "define",
+                           "Add additional define")
                .reusable()
                .withArgs(1))
     .addArgument("FILE",
