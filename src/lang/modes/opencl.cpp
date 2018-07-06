@@ -220,11 +220,31 @@ namespace occa {
           function_t *function;
           if (kernelSmnts[i]->type() & statementType::functionDecl) {
             function = &(((functionDeclStatement*) kernelSmnts[i])->function);
+
+            migrateLocalDecls(*((functionDeclStatement*) kernelSmnts[i]));
+            if (!success) return;  
           } else {
             function = &(((functionStatement*) kernelSmnts[i])->function);
           }
           setKernelQualifiers(*function);
-          if (!success) return;
+          if (!success) return;   
+        }
+      }
+
+      void openclParser::migrateLocalDecls(functionDeclStatement &kernelSmnt) {
+        statementExprMap exprMap;
+        findStatements(statementType::declaration,
+                       exprNodeType::variable,
+                       kernelSmnt,
+                       sharedVariableMatcher,
+                       exprMap);
+
+        statementExprMap::iterator it = exprMap.begin();
+        while (it != exprMap.end()) {
+          declarationStatement &declSmnt = *((declarationStatement*) it->first);
+          declSmnt.removeFromParent();
+          kernelSmnt.addFirst(declSmnt);
+          ++it;
         }
       }
 
