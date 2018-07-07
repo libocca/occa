@@ -229,6 +229,7 @@ namespace occa {
     props["defines"].asObject();
     props["includes"].asArray();
     props["header"].asArray();
+    props["include_paths"].asArray();
     return props;
   }
 
