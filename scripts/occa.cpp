@@ -249,42 +249,17 @@ bool runTranslate(const cli::command &command,
     ::exit(1);
   }
 
-  bool isVerbose = ( options.find("verbose") != options.end() );
+  properties kernelProps = getOptionProperties(options, "kernel-props");
 
-  properties kernelProps;
+  // Add include-paths
+  kernelProps["include-paths"] = (
+    getOptionIncludePaths(options, "include-path")
+  );
 
-  jsonObject  translateInfo;
-
-  if (isVerbose) {
-    kernelProps = getOptionProperties(options, "kernel-props");
-
-    // Add include-paths
-    kernelProps["include-paths"] = (
-      getOptionIncludePaths(options, "include-path")
-    );
-
-    // Add defines
-    kernelProps["defines"].asObject() += (
-      getOptionDefines(options, "define")
-    );
-
-    // Absolute full path
-    char* oklFilePath = realpath(filename.c_str(), NULL);
-    translateInfo["Filepath"] = oklFilePath;
-    if (oklFilePath)
-      ::free(oklFilePath);
-
-    // Timestamp (GMT)
-    time_t tsecs = time(0);
-    std::string timeStr = asctime(gmtime(&tsecs));
-    timeStr.resize(timeStr.length()-1);  // clip trailing '\n'; timeStr.pop_back() in C++11
-    timeStr += " GMT";
-    translateInfo["Timestamp"] = timeStr;
-
-    // Version
-    translateInfo["OCCA Version"] = OCCA_VERSION_STR;
-    translateInfo["OKL Version"] = OKL_VERSION_STR;
-  }
+  // Add defines
+  kernelProps["defines"].asObject() += (
+    getOptionDefines(options, "define")
+  );
 
   lang::parser_t *parser = NULL;
   if (mode == "Serial") {
@@ -305,19 +280,31 @@ bool runTranslate(const cli::command &command,
   parser->parseFile(filename);
 
   bool success = parser->succeeded();
-  if (success) {
-    if (isVerbose) {
-       std::cout
-	<< "/* Kernel Props:" << std::endl
-	<< kernelProps
-	<< "*/" << std::endl;
-       std::cout
-	<< "/* Translate Info:" << std::endl
-	<< translateInfo
-	<< "*/" << std::endl;
-     }
-    std::cout << parser->toString();
+  if (!success) {
+    delete parser;
+    return false;
   }
+
+  const bool isVerbose = (options.find("verbose") != options.end());
+  if (isVerbose) {
+    properties translationInfo;
+    // Filename
+    translationInfo["translate-info/filename"] = io::filename(filename);
+    // Date information
+    translationInfo["translate-info/date"] = sys::date();
+    translationInfo["translate-info/human-date"] = sys::humanDate();
+    // Version information
+    translationInfo["translate-info/occa-version"] = OCCA_VERSION_STR;
+    translationInfo["translate-info/okl-version"] = OKL_VERSION_STR;
+    // Kernel properties
+    translationInfo["kernel-properties"] = kernelProps;
+
+    std::cout
+      << "/* Translation Info:\n"
+      << translationInfo
+      << "*/\n";
+  }
+  std::cout << parser->toString();
   delete parser;
   return success;
 }

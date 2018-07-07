@@ -42,11 +42,11 @@ namespace occa {
       occa::device_v(properties_) {
 
       if (!properties.has("wrapped")) {
-        OCCA_ERROR("[CUDA] device not given a [deviceID] integer",
-                   properties.has("deviceID") &&
-                   properties["deviceID"].isNumber());
+        OCCA_ERROR("[CUDA] device not given a [device_id] integer",
+                   properties.has("device_id") &&
+                   properties["device_id"].isNumber());
 
-        const int deviceID = properties.get<int>("deviceID");
+        const int deviceID = properties.get<int>("device_id");
 
         OCCA_CUDA_ERROR("Device: Creating Device",
                         cuDeviceGet(&cuDevice, deviceID));
@@ -58,7 +58,7 @@ namespace occa {
       p2pEnabled = false;
 
       std::string compiler = properties["kernel/compiler"];
-      std::string compilerFlags = properties["kernel/compilerFlags"];
+      std::string compilerFlags = properties["kernel/compiler_flags"];
 
       if (!compiler.size()) {
         if (env::var("OCCA_CUDA_COMPILER").size()) {
@@ -73,7 +73,7 @@ namespace occa {
       }
 
       properties["kernel/compiler"]      = compiler;
-      properties["kernel/compilerFlags"] = compilerFlags;
+      properties["kernel/compiler_flags"] = compilerFlags;
 
       OCCA_CUDA_ERROR("Device: Getting CUDA Device Arch",
                       cuDeviceComputeCapability(&archMajorVersion,
@@ -344,12 +344,12 @@ namespace occa {
     }
 
     void device::setArchCompilerFlags(occa::properties &kernelProps) {
-      if (kernelProps.get<std::string>("compilerFlags").find("-arch=sm_") == std::string::npos) {
+      if (kernelProps.get<std::string>("compiler_flags").find("-arch=sm_") == std::string::npos) {
         const int major = archMajorVersion;
         const int minor = archMinorVersion;
         std::stringstream ss;
         ss << " -arch=sm_" << major << minor << ' ';
-        kernelProps["compilerFlags"] += ss.str();
+        kernelProps["compiler_flags"] += ss.str();
       }
     }
 
@@ -368,12 +368,12 @@ namespace occa {
 
       //---[ PTX Check Command ]--------
       std::stringstream command;
-      if (kernelProps.has("compilerEnvScript")) {
-        command << kernelProps["compilerEnvScript"] << " && ";
+      if (kernelProps.has("compiler_env_script")) {
+        command << kernelProps["compiler_env_script"] << " && ";
       }
 
       command << kernelProps["compiler"]
-              << ' ' << kernelProps["compilerFlags"]
+              << ' ' << kernelProps["compiler_flags"]
               << " -Xptxas -v,-dlcm=cg"
 #if (OCCA_OS == OCCA_WINDOWS_OS)
               << " -D OCCA_OS=OCCA_WINDOWS_OS -D _MSC_VER=1800"
@@ -401,7 +401,7 @@ namespace occa {
       //---[ Compiling Command ]--------
       command.str("");
       command << kernelProps["compiler"]
-              << ' ' << kernelProps["compilerFlags"]
+              << ' ' << kernelProps["compiler_flags"]
               << " -ptx"
 #if (OCCA_OS == OCCA_WINDOWS_OS)
               << " -D OCCA_OS=OCCA_WINDOWS_OS -D _MSC_VER=1800"
