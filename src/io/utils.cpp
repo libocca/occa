@@ -270,7 +270,7 @@ namespace occa {
 
     bool exists(const std::string &filename) {
       std::string expFilename = io::filename(filename);
-      FILE *fp = fopen(filename.c_str(), "rb");
+      FILE *fp = fopen(expFilename.c_str(), "rb");
       if (fp == NULL) {
         return false;
       }
@@ -283,12 +283,12 @@ namespace occa {
                  const bool readingBinary) {
       std::string expFilename = io::filename(filename);
 
-      FILE *fp = fopen(filename.c_str(), readingBinary ? "rb" : "r");
-      OCCA_ERROR("Failed to open [" << io::shortname(filename) << "]",
+      FILE *fp = fopen(expFilename.c_str(), readingBinary ? "rb" : "r");
+      OCCA_ERROR("Failed to open [" << io::shortname(expFilename) << "]",
                  fp != NULL);
 
       struct stat statbuf;
-      stat(filename.c_str(), &statbuf);
+      stat(expFilename.c_str(), &statbuf);
 
       const size_t nchars = statbuf.st_size;
 

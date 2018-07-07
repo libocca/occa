@@ -223,14 +223,17 @@ namespace occa {
             const char *cStart = c + 2;
             lex::skipTo(c, '}');
 
-            if (*c == '\0')
+            if (*c == '\0') {
               return expstr;
-
+            }
             expstr += env::var(std::string(cStart, c - cStart));
           } else {
             const char *cStart = c + 1;
             lex::skipTo(c, '/');
             expstr += env::var(std::string(cStart, c - cStart));
+            if (*c) {
+              expstr += '/';
+            }
           }
         }
 #else
