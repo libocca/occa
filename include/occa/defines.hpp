@@ -283,9 +283,9 @@
 
 #define OKL_MAJOR_VERSION 1
 #define OKL_MINOR_VERSION 0
-#define OKL_PATCH_VERSION 1
-#define OKL_VERSION       10001
-#define OKL_VERSION_STR   "1.0.1"
+#define OKL_PATCH_VERSION 2
+#define OKL_VERSION       10002
+#define OKL_VERSION_STR   "1.0.2"
 
 #define OCCA_MAX_ARGS 50
 //======================================
