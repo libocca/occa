@@ -251,8 +251,8 @@ bool runTranslate(const cli::command &command,
 
   properties kernelProps = getOptionProperties(options, "kernel-props");
 
-  // Add include-paths
-  kernelProps["include-paths"] = (
+  // Add include_paths
+  kernelProps["include_paths"] = (
     getOptionIncludePaths(options, "include-path")
   );
 
@@ -289,15 +289,15 @@ bool runTranslate(const cli::command &command,
   if (isVerbose) {
     properties translationInfo;
     // Filename
-    translationInfo["translate-info/filename"] = io::filename(filename);
+    translationInfo["translate_info/filename"] = io::filename(filename);
     // Date information
-    translationInfo["translate-info/date"] = sys::date();
-    translationInfo["translate-info/human-date"] = sys::humanDate();
+    translationInfo["translate_info/date"] = sys::date();
+    translationInfo["translate_info/human_date"] = sys::humanDate();
     // Version information
-    translationInfo["translate-info/occa-version"] = OCCA_VERSION_STR;
-    translationInfo["translate-info/okl-version"] = OKL_VERSION_STR;
+    translationInfo["translate_info/occa_version"] = OCCA_VERSION_STR;
+    translationInfo["translate_info/okl_version"] = OKL_VERSION_STR;
     // Kernel properties
-    translationInfo["kernel-properties"] = kernelProps;
+    translationInfo["kernel_properties"] = kernelProps;
 
     std::cout
       << "/* Translation Info:\n"
@@ -326,9 +326,9 @@ bool runCompile(const cli::command &command,
   properties kernelProps = getOptionProperties(options, "kernel-props");
   kernelProps["verbose"] = true;
 
-  // Add include-paths
-  kernelProps["include-paths"] = (
-    getOptionIncludePaths(options, "include-path")
+  // Add include_paths
+  kernelProps["include_paths"] = (
+    getOptionIncludePaths(options, "include_path")
   );
 
   // Add defines
