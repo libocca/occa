@@ -35,7 +35,7 @@ int main(int argc, char **argv) {
   occa::json config = occa::json::parse(
     "["
     "  { mode: 'OpenMP' },"
-    "  { mode: 'CUDA', deviceID: 0 },"
+    "  { mode: 'CUDA', device_id: 0 },"
     "]"
   );
 

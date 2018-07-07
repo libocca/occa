@@ -54,17 +54,17 @@ int main(int argc, char **argv) {
   //              "schedule : 'compact', "
   //              "chunk    : 10");
 
-  // device.setup("mode       : 'OpenCL', "
-  //              "platformID : 0, "
-  //              "deviceID   : 1");
+  // device.setup("mode        : 'OpenCL', "
+  //              "platform_id : 0, "
+  //              "device_id   : 1");
 
-  // device.setup("mode     : 'CUDA', "
-  //              "deviceID : 0");
+  // device.setup("mode      : 'CUDA', "
+  //              "device_id : 0");
 
-  // device.setup("mode        : 'Threads', "
-  //              "threadCount : 4, "
-  //              "schedule    : 'compact', "
-  //              "pinnedCores : [0, 0, 1, 1]");
+  // device.setup("mode         : 'Threads', "
+  //              "threads      : 4, "
+  //              "schedule     : 'compact', "
+  //              "pinned_cores : [0, 0, 1, 1]");
   //========================================================
 
   // Allocate memory on the device
