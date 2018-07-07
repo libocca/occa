@@ -249,17 +249,42 @@ bool runTranslate(const cli::command &command,
     ::exit(1);
   }
 
-  properties kernelProps = getOptionProperties(options, "kernel-props");
+  bool isVerbose = ( options.find("verbose") != options.end() );
 
-  // Add include-paths
-  kernelProps["include-paths"] = (
-    getOptionIncludePaths(options, "include-path")
-  );
+  properties kernelProps;
 
-  // Add defines
-  kernelProps["defines"].asObject() += (
-    getOptionDefines(options, "define")
-  );
+  jsonObject  translateInfo;
+
+  if (isVerbose) {
+    kernelProps = getOptionProperties(options, "kernel-props");
+
+    // Add include-paths
+    kernelProps["include-paths"] = (
+      getOptionIncludePaths(options, "include-path")
+    );
+
+    // Add defines
+    kernelProps["defines"].asObject() += (
+      getOptionDefines(options, "define")
+    );
+
+    // Absolute full path
+    char* oklFilePath = realpath(filename.c_str(), NULL);
+    translateInfo["Filepath"] = oklFilePath;
+    if (oklFilePath)
+      ::free(oklFilePath);
+
+    // Timestamp (GMT)
+    time_t tsecs = time(0);
+    std::string timeStr = asctime(gmtime(&tsecs));
+    timeStr.resize(timeStr.length()-1);  // clip trailing '\n'; timeStr.pop_back() in C++11
+    timeStr += " GMT";
+    translateInfo["Timestamp"] = timeStr;
+
+    // Version
+    translateInfo["OCCA Version"] = OCCA_VERSION_STR;
+    translateInfo["OKL Version"] = OKL_VERSION_STR;
+  }
 
   lang::parser_t *parser = NULL;
   if (mode == "Serial") {
@@ -281,11 +306,17 @@ bool runTranslate(const cli::command &command,
 
   bool success = parser->succeeded();
   if (success) {
-    std::cout
-      << "/* Kernel Props:\n"
-      << kernelProps
-      << "*/\n"
-      << parser->toString();
+    if (isVerbose) {
+       std::cout
+	<< "/* Kernel Props:" << std::endl
+	<< kernelProps
+	<< "*/" << std::endl;
+       std::cout
+	<< "/* Translate Info:" << std::endl
+	<< translateInfo
+	<< "*/" << std::endl;
+     }
+    std::cout << parser->toString();
   }
   delete parser;
   return success;
@@ -453,6 +484,8 @@ int main(const int argc, const char **argv) {
                            "Add additional define")
                .reusable()
                .withArgs(1))
+    .addOption(cli::option('v',"verbose",
+			   "Verbose output"))
     .addArgument("FILE",
                  "An .okl file",
                  true);
