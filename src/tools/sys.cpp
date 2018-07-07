@@ -246,7 +246,9 @@ namespace occa {
         else {
           expstr += *c;
         }
-        ++c;
+        if (*c) {
+          ++c;
+        }
       }
 
       return expstr;
