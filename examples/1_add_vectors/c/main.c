@@ -59,20 +59,20 @@ int main(int argc, char **argv) {
   //                           "schedule : 'compact', "
   //                           "chunk    : 10");
 
-  // const char *deviceInfo = ("mode       : 'OpenCL', "
-  //                           "platformID : 0, "
-  //                           "deviceID   : 1");
+  // const char *deviceInfo = ("mode        : 'OpenCL', "
+  //                           "platform_id : 0, "
+  //                           "device_id   : 1");
 
-  // const char *deviceInfo = ("mode     : 'CUDA', "
-  //                           "deviceID : 0");
+  // const char *deviceInfo = ("mode      : 'CUDA', "
+  //                           "device_id : 0");
 
-  // const char *deviceInfo = ("mode     : 'HIP', "
-  //                           "deviceID : 0");
+  // const char *deviceInfo = ("mode      : 'HIP', "
+  //                           "device_id : 0");
 
-  // const char *deviceInfo = ("mode        : 'Threads', "
-  //                           "threadCount : 4, "
-  //                           "schedule    : 'compact', "
-  //                           "pinnedCores : [0, 0, 1, 1]");
+  // const char *deviceInfo = ("mode         : 'Threads', "
+  //                           "threads      : 4, "
+  //                           "schedule     : 'compact', "
+  //                           "pinned_cores : [0, 0, 1, 1]");
 
   device = occaCreateDevice(occaString(deviceInfo));
   //========================================================

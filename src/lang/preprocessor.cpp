@@ -48,10 +48,10 @@ namespace occa {
     preprocessor_t::preprocessor_t(const occa::properties &settings_) {
       init();
       initDirectives();
-      if (!settings_.has("include-paths")) {
+      if (!settings_.has("include_paths")) {
         return;
       }
-      json paths = settings_["include-paths"];
+      json paths = settings_["include_paths"];
       if (!paths.isArray()) {
         return;
       }

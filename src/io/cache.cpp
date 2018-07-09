@@ -119,8 +119,10 @@ namespace occa {
           && !sys::fileExists(filename)) {
         occa::properties info = props;
         json &build = info["build"];
-        build["date"]      = sys::date();
-        build["humanDate"] = sys::humanDate();
+        build["date"]       = sys::date();
+        build["human_date"] = sys::humanDate();
+        build["version/occa"] = OCCA_VERSION_STR;
+        build["version/okl"]  = OKL_VERSION_STR;
 
         info.write(filename);
       }

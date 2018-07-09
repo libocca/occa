@@ -42,17 +42,17 @@ namespace occa {
 
       if (!properties.has("wrapped")) {
         cl_int error;
-        OCCA_ERROR("[OpenCL] device not given a [platformID] integer",
-                   properties.has("platformID") &&
-                   properties["platformID"].isNumber());
+        OCCA_ERROR("[OpenCL] device not given a [platform_id] integer",
+                   properties.has("platform_id") &&
+                   properties["platform_id"].isNumber());
 
 
-        OCCA_ERROR("[OpenCL] device not given a [deviceID] integer",
-                   properties.has("deviceID") &&
-                   properties["deviceID"].isNumber());
+        OCCA_ERROR("[OpenCL] device not given a [device_id] integer",
+                   properties.has("device_id") &&
+                   properties["device_id"].isNumber());
 
-        platformID = properties.get<int>("platformID");
-        deviceID   = properties.get<int>("deviceID");
+        platformID = properties.get<int>("platform_id");
+        deviceID   = properties.get<int>("device_id");
 
         clDevice = opencl::deviceID(platformID, deviceID);
 
@@ -62,15 +62,15 @@ namespace occa {
 
       std::string compilerFlags;
 
-      if (properties.has("kernel/compilerFlags")) {
-        compilerFlags = (std::string) properties["kernel/compilerFlags"];
+      if (properties.has("kernel/compiler_flags")) {
+        compilerFlags = (std::string) properties["kernel/compiler_flags"];
       } else if (env::var("OCCA_OPENCL_COMPILER_FLAGS").size()) {
         compilerFlags = env::var("OCCA_OPENCL_COMPILER_FLAGS");
       } else {
         compilerFlags = "-cl-opt-disable";
       }
 
-      properties["kernel/compilerFlags"] = compilerFlags;
+      properties["kernel/compiler_flags"] = compilerFlags;
     }
 
     device::~device() {}
@@ -320,7 +320,7 @@ namespace occa {
       opencl::buildProgramFromSource(clInfo,
                                      source,
                                      kernelName,
-                                     allProps["compilerFlags"],
+                                     allProps["compiler_flags"],
                                      sourceFilename,
                                      allProps,
                                      lock);
@@ -366,7 +366,7 @@ namespace occa {
         opencl::buildProgramFromBinary(clInfo,
                                        io::read(binaryFilename),
                                        kernelName,
-                                       properties["compilerFlags"],
+                                       properties["compiler_flags"],
                                        lock);
       }
 
@@ -466,7 +466,7 @@ namespace occa {
       opencl::buildProgramFromBinary(clInfo,
                                      source,
                                      kernelName,
-                                     properties["compilerFlags"]);
+                                     properties["compiler_flags"]);
 
       opencl::buildKernelFromProgram(clInfo,
                                      kernelName);

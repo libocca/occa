@@ -28,12 +28,12 @@ template <class TM, const int TMi>
 void printMatrix(occa::array<TM,TMi> &a);
 
 int main(int argc, char **argv) {
-  // occa::setDevice("mode       : 'OpenCL', "
-  //                 "platformID : 0, "
-  //                 "deviceID   : 1, ");
+  // occa::setDevice("mode        : 'OpenCL', "
+  //                 "platform_id : 0, "
+  //                 "device_id   : 1, ");
 
-  // occa::setDevice("mode     : 'CUDA', "
-  //                 "deviceID : 0, ");
+  // occa::setDevice("mode      : 'CUDA', "
+  //                 "device_id : 0, ");
 
   //---[ Testing API ]------------------
   std::cout << "Testing API:\n";

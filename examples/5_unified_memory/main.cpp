@@ -24,7 +24,7 @@
 #include <occa.hpp>
 
 int main(int argc, char **argv) {
-  occa::setDevice("mode: 'CUDA', deviceID: 0");
+  occa::setDevice("mode: 'CUDA', device_id: 0");
 
   int entries = 5;
 

@@ -252,8 +252,8 @@ bool runTranslate(const cli::command &command,
 
   properties kernelProps = getOptionProperties(options, "kernel-props");
 
-  // Add include-paths
-  kernelProps["include-paths"] = (
+  // Add include_paths
+  kernelProps["include_paths"] = (
     getOptionIncludePaths(options, "include-path")
   );
 
@@ -283,13 +283,31 @@ bool runTranslate(const cli::command &command,
   parser->parseFile(filename);
 
   bool success = parser->succeeded();
-  if (success) {
-    std::cout
-      << "/* Kernel Props:\n"
-      << kernelProps
-      << "*/\n"
-      << parser->toString();
+  if (!success) {
+    delete parser;
+    return false;
   }
+
+  const bool isVerbose = (options.find("verbose") != options.end());
+  if (isVerbose) {
+    properties translationInfo;
+    // Filename
+    translationInfo["translate_info/filename"] = io::filename(filename);
+    // Date information
+    translationInfo["translate_info/date"] = sys::date();
+    translationInfo["translate_info/human_date"] = sys::humanDate();
+    // Version information
+    translationInfo["translate_info/occa_version"] = OCCA_VERSION_STR;
+    translationInfo["translate_info/okl_version"] = OKL_VERSION_STR;
+    // Kernel properties
+    translationInfo["kernel_properties"] = kernelProps;
+
+    std::cout
+      << "/* Translation Info:\n"
+      << translationInfo
+      << "*/\n";
+  }
+  std::cout << parser->toString();
   delete parser;
   return success;
 }
@@ -311,9 +329,9 @@ bool runCompile(const cli::command &command,
   properties kernelProps = getOptionProperties(options, "kernel-props");
   kernelProps["verbose"] = true;
 
-  // Add include-paths
-  kernelProps["include-paths"] = (
-    getOptionIncludePaths(options, "include-path")
+  // Add include_paths
+  kernelProps["include_paths"] = (
+    getOptionIncludePaths(options, "include_path")
   );
 
   // Add defines
@@ -459,6 +477,8 @@ int main(const int argc, const char **argv) {
                            "Add additional define")
                .reusable()
                .withArgs(1))
+    .addOption(cli::option('v',"verbose",
+			   "Verbose output"))
     .addArgument("FILE",
                  "An .okl file",
                  true);

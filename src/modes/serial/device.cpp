@@ -53,8 +53,8 @@ namespace occa {
 
       vendor = sys::compilerVendor(compiler);
 
-      if (properties.get<std::string>("kernel/compilerFlags").size()) {
-        compilerFlags = (std::string) properties["kernel/compilerFlags"];
+      if (properties.get<std::string>("kernel/compiler_flags").size()) {
+        compilerFlags = (std::string) properties["kernel/compiler_flags"];
       } else if (env::var("OCCA_CXXFLAGS").size()) {
         compilerFlags = env::var("OCCA_CXXFLAGS");
       } else if (env::var("CXXFLAGS").size()) {
@@ -67,8 +67,8 @@ namespace occa {
 #endif
       }
 
-      if (properties.get<std::string>("kernel/compilerEnvScript").size()) {
-        compilerEnvScript = (std::string) properties["kernel/compilerEnvScript"];
+      if (properties.get<std::string>("kernel/compiler_env_script").size()) {
+        compilerEnvScript = (std::string) properties["kernel/compiler_env_script"];
       } else {
 #if (OCCA_OS == OCCA_WINDOWS_OS)
         std::string byteness;
@@ -103,9 +103,9 @@ namespace occa {
       properties["kernel/vendor"] = vendor;
       sys::addSharedBinaryFlagsTo(vendor, compilerFlags);
 
-      properties["kernel/compiler"]          = compiler;
-      properties["kernel/compilerFlags"]     = compilerFlags;
-      properties["kernel/compilerEnvScript"] = compilerEnvScript;
+      properties["kernel/compiler"] = compiler;
+      properties["kernel/compiler_flags"] = compilerFlags;
+      properties["kernel/compiler_env_script"] = compilerEnvScript;
     }
 
     device::~device() {}
@@ -154,7 +154,8 @@ namespace occa {
     //---[ Kernel ]---------------------
     bool device::parseFile(const std::string &filename,
                            const std::string &outputFile,
-                           const occa::properties &kernelProps) {
+                           const occa::properties &kernelProps,
+                           lang::kernelMetadataMap &metadata) {
       lang::okl::serialParser parser(kernelProps);
       parser.parseFile(filename);
 
@@ -174,6 +175,8 @@ namespace occa {
         }
       }
 
+      parser.setMetadata(metadata);
+
       return true;
     }
 
@@ -182,7 +185,7 @@ namespace occa {
                                   const hash_t kernelHash,
                                   const occa::properties &kernelProps) {
       const std::string hashDir = io::hashDir(filename, kernelHash);
-       std::string binaryFilename = hashDir + kc::binaryFile;
+      std::string binaryFilename = hashDir + kc::binaryFile;
       bool foundBinary = true;
 
       // This is a launcher kernel
@@ -222,26 +225,33 @@ namespace occa {
                       assembleHeader(kernelProps))
       );
 
+      lang::kernelMetadataMap metadata;
       if (kernelProps.get("okl", true)) {
         const std::string outputFile = hashDir + kc::sourceFile;
         bool valid = parseFile(sourceFilename,
                                outputFile,
-                               kernelProps);
+                               kernelProps,
+                               metadata);
         if (!valid) {
           return NULL;
         }
         sourceFilename = outputFile;
+
+        writeKernelBuildFile(hashDir + kc::buildFile,
+                             kernelHash,
+                             kernelProps,
+                             metadata);
       }
 
       std::stringstream command;
-      std::string compilerEnvScript = kernelProps["compilerEnvScript"];
+      std::string compilerEnvScript = kernelProps["compiler_env_script"];
       if (compilerEnvScript.size()) {
         command << compilerEnvScript << " && ";
       }
 
 #if (OCCA_OS & (OCCA_LINUX_OS | OCCA_MACOS_OS))
       command << (std::string) kernelProps["compiler"]
-              << ' '    << (std::string) kernelProps["compilerFlags"]
+              << ' '    << (std::string) kernelProps["compiler_flags"]
               << ' '    << sourceFilename
               << " -o " << binaryFilename
               << " -I"  << env::OCCA_DIR << "include"
@@ -253,7 +263,7 @@ namespace occa {
               << " /D OCCA_OS=OCCA_WINDOWS_OS"
               << " /EHsc"
               << " /wd4244 /wd4800 /wd4804 /wd4018"
-              << ' '       << kernelProps["compilerFlags"]
+              << ' '       << kernelProps["compiler_flags"]
               << " /I"     << env::OCCA_DIR << "include"
               << ' '       << sourceFilename
               << " /link " << env::OCCA_DIR << "lib/libocca.lib",

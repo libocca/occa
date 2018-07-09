@@ -44,8 +44,8 @@ int main(int argc, char **argv) {
 
   //---[ Device setup with string flags ]-------------------
   device.setup("mode: 'Serial'");
-  // device.setup("mode: 'CUDA', deviceID: 0");
-  // device.setup("mode: 'OpenCL', platformID : 0, deviceID: 1");
+  // device.setup("mode: 'CUDA', device_id: 0");
+  // device.setup("mode: 'OpenCL', platform_id : 0, device_id: 1");
   //========================================================
 
   o_a  = device.malloc(entries*sizeof(float));

@@ -90,7 +90,7 @@ namespace occa {
 
       const bool usingOpenMP = (lastCompilerOpenMPFlag != openmp::notSupported);
       if (usingOpenMP) {
-        allKernelProps["compilerFlags"] += " " + lastCompilerOpenMPFlag;
+        allKernelProps["compiler_flags"] += " " + lastCompilerOpenMPFlag;
       }
 
       kernel_v *k = serial::device::buildKernel(filename,
