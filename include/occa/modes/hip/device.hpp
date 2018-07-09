@@ -83,8 +83,6 @@ namespace occa {
                                     const hash_t kernelHash,
                                     const occa::properties &props);
 
-      void setArchCompilerFlags(occa::properties &kernelProps);
-
       void compileKernel(const std::string &hashDir,
                          const std::string &kernelName,
                          occa::properties &kernelProps,

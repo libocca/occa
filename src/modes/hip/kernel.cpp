@@ -67,7 +67,7 @@ namespace occa {
       static dim innerDims(0);
       if (innerDims.x == 0) {
         int maxSize;
-        int deviceID = properties["deviceID"];
+        int deviceID = properties["device_id"];
         hipDeviceProp_t props;
         OCCA_HIP_ERROR("Getting device properties", 
                           hipGetDeviceProperties(&props, deviceID ));

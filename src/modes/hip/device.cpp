@@ -44,11 +44,11 @@ namespace occa {
       occa::device_v(properties_) {
 
       if (!properties.has("wrapped")) {
-        OCCA_ERROR("[HIP] device not given a [deviceID] integer",
-                   properties.has("deviceID") &&
-                   properties["deviceID"].isNumber());
+        OCCA_ERROR("[HIP] device not given a [device_id] integer",
+                   properties.has("device_id") &&
+                   properties["device_id"].isNumber());
 
-        const int deviceID = properties.get<int>("deviceID");
+        const int deviceID = properties.get<int>("device_id");
 
         OCCA_HIP_ERROR("Device: Creating Device",
                         hipDeviceGet(&hipDevice, deviceID));
@@ -346,16 +346,6 @@ namespace occa {
                                       lock);
     }
 
-    void device::setArchCompilerFlags(occa::properties &kernelProps) {
-      if (kernelProps.get<std::string>("compilerFlags").find("-arch=sm_") == std::string::npos) {
-        const int major = archMajorVersion;
-        const int minor = archMinorVersion;
-        std::stringstream ss;
-        ss << " -arch=sm_" << major << minor << ' ';
-        kernelProps["compilerFlags"] += ss.str();
-      }
-    }
-
     void device::compileKernel(const std::string &hashDir,
                                const std::string &kernelName,
                                occa::properties &kernelProps,
@@ -367,38 +357,7 @@ namespace occa {
       std::string binaryFilename = hashDir + kc::binaryFile;
       const std::string ptxBinaryFilename = hashDir + "ptx_binary.o";
 
-      // setArchCompilerFlags(kernelProps);
-
       std::stringstream command;
-//       //---[ PTX Check Command ]--------
-//       if (kernelProps.has("compilerEnvScript")) {
-//         command << kernelProps["compilerEnvScript"] << " && ";
-//       }
-
-//       command << kernelProps["compiler"]
-//               << ' ' << kernelProps["compilerFlags"]
-// #if (OCCA_OS == OCCA_WINDOWS_OS)
-//               << " -D OCCA_OS=OCCA_WINDOWS_OS -D _MSC_VER=1800"
-// #endif
-//               << " -I"        << env::OCCA_DIR << "include"
-//               << " -L"        << env::OCCA_DIR << "lib -locca"
-//               << " -c "       << sourceFilename
-//               << " -o "       << ptxBinaryFilename;
-
-//       if (!verbose) {
-//         //command << " > /dev/null 2>&1";
-//       }
-//       const std::string &ptxCommand = command.str();
-//       //if (verbose) {
-//         std::cout << "Compiling [" << kernelName << "]\n" << ptxCommand << "\n";
-//       //}
-
-// #if (OCCA_OS & (OCCA_LINUX_OS | OCCA_MACOS_OS))
-//       //ignoreResult( system(ptxCommand.c_str()) );
-// #else
-//       //ignoreResult( system(("\"" +  ptxCommand + "\"").c_str()) );
-// #endif
-//       //================================
 
       //---[ Compiling Command ]--------
       command.str("");
@@ -411,8 +370,6 @@ namespace occa {
               << " -D OCCA_OS=OCCA_WINDOWS_OS -D _MSC_VER=1800"
 #endif
               ;
-              // << " -I"     << env::OCCA_DIR << "include"
-              // << " -L"     << env::OCCA_DIR << "lib -locca ";
 
       if (!verbose) {
         command << " > /dev/null 2>&1";

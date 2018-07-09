@@ -183,7 +183,7 @@ namespace occa {
 
       occa::properties allProps = props;
       allProps["mode"]     = "HIP";
-      allProps["deviceID"] = -1;
+      allProps["device_id"] = -1;
       allProps["wrapped"]  = true;
 
       hip::device &dev = *(new hip::device(allProps));
