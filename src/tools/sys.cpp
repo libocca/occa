@@ -831,7 +831,7 @@ namespace occa {
     }
 
     void runFunction(functionPtr_t f, const int argc, void **args) {
-#include "operators/runFunctionFromArguments.cpp"
+#include "runFunction.cpp"
     }
 
     void printStacktrace(const int frameStart, const std::string indent) {

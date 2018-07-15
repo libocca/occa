@@ -249,7 +249,7 @@ namespace occa {
     void run() const;
     void clearArgumentList();
 
-#include <occa/operators/declarations.hpp>
+#include "kernelOperators.hpp"
 
     void free();
   };

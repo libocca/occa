@@ -53,7 +53,9 @@ namespace occa {
 
     void kernel::run() const {
       const int totalArgCount = kernelArg::argumentCount(arguments);
-      if ((int) vArgs.size() < totalArgCount) {
+      if (!totalArgCount) {
+        vArgs.resize(1);
+      } else if ((int) vArgs.size() < totalArgCount) {
         vArgs.resize(totalArgCount);
       }
 
