@@ -34,7 +34,7 @@ EDIT_WARNING = '''
 // =========================================
 '''
 
-MAX_ARGS = 100
+MAX_ARGS = 50
 
 
 def to_file(filename):
