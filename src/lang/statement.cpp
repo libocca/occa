@@ -827,7 +827,7 @@ namespace occa {
       pout << "switch (";
       pout.pushInlined(true);
       condition->print(pout);
-      pout << ") {\n";
+      pout << ')';
 
       blockStatement::print(pout);
       pout.popInlined();
