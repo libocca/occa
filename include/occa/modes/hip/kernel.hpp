@@ -20,33 +20,57 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  */
 
-#ifndef OCCA_DEFINES_COMPILEDDEFINES_HEADER
-#define OCCA_DEFINES_COMPILEDDEFINES_HEADER
+#include <occa/defines.hpp>
 
-#ifndef OCCA_LINUX_OS
-#  define OCCA_LINUX_OS 1
-#endif
+#if OCCA_HIP_ENABLED
+#  ifndef OCCA_HIP_KERNEL_HEADER
+#  define OCCA_HIP_KERNEL_HEADER
 
-#ifndef OCCA_MACOS_OS
-#  define OCCA_MACOS_OS 2
-#endif
+#include "hip/hip_runtime_api.h"
 
-#ifndef OCCA_WINDOWS_OS
-#  define OCCA_WINDOWS_OS 4
-#endif
+#include <occa/kernel.hpp>
 
-#ifndef OCCA_WINUX_OS
-#  define OCCA_WINUX_OS (OCCA_LINUX_OS | OCCA_WINDOWS_OS)
-#endif
+namespace occa {
+  namespace hip {
+    class device;
 
-#define OCCA_OS             @@OCCA_OS@@
-#define OCCA_USING_VS       @@OCCA_USING_VS@@
-#define OCCA_UNSAFE         @@OCCA_UNSAFE@@
+    class kernel : public occa::kernel_v {
+      friend class device;
 
-#define OCCA_MPI_ENABLED    @@OCCA_MPI_ENABLED@@
-#define OCCA_OPENMP_ENABLED @@OCCA_OPENMP_ENABLED@@
-#define OCCA_OPENCL_ENABLED @@OCCA_OPENCL_ENABLED@@
-#define OCCA_CUDA_ENABLED   @@OCCA_CUDA_ENABLED@@
-#define OCCA_HIP_ENABLED    @@OCCA_HIP_ENABLED@@
+    private:
+      hipModule_t   hipModule;
+      hipFunction_t hipFunction;
 
+      occa::kernel_v *launcherKernel;
+      std::vector<kernel*> hipKernels;
+      mutable std::vector<void*> vArgs;
+
+    public:
+      kernel(device_v *dHandle_,
+             const std::string &name_,
+             const std::string &sourceFilename_,
+             const occa::properties &properties_);
+
+      kernel(device_v *dHandle_,
+             const std::string &name_,
+             const std::string &sourceFilename_,
+             hipModule_t   hipModule_,
+             hipFunction_t hipFunction_,
+             const occa::properties &properties_);
+
+      ~kernel();
+
+      int maxDims() const;
+      dim maxOuterDims() const;
+      dim maxInnerDims() const;
+
+      void run() const;
+      void launcherRun() const;
+
+      void free();
+    };
+  }
+}
+
+#  endif
 #endif

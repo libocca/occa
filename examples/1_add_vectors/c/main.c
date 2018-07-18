@@ -66,6 +66,9 @@ int main(int argc, char **argv) {
   // const char *deviceInfo = ("mode      : 'CUDA', "
   //                           "device_id : 0");
 
+  // const char *deviceInfo = ("mode      : 'HIP', "
+  //                           "device_id : 0");
+
   // const char *deviceInfo = ("mode         : 'Threads', "
   //                           "threads      : 4, "
   //                           "schedule     : 'compact', "

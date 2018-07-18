@@ -19,34 +19,53 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  */
+#ifndef OCCA_PARSER_MODES_HIP_HEADER
+#define OCCA_PARSER_MODES_HIP_HEADER
 
-#ifndef OCCA_DEFINES_COMPILEDDEFINES_HEADER
-#define OCCA_DEFINES_COMPILEDDEFINES_HEADER
+#include <occa/lang/modes/withLauncher.hpp>
 
-#ifndef OCCA_LINUX_OS
-#  define OCCA_LINUX_OS 1
-#endif
+namespace occa {
+  namespace lang {
+    namespace okl {
+      class hipParser : public withLauncher {
+      public:
+        qualifier_t constant;
+        qualifier_t global;
+        qualifier_t device;
+        qualifier_t shared;
 
-#ifndef OCCA_MACOS_OS
-#  define OCCA_MACOS_OS 2
-#endif
+        hipParser(const occa::properties &settings_ = occa::properties());
 
-#ifndef OCCA_WINDOWS_OS
-#  define OCCA_WINDOWS_OS 4
-#endif
+        virtual void onClear();
 
-#ifndef OCCA_WINUX_OS
-#  define OCCA_WINUX_OS (OCCA_LINUX_OS | OCCA_WINDOWS_OS)
-#endif
+        virtual void beforePreprocessing();
 
-#define OCCA_OS             @@OCCA_OS@@
-#define OCCA_USING_VS       @@OCCA_USING_VS@@
-#define OCCA_UNSAFE         @@OCCA_UNSAFE@@
+        virtual void beforeKernelSplit();
 
-#define OCCA_MPI_ENABLED    @@OCCA_MPI_ENABLED@@
-#define OCCA_OPENMP_ENABLED @@OCCA_OPENMP_ENABLED@@
-#define OCCA_OPENCL_ENABLED @@OCCA_OPENCL_ENABLED@@
-#define OCCA_CUDA_ENABLED   @@OCCA_CUDA_ENABLED@@
-#define OCCA_HIP_ENABLED    @@OCCA_HIP_ENABLED@@
+        virtual void afterKernelSplit();
+
+        virtual std::string getOuterIterator(const int loopIndex);
+
+        virtual std::string getInnerIterator(const int loopIndex);
+
+        void addInclude();
+
+        void updateConstToConstant();
+
+        void setFunctionQualifiers();
+
+        void setSharedQualifiers();
+
+        void addBarriers();
+
+        void setupKernels();
+
+        void setKernelQualifiers(functionDeclStatement &kernelSmnt);
+
+        static bool sharedVariableMatcher(exprNode &expr);
+      };
+    }
+  }
+}
 
 #endif

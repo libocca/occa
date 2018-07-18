@@ -332,4 +332,24 @@
 #define OCCA_CUDA_WARNING(message, expr) OCCA_CUDA_WARNING2(expr, __FILE__, __PRETTY_FUNCTION__, __LINE__, message)
 //======================================
 
+//---[ HIP ]---------------------------
+#define OCCA_HIP_TEMPLATE_CHECK(checkFunction, expr, filename, function, line, message) \
+  do {                                                                  \
+    hipError_t _hipErrorCode = expr;                                     \
+    if (_hipErrorCode) {                                               \
+      std::stringstream _check_ss;                                      \
+      _check_ss << message;                                             \
+      checkFunction(_hipErrorCode, filename, function, line, _check_ss.str()); \
+    }                                                                   \
+  } while(0)
+
+#define OCCA_HIP_ERROR3(expr, filename, function, line, message) OCCA_HIP_TEMPLATE_CHECK(occa::hip::error, expr, filename, function, line, message)
+#define OCCA_HIP_ERROR2(expr, filename, function, line, message) OCCA_HIP_ERROR3(expr, filename, function, line, message)
+#define OCCA_HIP_ERROR(message, expr) OCCA_HIP_ERROR2(expr, __FILE__, __PRETTY_FUNCTION__, __LINE__, message)
+
+#define OCCA_HIP_WARNING3(expr, filename, function, line, message) OCCA_HIP_TEMPLATE_CHECK(occa::hip::warn, expr, filename, function, line, message)
+#define OCCA_HIP_WARNING2(expr, filename, function, line, message) OCCA_HIP_WARNING3(expr, filename, function, line, message)
+#define OCCA_HIP_WARNING(message, expr) OCCA_HIP_WARNING2(expr, __FILE__, __PRETTY_FUNCTION__, __LINE__, message)
+//======================================
+
 #endif
