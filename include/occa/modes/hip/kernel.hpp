@@ -26,7 +26,7 @@
 #  ifndef OCCA_HIP_KERNEL_HEADER
 #  define OCCA_HIP_KERNEL_HEADER
 
-#include "hip/hip_runtime_api.h"
+#include <hip/hip_runtime_api.h>
 
 #include <occa/kernel.hpp>
 
@@ -38,7 +38,7 @@ namespace occa {
       friend class device;
 
     private:
-      hipModule_t   hipModule;
+      hipModule_t hipModule;
       hipFunction_t hipFunction;
 
       occa::kernel_v *launcherKernel;

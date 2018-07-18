@@ -43,8 +43,8 @@ namespace occa {
         int deviceCount = hip::getDeviceCount();
         for (int i = 0; i < deviceCount; ++i) {
           hipDeviceProp_t props;
-          OCCA_HIP_ERROR("Getting device properties", 
-                          hipGetDeviceProperties(&props, i));
+          OCCA_HIP_ERROR("Getting device properties",
+                         hipGetDeviceProperties(&props, i));
           strcpy(deviceName, props.name);
 
           const udim_t bytes         = props.totalGlobalMem;

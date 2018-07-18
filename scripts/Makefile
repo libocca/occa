@@ -293,7 +293,7 @@ ifdef OCCA_CUDA_ENABLED
   endif
 else
   cudaIncFlags = $(call includeFlagsFor,cuda.h)
-  
+
   ifneq (,$(cudaIncFlags))
 
     ifeq ($(usingLinux),1)
@@ -316,24 +316,20 @@ ifdef OCCA_HIP_ENABLED
   ifeq ($(hipEnabled),1)
     ifeq ($(usingLinux),1)
       links += -lhip_hcc
-    #else ifeq ($(usingMacOS),1)
-      #links += -framework HIP
     endif
   endif
 else
   hipIncFlags = $(call includeFlagsFor,hip/hip_runtime_api.h)
-  
+
   ifneq (,$(hipIncFlags))
     ifndef HIP_PATH
       HIP_PATH = ${hipIncFlags:-I%=%}/../..
-    endif 
+    endif
 
     hipconfig = $(shell $(HIP_PATH)/bin/hipconfig --cpp_config)
 
     ifeq ($(usingLinux),1)
       hipLibFlags = $(call libraryFlagsFor,hip_hcc)
-    #else ifeq ($(usingMacOS),1)
-      #hipLibFlags = $(call libraryFlagsFor,HPI_HCC)
     endif
 
     ifneq (,$(hipLibFlags))

@@ -22,47 +22,16 @@
 #ifndef OCCA_PARSER_MODES_HIP_HEADER
 #define OCCA_PARSER_MODES_HIP_HEADER
 
-#include <occa/lang/modes/withLauncher.hpp>
+#include <occa/lang/modes/cuda.hpp>
 
 namespace occa {
   namespace lang {
     namespace okl {
-      class hipParser : public withLauncher {
+      class hipParser : public cudaParser {
       public:
-        qualifier_t constant;
-        qualifier_t global;
-        qualifier_t device;
-        qualifier_t shared;
-
         hipParser(const occa::properties &settings_ = occa::properties());
 
-        virtual void onClear();
-
-        virtual void beforePreprocessing();
-
         virtual void beforeKernelSplit();
-
-        virtual void afterKernelSplit();
-
-        virtual std::string getOuterIterator(const int loopIndex);
-
-        virtual std::string getInnerIterator(const int loopIndex);
-
-        void addInclude();
-
-        void updateConstToConstant();
-
-        void setFunctionQualifiers();
-
-        void setSharedQualifiers();
-
-        void addBarriers();
-
-        void setupKernels();
-
-        void setKernelQualifiers(functionDeclStatement &kernelSmnt);
-
-        static bool sharedVariableMatcher(exprNode &expr);
       };
     }
   }

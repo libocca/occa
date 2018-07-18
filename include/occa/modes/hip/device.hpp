@@ -20,14 +20,15 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  */
 
+#include <occa/defines.hpp>
+
 #if OCCA_HIP_ENABLED
 #  ifndef OCCA_HIP_DEVICE_HEADER
 #  define OCCA_HIP_DEVICE_HEADER
 
-#include <occa/defines.hpp>
 #include <occa/device.hpp>
 
-#include "hip/hip_runtime_api.h"
+#include <hip/hip_runtime_api.h>
 
 namespace occa {
   namespace hip {
@@ -43,7 +44,7 @@ namespace occa {
       int archMajorVersion, archMinorVersion;
       bool p2pEnabled;
 
-      hipDevice_t  hipDevice;
+      hipDevice_t hipDevice;
       hipCtx_t hipContext;
 
       device(const occa::properties &properties_);

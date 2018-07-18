@@ -26,7 +26,7 @@
 #  ifndef OCCA_HIP_MEMORY_HEADER
 #  define OCCA_HIP_MEMORY_HEADER
 
-#include "hip/hip_runtime_api.h"
+#include <hip/hip_runtime_api.h>
 
 #include <occa/memory.hpp>
 

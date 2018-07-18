@@ -69,9 +69,9 @@ namespace occa {
         int maxSize;
         int deviceID = properties["device_id"];
         hipDeviceProp_t props;
-        OCCA_HIP_ERROR("Getting device properties", 
-                          hipGetDeviceProperties(&props, deviceID ));
-        maxSize = props.maxThreadsPerBlock; 
+        OCCA_HIP_ERROR("Getting device properties",
+                       hipGetDeviceProperties(&props, deviceID ));
+        maxSize = props.maxThreadsPerBlock;
 
         innerDims.x = maxSize;
       }
@@ -84,7 +84,9 @@ namespace occa {
       }
 
       const int totalArgCount = kernelArg::argumentCount(arguments);
-      if ((int) vArgs.size() < totalArgCount) {
+      if (!totalArgCount) {
+        vArgs.resize(1);
+      } else if ((int) vArgs.size() < totalArgCount) {
         vArgs.resize(totalArgCount);
       }
       const int kArgCount = (int) arguments.size();
@@ -103,14 +105,14 @@ namespace occa {
 
       size_t size = vArgs.size()*sizeof(vArgs[0]);
       void* config[] = {HIP_LAUNCH_PARAM_BUFFER_POINTER, &(vArgs[0]), HIP_LAUNCH_PARAM_BUFFER_SIZE, &size,
-                      HIP_LAUNCH_PARAM_END};
+                        HIP_LAUNCH_PARAM_END};
 
       OCCA_HIP_ERROR("Launching Kernel",
-                      hipModuleLaunchKernel(hipFunction,
-                                     outer.x, outer.y, outer.z,
-                                     inner.x, inner.y, inner.z,
-                                     0, *((hipStream_t*) dHandle->currentStream),
-                                     NULL, (void**)&config));
+                     hipModuleLaunchKernel(hipFunction,
+                                           outer.x, outer.y, outer.z,
+                                           inner.x, inner.y, inner.z,
+                                           0, *((hipStream_t*) dHandle->currentStream),
+                                           NULL, (void**)&config));
     }
 
     void kernel::launcherRun() const {
@@ -132,7 +134,7 @@ namespace occa {
       if (!launcherKernel) {
         if (hipModule) {
           OCCA_HIP_ERROR("Kernel (" + name + ") : Unloading Module",
-                          hipModuleUnload(hipModule));
+                         hipModuleUnload(hipModule));
           hipModule = NULL;
         }
         return;

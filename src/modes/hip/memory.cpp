@@ -71,12 +71,12 @@ namespace occa {
 
       if (!async) {
         OCCA_HIP_ERROR("Memory: Copy From",
-                        hipMemcpyHtoD((char*) hipPtr + offset,
+                       hipMemcpyHtoD((char*) hipPtr + offset,
                                      const_cast<void*>(src),
                                      bytes) );
       } else {
         OCCA_HIP_ERROR("Memory: Async Copy From",
-                        hipMemcpyHtoDAsync((char*) hipPtr + offset,
+                       hipMemcpyHtoDAsync((char*) hipPtr + offset,
                                           const_cast<void*>(src),
                                           bytes,
                                           stream) );
@@ -93,13 +93,13 @@ namespace occa {
 
       if (!async) {
         OCCA_HIP_ERROR("Memory: Copy From",
-                        hipMemcpyDtoD((char*) hipPtr + destOffset,
-                                      (char*) ((memory*) src)->hipPtr + srcOffset,
+                       hipMemcpyDtoD((char*) hipPtr + destOffset,
+                                     (char*) ((memory*) src)->hipPtr + srcOffset,
                                      bytes) );
       } else {
         OCCA_HIP_ERROR("Memory: Async Copy From",
-                        hipMemcpyDtoDAsync((char*) hipPtr + destOffset,
-                                           (char*) ((memory*) src)->hipPtr + srcOffset,
+                       hipMemcpyDtoDAsync((char*) hipPtr + destOffset,
+                                          (char*) ((memory*) src)->hipPtr + srcOffset,
                                           bytes,
                                           stream) );
       }
@@ -114,12 +114,12 @@ namespace occa {
 
       if (!async) {
         OCCA_HIP_ERROR("Memory: Copy From",
-                        hipMemcpyDtoH(dest,
+                       hipMemcpyDtoH(dest,
                                      (char*) hipPtr + offset,
                                      bytes) );
       } else {
         OCCA_HIP_ERROR("Memory: Async Copy From",
-                        hipMemcpyDtoHAsync(dest,
+                       hipMemcpyDtoHAsync(dest,
                                           (char*) hipPtr + offset,
                                           bytes,
                                           stream) );
@@ -129,7 +129,7 @@ namespace occa {
     void memory::free() {
       if (mappedPtr) {
         OCCA_HIP_ERROR("Device: mappedFree()",
-                        hipHostFree(mappedPtr));
+                       hipHostFree(mappedPtr));
         mappedPtr = NULL;
       } else if (hipPtr) {
         hipHostFree(hipPtr);
