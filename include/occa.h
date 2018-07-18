@@ -48,4 +48,4 @@
 
 #define occaKernelRun(...) OCCA_C_RUN_KERNEL1(OCCA_ARG_COUNT(__VA_ARGS__), __VA_ARGS__)
 
-#endif
+#endif // OCCA_DISABLE_VARIADIC_MACROS

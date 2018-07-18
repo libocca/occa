@@ -427,7 +427,7 @@ namespace occa {
     kHandle->arguments.clear();
   }
 
-#include "operators/definitions.cpp"
+#include "kernelOperators.cpp"
 
   void kernel::free() {
     if (kHandle == NULL) {
