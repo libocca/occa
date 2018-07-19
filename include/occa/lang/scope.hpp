@@ -74,7 +74,6 @@ namespace occa {
           keyword = new keywordType_(value);
           return true;
         }
-        throw 1;
 
         value.printError("[" + name + "] is already defined");
         keyword->printError("[" + name + "] was first defined here");
