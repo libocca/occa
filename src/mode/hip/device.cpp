@@ -41,6 +41,7 @@ namespace occa {
     device::device(const occa::properties &properties_) :
       occa::modeDevice_t(properties_) {
 
+      hipDeviceProp_t props;
       if (!properties.has("wrapped")) {
         OCCA_ERROR("[HIP] device not given a [device_id] integer",
                    properties.has("device_id") &&
@@ -53,6 +54,9 @@ namespace occa {
 
         OCCA_HIP_ERROR("Device: Creating Context",
                        hipCtxCreate(&hipContext, 0, hipDevice));
+
+        OCCA_HIP_ERROR("Getting device properties",
+                      hipGetDeviceProperties(&props, deviceID));
       }
 
       p2pEnabled = false;
@@ -82,6 +86,7 @@ namespace occa {
 
       archMajorVersion = properties.get("hip/arch/major", archMajorVersion);
       archMinorVersion = properties.get("hip/arch/minor", archMinorVersion);
+      properties["kernel/target"] = toString(props.gcnArch);
 
       properties["kernel/verbose"] = properties.get("verbose", false);
     }
@@ -339,6 +344,17 @@ namespace occa {
                                       lock);
     }
 
+    void device::setArchCompilerFlags(occa::properties &kernelProps) {
+      if (kernelProps.get<std::string>("compiler_flags").find("-t gfx") == std::string::npos) {
+        std::stringstream ss;
+        std::string arch = kernelProps["target"];
+        if (arch.size()) {
+          ss << " -t gfx" << arch << ' ';
+          kernelProps["compiler_flags"] += ss.str();
+        }
+      }
+    }
+
     void device::compileKernel(const std::string &hashDir,
                                const std::string &kernelName,
                                occa::properties &kernelProps,
@@ -350,6 +366,8 @@ namespace occa {
       std::string binaryFilename = hashDir + kc::binaryFile;
       const std::string ptxBinaryFilename = hashDir + "ptx_binary.o";
 
+      setArchCompilerFlags(kernelProps);
+
       std::stringstream command;
 
       //---[ Compiling Command ]--------
@@ -358,7 +376,7 @@ namespace occa {
               << " --genco "
               << " "       << sourceFilename
               << " -o "    << binaryFilename
-              << ' ' << kernelProps["compilerFlags"]
+              << ' ' << kernelProps["compiler_flags"]
 #if (OCCA_OS == OCCA_WINDOWS_OS)
               << " -D OCCA_OS=OCCA_WINDOWS_OS -D _MSC_VER=1800"
 #endif
