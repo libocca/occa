@@ -1482,6 +1482,7 @@ namespace occa {
         context.set(1);
         return new functionStatement(up, func);
       }
+
       // func() {...} <-- function declaration
       functionDeclStatement &funcSmnt = *(new functionDeclStatement(up, func));
       success = funcSmnt.updateScope();
@@ -1651,8 +1652,8 @@ namespace occa {
           context.printError("Missing content for [if] statement");
           success = false;
         }
-        delete &ifSmnt;
         popUp();
+        delete &ifSmnt;
         return NULL;
       }
       ifSmnt.set(*content);
@@ -1716,13 +1717,11 @@ namespace occa {
       if (!content) {
         context.printError("Missing content for [else if] statement");
         success = false;
-        popUp();
         delete &elifSmnt;
         return NULL;
       }
 
       elifSmnt.set(*content);
-      popUp();
       return &elifSmnt;
     }
 

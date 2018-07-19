@@ -52,8 +52,7 @@ namespace occa {
       bool add(variable_t &var,
                const bool force = false);
     private:
-      template <class keywordType_,
-                class valueType>
+      template <class keywordType_, class valueType>
       bool add(valueType &value,
                const bool force) {
         // TODO: Use unique name
@@ -61,11 +60,13 @@ namespace occa {
         if (!name.size()) {
           return true;
         }
+
         keywordMapIterator it = keywords.find(name);
         if (it == keywords.end()) {
           keywords[name] = new keywordType_(value);
           return true;
         }
+
         keyword_t *&keyword = it->second;
         if (force) {
           keyword->deleteSource();
@@ -73,6 +74,8 @@ namespace occa {
           keyword = new keywordType_(value);
           return true;
         }
+        throw 1;
+
         value.printError("[" + name + "] is already defined");
         keyword->printError("[" + name + "] was first defined here");
         return false;
