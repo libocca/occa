@@ -92,6 +92,7 @@ namespace occa {
       const int kArgCount = (int) arguments.size();
 
       int argc = 0;
+      int rem = 0;
       for (int i = 0; i < kArgCount; ++i) {
         const kArgVector &iArgs = arguments[i].args;
         const int argCount = (int) iArgs.size();
@@ -99,9 +100,20 @@ namespace occa {
           continue;
         }
         for (int ai = 0; ai < argCount; ++ai) {
-          memcpy(vArgs.data() + argc++,&(iArgs[ai].data.int64_), sizeof(void*));
+          size_t Nbytes;
+          if (rem+iArgs[ai].size<=sizeof(void*)) {
+            Nbytes = iArgs[ai].size;
+            rem = sizeof(void*) - rem - iArgs[ai].size;
+          } else {
+            Nbytes = sizeof(void*);
+            argc+=rem;
+            rem = 0;
+          }
+
+          memcpy((char*) vArgs.data() + argc,&(iArgs[ai].data.int64_), Nbytes);
+          argc += Nbytes;
         }
-      }
+      } 
 
       size_t size = vArgs.size()*sizeof(vArgs[0]);
       void* config[] = {HIP_LAUNCH_PARAM_BUFFER_POINTER, &(vArgs[0]), HIP_LAUNCH_PARAM_BUFFER_SIZE, &size,
