@@ -100,6 +100,8 @@ namespace occa {
 
     CUcontext getContext(occa::device device);
 
+    void* getMappedPtr(occa::memory mem);
+
     occa::device wrapDevice(CUdevice device,
                             CUcontext context,
                             const occa::properties &props = occa::properties());

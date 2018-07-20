@@ -36,10 +36,13 @@ namespace occa {
 
     class memory : public occa::memory_v {
       friend class cuda::device;
+
       friend occa::memory wrapMemory(occa::device device,
                                      void *ptr,
                                      const udim_t bytes,
                                      const occa::properties &props);
+
+      friend void* getMappedPtr(occa::memory mem);
 
     public:
       CUdeviceptr &cuPtr;

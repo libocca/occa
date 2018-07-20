@@ -443,12 +443,13 @@ namespace occa {
       return ((opencl::memory*) memory.getMHandle())->clMem;
     }
 
-    void* getCLMappedPtr(occa::memory memory) {
-      return ((opencl::memory*) memory.getMHandle())->mappedPtr;
-    }
-
     cl_kernel getCLKernel(occa::kernel kernel) {
       return ((opencl::kernel*) kernel.getKHandle())->clKernel;
+    }
+
+    void* getMappedPtr(occa::memory memory) {
+      opencl::memory *handle = (opencl::memory*) memory.getMHandle();
+      return handle ? handle->mappedPtr : NULL;
     }
 
     occa::device wrapDevice(cl_device_id clDevice,

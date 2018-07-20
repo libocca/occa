@@ -121,9 +121,9 @@ namespace occa {
 
     cl_mem getCLMemory(occa::memory memory);
 
-    void* getCLMappedPtr(occa::memory memory);
-
     cl_kernel getCLKernel(occa::kernel kernel);
+
+    void* getMappedPtr(occa::memory memory);
 
     occa::device wrapDevice(cl_device_id clDevice,
                             cl_context context,

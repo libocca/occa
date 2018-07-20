@@ -38,7 +38,7 @@ namespace occa {
 
       friend cl_mem getCLMemory(occa::memory memory);
 
-      friend void* getCLMappedPtr(occa::memory memory);
+      friend void* getMappedPtr(occa::memory memory);
 
       friend occa::memory wrapMemory(occa::device device,
                                      cl_mem clMem,
