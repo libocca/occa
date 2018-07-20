@@ -177,6 +177,11 @@ namespace occa {
       return ((hip::device*) device.getModeDevice())->hipContext;
     }
 
+    void* getMappedPtr(occa::memory mem) {
+      hip::memory *handle = (hip::memory*) mem.getMHandle();
+      return handle ? handle->mappedPtr : NULL;
+    }
+
     occa::device wrapDevice(hipDevice_t device,
                             hipCtx_t context,
                             const occa::properties &props) {

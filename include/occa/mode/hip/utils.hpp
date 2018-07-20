@@ -96,6 +96,8 @@ namespace occa {
 
     hipCtx_t getContext(occa::device device);
 
+    void* getMappedPtr(occa::memory mem);
+
     occa::device wrapDevice(hipDevice_t device,
                             hipCtx_t context,
                             const occa::properties &props = occa::properties());

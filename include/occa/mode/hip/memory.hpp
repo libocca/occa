@@ -41,6 +41,8 @@ namespace occa {
                                      const udim_t bytes,
                                      const occa::properties &props);
 
+      friend void* getMappedPtr(occa::memory mem);
+
     public:
       hipDeviceptr_t hipPtr;
       char *mappedPtr;
