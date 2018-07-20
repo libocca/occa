@@ -28,6 +28,7 @@
 #include <sstream>
 
 #include <cstring>
+#include <cstdlib>
 
 #include <occa/defines.hpp>
 #include <occa/types.hpp>
