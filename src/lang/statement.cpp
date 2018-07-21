@@ -802,7 +802,7 @@ namespace occa {
     switchStatement::switchStatement(blockStatement *up_,
                                      const switchStatement& other) :
       blockStatement(up_, other.source),
-      condition(other.condition) {
+      condition(&(other.condition->clone(this))) {
       copyFrom(other);
     }
 
