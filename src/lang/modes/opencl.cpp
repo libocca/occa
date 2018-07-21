@@ -242,8 +242,13 @@ namespace occa {
         statementExprMap::iterator it = exprMap.begin();
         while (it != exprMap.end()) {
           declarationStatement &declSmnt = *((declarationStatement*) it->first);
-          declSmnt.removeFromParent();
-          kernelSmnt.addFirst(declSmnt);
+
+          variable_t *var = declSmnt.declarations[0].variable;
+
+          if (var->hasAttribute("shared")) {
+            declSmnt.removeFromParent();
+            kernelSmnt.addFirst(declSmnt);
+          }
           ++it;
         }
       }
