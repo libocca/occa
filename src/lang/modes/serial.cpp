@@ -310,10 +310,14 @@ namespace occa {
                                    op::bracketStart);
           operatorToken endToken(var.source->origin,
                                  op::bracketEnd);
-          var.vartype += array_t(startToken,
-                                 endToken,
-                                 new primitiveNode(var.source,
-                                                   256));
+          // Add exclusive array to the beginning
+          var.vartype.arrays.insert(
+            var.vartype.arrays.begin(),
+            array_t(startToken,
+                    endToken,
+                    new primitiveNode(var.source,
+                                      256))
+          );
           return &expr;
         }
 
