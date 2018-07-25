@@ -141,8 +141,6 @@ namespace occa {
   void device::removeDHandleRefFrom(device_v *&dHandle_) {
     if (dHandle_ && !dHandle_->removeRef()) {
       free(dHandle_);
-      delete dHandle_;
-      dHandle_ = NULL;
     }
   }
 
@@ -208,6 +206,9 @@ namespace occa {
     }
     dHandle_->streams.clear();
     dHandle_->free();
+
+    delete dHandle_;
+    dHandle_ = NULL;
   }
 
   const std::string& device::mode() const {

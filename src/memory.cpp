@@ -107,11 +107,7 @@ namespace occa {
 
   void memory::removeMHandleRef() {
     if (mHandle && !mHandle->removeRef()) {
-      device_v *dHandle = mHandle->dHandle;
       free();
-      device::removeDHandleRefFrom(dHandle);
-      delete mHandle;
-      mHandle = NULL;
     }
   }
 
@@ -486,19 +482,20 @@ namespace occa {
   }
 
   void memory::deleteRefs(const bool freeMemory) {
-    if (!mHandle) {
+    if (mHandle == NULL) {
       return;
     }
-    mHandle->dHandle->bytesAllocated -= (mHandle->size);
+    device_v *dHandle = mHandle->dHandle;
+    dHandle->bytesAllocated -= (mHandle->size);
 
     if (mHandle->uvaPtr) {
       uvaMap.erase(mHandle->uvaPtr);
-      mHandle->dHandle->uvaMap.erase(mHandle->uvaPtr);
+      dHandle->uvaMap.erase(mHandle->uvaPtr);
 
       // CPU case where memory is shared
       if (mHandle->uvaPtr != mHandle->ptr) {
         uvaMap.erase(mHandle->ptr);
-        mHandle->dHandle->uvaMap.erase(mHandle->uvaPtr);
+        dHandle->uvaMap.erase(mHandle->uvaPtr);
 
         ::free(mHandle->uvaPtr);
         mHandle->uvaPtr = NULL;
@@ -510,6 +507,10 @@ namespace occa {
     } else {
       mHandle->detach();
     }
+
+    device::removeDHandleRefFrom(dHandle);
+    delete mHandle;
+    mHandle = NULL;
   }
 
   namespace cpu {

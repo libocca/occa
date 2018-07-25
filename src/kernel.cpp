@@ -338,10 +338,7 @@ namespace occa {
 
   void kernel::removeKHandleRef() {
     if (kHandle && !kHandle->removeRef()) {
-      device_v *dHandle = kHandle->dHandle;
       free();
-      device::removeDHandleRefFrom(dHandle);
-      delete kHandle;
       kHandle = NULL;
     }
   }
@@ -433,11 +430,13 @@ namespace occa {
     if (kHandle == NULL) {
       return;
     }
-
+    device_v *dHandle = kHandle->dHandle;
     // Remove kernel from cache map
-    kHandle->dHandle->removeCachedKernel(kHandle);
+    dHandle->removeCachedKernel(kHandle);
+    device::removeDHandleRefFrom(dHandle);
 
     kHandle->free();
+    delete kHandle;
     kHandle = NULL;
   }
   //====================================
