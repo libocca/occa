@@ -36,15 +36,13 @@ namespace occa {
         return false;
       }
 
-      const std::string &cpath = cachePath();
-
       // File is already cached
-      if (startsWith(filename, cpath)) {
+      const std::string &cPath = cachePath();
+      if (startsWith(filename, cPath)) {
         return true;
       }
 
       std::string occaLibName = getLibraryName(filename);
-
       if (occaLibName.size() == 0) {
         return false;
       }
@@ -113,7 +111,6 @@ namespace occa {
     void writeBuildFile(const std::string &filename,
                         const hash_t &hash,
                         const occa::properties &props) {
-
       io::lock_t lock(hash, "kernel-info");
       if (lock.isMine()
           && !sys::fileExists(filename)) {

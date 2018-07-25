@@ -222,12 +222,12 @@ namespace occa {
             function = &(((functionDeclStatement*) kernelSmnts[i])->function);
 
             migrateLocalDecls(*((functionDeclStatement*) kernelSmnts[i]));
-            if (!success) return;  
+            if (!success) return;
           } else {
             function = &(((functionStatement*) kernelSmnts[i])->function);
           }
           setKernelQualifiers(*function);
-          if (!success) return;   
+          if (!success) return;
         }
       }
 
@@ -242,7 +242,6 @@ namespace occa {
         statementExprMap::iterator it = exprMap.begin();
         while (it != exprMap.end()) {
           declarationStatement &declSmnt = *((declarationStatement*) it->first);
-
           variable_t *var = declSmnt.declarations[0].variable;
 
           if (var->hasAttribute("shared")) {
