@@ -140,14 +140,7 @@ tests: $(tests)
 test: unit-tests e2e-tests
 
 unit-tests: $(tests)
-	@for test in $(tests); do                             \
-	   	testname=$$(basename "$$test");                   \
-      chars=$$(echo "$${testname}" | wc -c);            \
-      linechars=$$((60 - $${chars}));                   \
-	    line=$$(printf '%*s' $${linechars} | tr ' ' '-'); \
-	    echo -e "\n---[ $${testname} ]$${line}";          \
-	    ASAN_OPTIONS=protect_shadow_gap=0 $$test 2>&1 | head -n 100; \
-	done
+	$(testPath)/run_tests
 
 e2e-tests: unit-tests
 	@for dir in $(examples); do                           \
