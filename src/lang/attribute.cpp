@@ -190,5 +190,58 @@ namespace occa {
       source->printError(message);
     }
     //==================================
+
+    std::ostream& operator << (std::ostream &out,
+                               const attributeArg_t &attr) {
+      if (attr.expr) {
+        out << *(attr.expr);
+        if (attr.attributes.size()) {
+          out << ' ';
+        }
+      }
+      out << attr.attributes;
+      return out;
+    }
+
+    std::ostream& operator << (std::ostream &out,
+                               const attributeToken_t &attr) {
+      out << '@' << attr.name();
+
+      const int argCount = (int) attr.args.size();
+      const int kwargCount = (int) attr.kwargs.size();
+      if (!argCount && !kwargCount) {
+        return out;
+      }
+
+      out << '(';
+      // args
+      for (int i = 0; i < argCount; ++i) {
+        out << attr.args[i];
+        if ((i < (argCount - 1)) || kwargCount) {
+          out << ", ";
+        }
+      }
+      // kwargs
+      attributeArgMap::const_iterator it = attr.kwargs.begin();
+      while (it != attr.kwargs.end()) {
+        out << it->first << '=' << it->second;
+        ++it;
+        if (it != attr.kwargs.end()) {
+          out << ", ";
+        }
+      }
+      out << ')';
+      return out;
+    }
+
+    std::ostream& operator << (std::ostream &out,
+                               const attributeTokenMap &attributes) {
+      attributeTokenMap::const_iterator it = attributes.begin();
+      while (it != attributes.end()) {
+        out << it->second << '\n';
+        ++it;
+      }
+      return out;
+    }
   }
 }

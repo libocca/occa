@@ -116,6 +116,15 @@ namespace occa {
       void printError(const std::string &message) const;
     };
     //==================================
+
+    std::ostream& operator << (std::ostream &out,
+                               const attributeArg_t &attr);
+
+    std::ostream& operator << (std::ostream &out,
+                               const attributeToken_t &attr);
+
+    std::ostream& operator << (std::ostream &out,
+                               const attributeTokenMap &attributes);
   }
 }
 

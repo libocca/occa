@@ -150,6 +150,13 @@ namespace occa {
       debugPrint(prefix + "|   ");
     }
 
+    std::ostream& operator << (std::ostream &out,
+                               const exprNode &node) {
+      printer pout(out);
+      node.print(pout);
+      return out;
+    }
+
     printer& operator << (printer &pout,
                           const exprNode &node) {
       node.print(pout);

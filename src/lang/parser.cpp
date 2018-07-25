@@ -688,6 +688,7 @@ namespace occa {
       variable_t var = (!isLoadingFunctionPointer()
                         ? loadVariable(vartype)
                         : loadFunctionPointer(vartype));
+      loadAttributes(attrs);
 
       if (var.vartype.type) {
         var.attributes = var.vartype.type->attributes;

@@ -155,6 +155,9 @@ namespace occa {
       void childDebugPrint(const std::string &prefix) const;
     };
 
+    std::ostream& operator << (std::ostream &out,
+                               const exprNode &node);
+
     printer& operator << (printer &pout,
                           const exprNode &node);
 
