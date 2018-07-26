@@ -27,22 +27,33 @@
 #include <occa/tools/env.hpp>
 #include <occa/tools/testing.hpp>
 
-void testLock();
+void testInit();
+void testAutoRelease();
+void testStaleRelease();
+void clearLocks();
 
 int main(const int argc, const char **argv) {
   occa::env::OCCA_CACHE_DIR = occa::io::dirname(__FILE__);
   srand(time(NULL));
 
-  testLock();
+  clearLocks();
+
+  testInit();
+  testAutoRelease();
+  testStaleRelease();
+
+  clearLocks();
 }
 
-void testLock() {
+void testInit() {
+  occa::io::lock_t lock;
+  ASSERT_FALSE(lock.isInitialized());
+}
+
+void testAutoRelease() {
   occa::hash_t hash = occa::hash(occa::toString(rand()));
-  {
-    occa::io::lock_t lock;
-    ASSERT_FALSE(lock.isInitialized());
-  }
-  occa::io::lock_t lock(hash, "tag", 1.0);
+
+  occa::io::lock_t lock(hash, "tag", 0.2);
   ASSERT_TRUE(lock.isInitialized());
   ASSERT_EQ(lock.dir(),
             occa::env::OCCA_CACHE_DIR
@@ -52,10 +63,32 @@ void testLock() {
   ASSERT_TRUE(lock.isMine());
   ASSERT_FALSE(lock.isReleased());
 
-  // Wait 2 seconds before trying again
-  ::usleep(2000000);
+  // Wait 0.5 seconds until it's considered 'stale'
+  ::usleep(500000);
 
   ASSERT_TRUE(lock.isReleased());
+  ASSERT_FALSE(occa::io::isDir(lock.dir()));
+}
+
+void testStaleRelease() {
+  occa::hash_t hash = occa::hash(occa::toString(rand()));
+
+  occa::io::lock_t lock1(hash, "tag", 0.2);
+  ASSERT_TRUE(lock1.isMine());
+
+  occa::io::lock_t lock2(hash, "tag", 0.2);
+  ASSERT_TRUE(lock2.isMine());
+
+  // Wait 0.5 seconds until both locks are considered stale
+  ::usleep(500000);
+
+  lock1.release();
+  lock2.release();
+
+  ASSERT_FALSE(occa::io::isDir(lock1.dir()));
+}
+
+void clearLocks() {
   occa::sys::rmdir(occa::env::OCCA_CACHE_DIR + "locks",
                    true);
 }

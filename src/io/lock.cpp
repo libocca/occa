@@ -27,6 +27,7 @@
 
 #include <occa/defines.hpp>
 #include <occa/io/lock.hpp>
+#include <occa/io/utils.hpp>
 #include <occa/tools/env.hpp>
 
 namespace occa {
@@ -37,7 +38,7 @@ namespace occa {
 
     lock_t::lock_t(const hash_t &hash,
                    const std::string &tag,
-                   const int staleAge_) :
+                   const float staleAge_) :
       isMineCached(false),
       staleAge(staleAge_),
       released(false) {
@@ -104,13 +105,11 @@ namespace occa {
     }
 
     bool lock_t::isReleased() {
-      struct stat buffer;
-
       const char *c_lockDir = lockDir.c_str();
-
+      double startTime = sys::currentTime();
       bool isStale = false;
 
-      double startTime = sys::currentTime();
+      struct stat buffer;
       while(!stat(c_lockDir, &buffer)) {
         const double age = ::difftime(::time(NULL),
                                       buffer.st_ctime);

@@ -28,10 +28,18 @@
 #include <occa/tools/hash.hpp>
 
 namespace occa {
+  class json;
   class properties;
 
   namespace io {
     bool isCached(const std::string &filename);
+
+    std::string getLibraryName(const std::string &filename);
+
+    std::string hashDir(const hash_t &hash);
+
+    std::string hashDir(const std::string &filename,
+                        const hash_t &hash = hash_t());
 
     void cache(const std::string &filename,
                std::string source,
@@ -51,18 +59,11 @@ namespace occa {
                           const hash_t &hash,
                           const std::string &header = "");
 
+    void setBuildProps(occa::json &props);
+
     void writeBuildFile(const std::string &filename,
                         const hash_t &hash,
                         const occa::properties &props);
-
-    std::string getLibraryName(const std::string &filename);
-
-    std::string hashFrom(const std::string &filename);
-
-    std::string hashDir(const hash_t &hash);
-
-    std::string hashDir(const std::string &filename,
-                        const hash_t &hash = hash_t());
   }
 }
 

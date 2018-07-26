@@ -26,6 +26,7 @@
 #include <occa/io/utils.hpp>
 #include <occa/tools/hash.hpp>
 #include <occa/tools/env.hpp>
+#include <occa/tools/lex.hpp>
 #include <occa/tools/properties.hpp>
 
 namespace occa {
@@ -36,20 +37,76 @@ namespace occa {
         return false;
       }
 
+      std::string expFilename = io::filename(filename);
+
       // File is already cached
       const std::string &cPath = cachePath();
-      if (startsWith(filename, cPath)) {
+      if (startsWith(expFilename, cPath)) {
         return true;
       }
 
-      std::string occaLibName = getLibraryName(filename);
+      std::string occaLibName = getLibraryName(expFilename);
       if (occaLibName.size() == 0) {
         return false;
       }
 
       // File is already cached in the library cache
       const std::string lpath = libraryPath() + occaLibName + "/cache/";
-      return startsWith(filename, lpath);
+      return startsWith(expFilename, lpath);
+    }
+
+    std::string getLibraryName(const std::string &filename) {
+      std::string expFilename = io::filename(filename);
+      const std::string cacheLibraryPath = env::OCCA_CACHE_DIR + "libraries/";
+
+      if (!startsWith(expFilename, cacheLibraryPath)) {
+        return "";
+      }
+
+      const char *start = expFilename.c_str() + cacheLibraryPath.size();
+      const char *end = start;
+      lex::skipTo(end, '/');
+
+      return expFilename.substr(start - expFilename.c_str(),
+                                end - start);
+    }
+
+    std::string hashDir(const hash_t &hash) {
+      return hashDir("", hash);
+    }
+
+    std::string hashDir(const std::string &filename,
+                        const hash_t &hash) {
+      bool fileIsCached = isCached(filename);
+
+      const std::string &cPath = cachePath();
+      std::string cacheDir = cPath;
+      bool useHash = true;
+
+      // Check cached locations first
+      if (filename.size() && fileIsCached) {
+        useHash = false;
+        // Cached in a library
+        if (!startsWith(filename, cPath)) {
+          cacheDir = libraryPath() + getLibraryName(filename) + "/cache/";
+        }
+      }
+
+      // Regular file, use hash
+      if (useHash) {
+        if (hash.initialized) {
+          return (cacheDir + hash.toString() + "/");
+        }
+        return cacheDir;
+      }
+
+      // Extract hash out of filename
+      const char *c = filename.c_str() + cacheDir.size();
+      lex::skipTo(c, '/');
+      if (!c) {
+        return filename;
+      }
+      return filename.substr(0, c - filename.c_str() + 1);
     }
 
     void cache(const std::string &filename,
@@ -108,116 +165,23 @@ namespace occa {
       return sourceFile;
     }
 
+    void setBuildProps(occa::json &props) {
+      props["date"]       = sys::date();
+      props["human_date"] = sys::humanDate();
+      props["version/occa"] = OCCA_VERSION_STR;
+      props["version/okl"]  = OKL_VERSION_STR;
+    }
+
     void writeBuildFile(const std::string &filename,
                         const hash_t &hash,
                         const occa::properties &props) {
       io::lock_t lock(hash, "kernel-info");
-      if (lock.isMine()
-          && !io::isFile(filename)) {
+      if (lock.isMine() &&
+          !io::isFile(filename)) {
         occa::properties info = props;
-        json &build = info["build"];
-        build["date"]       = sys::date();
-        build["human_date"] = sys::humanDate();
-        build["version/occa"] = OCCA_VERSION_STR;
-        build["version/okl"]  = OKL_VERSION_STR;
-
+        setBuildProps(info["build"]);
         info.write(filename);
       }
-    }
-
-    std::string getLibraryName(const std::string &filename) {
-      std::string expFilename = io::filename(filename);
-      const std::string cacheLibraryPath = (env::OCCA_CACHE_DIR + "libraries/");
-
-      if (!startsWith(expFilename, cacheLibraryPath)) {
-        return "";
-      }
-      const int chars = (int) expFilename.size();
-      const char *c   = expFilename.c_str();
-
-      int start = (int) cacheLibraryPath.size();
-      int end;
-
-      for (end = start; end < chars; ++end) {
-        if (c[end] == '/') {
-          break;
-        }
-      }
-      return expFilename.substr(start, end - start);
-    }
-
-    std::string hashFrom(const std::string &filename) {
-      std::string expFilename = io::filename(filename);
-      std::string dir = hashDir(expFilename);
-
-      const int chars = (int) expFilename.size();
-      const char *c   = expFilename.c_str();
-
-      int start = (int) dir.size();
-      int end;
-
-      for (end = (start + 1); end < chars; ++end) {
-        if (c[end] == '/') {
-          break;
-        }
-      }
-
-      return expFilename.substr(start, end - start);
-    }
-
-    std::string hashDir(const hash_t &hash) {
-      return hashDir("", hash);
-    }
-
-    std::string hashDir(const std::string &filename,
-                        const hash_t &hash) {
-      bool fileIsCached = isCached(filename);
-
-      const std::string &cpath = cachePath();
-
-      // Directory, not file
-      if (filename.size() == 0) {
-        if (hash.initialized) {
-          return (cpath + hash.toString() + "/");
-        } else {
-          return cpath;
-        }
-      }
-
-      // File is already cached
-      if (fileIsCached &&
-          startsWith(filename, cpath)) {
-        const char *c = filename.c_str() + cpath.size();
-        lex::skipTo(c, '/', '\\');
-        if (!c) {
-          return filename;
-        }
-        return filename.substr(0, c - filename.c_str() + 1);
-      }
-
-      std::string occaLibName = getLibraryName(filename);
-      if (occaLibName.size() == 0) {
-        if (hash.initialized) {
-          return (cpath + hash.toString() + "/");
-        } else {
-          return cpath;
-        }
-      }
-
-      const std::string lpath = libraryPath() + occaLibName + "/cache/";
-
-      // File is already cached
-      if (fileIsCached &&
-          startsWith(filename, lpath)) {
-        const char *c = filename.c_str() + lpath.size();
-        lex::skipTo(c, '/', '\\');
-        if (!c) {
-          return filename;
-        }
-        return filename.substr(0, c - filename.c_str() + 1);
-      }
-
-      return (lpath + hash.toString() + "/");
     }
   }
 }

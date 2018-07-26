@@ -42,7 +42,7 @@ namespace occa {
 
       lock_t(const hash_t &hash,
              const std::string &tag,
-             const int staleAge_ = 0);
+             const float staleAge_ = -1);
 
       ~lock_t();
 
