@@ -12,6 +12,9 @@ ignore:
   - examples
   - tests
   - scripts
+  - include/occa/kernelOperators.hpp
+  - src/kernelOperators.cpp
+  - src/tools/runFunction.cpp
 
 comment:
   layout: 'reach, diff, files'
