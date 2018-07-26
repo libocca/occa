@@ -76,7 +76,8 @@ namespace occa {
 
     std::string expandEnvVariables(const std::string &str);
 
-    void rmdir(const std::string &dir);
+    void rmdir(const std::string &dir,
+               const bool recursive = false);
     int mkdir(const std::string &dir);
     void mkpath(const std::string &dir);
 

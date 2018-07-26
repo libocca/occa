@@ -45,16 +45,18 @@ namespace occa {
     const std::string& libraryPath();
 
     void endWithSlash(std::string &dir);
-
     std::string endWithSlash(const std::string &dir);
 
     void removeEndSlash(std::string &dir);
-
     std::string removeEndSlash(const std::string &dir);
+
+    std::string convertSlashes(const std::string &filename);
+
+    std::string slashToSnake(const std::string &str);
 
     bool isAbsolutePath(const std::string &filename);
 
-    std::string convertSlashes(const std::string &filename);
+    std::string expandEnvVariables(const std::string &filename);
 
     std::string filename(const std::string &filename,
                          bool makeAbsolute = true);
@@ -69,6 +71,9 @@ namespace occa {
     std::string extension(const std::string &filename);
 
     std::string shortname(const std::string &filename);
+
+    bool isDir(const std::string &filename);
+    bool isFile(const std::string &filename);
 
     strVector filesInDir(const std::string &dir,
                          const unsigned char fileType);
@@ -88,8 +93,6 @@ namespace occa {
 
     void write(const std::string &filename,
                const std::string &content);
-
-    std::string removeSlashes(const std::string &str);
   }
 }
 

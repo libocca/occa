@@ -254,7 +254,22 @@ namespace occa {
       return expstr;
     }
 
-    void rmdir(const std::string &dir) {
+    void rmdir(const std::string &dir,
+               const bool recursive) {
+      if (recursive) {
+        // Remove files
+        strVector files = io::files(dir);
+        const int fileCount = (int) files.size();
+        for (int i = 0; i < fileCount; ++i) {
+          ::remove(files[i].c_str());
+        }
+        // Remove directories
+        strVector directories = io::directories(dir);
+        const int dirCount = (int) directories.size();
+        for (int i = 0; i < dirCount; ++i) {
+          rmdir(directories[i], true);
+        }
+      }
 #if (OCCA_OS & (OCCA_LINUX_OS | OCCA_MACOS_OS))
       ::rmdir(dir.c_str());
 #else
@@ -264,7 +279,6 @@ namespace occa {
 
     int mkdir(const std::string &dir) {
       errno = 0;
-
 #if (OCCA_OS & (OCCA_LINUX_OS | OCCA_MACOS_OS))
       return ::mkdir(dir.c_str(), 0755);
 #else
@@ -328,11 +342,11 @@ namespace occa {
       std::string filename = expandEnvVariables(filename_);
       strip(filename);
 
-      if (flags & flags::checkCacheDir)
+      if (flags & flags::checkCacheDir) {
         return fileExists(io::filename(filename));
+      }
 
       struct stat statInfo;
-
       return (stat(filename.c_str(), &statInfo) == 0);
     }
 
@@ -643,7 +657,7 @@ namespace occa {
 
     int compilerVendor(const std::string &compiler) {
 #if (OCCA_OS & (OCCA_LINUX_OS | OCCA_MACOS_OS))
-      const std::string safeCompiler = io::removeSlashes(compiler);
+      const std::string safeCompiler = io::slashToSnake(compiler);
       int vendor_ = sys::vendor::notFound;
       std::stringstream ss;
 

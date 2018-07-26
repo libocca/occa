@@ -1,0 +1,61 @@
+/* The MIT License (MIT)
+ *
+ * Copyright (c) 2014-2018 David Medina and Tim Warburton
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ */
+#include <stdlib.h>
+#include <time.h>
+#include <unistd.h>
+
+#include <occa/io.hpp>
+#include <occa/tools/env.hpp>
+#include <occa/tools/testing.hpp>
+
+void testLock();
+
+int main(const int argc, const char **argv) {
+  occa::env::OCCA_CACHE_DIR = occa::io::dirname(__FILE__);
+  srand(time(NULL));
+
+  testLock();
+}
+
+void testLock() {
+  occa::hash_t hash = occa::hash(occa::toString(rand()));
+  {
+    occa::io::lock_t lock;
+    ASSERT_FALSE(lock.isInitialized());
+  }
+  occa::io::lock_t lock(hash, "tag", 1.0);
+  ASSERT_TRUE(lock.isInitialized());
+  ASSERT_EQ(lock.dir(),
+            occa::env::OCCA_CACHE_DIR
+            + "locks/"
+            + hash.toString()
+            + "_tag");
+  ASSERT_TRUE(lock.isMine());
+  ASSERT_FALSE(lock.isReleased());
+
+  // Wait 2 seconds before trying again
+  ::usleep(2000000);
+
+  ASSERT_TRUE(lock.isReleased());
+  occa::sys::rmdir(occa::env::OCCA_CACHE_DIR + "locks",
+                   true);
+}

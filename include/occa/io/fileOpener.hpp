@@ -70,28 +70,6 @@ namespace occa {
       std::string expand(const std::string &filename);
     };
     //==================================
-
-    //---[ Header File Opener ]----------
-    class headerFileOpener : public fileOpener {
-    public:
-      headerFileOpener();
-      virtual ~headerFileOpener();
-
-      bool handles(const std::string &filename);
-      std::string expand(const std::string &filename);
-    };
-    //==================================
-
-    //---[ System Header File Opener ]------
-    class systemHeaderFileOpener : public fileOpener {
-    public:
-      systemHeaderFileOpener();
-      virtual ~systemHeaderFileOpener();
-
-      bool handles(const std::string &filename);
-      std::string expand(const std::string &filename);
-    };
-    //==================================
   }
 }
 

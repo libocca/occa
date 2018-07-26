@@ -180,8 +180,6 @@ namespace occa {
 
     void envInitializer_t::registerFileOpeners() {
       io::fileOpener::add(new io::occaFileOpener());
-      io::fileOpener::add(new io::headerFileOpener());
-      io::fileOpener::add(new io::systemHeaderFileOpener());
     }
 
     void envInitializer_t::cleanFileOpeners() {

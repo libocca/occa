@@ -60,7 +60,7 @@ namespace occa {
                              const std::string &compiler) {
 
 #if (OCCA_OS & (OCCA_LINUX_OS | OCCA_MACOS_OS))
-      const std::string safeCompiler = io::removeSlashes(compiler);
+      const std::string safeCompiler = io::slashToSnake(compiler);
       std::stringstream ss;
 
       const std::string openmpTest = env::OCCA_DIR + "scripts/openmpTest.cpp";

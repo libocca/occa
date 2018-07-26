@@ -80,35 +80,5 @@ namespace occa {
       return (libraryPath() + filename.substr(7));
     }
     //==================================
-
-    //-----[ Header File Opener ]-------
-    headerFileOpener::headerFileOpener() {}
-    headerFileOpener::~headerFileOpener() {}
-
-    bool headerFileOpener::handles(const std::string &filename) {
-      return ((2 <= filename.size()) &&
-              (filename[0] == '"')   &&
-              (filename[filename.size() - 1] == '"'));
-    }
-
-    std::string headerFileOpener::expand(const std::string &filename) {
-      return filename.substr(1, filename.size() - 2);
-    }
-    //==================================
-
-    //-----[ System Header File Opener ]---
-    systemHeaderFileOpener::systemHeaderFileOpener() {}
-    systemHeaderFileOpener::~systemHeaderFileOpener() {}
-
-    bool systemHeaderFileOpener::handles(const std::string &filename) {
-      return ((2 <= filename.size()) &&
-              (filename[0] == '<')   &&
-              (filename[filename.size() - 1] == '>'));
-    }
-
-    std::string systemHeaderFileOpener::expand(const std::string &filename) {
-      return filename.substr(1, filename.size() - 2);
-    }
-    //==================================
   }
 }
