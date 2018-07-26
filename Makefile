@@ -47,11 +47,11 @@ srcToObject  = $(subst $(PROJ_DIR)/src,$(PROJ_DIR)/obj,$(1:.cpp=.o))
 
 dontCompile = $(OCCA_DIR)/src/kernelOperators.cpp $(OCCA_DIR)/src/tools/runFunction.cpp
 
-sources     = $(realpath $(shell find $(PROJ_DIR)/src     -type f -name '*.cpp'))
+sources     = $(realpath $(shell find $(PROJ_DIR)/src -type f -name '*.cpp'))
 sources    := $(filter-out $(dontCompile),$(sources))
 headers     = $(realpath $(shell find $(PROJ_DIR)/include -type f -name '*.hpp'))
-testSources = $(realpath $(shell find $(PROJ_DIR)/tests   -type f -name '*.cpp'))
-tests       = $(subst $(testPath)/,$(testPath)/bin/,$(testSources:.cpp=))
+testSources = $(realpath $(shell find $(PROJ_DIR)/tests/src -type f -name '*.cpp'))
+tests       = $(subst $(testPath)/src,$(testPath)/bin,$(testSources:.cpp=))
 
 objects = $(call srcToObject,$(sources))
 
@@ -151,7 +151,7 @@ e2e-tests: unit-tests
 	  OCCA_VERBOSE=1 ./main;                              \
 	done
 
-$(testPath)/bin/%:$(testPath)/%.cpp $(libPath)/libocca.so
+$(testPath)/bin/%:$(testPath)/src/%.cpp $(libPath)/libocca.so
 	@mkdir -p $(abspath $(dir $@))
 	$(compiler) $(testFlags) $(pthreadFlag) -o $@ $(flags) $< $(paths) $(links) -L$(OCCA_DIR)/lib -locca
 #=================================================

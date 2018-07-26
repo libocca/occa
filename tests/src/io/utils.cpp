@@ -147,12 +147,8 @@ void testDirMethods() {
             0);
   dirs = occa::io::directories(testDir);
   ASSERT_EQ((int) dirs.size(),
-            5);
+            3);
 
-  ASSERT_TRUE(std::find(dirs.begin(), dirs.end(), testDir + "bin/")
-              != dirs.end());
-  ASSERT_TRUE(std::find(dirs.begin(), dirs.end(), testDir + "files/")
-              != dirs.end());
   ASSERT_TRUE(std::find(dirs.begin(), dirs.end(), testDir + "io/")
               != dirs.end());
   ASSERT_TRUE(std::find(dirs.begin(), dirs.end(), testDir + "lang/")

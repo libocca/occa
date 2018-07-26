@@ -24,6 +24,8 @@
 set -e
 
 TEST_DIR=$(dirname "$0")
+TEST_SRC_DIR=$(dirname "$0")/src
+TEST_BIN_DIR=$(dirname "$0")/bin
 
 export ASAN_OPTIONS
 ASAN_OPTIONS+=':protect_shadow_gap=0'
@@ -31,13 +33,13 @@ ASAN_OPTIONS+=':detect_container_overflow=0'
 
 HEADER_CHARS=80
 
-tests_cpp=$(find "${TEST_DIR}" -type f -name '*.cpp')
+tests_cpp=$(find "${TEST_SRC_DIR}" -type f -name '*.cpp')
 for test_cpp in ${tests_cpp}; do
-    test="${test_cpp/${TEST_DIR}/${TEST_DIR}/bin}"
+    test="${test_cpp/${TEST_SRC_DIR}/${TEST_BIN_DIR}}"
     test="${test/\.cpp/}"
 
     # Test output header
-    test_name="${test_cpp/${TEST_DIR}\//}"
+    test_name="${test_cpp/${TEST_SRC_DIR}\//}"
     chars=$(echo "${test_name}" | wc -c);
     linechars=$((${HEADER_CHARS} - ${chars} - 6));
 	  line=$(printf '%*s' ${linechars} | tr ' ' '-');
