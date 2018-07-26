@@ -53,7 +53,7 @@ namespace occa {
         return false;
       }
 
-      if (!sys::fileExists(outputFile)) {
+      if (!io::isFile(outputFile)) {
         hash_t hash = occa::hash(outputFile);
         io::lock_t lock(hash, "serial-parser");
         if (lock.isMine()) {

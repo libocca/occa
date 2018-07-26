@@ -74,7 +74,7 @@ namespace occa {
 
       io::lock_t lock(hash, "openmp-compiler");
       if (lock.isMine()
-          && !sys::fileExists(outFilename)) {
+          && !io::isFile(outFilename)) {
         std::string flag = baseCompilerFlag(vendor_);
         ss << compiler
            << ' '    << flag

@@ -67,7 +67,7 @@ namespace occa {
       const std::string expFilename = io::filename(filename);
       io::lock_t lock(hash, "cache");
       if (lock.isMine()
-          && !sys::fileExists(expFilename)) {
+          && !io::isFile(expFilename)) {
         write(expFilename, source);
       }
       if (deleteSource) {
@@ -98,7 +98,7 @@ namespace occa {
       const std::string buildFile   = hashDir + kc::buildFile;
       const std::string sourceFile  = hashDir + cachedName;
 
-      if (!sys::fileExists(sourceFile)) {
+      if (!io::isFile(sourceFile)) {
         std::stringstream ss;
         ss << header << '\n'
            << io::read(expFilename);
@@ -113,7 +113,7 @@ namespace occa {
                         const occa::properties &props) {
       io::lock_t lock(hash, "kernel-info");
       if (lock.isMine()
-          && !sys::fileExists(filename)) {
+          && !io::isFile(filename)) {
         occa::properties info = props;
         json &build = info["build"];
         build["date"]       = sys::date();

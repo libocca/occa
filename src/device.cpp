@@ -387,7 +387,7 @@ namespace occa {
     stringSourceFile += "stringSource.okl";
 
     if (lock.isMine()) {
-      if (!sys::fileExists(stringSourceFile)) {
+      if (!io::isFile(stringSourceFile)) {
         io::write(stringSourceFile, content);
       }
       lock.release();
@@ -418,7 +418,7 @@ namespace occa {
     for (int d = 0; d < dirCount; ++d) {
       const std::string buildFile = dirs[d] + kc::buildFile;
 
-      if (!sys::fileExists(buildFile)) {
+      if (!io::isFile(buildFile)) {
         continue;
       }
 

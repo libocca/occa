@@ -187,7 +187,7 @@ namespace occa {
         return false;
       }
 
-      if (!sys::fileExists(outputFile)) {
+      if (!io::isFile(outputFile)) {
         hash_t hash = occa::hash(outputFile);
         io::lock_t lock(hash, "cuda-parser-device");
         if (lock.isMine()) {
@@ -195,7 +195,7 @@ namespace occa {
         }
       }
 
-      if (!sys::fileExists(hostOutputFile)) {
+      if (!io::isFile(hostOutputFile)) {
         hash_t hash = occa::hash(hostOutputFile);
         io::lock_t lock(hash, "cuda-parser-host");
         if (lock.isMine()) {
@@ -223,7 +223,7 @@ namespace occa {
 
       io::lock_t lock(kernelHash, "cuda-kernel");
       if (lock.isMine()) {
-        if (sys::fileExists(binaryFilename)) {
+        if (io::isFile(binaryFilename)) {
           lock.release();
         } else {
           foundBinary = false;

@@ -63,13 +63,12 @@ jsonArray flattenArray(const jsonArray &array) {
   return flatArray;
 }
 
-bool removeDir(const std::string &dir, const bool promptCheck = true) {
-  if (!sys::dirExists(dir)) {
+bool safeRmrf(const std::string &dir, const bool promptCheck = true) {
+  if (!io::isDir(dir) && !io::isFile(dir)) {
     return false;
   }
 
   std::string input;
-
   std::cout << "  Removing [" << dir << "]";
   if (promptCheck) {
     std::cout << ", are you sure? [y/n]:  ";
@@ -81,8 +80,7 @@ bool removeDir(const std::string &dir, const bool promptCheck = true) {
   }
 
   if (input == "y") {
-    std::string command = "rm -rf " + dir;
-    ignoreResult( system(command.c_str()) );
+    sys::rmrf(dir);
   } else if (input != "n") {
     std::cout << "  Input must be [y] or [n], ignoring clear command\n";
   }
@@ -150,21 +148,21 @@ bool runClear(const cli::command &command,
   const bool promptCheck = (options.find("yes") == options.end());
   while (it != options.end()) {
     if (it->first == "all") {
-      removedSomething |= removeDir(env::OCCA_CACHE_DIR, promptCheck);
+      removedSomething |= safeRmrf(env::OCCA_CACHE_DIR, promptCheck);
     } else if (it->first == "lib") {
       jsonArray libs = flattenArray(it->second.array());
       for (int i = 0; i < (int) libs.size(); ++i) {
-        removedSomething |= removeDir(io::libraryPath() +
+        removedSomething |= safeRmrf(io::libraryPath() +
                                       (std::string) libs[i],
                                       promptCheck);
       }
     } else if (it->first == "libraries") {
-      removedSomething |= removeDir(io::libraryPath(), promptCheck);
+      removedSomething |= safeRmrf(io::libraryPath(), promptCheck);
     } else if (it->first == "kernels") {
-      removedSomething |= removeDir(io::cachePath(), promptCheck);
+      removedSomething |= safeRmrf(io::cachePath(), promptCheck);
     } else if (it->first == "locks") {
       const std::string lockPath = env::OCCA_CACHE_DIR + "locks/";
-      removedSomething |= removeDir(lockPath, promptCheck);
+      removedSomething |= safeRmrf(lockPath, promptCheck);
     }
     ++it;
   }
@@ -203,7 +201,7 @@ bool runCache(const cli::command &command,
     const std::string srcFile = arguments[i];
     const std::string destFile = libDir + io::basename(srcFile);
 
-    if (!sys::fileExists(srcFile)) {
+    if (!io::isFile(srcFile)) {
       std::cerr << yellow("Warning") << ": File '"
                 << srcFile << "' does not exist\n";
       continue;

@@ -78,12 +78,9 @@ namespace occa {
 
     void rmdir(const std::string &dir,
                const bool recursive = false);
+    void rmrf(const std::string &filename);
     int mkdir(const std::string &dir);
     void mkpath(const std::string &dir);
-
-    bool dirExists(const std::string &dir_);
-    bool fileExists(const std::string &filename_,
-                    const int flags = 0);
 
     bool pidExists(const int pid);
 

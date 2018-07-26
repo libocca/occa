@@ -25,6 +25,7 @@
 
 #include <occa/io.hpp>
 #include <occa/tools/env.hpp>
+#include <occa/tools/sys.hpp>
 #include <occa/tools/testing.hpp>
 
 void testPathMethods();
@@ -183,5 +184,5 @@ void testIOMethods() {
             content.size());
   delete [] c;
 
-  ::remove(test_foo.c_str());
+  occa::sys::rmrf(test_foo);
 }

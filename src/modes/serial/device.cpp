@@ -167,7 +167,7 @@ namespace occa {
         return false;
       }
 
-      if (!sys::fileExists(outputFile)) {
+      if (!io::isFile(outputFile)) {
         hash_t hash = occa::hash(outputFile);
         io::lock_t lock(hash, "serial-parser");
         if (lock.isMine()) {
@@ -196,7 +196,7 @@ namespace occa {
 
       io::lock_t lock(kernelHash, "serial-kernel");
       if (lock.isMine()) {
-        if (sys::fileExists(binaryFilename)) {
+        if (io::isFile(binaryFilename)) {
           lock.release();
         } else {
           foundBinary = false;

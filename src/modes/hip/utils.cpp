@@ -46,21 +46,21 @@ namespace occa {
     int getDeviceCount() {
       int deviceCount;
       OCCA_HIP_ERROR("Finding Number of Devices",
-                      hipGetDeviceCount(&deviceCount));
+                     hipGetDeviceCount(&deviceCount));
       return deviceCount;
     }
 
     hipDevice_t getDevice(const int id) {
       hipDevice_t device;
       OCCA_HIP_ERROR("Getting hipDevice_t",
-                      hipDeviceGet(&device, id));
+                     hipDeviceGet(&device, id));
       return device;
     }
 
     udim_t getDeviceMemorySize(hipDevice_t device) {
       size_t bytes;
       OCCA_HIP_ERROR("Finding available memory on device",
-                      hipDeviceTotalMem(&bytes, device));
+                     hipDeviceTotalMem(&bytes, device));
       return bytes;
     }
 
@@ -68,8 +68,8 @@ namespace occa {
       std::stringstream ss;
       int driverVersion;
       OCCA_HIP_ERROR("Finding HIP driver version",
-                      hipDriverGetVersion(&driverVersion)); 
-      ss << driverVersion; 
+                     hipDriverGetVersion(&driverVersion));
+      ss << driverVersion;
 
       return ss.str();
     }
@@ -77,7 +77,7 @@ namespace occa {
     void enablePeerToPeer(hipCtx_t context) {
 
       OCCA_HIP_ERROR("Enabling Peer-to-Peer",
-                      hipCtxEnablePeerAccess(context, 0) );
+                     hipCtxEnablePeerAccess(context, 0) );
     }
 
     void checkPeerToPeer(hipDevice_t destDevice,
@@ -85,7 +85,7 @@ namespace occa {
       int canAccessPeer;
 
       OCCA_HIP_ERROR("Checking Peer-to-Peer Connection",
-                      hipDeviceCanAccessPeer(&canAccessPeer,
+                     hipDeviceCanAccessPeer(&canAccessPeer,
                                             destDevice,
                                             srcDevice));
 
@@ -252,7 +252,7 @@ namespace occa {
       occa::error(filename, function, line, ss.str());
     }
 
-#define OCCA_HIP_ERROR_CASE(MACRO)             \
+#define OCCA_HIP_ERROR_CASE(MACRO)              \
     case MACRO: return #MACRO
 
     std::string getErrorMessage(const hipError_t errorCode) {

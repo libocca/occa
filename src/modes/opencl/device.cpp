@@ -194,7 +194,7 @@ namespace occa {
         return false;
       }
 
-      if (!sys::fileExists(outputFile)) {
+      if (!io::isFile(outputFile)) {
         hash_t hash = occa::hash(outputFile);
         io::lock_t lock(hash, "opencl-parser-device");
         if (lock.isMine()) {
@@ -202,7 +202,7 @@ namespace occa {
         }
       }
 
-      if (!sys::fileExists(hostOutputFile)) {
+      if (!io::isFile(hostOutputFile)) {
         hash_t hash = occa::hash(hostOutputFile);
         io::lock_t lock(hash, "opencl-parser-host");
         if (lock.isMine()) {
@@ -234,7 +234,7 @@ namespace occa {
 
       io::lock_t lock(kernelHash, "opencl-kernel");
       if (lock.isMine()) {
-        if (sys::fileExists(binaryFilename)) {
+        if (io::isFile(binaryFilename)) {
           lock.release();
         } else {
           foundBinary = false;

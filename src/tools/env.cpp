@@ -145,7 +145,7 @@ namespace occa {
       }
       env::OCCA_CACHE_DIR = io::filename(env::OCCA_CACHE_DIR);
 
-      if (!sys::dirExists(env::OCCA_CACHE_DIR)) {
+      if (!io::isDir(env::OCCA_CACHE_DIR)) {
         sys::mkpath(env::OCCA_CACHE_DIR);
       }
     }

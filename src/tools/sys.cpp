@@ -277,6 +277,14 @@ namespace occa {
 #endif
     }
 
+    void rmrf(const std::string &filename) {
+      if (io::isFile(filename)) {
+        ::remove(filename.c_str());
+      } else {
+        rmdir(filename, true);
+      }
+    }
+
     int mkdir(const std::string &dir) {
       errno = 0;
 #if (OCCA_OS & (OCCA_LINUX_OS | OCCA_MACOS_OS))
@@ -308,7 +316,7 @@ namespace occa {
 
       for (int d = firstDir; d < dirCount; ++d) {
         sPath += path[d];
-        if (!dirExists(sPath)) {
+        if (!io::isDir(sPath)) {
           makeFrom = d;
           break;
         }
@@ -325,29 +333,6 @@ namespace occa {
           sys::mkdir(sPath);
         }
       }
-    }
-
-    bool dirExists(const std::string &dir_) {
-      std::string dir = expandEnvVariables(dir_);
-      strip(dir);
-
-      struct stat statInfo;
-      return ((stat(dir.c_str(), &statInfo) == 0) &&
-              S_ISDIR(statInfo.st_mode));
-    }
-
-    bool fileExists(const std::string &filename_,
-                    const int flags) {
-
-      std::string filename = expandEnvVariables(filename_);
-      strip(filename);
-
-      if (flags & flags::checkCacheDir) {
-        return fileExists(io::filename(filename));
-      }
-
-      struct stat statInfo;
-      return (stat(filename.c_str(), &statInfo) == 0);
     }
 
     bool pidExists(const int pid) {
@@ -403,7 +388,7 @@ namespace occa {
 #if (OCCA_OS & OCCA_LINUX_OS)
       std::string shellToolsFile = io::filename("occa://occa/scripts/shellTools.sh");
 
-      if (!sys::fileExists(shellToolsFile)) {
+      if (!io::isFile(shellToolsFile)) {
         mkpath(io::dirname(shellToolsFile));
         std::string localFile = env::OCCA_DIR + "scripts/shellTools.sh";
 
@@ -675,7 +660,7 @@ namespace occa {
 
       io::lock_t lock(hash, "compiler");
       if (lock.isMine()
-          && !sys::fileExists(outFilename)) {
+          && !io::isFile(outFilename)) {
         ss << compiler
            << ' '    << srcFilename
            << " -o " << binaryFilename
@@ -685,7 +670,7 @@ namespace occa {
         ignoreResult( system(compileLine.c_str()) );
 
         OCCA_ERROR("Could not compile compilerVendorTest.cpp with following command:\n" << compileLine,
-                   sys::fileExists(binaryFilename));
+                   io::isFile(binaryFilename));
 
         int exitStatus = system(binaryFilename.c_str());
         int vendorBit  = WEXITSTATUS(exitStatus);
