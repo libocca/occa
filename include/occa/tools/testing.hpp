@@ -19,32 +19,59 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  */
+#include <algorithm>
 
 #include <occa/defines.hpp>
 #include <occa/tools/string.hpp>
 #include <occa/tools/sys.hpp>
 
-#define ASSERT_EQ(a, b)                         \
-  OCCA_ERROR("Comparison Failed",               \
+#define ASSERT_LE(a, b)                                 \
+  OCCA_ERROR("Assertion Failed: Value is >",            \
+             occa::test::assertLessThanOrEqual(a, b));
+
+#define ASSERT_LT(a, b)                         \
+  OCCA_ERROR("Assertion Failed: Value is >=",   \
+             occa::test::assertLessThan(a, b));
+
+#define ASSERT_GE(a, b)                             \
+  OCCA_ERROR("Assertion Failed: Value is <=",       \
+             occa::test::assertGreaterThan(a, b));
+
+#define ASSERT_GT(a, b)                                   \
+  OCCA_ERROR("Assertion Failed: Value is <",              \
+             occa::test::assertGreaterThanOrEqual(a, b));
+
+#define ASSERT_EQ(a, b)                                 \
+  OCCA_ERROR("Assertion Failed: Values are not equal",  \
              occa::test::assertEqual(a, b));
 
-#define ASSERT_NEQ(a, b)                        \
-  OCCA_ERROR("Comparison Failed",               \
+#define ASSERT_NEQ(a, b)                            \
+  OCCA_ERROR("Assertion Failed: Values are equal",  \
              occa::test::assertNotEqual(a, b));
 
-#define ASSERT_EQ_BINARY(a, b)                      \
-  OCCA_ERROR("Comparison Failed",                   \
+#define ASSERT_EQ_BINARY(a, b)                          \
+  OCCA_ERROR("Assertion Failed: Values are not equal",  \
              occa::test::assertEqualBinary(a, b));
 
 #define ASSERT_NEQ_BINARY(a, b)                       \
-  OCCA_ERROR("Comparison Failed",                     \
+  OCCA_ERROR("Assertion Failed: Values are equal",    \
              occa::test::assertNotEqualBinary(a, b));
 
-#define ASSERT_TRUE(value)                          \
-  OCCA_ERROR("Comparison Failed", (bool) (value));
+#define ASSERT_TRUE(value)                        \
+  OCCA_ERROR("Assertion Failed: Value not true",  \
+             (bool) (value));
 
-#define ASSERT_FALSE(value)                           \
-  OCCA_ERROR("Comparison Failed", !((bool) (value)));
+#define ASSERT_FALSE(value)                       \
+  OCCA_ERROR("Assertion Failed: Value not false", \
+             !((bool) (value)));
+
+#define ASSERT_IN(value, vec)                                       \
+  OCCA_ERROR("Assertion Failed: Value not in",                      \
+             std::find(vec.begin(), vec.end(), value) != vec.end())
+
+#define ASSERT_NOT_IN(value, vec)                                   \
+  OCCA_ERROR("Assertion Failed: Value in",                          \
+             std::find(vec.begin(), vec.end(), value) == vec.end())
 
 namespace occa {
   namespace test {
@@ -54,43 +81,83 @@ namespace occa {
     }
 
     template <class TM1, class TM2>
-    bool assertEqual(const TM1 &a, const TM2 &b) {
-      if (!areEqual(a, b)) {
-        std::cerr << "left : " << a << '\n'
-                  << "right: " << b;
-        return false;
+    bool assertLessThanOrEqual(const TM1 &a, const TM2 &b) {
+      if (a <= b) {
+        return true;
       }
-      return true;
+      std::cerr << "left : " << a << '\n'
+                << "right: " << b;
+      return false;
+    }
+
+    template <class TM1, class TM2>
+    bool assertLessThan(const TM1 &a, const TM2 &b) {
+      if (a < b) {
+        return true;
+      }
+      std::cerr << "left : " << a << '\n'
+                << "right: " << b;
+      return false;
+    }
+
+    template <class TM1, class TM2>
+    bool assertGreaterThan(const TM1 &a, const TM2 &b) {
+      if (a > b) {
+        return true;
+      }
+      std::cerr << "left : " << a << '\n'
+                << "right: " << b;
+      return false;
+    }
+
+    template <class TM1, class TM2>
+    bool assertGreaterThanOrEqual(const TM1 &a, const TM2 &b) {
+      if (a >= b) {
+        return true;
+      }
+      std::cerr << "left : " << a << '\n'
+                << "right: " << b;
+      return false;
+    }
+
+    template <class TM1, class TM2>
+    bool assertEqual(const TM1 &a, const TM2 &b) {
+      if (areEqual(a, b)) {
+        return true;
+      }
+      std::cerr << "left : " << a << '\n'
+                << "right: " << b;
+      return false;
     }
 
     template <class TM1, class TM2>
     bool assertNotEqual(const TM1 &a, const TM2 &b) {
-      if (areEqual(a, b)) {
-        std::cerr << "left : " << a << '\n'
-                  << "right: " << b;
-        return false;
+      if (!areEqual(a, b)) {
+        return true;
       }
-      return true;
+      std::cerr << "left : " << a << '\n'
+                << "right: " << b;
+      return false;
     }
 
     template <class TM1, class TM2>
     bool assertEqualBinary(const TM1 &a, const TM2 &b) {
-      if (a != b) {
-        std::cerr << "left : " << stringifySetBits(a) << '\n'
-                  << "right: " << stringifySetBits(b);
-        return false;
+      if (a == b) {
+        return true;
       }
-      return true;
+      std::cerr << "left : " << stringifySetBits(a) << '\n'
+                << "right: " << stringifySetBits(b);
+      return false;
     }
 
     template <class TM1, class TM2>
     bool assertNotEqualBinary(const TM1 &a, const TM2 &b) {
       if (a != b) {
-        std::cerr << "left : " << stringifySetBits(a) << '\n'
-                  << "right: " << stringifySetBits(b);
-        return false;
+        return true;
       }
-      return true;
+      std::cerr << "left : " << stringifySetBits(a) << '\n'
+                << "right: " << stringifySetBits(b);
+      return false;
     }
 
     template <>

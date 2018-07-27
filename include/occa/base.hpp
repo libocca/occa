@@ -55,6 +55,9 @@ namespace occa {
 
   void waitFor(streamTag tag);
 
+  double timeBetween(const streamTag &startTag,
+                     const streamTag &endTag);
+
   stream createStream();
   stream getStream();
   void setStream(stream s);

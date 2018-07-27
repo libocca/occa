@@ -551,6 +551,12 @@ namespace occa {
   hash_t hash(const occa::device &device) {
     return device.hash();
   }
+
+  std::ostream& operator << (std::ostream &out,
+                             const occa::device &device) {
+    out << device.properties();
+    return out;
+  }
   //====================================
 
   //---[ stream ]-----------------------
@@ -563,15 +569,19 @@ namespace occa {
     dHandle(dHandle_),
     handle(handle_) {}
 
-  stream::stream(const stream &s) :
-    dHandle(s.dHandle),
-    handle(s.handle) {}
+  stream::stream(const stream &other) :
+    dHandle(other.dHandle),
+    handle(other.handle) {}
 
-  stream& stream::operator = (const stream &s) {
-    dHandle = s.dHandle;
-    handle  = s.handle;
-
+  stream& stream::operator = (const stream &other) {
+    dHandle = other.dHandle;
+    handle  = other.handle;
     return *this;
+  }
+
+  bool stream::operator == (const stream &other) const {
+    return ((dHandle == other.dHandle) &&
+            (handle == other.handle));
   }
 
   void* stream::getHandle(const occa::properties &props) {

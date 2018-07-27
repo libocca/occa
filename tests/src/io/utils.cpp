@@ -126,14 +126,10 @@ void testDirMethods() {
   occa::strVector files = occa::io::files(ioDir);
   ASSERT_EQ((int) files.size(),
             4);
-  ASSERT_TRUE(std::find(files.begin(), files.end(), ioDir + "cache.cpp")
-              != files.end());
-  ASSERT_TRUE(std::find(files.begin(), files.end(), ioDir + "fileOpener.cpp")
-              != files.end());
-  ASSERT_TRUE(std::find(files.begin(), files.end(), ioDir + "lock.cpp")
-              != files.end());
-  ASSERT_TRUE(std::find(files.begin(), files.end(), ioDir + "utils.cpp")
-              != files.end());
+  ASSERT_IN(ioDir + "cache.cpp", files);
+  ASSERT_IN(ioDir + "fileOpener.cpp", files);
+  ASSERT_IN(ioDir + "lock.cpp", files);
+  ASSERT_IN(ioDir + "utils.cpp", files);
 
   // Check if files exists
   ASSERT_TRUE(occa::io::exists(ioDir + "cache.cpp"));
@@ -147,14 +143,12 @@ void testDirMethods() {
             0);
   dirs = occa::io::directories(testDir);
   ASSERT_EQ((int) dirs.size(),
-            3);
+            4);
 
-  ASSERT_TRUE(std::find(dirs.begin(), dirs.end(), testDir + "io/")
-              != dirs.end());
-  ASSERT_TRUE(std::find(dirs.begin(), dirs.end(), testDir + "lang/")
-              != dirs.end());
-  ASSERT_TRUE(std::find(dirs.begin(), dirs.end(), testDir + "tools/")
-              != dirs.end());
+  ASSERT_IN(testDir + "c/", dirs);
+  ASSERT_IN(testDir + "io/", dirs);
+  ASSERT_IN(testDir + "lang/", dirs);
+  ASSERT_IN(testDir + "tools/", dirs);
 }
 
 void testIOMethods() {

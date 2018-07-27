@@ -65,10 +65,6 @@ void OCCA_RFUNC occaFinish() {
   occa::finish();
 }
 
-void OCCA_RFUNC occaWaitFor(occaStreamTag tag) {
-  occa::waitFor(occa::c::streamTag(tag));
-}
-
 occaStream OCCA_RFUNC occaCreateStream() {
   return occa::c::newOccaType(occa::createStream());
 }
@@ -95,6 +91,16 @@ occaStream OCCA_RFUNC occaWrapStream(void *handle_,
 
 occaStreamTag OCCA_RFUNC occaTagStream() {
   return occa::c::newOccaType(occa::tagStream());
+}
+
+void OCCA_RFUNC occaWaitFor(occaStreamTag tag) {
+  occa::waitFor(occa::c::streamTag(tag));
+}
+
+double OCCA_RFUNC occaTimeBetween(occaStreamTag startTag,
+                                  occaStreamTag endTag) {
+  return occa::timeBetween(occa::c::streamTag(startTag),
+                           occa::c::streamTag(endTag));
 }
 //======================================
 

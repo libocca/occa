@@ -178,7 +178,8 @@ namespace occa {
       return oType;
     }
 
-    occaType newOccaType(occa::properties &properties) {
+    template <>
+    occaType newOccaType(const occa::properties &properties) {
       occaType oType;
       oType.magicHeader = OCCA_C_TYPE_MAGIC_HEADER;
       oType.type  = typeType::properties;
@@ -228,6 +229,12 @@ namespace occa {
       OCCA_ERROR("Input is not an occaProperties",
                  value.type == typeType::properties);
       return *((occa::properties*) value.value.ptr);
+    }
+
+    const occa::properties& constProperties(occaType value) {
+      OCCA_ERROR("Input is not an occaProperties",
+                 value.type == typeType::properties);
+      return *((const occa::properties*) value.value.ptr);
     }
 
     occa::stream stream(occaStream value) {

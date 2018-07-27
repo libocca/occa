@@ -101,7 +101,10 @@ namespace occa {
     occaType newOccaType(occa::device device);
     occaType newOccaType(occa::kernel kernel);
     occaType newOccaType(occa::memory memory);
-    occaType newOccaType(occa::properties &properties);
+
+    template <>
+    occaType newOccaType(const occa::properties &properties);
+
     occaStream newOccaType(occa::stream value);
     occaStreamTag newOccaType(occa::streamTag value);
 
@@ -110,7 +113,9 @@ namespace occa {
     occa::device device(occaType value);
     occa::kernel kernel(occaType value);
     occa::memory memory(occaType value);
+
     occa::properties& properties(occaType value);
+    const occa::properties& constProperties(occaType value);
 
     occa::stream stream(occaStream value);
     occa::streamTag streamTag(occaStreamTag value);

@@ -242,6 +242,9 @@ namespace occa {
 
   template <>
   hash_t hash(const occa::device &device);
+
+  std::ostream& operator << (std::ostream &out,
+                             const occa::device &device);
   //====================================
 
   //---[ stream ]-----------------------
@@ -255,10 +258,13 @@ namespace occa {
     stream(device_v *dHandle_,
            stream_t handle_);
 
-    stream(const stream &s);
+    stream(const stream &other);
 
-    stream& operator = (const stream &s);
+    stream& operator = (const stream &other);
 
+    bool operator == (const occa::stream &other) const;
+
+    // TODO: Remove and create util methods like getMappedPtr
     void* getHandle(const occa::properties &props = occa::properties());
 
     void free();

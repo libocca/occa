@@ -48,8 +48,6 @@ OCCA_LFUNC void OCCA_RFUNC occaLoadKernels(const char *library);
 
 OCCA_LFUNC void OCCA_RFUNC occaFinish();
 
-OCCA_LFUNC void OCCA_RFUNC occaWaitFor(occaStreamTag tag);
-
 OCCA_LFUNC occaStream OCCA_RFUNC occaCreateStream();
 
 OCCA_LFUNC occaStream OCCA_RFUNC occaGetStream();
@@ -60,6 +58,11 @@ OCCA_LFUNC occaStream OCCA_RFUNC occaWrapStream(void *handle_,
                                                 const occaProperties props);
 
 OCCA_LFUNC occaStreamTag OCCA_RFUNC occaTagStream();
+
+OCCA_LFUNC void OCCA_RFUNC occaWaitFor(occaStreamTag tag);
+
+OCCA_LFUNC double OCCA_RFUNC occaTimeBetween(occaStreamTag startTag,
+                                             occaStreamTag endTag);
 //======================================
 
 //---[ Kernel ]-------------------------

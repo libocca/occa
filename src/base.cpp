@@ -70,6 +70,11 @@ namespace occa {
     getDevice().waitFor(tag);
   }
 
+  double timeBetween(const streamTag &startTag,
+                     const streamTag &endTag) {
+    return getDevice().timeBetween(startTag, endTag);
+  }
+
   stream createStream() {
     return getDevice().createStream();
   }
