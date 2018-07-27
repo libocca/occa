@@ -39,6 +39,9 @@ int main(const int argc, const char **argv) {
   testHashDir();
   testBuild();
   testCache();
+
+  occa::sys::rmdir(occa::env::OCCA_CACHE_DIR + "locks",
+                   true);
 }
 
 void testCacheInfoMethods() {

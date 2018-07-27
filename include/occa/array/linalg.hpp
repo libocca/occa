@@ -169,6 +169,6 @@ namespace occa {
   }
 }
 
-#include <occa/array/linalg.tpp>
+#include "linalg.tpp"
 
 #endif

@@ -613,6 +613,6 @@ namespace occa {
                              const json &j);
 }
 
-#include <occa/tools/json.tpp>
+#include "json.tpp"
 
 #endif

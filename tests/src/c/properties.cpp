@@ -76,4 +76,7 @@ void testProperties() {
 
   ASSERT_EQ(props,
             props2);
+
+  occaFree(cProps);
+  occaFree(cProps2);
 }

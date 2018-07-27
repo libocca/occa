@@ -198,6 +198,6 @@ namespace occa {
   }
 }
 
-#include <occa/lang/stream.tpp>
+#include "stream.tpp"
 
 #endif

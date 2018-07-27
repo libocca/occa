@@ -68,6 +68,6 @@ namespace occa {
   std::ostream& operator << (std::ostream &out, const tls<TM> &t);
 }
 
-#include <occa/tools/tls.tpp>
+#include "tls.tpp"
 
 #endif

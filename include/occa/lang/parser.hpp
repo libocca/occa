@@ -268,6 +268,6 @@ namespace occa {
   }
 }
 
-#include <occa/lang/parser.tpp>
+#include "parser.tpp"
 
 #endif

@@ -464,6 +464,6 @@ namespace occa {
   };
 }
 
-#include <occa/array/array.tpp>
+#include "array.tpp"
 
 #endif
