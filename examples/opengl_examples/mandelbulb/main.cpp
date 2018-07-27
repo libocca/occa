@@ -23,7 +23,7 @@
 #include <iostream>
 #include <sstream>
 #include <vector>
-#include "math.h"
+#include <math.h>
 
 #include "visualizer.hpp"
 

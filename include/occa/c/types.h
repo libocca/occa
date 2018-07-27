@@ -23,10 +23,10 @@
 #ifndef OCCA_C_TYPES_HEADER
 #define OCCA_C_TYPES_HEADER
 
-#include "stdint.h"
-#include "stdlib.h"
+#include <stdint.h>
+#include <stdlib.h>
 
-#include "occa/c/defines.h"
+#include <occa/c/defines.h>
 
 OCCA_START_EXTERN_C
 

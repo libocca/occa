@@ -26,8 +26,6 @@ void testExternMerging();
 void testPrimitiveMethods();
 void testErrors();
 
-using namespace occa::lang;
-
 int main(const int argc, const char **argv) {
   testCommentSkipping();
   testExternMerging();

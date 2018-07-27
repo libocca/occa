@@ -28,6 +28,8 @@
 #include <occa/lang/tokenizer.hpp>
 #include <occa/lang/processingStages.hpp>
 
+using namespace occa::lang;
+
 //---[ Util Methods ]-------------------
 std::string source;
 tokenizer_t tokenizer;

@@ -24,7 +24,7 @@
 #include <sstream>
 #include <fstream>
 #include <vector>
-#include "math.h"
+#include <math.h>
 
 #include <occa.hpp>
 #include <occa/tools/json.hpp>

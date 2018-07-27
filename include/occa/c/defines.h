@@ -22,7 +22,7 @@
 #ifndef OCCA_C_DEFINES_HEADER
 #define OCCA_C_DEFINES_HEADER
 
-#include "occa/defines.hpp"
+#include <occa/defines.hpp>
 
 #if (OCCA_OS & (OCCA_LINUX_OS | OCCA_MACOS_OS))
 #  define OCCA_RFUNC

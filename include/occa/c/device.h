@@ -23,8 +23,8 @@
 #ifndef OCCA_C_DEVICE_HEADER
 #define OCCA_C_DEVICE_HEADER
 
-#include "occa/c/defines.h"
-#include "occa/c/types.h"
+#include <occa/c/defines.h>
+#include <occa/c/types.h>
 
 OCCA_START_EXTERN_C
 
