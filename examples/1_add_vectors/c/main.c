@@ -66,11 +66,6 @@ int main(int argc, char **argv) {
   // const char *deviceInfo = ("mode      : 'CUDA', "
   //                           "device_id : 0");
 
-  // const char *deviceInfo = ("mode         : 'Threads', "
-  //                           "threads      : 4, "
-  //                           "schedule     : 'compact', "
-  //                           "pinned_cores : [0, 0, 1, 1]");
-
   device = occaCreateDevice(occaString(deviceInfo));
   //========================================================
 
