@@ -37,7 +37,6 @@ namespace occa {
       modeInfo();
 
       void init();
-      occa::properties& getProperties();
     };
 
     // extern occa::mode<threads::modeInfo,

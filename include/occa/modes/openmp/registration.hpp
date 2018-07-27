@@ -39,7 +39,6 @@ namespace occa {
 
       void init();
       void setupProperties();
-      occa::properties& getProperties();
     };
 
     extern occa::mode<openmp::modeInfo,

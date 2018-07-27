@@ -59,11 +59,6 @@ namespace occa {
       return section;
     }
 
-    occa::properties& modeInfo::getProperties() {
-      static occa::properties properties;
-      return properties;
-    }
-
     occa::mode<cuda::modeInfo,
                cuda::device> mode("CUDA");
   }

@@ -29,11 +29,6 @@ namespace occa {
 
     void modeInfo::init() {}
 
-    occa::properties& modeInfo::getProperties() {
-      static occa::properties properties;
-      return properties;
-    }
-
     // occa::mode<threads::modeInfo,
     //            threads::device> mode("Threads");
   }

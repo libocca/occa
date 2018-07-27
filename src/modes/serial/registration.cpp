@@ -96,11 +96,6 @@ namespace occa {
       return section;
     }
 
-    occa::properties& modeInfo::getProperties() {
-      static occa::properties properties;
-      return properties;
-    }
-
     occa::mode<serial::modeInfo,
                serial::device> mode("Serial");
   }

@@ -55,7 +55,6 @@ namespace occa {
 
     virtual void init() = 0;
     virtual styling::section& getDescription();
-    virtual occa::properties& getProperties() = 0;
   };
 
   class mode_v {

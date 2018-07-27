@@ -32,11 +32,6 @@ namespace occa {
 
     void modeInfo::init() {}
 
-    occa::properties& modeInfo::getProperties() {
-      static occa::properties properties;
-      return properties;
-    }
-
     occa::mode<openmp::modeInfo,
                openmp::device> mode("OpenMP");
   }

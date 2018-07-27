@@ -39,7 +39,6 @@ namespace occa {
 
       void init();
       styling::section& getDescription();
-      occa::properties& getProperties();
     };
 
     extern occa::mode<serial::modeInfo,

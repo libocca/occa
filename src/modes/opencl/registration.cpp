@@ -57,11 +57,6 @@ namespace occa {
       return section;
     }
 
-    occa::properties& modeInfo::getProperties() {
-      static occa::properties properties;
-      return properties;
-    }
-
     occa::mode<opencl::modeInfo,
                opencl::device> mode("OpenCL");
   }
