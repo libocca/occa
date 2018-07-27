@@ -19,6 +19,7 @@ main
 *.gcno
 *.gcda
 *.gcov
+coverage*
 
 # Visual Studio
 editorTools/visualStudio/*

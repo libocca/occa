@@ -68,6 +68,8 @@ flags =
 
 # OCCA_INCLUDE_PATH : Extra include paths
 # OCCA_LIBRARY_PATH : Extra library paths
+
+OCCA_COVERAGE ?= 0
 #=================================================
 
 
@@ -135,6 +137,11 @@ ifndef CFLAGS
 else
   OCCA_DEBUG_ENABLED := 0
   cCompilerFlags = $(CFLAGS)
+endif
+
+ifeq ($(OCCA_COVERAGE),1)
+  compilerFlags += --coverage
+  cCompilerFlags += --coverage
 endif
 
 compiler  = $(CXX)

@@ -12,35 +12,45 @@ compiler: gcc
 
 matrix:
   include:
-    - env: MATRIX_INIT="CC=gcc-4.9 && CXX=g++-4.9"
+    - env:
+        - CC=gcc-4.9
+        - CXX=g++-4.9
       addons:
         apt:
           sources:
             - ubuntu-toolchain-r-test
           packages:
             - g++-4.9
-    - env: MATRIX_INIT="CC=gcc-5 && CXX=g++-5"
+    - env:
+        - CC=gcc-5
+        - CXX=g++-5
       addons:
         apt:
           sources:
             - ubuntu-toolchain-r-test
           packages:
             - g++-5
-    - env: MATRIX_INIT="CC=gcc-6 && CXX=g++-6"
+    - env:
+        - CC=gcc-6
+        - CXX=g++-6
       addons:
         apt:
           sources:
             - ubuntu-toolchain-r-test
           packages:
             - g++-6
-    - env: MATRIX_INIT="CC=gcc-7 && CXX=g++-7"
+    - env:
+        - CC=gcc-7
+        - CXX=g++-7
       addons:
         apt:
           sources:
             - ubuntu-toolchain-r-test
           packages:
             - g++-7
-    - env: MATRIX_INIT="CC=clang-3.6 && CXX=clang++-3.6"
+    - env:
+        - CC=clang-3.6
+        - CXX=clang++-3.6
       compiler: clang
       addons:
         apt:
@@ -49,7 +59,9 @@ matrix:
             - llvm-toolchain-precise-3.6
           packages:
             - clang-3.6
-    - env: MATRIX_INIT="CC=clang-4.0 && CXX=clang++-4.0"
+    - env:
+        - CC=clang-4.0
+        - CXX=clang++-4.0
       compiler: clang
       addons:
         apt:
@@ -57,7 +69,9 @@ matrix:
             - llvm-toolchain-trusty-4.0
           packages:
             - clang-4.0
-    - env: MATRIX_INIT="CC=clang-5.0 && CXX=clang++-5.0"
+    - env:
+        - CC=clang-5.0
+        - CXX=clang++-5.0
       compiler: clang
       addons:
         apt:
@@ -67,14 +81,22 @@ matrix:
             - clang-5.0
     - os: osx
       osx_image: xcode8
-      env: MATRIX_INIT="brew install gcc6 && CC=gcc-6 && CXX=g++-6"
+      env:
+        - MATRIX_INIT="brew install gcc6"
+        - CC=gcc-6
+        - CXX=g++-6
     - os: osx
       osx_image: xcode8
-      env: MATRIX_INIT="brew install gcc@7 && CC=gcc-7 && CXX=g++-7"
+      env:
+        - MATRIX_INIT="brew install gcc@7"
+        - CC=gcc-7
+        - CXX=g++-7
     - os: osx
       osx_image: xcode8
       compiler: clang
-      env: MATRIX_INIT="CC=clang && CXX=clang++"
+      env:
+        - CC=clang
+        - CXX=clang++
 
 env:
   global:
@@ -87,15 +109,16 @@ before_install:
     if [ "${TRAVIS_OS_NAME}" = "osx" ]; then
       brew update;
     fi
-  - eval "${MATRIX_INIT}"
   - |
+    if [ -n "${MATRIX_INIT}" ]; then
+      eval "${MATRIX_INIT}"
+    fi
+    export OCCA_COVERAGE=1
+    export BUILD_CXXFLAGS="${CXXFLAGS}"
+    export TEST_CXXFLAGS="${CXXFLAGS}"
     if [[ "${CXX}" =~ g++.* ]]; then
-      RUNNING_CODECOV=1
-      BUILD_CXXFLAGS="${CXXFLAGS} -fuse-ld=gold -fprofile-arcs -ftest-coverage"
-      TEST_CXXFLAGS="${CXXFLAGS} -fuse-ld=gold -lgcov --coverage"
-    else
-      BUILD_CXXFLAGS="${CXXFLAGS}"
-      TEST_CXXFLAGS="${CXXFLAGS}"
+      BUILD_CXXFLAGS+=" -fuse-ld=gold -fprofile-arcs"
+      TEST_CXXFLAGS+=" -fuse-ld=gold -lgcov"
     fi
 
 script:
@@ -104,7 +127,4 @@ script:
 
   - cd ${TRAVIS_BUILD_DIR}
   - CXXFLAGS="${TEST_CXXFLAGS}" make -j 4 test
-  - |
-    if [ ${RUNNING_CODECOV} ]; then
-      bash <(curl -s https://codecov.io/bash)
-    fi
+  - bash <(curl -s https://codecov.io/bash)
