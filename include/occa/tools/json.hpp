@@ -115,6 +115,11 @@ namespace occa {
       value_.number = value;
     }
 
+    inline json(const float value) :
+      type(number_) {
+      value_.number = value;
+    }
+
     inline json(const double value) :
       type(number_) {
       value_.number = value;
@@ -210,6 +215,12 @@ namespace occa {
     }
 
     inline json& operator = (const int64_t value) {
+      type = number_;
+      value_.number = value;
+      return *this;
+    }
+
+    inline json& operator = (const float value) {
       type = number_;
       value_.number = value;
       return *this;

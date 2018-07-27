@@ -171,5 +171,8 @@ namespace occa {
 
     template <>
     bool areEqual<double, double>(const double &a, const double &b);
+
+    template <>
+    bool areEqual<const char*, const char*>(const char * const &a, const char * const &b);
   }
 }

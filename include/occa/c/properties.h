@@ -36,6 +36,10 @@ OCCA_LFUNC void OCCA_RFUNC occaPropertiesSet(occaProperties props,
                                              const char *key,
                                              occaType value);
 
+OCCA_LFUNC occaType OCCA_RFUNC occaPropertiesGet(occaProperties props,
+                                                 const char *key,
+                                                 occaType defaultValue);
+
 OCCA_END_EXTERN_C
 
 #endif

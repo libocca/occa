@@ -48,5 +48,10 @@ namespace occa {
       const double diff = (a - b)/(fabs(a) + fabs(b) + 1e-50);
       return (diff < 1e-14);
     }
+
+    template <>
+    bool areEqual<const char*, const char*>(const char * const &a, const char * const &b) {
+      return (std::string(a) == std::string(b));
+    }
   }
 }

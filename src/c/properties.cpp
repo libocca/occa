@@ -68,4 +68,42 @@ void OCCA_RFUNC occaPropertiesSet(occaProperties props,
   }
 }
 
+occaType OCCA_RFUNC occaPropertiesGet(occaProperties props,
+                                      const char *key,
+                                      occaType defaultValue) {
+  occa::properties& props_ = occa::c::properties(props);
+  if (!props_.has(key)) {
+    return defaultValue;
+  }
+  occa::json &value = props_[key];
+
+  if (value.isString()) {
+    return occaString(value.string().c_str());
+  }
+  if (value.isNumber()) {
+    occa::primitive &number = value.number();
+    switch(number.type) {
+    case occa::primitiveType::bool_   : return occaBool((bool) number);
+    case occa::primitiveType::int8_   : return occaInt8((int8_t) number);
+    case occa::primitiveType::uint8_  : return occaUInt8((uint8_t) number);
+    case occa::primitiveType::int16_  : return occaInt16((int16_t) number);
+    case occa::primitiveType::uint16_ : return occaUInt16((uint16_t) number);
+    case occa::primitiveType::int32_  : return occaInt32((int32_t) number);
+    case occa::primitiveType::uint32_ : return occaUInt32((uint32_t) number);
+    case occa::primitiveType::int64_  : return occaInt64((int64_t) number);
+    case occa::primitiveType::uint64_ : return occaUInt64((uint64_t) number);
+    case occa::primitiveType::float_  : return occaFloat((float) number);
+    case occa::primitiveType::double_ : return occaDouble((double) number);
+    default: OCCA_FORCE_ERROR("Type not set");
+    }
+  }
+  if (value.isBoolean()) {
+    return occaBool(value.boolean());
+  }
+  if (value.isObject()) {
+    return occa::c::newOccaType((occa::properties&) value);
+  }
+  return defaultValue;
+}
+
 OCCA_END_EXTERN_C
