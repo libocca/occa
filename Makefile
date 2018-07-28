@@ -125,16 +125,6 @@ $(OCCA_DIR)/obj/%.o:$(OCCA_DIR)/src/%.cpp $(COMPILED_DEFINES_CHANGED)
 
 
 #---[ Test ]--------------------------------------
-examples =                 \
-	1_add_vectors/cpp        \
-	1_add_vectors/c          \
-	2_background_device      \
-	3_reduction              \
-	4_building_kernels       \
-	5_unified_memory         \
-	6_arrays                 \
-	7_streams
-
 tests: $(tests)
 
 test: unit-tests e2e-tests
@@ -143,13 +133,7 @@ unit-tests: $(tests)
 	@$(testPath)/run_tests
 
 e2e-tests: unit-tests
-	@for dir in $(examples); do                           \
-	  echo "Compiling example [$$dir]";                   \
-	  cd $(OCCA_DIR)/examples/$$dir &&                    \
-	  rm -f main                    &&                    \
-	  make                          &&                    \
-	  OCCA_VERBOSE=1 ./main;                              \
-	done
+	@$(testPath)/run_examples
 
 $(testPath)/bin/%:$(testPath)/src/%.cpp $(libPath)/libocca.so
 	@mkdir -p $(abspath $(dir $@))

@@ -1,0 +1,81 @@
+#!/bin/bash
+# The MIT License (MIT)
+#
+# Copyright (c) 2014-2018 David Medina and Tim Warburton
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in all
+# copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+# SOFTWARE.
+
+set -e
+
+OCCA_DIR=$(cd $(dirname "$0")/.. && pwd)
+EXAMPLE_DIR="${OCCA_DIR}/examples"
+
+export ASAN_OPTIONS
+ASAN_OPTIONS+=':protect_shadow_gap=0'
+ASAN_OPTIONS+=':detect_container_overflow=0'
+
+HEADER_CHARS=80
+
+declare -a examples=(
+    1_add_vectors/cpp
+    1_add_vectors/c
+    2_background_device
+    3_reduction
+    4_building_kernels
+    5_unified_memory
+    6_arrays
+    7_streams
+)
+
+for mode in $("${OCCA_DIR}/bin/occa" modes); do
+    case "${mode}" in
+        Serial) device="mode: 'Serial'";;
+        OpenMP) device="mode: 'OpenMP'";;
+        OpenCL) device="mode: 'OpenCL', platform_id: 0, device_id: 0";;
+        CUDA)   device="mode: 'CUDA', device_id: 0";;
+    esac
+
+    for example_dir in "${examples[@]}"; do
+        # OpenCL + Shared memory is finicky
+        case "(${mode}) ${example_dir}" in
+            "(OpenCL) 3_reduction") continue;;
+            "(OpenCL) 6_arrays") continue;;
+        esac
+
+        banner="(${mode}) ${example_dir}"
+        chars=$(echo "${banner}" | wc -c);
+        linechars=$((${HEADER_CHARS} - ${chars} - 6));
+	      line=$(printf '%*s' ${linechars} | tr ' ' '-');
+	      echo -e "\n---[ ${banner} ]${line}";
+
+        cd "${EXAMPLE_DIR}/${example_dir}"
+        rm -rf main
+        make
+
+        # Make sure not to go over the log size
+        if [ -n "${TRAVIS}" ]; then
+            OCCA_VERBOSE=1 ./main --device "${device}" 2>&1 | head -n 100;
+        else
+            OCCA_VERBOSE=1 ./main --device "${device}" 2>&1
+        fi
+
+        # Test output footer
+	      printf '%*s\n' ${HEADER_CHARS} | tr ' ' '=';
+    done
+done
