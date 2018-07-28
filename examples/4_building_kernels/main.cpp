@@ -75,8 +75,12 @@ public:
   }
 };
 
-int main(int argc, char **argv) {
-  occa::setDevice("mode: 'Serial'");
+occa::json parseArgs(int argc, const char **argv);
+
+int main(int argc, const char **argv) {
+  occa::json args = parseArgs(argc, argv);
+
+  occa::setDevice((std::string) args["options/device"]);
 
   int entries = 5;
 
@@ -117,4 +121,30 @@ int main(int argc, char **argv) {
   delete [] vec2;
 
   return 0;
+}
+
+occa::json parseArgs(int argc, const char **argv) {
+  // Note:
+  //   occa::cli is not supported yet, please don't rely on it
+  //   outside of the occa examples
+  occa::cli::parser parser;
+  parser
+    .withDescription(
+      "Example which shows run-time kernel source code generation"
+    )
+    .addOption(
+      occa::cli::option('d', "device",
+                        "Device properties (default: \"mode: 'Serial\")")
+      .withArg()
+      .withDefaultValue("mode: 'Serial'")
+    )
+    .addOption(
+      occa::cli::option('v', "verbose",
+                        "Compile kernels in verbose mode")
+    );
+
+  occa::json args = parser.parseArgs(argc, argv);
+  occa::settings()["kernel/verbose"] = args["options/verbose"];
+
+  return args;
 }

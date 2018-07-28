@@ -465,7 +465,7 @@ int main(const int argc, const char **argv) {
     .addCommand(infoCommand)
     .addCommand(modesCommand)
     .addCommand(autocompleteCommand)
-    .run(argc, (const char**) argv);
+    .run(argc, argv);
 
   return 0;
 }

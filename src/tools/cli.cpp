@@ -398,6 +398,11 @@ namespace occa {
               !arguments[argumentCount - 1].getIsRequired());
     }
 
+    parser& parser::withDescription(const std::string &description_) {
+      description = description_;
+      return *this;
+    }
+
     parser& parser::addArgument(const std::string &name_,
                                 const std::string &description_,
                                 const bool isRequired_) {
@@ -481,11 +486,11 @@ namespace occa {
       return newArgs;
     }
 
-    occa::json parser::parse(const int argc, const char **argv) {
-      return parse(vectorizeArgs(argc, argv));
+    occa::json parser::parseArgs(const int argc, const char **argv) {
+      return parseArgs(vectorizeArgs(argc, argv));
     }
 
-    occa::json parser::parse(const strVector &args_) {
+    occa::json parser::parseArgs(const strVector &args_) {
       strVector args = splitShortOptionArgs(args_);
       const int argc = (int) args.size();
 
@@ -788,7 +793,7 @@ namespace occa {
                     commandIsRequired);
       }
 
-      json parsedArgs = parse(args);
+      json parsedArgs = parseArgs(args);
       json &jArguments = parsedArgs["arguments"];
       strVector inputArgs = jArguments.getArray<std::string>();
 

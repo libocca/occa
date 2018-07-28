@@ -23,8 +23,12 @@
 
 #include <occa.hpp>
 
-int main(int argc, char **argv) {
-  occa::setDevice("mode: 'CUDA', device_id: 0");
+occa::json parseArgs(int argc, const char **argv);
+
+int main(int argc, const char **argv) {
+  occa::json args = parseArgs(argc, argv);
+
+  occa::setDevice((std::string) args["options/device"]);
 
   int entries = 5;
 
@@ -70,4 +74,29 @@ int main(int argc, char **argv) {
   // Memory is automatically freed
 
   return 0;
+}
+occa::json parseArgs(int argc, const char **argv) {
+  // Note:
+  //   occa::cli is not supported yet, please don't rely on it
+  //   outside of the occa examples
+  occa::cli::parser parser;
+  parser
+    .withDescription(
+      "Example using unified memory, where host and device data is mirrored and synced"
+    )
+    .addOption(
+      occa::cli::option('d', "device",
+                        "Device properties (default: \"mode: 'Serial\")")
+      .withArg()
+      .withDefaultValue("mode: 'CUDA', device_id: 0")
+    )
+    .addOption(
+      occa::cli::option('v', "verbose",
+                        "Compile kernels in verbose mode")
+    );
+
+  occa::json args = parser.parseArgs(argc, argv);
+  occa::settings()["kernel/verbose"] = args["options/verbose"];
+
+  return args;
 }

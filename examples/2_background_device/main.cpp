@@ -23,17 +23,25 @@
 
 #include <occa.hpp>
 
-int main(int argc, char **argv) {
-  int entries = 5;
+occa::json parseArgs(int argc, const char **argv);
+
+int main(int argc, const char **argv) {
+  occa::json args = parseArgs(argc, argv);
 
   // Other useful functions:
   //   occa::setDevice("mode: 'OpenMP'")
-  //   occa::device device("mode        : 'OpenCL', "
-  //                       "platform_id : 0, "
-  //                       "device_id   : 0");
   //   occa::device = occa::getDevice();
+  // Options:
+  //   occa::setDevice("mode: 'Serial'");
+  //   occa::setDevice("mode: 'OpenMP'");
+  //   occa::setDevice("mode: 'CUDA'  , device_id: 0");
+  //   occa::setDevice("mode: 'OpenCL', platform_id: 0, device_id: 0");
+  //
+  // The default device uses "mode: 'Serial'"
+  occa::setDevice((std::string) args["options/device"]);
 
-  // Use the default device (mode = Serial)
+  int entries = 5;
+
   float *a  = (float*) occa::umalloc(entries * sizeof(float));
   float *b  = (float*) occa::umalloc(entries * sizeof(float));
   float *ab = (float*) occa::umalloc(entries * sizeof(float));
@@ -73,4 +81,30 @@ int main(int argc, char **argv) {
   occa::free(ab);
 
   return 0;
+}
+
+occa::json parseArgs(int argc, const char **argv) {
+  // Note:
+  //   occa::cli is not supported yet, please don't rely on it
+  //   outside of the occa examples
+  occa::cli::parser parser;
+  parser
+    .withDescription(
+      "Example showing how to use background devices, allowing passing of the device implicitly"
+    )
+    .addOption(
+      occa::cli::option('d', "device",
+                        "Device properties (default: \"mode: 'Serial\")")
+      .withArg()
+      .withDefaultValue("mode: 'Serial'")
+    )
+    .addOption(
+      occa::cli::option('v', "verbose",
+                        "Compile kernels in verbose mode")
+    );
+
+  occa::json args = parser.parseArgs(argc, argv);
+  occa::settings()["kernel/verbose"] = args["options/verbose"];
+
+  return args;
 }

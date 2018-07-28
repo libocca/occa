@@ -27,13 +27,12 @@ void printVector(occa::array<TM,TMi> &a);
 template <class TM, const int TMi>
 void printMatrix(occa::array<TM,TMi> &a);
 
-int main(int argc, char **argv) {
-  // occa::setDevice("mode        : 'OpenCL', "
-  //                 "platform_id : 0, "
-  //                 "device_id   : 1, ");
+occa::json parseArgs(int argc, const char **argv);
 
-  // occa::setDevice("mode      : 'CUDA', "
-  //                 "device_id : 0, ");
+int main(int argc, const char **argv) {
+  occa::json args = parseArgs(argc, argv);
+
+  occa::setDevice((std::string) args["options/device"]);
 
   //---[ Testing API ]------------------
   std::cout << "Testing API:\n";
@@ -156,4 +155,30 @@ void printMatrix(occa::array<TM,TMi> &a) {
 
     std::cout << " |\n";
   }
+}
+
+occa::json parseArgs(int argc, const char **argv) {
+  // Note:
+  //   occa::cli is not supported yet, please don't rely on it
+  //   outside of the occa examples
+  occa::cli::parser parser;
+  parser
+    .withDescription(
+      "Example using occa::array objects for easy allocation and host <-> device syncing"
+    )
+    .addOption(
+      occa::cli::option('d', "device",
+                        "Device properties (default: \"mode: 'Serial\")")
+      .withArg()
+      .withDefaultValue("mode: 'Serial'")
+    )
+    .addOption(
+      occa::cli::option('v', "verbose",
+                        "Compile kernels in verbose mode")
+    );
+
+  occa::json args = parser.parseArgs(argc, argv);
+  occa::settings()["kernel/verbose"] = args["options/verbose"];
+
+  return args;
 }

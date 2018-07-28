@@ -151,6 +151,8 @@ namespace occa {
 
       bool hasOptionalArg();
 
+      parser& withDescription(const std::string &description_);
+
       parser& addArgument(const std::string &name_,
                           const std::string &description_,
                           const bool isRequired);
@@ -164,8 +166,8 @@ namespace occa {
       strVector vectorizeArgs(const int argc, const char **argv);
       strVector splitShortOptionArgs(const strVector &args);
 
-      occa::json parse(const int argc, const char **argv);
-      occa::json parse(const strVector &args_);
+      occa::json parseArgs(const int argc, const char **argv);
+      occa::json parseArgs(const strVector &args_);
 
       bool hasCustomHelpOption();
       void addHelpOption();

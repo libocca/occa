@@ -23,13 +23,10 @@
 
 #include <occa.hpp>
 
-int main(int argc, char **argv) {
-  occa::printModeInfo();
-  /*
-    Try running with OCCA_VERBOSE=1 or set
-    verbose at run-time with:
-    occa::settings()["kernel/verbose"] = true;
-  */
+occa::json parseArgs(int argc, const char **argv);
+
+int main(int argc, const char **argv) {
+  occa::json args = parseArgs(argc, argv);
 
   int entries = 5;
 
@@ -48,6 +45,8 @@ int main(int argc, char **argv) {
   occa::memory o_a, o_b, o_ab;
 
   //---[ Device setup with string flags ]-------------------
+  device.setup((std::string) args["options/device"]);
+
   // device.setup("mode: 'Serial'");
 
   // device.setup("mode     : 'OpenMP', "
@@ -97,4 +96,30 @@ int main(int argc, char **argv) {
   delete [] ab;
 
   return 0;
+}
+
+occa::json parseArgs(int argc, const char **argv) {
+  // Note:
+  //   occa::cli is not supported yet, please don't rely on it
+  //   outside of the occa examples
+  occa::cli::parser parser;
+  parser
+    .withDescription(
+      "Example adding two vectors"
+    )
+    .addOption(
+      occa::cli::option('d', "device",
+                        "Device properties (default: \"mode: 'Serial\")")
+      .withArg()
+      .withDefaultValue("mode: 'Serial'")
+    )
+    .addOption(
+      occa::cli::option('v', "verbose",
+                        "Compile kernels in verbose mode")
+    );
+
+  occa::json args = parser.parseArgs(argc, argv);
+  occa::settings()["kernel/verbose"] = args["options/verbose"];
+
+  return args;
 }

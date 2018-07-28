@@ -140,7 +140,7 @@ tests: $(tests)
 test: unit-tests e2e-tests
 
 unit-tests: $(tests)
-	$(testPath)/run_tests
+	@$(testPath)/run_tests
 
 e2e-tests: unit-tests
 	@for dir in $(examples); do                           \
