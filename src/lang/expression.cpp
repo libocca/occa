@@ -39,12 +39,19 @@ namespace occa {
       beforePairToken(beforePairToken_) {}
 
     void expressionScopedState::free() {
-      exprNodeList::iterator it = output.begin();
-      while (it != output.end()) {
-        delete *it;
-        ++it;
+      exprNodeList::iterator outputIt = output.begin();
+      while (outputIt != output.end()) {
+        delete *outputIt;
+        ++outputIt;
       }
       output.clear();
+
+      operatorList::iterator operatorIt = operators.begin();
+      while (operatorIt != operators.end()) {
+        delete *operatorIt;
+        ++operatorIt;
+      }
+      operators.clear();
     }
 
     void expressionScopedState::debugPrint() {

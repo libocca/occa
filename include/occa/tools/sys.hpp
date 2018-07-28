@@ -124,12 +124,14 @@ namespace occa {
 
     void runFunction(functionPtr_t f, const int argc, void **args);
 
-    void printStacktrace(const int frameStart = 0, const std::string indent = "");
+    std::string stacktrace(const int frameStart = 0,
+                           const std::string indent = "");
+
     std::string prettyStackSymbol(void *frame, const char *symbol);
     //==================================
   }
 
-  void _message(const std::string &title,
+  void _message(const std::string &header,
                 const bool exitInFailure,
                 const std::string &filename,
                 const std::string &function,

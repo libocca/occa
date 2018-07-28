@@ -332,6 +332,7 @@
 #define OCCA_CUDA_WARNING(message, expr) OCCA_CUDA_WARNING2(expr, __FILE__, __PRETTY_FUNCTION__, __LINE__, message)
 //======================================
 
+
 //---[ HIP ]---------------------------
 #define OCCA_HIP_TEMPLATE_CHECK(checkFunction, expr, filename, function, line, message) \
   do {                                                                  \

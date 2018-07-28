@@ -61,9 +61,10 @@
 #include <fcntl.h>
 
 #include <occa/base.hpp>
+#include <occa/io.hpp>
 #include <occa/tools/env.hpp>
 #include <occa/tools/hash.hpp>
-#include <occa/io.hpp>
+#include <occa/tools/exception.hpp>
 #include <occa/tools/lex.hpp>
 #include <occa/tools/misc.hpp>
 #include <occa/tools/string.hpp>
@@ -833,7 +834,8 @@ namespace occa {
 #include "runFunction.cpp"
     }
 
-    void printStacktrace(const int frameStart, const std::string indent) {
+    std::string stacktrace(const int frameStart,
+                           const std::string indent) {
 #if (OCCA_OS & (OCCA_LINUX_OS | OCCA_MACOS_OS))
       static const int maxFrames = 1024;
       static void *frames[maxFrames];
@@ -843,37 +845,46 @@ namespace occa {
 
       const int digits = toString(frameCount - frameStart).size();
 
+      std::stringstream ss;
       for (int i = frameStart; i < frameCount; ++i) {
         const std::string localFrame = toString(frameCount - i);
-        std::cout << indent
-                  << localFrame << std::string(digits - localFrame.size() + 1, ' ')
-                  << prettyStackSymbol(frames[i], symbols[i]) << '\n';
+        ss << indent
+           << localFrame << std::string(digits - localFrame.size() + 1, ' ')
+           << prettyStackSymbol(frames[i], symbols[i]) << '\n';
       }
       ::free(symbols);
+
+      return ss.str();
 #endif
     }
 
     std::string prettyStackSymbol(void *frame, const char *symbol) {
       static size_t maxChars = 1024;
       static char prettyBuffer[1024];
-      std::stringstream ss;
 
 #if (OCCA_OS == OCCA_MACOS_OS)
+      std::stringstream ss;
       const char *c = symbol;
+
       // Skip stack depth
       lex::skipBetweenWhitespaces(c);
+
       // Get origin
       const char *originStart = c;
       lex::skipToWhitespace(c);
       std::string origin(originStart, (c - originStart));
+
       // Skip address
       lex::skipBetweenWhitespaces(c);
+
       // Get function name
       const char *functionStart = c;
       lex::skipToWhitespace(c);
       std::string function(functionStart, (c - functionStart));
+
       // Skip the +
       lex::skipBetweenWhitespaces(c);
+
       // Get address offset
       const char *offsetStart = c;
       lex::skipToWhitespace(c);
@@ -889,6 +900,7 @@ namespace occa {
          << std::left << std::setw(50) << (status ? function : prettyFunction);
       return ss.str();
 #elif (OCCA_OS == OCCA_LINUX_OS)
+      std::stringstream ss;
       std::string function;
 
       Dl_info frameInfo;
@@ -914,36 +926,28 @@ namespace occa {
       }
       return function;
 #else
-      return std::string(c);
+      return "";
 #endif
     }
   }
 
-  void _message(const std::string &title,
+  void _message(const std::string &header,
                 const bool exitInFailure,
                 const std::string &filename,
                 const std::string &function,
                 const int line,
                 const std::string &message) {
 
-    std::string header = "---[ " + title + " ]";
-    header += std::string(60 - header.size(), '-');
-
-    std::cerr << '\n'
-              << header << '\n'
-              << "    File     : " << filename << '\n'
-              << "    Function : " << function << '\n'
-              << "    Line     : " << line     << '\n';
-    if (message.size()) {
-      std::cerr << "    Message  : " << message << '\n';
-    }
-    std::cerr << "    Stack    :\n";
-    sys::printStacktrace(3, "      ");
-    std::cerr << std::string(60, '=') << '\n';
+    exception exp(header,
+                  filename,
+                  function,
+                  line,
+                  message);
 
     if (exitInFailure) {
-      throw 1;
+      throw exp;
     }
+    std::cerr << exp;
   }
 
   void warn(const std::string &filename,
