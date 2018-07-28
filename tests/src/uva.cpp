@@ -24,12 +24,12 @@
 #include <occa.hpp>
 
 void testPtrRange();
-void testUvaInit();
+void testUva();
 void testUvaNull();
 
 int main(const int argc, const char **argv) {
   testPtrRange();
-  testUvaInit();
+  testUva();
   testUvaNull();
 
   return 0;
@@ -81,13 +81,38 @@ void testPtrRange() {
   std::cout << "Testing ptrRange output: " << range << '\n';
 }
 
-void testUvaInit() {
-  int *ptr = (int*) occa::umalloc(10 * sizeof(int));
-  occa::memory mem = occa::uvaToMemory(ptr);
+void testUva() {
+  size_t bytes = 10 * sizeof(int);
+  int *ptr = (int*) occa::umalloc(bytes);
+
+  occa::memory_v *mHandle = occa::uvaToMemory(ptr);
+  occa::memory mem(mHandle);
 
   ASSERT_NEQ(ptr,
              (int*) NULL);
   ASSERT_TRUE(mem.isInitialized());
+
+  // Managed
+  ASSERT_TRUE(occa::isManaged(ptr));
+  occa::stopManaging(ptr);
+  ASSERT_FALSE(occa::isManaged(ptr));
+  occa::startManaging(ptr);
+  ASSERT_TRUE(occa::isManaged(ptr));
+
+  // Sync
+  ASSERT_FALSE(occa::needsSync(ptr));
+
+  occa::syncToDevice(ptr);
+  occa::syncToHost(ptr);
+
+  occa::syncMemToDevice(mHandle);
+  occa::syncMemToHost(mHandle);
+
+  occa::sync(ptr);
+  occa::dontSync(ptr);
+
+  occa::removeFromStaleMap(ptr);
+  occa::removeFromStaleMap(mHandle);
 
   occa::free(ptr);
 

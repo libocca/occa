@@ -81,6 +81,14 @@ namespace occa {
     return (it == uvaMap.end()) ? NULL : it->second;
   }
 
+  bool isManaged(void *ptr) {
+    occa::memory_v *mem = uvaToMemory(ptr);
+    if (mem) {
+      return (mem->memInfo & uvaFlag::isManaged);
+    }
+    return false;
+  }
+
   void startManaging(void *ptr) {
     occa::memory_v *mem = uvaToMemory(ptr);
     if (mem) {

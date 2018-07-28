@@ -66,6 +66,7 @@ namespace occa {
   //---[ UVA ]--------------------------
   occa::memory_v* uvaToMemory(void *ptr);
 
+  bool isManaged(void *ptr);
   void startManaging(void *ptr);
   void stopManaging(void *ptr);
 
