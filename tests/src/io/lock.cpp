@@ -53,21 +53,31 @@ void testInit() {
 void testAutoRelease() {
   occa::hash_t hash = occa::hash(occa::toString(rand()));
 
-  occa::io::lock_t lock(hash, "tag", 0.2);
-  ASSERT_TRUE(lock.isInitialized());
-  ASSERT_EQ(lock.dir(),
+  occa::io::lock_t lock1(hash, "tag", 0.2);
+  ASSERT_TRUE(lock1.isInitialized());
+  ASSERT_EQ(lock1.dir(),
             occa::env::OCCA_CACHE_DIR
             + "locks/"
             + hash.toString()
             + "_tag");
-  ASSERT_TRUE(lock.isMine());
-  ASSERT_FALSE(lock.isReleased());
+  ASSERT_TRUE(lock1.isMine());
+  ASSERT_FALSE(lock1.isReleased());
 
   // Wait 0.5 seconds until it's considered 'stale'
   ::usleep(500000);
 
-  ASSERT_TRUE(lock.isReleased());
-  ASSERT_FALSE(occa::io::isDir(lock.dir()));
+  occa::io::lock_t lock2(hash, "tag", 0.2);
+  ASSERT_TRUE(lock2.isMine());
+
+  // lock2 owns the file now
+  ASSERT_FALSE(lock1.isReleased());
+  ASSERT_FALSE(occa::io::isDir(lock1.dir()));
+
+  // Wait 0.5 seconds until it's considered 'stale'
+  ::usleep(500000);
+
+  ASSERT_TRUE(lock2.isReleased());
+  ASSERT_FALSE(occa::io::isDir(lock2.dir()));
 }
 
 void testStaleRelease() {

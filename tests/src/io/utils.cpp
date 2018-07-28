@@ -143,6 +143,7 @@ void testDirMethods() {
   ASSERT_TRUE(occa::io::exists(ioDir + "fileOpener.cpp"));
   ASSERT_TRUE(occa::io::exists(ioDir + "lock.cpp"));
   ASSERT_TRUE(occa::io::exists(ioDir + "utils.cpp"));
+  ASSERT_FALSE(occa::io::exists(ioDir + "foo.okl"));
 
   // Find directories
   occa::strVector dirs = occa::io::directories(ioDir);
