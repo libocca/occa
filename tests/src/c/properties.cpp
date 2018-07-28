@@ -48,6 +48,7 @@ void testProperties() {
     ASSERT_EQ((propType) value_.value.field, v);                      \
   } while (0)
 
+  // Test set
   TEST_SET_PROP(bool, OCCA_BOOL, rand() % 2, int8_, occaBool);
 
   TEST_SET_PROP(int8_t, OCCA_INT8, rand(), int8_, occaInt8);
@@ -67,6 +68,18 @@ void testProperties() {
 
   const std::string stringValue = occa::toString(rand());
   TEST_SET_PROP(const char*, OCCA_STRING, stringValue.c_str(), ptr, occaString);
+
+  // Test set failure
+  ASSERT_THROW_START {
+    occaPropertiesSet(cProps, "ptr", occaPtr(NULL));
+  } ASSERT_THROW_END;
+
+  // Test get miss
+  occaType foobar = occaPropertiesGet(cProps, "foobar", occaInt32(2));
+  ASSERT_EQ(foobar.type,
+            OCCA_INT32);
+  ASSERT_EQ(foobar.value.int32_,
+            2);
 
 #undef TEST_SET_PROP
 

@@ -23,6 +23,7 @@
 
 #include <occa/defines.hpp>
 #include <occa/tools/string.hpp>
+#include <occa/tools/exception.hpp>
 #include <occa/tools/sys.hpp>
 
 #define ASSERT_LE(a, b)                                 \
@@ -72,6 +73,34 @@
 #define ASSERT_NOT_IN(value, vec)                                   \
   OCCA_ERROR("Assertion Failed: Value in",                          \
              std::find(vec.begin(), vec.end(), value) == vec.end())
+
+// Assert throw
+#define ASSERT_THROW_START                      \
+  do {                                          \
+    bool threw = false;                         \
+    try
+
+#define ASSERT_THROW_END                                      \
+    catch (occa::exception exc) {                             \
+      threw = true;                                           \
+    }                                                         \
+    OCCA_ERROR("Assertion Failed: No occa::exception thrown", \
+               threw);                                        \
+  } while(0)
+
+// Assert no throw
+#define ASSERT_NO_THROW_START                   \
+  do {                                          \
+    bool threw = false;                         \
+    try
+
+#define ASSERT_NO_THROW_END                                \
+    catch (occa::exception exc) {                          \
+      threw = true;                                        \
+    }                                                      \
+    OCCA_ERROR("Assertion Failed: occa::exception thrown", \
+               !threw);                                    \
+  } while(0)
 
 namespace occa {
   namespace test {

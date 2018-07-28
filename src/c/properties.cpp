@@ -83,7 +83,6 @@ occaType OCCA_RFUNC occaPropertiesGet(occaProperties props,
   if (value.isNumber()) {
     occa::primitive &number = value.number();
     switch(number.type) {
-    case occa::primitiveType::bool_   : return occaBool((bool) number);
     case occa::primitiveType::int8_   : return occaInt8((int8_t) number);
     case occa::primitiveType::uint8_  : return occaUInt8((uint8_t) number);
     case occa::primitiveType::int16_  : return occaInt16((int16_t) number);
@@ -94,13 +93,14 @@ occaType OCCA_RFUNC occaPropertiesGet(occaProperties props,
     case occa::primitiveType::uint64_ : return occaUInt64((uint64_t) number);
     case occa::primitiveType::float_  : return occaFloat((float) number);
     case occa::primitiveType::double_ : return occaDouble((double) number);
-    default: OCCA_FORCE_ERROR("Type not set");
+    default: return defaultValue;
     }
   }
   if (value.isBoolean()) {
     return occaBool(value.boolean());
   }
-  if (value.isObject()) {
+  if (value.isObject() ||
+      value.isArray()) {
     return occa::c::newOccaType((occa::properties&) value);
   }
   return defaultValue;
