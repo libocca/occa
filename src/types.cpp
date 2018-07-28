@@ -54,18 +54,11 @@ namespace occa {
     y(y_),
     z(z_) {}
 
-  dim::dim(const dim &d) :
-    dims(d.dims),
-    x(d.x),
-    y(d.y),
-    z(d.z) {}
-
-  dim& dim::operator = (const dim &d) {
-    dims = d.dims;
-    x = d.x;
-    y = d.y;
-    z = d.z;
-    return *this;
+  bool dim::operator == (const dim &d) const {
+    return ((dims == d.dims) &&
+            (x == d.x) &&
+            (y == d.y) &&
+            (z == d.z));
   }
 
   dim dim::operator + (const dim &d) const {
@@ -116,6 +109,22 @@ namespace occa {
     case 1 : return y;
     default: return z;
     }
+  }
+
+  std::ostream& operator << (std::ostream &out,
+                             const dim &d) {
+    out << '[';
+    if (d.dims > 0) {
+      out << d.x;
+      if (d.dims > 1) {
+        out << ", " << d.y;
+        if (d.dims > 2) {
+          out << ", " << d.z;
+        }
+      }
+    }
+    out << ']';
+    return out;
   }
   //====================================
 

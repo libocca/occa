@@ -66,9 +66,7 @@ namespace occa {
     dim(udim_t x_, udim_t y_, udim_t z_);
     dim(int dims_, udim_t x_, udim_t y_, udim_t z_);
 
-    dim(const dim &d);
-
-    dim& operator = (const dim &d);
+    bool operator == (const dim &d) const;
 
     dim operator + (const dim &d) const;
     dim operator - (const dim &d) const;
@@ -80,6 +78,9 @@ namespace occa {
     udim_t& operator [] (int i);
     udim_t  operator [] (int i) const;
   };
+
+  std::ostream& operator << (std::ostream &out,
+                             const dim &d);
   //====================================
 
   //---[ Bitfield ]---------------------
