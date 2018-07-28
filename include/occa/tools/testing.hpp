@@ -74,7 +74,6 @@
   OCCA_ERROR("Assertion Failed: Value in",                          \
              std::find(vec.begin(), vec.end(), value) == vec.end())
 
-// Assert throw
 #define ASSERT_THROW_START                      \
   do {                                          \
     bool threw = false;                         \
@@ -86,20 +85,6 @@
     }                                                         \
     OCCA_ERROR("Assertion Failed: No occa::exception thrown", \
                threw);                                        \
-  } while(0)
-
-// Assert no throw
-#define ASSERT_NO_THROW_START                   \
-  do {                                          \
-    bool threw = false;                         \
-    try
-
-#define ASSERT_NO_THROW_END                                \
-    catch (occa::exception exc) {                          \
-      threw = true;                                        \
-    }                                                      \
-    OCCA_ERROR("Assertion Failed: occa::exception thrown", \
-               !threw);                                    \
   } while(0)
 
 namespace occa {
@@ -115,7 +100,7 @@ namespace occa {
         return true;
       }
       std::cerr << "left : " << a << '\n'
-                << "right: " << b;
+                << "right: " << b << '\n';
       return false;
     }
 
@@ -125,7 +110,7 @@ namespace occa {
         return true;
       }
       std::cerr << "left : " << a << '\n'
-                << "right: " << b;
+                << "right: " << b << '\n';
       return false;
     }
 
@@ -135,7 +120,7 @@ namespace occa {
         return true;
       }
       std::cerr << "left : " << a << '\n'
-                << "right: " << b;
+                << "right: " << b << '\n';
       return false;
     }
 
@@ -145,7 +130,7 @@ namespace occa {
         return true;
       }
       std::cerr << "left : " << a << '\n'
-                << "right: " << b;
+                << "right: " << b << '\n';
       return false;
     }
 
@@ -155,7 +140,7 @@ namespace occa {
         return true;
       }
       std::cerr << "left : " << a << '\n'
-                << "right: " << b;
+                << "right: " << b << '\n';
       return false;
     }
 
@@ -165,7 +150,7 @@ namespace occa {
         return true;
       }
       std::cerr << "left : " << a << '\n'
-                << "right: " << b;
+                << "right: " << b << '\n';
       return false;
     }
 
@@ -175,7 +160,7 @@ namespace occa {
         return true;
       }
       std::cerr << "left : " << stringifySetBits(a) << '\n'
-                << "right: " << stringifySetBits(b);
+                << "right: " << stringifySetBits(b) << '\n';
       return false;
     }
 
@@ -185,7 +170,7 @@ namespace occa {
         return true;
       }
       std::cerr << "left : " << stringifySetBits(a) << '\n'
-                << "right: " << stringifySetBits(b);
+                << "right: " << stringifySetBits(b) << '\n';
       return false;
     }
 

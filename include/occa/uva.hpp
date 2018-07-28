@@ -33,21 +33,7 @@ namespace occa {
   class device;
   class memory;
   class memory_v;
-
-  class ptrRange {
-  public:
-    char *start, *end;
-
-    ptrRange();
-    ptrRange(void *ptr, const udim_t bytes = 0);
-    ptrRange(const ptrRange &r);
-
-    ptrRange& operator =  (const ptrRange &r);
-    bool        operator == (const ptrRange &r) const;
-    bool        operator != (const ptrRange &r) const;
-
-    friend int operator < (const ptrRange &a, const ptrRange &b);
-  };
+  class ptrRange;
 
   typedef std::map<ptrRange, occa::memory_v*> ptrRangeMap;
   typedef std::vector<occa::memory_v*>        memoryVector;
@@ -55,22 +41,29 @@ namespace occa {
   extern ptrRangeMap uvaMap;
   extern memoryVector uvaStaleMemory;
 
-  class uvaPtrInfo {
-  private:
-    occa::memory_v *mem;
-
+  //---[ ptrRange ]---------------------
+  class ptrRange {
   public:
-    uvaPtrInfo();
-    uvaPtrInfo(void *ptr);
-    uvaPtrInfo(occa::memory_v *mem_);
+    char *start, *end;
 
-    uvaPtrInfo(const uvaPtrInfo &upi);
-    uvaPtrInfo& operator = (const uvaPtrInfo &upi);
+    ptrRange();
+    ptrRange(void *ptr, const udim_t bytes = 0);
+    ptrRange(const ptrRange &other);
 
-    occa::device getDevice();
-    occa::memory getMemory();
+    ptrRange& operator =  (const ptrRange &other);
+    bool operator == (const ptrRange &other) const;
+    bool operator != (const ptrRange &other) const;
   };
 
+  int operator < (const ptrRange &a,
+                  const ptrRange &b);
+
+  std::ostream& operator << (std::ostream& out,
+                             const ptrRange &range);
+  //====================================
+
+
+  //---[ UVA ]--------------------------
   occa::memory_v* uvaToMemory(void *ptr);
 
   void startManaging(void *ptr);
@@ -97,6 +90,7 @@ namespace occa {
   void setupMagicFor(void *ptr);
 
   void free(void *ptr);
+  //====================================
 }
 
 #endif

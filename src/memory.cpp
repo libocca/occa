@@ -497,7 +497,7 @@ namespace occa {
         uvaMap.erase(mHandle->ptr);
         dHandle->uvaMap.erase(mHandle->uvaPtr);
 
-        ::free(mHandle->uvaPtr);
+        sys::free(mHandle->uvaPtr);
         mHandle->uvaPtr = NULL;
       }
     }

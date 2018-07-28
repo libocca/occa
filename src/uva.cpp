@@ -31,6 +31,7 @@ namespace occa {
   ptrRangeMap uvaMap;
   memoryVector uvaStaleMemory;
 
+  //---[ ptrRange ]---------------------
   ptrRange::ptrRange() :
     start(NULL),
     end(NULL) {}
@@ -39,61 +40,42 @@ namespace occa {
     start((char*) ptr),
     end(((char*) ptr) + bytes) {}
 
-  ptrRange::ptrRange(const ptrRange &r) :
-    start(r.start),
-    end(r.end) {}
+  ptrRange::ptrRange(const ptrRange &other) :
+    start(other.start),
+    end(other.end) {}
 
-  ptrRange& ptrRange::operator = (const ptrRange &r) {
-    start = r.start;
-    end   = r.end;
+  ptrRange& ptrRange::operator = (const ptrRange &other) {
+    start = other.start;
+    end   = other.end;
 
     return *this;
   }
 
-  bool ptrRange::operator == (const ptrRange &r) const {
-    return ((start <= r.start) && (r.start < end));
+  bool ptrRange::operator == (const ptrRange &other) const {
+    return ((start <= other.end) &&
+            (end >= other.start));
   }
 
-  bool ptrRange::operator != (const ptrRange &r) const {
-    return ((r.start < start) || (end <= r.start));
+  bool ptrRange::operator != (const ptrRange &other) const {
+    return ((start > other.end) ||
+            (end < other.start));
   }
 
   int operator < (const ptrRange &a, const ptrRange &b) {
     return ((a != b) && (a.start < b.start));
   }
 
-  uvaPtrInfo::uvaPtrInfo() :
-    mem(NULL) {}
-
-  uvaPtrInfo::uvaPtrInfo(void *ptr) {
-    ptrRangeMap::iterator it = uvaMap.find(ptr);
-
-    if (it != uvaMap.end()) {
-      mem = (it->second);
-    } else {
-      mem = (occa::memory_v*) ptr; // Defaults to ptr being a memory_v
-    }
+  std::ostream& operator << (std::ostream& out,
+                             const ptrRange &range) {
+    out << '['
+        << (void*) range.start << ", " << (void*) range.end
+        << ']';
+    return out;
   }
+  //====================================
 
-  uvaPtrInfo::uvaPtrInfo(occa::memory_v *mem_) :
-    mem(mem_) {}
 
-  uvaPtrInfo::uvaPtrInfo(const uvaPtrInfo &upi) :
-    mem(upi.mem) {}
-
-  uvaPtrInfo& uvaPtrInfo::operator = (const uvaPtrInfo &upi) {
-    mem = upi.mem;
-    return *this;
-  }
-
-  occa::device uvaPtrInfo::getDevice() {
-    return occa::device(mem->dHandle);
-  }
-
-  occa::memory uvaPtrInfo::getMemory() {
-    return occa::memory(mem);
-  }
-
+  //---[ UVA ]--------------------------
   occa::memory_v* uvaToMemory(void *ptr) {
     ptrRangeMap::iterator it = uvaMap.find(ptr);
     return (it == uvaMap.end()) ? NULL : it->second;
@@ -101,14 +83,14 @@ namespace occa {
 
   void startManaging(void *ptr) {
     occa::memory_v *mem = uvaToMemory(ptr);
-    if (mem != NULL) {
+    if (mem) {
       mem->memInfo |= uvaFlag::isManaged;
     }
   }
 
   void stopManaging(void *ptr) {
     occa::memory_v *mem = uvaToMemory(ptr);
-    if (mem != NULL) {
+    if (mem) {
       mem->memInfo &= ~uvaFlag::isManaged;
     }
   }
@@ -131,7 +113,8 @@ namespace occa {
                        const udim_t bytes,
                        const udim_t offset) {
 
-    if (mem->dHandle->hasSeparateMemorySpace()) {
+    if (mem &&
+        mem->dHandle->hasSeparateMemorySpace()) {
       occa::memory(mem).syncToDevice(bytes, offset);
     }
   }
@@ -140,20 +123,21 @@ namespace occa {
                      const udim_t bytes,
                      const udim_t offset) {
 
-    if (mem->dHandle->hasSeparateMemorySpace()) {
+    if (mem &&
+        mem->dHandle->hasSeparateMemorySpace()) {
       occa::memory(mem).syncToHost(bytes, offset);
     }
   }
 
   bool needsSync(void *ptr) {
     occa::memory_v *mem = uvaToMemory(ptr);
-    return (mem == NULL) ? false : mem->isStale();
+    return mem ? mem->isStale() : false;
   }
 
   void sync(void *ptr) {
     occa::memory_v *mem = uvaToMemory(ptr);
 
-    if (mem != NULL) {
+    if (mem) {
       if (mem->inDevice()) {
         syncMemToHost(mem);
       } else {
@@ -181,6 +165,10 @@ namespace occa {
   }
 
   void removeFromStaleMap(memory_v *mem) {
+    if (!mem) {
+      return;
+    }
+
     occa::memory m(mem);
     const size_t staleEntries = uvaStaleMemory.size();
 
@@ -207,4 +195,5 @@ namespace occa {
     }
     OCCA_FORCE_ERROR("Freeing a non-uva pointer");
   }
+  //====================================
 }
