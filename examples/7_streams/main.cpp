@@ -85,7 +85,7 @@ occa::json parseArgs(int argc, const char **argv) {
     )
     .addOption(
       occa::cli::option('d', "device",
-                        "Device properties (default: \"mode: 'Serial\")")
+                        "Device properties (default: \"mode: 'Serial'\")")
       .withArg()
       .withDefaultValue("mode: 'CUDA', device_id: 0")
     )

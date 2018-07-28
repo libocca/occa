@@ -70,9 +70,9 @@ for mode in $("${OCCA_DIR}/bin/occa" modes); do
 
         # Make sure not to go over the log size
         if [ -n "${TRAVIS}" ]; then
-            OCCA_VERBOSE=1 ./main --device "${device}" 2>&1 | head -n 100;
+            OCCA_VERBOSE=1 ./main --verbose --device "${device}" 2>&1 | head -n 100;
         else
-            OCCA_VERBOSE=1 ./main --device "${device}" 2>&1
+            OCCA_VERBOSE=1 ./main --verbose --device "${device}" 2>&1
         fi
 
         # Test output footer
