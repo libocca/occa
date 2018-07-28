@@ -16,9 +16,12 @@ ignore:
   - examples
   - tests
   - scripts
+  # Auto-generated files
   - include/occa/kernelOperators.hpp
   - src/kernelOperators.cpp
   - src/tools/runFunction.cpp
+  # Exception is not tracked properly
+  - src/tools/exception.cpp
 
 comment:
   layout: 'reach, diff, files'
