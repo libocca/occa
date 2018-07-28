@@ -12,7 +12,8 @@ compiler: gcc
 
 matrix:
   include:
-    - env:
+    - name: "[Linux] gcc-4.9"
+      env:
         - CC=gcc-4.9
         - CXX=g++-4.9
       addons:
@@ -21,7 +22,8 @@ matrix:
             - ubuntu-toolchain-r-test
           packages:
             - g++-4.9
-    - env:
+    - name: "[Linux] gcc-5"
+      env:
         - CC=gcc-5
         - CXX=g++-5
       addons:
@@ -30,7 +32,8 @@ matrix:
             - ubuntu-toolchain-r-test
           packages:
             - g++-5
-    - env:
+    - name: "[Linux] gcc-6"
+      env:
         - CC=gcc-6
         - CXX=g++-6
       addons:
@@ -39,7 +42,8 @@ matrix:
             - ubuntu-toolchain-r-test
           packages:
             - g++-6
-    - env:
+    - name: "[Linux] gcc-7"
+      env:
         - CC=gcc-7
         - CXX=g++-7
       addons:
@@ -48,7 +52,8 @@ matrix:
             - ubuntu-toolchain-r-test
           packages:
             - g++-7
-    - env:
+    - name: "[Linux] clang-3.6"
+      env:
         - CC=clang-3.6
         - CXX=clang++-3.6
       compiler: clang
@@ -59,7 +64,8 @@ matrix:
             - llvm-toolchain-precise-3.6
           packages:
             - clang-3.6
-    - env:
+    - name: "[Linux] clang-4.0"
+      env:
         - CC=clang-4.0
         - CXX=clang++-4.0
       compiler: clang
@@ -69,7 +75,8 @@ matrix:
             - llvm-toolchain-trusty-4.0
           packages:
             - clang-4.0
-    - env:
+    - name: "[Linux] clang-5.0"
+      env:
         - CC=clang-5.0
         - CXX=clang++-5.0
       compiler: clang
@@ -79,19 +86,22 @@ matrix:
             - llvm-toolchain-trusty-5.0
           packages:
             - clang-5.0
-    - os: osx
+    - name: "[MacOS] gcc-6"
+      os: osx
       osx_image: xcode8
       env:
         - MATRIX_INIT="brew install gcc6"
         - CC=gcc-6
         - CXX=g++-6
-    - os: osx
+    - name: "[MacOS] gcc-7"
+      os: osx
       osx_image: xcode8
       env:
         - MATRIX_INIT="brew install gcc@7"
         - CC=gcc-7
         - CXX=g++-7
-    - os: osx
+    - name: "[MacOS] clang"
+      os: osx
       osx_image: xcode8
       compiler: clang
       env:
