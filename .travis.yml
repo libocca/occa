@@ -12,7 +12,7 @@ compiler: gcc
 
 matrix:
   include:
-    - name: "[Linux] gcc-4.9"
+    - name: "gcc-4.9"
       env:
         - CC=gcc-4.9
         - CXX=g++-4.9
@@ -22,7 +22,7 @@ matrix:
             - ubuntu-toolchain-r-test
           packages:
             - g++-4.9
-    - name: "[Linux] gcc-5"
+    - name: "gcc-5"
       env:
         - CC=gcc-5
         - CXX=g++-5
@@ -32,7 +32,7 @@ matrix:
             - ubuntu-toolchain-r-test
           packages:
             - g++-5
-    - name: "[Linux] gcc-6"
+    - name: "gcc-6"
       env:
         - CC=gcc-6
         - CXX=g++-6
@@ -42,7 +42,7 @@ matrix:
             - ubuntu-toolchain-r-test
           packages:
             - g++-6
-    - name: "[Linux] gcc-7"
+    - name: "gcc-7"
       env:
         - CC=gcc-7
         - CXX=g++-7
@@ -52,7 +52,7 @@ matrix:
             - ubuntu-toolchain-r-test
           packages:
             - g++-7
-    - name: "[Linux] clang-3.6"
+    - name: "clang-3.6"
       env:
         - CC=clang-3.6
         - CXX=clang++-3.6
@@ -64,7 +64,7 @@ matrix:
             - llvm-toolchain-precise-3.6
           packages:
             - clang-3.6
-    - name: "[Linux] clang-4.0"
+    - name: "clang-4.0"
       env:
         - CC=clang-4.0
         - CXX=clang++-4.0
@@ -75,7 +75,7 @@ matrix:
             - llvm-toolchain-trusty-4.0
           packages:
             - clang-4.0
-    - name: "[Linux] clang-5.0"
+    - name: "clang-5.0"
       env:
         - CC=clang-5.0
         - CXX=clang++-5.0
@@ -86,21 +86,21 @@ matrix:
             - llvm-toolchain-trusty-5.0
           packages:
             - clang-5.0
-    - name: "[MacOS] gcc-6"
+    - name: "gcc-6"
       os: osx
       osx_image: xcode8
       env:
         - MATRIX_INIT="brew install gcc6"
         - CC=gcc-6
         - CXX=g++-6
-    - name: "[MacOS] gcc-7"
+    - name: "gcc-7"
       os: osx
       osx_image: xcode8
       env:
         - MATRIX_INIT="brew install gcc@7"
         - CC=gcc-7
         - CXX=g++-7
-    - name: "[MacOS] clang"
+    - name: "clang"
       os: osx
       osx_image: xcode8
       compiler: clang
