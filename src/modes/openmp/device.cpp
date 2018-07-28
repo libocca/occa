@@ -41,13 +41,14 @@ namespace occa {
 
     bool device::parseFile(const std::string &filename,
                            const std::string &outputFile,
-                           const occa::properties &parserProps) {
-      lang::okl::openmpParser parser(parserProps);
+                           const occa::properties &kernelProps,
+                           lang::kernelMetadataMap &metadata) {
+      lang::okl::openmpParser parser(kernelProps);
       parser.parseFile(filename);
 
       // Verify if parsing succeeded
       if (!parser.succeeded()) {
-        if (!parserProps.get("silent", false)) {
+        if (!kernelProps.get("silent", false)) {
           OCCA_FORCE_ERROR("Unable to transform OKL kernel");
         }
         return false;
@@ -55,11 +56,13 @@ namespace occa {
 
       if (!io::isFile(outputFile)) {
         hash_t hash = occa::hash(outputFile);
-        io::lock_t lock(hash, "serial-parser");
+        io::lock_t lock(hash, "openmp-parser");
         if (lock.isMine()) {
           parser.writeToFile(outputFile);
         }
       }
+
+      parser.setMetadata(metadata);
 
       return true;
     }
