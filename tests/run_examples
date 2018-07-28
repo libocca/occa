@@ -52,6 +52,10 @@ for mode in $("${OCCA_DIR}/bin/occa" modes); do
     esac
 
     for example_dir in "${examples[@]}"; do
+        # OpenCL throws CL_DEVICE_MAX_WORK_GROUP_SIZE
+        if [ -n "${TRAVIS}" ] && [ "${mode}" == "OpenCL" ]; then
+            continue
+        fi
         # OpenCL + Shared memory is finicky
         case "(${mode}) ${example_dir}" in
             "(OpenCL) 3_reduction") continue;;
