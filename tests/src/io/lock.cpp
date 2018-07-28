@@ -34,6 +34,9 @@ void clearLocks();
 
 int main(const int argc, const char **argv) {
   occa::env::OCCA_CACHE_DIR = occa::io::dirname(__FILE__);
+  occa::settings()["locks/stale-warning"] = 0;
+  occa::settings()["locks/stale-age"] = 0.2;
+
   srand(time(NULL));
 
   clearLocks();
@@ -53,7 +56,7 @@ void testInit() {
 void testAutoRelease() {
   occa::hash_t hash = occa::hash(occa::toString(rand()));
 
-  occa::io::lock_t lock1(hash, "tag", 0.2);
+  occa::io::lock_t lock1(hash, "tag");
   ASSERT_TRUE(lock1.isInitialized());
   ASSERT_EQ(lock1.dir(),
             occa::env::OCCA_CACHE_DIR
@@ -61,41 +64,33 @@ void testAutoRelease() {
             + hash.toString()
             + "_tag");
   ASSERT_TRUE(lock1.isMine());
-  ASSERT_FALSE(lock1.isReleased());
 
-  // Wait 0.5 seconds until it's considered 'stale'
-  ::usleep(500000);
+  ASSERT_TRUE(occa::io::isDir(lock1.dir()));
 
-  occa::io::lock_t lock2(hash, "tag", 0.2);
+  occa::io::lock_t lock2(hash, "tag");
   ASSERT_TRUE(lock2.isMine());
 
-  // lock2 owns the file now
-  ASSERT_FALSE(lock1.isReleased());
-  ASSERT_FALSE(occa::io::isDir(lock1.dir()));
-
-  // Wait 0.5 seconds until it's considered 'stale'
-  ::usleep(500000);
-
-  ASSERT_TRUE(lock2.isReleased());
+  ASSERT_TRUE(occa::io::isDir(lock2.dir()));
+  lock2.release();
   ASSERT_FALSE(occa::io::isDir(lock2.dir()));
 }
 
 void testStaleRelease() {
   occa::hash_t hash = occa::hash(occa::toString(rand()));
 
-  occa::io::lock_t lock1(hash, "tag", 0.2);
+  occa::io::lock_t lock1(hash, "tag");
   ASSERT_TRUE(lock1.isMine());
   // Test cached isMine()
   ASSERT_TRUE(lock1.isMine());
 
-  occa::io::lock_t lock2(hash, "tag", 0.2);
+  occa::io::lock_t lock2(hash, "tag");
   ASSERT_TRUE(lock2.isMine());
 
   // Wait 0.5 seconds until both locks are considered stale
   ::usleep(500000);
 
   // Kill the stale lock
-  occa::io::lock_t lock3(hash, "tag", 0.2);
+  occa::io::lock_t lock3(hash, "tag");
   ASSERT_TRUE(lock3.isMine());
 
   lock1.release();

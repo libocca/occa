@@ -41,15 +41,6 @@ namespace occa {
     std::string hashDir(const std::string &filename,
                         const hash_t &hash = hash_t());
 
-    void cache(const std::string &filename,
-               std::string source,
-               const hash_t &hash);
-
-    void cache(const std::string &filename,
-               const char *source,
-               const hash_t &hash,
-               const bool deleteSource = true);
-
     std::string cacheFile(const std::string &filename,
                           const std::string &cachedName,
                           const std::string &header = "");

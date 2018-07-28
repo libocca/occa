@@ -29,7 +29,6 @@
 void testCacheInfoMethods();
 void testHashDir();
 void testBuild();
-void testCache();
 
 int main(const int argc, const char **argv) {
   occa::env::OCCA_CACHE_DIR = occa::io::dirname(__FILE__);
@@ -38,7 +37,6 @@ int main(const int argc, const char **argv) {
   testCacheInfoMethods();
   testHashDir();
   testBuild();
-  testCache();
 
   occa::sys::rmdir(occa::env::OCCA_CACHE_DIR + "locks",
                    true);
@@ -141,7 +139,4 @@ void testBuild() {
   ASSERT_TRUE(occa::io::isFile("build.json"));
 
   occa::sys::rmrf("build.json");
-}
-
-void testCache() {
 }

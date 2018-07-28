@@ -109,29 +109,6 @@ namespace occa {
       return filename.substr(0, c - filename.c_str() + 1);
     }
 
-    void cache(const std::string &filename,
-               std::string source,
-               const hash_t &hash) {
-
-      cache(filename, source.c_str(), hash, false);
-    }
-
-    void cache(const std::string &filename,
-               const char *source,
-               const hash_t &hash,
-               const bool deleteSource) {
-
-      const std::string expFilename = io::filename(filename);
-      io::lock_t lock(hash, "cache");
-      if (lock.isMine()
-          && !io::isFile(expFilename)) {
-        write(expFilename, source);
-      }
-      if (deleteSource) {
-        delete [] source;
-      }
-    }
-
     std::string cacheFile(const std::string &filename,
                           const std::string &cachedName,
                           const std::string &header) {
