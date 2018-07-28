@@ -52,9 +52,6 @@ namespace occa {
 
       void release() const;
 
-      static void release(const hash_t &hash,
-                          const std::string &tag);
-
       bool isMine();
 
       bool isReleased();

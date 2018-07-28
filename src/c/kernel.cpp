@@ -110,7 +110,8 @@ void OCCA_RFUNC occaKernelRunN(occaKernel kernel,
 
     switch (arg.type) {
     case occa::c::typeType::none: {
-      kArg.add(NULL, false, false); break;
+      kArg.add(NULL, false, false);
+      break;
     }
     case occa::c::typeType::ptr: {
       kArg.add(arg.value.ptr,
@@ -174,11 +175,16 @@ void OCCA_RFUNC occaKernelRunN(occaKernel kernel,
       kArg = occa::kernelArg(occa::c::memory(arg));
       break;
     case occa::c::typeType::device:
-      OCCA_FORCE_ERROR("Unable to pass an occaDevice as a kernel argument"); break;
+      OCCA_FORCE_ERROR("Unable to pass an occaDevice as a kernel argument");
+      break;
     case occa::c::typeType::kernel:
-      OCCA_FORCE_ERROR("Unable to pass an occaKernel as a kernel argument"); break;
+      OCCA_FORCE_ERROR("Unable to pass an occaKernel as a kernel argument");
+      break;
     case occa::c::typeType::properties:
-      OCCA_FORCE_ERROR("Unable to pass an occaProperties as a kernel argument"); break;
+      OCCA_FORCE_ERROR("Unable to pass an occaProperties as a kernel argument");
+      break;
+    default:
+      OCCA_FORCE_ERROR("A non-occaType argument was passed");
     }
 
     kHandle.arguments.push_back(kArg);

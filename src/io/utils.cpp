@@ -40,6 +40,7 @@
 #include <occa/io/fileOpener.hpp>
 #include <occa/io/utils.hpp>
 #include <occa/tools/env.hpp>
+#include <occa/tools/lex.hpp>
 
 namespace occa {
   // Kernel Caching
@@ -238,23 +239,20 @@ namespace occa {
     std::string shortname(const std::string &filename) {
       std::string expFilename = io::filename(filename);
 
-      if (expFilename.find(env::OCCA_CACHE_DIR) != 0) {
+      if (!startsWith(expFilename, env::OCCA_CACHE_DIR)) {
         return filename;
       }
 
       const std::string &lPath = libraryPath();
-      const std::string &cPath = cachePath();
-
-      if (expFilename.find(lPath) == 0) {
+      if (startsWith(expFilename, lPath)) {
         std::string libName = getLibraryName(expFilename);
         std::string theRest = expFilename.substr(lPath.size() + libName.size() + 1);
 
         return ("occa://" + libName + "/" + theRest);
-      } else if (expFilename.find(cPath) == 0) {
-        return expFilename.substr(cPath.size());
       }
 
-      return expFilename;
+      const std::string &cPath = cachePath();
+      return expFilename.substr(cPath.size());
     }
 
     bool isFile(const std::string &filename) {

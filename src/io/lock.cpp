@@ -77,11 +77,6 @@ namespace occa {
       }
     }
 
-    void lock_t::release(const hash_t &hash,
-                         const std::string &tag) {
-      lock_t(hash, tag).release();
-    }
-
     bool lock_t::isMine() {
       if (isMineCached) {
         return true;

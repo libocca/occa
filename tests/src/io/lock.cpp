@@ -75,6 +75,8 @@ void testStaleRelease() {
 
   occa::io::lock_t lock1(hash, "tag", 0.2);
   ASSERT_TRUE(lock1.isMine());
+  // Test cached isMine()
+  ASSERT_TRUE(lock1.isMine());
 
   occa::io::lock_t lock2(hash, "tag", 0.2);
   ASSERT_TRUE(lock2.isMine());
@@ -82,8 +84,13 @@ void testStaleRelease() {
   // Wait 0.5 seconds until both locks are considered stale
   ::usleep(500000);
 
+  // Kill the stale lock
+  occa::io::lock_t lock3(hash, "tag", 0.2);
+  ASSERT_TRUE(lock3.isMine());
+
   lock1.release();
   lock2.release();
+  lock3.release();
 
   ASSERT_FALSE(occa::io::isDir(lock1.dir()));
 }

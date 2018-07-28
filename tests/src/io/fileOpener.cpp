@@ -47,8 +47,11 @@ void testFileOpeners() {
   occa::io::occaFileOpener occaOpener;
   ASSERT_FALSE(occaOpener.handles(""));
   ASSERT_FALSE(occaOpener.handles("foo.okl"));
+  ASSERT_TRUE(occaOpener.handles("occa://"));
   ASSERT_TRUE(occaOpener.handles("occa://foo.okl"));
 
+  ASSERT_EQ(occaOpener.expand("occa://"),
+            occa::io::cachePath());
   ASSERT_EQ(occaOpener.expand("occa://foo.okl"),
             occa::io::libraryPath() + "foo.okl");
 }
