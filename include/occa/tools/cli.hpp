@@ -25,36 +25,40 @@
 
 #include <iostream>
 #include <vector>
-#include <map>
 
 #include <occa/types.hpp>
 #include <occa/tools/json.hpp>
 
 namespace occa {
   namespace cli {
-    //---[ Printable ]------------------
-    class printable {
-    public:
+    namespace pretty {
       static const int COLUMN_SPACING = 3;
       static const int MAX_NAME_COLUMN_WIDTH = 30;
       static const int MAX_DESC_COLUMN_WIDTH = 50;
 
+      // Printable entries
+      template <class TM>
+      void printEntries(const std::string &title,
+                        const std::vector<TM> &entries,
+                        std::ostream &out);
+
+      void printDescription(std::ostream &out,
+                            const std::string &description);
+
+      void printDescription(std::ostream &out,
+                            const int indent, const int width,
+                            const std::string &description);
+    }
+
+    //---[ Printable ]------------------
+    class printable {
+    public:
       std::string name;
       std::string description;
 
-      printable();
-
-      virtual std::string getName() const;
-
-      template <class TM>
-      static void printEntries(const std::string &title,
-                               const std::vector<TM> &entries,
-                               std::ostream &out);
-
-      static void printDescription(std::ostream &out,
-                                   const int indent, const int width,
-                                   const std::string &description_);
+      virtual std::string getPrintName() const = 0;
     };
+    //==================================
 
     //---[ Option ]---------------------
     class option : public printable {
@@ -85,6 +89,7 @@ namespace occa {
 
       option isRequired();
       option reusable();
+      option withArg();
       option withArgs(const int requiredArgs_);
 
       option stopsExpansion();
@@ -93,33 +98,52 @@ namespace occa {
 
       bool getIsRequired();
 
-      virtual std::string getName() const;
+      virtual std::string getPrintName() const;
+      virtual std::string toString() const;
 
       void printBashAutocomplete(const std::string &funcPrefix);
 
       friend bool operator < (const option &l, const option &r);
       friend std::ostream& operator << (std::ostream &out, const option &opt);
     };
+    //==================================
 
-    class longOption : public option {
+    //---[ Argument ]-------------------
+    class argument: public option {
     public:
-      longOption();
-      longOption(const option &opt);
+      argument();
+      argument(const option &opt);
 
-      virtual std::string getName() const;
+      argument(const std::string &name_,
+               const std::string &description_);
+
+      virtual std::string getPrintName() const;
+      virtual std::string toString() const;
     };
+    //==================================
 
     //---[ Parser ]---------------------
     class parser : public printable {
     public:
-      std::vector<longOption> arguments;
+      std::vector<argument> arguments;
       std::vector<option> options;
       bool hasRepetitiveArg;
 
       parser();
 
-      option* getShortOption(const std::string &opt);
-      option* getOption(const std::string &opt);
+      virtual std::string getPrintName() const;
+
+      bool isLongOption(const std::string &arg);
+      bool isShortOption(const std::string &arg);
+      bool hasShortOption(const std::string &arg);
+      bool isOption(const std::string &arg);
+
+      option* getShortOption(const char opt,
+                             const bool errorIfMissing = true);
+      option* getLongOption(const std::string &opt,
+                            const bool errorIfMissing = true);
+      option* getOption(const std::string &arg,
+                        const bool errorIfMissing = true);
 
       bool hasOptionalArg();
 
@@ -133,24 +157,31 @@ namespace occa {
 
       parser& addOption(const option &option);
 
-      strVector makeArgs(const int argc, const char **argv);
+      strVector vectorizeArgs(const int argc, const char **argv);
+      strVector splitShortOptionArgs(const strVector &args);
 
       occa::json parse(const int argc, const char **argv);
-      occa::json parse(const strVector &args);
+      occa::json parse(const strVector &args_);
+
+      bool hasCustomHelpOption();
+      void addHelpOption();
+      void setOptionDefaults(occa::json &jOptions);
 
       virtual void printUsage(const std::string &program,
                               std::ostream &out = std::cout);
 
       virtual void printRequired(std::ostream &out);
+
+      void fatalError(const std::string &message);
+
+      void parseShortOptions(const std::string arg);
     };
+    //==================================
 
     //---[ Command ]--------------------
     class command : public parser {
     public:
-      typedef bool (*callback_t)(const occa::cli::command &command,
-                                 jsonArray order,
-                                 jsonObject options,
-                                 jsonArray arguments);
+      typedef bool (*callback_t)(const occa::json &args);
 
       bool commandIsRequired;
       std::vector<command> commands;
@@ -192,6 +223,7 @@ namespace occa {
 
       bool operator < (const command &comm) const;
     };
+    //==================================
   }
 }
 

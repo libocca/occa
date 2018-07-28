@@ -22,6 +22,7 @@
 
 #include <algorithm>
 #include <iomanip>
+#include <map>
 #include <sstream>
 
 #include <occa/tools/cli.hpp>
@@ -32,47 +33,49 @@
 
 namespace occa {
   namespace cli {
-    //---[ Printable ]------------------
-    printable::printable() {}
+    namespace pretty {
+      void printDescription(std::ostream &out,
+                            const std::string &description) {
+        printDescription(out,
+                         0, MAX_NAME_COLUMN_WIDTH + MAX_DESC_COLUMN_WIDTH,
+                         description);
+      }
 
-    std::string printable::getName() const {
-      return name;
-    }
+      void printDescription(std::ostream &out,
+                            const int indent, const int width,
+                            const std::string &description) {
+        std::stringstream ss;
 
-    void printable::printDescription(std::ostream &out,
-                                     const int indent, const int width,
-                                     const std::string &description_) {
-      std::stringstream ss;
+        // Print the description across multiple lines if needed
+        const char *desc_c = &(description[0]);
+        while (*desc_c) {
+          const char *start = desc_c;
+          lex::skipToWhitespace(desc_c);
+          const std::string word(start, desc_c - start);
 
-      // Print the description across multiple lines if needed
-      const char *desc_c = &(description_[0]);
-      while (*desc_c) {
-        const char *start = desc_c;
-        lex::skipToWhitespace(desc_c);
-        const std::string word(start, desc_c - start);
+          if ((int) (ss.str().size() + word.size()) >= width) {
+            out << ss.str()
+                << '\n' << std::string(indent, ' ');
+            ss.str("");
+          }
+          ss << word;
 
-        if ((int) (ss.str().size() + word.size()) >= width) {
-          out << ss.str()
-              << '\n' << std::string(indent, ' ');
+          start = desc_c;
+          lex::skipWhitespace(desc_c);
+          const std::string space(start, desc_c - start);
+
+          if ((int) (ss.str().size() + space.size()) >= width) {
+            ss << std::string(width - ss.str().size(), ' ');
+          } else {
+            ss << space;
+          }
+        }
+        if (ss.str().size()) {
+          out << ss.str();
           ss.str("");
         }
-        ss << word;
-
-        start = desc_c;
-        lex::skipWhitespace(desc_c);
-        const std::string space(start, desc_c - start);
-
-        if ((int) (ss.str().size() + space.size()) >= width) {
-          ss << std::string(width - ss.str().size(), ' ');
-        } else {
-          ss << space;
-        }
+        out << '\n';
       }
-      if (ss.str().size()) {
-        out << ss.str();
-        ss.str("");
-      }
-      out << '\n';
     }
 
     //---[ Option ]---------------------
@@ -121,6 +124,12 @@ namespace occa {
       return opt;
     }
 
+    option option::withArg() {
+      option opt = *this;
+      opt.requiredArgs = 1;
+      return opt;
+    }
+
     option option::withArgs(const int requiredArgs_) {
       option opt = *this;
       opt.requiredArgs = requiredArgs_;
@@ -150,7 +159,7 @@ namespace occa {
       return (flags & flags_t::isRequired);
     }
 
-    std::string option::getName() const {
+    std::string option::getPrintName() const {
       std::string ret;
       if (shortname) {
         ret += '-';
@@ -161,6 +170,22 @@ namespace occa {
         }
       } else {
         ret += "    --";
+        ret += name;
+      }
+      return ret;
+    }
+
+    std::string option::toString() const {
+      std::string ret;
+      if (shortname) {
+        ret += '-';
+        ret += shortname;
+        if (name.size()) {
+          ret += ", --";
+          ret += name;
+        }
+      } else {
+        ret += "--";
         ret += name;
       }
       return ret;
@@ -255,47 +280,102 @@ namespace occa {
       out << "--" << opt.name;
       return out;
     }
+    //==================================
 
-    longOption::longOption() {}
+    //---[ Argument ]-------------------
+    argument::argument() :
+      option() {}
 
-    longOption::longOption(const option &opt) {
-      shortname = opt.shortname;
-      name = opt.name;
-      description = opt.description;
+    argument::argument(const option &opt) :
+      option(opt) {}
 
-      flags = opt.flags;
-      expansionFunction = expansionFunction;
-    }
+    argument::argument(const std::string &name_,
+                       const std::string &description_) :
+      option(name_, description_) {}
 
-    std::string longOption::getName() const {
+    std::string argument::getPrintName() const {
       return name;
     }
+
+    std::string argument::toString() const {
+      return name;
+    }
+    //==================================
 
     //---[ Parser ]---------------------
     parser::parser() {}
 
-    option* parser::getShortOption(const std::string &opt) {
-      if (opt.size() != 1) {
-        return NULL;
-      }
-      const char optChar = opt[0];
+    std::string parser::getPrintName() const {
+      return name;
+    }
+
+    bool parser::isLongOption(const std::string &arg) {
+      return ((arg.size() > 2) &&
+              (arg[0] == '-') &&
+              (arg[1] == '-'));
+    }
+
+    bool parser::isShortOption(const std::string &arg) {
+      return ((arg.size() == 2) &&
+              (arg[0] == '-') &&
+              (arg[1] != '-'));
+    }
+
+    bool parser::hasShortOption(const std::string &arg) {
+      return ((arg.size() >= 2) &&
+              (arg[0] == '-') &&
+              (arg[1] != '-'));
+    }
+
+    bool parser::isOption(const std::string &arg) {
+      return (isLongOption(arg) ||
+              isShortOption(arg));
+    }
+
+    option* parser::getShortOption(const char opt,
+                                   const bool errorIfMissing) {
       const int optCount = (int) options.size();
       for (int i = 0; i < optCount; ++i) {
-        if (options[i].shortname == optChar) {
+        if (options[i].shortname == opt) {
           return &(options[i]);
         }
       }
+
+      if (errorIfMissing) {
+        std::stringstream ss;
+        ss << "Unknown option [-" << opt << ']';
+        fatalError(ss.str());
+      }
+
       return NULL;
     }
 
-    option* parser::getOption(const std::string &opt) {
+    option* parser::getLongOption(const std::string &opt,
+                                  const bool errorIfMissing) {
       const int optCount = (int) options.size();
       for (int i = 0; i < optCount; ++i) {
         if (options[i].name == opt) {
           return &(options[i]);
         }
       }
+
+      if (errorIfMissing) {
+        std::stringstream ss;
+        ss << "Unknown option [--" << opt << ']';
+        fatalError(ss.str());
+      }
+
       return NULL;
+    }
+
+    option* parser::getOption(const std::string &arg,
+                              const bool errorIfMissing) {
+      if (isLongOption(arg)) {
+        return getLongOption(arg.substr(2), errorIfMissing);
+      }
+      return (isShortOption(arg)
+              ? getShortOption(arg[1], errorIfMissing)
+              : NULL);
     }
 
     bool parser::hasOptionalArg() {
@@ -312,11 +392,11 @@ namespace occa {
                  << ", an optional argument has already been added\n",
                  !hasOptionalArg());
 
-      option opt('\0', name_, description_);
+      argument arg(name_, description_);
       if (isRequired_) {
-        opt = opt.isRequired();
+        arg = arg.isRequired();
       }
-      arguments.push_back(opt);
+      arguments.push_back(arg);
 
       return *this;
     }
@@ -336,7 +416,7 @@ namespace occa {
       return *this;
     }
 
-    strVector parser::makeArgs(const int argc, const char **argv) {
+    strVector parser::vectorizeArgs(const int argc, const char **argv) {
       strVector args;
       for (int i = 0; i < argc; ++i) {
         args.push_back(argv[i]);
@@ -344,131 +424,200 @@ namespace occa {
       return args;
     }
 
-    occa::json parser::parse(const int argc, const char **argv) {
-      return parse(makeArgs(argc, argv));
+    // Create list of args, splitting combined short options
+    // -abc could split as
+    //   -> -a -b -c
+    //   -> -a bc
+    strVector parser::splitShortOptionArgs(const strVector &args) {
+      const int argc = (int) args.size();
+      bool splitShortOptions = true;
+
+      strVector newArgs;
+      newArgs.reserve(argc);
+
+      for (int i = 0; i < argc; ++i) {
+        const std::string arg = args[i];
+        const int argSize = (int) arg.size();
+
+        // Check for short option
+        if (!splitShortOptions ||
+            !hasShortOption(arg) ||
+            !getShortOption(arg[1], false)) {
+          splitShortOptions = (arg != "--");
+          newArgs.push_back(arg);
+          continue;
+        }
+
+        // Split short options
+        for (int ci = 1; ci < argSize; ++ci) {
+          option &opt = *(getShortOption(arg[ci]));
+
+          std::string shortArg = "-";
+          shortArg += opt.shortname;
+          newArgs.push_back(shortArg);
+
+          if ((ci < (argSize - 1)) &&
+              (opt.requiredArgs > 0)) {
+            newArgs.push_back(arg.substr(ci + 1));
+            break;
+          }
+        }
+      }
+
+      return newArgs;
     }
 
-    occa::json parser::parse(const strVector &args) {
-      occa::json parsedInfo(json::object_);
+    occa::json parser::parse(const int argc, const char **argv) {
+      return parse(vectorizeArgs(argc, argv));
+    }
+
+    occa::json parser::parse(const strVector &args_) {
+      strVector args = splitShortOptionArgs(args_);
       const int argc = (int) args.size();
 
       // Set name to script name
       name = args[0];
 
-      occa::json &jOrder     = parsedInfo["order"].asArray();
-      occa::json &jOptions   = parsedInfo["options"].asObject();
-      occa::json &jArguments = parsedInfo["arguments"].asArray();
+      bool hasHelpOption = hasCustomHelpOption();
+      if (!hasHelpOption) {
+        addHelpOption();
+      }
 
-      std::vector<option*> opts;
-      option *opt = NULL;
+      occa::json parsedArgs(json::object_);
+      occa::json &jOptions   = parsedArgs["options"].asObject();
+      occa::json &jArguments = parsedArgs["arguments"].asArray();
+      setOptionDefaults(jOptions);
 
-      occa::json *optArgs = &jArguments;
-      bool readingOpts = true;
+      // Make a list of used options to check required options later
+      std::map<std::string, bool> usedOptions;
 
+      bool checkOptions = true;
       for (int i = 1; i < argc; ++i) {
-        const std::string &arg_i = args[i];
-        bool gotOpt = false;
-        opts.clear();
+        const std::string &arg = args[i];
 
-        if (readingOpts) {
-          if (startsWith(arg_i, "--")) {
-            opt = getOption(arg_i.substr(2));
-            gotOpt = true;
-          }
-          else if (startsWith(arg_i, "-")) {
-            std::string args_i = arg_i.substr(1);
-            const int shortArgs = (int) args_i.size();
-            for (int j = 0; j < (shortArgs - 1); ++j) {
-              opts.push_back(getShortOption(std::string(1, args_i[j])));
-            }
-            if (shortArgs) {
-              opt = getShortOption(std::string(1, args_i[shortArgs - 1]));
-            }
-            gotOpt = true;
-          }
-          else {
-            const int optArgCount = (int) optArgs->array().size();
-            if (opt &&
-                (opt->requiredArgs >= 0) &&
-                (opt->requiredArgs <= optArgCount)) {
-              opt = NULL;
-              optArgs = &jArguments;
-            }
-            *optArgs += arg_i;
-          }
-        } else {
-          jArguments += arg_i;
+        option *opt = NULL;
+        if (checkOptions) {
+          opt = getOption(arg);
         }
 
-        readingOpts = !jArguments.array().size();
+        // No option
+        if (!opt) {
+          checkOptions = (arg == "==");
+          jArguments += arg;
+          continue;
+        }
 
-        if (gotOpt) {
-          if (((arg_i == "-h")     && !getShortOption("h")) ||
-              ((arg_i == "--help") && !getShortOption("help"))) {
+        if ((opt->name == "help") &&
+            !hasHelpOption) {
+          printUsage(name);
+          ::exit(0);
+        }
 
-            printUsage(name);
-            ::exit(0);
+        occa::json &jOpt = jOptions[opt->name];
+        usedOptions[opt->name] = true;
+
+        // True/False option
+        if (opt->requiredArgs <= 0) {
+          jOpt = true;
+          continue;
+        }
+
+        // Add argument to current option
+        for (int ai = 0; ai < opt->requiredArgs; ++ai) {
+          ++i;
+
+          option *subOpt = NULL;
+          if (i < argc) {
+            subOpt = getOption(args[i]);
+          }
+          if (subOpt || (i >= argc)) {
+            std::stringstream ss;
+            ss << "Incorrect arguments for [" << arg << ']';
+            fatalError(ss.str());
           }
 
-          opts.push_back(opt);
-          const int optCount = (int) opts.size();
-
-          for (int j = 0; j < optCount; ++j) {
-            if (!opts[j]) {
-              std::cerr << red("Error") << ": Unknown option [" << arg_i << "]\n";
-              printUsage(name, std::cerr);
-              ::exit(1);
-            }
-
-            option &opt_j = *(opts[j]);
-            jOrder += opt_j.name;
-
-            // --foo a b       = [[a b]]
-            // --foo a --foo b = [[a], [b]]
-            json &argArrays = jOptions[opt_j.name].asArray();
-            argArrays += json(json::array_);
-            jsonArray &argArray = argArrays.array();
-            optArgs = &(argArray[argArray.size() - 1]);
+          // Check if we need to store value or entry in array
+          if ((opt->requiredArgs > 1) ||
+              (opt->flags & option::flags_t::reusable)) {
+            jOpt += args[i];
+          } else {
+            jOpt = args[i];
           }
         }
       }
 
-      // Make sure required options were passed
-      for (int i = 0; i < (int) options.size(); ++i) {
-        option &opt_i = options[i];
-        const bool hasOption = jOptions.has(opt_i.name);
-
-        if (hasOption) {
-          jsonArray optArgs_i = jOptions[opt_i.name].array();
-          for (int j = 0; j < (int) optArgs_i.size(); ++j) {
-            if (opt_i.requiredArgs != (int) optArgs_i[j].array().size()) {
-              std::cerr << red("Error")
-                        << ": Option [" << opt_i << "] requires "
-                        << opt_i.requiredArgs << " argument"
-                        << ((opt_i.requiredArgs > 1) ? "s\n" : "\n");
-              printUsage(name, std::cerr);
-              ::exit(1);
-            }
-          }
-        } else if (opt_i.getIsRequired()) {
-          std::cerr << red("Error") << ": Option [" << opt_i << "] is required and missing\n";
-          printUsage(name, std::cerr);
-          ::exit(1);
+      // Check required options
+      const int optCount = (int) options.size();
+      for (int i = 0; i < optCount; ++i) {
+        option &opt = options[i];
+        if (!(opt.flags & option::flags_t::isRequired)) {
+          continue;
+        }
+        if (usedOptions.find(opt.name) == usedOptions.end()) {
+          std::stringstream ss;
+          ss << "Missing required option [" << opt.toString() << ']';
+          fatalError(ss.str());
         }
       }
 
+      // Check required arguments
       const int argCount = (int) jArguments.array().size();
       const int reqArgCount = (int) arguments.size() - hasOptionalArg();
-
       if (argCount < reqArgCount) {
-        if (argCount) {
-          std::cerr << red("Error") << ": Incorrect number of arguments\n";
+        if (argCount == 0) {
+          printUsage(name);
+          ::exit(0);
         }
-        printUsage(name, std::cerr);
-        ::exit(1);
+        fatalError("Incorrect number of arguments");
       }
 
-      return parsedInfo;
+      return parsedArgs;
+    }
+
+    bool parser::hasCustomHelpOption() {
+      const int optCount = (int) options.size();
+      for (int i = 0; i < optCount; ++i) {
+        option &opt = options[i];
+        if (opt.name == "help") {
+          return true;
+        }
+      }
+      return false;
+    }
+
+    void parser::addHelpOption() {
+      bool hasShortOption = false;
+      const int optCount = (int) options.size();
+      for (int i = 0; i < optCount; ++i) {
+        option &opt = options[i];
+        if (opt.name == "help") {
+          return;
+        }
+        hasShortOption = (opt.shortname == 'h');
+      }
+      options.push_back(
+        option(hasShortOption ? '\0' : 'h',
+               "help",
+               "Print usage")
+      );
+    }
+
+    void parser::setOptionDefaults(occa::json &jOptions) {
+      const int optCount = (int) options.size();
+      for (int i = 0; i < optCount; ++i) {
+        option &opt = options[i];
+        occa::json &jOpt = jOptions[opt.name];
+
+        if (opt.requiredArgs <= 0) {
+          jOpt = false;
+        }
+        else if ((opt.requiredArgs > 1) ||
+                 (opt.flags & option::flags_t::reusable)) {
+          jOpt.asArray();
+        } else {
+          jOpt = "";
+        }
+      }
     }
 
     void parser::printUsage(const std::string &program,
@@ -496,9 +645,7 @@ namespace occa {
       }
       out << "\n\n";
       if (description.size()) {
-        printable::printDescription(out,
-                                    0, MAX_NAME_COLUMN_WIDTH + MAX_DESC_COLUMN_WIDTH,
-                                    description);
+        pretty::printDescription(out, description);
       } else {
         out << '\n';
       }
@@ -507,11 +654,18 @@ namespace occa {
       printRequired(out);
 
       std::sort(options.begin(), options.end());
-      printable::printEntries("Arguments", arguments, out);
-      printable::printEntries("Options", options, out);
+      pretty::printEntries("Arguments", arguments, out);
+      pretty::printEntries("Options", options, out);
     }
 
     void parser::printRequired(std::ostream &out) {}
+
+    void parser::fatalError(const std::string &message) {
+      std::cerr << red("Error") << ": " << message << '\n';
+      printUsage(name, std::cerr);
+      ::exit(1);
+    }
+    //==================================
 
     //---[ Command ]--------------------
     command::command() :
@@ -586,7 +740,7 @@ namespace occa {
 
     void command::printRequired(std::ostream &out) {
       std::sort(commands.begin(), commands.end());
-      printable::printEntries("Commands", commands, out);
+      pretty::printEntries("Commands", commands, out);
     }
 
     command& command::requiresCommand() {
@@ -600,13 +754,13 @@ namespace occa {
     }
 
     void command::run(const int argc, const char **argv) {
-      run(makeArgs(argc, argv));
+      run(vectorizeArgs(argc, argv));
     }
 
     void command::run(const strVector &args,
                       command *parent) {
       runParent = parent;
-      runArgs = args;
+      runArgs = splitShortOptionArgs(args);
 
       const bool hasCommands = commands.size();
 
@@ -616,9 +770,8 @@ namespace occa {
                     commandIsRequired);
       }
 
-      json info = parse(args);
-
-      json &jArguments = info["arguments"];
+      json parsedArgs = parse(args);
+      json &jArguments = parsedArgs["arguments"];
       strVector inputArgs = jArguments.getArray<std::string>();
 
       const int commandArg = arguments.size() - 1;
@@ -643,10 +796,7 @@ namespace occa {
         comm = getCommand(commandName);
       }
 
-      if (callback && !callback(*this,
-                                info["order"].array(),
-                                info["options"].object(),
-                                info["arguments"].array())) {
+      if (callback && !callback(parsedArgs)) {
         printUsage(std::cerr);
         ::exit(1);
       }
@@ -781,5 +931,6 @@ namespace occa {
     bool command::operator < (const command &comm) const {
       return name < comm.name;
     }
+    //==================================
   }
 }

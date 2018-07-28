@@ -45,24 +45,6 @@ std::string envEcho(const std::string &arg, const TM &defaultValue) {
   return (ret.size() ? ret : toString(defaultValue));
 }
 
-void flattenArray(const jsonArray &array, jsonArray &flatArray) {
-  const int count = (int) array.size();
-  for (int i = 0; i < count; ++i) {
-    json value = array[i];
-    if (!value.isArray()) {
-      flatArray.push_back(value);
-    } else {
-      flattenArray(value.array(), flatArray);
-    }
-  }
-}
-
-jsonArray flattenArray(const jsonArray &array) {
-  jsonArray flatArray;
-  flattenArray(array, flatArray);
-  return flatArray;
-}
-
 bool safeRmrf(const std::string &dir, const bool promptCheck = true) {
   if (!io::isDir(dir) && !io::isFile(dir)) {
     return false;
@@ -87,117 +69,99 @@ bool safeRmrf(const std::string &dir, const bool promptCheck = true) {
   return true;
 }
 
-jsonArray getOptionIncludePaths(jsonObject &options,
-                                const std::string optionName) {
-  jsonObject::const_iterator it = options.find(optionName);
-  if (it == options.end()) {
-    return jsonArray();
+properties getOptionProperties(const json &opt) {
+  properties props;
+  for (int i = 0; i < opt.size(); ++i) {
+    props += properties((std::string) opt[i]);
   }
-  jsonArray paths = flattenArray(it->second.array());
-  int pathCount = 0;
-  for (int i = 0; i < (int) paths.size(); ++i) {
-    if (paths[i].isString()) {
-      paths[pathCount++] = paths[i];
-    }
-  }
-  paths.resize(pathCount);
-  return paths;
+  return props;
 }
 
-jsonObject getOptionDefines(jsonObject &options,
-                            const std::string optionName) {
-  jsonObject::const_iterator it = options.find(optionName);
-  if (it == options.end()) {
-    return jsonObject();
-  }
-  jsonArray definesArray = flattenArray(it->second.array());
-  jsonObject defines;
-  for (int i = 0; i < (int) definesArray.size(); ++i) {
-    if (!definesArray[i].isString()) {
+json getOptionDefines(const json &opt) {
+  json defines(json::object_);
+  for (int i = 0; i < opt.size(); ++i) {
+    const std::string defineStr = opt[i];
+    if (!defineStr.size()) {
       continue;
     }
-    const std::string defineStr = definesArray[i];
+
     strVector parts = split(defineStr, '=', '\\');
     const int partCount = (int) parts.size();
+    const std::string name = parts[0];
+
     // Empty define
     if (partCount == 1) {
-      defines[defineStr] = "";
+      defines[name] = "";
     }
     if (partCount < 2) {
       continue;
     }
-    // Split key and value on first = found
-    const std::string define = parts[0];
     parts.erase(parts.begin());
-    defines[define] = join(parts, "=");
+    defines[name] = join(parts, "=");
   }
   return defines;
 }
 
-bool runClear(const cli::command &command,
-              jsonArray order,
-              jsonObject options,
-              jsonArray arguments) {
-
-  jsonObject::const_iterator it = options.begin();
-  if (it == options.end()) {
-    return false;
-  }
-
-  bool removedSomething = false;
-  const bool promptCheck = (options.find("yes") == options.end());
-  while (it != options.end()) {
-    if (it->first == "all") {
-      removedSomething |= safeRmrf(env::OCCA_CACHE_DIR, promptCheck);
-    } else if (it->first == "lib") {
-      jsonArray libs = flattenArray(it->second.array());
-      for (int i = 0; i < (int) libs.size(); ++i) {
-        removedSomething |= safeRmrf(io::libraryPath() +
-                                      (std::string) libs[i],
-                                      promptCheck);
-      }
-    } else if (it->first == "libraries") {
-      removedSomething |= safeRmrf(io::libraryPath(), promptCheck);
-    } else if (it->first == "kernels") {
-      removedSomething |= safeRmrf(io::cachePath(), promptCheck);
-    } else if (it->first == "locks") {
-      const std::string lockPath = env::OCCA_CACHE_DIR + "locks/";
-      removedSomething |= safeRmrf(lockPath, promptCheck);
-    }
-    ++it;
-  }
+void printRemovedMessage(const bool removedSomething) {
   if (!removedSomething) {
     std::cout << "  Nothing to remove.\n";
   }
+}
+
+bool runClear(const json &args) {
+  const json &options = args["options"];
+
+  const bool promptCheck = !options["yes"];
+
+  if (options["all"] &&
+      safeRmrf(env::OCCA_CACHE_DIR, promptCheck)) {
+    printRemovedMessage(true);
+    return true;
+  }
+
+  bool removedSomething = false;
+  if (options["libraries"]) {
+    removedSomething |= safeRmrf(io::libraryPath(), promptCheck);
+  } else {
+    const json &libs = options["lib"];
+    for (int i = 0; i < libs.size(); ++i) {
+      removedSomething |= safeRmrf(io::libraryPath() +
+                                   (std::string) libs[i],
+                                   promptCheck);
+    }
+  }
+
+  if (options["kernels"]) {
+    removedSomething |= safeRmrf(io::cachePath(), promptCheck);
+  }
+  if (options["locks"]) {
+    const std::string lockPath = env::OCCA_CACHE_DIR + "locks/";
+    removedSomething |= safeRmrf(lockPath, promptCheck);
+  }
+
+  printRemovedMessage(removedSomething);
+
   return true;
 }
 
-bool runVersion(const cli::command &command,
-                jsonArray order,
-                jsonObject options,
-                jsonArray arguments) {
-
-  jsonObject::const_iterator it = options.begin();
-  if (it == options.end()) {
+bool runVersion(const json &args) {
+  if (args["options/okl"]) {
+    std::cout << OKL_VERSION_STR << '\n';
+  } else {
     std::cout << OCCA_VERSION_STR << '\n';
   }
-  else if (options.find("okl") != options.end()) {
-    std::cout << OKL_VERSION_STR << '\n';
-  }
   return true;
 }
 
-bool runCache(const cli::command &command,
-              jsonArray order,
-              jsonObject options,
-              jsonArray arguments) {
+bool runCache(const json &args) {
+  const json &arguments = args["arguments"];
+
   std::string libDir = (io::libraryPath()
                         + (std::string) arguments[0]
                         + "/");
   sys::mkpath(libDir);
 
-  const int fileCount = arguments.size();
-  for (int i = 1; i < fileCount; ++i) {
+  for (int i = 1; i < arguments.size(); ++i) {
     const std::string srcFile = arguments[i];
     const std::string destFile = libDir + io::basename(srcFile);
 
@@ -215,50 +179,25 @@ bool runCache(const cli::command &command,
     src.close();
     dest.close();
   }
+
   return true;
 }
 
-properties getOptionProperties(jsonObject &options,
-                               const std::string optionName) {
-  properties props;
+bool runTranslate(const json &args) {
+  const json &options = args["options"];
+  const json &arguments = args["arguments"];
 
-  jsonObject::iterator it = options.find(optionName);
-  if (it == options.end()) {
-    return props;
-  }
-
-  json &propsList = it->second;
-  const int propsCount = propsList.size();
-  for (int i = 0; i < propsCount; ++i) {
-    props += occa::properties((std::string) propsList[i][0]);
-  }
-  return props;
-}
-
-bool runTranslate(const cli::command &command,
-                  jsonArray order,
-                  jsonObject options,
-                  jsonArray arguments) {
-
-  const std::string mode = options["mode"][0][0];
+  const std::string mode = options["mode"];
   const std::string filename = arguments[0];
 
   if (!io::exists(filename)) {
-    occa::printError("File [" + filename + "] doesn't exist" );
+    printError("File [" + filename + "] doesn't exist" );
     ::exit(1);
   }
 
-  properties kernelProps = getOptionProperties(options, "kernel-props");
-
-  // Add include_paths
-  kernelProps["include_paths"] = (
-    getOptionIncludePaths(options, "include-path")
-  );
-
-  // Add defines
-  kernelProps["defines"].asObject() += (
-    getOptionDefines(options, "define")
-  );
+  properties kernelProps = getOptionProperties(options["kernel-props"]);
+  kernelProps["include_paths"].asArray() += options["include-path"];
+  kernelProps["defines"].asObject() += getOptionDefines(options["define"]);
 
   lang::parser_t *parser = NULL;
   if (mode == "Serial") {
@@ -274,7 +213,7 @@ bool runTranslate(const cli::command &command,
   }
 
   if (!parser) {
-    occa::printError("Unable to translate for mode [" + mode + "]");
+    printError("Unable to translate for mode [" + mode + "]");
     ::exit(1);
   }
 
@@ -286,8 +225,7 @@ bool runTranslate(const cli::command &command,
     return false;
   }
 
-  const bool isVerbose = (options.find("verbose") != options.end());
-  if (isVerbose) {
+  if (options["verbose"]) {
     properties translationInfo;
     // Filename
     translationInfo["translate_info/filename"] = io::filename(filename);
@@ -310,44 +248,32 @@ bool runTranslate(const cli::command &command,
   return success;
 }
 
-bool runCompile(const cli::command &command,
-                jsonArray order,
-                jsonObject options,
-                jsonArray arguments) {
+bool runCompile(const json &args) {
+  const json &options = args["options"];
+  const json &arguments = args["arguments"];
 
   const std::string filename = arguments[0];
   const std::string kernelName = arguments[1];
 
   if (!io::exists(filename)) {
-    occa::printError("File [" + filename + "] doesn't exist" );
+    printError("File [" + filename + "] doesn't exist" );
     ::exit(1);
   }
 
-  properties deviceProps = getOptionProperties(options, "device-props");
-  properties kernelProps = getOptionProperties(options, "kernel-props");
-  kernelProps["verbose"] = true;
+  properties deviceProps = getOptionProperties(options["device-props"]);
 
-  // Add include_paths
-  kernelProps["include_paths"] = (
-    getOptionIncludePaths(options, "include_path")
-  );
+  properties kernelProps = getOptionProperties(options["kernel-props"]);
+  kernelProps["verbose"] = kernelProps.get("verbose", true);
+  kernelProps["include_paths"].asArray() += options["include-path"];
+  kernelProps["defines"].asObject() += getOptionDefines(options["define"]);
 
-  // Add defines
-  kernelProps["defines"].asObject() += (
-    getOptionDefines(options, "define")
-  );
-
-  occa::device device(deviceProps);
+  device device(deviceProps);
   device.buildKernel(filename, kernelName, kernelProps);
 
   return true;
 }
 
-bool runEnv(const cli::command &command,
-            jsonArray order,
-            jsonObject options,
-            jsonArray arguments) {
-
+bool runEnv(const json &args) {
   std::cout << "  Basic:\n"
             << "    - OCCA_DIR                   : " << envEcho("OCCA_DIR") << "\n"
             << "    - OCCA_CACHE_DIR             : " << envEcho("OCCA_CACHE_DIR") << "\n"
@@ -377,19 +303,12 @@ bool runEnv(const cli::command &command,
   return true;
 }
 
-bool runInfo(const cli::command &command,
-             jsonArray order,
-             jsonObject options,
-             jsonArray arguments) {
+bool runInfo(const json &args) {
   printModeInfo();
   return true;
 }
 
-bool runModes(const cli::command &command,
-              jsonArray order,
-              jsonObject options,
-              jsonArray arguments) {
-
+bool runModes(const json &args) {
   strToModeMap &modes = modeMap();
   strToModeMap::iterator it = modes.begin();
   while (it != modes.end()) {
@@ -399,10 +318,7 @@ bool runModes(const cli::command &command,
   return true;
 }
 
-bool runBashAutocomplete(const cli::command &command,
-                         jsonArray order,
-                         jsonObject options,
-                         jsonArray arguments) {
+bool runBashAutocomplete(const json &args) {
   occaCommand.printBashAutocomplete();
   return true;
 }
@@ -458,22 +374,22 @@ int main(const int argc, const char **argv) {
     .addOption(cli::option('m', "mode",
                            "Output mode")
                .isRequired()
-               .withArgs(1)
+               .withArg()
                .expandsFunction("occa modes"))
     .addOption(cli::option('k', "kernel-props",
                            "Kernel properties")
                .reusable()
-               .withArgs(1))
+               .withArg())
     .addOption(cli::option('I', "include-path",
                            "Add additional include path")
                .reusable()
-               .withArgs(1))
+               .withArg())
     .addOption(cli::option('D', "define",
                            "Add additional define")
                .reusable()
-               .withArgs(1))
+               .withArg())
     .addOption(cli::option('v',"verbose",
-			   "Verbose output"))
+                           "Verbose output"))
     .addArgument("FILE",
                  "An .okl file",
                  true);
@@ -486,19 +402,19 @@ int main(const int argc, const char **argv) {
     .addOption(cli::option('d', "device-props",
                            "Device properties")
                .reusable()
-               .withArgs(1))
+               .withArg())
     .addOption(cli::option('k', "kernel-props",
                            "Kernel properties")
                .reusable()
-               .withArgs(1))
+               .withArg())
     .addOption(cli::option('I', "include-path",
                            "Add additional include path")
                .reusable()
-               .withArgs(1))
+               .withArg())
     .addOption(cli::option('D', "define",
                            "Add additional define")
                .reusable()
-               .withArgs(1))
+               .withArg())
     .addArgument("FILE",
                  "An .okl file",
                  true)

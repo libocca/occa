@@ -224,15 +224,10 @@ namespace occa {
 
 
   //---[ Kernel Properties ]------------
-  occa::properties getKernelProperties() {
-    occa::properties props;
-    props["defines"].asObject();
-    props["includes"].asArray();
-    props["header"].asArray();
-    props["include_paths"].asArray();
-    return props;
-  }
-
+  // defines       : Object
+  // includes      : Array
+  // header        : Array
+  // include_paths : Array
   std::string assembleHeader(const occa::properties &props) {
     std::string header;
 
