@@ -63,8 +63,6 @@ namespace occa {
     //---[ Option ]---------------------
     class option : public printable {
     public:
-      char shortname;
-
       class flags_t {
       public:
         static const int isRequired      = (1 << 0);
@@ -74,9 +72,12 @@ namespace occa {
         static const int expandsFunction = (1 << 4);
       };
 
+      char shortname;
+
       int flags;
       int requiredArgs;
       std::string expansionFunction;
+      json defaultValue;
 
       option();
 
@@ -91,12 +92,15 @@ namespace occa {
       option reusable();
       option withArg();
       option withArgs(const int requiredArgs_);
+      option withDefaultValue(const json &defaultValue_);
 
       option stopsExpansion();
       option expandsFiles();
       option expandsFunction(const std::string &function);
 
       bool getIsRequired();
+      bool getReusable();
+      bool hasDefaultValue();
 
       virtual std::string getPrintName() const;
       virtual std::string toString() const;

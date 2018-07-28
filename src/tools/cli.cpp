@@ -124,6 +124,12 @@ namespace occa {
       return opt;
     }
 
+    option option::withDefaultValue(const json &defaultValue_) {
+      option opt = *this;
+      opt.defaultValue = defaultValue_;
+      return opt;
+    }
+
     option option::withArg() {
       option opt = *this;
       opt.requiredArgs = 1;
@@ -157,6 +163,14 @@ namespace occa {
 
     bool option::getIsRequired() {
       return (flags & flags_t::isRequired);
+    }
+
+    bool option::getReusable() {
+      return (flags & flags_t::reusable);
+    }
+
+    bool option::hasDefaultValue() {
+      return defaultValue.isInitialized();
     }
 
     std::string option::getPrintName() const {
@@ -538,7 +552,7 @@ namespace occa {
 
           // Check if we need to store value or entry in array
           if ((opt->requiredArgs > 1) ||
-              (opt->flags & option::flags_t::reusable)) {
+              opt->getReusable()) {
             jOpt += args[i];
           } else {
             jOpt = args[i];
@@ -550,7 +564,7 @@ namespace occa {
       const int optCount = (int) options.size();
       for (int i = 0; i < optCount; ++i) {
         option &opt = options[i];
-        if (!(opt.flags & option::flags_t::isRequired)) {
+        if (!opt.getIsRequired()) {
           continue;
         }
         if (usedOptions.find(opt.name) == usedOptions.end()) {
@@ -608,13 +622,17 @@ namespace occa {
         option &opt = options[i];
         occa::json &jOpt = jOptions[opt.name];
 
-        if (opt.requiredArgs <= 0) {
+        if (opt.hasDefaultValue()) {
+          jOpt = opt.defaultValue;
+        }
+        else if (opt.requiredArgs <= 0) {
           jOpt = false;
         }
         else if ((opt.requiredArgs > 1) ||
-                 (opt.flags & option::flags_t::reusable)) {
+                 opt.getReusable()) {
           jOpt.asArray();
-        } else {
+        }
+        else {
           jOpt = "";
         }
       }
