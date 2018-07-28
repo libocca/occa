@@ -127,4 +127,5 @@ script:
 
   - cd ${TRAVIS_BUILD_DIR}
   - CXXFLAGS="${TEST_CXXFLAGS}" make -j 4 test
-  - bash <(curl -s https://codecov.io/bash)
+  - bash <(curl --no-buffer -s https://codecov.io/bash) > codecov_output
+  - head -n 100 codecov_output
