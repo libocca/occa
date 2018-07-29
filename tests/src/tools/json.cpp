@@ -26,6 +26,7 @@
 #include <occa/tools/string.hpp>
 #include <occa/tools/testing.hpp>
 
+void testAsTypes();
 void testString();
 void testNumber();
 void testObject();
@@ -33,9 +34,12 @@ void testArray();
 void testKeywords();
 void testMethods();
 void testSize();
+void testTruthyValues();
+void testComparisons();
 void testConversions();
 
 int main(const int argc, const char **argv) {
+  testAsTypes();
   testString();
   testNumber();
   testObject();
@@ -43,9 +47,29 @@ int main(const int argc, const char **argv) {
   testKeywords();
   testMethods();
   testSize();
+  testTruthyValues();
+  testComparisons();
   testConversions();
 
   return 0;
+}
+
+void testAsTypes() {
+  occa::json j;
+
+  ASSERT_TRUE(j.asString().isString());
+  ASSERT_TRUE(j.asNumber().isNumber());
+  ASSERT_TRUE(j.asObject().isObject());
+  ASSERT_TRUE(j.asArray().isArray());
+  ASSERT_TRUE(j.asBoolean().isBoolean());
+  ASSERT_TRUE(j.asNull().isNull());
+
+  ASSERT_TRUE(j.asNumber().asString().isString());
+  ASSERT_TRUE(j.asObject().asNumber().isNumber());
+  ASSERT_TRUE(j.asArray().asObject().isObject());
+  ASSERT_TRUE(j.asBoolean().asArray().isArray());
+  ASSERT_TRUE(j.asNull().asBoolean().isBoolean());
+  ASSERT_TRUE(j.asNumber().asNull().isNull());
 }
 
 void testString() {
@@ -53,7 +77,7 @@ void testString() {
   j.load(str_);                                 \
   ASSERT_TRUE(j.isString());                    \
   ASSERT_EQ(expected_str_,                      \
-            j.value_.string)
+            j.string())
 
   occa::json j;
 
@@ -99,11 +123,11 @@ void testString() {
 }
 
 void testNumber() {
-#define checkNumber(str_, type_, expected_number_) \
-  j.load(str_);                                    \
-  ASSERT_TRUE(j.isNumber());                       \
-  ASSERT_EQ(expected_number_,                      \
-            (type_) j.value_.number)
+#define checkNumber(str_, type_, expected_number_)  \
+  j.load(str_);                                     \
+  ASSERT_TRUE(j.isNumber());                        \
+  ASSERT_EQ(expected_number_,                       \
+            (type_) j.number())
 
   occa::json j;
 
@@ -142,12 +166,12 @@ void testObject() {
   j.load(str_);                                 \
   ASSERT_TRUE(j.isObject());                    \
   ASSERT_EQ(expected_size_,                     \
-            (int) j.value_.object.size())
+            (int) j.object().size())
 
-#define checkNumber(key_, type_, expected_number_)      \
-  ASSERT_TRUE(j.value_.object[key_].isNumber());        \
-  ASSERT_EQ(expected_number_,                           \
-            (type_) j.value_.object[key_].value_.number)
+#define checkNumber(key_, type_, expected_number_)  \
+  ASSERT_TRUE(j.object()[key_].isNumber());         \
+  ASSERT_EQ(expected_number_,                       \
+            (type_) j.object()[key_].number())
 
   occa::json j;
 
@@ -181,12 +205,12 @@ void testArray() {
   j.load(str_);                                 \
   ASSERT_TRUE(j.isArray());                     \
   ASSERT_EQ(expected_size_,                     \
-            (int) j.value_.array.size())
+            (int) j.array().size())
 
-#define checkNumber(index_, type_, expected_number_)      \
-  ASSERT_TRUE(j.value_.array[index_].isNumber());         \
-  ASSERT_EQ(expected_number_,                             \
-            (type_) j.value_.array[index_].value_.number)
+#define checkNumber(index_, type_, expected_number_)  \
+  ASSERT_TRUE(j.array()[index_].isNumber());          \
+  ASSERT_EQ(expected_number_,                         \
+            (type_) j.array()[index_].number())
 
   occa::json j;
 
@@ -299,16 +323,60 @@ void testSize() {
             j["object"].size());
 }
 
+void testTruthyValues() {
+  ASSERT_FALSE(occa::json());
+
+  ASSERT_FALSE(occa::json::parse("false"));
+  ASSERT_TRUE(occa::json::parse("true"));
+
+  ASSERT_FALSE(occa::json::parse("0"));
+  ASSERT_TRUE(occa::json::parse("1"));
+
+  ASSERT_FALSE(occa::json::parse("''"));
+  ASSERT_TRUE(occa::json::parse("'1'"));
+
+  ASSERT_TRUE(occa::json::parse("[]"));
+  ASSERT_TRUE(occa::json::parse("[1]"));
+
+  ASSERT_TRUE(occa::json::parse("{}"));
+  ASSERT_TRUE(occa::json::parse("{ a: 1 }"));
+}
+
+void testComparisons() {
+  occa::json data = occa::json::parse(
+    "{"
+    "  zero: 0,"
+    "  one: 1,"
+    "  two: 2.0,"
+    "  false: false,"
+    "  true: true,"
+    "  null: null,"
+    "  array: [1, 2],"
+    "  object: { a: 1, b: 2},"
+    "}"
+  );
+  occa::strVector keys = data.keys();
+  for (int j = 0; j < (int) keys.size(); ++j) {
+    const std::string jKey = keys[j];
+    for (int i = 0; i < (int) keys.size(); ++i) {
+      const std::string iKey = keys[i];
+      ASSERT_EQ((data[jKey] == data[iKey]),
+                (i == j));
+    }
+  }
+}
+
 void testConversions() {
-  occa::json j;
-  j.load("{"
-         "  zero: 0,"
-         "  one: 1,"
-         "  two: 2.0,"
-         "  false: false,"
-         "  true: true,"
-         "  null: null,"
-         "}");
+  occa::json j = occa::json::parse(
+    "{"
+    "  zero: 0,"
+    "  one: 1,"
+    "  two: 2.0,"
+    "  false: false,"
+    "  true: true,"
+    "  null: null,"
+    "}"
+  );
 
   // Test 0
   ASSERT_EQ((bool) false,
