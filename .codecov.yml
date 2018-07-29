@@ -22,6 +22,13 @@ ignore:
   - src/tools/runFunction.cpp
   # Exception is not tracked properly
   - src/tools/exception.cpp
+  # Modes that can't be tested with Travis
+  - include/occa/modes/opencl
+  - include/occa/modes/cuda
+  - include/occa/modes/hip
+  - src/modes/opencl
+  - src/modes/cuda
+  - src/modes/hip
 
 comment:
   layout: 'reach, diff, files'
