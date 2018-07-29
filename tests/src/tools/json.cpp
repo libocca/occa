@@ -222,6 +222,27 @@ void testArray() {
   checkNumber(0, int, 1);
   checkNumber(1, int, 2);
 
+  occa::strVector vec;
+  vec.push_back("a");
+  vec.push_back("b");
+  vec.push_back("c");
+
+  ASSERT_TRUE(occa::json::parse("1")
+              .getArray<std::string>()
+              == occa::strVector());
+  ASSERT_TRUE(occa::json::parse("{}")
+              .getArray<std::string>()
+              == occa::strVector());
+  ASSERT_TRUE(occa::json::parse("['a', 'b', 'c']")
+              .getArray<std::string>()
+              == vec);
+  ASSERT_TRUE(occa::json::parse("{ key: ['a', 'b', 'c'] }")
+              .getArray<std::string>("key")
+              == vec);
+  ASSERT_TRUE(occa::json::parse("{ key: ['a', 'b', 'c'] }")
+              .getArray<std::string>("foo")
+              == occa::strVector());
+
 #undef loadArray
 #undef checkNumber
 }
