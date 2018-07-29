@@ -35,6 +35,7 @@ int main(const int argc, const char **argv) {
 
   testProperties();
 }
+
 void testProperties() {
   occaProperties cProps = occaCreateProperties();
   occa::properties &props = occa::c::properties(cProps);

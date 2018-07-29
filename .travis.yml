@@ -111,7 +111,7 @@ matrix:
 env:
   global:
     - LD_LIBRARY_PATH="${TRAVIS_BUILD_DIR}/lib:${LD_LIBRARY_PATH}"
-    - CXXFLAGS="-g -O0"
+    - CXXFLAGS="-g -O0 -fno-inline"
 
 
 before_install:
@@ -126,10 +126,6 @@ before_install:
     export OCCA_COVERAGE=1
     export BUILD_CXXFLAGS="${CXXFLAGS}"
     export TEST_CXXFLAGS="${CXXFLAGS}"
-    if [[ "${CXX}" =~ g++.* ]]; then
-      BUILD_CXXFLAGS+=" -fuse-ld=gold -fprofile-arcs"
-      TEST_CXXFLAGS+=" -fuse-ld=gold -lgcov"
-    fi
 
 script:
   - cd ${TRAVIS_BUILD_DIR}

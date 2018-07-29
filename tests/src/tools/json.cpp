@@ -51,8 +51,7 @@ int main(const int argc, const char **argv) {
 void testString() {
 #define checkString(str_, expected_str_)        \
   j.load(str_);                                 \
-  ASSERT_EQ_BINARY(occa::json::string_,         \
-                   j.type);                     \
+  ASSERT_TRUE(j.isString());                    \
   ASSERT_EQ(expected_str_,                      \
             j.value_.string)
 
@@ -102,8 +101,7 @@ void testString() {
 void testNumber() {
 #define checkNumber(str_, type_, expected_number_) \
   j.load(str_);                                    \
-  ASSERT_EQ_BINARY(occa::json::number_,            \
-                   j.type);                        \
+  ASSERT_TRUE(j.isNumber());                       \
   ASSERT_EQ(expected_number_,                      \
             (type_) j.value_.number)
 
@@ -142,14 +140,12 @@ void testNumber() {
 void testObject() {
 #define loadObject(str_, expected_size_)        \
   j.load(str_);                                 \
-  ASSERT_EQ_BINARY(occa::json::object_,         \
-                   j.type);                     \
+  ASSERT_TRUE(j.isObject());                    \
   ASSERT_EQ(expected_size_,                     \
             (int) j.value_.object.size())
 
 #define checkNumber(key_, type_, expected_number_)      \
-  ASSERT_EQ(occa::json::number_,                        \
-            j.value_.object[key_].type);                \
+  ASSERT_TRUE(j.value_.object[key_].isNumber());        \
   ASSERT_EQ(expected_number_,                           \
             (type_) j.value_.object[key_].value_.number)
 
@@ -183,15 +179,13 @@ void testObject() {
 void testArray() {
 #define loadArray(str_, expected_size_)         \
   j.load(str_);                                 \
-  ASSERT_EQ(occa::json::array_,                 \
-            j.type);                            \
+  ASSERT_TRUE(j.isArray());                     \
   ASSERT_EQ(expected_size_,                     \
             (int) j.value_.array.size())
 
-#define checkNumber(index_, type_, expected_number_)  \
-  ASSERT_EQ(occa::json::number_,                      \
-            j.value_.array[index_].type);             \
-  ASSERT_EQ(expected_number_,                         \
+#define checkNumber(index_, type_, expected_number_)      \
+  ASSERT_TRUE(j.value_.array[index_].isNumber());         \
+  ASSERT_EQ(expected_number_,                             \
             (type_) j.value_.array[index_].value_.number)
 
   occa::json j;
@@ -212,20 +206,17 @@ void testKeywords() {
   occa::json j;
 
   j.load("true");
-  ASSERT_EQ(occa::json::boolean_,
-            j.type);
+  ASSERT_TRUE(j.isBoolean());
   ASSERT_EQ(true,
             j.value_.boolean);
 
   j.load("false");
-  ASSERT_EQ(occa::json::boolean_,
-            j.type);
+  ASSERT_TRUE(j.isBoolean());
   ASSERT_EQ(false,
             j.value_.boolean);
 
   j.load("null");
-  ASSERT_EQ(occa::json::null_,
-            j.type);
+  ASSERT_TRUE(j.isNull());
 }
 
 void testMethods() {
@@ -277,8 +268,7 @@ void testMethods() {
 
   // Default get
   j = occa::json();
-  ASSERT_EQ(occa::json::none_,
-            j["hi"].type);
+  ASSERT_FALSE(j["hi"].isInitialized());
 }
 
 void testSize() {
