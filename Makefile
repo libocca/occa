@@ -39,7 +39,7 @@ endif
 #   using $OCCA_DIR/scripts/Makefile
 paths += -I$(srcPath)
 paths := $(filter-out -L$(OCCA_DIR)/lib,$(paths))
-links := $(filter-out -locca,$(links))
+linkerFlags := $(filter-out -locca,$(linkerFlags))
 #=================================================
 
 #---[ variables ]---------------------------------
@@ -99,11 +99,11 @@ $(COMPILED_DEFINES_CHANGED):
 #  ---[ libocca ]-------------
 $(libPath)/libocca.so:$(objects) $(headers) $(COMPILED_DEFINES)
 	mkdir -p $(libPath)
-	$(compiler) $(compilerFlags) $(sharedFlag) $(pthreadFlag) -o $(libPath)/libocca.so $(flags) $(objects) $(paths) $(filter-out -locca, $(links))
+	$(compiler) $(compilerFlags) $(sharedFlag) $(pthreadFlag) -o $(libPath)/libocca.so $(flags) $(objects) $(paths) $(filter-out -locca, $(linkerFlags))
 
 $(binPath)/occa:$(OCCA_DIR)/scripts/occa.cpp $(libPath)/libocca.so $(COMPILED_DEFINES_CHANGED)
 	@mkdir -p $(binPath)
-	$(compiler) $(compilerFlags) -o $(binPath)/occa -Wl,-rpath,$(libPath) $(flags) $(OCCA_DIR)/scripts/occa.cpp $(paths) $(links) -L$(OCCA_DIR)/lib -locca
+	$(compiler) $(compilerFlags) -o $(binPath)/occa -Wl,-rpath,$(libPath) $(flags) $(OCCA_DIR)/scripts/occa.cpp $(paths) $(linkerFlags) -L$(OCCA_DIR)/lib -locca
 #  ===========================
 
 $(OCCA_DIR)/obj/%.o:$(OCCA_DIR)/src/%.cpp $(OCCA_DIR)/include/occa/%.hpp $(OCCA_DIR)/include/occa/%.tpp $(COMPILED_DEFINES_CHANGED)
@@ -137,7 +137,7 @@ e2e-tests: unit-tests
 
 $(testPath)/bin/%:$(testPath)/src/%.cpp $(libPath)/libocca.so
 	@mkdir -p $(abspath $(dir $@))
-	$(compiler) $(testFlags) $(pthreadFlag) -o $@ $(flags) $< $(paths) $(links) -L$(OCCA_DIR)/lib -locca
+	$(compiler) $(testFlags) $(pthreadFlag) -o $@ $(flags) $< $(paths) $(linkerFlags) -L$(OCCA_DIR)/lib -locca
 #=================================================
 
 

@@ -5,7 +5,7 @@ else
   include ${OCCA_DIR}/scripts/Makefile
 endif
 
-links += -lcudart
+linkerFlags += -lcudart
 
 #---[ COMPILATION ]-------------------------------
 headers = $(wildcard $(incPath)/*.hpp) $(wildcard $(incPath)/*.tpp)
@@ -18,7 +18,7 @@ executables = ${PROJ_DIR}/main
 all: $(executables)
 
 ${PROJ_DIR}/main: $(objects) $(headers) ${PROJ_DIR}/main.cpp
-	$(compiler) $(compilerFlags) -o ${PROJ_DIR}/main $(flags) $(objects) ${PROJ_DIR}/main.cpp $(paths) -L${OCCA_DIR}/lib $(links)
+	$(compiler) $(compilerFlags) -o ${PROJ_DIR}/main $(flags) $(objects) ${PROJ_DIR}/main.cpp $(paths) -L${OCCA_DIR}/lib $(linkerFlags)
 
 $(objPath)/%.o:$(srcPath)/%.cpp $(wildcard $(subst $(srcPath)/,$(incPath)/,$(<:.cpp=.hpp))) $(wildcard $(subst $(srcPath)/,$(incPath)/,$(<:.cpp=.tpp)))
 	$(compiler) $(compilerFlags) -o $@ $(flags) -c $(paths) $<

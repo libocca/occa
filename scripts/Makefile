@@ -143,16 +143,17 @@ ifeq ($(OCCA_COVERAGE),1)
   coverageFlags = --coverage -fno-inline -fno-inline-small-functions -fno-default-inline -Wno-ignored-optimization-argument
   compilerFlags += $(coverageFlags)
   cCompilerFlags += $(coverageFlags)
+  linkerFlags += --coverage
 endif
 
 compiler  = $(CXX)
 cCompiler = $(CC)
 
-links = $(LDFLAGS)
+linkerFlags = $(LDFLAGS)
 #=================================================
 
 
-#---[ Paths/Flags/Links ]-------------------------
+#---[ Paths/Flags ]-------------------------------
 paths = -I$(OCCA_DIR)/include
 paths += $(foreach path, $(subst :, ,$(OCCA_INCLUDE_PATH)), -I$(path))
 paths += $(foreach path, $(subst :, ,$(OCCA_LIBRARY_PATH)), -L$(path))
@@ -161,7 +162,7 @@ ifneq (,$(wildcard ./$(incPath)/*))
   paths += -I./$(incPath)
 endif
 
-links += -locca
+linkerFlags += -locca
 #=================================================
 
 
@@ -209,13 +210,13 @@ ifeq ($(usingLinux),1)
     OCCA_OS := OCCA_WINUX_OS
   endif
 
-  links += -lm -lrt -ldl
+  linkerFlags += -lm -lrt -ldl
 
 else ifeq ($(usingMacOS),1)
 
 	OCCA_OS := OCCA_MACOS_OS
   flags += -Wno-deprecated-declarations
-  links += -framework accelerate -framework CoreServices
+  linkerFlags += -framework accelerate -framework CoreServices
 
 else ifeq ($(usingWindows),1)
 
@@ -226,7 +227,7 @@ else ifeq ($(usingWindows),1)
     OCCA_OS := OCCA_WINDOWS_OS
   endif
 
-  links +=
+  linkerFlags +=
 
 endif
 #=================================================
@@ -261,9 +262,9 @@ ifdef OCCA_OPENCL_ENABLED
 
   ifeq ($(openclEnabled),1)
     ifeq ($(usingLinux),1)
-      links += -lOpenCL
+      linkerFlags += -lOpenCL
     else ifeq ($(usingMacOS),1)
-      links += -framework OpenCL
+      linkerFlags += -framework OpenCL
     endif
   endif
 else
@@ -275,7 +276,7 @@ else
       ifneq (,$(openclIncFlags))
         openclEnabled = 1
         paths += $(openclIncFlags)
-        links += $(openclLibFlags)
+        linkerFlags += $(openclLibFlags)
       endif
     endif
   else ifeq ($(usingMacOS),1)
@@ -284,7 +285,7 @@ else
 
     ifneq (,$(openclLibFlags))
       openclEnabled = 1
-      links += $(openclLibFlags)
+      linkerFlags += $(openclLibFlags)
     endif
   endif
 endif
@@ -294,9 +295,9 @@ ifdef OCCA_CUDA_ENABLED
 
   ifeq ($(cudaEnabled),1)
     ifeq ($(usingLinux),1)
-      links += -lcuda
+      linkerFlags += -lcuda
     else ifeq ($(usingMacOS),1)
-      links += -framework CUDA
+      linkerFlags += -framework CUDA
     endif
   endif
 else
@@ -313,7 +314,7 @@ else
     ifneq (,$(cudaLibFlags))
       cudaEnabled = 1
       paths += $(cudaIncFlags)
-      links += $(cudaLibFlags)
+      linkerFlags += $(cudaLibFlags)
     endif
   endif
 endif
@@ -323,7 +324,7 @@ ifdef OCCA_HIP_ENABLED
 
   ifeq ($(hipEnabled),1)
     ifeq ($(usingLinux),1)
-      links += -lhip_hcc
+      linkerFlags += -lhip_hcc
     endif
   endif
 else
@@ -344,7 +345,7 @@ else
       hipEnabled = 1
       paths += $(hipconfig)
       paths += $(hipIncFlags)
-      links += $(hipLibFlags)
+      linkerFlags += $(hipLibFlags)
     endif
   endif
 endif
