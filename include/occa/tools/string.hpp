@@ -73,7 +73,7 @@ namespace occa {
                         const int chars);
 
   inline std::string lowercase(const std::string &s) {
-    return uppercase(s.c_str(), s.size());
+    return lowercase(s.c_str(), s.size());
   }
 
   template <class TM>
@@ -173,25 +173,36 @@ namespace occa {
   double atod(const std::string &str);
 
   inline char toHexChar(const char c) {
-    // 'W' = ('a' - 10)
-    return c + ((c < 10) ? '0' : 'W');
+    if (c < 16) {
+      // 'a' = 'W' + 10
+      return c + ((c < 10) ? '0' : 'W');
+    }
+    return c;
   }
 
   inline char fromHexChar(const char c) {
-    // 'W' = ('a' - 10)
-    return c - ((c <= '9') ? '0' : 'W');
+    if (('0' <= c) && (c <= '9')) {
+      return c - '0';
+    }
+    if (('a' <= c) && (c <= 'z')) {
+      return 10 + (c - 'a');
+    }
+    if (('A' <= c) && (c <= 'Z')) {
+      return 10 + (c - 'A');
+    }
+    return c;
   }
 
   template <class TM>
-  std::string toHex(const TM &t) {
+  std::string toHex(const TM &value) {
     std::string str;
-    const char *c = (const char*) &t;
-    const int bytes = (int) sizeof(t);
+    const char *c = (const char*) &value;
+    const int bytes = (int) sizeof(value);
 
     for (int i = 0; i < bytes; ++i) {
       const char ci = c[i];
-      str += toHexChar(ci        & 0xF);
       str += toHexChar((ci >> 4) & 0xF);
+      str += toHexChar(ci        & 0xF);
     }
 
     return str;
@@ -199,25 +210,36 @@ namespace occa {
 
   template <class TM>
   void fromHex(const std::string &str,
-               TM *t,
+               TM *out,
                const int bytes) {
-    const int viewBytes = (((int) str.size() > (2 * bytes))
-                           ? bytes
-                           : (int) (str.size() / 2));
-    const char *c_str = str.c_str();
-    char *c = (char*) t;
+    const int chars = (int) str.size();
+    const int hexChars = ((chars > (2 * bytes))
+                          ? bytes
+                          : (chars / 2));
 
-    for (int i = 0; i < viewBytes; ++i) {
-      const char c1 = fromHexChar(c_str[2*i + 0]);
-      const char c2 = fromHexChar(c_str[2*i + 1]);
-      c[i] = c1 | (c2 << 4);
+    ::memset(out, 0, bytes);
+
+    const char *c_in = str.c_str();
+    char *c_out = (char*) out;
+
+    for (int i = 0; i < hexChars; ++i) {
+      const char c1 = fromHexChar(c_in[2*i + 0]);
+      const char c2 = fromHexChar(c_in[2*i + 1]);
+      c_out[i] = (c1 << 4) | c2;
     }
+  }
+
+  template <class TM>
+  TM fromHex(const std::string &str) {
+    TM value;
+    fromHex(str, &value, sizeof(value));
+    return value;
   }
 
   template <class TM>
   std::string stringifySetBits(const TM value) {
     if (value == 0) {
-      return "no bits set";
+      return "No bits set";
     }
     std::stringstream ss;
     const int bits = (int) (8 * sizeof(TM));

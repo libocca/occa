@@ -292,10 +292,12 @@ namespace occa {
              isWhitespace(*start)) {
         ++start;
       }
+      end -= (*end == '\0');
       while ((start < end) &&
              isWhitespace(*end)) {
         --end;
       }
+      ++end;
     }
 
     void strip(const char *&start, const char *&end, const char escapeChar) {

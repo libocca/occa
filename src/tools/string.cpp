@@ -34,7 +34,7 @@
 namespace occa {
   std::string strip(const std::string &str) {
     const char *start = str.c_str();
-    const char *end   = start + str.size();
+    const char *end = start + str.size();
     lex::strip(start, end);
     return std::string(start, end - start);
   }
@@ -49,7 +49,7 @@ namespace occa {
       if (cstr[i] != c) {
         ret += cstr[i];
       } else {
-        if (i && (cstr[i - 1] == c)) {
+        if (i) {
           ret += escapeChar;
         }
         ret += c;
@@ -103,9 +103,9 @@ namespace occa {
 
   std::string lowercase(const char *c,
                         const int chars) {
-    std::string ret(c, chars);
+    std::string ret(chars, '\0');
     for (int i = 0; i < chars; ++i) {
-      ret[i] = lowercase(ret[i]);
+      ret[i] = lowercase(c[i]);
     }
     return ret;
   }
@@ -357,7 +357,7 @@ namespace occa {
     std::string ret = vec[0];
     for (int i = 1; i < entries; ++i) {
       ret += seq;
-      ret += vec[1];
+      ret += vec[i];
     }
     return ret;
   }
