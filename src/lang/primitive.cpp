@@ -114,6 +114,7 @@ namespace occa {
       } else if (C == 'E') {
         primitive exp = primitive::load(++c);
         // Check if there was an 'F' in exp
+        decimal = true;
         float_ = (exp.type & primitiveType::isFloat);
         break;
       } else if (C == 'F') {
