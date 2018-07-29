@@ -60,10 +60,10 @@ void testTypes() {
   TEST_OCCA_TYPE(occa::device(), OCCA_DEVICE);
   TEST_OCCA_TYPE(occa::kernel(), OCCA_KERNEL);
   TEST_OCCA_TYPE(occa::memory(), OCCA_MEMORY);
-  TEST_OCCA_TYPE(occa::properties(), OCCA_PROPERTIES);
+  TEST_OCCA_TYPE(*(new occa::properties()), OCCA_PROPERTIES);
 
   ASSERT_THROW_START {
-    occa::c::newOccaType(std::string());
+    occa::c::newOccaType<std::string>("hi");
   } ASSERT_THROW_END;
 
 #undef TEST_OCCA_TYPE
