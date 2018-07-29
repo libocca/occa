@@ -92,7 +92,7 @@ namespace occa {
         char *visualStudioTools = getenv("VS100COMNTOOLS");
 #  endif
 
-        if (visualStudioTools != NULL) {
+        if (visualStudioTools) {
           compilerEnvScript = "\"" + std::string(visualStudioTools) + "..\\..\\VC\\vcvarsall.bat\" " + byteness;
         } else {
           std::cout << "WARNING: Visual Studio environment variable not found -> compiler environment (vcvarsall.bat) maybe not correctly setup." << std::endl;
@@ -325,7 +325,7 @@ namespace occa {
       mem->size    = bytes;
       mem->ptr     = (char*) sys::malloc(bytes);
 
-      if (src != NULL) {
+      if (src) {
         ::memcpy(mem->ptr, src, bytes);
       }
 

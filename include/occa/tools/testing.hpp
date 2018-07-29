@@ -96,11 +96,12 @@ namespace occa {
 
     template <class TM1, class TM2>
     bool assertLessThanOrEqual(const TM1 &a, const TM2 &b) {
-      if (a <= b) {
+      if ((a < b) || areEqual(a, b)) {
         return true;
       }
       std::cerr << "left : " << a << '\n'
-                << "right: " << b << '\n';
+                << "right: " << b << '\n'
+                << std::flush;
       return false;
     }
 
@@ -110,27 +111,30 @@ namespace occa {
         return true;
       }
       std::cerr << "left : " << a << '\n'
-                << "right: " << b << '\n';
+                << "right: " << b << '\n'
+                << std::flush;
       return false;
     }
 
     template <class TM1, class TM2>
     bool assertGreaterThan(const TM1 &a, const TM2 &b) {
-      if (a > b) {
+      if (!((a < b) || areEqual(a, b))) {
         return true;
       }
       std::cerr << "left : " << a << '\n'
-                << "right: " << b << '\n';
+                << "right: " << b << '\n'
+                << std::flush;
       return false;
     }
 
     template <class TM1, class TM2>
     bool assertGreaterThanOrEqual(const TM1 &a, const TM2 &b) {
-      if (a >= b) {
+      if (!(a < b)) {
         return true;
       }
       std::cerr << "left : " << a << '\n'
-                << "right: " << b << '\n';
+                << "right: " << b << '\n'
+                << std::flush;
       return false;
     }
 
@@ -140,7 +144,8 @@ namespace occa {
         return true;
       }
       std::cerr << "left : " << a << '\n'
-                << "right: " << b << '\n';
+                << "right: " << b << '\n'
+                << std::flush;
       return false;
     }
 
@@ -150,7 +155,8 @@ namespace occa {
         return true;
       }
       std::cerr << "left : " << a << '\n'
-                << "right: " << b << '\n';
+                << "right: " << b << '\n'
+                << std::flush;
       return false;
     }
 
@@ -160,7 +166,8 @@ namespace occa {
         return true;
       }
       std::cerr << "left : " << stringifySetBits(a) << '\n'
-                << "right: " << stringifySetBits(b) << '\n';
+                << "right: " << stringifySetBits(b) << '\n'
+                << std::flush;
       return false;
     }
 
@@ -170,7 +177,8 @@ namespace occa {
         return true;
       }
       std::cerr << "left : " << stringifySetBits(a) << '\n'
-                << "right: " << stringifySetBits(b) << '\n';
+                << "right: " << stringifySetBits(b) << '\n'
+                << std::flush;
       return false;
     }
 

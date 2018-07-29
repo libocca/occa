@@ -60,7 +60,7 @@ namespace occa {
 
   std::ostream& operator << (std::ostream& out,
                              exception &exc) {
-    out << exc.toString();
+    out << exc.toString() << std::flush;
     return out;
   }
 }

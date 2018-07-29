@@ -212,10 +212,9 @@ namespace occa {
   }
 
   void memory::startManaging() {
-    if (!mHandle) {
-      return;
+    if (mHandle) {
+      mHandle->memInfo |= uvaFlag::isManaged;
     }
-    mHandle->memInfo |= uvaFlag::isManaged;
   }
 
   void memory::stopManaging() {
@@ -498,7 +497,6 @@ namespace occa {
         dHandle->uvaMap.erase(mHandle->uvaPtr);
 
         sys::free(mHandle->uvaPtr);
-        mHandle->uvaPtr = NULL;
       }
     }
 

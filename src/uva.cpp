@@ -77,6 +77,9 @@ namespace occa {
 
   //---[ UVA ]--------------------------
   occa::memory_v* uvaToMemory(void *ptr) {
+    if (!ptr) {
+      return NULL;
+    }
     ptrRangeMap::iterator it = uvaMap.find(ptr);
     return (it == uvaMap.end()) ? NULL : it->second;
   }
@@ -121,8 +124,7 @@ namespace occa {
                        const udim_t bytes,
                        const udim_t offset) {
 
-    if (mem &&
-        mem->dHandle->hasSeparateMemorySpace()) {
+    if (mem) {
       occa::memory(mem).syncToDevice(bytes, offset);
     }
   }
@@ -131,8 +133,7 @@ namespace occa {
                      const udim_t bytes,
                      const udim_t offset) {
 
-    if (mem &&
-        mem->dHandle->hasSeparateMemorySpace()) {
+    if (mem) {
       occa::memory(mem).syncToHost(bytes, offset);
     }
   }
@@ -144,7 +145,6 @@ namespace occa {
 
   void sync(void *ptr) {
     occa::memory_v *mem = uvaToMemory(ptr);
-
     if (mem) {
       if (mem->inDevice()) {
         syncMemToHost(mem);
@@ -189,16 +189,13 @@ namespace occa {
     }
   }
 
-  void free(void *ptr) {
+  void freeUvaPtr(void *ptr) {
     if (!ptr) {
       return;
     }
-
-    ptrRangeMap::iterator it = uvaMap.find(ptr);
-
-    if ((it != uvaMap.end()) &&
-        (((void*) it->first.start) != ((void*) it->second))) {
-      occa::memory(it->second).free();
+    memory_v *mHandle = uvaToMemory(ptr);
+    if (mHandle) {
+      occa::memory(mHandle).free();
       return;
     }
     OCCA_FORCE_ERROR("Freeing a non-uva pointer");

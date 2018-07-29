@@ -86,11 +86,10 @@ void testUva() {
   int *ptr = (int*) occa::umalloc(bytes);
 
   occa::memory_v *mHandle = occa::uvaToMemory(ptr);
-  occa::memory mem(mHandle);
 
   ASSERT_NEQ(ptr,
              (int*) NULL);
-  ASSERT_TRUE(mem.isInitialized());
+  ASSERT_TRUE(occa::memory(mHandle).isInitialized());
 
   // Managed
   ASSERT_TRUE(occa::isManaged(ptr));
@@ -111,10 +110,10 @@ void testUva() {
   occa::sync(ptr);
   occa::dontSync(ptr);
 
-  occa::removeFromStaleMap(ptr);
   occa::removeFromStaleMap(mHandle);
+  occa::removeFromStaleMap(ptr);
 
-  occa::free(ptr);
+  occa::freeUvaPtr(ptr);
 
   ASSERT_EQ(occa::uvaToMemory(ptr),
             (occa::memory_v*) NULL);
@@ -152,9 +151,9 @@ void testUvaNull() {
   occa::dontSync(NULL);
   occa::dontSync(ptr);
 
-  occa::free(NULL);
+  occa::freeUvaPtr(NULL);
   ASSERT_THROW_START {
-    occa::free(ptr);
+    occa::freeUvaPtr(ptr);
   } ASSERT_THROW_END;
 
   delete [] ptr;

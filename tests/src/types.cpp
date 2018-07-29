@@ -56,6 +56,10 @@ void testDim() {
 
   dim = occa::dim(1, 10, 20, 30);
   TEST_DIM(1, 10, 20, 30);
+  ASSERT_NEQ(dim,
+             occa::dim(10, 20, 30));
+  ASSERT_EQ(dim,
+            occa::dim(1, 10, 20, 30));
 
   dim = dim - occa::dim(10, 10, 10);
   TEST_DIM(3, 0, 10, 20);
@@ -68,6 +72,8 @@ void testDim() {
 
   dim = dim / occa::dim(10, 10, 10);
   TEST_DIM(3, 10, 20, 30);
+  ASSERT_EQ(dim,
+            occa::dim(10, 20, 30))
 
   // [] indexing
   ASSERT_EQ(dim[0],
