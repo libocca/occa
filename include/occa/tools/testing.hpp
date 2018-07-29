@@ -34,11 +34,11 @@
   OCCA_ERROR("Assertion Failed: Value is >=",   \
              occa::test::assertLessThan(a, b));
 
-#define ASSERT_GE(a, b)                             \
+#define ASSERT_GT(a, b)                             \
   OCCA_ERROR("Assertion Failed: Value is <=",       \
              occa::test::assertGreaterThan(a, b));
 
-#define ASSERT_GT(a, b)                                   \
+#define ASSERT_GE(a, b)                                   \
   OCCA_ERROR("Assertion Failed: Value is <",              \
              occa::test::assertGreaterThanOrEqual(a, b));
 
