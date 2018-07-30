@@ -101,17 +101,8 @@ namespace occa {
       b1(b1_),
       b2(b2_) {}
 
-    inline bitfield(const bitfield &bf) :
-      b1(bf.b1),
-      b2(bf.b2) {}
-
-    inline bitfield& operator = (const bitfield &bf) {
-      b1 = bf.b1;
-      b2 = bf.b2;
-      return *this;
-    }
-
     inline static int bits() {
+      // 2 * sizeof(udim_t) * 8
       return 16 * sizeof(udim_t);
     }
 

@@ -76,10 +76,6 @@ void testNewOccaTypes() {
             2);
   occaFree(cProps);
 
-  ASSERT_THROW_START {
-    occa::c::newOccaType<std::string>("hi");
-  } ASSERT_THROW_END;
-
 #undef TEST_OCCA_TYPE
 }
 

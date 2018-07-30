@@ -57,11 +57,10 @@ namespace occa {
 
     occaType defaultOccaType();
 
+    // Private API:
+    //   Compile error if template specialization doesn't exist
     template <class TM>
-    occaType newOccaType(const TM &value) {
-      OCCA_FORCE_ERROR("Unable to handle type");
-      return occaType();
-    }
+    occaType newOccaType(const TM &value);
 
     occaType newOccaType(void *value);
 
