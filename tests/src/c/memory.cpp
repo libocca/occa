@@ -150,6 +150,10 @@ void testCopyMethods() {
   occaMemory mem2 = occaMalloc(bytes2, data2, occaDefault);
   occaMemory mem4 = occaMalloc(bytes4, data4, occaDefault);
 
+  occaProperties props = (
+    occaCreatePropertiesFromString("foo: 'bar'")
+  );
+
   int *ptr2 = (int*) occaMemoryPtr(mem2);
   int *ptr4 = (int*) occaMemoryPtr(mem4);
 
@@ -167,7 +171,7 @@ void testCopyMethods() {
   occaCopyMemToMem(mem4, mem2,
                    1 * sizeof(int),
                    3 * sizeof(int), 0,
-                   occaDefault);
+                   props);
 
   ASSERT_EQ(ptr4[0], 0);
   ASSERT_EQ(ptr4[1], 1);
@@ -177,14 +181,13 @@ void testCopyMethods() {
   // Ptr -> Mem
   occaCopyPtrToMem(mem4, data4,
                    occaAllBytes, 0,
-                   occaDefault);
+                   props);
 
   ASSERT_EQ(ptr4[0], 0);
   ASSERT_EQ(ptr4[1], 1);
   ASSERT_EQ(ptr4[2], 2);
   ASSERT_EQ(ptr4[3], 3);
 
-  // Mem -> Ptr
   occaCopyMemToPtr(data2, mem2,
                    occaAllBytes, 0,
                    occaDefault);
@@ -192,10 +195,45 @@ void testCopyMethods() {
   ASSERT_EQ(data2[0], 2);
   ASSERT_EQ(data2[1], 3);
 
-  delete [] data2;
-  delete [] data4;
   occaFree(mem2);
   occaFree(mem4);
+
+  // UVA memory copy
+  int *o_data2 = (int*) occaUMalloc(bytes2, data2, occaDefault);
+  int *o_data4 = (int*) occaUMalloc(bytes4, data4, occaDefault);
+
+  o_data2[0] = -2;
+  o_data4[1] = -4;
+
+  occaMemcpy(o_data2, o_data4 + 1,
+             1 * sizeof(int),
+             occaDefault);
+
+  occaMemcpy(data2, o_data2,
+             occaAllBytes,
+             props);
+
+  ASSERT_EQ(data2[0], -4);
+
+  o_data2[0] = 1;
+  occaMemcpy(o_data2, data2,
+             occaAllBytes,
+             props);
+
+  ASSERT_EQ(o_data2[0], -4);
+
+  // Unable to find 'all bytes' from 2 non-occa pointers
+  ASSERT_THROW_START {
+    occaMemcpy(data2, data4,
+               occaAllBytes,
+               occaDefault);
+  } ASSERT_THROW_END;
+
+  delete [] data2;
+  delete [] data4;
+  occaFreeUvaPtr(o_data2);
+  occaFreeUvaPtr(o_data4);
+  occaFree(props);
 }
 
 void testInteropMethods() {

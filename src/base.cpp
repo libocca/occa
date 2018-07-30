@@ -145,17 +145,33 @@ namespace occa {
     occa::memory_v *srcMem  = ((srcIt  != uvaMap.end()) ? (srcIt->second)  : NULL);
     occa::memory_v *destMem = ((destIt != uvaMap.end()) ? (destIt->second) : NULL);
 
-    const udim_t srcOff  = (srcMem  ? (((char*) src)  - srcMem->uvaPtr)  : 0);
-    const udim_t destOff = (destMem ? (((char*) dest) - destMem->uvaPtr) : 0);
+    const udim_t srcOff  = (srcMem
+                            ? (((char*) src)  - srcMem->uvaPtr)
+                            : 0);
+    const udim_t destOff = (destMem
+                            ? (((char*) dest) - destMem->uvaPtr)
+                            : 0);
 
-    const bool usingSrcPtr  = ((srcMem  == NULL) ||
+    const bool usingSrcPtr  = (!srcMem ||
                                ((srcMem->isManaged() && !srcMem->inDevice())));
-    const bool usingDestPtr = ((destMem  == NULL) ||
+    const bool usingDestPtr = (!destMem ||
                                ((destMem->isManaged() && !destMem->inDevice())));
 
     if (usingSrcPtr && usingDestPtr) {
-      ::memcpy(dest, src, bytes);
-    } else if (usingSrcPtr) {
+      udim_t bytes_ = bytes;
+      if (bytes == -1) {
+        OCCA_ERROR("Unable to determine bytes to copy",
+                   srcMem || destMem);
+        bytes_ = (srcMem
+                  ? srcMem->size
+                  : destMem->size);
+      }
+
+      ::memcpy(dest, src, bytes_);
+      return;
+    }
+
+    if (usingSrcPtr) {
       destMem->copyFrom(src, bytes, destOff, props);
     } else if (usingDestPtr) {
       srcMem->copyTo(dest, bytes, srcOff, props);
