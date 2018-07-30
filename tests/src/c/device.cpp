@@ -79,6 +79,8 @@ void testInit() {
 
   ASSERT_TRUE(occaDeviceIsInitialized(device));
 
+  occaDeviceFinish(device);
+
   occaFree(device);
 }
 void testProperties() {
@@ -114,26 +116,51 @@ void testMemoryMethods() {
             allocatedBytes);
 
   // Test malloc + umalloc
-  occaMemory mem = occaDeviceMalloc(device, memBytes, NULL, occaDefault);
+  occaMemory mem1 = occaDeviceMalloc(device, memBytes, NULL, occaDefault);
   allocatedBytes += memBytes;
 
   ASSERT_EQ((size_t) occaDeviceMemoryAllocated(device),
             allocatedBytes);
 
-  void *ptr = occaDeviceUMalloc(device, memBytes, NULL, occaDefault);
+  occaMemory mem2 = occaDeviceMalloc(device, memBytes, NULL, props);
+  allocatedBytes += memBytes;
+
+  ASSERT_EQ((size_t) occaDeviceMemoryAllocated(device),
+            allocatedBytes);
+
+  void *ptr1 = occaDeviceUMalloc(device, memBytes, NULL, occaDefault);
+  allocatedBytes += memBytes;
+
+  ASSERT_EQ((size_t) occaDeviceMemoryAllocated(device),
+            allocatedBytes);
+
+  void *ptr2 = occaDeviceUMalloc(device, memBytes, NULL, props);
   allocatedBytes += memBytes;
 
   ASSERT_EQ((size_t) occaDeviceMemoryAllocated(device),
             allocatedBytes);
 
   // Free
-  occaFree(mem);
+  occaFree(mem1);
   allocatedBytes -= memBytes;
 
   ASSERT_EQ((size_t) occaDeviceMemoryAllocated(device),
             allocatedBytes);
 
-  occaFreeUvaPtr(ptr);
+  occaFree(mem2);
+  allocatedBytes -= memBytes;
+
+  ASSERT_EQ((size_t) occaDeviceMemoryAllocated(device),
+            allocatedBytes);
+
+  occaFreeUvaPtr(ptr1);
+  allocatedBytes -= memBytes;
+
+  ASSERT_EQ((size_t) occaDeviceMemoryAllocated(device),
+            allocatedBytes);
+
+
+  occaFreeUvaPtr(ptr2);
   allocatedBytes -= memBytes;
 
   ASSERT_EQ((size_t) occaDeviceMemoryAllocated(device),
