@@ -28,18 +28,29 @@
 #include <occa/c/types.hpp>
 #include <occa/tools/testing.hpp>
 
-void testProperties();
+void testTypes();
+void testBadType();
+void testKeyMiss();
+void testSerialization();
+
+occaProperties cProps;
 
 int main(const int argc, const char **argv) {
   srand(time(NULL));
 
-  testProperties();
+  cProps = occaCreateProperties();
+
+  testTypes();
+  testBadType();
+  testKeyMiss();
+  testSerialization();
+
+  occaFree(cProps);
+
+  return 0;
 }
 
-void testProperties() {
-  occaProperties cProps = occaCreateProperties();
-  occa::properties &props = occa::c::properties(cProps);
-
+void testTypes() {
 #define TEST_SET_PROP(propType, OCCA_TYPE, propValue, field, func)  \
   do {                                                                \
     propType v = (propType) (propValue);                              \
@@ -49,7 +60,6 @@ void testProperties() {
     ASSERT_EQ((propType) value_.value.field, v);                      \
   } while (0)
 
-  // Test set
   TEST_SET_PROP(bool, OCCA_BOOL, rand() % 2, int8_, occaBool);
 
   TEST_SET_PROP(int8_t, OCCA_INT8, rand(), int8_, occaInt8);
@@ -70,11 +80,23 @@ void testProperties() {
   const std::string stringValue = occa::toString(rand());
   TEST_SET_PROP(const char*, OCCA_STRING, stringValue.c_str(), ptr, occaString);
 
-  // Test set failure
-  ASSERT_THROW_START {
-    occaPropertiesSet(cProps, "ptr", occaPtr(NULL));
-  } ASSERT_THROW_END;
+  occaPropertiesSet(cProps, "null", occaNull);
+  occaType nullValue = occaPropertiesGet(cProps, "null", occaDefault);
+  ASSERT_EQ_BINARY(nullValue.type,
+                   OCCA_PTR);
+  ASSERT_EQ(nullValue.value.ptr,
+            (void*) NULL);
 
+#undef TEST_SET_PROP
+}
+
+void testBadType() {
+  ASSERT_THROW_START {
+    occaPropertiesSet(cProps, "ptr", occaPtr((void*) 10));
+  } ASSERT_THROW_END;
+}
+
+void testKeyMiss() {
   // Test get miss
   occaType foobar = occaPropertiesGet(cProps, "foobar", occaInt32(2));
   ASSERT_EQ(foobar.type,
@@ -82,7 +104,20 @@ void testProperties() {
   ASSERT_EQ(foobar.value.int32_,
             2);
 
-#undef TEST_SET_PROP
+  // Set 'foobar'
+  std::string hi = "hi";
+  occaPropertiesSet(cProps, "foobar", occaString(hi.c_str()));
+
+  // Test success
+  foobar = occaPropertiesGet(cProps, "foobar", occaInt32(2));
+  ASSERT_EQ(foobar.type,
+            OCCA_STRING);
+  ASSERT_EQ((char*) foobar.value.ptr,
+            hi);
+}
+
+void testSerialization() {
+  occa::properties &props = occa::c::properties(cProps);
 
   const std::string propStr = (std::string) props;
   occaProperties cProps2 = occaCreatePropertiesFromString(propStr.c_str());
@@ -91,6 +126,5 @@ void testProperties() {
   ASSERT_EQ(props,
             props2);
 
-  occaFree(cProps);
   occaFree(cProps2);
 }

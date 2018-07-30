@@ -290,6 +290,7 @@ const int OCCA_PROPERTIES = occa::c::typeType::properties;
 
 //---[ Globals & Flags ]----------------
 const occaType occaDefault    = occa::c::defaultOccaType();
+const occaType occaNull       = occa::c::newOccaType((void*) NULL);
 const occaUDim_t occaAllBytes = -1;
 //======================================
 

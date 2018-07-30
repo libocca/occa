@@ -62,7 +62,11 @@ void OCCA_RFUNC occaPropertiesSet(occaProperties props,
   case occa::c::typeType::double_:
     props_[key] = value.value.double_; break;
   case occa::c::typeType::string:
-    props_[key] = value.value.ptr; break;
+    props_[key] = (char*) value.value.ptr; break;
+  case occa::c::typeType::ptr:
+    OCCA_ERROR("Invalid value type",
+               value.value.ptr == NULL);
+    props_[key].asNull(); break;
   default:
     OCCA_FORCE_ERROR("Invalid value type");
   }
@@ -103,7 +107,7 @@ occaType OCCA_RFUNC occaPropertiesGet(occaProperties props,
     return occa::c::newOccaType((occa::properties&) value);
   }
   // Last type is NULL
-  return defaultValue;
+  return occaNull;
 }
 
 OCCA_END_EXTERN_C

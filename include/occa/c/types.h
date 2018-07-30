@@ -101,6 +101,7 @@ extern const int OCCA_PROPERTIES;
 
 //---[ Globals & Flags ]----------------
 extern const occaType occaDefault;
+extern const occaType occaNull;
 extern const occaUDim_t occaAllBytes;
 //======================================
 
