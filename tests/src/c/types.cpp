@@ -21,6 +21,7 @@
  */
 #include <occa.hpp>
 #include <occa/c/types.hpp>
+#include <occa/c/properties.h>
 #include <occa/tools/testing.hpp>
 
 void testNewOccaTypes();
@@ -57,6 +58,16 @@ void testNewOccaTypes() {
   TEST_OCCA_TYPE(occa::kernel(), OCCA_KERNEL);
   TEST_OCCA_TYPE(occa::memory(), OCCA_MEMORY);
   TEST_OCCA_TYPE(*(new occa::properties()), OCCA_PROPERTIES);
+
+  occaProperties cProps = (
+    occaCreatePropertiesFromString("a: 1, b: 2")
+  );
+  const occa::properties &props = occa::c::constProperties(cProps);
+  ASSERT_EQ((int) props["a"],
+            1);
+  ASSERT_EQ((int) props["b"],
+            2);
+  occaFree(cProps);
 
   ASSERT_THROW_START {
     occa::c::newOccaType<std::string>("hi");
