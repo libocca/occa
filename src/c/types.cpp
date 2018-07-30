@@ -38,8 +38,8 @@ namespace occa {
 
     occaType undefinedOccaType() {
       occaType oType;
-      oType.magicHeader = 0;
-      oType.type = occa::c::typeType::none;
+      oType.magicHeader = OCCA_C_TYPE_UNDEFINED_HEADER;
+      oType.type = occa::c::typeType::undefined;
       oType.value.ptr = NULL;
       return oType;
     }
@@ -47,7 +47,7 @@ namespace occa {
     occaType defaultOccaType() {
       occaType oType;
       oType.magicHeader = OCCA_C_TYPE_MAGIC_HEADER;
-      oType.type = occa::c::typeType::none;
+      oType.type = occa::c::typeType::default_;
       oType.value.ptr = NULL;
       return oType;
     }
@@ -172,29 +172,44 @@ namespace occa {
     }
 
     occaType newOccaType(occa::device device) {
+      occa::device_v *dHandle = device.getDHandle();
+      if (!dHandle) {
+        return occaUndefined;
+      }
+
       occaType oType;
       oType.magicHeader = OCCA_C_TYPE_MAGIC_HEADER;
       oType.type  = typeType::device;
       oType.bytes = sizeof(void*);
-      oType.value.ptr = (char*) device.getDHandle();
+      oType.value.ptr = (char*) dHandle;
       return oType;
     }
 
     occaType newOccaType(occa::kernel kernel) {
+      occa::kernel_v *kHandle = kernel.getKHandle();
+      if (!kHandle) {
+        return occaUndefined;
+      }
+
       occaType oType;
       oType.magicHeader = OCCA_C_TYPE_MAGIC_HEADER;
       oType.type  = typeType::kernel;
       oType.bytes = sizeof(void*);
-      oType.value.ptr = (char*) kernel.getKHandle();
+      oType.value.ptr = (char*) kHandle;
       return oType;
     }
 
     occaType newOccaType(occa::memory memory) {
+      occa::memory_v *mHandle = memory.getMHandle();
+      if (!mHandle) {
+        return occaUndefined;
+      }
+
       occaType oType;
       oType.magicHeader = OCCA_C_TYPE_MAGIC_HEADER;
       oType.type  = typeType::memory;
       oType.bytes = sizeof(void*);
-      oType.value.ptr = (char*) memory.getMHandle();
+      oType.value.ptr = (char*) mHandle;
       return oType;
     }
 
@@ -223,13 +238,11 @@ namespace occa {
     }
 
     bool isDefault(occaType value) {
-      return (occaTypeIsValid(value) &&
-              (value.type == typeType::none) &&
-              (value.value.ptr == NULL));
+      return (value.type == typeType::default_);
     }
 
     occa::device device(occaType value) {
-      if (!occaTypeIsValid(value)) {
+      if (occaIsUndefined(value)) {
         return occa::device();
       }
       OCCA_ERROR("Input is not an occaDevice",
@@ -238,7 +251,7 @@ namespace occa {
     }
 
     occa::kernel kernel(occaType value) {
-      if (!occaTypeIsValid(value)) {
+      if (occaIsUndefined(value)) {
         return occa::kernel();
       }
       OCCA_ERROR("Input is not an occaKernel",
@@ -247,7 +260,7 @@ namespace occa {
     }
 
     occa::memory memory(occaType value) {
-      if (!occaTypeIsValid(value)) {
+      if (occaIsUndefined(value)) {
         return occa::memory();
       }
       OCCA_ERROR("Input is not an occaMemory",
@@ -282,6 +295,9 @@ namespace occa {
 OCCA_START_EXTERN_C
 
 //---[ Type Flags ]---------------------
+const int OCCA_UNDEFINED  = occa::c::typeType::undefined;
+const int OCCA_DEFAULT    = occa::c::typeType::default_;
+
 const int OCCA_PTR        = occa::c::typeType::ptr;
 
 const int OCCA_BOOL       = occa::c::typeType::bool_;
@@ -314,8 +330,8 @@ const occaUDim_t occaAllBytes = -1;
 //======================================
 
 //-----[ Known Types ]------------------
-OCCA_LFUNC int OCCA_RFUNC occaTypeIsValid(occaType value) {
-  return value.magicHeader == OCCA_C_TYPE_MAGIC_HEADER;
+OCCA_LFUNC int OCCA_RFUNC occaIsUndefined(occaType value) {
+  return value.magicHeader == OCCA_C_TYPE_UNDEFINED_HEADER;
 }
 
 OCCA_LFUNC occaType OCCA_RFUNC occaPtr(void *value) {
@@ -421,7 +437,7 @@ OCCA_LFUNC occaType OCCA_RFUNC occaString(const char *str) {
 //======================================
 
 OCCA_LFUNC void OCCA_RFUNC occaFree(occaType value) {
-  if (!occaTypeIsValid(value)) {
+  if (occaIsUndefined(value)) {
     return;
   }
   switch (value.type) {
@@ -440,6 +456,7 @@ OCCA_LFUNC void OCCA_RFUNC occaFree(occaType value) {
     delete &occa::c::properties(value);
     break;
   }}
+  value.magicHeader = occaUndefined.magicHeader;
 }
 
 OCCA_LFUNC void OCCA_RFUNC occaFreeStream(occaStream value) {

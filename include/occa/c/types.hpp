@@ -28,31 +28,32 @@
 namespace occa {
   namespace c {
     namespace typeType {
-      static const int none       = (1 << 0);
+      static const int undefined  = 0;
+      static const int default_   = 1;
 
-      static const int ptr        = (1 << 1);
+      static const int ptr        = 2;
 
-      static const int bool_      = (1 << 2);
+      static const int bool_      = 3;
 
-      static const int int8_      = (1 << 3);
-      static const int uint8_     = (1 << 4);
-      static const int int16_     = (1 << 5);
-      static const int uint16_    = (1 << 6);
-      static const int int32_     = (1 << 7);
-      static const int uint32_    = (1 << 8);
-      static const int int64_     = (1 << 9);
-      static const int uint64_    = (1 << 10);
-      static const int float_     = (1 << 11);
-      static const int double_    = (1 << 12);
+      static const int int8_      = 4;
+      static const int uint8_     = 5;
+      static const int int16_     = 6;
+      static const int uint16_    = 7;
+      static const int int32_     = 8;
+      static const int uint32_    = 9;
+      static const int int64_     = 10;
+      static const int uint64_    = 11;
+      static const int float_     = 12;
+      static const int double_    = 13;
 
-      static const int struct_    = (1 << 13);
-      static const int string     = (1 << 14);
+      static const int struct_    = 14;
+      static const int string     = 15;
 
-      static const int device     = (1 << 15);
-      static const int kernel     = (1 << 16);
-      static const int memory     = (1 << 17);
+      static const int device     = 16;
+      static const int kernel     = 17;
+      static const int memory     = 18;
 
-      static const int properties = (1 << 18);
+      static const int properties = 19;
     }
 
     occaType defaultOccaType();

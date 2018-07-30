@@ -66,7 +66,16 @@ int main(const int argc, const char **argv) {
 }
 
 void testInit() {
-  occaDevice device = occaCreateDevice(props);
+  occaDevice device = occaUndefined;
+  ASSERT_TRUE(occaIsUndefined(device));
+  ASSERT_EQ(device.type,
+            OCCA_UNDEFINED);
+
+  device = occaCreateDevice(props);
+  ASSERT_FALSE(occaIsUndefined(device));
+  ASSERT_EQ(device.type,
+            OCCA_DEVICE);
+
   occaFree(device);
 
   device = occaCreateDevice(
@@ -84,10 +93,15 @@ void testInit() {
   occaFree(device);
 }
 void testProperties() {
-  occaDevice device = occaCreateDevice(props);
+  occaDevice device = occaUndefined;
 
-  ASSERT_EQ((const char *) occaDeviceMode(device),
-            (const char *) "Serial");
+  ASSERT_EQ((const char*) occaDeviceMode(device),
+            (const char*) "No Mode");
+
+  device = occaCreateDevice(props);
+
+  ASSERT_EQ((const char*) occaDeviceMode(device),
+            (const char*) "Serial");
 
   occaProperties deviceProps = occaDeviceGetProperties(device);
   ASSERT_TRUE(occaPropertiesHas(deviceProps, "dkey"));

@@ -76,6 +76,9 @@ typedef struct {
 } occaStreamTag;
 
 //---[ Type Flags ]---------------------
+extern const int OCCA_UNDEFINED;
+extern const int OCCA_DEFAULT;
+
 extern const int OCCA_PTR;
 
 extern const int OCCA_BOOL;
@@ -107,7 +110,7 @@ extern const occaUDim_t occaAllBytes;
 //======================================
 
 //-----[ Known Types ]------------------
-OCCA_LFUNC int OCCA_RFUNC occaTypeIsValid(occaType value);
+OCCA_LFUNC int OCCA_RFUNC occaIsUndefined(occaType value);
 
 OCCA_LFUNC occaType OCCA_RFUNC occaPtr(void *value);
 

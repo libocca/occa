@@ -160,15 +160,17 @@ namespace occa {
   }
 
   const std::string& memory::mode() const {
-    OCCA_ERROR("Memory not initialized",
-               mHandle != NULL);
-    return mHandle->dHandle->mode;
+    static const std::string noMode = "No Mode";
+    return (mHandle
+            ? mHandle->dHandle->mode
+            : noMode);
   }
 
   const occa::properties& memory::properties() const {
-    OCCA_ERROR("Memory not initialized",
-               mHandle != NULL);
-    return mHandle->properties;
+    static const occa::properties noProperties;
+    return (mHandle
+            ? mHandle->properties
+            : noProperties);
   }
 
   udim_t memory::size() const {

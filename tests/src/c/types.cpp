@@ -42,10 +42,11 @@ void testNewOccaTypes() {
     occaFree(v);                                \
   } while (0)
 
-  occaType value;
-  ASSERT_FALSE(occaTypeIsValid(value));
+  occaType value = occaUndefined;
+  ASSERT_TRUE(occaIsUndefined(value));
+
   value = occaInt(1);
-  ASSERT_TRUE(occaTypeIsValid(value));
+  ASSERT_FALSE(occaIsUndefined(value));
 
   TEST_OCCA_TYPE((void*) NULL, OCCA_PTR);
 
@@ -61,9 +62,6 @@ void testNewOccaTypes() {
   TEST_OCCA_TYPE((float) 1.0, OCCA_FLOAT);
   TEST_OCCA_TYPE((double) 1.0, OCCA_DOUBLE);
 
-  TEST_OCCA_TYPE(occa::device(), OCCA_DEVICE);
-  TEST_OCCA_TYPE(occa::kernel(), OCCA_KERNEL);
-  TEST_OCCA_TYPE(occa::memory(), OCCA_MEMORY);
   TEST_OCCA_TYPE(*(new occa::properties()), OCCA_PROPERTIES);
 
   occaProperties cProps = (

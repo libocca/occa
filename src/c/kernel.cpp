@@ -106,13 +106,9 @@ void OCCA_RFUNC occaKernelRunN(occaKernel kernel,
 
     occaType arg = va_arg(args, occaType);
     OCCA_ERROR("A non-occaType argument was passed",
-               occaTypeIsValid(arg));
+               !occaIsUndefined(arg));
 
     switch (arg.type) {
-    case occa::c::typeType::none: {
-      kArg.add(NULL, false, false);
-      break;
-    }
     case occa::c::typeType::ptr: {
       kArg.add(arg.value.ptr,
                arg.bytes,
@@ -182,6 +178,12 @@ void OCCA_RFUNC occaKernelRunN(occaKernel kernel,
       break;
     case occa::c::typeType::properties:
       OCCA_FORCE_ERROR("Unable to pass an occaProperties as a kernel argument");
+      break;
+    case occa::c::typeType::undefined:
+      OCCA_FORCE_ERROR("Unable to pass occaUndefined as a kernel argument");
+      break;
+    case occa::c::typeType::default_:
+      OCCA_FORCE_ERROR("Unable to pass occaDefault as a kernel argument");
       break;
     default:
       OCCA_FORCE_ERROR("A non-occaType argument was passed");

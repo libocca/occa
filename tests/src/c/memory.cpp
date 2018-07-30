@@ -53,8 +53,15 @@ void testInit() {
     occaCreatePropertiesFromString("foo: 'bar'")
   );
 
+  ASSERT_TRUE(occaIsUndefined(mem));
+  ASSERT_EQ(mem.type,
+            OCCA_UNDEFINED);
   ASSERT_FALSE(occaMemoryIsInitialized(mem));
+
   mem = occaMalloc(bytes, data, props);
+  ASSERT_FALSE(occaIsUndefined(mem));
+  ASSERT_EQ(mem.type,
+            OCCA_MEMORY);
   ASSERT_TRUE(occaMemoryIsInitialized(mem));
 
   int *ptr = (int*) occaMemoryPtr(mem);
@@ -67,8 +74,8 @@ void testInit() {
 
   occaProperties memProps = occaMemoryGetProperties(mem);
   occaType memMode = occaPropertiesGet(memProps, "foo", occaDefault);
-  ASSERT_EQ_BINARY(memMode.type,
-                   OCCA_STRING);
+  ASSERT_EQ(memMode.type,
+            OCCA_STRING);
   ASSERT_EQ((const char*) memMode.value.ptr,
             (const char*) "bar");
 

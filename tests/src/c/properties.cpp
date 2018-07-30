@@ -58,7 +58,7 @@ void testTypes() {
     propType v = (propType) (propValue);                              \
     occaPropertiesSet(cProps, #func, func(v));                        \
     occaType value_ = occaPropertiesGet(cProps, #func, occaDefault);  \
-    ASSERT_EQ_BINARY(value_.type, OCCA_TYPE);                         \
+    ASSERT_EQ(value_.type, OCCA_TYPE);                                \
     ASSERT_EQ((propType) value_.value.field, v);                      \
   } while (0)
 
@@ -87,8 +87,8 @@ void testTypes() {
   // NULL
   occaPropertiesSet(cProps, "null", occaNull);
   occaType nullValue = occaPropertiesGet(cProps, "null", occaDefault);
-  ASSERT_EQ_BINARY(nullValue.type,
-                   OCCA_PTR);
+  ASSERT_EQ(nullValue.type,
+            OCCA_PTR);
   ASSERT_EQ(nullValue.value.ptr,
             (void*) NULL);
 
@@ -97,8 +97,8 @@ void testTypes() {
     "prop: { value: 1 }"
   );
   occaType propValue = occaPropertiesGet(cProps2, "prop", occaDefault);
-  ASSERT_EQ_BINARY(propValue.type,
-                   OCCA_PROPERTIES);
+  ASSERT_EQ(propValue.type,
+            OCCA_PROPERTIES);
   ASSERT_TRUE(occaPropertiesHas(propValue, "value"));
 
   occaFree(cProps2);

@@ -349,11 +349,17 @@ namespace occa {
   }
 
   const std::string& kernel::mode() const {
-    return kHandle->dHandle->mode;
+    static const std::string noMode = "No Mode";
+    return (kHandle
+            ? kHandle->dHandle->mode
+            : noMode);
   }
 
   const occa::properties& kernel::properties() const {
-    return kHandle->properties;
+    static const occa::properties noProperties;
+    return (kHandle
+            ? kHandle->properties
+            : noProperties);
   }
 
   kernel_v* kernel::getKHandle() {
@@ -361,39 +367,61 @@ namespace occa {
   }
 
   occa::device kernel::getDevice() {
-    return occa::device(kHandle->dHandle);
+    return occa::device(kHandle
+                        ? kHandle->dHandle
+                        : NULL);
   }
 
   const std::string& kernel::name() {
-    return kHandle->name;
+    static const std::string noName = "";
+    return (kHandle
+            ? kHandle->name
+            : noName);
   }
 
   const std::string& kernel::sourceFilename() {
-    return kHandle->sourceFilename;
+    static const std::string noSourceFilename = "";
+    return (kHandle
+            ? kHandle->sourceFilename
+            : noSourceFilename);
   }
 
   const std::string& kernel::binaryFilename() {
-    return kHandle->binaryFilename;
+    static const std::string noBinaryFilename = "";
+    return (kHandle
+            ? kHandle->binaryFilename
+            : noBinaryFilename);
   }
 
   void kernel::setRunDims(occa::dim outer, occa::dim inner) {
-    kHandle->inner = inner;
-    kHandle->outer = outer;
+    if (kHandle) {
+      kHandle->inner = inner;
+      kHandle->outer = outer;
+    }
   }
 
   int kernel::maxDims() {
-    return kHandle->maxDims();
+    return (kHandle
+            ? kHandle->maxDims()
+            : -1);
   }
 
   dim kernel::maxOuterDims() {
-    return kHandle->maxOuterDims();
+    return (kHandle
+            ? kHandle->maxOuterDims()
+            : dim(-1, -1, -1));
   }
 
   dim kernel::maxInnerDims() {
-    return kHandle->maxInnerDims();
+    return (kHandle
+            ? kHandle->maxInnerDims()
+            : dim(-1, -1, -1));
   }
 
   void kernel::addArgument(const int argPos, const kernelArg &arg) {
+    OCCA_ERROR("Kernel not initialized",
+               kHandle != NULL);
+
     if (kHandle->argumentCount() <= argPos) {
       OCCA_ERROR("Kernels can only have at most [" << OCCA_MAX_ARGS << "] arguments,"
                  << " [" << argPos << "] arguments were set",
@@ -406,6 +434,9 @@ namespace occa {
   }
 
   void kernel::run() const {
+    OCCA_ERROR("Kernel not initialized",
+               kHandle != NULL);
+
     const int argc = (int) kHandle->arguments.size();
     for (int i = 0; i < argc; ++i) {
       const bool argIsConst = kHandle->metadata.argIsConst(i);
@@ -416,7 +447,9 @@ namespace occa {
   }
 
   void kernel::clearArgumentList() {
-    kHandle->arguments.clear();
+    if (kHandle) {
+      kHandle->arguments.clear();
+    }
   }
 
 #include "kernelOperators.cpp"
