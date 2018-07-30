@@ -93,12 +93,12 @@ occaStreamTag OCCA_RFUNC occaTagStream() {
   return occa::c::newOccaType(occa::tagStream());
 }
 
-void OCCA_RFUNC occaWaitFor(occaStreamTag tag) {
+void OCCA_RFUNC occaWaitForTag(occaStreamTag tag) {
   occa::waitFor(occa::c::streamTag(tag));
 }
 
-double OCCA_RFUNC occaTimeBetween(occaStreamTag startTag,
-                                  occaStreamTag endTag) {
+double OCCA_RFUNC occaTimeBetweenTags(occaStreamTag startTag,
+                                      occaStreamTag endTag) {
   return occa::timeBetween(occa::c::streamTag(startTag),
                            occa::c::streamTag(endTag));
 }

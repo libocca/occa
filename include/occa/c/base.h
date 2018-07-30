@@ -59,10 +59,10 @@ OCCA_LFUNC occaStream OCCA_RFUNC occaWrapStream(void *handle_,
 
 OCCA_LFUNC occaStreamTag OCCA_RFUNC occaTagStream();
 
-OCCA_LFUNC void OCCA_RFUNC occaWaitFor(occaStreamTag tag);
+OCCA_LFUNC void OCCA_RFUNC occaWaitForTag(occaStreamTag tag);
 
-OCCA_LFUNC double OCCA_RFUNC occaTimeBetween(occaStreamTag startTag,
-                                             occaStreamTag endTag);
+OCCA_LFUNC double OCCA_RFUNC occaTimeBetweenTags(occaStreamTag startTag,
+                                                 occaStreamTag endTag);
 //======================================
 
 //---[ Kernel ]-------------------------

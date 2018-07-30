@@ -116,8 +116,8 @@ occaStreamTag OCCA_RFUNC occaDeviceTagStream(occaDevice device) {
   return occa::c::newOccaType(device_.tagStream());
 }
 
-void OCCA_RFUNC occaDeviceWaitFor(occaDevice device,
-                                  occaStreamTag tag) {
+void OCCA_RFUNC occaDeviceWaitForTag(occaDevice device,
+                                     occaStreamTag tag) {
   occa::device device_ = occa::c::device(device);
   device_.waitFor(occa::c::streamTag(tag));
 }
@@ -212,7 +212,7 @@ occaMemory OCCA_RFUNC occaDeviceMalloc(occaDevice device,
   return occa::c::newOccaType(memory);
 }
 
-void* OCCA_RFUNC occaDeviceUmalloc(occaDevice device,
+void* OCCA_RFUNC occaDeviceUMalloc(occaDevice device,
                                    const occaUDim_t bytes,
                                    const void *src,
                                    occaProperties props) {

@@ -50,7 +50,8 @@ namespace occa {
     }
 
     template <>
-    bool areEqual<const char*, const char*>(const char * const &a, const char * const &b) {
+    bool areEqual<const char*, const char*>(const char * const &a,
+                                            const char * const &b) {
       return (std::string(a) == std::string(b));
     }
   }

@@ -31,19 +31,19 @@
 #include <occa/tools/testing.hpp>
 
 void testGlobals();
-void testDevice();
-void testMemory();
-void testKernel();
-void testStream();
+void testDeviceMethods();
+void testMemoryMethods();
+void testKernelMethods();
+void testStreamMethods();
 
 int main(const int argc, const char **argv) {
   srand(time(NULL));
 
   testGlobals();
-  testDevice();
-  testMemory();
-  testKernel();
-  testStream();
+  testDeviceMethods();
+  testMemoryMethods();
+  testKernelMethods();
+  testStreamMethods();
 
   return 0;
 }
@@ -53,7 +53,7 @@ void testGlobals() {
             &occa::settings());
 }
 
-void testDevice() {
+void testDeviceMethods() {
   ASSERT_EQ(occa::c::device(occaHost()),
             occa::host());
 
@@ -77,7 +77,7 @@ void testDevice() {
   occaFinish();
 }
 
-void testMemory() {
+void testMemoryMethods() {
   size_t bytes = 10 * sizeof(int);
   occaProperties props = (
     occaCreatePropertiesFromString("a: 1, b: 2")
@@ -112,7 +112,7 @@ void testMemory() {
   occaFree(props);
 }
 
-void testKernel() {
+void testKernelMethods() {
   const std::string addVectorsFile = (
     occa::env::OCCA_DIR + "tests/files/addVectors.okl"
   );
@@ -164,7 +164,7 @@ void testKernel() {
   occaFree(props);
 }
 
-void testStream() {
+void testStreamMethods() {
   occaStream cStream = occaCreateStream();
   occa::stream stream = occa::c::stream(cStream);
 
@@ -187,10 +187,10 @@ void testStream() {
   // End tagging
   double innerEnd = occa::sys::currentTime();
   occaStreamTag endTag = occaTagStream();
-  occaWaitFor(endTag);
+  occaWaitForTag(endTag);
   double outerEnd = occa::sys::currentTime();
 
-  double tagTime = occaTimeBetween(startTag, endTag);
+  double tagTime = occaTimeBetweenTags(startTag, endTag);
 
   ASSERT_GE(outerEnd - outerStart,
             tagTime);

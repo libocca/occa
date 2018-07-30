@@ -99,8 +99,8 @@ namespace occa {
       if ((a < b) || areEqual(a, b)) {
         return true;
       }
-      std::cerr << "left : " << a << '\n'
-                << "right: " << b << '\n'
+      std::cerr << "left : [" << a << "]\n"
+                << "right: [" << b << "]\n"
                 << std::flush;
       return false;
     }
@@ -110,8 +110,8 @@ namespace occa {
       if (a < b) {
         return true;
       }
-      std::cerr << "left : " << a << '\n'
-                << "right: " << b << '\n'
+      std::cerr << "left : [" << a << "]\n"
+                << "right: [" << b << "]\n"
                 << std::flush;
       return false;
     }
@@ -121,8 +121,8 @@ namespace occa {
       if (!((a < b) || areEqual(a, b))) {
         return true;
       }
-      std::cerr << "left : " << a << '\n'
-                << "right: " << b << '\n'
+      std::cerr << "left : [" << a << "]\n"
+                << "right: [" << b << "]\n"
                 << std::flush;
       return false;
     }
@@ -132,8 +132,8 @@ namespace occa {
       if (!(a < b)) {
         return true;
       }
-      std::cerr << "left : " << a << '\n'
-                << "right: " << b << '\n'
+      std::cerr << "left : [" << a << "]\n"
+                << "right: [" << b << "]\n"
                 << std::flush;
       return false;
     }
@@ -143,8 +143,8 @@ namespace occa {
       if (areEqual(a, b)) {
         return true;
       }
-      std::cerr << "left : " << a << '\n'
-                << "right: " << b << '\n'
+      std::cerr << "left : [" << a << "]\n"
+                << "right: [" << b << "]\n"
                 << std::flush;
       return false;
     }
@@ -154,8 +154,8 @@ namespace occa {
       if (!areEqual(a, b)) {
         return true;
       }
-      std::cerr << "left : " << a << '\n'
-                << "right: " << b << '\n'
+      std::cerr << "left : [" << a << "]\n"
+                << "right: [" << b << "]\n"
                 << std::flush;
       return false;
     }
@@ -165,8 +165,8 @@ namespace occa {
       if (a == b) {
         return true;
       }
-      std::cerr << "left : " << stringifySetBits(a) << '\n'
-                << "right: " << stringifySetBits(b) << '\n'
+      std::cerr << "left : [" << stringifySetBits(a) << "]\n"
+                << "right: [" << stringifySetBits(b) << "]\n"
                 << std::flush;
       return false;
     }
@@ -176,8 +176,8 @@ namespace occa {
       if (a != b) {
         return true;
       }
-      std::cerr << "left : " << stringifySetBits(a) << '\n'
-                << "right: " << stringifySetBits(b) << '\n'
+      std::cerr << "left : [" << stringifySetBits(a) << "]\n"
+                << "right: [" << stringifySetBits(b) << "]\n"
                 << std::flush;
       return false;
     }
@@ -195,6 +195,7 @@ namespace occa {
     bool areEqual<double, double>(const double &a, const double &b);
 
     template <>
-    bool areEqual<const char*, const char*>(const char * const &a, const char * const &b);
+    bool areEqual<const char*, const char*>(const char * const &a,
+                                            const char * const &b);
   }
 }
