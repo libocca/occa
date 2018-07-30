@@ -111,6 +111,7 @@ extern const occaUDim_t occaAllBytes;
 
 //-----[ Known Types ]------------------
 OCCA_LFUNC int OCCA_RFUNC occaIsUndefined(occaType value);
+OCCA_LFUNC int OCCA_RFUNC occaIsDefault(occaType value);
 
 OCCA_LFUNC occaType OCCA_RFUNC occaPtr(void *value);
 

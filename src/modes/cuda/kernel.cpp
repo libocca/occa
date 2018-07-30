@@ -105,8 +105,8 @@ namespace occa {
 
       OCCA_CUDA_ERROR("Launching Kernel",
                       cuLaunchKernel(cuFunction,
-                                     outer.x, outer.y, outer.z,
-                                     inner.x, inner.y, inner.z,
+                                     outerDims.x, outerDims.y, outerDims.z,
+                                     innerDims.x, innerDims.y, innerDims.z,
                                      0, *((CUstream*) dHandle->currentStream),
                                      &(vArgs[0]), 0));
     }

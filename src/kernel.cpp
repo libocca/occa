@@ -393,10 +393,10 @@ namespace occa {
             : noBinaryFilename);
   }
 
-  void kernel::setRunDims(occa::dim outer, occa::dim inner) {
+  void kernel::setRunDims(occa::dim outerDims, occa::dim innerDims) {
     if (kHandle) {
-      kHandle->inner = inner;
-      kHandle->outer = outer;
+      kHandle->innerDims = innerDims;
+      kHandle->outerDims = outerDims;
     }
   }
 

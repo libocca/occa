@@ -171,7 +171,7 @@ namespace occa {
     std::string sourceFilename, binaryFilename;
     occa::properties properties;
 
-    dim inner, outer;
+    dim outerDims, innerDims;
 
     std::vector<kernelArg> arguments;
     lang::kernelMetadata metadata;
@@ -241,7 +241,7 @@ namespace occa {
     dim maxOuterDims();
     dim maxInnerDims();
 
-    void setRunDims(dim outer, dim inner);
+    void setRunDims(dim outerDims, dim innerDims);
 
     void addArgument(const int argPos, const kernelArg &arg);
     void run() const;

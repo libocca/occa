@@ -212,9 +212,13 @@ namespace occa {
                     << io::shortname(filename)
                     << "] in [" << io::shortname(binaryFilename) << "]\n";
         }
-        return buildKernelFromBinary(binaryFilename,
-                                     kernelName,
-                                     kernelProps);
+        kernel_v *k = buildKernelFromBinary(binaryFilename,
+                                            kernelName,
+                                            kernelProps);
+        if (k) {
+          k->sourceFilename = filename;
+        }
+        return k;
       }
 
       // Cache raw origin
@@ -293,7 +297,7 @@ namespace occa {
                                           kernelName,
                                           kernelProps);
       if (k) {
-        k->sourceFilename = sourceFilename;
+        k->sourceFilename = filename;
       }
       return k;
     }

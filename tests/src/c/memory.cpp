@@ -73,7 +73,7 @@ void testInit() {
             occa::host());
 
   occaProperties memProps = occaMemoryGetProperties(mem);
-  occaType memMode = occaPropertiesGet(memProps, "foo", occaDefault);
+  occaType memMode = occaPropertiesGet(memProps, "foo", occaUndefined);
   ASSERT_EQ(memMode.type,
             OCCA_STRING);
   ASSERT_EQ((const char*) memMode.value.ptr,

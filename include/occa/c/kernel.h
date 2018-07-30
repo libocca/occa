@@ -47,8 +47,8 @@ OCCA_LFUNC occaDim OCCA_RFUNC occaKernelMaxOuterDims(occaKernel kernel);
 OCCA_LFUNC occaDim OCCA_RFUNC occaKernelMaxInnerDims(occaKernel kernel);
 
 OCCA_LFUNC void OCCA_RFUNC occaKernelSetRunDims(occaKernel kernel,
-                                                occaDim groups,
-                                                occaDim items);
+                                                occaDim outerDims,
+                                                occaDim innerDims);
 
 OCCA_LFUNC void OCCA_RFUNC occaKernelRunN(occaKernel kernel,
                                          const int argc,

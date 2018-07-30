@@ -109,8 +109,8 @@ namespace occa {
 
       OCCA_HIP_ERROR("Launching Kernel",
                      hipModuleLaunchKernel(hipFunction,
-                                           outer.x, outer.y, outer.z,
-                                           inner.x, inner.y, inner.z,
+                                           outerDims.x, outerDims.y, outerDims.z,
+                                           innerDims.x, innerDims.y, innerDims.z,
                                            0, *((hipStream_t*) dHandle->currentStream),
                                            NULL, (void**)&config));
     }

@@ -53,13 +53,13 @@ int main(const int argc, const char **argv) {
 }
 
 void testTypes() {
-#define TEST_SET_PROP(propType, OCCA_TYPE, propValue, field, func)  \
-  do {                                                                \
-    propType v = (propType) (propValue);                              \
-    occaPropertiesSet(cProps, #func, func(v));                        \
-    occaType value_ = occaPropertiesGet(cProps, #func, occaDefault);  \
-    ASSERT_EQ(value_.type, OCCA_TYPE);                                \
-    ASSERT_EQ((propType) value_.value.field, v);                      \
+#define TEST_SET_PROP(propType, OCCA_TYPE, propValue, field, func)      \
+  do {                                                                  \
+    propType v = (propType) (propValue);                                \
+    occaPropertiesSet(cProps, #func, func(v));                          \
+    occaType value_ = occaPropertiesGet(cProps, #func, occaUndefined);  \
+    ASSERT_EQ(value_.type, OCCA_TYPE);                                  \
+    ASSERT_EQ((propType) value_.value.field, v);                        \
   } while (0)
 
   // Base types
@@ -86,7 +86,7 @@ void testTypes() {
 
   // NULL
   occaPropertiesSet(cProps, "null", occaNull);
-  occaType nullValue = occaPropertiesGet(cProps, "null", occaDefault);
+  occaType nullValue = occaPropertiesGet(cProps, "null", occaUndefined);
   ASSERT_EQ(nullValue.type,
             OCCA_PTR);
   ASSERT_EQ(nullValue.value.ptr,
@@ -96,7 +96,7 @@ void testTypes() {
   occaProperties cProps2 = occaCreatePropertiesFromString(
     "prop: { value: 1 }"
   );
-  occaType propValue = occaPropertiesGet(cProps2, "prop", occaDefault);
+  occaType propValue = occaPropertiesGet(cProps2, "prop", occaUndefined);
   ASSERT_EQ(propValue.type,
             OCCA_PROPERTIES);
   ASSERT_TRUE(occaPropertiesHas(propValue, "value"));
@@ -121,7 +121,10 @@ void testKeyMiss() {
   // Test get miss
   ASSERT_FALSE(occaPropertiesHas(cProps, "foobar"));
 
-  occaType foobar = occaPropertiesGet(cProps, "foobar", occaInt32(2));
+  occaType foobar = occaPropertiesGet(cProps, "foobar", occaUndefined);
+  ASSERT_TRUE(occaIsUndefined(foobar));
+
+  foobar = occaPropertiesGet(cProps, "foobar", occaInt32(2));
   ASSERT_EQ(foobar.type,
             OCCA_INT32);
   ASSERT_EQ(foobar.value.int32_,

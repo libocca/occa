@@ -123,13 +123,13 @@ namespace occa {
       }
 
       // Setup kernel dimensions
-      occa::dim fullOuter = (outer * inner);
+      occa::dim fullDims = (outerDims * innerDims);
 
-      size_t fullOuter_[3] = {
-        fullOuter.x, fullOuter.y, fullOuter.z
+      size_t fullDims_[3] = {
+        fullDims.x, fullDims.y, fullDims.z
       };
-      size_t inner_[3] = {
-        inner.x, inner.y, inner.z
+      size_t innerDims_[3] = {
+        innerDims.x, innerDims.y, innerDims.z
       };
 
       // Set arguments
@@ -155,10 +155,10 @@ namespace occa {
                         << " : Kernel Run",
                         clEnqueueNDRangeKernel(*((cl_command_queue*) dHandle->currentStream),
                                                clKernel,
-                                               (cl_int) fullOuter.dims,
+                                               (cl_int) fullDims.dims,
                                                NULL,
-                                               (size_t*) &fullOuter_,
-                                               (size_t*) &inner_,
+                                               (size_t*) &fullDims_,
+                                               (size_t*) &innerDims_,
                                                0, NULL, NULL));
     }
 
