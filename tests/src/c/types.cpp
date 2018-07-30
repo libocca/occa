@@ -19,10 +19,6 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  */
-#include <stdlib.h>
-#include <time.h>
-#include <unistd.h>
-
 #include <occa.hpp>
 #include <occa/c/types.hpp>
 #include <occa/tools/testing.hpp>
@@ -31,8 +27,6 @@ void testNewOccaTypes();
 void testCTypeWrappers();
 
 int main(const int argc, const char **argv) {
-  srand(time(NULL));
-
   testNewOccaTypes();
   testCTypeWrappers();
 }

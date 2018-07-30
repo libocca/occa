@@ -19,18 +19,21 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  */
+#define OCCA_DISABLE_VARIADIC_MACROS
+
 #include <stdlib.h>
 #include <time.h>
 #include <unistd.h>
 
 #include <occa.hpp>
-#include <occa/c/base.h>
+#include <occa.h>
 #include <occa/c/types.hpp>
 #include <occa/tools/sys.hpp>
 #include <occa/tools/testing.hpp>
 
 void testGlobals();
 void testDevice();
+void testMemory();
 void testStream();
 
 int main(const int argc, const char **argv) {
@@ -38,6 +41,7 @@ int main(const int argc, const char **argv) {
 
   testGlobals();
   testDevice();
+  testMemory();
   testStream();
 }
 
@@ -68,6 +72,41 @@ void testDevice() {
   occaLoadKernels("lib");
 
   occaFinish();
+}
+
+void testMemory() {
+  size_t bytes = 10 * sizeof(int);
+  occaProperties props = (
+    occaCreatePropertiesFromString("a: 1, b: 2")
+  );
+
+  // malloc
+  occaMemory mem = occaMalloc(bytes,
+                              NULL,
+                              occaDefault);
+  ASSERT_EQ(occaMemorySize(mem),
+            bytes);
+  occaFree(mem);
+
+  mem = occaMalloc(bytes,
+                   NULL,
+                   props);
+  ASSERT_EQ(occaMemorySize(mem),
+            bytes);
+  occaFree(mem);
+
+  // umalloc
+  void *ptr = occaUMalloc(bytes,
+                          NULL,
+                          occaDefault);
+  occaFreeUvaPtr(ptr);
+
+  ptr = occaUMalloc(bytes,
+                    NULL,
+                    occaDefault);
+  occaFreeUvaPtr(ptr);
+
+  occaFree(props);
 }
 
 void testStream() {
@@ -102,4 +141,19 @@ void testStream() {
             tagTime);
   ASSERT_LE(innerEnd - innerStart,
             tagTime);
+
+  // TODO: Change to occaFree
+  occaFreeStream(cStream);
+
+  // Wrap stream
+  cStream = occaWrapStream(NULL, occaDefault);
+  occaFreeStream(cStream);
+
+  occaProperties props = (
+    occaCreatePropertiesFromString("a: 1, b: 2")
+  );
+  cStream = occaWrapStream(NULL, props);
+  occaFreeStream(cStream);
+
+  occaFree(props);
 }

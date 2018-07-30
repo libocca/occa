@@ -178,7 +178,7 @@ occaMemory OCCA_RFUNC occaMalloc(const occaUDim_t bytes,
   return occa::c::newOccaType(memory);
 }
 
-void* OCCA_RFUNC occaUmalloc(const occaUDim_t bytes,
+void* OCCA_RFUNC occaUMalloc(const occaUDim_t bytes,
                              const void *src,
                              occaProperties props) {
 
@@ -188,6 +188,10 @@ void* OCCA_RFUNC occaUmalloc(const occaUDim_t bytes,
   return occa::umalloc(bytes,
                        src,
                        occa::c::properties(props));
+}
+
+void OCCA_RFUNC occaFreeUvaPtr(void *ptr) {
+  occa::freeUvaPtr(ptr);
 }
 //======================================
 
