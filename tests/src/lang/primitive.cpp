@@ -34,6 +34,7 @@ int main(const int argc, const char **argv) {
   testLoad();
   testBadParsing();
   testToString();
+
   return 0;
 }
 

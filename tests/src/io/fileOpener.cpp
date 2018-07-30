@@ -29,6 +29,8 @@ int main(const int argc, const char **argv) {
   occa::env::OCCA_CACHE_DIR = occa::io::dirname(__FILE__);
 
   testFileOpeners();
+
+  return 0;
 }
 
 void testFileOpeners() {

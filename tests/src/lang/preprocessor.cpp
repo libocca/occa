@@ -103,6 +103,8 @@ int main(const int argc, const char **argv) {
   testOccaPragma();
 
   delete token;
+
+  return 0;
 }
 
 void testMacroDefines() {

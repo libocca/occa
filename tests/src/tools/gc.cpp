@@ -70,4 +70,6 @@ int main(const int argc, const char **argv) {
 
   OCCA_ERROR("Oh oh... left alive: " << test::count,
              test::count == 0);
+
+  return 0;
 }

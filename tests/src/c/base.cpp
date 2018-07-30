@@ -45,6 +45,8 @@ int main(const int argc, const char **argv) {
   testMemory();
   testKernel();
   testStream();
+
+  return 0;
 }
 
 void testGlobals() {

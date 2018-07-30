@@ -39,6 +39,8 @@ int main(const int argc, const char **argv) {
   testPathMethods();
   testDirMethods();
   testIOMethods();
+
+  return 0;
 }
 
 void testPathMethods() {

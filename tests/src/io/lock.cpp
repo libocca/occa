@@ -46,6 +46,8 @@ int main(const int argc, const char **argv) {
   testStaleRelease();
 
   clearLocks();
+
+  return 0;
 }
 
 void testInit() {

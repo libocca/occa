@@ -40,6 +40,8 @@ int main(const int argc, const char **argv) {
 
   occa::sys::rmdir(occa::env::OCCA_CACHE_DIR + "locks",
                    true);
+
+  return 0;
 }
 
 void testCacheInfoMethods() {

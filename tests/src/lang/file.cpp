@@ -58,5 +58,6 @@ int main(const int argc, const char **argv) {
   std::cout << "Test message\n\n";
   orig2.print(std::cout);
   std::cout << "Test message 2\n";
+
   return 0;
 }

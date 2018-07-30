@@ -24,14 +24,38 @@
 
 using namespace occa;
 
+void testStrip();
+void testEscape();
+void testSplit();
+void testCaseMethods();
+void testString();
+void testMatchEnds();
+void testHex();
+void testJoin();
+void testColors();
+
 int main(const int argc, const char **argv) {
-  // Strip
+  testStrip();
+  testEscape();
+  testSplit();
+  testCaseMethods();
+  testString();
+  testMatchEnds();
+  testHex();
+  testJoin();
+  testColors();
+
+  return 0;
+}
+
+void testStrip() {
   ASSERT_EQ(strip("a"), "a");
   ASSERT_EQ(strip("  a"), "a");
   ASSERT_EQ(strip("a  "), "a");
   ASSERT_EQ(strip("  a  "), "a");
+}
 
-  // Escape
+void testEscape() {
   ASSERT_EQ(escape("a", 'b'), "a");
   ASSERT_EQ(escape("aba", 'b'), "a\\ba");
   ASSERT_EQ(escape("a\\ba", 'b'), "a\\\\ba");
@@ -42,14 +66,17 @@ int main(const int argc, const char **argv) {
   ASSERT_EQ(unescape("a\\ba", 'b'), "aba");
   ASSERT_EQ(unescape("a", 'b', '|'), "a");
   ASSERT_EQ(unescape("a|ba", 'b', '|'), "aba");
+}
 
-  // Split
-  strVector parts = split("a|b|c", '|');
-  ASSERT_EQ((int) parts.size(), 3);
-  ASSERT_IN("a", parts);
-  ASSERT_IN("b", parts);
-  ASSERT_IN("c", parts);
+void testSplit() {
+  strVector vec = split("a|b|c", '|');
+  ASSERT_EQ((int) vec.size(), 3);
+  ASSERT_IN("a", vec);
+  ASSERT_IN("b", vec);
+  ASSERT_IN("c", vec);
+}
 
+void testCaseMethods() {
   // Uppercase
   ASSERT_EQ(uppercase('A'), 'A');
   ASSERT_EQ(uppercase('a'), 'A');
@@ -65,17 +92,22 @@ int main(const int argc, const char **argv) {
 
   ASSERT_EQ(lowercase("ABC123"), "abc123");
   ASSERT_EQ(lowercase("abc123", 3), "abc");
+}
+
+void testString() {
+  strVector vec = split("a|b|c", '|');
 
   // toString
   ASSERT_EQ(toString(1), "1");
   ASSERT_EQ(toString("1"), "1");
-  ASSERT_EQ(toString(parts), "[a,b,c]");
+  ASSERT_EQ(toString(vec), "[a,b,c]");
 
   // fromString
   ASSERT_EQ(fromString<int>("1"), 1);
-  ASSERT_TRUE(listFromString<std::string>(toString(parts)) == parts);
+  ASSERT_TRUE(listFromString<std::string>(toString(vec)) == vec);
+}
 
-  // Start/End
+void testMatchEnds() {
   ASSERT_TRUE(startsWith("abc", "a"));
   ASSERT_TRUE(startsWith("abc", "ab"));
   ASSERT_FALSE(startsWith("abc", "ab_"));
@@ -83,7 +115,9 @@ int main(const int argc, const char **argv) {
   ASSERT_TRUE(endsWith("abc", "c"));
   ASSERT_TRUE(endsWith("abc", "bc"));
   ASSERT_FALSE(endsWith("abc", "_bc"));
+}
 
+void testHex() {
   // To Hex
   for (int i = 0; i < 10; ++i) {
     ASSERT_EQ(toHexChar(i), '0' + i);
@@ -130,8 +164,9 @@ int main(const int argc, const char **argv) {
             "4 TB");
   ASSERT_EQ(stringifyBytes(1L << 52),
             toString(1L << 52) + " bytes");
+}
 
-  // Join
+void testJoin() {
   strVector vec;
   vec.push_back("a");
   vec.push_back("b");
@@ -140,8 +175,9 @@ int main(const int argc, const char **argv) {
             "a,b,c");
   ASSERT_EQ(join(vec, " , "),
             "a , b , c");
+}
 
-  // Colors
+void testColors() {
   std::cout << black("black") << '\n'
             << red("red") << '\n'
             << green("green") << '\n'
@@ -150,6 +186,4 @@ int main(const int argc, const char **argv) {
             << magenta("magenta") << '\n'
             << cyan("cyan") << '\n'
             << white("white") << '\n';
-
-  return 0;
 }

@@ -30,6 +30,8 @@ void testCTypeWrappers();
 int main(const int argc, const char **argv) {
   testNewOccaTypes();
   testCTypeWrappers();
+
+  return 0;
 }
 
 void testNewOccaTypes() {
