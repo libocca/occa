@@ -178,22 +178,31 @@ void testCopyMethods() {
   ASSERT_EQ(ptr4[2], 2);
   ASSERT_EQ(ptr4[3], 2);
 
-  // Ptr -> Mem
+  // Ptr <-> Mem with default props
   occaCopyPtrToMem(mem4, data4,
+                   occaAllBytes, 0,
+                   occaDefault);
+  ASSERT_EQ(ptr4[3], 3);
+  ptr4[3] = 2;
+
+  occaCopyMemToPtr(data4, mem4,
+                   occaAllBytes, 0,
+                   occaDefault);
+  ASSERT_EQ(data4[3], 2);
+
+  // Ptr <-> Mem with props
+  occaCopyMemToPtr(data2, mem2,
                    occaAllBytes, 0,
                    props);
 
-  ASSERT_EQ(ptr4[0], 0);
-  ASSERT_EQ(ptr4[1], 1);
-  ASSERT_EQ(ptr4[2], 2);
-  ASSERT_EQ(ptr4[3], 3);
-
-  occaCopyMemToPtr(data2, mem2,
-                   occaAllBytes, 0,
-                   occaDefault);
-
   ASSERT_EQ(data2[0], 2);
   ASSERT_EQ(data2[1], 3);
+  data2[1] = 1;
+
+  occaCopyPtrToMem(mem2, data2,
+                   occaAllBytes, 0,
+                   props);
+  ASSERT_EQ(ptr2[1], 1);
 
   occaFree(mem2);
   occaFree(mem4);
