@@ -303,11 +303,11 @@ namespace occa {
     }
   }
 
-  bool memory::operator == (const occa::memory &m) {
+  bool memory::operator == (const occa::memory &m) const {
     return (mHandle == m.mHandle);
   }
 
-  bool memory::operator != (const occa::memory &m) {
+  bool memory::operator != (const occa::memory &m) const {
     return (mHandle != m.mHandle);
   }
 
@@ -509,6 +509,12 @@ namespace occa {
     device::removeDHandleRefFrom(dHandle);
     delete mHandle;
     mHandle = NULL;
+  }
+
+  std::ostream& operator << (std::ostream &out,
+                             const occa::memory &memory) {
+    out << memory.properties();
+    return out;
   }
 
   namespace cpu {

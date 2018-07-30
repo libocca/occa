@@ -27,6 +27,196 @@
 #include <occa/c/types.hpp>
 #include <occa/tools/testing.hpp>
 
+void testInit();
+void testUvaMethods();
+void testCopyMethods();
+void testInteropMethods();
+
 int main(const int argc, const char **argv) {
+  testInit();
+  testUvaMethods();
+  testCopyMethods();
+  testInteropMethods();
+
   return 0;
+}
+
+void testInit() {
+  const size_t bytes = 3 * sizeof(int);
+  int *data = new int[3];
+  data[0] = 0;
+  data[1] = 1;
+  data[2] = 2;
+
+  occaMemory mem;
+  occaProperties props = (
+    occaCreatePropertiesFromString("foo: 'bar'")
+  );
+
+  ASSERT_FALSE(occaMemoryIsInitialized(mem));
+  mem = occaMalloc(bytes, data, props);
+  ASSERT_TRUE(occaMemoryIsInitialized(mem));
+
+  int *ptr = (int*) occaMemoryPtr(mem);
+  ASSERT_EQ(ptr[0], 0);
+  ASSERT_EQ(ptr[1], 1);
+  ASSERT_EQ(ptr[2], 2);
+
+  ASSERT_EQ(occa::c::device(occaMemoryGetDevice(mem)),
+            occa::host());
+
+  occaProperties memProps = occaMemoryGetProperties(mem);
+  occaType memMode = occaPropertiesGet(memProps, "foo", occaDefault);
+  ASSERT_EQ_BINARY(memMode.type,
+                   OCCA_STRING);
+  ASSERT_EQ((const char*) memMode.value.ptr,
+            (const char*) "bar");
+
+  ASSERT_EQ((size_t) occaMemorySize(mem),
+            bytes);
+
+  occaMemory subMem = occaMemorySlice(mem,
+                                      1 * sizeof(int),
+                                      occaAllBytes);
+
+  ASSERT_EQ((size_t) occaMemorySize(subMem),
+            bytes - (1 * sizeof(int)));
+
+  ptr = (int*) occaMemoryPtr(subMem);
+  ASSERT_EQ(ptr[0], 1);
+  ASSERT_EQ(ptr[1], 2);
+
+  occaFree(props);
+  occaFree(mem);
+}
+
+void testUvaMethods() {
+  // Test with uninitialized memory
+  occaMemory mem;
+
+  ASSERT_FALSE(occaMemoryIsManaged(mem));
+  ASSERT_FALSE(occaMemoryInDevice(mem));
+  ASSERT_FALSE(occaMemoryIsStale(mem));
+
+  occaMemoryStartManaging(mem);
+  ASSERT_FALSE(occaMemoryIsManaged(mem));
+
+  occaMemoryStopManaging(mem);
+  ASSERT_FALSE(occaMemoryIsManaged(mem));
+
+  ASSERT_THROW_START {
+    occaMemorySyncToDevice(mem, occaAllBytes, 0);
+  } ASSERT_THROW_END;
+
+  ASSERT_THROW_START {
+    occaMemorySyncToHost(mem, occaAllBytes, 0);
+  } ASSERT_THROW_END;
+
+  // Test with memory
+  mem = occaMalloc(10 * sizeof(int), NULL, occaDefault);
+
+  ASSERT_FALSE(occaMemoryIsManaged(mem));
+  ASSERT_FALSE(occaMemoryInDevice(mem));
+  ASSERT_FALSE(occaMemoryIsStale(mem));
+
+  occaMemoryStartManaging(mem);
+  ASSERT_TRUE(occaMemoryIsManaged(mem));
+
+  occaMemoryStopManaging(mem);
+  ASSERT_FALSE(occaMemoryIsManaged(mem));
+
+  occaMemorySyncToDevice(mem, occaAllBytes, 0);
+  occaMemorySyncToHost(mem, occaAllBytes, 0);
+
+  occaFree(mem);
+}
+
+void testCopyMethods() {
+  const size_t bytes2 = 2 * sizeof(int);
+  int *data2 = new int[2];
+  data2[0] = 0;
+  data2[1] = 1;
+
+  const size_t bytes4 = 4 * sizeof(int);
+  int *data4 = new int[4];
+  data4[0] = 0;
+  data4[1] = 1;
+  data4[2] = 2;
+  data4[3] = 3;
+
+  occaMemory mem2 = occaMalloc(bytes2, data2, occaDefault);
+  occaMemory mem4 = occaMalloc(bytes4, data4, occaDefault);
+
+  int *ptr2 = (int*) occaMemoryPtr(mem2);
+  int *ptr4 = (int*) occaMemoryPtr(mem4);
+
+  // Mem -> Mem
+  // Copy over [2, 3]
+  occaCopyMemToMem(mem2, mem4,
+                   bytes2,
+                   0, bytes2,
+                   occaDefault);
+
+  ASSERT_EQ(ptr2[0], 2);
+  ASSERT_EQ(ptr2[1], 3);
+
+  // Copy over [2] to the end
+  occaCopyMemToMem(mem4, mem2,
+                   1 * sizeof(int),
+                   3 * sizeof(int), 0,
+                   occaDefault);
+
+  ASSERT_EQ(ptr4[0], 0);
+  ASSERT_EQ(ptr4[1], 1);
+  ASSERT_EQ(ptr4[2], 2);
+  ASSERT_EQ(ptr4[3], 2);
+
+  // Ptr -> Mem
+  occaCopyPtrToMem(mem4, data4,
+                   occaAllBytes, 0,
+                   occaDefault);
+
+  ASSERT_EQ(ptr4[0], 0);
+  ASSERT_EQ(ptr4[1], 1);
+  ASSERT_EQ(ptr4[2], 2);
+  ASSERT_EQ(ptr4[3], 3);
+
+  // Mem -> Ptr
+  occaCopyMemToPtr(data2, mem2,
+                   occaAllBytes, 0,
+                   occaDefault);
+
+  ASSERT_EQ(data2[0], 2);
+  ASSERT_EQ(data2[1], 3);
+
+  delete [] data2;
+  delete [] data4;
+  occaFree(mem2);
+  occaFree(mem4);
+}
+
+void testInteropMethods() {
+  const int entries = 10;
+  const size_t bytes = entries * sizeof(int);
+
+  occaMemory mem1 = occaMalloc(bytes, NULL, occaDefault);
+  occaMemory mem2 = occaMemoryClone(mem1);
+
+  ASSERT_EQ(occaMemorySize(mem1),
+            occaMemorySize(mem2));
+
+  ASSERT_NEQ(occa::c::memory(mem1),
+             occa::c::memory(mem2));
+
+  int *ptr = (int*) occaMemoryPtr(mem2);
+  occaMemoryDetach(mem2);
+
+  for (int i = 0; i < entries; ++i) {
+    ptr[i] = i;
+  }
+
+  mem2 = occaWrapCpuMemory(ptr, bytes);
+
+  occaFree(mem1);
+  occaFree(mem2);
 }

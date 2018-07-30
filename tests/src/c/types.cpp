@@ -42,6 +42,11 @@ void testNewOccaTypes() {
     occaFree(v);                                \
   } while (0)
 
+  occaType value;
+  ASSERT_FALSE(occaTypeIsValid(value));
+  value = occaInt(1);
+  ASSERT_TRUE(occaTypeIsValid(value));
+
   TEST_OCCA_TYPE((void*) NULL, OCCA_PTR);
 
   TEST_OCCA_TYPE((bool) true, OCCA_BOOL);

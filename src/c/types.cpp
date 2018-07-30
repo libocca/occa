@@ -215,23 +215,33 @@ namespace occa {
     }
 
     bool isDefault(occaType value) {
-      return ((value.type == typeType::none) &&
+      return (occaTypeIsValid(value) &&
+              (value.type == typeType::none) &&
               (value.value.ptr == NULL));
     }
 
     occa::device device(occaType value) {
+      if (!occaTypeIsValid(value)) {
+        return occa::device();
+      }
       OCCA_ERROR("Input is not an occaDevice",
                  value.type == typeType::device);
       return occa::device((occa::device_v*) value.value.ptr);
     }
 
     occa::kernel kernel(occaType value) {
+      if (!occaTypeIsValid(value)) {
+        return occa::kernel();
+      }
       OCCA_ERROR("Input is not an occaKernel",
                  value.type == typeType::kernel);
       return occa::kernel((occa::kernel_v*) value.value.ptr);
     }
 
     occa::memory memory(occaType value) {
+      if (!occaTypeIsValid(value)) {
+        return occa::memory();
+      }
       OCCA_ERROR("Input is not an occaMemory",
                  value.type == typeType::memory);
       return occa::memory((occa::memory_v*) value.value.ptr);
@@ -397,7 +407,15 @@ OCCA_LFUNC occaType OCCA_RFUNC occaString(const char *str) {
 }
 //======================================
 
+
+OCCA_LFUNC int OCCA_RFUNC occaTypeIsValid(occaType value) {
+  return value.magicHeader == OCCA_C_TYPE_MAGIC_HEADER;
+}
+
 OCCA_LFUNC void OCCA_RFUNC occaFree(occaType value) {
+  if (!occaTypeIsValid(value)) {
+    return;
+  }
   switch (value.type) {
   case occa::c::typeType::device: {
     break;

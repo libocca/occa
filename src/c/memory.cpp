@@ -164,9 +164,9 @@ void OCCA_RFUNC occaCopyMemToPtr(void *dest, occaMemory src,
 }
 
 occaMemory OCCA_RFUNC occaMemoryClone(occaMemory memory) {
-  return occa::c::newOccaType(
-    occa::c::memory(memory).clone()
-  );
+  occa::memory clone = occa::c::memory(memory).clone();
+  clone.dontUseRefs();
+  return occa::c::newOccaType(clone);
 }
 
 void OCCA_RFUNC occaMemoryDetach(occaMemory memory) {
@@ -175,9 +175,9 @@ void OCCA_RFUNC occaMemoryDetach(occaMemory memory) {
 
 occaMemory OCCA_RFUNC occaWrapCpuMemory(void *ptr,
                                         occaUDim_t bytes) {
-  return occa::c::newOccaType(
-    occa::cpu::wrapMemory(ptr, bytes)
-  );
+  occa::memory mem = occa::cpu::wrapMemory(ptr, bytes);
+  mem.dontUseRefs();
+  return occa::c::newOccaType(mem);
 }
 
 OCCA_END_EXTERN_C

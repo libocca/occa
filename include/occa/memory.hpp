@@ -167,7 +167,7 @@ namespace occa {
       return (mHandle->size / sizeof(TM));
     }
 
-//---[ UVA ]----------------------------
+    //---[ UVA ]------------------------
     bool isManaged() const;
     bool inDevice() const;
     bool isStale() const;
@@ -182,10 +182,10 @@ namespace occa {
     bool uvaIsStale() const;
     void uvaMarkStale();
     void uvaMarkFresh();
-//======================================
+    //==================================
 
-    bool operator == (const occa::memory &m);
-    bool operator != (const occa::memory &m);
+    bool operator == (const occa::memory &m) const;
+    bool operator != (const occa::memory &m) const;
 
     occa::memory operator + (const dim_t offset) const;
     occa::memory& operator += (const dim_t offset);
@@ -234,6 +234,9 @@ namespace occa {
     void deleteRefs(const bool freeMemory = false);
   };
   //====================================
+
+  std::ostream& operator << (std::ostream &out,
+                             const occa::memory &memory);
 
   namespace cpu {
     occa::memory wrapMemory(void *ptr, const udim_t bytes);
