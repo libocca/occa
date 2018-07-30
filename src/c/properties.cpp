@@ -72,6 +72,11 @@ void OCCA_RFUNC occaPropertiesSet(occaProperties props,
   }
 }
 
+int OCCA_RFUNC occaPropertiesHas(occaProperties props,
+                                  const char *key) {
+  return occa::c::properties(props).has(key);
+}
+
 occaType OCCA_RFUNC occaPropertiesGet(occaProperties props,
                                       const char *key,
                                       occaType defaultValue) {

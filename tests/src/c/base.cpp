@@ -28,7 +28,6 @@
 #include <occa.hpp>
 #include <occa.h>
 #include <occa/c/types.hpp>
-#include <occa/tools/sys.hpp>
 #include <occa/tools/testing.hpp>
 
 void testGlobals();
