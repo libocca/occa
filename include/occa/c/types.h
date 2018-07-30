@@ -100,12 +100,15 @@ extern const int OCCA_PROPERTIES;
 //======================================
 
 //---[ Globals & Flags ]----------------
-extern const occaType occaDefault;
 extern const occaType occaNull;
+extern const occaType occaUndefined;
+extern const occaType occaDefault;
 extern const occaUDim_t occaAllBytes;
 //======================================
 
 //-----[ Known Types ]------------------
+OCCA_LFUNC int OCCA_RFUNC occaTypeIsValid(occaType value);
+
 OCCA_LFUNC occaType OCCA_RFUNC occaPtr(void *value);
 
 OCCA_LFUNC occaType OCCA_RFUNC occaBool(int value);
@@ -144,8 +147,6 @@ OCCA_LFUNC occaType OCCA_RFUNC occaStruct(void *value,
 
 OCCA_LFUNC occaType OCCA_RFUNC occaString(const char *str);
 //======================================
-
-OCCA_LFUNC int OCCA_RFUNC occaTypeIsValid(occaType value);
 
 OCCA_LFUNC void OCCA_RFUNC occaFree(occaType value);
 OCCA_LFUNC void OCCA_RFUNC occaFreeStream(occaStream stream);

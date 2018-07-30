@@ -48,7 +48,7 @@ void testInit() {
   data[1] = 1;
   data[2] = 2;
 
-  occaMemory mem;
+  occaMemory mem = occaUndefined;
   occaProperties props = (
     occaCreatePropertiesFromString("foo: 'bar'")
   );
@@ -95,7 +95,7 @@ void testInit() {
 
 void testUvaMethods() {
   // Test with uninitialized memory
-  occaMemory mem;
+  occaMemory mem = occaUndefined;
 
   ASSERT_FALSE(occaMemoryIsManaged(mem));
   ASSERT_FALSE(occaMemoryInDevice(mem));

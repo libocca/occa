@@ -36,6 +36,14 @@ namespace occa {
       OCCA_FORCE_ERROR("Unknown int type");
     }
 
+    occaType undefinedOccaType() {
+      occaType oType;
+      oType.magicHeader = 0;
+      oType.type = occa::c::typeType::none;
+      oType.value.ptr = NULL;
+      return oType;
+    }
+
     occaType defaultOccaType() {
       occaType oType;
       oType.magicHeader = OCCA_C_TYPE_MAGIC_HEADER;
@@ -299,12 +307,17 @@ const int OCCA_PROPERTIES = occa::c::typeType::properties;
 //======================================
 
 //---[ Globals & Flags ]----------------
-const occaType occaDefault    = occa::c::defaultOccaType();
 const occaType occaNull       = occa::c::newOccaType((void*) NULL);
+const occaType occaUndefined  = occa::c::undefinedOccaType();
+const occaType occaDefault    = occa::c::defaultOccaType();
 const occaUDim_t occaAllBytes = -1;
 //======================================
 
 //-----[ Known Types ]------------------
+OCCA_LFUNC int OCCA_RFUNC occaTypeIsValid(occaType value) {
+  return value.magicHeader == OCCA_C_TYPE_MAGIC_HEADER;
+}
+
 OCCA_LFUNC occaType OCCA_RFUNC occaPtr(void *value) {
   return occa::c::newOccaType(value);
 }
@@ -406,11 +419,6 @@ OCCA_LFUNC occaType OCCA_RFUNC occaString(const char *str) {
   return oType;
 }
 //======================================
-
-
-OCCA_LFUNC int OCCA_RFUNC occaTypeIsValid(occaType value) {
-  return value.magicHeader == OCCA_C_TYPE_MAGIC_HEADER;
-}
 
 OCCA_LFUNC void OCCA_RFUNC occaFree(occaType value) {
   if (!occaTypeIsValid(value)) {
