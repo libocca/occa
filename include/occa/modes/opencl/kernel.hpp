@@ -23,8 +23,8 @@
 #include <occa/defines.hpp>
 
 #if OCCA_OPENCL_ENABLED
-#  ifndef OCCA_OPENCL_KERNEL_HEADER
-#  define OCCA_OPENCL_KERNEL_HEADER
+#  ifndef OCCA_MODES_OPENCL_KERNEL_HEADER
+#  define OCCA_MODES_OPENCL_KERNEL_HEADER
 
 #include <occa/kernel.hpp>
 #include <occa/modes/opencl/headers.hpp>

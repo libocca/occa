@@ -21,8 +21,8 @@
  */
 
 #if OCCA_USING_VS
-#  ifndef OCCA_VS_DEFINES_HEADER
-#  define OCCA_VS_DEFINES_HEADER
+#  ifndef OCCA_DEFINES_VISUALSTUDIO_HEADER
+#  define OCCA_DEFINES_VISUALSTUDIO_HEADER
 
 //---[ Mode Support ]-------------------
 #define OCCA_THREADS_ENABLED   0

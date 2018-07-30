@@ -23,8 +23,8 @@
 #include <occa/defines.hpp>
 
 #if OCCA_HIP_ENABLED
-#  ifndef OCCA_HIP_KERNEL_HEADER
-#  define OCCA_HIP_KERNEL_HEADER
+#  ifndef OCCA_MODES_HIP_KERNEL_HEADER
+#  define OCCA_MODES_HIP_KERNEL_HEADER
 
 #include <hip/hip_runtime_api.h>
 

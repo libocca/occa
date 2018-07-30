@@ -23,8 +23,8 @@
 #include <occa/defines.hpp>
 
 #if OCCA_OPENMP_ENABLED
-#  ifndef OCCA_OPENMP_REGISTRATION_HEADER
-#  define OCCA_OPENMP_REGISTRATION_HEADER
+#  ifndef OCCA_MODES_OPENMP_REGISTRATION_HEADER
+#  define OCCA_MODES_OPENMP_REGISTRATION_HEADER
 
 #include <occa/mode.hpp>
 #include <occa/modes/openmp/device.hpp>

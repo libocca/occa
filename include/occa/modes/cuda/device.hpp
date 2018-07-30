@@ -21,8 +21,8 @@
  */
 
 #if OCCA_CUDA_ENABLED
-#  ifndef OCCA_CUDA_DEVICE_HEADER
-#  define OCCA_CUDA_DEVICE_HEADER
+#  ifndef OCCA_MODES_CUDA_DEVICE_HEADER
+#  define OCCA_MODES_CUDA_DEVICE_HEADER
 
 #include <occa/defines.hpp>
 #include <occa/device.hpp>

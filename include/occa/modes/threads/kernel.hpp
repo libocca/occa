@@ -21,8 +21,8 @@
  */
 
 #if 0
-#  ifndef OCCA_THREADS_KERNEL_HEADER
-#  define OCCA_THREADS_KERNEL_HEADER
+#  ifndef OCCA_MODES_THREADS_KERNEL_HEADER
+#  define OCCA_MODES_THREADS_KERNEL_HEADER
 
 #include <occa/defines.hpp>
 #include <occa/modes/threads/headers.hpp>

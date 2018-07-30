@@ -23,8 +23,8 @@
 #include <occa/defines.hpp>
 
 #if OCCA_CUDA_ENABLED
-#  ifndef OCCA_CUDA_REGISTRATION_HEADER
-#  define OCCA_CUDA_REGISTRATION_HEADER
+#  ifndef OCCA_MODES_CUDA_REGISTRATION_HEADER
+#  define OCCA_MODES_CUDA_REGISTRATION_HEADER
 
 #include <occa/mode.hpp>
 #include <occa/modes/cuda/device.hpp>

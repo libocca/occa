@@ -23,8 +23,8 @@
 #include <occa/defines.hpp>
 
 #if OCCA_HIP_ENABLED
-#  ifndef OCCA_HIP_REGISTRATION_HEADER
-#  define OCCA_HIP_REGISTRATION_HEADER
+#  ifndef OCCA_MODES_HIP_REGISTRATION_HEADER
+#  define OCCA_MODES_HIP_REGISTRATION_HEADER
 
 #include <occa/mode.hpp>
 #include <occa/modes/hip/device.hpp>

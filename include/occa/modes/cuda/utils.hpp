@@ -23,8 +23,8 @@
 #include <occa/defines.hpp>
 
 #if OCCA_CUDA_ENABLED
-#  ifndef OCCA_CUDA_UTILS_HEADER
-#  define OCCA_CUDA_UTILS_HEADER
+#  ifndef OCCA_MODES_CUDA_UTILS_HEADER
+#  define OCCA_MODES_CUDA_UTILS_HEADER
 
 #include <cuda.h>
 

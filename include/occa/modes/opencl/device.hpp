@@ -23,8 +23,8 @@
 #include <occa/defines.hpp>
 
 #if OCCA_OPENCL_ENABLED
-#  ifndef OCCA_OPENCL_DEVICE_HEADER
-#  define OCCA_OPENCL_DEVICE_HEADER
+#  ifndef OCCA_MODES_OPENCL_DEVICE_HEADER
+#  define OCCA_MODES_OPENCL_DEVICE_HEADER
 
 #include <occa/device.hpp>
 #include <occa/modes/opencl/headers.hpp>
