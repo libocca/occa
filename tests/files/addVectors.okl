@@ -19,14 +19,11 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  */
-
-#define OCCA_DISABLE_VARIADIC_MACROS
-
-#include <occa.hpp>
-#include <occa.h>
-#include <occa/c/types.hpp>
-#include <occa/tools/testing.hpp>
-
-int main(const int argc, const char **argv) {
-  return 0;
+@kernel void addVectors(const int entries,
+                        const float *a,
+                        const float *b,
+                        float *ab) {
+  for (int i = 0; i < entries; ++i; @tile(16, @outer, @inner)) {
+    ab[i] = a[i] + b[i];
+  }
 }

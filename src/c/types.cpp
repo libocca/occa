@@ -24,6 +24,18 @@
 
 namespace occa {
   namespace c {
+    template <class TM>
+    inline occaType newOccaIntType(bool isUnsigned,
+                                   TM value) {
+      switch (sizeof(value)) {
+      case 1: return isUnsigned ? occaUInt8(value) : occaInt8(value);
+      case 2: return isUnsigned ? occaUInt16(value) : occaInt16(value);
+      case 4: return isUnsigned ? occaUInt32(value) : occaInt32(value);
+      case 8: return isUnsigned ? occaUInt64(value) : occaInt64(value);
+      }
+      OCCA_FORCE_ERROR("Unknown int type");
+    }
+
     occaType defaultOccaType() {
       occaType oType;
       oType.magicHeader = OCCA_C_TYPE_MAGIC_HEADER;
@@ -325,35 +337,35 @@ OCCA_LFUNC occaType OCCA_RFUNC occaUInt64(uint64_t value) {
 
 //-----[ Ambiguous Types ]--------------
 OCCA_LFUNC occaType OCCA_RFUNC occaChar(char value) {
-  return occa::c::newOccaType((int8_t) value);
+  return occa::c::newOccaIntType<char>(false, value);
 }
 
 OCCA_LFUNC occaType OCCA_RFUNC occaUChar(unsigned char value) {
-  return occa::c::newOccaType((uint8_t) value);
+  return occa::c::newOccaIntType<char>(true, value);
 }
 
 OCCA_LFUNC occaType OCCA_RFUNC occaShort(short value) {
-  return occa::c::newOccaType(value);
+  return occa::c::newOccaIntType<short>(false, value);
 }
 
 OCCA_LFUNC occaType OCCA_RFUNC occaUShort(unsigned short value) {
-  return occa::c::newOccaType(value);
+  return occa::c::newOccaIntType<short>(true, value);
 }
 
 OCCA_LFUNC occaType OCCA_RFUNC occaInt(int value) {
-  return occa::c::newOccaType(value);
+  return occa::c::newOccaIntType<int>(false, value);
 }
 
 OCCA_LFUNC occaType OCCA_RFUNC occaUInt(unsigned int value) {
-  return occa::c::newOccaType(value);
+  return occa::c::newOccaIntType<int>(true, value);
 }
 
 OCCA_LFUNC occaType OCCA_RFUNC occaLong(long value) {
-  return occa::c::newOccaType(value);
+  return occa::c::newOccaIntType<long>(false, value);
 }
 
 OCCA_LFUNC occaType OCCA_RFUNC occaULong(unsigned long value) {
-  return occa::c::newOccaType(value);
+  return occa::c::newOccaIntType<long>(true, value);
 }
 
 OCCA_LFUNC occaType OCCA_RFUNC occaFloat(float value) {

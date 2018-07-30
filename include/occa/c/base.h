@@ -70,7 +70,7 @@ OCCA_LFUNC occaKernel OCCA_RFUNC occaBuildKernel(const char *filename,
                                                  const char *kernelName,
                                                  const occaProperties props);
 
-OCCA_LFUNC occaKernel OCCA_RFUNC occaBuildKernelFromString(const char *str,
+OCCA_LFUNC occaKernel OCCA_RFUNC occaBuildKernelFromString(const char *source,
                                                            const char *kernelName,
                                                            const occaProperties props);
 

@@ -472,8 +472,8 @@ namespace occa {
                                      kernelName);
 
       return new kernel(this,
-                        filename,
                         kernelName,
+                        filename,
                         clDevice,
                         clInfo.clKernel,
                         kernelProps);

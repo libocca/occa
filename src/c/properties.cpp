@@ -93,7 +93,6 @@ occaType OCCA_RFUNC occaPropertiesGet(occaProperties props,
     case occa::primitiveType::uint64_ : return occaUInt64((uint64_t) number);
     case occa::primitiveType::float_  : return occaFloat((float) number);
     case occa::primitiveType::double_ : return occaDouble((double) number);
-    default: return defaultValue;
     }
   }
   if (value.isBoolean()) {
@@ -103,6 +102,7 @@ occaType OCCA_RFUNC occaPropertiesGet(occaProperties props,
       value.isArray()) {
     return occa::c::newOccaType((occa::properties&) value);
   }
+  // Last type is NULL
   return defaultValue;
 }
 

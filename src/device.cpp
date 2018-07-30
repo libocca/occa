@@ -363,6 +363,7 @@ namespace occa {
 
     const std::string realFilename = io::filename(filename);
     const std::string hashDir = io::hashDir(realFilename, kernelHash);
+    allProps["hash"] = kernelHash.toFullString();
 
     cachedKernel = dHandle->buildKernel(realFilename,
                                         kernelName,
@@ -378,13 +379,14 @@ namespace occa {
     occa::properties allProps = props + kernelProperties();
     allProps["mode"] = mode();
 
+    // Store in the same directory as cached outputs
     hash_t kernelHash = (hash()
                          ^ occa::hash(allProps)
                          ^ occa::hash(content));
 
     io::lock_t lock(kernelHash, "occa-device");
     std::string stringSourceFile = io::hashDir(kernelHash);
-    stringSourceFile += "stringSource.okl";
+    stringSourceFile += "string_source.cpp";
 
     if (lock.isMine()) {
       if (!io::isFile(stringSourceFile)) {

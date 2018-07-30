@@ -29,7 +29,8 @@
 namespace occa {
   //---[ Device Functions ]-------------
   device host() {
-    static device dev;
+    static tls<device> tdev;
+    device &dev = tdev.value();
     if (!dev.isInitialized()) {
       dev = occa::device(newModeDevice("mode: 'Serial'"));
       dev.dontUseRefs();

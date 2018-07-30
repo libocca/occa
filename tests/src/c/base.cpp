@@ -34,6 +34,7 @@
 void testGlobals();
 void testDevice();
 void testMemory();
+void testKernel();
 void testStream();
 
 int main(const int argc, const char **argv) {
@@ -42,6 +43,7 @@ int main(const int argc, const char **argv) {
   testGlobals();
   testDevice();
   testMemory();
+  testKernel();
   testStream();
 }
 
@@ -105,6 +107,58 @@ void testMemory() {
                     NULL,
                     occaDefault);
   occaFreeUvaPtr(ptr);
+
+  occaFree(props);
+}
+
+void testKernel() {
+  const std::string addVectorsFile = (
+    occa::env::OCCA_DIR + "tests/files/addVectors.okl"
+  );
+  const std::string addVectorsSource = (
+    occa::io::read(addVectorsFile)
+  );
+
+  occaProperties props = occaCreateProperties();
+  occaPropertiesSet(props, "defines/foo", occaInt(3));
+
+  // occaBuildKernel
+  occaKernel addVectors = occaBuildKernel(addVectorsFile.c_str(),
+                                          "addVectors",
+                                          occaDefault);
+
+  const std::string addVectorsBinaryFile = (
+    occa::c::kernel(addVectors).binaryFilename()
+  );
+
+  occaFree(addVectors);
+
+  addVectors = occaBuildKernel(addVectorsFile.c_str(),
+                               "addVectors",
+                               props);
+  occaFree(addVectors);
+
+  // occaBuildFromString
+  addVectors = occaBuildKernelFromString(addVectorsSource.c_str(),
+                                         "addVectors",
+                                         occaDefault);
+  occaFree(addVectors);
+
+  addVectors = occaBuildKernelFromString(addVectorsSource.c_str(),
+                                         "addVectors",
+                                         props);
+  occaFree(addVectors);
+
+  // occaBuildFromBinary
+  addVectors = occaBuildKernelFromBinary(addVectorsBinaryFile.c_str(),
+                                         "addVectors",
+                                         occaDefault);
+  occaFree(addVectors);
+
+  addVectors = occaBuildKernelFromBinary(addVectorsBinaryFile.c_str(),
+                                         "addVectors",
+                                         props);
+  occaFree(addVectors);
 
   occaFree(props);
 }

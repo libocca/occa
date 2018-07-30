@@ -123,16 +123,16 @@ occaKernel OCCA_RFUNC occaBuildKernel(const char *filename,
   return occa::c::newOccaType(kernel);
 }
 
-occaKernel OCCA_RFUNC occaBuildKernelFromString(const char *str,
+occaKernel OCCA_RFUNC occaBuildKernelFromString(const char *source,
                                                 const char *kernelName,
                                                 const occaProperties props) {
   occa::kernel kernel;
 
   if (occa::c::isDefault(props)) {
-    kernel = occa::buildKernelFromString(str,
+    kernel = occa::buildKernelFromString(source,
                                          kernelName);
   } else {
-    kernel = occa::buildKernelFromString(str,
+    kernel = occa::buildKernelFromString(source,
                                          kernelName,
                                          occa::c::properties(props));
   }

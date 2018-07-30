@@ -302,8 +302,8 @@ namespace occa {
                                             const std::string &kernelName,
                                             const occa::properties &kernelProps) {
       kernel &k = *(new kernel(this,
-                               filename,
                                kernelName,
+                               filename,
                                kernelProps));
 
       k.binaryFilename = filename;
