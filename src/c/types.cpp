@@ -325,11 +325,11 @@ OCCA_LFUNC occaType OCCA_RFUNC occaUInt64(uint64_t value) {
 
 //-----[ Ambiguous Types ]--------------
 OCCA_LFUNC occaType OCCA_RFUNC occaChar(char value) {
-  return occa::c::newOccaType(value);
+  return occa::c::newOccaType((int8_t) value);
 }
 
 OCCA_LFUNC occaType OCCA_RFUNC occaUChar(unsigned char value) {
-  return occa::c::newOccaType(value);
+  return occa::c::newOccaType((uint8_t) value);
 }
 
 OCCA_LFUNC occaType OCCA_RFUNC occaShort(short value) {
