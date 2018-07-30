@@ -51,7 +51,7 @@ namespace occa {
 
       kernelArg makeKernelArg() const;
 
-      memory_v* addOffset(const dim_t offset, bool &needsFree);
+      memory_v* addOffset(const dim_t offset);
 
       void copyTo(void *dest,
                   const udim_t bytes,

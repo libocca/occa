@@ -87,7 +87,10 @@ void testInit() {
   ASSERT_EQ(ptr[1], 2);
 
   occaFree(props);
+  occaFree(subMem);
   occaFree(mem);
+
+  delete [] data;
 }
 
 void testUvaMethods() {

@@ -52,9 +52,9 @@ occaUDim_t OCCA_RFUNC occaMemorySize(occaMemory memory) {
 occaMemory OCCA_RFUNC occaMemorySlice(occaMemory memory,
                                       const occaDim_t offset,
                                       const occaDim_t bytes) {
-  return occa::c::newOccaType(
-    occa::c::memory(memory).slice(offset, bytes)
-  );
+  occa::memory memSlice = occa::c::memory(memory).slice(offset, bytes);
+  memSlice.dontUseRefs();
+  return occa::c::newOccaType(memSlice);
 }
 
 //---[ UVA ]----------------------------

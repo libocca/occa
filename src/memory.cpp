@@ -39,7 +39,9 @@ namespace occa {
     uvaPtr = NULL;
 
     dHandle = NULL;
-    size    = 0;
+
+    size = 0;
+    canBeFreed = true;
   }
 
   memory_v::~memory_v() {}
@@ -337,16 +339,12 @@ namespace occa {
                << offset << " + " << bytes_ << " > " << size() << ")",
                (offset + (dim_t) bytes_) <= (dim_t) size());
 
-    bool needsFree;
-    occa::memory m(mHandle->addOffset(offset, needsFree));
+    occa::memory m(mHandle->addOffset(offset));
     memory_v &mv = *(m.mHandle);
     mv.dHandle = mHandle->dHandle;
     mv.size = bytes_;
     if (mHandle->uvaPtr) {
       mv.uvaPtr = (mHandle->uvaPtr + offset);
-    }
-    if (!needsFree) {
-      m.dontUseRefs();
     }
     return m;
   }
@@ -484,6 +482,12 @@ namespace occa {
     if (mHandle == NULL) {
       return;
     }
+    if (!mHandle->canBeFreed) {
+      delete mHandle;
+      mHandle = NULL;
+      return ;
+    }
+
     device_v *dHandle = mHandle->dHandle;
     dHandle->bytesAllocated -= (mHandle->size);
 

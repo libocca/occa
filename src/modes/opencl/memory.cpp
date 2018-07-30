@@ -50,7 +50,7 @@ namespace occa {
       return kernelArg(arg);
     }
 
-    memory_v* memory::addOffset(const dim_t offset, bool &needsFree) {
+    memory_v* memory::addOffset(const dim_t offset) {
       opencl::device &dev = *((opencl::device*) dHandle);
       opencl::memory *m = new opencl::memory();
       m->dHandle = &dev;
@@ -68,7 +68,6 @@ namespace occa {
                                    &error);
 
       OCCA_OPENCL_ERROR("Device: clCreateSubBuffer", error);
-      needsFree = true;
       return m;
     }
 

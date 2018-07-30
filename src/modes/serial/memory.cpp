@@ -44,10 +44,10 @@ namespace occa {
       return kernelArg(arg);
     }
 
-    memory_v* memory::addOffset(const dim_t offset, bool &needsFree) {
+    memory_v* memory::addOffset(const dim_t offset) {
       memory *m = new memory(properties);
       m->ptr = ptr + offset;
-      needsFree = false;
+      m->canBeFreed = false;
       return m;
     }
 

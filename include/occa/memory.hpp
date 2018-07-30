@@ -55,9 +55,11 @@ namespace occa {
 
     char *ptr;
     char *uvaPtr;
+
     occa::device_v *dHandle;
 
     udim_t size;
+    bool canBeFreed;
 
     memory_v(const occa::properties &properties_);
 
@@ -72,8 +74,7 @@ namespace occa {
 
     virtual kernelArg makeKernelArg() const = 0;
 
-    virtual memory_v* addOffset(const dim_t offset,
-                                bool &needsFree) = 0;
+    virtual memory_v* addOffset(const dim_t offset) = 0;
 
     virtual void copyTo(void *dest,
                         const udim_t bytes,

@@ -51,14 +51,14 @@ namespace occa {
       return kernelArg(arg);
     }
 
-    memory_v* memory::addOffset(const dim_t offset, bool &needsFree) {
+    memory_v* memory::addOffset(const dim_t offset) {
       memory *m = new memory(properties);
       m->hipPtr = (char*) hipPtr + offset;
       if (mappedPtr) {
         m->mappedPtr = mappedPtr + offset;
       }
       m->isManaged = isManaged;
-      needsFree = false;
+      m->canBeFreed = false;
       return m;
     }
 
