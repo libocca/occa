@@ -105,7 +105,7 @@ void testMemory() {
 
   ptr = occaUMalloc(bytes,
                     NULL,
-                    occaDefault);
+                    props);
   occaFreeUvaPtr(ptr);
 
   occaFree(props);
