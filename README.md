@@ -26,8 +26,7 @@ In a nutshell, OCCA (like *oca*-rina) is an open-source library which aims to
 ### Links
 
 - [Documentation](https://libocca.org)
-- **Want to contribute?** Checkout the ['Good First Issue' issues](https://github.com/libocca/occa/issues?q=is%3Aopen+is%3Aissue+label%3A%22Good+First+Issue%22)
-- **More of a challenge?** Checkout the ['Help Needed' issues](https://github.com/libocca/occa/issues?utf8=%E2%9C%93&q=is%3Aopen+is%3Aissue+label%3A%22Help+Wanted%22)
+- **Want to contribute?** Checkout the ['beginner' issues](https://github.com/libocca/occa/labels/beginner)
 - 🌟 Who is using OCCA?
   - [Gallery](https://libocca.org/#/gallery)
   - [Publications](https://libocca.org/#/publications)
