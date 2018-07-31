@@ -402,7 +402,6 @@ namespace occa {
                                         allProps);
 
     if (!cachedKernel.isInitialized()) {
-      std::cout << "HERE\n";
       sys::rmrf(hashDir);
     }
 
