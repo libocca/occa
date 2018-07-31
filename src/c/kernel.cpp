@@ -171,19 +171,12 @@ void OCCA_RFUNC occaKernelRunN(occaKernel kernel,
       break;
     case occa::c::typeType::device:
       OCCA_FORCE_ERROR("Unable to pass an occaDevice as a kernel argument");
-      break;
     case occa::c::typeType::kernel:
       OCCA_FORCE_ERROR("Unable to pass an occaKernel as a kernel argument");
-      break;
     case occa::c::typeType::properties:
       OCCA_FORCE_ERROR("Unable to pass an occaProperties as a kernel argument");
-      break;
-    case occa::c::typeType::undefined:
-      OCCA_FORCE_ERROR("Unable to pass occaUndefined as a kernel argument");
-      break;
     case occa::c::typeType::default_:
       OCCA_FORCE_ERROR("Unable to pass occaDefault as a kernel argument");
-      break;
     default:
       OCCA_FORCE_ERROR("A non-occaType argument was passed");
     }

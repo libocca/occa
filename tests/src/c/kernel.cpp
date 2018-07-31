@@ -156,4 +156,7 @@ void testRun() {
   ASSERT_THROW(
     occaKernelRunN(argKernel, 1, occaDefault);
   );
+  ASSERT_THROW(
+    occaKernelRunN(argKernel, 1, uvaPtr);
+  );
 }
