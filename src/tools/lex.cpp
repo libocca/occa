@@ -56,7 +56,8 @@ namespace occa {
 
     void skipTo(const char *&c, const char delimiter, const char escapeChar) {
       while (*c != '\0') {
-        if (*c == escapeChar) {
+        if (escapeChar &&
+            (*c == escapeChar)) {
           c += 1 + (c[1] != '\0');
           continue;
         }
@@ -78,7 +79,8 @@ namespace occa {
 
     void skipTo(const char *&c, const char *delimiters, const char escapeChar) {
       while (*c != '\0') {
-        if (*c == escapeChar) {
+        if (escapeChar &&
+            (*c == escapeChar)) {
           c += 1 + (c[1] != '\0');
           continue;
         }
@@ -164,7 +166,8 @@ namespace occa {
       const char *d      = match.c_str();
 
       while (*c != '\0') {
-        if (*c == escapeChar) {
+        if (escapeChar &&
+            (*c == escapeChar)) {
           c += 1 + (c[1] != '\0');
           continue;
         }
@@ -190,7 +193,8 @@ namespace occa {
 
     void skipFrom(const char *&c, const char *delimiters, const char escapeChar) {
       while (*c != '\0') {
-        if (*c == escapeChar) {
+        if (escapeChar &&
+            (*c == escapeChar)) {
           c += 1 + (c[1] != '\0');
           continue;
         }
@@ -307,7 +311,8 @@ namespace occa {
       while (*start != '\0') {
         if (isWhitespace(*start)) {
           ++start;
-        } else if ((*start == escapeChar) &&
+        } else if (escapeChar &&
+                   (*start == escapeChar) &&
                    isWhitespace(start[1])) {
           start += 2;
         } else {
@@ -317,7 +322,8 @@ namespace occa {
       while (start < end) {
         if (isWhitespace(*end)) {
           --end;
-        } else if ((*end == escapeChar) &&
+        } else if (escapeChar &&
+                   (*end == escapeChar) &&
                    isWhitespace(end[1])) {
           end -= 2;
         } else {

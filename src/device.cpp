@@ -399,6 +399,11 @@ namespace occa {
                                         kernelName,
                                         kernelHash,
                                         allProps);
+
+    if (!cachedKernel.isInitialized()) {
+      sys::rmrf(hashDir);
+    }
+
     return cachedKernel;
   }
 

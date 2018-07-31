@@ -34,10 +34,6 @@
 namespace occa {
   typedef void (*functionPtr_t)(...);
 
-  namespace flags {
-    extern const int checkCacheDir;
-  }
-
   namespace sys {
     namespace vendor {
       static const int notFound = 0;
@@ -79,6 +75,8 @@ namespace occa {
     void rmdir(const std::string &dir,
                const bool recursive = false);
     void rmrf(const std::string &filename);
+    bool isSafeToRmrf(const std::string &filename);
+
     int mkdir(const std::string &dir);
     void mkpath(const std::string &dir);
 

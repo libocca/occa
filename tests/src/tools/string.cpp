@@ -69,8 +69,9 @@ void testEscape() {
 }
 
 void testSplit() {
-  strVector vec = split("a|b|c", '|');
-  ASSERT_EQ((int) vec.size(), 3);
+  strVector vec = split("|a|b|c", '|');
+  ASSERT_EQ((int) vec.size(), 4);
+  ASSERT_IN(std::string(""), vec);
   ASSERT_IN("a", vec);
   ASSERT_IN("b", vec);
   ASSERT_IN("c", vec);

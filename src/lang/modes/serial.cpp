@@ -39,7 +39,7 @@ namespace occa {
       void serialParser::afterParsing() {
         if (!success) return;
         if (settings.get("okl/validate", true)) {
-          checkKernels(root);
+          success = checkKernels(root);
         }
 
         if (!success) return;

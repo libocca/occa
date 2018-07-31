@@ -49,7 +49,7 @@ namespace occa {
       if (cstr[i] != c) {
         ret += cstr[i];
       } else {
-        if (i) {
+        if (i && escapeChar) {
           ret += escapeChar;
         }
         ret += c;
@@ -65,7 +65,8 @@ namespace occa {
     const int chars = (int) str.size();
     const char *cstr = str.c_str();
     for (int i = 0; i < chars; ++i) {
-      if ((cstr[i] == escapeChar) &&
+      if (escapeChar &&
+          (cstr[i] == escapeChar) &&
           (cstr[i + 1] == c)) {
         continue;
       }

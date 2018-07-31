@@ -71,10 +71,6 @@
 #include <occa/tools/sys.hpp>
 
 namespace occa {
-  namespace flags {
-    const int checkCacheDir = (1 << 0);
-  }
-
   namespace sys {
     //---[ System Info ]----------------
     double currentTime() {
@@ -281,9 +277,38 @@ namespace occa {
     void rmrf(const std::string &filename) {
       if (io::isFile(filename)) {
         ::remove(filename.c_str());
-      } else {
-        rmdir(filename, true);
+        return;
       }
+
+      // Make sure we're not deleting /
+      if (settings().get("options/safe-rmrf", true)) {
+        OCCA_ERROR("For safety, not deleting [" << filename << "]."
+                   " To disable this error, set 'options/safe-rmrf' settings to false",
+                   isSafeToRmrf(filename));
+      }
+      rmdir(filename, true);
+    }
+
+    bool isSafeToRmrf(const std::string &filename) {
+      const std::string expFilename = io::filename(filename);
+      int depth = 0;
+
+      strVector path = split(expFilename, '/', '\0');
+      const int pathSize = (int) path.size();
+      for (int i = 0; i < pathSize; ++i) {
+        const std::string &dir = path[i];
+        if (!dir.size() ||
+            (dir == ".")) {
+          continue;
+        }
+        if (dir == "..") {
+          depth -= (depth > 0);
+        } else {
+          ++depth;
+        }
+      }
+
+      return depth > 2;
     }
 
     int mkdir(const std::string &dir) {
@@ -296,7 +321,7 @@ namespace occa {
     }
 
     void mkpath(const std::string &dir) {
-      strVector path = split(io::filename(dir), '/');
+      strVector path = split(io::filename(dir), '/', '\0');
 
       const int dirCount = (int) path.size();
       std::string sPath;
