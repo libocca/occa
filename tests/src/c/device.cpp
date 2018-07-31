@@ -82,9 +82,9 @@ void testInit() {
     occaString(deviceStr.c_str())
   );
 
-  ASSERT_THROW_START {
+  ASSERT_THROW(
     occaCreateDevice(occaNull);
-  } ASSERT_THROW_END;
+  );
 
   ASSERT_TRUE(occaDeviceIsInitialized(device));
 

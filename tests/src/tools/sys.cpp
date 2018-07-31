@@ -70,9 +70,9 @@ void testRmrf() {
   ASSERT_FALSE(occa::io::isDir(filename));
   ASSERT_FALSE(occa::io::isFile(filename));
 
-  ASSERT_THROW_START {
+  ASSERT_THROW(
     occa::sys::rmrf(filename);
-  } ASSERT_THROW_END;
+  );
 
   occa::settings()["options/safe-rmrf"] = false;
   occa::sys::rmrf(filename);

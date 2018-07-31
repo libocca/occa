@@ -95,10 +95,10 @@ void testParsingFailure() {
   );
 
   // Bad C/C++ code
-  ASSERT_THROW_START {
+  ASSERT_THROW(
     badKernel = occa::buildKernelFromString(badSource,
                                             "foo");
-  } ASSERT_THROW_END;
+  );
 
   badKernel = occa::buildKernelFromString(badSource,
                                           "foo",
@@ -110,10 +110,10 @@ void testParsingFailure() {
     "@kernel void foo(int i) {}"
   );
 
-  ASSERT_THROW_START {
+  ASSERT_THROW(
     badKernel = occa::buildKernelFromString(badSource,
                                             "foo");
-  } ASSERT_THROW_END;
+  );
 
   badKernel = occa::buildKernelFromString(badSource,
                                           "foo",
@@ -130,10 +130,10 @@ void testCompilingFailure() {
     "}"
   );
 
-  ASSERT_THROW_START {
+  ASSERT_THROW(
     badKernel = occa::buildKernelFromString(badSource,
                                             "foo");
-  } ASSERT_THROW_END;
+  );
 }
 
 void testRun() {

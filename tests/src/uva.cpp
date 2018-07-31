@@ -152,9 +152,9 @@ void testUvaNull() {
   occa::dontSync(ptr);
 
   occa::freeUvaPtr(NULL);
-  ASSERT_THROW_START {
+  ASSERT_THROW(
     occa::freeUvaPtr(ptr);
-  } ASSERT_THROW_END;
+  );
 
   delete [] ptr;
 }

@@ -108,13 +108,13 @@ void testTypes() {
 }
 
 void testBadType() {
-  ASSERT_THROW_START {
+  ASSERT_THROW(
     occaPropertiesSet(cProps, "ptr", occaPtr((void*) 10));
-  } ASSERT_THROW_END;
+  );
 
-  ASSERT_THROW_START {
+  ASSERT_THROW(
     occaPropertiesSet(cProps, "device", occaGetDevice());
-  } ASSERT_THROW_END;
+  );
 }
 
 void testKeyMiss() {

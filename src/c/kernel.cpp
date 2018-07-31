@@ -77,13 +77,12 @@ occaDim OCCA_RFUNC occaKernelMaxInnerDims(occaKernel kernel) {
 }
 
 void OCCA_RFUNC occaKernelSetRunDims(occaKernel kernel,
-                                     occaDim groups,
-                                     occaDim items) {
-
-  occa::dim groupDim(groups.x, groups.y, groups.z);
-  occa::dim itemDim(items.x, items.y, items.z);
-
-  occa::c::kernel(kernel).setRunDims(groupDim, itemDim);
+                                     occaDim outerDims,
+                                     occaDim innerDims) {
+  occa::c::kernel(kernel).setRunDims(
+    occa::dim(outerDims.x, outerDims.y, outerDims.z),
+    occa::dim(innerDims.x, innerDims.y, innerDims.z)
+  );
 }
 
 // `occaKernelRun` is reserved for a variadic macro

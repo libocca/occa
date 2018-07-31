@@ -87,6 +87,11 @@
                threw);                                        \
   } while(0)
 
+#define ASSERT_THROW(source)                    \
+  ASSERT_THROW_START {                          \
+    source                                      \
+  } ASSERT_THROW_END
+
 namespace occa {
   namespace test {
     template <class TM1, class TM2>

@@ -133,4 +133,7 @@ void testStringMerging() {
   testStringMergeToken(s1, encodingType::U);
   testStringMergeToken(s2, encodingType::L);
   testStringMergeToken(s3, encodingType::L);
+
+  testStringMergeValue("\"a\" \n \"b\"\n\"c\"\"d\"",
+                       "abcd");
 }

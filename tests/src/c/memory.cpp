@@ -114,13 +114,13 @@ void testUvaMethods() {
   occaMemoryStopManaging(mem);
   ASSERT_FALSE(occaMemoryIsManaged(mem));
 
-  ASSERT_THROW_START {
+  ASSERT_THROW(
     occaMemorySyncToDevice(mem, occaAllBytes, 0);
-  } ASSERT_THROW_END;
+  );
 
-  ASSERT_THROW_START {
+  ASSERT_THROW(
     occaMemorySyncToHost(mem, occaAllBytes, 0);
-  } ASSERT_THROW_END;
+  );
 
   // Test with memory
   mem = occaMalloc(10 * sizeof(int), NULL, occaDefault);
@@ -239,11 +239,11 @@ void testCopyMethods() {
   ASSERT_EQ(o_data2[0], -4);
 
   // Unable to find 'all bytes' from 2 non-occa pointers
-  ASSERT_THROW_START {
+  ASSERT_THROW(
     occaMemcpy(data2, data4,
                occaAllBytes,
                occaDefault);
-  } ASSERT_THROW_END;
+  );
 
   delete [] data2;
   delete [] data4;

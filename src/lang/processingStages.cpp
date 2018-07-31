@@ -62,21 +62,31 @@ namespace occa {
         return;
       }
 
-      token_t *nextToken = NULL;
+      tokenVector stack;
       stringToken &strToken = token->to<stringToken>();
       while (!inputIsEmpty()) {
-        nextToken = NULL;
-
-        // Merge until no stringToken appears
+        token_t *nextToken = NULL;
         *(this->input) >> nextToken;
-
-        if (!(nextToken->type() & tokenType::string)) {
+        if (!nextToken) {
           break;
         }
 
+        int tType = nextToken->type();
+        if (!(tType & (tokenType::newline |
+                       tokenType::string))) {
+          stack.push_back(nextToken);
+          break;
+        }
+
+        // Strings can be separated by spaces or newlines
+        if (tType & tokenType::newline) {
+          stack.push_back(nextToken);
+          continue;
+        }
+        // Free all of the newline tokens
+        freeTokenVector(stack);
+
         strToken.append(nextToken->to<stringToken>());
-        delete nextToken;
-        nextToken = NULL;
         // Can't merge strings with udfs in one token
         if (strToken.udf.size()) {
           break;
@@ -84,8 +94,9 @@ namespace occa {
       }
 
       pushOutput(&strToken);
-      if (nextToken) {
-        pushOutput(nextToken);
+      const int stackSize = (int) stack.size();
+      for (int i = 0; i < stackSize; ++i) {
+        pushOutput(stack[i]);
       }
     }
     //==================================

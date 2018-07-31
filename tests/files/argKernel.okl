@@ -1,0 +1,68 @@
+/* The MIT License (MIT)
+ *
+ * Copyright (c) 2014-2018 David Medina and Tim Warburton
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ */
+@kernel void argKernel(char *mem,
+                       char *uvaPtr,
+                       int i8,
+                       int u8,
+                       int i16,
+                       int u16,
+                       int i32,
+                       int u32,
+                       int i64,
+                       int u64,
+                       float f,
+                       double d,
+                       int *xy,
+                       const char *str) {
+  for (int i = 0; i < 1; ++i; @tile(1, @outer, @inner)) {
+    printf(
+      "mem: %d\n"
+      "uvaPtr: %d\n"
+      "i8: %d\n"
+      "u8: %d\n"
+      "i16: %d\n"
+      "u16: %d\n"
+      "i32: %d\n"
+      "u32: %d\n"
+      "i64: %d\n"
+      "u64: %d\n"
+      "f: %f\n"
+      "d: %f\n"
+      "xy: [%d, %d]\n"
+      "str: %s\n",
+      mem[0],
+      uvaPtr[0],
+      (int) i8,
+      (int) u8,
+      (int) i16,
+      (int) u16,
+      (int) i32,
+      (int) u32,
+      (int) i64,
+      (int) u64,
+      f,
+      d,
+      xy[0], xy[1],
+      str
+    );
+  }
+}

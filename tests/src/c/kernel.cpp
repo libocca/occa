@@ -94,5 +94,66 @@ void testInfo() {
 }
 
 void testRun() {
-  // TODO: Add test kernels
+  std::string argKernelFile = (
+    occa::env::OCCA_DIR + "tests/files/argKernel.okl"
+  );
+  occaKernel argKernel = (
+    occaBuildKernel(argKernelFile.c_str(),
+                    "argKernel",
+                    occaDefault)
+  );
+
+  // Dummy dims
+  occaDim outerDims, innerDims;
+  outerDims.x = innerDims.x = 1;
+  outerDims.y = innerDims.y = 1;
+  outerDims.z = innerDims.z = 1;
+
+  occaKernelSetRunDims(argKernel,
+                       outerDims,
+                       innerDims);
+
+  int value = 0;
+  occaMemory mem = occaMalloc(1 * sizeof(int), &value, occaDefault);
+  value = 1;
+  int *uvaPtr = (int*) occaUMalloc(1 * sizeof(int), &value, occaDefault);
+
+  int xy[2] = {12, 13};
+  std::string str = "fourteen";
+
+  // Good argument types
+  occaKernelRunN(
+    argKernel, 14,
+    mem,
+    occaPtr(uvaPtr),
+    occaInt8(2),
+    occaUInt8(3),
+    occaInt16(4),
+    occaUInt16(5),
+    occaInt32(6),
+    occaUInt32(7),
+    occaInt64(8),
+    occaUInt64(9),
+    occaFloat(10.0),
+    occaDouble(11.0),
+    occaStruct(xy, sizeof(xy)),
+    occaString(str.c_str())
+  );
+
+  // Bad argument types
+  ASSERT_THROW(
+    occaKernelRunN(argKernel, 1, occaGetDevice());
+  );
+  ASSERT_THROW(
+    occaKernelRunN(argKernel, 1, argKernel);
+  );
+  ASSERT_THROW(
+    occaKernelRunN(argKernel, 1, occaSettings());
+  );
+  ASSERT_THROW(
+    occaKernelRunN(argKernel, 1, occaUndefined);
+  );
+  ASSERT_THROW(
+    occaKernelRunN(argKernel, 1, occaDefault);
+  );
 }

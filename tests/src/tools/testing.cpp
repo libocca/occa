@@ -110,11 +110,11 @@ void testFailedAsserts() {
   std::vector<int> vec;
   vec.push_back(1);
 
-  ASSERT_THROW_START {
+  ASSERT_THROW(
     ASSERT_IN(2, vec);
-  } ASSERT_THROW_END;
+  );
 
-  ASSERT_THROW_START {
+  ASSERT_THROW(
     ASSERT_NOT_IN(1, vec);
-  } ASSERT_THROW_END;
+  );
 }
