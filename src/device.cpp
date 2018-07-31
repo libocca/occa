@@ -380,6 +380,7 @@ namespace occa {
     occa::properties allProps = props + kernelProperties();
     allProps["mode"] = mode();
 
+    // TODO: [#184] Properly hash through device
     hash_t kernelHash = (hash()
                          ^ occa::hash(allProps)
                          ^ hashFile(filename));

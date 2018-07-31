@@ -44,9 +44,11 @@ void testNewOccaTypes() {
 
   occaType value = occaUndefined;
   ASSERT_TRUE(occaIsUndefined(value));
+  ASSERT_FALSE(occaIsDefault(value));
 
-  value = occaInt(1);
+  value = occaDefault;
   ASSERT_FALSE(occaIsUndefined(value));
+  ASSERT_TRUE(occaIsDefault(value));
 
   TEST_OCCA_TYPE((void*) NULL, OCCA_PTR);
 
