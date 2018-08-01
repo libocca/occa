@@ -135,7 +135,7 @@ namespace occa {
         const char c = op.str[0];
         // Only store chars that don't conflict with identifiers
         // This check is done in the peekForIdentifier method
-        if (!lex::charIsIn(c, charcodes::identifierStart)) {
+        if (!lex::inCharset(c, charcodes::identifierStart)) {
           charcodes[c] = true;
         }
       }
@@ -355,7 +355,7 @@ namespace occa {
           fp.start += 1 + (fp.start[1] != '\0');
           continue;
         }
-        if (lex::charIsIn(*fp.start, delimiters)) {
+        if (lex::inCharset(*fp.start, delimiters)) {
           return;
         }
         if (*fp.start == '\n') {
@@ -376,7 +376,7 @@ namespace occa {
           fp.start += 1 + (fp.start[1] != '\0');
           continue;
         }
-        if (!lex::charIsIn(*fp.start, delimiters)) {
+        if (!lex::inCharset(*fp.start, delimiters)) {
           break;
         }
         if (*fp.start == '\n') {
@@ -416,10 +416,10 @@ namespace occa {
       if (primitive::load(pos, false).type != occa::primitiveType::none) {
         return tokenType::primitive;
       }
-      if (lex::charIsIn(c, charcodes::identifierStart)) {
+      if (lex::inCharset(c, charcodes::identifierStart)) {
         return tokenType::identifier;
       }
-      if (lex::charIsIn(c, operatorCharcodes.c_str())) {
+      if (lex::inCharset(c, operatorCharcodes.c_str())) {
         return tokenType::op;
       }
       if (c == '\n') {
@@ -488,7 +488,7 @@ namespace occa {
     }
 
     void tokenizer_t::getIdentifier(std::string &value) {
-      if (!lex::charIsIn(*fp.start, charcodes::identifierStart)) {
+      if (!lex::inCharset(*fp.start, charcodes::identifierStart)) {
         return;
       }
       push();
@@ -650,7 +650,7 @@ namespace occa {
     }
 
     token_t* tokenizer_t::getIdentifierToken() {
-      if (!lex::charIsIn(*fp.start, charcodes::identifierStart)) {
+      if (!lex::inCharset(*fp.start, charcodes::identifierStart)) {
         printError("Not able to parse identifier");
         return NULL;
       }

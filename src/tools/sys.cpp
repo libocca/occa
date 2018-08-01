@@ -892,7 +892,9 @@ namespace occa {
       const char *c = symbol;
 
       // Skip stack depth
-      lex::skipBetweenWhitespaces(c);
+      lex::skipWhitespace(c);
+      lex::skipToWhitespace(c);
+      lex::skipWhitespace(c);
 
       // Get origin
       const char *originStart = c;
@@ -900,7 +902,9 @@ namespace occa {
       std::string origin(originStart, (c - originStart));
 
       // Skip address
-      lex::skipBetweenWhitespaces(c);
+      lex::skipWhitespace(c);
+      lex::skipToWhitespace(c);
+      lex::skipWhitespace(c);
 
       // Get function name
       const char *functionStart = c;
@@ -908,7 +912,9 @@ namespace occa {
       std::string function(functionStart, (c - functionStart));
 
       // Skip the +
-      lex::skipBetweenWhitespaces(c);
+      lex::skipWhitespace(c);
+      lex::skipToWhitespace(c);
+      lex::skipWhitespace(c);
 
       // Get address offset
       const char *offsetStart = c;

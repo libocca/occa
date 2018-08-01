@@ -24,18 +24,10 @@
 
 namespace occa {
   namespace lex {
-    const char whitespaceChars[] = " \t\r\n\v\f";
-    const char alphaChars[]    = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
-    const char numChars[]      = "0123456789";
-    const char alphanumChars[] = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+    const char whitespaceCharset[] = " \t\r\n\v\f";
+    const char numberCharset[]     = "0123456789";
 
-    const char identifierStartChar[] = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_";
-    const char identifierChars[]     = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_0123456789";
-
-    const char quote1Delimiters[] = "\n'";
-    const char quote2Delimiters[] = "\n\"";
-
-    bool charIsIn(const char c, const char *delimiters) {
+    bool inCharset(const char c, const char *delimiters) {
       while (*delimiters != '\0') {
         if (c == *(delimiters++)) {
           return true;
@@ -70,7 +62,7 @@ namespace occa {
 
     void skipTo(const char *&c, const char *delimiters) {
       while (*c != '\0') {
-        if (charIsIn(*c, delimiters)) {
+        if (inCharset(*c, delimiters)) {
           return;
         }
         ++c;
@@ -84,7 +76,7 @@ namespace occa {
           c += 1 + (c[1] != '\0');
           continue;
         }
-        if (charIsIn(*c, delimiters)) {
+        if (inCharset(*c, delimiters)) {
           return;
         }
         ++c;
@@ -99,91 +91,9 @@ namespace occa {
       skipTo(c, delimiters.c_str(), escapeChar);
     }
 
-    void quotedSkipTo(const char *&c, const char delimiter) {
-      while (*c != '\0') {
-        if (*c == '\\') {
-          c += 1 + (c[1] != '\0');
-          continue;
-        }
-        if (*c == delimiter) {
-          return;
-        } else if (*c == '\'') {
-          ++c;
-          skipTo(c, quote1Delimiters, '\\');
-          c += (*c == '\'');
-        } else if (*c == '"') {
-          ++c;
-          skipTo(c, quote2Delimiters, '\\');
-          c += (*c == '"');
-        } else {
-          ++c;
-        }
-      }
-    }
-
-    void quotedSkipTo(const char *&c, const char *delimiters) {
-      while (*c != '\0') {
-        if (*c == '\\') {
-          c += 1 + (c[1] != '\0');
-          continue;
-        }
-        if (charIsIn(*c, delimiters)) {
-          return;
-        } else if (*c == '\'') {
-          ++c;
-          skipTo(c, quote1Delimiters, '\\');
-          c += (*c == '\'');
-        } else if (*c == '"') {
-          ++c;
-          skipTo(c, quote2Delimiters, '\\');
-          c += (*c == '"');
-        }
-        ++c;
-      }
-    }
-
-    void quotedSkipTo(const char *&c, const std::string &delimiters) {
-      quotedSkipTo(c, delimiters.c_str());
-    }
-
-    void skipToMatch(const char *&c, const std::string &match) {
-      const size_t chars = match.size();
-      const char *d      = match.c_str();
-
-      while (*c != '\0') {
-        for (size_t i = 0; i < chars; ++i) {
-          if (c[i] != d[i]) {
-            continue;
-          }
-          return;
-        }
-        ++c;
-      }
-    }
-
-    void skipToMatch(const char *&c, const std::string &match, const char escapeChar) {
-      const size_t chars = match.size();
-      const char *d      = match.c_str();
-
-      while (*c != '\0') {
-        if (escapeChar &&
-            (*c == escapeChar)) {
-          c += 1 + (c[1] != '\0');
-          continue;
-        }
-        for (size_t i = 0; i < chars; ++i) {
-          if (c[i] != d[i]) {
-            continue;
-          }
-          return;
-        }
-        ++c;
-      }
-    }
-
     void skipFrom(const char *&c, const char *delimiters) {
       while (*c != '\0') {
-        if (charIsIn(*c, delimiters)) {
+        if (inCharset(*c, delimiters)) {
           ++c;
           continue;
         }
@@ -198,7 +108,7 @@ namespace occa {
           c += 1 + (c[1] != '\0');
           continue;
         }
-        if (charIsIn(*c, delimiters)) {
+        if (inCharset(*c, delimiters)) {
           ++c;
           continue;
         }
@@ -215,121 +125,21 @@ namespace occa {
     }
     //==================================
 
-    //---[ Lower/Upper ]----------------
-    char upChar(const char c) {
-      if (('a' <= c) && (c <= 'z')) {
-        return ((c + 'A') - 'a');
-      }
-      return c;
-    }
-
-    char downChar(const char c) {
-      if (('A' <= c) && (c <= 'Z')) {
-        return ((c + 'a') - 'A');
-      }
-      return c;
-    }
-
-    std::string upString(const char *c, const int chars) {
-      std::string ret(c, chars);
-      for (int i = 0; i < chars; ++i) {
-        ret[i] = upChar(ret[i]);
-      }
-      return ret;
-    }
-
-    std::string upString(const std::string &s) {
-      return upString(s.c_str(), s.size());
-    }
-
-    bool upStringCheck(const std::string &a,
-                       const std::string &b) {
-      const int aSize = a.size();
-      const int bSize = b.size();
-
-      if (aSize != bSize) {
-        return false;
-      }
-      for (int i = 0; i < aSize; ++i) {
-        if (upChar(a[i]) != upChar(b[i])) {
-          return false;
-        }
-      }
-      return true;
-    }
-    //==================================
-
     //---[ Whitespace ]-----------------
     bool isWhitespace(const char c) {
-      return charIsIn(c, whitespaceChars);
+      return inCharset(c, whitespaceCharset);
     }
 
     void skipWhitespace(const char *&c) {
-      skipFrom(c, whitespaceChars);
+      skipFrom(c, whitespaceCharset);
     }
 
     void skipWhitespace(const char *&c, const char escapeChar) {
-      skipFrom(c, whitespaceChars, escapeChar);
+      skipFrom(c, whitespaceCharset, escapeChar);
     }
 
     void skipToWhitespace(const char *&c) {
-      skipTo(c, whitespaceChars);
-    }
-
-    void skipBetweenWhitespaces(const char *&c) {
-      skipWhitespace(c);
-      skipToWhitespace(c);
-      skipWhitespace(c);
-    }
-
-    void skipBetweenWhitespaces(const char *&c, const char escapeChar) {
-      skipWhitespace(c, escapeChar);
-      skipToWhitespace(c);
-      skipWhitespace(c, escapeChar);
-    }
-
-    void strip(const char *&start, const char *&end) {
-      if (end <= start) {
-        return;
-      }
-      while ((*start != '\0') &&
-             isWhitespace(*start)) {
-        ++start;
-      }
-      end -= (*end == '\0');
-      while ((start < end) &&
-             isWhitespace(*end)) {
-        --end;
-      }
-      ++end;
-    }
-
-    void strip(const char *&start, const char *&end, const char escapeChar) {
-      if (end <= start) {
-        return;
-      }
-      while (*start != '\0') {
-        if (isWhitespace(*start)) {
-          ++start;
-        } else if (escapeChar &&
-                   (*start == escapeChar) &&
-                   isWhitespace(start[1])) {
-          start += 2;
-        } else {
-          break;
-        }
-      }
-      while (start < end) {
-        if (isWhitespace(*end)) {
-          --end;
-        } else if (escapeChar &&
-                   (*end == escapeChar) &&
-                   isWhitespace(end[1])) {
-          end -= 2;
-        } else {
-          break;
-        }
-      }
+      skipTo(c, whitespaceCharset);
     }
   }
 }

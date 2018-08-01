@@ -34,8 +34,17 @@
 namespace occa {
   std::string strip(const std::string &str) {
     const char *start = str.c_str();
-    const char *end = start + str.size();
-    lex::strip(start, end);
+    const char *end = start + str.size() - 1;
+
+    while ((*start != '\0') &&
+           lex::isWhitespace(*start)) {
+      ++start;
+    }
+    while ((start < end) &&
+           lex::isWhitespace(*end)) {
+      --end;
+    }
+    ++end;
     return std::string(start, end - start);
   }
 
@@ -171,7 +180,7 @@ namespace occa {
     }
 
     while(*c != '\0') {
-      const char C = lex::upChar(*c);
+      const char C = uppercase(*c);
 
       if (C == 'L') {
         ++longs;
@@ -226,7 +235,7 @@ namespace occa {
     if (*c == '0') {
       ++c;
 
-      const char C = lex::upChar(*c);
+      const char C = uppercase(*c);
 
       if (C == 'X') {
         bits = 4;
@@ -257,7 +266,7 @@ namespace occa {
         ret <<= bits;
         ret += digitValue;
       } else {
-        const char C = lex::upChar(*c);
+        const char C = uppercase(*c);
 
         if (('A' <= C) && (C <= 'F')) {
           const char digitValue = 10 + (C - 'A');

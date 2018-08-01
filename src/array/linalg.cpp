@@ -53,7 +53,7 @@ namespace occa {
           int &maxVal = (*c == 'v') ? maxInput : maxConstant;
 
           const char *cStart = ++c;
-          lex::skipFrom(c, lex::numChars);
+          lex::skipFrom(c, lex::numberCharset);
           // This is not the 'v' or 'c' you're looking for
           if (cStart == c) {
             ++c;

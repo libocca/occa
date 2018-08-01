@@ -22,44 +22,12 @@
 #include <occa.hpp>
 #include <occa/tools/testing.hpp>
 
-void testBase2Methods();
 void testPtrMethods();
 
 int main(const int argc, const char **argv) {
-  testBase2Methods();
   testPtrMethods();
 
   return 0;
-}
-
-void testBase2Methods() {
-  // Max bit index
-  ASSERT_EQ(occa::maxBase2Bit(0),
-            0);
-  ASSERT_EQ(occa::maxBase2Bit(1),
-            0);
-  ASSERT_EQ(occa::maxBase2Bit(2),
-            1);
-  ASSERT_EQ(occa::maxBase2Bit(3),
-            2);
-  ASSERT_EQ(occa::maxBase2Bit(7),
-            2);
-  ASSERT_EQ(occa::maxBase2Bit(-1),
-            (int) (8 * sizeof(int)));
-
-  // Max bit value
-  ASSERT_EQ(occa::maxBase2(0),
-            1);
-  ASSERT_EQ(occa::maxBase2(1),
-            1);
-  ASSERT_EQ(occa::maxBase2(2),
-            2);
-  ASSERT_EQ(occa::maxBase2(3),
-            2);
-  ASSERT_EQ(occa::maxBase2(7),
-            4);
-  ASSERT_EQ(occa::maxBase2(-1),
-            -1);
 }
 
 void testPtrMethods() {
