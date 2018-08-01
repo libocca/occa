@@ -344,7 +344,8 @@ namespace occa {
       lex::skipWhitespace(c);
       // Trailing ,
       if (*c == ']') {
-        break;
+        ++c; // Skip ]
+        return;
       }
 
       value_.array.push_back(json());
@@ -355,15 +356,14 @@ namespace occa {
         ++c;
         continue;
       } else if(*c == ']') {
-        break;
+        ++c; // Skip ]
+        return;
       } else if(*c == '\0') {
-        OCCA_FORCE_ERROR("Array is missing closing ']'");
+        break;
       }
       OCCA_FORCE_ERROR("Array values should be followed by ',' or ']'");
     }
-
-    // Skip ]
-    ++c;
+    OCCA_FORCE_ERROR("Array is missing closing ']'");
   }
 
   void json::loadTrue(const char *&c) {
@@ -463,6 +463,7 @@ namespace occa {
 
       const char *cStart = c;
       lex::skipTo(c, '/', '\\');
+
       std::string key(cStart, c - cStart);
       if (*c == '/') {
         ++c;
@@ -629,19 +630,6 @@ namespace occa {
       jsonObject::const_iterator it = obj.begin();
       while (it != obj.end()) {
         vec.push_back(it->first);
-        ++it;
-      }
-    }
-    return vec;
-  }
-
-  jsonArray json::values() {
-    jsonArray vec;
-    if (type == object_) {
-      jsonObject &obj = value_.object;
-      jsonObject::iterator it = obj.begin();
-      while (it != obj.end()) {
-        vec.push_back(it->second);
         ++it;
       }
     }

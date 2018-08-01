@@ -431,7 +431,6 @@ namespace occa {
                              const std::vector<TM> &default_ = std::vector<TM>()) const;
 
     strVector keys() const;
-    jsonArray values();
     jsonArray values() const;
 
     json& remove(const char *c);
@@ -456,18 +455,18 @@ namespace occa {
         return primitive::equal(value_.number, j.value_.number);
       case string_:
         return value_.string == j.value_.string;
-      case array_:
-        return value_.array == j.value_.array;
       case object_:
         return value_.object == j.value_.object;
-      default:
-        return false;
+      case array_:
+        return value_.array == j.value_.array;
       }
     }
 
     inline operator bool () const {
       switch (type) {
       case none_:
+        return false;
+      case null_:
         return false;
       case boolean_:
         return value_.boolean;
@@ -479,8 +478,6 @@ namespace occa {
         return true;
       case array_:
         return true;
-      default:
-        return false;
       }
     }
 

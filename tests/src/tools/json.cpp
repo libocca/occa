@@ -32,11 +32,13 @@ void testNumber();
 void testObject();
 void testArray();
 void testKeywords();
+void testSetters();
 void testMethods();
 void testSize();
 void testTruthyValues();
 void testComparisons();
 void testConversions();
+void testErrors();
 
 int main(const int argc, const char **argv) {
   testAsTypes();
@@ -45,11 +47,13 @@ int main(const int argc, const char **argv) {
   testObject();
   testArray();
   testKeywords();
+  testSetters();
   testMethods();
   testSize();
   testTruthyValues();
   testComparisons();
   testConversions();
+  testErrors();
 
   return 0;
 }
@@ -264,6 +268,22 @@ void testKeywords() {
   ASSERT_TRUE(j.isNull());
 }
 
+void testSetters() {
+  occa::json j = occa::json::parse("{ a: 1, b: { b1: 2, b2: 3} }");
+  ASSERT_TRUE(j.has("a"));
+  ASSERT_TRUE(j.has("b"));
+  ASSERT_TRUE(j.has("b/b1"));
+  ASSERT_FALSE(j.has("b/b3"));
+
+  j.remove("a");
+  j.remove("b/b1");
+  ASSERT_FALSE(j.has("a"));
+  ASSERT_FALSE(j.has("b/b1"));
+
+  j.remove("b");
+  ASSERT_FALSE(j.has("b"));
+}
+
 void testMethods() {
   occa::json j;
 
@@ -275,9 +295,12 @@ void testMethods() {
   // Key method
   j.load("{ a: 1, b: 2 }");
   occa::strVector keys = j.keys();
-  ASSERT_EQ(2, (int) keys.size());
-  ASSERT_EQ("a", keys[0]);
-  ASSERT_EQ("b", keys[1]);
+  ASSERT_IN("a", keys);
+  ASSERT_IN("b", keys);
+
+  occa::jsonArray values = j.values();
+  ASSERT_IN(occa::json::parse("1"), values);
+  ASSERT_IN(occa::json::parse("2"), values);
 
   // operator +=
   j.load("1");
@@ -347,6 +370,8 @@ void testSize() {
 void testTruthyValues() {
   ASSERT_FALSE(occa::json());
 
+  ASSERT_FALSE(occa::json::parse("null"));
+
   ASSERT_FALSE(occa::json::parse("false"));
   ASSERT_TRUE(occa::json::parse("true"));
 
@@ -376,6 +401,10 @@ void testComparisons() {
     "  object: { a: 1, b: 2},"
     "}"
   );
+
+  occa::json a, b;
+  ASSERT_EQ(a, b);
+
   occa::strVector keys = data.keys();
   for (int j = 0; j < (int) keys.size(); ++j) {
     const std::string jKey = keys[j];
@@ -476,4 +505,63 @@ void testConversions() {
 
   ASSERT_EQ((double) 0,
             (double) j["null"]);
+}
+
+void testErrors() {
+  // Unknown type
+  ASSERT_THROW(
+    occa::json::parse("abc");
+  );
+  // Unfinished string
+  ASSERT_THROW(
+    occa::json::parse("'a");
+  );
+  ASSERT_THROW(
+    occa::json::parse("'\\");
+  );
+  // Bad unicode
+  ASSERT_THROW(
+    occa::json::parse("'\\uG");
+  );
+  ASSERT_THROW(
+    occa::json::parse("'\\u123G");
+  );
+  // Unclosed object
+  ASSERT_THROW(
+    occa::json::parse("{ a: 1");
+  );
+  // Missing ,
+  ASSERT_THROW(
+    occa::json::parse("{ a: 1 b: 2}");
+  );
+  // No key
+  ASSERT_THROW(
+    occa::json::parse("{ : 1 }");
+  );
+  // No :
+  ASSERT_THROW(
+    occa::json::parse("{ a 1 }");
+  );
+  // Unclosed array
+  ASSERT_THROW(
+    occa::json::parse("[1,");
+  );
+  ASSERT_THROW(
+    occa::json::parse("[1, 2");
+  );
+  // Bad +=, this isn't Javascript
+  ASSERT_THROW(
+    occa::json::parse("1") + occa::json::parse("{}");
+  );
+  // Bad [] access
+  ASSERT_THROW(
+    occa::json::parse("{ a: 1}")["a/1"];
+  );
+  // Index on non-arrays
+  ASSERT_THROW(
+    occa::json::parse("1")[1];
+  );
+  ASSERT_THROW(
+    occa::json::parse("{ a: 1}")["a"][1];
+  );
 }

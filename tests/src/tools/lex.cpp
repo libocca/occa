@@ -22,19 +22,21 @@
 #include <occa.hpp>
 #include <occa/tools/testing.hpp>
 
-void testCharsets();
-void testSkipTo();
+void testCharsetMethods();
+void testSkipToMethods();
+void testSkipFromMethods();
 void testWhitespaceMethods();
 
 int main(const int argc, const char **argv) {
-  testCharsets();
-  testSkipTo();
+  testCharsetMethods();
+  testSkipToMethods();
+  testSkipFromMethods();
   testWhitespaceMethods();
 
   return 0;
 }
 
-void testCharsets() {
+void testCharsetMethods() {
   for (int i = 0; i < 10; ++i) {
     char c = '0' + i;
     ASSERT_TRUE(occa::lex::isDigit(c));
@@ -57,8 +59,27 @@ void testCharsets() {
   ASSERT_FALSE(occa::lex::inCharset('d', "abc"));
 }
 
-void testSkipTo() {
+void testSkipToMethods() {
+  void skipTo(const char *&c, const char delimiter);
+  void skipTo(const char *&c, const char delimiter, const char escapeChar);
+  void skipTo(const char *&c, const char *delimiters);
+  void skipTo(const char *&c, const char *delimiters, const char escapeChar);
+  void skipTo(const char *&c, const std::string &delimiters);
+  void skipTo(const char *&c, const std::string &delimiters, const char escapeChar);
+}
+
+void testSkipFromMethods() {
+  void skipFrom(const char *&c, const char *delimiters);
+  void skipFrom(const char *&c, const char *delimiters, const char escapeChar);
+  void skipFrom(const char *&c, const std::string &delimiters);
+  void skipFrom(const char *&c, const std::string &delimiters, const char escapeChar);
 }
 
 void testWhitespaceMethods() {
+  bool isWhitespace(const char c);
+
+  void skipWhitespace(const char *&c);
+  void skipWhitespace(const char *&c, const char escapeChar);
+
+  void skipToWhitespace(const char *&c);
 }
