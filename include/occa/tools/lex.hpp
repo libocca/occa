@@ -51,20 +51,14 @@ namespace occa {
     void skipTo(const char *&c, const char delimiter, const char escapeChar);
     void skipTo(const char *&c, const char *delimiters);
     void skipTo(const char *&c, const char *delimiters, const char escapeChar);
-    void skipTo(const char *&c, const std::string &delimiters);
-    void skipTo(const char *&c, const std::string &delimiters, const char escapeChar);
 
     void skipFrom(const char *&c, const char *delimiters);
-    void skipFrom(const char *&c, const char *delimiters, const char escapeChar);
-    void skipFrom(const char *&c, const std::string &delimiters);
-    void skipFrom(const char *&c, const std::string &delimiters, const char escapeChar);
     //==================================
 
     //---[ Whitespace ]-----------------
     bool isWhitespace(const char c);
 
     void skipWhitespace(const char *&c);
-    void skipWhitespace(const char *&c, const char escapeChar);
 
     void skipToWhitespace(const char *&c);
     //==================================

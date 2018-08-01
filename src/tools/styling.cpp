@@ -46,20 +46,6 @@ namespace occa {
       return std::string(spaces + pad, ' ') + str + (pad ? " " : "");
     }
 
-    std::string center(const std::string &str,
-                       const int width,
-                       const bool pad) {
-      const int chars = (int) str.size();
-      if (chars == 0 || width == 0) {
-        return "";
-      }
-      const int spaces = (pad ? 2 : 0) + ((chars >= width) ? 0 : (width - chars));
-      std::string ret = std::string((spaces + 0)/2, ' ');
-      ret += str;
-      ret += std::string((spaces + 1)/2, ' ');
-      return ret;
-    }
-
     //---[ field ]----------------------
     field::field(const std::string &name_,
                  const std::string &value_) :

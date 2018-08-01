@@ -38,9 +38,6 @@ namespace occa {
     std::string right(const std::string &str,
                       const int width,
                       const bool pad = false);
-    std::string center(const std::string &str,
-                       const int width,
-                       const bool pad = false);
 
     class field {
     public:

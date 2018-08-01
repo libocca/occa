@@ -83,14 +83,6 @@ namespace occa {
       }
     }
 
-    void skipTo(const char *&c, const std::string &delimiters) {
-      skipTo(c, delimiters.c_str());
-    }
-
-    void skipTo(const char *&c, const std::string &delimiters, const char escapeChar) {
-      skipTo(c, delimiters.c_str(), escapeChar);
-    }
-
     void skipFrom(const char *&c, const char *delimiters) {
       while (*c != '\0') {
         if (inCharset(*c, delimiters)) {
@@ -99,29 +91,6 @@ namespace occa {
         }
         return;
       }
-    }
-
-    void skipFrom(const char *&c, const char *delimiters, const char escapeChar) {
-      while (*c != '\0') {
-        if (escapeChar &&
-            (*c == escapeChar)) {
-          c += 1 + (c[1] != '\0');
-          continue;
-        }
-        if (inCharset(*c, delimiters)) {
-          ++c;
-          continue;
-        }
-        return;
-      }
-    }
-
-    void skipFrom(const char *&c, const std::string &delimiters) {
-      skipFrom(c, delimiters.c_str());
-    }
-
-    void skipFrom(const char *&c, const std::string &delimiters, const char escapeChar) {
-      skipFrom(c, delimiters.c_str(), escapeChar);
     }
     //==================================
 
@@ -132,10 +101,6 @@ namespace occa {
 
     void skipWhitespace(const char *&c) {
       skipFrom(c, whitespaceCharset);
-    }
-
-    void skipWhitespace(const char *&c, const char escapeChar) {
-      skipFrom(c, whitespaceCharset, escapeChar);
     }
 
     void skipToWhitespace(const char *&c) {

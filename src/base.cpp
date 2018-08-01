@@ -260,6 +260,6 @@ namespace occa {
     styling::section serialSection = table.sections[serialIdx];
     table.sections[serialIdx] = table.sections[0];
     table.sections[0] = serialSection;
-    std::cout << table.toString();
+    std::cout << table;
   }
 }
