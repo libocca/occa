@@ -75,8 +75,8 @@ namespace occa {
 
     dim kernel::maxOuterDims() const {
       // TODO 1.1: This should be in the device, not the kernel
-      static occa::dim outerDims(0);
-      if (outerDims.x == 0) {
+      static occa::dim maxOuterDims_(0);
+      if (maxOuterDims_.x == 0) {
         int dims_ = maxDims();
         size_t *od = new size_t[dims_];
         size_t bytes;
@@ -89,17 +89,17 @@ namespace occa {
                                           CL_DEVICE_MAX_WORK_ITEM_SIZES,
                                           bytes, &od, NULL));
         for (int i = 0; i < dims_; ++i) {
-          outerDims[i] = od[i];
+          maxOuterDims_[i] = od[i];
         }
         delete [] od;
       }
-      return outerDims;
+      return maxOuterDims_;
     }
 
     dim kernel::maxInnerDims() const {
       // TODO 1.1: This should be in the device, not the kernel
-      static occa::dim innerDims(0);
-      if (innerDims.x == 0) {
+      static occa::dim maxInnerDims_(0);
+      if (maxInnerDims_.x == 0) {
         size_t dims_;
         size_t bytes;
         OCCA_OPENCL_ERROR("Kernel: Max Inner Dims",
@@ -112,9 +112,9 @@ namespace occa {
                                                    clDevice,
                                                    CL_KERNEL_WORK_GROUP_SIZE,
                                                    bytes, &dims_, NULL));
-        innerDims.x = dims_;
+        maxInnerDims_.x = dims_;
       }
-      return innerDims;
+      return maxInnerDims_;
     }
 
     void kernel::run() const {

@@ -52,13 +52,13 @@ namespace occa {
   }
 
   bool ptrRange::operator == (const ptrRange &other) const {
-    return ((start <= other.end) &&
-            (end >= other.start));
+    return ((start < other.end) &&
+            (end > other.start));
   }
 
   bool ptrRange::operator != (const ptrRange &other) const {
-    return ((start > other.end) ||
-            (end < other.start));
+    return ((start >= other.end) ||
+            (end <= other.start));
   }
 
   int operator < (const ptrRange &a, const ptrRange &b) {

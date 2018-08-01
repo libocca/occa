@@ -244,7 +244,7 @@ namespace occa {
     }
 
     OCCA_ERROR("Memory has size [" << mHandle->size << "],"
-               << " trying to access [ " << offset << " , " << (offset + bytes_) << " ]",
+               << " trying to access [" << offset << ", " << (offset + bytes_) << "]",
                (bytes_ + offset) <= mHandle->size);
 
     if (!mHandle->dHandle->hasSeparateMemorySpace()) {
@@ -276,7 +276,7 @@ namespace occa {
     }
 
     OCCA_ERROR("Memory has size [" << mHandle->size << "],"
-               << " trying to access [ " << offset << " , " << (offset + bytes_) << " ]",
+               << " trying to access [" << offset << ", " << (offset + bytes_) << "]",
                (bytes_ + offset) <= mHandle->size);
 
     if (!mHandle->dHandle->hasSeparateMemorySpace()) {
@@ -365,7 +365,7 @@ namespace occa {
     OCCA_ERROR("Cannot have a negative offset (" << offset << ")",
                offset >= 0);
     OCCA_ERROR("Destination memory has size [" << mHandle->size << "],"
-               << "trying to access [ " << offset << " , " << (offset + bytes_) << " ]",
+               << "trying to access [" << offset << ", " << (offset + bytes_) << "]",
                (bytes_ + offset) <= mHandle->size);
 
     mHandle->copyFrom(src, bytes_, offset, props);
@@ -388,10 +388,10 @@ namespace occa {
     OCCA_ERROR("Cannot have a negative offset (" << srcOffset << ")",
                srcOffset >= 0);
     OCCA_ERROR("Source memory has size [" << src.mHandle->size << "],"
-               << "trying to access [ " << srcOffset << " , " << (srcOffset + bytes_) << " ]",
+               << "trying to access [" << srcOffset << ", " << (srcOffset + bytes_) << "]",
                (bytes_ + srcOffset) <= src.mHandle->size);
     OCCA_ERROR("Destination memory has size [" << mHandle->size << "],"
-               << "trying to access [ " << destOffset << " , " << (destOffset + bytes_) << " ]",
+               << "trying to access [" << destOffset << ", " << (destOffset + bytes_) << "]",
                (bytes_ + destOffset) <= mHandle->size);
 
     mHandle->copyFrom(src.mHandle, bytes_, destOffset, srcOffset, props);
@@ -411,7 +411,7 @@ namespace occa {
     OCCA_ERROR("Cannot have a negative offset (" << offset << ")",
                offset >= 0);
     OCCA_ERROR("Source memory has size [" << mHandle->size << "],"
-               << "trying to access [ " << offset << " , " << (offset + bytes_) << " ]",
+               << "trying to access [" << offset << ", " << (offset + bytes_) << "]",
                (bytes_ + offset) <= mHandle->size);
 
     mHandle->copyTo(dest, bytes_, offset, props);
@@ -434,10 +434,10 @@ namespace occa {
     OCCA_ERROR("Cannot have a negative offset (" << srcOffset << ")",
                srcOffset >= 0);
     OCCA_ERROR("Source memory has size [" << mHandle->size << "],"
-               << "trying to access [ " << srcOffset << " , " << (srcOffset + bytes_) << " ]",
+               << "trying to access [" << srcOffset << ", " << (srcOffset + bytes_) << "]",
                (bytes_ + srcOffset) <= mHandle->size);
     OCCA_ERROR("Destination memory has size [" << dest.mHandle->size << "],"
-               << "trying to access [ " << destOffset << " , " << (destOffset + bytes_) << " ]",
+               << "trying to access [" << destOffset << ", " << (destOffset + bytes_) << "]",
                (bytes_ + destOffset) <= dest.mHandle->size);
 
     dest.mHandle->copyFrom(mHandle, bytes_, destOffset, srcOffset, props);

@@ -64,17 +64,17 @@ namespace occa {
     }
 
     dim kernel::maxInnerDims() const {
-      static dim innerDims(0);
-      if (innerDims.x == 0) {
+      static dim maxInnerDims_(0);
+      if (maxInnerDims_.x == 0) {
         int maxSize;
         OCCA_CUDA_ERROR("Kernel: Getting Maximum Inner-Dim Size",
                         cuFuncGetAttribute(&maxSize,
                                            CU_FUNC_ATTRIBUTE_MAX_THREADS_PER_BLOCK,
                                            cuFunction));
 
-        innerDims.x = maxSize;
+        maxInnerDims_.x = maxSize;
       }
-      return innerDims;
+      return maxInnerDims_;
     }
 
     void kernel::run() const {
