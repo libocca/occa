@@ -109,23 +109,6 @@ namespace occa {
       return memory_.operator occa::kernelArg();
     }
 
-    inline occa::kernelArg arrayArg() {
-      occa::kernelArg ret;
-      occa::kernelArgData sizeArg;
-
-      sizeArg.modeMemory = memory_.getModeMemory();
-      sizeArg.modeDevice = memory_.getModeDevice();
-
-      sizeArg.data.void_ = (void*) ks_;
-      sizeArg.size       = maxBase2(idxCount) * sizeof(int);
-      sizeArg.info       = kArgInfo::usePointer;
-
-      ret.add((kernelArg) memory_);
-      ret.args.push_back(sizeArg);
-
-      return ret;
-    }
-
     std::string indexingStr();
     //==================================
 

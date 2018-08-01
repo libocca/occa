@@ -1,40 +1,4 @@
-* Compiling
-
-  Create a sym-link to libocca in the working directory:
-     ln -s ../../libocca .
-
-  make
-
-** Supported languages/standards
-
-   The first four lines of the Makefile are:
-
-       # Default variables
-       enableOpenCL = 1
-       enableCUDA   = 1
-       enableGL     = 1
-
-   If OpenCL is not supported in your machine:
-       enableOpenCL = 0
-
-   If CUDA is not supported in your machine:
-       enableCUDA   = 0
-
-   To disable the visualization:
-       enableGL     = 0
-
-   To disable OpenMP (for compilers like clang):
-       flags += -DOCCA_USING_OMP=0
-
-* Setup Options
-  The file [setuprc] contains options for the fd simulation
-  For different models, you can use:
-
-     [MODEL] OpenCL
-     [MODEL] CUDA
-     [MODEL] CPU
-
-* Visualization shortcuts
+### Visualization shortcuts
 
     |------------------------+-----------------------------------------------|
     | Button/Key             | Description                                   |
@@ -49,17 +13,3 @@
     | + / -                  | Zoom in/out                                   |
     | [Space] (When Paused)  | Do one solve iteration                        |
     |------------------------+-----------------------------------------------|
-
-* Non-shared vs shared versions
-
-  For non-shared memory version:
-    cp fd2d_nonShared.occa fd2d.occa
-
-  For shared memory version:
-    cp fd2d_shared.occa fd2d.occa
-
-* For bugs/comments/concerns
-
-  E-mail me at dsm5@rice.edu
-
-Thanks!

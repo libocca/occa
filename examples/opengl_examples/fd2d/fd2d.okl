@@ -97,8 +97,8 @@ tFloat hatWavelet(tFloat t) {
         }
       }
 
-      for (int ly = 0; ly < By; ++ly; inner1) {
-        for (int lx = 0; lx < Bx; ++lx; inner0) {
+      for (int ly = 0; ly < By; ++ly; @inner) {
+        for (int lx = 0; lx < Bx; ++lx; @inner) {
           const int tx = bx + lx;
           const int ty = by + ly;
 

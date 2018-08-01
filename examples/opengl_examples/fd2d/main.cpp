@@ -111,19 +111,19 @@ void run() {
   setupMesh();
   setupSolver();
 
-  for (int i = 0; i < 50; i++)
+  for (int i = 0; i < 50; i++) {
     solve();
+  }
 
-  std::ofstream avgFile("avg.dat");
+  std::cout << "Average GFLOPS           : " << (totalFlops / totalIters) << '\n'
+            << "Average Bandwidth (GB/S) : " << (totalBW / totalIters) << '\n'
+            << "Average Time (ns)        : " << (totalNS / totalIters) << '\n';
 
-  avgFile << totalFlops/totalIters << " " << totalBW/totalIters << " " << totalNS/totalIters << '\n';
-
-  avgFile.close();
   exit(0);
 }
 
 void setupMesh() {
-  occa::json settings = occa::json::loads("settings.json");
+  occa::json settings = occa::json::read("settings.json");
 
   deviceInfo = (std::string) settings["device"];
 
@@ -338,9 +338,9 @@ void solve() {
   const tFloat bw    = sizeof(tFloat)*width*height*(2*stencilDiameter + 3);
   const tFloat ns    = width*height;
 
-  totalFlops += flops/(1.0e9*timeTakenPerIteration);
-  totalBW    += bw/(1.0e9*timeTakenPerIteration);
-  totalNS    += ns/(1.0e6*timeTakenPerIteration);
+  totalFlops += flops / (1.0e9 * timeTakenPerIteration);
+  totalBW    += bw / (1.0e9 * timeTakenPerIteration);
+  totalNS    += ns / (1.0e6 * timeTakenPerIteration);
   totalIters += 1;
 
   o_u1.copyTo( &(u1[0]) );

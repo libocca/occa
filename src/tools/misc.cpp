@@ -23,33 +23,10 @@
 #include <occa/tools/misc.hpp>
 
 namespace occa {
-  int maxBase2Bit(const int value) {
-    if (value <= 0) {
-      return 0;
-    }
-
-    const int maxBits = 8 * sizeof(value);
-    for (int i = 0; i < maxBits; ++i) {
-      if (value <= (1 << i)) {
-        return i;
-      }
-    }
-
-    return 0;
-  }
-
-  int maxBase2(const int value) {
-    return (1 << maxBase2Bit(value));
-  }
-
   udim_t ptrDiff(void *start, void *end) {
     if (start < end) {
       return (udim_t) (((char*) end) - ((char*) start));
     }
     return (udim_t) (((char*) start) - ((char*) end));
-  }
-
-  void* ptrOff(void *ptr, udim_t offset) {
-    return (void*) (((char*) ptr) + offset);
   }
 }

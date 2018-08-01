@@ -19,20 +19,56 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  */
+#include <occa.hpp>
+#include <occa/tools/testing.hpp>
 
-#ifndef OCCA_TOOLS_MISC_HEADER
-#define OCCA_TOOLS_MISC_HEADER
+void testBase2Methods();
+void testPtrMethods();
 
-#include <occa/defines.hpp>
-#include <occa/types.hpp>
+int main(const int argc, const char **argv) {
+  testBase2Methods();
+  testPtrMethods();
 
-namespace occa {
-  udim_t ptrDiff(void *start, void *end);
-
-  template <class TM>
-  void ignoreResult(const TM &t) {
-    (void) t;
-  }
+  return 0;
 }
 
-#endif
+void testBase2Methods() {
+  // Max bit index
+  ASSERT_EQ(occa::maxBase2Bit(0),
+            0);
+  ASSERT_EQ(occa::maxBase2Bit(1),
+            0);
+  ASSERT_EQ(occa::maxBase2Bit(2),
+            1);
+  ASSERT_EQ(occa::maxBase2Bit(3),
+            2);
+  ASSERT_EQ(occa::maxBase2Bit(7),
+            2);
+  ASSERT_EQ(occa::maxBase2Bit(-1),
+            (int) (8 * sizeof(int)));
+
+  // Max bit value
+  ASSERT_EQ(occa::maxBase2(0),
+            1);
+  ASSERT_EQ(occa::maxBase2(1),
+            1);
+  ASSERT_EQ(occa::maxBase2(2),
+            2);
+  ASSERT_EQ(occa::maxBase2(3),
+            2);
+  ASSERT_EQ(occa::maxBase2(7),
+            4);
+  ASSERT_EQ(occa::maxBase2(-1),
+            -1);
+}
+
+void testPtrMethods() {
+  int a;
+  int *b = new int[10];
+
+  ASSERT_EQ(occa::ptrDiff(&a, &a), (occa::udim_t) 0);
+  ASSERT_EQ(occa::ptrDiff(b, b)  , (occa::udim_t) 0);
+
+  ASSERT_GT(occa::ptrDiff(&a, b), (occa::udim_t) 0);
+  ASSERT_GT(occa::ptrDiff(b, &a), (occa::udim_t) 0);
+}
