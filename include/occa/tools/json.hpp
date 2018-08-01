@@ -464,10 +464,6 @@ namespace occa {
 
     inline operator bool () const {
       switch (type) {
-      case none_:
-        return false;
-      case null_:
-        return false;
       case boolean_:
         return value_.boolean;
       case number_:
@@ -478,6 +474,8 @@ namespace occa {
         return true;
       case array_:
         return true;
+      default:
+        return false;
       }
     }
 

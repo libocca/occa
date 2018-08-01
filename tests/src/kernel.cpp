@@ -137,5 +137,40 @@ void testCompilingFailure() {
 }
 
 void testRun() {
-  // TODO: Add test kernels
+  std::string argKernelFile = (
+    occa::env::OCCA_DIR + "tests/files/argKernel.okl"
+  );
+  occa::kernel argKernel = occa::buildKernel(argKernelFile,
+                                             "argKernel");
+
+  argKernel.setRunDims(occa::dim(1, 1, 1),
+                       occa::dim(1, 1, 1));
+
+  int value = 0;
+  occa::memory mem = occa::malloc(1 * sizeof(int), &value);
+
+  value = 1;
+  int *uvaPtr = (int*) occa::umalloc(1 * sizeof(int), &value);
+
+  int xy[2] = {12, 13};
+  std::string str = "fourteen";
+
+  argKernel(
+    mem,
+    uvaPtr,
+    (int8_t) 2,
+    (uint8_t) 3,
+    (int16_t) 4,
+    (uint16_t) 5,
+    (int32_t) 6,
+    (uint32_t) 7,
+    (int64_t) 8,
+    (uint64_t) 9,
+    (float) 10.0,
+    (double) 11.0,
+    xy,
+    str.c_str()
+  );
+
+  occa::freeUvaPtr(uvaPtr);
 }
