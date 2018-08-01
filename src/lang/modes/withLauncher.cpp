@@ -301,7 +301,7 @@ namespace occa {
       void withLauncher::setupHostKernelArgs(functionDeclStatement &kernelSmnt) {
         // Add kernel argument
         identifierToken kernelTypeSource(kernelSmnt.source->origin,
-                                         "occa::kernel_v");
+                                         "occa::modeKernel_t");
         type_t &kernelType = *(new typedef_t(vartype_t(),
                                              kernelTypeSource));
         identifierToken kernelVarSource(kernelSmnt.source->origin,

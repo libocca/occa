@@ -33,7 +33,7 @@ namespace occa {
   namespace cuda {
     class kernel;
 
-    class device : public occa::device_v {
+    class device : public occa::modeDevice_t {
       friend class kernel;
 
     private:
@@ -75,10 +75,10 @@ namespace occa {
                      lang::kernelMetadataMap &hostMetadata,
                      lang::kernelMetadataMap &deviceMetadata);
 
-      virtual kernel_v* buildKernel(const std::string &filename,
-                                    const std::string &kernelName,
-                                    const hash_t kernelHash,
-                                    const occa::properties &props);
+      virtual modeKernel_t* buildKernel(const std::string &filename,
+                                        const std::string &kernelName,
+                                        const hash_t kernelHash,
+                                        const occa::properties &props);
 
       void setArchCompilerFlags(occa::properties &kernelProps);
 
@@ -87,34 +87,34 @@ namespace occa {
                          occa::properties &kernelProps,
                          io::lock_t &lock);
 
-      kernel_v* buildOKLKernelFromBinary(const std::string &hashDir,
-                                         const std::string &kernelName,
-                                         lang::kernelMetadataMap &hostMetadata,
-                                         lang::kernelMetadataMap &deviceMetadata,
-                                         const occa::properties &kernelProps,
-                                         const io::lock_t &lock = io::lock_t());
+      modeKernel_t* buildOKLKernelFromBinary(const std::string &hashDir,
+                                             const std::string &kernelName,
+                                             lang::kernelMetadataMap &hostMetadata,
+                                             lang::kernelMetadataMap &deviceMetadata,
+                                             const occa::properties &kernelProps,
+                                             const io::lock_t &lock = io::lock_t());
 
-      kernel_v* buildLauncherKernel(const std::string &hashDir,
-                                    const std::string &kernelName,
-                                    lang::kernelMetadata &hostMetadata);
+      modeKernel_t* buildLauncherKernel(const std::string &hashDir,
+                                        const std::string &kernelName,
+                                        lang::kernelMetadata &hostMetadata);
 
-      virtual kernel_v* buildKernelFromBinary(const std::string &filename,
-                                              const std::string &kernelName,
-                                              const occa::properties &props);
+      virtual modeKernel_t* buildKernelFromBinary(const std::string &filename,
+                                                  const std::string &kernelName,
+                                                  const occa::properties &props);
       //================================
 
       //---[ Memory ]-------------------
-      virtual memory_v* malloc(const udim_t bytes,
-                               const void *src,
-                               const occa::properties &props);
+      virtual modeMemory_t* malloc(const udim_t bytes,
+                                   const void *src,
+                                   const occa::properties &props);
 
-      virtual memory_v* mappedAlloc(const udim_t bytes,
-                                    const void *src,
-                                    const occa::properties &props);
+      virtual modeMemory_t* mappedAlloc(const udim_t bytes,
+                                        const void *src,
+                                        const occa::properties &props);
 
-      memory_v* managedAlloc(const udim_t bytes,
-                             const void *src,
-                             const occa::properties &props);
+      modeMemory_t* managedAlloc(const udim_t bytes,
+                                 const void *src,
+                                 const occa::properties &props);
 
       virtual udim_t memorySize() const;
       //================================

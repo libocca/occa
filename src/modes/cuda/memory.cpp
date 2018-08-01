@@ -31,7 +31,7 @@
 namespace occa {
   namespace cuda {
     memory::memory(const occa::properties &properties_) :
-      occa::memory_v(properties_),
+      occa::modeMemory_t(properties_),
       cuPtr((CUdeviceptr&) ptr),
       mappedPtr(NULL),
       isManaged(false) {}
@@ -51,7 +51,7 @@ namespace occa {
       return kernelArg(arg);
     }
 
-    memory_v* memory::addOffset(const dim_t offset) {
+    modeMemory_t* memory::addOffset(const dim_t offset) {
       memory *m = new memory(properties);
       m->cuPtr = cuPtr + offset;
       if (mappedPtr) {
@@ -83,7 +83,7 @@ namespace occa {
       }
     }
 
-    void memory::copyFrom(const memory_v *src,
+    void memory::copyFrom(const modeMemory_t *src,
                           const udim_t bytes,
                           const udim_t destOffset,
                           const udim_t srcOffset,

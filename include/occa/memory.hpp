@@ -30,9 +30,8 @@
 #include <occa/tools/properties.hpp>
 
 namespace occa {
-  class kernel_v; class kernel;
-  class memory_v; class memory;
-  class device_v; class device;
+  class modeMemory_t; class memory;
+  class modeDevice_t; class device;
   class kernelArg;
 
 
@@ -47,8 +46,8 @@ namespace occa {
     static const int isStale      = (1 << 2);
   }
 
-  //---[ memory_v ]---------------------
-  class memory_v : public withRefs {
+  //---[ modeMemory_t ]---------------------
+  class modeMemory_t : public withRefs {
   public:
     int memInfo;
     occa::properties properties;
@@ -56,25 +55,25 @@ namespace occa {
     char *ptr;
     char *uvaPtr;
 
-    occa::device_v *modeDevice;
+    occa::modeDevice_t *modeDevice;
 
     udim_t size;
     bool canBeFreed;
 
-    memory_v(const occa::properties &properties_);
+    modeMemory_t(const occa::properties &properties_);
 
     bool isManaged() const;
     bool inDevice() const;
     bool isStale() const;
 
     //---[ Virtual Methods ]------------
-    virtual ~memory_v() = 0;
+    virtual ~modeMemory_t() = 0;
     // Must be able to be called multiple times safely
     virtual void free() = 0;
 
     virtual kernelArg makeKernelArg() const = 0;
 
-    virtual memory_v* addOffset(const dim_t offset) = 0;
+    virtual modeMemory_t* addOffset(const dim_t offset) = 0;
 
     virtual void copyTo(void *dest,
                         const udim_t bytes,
@@ -86,7 +85,7 @@ namespace occa {
                           const udim_t offset = 0,
                           const occa::properties &props = occa::properties()) = 0;
 
-    virtual void copyFrom(const memory_v *src,
+    virtual void copyFrom(const modeMemory_t *src,
                           const udim_t bytes,
                           const udim_t destOffset = 0,
                           const udim_t srcOffset = 0,
@@ -106,11 +105,11 @@ namespace occa {
     friend void syncToDevice(void *ptr, const dim_t bytes);
     friend void syncToHost(void *ptr, const dim_t bytes);
 
-    friend void syncMemToDevice(occa::memory_v *mem,
+    friend void syncMemToDevice(occa::modeMemory_t *mem,
                                 const dim_t bytes,
                                 const dim_t offset);
 
-    friend void syncMemToHost(occa::memory_v *mem,
+    friend void syncMemToHost(occa::modeMemory_t *mem,
                               const dim_t bytes,
                               const dim_t offset);
   };
@@ -122,20 +121,20 @@ namespace occa {
     friend class occa::kernelArg;
 
   private:
-    memory_v *modeMemory;
+    modeMemory_t *modeMemory;
 
   public:
     memory();
     memory(void *uvaPtr);
-    memory(memory_v *modeMemory_);
+    memory(modeMemory_t *modeMemory_);
 
     memory(const memory &m);
     memory& operator = (const memory &m);
     ~memory();
 
   private:
-    void setModeMemory(memory_v *modeMemory_);
-    void setModeDevice(device_v *modeDevice);
+    void setModeMemory(modeMemory_t *modeMemory_);
+    void setModeDevice(modeDevice_t *modeDevice);
     void removeRef();
 
   public:
@@ -148,8 +147,8 @@ namespace occa {
     void* ptr();
     const void* ptr() const;
 
-    memory_v* getModeMemory() const;
-    device_v* getModeDevice() const;
+    modeMemory_t* getModeMemory() const;
+    modeDevice_t* getModeDevice() const;
 
     occa::device getDevice() const;
 

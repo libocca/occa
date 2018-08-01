@@ -94,7 +94,7 @@ void OCCA_RFUNC occaKernelRunN(occaKernel kernel,
   OCCA_ERROR("Uninitialized kernel",
              kernel_.isInitialized());
 
-  occa::kernel_v &modeKernel = *(kernel_.getModeKernel());
+  occa::modeKernel_t &modeKernel = *(kernel_.getModeKernel());
   modeKernel.arguments.clear();
   modeKernel.arguments.reserve(argc);
 

@@ -32,9 +32,9 @@
 #include <occa/tools/gc.hpp>
 
 namespace occa {
-  class kernel_v; class kernel;
-  class memory_v; class memory;
-  class device_v; class device;
+  class modeKernel_t; class kernel;
+  class modeMemory_t; class memory;
+  class modeDevice_t; class device;
   class deviceInfo;
 
   typedef void* stream_t;
@@ -45,8 +45,8 @@ namespace occa {
   typedef cachedKernelMap::iterator       cachedKernelMapIterator;
   typedef cachedKernelMap::const_iterator cCachedKernelMapIterator;
 
-  //---[ device_v ]---------------------
-  class device_v : public withRefs {
+  //---[ modeDevice_t ]---------------------
+  class modeDevice_t : public withRefs {
   public:
     std::string mode;
     occa::properties properties;
@@ -61,10 +61,10 @@ namespace occa {
 
     cachedKernelMap cachedKernels;
 
-    device_v(const occa::properties &properties_);
+    modeDevice_t(const occa::properties &properties_);
 
     //---[ Virtual Methods ]------------
-    virtual ~device_v() = 0;
+    virtual ~modeDevice_t() = 0;
     // Must be able to be called multiple times safely
     virtual void free() = 0;
 
@@ -97,27 +97,27 @@ namespace occa {
     std::string getKernelHash(const hash_t &kernelHash,
                               const std::string &kernelName);
 
-    std::string getKernelHash(kernel_v *kernel);
+    std::string getKernelHash(modeKernel_t *kernel);
 
     kernel& getCachedKernel(const hash_t &kernelHash,
                             const std::string &kernelName);
 
-    void removeCachedKernel(kernel_v *kernel);
+    void removeCachedKernel(modeKernel_t *kernel);
 
-    virtual kernel_v* buildKernel(const std::string &filename,
-                                  const std::string &kernelName,
-                                  const hash_t hash,
-                                  const occa::properties &props) = 0;
+    virtual modeKernel_t* buildKernel(const std::string &filename,
+                                      const std::string &kernelName,
+                                      const hash_t hash,
+                                      const occa::properties &props) = 0;
 
-    virtual kernel_v* buildKernelFromBinary(const std::string &filename,
-                                            const std::string &kernelName,
-                                            const occa::properties &props) = 0;
+    virtual modeKernel_t* buildKernelFromBinary(const std::string &filename,
+                                                const std::string &kernelName,
+                                                const occa::properties &props) = 0;
     //  |===============================
 
     //  |---[ Memory ]------------------
-    virtual memory_v* malloc(const udim_t bytes,
-                             const void* src,
-                             const occa::properties &props) = 0;
+    virtual modeMemory_t* malloc(const udim_t bytes,
+                                 const void* src,
+                                 const occa::properties &props) = 0;
 
     virtual udim_t memorySize() const = 0;
     //  |===============================
@@ -131,11 +131,11 @@ namespace occa {
     friend class memory;
 
   private:
-    mutable device_v *modeDevice;
+    mutable modeDevice_t *modeDevice;
 
   public:
     device();
-    device(device_v *modeDevice_);
+    device(modeDevice_t *modeDevice_);
     device(const occa::properties &props);
 
     device(const occa::device &d);
@@ -143,7 +143,7 @@ namespace occa {
     ~device();
 
   private:
-    void setModeDevice(device_v *modeDevice_);
+    void setModeDevice(modeDevice_t *modeDevice_);
     void removeRef();
 
   public:
@@ -153,7 +153,7 @@ namespace occa {
 
     bool isInitialized();
 
-    device_v* getModeDevice() const;
+    modeDevice_t* getModeDevice() const;
 
     void setup(const occa::properties &props);
 
@@ -243,12 +243,12 @@ namespace occa {
   //---[ stream ]-----------------------
   class stream {
   public:
-    device_v *modeDevice;
+    modeDevice_t *modeDevice;
     stream_t modeStream;
 
     stream();
 
-    stream(device_v *modeDevice_,
+    stream(modeDevice_t *modeDevice_,
            stream_t modeStream_);
 
     stream(const stream &other);

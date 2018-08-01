@@ -30,8 +30,8 @@
 #include <occa/tools/sys.hpp>
 
 namespace occa {
-  //---[ memory_v ]---------------------
-  memory_v::memory_v(const occa::properties &properties_) {
+  //---[ modeMemory_t ]---------------------
+  modeMemory_t::modeMemory_t(const occa::properties &properties_) {
     memInfo = uvaFlag::none;
     properties = properties_;
 
@@ -44,17 +44,17 @@ namespace occa {
     canBeFreed = true;
   }
 
-  memory_v::~memory_v() {}
+  modeMemory_t::~modeMemory_t() {}
 
-  bool memory_v::isManaged() const {
+  bool modeMemory_t::isManaged() const {
     return (memInfo & uvaFlag::isManaged);
   }
 
-  bool memory_v::inDevice() const {
+  bool modeMemory_t::inDevice() const {
     return (memInfo & uvaFlag::inDevice);
   }
 
-  bool memory_v::isStale() const {
+  bool modeMemory_t::isStale() const {
     return (memInfo & uvaFlag::isStale);
   }
 
@@ -68,11 +68,11 @@ namespace occa {
     if (it != uvaMap.end()) {
       setModeMemory(it->second);
     } else {
-      setModeMemory((memory_v*) uvaPtr);
+      setModeMemory((modeMemory_t*) uvaPtr);
     }
   }
 
-  memory::memory(memory_v *modeMemory_) :
+  memory::memory(modeMemory_t *modeMemory_) :
     modeMemory(NULL) {
     setModeMemory(modeMemory_);
   }
@@ -91,7 +91,7 @@ namespace occa {
     removeRef();
   }
 
-  void memory::setModeMemory(memory_v *modeMemory_) {
+  void memory::setModeMemory(modeMemory_t *modeMemory_) {
     if (modeMemory != modeMemory_) {
       removeRef();
       modeMemory = modeMemory_;
@@ -99,7 +99,7 @@ namespace occa {
     }
   }
 
-  void memory::setModeDevice(device_v *modeDevice) {
+  void memory::setModeDevice(modeDevice_t *modeDevice) {
     modeMemory->modeDevice = modeDevice;
     // If this is the very first reference, update the device references
     if (modeMemory->getRefs() == 1) {
@@ -124,7 +124,7 @@ namespace occa {
   }
 
   memory& memory::swap(memory &m) {
-    memory_v *modeMemory_ = modeMemory;
+    modeMemory_t *modeMemory_ = modeMemory;
     modeMemory   = m.modeMemory;
     m.modeMemory = modeMemory_;
     return *this;
@@ -138,11 +138,11 @@ namespace occa {
     return (modeMemory ? modeMemory->ptr : NULL);
   }
 
-  memory_v* memory::getModeMemory() const {
+  modeMemory_t* memory::getModeMemory() const {
     return modeMemory;
   }
 
-  device_v* memory::getModeDevice() const {
+  modeDevice_t* memory::getModeDevice() const {
     return modeMemory->modeDevice;
   }
 
@@ -344,7 +344,7 @@ namespace occa {
                (offset + (dim_t) bytes_) <= (dim_t) size());
 
     occa::memory m(modeMemory->addOffset(offset));
-    memory_v &mv = *(m.modeMemory);
+    modeMemory_t &mv = *(m.modeMemory);
     mv.modeDevice = modeMemory->modeDevice;
     mv.size = bytes_;
     if (modeMemory->uvaPtr) {
@@ -504,7 +504,7 @@ namespace occa {
       return;
     }
 
-    device_v *modeDevice = modeMemory->modeDevice;
+    modeDevice_t *modeDevice = modeMemory->modeDevice;
     modeDevice->bytesAllocated -= (modeMemory->size);
 
     if (modeMemory->uvaPtr) {

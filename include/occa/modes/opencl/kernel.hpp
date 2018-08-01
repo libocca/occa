@@ -34,7 +34,7 @@ namespace occa {
   namespace opencl {
     class device;
 
-    class kernel : public occa::kernel_v {
+    class kernel : public occa::modeKernel_t {
       friend class device;
       friend cl_kernel getCLKernel(occa::kernel kernel);
 
@@ -42,16 +42,16 @@ namespace occa {
       cl_device_id clDevice;
       cl_kernel clKernel;
 
-      occa::kernel_v *launcherKernel;
+      occa::modeKernel_t *launcherKernel;
       std::vector<kernel*> clKernels;
 
     public:
-      kernel(device_v *modeDevice_,
+      kernel(modeDevice_t *modeDevice_,
              const std::string &name_,
              const std::string &sourceFilename_,
              const occa::properties &properties_);
 
-      kernel(device_v *modeDevice_,
+      kernel(modeDevice_t *modeDevice_,
              const std::string &name_,
              const std::string &sourceFilename_,
              cl_device_id clDevice_,

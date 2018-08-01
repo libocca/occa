@@ -28,8 +28,8 @@
 #include <occa/io.hpp>
 
 namespace occa {
-  //---[ device_v ]---------------------
-  device_v::device_v(const occa::properties &properties_) {
+  //---[ modeDevice_t ]---------------------
+  modeDevice_t::modeDevice_t(const occa::properties &properties_) {
     mode = (std::string) properties_["mode"];
     properties = properties_;
 
@@ -37,17 +37,17 @@ namespace occa {
     bytesAllocated = 0;
   }
 
-  device_v::~device_v() {}
+  modeDevice_t::~modeDevice_t() {}
 
-  hash_t device_v::versionedHash() const {
+  hash_t modeDevice_t::versionedHash() const {
     return (occa::hash(settings()["version"])
             ^ hash());
   }
 
-  void device_v::writeKernelBuildFile(const std::string &filename,
-                                      const hash_t &kernelHash,
-                                      const occa::properties &kernelProps,
-                                      const lang::kernelMetadataMap &metadataMap) const {
+  void modeDevice_t::writeKernelBuildFile(const std::string &filename,
+                                          const hash_t &kernelHash,
+                                          const occa::properties &kernelProps,
+                                          const lang::kernelMetadataMap &metadataMap) const {
     occa::properties infoProps;
 
     infoProps["device"]       = properties;
@@ -65,29 +65,29 @@ namespace occa {
     io::writeBuildFile(filename, kernelHash, infoProps);
   }
 
-  std::string device_v::getKernelHash(const std::string &fullHash,
-                                      const std::string &kernelName) {
+  std::string modeDevice_t::getKernelHash(const std::string &fullHash,
+                                          const std::string &kernelName) {
     return (fullHash + "-" + kernelName);
   }
 
-  std::string device_v::getKernelHash(const hash_t &kernelHash,
-                                      const std::string &kernelName) {
+  std::string modeDevice_t::getKernelHash(const hash_t &kernelHash,
+                                          const std::string &kernelName) {
     return getKernelHash(kernelHash.toFullString(),
                          kernelName);
   }
 
-  std::string device_v::getKernelHash(kernel_v *kernel) {
+  std::string modeDevice_t::getKernelHash(modeKernel_t *kernel) {
     return getKernelHash(kernel->properties["hash"],
                          kernel->name);
   }
 
-  kernel& device_v::getCachedKernel(const hash_t &kernelHash,
-                                    const std::string &kernelName) {
+  kernel& modeDevice_t::getCachedKernel(const hash_t &kernelHash,
+                                        const std::string &kernelName) {
 
     return cachedKernels[getKernelHash(kernelHash, kernelName)];
   }
 
-  void device_v::removeCachedKernel(kernel_v *kernel) {
+  void modeDevice_t::removeCachedKernel(modeKernel_t *kernel) {
     if (kernel == NULL) {
       return;
     }
@@ -102,7 +102,7 @@ namespace occa {
   device::device() :
     modeDevice(NULL) {}
 
-  device::device(device_v *modeDevice_) :
+  device::device(modeDevice_t *modeDevice_) :
     modeDevice(NULL) {
     setModeDevice(modeDevice_);
   }
@@ -126,7 +126,7 @@ namespace occa {
     removeRef();
   }
 
-  void device::setModeDevice(device_v *modeDevice_) {
+  void device::setModeDevice(modeDevice_t *modeDevice_) {
     if (modeDevice != modeDevice_) {
       removeRef();
       modeDevice = modeDevice_;
@@ -154,7 +154,7 @@ namespace occa {
     return (modeDevice != NULL);
   }
 
-  device_v* device::getModeDevice() const {
+  modeDevice_t* device::getModeDevice() const {
     return modeDevice;
   }
 
@@ -274,7 +274,7 @@ namespace occa {
     if (modeDevice->hasSeparateMemorySpace()) {
       const size_t staleEntries = uvaStaleMemory.size();
       for (size_t i = 0; i < staleEntries; ++i) {
-        occa::memory_v *mem = uvaStaleMemory[i];
+        occa::modeMemory_t *mem = uvaStaleMemory[i];
 
         mem->copyTo(mem->uvaPtr, mem->size, 0, "async: true");
 
@@ -372,7 +372,7 @@ namespace occa {
 
     // Check cache first
     kernel &cachedKernel = modeDevice->getCachedKernel(kernelHash,
-                                                    kernelName);
+                                                       kernelName);
     if (cachedKernel.isInitialized()) {
       return cachedKernel;
     }
@@ -382,9 +382,9 @@ namespace occa {
     allProps["hash"] = kernelHash.toFullString();
 
     cachedKernel = modeDevice->buildKernel(realFilename,
-                                        kernelName,
-                                        kernelHash,
-                                        allProps);
+                                           kernelName,
+                                           kernelHash,
+                                           allProps);
 
     if (!cachedKernel.isInitialized()) {
       sys::rmrf(hashDir);
@@ -430,8 +430,8 @@ namespace occa {
                modeDevice != NULL);
 
     return kernel(modeDevice->buildKernelFromBinary(filename,
-                                                 kernelName,
-                                                 props));
+                                                    kernelName,
+                                                    props));
   }
 
   void device::loadKernels(const std::string &library) {
@@ -604,7 +604,7 @@ namespace occa {
     modeDevice(NULL),
     modeStream(NULL) {}
 
-  stream::stream(device_v *modeDevice_,
+  stream::stream(modeDevice_t *modeDevice_,
                  stream_t modeStream_) :
     modeDevice(modeDevice_),
     modeStream(modeStream_) {}

@@ -172,7 +172,7 @@ namespace occa {
     }
 
     occaType newOccaType(occa::device device) {
-      occa::device_v *modeDevice = device.getModeDevice();
+      occa::modeDevice_t *modeDevice = device.getModeDevice();
       if (!modeDevice) {
         return occaUndefined;
       }
@@ -186,7 +186,7 @@ namespace occa {
     }
 
     occaType newOccaType(occa::kernel kernel) {
-      occa::kernel_v *modeKernel = kernel.getModeKernel();
+      occa::modeKernel_t *modeKernel = kernel.getModeKernel();
       if (!modeKernel) {
         return occaUndefined;
       }
@@ -200,7 +200,7 @@ namespace occa {
     }
 
     occaType newOccaType(occa::memory memory) {
-      occa::memory_v *modeMemory = memory.getModeMemory();
+      occa::modeMemory_t *modeMemory = memory.getModeMemory();
       if (!modeMemory) {
         return occaUndefined;
       }
@@ -247,7 +247,7 @@ namespace occa {
       }
       OCCA_ERROR("Input is not an occaDevice",
                  value.type == typeType::device);
-      return occa::device((occa::device_v*) value.value.ptr);
+      return occa::device((occa::modeDevice_t*) value.value.ptr);
     }
 
     occa::kernel kernel(occaType value) {
@@ -256,7 +256,7 @@ namespace occa {
       }
       OCCA_ERROR("Input is not an occaKernel",
                  value.type == typeType::kernel);
-      return occa::kernel((occa::kernel_v*) value.value.ptr);
+      return occa::kernel((occa::modeKernel_t*) value.value.ptr);
     }
 
     occa::memory memory(occaType value) {
@@ -265,7 +265,7 @@ namespace occa {
       }
       OCCA_ERROR("Input is not an occaMemory",
                  value.type == typeType::memory);
-      return occa::memory((occa::memory_v*) value.value.ptr);
+      return occa::memory((occa::modeMemory_t*) value.value.ptr);
     }
 
     occa::properties& properties(occaType value) {
@@ -281,7 +281,7 @@ namespace occa {
     }
 
     occa::stream stream(occaStream value) {
-      return occa::stream((occa::device_v*) value.device.value.ptr,
+      return occa::stream((occa::modeDevice_t*) value.device.value.ptr,
                           value.modeStream);
     }
 

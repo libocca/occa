@@ -67,10 +67,10 @@ namespace occa {
       return true;
     }
 
-    kernel_v* device::buildKernel(const std::string &filename,
-                                  const std::string &kernelName,
-                                  const hash_t kernelHash,
-                                  const occa::properties &kernelProps) {
+    modeKernel_t* device::buildKernel(const std::string &filename,
+                                      const std::string &kernelName,
+                                      const hash_t kernelHash,
+                                      const occa::properties &kernelProps) {
 
       occa::properties allKernelProps = properties + kernelProps;
 
@@ -96,10 +96,10 @@ namespace occa {
         allKernelProps["compiler_flags"] += " " + lastCompilerOpenMPFlag;
       }
 
-      kernel_v *k = serial::device::buildKernel(filename,
-                                                kernelName,
-                                                kernelHash,
-                                                allKernelProps);
+      modeKernel_t *k = serial::device::buildKernel(filename,
+                                                    kernelName,
+                                                    kernelHash,
+                                                    allKernelProps);
 
       if (k && usingOpenMP) {
         k->modeDevice->removeRef();

@@ -32,7 +32,7 @@
 #include <occa/device.hpp>
 
 namespace occa {
-  class device_v; class device;
+  class modeDevice_t; class device;
 
   class mode_v;
 
@@ -45,7 +45,7 @@ namespace occa {
 
   mode_v* getMode(const occa::properties &props);
 
-  device_v* newModeDevice(const occa::properties &props = occa::properties());
+  modeDevice_t* newModeDevice(const occa::properties &props = occa::properties());
 
   class modeInfo_v {
   public:
@@ -62,7 +62,7 @@ namespace occa {
   public:
     std::string& name();
     virtual styling::section &getDescription() = 0;
-    virtual device_v* newDevice(const occa::properties &props = occa::properties()) = 0;
+    virtual modeDevice_t* newDevice(const occa::properties &props = occa::properties()) = 0;
   };
 
   template <class modeInfo_t,
@@ -79,7 +79,7 @@ namespace occa {
       return modeInfo_t().getDescription();
     }
 
-    device_v* newDevice(const occa::properties &props) {
+    modeDevice_t* newDevice(const occa::properties &props) {
       occa::properties allProps = props;
       allProps["mode"] = modeName;
       return new device_t(allProps);

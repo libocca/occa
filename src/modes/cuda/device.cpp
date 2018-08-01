@@ -39,7 +39,7 @@
 namespace occa {
   namespace cuda {
     device::device(const occa::properties &properties_) :
-      occa::device_v(properties_) {
+      occa::modeDevice_t(properties_) {
 
       if (!properties.has("wrapped")) {
         OCCA_ERROR("[CUDA] device not given a [device_id] integer",
@@ -204,10 +204,10 @@ namespace occa {
       return true;
     }
 
-    kernel_v* device::buildKernel(const std::string &filename,
-                                  const std::string &kernelName,
-                                  const hash_t kernelHash,
-                                  const occa::properties &kernelProps) {
+    modeKernel_t* device::buildKernel(const std::string &filename,
+                                      const std::string &kernelName,
+                                      const hash_t kernelHash,
+                                      const occa::properties &kernelProps) {
 
       occa::properties allProps = properties["kernel"] + kernelProps;
 
@@ -228,11 +228,11 @@ namespace occa {
       const bool verbose = allProps.get("verbose", false);
       if (foundBinary) {
         if (verbose) {
-           std::cout << "Loading cached ["
-                     << kernelName
-                     << "] from ["
-                     << io::shortname(filename)
-                     << "] in [" << io::shortname(binaryFilename) << "]\n";
+          std::cout << "Loading cached ["
+                    << kernelName
+                    << "] from ["
+                    << io::shortname(filename)
+                    << "] in [" << io::shortname(binaryFilename) << "]\n";
         }
         if (usingOKL) {
           lang::kernelMetadataMap hostMetadata = (
@@ -262,7 +262,7 @@ namespace occa {
                       assembleHeader(allProps))
       );
 
-      kernel_v *launcherKernel = NULL;
+      modeKernel_t *launcherKernel = NULL;
       lang::kernelMetadataMap hostMetadata, deviceMetadata;
       if (usingOKL) {
         const std::string outputFile = hashDir + kc::sourceFile;
@@ -424,12 +424,12 @@ namespace occa {
       //================================
     }
 
-    kernel_v* device::buildOKLKernelFromBinary(const std::string &hashDir,
-                                               const std::string &kernelName,
-                                               lang::kernelMetadataMap &hostMetadata,
-                                               lang::kernelMetadataMap &deviceMetadata,
-                                               const occa::properties &kernelProps,
-                                               const io::lock_t &lock) {
+    modeKernel_t* device::buildOKLKernelFromBinary(const std::string &hashDir,
+                                                   const std::string &kernelName,
+                                                   lang::kernelMetadataMap &hostMetadata,
+                                                   lang::kernelMetadataMap &deviceMetadata,
+                                                   const occa::properties &kernelProps,
+                                                   const io::lock_t &lock) {
 
       const std::string sourceFilename = hashDir + kc::sourceFile;
       const std::string binaryFilename = hashDir + kc::binaryFile;
@@ -508,9 +508,9 @@ namespace occa {
       return &k;
     }
 
-    kernel_v* device::buildLauncherKernel(const std::string &hashDir,
-                                          const std::string &kernelName,
-                                          lang::kernelMetadata &hostMetadata) {
+    modeKernel_t* device::buildLauncherKernel(const std::string &hashDir,
+                                              const std::string &kernelName,
+                                              lang::kernelMetadata &hostMetadata) {
       const std::string hostOutputFile = hashDir + kc::hostSourceFile;
 
       occa::kernel hostKernel = host().buildKernel(hostOutputFile,
@@ -518,7 +518,7 @@ namespace occa {
                                                    "okl: false");
 
       // Launcher and clKernels use the same refs as the wrapper kernel
-      kernel_v *launcherKernel = hostKernel.getModeKernel();
+      modeKernel_t *launcherKernel = hostKernel.getModeKernel();
       launcherKernel->dontUseRefs();
 
       launcherKernel->metadata = hostMetadata;
@@ -526,9 +526,9 @@ namespace occa {
       return launcherKernel;
     }
 
-    kernel_v* device::buildKernelFromBinary(const std::string &filename,
-                                            const std::string &kernelName,
-                                            const occa::properties &kernelProps) {
+    modeKernel_t* device::buildKernelFromBinary(const std::string &filename,
+                                                const std::string &kernelName,
+                                                const occa::properties &kernelProps) {
 
       occa::properties allProps = properties["kernel"] + kernelProps;
 
@@ -551,9 +551,9 @@ namespace occa {
     //==================================
 
     //---[ Memory ]---------------------
-    memory_v* device::malloc(const udim_t bytes,
-                             const void *src,
-                             const occa::properties &props) {
+    modeMemory_t* device::malloc(const udim_t bytes,
+                                 const void *src,
+                                 const occa::properties &props) {
 
       if (props.get("cuda/mapped", false)) {
         return mappedAlloc(bytes, src, props);
@@ -577,9 +577,9 @@ namespace occa {
       return &mem;
     }
 
-    memory_v* device::mappedAlloc(const udim_t bytes,
-                                  const void *src,
-                                  const occa::properties &props) {
+    modeMemory_t* device::mappedAlloc(const udim_t bytes,
+                                      const void *src,
+                                      const occa::properties &props) {
 
       cuda::memory &mem = *(new cuda::memory(props));
       mem.modeDevice = this;
@@ -600,9 +600,9 @@ namespace occa {
       return &mem;
     }
 
-    memory_v* device::managedAlloc(const udim_t bytes,
-                                   const void *src,
-                                   const occa::properties &props) {
+    modeMemory_t* device::managedAlloc(const udim_t bytes,
+                                       const void *src,
+                                       const occa::properties &props) {
       cuda::memory &mem = *(new cuda::memory(props));
 #if CUDA_VERSION >= 8000
       mem.modeDevice = this;

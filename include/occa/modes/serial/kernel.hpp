@@ -33,14 +33,14 @@ namespace occa {
   namespace serial {
     class device;
 
-    class kernel : public occa::kernel_v {
+    class kernel : public occa::modeKernel_t {
     protected:
       void *dlHandle;
       functionPtr_t function;
       mutable std::vector<void*> vArgs;
 
     public:
-      kernel(device_v *modeDevice_,
+      kernel(modeDevice_t *modeDevice_,
              const std::string &name_,
              const std::string &sourceFilename_,
              const occa::properties &properties_);

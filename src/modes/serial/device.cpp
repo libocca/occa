@@ -32,7 +32,7 @@
 namespace occa {
   namespace serial {
     device::device(const occa::properties &properties_) :
-      occa::device_v(properties_) {
+      occa::modeDevice_t(properties_) {
 
       int vendor;
       std::string compiler, compilerFlags, compilerEnvScript;
@@ -174,10 +174,10 @@ namespace occa {
       return true;
     }
 
-    kernel_v* device::buildKernel(const std::string &filename,
-                                  const std::string &kernelName,
-                                  const hash_t kernelHash,
-                                  const occa::properties &kernelProps) {
+    modeKernel_t* device::buildKernel(const std::string &filename,
+                                      const std::string &kernelName,
+                                      const hash_t kernelHash,
+                                      const occa::properties &kernelProps) {
       const std::string hashDir = io::hashDir(filename, kernelHash);
       std::string binaryFilename = hashDir + kc::binaryFile;
       bool foundBinary = true;
@@ -206,9 +206,9 @@ namespace occa {
                     << io::shortname(filename)
                     << "] in [" << io::shortname(binaryFilename) << "]\n";
         }
-        kernel_v *k = buildKernelFromBinary(binaryFilename,
-                                            kernelName,
-                                            kernelProps);
+        modeKernel_t *k = buildKernelFromBinary(binaryFilename,
+                                                kernelName,
+                                                kernelProps);
         if (k) {
           k->sourceFilename = filename;
         }
@@ -287,18 +287,18 @@ namespace occa {
                          " Command: [" << sCommand << ']');
       }
 
-      kernel_v *k = buildKernelFromBinary(binaryFilename,
-                                          kernelName,
-                                          kernelProps);
+      modeKernel_t *k = buildKernelFromBinary(binaryFilename,
+                                              kernelName,
+                                              kernelProps);
       if (k) {
         k->sourceFilename = filename;
       }
       return k;
     }
 
-    kernel_v* device::buildKernelFromBinary(const std::string &filename,
-                                            const std::string &kernelName,
-                                            const occa::properties &kernelProps) {
+    modeKernel_t* device::buildKernelFromBinary(const std::string &filename,
+                                                const std::string &kernelName,
+                                                const occa::properties &kernelProps) {
       kernel &k = *(new kernel(this,
                                kernelName,
                                filename,
@@ -313,10 +313,10 @@ namespace occa {
     }
     //==================================
 
-      //---[ Memory ]-------------------
-    memory_v* device::malloc(const udim_t bytes,
-                             const void *src,
-                             const occa::properties &props) {
+    //---[ Memory ]-------------------
+    modeMemory_t* device::malloc(const udim_t bytes,
+                                 const void *src,
+                                 const occa::properties &props) {
       memory *mem = new memory(props);
 
       mem->modeDevice = this;

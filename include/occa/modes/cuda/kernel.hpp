@@ -34,24 +34,24 @@ namespace occa {
   namespace cuda {
     class device;
 
-    class kernel : public occa::kernel_v {
+    class kernel : public occa::modeKernel_t {
       friend class device;
 
     private:
       CUmodule cuModule;
       CUfunction cuFunction;
 
-      occa::kernel_v *launcherKernel;
+      occa::modeKernel_t *launcherKernel;
       std::vector<kernel*> cuKernels;
       mutable std::vector<void*> vArgs;
 
     public:
-      kernel(device_v *modeDevice_,
+      kernel(modeDevice_t *modeDevice_,
              const std::string &name_,
              const std::string &sourceFilename_,
              const occa::properties &properties_);
 
-      kernel(device_v *modeDevice_,
+      kernel(modeDevice_t *modeDevice_,
              const std::string &name_,
              const std::string &sourceFilename_,
              CUmodule cuModule_,

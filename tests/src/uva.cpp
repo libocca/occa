@@ -89,7 +89,7 @@ void testUva() {
   size_t bytes = 10 * sizeof(int);
   int *ptr = (int*) occa::umalloc(bytes);
 
-  occa::memory_v *modeMemory = occa::uvaToMemory(ptr);
+  occa::modeMemory_t *modeMemory = occa::uvaToMemory(ptr);
 
   ASSERT_NEQ(ptr,
              (int*) NULL);
@@ -120,16 +120,16 @@ void testUva() {
   occa::freeUvaPtr(ptr);
 
   ASSERT_EQ(occa::uvaToMemory(ptr),
-            (occa::memory_v*) NULL);
+            (occa::modeMemory_t*) NULL);
 }
 
 void testUvaNull() {
   int *ptr = new int[2];
 
   ASSERT_EQ(occa::uvaToMemory(NULL),
-            (occa::memory_v*) NULL);
+            (occa::modeMemory_t*) NULL);
   ASSERT_EQ(occa::uvaToMemory(ptr),
-            (occa::memory_v*) NULL);
+            (occa::modeMemory_t*) NULL);
 
   occa::startManaging(NULL);
   occa::startManaging(ptr);

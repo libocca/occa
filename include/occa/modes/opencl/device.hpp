@@ -33,7 +33,7 @@ namespace occa {
   namespace opencl {
     class info_t;
 
-    class device : public occa::device_v {
+    class device : public occa::modeDevice_t {
       friend cl_context getContext(occa::device device);
 
     private:
@@ -74,36 +74,36 @@ namespace occa {
                      lang::kernelMetadataMap &hostMetadata,
                      lang::kernelMetadataMap &deviceMetadata);
 
-      virtual kernel_v* buildKernel(const std::string &filename,
-                                    const std::string &kernelName,
-                                    const hash_t kernelHash,
-                                    const occa::properties &kernelProps);
+      virtual modeKernel_t* buildKernel(const std::string &filename,
+                                        const std::string &kernelName,
+                                        const hash_t kernelHash,
+                                        const occa::properties &kernelProps);
 
-      kernel_v* buildOKLKernelFromBinary(info_t &clInfo,
-                                         const std::string &hashDir,
-                                         const std::string &kernelName,
-                                         lang::kernelMetadataMap &hostMetadata,
-                                         lang::kernelMetadataMap &deviceMetadata,
-                                         const occa::properties &kernelProps,
-                                         io::lock_t lock);
+      modeKernel_t* buildOKLKernelFromBinary(info_t &clInfo,
+                                             const std::string &hashDir,
+                                             const std::string &kernelName,
+                                             lang::kernelMetadataMap &hostMetadata,
+                                             lang::kernelMetadataMap &deviceMetadata,
+                                             const occa::properties &kernelProps,
+                                             io::lock_t lock);
 
-      kernel_v* buildLauncherKernel(const std::string &hashDir,
-                                    const std::string &kernelName,
-                                    lang::kernelMetadata &hostMetadata);
+      modeKernel_t* buildLauncherKernel(const std::string &hashDir,
+                                        const std::string &kernelName,
+                                        lang::kernelMetadata &hostMetadata);
 
-      virtual kernel_v* buildKernelFromBinary(const std::string &filename,
-                                              const std::string &kernelName,
-                                              const occa::properties &kernelProps);
+      virtual modeKernel_t* buildKernelFromBinary(const std::string &filename,
+                                                  const std::string &kernelName,
+                                                  const occa::properties &kernelProps);
       //================================
 
       //---[ Memory ]-------------------
-      virtual memory_v* malloc(const udim_t bytes,
-                               const void *src,
-                               const occa::properties &props);
+      virtual modeMemory_t* malloc(const udim_t bytes,
+                                   const void *src,
+                                   const occa::properties &props);
 
-      virtual memory_v* mappedAlloc(const udim_t bytes,
-                                    const void *src,
-                                    const occa::properties &props);
+      virtual modeMemory_t* mappedAlloc(const udim_t bytes,
+                                        const void *src,
+                                        const occa::properties &props);
 
       virtual udim_t memorySize() const;
       //================================

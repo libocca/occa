@@ -32,11 +32,11 @@
 namespace occa {
   class device;
   class memory;
-  class memory_v;
+  class modeMemory_t;
   class ptrRange;
 
-  typedef std::map<ptrRange, occa::memory_v*> ptrRangeMap;
-  typedef std::vector<occa::memory_v*>        memoryVector;
+  typedef std::map<ptrRange, occa::modeMemory_t*> ptrRangeMap;
+  typedef std::vector<occa::modeMemory_t*>        memoryVector;
 
   extern ptrRangeMap uvaMap;
   extern memoryVector uvaStaleMemory;
@@ -64,7 +64,7 @@ namespace occa {
 
 
   //---[ UVA ]--------------------------
-  occa::memory_v* uvaToMemory(void *ptr);
+  occa::modeMemory_t* uvaToMemory(void *ptr);
 
   bool isManaged(void *ptr);
   void startManaging(void *ptr);
@@ -73,11 +73,11 @@ namespace occa {
   void syncToDevice(void *ptr, const udim_t bytes = (udim_t) -1);
   void syncToHost(void *ptr, const udim_t bytes = (udim_t) -1);
 
-  void syncMemToDevice(occa::memory_v *mem,
+  void syncMemToDevice(occa::modeMemory_t *mem,
                        const udim_t bytes = (udim_t) -1,
                        const udim_t offset = 0);
 
-  void syncMemToHost(occa::memory_v *mem,
+  void syncMemToHost(occa::modeMemory_t *mem,
                      const udim_t bytes = (udim_t) -1,
                      const udim_t offset = 0);
 
@@ -86,7 +86,7 @@ namespace occa {
   void dontSync(void *ptr);
 
   void removeFromStaleMap(void *ptr);
-  void removeFromStaleMap(memory_v *mem);
+  void removeFromStaleMap(modeMemory_t *mem);
 
   void setupMagicFor(void *ptr);
 

@@ -51,7 +51,7 @@ namespace occa {
     return modeMap()[mode];
   }
 
-  device_v* newModeDevice(const occa::properties &props) {
+  modeDevice_t* newModeDevice(const occa::properties &props) {
     return getMode(props)->newDevice(props);
   }
 

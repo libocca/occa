@@ -32,9 +32,9 @@
 #include <occa/lang/kernelMetadata.hpp>
 
 namespace occa {
-  class kernel_v; class kernel;
-  class memory_v; class memory;
-  class device_v; class device;
+  class modeKernel_t; class kernel;
+  class modeMemory_t; class memory;
+  class modeDevice_t; class device;
   class kernelArgData;
   class kernelBuilder;
 
@@ -80,8 +80,8 @@ namespace occa {
 
   class kernelArgData {
   public:
-    occa::device_v *modeDevice;
-    occa::memory_v *modeMemory;
+    occa::modeDevice_t *modeDevice;
+    occa::modeMemory_t *modeMemory;
 
     kernelArgData_t data;
     udim_t size;
@@ -162,10 +162,10 @@ namespace occa {
   //====================================
 
 
-  //---[ kernel_v ]---------------------
-  class kernel_v : public withRefs {
+  //---[ modeKernel_t ]---------------------
+  class modeKernel_t : public withRefs {
   public:
-    occa::device_v *modeDevice;
+    occa::modeDevice_t *modeDevice;
 
     std::string name;
     std::string sourceFilename, binaryFilename;
@@ -176,10 +176,10 @@ namespace occa {
     std::vector<kernelArg> arguments;
     lang::kernelMetadata metadata;
 
-    kernel_v(device_v *modeDevice_,
-             const std::string &name_,
-             const std::string &sourceFilename_,
-             const occa::properties &properties_);
+    modeKernel_t(modeDevice_t *modeDevice_,
+                 const std::string &name_,
+                 const std::string &sourceFilename_,
+                 const occa::properties &properties_);
 
     kernelArg* argumentsPtr();
     int argumentCount();
@@ -187,7 +187,7 @@ namespace occa {
     void setMetadata(lang::parser_t &parser);
 
     //---[ Virtual Methods ]------------
-    virtual ~kernel_v() = 0;
+    virtual ~modeKernel_t() = 0;
 
     // Must be able to be called multiple times safely
     virtual void free() = 0;
@@ -206,19 +206,19 @@ namespace occa {
     friend class occa::device;
 
   private:
-    kernel_v *modeKernel;
+    modeKernel_t *modeKernel;
 
   public:
     kernel();
-    kernel(kernel_v *modeKernel_);
+    kernel(modeKernel_t *modeKernel_);
 
     kernel(const kernel &k);
     kernel& operator = (const kernel &k);
-    kernel& operator = (kernel_v *modeKernel_);
+    kernel& operator = (modeKernel_t *modeKernel_);
     ~kernel();
 
   private:
-    void setModeKernel(kernel_v *modeKernel_);
+    void setModeKernel(modeKernel_t *modeKernel_);
     void removeRef();
 
   public:
@@ -229,7 +229,7 @@ namespace occa {
     const std::string& mode() const;
     const occa::properties& properties() const;
 
-    kernel_v* getModeKernel();
+    modeKernel_t* getModeKernel();
 
     occa::device getDevice();
 

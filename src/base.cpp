@@ -138,8 +138,8 @@ namespace occa {
     ptrRangeMap::iterator srcIt  = uvaMap.find(const_cast<void*>(src));
     ptrRangeMap::iterator destIt = uvaMap.find(dest);
 
-    occa::memory_v *srcMem  = ((srcIt  != uvaMap.end()) ? (srcIt->second)  : NULL);
-    occa::memory_v *destMem = ((destIt != uvaMap.end()) ? (destIt->second) : NULL);
+    occa::modeMemory_t *srcMem  = ((srcIt  != uvaMap.end()) ? (srcIt->second)  : NULL);
+    occa::modeMemory_t *destMem = ((destIt != uvaMap.end()) ? (destIt->second) : NULL);
 
     const udim_t srcOff  = (srcMem
                             ? (((char*) src)  - srcMem->uvaPtr)

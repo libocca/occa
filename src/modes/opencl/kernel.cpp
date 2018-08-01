@@ -34,22 +34,22 @@
 
 namespace occa {
   namespace opencl {
-    kernel::kernel(device_v *modeDevice_,
+    kernel::kernel(modeDevice_t *modeDevice_,
                    const std::string &name_,
                    const std::string &sourceFilename_,
                    const occa::properties &properties_) :
-      occa::kernel_v(modeDevice_, name_, sourceFilename_, properties_),
+      occa::modeKernel_t(modeDevice_, name_, sourceFilename_, properties_),
       clDevice(NULL),
       clKernel(NULL),
       launcherKernel(NULL) {}
 
-    kernel::kernel(device_v *modeDevice_,
+    kernel::kernel(modeDevice_t *modeDevice_,
                    const std::string &name_,
                    const std::string &sourceFilename_,
                    cl_device_id clDevice_,
                    cl_kernel clKernel_,
                    const occa::properties &properties_) :
-      occa::kernel_v(modeDevice_, name_, sourceFilename_, properties_),
+      occa::modeKernel_t(modeDevice_, name_, sourceFilename_, properties_),
       clDevice(clDevice_),
       clKernel(clKernel_),
       launcherKernel(NULL) {}

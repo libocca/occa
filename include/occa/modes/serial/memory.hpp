@@ -28,14 +28,14 @@
 
 namespace occa {
   namespace serial {
-    class memory : public occa::memory_v {
+    class memory : public occa::modeMemory_t {
     public:
       memory(const occa::properties &properties_ = occa::properties());
       ~memory();
 
       kernelArg makeKernelArg() const;
 
-      memory_v* addOffset(const dim_t offset);
+      modeMemory_t* addOffset(const dim_t offset);
 
       void copyTo(void *dest,
                   const udim_t bytes,
@@ -47,7 +47,7 @@ namespace occa {
                     const udim_t offset,
                     const occa::properties &props);
 
-      void copyFrom(const memory_v *src,
+      void copyFrom(const modeMemory_t *src,
                     const udim_t bytes,
                     const udim_t destOffset,
                     const udim_t srcOffset,

@@ -45,10 +45,10 @@ namespace occa {
                              const occa::properties &kernelProps,
                              lang::kernelMetadataMap &metadata);
 
-      virtual kernel_v* buildKernel(const std::string &filename,
-                                    const std::string &kernelName,
-                                    const hash_t kernelHash,
-                                    const occa::properties &kernelProps);
+      virtual modeKernel_t* buildKernel(const std::string &filename,
+                                        const std::string &kernelName,
+                                        const hash_t kernelHash,
+                                        const occa::properties &kernelProps);
     };
   }
 }

@@ -169,10 +169,10 @@ namespace occa {
   void kernelArg::add(void *arg, size_t bytes,
                       bool lookAtUva, bool argIsUva) {
 
-    memory_v *modeMemory = NULL;
+    modeMemory_t *modeMemory = NULL;
 
     if (argIsUva) {
-      modeMemory = (memory_v*) arg;
+      modeMemory = (modeMemory_t*) arg;
     } else if (lookAtUva) {
       ptrRangeMap::iterator it = uvaMap.find(arg);
       if (it != uvaMap.end()) {
@@ -194,7 +194,7 @@ namespace occa {
   void kernelArg::setupForKernelCall(const bool isConst) const {
     const int argCount = (int) args.size();
     for (int i = 0; i < argCount; ++i) {
-      occa::memory_v *modeMemory = args[i].modeMemory;
+      occa::modeMemory_t *modeMemory = args[i].modeMemory;
 
       if (!modeMemory              ||
           !modeMemory->isManaged() ||
@@ -270,11 +270,11 @@ namespace occa {
   //====================================
 
 
-  //---[ kernel_v ]---------------------
-  kernel_v::kernel_v(device_v *modeDevice_,
-                     const std::string &name_,
-                     const std::string &sourceFilename_,
-                     const occa::properties &properties_) :
+  //---[ modeKernel_t ]---------------------
+  modeKernel_t::modeKernel_t(modeDevice_t *modeDevice_,
+                             const std::string &name_,
+                             const std::string &sourceFilename_,
+                             const occa::properties &properties_) :
     modeDevice(modeDevice_),
     name(name_),
     sourceFilename(sourceFilename_),
@@ -282,13 +282,13 @@ namespace occa {
     modeDevice->addRef();
   }
 
-  kernel_v::~kernel_v() {}
+  modeKernel_t::~modeKernel_t() {}
 
-  kernelArg* kernel_v::argumentsPtr() {
+  kernelArg* modeKernel_t::argumentsPtr() {
     return &(arguments[0]);
   }
 
-  int kernel_v::argumentCount() {
+  int modeKernel_t::argumentCount() {
     return (int) arguments.size();
   }
   //====================================
@@ -297,7 +297,7 @@ namespace occa {
   kernel::kernel() :
     modeKernel(NULL) {}
 
-  kernel::kernel(kernel_v *modeKernel_) :
+  kernel::kernel(modeKernel_t *modeKernel_) :
     modeKernel(NULL) {
     setModeKernel(modeKernel_);
   }
@@ -312,7 +312,7 @@ namespace occa {
     return *this;
   }
 
-  kernel& kernel::operator = (kernel_v *modeKernel_) {
+  kernel& kernel::operator = (modeKernel_t *modeKernel_) {
     setModeKernel(modeKernel_);
     return *this;
   }
@@ -321,7 +321,7 @@ namespace occa {
     removeRef();
   }
 
-  void kernel::setModeKernel(kernel_v *modeKernel_) {
+  void kernel::setModeKernel(modeKernel_t *modeKernel_) {
     if (modeKernel != modeKernel_) {
       removeRef();
       modeKernel = modeKernel_;
@@ -362,7 +362,7 @@ namespace occa {
             : noProperties);
   }
 
-  kernel_v* kernel::getModeKernel() {
+  modeKernel_t* kernel::getModeKernel() {
     return modeKernel;
   }
 
@@ -458,7 +458,7 @@ namespace occa {
     if (modeKernel == NULL) {
       return;
     }
-    device_v *modeDevice = modeKernel->modeDevice;
+    modeDevice_t *modeDevice = modeKernel->modeDevice;
     // Remove kernel from cache map
     modeDevice->removeCachedKernel(modeKernel);
     modeDevice->removeRef();
