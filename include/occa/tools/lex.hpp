@@ -44,7 +44,7 @@ namespace occa {
               (('A' <= c) && (c <= 'Z')));
     }
 
-    bool inCharset(const char c, const char *delimiters);
+    bool inCharset(const char c, const char *charset);
 
     //---[ Skip ]-----------------------
     void skipTo(const char *&c, const char delimiter);
@@ -54,50 +54,10 @@ namespace occa {
     void skipTo(const char *&c, const std::string &delimiters);
     void skipTo(const char *&c, const std::string &delimiters, const char escapeChar);
 
-    inline void skipTo(char *&c, const char delimiter) {
-      skipTo((const char *&) c, delimiter);
-    }
-
-    inline void skipTo(char *&c, const char delimiter, const char escapeChar) {
-      skipTo((const char *&) c, delimiter, escapeChar);
-    }
-
-    inline void skipTo(char *&c, const char *delimiters) {
-      skipTo((const char *&) c, delimiters);
-    }
-
-    inline void skipTo(char *&c, const char *delimiters, const char escapeChar) {
-      skipTo((const char *&) c, delimiters, escapeChar);
-    }
-
-    inline void skipTo(char *&c, const std::string &delimiters) {
-      skipTo((const char *&) c, delimiters);
-    }
-
-    inline void skipTo(char *&c, const std::string &delimiters, const char escapeChar) {
-      skipTo((const char *&) c, delimiters, escapeChar);
-    }
-
     void skipFrom(const char *&c, const char *delimiters);
     void skipFrom(const char *&c, const char *delimiters, const char escapeChar);
     void skipFrom(const char *&c, const std::string &delimiters);
     void skipFrom(const char *&c, const std::string &delimiters, const char escapeChar);
-
-    inline void skipFrom(char *&c, const char *delimiters) {
-      skipFrom((const char *&) c, delimiters);
-    }
-
-    inline void skipFrom(char *&c, const char *delimiters, const char escapeChar) {
-      skipFrom((const char *&) c, delimiters, escapeChar);
-    }
-
-    inline void skipFrom(char *&c, const std::string &delimiters) {
-      skipFrom((const char *&) c, delimiters);
-    }
-
-    inline void skipFrom(char *&c, const std::string &delimiters, const char escapeChar) {
-      skipFrom((const char *&) c, delimiters, escapeChar);
-    }
     //==================================
 
     //---[ Whitespace ]-----------------
@@ -106,19 +66,7 @@ namespace occa {
     void skipWhitespace(const char *&c);
     void skipWhitespace(const char *&c, const char escapeChar);
 
-    inline void skipWhitespace(char *&c) {
-      skipWhitespace((const char *&) c);
-    }
-
-    inline void skipWhitespace(char *&c, const char escapeChar) {
-      skipWhitespace((const char *&) c, escapeChar);
-    }
-
     void skipToWhitespace(const char *&c);
-
-    inline void skipToWhitespace(char *&c) {
-      skipToWhitespace((const char *&) c);
-    }
     //==================================
   }
 }

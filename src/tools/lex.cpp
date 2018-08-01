@@ -27,9 +27,9 @@ namespace occa {
     const char whitespaceCharset[] = " \t\r\n\v\f";
     const char numberCharset[]     = "0123456789";
 
-    bool inCharset(const char c, const char *delimiters) {
-      while (*delimiters != '\0') {
-        if (c == *(delimiters++)) {
+    bool inCharset(const char c, const char *charset) {
+      while (*charset != '\0') {
+        if (c == *(charset++)) {
           return true;
         }
       }
