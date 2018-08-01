@@ -23,11 +23,11 @@
 #include <fstream>
 
 #include <occa.hpp>
-#include <occa/lang/modes/serial.hpp>
-#include <occa/lang/modes/openmp.hpp>
-#include <occa/lang/modes/opencl.hpp>
-#include <occa/lang/modes/cuda.hpp>
-#include <occa/lang/modes/hip.hpp>
+#include <occa/lang/mode/serial.hpp>
+#include <occa/lang/mode/openmp.hpp>
+#include <occa/lang/mode/opencl.hpp>
+#include <occa/lang/mode/cuda.hpp>
+#include <occa/lang/mode/hip.hpp>
 
 using namespace occa;
 

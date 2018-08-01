@@ -23,15 +23,15 @@ ignore:
   # Exception is not tracked properly
   - src/tools/exception.cpp
   # Disabled modes
-  - include/occa/modes/threads
-  - src/modes/threads
+  - include/occa/mode/threads
+  - src/mode/threads
   # Modes that can't be tested with Travis
-  - include/occa/modes/opencl
-  - include/occa/modes/cuda
-  - include/occa/modes/hip
-  - src/modes/opencl
-  - src/modes/cuda
-  - src/modes/hip
+  - include/occa/mode/opencl
+  - include/occa/mode/cuda
+  - include/occa/mode/hip
+  - src/mode/opencl
+  - src/mode/cuda
+  - src/mode/hip
 
 comment:
   layout: 'reach, diff, files'
