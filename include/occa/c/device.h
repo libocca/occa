@@ -56,10 +56,6 @@ OCCA_LFUNC occaStream OCCA_RFUNC occaDeviceGetStream(occaDevice device);
 OCCA_LFUNC void       OCCA_RFUNC occaDeviceSetStream(occaDevice device,
                                                      occaStream stream);
 
-OCCA_LFUNC occaStream OCCA_RFUNC occaDeviceWrapStream(occaDevice device,
-                                                      void *handle_,
-                                                      const occaProperties props);
-
 OCCA_LFUNC occaStreamTag OCCA_RFUNC occaDeviceTagStream(occaDevice device);
 
 OCCA_LFUNC void OCCA_RFUNC occaDeviceWaitForTag(occaDevice device,

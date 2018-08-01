@@ -34,22 +34,22 @@
 
 namespace occa {
   namespace opencl {
-    kernel::kernel(device_v *dHandle_,
+    kernel::kernel(device_v *modeDevice_,
                    const std::string &name_,
                    const std::string &sourceFilename_,
                    const occa::properties &properties_) :
-      occa::kernel_v(dHandle_, name_, sourceFilename_, properties_),
+      occa::kernel_v(modeDevice_, name_, sourceFilename_, properties_),
       clDevice(NULL),
       clKernel(NULL),
       launcherKernel(NULL) {}
 
-    kernel::kernel(device_v *dHandle_,
+    kernel::kernel(device_v *modeDevice_,
                    const std::string &name_,
                    const std::string &sourceFilename_,
                    cl_device_id clDevice_,
                    cl_kernel clKernel_,
                    const occa::properties &properties_) :
-      occa::kernel_v(dHandle_, name_, sourceFilename_, properties_),
+      occa::kernel_v(modeDevice_, name_, sourceFilename_, properties_),
       clDevice(clDevice_),
       clKernel(clKernel_),
       launcherKernel(NULL) {}
@@ -153,7 +153,7 @@ namespace occa {
 
       OCCA_OPENCL_ERROR("Kernel [" + name + "]"
                         << " : Kernel Run",
-                        clEnqueueNDRangeKernel(*((cl_command_queue*) dHandle->currentStream),
+                        clEnqueueNDRangeKernel(*((cl_command_queue*) modeDevice->currentStream),
                                                clKernel,
                                                (cl_int) fullDims.dims,
                                                NULL,

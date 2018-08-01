@@ -40,18 +40,18 @@ namespace occa {
 
     private:
       cl_device_id clDevice;
-      cl_kernel    clKernel;
+      cl_kernel clKernel;
 
       occa::kernel_v *launcherKernel;
       std::vector<kernel*> clKernels;
 
     public:
-      kernel(device_v *dHandle_,
+      kernel(device_v *modeDevice_,
              const std::string &name_,
              const std::string &sourceFilename_,
              const occa::properties &properties_);
 
-      kernel(device_v *dHandle_,
+      kernel(device_v *modeDevice_,
              const std::string &name_,
              const std::string &sourceFilename_,
              cl_device_id clDevice_,

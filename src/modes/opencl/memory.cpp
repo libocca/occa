@@ -40,8 +40,8 @@ namespace occa {
     kernelArg memory::makeKernelArg() const {
       kernelArgData arg;
 
-      arg.dHandle = dHandle;
-      arg.mHandle = const_cast<memory*>(this);
+      arg.modeDevice = modeDevice;
+      arg.modeMemory = const_cast<memory*>(this);
 
       arg.data.void_ = (void*) &clMem;
       arg.size       = sizeof(void*);
@@ -51,9 +51,9 @@ namespace occa {
     }
 
     memory_v* memory::addOffset(const dim_t offset) {
-      opencl::device &dev = *((opencl::device*) dHandle);
+      opencl::device &dev = *((opencl::device*) modeDevice);
       opencl::memory *m = new opencl::memory();
-      m->dHandle = &dev;
+      m->modeDevice = &dev;
       m->size    = size - offset;
 
       cl_buffer_region info;
@@ -75,7 +75,7 @@ namespace occa {
                           const udim_t bytes,
                           const udim_t offset,
                           const occa::properties &props) {
-      cl_command_queue &stream = *((cl_command_queue*) dHandle->currentStream);
+      cl_command_queue &stream = *((cl_command_queue*) modeDevice->currentStream);
       const bool async = props.get("async", false);
 
       OCCA_OPENCL_ERROR("Memory: " << (async ? "Async " : "") << "Copy From",
@@ -90,7 +90,7 @@ namespace occa {
                           const udim_t destOffset,
                           const udim_t srcOffset,
                           const occa::properties &props) {
-      cl_command_queue &stream = *((cl_command_queue*) dHandle->currentStream);
+      cl_command_queue &stream = *((cl_command_queue*) modeDevice->currentStream);
       const bool async = props.get("async", false);
 
       OCCA_OPENCL_ERROR("Memory: " << (async ? "Async " : "") << "Copy From",
@@ -107,7 +107,7 @@ namespace occa {
                         const udim_t offset,
                         const occa::properties &props) const {
 
-      const cl_command_queue &stream = *((cl_command_queue*) dHandle->currentStream);
+      const cl_command_queue &stream = *((cl_command_queue*) modeDevice->currentStream);
       const bool async = props.get("async", false);
 
       OCCA_OPENCL_ERROR("Memory: " << (async ? "Async " : "") << "Copy To",
@@ -119,7 +119,7 @@ namespace occa {
 
     void memory::free() {
       if (mappedPtr) {
-        cl_command_queue &stream = *((cl_command_queue*) dHandle->currentStream);
+        cl_command_queue &stream = *((cl_command_queue*) modeDevice->currentStream);
 
         OCCA_OPENCL_ERROR("Mapped Free: clEnqueueUnmapMemObject",
                           clEnqueueUnmapMemObject(stream,

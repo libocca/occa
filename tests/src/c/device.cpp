@@ -248,11 +248,11 @@ void testStreamMethods() {
 
   occaDeviceSetStream(device, cStream);
 
-  ASSERT_EQ(stream.getHandle(),
-            occa::getStream().getHandle());
+  ASSERT_EQ(stream.getModeStream(),
+            occa::getStream().getModeStream());
 
-  ASSERT_EQ(stream.getHandle(),
-            occa::c::stream(occaDeviceGetStream(device)).getHandle());
+  ASSERT_EQ(stream.getModeStream(),
+            occa::c::stream(occaDeviceGetStream(device)).getModeStream());
 
   // Start tagging
   double outerStart = occa::sys::currentTime();
@@ -276,13 +276,6 @@ void testStreamMethods() {
             tagTime);
 
   // TODO: Change to occaFree
-  occaFreeStream(cStream);
-
-  // Wrap stream
-  cStream = occaDeviceWrapStream(device, NULL, occaDefault);
-  occaFreeStream(cStream);
-
-  cStream = occaDeviceWrapStream(device, NULL, props);
   occaFreeStream(cStream);
 
   occaFree(device);

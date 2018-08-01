@@ -33,8 +33,8 @@
 namespace occa {
   //---[ KernelArg ]--------------------
   kernelArgData::kernelArgData() :
-    dHandle(NULL),
-    mHandle(NULL),
+    modeDevice(NULL),
+    modeMemory(NULL),
     size(0),
     info(kArgInfo::none) {
     ::memset(&data, 0, sizeof(data));
@@ -45,8 +45,8 @@ namespace occa {
   }
 
   kernelArgData& kernelArgData::operator = (const kernelArgData &k) {
-    dHandle = k.dHandle;
-    mHandle = k.mHandle;
+    modeDevice = k.modeDevice;
+    modeMemory = k.modeMemory;
 
     data = k.data;
     size = k.size;
@@ -169,19 +169,19 @@ namespace occa {
   void kernelArg::add(void *arg, size_t bytes,
                       bool lookAtUva, bool argIsUva) {
 
-    memory_v *mHandle = NULL;
+    memory_v *modeMemory = NULL;
 
     if (argIsUva) {
-      mHandle = (memory_v*) arg;
+      modeMemory = (memory_v*) arg;
     } else if (lookAtUva) {
       ptrRangeMap::iterator it = uvaMap.find(arg);
       if (it != uvaMap.end()) {
-        mHandle = it->second;
+        modeMemory = it->second;
       }
     }
 
-    if (mHandle) {
-      add(mHandle->makeKernelArg());
+    if (modeMemory) {
+      add(modeMemory->makeKernelArg());
     } else {
       kernelArgData kArg;
       kArg.data.void_ = arg;
@@ -194,20 +194,20 @@ namespace occa {
   void kernelArg::setupForKernelCall(const bool isConst) const {
     const int argCount = (int) args.size();
     for (int i = 0; i < argCount; ++i) {
-      occa::memory_v *mHandle = args[i].mHandle;
+      occa::memory_v *modeMemory = args[i].modeMemory;
 
-      if (!mHandle              ||
-          !mHandle->isManaged() ||
-          !mHandle->dHandle->hasSeparateMemorySpace()) {
+      if (!modeMemory              ||
+          !modeMemory->isManaged() ||
+          !modeMemory->modeDevice->hasSeparateMemorySpace()) {
         continue;
       }
-      if (!mHandle->inDevice()) {
-        mHandle->copyFrom(mHandle->uvaPtr, mHandle->size);
-        mHandle->memInfo |= uvaFlag::inDevice;
+      if (!modeMemory->inDevice()) {
+        modeMemory->copyFrom(modeMemory->uvaPtr, modeMemory->size);
+        modeMemory->memInfo |= uvaFlag::inDevice;
       }
-      if (!isConst && !mHandle->isStale()) {
-        uvaStaleMemory.push_back(mHandle);
-        mHandle->memInfo |= uvaFlag::isStale;
+      if (!isConst && !modeMemory->isStale()) {
+        uvaStaleMemory.push_back(modeMemory);
+        modeMemory->memInfo |= uvaFlag::isStale;
       }
     }
   }
@@ -271,15 +271,15 @@ namespace occa {
 
 
   //---[ kernel_v ]---------------------
-  kernel_v::kernel_v(device_v *dHandle_,
+  kernel_v::kernel_v(device_v *modeDevice_,
                      const std::string &name_,
                      const std::string &sourceFilename_,
                      const occa::properties &properties_) :
-    dHandle(dHandle_),
+    modeDevice(modeDevice_),
     name(name_),
     sourceFilename(sourceFilename_),
     properties(properties_) {
-    dHandle->addRef();
+    modeDevice->addRef();
   }
 
   kernel_v::~kernel_v() {}
@@ -295,177 +295,177 @@ namespace occa {
 
   //---[ kernel ]-----------------------
   kernel::kernel() :
-    kHandle(NULL) {}
+    modeKernel(NULL) {}
 
-  kernel::kernel(kernel_v *kHandle_) :
-    kHandle(NULL) {
-    setKHandle(kHandle_);
+  kernel::kernel(kernel_v *modeKernel_) :
+    modeKernel(NULL) {
+    setModeKernel(modeKernel_);
   }
 
   kernel::kernel(const kernel &k) :
-    kHandle(NULL) {
-    setKHandle(k.kHandle);
+    modeKernel(NULL) {
+    setModeKernel(k.modeKernel);
   }
 
   kernel& kernel::operator = (const kernel &k) {
-    setKHandle(k.kHandle);
+    setModeKernel(k.modeKernel);
     return *this;
   }
 
-  kernel& kernel::operator = (kernel_v *kHandle_) {
-    setKHandle(kHandle_);
+  kernel& kernel::operator = (kernel_v *modeKernel_) {
+    setModeKernel(modeKernel_);
     return *this;
   }
 
   kernel::~kernel() {
-    removeKHandleRef();
+    removeRef();
   }
 
-  void kernel::setKHandle(kernel_v *kHandle_) {
-    if (kHandle != kHandle_) {
-      removeKHandleRef();
-      kHandle = kHandle_;
-      if (kHandle) {
-        kHandle->addRef();
+  void kernel::setModeKernel(kernel_v *modeKernel_) {
+    if (modeKernel != modeKernel_) {
+      removeRef();
+      modeKernel = modeKernel_;
+      if (modeKernel) {
+        modeKernel->addRef();
       }
     }
   }
 
-  void kernel::removeKHandleRef() {
-    if (kHandle && !kHandle->removeRef()) {
+  void kernel::removeRef() {
+    if (modeKernel && !modeKernel->removeRef()) {
       free();
-      kHandle = NULL;
+      modeKernel = NULL;
     }
   }
 
   void kernel::dontUseRefs() {
-    if (kHandle) {
-      kHandle->dontUseRefs();
+    if (modeKernel) {
+      modeKernel->dontUseRefs();
     }
   }
 
   bool kernel::isInitialized() {
-    return (kHandle != NULL);
+    return (modeKernel != NULL);
   }
 
   const std::string& kernel::mode() const {
     static const std::string noMode = "No Mode";
-    return (kHandle
-            ? kHandle->dHandle->mode
+    return (modeKernel
+            ? modeKernel->modeDevice->mode
             : noMode);
   }
 
   const occa::properties& kernel::properties() const {
     static const occa::properties noProperties;
-    return (kHandle
-            ? kHandle->properties
+    return (modeKernel
+            ? modeKernel->properties
             : noProperties);
   }
 
-  kernel_v* kernel::getKHandle() {
-    return kHandle;
+  kernel_v* kernel::getModeKernel() {
+    return modeKernel;
   }
 
   occa::device kernel::getDevice() {
-    return occa::device(kHandle
-                        ? kHandle->dHandle
+    return occa::device(modeKernel
+                        ? modeKernel->modeDevice
                         : NULL);
   }
 
   const std::string& kernel::name() {
     static const std::string noName = "";
-    return (kHandle
-            ? kHandle->name
+    return (modeKernel
+            ? modeKernel->name
             : noName);
   }
 
   const std::string& kernel::sourceFilename() {
     static const std::string noSourceFilename = "";
-    return (kHandle
-            ? kHandle->sourceFilename
+    return (modeKernel
+            ? modeKernel->sourceFilename
             : noSourceFilename);
   }
 
   const std::string& kernel::binaryFilename() {
     static const std::string noBinaryFilename = "";
-    return (kHandle
-            ? kHandle->binaryFilename
+    return (modeKernel
+            ? modeKernel->binaryFilename
             : noBinaryFilename);
   }
 
   void kernel::setRunDims(occa::dim outerDims, occa::dim innerDims) {
-    if (kHandle) {
-      kHandle->innerDims = innerDims;
-      kHandle->outerDims = outerDims;
+    if (modeKernel) {
+      modeKernel->innerDims = innerDims;
+      modeKernel->outerDims = outerDims;
     }
   }
 
   int kernel::maxDims() {
-    return (kHandle
-            ? kHandle->maxDims()
+    return (modeKernel
+            ? modeKernel->maxDims()
             : -1);
   }
 
   dim kernel::maxOuterDims() {
-    return (kHandle
-            ? kHandle->maxOuterDims()
+    return (modeKernel
+            ? modeKernel->maxOuterDims()
             : dim(-1, -1, -1));
   }
 
   dim kernel::maxInnerDims() {
-    return (kHandle
-            ? kHandle->maxInnerDims()
+    return (modeKernel
+            ? modeKernel->maxInnerDims()
             : dim(-1, -1, -1));
   }
 
   void kernel::addArgument(const int argPos, const kernelArg &arg) {
     OCCA_ERROR("Kernel not initialized",
-               kHandle != NULL);
+               modeKernel != NULL);
 
-    if (kHandle->argumentCount() <= argPos) {
+    if (modeKernel->argumentCount() <= argPos) {
       OCCA_ERROR("Kernels can only have at most [" << OCCA_MAX_ARGS << "] arguments,"
                  << " [" << argPos << "] arguments were set",
                  argPos < OCCA_MAX_ARGS);
 
-      kHandle->arguments.resize(argPos + 1);
+      modeKernel->arguments.resize(argPos + 1);
     }
 
-    kHandle->arguments[argPos] = arg;
+    modeKernel->arguments[argPos] = arg;
   }
 
   void kernel::run() const {
     OCCA_ERROR("Kernel not initialized",
-               kHandle != NULL);
+               modeKernel != NULL);
 
-    const int argc = (int) kHandle->arguments.size();
+    const int argc = (int) modeKernel->arguments.size();
     for (int i = 0; i < argc; ++i) {
-      const bool argIsConst = kHandle->metadata.argIsConst(i);
-      kHandle->arguments[i].setupForKernelCall(argIsConst);
+      const bool argIsConst = modeKernel->metadata.argIsConst(i);
+      modeKernel->arguments[i].setupForKernelCall(argIsConst);
     }
 
-    kHandle->run();
+    modeKernel->run();
   }
 
   void kernel::clearArgumentList() {
-    if (kHandle) {
-      kHandle->arguments.clear();
+    if (modeKernel) {
+      modeKernel->arguments.clear();
     }
   }
 
 #include "kernelOperators.cpp"
 
   void kernel::free() {
-    if (kHandle == NULL) {
+    if (modeKernel == NULL) {
       return;
     }
-    device_v *dHandle = kHandle->dHandle;
+    device_v *modeDevice = modeKernel->modeDevice;
     // Remove kernel from cache map
-    dHandle->removeCachedKernel(kHandle);
-    device::removeDHandleRefFrom(dHandle);
+    modeDevice->removeCachedKernel(modeKernel);
+    modeDevice->removeRef();
 
-    kHandle->free();
-    delete kHandle;
-    kHandle = NULL;
+    modeKernel->free();
+    delete modeKernel;
+    modeKernel = NULL;
   }
   //====================================
 

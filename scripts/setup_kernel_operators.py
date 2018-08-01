@@ -135,16 +135,16 @@ def operatorDefinition(N):
   kernelArg args[] = {{
     {array_args}
   }};
-  kHandle->arguments.clear();
-  kHandle->arguments.reserve({N});
-  kHandle->arguments.insert(kHandle->arguments.begin(), args, args + {N});
+  modeKernel->arguments.clear();
+  modeKernel->arguments.reserve({N});
+  modeKernel->arguments.insert(modeKernel->arguments.begin(), args, args + {N});
   run();
 }}
 '''.format(N=N,
            array_args=array_args(N, ' ' * 4))
     else:
         content += ''') const {
-  kHandle->arguments.clear();
+  modeKernel->arguments.clear();
   run();
 }
 '''

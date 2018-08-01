@@ -97,20 +97,6 @@ void OCCA_RFUNC occaDeviceSetStream(occaDevice device,
   device_.setStream(occa::c::stream(stream));
 }
 
-occaStream OCCA_RFUNC occaDeviceWrapStream(occaDevice device,
-                                           void *handle_,
-                                           const occaProperties props) {
-  occa::device device_ = occa::c::device(device);
-  occa::stream stream;
-  if (occa::c::isDefault(props)) {
-    stream = device_.wrapStream(handle_);
-  } else {
-    stream = device_.wrapStream(handle_,
-                                occa::c::properties(props));
-  }
-  return occa::c::newOccaType(stream);
-}
-
 occaStreamTag OCCA_RFUNC occaDeviceTagStream(occaDevice device) {
   occa::device device_ = occa::c::device(device);
   return occa::c::newOccaType(device_.tagStream());

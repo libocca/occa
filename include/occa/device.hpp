@@ -83,9 +83,6 @@ namespace occa {
     virtual void waitFor(streamTag tag) const = 0;
     virtual double timeBetween(const streamTag &startTag,
                                const streamTag &endTag) const = 0;
-
-    virtual stream_t wrapStream(void *handle_,
-                                const occa::properties &props) const = 0;
     //  |===============================
 
     //  |---[ Kernel ]------------------
@@ -134,11 +131,11 @@ namespace occa {
     friend class memory;
 
   private:
-    mutable device_v *dHandle;
+    mutable device_v *modeDevice;
 
   public:
     device();
-    device(device_v *dHandle_);
+    device(device_v *modeDevice_);
     device(const occa::properties &props);
 
     device(const occa::device &d);
@@ -146,9 +143,8 @@ namespace occa {
     ~device();
 
   private:
-    void setDHandle(device_v *dhandle_);
-    void removeDHandleRef();
-    static void removeDHandleRefFrom(device_v *&dhandle_);
+    void setModeDevice(device_v *modeDevice_);
+    void removeRef();
 
   public:
     void dontUseRefs();
@@ -157,12 +153,11 @@ namespace occa {
 
     bool isInitialized();
 
-    device_v* getDHandle() const;
+    device_v* getModeDevice() const;
 
     void setup(const occa::properties &props);
 
     void free();
-    static void free(device_v *&dHandle_);
 
     const std::string& mode() const;
 
@@ -190,8 +185,6 @@ namespace occa {
 
     stream getStream();
     void setStream(stream s);
-    stream wrapStream(void *handle_,
-                      const occa::properties &props = occa::properties());
 
     streamTag tagStream();
     void waitFor(streamTag tag);
@@ -250,13 +243,13 @@ namespace occa {
   //---[ stream ]-----------------------
   class stream {
   public:
-    device_v *dHandle;
-    stream_t handle;
+    device_v *modeDevice;
+    stream_t modeStream;
 
     stream();
 
-    stream(device_v *dHandle_,
-           stream_t handle_);
+    stream(device_v *modeDevice_,
+           stream_t modeStream_);
 
     stream(const stream &other);
 
@@ -264,24 +257,23 @@ namespace occa {
 
     bool operator == (const occa::stream &other) const;
 
-    // TODO: Remove and create util methods like getMappedPtr
-    void* getHandle(const occa::properties &props = occa::properties());
+    stream_t getModeStream();
 
     void free();
   };
 
   /*
-   * CUDA   : handle = CUevent*
-   * OpenCL : handle = cl_event*
+   * CUDA   : modeTag = CUevent*
+   * OpenCL : modeTag = cl_event*
    */
   class streamTag {
   public:
     double tagTime;
-    void *handle;
+    void *modeTag;
 
     streamTag();
     streamTag(const double tagTime_,
-              void *handle_);
+              void *modeTag_);
   };
   //====================================
 }

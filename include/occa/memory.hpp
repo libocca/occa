@@ -56,7 +56,7 @@ namespace occa {
     char *ptr;
     char *uvaPtr;
 
-    occa::device_v *dHandle;
+    occa::device_v *modeDevice;
 
     udim_t size;
     bool canBeFreed;
@@ -122,21 +122,21 @@ namespace occa {
     friend class occa::kernelArg;
 
   private:
-    memory_v *mHandle;
+    memory_v *modeMemory;
 
   public:
     memory();
     memory(void *uvaPtr);
-    memory(memory_v *mHandle_);
+    memory(memory_v *modeMemory_);
 
     memory(const memory &m);
     memory& operator = (const memory &m);
     ~memory();
 
   private:
-    void setMHandle(memory_v *mHandle_);
-    void setDHandle(device_v *dHandle_);
-    void removeMHandleRef();
+    void setModeMemory(memory_v *modeMemory_);
+    void setModeDevice(device_v *modeDevice);
+    void removeRef();
 
   public:
     void dontUseRefs();
@@ -148,8 +148,8 @@ namespace occa {
     void* ptr();
     const void* ptr() const;
 
-    memory_v* getMHandle() const;
-    device_v* getDHandle() const;
+    memory_v* getModeMemory() const;
+    device_v* getModeDevice() const;
 
     occa::device getDevice() const;
 
@@ -162,10 +162,9 @@ namespace occa {
 
     template <class TM>
     udim_t size() const {
-      if (mHandle == NULL) {
-        return 0;
-      }
-      return (mHandle->size / sizeof(TM));
+      return (modeMemory
+              ? (modeMemory->size / sizeof(TM))
+              : 0);
     }
 
     //---[ UVA ]------------------------

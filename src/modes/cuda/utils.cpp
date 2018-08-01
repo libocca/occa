@@ -176,10 +176,10 @@ namespace occa {
 #if CUDA_VERSION >= 8000
       udim_t bytes_ = ((bytes == -1) ? mem.size() : bytes);
       CUdevice cuDevice = ((device.mode() == "CUDA")
-                           ? ((cuda::device*) device.getDHandle())->cuDevice
+                           ? ((cuda::device*) device.getModeDevice())->cuDevice
                            : CU_DEVICE_CPU);
       OCCA_CUDA_ERROR("Advising about unified memory",
-                      cuMemAdvise(((cuda::memory*) mem.getMHandle())->cuPtr,
+                      cuMemAdvise(((cuda::memory*) mem.getModeMemory())->cuPtr,
                                   (size_t) bytes_,
                                   advice,
                                   cuDevice));
@@ -204,14 +204,14 @@ namespace occa {
 #if CUDA_VERSION >= 8000
       udim_t bytes_ = ((bytes == -1) ? mem.size() : bytes);
       CUdevice cuDevice = ((device.mode() == "CUDA")
-                           ? ((cuda::device*) device.getDHandle())->cuDevice
+                           ? ((cuda::device*) device.getModeDevice())->cuDevice
                            : CU_DEVICE_CPU);
       occa::stream stream = device.getStream();
       OCCA_CUDA_ERROR("Prefetching unified memory",
-                      cuMemPrefetchAsync(((cuda::memory*) mem.getMHandle())->cuPtr,
+                      cuMemPrefetchAsync(((cuda::memory*) mem.getModeMemory())->cuPtr,
                                          (size_t) bytes_,
                                          cuDevice,
-                                         *((CUstream*) stream.getHandle())) );
+                                         *((CUstream*) stream.getModeStream())) );
 #else
       OCCA_FORCE_ERROR("CUDA version ["
                        << cuda::getVersion()
@@ -220,12 +220,14 @@ namespace occa {
     }
 
     CUcontext getContext(occa::device device) {
-      return ((cuda::device*) device.getDHandle())->cuContext;
+      return ((cuda::device*) device.getModeDevice())->cuContext;
     }
 
     void* getMappedPtr(occa::memory mem) {
-      cuda::memory *handle = (cuda::memory*) mem.getMHandle();
-      return handle ? handle->mappedPtr : NULL;
+      cuda::memory *cudaMemory = (cuda::memory*) mem.getModeMemory();
+      return (cudaMemory
+              ? cudaMemory->mappedPtr
+              : NULL);
     }
 
     occa::device wrapDevice(CUdevice device,
@@ -256,9 +258,9 @@ namespace occa {
       cuda::memory &mem = *(new cuda::memory(props));
       mem.dontUseRefs();
 
-      mem.dHandle   = device.getDHandle();
-      mem.ptr       = (char*) ptr;
-      mem.size      = bytes;
+      mem.modeDevice = device.getModeDevice();
+      mem.ptr = (char*) ptr;
+      mem.size = bytes;
       mem.mappedPtr = NULL;
       mem.isManaged = props.get("cuda/managed", false);
 
@@ -266,11 +268,11 @@ namespace occa {
     }
 
     CUevent& event(streamTag &tag) {
-      return (CUevent&) tag.handle;
+      return (CUevent&) tag.modeTag;
     }
 
     const CUevent& event(const streamTag &tag) {
-      return (const CUevent&) tag.handle;
+      return (const CUevent&) tag.modeTag;
     }
 
     void warn(CUresult errorCode,

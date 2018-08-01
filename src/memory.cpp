@@ -38,7 +38,7 @@ namespace occa {
     ptr    = NULL;
     uvaPtr = NULL;
 
-    dHandle = NULL;
+    modeDevice = NULL;
 
     size = 0;
     canBeFreed = true;
@@ -60,179 +60,179 @@ namespace occa {
 
   //---[ memory ]-----------------------
   memory::memory() :
-    mHandle(NULL) {}
+    modeMemory(NULL) {}
 
   memory::memory(void *uvaPtr) :
-    mHandle(NULL) {
+    modeMemory(NULL) {
     ptrRangeMap::iterator it = uvaMap.find(uvaPtr);
     if (it != uvaMap.end()) {
-      setMHandle(it->second);
+      setModeMemory(it->second);
     } else {
-      setMHandle((memory_v*) uvaPtr);
+      setModeMemory((memory_v*) uvaPtr);
     }
   }
 
-  memory::memory(memory_v *mHandle_) :
-    mHandle(NULL) {
-    setMHandle(mHandle_);
+  memory::memory(memory_v *modeMemory_) :
+    modeMemory(NULL) {
+    setModeMemory(modeMemory_);
   }
 
   memory::memory(const memory &m) :
-    mHandle(NULL) {
-    setMHandle(m.mHandle);
+    modeMemory(NULL) {
+    setModeMemory(m.modeMemory);
   }
 
   memory& memory::operator = (const memory &m) {
-    setMHandle(m.mHandle);
+    setModeMemory(m.modeMemory);
     return *this;
   }
 
   memory::~memory() {
-    removeMHandleRef();
+    removeRef();
   }
 
-  void memory::setMHandle(memory_v *mHandle_) {
-    if (mHandle != mHandle_) {
-      removeMHandleRef();
-      mHandle = mHandle_;
-      mHandle->addRef();
+  void memory::setModeMemory(memory_v *modeMemory_) {
+    if (modeMemory != modeMemory_) {
+      removeRef();
+      modeMemory = modeMemory_;
+      modeMemory->addRef();
     }
   }
 
-  void memory::setDHandle(device_v *dHandle) {
-    mHandle->dHandle = dHandle;
+  void memory::setModeDevice(device_v *modeDevice) {
+    modeMemory->modeDevice = modeDevice;
     // If this is the very first reference, update the device references
-    if (mHandle->getRefs() == 1) {
-      mHandle->dHandle->addRef();
+    if (modeMemory->getRefs() == 1) {
+      modeMemory->modeDevice->addRef();
     }
   }
 
-  void memory::removeMHandleRef() {
-    if (mHandle && !mHandle->removeRef()) {
+  void memory::removeRef() {
+    if (modeMemory && !modeMemory->removeRef()) {
       free();
     }
   }
 
   void memory::dontUseRefs() {
-    if (mHandle) {
-      mHandle->dontUseRefs();
+    if (modeMemory) {
+      modeMemory->dontUseRefs();
     }
   }
 
   bool memory::isInitialized() const {
-    return (mHandle != NULL);
+    return (modeMemory != NULL);
   }
 
   memory& memory::swap(memory &m) {
-    memory_v *mHandle_ = mHandle;
-    mHandle   = m.mHandle;
-    m.mHandle = mHandle_;
+    memory_v *modeMemory_ = modeMemory;
+    modeMemory   = m.modeMemory;
+    m.modeMemory = modeMemory_;
     return *this;
   }
 
   void* memory::ptr() {
-    return (mHandle ? mHandle->ptr : NULL);
+    return (modeMemory ? modeMemory->ptr : NULL);
   }
 
   const void* memory::ptr() const {
-    return (mHandle ? mHandle->ptr : NULL);
+    return (modeMemory ? modeMemory->ptr : NULL);
   }
 
-  memory_v* memory::getMHandle() const {
-    return mHandle;
+  memory_v* memory::getModeMemory() const {
+    return modeMemory;
   }
 
-  device_v* memory::getDHandle() const {
-    return mHandle->dHandle;
+  device_v* memory::getModeDevice() const {
+    return modeMemory->modeDevice;
   }
 
   occa::device memory::getDevice() const {
-    return occa::device(mHandle
-                        ? mHandle->dHandle
+    return occa::device(modeMemory
+                        ? modeMemory->modeDevice
                         : NULL);
   }
 
   memory::operator kernelArg() const {
-    if (!mHandle) {
+    if (!modeMemory) {
       return kernelArg((void*) NULL);
     }
-    return mHandle->makeKernelArg();
+    return modeMemory->makeKernelArg();
   }
 
   const std::string& memory::mode() const {
     static const std::string noMode = "No Mode";
-    return (mHandle
-            ? mHandle->dHandle->mode
+    return (modeMemory
+            ? modeMemory->modeDevice->mode
             : noMode);
   }
 
   const occa::properties& memory::properties() const {
     static const occa::properties noProperties;
-    return (mHandle
-            ? mHandle->properties
+    return (modeMemory
+            ? modeMemory->properties
             : noProperties);
   }
 
   udim_t memory::size() const {
-    if (mHandle == NULL) {
+    if (modeMemory == NULL) {
       return 0;
     }
-    return mHandle->size;
+    return modeMemory->size;
   }
 
   bool memory::isManaged() const {
-    return (mHandle && mHandle->isManaged());
+    return (modeMemory && modeMemory->isManaged());
   }
 
   bool memory::inDevice() const {
-    return (mHandle && mHandle->inDevice());
+    return (modeMemory && modeMemory->inDevice());
   }
 
   bool memory::isStale() const {
-    return (mHandle && mHandle->isStale());
+    return (modeMemory && modeMemory->isStale());
   }
 
   void memory::setupUva() {
-    if (!mHandle) {
+    if (!modeMemory) {
       return;
     }
-    if ( !(mHandle->dHandle->hasSeparateMemorySpace()) ) {
-      mHandle->uvaPtr = mHandle->ptr;
+    if ( !(modeMemory->modeDevice->hasSeparateMemorySpace()) ) {
+      modeMemory->uvaPtr = modeMemory->ptr;
     } else {
-      mHandle->uvaPtr = (char*) sys::malloc(mHandle->size);
+      modeMemory->uvaPtr = (char*) sys::malloc(modeMemory->size);
     }
 
     ptrRange range;
-    range.start = mHandle->uvaPtr;
-    range.end   = (range.start + mHandle->size);
+    range.start = modeMemory->uvaPtr;
+    range.end   = (range.start + modeMemory->size);
 
-    uvaMap[range]                   = mHandle;
-    mHandle->dHandle->uvaMap[range] = mHandle;
+    uvaMap[range] = modeMemory;
+    modeMemory->modeDevice->uvaMap[range] = modeMemory;
 
-    // Needed for kernelArg.void_ -> mHandle checks
-    if (mHandle->uvaPtr != mHandle->ptr) {
-      uvaMap[mHandle->ptr] = mHandle;
+    // Needed for kernelArg.void_ -> modeMemory checks
+    if (modeMemory->uvaPtr != modeMemory->ptr) {
+      uvaMap[modeMemory->ptr] = modeMemory;
     }
   }
 
   void memory::startManaging() {
-    if (mHandle) {
-      mHandle->memInfo |= uvaFlag::isManaged;
+    if (modeMemory) {
+      modeMemory->memInfo |= uvaFlag::isManaged;
     }
   }
 
   void memory::stopManaging() {
-    if (mHandle) {
-      mHandle->memInfo &= ~uvaFlag::isManaged;
+    if (modeMemory) {
+      modeMemory->memInfo &= ~uvaFlag::isManaged;
     }
   }
 
   void memory::syncToDevice(const dim_t bytes,
                             const dim_t offset) {
     OCCA_ERROR("Memory not initialized",
-               mHandle != NULL);
+               modeMemory != NULL);
 
-    udim_t bytes_ = ((bytes == -1) ? mHandle->size : bytes);
+    udim_t bytes_ = ((bytes == -1) ? modeMemory->size : bytes);
 
     OCCA_ERROR("Trying to copy negative bytes (" << bytes << ")",
                bytes >= -1);
@@ -243,28 +243,28 @@ namespace occa {
       return;
     }
 
-    OCCA_ERROR("Memory has size [" << mHandle->size << "],"
+    OCCA_ERROR("Memory has size [" << modeMemory->size << "],"
                << " trying to access [" << offset << ", " << (offset + bytes_) << "]",
-               (bytes_ + offset) <= mHandle->size);
+               (bytes_ + offset) <= modeMemory->size);
 
-    if (!mHandle->dHandle->hasSeparateMemorySpace()) {
+    if (!modeMemory->modeDevice->hasSeparateMemorySpace()) {
       return;
     }
 
-    copyFrom(mHandle->uvaPtr, bytes_, offset);
+    copyFrom(modeMemory->uvaPtr, bytes_, offset);
 
-    mHandle->memInfo |=  uvaFlag::inDevice;
-    mHandle->memInfo &= ~uvaFlag::isStale;
+    modeMemory->memInfo |=  uvaFlag::inDevice;
+    modeMemory->memInfo &= ~uvaFlag::isStale;
 
-    removeFromStaleMap(mHandle);
+    removeFromStaleMap(modeMemory);
   }
 
   void memory::syncToHost(const dim_t bytes,
                           const dim_t offset) {
     OCCA_ERROR("Memory not initialized",
-               mHandle != NULL);
+               modeMemory != NULL);
 
-    udim_t bytes_ = ((bytes == -1) ? mHandle->size : bytes);
+    udim_t bytes_ = ((bytes == -1) ? modeMemory->size : bytes);
 
     OCCA_ERROR("Trying to copy negative bytes (" << bytes << ")",
                bytes >= -1);
@@ -275,44 +275,44 @@ namespace occa {
       return;
     }
 
-    OCCA_ERROR("Memory has size [" << mHandle->size << "],"
+    OCCA_ERROR("Memory has size [" << modeMemory->size << "],"
                << " trying to access [" << offset << ", " << (offset + bytes_) << "]",
-               (bytes_ + offset) <= mHandle->size);
+               (bytes_ + offset) <= modeMemory->size);
 
-    if (!mHandle->dHandle->hasSeparateMemorySpace()) {
+    if (!modeMemory->modeDevice->hasSeparateMemorySpace()) {
       return;
     }
 
-    copyTo(mHandle->uvaPtr, bytes_, offset);
+    copyTo(modeMemory->uvaPtr, bytes_, offset);
 
-    mHandle->memInfo &= ~uvaFlag::inDevice;
-    mHandle->memInfo &= ~uvaFlag::isStale;
+    modeMemory->memInfo &= ~uvaFlag::inDevice;
+    modeMemory->memInfo &= ~uvaFlag::isStale;
 
-    removeFromStaleMap(mHandle);
+    removeFromStaleMap(modeMemory);
   }
 
   bool memory::uvaIsStale() const {
-    return (mHandle && mHandle->isStale());
+    return (modeMemory && modeMemory->isStale());
   }
 
   void memory::uvaMarkStale() {
-    if (mHandle != NULL) {
-      mHandle->memInfo |= uvaFlag::isStale;
+    if (modeMemory != NULL) {
+      modeMemory->memInfo |= uvaFlag::isStale;
     }
   }
 
   void memory::uvaMarkFresh() {
-    if (mHandle != NULL) {
-      mHandle->memInfo &= ~uvaFlag::isStale;
+    if (modeMemory != NULL) {
+      modeMemory->memInfo &= ~uvaFlag::isStale;
     }
   }
 
   bool memory::operator == (const occa::memory &m) const {
-    return (mHandle == m.mHandle);
+    return (modeMemory == m.modeMemory);
   }
 
   bool memory::operator != (const occa::memory &m) const {
-    return (mHandle != m.mHandle);
+    return (modeMemory != m.modeMemory);
   }
 
   occa::memory memory::operator + (const dim_t offset) const {
@@ -327,26 +327,28 @@ namespace occa {
   occa::memory memory::slice(const dim_t offset,
                              const dim_t bytes) const {
     OCCA_ERROR("Memory not initialized",
-               mHandle != NULL);
+               modeMemory != NULL);
 
     udim_t bytes_ = ((bytes == -1)
-                     ? (mHandle->size - offset)
+                     ? (modeMemory->size - offset)
                      : bytes);
 
     OCCA_ERROR("Trying to allocate negative bytes (" << bytes << ")",
                bytes >= -1);
+
     OCCA_ERROR("Cannot have a negative offset (" << offset << ")",
                offset >= 0);
+
     OCCA_ERROR("Cannot have offset and bytes greater than the memory size ("
                << offset << " + " << bytes_ << " > " << size() << ")",
                (offset + (dim_t) bytes_) <= (dim_t) size());
 
-    occa::memory m(mHandle->addOffset(offset));
-    memory_v &mv = *(m.mHandle);
-    mv.dHandle = mHandle->dHandle;
+    occa::memory m(modeMemory->addOffset(offset));
+    memory_v &mv = *(m.modeMemory);
+    mv.modeDevice = modeMemory->modeDevice;
     mv.size = bytes_;
-    if (mHandle->uvaPtr) {
-      mv.uvaPtr = (mHandle->uvaPtr + offset);
+    if (modeMemory->uvaPtr) {
+      mv.uvaPtr = (modeMemory->uvaPtr + offset);
     }
     return m;
   }
@@ -356,19 +358,21 @@ namespace occa {
                         const dim_t offset,
                         const occa::properties &props) {
     OCCA_ERROR("Memory not initialized",
-               mHandle != NULL);
+               modeMemory != NULL);
 
-    udim_t bytes_ = ((bytes == -1) ? mHandle->size : bytes);
+    udim_t bytes_ = ((bytes == -1) ? modeMemory->size : bytes);
 
     OCCA_ERROR("Trying to allocate negative bytes (" << bytes << ")",
                bytes >= -1);
+
     OCCA_ERROR("Cannot have a negative offset (" << offset << ")",
                offset >= 0);
-    OCCA_ERROR("Destination memory has size [" << mHandle->size << "],"
-               << "trying to access [" << offset << ", " << (offset + bytes_) << "]",
-               (bytes_ + offset) <= mHandle->size);
 
-    mHandle->copyFrom(src, bytes_, offset, props);
+    OCCA_ERROR("Destination memory has size [" << modeMemory->size << "],"
+               << "trying to access [" << offset << ", " << (offset + bytes_) << "]",
+               (bytes_ + offset) <= modeMemory->size);
+
+    modeMemory->copyFrom(src, bytes_, offset, props);
   }
 
   void memory::copyFrom(const memory src,
@@ -377,24 +381,28 @@ namespace occa {
                         const dim_t srcOffset,
                         const occa::properties &props) {
     OCCA_ERROR("Memory not initialized",
-               mHandle && src.mHandle);
+               modeMemory && src.modeMemory);
 
-    udim_t bytes_ = ((bytes == -1) ? mHandle->size : bytes);
+    udim_t bytes_ = ((bytes == -1) ? modeMemory->size : bytes);
 
     OCCA_ERROR("Trying to allocate negative bytes (" << bytes << ")",
                bytes >= -1);
+
     OCCA_ERROR("Cannot have a negative offset (" << destOffset << ")",
                destOffset >= 0);
+
     OCCA_ERROR("Cannot have a negative offset (" << srcOffset << ")",
                srcOffset >= 0);
-    OCCA_ERROR("Source memory has size [" << src.mHandle->size << "],"
-               << "trying to access [" << srcOffset << ", " << (srcOffset + bytes_) << "]",
-               (bytes_ + srcOffset) <= src.mHandle->size);
-    OCCA_ERROR("Destination memory has size [" << mHandle->size << "],"
-               << "trying to access [" << destOffset << ", " << (destOffset + bytes_) << "]",
-               (bytes_ + destOffset) <= mHandle->size);
 
-    mHandle->copyFrom(src.mHandle, bytes_, destOffset, srcOffset, props);
+    OCCA_ERROR("Source memory has size [" << src.modeMemory->size << "],"
+               << "trying to access [" << srcOffset << ", " << (srcOffset + bytes_) << "]",
+               (bytes_ + srcOffset) <= src.modeMemory->size);
+
+    OCCA_ERROR("Destination memory has size [" << modeMemory->size << "],"
+               << "trying to access [" << destOffset << ", " << (destOffset + bytes_) << "]",
+               (bytes_ + destOffset) <= modeMemory->size);
+
+    modeMemory->copyFrom(src.modeMemory, bytes_, destOffset, srcOffset, props);
   }
 
   void memory::copyTo(void *dest,
@@ -402,19 +410,21 @@ namespace occa {
                       const dim_t offset,
                       const occa::properties &props) const {
     OCCA_ERROR("Memory not initialized",
-               mHandle != NULL);
+               modeMemory != NULL);
 
-    udim_t bytes_ = ((bytes == -1) ? mHandle->size : bytes);
+    udim_t bytes_ = ((bytes == -1) ? modeMemory->size : bytes);
 
     OCCA_ERROR("Trying to allocate negative bytes (" << bytes << ")",
                bytes >= -1);
+
     OCCA_ERROR("Cannot have a negative offset (" << offset << ")",
                offset >= 0);
-    OCCA_ERROR("Source memory has size [" << mHandle->size << "],"
-               << "trying to access [" << offset << ", " << (offset + bytes_) << "]",
-               (bytes_ + offset) <= mHandle->size);
 
-    mHandle->copyTo(dest, bytes_, offset, props);
+    OCCA_ERROR("Source memory has size [" << modeMemory->size << "],"
+               << "trying to access [" << offset << ", " << (offset + bytes_) << "]",
+               (bytes_ + offset) <= modeMemory->size);
+
+    modeMemory->copyTo(dest, bytes_, offset, props);
   }
 
   void memory::copyTo(memory dest,
@@ -423,24 +433,28 @@ namespace occa {
                       const dim_t srcOffset,
                       const occa::properties &props) const {
     OCCA_ERROR("Memory not initialized",
-               mHandle && dest.mHandle);
+               modeMemory && dest.modeMemory);
 
-    udim_t bytes_ = ((bytes == -1) ? mHandle->size : bytes);
+    udim_t bytes_ = ((bytes == -1) ? modeMemory->size : bytes);
 
     OCCA_ERROR("Trying to allocate negative bytes (" << bytes << ")",
                bytes >= -1);
+
     OCCA_ERROR("Cannot have a negative offset (" << destOffset << ")",
                destOffset >= 0);
+
     OCCA_ERROR("Cannot have a negative offset (" << srcOffset << ")",
                srcOffset >= 0);
-    OCCA_ERROR("Source memory has size [" << mHandle->size << "],"
-               << "trying to access [" << srcOffset << ", " << (srcOffset + bytes_) << "]",
-               (bytes_ + srcOffset) <= mHandle->size);
-    OCCA_ERROR("Destination memory has size [" << dest.mHandle->size << "],"
-               << "trying to access [" << destOffset << ", " << (destOffset + bytes_) << "]",
-               (bytes_ + destOffset) <= dest.mHandle->size);
 
-    dest.mHandle->copyFrom(mHandle, bytes_, destOffset, srcOffset, props);
+    OCCA_ERROR("Source memory has size [" << modeMemory->size << "],"
+               << "trying to access [" << srcOffset << ", " << (srcOffset + bytes_) << "]",
+               (bytes_ + srcOffset) <= modeMemory->size);
+
+    OCCA_ERROR("Destination memory has size [" << dest.modeMemory->size << "],"
+               << "trying to access [" << destOffset << ", " << (destOffset + bytes_) << "]",
+               (bytes_ + destOffset) <= dest.modeMemory->size);
+
+    dest.modeMemory->copyFrom(modeMemory, bytes_, destOffset, srcOffset, props);
   }
 
   void memory::copyFrom(const void *src,
@@ -464,10 +478,10 @@ namespace occa {
   }
 
   occa::memory memory::clone() const {
-    if (mHandle) {
-      return occa::device(mHandle->dHandle).malloc(size(),
-                                                   *this,
-                                                   properties());
+    if (modeMemory) {
+      return occa::device(modeMemory->modeDevice).malloc(size(),
+                                                         *this,
+                                                         properties());
     }
     return occa::memory();
   }
@@ -481,40 +495,40 @@ namespace occa {
   }
 
   void memory::deleteRefs(const bool freeMemory) {
-    if (mHandle == NULL) {
+    if (modeMemory == NULL) {
       return;
     }
-    if (!mHandle->canBeFreed) {
-      delete mHandle;
-      mHandle = NULL;
-      return ;
+    if (!modeMemory->canBeFreed) {
+      delete modeMemory;
+      modeMemory = NULL;
+      return;
     }
 
-    device_v *dHandle = mHandle->dHandle;
-    dHandle->bytesAllocated -= (mHandle->size);
+    device_v *modeDevice = modeMemory->modeDevice;
+    modeDevice->bytesAllocated -= (modeMemory->size);
 
-    if (mHandle->uvaPtr) {
-      uvaMap.erase(mHandle->uvaPtr);
-      dHandle->uvaMap.erase(mHandle->uvaPtr);
+    if (modeMemory->uvaPtr) {
+      uvaMap.erase(modeMemory->uvaPtr);
+      modeDevice->uvaMap.erase(modeMemory->uvaPtr);
 
       // CPU case where memory is shared
-      if (mHandle->uvaPtr != mHandle->ptr) {
-        uvaMap.erase(mHandle->ptr);
-        dHandle->uvaMap.erase(mHandle->uvaPtr);
+      if (modeMemory->uvaPtr != modeMemory->ptr) {
+        uvaMap.erase(modeMemory->ptr);
+        modeDevice->uvaMap.erase(modeMemory->uvaPtr);
 
-        sys::free(mHandle->uvaPtr);
+        sys::free(modeMemory->uvaPtr);
       }
     }
 
     if (freeMemory) {
-      mHandle->free();
+      modeMemory->free();
     } else {
-      mHandle->detach();
+      modeMemory->detach();
     }
 
-    device::removeDHandleRefFrom(dHandle);
-    delete mHandle;
-    mHandle = NULL;
+    modeDevice->removeRef();
+    delete modeMemory;
+    modeMemory = NULL;
   }
 
   std::ostream& operator << (std::ostream &out,
@@ -528,9 +542,9 @@ namespace occa {
       serial::memory &mem = *(new serial::memory);
       mem.dontUseRefs();
 
-      mem.dHandle = host().getDHandle();
-      mem.size    = bytes;
-      mem.ptr     = (char*) ptr;
+      mem.modeDevice = host().getModeDevice();
+      mem.size = bytes;
+      mem.ptr = (char*) ptr;
 
       return occa::memory(&mem);
     }

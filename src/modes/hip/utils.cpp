@@ -174,7 +174,7 @@ namespace occa {
     }
 
     hipCtx_t getContext(occa::device device) {
-      return ((hip::device*) device.getDHandle())->hipContext;
+      return ((hip::device*) device.getModeDevice())->hipContext;
     }
 
     occa::device wrapDevice(hipDevice_t device,
@@ -205,9 +205,9 @@ namespace occa {
       hip::memory &mem = *(new hip::memory(props));
       mem.dontUseRefs();
 
-      mem.dHandle   = device.getDHandle();
-      mem.ptr       = (char*) ptr;
-      mem.size      = bytes;
+      mem.modeDevice = device.getModeDevice();
+      mem.ptr = (char*) ptr;
+      mem.size = bytes;
       mem.mappedPtr = NULL;
       mem.isManaged = props.get("hip/managed", false);
 
@@ -215,11 +215,11 @@ namespace occa {
     }
 
     hipEvent_t& event(streamTag &tag) {
-      return (hipEvent_t&) tag.handle;
+      return (hipEvent_t&) tag.modeTag;
     }
 
     const hipEvent_t& event(const streamTag &tag) {
-      return (const hipEvent_t&) tag.handle;
+      return (const hipEvent_t&) tag.modeTag;
     }
 
     void warn(hipError_t errorCode,

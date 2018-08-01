@@ -89,11 +89,11 @@ void testUva() {
   size_t bytes = 10 * sizeof(int);
   int *ptr = (int*) occa::umalloc(bytes);
 
-  occa::memory_v *mHandle = occa::uvaToMemory(ptr);
+  occa::memory_v *modeMemory = occa::uvaToMemory(ptr);
 
   ASSERT_NEQ(ptr,
              (int*) NULL);
-  ASSERT_TRUE(occa::memory(mHandle).isInitialized());
+  ASSERT_TRUE(occa::memory(modeMemory).isInitialized());
 
   // Managed
   ASSERT_TRUE(occa::isManaged(ptr));
@@ -108,13 +108,13 @@ void testUva() {
   occa::syncToDevice(ptr);
   occa::syncToHost(ptr);
 
-  occa::syncMemToDevice(mHandle);
-  occa::syncMemToHost(mHandle);
+  occa::syncMemToDevice(modeMemory);
+  occa::syncMemToHost(modeMemory);
 
   occa::sync(ptr);
   occa::dontSync(ptr);
 
-  occa::removeFromStaleMap(mHandle);
+  occa::removeFromStaleMap(modeMemory);
   occa::removeFromStaleMap(ptr);
 
   occa::freeUvaPtr(ptr);

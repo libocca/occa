@@ -94,9 +94,9 @@ void OCCA_RFUNC occaKernelRunN(occaKernel kernel,
   OCCA_ERROR("Uninitialized kernel",
              kernel_.isInitialized());
 
-  occa::kernel_v &kHandle = *(kernel_.getKHandle());
-  kHandle.arguments.clear();
-  kHandle.arguments.reserve(argc);
+  occa::kernel_v &modeKernel = *(kernel_.getModeKernel());
+  modeKernel.arguments.clear();
+  modeKernel.arguments.reserve(argc);
 
   va_list args;
   va_start(args, argc);
@@ -181,7 +181,7 @@ void OCCA_RFUNC occaKernelRunN(occaKernel kernel,
       OCCA_FORCE_ERROR("A non-occaType argument was passed");
     }
 
-    kHandle.arguments.push_back(kArg);
+    modeKernel.arguments.push_back(kArg);
   }
 
   kernel_.run();

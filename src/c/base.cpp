@@ -77,18 +77,6 @@ void OCCA_RFUNC occaSetStream(occaStream stream) {
   occa::setStream(occa::c::stream(stream));
 }
 
-occaStream OCCA_RFUNC occaWrapStream(void *handle_,
-                                     const occaProperties props) {
-  occa::stream stream;
-  if (occa::c::isDefault(props)) {
-    stream = occa::wrapStream(handle_);
-  } else {
-    stream = occa::wrapStream(handle_,
-                              occa::c::properties(props));
-  }
-  return occa::c::newOccaType(stream);
-}
-
 occaStreamTag OCCA_RFUNC occaTagStream() {
   return occa::c::newOccaType(occa::tagStream());
 }

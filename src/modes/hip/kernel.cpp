@@ -33,22 +33,22 @@
 
 namespace occa {
   namespace hip {
-    kernel::kernel(device_v *dHandle_,
+    kernel::kernel(device_v *modeDevice_,
                    const std::string &name_,
                    const std::string &sourceFilename_,
                    const occa::properties &properties_) :
-      occa::kernel_v(dHandle_, name_, sourceFilename_, properties_),
+      occa::kernel_v(modeDevice_, name_, sourceFilename_, properties_),
       hipModule(NULL),
       hipFunction(NULL),
       launcherKernel(NULL) {}
 
-    kernel::kernel(device_v *dHandle_,
+    kernel::kernel(device_v *modeDevice_,
                    const std::string &name_,
                    const std::string &sourceFilename_,
                    hipModule_t hipModule_,
                    hipFunction_t hipFunction_,
                    const occa::properties &properties_) :
-      occa::kernel_v(dHandle_, name_, sourceFilename_, properties_),
+      occa::kernel_v(modeDevice_, name_, sourceFilename_, properties_),
       hipModule(hipModule_),
       hipFunction(hipFunction_),
       launcherKernel(NULL) {}
@@ -111,7 +111,7 @@ namespace occa {
                      hipModuleLaunchKernel(hipFunction,
                                            outerDims.x, outerDims.y, outerDims.z,
                                            innerDims.x, innerDims.y, innerDims.z,
-                                           0, *((hipStream_t*) dHandle->currentStream),
+                                           0, *((hipStream_t*) modeDevice->currentStream),
                                            NULL, (void**)&config));
     }
 

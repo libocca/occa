@@ -436,20 +436,22 @@ namespace occa {
     }
 
     cl_context getCLContext(occa::device device) {
-      return ((opencl::device*) device.getDHandle())->clContext;
+      return ((opencl::device*) device.getModeDevice())->clContext;
     }
 
     cl_mem getCLMemory(occa::memory memory) {
-      return ((opencl::memory*) memory.getMHandle())->clMem;
+      return ((opencl::memory*) memory.getModeMemory())->clMem;
     }
 
     cl_kernel getCLKernel(occa::kernel kernel) {
-      return ((opencl::kernel*) kernel.getKHandle())->clKernel;
+      return ((opencl::kernel*) kernel.getModeKernel())->clKernel;
     }
 
     void* getMappedPtr(occa::memory memory) {
-      opencl::memory *handle = (opencl::memory*) memory.getMHandle();
-      return handle ? handle->mappedPtr : NULL;
+      opencl::memory *openclMemory = (opencl::memory*) memory.getModeMemory();
+      return (openclMemory
+              ? openclMemory->mappedPtr
+              : NULL);
     }
 
     occa::device wrapDevice(cl_device_id clDevice,
@@ -484,19 +486,19 @@ namespace occa {
       opencl::memory &mem = *(new opencl::memory(props));
       mem.dontUseRefs();
 
-      mem.dHandle = device.getDHandle();
-      mem.clMem   = clMem;
-      mem.size    = bytes;
+      mem.modeDevice = device.getModeDevice();
+      mem.clMem = clMem;
+      mem.size = bytes;
 
       return occa::memory(&mem);
     }
 
     cl_event& event(streamTag &tag) {
-      return (cl_event&) (tag.handle);
+      return (cl_event&) (tag.modeTag);
     }
 
     const cl_event& event(const streamTag &tag) {
-      return (const cl_event&) (tag.handle);
+      return (const cl_event&) (tag.modeTag);
     }
 
     void warn(cl_int errorCode,

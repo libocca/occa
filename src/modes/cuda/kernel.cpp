@@ -33,22 +33,22 @@
 
 namespace occa {
   namespace cuda {
-    kernel::kernel(device_v *dHandle_,
+    kernel::kernel(device_v *modeDevice_,
                    const std::string &name_,
                    const std::string &sourceFilename_,
                    const occa::properties &properties_) :
-      occa::kernel_v(dHandle_, name_, sourceFilename_, properties_),
+      occa::kernel_v(modeDevice_, name_, sourceFilename_, properties_),
       cuModule(NULL),
       cuFunction(NULL),
       launcherKernel(NULL) {}
 
-    kernel::kernel(device_v *dHandle_,
+    kernel::kernel(device_v *modeDevice_,
                    const std::string &name_,
                    const std::string &sourceFilename_,
                    CUmodule cuModule_,
                    CUfunction cuFunction_,
                    const occa::properties &properties_) :
-      occa::kernel_v(dHandle_, name_, sourceFilename_, properties_),
+      occa::kernel_v(modeDevice_, name_, sourceFilename_, properties_),
       cuModule(cuModule_),
       cuFunction(cuFunction_),
       launcherKernel(NULL) {}
@@ -107,7 +107,7 @@ namespace occa {
                       cuLaunchKernel(cuFunction,
                                      outerDims.x, outerDims.y, outerDims.z,
                                      innerDims.x, innerDims.y, innerDims.z,
-                                     0, *((CUstream*) dHandle->currentStream),
+                                     0, *((CUstream*) modeDevice->currentStream),
                                      &(vArgs[0]), 0));
     }
 

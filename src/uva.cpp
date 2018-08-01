@@ -169,7 +169,7 @@ namespace occa {
       return;
     }
 
-    removeFromStaleMap(m.getMHandle());
+    removeFromStaleMap(m.getModeMemory());
   }
 
   void removeFromStaleMap(memory_v *mem) {
@@ -193,9 +193,9 @@ namespace occa {
     if (!ptr) {
       return;
     }
-    memory_v *mHandle = uvaToMemory(ptr);
-    if (mHandle) {
-      occa::memory(mHandle).free();
+    memory_v *modeMemory = uvaToMemory(ptr);
+    if (modeMemory) {
+      occa::memory(modeMemory).free();
       return;
     }
     OCCA_FORCE_ERROR("Freeing a non-uva pointer");

@@ -34,7 +34,7 @@ namespace occa {
     public:
       int threads;
 
-      kernel(device_v *dHandle_,
+      kernel(device_v *modeDevice_,
              const std::string &name_,
              const std::string &sourceFilename_,
              const occa::properties &properties_);

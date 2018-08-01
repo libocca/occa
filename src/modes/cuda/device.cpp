@@ -162,11 +162,6 @@ namespace occa {
 
       return (double) (1.0e-3 * (double) msTimeTaken);
     }
-
-    stream_t device::wrapStream(void *handle_,
-                                const occa::properties &props) const {
-      return handle_;
-    }
     //==================================
 
     //---[ Kernel ]---------------------
@@ -290,7 +285,7 @@ namespace occa {
         // No OKL means no build file is generated,
         //   so we need to build it
         host()
-          .getDHandle()
+          .getModeDevice()
           ->writeKernelBuildFile(hashDir + kc::hostBuildFile,
                                  kernelHash,
                                  occa::properties(),
@@ -523,7 +518,7 @@ namespace occa {
                                                    "okl: false");
 
       // Launcher and clKernels use the same refs as the wrapper kernel
-      kernel_v *launcherKernel = hostKernel.getKHandle();
+      kernel_v *launcherKernel = hostKernel.getModeKernel();
       launcherKernel->dontUseRefs();
 
       launcherKernel->metadata = hostMetadata;
@@ -567,8 +562,8 @@ namespace occa {
       }
 
       cuda::memory &mem = *(new cuda::memory(props));
-      mem.dHandle = this;
-      mem.size    = bytes;
+      mem.modeDevice = this;
+      mem.size = bytes;
 
       OCCA_CUDA_ERROR("Device: Setting Context",
                       cuCtxSetCurrent(cuContext));
@@ -587,8 +582,8 @@ namespace occa {
                                   const occa::properties &props) {
 
       cuda::memory &mem = *(new cuda::memory(props));
-      mem.dHandle = this;
-      mem.size    = bytes;
+      mem.modeDevice = this;
+      mem.size = bytes;
 
       OCCA_CUDA_ERROR("Device: Setting Context",
                       cuCtxSetCurrent(cuContext));
@@ -610,8 +605,8 @@ namespace occa {
                                    const occa::properties &props) {
       cuda::memory &mem = *(new cuda::memory(props));
 #if CUDA_VERSION >= 8000
-      mem.dHandle   = this;
-      mem.size      = bytes;
+      mem.modeDevice = this;
+      mem.size = bytes;
       mem.isManaged = true;
 
       const unsigned int flags = (props.get("cuda/attachedHost", false) ?

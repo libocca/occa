@@ -100,66 +100,62 @@ namespace occa {
 
   //---[ device ]-----------------------
   device::device() :
-    dHandle(NULL) {}
+    modeDevice(NULL) {}
 
-  device::device(device_v *dHandle_) :
-    dHandle(NULL) {
-    setDHandle(dHandle_);
+  device::device(device_v *modeDevice_) :
+    modeDevice(NULL) {
+    setModeDevice(modeDevice_);
   }
 
   device::device(const occa::properties &props) :
-    dHandle(NULL) {
+    modeDevice(NULL) {
     setup(props);
   }
 
   device::device(const device &d) :
-    dHandle(NULL) {
-    setDHandle(d.dHandle);
+    modeDevice(NULL) {
+    setModeDevice(d.modeDevice);
   }
 
   device& device::operator = (const device &d) {
-    setDHandle(d.dHandle);
+    setModeDevice(d.modeDevice);
     return *this;
   }
 
   device::~device() {
-    removeDHandleRef();
+    removeRef();
   }
 
-  void device::setDHandle(device_v *dHandle_) {
-    if (dHandle != dHandle_) {
-      removeDHandleRef();
-      dHandle = dHandle_;
-      dHandle->addRef();
+  void device::setModeDevice(device_v *modeDevice_) {
+    if (modeDevice != modeDevice_) {
+      removeRef();
+      modeDevice = modeDevice_;
+      modeDevice->addRef();
     }
   }
 
-  void device::removeDHandleRef() {
-    removeDHandleRefFrom(dHandle);
-  }
-
-  void device::removeDHandleRefFrom(device_v *&dHandle_) {
-    if (dHandle_ && !dHandle_->removeRef()) {
-      free(dHandle_);
+  void device::removeRef() {
+    if (modeDevice && !modeDevice->removeRef()) {
+      free();
     }
   }
 
   void device::dontUseRefs() {
-    if (dHandle) {
-      dHandle->dontUseRefs();
+    if (modeDevice) {
+      modeDevice->dontUseRefs();
     }
   }
 
   bool device::operator == (const occa::device &d) const {
-    return (dHandle == d.dHandle);
+    return (modeDevice == d.modeDevice);
   }
 
   bool device::isInitialized() {
-    return (dHandle != NULL);
+    return (modeDevice != NULL);
   }
 
-  device_v* device::getDHandle() const {
-    return dHandle;
+  device_v* device::getModeDevice() const {
+    return modeDevice;
   }
 
   void device::setup(const occa::properties &props) {
@@ -185,101 +181,97 @@ namespace occa {
       }
     }
 
-    setDHandle(occa::newModeDevice(defaults + props));
+    setModeDevice(occa::newModeDevice(defaults + props));
 
     stream newStream = createStream();
-    dHandle->currentStream = newStream.handle;
+    modeDevice->currentStream = newStream.modeStream;
   }
 
   void device::free() {
-    free(dHandle);
-  }
-
-  void device::free(device_v *&dHandle_) {
-    if (dHandle_ == NULL) {
+    if (modeDevice == NULL) {
       return;
     }
-    const int streamCount = dHandle_->streams.size();
+    const int streamCount = modeDevice->streams.size();
 
     for (int i = 0; i < streamCount; ++i) {
-      dHandle_->freeStream(dHandle_->streams[i]);
+      modeDevice->freeStream(modeDevice->streams[i]);
     }
-    dHandle_->streams.clear();
-    dHandle_->free();
+    modeDevice->streams.clear();
+    modeDevice->free();
 
-    delete dHandle_;
-    dHandle_ = NULL;
+    delete modeDevice;
+    modeDevice = NULL;
   }
 
   const std::string& device::mode() const {
     static const std::string noMode = "No Mode";
-    return (dHandle
-            ? dHandle->mode
+    return (modeDevice
+            ? modeDevice->mode
             : noMode);
   }
 
   occa::properties& device::properties() {
     OCCA_ERROR("Device not initialized",
-               dHandle != NULL);
-    return dHandle->properties;
+               modeDevice != NULL);
+    return modeDevice->properties;
   }
 
   const occa::properties& device::properties() const {
     OCCA_ERROR("Device not initialized",
-               dHandle != NULL);
-    return dHandle->properties;
+               modeDevice != NULL);
+    return modeDevice->properties;
   }
 
   occa::properties& device::kernelProperties() {
     OCCA_ERROR("Device not initialized",
-               dHandle != NULL);
-    return (occa::properties&) dHandle->properties["kernel"];
+               modeDevice != NULL);
+    return (occa::properties&) modeDevice->properties["kernel"];
   }
 
   const occa::properties& device::kernelProperties() const {
     OCCA_ERROR("Device not initialized",
-               dHandle != NULL);
-    return (const occa::properties&) dHandle->properties["kernel"];
+               modeDevice != NULL);
+    return (const occa::properties&) modeDevice->properties["kernel"];
   }
 
   occa::properties& device::memoryProperties() {
     OCCA_ERROR("Device not initialized",
-               dHandle != NULL);
-    return (occa::properties&) dHandle->properties["memory"];
+               modeDevice != NULL);
+    return (occa::properties&) modeDevice->properties["memory"];
   }
 
   const occa::properties& device::memoryProperties() const {
     OCCA_ERROR("Device not initialized",
-               dHandle != NULL);
-    return (const occa::properties&) dHandle->properties["memory"];
+               modeDevice != NULL);
+    return (const occa::properties&) modeDevice->properties["memory"];
   }
 
   hash_t device::hash() const {
-    if (dHandle) {
-      return dHandle->versionedHash();
+    if (modeDevice) {
+      return modeDevice->versionedHash();
     }
     return hash_t();
   }
 
   udim_t device::memorySize() const {
-    if (dHandle) {
-      return dHandle->memorySize();
+    if (modeDevice) {
+      return modeDevice->memorySize();
     }
     return 0;
   }
 
   udim_t device::memoryAllocated() const {
-    if (dHandle) {
-      return dHandle->bytesAllocated;
+    if (modeDevice) {
+      return modeDevice->bytesAllocated;
     }
     return 0;
   }
 
   void device::finish() {
-    if (!dHandle) {
+    if (!modeDevice) {
       return;
     }
-    if (dHandle->hasSeparateMemorySpace()) {
+    if (modeDevice->hasSeparateMemorySpace()) {
       const size_t staleEntries = uvaStaleMemory.size();
       for (size_t i = 0; i < staleEntries; ++i) {
         occa::memory_v *mem = uvaStaleMemory[i];
@@ -294,38 +286,38 @@ namespace occa {
       }
     }
 
-    dHandle->finish();
+    modeDevice->finish();
   }
 
   bool device::hasSeparateMemorySpace() {
-    return (dHandle &&
-            dHandle->hasSeparateMemorySpace());
+    return (modeDevice &&
+            modeDevice->hasSeparateMemorySpace());
   }
 
   //  |---[ Stream ]--------------------
   stream device::createStream() {
     OCCA_ERROR("Device not initialized",
-               dHandle != NULL);
+               modeDevice != NULL);
 
-    stream newStream(dHandle, dHandle->createStream());
-    dHandle->streams.push_back(newStream.handle);
+    stream newStream(modeDevice, modeDevice->createStream());
+    modeDevice->streams.push_back(newStream.modeStream);
 
     return newStream;
   }
 
   void device::freeStream(stream s) {
     OCCA_ERROR("Device not initialized",
-               dHandle != NULL);
+               modeDevice != NULL);
 
-    const int streamCount = dHandle->streams.size();
+    const int streamCount = modeDevice->streams.size();
 
     for (int i = 0; i < streamCount; ++i) {
-      if (dHandle->streams[i] == s.handle) {
-        if (dHandle->currentStream == s.handle)
-          dHandle->currentStream = NULL;
+      if (modeDevice->streams[i] == s.modeStream) {
+        if (modeDevice->currentStream == s.modeStream)
+          modeDevice->currentStream = NULL;
 
-        dHandle->freeStream(dHandle->streams[i]);
-        dHandle->streams.erase(dHandle->streams.begin() + i);
+        modeDevice->freeStream(modeDevice->streams[i]);
+        modeDevice->streams.erase(modeDevice->streams.begin() + i);
 
         break;
       }
@@ -334,39 +326,32 @@ namespace occa {
 
   stream device::getStream() {
     OCCA_ERROR("Device not initialized",
-               dHandle != NULL);
-    return stream(dHandle, dHandle->currentStream);
+               modeDevice != NULL);
+    return stream(modeDevice, modeDevice->currentStream);
   }
 
   void device::setStream(stream s) {
     OCCA_ERROR("Device not initialized",
-               dHandle != NULL);
-    dHandle->currentStream = s.handle;
-  }
-
-  stream device::wrapStream(void *handle_, const occa::properties &props) {
-    OCCA_ERROR("Device not initialized",
-               dHandle != NULL);
-    return stream(dHandle,
-                  dHandle->wrapStream(handle_, props));
+               modeDevice != NULL);
+    modeDevice->currentStream = s.modeStream;
   }
 
   streamTag device::tagStream() {
     OCCA_ERROR("Device not initialized",
-               dHandle != NULL);
-    return dHandle->tagStream();
+               modeDevice != NULL);
+    return modeDevice->tagStream();
   }
 
   void device::waitFor(streamTag tag) {
     OCCA_ERROR("Device not initialized",
-               dHandle != NULL);
-    dHandle->waitFor(tag);
+               modeDevice != NULL);
+    modeDevice->waitFor(tag);
   }
 
   double device::timeBetween(const streamTag &startTag, const streamTag &endTag) {
     OCCA_ERROR("Device not initialized",
-               dHandle != NULL);
-    return dHandle->timeBetween(startTag, endTag);
+               modeDevice != NULL);
+    return modeDevice->timeBetween(startTag, endTag);
   }
   //  |=================================
 
@@ -375,7 +360,7 @@ namespace occa {
                              const std::string &kernelName,
                              const occa::properties &props) const {
     OCCA_ERROR("Device not initialized",
-               dHandle != NULL);
+               modeDevice != NULL);
 
     occa::properties allProps = props + kernelProperties();
     allProps["mode"] = mode();
@@ -386,7 +371,7 @@ namespace occa {
                          ^ hashFile(filename));
 
     // Check cache first
-    kernel &cachedKernel = dHandle->getCachedKernel(kernelHash,
+    kernel &cachedKernel = modeDevice->getCachedKernel(kernelHash,
                                                     kernelName);
     if (cachedKernel.isInitialized()) {
       return cachedKernel;
@@ -396,7 +381,7 @@ namespace occa {
     const std::string hashDir = io::hashDir(realFilename, kernelHash);
     allProps["hash"] = kernelHash.toFullString();
 
-    cachedKernel = dHandle->buildKernel(realFilename,
+    cachedKernel = modeDevice->buildKernel(realFilename,
                                         kernelName,
                                         kernelHash,
                                         allProps);
@@ -412,7 +397,7 @@ namespace occa {
                                        const std::string &kernelName,
                                        const occa::properties &props) const {
     OCCA_ERROR("Device not initialized",
-               dHandle != NULL);
+               modeDevice != NULL);
 
     occa::properties allProps = props + kernelProperties();
     allProps["mode"] = mode();
@@ -442,9 +427,9 @@ namespace occa {
                                        const std::string &kernelName,
                                        const occa::properties &props) const {
     OCCA_ERROR("Device not initialized",
-               dHandle != NULL);
+               modeDevice != NULL);
 
-    return kernel(dHandle->buildKernelFromBinary(filename,
+    return kernel(modeDevice->buildKernelFromBinary(filename,
                                                  kernelName,
                                                  props));
   }
@@ -453,7 +438,7 @@ namespace occa {
     // TODO 1.1: Load kernels
 #if 0
     OCCA_ERROR("Device not initialized",
-               dHandle != NULL);
+               modeDevice != NULL);
 
     std::string devHash = hash().toFullString();
     strVector dirs = io::directories("occa://" + library);
@@ -513,7 +498,7 @@ namespace occa {
                         const void *src,
                         const occa::properties &props) {
     OCCA_ERROR("Device not initialized",
-               dHandle != NULL);
+               modeDevice != NULL);
 
     if (bytes == 0) {
       return memory();
@@ -525,10 +510,10 @@ namespace occa {
 
     occa::properties memProps = props + memoryProperties();
 
-    memory mem(dHandle->malloc(bytes, src, memProps));
-    mem.setDHandle(dHandle);
+    memory mem(modeDevice->malloc(bytes, src, memProps));
+    mem.setModeDevice(modeDevice);
 
-    dHandle->bytesAllocated += bytes;
+    modeDevice->bytesAllocated += bytes;
 
     return mem;
   }
@@ -537,7 +522,7 @@ namespace occa {
                         const occa::memory src,
                         const occa::properties &props) {
     OCCA_ERROR("Device not initialized",
-               dHandle != NULL);
+               modeDevice != NULL);
 
     memory mem = malloc(bytes, NULL, props);
     if (bytes && src.size()) {
@@ -556,7 +541,7 @@ namespace occa {
                         const void *src,
                         const occa::properties &props) {
     OCCA_ERROR("Device not initialized",
-               dHandle != NULL);
+               modeDevice != NULL);
 
     void *ptr = umalloc(bytes, occa::memory(), props);
     if (src) {
@@ -569,7 +554,7 @@ namespace occa {
                         const occa::memory src,
                         const occa::properties &props) {
     OCCA_ERROR("Device not initialized",
-               dHandle != NULL);
+               modeDevice != NULL);
 
     if (bytes == 0) {
       return NULL;
@@ -588,7 +573,7 @@ namespace occa {
     if (memProps.get("managed", true)) {
       mem.startManaging();
     }
-    void *ptr = mem.mHandle->uvaPtr;
+    void *ptr = mem.modeMemory->uvaPtr;
     if (src.size()) {
       src.copyTo(ptr, bytes);
     }
@@ -616,45 +601,46 @@ namespace occa {
 
   //---[ stream ]-----------------------
   stream::stream() :
-    dHandle(NULL),
-    handle(NULL) {}
+    modeDevice(NULL),
+    modeStream(NULL) {}
 
-  stream::stream(device_v *dHandle_,
-                 stream_t handle_) :
-    dHandle(dHandle_),
-    handle(handle_) {}
+  stream::stream(device_v *modeDevice_,
+                 stream_t modeStream_) :
+    modeDevice(modeDevice_),
+    modeStream(modeStream_) {}
 
   stream::stream(const stream &other) :
-    dHandle(other.dHandle),
-    handle(other.handle) {}
+    modeDevice(other.modeDevice),
+    modeStream(other.modeStream) {}
 
   stream& stream::operator = (const stream &other) {
-    dHandle = other.dHandle;
-    handle  = other.handle;
+    modeDevice = other.modeDevice;
+    modeStream  = other.modeStream;
     return *this;
   }
 
   bool stream::operator == (const stream &other) const {
-    return ((dHandle == other.dHandle) &&
-            (handle == other.handle));
+    return ((modeDevice == other.modeDevice) &&
+            (modeStream == other.modeStream));
   }
 
-  void* stream::getHandle(const occa::properties &props) {
-    return handle;
+  stream_t stream::getModeStream() {
+    return modeStream;
   }
 
   void stream::free() {
-    if (dHandle != NULL) {
-      device(dHandle).freeStream(*this);
+    if (modeDevice != NULL) {
+      device(modeDevice).freeStream(*this);
     }
   }
 
   streamTag::streamTag() :
     tagTime(0),
-    handle(NULL) {}
+    modeTag(NULL) {}
+
   streamTag::streamTag(const double tagTime_,
-                       void *handle_) :
+                       void *modeTag_) :
     tagTime(tagTime_),
-    handle(handle_) {}
+    modeTag(modeTag_) {}
   //====================================
 }

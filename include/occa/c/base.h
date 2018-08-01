@@ -54,9 +54,6 @@ OCCA_LFUNC occaStream OCCA_RFUNC occaGetStream();
 
 OCCA_LFUNC void OCCA_RFUNC occaSetStream(occaStream stream);
 
-OCCA_LFUNC occaStream OCCA_RFUNC occaWrapStream(void *handle_,
-                                                const occaProperties props);
-
 OCCA_LFUNC occaStreamTag OCCA_RFUNC occaTagStream();
 
 OCCA_LFUNC void OCCA_RFUNC occaWaitForTag(occaStreamTag tag);

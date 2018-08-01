@@ -163,11 +163,6 @@ namespace occa {
 
       return (double) (1.0e-3 * (double) msTimeTaken);
     }
-
-    stream_t device::wrapStream(void *handle_,
-                                const occa::properties &props) const {
-      return handle_;
-    }
     //==================================
 
     //---[ Kernel ]---------------------
@@ -291,7 +286,7 @@ namespace occa {
         // No OKL means no build file is generated,
         //   so we need to build it
         host()
-          .getDHandle()
+          .getModeDevice()
           ->writeKernelBuildFile(hashDir + kc::hostBuildFile,
                                  kernelHash,
                                  occa::properties(),
@@ -481,7 +476,7 @@ namespace occa {
                                                    "okl: false");
 
       // Launcher and clKernels use the same refs as the wrapper kernel
-      kernel_v *launcherKernel = hostKernel.getKHandle();
+      kernel_v *launcherKernel = hostKernel.getModeKernel();
       launcherKernel->dontUseRefs();
 
       launcherKernel->metadata = hostMetadata;
@@ -525,8 +520,8 @@ namespace occa {
       }
 
       hip::memory &mem = *(new hip::memory(props));
-      mem.dHandle = this;
-      mem.size    = bytes;
+      mem.modeDevice = this;
+      mem.size = bytes;
 
       OCCA_HIP_ERROR("Device: Setting Context",
                      hipCtxSetCurrent(hipContext));
@@ -545,8 +540,8 @@ namespace occa {
                                   const occa::properties &props) {
 
       hip::memory &mem = *(new hip::memory(props));
-      mem.dHandle = this;
-      mem.size    = bytes;
+      mem.modeDevice = this;
+      mem.size = bytes;
 
       OCCA_HIP_ERROR("Device: Setting Context",
                      hipCtxSetCurrent(hipContext));

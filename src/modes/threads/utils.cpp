@@ -38,22 +38,22 @@ namespace occa {
 
     job_t::job_t() {}
 
-    job_t::job_t(const job_t &k) {
-      *this = k;
+    job_t::job_t(const job_t &job) {
+      *this = job;
     }
 
-    job_t& job_t::operator = (const job_t &k) {
-      rank     = k.rank;
-      count    = k.count;
-      schedule = k.schedule;
+    job_t& job_t::operator = (const job_t &job) {
+      rank     = job.rank;
+      count    = job.count;
+      schedule = job.schedule;
 
-      handle = k.handle;
+      function = job.function;
 
-      dims  = k.dims;
-      inner = k.inner;
-      outer = k.outer;
+      dims  = job.dims;
+      inner = job.inner;
+      outer = job.outer;
 
-      args = k.args;
+      args = job.args;
 
       return *this;
     }
@@ -87,9 +87,7 @@ namespace occa {
     }
 
     void run(job_t &job) {
-      functionPtr_t tmpKernel = (functionPtr_t) job.handle;
-
-      sys::runFunction(tmpKernel,
+      sys::runFunction(job.function,
                        (int) job.args.size(),
                        &(job.args[0]));
     }

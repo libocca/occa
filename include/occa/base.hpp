@@ -61,8 +61,6 @@ namespace occa {
   stream createStream();
   stream getStream();
   void setStream(stream s);
-  stream wrapStream(void *handle_,
-                    const occa::properties &props = occa::properties());
 
   streamTag tagStream();
   //====================================

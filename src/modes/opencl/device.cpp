@@ -170,10 +170,6 @@ namespace occa {
 
       return (double) (1.0e-9 * (double)(end - start));
     }
-
-    stream_t device::wrapStream(void *handle_, const occa::properties &props) const {
-      return handle_;
-    }
     //==================================
 
     //---[ Kernel ]---------------------
@@ -302,7 +298,7 @@ namespace occa {
         // No OKL means no build file is generated,
         //   so we need to build it
         host()
-          .getDHandle()
+          .getModeDevice()
           ->writeKernelBuildFile(hashDir + kc::hostBuildFile,
                                  kernelHash,
                                  occa::properties(),
@@ -441,7 +437,7 @@ namespace occa {
                                                    "okl: false");
 
       // Launcher and clKernels use the same refs as the wrapper kernel
-      kernel_v *launcherKernel = hostKernel.getKHandle();
+      kernel_v *launcherKernel = hostKernel.getModeKernel();
       if (!launcherKernel) {
         return NULL;
       }
@@ -492,8 +488,8 @@ namespace occa {
       cl_int error;
 
       opencl::memory *mem = new opencl::memory(props);
-      mem->dHandle = this;
-      mem->size    = bytes;
+      mem->modeDevice = this;
+      mem->size = bytes;
 
       if (src == NULL) {
         mem->clMem = clCreateBuffer(clContext,
@@ -520,8 +516,8 @@ namespace occa {
 
       cl_command_queue &stream = *((cl_command_queue*) currentStream);
       opencl::memory *mem = new opencl::memory(props);
-      mem->dHandle = this;
-      mem->size    = bytes;
+      mem->modeDevice = this;
+      mem->size = bytes;
 
       // Alloc pinned host buffer
       mem->clMem = clCreateBuffer(clContext,

@@ -144,11 +144,6 @@ namespace occa {
                                const streamTag &endTag) const {
       return (endTag.tagTime - startTag.tagTime);
     }
-
-    stream_t device::wrapStream(void *handle_,
-                                const occa::properties &props) const {
-      return NULL;
-    }
     //==================================
 
     //---[ Kernel ]---------------------
@@ -324,9 +319,9 @@ namespace occa {
                              const occa::properties &props) {
       memory *mem = new memory(props);
 
-      mem->dHandle = this;
-      mem->size    = bytes;
-      mem->ptr     = (char*) sys::malloc(bytes);
+      mem->modeDevice = this;
+      mem->size = bytes;
+      mem->ptr = (char*) sys::malloc(bytes);
 
       if (src) {
         ::memcpy(mem->ptr, src, bytes);

@@ -47,8 +47,6 @@ namespace occa {
 
   device_v* newModeDevice(const occa::properties &props = occa::properties());
 
-  void freeModeDevice(device_v *dHandle);
-
   class modeInfo_v {
   public:
     modeInfo_v();

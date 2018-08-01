@@ -88,10 +88,6 @@ namespace occa {
     getDevice().setStream(s);
   }
 
-  stream wrapStream(void *handle_, const occa::properties &props) {
-    return getDevice().wrapStream(handle_, props);
-  }
-
   streamTag tagStream() {
     return getDevice().tagStream();
   }

@@ -80,8 +80,8 @@ namespace occa {
 
   class kernelArgData {
   public:
-    occa::device_v *dHandle;
-    occa::memory_v *mHandle;
+    occa::device_v *modeDevice;
+    occa::memory_v *modeMemory;
 
     kernelArgData_t data;
     udim_t size;
@@ -165,7 +165,7 @@ namespace occa {
   //---[ kernel_v ]---------------------
   class kernel_v : public withRefs {
   public:
-    occa::device_v *dHandle;
+    occa::device_v *modeDevice;
 
     std::string name;
     std::string sourceFilename, binaryFilename;
@@ -176,7 +176,7 @@ namespace occa {
     std::vector<kernelArg> arguments;
     lang::kernelMetadata metadata;
 
-    kernel_v(device_v *dHandle_,
+    kernel_v(device_v *modeDevice_,
              const std::string &name_,
              const std::string &sourceFilename_,
              const occa::properties &properties_);
@@ -206,20 +206,20 @@ namespace occa {
     friend class occa::device;
 
   private:
-    kernel_v *kHandle;
+    kernel_v *modeKernel;
 
   public:
     kernel();
-    kernel(kernel_v *kHandle_);
+    kernel(kernel_v *modeKernel_);
 
     kernel(const kernel &k);
     kernel& operator = (const kernel &k);
-    kernel& operator = (kernel_v *kHandle_);
+    kernel& operator = (kernel_v *modeKernel_);
     ~kernel();
 
   private:
-    void setKHandle(kernel_v *kHandle_);
-    void removeKHandleRef();
+    void setModeKernel(kernel_v *modeKernel_);
+    void removeRef();
 
   public:
     void dontUseRefs();
@@ -229,7 +229,7 @@ namespace occa {
     const std::string& mode() const;
     const occa::properties& properties() const;
 
-    kernel_v* getKHandle();
+    kernel_v* getModeKernel();
 
     occa::device getDevice();
 

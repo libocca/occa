@@ -28,11 +28,11 @@
 
 namespace occa {
   namespace threads {
-    kernel::kernel(device_v *dHandle_,
+    kernel::kernel(device_v *modeDevice_,
                    const std::string &name_,
                    const std::string &sourceFilename_,
                    const occa::properties &properties_) :
-      serial::kernel(dHandle_, name_, sourceFilename_, properties_) {
+      serial::kernel(modeDevice_, name_, sourceFilename_, properties_) {
 
       threads = properties.get("threads", sys::getCoreCount());
     }
@@ -60,7 +60,7 @@ namespace occa {
 
       for (int t = 0; t < threads; ++t) {
         job.rank = t;
-        ((device*) dHandle)->addJob(job);
+        ((device*) modeDevice)->addJob(job);
       }
     }
   }

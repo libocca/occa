@@ -172,8 +172,8 @@ namespace occa {
     }
 
     occaType newOccaType(occa::device device) {
-      occa::device_v *dHandle = device.getDHandle();
-      if (!dHandle) {
+      occa::device_v *modeDevice = device.getModeDevice();
+      if (!modeDevice) {
         return occaUndefined;
       }
 
@@ -181,13 +181,13 @@ namespace occa {
       oType.magicHeader = OCCA_C_TYPE_MAGIC_HEADER;
       oType.type  = typeType::device;
       oType.bytes = sizeof(void*);
-      oType.value.ptr = (char*) dHandle;
+      oType.value.ptr = (char*) modeDevice;
       return oType;
     }
 
     occaType newOccaType(occa::kernel kernel) {
-      occa::kernel_v *kHandle = kernel.getKHandle();
-      if (!kHandle) {
+      occa::kernel_v *modeKernel = kernel.getModeKernel();
+      if (!modeKernel) {
         return occaUndefined;
       }
 
@@ -195,13 +195,13 @@ namespace occa {
       oType.magicHeader = OCCA_C_TYPE_MAGIC_HEADER;
       oType.type  = typeType::kernel;
       oType.bytes = sizeof(void*);
-      oType.value.ptr = (char*) kHandle;
+      oType.value.ptr = (char*) modeKernel;
       return oType;
     }
 
     occaType newOccaType(occa::memory memory) {
-      occa::memory_v *mHandle = memory.getMHandle();
-      if (!mHandle) {
+      occa::memory_v *modeMemory = memory.getModeMemory();
+      if (!modeMemory) {
         return occaUndefined;
       }
 
@@ -209,7 +209,7 @@ namespace occa {
       oType.magicHeader = OCCA_C_TYPE_MAGIC_HEADER;
       oType.type  = typeType::memory;
       oType.bytes = sizeof(void*);
-      oType.value.ptr = (char*) mHandle;
+      oType.value.ptr = (char*) modeMemory;
       return oType;
     }
 
@@ -225,15 +225,15 @@ namespace occa {
 
     occaStream newOccaType(occa::stream value) {
       occaStream stream;
-      stream.device = newOccaType(occa::device(value.dHandle));
-      stream.handle = value.handle;
+      stream.device = newOccaType(occa::device(value.modeDevice));
+      stream.modeStream = value.modeStream;
       return stream;
     }
 
     occaStreamTag newOccaType(occa::streamTag value) {
       occaStreamTag tag;
       tag.tagTime = value.tagTime;
-      tag.handle  = value.handle;
+      tag.modeTag = value.modeTag;
       return tag;
     }
 
@@ -282,12 +282,12 @@ namespace occa {
 
     occa::stream stream(occaStream value) {
       return occa::stream((occa::device_v*) value.device.value.ptr,
-                          value.handle);
+                          value.modeStream);
     }
 
     occa::streamTag streamTag(occaStreamTag value) {
       return occa::streamTag(value.tagTime,
-                             value.handle);
+                             value.modeTag);
     }
   }
 }

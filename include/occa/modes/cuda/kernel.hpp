@@ -46,12 +46,12 @@ namespace occa {
       mutable std::vector<void*> vArgs;
 
     public:
-      kernel(device_v *dHandle_,
+      kernel(device_v *modeDevice_,
              const std::string &name_,
              const std::string &sourceFilename_,
              const occa::properties &properties_);
 
-      kernel(device_v *dHandle_,
+      kernel(device_v *modeDevice_,
              const std::string &name_,
              const std::string &sourceFilename_,
              CUmodule cuModule_,

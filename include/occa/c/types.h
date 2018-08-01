@@ -67,12 +67,12 @@ typedef occaType occaProperties;
 
 typedef struct {
   occaDevice device;
-  void *handle;
+  void *modeStream;
 } occaStream;
 
 typedef struct {
   double tagTime;
-  void *handle;
+  void *modeTag;
 } occaStreamTag;
 
 //---[ Type Flags ]---------------------

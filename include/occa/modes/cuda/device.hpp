@@ -65,9 +65,6 @@ namespace occa {
       virtual void waitFor(streamTag tag) const;
       virtual double timeBetween(const streamTag &startTag,
                                  const streamTag &endTag) const;
-
-      virtual stream_t wrapStream(void *handle_,
-                                  const occa::properties &props) const;
       //================================
 
       //---[ Kernel ]-------------------

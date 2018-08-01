@@ -28,11 +28,11 @@
 
 namespace occa {
   namespace serial {
-    kernel::kernel(device_v *dHandle_,
+    kernel::kernel(device_v *modeDevice_,
                    const std::string &name_,
                    const std::string &sourceFilename_,
                    const occa::properties &properties_) :
-      occa::kernel_v(dHandle_, name_, sourceFilename_, properties_) {
+      occa::kernel_v(modeDevice_, name_, sourceFilename_, properties_) {
       dlHandle = NULL;
       function = NULL;
     }

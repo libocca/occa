@@ -41,8 +41,8 @@ namespace occa {
     kernelArg memory::makeKernelArg() const {
       kernelArgData arg;
 
-      arg.dHandle = dHandle;
-      arg.mHandle = const_cast<memory*>(this);
+      arg.modeDevice = modeDevice;
+      arg.modeMemory = const_cast<memory*>(this);
 
       arg.data.void_ = (void*) &cuPtr;
       arg.size       = sizeof(void*);
@@ -66,7 +66,7 @@ namespace occa {
                           const udim_t bytes,
                           const udim_t offset,
                           const occa::properties &props) {
-      const CUstream &stream = *((CUstream*) dHandle->currentStream);
+      const CUstream &stream = *((CUstream*) modeDevice->currentStream);
       const bool async = props.get("async", false);
 
       if (!async) {
@@ -88,7 +88,7 @@ namespace occa {
                           const udim_t destOffset,
                           const udim_t srcOffset,
                           const occa::properties &props) {
-      const CUstream &stream = *((CUstream*) dHandle->currentStream);
+      const CUstream &stream = *((CUstream*) modeDevice->currentStream);
       const bool async = props.get("async", false);
 
       if (!async) {
@@ -109,7 +109,7 @@ namespace occa {
                         const udim_t bytes,
                         const udim_t offset,
                         const occa::properties &props) const {
-      const CUstream &stream = *((CUstream*) dHandle->currentStream);
+      const CUstream &stream = *((CUstream*) modeDevice->currentStream);
       const bool async = props.get("async", false);
 
       if (!async) {

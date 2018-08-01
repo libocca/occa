@@ -462,14 +462,14 @@ namespace occa {
   void array<TM,idxType>::allocate(const TM *src) {
     ptr_   = (TM*) device.umalloc(bytes(), src);
     memory_ = occa::memory(ptr_);
-    memory_.getMHandle()->setRefs(1);
+    memory_.getModeMemory()->setRefs(1);
   }
 
   template <class TM, const int idxType>
   void array<TM,idxType>::allocate(const occa::memory src) {
     ptr_   = (TM*) device.umalloc(bytes(), src);
     memory_ = occa::memory(ptr_);
-    memory_.getMHandle()->setRefs(1);
+    memory_.getModeMemory()->setRefs(1);
   }
 
   template <class TM, const int idxType>

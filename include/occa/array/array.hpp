@@ -113,8 +113,8 @@ namespace occa {
       occa::kernelArg ret;
       occa::kernelArgData sizeArg;
 
-      sizeArg.mHandle = memory_.getMHandle();
-      sizeArg.dHandle = memory_.getDHandle();
+      sizeArg.modeMemory = memory_.getModeMemory();
+      sizeArg.modeDevice = memory_.getModeDevice();
 
       sizeArg.data.void_ = (void*) ks_;
       sizeArg.size       = maxBase2(idxCount) * sizeof(int);
