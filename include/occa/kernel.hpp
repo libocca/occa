@@ -233,6 +233,9 @@ namespace occa {
 
     occa::device getDevice();
 
+    bool operator == (const occa::kernel &other) const;
+    bool operator != (const occa::kernel &other) const;
+
     const std::string& name();
     const std::string& sourceFilename();
     const std::string& binaryFilename();

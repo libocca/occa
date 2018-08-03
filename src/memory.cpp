@@ -307,12 +307,12 @@ namespace occa {
     }
   }
 
-  bool memory::operator == (const occa::memory &m) const {
-    return (modeMemory == m.modeMemory);
+  bool memory::operator == (const occa::memory &other) const {
+    return (modeMemory == other.modeMemory);
   }
 
-  bool memory::operator != (const occa::memory &m) const {
-    return (modeMemory != m.modeMemory);
+  bool memory::operator != (const occa::memory &other) const {
+    return (modeMemory != other.modeMemory);
   }
 
   occa::memory memory::operator + (const dim_t offset) const {

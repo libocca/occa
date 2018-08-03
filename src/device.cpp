@@ -112,13 +112,13 @@ namespace occa {
     setup(props);
   }
 
-  device::device(const device &d) :
+  device::device(const device &other) :
     modeDevice(NULL) {
-    setModeDevice(d.modeDevice);
+    setModeDevice(other.modeDevice);
   }
 
-  device& device::operator = (const device &d) {
-    setModeDevice(d.modeDevice);
+  device& device::operator = (const device &other) {
+    setModeDevice(other.modeDevice);
     return *this;
   }
 
@@ -146,8 +146,12 @@ namespace occa {
     }
   }
 
-  bool device::operator == (const occa::device &d) const {
-    return (modeDevice == d.modeDevice);
+  bool device::operator == (const occa::device &other) const {
+    return (modeDevice == other.modeDevice);
+  }
+
+  bool device::operator != (const occa::device &other) const {
+    return (modeDevice != other.modeDevice);
   }
 
   bool device::isInitialized() {

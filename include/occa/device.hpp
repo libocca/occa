@@ -138,8 +138,8 @@ namespace occa {
     device(modeDevice_t *modeDevice_);
     device(const occa::properties &props);
 
-    device(const occa::device &d);
-    device& operator = (const occa::device &d);
+    device(const occa::device &other);
+    device& operator = (const occa::device &other);
     ~device();
 
   private:
@@ -149,7 +149,8 @@ namespace occa {
   public:
     void dontUseRefs();
 
-    bool operator == (const occa::device &d) const;
+    bool operator == (const occa::device &other) const;
+    bool operator != (const occa::device &other) const;
 
     bool isInitialized();
 

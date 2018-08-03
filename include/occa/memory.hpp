@@ -183,8 +183,8 @@ namespace occa {
     void uvaMarkFresh();
     //==================================
 
-    bool operator == (const occa::memory &m) const;
-    bool operator != (const occa::memory &m) const;
+    bool operator == (const occa::memory &other) const;
+    bool operator != (const occa::memory &other) const;
 
     occa::memory operator + (const dim_t offset) const;
     occa::memory& operator += (const dim_t offset);

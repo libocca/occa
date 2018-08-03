@@ -372,6 +372,14 @@ namespace occa {
                         : NULL);
   }
 
+  bool kernel::operator == (const occa::kernel &other) const {
+    return (modeKernel == other.modeKernel);
+  }
+
+  bool kernel::operator != (const occa::kernel &other) const {
+    return (modeKernel != other.modeKernel);
+  }
+
   const std::string& kernel::name() {
     static const std::string noName = "";
     return (modeKernel

@@ -1007,12 +1007,20 @@ namespace occa {
     void preprocessor_t::processOccaPragma(identifierToken &directive,
                                            tokenVector &lineTokens) {
       const int tokenCount = (int) lineTokens.size();
-      // Insert tokens backwards into input cache, ignoring [occa] token
-      for (int i = (tokenCount - 1); i >= 1; --i) {
+      if ((tokenCount < 2)
+          || !(lineTokens[1]->type() & tokenType::identifier)
+          || (((identifierToken*) lineTokens[1])->value != "attributes")) {
+        freeTokenVector(lineTokens);
+        return;
+      }
+
+      // Insert tokens backwards into input cache, ignoring [occa] [attributes] tokens
+      for (int i = (tokenCount - 1); i >= 2; --i) {
         pushInput(lineTokens[i]);
       }
-      // Remove the [occa] token
+      // Remove the [occa] [attributes] tokens
       delete lineTokens[0];
+      delete lineTokens[1];
     }
 
     void preprocessor_t::processLine(identifierToken &directive) {

@@ -85,6 +85,10 @@ void testPathMethods() {
   ASSERT_EQ(occa::io::expandEnvVariables("~a"),
             "~a");
   ASSERT_EQ(occa::io::endWithSlash(
+              occa::io::expandEnvVariables("$HOME")
+            ),
+            occa::env::HOME);
+  ASSERT_EQ(occa::io::endWithSlash(
               occa::io::expandEnvVariables("${HOME}")
             ),
             occa::env::HOME);

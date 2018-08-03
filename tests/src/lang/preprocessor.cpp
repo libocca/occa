@@ -648,7 +648,7 @@ void testOccaPragma() {
             (int) ((primitiveToken*) token)->value)
 
 
-  setStream("#pragma occa @tile(16, @outer, @inner)");
+  setStream("#pragma occa attributes @tile(16, @outer, @inner)");
   // @
   checkOp(operatorType::attribute);
   // tile
