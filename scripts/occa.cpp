@@ -222,7 +222,7 @@ bool runTranslate(const json &args) {
   bool success = parser->succeeded();
   if (!success) {
     delete parser;
-    return false;
+    ::exit(1);
   }
 
   if (options["verbose"]) {
@@ -245,7 +245,10 @@ bool runTranslate(const json &args) {
   }
   std::cout << parser->toString();
   delete parser;
-  return success;
+  if (!success) {
+    ::exit(1);
+  }
+  return true;
 }
 
 bool runCompile(const json &args) {

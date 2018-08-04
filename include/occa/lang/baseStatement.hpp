@@ -77,9 +77,14 @@ namespace occa {
     class statement_t {
     public:
       blockStatement *up;
+      token_t *source;
       attributeTokenMap attributes;
 
-      statement_t(blockStatement *up_);
+      statement_t(blockStatement *up_,
+                  const token_t *source_);
+
+      statement_t(blockStatement *up_,
+                  const statement_t &other);
 
       virtual ~statement_t();
 
@@ -127,8 +132,8 @@ namespace occa {
       operator std::string() const;
       void debugPrint() const;
 
-      virtual void printWarning(const std::string &message) const = 0;
-      virtual void printError(const std::string &message) const = 0;
+      void printWarning(const std::string &message) const;
+      void printError(const std::string &message) const;
     };
 
     printer& operator << (printer &pout,
@@ -137,29 +142,25 @@ namespace occa {
     //---[ Empty ]----------------------
     class emptyStatement : public statement_t {
     public:
-      token_t *source;
       bool hasSemicolon;
 
       emptyStatement(blockStatement *up_,
                      token_t *source_,
                      const bool hasSemicolon_ = true);
-
+      emptyStatement(blockStatement *up_,
+                     const emptyStatement &other);
       ~emptyStatement();
 
       virtual statement_t& clone_(blockStatement *up_) const;
       virtual int type() const;
 
       virtual void print(printer &pout) const;
-
-      virtual void printWarning(const std::string &message) const;
-      virtual void printError(const std::string &message) const;
     };
     //==================================
 
     //---[ Block ]------------------------
     class blockStatement : public statement_t {
     public:
-      token_t *source;
       statementPtrVector children;
       scope_t scope;
 
@@ -208,9 +209,6 @@ namespace occa {
 
       virtual void print(printer &pout) const;
       void printChildren(printer &pout) const;
-
-      virtual void printWarning(const std::string &message) const;
-      virtual void printError(const std::string &message) const;
     };
     //====================================
   }

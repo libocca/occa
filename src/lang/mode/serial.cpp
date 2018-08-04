@@ -195,7 +195,8 @@ namespace occa {
         );
 
         // Create declaration statement for index variable
-        declarationStatement &indexDeclSmnt = *(new declarationStatement(innerMostOuterLoop));
+        declarationStatement &indexDeclSmnt = *(new declarationStatement(innerMostOuterLoop,
+                                                                         &varSource));
         innerMostOuterLoop->addFirst(indexDeclSmnt);
         // Add variable to decl + scope
         indexDeclSmnt.addDeclaration(*indexVar);

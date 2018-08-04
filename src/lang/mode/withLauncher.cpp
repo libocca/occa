@@ -597,7 +597,8 @@ namespace occa {
 
         // Add declaration before block
         declarationStatement &declSmnt = (
-          *(new declarationStatement(blockSmnt.up))
+          *(new declarationStatement(blockSmnt.up,
+                                     forSmnt.source))
         );
         declSmnt.declarations.push_back(decl);
 

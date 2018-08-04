@@ -66,11 +66,21 @@ namespace occa {
       const int attribute    = (1 << 25);
     }
 
-    statement_t::statement_t(blockStatement *up_) :
+    statement_t::statement_t(blockStatement *up_,
+                             const token_t *source_) :
       up(up_),
+      source(token_t::clone(source_)),
       attributes() {}
 
-    statement_t::~statement_t() {}
+    statement_t::statement_t(blockStatement *up_,
+                             const statement_t &other) :
+      up(up_),
+      source(token_t::clone(other.source)),
+      attributes() {}
+
+    statement_t::~statement_t() {
+      delete source;
+    }
 
     statement_t& statement_t::clone(blockStatement *up_) const {
       statement_t &s = clone_(up_);
@@ -141,6 +151,14 @@ namespace occa {
       std::cout << toString();
     }
 
+    void statement_t::printWarning(const std::string &message) const {
+      source->printWarning(message);
+    }
+
+    void statement_t::printError(const std::string &message) const {
+      source->printError(message);
+    }
+
     printer& operator << (printer &pout,
                           const statement_t &smnt) {
       smnt.print(pout);
@@ -151,17 +169,18 @@ namespace occa {
     emptyStatement::emptyStatement(blockStatement *up_,
                                    token_t *source_,
                                    const bool hasSemicolon_) :
-      statement_t(up_),
-      source(token_t::clone(source_)),
+      statement_t(up_, source_),
       hasSemicolon(hasSemicolon_) {}
 
-    emptyStatement::~emptyStatement() {
-      delete source;
-    }
+    emptyStatement::emptyStatement(blockStatement *up_,
+                                   const emptyStatement &other):
+      statement_t(up_, other),
+      hasSemicolon(other.hasSemicolon) {}
+
+    emptyStatement::~emptyStatement() {}
 
     statement_t& emptyStatement::clone_(blockStatement *up_) const {
-      return *(new emptyStatement(up_,
-                                  source));
+      return *(new emptyStatement(up_, *this));
     }
 
     int emptyStatement::type() const {
@@ -175,32 +194,21 @@ namespace occa {
         pout.printEndNewline();
       }
     }
-
-    void emptyStatement::printWarning(const std::string &message) const {
-      source->printWarning(message);
-    }
-
-    void emptyStatement::printError(const std::string &message) const {
-      source->printError(message);
-    }
     //====================================
 
     //---[ Block ]------------------------
     blockStatement::blockStatement(blockStatement *up_,
                                    token_t *source_) :
-      statement_t(up_),
-      source(token_t::clone(source_)) {}
+      statement_t(up_, source_) {}
 
     blockStatement::blockStatement(blockStatement *up_,
                                    const blockStatement &other) :
-      statement_t(up_),
-      source(token_t::clone(other.source)) {
+      statement_t(up_, other) {
       copyFrom(other);
     }
 
     blockStatement::~blockStatement() {
       clear();
-      delete source;
     }
 
     statement_t& blockStatement::clone_(blockStatement *up_) const {
@@ -413,14 +421,6 @@ namespace occa {
       for (int i = 0; i < count; ++i) {
         pout << *(children[i]);
       }
-    }
-
-    void blockStatement::printWarning(const std::string &message) const {
-      source->printWarning(message);
-    }
-
-    void blockStatement::printError(const std::string &message) const {
-      source->printError(message);
     }
     //====================================
   }

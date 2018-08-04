@@ -46,6 +46,8 @@ namespace occa {
 
       directiveStatement(blockStatement *up_,
                          const directiveToken &token_);
+      directiveStatement(blockStatement *up_,
+                         const directiveStatement &other);
       ~directiveStatement();
 
       virtual statement_t& clone_(blockStatement *up_) const;
@@ -55,9 +57,6 @@ namespace occa {
       const std::string& value() const;
 
       virtual void print(printer &pout) const;
-
-      virtual void printWarning(const std::string &message) const;
-      virtual void printError(const std::string &message) const;
     };
 
     class pragmaStatement : public statement_t {
@@ -66,6 +65,8 @@ namespace occa {
 
       pragmaStatement(blockStatement *up_,
                       const pragmaToken &token_);
+      pragmaStatement(blockStatement *up_,
+                      const pragmaStatement &other);
       ~pragmaStatement();
 
       virtual statement_t& clone_(blockStatement *up_) const;
@@ -75,9 +76,6 @@ namespace occa {
       const std::string& value() const;
 
       virtual void print(printer &pout) const;
-
-      virtual void printWarning(const std::string &message) const;
-      virtual void printError(const std::string &message) const;
     };
     //==================================
 
@@ -89,15 +87,14 @@ namespace occa {
 
       functionStatement(blockStatement *up_,
                         function_t &function_);
+      functionStatement(blockStatement *up_,
+                        const functionStatement&other);
       ~functionStatement();
 
       virtual statement_t& clone_(blockStatement *up_) const;
       virtual int type() const;
 
       virtual void print(printer &pout) const;
-
-      virtual void printWarning(const std::string &message) const;
-      virtual void printError(const std::string &message) const;
     };
 
     class functionDeclStatement : public blockStatement {
@@ -120,21 +117,19 @@ namespace occa {
 
     class classAccessStatement : public statement_t {
     public:
-      token_t *source;
       int access;
 
       classAccessStatement(blockStatement *up_,
                            token_t *source_,
                            const int access_);
+      classAccessStatement(blockStatement *up_,
+                           const classAccessStatement &other);
       ~classAccessStatement();
 
       virtual statement_t& clone_(blockStatement *up_) const;
       virtual int type() const;
 
       virtual void print(printer &pout) const;
-
-      virtual void printWarning(const std::string &message) const;
-      virtual void printError(const std::string &message) const;
     };
     //==================================
 
@@ -155,16 +150,14 @@ namespace occa {
       virtual int type() const;
 
       virtual void print(printer &pout) const;
-
-      virtual void printWarning(const std::string &message) const;
-      virtual void printError(const std::string &message) const;
     };
 
     class declarationStatement : public statement_t {
     public:
       variableDeclarationVector declarations;
 
-      declarationStatement(blockStatement *up_);
+      declarationStatement(blockStatement *up_,
+                           token_t *source_);
       declarationStatement(blockStatement *up_,
                            const declarationStatement &other);
       ~declarationStatement();
@@ -179,9 +172,6 @@ namespace occa {
                           const bool force = false);
 
       virtual void print(printer &pout) const;
-
-      virtual void printWarning(const std::string &message) const;
-      virtual void printError(const std::string &message) const;
     };
     //==================================
 
@@ -203,9 +193,6 @@ namespace occa {
       virtual int type() const;
 
       virtual void print(printer &pout) const;
-
-      virtual void printWarning(const std::string &message) const;
-      virtual void printError(const std::string &message) const;
     };
 
     class gotoLabelStatement : public statement_t {
@@ -225,9 +212,6 @@ namespace occa {
       virtual int type() const;
 
       virtual void print(printer &pout) const;
-
-      virtual void printWarning(const std::string &message) const;
-      virtual void printError(const std::string &message) const;
     };
     //==================================
 
@@ -376,95 +360,80 @@ namespace occa {
     //---[ Case ]-----------------------
     class caseStatement : public statement_t {
     public:
-      token_t *source;
       exprNode *value;
 
       caseStatement(blockStatement *up_,
                     token_t *source_,
                     exprNode &value_);
+      caseStatement(blockStatement *up_,
+                    const caseStatement &other);
       ~caseStatement();
 
       virtual statement_t& clone_(blockStatement *up_) const;
       virtual int type() const;
 
       virtual void print(printer &pout) const;
-
-      virtual void printWarning(const std::string &message) const;
-      virtual void printError(const std::string &message) const;
     };
 
     class defaultStatement : public statement_t {
     public:
-      token_t *source;
-
       defaultStatement(blockStatement *up_,
                        token_t *source_);
+      defaultStatement(blockStatement *up_,
+                       const defaultStatement &other);
       ~defaultStatement();
 
       virtual statement_t& clone_(blockStatement *up_) const;
       virtual int type() const;
 
       virtual void print(printer &pout) const;
-
-      virtual void printWarning(const std::string &message) const;
-      virtual void printError(const std::string &message) const;
     };
     //==================================
 
     //---[ Exit ]-----------------------
     class continueStatement : public statement_t {
     public:
-      token_t *source;
-
       continueStatement(blockStatement *up_,
                         token_t *source_);
+      continueStatement(blockStatement *up_,
+                        const continueStatement &other);
       ~continueStatement();
 
       virtual statement_t& clone_(blockStatement *up_) const;
       virtual int type() const;
 
       virtual void print(printer &pout) const;
-
-      virtual void printWarning(const std::string &message) const;
-      virtual void printError(const std::string &message) const;
     };
 
     class breakStatement : public statement_t {
     public:
-      token_t *source;
-
       breakStatement(blockStatement *up_,
                      token_t *source_);
+      breakStatement(blockStatement *up_,
+                        const breakStatement &other);
       ~breakStatement();
 
       virtual statement_t& clone_(blockStatement *up_) const;
       virtual int type() const;
 
       virtual void print(printer &pout) const;
-
-      virtual void printWarning(const std::string &message) const;
-      virtual void printError(const std::string &message) const;
     };
 
     class returnStatement : public statement_t {
     public:
-      token_t *source;
       exprNode *value;
 
       returnStatement(blockStatement *up_,
                       token_t *source_,
                       exprNode *value_);
       returnStatement(blockStatement *up_,
-                      const returnStatement &other);
+                        const returnStatement &other);
       ~returnStatement();
 
       virtual statement_t& clone_(blockStatement *up_) const;
       virtual int type() const;
 
       virtual void print(printer &pout) const;
-
-      virtual void printWarning(const std::string &message) const;
-      virtual void printError(const std::string &message) const;
     };
     //==================================
   }

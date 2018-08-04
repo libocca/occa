@@ -211,7 +211,7 @@ namespace occa {
         const bool addUpdate = (updateOp.opType & operatorType::addEq);
 
         // Create init
-        innerForSmnt.init = new declarationStatement(&innerForSmnt);
+        innerForSmnt.init = new declarationStatement(&innerForSmnt, initToken);
         variableDeclarationVector &decls = (
           ((declarationStatement*) innerForSmnt.init)
           ->declarations

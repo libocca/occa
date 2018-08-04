@@ -1324,7 +1324,10 @@ namespace occa {
         return NULL;
       }
 
-      declarationStatement &smnt = *(new declarationStatement(up));
+      declarationStatement &smnt = *(
+        new declarationStatement(up,
+                                 baseType.typeToken)
+      );
       addAttributesTo(smntAttributes, &smnt);
       while(success) {
         // TODO: Pass decl as argument to prevent a copy
