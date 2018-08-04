@@ -48,6 +48,10 @@ namespace occa {
       return statementType::directive;
     }
 
+    std::string directiveStatement::statementName() const {
+      return "directive";
+    }
+
     std::string& directiveStatement::value() {
       return token.value;
     }
@@ -78,6 +82,10 @@ namespace occa {
 
     int pragmaStatement::type() const {
       return statementType::pragma;
+    }
+
+    std::string pragmaStatement::statementName() const {
+      return "pragma";
     }
 
     std::string& pragmaStatement::value() {
@@ -118,6 +126,10 @@ namespace occa {
       return statementType::function;
     }
 
+    std::string functionStatement::statementName() const {
+      return "function";
+    }
+
     void functionStatement::print(printer &pout) const {
       // Double newlines to make it look cleaner
       pout << '\n';
@@ -144,6 +156,10 @@ namespace occa {
 
     int functionDeclStatement::type() const {
       return statementType::functionDecl;
+    }
+
+    std::string functionDeclStatement::statementName() const {
+      return "function declaration";
     }
 
     bool functionDeclStatement::updateScope(const bool force) {
@@ -193,6 +209,10 @@ namespace occa {
       return statementType::classAccess;
     }
 
+    std::string classAccessStatement::statementName() const {
+      return "class access";
+    }
+
     void classAccessStatement::print(printer &pout) const {
       pout.removeIndentation();
 
@@ -235,6 +255,10 @@ namespace occa {
 
     int expressionStatement::type() const {
       return statementType::expression;
+    }
+
+    std::string expressionStatement::statementName() const {
+      return "expression";
     }
 
     void expressionStatement::print(printer &pout) const {
@@ -309,6 +333,10 @@ namespace occa {
 
     int declarationStatement::type() const {
       return statementType::declaration;
+    }
+
+    std::string declarationStatement::statementName() const {
+      return "declaration";
     }
 
     bool declarationStatement::addDeclaration(const variableDeclaration &decl,
@@ -393,6 +421,10 @@ namespace occa {
       return statementType::goto_;
     }
 
+    std::string gotoStatement::statementName() const {
+      return "goto";
+    }
+
     void gotoStatement::print(printer &pout) const {
       pout.printIndentation();
       pout << "goto " << label() << ';';
@@ -424,6 +456,10 @@ namespace occa {
 
     int gotoLabelStatement::type() const {
       return statementType::gotoLabel;
+    }
+
+    std::string gotoLabelStatement::statementName() const {
+      return "goto label";
     }
 
     void gotoLabelStatement::print(printer &pout) const {
@@ -459,6 +495,10 @@ namespace occa {
 
     int namespaceStatement::type() const {
       return statementType::namespace_;
+    }
+
+    std::string namespaceStatement::statementName() const {
+      return "namespace";
     }
 
     void namespaceStatement::print(printer &pout) const {
@@ -528,6 +568,10 @@ namespace occa {
       return statementType::if_;
     }
 
+    std::string ifStatement::statementName() const {
+      return "if";
+    }
+
     void ifStatement::print(printer &pout) const {
       pout.printStartIndentation();
       pout << "if (";
@@ -576,6 +620,10 @@ namespace occa {
       return statementType::elif_;
     }
 
+    std::string elifStatement::statementName() const {
+      return "else if";
+    }
+
     void elifStatement::print(printer &pout) const {
       pout.printStartIndentation();
       pout << "else if (";
@@ -601,6 +649,10 @@ namespace occa {
 
     int elseStatement::type() const {
       return statementType::else_;
+    }
+
+    std::string elseStatement::statementName() const {
+      return "else";
     }
 
     void elseStatement::print(printer &pout) const {
@@ -641,6 +693,10 @@ namespace occa {
 
     int whileStatement::type() const {
       return statementType::while_;
+    }
+
+    std::string whileStatement::statementName() const {
+      return isDoWhile ? "do while" : "while";
     }
 
     void whileStatement::print(printer &pout) const {
@@ -717,6 +773,10 @@ namespace occa {
       return statementType::for_;
     }
 
+    std::string forStatement::statementName() const {
+      return "for";
+    }
+
     void forStatement::print(printer &pout) const {
       pout.printStartIndentation();
 
@@ -759,6 +819,10 @@ namespace occa {
       return statementType::switch_;
     }
 
+    std::string switchStatement::statementName() const {
+      return "switch";
+    }
+
     void switchStatement::print(printer &pout) const {
       pout.printStartIndentation();
       pout << "switch (";
@@ -795,6 +859,10 @@ namespace occa {
       return statementType::case_;
     }
 
+    std::string caseStatement::statementName() const {
+      return "case";
+    }
+
     void caseStatement::print(printer &pout) const {
       pout.removeIndentation();
 
@@ -826,6 +894,10 @@ namespace occa {
       return statementType::default_;
     }
 
+    std::string defaultStatement::statementName() const {
+      return "default";
+    }
+
     void defaultStatement::print(printer &pout) const {
       pout.removeIndentation();
 
@@ -855,6 +927,10 @@ namespace occa {
       return statementType::continue_;
     }
 
+    std::string continueStatement::statementName() const {
+      return "continue";
+    }
+
     void continueStatement::print(printer &pout) const {
       pout.printIndentation();
       pout << "continue;\n";
@@ -876,6 +952,10 @@ namespace occa {
 
     int breakStatement::type() const {
       return statementType::break_;
+    }
+
+    std::string breakStatement::statementName() const {
+      return "break";
     }
 
     void breakStatement::print(printer &pout) const {
@@ -904,6 +984,10 @@ namespace occa {
 
     int returnStatement::type() const {
       return statementType::return_;
+    }
+
+    std::string returnStatement::statementName() const {
+      return "return";
     }
 
     void returnStatement::print(printer &pout) const {

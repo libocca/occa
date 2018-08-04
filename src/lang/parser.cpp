@@ -558,7 +558,9 @@ namespace occa {
         if (attr.forStatement(sType)) {
           smnt->addAttribute(attr);
         } else {
-          attr.printError("Cannot apply attribute to this type of statement");
+          attr.printError("Cannot apply attribute to a ["
+                          + smnt->statementName()
+                          + "] statement");
           smnt->printError("Trying to add @" + attr.name() + " to this statement");
           smnt->attributes.clear();
           clearAttributes(attrs);

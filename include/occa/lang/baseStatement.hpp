@@ -116,6 +116,7 @@ namespace occa {
                                 statement_t *smnt);
 
       virtual int type() const = 0;
+      virtual std::string statementName() const = 0;
 
       virtual bool inScope(const std::string &name);
       virtual keyword_t& getScopeKeyword(const std::string &name);
@@ -152,7 +153,9 @@ namespace occa {
       ~emptyStatement();
 
       virtual statement_t& clone_(blockStatement *up_) const;
+
       virtual int type() const;
+      virtual std::string statementName() const;
 
       virtual void print(printer &pout) const;
     };
@@ -173,7 +176,9 @@ namespace occa {
       void copyFrom(const blockStatement &other);
 
       virtual statement_t& clone_(blockStatement *up_) const;
+
       virtual int type() const;
+      virtual std::string statementName() const;
 
       virtual bool inScope(const std::string &name);
       virtual keyword_t& getScopeKeyword(const std::string &name);

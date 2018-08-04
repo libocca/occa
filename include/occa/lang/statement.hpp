@@ -51,7 +51,9 @@ namespace occa {
       ~directiveStatement();
 
       virtual statement_t& clone_(blockStatement *up_) const;
+
       virtual int type() const;
+      virtual std::string statementName() const;
 
       std::string& value();
       const std::string& value() const;
@@ -70,7 +72,9 @@ namespace occa {
       ~pragmaStatement();
 
       virtual statement_t& clone_(blockStatement *up_) const;
+
       virtual int type() const;
+      virtual std::string statementName() const;
 
       std::string& value();
       const std::string& value() const;
@@ -92,7 +96,9 @@ namespace occa {
       ~functionStatement();
 
       virtual statement_t& clone_(blockStatement *up_) const;
+
       virtual int type() const;
+      virtual std::string statementName() const;
 
       virtual void print(printer &pout) const;
     };
@@ -107,7 +113,9 @@ namespace occa {
                             const functionDeclStatement &other);
 
       virtual statement_t& clone_(blockStatement *up_) const;
+
       virtual int type() const;
+      virtual std::string statementName() const;
 
       bool updateScope(const bool force = false);
       void addArgumentsToScope(const bool force = false);
@@ -127,7 +135,9 @@ namespace occa {
       ~classAccessStatement();
 
       virtual statement_t& clone_(blockStatement *up_) const;
+
       virtual int type() const;
+      virtual std::string statementName() const;
 
       virtual void print(printer &pout) const;
     };
@@ -147,7 +157,9 @@ namespace occa {
       ~expressionStatement();
 
       virtual statement_t& clone_(blockStatement *up_) const;
+
       virtual int type() const;
+      virtual std::string statementName() const;
 
       virtual void print(printer &pout) const;
     };
@@ -166,7 +178,9 @@ namespace occa {
       void freeDeclarations();
 
       virtual statement_t& clone_(blockStatement *up_) const;
+
       virtual int type() const;
+      virtual std::string statementName() const;
 
       bool addDeclaration(const variableDeclaration &decl,
                           const bool force = false);
@@ -190,7 +204,9 @@ namespace occa {
       const std::string& label() const;
 
       virtual statement_t& clone_(blockStatement *up_) const;
+
       virtual int type() const;
+      virtual std::string statementName() const;
 
       virtual void print(printer &pout) const;
     };
@@ -209,7 +225,9 @@ namespace occa {
       const std::string& label() const;
 
       virtual statement_t& clone_(blockStatement *up_) const;
+
       virtual int type() const;
+      virtual std::string statementName() const;
 
       virtual void print(printer &pout) const;
     };
@@ -230,7 +248,9 @@ namespace occa {
       const std::string& name() const;
 
       virtual statement_t& clone_(blockStatement *up_) const;
+
       virtual int type() const;
+      virtual std::string statementName() const;
 
       virtual void print(printer &pout) const;
     };
@@ -256,7 +276,9 @@ namespace occa {
       void addElse(elseStatement &elseSmnt_);
 
       virtual statement_t& clone_(blockStatement *up_) const;
+
       virtual int type() const;
+      virtual std::string statementName() const;
 
       virtual void print(printer &pout) const;
     };
@@ -274,7 +296,9 @@ namespace occa {
       void setCondition(statement_t *condition_);
 
       virtual statement_t& clone_(blockStatement *up_) const;
+
       virtual int type() const;
+      virtual std::string statementName() const;
 
       virtual void print(printer &pout) const;
     };
@@ -287,7 +311,9 @@ namespace occa {
                     const elseStatement &other);
 
       virtual statement_t& clone_(blockStatement *up_) const;
+
       virtual int type() const;
+      virtual std::string statementName() const;
 
       virtual void print(printer &pout) const;
     };
@@ -309,7 +335,9 @@ namespace occa {
                              statement_t *update_);
 
       virtual statement_t& clone_(blockStatement *up_) const;
+
       virtual int type() const;
+      virtual std::string statementName() const;
 
       virtual void print(printer &pout) const;
     };
@@ -331,7 +359,9 @@ namespace occa {
       void setCondition(statement_t *condition_);
 
       virtual statement_t& clone_(blockStatement *up_) const;
+
       virtual int type() const;
+      virtual std::string statementName() const;
 
       virtual void print(printer &pout) const;
     };
@@ -351,7 +381,9 @@ namespace occa {
       void setCondition(statement_t *condition_);
 
       virtual statement_t& clone_(blockStatement *up_) const;
+
       virtual int type() const;
+      virtual std::string statementName() const;
 
       virtual void print(printer &pout) const;
     };
@@ -370,7 +402,9 @@ namespace occa {
       ~caseStatement();
 
       virtual statement_t& clone_(blockStatement *up_) const;
+
       virtual int type() const;
+      virtual std::string statementName() const;
 
       virtual void print(printer &pout) const;
     };
@@ -384,7 +418,9 @@ namespace occa {
       ~defaultStatement();
 
       virtual statement_t& clone_(blockStatement *up_) const;
+
       virtual int type() const;
+      virtual std::string statementName() const;
 
       virtual void print(printer &pout) const;
     };
@@ -400,7 +436,9 @@ namespace occa {
       ~continueStatement();
 
       virtual statement_t& clone_(blockStatement *up_) const;
+
       virtual int type() const;
+      virtual std::string statementName() const;
 
       virtual void print(printer &pout) const;
     };
@@ -414,7 +452,9 @@ namespace occa {
       ~breakStatement();
 
       virtual statement_t& clone_(blockStatement *up_) const;
+
       virtual int type() const;
+      virtual std::string statementName() const;
 
       virtual void print(printer &pout) const;
     };
@@ -431,7 +471,9 @@ namespace occa {
       ~returnStatement();
 
       virtual statement_t& clone_(blockStatement *up_) const;
+
       virtual int type() const;
+      virtual std::string statementName() const;
 
       virtual void print(printer &pout) const;
     };

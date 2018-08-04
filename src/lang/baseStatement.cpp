@@ -187,6 +187,10 @@ namespace occa {
       return statementType::empty;
     }
 
+    std::string emptyStatement::statementName() const {
+      return "empty";
+    }
+
     void emptyStatement::print(printer &pout) const {
       if (hasSemicolon) {
         pout.printStartIndentation();
@@ -247,6 +251,10 @@ namespace occa {
 
     int blockStatement::type() const {
       return statementType::block;
+    }
+
+    std::string blockStatement::statementName() const {
+      return "block";
     }
 
     bool blockStatement::inScope(const std::string &name) {
