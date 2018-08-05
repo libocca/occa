@@ -557,17 +557,18 @@ namespace occa {
         attributeToken_t &attr = it->second;
         if (attr.forStatement(sType)) {
           smnt->addAttribute(attr);
-        } else {
-          attr.printError("Cannot apply attribute to a ["
-                          + smnt->statementName()
-                          + "] statement");
-          smnt->printError("Trying to add @" + attr.name() + " to this statement");
-          smnt->attributes.clear();
-          clearAttributes(attrs);
-          success = false;
-          break;
+          ++it;
+          continue;
         }
-        ++it;
+
+        attr.printError("Cannot apply attribute to a ["
+                        + smnt->statementName()
+                        + "] statement");
+        smnt->printError("Trying to add @" + attr.name() + " to this statement");
+        smnt->attributes.clear();
+        clearAttributes(attrs);
+        success = false;
+        break;
       }
       attrs.clear();
     }

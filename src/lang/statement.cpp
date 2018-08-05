@@ -674,7 +674,7 @@ namespace occa {
     whileStatement::whileStatement(blockStatement *up_,
                                    const whileStatement &other) :
       blockStatement(up_, other.source),
-      condition(other.condition),
+      condition(statement_t::clone(up_, other.condition)),
       isDoWhile(other.isDoWhile) {
       copyFrom(other);
     }

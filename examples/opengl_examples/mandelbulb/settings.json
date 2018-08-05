@@ -1,5 +1,5 @@
 {
-  device: "mode: 'Serial'",
+  device: "mode: 'OpenCL', platform_id: 0, device_id: 0",
 
   shapeFunction: "mandelbulb",
 

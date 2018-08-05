@@ -24,6 +24,7 @@
 #define OCCA_VECTOR_HEADER
 
 #include <occa/defines.hpp>
+#include <cmath>
 
 #if OCCA_MMX
 #  include <mmintrin.h>

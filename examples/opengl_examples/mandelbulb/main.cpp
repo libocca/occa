@@ -131,7 +131,7 @@ void glRun() {
 #endif
 
 void readSetupFile() {
-  occa::json settings = occa::json::loads("settings.json");
+  occa::json settings = occa::json::read("settings.json");
 
   deviceInfo = (std::string) settings["device"];
 
@@ -216,7 +216,7 @@ void render() {
 
   const double startTime = occa::sys::currentTime();
 
-  rayMarcher(rgba.arrayArg(),
+  rayMarcher(rgba,
              lightDirection,
              viewDirectionY, viewDirectionX,
              nearFieldLocation, eyeLocation);
