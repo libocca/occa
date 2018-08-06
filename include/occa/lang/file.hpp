@@ -31,7 +31,7 @@
 
 namespace occa {
   namespace lang {
-    class file_t : public withRefs {
+    class file_t : public gc::withRefs {
     public:
       std::string filename;
       std::string expandedFilename;
@@ -73,7 +73,7 @@ namespace occa {
       std::string str() const;
     };
 
-    class fileOrigin : public withRefs,
+    class fileOrigin : public gc::withRefs,
                        public errorHandler {
     public:
       bool fromInclude;

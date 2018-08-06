@@ -24,36 +24,48 @@
 #define OCCA_TOOLS_GC_HEADER
 
 #include <stdint.h>
+#include <cstddef>
 
 namespace occa {
-  class withRefs {
-  private:
-    int refs;
+  namespace gc {
+    class withRefs {
+    private:
+      int refs;
 
-  public:
-    withRefs();
+    public:
+      withRefs();
 
-    int getRefs() const;
-    void addRef();
-    int removeRef();
+      int getRefs() const;
+      void addRef();
+      int removeRef();
 
-    void setRefs(const int refs_);
-    void dontUseRefs();
-  };
+      void setRefs(const int refs_);
+      void dontUseRefs();
+    };
 
-  class withRef : public withRefs {
-  protected:
-    withRefs *ref;
+    class ringEntry {
+    public:
+      ringEntry *leftRingEntry;
+      ringEntry *rightRingEntry;
 
-    withRef();
-    withRef(const withRef &other);
+      ringEntry();
 
-    void newRef();
-    void removeRef();
-    void changeRef(const withRef &other);
+      void remove();
+    };
 
-    virtual void destructor() = 0;
-  };
+    template <class entry_t>
+    class ring {
+    public:
+      entry_t *head;
+
+      ring();
+
+      void add(entry_t *entry);
+      void remove(entry_t *entry);
+    };
+  }
 }
+
+#include "gc.tpp"
 
 #endif

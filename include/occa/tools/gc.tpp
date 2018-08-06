@@ -19,50 +19,41 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  */
-
-#include <occa/tools/gc.hpp>
-#include <iostream>
-
 namespace occa {
   namespace gc {
-    withRefs::withRefs() :
-      refs(0) {}
+    template <class entry_t>
+    ring<entry_t>::ring() :
+      head(NULL) {}
 
-    int withRefs::getRefs() const {
-      return refs;
-    }
-
-    void withRefs::addRef() {
-      if (refs >= 0) {
-        ++refs;
+    template <class entry_t>
+    void ring<entry_t>::add(entry_t *entry) {
+      if (!entry) {
+        return;
       }
-    }
-
-    int withRefs::removeRef() {
-      if (refs > 0) {
-        return --refs;
+      entry->remove();
+      if (!head) {
+        head = entry;
+        return;
       }
-      return refs;
+      entry_t *tail = head->leftRingEntry;
+      entry->leftRingEntry  = tail;
+      tail->rightRingEntry  = entry;
+      head->leftRingEntry   = entry;
+      entry->rightRingEntry = head;
     }
 
-    void withRefs::setRefs(const int refs_) {
-      refs = refs_;
-    }
-
-    void withRefs::dontUseRefs() {
-      refs = -1;
-    }
-
-    ringEntry::ringEntry() :
-      leftRingEntry(this),
-      rightRingEntry(this) {}
-
-    void ringEntry::remove() {
-      if (leftRingEntry != this) {
-        leftRingEntry->rightRingEntry = rightRingEntry;
-        rightRingEntry->leftRingEntry = leftRingEntry;
+    template <class entry_t>
+    void ring<entry_t>::remove(entry_t *entry) {
+      if (!entry || !head) {
+        return;
       }
-      leftRingEntry = rightRingEntry = this;
+      entry_t *tail = head->leftRingEntry;
+      entry->remove();
+      if (head == entry) {
+        head = ((head != tail)
+                ? tail
+                : NULL);
+      }
     }
   }
 }

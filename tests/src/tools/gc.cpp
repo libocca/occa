@@ -20,56 +20,109 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  */
 #include <occa/defines.hpp>
-#include <occa/tools/sys.hpp>
 #include <occa/tools/gc.hpp>
+#include <occa/tools/testing.hpp>
 
-class test : public occa::withRef {
-public:
-  static int count;
-
-  test(const int idx) {}
-
-  test(const test &other) :
-    occa::withRef(other) {}
-
-  test& operator = (const test &other) {
-    changeRef(other);
-    return *this;
-  }
-
-  ~test() {
-    removeRef();
-  }
-
-  virtual void destructor() {
-    --count;
-  }
-};
-
-int test::count = 2;
+void testWithRefs();
+void testRingEntry();
+void testRing();
 
 int main(const int argc, const char **argv) {
-  {
-    test a1(1), a2(a1), a3(a1), a4(a1), a5(a1), a6(a4);
-    test b1(2), b2(b1), b3(b1), b4(b1), b5(b1), b6(b4);
-
-    a1 = b5;
-    a2 = b2;
-    a3 = b2;
-    a4 = b3;
-    a5 = b3;
-
-    b1 = a5;
-    b2 = a4;
-    b3 = a3;
-    b4 = a2;
-    b5 = a1;
-    OCCA_ERROR("Oh oh... some died: " << (2 - test::count),
-               test::count == 2);
-  }
-
-  OCCA_ERROR("Oh oh... left alive: " << test::count,
-             test::count == 0);
+  testWithRefs();
+  testRingEntry();
+  testRing();
 
   return 0;
+}
+
+void testWithRefs() {
+  occa::gc::withRefs refs;
+
+  ASSERT_EQ(refs.getRefs(),
+            0);
+
+  refs.addRef();
+  ASSERT_EQ(refs.getRefs(),
+            1);
+
+  refs.removeRef();
+  refs.removeRef();
+  ASSERT_EQ(refs.getRefs(),
+            0);
+
+  refs.dontUseRefs();
+  ASSERT_EQ(refs.getRefs(),
+            -1);
+
+  refs.addRef();
+  ASSERT_EQ(refs.getRefs(),
+            -1);
+
+  refs.removeRef();
+  ASSERT_EQ(refs.getRefs(),
+            -1);
+
+  refs.setRefs(1);
+  refs.addRef();
+  ASSERT_EQ(refs.getRefs(),
+            2);
+}
+
+void testRingEntry() {
+  occa::gc::ringEntry a, b;
+
+  ASSERT_EQ(a.leftRingEntry,
+            &a);
+  ASSERT_EQ(a.rightRingEntry,
+            &a);
+
+  a.remove();
+  ASSERT_EQ(a.leftRingEntry,
+            &a);
+  ASSERT_EQ(a.rightRingEntry,
+            &a);
+
+  a.leftRingEntry = &b;
+  a.rightRingEntry = &b;
+
+  b.leftRingEntry = &a;
+  b.rightRingEntry = &a;
+
+  b.remove();
+  ASSERT_EQ(a.leftRingEntry,
+            &a);
+  ASSERT_EQ(a.rightRingEntry,
+            &a);
+}
+
+void testRing() {
+  occa::gc::ringEntry a, b, c;
+  occa::gc::ring<occa::gc::ringEntry> values;
+
+  ASSERT_EQ((void*) values.head,
+            (void*) NULL);
+
+  values.add(NULL);
+  ASSERT_EQ((void*) values.head,
+            (void*) NULL);
+
+  values.add(&a);
+  ASSERT_EQ(values.head,
+            &a);
+
+  values.add(&b);
+  ASSERT_EQ(values.head,
+            &a);
+  ASSERT_EQ(values.head->rightRingEntry,
+            &b);
+
+  values.remove(&a);
+  ASSERT_EQ(values.head,
+            &b);
+  ASSERT_EQ(values.head->rightRingEntry,
+            &b);
+
+  values.remove(&b);
+  ASSERT_EQ((void*) values.head,
+            (void*) NULL);
 }

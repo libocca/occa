@@ -47,7 +47,7 @@ namespace occa {
   }
 
   //---[ modeMemory_t ]---------------------
-  class modeMemory_t : public withRefs {
+  class modeMemory_t : public gc::withRefs {
   public:
     int memInfo;
     occa::properties properties;

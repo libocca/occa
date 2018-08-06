@@ -163,7 +163,7 @@ namespace occa {
 
 
   //---[ modeKernel_t ]---------------------
-  class modeKernel_t : public withRefs {
+  class modeKernel_t : public gc::withRefs {
   public:
     occa::modeDevice_t *modeDevice;
 

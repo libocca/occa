@@ -46,7 +46,7 @@ namespace occa {
   typedef cachedKernelMap::const_iterator cCachedKernelMapIterator;
 
   //---[ modeDevice_t ]---------------------
-  class modeDevice_t : public withRefs {
+  class modeDevice_t : public gc::withRefs {
   public:
     std::string mode;
     occa::properties properties;
