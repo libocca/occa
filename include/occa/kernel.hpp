@@ -218,6 +218,7 @@ namespace occa {
     ~kernel();
 
   private:
+    void assertInitialized() const;
     void setModeKernel(modeKernel_t *modeKernel_);
     void removeRef();
 

@@ -321,6 +321,11 @@ namespace occa {
     removeRef();
   }
 
+  void kernel::assertInitialized() const {
+    OCCA_ERROR("Kernel not initialized or has been freed",
+               modeKernel != NULL);
+  }
+
   void kernel::setModeKernel(modeKernel_t *modeKernel_) {
     if (modeKernel != modeKernel_) {
       removeRef();
@@ -427,8 +432,7 @@ namespace occa {
   }
 
   void kernel::addArgument(const int argPos, const kernelArg &arg) {
-    OCCA_ERROR("Kernel not initialized",
-               modeKernel != NULL);
+    assertInitialized();
 
     if (modeKernel->argumentCount() <= argPos) {
       OCCA_ERROR("Kernels can only have at most [" << OCCA_MAX_ARGS << "] arguments,"
@@ -442,8 +446,7 @@ namespace occa {
   }
 
   void kernel::run() const {
-    OCCA_ERROR("Kernel not initialized",
-               modeKernel != NULL);
+    assertInitialized();
 
     const int argc = (int) modeKernel->arguments.size();
     for (int i = 0; i < argc; ++i) {

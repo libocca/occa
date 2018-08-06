@@ -133,6 +133,7 @@ namespace occa {
     ~memory();
 
   private:
+    void assertInitialized() const;
     void setModeMemory(modeMemory_t *modeMemory_);
     void setModeDevice(modeDevice_t *modeDevice);
     void removeRef();

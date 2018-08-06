@@ -126,6 +126,11 @@ namespace occa {
     removeRef();
   }
 
+  void device::assertInitialized() const {
+    OCCA_ERROR("Device not initialized or has been freed",
+               modeDevice != NULL);
+  }
+
   void device::setModeDevice(modeDevice_t *modeDevice_) {
     if (modeDevice != modeDevice_) {
       removeRef();
@@ -215,38 +220,32 @@ namespace occa {
   }
 
   occa::properties& device::properties() {
-    OCCA_ERROR("Device not initialized",
-               modeDevice != NULL);
+    assertInitialized();
     return modeDevice->properties;
   }
 
   const occa::properties& device::properties() const {
-    OCCA_ERROR("Device not initialized",
-               modeDevice != NULL);
+    assertInitialized();
     return modeDevice->properties;
   }
 
   occa::properties& device::kernelProperties() {
-    OCCA_ERROR("Device not initialized",
-               modeDevice != NULL);
+    assertInitialized();
     return (occa::properties&) modeDevice->properties["kernel"];
   }
 
   const occa::properties& device::kernelProperties() const {
-    OCCA_ERROR("Device not initialized",
-               modeDevice != NULL);
+    assertInitialized();
     return (const occa::properties&) modeDevice->properties["kernel"];
   }
 
   occa::properties& device::memoryProperties() {
-    OCCA_ERROR("Device not initialized",
-               modeDevice != NULL);
+    assertInitialized();
     return (occa::properties&) modeDevice->properties["memory"];
   }
 
   const occa::properties& device::memoryProperties() const {
-    OCCA_ERROR("Device not initialized",
-               modeDevice != NULL);
+    assertInitialized();
     return (const occa::properties&) modeDevice->properties["memory"];
   }
 
@@ -300,8 +299,7 @@ namespace occa {
 
   //  |---[ Stream ]--------------------
   stream device::createStream() {
-    OCCA_ERROR("Device not initialized",
-               modeDevice != NULL);
+    assertInitialized();
 
     stream newStream(modeDevice, modeDevice->createStream());
     modeDevice->streams.push_back(newStream.modeStream);
@@ -310,8 +308,7 @@ namespace occa {
   }
 
   void device::freeStream(stream s) {
-    OCCA_ERROR("Device not initialized",
-               modeDevice != NULL);
+    assertInitialized();
 
     const int streamCount = modeDevice->streams.size();
 
@@ -329,32 +326,27 @@ namespace occa {
   }
 
   stream device::getStream() {
-    OCCA_ERROR("Device not initialized",
-               modeDevice != NULL);
+    assertInitialized();
     return stream(modeDevice, modeDevice->currentStream);
   }
 
   void device::setStream(stream s) {
-    OCCA_ERROR("Device not initialized",
-               modeDevice != NULL);
+    assertInitialized();
     modeDevice->currentStream = s.modeStream;
   }
 
   streamTag device::tagStream() {
-    OCCA_ERROR("Device not initialized",
-               modeDevice != NULL);
+    assertInitialized();
     return modeDevice->tagStream();
   }
 
   void device::waitFor(streamTag tag) {
-    OCCA_ERROR("Device not initialized",
-               modeDevice != NULL);
+    assertInitialized();
     modeDevice->waitFor(tag);
   }
 
   double device::timeBetween(const streamTag &startTag, const streamTag &endTag) {
-    OCCA_ERROR("Device not initialized",
-               modeDevice != NULL);
+    assertInitialized();
     return modeDevice->timeBetween(startTag, endTag);
   }
   //  |=================================
@@ -363,8 +355,7 @@ namespace occa {
   kernel device::buildKernel(const std::string &filename,
                              const std::string &kernelName,
                              const occa::properties &props) const {
-    OCCA_ERROR("Device not initialized",
-               modeDevice != NULL);
+    assertInitialized();
 
     occa::properties allProps = props + kernelProperties();
     allProps["mode"] = mode();
@@ -400,8 +391,7 @@ namespace occa {
   kernel device::buildKernelFromString(const std::string &content,
                                        const std::string &kernelName,
                                        const occa::properties &props) const {
-    OCCA_ERROR("Device not initialized",
-               modeDevice != NULL);
+    assertInitialized();
 
     occa::properties allProps = props + kernelProperties();
     allProps["mode"] = mode();
@@ -430,8 +420,7 @@ namespace occa {
   kernel device::buildKernelFromBinary(const std::string &filename,
                                        const std::string &kernelName,
                                        const occa::properties &props) const {
-    OCCA_ERROR("Device not initialized",
-               modeDevice != NULL);
+    assertInitialized();
 
     return kernel(modeDevice->buildKernelFromBinary(filename,
                                                     kernelName,
@@ -441,8 +430,7 @@ namespace occa {
   void device::loadKernels(const std::string &library) {
     // TODO 1.1: Load kernels
 #if 0
-    OCCA_ERROR("Device not initialized",
-               modeDevice != NULL);
+    assertInitialized();
 
     std::string devHash = hash().toFullString();
     strVector dirs = io::directories("occa://" + library);
@@ -501,8 +489,7 @@ namespace occa {
   memory device::malloc(const dim_t bytes,
                         const void *src,
                         const occa::properties &props) {
-    OCCA_ERROR("Device not initialized",
-               modeDevice != NULL);
+    assertInitialized();
 
     if (bytes == 0) {
       return memory();
@@ -525,8 +512,7 @@ namespace occa {
   memory device::malloc(const dim_t bytes,
                         const occa::memory src,
                         const occa::properties &props) {
-    OCCA_ERROR("Device not initialized",
-               modeDevice != NULL);
+    assertInitialized();
 
     memory mem = malloc(bytes, NULL, props);
     if (bytes && src.size()) {
@@ -544,8 +530,7 @@ namespace occa {
   void* device::umalloc(const dim_t bytes,
                         const void *src,
                         const occa::properties &props) {
-    OCCA_ERROR("Device not initialized",
-               modeDevice != NULL);
+    assertInitialized();
 
     void *ptr = umalloc(bytes, occa::memory(), props);
     if (src) {
@@ -557,8 +542,7 @@ namespace occa {
   void* device::umalloc(const dim_t bytes,
                         const occa::memory src,
                         const occa::properties &props) {
-    OCCA_ERROR("Device not initialized",
-               modeDevice != NULL);
+    assertInitialized();
 
     if (bytes == 0) {
       return NULL;

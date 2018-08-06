@@ -91,6 +91,11 @@ namespace occa {
     removeRef();
   }
 
+  void memory::assertInitialized() const {
+    OCCA_ERROR("Memory not initialized or has been freed",
+               modeMemory != NULL);
+  }
+
   void memory::setModeMemory(modeMemory_t *modeMemory_) {
     if (modeMemory != modeMemory_) {
       removeRef();
@@ -229,8 +234,7 @@ namespace occa {
 
   void memory::syncToDevice(const dim_t bytes,
                             const dim_t offset) {
-    OCCA_ERROR("Memory not initialized",
-               modeMemory != NULL);
+    assertInitialized();
 
     udim_t bytes_ = ((bytes == -1) ? modeMemory->size : bytes);
 
@@ -261,8 +265,7 @@ namespace occa {
 
   void memory::syncToHost(const dim_t bytes,
                           const dim_t offset) {
-    OCCA_ERROR("Memory not initialized",
-               modeMemory != NULL);
+    assertInitialized();
 
     udim_t bytes_ = ((bytes == -1) ? modeMemory->size : bytes);
 
@@ -326,8 +329,7 @@ namespace occa {
 
   occa::memory memory::slice(const dim_t offset,
                              const dim_t bytes) const {
-    OCCA_ERROR("Memory not initialized",
-               modeMemory != NULL);
+    assertInitialized();
 
     udim_t bytes_ = ((bytes == -1)
                      ? (modeMemory->size - offset)
@@ -357,8 +359,7 @@ namespace occa {
                         const dim_t bytes,
                         const dim_t offset,
                         const occa::properties &props) {
-    OCCA_ERROR("Memory not initialized",
-               modeMemory != NULL);
+    assertInitialized();
 
     udim_t bytes_ = ((bytes == -1) ? modeMemory->size : bytes);
 
@@ -380,8 +381,7 @@ namespace occa {
                         const dim_t destOffset,
                         const dim_t srcOffset,
                         const occa::properties &props) {
-    OCCA_ERROR("Memory not initialized",
-               modeMemory && src.modeMemory);
+    assertInitialized();
 
     udim_t bytes_ = ((bytes == -1) ? modeMemory->size : bytes);
 
@@ -409,8 +409,7 @@ namespace occa {
                       const dim_t bytes,
                       const dim_t offset,
                       const occa::properties &props) const {
-    OCCA_ERROR("Memory not initialized",
-               modeMemory != NULL);
+    assertInitialized();
 
     udim_t bytes_ = ((bytes == -1) ? modeMemory->size : bytes);
 
@@ -432,8 +431,7 @@ namespace occa {
                       const dim_t destOffset,
                       const dim_t srcOffset,
                       const occa::properties &props) const {
-    OCCA_ERROR("Memory not initialized",
-               modeMemory && dest.modeMemory);
+    assertInitialized();
 
     udim_t bytes_ = ((bytes == -1) ? modeMemory->size : bytes);
 

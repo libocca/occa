@@ -143,6 +143,7 @@ namespace occa {
     ~device();
 
   private:
+    void assertInitialized() const;
     void setModeDevice(modeDevice_t *modeDevice_);
     void removeRef();
 
