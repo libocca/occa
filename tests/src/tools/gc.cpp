@@ -101,14 +101,17 @@ void testRing() {
 
   ASSERT_EQ((void*) values.head,
             (void*) NULL);
+  ASSERT_TRUE(values.isEmpty());
 
   values.add(NULL);
   ASSERT_EQ((void*) values.head,
             (void*) NULL);
+  ASSERT_TRUE(values.isEmpty());
 
   values.add(&a);
   ASSERT_EQ(values.head,
             &a);
+  ASSERT_FALSE(values.isEmpty());
 
   values.add(&b);
   ASSERT_EQ(values.head,
@@ -125,4 +128,5 @@ void testRing() {
   values.remove(&b);
   ASSERT_EQ((void*) values.head,
             (void*) NULL);
+  ASSERT_TRUE(values.isEmpty());
 }

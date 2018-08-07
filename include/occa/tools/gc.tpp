@@ -55,5 +55,10 @@ namespace occa {
                 : NULL);
       }
     }
+
+    template <class entry_t>
+    bool ring<entry_t>::isEmpty() const {
+      return (head == NULL);
+    }
   }
 }

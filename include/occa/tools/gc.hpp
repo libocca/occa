@@ -62,6 +62,8 @@ namespace occa {
 
       void add(entry_t *entry);
       void remove(entry_t *entry);
+
+      bool isEmpty() const;
     };
   }
 }
