@@ -117,7 +117,7 @@ ifndef CXXFLAGS
     compilerFlags = $(debugFlags)
   else
     OCCA_DEBUG_ENABLED := 0
-    compilerFlags = $(releaseFlags) -DNDEBUG=1
+    compilerFlags = $(releaseFlags)
   endif
 else
   OCCA_DEBUG_ENABLED := 0
@@ -132,7 +132,7 @@ ifndef CFLAGS
     cCompilerFlags = $(debugFlags)
   else
     OCCA_DEBUG_ENABLED := 0
-    cCompilerFlags = $(releaseFlags) -DNDEBUG=1
+    cCompilerFlags = $(releaseFlags)
   endif
 else
   OCCA_DEBUG_ENABLED := 0
