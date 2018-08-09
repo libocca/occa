@@ -365,21 +365,22 @@ namespace occa {
                          ^ occa::hash(allProps)
                          ^ hashFile(filename));
 
-    // Check cache first
-    kernel &cachedKernel = modeDevice->getCachedKernel(kernelHash,
-                                                       kernelName);
-    if (cachedKernel.isInitialized()) {
-      return cachedKernel;
-    }
+    // TODO: [#185] Fix kernel cache frees
+    // // Check cache first
+    // kernel &cachedKernel = modeDevice->getCachedKernel(kernelHash,
+    //                                                    kernelName);
+    // if (cachedKernel.isInitialized()) {
+    //   return cachedKernel;
+    // }
 
     const std::string realFilename = io::filename(filename);
     const std::string hashDir = io::hashDir(realFilename, kernelHash);
     allProps["hash"] = kernelHash.toFullString();
 
-    cachedKernel = modeDevice->buildKernel(realFilename,
-                                           kernelName,
-                                           kernelHash,
-                                           allProps);
+    kernel cachedKernel = modeDevice->buildKernel(realFilename,
+                                                  kernelName,
+                                                  kernelHash,
+                                                  allProps);
 
     if (!cachedKernel.isInitialized()) {
       sys::rmrf(hashDir);
