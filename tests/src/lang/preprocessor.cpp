@@ -32,6 +32,7 @@ void testMacroDefines();
 void testCppStandardTests();
 void testIfElse();
 void testIfElseDefines();
+void testIfWithUndefines();
 void testErrorDefines();
 void testSpecialMacros();
 void testInclude();
@@ -96,6 +97,7 @@ int main(const int argc, const char **argv) {
   testCppStandardTests();
   testIfElse();
   testIfElseDefines();
+  testIfWithUndefines();
   testErrorDefines();
   testSpecialMacros();
   testInclude();
@@ -483,6 +485,18 @@ void testIfElseDefines () {
   while (!tokenStream.isEmpty()) {
     getToken();
   }
+}
+
+void testIfWithUndefines() {
+  setStream(
+    "#if foo == 0\n"
+    "  1\n"
+    "#else\n"
+    "  0\n"
+    "#endif"
+  );
+  ASSERT_EQ(1,
+            (int) nextTokenPrimitiveValue());
 }
 
 void testErrorDefines() {

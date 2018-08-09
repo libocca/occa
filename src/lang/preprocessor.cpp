@@ -605,6 +605,16 @@ namespace occa {
       getExpandedLineTokens(lineTokens);
       removeNewline(lineTokens);
 
+      const int tokenCount = (int) lineTokens.size();
+      for (int i = 0; i < tokenCount; ++i) {
+        token_t *token = lineTokens[i];
+        if (!(token->type() & tokenType::identifier)) {
+          continue;
+        }
+        lineTokens[i] = new primitiveToken(token->origin, 0, "0");
+        delete token;
+      }
+
       exprNode *expr = getExpression(lineTokens);
 
       // Errors when expr is NULL are handled
