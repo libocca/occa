@@ -209,7 +209,6 @@ namespace occa {
       mem.ptr = (char*) ptr;
       mem.size = bytes;
       mem.mappedPtr = NULL;
-      mem.isManaged = props.get("hip/managed", false);
 
       return occa::memory(&mem);
     }
