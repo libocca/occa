@@ -46,6 +46,10 @@ namespace occa {
 
   modeMemory_t::~modeMemory_t() {}
 
+  void* modeMemory_t::getPtr(const occa::properties &props) {
+    return ptr;
+  }
+
   bool modeMemory_t::isManaged() const {
     return (memInfo & uvaFlag::isManaged);
   }
@@ -136,11 +140,27 @@ namespace occa {
   }
 
   void* memory::ptr() {
-    return (modeMemory ? modeMemory->ptr : NULL);
+    return (modeMemory
+            ? modeMemory->ptr
+            : NULL);
   }
 
   const void* memory::ptr() const {
-    return (modeMemory ? modeMemory->ptr : NULL);
+    return (modeMemory
+            ? modeMemory->ptr
+            : NULL);
+  }
+
+  void* memory::ptr(const occa::properties &props) {
+    return (modeMemory
+            ? modeMemory->getPtr(props)
+            : NULL);
+  }
+
+  const void* memory::ptr(const occa::properties &props) const {
+    return (modeMemory
+            ? modeMemory->getPtr(props)
+            : NULL);
   }
 
   modeMemory_t* memory::getModeMemory() const {

@@ -123,8 +123,6 @@ namespace occa {
 
     cl_kernel getCLKernel(occa::kernel kernel);
 
-    void* getMappedPtr(occa::memory memory);
-
     occa::device wrapDevice(cl_device_id clDevice,
                             cl_context context,
                             const occa::properties &props = occa::properties());

@@ -33,8 +33,7 @@ namespace occa {
     memory::memory(const occa::properties &properties_) :
       occa::modeMemory_t(properties_),
       hipPtr((hipDeviceptr_t&) ptr),
-      mappedPtr(NULL),
-      isManaged(false) {}
+      mappedPtr(NULL) {}
 
     memory::~memory() {}
 
@@ -57,7 +56,6 @@ namespace occa {
       if (mappedPtr) {
         m->mappedPtr = mappedPtr + offset;
       }
-      m->isManaged = isManaged;
       m->canBeFreed = false;
       return m;
     }
@@ -103,6 +101,13 @@ namespace occa {
                                           bytes,
                                           stream) );
       }
+    }
+
+    void* memory::getPtr(const occa::properties &props) {
+      if (props.get("mapped", false)) {
+        return mappedPtr;
+      }
+      return ptr;
     }
 
     void memory::copyTo(void *dest,

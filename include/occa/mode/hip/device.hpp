@@ -111,10 +111,6 @@ namespace occa {
                                         const void *src,
                                         const occa::properties &props);
 
-      modeMemory_t* managedAlloc(const udim_t bytes,
-                                 const void *src,
-                                 const occa::properties &props);
-
       virtual udim_t memorySize() const;
       //================================
     };

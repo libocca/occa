@@ -34,7 +34,7 @@ namespace occa {
       occa::modeMemory_t(properties_),
       cuPtr((CUdeviceptr&) ptr),
       mappedPtr(NULL),
-      isManaged(false) {}
+      isUnified(false) {}
 
     memory::~memory() {}
 
@@ -57,7 +57,7 @@ namespace occa {
       if (mappedPtr) {
         m->mappedPtr = mappedPtr + offset;
       }
-      m->isManaged = isManaged;
+      m->isUnified = isUnified;
       m->canBeFreed = false;
       return m;
     }
@@ -103,6 +103,13 @@ namespace occa {
                                           bytes,
                                           stream) );
       }
+    }
+
+    void* memory::getPtr(const occa::properties &props) {
+      if (props.get("mapped", false)) {
+        return mappedPtr;
+      }
+      return ptr;
     }
 
     void memory::copyTo(void *dest,

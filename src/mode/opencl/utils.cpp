@@ -447,13 +447,6 @@ namespace occa {
       return ((opencl::kernel*) kernel.getModeKernel())->clKernel;
     }
 
-    void* getMappedPtr(occa::memory memory) {
-      opencl::memory *openclMemory = (opencl::memory*) memory.getModeMemory();
-      return (openclMemory
-              ? openclMemory->mappedPtr
-              : NULL);
-    }
-
     occa::device wrapDevice(cl_device_id clDevice,
                             cl_context context,
                             const occa::properties &props) {

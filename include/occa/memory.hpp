@@ -40,10 +40,10 @@ namespace occa {
   typedef hashedMemoryMap::const_iterator cHashedMemoryMapIterator;
 
   namespace uvaFlag {
-    static const int none         = 0;
-    static const int isManaged    = (1 << 0);
-    static const int inDevice     = (1 << 1);
-    static const int isStale      = (1 << 2);
+    static const int none      = 0;
+    static const int isManaged = (1 << 0);
+    static const int inDevice  = (1 << 1);
+    static const int isStale   = (1 << 2);
   }
 
   //---[ modeMemory_t ]---------------------
@@ -74,6 +74,8 @@ namespace occa {
     virtual kernelArg makeKernelArg() const = 0;
 
     virtual modeMemory_t* addOffset(const dim_t offset) = 0;
+
+    virtual void* getPtr(const occa::properties &props);
 
     virtual void copyTo(void *dest,
                         const udim_t bytes,
@@ -147,6 +149,9 @@ namespace occa {
 
     void* ptr();
     const void* ptr() const;
+
+    void* ptr(const occa::properties &props);
+    const void* ptr(const occa::properties &props) const;
 
     modeMemory_t* getModeMemory() const;
     modeDevice_t* getModeDevice() const;

@@ -555,10 +555,11 @@ namespace occa {
                                  const void *src,
                                  const occa::properties &props) {
 
-      if (props.get("cuda/mapped", false)) {
+      if (props.get("mapped", false)) {
         return mappedAlloc(bytes, src, props);
-      } else if (props.get("cuda/managed", false)) {
-        return managedAlloc(bytes, src, props);
+      }
+      if (props.get("unified", false)) {
+        return unifiedAlloc(bytes, src, props);
       }
 
       cuda::memory &mem = *(new cuda::memory(props));
@@ -600,21 +601,21 @@ namespace occa {
       return &mem;
     }
 
-    modeMemory_t* device::managedAlloc(const udim_t bytes,
+    modeMemory_t* device::unifiedAlloc(const udim_t bytes,
                                        const void *src,
                                        const occa::properties &props) {
       cuda::memory &mem = *(new cuda::memory(props));
 #if CUDA_VERSION >= 8000
       mem.modeDevice = this;
       mem.size = bytes;
-      mem.isManaged = true;
+      mem.isUnified = true;
 
       const unsigned int flags = (props.get("cuda/attachedHost", false) ?
                                   CU_MEM_ATTACH_HOST : CU_MEM_ATTACH_GLOBAL);
 
       OCCA_CUDA_ERROR("Device: Setting Context",
                       cuCtxSetCurrent(cuContext));
-      OCCA_CUDA_ERROR("Device: managed alloc",
+      OCCA_CUDA_ERROR("Device: Unified alloc",
                       cuMemAllocManaged(&(mem.cuPtr),
                                         bytes,
                                         flags));

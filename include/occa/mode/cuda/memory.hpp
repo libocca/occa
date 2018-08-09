@@ -47,7 +47,7 @@ namespace occa {
     public:
       CUdeviceptr &cuPtr;
       char *mappedPtr;
-      bool isManaged;
+      bool isUnified;
 
       memory(const occa::properties &properties_ = occa::properties());
       ~memory();
@@ -55,6 +55,8 @@ namespace occa {
       kernelArg makeKernelArg() const;
 
       modeMemory_t* addOffset(const dim_t offset);
+
+      void* getPtr(const occa::properties &props);
 
       void copyTo(void *dest,
                   const udim_t bytes,

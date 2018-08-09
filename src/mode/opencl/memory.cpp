@@ -102,6 +102,13 @@ namespace occa {
                                             0, NULL, NULL));
     }
 
+    void* memory::getPtr(const occa::properties &props) {
+      if (props.get("mapped", false)) {
+        return mappedPtr;
+      }
+      return ptr;
+    }
+
     void memory::copyTo(void *dest,
                         const udim_t bytes,
                         const udim_t offset,

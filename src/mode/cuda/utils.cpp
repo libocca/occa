@@ -223,13 +223,6 @@ namespace occa {
       return ((cuda::device*) device.getModeDevice())->cuContext;
     }
 
-    void* getMappedPtr(occa::memory mem) {
-      cuda::memory *cudaMemory = (cuda::memory*) mem.getModeMemory();
-      return (cudaMemory
-              ? cudaMemory->mappedPtr
-              : NULL);
-    }
-
     occa::device wrapDevice(CUdevice device,
                             CUcontext context,
                             const occa::properties &props) {

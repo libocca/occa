@@ -513,10 +513,8 @@ namespace occa {
                                  const void *src,
                                  const occa::properties &props) {
 
-      if (props.get("hip/mapped", false)) {
+      if (props.get("mapped", false)) {
         return mappedAlloc(bytes, src, props);
-      } else if (props.get("hip/managed", false)) {
-        return managedAlloc(bytes, src, props);
       }
 
       hip::memory &mem = *(new hip::memory(props));
@@ -555,18 +553,6 @@ namespace occa {
       if (src != NULL) {
         ::memcpy(mem.mappedPtr, src, bytes);
       }
-      return &mem;
-    }
-
-    modeMemory_t* device::managedAlloc(const udim_t bytes,
-                                       const void *src,
-                                       const occa::properties &props) {
-      hip::memory &mem = *(new hip::memory(props));
-
-      OCCA_FORCE_ERROR("HIP version ["
-                       << hip::getVersion()
-                       << "] does not support unified memory allocation");
-
       return &mem;
     }
 

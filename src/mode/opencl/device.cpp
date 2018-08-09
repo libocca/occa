@@ -481,7 +481,7 @@ namespace occa {
                                  const void *src,
                                  const occa::properties &props) {
 
-      if (props.get("opencl/mapped", false)) {
+      if (props.get("mapped", false)) {
         return mappedAlloc(bytes, src, props);
       }
 

@@ -44,7 +44,6 @@ namespace occa {
     public:
       hipDeviceptr_t hipPtr;
       char *mappedPtr;
-      bool isManaged;
 
       memory(const occa::properties &properties_ = occa::properties());
       ~memory();
@@ -52,6 +51,8 @@ namespace occa {
       kernelArg makeKernelArg() const;
 
       modeMemory_t* addOffset(const dim_t offset);
+
+      void* getPtr(const occa::properties &props);
 
       void copyTo(void *dest,
                   const udim_t bytes,
