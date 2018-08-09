@@ -459,6 +459,8 @@ namespace occa {
         return value_.object == j.value_.object;
       case array_:
         return value_.array == j.value_.array;
+      default:
+        return false;
       }
     }
 
