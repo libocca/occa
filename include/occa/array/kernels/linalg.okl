@@ -37,16 +37,18 @@
 #  define VTYPE_Y float
 #endif
 
-#define CPU_CHUNK ((entries + CPU_DOT_OUTER - 1) / CPU_DOT_OUTER)
-#define CPU_REDUCTION_BODY(INIT, OPERATION, RED_OPERATION)  \
-  for (int oi = 0; oi < CPU_DOT_OUTER; ++oi; @outer) {      \
-    RETTYPE r_red = INIT(oi);                               \
-    for (int i = 0; i < CPU_CHUNK; ++i; @inner) {           \
-      if ((oi * CPU_CHUNK + i) < entries) {                 \
-        OPERATION(r_red, oi * CPU_CHUNK + i);               \
-      }                                                     \
-    }                                                       \
-    vecReduction[oi] = r_red;                               \
+#define CPU_BLOCK ((entries + CPU_DOT_OUTER - 1) / CPU_DOT_OUTER)
+#define CPU_REDUCTION_BODY(INIT, OPERATION, RED_OPERATION)            \
+  for (int oi = 0; oi < CPU_DOT_OUTER; ++oi; @outer) {                \
+    RETTYPE r_red = INIT(oi);                                         \
+    const int r_blockSize = CPU_BLOCK;                                \
+    const int r_start = (oi * r_blockSize);                           \
+    for (int i = r_start; i < (r_start + r_blockSize); ++i; @inner) { \
+      if (i < entries) {                                              \
+        OPERATION(r_red, i);                                          \
+      }                                                               \
+    }                                                                 \
+    vecReduction[oi] = r_red;                                         \
   }
 
 #define GPU_DOT_BLOCK (GPU_DOT_OUTER * GPU_DOT_INNER)

@@ -390,7 +390,7 @@ namespace occa {
                offset >= 0);
 
     OCCA_ERROR("Destination memory has size [" << modeMemory->size << "],"
-               << "trying to access [" << offset << ", " << (offset + bytes_) << "]",
+               << " trying to access [" << offset << ", " << (offset + bytes_) << "]",
                (bytes_ + offset) <= modeMemory->size);
 
     modeMemory->copyFrom(src, bytes_, offset, props);
@@ -415,11 +415,11 @@ namespace occa {
                srcOffset >= 0);
 
     OCCA_ERROR("Source memory has size [" << src.modeMemory->size << "],"
-               << "trying to access [" << srcOffset << ", " << (srcOffset + bytes_) << "]",
+               << " trying to access [" << srcOffset << ", " << (srcOffset + bytes_) << "]",
                (bytes_ + srcOffset) <= src.modeMemory->size);
 
     OCCA_ERROR("Destination memory has size [" << modeMemory->size << "],"
-               << "trying to access [" << destOffset << ", " << (destOffset + bytes_) << "]",
+               << " trying to access [" << destOffset << ", " << (destOffset + bytes_) << "]",
                (bytes_ + destOffset) <= modeMemory->size);
 
     modeMemory->copyFrom(src.modeMemory, bytes_, destOffset, srcOffset, props);
@@ -440,7 +440,7 @@ namespace occa {
                offset >= 0);
 
     OCCA_ERROR("Source memory has size [" << modeMemory->size << "],"
-               << "trying to access [" << offset << ", " << (offset + bytes_) << "]",
+               << " trying to access [" << offset << ", " << (offset + bytes_) << "]",
                (bytes_ + offset) <= modeMemory->size);
 
     modeMemory->copyTo(dest, bytes_, offset, props);
@@ -465,11 +465,11 @@ namespace occa {
                srcOffset >= 0);
 
     OCCA_ERROR("Source memory has size [" << modeMemory->size << "],"
-               << "trying to access [" << srcOffset << ", " << (srcOffset + bytes_) << "]",
+               << " trying to access [" << srcOffset << ", " << (srcOffset + bytes_) << "]",
                (bytes_ + srcOffset) <= modeMemory->size);
 
     OCCA_ERROR("Destination memory has size [" << dest.modeMemory->size << "],"
-               << "trying to access [" << destOffset << ", " << (destOffset + bytes_) << "]",
+               << " trying to access [" << destOffset << ", " << (destOffset + bytes_) << "]",
                (bytes_ + destOffset) <= dest.modeMemory->size);
 
     dest.modeMemory->copyFrom(modeMemory, bytes_, destOffset, srcOffset, props);
