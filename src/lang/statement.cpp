@@ -719,6 +719,8 @@ namespace occa {
         condition->print(pout);
         pout.popInlined();
         pout << ");";
+      } else {
+        pout.popInlined();
       }
       pout.printEndNewline();
     }
