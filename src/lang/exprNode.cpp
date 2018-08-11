@@ -275,7 +275,7 @@ namespace occa {
     void charNode::setChildren(exprNodeRefVector &children) {}
 
     void charNode::print(printer &pout) const {
-      pout << "'" << escape(value, '\'') << '"';
+      pout << '\'' << escape(value, '\'') << '\'';
     }
 
     void charNode::debugPrint(const std::string &prefix) const {
@@ -743,9 +743,18 @@ namespace occa {
     }
 
     void binaryOpNode::print(printer &pout) const {
-      pout << *leftValue
-           << ' ' << op
-           << ' ' << *rightValue;
+      if (op.opType & (operatorType::scope |
+                       operatorType::dot |
+                       operatorType::dotStar |
+                       operatorType::arrow |
+                       operatorType::arrowStar)) {
+        pout << *leftValue << op << *rightValue;
+      }
+      else if (op.opType & operatorType::comma) {
+        pout << *leftValue << ", " << *rightValue;
+      } else {
+        pout << *leftValue << ' ' << op << ' ' << *rightValue;
+      }
     }
 
     void binaryOpNode::debugPrint(const std::string &prefix) const {
