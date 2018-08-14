@@ -84,7 +84,7 @@ usingMacOS   = 0
 usingWinux   = 0
 usingWindows = 0
 
-UNAME = $(shell uname)
+UNAME := $(shell uname)
 
 ifeq ($(UNAME),Linux)
   usingLinux   = 1
@@ -143,6 +143,7 @@ ifeq ($(OCCA_COVERAGE),1)
   coverageFlags = --coverage -fno-inline -fno-inline-small-functions -fno-default-inline -Wno-ignored-optimization-argument
   compilerFlags += $(coverageFlags)
   cCompilerFlags += $(coverageFlags)
+  # FIXME: linkerFlags is overwritten below
   linkerFlags += --coverage
 endif
 
