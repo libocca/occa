@@ -100,18 +100,20 @@ namespace occa {
           continue;
         }
         for (int ai = 0; ai < argCount; ++ai) {
-          size_t Nbytes;
-          if (rem+iArgs[ai].size<=sizeof(void*)) {
-            Nbytes = iArgs[ai].size;
+          size_t bytes;
+          if (rem+iArgs[ai].size <= sizeof(void*)) {
+            bytes = iArgs[ai].size;
             rem = sizeof(void*) - rem - iArgs[ai].size;
           } else {
-            Nbytes = sizeof(void*);
-            argc+=rem;
+            bytes = sizeof(void*);
+            argc += rem;
             rem = 0;
           }
 
-          memcpy((char*) vArgs.data() + argc,&(iArgs[ai].data.int64_), Nbytes);
-          argc += Nbytes;
+          memcpy((char*) vArgs.data() + argc,
+                 &(iArgs[ai].data.int64_),
+                 bytes);
+          argc += bytes;
         }
       } 
 
