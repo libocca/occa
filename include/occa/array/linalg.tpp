@@ -200,7 +200,9 @@ namespace occa {
     template <class TM>
     occa::memory deviceReductionBuffer(occa::device device,
                                        const int size) {
-      return device.malloc(size * sizeof(TM));
+      const dim_t bytes = size * sizeof(TM);
+      occa::memory mem(device.getReductionBuffer(bytes));
+      return mem.slice(0, bytes);
     }
 
     template <class VTYPE, class RETTYPE>

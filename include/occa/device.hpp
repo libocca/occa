@@ -61,6 +61,8 @@ namespace occa {
 
     cachedKernelMap cachedKernels;
 
+    occa::modeMemory_t *reductionBuffer;
+
     modeDevice_t(const occa::properties &properties_);
 
     //---[ Virtual Methods ]------------
@@ -146,6 +148,7 @@ namespace occa {
     void assertInitialized() const;
     void setModeDevice(modeDevice_t *modeDevice_);
     void removeRef();
+    void setReductionBuffer();
 
   public:
     void dontUseRefs();
@@ -176,6 +179,7 @@ namespace occa {
 
     udim_t memorySize() const;
     udim_t memoryAllocated() const;
+    occa::modeMemory_t *getReductionBuffer(const dim_t bytes);
 
     void finish();
 

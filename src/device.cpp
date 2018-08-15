@@ -35,9 +35,13 @@ namespace occa {
 
     currentStream = NULL;
     bytesAllocated = 0;
+
+    reductionBuffer = NULL; // init & modified by occa::device methods
   }
 
-  modeDevice_t::~modeDevice_t() {}
+  modeDevice_t::~modeDevice_t() {
+    delete reductionBuffer;
+  }
 
   hash_t modeDevice_t::versionedHash() const {
     return (occa::hash(settings()["version"])
@@ -136,6 +140,9 @@ namespace occa {
       removeRef();
       modeDevice = modeDevice_;
       modeDevice->addRef();
+      if (!modeDevice->reductionBuffer) {
+        setReductionBuffer();
+      }
     }
   }
 
@@ -143,6 +150,13 @@ namespace occa {
     if (modeDevice && !modeDevice->removeRef()) {
       free();
     }
+  }
+
+  void device::setReductionBuffer() {
+    const dim_t bytes = 1024 * sizeof(double);
+    occa::memory buf(malloc(bytes));
+    buf.dontUseRefs();
+    modeDevice->reductionBuffer = buf.getModeMemory();
   }
 
   void device::dontUseRefs() {
@@ -268,6 +282,16 @@ namespace occa {
       return modeDevice->bytesAllocated;
     }
     return 0;
+  }
+
+  occa::modeMemory_t *device::getReductionBuffer(const dim_t bytes) {
+    if (modeDevice->reductionBuffer->size < bytes) {
+      delete modeDevice->reductionBuffer;
+      occa::memory buf(malloc(bytes));
+      buf.dontUseRefs();
+      modeDevice->reductionBuffer = buf.getModeMemory();
+    }
+    return modeDevice->reductionBuffer;
   }
 
   void device::finish() {
