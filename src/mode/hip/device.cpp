@@ -56,7 +56,7 @@ namespace occa {
                        hipCtxCreate(&hipContext, 0, hipDevice));
 
         OCCA_HIP_ERROR("Getting device properties",
-                      hipGetDeviceProperties(&props, deviceID));
+                       hipGetDeviceProperties(&props, deviceID));
       }
 
       p2pEnabled = false;
@@ -86,8 +86,8 @@ namespace occa {
 
       archMajorVersion = properties.get("hip/arch/major", archMajorVersion);
       archMinorVersion = properties.get("hip/arch/minor", archMinorVersion);
-      properties["kernel/target"] = toString(props.gcnArch);
 
+      properties["kernel/target"]  = toString(props.gcnArch);
       properties["kernel/verbose"] = properties.get("verbose", false);
     }
 
