@@ -52,7 +52,7 @@ namespace occa {
 
           section
             .add("Device ID"  ,  toString(i))
-            .add("Arch"       , "gfx"+toString(props.gcnArch))
+            .add("Arch"       , "gfx" + toString(props.gcnArch))
             .add("Device Name",  deviceName)
             .add("Memory"     ,  bytesStr)
             .addDivider();
