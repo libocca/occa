@@ -5,12 +5,39 @@ coverage:
 
   status:
     project:
-      default:
-        threshold: 0.1%
+      default: false
+      api:
+        flags: api
+      parser:
+        flags: parser
     patch:
-      default:
-        threshold: 50%
-    changes: false
+      default: false
+      api:
+        flags: api
+      parser:
+        flags: parser
+
+flags:
+  api:
+    paths:
+      - include/
+      - src/
+    ignore:
+      - examples/
+  parser:
+    paths:
+      - parser_sandbox/include
+      - parser_sandbox/src
+    ignore:
+      - parser_sandbox/tests
+
+comment:
+  layout: 'reach, diff, files'
+  behavior: default
+  require_changes: false
+  require_base: no
+  require_head: yes
+  branches: null
 
 ignore:
   - examples
@@ -32,11 +59,3 @@ ignore:
   - src/mode/opencl
   - src/mode/cuda
   - src/mode/hip
-
-comment:
-  layout: 'reach, diff, files'
-  behavior: default
-  require_changes: false
-  require_base: no
-  require_head: yes
-  branches: null
