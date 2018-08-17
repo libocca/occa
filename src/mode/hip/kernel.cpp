@@ -92,6 +92,8 @@ namespace occa {
       const int kArgCount = (int) arguments.size();
 
       int argc = 0;
+      // HIP expects kernel arguments to be byte-aligned so we add padding to arguments
+      int padding = 0;
       for (int i = 0; i < kArgCount; ++i) {
         const kArgVector &iArgs = arguments[i].args;
         const int argCount = (int) iArgs.size();
@@ -99,20 +101,36 @@ namespace occa {
           continue;
         }
         for (int ai = 0; ai < argCount; ++ai) {
-          memcpy(vArgs.data() + argc++,&(iArgs[ai].data.int64_), sizeof(void*));
+          size_t bytes;
+          if ((padding + iArgs[ai].size) <= sizeof(void*)) {
+            bytes = iArgs[ai].size;
+            padding = sizeof(void*) - padding - iArgs[ai].size;
+          } else {
+            bytes = sizeof(void*);
+            argc += padding;
+            padding = 0;
+          }
+
+          memcpy((char*) vArgs.data() + argc,
+                 &(iArgs[ai].data.int64_),
+                 bytes);
+          argc += bytes;
         }
       }
 
-      size_t size = vArgs.size()*sizeof(vArgs[0]);
-      void* config[] = {HIP_LAUNCH_PARAM_BUFFER_POINTER, &(vArgs[0]), HIP_LAUNCH_PARAM_BUFFER_SIZE, &size,
-                        HIP_LAUNCH_PARAM_END};
+      size_t size = vArgs.size() * sizeof(vArgs[0]);
+      void* config[] = {
+        HIP_LAUNCH_PARAM_BUFFER_POINTER, &(vArgs[0]),
+        HIP_LAUNCH_PARAM_BUFFER_SIZE, &size,
+        HIP_LAUNCH_PARAM_END
+      };
 
       OCCA_HIP_ERROR("Launching Kernel",
                      hipModuleLaunchKernel(hipFunction,
                                            outerDims.x, outerDims.y, outerDims.z,
                                            innerDims.x, innerDims.y, innerDims.z,
                                            0, *((hipStream_t*) modeDevice->currentStream),
-                                           NULL, (void**)&config));
+                                           NULL, (void**) &config));
     }
 
     void kernel::launcherRun() const {

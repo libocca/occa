@@ -25,6 +25,14 @@ rmSlash = $(patsubst %/,%,$1)
 OCCA_DIR := $(call rmSlash,$(dir $(abspath $(lastword $(MAKEFILE_LIST)))))
 PROJ_DIR := $(OCCA_DIR)
 
+# Clear the list of suffixes
+.SUFFIXES:
+.SUFFIXES: .hpp .h .tpp .cpp .o .so
+# Cancel some implicit rules
+%:   %.o
+%.o: %.cpp
+%:   %.cpp
+
 include $(OCCA_DIR)/scripts/Makefile
 
 #---[ Working Paths ]-----------------------------
@@ -41,6 +49,17 @@ paths += -I$(srcPath)
 paths := $(filter-out -L$(OCCA_DIR)/lib,$(paths))
 linkerFlags := $(filter-out -locca,$(linkerFlags))
 #=================================================
+
+
+#---[ Flags ]-------------------------------------
+# Expand and overwrite flag variables to avoid
+# multiple expansions which are slow.
+compilerFlags := $(compilerFlags)
+flags := $(flags)
+sharedFlag := $(sharedFlag)
+pthreadFlag := $(pthreadFlag)
+#=================================================
+
 
 #---[ variables ]---------------------------------
 srcToObject  = $(subst $(PROJ_DIR)/src,$(PROJ_DIR)/obj,$(1:.cpp=.o))
@@ -148,4 +167,48 @@ clean:
 	rm -rf $(testPath)/bin/*;
 	rm  -f $(libPath)/libocca.so
 	rm  -f $(OCCA_DIR)/scripts/main
+#=================================================
+
+
+#---[ Info ]--------------------------------------
+info:
+	$(info --------------------------------)
+	$(info CXX            = $(or $(CXX),(empty)))
+	$(info CXXFLAGS       = $(or $(CXXFLAGS),(empty)))
+	$(info LDFLAGS        = $(or $(LDFLAGS),(empty)))
+	$(info --------------------------------)
+	$(info compiler       = $(value compiler))
+	$(info compilerFlags  = $(compilerFlags))
+	$(info flags          = $(flags))
+	$(info paths          = $(paths))
+	$(info sharedFlag     = $(sharedFlag))
+	$(info pthreadFlag    = $(pthreadFlag))
+	$(info linkerFlags    = $(linkerFlags))
+	$(info --------------------------------)
+#	$(info OCCA_DEVELOPER = $(OCCA_DEVELOPER))
+	$(info debugEnabled   = $(debugEnabled))
+	$(info checkEnabled   = $(checkEnabled))
+	$(info debugFlags     = $(debugFlags))
+	$(info releaseFlags   = $(releaseFlags))
+	$(info picFlag        = $(picFlag))
+	$(info --------------------------------)
+	$(info mpiEnabled     = $(mpiEnabled))
+	$(info openmpEnabled  = $(openmpEnabled))
+	$(info openclEnabled  = $(openclEnabled))
+	$(info cudaEnabled    = $(cudaEnabled))
+	$(info hipEnabled     = $(hipEnabled))
+	$(info --------------------------------)
+	@true
+#=================================================
+
+
+#---[ Print ]-------------------------------------
+# Print the contents of a makefile variable, e.g.: 'make print-compiler'.
+print-%:
+	$(info [ variable name]: $*)
+	$(info [        origin]: $(origin $*))
+	$(info [         value]: $(value $*))
+	$(info [expanded value]: $($*))
+	$(info )
+	@true
 #=================================================
