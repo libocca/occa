@@ -47,7 +47,9 @@ namespace occa {
       hipDeviceptr_t hipPtr;
       char *mappedPtr;
 
-      memory(const occa::properties &properties_ = occa::properties());
+      memory(modeDevice_t *modeDevice_,
+             udim_t size_,
+             const occa::properties &properties_ = occa::properties());
       ~memory();
 
       kernelArg makeKernelArg() const;

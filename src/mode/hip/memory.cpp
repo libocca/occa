@@ -30,8 +30,10 @@
 
 namespace occa {
   namespace hip {
-    memory::memory(const occa::properties &properties_) :
-      occa::modeMemory_t(properties_),
+    memory::memory(modeDevice_t *modeDevice_,
+                   udim_t size_,
+                   const occa::properties &properties_) :
+      occa::modeMemory_t(modeDevice_, size_, properties_),
       hipPtr((hipDeviceptr_t&) ptr),
       mappedPtr(NULL) {}
 
@@ -51,7 +53,9 @@ namespace occa {
     }
 
     modeMemory_t* memory::addOffset(const dim_t offset) {
-      memory *m = new memory(properties);
+      memory *m = new memory(modeDevice,
+                             size - offset,
+                             properties);
       m->hipPtr = (char*) hipPtr + offset;
       if (mappedPtr) {
         m->mappedPtr = mappedPtr + offset;

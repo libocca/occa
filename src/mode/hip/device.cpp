@@ -535,9 +535,7 @@ namespace occa {
         return mappedAlloc(bytes, src, props);
       }
 
-      hip::memory &mem = *(new hip::memory(props));
-      mem.modeDevice = this;
-      mem.size = bytes;
+      hip::memory &mem = *(new hip::memory(this, bytes, props));
 
       OCCA_HIP_ERROR("Device: Setting Context",
                      hipCtxSetCurrent(hipContext));
@@ -555,9 +553,7 @@ namespace occa {
                                       const void *src,
                                       const occa::properties &props) {
 
-      hip::memory &mem = *(new hip::memory(props));
-      mem.modeDevice = this;
-      mem.size = bytes;
+      hip::memory &mem = *(new hip::memory(this, bytes, props));
 
       OCCA_HIP_ERROR("Device: Setting Context",
                      hipCtxSetCurrent(hipContext));

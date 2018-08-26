@@ -30,7 +30,9 @@ namespace occa {
   namespace serial {
     class memory : public occa::modeMemory_t {
     public:
-      memory(const occa::properties &properties_ = occa::properties());
+      memory(modeDevice_t *modeDevice_,
+             udim_t size_,
+             const occa::properties &properties_ = occa::properties());
       ~memory();
 
       kernelArg makeKernelArg() const;

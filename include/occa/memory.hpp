@@ -62,7 +62,9 @@ namespace occa {
     udim_t size;
     bool canBeFreed;
 
-    modeMemory_t(const occa::properties &properties_);
+    modeMemory_t(modeDevice_t *modeDevice_,
+                 udim_t size_,
+                 const occa::properties &properties_);
 
     void dontUseRefs();
     void addMemoryRef(memory *mem);
@@ -145,7 +147,6 @@ namespace occa {
   private:
     void assertInitialized() const;
     void setModeMemory(modeMemory_t *modeMemory_);
-    void setModeDevice(modeDevice_t *modeDevice);
     void removeMemoryRef();
 
   public:
@@ -252,7 +253,10 @@ namespace occa {
                              const occa::memory &memory);
 
   namespace cpu {
-    occa::memory wrapMemory(void *ptr, const udim_t bytes);
+    occa::memory wrapMemory(occa::device dev,
+                            void *ptr,
+                            const udim_t bytes,
+                            const occa::properties &props = occa::properties());
   }
 }
 

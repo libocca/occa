@@ -163,7 +163,7 @@ namespace occa {
 
 
   //---[ modeKernel_t ]---------------------
-  class modeKernel_t {
+  class modeKernel_t : public gc::ringEntry_t {
   public:
     occa::modeDevice_t *modeDevice;
 

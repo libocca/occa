@@ -31,17 +31,17 @@
 
 namespace occa {
   //---[ modeMemory_t ]---------------------
-  modeMemory_t::modeMemory_t(const occa::properties &properties_) {
-    memInfo = uvaFlag::none;
-    properties = properties_;
-
-    ptr    = NULL;
-    uvaPtr = NULL;
-
-    modeDevice = NULL;
-
-    size = 0;
-    canBeFreed = true;
+  modeMemory_t::modeMemory_t(modeDevice_t *modeDevice_,
+                             udim_t size_,
+                             const occa::properties &properties_) :
+    memInfo(uvaFlag::none),
+    properties(properties_),
+    ptr(NULL),
+    uvaPtr(NULL),
+    modeDevice(modeDevice_),
+    size(size_),
+    canBeFreed(true) {
+    modeDevice->addMemoryRef(this);
   }
 
   modeMemory_t::~modeMemory_t() {
@@ -57,6 +57,8 @@ namespace occa {
       ptr_->removeRef();
       ptr_ = nextPtr;
     } while (ptr_ != head);
+
+    modeDevice->removeMemoryRef(this);
   }
 
   void* modeMemory_t::getPtr(const occa::properties &props) {
@@ -139,24 +141,19 @@ namespace occa {
     }
   }
 
-  void memory::setModeDevice(modeDevice_t *modeDevice) {
-    modeMemory->modeDevice = modeDevice;
-    // TODO: Add to device ring
-  }
-
   void memory::removeMemoryRef() {
     if (!modeMemory) {
       return;
     }
     modeMemory->removeMemoryRef(this);
-    if (modeMemory->needsFree()) {
+    if (modeMemory->modeMemory_t::needsFree()) {
       free();
     }
   }
 
   void memory::dontUseRefs() {
     if (modeMemory) {
-      modeMemory->dontUseRefs();
+      modeMemory->modeMemory_t::dontUseRefs();
     }
   }
 
@@ -575,8 +572,6 @@ namespace occa {
       }
     }
 
-    // Free the handle
-    modeDevice->removeRef();
     // ~modeMemory_t NULLs all wrappers
     delete modeMemory;
   }
@@ -588,12 +583,15 @@ namespace occa {
   }
 
   namespace cpu {
-    occa::memory wrapMemory(void *ptr, const udim_t bytes) {
-      serial::memory &mem = *(new serial::memory);
-      mem.dontUseRefs();
+    occa::memory wrapMemory(occa::device device,
+                            void *ptr,
+                            const udim_t bytes,
+                            const occa::properties &props) {
+      serial::memory &mem = *(new serial::memory(device.getModeDevice(),
+                                                 bytes,
+                                                 props));
 
-      mem.modeDevice = host().getModeDevice();
-      mem.size = bytes;
+      mem.dontUseRefs();
       mem.ptr = (char*) ptr;
 
       return occa::memory(&mem);

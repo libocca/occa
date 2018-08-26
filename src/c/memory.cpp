@@ -178,9 +178,21 @@ void OCCA_RFUNC occaMemoryDetach(occaMemory memory) {
   occa::c::memory(memory).detach();
 }
 
-occaMemory OCCA_RFUNC occaWrapCpuMemory(void *ptr,
-                                        occaUDim_t bytes) {
-  occa::memory mem = occa::cpu::wrapMemory(ptr, bytes);
+occaMemory OCCA_RFUNC occaWrapCpuMemory(occaDevice device,
+                                        void *ptr,
+                                        occaUDim_t bytes,
+                                        occaProperties props) {
+  occa::memory mem;
+  if (occa::c::isDefault(props)) {
+    mem = occa::cpu::wrapMemory(occa::c::device(device),
+                                ptr,
+                                bytes);
+  } else {
+    mem = occa::cpu::wrapMemory(occa::c::device(device),
+                                ptr,
+                                bytes,
+                                occa::c::properties(props));
+  }
   mem.dontUseRefs();
   return occa::c::newOccaType(mem);
 }

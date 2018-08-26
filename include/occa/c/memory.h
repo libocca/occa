@@ -90,8 +90,10 @@ OCCA_LFUNC occaMemory OCCA_RFUNC occaMemoryClone(occaMemory memory);
 
 OCCA_LFUNC void OCCA_RFUNC occaMemoryDetach(occaMemory memory);
 
-OCCA_LFUNC occaMemory OCCA_RFUNC occaWrapCpuMemory(void *ptr,
-                                                   occaUDim_t bytes);
+OCCA_LFUNC occaMemory OCCA_RFUNC occaWrapCpuMemory(occaDevice device,
+                                                   void *ptr,
+                                                   occaUDim_t bytes,
+                                                   occaProperties props);
 
 OCCA_END_EXTERN_C
 

@@ -279,10 +279,11 @@ namespace occa {
     name(name_),
     sourceFilename(sourceFilename_),
     properties(properties_) {
-    modeDevice->addRef();
+    modeDevice->addKernelRef(this);
   }
 
   modeKernel_t::~modeKernel_t() {
+    // NULL all wrappers
     kernel *head = (kernel*) kernelRing.head;
     if (!head) {
       return;
@@ -295,6 +296,8 @@ namespace occa {
       ptr->removeRef();
       ptr = nextPtr;
     } while (ptr != head);
+
+    modeDevice->removeKernelRef(this);
   }
 
   void modeKernel_t::dontUseRefs() {
@@ -370,14 +373,14 @@ namespace occa {
       return;
     }
     modeKernel->removeKernelRef(this);
-    if (modeKernel->needsFree()) {
+    if (modeKernel->modeKernel_t::needsFree()) {
       free();
     }
   }
 
   void kernel::dontUseRefs() {
     if (modeKernel) {
-      modeKernel->dontUseRefs();
+      modeKernel->modeKernel_t::dontUseRefs();
     }
   }
 
@@ -501,10 +504,6 @@ namespace occa {
     if (modeKernel == NULL) {
       return;
     }
-    modeDevice_t *modeDevice = modeKernel->modeDevice;
-    // Remove kernel from cache map
-    modeDevice->removeCachedKernel(modeKernel);
-    modeDevice->removeRef();
 
     modeKernel->free();
     // ~modeKernel_t NULLs all wrappers

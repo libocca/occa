@@ -248,12 +248,12 @@ namespace occa {
                             const udim_t bytes,
                             const occa::properties &props) {
 
-      cuda::memory &mem = *(new cuda::memory(props));
+      cuda::memory &mem = *(new cuda::memory(device.getModeDevice(),
+                                             bytes,
+                                             props));
       mem.dontUseRefs();
 
-      mem.modeDevice = device.getModeDevice();
       mem.ptr = (char*) ptr;
-      mem.size = bytes;
       mem.mappedPtr = NULL;
       mem.isUnified = props.get("unified", false);
 

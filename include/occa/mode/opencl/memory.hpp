@@ -50,7 +50,9 @@ namespace occa {
       void *mappedPtr;
 
     public:
-      memory(const occa::properties &properties_ = occa::properties());
+      memory(modeDevice_t *modeDevice_,
+             udim_t size_,
+             const occa::properties &properties_ = occa::properties());
       ~memory();
 
       kernelArg makeKernelArg() const;

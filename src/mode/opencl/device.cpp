@@ -487,9 +487,7 @@ namespace occa {
 
       cl_int error;
 
-      opencl::memory *mem = new opencl::memory(props);
-      mem->modeDevice = this;
-      mem->size = bytes;
+      opencl::memory *mem = new opencl::memory(this, bytes, props);
 
       if (src == NULL) {
         mem->clMem = clCreateBuffer(clContext,
@@ -515,9 +513,7 @@ namespace occa {
       cl_int error;
 
       cl_command_queue &stream = *((cl_command_queue*) currentStream);
-      opencl::memory *mem = new opencl::memory(props);
-      mem->modeDevice = this;
-      mem->size = bytes;
+      opencl::memory *mem = new opencl::memory(this, bytes, props);
 
       // Alloc pinned host buffer
       mem->clMem = clCreateBuffer(clContext,

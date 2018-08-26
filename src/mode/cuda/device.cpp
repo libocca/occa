@@ -562,9 +562,7 @@ namespace occa {
         return unifiedAlloc(bytes, src, props);
       }
 
-      cuda::memory &mem = *(new cuda::memory(props));
-      mem.modeDevice = this;
-      mem.size = bytes;
+      cuda::memory &mem = *(new cuda::memory(this, bytes, props));
 
       OCCA_CUDA_ERROR("Device: Setting Context",
                       cuCtxSetCurrent(cuContext));
@@ -582,9 +580,7 @@ namespace occa {
                                       const void *src,
                                       const occa::properties &props) {
 
-      cuda::memory &mem = *(new cuda::memory(props));
-      mem.modeDevice = this;
-      mem.size = bytes;
+      cuda::memory &mem = *(new cuda::memory(this, bytes, props));
 
       OCCA_CUDA_ERROR("Device: Setting Context",
                       cuCtxSetCurrent(cuContext));
@@ -604,10 +600,8 @@ namespace occa {
     modeMemory_t* device::unifiedAlloc(const udim_t bytes,
                                        const void *src,
                                        const occa::properties &props) {
-      cuda::memory &mem = *(new cuda::memory(props));
+      cuda::memory &mem = *(new cuda::memory(this, bytes, props));
 #if CUDA_VERSION >= 8000
-      mem.modeDevice = this;
-      mem.size = bytes;
       mem.isUnified = true;
 
       const unsigned int flags = (props.get("cuda/attachedHost", false) ?

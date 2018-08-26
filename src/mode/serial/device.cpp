@@ -317,12 +317,9 @@ namespace occa {
     modeMemory_t* device::malloc(const udim_t bytes,
                                  const void *src,
                                  const occa::properties &props) {
-      memory *mem = new memory(props);
+      memory *mem = new memory(this, bytes, props);
 
-      mem->modeDevice = this;
-      mem->size = bytes;
       mem->ptr = (char*) sys::malloc(bytes);
-
       if (src) {
         ::memcpy(mem->ptr, src, bytes);
       }

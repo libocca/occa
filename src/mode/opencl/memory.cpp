@@ -31,8 +31,10 @@
 
 namespace occa {
   namespace opencl {
-    memory::memory(const occa::properties &properties_) :
-      occa::modeMemory_t(properties_),
+    memory::memory(modeDevice_t *modeDevice_,
+                   udim_t size_,
+                   const occa::properties &properties_) :
+      occa::modeMemory_t(modeDevice_, size_, properties_),
       mappedPtr(NULL) {}
 
     memory::~memory() {}
@@ -51,10 +53,9 @@ namespace occa {
     }
 
     modeMemory_t* memory::addOffset(const dim_t offset) {
-      opencl::device &dev = *((opencl::device*) modeDevice);
-      opencl::memory *m = new opencl::memory();
-      m->modeDevice = &dev;
-      m->size    = size - offset;
+      opencl::memory *m = new opencl::memory(modeDevice,
+                                             size - offset,
+                                             properties);
 
       cl_buffer_region info;
       info.origin = offset;

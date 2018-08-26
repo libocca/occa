@@ -26,8 +26,10 @@
 
 namespace occa {
   namespace serial {
-    memory::memory(const occa::properties &properties_) :
-      occa::modeMemory_t(properties_) {}
+    memory::memory(modeDevice_t *modeDevice_,
+                   udim_t size_,
+                   const occa::properties &properties_) :
+      occa::modeMemory_t(modeDevice_, size_, properties_) {}
 
     memory::~memory() {}
 
@@ -45,7 +47,9 @@ namespace occa {
     }
 
     modeMemory_t* memory::addOffset(const dim_t offset) {
-      memory *m = new memory(properties);
+      memory *m = new memory(modeDevice,
+                             size - offset,
+                             properties);
       m->ptr = ptr + offset;
       m->canBeFreed = false;
       return m;

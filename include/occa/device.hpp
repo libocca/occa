@@ -46,10 +46,14 @@ namespace occa {
   typedef cachedKernelMap::const_iterator cCachedKernelMapIterator;
 
   //---[ modeDevice_t ]---------------------
-  class modeDevice_t : public gc::withRefs {
+  class modeDevice_t {
   public:
     std::string mode;
     occa::properties properties;
+
+    gc::ring_t<device> deviceRing;
+    gc::ring_t<modeKernel_t> kernelRing;
+    gc::ring_t<modeMemory_t> memoryRing;
 
     ptrRangeMap uvaMap;
     memoryVector uvaStaleMemory;
@@ -62,6 +66,17 @@ namespace occa {
     cachedKernelMap cachedKernels;
 
     modeDevice_t(const occa::properties &properties_);
+
+    void dontUseRefs();
+    void addDeviceRef(device *dev);
+    void removeDeviceRef(device *dev);
+    bool needsFree() const;
+
+    void addKernelRef(modeKernel_t *ker);
+    void removeKernelRef(modeKernel_t *ker);
+
+    void addMemoryRef(modeMemory_t *mem);
+    void removeMemoryRef(modeMemory_t *mem);
 
     //---[ Virtual Methods ]------------
     virtual ~modeDevice_t() = 0;
@@ -126,7 +141,8 @@ namespace occa {
   //====================================
 
   //---[ device ]-----------------------
-  class device {
+  class device : public gc::ringEntry_t {
+    friend class modeDevice_t;
     friend class kernel;
     friend class memory;
 
@@ -145,7 +161,7 @@ namespace occa {
   private:
     void assertInitialized() const;
     void setModeDevice(modeDevice_t *modeDevice_);
-    void removeRef();
+    void removeDeviceRef();
 
   public:
     void dontUseRefs();

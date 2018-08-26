@@ -37,7 +37,48 @@ namespace occa {
     bytesAllocated = 0;
   }
 
-  modeDevice_t::~modeDevice_t() {}
+  modeDevice_t::~modeDevice_t() {
+    device *head = (device*) deviceRing.head;
+    if (!head) {
+      return;
+    }
+    // NULL all wrappers
+    device *ptr = head;
+    do {
+      device *nextPtr = (device*) ptr->rightRingEntry;
+      ptr->modeDevice = NULL;
+      ptr->removeRef();
+      ptr = nextPtr;
+    } while (ptr != head);
+  }
+
+  void modeDevice_t::dontUseRefs() {
+    deviceRing.dontUseRefs();
+  }
+
+  void modeDevice_t::addDeviceRef(device *dev) {
+    deviceRing.addRef(dev);
+  }
+
+  void modeDevice_t::removeDeviceRef(device *dev) {
+    deviceRing.removeRef(dev);
+  }
+
+  bool modeDevice_t::needsFree() const {
+    return deviceRing.needsFree();
+  }
+
+  void modeDevice_t::addKernelRef(modeKernel_t *ker) {
+  }
+
+  void modeDevice_t::removeKernelRef(modeKernel_t *ker) {
+  }
+
+  void modeDevice_t::addMemoryRef(modeMemory_t *mem) {
+  }
+
+  void modeDevice_t::removeMemoryRef(modeMemory_t *mem) {
+  }
 
   hash_t modeDevice_t::versionedHash() const {
     return (occa::hash(settings()["version"])
@@ -123,7 +164,7 @@ namespace occa {
   }
 
   device::~device() {
-    removeRef();
+    removeDeviceRef();
   }
 
   void device::assertInitialized() const {
@@ -133,21 +174,27 @@ namespace occa {
 
   void device::setModeDevice(modeDevice_t *modeDevice_) {
     if (modeDevice != modeDevice_) {
-      removeRef();
+      removeDeviceRef();
       modeDevice = modeDevice_;
-      modeDevice->addRef();
+      if (modeDevice) {
+        modeDevice->addDeviceRef(this);
+      }
     }
   }
 
-  void device::removeRef() {
-    if (modeDevice && !modeDevice->removeRef()) {
+  void device::removeDeviceRef() {
+    if (!modeDevice) {
+      return;
+    }
+    modeDevice->removeDeviceRef(this);
+    if (modeDevice->modeDevice_t::needsFree()) {
       free();
     }
   }
 
   void device::dontUseRefs() {
     if (modeDevice) {
-      modeDevice->dontUseRefs();
+      modeDevice->modeDevice_t::dontUseRefs();
     }
   }
 
@@ -208,8 +255,8 @@ namespace occa {
     modeDevice->streams.clear();
     modeDevice->free();
 
+    // ~modeDevice_t NULLs all wrappers
     delete modeDevice;
-    modeDevice = NULL;
   }
 
   const std::string& device::mode() const {
@@ -501,9 +548,7 @@ namespace occa {
                bytes >= 0);
 
     occa::properties memProps = props + memoryProperties();
-
     memory mem(modeDevice->malloc(bytes, src, memProps));
-    mem.setModeDevice(modeDevice);
 
     modeDevice->bytesAllocated += bytes;
 

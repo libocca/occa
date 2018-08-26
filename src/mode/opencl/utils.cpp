@@ -476,12 +476,12 @@ namespace occa {
                             const udim_t bytes,
                             const occa::properties &props) {
 
-      opencl::memory &mem = *(new opencl::memory(props));
+      opencl::memory &mem = *(new opencl::memory(device.getModeDevice(),
+                                                 bytes,
+                                                 props));
       mem.dontUseRefs();
 
-      mem.modeDevice = device.getModeDevice();
       mem.clMem = clMem;
-      mem.size = bytes;
 
       return occa::memory(&mem);
     }
