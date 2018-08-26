@@ -43,27 +43,31 @@ namespace occa {
       void dontUseRefs();
     };
 
-    class ringEntry {
+    class ringEntry_t {
     public:
-      ringEntry *leftRingEntry;
-      ringEntry *rightRingEntry;
+      ringEntry_t *leftRingEntry;
+      ringEntry_t *rightRingEntry;
 
-      ringEntry();
+      ringEntry_t();
 
-      void remove();
+      void removeRef();
+      void dontUseRefs();
     };
 
     template <class entry_t>
-    class ring {
+    class ring_t {
     public:
-      entry_t *head;
+      bool useRefs;
+      ringEntry_t *head;
 
-      ring();
+      ring_t();
 
-      void add(entry_t *entry);
-      void remove(entry_t *entry);
+      void dontUseRefs();
 
-      bool isEmpty() const;
+      void addRef(entry_t *entry);
+      void removeRef(entry_t *entry);
+
+      bool needsFree() const;
     };
   }
 }

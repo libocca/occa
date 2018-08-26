@@ -53,11 +53,11 @@ namespace occa {
       refs = -1;
     }
 
-    ringEntry::ringEntry() :
+    ringEntry_t::ringEntry_t() :
       leftRingEntry(this),
       rightRingEntry(this) {}
 
-    void ringEntry::remove() {
+    void ringEntry_t::removeRef() {
       if (leftRingEntry != this) {
         leftRingEntry->rightRingEntry = rightRingEntry;
         rightRingEntry->leftRingEntry = leftRingEntry;

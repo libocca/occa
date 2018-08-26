@@ -47,10 +47,12 @@ namespace occa {
   }
 
   //---[ modeMemory_t ]---------------------
-  class modeMemory_t : public gc::withRefs {
+  class modeMemory_t {
   public:
     int memInfo;
     occa::properties properties;
+
+    gc::ring_t<memory> memoryRing;
 
     char *ptr;
     char *uvaPtr;
@@ -61,6 +63,11 @@ namespace occa {
     bool canBeFreed;
 
     modeMemory_t(const occa::properties &properties_);
+
+    void dontUseRefs();
+    void addMemoryRef(memory *mem);
+    void removeMemoryRef(memory *mem);
+    bool needsFree() const;
 
     bool isManaged() const;
     bool inDevice() const;
@@ -118,7 +125,7 @@ namespace occa {
   //====================================
 
   //---[ memory ]-----------------------
-  class memory {
+  class memory : public gc::ringEntry_t {
     friend class occa::device;
     friend class occa::kernelArg;
 
@@ -138,7 +145,7 @@ namespace occa {
     void assertInitialized() const;
     void setModeMemory(modeMemory_t *modeMemory_);
     void setModeDevice(modeDevice_t *modeDevice);
-    void removeRef();
+    void removeMemoryRef();
 
   public:
     void dontUseRefs();
