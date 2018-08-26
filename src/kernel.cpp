@@ -46,19 +46,19 @@ namespace occa {
   modeKernel_t::~modeKernel_t() {
     // NULL all wrappers
     kernel *head = (kernel*) kernelRing.head;
-    if (!head) {
-      return;
+    if (head) {
+      kernel *ptr = head;
+      do {
+        kernel *nextPtr = (kernel*) ptr->rightRingEntry;
+        ptr->modeKernel = NULL;
+        ptr->removeRef();
+        ptr = nextPtr;
+      } while (ptr != head);
     }
-    // NULL all wrappers
-    kernel *ptr = head;
-    do {
-      kernel *nextPtr = (kernel*) ptr->rightRingEntry;
-      ptr->modeKernel = NULL;
-      ptr->removeRef();
-      ptr = nextPtr;
-    } while (ptr != head);
-
-    modeDevice->removeKernelRef(this);
+    // Remove ref from device
+    if (modeDevice) {
+      modeDevice->removeKernelRef(this);
+    }
   }
 
   void modeKernel_t::dontUseRefs() {

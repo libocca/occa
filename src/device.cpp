@@ -44,6 +44,8 @@ namespace occa {
       modeKernel_t *ptr = kernelHead;
       do {
         modeKernel_t *nextPtr = (modeKernel_t*) ptr->rightRingEntry;
+        // Remove modeDevice to prevent messing with this ring
+        ptr->modeDevice = NULL;
         delete ptr;
         ptr = nextPtr;
       } while (ptr != kernelHead);
@@ -56,6 +58,8 @@ namespace occa {
       modeMemory_t *ptr = memoryHead;
       do {
         modeMemory_t *nextPtr = (modeMemory_t*) ptr->rightRingEntry;
+        // Remove modeDevice to prevent messing with this ring
+        ptr->modeDevice = NULL;
         delete ptr;
         ptr = nextPtr;
       } while (ptr != memoryHead);

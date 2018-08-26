@@ -45,20 +45,21 @@ namespace occa {
   }
 
   modeMemory_t::~modeMemory_t() {
-    memory *head = (memory*) memoryRing.head;
-    if (!head) {
-      return;
-    }
     // NULL all wrappers
-    memory *ptr_ = head;
-    do {
-      memory *nextPtr = (memory*) ptr_->rightRingEntry;
-      ptr_->modeMemory = NULL;
-      ptr_->removeRef();
-      ptr_ = nextPtr;
-    } while (ptr_ != head);
-
-    modeDevice->removeMemoryRef(this);
+    memory *head = (memory*) memoryRing.head;
+    if (head) {
+      memory *ptr_ = head;
+      do {
+        memory *nextPtr = (memory*) ptr_->rightRingEntry;
+        ptr_->modeMemory = NULL;
+        ptr_->removeRef();
+        ptr_ = nextPtr;
+      } while (ptr_ != head);
+    }
+    // Remove ref from device
+    if (modeDevice) {
+      modeDevice->removeMemoryRef(this);
+    }
   }
 
   void* modeMemory_t::getPtr(const occa::properties &props) {
