@@ -102,9 +102,9 @@ namespace occa {
                                                     allKernelProps);
 
       if (k && usingOpenMP) {
-        k->modeDevice->removeRef();
+        k->modeDevice->removeKernelRef(k);
         k->modeDevice = this;
-        addRef();
+        addKernelRef(k);
       }
 
       return k;

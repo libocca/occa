@@ -69,7 +69,7 @@ void testWithRefs() {
 }
 
 void testRingEntry() {
-  occa::gc::ringEntry a, b;
+  occa::gc::ringEntry_t a, b;
 
   ASSERT_EQ(a.leftRingEntry,
             &a);
@@ -96,8 +96,8 @@ void testRingEntry() {
 }
 
 void testRing() {
-  occa::gc::ringEntry a, b, c;
-  occa::gc::ring<occa::gc::ringEntry> values;
+  occa::gc::ringEntry_t a, b, c;
+  occa::gc::ring_t<occa::gc::ringEntry_t> values;
 
   ASSERT_EQ((void*) values.head,
             (void*) NULL);
