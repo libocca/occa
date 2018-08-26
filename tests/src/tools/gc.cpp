@@ -76,7 +76,7 @@ void testRingEntry() {
   ASSERT_EQ(a.rightRingEntry,
             &a);
 
-  a.remove();
+  a.removeRef();
   ASSERT_EQ(a.leftRingEntry,
             &a);
   ASSERT_EQ(a.rightRingEntry,
@@ -88,7 +88,7 @@ void testRingEntry() {
   b.leftRingEntry = &a;
   b.rightRingEntry = &a;
 
-  b.remove();
+  b.removeRef();
   ASSERT_EQ(a.leftRingEntry,
             &a);
   ASSERT_EQ(a.rightRingEntry,
@@ -101,32 +101,32 @@ void testRing() {
 
   ASSERT_EQ((void*) values.head,
             (void*) NULL);
-  ASSERT_TRUE(values.isEmpty());
+  ASSERT_TRUE(values.needsFree());
 
-  values.add(NULL);
+  values.addRef(NULL);
   ASSERT_EQ((void*) values.head,
             (void*) NULL);
-  ASSERT_TRUE(values.isEmpty());
+  ASSERT_TRUE(values.needsFree());
 
-  values.add(&a);
+  values.addRef(&a);
   ASSERT_EQ(values.head,
             &a);
-  ASSERT_FALSE(values.isEmpty());
+  ASSERT_FALSE(values.needsFree());
 
-  values.add(&b);
+  values.addRef(&b);
   ASSERT_EQ(values.head,
             &a);
   ASSERT_EQ(values.head->rightRingEntry,
             &b);
 
-  values.remove(&a);
+  values.removeRef(&a);
   ASSERT_EQ(values.head,
             &b);
   ASSERT_EQ(values.head->rightRingEntry,
             &b);
 
-  values.remove(&b);
+  values.removeRef(&b);
   ASSERT_EQ((void*) values.head,
             (void*) NULL);
-  ASSERT_TRUE(values.isEmpty());
+  ASSERT_TRUE(values.needsFree());
 }
