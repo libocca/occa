@@ -115,6 +115,14 @@ namespace occa {
       return hash_;
     }
 
+    hash_t device::kernelHash(const occa::properties &props) const {
+      return (
+        occa::hash(properties["compiler"])
+        ^ properties["compiler_flags"]
+        ^ properties["compiler_env_script"]
+      );
+    }
+
     //---[ Stream ]---------------------
     stream_t device::createStream() const {
       CUstream *retStream = new CUstream;
@@ -209,12 +217,10 @@ namespace occa {
                                       const hash_t kernelHash,
                                       const occa::properties &kernelProps) {
 
-      occa::properties allProps = properties["kernel"] + kernelProps;
-
       const std::string hashDir = io::hashDir(filename, kernelHash);
       const std::string binaryFilename = hashDir + kc::binaryFile;
       bool foundBinary = true;
-      bool usingOKL = allProps.get("okl", true);
+      bool usingOKL = kernelProps.get("okl", true);
 
       io::lock_t lock(kernelHash, "cuda-kernel");
       if (lock.isMine()) {
@@ -225,7 +231,7 @@ namespace occa {
         }
       }
 
-      const bool verbose = allProps.get("verbose", false);
+      const bool verbose = kernelProps.get("verbose", false);
       if (foundBinary) {
         if (verbose) {
           std::cout << "Loading cached ["
@@ -245,7 +251,7 @@ namespace occa {
                                           kernelName,
                                           hostMetadata,
                                           deviceMetadata,
-                                          allProps,
+                                          kernelProps,
                                           lock);
         } else {
           return buildKernelFromBinary(binaryFilename,
@@ -259,7 +265,7 @@ namespace occa {
         io::cacheFile(filename,
                       kc::rawSourceFile,
                       kernelHash,
-                      assembleHeader(allProps))
+                      assembleHeader(kernelProps))
       );
 
       modeKernel_t *launcherKernel = NULL;
@@ -270,7 +276,7 @@ namespace occa {
         bool valid = parseFile(sourceFilename,
                                outputFile,
                                hostOutputFile,
-                               allProps,
+                               kernelProps,
                                hostMetadata,
                                deviceMetadata);
         if (!valid) {
@@ -293,13 +299,13 @@ namespace occa {
 
         writeKernelBuildFile(hashDir + kc::buildFile,
                              kernelHash,
-                             allProps,
+                             kernelProps,
                              deviceMetadata);
       }
 
       compileKernel(hashDir,
                     kernelName,
-                    allProps,
+                    kernelProps,
                     lock);
 
       // Regular CUDA Kernel
@@ -327,14 +333,14 @@ namespace occa {
                           sourceFilename,
                           cuModule,
                           cuFunction,
-                          allProps);
+                          kernelProps);
       }
 
       return buildOKLKernelFromBinary(hashDir,
                                       kernelName,
                                       hostMetadata,
                                       deviceMetadata,
-                                      allProps,
+                                      kernelProps,
                                       lock);
     }
 
@@ -529,9 +535,6 @@ namespace occa {
     modeKernel_t* device::buildKernelFromBinary(const std::string &filename,
                                                 const std::string &kernelName,
                                                 const occa::properties &kernelProps) {
-
-      occa::properties allProps = properties["kernel"] + kernelProps;
-
       CUmodule cuModule;
       CUfunction cuFunction;
 
@@ -546,7 +549,7 @@ namespace occa {
                         filename,
                         cuModule,
                         cuFunction,
-                        allProps);
+                        kernelProps);
     }
     //==================================
 

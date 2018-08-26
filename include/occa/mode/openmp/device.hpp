@@ -40,6 +40,8 @@ namespace occa {
     public:
       device(const occa::properties &properties_);
 
+      virtual hash_t device::kernelHash(const occa::properties &props) const;
+
       virtual bool parseFile(const std::string &filename,
                              const std::string &outputFile,
                              const occa::properties &kernelProps,

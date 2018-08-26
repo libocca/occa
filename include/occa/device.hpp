@@ -89,6 +89,7 @@ namespace occa {
 
     hash_t versionedHash() const;
     virtual hash_t hash() const = 0;
+    virtual hash_t kernelHash(const occa::properties &props) const = 0;
 
     //  |---[ Stream ]------------------
     virtual stream_t createStream() const = 0;

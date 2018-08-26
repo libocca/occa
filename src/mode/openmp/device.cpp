@@ -39,6 +39,15 @@ namespace occa {
       omp_get_num_threads();
     }
 
+    hash_t device::kernelHash(const occa::properties &props) const {
+      return (
+        occa::hash(properties["vendor"])
+        ^ properties["compiler"]
+        ^ properties["compiler_flags"]
+        ^ properties["compiler_env_script"]
+      );
+    }
+
     bool device::parseFile(const std::string &filename,
                            const std::string &outputFile,
                            const occa::properties &kernelProps,

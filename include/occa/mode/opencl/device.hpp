@@ -56,6 +56,8 @@ namespace occa {
 
       virtual hash_t hash() const;
 
+      virtual hash_t kernelHash(const occa::properties &props) const;
+
       //---[ Stream ]-------------------
       virtual stream_t createStream() const;
       virtual void freeStream(stream_t s) const;

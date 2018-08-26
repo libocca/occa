@@ -125,6 +125,15 @@ namespace occa {
       return hash_;
     }
 
+    hash_t device::kernelHash(const occa::properties &props) const {
+      return (
+        occa::hash(properties["vendor"])
+        ^ properties["compiler"]
+        ^ properties["compiler_flags"]
+        ^ properties["compiler_env_script"]
+      );
+    }
+
     //---[ Stream ]---------------------
     stream_t device::createStream() const {
       return NULL;
