@@ -356,25 +356,26 @@ namespace occa {
 
     void device::compileKernel(const std::string &hashDir,
                                const std::string &kernelName,
-                               occa::properties &kernelProps,
+                               const occa::properties &kernelProps,
                                io::lock_t &lock) {
 
-      const bool verbose = kernelProps.get("verbose", false);
+      occa::properties allProps = kernelProps;
+      const bool verbose = allProps.get("verbose", false);
 
       std::string sourceFilename = hashDir + kc::sourceFile;
       std::string binaryFilename = hashDir + kc::binaryFile;
       const std::string ptxBinaryFilename = hashDir + "ptx_binary.o";
 
-      setArchCompilerFlags(kernelProps);
+      setArchCompilerFlags(allProps);
 
       //---[ PTX Check Command ]--------
       std::stringstream command;
-      if (kernelProps.has("compiler_env_script")) {
-        command << kernelProps["compiler_env_script"] << " && ";
+      if (allProps.has("compiler_env_script")) {
+        command << allProps["compiler_env_script"] << " && ";
       }
 
-      command << kernelProps["compiler"]
-              << ' ' << kernelProps["compiler_flags"]
+      command << allProps["compiler"]
+              << ' ' << allProps["compiler_flags"]
               << " -Xptxas -v,-dlcm=cg"
 #if (OCCA_OS == OCCA_WINDOWS_OS)
               << " -D OCCA_OS=OCCA_WINDOWS_OS -D _MSC_VER=1800"
@@ -401,8 +402,8 @@ namespace occa {
 
       //---[ Compiling Command ]--------
       command.str("");
-      command << kernelProps["compiler"]
-              << ' ' << kernelProps["compiler_flags"]
+      command << allProps["compiler"]
+              << ' ' << allProps["compiler_flags"]
               << " -ptx"
 #if (OCCA_OS == OCCA_WINDOWS_OS)
               << " -D OCCA_OS=OCCA_WINDOWS_OS -D _MSC_VER=1800"

@@ -200,20 +200,18 @@ namespace occa {
     template <class TM>
     occa::memory deviceReductionBuffer(occa::device device,
                                        const int size) {
-      static std::map<hash_t, memory> deviceBufferMap;
-      memory &mapBuffer = deviceBufferMap[hash(device)];
-      memory buffer;
-      if (!mapBuffer.isInitialized()) {
-        buffer = mapBuffer = device.malloc(size * sizeof(TM));
-      } else {
-        const int bufferSize = (int) mapBuffer.size();
-        if (bufferSize < size) {
-          buffer = mapBuffer = device.malloc(size * sizeof(TM));
-        } else if (bufferSize > size) {
-          buffer = mapBuffer.slice(0, size);
-        }
+      memory &mapBuffer = deviceBufferMap()[hash(device)];
+      const size_t bytes = size * sizeof(TM);
+      // Not initialized or too small
+      if (!mapBuffer.isInitialized() ||
+          (mapBuffer.size() < bytes)) {
+        mapBuffer = device.malloc(bytes);
+        return mapBuffer;
       }
-      return buffer;
+      if (mapBuffer.size() == bytes) {
+        return mapBuffer;
+      }
+      return mapBuffer.slice(0, bytes);
     }
 
     template <class VTYPE, class RETTYPE>

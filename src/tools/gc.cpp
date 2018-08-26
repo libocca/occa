@@ -64,5 +64,9 @@ namespace occa {
       }
       leftRingEntry = rightRingEntry = this;
     }
+
+    bool ringEntry_t::isAlone() const {
+      return (leftRingEntry == this);
+    }
   }
 }

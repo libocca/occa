@@ -112,7 +112,6 @@ namespace occa {
       return bufferMap;
     }
 
-    template <class TM>
     inline hashedMemoryMap& deviceBufferMap() {
       static hashedMemoryMap bufferMap;
       return bufferMap;
