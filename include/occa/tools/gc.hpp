@@ -63,6 +63,7 @@ namespace occa {
       ring_t();
 
       void dontUseRefs();
+      void clear();
 
       void addRef(entry_t *entry);
       void removeRef(entry_t *entry);

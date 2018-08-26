@@ -38,18 +38,41 @@ namespace occa {
   }
 
   modeDevice_t::~modeDevice_t() {
-    device *head = (device*) deviceRing.head;
-    if (!head) {
-      return;
+    // Free all kernel objects
+    modeKernel_t *kernelHead = (modeKernel_t*) kernelRing.head;
+    if (kernelHead) {
+      modeKernel_t *ptr = kernelHead;
+      do {
+        modeKernel_t *nextPtr = (modeKernel_t*) ptr->rightRingEntry;
+        delete ptr;
+        ptr = nextPtr;
+      } while (ptr != kernelHead);
+      kernelRing.clear();
     }
-    // NULL all wrappers
-    device *ptr = head;
-    do {
-      device *nextPtr = (device*) ptr->rightRingEntry;
-      ptr->modeDevice = NULL;
-      ptr->removeRef();
-      ptr = nextPtr;
-    } while (ptr != head);
+
+    // Free all memory objects
+    modeMemory_t *memoryHead = (modeMemory_t*) memoryRing.head;
+    if (memoryHead) {
+      modeMemory_t *ptr = memoryHead;
+      do {
+        modeMemory_t *nextPtr = (modeMemory_t*) ptr->rightRingEntry;
+        delete ptr;
+        ptr = nextPtr;
+      } while (ptr != memoryHead);
+      memoryRing.clear();
+    }
+
+    // Null all wrappers
+    device *deviceHead = (device*) deviceRing.head;
+    if (deviceHead) {
+      device *ptr = deviceHead;
+      do {
+        device *nextPtr = (device*) ptr->rightRingEntry;
+        ptr->modeDevice = NULL;
+        ptr->removeRef();
+        ptr = nextPtr;
+      } while (ptr != deviceHead);
+    }
   }
 
   void modeDevice_t::dontUseRefs() {
@@ -69,15 +92,19 @@ namespace occa {
   }
 
   void modeDevice_t::addKernelRef(modeKernel_t *ker) {
+    kernelRing.addRef(ker);
   }
 
   void modeDevice_t::removeKernelRef(modeKernel_t *ker) {
+    kernelRing.removeRef(ker);
   }
 
   void modeDevice_t::addMemoryRef(modeMemory_t *mem) {
+    memoryRing.addRef(mem);
   }
 
   void modeDevice_t::removeMemoryRef(modeMemory_t *mem) {
+    memoryRing.removeRef(mem);
   }
 
   hash_t modeDevice_t::versionedHash() const {

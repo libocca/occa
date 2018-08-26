@@ -32,6 +32,12 @@ namespace occa {
     }
 
     template <class entry_t>
+    void ring_t<entry_t>::clear() {
+      useRefs = true;
+      head = NULL;
+    }
+
+    template <class entry_t>
     void ring_t<entry_t>::addRef(entry_t *entry) {
       if (!entry) {
         return;

@@ -25,26 +25,24 @@
 
 #include <iostream>
 #include <stdint.h>
+#include <vector>
 
 #include <occa/defines.hpp>
+#include <occa/kernelArg.hpp>
+#include <occa/lang/kernelMetadata.hpp>
 #include <occa/tools/gc.hpp>
 #include <occa/tools/properties.hpp>
-#include <occa/lang/kernelMetadata.hpp>
+#include <occa/types.hpp>
 
 namespace occa {
   class modeKernel_t; class kernel;
   class modeMemory_t; class memory;
   class modeDevice_t; class device;
-  class kernelArgData;
   class kernelBuilder;
 
   namespace lang {
     class parser_t;
   }
-
-  typedef std::vector<kernelArgData>          kArgVector;
-  typedef kArgVector::iterator                kArgVectorIterator;
-  typedef kArgVector::const_iterator          cKArgVectorIterator;
 
   typedef std::map<hash_t, kernel>            hashedKernelMap;
   typedef hashedKernelMap::iterator           hashedKernelMapIterator;
@@ -53,113 +51,6 @@ namespace occa {
   typedef std::vector<kernelBuilder>          kernelBuilderVector;
   typedef kernelBuilderVector::iterator       kernelBuilderVectorIterator;
   typedef kernelBuilderVector::const_iterator cKernelBuilderVectorIterator;
-
-  //---[ KernelArg ]--------------------
-  namespace kArgInfo {
-    static const char none       = 0;
-    static const char usePointer = (1 << 0);
-    static const char hasTexture = (1 << 1);
-  }
-
-  union kernelArgData_t {
-    uint8_t  uint8_;
-    uint16_t uint16_;
-    uint32_t uint32_;
-    uint64_t uint64_;
-
-    int8_t  int8_;
-    int16_t int16_;
-    int32_t int32_;
-    int64_t int64_;
-
-    float float_;
-    double double_;
-
-    void* void_;
-  };
-
-  class kernelArgData {
-  public:
-    occa::modeDevice_t *modeDevice;
-    occa::modeMemory_t *modeMemory;
-
-    kernelArgData_t data;
-    udim_t size;
-    char info;
-
-    kernelArgData();
-    kernelArgData(const kernelArgData &k);
-    kernelArgData& operator = (const kernelArgData &k);
-    ~kernelArgData();
-
-    void* ptr() const;
-  };
-
-  class kernelArg {
-  public:
-    kArgVector args;
-
-    kernelArg();
-    ~kernelArg();
-    kernelArg(const kernelArgData &arg);
-    kernelArg(const kernelArg &k);
-    kernelArg& operator = (const kernelArg &k);
-
-    kernelArg(const uint8_t arg);
-    kernelArg(const uint16_t arg);
-    kernelArg(const uint32_t arg);
-    kernelArg(const uint64_t arg);
-
-    kernelArg(const int8_t arg);
-    kernelArg(const int16_t arg);
-    kernelArg(const int32_t arg);
-    kernelArg(const int64_t arg);
-
-    kernelArg(const float arg);
-    kernelArg(const double arg);
-
-    template <class TM>
-    kernelArg(const type2<TM> &arg) {
-      add((void*) const_cast<type2<TM>*>(&arg), sizeof(type2<TM>), false);
-    }
-
-    template <class TM>
-    kernelArg(const type4<TM> &arg) {
-      add((void*) const_cast<type4<TM>*>(&arg), sizeof(type4<TM>), false);
-    }
-
-    template <class TM>
-    kernelArg(TM *arg) {
-      add((void*) arg, true, false);
-    }
-
-    template <class TM>
-    kernelArg(const TM *arg) {
-      add((void*) const_cast<TM*>(arg), true, false);
-    }
-
-    int size();
-
-    kernelArgData& operator [] (const int index);
-
-    void add(const kernelArg &arg);
-
-    void add(void *arg,
-             bool lookAtUva = true, bool argIsUva = false);
-
-    void add(void *arg, size_t bytes,
-             bool lookAtUva = true, bool argIsUva = false);
-
-    void setupForKernelCall(const bool isConst) const;
-
-    static int argumentCount(const std::vector<kernelArg> &arguments);
-  };
-  //====================================
-
-
-  //---[ Kernel Properties ]------------
-  std::string assembleHeader(const occa::properties &props);
-  //====================================
 
 
   //---[ modeKernel_t ]---------------------
@@ -308,6 +199,11 @@ namespace occa {
 
     void free();
   };
+  //====================================
+
+
+  //---[ Kernel Properties ]------------
+  std::string assembleHeader(const occa::properties &props);
   //====================================
 }
 
