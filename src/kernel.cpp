@@ -282,7 +282,36 @@ namespace occa {
     modeDevice->addRef();
   }
 
-  modeKernel_t::~modeKernel_t() {}
+  modeKernel_t::~modeKernel_t() {
+    kernel *head = (kernel*) kernelRing.head;
+    if (!head) {
+      return;
+    }
+    // NULL all wrappers
+    kernel *ptr = head;
+    do {
+      kernel *nextPtr = (kernel*) ptr->rightRingEntry;
+      ptr->modeKernel = NULL;
+      ptr->removeRef();
+      ptr = nextPtr;
+    } while (ptr != head);
+  }
+
+  void modeKernel_t::dontUseRefs() {
+    kernelRing.dontUseRefs();
+  }
+
+  void modeKernel_t::addKernelRef(kernel *ker) {
+    kernelRing.addRef(ker);
+  }
+
+  void modeKernel_t::removeKernelRef(kernel *ker) {
+    kernelRing.removeRef(ker);
+  }
+
+  bool modeKernel_t::needsFree() const {
+    return kernelRing.needsFree();
+  }
 
   kernelArg* modeKernel_t::argumentsPtr() {
     return &(arguments[0]);
@@ -318,7 +347,7 @@ namespace occa {
   }
 
   kernel::~kernel() {
-    removeRef();
+    removeKernelRef();
   }
 
   void kernel::assertInitialized() const {
@@ -328,18 +357,21 @@ namespace occa {
 
   void kernel::setModeKernel(modeKernel_t *modeKernel_) {
     if (modeKernel != modeKernel_) {
-      removeRef();
+      removeKernelRef();
       modeKernel = modeKernel_;
       if (modeKernel) {
-        modeKernel->addRef();
+        modeKernel->addKernelRef(this);
       }
     }
   }
 
-  void kernel::removeRef() {
-    if (modeKernel && !modeKernel->removeRef()) {
+  void kernel::removeKernelRef() {
+    if (!modeKernel) {
+      return;
+    }
+    modeKernel->removeKernelRef(this);
+    if (modeKernel->needsFree()) {
       free();
-      modeKernel = NULL;
     }
   }
 
@@ -475,8 +507,8 @@ namespace occa {
     modeDevice->removeRef();
 
     modeKernel->free();
+    // ~modeKernel_t NULLs all wrappers
     delete modeKernel;
-    modeKernel = NULL;
   }
   //====================================
 

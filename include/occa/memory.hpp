@@ -126,6 +126,7 @@ namespace occa {
 
   //---[ memory ]-----------------------
   class memory : public gc::ringEntry_t {
+    friend class occa::modeMemory_t;
     friend class occa::device;
     friend class occa::kernelArg;
 

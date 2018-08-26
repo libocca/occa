@@ -44,7 +44,20 @@ namespace occa {
     canBeFreed = true;
   }
 
-  modeMemory_t::~modeMemory_t() {}
+  modeMemory_t::~modeMemory_t() {
+    memory *head = (memory*) memoryRing.head;
+    if (!head) {
+      return;
+    }
+    // NULL all wrappers
+    memory *ptr_ = head;
+    do {
+      memory *nextPtr = (memory*) ptr_->rightRingEntry;
+      ptr_->modeMemory = NULL;
+      ptr_->removeRef();
+      ptr_ = nextPtr;
+    } while (ptr_ != head);
+  }
 
   void* modeMemory_t::getPtr(const occa::properties &props) {
     return ptr;
@@ -120,7 +133,9 @@ namespace occa {
     if (modeMemory != modeMemory_) {
       removeMemoryRef();
       modeMemory = modeMemory_;
-      modeMemory->addMemoryRef(this);
+      if (modeMemory) {
+        modeMemory->addMemoryRef(this);
+      }
     }
   }
 
@@ -562,16 +577,8 @@ namespace occa {
 
     // Free the handle
     modeDevice->removeRef();
+    // ~modeMemory_t NULLs all wrappers
     delete modeMemory;
-
-    // NULL all wrappers
-    memory *ptr = this;
-    do {
-      memory *nextPtr = (memory*) ptr->rightRingEntry;
-      ptr->modeMemory = NULL;
-      ptr->removeRef();
-      ptr = nextPtr;
-    } while (ptr != this);
   }
 
   std::ostream& operator << (std::ostream &out,

@@ -163,13 +163,15 @@ namespace occa {
 
 
   //---[ modeKernel_t ]---------------------
-  class modeKernel_t : public gc::withRefs {
+  class modeKernel_t {
   public:
     occa::modeDevice_t *modeDevice;
 
     std::string name;
     std::string sourceFilename, binaryFilename;
     occa::properties properties;
+
+    gc::ring_t<kernel> kernelRing;
 
     dim outerDims, innerDims;
 
@@ -180,6 +182,11 @@ namespace occa {
                  const std::string &name_,
                  const std::string &sourceFilename_,
                  const occa::properties &properties_);
+
+    void dontUseRefs();
+    void addKernelRef(kernel *ker);
+    void removeKernelRef(kernel *ker);
+    bool needsFree() const;
 
     kernelArg* argumentsPtr();
     int argumentCount();
@@ -202,7 +209,8 @@ namespace occa {
   //====================================
 
   //---[ kernel ]-----------------------
-  class kernel {
+  class kernel : public gc::ringEntry_t {
+    friend class occa::modeKernel_t;
     friend class occa::device;
 
   private:
@@ -220,7 +228,7 @@ namespace occa {
   private:
     void assertInitialized() const;
     void setModeKernel(modeKernel_t *modeKernel_);
-    void removeRef();
+    void removeKernelRef();
 
   public:
     void dontUseRefs();
