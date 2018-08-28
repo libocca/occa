@@ -44,12 +44,13 @@ namespace occa {
     inline occa::kernel getTiledKernel(kernelBuilderVector &builders,
                                        occa::device dev,
                                        const int tileSize) {
-      for (int i = 0; i < usedTileSizeCount; ++i) {
-        if (usedTileSizes[i] <= tileSize) {
-          return builders[i].build(dev);
+      int i;
+      for (i = 1; i < usedTileSizeCount; ++i) {
+        if (usedTileSizes[i] > tileSize) {
+          break;
         }
       }
-      return builders[usedTileSizeCount - 1].build(dev);
+      return builders[i-1].build(dev);
     }
 
     template <class VTYPE, class RETTYPE>
