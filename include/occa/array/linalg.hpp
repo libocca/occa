@@ -31,8 +31,10 @@
 
 namespace occa {
   namespace linalg {
-    static const int usedTileSizeCount = 5;
-    static const int usedTileSizes[5] = {32, 64, 128, 256, 512};
+    static const int usedTileSizeCount = 7;
+    static const int usedTileSizes[7] = {
+      32, 64, 128, 256, 512, 1024, 2048
+    };
 
     template <class VTYPE_IN, class VTYPE_OUT>
     kernelBuilder makeAssignmentBuilder(const std::string &kernelName,
@@ -50,7 +52,7 @@ namespace occa {
           break;
         }
       }
-      return builders[i-1].build(dev);
+      return builders[i - 1].build(dev);
     }
 
     template <class VTYPE, class RETTYPE>
