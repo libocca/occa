@@ -125,7 +125,7 @@ namespace occa {
             variable_t &var = *(declSmnt.declarations[di].variable);
             if (var.has(const_)) {
               var -= const_;
-              var += constant;
+              var.add(0, constant);
             }
           }
         }
@@ -148,7 +148,7 @@ namespace occa {
             if (!var.hasAttribute("shared")) {
               continue;
             }
-            var += local;
+            var.add(0, local);
           }
           ++it;
         }
@@ -253,14 +253,14 @@ namespace occa {
       }
 
       void openclParser::setKernelQualifiers(function_t &function) {
-        function.returnType += kernel;
+        function.returnType.add(0, kernel);
 
         const int argCount = (int) function.args.size();
         for (int ai = 0; ai < argCount; ++ai) {
           variable_t &arg = *(function.args[ai]);
           arg.vartype = arg.vartype.flatten();
           if (arg.vartype.isPointerType()) {
-            arg += global;
+            arg.add(0, global);
           }
         }
       }

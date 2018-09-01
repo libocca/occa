@@ -146,6 +146,13 @@ namespace occa {
 
       qualifiers_t& add(const qualifierWithSource &qualifier);
 
+      qualifiers_t& add(const int index,
+                        const fileOrigin &origin,
+                        const qualifier_t &qualifier);
+
+      qualifiers_t& add(const int index,
+                        const qualifierWithSource &qualifier);
+
       qualifiers_t& addFirst(const fileOrigin &origin,
                              const qualifier_t &qualifier);
 

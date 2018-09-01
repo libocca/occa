@@ -99,6 +99,7 @@ namespace occa {
       return (attributes.find(attr) != attributes.end());
     }
 
+    // Qualifiers
     bool variable_t::has(const qualifier_t &qualifier) const {
       return vartype.has(qualifier);
     }
@@ -127,6 +128,18 @@ namespace occa {
       vartype.add(qualifier);
     }
 
+    void variable_t::add(const int index,
+                         const fileOrigin &origin,
+                         const qualifier_t &qualifier) {
+      vartype.add(index, origin, qualifier);
+    }
+
+    void variable_t::add(const int index,
+                         const qualifierWithSource &qualifier) {
+      vartype.add(index, qualifier);
+    }
+
+    // Pointers
     variable_t& variable_t::operator += (const pointer_t &pointer) {
       vartype += pointer;
       return *this;

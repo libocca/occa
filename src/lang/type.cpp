@@ -491,6 +491,17 @@ namespace occa {
       qualifiers.add(qualifier);
     }
 
+    void vartype_t::add(const int index,
+                        const fileOrigin &origin,
+                        const qualifier_t &qualifier) {
+      qualifiers.add(index, origin, qualifier);
+    }
+
+    void vartype_t::add(const int index,
+                        const qualifierWithSource &qualifier) {
+      qualifiers.add(index, qualifier);
+    }
+
     vartype_t& vartype_t::operator += (const pointer_t &pointer) {
       pointers.push_back(pointer);
       return *this;

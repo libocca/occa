@@ -238,6 +238,37 @@ namespace occa {
       return *this;
     }
 
+    qualifiers_t& qualifiers_t::add(const int index,
+                                    const fileOrigin &origin,
+                                    const qualifier_t &qualifier) {
+      if (!has(qualifier)) {
+        int safeIndex = 0;
+        if (index > (int) qualifiers.size()) {
+          safeIndex = (int) qualifiers.size();
+        }
+        qualifiers.insert(
+          qualifiers.begin() + safeIndex,
+          qualifierWithSource(origin, qualifier)
+        );
+      }
+      return *this;
+    }
+
+    qualifiers_t& qualifiers_t::add(const int index,
+                                    const qualifierWithSource &qualifier) {
+      if (!has(*(qualifier.qualifier))) {
+        int safeIndex = 0;
+        if (index > (int) qualifiers.size()) {
+          safeIndex = (int) qualifiers.size();
+        }
+        qualifiers.insert(
+          qualifiers.begin() + safeIndex,
+          qualifier
+        );
+      }
+      return *this;
+    }
+
     qualifiers_t& qualifiers_t::addFirst(const fileOrigin &origin,
                                          const qualifier_t &qualifier) {
       return addFirst(

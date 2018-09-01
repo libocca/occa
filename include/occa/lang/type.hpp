@@ -245,6 +245,13 @@ namespace occa {
 
       void add(const qualifierWithSource &qualifier);
 
+      void add(const int index,
+               const fileOrigin &origin,
+               const qualifier_t &qualifier);
+
+      void add(const int index,
+               const qualifierWithSource &qualifier);
+
       vartype_t& operator += (const pointer_t &pointer);
       vartype_t& operator += (const pointerVector &pointers_);
 
