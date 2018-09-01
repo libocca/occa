@@ -440,6 +440,7 @@ namespace occa {
 
     hash_t kernelHash = (hash()
                          ^ modeDevice->kernelHash(allProps)
+                         ^ kernelHeaderHash(allProps)
                          ^ hashFile(filename));
 
     // TODO: [#185] Fix kernel cache frees
@@ -476,7 +477,7 @@ namespace occa {
 
     // Store in the same directory as cached outputs
     hash_t kernelHash = (hash()
-                         ^ modeDevice->kernelHash(allProps)
+                         ^ occa::hash(allProps) // ^ modeDevice->kernelHash(allProps)
                          ^ occa::hash(content));
 
     io::lock_t lock(kernelHash, "occa-device");

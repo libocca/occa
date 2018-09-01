@@ -203,7 +203,9 @@ namespace occa {
 
 
   //---[ Kernel Properties ]------------
-  std::string assembleHeader(const occa::properties &props);
+  hash_t kernelHeaderHash(const occa::properties &props);
+
+  std::string assembleKernelHeader(const occa::properties &props);
   //====================================
 }
 

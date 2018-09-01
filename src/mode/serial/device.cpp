@@ -229,7 +229,7 @@ namespace occa {
         io::cacheFile(filename,
                       kc::rawSourceFile,
                       kernelHash,
-                      assembleHeader(kernelProps))
+                      assembleKernelHeader(kernelProps))
       );
 
       lang::kernelMetadataMap metadata;

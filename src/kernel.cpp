@@ -369,7 +369,16 @@ namespace occa {
   // includes      : Array
   // header        : Array
   // include_paths : Array
-  std::string assembleHeader(const occa::properties &props) {
+
+  hash_t kernelHeaderHash(const occa::properties &props) {
+    return (
+      occa::hash(props["defines"])
+      ^ props["includes"]
+      ^ props["header"]
+    );
+  }
+
+  std::string assembleKernelHeader(const occa::properties &props) {
     std::string header;
 
     // Add defines
