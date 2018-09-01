@@ -104,8 +104,8 @@ namespace occa {
 
     hash_t device::kernelHash(const occa::properties &props) const {
       return (
-        occa::hash(properties["compiler"])
-        ^ properties["compiler_flags"]
+        occa::hash(props["compiler"])
+        ^ props["compiler_flags"]
       );
     }
 
