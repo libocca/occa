@@ -88,8 +88,6 @@ namespace occa {
   void removeFromStaleMap(void *ptr);
   void removeFromStaleMap(modeMemory_t *mem);
 
-  void setupMagicFor(void *ptr);
-
   void freeUvaPtr(void *ptr);
   //====================================
 }

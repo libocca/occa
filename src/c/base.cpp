@@ -50,8 +50,8 @@ void OCCA_RFUNC occaSetDevice(occaDevice device) {
   occa::setDevice(occa::c::device(device));
 }
 
-void OCCA_RFUNC occaSetDeviceFromInfo(const char *infos) {
-  occa::setDevice(infos);
+void OCCA_RFUNC occaSetDeviceFromString(const char *info) {
+  occa::setDevice(info);
 }
 
 occaProperties OCCA_RFUNC occaDeviceProperties() {
@@ -178,10 +178,6 @@ void* OCCA_RFUNC occaUMalloc(const occaUDim_t bytes,
   return occa::umalloc(bytes,
                        src,
                        occa::c::properties(props));
-}
-
-void OCCA_RFUNC occaFreeUvaPtr(void *ptr) {
-  occa::freeUvaPtr(ptr);
 }
 //======================================
 

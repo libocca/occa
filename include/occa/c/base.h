@@ -27,6 +27,7 @@
 #include <occa/c/types.h>
 
 OCCA_START_EXTERN_C
+
 //---[ Globals & Flags ]----------------
 OCCA_LFUNC occaProperties OCCA_RFUNC occaSettings();
 
@@ -40,7 +41,7 @@ OCCA_LFUNC occaDevice OCCA_RFUNC occaGetDevice();
 
 OCCA_LFUNC void OCCA_RFUNC occaSetDevice(occaDevice device);
 
-OCCA_LFUNC void OCCA_RFUNC occaSetDeviceFromInfo(const char *infos);
+OCCA_LFUNC void OCCA_RFUNC occaSetDeviceFromString(const char *info);
 
 OCCA_LFUNC occaProperties OCCA_RFUNC occaDeviceProperties();
 
@@ -84,8 +85,6 @@ OCCA_LFUNC occaMemory OCCA_RFUNC occaMalloc(const occaUDim_t bytes,
 OCCA_LFUNC void* OCCA_RFUNC occaUMalloc(const occaUDim_t bytes,
                                         const void *src,
                                         occaProperties props);
-
-OCCA_LFUNC void OCCA_RFUNC occaFreeUvaPtr(void *ptr);
 //======================================
 
 OCCA_END_EXTERN_C

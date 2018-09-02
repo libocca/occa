@@ -41,6 +41,7 @@ declare -a examples=(
     cpp/6_arrays
     cpp/7_streams
     c/1_add_vectors
+    c/2_background_device
 )
 
 for mode in $("${OCCA_DIR}/bin/occa" modes); do
@@ -52,14 +53,17 @@ for mode in $("${OCCA_DIR}/bin/occa" modes); do
     esac
 
     for example_dir in "${examples[@]}"; do
+        echo "example_dir = ${example_dir}"
+
         # OpenCL throws CL_DEVICE_MAX_WORK_GROUP_SIZE
         if [ -n "${TRAVIS}" ] && [ "${mode}" == "OpenCL" ]; then
             continue
         fi
+
         # OpenCL + Shared memory is finicky
         case "(${mode}) ${example_dir}" in
-            "(OpenCL) 3_reduction") continue;;
-            "(OpenCL) 6_arrays") continue;;
+            "(OpenCL) (c|cpp)/3_reduction") continue;;
+            "(OpenCL) (c|cpp)/6_arrays") continue;;
         esac
 
         banner="(${mode}) ${example_dir}"
