@@ -34,8 +34,6 @@ int main(int argc, const char **argv) {
   // occa::setDevice("mode: 'OpenCL', platform_id: 0, device_id: 0");
   occa::setDevice((std::string) args["options/device"]);
 
-  occa::kernel reduction;
-
   // Choosing something not divisible by 256
   int entries = 10000;
   int block   = 256;
@@ -43,7 +41,6 @@ int main(int argc, const char **argv) {
 
   float *vec      = new float[entries];
   float *blockSum = new float[blocks];
-  occa::memory o_vec, o_blockSum;
 
   float sum = 0;
 
@@ -58,16 +55,16 @@ int main(int argc, const char **argv) {
   }
 
   // Allocate memory on the device
-  o_vec      = occa::malloc(entries * sizeof(float));
-  o_blockSum = occa::malloc(blocks  * sizeof(float));
+  occa::memory o_vec      = occa::malloc(entries * sizeof(float));
+  occa::memory o_blockSum = occa::malloc(blocks  * sizeof(float));
 
   // Pass value of 'block' at kernel compile-time
   occa::properties reductionProps;
   reductionProps["defines/block"] = block;
 
-  reduction = occa::buildKernel("reduction.okl",
-                                "reduction",
-                                reductionProps);
+  occa::kernel reduction = occa::buildKernel("reduction.okl",
+                                             "reduction",
+                                             reductionProps);
 
   // Host -> Device
   o_vec.copyFrom(vec);

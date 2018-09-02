@@ -29,16 +29,10 @@ occaJson parseArgs(int argc, const char **argv);
 int main(int argc, const char **argv) {
   occaJson args = parseArgs(argc, argv);
 
-  // Other useful functions:
-  //   occaSetDeviceFromString("mode: 'OpenMP'")
-  //   occaDevice = occaGetDevice();
-  // Options:
-  //   occaSetDeviceFromString("mode: 'Serial'");
-  //   occaSetDeviceFromString("mode: 'OpenMP'");
-  //   occaSetDeviceFromString("mode: 'CUDA'  , device_id: 0");
-  //   occaSetDeviceFromString("mode: 'OpenCL', platform_id: 0, device_id: 0");
-  //
-  // The default device uses "mode: 'Serial'"
+  // occaSetDeviceFromString("mode: 'Serial'");
+  // occaSetDeviceFromString("mode: 'OpenMP'");
+  // occaSetDeviceFromString("mode: 'CUDA'  , device_id: 0");
+  // occaSetDeviceFromString("mode: 'OpenCL', platform_id: 0, device_id: 0");
   occaSetDeviceFromString(
     occaJsonGetString(
       occaJsonObjectGet(args,
@@ -47,51 +41,79 @@ int main(int argc, const char **argv) {
     )
   );
 
-  int entries = 5;
+  // Choosing something not divisible by 256
   int i;
+  int entries = 10000;
+  int block   = 256;
+  int blocks  = (entries + block - 1)/block;
 
-  float *a  = (float*) occaUMalloc(entries * sizeof(float), NULL, occaDefault);
-  float *b  = (float*) occaUMalloc(entries * sizeof(float), NULL, occaDefault);
-  float *ab = (float*) occaUMalloc(entries * sizeof(float), NULL, occaDefault);
+  float *vec      = (float*) malloc(entries * sizeof(float));
+  float *blockSum = (float*) malloc(blocks  * sizeof(float));
 
+  float sum = 0;
+
+  // Initialize device memory
   for (i = 0; i < entries; ++i) {
-    a[i]  = i;
-    b[i]  = 1 - i;
-    ab[i] = 0;
+    vec[i] = 1;
+    sum += vec[i];
   }
 
-  occaKernel addVectors = occaBuildKernel("addVectors.okl",
-                                          "addVectors",
-                                          occaDefault);
-
-  // Arrays a, b, and ab are now resident
-  //   on [device]
-  occaKernelRun(addVectors,
-                occaInt(entries), occaPtr(a), occaPtr(b), occaPtr(ab));
-
-  // b is not const in the kernel, so we can use
-  //   dontSync(b) to manually force b to not sync
-  occaDontSync(b);
-
-  // Finish work queued up in [device],
-  //   synchronizing a, b, and ab and
-  //   making it safe to use them again
-  occaFinish();
-
-  for (i = 0; i < 5; ++i)
-    printf("%d = %f\n", i, ab[i]);
-
-  for (i = 0; i < entries; ++i) {
-    if (ab[i] != (a[i] + b[i])) {
-      exit(1);
-    }
+  for (i = 0; i < blocks; ++i) {
+    blockSum[i] = 0;
   }
+
+  // Allocate memory on the device
+  occaMemory o_vec      = occaMalloc(entries * sizeof(float),
+                                     NULL, occaDefault);
+  occaMemory o_blockSum = occaMalloc(blocks * sizeof(float),
+                                     NULL, occaDefault);
+
+  // Pass value of 'block' at kernel compile-time
+  occaProperties reductionProps = occaCreateProperties();
+  occaPropertiesSet(reductionProps,
+                    "defines/block",
+                    occaInt(block));
+
+  occaKernel reduction = occaBuildKernel("reduction.okl",
+                                         "reduction",
+                                         reductionProps);
+
+  // Host -> Device
+  occaCopyPtrToMem(o_vec, vec,
+                   occaAllBytes, 0, occaDefault);
+
+  occaKernelRun(reduction,
+                occaInt(entries), o_vec, o_blockSum);
+
+  // Host <- Device
+  occaCopyMemToPtr(blockSum, o_blockSum,
+                   occaAllBytes, 0, occaDefault);
+
+  // Finalize the reduction in the host
+  for (i = 1; i < blocks; ++i) {
+    blockSum[0] += blockSum[i];
+  }
+
+  // Validate
+  if (blockSum[0] != sum) {
+    printf("sum      = %f\n", sum);
+    printf("blockSum = %f\n", blockSum[0]);
+    printf("Reduction failed\n");
+    exit(1);
+  }
+  else {
+    printf("Reduction = %f\n", blockSum[0]);
+  }
+
+  // Free host memory
+  free(vec);
+  free(blockSum);
 
   occaFree(args);
-  occaFree(addVectors);
-  occaFreeUvaPtr(a);
-  occaFreeUvaPtr(b);
-  occaFreeUvaPtr(ab);
+  occaFree(reductionProps);
+  occaFree(reduction);
+  occaFree(o_vec);
+  occaFree(o_blockSum);
 
   return 0;
 }

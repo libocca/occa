@@ -118,6 +118,7 @@ int main(int argc, const char **argv) {
   free(ab);
 
   // Free device memory and occa objects
+  occaFree(args);
   occaFree(props);
   occaFree(addVectors);
   occaFree(o_a);

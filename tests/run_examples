@@ -42,6 +42,7 @@ declare -a examples=(
     cpp/7_streams
     c/1_add_vectors
     c/2_background_device
+    c/3_reduction
 )
 
 for mode in $("${OCCA_DIR}/bin/occa" modes); do
@@ -53,8 +54,6 @@ for mode in $("${OCCA_DIR}/bin/occa" modes); do
     esac
 
     for example_dir in "${examples[@]}"; do
-        echo "example_dir = ${example_dir}"
-
         # OpenCL throws CL_DEVICE_MAX_WORK_GROUP_SIZE
         if [ -n "${TRAVIS}" ] && [ "${mode}" == "OpenCL" ]; then
             continue
