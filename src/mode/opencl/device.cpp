@@ -233,11 +233,12 @@ namespace occa {
       clInfo.clDevice  = clDevice;
       clInfo.clContext = clContext;
 
-      io::lock_t lock(kernelHash, "opencl-kernel");
-      if (lock.isMine()) {
-        if (io::isFile(binaryFilename)) {
-          lock.release();
-        } else {
+      // Check if binary exists and is finished
+      io::lock_t lock;
+      if (!io::cachedFileIsComplete(hashDir, kc::binaryFile) ||
+          !io::isFile(binaryFilename)) {
+        lock = io::lock_t(kernelHash, "opencl-kernel");
+        if (lock.isMine()) {
           foundBinary = false;
         }
       }
@@ -331,25 +332,31 @@ namespace occa {
                                 lock);
 
       // Regular OpenCL Kernel
+      modeKernel_t *k = NULL;
       if (!launcherKernel) {
         opencl::buildKernelFromProgram(clInfo,
                                        kernelName,
                                        lock);
-        return new kernel(this,
-                          kernelName,
-                          sourceFilename,
-                          clDevice,
-                          clInfo.clKernel,
-                          kernelProps);
+        k = new kernel(this,
+                       kernelName,
+                       sourceFilename,
+                       clDevice,
+                       clInfo.clKernel,
+                       kernelProps);
+      } else {
+        k = buildOKLKernelFromBinary(clInfo,
+                                     hashDir,
+                                     kernelName,
+                                     hostMetadata,
+                                     deviceMetadata,
+                                     kernelProps,
+                                     lock);
       }
 
-      return buildOKLKernelFromBinary(clInfo,
-                                      hashDir,
-                                      kernelName,
-                                      hostMetadata,
-                                      deviceMetadata,
-                                      kernelProps,
-                                      lock);
+      if (k) {
+        io::markCachedFileComplete(hashDir, kc::binaryFile);
+      }
+      return k;
     }
 
     modeKernel_t* device::buildOKLKernelFromBinary(info_t &clInfo,

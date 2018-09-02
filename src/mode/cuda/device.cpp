@@ -222,11 +222,12 @@ namespace occa {
       bool foundBinary = true;
       bool usingOKL = kernelProps.get("okl", true);
 
-      io::lock_t lock(kernelHash, "cuda-kernel");
-      if (lock.isMine()) {
-        if (io::isFile(binaryFilename)) {
-          lock.release();
-        } else {
+      // Check if binary exists and is finished
+      io::lock_t lock;
+      if (!io::cachedFileIsComplete(hashDir, kc::binaryFile) ||
+          !io::isFile(binaryFilename)) {
+        lock = io::lock_t(kernelHash, "cuda-kernel");
+        if (lock.isMine()) {
           foundBinary = false;
         }
       }
@@ -309,6 +310,7 @@ namespace occa {
                     lock);
 
       // Regular CUDA Kernel
+      modeKernel_t *k = NULL;
       if (!launcherKernel) {
         CUmodule cuModule;
         CUfunction cuFunction;
@@ -328,20 +330,25 @@ namespace occa {
           OCCA_CUDA_ERROR("Kernel [" + kernelName + "]: Loading Function",
                           error);
         }
-        return new kernel(this,
-                          kernelName,
-                          sourceFilename,
-                          cuModule,
-                          cuFunction,
-                          kernelProps);
+        k = new kernel(this,
+                       kernelName,
+                       sourceFilename,
+                       cuModule,
+                       cuFunction,
+                       kernelProps);
+      } else {
+        k = buildOKLKernelFromBinary(hashDir,
+                                     kernelName,
+                                     hostMetadata,
+                                     deviceMetadata,
+                                     kernelProps,
+                                     lock);
       }
 
-      return buildOKLKernelFromBinary(hashDir,
-                                      kernelName,
-                                      hostMetadata,
-                                      deviceMetadata,
-                                      kernelProps,
-                                      lock);
+      if (k) {
+        io::markCachedFileComplete(hashDir, kc::binaryFile);
+      }
+      return k;
     }
 
     void device::setArchCompilerFlags(occa::properties &kernelProps) {

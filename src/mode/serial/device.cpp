@@ -188,20 +188,22 @@ namespace occa {
                                       const hash_t kernelHash,
                                       const occa::properties &kernelProps) {
       const std::string hashDir = io::hashDir(filename, kernelHash);
-      std::string binaryFilename = hashDir + kc::binaryFile;
+      // Binary name depends if this is being used as the launcher kernel for
+      //   GPU-style kernels
+      const std::string &kcBinaryFile = (
+        (filename != (hashDir + kc::hostSourceFile))
+        ? kc::binaryFile
+        : kc::hostBinaryFile
+      );
+      std::string binaryFilename = hashDir + kcBinaryFile;
       bool foundBinary = true;
 
-      // This is a launcher kernel
-      // TODO: Clean this up
-      if (startsWith(filename, hashDir)) {
-        binaryFilename = io::dirname(filename) + kc::hostBinaryFile;
-      }
-
-      io::lock_t lock(kernelHash, "serial-kernel");
-      if (lock.isMine()) {
-        if (io::isFile(binaryFilename)) {
-          lock.release();
-        } else {
+      // Check if binary exists and is finished
+      io::lock_t lock;
+      if (!io::cachedFileIsComplete(hashDir, kcBinaryFile) ||
+          !io::isFile(binaryFilename)) {
+        lock = io::lock_t(kernelHash, "serial-kernel");
+        if (lock.isMine()) {
           foundBinary = false;
         }
       }
@@ -300,6 +302,7 @@ namespace occa {
                                               kernelName,
                                               kernelProps);
       if (k) {
+        io::markCachedFileComplete(hashDir, kcBinaryFile);
         k->sourceFilename = filename;
       }
       return k;

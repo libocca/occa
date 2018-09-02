@@ -41,7 +41,6 @@ namespace occa {
 
   namespace io {
     const std::string& cachePath();
-
     const std::string& libraryPath();
 
     void endWithSlash(std::string &dir);

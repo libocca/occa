@@ -142,6 +142,25 @@ namespace occa {
       return sourceFile;
     }
 
+    void markCachedFileComplete(const std::string &hashDir,
+                                const std::string &filename) {
+      std::string successFile = hashDir;
+      successFile += ".success/";
+      sys::mkpath(successFile);
+
+      successFile += filename;
+      io::write(successFile, "");
+    }
+
+    bool cachedFileIsComplete(const std::string &hashDir,
+                              const std::string &filename) {
+      std::string successFile = hashDir;
+      successFile += ".success/";
+      successFile += filename;
+
+      return io::exists(successFile);
+    }
+
     void setBuildProps(occa::json &props) {
       props["date"]       = sys::date();
       props["human_date"] = sys::humanDate();
