@@ -64,7 +64,17 @@ void testNewOccaTypes() {
   TEST_OCCA_TYPE((float) 1.0, OCCA_FLOAT);
   TEST_OCCA_TYPE((double) 1.0, OCCA_DOUBLE);
 
-  TEST_OCCA_TYPE(*(new occa::properties()), OCCA_PROPERTIES);
+  {
+    occaType v = occa::c::newOccaType(*(new occa::properties()), true);
+    ASSERT_EQ(v.type, OCCA_PROPERTIES);
+    occaFree(v);
+  }
+  {
+    occa::properties props;
+    occaType v = occa::c::newOccaType(props, false);
+    ASSERT_EQ(v.type, OCCA_PROPERTIES);
+    occaFree(v);
+  }
 
   occaProperties cProps = (
     occaCreatePropertiesFromString("a: 1, b: 2")

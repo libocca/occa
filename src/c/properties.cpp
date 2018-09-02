@@ -26,93 +26,36 @@
 OCCA_START_EXTERN_C
 
 occaType OCCA_RFUNC occaCreateProperties() {
-  return occa::c::newOccaType(*(new occa::properties()));
+  return occa::c::newOccaType(*(new occa::properties()),
+                              true);
 }
 
 occaType OCCA_RFUNC occaCreatePropertiesFromString(const char *c) {
-  return occa::c::newOccaType(*(new occa::properties(c)));
-}
-
-void OCCA_RFUNC occaPropertiesSet(occaProperties props,
-                                  const char *key,
-                                  occaType value) {
-  occa::properties& props_ = occa::c::properties(props);
-
-  switch (value.type) {
-  case occa::c::typeType::bool_:
-    props_[key] = (bool) value.value.int8_; break;
-  case occa::c::typeType::int8_:
-    props_[key] = value.value.int8_; break;
-  case occa::c::typeType::uint8_:
-    props_[key] = value.value.uint8_; break;
-  case occa::c::typeType::int16_:
-    props_[key] = value.value.int16_; break;
-  case occa::c::typeType::uint16_:
-    props_[key] = value.value.uint16_; break;
-  case occa::c::typeType::int32_:
-    props_[key] = value.value.int32_; break;
-  case occa::c::typeType::uint32_:
-    props_[key] = value.value.uint32_; break;
-  case occa::c::typeType::int64_:
-    props_[key] = value.value.int64_; break;
-  case occa::c::typeType::uint64_:
-    props_[key] = value.value.uint64_; break;
-  case occa::c::typeType::float_:
-    props_[key] = value.value.float_; break;
-  case occa::c::typeType::double_:
-    props_[key] = value.value.double_; break;
-  case occa::c::typeType::string:
-    props_[key] = (char*) value.value.ptr; break;
-  case occa::c::typeType::ptr:
-    OCCA_ERROR("Invalid value type",
-               value.value.ptr == NULL);
-    props_[key].asNull(); break;
-  default:
-    OCCA_FORCE_ERROR("Invalid value type");
-  }
-}
-
-int OCCA_RFUNC occaPropertiesHas(occaProperties props,
-                                  const char *key) {
-  return occa::c::properties(props).has(key);
+  return occa::c::newOccaType(*(new occa::properties(c)),
+                              true);
 }
 
 occaType OCCA_RFUNC occaPropertiesGet(occaProperties props,
                                       const char *key,
                                       occaType defaultValue) {
   occa::properties& props_ = occa::c::properties(props);
-  if (!props_.has(key)) {
-    return defaultValue;
+  if (props_.has(key)) {
+    return occa::c::newOccaType(props_[key], false);
   }
-  occa::json &value = props_[key];
+  return defaultValue;
+}
 
-  if (value.isString()) {
-    return occaString(value.string().c_str());
-  }
-  if (value.isNumber()) {
-    occa::primitive &number = value.number();
-    switch(number.type) {
-    case occa::primitiveType::int8_   : return occaInt8((int8_t) number);
-    case occa::primitiveType::uint8_  : return occaUInt8((uint8_t) number);
-    case occa::primitiveType::int16_  : return occaInt16((int16_t) number);
-    case occa::primitiveType::uint16_ : return occaUInt16((uint16_t) number);
-    case occa::primitiveType::int32_  : return occaInt32((int32_t) number);
-    case occa::primitiveType::uint32_ : return occaUInt32((uint32_t) number);
-    case occa::primitiveType::int64_  : return occaInt64((int64_t) number);
-    case occa::primitiveType::uint64_ : return occaUInt64((uint64_t) number);
-    case occa::primitiveType::float_  : return occaFloat((float) number);
-    case occa::primitiveType::double_ : return occaDouble((double) number);
-    }
-  }
-  if (value.isBoolean()) {
-    return occaBool(value.boolean());
-  }
-  if (value.isObject() ||
-      value.isArray()) {
-    return occa::c::newOccaType((occa::properties&) value);
-  }
-  // Last type is NULL
-  return occaNull;
+void OCCA_RFUNC occaPropertiesSet(occaProperties props,
+                                  const char *key,
+                                  occaType value) {
+  occa::properties& props_ = occa::c::properties(props);
+  props_[key] = occa::c::inferJson(value);
+}
+
+int OCCA_RFUNC occaPropertiesHas(occaProperties props,
+                                  const char *key) {
+  occa::properties& props_ = occa::c::properties(props);
+  return props_.has(key);
 }
 
 OCCA_END_EXTERN_C

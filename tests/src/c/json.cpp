@@ -30,26 +30,77 @@
 #include <occa/c/types.hpp>
 #include <occa/tools/testing.hpp>
 
+void testTypeChecking();
 void testTypes();
+void testArray();
 void testBadType();
 void testKeyMiss();
 void testSerialization();
 
-occaProperties cProps;
+occaProperties cJson;
 
 int main(const int argc, const char **argv) {
   srand(time(NULL));
 
-  cProps = occaCreateProperties();
+  cJson = occaCreateJson();
 
+  testTypeChecking();
   testTypes();
+  testArray();
   testBadType();
   testKeyMiss();
   testSerialization();
 
-  occaFree(cProps);
+  occaFree(cJson);
 
   return 0;
+}
+
+void testTypeChecking() {
+  occaJson cJson2 = occaCreateJsonFromString(
+    "{"
+    "  bool: true,"
+    "  number: 1,"
+    "  string: 'string',"
+    "  array: [],"
+    "}"
+  );
+
+  ASSERT_TRUE(
+    occaJsonIsObject(cJson2)
+  );
+
+  ASSERT_TRUE(
+    occaJsonIsBoolean(
+      occaJsonObjectGet(cJson2, "bool", occaUndefined)
+    )
+  );
+
+  ASSERT_TRUE(
+    occaJsonIsNumber(
+      occaJsonObjectGet(cJson2, "number", occaUndefined)
+    )
+  );
+
+  ASSERT_TRUE(
+    occaJsonIsString(
+      occaJsonObjectGet(cJson2, "string", occaUndefined)
+    )
+  );
+
+  ASSERT_TRUE(
+    occaJsonIsArray(
+      occaJsonObjectGet(cJson2, "array", occaUndefined)
+    )
+  );
+
+  ASSERT_FALSE(occaJsonObjectHas(cJson2, "undefined"));
+  ASSERT_TRUE(occaJsonObjectHas(cJson2, "bool"));
+  ASSERT_TRUE(occaJsonObjectHas(cJson2, "number"));
+  ASSERT_TRUE(occaJsonObjectHas(cJson2, "string"));
+  ASSERT_TRUE(occaJsonObjectHas(cJson2, "array"));
+
+  occaFree(cJson2);
 }
 
 void testTypes() {
@@ -75,30 +126,30 @@ void testTypes() {
   occaType u64    = occaUInt64(u64Value);
   occaType string = occaString(stringValue.c_str());
 
-  occaPropertiesSet(cProps, "bool"    , bool_);
-  occaPropertiesSet(cProps, "int8_t"  , i8);
-  occaPropertiesSet(cProps, "uint8_t" , u8);
-  occaPropertiesSet(cProps, "int16_t" , i16);
-  occaPropertiesSet(cProps, "uint16_t", u16);
-  occaPropertiesSet(cProps, "int32_t" , i32);
-  occaPropertiesSet(cProps, "uint32_t", u32);
-  occaPropertiesSet(cProps, "int64_t" , i64);
-  occaPropertiesSet(cProps, "uint64_t", u64);
-  occaPropertiesSet(cProps, "string"  , string);
+  occaJsonObjectSet(cJson, "bool"    , bool_);
+  occaJsonObjectSet(cJson, "int8_t"  , i8);
+  occaJsonObjectSet(cJson, "uint8_t" , u8);
+  occaJsonObjectSet(cJson, "int16_t" , i16);
+  occaJsonObjectSet(cJson, "uint16_t", u16);
+  occaJsonObjectSet(cJson, "int32_t" , i32);
+  occaJsonObjectSet(cJson, "uint32_t", u32);
+  occaJsonObjectSet(cJson, "int64_t" , i64);
+  occaJsonObjectSet(cJson, "uint64_t", u64);
+  occaJsonObjectSet(cJson, "string"  , string);
 
-  occaType undef  = occaPropertiesGet(cProps, "undefined", occaUndefined);
+  occaType undef  = occaJsonObjectGet(cJson, "undefined", occaUndefined);
   ASSERT_NEQ(undef.type, OCCA_JSON);
 
-  occaType bool_2   = occaPropertiesGet(cProps, "bool"    , occaUndefined);
-  occaType i8_2     = occaPropertiesGet(cProps, "int8_t"  , occaUndefined);
-  occaType u8_2     = occaPropertiesGet(cProps, "uint8_t" , occaUndefined);
-  occaType i16_2    = occaPropertiesGet(cProps, "int16_t" , occaUndefined);
-  occaType u16_2    = occaPropertiesGet(cProps, "uint16_t", occaUndefined);
-  occaType i32_2    = occaPropertiesGet(cProps, "int32_t" , occaUndefined);
-  occaType u32_2    = occaPropertiesGet(cProps, "uint32_t", occaUndefined);
-  occaType i64_2    = occaPropertiesGet(cProps, "int64_t" , occaUndefined);
-  occaType u64_2    = occaPropertiesGet(cProps, "uint64_t", occaUndefined);
-  occaType string_2 = occaPropertiesGet(cProps, "string"  , occaUndefined);
+  occaType bool_2   = occaJsonObjectGet(cJson, "bool"    , occaUndefined);
+  occaType i8_2     = occaJsonObjectGet(cJson, "int8_t"  , occaUndefined);
+  occaType u8_2     = occaJsonObjectGet(cJson, "uint8_t" , occaUndefined);
+  occaType i16_2    = occaJsonObjectGet(cJson, "int16_t" , occaUndefined);
+  occaType u16_2    = occaJsonObjectGet(cJson, "uint16_t", occaUndefined);
+  occaType i32_2    = occaJsonObjectGet(cJson, "int32_t" , occaUndefined);
+  occaType u32_2    = occaJsonObjectGet(cJson, "uint32_t", occaUndefined);
+  occaType i64_2    = occaJsonObjectGet(cJson, "int64_t" , occaUndefined);
+  occaType u64_2    = occaJsonObjectGet(cJson, "uint64_t", occaUndefined);
+  occaType string_2 = occaJsonObjectGet(cJson, "string"  , occaUndefined);
 
   ASSERT_EQ(bool_2.type  , OCCA_JSON);
   ASSERT_EQ(i8_2.type    , OCCA_JSON);
@@ -133,41 +184,100 @@ void testTypes() {
   ASSERT_EQ(u64_3.value.uint64_, u64Value);
 
   // NULL
-  occaPropertiesSet(cProps, "null", occaNull);
-  occaType nullValue = occaPropertiesGet(cProps, "null", occaUndefined);
+  occaJsonObjectSet(cJson, "null", occaNull);
+  occaType nullValue = occaJsonObjectGet(cJson, "null", occaUndefined);
   ASSERT_EQ(nullValue.type, OCCA_PTR);
   ASSERT_EQ(nullValue.value.ptr, (void*) NULL);
 
   // Nested props
-  occaProperties cProps2 = occaCreatePropertiesFromString(
-    "prop: { value: 1 }"
+  occaJson cJson2 = occaCreateJsonFromString(
+    "{ prop: { value: 1 } }"
   );
-  occaType propValue = occaPropertiesGet(cProps2, "prop", occaUndefined);
+  occaType propValue = occaJsonObjectGet(cJson2, "prop", occaUndefined);
   ASSERT_EQ(propValue.type, OCCA_JSON);
   ASSERT_TRUE(occaJsonIsObject(propValue));
   ASSERT_TRUE(occaJsonObjectHas(propValue, "value"));
 
-  occaFree(cProps2);
+  occaFree(cJson2);
+}
+
+void testArray() {
+  occaJson array = occaCreateJsonFromString(
+    "[true, 1, 'string', [], {}]"
+  );
+
+  ASSERT_EQ(occaJsonArraySize(array), 5);
+
+  ASSERT_TRUE(
+    occaJsonIsBoolean(
+      occaJsonArrayGet(array, 0)
+    )
+  );
+
+  ASSERT_TRUE(
+    occaJsonIsNumber(
+      occaJsonArrayGet(array, 1)
+    )
+  );
+
+  ASSERT_TRUE(
+    occaJsonIsString(
+      occaJsonArrayGet(array, 2)
+    )
+  );
+
+  ASSERT_TRUE(
+    occaJsonIsArray(
+      occaJsonArrayGet(array, 3)
+    )
+  );
+
+  ASSERT_TRUE(
+    occaJsonIsObject(
+      occaJsonArrayGet(array, 4)
+    )
+  );
+
+  occaJsonArrayPush(array, occaInt(1));
+  ASSERT_EQ(occaJsonArraySize(array), 6);
+
+  occaJsonArrayPop(array);
+  ASSERT_EQ(occaJsonArraySize(array), 5);
+
+
+  occaJsonArrayInsert(array, 0, occaInt(1));
+  ASSERT_EQ(occaJsonArraySize(array), 6);
+
+  ASSERT_TRUE(
+    occaJsonIsNumber(
+      occaJsonArrayGet(array, 0)
+    )
+  );
+
+  occaJsonArrayClear(array);
+  ASSERT_EQ(occaJsonArraySize(array), 0);
+
+  occaFree(array);
 }
 
 void testBadType() {
   ASSERT_THROW(
-    occaPropertiesSet(cProps, "ptr", occaPtr((void*) 10));
+    occaJsonObjectSet(cJson, "ptr", occaPtr((void*) 10));
   );
 
   ASSERT_THROW(
-    occaPropertiesSet(cProps, "device", occaGetDevice());
+    occaJsonObjectSet(cJson, "device", occaGetDevice());
   );
 }
 
 void testKeyMiss() {
   // Test get miss
-  ASSERT_FALSE(occaPropertiesHas(cProps, "foobar"));
+  ASSERT_FALSE(occaJsonObjectHas(cJson, "foobar"));
 
-  occaType foobar = occaPropertiesGet(cProps, "foobar", occaUndefined);
+  occaType foobar = occaJsonObjectGet(cJson, "foobar", occaUndefined);
   ASSERT_TRUE(occaIsUndefined(foobar));
 
-  foobar = occaPropertiesGet(cProps, "foobar", occaInt32(2));
+  foobar = occaJsonObjectGet(cJson, "foobar", occaInt32(2));
   ASSERT_EQ(foobar.type,
             OCCA_INT32);
   ASSERT_EQ(foobar.value.int32_,
@@ -175,25 +285,25 @@ void testKeyMiss() {
 
   // Set 'foobar'
   std::string hi = "hi";
-  occaPropertiesSet(cProps, "foobar", occaString(hi.c_str()));
+  occaJsonObjectSet(cJson, "foobar", occaString(hi.c_str()));
 
   // Test success
-  ASSERT_TRUE(occaPropertiesHas(cProps, "foobar"));
+  ASSERT_TRUE(occaJsonObjectHas(cJson, "foobar"));
 
-  foobar = occaPropertiesGet(cProps, "foobar", occaInt32(2));
+  foobar = occaJsonObjectGet(cJson, "foobar", occaInt32(2));
   ASSERT_TRUE(occaJsonIsString(foobar));
   ASSERT_EQ(hi, occaJsonGetString(foobar));
 }
 
 void testSerialization() {
-  occa::properties &props = occa::c::properties(cProps);
+  occa::json &props = occa::c::json(cJson);
 
   const std::string propStr = (std::string) props;
-  occaProperties cProps2 = occaCreatePropertiesFromString(propStr.c_str());
-  occa::properties &props2 = occa::c::properties(cProps2);
+  occaJson cJson2 = occaCreateJsonFromString(propStr.c_str());
+  occa::json &props2 = occa::c::json(cJson2);
 
   ASSERT_EQ(props,
             props2);
 
-  occaFree(cProps2);
+  occaFree(cJson2);
 }

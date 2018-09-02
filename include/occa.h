@@ -23,6 +23,7 @@
 #include <occa/c/kernel.h>
 #include <occa/c/memory.h>
 #include <occa/c/base.h>
+#include <occa/c/json.h>
 #include <occa/c/properties.h>
 
 // Just in case someone wants to run with an older format than C99

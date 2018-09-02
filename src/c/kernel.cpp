@@ -32,7 +32,8 @@ int OCCA_RFUNC occaKernelIsInitialized(occaKernel kernel) {
 
 occaProperties OCCA_RFUNC occaKernelGetProperties(occaKernel kernel) {
   return occa::c::newOccaType(
-    occa::c::kernel(kernel).properties()
+    occa::c::kernel(kernel).properties(),
+    false
   );
 }
 

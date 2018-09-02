@@ -51,17 +51,17 @@ const char* OCCA_RFUNC occaDeviceMode(occaDevice device) {
 
 occaProperties OCCA_RFUNC occaDeviceGetProperties(occaDevice device) {
   occa::properties &props = occa::c::device(device).properties();
-  return occa::c::newOccaType(props);
+  return occa::c::newOccaType(props, false);
 }
 
 occaProperties OCCA_RFUNC occaDeviceGetKernelProperties(occaDevice device) {
   occa::properties &props = occa::c::device(device).kernelProperties();
-  return occa::c::newOccaType(props);
+  return occa::c::newOccaType(props, false);
 }
 
 occaProperties OCCA_RFUNC occaDeviceGetMemoryProperties(occaDevice device) {
   occa::properties &props = occa::c::device(device).memoryProperties();
-  return occa::c::newOccaType(props);
+  return occa::c::newOccaType(props, false);
 }
 
 occaUDim_t OCCA_RFUNC occaDeviceMemorySize(occaDevice device) {

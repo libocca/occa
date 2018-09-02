@@ -41,6 +41,7 @@ namespace occa {
       oType.magicHeader = OCCA_C_TYPE_UNDEFINED_HEADER;
       oType.type = occa::c::typeType::undefined;
       oType.value.ptr = NULL;
+      oType.needsFree = false;
       return oType;
     }
 
@@ -49,6 +50,7 @@ namespace occa {
       oType.magicHeader = OCCA_C_TYPE_MAGIC_HEADER;
       oType.type = occa::c::typeType::default_;
       oType.value.ptr = NULL;
+      oType.needsFree = false;
       return oType;
     }
 
@@ -58,7 +60,42 @@ namespace occa {
       oType.type  = typeType::ptr;
       oType.bytes = sizeof(void*);
       oType.value.ptr = (char*) value;
+      oType.needsFree = false;
       return oType;
+    }
+
+    template <>
+    occaType newOccaType(const occa::primitive &value) {
+      switch(value.type) {
+      case occa::primitiveType::int8_   : return newOccaType<int8_t>(value);
+      case occa::primitiveType::uint8_  : return newOccaType<uint8_t>(value);
+      case occa::primitiveType::int16_  : return newOccaType<int16_t>(value);
+      case occa::primitiveType::uint16_ : return newOccaType<uint16_t>(value);
+      case occa::primitiveType::int32_  : return newOccaType<int32_t>(value);
+      case occa::primitiveType::uint32_ : return newOccaType<uint32_t>(value);
+      case occa::primitiveType::int64_  : return newOccaType<int64_t>(value);
+      case occa::primitiveType::uint64_ : return newOccaType<uint64_t>(value);
+      case occa::primitiveType::float_  : return newOccaType<float>(value);
+      case occa::primitiveType::double_ : return newOccaType<double>(value);
+      }
+      return occaUndefined;
+    }
+
+    occaType newOccaType(const occa::primitive &value,
+                         const int type) {
+      switch(type) {
+      case occa::c::typeType::int8_   : return newOccaType<int8_t>(value);
+      case occa::c::typeType::uint8_  : return newOccaType<uint8_t>(value);
+      case occa::c::typeType::int16_  : return newOccaType<int16_t>(value);
+      case occa::c::typeType::uint16_ : return newOccaType<uint16_t>(value);
+      case occa::c::typeType::int32_  : return newOccaType<int32_t>(value);
+      case occa::c::typeType::uint32_ : return newOccaType<uint32_t>(value);
+      case occa::c::typeType::int64_  : return newOccaType<int64_t>(value);
+      case occa::c::typeType::uint64_ : return newOccaType<uint64_t>(value);
+      case occa::c::typeType::float_  : return newOccaType<float>(value);
+      case occa::c::typeType::double_ : return newOccaType<double>(value);
+      }
+      return occaUndefined;
     }
 
     template <>
@@ -182,6 +219,7 @@ namespace occa {
       oType.type  = typeType::device;
       oType.bytes = sizeof(void*);
       oType.value.ptr = (char*) modeDevice;
+      oType.needsFree = false;
       return oType;
     }
 
@@ -196,6 +234,7 @@ namespace occa {
       oType.type  = typeType::kernel;
       oType.bytes = sizeof(void*);
       oType.value.ptr = (char*) modeKernel;
+      oType.needsFree = false;
       return oType;
     }
 
@@ -210,16 +249,32 @@ namespace occa {
       oType.type  = typeType::memory;
       oType.bytes = sizeof(void*);
       oType.value.ptr = (char*) modeMemory;
+      oType.needsFree = false;
       return oType;
     }
 
-    template <>
-    occaType newOccaType(const occa::properties &properties) {
+    occaType newOccaType(const occa::json &json,
+                         const bool needsFree) {
+      if (json.isNull()) {
+        return occaNull;
+      }
+      occaType oType;
+      oType.magicHeader = OCCA_C_TYPE_MAGIC_HEADER;
+      oType.type  = typeType::json;
+      oType.bytes = sizeof(void*);
+      oType.value.ptr = (char*) &json;
+      oType.needsFree = needsFree;
+      return oType;
+    }
+
+    occaType newOccaType(const occa::properties &properties,
+                         const bool needsFree) {
       occaType oType;
       oType.magicHeader = OCCA_C_TYPE_MAGIC_HEADER;
       oType.type  = typeType::properties;
       oType.bytes = sizeof(void*);
       oType.value.ptr = (char*) &properties;
+      oType.needsFree = needsFree;
       return oType;
     }
 
@@ -266,6 +321,95 @@ namespace occa {
       OCCA_ERROR("Input is not an occaMemory",
                  value.type == typeType::memory);
       return occa::memory((occa::modeMemory_t*) value.value.ptr);
+    }
+
+    occa::primitive primitive(occaType value) {
+      occa::primitive p;
+
+      switch (value.type) {
+      case occa::c::typeType::int8_:
+        p = value.value.int8_; break;
+      case occa::c::typeType::uint8_:
+        p = value.value.uint8_; break;
+      case occa::c::typeType::int16_:
+        p = value.value.int16_; break;
+      case occa::c::typeType::uint16_:
+        p = value.value.uint16_; break;
+      case occa::c::typeType::int32_:
+        p = value.value.int32_; break;
+      case occa::c::typeType::uint32_:
+        p = value.value.uint32_; break;
+      case occa::c::typeType::int64_:
+        p = value.value.int64_; break;
+      case occa::c::typeType::uint64_:
+        p = value.value.uint64_; break;
+      case occa::c::typeType::float_:
+        p = value.value.float_; break;
+      case occa::c::typeType::double_:
+        p = value.value.double_; break;
+      default:
+        OCCA_FORCE_ERROR("Invalid value type");
+      }
+
+      return p;
+    }
+
+    occa::primitive primitive(occaType value,
+                              const int type) {
+      occa::primitive p = primitive(value);
+
+      switch (type) {
+      case occa::c::typeType::int8_: return p.to<int8_t>();
+      case occa::c::typeType::uint8_: return p.to<uint8_t>();
+      case occa::c::typeType::int16_: return p.to<int16_t>();
+      case occa::c::typeType::uint16_: return p.to<uint16_t>();
+      case occa::c::typeType::int32_: return p.to<int32_t>();
+      case occa::c::typeType::uint32_: return p.to<uint32_t>();
+      case occa::c::typeType::int64_: return p.to<int64_t>();
+      case occa::c::typeType::uint64_: return p.to<uint64_t>();
+      case occa::c::typeType::float_: return p.to<float>();
+      case occa::c::typeType::double_: return p.to<double>();
+      default:
+        OCCA_FORCE_ERROR("Invalid value type");
+      }
+      return p;
+    }
+
+    occa::json& json(occaType value) {
+      OCCA_ERROR("Input is not an occaJson",
+                 value.type == typeType::json);
+      return *((occa::json*) value.value.ptr);
+    }
+
+    occa::json inferJson(occaType value) {
+      switch (value.type) {
+      case occa::c::typeType::bool_:
+        return occa::json((bool) value.value.int8_);
+      case occa::c::typeType::int8_:
+      case occa::c::typeType::uint8_:
+      case occa::c::typeType::int16_:
+      case occa::c::typeType::uint16_:
+      case occa::c::typeType::int32_:
+      case occa::c::typeType::uint32_:
+      case occa::c::typeType::int64_:
+      case occa::c::typeType::uint64_:
+      case occa::c::typeType::float_:
+      case occa::c::typeType::double_:
+        return occa::json(occa::c::primitive(value));
+      case occa::c::typeType::string:
+        return occa::json((char*) value.value.ptr);
+      case occa::c::typeType::json:
+        return occa::c::json(value);
+      case occa::c::typeType::properties:
+        return occa::c::properties(value);
+      case occa::c::typeType::ptr:
+        if (value.value.ptr == NULL) {
+          return occa::json(occa::json::null_);
+        }
+      default:
+        OCCA_FORCE_ERROR("Invalid value type");
+        return occa::json();
+      }
     }
 
     occa::properties& properties(occaType value) {
@@ -319,6 +463,8 @@ const int OCCA_STRING     = occa::c::typeType::string;
 const int OCCA_DEVICE     = occa::c::typeType::device;
 const int OCCA_KERNEL     = occa::c::typeType::kernel;
 const int OCCA_MEMORY     = occa::c::typeType::memory;
+
+const int OCCA_JSON       = occa::c::typeType::json;
 const int OCCA_PROPERTIES = occa::c::typeType::properties;
 //======================================
 
@@ -428,6 +574,7 @@ OCCA_LFUNC occaType OCCA_RFUNC occaStruct(void *value,
   oType.type  = occa::c::typeType::struct_;
   oType.bytes = bytes;
   oType.value.ptr = (char*) value;
+  oType.needsFree = false;
   return oType;
 }
 
@@ -437,6 +584,7 @@ OCCA_LFUNC occaType OCCA_RFUNC occaString(const char *str) {
   oType.type  = occa::c::typeType::string;
   oType.bytes = strlen(str);
   oType.value.ptr = const_cast<char*>(str);
+  oType.needsFree = false;
   return oType;
 }
 //======================================
@@ -457,8 +605,16 @@ OCCA_LFUNC void OCCA_RFUNC occaFree(occaType value) {
     occa::c::memory(value).free();
     break;
   }
+  case occa::c::typeType::json: {
+    if (value.needsFree) {
+      delete &occa::c::json(value);
+    }
+    break;
+  }
   case occa::c::typeType::properties: {
-    delete &occa::c::properties(value);
+    if (value.needsFree) {
+      delete &occa::c::properties(value);
+    }
     break;
   }}
   value.magicHeader = occaUndefined.magicHeader;

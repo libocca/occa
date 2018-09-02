@@ -28,7 +28,8 @@ OCCA_START_EXTERN_C
 
 //---[ Globals & Flags ]----------------
 occaProperties OCCA_RFUNC occaSettings() {
-  return occa::c::newOccaType(occa::settings());
+  return occa::c::newOccaType(occa::settings(),
+                              false);
 }
 
 void OCCA_RFUNC occaPrintModeInfo() {
@@ -54,7 +55,8 @@ void OCCA_RFUNC occaSetDeviceFromInfo(const char *infos) {
 }
 
 occaProperties OCCA_RFUNC occaDeviceProperties() {
-  return occa::c::newOccaType(occa::deviceProperties());
+  return occa::c::newOccaType(occa::deviceProperties(),
+                              false);
 }
 
 void OCCA_RFUNC occaLoadKernels(const char *library) {

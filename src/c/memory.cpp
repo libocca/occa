@@ -46,7 +46,8 @@ occaDevice OCCA_RFUNC occaMemoryGetDevice(occaMemory memory) {
 
 occaProperties OCCA_RFUNC occaMemoryGetProperties(occaMemory memory) {
   return occa::c::newOccaType(
-    occa::c::memory(memory).properties()
+    occa::c::memory(memory).properties(),
+    false
   );
 }
 

@@ -69,7 +69,7 @@ void testInfo() {
   occaProperties props = occaKernelGetProperties(addVectors);
   occaType mode = occaPropertiesGet(props, "mode", occaUndefined);
   ASSERT_FALSE(occaIsUndefined(mode));
-  ASSERT_EQ((const char*) mode.value.ptr,
+  ASSERT_EQ((const char*) occaJsonGetString(mode),
             (const char*) "Serial");
 
   occaDevice device = occaKernelGetDevice(addVectors);

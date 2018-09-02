@@ -41,6 +41,7 @@ typedef struct {
   int magicHeader;
   int type;
   occaUDim_t bytes;
+  char needsFree;
 
   union {
     uint8_t  uint8_;
@@ -63,6 +64,8 @@ typedef struct {
 typedef occaType occaDevice;
 typedef occaType occaKernel;
 typedef occaType occaMemory;
+
+typedef occaType occaJson;
 typedef occaType occaProperties;
 
 typedef struct {
@@ -99,6 +102,8 @@ extern const int OCCA_STRING;
 extern const int OCCA_DEVICE;
 extern const int OCCA_KERNEL;
 extern const int OCCA_MEMORY;
+
+extern const int OCCA_JSON;
 extern const int OCCA_PROPERTIES;
 //======================================
 
