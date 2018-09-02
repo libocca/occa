@@ -30,7 +30,7 @@ occaDevice OCCA_RFUNC occaCreateDevice(occaType info) {
   if (info.type == occa::c::typeType::properties) {
     device = occa::device(occa::c::properties(info));
   }
-  if (info.type == occa::c::typeType::json) {
+  else if (info.type == occa::c::typeType::json) {
     device = occa::device(occa::c::json(info));
   }
   else if (info.type == occa::c::typeType::string) {
