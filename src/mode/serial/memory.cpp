@@ -51,7 +51,6 @@ namespace occa {
                              size - offset,
                              properties);
       m->ptr = ptr + offset;
-      m->canBeFreed = false;
       return m;
     }
 
@@ -89,7 +88,9 @@ namespace occa {
 
     void memory::free() {
       if (ptr) {
-        sys::free(ptr);
+        if (isOrigin) {
+          sys::free(ptr);
+        }
         ptr = NULL;
         size = 0;
       }

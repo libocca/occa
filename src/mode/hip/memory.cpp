@@ -60,7 +60,6 @@ namespace occa {
       if (mappedPtr) {
         m->mappedPtr = mappedPtr + offset;
       }
-      m->canBeFreed = false;
       return m;
     }
 
@@ -136,6 +135,13 @@ namespace occa {
     }
 
     void memory::free() {
+      if (!isOrigin) {
+        hipPtr = 0;
+        mappedPtr = NULL;
+        size = 0;
+        return;
+      }
+
       if (mappedPtr) {
         OCCA_HIP_ERROR("Device: mappedFree()",
                        hipHostFree(mappedPtr));

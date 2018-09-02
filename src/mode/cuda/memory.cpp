@@ -62,7 +62,6 @@ namespace occa {
         m->mappedPtr = mappedPtr + offset;
       }
       m->isUnified = isUnified;
-      m->canBeFreed = false;
       return m;
     }
 
@@ -138,6 +137,13 @@ namespace occa {
     }
 
     void memory::free() {
+      if (!isOrigin) {
+        cuPtr = 0;
+        mappedPtr = NULL;
+        size = 0;
+        return;
+      }
+
       if (mappedPtr) {
         OCCA_CUDA_ERROR("Device: mappedFree()",
                         cuMemFreeHost(mappedPtr));

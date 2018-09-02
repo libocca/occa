@@ -60,7 +60,7 @@ namespace occa {
     occa::modeDevice_t *modeDevice;
 
     udim_t size;
-    bool canBeFreed;
+    bool isOrigin;
 
     modeMemory_t(modeDevice_t *modeDevice_,
                  udim_t size_,

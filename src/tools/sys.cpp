@@ -591,8 +591,7 @@ namespace occa {
             cache = info.Size;
             break;
           }
-        }
-        }
+        }}
         ++pos;
         off += sk;
       }

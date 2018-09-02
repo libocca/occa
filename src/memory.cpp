@@ -40,7 +40,7 @@ namespace occa {
     uvaPtr(NULL),
     modeDevice(modeDevice_),
     size(size_),
-    canBeFreed(true) {
+    isOrigin(true) {
     modeDevice->addMemoryRef(this);
   }
 
@@ -396,12 +396,15 @@ namespace occa {
                (offset + (dim_t) bytes_) <= (dim_t) size());
 
     occa::memory m(modeMemory->addOffset(offset));
-    modeMemory_t &mv = *(m.modeMemory);
-    mv.modeDevice = modeMemory->modeDevice;
-    mv.size = bytes_;
+
+    modeMemory_t &mm = *(m.modeMemory);
+    mm.modeDevice = modeMemory->modeDevice;
+    mm.size = bytes_;
+    mm.isOrigin = false;
     if (modeMemory->uvaPtr) {
-      mv.uvaPtr = (modeMemory->uvaPtr + offset);
+      mm.uvaPtr = (modeMemory->uvaPtr + offset);
     }
+
     return m;
   }
 
@@ -550,19 +553,22 @@ namespace occa {
     modeDevice_t *modeDevice = modeMemory->modeDevice;
 
     // Free the actual backend memory object
-    if (modeMemory->canBeFreed) {
+    if (modeMemory->isOrigin) {
       modeDevice->bytesAllocated -= (modeMemory->size);
 
       if (modeMemory->uvaPtr) {
-        uvaMap.erase(modeMemory->uvaPtr);
-        modeDevice->uvaMap.erase(modeMemory->uvaPtr);
+        void *ptr = modeMemory->ptr;
+        void *uvaPtr = modeMemory->uvaPtr;
+
+        uvaMap.erase(uvaPtr);
+        modeDevice->uvaMap.erase(uvaPtr);
 
         // CPU case where memory is shared
-        if (modeMemory->uvaPtr != modeMemory->ptr) {
-          uvaMap.erase(modeMemory->ptr);
-          modeDevice->uvaMap.erase(modeMemory->uvaPtr);
+        if (uvaPtr != ptr) {
+          uvaMap.erase(ptr);
+          modeDevice->uvaMap.erase(ptr);
 
-          sys::free(modeMemory->uvaPtr);
+          sys::free(uvaPtr);
         }
       }
 
