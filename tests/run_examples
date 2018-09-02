@@ -33,14 +33,14 @@ ASAN_OPTIONS+=':detect_container_overflow=0'
 HEADER_CHARS=80
 
 declare -a examples=(
-    1_add_vectors/cpp
-    1_add_vectors/c
-    2_background_device
-    3_reduction
-    4_building_kernels
-    5_unified_memory
-    6_arrays
-    7_streams
+    cpp/1_add_vectors
+    cpp/2_background_device
+    cpp/3_reduction
+    cpp/4_building_kernels
+    cpp/5_unified_memory
+    cpp/6_arrays
+    cpp/7_streams
+    c/1_add_vectors
 )
 
 for mode in $("${OCCA_DIR}/bin/occa" modes); do

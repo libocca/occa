@@ -22,7 +22,7 @@
 
 PROJ_DIR := $(dir $(abspath $(lastword $(MAKEFILE_LIST))))
 ifndef OCCA_DIR
-  include $(PROJ_DIR)/../../scripts/Makefile
+  include $(PROJ_DIR)/../../../scripts/Makefile
 else
   include ${OCCA_DIR}/scripts/Makefile
 endif
@@ -45,5 +45,5 @@ $(objPath)/%.o:$(srcPath)/%.cpp $(wildcard $(subst $(srcPath)/,$(incPath)/,$(<:.
 
 clean:
 	rm -f $(objPath)/*;
-	rm -f ${PROJ_DIR}/main
+	rm -f ${PROJ_DIR}/main;
 #=================================================

@@ -66,7 +66,7 @@ export DYLD_LIBRARY_PATH+=":${PWD}/lib"
 ### Hello World
 
 ```bash
-cd examples/1_add_vectors/cpp
+cd examples/cpp/1_add_vectors
 make
 ./main
 ```
