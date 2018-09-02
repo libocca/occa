@@ -30,12 +30,40 @@ occaType OCCA_RFUNC occaCreateJson() {
                               true);
 }
 
-occaType OCCA_RFUNC occaCreateJsonFromString(const char *c) {
+
+//---[ Global methods ]-----------------
+occaJson OCCA_RFUNC occaJsonParse(const char *c) {
   return occa::c::newOccaType(
     *(new occa::json(occa::json::parse(c))),
     true
   );
 }
+
+OCCA_LFUNC occaJson OCCA_RFUNC occaJsonRead(const char *filename) {
+  return occa::c::newOccaType(
+    *(new occa::json(occa::json::read(filename))),
+    true
+  );
+}
+
+OCCA_LFUNC void OCCA_RFUNC occaJsonWrite(occaJson j,
+                                         const char *filename) {
+  occa::json &j_ = occa::c::json(j);
+  j_.write(filename);
+}
+
+OCCA_LFUNC const char* OCCA_RFUNC occaJsonDump(occaJson j,
+                                               const int indent) {
+  occa::json &j_ = occa::c::json(j);
+  std::string str = j_.dump(indent);
+
+  const size_t chars = str.size() + 1;
+  char *c = (char*) ::malloc(chars);
+  ::memcpy(c, str.c_str(), chars);
+
+  return c;
+}
+//======================================
 
 
 //---[ Type checks ]--------------------

@@ -30,7 +30,19 @@ OCCA_START_EXTERN_C
 
 OCCA_LFUNC occaJson OCCA_RFUNC occaCreateJson();
 
-OCCA_LFUNC occaJson OCCA_RFUNC occaCreateJsonFromString(const char *c);
+
+//---[ Global methods ]-----------------
+OCCA_LFUNC occaJson OCCA_RFUNC occaJsonParse(const char *c);
+
+OCCA_LFUNC occaJson OCCA_RFUNC occaJsonRead(const char *filename);
+
+OCCA_LFUNC void OCCA_RFUNC occaJsonWrite(occaJson j,
+                                         const char *filename);
+
+OCCA_LFUNC const char* OCCA_RFUNC occaJsonDump(occaJson j,
+                                               const int indent);
+//======================================
+
 
 //---[ Type checks ]--------------------
 OCCA_LFUNC int OCCA_RFUNC occaJsonIsBoolean(occaJson j);

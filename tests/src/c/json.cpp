@@ -57,7 +57,7 @@ int main(const int argc, const char **argv) {
 }
 
 void testTypeChecking() {
-  occaJson cJson2 = occaCreateJsonFromString(
+  occaJson cJson2 = occaJsonParse(
     "{"
     "  bool: true,"
     "  number: 1,"
@@ -190,7 +190,7 @@ void testTypes() {
   ASSERT_EQ(nullValue.value.ptr, (void*) NULL);
 
   // Nested props
-  occaJson cJson2 = occaCreateJsonFromString(
+  occaJson cJson2 = occaJsonParse(
     "{ prop: { value: 1 } }"
   );
   occaType propValue = occaJsonObjectGet(cJson2, "prop", occaUndefined);
@@ -202,7 +202,7 @@ void testTypes() {
 }
 
 void testArray() {
-  occaJson array = occaCreateJsonFromString(
+  occaJson array = occaJsonParse(
     "[true, 1, 'string', [], {}]"
   );
 
@@ -299,7 +299,7 @@ void testSerialization() {
   occa::json &props = occa::c::json(cJson);
 
   const std::string propStr = (std::string) props;
-  occaJson cJson2 = occaCreateJsonFromString(propStr.c_str());
+  occaJson cJson2 = occaJsonParse(propStr.c_str());
   occa::json &props2 = occa::c::json(cJson2);
 
   ASSERT_EQ(props,
