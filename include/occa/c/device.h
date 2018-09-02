@@ -29,6 +29,7 @@
 OCCA_START_EXTERN_C
 
 OCCA_LFUNC occaDevice OCCA_RFUNC occaCreateDevice(occaType info);
+OCCA_LFUNC occaDevice OCCA_RFUNC occaCreateDeviceFromString(const char *info);
 
 OCCA_LFUNC int OCCA_RFUNC occaDeviceIsInitialized(occaDevice device);
 

@@ -229,6 +229,12 @@ namespace occa {
       bool operator < (const command &comm) const;
     };
     //==================================
+
+    //---[ JSON ]-----------------------
+    json parse(const int argc,
+               const char **argv,
+               const char *config);
+    //==================================
   }
 }
 

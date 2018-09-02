@@ -19,11 +19,12 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  */
+#include <occa/c/base.h>
+#include <occa/c/cli.h>
 #include <occa/c/device.h>
+#include <occa/c/json.h>
 #include <occa/c/kernel.h>
 #include <occa/c/memory.h>
-#include <occa/c/base.h>
-#include <occa/c/json.h>
 #include <occa/c/properties.h>
 
 // Just in case someone wants to run with an older format than C99

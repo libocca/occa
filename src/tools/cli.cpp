@@ -955,5 +955,57 @@ namespace occa {
       return name < comm.name;
     }
     //==================================
+
+    //---[ JSON ]-----------------------
+    json parse(const int argc,
+               const char **argv,
+               const char *config) {
+
+      occa::cli::parser parser;
+      json j = json::parse(config);
+
+      if (j.has("description")) {
+        parser.withDescription(j["description"]);
+      }
+
+      json options = j["options"].asArray();
+      const int optionCount = options.size();
+      for (int i = 0; i < optionCount; ++i) {
+        json option_i = options[i];
+
+        const std::string name = option_i.get<std::string>("name", "");
+        const char shortname = option_i.get<std::string>("shortname", "\0")[0];
+        const std::string description = option_i.get<std::string>("description", "");
+        json defaultValue = option_i["default_value"];
+
+        option opt(shortname, name, description);
+        if (option_i.get("is_required", false)) {
+          opt = opt.isRequired();
+        }
+        if (option_i.get("reusable", false)) {
+          opt = opt.reusable();
+        }
+        if (option_i.get("with_arg", false)) {
+          opt = opt.withArg();
+        }
+        if (option_i.has("with_args")) {
+          opt = opt.withArgs(option_i.get("with_args", 0));
+        }
+        if (option_i.get("stops_expansion", false)) {
+          opt = opt.stopsExpansion();
+        }
+        if (option_i.get("expands_files", false)) {
+          opt = opt.expandsFiles();
+        }
+        if (defaultValue.isInitialized()) {
+          opt = opt.withDefaultValue(defaultValue);
+        }
+
+        parser.addOption(opt);
+      }
+
+      return parser.parseArgs(argc, argv);
+    }
+    //==================================
   }
 }

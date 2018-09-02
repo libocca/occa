@@ -24,16 +24,10 @@
 
 #include <occa.h>
 
-int main(int argc, char **argv) {
-  occaPrintModeInfo();
+occaJson parseArgs(int argc, const char **argv);
 
-  /*
-    Try running with OCCA_VERBOSE=1 or set
-    verbose at run-time with:
-    occaPropertiesSet(occaSettings(),
-                      "kernel/verbose,
-                      occaBool(1));
-  */
+int main(int argc, const char **argv) {
+  occaJson args = parseArgs(argc, argv);
 
   int entries = 5;
   int i;
@@ -53,20 +47,34 @@ int main(int argc, char **argv) {
   occaMemory o_a, o_b, o_ab;
 
   //---[ Device setup with string flags ]-------------------
-  const char *deviceInfo = "mode: 'Serial'";
+  device = occaCreateDeviceFromString(
+    occaJsonGetString(
+      occaJsonObjectGet(args,
+                        "options/device",
+                        occaDefault)
+    )
+  );
 
-  // const char *deviceInfo = ("mode     : 'OpenMP', "
-  //                           "schedule : 'compact', "
-  //                           "chunk    : 10");
+  // device = occaCreateDeviceFromString(
+  //   "mode: 'Serial'"
+  // );
 
-  // const char *deviceInfo = ("mode        : 'OpenCL', "
-  //                           "platform_id : 0, "
-  //                           "device_id   : 1");
+  // device = occaCreateDeviceFromString(
+  //   "mode     : 'OpenMP', "
+  //   "schedule : 'compact', "
+  //   "chunk    : 10"
+  // );
 
-  // const char *deviceInfo = ("mode      : 'CUDA', "
-  //                           "device_id : 0");
+  // device = occaCreateDeviceFromString(
+  //   "mode        : 'OpenCL', "
+  //   "platform_id : 0, "
+  //   "device_id   : 1"
+  // );
 
-  device = occaCreateDevice(occaString(deviceInfo));
+  // device = occaCreateDeviceFromString(
+  //   "mode      : 'CUDA', "
+  //   "device_id : 0"
+  // );
   //========================================================
 
   // Allocate memory on the device
@@ -116,4 +124,35 @@ int main(int argc, char **argv) {
   occaFree(o_b);
   occaFree(o_ab);
   occaFree(device);
+}
+
+occaJson parseArgs(int argc, const char **argv) {
+  occaJson args = occaCliParseArgs(
+    argc, argv,
+    "{"
+    "  description: 'Example adding two vectors',"
+    "  options: ["
+    "    {"
+    "      name: 'device',"
+    "      shortname: 'd',"
+    "      description: 'Device properties (default: \"mode: \\'Serial\\'\")',"
+    "      with_arg: true,"
+    "      default_value: { mode: 'Serial' },"
+    "    },"
+    "    {"
+    "      name: 'verbose',"
+    "      shortname: 'v',"
+    "      description: 'Compile kernels in verbose mode',"
+    "      default_value: false,"
+    "    },"
+    "  ],"
+    "}"
+  );
+
+  occaProperties settings = occaSettings();
+  occaPropertiesSet(settings,
+                    "kernel/verbose",
+                    occaJsonObjectGet(args, "options/verbose", occaBool(0)));
+
+  return args;
 }
