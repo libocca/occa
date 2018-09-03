@@ -22,6 +22,7 @@
 
 #include <occa/tools/cli.hpp>
 #include <occa/tools/env.hpp>
+#include <occa/tools/exception.hpp>
 #include <occa/tools/gc.hpp>
 #include <occa/tools/hash.hpp>
 #include <occa/tools/json.hpp>
