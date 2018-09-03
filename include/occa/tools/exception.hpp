@@ -26,15 +26,18 @@
 
 namespace occa {
   class exception : public std::exception {
-  private:
-    std::string output;
-
   public:
-    exception(const std::string &header,
-              const std::string &filename,
-              const std::string &function,
-              const int line,
-              const std::string &message);
+    const std::string header;
+    const std::string filename;
+    const std::string function;
+    const std::string message;
+    const int line;
+
+    exception(const std::string &header_,
+              const std::string &filename_,
+              const std::string &function_,
+              const int line_,
+              const std::string &message_ = "");
 
     ~exception() throw();
 

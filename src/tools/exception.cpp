@@ -26,12 +26,24 @@
 #include <occa/tools/sys.hpp>
 
 namespace occa {
-  exception::exception(const std::string &header,
-                       const std::string &filename,
-                       const std::string &function,
-                       const int line,
-                       const std::string &message = "") {
+  exception::exception(const std::string &header_,
+                       const std::string &filename_,
+                       const std::string &function_,
+                       const int line_,
+                       const std::string &message_) :
+    header(header_),
+    filename(filename_),
+    function(function_),
+    message(message_),
+    line(line_) {}
 
+  exception::~exception() throw() {}
+
+  const char* exception::what() const throw() {
+    return toString().c_str();
+  }
+
+  std::string exception::toString() const {
     std::stringstream ss;
 
     std::string banner = "---[ " + header + " ]";
@@ -45,17 +57,7 @@ namespace occa {
        << sys::stacktrace(4, "      ")
        << std::string(80, '=') << '\n';
 
-    output = ss.str();
-  }
-
-  exception::~exception() throw() {}
-
-  const char* exception::what() const throw() {
-    return output.c_str();
-  }
-
-  std::string exception::toString() const {
-    return output;
+    return ss.str();
   }
 
   std::ostream& operator << (std::ostream& out,
