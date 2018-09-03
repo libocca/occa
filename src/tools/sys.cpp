@@ -873,7 +873,9 @@ namespace occa {
       for (int i = frameStart; i < frameCount; ++i) {
         const std::string localFrame = toString(frameCount - i);
         ss << indent
-           << localFrame << std::string(digits - localFrame.size() + 1, ' ')
+           << std::string(digits - localFrame.size(), ' ')
+           << localFrame
+           << ' '
            << prettyStackSymbol(frames[i], symbols[i]) << '\n';
       }
       ::free(symbols);

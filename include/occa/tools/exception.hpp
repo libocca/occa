@@ -43,7 +43,8 @@ namespace occa {
 
     const char* what() const throw();
 
-    std::string toString() const;
+    std::string toString(const int stackTraceStart = 4) const;
+    std::string location() const;
   };
 
   std::ostream& operator << (std::ostream& out,

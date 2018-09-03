@@ -43,20 +43,26 @@ namespace occa {
     return toString().c_str();
   }
 
-  std::string exception::toString() const {
+  std::string exception::toString(const int stackTraceStart) const {
     std::stringstream ss;
 
     std::string banner = "---[ " + header + " ]";
     ss << '\n'
        << banner << std::string(80 - banner.size(), '-') << '\n'
-       << "    File     : " << filename << '\n'
-       << "    Function : " << function << '\n'
-       << "    Line     : " << line     << '\n'
+       << location()
        << "    Message  : " << message << '\n'
        << "    Stack    :\n"
-       << sys::stacktrace(4, "      ")
+       << sys::stacktrace(stackTraceStart, "      ")
        << std::string(80, '=') << '\n';
 
+    return ss.str();
+  }
+
+  std::string exception::location() const {
+    std::stringstream ss;
+    ss << "    File     : " << filename << '\n'
+       << "    Line     : " << line     << '\n'
+       << "    Function : " << function << '\n';
     return ss.str();
   }
 
