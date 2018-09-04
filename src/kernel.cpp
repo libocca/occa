@@ -163,7 +163,7 @@ namespace occa {
             : noProperties);
   }
 
-  modeKernel_t* kernel::getModeKernel() {
+  modeKernel_t* kernel::getModeKernel() const {
     return modeKernel;
   }
 

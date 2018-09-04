@@ -129,7 +129,7 @@ namespace occa {
     const std::string& mode() const;
     const occa::properties& properties() const;
 
-    modeKernel_t* getModeKernel();
+    modeKernel_t* getModeKernel() const;
 
     occa::device getDevice();
 
