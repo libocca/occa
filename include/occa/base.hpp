@@ -38,6 +38,7 @@
 #include <occa/device.hpp>
 #include <occa/kernel.hpp>
 #include <occa/memory.hpp>
+#include <occa/stream.hpp>
 
 namespace occa {
   //---[ Device Functions ]-------------
@@ -58,7 +59,7 @@ namespace occa {
   double timeBetween(const streamTag &startTag,
                      const streamTag &endTag);
 
-  stream createStream();
+  stream createStream(const occa::properties &props = occa::properties());
   stream getStream();
   void setStream(stream s);
 

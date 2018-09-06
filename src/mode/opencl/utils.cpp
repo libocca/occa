@@ -451,22 +451,23 @@ namespace occa {
                             cl_context context,
                             const occa::properties &props) {
 
-      occa::properties allProps = props;
-      allProps["mode"]       = "OpenCL";
-      allProps["platformID"] = -1;
-      allProps["deviceID"]   = -1;
-      allProps["wrapped"]    = true;
+      occa::properties allProps;
+      allProps["mode"]        = "OpenCL";
+      allProps["platform_id"] = -1;
+      allProps["device_id"]   = -1;
+      allProps["wrapped"]     = true;
+      allProps += props;
 
       opencl::device &dev = *(new opencl::device(allProps));
       dev.dontUseRefs();
 
-      dev.platformID = -1;
-      dev.deviceID   = -1;
+      dev.platformID = (int) allProps["platform_id"];
+      dev.deviceID   = (int) allProps["device_id"];
 
       dev.clDevice  = clDevice;
       dev.clContext = context;
 
-      dev.currentStream = dev.createStream();
+      dev.currentStream = dev.createStream(allProps["stream"]);
 
       return occa::device(&dev);
     }

@@ -227,10 +227,11 @@ namespace occa {
                             CUcontext context,
                             const occa::properties &props) {
 
-      occa::properties allProps = props;
+      occa::properties allProps;
       allProps["mode"]     = "CUDA";
       allProps["deviceID"] = -1;
       allProps["wrapped"]  = true;
+      allProps += props;
 
       cuda::device &dev = *(new cuda::device(allProps));
       dev.dontUseRefs();
@@ -238,7 +239,7 @@ namespace occa {
       dev.cuDevice  = device;
       dev.cuContext = context;
 
-      dev.currentStream = dev.createStream();
+      dev.currentStream = dev.createStream(allProps["stream"]);
 
       return occa::device(&dev);
     }

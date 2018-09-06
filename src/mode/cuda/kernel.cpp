@@ -53,7 +53,29 @@ namespace occa {
       cuFunction(cuFunction_),
       launcherKernel(NULL) {}
 
-    kernel::~kernel() {}
+    kernel::~kernel() {
+      if (!launcherKernel) {
+        if (cuModule) {
+          OCCA_CUDA_ERROR("Kernel (" + name + ") : Unloading Module",
+                          cuModuleUnload(cuModule));
+          cuModule = NULL;
+        }
+        return;
+      }
+
+      delete launcherKernel;
+      launcherKernel = NULL;
+
+      int kernelCount = (int) cuKernels.size();
+      for (int i = 0; i < kernelCount; ++i) {
+        delete cuKernels[i];
+      }
+      cuKernels.clear();
+    }
+
+    CUstream& kernel::getCuStream() const {
+      return ((device*) modeDevice)->getCuStream();
+    }
 
     int kernel::maxDims() const {
       return 3;
@@ -107,7 +129,7 @@ namespace occa {
                       cuLaunchKernel(cuFunction,
                                      outerDims.x, outerDims.y, outerDims.z,
                                      innerDims.x, innerDims.y, innerDims.z,
-                                     0, *((CUstream*) modeDevice->currentStream),
+                                     0, getCuStream(),
                                      &(vArgs[0]), 0));
     }
 
@@ -124,28 +146,6 @@ namespace occa {
       }
 
       launcherKernel->run();
-    }
-
-    void kernel::free() {
-      if (!launcherKernel) {
-        if (cuModule) {
-          OCCA_CUDA_ERROR("Kernel (" + name + ") : Unloading Module",
-                          cuModuleUnload(cuModule));
-          cuModule = NULL;
-        }
-        return;
-      }
-
-      launcherKernel->free();
-      delete launcherKernel;
-      launcherKernel = NULL;
-
-      int kernelCount = (int) cuKernels.size();
-      for (int i = 0; i < kernelCount; ++i) {
-        cuKernels[i]->free();
-        delete cuKernels[i];
-      }
-      cuKernels.clear();
     }
   }
 }

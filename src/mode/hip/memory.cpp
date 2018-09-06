@@ -37,7 +37,24 @@ namespace occa {
       hipPtr((hipDeviceptr_t&) ptr),
       mappedPtr(NULL) {}
 
-    memory::~memory() {}
+    memory::~memory() {
+      if (!isOrigin) {
+        hipPtr = 0;
+        mappedPtr = NULL;
+        size = 0;
+        return;
+      }
+
+      if (mappedPtr) {
+        OCCA_HIP_ERROR("Device: mappedFree()",
+                       hipHostFree(mappedPtr));
+        mappedPtr = NULL;
+      } else if (hipPtr) {
+        hipHostFree(hipPtr);
+        hipPtr = 0;
+      }
+      size = 0;
+    }
 
     kernelArg memory::makeKernelArg() const {
       kernelArgData arg;
@@ -132,25 +149,6 @@ namespace occa {
                                           bytes,
                                           stream) );
       }
-    }
-
-    void memory::free() {
-      if (!isOrigin) {
-        hipPtr = 0;
-        mappedPtr = NULL;
-        size = 0;
-        return;
-      }
-
-      if (mappedPtr) {
-        OCCA_HIP_ERROR("Device: mappedFree()",
-                       hipHostFree(mappedPtr));
-        mappedPtr = NULL;
-      } else if (hipPtr) {
-        hipHostFree(hipPtr);
-        hipPtr = 0;
-      }
-      size = 0;
     }
 
     void memory::detach() {

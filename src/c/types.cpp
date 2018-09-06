@@ -253,6 +253,21 @@ namespace occa {
       return oType;
     }
 
+    occaType newOccaType(occa::stream stream) {
+      occa::modeStream_t *modeStream = stream.getModeStream();
+      if (!modeStream) {
+        return occaUndefined;
+      }
+
+      occaType oType;
+      oType.magicHeader = OCCA_C_TYPE_MAGIC_HEADER;
+      oType.type  = typeType::stream;
+      oType.bytes = sizeof(void*);
+      oType.value.ptr = (char*) modeStream;
+      oType.needsFree = false;
+      return oType;
+    }
+
     occaType newOccaType(const occa::json &json,
                          const bool needsFree) {
       if (json.isNull()) {
@@ -276,13 +291,6 @@ namespace occa {
       oType.value.ptr = (char*) &properties;
       oType.needsFree = needsFree;
       return oType;
-    }
-
-    occaStream newOccaType(occa::stream value) {
-      occaStream stream;
-      stream.device = newOccaType(occa::device(value.modeDevice));
-      stream.modeStream = value.modeStream;
-      return stream;
     }
 
     occaStreamTag newOccaType(occa::streamTag value) {
@@ -321,6 +329,15 @@ namespace occa {
       OCCA_ERROR("Input is not an occaMemory",
                  value.type == typeType::memory);
       return occa::memory((occa::modeMemory_t*) value.value.ptr);
+    }
+
+    occa::stream stream(occaType value) {
+      if (occaIsUndefined(value)) {
+        return occa::stream();
+      }
+      OCCA_ERROR("Input is not an occaStream",
+                 value.type == typeType::stream);
+      return occa::stream((occa::modeStream_t*) value.value.ptr);
     }
 
     occa::primitive primitive(occaType value) {
@@ -424,11 +441,6 @@ namespace occa {
       return *((const occa::properties*) value.value.ptr);
     }
 
-    occa::stream stream(occaStream value) {
-      return occa::stream((occa::modeDevice_t*) value.device.value.ptr,
-                          value.modeStream);
-    }
-
     occa::streamTag streamTag(occaStreamTag value) {
       return occa::streamTag(value.tagTime,
                              value.modeTag);
@@ -463,6 +475,7 @@ const int OCCA_STRING     = occa::c::typeType::string;
 const int OCCA_DEVICE     = occa::c::typeType::device;
 const int OCCA_KERNEL     = occa::c::typeType::kernel;
 const int OCCA_MEMORY     = occa::c::typeType::memory;
+const int OCCA_STREAM     = occa::c::typeType::stream;
 
 const int OCCA_JSON       = occa::c::typeType::json;
 const int OCCA_PROPERTIES = occa::c::typeType::properties;
@@ -595,6 +608,7 @@ OCCA_LFUNC void OCCA_RFUNC occaFree(occaType value) {
   }
   switch (value.type) {
   case occa::c::typeType::device: {
+    occa::c::device(value).free();
     break;
   }
   case occa::c::typeType::kernel: {
@@ -603,6 +617,10 @@ OCCA_LFUNC void OCCA_RFUNC occaFree(occaType value) {
   }
   case occa::c::typeType::memory: {
     occa::c::memory(value).free();
+    break;
+  }
+  case occa::c::typeType::stream: {
+    occa::c::stream(value).free();
     break;
   }
   case occa::c::typeType::json: {
@@ -618,10 +636,6 @@ OCCA_LFUNC void OCCA_RFUNC occaFree(occaType value) {
     break;
   }}
   value.magicHeader = occaUndefined.magicHeader;
-}
-
-OCCA_LFUNC void OCCA_RFUNC occaFreeStream(occaStream value) {
-  occa::c::stream(value).free();
 }
 
 OCCA_END_EXTERN_C

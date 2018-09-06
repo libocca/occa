@@ -29,6 +29,7 @@
 #include <occa/defines.hpp>
 #include <occa/uva.hpp>
 #include <occa/kernel.hpp>
+#include <occa/stream.hpp>
 #include <occa/tools/gc.hpp>
 
 namespace occa {
@@ -37,8 +38,6 @@ namespace occa {
   class modeDevice_t; class device;
   class deviceInfo;
 
-  typedef void* stream_t;
-  class stream;
   class streamTag;
 
   typedef std::map<std::string, kernel>   cachedKernelMap;
@@ -54,12 +53,13 @@ namespace occa {
     gc::ring_t<device> deviceRing;
     gc::ring_t<modeKernel_t> kernelRing;
     gc::ring_t<modeMemory_t> memoryRing;
+    gc::ring_t<modeStream_t> streamRing;
 
     ptrRangeMap uvaMap;
     memoryVector uvaStaleMemory;
 
-    stream_t currentStream;
-    std::vector<stream_t> streams;
+    stream currentStream;
+    std::vector<modeStream_t*> streams;
 
     udim_t bytesAllocated;
 
@@ -67,21 +67,40 @@ namespace occa {
 
     modeDevice_t(const occa::properties &properties_);
 
+    template <class modeType_t>
+    void freeRing(gc::ring_t<modeType_t> ring) {
+      modeType_t *head = (modeType_t*) ring.head;
+      if (head) {
+        modeType_t *ptr = head;
+        do {
+          modeType_t *nextPtr = (modeType_t*) ptr->rightRingEntry;
+          // Remove modeDevice to prevent messing with this ring
+          ptr->modeDevice = NULL;
+          delete ptr;
+          ptr = nextPtr;
+        } while (ptr != head);
+        ring.clear();
+      }
+    }
+
+    void freeResources();
+
     void dontUseRefs();
     void addDeviceRef(device *dev);
     void removeDeviceRef(device *dev);
     bool needsFree() const;
 
-    void addKernelRef(modeKernel_t *ker);
-    void removeKernelRef(modeKernel_t *ker);
+    void addKernelRef(modeKernel_t *kernel);
+    void removeKernelRef(modeKernel_t *kernel);
 
-    void addMemoryRef(modeMemory_t *mem);
-    void removeMemoryRef(modeMemory_t *mem);
+    void addMemoryRef(modeMemory_t *memory);
+    void removeMemoryRef(modeMemory_t *memory);
+
+    void addStreamRef(modeStream_t *stream);
+    void removeStreamRef(modeStream_t *stream);
 
     //---[ Virtual Methods ]------------
     virtual ~modeDevice_t() = 0;
-    // Must be able to be called multiple times safely
-    virtual void free() = 0;
 
     virtual void finish() const = 0;
 
@@ -92,8 +111,7 @@ namespace occa {
     virtual hash_t kernelHash(const occa::properties &props) const = 0;
 
     //  |---[ Stream ]------------------
-    virtual stream_t createStream() const = 0;
-    virtual void freeStream(stream_t s) const = 0;
+    virtual modeStream_t* createStream(const occa::properties &props) = 0;
 
     virtual streamTag tagStream() const = 0;
     virtual void waitFor(streamTag tag) const = 0;
@@ -189,6 +207,9 @@ namespace occa {
     occa::properties& memoryProperties();
     const occa::properties& memoryProperties() const;
 
+    occa::properties& streamProperties();
+    const occa::properties& streamProperties() const;
+
     hash_t hash() const;
 
     udim_t memorySize() const;
@@ -199,8 +220,7 @@ namespace occa {
     bool hasSeparateMemorySpace();
 
     //  |---[ Stream ]------------------
-    stream createStream();
-    void freeStream(stream s);
+    stream createStream(const occa::properties &props = occa::properties());
 
     stream getStream();
     void setStream(stream s);
@@ -265,27 +285,6 @@ namespace occa {
   //====================================
 
   //---[ stream ]-----------------------
-  class stream {
-  public:
-    modeDevice_t *modeDevice;
-    stream_t modeStream;
-
-    stream();
-
-    stream(modeDevice_t *modeDevice_,
-           stream_t modeStream_);
-
-    stream(const stream &other);
-
-    stream& operator = (const stream &other);
-
-    bool operator == (const occa::stream &other) const;
-
-    stream_t getModeStream();
-
-    void free();
-  };
-
   /*
    * CUDA   : modeTag = CUevent*
    * OpenCL : modeTag = cl_event*

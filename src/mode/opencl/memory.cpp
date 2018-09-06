@@ -37,7 +37,25 @@ namespace occa {
       occa::modeMemory_t(modeDevice_, size_, properties_),
       mappedPtr(NULL) {}
 
-    memory::~memory() {}
+    memory::~memory() {
+      if (mappedPtr) {
+        OCCA_OPENCL_ERROR("Mapped Free: clEnqueueUnmapMemObject",
+                          clEnqueueUnmapMemObject(getCommandQueue(),
+                                                  clMem,
+                                                  mappedPtr,
+                                                  0, NULL, NULL));
+      }
+      if (size) {
+        // Free mapped-host pointer
+        OCCA_OPENCL_ERROR("Mapped Free: clReleaseMemObject",
+                          clReleaseMemObject(clMem));
+        size = 0;
+      }
+    }
+
+    cl_command_queue& memory::getCommandQueue() const {
+      return ((device*) modeDevice)->getCommandQueue();
+    }
 
     kernelArg memory::makeKernelArg() const {
       kernelArgData arg;
@@ -76,11 +94,11 @@ namespace occa {
                           const udim_t bytes,
                           const udim_t offset,
                           const occa::properties &props) {
-      cl_command_queue &stream = *((cl_command_queue*) modeDevice->currentStream);
       const bool async = props.get("async", false);
 
       OCCA_OPENCL_ERROR("Memory: " << (async ? "Async " : "") << "Copy From",
-                        clEnqueueWriteBuffer(stream, clMem,
+                        clEnqueueWriteBuffer(getCommandQueue(),
+                                             clMem,
                                              async ? CL_FALSE : CL_TRUE,
                                              offset, bytes, src,
                                              0, NULL, NULL));
@@ -91,11 +109,10 @@ namespace occa {
                           const udim_t destOffset,
                           const udim_t srcOffset,
                           const occa::properties &props) {
-      cl_command_queue &stream = *((cl_command_queue*) modeDevice->currentStream);
       const bool async = props.get("async", false);
 
       OCCA_OPENCL_ERROR("Memory: " << (async ? "Async " : "") << "Copy From",
-                        clEnqueueCopyBuffer(stream,
+                        clEnqueueCopyBuffer(getCommandQueue(),
                                             ((memory*) src)->clMem,
                                             clMem,
                                             srcOffset, destOffset,
@@ -115,32 +132,14 @@ namespace occa {
                         const udim_t offset,
                         const occa::properties &props) const {
 
-      const cl_command_queue &stream = *((cl_command_queue*) modeDevice->currentStream);
       const bool async = props.get("async", false);
 
       OCCA_OPENCL_ERROR("Memory: " << (async ? "Async " : "") << "Copy To",
-                        clEnqueueReadBuffer(stream, clMem,
+                        clEnqueueReadBuffer(getCommandQueue(),
+                                            clMem,
                                             async ? CL_FALSE : CL_TRUE,
                                             offset, bytes, dest,
                                             0, NULL, NULL));
-    }
-
-    void memory::free() {
-      if (mappedPtr) {
-        cl_command_queue &stream = *((cl_command_queue*) modeDevice->currentStream);
-
-        OCCA_OPENCL_ERROR("Mapped Free: clEnqueueUnmapMemObject",
-                          clEnqueueUnmapMemObject(stream,
-                                                  clMem,
-                                                  mappedPtr,
-                                                  0, NULL, NULL));
-      }
-      if (size) {
-        // Free mapped-host pointer
-        OCCA_OPENCL_ERROR("Mapped Free: clReleaseMemObject",
-                          clReleaseMemObject(clMem));
-        size = 0;
-      }
     }
 
     void memory::detach() {

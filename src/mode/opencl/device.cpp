@@ -30,6 +30,7 @@
 #include <occa/mode/opencl/device.hpp>
 #include <occa/mode/opencl/kernel.hpp>
 #include <occa/mode/opencl/memory.hpp>
+#include <occa/mode/opencl/stream.hpp>
 #include <occa/mode/opencl/utils.hpp>
 #include <occa/lang/kernelMetadata.hpp>
 #include <occa/lang/primitive.hpp>
@@ -73,9 +74,7 @@ namespace occa {
       properties["kernel/compiler_flags"] = compilerFlags;
     }
 
-    device::~device() {}
-
-    void device::free() {
+    device::~device() {
       if (clContext) {
         OCCA_OPENCL_ERROR("Device: Freeing Context",
                           clReleaseContext(clContext) );
@@ -85,7 +84,7 @@ namespace occa {
 
     void device::finish() const {
       OCCA_OPENCL_ERROR("Device: Finish",
-                        clFinish(*((cl_command_queue*) currentStream)));
+                        clFinish(getCommandQueue()));
     }
 
     bool device::hasSeparateMemorySpace() const {
@@ -110,38 +109,28 @@ namespace occa {
     }
 
     //---[ Stream ]---------------------
-    stream_t device::createStream() const {
+    modeStream_t* device::createStream(const occa::properties &props) {
       cl_int error;
-
-      cl_command_queue *retStream = new cl_command_queue;
-
-      *retStream = clCreateCommandQueue(clContext,
-                                        clDevice,
-                                        CL_QUEUE_PROFILING_ENABLE,
-                                        &error);
+      cl_command_queue commandQueue = clCreateCommandQueue(clContext,
+                                                           clDevice,
+                                                           CL_QUEUE_PROFILING_ENABLE,
+                                                           &error);
       OCCA_OPENCL_ERROR("Device: createStream", error);
 
-      return retStream;
-    }
-
-    void device::freeStream(stream_t s) const {
-      OCCA_OPENCL_ERROR("Device: freeStream",
-                        clReleaseCommandQueue( *((cl_command_queue*) s) ));
-
-      delete (cl_command_queue*) s;
+      return new stream(this, props, commandQueue);
     }
 
     streamTag device::tagStream() const {
-      cl_command_queue &stream = *((cl_command_queue*) currentStream);
-
       streamTag ret;
 
 #ifdef CL_VERSION_1_2
       OCCA_OPENCL_ERROR("Device: Tagging Stream",
-                        clEnqueueMarkerWithWaitList(stream, 0, NULL, &event(ret)));
+                        clEnqueueMarkerWithWaitList(getCommandQueue(),
+                                                    0, NULL, &event(ret)));
 #else
       OCCA_OPENCL_ERROR("Device: Tagging Stream",
-                        clEnqueueMarker(stream, &event(ret)));
+                        clEnqueueMarker(getCommandQueue(),
+                                        &event(ret)));
 #endif
 
       return ret;
@@ -176,6 +165,11 @@ namespace occa {
                         clReleaseEvent(event(endTag)));
 
       return (double) (1.0e-9 * (double)(end - start));
+    }
+
+    cl_command_queue& device::getCommandQueue() const {
+      occa::opencl::stream *stream = (occa::opencl::stream*) currentStream.getModeStream();
+      return stream->commandQueue;
     }
     //==================================
 
@@ -524,7 +518,6 @@ namespace occa {
 
       cl_int error;
 
-      cl_command_queue &stream = *((cl_command_queue*) currentStream);
       opencl::memory *mem = new opencl::memory(this, bytes, props);
 
       // Alloc pinned host buffer
@@ -540,7 +533,7 @@ namespace occa {
       }
 
       // Map memory to read/write
-      mem->mappedPtr = clEnqueueMapBuffer(stream,
+      mem->mappedPtr = clEnqueueMapBuffer(getCommandQueue(),
                                           mem->clMem,
                                           CL_TRUE,
                                           CL_MAP_READ | CL_MAP_WRITE,

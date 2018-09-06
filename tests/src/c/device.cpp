@@ -242,8 +242,9 @@ void testKernelMethods() {
 
 void testStreamMethods() {
   occaDevice device = occaCreateDevice(props);
+  occaSetDevice(device);
 
-  occaStream cStream = occaDeviceCreateStream(device);
+  occaStream cStream = occaDeviceCreateStream(device, occaDefault);
   occa::stream stream = occa::c::stream(cStream);
 
   occaDeviceSetStream(device, cStream);
@@ -275,8 +276,6 @@ void testStreamMethods() {
   ASSERT_LE(innerEnd - innerStart,
             tagTime);
 
-  // TODO: Change to occaFree
-  occaFreeStream(cStream);
-
+  occaFree(cStream);
   occaFree(device);
 }

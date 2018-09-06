@@ -31,7 +31,15 @@ namespace occa {
                    const occa::properties &properties_) :
       occa::modeMemory_t(modeDevice_, size_, properties_) {}
 
-    memory::~memory() {}
+    memory::~memory() {
+      if (ptr) {
+        if (isOrigin) {
+          sys::free(ptr);
+        }
+        ptr = NULL;
+        size = 0;
+      }
+    }
 
     kernelArg memory::makeKernelArg() const {
       kernelArgData arg;
@@ -84,16 +92,6 @@ namespace occa {
       const void *srcPtr = src->ptr + srcOffset;
 
       ::memcpy(destPtr, srcPtr, bytes);
-    }
-
-    void memory::free() {
-      if (ptr) {
-        if (isOrigin) {
-          sys::free(ptr);
-        }
-        ptr = NULL;
-        size = 0;
-      }
     }
 
     void memory::detach() {

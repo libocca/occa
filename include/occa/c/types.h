@@ -64,14 +64,10 @@ typedef struct {
 typedef occaType occaDevice;
 typedef occaType occaKernel;
 typedef occaType occaMemory;
+typedef occaType occaStream;
 
 typedef occaType occaJson;
 typedef occaType occaProperties;
-
-typedef struct {
-  occaDevice device;
-  void *modeStream;
-} occaStream;
 
 typedef struct {
   double tagTime;
@@ -102,6 +98,7 @@ extern const int OCCA_STRING;
 extern const int OCCA_DEVICE;
 extern const int OCCA_KERNEL;
 extern const int OCCA_MEMORY;
+extern const int OCCA_STREAM;
 
 extern const int OCCA_JSON;
 extern const int OCCA_PROPERTIES;
@@ -158,7 +155,6 @@ OCCA_LFUNC occaType OCCA_RFUNC occaString(const char *str);
 //======================================
 
 OCCA_LFUNC void OCCA_RFUNC occaFree(occaType value);
-OCCA_LFUNC void OCCA_RFUNC occaFreeStream(occaStream stream);
 
 OCCA_END_EXTERN_C
 

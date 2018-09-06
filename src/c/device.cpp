@@ -90,9 +90,18 @@ OCCA_LFUNC int OCCA_RFUNC occaDeviceHasSeparateMemorySpace(occaDevice device) {
 }
 
 //---[ Stream ]-------------------------
-occaStream OCCA_RFUNC occaDeviceCreateStream(occaDevice device) {
+occaStream OCCA_RFUNC occaDeviceCreateStream(occaDevice device,
+                                             occaProperties props) {
   occa::device device_ = occa::c::device(device);
-  return occa::c::newOccaType(device_.createStream());
+  occa::stream stream;
+  if (occa::c::isDefault(props)) {
+    stream = device_.createStream();
+  } else {
+    stream = device_.createStream(occa::c::properties(props));
+  }
+  stream.dontUseRefs();
+
+  return occa::c::newOccaType(stream);
 }
 
 occaStream OCCA_RFUNC occaDeviceGetStream(occaDevice device) {

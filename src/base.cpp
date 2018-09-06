@@ -76,8 +76,8 @@ namespace occa {
     return getDevice().timeBetween(startTag, endTag);
   }
 
-  stream createStream() {
-    return getDevice().createStream();
+  stream createStream(const occa::properties &props) {
+    return getDevice().createStream(props);
   }
 
   stream getStream() {
@@ -231,7 +231,7 @@ namespace occa {
   }
 
   void free(stream s) {
-    getDevice().freeStream(s);
+    s.free();
   }
 
   void free(kernel k) {

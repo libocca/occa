@@ -64,7 +64,7 @@ namespace occa {
       ringEntry_t *tail = head->leftRingEntry;
       entry->removeRef();
       if (head == entry) {
-        head = ((head != tail)
+        head = ((tail != entry)
                 ? tail
                 : NULL);
       }

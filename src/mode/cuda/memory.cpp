@@ -38,7 +38,28 @@ namespace occa {
       mappedPtr(NULL),
       isUnified(false) {}
 
-    memory::~memory() {}
+    memory::~memory() {
+      if (!isOrigin) {
+        cuPtr = 0;
+        mappedPtr = NULL;
+        size = 0;
+        return;
+      }
+
+      if (mappedPtr) {
+        OCCA_CUDA_ERROR("Device: mappedFree()",
+                        cuMemFreeHost(mappedPtr));
+        mappedPtr = NULL;
+      } else if (cuPtr) {
+        cuMemFree(cuPtr);
+        cuPtr = 0;
+      }
+      size = 0;
+    }
+
+    CUstream& memory::getCuStream() const {
+      return ((device*) modeDevice)->getCuStream();
+    }
 
     kernelArg memory::makeKernelArg() const {
       kernelArgData arg;
@@ -69,20 +90,19 @@ namespace occa {
                           const udim_t bytes,
                           const udim_t offset,
                           const occa::properties &props) {
-      const CUstream &stream = *((CUstream*) modeDevice->currentStream);
       const bool async = props.get("async", false);
 
       if (!async) {
         OCCA_CUDA_ERROR("Memory: Copy From",
                         cuMemcpyHtoD(cuPtr + offset,
                                      src,
-                                     bytes) );
+                                     bytes));
       } else {
         OCCA_CUDA_ERROR("Memory: Async Copy From",
                         cuMemcpyHtoDAsync(cuPtr + offset,
                                           src,
                                           bytes,
-                                          stream) );
+                                          getCuStream()));
       }
     }
 
@@ -91,20 +111,19 @@ namespace occa {
                           const udim_t destOffset,
                           const udim_t srcOffset,
                           const occa::properties &props) {
-      const CUstream &stream = *((CUstream*) modeDevice->currentStream);
       const bool async = props.get("async", false);
 
       if (!async) {
         OCCA_CUDA_ERROR("Memory: Copy From",
                         cuMemcpyDtoD(cuPtr + destOffset,
                                      ((memory*) src)->cuPtr + srcOffset,
-                                     bytes) );
+                                     bytes));
       } else {
         OCCA_CUDA_ERROR("Memory: Async Copy From",
                         cuMemcpyDtoDAsync(cuPtr + destOffset,
                                           ((memory*) src)->cuPtr + srcOffset,
                                           bytes,
-                                          stream) );
+                                          getCuStream()));
       }
     }
 
@@ -119,40 +138,20 @@ namespace occa {
                         const udim_t bytes,
                         const udim_t offset,
                         const occa::properties &props) const {
-      const CUstream &stream = *((CUstream*) modeDevice->currentStream);
       const bool async = props.get("async", false);
 
       if (!async) {
         OCCA_CUDA_ERROR("Memory: Copy From",
                         cuMemcpyDtoH(dest,
                                      cuPtr + offset,
-                                     bytes) );
+                                     bytes));
       } else {
         OCCA_CUDA_ERROR("Memory: Async Copy From",
                         cuMemcpyDtoHAsync(dest,
                                           cuPtr + offset,
                                           bytes,
-                                          stream) );
+                                          getCuStream()));
       }
-    }
-
-    void memory::free() {
-      if (!isOrigin) {
-        cuPtr = 0;
-        mappedPtr = NULL;
-        size = 0;
-        return;
-      }
-
-      if (mappedPtr) {
-        OCCA_CUDA_ERROR("Device: mappedFree()",
-                        cuMemFreeHost(mappedPtr));
-        mappedPtr = NULL;
-      } else if (cuPtr) {
-        cuMemFree(cuPtr);
-        cuPtr = 0;
-      }
-      size = 0;
     }
 
     void memory::detach() {

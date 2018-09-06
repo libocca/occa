@@ -90,9 +90,7 @@ namespace occa {
       properties["kernel/target"] = toString(props.gcnArch);
     }
 
-    device::~device() {}
-
-    void device::free() {
+    device::~device() {
       if (hipContext) {
         OCCA_HIP_ERROR("Device: Freeing Context",
                        hipCtxDestroy(hipContext) );
@@ -129,7 +127,7 @@ namespace occa {
     }
 
     //---[ Stream ]---------------------
-    stream_t device::createStream() const {
+    stream_t device::createStream(const occa::properties &props) {
       hipStream_t *retStream = new hipStream_t;
 
       OCCA_HIP_ERROR("Device: Setting Context",

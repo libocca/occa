@@ -54,7 +54,29 @@ namespace occa {
       clKernel(clKernel_),
       launcherKernel(NULL) {}
 
-    kernel::~kernel() {}
+    kernel::~kernel() {
+      if (!launcherKernel) {
+        if (clKernel) {
+          OCCA_OPENCL_ERROR("Kernel [" + name + "]: Free",
+                            clReleaseKernel(clKernel));
+          clKernel = NULL;
+        }
+        return;
+      }
+
+      delete launcherKernel;
+      launcherKernel = NULL;
+
+      int kernelCount = (int) clKernels.size();
+      for (int i = 0; i < kernelCount; ++i) {
+        delete clKernels[i];
+      }
+      clKernels.clear();
+    }
+
+    cl_command_queue& kernel::getCommandQueue() const {
+      return ((device*) modeDevice)->getCommandQueue();
+    }
 
     int kernel::maxDims() const {
       // TODO 1.1: This should be in the device, not the kernel
@@ -153,7 +175,7 @@ namespace occa {
 
       OCCA_OPENCL_ERROR("Kernel [" + name + "]"
                         << " : Kernel Run",
-                        clEnqueueNDRangeKernel(*((cl_command_queue*) modeDevice->currentStream),
+                        clEnqueueNDRangeKernel(getCommandQueue(),
                                                clKernel,
                                                (cl_int) fullDims.dims,
                                                NULL,
@@ -175,28 +197,6 @@ namespace occa {
       }
 
       launcherKernel->run();
-    }
-
-    void kernel::free() {
-      if (!launcherKernel) {
-        if (clKernel) {
-          OCCA_OPENCL_ERROR("Kernel [" + name + "]: Free",
-                            clReleaseKernel(clKernel));
-          clKernel = NULL;
-        }
-        return;
-      }
-
-      launcherKernel->free();
-      delete launcherKernel;
-      launcherKernel = NULL;
-
-      int kernelCount = (int) clKernels.size();
-      for (int i = 0; i < kernelCount; ++i) {
-        clKernels[i]->free();
-        delete clKernels[i];
-      }
-      clKernels.clear();
     }
   }
 }

@@ -34,7 +34,6 @@ namespace occa {
   class modeDevice_t; class device;
   class kernelArg;
 
-
   typedef std::map<hash_t,occa::memory>   hashedMemoryMap;
   typedef hashedMemoryMap::iterator       hashedMemoryMapIterator;
   typedef hashedMemoryMap::const_iterator cHashedMemoryMapIterator;
@@ -77,8 +76,6 @@ namespace occa {
 
     //---[ Virtual Methods ]------------
     virtual ~modeMemory_t() = 0;
-    // Must be able to be called multiple times safely
-    virtual void free() = 0;
 
     virtual kernelArg makeKernelArg() const = 0;
 

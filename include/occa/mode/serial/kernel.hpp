@@ -52,8 +52,6 @@ namespace occa {
 
       void run() const;
 
-      void free();
-
       friend class device;
     };
   }

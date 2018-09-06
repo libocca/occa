@@ -20,56 +20,21 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  */
 
-#ifndef OCCA_MODES_THREADS_UTILS_HEADER
-#define OCCA_MODES_THREADS_UTILS_HEADER
-
-#include <iostream>
-#include <queue>
+#ifndef OCCA_MODES_SERIAL_STREAM_HEADER
+#define OCCA_MODES_SERIAL_STREAM_HEADER
 
 #include <occa/defines.hpp>
-#include <occa/mode/threads/headers.hpp>
-#include <occa/tools/sys.hpp>
+#include <occa/stream.hpp>
 
 namespace occa {
-  namespace threads {
-    //---[ Types ]----------------------
-    enum schedule_t {
-      compact, scatter, manual
-    };
-
-    std::string toString(schedule_t s);
-
-    class job_t {
+  namespace serial {
+    class stream : public occa::modeStream_t {
     public:
-      int rank, count;
-      schedule_t schedule;
+      stream(modeDevice_t *modeDevice_,
+             const occa::properties &properties_);
 
-      functionPtr_t function;
-
-      int dims;
-      occa::dim inner, outer;
-
-      std::vector<void*> args;
-
-      job_t();
-      job_t(const job_t &k);
-      job_t& operator = (const job_t &k);
+      virtual ~stream();
     };
-
-    struct workerData_t {
-      int rank, count;
-      int pinnedCore;
-
-      std::queue<job_t> *jobs;
-
-      mutex *jobMutex;
-    };
-    //==================================
-
-    //---[ Functions ]------------------
-    void* limbo(void *args);
-    void run(job_t &job);
-    //==================================
   }
 }
 

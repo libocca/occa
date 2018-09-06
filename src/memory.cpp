@@ -46,15 +46,14 @@ namespace occa {
 
   modeMemory_t::~modeMemory_t() {
     // NULL all wrappers
-    memory *head = (memory*) memoryRing.head;
-    if (head) {
-      memory *ptr_ = head;
-      do {
-        memory *nextPtr = (memory*) ptr_->rightRingEntry;
-        ptr_->modeMemory = NULL;
-        ptr_->removeRef();
-        ptr_ = nextPtr;
-      } while (ptr_ != head);
+    memory *ptr_ = (memory*) memoryRing.head;
+    while (ptr) {
+      memory *nextPtr = (memory*) ptr_->rightRingEntry;
+      ptr_->modeMemory = NULL;
+      ptr_->removeRef();
+      ptr_ = ((nextPtr != ptr_)
+              ? nextPtr
+              : NULL);
     }
     // Remove ref from device
     if (modeDevice) {
@@ -572,9 +571,7 @@ namespace occa {
         }
       }
 
-      if (freeMemory) {
-        modeMemory->free();
-      } else {
+      if (!freeMemory) {
         modeMemory->detach();
       }
     }

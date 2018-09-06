@@ -20,27 +20,27 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  */
 
-#if 0
-#  ifndef OCCA_MODES_THREADS_KERNEL_HEADER
-#  define OCCA_MODES_THREADS_KERNEL_HEADER
-
 #include <occa/defines.hpp>
-#include <occa/mode/threads/headers.hpp>
-#include <occa/mode/serial/kernel.hpp>
+
+#if OCCA_CUDA_ENABLED
+#  ifndef OCCA_MODES_CUDA_STREAM_HEADER
+#  define OCCA_MODES_CUDA_STREAM_HEADER
+
+#include <cuda.h>
+
+#include <occa/stream.hpp>
 
 namespace occa {
-  namespace threads {
-    class kernel : public serial::kernel {
+  namespace cuda {
+    class stream : public occa::modeStream_t {
     public:
-      int threads;
+      CUstream cuStream;
 
-      kernel(modeDevice_t *modeDevice_,
-             const std::string &name_,
-             const std::string &sourceFilename_,
-             const occa::properties &properties_);
-      ~kernel();
+      stream(modeDevice_t *modeDevice_,
+             const occa::properties &properties_,
+             CUstream cuStream_);
 
-      void run() const;
+      virtual ~stream();
     };
   }
 }

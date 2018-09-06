@@ -35,8 +35,6 @@ namespace occa {
       device(const occa::properties &properties_);
       virtual ~device();
 
-      virtual void free();
-
       virtual void finish() const;
 
       virtual bool hasSeparateMemorySpace() const;
@@ -46,8 +44,7 @@ namespace occa {
       virtual hash_t kernelHash(const occa::properties &props) const;
 
       //---[ Stream ]-------------------
-      virtual stream_t createStream() const;
-      virtual void freeStream(stream_t s) const;
+      virtual modeStream_t* createStream(const occa::properties &props);
 
       virtual streamTag tagStream() const;
       virtual void waitFor(streamTag tag) const;

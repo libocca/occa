@@ -154,7 +154,7 @@ unit-tests: $(tests)
 e2e-tests: unit-tests
 	@$(testPath)/run_examples
 
-$(testPath)/bin/%:$(testPath)/src/%.cpp $(libPath)/libocca.so
+$(testPath)/bin/%:$(testPath)/src/%.cpp $(outputs)
 	@mkdir -p $(abspath $(dir $@))
 	$(compiler) $(testFlags) $(pthreadFlag) -o $@ $(flags) $< $(paths) $(linkerFlags) -L$(OCCA_DIR)/lib -locca
 #=================================================

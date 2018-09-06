@@ -27,6 +27,7 @@
 #include <occa/mode/serial/device.hpp>
 #include <occa/mode/serial/kernel.hpp>
 #include <occa/mode/serial/memory.hpp>
+#include <occa/mode/serial/stream.hpp>
 #include <occa/lang/mode/serial.hpp>
 
 namespace occa {
@@ -110,8 +111,6 @@ namespace occa {
 
     device::~device() {}
 
-    void device::free() {}
-
     void device::finish() const {}
 
     bool device::hasSeparateMemorySpace() const {
@@ -135,11 +134,9 @@ namespace occa {
     }
 
     //---[ Stream ]---------------------
-    stream_t device::createStream() const {
-      return NULL;
+    modeStream_t* device::createStream(const occa::properties &props) {
+      return new stream(this, props);
     }
-
-    void device::freeStream(stream_t s) const {}
 
     streamTag device::tagStream() const {
       streamTag ret;

@@ -35,12 +35,13 @@ namespace occa {
     filename(filename_),
     function(function_),
     message(message_),
-    line(line_) {}
+    line(line_),
+    exceptionMessage(toString()) {}
 
   exception::~exception() throw() {}
 
   const char* exception::what() const throw() {
-    return toString().c_str();
+    return exceptionMessage.c_str();
   }
 
   std::string exception::toString(const int stackTraceStart) const {

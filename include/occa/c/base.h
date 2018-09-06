@@ -49,7 +49,7 @@ OCCA_LFUNC void OCCA_RFUNC occaLoadKernels(const char *library);
 
 OCCA_LFUNC void OCCA_RFUNC occaFinish();
 
-OCCA_LFUNC occaStream OCCA_RFUNC occaCreateStream();
+OCCA_LFUNC occaStream OCCA_RFUNC occaCreateStream(occaProperties props);
 
 OCCA_LFUNC occaStream OCCA_RFUNC occaGetStream();
 

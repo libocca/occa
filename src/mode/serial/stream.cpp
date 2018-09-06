@@ -19,51 +19,15 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  */
-#if 0
 
-#include <occa/mode/threads/kernel.hpp>
-#include <occa/mode/threads/device.hpp>
-#include <occa/mode/threads/utils.hpp>
-#include <occa/base.hpp>
+#include <occa/mode/serial/stream.hpp>
 
 namespace occa {
-  namespace threads {
-    kernel::kernel(modeDevice_t *modeDevice_,
-                   const std::string &name_,
-                   const std::string &sourceFilename_,
+  namespace serial {
+    stream::stream(modeDevice_t *modeDevice_,
                    const occa::properties &properties_) :
-      serial::kernel(modeDevice_, name_, sourceFilename_, properties_) {
+      modeStream_t(modeDevice_, properties_) {}
 
-      threads = properties.get("threads", sys::getCoreCount());
-    }
-
-    kernel::~kernel() {}
-
-    void kernel::run() const {
-      job_t job;
-
-      job.count  = threads;
-      job.handle = handle;
-      job.inner  = inner;
-      job.outer  = outer;
-
-      const int argc = kernelArg::argumentCount(kArgc, kArgs);
-      for (int i = 0; i < argc; ++i) {
-        const int argCount = (int) kArgs[i].args.size();
-        if (argCount) {
-          const kernelArgData *kArgs_i = &(kArgs[i].args[0]);
-          for (int j = 0; j < argCount; ++j) {
-            job.args.push_back(kArgs_i[j].ptr());
-          }
-        }
-      }
-
-      for (int t = 0; t < threads; ++t) {
-        job.rank = t;
-        ((device*) modeDevice)->addJob(job);
-      }
-    }
+    stream::~stream() {}
   }
 }
-
-#endif

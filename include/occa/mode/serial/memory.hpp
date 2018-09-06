@@ -54,8 +54,6 @@ namespace occa {
                     const udim_t destOffset,
                     const udim_t srcOffset,
                     const occa::properties &props);
-
-      void free();
       void detach();
     };
   }

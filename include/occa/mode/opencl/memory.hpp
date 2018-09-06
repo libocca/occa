@@ -55,6 +55,8 @@ namespace occa {
              const occa::properties &properties_ = occa::properties());
       ~memory();
 
+      cl_command_queue& getCommandQueue() const;
+
       kernelArg makeKernelArg() const;
 
       modeMemory_t* addOffset(const dim_t offset);
@@ -76,8 +78,6 @@ namespace occa {
                     const udim_t destOffset = 0,
                     const udim_t srcOffset = 0,
                     const occa::properties &props = occa::properties());
-
-      void free();
       void detach();
     };
   }

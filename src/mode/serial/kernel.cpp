@@ -37,7 +37,12 @@ namespace occa {
       function = NULL;
     }
 
-    kernel::~kernel() {}
+    kernel::~kernel() {
+      if (dlHandle) {
+        sys::dlclose(dlHandle);
+        dlHandle = NULL;
+      }
+    }
 
     int kernel::maxDims() const {
       return 3;
@@ -74,13 +79,6 @@ namespace occa {
       }
 
       sys::runFunction(function, argc, &(vArgs[0]));
-    }
-
-    void kernel::free() {
-      if (dlHandle) {
-        sys::dlclose(dlHandle);
-        dlHandle = NULL;
-      }
     }
   }
 }

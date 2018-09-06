@@ -19,28 +19,28 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  */
-#if 0
-#  ifndef OCCA_MODES_THREADS_REGISTRATION_HEADER
-#  define OCCA_MODES_THREADS_REGISTRATION_HEADER
 
 #include <occa/defines.hpp>
-#include <occa/mode.hpp>
-#include <occa/mode/threads/device.hpp>
-#include <occa/mode/threads/kernel.hpp>
-#include <occa/mode/serial/memory.hpp>
-#include <occa/base.hpp>
+
+#if OCCA_OPENCL_ENABLED
+#  ifndef OCCA_MODES_OPENCL_STREAM_HEADER
+#  define OCCA_MODES_OPENCL_STREAM_HEADER
+
+#include <occa/stream.hpp>
+#include <occa/mode/opencl/headers.hpp>
 
 namespace occa {
-  namespace threads {
-    class modeInfo : public modeInfo_v {
+  namespace opencl {
+    class stream : public occa::modeStream_t {
     public:
-      modeInfo();
+      cl_command_queue commandQueue;
 
-      void init();
+      stream(modeDevice_t *modeDevice_,
+             const occa::properties &properties_,
+             cl_command_queue commandQueue_);
+
+      virtual ~stream();
     };
-
-    // extern occa::mode<threads::modeInfo,
-    //                   threads::device> mode;
   }
 }
 

@@ -50,12 +50,13 @@ OCCA_LFUNC void OCCA_RFUNC occaDeviceFinish(occaDevice device);
 OCCA_LFUNC int OCCA_RFUNC occaDeviceHasSeparateMemorySpace(occaDevice device);
 
 //---[ Stream ]-------------------------
-OCCA_LFUNC occaStream OCCA_RFUNC occaDeviceCreateStream(occaDevice device);
+OCCA_LFUNC occaStream OCCA_RFUNC occaDeviceCreateStream(occaDevice device,
+                                                        occaProperties props);
 
 OCCA_LFUNC occaStream OCCA_RFUNC occaDeviceGetStream(occaDevice device);
 
-OCCA_LFUNC void       OCCA_RFUNC occaDeviceSetStream(occaDevice device,
-                                                     occaStream stream);
+OCCA_LFUNC void OCCA_RFUNC occaDeviceSetStream(occaDevice device,
+                                               occaStream stream);
 
 OCCA_LFUNC occaStreamTag OCCA_RFUNC occaDeviceTagStream(occaDevice device);
 

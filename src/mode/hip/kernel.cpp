@@ -53,7 +53,27 @@ namespace occa {
       hipFunction(hipFunction_),
       launcherKernel(NULL) {}
 
-    kernel::~kernel() {}
+    kernel::~kernel() {
+      if (!launcherKernel) {
+        if (hipModule) {
+          OCCA_HIP_ERROR("Kernel (" + name + ") : Unloading Module",
+                         hipModuleUnload(hipModule));
+          hipModule = NULL;
+        }
+        return;
+      }
+
+      launcherKernel->free();
+      delete launcherKernel;
+      launcherKernel = NULL;
+
+      int kernelCount = (int) hipKernels.size();
+      for (int i = 0; i < kernelCount; ++i) {
+        hipKernels[i]->free();
+        delete hipKernels[i];
+      }
+      hipKernels.clear();
+    }
 
     int kernel::maxDims() const {
       return 3;
@@ -146,28 +166,6 @@ namespace occa {
       }
 
       launcherKernel->run();
-    }
-
-    void kernel::free() {
-      if (!launcherKernel) {
-        if (hipModule) {
-          OCCA_HIP_ERROR("Kernel (" + name + ") : Unloading Module",
-                         hipModuleUnload(hipModule));
-          hipModule = NULL;
-        }
-        return;
-      }
-
-      launcherKernel->free();
-      delete launcherKernel;
-      launcherKernel = NULL;
-
-      int kernelCount = (int) hipKernels.size();
-      for (int i = 0; i < kernelCount; ++i) {
-        hipKernels[i]->free();
-        delete hipKernels[i];
-      }
-      hipKernels.clear();
     }
   }
 }

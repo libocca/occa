@@ -87,9 +87,6 @@ namespace occa {
     //---[ Virtual Methods ]------------
     virtual ~modeKernel_t() = 0;
 
-    // Must be able to be called multiple times safely
-    virtual void free() = 0;
-
     virtual int maxDims() const = 0;
     virtual dim maxOuterDims() const = 0;
     virtual dim maxInnerDims() const = 0;

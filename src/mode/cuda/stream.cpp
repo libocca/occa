@@ -19,18 +19,26 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  */
-#if 0
 
-#include <occa/mode/threads/registration.hpp>
+#include <occa/defines.hpp>
+
+#if OCCA_CUDA_ENABLED
+
+#include <occa/mode/cuda/stream.hpp>
+#include <occa/mode/cuda/utils.hpp>
 
 namespace occa {
-  namespace threads {
-    modeInfo::modeInfo() {}
+  namespace cuda {
+    stream::stream(modeDevice_t *modeDevice_,
+                   const occa::properties &properties_,
+                   CUstream cuStream_) :
+      modeStream_t(modeDevice_, properties_),
+      cuStream(cuStream_) {}
 
-    void modeInfo::init() {}
-
-    // occa::mode<threads::modeInfo,
-    //            threads::device> mode("Threads");
+    stream::~stream() {
+      OCCA_CUDA_ERROR("Device: freeStream",
+                      cuStreamDestroy(cuStream));
+    }
   }
 }
 

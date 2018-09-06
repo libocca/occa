@@ -165,7 +165,7 @@ void testKernelMethods() {
 }
 
 void testStreamMethods() {
-  occaStream cStream = occaCreateStream();
+  occaStream cStream = occaCreateStream(occaDefault);
   occa::stream stream = occa::c::stream(cStream);
 
   occaSetStream(cStream);
@@ -197,6 +197,5 @@ void testStreamMethods() {
   ASSERT_LE(innerEnd - innerStart,
             tagTime);
 
-  // TODO: Change to occaFree
-  occaFreeStream(cStream);
+  occaFree(cStream);
 }

@@ -33,6 +33,8 @@ namespace occa {
     const std::string message;
     const int line;
 
+    std::string exceptionMessage;
+
     exception(const std::string &header_,
               const std::string &filename_,
               const std::string &function_,

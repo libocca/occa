@@ -67,8 +67,16 @@ void OCCA_RFUNC occaFinish() {
   occa::finish();
 }
 
-occaStream OCCA_RFUNC occaCreateStream() {
-  return occa::c::newOccaType(occa::createStream());
+occaStream OCCA_RFUNC occaCreateStream(occaProperties props) {
+  occa::stream stream;
+  if (occa::c::isDefault(props)) {
+    stream = occa::createStream();
+  } else {
+    stream = occa::createStream(occa::c::properties(props));
+  }
+  stream.dontUseRefs();
+
+  return occa::c::newOccaType(stream);
 }
 
 occaStream OCCA_RFUNC occaGetStream() {

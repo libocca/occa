@@ -1,17 +1,17 @@
 /* The MIT License (MIT)
- * 
+ *
  * Copyright (c) 2014-2018 David Medina and Tim Warburton
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be included in all
  * copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -22,13 +22,24 @@
 
 #include <occa/defines.hpp>
 
-#if (OCCA_OS & (OCCA_LINUX_OS | OCCA_MACOS_OS))
-#  if (OCCA_OS != OCCA_WINUX_OS)
-#    include <sys/sysctl.h>
-#  endif
-#  include <pthread.h>
-#  include <dlfcn.h>
-#else
-#  include <windows.h>
-#  include <intrin.h>
+#if OCCA_OPENCL_ENABLED
+
+#include <occa/mode/opencl/stream.hpp>
+#include <occa/mode/opencl/utils.hpp>
+
+namespace occa {
+  namespace opencl {
+    stream::stream(modeDevice_t *modeDevice_,
+                   const occa::properties &properties_,
+                   cl_command_queue commandQueue_) :
+      modeStream_t(modeDevice_, properties_),
+      commandQueue(commandQueue_) {}
+
+    stream::~stream() {
+      OCCA_OPENCL_ERROR("Device: freeStream",
+                        clReleaseCommandQueue(commandQueue));
+    }
+  }
+}
+
 #endif

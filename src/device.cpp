@@ -29,54 +29,29 @@
 
 namespace occa {
   //---[ modeDevice_t ]---------------------
-  modeDevice_t::modeDevice_t(const occa::properties &properties_) {
-    mode = (std::string) properties_["mode"];
-    properties = properties_;
-
-    currentStream = NULL;
-    bytesAllocated = 0;
-  }
+  modeDevice_t::modeDevice_t(const occa::properties &properties_) :
+    mode((std::string) properties_["mode"]),
+    properties(properties_),
+    bytesAllocated(0) {}
 
   modeDevice_t::~modeDevice_t() {
-    // Free all kernel objects
-    modeKernel_t *kernelHead = (modeKernel_t*) kernelRing.head;
-    if (kernelHead) {
-      modeKernel_t *ptr = kernelHead;
-      do {
-        modeKernel_t *nextPtr = (modeKernel_t*) ptr->rightRingEntry;
-        // Remove modeDevice to prevent messing with this ring
-        ptr->modeDevice = NULL;
-        delete ptr;
-        ptr = nextPtr;
-      } while (ptr != kernelHead);
-      kernelRing.clear();
-    }
-
-    // Free all memory objects
-    modeMemory_t *memoryHead = (modeMemory_t*) memoryRing.head;
-    if (memoryHead) {
-      modeMemory_t *ptr = memoryHead;
-      do {
-        modeMemory_t *nextPtr = (modeMemory_t*) ptr->rightRingEntry;
-        // Remove modeDevice to prevent messing with this ring
-        ptr->modeDevice = NULL;
-        delete ptr;
-        ptr = nextPtr;
-      } while (ptr != memoryHead);
-      memoryRing.clear();
-    }
-
     // Null all wrappers
-    device *deviceHead = (device*) deviceRing.head;
-    if (deviceHead) {
-      device *ptr = deviceHead;
-      do {
-        device *nextPtr = (device*) ptr->rightRingEntry;
-        ptr->modeDevice = NULL;
-        ptr->removeRef();
-        ptr = nextPtr;
-      } while (ptr != deviceHead);
+    device *ptr = (device*) deviceRing.head;
+    while (ptr) {
+      device *nextPtr = (device*) ptr->rightRingEntry;
+      ptr->modeDevice = NULL;
+      ptr->removeRef();
+      ptr = ((nextPtr != ptr)
+             ? nextPtr
+             : NULL);
     }
+  }
+
+  // Must be called before ~modeDevice_t()!
+  void modeDevice_t::freeResources() {
+    freeRing<modeKernel_t>(kernelRing);
+    freeRing<modeMemory_t>(memoryRing);
+    freeRing<modeStream_t>(streamRing);
   }
 
   void modeDevice_t::dontUseRefs() {
@@ -95,20 +70,28 @@ namespace occa {
     return deviceRing.needsFree();
   }
 
-  void modeDevice_t::addKernelRef(modeKernel_t *ker) {
-    kernelRing.addRef(ker);
+  void modeDevice_t::addKernelRef(modeKernel_t *kernel) {
+    kernelRing.addRef(kernel);
   }
 
-  void modeDevice_t::removeKernelRef(modeKernel_t *ker) {
-    kernelRing.removeRef(ker);
+  void modeDevice_t::removeKernelRef(modeKernel_t *kernel) {
+    kernelRing.removeRef(kernel);
   }
 
-  void modeDevice_t::addMemoryRef(modeMemory_t *mem) {
-    memoryRing.addRef(mem);
+  void modeDevice_t::addMemoryRef(modeMemory_t *memory) {
+    memoryRing.addRef(memory);
   }
 
-  void modeDevice_t::removeMemoryRef(modeMemory_t *mem) {
-    memoryRing.removeRef(mem);
+  void modeDevice_t::removeMemoryRef(modeMemory_t *memory) {
+    memoryRing.removeRef(memory);
+  }
+
+  void modeDevice_t::addStreamRef(modeStream_t *stream) {
+    streamRing.addRef(stream);
+  }
+
+  void modeDevice_t::removeStreamRef(modeStream_t *stream) {
+    streamRing.removeRef(stream);
   }
 
   hash_t modeDevice_t::versionedHash() const {
@@ -266,28 +249,24 @@ namespace occa {
       if (settings_.has(path + "memory")) {
         defaults["memory"] += settings_[path + "memory"];
       }
+      if (settings_.has(path + "stream")) {
+        defaults["stream"] += settings_[path + "stream"];
+      }
     }
 
     setModeDevice(occa::newModeDevice(defaults + props));
 
-    stream newStream = createStream();
-    modeDevice->currentStream = newStream.modeStream;
+    // Create an initial stream
+    setStream(createStream());
   }
 
   void device::free() {
-    if (modeDevice == NULL) {
-      return;
-    }
-    const int streamCount = modeDevice->streams.size();
+    if (modeDevice) {
+      modeDevice->freeResources();
 
-    for (int i = 0; i < streamCount; ++i) {
-      modeDevice->freeStream(modeDevice->streams[i]);
+      // ~modeDevice_t NULLs all wrappers
+      delete modeDevice;
     }
-    modeDevice->streams.clear();
-    modeDevice->free();
-
-    // ~modeDevice_t NULLs all wrappers
-    delete modeDevice;
   }
 
   const std::string& device::mode() const {
@@ -325,6 +304,16 @@ namespace occa {
   const occa::properties& device::memoryProperties() const {
     assertInitialized();
     return (const occa::properties&) modeDevice->properties["memory"];
+  }
+
+  occa::properties& device::streamProperties() {
+    assertInitialized();
+    return (occa::properties&) modeDevice->properties["stream"];
+  }
+
+  const occa::properties& device::streamProperties() const {
+    assertInitialized();
+    return (const occa::properties&) modeDevice->properties["stream"];
   }
 
   hash_t device::hash() const {
@@ -376,41 +365,19 @@ namespace occa {
   }
 
   //  |---[ Stream ]--------------------
-  stream device::createStream() {
+  stream device::createStream(const occa::properties &props) {
     assertInitialized();
-
-    stream newStream(modeDevice, modeDevice->createStream());
-    modeDevice->streams.push_back(newStream.modeStream);
-
-    return newStream;
-  }
-
-  void device::freeStream(stream s) {
-    assertInitialized();
-
-    const int streamCount = modeDevice->streams.size();
-
-    for (int i = 0; i < streamCount; ++i) {
-      if (modeDevice->streams[i] == s.modeStream) {
-        if (modeDevice->currentStream == s.modeStream)
-          modeDevice->currentStream = NULL;
-
-        modeDevice->freeStream(modeDevice->streams[i]);
-        modeDevice->streams.erase(modeDevice->streams.begin() + i);
-
-        break;
-      }
-    }
+    return modeDevice->createStream(props + streamProperties());
   }
 
   stream device::getStream() {
     assertInitialized();
-    return stream(modeDevice, modeDevice->currentStream);
+    return modeDevice->currentStream;
   }
 
   void device::setStream(stream s) {
     assertInitialized();
-    modeDevice->currentStream = s.modeStream;
+    modeDevice->currentStream = s;
   }
 
   streamTag device::tagStream() {
@@ -669,41 +636,7 @@ namespace occa {
   }
   //====================================
 
-  //---[ stream ]-----------------------
-  stream::stream() :
-    modeDevice(NULL),
-    modeStream(NULL) {}
-
-  stream::stream(modeDevice_t *modeDevice_,
-                 stream_t modeStream_) :
-    modeDevice(modeDevice_),
-    modeStream(modeStream_) {}
-
-  stream::stream(const stream &other) :
-    modeDevice(other.modeDevice),
-    modeStream(other.modeStream) {}
-
-  stream& stream::operator = (const stream &other) {
-    modeDevice = other.modeDevice;
-    modeStream  = other.modeStream;
-    return *this;
-  }
-
-  bool stream::operator == (const stream &other) const {
-    return ((modeDevice == other.modeDevice) &&
-            (modeStream == other.modeStream));
-  }
-
-  stream_t stream::getModeStream() {
-    return modeStream;
-  }
-
-  void stream::free() {
-    if (modeDevice != NULL) {
-      device(modeDevice).freeStream(*this);
-    }
-  }
-
+  //---[ streamTag ]--------------------
   streamTag::streamTag() :
     tagTime(0),
     modeTag(NULL) {}

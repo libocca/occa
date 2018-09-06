@@ -31,6 +31,7 @@
 #include <occa/mode/cuda/device.hpp>
 #include <occa/mode/cuda/kernel.hpp>
 #include <occa/mode/cuda/memory.hpp>
+#include <occa/mode/cuda/stream.hpp>
 #include <occa/mode/cuda/utils.hpp>
 #include <occa/lang/kernelMetadata.hpp>
 #include <occa/lang/primitive.hpp>
@@ -84,9 +85,7 @@ namespace occa {
       archMinorVersion = properties.get("cuda/arch/minor", archMinorVersion);
     }
 
-    device::~device() {}
-
-    void device::free() {
+    device::~device() {
       if (cuContext) {
         OCCA_CUDA_ERROR("Device: Freeing Context",
                         cuCtxDestroy(cuContext) );
@@ -96,7 +95,7 @@ namespace occa {
 
     void device::finish() const {
       OCCA_CUDA_ERROR("Device: Finish",
-                      cuStreamSynchronize(*((CUstream*) currentStream)) );
+                      cuStreamSynchronize(getCuStream()));
     }
 
     bool device::hasSeparateMemorySpace() const {
@@ -122,21 +121,15 @@ namespace occa {
     }
 
     //---[ Stream ]---------------------
-    stream_t device::createStream() const {
-      CUstream *retStream = new CUstream;
+    modeStream_t* device::createStream(const occa::properties &props) {
+      CUstream cuStream;
 
       OCCA_CUDA_ERROR("Device: Setting Context",
                       cuCtxSetCurrent(cuContext));
       OCCA_CUDA_ERROR("Device: createStream",
-                      cuStreamCreate(retStream, CU_STREAM_DEFAULT));
+                      cuStreamCreate(&cuStream, CU_STREAM_DEFAULT));
 
-      return retStream;
-    }
-
-    void device::freeStream(stream_t s) const {
-      OCCA_CUDA_ERROR("Device: freeStream",
-                      cuStreamDestroy( *((CUstream*) s) ));
-      delete (CUstream*) s;
+      return new stream(this, props, cuStream);
     }
 
     streamTag device::tagStream() const {
@@ -167,6 +160,11 @@ namespace occa {
                       cuEventElapsedTime(&msTimeTaken, cuda::event(startTag), cuda::event(endTag)));
 
       return (double) (1.0e-3 * (double) msTimeTaken);
+    }
+
+    CUstream& device::getCuStream() const {
+      occa::cuda::stream *stream = (occa::cuda::stream*) currentStream.getModeStream();
+      return stream->cuStream;
     }
     //==================================
 

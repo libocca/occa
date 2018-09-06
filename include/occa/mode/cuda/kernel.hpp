@@ -60,14 +60,14 @@ namespace occa {
 
       ~kernel();
 
+      CUstream& getCuStream() const;
+
       int maxDims() const;
       dim maxOuterDims() const;
       dim maxInnerDims() const;
 
       void run() const;
       void launcherRun() const;
-
-      void free();
     };
   }
 }

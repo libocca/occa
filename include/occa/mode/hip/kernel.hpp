@@ -66,8 +66,6 @@ namespace occa {
 
       void run() const;
       void launcherRun() const;
-
-      void free();
     };
   }
 }
