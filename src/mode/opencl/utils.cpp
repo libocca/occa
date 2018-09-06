@@ -30,6 +30,7 @@
 #include <occa/mode/opencl/device.hpp>
 #include <occa/mode/opencl/memory.hpp>
 #include <occa/mode/opencl/kernel.hpp>
+#include <occa/mode/opencl/streamTag.hpp>
 #include <occa/io.hpp>
 #include <occa/tools/sys.hpp>
 #include <occa/base.hpp>
@@ -485,14 +486,6 @@ namespace occa {
       mem.clMem = clMem;
 
       return occa::memory(&mem);
-    }
-
-    cl_event& event(streamTag &tag) {
-      return (cl_event&) (tag.modeTag);
-    }
-
-    const cl_event& event(const streamTag &tag) {
-      return (const cl_event&) (tag.modeTag);
     }
 
     void warn(cl_int errorCode,

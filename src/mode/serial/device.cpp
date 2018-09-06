@@ -28,6 +28,7 @@
 #include <occa/mode/serial/kernel.hpp>
 #include <occa/mode/serial/memory.hpp>
 #include <occa/mode/serial/stream.hpp>
+#include <occa/mode/serial/streamTag.hpp>
 #include <occa/lang/mode/serial.hpp>
 
 namespace occa {
@@ -138,17 +139,22 @@ namespace occa {
       return new stream(this, props);
     }
 
-    streamTag device::tagStream() const {
-      streamTag ret;
-      ret.tagTime = sys::currentTime();
-      return ret;
+    occa::streamTag device::tagStream() {
+      return new occa::serial::streamTag(this, sys::currentTime());
     }
 
-    void device::waitFor(streamTag tag) const {}
+    void device::waitFor(occa::streamTag tag) {}
 
-    double device::timeBetween(const streamTag &startTag,
-                               const streamTag &endTag) const {
-      return (endTag.tagTime - startTag.tagTime);
+    double device::timeBetween(const occa::streamTag &startTag,
+                               const occa::streamTag &endTag) {
+      occa::serial::streamTag *srStartTag = (
+        dynamic_cast<occa::serial::streamTag*>(startTag.getModeStreamTag())
+      );
+      occa::serial::streamTag *srEndTag = (
+        dynamic_cast<occa::serial::streamTag*>(endTag.getModeStreamTag())
+      );
+
+      return (srEndTag->time - srStartTag->time);
     }
     //==================================
 

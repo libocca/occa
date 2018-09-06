@@ -31,6 +31,7 @@
 #include <occa/mode/opencl/kernel.hpp>
 #include <occa/mode/opencl/memory.hpp>
 #include <occa/mode/opencl/stream.hpp>
+#include <occa/mode/opencl/streamTag.hpp>
 #include <occa/mode/opencl/utils.hpp>
 #include <occa/lang/kernelMetadata.hpp>
 #include <occa/lang/primitive.hpp>
@@ -120,51 +121,42 @@ namespace occa {
       return new stream(this, props, commandQueue);
     }
 
-    streamTag device::tagStream() const {
-      streamTag ret;
+    occa::streamTag device::tagStream() {
+      cl_event clEvent;
 
 #ifdef CL_VERSION_1_2
       OCCA_OPENCL_ERROR("Device: Tagging Stream",
                         clEnqueueMarkerWithWaitList(getCommandQueue(),
-                                                    0, NULL, &event(ret)));
+                                                    0, NULL, &clEvent));
 #else
       OCCA_OPENCL_ERROR("Device: Tagging Stream",
                         clEnqueueMarker(getCommandQueue(),
-                                        &event(ret)));
+                                        &clEvent));
 #endif
 
-      return ret;
+      return new occa::opencl::streamTag(this, clEvent);
     }
 
-    void device::waitFor(streamTag tag) const {
+    void device::waitFor(occa::streamTag tag) {
+      occa::opencl::streamTag *clTag = (
+        dynamic_cast<occa::opencl::streamTag*>(tag.getModeStreamTag())
+      );
       OCCA_OPENCL_ERROR("Device: Waiting For Tag",
-                        clWaitForEvents(1, &event(tag)));
+                        clWaitForEvents(1, &(clTag->clEvent)));
     }
 
-    double device::timeBetween(const streamTag &startTag, const streamTag &endTag) const {
-      cl_ulong start, end;
+    double device::timeBetween(const occa::streamTag &startTag,
+                               const occa::streamTag &endTag) {
+      occa::opencl::streamTag *clStartTag = (
+        dynamic_cast<occa::opencl::streamTag*>(startTag.getModeStreamTag())
+      );
+      occa::opencl::streamTag *clEndTag = (
+        dynamic_cast<occa::opencl::streamTag*>(endTag.getModeStreamTag())
+      );
 
       finish();
 
-      OCCA_OPENCL_ERROR ("Device: Time Between Tags (Start)",
-                         clGetEventProfilingInfo(event(startTag),
-                                                 CL_PROFILING_COMMAND_END,
-                                                 sizeof(cl_ulong),
-                                                 &start, NULL) );
-
-      OCCA_OPENCL_ERROR ("Device: Time Between Tags (End)",
-                         clGetEventProfilingInfo(event(endTag),
-                                                 CL_PROFILING_COMMAND_START,
-                                                 sizeof(cl_ulong),
-                                                 &end, NULL) );
-
-      OCCA_OPENCL_ERROR("Device: Time Between Tags (Freeing start tag)",
-                        clReleaseEvent(event(startTag)));
-
-      OCCA_OPENCL_ERROR("Device: Time Between Tags (Freeing end tag)",
-                        clReleaseEvent(event(endTag)));
-
-      return (double) (1.0e-9 * (double)(end - start));
+      return (clStartTag->getTime() - clEndTag->getTime());
     }
 
     cl_command_queue& device::getCommandQueue() const {

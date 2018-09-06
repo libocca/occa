@@ -20,84 +20,76 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  */
 
-#ifndef OCCA_STREAM_HEADER
-#define OCCA_STREAM_HEADER
+#ifndef OCCA_STREAMTAG_HEADER
+#define OCCA_STREAMTAG_HEADER
 
 #include <iostream>
 
 #include <occa/defines.hpp>
 #include <occa/tools/gc.hpp>
-#include <occa/tools/properties.hpp>
 
 namespace occa {
-  class modeStream_t; class stream;
   class modeDevice_t; class device;
+  class modeStreamTag_t; class streamTag;
 
-  //---[ modeStream_t ]---------------------
-  class modeStream_t : public gc::ringEntry_t {
+  //---[ modeStreamTag_t ]---------------------
+  class modeStreamTag_t : public gc::ringEntry_t {
   public:
-    occa::properties properties;
-
-    gc::ring_t<stream> streamRing;
+    gc::ring_t<streamTag> streamTagRing;
 
     modeDevice_t *modeDevice;
 
-    modeStream_t(modeDevice_t *modeDevice_,
-                 const occa::properties &properties_);
+    modeStreamTag_t(modeDevice_t *modeDevice_);
 
     void dontUseRefs();
-    void addStreamRef(stream *s);
-    void removeStreamRef(stream *s);
+    void addStreamTagRef(streamTag *s);
+    void removeStreamTagRef(streamTag *s);
     bool needsFree() const;
 
     //---[ Virtual Methods ]------------
-    virtual ~modeStream_t() = 0;
+    virtual ~modeStreamTag_t();
     //==================================
   };
   //====================================
 
-  //---[ stream ]-----------------------
-  class stream : public gc::ringEntry_t {
-    friend class occa::modeStream_t;
+  //---[ streamTag ]-----------------------
+  class streamTag : public gc::ringEntry_t {
+    friend class occa::modeStreamTag_t;
     friend class occa::device;
 
   private:
-    modeStream_t *modeStream;
+    modeStreamTag_t *modeStreamTag;
 
   public:
-    stream();
-    stream(modeStream_t *modeStream_);
+    streamTag();
+    streamTag(modeStreamTag_t *modeStreamTag_);
 
-    stream(const stream &s);
-    stream& operator = (const stream &m);
-    ~stream();
+    streamTag(const streamTag &s);
+    streamTag& operator = (const streamTag &m);
+    ~streamTag();
 
   private:
-    void setModeStream(modeStream_t *modeStream_);
-    void removeStreamRef();
+    void setModeStreamTag(modeStreamTag_t *modeStreamTag_);
+    void removeStreamTagRef();
 
   public:
     void dontUseRefs();
 
     bool isInitialized() const;
 
-    modeStream_t* getModeStream() const;
+    modeStreamTag_t* getModeStreamTag() const;
     modeDevice_t* getModeDevice() const;
 
     occa::device getDevice() const;
 
-    const std::string& mode() const;
-    const occa::properties& properties() const;
+    void wait() const;
 
-    bool operator == (const occa::stream &other) const;
-    bool operator != (const occa::stream &other) const;
+    bool operator == (const occa::streamTag &other) const;
+    bool operator != (const occa::streamTag &other) const;
 
     void free();
   };
   //====================================
-
-  std::ostream& operator << (std::ostream &out,
-                             const occa::stream &stream);
 }
 
 #endif

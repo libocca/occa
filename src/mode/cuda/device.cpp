@@ -32,6 +32,7 @@
 #include <occa/mode/cuda/kernel.hpp>
 #include <occa/mode/cuda/memory.hpp>
 #include <occa/mode/cuda/stream.hpp>
+#include <occa/mode/cuda/streamTag.hpp>
 #include <occa/mode/cuda/utils.hpp>
 #include <occa/lang/kernelMetadata.hpp>
 #include <occa/lang/primitive.hpp>
@@ -132,32 +133,44 @@ namespace occa {
       return new stream(this, props, cuStream);
     }
 
-    streamTag device::tagStream() const {
-      streamTag ret;
+    occa::streamTag device::tagStream() {
+      CUevent cuEvent;
 
       OCCA_CUDA_ERROR("Device: Setting Context",
                       cuCtxSetCurrent(cuContext));
       OCCA_CUDA_ERROR("Device: Tagging Stream (Creating Tag)",
-                      cuEventCreate(&cuda::event(ret), CU_EVENT_DEFAULT));
+                      cuEventCreate(&cuEvent,
+                                    CU_EVENT_DEFAULT));
       OCCA_CUDA_ERROR("Device: Tagging Stream",
-                      cuEventRecord(cuda::event(ret), 0));
+                      cuEventRecord(cuEvent, 0));
 
-      return ret;
+      return new occa::cuda::streamTag(this, cuEvent);
     }
 
-    void device::waitFor(streamTag tag) const {
+    void device::waitFor(occa::streamTag tag) {
+      occa::cuda::streamTag *cuTag = (
+        dynamic_cast<occa::cuda::streamTag*>(tag.getModeStreamTag())
+      );
       OCCA_CUDA_ERROR("Device: Waiting For Tag",
-                      cuEventSynchronize(cuda::event(tag)));
+                      cuEventSynchronize(cuTag->cuEvent));
     }
 
-    double device::timeBetween(const streamTag &startTag,
-                               const streamTag &endTag) const {
-      OCCA_CUDA_ERROR("Device: Waiting for endTag",
-                      cuEventSynchronize(cuda::event(endTag)));
+    double device::timeBetween(const occa::streamTag &startTag,
+                               const occa::streamTag &endTag) {
+      occa::cuda::streamTag *cuStartTag = (
+        dynamic_cast<occa::cuda::streamTag*>(startTag.getModeStreamTag())
+      );
+      occa::cuda::streamTag *cuEndTag = (
+        dynamic_cast<occa::cuda::streamTag*>(endTag.getModeStreamTag())
+      );
+
+      waitFor(endTag);
 
       float msTimeTaken;
       OCCA_CUDA_ERROR("Device: Timing Between Tags",
-                      cuEventElapsedTime(&msTimeTaken, cuda::event(startTag), cuda::event(endTag)));
+                      cuEventElapsedTime(&msTimeTaken,
+                                         cuStartTag->cuEvent,
+                                         cuEndTag->cuEvent));
 
       return (double) (1.0e-3 * (double) msTimeTaken);
     }

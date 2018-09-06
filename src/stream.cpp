@@ -20,13 +20,11 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  */
 
-#include <map>
-
 #include <occa/stream.hpp>
 #include <occa/device.hpp>
 
 namespace occa {
-  //---[ modeStream_t ]---------------------
+  //---[ modeStream_t ]-----------------
   modeStream_t::modeStream_t(modeDevice_t *modeDevice_,
                              const occa::properties &properties_) :
     properties(properties_),
@@ -69,8 +67,7 @@ namespace occa {
 
   //---[ stream ]-----------------------
   stream::stream() :
-    modeStream(NULL) {
-  }
+    modeStream(NULL) {}
 
   stream::stream(modeStream_t *modeStream_) :
     modeStream(NULL) {
@@ -89,11 +86,6 @@ namespace occa {
 
   stream::~stream() {
     removeStreamRef();
-  }
-
-  void stream::assertInitialized() const {
-    OCCA_ERROR("Stream not initialized or has been freed",
-               modeStream != NULL);
   }
 
   void stream::setModeStream(modeStream_t *modeStream_) {
@@ -163,10 +155,6 @@ namespace occa {
   }
 
   void stream::free() {
-    if (!modeStream) {
-      return;
-    }
-
     // ~modeStream_t NULLs all wrappers
     delete modeStream;
   }

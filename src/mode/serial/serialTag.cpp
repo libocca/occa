@@ -22,24 +22,15 @@
 
 #include <occa/defines.hpp>
 
-#if OCCA_OPENCL_ENABLED
-
-#include <occa/mode/opencl/stream.hpp>
-#include <occa/mode/opencl/utils.hpp>
+#include <occa/mode/serial/streamTag.hpp>
 
 namespace occa {
-  namespace opencl {
-    stream::stream(modeDevice_t *modeDevice_,
-                   const occa::properties &properties_,
-                   cl_command_queue commandQueue_) :
-      modeStream_t(modeDevice_, properties_),
-      commandQueue(commandQueue_) {}
+  namespace serial {
+    streamTag::streamTag(modeDevice_t *modeDevice_,
+                         double time_) :
+      modeStreamTag_t(modeDevice_),
+      time(time_) {}
 
-    stream::~stream() {
-      OCCA_OPENCL_ERROR("Device: Freeing cl_command_queue",
-                        clReleaseCommandQueue(commandQueue));
-    }
+    streamTag::~streamTag() {}
   }
 }
-
-#endif

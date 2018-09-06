@@ -30,7 +30,7 @@
 #include <occa/tools/sys.hpp>
 
 namespace occa {
-  //---[ modeMemory_t ]---------------------
+  //---[ modeMemory_t ]-----------------
   modeMemory_t::modeMemory_t(modeDevice_t *modeDevice_,
                              udim_t size_,
                              const occa::properties &properties_) :

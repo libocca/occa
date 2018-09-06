@@ -65,14 +65,10 @@ typedef occaType occaDevice;
 typedef occaType occaKernel;
 typedef occaType occaMemory;
 typedef occaType occaStream;
+typedef occaType occaStreamTag;
 
 typedef occaType occaJson;
 typedef occaType occaProperties;
-
-typedef struct {
-  double tagTime;
-  void *modeTag;
-} occaStreamTag;
 
 //---[ Type Flags ]---------------------
 extern const int OCCA_UNDEFINED;
@@ -99,6 +95,7 @@ extern const int OCCA_DEVICE;
 extern const int OCCA_KERNEL;
 extern const int OCCA_MEMORY;
 extern const int OCCA_STREAM;
+extern const int OCCA_STREAMTAG;
 
 extern const int OCCA_JSON;
 extern const int OCCA_PROPERTIES;

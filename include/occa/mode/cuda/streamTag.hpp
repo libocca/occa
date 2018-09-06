@@ -22,24 +22,27 @@
 
 #include <occa/defines.hpp>
 
-#if OCCA_OPENCL_ENABLED
+#if OCCA_CUDA_ENABLED
+#  ifndef OCCA_MODES_CUDA_STREAMTAG_HEADER
+#  define OCCA_MODES_CUDA_STREAMTAG_HEADER
 
-#include <occa/mode/opencl/stream.hpp>
-#include <occa/mode/opencl/utils.hpp>
+#include <cuda.h>
+
+#include <occa/streamTag.hpp>
 
 namespace occa {
-  namespace opencl {
-    stream::stream(modeDevice_t *modeDevice_,
-                   const occa::properties &properties_,
-                   cl_command_queue commandQueue_) :
-      modeStream_t(modeDevice_, properties_),
-      commandQueue(commandQueue_) {}
+  namespace cuda {
+    class streamTag : public occa::modeStreamTag_t {
+    public:
+      CUevent cuEvent;
 
-    stream::~stream() {
-      OCCA_OPENCL_ERROR("Device: Freeing cl_command_queue",
-                        clReleaseCommandQueue(commandQueue));
-    }
+      streamTag(modeDevice_t *modeDevice_,
+                CUevent cuEvent_);
+
+      virtual ~streamTag();
+    };
   }
 }
 
+#  endif
 #endif

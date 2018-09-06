@@ -46,10 +46,10 @@ namespace occa {
       //---[ Stream ]-------------------
       virtual modeStream_t* createStream(const occa::properties &props);
 
-      virtual streamTag tagStream() const;
-      virtual void waitFor(streamTag tag) const;
+      virtual streamTag tagStream();
+      virtual void waitFor(streamTag tag);
       virtual double timeBetween(const streamTag &startTag,
-                                 const streamTag &endTag) const;
+                                 const streamTag &endTag);
       //================================
 
       //---[ Kernel ]-------------------

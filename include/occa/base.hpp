@@ -39,6 +39,7 @@
 #include <occa/kernel.hpp>
 #include <occa/memory.hpp>
 #include <occa/stream.hpp>
+#include <occa/streamTag.hpp>
 
 namespace occa {
   //---[ Device Functions ]-------------

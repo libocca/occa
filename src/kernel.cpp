@@ -31,7 +31,7 @@
 #include <occa/lang/builtins/transforms/finders.hpp>
 
 namespace occa {
-  //---[ modeKernel_t ]---------------------
+  //---[ modeKernel_t ]-----------------
   modeKernel_t::modeKernel_t(modeDevice_t *modeDevice_,
                              const std::string &name_,
                              const std::string &sourceFilename_,

@@ -36,9 +36,8 @@ namespace occa {
   class modeKernel_t; class kernel;
   class modeMemory_t; class memory;
   class modeDevice_t; class device;
+  class modeStreamTag_t; class streamTag;
   class deviceInfo;
-
-  class streamTag;
 
   typedef std::map<std::string, kernel>   cachedKernelMap;
   typedef cachedKernelMap::iterator       cachedKernelMapIterator;
@@ -54,6 +53,7 @@ namespace occa {
     gc::ring_t<modeKernel_t> kernelRing;
     gc::ring_t<modeMemory_t> memoryRing;
     gc::ring_t<modeStream_t> streamRing;
+    gc::ring_t<modeStreamTag_t> streamTagRing;
 
     ptrRangeMap uvaMap;
     memoryVector uvaStaleMemory;
@@ -83,6 +83,7 @@ namespace occa {
       }
     }
 
+    // Must be called before ~modeDevice_t()!
     void freeResources();
 
     void dontUseRefs();
@@ -99,6 +100,9 @@ namespace occa {
     void addStreamRef(modeStream_t *stream);
     void removeStreamRef(modeStream_t *stream);
 
+    void addStreamTagRef(modeStreamTag_t *streamTag);
+    void removeStreamTagRef(modeStreamTag_t *streamTag);
+
     //---[ Virtual Methods ]------------
     virtual ~modeDevice_t() = 0;
 
@@ -113,10 +117,10 @@ namespace occa {
     //  |---[ Stream ]------------------
     virtual modeStream_t* createStream(const occa::properties &props) = 0;
 
-    virtual streamTag tagStream() const = 0;
-    virtual void waitFor(streamTag tag) const = 0;
+    virtual streamTag tagStream() = 0;
+    virtual void waitFor(streamTag tag) = 0;
     virtual double timeBetween(const streamTag &startTag,
-                               const streamTag &endTag) const = 0;
+                               const streamTag &endTag) = 0;
     //  |===============================
 
     //  |---[ Kernel ]------------------
@@ -283,21 +287,6 @@ namespace occa {
   std::ostream& operator << (std::ostream &out,
                              const occa::device &device);
   //====================================
-
-  //---[ stream ]-----------------------
-  /*
-   * CUDA   : modeTag = CUevent*
-   * OpenCL : modeTag = cl_event*
-   */
-  class streamTag {
-  public:
-    double tagTime;
-    void *modeTag;
-
-    streamTag();
-    streamTag(const double tagTime_,
-              void *modeTag_);
-  };
-  //====================================
 }
+
 #endif

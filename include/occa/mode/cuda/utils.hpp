@@ -109,9 +109,6 @@ namespace occa {
                             const udim_t bytes,
                             const occa::properties &props = occa::properties());
 
-    CUevent& event(streamTag &tag);
-    const CUevent& event(const streamTag &tag);
-
     void warn(CUresult errorCode,
               const std::string &filename,
               const std::string &function,

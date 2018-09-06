@@ -28,7 +28,7 @@
 #include <occa/io.hpp>
 
 namespace occa {
-  //---[ modeDevice_t ]---------------------
+  //---[ modeDevice_t ]-----------------
   modeDevice_t::modeDevice_t(const occa::properties &properties_) :
     mode((std::string) properties_["mode"]),
     properties(properties_),
@@ -52,6 +52,7 @@ namespace occa {
     freeRing<modeKernel_t>(kernelRing);
     freeRing<modeMemory_t>(memoryRing);
     freeRing<modeStream_t>(streamRing);
+    freeRing<modeStreamTag_t>(streamTagRing);
   }
 
   void modeDevice_t::dontUseRefs() {
@@ -92,6 +93,14 @@ namespace occa {
 
   void modeDevice_t::removeStreamRef(modeStream_t *stream) {
     streamRing.removeRef(stream);
+  }
+
+  void modeDevice_t::addStreamTagRef(modeStreamTag_t *streamTag) {
+    streamTagRing.addRef(streamTag);
+  }
+
+  void modeDevice_t::removeStreamTagRef(modeStreamTag_t *streamTag) {
+    streamTagRing.removeRef(streamTag);
   }
 
   hash_t modeDevice_t::versionedHash() const {
@@ -634,16 +643,5 @@ namespace occa {
     out << device.properties();
     return out;
   }
-  //====================================
-
-  //---[ streamTag ]--------------------
-  streamTag::streamTag() :
-    tagTime(0),
-    modeTag(NULL) {}
-
-  streamTag::streamTag(const double tagTime_,
-                       void *modeTag_) :
-    tagTime(tagTime_),
-    modeTag(modeTag_) {}
   //====================================
 }

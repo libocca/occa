@@ -261,14 +261,6 @@ namespace occa {
       return occa::memory(&mem);
     }
 
-    CUevent& event(streamTag &tag) {
-      return (CUevent&) tag.modeTag;
-    }
-
-    const CUevent& event(const streamTag &tag) {
-      return (const CUevent&) tag.modeTag;
-    }
-
     void warn(CUresult errorCode,
               const std::string &filename,
               const std::string &function,
