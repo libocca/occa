@@ -82,8 +82,6 @@ namespace occa {
 
       archMajorVersion = properties.get("cuda/arch/major", archMajorVersion);
       archMinorVersion = properties.get("cuda/arch/minor", archMinorVersion);
-
-      properties["kernel/verbose"] = properties.get("verbose", false);
     }
 
     device::~device() {}
