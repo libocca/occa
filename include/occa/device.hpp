@@ -212,6 +212,11 @@ namespace occa {
     //  |===============================
 
     //  |---[ Kernel ]------------------
+    void setupKernelInfo(const occa::properties &props,
+                         const hash_t &sourceHash,
+                         occa::properties &kernelProps,
+                         hash_t &kernelHash) const;
+
     occa::kernel buildKernel(const std::string &filename,
                              const std::string &kernelName,
                              const occa::properties &props = occa::properties()) const;

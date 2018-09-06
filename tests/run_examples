@@ -60,10 +60,12 @@ for mode in $("${OCCA_DIR}/bin/occa" modes); do
         fi
 
         # OpenCL + Shared memory is finicky
-        case "(${mode}) ${example_dir}" in
-            "(OpenCL) (c|cpp)/3_reduction") continue;;
-            "(OpenCL) (c|cpp)/6_arrays") continue;;
-        esac
+        if [ "${mode}" == OpenCL ]; then
+            case "${example_dir}" in
+                */3_reduction) continue;;
+                */6_arrays) continue;;
+            esac
+        fi
 
         banner="(${mode}) ${example_dir}"
         chars=$(echo "${banner}" | wc -c);

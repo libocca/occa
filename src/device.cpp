@@ -430,18 +430,28 @@ namespace occa {
   //  |=================================
 
   //  |---[ Kernel ]--------------------
+  void device::setupKernelInfo(const occa::properties &props,
+                               const hash_t &sourceHash,
+                               occa::properties &kernelProps,
+                               hash_t &kernelHash) const {
+    assertInitialized();
+
+    kernelProps = props + kernelProperties();
+    kernelProps["mode"] = mode();
+
+    kernelHash = (hash()
+                  ^ modeDevice->kernelHash(kernelProps)
+                  ^ kernelHeaderHash(kernelProps)
+                  ^ sourceHash);
+  }
+
   kernel device::buildKernel(const std::string &filename,
                              const std::string &kernelName,
                              const occa::properties &props) const {
-    assertInitialized();
-
-    occa::properties allProps = props + kernelProperties();
-    allProps["mode"] = mode();
-
-    hash_t kernelHash = (hash()
-                         ^ modeDevice->kernelHash(allProps)
-                         ^ kernelHeaderHash(allProps)
-                         ^ hashFile(filename));
+    occa::properties allProps;
+    hash_t kernelHash;
+    setupKernelInfo(props, hashFile(filename),
+                    allProps, kernelHash);
 
     // TODO: [#185] Fix kernel cache frees
     // // Check cache first
@@ -470,15 +480,10 @@ namespace occa {
   kernel device::buildKernelFromString(const std::string &content,
                                        const std::string &kernelName,
                                        const occa::properties &props) const {
-    assertInitialized();
-
-    occa::properties allProps = props + kernelProperties();
-    allProps["mode"] = mode();
-
-    // Store in the same directory as cached outputs
-    hash_t kernelHash = (hash()
-                         ^ occa::hash(allProps) // ^ modeDevice->kernelHash(allProps)
-                         ^ occa::hash(content));
+    occa::properties allProps;
+    hash_t kernelHash;
+    setupKernelInfo(props, occa::hash(content),
+                    allProps, kernelHash);
 
     io::lock_t lock(kernelHash, "occa-device");
     std::string stringSourceFile = io::hashDir(kernelHash);
