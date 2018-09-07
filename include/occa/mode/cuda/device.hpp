@@ -25,7 +25,7 @@
 #  define OCCA_MODES_CUDA_DEVICE_HEADER
 
 #include <occa/defines.hpp>
-#include <occa/device.hpp>
+#include <occa/core/device.hpp>
 
 #include <cuda.h>
 

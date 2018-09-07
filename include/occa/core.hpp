@@ -20,31 +20,10 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  */
 
-#include <occa/defines.hpp>
-
-#if OCCA_OPENMP_ENABLED
-#  ifndef OCCA_MODES_OPENMP_REGISTRATION_HEADER
-#  define OCCA_MODES_OPENMP_REGISTRATION_HEADER
-
-#include <occa/mode.hpp>
-#include <occa/mode/openmp/device.hpp>
-#include <occa/mode/serial/memory.hpp>
 #include <occa/core/base.hpp>
-
-namespace occa {
-  namespace openmp {
-    class modeInfo : public modeInfo_v {
-    public:
-      modeInfo();
-
-      void init();
-      void setupProperties();
-    };
-
-    extern occa::mode<openmp::modeInfo,
-                      openmp::device> mode;
-  }
-}
-
-#  endif
-#endif
+#include <occa/core/device.hpp>
+#include <occa/core/kernel.hpp>
+#include <occa/core/kernelArg.hpp>
+#include <occa/core/memory.hpp>
+#include <occa/core/stream.hpp>
+#include <occa/core/streamTag.hpp>

@@ -28,7 +28,7 @@
 
 #include <hip/hip_runtime_api.h>
 
-#include <occa/kernel.hpp>
+#include <occa/core/kernel.hpp>
 
 namespace occa {
   namespace hip {

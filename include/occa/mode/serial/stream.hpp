@@ -24,7 +24,7 @@
 #define OCCA_MODES_SERIAL_STREAM_HEADER
 
 #include <occa/defines.hpp>
-#include <occa/stream.hpp>
+#include <occa/core/stream.hpp>
 
 namespace occa {
   namespace serial {

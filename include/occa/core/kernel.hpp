@@ -28,7 +28,7 @@
 #include <vector>
 
 #include <occa/defines.hpp>
-#include <occa/kernelArg.hpp>
+#include <occa/core/kernelArg.hpp>
 #include <occa/lang/kernelMetadata.hpp>
 #include <occa/tools/gc.hpp>
 #include <occa/tools/properties.hpp>

@@ -31,7 +31,7 @@
 #include <occa/mode/hip/kernel.hpp>
 #include <occa/mode/hip/memory.hpp>
 #include <occa/tools/styling.hpp>
-#include <occa/base.hpp>
+#include <occa/core/base.hpp>
 
 namespace occa {
   namespace hip {

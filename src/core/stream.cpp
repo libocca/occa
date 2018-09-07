@@ -20,8 +20,8 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  */
 
-#include <occa/stream.hpp>
-#include <occa/device.hpp>
+#include <occa/core/stream.hpp>
+#include <occa/core/device.hpp>
 
 namespace occa {
   //---[ modeStream_t ]-----------------

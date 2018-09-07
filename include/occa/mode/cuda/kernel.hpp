@@ -28,7 +28,7 @@
 
 #include <cuda.h>
 
-#include <occa/kernel.hpp>
+#include <occa/core/kernel.hpp>
 
 namespace occa {
   namespace cuda {

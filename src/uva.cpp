@@ -24,7 +24,7 @@
 
 #include <occa/tools/misc.hpp>
 #include <occa/tools/sys.hpp>
-#include <occa/base.hpp>
+#include <occa/core/base.hpp>
 #include <occa/uva.hpp>
 
 namespace occa {

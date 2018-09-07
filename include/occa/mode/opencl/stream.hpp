@@ -26,7 +26,7 @@
 #  ifndef OCCA_MODES_OPENCL_STREAM_HEADER
 #  define OCCA_MODES_OPENCL_STREAM_HEADER
 
-#include <occa/stream.hpp>
+#include <occa/core/stream.hpp>
 #include <occa/mode/opencl/headers.hpp>
 
 namespace occa {

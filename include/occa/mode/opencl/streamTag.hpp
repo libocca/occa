@@ -26,7 +26,7 @@
 #  ifndef OCCA_MODES_OPENCL_STREAMTAG_HEADER
 #  define OCCA_MODES_OPENCL_STREAMTAG_HEADER
 
-#include <occa/streamTag.hpp>
+#include <occa/core/streamTag.hpp>
 #include <occa/mode/opencl/headers.hpp>
 
 namespace occa {

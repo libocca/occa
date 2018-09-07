@@ -28,8 +28,8 @@
 
 #include <occa/defines.hpp>
 #include <occa/uva.hpp>
-#include <occa/kernel.hpp>
-#include <occa/stream.hpp>
+#include <occa/core/kernel.hpp>
+#include <occa/core/stream.hpp>
 #include <occa/tools/gc.hpp>
 
 namespace occa {

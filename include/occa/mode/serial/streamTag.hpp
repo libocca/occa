@@ -25,7 +25,7 @@
 #ifndef OCCA_MODES_SERIAL_STREAMTAG_HEADER
 #define OCCA_MODES_SERIAL_STREAMTAG_HEADER
 
-#include <occa/streamTag.hpp>
+#include <occa/core/streamTag.hpp>
 
 namespace occa {
   namespace serial {

@@ -28,7 +28,7 @@
 
 #include <cuda.h>
 
-#include <occa/streamTag.hpp>
+#include <occa/core/streamTag.hpp>
 
 namespace occa {
   namespace cuda {

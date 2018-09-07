@@ -103,7 +103,7 @@ def runFunctionFromArgument(N):
     return content
 
 
-@to_file('include/occa/kernelOperators.hpp')
+@to_file('include/occa/core/kernelOperators.hpp')
 def operatorDeclarations(N):
     return '\n\n'.join(
         operatorDeclaration(n) for n in range(N + 1)
@@ -119,7 +119,7 @@ def operatorDeclaration(N):
     return content
 
 
-@to_file('src/kernelOperators.cpp')
+@to_file('src/core/kernelOperators.cpp')
 def operatorDefinitions(N):
     return '\n'.join(
         operatorDefinition(n) for n in range(N + 1)

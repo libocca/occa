@@ -33,7 +33,7 @@
 #include <occa/mode/opencl/streamTag.hpp>
 #include <occa/io.hpp>
 #include <occa/tools/sys.hpp>
-#include <occa/base.hpp>
+#include <occa/core/base.hpp>
 
 namespace occa {
   namespace opencl {

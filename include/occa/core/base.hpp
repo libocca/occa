@@ -35,11 +35,11 @@
 #  include <xmmintrin.h>
 #endif
 
-#include <occa/device.hpp>
-#include <occa/kernel.hpp>
-#include <occa/memory.hpp>
-#include <occa/stream.hpp>
-#include <occa/streamTag.hpp>
+#include <occa/core/device.hpp>
+#include <occa/core/kernel.hpp>
+#include <occa/core/memory.hpp>
+#include <occa/core/stream.hpp>
+#include <occa/core/streamTag.hpp>
 
 namespace occa {
   //---[ Device Functions ]-------------

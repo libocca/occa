@@ -22,7 +22,7 @@
 
 #include <cstdlib>
 
-#include <occa/base.hpp>
+#include <occa/core/base.hpp>
 #include <occa/io.hpp>
 #include <occa/tools/env.hpp>
 #include <occa/tools/sys.hpp>

@@ -31,7 +31,7 @@
 #include <occa/mode/cuda/kernel.hpp>
 #include <occa/mode/cuda/memory.hpp>
 #include <occa/tools/styling.hpp>
-#include <occa/base.hpp>
+#include <occa/core/base.hpp>
 
 namespace occa {
   namespace cuda {

@@ -20,8 +20,8 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  */
 
-#include <occa/streamTag.hpp>
-#include <occa/device.hpp>
+#include <occa/core/streamTag.hpp>
+#include <occa/core/device.hpp>
 
 namespace occa {
   //---[ modeStreamTag_t ]--------------

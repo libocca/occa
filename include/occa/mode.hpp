@@ -29,7 +29,7 @@
 #include <occa/defines.hpp>
 #include <occa/tools/properties.hpp>
 #include <occa/tools/styling.hpp>
-#include <occa/device.hpp>
+#include <occa/core/device.hpp>
 
 namespace occa {
   class modeDevice_t; class device;

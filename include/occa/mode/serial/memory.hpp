@@ -24,7 +24,7 @@
 #define OCCA_MODES_SERIAL_MEMORY_HEADER
 
 #include <occa/defines.hpp>
-#include <occa/memory.hpp>
+#include <occa/core/memory.hpp>
 
 namespace occa {
   namespace serial {

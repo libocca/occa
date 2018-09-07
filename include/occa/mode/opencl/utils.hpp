@@ -29,7 +29,7 @@
 #include <iostream>
 
 #include <occa/mode/opencl/headers.hpp>
-#include <occa/device.hpp>
+#include <occa/core/device.hpp>
 #include <occa/io/lock.hpp>
 
 namespace occa {

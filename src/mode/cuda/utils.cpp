@@ -24,8 +24,8 @@
 
 #if OCCA_CUDA_ENABLED
 
-#include <occa/device.hpp>
-#include <occa/memory.hpp>
+#include <occa/core/device.hpp>
+#include <occa/core/memory.hpp>
 #include <occa/tools/string.hpp>
 #include <occa/tools/sys.hpp>
 #include <occa/mode/cuda/device.hpp>

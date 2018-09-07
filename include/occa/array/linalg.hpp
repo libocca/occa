@@ -26,7 +26,7 @@
 #include <cmath>
 
 #include <occa/defines.hpp>
-#include <occa/base.hpp>
+#include <occa/core/base.hpp>
 #include <occa/tools/env.hpp>
 
 namespace occa {

@@ -24,7 +24,7 @@
 
 #if OCCA_HIP_ENABLED
 
-#include <occa/base.hpp>
+#include <occa/core/base.hpp>
 #include <occa/tools/env.hpp>
 #include <occa/tools/misc.hpp>
 #include <occa/tools/sys.hpp>

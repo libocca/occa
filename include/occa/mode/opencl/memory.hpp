@@ -26,7 +26,7 @@
 #  ifndef OCCA_MODES_OPENCL_MEMORY_HEADER
 #  define OCCA_MODES_OPENCL_MEMORY_HEADER
 
-#include <occa/memory.hpp>
+#include <occa/core/memory.hpp>
 #include <occa/mode/opencl/headers.hpp>
 
 namespace occa {

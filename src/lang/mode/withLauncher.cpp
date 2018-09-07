@@ -322,7 +322,7 @@ namespace occa {
         // TODO 1.1: Remove hack after methods are properly added
         const int headerCount = 2;
         std::string headers[headerCount] = {
-          "include <occa/base.hpp>",
+          "include <occa/core/base.hpp>",
           "include <occa/mode/serial/kernel.hpp>"
         };
         for (int i = 0; i < headerCount; ++i) {

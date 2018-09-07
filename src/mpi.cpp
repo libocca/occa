@@ -24,7 +24,7 @@
 
 #if OCCA_MPI_ENABLED
 
-#include <occa/base.hpp>
+#include <occa/core/base.hpp>
 #include <occa/mpi.hpp>
 #include <occa/tools/tls.hpp>
 

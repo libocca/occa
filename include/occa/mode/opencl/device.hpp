@@ -26,7 +26,7 @@
 #  ifndef OCCA_MODES_OPENCL_DEVICE_HEADER
 #  define OCCA_MODES_OPENCL_DEVICE_HEADER
 
-#include <occa/device.hpp>
+#include <occa/core/device.hpp>
 #include <occa/mode/opencl/headers.hpp>
 
 namespace occa {

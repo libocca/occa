@@ -26,7 +26,7 @@
 #include <vector>
 
 #include <occa/defines.hpp>
-#include <occa/kernel.hpp>
+#include <occa/core/kernel.hpp>
 #include <occa/tools/sys.hpp>
 
 namespace occa {

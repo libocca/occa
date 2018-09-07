@@ -26,7 +26,7 @@
 #  ifndef OCCA_MODES_OPENCL_KERNEL_HEADER
 #  define OCCA_MODES_OPENCL_KERNEL_HEADER
 
-#include <occa/kernel.hpp>
+#include <occa/core/kernel.hpp>
 #include <occa/mode/opencl/headers.hpp>
 #include <occa/mode/opencl/utils.hpp>
 

@@ -24,7 +24,7 @@
 #define OCCA_MODES_SERIAL_DEVICE_HEADER
 
 #include <occa/defines.hpp>
-#include <occa/device.hpp>
+#include <occa/core/device.hpp>
 
 namespace occa {
   namespace serial {

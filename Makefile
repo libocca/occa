@@ -64,7 +64,7 @@ pthreadFlag := $(pthreadFlag)
 #---[ variables ]---------------------------------
 srcToObject  = $(subst $(PROJ_DIR)/src,$(PROJ_DIR)/obj,$(1:.cpp=.o))
 
-dontCompile = $(OCCA_DIR)/src/kernelOperators.cpp $(OCCA_DIR)/src/tools/runFunction.cpp
+dontCompile = $(OCCA_DIR)/src/core/kernelOperators.cpp $(OCCA_DIR)/src/tools/runFunction.cpp
 
 sources     = $(realpath $(shell find $(PROJ_DIR)/src -type f -name '*.cpp'))
 sources    := $(filter-out $(dontCompile),$(sources))

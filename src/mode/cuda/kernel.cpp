@@ -29,7 +29,7 @@
 #include <occa/mode/cuda/utils.hpp>
 #include <occa/tools/env.hpp>
 #include <occa/io.hpp>
-#include <occa/base.hpp>
+#include <occa/core/base.hpp>
 
 namespace occa {
   namespace cuda {

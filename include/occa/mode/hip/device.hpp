@@ -26,7 +26,7 @@
 #  ifndef OCCA_MODES_HIP_DEVICE_HEADER
 #  define OCCA_MODES_HIP_DEVICE_HEADER
 
-#include <occa/device.hpp>
+#include <occa/core/device.hpp>
 
 #include <hip/hip_runtime_api.h>
 

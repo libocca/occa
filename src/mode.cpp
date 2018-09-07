@@ -21,7 +21,7 @@
  */
 
 #include <occa/mode.hpp>
-#include <occa/device.hpp>
+#include <occa/core/device.hpp>
 
 namespace occa {
   strToModeMap& modeMap() {
