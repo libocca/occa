@@ -26,7 +26,7 @@
 #include <occa/core/memory.hpp>
 #include <occa/core/device.hpp>
 #include <occa/mode/serial/memory.hpp>
-#include <occa/uva.hpp>
+#include <occa/tools/uva.hpp>
 #include <occa/tools/sys.hpp>
 
 namespace occa {

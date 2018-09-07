@@ -20,17 +20,30 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  */
 
-#include <occa/tools/cli.hpp>
-#include <occa/tools/env.hpp>
-#include <occa/tools/exception.hpp>
-#include <occa/tools/gc.hpp>
-#include <occa/tools/hash.hpp>
-#include <occa/tools/json.hpp>
-#include <occa/tools/lex.hpp>
-#include <occa/tools/misc.hpp>
-#include <occa/tools/properties.hpp>
-#include <occa/tools/string.hpp>
-#include <occa/tools/styling.hpp>
-#include <occa/tools/sys.hpp>
-#include <occa/tools/tls.hpp>
-#include <occa/tools/uva.hpp>
+#ifndef OCCA_DEFINES_MACROS_HEADER
+#define OCCA_DEFINES_MACROS_HEADER
+
+#include <occa/defines/compiledDefines.hpp>
+
+#ifndef __PRETTY_FUNCTION__
+#  define __PRETTY_FUNCTION__ __FUNCTION__
+#endif
+
+#define OCCA_STRINGIFY2(macro) #macro
+#define OCCA_STRINGIFY(macro) OCCA_STRINGIFY2(macro)
+
+#ifdef __cplusplus
+#  define OCCA_START_EXTERN_C extern "C" {
+#  define OCCA_END_EXTERN_C   }
+#else
+#  define OCCA_START_EXTERN_C
+#  define OCCA_END_EXTERN_C
+#endif
+
+#if   (OCCA_OS == OCCA_LINUX_OS) || (OCCA_OS == OCCA_MACOS_OS)
+#  define OCCA_INLINE inline __attribute__ ((always_inline))
+#elif (OCCA_OS == OCCA_WINDOWS_OS)
+#  define OCCA_INLINE __forceinline
+#endif
+
+#endif

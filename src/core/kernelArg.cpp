@@ -22,7 +22,7 @@
 #include <occa/core/device.hpp>
 #include <occa/core/memory.hpp>
 #include <occa/core/kernelArg.hpp>
-#include <occa/uva.hpp>
+#include <occa/tools/uva.hpp>
 
 namespace occa {
   //---[ KernelArg ]--------------------

@@ -23,7 +23,7 @@
 #include <occa/core/kernel.hpp>
 #include <occa/core/device.hpp>
 #include <occa/core/memory.hpp>
-#include <occa/uva.hpp>
+#include <occa/tools/uva.hpp>
 #include <occa/io.hpp>
 #include <occa/tools/sys.hpp>
 #include <occa/lang/parser.hpp>

@@ -20,17 +20,17 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  */
 
-#ifndef OCCA_DEVICE_HEADER
-#define OCCA_DEVICE_HEADER
+#ifndef OCCA_CORE_DEVICE_HEADER
+#define OCCA_CORE_DEVICE_HEADER
 
 #include <iostream>
 #include <sstream>
 
 #include <occa/defines.hpp>
-#include <occa/uva.hpp>
 #include <occa/core/kernel.hpp>
 #include <occa/core/stream.hpp>
 #include <occa/tools/gc.hpp>
+#include <occa/tools/uva.hpp>
 
 namespace occa {
   class modeKernel_t; class kernel;
