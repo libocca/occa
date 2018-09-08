@@ -357,6 +357,78 @@ namespace occa {
       return occa::streamTag((occa::modeStreamTag_t*) value.value.ptr);
     }
 
+    occa::kernelArg kernelArg(occaType value) {
+      OCCA_ERROR("A non-occaType argument was passed",
+                 !occaIsUndefined(value));
+
+      occa::kernelArg arg;
+
+      switch (value.type) {
+      case occa::c::typeType::ptr: {
+        arg.add(value.value.ptr,
+                value.bytes,
+                false, false);
+        break;
+      }
+      case occa::c::typeType::int8_: {
+        return occa::kernelArg(value.value.int8_);
+      }
+      case occa::c::typeType::uint8_: {
+        return occa::kernelArg(value.value.uint8_);
+      }
+      case occa::c::typeType::int16_: {
+        return occa::kernelArg(value.value.int16_);
+      }
+      case occa::c::typeType::uint16_: {
+        return occa::kernelArg(value.value.uint16_);
+      }
+      case occa::c::typeType::int32_: {
+        return occa::kernelArg(value.value.int32_);
+      }
+      case occa::c::typeType::uint32_: {
+        return occa::kernelArg(value.value.uint32_);
+      }
+      case occa::c::typeType::int64_: {
+        return occa::kernelArg(value.value.int64_);
+      }
+      case occa::c::typeType::uint64_: {
+        return occa::kernelArg(value.value.uint64_);
+      }
+      case occa::c::typeType::float_: {
+        return occa::kernelArg(value.value.float_);
+      }
+      case occa::c::typeType::double_: {
+        return occa::kernelArg(value.value.double_);
+      }
+      case occa::c::typeType::struct_: {
+        arg.add(value.value.ptr,
+                value.bytes,
+                false, false);
+        break;
+      }
+      case occa::c::typeType::string: {
+        arg.add(value.value.ptr,
+                value.bytes,
+                false, false);
+        break;
+      }
+      case occa::c::typeType::memory: {
+        return occa::kernelArg(occa::c::memory(value));
+      }
+      case occa::c::typeType::device:
+        OCCA_FORCE_ERROR("Unable to pass an occaDevice as a kernel argument");
+      case occa::c::typeType::kernel:
+        OCCA_FORCE_ERROR("Unable to pass an occaKernel as a kernel argument");
+      case occa::c::typeType::properties:
+        OCCA_FORCE_ERROR("Unable to pass an occaProperties as a kernel argument");
+      case occa::c::typeType::default_:
+        OCCA_FORCE_ERROR("Unable to pass occaDefault as a kernel argument");
+      default:
+        OCCA_FORCE_ERROR("A non-occaType argument was passed");
+      }
+      return arg;
+    }
+
     occa::primitive primitive(occaType value) {
       occa::primitive p;
 

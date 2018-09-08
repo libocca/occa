@@ -23,6 +23,8 @@
 #ifndef OCCA_C_KERNEL_HEADER
 #define OCCA_C_KERNEL_HEADER
 
+#include <stdarg.h>
+
 #include <occa/c/defines.h>
 #include <occa/c/types.h>
 
@@ -50,9 +52,22 @@ OCCA_LFUNC void OCCA_RFUNC occaKernelSetRunDims(occaKernel kernel,
                                                 occaDim outerDims,
                                                 occaDim innerDims);
 
+OCCA_LFUNC void OCCA_RFUNC occaKernelPushArg(occaKernel kernel,
+                                             occaType arg);
+
+OCCA_LFUNC void OCCA_RFUNC occaKernelClearArgs(occaKernel kernel);
+
+OCCA_LFUNC void OCCA_RFUNC occaKernelRunFromArgs(occaKernel kernel);
+
+// `occaKernelRun` is reserved for a variadic macro
+//    which is more user-friendly
 OCCA_LFUNC void OCCA_RFUNC occaKernelRunN(occaKernel kernel,
                                          const int argc,
                                          ...);
+
+OCCA_LFUNC void OCCA_RFUNC occaKernelVaRun(occaKernel kernel,
+                                           const int argc,
+                                           va_list args);
 
 OCCA_END_EXTERN_C
 

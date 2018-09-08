@@ -127,6 +127,8 @@ namespace occa {
     occa::stream stream(occaType value);
     occa::streamTag streamTag(occaType value);
 
+    occa::kernelArg kernelArg(occaType value);
+
     occa::primitive primitive(occaType value);
     occa::primitive primitive(occaType value,
                               const int type);

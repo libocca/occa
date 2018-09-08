@@ -226,18 +226,19 @@ namespace occa {
             : dim(-1, -1, -1));
   }
 
-  void kernel::addArgument(const int argPos, const kernelArg &arg) {
+  void kernel::pushArg(const kernelArg &arg) {
     assertInitialized();
 
-    if (modeKernel->argumentCount() <= argPos) {
-      OCCA_ERROR("Kernels can only have at most [" << OCCA_MAX_ARGS << "] arguments,"
-                 << " [" << argPos << "] arguments were set",
-                 argPos < OCCA_MAX_ARGS);
+    OCCA_ERROR("Kernels can have at most [" << OCCA_MAX_ARGS << "] arguments",
+               (modeKernel->argumentCount() + 1) < OCCA_MAX_ARGS);
 
-      modeKernel->arguments.resize(argPos + 1);
+    modeKernel->arguments.push_back(arg);
+  }
+
+  void kernel::clearArgs() {
+    if (modeKernel) {
+      modeKernel->arguments.clear();
     }
-
-    modeKernel->arguments[argPos] = arg;
   }
 
   void kernel::run() const {
@@ -250,12 +251,6 @@ namespace occa {
     }
 
     modeKernel->run();
-  }
-
-  void kernel::clearArgumentList() {
-    if (modeKernel) {
-      modeKernel->arguments.clear();
-    }
   }
 
 #include "kernelOperators.cpp"

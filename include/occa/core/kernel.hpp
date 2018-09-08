@@ -143,9 +143,10 @@ namespace occa {
 
     void setRunDims(dim outerDims, dim innerDims);
 
-    void addArgument(const int argPos, const kernelArg &arg);
+    void pushArg(const kernelArg &arg);
+    void clearArgs();
+
     void run() const;
-    void clearArgumentList();
 
 #include "kernelOperators.hpp"
 

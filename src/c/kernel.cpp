@@ -86,11 +86,34 @@ void OCCA_RFUNC occaKernelSetRunDims(occaKernel kernel,
   );
 }
 
+OCCA_LFUNC void OCCA_RFUNC occaKernelPushArg(occaKernel kernel,
+                                             occaType arg) {
+  occa::c::kernel(kernel).pushArg(
+    occa::c::kernelArg(arg)
+  );
+}
+
+OCCA_LFUNC void OCCA_RFUNC occaKernelClearArgs(occaKernel kernel) {
+  occa::c::kernel(kernel).clearArgs();
+}
+
+OCCA_LFUNC void OCCA_RFUNC occaKernelRunFromArgs(occaKernel kernel) {
+  occa::c::kernel(kernel).run();
+}
+
 // `occaKernelRun` is reserved for a variadic macro
 //    which is more user-friendly
 void OCCA_RFUNC occaKernelRunN(occaKernel kernel,
                                const int argc,
                                ...) {
+  va_list args;
+  va_start(args, argc);
+  occaKernelVaRun(kernel, argc, args);
+}
+
+void OCCA_RFUNC occaKernelVaRun(occaKernel kernel,
+                                const int argc,
+                                va_list args) {
   occa::kernel kernel_ = occa::c::kernel(kernel);
   OCCA_ERROR("Uninitialized kernel",
              kernel_.isInitialized());
@@ -99,90 +122,11 @@ void OCCA_RFUNC occaKernelRunN(occaKernel kernel,
   modeKernel.arguments.clear();
   modeKernel.arguments.reserve(argc);
 
-  va_list args;
-  va_start(args, argc);
   for (int i = 0; i < argc; ++i) {
-    occa::kernelArg kArg;
-
     occaType arg = va_arg(args, occaType);
-    OCCA_ERROR("A non-occaType argument was passed",
-               !occaIsUndefined(arg));
-
-    switch (arg.type) {
-    case occa::c::typeType::ptr: {
-      kArg.add(arg.value.ptr,
-               arg.bytes,
-               false, false);
-      break;
-    }
-    case occa::c::typeType::int8_: {
-      kArg = occa::kernelArg(arg.value.int8_);
-      break;
-    }
-    case occa::c::typeType::uint8_: {
-      kArg = occa::kernelArg(arg.value.uint8_);
-      break;
-    }
-    case occa::c::typeType::int16_: {
-      kArg = occa::kernelArg(arg.value.int16_);
-      break;
-    }
-    case occa::c::typeType::uint16_: {
-      kArg = occa::kernelArg(arg.value.uint16_);
-      break;
-    }
-    case occa::c::typeType::int32_: {
-      kArg = occa::kernelArg(arg.value.int32_);
-      break;
-    }
-    case occa::c::typeType::uint32_: {
-      kArg = occa::kernelArg(arg.value.uint32_);
-      break;
-    }
-    case occa::c::typeType::int64_: {
-      kArg = occa::kernelArg(arg.value.int64_);
-      break;
-    }
-    case occa::c::typeType::uint64_: {
-      kArg = occa::kernelArg(arg.value.uint64_);
-      break;
-    }
-    case occa::c::typeType::float_: {
-      kArg = occa::kernelArg(arg.value.float_);
-      break;
-    }
-    case occa::c::typeType::double_: {
-      kArg = occa::kernelArg(arg.value.double_);
-      break;
-    }
-    case occa::c::typeType::struct_: {
-      kArg.add(arg.value.ptr,
-               arg.bytes,
-               false, false);
-      break;
-    }
-    case occa::c::typeType::string: {
-      kArg.add(arg.value.ptr,
-               arg.bytes,
-               false, false);
-      break;
-    }
-    case occa::c::typeType::memory:
-      kArg = occa::kernelArg(occa::c::memory(arg));
-      break;
-    case occa::c::typeType::device:
-      OCCA_FORCE_ERROR("Unable to pass an occaDevice as a kernel argument");
-    case occa::c::typeType::kernel:
-      OCCA_FORCE_ERROR("Unable to pass an occaKernel as a kernel argument");
-    case occa::c::typeType::properties:
-      OCCA_FORCE_ERROR("Unable to pass an occaProperties as a kernel argument");
-    case occa::c::typeType::default_:
-      OCCA_FORCE_ERROR("Unable to pass occaDefault as a kernel argument");
-    default:
-      OCCA_FORCE_ERROR("A non-occaType argument was passed");
-    }
-
-    modeKernel.arguments.push_back(kArg);
+    modeKernel.arguments.push_back(
+      occa::c::kernelArg(arg)
+    );
   }
 
   kernel_.run();

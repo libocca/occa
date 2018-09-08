@@ -140,6 +140,24 @@ void testRun() {
     occaString(str.c_str())
   );
 
+  // Manual argument insertion
+  occaKernelClearArgs(argKernel);
+  occaKernelPushArg(argKernel, mem);
+  occaKernelPushArg(argKernel, occaPtr(uvaPtr));
+  occaKernelPushArg(argKernel, occaInt8(2));
+  occaKernelPushArg(argKernel, occaUInt8(3));
+  occaKernelPushArg(argKernel, occaInt16(4));
+  occaKernelPushArg(argKernel, occaUInt16(5));
+  occaKernelPushArg(argKernel, occaInt32(6));
+  occaKernelPushArg(argKernel, occaUInt32(7));
+  occaKernelPushArg(argKernel, occaInt64(8));
+  occaKernelPushArg(argKernel, occaUInt64(9));
+  occaKernelPushArg(argKernel, occaFloat(10.0));
+  occaKernelPushArg(argKernel, occaDouble(11.0));
+  occaKernelPushArg(argKernel, occaStruct(xy, sizeof(xy)));
+  occaKernelPushArg(argKernel, occaString(str.c_str()));
+  occaKernelRunFromArgs(argKernel);
+
   // Bad argument types
   ASSERT_THROW(
     occaKernelRunN(argKernel, 1, occaGetDevice());
