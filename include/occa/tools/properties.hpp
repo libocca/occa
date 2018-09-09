@@ -35,6 +35,7 @@ namespace occa {
     properties(const json &j);
     properties(const char *c);
     properties(const std::string &s);
+    ~properties();
 
     bool isInitialized();
 

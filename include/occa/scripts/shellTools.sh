@@ -21,7 +21,7 @@
 # SOFTWARE.
 
 
-OCCA_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")"/.. && pwd)"
+SCRIPTS_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 #---[ Library Information ]-------------
 function uniqueAddToPath {
@@ -362,8 +362,8 @@ function compilerVendor {
     local b_VisualStudio=7
     local b_Cray=8
 
-    local testFilename="${OCCA_DIR}/scripts/compilerVendorTest.cpp"
-    local binaryFilename="${OCCA_DIR}/scripts/compilerVendorTest"
+    local testFilename="${SCRIPTS_DIR}/tests/compiler.cpp"
+    local binaryFilename="${SCRIPTS_DIR}/tests/compiler"
 
     eval "${chosenCompiler}" "${testFilename}" -o "${binaryFilename}" > /dev/null 2>&1
     eval "${binaryFilename}"
@@ -466,8 +466,8 @@ function compilerSupportsOpenMP {
     local vendor=$(compilerVendor "${compiler}")
     local ompFlag=$(compilerOpenMPFlag "${compiler}")
 
-    local filename="${OCCA_DIR}"/scripts/openmpTest.cpp
-    local binary="${OCCA_DIR}"/scripts/openmpTest
+    local filename="${SCRIPTS_DIR}/tests/openmp.cpp"
+    local binary="${SCRIPTS_DIR}/tests/openmp"
 
     rm -f "${binary}"
 
@@ -500,8 +500,8 @@ function compilerSupportsOpenMP {
 function compilerSupportsMPI {
     local compiler="$1"
 
-    local filename="${OCCA_DIR}"/scripts/mpiTest.cpp
-    local binary="${OCCA_DIR}"/scripts/mpiTest
+    local filename="${SCRIPTS_DIR}/tests/mpi.cpp"
+    local binary="${SCRIPTS_DIR}/tests/mpi"
 
     rm -f "${binary}"
 
@@ -567,7 +567,6 @@ function installOcca {
     mkdir -p "${PREFIX}"
     cp -r bin     "${PREFIX}/bin"
     cp -r include "${PREFIX}/include"
-    cp -r scripts "${PREFIX}/scripts"
     cp -r lib     "${PREFIX}/lib"
 }
 #=======================================

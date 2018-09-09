@@ -29,6 +29,8 @@
 namespace occa {
   const char json::objectKeyEndChars[] = " \t\r\n\v\f:";
 
+  json::~json() {}
+
   json& json::clear() {
     type = none_;
     value_.string = "";

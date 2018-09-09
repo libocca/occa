@@ -175,18 +175,18 @@ ifeq (,$(findstring bash,$(SHELL)))
   endif
 endif
 
-libraryFlagsFor = $(shell . $(OCCA_DIR)/scripts/shellTools.sh; libraryFlags "$1")
-includeFlagsFor = $(shell . $(OCCA_DIR)/scripts/shellTools.sh; headerFlags  "$1")
+libraryFlagsFor = $(shell . $(OCCA_DIR)/include/occa/scripts/shellTools.sh; libraryFlags "$1")
+includeFlagsFor = $(shell . $(OCCA_DIR)/include/occa/scripts/shellTools.sh; headerFlags  "$1")
 
-compilerReleaseFlags = $(shell . $(OCCA_DIR)/scripts/shellTools.sh; compilerReleaseFlags "$(compiler)")
-compilerDebugFlags   = $(shell . $(OCCA_DIR)/scripts/shellTools.sh; compilerDebugFlags   "$(compiler)")
-compilerPicFlag      = $(shell . $(OCCA_DIR)/scripts/shellTools.sh; compilerPicFlag      "$(compiler)")
-compilerSharedFlag   = $(shell . $(OCCA_DIR)/scripts/shellTools.sh; compilerSharedFlag   "$(compiler)")
-compilerPthreadFlag  = $(shell . $(OCCA_DIR)/scripts/shellTools.sh; compilerPthreadFlag  "$(compiler)")
+compilerReleaseFlags = $(shell . $(OCCA_DIR)/include/occa/scripts/shellTools.sh; compilerReleaseFlags "$(compiler)")
+compilerDebugFlags   = $(shell . $(OCCA_DIR)/include/occa/scripts/shellTools.sh; compilerDebugFlags   "$(compiler)")
+compilerPicFlag      = $(shell . $(OCCA_DIR)/include/occa/scripts/shellTools.sh; compilerPicFlag      "$(compiler)")
+compilerSharedFlag   = $(shell . $(OCCA_DIR)/include/occa/scripts/shellTools.sh; compilerSharedFlag   "$(compiler)")
+compilerPthreadFlag  = $(shell . $(OCCA_DIR)/include/occa/scripts/shellTools.sh; compilerPthreadFlag  "$(compiler)")
 
-compilerSupportsMPI    = $(shell . $(OCCA_DIR)/scripts/shellTools.sh; compilerSupportsMPI    "$(compiler)")
-compilerSupportsOpenMP = $(shell . $(OCCA_DIR)/scripts/shellTools.sh; compilerSupportsOpenMP "$(compiler)")
-compilerOpenMPFlag     = $(shell . $(OCCA_DIR)/scripts/shellTools.sh; compilerOpenMPFlag     "$(compiler)")
+compilerSupportsMPI    = $(shell . $(OCCA_DIR)/include/occa/scripts/shellTools.sh; compilerSupportsMPI    "$(compiler)")
+compilerSupportsOpenMP = $(shell . $(OCCA_DIR)/include/occa/scripts/shellTools.sh; compilerSupportsOpenMP "$(compiler)")
+compilerOpenMPFlag     = $(shell . $(OCCA_DIR)/include/occa/scripts/shellTools.sh; compilerOpenMPFlag     "$(compiler)")
 #=================================================
 
 

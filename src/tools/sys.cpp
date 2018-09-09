@@ -416,7 +416,7 @@ namespace occa {
 
       if (!io::isFile(shellToolsFile)) {
         mkpath(io::dirname(shellToolsFile));
-        std::string localFile = env::OCCA_DIR + "scripts/shellTools.sh";
+        std::string localFile = env::OCCA_DIR + "include/occa/scripts/shellTools.sh";
 
         std::ifstream src(localFile.c_str(),
                           std::ios::binary);
@@ -671,7 +671,7 @@ namespace occa {
       int vendor_ = sys::vendor::notFound;
       std::stringstream ss;
 
-      const std::string compilerVendorTest = env::OCCA_DIR + "scripts/compilerVendorTest.cpp";
+      const std::string compilerVendorTest = env::OCCA_DIR + "include/occa/scripts/tests/compiler.cpp";
       hash_t hash = occa::hashFile(compilerVendorTest);
       hash ^= occa::hash(compiler);
 

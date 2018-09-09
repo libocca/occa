@@ -150,6 +150,8 @@ namespace occa {
       value_.array = value;
     }
 
+    virtual ~json();
+
     json& clear();
 
     json& operator = (const json &j);
@@ -250,7 +252,7 @@ namespace occa {
       return *this;
     }
 
-    bool isInitialized();
+    virtual bool isInitialized();
 
     json& load(const char *&c);
     json& load(const std::string &s);

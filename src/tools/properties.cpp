@@ -50,7 +50,12 @@ namespace occa {
     properties::load(s);
   }
 
+  properties::~properties() {}
+
   bool properties::isInitialized() {
+    if (!initialized) {
+      initialized = value_.object.size();
+    }
     return initialized;
   }
 

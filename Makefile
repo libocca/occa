@@ -106,7 +106,7 @@ MAKE_COMPILED_DEFINES := $(shell \
 MAKE_COMPILED_DEFINES := $(shell rm $(NEW_COMPILED_DEFINES))
 
 all: $(objects) $(outputs)
-	@(. $(OCCA_DIR)/scripts/shellTools.sh && installOcca)
+	@(. $(OCCA_DIR)/include/occa/scripts/shellTools.sh && installOcca)
 	@echo "> occa info"
 	@$(OCCA_DIR)/bin/occa info
 
@@ -120,9 +120,9 @@ $(libPath)/libocca.so:$(objects) $(headers) $(COMPILED_DEFINES)
 	mkdir -p $(libPath)
 	$(compiler) $(compilerFlags) $(sharedFlag) $(pthreadFlag) -o $(libPath)/libocca.so $(flags) $(objects) $(paths) $(filter-out -locca, $(linkerFlags))
 
-$(binPath)/occa:$(OCCA_DIR)/scripts/occa.cpp $(libPath)/libocca.so $(COMPILED_DEFINES_CHANGED)
+$(binPath)/occa:$(OCCA_DIR)/bin/occa.cpp $(libPath)/libocca.so $(COMPILED_DEFINES_CHANGED)
 	@mkdir -p $(binPath)
-	$(compiler) $(compilerFlags) -o $(binPath)/occa -Wl,-rpath,$(libPath) $(flags) $(OCCA_DIR)/scripts/occa.cpp $(paths) $(linkerFlags) -L$(OCCA_DIR)/lib -locca
+	$(compiler) $(compilerFlags) -o $(binPath)/occa -Wl,-rpath,$(libPath) $(flags) $(OCCA_DIR)/bin/occa.cpp $(paths) $(linkerFlags) -L$(OCCA_DIR)/lib -locca
 #  ===========================
 
 $(OCCA_DIR)/obj/%.o:$(OCCA_DIR)/src/%.cpp $(OCCA_DIR)/include/occa/%.hpp $(OCCA_DIR)/include/occa/%.tpp $(COMPILED_DEFINES_CHANGED)
@@ -163,10 +163,10 @@ $(testPath)/bin/%:$(testPath)/src/%.cpp $(outputs)
 #---[ Clean ]-------------------------------------
 clean:
 	rm -rf $(objPath)/*
-	rm -rf $(binPath)/*
-	rm -rf $(testPath)/bin/*;
+	rm -rf $(binPath)/occa
+	rm -rf $(testPath)/bin
+	rm -rf $(testPath)/src/io/locks
 	rm  -f $(libPath)/libocca.so
-	rm  -f $(OCCA_DIR)/scripts/main
 #=================================================
 
 

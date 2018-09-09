@@ -63,7 +63,7 @@ namespace occa {
       const std::string safeCompiler = io::slashToSnake(compiler);
       std::stringstream ss;
 
-      const std::string openmpTest = env::OCCA_DIR + "scripts/openmpTest.cpp";
+      const std::string openmpTest = env::OCCA_DIR + "/include/occa/scripts/tests/openmp.cpp";
       hash_t hash = occa::hashFile(openmpTest);
       hash ^= occa::hash(vendor_);
       hash ^= occa::hash(compiler);

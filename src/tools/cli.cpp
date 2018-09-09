@@ -838,7 +838,7 @@ namespace occa {
       const bool isRoot = (funcPrefix.size() == 0);
 
       if (isRoot) {
-        std::cout << io::read(env::OCCA_DIR + "scripts/autocomplete.sh");
+        std::cout << io::read(env::OCCA_DIR + "include/occa/scripts/autocomplete.sh");
       }
 
       std::cout << '\n'

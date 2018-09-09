@@ -1,11 +1,12 @@
 .gitattributes
 
 bin/
+!bin/occa.cpp
 lib/
 obj/
-/include/occa/defines/compiledDefines.hpp
-/scripts/compilerVendorTest
 .compiledDefines
+include/occa/defines/compiledDefines.hpp
+include/occa/scripts
 
 *.obj
 *.pyc
