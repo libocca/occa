@@ -24,13 +24,16 @@
 
 #if OCCA_OPENCL_ENABLED
 
+#include <occa/mode/opencl/utils.hpp>
 #include <occa/mode/opencl/registration.hpp>
 
 namespace occa {
   namespace opencl {
     modeInfo::modeInfo() {}
 
-    void modeInfo::init() {}
+    bool modeInfo::init() {
+      return occa::opencl::isEnabled();
+    }
 
     styling::section& modeInfo::getDescription() {
       static styling::section section("OpenCL");

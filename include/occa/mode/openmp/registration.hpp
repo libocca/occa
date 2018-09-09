@@ -37,7 +37,7 @@ namespace occa {
     public:
       modeInfo();
 
-      void init();
+      bool init();
       void setupProperties();
     };
 

@@ -26,7 +26,9 @@ namespace occa {
   namespace serial {
     modeInfo::modeInfo() {}
 
-    void modeInfo::init() {}
+    bool modeInfo::init() {
+      return true;
+    }
 
     styling::section& modeInfo::getDescription() {
       static styling::section section("CPU(s)");

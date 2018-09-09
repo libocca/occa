@@ -24,8 +24,6 @@
 
 #if OCCA_OPENMP_ENABLED
 
-#include <omp.h>
-
 #include <occa/mode/serial/device.hpp>
 #include <occa/mode/openmp/device.hpp>
 #include <occa/mode/openmp/utils.hpp>
@@ -34,10 +32,7 @@
 namespace occa {
   namespace openmp {
     device::device(const occa::properties &properties_) :
-      serial::device(properties_) {
-      // Generate an OpenMP library dependency (so it doesn't crash when dlclose())
-      omp_get_num_threads();
-    }
+      serial::device(properties_) {}
 
     hash_t device::kernelHash(const occa::properties &props) const {
       return (

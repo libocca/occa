@@ -31,8 +31,9 @@ namespace occa {
   namespace hip {
     modeInfo::modeInfo() {}
 
-    void modeInfo::init() {
+    bool modeInfo::init() {
       hip::init();
+      return true;
     }
 
     styling::section& modeInfo::getDescription() {

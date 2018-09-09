@@ -65,6 +65,8 @@ namespace occa {
       std::string vendor(int type);
     }
 
+    bool isEnabled();
+
     cl_device_type deviceType(int type);
 
     int getPlatformCount();

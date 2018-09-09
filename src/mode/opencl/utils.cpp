@@ -63,6 +63,12 @@ namespace occa {
       }
     }
 
+    bool isEnabled() {
+      cl_uint platformCount;
+      cl_int error = clGetPlatformIDs(0, NULL, &platformCount);
+      return !error;
+    }
+
     cl_device_type deviceType(int type) {
       cl_device_type ret = 0;
 

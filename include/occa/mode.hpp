@@ -51,7 +51,7 @@ namespace occa {
   public:
     modeInfo_v();
 
-    virtual void init() = 0;
+    virtual bool init() = 0;
     virtual styling::section& getDescription();
   };
 
@@ -71,8 +71,9 @@ namespace occa {
   public:
     mode(std::string modeName_) {
       modeName = modeName_;
-      registerMode(this);
-      modeInfo_t().init();
+      if (modeInfo_t().init()) {
+        registerMode(this);
+      }
     }
 
     styling::section &getDescription() {
