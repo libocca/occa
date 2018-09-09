@@ -35,12 +35,12 @@
 namespace occa {
   //---[ Helper Functions ]-----------
   namespace cuda {
-    void init() {
+    bool init() {
       static bool isInitialized = false;
       if (!isInitialized) {
-        cuInit(0);
-        isInitialized = true;
+        isInitialized = cuInit(0);
       }
+      return isInitialized;
     }
 
     int getDeviceCount() {

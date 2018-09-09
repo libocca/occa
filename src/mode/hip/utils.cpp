@@ -35,12 +35,12 @@
 namespace occa {
   //---[ Helper Functions ]-----------
   namespace hip {
-    void init() {
+    bool init() {
       static bool isInitialized = false;
       if (!isInitialized) {
-        hipInit(0);
-        isInitialized = true;
+        isInitialized = hipInit(0);
       }
+      return isInitialized;
     }
 
     int getDeviceCount() {

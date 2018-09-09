@@ -38,7 +38,7 @@ namespace occa {
     typedef int advice_t;
 #endif
 
-    void init();
+    bool init();
 
     int getDeviceCount();
     CUdevice getDevice(const int id);

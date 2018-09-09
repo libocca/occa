@@ -34,7 +34,7 @@ namespace occa {
   namespace hip {
     typedef int advice_t;
 
-    void init();
+    bool init();
 
     int getDeviceCount();
     hipDevice_t getDevice(const int id);

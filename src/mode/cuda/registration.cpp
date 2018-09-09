@@ -32,8 +32,7 @@ namespace occa {
     modeInfo::modeInfo() {}
 
     bool modeInfo::init() {
-      cuda::init();
-      return true;
+      return cuda::init();
     }
 
     styling::section& modeInfo::getDescription() {
