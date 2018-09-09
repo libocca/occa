@@ -28,7 +28,10 @@
 namespace occa {
   class properties: public json {
   public:
+    bool initialized;
+
     properties();
+    properties(const properties &other);
     properties(const json &j);
     properties(const char *c);
     properties(const std::string &s);

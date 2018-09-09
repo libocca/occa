@@ -27,32 +27,44 @@
 namespace occa {
   properties::properties() {
     type = object_;
+    initialized = false;
+  }
+
+  properties::properties(const properties &other) {
+    type = object_;
+    value_ = other.value_;
+    initialized = other.initialized;
   }
 
   properties::properties(const json &j) {
     type = object_;
     value_ = j.value_;
+    initialized = true;
   }
 
   properties::properties(const char *c) {
-    load(c);
+    properties::load(c);
   }
 
   properties::properties(const std::string &s) {
-    load(s);
+    properties::load(s);
   }
 
   bool properties::isInitialized() {
-    return (0 < value_.object.size());
+    return initialized;
   }
 
   void properties::load(const char *&c) {
+    lex::skipWhitespace(c);
     loadObject(c);
+    initialized = true;
   }
 
   void properties::load(const std::string &s) {
     const char *c = s.c_str();
+    lex::skipWhitespace(c);
     loadObject(c);
+    initialized = true;
   }
 
   properties properties::read(const std::string &filename) {
