@@ -32,14 +32,10 @@ namespace occa {
 
   modeStreamTag_t::~modeStreamTag_t() {
     // NULL all wrappers
-    streamTag *ptr = (streamTag*) streamTagRing.head;
-    while (ptr) {
-      streamTag *nextPtr = (streamTag*) ptr->rightRingEntry;
-      ptr->modeStreamTag = NULL;
-      ptr->removeRef();
-      ptr = ((nextPtr != ptr)
-             ? nextPtr
-             : NULL);
+    while (streamTagRing.head) {
+      streamTag *mem = (streamTag*) streamTagRing.head;
+      streamTagRing.removeRef(mem);
+      mem->modeStreamTag = NULL;
     }
     // Remove ref from device
     if (modeDevice) {
@@ -147,5 +143,6 @@ namespace occa {
   void streamTag::free() {
     // ~modeStreamTag_t NULLs all wrappers
     delete modeStreamTag;
+    modeStreamTag = NULL;
   }
 }

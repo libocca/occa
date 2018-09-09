@@ -36,14 +36,10 @@ namespace occa {
 
   modeDevice_t::~modeDevice_t() {
     // Null all wrappers
-    device *ptr = (device*) deviceRing.head;
-    while (ptr) {
-      device *nextPtr = (device*) ptr->rightRingEntry;
-      ptr->modeDevice = NULL;
-      ptr->removeRef();
-      ptr = ((nextPtr != ptr)
-             ? nextPtr
-             : NULL);
+    while (deviceRing.head) {
+      device *mem = (device*) deviceRing.head;
+      deviceRing.removeRef(mem);
+      mem->modeDevice = NULL;
     }
   }
 
@@ -275,6 +271,7 @@ namespace occa {
 
       // ~modeDevice_t NULLs all wrappers
       delete modeDevice;
+      modeDevice = NULL;
     }
   }
 

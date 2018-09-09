@@ -34,14 +34,10 @@ namespace occa {
 
   modeStream_t::~modeStream_t() {
     // NULL all wrappers
-    stream *ptr = (stream*) streamRing.head;
-    while (ptr) {
-      stream *nextPtr = (stream*) ptr->rightRingEntry;
-      ptr->modeStream = NULL;
-      ptr->removeRef();
-      ptr = ((nextPtr != ptr)
-             ? nextPtr
-             : NULL);
+    while (streamRing.head) {
+      stream *mem = (stream*) streamRing.head;
+      streamRing.removeRef(mem);
+      mem->modeStream = NULL;
     }
     // Remove ref from device
     if (modeDevice) {
@@ -157,6 +153,7 @@ namespace occa {
   void stream::free() {
     // ~modeStream_t NULLs all wrappers
     delete modeStream;
+    modeStream = NULL;
   }
 
   std::ostream& operator << (std::ostream &out,

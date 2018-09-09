@@ -69,17 +69,10 @@ namespace occa {
 
     template <class modeType_t>
     void freeRing(gc::ring_t<modeType_t> ring) {
-      modeType_t *head = (modeType_t*) ring.head;
-      if (head) {
-        modeType_t *ptr = head;
-        do {
-          modeType_t *nextPtr = (modeType_t*) ptr->rightRingEntry;
-          // Remove modeDevice to prevent messing with this ring
-          ptr->modeDevice = NULL;
-          delete ptr;
-          ptr = nextPtr;
-        } while (ptr != head);
-        ring.clear();
+      while (ring.head) {
+        modeType_t *ptr = (modeType_t*) ring.head;
+        ring.removeRef(ptr);
+        delete ptr;
       }
     }
 
