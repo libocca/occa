@@ -15,7 +15,9 @@ coverage:
 ignore:
   - examples
   - tests
+  # Scripts
   - scripts
+  - include/occa/scripts
   # Auto-generated files
   - include/occa/kernelOperators.hpp
   - src/kernelOperators.cpp
