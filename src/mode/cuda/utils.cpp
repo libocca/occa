@@ -38,7 +38,7 @@ namespace occa {
     bool init() {
       static bool isInitialized = false;
       if (!isInitialized) {
-        isInitialized = cuInit(0);
+        isInitialized = !cuInit(0);
       }
       return isInitialized;
     }
