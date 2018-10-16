@@ -19,7 +19,7 @@ namespace occa {
 #if (OCCA_OS & (OCCA_LINUX_OS | OCCA_MACOS_OS))
     pthread_key_t pkey;
 #else
-    __declspec(thread) TM value_;
+    thread_local TM value_;
 #endif
 
   public:

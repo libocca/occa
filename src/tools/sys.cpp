@@ -344,11 +344,13 @@ namespace occa {
 #if (OCCA_OS & (OCCA_LINUX_OS | OCCA_MACOS_OS))
       return !::kill(pid, 0);
 #else
-      DWORD exitCode;
-      if(GetExitCodeProcess(pid, &exitCode)) {
-        return (exitCode == STILL_ACTIVE);
+      HANDLE hProc = OpenProcess(SYNCHRONIZE, FALSE, pid);
+      if (!hProc) {
+        return false; // Process has closed
       }
-      return false;
+      DWORD ret = WaitForSingleObject(hProc, 0);
+      CloseHandle(hProc);
+      return (ret != WAIT_TIMEOUT);
 #endif
     }
 
@@ -382,7 +384,7 @@ namespace occa {
       CPU_SET(core, &cpuSet);
       syscall(__NR_sched_setaffinity, getTID(), sizeof(cpu_set_t), &cpuSet);
 #elif (OCCA_OS == OCCA_WINDOWS_OS)
-      SetThreadAffinityMask(GetCurrentThread(), 1 << core);
+      SetThreadAffinityMask(GetCurrentThread(), 1ULL << core);
 #endif
     }
     //==================================
@@ -442,7 +444,7 @@ namespace occa {
       char buffer[MAX_COMPUTERNAME_LENGTH + 1];
       int bytes;
 
-      GetComputerName((LPSTR) buffer, (LPDWORD) &bytes);
+      GetComputerName((LPTSTR) buffer, (LPDWORD) &bytes);
 
       return std::string(buffer, bytes);
 #endif
@@ -547,15 +549,13 @@ namespace occa {
       int sk = sizeof(PSYSTEM_LOGICAL_PROCESSOR_INFORMATION);
 
       while ((off + sk) <= bytes) {
-        switch(pos->Relationship) {
-        case RelationCache:{
+        if (pos->Relationship == RelationCache) {
           CACHE_DESCRIPTOR info = pos->Cache;
-
           if (info.Level == level) {
             cache = info.Size;
             break;
           }
-        }}
+        }
         ++pos;
         off += sk;
       }
@@ -709,7 +709,7 @@ namespace occa {
       } else if (vendor_ & sys::vendor::HP) {
         return "+z -b";
       } else if (vendor_ & sys::vendor::VisualStudio) {
-        return "/TP /LD /MDd";
+        return "/TP /LD /MD"; // TODO: Use /MDd for debug mode
       }
       OCCA_FORCE_ERROR("Could not find compiler flags for creating a shared object");
       return "";
@@ -922,7 +922,7 @@ namespace occa {
       }
       return function;
 #else
-      return "";
+      return std::string(symbol);
 #endif
     }
   }

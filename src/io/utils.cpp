@@ -12,7 +12,7 @@
 #else
 #  include <windows.h>
 #  include <string>
-#  include <direct.h> // rmdir _rmdir
+#  include <algorithm> // std::replace
 #endif
 
 #include <occa/io/cache.hpp>
@@ -26,14 +26,27 @@ namespace occa {
   namespace kc {
     const std::string rawSourceFile  = "raw_source.cpp";
     const std::string sourceFile     = "source.cpp";
-    const std::string binaryFile     = "binary";
-    const std::string buildFile      = "build.json";
     const std::string hostSourceFile = "host_source.cpp";
-    const std::string hostBinaryFile = "host_binary";
+    const std::string buildFile      = "build.json";
     const std::string hostBuildFile  = "host_build.json";
+#if (OCCA_OS & (OCCA_LINUX_OS | OCCA_MACOS_OS))
+    const std::string binaryFile     = "binary";
+    const std::string hostBinaryFile = "host_binary";
+#else
+    const std::string binaryFile     = "binary.dll";
+    const std::string hostBinaryFile = "host_binary.dll";
+#endif
   }
 
   namespace io {
+    // Might not be defined in Windows
+#ifndef DT_REG
+    static const unsigned char DT_REG = 'r';
+#endif
+#ifndef DT_DIR
+    static const unsigned char DT_DIR = 'd';
+#endif
+
     const std::string& cachePath() {
       static std::string path;
       if (path.size() == 0) {
@@ -230,14 +243,14 @@ namespace occa {
       const std::string expFilename = io::filename(filename);
       struct stat statInfo;
       return ((stat(expFilename.c_str(), &statInfo) == 0) &&
-              S_ISREG(statInfo.st_mode));
+              ((statInfo.st_mode & S_IFMT) == S_IFREG));
     }
 
     bool isDir(const std::string &filename) {
       const std::string expFilename = io::filename(filename);
       struct stat statInfo;
       return ((stat(expFilename.c_str(), &statInfo) == 0) &&
-              S_ISDIR(statInfo.st_mode));
+              ((statInfo.st_mode & S_IFMT) == S_IFDIR));
     }
 
     strVector filesInDir(const std::string &dir, const unsigned char fileType) {

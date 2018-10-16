@@ -2,12 +2,17 @@
 #include <errno.h>
 #include <sys/stat.h>
 #include <sys/types.h>
-#include <unistd.h>
 
 #include <occa/defines.hpp>
 #include <occa/io/lock.hpp>
 #include <occa/io/utils.hpp>
 #include <occa/tools/env.hpp>
+
+#if (OCCA_OS & (OCCA_LINUX_OS | OCCA_MACOS_OS))
+#  include <unistd.h>
+#else
+#  include <windows.h> // Sleep
+#endif
 
 namespace occa {
   namespace io {
@@ -100,7 +105,11 @@ namespace occa {
         }
 
         // Wait 0.5 seconds before trying again
+#if (OCCA_OS & (OCCA_LINUX_OS | OCCA_MACOS_OS))
         ::usleep(500000);
+#else
+        Sleep(500);
+#endif
       }
 
       // Other process released the hash

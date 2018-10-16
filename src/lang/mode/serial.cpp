@@ -81,7 +81,11 @@ namespace occa {
         function_t &func = kernelSmnt.function;
         attributeToken_t &kernelAttr = kernelSmnt.attributes["kernel"];
         qualifiers_t &qualifiers = func.returnType.qualifiers;
-        // Add extern "C"
+        // Add extern "C" [__declspec(dllexport)]
+#if OCCA_OS == OCCA_WINDOWS_OS
+        qualifiers.addFirst(kernelAttr.source->origin,
+                            dllexport_);
+#endif
         qualifiers.addFirst(kernelAttr.source->origin,
                             externC);
         // Remove other externs

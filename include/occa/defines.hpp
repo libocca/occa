@@ -6,3 +6,4 @@
 #include <occa/defines/macros.hpp>
 #include <occa/defines/occa.hpp>
 #include <occa/defines/os.hpp>
+#include <occa/defines/windows.hpp>

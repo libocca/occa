@@ -32,6 +32,10 @@ namespace occa {
     extern const qualifier_t enum_;
     extern const qualifier_t union_;
 
+    // Windows types
+    // TODO: Properly handle compiler extension attributes
+    extern const qualifier_t dllexport_;
+
     extern const primitive_t bool_;
     extern const primitive_t char_;
     extern const primitive_t char16_t_;

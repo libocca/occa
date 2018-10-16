@@ -150,7 +150,7 @@ namespace occa {
 #if (OCCA_OS & (OCCA_LINUX_OS | OCCA_MACOS_OS))
     pthread_mutex_t mutexHandle;
 #else
-    HANDLE mutexHandle;
+    void *mutexHandle;
 #endif
 
     mutex();

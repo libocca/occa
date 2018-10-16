@@ -55,6 +55,9 @@ namespace occa {
       extern const udim_t struct_;
       extern const udim_t union_;
 
+      // Windows types
+      extern const udim_t dllexport_;
+
       extern const udim_t newType_;
       extern const udim_t newType;
 

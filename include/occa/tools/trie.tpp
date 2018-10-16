@@ -1,9 +1,11 @@
 #include <cstring>
 
-#include <alloca.h>
-
 #include <occa/defines.hpp>
 #include <occa/tools/sys.hpp>
+
+#if (OCCA_OS & (OCCA_LINUX_OS | OCCA_MACOS_OS))
+#  include <alloca.h>
+#endif
 
 namespace occa {
   //---[ Trie ]-------------------------

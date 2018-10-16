@@ -3,97 +3,97 @@
 namespace occa {
   namespace lang {
     namespace rawOperatorType {
-      const rawOpType_t not_              (1L << 1);
-      const rawOpType_t positive          (1L << 2);
-      const rawOpType_t negative          (1L << 3);
-      const rawOpType_t tilde             (1L << 4);
-      const rawOpType_t leftIncrement     (1L << 5);
-      const rawOpType_t rightIncrement    (1L << 6);
-      const rawOpType_t leftDecrement     (1L << 7);
-      const rawOpType_t rightDecrement    (1L << 8);
+      const rawOpType_t not_              (1ULL << 1);
+      const rawOpType_t positive          (1ULL << 2);
+      const rawOpType_t negative          (1ULL << 3);
+      const rawOpType_t tilde             (1ULL << 4);
+      const rawOpType_t leftIncrement     (1ULL << 5);
+      const rawOpType_t rightIncrement    (1ULL << 6);
+      const rawOpType_t leftDecrement     (1ULL << 7);
+      const rawOpType_t rightDecrement    (1ULL << 8);
 
-      const rawOpType_t add               (1L << 9);
-      const rawOpType_t sub               (1L << 10);
-      const rawOpType_t mult              (1L << 11);
-      const rawOpType_t div               (1L << 12);
-      const rawOpType_t mod               (1L << 13);
+      const rawOpType_t add               (1ULL << 9);
+      const rawOpType_t sub               (1ULL << 10);
+      const rawOpType_t mult              (1ULL << 11);
+      const rawOpType_t div               (1ULL << 12);
+      const rawOpType_t mod               (1ULL << 13);
 
-      const rawOpType_t lessThan          (1L << 14);
-      const rawOpType_t lessThanEq        (1L << 15);
-      const rawOpType_t equal             (1L << 16);
-      const rawOpType_t compare           (1L << 17);
-      const rawOpType_t notEqual          (1L << 18);
-      const rawOpType_t greaterThan       (1L << 19);
-      const rawOpType_t greaterThanEq     (1L << 20);
+      const rawOpType_t lessThan          (1ULL << 14);
+      const rawOpType_t lessThanEq        (1ULL << 15);
+      const rawOpType_t equal             (1ULL << 16);
+      const rawOpType_t compare           (1ULL << 17);
+      const rawOpType_t notEqual          (1ULL << 18);
+      const rawOpType_t greaterThan       (1ULL << 19);
+      const rawOpType_t greaterThanEq     (1ULL << 20);
 
-      const rawOpType_t and_              (1L << 21);
-      const rawOpType_t or_               (1L << 22);
+      const rawOpType_t and_              (1ULL << 21);
+      const rawOpType_t or_               (1ULL << 22);
 
-      const rawOpType_t bitAnd            (1L << 23);
-      const rawOpType_t bitOr             (1L << 24);
-      const rawOpType_t xor_              (1L << 25);
-      const rawOpType_t leftShift         (1L << 26);
-      const rawOpType_t rightShift        (1L << 27);
+      const rawOpType_t bitAnd            (1ULL << 23);
+      const rawOpType_t bitOr             (1ULL << 24);
+      const rawOpType_t xor_              (1ULL << 25);
+      const rawOpType_t leftShift         (1ULL << 26);
+      const rawOpType_t rightShift        (1ULL << 27);
 
-      const rawOpType_t assign            (1L << 28);
-      const rawOpType_t addEq             (1L << 29);
-      const rawOpType_t subEq             (1L << 30);
-      const rawOpType_t multEq            (1L << 31);
-      const rawOpType_t divEq             (1L << 32);
-      const rawOpType_t modEq             (1L << 33);
-      const rawOpType_t andEq             (1L << 34);
-      const rawOpType_t orEq              (1L << 35);
-      const rawOpType_t xorEq             (1L << 36);
-      const rawOpType_t leftShiftEq       (1L << 37);
-      const rawOpType_t rightShiftEq      (1L << 38);
+      const rawOpType_t assign            (1ULL << 28);
+      const rawOpType_t addEq             (1ULL << 29);
+      const rawOpType_t subEq             (1ULL << 30);
+      const rawOpType_t multEq            (1ULL << 31);
+      const rawOpType_t divEq             (1ULL << 32);
+      const rawOpType_t modEq             (1ULL << 33);
+      const rawOpType_t andEq             (1ULL << 34);
+      const rawOpType_t orEq              (1ULL << 35);
+      const rawOpType_t xorEq             (1ULL << 36);
+      const rawOpType_t leftShiftEq       (1ULL << 37);
+      const rawOpType_t rightShiftEq      (1ULL << 38);
 
-      const rawOpType_t comma             (1L << 39);
-      const rawOpType_t scope             (1L << 40);
-      const rawOpType_t globalScope       (1L << 41);
-      const rawOpType_t dereference       (1L << 42);
-      const rawOpType_t address           (1L << 43);
-      const rawOpType_t dot               (1L << 44);
-      const rawOpType_t dotStar           (1L << 45);
-      const rawOpType_t arrow             (1L << 46);
-      const rawOpType_t arrowStar         (1L << 47);
+      const rawOpType_t comma             (1ULL << 39);
+      const rawOpType_t scope             (1ULL << 40);
+      const rawOpType_t globalScope       (1ULL << 41);
+      const rawOpType_t dereference       (1ULL << 42);
+      const rawOpType_t address           (1ULL << 43);
+      const rawOpType_t dot               (1ULL << 44);
+      const rawOpType_t dotStar           (1ULL << 45);
+      const rawOpType_t arrow             (1ULL << 46);
+      const rawOpType_t arrowStar         (1ULL << 47);
 
-      const rawOpType_t questionMark      (1L << 48);
-      const rawOpType_t colon             (1L << 49);
-      const rawOpType_t ternary           (1L << 50);
+      const rawOpType_t questionMark      (1ULL << 48);
+      const rawOpType_t colon             (1ULL << 49);
+      const rawOpType_t ternary           (1ULL << 50);
 
       // End = (Start << 51)
-      const rawOpType_t braceStart        (1L << 52);
-      const rawOpType_t braceEnd          (1L << 53);
-      const rawOpType_t bracketStart      (1L << 54);
-      const rawOpType_t bracketEnd        (1L << 55);
-      const rawOpType_t parenthesesStart  (1L << 56);
-      const rawOpType_t parenthesesEnd    (1L << 57);
+      const rawOpType_t braceStart        (1ULL << 52);
+      const rawOpType_t braceEnd          (1ULL << 53);
+      const rawOpType_t bracketStart      (1ULL << 54);
+      const rawOpType_t bracketEnd        (1ULL << 55);
+      const rawOpType_t parenthesesStart  (1ULL << 56);
+      const rawOpType_t parenthesesEnd    (1ULL << 57);
 
       //---[ Special operators ]--------
-      const rawOpType_t lineComment       (1L << 0);
-      const rawOpType_t blockCommentStart (1L << 1);
+      const rawOpType_t lineComment       (1ULL << 0);
+      const rawOpType_t blockCommentStart (1ULL << 1);
 
-      const rawOpType_t hash              (1L << 2);
-      const rawOpType_t hashhash          (1L << 3);
+      const rawOpType_t hash              (1ULL << 2);
+      const rawOpType_t hashhash          (1ULL << 3);
 
-      const rawOpType_t semicolon         (1L << 4);
-      const rawOpType_t ellipsis          (1L << 5);
-      const rawOpType_t attribute         (1L << 6);
+      const rawOpType_t semicolon         (1ULL << 4);
+      const rawOpType_t ellipsis          (1ULL << 5);
+      const rawOpType_t attribute         (1ULL << 6);
 
-      const rawOpType_t sizeof_           (1L << 7);
-      const rawOpType_t sizeof_pack_      (1L << 8);
-      const rawOpType_t new_              (1L << 9);
-      const rawOpType_t delete_           (1L << 10);
-      const rawOpType_t throw_            (1L << 11);
+      const rawOpType_t sizeof_           (1ULL << 7);
+      const rawOpType_t sizeof_pack_      (1ULL << 8);
+      const rawOpType_t new_              (1ULL << 9);
+      const rawOpType_t delete_           (1ULL << 10);
+      const rawOpType_t throw_            (1ULL << 11);
 
-      const rawOpType_t typeid_           (1L << 12);
-      const rawOpType_t noexcept_         (1L << 13);
-      const rawOpType_t alignof_          (1L << 14);
+      const rawOpType_t typeid_           (1ULL << 12);
+      const rawOpType_t noexcept_         (1ULL << 13);
+      const rawOpType_t alignof_          (1ULL << 14);
 
-      const rawOpType_t parenCast         (1L << 15);
+      const rawOpType_t parenCast         (1ULL << 15);
 
-      const rawOpType_t cudaCallStart     (1L << 16);
-      const rawOpType_t cudaCallEnd       (1L << 17);
+      const rawOpType_t cudaCallStart     (1ULL << 16);
+      const rawOpType_t cudaCallEnd       (1ULL << 17);
       //================================
     }
 

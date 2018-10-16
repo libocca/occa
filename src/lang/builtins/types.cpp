@@ -29,6 +29,10 @@ namespace occa {
     const qualifier_t struct_       ("struct"        , qualifierType::struct_);
     const qualifier_t union_        ("union"         , qualifierType::union_);
 
+    // Windows types
+    // TODO: Properly handle compiler extension attributes
+    const qualifier_t dllexport_    ("__declspec(dllexport)", qualifierType::dllexport_);
+
     const primitive_t bool_         ("bool");
     const primitive_t char_         ("char");
     const primitive_t char16_t_     ("char16_t");
