@@ -35,24 +35,6 @@ void testCacheInfoMethods() {
   ASSERT_TRUE(occa::io::isCached(
                 occa::env::OCCA_CACHE_DIR + "cache/foo.okl"
               ));
-  ASSERT_FALSE(occa::io::isCached(
-                occa::env::OCCA_CACHE_DIR + "libraries/foo.okl"
-              ));
-  ASSERT_TRUE(occa::io::isCached(
-                occa::env::OCCA_CACHE_DIR + "libraries/lib/cache/foo.okl"
-              ));
-
-  // getLibraryName
-  ASSERT_EQ(occa::io::getLibraryName(""),
-            "");
-  ASSERT_EQ(occa::io::getLibraryName("foo.okl"),
-            "");
-  ASSERT_EQ(occa::io::getLibraryName("occa://lib/foo.okl"),
-            "lib");
-  ASSERT_EQ(occa::io::getLibraryName(
-              occa::env::OCCA_CACHE_DIR + "libraries/lib/cache/foo.okl"
-            ),
-            "lib");
 }
 
 void testHashDir() {
@@ -60,14 +42,8 @@ void testHashDir() {
   const std::string cacheDir = (
     occa::io::cachePath() + hash.toString() + "/"
   );
-  const std::string cacheLibDir = (
-    occa::io::libraryPath() + "lib/cache/" + hash.toString() + "/"
-  );
   const std::string manualCacheDir = (
     occa::io::cachePath() + "1234/"
-  );
-  const std::string manualCacheLibDir = (
-    occa::io::libraryPath() + "lib/cache/1234/"
   );
 
   // Default
@@ -93,10 +69,6 @@ void testHashDir() {
             manualCacheDir);
   ASSERT_EQ(occa::io::hashDir(manualCacheDir + "dir/foo.okl", hash),
             manualCacheDir);
-  ASSERT_EQ(occa::io::hashDir(manualCacheLibDir + "foo.okl", hash),
-            manualCacheLibDir);
-  ASSERT_EQ(occa::io::hashDir(manualCacheLibDir + "dir/foo.okl", hash),
-            manualCacheLibDir);
 }
 
 void testBuild() {

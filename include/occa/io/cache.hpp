@@ -12,8 +12,6 @@ namespace occa {
   namespace io {
     bool isCached(const std::string &filename);
 
-    std::string getLibraryName(const std::string &filename);
-
     std::string hashDir(const hash_t &hash);
 
     std::string hashDir(const std::string &filename,

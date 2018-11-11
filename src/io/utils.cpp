@@ -222,14 +222,6 @@ namespace occa {
         return filename;
       }
 
-      const std::string &lPath = libraryPath();
-      if (startsWith(expFilename, lPath)) {
-        std::string libName = getLibraryName(expFilename);
-        std::string theRest = expFilename.substr(lPath.size() + libName.size() + 1);
-
-        return ("occa://" + libName + "/" + theRest);
-      }
-
       const std::string &cPath = cachePath();
       return expFilename.substr(cPath.size());
     }

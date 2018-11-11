@@ -2,17 +2,19 @@
 #include <occa/tools/env.hpp>
 #include <occa/tools/testing.hpp>
 
-void testFileOpeners();
+void testDefaultFileOpener();
+void testOccaFileOpener();
 
 int main(const int argc, const char **argv) {
   occa::env::OCCA_CACHE_DIR = occa::io::dirname(__FILE__);
 
-  testFileOpeners();
+  testDefaultFileOpener();
+  testOccaFileOpener();
 
   return 0;
 }
 
-void testFileOpeners() {
+void testDefaultFileOpener() {
   occa::io::defaultFileOpener defaultOpener;
   ASSERT_TRUE(defaultOpener.handles(""));
   ASSERT_TRUE(defaultOpener.handles("foo.okl"));
@@ -24,7 +26,9 @@ void testFileOpeners() {
             "foo.okl");
   ASSERT_EQ(defaultOpener.expand("occa://foo.okl"),
             "occa://foo.okl");
+}
 
+void testOccaFileOpener() {
   occa::io::occaFileOpener occaOpener;
   ASSERT_FALSE(occaOpener.handles(""));
   ASSERT_FALSE(occaOpener.handles("foo.okl"));
@@ -32,7 +36,33 @@ void testFileOpeners() {
   ASSERT_TRUE(occaOpener.handles("occa://foo.okl"));
 
   ASSERT_EQ(occaOpener.expand("occa://"),
-            occa::io::cachePath());
+            "");
   ASSERT_EQ(occaOpener.expand("occa://foo.okl"),
-            occa::io::libraryPath() + "foo.okl");
+            "");
+
+  ASSERT_EQ(occaOpener.expand("occa://a/"),
+            "");
+  ASSERT_EQ(occaOpener.expand("occa://a/foo.okl"),
+            "");
+
+  occa::io::addLibraryPath("a", "foo");
+
+  ASSERT_EQ(occaOpener.expand("occa://a/"),
+            "foo/");
+  ASSERT_EQ(occaOpener.expand("occa://a/foo.okl"),
+            "foo/foo.okl");
+
+  occa::io::addLibraryPath("a", "foo/");
+
+  ASSERT_EQ(occaOpener.expand("occa://a/"),
+            "foo/");
+  ASSERT_EQ(occaOpener.expand("occa://a/foo.okl"),
+            "foo/foo.okl");
+
+  ASSERT_THROW(
+    occa::io::addLibraryPath("", "foobar");
+  );
+  ASSERT_THROW(
+    occa::io::addLibraryPath("a/b/c", "foo/");
+  );
 }

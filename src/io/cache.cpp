@@ -19,34 +19,7 @@ namespace occa {
 
       // File is already cached
       const std::string &cPath = cachePath();
-      if (startsWith(expFilename, cPath)) {
-        return true;
-      }
-
-      std::string occaLibName = getLibraryName(expFilename);
-      if (occaLibName.size() == 0) {
-        return false;
-      }
-
-      // File is already cached in the library cache
-      const std::string lpath = libraryPath() + occaLibName + "/cache/";
-      return startsWith(expFilename, lpath);
-    }
-
-    std::string getLibraryName(const std::string &filename) {
-      std::string expFilename = io::filename(filename);
-      const std::string cacheLibraryPath = env::OCCA_CACHE_DIR + "libraries/";
-
-      if (!startsWith(expFilename, cacheLibraryPath)) {
-        return "";
-      }
-
-      const char *start = expFilename.c_str() + cacheLibraryPath.size();
-      const char *end = start;
-      lex::skipTo(end, '/');
-
-      return expFilename.substr(start - expFilename.c_str(),
-                                end - start);
+      return startsWith(expFilename, cPath);
     }
 
     std::string hashDir(const hash_t &hash) {
@@ -59,16 +32,8 @@ namespace occa {
 
       const std::string &cPath = cachePath();
       std::string cacheDir = cPath;
-      bool useHash = true;
 
-      // Check cached locations first
-      if (filename.size() && fileIsCached) {
-        useHash = false;
-        // Cached in a library
-        if (!startsWith(filename, cPath)) {
-          cacheDir = libraryPath() + getLibraryName(filename) + "/cache/";
-        }
-      }
+      const bool useHash = !filename.size() || !fileIsCached;
 
       // Regular file, use hash
       if (useHash) {

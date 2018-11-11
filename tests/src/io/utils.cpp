@@ -106,8 +106,6 @@ void testPathMethods() {
             "foo.okl");
   ASSERT_EQ(occa::io::shortname(occa::io::cachePath() + "hash/foo.okl"),
             "hash/foo.okl");
-  ASSERT_EQ(occa::io::shortname(occa::io::libraryPath() + "lib/foo.okl"),
-            "occa://lib/foo.okl");
 }
 
 void testDirMethods() {

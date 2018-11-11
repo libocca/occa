@@ -2,6 +2,7 @@
 #define OCCA_IO_FILEOPENER_HEADER
 
 #include <iostream>
+#include <map>
 #include <vector>
 
 namespace occa {
@@ -10,6 +11,7 @@ namespace occa {
   }
 
   namespace io {
+    typedef std::map<std::string, std::string> libraryPathMap_t;
     class fileOpener {
       friend class occa::env::envInitializer_t;
 
@@ -47,6 +49,11 @@ namespace occa {
       bool handles(const std::string &filename);
       std::string expand(const std::string &filename);
     };
+
+    libraryPathMap_t &getLibraryPathMap();
+
+    void addLibraryPath(const std::string &library,
+                        const std::string &path);
     //==================================
   }
 }
