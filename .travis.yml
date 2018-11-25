@@ -117,7 +117,7 @@ env:
 before_install:
   - |
     if [ "${TRAVIS_OS_NAME}" = "osx" ]; then
-      brew update;
+      travis_wait brew update;
     fi
   - |
     if [ -n "${MATRIX_INIT}" ]; then
