@@ -131,36 +131,6 @@ bool runVersion(const json &args) {
   return true;
 }
 
-bool runCache(const json &args) {
-  const json &arguments = args["arguments"];
-
-  std::string libDir = (io::libraryPath()
-                        + (std::string) arguments[0]
-                        + "/");
-  sys::mkpath(libDir);
-
-  for (int i = 1; i < arguments.size(); ++i) {
-    const std::string srcFile = arguments[i];
-    const std::string destFile = libDir + io::basename(srcFile);
-
-    if (!io::isFile(srcFile)) {
-      std::cerr << yellow("Warning") << ": File '"
-                << srcFile << "' does not exist\n";
-      continue;
-    }
-
-    std::ifstream src(srcFile.c_str(), std::ios::binary);
-    std::ofstream dest(destFile.c_str(), std::ios::binary);
-
-    dest << src.rdbuf();
-
-    src.close();
-    dest.close();
-  }
-
-  return true;
-}
-
 bool runTranslate(const json &args) {
   const json &options = args["options"];
   const json &arguments = args["arguments"];
@@ -314,18 +284,6 @@ int main(const int argc, const char **argv) {
                            "Print the OKL language version")
                .stopsExpansion());
 
-  cli::command cacheCommand;
-  cacheCommand
-    .withName("cache")
-    .withCallback(runCache)
-    .withDescription("Cache kernels")
-    .addArgument("LIBRARY",
-                 "Library where kernels will be cached under",
-                 true)
-    .addRepetitiveArgument("FILE",
-                           "OKL files that will be cached.",
-                           true);
-
   cli::command clearCommand;
   clearCommand
     .withName("clear")
@@ -435,10 +393,9 @@ int main(const int argc, const char **argv) {
     .addCommand(autocompleteBash);
 
   occaCommand
-    .withDescription("Can be used to display information of cache kernels.")
+    .withDescription("Helpful utilities related to OCCA workflows")
     .requiresCommand()
     .addCommand(versionCommand)
-    .addCommand(cacheCommand)
     .addCommand(clearCommand)
     .addCommand(translateCommand)
     .addCommand(compileCommand)
