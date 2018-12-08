@@ -266,10 +266,7 @@ namespace occa {
     }
 
     std::ostream& operator << (std::ostream &out, const option &opt) {
-      if (opt.shortname) {
-        out << '-' << opt.shortname << '/';
-      }
-      out << "--" << opt.name;
+      out << opt.toString();
       return out;
     }
     //==================================
@@ -304,7 +301,8 @@ namespace occa {
     bool parser::isLongOption(const std::string &arg) {
       return ((arg.size() > 2) &&
               (arg[0] == '-') &&
-              (arg[1] == '-'));
+              (arg[1] == '-') &&
+              (arg[2] != '-'));
     }
 
     bool parser::isShortOption(const std::string &arg) {

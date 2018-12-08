@@ -115,10 +115,10 @@ namespace occa {
 
       virtual std::string getPrintName() const;
 
-      bool isLongOption(const std::string &arg);
-      bool isShortOption(const std::string &arg);
-      bool hasShortOption(const std::string &arg);
-      bool isOption(const std::string &arg);
+      static bool isLongOption(const std::string &arg);
+      static bool isShortOption(const std::string &arg);
+      static bool hasShortOption(const std::string &arg);
+      static bool isOption(const std::string &arg);
 
       option* getShortOption(const char opt,
                              const bool errorIfMissing = true);
@@ -157,8 +157,6 @@ namespace occa {
       virtual void printRequired(std::ostream &out);
 
       void fatalError(const std::string &message);
-
-      void parseShortOptions(const std::string arg);
     };
     //==================================
 
