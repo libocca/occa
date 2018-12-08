@@ -6,7 +6,6 @@
 namespace occa {
   //---[ KernelArg ]--------------------
   kernelArgData::kernelArgData() :
-    modeDevice(NULL),
     modeMemory(NULL),
     size(0),
     info(kArgInfo::none) {
@@ -18,7 +17,6 @@ namespace occa {
   }
 
   kernelArgData& kernelArgData::operator = (const kernelArgData &k) {
-    modeDevice = k.modeDevice;
     modeMemory = k.modeMemory;
 
     data = k.data;
@@ -183,6 +181,26 @@ namespace occa {
         modeMemory->memInfo |= uvaFlag::isStale;
       }
     }
+  }
+
+  occa::modeDevice_t* kernelArg::getModeDevice() const {
+    occa::modeDevice_t *device = NULL;
+
+    const int argCount = (int) args.size();
+    for (int i = 0; i < argCount; ++i) {
+      occa::modeMemory_t *modeMemory = args[i].modeMemory;
+      if (!modeMemory) {
+        continue;
+      }
+      if (!device) {
+        device = modeMemory->modeDevice;
+      } else {
+        OCCA_ERROR("Found multiple memory arguments created from different devices",
+                   device == modeMemory->modeDevice);
+      }
+    }
+
+    return device;
   }
 
   int kernelArg::argumentCount(const std::vector<kernelArg> &arguments) {

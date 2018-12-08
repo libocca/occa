@@ -10,6 +10,7 @@ void testInit();
 void testInfo();
 void testParsingFailure();
 void testCompilingFailure();
+void testArgumentFailure();
 void testRun();
 
 int main(const int argc, const char **argv) {
@@ -20,6 +21,7 @@ int main(const int argc, const char **argv) {
   testInfo();
   testParsingFailure();
   testCompilingFailure();
+  testArgumentFailure();
   testRun();
 
   return 0;
@@ -112,6 +114,25 @@ void testCompilingFailure() {
   ASSERT_THROW(
     badKernel = occa::buildKernelFromString(badSource,
                                             "foo");
+  );
+}
+
+void testArgumentFailure() {
+  occa::kernel kernel = occa::buildKernelFromString(
+    "@kernel void foo(int N, float *arg) {"
+    "  for (int i = 0; i < N; ++i; @tile(16, @outer, @inner)) {}"
+    "}",
+    "foo"
+  );
+
+  const int N = 10;
+
+  // Use wrong device
+  occa::device dev("mode: 'Serial'");
+  occa::memory arg = dev.malloc(N * sizeof(float));
+
+  ASSERT_THROW(
+    kernel(N, arg);
   );
 }
 

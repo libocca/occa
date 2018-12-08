@@ -124,6 +124,9 @@ namespace occa {
     void pushArg(const kernelArg &arg);
     void clearArgs();
 
+    void assertArgumentLimit() const;
+    void assertSameDevice(const kernelArg &arg) const;
+
     void run() const;
 
 #include "kernelOperators.hpp"

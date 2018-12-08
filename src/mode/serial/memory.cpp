@@ -22,9 +22,7 @@ namespace occa {
     kernelArg memory::makeKernelArg() const {
       kernelArgData arg;
 
-      arg.modeDevice = modeDevice;
       arg.modeMemory = const_cast<memory*>(this);
-
       arg.data.void_ = ptr;
       arg.size       = sizeof(void*);
       arg.info       = kArgInfo::usePointer;

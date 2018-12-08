@@ -3,97 +3,97 @@
 namespace occa {
   namespace lang {
     namespace rawOperatorType {
-      const rawOpType_t not_              (1ULL << 1);
-      const rawOpType_t positive          (1ULL << 2);
-      const rawOpType_t negative          (1ULL << 3);
-      const rawOpType_t tilde             (1ULL << 4);
-      const rawOpType_t leftIncrement     (1ULL << 5);
-      const rawOpType_t rightIncrement    (1ULL << 6);
-      const rawOpType_t leftDecrement     (1ULL << 7);
-      const rawOpType_t rightDecrement    (1ULL << 8);
+      const rawOpType_t not_              (((uint64_t) 1) << 1);
+      const rawOpType_t positive          (((uint64_t) 1) << 2);
+      const rawOpType_t negative          (((uint64_t) 1) << 3);
+      const rawOpType_t tilde             (((uint64_t) 1) << 4);
+      const rawOpType_t leftIncrement     (((uint64_t) 1) << 5);
+      const rawOpType_t rightIncrement    (((uint64_t) 1) << 6);
+      const rawOpType_t leftDecrement     (((uint64_t) 1) << 7);
+      const rawOpType_t rightDecrement    (((uint64_t) 1) << 8);
 
-      const rawOpType_t add               (1ULL << 9);
-      const rawOpType_t sub               (1ULL << 10);
-      const rawOpType_t mult              (1ULL << 11);
-      const rawOpType_t div               (1ULL << 12);
-      const rawOpType_t mod               (1ULL << 13);
+      const rawOpType_t add               (((uint64_t) 1) << 9);
+      const rawOpType_t sub               (((uint64_t) 1) << 10);
+      const rawOpType_t mult              (((uint64_t) 1) << 11);
+      const rawOpType_t div               (((uint64_t) 1) << 12);
+      const rawOpType_t mod               (((uint64_t) 1) << 13);
 
-      const rawOpType_t lessThan          (1ULL << 14);
-      const rawOpType_t lessThanEq        (1ULL << 15);
-      const rawOpType_t equal             (1ULL << 16);
-      const rawOpType_t compare           (1ULL << 17);
-      const rawOpType_t notEqual          (1ULL << 18);
-      const rawOpType_t greaterThan       (1ULL << 19);
-      const rawOpType_t greaterThanEq     (1ULL << 20);
+      const rawOpType_t lessThan          (((uint64_t) 1) << 14);
+      const rawOpType_t lessThanEq        (((uint64_t) 1) << 15);
+      const rawOpType_t equal             (((uint64_t) 1) << 16);
+      const rawOpType_t compare           (((uint64_t) 1) << 17);
+      const rawOpType_t notEqual          (((uint64_t) 1) << 18);
+      const rawOpType_t greaterThan       (((uint64_t) 1) << 19);
+      const rawOpType_t greaterThanEq     (((uint64_t) 1) << 20);
 
-      const rawOpType_t and_              (1ULL << 21);
-      const rawOpType_t or_               (1ULL << 22);
+      const rawOpType_t and_              (((uint64_t) 1) << 21);
+      const rawOpType_t or_               (((uint64_t) 1) << 22);
 
-      const rawOpType_t bitAnd            (1ULL << 23);
-      const rawOpType_t bitOr             (1ULL << 24);
-      const rawOpType_t xor_              (1ULL << 25);
-      const rawOpType_t leftShift         (1ULL << 26);
-      const rawOpType_t rightShift        (1ULL << 27);
+      const rawOpType_t bitAnd            (((uint64_t) 1) << 23);
+      const rawOpType_t bitOr             (((uint64_t) 1) << 24);
+      const rawOpType_t xor_              (((uint64_t) 1) << 25);
+      const rawOpType_t leftShift         (((uint64_t) 1) << 26);
+      const rawOpType_t rightShift        (((uint64_t) 1) << 27);
 
-      const rawOpType_t assign            (1ULL << 28);
-      const rawOpType_t addEq             (1ULL << 29);
-      const rawOpType_t subEq             (1ULL << 30);
-      const rawOpType_t multEq            (1ULL << 31);
-      const rawOpType_t divEq             (1ULL << 32);
-      const rawOpType_t modEq             (1ULL << 33);
-      const rawOpType_t andEq             (1ULL << 34);
-      const rawOpType_t orEq              (1ULL << 35);
-      const rawOpType_t xorEq             (1ULL << 36);
-      const rawOpType_t leftShiftEq       (1ULL << 37);
-      const rawOpType_t rightShiftEq      (1ULL << 38);
+      const rawOpType_t assign            (((uint64_t) 1) << 28);
+      const rawOpType_t addEq             (((uint64_t) 1) << 29);
+      const rawOpType_t subEq             (((uint64_t) 1) << 30);
+      const rawOpType_t multEq            (((uint64_t) 1) << 31);
+      const rawOpType_t divEq             (((uint64_t) 1) << 32);
+      const rawOpType_t modEq             (((uint64_t) 1) << 33);
+      const rawOpType_t andEq             (((uint64_t) 1) << 34);
+      const rawOpType_t orEq              (((uint64_t) 1) << 35);
+      const rawOpType_t xorEq             (((uint64_t) 1) << 36);
+      const rawOpType_t leftShiftEq       (((uint64_t) 1) << 37);
+      const rawOpType_t rightShiftEq      (((uint64_t) 1) << 38);
 
-      const rawOpType_t comma             (1ULL << 39);
-      const rawOpType_t scope             (1ULL << 40);
-      const rawOpType_t globalScope       (1ULL << 41);
-      const rawOpType_t dereference       (1ULL << 42);
-      const rawOpType_t address           (1ULL << 43);
-      const rawOpType_t dot               (1ULL << 44);
-      const rawOpType_t dotStar           (1ULL << 45);
-      const rawOpType_t arrow             (1ULL << 46);
-      const rawOpType_t arrowStar         (1ULL << 47);
+      const rawOpType_t comma             (((uint64_t) 1) << 39);
+      const rawOpType_t scope             (((uint64_t) 1) << 40);
+      const rawOpType_t globalScope       (((uint64_t) 1) << 41);
+      const rawOpType_t dereference       (((uint64_t) 1) << 42);
+      const rawOpType_t address           (((uint64_t) 1) << 43);
+      const rawOpType_t dot               (((uint64_t) 1) << 44);
+      const rawOpType_t dotStar           (((uint64_t) 1) << 45);
+      const rawOpType_t arrow             (((uint64_t) 1) << 46);
+      const rawOpType_t arrowStar         (((uint64_t) 1) << 47);
 
-      const rawOpType_t questionMark      (1ULL << 48);
-      const rawOpType_t colon             (1ULL << 49);
-      const rawOpType_t ternary           (1ULL << 50);
+      const rawOpType_t questionMark      (((uint64_t) 1) << 48);
+      const rawOpType_t colon             (((uint64_t) 1) << 49);
+      const rawOpType_t ternary           (((uint64_t) 1) << 50);
 
       // End = (Start << 51)
-      const rawOpType_t braceStart        (1ULL << 52);
-      const rawOpType_t braceEnd          (1ULL << 53);
-      const rawOpType_t bracketStart      (1ULL << 54);
-      const rawOpType_t bracketEnd        (1ULL << 55);
-      const rawOpType_t parenthesesStart  (1ULL << 56);
-      const rawOpType_t parenthesesEnd    (1ULL << 57);
+      const rawOpType_t braceStart        (((uint64_t) 1) << 52);
+      const rawOpType_t braceEnd          (((uint64_t) 1) << 53);
+      const rawOpType_t bracketStart      (((uint64_t) 1) << 54);
+      const rawOpType_t bracketEnd        (((uint64_t) 1) << 55);
+      const rawOpType_t parenthesesStart  (((uint64_t) 1) << 56);
+      const rawOpType_t parenthesesEnd    (((uint64_t) 1) << 57);
 
       //---[ Special operators ]--------
-      const rawOpType_t lineComment       (1ULL << 0);
-      const rawOpType_t blockCommentStart (1ULL << 1);
+      const rawOpType_t lineComment       (((uint64_t) 1) << 0);
+      const rawOpType_t blockCommentStart (((uint64_t) 1) << 1);
 
-      const rawOpType_t hash              (1ULL << 2);
-      const rawOpType_t hashhash          (1ULL << 3);
+      const rawOpType_t hash              (((uint64_t) 1) << 2);
+      const rawOpType_t hashhash          (((uint64_t) 1) << 3);
 
-      const rawOpType_t semicolon         (1ULL << 4);
-      const rawOpType_t ellipsis          (1ULL << 5);
-      const rawOpType_t attribute         (1ULL << 6);
+      const rawOpType_t semicolon         (((uint64_t) 1) << 4);
+      const rawOpType_t ellipsis          (((uint64_t) 1) << 5);
+      const rawOpType_t attribute         (((uint64_t) 1) << 6);
 
-      const rawOpType_t sizeof_           (1ULL << 7);
-      const rawOpType_t sizeof_pack_      (1ULL << 8);
-      const rawOpType_t new_              (1ULL << 9);
-      const rawOpType_t delete_           (1ULL << 10);
-      const rawOpType_t throw_            (1ULL << 11);
+      const rawOpType_t sizeof_           (((uint64_t) 1) << 7);
+      const rawOpType_t sizeof_pack_      (((uint64_t) 1) << 8);
+      const rawOpType_t new_              (((uint64_t) 1) << 9);
+      const rawOpType_t delete_           (((uint64_t) 1) << 10);
+      const rawOpType_t throw_            (((uint64_t) 1) << 11);
 
-      const rawOpType_t typeid_           (1ULL << 12);
-      const rawOpType_t noexcept_         (1ULL << 13);
-      const rawOpType_t alignof_          (1ULL << 14);
+      const rawOpType_t typeid_           (((uint64_t) 1) << 12);
+      const rawOpType_t noexcept_         (((uint64_t) 1) << 13);
+      const rawOpType_t alignof_          (((uint64_t) 1) << 14);
 
-      const rawOpType_t parenCast         (1ULL << 15);
+      const rawOpType_t parenCast         (((uint64_t) 1) << 15);
 
-      const rawOpType_t cudaCallStart     (1ULL << 16);
-      const rawOpType_t cudaCallEnd       (1ULL << 17);
+      const rawOpType_t cudaCallStart     (((uint64_t) 1) << 16);
+      const rawOpType_t cudaCallEnd       (((uint64_t) 1) << 17);
       //================================
     }
 

@@ -384,7 +384,7 @@ namespace occa {
       CPU_SET(core, &cpuSet);
       syscall(__NR_sched_setaffinity, getTID(), sizeof(cpu_set_t), &cpuSet);
 #elif (OCCA_OS == OCCA_WINDOWS_OS)
-      SetThreadAffinityMask(GetCurrentThread(), 1ULL << core);
+      SetThreadAffinityMask(GetCurrentThread(), ((uint64_t) 1) << core);
 #endif
     }
     //==================================

@@ -12,19 +12,19 @@
 namespace occa {
   namespace lang {
     namespace qualifierType {
-      const udim_t none          = (1ULL << 0);
+      const udim_t none          = (((uint64_t) 1) << 0);
 
-      const udim_t auto_         = (1ULL << 1);
-      const udim_t const_        = (1ULL << 2);
-      const udim_t constexpr_    = (1ULL << 3);
-      const udim_t signed_       = (1ULL << 4);
-      const udim_t unsigned_     = (1ULL << 5);
-      const udim_t volatile_     = (1ULL << 6);
-      const udim_t long_         = (1ULL << 7);
-      const udim_t longlong_     = (1ULL << 8);
-      const udim_t register_     = (1ULL << 9);
+      const udim_t auto_         = (((uint64_t) 1) << 1);
+      const udim_t const_        = (((uint64_t) 1) << 2);
+      const udim_t constexpr_    = (((uint64_t) 1) << 3);
+      const udim_t signed_       = (((uint64_t) 1) << 4);
+      const udim_t unsigned_     = (((uint64_t) 1) << 5);
+      const udim_t volatile_     = (((uint64_t) 1) << 6);
+      const udim_t long_         = (((uint64_t) 1) << 7);
+      const udim_t longlong_     = (((uint64_t) 1) << 8);
+      const udim_t register_     = (((uint64_t) 1) << 9);
 
-      const udim_t typeInfo_     = (1ULL << 10);
+      const udim_t typeInfo_     = (((uint64_t) 1) << 10);
       const udim_t typeInfo      = (const_     |
                                     constexpr_ |
                                     signed_    |
@@ -35,18 +35,18 @@ namespace occa {
                                     register_  |
                                     typeInfo_);
 
-      const udim_t forPointers_  = (1ULL << 11);
+      const udim_t forPointers_  = (((uint64_t) 1) << 11);
       const udim_t forPointers   = (const_    |
                                     volatile_ |
                                     forPointers_);
 
-      const udim_t extern_       = (1ULL << 12);
-      const udim_t externC       = (1ULL << 13);
-      const udim_t externCpp     = (1ULL << 14);
-      const udim_t static_       = (1ULL << 15);
-      const udim_t thread_local_ = (1ULL << 16);
+      const udim_t extern_       = (((uint64_t) 1) << 12);
+      const udim_t externC       = (((uint64_t) 1) << 13);
+      const udim_t externCpp     = (((uint64_t) 1) << 14);
+      const udim_t static_       = (((uint64_t) 1) << 15);
+      const udim_t thread_local_ = (((uint64_t) 1) << 16);
 
-      const udim_t globalScope_  = (1ULL << 17);
+      const udim_t globalScope_  = (((uint64_t) 1) << 17);
       const udim_t globalScope   = (extern_       |
                                     externC       |
                                     externCpp     |
@@ -54,36 +54,36 @@ namespace occa {
                                     thread_local_ |
                                     globalScope_);
 
-      const udim_t friend_       = (1ULL << 18);
-      const udim_t mutable_      = (1ULL << 19);
+      const udim_t friend_       = (((uint64_t) 1) << 18);
+      const udim_t mutable_      = (((uint64_t) 1) << 19);
 
-      const udim_t classInfo_    = (1ULL << 20);
+      const udim_t classInfo_    = (((uint64_t) 1) << 20);
       const udim_t classInfo     = (friend_  |
                                     mutable_ |
                                     classInfo_);
 
-      const udim_t inline_       = (1ULL << 21);
-      const udim_t virtual_      = (1ULL << 22);
-      const udim_t explicit_     = (1ULL << 23);
+      const udim_t inline_       = (((uint64_t) 1) << 21);
+      const udim_t virtual_      = (((uint64_t) 1) << 22);
+      const udim_t explicit_     = (((uint64_t) 1) << 23);
 
-      const udim_t functionInfo_ = (1ULL << 24);
+      const udim_t functionInfo_ = (((uint64_t) 1) << 24);
       const udim_t functionInfo  = (typeInfo  |
                                     inline_   |
                                     virtual_  |
                                     explicit_ |
                                     functionInfo_);
 
-      const udim_t builtin_      = (1ULL << 25);
-      const udim_t typedef_      = (1ULL << 26);
-      const udim_t class_        = (1ULL << 27);
-      const udim_t enum_         = (1ULL << 28);
-      const udim_t struct_       = (1ULL << 29);
-      const udim_t union_        = (1ULL << 30);
+      const udim_t builtin_      = (((uint64_t) 1) << 25);
+      const udim_t typedef_      = (((uint64_t) 1) << 26);
+      const udim_t class_        = (((uint64_t) 1) << 27);
+      const udim_t enum_         = (((uint64_t) 1) << 28);
+      const udim_t struct_       = (((uint64_t) 1) << 29);
+      const udim_t union_        = (((uint64_t) 1) << 30);
 
       // Windows types
-      const udim_t dllexport_    = (1ULL << 31);
+      const udim_t dllexport_    = (((uint64_t) 1) << 31);
 
-      const udim_t newType_      = (1ULL << 32);
+      const udim_t newType_      = (((uint64_t) 1) << 32);
       const udim_t newType       = (typedef_ |
                                     class_   |
                                     enum_    |
@@ -91,7 +91,7 @@ namespace occa {
                                     union_   |
                                     newType_);
 
-      const udim_t custom        = (1ULL << 33);
+      const udim_t custom        = (((uint64_t) 1) << 33);
     }
 
     //---[ Qualifier ]------------------

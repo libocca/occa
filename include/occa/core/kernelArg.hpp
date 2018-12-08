@@ -41,7 +41,6 @@ namespace occa {
 
   class kernelArgData {
   public:
-    occa::modeDevice_t *modeDevice;
     occa::modeMemory_t *modeMemory;
 
     kernelArgData_t data;
@@ -112,6 +111,8 @@ namespace occa {
              bool lookAtUva = true, bool argIsUva = false);
 
     void setupForKernelCall(const bool isConst) const;
+
+    occa::modeDevice_t* getModeDevice() const;
 
     static int argumentCount(const std::vector<kernelArg> &arguments);
   };

@@ -202,11 +202,10 @@ namespace occa {
 
   void kernel::pushArg(const kernelArg &arg) {
     assertInitialized();
-
-    OCCA_ERROR("Kernels can have at most [" << OCCA_MAX_ARGS << "] arguments",
-               (modeKernel->argumentCount() + 1) < OCCA_MAX_ARGS);
+    assertSameDevice(arg);
 
     modeKernel->arguments.push_back(arg);
+    assertArgumentLimit();
   }
 
   void kernel::clearArgs() {
@@ -215,13 +214,30 @@ namespace occa {
     }
   }
 
+  void kernel::assertArgumentLimit() const {
+    // Check argument limit
+    OCCA_ERROR("Kernels can have at most [" << OCCA_MAX_ARGS << "] arguments",
+               (modeKernel->argumentCount() + 1) < OCCA_MAX_ARGS);
+  }
+
+  void kernel::assertSameDevice(const kernelArg &arg) const {
+    // Make sure the argument is from the same device as the kernel
+    occa::modeDevice_t *argDevice = arg.getModeDevice();
+    OCCA_ERROR("Kernel argument was not created from the same device as the kernel",
+               !argDevice || (argDevice == modeKernel->modeDevice));
+  }
+
   void kernel::run() const {
     assertInitialized();
+    assertArgumentLimit();
 
     const int argc = (int) modeKernel->arguments.size();
     for (int i = 0; i < argc; ++i) {
+      kernelArg &arg = modeKernel->arguments[i];
+      assertSameDevice(arg);
+
       const bool argIsConst = modeKernel->metadata.argIsConst(i);
-      modeKernel->arguments[i].setupForKernelCall(argIsConst);
+      arg.setupForKernelCall(argIsConst);
     }
 
     modeKernel->run();

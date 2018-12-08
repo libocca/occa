@@ -5,15 +5,15 @@
 namespace occa {
   namespace lang {
     namespace exprNodeType {
-      const udim_t empty             = (1ULL << 0);
-      const udim_t primitive         = (1ULL << 1);
-      const udim_t char_             = (1ULL << 2);
-      const udim_t string            = (1ULL << 3);
-      const udim_t identifier        = (1ULL << 4);
-      const udim_t type              = (1ULL << 5);
-      const udim_t vartype           = (1ULL << 6);
-      const udim_t variable          = (1ULL << 7);
-      const udim_t function          = (1ULL << 8);
+      const udim_t empty             = (((uint64_t) 1) << 0);
+      const udim_t primitive         = (((uint64_t) 1) << 1);
+      const udim_t char_             = (((uint64_t) 1) << 2);
+      const udim_t string            = (((uint64_t) 1) << 3);
+      const udim_t identifier        = (((uint64_t) 1) << 4);
+      const udim_t type              = (((uint64_t) 1) << 5);
+      const udim_t vartype           = (((uint64_t) 1) << 6);
+      const udim_t variable          = (((uint64_t) 1) << 7);
+      const udim_t function          = (((uint64_t) 1) << 8);
 
       const udim_t value             = (primitive |
                                         type      |
@@ -21,46 +21,46 @@ namespace occa {
                                         variable  |
                                         function);
 
-      const udim_t rawOp             = (1ULL << 9);
-      const udim_t leftUnary         = (1ULL << 10);
-      const udim_t rightUnary        = (1ULL << 11);
-      const udim_t binary            = (1ULL << 12);
-      const udim_t ternary           = (1ULL << 13);
+      const udim_t rawOp             = (((uint64_t) 1) << 9);
+      const udim_t leftUnary         = (((uint64_t) 1) << 10);
+      const udim_t rightUnary        = (((uint64_t) 1) << 11);
+      const udim_t binary            = (((uint64_t) 1) << 12);
+      const udim_t ternary           = (((uint64_t) 1) << 13);
       const udim_t op                = (leftUnary  |
                                         rightUnary |
                                         binary     |
                                         ternary);
 
-      const udim_t pair              = (1ULL << 14);
+      const udim_t pair              = (((uint64_t) 1) << 14);
 
-      const udim_t subscript         = (1ULL << 15);
-      const udim_t call              = (1ULL << 16);
+      const udim_t subscript         = (((uint64_t) 1) << 15);
+      const udim_t call              = (((uint64_t) 1) << 16);
 
-      const udim_t sizeof_           = (1ULL << 17);
-      const udim_t sizeof_pack_      = (1ULL << 18);
-      const udim_t new_              = (1ULL << 19);
-      const udim_t delete_           = (1ULL << 20);
-      const udim_t throw_            = (1ULL << 21);
+      const udim_t sizeof_           = (((uint64_t) 1) << 17);
+      const udim_t sizeof_pack_      = (((uint64_t) 1) << 18);
+      const udim_t new_              = (((uint64_t) 1) << 19);
+      const udim_t delete_           = (((uint64_t) 1) << 20);
+      const udim_t throw_            = (((uint64_t) 1) << 21);
 
-      const udim_t typeid_           = (1ULL << 22);
-      const udim_t noexcept_         = (1ULL << 23);
-      const udim_t alignof_          = (1ULL << 24);
+      const udim_t typeid_           = (((uint64_t) 1) << 22);
+      const udim_t noexcept_         = (((uint64_t) 1) << 23);
+      const udim_t alignof_          = (((uint64_t) 1) << 24);
 
-      const udim_t const_cast_       = (1ULL << 25);
-      const udim_t dynamic_cast_     = (1ULL << 26);
-      const udim_t static_cast_      = (1ULL << 27);
-      const udim_t reinterpret_cast_ = (1ULL << 28);
+      const udim_t const_cast_       = (((uint64_t) 1) << 25);
+      const udim_t dynamic_cast_     = (((uint64_t) 1) << 26);
+      const udim_t static_cast_      = (((uint64_t) 1) << 27);
+      const udim_t reinterpret_cast_ = (((uint64_t) 1) << 28);
 
-      const udim_t funcCast          = (1ULL << 29);
-      const udim_t parenCast         = (1ULL << 30);
-      const udim_t constCast         = (1ULL << 31);
-      const udim_t staticCast        = (1ULL << 32);
-      const udim_t reinterpretCast   = (1ULL << 33);
-      const udim_t dynamicCast       = (1ULL << 34);
+      const udim_t funcCast          = (((uint64_t) 1) << 29);
+      const udim_t parenCast         = (((uint64_t) 1) << 30);
+      const udim_t constCast         = (((uint64_t) 1) << 31);
+      const udim_t staticCast        = (((uint64_t) 1) << 32);
+      const udim_t reinterpretCast   = (((uint64_t) 1) << 33);
+      const udim_t dynamicCast       = (((uint64_t) 1) << 34);
 
-      const udim_t parentheses       = (1ULL << 35);
-      const udim_t tuple             = (1ULL << 36);
-      const udim_t cudaCall          = (1ULL << 37);
+      const udim_t parentheses       = (((uint64_t) 1) << 35);
+      const udim_t tuple             = (((uint64_t) 1) << 36);
+      const udim_t cudaCall          = (((uint64_t) 1) << 37);
     }
 
     exprNode::exprNode(token_t *token_) :

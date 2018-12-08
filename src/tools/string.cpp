@@ -301,21 +301,21 @@ namespace occa {
       std::stringstream ss;
       uint64_t bigBytes = bytes;
 
-      if (bigBytes < (1ULL << 10)) {
+      if (bigBytes < (((uint64_t) 1) << 10)) {
         ss << bigBytes << " bytes";
-      } else if (bigBytes < (1ULL << 20)) {
+      } else if (bigBytes < (((uint64_t) 1) << 20)) {
         ss << (bigBytes >> 10);
         stringifyBytesFraction(ss, bigBytes >> 0);
         ss << " KB";
-      } else if (bigBytes < (1ULL << 30)) {
+      } else if (bigBytes < (((uint64_t) 1) << 30)) {
         ss << (bigBytes >> 20);
         stringifyBytesFraction(ss, bigBytes >> 10);
         ss << " MB";
-      } else if (bigBytes < (1ULL << 40)) {
+      } else if (bigBytes < (((uint64_t) 1) << 40)) {
         ss << (bigBytes >> 30);
         stringifyBytesFraction(ss, bigBytes >> 20);
         ss << " GB";
-      } else if (bigBytes < (1ULL << 50)) {
+      } else if (bigBytes < (((uint64_t) 1) << 50)) {
         ss << (bigBytes >> 40);
         stringifyBytesFraction(ss, bigBytes >> 30);
         ss << " TB";
