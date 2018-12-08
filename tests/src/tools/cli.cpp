@@ -76,7 +76,7 @@ void testPretty() {
 }
 
 void testOption() {
-  occa::cli::option emptyOpt();
+  occa::cli::option emptyOpt;
   occa::cli::option shortOpt('a', "aaa", "aaaahhhhhhhhh!!!!");
   occa::cli::option opt("ooo", "ooohhhhhhhhhhhh");
 
@@ -149,7 +149,7 @@ void testOption() {
 }
 
 void testArgument() {
-  occa::cli::argument emptyArg();
+  occa::cli::argument emptyArg;
   occa::cli::argument arg("name", "description");
   occa::cli::argument arg2(arg);
 

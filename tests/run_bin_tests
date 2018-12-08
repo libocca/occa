@@ -1,0 +1,19 @@
+#!/bin/bash
+
+set -e
+
+OCCA=$(dirname "$0")/../bin/occa
+
+function verbose_run {
+    echo "$@"
+    "$@"
+}
+
+verbose_run "${OCCA}" autocomplete
+verbose_run "${OCCA}" clear
+verbose_run "${OCCA}" compile --help
+verbose_run "${OCCA}" env
+verbose_run "${OCCA}" info
+verbose_run "${OCCA}" modes
+verbose_run "${OCCA}" translate --help
+verbose_run "${OCCA}" version

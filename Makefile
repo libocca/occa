@@ -124,13 +124,16 @@ $(OCCA_DIR)/obj/%.o:$(OCCA_DIR)/src/%.cpp $(COMPILED_DEFINES_CHANGED)
 #---[ Test ]--------------------------------------
 tests: $(tests)
 
-test: unit-tests e2e-tests
+test: unit-tests e2e-tests bin-tests
 
 unit-tests: $(tests)
 	@$(testPath)/run_tests
 
 e2e-tests: unit-tests
 	@$(testPath)/run_examples
+
+bin-tests: unit-tests
+	@$(testPath)/run_bin_tests
 
 $(testPath)/bin/%:$(testPath)/src/%.cpp $(outputs)
 	@mkdir -p $(abspath $(dir $@))
