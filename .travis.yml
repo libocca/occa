@@ -86,20 +86,6 @@ matrix:
             - llvm-toolchain-trusty-5.0
           packages:
             - clang-5.0
-    - name: "gcc-6"
-      os: osx
-      osx_image: xcode8
-      env:
-        - MATRIX_INIT="brew install gcc6"
-        - CC=gcc-6
-        - CXX=g++-6
-    - name: "gcc-7"
-      os: osx
-      osx_image: xcode8
-      env:
-        - MATRIX_INIT="brew install gcc@7"
-        - CC=gcc-7
-        - CXX=g++-7
     - name: "clang"
       os: osx
       osx_image: xcode8
