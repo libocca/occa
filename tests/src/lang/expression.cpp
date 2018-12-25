@@ -1,7 +1,7 @@
 #include <occa/tools/env.hpp>
 #include <occa/tools/testing.hpp>
 
-#include <occa/lang/expression.hpp>
+#include <occa/lang/expr.hpp>
 #include <occa/lang/tokenizer.hpp>
 #include <occa/lang/builtins/types.hpp>
 #include <occa/lang/variable.hpp>

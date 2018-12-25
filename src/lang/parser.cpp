@@ -1,6 +1,6 @@
 #include <occa/io.hpp>
 #include <occa/lang/attribute.hpp>
-#include <occa/lang/expression.hpp>
+#include <occa/lang/expr.hpp>
 #include <occa/lang/parser.hpp>
 #include <occa/lang/variable.hpp>
 #include <occa/lang/builtins/attributes.hpp>

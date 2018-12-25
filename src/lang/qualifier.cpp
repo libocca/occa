@@ -6,7 +6,7 @@
 #include <occa/lang/type.hpp>
 #include <occa/lang/statement.hpp>
 #include <occa/lang/variable.hpp>
-#include <occa/lang/expression.hpp>
+#include <occa/lang/expr.hpp>
 #include <occa/lang/builtins/types.hpp>
 
 namespace occa {

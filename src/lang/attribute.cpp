@@ -1,5 +1,5 @@
 #include <occa/lang/attribute.hpp>
-#include <occa/lang/exprNode.hpp>
+#include <occa/lang/expr.hpp>
 #include <occa/lang/parser.hpp>
 
 namespace occa {

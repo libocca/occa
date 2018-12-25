@@ -1,10 +1,10 @@
-#ifndef OCCA_LANG_EXPRESSION_HEADER
-#define OCCA_LANG_EXPRESSION_HEADER
+#ifndef OCCA_LANG_EXPR_EXPRESSION_HEADER
+#define OCCA_LANG_EXPR_EXPRESSION_HEADER
 
 #include <list>
 #include <vector>
 
-#include <occa/lang/exprNode.hpp>
+#include <occa/lang/expr.hpp>
 
 namespace occa {
   namespace lang {

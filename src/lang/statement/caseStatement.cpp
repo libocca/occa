@@ -1,5 +1,5 @@
 #include <occa/lang/statement/caseStatement.hpp>
-#include <occa/lang/exprNode.hpp>
+#include <occa/lang/expr.hpp>
 
 namespace occa {
   namespace lang {

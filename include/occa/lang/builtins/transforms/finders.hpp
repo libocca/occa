@@ -5,7 +5,7 @@
 #include <list>
 #include <vector>
 
-#include <occa/lang/exprNode.hpp>
+#include <occa/lang/expr.hpp>
 #include <occa/lang/statement.hpp>
 #include <occa/lang/statementTransform.hpp>
 #include <occa/lang/exprTransform.hpp>

@@ -10,7 +10,7 @@
 
 #include <occa/lang/preprocessor.hpp>
 #include <occa/lang/specialMacros.hpp>
-#include <occa/lang/expression.hpp>
+#include <occa/lang/expr.hpp>
 #include <occa/lang/tokenizer.hpp>
 
 namespace occa {

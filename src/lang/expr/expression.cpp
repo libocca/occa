@@ -1,6 +1,5 @@
 #include <occa/tools/string.hpp>
-
-#include <occa/lang/expression.hpp>
+#include <occa/lang/expr/expression.hpp>
 
 namespace occa {
   namespace lang {

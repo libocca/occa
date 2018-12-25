@@ -1,4 +1,4 @@
-#include <occa/lang/exprNode.hpp>
+#include <occa/lang/expr.hpp>
 #include <occa/lang/exprTransform.hpp>
 
 namespace occa {
