@@ -864,10 +864,9 @@ namespace occa {
       pout << ')';
     }
 
-    // TODO: Fix body source (!NULL)
     structure_t::structure_t(const std::string &name_) :
       type_t(name_),
-      body(NULL, NULL) {}
+      body(NULL) {}
 
     class_t::class_t() :
       structure_t("") {}

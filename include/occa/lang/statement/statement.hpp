@@ -1,18 +1,25 @@
-#ifndef OCCA_LANG_BASESTATEMENT_HEADER
-#define OCCA_LANG_BASESTATEMENT_HEADER
+#ifndef OCCA_LANG_STATEMENT_STATEMENT_HEADER
+#define OCCA_LANG_STATEMENT_STATEMENT_HEADER
 
 #include <vector>
 
-#include <occa/lang/printer.hpp>
-#include <occa/lang/scope.hpp>
 #include <occa/lang/attribute.hpp>
+#include <occa/lang/printer.hpp>
+#include <occa/lang/keyword.hpp>
+#include <occa/lang/token.hpp>
 
 namespace occa {
   namespace lang {
     class statement_t;
     class blockStatement;
+    class ifStatement;
+    class elifStatement;
+    class elseStatement;
+    class variableDeclaration;
 
-    typedef std::vector<statement_t*> statementPtrVector;
+    typedef std::vector<statement_t*>        statementPtrVector;
+    typedef std::vector<elifStatement*>      elifStatementVector;
+    typedef std::vector<variableDeclaration> variableDeclarationVector;
 
     namespace statementType {
       extern const int none;
@@ -118,83 +125,6 @@ namespace occa {
 
     printer& operator << (printer &pout,
                           const statement_t &smnt);
-
-    //---[ Empty ]----------------------
-    class emptyStatement : public statement_t {
-    public:
-      bool hasSemicolon;
-
-      emptyStatement(blockStatement *up_,
-                     token_t *source_,
-                     const bool hasSemicolon_ = true);
-      emptyStatement(blockStatement *up_,
-                     const emptyStatement &other);
-      ~emptyStatement();
-
-      virtual statement_t& clone_(blockStatement *up_) const;
-
-      virtual int type() const;
-      virtual std::string statementName() const;
-
-      virtual void print(printer &pout) const;
-    };
-    //==================================
-
-    //---[ Block ]------------------------
-    class blockStatement : public statement_t {
-    public:
-      statementPtrVector children;
-      scope_t scope;
-
-      blockStatement(blockStatement *up_,
-                     token_t *source_);
-      blockStatement(blockStatement *up_,
-                     const blockStatement &other);
-      virtual ~blockStatement();
-
-      void copyFrom(const blockStatement &other);
-
-      virtual statement_t& clone_(blockStatement *up_) const;
-
-      virtual int type() const;
-      virtual std::string statementName() const;
-
-      virtual bool inScope(const std::string &name);
-      virtual keyword_t& getScopeKeyword(const std::string &name);
-
-      statement_t* operator [] (const int index);
-
-      int size() const;
-
-      void add(statement_t &child);
-
-      bool add(statement_t &child,
-               const int index);
-
-      bool addFirst(statement_t &child);
-
-      bool addLast(statement_t &child);
-
-      bool addBefore(statement_t &child,
-                     statement_t &newChild);
-
-      bool addAfter(statement_t &child,
-                    statement_t &newChild);
-
-      void remove(statement_t &child);
-
-      void set(statement_t &child);
-
-      void swap(blockStatement &other);
-
-      void clear();
-
-      exprNode* replaceIdentifiers(exprNode *expr);
-
-      virtual void print(printer &pout) const;
-      void printChildren(printer &pout) const;
-    };
-    //====================================
   }
 }
 

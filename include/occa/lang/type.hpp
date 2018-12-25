@@ -4,7 +4,6 @@
 #include <vector>
 
 #include <occa/lang/attribute.hpp>
-#include <occa/lang/baseStatement.hpp>
 #include <occa/lang/printer.hpp>
 #include <occa/lang/qualifier.hpp>
 
@@ -358,7 +357,7 @@ namespace occa {
 
     class structure_t : public type_t {
     public:
-      blockStatement body;
+      blockStatement *body;
 
       structure_t(const std::string &name_ = "");
     };
