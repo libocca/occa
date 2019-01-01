@@ -1,5 +1,5 @@
 #include <occa/lang/variable.hpp>
-#include <occa/lang/builtins/transforms/finders.hpp>
+#include <occa/lang/transforms/builtins/finders.hpp>
 
 namespace occa {
   namespace lang {

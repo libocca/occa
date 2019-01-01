@@ -3,7 +3,7 @@
 
 #include <occa/lang/parser.hpp>
 #include <occa/lang/mode/serial.hpp>
-#include <occa/lang/builtins/transforms/finders.hpp>
+#include <occa/lang/transforms/builtins/finders.hpp>
 
 namespace occa {
   namespace lang {

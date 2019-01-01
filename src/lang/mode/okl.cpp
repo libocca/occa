@@ -3,7 +3,7 @@
 #include <occa/lang/parser.hpp>
 #include <occa/lang/builtins/attributes.hpp>
 #include <occa/lang/builtins/types.hpp>
-#include <occa/lang/builtins/transforms/finders.hpp>
+#include <occa/lang/transforms/builtins/finders.hpp>
 #include <occa/lang/mode/oklForStatement.hpp>
 
 namespace occa {

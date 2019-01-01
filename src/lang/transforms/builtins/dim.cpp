@@ -2,7 +2,7 @@
 #include <occa/lang/statement.hpp>
 #include <occa/lang/variable.hpp>
 #include <occa/lang/builtins/types.hpp>
-#include <occa/lang/builtins/transforms/dim.hpp>
+#include <occa/lang/transforms/builtins/dim.hpp>
 
 namespace occa {
   namespace lang {

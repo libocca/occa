@@ -1,7 +1,7 @@
-#ifndef OCCA_LANG_BUILTINS_TRANSFORMS_TILE_HEADER
-#define OCCA_LANG_BUILTINS_TRANSFORMS_TILE_HEADER
+#ifndef OCCA_LANG_TRANSFORMS_BUILTINS_TILE_HEADER
+#define OCCA_LANG_TRANSFORMS_BUILTINS_TILE_HEADER
 
-#include <occa/lang/statementTransform.hpp>
+#include <occa/lang/transforms/statementTransform.hpp>
 
 namespace occa {
   namespace lang {

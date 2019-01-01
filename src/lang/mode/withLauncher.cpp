@@ -4,7 +4,7 @@
 #include <occa/lang/mode/oklForStatement.hpp>
 #include <occa/lang/builtins/attributes.hpp>
 #include <occa/lang/builtins/types.hpp>
-#include <occa/lang/builtins/transforms/replacer.hpp>
+#include <occa/lang/transforms/builtins/replacer.hpp>
 
 namespace occa {
   namespace lang {

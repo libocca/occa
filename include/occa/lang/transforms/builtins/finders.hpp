@@ -1,5 +1,5 @@
-#ifndef OCCA_LANG_BUILTINS_TRANSFORMS_FINDERS_HEADER
-#define OCCA_LANG_BUILTINS_TRANSFORMS_FINDERS_HEADER
+#ifndef OCCA_LANG_TRANSFORMS_BUILTINS_FINDERS_HEADER
+#define OCCA_LANG_TRANSFORMS_BUILTINS_FINDERS_HEADER
 
 #include <map>
 #include <list>
@@ -7,8 +7,8 @@
 
 #include <occa/lang/expr.hpp>
 #include <occa/lang/statement.hpp>
-#include <occa/lang/statementTransform.hpp>
-#include <occa/lang/exprTransform.hpp>
+#include <occa/lang/transforms/statementTransform.hpp>
+#include <occa/lang/transforms/exprTransform.hpp>
 
 namespace occa {
   namespace lang {

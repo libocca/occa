@@ -1,5 +1,5 @@
 #include <occa/lang/expr.hpp>
-#include <occa/lang/exprTransform.hpp>
+#include <occa/lang/transforms/exprTransform.hpp>
 
 namespace occa {
   namespace lang {

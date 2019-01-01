@@ -1,7 +1,7 @@
 #include <occa/lang/expr.hpp>
 #include <occa/lang/statement.hpp>
 #include <occa/lang/variable.hpp>
-#include <occa/lang/builtins/transforms/replacer.hpp>
+#include <occa/lang/transforms/builtins/replacer.hpp>
 
 namespace occa {
   namespace lang {

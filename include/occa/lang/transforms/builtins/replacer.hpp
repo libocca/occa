@@ -1,8 +1,8 @@
-#ifndef OCCA_LANG_BUILTINS_TRANSFORMS_REPLACER_HEADER
-#define OCCA_LANG_BUILTINS_TRANSFORMS_REPLACER_HEADER
+#ifndef OCCA_LANG_TRANSFORMS_BUILTINS_REPLACER_HEADER
+#define OCCA_LANG_TRANSFORMS_BUILTINS_REPLACER_HEADER
 
-#include <occa/lang/exprTransform.hpp>
-#include <occa/lang/builtins/transforms/finders.hpp>
+#include <occa/lang/transforms/exprTransform.hpp>
+#include <occa/lang/transforms/builtins/finders.hpp>
 
 namespace occa {
   namespace lang {

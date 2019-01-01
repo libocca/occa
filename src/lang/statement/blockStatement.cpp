@@ -1,7 +1,7 @@
 #include <occa/lang/statement/blockStatement.hpp>
 
-#include <occa/lang/builtins/transforms/fillExprIdentifiers.hpp>
-#include <occa/lang/builtins/transforms/replacer.hpp>
+#include <occa/lang/transforms/builtins/fillExprIdentifiers.hpp>
+#include <occa/lang/transforms/builtins/replacer.hpp>
 
 namespace occa {
   namespace lang {

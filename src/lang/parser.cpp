@@ -4,7 +4,7 @@
 #include <occa/lang/parser.hpp>
 #include <occa/lang/variable.hpp>
 #include <occa/lang/builtins/attributes.hpp>
-#include <occa/lang/builtins/transforms.hpp>
+#include <occa/lang/transforms/builtins.hpp>
 #include <occa/lang/builtins/types.hpp>
 
 namespace occa {

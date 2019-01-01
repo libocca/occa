@@ -1,8 +1,8 @@
-#ifndef OCCA_LANG_BUILTINS_TRANSFORMS_DIM_HEADER
-#define OCCA_LANG_BUILTINS_TRANSFORMS_DIM_HEADER
+#ifndef OCCA_LANG_TRANSFORMS_BUILTINS_DIM_HEADER
+#define OCCA_LANG_TRANSFORMS_BUILTINS_DIM_HEADER
 
-#include <occa/lang/exprTransform.hpp>
-#include <occa/lang/statementTransform.hpp>
+#include <occa/lang/transforms/exprTransform.hpp>
+#include <occa/lang/transforms/statementTransform.hpp>
 
 namespace occa {
   namespace lang {

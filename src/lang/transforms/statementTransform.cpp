@@ -1,7 +1,7 @@
 #include <occa/lang/attribute.hpp>
 #include <occa/lang/statement.hpp>
-#include <occa/lang/statementTransform.hpp>
 #include <occa/lang/parser.hpp>
+#include <occa/lang/transforms/statementTransform.hpp>
 
 namespace occa {
   namespace lang {

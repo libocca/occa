@@ -6,7 +6,7 @@
 #include <occa/tools/sys.hpp>
 #include <occa/lang/parser.hpp>
 #include <occa/lang/builtins/types.hpp>
-#include <occa/lang/builtins/transforms/finders.hpp>
+#include <occa/lang/transforms/builtins/finders.hpp>
 
 namespace occa {
   //---[ modeKernel_t ]-----------------

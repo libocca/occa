@@ -2,8 +2,8 @@
 #include <occa/lang/mode/oklForStatement.hpp>
 #include <occa/lang/variable.hpp>
 #include <occa/lang/builtins/types.hpp>
-#include <occa/lang/builtins/transforms/tile.hpp>
-#include <occa/lang/builtins/transforms/replacer.hpp>
+#include <occa/lang/transforms/builtins/tile.hpp>
+#include <occa/lang/transforms/builtins/replacer.hpp>
 
 namespace occa {
   namespace lang {
