@@ -1,3 +1,6 @@
+#ifndef OCCA_TOOLS_HEADER
+#define OCCA_TOOLS_HEADER
+
 #include <occa/tools/cli.hpp>
 #include <occa/tools/env.hpp>
 #include <occa/tools/exception.hpp>
@@ -12,3 +15,5 @@
 #include <occa/tools/sys.hpp>
 #include <occa/tools/tls.hpp>
 #include <occa/tools/uva.hpp>
+
+#endif

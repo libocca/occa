@@ -1,3 +1,6 @@
+#ifndef OCCA_C_HEADER
+#define OCCA_C_HEADER
+
 #include <occa/c/base.h>
 #include <occa/c/cli.h>
 #include <occa/c/device.h>
@@ -33,3 +36,5 @@
 #define occaKernelRun(...) OCCA_C_RUN_KERNEL1(OCCA_ARG_COUNT(__VA_ARGS__), __VA_ARGS__)
 
 #endif // OCCA_DISABLE_VARIADIC_MACROS
+
+#endif

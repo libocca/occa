@@ -1,3 +1,6 @@
+#ifndef OCCA_DEFINES_HEADER
+#define OCCA_DEFINES_HEADER
+
 // Generated at compile-time
 #include <occa/defines/compiledDefines.hpp>
 
@@ -7,3 +10,5 @@
 #include <occa/defines/occa.hpp>
 #include <occa/defines/os.hpp>
 #include <occa/defines/windows.hpp>
+
+#endif
