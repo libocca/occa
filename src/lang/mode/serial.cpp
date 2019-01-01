@@ -159,8 +159,8 @@ namespace occa {
         }
 
         // Check if index variable exists and is valid
-        if (innerMostOuterLoop->scope.has(exclusiveIndexName)) {
-          keyword_t &keyword = innerMostOuterLoop->scope.get(exclusiveIndexName);
+        if (innerMostOuterLoop->hasDirectlyInScope(exclusiveIndexName)) {
+          keyword_t &keyword = innerMostOuterLoop->getScopeKeyword(exclusiveIndexName);
           if (keyword.type() != keywordType::variable) {
             keyword.printError(exclusiveIndexName
                                + " is a restricted OCCA keyword");
@@ -262,7 +262,7 @@ namespace occa {
       bool serialParser::exclusiveInnerLoopMatcher(statement_t &smnt) {
         return (
           smnt.hasAttribute("inner")
-          && smnt.inScope(exclusiveIndexName)
+          && smnt.hasInScope(exclusiveIndexName)
         );
       }
 

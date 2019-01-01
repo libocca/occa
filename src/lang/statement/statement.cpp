@@ -73,9 +73,9 @@ namespace occa {
       return NULL;
     }
 
-    bool statement_t::inScope(const std::string &name) {
+    bool statement_t::hasInScope(const std::string &name) {
       if (up) {
-        return up->inScope(name);
+        return up->hasInScope(name);
       }
       return false;
     }

@@ -293,8 +293,8 @@ namespace occa {
         func.args.insert(func.args.begin(),
                          &kernelVar);
 
-        kernelSmnt.scope.add(kernelType);
-        kernelSmnt.scope.add(kernelVar);
+        kernelSmnt.addToScope(kernelType);
+        kernelSmnt.addToScope(kernelVar);
       }
 
       void withLauncher::setupHostHeaders() {
@@ -414,8 +414,8 @@ namespace occa {
         }
 
         root.remove(kernelSmnt);
-        root.scope.remove(kernelSmnt.function.name(),
-                          true);
+        root.removeFromScope(kernelSmnt.function.name(),
+                             true);
 
         // TODO 1.1: Find out what causes segfault here
         // delete &kernelSmnt;
@@ -447,7 +447,7 @@ namespace occa {
         }
 
         newKernelSmnt.set(newForSmnt);
-        root.scope.add(newFunction);
+        root.addToScope(newFunction);
 
         return &newKernelSmnt;
       }

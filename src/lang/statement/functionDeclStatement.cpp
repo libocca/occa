@@ -27,8 +27,7 @@ namespace occa {
     }
 
     bool functionDeclStatement::updateScope(const bool force) {
-      if (up &&
-          !up->scope.add(function, force)) {
+      if (up && !up->addToScope(function, force)) {
         return false;
       }
       addArgumentsToScope(force);
@@ -38,8 +37,8 @@ namespace occa {
     void functionDeclStatement::addArgumentsToScope(const bool force) {
       const int count = (int) function.args.size();
       for (int i = 0; i < count; ++i) {
-        scope.add(*(function.args[i]),
-                  force);
+        addToScope(*(function.args[i]),
+                   force);
       }
     }
 

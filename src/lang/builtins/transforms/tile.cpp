@@ -38,7 +38,7 @@ namespace occa {
         variable_t &iter = *(oklForSmnt.iterator);
         variable_t &blockIter = iter.clone();
         blockIter.name() = "_occa_tiled_" + iter.name();
-        blockForSmnt.scope.add(blockIter);
+        blockForSmnt.addToScope(blockIter);
 
         setupNewForStatements(attr,
                               oklForSmnt,
@@ -233,17 +233,19 @@ namespace occa {
         if (!check) {
           return;
         }
+
         // Check variables
         binaryOpNode &checkExpr = ((binaryOpNode&)
                                    *(((expressionStatement*) blockForSmnt.check)->expr));
         token_t *checkToken = checkExpr.startNode()->token;
         const bool varInLeft = oklForSmnt.checkValueOnRight;
+
         // Make ifStatement
         ifStatement &ifSmnt = *(new ifStatement(&innerForSmnt,
                                                 checkToken));
-        innerForSmnt.swap(ifSmnt);
-        innerForSmnt.scope.swap(ifSmnt.scope);
+        innerForSmnt.swapChildren(ifSmnt);
         innerForSmnt.add(ifSmnt);
+
         // Get global check
         token_t *iterToken = (varInLeft
                               ? checkExpr.leftValue->token

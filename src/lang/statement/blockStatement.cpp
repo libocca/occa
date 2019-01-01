@@ -61,12 +61,12 @@ namespace occa {
       return "block";
     }
 
-    bool blockStatement::inScope(const std::string &name) {
+    bool blockStatement::hasInScope(const std::string &name) {
       if (scope.has(name)) {
         return true;
       }
       return (up
-              ? up->inScope(name)
+              ? up->hasInScope(name)
               : false);
     }
 
@@ -77,6 +77,30 @@ namespace occa {
         return up->getScopeKeyword(name);
       }
       return keyword;
+    }
+
+    bool blockStatement::addToScope(type_t &type,
+                                    const bool force) {
+      return scope.add(type, force);
+    }
+
+    bool blockStatement::addToScope(function_t &func,
+                                    const bool force) {
+      return scope.add(func, force);
+    }
+
+    bool blockStatement::addToScope(variable_t &var,
+                                    const bool force) {
+      return scope.add(var, force);
+    }
+
+    void blockStatement::removeFromScope(const std::string &name,
+                                         const bool deleteSource) {
+      scope.remove(name, deleteSource);
+    }
+
+    bool blockStatement::hasDirectlyInScope(const std::string &name) {
+      return scope.has(name);
     }
 
     statement_t* blockStatement::operator [] (const int index) {
@@ -170,6 +194,10 @@ namespace occa {
 
     void blockStatement::swap(blockStatement &other) {
       scope.swap(other.scope);
+      swapChildren(other);
+    }
+
+    void blockStatement::swapChildren(blockStatement &other) {
       children.swap(other.children);
 
       const int childCount = (int) children.size();

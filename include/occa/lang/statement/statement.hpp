@@ -104,7 +104,7 @@ namespace occa {
       virtual int type() const = 0;
       virtual std::string statementName() const = 0;
 
-      virtual bool inScope(const std::string &name);
+      virtual bool hasInScope(const std::string &name);
       virtual keyword_t& getScopeKeyword(const std::string &name);
 
       void addAttribute(const attributeToken_t &attribute);

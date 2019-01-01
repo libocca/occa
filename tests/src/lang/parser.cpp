@@ -1360,9 +1360,9 @@ void testScopeKeywords() {
   blockStatement &fooBlock = foo[1]->to<blockStatement>();
 
   // Make sure we can find variables 'x'
-  ASSERT_TRUE(root.inScope("x"));
-  ASSERT_TRUE(foo.inScope("x"));
-  ASSERT_TRUE(fooBlock.inScope("x"));
+  ASSERT_TRUE(root.hasInScope("x"));
+  ASSERT_TRUE(foo.hasInScope("x"));
+  ASSERT_TRUE(fooBlock.hasInScope("x"));
 
   // Make sure variables 'x' exist
   ASSERT_EQ_BINARY(keywordType::variable,

@@ -51,9 +51,8 @@ namespace occa {
         variable_t *var = declarations[i].variable;
         // The scope has its own typedef copy
         // We have to delete the variable-typedef
-        if (up
-            && up->scope.has(var->name())) {
-          up->scope.remove(var->name());
+        if (up && up->hasDirectlyInScope(var->name())) {
+          up->removeFromScope(var->name());
           var = NULL;
         }
         delete var;
@@ -84,7 +83,7 @@ namespace occa {
       }
       // Variable
       if (!var.vartype.has(typedef_)) {
-        success = up->scope.add(var, force);
+        success = up->addToScope(var, force);
       } else {
         // Typedef
         typedef_t &type = *(new typedef_t(var.vartype));
@@ -98,7 +97,7 @@ namespace occa {
         type.attributes.insert(var.attributes.begin(),
                                var.attributes.end());
 
-        success = up->scope.add(type, force);
+        success = up->addToScope(type, force);
         if (!success) {
           delete &type;
         }

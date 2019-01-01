@@ -24,8 +24,20 @@ namespace occa {
       virtual int type() const;
       virtual std::string statementName() const;
 
-      virtual bool inScope(const std::string &name);
+      virtual bool hasInScope(const std::string &name);
       virtual keyword_t& getScopeKeyword(const std::string &name);
+
+      bool addToScope(type_t &type,
+                      const bool force = false);
+      bool addToScope(function_t &func,
+                      const bool force = false);
+      bool addToScope(variable_t &var,
+                      const bool force = false);
+
+      void removeFromScope(const std::string &name,
+                           const bool deleteSource = true);
+
+      bool hasDirectlyInScope(const std::string &name);
 
       statement_t* operator [] (const int index);
 
@@ -51,6 +63,7 @@ namespace occa {
       void set(statement_t &child);
 
       void swap(blockStatement &other);
+      void swapChildren(blockStatement &other);
 
       void clear();
 
