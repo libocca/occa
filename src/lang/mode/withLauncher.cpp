@@ -79,8 +79,6 @@ namespace occa {
         // Clone source
         blockStatement &rootClone = (blockStatement&) root.clone();
 
-        hostParser.root.source = root.source->clone();
-
         hostParser.root.swap(rootClone);
         delete &rootClone;
         hostParser.setupKernels();
@@ -414,8 +412,7 @@ namespace occa {
         }
 
         root.remove(kernelSmnt);
-        root.removeFromScope(kernelSmnt.function.name(),
-                             true);
+        root.removeFromScope(kernelSmnt.function.name(), true);
 
         // TODO 1.1: Find out what causes segfault here
         // delete &kernelSmnt;
@@ -436,18 +433,18 @@ namespace occa {
                                     newFunction)
         );
         newKernelSmnt.attributes = kernelSmnt.attributes;
+        newKernelSmnt.addFunctionToParentScope();
 
         // Clone for-loop and replace argument variables
-        statement_t &newForSmnt = forSmnt.clone();
+        forStatement &newForSmnt = (forStatement&) forSmnt.clone();
+        newKernelSmnt.set(newForSmnt);
+
         const int argc = (int) newFunction.args.size();
         for (int i = 0; i < argc; ++i) {
-          replaceVariables(newForSmnt,
-                           *oldFunction.args[i],
-                           *newFunction.args[i]);
+          variable_t *oldArg = oldFunction.args[i];
+          variable_t *newArg = newFunction.args[i];
+          replaceVariables(newForSmnt, *oldArg, *newArg);
         }
-
-        newKernelSmnt.set(newForSmnt);
-        root.addToScope(newFunction);
 
         return &newKernelSmnt;
       }

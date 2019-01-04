@@ -123,15 +123,17 @@ namespace occa {
         currentSmnt = &smnt;
         nextExprIsBeingDeclared = false;
 
+        const int smntType = smnt.type();
+
         // Expression
-        if (smnt.type() & statementType::expression) {
+        if (smntType & statementType::expression) {
           expressionStatement &exprSmnt = (expressionStatement&) smnt;
           exprSmnt.expr = exprTransform::apply(*(exprSmnt.expr));
           return &smnt;
         }
 
         // Function Declaration
-        if (smnt.type() & statementType::functionDecl) {
+        if (smntType & statementType::functionDecl) {
           functionDeclStatement &declSmnt = (functionDeclStatement&) smnt;
           functionNode *funcNode = new functionNode(declSmnt.function.source,
                                                     declSmnt.function);
@@ -143,9 +145,7 @@ namespace occa {
             if (newNode->type() & exprNodeType::function) {
               function_t &newFunc = ((functionNode*) newNode)->value;
               delete newNode;
-              functionDeclStatement *newSmnt = new functionDeclStatement(smnt.up, newFunc);
-              newSmnt->updateScope(true);
-              return newSmnt;
+              return new functionDeclStatement(smnt.up, newFunc);
             }
           }
           delete newNode;

@@ -63,6 +63,7 @@ namespace occa {
       void set(statement_t &child);
 
       void swap(blockStatement &other);
+      void swapScope(blockStatement &other);
       void swapChildren(blockStatement &other);
 
       void clear();

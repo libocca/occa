@@ -104,6 +104,8 @@ namespace occa {
       virtual int type() const = 0;
       virtual std::string statementName() const = 0;
 
+      void swapSource(statement_t &other);
+
       virtual bool hasInScope(const std::string &name);
       virtual keyword_t& getScopeKeyword(const std::string &name);
 

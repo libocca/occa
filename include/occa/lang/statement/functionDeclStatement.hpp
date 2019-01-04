@@ -19,8 +19,8 @@ namespace occa {
       virtual int type() const;
       virtual std::string statementName() const;
 
-      bool updateScope(const bool force = false);
-      void addArgumentsToScope(const bool force = false);
+      bool addFunctionToParentScope();
+      void addArgumentsToScope();
 
       virtual void print(printer &pout) const;
     };

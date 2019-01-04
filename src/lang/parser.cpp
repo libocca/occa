@@ -1471,7 +1471,7 @@ namespace occa {
 
       // func() {...} <-- function declaration
       functionDeclStatement &funcSmnt = *(new functionDeclStatement(up, func));
-      success = funcSmnt.updateScope();
+      success = funcSmnt.addFunctionToParentScope();
       if (!success) {
         success = false;
         delete &funcSmnt;

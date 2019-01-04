@@ -174,6 +174,7 @@ namespace occa {
       const int childCount = (int) children.size();
       for (int i = 0; i < childCount; ++i) {
         if (children[i] == &child) {
+          child.up = NULL;
           children.erase(children.begin() + i);
           return;
         }
@@ -189,12 +190,17 @@ namespace occa {
       blockStatement &body = (blockStatement&) child;
       swap(body);
       body.scope.moveTo(scope);
-      delete &body;
+      delete &child;
     }
 
     void blockStatement::swap(blockStatement &other) {
-      scope.swap(other.scope);
+      swapSource(other);
+      swapScope(other);
       swapChildren(other);
+    }
+
+    void blockStatement::swapScope(blockStatement &other) {
+      scope.swap(other.scope);
     }
 
     void blockStatement::swapChildren(blockStatement &other) {

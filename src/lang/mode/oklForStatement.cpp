@@ -291,6 +291,7 @@ namespace occa {
           );
           delete count;
           delete updateInParen;
+          delete boundCheckInParen;
           count = countWithUpdate;
         }
 

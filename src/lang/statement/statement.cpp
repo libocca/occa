@@ -73,6 +73,12 @@ namespace occa {
       return NULL;
     }
 
+    void statement_t::swapSource(statement_t &other) {
+      token_t *prevSource = source;
+      source = other.source;
+      other.source = prevSource;
+    }
+
     bool statement_t::hasInScope(const std::string &name) {
       if (up) {
         return up->hasInScope(name);

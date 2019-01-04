@@ -5,17 +5,23 @@ namespace occa {
     functionDeclStatement::functionDeclStatement(blockStatement *up_,
                                                  function_t &function_) :
       blockStatement(up_, function_.source),
-      function(function_) {}
+      function(function_) {
+      addArgumentsToScope();
+    }
 
     functionDeclStatement::functionDeclStatement(blockStatement *up_,
                                                  const functionDeclStatement &other) :
       blockStatement(up_, other),
       function((function_t&) other.function.clone()) {
-      updateScope(true);
+      addArgumentsToScope();
     }
 
     statement_t& functionDeclStatement::clone_(blockStatement *up_) const {
-      return *(new functionDeclStatement(up_, *this));
+      functionDeclStatement *smnt = new functionDeclStatement(up_, *this);
+      if (up_) {
+        smnt->addFunctionToParentScope();
+      }
+      return *smnt;
     }
 
     int functionDeclStatement::type() const {
@@ -26,19 +32,17 @@ namespace occa {
       return "function declaration";
     }
 
-    bool functionDeclStatement::updateScope(const bool force) {
-      if (up && !up->addToScope(function, force)) {
+    bool functionDeclStatement::addFunctionToParentScope() {
+      if (up && !up->addToScope(function)) {
         return false;
       }
-      addArgumentsToScope(force);
       return true;
     }
 
-    void functionDeclStatement::addArgumentsToScope(const bool force) {
+    void functionDeclStatement::addArgumentsToScope() {
       const int count = (int) function.args.size();
       for (int i = 0; i < count; ++i) {
-        addToScope(*(function.args[i]),
-                   force);
+        addToScope(*(function.args[i]));
       }
     }
 

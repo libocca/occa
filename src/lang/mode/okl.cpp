@@ -427,7 +427,7 @@ namespace occa {
         const int loopIndex = oklForSmnt.oklLoopIndex();
 
         oklAttr.args.push_back(
-          new primitiveNode(oklAttr.source->clone(),
+          new primitiveNode(oklAttr.source,
                             loopIndex)
         );
       }
