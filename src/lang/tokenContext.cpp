@@ -91,6 +91,20 @@ namespace occa {
         // Store pairs
         pairs[pairIndex] = i;
       }
+      // Make sure all pair openers have a close
+      if (pairStack.size()) {
+        const int pairIndex = pairStack.back();
+        pairStack.pop_back();
+        pairOperator_t &pairStartOp =
+          *((pairOperator_t*) tokens[pairIndex]->to<operatorToken>().op);
+
+        std::stringstream ss;
+        ss << "Could not find a closing '"
+           << pairStartOp.pairStr
+           << '\'';
+        tokens[pairIndex]->printError(ss.str());
+        hasError = true;
+      }
     }
 
     void tokenContext::findSemicolons() {
