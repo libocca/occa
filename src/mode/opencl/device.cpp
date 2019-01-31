@@ -190,7 +190,6 @@ namespace occa {
 
       const std::string hashDir = io::hashDir(filename, kernelHash);
       const std::string binaryFilename = hashDir + kc::binaryFile;
-      bool foundBinary = true;
       bool usingOKL = kernelProps.get("okl", true);
 
       info_t clInfo;
@@ -198,13 +197,15 @@ namespace occa {
       clInfo.clContext = clContext;
 
       // Check if binary exists and is finished
+      bool foundBinary = (
+        io::cachedFileIsComplete(hashDir, kc::binaryFile)
+        && io::isFile(binaryFilename)
+      );
+
       io::lock_t lock;
-      if (!io::cachedFileIsComplete(hashDir, kc::binaryFile) ||
-          !io::isFile(binaryFilename)) {
+      if (!foundBinary) {
         lock = io::lock_t(kernelHash, "opencl-kernel");
-        if (lock.isMine()) {
-          foundBinary = false;
-        }
+        foundBinary = !lock.isMine();
       }
 
       const bool verbose = kernelProps.get("verbose", false);

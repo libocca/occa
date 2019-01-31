@@ -176,16 +176,17 @@ namespace occa {
         : kc::hostBinaryFile
       );
       std::string binaryFilename = hashDir + kcBinaryFile;
-      bool foundBinary = true;
 
       // Check if binary exists and is finished
+      bool foundBinary = (
+        io::cachedFileIsComplete(hashDir, kc::binaryFile)
+        && io::isFile(binaryFilename)
+      );
+
       io::lock_t lock;
-      if (!io::cachedFileIsComplete(hashDir, kcBinaryFile) ||
-          !io::isFile(binaryFilename)) {
+      if (!foundBinary) {
         lock = io::lock_t(kernelHash, "serial-kernel");
-        if (lock.isMine()) {
-          foundBinary = false;
-        }
+        foundBinary = !lock.isMine();
       }
 
       const bool verbose = kernelProps.get("verbose", false);
