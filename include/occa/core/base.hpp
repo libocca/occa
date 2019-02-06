@@ -60,9 +60,19 @@ namespace occa {
   //====================================
 
   //---[ Memory Functions ]-------------
+    occa::memory malloc(const dim_t entries,
+                        const dtype &type,
+                        const void *src = NULL,
+                        const occa::properties &props = occa::properties());
+
   occa::memory malloc(const dim_t bytes,
                       const void *src = NULL,
                       const occa::properties &props = occa::properties());
+
+  void* umalloc(const dim_t entries,
+                const dtype &type,
+                const void *src = NULL,
+                const occa::properties &props = occa::properties());
 
   void* umalloc(const dim_t bytes,
                 const void *src = NULL,

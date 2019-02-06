@@ -16,7 +16,7 @@ void testBadType();
 void testKeyMiss();
 void testSerialization();
 
-occaProperties cJson;
+occaJson cJson;
 
 int main(const int argc, const char **argv) {
   srand(time(NULL));

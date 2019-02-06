@@ -69,10 +69,22 @@ OCCA_LFUNC occaMemory OCCA_RFUNC occaDeviceMalloc(occaDevice device,
                                                   const void *src,
                                                   occaProperties props);
 
+OCCA_LFUNC occaMemory OCCA_RFUNC occaDeviceTypedMalloc(occaDevice device,
+                                                       const occaUDim_t entries,
+                                                       const occaDtype type,
+                                                       const void *src,
+                                                       occaProperties props);
+
 OCCA_LFUNC void* OCCA_RFUNC occaDeviceUMalloc(occaDevice device,
                                               const occaUDim_t bytes,
                                               const void *src,
                                               occaProperties props);
+
+OCCA_LFUNC void* OCCA_RFUNC occaDeviceTypedUMalloc(occaDevice device,
+                                                   const occaUDim_t entries,
+                                                   const occaDtype type,
+                                                   const void *src,
+                                                   occaProperties props);
 //======================================
 
 OCCA_END_EXTERN_C

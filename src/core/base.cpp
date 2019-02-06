@@ -95,17 +95,29 @@ namespace occa {
   }
 
   //---[ Memory Functions ]-------------
+  occa::memory malloc(const dim_t entries,
+                      const dtype &type,
+                      const void *src,
+                      const occa::properties &props) {
+    return getDevice().malloc(entries, type, src, props);
+  }
+
   occa::memory malloc(const dim_t bytes,
                       const void *src,
                       const occa::properties &props) {
-
     return getDevice().malloc(bytes, src, props);
+  }
+
+  void* umalloc(const dim_t entries,
+                const dtype &type,
+                const void *src,
+                const occa::properties &props) {
+    return getDevice().umalloc(entries, type, src, props);
   }
 
   void* umalloc(const dim_t bytes,
                 const void *src,
                 const occa::properties &props) {
-
     return getDevice().umalloc(bytes, src, props);
   }
 

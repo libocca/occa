@@ -261,6 +261,16 @@ namespace occa {
       return oType;
     }
 
+    occaType newOccaType(const occa::dtype &dtype) {
+      occaType oType;
+      oType.magicHeader = OCCA_C_TYPE_MAGIC_HEADER;
+      oType.type  = typeType::dtype;
+      oType.bytes = sizeof(void*);
+      oType.value.ptr = (char*) &dtype;
+      oType.needsFree = true;
+      return oType;
+    }
+
     occaType newOccaType(const occa::json &json,
                          const bool needsFree) {
       if (json.isNull()) {
@@ -459,6 +469,12 @@ namespace occa {
       return p;
     }
 
+    occa::dtype& dtype(occaType value) {
+      OCCA_ERROR("Input is not an occaDtype",
+                 value.type == typeType::dtype);
+      return *((occa::dtype*) value.value.ptr);
+    }
+
     occa::json& json(occaType value) {
       OCCA_ERROR("Input is not an occaJson",
                  value.type == typeType::json);
@@ -540,6 +556,7 @@ const int OCCA_MEMORY     = occa::c::typeType::memory;
 const int OCCA_STREAM     = occa::c::typeType::stream;
 const int OCCA_STREAMTAG  = occa::c::typeType::streamTag;
 
+const int OCCA_DTYPE      = occa::c::typeType::dtype;
 const int OCCA_JSON       = occa::c::typeType::json;
 const int OCCA_PROPERTIES = occa::c::typeType::properties;
 //======================================
@@ -688,6 +705,10 @@ OCCA_LFUNC void OCCA_RFUNC occaFree(occaType value) {
   }
   case occa::c::typeType::streamTag: {
     occa::c::streamTag(value).free();
+    break;
+  }
+  case occa::c::typeType::dtype: {
+    delete &occa::c::dtype(value);
     break;
   }
   case occa::c::typeType::json: {

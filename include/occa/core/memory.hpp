@@ -4,6 +4,7 @@
 #include <iostream>
 
 #include <occa/defines.hpp>
+#include <occa/dtype.hpp>
 #include <occa/tools/gc.hpp>
 #include <occa/tools/properties.hpp>
 
@@ -36,6 +37,7 @@ namespace occa {
 
     occa::modeDevice_t *modeDevice;
 
+    const dtype *type;
     udim_t size;
     bool isOrigin;
 
@@ -147,7 +149,11 @@ namespace occa {
     const std::string& mode() const;
     const occa::properties& properties() const;
 
+    void setType(const dtype &type);
+    const dtype& getType();
+
     udim_t size() const;
+    udim_t length() const;
 
     template <class TM>
     udim_t size() const {

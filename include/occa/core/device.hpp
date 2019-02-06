@@ -7,6 +7,7 @@
 #include <occa/defines.hpp>
 #include <occa/core/kernel.hpp>
 #include <occa/core/stream.hpp>
+#include <occa/dtype.hpp>
 #include <occa/tools/gc.hpp>
 #include <occa/tools/uva.hpp>
 
@@ -228,6 +229,20 @@ namespace occa {
     //  |===============================
 
     //  |---[ Memory ]------------------
+    occa::memory malloc(const dim_t entries,
+                        const dtype &type,
+                        const void *src = NULL,
+                        const occa::properties &props = occa::properties());
+
+    occa::memory malloc(const dim_t entries,
+                        const dtype &type,
+                        const occa::memory src,
+                        const occa::properties &props = occa::properties());
+
+    occa::memory malloc(const dim_t entries,
+                        const dtype &type,
+                        const occa::properties &props);
+
     occa::memory malloc(const dim_t bytes,
                         const void *src = NULL,
                         const occa::properties &props = occa::properties());
@@ -238,6 +253,20 @@ namespace occa {
 
     occa::memory malloc(const dim_t bytes,
                         const occa::properties &props);
+
+    void* umalloc(const dim_t entries,
+                  const dtype &type,
+                  const void *src = NULL,
+                  const occa::properties &props = occa::properties());
+
+    void* umalloc(const dim_t entries,
+                  const dtype &type,
+                  const occa::memory src,
+                  const occa::properties &props = occa::properties());
+
+    void* umalloc(const dim_t entries,
+                  const dtype &type,
+                  const occa::properties &props);
 
     void* umalloc(const dim_t bytes,
                   const void *src = NULL,

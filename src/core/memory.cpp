@@ -17,6 +17,7 @@ namespace occa {
     ptr(NULL),
     uvaPtr(NULL),
     modeDevice(modeDevice_),
+    type(&dtypes::none),
     size(size_),
     isOrigin(true) {
     modeDevice->addMemoryRef(this);
@@ -201,11 +202,30 @@ namespace occa {
             : noProperties);
   }
 
+  void memory::setType(const dtype &type) {
+    assertInitialized();
+    modeMemory->type = &type;
+  }
+
+  const dtype& memory::getType() {
+    if (modeMemory) {
+      return *modeMemory->type;
+    }
+    return dtypes::none;
+  }
+
   udim_t memory::size() const {
     if (modeMemory == NULL) {
       return 0;
     }
     return modeMemory->size;
+  }
+
+  udim_t memory::length() const {
+    if (modeMemory == NULL) {
+      return 0;
+    }
+    return modeMemory->size / modeMemory->type->getBytes();
   }
 
   bool memory::isManaged() const {

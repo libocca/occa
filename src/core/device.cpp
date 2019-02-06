@@ -521,73 +521,93 @@ namespace occa {
   //  |=================================
 
   //  |---[ Memory ]--------------------
-  memory device::malloc(const dim_t bytes,
-                        const void *src,
-                        const occa::properties &props) {
+  occa::memory device::malloc(const dim_t entries,
+                              const dtype &type,
+                              const void *src,
+                              const occa::properties &props) {
     assertInitialized();
 
-    if (bytes == 0) {
+    if (entries == 0) {
       return memory();
     }
 
+    const dim_t bytes = entries * type.getBytes();
     OCCA_ERROR("Trying to allocate "
                << "negative bytes (" << bytes << ")",
                bytes >= 0);
 
     occa::properties memProps = props + memoryProperties();
+
     memory mem(modeDevice->malloc(bytes, src, memProps));
+    mem.setType(type);
 
     modeDevice->bytesAllocated += bytes;
 
     return mem;
   }
 
-  memory device::malloc(const dim_t bytes,
-                        const occa::memory src,
-                        const occa::properties &props) {
-    assertInitialized();
-
-    memory mem = malloc(bytes, NULL, props);
-    if (bytes && src.size()) {
+  occa::memory device::malloc(const dim_t entries,
+                              const dtype &type,
+                              const occa::memory src,
+                              const occa::properties &props) {
+    memory mem = malloc(entries, type, NULL, props);
+    if (entries && src.size()) {
       mem.copyFrom(src);
     }
     return mem;
   }
 
-  memory device::malloc(const dim_t bytes,
-                        const occa::properties &props) {
-
-    return malloc(bytes, NULL, props);
+  occa::memory device::malloc(const dim_t entries,
+                              const dtype &type,
+                              const occa::properties &props) {
+    return malloc(entries, type, NULL, props);
   }
 
-  void* device::umalloc(const dim_t bytes,
+  memory device::malloc(const dim_t bytes,
                         const void *src,
                         const occa::properties &props) {
-    assertInitialized();
+    return malloc(bytes, dtypes::byte, src, props);
+  }
 
-    void *ptr = umalloc(bytes, occa::memory(), props);
-    if (src) {
+  memory device::malloc(const dim_t bytes,
+                        const occa::memory src,
+                        const occa::properties &props) {
+    return malloc(bytes, dtypes::byte, src, props);
+  }
+
+  memory device::malloc(const dim_t bytes,
+                        const occa::properties &props) {
+    return malloc(bytes, dtypes::byte, NULL, props);
+  }
+
+  void* device::umalloc(const dim_t entries,
+                        const dtype &type,
+                        const void *src,
+                        const occa::properties &props) {
+    void *ptr = umalloc(entries, type, occa::memory(), props);
+
+    if (src && entries) {
+      const dim_t bytes = entries * type.getBytes();
       ::memcpy(ptr, src, bytes);
     }
+
     return ptr;
   }
 
-  void* device::umalloc(const dim_t bytes,
+  void* device::umalloc(const dim_t entries,
+                        const dtype &type,
                         const occa::memory src,
                         const occa::properties &props) {
     assertInitialized();
 
-    if (bytes == 0) {
+    if (entries == 0) {
       return NULL;
     }
 
-    OCCA_ERROR("Trying to allocate "
-               << "negative bytes (" << bytes << ")",
-               bytes >= 0);
-
     occa::properties memProps = props + memoryProperties();
 
-    memory mem = malloc(bytes, src, memProps);
+    memory mem = malloc(entries, type, src, memProps);
+    mem.setType(type);
     mem.dontUseRefs();
     mem.setupUva();
 
@@ -596,15 +616,32 @@ namespace occa {
     }
     void *ptr = mem.modeMemory->uvaPtr;
     if (src.size()) {
-      src.copyTo(ptr, bytes);
+      mem.copyTo(ptr);
     }
     return ptr;
   }
 
+  void* device::umalloc(const dim_t entries,
+                        const dtype &type,
+                        const occa::properties &props) {
+    return umalloc(entries, type, NULL, props);
+  }
+
+  void* device::umalloc(const dim_t bytes,
+                        const void *src,
+                        const occa::properties &props) {
+    return umalloc(bytes, dtypes::byte, src, props);
+  }
+
+  void* device::umalloc(const dim_t bytes,
+                        const occa::memory src,
+                        const occa::properties &props) {
+    return umalloc(bytes, dtypes::byte, src, props);
+  }
+
   void* device::umalloc(const dim_t bytes,
                         const occa::properties &props) {
-
-    return umalloc(bytes, NULL, props);
+    return umalloc(bytes, dtypes::byte, NULL, props);
   }
   //  |=================================
 

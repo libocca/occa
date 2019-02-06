@@ -213,5 +213,4 @@ void OCCA_RFUNC occaJsonArrayClear(occaJson j) {
 }
 //======================================
 
-
 OCCA_END_EXTERN_C
