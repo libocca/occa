@@ -21,9 +21,9 @@ int main(int argc, char **argv) {
 
   device.setup("mode: 'OpenMP'");
 
-  o_a  = occa::cpu::wrapMemory(a , entries*sizeof(float));
-  o_b  = occa::cpu::wrapMemory(b , entries*sizeof(float));
-  o_ab = occa::cpu::wrapMemory(ab, entries*sizeof(float));
+  o_a  = occa::cpu::wrapMemory(device, a , entries * sizeof(float));
+  o_b  = occa::cpu::wrapMemory(device, b , entries * sizeof(float));
+  o_ab = occa::cpu::wrapMemory(device, ab, entries * sizeof(float));
 
   addVectors = device.buildKernel("addVectors.okl",
                                   "addVectors");

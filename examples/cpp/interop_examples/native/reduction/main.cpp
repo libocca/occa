@@ -30,12 +30,12 @@ int main(int argc, char **argv) {
   }
 
   // Allocate memory on the device
-  o_vec      = occa::malloc(entries * sizeof(float));
-  o_blockSum = occa::malloc(blocks  * sizeof(float));
+  o_vec      = occa::malloc(entries, occa::dtypes::float_);
+  o_blockSum = occa::malloc(blocks, occa::dtypes::float_);
 
   // Pass value of 'block' at kernel compile-time
   occa::properties reductionProps;
-  reductionProps["OKL"] = false; // Disable OKL parsing
+  reductionProps["okl"] = false; // Disable OKL parsing
   reductionProps["defines/block"] = block;
 
   const std::string kernelFile = (

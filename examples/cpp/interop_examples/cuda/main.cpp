@@ -1,7 +1,7 @@
 #include <iostream>
 
 #include <occa.hpp>
-#include <occa/modes/cuda/utils.hpp>
+#include <occa/mode/cuda/utils.hpp>
 
 #include <cuda_runtime_api.h>
 
@@ -9,16 +9,16 @@ int main(int argc, char **argv) {
   int entries = 5;
 
   //---[ Init CUDA ]------------------
-  int cuDeviceID;
+  int cuDeviceID = 0;
   cudaStream_t cuStream;
   void *cu_a, *cu_b, *cu_ab;
 
   // Default: cuStream = 0
   cudaStreamCreate(&cuStream);
 
-  cudaMalloc(&cu_a , entries*sizeof(float));
-  cudaMalloc(&cu_b , entries*sizeof(float));
-  cudaMalloc(&cu_ab, entries*sizeof(float));
+  cudaMalloc(&cu_a , entries * sizeof(float));
+  cudaMalloc(&cu_b , entries * sizeof(float));
+  cudaMalloc(&cu_ab, entries * sizeof(float));
 
   //  ---[ Get CUDA Info ]----
   CUdevice cuDevice;
@@ -35,9 +35,6 @@ int main(int argc, char **argv) {
 
   occa::device device = occa::cuda::wrapDevice(cuDevice, cuContext);
 
-  occa::stream stream = device.wrapStream(&cuStream);
-  device.setStream(stream);
-
   occa::kernel addVectors;
   occa::memory o_a, o_b, o_ab;
 
@@ -47,9 +44,9 @@ int main(int argc, char **argv) {
     ab[i] = 0;
   }
 
-  o_a  = occa::cuda::wrapMemory(device, cu_a , entries*sizeof(float));
-  o_b  = occa::cuda::wrapMemory(device, cu_b , entries*sizeof(float));
-  o_ab = occa::cuda::wrapMemory(device, cu_ab, entries*sizeof(float));
+  o_a  = occa::cuda::wrapMemory(device, cu_a , entries * sizeof(float));
+  o_b  = occa::cuda::wrapMemory(device, cu_b , entries * sizeof(float));
+  o_ab = occa::cuda::wrapMemory(device, cu_ab, entries * sizeof(float));
 
   addVectors = device.buildKernel("addVectors.okl",
                                   "addVectors");

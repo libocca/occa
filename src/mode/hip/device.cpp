@@ -244,17 +244,17 @@ namespace occa {
         }
       }
 
-      // Cache raw origin
-      std::string sourceFilename = (
-        io::cacheFile(filename,
-                      kc::rawSourceFile,
-                      kernelHash,
-                      assembleKernelHeader(kernelProps))
-      );
-
       modeKernel_t *launcherKernel = NULL;
       lang::kernelMetadataMap hostMetadata, deviceMetadata;
+      std::string sourceFilename;
       if (usingOKL) {
+        // Cache raw origin
+        sourceFilename = (
+          io::cacheFile(filename,
+                        kc::rawSourceFile,
+                        kernelHash,
+                        assembleKernelHeader(kernelProps))
+        );
         const std::string outputFile = hashDir + kc::sourceFile;
         const std::string hostOutputFile = hashDir + kc::hostSourceFile;
         bool valid = parseFile(sourceFilename,
@@ -285,6 +285,14 @@ namespace occa {
                              kernelHash,
                              kernelProps,
                              deviceMetadata);
+      } else {
+        // Cache in sourceFile to directly compile file
+        sourceFilename = (
+          io::cacheFile(filename,
+                        kc::sourceFile,
+                        kernelHash,
+                        assembleKernelHeader(kernelProps))
+        );
       }
 
       compileKernel(hashDir,

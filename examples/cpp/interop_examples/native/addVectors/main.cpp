@@ -27,22 +27,22 @@ int main(int argc, char **argv) {
   // device.setup("mode: 'OpenCL', platform_id : 0, device_id: 1");
   //========================================================
 
-  o_a  = device.malloc(entries*sizeof(float));
-  o_b  = device.malloc(entries*sizeof(float));
-  o_ab = device.malloc(entries*sizeof(float));
+  o_a  = device.malloc(entries, occa::dtypes::float_);
+  o_b  = device.malloc(entries, occa::dtypes::float_);
+  o_ab = device.malloc(entries, occa::dtypes::float_);
 
   // Native Serial kernel
   addVectors = device.buildKernel("addVectors.cpp",
                                   "addVectors",
-                                  "OKL: false");
+                                  "okl: false");
   // Native CUDA kernel
   // addVectors = device.buildKernel("addVectors.cu",
   //                                 "addVectors",
-  //                                 "OKL: false");
+  //                                 "okl: false");
   // Native OpenCL kernel
   // addVectors = device.buildKernel("addVectors.cl",
   //                                 "addVectors",
-  //                                 "OKL: false");
+  //                                 "okl: false");
 
   o_a.copyFrom(a);
   o_b.copyFrom(b);
