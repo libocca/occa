@@ -72,7 +72,7 @@ void testDtype() {
   ASSERT_FALSE(
     occaDtypeIsEqual(foo1, foo4)
   );
-  ASSERT_FALSE(
+  ASSERT_TRUE(
     occaDtypeIsEqual(foo3, foo4)
   );
 

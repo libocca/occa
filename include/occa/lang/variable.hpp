@@ -1,6 +1,7 @@
 #ifndef OCCA_LANG_VARIABLE_HEADER
 #define OCCA_LANG_VARIABLE_HEADER
 
+#include <occa/dtype.hpp>
 #include <occa/lang/type.hpp>
 
 namespace occa {
@@ -59,6 +60,8 @@ namespace occa {
 
       variable_t& operator += (const array_t &array);
       variable_t& operator += (const arrayVector &arrays);
+
+      dtype getDtype() const;
 
       void printDeclaration(printer &pout) const;
       void printExtraDeclaration(printer &pout) const;

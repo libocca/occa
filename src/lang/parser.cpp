@@ -129,7 +129,8 @@ namespace occa {
         int args = (int) func.args.size();
         for (int ai = 0; ai < args; ++ai) {
           metadata += argumentInfo(
-            func.args[ai]->has(const_)
+            func.args[ai]->has(const_),
+            func.args[ai]->getDtype()
           );
         }
       }

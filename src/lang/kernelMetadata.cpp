@@ -4,8 +4,10 @@
 
 namespace occa {
   namespace lang {
-    argumentInfo::argumentInfo(const bool isConst_) :
-      isConst(isConst_) {}
+    argumentInfo::argumentInfo(const bool isConst_,
+                               const dtype &type_) :
+      isConst(isConst_),
+      type(type_) {}
 
     argumentInfo argumentInfo::fromJson(const json &j) {
       return argumentInfo((bool) j["const"]);
@@ -27,6 +29,18 @@ namespace occa {
     bool kernelMetadata::argIsConst(const int pos) const {
       if (pos < (int) arguments.size()) {
         return arguments[pos].isConst;
+      }
+      return false;
+    }
+
+    bool kernelMetadata::argMatchesDtype(const int pos,
+                                         const dtype &type) const {
+      if (pos < (int) arguments.size()) {
+        const dtype &argType = arguments[pos].type;
+        if (argType == dtypes::byte) {
+          return true;
+        }
+        return argType == type;
       }
       return false;
     }

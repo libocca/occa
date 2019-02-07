@@ -139,6 +139,10 @@ namespace occa {
       return *this;
     }
 
+    dtype variable_t::getDtype() const {
+      return dtypes::byte;
+    }
+
     void variable_t::printDeclaration(printer &pout) const {
       vartype.printDeclaration(pout, name());
     }

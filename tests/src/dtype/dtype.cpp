@@ -43,7 +43,7 @@ void testDtype() {
   ASSERT_EQ(foo1, foo2);
   ASSERT_NEQ(foo1, foo3);
   ASSERT_NEQ(foo1, foo4);
-  ASSERT_NEQ(foo3, foo4);
+  ASSERT_EQ(foo3, foo4);
 }
 
 void testJsonMethods() {

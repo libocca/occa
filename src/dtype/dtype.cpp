@@ -55,9 +55,6 @@ namespace occa {
     for (int i = 0; i < fieldCount; ++i) {
       const dtypeField &field = fields[i];
       const dtypeField &otherField = other.fields[i];
-      if (field.name != otherField.name) {
-        return false;
-      }
       if (field.type != otherField.type) {
         return false;
       }
@@ -73,6 +70,7 @@ namespace occa {
     static dtypeNameMap_t dtypeMap;
     if (!dtypeMap.size()) {
       dtypeMap["void"] = &dtypes::void_;
+      dtypeMap["byte"] = &dtypes::byte;
 
       dtypeMap["bool"] = &dtypes::bool_;
       dtypeMap["char"] = &dtypes::char_;
@@ -103,7 +101,10 @@ namespace occa {
   dtype dtype::fromJson(const std::string &str) {
     json j;
     j.load(str);
-    return dtype::fromJson(j);
+    if (j.isInitialized()) {
+      return dtype::fromJson(j);
+    }
+    return dtypes::none;
   }
 
   dtype dtype::fromJson(const json &j) {

@@ -2,6 +2,7 @@
 #define OCCA_LANG_KERNELMETADATA_HEADER
 
 #include <occa/tools/json.hpp>
+#include <occa/dtype.hpp>
 
 namespace occa {
   namespace lang {
@@ -12,8 +13,10 @@ namespace occa {
     class argumentInfo {
     public:
       bool isConst;
+      dtype type;
 
-      argumentInfo(const bool isConst_ = false);
+      argumentInfo(const bool isConst_ = false,
+                   const dtype &type_ = dtypes::byte);
 
       static argumentInfo fromJson(const json &j);
       json toJson() const;
@@ -29,6 +32,8 @@ namespace occa {
       kernelMetadata& operator += (const argumentInfo &argInfo);
 
       bool argIsConst(const int pos) const;
+      bool argMatchesDtype(const int pos,
+                           const dtype &type) const;
 
       static kernelMetadata fromJson(const json &j);
       json toJson() const;
