@@ -5,6 +5,7 @@
 #include <occa/c/cli.h>
 #include <occa/c/device.h>
 #include <occa/c/dtype.h>
+#include <occa/c/io.h>
 #include <occa/c/json.h>
 #include <occa/c/kernel.h>
 #include <occa/c/memory.h>
