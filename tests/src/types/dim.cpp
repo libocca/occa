@@ -44,7 +44,7 @@ int main(const int argc, const char **argv) {
   dim = dim / occa::dim(10, 10, 10);
   TEST_DIM(3, 10, 20, 30);
   ASSERT_EQ(dim,
-            occa::dim(10, 20, 30))
+            occa::dim(10, 20, 30));
 
   // [] indexing
   ASSERT_EQ(dim[0],

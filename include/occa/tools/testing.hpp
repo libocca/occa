@@ -5,71 +5,76 @@
 #include <occa/tools/exception.hpp>
 #include <occa/tools/sys.hpp>
 
-#define ASSERT_LE(a, b)                                 \
-  OCCA_ERROR("Assertion Failed: Value is >",            \
-             occa::test::assertLessThanOrEqual(a, b));
-
-#define ASSERT_LT(a, b)                         \
-  OCCA_ERROR("Assertion Failed: Value is >=",   \
-             occa::test::assertLessThan(a, b));
-
-#define ASSERT_GT(a, b)                             \
-  OCCA_ERROR("Assertion Failed: Value is <=",       \
-             occa::test::assertGreaterThan(a, b));
-
-#define ASSERT_GE(a, b)                                   \
-  OCCA_ERROR("Assertion Failed: Value is <",              \
-             occa::test::assertGreaterThanOrEqual(a, b));
-
-#define ASSERT_EQ(a, b)                                 \
-  OCCA_ERROR("Assertion Failed: Values are not equal",  \
-             occa::test::assertEqual(a, b));
-
-#define ASSERT_NEQ(a, b)                            \
-  OCCA_ERROR("Assertion Failed: Values are equal",  \
-             occa::test::assertNotEqual(a, b));
-
-#define ASSERT_EQ_BINARY(a, b)                          \
-  OCCA_ERROR("Assertion Failed: Values are not equal",  \
-             occa::test::assertEqualBinary(a, b));
-
-#define ASSERT_NEQ_BINARY(a, b)                       \
-  OCCA_ERROR("Assertion Failed: Values are equal",    \
-             occa::test::assertNotEqualBinary(a, b));
-
-#define ASSERT_TRUE(value)                        \
-  OCCA_ERROR("Assertion Failed: Value not true",  \
-             (bool) (value));
-
-#define ASSERT_FALSE(value)                       \
-  OCCA_ERROR("Assertion Failed: Value not false", \
-             !((bool) (value)));
-
-#define ASSERT_IN(value, vec)                                       \
-  OCCA_ERROR("Assertion Failed: Value not in",                      \
-             std::find(vec.begin(), vec.end(), value) != vec.end())
-
-#define ASSERT_NOT_IN(value, vec)                                   \
-  OCCA_ERROR("Assertion Failed: Value in",                          \
-             std::find(vec.begin(), vec.end(), value) == vec.end())
-
-#define ASSERT_THROW_START                      \
+#define OCCA_ASSERT_ERROR(message, expr)        \
   do {                                          \
-    bool threw = false;                         \
-    try
+    try {                                       \
+      const bool assertIsOk = (bool) (expr);    \
+      OCCA_ERROR(message, assertIsOk);          \
+    } catch (occa::exception exc) {             \
+      std::cerr << exc << '\n';                 \
+      OCCA_FORCE_ERROR(message);                \
+    }                                           \
+  } while(0)
 
-#define ASSERT_THROW_END                                      \
-    catch (occa::exception exc) {                             \
+#define ASSERT_LE(a, b)                                       \
+  OCCA_ASSERT_ERROR("Assertion Failed: Value is >",           \
+                    occa::test::assertLessThanOrEqual(a, b))
+
+#define ASSERT_LT(a, b)                               \
+  OCCA_ASSERT_ERROR("Assertion Failed: Value is >=",  \
+                    occa::test::assertLessThan(a, b))
+
+#define ASSERT_GT(a, b)                                   \
+  OCCA_ASSERT_ERROR("Assertion Failed: Value is <=",      \
+                    occa::test::assertGreaterThan(a, b))
+
+#define ASSERT_GE(a, b)                                         \
+  OCCA_ASSERT_ERROR("Assertion Failed: Value is <",             \
+                    occa::test::assertGreaterThanOrEqual(a, b))
+
+#define ASSERT_EQ(a, b)                                       \
+  OCCA_ASSERT_ERROR("Assertion Failed: Values are not equal", \
+                    occa::test::assertEqual(a, b))
+
+#define ASSERT_NEQ(a, b)                                  \
+  OCCA_ASSERT_ERROR("Assertion Failed: Values are equal", \
+                    occa::test::assertNotEqual(a, b))
+
+#define ASSERT_EQ_BINARY(a, b)                                \
+  OCCA_ASSERT_ERROR("Assertion Failed: Values are not equal", \
+                    occa::test::assertEqualBinary(a, b))
+
+#define ASSERT_NEQ_BINARY(a, b)                             \
+  OCCA_ASSERT_ERROR("Assertion Failed: Values are equal",   \
+                    occa::test::assertNotEqualBinary(a, b))
+
+#define ASSERT_TRUE(value)                              \
+  OCCA_ASSERT_ERROR("Assertion Failed: Value not true", \
+                    (bool) (value))
+
+#define ASSERT_FALSE(value)                               \
+  OCCA_ASSERT_ERROR("Assertion Failed: Value not false",  \
+                    !((bool) (value)))
+
+#define ASSERT_IN(value, vec)                                           \
+  OCCA_ASSERT_ERROR("Assertion Failed: Value not in",                   \
+                    std::find(vec.begin(), vec.end(), value) != vec.end())
+
+#define ASSERT_NOT_IN(value, vec)                                       \
+  OCCA_ASSERT_ERROR("Assertion Failed: Value in",                       \
+                    std::find(vec.begin(), vec.end(), value) == vec.end())
+
+#define ASSERT_THROW(source)                                  \
+  do {                                                        \
+    bool threw = false;                                       \
+    try {                                                     \
+      source;                                                 \
+    } catch (occa::exception exc) {                           \
       threw = true;                                           \
     }                                                         \
     OCCA_ERROR("Assertion Failed: No occa::exception thrown", \
                threw);                                        \
   } while(0)
-
-#define ASSERT_THROW(source)                    \
-  ASSERT_THROW_START {                          \
-    source                                      \
-  } ASSERT_THROW_END
 
 namespace occa {
   namespace test {

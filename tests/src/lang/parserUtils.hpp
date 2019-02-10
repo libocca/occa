@@ -30,7 +30,7 @@ void parseSource(const std::string &s) {
 
 #define parseAndPrintSource(str_)               \
   parseSource(str_);                            \
-  ASSERT_TRUE(parser.success)                   \
+  ASSERT_TRUE(parser.success);                  \
   {                                             \
     printer pout;                               \
     parser.root.print(pout);                    \
@@ -40,7 +40,7 @@ void parseSource(const std::string &s) {
 
 #define parseBadSource(str_)                    \
   parseSource(str_);                            \
-  ASSERT_FALSE(parser.success)
+  ASSERT_FALSE(parser.success);
 
 template <class smntType>
 smntType& getStatement(const int index = 0) {
@@ -53,14 +53,14 @@ smntType& getStatement(const int index = 0) {
   setSource(str_);                              \
   ASSERT_EQ_BINARY(type_,                       \
                    parser.peek());              \
-  ASSERT_TRUE(parser.success)
+  ASSERT_TRUE(parser.success);
 
 #define setStatement(str_, type_)               \
   parseSource(str_);                            \
   ASSERT_EQ(1,                                  \
             parser.root.size());                \
   ASSERT_EQ_BINARY(type_,                       \
-                   parser.root[0]->type())      \
+                   parser.root[0]->type());     \
   ASSERT_TRUE(parser.success);                  \
   statement = parser.root[0]
 //======================================

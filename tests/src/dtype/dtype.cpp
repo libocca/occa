@@ -58,7 +58,7 @@ void testDtype() {
 
 void testJsonMethods() {
   ASSERT_EQ(occa::dtype::double_.toJson().toString(),
-            occa::json::parse("'double'").toString())
+            occa::json::parse("'double'").toString());
 
   occa::dtype_t foo("foo");
   foo.addField("a", occa::dtype::double_)

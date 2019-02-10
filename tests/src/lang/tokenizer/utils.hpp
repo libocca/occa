@@ -88,7 +88,7 @@ int getTokenType() {
 #define testCharToken(s, encoding_)                 \
   setToken(s);                                      \
   ASSERT_EQ_BINARY(tokenType::char_,                \
-                   getTokenType())                  \
+                   getTokenType());                 \
   ASSERT_EQ_BINARY(encoding_,                       \
                    token->to<charToken>().encoding)
 

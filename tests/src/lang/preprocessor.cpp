@@ -649,9 +649,9 @@ void testOccaPragma() {
   // (
   checkOp(operatorType::parenthesesStart);
   // 16
-  checkPrimitive(16)
+  checkPrimitive(16);
     // ,
-    checkOp(operatorType::comma);
+  checkOp(operatorType::comma);
   // @
   checkOp(operatorType::attribute);
   // outer

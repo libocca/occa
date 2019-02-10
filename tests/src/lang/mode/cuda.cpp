@@ -6,7 +6,7 @@
 #undef parseAndPrintSource
 #define parseAndPrintSource(str_)                                       \
   parseSource(str_);                                                    \
-  ASSERT_TRUE(parser.success)                                           \
+  ASSERT_TRUE(parser.success);                                          \
   {                                                                     \
     printer pout;                                                       \
     parser.hostParser.root.print(pout);                                 \

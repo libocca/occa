@@ -45,6 +45,7 @@ OCCA_LFUNC void OCCA_RFUNC occaDtypeAddField(occaDtype dtype,
 
 OCCA_LFUNC int OCCA_RFUNC occaDtypesAreEqual(occaDtype a,
                                              occaDtype b) {
+  OCCA_FORCE_ERROR("hi");
   return (occa::c::dtype(a) == occa::c::dtype(b));
 }
 

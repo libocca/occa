@@ -853,7 +853,7 @@ void testSwitchLoading() {
   ASSERT_EQ_BINARY(statementType::expression,
                    condition.type());
   ASSERT_EQ(0,
-            switchSmnt.size())
+            switchSmnt.size());
 
     // Weird cases
     setStatement("switch (2) ;",
@@ -861,7 +861,7 @@ void testSwitchLoading() {
   ASSERT_EQ_BINARY(statementType::expression,
                    condition.type());
   ASSERT_EQ(1,
-            switchSmnt.size())
+            switchSmnt.size());
 
     // Weird cases
     setStatement("switch (2) case 2:;",
@@ -869,28 +869,28 @@ void testSwitchLoading() {
   ASSERT_EQ_BINARY(statementType::expression,
                    condition.type());
   ASSERT_EQ(2,
-            switchSmnt.size())
+            switchSmnt.size());
 
     setStatement("switch (2) default:;",
                  statementType::switch_);
   ASSERT_EQ_BINARY(statementType::expression,
                    condition.type());
   ASSERT_EQ(2,
-            switchSmnt.size())
+            switchSmnt.size());
 
     setStatement("switch (2) case 2: 2;",
                  statementType::switch_);
   ASSERT_EQ_BINARY(statementType::expression,
                    condition.type());
   ASSERT_EQ(2,
-            switchSmnt.size())
+            switchSmnt.size());
 
     setStatement("switch (2) default: 2;",
                  statementType::switch_);
   ASSERT_EQ_BINARY(statementType::expression,
                    condition.type());
   ASSERT_EQ(2,
-            switchSmnt.size())
+            switchSmnt.size());
 
     // Test declaration in conditional
     setStatement("switch (int i = 2) {}",

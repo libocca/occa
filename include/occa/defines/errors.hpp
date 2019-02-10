@@ -7,8 +7,8 @@
 //---[ Checks and Info ]----------------
 #define OCCA_TEMPLATE_CHECK_(checkFunction, expr, filename, function, line, message) \
   do {                                                                  \
-    const bool isOK = (bool) (expr);                                    \
-    if (!isOK) {                                                        \
+    const bool isOk = (bool) (expr);                                    \
+    if (!isOk) {                                                        \
       std::stringstream _check_ss;                                      \
       _check_ss << message;                                             \
       checkFunction(filename, function, line, _check_ss.str());         \

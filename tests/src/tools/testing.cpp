@@ -46,45 +46,45 @@ void testAsserts() {
 }
 
 void testFailedAsserts() {
-  ASSERT_THROW_START {
+  ASSERT_THROW({
     ASSERT_LE(2, 1);
-  } ASSERT_THROW_END;
+  });
 
-  ASSERT_THROW_START {
+  ASSERT_THROW({
     ASSERT_LT(2, 1);
-  } ASSERT_THROW_END;
+  });
 
-  ASSERT_THROW_START {
+  ASSERT_THROW({
     ASSERT_GE(1, 2);
-  } ASSERT_THROW_END;
+  });
 
-  ASSERT_THROW_START {
+  ASSERT_THROW({
     ASSERT_GT(1, 2);
-  } ASSERT_THROW_END;
+  });
 
-  ASSERT_THROW_START {
+  ASSERT_THROW({
     ASSERT_EQ(1, 2);
-  } ASSERT_THROW_END;
+  });
 
-  ASSERT_THROW_START {
+  ASSERT_THROW({
     ASSERT_NEQ(1, 1);
-  } ASSERT_THROW_END;
+  });
 
-  ASSERT_THROW_START {
+  ASSERT_THROW({
     ASSERT_EQ_BINARY(1, 2);
-  } ASSERT_THROW_END;
+  });
 
-  ASSERT_THROW_START {
+  ASSERT_THROW({
     ASSERT_NEQ_BINARY(1, 1);
-  } ASSERT_THROW_END;
+  });
 
-  ASSERT_THROW_START {
+  ASSERT_THROW({
     ASSERT_TRUE(1 == 2);
-  } ASSERT_THROW_END;
+  });
 
-  ASSERT_THROW_START {
+  ASSERT_THROW({
     ASSERT_FALSE(1 == 1);
-  } ASSERT_THROW_END;
+  });
 
   std::vector<int> vec;
   vec.push_back(1);
