@@ -23,6 +23,22 @@ namespace occa {
     tuple_(NULL),
     struct_(NULL) {}
 
+  dtype_t::dtype_t(const std::string &name__,
+                   const dtype_t &other,
+                   const bool global_) :
+    ref(NULL),
+    name_(),
+    bytes_(0),
+    global(false),
+    tuple_(NULL),
+    struct_(NULL) {
+
+    *this = other;
+
+    name_ = name__;
+    global = global_;
+  }
+
   dtype_t::dtype_t(const dtype_t &other) :
     ref(NULL),
     name_(),
@@ -158,6 +174,24 @@ namespace occa {
     return *this;
   }
 
+  void dtype_t::setFlattenedDtype() const {
+    const dtype_t &self_ = self();
+    if (!self_.flatDtype.size()) {
+      self_.addFlatDtypes(flatDtype);
+    }
+  }
+
+  void dtype_t::addFlatDtypes(dtypeVector_t &vec) const {
+    const dtype_t &self_ = self();
+    if (self_.struct_) {
+      self_.struct_->addFlatDtypes(vec);
+    } else if (self_.tuple_) {
+      self_.tuple_->addFlatDtypes(vec);
+    } else {
+      vec.push_back(&self_);
+    }
+  }
+
   bool dtype_t::operator == (const dtype_t &other) const {
     return &(self()) == &(other.self());
   }
@@ -197,6 +231,63 @@ namespace occa {
 
     // Shouldn't get here
     return false;
+  }
+
+  bool dtype_t::canBeCastedTo(const dtype_t &other) const {
+    const dtype_t &from = self();
+    const dtype_t &to   = other.self();
+
+    from.setFlattenedDtype();
+    to.setFlattenedDtype();
+
+    const dtypeVector_t &fromVec = from.flatDtype;
+    const int fromEntries = (int) fromVec.size();
+
+    const dtypeVector_t &toVec = to.flatDtype;
+    const int toEntries = (int) toVec.size();
+
+    int entries = fromEntries;
+    // Check if type cycles (e.g. float -> float2)
+    if (fromEntries < toEntries) {
+      if (!isCyclic(toVec, fromEntries)) {
+        return false;
+      }
+      entries = fromEntries;
+    } else if (fromEntries > toEntries) {
+      if (!isCyclic(fromVec, toEntries)) {
+        return false;
+      }
+      entries = toEntries;
+    }
+
+    for (int i = 0; i < entries; ++i) {
+      if (fromVec[i] != toVec[i]) {
+        return false;
+      }
+    }
+
+    return true;
+  }
+
+  bool dtype_t::isCyclic(const dtypeVector_t &vec,
+                         const int cycleLength) {
+    const int size = (int) vec.size();
+    if ((size % cycleLength) != 0) {
+      return false;
+    }
+
+    const int cycles = size / cycleLength;
+    for (int i = 0; i < cycleLength; ++i) {
+      const dtype_t &dtype = *(vec[i]);
+      for (int c = 1; c < cycles; ++c) {
+        const dtype_t &dtype2 = *(vec[i + (c * cycleLength)]);
+        if (dtype != dtype2) {
+          return false;
+        }
+      }
+    }
+
+    return true;
   }
 
   json dtype_t::toJson() const {
@@ -377,6 +468,12 @@ namespace occa {
     return dtype.matches(other.dtype);
   }
 
+  void dtypeTuple_t::addFlatDtypes(dtypeVector_t &vec) const {
+    for (int i = 0; i < size; ++i) {
+      dtype.addFlatDtypes(vec);
+    }
+  }
+
   json dtypeTuple_t::toJson() const {
     // Example:
     //   ['double', 2]
@@ -451,6 +548,16 @@ namespace occa {
     if (!fieldExists) {
       fieldNames.push_back(field);
       fieldTypes[field] = dtype;
+    }
+  }
+
+  void dtypeStruct_t::addFlatDtypes(dtypeVector_t &vec) const {
+    const int entries = (int) fieldNames.size();
+    const std::string *names = &(fieldNames[0]);
+    for (int i = 0; i < entries; ++i) {
+      const std::string &name = names[i];
+      const dtype_t &dtype = fieldTypes.find(name)->second;
+      dtype.addFlatDtypes(vec);
     }
   }
 

@@ -16,6 +16,7 @@ namespace occa {
 
   typedef std::map<std::string, const dtype_t*> dtypeGlobalMap_t;
   typedef std::map<std::string, dtype_t> dtypeNameMap_t;
+  typedef std::vector<const dtype_t*> dtypeVector_t;
 
   class dtype_t {
   private:
@@ -27,12 +28,17 @@ namespace occa {
 
     dtypeTuple_t *tuple_;
     dtypeStruct_t *struct_;
+    mutable dtypeVector_t flatDtype;
 
   public:
     dtype_t();
 
     dtype_t(const std::string &name__,
             const int bytes__ = 0,
+            const bool global_ = false);
+
+    dtype_t(const std::string &name__,
+            const dtype_t &other,
             const bool global_ = false);
 
     dtype_t(const dtype_t &other);
@@ -68,10 +74,18 @@ namespace occa {
                       const int tupleSize_ = 1);
 
     // Dtype methods
+    void setFlattenedDtype() const;
+    void addFlatDtypes(dtypeVector_t &vec) const;
+
     bool operator == (const dtype_t &other) const;
     bool operator != (const dtype_t &other) const;
 
     bool matches(const dtype_t &other) const;
+
+    bool canBeCastedTo(const dtype_t &other) const;
+
+    static bool isCyclic(const dtypeVector_t &vec,
+                         const int cycleLength);
 
     json toJson() const;
 
@@ -107,6 +121,8 @@ namespace occa {
 
     bool matches(const dtypeTuple_t &other) const;
 
+    void addFlatDtypes(dtypeVector_t &vec) const;
+
     json toJson() const;
   };
   //====================================
@@ -133,6 +149,8 @@ namespace occa {
 
     void addField(const std::string &field,
                   const dtype_t &dtype);
+
+    void addFlatDtypes(dtypeVector_t &vec) const;
 
     json toJson() const;
   };

@@ -5,15 +5,23 @@
 #include <occa/tools/exception.hpp>
 #include <occa/tools/sys.hpp>
 
-#define OCCA_ASSERT_ERROR(message, expr)        \
-  do {                                          \
-    try {                                       \
-      const bool assertIsOk = (bool) (expr);    \
-      OCCA_ERROR(message, assertIsOk);          \
-    } catch (occa::exception exc) {             \
-      std::cerr << exc << '\n';                 \
-      OCCA_FORCE_ERROR(message);                \
-    }                                           \
+#define OCCA_ASSERT_ERROR(message, expr)                \
+  do {                                                  \
+    bool exprThrewException = true;                     \
+    try {                                               \
+      const bool assertIsOk = (bool) (expr);            \
+      exprThrewException = false;                       \
+      OCCA_ERROR(message, assertIsOk);                  \
+    } catch (occa::exception exc) {                     \
+      if (exprThrewException) {                         \
+        /* Print expr exception and assert exception*/  \
+        std::cerr << exc << '\n';                       \
+        OCCA_FORCE_ERROR(message);                      \
+      } else {                                          \
+        /* Re-throw exception */                        \
+        throw exc;                                      \
+      }                                                 \
+    }                                                   \
   } while(0)
 
 #define ASSERT_LE(a, b)                                       \

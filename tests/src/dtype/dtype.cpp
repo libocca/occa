@@ -2,10 +2,12 @@
 #include <occa/tools/testing.hpp>
 
 void testDtype();
+void testCasting();
 void testJsonMethods();
 
 int main(const int argc, const char **argv) {
   testDtype();
+  testCasting();
   testJsonMethods();
 
   return 0;
@@ -54,6 +56,43 @@ void testDtype() {
   ASSERT_FALSE(foo1.matches(foo3));
   ASSERT_FALSE(foo1.matches(foo4));
   ASSERT_FALSE(foo3.matches(foo4));
+}
+
+void testCasting() {
+  occa::dtype_t foo1("foo");
+  foo1.addField("a", occa::dtype::double_)
+    .addField("b", occa::dtype::double_);
+
+  occa::dtype_t foo2("foo");
+  foo2.addField("b", occa::dtype::double_)
+    .addField("a", occa::dtype::double_);
+
+  ASSERT_NEQ(foo1, foo2);
+  ASSERT_FALSE(foo1.matches(foo2));
+  ASSERT_TRUE(foo1.canBeCastedTo(foo2));
+  ASSERT_TRUE(foo2.canBeCastedTo(foo1));
+
+  ASSERT_NEQ(occa::dtype::double_,
+             occa::dtype::double2);
+  ASSERT_FALSE(
+    occa::dtype::double_.matches(occa::dtype::double2)
+  );
+  ASSERT_TRUE(
+    occa::dtype::double_.canBeCastedTo(occa::dtype::double2)
+  );
+  ASSERT_TRUE(
+    occa::dtype::double2.canBeCastedTo(occa::dtype::double_)
+  );
+
+  ASSERT_TRUE(
+    occa::dtype::double_.canBeCastedTo(occa::dtype::double3)
+  );
+  ASSERT_FALSE(
+    occa::dtype::double2.canBeCastedTo(occa::dtype::double3)
+  );
+  ASSERT_FALSE(
+    occa::dtype::double3.canBeCastedTo(occa::dtype::double2)
+  );
 }
 
 void testJsonMethods() {
