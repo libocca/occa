@@ -43,7 +43,10 @@ int main(int argc, const char **argv) {
   // Allocate memory on the device
   o_a  = device.malloc(entries, occa::dtype::float_);
   o_b  = device.malloc(entries, occa::dtype::float_);
-  o_ab = device.malloc(entries, occa::dtype::float_);
+
+  // We can also allocate memory without a dtype
+  // WARNING: This will disable runtime type checking
+  o_ab = device.malloc(entries * sizeof(float));
 
   // Compile the kernel at run-time
   addVectors = device.buildKernel("addVectors.okl",

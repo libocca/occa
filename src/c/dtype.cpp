@@ -27,12 +27,29 @@ OCCA_LFUNC occaDtype OCCA_RFUNC occaCreateDtypeTuple(occaDtype dtype,
   );
 }
 
+OCCA_LFUNC occaDtype OCCA_RFUNC occaCreateGlobalDtypeTuple(occaDtype dtype,
+                                                           const int size) {
+  return occa::c::newOccaType(
+    *(new occa::dtype_t(
+        occa::dtype_t::tuple(occa::c::dtype(dtype), size, true)
+      ))
+  );
+}
+
 OCCA_LFUNC const char* OCCA_RFUNC occaDtypeName(occaDtype dtype) {
   return occa::c::dtype(dtype).name().c_str();
 }
 
 OCCA_LFUNC int OCCA_RFUNC occaDtypeBytes(occaDtype dtype) {
   return occa::c::dtype(dtype).bytes();
+}
+
+OCCA_LFUNC void OCCA_RFUNC occaDtypeSetAsGlobal(occaDtype dtype) {
+  occa::c::dtype(dtype).setAsGlobal();
+}
+
+OCCA_LFUNC int OCCA_RFUNC occaDtypeIsGlobal(occaDtype dtype) {
+  return occa::c::dtype(dtype).isGlobal();
 }
 
 OCCA_LFUNC void OCCA_RFUNC occaDtypeAddField(occaDtype dtype,
@@ -45,7 +62,6 @@ OCCA_LFUNC void OCCA_RFUNC occaDtypeAddField(occaDtype dtype,
 
 OCCA_LFUNC int OCCA_RFUNC occaDtypesAreEqual(occaDtype a,
                                              occaDtype b) {
-  OCCA_FORCE_ERROR("hi");
   return (occa::c::dtype(a) == occa::c::dtype(b));
 }
 

@@ -59,7 +59,10 @@ int main(int argc, const char **argv) {
   // Allocate memory on the device
   o_a  = occaDeviceTypedMalloc(device, entries, occaDtypeFloat, NULL, occaDefault);
   o_b  = occaDeviceTypedMalloc(device, entries, occaDtypeFloat, NULL, occaDefault);
-  o_ab = occaDeviceTypedMalloc(device, entries, occaDtypeFloat, NULL, occaDefault);
+
+  // We can also allocate memory without a dtype
+  // WARNING: This will disable runtime type checking
+  o_ab = occaDeviceMalloc(device, entries * sizeof(float), NULL, occaDefault);
 
   // Setup properties that can be passed to the kernel
   occaProperties props = occaCreateProperties();

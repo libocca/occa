@@ -75,6 +75,12 @@ namespace occa {
     return self().bytes_;
   }
 
+  void dtype_t::setAsGlobal() {
+    OCCA_ERROR("Unable to declare dtype references as global",
+               ref == NULL);
+    global = true;
+  }
+
   bool dtype_t::isGlobal() const {
     return global;
   }
@@ -219,10 +225,12 @@ namespace occa {
   }
 
   dtype_t dtype_t::tuple(const dtype_t &dtype,
-                         const int size) {
+                         const int size,
+                         const bool global_) {
     dtype_t newType;
     newType.bytes_ = dtype.bytes_ * size;
     newType.tuple_ = new dtypeTuple_t(dtype, size);
+    newType.global = global_;
     return newType;
   }
 

@@ -48,6 +48,7 @@ namespace occa {
     const std::string& name() const;
     int bytes() const;
 
+    void setAsGlobal();
     bool isGlobal() const;
 
     // Tuple methods
@@ -75,7 +76,8 @@ namespace occa {
     json toJson() const;
 
     static dtype_t tuple(const dtype_t &dtype,
-                         const int size);
+                         const int size,
+                         const bool global_ = false);
 
     static const dtype_t& getBuiltin(const std::string name);
 

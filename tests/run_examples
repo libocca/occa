@@ -16,8 +16,9 @@ declare -a examples=(
     cpp/3_reduction
     cpp/4_building_kernels
     cpp/5_unified_memory
-    cpp/6_arrays
-    cpp/7_streams
+    cpp/6_dtypes
+    cpp/7_arrays
+    cpp/8_streams
     c/1_add_vectors
     c/2_background_device
     c/3_reduction
