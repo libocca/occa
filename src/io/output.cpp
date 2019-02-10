@@ -4,39 +4,39 @@ namespace occa {
   namespace io {
     output::output(std::ostream &out_) :
       out(out_),
-      customOut(NULL) {}
+      overrideOut(NULL) {}
 
-    void output::setOutputFunction(outputFunction_t customOut_) {
-      customOut = customOut_;
+    void output::setOverride(outputFunction_t overrideOut_) {
+      overrideOut = overrideOut_;
     }
 
     template <>
     output& output::operator << (const std::string &str) {
-      if (!customOut) {
+      if (!overrideOut) {
         out << str;
       } else {
-        customOut(str.c_str());
+        overrideOut(str.c_str());
       }
       return *this;
     }
 
     template <>
     output& output::operator << (char * const &c) {
-      if (!customOut) {
+      if (!overrideOut) {
         out << c;
       } else {
-        customOut(c);
+        overrideOut(c);
       }
       return *this;
     }
 
     template <>
     output& output::operator << (const char &c) {
-      if (!customOut) {
+      if (!overrideOut) {
         out << c;
       } else {
         char str[2] = { c, '\0' };
-        customOut(str);
+        overrideOut(str);
       }
       return *this;
     }

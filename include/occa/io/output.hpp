@@ -12,12 +12,12 @@ namespace occa {
     private:
       std::ostream &out;
       std::stringstream ss;
-      outputFunction_t customOut;
+      outputFunction_t overrideOut;
 
     public:
       output(std::ostream &out_);
 
-      void setOutputFunction(outputFunction_t customOut_);
+      void setOverride(outputFunction_t overrideOut_);
 
       template <class TM>
       output& operator << (const TM &t);
