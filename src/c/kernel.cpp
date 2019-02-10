@@ -103,7 +103,7 @@ void OCCA_RFUNC occaKernelVaRun(occaKernel kernel,
 
   for (int i = 0; i < argc; ++i) {
     occaType arg = va_arg(args, occaType);
-    modeKernel.arguments.push_back(
+    modeKernel.pushArgument(
       occa::c::kernelArg(arg)
     );
   }

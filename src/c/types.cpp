@@ -403,16 +403,8 @@ namespace occa {
       case occa::c::typeType::memory: {
         return occa::kernelArg(occa::c::memory(value));
       }
-      case occa::c::typeType::device:
-        OCCA_FORCE_ERROR("Unable to pass an occaDevice as a kernel argument");
-      case occa::c::typeType::kernel:
-        OCCA_FORCE_ERROR("Unable to pass an occaKernel as a kernel argument");
-      case occa::c::typeType::properties:
-        OCCA_FORCE_ERROR("Unable to pass an occaProperties as a kernel argument");
-      case occa::c::typeType::default_:
-        OCCA_FORCE_ERROR("Unable to pass occaDefault as a kernel argument");
       default:
-        OCCA_FORCE_ERROR("A non-occaType argument was passed");
+        OCCA_FORCE_ERROR("An invalid occaType or non-occaType argument was passed");
       }
       return arg;
     }
