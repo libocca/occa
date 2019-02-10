@@ -5,6 +5,7 @@
 #include <vector>
 #include <map>
 
+#include <occa/io/output.hpp>
 #include <occa/lang/tokenContext.hpp>
 
 namespace occa {
@@ -96,14 +97,14 @@ namespace occa {
     };
     //==================================
 
-    std::ostream& operator << (std::ostream &out,
-                               const attributeArg_t &attr);
+    io::output& operator << (io::output &out,
+                             const attributeArg_t &attr);
 
-    std::ostream& operator << (std::ostream &out,
-                               const attributeToken_t &attr);
+    io::output& operator << (io::output &out,
+                             const attributeToken_t &attr);
 
-    std::ostream& operator << (std::ostream &out,
-                               const attributeTokenMap &attributes);
+    io::output& operator << (io::output &out,
+                             const attributeTokenMap &attributes);
   }
 }
 

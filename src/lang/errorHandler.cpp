@@ -8,17 +8,17 @@ namespace occa {
       warnings(0),
       errors(0) {}
 
-    void errorHandler::preprint(std::ostream &out) {}
-    void errorHandler::postprint(std::ostream &out) {}
+    void errorHandler::preprint(io::output &out) {}
+    void errorHandler::postprint(io::output &out) {}
 
-    void errorHandler::printNote(std::ostream &out,
+    void errorHandler::printNote(io::output &out,
                                  const std::string &message) {
       preprint(out);
       occa::printNote(out, message);
       postprint(out);
     }
 
-    void errorHandler::printWarning(std::ostream &out,
+    void errorHandler::printWarning(io::output &out,
                                     const std::string &message) {
       ++warnings;
       preprint(out);
@@ -26,7 +26,7 @@ namespace occa {
       postprint(out);
     }
 
-    void errorHandler::printError(std::ostream &out,
+    void errorHandler::printError(io::output &out,
                                   const std::string &message) {
       ++errors;
       preprint(out);

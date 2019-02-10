@@ -166,11 +166,11 @@ namespace occa {
       outputCache.clear();
     }
 
-    void tokenizer_t::preprint(std::ostream &out) {
+    void tokenizer_t::preprint(io::output &out) {
       origin.preprint(out);
     }
 
-    void tokenizer_t::postprint(std::ostream &out) {
+    void tokenizer_t::postprint(io::output &out) {
       origin.postprint(out);
     }
 

@@ -5,6 +5,7 @@
 #include <map>
 #include <vector>
 
+#include <occa/io/output.hpp>
 #include <occa/tools/json.hpp>
 #include <occa/types/typedefs.hpp>
 
@@ -99,11 +100,11 @@ namespace occa {
     static dtype_t fromJson(const json &j);
 
     friend std::ostream& operator << (std::ostream &out,
-                                      const dtype_t &dtype);
+                                    const dtype_t &dtype);
   };
 
   std::ostream& operator << (std::ostream &out,
-                             const dtype_t &dtype);
+                           const dtype_t &dtype);
 
 
   //---[ Tuple ]------------------------

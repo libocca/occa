@@ -249,7 +249,7 @@ namespace occa {
     void tokenContext::printWarning(const std::string &message) {
       token_t *token = getPrintToken(false);
       if (!token) {
-        occa::printWarning(std::cerr, "[No Token] " + message);
+        occa::printWarning(io::stderr, "[No Token] " + message);
       } else {
         token->printWarning(message);
       }
@@ -258,7 +258,7 @@ namespace occa {
     void tokenContext::printWarningAtEnd(const std::string &message) {
       token_t *token = getPrintToken(true);
       if (!token) {
-        occa::printWarning(std::cerr, "[No Token] " + message);
+        occa::printWarning(io::stderr, "[No Token] " + message);
       } else {
         token->printWarning(message);
       }
@@ -267,7 +267,7 @@ namespace occa {
     void tokenContext::printError(const std::string &message) {
       token_t *token = getPrintToken(false);
       if (!token) {
-        occa::printError(std::cerr, "[No Token] " + message);
+        occa::printError(io::stderr, "[No Token] " + message);
       } else {
         token->printError(message);
       }
@@ -276,7 +276,7 @@ namespace occa {
     void tokenContext::printErrorAtEnd(const std::string &message) {
       token_t *token = getPrintToken(true);
       if (!token) {
-        occa::printError(std::cerr, "[No Token] " + message);
+        occa::printError(io::stderr, "[No Token] " + message);
       } else {
         token->printError(message);
       }
@@ -341,7 +341,7 @@ namespace occa {
 
     void tokenContext::debugPrint() {
       for (int i = tp.start; i < tp.end; ++i) {
-        std::cout << '[' << *tokens[i] << "]\n";
+        io::stdout << '[' << *tokens[i] << "]\n";
       }
     }
   }

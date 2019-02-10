@@ -63,8 +63,8 @@ namespace occa {
 
       void clear();
 
-      virtual void preprint(std::ostream &out);
-      virtual void postprint(std::ostream &out);
+      virtual void preprint(io::output &out);
+      virtual void postprint(io::output &out);
 
       void setLine(const int line);
 

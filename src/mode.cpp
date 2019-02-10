@@ -1,5 +1,6 @@
-#include <occa/mode.hpp>
 #include <occa/core/device.hpp>
+#include <occa/io/output.hpp>
+#include <occa/mode.hpp>
 
 namespace occa {
   strToModeMap& modeMap() {
@@ -20,9 +21,9 @@ namespace occa {
     const bool noMode = !mode.size();
     if (noMode || !modeIsEnabled(mode)) {
       if (noMode) {
-        std::cerr << "No OCCA mode given, defaulting to [Serial] mode\n";
+        io::stderr << "No OCCA mode given, defaulting to [Serial] mode\n";
       } else {
-        std::cerr << "[" << mode << "] mode is not enabled, defaulting to [Serial] mode\n";
+        io::stderr << "[" << mode << "] mode is not enabled, defaulting to [Serial] mode\n";
       }
       mode = "Serial";
     }

@@ -348,37 +348,37 @@ namespace occa {
       "leafCount  : ",
       "valueIndex : "
     };
-    std::cout << headers[0];
+    io::stdout << headers[0];
     for (int i = 0; i < nodeCount; ++i) {
       std::string spaces(i < 10 ? 2 : ((i < 100) ? 1 : 0), ' ');
-      std::cout << i << ' ' << spaces;
+      io::stdout << i << ' ' << spaces;
     }
-    std::cout << '\n' << headers[1];
+    io::stdout << '\n' << headers[1];
     for (int i = 0; i < nodeCount; ++i) {
-      std::cout << chars[i] << "   ";
+      io::stdout << chars[i] << "   ";
     }
-    std::cout << '\n' << headers[2];
+    io::stdout << '\n' << headers[2];
     for (int i = 0; i < nodeCount; ++i) {
       const int offset = offsets[i];
       std::string spaces(offset < 10 ? 2 : ((offset < 100) ? 1 : 0), ' ');
-      std::cout << offsets[i] << ' ' << spaces;
+      io::stdout << offsets[i] << ' ' << spaces;
     }
-    std::cout << '\n' << headers[3];
+    io::stdout << '\n' << headers[3];
     for (int i = 0; i < nodeCount; ++i) {
       const int lcount = leafCount[i];
       std::string spaces(lcount < 10 ? 2 : ((lcount < 100) ? 1 : 0), ' ');
-      std::cout << leafCount[i] << ' ' << spaces;
+      io::stdout << leafCount[i] << ' ' << spaces;
     }
-    std::cout << '\n' << headers[4];
+    io::stdout << '\n' << headers[4];
     for (int i = 0; i < nodeCount; ++i) {
       const int valueIndex = valueIndices[i];
       std::string spaces(valueIndex < 10 ? 2 : ((valueIndex < 100) ? 1 : 0), ' ');
       if (valueIndex < 0) {
         spaces = spaces.substr(1);
       }
-      std::cout << valueIndex << ' ' << spaces;
+      io::stdout << valueIndex << ' ' << spaces;
     }
-    std::cout << '\n';
+    io::stdout << '\n';
     isFrozen = wasFrozen;
   }
   //====================================

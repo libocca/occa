@@ -75,7 +75,7 @@ namespace occa {
     void keyword_t::deleteSource() {}
 
     void keyword_t::printError(const std::string &message) {
-      occa::printError(std::cerr, message);
+      occa::printError(io::stderr, message);
     }
 
     int keyword_t::safeType(keyword_t *keyword) {

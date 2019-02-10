@@ -4,6 +4,7 @@
 #include <stack>
 #include <vector>
 
+#include <occa/io/output.hpp>
 #include <occa/lang/primitive.hpp>
 #include <occa/lang/printer.hpp>
 #include <occa/lang/token.hpp>
@@ -133,8 +134,8 @@ namespace occa {
       void childDebugPrint(const std::string &prefix) const;
     };
 
-    std::ostream& operator << (std::ostream &out,
-                               const exprNode &node);
+    io::output& operator << (io::output &out,
+                             const exprNode &node);
 
     printer& operator << (printer &pout,
                           const exprNode &node);

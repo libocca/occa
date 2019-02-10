@@ -113,27 +113,29 @@ namespace occa {
       return to<operatorToken>().opType();
     }
 
-    void token_t::preprint(std::ostream &out) {
+    void token_t::preprint(io::output &out) {
       origin.preprint(out);
     }
 
-    void token_t::postprint(std::ostream &out) {
+    void token_t::postprint(io::output &out) {
       origin.postprint(out);
     }
 
     std::string token_t::str() const {
       std::stringstream ss;
-      print(ss);
+      io::output out(ss);
+      print(out);
       return ss.str();
     }
 
     void token_t::debugPrint() const {
-      std::cerr << '[';
-      print(std::cerr);
-      std::cerr << "]\n";
+      io::stderr << '[';
+      print(io::stderr);
+      io::stderr << "]\n";
     }
 
-    std::ostream& operator << (std::ostream &out, token_t &token) {
+    io::output& operator << (io::output &out,
+                             token_t &token) {
       token.print(out);
       return out;
     }
@@ -152,7 +154,7 @@ namespace occa {
       return new unknownToken(origin);
     }
 
-    void unknownToken::print(std::ostream &out) const {
+    void unknownToken::print(io::output &out) const {
       out << origin.position.start[0];
     }
     //==================================
@@ -171,7 +173,7 @@ namespace occa {
       return new newlineToken(origin);
     }
 
-    void newlineToken::print(std::ostream &out) const {
+    void newlineToken::print(io::output &out) const {
       out << '\n';
     }
     //==================================
@@ -192,7 +194,7 @@ namespace occa {
       return new directiveToken(origin, value);
     }
 
-    void directiveToken::print(std::ostream &out) const {
+    void directiveToken::print(io::output &out) const {
       out << '#' << value << '\n';
     }
     //==================================
@@ -213,7 +215,7 @@ namespace occa {
       return new pragmaToken(origin, value);
     }
 
-    void pragmaToken::print(std::ostream &out) const {
+    void pragmaToken::print(io::output &out) const {
       out << "#pragma " << value << '\n';
     }
     //==================================
@@ -234,7 +236,7 @@ namespace occa {
       return new identifierToken(origin, value);
     }
 
-    void identifierToken::print(std::ostream &out) const {
+    void identifierToken::print(io::output &out) const {
       out << value;
     }
     //==================================
@@ -255,7 +257,7 @@ namespace occa {
       return new qualifierToken(origin, qualifier);
     }
 
-    void qualifierToken::print(std::ostream &out) const {
+    void qualifierToken::print(io::output &out) const {
       out << qualifier.name;
     }
     //==================================
@@ -263,8 +265,8 @@ namespace occa {
     //---[ Type ]-----------------------
     typeToken::typeToken(const fileOrigin &origin_,
                          type_t &type_) :
-    token_t(origin_),
-    value(type_) {}
+      token_t(origin_),
+      value(type_) {}
 
     typeToken::~typeToken() {}
 
@@ -276,7 +278,7 @@ namespace occa {
       return new typeToken(origin, value);
     }
 
-    void typeToken::print(std::ostream &out) const {
+    void typeToken::print(io::output &out) const {
       out << value.name();
     }
     //==================================
@@ -297,7 +299,7 @@ namespace occa {
       return new vartypeToken(origin, value);
     }
 
-    void vartypeToken::print(std::ostream &out) const {
+    void vartypeToken::print(io::output &out) const {
       out << value;
     }
     //==================================
@@ -318,7 +320,7 @@ namespace occa {
       return new variableToken(origin, value);
     }
 
-    void variableToken::print(std::ostream &out) const {
+    void variableToken::print(io::output &out) const {
       out << value.name();
     }
     //==================================
@@ -339,7 +341,7 @@ namespace occa {
       return new functionToken(origin, value);
     }
 
-    void functionToken::print(std::ostream &out) const {
+    void functionToken::print(io::output &out) const {
       out << value.name();
     }
     //==================================
@@ -362,7 +364,7 @@ namespace occa {
       return new primitiveToken(origin, value, strValue);
     }
 
-    void primitiveToken::print(std::ostream &out) const {
+    void primitiveToken::print(io::output &out) const {
       out << strValue;
     }
     //==================================
@@ -387,7 +389,7 @@ namespace occa {
       return new operatorToken(origin, *op);
     }
 
-    void operatorToken::print(std::ostream &out) const {
+    void operatorToken::print(io::output &out) const {
       out << op->str;
     }
     //==================================
@@ -412,7 +414,7 @@ namespace occa {
       return new charToken(origin, encoding, value, udf);
     }
 
-    void charToken::print(std::ostream &out) const {
+    void charToken::print(io::output &out) const {
       if (encoding & encodingType::u) {
         out << 'u';
       } else if (encoding & encodingType::U) {
@@ -460,7 +462,7 @@ namespace occa {
       udf = token.udf;
     }
 
-    void stringToken::print(std::ostream &out) const {
+    void stringToken::print(io::output &out) const {
       if (encoding & encodingType::ux) {
         if (encoding & encodingType::u8) {
           out << "u8";
@@ -492,9 +494,11 @@ namespace occa {
     std::string stringifyTokens(tokenVector &tokens,
                                 const bool addSpaces) {
       std::stringstream ss;
+      io::output out(ss);
+
       const int tokenCount = (int) tokens.size();
       for (int i = 0; i < tokenCount; ++i) {
-        tokens[i]->print(ss);
+        tokens[i]->print(out);
         // We don't add spaces between adjacent tokens
         // For example, .. would normaly turn to ". ."
         if (addSpaces              &&

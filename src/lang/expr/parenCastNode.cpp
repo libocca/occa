@@ -49,11 +49,11 @@ namespace occa {
     }
 
     void parenCastNode::debugPrint(const std::string &prefix) const {
-      printer pout(std::cerr);
-      std::cerr << prefix << "|\n"
+      printer pout(io::stderr);
+      io::stderr << prefix << "|\n"
                 << prefix << "|---[";
       pout << valueType;
-      std::cerr << "] (parenCast)\n";
+      io::stderr << "] (parenCast)\n";
       value->childDebugPrint(prefix);
     }
   }

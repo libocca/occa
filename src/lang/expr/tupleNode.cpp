@@ -60,8 +60,8 @@ namespace occa {
     }
 
     void tupleNode::debugPrint(const std::string &prefix) const {
-      printer pout(std::cerr);
-      std::cerr << prefix << "|\n"
+      printer pout(io::stderr);
+      io::stderr << prefix << "|\n"
                 << prefix << "|---(tuple)\n";
       for (int i = 0; i < ((int) args.size()); ++i) {
         args[i]->childDebugPrint(prefix);

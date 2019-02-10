@@ -4,6 +4,7 @@
 #include <vector>
 #include <map>
 
+#include <occa/io/output.hpp>
 #include <occa/lang/primitive.hpp>
 #include <occa/tools/hash.hpp>
 #include <occa/tools/lex.hpp>
@@ -580,14 +581,14 @@ namespace occa {
     std::string toString() const;
 
     friend std::ostream& operator << (std::ostream &out,
-                                      const json &j);
+                                    const json &j);
   };
 
   template <>
   hash_t hash(const occa::json &json);
 
   std::ostream& operator << (std::ostream &out,
-                             const json &j);
+                           const json &j);
 }
 
 #include "json.tpp"

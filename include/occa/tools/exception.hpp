@@ -3,6 +3,9 @@
 
 #include <stdexcept>
 
+#include <occa/io/output.hpp>
+
+
 namespace occa {
   class exception : public std::exception {
   public:
@@ -29,7 +32,7 @@ namespace occa {
   };
 
   std::ostream& operator << (std::ostream& out,
-                             exception &exc);
+                             const exception &exc);
 }
 
 #endif

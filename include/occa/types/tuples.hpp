@@ -192,11 +192,9 @@ namespace occa {
   }
 
   template <class TM>
-  inline std::ostream& operator << (std::ostream &out, const type2<TM>& a) {
-    out << "["
-        << a.x << ", "
-        << a.y
-        << "]\n";
+  inline std::ostream& operator << (std::ostream &out,
+                                  const type2<TM>& a) {
+    out << "[" << a.x << ", " << a.y << "]\n";
     return out;
   }
   //====================================
@@ -421,13 +419,9 @@ namespace occa {
   }
 
   template <class TM>
-  inline std::ostream& operator << (std::ostream &out, const type4<TM>& a) {
-    out << "["
-        << a.x << ", "
-        << a.y << ", "
-        << a.z << ", "
-        << a.w
-        << "]\n";
+  inline std::ostream& operator << (std::ostream &out,
+                                  const type4<TM>& a) {
+    out << "[" << a.x << ", " << a.y << ", " << a.z << ", " << a.w << "]\n";
     return out;
   }
   //====================================

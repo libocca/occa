@@ -82,11 +82,11 @@ namespace occa {
     }
 
     void binaryOpNode::debugPrint(const std::string &prefix) const {
-      printer pout(std::cerr);
-      std::cerr << prefix << "|\n"
+      printer pout(io::stderr);
+      io::stderr << prefix << "|\n"
                 << prefix << "|---[";
       pout << op;
-      std::cerr << "] (binary)\n";
+      io::stderr << "] (binary)\n";
       leftValue->childDebugPrint(prefix);
       rightValue->childDebugPrint(prefix);
     }

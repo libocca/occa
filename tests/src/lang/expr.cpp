@@ -189,7 +189,7 @@ void testPoutPrint() {
   args.push_back(&two);
   args.push_back(&three);
 
-  printer pout(std::cerr);
+  printer pout(io::stderr);
 
   std::cerr << "\n---[ Testing pout Printing ]----------------------\n";
 

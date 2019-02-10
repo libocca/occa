@@ -170,7 +170,7 @@ namespace occa {
     }
     //==================================
 
-    std::ostream& operator << (std::ostream &out,
+    io::output& operator << (io::output &out,
                                const attributeArg_t &attr) {
       if (attr.expr) {
         out << *(attr.expr);
@@ -182,7 +182,7 @@ namespace occa {
       return out;
     }
 
-    std::ostream& operator << (std::ostream &out,
+    io::output& operator << (io::output &out,
                                const attributeToken_t &attr) {
       out << '@' << attr.name();
 
@@ -213,7 +213,7 @@ namespace occa {
       return out;
     }
 
-    std::ostream& operator << (std::ostream &out,
+    io::output& operator << (io::output &out,
                                const attributeTokenMap &attributes) {
       attributeTokenMap::const_iterator it = attributes.begin();
       while (it != attributes.end()) {

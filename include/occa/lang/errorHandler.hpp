@@ -1,6 +1,8 @@
 #ifndef OCCA_LANG_ERRORHANDLER_HEADER
 #define OCCA_LANG_ERRORHANDLER_HEADER
 
+#include <occa/io/output.hpp>
+
 namespace occa {
   namespace lang {
     class errorHandler {
@@ -9,28 +11,28 @@ namespace occa {
 
       errorHandler();
 
-      virtual void preprint(std::ostream &out);
-      virtual void postprint(std::ostream &out);
+      virtual void preprint(io::output &out);
+      virtual void postprint(io::output &out);
 
-      void printNote(std::ostream &out,
+      void printNote(io::output &out,
                      const std::string &message);
 
       inline void printNote(const std::string &message){
-        printNote(std::cerr, message);
+        printNote(io::stderr, message);
       }
 
-      void printWarning(std::ostream &out,
+      void printWarning(io::output &out,
                         const std::string &message);
 
       inline void printWarning(const std::string &message) {
-        printWarning(std::cerr, message);
+        printWarning(io::stderr, message);
       }
 
-      void printError(std::ostream &out,
+      void printError(io::output &out,
                       const std::string &message);
 
       inline void printError(const std::string &message) {
-        printError(std::cerr, message);
+        printError(io::stderr, message);
       }
     };
   }

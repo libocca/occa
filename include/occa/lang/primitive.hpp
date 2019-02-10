@@ -9,6 +9,7 @@
 #include <stdlib.h>
 
 #include <occa/defines.hpp>
+#include <occa/io/output.hpp>
 #include <occa/tools/string.hpp>
 #include <occa/tools/sys.hpp>
 
@@ -318,7 +319,8 @@ namespace occa {
 
     std::string toString() const;
 
-    friend std::ostream& operator << (std::ostream &out, const primitive &p);
+    friend io::output& operator << (io::output &out,
+                                    const primitive &p);
 
     //---[ Misc Methods ]-----------------
     uint64_t sizeof_();

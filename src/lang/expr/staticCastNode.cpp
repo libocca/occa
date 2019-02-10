@@ -42,11 +42,11 @@ namespace occa {
     }
 
     void staticCastNode::debugPrint(const std::string &prefix) const {
-      printer pout(std::cerr);
-      std::cerr << prefix << "|\n"
+      printer pout(io::stderr);
+      io::stderr << prefix << "|\n"
                 << prefix << "|---[";
       pout << valueType;
-      std::cerr << "] (staticCast)\n";
+      io::stderr << "] (staticCast)\n";
       value->childDebugPrint(prefix);
     }
   }

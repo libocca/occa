@@ -95,9 +95,9 @@ namespace occa {
         if ((align != 0) && ((align & (~align + 1)) == align)) {
           OCCA_MEM_BYTE_ALIGN = align;
         } else {
-          std::cout << "Environment variable [OCCA_MEM_BYTE_ALIGN ("
-                    << align << ")] is not a power of two, defaulting to "
-                    << OCCA_DEFAULT_MEM_BYTE_ALIGN << '\n';
+          io::stdout << "Environment variable [OCCA_MEM_BYTE_ALIGN ("
+                     << align << ")] is not a power of two, defaulting to "
+                     << OCCA_DEFAULT_MEM_BYTE_ALIGN << '\n';
         }
       }
     }

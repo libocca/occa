@@ -5,6 +5,8 @@
 #include <iostream>
 #include <vector>
 
+#include <occa/io/output.hpp>
+
 namespace occa {
   namespace lang {
     int charsFromNewline(const std::string &s);
@@ -12,7 +14,7 @@ namespace occa {
     class printer {
     private:
       std::stringstream ss;
-      std::ostream *outputStream;
+      io::output *out;
 
       std::string indent;
       std::vector<int> inlinedStack;
@@ -23,9 +25,9 @@ namespace occa {
 
     public:
       printer();
-      printer(std::ostream &outputStream_);
+      printer(io::output &out_);
 
-      void setOutputStream(std::ostream &outputStream_);
+      void setOutput(io::output &out_);
 
       int size();
 
@@ -66,7 +68,11 @@ namespace occa {
               charsFromNewline = 0;
             }
           }
-          *outputStream << str;
+          if (out) {
+            *out << str;
+          } else {
+            ss << str;
+          }
         }
       }
     };

@@ -1,6 +1,7 @@
 #ifndef OCCA_TYPES_DIM_HEADER
 #define OCCA_TYPES_DIM_HEADER
 
+#include <occa/io/output.hpp>
 #include <occa/types/typedefs.hpp>
 
 namespace occa {
@@ -29,7 +30,7 @@ namespace occa {
   };
 
   std::ostream& operator << (std::ostream &out,
-                             const dim &d);
+                           const dim &d);
 }
 
 #endif

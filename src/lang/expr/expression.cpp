@@ -33,17 +33,17 @@ namespace occa {
     }
 
     void expressionScopedState::debugPrint() {
-      std::cout << "Outputs:\n";
+      io::stdout << "Outputs:\n";
       exprNodeList::iterator it = output.begin();
       while (it != output.end()) {
         (*it)->debugPrint();
         ++it;
       }
 
-      std::cout << "Operators:\n";
+      io::stdout << "Operators:\n";
       operatorList::iterator itOp = operators.begin();
       while (itOp != operators.end()) {
-        std::cout << '[' << *((*itOp)->token) << "]\n";
+        io::stdout << '[' << *((*itOp)->token) << "]\n";
         ++itOp;
       }
     }
@@ -151,16 +151,16 @@ namespace occa {
     }
 
     void expressionState::debugPrint() {
-      std::cout << "\n---[ Scopes ]---------------------------\n";
+      io::stdout << "\n---[ Scopes ]---------------------------\n";
       scopedStateList::iterator it = scopedStates.begin();
       while (it != scopedStates.end()) {
         it->debugPrint();
         ++it;
         if (it != scopedStates.end()) {
-          std::cout << " - - - - - - - - - - - - - - - - - - - -\n";
+          io::stdout << " - - - - - - - - - - - - - - - - - - - -\n";
         }
       }
-      std::cout << "========================================\n";
+      io::stdout << "========================================\n";
     }
     //==================================
 

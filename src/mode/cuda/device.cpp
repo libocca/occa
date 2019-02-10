@@ -223,11 +223,11 @@ namespace occa {
       const bool verbose = kernelProps.get("verbose", false);
       if (foundBinary) {
         if (verbose) {
-          std::cout << "Loading cached ["
-                    << kernelName
-                    << "] from ["
-                    << io::shortname(filename)
-                    << "] in [" << io::shortname(binaryFilename) << "]\n";
+          io::stdout << "Loading cached ["
+                     << kernelName
+                     << "] from ["
+                     << io::shortname(filename)
+                     << "] in [" << io::shortname(binaryFilename) << "]\n";
         }
         if (usingOKL) {
           lang::kernelMetadataMap hostMetadata = (
@@ -394,7 +394,7 @@ namespace occa {
       }
       const std::string &ptxCommand = command.str();
       if (verbose) {
-        std::cout << "Compiling [" << kernelName << "]\n" << ptxCommand << "\n";
+        io::stdout << "Compiling [" << kernelName << "]\n" << ptxCommand << "\n";
       }
 
 #if (OCCA_OS & (OCCA_LINUX_OS | OCCA_MACOS_OS))
@@ -422,7 +422,7 @@ namespace occa {
       }
       const std::string &sCommand = command.str();
       if (verbose) {
-        std::cout << sCommand << '\n';
+        io::stdout << sCommand << '\n';
       }
 
       const int compileError = system(sCommand.c_str());

@@ -35,11 +35,11 @@ namespace occa {
     }
 
     void exprOpNode::debugPrint(const std::string &prefix) const {
-      printer pout(std::cerr);
-      std::cerr << prefix << "|\n"
+      printer pout(io::stderr);
+      io::stderr << prefix << "|\n"
                 << prefix << "|---[";
       pout << op;
-      std::cerr << "] (exprOpNode)\n";
+      io::stderr << "] (exprOpNode)\n";
     }
   }
 }

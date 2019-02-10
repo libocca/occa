@@ -61,11 +61,11 @@ namespace occa {
     }
 
     void newNode::debugPrint(const std::string &prefix) const {
-      printer pout(std::cerr);
-      std::cerr << prefix << "|\n"
+      printer pout(io::stderr);
+      io::stderr << prefix << "|\n"
                 << prefix << "|---[";
       pout << valueType;
-      std::cerr << "] (new)\n";
+      io::stderr << "] (new)\n";
       value->childDebugPrint(prefix);
       size->childDebugPrint(prefix);
     }

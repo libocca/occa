@@ -44,11 +44,11 @@ namespace occa {
     }
 
     void sizeofNode::debugPrint(const std::string &prefix) const {
-      printer pout(std::cerr);
-      std::cerr << prefix << '\n'
+      printer pout(io::stderr);
+      io::stderr << prefix << '\n'
                 << prefix << "|---[";
       pout << *value;
-      std::cerr << "] (sizeof)\n";
+      io::stderr << "] (sizeof)\n";
     }
   }
 }

@@ -33,9 +33,11 @@ int main(const int argc, const char **argv) {
                           c_line,
                           c_line + bar,
                           c_line + bar + 3));
-  orig.print(std::cout);
+
+  orig.print(occa::io::stdout);
   std::cout << "Test message\n\n";
-  orig2.print(std::cout);
+
+  orig2.print(occa::io::stdout);
   std::cout << "Test message 2\n";
 
   return 0;

@@ -276,15 +276,15 @@ namespace occa {
       }
       if (verbose) {
         if (lock.isInitialized()) {
-          std::cout << "OpenCL compiling " << kernelName
-                    << " from [" << sourceFile << "]";
+          io::stdout << "OpenCL compiling " << kernelName
+                     << " from [" << sourceFile << "]";
 
           if (compilerFlags.size()) {
-            std::cout << " with compiler flags [" << compilerFlags << "]";
+            io::stdout << " with compiler flags [" << compilerFlags << "]";
           }
-          std::cout << '\n';
+          io::stdout << '\n';
         } else {
-          std::cout << "OpenCL compiling " << kernelName << '\n';
+          io::stdout << "OpenCL compiling " << kernelName << '\n';
         }
       }
 
@@ -356,10 +356,10 @@ namespace occa {
                             logError);
           log[logSize] = '\0';
 
-          std::cout << "Kernel ["
-                    << kernelName
-                    << "]: Build Log\n"
-                    << log;
+          io::stdout << "Kernel ["
+                     << kernelName
+                     << "]: Build Log\n"
+                     << log;
 
           delete [] log;
         }

@@ -56,10 +56,10 @@ namespace occa {
     }
 
     void cudaCallNode::debugPrint(const std::string &prefix) const {
-      printer pout(std::cerr);
-      std::cerr << prefix << "|\n"
+      printer pout(io::stderr);
+      io::stderr << prefix << "|\n"
                 << prefix << "|---[<<<...>>>";
-      std::cerr << "] (cudaCall)\n";
+      io::stderr << "] (cudaCall)\n";
       value->childDebugPrint(prefix);
       blocks->childDebugPrint(prefix);
       threads->childDebugPrint(prefix);

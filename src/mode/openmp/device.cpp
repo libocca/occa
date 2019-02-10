@@ -2,10 +2,11 @@
 
 #if OCCA_OPENMP_ENABLED
 
+#include <occa/io/output.hpp>
+#include <occa/lang/mode/openmp.hpp>
 #include <occa/mode/serial/device.hpp>
 #include <occa/mode/openmp/device.hpp>
 #include <occa/mode/openmp/utils.hpp>
-#include <occa/lang/mode/openmp.hpp>
 
 namespace occa {
   namespace openmp {
@@ -68,8 +69,8 @@ namespace occa {
         lastCompilerOpenMPFlag = openmp::compilerFlag(vendor, compiler);
 
         if (lastCompilerOpenMPFlag == openmp::notSupported) {
-          std::cerr << "Compiler [" << (std::string) allKernelProps["compiler"]
-                    << "] does not support OpenMP, defaulting to [Serial] mode\n";
+          io::stderr << "Compiler [" << (std::string) allKernelProps["compiler"]
+                     << "] does not support OpenMP, defaulting to [Serial] mode\n";
         }
       }
 

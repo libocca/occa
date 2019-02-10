@@ -95,7 +95,7 @@ namespace occa {
 
     void type_t::printWarning(const std::string &message) const {
       if (!source) {
-        occa::printWarning(std::cerr, "[No Token] " + message);
+        occa::printWarning(io::stderr, "[No Token] " + message);
       } else {
         source->printWarning(message);
       }
@@ -103,13 +103,13 @@ namespace occa {
 
     void type_t::printError(const std::string &message) const {
       if (!source) {
-        occa::printError(std::cerr, "[No Token] " + message);
+        occa::printError(io::stderr, "[No Token] " + message);
       } else {
         source->printError(message);
       }
     }
 
-    std::ostream& operator << (std::ostream &out,
+    io::output& operator << (io::output &out,
                                const type_t &type) {
       printer pout(out);
       pout << type;
@@ -157,7 +157,7 @@ namespace occa {
       qualifiers.add(qualifier);
     }
 
-    std::ostream& operator << (std::ostream &out,
+    io::output& operator << (io::output &out,
                                const pointer_t &pointer) {
       printer pout(out);
       pout << pointer;
@@ -231,7 +231,7 @@ namespace occa {
       start->printError(message);
     }
 
-    std::ostream& operator << (std::ostream &out,
+    io::output& operator << (io::output &out,
                                const array_t &array) {
       printer pout(out);
       pout << array;
@@ -614,7 +614,7 @@ namespace occa {
       }
     }
 
-    std::ostream& operator << (std::ostream &out,
+    io::output& operator << (io::output &out,
                                const vartype_t &type) {
       printer pout(out);
       pout << type;

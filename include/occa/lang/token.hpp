@@ -2,7 +2,6 @@
 #define OCCA_LANG_TOKEN_HEADER
 
 #include <occa/io.hpp>
-
 #include <occa/lang/errorHandler.hpp>
 #include <occa/lang/file.hpp>
 #include <occa/lang/type.hpp>
@@ -108,17 +107,17 @@ namespace occa {
 
       opType_t getOpType();
 
-      virtual void print(std::ostream &out) const = 0;
+      virtual void print(io::output &out) const = 0;
 
-      void preprint(std::ostream &out);
-      void postprint(std::ostream &out);
+      void preprint(io::output &out);
+      void postprint(io::output &out);
 
       std::string str() const;
       void debugPrint() const;
     };
 
-    std::ostream& operator << (std::ostream &out,
-                               token_t &token);
+    io::output& operator << (io::output &out,
+                             token_t &token);
 
     //---[ Unknown ]--------------------
     class unknownToken : public token_t {
@@ -133,7 +132,7 @@ namespace occa {
 
       virtual token_t* clone() const;
 
-      virtual void print(std::ostream &out) const;
+      virtual void print(io::output &out) const;
     };
     //==================================
 
@@ -148,7 +147,7 @@ namespace occa {
 
       virtual token_t* clone() const;
 
-      virtual void print(std::ostream &out) const;
+      virtual void print(io::output &out) const;
     };
     //==================================
 
@@ -166,7 +165,7 @@ namespace occa {
 
       virtual token_t* clone() const;
 
-      virtual void print(std::ostream &out) const;
+      virtual void print(io::output &out) const;
     };
     //==================================
 
@@ -184,7 +183,7 @@ namespace occa {
 
       virtual token_t* clone() const;
 
-      virtual void print(std::ostream &out) const;
+      virtual void print(io::output &out) const;
     };
     //==================================
 
@@ -202,7 +201,7 @@ namespace occa {
 
       virtual token_t* clone() const;
 
-      virtual void print(std::ostream &out) const;
+      virtual void print(io::output &out) const;
     };
     //==================================
 
@@ -220,7 +219,7 @@ namespace occa {
 
       virtual token_t* clone() const;
 
-      virtual void print(std::ostream &out) const;
+      virtual void print(io::output &out) const;
     };
     //==================================
 
@@ -238,7 +237,7 @@ namespace occa {
 
       virtual token_t* clone() const;
 
-      virtual void print(std::ostream &out) const;
+      virtual void print(io::output &out) const;
     };
     //==================================
 
@@ -256,7 +255,7 @@ namespace occa {
 
       virtual token_t* clone() const;
 
-      virtual void print(std::ostream &out) const;
+      virtual void print(io::output &out) const;
     };
     //==================================
 
@@ -274,7 +273,7 @@ namespace occa {
 
       virtual token_t* clone() const;
 
-      virtual void print(std::ostream &out) const;
+      virtual void print(io::output &out) const;
     };
     //==================================
 
@@ -292,7 +291,7 @@ namespace occa {
 
       virtual token_t* clone() const;
 
-      virtual void print(std::ostream &out) const;
+      virtual void print(io::output &out) const;
     };
     //==================================
 
@@ -312,7 +311,7 @@ namespace occa {
 
       virtual token_t* clone() const;
 
-      virtual void print(std::ostream &out) const;
+      virtual void print(io::output &out) const;
     };
     //==================================
 
@@ -332,7 +331,7 @@ namespace occa {
 
       virtual token_t* clone() const;
 
-      virtual void print(std::ostream &out) const;
+      virtual void print(io::output &out) const;
     };
     //==================================
 
@@ -354,7 +353,7 @@ namespace occa {
 
       virtual token_t* clone() const;
 
-      virtual void print(std::ostream &out) const;
+      virtual void print(io::output &out) const;
     };
     //==================================
 
@@ -381,7 +380,7 @@ namespace occa {
 
       void append(const stringToken &token);
 
-      virtual void print(std::ostream &out) const;
+      virtual void print(io::output &out) const;
     };
     //==================================
 

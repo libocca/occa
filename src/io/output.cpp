@@ -2,30 +2,46 @@
 
 namespace occa {
   namespace io {
-    output_t::output_t(std::ostream &out_) :
+    output::output(std::ostream &out_) :
       out(out_),
       customOut(NULL) {}
 
-    void output_t::setOutputFunction(outputFunction_t customOut_) {
+    void output::setOutputFunction(outputFunction_t customOut_) {
       customOut = customOut_;
     }
 
-    output_t::operator std::ostream& () {
-      return out;
-    }
-
     template <>
-    output_t& output_t::operator << (const std::string &t) {
+    output& output::operator << (const std::string &str) {
       if (!customOut) {
-        out << t;
+        out << str;
       } else {
-        out << t;
-        customOut(t.c_str());
+        customOut(str.c_str());
       }
       return *this;
     }
 
-    output_t stdout(std::cout);
-    output_t stderr(std::cerr);
+    template <>
+    output& output::operator << (char * const &c) {
+      if (!customOut) {
+        out << c;
+      } else {
+        customOut(c);
+      }
+      return *this;
+    }
+
+    template <>
+    output& output::operator << (const char &c) {
+      if (!customOut) {
+        out << c;
+      } else {
+        char str[2] = { c, '\0' };
+        customOut(str);
+      }
+      return *this;
+    }
+
+    output stdout(std::cout);
+    output stderr(std::cerr);
   }
 }

@@ -3,8 +3,8 @@
 
 #include <iostream>
 
+#include <occa/io/output.hpp>
 #include <occa/tools/gc.hpp>
-
 #include <occa/lang/errorHandler.hpp>
 #include <occa/lang/operator.hpp>
 
@@ -96,14 +96,14 @@ namespace occa {
 
       dim_t distanceTo(const fileOrigin &origin);
 
-      virtual void preprint(std::ostream &out);
-      virtual void postprint(std::ostream &out);
+      virtual void preprint(io::output &out);
+      virtual void postprint(io::output &out);
 
-      void print(std::ostream &out,
+      void print(io::output &out,
                  const bool root = true) const;
 
       inline void print(const bool root = true) const {
-        print(std::cerr, root);
+        print(io::stderr, root);
       }
 
       void printWarning(const std::string &message) const;

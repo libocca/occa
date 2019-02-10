@@ -3,6 +3,7 @@
 
 #include <vector>
 
+#include <occa/io/output.hpp>
 #include <occa/lang/attribute.hpp>
 #include <occa/lang/printer.hpp>
 #include <occa/lang/qualifier.hpp>
@@ -106,8 +107,9 @@ namespace occa {
       void printError(const std::string &message) const;
     };
 
-    std::ostream& operator << (std::ostream &out,
-                               const type_t &type);
+    io::output& operator << (io::output &out,
+                             const type_t &type);
+
     printer& operator << (printer &pout,
                           const type_t &type);
     //==================================
@@ -133,8 +135,9 @@ namespace occa {
       void add(const qualifierWithSource &qualifier);
     };
 
-    std::ostream& operator << (std::ostream &out,
-                               const pointer_t &pointer);
+    io::output& operator << (io::output &out,
+                             const pointer_t &pointer);
+
     printer& operator << (printer &pout,
                           const pointer_t &pointer);
     //==================================
@@ -163,8 +166,9 @@ namespace occa {
       void printError(const std::string &message) const;
     };
 
-    std::ostream& operator << (std::ostream &out,
-                               const array_t &array);
+    io::output& operator << (io::output &out,
+                             const array_t &array);
+
     printer& operator << (printer &pout,
                           const array_t &array);
     //==================================
@@ -253,8 +257,9 @@ namespace occa {
       void printError(const std::string &message) const;
     };
 
-    std::ostream& operator << (std::ostream &out,
-                               const vartype_t &type);
+    io::output& operator << (io::output &out,
+                             const vartype_t &type);
+
     printer& operator << (printer &pout,
                           const vartype_t &type);
     //==================================

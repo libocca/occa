@@ -22,7 +22,7 @@ namespace occa {
     void emptyNode::print(printer &pout) const {}
 
     void emptyNode::debugPrint(const std::string &prefix) const {
-      std::cerr << prefix << "|\n"
+      io::stderr << prefix << "|\n"
                 << prefix << "|---o\n"
                 << prefix << '\n';
     }

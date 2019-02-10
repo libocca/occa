@@ -7,6 +7,7 @@
 #include <occa/defines.hpp>
 #include <occa/types.hpp>
 #include <occa/io/lock.hpp>
+#include <occa/io/output.hpp>
 #include <occa/tools/hash.hpp>
 
 namespace occa {
@@ -124,25 +125,25 @@ namespace occa {
              const int line,
              const std::string &message);
 
-  void printNote(std::ostream &out,
+  void printNote(io::output &out,
                  const std::string &message);
 
   inline void printNote(const std::string &message) {
-    printNote(std::cerr, message);
+    printNote(io::stderr, message);
   }
 
-  void printWarning(std::ostream &out,
+  void printWarning(io::output &out,
                     const std::string &message);
 
   inline void printWarning(const std::string &message) {
-    printWarning(std::cerr, message);
+    printWarning(io::stderr, message);
   }
 
-  void printError(std::ostream &out,
+  void printError(io::output &out,
                   const std::string &message);
 
   inline void printError(const std::string &message) {
-    printError(std::cerr, message);
+    printError(io::stderr, message);
   }
 
   class mutex {

@@ -5,6 +5,7 @@
 #include <vector>
 
 #include <occa/defines.hpp>
+#include <occa/io/output.hpp>
 #include <occa/types.hpp>
 
 namespace occa {
@@ -37,7 +38,7 @@ namespace occa {
                   const ptrRange &b);
 
   std::ostream& operator << (std::ostream& out,
-                             const ptrRange &range);
+                           const ptrRange &range);
   //====================================
 
 

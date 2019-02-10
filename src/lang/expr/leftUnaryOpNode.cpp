@@ -56,11 +56,11 @@ namespace occa {
     }
 
     void leftUnaryOpNode::debugPrint(const std::string &prefix) const {
-      printer pout(std::cerr);
-      std::cerr << prefix << "|\n"
+      printer pout(io::stderr);
+      io::stderr << prefix << "|\n"
                 << prefix << "|---[";
       pout << op;
-      std::cerr << "] (leftUnary)\n";
+      io::stderr << "] (leftUnary)\n";
       value->childDebugPrint(prefix);
     }
   }

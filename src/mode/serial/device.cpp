@@ -74,7 +74,7 @@ namespace occa {
         if (visualStudioTools) {
           compilerEnvScript = "\"" + std::string(visualStudioTools) + "..\\..\\VC\\vcvarsall.bat\" " + byteness;
         } else {
-          std::cout << "WARNING: Visual Studio environment variable not found -> compiler environment (vcvarsall.bat) maybe not correctly setup." << std::endl;
+          io::stdout << "WARNING: Visual Studio environment variable not found -> compiler environment (vcvarsall.bat) maybe not correctly setup." << std::endl;
         }
 #endif
       }
@@ -192,11 +192,11 @@ namespace occa {
       const bool verbose = kernelProps.get("verbose", false);
       if (foundBinary) {
         if (verbose) {
-          std::cout << "Loading cached ["
-                    << kernelName
-                    << "] from ["
-                    << io::shortname(filename)
-                    << "] in [" << io::shortname(binaryFilename) << "]\n";
+          io::stdout << "Loading cached ["
+                     << kernelName
+                     << "] from ["
+                     << io::shortname(filename)
+                     << "] in [" << io::shortname(binaryFilename) << "]\n";
         }
         modeKernel_t *k = buildKernelFromBinary(binaryFilename,
                                                 kernelName,
@@ -264,7 +264,7 @@ namespace occa {
       const std::string &sCommand = command.str();
 
       if (verbose) {
-        std::cout << "Compiling [" << kernelName << "]\n" << sCommand << "\n";
+        io::stdout << "Compiling [" << kernelName << "]\n" << sCommand << "\n";
       }
 
 #if (OCCA_OS & (OCCA_LINUX_OS | OCCA_MACOS_OS))

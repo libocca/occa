@@ -5,6 +5,7 @@
 
 #include <occa/defines.hpp>
 #include <occa/dtype.hpp>
+#include <occa/io/output.hpp>
 #include <occa/tools/gc.hpp>
 #include <occa/tools/properties.hpp>
 
@@ -232,7 +233,7 @@ namespace occa {
   //====================================
 
   std::ostream& operator << (std::ostream &out,
-                             const occa::memory &memory);
+                           const occa::memory &memory);
 
   namespace cpu {
     occa::memory wrapMemory(occa::device dev,

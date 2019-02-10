@@ -99,10 +99,9 @@ namespace occa {
     }
 
     std::string statement_t::toString() const {
-      std::stringstream ss;
-      printer pout(ss);
+      printer pout;
       pout << (*this);
-      return ss.str();
+      return pout.str();
     }
 
     statement_t::operator std::string() const {
@@ -131,7 +130,7 @@ namespace occa {
     }
 
     void statement_t::debugPrint() const {
-      std::cout << toString();
+      io::stdout << toString();
     }
 
     void statement_t::printWarning(const std::string &message) const {

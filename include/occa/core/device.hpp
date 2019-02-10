@@ -8,6 +8,7 @@
 #include <occa/core/kernel.hpp>
 #include <occa/core/stream.hpp>
 #include <occa/dtype.hpp>
+#include <occa/io/output.hpp>
 #include <occa/tools/gc.hpp>
 #include <occa/tools/uva.hpp>
 
@@ -285,7 +286,7 @@ namespace occa {
   hash_t hash(const occa::device &device);
 
   std::ostream& operator << (std::ostream &out,
-                             const occa::device &device);
+                           const occa::device &device);
   //====================================
 }
 

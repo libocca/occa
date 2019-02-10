@@ -506,15 +506,15 @@ namespace occa {
 
     // Print loaded info
     if (properties().get("verbose", false) && kernelsLoaded) {
-      std::cout << "Loaded " << kernelsLoaded;
+      io::stdout << "Loaded " << kernelsLoaded;
       if (library.size()) {
-        std::cout << " ["<< library << "]";
+        io::stdout << " ["<< library << "]";
       } else {
-        std::cout << " cached";
+        io::stdout << " cached";
       }
-      std::cout << ((kernelsLoaded == 1)
-                    ? " kernel\n"
-                    : " kernels\n");
+      io::stdout << ((kernelsLoaded == 1)
+                     ? " kernel\n"
+                     : " kernels\n");
     }
 #endif
   }

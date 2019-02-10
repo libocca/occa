@@ -43,12 +43,12 @@ namespace occa {
     }
 
     void throwNode::debugPrint(const std::string &prefix) const {
-      printer pout(std::cerr);
-      std::cerr << prefix << "|\n"
+      printer pout(io::stderr);
+      io::stderr << prefix << "|\n"
                 << prefix << "|\n"
                 << prefix << "|---[";
       pout << *value;
-      std::cerr << "] (throw)\n";
+      io::stderr << "] (throw)\n";
     }
   }
 }

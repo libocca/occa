@@ -937,7 +937,7 @@ namespace occa {
   }
   //====================================
 
-  std::ostream& operator << (std::ostream &out, const primitive &p) {
+  io::output& operator << (io::output &out, const primitive &p) {
     out << p.toString();
     return out;
   }

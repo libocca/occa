@@ -46,7 +46,7 @@ namespace occa {
   }
 
   std::ostream& operator << (std::ostream& out,
-                             exception &exc) {
+                             const exception &exc) {
     out << exc.toString() << std::flush;
     return out;
   }

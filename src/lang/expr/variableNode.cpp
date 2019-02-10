@@ -37,11 +37,11 @@ namespace occa {
     }
 
     void variableNode::debugPrint(const std::string &prefix) const {
-      printer pout(std::cerr);
-      std::cerr << prefix << "|\n"
+      printer pout(io::stderr);
+      io::stderr << prefix << "|\n"
                 << prefix << "|---[";
       pout << (*this);
-      std::cerr << "] (variable)\n";
+      io::stderr << "] (variable)\n";
     }
   }
 }

@@ -4,6 +4,7 @@
 #include <iostream>
 
 #include <occa/defines.hpp>
+#include <occa/io/output.hpp>
 #include <occa/tools/gc.hpp>
 #include <occa/tools/properties.hpp>
 
@@ -75,7 +76,7 @@ namespace occa {
   //====================================
 
   std::ostream& operator << (std::ostream &out,
-                             const occa::stream &stream);
+                           const occa::stream &stream);
 }
 
 #endif

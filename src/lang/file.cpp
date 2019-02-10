@@ -204,11 +204,11 @@ namespace occa {
       return (origin.position.start - position.end);
     }
 
-    void fileOrigin::preprint(std::ostream &out) {
+    void fileOrigin::preprint(io::output &out) {
       print(out, true);
     }
 
-    void fileOrigin::postprint(std::ostream &out) {
+    void fileOrigin::postprint(io::output &out) {
       const char *lineEnd = position.lineStart;
       lex::skipTo(lineEnd, '\n');
 
@@ -220,7 +220,7 @@ namespace occa {
           << space << green("^") << '\n';
     }
 
-    void fileOrigin::print(std::ostream &out,
+    void fileOrigin::print(io::output &out,
                            const bool root) const {
       if (up) {
         up->print(out, false);
@@ -245,16 +245,16 @@ namespace occa {
 
     void fileOrigin::printWarning(const std::string &message) const {
       fileOrigin &this_ = const_cast<fileOrigin&>(*this);
-      this_.preprint(std::cerr);
-      occa::printWarning(std::cerr, message);
-      this_.postprint(std::cerr);
+      this_.preprint(io::stderr);
+      occa::printWarning(io::stderr, message);
+      this_.postprint(io::stderr);
     }
 
     void fileOrigin::printError(const std::string &message) const {
       fileOrigin &this_ = const_cast<fileOrigin&>(*this);
-      this_.preprint(std::cerr);
-      occa::printError(std::cerr, message);
-      this_.postprint(std::cerr);
+      this_.preprint(io::stderr);
+      occa::printError(io::stderr, message);
+      this_.postprint(io::stderr);
     }
     //==================================
   }

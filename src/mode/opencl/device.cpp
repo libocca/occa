@@ -211,11 +211,11 @@ namespace occa {
       const bool verbose = kernelProps.get("verbose", false);
       if (foundBinary) {
         if (verbose) {
-          std::cout << "Loading cached ["
-                    << kernelName
-                    << "] from ["
-                    << io::shortname(filename)
-                    << "] in [" << io::shortname(binaryFilename) << "]\n";
+          io::stdout << "Loading cached ["
+                     << kernelName
+                     << "] from ["
+                     << io::shortname(filename)
+                     << "] in [" << io::shortname(binaryFilename) << "]\n";
         }
         if (usingOKL) {
           lang::kernelMetadataMap hostMetadata = (

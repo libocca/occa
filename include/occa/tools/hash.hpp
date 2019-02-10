@@ -4,6 +4,7 @@
 #include <iostream>
 
 #include <occa/defines.hpp>
+#include <occa/io/output.hpp>
 #include <occa/types.hpp>
 
 namespace occa {
@@ -40,9 +41,11 @@ namespace occa {
 
     static hash_t fromString(const std::string &s);
 
-    friend std::ostream& operator << (std::ostream &out, const hash_t &hash);
+    friend std::ostream& operator << (std::ostream &out,
+                                    const hash_t &hash);
   };
-  std::ostream& operator << (std::ostream &out, const hash_t &hash);
+  std::ostream& operator << (std::ostream &out,
+                           const hash_t &hash);
 
   hash_t hash(const void *ptr, udim_t bytes);
 

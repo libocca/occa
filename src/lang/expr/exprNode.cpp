@@ -104,10 +104,9 @@ namespace occa {
     }
 
     std::string exprNode::toString() const {
-      std::stringstream ss;
-      printer pout(ss);
+      printer pout;
       pout << (*this);
-      return ss.str();
+      return pout.str();
     }
 
     void exprNode::printWarning(const std::string &message) const {
@@ -120,14 +119,14 @@ namespace occa {
 
     void exprNode::debugPrint() const {
       debugPrint("");
-      std::cerr << '\n';
+      io::stderr << '\n';
     }
 
     void exprNode::childDebugPrint(const std::string &prefix) const {
       debugPrint(prefix + "|   ");
     }
 
-    std::ostream& operator << (std::ostream &out,
+    io::output& operator << (io::output &out,
                                const exprNode &node) {
       printer pout(out);
       node.print(pout);

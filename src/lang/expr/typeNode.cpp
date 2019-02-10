@@ -32,11 +32,11 @@ namespace occa {
     }
 
     void typeNode::debugPrint(const std::string &prefix) const {
-      printer pout(std::cerr);
-      std::cerr << prefix << "|\n"
+      printer pout(io::stderr);
+      io::stderr << prefix << "|\n"
                 << prefix << "|---[";
       pout << (*this);
-      std::cerr << "] (type)\n";
+      io::stderr << "] (type)\n";
     }
   }
 }

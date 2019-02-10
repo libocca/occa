@@ -69,9 +69,13 @@ namespace occa {
 
       void add(section &section);
       std::string toString(const int indent = 4) const;
-      friend std::ostream& operator << (std::ostream &out, const table &ppt);
+
+      friend std::ostream& operator << (std::ostream &out,
+                                      const table &ppt);
     };
-    std::ostream& operator << (std::ostream &out, const table &ppt);
+
+    std::ostream& operator << (std::ostream &out,
+                             const table &ppt);
   }
 }
 

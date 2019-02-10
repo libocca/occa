@@ -28,11 +28,11 @@ namespace occa {
     }
 
     void identifierNode::debugPrint(const std::string &prefix) const {
-      printer pout(std::cerr);
-      std::cerr << prefix << '\n'
+      printer pout(io::stderr);
+      io::stderr << prefix << '\n'
                 << prefix << "|---[";
       pout << (*this);
-      std::cerr << "] (identifier)\n";
+      io::stderr << "] (identifier)\n";
     }
   }
 }

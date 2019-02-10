@@ -82,10 +82,10 @@ namespace occa {
     void scope_t::debugPrint() const {
       keywordMap::const_iterator it = keywords.begin();
       while (it != keywords.end()) {
-        std::cout << '['
-                  << stringifySetBits(it->second->type())
-                  << "] "
-                  << it->first << '\n';
+        io::stdout << '['
+                   << stringifySetBits(it->second->type())
+                   << "] "
+                   << it->first << '\n';
         ++it;
       }
     }

@@ -8,28 +8,30 @@ namespace occa {
   namespace io {
     typedef void (*outputFunction_t)(const char *str);
 
-    class output_t {
+    class output {
     private:
       std::ostream &out;
       std::stringstream ss;
       outputFunction_t customOut;
 
     public:
-      output_t(std::ostream &out_);
+      output(std::ostream &out_);
 
       void setOutputFunction(outputFunction_t customOut_);
 
-      operator std::ostream& ();
-
       template <class TM>
-      output_t& operator << (const TM &t);
+      output& operator << (const TM &t);
     };
 
     template <>
-    output_t& output_t::operator << (const std::string &t);
+    output& output::operator << (const std::string &str);
+    template <>
+    output& output::operator << (char * const &c);
+    template <>
+    output& output::operator << (const char &c);
 
-    extern output_t stdout;
-    extern output_t stderr;
+    extern output stdout;
+    extern output stderr;
   }
 }
 

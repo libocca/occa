@@ -943,7 +943,7 @@ namespace occa {
     if (exitInFailure) {
       throw exp;
     }
-    std::cerr << exp;
+    io::stderr << exp;
   }
 
   void warn(const std::string &filename,
@@ -962,17 +962,17 @@ namespace occa {
              filename, function, line, message);
   }
 
-  void printNote(std::ostream &out,
+  void printNote(io::output &out,
                  const std::string &message) {
     out << blue("Note") << ": " << message << '\n';
   }
 
-  void printWarning(std::ostream &out,
+  void printWarning(io::output &out,
                     const std::string &message) {
     out << yellow("Warning") << ": " << message << '\n';
   }
 
-  void printError(std::ostream &out,
+  void printError(io::output &out,
                   const std::string &message) {
     out << red("Error") << ": " << message << '\n';
   }

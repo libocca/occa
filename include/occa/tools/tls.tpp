@@ -82,7 +82,8 @@ namespace occa {
   }
 
   template <class TM>
-  std::ostream& operator << (std::ostream &out, const tls<TM> &t) {
+  std::ostream& operator << (std::ostream &out,
+                           const tls<TM> &t) {
     out << t.value();
     return out;
   }

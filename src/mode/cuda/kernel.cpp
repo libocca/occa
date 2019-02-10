@@ -103,10 +103,12 @@ namespace occa {
     }
 
     void kernel::launcherRun() const {
+      kernelArg arg(&(cuKernels[0]));
+
       launcherKernel->arguments = arguments;
       launcherKernel->arguments.insert(
         launcherKernel->arguments.begin(),
-        &(cuKernels[0])
+        arg[0]
       );
 
       int kernelCount = (int) cuKernels.size();

@@ -152,7 +152,7 @@ namespace occa {
       void setOptionDefaults(occa::json &jOptions);
 
       virtual void printUsage(const std::string &program,
-                              std::ostream &out = std::cout);
+                              std::ostream &out = std::cerr);
 
       virtual void printRequired(std::ostream &out);
 
@@ -187,10 +187,10 @@ namespace occa {
 
       void fillProgram(std::string &program);
 
-      void printUsage(std::ostream &out = std::cout);
+      void printUsage(std::ostream &out = std::cerr);
 
       virtual void printUsage(const std::string &program,
-                              std::ostream &out = std::cout);
+                              std::ostream &out = std::cerr);
 
       virtual void printRequired(std::ostream &out);
 

@@ -3,6 +3,7 @@
 #if OCCA_HIP_ENABLED
 
 #include <occa/core/base.hpp>
+#include <occa/io/output.hpp>
 #include <occa/tools/env.hpp>
 #include <occa/tools/misc.hpp>
 #include <occa/tools/sys.hpp>
@@ -218,11 +219,11 @@ namespace occa {
       const bool verbose = kernelProps.get("verbose", false);
       if (foundBinary) {
         if (verbose) {
-          std::cout << "Loading cached ["
-                    << kernelName
-                    << "] from ["
-                    << io::shortname(filename)
-                    << "] in [" << io::shortname(binaryFilename) << "]\n";
+          io::stdout << "Loading cached ["
+                     << kernelName
+                     << "] from ["
+                     << io::shortname(filename)
+                     << "] in [" << io::shortname(binaryFilename) << "]\n";
         }
         if (usingOKL) {
           lang::kernelMetadataMap hostMetadata = (
@@ -385,7 +386,7 @@ namespace occa {
       }
       const std::string &sCommand = command.str();
       if (verbose) {
-        std::cout << sCommand << '\n';
+        io::stdout << sCommand << '\n';
       }
 
       const int compileError = system(sCommand.c_str());

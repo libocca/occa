@@ -50,11 +50,11 @@ namespace occa {
     }
 
     void subscriptNode::debugPrint(const std::string &prefix) const {
-      printer pout(std::cerr);
-      std::cerr << prefix << "|\n"
+      printer pout(io::stderr);
+      io::stderr << prefix << "|\n"
                 << prefix << "|---[";
       pout << *index;
-      std::cerr << "] (subscript)\n";
+      io::stderr << "] (subscript)\n";
       value->childDebugPrint(prefix);
     }
   }

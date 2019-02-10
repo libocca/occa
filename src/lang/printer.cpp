@@ -15,18 +15,18 @@ namespace occa {
 
     printer::printer() :
       ss(),
-      outputStream(&ss) {
+      out(NULL) {
       clear();
     }
 
-    printer::printer(std::ostream &outputStream_) :
+    printer::printer(io::output &out_) :
       ss(),
-      outputStream(&outputStream_) {
+      out(&out_) {
       clear();
     }
 
-    void printer::setOutputStream(std::ostream &outputStream_) {
-      outputStream = &outputStream_;
+    void printer::setOutput(io::output &out_) {
+      out = &out_;
     }
 
     int printer::size() {

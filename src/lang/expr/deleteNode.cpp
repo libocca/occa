@@ -48,15 +48,15 @@ namespace occa {
     }
 
     void deleteNode::debugPrint(const std::string &prefix) const {
-      printer pout(std::cerr);
-      std::cerr << prefix << '\n'
+      printer pout(io::stderr);
+      io::stderr << prefix << '\n'
                 << prefix << "|---[";
       pout << *value;
-      std::cerr << "] (delete";
+      io::stderr << "] (delete";
       if (isArray) {
-        std::cerr << " []";
+        io::stderr << " []";
       }
-      std::cerr << ")\n";
+      io::stderr << ")\n";
     }
   }
 }

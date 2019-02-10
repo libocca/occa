@@ -5,6 +5,7 @@
 
 #include <occa/defines.hpp>
 #include <occa/io/lock.hpp>
+#include <occa/io/output.hpp>
 #include <occa/io/utils.hpp>
 #include <occa/tools/env.hpp>
 
@@ -98,9 +99,9 @@ namespace occa {
         }
         // Print warning only once
         if ((sys::currentTime() - startTime) > staleWarning) {
-          std::cerr << "Located possible stale hash: ["
-                    << lockDir
-                    << "]\n";
+          io::stderr << "Located possible stale hash: ["
+                     << lockDir
+                     << "]\n";
           staleWarning = staleAge + 10;
         }
 
