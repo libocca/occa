@@ -42,10 +42,8 @@ int main(int argc, const char **argv) {
   }
 
   // Allocate memory on the device
-  occaMemory o_vec      = occaMalloc(entries * sizeof(float),
-                                     NULL, occaDefault);
-  occaMemory o_blockSum = occaMalloc(blocks * sizeof(float),
-                                     NULL, occaDefault);
+  occaMemory o_vec      = occaTypedMalloc(entries, occaDtypeFloat, NULL, occaDefault);
+  occaMemory o_blockSum = occaTypedMalloc(blocks , occaDtypeFloat, NULL, occaDefault);
 
   // Pass value of 'block' at kernel compile-time
   occaProperties reductionProps = occaCreateProperties();

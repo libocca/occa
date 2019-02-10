@@ -203,7 +203,7 @@ occaMemory OCCA_RFUNC occaDeviceTypedMalloc(occaDevice device,
                                             const void *src,
                                             occaProperties props) {
   occa::device device_ = occa::c::device(device);
-  occa::dtype_t dtype_ = occa::c::dtype(dtype);
+  const occa::dtype_t &dtype_ = occa::c::dtype(dtype);
 
   occa::memory memory;
   if (occa::c::isDefault(props)) {
@@ -240,7 +240,7 @@ void* OCCA_RFUNC occaDeviceTypedUMalloc(occaDevice device,
                                         const void *src,
                                         occaProperties props) {
   occa::device device_ = occa::c::device(device);
-  occa::dtype_t dtype_ = occa::c::dtype(dtype);
+  const occa::dtype_t &dtype_ = occa::c::dtype(dtype);
 
   if (occa::c::isDefault(props)) {
     return device_.umalloc(entries, dtype_, src);

@@ -29,9 +29,9 @@ int main(int argc, const char **argv) {
   int entries = 5;
   int i;
 
-  float *a  = (float*) occaUMalloc(entries * sizeof(float), NULL, occaDefault);
-  float *b  = (float*) occaUMalloc(entries * sizeof(float), NULL, occaDefault);
-  float *ab = (float*) occaUMalloc(entries * sizeof(float), NULL, occaDefault);
+  float *a  = (float*) occaTypedUMalloc(entries, occaDtypeFloat, NULL, occaDefault);
+  float *b  = (float*) occaTypedUMalloc(entries, occaDtypeFloat, NULL, occaDefault);
+  float *ab = (float*) occaTypedUMalloc(entries, occaDtypeFloat, NULL, occaDefault);
 
   for (i = 0; i < entries; ++i) {
     a[i]  = i;

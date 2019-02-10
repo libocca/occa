@@ -71,7 +71,7 @@ OCCA_LFUNC occaMemory OCCA_RFUNC occaDeviceMalloc(occaDevice device,
 
 OCCA_LFUNC occaMemory OCCA_RFUNC occaDeviceTypedMalloc(occaDevice device,
                                                        const occaUDim_t entries,
-                                                       const occaDtype type,
+                                                       const occaDtype dtype,
                                                        const void *src,
                                                        occaProperties props);
 

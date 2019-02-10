@@ -36,70 +36,70 @@ OCCA_LFUNC occaJson OCCA_RFUNC occaDtypeToJson(occaDtype dtype);
 //======================================
 
 //-----[ Builtins ]---------------------
-extern occaDtype occaDtypeNone;
+extern const occaDtype occaDtypeNone;
 
-extern occaDtype occaDtypeVoid;
-extern occaDtype occaDtypeByte;
+extern const occaDtype occaDtypeVoid;
+extern const occaDtype occaDtypeByte;
 
-extern occaDtype occaDtypeBool;
-extern occaDtype occaDtypeChar;
-extern occaDtype occaDtypeShort;
-extern occaDtype occaDtypeInt;
-extern occaDtype occaDtypeLong;
-extern occaDtype occaDtypeFloat;
-extern occaDtype occaDtypeDouble;
+extern const occaDtype occaDtypeBool;
+extern const occaDtype occaDtypeChar;
+extern const occaDtype occaDtypeShort;
+extern const occaDtype occaDtypeInt;
+extern const occaDtype occaDtypeLong;
+extern const occaDtype occaDtypeFloat;
+extern const occaDtype occaDtypeDouble;
 
-extern occaDtype occaDtypeInt8;
-extern occaDtype occaDtypeUint8;
-extern occaDtype occaDtypeInt16;
-extern occaDtype occaDtypeUint16;
-extern occaDtype occaDtypeInt32;
-extern occaDtype occaDtypeUint32;
-extern occaDtype occaDtypeInt64;
-extern occaDtype occaDtypeUint64;
-extern occaDtype occaDtypeFloat32;
-extern occaDtype occaDtypeFloat64;
+extern const occaDtype occaDtypeInt8;
+extern const occaDtype occaDtypeUint8;
+extern const occaDtype occaDtypeInt16;
+extern const occaDtype occaDtypeUint16;
+extern const occaDtype occaDtypeInt32;
+extern const occaDtype occaDtypeUint32;
+extern const occaDtype occaDtypeInt64;
+extern const occaDtype occaDtypeUint64;
+extern const occaDtype occaDtypeFloat32;
+extern const occaDtype occaDtypeFloat64;
 
 // OKL Primitives
-extern occaDtype occaDtypeUchar2;
-extern occaDtype occaDtypeUchar3;
-extern occaDtype occaDtypeUchar4;
+extern const occaDtype occaDtypeUchar2;
+extern const occaDtype occaDtypeUchar3;
+extern const occaDtype occaDtypeUchar4;
 
-extern occaDtype occaDtypeChar2;
-extern occaDtype occaDtypeChar3;
-extern occaDtype occaDtypeChar4;
+extern const occaDtype occaDtypeChar2;
+extern const occaDtype occaDtypeChar3;
+extern const occaDtype occaDtypeChar4;
 
-extern occaDtype occaDtypeUshort2;
-extern occaDtype occaDtypeUshort3;
-extern occaDtype occaDtypeUshort4;
+extern const occaDtype occaDtypeUshort2;
+extern const occaDtype occaDtypeUshort3;
+extern const occaDtype occaDtypeUshort4;
 
-extern occaDtype occaDtypeShort2;
-extern occaDtype occaDtypeShort3;
-extern occaDtype occaDtypeShort4;
+extern const occaDtype occaDtypeShort2;
+extern const occaDtype occaDtypeShort3;
+extern const occaDtype occaDtypeShort4;
 
-extern occaDtype occaDtypeUint2;
-extern occaDtype occaDtypeUint3;
-extern occaDtype occaDtypeUint4;
+extern const occaDtype occaDtypeUint2;
+extern const occaDtype occaDtypeUint3;
+extern const occaDtype occaDtypeUint4;
 
-extern occaDtype occaDtypeInt2;
-extern occaDtype occaDtypeInt3;
-extern occaDtype occaDtypeInt4;
+extern const occaDtype occaDtypeInt2;
+extern const occaDtype occaDtypeInt3;
+extern const occaDtype occaDtypeInt4;
 
-extern occaDtype occaDtypeUlong2;
-extern occaDtype occaDtypeUlong3;
-extern occaDtype occaDtypeUlong4;
+extern const occaDtype occaDtypeUlong2;
+extern const occaDtype occaDtypeUlong3;
+extern const occaDtype occaDtypeUlong4;
 
-extern occaDtype occaDtypeLong2;
-extern occaDtype occaDtypeLong3;
-extern occaDtype occaDtypeLong4;
+extern const occaDtype occaDtypeLong2;
+extern const occaDtype occaDtypeLong3;
+extern const occaDtype occaDtypeLong4;
 
-extern occaDtype occaDtypeFloat2;
-extern occaDtype occaDtypeFloat3;
-extern occaDtype occaDtypeFloat4;
+extern const occaDtype occaDtypeFloat2;
+extern const occaDtype occaDtypeFloat3;
+extern const occaDtype occaDtypeFloat4;
 
-extern occaDtype occaDtypeDouble2;
-extern occaDtype occaDtypeDouble3;
-extern occaDtype occaDtypeDouble4;
+extern const occaDtype occaDtypeDouble2;
+extern const occaDtype occaDtypeDouble3;
+extern const occaDtype occaDtypeDouble4;
 //======================================
 
 OCCA_END_EXTERN_C

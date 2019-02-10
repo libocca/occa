@@ -57,9 +57,9 @@ int main(int argc, const char **argv) {
   //========================================================
 
   // Allocate memory on the device
-  o_a  = occaDeviceMalloc(device, entries*sizeof(float), NULL, occaDefault);
-  o_b  = occaDeviceMalloc(device, entries*sizeof(float), NULL, occaDefault);
-  o_ab = occaDeviceMalloc(device, entries*sizeof(float), NULL, occaDefault);
+  o_a  = occaDeviceTypedMalloc(device, entries, occaDtypeFloat, NULL, occaDefault);
+  o_b  = occaDeviceTypedMalloc(device, entries, occaDtypeFloat, NULL, occaDefault);
+  o_ab = occaDeviceTypedMalloc(device, entries, occaDtypeFloat, NULL, occaDefault);
 
   // Setup properties that can be passed to the kernel
   occaProperties props = occaCreateProperties();

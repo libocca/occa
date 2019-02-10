@@ -78,70 +78,70 @@ OCCA_LFUNC occaJson OCCA_RFUNC occaDtypeToJson(occaDtype dtype) {
 //======================================
 
 //-----[ Builtins ]---------------------
-occaDtype occaDtypeNone = occa::c::newOccaType(occa::dtype::none);
+const occaDtype occaDtypeNone = occa::c::newOccaType(occa::dtype::none);
 
-occaDtype occaDtypeVoid = occa::c::newOccaType(occa::dtype::void_);
-occaDtype occaDtypeByte = occa::c::newOccaType(occa::dtype::byte);
+const occaDtype occaDtypeVoid = occa::c::newOccaType(occa::dtype::void_);
+const occaDtype occaDtypeByte = occa::c::newOccaType(occa::dtype::byte);
 
-occaDtype occaDtypeBool   = occa::c::newOccaType(occa::dtype::bool_);
-occaDtype occaDtypeChar   = occa::c::newOccaType(occa::dtype::char_);
-occaDtype occaDtypeShort  = occa::c::newOccaType(occa::dtype::short_);
-occaDtype occaDtypeInt    = occa::c::newOccaType(occa::dtype::int_);
-occaDtype occaDtypeLong   = occa::c::newOccaType(occa::dtype::long_);
-occaDtype occaDtypeFloat  = occa::c::newOccaType(occa::dtype::float_);
-occaDtype occaDtypeDouble = occa::c::newOccaType(occa::dtype::double_);
+const occaDtype occaDtypeBool   = occa::c::newOccaType(occa::dtype::bool_);
+const occaDtype occaDtypeChar   = occa::c::newOccaType(occa::dtype::char_);
+const occaDtype occaDtypeShort  = occa::c::newOccaType(occa::dtype::short_);
+const occaDtype occaDtypeInt    = occa::c::newOccaType(occa::dtype::int_);
+const occaDtype occaDtypeLong   = occa::c::newOccaType(occa::dtype::long_);
+const occaDtype occaDtypeFloat  = occa::c::newOccaType(occa::dtype::float_);
+const occaDtype occaDtypeDouble = occa::c::newOccaType(occa::dtype::double_);
 
-occaDtype occaDtypeInt8    = occa::c::newOccaType(occa::dtype::int8);
-occaDtype occaDtypeUint8   = occa::c::newOccaType(occa::dtype::uint8);
-occaDtype occaDtypeInt16   = occa::c::newOccaType(occa::dtype::int16);
-occaDtype occaDtypeUint16  = occa::c::newOccaType(occa::dtype::uint16);
-occaDtype occaDtypeInt32   = occa::c::newOccaType(occa::dtype::int32);
-occaDtype occaDtypeUint32  = occa::c::newOccaType(occa::dtype::uint32);
-occaDtype occaDtypeInt64   = occa::c::newOccaType(occa::dtype::int64);
-occaDtype occaDtypeUint64  = occa::c::newOccaType(occa::dtype::uint64);
-occaDtype occaDtypeFloat32 = occa::c::newOccaType(occa::dtype::float32);
-occaDtype occaDtypeFloat64 = occa::c::newOccaType(occa::dtype::float64);
+const occaDtype occaDtypeInt8    = occa::c::newOccaType(occa::dtype::int8);
+const occaDtype occaDtypeUint8   = occa::c::newOccaType(occa::dtype::uint8);
+const occaDtype occaDtypeInt16   = occa::c::newOccaType(occa::dtype::int16);
+const occaDtype occaDtypeUint16  = occa::c::newOccaType(occa::dtype::uint16);
+const occaDtype occaDtypeInt32   = occa::c::newOccaType(occa::dtype::int32);
+const occaDtype occaDtypeUint32  = occa::c::newOccaType(occa::dtype::uint32);
+const occaDtype occaDtypeInt64   = occa::c::newOccaType(occa::dtype::int64);
+const occaDtype occaDtypeUint64  = occa::c::newOccaType(occa::dtype::uint64);
+const occaDtype occaDtypeFloat32 = occa::c::newOccaType(occa::dtype::float32);
+const occaDtype occaDtypeFloat64 = occa::c::newOccaType(occa::dtype::float64);
 
 // OKL Primitives
-occaDtype occaDtypeUchar2 = occa::c::newOccaType(occa::dtype::uchar2);
-occaDtype occaDtypeUchar3 = occa::c::newOccaType(occa::dtype::uchar3);
-occaDtype occaDtypeUchar4 = occa::c::newOccaType(occa::dtype::uchar4);
+const occaDtype occaDtypeUchar2 = occa::c::newOccaType(occa::dtype::uchar2);
+const occaDtype occaDtypeUchar3 = occa::c::newOccaType(occa::dtype::uchar3);
+const occaDtype occaDtypeUchar4 = occa::c::newOccaType(occa::dtype::uchar4);
 
-occaDtype occaDtypeChar2 = occa::c::newOccaType(occa::dtype::char2);
-occaDtype occaDtypeChar3 = occa::c::newOccaType(occa::dtype::char3);
-occaDtype occaDtypeChar4 = occa::c::newOccaType(occa::dtype::char4);
+const occaDtype occaDtypeChar2 = occa::c::newOccaType(occa::dtype::char2);
+const occaDtype occaDtypeChar3 = occa::c::newOccaType(occa::dtype::char3);
+const occaDtype occaDtypeChar4 = occa::c::newOccaType(occa::dtype::char4);
 
-occaDtype occaDtypeUshort2 = occa::c::newOccaType(occa::dtype::ushort2);
-occaDtype occaDtypeUshort3 = occa::c::newOccaType(occa::dtype::ushort3);
-occaDtype occaDtypeUshort4 = occa::c::newOccaType(occa::dtype::ushort4);
+const occaDtype occaDtypeUshort2 = occa::c::newOccaType(occa::dtype::ushort2);
+const occaDtype occaDtypeUshort3 = occa::c::newOccaType(occa::dtype::ushort3);
+const occaDtype occaDtypeUshort4 = occa::c::newOccaType(occa::dtype::ushort4);
 
-occaDtype occaDtypeShort2 = occa::c::newOccaType(occa::dtype::short2);
-occaDtype occaDtypeShort3 = occa::c::newOccaType(occa::dtype::short3);
-occaDtype occaDtypeShort4 = occa::c::newOccaType(occa::dtype::short4);
+const occaDtype occaDtypeShort2 = occa::c::newOccaType(occa::dtype::short2);
+const occaDtype occaDtypeShort3 = occa::c::newOccaType(occa::dtype::short3);
+const occaDtype occaDtypeShort4 = occa::c::newOccaType(occa::dtype::short4);
 
-occaDtype occaDtypeUint2 = occa::c::newOccaType(occa::dtype::uint2);
-occaDtype occaDtypeUint3 = occa::c::newOccaType(occa::dtype::uint3);
-occaDtype occaDtypeUint4 = occa::c::newOccaType(occa::dtype::uint4);
+const occaDtype occaDtypeUint2 = occa::c::newOccaType(occa::dtype::uint2);
+const occaDtype occaDtypeUint3 = occa::c::newOccaType(occa::dtype::uint3);
+const occaDtype occaDtypeUint4 = occa::c::newOccaType(occa::dtype::uint4);
 
-occaDtype occaDtypeInt2 = occa::c::newOccaType(occa::dtype::int2);
-occaDtype occaDtypeInt3 = occa::c::newOccaType(occa::dtype::int3);
-occaDtype occaDtypeInt4 = occa::c::newOccaType(occa::dtype::int4);
+const occaDtype occaDtypeInt2 = occa::c::newOccaType(occa::dtype::int2);
+const occaDtype occaDtypeInt3 = occa::c::newOccaType(occa::dtype::int3);
+const occaDtype occaDtypeInt4 = occa::c::newOccaType(occa::dtype::int4);
 
-occaDtype occaDtypeUlong2 = occa::c::newOccaType(occa::dtype::ulong2);
-occaDtype occaDtypeUlong3 = occa::c::newOccaType(occa::dtype::ulong3);
-occaDtype occaDtypeUlong4 = occa::c::newOccaType(occa::dtype::ulong4);
+const occaDtype occaDtypeUlong2 = occa::c::newOccaType(occa::dtype::ulong2);
+const occaDtype occaDtypeUlong3 = occa::c::newOccaType(occa::dtype::ulong3);
+const occaDtype occaDtypeUlong4 = occa::c::newOccaType(occa::dtype::ulong4);
 
-occaDtype occaDtypeLong2 = occa::c::newOccaType(occa::dtype::long2);
-occaDtype occaDtypeLong3 = occa::c::newOccaType(occa::dtype::long3);
-occaDtype occaDtypeLong4 = occa::c::newOccaType(occa::dtype::long4);
+const occaDtype occaDtypeLong2 = occa::c::newOccaType(occa::dtype::long2);
+const occaDtype occaDtypeLong3 = occa::c::newOccaType(occa::dtype::long3);
+const occaDtype occaDtypeLong4 = occa::c::newOccaType(occa::dtype::long4);
 
-occaDtype occaDtypeFloat2 = occa::c::newOccaType(occa::dtype::float2);
-occaDtype occaDtypeFloat3 = occa::c::newOccaType(occa::dtype::float3);
-occaDtype occaDtypeFloat4 = occa::c::newOccaType(occa::dtype::float4);
+const occaDtype occaDtypeFloat2 = occa::c::newOccaType(occa::dtype::float2);
+const occaDtype occaDtypeFloat3 = occa::c::newOccaType(occa::dtype::float3);
+const occaDtype occaDtypeFloat4 = occa::c::newOccaType(occa::dtype::float4);
 
-occaDtype occaDtypeDouble2 = occa::c::newOccaType(occa::dtype::double2);
-occaDtype occaDtypeDouble3 = occa::c::newOccaType(occa::dtype::double3);
-occaDtype occaDtypeDouble4 = occa::c::newOccaType(occa::dtype::double4);
+const occaDtype occaDtypeDouble2 = occa::c::newOccaType(occa::dtype::double2);
+const occaDtype occaDtypeDouble3 = occa::c::newOccaType(occa::dtype::double3);
+const occaDtype occaDtypeDouble4 = occa::c::newOccaType(occa::dtype::double4);
 //======================================
 
 OCCA_END_EXTERN_C
