@@ -26,6 +26,7 @@ matrix:
       env:
         - CC=gcc-5
         - CXX=g++-5
+        - OCCA_COVERAGE=1
       addons:
         apt:
           sources:
@@ -36,6 +37,7 @@ matrix:
       env:
         - CC=gcc-6
         - CXX=g++-6
+        - OCCA_COVERAGE=1
       addons:
         apt:
           sources:
@@ -46,6 +48,7 @@ matrix:
       env:
         - CC=gcc-7
         - CXX=g++-7
+        - OCCA_COVERAGE=1
       addons:
         apt:
           sources:
@@ -56,6 +59,7 @@ matrix:
       env:
         - CC=clang-3.6
         - CXX=clang++-3.6
+        - CODECOV=OFF
       compiler: clang
       addons:
         apt:
@@ -68,6 +72,7 @@ matrix:
       env:
         - CC=clang-4.0
         - CXX=clang++-4.0
+        - CODECOV=OFF
       compiler: clang
       addons:
         apt:
@@ -79,6 +84,7 @@ matrix:
       env:
         - CC=clang-5.0
         - CXX=clang++-5.0
+        - CODECOV=OFF
       compiler: clang
       addons:
         apt:
@@ -93,6 +99,7 @@ matrix:
       env:
         - CC=clang
         - CXX=clang++
+        - CODECOV=OFF
 
 env:
   global:
@@ -109,7 +116,6 @@ before_install:
     if [ -n "${MATRIX_INIT}" ]; then
       eval "${MATRIX_INIT}"
     fi
-    export OCCA_COVERAGE=1
     export BUILD_CXXFLAGS="${CXXFLAGS}"
     export TEST_CXXFLAGS="${CXXFLAGS}"
 
