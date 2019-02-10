@@ -35,28 +35,19 @@ namespace occa {
     }
 
     void kernel::run() const {
-      const int totalArgCount = kernelArg::argumentCount(arguments);
-      if (!totalArgCount) {
+      const int args = (int) arguments.size();
+      if (!args) {
         vArgs.resize(1);
-      } else if ((int) vArgs.size() < totalArgCount) {
-        vArgs.resize(totalArgCount);
+      } else if ((int) vArgs.size() < args) {
+        vArgs.resize(args);
       }
 
-      const int kArgCount = (int) arguments.size();
-
-      int argc = 0;
-      for (int i = 0; i < kArgCount; ++i) {
-        const kArgVector &iArgs = arguments[i].args;
-        const int argCount = (int) iArgs.size();
-        if (!argCount) {
-          continue;
-        }
-        for (int ai = 0; ai < argCount; ++ai) {
-          vArgs[argc++] = iArgs[ai].ptr();
-        }
+      // Set arguments
+      for (int i = 0; i < args; ++i) {
+        vArgs[i] = arguments[i].ptr();
       }
 
-      sys::runFunction(function, argc, &(vArgs[0]));
+      sys::runFunction(function, args, &(vArgs[0]));
     }
   }
 }

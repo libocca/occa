@@ -114,9 +114,7 @@ def operatorDefinition(N):
   kernelArg args[] = {{
     {array_args}
   }};
-  modeKernel->arguments.clear();
-  modeKernel->arguments.reserve({N});
-  modeKernel->arguments.insert(modeKernel->arguments.begin(), args, args + {N});
+  modeKernel->setArguments(args, {N});
   run();
 }}
 '''.format(N=N,
@@ -127,7 +125,6 @@ def operatorDefinition(N):
   run();
 }
 '''
-
     return content
 
 

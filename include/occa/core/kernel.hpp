@@ -44,7 +44,7 @@ namespace occa {
 
     dim outerDims, innerDims;
 
-    std::vector<kernelArg> arguments;
+    std::vector<kernelArgData> arguments;
     lang::kernelMetadata metadata;
 
     modeKernel_t(modeDevice_t *modeDevice_,
@@ -57,10 +57,16 @@ namespace occa {
     void removeKernelRef(kernel *ker);
     bool needsFree() const;
 
-    kernelArg* argumentsPtr();
-    int argumentCount();
+    void assertArgumentLimit() const;
+    void assertArgInDevice(const kernelArg &arg) const;
+
+    void setArguments(kernelArg *args,
+                      const int count);
+    void pushArgument(const kernelArg &arg);
 
     void setMetadata(lang::parser_t &parser);
+
+    void setupRun();
 
     //---[ Virtual Methods ]------------
     virtual ~modeKernel_t() = 0;
@@ -123,9 +129,6 @@ namespace occa {
 
     void pushArg(const kernelArg &arg);
     void clearArgs();
-
-    void assertArgumentLimit() const;
-    void assertSameDevice(const kernelArg &arg) const;
 
     void run() const;
 

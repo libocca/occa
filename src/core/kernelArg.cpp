@@ -32,6 +32,22 @@ namespace occa {
     return ((info & kArgInfo::usePointer) ? data.void_ : (void*) &data);
   }
 
+  void kernelArgData::setupForKernelCall(const bool isConst) const {
+    if (!modeMemory              ||
+        !modeMemory->isManaged() ||
+        !modeMemory->modeDevice->hasSeparateMemorySpace()) {
+      return;
+    }
+    if (!modeMemory->inDevice()) {
+      modeMemory->copyFrom(modeMemory->uvaPtr, modeMemory->size);
+      modeMemory->memInfo |= uvaFlag::inDevice;
+    }
+    if (!isConst && !modeMemory->isStale()) {
+      uvaStaleMemory.push_back(modeMemory);
+      modeMemory->memInfo |= uvaFlag::isStale;
+    }
+  }
+
   kernelArg::kernelArg() {}
   kernelArg::~kernelArg() {}
 
@@ -42,11 +58,11 @@ namespace occa {
   kernelArg::kernelArg(const kernelArg &k) :
     args(k.args) {}
 
-  int kernelArg::size() {
+  int kernelArg::size() const {
     return (int) args.size();
   }
 
-  kernelArgData& kernelArg::operator [] (const int index) {
+  const kernelArgData& kernelArg::operator [] (const int index) const {
     return args[index];
   }
 
@@ -159,27 +175,6 @@ namespace occa {
       kArg.size       = bytes;
       kArg.info       = kArgInfo::usePointer;
       args.push_back(kArg);
-    }
-  }
-
-  void kernelArg::setupForKernelCall(const bool isConst) const {
-    const int argCount = (int) args.size();
-    for (int i = 0; i < argCount; ++i) {
-      occa::modeMemory_t *modeMemory = args[i].modeMemory;
-
-      if (!modeMemory              ||
-          !modeMemory->isManaged() ||
-          !modeMemory->modeDevice->hasSeparateMemorySpace()) {
-        continue;
-      }
-      if (!modeMemory->inDevice()) {
-        modeMemory->copyFrom(modeMemory->uvaPtr, modeMemory->size);
-        modeMemory->memInfo |= uvaFlag::inDevice;
-      }
-      if (!isConst && !modeMemory->isStale()) {
-        uvaStaleMemory.push_back(modeMemory);
-        modeMemory->memInfo |= uvaFlag::isStale;
-      }
     }
   }
 

@@ -81,39 +81,33 @@ namespace occa {
         return launcherRun();
       }
 
-      const int totalArgCount = kernelArg::argumentCount(arguments);
-      if (!totalArgCount) {
+      const int args = (int) arguments.size();
+      if (!args) {
         vArgs.resize(1);
-      } else if ((int) vArgs.size() < totalArgCount) {
-        vArgs.resize(totalArgCount);
+      } else if ((int) vArgs.size() < args) {
+        vArgs.resize(args);
       }
-      const int kArgCount = (int) arguments.size();
 
-      int argc = 0;
       // HIP expects kernel arguments to be byte-aligned so we add padding to arguments
+      char *dataPtr = (char*) &(vArgs[0]);
       int padding = 0;
       for (int i = 0; i < kArgCount; ++i) {
-        const kArgVector &iArgs = arguments[i].args;
-        const int argCount = (int) iArgs.size();
-        if (!argCount) {
-          continue;
-        }
-        for (int ai = 0; ai < argCount; ++ai) {
-          size_t bytes;
-          if ((padding + iArgs[ai].size) <= sizeof(void*)) {
-            bytes = iArgs[ai].size;
-            padding = sizeof(void*) - padding - iArgs[ai].size;
-          } else {
-            bytes = sizeof(void*);
-            argc += padding;
-            padding = 0;
-          }
+        const kernelArgData &arg = arguments[i];
 
-          memcpy((char*) vArgs.data() + argc,
-                 &(iArgs[ai].data.int64_),
-                 bytes);
-          argc += bytes;
+        size_t bytes;
+        if ((padding + arg.size) <= sizeof(void*)) {
+          bytes = arg.size;
+          padding = sizeof(void*) - padding - arg.size;
+        } else {
+          bytes = sizeof(void*);
+          dataPtr += padding;
+          padding = 0;
         }
+
+        ::memcpy(dataPtr,
+                 &(arg.data.int64_),
+                 bytes);
+        dataPtr += bytes;
       }
 
       size_t size = vArgs.size() * sizeof(vArgs[0]);

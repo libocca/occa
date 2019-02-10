@@ -12,9 +12,7 @@ void kernel::operator() (const kernelArg &arg1) const {
   kernelArg args[] = {
     arg1
   };
-  modeKernel->arguments.clear();
-  modeKernel->arguments.reserve(1);
-  modeKernel->arguments.insert(modeKernel->arguments.begin(), args, args + 1);
+  modeKernel->setArguments(args, 1);
   run();
 }
 
@@ -22,9 +20,7 @@ void kernel::operator() (const kernelArg &arg1, const kernelArg &arg2) const {
   kernelArg args[] = {
     arg1, arg2
   };
-  modeKernel->arguments.clear();
-  modeKernel->arguments.reserve(2);
-  modeKernel->arguments.insert(modeKernel->arguments.begin(), args, args + 2);
+  modeKernel->setArguments(args, 2);
   run();
 }
 
@@ -32,9 +28,7 @@ void kernel::operator() (const kernelArg &arg1, const kernelArg &arg2, const ker
   kernelArg args[] = {
     arg1, arg2, arg3
   };
-  modeKernel->arguments.clear();
-  modeKernel->arguments.reserve(3);
-  modeKernel->arguments.insert(modeKernel->arguments.begin(), args, args + 3);
+  modeKernel->setArguments(args, 3);
   run();
 }
 
@@ -42,9 +36,7 @@ void kernel::operator() (const kernelArg &arg1, const kernelArg &arg2, const ker
   kernelArg args[] = {
     arg1, arg2, arg3, arg4
   };
-  modeKernel->arguments.clear();
-  modeKernel->arguments.reserve(4);
-  modeKernel->arguments.insert(modeKernel->arguments.begin(), args, args + 4);
+  modeKernel->setArguments(args, 4);
   run();
 }
 
@@ -52,9 +44,7 @@ void kernel::operator() (const kernelArg &arg1, const kernelArg &arg2, const ker
   kernelArg args[] = {
     arg1, arg2, arg3, arg4, arg5
   };
-  modeKernel->arguments.clear();
-  modeKernel->arguments.reserve(5);
-  modeKernel->arguments.insert(modeKernel->arguments.begin(), args, args + 5);
+  modeKernel->setArguments(args, 5);
   run();
 }
 
@@ -63,9 +53,7 @@ void kernel::operator() (const kernelArg &arg1, const kernelArg &arg2, const ker
   kernelArg args[] = {
     arg1, arg2, arg3, arg4, arg5, arg6
   };
-  modeKernel->arguments.clear();
-  modeKernel->arguments.reserve(6);
-  modeKernel->arguments.insert(modeKernel->arguments.begin(), args, args + 6);
+  modeKernel->setArguments(args, 6);
   run();
 }
 
@@ -74,9 +62,7 @@ void kernel::operator() (const kernelArg &arg1, const kernelArg &arg2, const ker
   kernelArg args[] = {
     arg1, arg2, arg3, arg4, arg5, arg6, arg7
   };
-  modeKernel->arguments.clear();
-  modeKernel->arguments.reserve(7);
-  modeKernel->arguments.insert(modeKernel->arguments.begin(), args, args + 7);
+  modeKernel->setArguments(args, 7);
   run();
 }
 
@@ -85,9 +71,7 @@ void kernel::operator() (const kernelArg &arg1, const kernelArg &arg2, const ker
   kernelArg args[] = {
     arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8
   };
-  modeKernel->arguments.clear();
-  modeKernel->arguments.reserve(8);
-  modeKernel->arguments.insert(modeKernel->arguments.begin(), args, args + 8);
+  modeKernel->setArguments(args, 8);
   run();
 }
 
@@ -96,9 +80,7 @@ void kernel::operator() (const kernelArg &arg1, const kernelArg &arg2, const ker
   kernelArg args[] = {
     arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9
   };
-  modeKernel->arguments.clear();
-  modeKernel->arguments.reserve(9);
-  modeKernel->arguments.insert(modeKernel->arguments.begin(), args, args + 9);
+  modeKernel->setArguments(args, 9);
   run();
 }
 
@@ -107,9 +89,7 @@ void kernel::operator() (const kernelArg &arg1, const kernelArg &arg2, const ker
   kernelArg args[] = {
     arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10
   };
-  modeKernel->arguments.clear();
-  modeKernel->arguments.reserve(10);
-  modeKernel->arguments.insert(modeKernel->arguments.begin(), args, args + 10);
+  modeKernel->setArguments(args, 10);
   run();
 }
 
@@ -120,9 +100,7 @@ void kernel::operator() (const kernelArg &arg1, const kernelArg &arg2, const ker
     arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10,
     arg11
   };
-  modeKernel->arguments.clear();
-  modeKernel->arguments.reserve(11);
-  modeKernel->arguments.insert(modeKernel->arguments.begin(), args, args + 11);
+  modeKernel->setArguments(args, 11);
   run();
 }
 
@@ -133,9 +111,7 @@ void kernel::operator() (const kernelArg &arg1, const kernelArg &arg2, const ker
     arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10,
     arg11, arg12
   };
-  modeKernel->arguments.clear();
-  modeKernel->arguments.reserve(12);
-  modeKernel->arguments.insert(modeKernel->arguments.begin(), args, args + 12);
+  modeKernel->setArguments(args, 12);
   run();
 }
 
@@ -146,9 +122,7 @@ void kernel::operator() (const kernelArg &arg1, const kernelArg &arg2, const ker
     arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10,
     arg11, arg12, arg13
   };
-  modeKernel->arguments.clear();
-  modeKernel->arguments.reserve(13);
-  modeKernel->arguments.insert(modeKernel->arguments.begin(), args, args + 13);
+  modeKernel->setArguments(args, 13);
   run();
 }
 
@@ -159,9 +133,7 @@ void kernel::operator() (const kernelArg &arg1, const kernelArg &arg2, const ker
     arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10,
     arg11, arg12, arg13, arg14
   };
-  modeKernel->arguments.clear();
-  modeKernel->arguments.reserve(14);
-  modeKernel->arguments.insert(modeKernel->arguments.begin(), args, args + 14);
+  modeKernel->setArguments(args, 14);
   run();
 }
 
@@ -172,9 +144,7 @@ void kernel::operator() (const kernelArg &arg1, const kernelArg &arg2, const ker
     arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10,
     arg11, arg12, arg13, arg14, arg15
   };
-  modeKernel->arguments.clear();
-  modeKernel->arguments.reserve(15);
-  modeKernel->arguments.insert(modeKernel->arguments.begin(), args, args + 15);
+  modeKernel->setArguments(args, 15);
   run();
 }
 
@@ -186,9 +156,7 @@ void kernel::operator() (const kernelArg &arg1, const kernelArg &arg2, const ker
     arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10,
     arg11, arg12, arg13, arg14, arg15, arg16
   };
-  modeKernel->arguments.clear();
-  modeKernel->arguments.reserve(16);
-  modeKernel->arguments.insert(modeKernel->arguments.begin(), args, args + 16);
+  modeKernel->setArguments(args, 16);
   run();
 }
 
@@ -200,9 +168,7 @@ void kernel::operator() (const kernelArg &arg1, const kernelArg &arg2, const ker
     arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10,
     arg11, arg12, arg13, arg14, arg15, arg16, arg17
   };
-  modeKernel->arguments.clear();
-  modeKernel->arguments.reserve(17);
-  modeKernel->arguments.insert(modeKernel->arguments.begin(), args, args + 17);
+  modeKernel->setArguments(args, 17);
   run();
 }
 
@@ -214,9 +180,7 @@ void kernel::operator() (const kernelArg &arg1, const kernelArg &arg2, const ker
     arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10,
     arg11, arg12, arg13, arg14, arg15, arg16, arg17, arg18
   };
-  modeKernel->arguments.clear();
-  modeKernel->arguments.reserve(18);
-  modeKernel->arguments.insert(modeKernel->arguments.begin(), args, args + 18);
+  modeKernel->setArguments(args, 18);
   run();
 }
 
@@ -228,9 +192,7 @@ void kernel::operator() (const kernelArg &arg1, const kernelArg &arg2, const ker
     arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10,
     arg11, arg12, arg13, arg14, arg15, arg16, arg17, arg18, arg19
   };
-  modeKernel->arguments.clear();
-  modeKernel->arguments.reserve(19);
-  modeKernel->arguments.insert(modeKernel->arguments.begin(), args, args + 19);
+  modeKernel->setArguments(args, 19);
   run();
 }
 
@@ -242,9 +204,7 @@ void kernel::operator() (const kernelArg &arg1, const kernelArg &arg2, const ker
     arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10,
     arg11, arg12, arg13, arg14, arg15, arg16, arg17, arg18, arg19, arg20
   };
-  modeKernel->arguments.clear();
-  modeKernel->arguments.reserve(20);
-  modeKernel->arguments.insert(modeKernel->arguments.begin(), args, args + 20);
+  modeKernel->setArguments(args, 20);
   run();
 }
 
@@ -258,9 +218,7 @@ void kernel::operator() (const kernelArg &arg1, const kernelArg &arg2, const ker
     arg11, arg12, arg13, arg14, arg15, arg16, arg17, arg18, arg19, arg20,
     arg21
   };
-  modeKernel->arguments.clear();
-  modeKernel->arguments.reserve(21);
-  modeKernel->arguments.insert(modeKernel->arguments.begin(), args, args + 21);
+  modeKernel->setArguments(args, 21);
   run();
 }
 
@@ -274,9 +232,7 @@ void kernel::operator() (const kernelArg &arg1, const kernelArg &arg2, const ker
     arg11, arg12, arg13, arg14, arg15, arg16, arg17, arg18, arg19, arg20,
     arg21, arg22
   };
-  modeKernel->arguments.clear();
-  modeKernel->arguments.reserve(22);
-  modeKernel->arguments.insert(modeKernel->arguments.begin(), args, args + 22);
+  modeKernel->setArguments(args, 22);
   run();
 }
 
@@ -290,9 +246,7 @@ void kernel::operator() (const kernelArg &arg1, const kernelArg &arg2, const ker
     arg11, arg12, arg13, arg14, arg15, arg16, arg17, arg18, arg19, arg20,
     arg21, arg22, arg23
   };
-  modeKernel->arguments.clear();
-  modeKernel->arguments.reserve(23);
-  modeKernel->arguments.insert(modeKernel->arguments.begin(), args, args + 23);
+  modeKernel->setArguments(args, 23);
   run();
 }
 
@@ -306,9 +260,7 @@ void kernel::operator() (const kernelArg &arg1, const kernelArg &arg2, const ker
     arg11, arg12, arg13, arg14, arg15, arg16, arg17, arg18, arg19, arg20,
     arg21, arg22, arg23, arg24
   };
-  modeKernel->arguments.clear();
-  modeKernel->arguments.reserve(24);
-  modeKernel->arguments.insert(modeKernel->arguments.begin(), args, args + 24);
+  modeKernel->setArguments(args, 24);
   run();
 }
 
@@ -322,9 +274,7 @@ void kernel::operator() (const kernelArg &arg1, const kernelArg &arg2, const ker
     arg11, arg12, arg13, arg14, arg15, arg16, arg17, arg18, arg19, arg20,
     arg21, arg22, arg23, arg24, arg25
   };
-  modeKernel->arguments.clear();
-  modeKernel->arguments.reserve(25);
-  modeKernel->arguments.insert(modeKernel->arguments.begin(), args, args + 25);
+  modeKernel->setArguments(args, 25);
   run();
 }
 
@@ -339,9 +289,7 @@ void kernel::operator() (const kernelArg &arg1, const kernelArg &arg2, const ker
     arg11, arg12, arg13, arg14, arg15, arg16, arg17, arg18, arg19, arg20,
     arg21, arg22, arg23, arg24, arg25, arg26
   };
-  modeKernel->arguments.clear();
-  modeKernel->arguments.reserve(26);
-  modeKernel->arguments.insert(modeKernel->arguments.begin(), args, args + 26);
+  modeKernel->setArguments(args, 26);
   run();
 }
 
@@ -356,9 +304,7 @@ void kernel::operator() (const kernelArg &arg1, const kernelArg &arg2, const ker
     arg11, arg12, arg13, arg14, arg15, arg16, arg17, arg18, arg19, arg20,
     arg21, arg22, arg23, arg24, arg25, arg26, arg27
   };
-  modeKernel->arguments.clear();
-  modeKernel->arguments.reserve(27);
-  modeKernel->arguments.insert(modeKernel->arguments.begin(), args, args + 27);
+  modeKernel->setArguments(args, 27);
   run();
 }
 
@@ -373,9 +319,7 @@ void kernel::operator() (const kernelArg &arg1, const kernelArg &arg2, const ker
     arg11, arg12, arg13, arg14, arg15, arg16, arg17, arg18, arg19, arg20,
     arg21, arg22, arg23, arg24, arg25, arg26, arg27, arg28
   };
-  modeKernel->arguments.clear();
-  modeKernel->arguments.reserve(28);
-  modeKernel->arguments.insert(modeKernel->arguments.begin(), args, args + 28);
+  modeKernel->setArguments(args, 28);
   run();
 }
 
@@ -390,9 +334,7 @@ void kernel::operator() (const kernelArg &arg1, const kernelArg &arg2, const ker
     arg11, arg12, arg13, arg14, arg15, arg16, arg17, arg18, arg19, arg20,
     arg21, arg22, arg23, arg24, arg25, arg26, arg27, arg28, arg29
   };
-  modeKernel->arguments.clear();
-  modeKernel->arguments.reserve(29);
-  modeKernel->arguments.insert(modeKernel->arguments.begin(), args, args + 29);
+  modeKernel->setArguments(args, 29);
   run();
 }
 
@@ -407,9 +349,7 @@ void kernel::operator() (const kernelArg &arg1, const kernelArg &arg2, const ker
     arg11, arg12, arg13, arg14, arg15, arg16, arg17, arg18, arg19, arg20,
     arg21, arg22, arg23, arg24, arg25, arg26, arg27, arg28, arg29, arg30
   };
-  modeKernel->arguments.clear();
-  modeKernel->arguments.reserve(30);
-  modeKernel->arguments.insert(modeKernel->arguments.begin(), args, args + 30);
+  modeKernel->setArguments(args, 30);
   run();
 }
 
@@ -426,9 +366,7 @@ void kernel::operator() (const kernelArg &arg1, const kernelArg &arg2, const ker
     arg21, arg22, arg23, arg24, arg25, arg26, arg27, arg28, arg29, arg30,
     arg31
   };
-  modeKernel->arguments.clear();
-  modeKernel->arguments.reserve(31);
-  modeKernel->arguments.insert(modeKernel->arguments.begin(), args, args + 31);
+  modeKernel->setArguments(args, 31);
   run();
 }
 
@@ -445,9 +383,7 @@ void kernel::operator() (const kernelArg &arg1, const kernelArg &arg2, const ker
     arg21, arg22, arg23, arg24, arg25, arg26, arg27, arg28, arg29, arg30,
     arg31, arg32
   };
-  modeKernel->arguments.clear();
-  modeKernel->arguments.reserve(32);
-  modeKernel->arguments.insert(modeKernel->arguments.begin(), args, args + 32);
+  modeKernel->setArguments(args, 32);
   run();
 }
 
@@ -464,9 +400,7 @@ void kernel::operator() (const kernelArg &arg1, const kernelArg &arg2, const ker
     arg21, arg22, arg23, arg24, arg25, arg26, arg27, arg28, arg29, arg30,
     arg31, arg32, arg33
   };
-  modeKernel->arguments.clear();
-  modeKernel->arguments.reserve(33);
-  modeKernel->arguments.insert(modeKernel->arguments.begin(), args, args + 33);
+  modeKernel->setArguments(args, 33);
   run();
 }
 
@@ -483,9 +417,7 @@ void kernel::operator() (const kernelArg &arg1, const kernelArg &arg2, const ker
     arg21, arg22, arg23, arg24, arg25, arg26, arg27, arg28, arg29, arg30,
     arg31, arg32, arg33, arg34
   };
-  modeKernel->arguments.clear();
-  modeKernel->arguments.reserve(34);
-  modeKernel->arguments.insert(modeKernel->arguments.begin(), args, args + 34);
+  modeKernel->setArguments(args, 34);
   run();
 }
 
@@ -502,9 +434,7 @@ void kernel::operator() (const kernelArg &arg1, const kernelArg &arg2, const ker
     arg21, arg22, arg23, arg24, arg25, arg26, arg27, arg28, arg29, arg30,
     arg31, arg32, arg33, arg34, arg35
   };
-  modeKernel->arguments.clear();
-  modeKernel->arguments.reserve(35);
-  modeKernel->arguments.insert(modeKernel->arguments.begin(), args, args + 35);
+  modeKernel->setArguments(args, 35);
   run();
 }
 
@@ -522,9 +452,7 @@ void kernel::operator() (const kernelArg &arg1, const kernelArg &arg2, const ker
     arg21, arg22, arg23, arg24, arg25, arg26, arg27, arg28, arg29, arg30,
     arg31, arg32, arg33, arg34, arg35, arg36
   };
-  modeKernel->arguments.clear();
-  modeKernel->arguments.reserve(36);
-  modeKernel->arguments.insert(modeKernel->arguments.begin(), args, args + 36);
+  modeKernel->setArguments(args, 36);
   run();
 }
 
@@ -542,9 +470,7 @@ void kernel::operator() (const kernelArg &arg1, const kernelArg &arg2, const ker
     arg21, arg22, arg23, arg24, arg25, arg26, arg27, arg28, arg29, arg30,
     arg31, arg32, arg33, arg34, arg35, arg36, arg37
   };
-  modeKernel->arguments.clear();
-  modeKernel->arguments.reserve(37);
-  modeKernel->arguments.insert(modeKernel->arguments.begin(), args, args + 37);
+  modeKernel->setArguments(args, 37);
   run();
 }
 
@@ -562,9 +488,7 @@ void kernel::operator() (const kernelArg &arg1, const kernelArg &arg2, const ker
     arg21, arg22, arg23, arg24, arg25, arg26, arg27, arg28, arg29, arg30,
     arg31, arg32, arg33, arg34, arg35, arg36, arg37, arg38
   };
-  modeKernel->arguments.clear();
-  modeKernel->arguments.reserve(38);
-  modeKernel->arguments.insert(modeKernel->arguments.begin(), args, args + 38);
+  modeKernel->setArguments(args, 38);
   run();
 }
 
@@ -582,9 +506,7 @@ void kernel::operator() (const kernelArg &arg1, const kernelArg &arg2, const ker
     arg21, arg22, arg23, arg24, arg25, arg26, arg27, arg28, arg29, arg30,
     arg31, arg32, arg33, arg34, arg35, arg36, arg37, arg38, arg39
   };
-  modeKernel->arguments.clear();
-  modeKernel->arguments.reserve(39);
-  modeKernel->arguments.insert(modeKernel->arguments.begin(), args, args + 39);
+  modeKernel->setArguments(args, 39);
   run();
 }
 
@@ -602,9 +524,7 @@ void kernel::operator() (const kernelArg &arg1, const kernelArg &arg2, const ker
     arg21, arg22, arg23, arg24, arg25, arg26, arg27, arg28, arg29, arg30,
     arg31, arg32, arg33, arg34, arg35, arg36, arg37, arg38, arg39, arg40
   };
-  modeKernel->arguments.clear();
-  modeKernel->arguments.reserve(40);
-  modeKernel->arguments.insert(modeKernel->arguments.begin(), args, args + 40);
+  modeKernel->setArguments(args, 40);
   run();
 }
 
@@ -624,9 +544,7 @@ void kernel::operator() (const kernelArg &arg1, const kernelArg &arg2, const ker
     arg31, arg32, arg33, arg34, arg35, arg36, arg37, arg38, arg39, arg40,
     arg41
   };
-  modeKernel->arguments.clear();
-  modeKernel->arguments.reserve(41);
-  modeKernel->arguments.insert(modeKernel->arguments.begin(), args, args + 41);
+  modeKernel->setArguments(args, 41);
   run();
 }
 
@@ -646,9 +564,7 @@ void kernel::operator() (const kernelArg &arg1, const kernelArg &arg2, const ker
     arg31, arg32, arg33, arg34, arg35, arg36, arg37, arg38, arg39, arg40,
     arg41, arg42
   };
-  modeKernel->arguments.clear();
-  modeKernel->arguments.reserve(42);
-  modeKernel->arguments.insert(modeKernel->arguments.begin(), args, args + 42);
+  modeKernel->setArguments(args, 42);
   run();
 }
 
@@ -668,9 +584,7 @@ void kernel::operator() (const kernelArg &arg1, const kernelArg &arg2, const ker
     arg31, arg32, arg33, arg34, arg35, arg36, arg37, arg38, arg39, arg40,
     arg41, arg42, arg43
   };
-  modeKernel->arguments.clear();
-  modeKernel->arguments.reserve(43);
-  modeKernel->arguments.insert(modeKernel->arguments.begin(), args, args + 43);
+  modeKernel->setArguments(args, 43);
   run();
 }
 
@@ -690,9 +604,7 @@ void kernel::operator() (const kernelArg &arg1, const kernelArg &arg2, const ker
     arg31, arg32, arg33, arg34, arg35, arg36, arg37, arg38, arg39, arg40,
     arg41, arg42, arg43, arg44
   };
-  modeKernel->arguments.clear();
-  modeKernel->arguments.reserve(44);
-  modeKernel->arguments.insert(modeKernel->arguments.begin(), args, args + 44);
+  modeKernel->setArguments(args, 44);
   run();
 }
 
@@ -712,9 +624,7 @@ void kernel::operator() (const kernelArg &arg1, const kernelArg &arg2, const ker
     arg31, arg32, arg33, arg34, arg35, arg36, arg37, arg38, arg39, arg40,
     arg41, arg42, arg43, arg44, arg45
   };
-  modeKernel->arguments.clear();
-  modeKernel->arguments.reserve(45);
-  modeKernel->arguments.insert(modeKernel->arguments.begin(), args, args + 45);
+  modeKernel->setArguments(args, 45);
   run();
 }
 
@@ -735,9 +645,7 @@ void kernel::operator() (const kernelArg &arg1, const kernelArg &arg2, const ker
     arg31, arg32, arg33, arg34, arg35, arg36, arg37, arg38, arg39, arg40,
     arg41, arg42, arg43, arg44, arg45, arg46
   };
-  modeKernel->arguments.clear();
-  modeKernel->arguments.reserve(46);
-  modeKernel->arguments.insert(modeKernel->arguments.begin(), args, args + 46);
+  modeKernel->setArguments(args, 46);
   run();
 }
 
@@ -758,9 +666,7 @@ void kernel::operator() (const kernelArg &arg1, const kernelArg &arg2, const ker
     arg31, arg32, arg33, arg34, arg35, arg36, arg37, arg38, arg39, arg40,
     arg41, arg42, arg43, arg44, arg45, arg46, arg47
   };
-  modeKernel->arguments.clear();
-  modeKernel->arguments.reserve(47);
-  modeKernel->arguments.insert(modeKernel->arguments.begin(), args, args + 47);
+  modeKernel->setArguments(args, 47);
   run();
 }
 
@@ -781,9 +687,7 @@ void kernel::operator() (const kernelArg &arg1, const kernelArg &arg2, const ker
     arg31, arg32, arg33, arg34, arg35, arg36, arg37, arg38, arg39, arg40,
     arg41, arg42, arg43, arg44, arg45, arg46, arg47, arg48
   };
-  modeKernel->arguments.clear();
-  modeKernel->arguments.reserve(48);
-  modeKernel->arguments.insert(modeKernel->arguments.begin(), args, args + 48);
+  modeKernel->setArguments(args, 48);
   run();
 }
 
@@ -804,9 +708,7 @@ void kernel::operator() (const kernelArg &arg1, const kernelArg &arg2, const ker
     arg31, arg32, arg33, arg34, arg35, arg36, arg37, arg38, arg39, arg40,
     arg41, arg42, arg43, arg44, arg45, arg46, arg47, arg48, arg49
   };
-  modeKernel->arguments.clear();
-  modeKernel->arguments.reserve(49);
-  modeKernel->arguments.insert(modeKernel->arguments.begin(), args, args + 49);
+  modeKernel->setArguments(args, 49);
   run();
 }
 
@@ -827,9 +729,7 @@ void kernel::operator() (const kernelArg &arg1, const kernelArg &arg2, const ker
     arg31, arg32, arg33, arg34, arg35, arg36, arg37, arg38, arg39, arg40,
     arg41, arg42, arg43, arg44, arg45, arg46, arg47, arg48, arg49, arg50
   };
-  modeKernel->arguments.clear();
-  modeKernel->arguments.reserve(50);
-  modeKernel->arguments.insert(modeKernel->arguments.begin(), args, args + 50);
+  modeKernel->setArguments(args, 50);
   run();
 }
 

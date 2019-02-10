@@ -53,6 +53,8 @@ namespace occa {
     ~kernelArgData();
 
     void* ptr() const;
+
+    void setupForKernelCall(const bool isConst) const;
   };
 
   class kernelArg {
@@ -98,9 +100,9 @@ namespace occa {
       add((void*) const_cast<TM*>(arg), true, false);
     }
 
-    int size();
+    int size() const;
 
-    kernelArgData& operator [] (const int index);
+    const kernelArgData& operator [] (const int index) const;
 
     void add(const kernelArg &arg);
 
@@ -109,8 +111,6 @@ namespace occa {
 
     void add(void *arg, size_t bytes,
              bool lookAtUva = true, bool argIsUva = false);
-
-    void setupForKernelCall(const bool isConst) const;
 
     occa::modeDevice_t* getModeDevice() const;
 

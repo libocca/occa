@@ -133,22 +133,12 @@ namespace occa {
       };
 
       // Set arguments
-      const int kArgCount = (int) arguments.size();
-
-      int argc = 0;
-      for (int i = 0; i < kArgCount; ++i) {
-        const kArgVector &iArgs = arguments[i].args;
-        const int argCount = (int) iArgs.size();
-        if (!argCount) {
-          continue;
-        }
-
-        for (int ai = 0; ai < argCount; ++ai) {
-          const kernelArgData &kArg = iArgs[ai];
-          OCCA_OPENCL_ERROR("Kernel [" + name + "]"
-                            << ": Setting Kernel Argument [" << (i + 1) << "]",
-                            clSetKernelArg(clKernel, argc++, kArg.size, kArg.ptr()));
-        }
+      const int args = (int) arguments.size();
+      for (int i = 0; i < args; ++i) {
+        const kernelArgData &arg = arguments[i];
+        OCCA_OPENCL_ERROR("Kernel [" + name + "]"
+                          << ": Setting Kernel Argument [" << (i + 1) << "]",
+                          clSetKernelArg(clKernel, i, arg.size, arg.ptr()));
       }
 
       OCCA_OPENCL_ERROR("Kernel [" + name + "]"
@@ -163,10 +153,12 @@ namespace occa {
     }
 
     void kernel::launcherRun() const {
+      kernelArg arg(&(clKernels[0]));
+
       launcherKernel->arguments = arguments;
       launcherKernel->arguments.insert(
         launcherKernel->arguments.begin(),
-        &(clKernels[0])
+        arg[0]
       );
 
       int kernelCount = (int) clKernels.size();
