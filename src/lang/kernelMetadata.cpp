@@ -37,10 +37,7 @@ namespace occa {
                                          const dtype_t &dtype) const {
       if (pos < (int) arguments.size()) {
         const dtype_t &argDtype = arguments[pos].dtype;
-        if (argDtype == dtype::byte) {
-          return true;
-        }
-        return argDtype == dtype;
+        return dtype.canBeCastedTo(argDtype);
       }
       return false;
     }

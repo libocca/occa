@@ -72,6 +72,7 @@ void testCasting() {
   ASSERT_TRUE(foo1.canBeCastedTo(foo2));
   ASSERT_TRUE(foo2.canBeCastedTo(foo1));
 
+  // double  <---> double2
   ASSERT_NEQ(occa::dtype::double_,
              occa::dtype::double2);
   ASSERT_FALSE(
@@ -84,6 +85,8 @@ void testCasting() {
     occa::dtype::double2.canBeCastedTo(occa::dtype::double_)
   );
 
+  // double  <---> double3
+  // double2 <-!-> dobule3
   ASSERT_TRUE(
     occa::dtype::double_.canBeCastedTo(occa::dtype::double3)
   );
@@ -92,6 +95,21 @@ void testCasting() {
   );
   ASSERT_FALSE(
     occa::dtype::double3.canBeCastedTo(occa::dtype::double2)
+  );
+
+  // double  <---> byte
+  // double2 <---> byte
+  ASSERT_TRUE(
+    occa::dtype::double_.canBeCastedTo(occa::dtype::byte)
+  );
+  ASSERT_TRUE(
+    occa::dtype::byte.canBeCastedTo(occa::dtype::double_)
+  );
+  ASSERT_TRUE(
+    occa::dtype::double2.canBeCastedTo(occa::dtype::byte)
+  );
+  ASSERT_TRUE(
+    occa::dtype::byte.canBeCastedTo(occa::dtype::double2)
   );
 }
 

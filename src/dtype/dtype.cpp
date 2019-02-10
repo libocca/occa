@@ -237,6 +237,12 @@ namespace occa {
     const dtype_t &from = self();
     const dtype_t &to   = other.self();
 
+    // Anything can be casted from/to bytes
+    if ((&from == &dtype::byte) ||
+        (&to == &dtype::byte)) {
+      return true;
+    }
+
     from.setFlattenedDtype();
     to.setFlattenedDtype();
 
