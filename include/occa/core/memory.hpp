@@ -37,7 +37,7 @@ namespace occa {
 
     occa::modeDevice_t *modeDevice;
 
-    const dtype *type;
+    const dtype_t *dtype_;
     udim_t size;
     bool isOrigin;
 
@@ -126,6 +126,8 @@ namespace occa {
     void setModeMemory(modeMemory_t *modeMemory_);
     void removeMemoryRef();
 
+    void setDtype(const dtype_t &dtype__);
+
   public:
     void dontUseRefs();
 
@@ -149,8 +151,7 @@ namespace occa {
     const std::string& mode() const;
     const occa::properties& properties() const;
 
-    void setType(const dtype &type);
-    const dtype& getType();
+    const dtype_t& dtype();
 
     udim_t size() const;
     udim_t length() const;

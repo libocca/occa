@@ -17,7 +17,7 @@ namespace occa {
     ptr(NULL),
     uvaPtr(NULL),
     modeDevice(modeDevice_),
-    type(&dtypes::none),
+    dtype_(&dtype::none),
     size(size_),
     isOrigin(true) {
     modeDevice->addMemoryRef(this);
@@ -202,16 +202,18 @@ namespace occa {
             : noProperties);
   }
 
-  void memory::setType(const dtype &type) {
+  void memory::setDtype(const dtype_t &dtype__) {
     assertInitialized();
-    modeMemory->type = &type;
+    OCCA_ERROR("Memory dtype must be declared as global",
+               dtype__.isGlobal());
+    modeMemory->dtype_ = &dtype__;
   }
 
-  const dtype& memory::getType() {
+  const dtype_t& memory::dtype() {
     if (modeMemory) {
-      return *modeMemory->type;
+      return *modeMemory->dtype_;
     }
-    return dtypes::none;
+    return dtype::none;
   }
 
   udim_t memory::size() const {
@@ -225,7 +227,7 @@ namespace occa {
     if (modeMemory == NULL) {
       return 0;
     }
-    return modeMemory->size / modeMemory->type->getBytes();
+    return modeMemory->size / modeMemory->dtype_->bytes();
   }
 
   bool memory::isManaged() const {

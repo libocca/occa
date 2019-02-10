@@ -261,7 +261,7 @@ namespace occa {
       return oType;
     }
 
-    occaType newOccaType(const occa::dtype &dtype) {
+    occaType newOccaType(const occa::dtype_t &dtype) {
       occaType oType;
       oType.magicHeader = OCCA_C_TYPE_MAGIC_HEADER;
       oType.type  = typeType::dtype;
@@ -469,10 +469,10 @@ namespace occa {
       return p;
     }
 
-    occa::dtype& dtype(occaType value) {
+    occa::dtype_t& dtype(occaType value) {
       OCCA_ERROR("Input is not an occaDtype",
                  value.type == typeType::dtype);
-      return *((occa::dtype*) value.value.ptr);
+      return *((occa::dtype_t*) value.value.ptr);
     }
 
     occa::json& json(occaType value) {

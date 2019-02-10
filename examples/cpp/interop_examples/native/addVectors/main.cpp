@@ -27,9 +27,9 @@ int main(int argc, char **argv) {
   // device.setup("mode: 'OpenCL', platform_id : 0, device_id: 1");
   //========================================================
 
-  o_a  = device.malloc(entries, occa::dtypes::float_);
-  o_b  = device.malloc(entries, occa::dtypes::float_);
-  o_ab = device.malloc(entries, occa::dtypes::float_);
+  o_a  = device.malloc(entries, occa::dtype::float_);
+  o_b  = device.malloc(entries, occa::dtype::float_);
+  o_ab = device.malloc(entries, occa::dtype::float_);
 
   // Native Serial kernel
   addVectors = device.buildKernel("addVectors.cpp",

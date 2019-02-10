@@ -139,8 +139,8 @@ namespace occa {
       return *this;
     }
 
-    dtype variable_t::getDtype() const {
-      return dtypes::byte;
+    dtype_t variable_t::dtype() const {
+      return dtype::byte;
     }
 
     void variable_t::printDeclaration(printer &pout) const {

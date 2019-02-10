@@ -199,18 +199,18 @@ occaMemory OCCA_RFUNC occaDeviceMalloc(occaDevice device,
 
 occaMemory OCCA_RFUNC occaDeviceTypedMalloc(occaDevice device,
                                             const occaUDim_t entries,
-                                            const occaDtype type,
+                                            const occaDtype dtype,
                                             const void *src,
                                             occaProperties props) {
   occa::device device_ = occa::c::device(device);
-  occa::dtype type_ = occa::c::dtype(type);
+  occa::dtype_t dtype_ = occa::c::dtype(dtype);
 
   occa::memory memory;
   if (occa::c::isDefault(props)) {
-    memory = device_.malloc(entries, type_, src);
+    memory = device_.malloc(entries, dtype_, src);
   } else {
     memory = device_.malloc(entries,
-                            type_,
+                            dtype_,
                             src,
                             occa::c::properties(props));
   }
@@ -236,17 +236,17 @@ void* OCCA_RFUNC occaDeviceUMalloc(occaDevice device,
 
 void* OCCA_RFUNC occaDeviceTypedUMalloc(occaDevice device,
                                         const occaUDim_t entries,
-                                        const occaDtype type,
+                                        const occaDtype dtype,
                                         const void *src,
                                         occaProperties props) {
   occa::device device_ = occa::c::device(device);
-  occa::dtype type_ = occa::c::dtype(type);
+  occa::dtype_t dtype_ = occa::c::dtype(dtype);
 
   if (occa::c::isDefault(props)) {
-    return device_.umalloc(entries, type_, src);
+    return device_.umalloc(entries, dtype_, src);
   }
   return device_.umalloc(entries,
-                         type_,
+                         dtype_,
                          src,
                          occa::c::properties(props));
 }

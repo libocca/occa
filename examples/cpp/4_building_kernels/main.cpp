@@ -74,8 +74,8 @@ int main(int argc, const char **argv) {
   map squareArray;
   occa::memory o_vec, o_vec2;
 
-  o_vec  = occa::malloc(entries, occa::dtypes::float_);
-  o_vec2 = occa::malloc(entries, occa::dtypes::float_);
+  o_vec  = occa::malloc(entries, occa::dtype::float_);
+  o_vec2 = occa::malloc(entries, occa::dtype::float_);
 
   squareArray.setup("float", "vec",
                     "float", "vec2",

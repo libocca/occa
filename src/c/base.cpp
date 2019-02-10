@@ -158,17 +158,17 @@ occaMemory OCCA_RFUNC occaMalloc(const occaUDim_t bytes,
 }
 
 occaMemory OCCA_RFUNC occaTypedMalloc(const occaUDim_t entries,
-                                      const occaDtype type,
+                                      const occaDtype dtype,
                                       const void *src,
                                       occaProperties props) {
-  occa::dtype type_ = occa::c::dtype(type);
+  occa::dtype_t dtype_ = occa::c::dtype(dtype);
 
   occa::memory memory;
   if (occa::c::isDefault(props)) {
-    memory = occa::malloc(entries, type_, src);
+    memory = occa::malloc(entries, dtype_, src);
   } else {
     memory = occa::malloc(entries,
-                          type_,
+                          dtype_,
                           src,
                           occa::c::properties(props));
   }
@@ -190,16 +190,16 @@ void* OCCA_RFUNC occaUMalloc(const occaUDim_t bytes,
 }
 
 void* OCCA_RFUNC occaTypedUMalloc(const occaUDim_t entries,
-                                  const occaDtype type,
+                                  const occaDtype dtype,
                                   const void *src,
                                   occaProperties props) {
-  occa::dtype type_ = occa::c::dtype(type);
+  occa::dtype_t dtype_ = occa::c::dtype(dtype);
 
   if (occa::c::isDefault(props)) {
-    return occa::umalloc(entries, type_, src);
+    return occa::umalloc(entries, dtype_, src);
   }
   return occa::umalloc(entries,
-                       type_,
+                       dtype_,
                        src,
                        occa::c::properties(props));
 }

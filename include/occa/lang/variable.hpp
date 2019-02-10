@@ -61,7 +61,7 @@ namespace occa {
       variable_t& operator += (const array_t &array);
       variable_t& operator += (const arrayVector &arrays);
 
-      dtype getDtype() const;
+      dtype_t dtype() const;
 
       void printDeclaration(printer &pout) const;
       void printExtraDeclaration(printer &pout) const;

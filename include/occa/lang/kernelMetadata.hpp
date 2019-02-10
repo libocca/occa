@@ -13,10 +13,10 @@ namespace occa {
     class argumentInfo {
     public:
       bool isConst;
-      dtype type;
+      dtype_t dtype;
 
       argumentInfo(const bool isConst_ = false,
-                   const dtype &type_ = dtypes::byte);
+                   const dtype_t &dtype_ = dtype::byte);
 
       static argumentInfo fromJson(const json &j);
       json toJson() const;
@@ -33,7 +33,7 @@ namespace occa {
 
       bool argIsConst(const int pos) const;
       bool argMatchesDtype(const int pos,
-                           const dtype &type) const;
+                           const dtype_t &dtype) const;
 
       static kernelMetadata fromJson(const json &j);
       json toJson() const;

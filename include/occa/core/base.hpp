@@ -61,7 +61,7 @@ namespace occa {
 
   //---[ Memory Functions ]-------------
     occa::memory malloc(const dim_t entries,
-                        const dtype &type,
+                        const dtype_t &dtype,
                         const void *src = NULL,
                         const occa::properties &props = occa::properties());
 
@@ -70,7 +70,7 @@ namespace occa {
                       const occa::properties &props = occa::properties());
 
   void* umalloc(const dim_t entries,
-                const dtype &type,
+                const dtype_t &dtype,
                 const void *src = NULL,
                 const occa::properties &props = occa::properties());
 

@@ -92,7 +92,7 @@ namespace occa {
     occaType newOccaType(occa::stream stream);
     occaType newOccaType(occa::streamTag streamTag);
 
-    occaType newOccaType(const dtype &type);
+    occaType newOccaType(const dtype_t &dtype);
 
     occaType newOccaType(const json &json,
                          const bool needsFree);
@@ -114,7 +114,7 @@ namespace occa {
     occa::primitive primitive(occaType value,
                               const int type);
 
-    occa::dtype& dtype(occaType value);
+    occa::dtype_t& dtype(occaType value);
 
     occa::json& json(occaType value);
     occa::json inferJson(occaType value);

@@ -96,10 +96,10 @@ namespace occa {
 
   //---[ Memory Functions ]-------------
   occa::memory malloc(const dim_t entries,
-                      const dtype &type,
+                      const dtype_t &dtype,
                       const void *src,
                       const occa::properties &props) {
-    return getDevice().malloc(entries, type, src, props);
+    return getDevice().malloc(entries, dtype, src, props);
   }
 
   occa::memory malloc(const dim_t bytes,
@@ -109,10 +109,10 @@ namespace occa {
   }
 
   void* umalloc(const dim_t entries,
-                const dtype &type,
+                const dtype_t &dtype,
                 const void *src,
                 const occa::properties &props) {
-    return getDevice().umalloc(entries, type, src, props);
+    return getDevice().umalloc(entries, dtype, src, props);
   }
 
   void* umalloc(const dim_t bytes,

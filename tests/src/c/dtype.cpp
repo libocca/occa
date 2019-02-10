@@ -19,25 +19,25 @@ int main(const int argc, const char **argv) {
 
 void testDtype() {
   ASSERT_TRUE(
-    occaDtypeIsEqual(occaDtypeFloat,
-                     occaDtypeFloat)
+    occaDtypesAreEqual(occaDtypeFloat,
+                       occaDtypeFloat)
   );
 
   occaDtype fakeFloat = occaCreateDtype("float",
-                                        occaDtypeGetBytes(occaDtypeFloat));
-  ASSERT_TRUE(
-    occaDtypeIsEqual(occaDtypeFloat,
-                     fakeFloat)
+                                        occaDtypeBytes(occaDtypeFloat));
+  ASSERT_FALSE(
+    occaDtypesAreEqual(occaDtypeFloat,
+                       fakeFloat)
   );
 
   occaDtype fakeDouble = occaCreateDtype("double", 0);
   ASSERT_FALSE(
-    occaDtypeIsEqual(occaDtypeFloat,
-                     fakeDouble)
+    occaDtypesAreEqual(occaDtypeFloat,
+                       fakeDouble)
   );
   ASSERT_FALSE(
-    occaDtypeIsEqual(occaDtypeDouble,
-                     fakeDouble)
+    occaDtypesAreEqual(occaDtypeDouble,
+                       fakeDouble)
   );
 
   occaDtype foo1 = occaCreateDtype("foo", 0);
@@ -61,19 +61,35 @@ void testDtype() {
                     "a", occaDtypeDouble);
 
   ASSERT_TRUE(
-    occaDtypeIsEqual(foo1, foo1)
-  );
-  ASSERT_TRUE(
-    occaDtypeIsEqual(foo1, foo2)
+    occaDtypesAreEqual(foo1, foo1)
   );
   ASSERT_FALSE(
-    occaDtypeIsEqual(foo1, foo3)
+    occaDtypesAreEqual(foo1, foo2)
   );
   ASSERT_FALSE(
-    occaDtypeIsEqual(foo1, foo4)
+    occaDtypesAreEqual(foo1, foo3)
+  );
+  ASSERT_FALSE(
+    occaDtypesAreEqual(foo1, foo4)
+  );
+  ASSERT_FALSE(
+    occaDtypesAreEqual(foo3, foo4)
+  );
+
+  ASSERT_TRUE(
+    occaDtypesMatch(foo1, foo1)
   );
   ASSERT_TRUE(
-    occaDtypeIsEqual(foo3, foo4)
+    occaDtypesMatch(foo1, foo2)
+  );
+  ASSERT_FALSE(
+    occaDtypesMatch(foo1, foo3)
+  );
+  ASSERT_FALSE(
+    occaDtypesMatch(foo1, foo4)
+  );
+  ASSERT_FALSE(
+    occaDtypesMatch(foo3, foo4)
   );
 
   occaFree(fakeFloat);
@@ -101,12 +117,10 @@ void testJsonMethods() {
                     "b", occaDtypeDouble);
 
   const std::string baseFooJsonStr = (
-    "{"
-    "  foo: ["
-    "    { a: 'double' },"
-    "    { b: 'double' },"
-    "  ],"
-    "}"
+    "["
+    "  ['a', 'double'],"
+    "  ['b', 'double'],"
+    "]"
   );
 
   occaJson fooJson = occaDtypeToJson(foo);
@@ -119,16 +133,25 @@ void testJsonMethods() {
             rawFooJsonStr);
 
   occaDtype foo2 = occaDtypeFromJson(fooJson);
+  ASSERT_FALSE(
+    occaDtypesAreEqual(foo, foo2)
+  );
   ASSERT_TRUE(
-    occaDtypeIsEqual(foo, foo2)
+    occaDtypesMatch(foo, foo2)
   );
 
   occaDtype foo3 = occaDtypeFromJsonString(baseFooJsonStr.c_str());
-  ASSERT_TRUE(
-    occaDtypeIsEqual(foo, foo3)
+  ASSERT_FALSE(
+    occaDtypesAreEqual(foo, foo3)
+  );
+  ASSERT_FALSE(
+    occaDtypesAreEqual(foo2, foo3)
   );
   ASSERT_TRUE(
-    occaDtypeIsEqual(foo2, foo3)
+    occaDtypesMatch(foo, foo3)
+  );
+  ASSERT_TRUE(
+    occaDtypesMatch(foo2, foo3)
   );
 
   ::free((void*) doubleJsonStr);

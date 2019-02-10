@@ -41,9 +41,9 @@ int main(int argc, const char **argv) {
   //========================================================
 
   // Allocate memory on the device
-  o_a  = device.malloc(entries, occa::dtypes::float_);
-  o_b  = device.malloc(entries, occa::dtypes::float_);
-  o_ab = device.malloc(entries, occa::dtypes::float_);
+  o_a  = device.malloc(entries, occa::dtype::float_);
+  o_b  = device.malloc(entries, occa::dtype::float_);
+  o_ab = device.malloc(entries, occa::dtype::float_);
 
   // Compile the kernel at run-time
   addVectors = device.buildKernel("addVectors.okl",
