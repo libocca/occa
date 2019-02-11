@@ -28,6 +28,7 @@ namespace occa {
   public:
     std::string mode;
     occa::properties properties;
+    bool needsLauncherKernel;
 
     gc::ring_t<device> deviceRing;
     gc::ring_t<modeKernel_t> kernelRing;

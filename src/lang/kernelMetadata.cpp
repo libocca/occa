@@ -4,46 +4,48 @@
 
 namespace occa {
   namespace lang {
+    argumentInfo::argumentInfo() :
+      isConst(false),
+      isPtr(false),
+      dtype(dtype::byte) {}
+
     argumentInfo::argumentInfo(const bool isConst_,
+                               const bool isPtr_,
                                const dtype_t &dtype_) :
       isConst(isConst_),
+      isPtr(isPtr_),
       dtype(dtype_) {}
 
     argumentInfo argumentInfo::fromJson(const json &j) {
-      return argumentInfo((bool) j["const"]);
+      return argumentInfo((bool) j["const"],
+                          (bool) j["ptr"],
+                          dtype_t::fromJson(j["dtype"]));
     }
 
     json argumentInfo::toJson() const {
       json j;
       j["const"] = isConst;
+      j["ptr"]   = isPtr;
+      j["dtype"] = dtype.toJson();
       return j;
     }
 
-    kernelMetadata::kernelMetadata() {}
+    kernelMetadata::kernelMetadata() :
+      initialized(false) {}
+
+    bool kernelMetadata::isInitialized() const {
+      return initialized;
+    }
 
     kernelMetadata& kernelMetadata::operator += (const argumentInfo &argInfo) {
+      initialized = true;
       arguments.push_back(argInfo);
       return *this;
     }
 
-    bool kernelMetadata::argIsConst(const int pos) const {
-      if (pos < (int) arguments.size()) {
-        return arguments[pos].isConst;
-      }
-      return false;
-    }
-
-    bool kernelMetadata::argMatchesDtype(const int pos,
-                                         const dtype_t &dtype) const {
-      if (pos < (int) arguments.size()) {
-        const dtype_t &argDtype = arguments[pos].dtype;
-        return dtype.canBeCastedTo(argDtype);
-      }
-      return false;
-    }
-
     kernelMetadata kernelMetadata::fromJson(const json &j) {
       kernelMetadata meta;
+      meta.initialized = true;
 
       meta.name = (std::string) j["name"];
 

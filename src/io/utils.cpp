@@ -24,17 +24,17 @@
 namespace occa {
   // Kernel Caching
   namespace kc {
-    const std::string rawSourceFile  = "raw_source.cpp";
-    const std::string sourceFile     = "source.cpp";
-    const std::string hostSourceFile = "host_source.cpp";
-    const std::string buildFile      = "build.json";
-    const std::string hostBuildFile  = "host_build.json";
+    const std::string rawSourceFile      = "raw_source.cpp";
+    const std::string sourceFile         = "source.cpp";
+    const std::string launcherSourceFile = "launcher_source.cpp";
+    const std::string buildFile          = "build.json";
+    const std::string launcherBuildFile  = "launcher_build.json";
 #if (OCCA_OS & (OCCA_LINUX_OS | OCCA_MACOS_OS))
-    const std::string binaryFile     = "binary";
-    const std::string hostBinaryFile = "host_binary";
+    const std::string binaryFile         = "binary";
+    const std::string launcherBinaryFile = "launcher_binary";
 #else
-    const std::string binaryFile     = "binary.dll";
-    const std::string hostBinaryFile = "host_binary.dll";
+    const std::string binaryFile         = "binary.dll";
+    const std::string launcherBinaryFile = "launcher_binary.dll";
 #endif
   }
 

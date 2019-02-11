@@ -19,7 +19,7 @@ namespace occa {
       }
 
       void cudaParser::onClear() {
-        hostClear();
+        launcherClear();
       }
 
       void cudaParser::beforePreprocessing() {

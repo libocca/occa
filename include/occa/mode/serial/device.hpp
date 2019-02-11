@@ -41,9 +41,24 @@ namespace occa {
                                         const hash_t kernelHash,
                                         const occa::properties &kernelProps);
 
+      modeKernel_t* buildLauncherKernel(const std::string &filename,
+                                        const std::string &kernelName,
+                                        const hash_t kernelHash);
+
+      modeKernel_t* buildKernel(const std::string &filename,
+                                const std::string &kernelName,
+                                const hash_t kernelHash,
+                                const occa::properties &kernelProps,
+                                const bool isLauncerKernel);
+
       virtual modeKernel_t* buildKernelFromBinary(const std::string &filename,
                                                   const std::string &kernelName,
                                                   const occa::properties &kernelProps);
+
+      virtual modeKernel_t* buildKernelFromBinary(const std::string &filename,
+                                                  const std::string &kernelName,
+                                                  const occa::properties &kernelProps,
+                                                  lang::kernelMetadata &metadata);
       //================================
 
       //---[ Memory ]-------------------

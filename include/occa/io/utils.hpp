@@ -12,9 +12,9 @@ namespace occa {
     extern const std::string sourceFile;
     extern const std::string binaryFile;
     extern const std::string buildFile;
-    extern const std::string hostSourceFile;
-    extern const std::string hostBinaryFile;
-    extern const std::string hostBuildFile;
+    extern const std::string launcherSourceFile;
+    extern const std::string launcherBinaryFile;
+    extern const std::string launcherBuildFile;
   }
 
   namespace io {

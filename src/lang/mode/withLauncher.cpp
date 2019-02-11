@@ -11,22 +11,22 @@ namespace occa {
     namespace okl {
       withLauncher::withLauncher(const occa::properties &settings_) :
         parser_t(settings_),
-        hostParser(settings["host"]) {
-        hostParser.settings["okl/validate"] = false;
+        launcherParser(settings["launcher"]) {
+        launcherParser.settings["okl/validate"] = false;
       }
 
       //---[ Public ]-------------------
       bool withLauncher::succeeded() const {
-        return (success && hostParser.success);
+        return (success && launcherParser.success);
       }
 
-      void withLauncher::writeHostSourceToFile(const std::string &filename) const {
-        hostParser.writeToFile(filename);
+      void withLauncher::writeLauncherSourceToFile(const std::string &filename) const {
+        launcherParser.writeToFile(filename);
       }
       //================================
 
-      void withLauncher::hostClear() {
-        hostParser.onClear();
+      void withLauncher::launcherClear() {
+        launcherParser.onClear();
       }
 
       void withLauncher::afterParsing() {
@@ -39,7 +39,7 @@ namespace occa {
         setOKLLoopIndices();
 
         if (!success) return;
-        setupHostParser();
+        setupLauncherParser();
 
         if (!success) return;
         beforeKernelSplit();
@@ -75,19 +75,19 @@ namespace occa {
         }
       }
 
-      void withLauncher::setupHostParser() {
+      void withLauncher::setupLauncherParser() {
         // Clone source
         blockStatement &rootClone = (blockStatement&) root.clone();
 
-        hostParser.root.swap(rootClone);
+        launcherParser.root.swap(rootClone);
         delete &rootClone;
-        hostParser.setupKernels();
+        launcherParser.setupKernels();
 
         // Remove outer loops
         statementPtrVector kernelSmnts;
         findStatementsByAttr(statementType::functionDecl,
                              "kernel",
-                             hostParser.root,
+                             launcherParser.root,
                              kernelSmnts);
 
         const int kernelCount = (int) kernelSmnts.size();
@@ -95,16 +95,16 @@ namespace occa {
           functionDeclStatement &kernelSmnt = (
             *((functionDeclStatement*) kernelSmnts[i])
           );
-          removeHostOuterLoops(kernelSmnt);
+          removeLauncherOuterLoops(kernelSmnt);
           if (!success) return;
-          setupHostKernelArgs(kernelSmnt);
+          setupLauncherKernelArgs(kernelSmnt);
           if (!success) return;
         }
 
-        setupHostHeaders();
+        setupLauncherHeaders();
       }
 
-      void withLauncher::removeHostOuterLoops(functionDeclStatement &kernelSmnt) {
+      void withLauncher::removeLauncherOuterLoops(functionDeclStatement &kernelSmnt) {
         statementPtrVector outerSmnts;
         findStatementsByAttr(statementType::for_,
                              "outer",
@@ -275,7 +275,7 @@ namespace occa {
         // delete &forSmnt;
       }
 
-      void withLauncher::setupHostKernelArgs(functionDeclStatement &kernelSmnt) {
+      void withLauncher::setupLauncherKernelArgs(functionDeclStatement &kernelSmnt) {
         // Add kernel argument
         identifierToken kernelTypeSource(kernelSmnt.source->origin,
                                          "occa::modeKernel_t");
@@ -295,18 +295,18 @@ namespace occa {
         kernelSmnt.addToScope(kernelVar);
       }
 
-      void withLauncher::setupHostHeaders() {
+      void withLauncher::setupLauncherHeaders() {
         // TODO 1.1: Remove hack after methods are properly added
         const int headerCount = 2;
         std::string headers[headerCount] = {
-          "include <occa/core/base.hpp>",
-          "include <occa/mode/serial/kernel.hpp>"
+                                            "include <occa/core/base.hpp>",
+                                            "include <occa/mode/serial/kernel.hpp>"
         };
         for (int i = 0; i < headerCount; ++i) {
           std::string header = headers[i];
           directiveToken token(root.source->origin,
                                header);
-          hostParser.root.addFirst(
+          launcherParser.root.addFirst(
             *(new directiveStatement(&root, token))
           );
         }

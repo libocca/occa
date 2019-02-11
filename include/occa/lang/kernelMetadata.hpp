@@ -13,10 +13,14 @@ namespace occa {
     class argumentInfo {
     public:
       bool isConst;
+      bool isPtr;
       dtype_t dtype;
 
-      argumentInfo(const bool isConst_ = false,
-                   const dtype_t &dtype_ = dtype::byte);
+      argumentInfo();
+
+      argumentInfo(const bool isConst_,
+                   const bool isPtr_,
+                   const dtype_t &dtype_);
 
       static argumentInfo fromJson(const json &j);
       json toJson() const;
@@ -24,16 +28,15 @@ namespace occa {
 
     class kernelMetadata {
     public:
+      bool initialized;
       std::string name;
       std::vector<argumentInfo> arguments;
 
       kernelMetadata();
 
-      kernelMetadata& operator += (const argumentInfo &argInfo);
+      bool isInitialized() const;
 
-      bool argIsConst(const int pos) const;
-      bool argMatchesDtype(const int pos,
-                           const dtype_t &dtype) const;
+      kernelMetadata& operator += (const argumentInfo &argInfo);
 
       static kernelMetadata fromJson(const json &j);
       json toJson() const;

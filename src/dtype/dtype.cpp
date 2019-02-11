@@ -451,7 +451,7 @@ namespace occa {
 
   std::ostream& operator << (std::ostream &out,
                              const dtype_t &dtype) {
-    out << dtype.name_;
+    out << dtype.self().name_;
     return out;
   }
   //====================================

@@ -128,9 +128,11 @@ namespace occa {
 
         int args = (int) func.args.size();
         for (int ai = 0; ai < args; ++ai) {
+          variable_t &arg = *(func.args[ai]);
           metadata += argumentInfo(
-            func.args[ai]->has(const_),
-            func.args[ai]->dtype()
+            arg.has(const_),
+            arg.vartype.isPointerType(),
+            arg.dtype()
           );
         }
       }

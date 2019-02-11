@@ -21,7 +21,7 @@ namespace occa {
       }
 
       void openclParser::onClear() {
-        hostClear();
+        launcherClear();
       }
 
       void openclParser::beforePreprocessing() {

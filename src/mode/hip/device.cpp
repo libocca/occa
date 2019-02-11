@@ -11,6 +11,8 @@
 #include <occa/mode/hip/kernel.hpp>
 #include <occa/mode/hip/memory.hpp>
 #include <occa/mode/hip/utils.hpp>
+#include <occa/mode/serial/device.hpp>
+#include <occa/mode/serial/kernel.hpp>
 #include <occa/lang/kernelMetadata.hpp>
 #include <occa/lang/primitive.hpp>
 #include <occa/lang/mode/hip.hpp>
@@ -19,6 +21,8 @@ namespace occa {
   namespace hip {
     device::device(const occa::properties &properties_) :
       occa::modeDevice_t(properties_) {
+
+      needsLauncherKernel = true;
 
       hipDeviceProp_t props;
       if (!properties.has("wrapped")) {
@@ -105,6 +109,10 @@ namespace occa {
       );
     }
 
+    lang::okl::withLauncher* device::createParser(const occa::properties &props) const {
+      return new lang::okl::hipParser(props);
+    }
+
     //---[ Stream ]---------------------
     stream_t device::createStream(const occa::properties &props) {
       hipStream_t *retStream = new hipStream_t;
@@ -155,192 +163,59 @@ namespace occa {
     //==================================
 
     //---[ Kernel ]---------------------
-    bool device::parseFile(const std::string &filename,
-                           const std::string &outputFile,
-                           const std::string &hostOutputFile,
-                           const occa::properties &kernelProps,
-                           lang::kernelMetadataMap &hostMetadata,
-                           lang::kernelMetadataMap &deviceMetadata) {
-      lang::okl::hipParser parser(kernelProps);
-      parser.parseFile(filename);
-
-      // Verify if parsing succeeded
-      if (!parser.succeeded()) {
-        if (!kernelProps.get("silent", false)) {
-          OCCA_FORCE_ERROR("Unable to transform OKL kernel");
-        }
-        return false;
-      }
-
-      if (!io::isFile(outputFile)) {
-        hash_t hash = occa::hash(outputFile);
-        io::lock_t lock(hash, "hip-parser-device");
-        if (lock.isMine()) {
-          parser.writeToFile(outputFile);
-        }
-      }
-
-      if (!io::isFile(hostOutputFile)) {
-        hash_t hash = occa::hash(hostOutputFile);
-        io::lock_t lock(hash, "hip-parser-host");
-        if (lock.isMine()) {
-          parser.hostParser.writeToFile(hostOutputFile);
-        }
-      }
-
-      parser.hostParser.setMetadata(hostMetadata);
-      parser.setMetadata(deviceMetadata);
-
-      return true;
-    }
-
-    modeKernel_t* device::buildKernel(const std::string &filename,
-                                      const std::string &kernelName,
-                                      const hash_t kernelHash,
-                                      const occa::properties &kernelProps) {
-
-      const std::string hashDir = io::hashDir(filename, kernelHash);
-      const std::string binaryFilename = hashDir + kc::binaryFile;
-      bool foundBinary = true;
-      bool usingOKL = kernelProps.get("okl", true);
-
-      // Check if binary exists and is finished
-      bool foundBinary = (
-        io::cachedFileIsComplete(hashDir, kc::binaryFile)
-        && io::isFile(binaryFilename)
-      );
-
-      io::lock_t lock;
-      if (!foundBinary) {
-        lock = io::lock_t(kernelHash, "hip-kernel");
-        foundBinary = !lock.isMine();
-      }
-
-      const bool verbose = kernelProps.get("verbose", false);
-      if (foundBinary) {
-        if (verbose) {
-          io::stdout << "Loading cached ["
-                     << kernelName
-                     << "] from ["
-                     << io::shortname(filename)
-                     << "] in [" << io::shortname(binaryFilename) << "]\n";
-        }
-        if (usingOKL) {
-          lang::kernelMetadataMap hostMetadata = (
-            lang::getBuildFileMetadata(hashDir + kc::hostBuildFile)
-          );
-          lang::kernelMetadataMap deviceMetadata = (
-            lang::getBuildFileMetadata(hashDir + kc::buildFile)
-          );
-          return buildOKLKernelFromBinary(hashDir,
-                                          kernelName,
-                                          hostMetadata,
-                                          deviceMetadata,
-                                          kernelProps,
-                                          lock);
-        } else {
-          return buildKernelFromBinary(binaryFilename,
-                                       kernelName,
-                                       kernelProps);
-        }
-      }
-
-      modeKernel_t *launcherKernel = NULL;
-      lang::kernelMetadataMap hostMetadata, deviceMetadata;
-      std::string sourceFilename;
-      if (usingOKL) {
-        // Cache raw origin
-        sourceFilename = (
-          io::cacheFile(filename,
-                        kc::rawSourceFile,
-                        kernelHash,
-                        assembleKernelHeader(kernelProps))
-        );
-        const std::string outputFile = hashDir + kc::sourceFile;
-        const std::string hostOutputFile = hashDir + kc::hostSourceFile;
-        bool valid = parseFile(sourceFilename,
-                               outputFile,
-                               hostOutputFile,
-                               kernelProps,
-                               hostMetadata,
-                               deviceMetadata);
-        if (!valid) {
-          return NULL;
-        }
-        sourceFilename = outputFile;
-
-        launcherKernel = buildLauncherKernel(hashDir,
-                                             kernelName,
-                                             hostMetadata[kernelName]);
-
-        // No OKL means no build file is generated,
-        //   so we need to build it
-        host()
-          .getModeDevice()
-          ->writeKernelBuildFile(hashDir + kc::hostBuildFile,
-                                 kernelHash,
-                                 occa::properties(),
-                                 hostMetadata);
-
-        writeKernelBuildFile(hashDir + kc::buildFile,
-                             kernelHash,
-                             kernelProps,
-                             deviceMetadata);
-      } else {
-        // Cache in sourceFile to directly compile file
-        sourceFilename = (
-          io::cacheFile(filename,
-                        kc::sourceFile,
-                        kernelHash,
-                        assembleKernelHeader(kernelProps))
-        );
-      }
-
+    modeKernel_t* device::buildKernelFromProcessedSource(
+      const hash_t kernelHash,
+      const std::string &hashDir,
+      const std::string &kernelName,
+      const std::string &sourceFilename,
+      const std::string &binaryFilename,
+      const bool usingOkl,
+      lang::kernelMetadataMap &launcherMetadata,
+      lang::kernelMetadataMap &deviceMetadata,
+      const occa::properties &kernelProps,
+      io::lock_t lock
+    ) {
       compileKernel(hashDir,
                     kernelName,
                     kernelProps,
                     lock);
 
+      if (usingOkl) {
+        return buildOKLKernelFromBinary(kernelHash,
+                                        hashDir,
+                                        kernelName,
+                                        launcherMetadata,
+                                        deviceMetadata,
+                                        kernelProps,
+                                        lock);
+      }
+
       // Regular HIP Kernel
-      modeKernel_t *k = NULL;
-      if (!launcherKernel) {
-        hipModule_t hipModule;
-        hipFunction_t hipFunction;
-        hipError_t error;
+      hipModule_t hipModule;
+      hipFunction_t hipFunction;
+      hipError_t error;
 
-        error = hipModuleLoad(&hipModule, binaryFilename.c_str());
-        if (error) {
-          lock.release();
-          OCCA_HIP_ERROR("Kernel [" + kernelName + "]: Loading Module",
-                         error);
-        }
-        error = hipModuleGetFunction(&hipFunction,
-                                     hipModule,
-                                     kernelName.c_str());
-        if (error) {
-          lock.release();
-          OCCA_HIP_ERROR("Kernel [" + kernelName + "]: Loading Function",
-                         error);
-        }
-        k = new kernel(this,
-                       kernelName,
-                       sourceFilename,
-                       hipModule,
-                       hipFunction,
-                       kernelProps);
-      } else {
-        k = buildOKLKernelFromBinary(hashDir,
-                                     kernelName,
-                                     hostMetadata,
-                                     deviceMetadata,
-                                     kernelProps,
-                                     lock);
+      error = hipModuleLoad(&hipModule, binaryFilename.c_str());
+      if (error) {
+        lock.release();
+        OCCA_HIP_ERROR("Kernel [" + kernelName + "]: Loading Module",
+                       error);
+      }
+      error = hipModuleGetFunction(&hipFunction,
+                                   hipModule,
+                                   kernelName.c_str());
+      if (error) {
+        lock.release();
+        OCCA_HIP_ERROR("Kernel [" + kernelName + "]: Loading Function",
+                       error);
       }
 
-      if (k) {
-        io::markCachedFileComplete(hashDir, kc::binaryFile);
-      }
-      return k;
+      return new kernel(this,
+                        kernelName,
+                        sourceFilename,
+                        hipModule,
+                        hipFunction,
+                        kernelProps);
     }
 
     void device::setArchCompilerFlags(occa::properties &kernelProps) {
@@ -399,12 +274,13 @@ namespace occa {
       //================================
     }
 
-    modeKernel_t* device::buildOKLKernelFromBinary(const std::string &hashDir,
+    modeKernel_t* device::buildOKLKernelFromBinary(const hash_t kernelHash,
+                                                   const std::string &hashDir,
                                                    const std::string &kernelName,
-                                                   lang::kernelMetadataMap &hostMetadata,
+                                                   lang::kernelMetadataMap &launcherMetadata,
                                                    lang::kernelMetadataMap &deviceMetadata,
                                                    const occa::properties &kernelProps,
-                                                   const io::lock_t &lock) {
+                                                   io::lock_t lock) {
 
       const std::string sourceFilename = hashDir + kc::sourceFile;
       const std::string binaryFilename = hashDir + kc::binaryFile;
@@ -427,7 +303,7 @@ namespace occa {
 
       k.launcherKernel = buildLauncherKernel(hashDir,
                                              kernelName,
-                                             hostMetadata[kernelName]);
+                                             launcherMetadata[kernelName]);
 
       // Find clKernels
       typedef std::map<int, lang::kernelMetadata> kernelOrderMap;
@@ -481,24 +357,6 @@ namespace occa {
       }
 
       return &k;
-    }
-
-    modeKernel_t* device::buildLauncherKernel(const std::string &hashDir,
-                                              const std::string &kernelName,
-                                              lang::kernelMetadata &hostMetadata) {
-      const std::string hostOutputFile = hashDir + kc::hostSourceFile;
-
-      occa::kernel hostKernel = host().buildKernel(hostOutputFile,
-                                                   kernelName,
-                                                   "okl: false");
-
-      // Launcher and clKernels use the same refs as the wrapper kernel
-      modeKernel_t *launcherKernel = hostKernel.getModeKernel();
-      launcherKernel->dontUseRefs();
-
-      launcherKernel->metadata = hostMetadata;
-
-      return launcherKernel;
     }
 
     modeKernel_t* device::buildKernelFromBinary(const std::string &filename,

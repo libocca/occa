@@ -9,7 +9,7 @@
   ASSERT_TRUE(parser.success);                                          \
   {                                                                     \
     printer pout;                                                       \
-    parser.hostParser.root.print(pout);                                 \
+    parser.launcherParser.root.print(pout);                                 \
     std::cout << "---[ Host ]-----------------------------------\n";    \
     std::cout << pout.str();                                            \
     std::cout << "==============================================\n\n";  \

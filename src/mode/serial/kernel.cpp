@@ -10,10 +10,10 @@ namespace occa {
                    const std::string &name_,
                    const std::string &sourceFilename_,
                    const occa::properties &properties_) :
-      occa::modeKernel_t(modeDevice_, name_, sourceFilename_, properties_) {
-      dlHandle = NULL;
-      function = NULL;
-    }
+      occa::modeKernel_t(modeDevice_, name_, sourceFilename_, properties_),
+      dlHandle(NULL),
+      function(NULL),
+      isLauncherKernel(false) {}
 
     kernel::~kernel() {
       if (dlHandle) {

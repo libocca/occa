@@ -1,6 +1,7 @@
 #include <sstream>
 
 #include <occa/tools/exception.hpp>
+#include <occa/tools/string.hpp>
 #include <occa/tools/sys.hpp>
 
 namespace occa {
@@ -25,12 +26,25 @@ namespace occa {
   std::string exception::toString(const int stackTraceStart) const {
     std::stringstream ss;
 
+    // Pad message lines
+    strVector lines = split(message, '\n');
+    const int lineCount = (int) lines.size();
+
+    for (int i = 0; i < lineCount; ++i) {
+      if (i) {
+        ss << "\n               ";
+      }
+      ss << lines[i];
+    }
+    const std::string prettyMessage = ss.str();
+    ss.str("");
+
     std::string banner = "---[ " + header + " ]";
     ss << '\n'
        << banner << std::string(80 - banner.size(), '-') << '\n'
        << location()
-       << "    Message  : " << message << '\n'
-       << "    Stack    :\n"
+       << "    Message  : " << prettyMessage << '\n'
+       << "    Stack\n"
        << sys::stacktrace(stackTraceStart, "      ")
        << std::string(80, '=') << '\n';
 

@@ -167,13 +167,28 @@ namespace occa {
                                       const std::string &kernelName,
                                       const hash_t kernelHash,
                                       const occa::properties &kernelProps) {
+      return buildKernel(filename, kernelName, kernelHash, kernelProps, false);
+    }
+
+    modeKernel_t* device::buildLauncherKernel(const std::string &filename,
+                                              const std::string &kernelName,
+                                              const hash_t kernelHash) {
+      occa::properties kernelProps = properties["kernel"];
+      kernelProps["okl"] = false;
+      return buildKernel(filename, kernelName, kernelHash, kernelProps, true);
+    }
+
+    modeKernel_t* device::buildKernel(const std::string &filename,
+                                      const std::string &kernelName,
+                                      const hash_t kernelHash,
+                                      const occa::properties &kernelProps,
+                                      const bool isLauncherKernel) {
       const std::string hashDir = io::hashDir(filename, kernelHash);
-      // Binary name depends if this is being used as the launcher kernel for
-      //   GPU-style kernels
+
       const std::string &kcBinaryFile = (
-        (filename != (hashDir + kc::hostSourceFile))
-        ? kc::binaryFile
-        : kc::hostBinaryFile
+        isLauncherKernel
+        ? kc::launcherBinaryFile
+        : kc::binaryFile
       );
       std::string binaryFilename = hashDir + kcBinaryFile;
 
@@ -281,7 +296,8 @@ namespace occa {
 
       modeKernel_t *k = buildKernelFromBinary(binaryFilename,
                                               kernelName,
-                                              kernelProps);
+                                              kernelProps,
+                                              metadata[kernelName]);
       if (k) {
         io::markCachedFileComplete(hashDir, kcBinaryFile);
         k->sourceFilename = filename;
@@ -292,12 +308,32 @@ namespace occa {
     modeKernel_t* device::buildKernelFromBinary(const std::string &filename,
                                                 const std::string &kernelName,
                                                 const occa::properties &kernelProps) {
+      std::string buildFile = io::dirname(filename);
+      buildFile += kc::buildFile;
+
+      lang::kernelMetadata metadata;
+      if (io::isFile(buildFile)) {
+        lang::kernelMetadataMap metadataMap = lang::getBuildFileMetadata(buildFile);
+        metadata = metadataMap[kernelName];
+      }
+
+      return buildKernelFromBinary(filename,
+                                   kernelName,
+                                   kernelProps,
+                                   metadata);
+    }
+
+    modeKernel_t* device::buildKernelFromBinary(const std::string &filename,
+                                                const std::string &kernelName,
+                                                const occa::properties &kernelProps,
+                                                lang::kernelMetadata &metadata) {
       kernel &k = *(new kernel(this,
                                kernelName,
                                filename,
                                kernelProps));
 
       k.binaryFilename = filename;
+      k.metadata = metadata;
 
       k.dlHandle = sys::dlopen(filename);
       k.function = sys::dlsym(k.dlHandle, kernelName);

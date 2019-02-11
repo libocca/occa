@@ -10,6 +10,7 @@ namespace occa {
   modeDevice_t::modeDevice_t(const occa::properties &properties_) :
     mode((std::string) properties_["mode"]),
     properties(properties_),
+    needsLauncherKernel(false),
     bytesAllocated(0) {}
 
   modeDevice_t::~modeDevice_t() {

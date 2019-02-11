@@ -10,17 +10,17 @@ namespace occa {
     namespace okl {
       class withLauncher : public parser_t {
       public:
-        serialParser hostParser;
+        serialParser launcherParser;
 
         withLauncher(const occa::properties &settings_ = occa::properties());
 
         //---[ Public ]-----------------
         virtual bool succeeded() const;
 
-        void writeHostSourceToFile(const std::string &filename) const;
+        void writeLauncherSourceToFile(const std::string &filename) const;
         //==============================
 
-        void hostClear();
+        void launcherClear();
 
         void afterParsing();
 
@@ -29,9 +29,9 @@ namespace occa {
 
         void setOKLLoopIndices();
 
-        void setupHostParser();
+        void setupLauncherParser();
 
-        void removeHostOuterLoops(functionDeclStatement &kernelSmnt);
+        void removeLauncherOuterLoops(functionDeclStatement &kernelSmnt);
 
         bool isOuterMostOuterLoop(forStatement &forSmnt);
 
@@ -44,8 +44,8 @@ namespace occa {
                              forStatement &forSmnt,
                              const int kernelIndex);
 
-        void setupHostKernelArgs(functionDeclStatement &kernelSmnt);
-        void setupHostHeaders();
+        void setupLauncherKernelArgs(functionDeclStatement &kernelSmnt);
+        void setupLauncherHeaders();
 
         int getInnerLoopLevel(forStatement &forSmnt);
 

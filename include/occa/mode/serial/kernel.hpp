@@ -18,6 +18,8 @@ namespace occa {
       mutable std::vector<void*> vArgs;
 
     public:
+      bool isLauncherKernel;
+
       kernel(modeDevice_t *modeDevice_,
              const std::string &name_,
              const std::string &sourceFilename_,

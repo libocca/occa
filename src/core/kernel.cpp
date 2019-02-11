@@ -52,14 +52,14 @@ namespace occa {
 
   void modeKernel_t::assertArgumentLimit() const {
     // Check argument limit
-    OCCA_ERROR("Kernels can have at most [" << OCCA_MAX_ARGS << "] arguments",
+    OCCA_ERROR("(" << name << ") Kernels can have at most [" << OCCA_MAX_ARGS << "] arguments",
                ((int) arguments.size() + 1) < OCCA_MAX_ARGS);
   }
 
   void modeKernel_t::assertArgInDevice(const kernelArgData &arg) const {
     // Make sure the argument is from the same device as the kernel
     occa::modeDevice_t *argDevice = arg.getModeDevice();
-    OCCA_ERROR("Kernel argument was not created from the same device as the kernel",
+    OCCA_ERROR("(" << name << ") Kernel argument was not created from the same device as the kernel",
                !argDevice || (argDevice == modeDevice));
   }
 
@@ -85,19 +85,56 @@ namespace occa {
 
   void modeKernel_t::setupRun() {
     const int argc = (int) arguments.size();
+
+    if (metadata.isInitialized()) {
+      const int metaArgc = (int) metadata.arguments.size();
+
+      OCCA_ERROR("(" << name << ") Kernel expects ["
+                 << argc << "] argument"
+                 << (argc != 1 ? "s," : ",")
+                 << " received ["
+                 << metaArgc << ']',
+                 argc == metaArgc);
+
+      // TODO: Get original arg #
+      for (int i = 0; i < argc; ++i) {
+        kernelArgData &arg = arguments[i];
+        lang::argumentInfo &argInfo = metadata.arguments[i];
+
+        modeMemory_t *mem = arg.getModeMemory();
+        bool isPtr = (bool) mem;
+        if (isPtr != argInfo.isPtr) {
+          if (argInfo.isPtr) {
+            OCCA_FORCE_ERROR("(" << name << ") Kernel expects an occa::memory for argument ["
+                             << (i + 1) << "]");
+          } else {
+            OCCA_FORCE_ERROR("(" << name << ") Kernel expects a non-occa::memory type for argument ["
+                             << (i + 1) << "]");
+          }
+        }
+
+        if (!isPtr) {
+          continue;
+        }
+
+        OCCA_ERROR("(" << name << ") Argument [" << (i + 1) << "] has wrong runtime type.\n"
+                   << "Expected type: " << argInfo.dtype << '\n'
+                   << "Received type: " << *(mem->dtype_) << '\n',
+                   mem->dtype_->canBeCastedTo(argInfo.dtype));
+
+        arg.setupForKernelCall(argInfo.isConst);
+      }
+      return;
+    }
+
+    // Non-OKL kernel setup
+    // All memory arguments are expected to be non-const for UVA purposes
     for (int i = 0; i < argc; ++i) {
       kernelArgData &arg = arguments[i];
       modeMemory_t *mem = arg.getModeMemory();
-      if (!mem) {
-        continue;
+      if (mem) {
+        arg.setupForKernelCall(false);
       }
-
-      // TODO: Get original arg #
-      // OCCA_ERROR("Argument [" << i << "] has wrong runtime type",
-      //            metadata.argMatchesDtype(i, *(mem->dtype_)));
-
-      const bool argIsConst = metadata.argIsConst(i);
-      arg.setupForKernelCall(argIsConst);
     }
   }
   //====================================
