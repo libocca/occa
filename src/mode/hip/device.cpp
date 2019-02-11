@@ -200,7 +200,7 @@ namespace occa {
                                       const occa::properties &kernelProps) {
 
       const std::string hashDir = io::hashDir(filename, kernelHash);
-      const std::string binaryFilename = hashDir + kc::binaryFile+".adipose";
+      const std::string binaryFilename = hashDir + kc::binaryFile;
       bool foundBinary = true;
       bool usingOKL = kernelProps.get("okl", true);
 
@@ -407,7 +407,7 @@ namespace occa {
                                                    const io::lock_t &lock) {
 
       const std::string sourceFilename = hashDir + kc::sourceFile;
-      const std::string binaryFilename = hashDir + kc::binaryFile +".adipose";
+      const std::string binaryFilename = hashDir + kc::binaryFile;
 
       hipModule_t hipModule;
       hipError_t error;
