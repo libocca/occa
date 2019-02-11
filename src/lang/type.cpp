@@ -385,6 +385,13 @@ namespace occa {
       return referenceToken;
     }
 
+    dtype_t vartype_t::dtype() const {
+      if (type) {
+        return type->dtype();
+      }
+      return dtype::none;
+    }
+
     bool vartype_t::operator == (const vartype_t &other) const {
       if (!type || !other.type) {
         return false;
@@ -631,7 +638,8 @@ namespace occa {
     //---[ Types ]----------------------
     primitive_t::primitive_t(const std::string &name_) :
       type_t(name_),
-      pname(name_) {}
+      pname(name_),
+      dtype_(NULL) {}
 
     const std::string& primitive_t::name() const {
       return pname;
@@ -647,6 +655,13 @@ namespace occa {
 
     type_t& primitive_t::clone() const {
       return *(const_cast<primitive_t*>(this));
+    }
+
+    dtype_t primitive_t::dtype() const {
+      if (!dtype_) {
+        dtype_ = &(dtype_t::getBuiltin(pname));
+      }
+      return *dtype_;
     }
 
     void primitive_t::printDeclaration(printer &pout) const {
@@ -676,6 +691,10 @@ namespace occa {
 
     bool typedef_t::isPointerType() const {
       return baseType.isPointerType();
+    }
+
+    dtype_t typedef_t::dtype() const {
+      return baseType.dtype();
     }
 
     bool typedef_t::equals(const type_t &other) const {
@@ -733,6 +752,10 @@ namespace occa {
         args.push_back(args_[i]);
       }
       return *this;
+    }
+
+    dtype_t functionPtr_t::dtype() const {
+      return dtype::byte;
     }
 
     bool functionPtr_t::equals(const type_t &other) const {
@@ -817,6 +840,10 @@ namespace occa {
       return *(new function_t(*this));
     }
 
+    dtype_t function_t::dtype() const {
+      return dtype::byte;
+    }
+
     function_t& function_t::operator += (const variable_t &arg) {
       args.push_back(&(arg.clone()));
       return *this;
@@ -879,6 +906,10 @@ namespace occa {
       return *(new class_t());
     }
 
+    dtype_t class_t::dtype() const {
+      return dtype::byte;
+    }
+
     void class_t::printDeclaration(printer &pout) const {
     }
 
@@ -891,6 +922,10 @@ namespace occa {
 
     type_t& struct_t::clone() const {
       return *(new struct_t());
+    }
+
+    dtype_t struct_t::dtype() const {
+      return dtype::byte;
     }
 
     void struct_t::printDeclaration(printer &pout) const {
@@ -907,6 +942,10 @@ namespace occa {
       return *(new enum_t());
     }
 
+    dtype_t enum_t::dtype() const {
+      return dtype::byte;
+    }
+
     void enum_t::printDeclaration(printer &pout) const {
     }
 
@@ -919,6 +958,10 @@ namespace occa {
 
     type_t& union_t::clone() const {
       return *(new union_t());
+    }
+
+    dtype_t union_t::dtype() const {
+      return dtype::byte;
     }
 
     void union_t::printDeclaration(printer &pout) const {

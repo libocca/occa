@@ -52,6 +52,9 @@ namespace occa {
     kernelArgData& operator = (const kernelArgData &k);
     ~kernelArgData();
 
+    occa::modeDevice_t* getModeDevice() const;
+    occa::modeMemory_t* getModeMemory() const;
+
     void* ptr() const;
 
     void setupForKernelCall(const bool isConst) const;
@@ -111,8 +114,6 @@ namespace occa {
 
     void add(void *arg, size_t bytes,
              bool lookAtUva = true, bool argIsUva = false);
-
-    occa::modeDevice_t* getModeDevice() const;
 
     static int argumentCount(const std::vector<kernelArg> &arguments);
   };

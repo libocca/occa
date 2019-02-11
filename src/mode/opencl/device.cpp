@@ -26,7 +26,6 @@ namespace occa {
                    properties.has("platform_id") &&
                    properties["platform_id"].isNumber());
 
-
         OCCA_ERROR("[OpenCL] device not given a [device_id] integer",
                    properties.has("device_id") &&
                    properties["device_id"].isNumber());

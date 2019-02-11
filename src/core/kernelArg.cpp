@@ -28,6 +28,17 @@ namespace occa {
 
   kernelArgData::~kernelArgData() {}
 
+  occa::modeDevice_t* kernelArgData::getModeDevice() const {
+    if (!modeMemory) {
+      return NULL;
+    }
+    return modeMemory->modeDevice;
+  }
+
+  occa::modeMemory_t* kernelArgData::getModeMemory() const {
+    return modeMemory;
+  }
+
   void* kernelArgData::ptr() const {
     return ((info & kArgInfo::usePointer) ? data.void_ : (void*) &data);
   }
@@ -176,26 +187,6 @@ namespace occa {
       kArg.info       = kArgInfo::usePointer;
       args.push_back(kArg);
     }
-  }
-
-  occa::modeDevice_t* kernelArg::getModeDevice() const {
-    occa::modeDevice_t *device = NULL;
-
-    const int argCount = (int) args.size();
-    for (int i = 0; i < argCount; ++i) {
-      occa::modeMemory_t *modeMemory = args[i].modeMemory;
-      if (!modeMemory) {
-        continue;
-      }
-      if (!device) {
-        device = modeMemory->modeDevice;
-      } else {
-        OCCA_ERROR("Found multiple memory arguments created from different devices",
-                   device == modeMemory->modeDevice);
-      }
-    }
-
-    return device;
   }
 
   int kernelArg::argumentCount(const std::vector<kernelArg> &arguments) {

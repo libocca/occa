@@ -3,6 +3,7 @@
 
 #include <vector>
 
+#include <occa/dtype.hpp>
 #include <occa/io/output.hpp>
 #include <occa/lang/attribute.hpp>
 #include <occa/lang/printer.hpp>
@@ -94,6 +95,8 @@ namespace occa {
       virtual bool isNamed() const;
 
       virtual bool isPointerType() const;
+
+      virtual dtype_t dtype() const = 0;
 
       bool operator == (const type_t &other) const;
       bool operator != (const type_t &other) const;
@@ -213,6 +216,8 @@ namespace occa {
       void setReferenceToken(token_t *token);
       bool isReference() const;
 
+      dtype_t dtype() const;
+
       bool operator == (const vartype_t &other) const;
       bool operator != (const vartype_t &other) const;
 
@@ -268,6 +273,7 @@ namespace occa {
     class primitive_t : public type_t {
     public:
       const std::string pname;
+      mutable const dtype_t *dtype_;
 
       primitive_t(const std::string &name_);
 
@@ -276,6 +282,8 @@ namespace occa {
 
       virtual int type() const;
       virtual type_t& clone() const;
+
+      virtual dtype_t dtype() const;
 
       virtual void printDeclaration(printer &pout) const;
     };
@@ -295,6 +303,8 @@ namespace occa {
       virtual type_t& clone() const;
 
       virtual bool isPointerType() const;
+
+      virtual dtype_t dtype() const;
 
       virtual bool equals(const type_t &other) const;
 
@@ -327,6 +337,8 @@ namespace occa {
 
       virtual bool isPointerType() const;
 
+      virtual dtype_t dtype() const;
+
       virtual bool equals(const type_t &other) const;
 
       virtual void printDeclaration(printer &pout) const;
@@ -352,6 +364,8 @@ namespace occa {
       virtual int type() const;
       virtual type_t& clone() const;
 
+      virtual dtype_t dtype() const;
+
       function_t& operator += (const variable_t &arg);
       function_t& operator += (const variableVector &args_);
 
@@ -374,6 +388,8 @@ namespace occa {
       virtual int type() const;
       virtual type_t& clone() const;
 
+      virtual dtype_t dtype() const;
+
       virtual void printDeclaration(printer &pout) const;
     };
 
@@ -383,6 +399,8 @@ namespace occa {
 
       virtual int type() const;
       virtual type_t& clone() const;
+
+      virtual dtype_t dtype() const;
 
       virtual void printDeclaration(printer &pout) const;
     };
@@ -394,6 +412,8 @@ namespace occa {
       virtual int type() const;
       virtual type_t& clone() const;
 
+      virtual dtype_t dtype() const;
+
       virtual void printDeclaration(printer &pout) const;
     };
 
@@ -403,6 +423,8 @@ namespace occa {
 
       virtual int type() const;
       virtual type_t& clone() const;
+
+      virtual dtype_t dtype() const;
 
       virtual void printDeclaration(printer &pout) const;
     };

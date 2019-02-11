@@ -56,7 +56,7 @@ namespace occa {
                ((int) arguments.size() + 1) < OCCA_MAX_ARGS);
   }
 
-  void modeKernel_t::assertArgInDevice(const kernelArg &arg) const {
+  void modeKernel_t::assertArgInDevice(const kernelArgData &arg) const {
     // Make sure the argument is from the same device as the kernel
     occa::modeDevice_t *argDevice = arg.getModeDevice();
     OCCA_ERROR("Kernel argument was not created from the same device as the kernel",
@@ -73,23 +73,28 @@ namespace occa {
   }
 
   void modeKernel_t::pushArgument(const kernelArg &arg) {
-    assertArgInDevice(arg);
-
     const int argCount = (int) arg.size();
     for (int i = 0; i < argCount; ++i) {
-      arguments.push_back(arg[i]);
+      const kernelArgData &argi = arg[i];
+      assertArgInDevice(argi);
+      arguments.push_back(argi);
     }
 
     assertArgumentLimit();
   }
 
   void modeKernel_t::setupRun() {
-    assertArgumentLimit();
-
     const int argc = (int) arguments.size();
     for (int i = 0; i < argc; ++i) {
       kernelArgData &arg = arguments[i];
-      assertArgInDevice(arg);
+      modeMemory_t *mem = arg.getModeMemory();
+      if (!mem) {
+        continue;
+      }
+
+      // TODO: Get original arg #
+      // OCCA_ERROR("Argument [" << i << "] has wrong runtime type",
+      //            metadata.argMatchesDtype(i, *(mem->dtype_)));
 
       const bool argIsConst = metadata.argIsConst(i);
       arg.setupForKernelCall(argIsConst);

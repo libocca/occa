@@ -58,7 +58,6 @@ namespace occa {
 
     json kernelMetadata::toJson() const {
       json j;
-
       j["name"] = name;
 
       const int argumentCount = (int) arguments.size();

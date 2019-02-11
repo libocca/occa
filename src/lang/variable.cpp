@@ -140,7 +140,7 @@ namespace occa {
     }
 
     dtype_t variable_t::dtype() const {
-      return dtype::byte;
+      return vartype.dtype();
     }
 
     void variable_t::printDeclaration(printer &pout) const {

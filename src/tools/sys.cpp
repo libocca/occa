@@ -849,9 +849,6 @@ namespace occa {
     }
 
     std::string prettyStackSymbol(void *frame, const char *symbol) {
-      static size_t maxChars = 1024;
-      static char prettyBuffer[1024];
-
 #if (OCCA_OS == OCCA_MACOS_OS)
       std::stringstream ss;
       const char *c = symbol;
@@ -886,14 +883,20 @@ namespace occa {
       lex::skipToWhitespace(c);
       std::string offset(offsetStart, (c - offsetStart));
 
+      size_t maxChars = 1024;
+      char *buffer = (char*) ::malloc(1024 * sizeof(char));
+
       int status;
       const char *prettyFunction = abi::__cxa_demangle(function.c_str(),
-                                                       prettyBuffer,
+                                                       buffer,
                                                        &maxChars,
                                                        &status);
 
       ss << std::left << std::setw(20) << origin
          << std::left << std::setw(50) << (status ? function : prettyFunction);
+
+      ::free(buffer);
+
       return ss.str();
 #elif (OCCA_OS == OCCA_LINUX_OS)
       std::stringstream ss;
@@ -904,13 +907,18 @@ namespace occa {
       const char *dl_name = frameInfo.dli_sname;
 
       if (status && dl_name) {
+        size_t maxChars = 1024;
+        char *buffer = (char*) ::malloc(1024 * sizeof(char));
+
         const char *prettyFunction = abi::__cxa_demangle(dl_name,
-                                                         prettyBuffer,
+                                                         buffer,
                                                          &maxChars,
                                                          &status);
+
         if (!status) {
           function = std::string(prettyFunction);
         }
+        ::free(buffer);
       }
       if (function.size() == 0) {
         const char *c = symbol;
