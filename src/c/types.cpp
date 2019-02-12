@@ -355,7 +355,7 @@ namespace occa {
       case occa::c::typeType::ptr: {
         arg.add(value.value.ptr,
                 value.bytes,
-                false, false);
+                true, false);
         break;
       }
       case occa::c::typeType::int8_: {
