@@ -224,6 +224,8 @@ namespace occa {
     void copyTo(const memory dest,
                 const occa::properties &props) const;
 
+    occa::memory as(const dtype_t &dtype_) const;
+
     occa::memory clone() const;
 
     void free();

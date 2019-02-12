@@ -78,7 +78,10 @@ int main(int argc, const char **argv) {
   o_b.copyFrom(b);
 
   // Launch device kernel
-  addVectors(entries, o_a, o_b, o_ab);
+  addVectors(entries,
+             o_a.as(occa::dtype::float_),
+             o_b,
+             o_ab);
 
   // Copy result to the host
   o_ab.copyTo(ab);

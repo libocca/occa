@@ -523,6 +523,12 @@ namespace occa {
     copyTo(dest, -1, 0, 0, props);
   }
 
+  occa::memory memory::as(const dtype_t &dtype_) const {
+    occa::memory mem = slice(0);
+    mem.setDtype(dtype_);
+    return mem;
+  }
+
   occa::memory memory::clone() const {
     if (modeMemory) {
       return occa::device(modeMemory->modeDevice).malloc(size(),
