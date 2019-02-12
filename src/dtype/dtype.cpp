@@ -401,6 +401,7 @@ namespace occa {
     if (it != dtypeMap.end()) {
       return *(it->second);
     }
+
     return dtype::none;
   }
 

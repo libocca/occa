@@ -17,7 +17,7 @@ namespace occa {
     ptr(NULL),
     uvaPtr(NULL),
     modeDevice(modeDevice_),
-    dtype_(&dtype::none),
+    dtype_(&dtype::byte),
     size(size_),
     isOrigin(true) {
     modeDevice->addMemoryRef(this);
