@@ -883,19 +883,16 @@ namespace occa {
       lex::skipToWhitespace(c);
       std::string offset(offsetStart, (c - offsetStart));
 
-      size_t maxChars = 1024;
-      char *buffer = (char*) ::malloc(1024 * sizeof(char));
-
       int status;
       const char *prettyFunction = abi::__cxa_demangle(function.c_str(),
-                                                       buffer,
-                                                       &maxChars,
+                                                       NULL,
+                                                       NULL,
                                                        &status);
 
       ss << std::left << std::setw(20) << origin
          << std::left << std::setw(50) << (status ? function : prettyFunction);
 
-      ::free(buffer);
+      ::free((void*) prettyFunction);
 
       return ss.str();
 #elif (OCCA_OS == OCCA_LINUX_OS)
@@ -907,18 +904,15 @@ namespace occa {
       const char *dl_name = frameInfo.dli_sname;
 
       if (status && dl_name) {
-        size_t maxChars = 1024;
-        char *buffer = (char*) ::malloc(1024 * sizeof(char));
-
         const char *prettyFunction = abi::__cxa_demangle(dl_name,
-                                                         buffer,
-                                                         &maxChars,
+                                                         NULL,
+                                                         NULL,
                                                          &status);
 
         if (!status) {
           function = std::string(prettyFunction);
         }
-        ::free(buffer);
+        ::free((void*) prettyFunction);
       }
       if (function.size() == 0) {
         const char *c = symbol;

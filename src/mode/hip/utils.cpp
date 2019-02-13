@@ -229,7 +229,7 @@ namespace occa {
       }
       std::stringstream ss;
       ss << message << '\n'
-         << "    Error   : HIP Error [ " << errorCode << " ]: "
+         << "HIP Error [ " << errorCode << " ]: "
          << occa::hip::getErrorMessage(errorCode);
       occa::error(filename, function, line, ss.str());
     }

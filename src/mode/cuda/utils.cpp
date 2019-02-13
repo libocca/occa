@@ -264,7 +264,7 @@ namespace occa {
       }
       std::stringstream ss;
       ss << message << '\n'
-         << "    Error   : CUDA Error [ " << errorCode << " ]: "
+         << "CUDA Error [ " << errorCode << " ]: "
          << occa::cuda::getErrorMessage(errorCode);
       occa::error(filename, function, line, ss.str());
     }

@@ -288,7 +288,6 @@ namespace occa {
         }
       }
 
-
       buildProgram(info,
                    kernelName,
                    compilerFlags,
@@ -296,19 +295,20 @@ namespace occa {
     }
 
     void buildProgramFromBinary(info_t &info,
-                                const std::string &source,
+                                const std::string &binaryFilename,
                                 const std::string &kernelName,
                                 const std::string &compilerFlags,
                                 const io::lock_t &lock) {
       cl_int error, binaryError;
 
-      const char *c_source = source.c_str();
-      const size_t sourceBytes = source.size();
+      size_t binaryBytes;
+      const char *binary = io::c_read(binaryFilename, &binaryBytes, true);
       info.clProgram = clCreateProgramWithBinary(info.clContext,
                                                  1, &(info.clDevice),
-                                                 &sourceBytes,
-                                                 (const unsigned char**) &c_source,
+                                                 &binaryBytes,
+                                                 (const unsigned char**) &binary,
                                                  &binaryError, &error);
+      delete [] binary;
 
       if (binaryError || error) {
         lock.release();
@@ -356,7 +356,7 @@ namespace occa {
                             logError);
           log[logSize] = '\0';
 
-          io::stdout << "Kernel ["
+          io::stderr << "Kernel ["
                      << kernelName
                      << "]: Build Log\n"
                      << log;
@@ -385,39 +385,54 @@ namespace occa {
                         error);
     }
 
-    void saveProgramBinary(cl_program &clProgram,
+    bool saveProgramBinary(info_t &info,
                            const std::string &binaryFile,
                            const io::lock_t &lock) {
-      size_t binarySize;
-      char *binary;
+      cl_int error, binaryError;
 
-      cl_int error = clGetProgramInfo(clProgram,
-                                      CL_PROGRAM_BINARY_SIZES,
-                                      sizeof(size_t), &binarySize, NULL);
-
+      size_t binaryBytes;
+      error = clGetProgramInfo(info.clProgram,
+                               CL_PROGRAM_BINARY_SIZES,
+                               sizeof(size_t), &binaryBytes, NULL);
       if (error) {
         lock.release();
       }
       OCCA_OPENCL_ERROR("saveProgramBinary: Getting Binary Sizes",
                         error);
 
-      binary = new char[binarySize + 1];
-
-      error = clGetProgramInfo(clProgram,
+      char *binary = new char[binaryBytes + 1];
+      error = clGetProgramInfo(info.clProgram,
                                CL_PROGRAM_BINARIES,
                                sizeof(char*), &binary, NULL);
-
       if (error) {
         lock.release();
       }
       OCCA_OPENCL_ERROR("saveProgramBinary: Getting Binary",
                         error);
 
+      // Test to see if device supports reading from its own binary
+      cl_program testProgram = clCreateProgramWithBinary(info.clContext,
+                                                         1, &(info.clDevice),
+                                                         &binaryBytes,
+                                                         (const unsigned char**) &binary,
+                                                         &binaryError, &error);
+
+      size_t testBinaryBytes;
+      error = clGetProgramInfo(testProgram,
+                               CL_PROGRAM_BINARY_SIZES,
+                               sizeof(size_t), &testBinaryBytes, NULL);
+      if (!error || !testBinaryBytes) {
+        delete [] binary;
+        return false;
+      }
+
       FILE *fp = fopen(binaryFile.c_str(), "wb");
-      fwrite(binary, 1, binarySize, fp);
+      fwrite(binary, 1, binaryBytes, fp);
       fclose(fp);
 
       delete [] binary;
+
+      return true;
     }
 
     cl_context getCLContext(occa::device device) {
@@ -499,7 +514,7 @@ namespace occa {
       const cl_int clErrorCode = getErrorCode(errorCode);
       std::stringstream ss;
       ss << message << '\n'
-         << "    Error   : OpenCL Error [ " << clErrorCode << " ]: "
+         << "OpenCL Error [ " << clErrorCode << " ]: "
          << occa::opencl::getErrorMessage(clErrorCode);
       occa::error(filename, function, line, ss.str());
     }

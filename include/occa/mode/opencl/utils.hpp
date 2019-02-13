@@ -79,7 +79,7 @@ namespace occa {
                                 const io::lock_t &lock = io::lock_t());
 
     void buildProgramFromBinary(info_t &info,
-                                const std::string &source,
+                                const std::string &binaryFilename,
                                 const std::string &kernelName,
                                 const std::string &compilerFlags = "",
                                 const io::lock_t &lock = io::lock_t());
@@ -93,7 +93,7 @@ namespace occa {
                                 const std::string &kernelName,
                                 const io::lock_t &lock = io::lock_t());
 
-    void saveProgramBinary(cl_program &clProgram,
+    bool saveProgramBinary(info_t &info,
                            const std::string &binaryFile,
                            const io::lock_t &lock = io::lock_t());
 

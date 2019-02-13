@@ -166,7 +166,7 @@ namespace occa {
       clInfo.clContext = clContext;
 
       // Build OpenCL program
-      std::string source = io::read(sourceFilename);
+      std::string source = io::read(sourceFilename, true);
 
       opencl::buildProgramFromSource(clInfo,
                                      source,
@@ -176,7 +176,7 @@ namespace occa {
                                      kernelProps,
                                      lock);
 
-      opencl::saveProgramBinary(clInfo.clProgram,
+      opencl::saveProgramBinary(clInfo,
                                 binaryFilename,
                                 lock);
 
@@ -238,7 +238,7 @@ namespace occa {
 
       if (!clInfo.clProgram) {
         opencl::buildProgramFromBinary(clInfo,
-                                       io::read(binaryFilename),
+                                       binaryFilename,
                                        kernelName,
                                        properties["compiler_flags"],
                                        lock);
@@ -310,14 +310,12 @@ namespace occa {
                                                 const std::string &kernelName,
                                                 const occa::properties &kernelProps) {
 
-      std::string source = io::read(filename);
-
       info_t clInfo;
       clInfo.clDevice  = clDevice;
       clInfo.clContext = clContext;
 
       opencl::buildProgramFromBinary(clInfo,
-                                     source,
+                                     filename,
                                      kernelName,
                                      properties["compiler_flags"]);
 

@@ -327,7 +327,8 @@ namespace occa {
       return buffer;
     }
 
-    std::string read(const std::string &filename, const bool readingBinary) {
+    std::string read(const std::string &filename,
+                     const bool readingBinary) {
       size_t chars;
       const char *c = c_read(filename, &chars, readingBinary);
       std::string contents(c, chars);
