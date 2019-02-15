@@ -15,10 +15,9 @@ namespace occa {
                    const std::string &name_,
                    const std::string &sourceFilename_,
                    const occa::properties &properties_) :
-      occa::modeKernel_t(modeDevice_, name_, sourceFilename_, properties_),
+      occa::launchedModeKernel_t(modeDevice_, name_, sourceFilename_, properties_),
       hipModule(NULL),
-      hipFunction(NULL),
-      launcherKernel(NULL) {}
+      hipFunction(NULL) {}
 
     kernel::kernel(modeDevice_t *modeDevice_,
                    const std::string &name_,
@@ -26,31 +25,16 @@ namespace occa {
                    hipModule_t hipModule_,
                    hipFunction_t hipFunction_,
                    const occa::properties &properties_) :
-      occa::modeKernel_t(modeDevice_, name_, sourceFilename_, properties_),
+      occa::launchedModeKernel_t(modeDevice_, name_, sourceFilename_, properties_),
       hipModule(hipModule_),
-      hipFunction(hipFunction_),
-      launcherKernel(NULL) {}
+      hipFunction(hipFunction_) {}
 
     kernel::~kernel() {
-      if (!launcherKernel) {
-        if (hipModule) {
-          OCCA_HIP_ERROR("Kernel (" + name + ") : Unloading Module",
-                         hipModuleUnload(hipModule));
-          hipModule = NULL;
-        }
-        return;
+      if (hipModule) {
+        OCCA_HIP_ERROR("Kernel (" + name + ") : Unloading Module",
+                       hipModuleUnload(hipModule));
+        hipModule = NULL;
       }
-
-      launcherKernel->free();
-      delete launcherKernel;
-      launcherKernel = NULL;
-
-      int kernelCount = (int) hipKernels.size();
-      for (int i = 0; i < kernelCount; ++i) {
-        hipKernels[i]->free();
-        delete hipKernels[i];
-      }
-      hipKernels.clear();
     }
 
     int kernel::maxDims() const {
@@ -76,11 +60,7 @@ namespace occa {
       return innerDims;
     }
 
-    void kernel::run() const {
-      if (launcherKernel) {
-        return launcherRun();
-      }
-
+    void kernel::deviceRun() const {
       const int args = (int) arguments.size();
       if (!args) {
         vArgs.resize(1);
@@ -123,21 +103,6 @@ namespace occa {
                                            innerDims.x, innerDims.y, innerDims.z,
                                            0, *((hipStream_t*) modeDevice->currentStream),
                                            NULL, (void**) &config));
-    }
-
-    void kernel::launcherRun() const {
-      launcherKernel->arguments = arguments;
-      launcherKernel->arguments.insert(
-        launcherKernel->arguments.begin(),
-        &(hipKernels[0])
-      );
-
-      int kernelCount = (int) hipKernels.size();
-      for (int i = 0; i < kernelCount; ++i) {
-        hipKernels[i]->arguments = arguments;
-      }
-
-      launcherKernel->run();
     }
   }
 }

@@ -340,7 +340,7 @@ namespace occa {
                                              kernelName,
                                              launcherMetadata[kernelName]);
 
-      // Find clKernels
+      // Find cuda kernels
       typedef std::map<int, lang::kernelMetadata> kernelOrderMap;
       kernelOrderMap cuKernelMetadata;
 
@@ -386,7 +386,8 @@ namespace occa {
                                       cuFunction,
                                       kernelProps);
         cuKernel->dontUseRefs();
-        k.cuKernels.push_back(cuKernel);
+        cuKernel->metadata = metadata;
+        k.deviceKernels.push_back(cuKernel);
 
         ++oit;
       }

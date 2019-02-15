@@ -86,7 +86,12 @@ namespace occa {
   void modeKernel_t::setupRun() {
     const int argc = (int) arguments.size();
 
-    if (metadata.isInitialized()) {
+    const bool validateTypes = (
+      metadata.isInitialized()
+      && properties.get("type_validation", true)
+    );
+
+    if (validateTypes) {
       const int metaArgc = (int) metadata.arguments.size();
 
       OCCA_ERROR("(" << name << ") Kernel expects ["

@@ -6,21 +6,19 @@
 
 #include <cuda.h>
 
-#include <occa/core/kernel.hpp>
+#include <occa/core/launchedKernel.hpp>
 
 namespace occa {
   namespace cuda {
     class device;
 
-    class kernel : public occa::modeKernel_t {
+    class kernel : public occa::launchedModeKernel_t {
       friend class device;
 
     private:
       CUmodule cuModule;
       CUfunction cuFunction;
 
-      occa::modeKernel_t *launcherKernel;
-      std::vector<kernel*> cuKernels;
       mutable std::vector<void*> vArgs;
 
     public:
@@ -44,8 +42,7 @@ namespace occa {
       dim maxOuterDims() const;
       dim maxInnerDims() const;
 
-      void run() const;
-      void launcherRun() const;
+      void deviceRun() const;
     };
   }
 }

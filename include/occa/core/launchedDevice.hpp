@@ -22,6 +22,12 @@ namespace occa {
                                       const hash_t kernelHash,
                                       const occa::properties &kernelProps);
 
+    modeKernel_t* buildKernel(const std::string &filename,
+                              const std::string &kernelName,
+                              const hash_t kernelHash,
+                              const bool usingOkl,
+                              const occa::properties &kernelProps);
+
     modeKernel_t* buildLauncherKernel(const hash_t kernelHash,
                                       const std::string &hashDir,
                                       const std::string &kernelName,

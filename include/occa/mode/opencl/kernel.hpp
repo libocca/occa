@@ -4,7 +4,7 @@
 #  ifndef OCCA_MODES_OPENCL_KERNEL_HEADER
 #  define OCCA_MODES_OPENCL_KERNEL_HEADER
 
-#include <occa/core/kernel.hpp>
+#include <occa/core/launchedKernel.hpp>
 #include <occa/mode/opencl/headers.hpp>
 #include <occa/mode/opencl/utils.hpp>
 
@@ -12,16 +12,13 @@ namespace occa {
   namespace opencl {
     class device;
 
-    class kernel : public occa::modeKernel_t {
+    class kernel : public occa::launchedModeKernel_t {
       friend class device;
       friend cl_kernel getCLKernel(occa::kernel kernel);
 
     private:
       cl_device_id clDevice;
       cl_kernel clKernel;
-
-      occa::modeKernel_t *launcherKernel;
-      std::vector<kernel*> clKernels;
 
     public:
       kernel(modeDevice_t *modeDevice_,
@@ -44,8 +41,7 @@ namespace occa {
       dim maxOuterDims() const;
       dim maxInnerDims() const;
 
-      void run() const;
-      void launcherRun() const;
+      void deviceRun() const;
     };
   }
 }

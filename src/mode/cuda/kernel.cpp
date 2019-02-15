@@ -15,10 +15,9 @@ namespace occa {
                    const std::string &name_,
                    const std::string &sourceFilename_,
                    const occa::properties &properties_) :
-      occa::modeKernel_t(modeDevice_, name_, sourceFilename_, properties_),
+      occa::launchedModeKernel_t(modeDevice_, name_, sourceFilename_, properties_),
       cuModule(NULL),
-      cuFunction(NULL),
-      launcherKernel(NULL) {}
+      cuFunction(NULL) {}
 
     kernel::kernel(modeDevice_t *modeDevice_,
                    const std::string &name_,
@@ -26,29 +25,16 @@ namespace occa {
                    CUmodule cuModule_,
                    CUfunction cuFunction_,
                    const occa::properties &properties_) :
-      occa::modeKernel_t(modeDevice_, name_, sourceFilename_, properties_),
+      occa::launchedModeKernel_t(modeDevice_, name_, sourceFilename_, properties_),
       cuModule(cuModule_),
-      cuFunction(cuFunction_),
-      launcherKernel(NULL) {}
+      cuFunction(cuFunction_) {}
 
     kernel::~kernel() {
-      if (!launcherKernel) {
-        if (cuModule) {
-          OCCA_CUDA_ERROR("Kernel (" + name + ") : Unloading Module",
-                          cuModuleUnload(cuModule));
-          cuModule = NULL;
-        }
-        return;
+      if (cuModule) {
+        OCCA_CUDA_ERROR("Kernel (" + name + ") : Unloading Module",
+                        cuModuleUnload(cuModule));
+        cuModule = NULL;
       }
-
-      delete launcherKernel;
-      launcherKernel = NULL;
-
-      int kernelCount = (int) cuKernels.size();
-      for (int i = 0; i < kernelCount; ++i) {
-        delete cuKernels[i];
-      }
-      cuKernels.clear();
     }
 
     CUstream& kernel::getCuStream() const {
@@ -77,11 +63,7 @@ namespace occa {
       return maxInnerDims_;
     }
 
-    void kernel::run() const {
-      if (launcherKernel) {
-        return launcherRun();
-      }
-
+    void kernel::deviceRun() const {
       const int args = (int) arguments.size();
       if (!args) {
         vArgs.resize(1);
@@ -100,23 +82,6 @@ namespace occa {
                                      innerDims.x, innerDims.y, innerDims.z,
                                      0, getCuStream(),
                                      &(vArgs[0]), 0));
-    }
-
-    void kernel::launcherRun() const {
-      kernelArg arg(&(cuKernels[0]));
-
-      launcherKernel->arguments = arguments;
-      launcherKernel->arguments.insert(
-        launcherKernel->arguments.begin(),
-        arg[0]
-      );
-
-      int kernelCount = (int) cuKernels.size();
-      for (int i = 0; i < kernelCount; ++i) {
-        cuKernels[i]->arguments = arguments;
-      }
-
-      launcherKernel->run();
     }
   }
 }

@@ -259,7 +259,7 @@ namespace occa {
         return NULL;
       }
 
-      // Find clKernels
+      // Find device kernels
       typedef std::map<int, lang::kernelMetadata> kernelOrderMap;
       kernelOrderMap clKernelMetadata;
 
@@ -298,7 +298,7 @@ namespace occa {
                                       clInfo.clKernel,
                                       kernelProps);
         clKernel->dontUseRefs();
-        k.clKernels.push_back(clKernel);
+        k.deviceKernels.push_back(clKernel);
 
         ++oit;
       }

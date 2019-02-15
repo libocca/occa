@@ -255,10 +255,11 @@ namespace occa {
         function_t &func = kernelSmnt.function;
         const int argCount = (int) func.args.size();
         for (int i = 0; i < argCount; ++i) {
+          variable_t &arg = *(func.args[i]);
           if (i) {
             kernelCall += ", ";
           }
-          kernelCall += func.args[i]->name();
+          kernelCall += arg.name();
         }
         kernelCall += ')';
         launchBlock.add(

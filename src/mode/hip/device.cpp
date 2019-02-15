@@ -20,9 +20,7 @@
 namespace occa {
   namespace hip {
     device::device(const occa::properties &properties_) :
-      occa::modeDevice_t(properties_) {
-
-      needsLauncherKernel = true;
+      occa::launchedModeDevice_t(properties_) {
 
       hipDeviceProp_t props;
       if (!properties.has("wrapped")) {
@@ -351,7 +349,7 @@ namespace occa {
                                        hipFunction,
                                        kernelProps);
         hipKernel->dontUseRefs();
-        k.hipKernels.push_back(hipKernel);
+        k.deviceKernels.push_back(hipKernel);
 
         ++oit;
       }

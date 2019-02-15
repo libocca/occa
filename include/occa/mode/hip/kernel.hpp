@@ -42,8 +42,7 @@ namespace occa {
       dim maxOuterDims() const;
       dim maxInnerDims() const;
 
-      void run() const;
-      void launcherRun() const;
+      void deviceRun() const;
     };
   }
 }
