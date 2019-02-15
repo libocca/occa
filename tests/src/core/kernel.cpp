@@ -122,7 +122,8 @@ void testArgumentFailure() {
     "@kernel void foo(int N, float *arg) {"
     "  for (int i = 0; i < N; ++i; @tile(16, @outer, @inner)) {}"
     "}",
-    "foo"
+    "foo",
+    "type_validation: false"
   );
 
   const int N = 10;
@@ -141,7 +142,8 @@ void testRun() {
     occa::env::OCCA_DIR + "tests/files/argKernel.okl"
   );
   occa::kernel argKernel = occa::buildKernel(argKernelFile,
-                                             "argKernel");
+                                             "argKernel",
+                                             "type_validation: false");
 
   argKernel.setRunDims(occa::dim(1, 1, 1),
                        occa::dim(1, 1, 1));

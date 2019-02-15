@@ -15,16 +15,14 @@ namespace occa {
     const dtype_t float_("float", sizeof(float), true);
     const dtype_t double_("double", sizeof(double), true);
 
-    const dtype_t int8("int8", 1, true);
-    const dtype_t uint8("uint8", 1, true);
-    const dtype_t int16("int16", 2, true);
-    const dtype_t uint16("uint16", 2, true);
-    const dtype_t int32("int32", 4, true);
-    const dtype_t uint32("uint32", 4, true);
-    const dtype_t int64("int64", 8, true);
-    const dtype_t uint64("uint64", 8, true);
-    const dtype_t float32("float32", 4, true);
-    const dtype_t float64("float64", 8, true);
+    const dtype_t int8    = get<int8_t>();
+    const dtype_t uint8   = get<uint8_t>();
+    const dtype_t int16   = get<int16_t>();
+    const dtype_t uint16  = get<uint16_t>();
+    const dtype_t int32   = get<int32_t>();
+    const dtype_t uint32  = get<uint32_t>();
+    const dtype_t int64   = get<int64_t>();
+    const dtype_t uint64  = get<uint64_t>();
 
     // OKL Primitives
     const dtype_t uchar2("uchar2", dtype_t::tuple(char_, 2), true);
@@ -66,5 +64,130 @@ namespace occa {
     const dtype_t double2("double2", dtype_t::tuple(double_, 2), true);
     const dtype_t double3("double3", dtype_t::tuple(double_, 3), true);
     const dtype_t double4("double4", dtype_t::tuple(double_, 4), true);
+
+    // Templated types
+    template <> dtype_t get<char>() {
+      return char_;
+    }
+
+    template <> dtype_t get<signed char>() {
+      return char_;
+    }
+
+    template <> dtype_t get<unsigned char>() {
+      return char_;
+    }
+
+    template <> dtype_t get<short>() {
+      return short_;
+    }
+
+    template <> dtype_t get<unsigned short>() {
+      return short_;
+    }
+
+    template <> dtype_t get<int>() {
+      return int_;
+    }
+
+    template <> dtype_t get<unsigned int>() {
+      return int_;
+    }
+
+    template <> dtype_t get<long>() {
+      return long_;
+    }
+
+    template <> dtype_t get<unsigned long>() {
+      return long_;
+    }
+
+    template <> dtype_t get<float>() {
+      return float_;
+    }
+
+    template <> dtype_t get<double>() {
+      return double_;
+    }
+
+    template <> dtype_t get<occa::uchar2>() {
+      return uchar2;
+    }
+
+    template <> dtype_t get<occa::uchar4>() {
+      return uchar4;
+    }
+
+    template <> dtype_t get<occa::char2>() {
+      return char2;
+    }
+
+    template <> dtype_t get<occa::char4>() {
+      return char4;
+    }
+
+    template <> dtype_t get<occa::ushort2>() {
+      return ushort2;
+    }
+
+    template <> dtype_t get<occa::ushort4>() {
+      return ushort4;
+    }
+
+    template <> dtype_t get<occa::short2>() {
+      return short2;
+    }
+
+    template <> dtype_t get<occa::short4>() {
+      return short4;
+    }
+
+    template <> dtype_t get<occa::uint2>() {
+      return uint2;
+    }
+
+    template <> dtype_t get<occa::uint4>() {
+      return uint4;
+    }
+
+    template <> dtype_t get<occa::int2>() {
+      return int2;
+    }
+
+    template <> dtype_t get<occa::int4>() {
+      return int4;
+    }
+
+    template <> dtype_t get<occa::ulong2>() {
+      return ulong2;
+    }
+
+    template <> dtype_t get<occa::ulong4>() {
+      return ulong4;
+    }
+
+    template <> dtype_t get<occa::long2>() {
+      return long2;
+    }
+
+    template <> dtype_t get<occa::long4>() {
+      return long4;
+    }
+
+    template <> dtype_t get<occa::float2>() {
+      return float2;
+    }
+
+    template <> dtype_t get<occa::float4>() {
+      return float4;
+    }
+
+    template <> dtype_t get<occa::double2>() {
+      return double2;
+    }
+
+    template <> dtype_t get<occa::double4>() {
+      return double4;
+    }
   }
 }

@@ -66,8 +66,6 @@ extern const occaDtype occaDtypeInt32;
 extern const occaDtype occaDtypeUint32;
 extern const occaDtype occaDtypeInt64;
 extern const occaDtype occaDtypeUint64;
-extern const occaDtype occaDtypeFloat32;
-extern const occaDtype occaDtypeFloat64;
 
 // OKL Primitives
 extern const occaDtype occaDtypeUchar2;

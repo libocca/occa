@@ -116,8 +116,6 @@ const occaDtype occaDtypeInt32   = occa::c::newOccaType(occa::dtype::int32);
 const occaDtype occaDtypeUint32  = occa::c::newOccaType(occa::dtype::uint32);
 const occaDtype occaDtypeInt64   = occa::c::newOccaType(occa::dtype::int64);
 const occaDtype occaDtypeUint64  = occa::c::newOccaType(occa::dtype::uint64);
-const occaDtype occaDtypeFloat32 = occa::c::newOccaType(occa::dtype::float32);
-const occaDtype occaDtypeFloat64 = occa::c::newOccaType(occa::dtype::float64);
 
 // OKL Primitives
 const occaDtype occaDtypeUchar2 = occa::c::newOccaType(occa::dtype::uchar2);

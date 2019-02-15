@@ -1,10 +1,10 @@
 #include <occa.hpp>
 
 template <class TM, const int TMi>
-void printVector(occa::array<TM,TMi> &a);
+void printVector(occa::array<TM, TMi> &a);
 
 template <class TM, const int TMi>
-void printMatrix(occa::array<TM,TMi> &a);
+void printMatrix(occa::array<TM, TMi> &a);
 
 occa::json parseArgs(int argc, const char **argv);
 

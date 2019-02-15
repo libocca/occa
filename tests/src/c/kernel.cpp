@@ -76,11 +76,15 @@ void testRun() {
   std::string argKernelFile = (
     occa::env::OCCA_DIR + "tests/files/argKernel.okl"
   );
+  occaProperties kernelProps = occaCreatePropertiesFromString(
+    "type_validation: false"
+  );
   occaKernel argKernel = (
     occaBuildKernel(argKernelFile.c_str(),
                     "argKernel",
-                    occaDefault)
+                    kernelProps)
   );
+  occaFree(kernelProps);
 
   // Dummy dims
   occaDim outerDims, innerDims;

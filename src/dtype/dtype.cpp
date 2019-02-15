@@ -98,7 +98,7 @@ namespace occa {
   }
 
   bool dtype_t::isGlobal() const {
-    return global;
+    return self().global;
   }
 
   // Tuple methods
@@ -334,6 +334,8 @@ namespace occa {
   const dtype_t& dtype_t::getBuiltin(const std::string name) {
     static dtypeGlobalMap_t dtypeMap;
     if (!dtypeMap.size()) {
+      dtypeMap["none"] = &dtype::none;
+
       dtypeMap["void"] = &dtype::void_;
       dtypeMap["byte"] = &dtype::byte;
 
@@ -344,17 +346,6 @@ namespace occa {
       dtypeMap["long"]   = &dtype::long_;
       dtypeMap["float"]  = &dtype::float_;
       dtypeMap["double"] = &dtype::double_;
-
-      dtypeMap["int8"]    = &dtype::int8;
-      dtypeMap["uint8"]   = &dtype::uint8;
-      dtypeMap["int16"]   = &dtype::int16;
-      dtypeMap["uint16"]  = &dtype::uint16;
-      dtypeMap["int32"]   = &dtype::int32;
-      dtypeMap["uint32"]  = &dtype::uint32;
-      dtypeMap["int64"]   = &dtype::int64;
-      dtypeMap["uint64"]  = &dtype::uint64;
-      dtypeMap["float32"] = &dtype::float32;
-      dtypeMap["float64"] = &dtype::float64;
 
       // OKL Primitives
       dtypeMap["uchar2"] = &dtype::uchar2;

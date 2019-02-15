@@ -2,6 +2,8 @@
 #define OCCA_DTYPE_BUILTINS_HEADER
 
 #include <occa/dtype/dtype.hpp>
+#include <occa/types/typedefs.hpp>
+#include <occa/types/tuples.hpp>
 
 namespace occa {
   namespace dtype {
@@ -26,8 +28,6 @@ namespace occa {
     extern const dtype_t uint32;
     extern const dtype_t int64;
     extern const dtype_t uint64;
-    extern const dtype_t float32;
-    extern const dtype_t float64;
 
     // OKL Primitives
     extern const dtype_t uchar2;
@@ -69,6 +69,44 @@ namespace occa {
     extern const dtype_t double2;
     extern const dtype_t double3;
     extern const dtype_t double4;
+
+    // Templated types
+    template <class TM>
+    dtype_t get() {
+      return none;
+    }
+
+    template <> dtype_t get<char>();
+    template <> dtype_t get<signed char>();
+    template <> dtype_t get<unsigned char>();
+    template <> dtype_t get<short>();
+    template <> dtype_t get<unsigned short>();
+    template <> dtype_t get<int>();
+    template <> dtype_t get<unsigned int>();
+    template <> dtype_t get<long>();
+    template <> dtype_t get<unsigned long>();
+    template <> dtype_t get<float>();
+    template <> dtype_t get<double>();
+    template <> dtype_t get<occa::uchar2>();
+    template <> dtype_t get<occa::uchar4>();
+    template <> dtype_t get<occa::char2>();
+    template <> dtype_t get<occa::char4>();
+    template <> dtype_t get<occa::ushort2>();
+    template <> dtype_t get<occa::ushort4>();
+    template <> dtype_t get<occa::short2>();
+    template <> dtype_t get<occa::short4>();
+    template <> dtype_t get<occa::uint2>();
+    template <> dtype_t get<occa::uint4>();
+    template <> dtype_t get<occa::int2>();
+    template <> dtype_t get<occa::int4>();
+    template <> dtype_t get<occa::ulong2>();
+    template <> dtype_t get<occa::ulong4>();
+    template <> dtype_t get<occa::long2>();
+    template <> dtype_t get<occa::long4>();
+    template <> dtype_t get<occa::float2>();
+    template <> dtype_t get<occa::float4>();
+    template <> dtype_t get<occa::double2>();
+    template <> dtype_t get<occa::double4>();
   }
 }
 
