@@ -347,6 +347,16 @@ namespace occa {
       dtypeMap["float"]  = &dtype::float_;
       dtypeMap["double"] = &dtype::double_;
 
+      // Sized primitives
+      dtypeMap["int8"]   = dtype::get<int8_t>().ref;
+      dtypeMap["uint8"]  = dtype::get<uint8_t>().ref;
+      dtypeMap["int16"]  = dtype::get<int16_t>().ref;
+      dtypeMap["uint16"] = dtype::get<uint16_t>().ref;
+      dtypeMap["int32"]  = dtype::get<int32_t>().ref;
+      dtypeMap["uint32"] = dtype::get<uint32_t>().ref;
+      dtypeMap["int64"]  = dtype::get<int64_t>().ref;
+      dtypeMap["uint64"] = dtype::get<uint64_t>().ref;
+
       // OKL Primitives
       dtypeMap["uchar2"] = &dtype::uchar2;
       dtypeMap["uchar3"] = &dtype::uchar3;
