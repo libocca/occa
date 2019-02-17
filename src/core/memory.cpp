@@ -206,7 +206,7 @@ namespace occa {
     assertInitialized();
     OCCA_ERROR("Memory dtype [" << dtype__.name() << "] must be declared as global",
                dtype__.isGlobal());
-    modeMemory->dtype_ = &dtype__;
+    modeMemory->dtype_ = &(dtype__.self());
   }
 
   const dtype_t& memory::dtype() {
