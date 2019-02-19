@@ -134,7 +134,7 @@ void testDirMethods() {
             0);
   dirs = occa::io::directories(testDir);
   ASSERT_EQ((int) dirs.size(),
-            7);
+            6);
 
   ASSERT_IN(testDir + "c/", dirs);
   ASSERT_IN(testDir + "io/", dirs);

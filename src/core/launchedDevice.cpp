@@ -126,7 +126,6 @@ namespace occa {
       }
     }
 
-    modeKernel_t *launcherKernel = NULL;
     lang::kernelMetadataMap launcherMetadata, deviceMetadata;
     std::string sourceFilename;
     if (usingOkl) {
@@ -151,10 +150,10 @@ namespace occa {
       }
       sourceFilename = outputFile;
 
-      launcherKernel = buildLauncherKernel(kernelHash,
-                                           hashDir,
-                                           kernelName,
-                                           launcherMetadata[kernelName]);
+      buildLauncherKernel(kernelHash,
+                          hashDir,
+                          kernelName,
+                          launcherMetadata[kernelName]);
 
       // No OKL means no build file is generated,
       //   so we need to build it

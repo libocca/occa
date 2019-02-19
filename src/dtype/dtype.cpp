@@ -154,7 +154,7 @@ namespace occa {
     OCCA_ERROR("Cannot add a field to a dtype_t reference",
                ref == NULL);
     OCCA_ERROR("Cannot add a field to an tuple dtype_t",
-               tuple);
+               tuple_ == NULL);
     OCCA_ERROR("Tuple size must be a positive integer",
                tupleSize_ > 0);
 
