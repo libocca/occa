@@ -43,12 +43,11 @@ namespace occa {
 
       std::string compilerFlags;
 
+      // Use "-cl-opt-disable" for debug-mode
       if (properties.has("kernel/compiler_flags")) {
         compilerFlags = (std::string) properties["kernel/compiler_flags"];
       } else if (env::var("OCCA_OPENCL_COMPILER_FLAGS").size()) {
         compilerFlags = env::var("OCCA_OPENCL_COMPILER_FLAGS");
-      } else {
-        compilerFlags = "-cl-opt-disable";
       }
 
       properties["kernel/compiler_flags"] = compilerFlags;

@@ -39,22 +39,23 @@ namespace occa {
 
       p2pEnabled = false;
 
-      std::string compiler = properties["kernel/compiler"];
-      std::string compilerFlags = properties["kernel/compiler_flags"];
+      std::string compiler, compilerFlags;
 
-      if (!compiler.size()) {
-        if (env::var("OCCA_CUDA_COMPILER").size()) {
-          compiler = env::var("OCCA_CUDA_COMPILER");
-        } else {
-          compiler = "nvcc";
-        }
+      if (properties.get<std::string>("kernel/compiler").size()) {
+        compiler = (std::string) properties["kernel/compiler"];
+      } else if (env::var("OCCA_CUDA_COMPILER").size()) {
+        compiler = env::var("OCCA_CUDA_COMPILER");
+      } else {
+        compiler = "nvcc";
       }
 
-      if (!compilerFlags.size()) {
-        compilerFlags = env::var("OCCA_CUDA_COMPILER_FLAGS");
+      if (properties.get<std::string>("kernel/compiler_flags").size()) {
+        compilerFlags = (std::string) properties["kernel/compiler_flags"];
+      } else {
+        compilerFlags = "-O3";
       }
 
-      properties["kernel/compiler"]      = compiler;
+      properties["kernel/compiler"] = compiler;
       properties["kernel/compiler_flags"] = compilerFlags;
 
       OCCA_CUDA_ERROR("Device: Getting CUDA Device Arch",

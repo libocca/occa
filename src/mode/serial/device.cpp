@@ -41,9 +41,9 @@ namespace occa {
         compilerFlags = env::var("CXXFLAGS");
       } else {
 #if (OCCA_OS & (OCCA_LINUX_OS | OCCA_MACOS_OS))
-        compilerFlags = "-g";
+        compilerFlags = "-O3";
 #else
-        compilerFlags = " /Od";
+        compilerFlags = " /Ox";
 #endif
       }
 
