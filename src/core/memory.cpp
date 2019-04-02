@@ -600,6 +600,7 @@ namespace occa {
 
       mem.dontUseRefs();
       mem.ptr = (char*) ptr;
+      mem.isOrigin = false;
 
       return occa::memory(&mem);
     }
