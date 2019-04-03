@@ -102,6 +102,10 @@ namespace occa {
 
     qualifier_t::~qualifier_t() {}
 
+    bool qualifier_t::operator == (const qualifier_t &other) const {
+      return (this == &other);
+    }
+
     udim_t qualifier_t::type() const {
       return qtype;
     }

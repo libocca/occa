@@ -143,21 +143,25 @@ namespace occa {
       void loadDeclarationBraceInitializer(variableDeclaration &decl);
 
       vartype_t loadType();
+      struct_t* loadStruct();
+
+      qualifiers_t loadQualifiers();
 
       void loadBaseType(vartype_t &vartype);
 
-      void loadQualifier(token_t *token,
-                         const qualifier_t &qualifier,
-                         vartype_t &vartype);
+      void loadVartypeQualifier(token_t *token,
+                                const qualifier_t &qualifier,
+                                vartype_t &vartype);
 
-      void setPointers(vartype_t &vartype);
-      void setPointer(vartype_t &vartype);
+      void setVartypePointers(vartype_t &vartype);
+      void setVartypePointer(vartype_t &vartype);
 
-      void setReference(vartype_t &vartype);
+      void setVartypeReference(vartype_t &vartype);
 
       bool isLoadingFunctionPointer();
       bool isLoadingVariable();
       bool isLoadingFunction();
+      bool isLoadingStruct();
 
       variable_t loadFunctionPointer(vartype_t &vartype);
       variable_t loadVariable(vartype_t &vartype);
@@ -176,11 +180,6 @@ namespace occa {
     public:
       void getArgumentRanges(tokenRangeVector &argRanges);
       variable_t getArgument();
-
-      class_t loadClassType();
-      struct_t loadStructType();
-      enum_t loadEnumType();
-      union_t loadUnionType();
       //================================
 
       //---[ Loader Helpers ]-----------
@@ -199,9 +198,9 @@ namespace occa {
 
       statement_t* loadDeclarationStatement(attributeTokenMap &smntAttributes);
 
-      statement_t* loadNamespaceStatement(attributeTokenMap &smntAttributes);
+      statement_t* loadStructStatement(attributeTokenMap &smntAttributes);
 
-      statement_t* loadTypeDeclStatement(attributeTokenMap &smntAttributes);
+      statement_t* loadNamespaceStatement(attributeTokenMap &smntAttributes);
 
       statement_t* loadFunctionStatement(attributeTokenMap &smntAttributes);
 

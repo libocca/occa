@@ -36,6 +36,7 @@ namespace occa {
       intIntMap pairs;
       intVector semicolons;
       bool hasError;
+      bool supressErrors;
 
       tokenRangeList stack;
       tokenRange tp;
@@ -69,7 +70,11 @@ namespace occa {
 
       int position() const;
       int size() const;
+
       token_t* operator [] (const int index);
+      tokenContext& operator ++ ();
+      tokenContext& operator ++ (int);
+
       void setToken(const int index,
                     token_t *value);
 

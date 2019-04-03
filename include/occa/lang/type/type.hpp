@@ -20,8 +20,8 @@ namespace occa {
     class array_t;
     class variable_t;
 
-    typedef std::vector<pointer_t>   pointerVector;
     typedef std::vector<array_t>     arrayVector;
+    typedef std::vector<pointer_t>   pointerVector;
     typedef std::vector<variable_t>  variableVector;
     typedef std::vector<variable_t*> variablePtrVector;
 

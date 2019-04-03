@@ -24,6 +24,7 @@ namespace occa {
       tp.end   = 0;
 
       hasError = false;
+      supressErrors = false;
 
       const int tokenCount = (int) tokens.size();
       for (int i = 0; i < tokenCount; ++i) {
@@ -63,12 +64,14 @@ namespace occa {
 
         // Make sure we have a proper pair
         if (!pairStack.size()) {
-          std::stringstream ss;
-          ss << "Could not find an opening '"
-             << pairEndOp.pairStr
-             << '\'';
-          token->printError(ss.str());
-          hasError = true;
+          if (!supressErrors) {
+            std::stringstream ss;
+            ss << "Could not find an opening '"
+               << pairEndOp.pairStr
+               << '\'';
+            token->printError(ss.str());
+            hasError = true;
+          }
           return;
         }
 
@@ -79,12 +82,14 @@ namespace occa {
           *((pairOperator_t*) tokens[pairIndex]->to<operatorToken>().op);
 
         if (pairStartOp.opType != (pairEndOp.opType >> 1)) {
-          std::stringstream ss;
-          ss << "Could not find a closing '"
-             << pairStartOp.pairStr
-             << '\'';
-          tokens[pairIndex]->printError(ss.str());
-          hasError = true;
+          if (!supressErrors) {
+            std::stringstream ss;
+            ss << "Could not find a closing '"
+               << pairStartOp.pairStr
+               << '\'';
+            tokens[pairIndex]->printError(ss.str());
+            hasError = true;
+          }
           return;
         }
 
@@ -98,12 +103,14 @@ namespace occa {
         pairOperator_t &pairStartOp =
           *((pairOperator_t*) tokens[pairIndex]->to<operatorToken>().op);
 
-        std::stringstream ss;
-        ss << "Could not find a closing '"
-           << pairStartOp.pairStr
-           << '\'';
-        tokens[pairIndex]->printError(ss.str());
-        hasError = true;
+        if (!supressErrors) {
+          std::stringstream ss;
+          ss << "Could not find a closing '"
+             << pairStartOp.pairStr
+             << '\'';
+          tokens[pairIndex]->printError(ss.str());
+          hasError = true;
+        }
       }
     }
 
@@ -207,6 +214,16 @@ namespace occa {
       return tokens[tp.start + index];
     }
 
+    tokenContext& tokenContext::operator ++ () {
+      set(1);
+      return *this;
+    }
+
+    tokenContext& tokenContext::operator ++ (int) {
+      set(1);
+      return *this;
+    }
+
     void tokenContext::setToken(const int index,
                                 token_t *value) {
       if (!indexInRange(index)) {
@@ -265,6 +282,9 @@ namespace occa {
     }
 
     void tokenContext::printError(const std::string &message) {
+      if (supressErrors) {
+        return;
+      }
       token_t *token = getPrintToken(false);
       if (!token) {
         occa::printError(io::stderr, "[No Token] " + message);
@@ -274,6 +294,9 @@ namespace occa {
     }
 
     void tokenContext::printErrorAtEnd(const std::string &message) {
+      if (supressErrors) {
+        return;
+      }
       token_t *token = getPrintToken(true);
       if (!token) {
         occa::printError(io::stderr, "[No Token] " + message);

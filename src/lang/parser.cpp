@@ -56,7 +56,6 @@ namespace occa {
       statementLoaders[statementType::declaration] = &parser_t::loadDeclarationStatement;
       statementLoaders[statementType::block]       = &parser_t::loadBlockStatement;
       statementLoaders[statementType::namespace_]  = &parser_t::loadNamespaceStatement;
-      statementLoaders[statementType::typeDecl]    = &parser_t::loadTypeDeclStatement;
       statementLoaders[statementType::if_]         = &parser_t::loadIfStatement;
       statementLoaders[statementType::elif_]       = &parser_t::loadElifStatement;
       statementLoaders[statementType::else_]       = &parser_t::loadElseStatement;
@@ -344,7 +343,7 @@ namespace occa {
           token_t *token = context[0];
           if (!(token->type() & (tokenType::qualifier |
                                  tokenType::type))) {
-            context.set(1);
+            ++context;
             tokens.push_back(token->clone());
             continue;
           }
@@ -415,7 +414,7 @@ namespace occa {
 
     void parser_t::loadAttribute(attributeTokenMap &attrs) {
       // Skip [@] token
-      context.set(1);
+      ++context;
 
       if (!(context[0]->type() & tokenType::identifier)) {
         context.printError("Expected an attribute name");
@@ -424,7 +423,7 @@ namespace occa {
       }
 
       identifierToken &nameToken = *((identifierToken*) context[0]);
-      context.set(1);
+      ++context;
 
       attribute_t *attribute = getAttribute(nameToken.value);
       if (!attribute) {
@@ -690,11 +689,11 @@ namespace occa {
       // If partially-defined type, finish parsing it
       vartype_t vartype = baseType.declarationType();
       vartype.qualifiers = baseType.qualifiers;
-      setPointers(vartype);
+      setVartypePointers(vartype);
       if (!success) {
         return decl;
       }
-      setReference(vartype);
+      setVartypeReference(vartype);
       if (!success) {
         return decl;
       }
@@ -839,13 +838,118 @@ namespace occa {
         return vartype;
       }
 
-      setPointers(vartype);
+      setVartypePointers(vartype);
       if (!success) {
         return vartype;
       }
 
-      setReference(vartype);
+      setVartypeReference(vartype);
       return vartype;
+    }
+
+    struct_t* parser_t::loadStruct() {
+      // Store type declarations in temporary block statement
+      blockStatement *blockSmnt = new blockStatement(up, context[0]);
+      pushUp(*blockSmnt);
+
+      // Skip 'struct' token
+      ++context;
+
+      token_t *nameToken = context[0];
+      if (!nameToken ||
+          (!(nameToken->type() & tokenType::identifier))) {
+        context.printError("Expected struct name");
+        success = false;
+        delete blockSmnt;
+        popUp();
+        return NULL;
+      }
+
+      ++context;
+      opType_t opType = getOperatorType(context[0]);
+      if (!(opType & (operatorType::braceStart |
+                      operatorType::scope))) {
+        context.printError("Expected struct body {}");
+        success = false;
+        delete blockSmnt;
+        popUp();
+        return NULL;
+      }
+
+      context.pushPairRange(0);
+
+      // Load type declaration statements
+      statement_t *smnt = getNextStatement();
+      variableVector fields;
+      while (smnt) {
+        const int sType = smnt->type();
+        if (!(sType & statementType::declaration)) {
+          if (sType & (statementType::function |
+                       statementType::functionDecl)) {
+            smnt->printError("Struct functions are not supported yet");
+          } else if (sType & statementType::classAccess) {
+            smnt->printError("Access modifiers are not supported yet");
+          } else {
+            smnt->printError("Expected variable declaration statements");
+          }
+          success = false;
+          delete blockSmnt;
+          popUp();
+          return NULL;
+        }
+
+        variableDeclarationVector &declarations = (smnt
+                                                   ->to<declarationStatement>()
+                                                   .declarations);
+        const int varCount = (int) declarations.size();
+        for (int i = 0; i < varCount; ++i) {
+          variableDeclaration &decl = declarations[i];
+          if (decl.value) {
+            decl.value->printError("Struct fields cannot have default values");
+            success = false;
+            delete blockSmnt;
+            popUp();
+            return NULL;
+          }
+          fields.push_back(*(decl.variable));
+        }
+        delete smnt;
+        smnt = getNextStatement();
+      }
+
+      delete blockSmnt;
+      popUp();
+
+      context.popAndSkip();
+
+      opType = getOperatorType(context[0]);
+      if (!(opType & operatorType::semicolon)) {
+        context.printError("Expected [;] after struct definition");
+        success = false;
+        return NULL;
+      }
+      ++context;
+
+      struct_t *type = new struct_t(*((identifierToken*) nameToken));
+      type->addFields(fields);
+
+      return type;
+    }
+
+    qualifiers_t parser_t::loadQualifiers() {
+      qualifiers_t qualifiers;
+
+      while (context.size()) {
+        token_t *token = context[0];
+        keyword_t &keyword = getKeyword(token);
+        if (!(keyword.type() & keywordType::qualifier)) {
+          break;
+        }
+        qualifiers += keyword.to<qualifierKeyword>().qualifier;
+        ++context;
+      }
+
+      return qualifiers;
     }
 
     void parser_t::loadBaseType(vartype_t &vartype) {
@@ -854,10 +958,13 @@ namespace occa {
         return;
       }
 
-      const int tokens = context.size();
+      const int tokenCount = context.size();
       int tokenPos;
-      for (tokenPos = 0; tokenPos < tokens; ++tokenPos) {
-        token_t *token     = context[tokenPos];
+
+      bool typedefing = false;
+      for (tokenPos = 0; tokenPos < tokenCount; ++tokenPos) {
+        token_t *token = context[tokenPos];
+
         keyword_t &keyword = getKeyword(token);
         const int kType    = keyword.type();
         if (kType & keywordType::none) {
@@ -865,9 +972,39 @@ namespace occa {
         }
 
         if (kType & keywordType::qualifier) {
-          loadQualifier(token,
-                        keyword.to<qualifierKeyword>().qualifier,
-                        vartype);
+          const qualifier_t &qualifier = keyword.to<qualifierKeyword>().qualifier;
+          type_t *type = NULL;
+          if (qualifier == typedef_) {
+            typedefing = true;
+          } else if (qualifier == struct_) {
+            if (typedefing) {
+              token->printError("Typedef'd structs are not supported yet");
+              success = false;
+            }
+          } else if (qualifier == enum_) {
+            // TODO: type = loadEnum();
+            token->printError("Enums are not supported yet");
+            success = false;
+          } else if (qualifier == union_) {
+            // TODO: type = loadUnion();
+            token->printError("Enums are not supported yet");
+            success = false;
+          } else if (qualifier == class_) {
+            // TODO: type = loadClass();
+            token->printError("Enums are not supported yet");
+            success = false;
+          }
+          if (!success) {
+            return;
+          }
+          if (!type) {
+            loadVartypeQualifier(token,
+                                 keyword.to<qualifierKeyword>().qualifier,
+                                 vartype);
+          } else {
+            vartype.type = type;
+            vartype.typeToken = (identifierToken*) type->source->clone();
+          }
           continue;
         }
         if ((kType & keywordType::type) &&
@@ -876,16 +1013,17 @@ namespace occa {
           vartype.typeToken = (identifierToken*) token->clone();
           continue;
         }
+
         break;
       }
 
-      if (tokenPos == 0) {
+      if (tokenPos) {
+        context.set(tokenPos);
+      } else {
         context.printError("Unable to load type");
         success = false;
         return;
       }
-
-      context.set(tokenPos);
 
       if (vartype.isValid()) {
         return;
@@ -901,9 +1039,9 @@ namespace occa {
       success = false;
     }
 
-    void parser_t::loadQualifier(token_t *token,
-                                 const qualifier_t &qualifier,
-                                 vartype_t &vartype) {
+    void parser_t::loadVartypeQualifier(token_t *token,
+                                        const qualifier_t &qualifier,
+                                        vartype_t &vartype) {
       // Handle long/long long case
       if (&qualifier == &long_) {
         if (vartype.has(long_)) {
@@ -931,18 +1069,18 @@ namespace occa {
       }
     }
 
-    void parser_t::setPointers(vartype_t &vartype) {
+    void parser_t::setVartypePointers(vartype_t &vartype) {
       while (success &&
              context.size()) {
         if (!(getOperatorType(context[0]) & operatorType::mult)) {
           break;
         }
-        context.set(1);
-        setPointer(vartype);
+        ++context;
+        setVartypePointer(vartype);
       }
     }
 
-    void parser_t::setPointer(vartype_t &vartype) {
+    void parser_t::setVartypePointer(vartype_t &vartype) {
       pointer_t pointer;
 
       const int tokens = context.size();
@@ -971,7 +1109,7 @@ namespace occa {
       }
     }
 
-    void parser_t::setReference(vartype_t &vartype) {
+    void parser_t::setVartypeReference(vartype_t &vartype) {
       if (!context.size()) {
         return;
       }
@@ -979,7 +1117,7 @@ namespace occa {
         return;
       }
       vartype.setReferenceToken(context[0]);
-      context.set(1);
+      ++context;
     }
 
     bool parser_t::isLoadingFunctionPointer() {
@@ -1024,14 +1162,18 @@ namespace occa {
     bool parser_t::isLoadingFunction() {
       context.push();
 
+      context.supressErrors = true;
       vartype_t vartype = loadType();
+      context.supressErrors = false;
+
       if (!success) {
-        context.popAndSkip();
+        success = true;
+        context.pop();
         return false;
       }
 
       if (!(token_t::safeType(context[0]) & tokenType::identifier)) {
-        context.popAndSkip();
+        context.pop();
         return false;
       }
 
@@ -1041,6 +1183,15 @@ namespace occa {
       return isFunction;
     }
 
+    bool parser_t::isLoadingStruct() {
+      context.push();
+      qualifiers_t qualifiers = loadQualifiers();
+      context.pop();
+
+      return (qualifiers.has(struct_) &&
+              !qualifiers.has(typedef_));
+    }
+
     variable_t parser_t::loadFunctionPointer(vartype_t &vartype) {
       // TODO: Check for nested function pointers
       //       Check for arrays
@@ -1048,13 +1199,13 @@ namespace occa {
 
       functionPtr_t func(vartype);
       func.isBlock = (getOperatorType(context[0]) & operatorType::xor_);
-      context.set(1);
+      ++context;
 
       identifierToken *nameToken = NULL;
       if (context.size() &&
           (context[0]->type() & tokenType::identifier)) {
         nameToken = (identifierToken*) context[0];
-        context.set(1);
+        ++context;
       }
 
       // If we have arrays, we don't set them in the return type
@@ -1088,7 +1239,7 @@ namespace occa {
       if (context.size() &&
           (context[0]->type() & tokenType::identifier)) {
         nameToken = (identifierToken*) context[0];
-        context.set(1);
+        ++context;
       }
 
       setArrays(vartype);
@@ -1157,30 +1308,6 @@ namespace occa {
         context.set(pos + 1);
       }
       context.pop();
-    }
-
-    class_t parser_t::loadClassType() {
-      context.printError("Cannot parse classes yet");
-      success = false;
-      return class_t();
-    }
-
-    struct_t parser_t::loadStructType() {
-      context.printError("Cannot parse structs yet");
-      success = false;
-      return struct_t();
-    }
-
-    enum_t parser_t::loadEnumType() {
-      context.printError("Cannot parse enum yet");
-      success = false;
-      return enum_t();
-    }
-
-    union_t parser_t::loadUnionType() {
-      context.printError("Cannot parse union yet");
-      success = false;
-      return union_t();
     }
     //==================================
 
@@ -1266,7 +1393,7 @@ namespace occa {
       addAttributesTo(smntAttributes, smnt);
 
       // Skip [;] token
-      context.set(1);
+      ++context;
       return smnt;
     }
 
@@ -1295,12 +1422,14 @@ namespace occa {
     }
 
     statement_t* parser_t::loadDeclarationStatement(attributeTokenMap &smntAttributes) {
-      bool isFunction = isLoadingFunction();
+      if (isLoadingFunction()) {
+        return loadFunctionStatement(smntAttributes);
+      }
+      if (success && isLoadingStruct()) {
+        return loadStructStatement(smntAttributes);
+      }
       if (!success) {
         return NULL;
-      }
-      if (isFunction) {
-        return loadFunctionStatement(smntAttributes);
       }
 
       vartype_t baseType;
@@ -1325,14 +1454,14 @@ namespace occa {
         const opType_t opType = getOperatorType(context[0]);
         if (!(opType & operatorType::comma)) {
           if (opType & operatorType::semicolon) {
-            context.set(1);
+            ++context;
           } else if (checkSemicolon) {
             context.printError("[3] Expected a [;]");
             success = false;
           }
           break;
         }
-        context.set(1);
+        ++context;
       }
       if (!success) {
         smnt.freeDeclarations();
@@ -1342,6 +1471,26 @@ namespace occa {
       return &smnt;
     }
 
+    statement_t* parser_t::loadStructStatement(attributeTokenMap &smntAttributes) {
+      struct_t *type = loadStruct();
+      if (!success || !type) {
+        return NULL;
+      }
+
+      structStatement *smnt = new structStatement(up, *type);
+      success = smnt->addStructToParentScope();
+      if (!success) {
+        delete &smnt;
+        // Struct wasn't added to scope, free it manually
+        delete type;
+        return NULL;
+      }
+
+      addAttributesTo(smntAttributes, smnt);
+
+      return smnt;
+    }
+
     statement_t* parser_t::loadNamespaceStatement(attributeTokenMap &smntAttributes) {
       if (context.size() == 1) {
         context.printError("Expected a namespace name");
@@ -1349,7 +1498,7 @@ namespace occa {
       }
 
       // Skip [namespace] token
-      context.set(1);
+      ++context;
       tokenVector names;
 
       while (true) {
@@ -1367,7 +1516,7 @@ namespace occa {
           success = false;
           return NULL;
         }
-        context.set(1);
+        ++context;
 
         // Find { or ::
         const opType_t opType = getOperatorType(context[0]);
@@ -1386,7 +1535,7 @@ namespace occa {
           success = false;
           return NULL;
         }
-        context.set(1);
+        ++context;
       }
 
       namespaceStatement *smnt = NULL;
@@ -1418,10 +1567,6 @@ namespace occa {
       context.popAndSkip();
 
       return smnt;
-    }
-
-    statement_t* parser_t::loadTypeDeclStatement(attributeTokenMap &smntAttributes) {
-      return NULL;
     }
 
     statement_t* parser_t::loadFunctionStatement(attributeTokenMap &smntAttributes) {
@@ -1468,7 +1613,7 @@ namespace occa {
 
       // func(); <-- function
       if (opType & operatorType::semicolon) {
-        context.set(1);
+        ++context;
         return new functionStatement(up, func);
       }
 
@@ -1476,9 +1621,8 @@ namespace occa {
       functionDeclStatement &funcSmnt = *(new functionDeclStatement(up, func));
       success = funcSmnt.addFunctionToParentScope();
       if (!success) {
-        success = false;
         delete &funcSmnt;
-        // func wasn't added to scope, free it manually
+        // Function wasn't added to scope, free it manually
         delete &func;
         return NULL;
       }
@@ -1506,7 +1650,7 @@ namespace occa {
       // Need to make sure we have another token (even if it's not '(')
       bool error = (context.size() == 1);
       if (!error) {
-        context.set(1);
+        ++context;
         error = !(getOperatorType(context[0]) & operatorType::parenthesesStart);
       }
 
@@ -1679,7 +1823,7 @@ namespace occa {
       // This is basically the same code as loadIfStatement
       //   but with an elif class
       token_t *elifToken = context[0];
-      context.set(1);
+      ++context;
       checkIfConditionStatementExists();
       if (!success) {
         return NULL;
@@ -1716,7 +1860,7 @@ namespace occa {
 
     statement_t* parser_t::loadElseStatement(attributeTokenMap &smntAttributes) {
       token_t *elseToken = context[0];
-      context.set(1);
+      ++context;
 
       elseStatement &elseSmnt = *(new elseStatement(up, elseToken));
       pushUp(elseSmnt);
@@ -1851,7 +1995,7 @@ namespace occa {
 
     statement_t* parser_t::loadDoWhileStatement(attributeTokenMap &smntAttributes) {
       token_t *doToken = context[0];
-      context.set(1);
+      ++context;
 
       whileStatement &whileSmnt = *(new whileStatement(up, doToken, true));
       pushUp(whileSmnt);
@@ -1903,7 +2047,7 @@ namespace occa {
         delete &whileSmnt;
         return NULL;
       }
-      context.set(1);
+      ++context;
 
       return &whileSmnt;
     }
@@ -1963,7 +2107,7 @@ namespace occa {
 
     statement_t* parser_t::loadCaseStatement(attributeTokenMap &smntAttributes) {
       token_t *caseToken = context[0];
-      context.set(1);
+      ++context;
 
       const int pos = context.getNextOperator(operatorType::colon);
       // No : found
@@ -1993,13 +2137,13 @@ namespace occa {
 
     statement_t* parser_t::loadDefaultStatement(attributeTokenMap &smntAttributes) {
       token_t *defaultToken = context[0];
-      context.set(1);
+      ++context;
       if (!(getOperatorType(context[0]) & operatorType::colon)) {
         context.printError("Expected a [:]");
         success = false;
         return NULL;
       }
-      context.set(1);
+      ++context;
 
       defaultStatement *smnt = new defaultStatement(up, defaultToken);
       addAttributesTo(smntAttributes, smnt);
@@ -2008,13 +2152,13 @@ namespace occa {
 
     statement_t* parser_t::loadContinueStatement(attributeTokenMap &smntAttributes) {
       token_t *continueToken = context[0];
-      context.set(1);
+      ++context;
       if (!(getOperatorType(context[0]) & operatorType::semicolon)) {
         context.printError("[6] Expected a [;]");
         success = false;
         return NULL;
       }
-      context.set(1);
+      ++context;
 
       continueStatement *smnt = new continueStatement(up, continueToken);
       addAttributesTo(smntAttributes, smnt);
@@ -2023,13 +2167,13 @@ namespace occa {
 
     statement_t* parser_t::loadBreakStatement(attributeTokenMap &smntAttributes) {
       token_t *breakToken = context[0];
-      context.set(1);
+      ++context;
       if (!(getOperatorType(context[0]) & operatorType::semicolon)) {
         context.printError("[7] Expected a [;]");
         success = false;
         return NULL;
       }
-      context.set(1);
+      ++context;
 
       breakStatement *smnt = new breakStatement(up, breakToken);
       addAttributesTo(smntAttributes, smnt);
@@ -2038,7 +2182,7 @@ namespace occa {
 
     statement_t* parser_t::loadReturnStatement(attributeTokenMap &smntAttributes) {
       token_t *returnToken = context[0];
-      context.set(1);
+      ++context;
 
       const int pos = context.getNextOperator(operatorType::semicolon);
       // No ; found
@@ -2091,13 +2235,13 @@ namespace occa {
                                                   *((pragmaToken*) context[0]));
       addAttributesTo(smntAttributes, smnt);
 
-      context.set(1);
+      ++context;
 
       return smnt;
     }
 
     statement_t* parser_t::loadGotoStatement(attributeTokenMap &smntAttributes) {
-      context.set(1);
+      ++context;
       if (!(token_t::safeType(context[0]) & tokenType::identifier)) {
         context.printError("Expected [goto label] identifier");
         success = false;

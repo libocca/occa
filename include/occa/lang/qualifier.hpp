@@ -74,6 +74,8 @@ namespace occa {
                   const udim_t qtype_);
       ~qualifier_t();
 
+      bool operator == (const qualifier_t &other) const;
+
       udim_t type() const;
     };
 

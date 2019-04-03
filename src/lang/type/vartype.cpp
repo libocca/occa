@@ -156,9 +156,8 @@ namespace occa {
       vartype_t flat      = flatten();
       vartype_t otherFlat = other.flatten();
 
-      if (((*flat.type)       != (*otherFlat.type))     ||
-          (flat.isReference() != otherFlat.isReference()) ||
-          (flat.qualifiers    != otherFlat.qualifiers)) {
+      if (((*flat.type)    != (*otherFlat.type)) ||
+          (flat.qualifiers != otherFlat.qualifiers)) {
         return false;
       }
 
@@ -180,11 +179,11 @@ namespace occa {
                             ? otherFlat
                             : flat);
       const int minPointerCount = ((pointerCount < otherPointerCount)
-                                   ? otherPointerCount
-                                   : pointerCount);
-      const int maxPointerCount = ((pointerCount < otherPointerCount)
                                    ? pointerCount
                                    : otherPointerCount);
+      const int maxPointerCount = ((pointerCount < otherPointerCount)
+                                   ? otherPointerCount
+                                   : pointerCount);
 
       for (int i = 0; i < minPointerCount; ++i) {
         if (flat.pointers[i].qualifiers
