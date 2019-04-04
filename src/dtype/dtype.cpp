@@ -9,41 +9,41 @@ namespace occa {
     ref(NULL),
     name_(),
     bytes_(0),
-    global(false),
+    registered(false),
     tuple_(NULL),
     struct_(NULL) {}
 
   dtype_t::dtype_t(const std::string &name__,
                    const int bytes__,
-                   const bool global_) :
+                   const bool registered_) :
     ref(NULL),
     name_(name__),
     bytes_(bytes__),
-    global(global_),
+    registered(registered_),
     tuple_(NULL),
     struct_(NULL) {}
 
   dtype_t::dtype_t(const std::string &name__,
                    const dtype_t &other,
-                   const bool global_) :
+                   const bool registered_) :
     ref(NULL),
     name_(),
     bytes_(0),
-    global(false),
+    registered(false),
     tuple_(NULL),
     struct_(NULL) {
 
     *this = other;
 
     name_ = name__;
-    global = global_;
+    registered = registered_;
   }
 
   dtype_t::dtype_t(const dtype_t &other) :
     ref(NULL),
     name_(),
     bytes_(0),
-    global(false),
+    registered(false),
     tuple_(NULL),
     struct_(NULL) {
 
@@ -51,8 +51,8 @@ namespace occa {
   }
 
   dtype_t& dtype_t::operator = (const dtype_t &other_) {
-    OCCA_ERROR("Cannot override global dtypes",
-               !global);
+    OCCA_ERROR("Cannot override registered dtypes",
+               !registered);
 
     const dtype_t &other = other_.self();
 
@@ -60,7 +60,7 @@ namespace occa {
       delete tuple_;
       delete struct_;
 
-      if (other.global) {
+      if (other.registered) {
         // Clear values
         ref     = &other;
         name_   = "";
@@ -91,14 +91,14 @@ namespace occa {
     return self().bytes_;
   }
 
-  void dtype_t::setAsGlobal() {
-    OCCA_ERROR("Unable to declare dtype references as global",
+  void dtype_t::registerType() {
+    OCCA_ERROR("Unable to register dtype references",
                ref == NULL);
-    global = true;
+    registered = true;
   }
 
-  bool dtype_t::isGlobal() const {
-    return self().global;
+  bool dtype_t::isRegistered() const {
+    return self().registered;
   }
 
   // Tuple methods
@@ -208,11 +208,11 @@ namespace occa {
     if (&a == &b) {
       return true;
     }
-    if (a.global != b.global) {
+    if (a.registered != b.registered) {
       return false;
     }
-    // Refs didn't match and both a and b are globals
-    if (a.global) {
+    // Refs didn't match and both a and b are registered
+    if (a.registered) {
         return false;
     }
 
@@ -296,42 +296,42 @@ namespace occa {
     return true;
   }
 
-  json dtype_t::toJson() const {
+  json dtype_t::toJson(const std::string &name) const {
     if (ref) {
-      return ref->toJson();
+      return ref->toJson(name);
     }
 
     if (tuple_) {
-      return tuple_->toJson();
+      return tuple_->toJson(name);
     } else if (struct_) {
-      return struct_->toJson();
+      return struct_->toJson(name);
     }
 
+    json j;
     const dtype_t &dtype = dtype_t::getBuiltin(name_);
     if (&dtype != &dtype::none) {
-      // "float"
-      return name_;
+      j["type"] = "builtin";
+      j["name"] = name_;
+    } else {
+      j["type"]  = "custom";
+      j["name"]  = name_;
+      j["bytes"] = bytes_;
     }
 
-    // Custom type
-    //   { name: "foo", bytes: 123 }
-    json j;
-    j["name"] = name_;
-    j["bytes"] = bytes_;
     return j;
   }
 
   dtype_t dtype_t::tuple(const dtype_t &dtype,
                          const int size,
-                         const bool global_) {
+                         const bool registered_) {
     dtype_t newType;
     newType.bytes_ = dtype.bytes_ * size;
     newType.tuple_ = new dtypeTuple_t(dtype, size);
-    newType.global = global_;
+    newType.registered = registered_;
     return newType;
   }
 
-  const dtype_t& dtype_t::getBuiltin(const std::string name) {
+  const dtype_t& dtype_t::getBuiltin(const std::string &name) {
     static dtypeGlobalMap_t dtypeMap;
     if (!dtypeMap.size()) {
       dtypeMap["none"] = &dtype::none;
@@ -416,44 +416,54 @@ namespace occa {
   }
 
   dtype_t dtype_t::fromJson(const json &j) {
-    if (j.isString()) {
-      const std::string name = (std::string) j;
-      const dtype_t &dtype = dtype_t::getBuiltin(name);
-      OCCA_ERROR("Unknown builtin dtype [" << name << "]",
-                 &dtype != &dtype::none);
-      return dtype;
-    }
-
-    if (j.isObject()) {
-      std::string name = j.get<std::string>("name");
-      int bytes = j.get<int>("bytes");
-      return dtype_t(name, bytes);
-    }
-
-    OCCA_ERROR("Incorrect dtype JSON format",
-               j.isArray());
-
-    const jsonArray &array = j.array();
-    if ((array.size() == 2) && array[1].isNumber()) {
-      return tuple(fromJson(array[0]),
-                   (int) array[1]);
-    }
+    const std::string type = j["type"].toString();
 
     dtype_t dtype;
-    const int fields = (int) array.size();
-    for (int i = 0; i < fields; ++i) {
-      const json &field = array[i];
-      OCCA_ERROR("Incorrect dtype JSON format",
-                 field.isArray() && (field.size() == 2) && field[1].isString());
-      dtype.addField((std::string) field[0],
-                     fromJson(field[1]));
+    dtype.name_ = j["name"].toString();
+
+    if (type == "builtin") {
+      const dtype_t &builtin = dtype_t::getBuiltin(dtype.name_);
+      OCCA_ERROR("Unknown dtype builtin [" << dtype.name_ << "]",
+                 &builtin != &dtype::none);
+      dtype = builtin;
+    } else if (type == "tuple") {
+      dtype.tuple_ = dtypeTuple_t::fromJson(j).clone();
+    } else if (type == "struct") {
+      dtype.struct_ = dtypeStruct_t::fromJson(j).clone();
+    } else if (type == "custom") {
+      dtype.bytes_ = (int) j["bytes"];
+    } else {
+      OCCA_FORCE_ERROR("Incorrect dtype JSON format");
     }
+
     return dtype;
+  }
+
+  std::string dtype_t::toString(const std::string &varName) const {
+    std::stringstream ss;
+    const dtype_t &self_ = self();
+
+    std::string name;
+    if (varName.size()) {
+      name = varName;
+    } else {
+      name = self_.name_;
+    }
+
+    if (self_.tuple_) {
+      ss << self_.tuple_->toString(name);
+    } else if (self_.struct_) {
+      ss << self_.struct_->toString(name);
+    } else {
+      ss << name;
+    }
+
+    return ss.str();
   }
 
   std::ostream& operator << (std::ostream &out,
                              const dtype_t &dtype) {
-    out << dtype.self().name_;
+    out << dtype.toString();
     return out;
   }
   //====================================
@@ -482,14 +492,47 @@ namespace occa {
     }
   }
 
-  json dtypeTuple_t::toJson() const {
-    // Example:
-    //   ['double', 2]
+  json dtypeTuple_t::toJson(const std::string &name) const {
     json j;
-    j.asArray();
-    j += dtype.toJson();
-    j += size;
+    j["type"]  = "tuple";
+    if (name.size()) {
+      j["name"]  = name;
+    }
+    j["dtype"] = dtype.toJson();
+    j["size"]  = size;
     return j;
+  }
+
+  dtypeTuple_t dtypeTuple_t::fromJson(const json &j) {
+    OCCA_ERROR("JSON field [dtype] missing from tuple",
+               j.has("dtype"));
+    OCCA_ERROR("JSON field [size] missing from tuple",
+               j.has("size"));
+    OCCA_ERROR("JSON field [size] must be an integer",
+               j["size"].isNumber());
+
+    return dtypeTuple_t(dtype_t::fromJson(j["dtype"]),
+                        (int) j["size"]);
+  }
+
+  std::string dtypeTuple_t::toString(const std::string &varName) const {
+    std::stringstream ss;
+
+    ss << dtype;
+
+    if (varName.size()) {
+      ss << ' ' << varName;
+    }
+
+    ss << '[';
+    if (size >= 0) {
+      ss << size;
+    } else {
+      ss << '?';
+    }
+    ss << ']';
+
+    return ss.str();
   }
   //====================================
 
@@ -505,15 +548,15 @@ namespace occa {
   }
 
   bool dtypeStruct_t::matches(const dtypeStruct_t &other) const {
-    const int entries = (int) fieldNames.size();
-    if (entries != (int) other.fieldNames.size()) {
+    const int fieldCount = (int) fieldNames.size();
+    if (fieldCount != (int) other.fieldNames.size()) {
       return false;
     }
 
     // Compare fields
     const std::string *names1 = &(fieldNames[0]);
     const std::string *names2 = &(other.fieldNames[0]);
-    for (int i = 0; i < entries; ++i) {
+    for (int i = 0; i < fieldCount; ++i) {
       const std::string &name1 = names1[i];
       const std::string &name2 = names2[i];
       if (name1 != name2) {
@@ -560,35 +603,104 @@ namespace occa {
   }
 
   void dtypeStruct_t::addFlatDtypes(dtypeVector_t &vec) const {
-    const int entries = (int) fieldNames.size();
+    const int fieldCount = (int) fieldNames.size();
     const std::string *names = &(fieldNames[0]);
-    for (int i = 0; i < entries; ++i) {
+    for (int i = 0; i < fieldCount; ++i) {
       const std::string &name = names[i];
       const dtype_t &dtype = fieldTypes.find(name)->second;
       dtype.addFlatDtypes(vec);
     }
   }
 
-  json dtypeStruct_t::toJson() const {
-    // Example:
-    //   [['x', 'double'], ['y', 'double']]
+  json dtypeStruct_t::toJson(const std::string &name) const {
     json j;
-    j.asArray();
+    j["type"] = "struct";
+    if (name.size()) {
+      j["name"] = name;
+    }
 
-    const int entries = (int) fieldNames.size();
+    json &fieldsJson = j["fields"].asArray();
+    const int fieldCount = (int) fieldNames.size();
+
     const std::string *names = &(fieldNames[0]);
-    for (int i = 0; i < entries; ++i) {
-      const std::string &name = names[i];
-      const dtype_t &dtype = fieldTypes.find(name)->second;
+    for (int i = 0; i < fieldCount; ++i) {
+      const std::string &fieldName = names[i];
+      const dtype_t &dtype = fieldTypes.find(fieldName)->second;
 
-      json field;
-      field.asArray();
-      field += name;
-      field += dtype.toJson();
-      j += field;
+      json fieldJson;
+      fieldJson["dtype"] = dtype.toJson();
+      fieldJson["name"] = fieldName;
+      fieldsJson += fieldJson;
     }
 
     return j;
+  }
+
+  dtypeStruct_t dtypeStruct_t::fromJson(const json &j) {
+    OCCA_ERROR("JSON field [fields] missing from struct",
+               j.has("fields"));
+    OCCA_ERROR("JSON field [fields] must be an array of dtypes",
+               j["fields"].isArray());
+
+    const jsonArray &fields = j["fields"].array();
+    const int fieldCount = (int) fields.size();
+
+    dtypeStruct_t struct_;
+    for (int i = 0; i < fieldCount; ++i) {
+      const json &fieldJson = fields[i];
+      OCCA_ERROR("JSON field [dtype] missing from struct field",
+                 fieldJson.has("dtype"));
+      OCCA_ERROR("JSON field [name] missing from struct field",
+                 fieldJson.has("name"));
+      OCCA_ERROR("JSON field [name] must be a string for struct fields",
+                 fieldJson["name"].isString());
+
+      struct_.addField(fieldJson["name"].string(),
+                       dtype_t::fromJson(fieldJson["dtype"]));
+    }
+
+    return struct_;
+  }
+
+  std::string dtypeStruct_t::toString(const std::string &varName) const {
+    std::stringstream ss;
+    const int fieldCount = (int) fieldNames.size();
+
+    ss << "struct ";
+    if (varName.size()) {
+      ss << varName << ' ';
+    }
+    ss << '{';
+
+    if (!fieldCount) {
+      ss << '}';
+      return ss.str();
+    }
+
+    ss << '\n';
+
+    const std::string *names = &(fieldNames[0]);
+    dtype_t prevDtype = dtype::none;
+    for (int i = 0; i < fieldCount; ++i) {
+      const std::string &name = names[i];
+      const dtype_t &dtype = fieldTypes.find(name)->second;
+
+      if (prevDtype != dtype) {
+        prevDtype = dtype;
+        if (i) {
+          ss << ";\n";
+        }
+        ss << "  " << dtype.toString(name);
+      } else {
+        if (!i) {
+          prevDtype = dtype;
+        }
+        ss << ", " << name;
+      }
+    }
+    ss << ";\n}";
+
+    return ss.str();
   }
   //====================================
 }

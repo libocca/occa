@@ -1,4 +1,5 @@
 #include <occa/lang/builtins/types.hpp>
+#include <occa/lang/expr/exprNode.hpp>
 #include <occa/lang/token.hpp>
 #include <occa/lang/type/array.hpp>
 #include <occa/lang/type/pointer.hpp>
@@ -142,10 +143,19 @@ namespace occa {
     }
 
     dtype_t vartype_t::dtype() const {
-      if (type) {
-        return type->dtype();
+      if (!type) {
+        return dtype::none;
       }
-      return dtype::none;
+
+      dtype_t dtype = type->dtype();
+      const int arrayCount = (int) arrays.size();
+      for (int i = 0; i < arrayCount; ++i) {
+        primitive primSize = arrays[i].size->evaluate();
+        const int size = primSize.isNaN() ? -1 : primSize.to<int>();
+        dtype = dtype_t::tuple(dtype, size);
+      }
+
+      return dtype;
     }
 
     bool vartype_t::operator == (const vartype_t &other) const {

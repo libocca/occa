@@ -25,7 +25,7 @@ namespace occa {
 
     std::string name_;
     int bytes_;
-    bool global;
+    bool registered;
 
     dtypeTuple_t *tuple_;
     dtypeStruct_t *struct_;
@@ -36,11 +36,11 @@ namespace occa {
 
     dtype_t(const std::string &name__,
             const int bytes__ = 0,
-            const bool global_ = false);
+            const bool registered_ = false);
 
     dtype_t(const std::string &name__,
             const dtype_t &other,
-            const bool global_ = false);
+            const bool registered_ = false);
 
     dtype_t(const dtype_t &other);
 
@@ -55,8 +55,8 @@ namespace occa {
     const std::string& name() const;
     int bytes() const;
 
-    void setAsGlobal();
-    bool isGlobal() const;
+    void registerType();
+    bool isRegistered() const;
 
     // Tuple methods
     bool isTuple() const;
@@ -88,16 +88,18 @@ namespace occa {
     static bool isCyclic(const dtypeVector_t &vec,
                          const int cycleLength);
 
-    json toJson() const;
+    json toJson(const std::string &name = "") const;
 
     static dtype_t tuple(const dtype_t &dtype,
                          const int size,
-                         const bool global_ = false);
+                         const bool registered_ = false);
 
-    static const dtype_t& getBuiltin(const std::string name);
+    static const dtype_t& getBuiltin(const std::string &name);
 
     static dtype_t fromJson(const std::string &str);
     static dtype_t fromJson(const json &j);
+
+    std::string toString(const std::string &varName = "") const;
 
     friend std::ostream& operator << (std::ostream &out,
                                     const dtype_t &dtype);
@@ -124,7 +126,10 @@ namespace occa {
 
     void addFlatDtypes(dtypeVector_t &vec) const;
 
-    json toJson() const;
+    json toJson(const std::string &name = "") const;
+    static dtypeTuple_t fromJson(const json &j);
+
+    std::string toString(const std::string &varName = "") const;
   };
   //====================================
 
@@ -153,7 +158,10 @@ namespace occa {
 
     void addFlatDtypes(dtypeVector_t &vec) const;
 
-    json toJson() const;
+    json toJson(const std::string &name = "") const;
+    static dtypeStruct_t fromJson(const json &j);
+
+    std::string toString(const std::string &varName = "") const;
   };
   //====================================
 }

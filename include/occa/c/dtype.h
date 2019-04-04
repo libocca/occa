@@ -10,23 +10,17 @@ OCCA_START_EXTERN_C
 OCCA_LFUNC occaDtype OCCA_RFUNC occaCreateDtype(const char *name,
                                                 const int bytes);
 
-OCCA_LFUNC occaDtype OCCA_RFUNC occaCreateGlobalDtype(const char *name,
-                                                      const int bytes);
-
 OCCA_LFUNC occaDtype OCCA_RFUNC occaCreateDtypeTuple(occaDtype dtype,
                                                      const int size);
-
-OCCA_LFUNC occaDtype OCCA_RFUNC occaCreateGlobalDtypeTuple(occaDtype dtype,
-                                                           const int size);
 
 OCCA_LFUNC const char* OCCA_RFUNC occaDtypeName(occaDtype dtype);
 
 OCCA_LFUNC int OCCA_RFUNC occaDtypeBytes(occaDtype dtype);
 
 
-OCCA_LFUNC void OCCA_RFUNC occaDtypeSetAsGlobal(occaDtype dtype);
+OCCA_LFUNC void OCCA_RFUNC occaDtypeRegisterType(occaDtype dtype);
 
-OCCA_LFUNC int OCCA_RFUNC occaDtypeIsGlobal(occaDtype dtype);
+OCCA_LFUNC int OCCA_RFUNC occaDtypeIsRegistered(occaDtype dtype);
 
 OCCA_LFUNC void OCCA_RFUNC occaDtypeAddField(occaDtype dtype,
                                              const char *field,

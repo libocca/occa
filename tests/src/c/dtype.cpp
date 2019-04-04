@@ -104,7 +104,7 @@ void testJsonMethods() {
   occaJson doubleJson = occaDtypeToJson(occaDtypeDouble);
   const char *doubleJsonStr = occaJsonDump(doubleJson, 0);
 
-  occaJson rawDoubleJson = occaJsonParse("'double'");
+  occaJson rawDoubleJson = occaJsonParse("{ type: 'builtin', name: 'double' }");
   const char *rawDoubleJsonStr = occaJsonDump(rawDoubleJson, 0);
 
   ASSERT_EQ(doubleJsonStr,
@@ -117,10 +117,13 @@ void testJsonMethods() {
                     "b", occaDtypeDouble);
 
   const std::string baseFooJsonStr = (
-    "["
-    "  ['a', 'double'],"
-    "  ['b', 'double'],"
-    "]"
+    "{"
+    "  type: 'struct',"
+    "  fields: ["
+    "    { name: 'a', dtype: { type: 'builtin', name: 'double' } },"
+    "    { name: 'b', dtype: { type: 'builtin', name: 'double' } },"
+    "  ],"
+    "}"
   );
 
   occaJson fooJson = occaDtypeToJson(foo);

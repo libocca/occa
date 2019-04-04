@@ -52,17 +52,17 @@ int main(int argc, const char **argv) {
   // Basic dtype
   // NOTE: We're using local dtype_t since their only use is in this file
   occa::dtype_t myFloatDtype("myFloat", sizeof(float));
-  myFloatDtype.setAsGlobal();
+  myFloatDtype.registerType();
 
   // Struct dtype
   occa::dtype_t myFloat2Dtype;
-  myFloat2Dtype.setAsGlobal();
+  myFloat2Dtype.registerType();
   myFloat2Dtype.addField("x", occa::dtype::float_);
   myFloat2Dtype.addField("y", occa::dtype::float_);
 
   // Tuple dtype
   occa::dtype_t myFloat4Dtype = occa::dtype_t::tuple(occa::dtype::float_, 4);
-  myFloat4Dtype.setAsGlobal();
+  myFloat4Dtype.registerType();
 
   // Allocate memory on the device
   occa::memory o_a  = occa::malloc(entries    , myFloatDtype);

@@ -204,8 +204,8 @@ namespace occa {
 
   void memory::setDtype(const dtype_t &dtype__) {
     assertInitialized();
-    OCCA_ERROR("Memory dtype [" << dtype__.name() << "] must be declared as global",
-               dtype__.isGlobal());
+    OCCA_ERROR("Memory dtype [" << dtype__.name() << "] must be registered",
+               dtype__.isRegistered());
     modeMemory->dtype_ = &(dtype__.self());
   }
 

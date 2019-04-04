@@ -115,17 +115,20 @@ void testCasting() {
 
 void testJsonMethods() {
   ASSERT_EQ(occa::dtype::double_.toJson().toString(),
-            occa::json::parse("'double'").toString());
+            occa::json::parse("{ type: 'builtin', name: 'double' }").toString());
 
   occa::dtype_t foo("foo");
   foo.addField("a", occa::dtype::double_)
     .addField("b", occa::dtype::double_);
 
   const std::string fooJsonStr = (
-    "["
-    "  ['a', 'double'],"
-    "  ['b', 'double'],"
-    "]"
+    "{"
+    "  type: 'struct',"
+    "  fields: ["
+    "    { name: 'a', dtype: { type: 'builtin', name: 'double' } },"
+    "    { name: 'b', dtype: { type: 'builtin', name: 'double' } },"
+    "  ],"
+    "}"
   );
 
   occa::json fooJson = occa::json::parse(fooJsonStr);
