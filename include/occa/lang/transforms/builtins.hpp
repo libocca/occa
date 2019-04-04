@@ -3,6 +3,7 @@
 
 #include <occa/lang/transforms/builtins/dim.hpp>
 #include <occa/lang/transforms/builtins/finders.hpp>
+#include <occa/lang/transforms/builtins/restrict.hpp>
 #include <occa/lang/transforms/builtins/tile.hpp>
 
 #endif

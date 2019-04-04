@@ -16,7 +16,6 @@ namespace occa {
         openclParser(const occa::properties &settings_ = occa::properties());
 
         virtual void onClear();
-
         virtual void beforePreprocessing();
 
         virtual void beforeKernelSplit();

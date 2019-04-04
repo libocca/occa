@@ -64,6 +64,7 @@ namespace occa {
 
       //---[ Misc ]---------------------
       occa::properties settings;
+      qualifier_t *restrictQualifier;
       //================================
 
       parser_t(const occa::properties &settings_ = occa::properties());
@@ -95,10 +96,13 @@ namespace occa {
 
       void setSource(const std::string &source,
                      const bool isFile);
+      void setupLoadTokens();
       void loadTokens();
       void parseTokens();
 
       keyword_t& getKeyword(token_t *token);
+      keyword_t& getKeyword(const std::string &name);
+
       opType_t getOperatorType(token_t *token);
       //================================
 

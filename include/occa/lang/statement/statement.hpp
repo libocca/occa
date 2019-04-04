@@ -63,6 +63,8 @@ namespace occa {
       extern const int return_;
 
       extern const int attribute;
+
+      extern const int blockStatements;
     }
 
     class statement_t {

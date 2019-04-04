@@ -19,7 +19,8 @@ namespace occa {
       root(NULL, NULL),
       up(&root),
       success(true),
-      settings(settings_) {
+      settings(settings_),
+      restrictQualifier(NULL) {
       // Properly implement `identifier-nondigit` for identifiers
       // Meanwhile, we use the unknownFilter
       stream = (tokenizer
@@ -77,12 +78,14 @@ namespace occa {
       addAttribute<attributes::dim>();
       addAttribute<attributes::dimOrder>();
       addAttribute<attributes::tile>();
+      addAttribute<attributes::restrict>();
     }
 
     parser_t::~parser_t() {
       clear();
 
       freeKeywords(keywords);
+      delete restrictQualifier;
 
       nameToAttributeMap::iterator it = attributeMap.begin();
       while (it != attributeMap.end()) {
@@ -231,6 +234,7 @@ namespace occa {
         tokenizer.set(source.c_str());
       }
 
+      setupLoadTokens();
       loadTokens();
 
       delete root.source;
@@ -241,9 +245,23 @@ namespace occa {
       );
     }
 
-    void parser_t::loadTokens() {
+    void parser_t::setupLoadTokens() {
       beforePreprocessing();
 
+      // Setup @restrict
+      const std::string restrictStr = (
+        settings.get<std::string>("options/restrict",
+                                  "__restrict__")
+      );
+
+      if (restrictStr != "disabled") {
+        restrictQualifier = new qualifier_t(restrictStr,
+                                            qualifierType::custom);
+        addKeyword(keywords, new qualifierKeyword(*restrictQualifier));
+      }
+    }
+
+    void parser_t::loadTokens() {
       token_t *token;
       while (!stream.isEmpty()) {
         stream >> token;
@@ -263,12 +281,22 @@ namespace occa {
     void parser_t::parseTokens() {
       beforeParsing();
       if (!success) return;
+
       loadAllStatements();
       if (!success) return;
+
+      if (restrictQualifier) {
+        success = transforms::applyRestrictTransforms(root,
+                                                      *restrictQualifier);
+        if (!success) return;
+      }
+
       success = transforms::applyDimTransforms(root);
       if (!success) return;
+
       success = transforms::applyTileTransforms(root);
       if (!success) return;
+
       afterParsing();
     }
 
@@ -287,28 +315,32 @@ namespace occa {
         return noKeyword;
       }
 
-      std::string identifier;
+      std::string name;
       if (tType & tokenType::identifier) {
-        identifier = token->to<identifierToken>().value;
+        name = token->to<identifierToken>().value;
       }
       else if (tType & tokenType::qualifier) {
-        identifier = token->to<qualifierToken>().qualifier.name;
+        name = token->to<qualifierToken>().qualifier.name;
       }
       else if (tType & tokenType::type) {
-        identifier = token->to<typeToken>().value.name();
+        name = token->to<typeToken>().value.name();
       }
       else if (tType & tokenType::variable) {
-        identifier = token->to<variableToken>().value.name();
+        name = token->to<variableToken>().value.name();
       }
       else if (tType & tokenType::function) {
-        identifier = token->to<functionToken>().value.name();
+        name = token->to<functionToken>().value.name();
       }
 
-      keywordMapIterator it = keywords.find(identifier);
+      return getKeyword(name);
+    }
+
+    keyword_t& parser_t::getKeyword(const std::string &name) {
+      keywordMapIterator it = keywords.find(name);
       if (it != keywords.end()) {
         return *(it->second);
       }
-      return up->getScopeKeyword(identifier);
+      return up->getScopeKeyword(name);
     }
 
     opType_t parser_t::getOperatorType(token_t *token) {

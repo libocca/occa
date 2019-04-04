@@ -706,6 +706,10 @@ void testAttributeLoading() {
   parseAndPrintSource("@dim(1,2,3) @dimOrder(2,1,0) int *x; x(1,2,3);");
   std::cerr << "==============================================\n";
 
+  std::cerr << "\n---[ @restrict Transformations ]------------\n";
+  parseAndPrintSource("void foo(@restrict int *a) {}");
+  std::cerr << "==============================================\n";
+
   std::cerr << "\n---[ @tile Transformations ]--------------------\n";
   parseAndPrintSource("for (int i = 0; i < (1 + 2 + N + 6); ++i; @tile(16, @outer, @inner, check=false)) {"
                       "  int x;"

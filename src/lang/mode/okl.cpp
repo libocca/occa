@@ -388,7 +388,6 @@ namespace occa {
         parser.addAttribute<attributes::inner>();
         parser.addAttribute<attributes::kernel>();
         parser.addAttribute<attributes::outer>();
-        parser.addAttribute<attributes::restrict>();
         parser.addAttribute<attributes::shared>();
       }
 

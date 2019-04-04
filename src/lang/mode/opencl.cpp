@@ -17,6 +17,9 @@ namespace occa {
 
         okl::addAttributes(*this);
 
+        if (!settings.has("options/restrict")) {
+          settings["options/restrict"] = "restrict";
+        }
         settings["opencl/extensions/cl_khr_fp64"] = true;
       }
 
@@ -236,16 +239,8 @@ namespace occa {
 
       void openclParser::addStructQualifiers() {
         statementPtrVector statements;
-        findStatements(statementType::block        |
-                       statementType::elif_        |
-                       statementType::else_        |
-                       statementType::for_         |
-                       statementType::function     |
-                       statementType::functionDecl |
-                       statementType::if_          |
-                       statementType::namespace_   |
-                       statementType::switch_      |
-                       statementType::while_,
+        findStatements(statementType::blockStatements |
+                       statementType::function,
                        root,
                        updateScopeStructVariables,
                        statements);

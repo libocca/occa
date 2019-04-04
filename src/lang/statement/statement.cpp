@@ -46,6 +46,18 @@ namespace occa {
       const int return_      = (1 << 27);
 
       const int attribute    = (1 << 28);
+
+      const int blockStatements = (
+        block        |
+        elif_        |
+        else_        |
+        for_         |
+        functionDecl |
+        if_          |
+        namespace_   |
+        switch_      |
+        while_
+      );
     }
 
     statement_t::statement_t(blockStatement *up_,
