@@ -46,6 +46,9 @@ namespace occa {
         addFunctionPrototypes();
 
         if (!success) return;
+        addStructQualifiers();
+
+        if (!success) return;
         setupKernels();
       }
 
@@ -137,6 +140,51 @@ namespace occa {
         return expr.hasAttribute("shared");
       }
 
+      bool openclParser::updateScopeStructVariables(statement_t &smnt) {
+        if (smnt.type() & statementType::function) {
+          addStructToFunctionArgs(
+            smnt.to<functionStatement>().function
+          );
+          return false;
+        }
+
+        scope_t &scope = smnt.to<blockStatement>().scope;
+
+        keywordMap::iterator it = scope.keywords.begin();
+        while (it != scope.keywords.end()) {
+          keyword_t &keyword = *(it->second);
+
+          if (keyword.type() & keywordType::variable) {
+            addStructToVariable(keyword.to<variableKeyword>().variable);
+          } else if (keyword.type() & keywordType::function) {
+            addStructToFunctionArgs(keyword.to<functionKeyword>().function);
+          }
+
+          ++it;
+        }
+
+        return false;
+      }
+
+      void openclParser::addStructToVariable(variable_t &var) {
+        const type_t *type = var.vartype.type;
+        if (type &&
+            (type->type() & typeType::struct_) &&
+            !var.has(struct_)) {
+          var += struct_;
+        }
+      }
+
+      void openclParser::addStructToFunctionArgs(function_t &func) {
+        const int argc = (int) func.args.size();
+        for (int i = 0; i < argc; ++i) {
+          variable_t *arg = func.args[i];
+          if (arg) {
+            addStructToVariable(*arg);
+          }
+        }
+      }
+
       void openclParser::addBarriers() {
         statementPtrVector statements;
         findStatementsByAttr(statementType::empty,
@@ -184,6 +232,23 @@ namespace occa {
           root.add(*funcSmnt, index - 1);
           ++index;
         }
+      }
+
+      void openclParser::addStructQualifiers() {
+        statementPtrVector statements;
+        findStatements(statementType::block        |
+                       statementType::elif_        |
+                       statementType::else_        |
+                       statementType::for_         |
+                       statementType::function     |
+                       statementType::functionDecl |
+                       statementType::if_          |
+                       statementType::namespace_   |
+                       statementType::switch_      |
+                       statementType::while_,
+                       root,
+                       updateScopeStructVariables,
+                       statements);
       }
 
       void openclParser::setupKernels() {

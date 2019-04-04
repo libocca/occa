@@ -34,10 +34,15 @@ namespace occa {
         void setLocalQualifiers();
 
         static bool sharedVariableMatcher(exprNode &expr);
+        static bool updateScopeStructVariables(statement_t &smnt);
+        static void addStructToVariable(variable_t &var);
+        static void addStructToFunctionArgs(function_t &func);
 
         void addBarriers();
 
         void addFunctionPrototypes();
+
+        void addStructQualifiers();
 
         void setupKernels();
 
