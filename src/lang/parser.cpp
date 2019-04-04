@@ -1185,11 +1185,15 @@ namespace occa {
 
     bool parser_t::isLoadingStruct() {
       context.push();
-      qualifiers_t qualifiers = loadQualifiers();
+      context.supressErrors = true;
+      vartype_t vartype = loadType();
+      context.supressErrors = false;
+      success = true;
       context.pop();
 
-      return (qualifiers.has(struct_) &&
-              !qualifiers.has(typedef_));
+      return (!vartype.isValid()   &&  // Should not have a base type since we're defining it
+              vartype.has(struct_) &&  // Should have struct_
+              !vartype.has(typedef_)); // typedef struct is not loaded as a struct
     }
 
     variable_t parser_t::loadFunctionPointer(vartype_t &vartype) {

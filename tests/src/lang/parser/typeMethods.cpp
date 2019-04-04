@@ -20,4 +20,8 @@ void testTypeMethods() {
 
   setSource("long long a = 0;");
   setSource("const long long *a = 0;");
+
+  // Make sure we load structs as structs (use long as a dummy known type)
+  setSource("struct long a;");
+  setSource("struct long a = 0;");
 }
