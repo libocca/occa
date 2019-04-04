@@ -34,6 +34,8 @@ namespace occa {
     }
 
     void structStatement::print(printer &pout) const {
+      // Double newlines to make it look cleaner
+      pout << '\n';
       struct_.printDeclaration(pout);
       pout << '\n';
     }

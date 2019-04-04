@@ -31,13 +31,13 @@ namespace occa {
       void serialParser::setupHeaders() {
         strVector headers;
         const bool includingStd = settings.get("serial/include-std", true);
+        headers.push_back("include <occa.hpp>\n");
         if (includingStd) {
-          headers.push_back("include <stdint.h>");
+          headers.push_back("include <cstdint>");
           headers.push_back("include <cstdlib>");
           headers.push_back("include <cstdio>");
           headers.push_back("include <cmath>");
         }
-        headers.push_back("include <occa.hpp>");
 
         const int headerCount = (int) headers.size();
         for (int i = 0; i < headerCount; ++i) {
