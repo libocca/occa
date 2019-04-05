@@ -76,6 +76,13 @@ namespace occa {
       attributeMap.clear();
     }
 
+    //---[ Customization ]--------------
+    void parser_t::onClear() {}
+    void parser_t::beforePreprocessing() {}
+    void parser_t::beforeParsing() {}
+    void parser_t::afterParsing() {}
+    //==================================
+
     //---[ Public ]---------------------
     bool parser_t::succeeded() const {
       return success;
@@ -565,11 +572,21 @@ namespace occa {
     }
     //==================================
 
-    //---[ Loader Helpers ]-------------
+    //---[ Statement Loaders ]----------
     bool parser_t::isEmpty() {
       const int sType = peek();
       return (!success ||
               (sType & statementType::none));
+    }
+
+    void parser_t::loadAllStatements() {
+      statementPtrVector &statements = smntContext.up->children;
+      statement_t *smnt = getNextStatement();
+
+      while (smnt) {
+        statements.push_back(smnt);
+        smnt = getNextStatement();
+      }
     }
 
     statement_t* parser_t::getNextStatement() {
@@ -611,18 +628,6 @@ namespace occa {
       OCCA_FORCE_ERROR("[Waldo] Oops, forgot to implement a statement loader"
                        " for [" << stringifySetBits(sType) << "]");
       return NULL;
-    }
-    //==================================
-
-    //---[ Statement Loaders ]----------
-    void parser_t::loadAllStatements() {
-      statementPtrVector &statements = smntContext.up->children;
-      statement_t *smnt = getNextStatement();
-
-      while (smnt) {
-        statements.push_back(smnt);
-        smnt = getNextStatement();
-      }
     }
 
     statement_t* parser_t::loadBlockStatement(attributeTokenMap &smntAttributes) {
@@ -1535,13 +1540,6 @@ namespace occa {
       addAttributesTo(smntAttributes, smnt);
       return smnt;
     }
-    //==================================
-
-    //---[ Customization ]--------------
-    void parser_t::onClear() {}
-    void parser_t::beforePreprocessing() {}
-    void parser_t::beforeParsing() {}
-    void parser_t::afterParsing() {}
     //==================================
   }
 }

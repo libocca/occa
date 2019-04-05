@@ -67,6 +67,16 @@ namespace occa {
       parser_t(const occa::properties &settings_ = occa::properties());
       virtual ~parser_t();
 
+      //---[ Customization ]------------
+      template <class attributeType>
+      void addAttribute();
+
+      virtual void onClear();
+      virtual void beforePreprocessing();
+      virtual void beforeParsing();
+      virtual void afterParsing();
+      //================================
+
       //---[ Public ]-------------------
       virtual bool succeeded() const;
 
@@ -84,9 +94,6 @@ namespace occa {
       void clearAttributes(attributeTokenMap &attrs);
 
       void addSettingDefines();
-
-      void pushUp(blockStatement &newUp);
-      void popUp();
 
       void parseSource(const std::string &source);
       void parseFile(const std::string &filename);
@@ -139,21 +146,25 @@ namespace occa {
       //---[ Type Loaders ]-------------
       variableDeclaration loadVariableDeclaration(attributeTokenMap &smntAttributes,
                                                   const vartype_t &baseType);
+
       void applyDeclarationSmntAttributes(attributeTokenMap &smntAttributes,
                                           variable_t &var);
+
       int declarationNextCheck(const opType_t opCheck);
+
       void loadDeclarationBitfield(variableDeclaration &decl);
+
       void loadDeclarationAssignment(variableDeclaration &decl);
+
       void loadDeclarationBraceInitializer(variableDeclaration &decl);
       //================================
 
-      //---[ Loader Helpers ]-----------
-      bool isEmpty();
-      statement_t* getNextStatement();
-      //================================
-
       //---[ Statement Loaders ]--------
+      bool isEmpty();
+
       void loadAllStatements();
+
+      statement_t* getNextStatement();
 
       statement_t* loadBlockStatement(attributeTokenMap &smntAttributes);
 
@@ -196,16 +207,6 @@ namespace occa {
 
       statement_t* loadGotoStatement(attributeTokenMap &smntAttributes);
       statement_t* loadGotoLabelStatement(attributeTokenMap &smntAttributes);
-      //================================
-
-      //---[ Customization ]------------
-      template <class attributeType>
-      void addAttribute();
-
-      virtual void onClear();
-      virtual void beforePreprocessing();
-      virtual void beforeParsing();
-      virtual void afterParsing();
       //================================
     };
   }
