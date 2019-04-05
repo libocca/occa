@@ -429,17 +429,13 @@ namespace occa {
   //---[ allocate(...) ]----------------
   template <class TM, const int idxType>
   void array<TM,idxType>::allocate(const TM *src) {
-    // TODO: Find out why dtype fails
-    // ptr_   = (TM*) device.umalloc(size(), dtype::get<TM>(), src);
-    ptr_    = (TM*) device.umalloc(bytes(), src);
+    ptr_    = (TM*) device.umalloc(size(), dtype::get<TM>(), src);
     memory_ = occa::memory(ptr_);
   }
 
   template <class TM, const int idxType>
   void array<TM,idxType>::allocate(const occa::memory src) {
-    // TODO: Find out why dtype fails
-    // ptr_   = (TM*) device.umalloc(size(), dtype::get<TM>(), src);
-    ptr_    = (TM*) device.umalloc(bytes(), src);
+    ptr_    = (TM*) device.umalloc(size(), dtype::get<TM>(), src);
     memory_ = occa::memory(ptr_);
   }
 

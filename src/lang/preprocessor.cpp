@@ -558,7 +558,6 @@ namespace occa {
 
       processDirective_t processFunc = it->second;
 
-      // TODO: Bits for two comparisons?
       if ((status & ppStatus::ignoring)                   &&
           (processFunc != &preprocessor_t::processIf)     &&
           (processFunc != &preprocessor_t::processIfdef)  &&
