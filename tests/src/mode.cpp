@@ -1,6 +1,6 @@
 #include <occa/tools/testing.hpp>
 
-#include <occa/mode.hpp>
+#include <occa/modes.hpp>
 
 void testMode();
 

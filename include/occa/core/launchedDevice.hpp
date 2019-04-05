@@ -2,7 +2,7 @@
 #define OCCA_CORE_LAUNCHEDDEVICE_HEADER
 
 #include <occa/core/device.hpp>
-#include <occa/lang/mode/withLauncher.hpp>
+#include <occa/lang/modes/withLauncher.hpp>
 #include <occa/tools/properties.hpp>
 
 namespace occa {

@@ -1,6 +1,6 @@
 #define OCCA_TEST_PARSER_TYPE okl::cudaParser
 
-#include <occa/lang/mode/cuda.hpp>
+#include <occa/lang/modes/cuda.hpp>
 #include "../parserUtils.hpp"
 
 #undef parseAndPrintSource

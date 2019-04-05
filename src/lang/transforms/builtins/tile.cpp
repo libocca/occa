@@ -1,5 +1,5 @@
 #include <occa/lang/expr.hpp>
-#include <occa/lang/mode/oklForStatement.hpp>
+#include <occa/lang/modes/oklForStatement.hpp>
 #include <occa/lang/variable.hpp>
 #include <occa/lang/builtins/types.hpp>
 #include <occa/lang/transforms/builtins/tile.hpp>

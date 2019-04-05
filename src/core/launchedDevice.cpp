@@ -1,8 +1,8 @@
 #include <occa/core/base.hpp>
 #include <occa/core/launchedDevice.hpp>
 #include <occa/core/launchedKernel.hpp>
-#include <occa/mode/serial/device.hpp>
-#include <occa/mode/serial/kernel.hpp>
+#include <occa/modes/serial/device.hpp>
+#include <occa/modes/serial/kernel.hpp>
 
 namespace occa {
   launchedModeDevice_t::launchedModeDevice_t(const occa::properties &properties_) :

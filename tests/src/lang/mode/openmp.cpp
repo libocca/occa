@@ -1,6 +1,6 @@
 #define OCCA_TEST_PARSER_TYPE okl::openmpParser
 
-#include <occa/lang/mode/openmp.hpp>
+#include <occa/lang/modes/openmp.hpp>
 #include "../parserUtils.hpp"
 
 void testPragma();

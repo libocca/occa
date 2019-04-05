@@ -1,5 +1,5 @@
 #include <occa/core/base.hpp>
-#include <occa/mode.hpp>
+#include <occa/modes.hpp>
 #include <occa/tools/env.hpp>
 #include <occa/tools/sys.hpp>
 #include <occa/tools/tls.hpp>

@@ -1,6 +1,6 @@
 #include <occa/core/device.hpp>
 #include <occa/io/output.hpp>
-#include <occa/mode.hpp>
+#include <occa/modes.hpp>
 
 namespace occa {
   strToModeMap& modeMap() {

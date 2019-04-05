@@ -3,7 +3,7 @@
 #include <occa/core/base.hpp>
 #include <occa/core/memory.hpp>
 #include <occa/core/device.hpp>
-#include <occa/mode/serial/memory.hpp>
+#include <occa/modes/serial/memory.hpp>
 #include <occa/tools/uva.hpp>
 #include <occa/tools/sys.hpp>
 

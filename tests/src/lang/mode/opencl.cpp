@@ -1,6 +1,6 @@
 #define OCCA_TEST_PARSER_TYPE okl::openclParser
 
-#include <occa/lang/mode/opencl.hpp>
+#include <occa/lang/modes/opencl.hpp>
 #include "../parserUtils.hpp"
 
 #undef parseAndPrintSource

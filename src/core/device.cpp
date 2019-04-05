@@ -1,6 +1,6 @@
 #include <occa/core/device.hpp>
 #include <occa/core/base.hpp>
-#include <occa/mode.hpp>
+#include <occa/modes.hpp>
 #include <occa/tools/env.hpp>
 #include <occa/tools/sys.hpp>
 #include <occa/io.hpp>

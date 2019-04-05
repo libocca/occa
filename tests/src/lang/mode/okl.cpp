@@ -1,5 +1,5 @@
 #include "../parserUtils.hpp"
-#include <occa/lang/mode/okl.hpp>
+#include <occa/lang/modes/okl.hpp>
 
 
 #define parseOKLSource(src_)                    \
