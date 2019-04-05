@@ -45,7 +45,7 @@ namespace occa {
     }
 
     void type_t::setSource(const identifierToken &source_) {
-      if (source != &source_ ) {
+      if (source != &source_) {
         delete source;
         source = (identifierToken*) source_.clone();
       }

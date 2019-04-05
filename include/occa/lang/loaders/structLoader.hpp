@@ -15,12 +15,16 @@ namespace occa {
       statementContext_t &smntContext;
       parser_t &parser;
 
-    public:
       structLoader_t(tokenContext_t &tokenContext_,
                      statementContext_t &smntContext_,
                      parser_t &parser_);
 
       bool loadStruct(struct_t *&type);
+
+      friend bool loadStruct(tokenContext_t &tokenContext,
+                             statementContext_t &smntContext,
+                             parser_t &parser,
+                             struct_t *&type);
     };
 
     bool loadStruct(tokenContext_t &tokenContext,

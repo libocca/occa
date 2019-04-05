@@ -175,10 +175,10 @@ namespace occa {
       push(range.start, range.end);
     }
 
-    void tokenContext_t::pushPairRange(const int pairStart) {
-      const int pairEnd = getClosingPair(pairStart);
+    void tokenContext_t::pushPairRange() {
+      const int pairEnd = getClosingPair();
       if (pairEnd >= 0) {
-        push(pairStart + 1, pairEnd);
+        push(1, pairEnd);
       } else {
         OCCA_FORCE_ERROR("Trying to push a pair range without a pair");
       }
@@ -329,20 +329,20 @@ namespace occa {
       }
     }
 
-    int tokenContext_t::getClosingPair(const int index) {
-      if (!indexInRange(index)) {
+    int tokenContext_t::getClosingPair() {
+      if (!size()) {
         return -1;
       }
 
-      intIntMap::iterator it = pairs.find(tp.start + index);
+      intIntMap::iterator it = pairs.find(tp.start);
       if (it != pairs.end()) {
         return (it->second - tp.start);
       }
       return -1;
     }
 
-    token_t* tokenContext_t::getClosingPairToken(const int index) {
-      const int endIndex = getClosingPair(index);
+    token_t* tokenContext_t::getClosingPairToken() {
+      const int endIndex = getClosingPair();
       if (endIndex >= 0) {
         return tokens[tp.start + endIndex];
       }

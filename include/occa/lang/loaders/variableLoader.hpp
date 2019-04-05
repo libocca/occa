@@ -17,7 +17,6 @@ namespace occa {
       nameToAttributeMap &attributeMap;
       bool success;
 
-    public:
       variableLoader_t(tokenContext_t &tokenContext_,
                        statementContext_t &smntContext_,
                        const keywords_t &keywords_,
@@ -46,12 +45,46 @@ namespace occa {
       void setArguments(functionPtr_t &func);
       void setArguments(function_t &func);
 
-      static void getArgumentRanges(tokenContext_t &tokenContext,
-                                    tokenRangeVector &argRanges);
-
       template <class funcType>
       void setArgumentsFor(funcType &func);
+
+      friend bool loadVariable(tokenContext_t &tokenContext,
+                               statementContext_t &smntContext,
+                               const keywords_t &keywords,
+                               nameToAttributeMap &attributeMap,
+                               variable_t &var);
+
+      friend bool loadVariable(tokenContext_t &tokenContext,
+                               statementContext_t &smntContext,
+                               const keywords_t &keywords,
+                               nameToAttributeMap &attributeMap,
+                               vartype_t &vartype,
+                               variable_t &var);
+
+      friend bool loadFunction(tokenContext_t &tokenContext,
+                               statementContext_t &smntContext,
+                               const keywords_t &keywords,
+                               nameToAttributeMap &attributeMap,
+                               function_t &func);
+
+      friend bool isLoadingVariable(tokenContext_t &tokenContext,
+                                    statementContext_t &smntContext,
+                                    const keywords_t &keywords,
+                                    nameToAttributeMap &attributeMap);
+
+      friend bool isLoadingFunction(tokenContext_t &tokenContext,
+                                    statementContext_t &smntContext,
+                                    const keywords_t &keywords,
+                                    nameToAttributeMap &attributeMap);
+
+      friend bool isLoadingFunctionPointer(tokenContext_t &tokenContext,
+                                           statementContext_t &smntContext,
+                                           const keywords_t &keywords,
+                                           nameToAttributeMap &attributeMap);
     };
+
+    void getArgumentRanges(tokenContext_t &tokenContext,
+                           tokenRangeVector &argRanges);
 
     bool loadVariable(tokenContext_t &tokenContext,
                       statementContext_t &smntContext,

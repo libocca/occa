@@ -66,7 +66,7 @@ namespace occa {
                 const int end);
       void push(const tokenRange &range);
 
-      void pushPairRange(const int pairStart);
+      void pushPairRange();
 
       tokenRange pop();
       void popAndSkip();
@@ -95,8 +95,8 @@ namespace occa {
       void getTokens(tokenVector &tokens_);
       void getAndCloneTokens(tokenVector &tokens_);
 
-      int getClosingPair(const int index);
-      token_t* getClosingPairToken(const int index);
+      int getClosingPair();
+      token_t* getClosingPairToken();
 
       int getNextOperator(const opType_t &opType);
 

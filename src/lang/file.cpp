@@ -204,11 +204,11 @@ namespace occa {
       return (origin.position.start - position.end);
     }
 
-    void fileOrigin::preprint(io::output &out) {
+    void fileOrigin::preprint(io::output &out) const {
       print(out, true);
     }
 
-    void fileOrigin::postprint(io::output &out) {
+    void fileOrigin::postprint(io::output &out) const {
       const char *lineEnd = position.lineStart;
       lex::skipTo(lineEnd, '\n');
 
@@ -244,17 +244,15 @@ namespace occa {
     }
 
     void fileOrigin::printWarning(const std::string &message) const {
-      fileOrigin &this_ = const_cast<fileOrigin&>(*this);
-      this_.preprint(io::stderr);
+      preprint(io::stderr);
       occa::printWarning(io::stderr, message);
-      this_.postprint(io::stderr);
+      postprint(io::stderr);
     }
 
     void fileOrigin::printError(const std::string &message) const {
-      fileOrigin &this_ = const_cast<fileOrigin&>(*this);
-      this_.preprint(io::stderr);
+      preprint(io::stderr);
       occa::printError(io::stderr, message);
-      this_.postprint(io::stderr);
+      postprint(io::stderr);
     }
     //==================================
   }

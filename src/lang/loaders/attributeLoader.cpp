@@ -56,9 +56,8 @@ namespace occa {
         token_t::safeOperatorType(tokenContext[0]) & operatorType::parenthesesStart
       );
       if (hasArgs) {
-        tokenContext.pushPairRange(0);
-        variableLoader_t::getArgumentRanges(tokenContext,
-                                            argRanges);
+        tokenContext.pushPairRange();
+        getArgumentRanges(tokenContext, argRanges);
       }
       if (!success) {
         if (hasArgs) {

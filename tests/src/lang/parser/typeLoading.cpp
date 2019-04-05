@@ -226,33 +226,33 @@ void testArgumentLoading() {
   tokenRangeVector argRanges;
 
   setSource("");
-  variableLoader_t::getArgumentRanges(parser.tokenContext,
-                                      argRanges);
+  getArgumentRanges(parser.tokenContext,
+                    argRanges);
   ASSERT_EQ(0,
             (int) argRanges.size());
 
   setSource("a, b");
-  variableLoader_t::getArgumentRanges(parser.tokenContext,
-                                      argRanges);
+  getArgumentRanges(parser.tokenContext,
+                    argRanges);
   ASSERT_EQ(2,
             (int) argRanges.size());
 
   setSource("(,,)");
-  variableLoader_t::getArgumentRanges(parser.tokenContext,
-                                      argRanges);
+  getArgumentRanges(parser.tokenContext,
+                    argRanges);
   ASSERT_EQ(1,
             (int) argRanges.size());
 
   setSource("(,,), (,,), (,,)");
-  variableLoader_t::getArgumentRanges(parser.tokenContext,
-                                      argRanges);
+  getArgumentRanges(parser.tokenContext,
+                    argRanges);
   ASSERT_EQ(3,
             (int) argRanges.size());
 
   // Removes trailing comma
   setSource("a, b,");
-  variableLoader_t::getArgumentRanges(parser.tokenContext,
-                                      argRanges);
+  getArgumentRanges(parser.tokenContext,
+                    argRanges);
   ASSERT_EQ(2,
             (int) argRanges.size());
 

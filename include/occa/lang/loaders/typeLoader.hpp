@@ -15,7 +15,6 @@ namespace occa {
       const keywords_t &keywords;
       bool success;
 
-    public:
       typeLoader_t(tokenContext_t &tokenContext_,
                    statementContext_t &smntContext_,
                    const keywords_t &keywords_);
@@ -32,6 +31,20 @@ namespace occa {
       void setVartypePointer(vartype_t &vartype);
 
       void setVartypeReference(vartype_t &vartype);
+
+      friend bool loadBaseType(tokenContext_t &tokenContext,
+                               statementContext_t &smntContext,
+                               const keywords_t &keywords,
+                               vartype_t &vartype);
+
+      friend bool loadType(tokenContext_t &tokenContext,
+                           statementContext_t &smntContext,
+                           const keywords_t &keywords,
+                           vartype_t &vartype);
+
+      friend bool isLoadingStruct(tokenContext_t &tokenContext,
+                                  statementContext_t &smntContext,
+                                  const keywords_t &keywords);
     };
 
     bool loadBaseType(tokenContext_t &tokenContext,

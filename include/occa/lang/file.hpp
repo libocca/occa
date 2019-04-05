@@ -5,7 +5,6 @@
 
 #include <occa/io/output.hpp>
 #include <occa/tools/gc.hpp>
-#include <occa/lang/errorHandler.hpp>
 #include <occa/lang/operator.hpp>
 
 namespace occa {
@@ -52,8 +51,7 @@ namespace occa {
       std::string str() const;
     };
 
-    class fileOrigin : public gc::withRefs,
-                       public errorHandler {
+    class fileOrigin : public gc::withRefs {
     public:
       bool fromInclude;
       file_t *file;
@@ -96,8 +94,8 @@ namespace occa {
 
       dim_t distanceTo(const fileOrigin &origin);
 
-      virtual void preprint(io::output &out);
-      virtual void postprint(io::output &out);
+      void preprint(io::output &out) const;
+      void postprint(io::output &out) const;
 
       void print(io::output &out,
                  const bool root = true) const;

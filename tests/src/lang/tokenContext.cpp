@@ -121,18 +121,24 @@ void testPairs() {
   while (it != tokenContext.pairs.end()) {
     const int pairStart = it->first;
     const int pairEnd   = it->second;
-    tokenContext.pushPairRange(pairStart);
+
+    tokenContext.push();
+    tokenContext += pairStart;
+
+    tokenContext.pushPairRange();
     ASSERT_EQ(pairEnd - pairStart - 1,
               tokenContext.size());
+    tokenContext.pop();
     tokenContext.pop();
     ++it;
   }
 
   // Test pair range pop
   // [{1}, {2}]
-  tokenContext.pushPairRange(2);
+  tokenContext += 2;
+  tokenContext.pushPairRange();
   // {1}
-  tokenContext.pushPairRange(0);
+  tokenContext.pushPairRange();
   // ,
   tokenContext.popAndSkip();
   ASSERT_EQ_BINARY(tokenType::op,
@@ -140,7 +146,8 @@ void testPairs() {
   ASSERT_EQ(operatorType::comma,
             tokenContext[0]->to<operatorToken>().opType());
   // {2}
-  tokenContext.pushPairRange(1);
+  ++tokenContext;
+  tokenContext.pushPairRange();
   tokenContext.popAndSkip();
   ASSERT_EQ(tokenContext.tp.start,
             tokenContext.tp.end);

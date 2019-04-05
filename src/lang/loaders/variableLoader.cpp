@@ -124,7 +124,7 @@ namespace occa {
         return false;
       }
 
-      tokenContext.pushPairRange(0);
+      tokenContext.pushPairRange();
       const bool isFunctionPointer = (
         tokenContext.size()
         && (token_t::safeOperatorType(tokenContext[0]) & (operatorType::mult |
@@ -156,7 +156,7 @@ namespace occa {
                                                variable_t &functionVar) {
       // TODO: Check for nested function pointers
       //       Check for arrays
-      tokenContext.pushPairRange(0);
+      tokenContext.pushPairRange();
 
       functionPtr_t func(vartype);
       func.isBlock = (
@@ -183,7 +183,7 @@ namespace occa {
       tokenContext.popAndSkip();
 
       if (success) {
-        tokenContext.pushPairRange(0);
+        tokenContext.pushPairRange();
         setArguments(func);
         if (!success) {
           return false;
@@ -222,8 +222,10 @@ namespace occa {
       }
 
       func.setSource(tokenContext[0]->to<identifierToken>());
+      func.printWarning("hi");
+      ++tokenContext;
 
-      tokenContext.pushPairRange(1);
+      tokenContext.pushPairRange();
       setArguments(func);
       tokenContext.popAndSkip();
 
@@ -245,8 +247,8 @@ namespace occa {
     void variableLoader_t::setArrays(vartype_t &vartype) {
       while (success && hasArray()) {
         operatorToken &start = tokenContext[0]->to<operatorToken>();
-        operatorToken &end   = tokenContext.getClosingPairToken(0)->to<operatorToken>();
-        tokenContext.pushPairRange(0);
+        operatorToken &end   = tokenContext.getClosingPairToken()->to<operatorToken>();
+        tokenContext.pushPairRange();
 
         exprNode *value = NULL;
         if (tokenContext.size()) {
@@ -271,8 +273,8 @@ namespace occa {
       setArgumentsFor(func);
     }
 
-    void variableLoader_t::getArgumentRanges(tokenContext_t &tokenContext,
-                                             tokenRangeVector &argRanges) {
+    void getArgumentRanges(tokenContext_t &tokenContext,
+                           tokenRangeVector &argRanges) {
       argRanges.clear();
 
       tokenContext.push();

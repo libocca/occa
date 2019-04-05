@@ -120,12 +120,12 @@ namespace occa {
       return to<operatorToken>().opType();
     }
 
-    void token_t::preprint(io::output &out) {
-      origin.preprint(out);
+    void token_t::printWarning(const std::string &message) const {
+      origin.printWarning(message);
     }
 
-    void token_t::postprint(io::output &out) {
-      origin.postprint(out);
+    void token_t::printError(const std::string &message) const {
+      origin.printError(message);
     }
 
     std::string token_t::str() const {

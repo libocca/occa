@@ -2,7 +2,6 @@
 #define OCCA_LANG_TOKEN_HEADER
 
 #include <occa/io.hpp>
-#include <occa/lang/errorHandler.hpp>
 #include <occa/lang/file.hpp>
 #include <occa/lang/type.hpp>
 
@@ -69,7 +68,7 @@ namespace occa {
       int mergeEncodings(const int type1, const int type2);
     }
 
-    class token_t : public errorHandler {
+    class token_t {
     public:
       fileOrigin origin;
 
@@ -110,8 +109,8 @@ namespace occa {
 
       virtual void print(io::output &out) const = 0;
 
-      void preprint(io::output &out);
-      void postprint(io::output &out);
+      void printWarning(const std::string &message) const;
+      void printError(const std::string &message) const;
 
       std::string str() const;
       void debugPrint() const;

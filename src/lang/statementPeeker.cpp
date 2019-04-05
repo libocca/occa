@@ -49,6 +49,7 @@ namespace occa {
                                  int &statementType) {
       const int tokenContextPosition = tokenContext.position();
       if (lastPeekPosition != tokenContextPosition) {
+        success = true;
         setupPeek(attributes);
         lastPeek = (success
                     ? uncachedPeek()
@@ -103,11 +104,11 @@ namespace occa {
              tokenContext.size() &&
              (tokenContextPos != tokenContext.position())) {
         tokenContextPos = tokenContext.position();
-        loadAttributes(tokenContext,
-                       smntContext,
-                       keywords,
-                       attributeMap,
-                       attributes);
+        success &= loadAttributes(tokenContext,
+                                  smntContext,
+                                  keywords,
+                                  attributeMap,
+                                  attributes);
       }
     }
 

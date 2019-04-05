@@ -20,7 +20,6 @@ namespace occa {
       nameToAttributeMap &attributeMap;
       bool success;
 
-    public:
       attributeLoader_t(tokenContext_t &tokenContext_,
                         statementContext_t &smntContext_,
                         const keywords_t &keywords_,
@@ -32,6 +31,16 @@ namespace occa {
 
       void setAttributeArgs(attributeToken_t &attr,
                             tokenRangeVector &argRanges);
+
+
+      friend bool loadAttributes(tokenContext_t &tokenContext,
+                                 statementContext_t &smntContext,
+                                 const keywords_t &keywords,
+                                 nameToAttributeMap &attributeMap,
+                                 attributeTokenMap &attrs);
+
+      friend attribute_t* getAttribute(nameToAttributeMap &attributeMap,
+                                       const std::string &name);
     };
 
     bool loadAttributes(tokenContext_t &tokenContext,

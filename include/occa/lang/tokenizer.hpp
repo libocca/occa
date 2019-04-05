@@ -6,7 +6,6 @@
 
 #include <occa/io.hpp>
 #include <occa/tools/trie.hpp>
-#include <occa/lang/errorHandler.hpp>
 #include <occa/lang/file.hpp>
 #include <occa/lang/printer.hpp>
 #include <occa/lang/stream.hpp>
@@ -24,8 +23,7 @@ namespace occa {
     int getCharacterEncoding(const std::string &str);
     int getStringEncoding(const std::string &str);
 
-    class tokenizer_t : public baseStream<token_t*>,
-                        public errorHandler {
+    class tokenizer_t : public baseStream<token_t*> {
     public:
       tokenList outputCache;
 
@@ -36,6 +34,8 @@ namespace occa {
 
       operatorTrie operators;
       std::string operatorCharcodes;
+
+      int errors, warnings;
 
       tokenizer_t();
 
@@ -63,8 +63,7 @@ namespace occa {
 
       void clear();
 
-      virtual void preprint(io::output &out);
-      virtual void postprint(io::output &out);
+      void printError(const std::string &message);
 
       void setLine(const int line);
 

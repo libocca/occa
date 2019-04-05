@@ -45,7 +45,7 @@ namespace occa {
         return false;
       }
 
-      tokenContext.pushPairRange(0);
+      tokenContext.pushPairRange();
 
       // Load type declaration statements
       statement_t *smnt = parser.getNextStatement();
