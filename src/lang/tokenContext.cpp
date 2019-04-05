@@ -1,4 +1,7 @@
 #include <occa/lang/expr.hpp>
+#include <occa/lang/keyword.hpp>
+#include <occa/lang/loaders/typeLoader.hpp>
+#include <occa/lang/statementContext.hpp>
 #include <occa/lang/token.hpp>
 #include <occa/lang/tokenContext.hpp>
 
@@ -13,13 +16,13 @@ namespace occa {
       start(start_),
       end(end_) {}
 
-    tokenContext::tokenContext() {}
+    tokenContext_t::tokenContext_t() {}
 
-    tokenContext::~tokenContext() {
+    tokenContext_t::~tokenContext_t() {
       clear();
     }
 
-    void tokenContext::clear() {
+    void tokenContext_t::clear() {
       tp.start = 0;
       tp.end   = 0;
 
@@ -36,7 +39,7 @@ namespace occa {
       stack.clear();
     }
 
-    void tokenContext::setup() {
+    void tokenContext_t::setup() {
       tp.start = 0;
       tp.end   = (int) tokens.size();
 
@@ -44,7 +47,7 @@ namespace occa {
       findSemicolons();
     }
 
-    void tokenContext::findPairs() {
+    void tokenContext_t::findPairs() {
       intVector pairStack;
 
       const int tokenCount = (int) tokens.size();
@@ -114,7 +117,7 @@ namespace occa {
       }
     }
 
-    void tokenContext::findSemicolons() {
+    void tokenContext_t::findSemicolons() {
       const int tokenCount = (int) tokens.size();
       for (int i = 0; i < tokenCount; ++i) {
         token_t *token = tokens[i];
@@ -125,11 +128,11 @@ namespace occa {
       }
     }
 
-    bool tokenContext::indexInRange(const int index) const {
+    bool tokenContext_t::indexInRange(const int index) const {
       return ((index >= 0) && ((tp.start + index) < tp.end));
     }
 
-    void tokenContext::set(const int start) {
+    void tokenContext_t::set(const int start) {
       if (indexInRange(start)) {
         tp.start += start;
       } else {
@@ -137,8 +140,8 @@ namespace occa {
       }
     }
 
-    void tokenContext::set(const int start,
-                           const int end) {
+    void tokenContext_t::set(const int start,
+                             const int end) {
       if (indexInRange(start)) {
         tp.start += start;
         if (indexInRange(end - start)) {
@@ -149,30 +152,30 @@ namespace occa {
       }
     }
 
-    void tokenContext::set(const tokenRange &range) {
+    void tokenContext_t::set(const tokenRange &range) {
       set(range.start, range.end);
     }
 
-    void tokenContext::push() {
+    void tokenContext_t::push() {
       stack.push_back(tp);
     }
 
-    void tokenContext::push(const int start) {
+    void tokenContext_t::push(const int start) {
       stack.push_back(tp);
       set(start);
     }
 
-    void tokenContext::push(const int start,
-                            const int end) {
+    void tokenContext_t::push(const int start,
+                              const int end) {
       stack.push_back(tp);
       set(start, end);
     }
 
-    void tokenContext::push(const tokenRange &range) {
+    void tokenContext_t::push(const tokenRange &range) {
       push(range.start, range.end);
     }
 
-    void tokenContext::pushPairRange(const int pairStart) {
+    void tokenContext_t::pushPairRange(const int pairStart) {
       const int pairEnd = getClosingPair(pairStart);
       if (pairEnd >= 0) {
         push(pairStart + 1, pairEnd);
@@ -181,8 +184,8 @@ namespace occa {
       }
     }
 
-    tokenRange tokenContext::pop() {
-      OCCA_ERROR("Unable to call tokenContext::pop",
+    tokenRange tokenContext_t::pop() {
+      OCCA_ERROR("Unable to call tokenContext_t::pop",
                  stack.size());
 
       tokenRange prev = tp;
@@ -195,37 +198,42 @@ namespace occa {
                         prevStart + (prev.end - prev.start));
     }
 
-    void tokenContext::popAndSkip() {
+    void tokenContext_t::popAndSkip() {
       set(pop().end + 1);
     }
 
-    int tokenContext::position() const {
+    int tokenContext_t::position() const {
       return tp.start;
     }
 
-    int tokenContext::size() const {
+    int tokenContext_t::size() const {
       return (tp.end - tp.start);
     }
 
-    token_t* tokenContext::operator [] (const int index) {
+    token_t* tokenContext_t::operator [] (const int index) {
       if (!indexInRange(index)) {
         return NULL;
       }
       return tokens[tp.start + index];
     }
 
-    tokenContext& tokenContext::operator ++ () {
+    tokenContext_t& tokenContext_t::operator ++ () {
       set(1);
       return *this;
     }
 
-    tokenContext& tokenContext::operator ++ (int) {
+    tokenContext_t& tokenContext_t::operator ++ (int) {
       set(1);
       return *this;
     }
 
-    void tokenContext::setToken(const int index,
-                                token_t *value) {
+    tokenContext_t& tokenContext_t::operator += (const int offset) {
+      set(offset);
+      return *this;
+    }
+
+    void tokenContext_t::setToken(const int index,
+                                  token_t *value) {
       if (!indexInRange(index)) {
         return;
       }
@@ -236,14 +244,14 @@ namespace occa {
       }
     }
 
-    token_t* tokenContext::end() {
+    token_t* tokenContext_t::end() {
       if (indexInRange(tp.end - tp.start - 1)) {
         return tokens[tp.end - 1];
       }
       return NULL;
     }
 
-    token_t* tokenContext::getPrintToken(const bool atEnd) {
+    token_t* tokenContext_t::getPrintToken(const bool atEnd) {
       if (tokens.size() == 0) {
         return NULL;
       }
@@ -263,7 +271,7 @@ namespace occa {
       return token;
     }
 
-    void tokenContext::printWarning(const std::string &message) {
+    void tokenContext_t::printWarning(const std::string &message) {
       token_t *token = getPrintToken(false);
       if (!token) {
         occa::printWarning(io::stderr, "[No Token] " + message);
@@ -272,7 +280,7 @@ namespace occa {
       }
     }
 
-    void tokenContext::printWarningAtEnd(const std::string &message) {
+    void tokenContext_t::printWarningAtEnd(const std::string &message) {
       token_t *token = getPrintToken(true);
       if (!token) {
         occa::printWarning(io::stderr, "[No Token] " + message);
@@ -281,7 +289,7 @@ namespace occa {
       }
     }
 
-    void tokenContext::printError(const std::string &message) {
+    void tokenContext_t::printError(const std::string &message) {
       if (supressErrors) {
         return;
       }
@@ -293,7 +301,7 @@ namespace occa {
       }
     }
 
-    void tokenContext::printErrorAtEnd(const std::string &message) {
+    void tokenContext_t::printErrorAtEnd(const std::string &message) {
       if (supressErrors) {
         return;
       }
@@ -305,7 +313,7 @@ namespace occa {
       }
     }
 
-    void tokenContext::getTokens(tokenVector &tokens_) {
+    void tokenContext_t::getTokens(tokenVector &tokens_) {
       tokens_.clear();
       tokens_.reserve(tp.end - tp.start);
       for (int i = tp.start; i < tp.end; ++i) {
@@ -313,7 +321,7 @@ namespace occa {
       }
     }
 
-    void tokenContext::getAndCloneTokens(tokenVector &tokens_) {
+    void tokenContext_t::getAndCloneTokens(tokenVector &tokens_) {
       tokens_.clear();
       tokens_.reserve(tp.end - tp.start);
       for (int i = tp.start; i < tp.end; ++i) {
@@ -321,7 +329,7 @@ namespace occa {
       }
     }
 
-    int tokenContext::getClosingPair(const int index) {
+    int tokenContext_t::getClosingPair(const int index) {
       if (!indexInRange(index)) {
         return -1;
       }
@@ -333,7 +341,7 @@ namespace occa {
       return -1;
     }
 
-    token_t* tokenContext::getClosingPairToken(const int index) {
+    token_t* tokenContext_t::getClosingPairToken(const int index) {
       const int endIndex = getClosingPair(index);
       if (endIndex >= 0) {
         return tokens[tp.start + endIndex];
@@ -341,7 +349,7 @@ namespace occa {
       return NULL;
     }
 
-    int tokenContext::getNextOperator(const opType_t &opType) {
+    int tokenContext_t::getNextOperator(const opType_t &opType) {
       for (int pos = tp.start; pos < tp.end; ++pos) {
         token_t *token = tokens[pos];
         if (!(token->type() & tokenType::op)) {
@@ -362,7 +370,84 @@ namespace occa {
       return -1;
     }
 
-    void tokenContext::debugPrint() {
+    exprNode* tokenContext_t::getExpression(statementContext_t &smntContext,
+                                            const keywords_t &keywords) {
+      return getExpression(smntContext, keywords, 0, size());
+    }
+
+    exprNode* tokenContext_t::getExpression(statementContext_t &smntContext,
+                                            const keywords_t &keywords,
+                                            const int start,
+                                            const int end) {
+      push(start, end);
+      const int tokenCount = size();
+      tokenVector exprTokens;
+      exprTokens.reserve(tokenCount);
+
+      // Replace identifier tokens with keywords if they exist
+      for (int i = 0; i < tokenCount; ++i) {
+        token_t *token = (*this)[i];
+        if (token->type() & tokenType::identifier) {
+          setToken(i, replaceIdentifier(smntContext,
+                                        keywords,
+                                        (identifierToken&) *token));
+        }
+      }
+      while (size()) {
+        token_t *token = (*this)[0];
+        if (!(token->type() & (tokenType::qualifier |
+                               tokenType::type))) {
+          set(1);
+          exprTokens.push_back(token->clone());
+          continue;
+        }
+
+        vartype_t vartype;
+        if (!loadType(*this, smntContext, keywords, vartype)) {
+          pop();
+          freeTokenVector(exprTokens);
+          return NULL;
+        }
+
+        exprTokens.push_back(new vartypeToken(token->origin,
+                                          vartype));
+      }
+      pop();
+
+      return occa::lang::getExpression(exprTokens);
+    }
+
+    token_t* tokenContext_t::replaceIdentifier(statementContext_t &smntContext,
+                                               const keywords_t &keywords,
+                                               identifierToken &identifier) {
+      keyword_t &keyword = keywords.get(smntContext, &identifier);
+      const int kType = keyword.type();
+
+      if (!(kType & (keywordType::qualifier |
+                     keywordType::type      |
+                     keywordType::variable  |
+                     keywordType::function))) {
+        return &identifier;
+      }
+
+      if (kType & keywordType::qualifier) {
+        return new qualifierToken(identifier.origin,
+                                  ((qualifierKeyword&) keyword).qualifier);
+      }
+      if (kType & keywordType::variable) {
+        return new variableToken(identifier.origin,
+                                 ((variableKeyword&) keyword).variable);
+      }
+      if (kType & keywordType::function) {
+        return new functionToken(identifier.origin,
+                                 ((functionKeyword&) keyword).function);
+      }
+      // keywordType::type
+      return new typeToken(identifier.origin,
+                           ((typeKeyword&) keyword).type_);
+    }
+
+    void tokenContext_t::debugPrint() {
       for (int i = tp.start; i < tp.end; ++i) {
         io::stdout << '[' << *tokens[i] << "]\n";
       }

@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -e
+# set -e
 
 TEST_DIR=$(dirname "$0")
 TEST_SRC_DIR=$(dirname "$0")/src

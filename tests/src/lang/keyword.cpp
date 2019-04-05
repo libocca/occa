@@ -3,25 +3,25 @@
 
 using namespace occa::lang;
 
-void testDefaults(keywordMap &keywords);
+void testDefaults(keywords_t &keywords);
 
 int main(const int argc, const char **argv) {
-  keywordMap keywords;
+  keywords_t keywords;
   getKeywords(keywords);
 
   testDefaults(keywords);
 
-  freeKeywords(keywords);
+  keywords.free();
 
   return 0;
 }
 
 #define assertKeyword(name_, type_)             \
   ASSERT_EQ_BINARY(type_,                       \
-                   keywords[name_]->type())
+                   keywords.keywords[name_]->type())
 
 
-void testDefaults(keywordMap &keywords) {
+void testDefaults(keywords_t &keywords) {
   // Qualifiers
   assertKeyword("const"       , keywordType::qualifier);
   assertKeyword("constexpr"   , keywordType::qualifier);

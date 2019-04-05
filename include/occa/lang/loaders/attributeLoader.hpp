@@ -1,0 +1,48 @@
+#ifndef OCCA_LANG_PARSER_ATTRIBUTELOADER_HEADER
+#define OCCA_LANG_PARSER_ATTRIBUTELOADER_HEADER
+
+#include <occa/lang/attribute.hpp>
+#include <occa/lang/tokenContext.hpp>
+#include <occa/lang/variable.hpp>
+
+namespace occa {
+  namespace lang {
+    class keywords_t;
+    class statementContext_t;
+    class tokenContext_t;
+    class vartype_t;
+
+    class attributeLoader_t {
+    private:
+      tokenContext_t &tokenContext;
+      statementContext_t &smntContext;
+      const keywords_t &keywords;
+      nameToAttributeMap &attributeMap;
+      bool success;
+
+    public:
+      attributeLoader_t(tokenContext_t &tokenContext_,
+                        statementContext_t &smntContext_,
+                        const keywords_t &keywords_,
+                        nameToAttributeMap &attributeMap_);
+
+      bool loadAttributes(attributeTokenMap &attrs);
+
+      void loadAttribute(attributeTokenMap &attrs);
+
+      void setAttributeArgs(attributeToken_t &attr,
+                            tokenRangeVector &argRanges);
+    };
+
+    bool loadAttributes(tokenContext_t &tokenContext,
+                        statementContext_t &smntContext,
+                        const keywords_t &keywords,
+                        nameToAttributeMap &attributeMap,
+                        attributeTokenMap &attrs);
+
+    attribute_t* getAttribute(nameToAttributeMap &attributeMap,
+                              const std::string &name);
+  }
+}
+
+#endif

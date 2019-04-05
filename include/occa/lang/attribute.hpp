@@ -6,7 +6,6 @@
 #include <map>
 
 #include <occa/io/output.hpp>
-#include <occa/lang/tokenContext.hpp>
 
 namespace occa {
   namespace lang {
@@ -15,6 +14,7 @@ namespace occa {
     class attribute_t;
     class attributeToken_t;
     class attributeArg_t;
+    class exprNode;
     class vartype_t;
     class variable_t;
     class function_t;
@@ -24,6 +24,7 @@ namespace occa {
     typedef std::vector<attributeArg_t>             attributeArgVector;
     typedef std::map<std::string, attributeArg_t>   attributeArgMap;
     typedef std::map<std::string, attributeToken_t> attributeTokenMap;
+    typedef std::map<std::string, attribute_t*>     nameToAttributeMap;
 
     //---[ Attribute Type ]-------------
     class attribute_t {

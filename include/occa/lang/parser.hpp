@@ -1,13 +1,13 @@
 #ifndef OCCA_LANG_PARSER_HEADER
 #define OCCA_LANG_PARSER_HEADER
 
-#include <list>
 #include <map>
 #include <vector>
 
 #include <occa/tools/properties.hpp>
 #include <occa/lang/kernelMetadata.hpp>
 #include <occa/lang/keyword.hpp>
+#include <occa/lang/loaders.hpp>
 #include <occa/lang/preprocessor.hpp>
 #include <occa/lang/processingStages.hpp>
 #include <occa/lang/statement.hpp>
@@ -15,20 +15,18 @@
 #include <occa/lang/transforms/statementTransform.hpp>
 #include <occa/lang/tokenizer.hpp>
 #include <occa/lang/tokenContext.hpp>
+#include <occa/lang/statementContext.hpp>
+#include <occa/lang/statementPeeker.hpp>
 #include <occa/lang/variable.hpp>
 
 namespace occa {
   namespace lang {
     class parser_t;
 
-    typedef stream<token_t*>   tokenStream;
-    typedef std::map<int, int> keywordToStatementMap;
+    typedef stream<token_t*> tokenStream;
 
     typedef statement_t* (parser_t::*statementLoader_t)(attributeTokenMap &smntAttributes);
     typedef std::map<int, statementLoader_t> statementLoaderMap;
-
-    typedef std::list<blockStatement*>          blockStatementList;
-    typedef std::map<std::string, attribute_t*> nameToAttributeMap;
 
     class parser_t {
     public:
@@ -43,20 +41,19 @@ namespace occa {
       //================================
 
       //---[ Status ]-------------------
-      tokenContext context;
-      keywordMap keywords;
-      keywordToStatementMap keywordPeek;
+      blockStatement root;
+
+      keywords_t keywords;
       statementLoaderMap statementLoaders;
       nameToAttributeMap attributeMap;
 
-      int lastPeek;
-      int lastPeekPosition;
+      tokenContext_t tokenContext;
+      statementContext_t smntContext;
+      statementPeeker_t smntPeeker;
+
       bool checkSemicolon;
 
       unknownToken defaultRootToken;
-      blockStatement root;
-      blockStatement *up;
-      blockStatementList upStack;
       attributeTokenMap attributes;
 
       bool success;
@@ -99,91 +96,55 @@ namespace occa {
       void setupLoadTokens();
       void loadTokens();
       void parseTokens();
-
-      keyword_t& getKeyword(token_t *token);
-      keyword_t& getKeyword(const std::string &name);
-
-      opType_t getOperatorType(token_t *token);
       //================================
 
       //---[ Helper Methods ]-----------
+      keyword_t& getKeyword(token_t *token);
+      keyword_t& getKeyword(const std::string &name);
+
       exprNode* getExpression();
       exprNode* getExpression(const int start,
                               const int end);
-      token_t* replaceIdentifier(identifierToken &identifier);
+
+      void loadAttributes(attributeTokenMap &attrs);
 
       attribute_t* getAttribute(const std::string &name);
 
-      void loadAttributes(attributeTokenMap &attrs);
-      void loadAttribute(attributeTokenMap &attrs);
-      void setAttributeArgs(attributeToken_t &attr,
-                            tokenRangeVector &argRanges);
       void addAttributesTo(attributeTokenMap &attrs,
                            statement_t *smnt);
-      //================================
 
-      //---[ Peek ]---------------------
+      void loadBaseType(vartype_t &vartype);
+      void loadType(vartype_t &vartype);
+      vartype_t loadType();
+
+      bool isLoadingStruct();
+
+      struct_t* loadStruct();
+
+      bool isLoadingVariable();
+      bool isLoadingFunction();
+      bool isLoadingFunctionPointer();
+
+      void loadVariable(variable_t &var);
+      variable_t loadVariable();
+
+      void loadVariable(vartype_t &vartype,
+                        variable_t &var);
+
+      void loadFunction(function_t &func);
+
       int peek();
-      int uncachedPeek();
-
-      void setupPeek();
-
-      int peekIdentifier(const int tokenIndex);
-      bool isGotoLabel(const int tokenIndex);
-
-      int peekOperator(const int tokenIndex);
       //================================
 
       //---[ Type Loaders ]-------------
-      variable_t loadVariable();
-
       variableDeclaration loadVariableDeclaration(attributeTokenMap &smntAttributes,
                                                   const vartype_t &baseType);
-      void loadDeclarationAttributes(attributeTokenMap &smntAttributes,
-                                     variableDeclaration &decl);
+      void applyDeclarationSmntAttributes(attributeTokenMap &smntAttributes,
+                                          variable_t &var);
       int declarationNextCheck(const opType_t opCheck);
       void loadDeclarationBitfield(variableDeclaration &decl);
       void loadDeclarationAssignment(variableDeclaration &decl);
       void loadDeclarationBraceInitializer(variableDeclaration &decl);
-
-      vartype_t loadType();
-      struct_t* loadStruct();
-
-      qualifiers_t loadQualifiers();
-
-      void loadBaseType(vartype_t &vartype);
-
-      void loadVartypeQualifier(token_t *token,
-                                const qualifier_t &qualifier,
-                                vartype_t &vartype);
-
-      void setVartypePointers(vartype_t &vartype);
-      void setVartypePointer(vartype_t &vartype);
-
-      void setVartypeReference(vartype_t &vartype);
-
-      bool isLoadingFunctionPointer();
-      bool isLoadingVariable();
-      bool isLoadingFunction();
-      bool isLoadingStruct();
-
-      variable_t loadFunctionPointer(vartype_t &vartype);
-      variable_t loadVariable(vartype_t &vartype);
-
-      bool hasArray();
-      void setArrays(vartype_t &vartype);
-      void setArray(vartype_t &vartype);
-
-      void setArguments(functionPtr_t &func);
-      void setArguments(function_t &func);
-
-    private:
-      template <class funcType>
-      void setArgumentsFor(funcType &func);
-
-    public:
-      void getArgumentRanges(tokenRangeVector &argRanges);
-      variable_t getArgument();
       //================================
 
       //---[ Loader Helpers ]-----------

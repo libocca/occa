@@ -9,9 +9,12 @@
 
 namespace occa {
   namespace lang {
+    class exprNode;
+    class identifierToken;
+    class keywords_t;
+    class statementContext_t;
     class tokenRange;
     class token_t;
-    class exprNode;
 
     typedef bitfield opType_t;
 
@@ -30,7 +33,7 @@ namespace occa {
                  const int end_);
     };
 
-    class tokenContext {
+    class tokenContext_t {
     public:
       tokenVector tokens;
       intIntMap pairs;
@@ -41,8 +44,8 @@ namespace occa {
       tokenRangeList stack;
       tokenRange tp;
 
-      tokenContext();
-      ~tokenContext();
+      tokenContext_t();
+      ~tokenContext_t();
 
       void clear();
       void setup();
@@ -72,8 +75,9 @@ namespace occa {
       int size() const;
 
       token_t* operator [] (const int index);
-      tokenContext& operator ++ ();
-      tokenContext& operator ++ (int);
+      tokenContext_t& operator ++ ();
+      tokenContext_t& operator ++ (int);
+      tokenContext_t& operator += (const int offset);
 
       void setToken(const int index,
                     token_t *value);
@@ -95,6 +99,17 @@ namespace occa {
       token_t* getClosingPairToken(const int index);
 
       int getNextOperator(const opType_t &opType);
+
+      exprNode* getExpression(statementContext_t &smntContext,
+                              const keywords_t &keywords);
+      exprNode* getExpression(statementContext_t &smntContext,
+                              const keywords_t &keywords,
+                              const int start,
+                              const int end);
+
+      token_t* replaceIdentifier(statementContext_t &smntContext,
+                                 const keywords_t &keywords,
+                                 identifierToken &identifier);
 
       void debugPrint();
     };

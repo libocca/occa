@@ -12,12 +12,14 @@ namespace occa {
     parser_t::parser_t(const occa::properties &settings_) :
       preprocessor(settings_),
       unknownFilter(true),
-      lastPeek(0),
-      lastPeekPosition(-1),
+      root(NULL, NULL),
+      smntContext(root),
+      smntPeeker(tokenContext,
+                 smntContext,
+                 keywords,
+                 attributeMap),
       checkSemicolon(true),
       defaultRootToken(originSource::builtin),
-      root(NULL, NULL),
-      up(&root),
       success(true),
       settings(settings_),
       restrictQualifier(NULL) {
@@ -29,27 +31,6 @@ namespace occa {
                 .map(stringMerger)
                 .map(externMerger)
                 .map(newlineFilter));
-
-      // Setup simple keyword -> statement peeks
-      keywordPeek[keywordType::qualifier]   = statementType::declaration;
-      keywordPeek[keywordType::type]        = statementType::declaration;
-      keywordPeek[keywordType::variable]    = statementType::expression;
-      keywordPeek[keywordType::function]    = statementType::expression;
-      keywordPeek[keywordType::if_]         = statementType::if_;
-      keywordPeek[keywordType::switch_]     = statementType::switch_;
-      keywordPeek[keywordType::case_]       = statementType::case_;
-      keywordPeek[keywordType::default_]    = statementType::default_;
-      keywordPeek[keywordType::for_]        = statementType::for_;
-      keywordPeek[keywordType::while_]      = statementType::while_;
-      keywordPeek[keywordType::do_]         = statementType::while_;
-      keywordPeek[keywordType::break_]      = statementType::break_;
-      keywordPeek[keywordType::continue_]   = statementType::continue_;
-      keywordPeek[keywordType::return_]     = statementType::return_;
-      keywordPeek[keywordType::public_]     = statementType::classAccess;
-      keywordPeek[keywordType::protected_]  = statementType::classAccess;
-      keywordPeek[keywordType::private_]    = statementType::classAccess;
-      keywordPeek[keywordType::namespace_]  = statementType::namespace_;
-      keywordPeek[keywordType::goto_]       = statementType::goto_;
 
       // Statement type -> loader function
       statementLoaders[statementType::empty]       = &parser_t::loadEmptyStatement;
@@ -84,7 +65,7 @@ namespace occa {
     parser_t::~parser_t() {
       clear();
 
-      freeKeywords(keywords);
+      keywords.free();
       delete restrictQualifier;
 
       nameToAttributeMap::iterator it = attributeMap.begin();
@@ -144,21 +125,19 @@ namespace occa {
     //---[ Setup ]----------------------
     void parser_t::clear() {
       tokenizer.clear();
-      context.clear();
-
-      preprocessor.clear();
-      addSettingDefines();
-
-      lastPeek = 0;
-      lastPeekPosition = -1;
-      checkSemicolon = true;
 
       root.clear();
       delete root.source;
       root.source = NULL;
 
-      up = &root;
-      upStack.clear();
+      tokenContext.clear();
+      smntContext.clear();
+      smntPeeker.clear();
+
+      preprocessor.clear();
+      addSettingDefines();
+
+      checkSemicolon = true;
 
       clearAttributes();
 
@@ -182,31 +161,19 @@ namespace occa {
 
     void parser_t::addSettingDefines() {
       json &defines = settings["defines"];
-      if (defines.isObject()) {
-        jsonObject &defineMap = defines.object();
-        jsonObject::iterator it = defineMap.begin();
-        while (it != defineMap.end()) {
-          const std::string &define = it->first;
-          json &value = it->second;
-
-          preprocessor.addSourceDefine(define, value);
-
-          ++it;
-        }
+      if (!defines.isObject()) {
+        return;
       }
-    }
 
-    void parser_t::pushUp(blockStatement &newUp) {
-      upStack.push_back(up);
-      up = &newUp;
-    }
+      jsonObject &defineMap = defines.object();
+      jsonObject::iterator it = defineMap.begin();
+      while (it != defineMap.end()) {
+        const std::string &define = it->first;
+        json &value = it->second;
 
-    void parser_t::popUp() {
-      if (upStack.size()) {
-        up = upStack.back();
-        upStack.pop_back();
-      } else {
-        up = &root;
+        preprocessor.addSourceDefine(define, value);
+
+        ++it;
       }
     }
 
@@ -239,8 +206,8 @@ namespace occa {
 
       delete root.source;
       root.source = (
-        context.size()
-        ? context[0]->clone()
+        tokenContext.size()
+        ? tokenContext[0]->clone()
         : defaultRootToken.clone()
       );
     }
@@ -257,7 +224,7 @@ namespace occa {
       if (restrictStr != "disabled") {
         restrictQualifier = new qualifier_t(restrictStr,
                                             qualifierType::custom);
-        addKeyword(keywords, new qualifierKeyword(*restrictQualifier));
+        keywords.add(*(new qualifierKeyword(*restrictQualifier)));
       }
     }
 
@@ -265,7 +232,7 @@ namespace occa {
       token_t *token;
       while (!stream.isEmpty()) {
         stream >> token;
-        context.tokens.push_back(token);
+        tokenContext.tokens.push_back(token);
       }
 
       if (tokenizer.errors ||
@@ -274,8 +241,8 @@ namespace occa {
         return;
       }
 
-      context.setup();
-      success = !context.hasError;
+      tokenContext.setup();
+      success = !tokenContext.hasError;
     }
 
     void parser_t::parseTokens() {
@@ -299,262 +266,43 @@ namespace occa {
 
       afterParsing();
     }
-
-    keyword_t& parser_t::getKeyword(token_t *token) {
-      static keyword_t noKeyword;
-      if (!token) {
-        return noKeyword;
-      }
-
-      const int tType = token->type();
-      if (!(tType & (tokenType::identifier |
-                     tokenType::qualifier  |
-                     tokenType::type       |
-                     tokenType::variable   |
-                     tokenType::function))) {
-        return noKeyword;
-      }
-
-      std::string name;
-      if (tType & tokenType::identifier) {
-        name = token->to<identifierToken>().value;
-      }
-      else if (tType & tokenType::qualifier) {
-        name = token->to<qualifierToken>().qualifier.name;
-      }
-      else if (tType & tokenType::type) {
-        name = token->to<typeToken>().value.name();
-      }
-      else if (tType & tokenType::variable) {
-        name = token->to<variableToken>().value.name();
-      }
-      else if (tType & tokenType::function) {
-        name = token->to<functionToken>().value.name();
-      }
-
-      return getKeyword(name);
-    }
-
-    keyword_t& parser_t::getKeyword(const std::string &name) {
-      keywordMapIterator it = keywords.find(name);
-      if (it != keywords.end()) {
-        return *(it->second);
-      }
-      return up->getScopeKeyword(name);
-    }
-
-    opType_t parser_t::getOperatorType(token_t *token) {
-      if (!(token_t::safeType(token) & tokenType::op)) {
-        return operatorType::none;
-      }
-      return token->to<operatorToken>().getOpType();
-    }
     //==================================
 
     //---[ Helper Methods ]-------------
+    keyword_t& parser_t::getKeyword(token_t *token) {
+      return keywords.get(smntContext, token);
+    }
+
+    keyword_t& parser_t::getKeyword(const std::string &name) {
+      return keywords.get(smntContext, name);
+    }
+
     exprNode* parser_t::getExpression() {
-      return getExpression(0, context.size());
+      exprNode *expr = tokenContext.getExpression(smntContext,
+                                                  keywords);
+      success = !!expr;
+      return expr;
     }
 
     exprNode* parser_t::getExpression(const int start,
                                       const int end) {
-      context.push(start, end);
-      const int tokenCount = context.size();
-      tokenVector tokens;
-      tokens.reserve(tokenCount);
-
-      if (up) {
-        // Replace identifier tokens with keywords if they exist
-        for (int i = 0; i < tokenCount; ++i) {
-          token_t *token = context[i];
-          if (token->type() & tokenType::identifier) {
-            context.setToken(i, replaceIdentifier((identifierToken&) *token));
-          }
-        }
-        while (context.size()) {
-          token_t *token = context[0];
-          if (!(token->type() & (tokenType::qualifier |
-                                 tokenType::type))) {
-            ++context;
-            tokens.push_back(token->clone());
-            continue;
-          }
-
-          vartype_t vartype = loadType();
-          if (!success) {
-            context.pop();
-            freeTokenVector(tokens);
-            return NULL;
-          }
-
-          tokens.push_back(new vartypeToken(token->origin,
-                                            vartype));
-        }
-      }
-      context.pop();
-
-      exprNode *expr = occa::lang::getExpression(tokens);
-      success &= !!expr;
+      exprNode *expr = tokenContext.getExpression(smntContext,
+                                                  keywords,
+                                                  start, end);
+      success = !!expr;
       return expr;
     }
 
-    token_t* parser_t::replaceIdentifier(identifierToken &identifier) {
-      keyword_t &keyword = getKeyword(&identifier);
-      const int kType = keyword.type();
-
-      if (!(kType & (keywordType::qualifier |
-                     keywordType::type      |
-                     keywordType::variable  |
-                     keywordType::function))) {
-        return &identifier;
-      }
-
-      if (kType & keywordType::qualifier) {
-        return new qualifierToken(identifier.origin,
-                                  ((qualifierKeyword&) keyword).qualifier);
-      }
-      if (kType & keywordType::variable) {
-        return new variableToken(identifier.origin,
-                                 ((variableKeyword&) keyword).variable);
-      }
-      if (kType & keywordType::function) {
-        return new functionToken(identifier.origin,
-                                 ((functionKeyword&) keyword).function);
-      }
-      // keywordType::type
-      return new typeToken(identifier.origin,
-                           ((typeKeyword&) keyword).type_);
+    void parser_t::loadAttributes(attributeTokenMap &attrs) {
+      success = lang::loadAttributes(tokenContext,
+                                     smntContext,
+                                     keywords,
+                                     attributeMap,
+                                     attrs);
     }
 
     attribute_t* parser_t::getAttribute(const std::string &name) {
-      nameToAttributeMap::iterator it = attributeMap.find(name);
-      if (it == attributeMap.end()) {
-        return NULL;
-      }
-      return it->second;
-    }
-
-    void parser_t::loadAttributes(attributeTokenMap &attrs) {
-      while (success &&
-             (getOperatorType(context[0]) & operatorType::attribute)) {
-        loadAttribute(attrs);
-        if (!success) {
-          break;
-        }
-      }
-    }
-
-    void parser_t::loadAttribute(attributeTokenMap &attrs) {
-      // Skip [@] token
-      ++context;
-
-      if (!(context[0]->type() & tokenType::identifier)) {
-        context.printError("Expected an attribute name");
-        success = false;
-        return;
-      }
-
-      identifierToken &nameToken = *((identifierToken*) context[0]);
-      ++context;
-
-      attribute_t *attribute = getAttribute(nameToken.value);
-      if (!attribute) {
-        nameToken.printError("Unknown attribute");
-        success = false;
-        return;
-      }
-
-      tokenRangeVector argRanges;
-      const bool hasArgs = (getOperatorType(context[0]) & operatorType::parenthesesStart);
-      if (hasArgs) {
-        context.pushPairRange(0);
-        getArgumentRanges(argRanges);
-      }
-      if (!success) {
-        if (hasArgs) {
-          context.popAndSkip();
-        }
-        return;
-      }
-
-      attributeToken_t attr(*attribute, nameToken);
-      setAttributeArgs(attr, argRanges);
-      if (hasArgs) {
-        context.popAndSkip();
-      }
-      if (success) {
-        attrs[nameToken.value] = attr;
-        success = attribute->isValid(attr);
-      }
-    }
-
-    void parser_t::setAttributeArgs(attributeToken_t &attr,
-                                    tokenRangeVector &argRanges) {
-      const int args = (int) argRanges.size();
-      bool foundNamedArg = false;
-      for (int i = 0; i < args; ++i) {
-        attributeArg_t arg;
-        context.push(argRanges[i].start,
-                     argRanges[i].end);
-
-        if (!context.size()) {
-          arg.expr = new emptyNode();
-          attr.args.push_back(arg);
-          context.popAndSkip();
-          continue;
-        }
-
-        // Load args
-        loadAttributes(arg.attributes);
-        if (!context.size()) {
-          arg.expr = new emptyNode();
-          attr.args.push_back(arg);
-          context.popAndSkip();
-          continue;
-        }
-
-        // Get argument
-        arg.expr = getExpression();
-        if (!success) {
-          context.pop();
-          arg.clear();
-          return;
-        }
-
-        std::string argName;
-        // Check for
-        // |---[=] (binary)
-        // |   |
-        // |   |---[argName] (identifier)
-        // |   |
-        // |   |---[arg] (?)
-        if (arg.expr->type() & exprNodeType::binary) {
-          binaryOpNode &equalsNode = arg.expr->to<binaryOpNode>();
-          if ((equalsNode.opType() & operatorType::assign) &&
-              (equalsNode.leftValue->type() & exprNodeType::identifier)) {
-            argName = equalsNode.leftValue->to<identifierNode>().value;
-            arg.expr = equalsNode.rightValue->clone();
-            delete &equalsNode;
-          }
-        }
-
-        if (!argName.size() &&
-            foundNamedArg) {
-          context.printError("All arguments after a named argument"
-                             " must also be named");
-          success = false;
-          context.pop();
-          arg.clear();
-          return;
-        }
-
-        if (!argName.size()) {
-          attr.args.push_back(arg);
-        } else {
-          attr.kwargs[argName] = arg;
-        }
-        context.popAndSkip();
-      }
+      return lang::getAttribute(attributeMap, name);
     }
 
     void parser_t::addAttributesTo(attributeTokenMap &attrs,
@@ -585,135 +333,107 @@ namespace occa {
       }
       attrs.clear();
     }
-    //==================================
 
-    //---[ Peek ]-----------------------
+    void parser_t::loadBaseType(vartype_t &vartype) {
+      success &= lang::loadBaseType(tokenContext,
+                                    smntContext,
+                                    keywords,
+                                    vartype);
+    }
+
+    void parser_t::loadType(vartype_t &vartype) {
+      success &= lang::loadType(tokenContext,
+                                smntContext,
+                                keywords,
+                                vartype);
+    }
+
+    vartype_t parser_t::loadType() {
+      vartype_t vartype;
+      success &= lang::loadType(tokenContext,
+                                smntContext,
+                                keywords,
+                                vartype);
+      return vartype;
+    }
+
+    bool parser_t::isLoadingStruct() {
+      return lang::isLoadingStruct(tokenContext,
+                                   smntContext,
+                                   keywords);
+    }
+
+    struct_t* parser_t::loadStruct() {
+      struct_t *type;
+      success &= lang::loadStruct(tokenContext,
+                                  smntContext,
+                                  *this,
+                                  type);
+      return type;
+    }
+
+    bool parser_t::isLoadingVariable() {
+      return lang::isLoadingVariable(tokenContext,
+                                     smntContext,
+                                     keywords,
+                                     attributeMap);
+    }
+
+    bool parser_t::isLoadingFunction() {
+      return lang::isLoadingFunction(tokenContext,
+                                     smntContext,
+                                     keywords,
+                                     attributeMap);
+    }
+
+    bool parser_t::isLoadingFunctionPointer() {
+      return lang::isLoadingFunctionPointer(tokenContext,
+                                            smntContext,
+                                            keywords,
+                                            attributeMap);
+    }
+
+    void parser_t::loadVariable(variable_t &var) {
+      success &= lang::loadVariable(tokenContext,
+                                    smntContext,
+                                    keywords,
+                                    attributeMap,
+                                    var);
+    }
+
+    variable_t parser_t:: loadVariable() {
+      variable_t var;
+      loadVariable(var);
+      return var;
+    }
+
+    void parser_t::loadVariable(vartype_t &vartype,
+                                variable_t &var) {
+      success &= lang::loadVariable(tokenContext,
+                                    smntContext,
+                                    keywords,
+                                    attributeMap,
+                                    vartype,
+                                    var);
+    }
+
+    void parser_t::loadFunction(function_t &func) {
+      success &= lang::loadFunction(tokenContext,
+                                    smntContext,
+                                    keywords,
+                                    attributeMap,
+                                    func);
+    }
+
     int parser_t::peek() {
-      const int contextPosition = context.position();
-      if (lastPeekPosition != contextPosition) {
-        setupPeek();
-        lastPeek = (success
-                    ? uncachedPeek()
-                    : statementType::none);
-        lastPeekPosition = contextPosition;
-      }
-      return lastPeek;
-    }
-
-    int parser_t::uncachedPeek() {
-      const int tokens = context.size();
-      if (!tokens) {
-        return statementType::none;
-      }
-
-      int tokenIndex = 0;
-
-      while (success &&
-             (tokenIndex < tokens)) {
-
-        token_t *token = context[tokenIndex];
-        const int tokenType = token->type();
-
-        if (tokenType & tokenType::identifier) {
-          return peekIdentifier(tokenIndex);
-        }
-
-        if (tokenType & tokenType::op) {
-          return peekOperator(tokenIndex);
-        }
-
-        if (tokenType & (tokenType::primitive |
-                         tokenType::string    |
-                         tokenType::char_)) {
-          return statementType::expression;
-        }
-
-        if (tokenType & tokenType::pragma) {
-          return statementType::pragma;
-        }
-
-        ++tokenIndex;
-      }
-
-      return statementType::none;
-    }
-
-    void parser_t::setupPeek() {
-      int contextPos = -1;
-      while (success &&
-             context.size() &&
-             (contextPos != context.position())) {
-        contextPos = context.position();
-        loadAttributes(attributes);
-      }
-    }
-
-    int parser_t::peekIdentifier(const int tokenIndex) {
-      token_t *token = context[tokenIndex];
-      int kType = getKeyword(token).type();
-
-      if (kType & keywordType::none) {
-        // Test for : for it to be a goto label
-        if (isGotoLabel(tokenIndex + 1)) {
-          return statementType::gotoLabel;
-        }
-        // TODO: Make sure it's a defined variable
-        return statementType::expression;
-      }
-
-      const int sType = keywordPeek[kType];
-      if (sType) {
-        return sType;
-      }
-
-      if (kType & keywordType::else_) {
-        keyword_t &nextKeyword = getKeyword(context[tokenIndex + 1]);
-        if ((nextKeyword.type() & keywordType::if_)) {
-          return statementType::elif_;
-        }
-        return statementType::else_;
-      }
-
-      token->printError("Unknown identifier");
-      success = false;
-      return statementType::none;
-    }
-
-    bool parser_t::isGotoLabel(const int tokenIndex) {
-      return (getOperatorType(context[tokenIndex]) & operatorType::colon);
-    }
-
-    int parser_t::peekOperator(const int tokenIndex) {
-      const opType_t opType = getOperatorType(context[tokenIndex]);
-      if (opType & operatorType::braceStart) {
-        return statementType::block;
-      }
-      if (opType & operatorType::semicolon) {
-        return statementType::empty;
-      }
-      return statementType::expression;
+      int sType;
+      success &= smntPeeker.peek(attributes,
+                                 sType);
+      return sType;
     }
     //==================================
 
     //---[ Type Loaders ]---------------
-    variable_t parser_t::loadVariable() {
-      attributeTokenMap attrs;
-      loadAttributes(attrs);
-
-      vartype_t vartype = loadType();
-      variable_t var = (!isLoadingFunctionPointer()
-                        ? loadVariable(vartype)
-                        : loadFunctionPointer(vartype));
-      loadAttributes(attrs);
-
-      if (var.vartype.type) {
-        var.attributes = var.vartype.type->attributes;
-      }
-      var.attributes.insert(attrs.begin(), attrs.end());
-
-      return var;
-    }
-
     variableDeclaration parser_t::loadVariableDeclaration(attributeTokenMap &smntAttributes,
                                                           const vartype_t &baseType) {
       variableDeclaration decl;
@@ -721,24 +441,13 @@ namespace occa {
       // If partially-defined type, finish parsing it
       vartype_t vartype = baseType.declarationType();
       vartype.qualifiers = baseType.qualifiers;
-      setVartypePointers(vartype);
-      if (!success) {
-        return decl;
-      }
-      setVartypeReference(vartype);
-      if (!success) {
-        return decl;
-      }
 
-      // Load the actual variable if it exists
-      decl.variable = &(!isLoadingFunctionPointer()
-                        ? loadVariable(vartype).clone()
-                        : loadFunctionPointer(vartype).clone());
+      variable_t var;
+      loadVariable(vartype, var);
+      decl.variable = &(var.clone());
 
-      loadDeclarationAttributes(smntAttributes, decl);
-      if (!success) {
-        return decl;
-      }
+      applyDeclarationSmntAttributes(smntAttributes,
+                                     *(decl.variable));
 
       loadDeclarationBitfield(decl);
       loadDeclarationAssignment(decl);
@@ -749,17 +458,15 @@ namespace occa {
     }
 
 
-    void parser_t::loadDeclarationAttributes(attributeTokenMap &smntAttributes,
-                                             variableDeclaration &decl) {
-      attributeTokenMap &varAttributes = decl.variable->attributes;
+    void parser_t::applyDeclarationSmntAttributes(attributeTokenMap &smntAttributes,
+                                                  variable_t &var) {
+      attributeTokenMap allAttributes = smntAttributes;
+      attributeTokenMap &varAttributes = var.attributes;
       // Copy statement attributes to each variable
       // Variable attributes should override statement attributes
-      varAttributes.insert(smntAttributes.begin(),
-                           smntAttributes.end());
-      loadAttributes(varAttributes);
-      if (!success) {
-        return;
-      }
+      allAttributes.insert(varAttributes.begin(),
+                           varAttributes.end());
+      varAttributes = allAttributes;
 
       attributeTokenMap::iterator it = varAttributes.begin();
       while (it != varAttributes.end()) {
@@ -773,19 +480,19 @@ namespace occa {
     }
 
     int parser_t::declarationNextCheck(const opType_t opCheck) {
-      int pos = context.getNextOperator(opCheck);
+      int pos = tokenContext.getNextOperator(opCheck);
       if (pos < 0) {
         if (checkSemicolon) {
-          context.printErrorAtEnd("[1] Expected a [;]");
+          tokenContext.printErrorAtEnd("[1] Expected a [;]");
           success = false;
         }
-        pos = context.size();
+        pos = tokenContext.size();
       }
       return pos;
     }
 
     void parser_t::loadDeclarationBitfield(variableDeclaration &decl) {
-      if (!(getOperatorType(context[0]) & operatorType::colon)) {
+      if (!(token_t::safeOperatorType(tokenContext[0]) & operatorType::colon)) {
         return;
       }
 
@@ -794,7 +501,7 @@ namespace occa {
                                      operatorType::comma      |
                                      operatorType::semicolon);
       if (pos == 1) {
-        context[1]->printError("Expected an expression");
+        tokenContext[1]->printError("Expected an expression");
         success = false;
       }
       if (!success) {
@@ -807,18 +514,18 @@ namespace occa {
       }
       decl.variable->vartype.bitfield = (int) value->evaluate();
       delete value;
-      context.set(pos);
+      tokenContext += pos;
     }
 
     void parser_t::loadDeclarationAssignment(variableDeclaration &decl) {
-      if (!(getOperatorType(context[0]) & operatorType::assign)) {
+      if (!(token_t::safeOperatorType(tokenContext[0]) & operatorType::assign)) {
         return;
       }
 
       int pos = declarationNextCheck(operatorType::comma |
                                      operatorType::semicolon);
       if (pos == 1) {
-        context[1]->printError("Expected an expression");
+        tokenContext[1]->printError("Expected an expression");
         success = false;
       }
       if (!success) {
@@ -829,521 +536,32 @@ namespace occa {
       if (!success) {
         return;
       }
-      context.set(pos);
+      tokenContext += pos;
     }
 
     // TODO: Store brace initializer propertly, maybe in value with an extra flag
     void parser_t::loadDeclarationBraceInitializer(variableDeclaration &decl) {
-      if (!(getOperatorType(context[0]) & operatorType::braceStart)) {
+      if (!(token_t::safeOperatorType(tokenContext[0]) & operatorType::braceStart)) {
         return;
       }
 
-      context.push(context.getClosingPair(0) + 1);
+      tokenContext.push(tokenContext.getClosingPair(0) + 1);
       int pos = declarationNextCheck(operatorType::comma |
                                      operatorType::semicolon);
       if ((pos != 0) &&
-          (pos != context.size())) {
-        context.printError("Expected a [,] for another variable"
-                           " or a stopping [;]");
+          (pos != tokenContext.size())) {
+        tokenContext.printError("Expected a [,] for another variable"
+                                " or a stopping [;]");
         success = false;
       }
       if (!success) {
         return;
       }
-      context.pop();
+      tokenContext.pop();
 
-      context.pushPairRange(0);
+      tokenContext.pushPairRange(0);
       decl.value = getExpression();
-      context.popAndSkip();
-    }
-
-    vartype_t parser_t::loadType() {
-      // TODO: Handle weird () cases:
-      //        int (*const (*const a))      -> int * const * const a;
-      //        int (*const (*const (*a)))() -> int (* const * const *a)();
-      // Set the name in loadBaseType and look for (*)() or (^)()
-      //   to stop qualifier merging
-      vartype_t vartype;
-      loadBaseType(vartype);
-      if (!success ||
-          !vartype.isValid()) {
-        return vartype;
-      }
-
-      setVartypePointers(vartype);
-      if (!success) {
-        return vartype;
-      }
-
-      setVartypeReference(vartype);
-      return vartype;
-    }
-
-    struct_t* parser_t::loadStruct() {
-      // Store type declarations in temporary block statement
-      blockStatement *blockSmnt = new blockStatement(up, context[0]);
-      pushUp(*blockSmnt);
-
-      // Skip 'struct' token
-      ++context;
-
-      token_t *nameToken = context[0];
-      if (!nameToken ||
-          (!(nameToken->type() & tokenType::identifier))) {
-        context.printError("Expected struct name");
-        success = false;
-        delete blockSmnt;
-        popUp();
-        return NULL;
-      }
-
-      ++context;
-      opType_t opType = getOperatorType(context[0]);
-      if (!(opType & (operatorType::braceStart |
-                      operatorType::scope))) {
-        context.printError("Expected struct body {}");
-        success = false;
-        delete blockSmnt;
-        popUp();
-        return NULL;
-      }
-
-      context.pushPairRange(0);
-
-      // Load type declaration statements
-      statement_t *smnt = getNextStatement();
-      variableVector fields;
-      while (smnt) {
-        const int sType = smnt->type();
-        if (!(sType & statementType::declaration)) {
-          if (sType & (statementType::function |
-                       statementType::functionDecl)) {
-            smnt->printError("Struct functions are not supported yet");
-          } else if (sType & statementType::classAccess) {
-            smnt->printError("Access modifiers are not supported yet");
-          } else {
-            smnt->printError("Expected variable declaration statements");
-          }
-          success = false;
-          delete blockSmnt;
-          popUp();
-          return NULL;
-        }
-
-        variableDeclarationVector &declarations = (smnt
-                                                   ->to<declarationStatement>()
-                                                   .declarations);
-        const int varCount = (int) declarations.size();
-        for (int i = 0; i < varCount; ++i) {
-          variableDeclaration &decl = declarations[i];
-          if (decl.value) {
-            decl.value->printError("Struct fields cannot have default values");
-            success = false;
-            delete blockSmnt;
-            popUp();
-            return NULL;
-          }
-          fields.push_back(*(decl.variable));
-        }
-        delete smnt;
-        smnt = getNextStatement();
-      }
-
-      delete blockSmnt;
-      popUp();
-
-      context.popAndSkip();
-
-      opType = getOperatorType(context[0]);
-      if (!(opType & operatorType::semicolon)) {
-        context.printError("Expected [;] after struct definition");
-        success = false;
-        return NULL;
-      }
-      ++context;
-
-      struct_t *type = new struct_t(*((identifierToken*) nameToken));
-      type->addFields(fields);
-
-      return type;
-    }
-
-    qualifiers_t parser_t::loadQualifiers() {
-      qualifiers_t qualifiers;
-
-      while (context.size()) {
-        token_t *token = context[0];
-        keyword_t &keyword = getKeyword(token);
-        if (!(keyword.type() & keywordType::qualifier)) {
-          break;
-        }
-        qualifiers += keyword.to<qualifierKeyword>().qualifier;
-        ++context;
-      }
-
-      return qualifiers;
-    }
-
-    void parser_t::loadBaseType(vartype_t &vartype) {
-      // Type was already loaded
-      if (vartype.type) {
-        return;
-      }
-
-      const int tokenCount = context.size();
-      int tokenPos;
-
-      bool typedefing = false;
-      for (tokenPos = 0; tokenPos < tokenCount; ++tokenPos) {
-        token_t *token = context[tokenPos];
-
-        keyword_t &keyword = getKeyword(token);
-        const int kType    = keyword.type();
-        if (kType & keywordType::none) {
-          break;
-        }
-
-        if (kType & keywordType::qualifier) {
-          const qualifier_t &qualifier = keyword.to<qualifierKeyword>().qualifier;
-          type_t *type = NULL;
-          if (qualifier == typedef_) {
-            typedefing = true;
-          } else if (qualifier == struct_) {
-            if (typedefing) {
-              token->printError("Typedef'd structs are not supported yet");
-              success = false;
-            }
-          } else if (qualifier == enum_) {
-            // TODO: type = loadEnum();
-            token->printError("Enums are not supported yet");
-            success = false;
-          } else if (qualifier == union_) {
-            // TODO: type = loadUnion();
-            token->printError("Enums are not supported yet");
-            success = false;
-          } else if (qualifier == class_) {
-            // TODO: type = loadClass();
-            token->printError("Enums are not supported yet");
-            success = false;
-          }
-          if (!success) {
-            return;
-          }
-          if (!type) {
-            loadVartypeQualifier(token,
-                                 keyword.to<qualifierKeyword>().qualifier,
-                                 vartype);
-          } else {
-            vartype.type = type;
-            vartype.typeToken = (identifierToken*) type->source->clone();
-          }
-          continue;
-        }
-        if ((kType & keywordType::type) &&
-            !vartype.isValid()) {
-          vartype.type = &(keyword.to<typeKeyword>().type_);
-          vartype.typeToken = (identifierToken*) token->clone();
-          continue;
-        }
-
-        break;
-      }
-
-      if (tokenPos) {
-        context.set(tokenPos);
-      } else {
-        context.printError("Unable to load type");
-        success = false;
-        return;
-      }
-
-      if (vartype.isValid()) {
-        return;
-      }
-
-      if (vartype.has(long_) ||
-          vartype.has(longlong_)) {
-        vartype.type = &int_;
-        return;
-      }
-
-      context.printError("Expected a type");
-      success = false;
-    }
-
-    void parser_t::loadVartypeQualifier(token_t *token,
-                                        const qualifier_t &qualifier,
-                                        vartype_t &vartype) {
-      // Handle long/long long case
-      if (&qualifier == &long_) {
-        if (vartype.has(long_)) {
-          vartype -= long_;
-          vartype.add(token->origin,
-                      longlong_);
-        }
-        else if (vartype.has(longlong_)) {
-          token->printWarning("'long long long' is tooooooo long,"
-                              " ignoring additional longs");
-        }
-        else {
-          vartype.add(token->origin,
-                      long_);
-        }
-        return;
-      }
-
-      // Non-long qualifiers
-      if (!vartype.has(qualifier)) {
-        vartype.add(token->origin,
-                    qualifier);
-      } else {
-        token->printWarning("Ignoring duplicate qualifier");
-      }
-    }
-
-    void parser_t::setVartypePointers(vartype_t &vartype) {
-      while (success &&
-             context.size()) {
-        if (!(getOperatorType(context[0]) & operatorType::mult)) {
-          break;
-        }
-        ++context;
-        setVartypePointer(vartype);
-      }
-    }
-
-    void parser_t::setVartypePointer(vartype_t &vartype) {
-      pointer_t pointer;
-
-      const int tokens = context.size();
-      int tokenPos;
-      for (tokenPos = 0; tokenPos < tokens; ++tokenPos) {
-        token_t *token     = context[tokenPos];
-        keyword_t &keyword = getKeyword(token);
-        if (!(keyword.type() & keywordType::qualifier)) {
-          break;
-        }
-
-        const qualifier_t &qualifier = keyword.to<qualifierKeyword>().qualifier;
-        if (!(qualifier.type() & qualifierType::forPointers)) {
-          token->printError("Cannot add this qualifier to a pointer");
-          success = false;
-          break;
-        }
-        pointer.add(token->origin,
-                    qualifier);
-      }
-
-      context.set(tokenPos);
-
-      if (success) {
-        vartype += pointer;
-      }
-    }
-
-    void parser_t::setVartypeReference(vartype_t &vartype) {
-      if (!context.size()) {
-        return;
-      }
-      if (!(getOperatorType(context[0]) & operatorType::bitAnd)) {
-        return;
-      }
-      vartype.setReferenceToken(context[0]);
-      ++context;
-    }
-
-    bool parser_t::isLoadingFunctionPointer() {
-      // TODO: Cover the case 'int *()' -> int (*)()'
-      const int tokens = context.size();
-      // Function pointer starts with (* or (^
-      if (!tokens ||
-          !(getOperatorType(context[0]) & operatorType::parenthesesStart)) {
-        return false;
-      }
-
-      context.pushPairRange(0);
-      const bool isFunctionPointer = (
-        context.size()
-        && (getOperatorType(context[0]) & (operatorType::mult |
-                                           operatorType::xor_))
-      );
-      context.pop();
-      return isFunctionPointer;
-    }
-
-    bool parser_t::isLoadingVariable() {
-      const int tokens = context.size();
-      // Variable must have an identifier token next
-      if (!tokens ||
-          (!(context[0]->type() & tokenType::identifier))) {
-        return false;
-      }
-      // If nothing else follows, it must be a variable
-      if (tokens == 1) {
-        return true;
-      }
-      // Last check is if the variable is being called
-      //   with a constructor vs defining a function:
-      //   - int foo((...));
-      // Note: We're guaranteed an extra token since we check for
-      //         closing pairs. So there is at least one ')' token
-      return (!(getOperatorType(context[1]) & operatorType::parenthesesStart) ||
-              (getOperatorType(context[2]) & operatorType::parenthesesStart));
-    }
-
-    bool parser_t::isLoadingFunction() {
-      context.push();
-
-      context.supressErrors = true;
-      vartype_t vartype = loadType();
-      context.supressErrors = false;
-
-      if (!success) {
-        success = true;
-        context.pop();
-        return false;
-      }
-
-      if (!(token_t::safeType(context[0]) & tokenType::identifier)) {
-        context.pop();
-        return false;
-      }
-
-      const bool isFunction = (getOperatorType(context[1])
-                               & operatorType::parenthesesStart);
-      context.pop();
-      return isFunction;
-    }
-
-    bool parser_t::isLoadingStruct() {
-      context.push();
-      context.supressErrors = true;
-      vartype_t vartype = loadType();
-      context.supressErrors = false;
-      success = true;
-      context.pop();
-
-      return (!vartype.isValid()   &&  // Should not have a base type since we're defining it
-              vartype.has(struct_) &&  // Should have struct_
-              !vartype.has(typedef_)); // typedef struct is not loaded as a struct
-    }
-
-    variable_t parser_t::loadFunctionPointer(vartype_t &vartype) {
-      // TODO: Check for nested function pointers
-      //       Check for arrays
-      context.pushPairRange(0);
-
-      functionPtr_t func(vartype);
-      func.isBlock = (getOperatorType(context[0]) & operatorType::xor_);
-      ++context;
-
-      identifierToken *nameToken = NULL;
-      if (context.size() &&
-          (context[0]->type() & tokenType::identifier)) {
-        nameToken = (identifierToken*) context[0];
-        ++context;
-      }
-
-      // If we have arrays, we don't set them in the return type
-      vartype_t arraytype;
-      setArrays(arraytype);
-
-      if (context.size()) {
-        context.printError("Unable to parse type");
-        success = false;
-      }
-
-      context.popAndSkip();
-
-      if (success) {
-        context.pushPairRange(0);
-        setArguments(func);
-        context.popAndSkip();
-      }
-
-      if (!arraytype.arrays.size()) {
-        return variable_t(func, nameToken);
-      }
-
-      vartype_t varType(func);
-      varType.arrays = arraytype.arrays;
-      return variable_t(varType, nameToken);
-    }
-
-    variable_t parser_t::loadVariable(vartype_t &vartype) {
-      identifierToken *nameToken = NULL;
-      if (context.size() &&
-          (context[0]->type() & tokenType::identifier)) {
-        nameToken = (identifierToken*) context[0];
-        ++context;
-      }
-
-      setArrays(vartype);
-
-      return variable_t(vartype, nameToken);
-    }
-
-    bool parser_t::hasArray() {
-      return (context.size() &&
-              (getOperatorType(context[0]) & operatorType::bracketStart));
-    }
-
-    void parser_t::setArrays(vartype_t &vartype) {
-      while (success &&
-             hasArray()) {
-
-        operatorToken &start = context[0]->to<operatorToken>();
-        operatorToken &end   = context.getClosingPairToken(0)->to<operatorToken>();
-        context.pushPairRange(0);
-
-        exprNode *value = NULL;
-        if (context.size()) {
-          value = getExpression();
-          if (!success) {
-            return;
-          }
-        }
-        vartype += array_t(start,
-                           end,
-                           value);
-
-        tokenRange pairRange = context.pop();
-        context.set(pairRange.end + 1);
-      }
-    }
-
-    void parser_t::setArguments(functionPtr_t &func) {
-      setArgumentsFor(func);
-    }
-
-    void parser_t::setArguments(function_t &func) {
-      setArgumentsFor(func);
-    }
-
-    void parser_t::getArgumentRanges(tokenRangeVector &argRanges) {
-      argRanges.clear();
-
-      context.push();
-      while (true) {
-        const int tokens = context.size();
-        if (!tokens) {
-          break;
-        }
-
-        const int pos = context.getNextOperator(operatorType::comma);
-        // No comma found
-        if (pos < 0) {
-          argRanges.push_back(tokenRange(0, tokens));
-          break;
-        }
-        argRanges.push_back(tokenRange(0, pos));
-        // Trailing comma found
-        if (pos == (tokens - 1)) {
-          break;
-        }
-        context.set(pos + 1);
-      }
-      context.pop();
+      tokenContext.popAndSkip();
     }
     //==================================
 
@@ -1398,7 +616,7 @@ namespace occa {
 
     //---[ Statement Loaders ]----------
     void parser_t::loadAllStatements() {
-      statementPtrVector &statements = up->children;
+      statementPtrVector &statements = smntContext.up->children;
       statement_t *smnt = getNextStatement();
 
       while (smnt) {
@@ -1408,14 +626,15 @@ namespace occa {
     }
 
     statement_t* parser_t::loadBlockStatement(attributeTokenMap &smntAttributes) {
-      blockStatement *smnt = new blockStatement(up, context[0]);
+      blockStatement *smnt = new blockStatement(smntContext.up,
+                                                tokenContext[0]);
       addAttributesTo(smntAttributes, smnt);
 
-      context.pushPairRange(0);
-      pushUp(*smnt);
+      tokenContext.pushPairRange(0);
+      smntContext.pushUp(*smnt);
       loadAllStatements();
-      popUp();
-      context.popAndSkip();
+      smntContext.popUp();
+      tokenContext.popAndSkip();
       if (!success) {
         delete smnt;
         return NULL;
@@ -1425,34 +644,36 @@ namespace occa {
     }
 
     statement_t* parser_t::loadEmptyStatement(attributeTokenMap &smntAttributes) {
-      statement_t *smnt = new emptyStatement(up, context[0]);
+      statement_t *smnt = new emptyStatement(smntContext.up,
+                                             tokenContext[0]);
       addAttributesTo(smntAttributes, smnt);
 
       // Skip [;] token
-      ++context;
+      ++tokenContext;
       return smnt;
     }
 
     statement_t* parser_t::loadExpressionStatement(attributeTokenMap &smntAttributes) {
-      int end = context.getNextOperator(operatorType::semicolon);
+      int end = tokenContext.getNextOperator(operatorType::semicolon);
       if (end < 0) {
         if (checkSemicolon) {
-          context.printErrorAtEnd("[2] Expected a [;]");
+          tokenContext.printErrorAtEnd("[2] Expected a [;]");
           success = false;
           return NULL;
         }
-        end = context.size();
+        end = tokenContext.size();
       }
 
-      context.push(0, end);
+      tokenContext.push(0, end);
       exprNode *expr = getExpression();
-      context.pop();
+      tokenContext.pop();
       if (!success) {
         return NULL;
       }
-      context.set(end + 1);
+      tokenContext += (end + 1);
 
-      expressionStatement *smnt = new expressionStatement(up, *expr);
+      expressionStatement *smnt = new expressionStatement(smntContext.up,
+                                                          *expr);
       addAttributesTo(smntAttributes, smnt);
       return smnt;
     }
@@ -1475,7 +696,7 @@ namespace occa {
       }
 
       declarationStatement &smnt = *(
-        new declarationStatement(up,
+        new declarationStatement(smntContext.up,
                                  baseType.typeToken)
       );
       addAttributesTo(smntAttributes, &smnt);
@@ -1487,17 +708,17 @@ namespace occa {
         if (!success) {
           break;
         }
-        const opType_t opType = getOperatorType(context[0]);
+        const opType_t opType = token_t::safeOperatorType(tokenContext[0]);
         if (!(opType & operatorType::comma)) {
           if (opType & operatorType::semicolon) {
-            ++context;
+            ++tokenContext;
           } else if (checkSemicolon) {
-            context.printError("[3] Expected a [;]");
+            tokenContext.printError("[3] Expected a [;]");
             success = false;
           }
           break;
         }
-        ++context;
+        ++tokenContext;
       }
       if (!success) {
         smnt.freeDeclarations();
@@ -1513,7 +734,8 @@ namespace occa {
         return NULL;
       }
 
-      structStatement *smnt = new structStatement(up, *type);
+      structStatement *smnt = new structStatement(smntContext.up,
+                                                  *type);
       success = smnt->addStructToParentScope();
       if (!success) {
         delete &smnt;
@@ -1528,37 +750,37 @@ namespace occa {
     }
 
     statement_t* parser_t::loadNamespaceStatement(attributeTokenMap &smntAttributes) {
-      if (context.size() == 1) {
-        context.printError("Expected a namespace name");
+      if (tokenContext.size() == 1) {
+        tokenContext.printError("Expected a namespace name");
         return NULL;
       }
 
       // Skip [namespace] token
-      ++context;
+      ++tokenContext;
       tokenVector names;
 
       while (true) {
         // Get the namespace name
-        if (!(context[0]->type() & tokenType::identifier)) {
-          context.printError("Expected a namespace name");
+        if (!(tokenContext[0]->type() & tokenType::identifier)) {
+          tokenContext.printError("Expected a namespace name");
           success = false;
           return NULL;
         }
-        names.push_back(context[0]);
+        names.push_back(tokenContext[0]);
 
         // Check we still have a token for {
-        if (context.size() == 1) {
-          context.printError("Missing namespace body {}");
+        if (tokenContext.size() == 1) {
+          tokenContext.printError("Missing namespace body {}");
           success = false;
           return NULL;
         }
-        ++context;
+        ++tokenContext;
 
         // Find { or ::
-        const opType_t opType = getOperatorType(context[0]);
+        const opType_t opType = token_t::safeOperatorType(tokenContext[0]);
         if (!(opType & (operatorType::braceStart |
                         operatorType::scope))) {
-          context.printError("Expected namespace body {}");
+          tokenContext.printError("Expected namespace body {}");
           success = false;
           return NULL;
         }
@@ -1566,12 +788,12 @@ namespace occa {
         if (opType & operatorType::braceStart) {
           break;
         }
-        if (context.size() == 1) {
-          context.printError("Missing namespace body {}");
+        if (tokenContext.size() == 1) {
+          tokenContext.printError("Missing namespace body {}");
           success = false;
           return NULL;
         }
-        ++context;
+        ++tokenContext;
       }
 
       namespaceStatement *smnt = NULL;
@@ -1579,7 +801,7 @@ namespace occa {
 
       const int levels = (int) names.size();
       for (int i = 0; i < levels; ++i) {
-        namespaceStatement *nextSmnt = new namespaceStatement(up,
+        namespaceStatement *nextSmnt = new namespaceStatement(smntContext.up,
                                                               names[i]
                                                               ->clone()
                                                               ->to<identifierToken>());
@@ -1596,43 +818,18 @@ namespace occa {
       addAttributesTo(smntAttributes, currentSmnt);
 
       // Load block content
-      context.pushPairRange(0);
-      pushUp(*currentSmnt);
+      tokenContext.pushPairRange(0);
+      smntContext.pushUp(*currentSmnt);
       loadAllStatements();
-      popUp();
-      context.popAndSkip();
+      smntContext.popUp();
+      tokenContext.popAndSkip();
 
       return smnt;
     }
 
     statement_t* parser_t::loadFunctionStatement(attributeTokenMap &smntAttributes) {
-      vartype_t returnType = loadType();
-
-      if (!(token_t::safeType(context[0]) & tokenType::identifier)) {
-        context.printError("Expected function name identifier");
-        success = false;
-        return NULL;
-      }
-      if (!(getOperatorType(context[1]) & operatorType::parenthesesStart)) {
-        context.printError("Expected parenetheses with function arguments");
-        success = false;
-        return NULL;
-      }
-
-      function_t &func = *(new function_t(returnType,
-                                          context[0]->to<identifierToken>()));
-      context.pushPairRange(1);
-      setArguments(func);
-      context.popAndSkip();
-
-      const opType_t opType = getOperatorType(context[0]);
-      if (!(opType & (operatorType::semicolon |
-                      operatorType::braceStart))) {
-        context.printError("[4] Expected a [;]");
-        success = false;
-        delete &func;
-        return NULL;
-      }
+      function_t &func = *(new function_t());
+      loadFunction(func);
 
       // Copy attributes to the function itself
       func.attributes = smntAttributes;
@@ -1648,13 +845,15 @@ namespace occa {
       }
 
       // func(); <-- function
-      if (opType & operatorType::semicolon) {
-        ++context;
-        return new functionStatement(up, func);
+      if (token_t::safeOperatorType(tokenContext[0]) & operatorType::semicolon) {
+        ++tokenContext;
+        return new functionStatement(smntContext.up,
+                                     func);
       }
 
       // func() {...} <-- function declaration
-      functionDeclStatement &funcSmnt = *(new functionDeclStatement(up, func));
+      functionDeclStatement &funcSmnt = *(new functionDeclStatement(smntContext.up,
+                                                                    func));
       success = funcSmnt.addFunctionToParentScope();
       if (!success) {
         delete &funcSmnt;
@@ -1664,9 +863,9 @@ namespace occa {
       }
       addAttributesTo(smntAttributes, &funcSmnt);
 
-      pushUp(funcSmnt);
+      smntContext.pushUp(funcSmnt);
       statement_t *content = getNextStatement();
-      popUp();
+      smntContext.popUp();
       if (success) {
         funcSmnt.set(*content);
       }
@@ -1680,18 +879,18 @@ namespace occa {
     void parser_t::checkIfConditionStatementExists() {
       // Called when checking:
       //     if (...), for (...), while (...), switch (...)
-      // when the context is at
+      // when the tokenContext is at
       //     if, for, while, switch
 
       // Need to make sure we have another token (even if it's not '(')
-      bool error = (context.size() == 1);
+      bool error = (tokenContext.size() == 1);
       if (!error) {
-        ++context;
-        error = !(getOperatorType(context[0]) & operatorType::parenthesesStart);
+        ++tokenContext;
+        error = !(token_t::safeOperatorType(tokenContext[0]) & operatorType::parenthesesStart);
       }
 
       if (error) {
-        context.printError("Expected a condition statement");
+        tokenContext.printError("Expected a condition statement");
         success = false;
       }
     }
@@ -1699,8 +898,8 @@ namespace occa {
     void parser_t::loadConditionStatements(statementPtrVector &statements,
                                            const int expectedCount) {
       // Load expression/declaration
-      token_t *parenBegin = context[0];
-      context.pushPairRange(0);
+      token_t *parenBegin = tokenContext[0];
+      tokenContext.pushPairRange(0);
 
       int count = 0;
       bool error = true;
@@ -1735,7 +934,7 @@ namespace occa {
         if (count > expectedCount) {
           std::string message = "Too many statements, expected ";
           message += ('0' + (char) expectedCount);
-          context.printError(message);
+          tokenContext.printError(message);
           error = true;
           break;
         }
@@ -1748,14 +947,14 @@ namespace occa {
           break;
         }
       }
-      context.popAndSkip();
+      tokenContext.popAndSkip();
 
       if (!error &&
           (peek() & statementType::attribute)) {
         // TODO: Support multi-location errors and point to
         //         parenEnd as a suggestion
-        context.printError("Attributes should be placed as an additional statement"
-                           " (e.g. [for (;;; @attr)] or [if (; @attr)])");
+        tokenContext.printError("Attributes should be placed as an additional statement"
+                                " (e.g. [for (;;; @attr)] or [if (; @attr)])");
         error = true;
       }
 
@@ -1792,23 +991,24 @@ namespace occa {
     }
 
     statement_t* parser_t::loadIfStatement(attributeTokenMap &smntAttributes) {
-      token_t *ifToken = context[0];
+      token_t *ifToken = tokenContext[0];
       checkIfConditionStatementExists();
       if (!success) {
         return NULL;
       }
 
-      ifStatement &ifSmnt = *(new ifStatement(up, ifToken));
-      pushUp(ifSmnt);
+      ifStatement &ifSmnt = *(new ifStatement(smntContext.up,
+                                              ifToken));
+      smntContext.pushUp(ifSmnt);
       addAttributesTo(smntAttributes, &ifSmnt);
 
       statement_t *condition = loadConditionStatement();
       if (!condition) {
         if (success) {
           success = false;
-          context.printError("Missing condition for [if] statement");
+          tokenContext.printError("Missing condition for [if] statement");
         }
-        popUp();
+        smntContext.popUp();
         delete &ifSmnt;
         return NULL;
       }
@@ -1818,10 +1018,10 @@ namespace occa {
       statement_t *content = getNextStatement();
       if (!content) {
         if (success) {
-          context.printError("Missing content for [if] statement");
+          tokenContext.printError("Missing content for [if] statement");
           success = false;
         }
-        popUp();
+        smntContext.popUp();
         delete &ifSmnt;
         return NULL;
       }
@@ -1830,15 +1030,15 @@ namespace occa {
       int sType;
       while ((sType = peek()) & (statementType::elif_ |
                                  statementType::else_)) {
-        pushUp(ifSmnt);
+        smntContext.pushUp(ifSmnt);
         statement_t *elSmnt = getNextStatement();
-        popUp();
+        smntContext.popUp();
         if (!elSmnt) {
           if (success) {
             break;
           }
           delete &ifSmnt;
-          popUp();
+          smntContext.popUp();
           return NULL;
         }
         if (sType & statementType::elif_) {
@@ -1849,7 +1049,7 @@ namespace occa {
         }
       }
 
-      popUp();
+      smntContext.popUp();
       return &ifSmnt;
     }
 
@@ -1858,33 +1058,34 @@ namespace occa {
       //   expects 1 token before the condition
       // This is basically the same code as loadIfStatement
       //   but with an elif class
-      token_t *elifToken = context[0];
-      ++context;
+      token_t *elifToken = tokenContext[0];
+      ++tokenContext;
       checkIfConditionStatementExists();
       if (!success) {
         return NULL;
       }
 
-      elifStatement &elifSmnt = *(new elifStatement(up, elifToken));
-      pushUp(elifSmnt);
+      elifStatement &elifSmnt = *(new elifStatement(smntContext.up,
+                                                    elifToken));
+      smntContext.pushUp(elifSmnt);
       addAttributesTo(smntAttributes, &elifSmnt);
 
       statement_t *condition = loadConditionStatement();
       if (!condition) {
         if (success) {
           success = false;
-          context.printError("Missing condition for [else if] statement");
+          tokenContext.printError("Missing condition for [else if] statement");
         }
-        popUp();
+        smntContext.popUp();
         return NULL;
       }
 
       elifSmnt.setCondition(condition);
 
       statement_t *content = getNextStatement();
-      popUp();
+      smntContext.popUp();
       if (!content) {
-        context.printError("Missing content for [else if] statement");
+        tokenContext.printError("Missing content for [else if] statement");
         success = false;
         delete &elifSmnt;
         return NULL;
@@ -1895,17 +1096,18 @@ namespace occa {
     }
 
     statement_t* parser_t::loadElseStatement(attributeTokenMap &smntAttributes) {
-      token_t *elseToken = context[0];
-      ++context;
+      token_t *elseToken = tokenContext[0];
+      ++tokenContext;
 
-      elseStatement &elseSmnt = *(new elseStatement(up, elseToken));
-      pushUp(elseSmnt);
+      elseStatement &elseSmnt = *(new elseStatement(smntContext.up,
+                                                    elseToken));
+      smntContext.pushUp(elseSmnt);
       addAttributesTo(smntAttributes, &elseSmnt);
 
       statement_t *content = getNextStatement();
-      popUp();
+      smntContext.popUp();
       if (!content) {
-        context.printError("Missing content for [else] statement");
+        tokenContext.printError("Missing content for [else] statement");
         success = false;
         delete &elseSmnt;
         return NULL;
@@ -1916,22 +1118,23 @@ namespace occa {
     }
 
     statement_t* parser_t::loadForStatement(attributeTokenMap &smntAttributes) {
-      token_t *forToken = context[0];
+      token_t *forToken = tokenContext[0];
       checkIfConditionStatementExists();
       if (!success) {
         return NULL;
       }
 
-      forStatement &forSmnt = *(new forStatement(up, forToken));
-      pushUp(forSmnt);
+      forStatement &forSmnt = *(new forStatement(smntContext.up,
+                                                 forToken));
+      smntContext.pushUp(forSmnt);
       addAttributesTo(smntAttributes, &forSmnt);
 
-      token_t *parenEnd = context.getClosingPairToken(0);
+      token_t *parenEnd = tokenContext.getClosingPairToken(0);
 
       statementPtrVector statements;
       loadConditionStatements(statements, 3);
       if (!success) {
-        popUp();
+        smntContext.popUp();
         delete &forSmnt;
         return NULL;
       }
@@ -1940,7 +1143,9 @@ namespace occa {
       // Last statement is optional
       if (count == 2) {
         ++count;
-        statements.push_back(new emptyStatement(up, parenEnd, false));
+        statements.push_back(new emptyStatement(smntContext.up,
+                                                parenEnd,
+                                                false));
       }
       if (count < 3) {
         std::string message;
@@ -1952,13 +1157,13 @@ namespace occa {
         if (parenEnd) {
           parenEnd->printError(message);
         } else {
-          context.printError(message);
+          tokenContext.printError(message);
         }
         for (int i = 0; i < count; ++i) {
           delete statements[i];
         }
         success = false;
-        popUp();
+        smntContext.popUp();
         delete &forSmnt;
         return NULL;
       }
@@ -1974,10 +1179,10 @@ namespace occa {
       addAttributesTo(attributes, &forSmnt);
 
       statement_t *content = getNextStatement();
-      popUp();
+      smntContext.popUp();
       if (!content) {
         if (success) {
-          context.printError("Missing content for [for] statement");
+          tokenContext.printError("Missing content for [for] statement");
           success = false;
         }
         delete &forSmnt;
@@ -1989,8 +1194,8 @@ namespace occa {
     }
 
     statement_t* parser_t::loadWhileStatement(attributeTokenMap &smntAttributes) {
-      token_t *whileToken = context[0];
-      if (getKeyword(context[0]).type() & keywordType::do_) {
+      token_t *whileToken = tokenContext[0];
+      if (getKeyword(tokenContext[0]).type() & keywordType::do_) {
         return loadDoWhileStatement(smntAttributes);
       }
 
@@ -1999,17 +1204,18 @@ namespace occa {
         return NULL;
       }
 
-      whileStatement &whileSmnt = *(new whileStatement(up, whileToken));
-      pushUp(whileSmnt);
+      whileStatement &whileSmnt = *(new whileStatement(smntContext.up,
+                                                       whileToken));
+      smntContext.pushUp(whileSmnt);
       addAttributesTo(smntAttributes, &whileSmnt);
 
       statement_t *condition = loadConditionStatement();
       if (!condition) {
         if (success) {
           success = false;
-          context.printError("Missing condition for [while] statement");
+          tokenContext.printError("Missing condition for [while] statement");
         }
-        popUp();
+        smntContext.popUp();
         delete &whileSmnt;
         return NULL;
       }
@@ -2017,9 +1223,9 @@ namespace occa {
       whileSmnt.setCondition(condition);
 
       statement_t *content = getNextStatement();
-      popUp();
+      smntContext.popUp();
       if (!content) {
-        context.printError("Missing content for [while] statement");
+        tokenContext.printError("Missing content for [while] statement");
         success = false;
         delete &whileSmnt;
         return NULL;
@@ -2030,28 +1236,30 @@ namespace occa {
     }
 
     statement_t* parser_t::loadDoWhileStatement(attributeTokenMap &smntAttributes) {
-      token_t *doToken = context[0];
-      ++context;
+      token_t *doToken = tokenContext[0];
+      ++tokenContext;
 
-      whileStatement &whileSmnt = *(new whileStatement(up, doToken, true));
-      pushUp(whileSmnt);
+      whileStatement &whileSmnt = *(new whileStatement(smntContext.up,
+                                                       doToken,
+                                                       true));
+      smntContext.pushUp(whileSmnt);
       addAttributesTo(smntAttributes, &whileSmnt);
 
       statement_t *content = getNextStatement();
       if (!content) {
         if (success) {
-          context.printError("Missing content for [do-while] statement");
+          tokenContext.printError("Missing content for [do-while] statement");
           success = false;
         }
-        popUp();
+        smntContext.popUp();
         delete &whileSmnt;
         return NULL;
       }
       whileSmnt.set(*content);
 
-      keyword_t &nextKeyword = getKeyword(context[0]);
+      keyword_t &nextKeyword = getKeyword(tokenContext[0]);
       if (!(nextKeyword.type() & keywordType::while_)) {
-        context.printError("Expected [while] condition after [do]");
+        tokenContext.printError("Expected [while] condition after [do]");
         success = false;
         delete &whileSmnt;
         return NULL;
@@ -2060,7 +1268,7 @@ namespace occa {
       checkIfConditionStatementExists();
       if (!success) {
         delete &whileSmnt;
-        popUp();
+        smntContext.popUp();
         return NULL;
       }
 
@@ -2068,45 +1276,46 @@ namespace occa {
       if (!condition) {
         if (success) {
           success = false;
-          context.printError("Missing condition for [do-while] statement");
+          tokenContext.printError("Missing condition for [do-while] statement");
         }
         delete &whileSmnt;
-        popUp();
+        smntContext.popUp();
         return NULL;
       }
       whileSmnt.setCondition(condition);
 
-      if (!(getOperatorType(context[0]) & operatorType::semicolon)) {
-        context.printError("[5] Expected a [;]");
+      if (!(token_t::safeOperatorType(tokenContext[0]) & operatorType::semicolon)) {
+        tokenContext.printError("[5] Expected a [;]");
         success = false;
-        popUp();
+        smntContext.popUp();
         delete &whileSmnt;
         return NULL;
       }
-      ++context;
+      ++tokenContext;
 
       return &whileSmnt;
     }
 
     statement_t* parser_t::loadSwitchStatement(attributeTokenMap &smntAttributes) {
-      token_t *switchToken = context[0];
+      token_t *switchToken = tokenContext[0];
       checkIfConditionStatementExists();
       if (!success) {
         return NULL;
       }
 
-      switchStatement &switchSmnt = *(new switchStatement(up, switchToken));
-      pushUp(switchSmnt);
+      switchStatement &switchSmnt = *(new switchStatement(smntContext.up,
+                                                          switchToken));
+      smntContext.pushUp(switchSmnt);
       addAttributesTo(smntAttributes, &switchSmnt);
 
-      token_t *parenEnd = context.getClosingPairToken(0);
+      token_t *parenEnd = tokenContext.getClosingPairToken(0);
       statement_t *condition = loadConditionStatement();
       if (!condition) {
         if (success) {
           success = false;
-          context.printError("Missing condition for [switch] statement");
+          tokenContext.printError("Missing condition for [switch] statement");
         }
-        popUp();
+        smntContext.popUp();
         delete &switchSmnt;
         return NULL;
       }
@@ -2114,7 +1323,7 @@ namespace occa {
       switchSmnt.setCondition(condition);
 
       statement_t *content = getNextStatement();
-      popUp();
+      smntContext.popUp();
       if (!content) {
         parenEnd->printError("Missing content for [switch] statement");
         success = false;
@@ -2142,13 +1351,13 @@ namespace occa {
     }
 
     statement_t* parser_t::loadCaseStatement(attributeTokenMap &smntAttributes) {
-      token_t *caseToken = context[0];
-      ++context;
+      token_t *caseToken = tokenContext[0];
+      ++tokenContext;
 
-      const int pos = context.getNextOperator(operatorType::colon);
+      const int pos = tokenContext.getNextOperator(operatorType::colon);
       // No : found
       if (pos < 0) {
-        context.printError("Expected a [:] to close the [case] statement");
+        tokenContext.printError("Expected a [:] to close the [case] statement");
         success = false;
         return NULL;
       }
@@ -2159,71 +1368,76 @@ namespace occa {
         value = getExpression(0, pos);
       }
       if (!value) {
-        context.printError("Expected a constant expression for the [case] statement");
+        tokenContext.printError("Expected a constant expression for the [case] statement");
         success = false;
         return NULL;
       }
 
-      context.set(pos + 1);
+      tokenContext += (pos + 1);
 
-      caseStatement *smnt = new caseStatement(up, caseToken, *value);
+      caseStatement *smnt = new caseStatement(smntContext.up,
+                                              caseToken,
+                                              *value);
       addAttributesTo(smntAttributes, smnt);
       return smnt;
     }
 
     statement_t* parser_t::loadDefaultStatement(attributeTokenMap &smntAttributes) {
-      token_t *defaultToken = context[0];
-      ++context;
-      if (!(getOperatorType(context[0]) & operatorType::colon)) {
-        context.printError("Expected a [:]");
+      token_t *defaultToken = tokenContext[0];
+      ++tokenContext;
+      if (!(token_t::safeOperatorType(tokenContext[0]) & operatorType::colon)) {
+        tokenContext.printError("Expected a [:]");
         success = false;
         return NULL;
       }
-      ++context;
+      ++tokenContext;
 
-      defaultStatement *smnt = new defaultStatement(up, defaultToken);
+      defaultStatement *smnt = new defaultStatement(smntContext.up,
+                                                    defaultToken);
       addAttributesTo(smntAttributes, smnt);
       return smnt;
     }
 
     statement_t* parser_t::loadContinueStatement(attributeTokenMap &smntAttributes) {
-      token_t *continueToken = context[0];
-      ++context;
-      if (!(getOperatorType(context[0]) & operatorType::semicolon)) {
-        context.printError("[6] Expected a [;]");
+      token_t *continueToken = tokenContext[0];
+      ++tokenContext;
+      if (!(token_t::safeOperatorType(tokenContext[0]) & operatorType::semicolon)) {
+        tokenContext.printError("[6] Expected a [;]");
         success = false;
         return NULL;
       }
-      ++context;
+      ++tokenContext;
 
-      continueStatement *smnt = new continueStatement(up, continueToken);
+      continueStatement *smnt = new continueStatement(smntContext.up,
+                                                      continueToken);
       addAttributesTo(smntAttributes, smnt);
       return smnt;
     }
 
     statement_t* parser_t::loadBreakStatement(attributeTokenMap &smntAttributes) {
-      token_t *breakToken = context[0];
-      ++context;
-      if (!(getOperatorType(context[0]) & operatorType::semicolon)) {
-        context.printError("[7] Expected a [;]");
+      token_t *breakToken = tokenContext[0];
+      ++tokenContext;
+      if (!(token_t::safeOperatorType(tokenContext[0]) & operatorType::semicolon)) {
+        tokenContext.printError("[7] Expected a [;]");
         success = false;
         return NULL;
       }
-      ++context;
+      ++tokenContext;
 
-      breakStatement *smnt = new breakStatement(up, breakToken);
+      breakStatement *smnt = new breakStatement(smntContext.up,
+                                                breakToken);
       addAttributesTo(smntAttributes, smnt);
       return smnt;
     }
 
     statement_t* parser_t::loadReturnStatement(attributeTokenMap &smntAttributes) {
-      token_t *returnToken = context[0];
-      ++context;
+      token_t *returnToken = tokenContext[0];
+      ++tokenContext;
 
-      const int pos = context.getNextOperator(operatorType::semicolon);
+      const int pos = tokenContext.getNextOperator(operatorType::semicolon);
       // No ; found
       if (pos < 0) {
-        context.printErrorAtEnd("[8] Expected a [;]");
+        tokenContext.printErrorAtEnd("[8] Expected a [;]");
         success = false;
         return NULL;
       }
@@ -2237,22 +1451,24 @@ namespace occa {
         }
       }
 
-      context.set(pos + 1);
+      tokenContext += (pos + 1);
 
-      returnStatement *smnt = new returnStatement(up, returnToken, value);
+      returnStatement *smnt = new returnStatement(smntContext.up,
+                                                  returnToken,
+                                                  value);
       addAttributesTo(smntAttributes, smnt);
       return smnt;
     }
 
     statement_t* parser_t::loadClassAccessStatement(attributeTokenMap &smntAttributes) {
-      token_t *accessToken = context[0];
-      if (!(getOperatorType(context[1]) & operatorType::colon)) {
-        context.printError("Expected a [:]");
+      token_t *accessToken = tokenContext[0];
+      if (!(token_t::safeOperatorType(tokenContext[1]) & operatorType::colon)) {
+        tokenContext.printError("Expected a [:]");
         success = false;
         return NULL;
       }
-      const int kType = getKeyword(context[0]).type();
-      context.set(2);
+      const int kType = getKeyword(tokenContext[0]).type();
+      tokenContext += 2;
 
       int access = classAccess::private_;
       if (kType == keywordType::public_) {
@@ -2261,57 +1477,61 @@ namespace occa {
         access = classAccess::protected_;
       }
 
-      classAccessStatement *smnt = new classAccessStatement(up, accessToken, access);
+      classAccessStatement *smnt = new classAccessStatement(smntContext.up,
+                                                            accessToken,
+                                                            access);
       addAttributesTo(smntAttributes, smnt);
       return smnt;
     }
 
     statement_t* parser_t::loadPragmaStatement(attributeTokenMap &smntAttributes) {
-      pragmaStatement *smnt = new pragmaStatement(up,
-                                                  *((pragmaToken*) context[0]));
+      pragmaStatement *smnt = new pragmaStatement(smntContext.up,
+                                                  *((pragmaToken*) tokenContext[0]));
       addAttributesTo(smntAttributes, smnt);
 
-      ++context;
+      ++tokenContext;
 
       return smnt;
     }
 
     statement_t* parser_t::loadGotoStatement(attributeTokenMap &smntAttributes) {
-      ++context;
-      if (!(token_t::safeType(context[0]) & tokenType::identifier)) {
-        context.printError("Expected [goto label] identifier");
+      ++tokenContext;
+      if (!(token_t::safeType(tokenContext[0]) & tokenType::identifier)) {
+        tokenContext.printError("Expected [goto label] identifier");
         success = false;
         return NULL;
       }
-      if (!(getOperatorType(context[1]) & operatorType::semicolon)) {
-        context.printError("[9] Expected a [;]");
+      if (!(token_t::safeOperatorType(tokenContext[1]) & operatorType::semicolon)) {
+        tokenContext.printError("[9] Expected a [;]");
         success = false;
         return NULL;
       }
 
-      identifierToken &labelToken = (context[0]
+      identifierToken &labelToken = (tokenContext[0]
                                      ->clone()
                                      ->to<identifierToken>());
-      context.set(2);
+      tokenContext += 2;
 
-      gotoStatement *smnt = new gotoStatement(up, labelToken);
+      gotoStatement *smnt = new gotoStatement(smntContext.up,
+                                              labelToken);
       addAttributesTo(smntAttributes, smnt);
       return smnt;
     }
 
     statement_t* parser_t::loadGotoLabelStatement(attributeTokenMap &smntAttributes) {
-      if (!(getOperatorType(context[1]) & operatorType::colon)) {
-        context.printError("Expected a [:]");
+      if (!(token_t::safeOperatorType(tokenContext[1]) & operatorType::colon)) {
+        tokenContext.printError("Expected a [:]");
         success = false;
         return NULL;
       }
 
-      identifierToken &labelToken = (context[0]
+      identifierToken &labelToken = (tokenContext[0]
                                      ->clone()
                                      ->to<identifierToken>());
-      context.set(2);
+      tokenContext += 2;
 
-      gotoLabelStatement *smnt = new gotoLabelStatement(up, labelToken);
+      gotoLabelStatement *smnt = new gotoLabelStatement(smntContext.up,
+                                                        labelToken);
       addAttributesTo(smntAttributes, smnt);
       return smnt;
     }

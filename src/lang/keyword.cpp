@@ -1,4 +1,6 @@
 #include <occa/lang/keyword.hpp>
+#include <occa/lang/statementContext.hpp>
+#include <occa/lang/token.hpp>
 #include <occa/lang/variable.hpp>
 #include <occa/lang/builtins/types.hpp>
 
@@ -83,6 +85,86 @@ namespace occa {
               ? keyword->type()
               : keywordType::none);
     }
+
+    //---[ Keywords ]-------------------
+    keywords_t::keywords_t() {}
+
+    void keywords_t::free(const bool deleteSource) {
+      freeKeywords(keywords, deleteSource);
+    }
+
+    keywordMapIterator keywords_t::begin() {
+      return keywords.begin();
+    }
+
+    keywordMapIterator keywords_t::end() {
+      return keywords.end();
+    }
+
+    keyword_t& keywords_t::get(statementContext_t &smntContext,
+                               token_t *token) const {
+      static keyword_t noKeyword;
+      if (!token) {
+        return noKeyword;
+      }
+
+      const int tType = token->type();
+      if (!(tType & (tokenType::identifier |
+                     tokenType::qualifier  |
+                     tokenType::type       |
+                     tokenType::variable   |
+                     tokenType::function))) {
+        return noKeyword;
+      }
+
+      std::string name;
+      if (tType & tokenType::identifier) {
+        name = token->to<identifierToken>().value;
+      }
+      else if (tType & tokenType::qualifier) {
+        name = token->to<qualifierToken>().qualifier.name;
+      }
+      else if (tType & tokenType::type) {
+        name = token->to<typeToken>().value.name();
+      }
+      else if (tType & tokenType::variable) {
+        name = token->to<variableToken>().value.name();
+      }
+      else if (tType & tokenType::function) {
+        name = token->to<functionToken>().value.name();
+      }
+
+      return get(smntContext, name);
+    }
+
+    keyword_t& keywords_t::get(statementContext_t &smntContext,
+                               const std::string &name) const {
+      static keyword_t noKeyword;
+
+      cKeywordMapIterator it = keywords.find(name);
+      if (it != keywords.end()) {
+        return *(it->second);
+      }
+      if (smntContext.up) {
+        return smntContext.up->getScopeKeyword(name);
+      }
+      return noKeyword;
+    }
+
+    void freeKeywords(keywordMap &keywords,
+                      const bool deleteSource) {
+      keywordMapIterator it = keywords.begin();
+      while (it != keywords.end()) {
+        keyword_t &keyword = *(it->second);
+        if (deleteSource) {
+          keyword.deleteSource();
+        }
+        delete &keyword;
+        ++it;
+      }
+      keywords.clear();
+    }
+    //==================================
 
     //---[ Qualifier ]------------------
     qualifierKeyword::qualifierKeyword(const qualifier_t &qualifier_) :
@@ -197,88 +279,88 @@ namespace occa {
     }
     //==================================
 
-    void getKeywords(keywordMap &keywords) {
+    void getKeywords(keywords_t &keywords) {
       // Qualifiers
-      addKeyword(keywords, new qualifierKeyword(const_));
-      addKeyword(keywords, new qualifierKeyword(constexpr_));
-      addKeyword(keywords, new qualifierKeyword(friend_));
-      addKeyword(keywords, new qualifierKeyword(typedef_));
-      addKeyword(keywords, new qualifierKeyword(signed_));
-      addKeyword(keywords, new qualifierKeyword(unsigned_));
-      addKeyword(keywords, new qualifierKeyword(volatile_));
-      addKeyword(keywords, new qualifierKeyword(long_));
-      addKeyword(keywords, new qualifierKeyword(longlong_));
+      keywords.add(*(new qualifierKeyword(const_)));
+      keywords.add(*(new qualifierKeyword(constexpr_)));
+      keywords.add(*(new qualifierKeyword(friend_)));
+      keywords.add(*(new qualifierKeyword(typedef_)));
+      keywords.add(*(new qualifierKeyword(signed_)));
+      keywords.add(*(new qualifierKeyword(unsigned_)));
+      keywords.add(*(new qualifierKeyword(volatile_)));
+      keywords.add(*(new qualifierKeyword(long_)));
+      keywords.add(*(new qualifierKeyword(longlong_)));
 
-      addKeyword(keywords, new qualifierKeyword(extern_));
-      addKeyword(keywords, new qualifierKeyword(externC));
-      addKeyword(keywords, new qualifierKeyword(externCpp));
-      addKeyword(keywords, new qualifierKeyword(mutable_));
-      addKeyword(keywords, new qualifierKeyword(register_));
-      addKeyword(keywords, new qualifierKeyword(static_));
-      addKeyword(keywords, new qualifierKeyword(thread_local_));
+      keywords.add(*(new qualifierKeyword(extern_)));
+      keywords.add(*(new qualifierKeyword(externC)));
+      keywords.add(*(new qualifierKeyword(externCpp)));
+      keywords.add(*(new qualifierKeyword(mutable_)));
+      keywords.add(*(new qualifierKeyword(register_)));
+      keywords.add(*(new qualifierKeyword(static_)));
+      keywords.add(*(new qualifierKeyword(thread_local_)));
 
-      addKeyword(keywords, new qualifierKeyword(explicit_));
-      addKeyword(keywords, new qualifierKeyword(inline_));
-      addKeyword(keywords, new qualifierKeyword(virtual_));
+      keywords.add(*(new qualifierKeyword(explicit_)));
+      keywords.add(*(new qualifierKeyword(inline_)));
+      keywords.add(*(new qualifierKeyword(virtual_)));
 
-      addKeyword(keywords, new qualifierKeyword(class_));
-      addKeyword(keywords, new qualifierKeyword(struct_));
-      addKeyword(keywords, new qualifierKeyword(enum_));
-      addKeyword(keywords, new qualifierKeyword(union_));
+      keywords.add(*(new qualifierKeyword(class_)));
+      keywords.add(*(new qualifierKeyword(struct_)));
+      keywords.add(*(new qualifierKeyword(enum_)));
+      keywords.add(*(new qualifierKeyword(union_)));
 
       // Types
-      addKeyword(keywords, new typeKeyword(const_cast<primitive_t&>(bool_)));
-      addKeyword(keywords, new typeKeyword(const_cast<primitive_t&>(char_)));
-      addKeyword(keywords, new typeKeyword(const_cast<primitive_t&>(char16_t_)));
-      addKeyword(keywords, new typeKeyword(const_cast<primitive_t&>(char32_t_)));
-      addKeyword(keywords, new typeKeyword(const_cast<primitive_t&>(wchar_t_)));
-      addKeyword(keywords, new typeKeyword(const_cast<primitive_t&>(short_)));
-      addKeyword(keywords, new typeKeyword(const_cast<primitive_t&>(int_)));
-      addKeyword(keywords, new typeKeyword(const_cast<primitive_t&>(float_)));
-      addKeyword(keywords, new typeKeyword(const_cast<primitive_t&>(double_)));
-      addKeyword(keywords, new typeKeyword(const_cast<primitive_t&>(void_)));
-      addKeyword(keywords, new typeKeyword(const_cast<primitive_t&>(auto_)));
+      keywords.add(*(new typeKeyword(const_cast<primitive_t&>(bool_))));
+      keywords.add(*(new typeKeyword(const_cast<primitive_t&>(char_))));
+      keywords.add(*(new typeKeyword(const_cast<primitive_t&>(char16_t_))));
+      keywords.add(*(new typeKeyword(const_cast<primitive_t&>(char32_t_))));
+      keywords.add(*(new typeKeyword(const_cast<primitive_t&>(wchar_t_))));
+      keywords.add(*(new typeKeyword(const_cast<primitive_t&>(short_))));
+      keywords.add(*(new typeKeyword(const_cast<primitive_t&>(int_))));
+      keywords.add(*(new typeKeyword(const_cast<primitive_t&>(float_))));
+      keywords.add(*(new typeKeyword(const_cast<primitive_t&>(double_))));
+      keywords.add(*(new typeKeyword(const_cast<primitive_t&>(void_))));
+      keywords.add(*(new typeKeyword(const_cast<primitive_t&>(auto_))));
 
       // OKL Types
-      addKeyword(keywords, new typeKeyword(const_cast<primitive_t&>(uchar2)));
-      addKeyword(keywords, new typeKeyword(const_cast<primitive_t&>(uchar3)));
-      addKeyword(keywords, new typeKeyword(const_cast<primitive_t&>(uchar4)));
+      keywords.add(*(new typeKeyword(const_cast<primitive_t&>(uchar2))));
+      keywords.add(*(new typeKeyword(const_cast<primitive_t&>(uchar3))));
+      keywords.add(*(new typeKeyword(const_cast<primitive_t&>(uchar4))));
 
-      addKeyword(keywords, new typeKeyword(const_cast<primitive_t&>(char2)));
-      addKeyword(keywords, new typeKeyword(const_cast<primitive_t&>(char3)));
-      addKeyword(keywords, new typeKeyword(const_cast<primitive_t&>(char4)));
+      keywords.add(*(new typeKeyword(const_cast<primitive_t&>(char2))));
+      keywords.add(*(new typeKeyword(const_cast<primitive_t&>(char3))));
+      keywords.add(*(new typeKeyword(const_cast<primitive_t&>(char4))));
 
-      addKeyword(keywords, new typeKeyword(const_cast<primitive_t&>(ushort2)));
-      addKeyword(keywords, new typeKeyword(const_cast<primitive_t&>(ushort3)));
-      addKeyword(keywords, new typeKeyword(const_cast<primitive_t&>(ushort4)));
+      keywords.add(*(new typeKeyword(const_cast<primitive_t&>(ushort2))));
+      keywords.add(*(new typeKeyword(const_cast<primitive_t&>(ushort3))));
+      keywords.add(*(new typeKeyword(const_cast<primitive_t&>(ushort4))));
 
-      addKeyword(keywords, new typeKeyword(const_cast<primitive_t&>(short2)));
-      addKeyword(keywords, new typeKeyword(const_cast<primitive_t&>(short3)));
-      addKeyword(keywords, new typeKeyword(const_cast<primitive_t&>(short4)));
+      keywords.add(*(new typeKeyword(const_cast<primitive_t&>(short2))));
+      keywords.add(*(new typeKeyword(const_cast<primitive_t&>(short3))));
+      keywords.add(*(new typeKeyword(const_cast<primitive_t&>(short4))));
 
-      addKeyword(keywords, new typeKeyword(const_cast<primitive_t&>(uint2)));
-      addKeyword(keywords, new typeKeyword(const_cast<primitive_t&>(uint3)));
-      addKeyword(keywords, new typeKeyword(const_cast<primitive_t&>(uint4)));
+      keywords.add(*(new typeKeyword(const_cast<primitive_t&>(uint2))));
+      keywords.add(*(new typeKeyword(const_cast<primitive_t&>(uint3))));
+      keywords.add(*(new typeKeyword(const_cast<primitive_t&>(uint4))));
 
-      addKeyword(keywords, new typeKeyword(const_cast<primitive_t&>(int2)));
-      addKeyword(keywords, new typeKeyword(const_cast<primitive_t&>(int3)));
-      addKeyword(keywords, new typeKeyword(const_cast<primitive_t&>(int4)));
+      keywords.add(*(new typeKeyword(const_cast<primitive_t&>(int2))));
+      keywords.add(*(new typeKeyword(const_cast<primitive_t&>(int3))));
+      keywords.add(*(new typeKeyword(const_cast<primitive_t&>(int4))));
 
-      addKeyword(keywords, new typeKeyword(const_cast<primitive_t&>(ulong2)));
-      addKeyword(keywords, new typeKeyword(const_cast<primitive_t&>(ulong3)));
-      addKeyword(keywords, new typeKeyword(const_cast<primitive_t&>(ulong4)));
+      keywords.add(*(new typeKeyword(const_cast<primitive_t&>(ulong2))));
+      keywords.add(*(new typeKeyword(const_cast<primitive_t&>(ulong3))));
+      keywords.add(*(new typeKeyword(const_cast<primitive_t&>(ulong4))));
 
-      addKeyword(keywords, new typeKeyword(const_cast<primitive_t&>(long2)));
-      addKeyword(keywords, new typeKeyword(const_cast<primitive_t&>(long3)));
-      addKeyword(keywords, new typeKeyword(const_cast<primitive_t&>(long4)));
+      keywords.add(*(new typeKeyword(const_cast<primitive_t&>(long2))));
+      keywords.add(*(new typeKeyword(const_cast<primitive_t&>(long3))));
+      keywords.add(*(new typeKeyword(const_cast<primitive_t&>(long4))));
 
-      addKeyword(keywords, new typeKeyword(const_cast<primitive_t&>(float2)));
-      addKeyword(keywords, new typeKeyword(const_cast<primitive_t&>(float3)));
-      addKeyword(keywords, new typeKeyword(const_cast<primitive_t&>(float4)));
+      keywords.add(*(new typeKeyword(const_cast<primitive_t&>(float2))));
+      keywords.add(*(new typeKeyword(const_cast<primitive_t&>(float3))));
+      keywords.add(*(new typeKeyword(const_cast<primitive_t&>(float4))));
 
-      addKeyword(keywords, new typeKeyword(const_cast<primitive_t&>(double2)));
-      addKeyword(keywords, new typeKeyword(const_cast<primitive_t&>(double3)));
-      addKeyword(keywords, new typeKeyword(const_cast<primitive_t&>(double4)));
+      keywords.add(*(new typeKeyword(const_cast<primitive_t&>(double2))));
+      keywords.add(*(new typeKeyword(const_cast<primitive_t&>(double3))));
+      keywords.add(*(new typeKeyword(const_cast<primitive_t&>(double4))));
 
       // TODO: Add builtin functions
       //  - const_cast, static_cast, dynamic_cast, reinterpret_cast
@@ -288,67 +370,26 @@ namespace occa {
       //  - sizeof...
 
       // Conditional statements
-      addKeyword(keywords, new statementKeyword(keywordType::if_       , "if"));
-      addKeyword(keywords, new statementKeyword(keywordType::else_     , "else"));
-      addKeyword(keywords, new statementKeyword(keywordType::switch_   , "switch"));
-      addKeyword(keywords, new statementKeyword(keywordType::case_     , "case"));
-      addKeyword(keywords, new statementKeyword(keywordType::default_  , "default"));
+      keywords.add(*(new statementKeyword(keywordType::if_       , "if")));
+      keywords.add(*(new statementKeyword(keywordType::else_     , "else")));
+      keywords.add(*(new statementKeyword(keywordType::switch_   , "switch")));
+      keywords.add(*(new statementKeyword(keywordType::case_     , "case")));
+      keywords.add(*(new statementKeyword(keywordType::default_  , "default")));
       // Iteration statements
-      addKeyword(keywords, new statementKeyword(keywordType::for_      , "for"));
-      addKeyword(keywords, new statementKeyword(keywordType::while_    , "while"));
-      addKeyword(keywords, new statementKeyword(keywordType::do_       , "do"));
+      keywords.add(*(new statementKeyword(keywordType::for_      , "for")));
+      keywords.add(*(new statementKeyword(keywordType::while_    , "while")));
+      keywords.add(*(new statementKeyword(keywordType::do_       , "do")));
       // Jump statements
-      addKeyword(keywords, new statementKeyword(keywordType::break_    , "break"));
-      addKeyword(keywords, new statementKeyword(keywordType::continue_ , "continue"));
-      addKeyword(keywords, new statementKeyword(keywordType::return_   , "return"));
-      addKeyword(keywords, new statementKeyword(keywordType::goto_     , "goto"));
+      keywords.add(*(new statementKeyword(keywordType::break_    , "break")));
+      keywords.add(*(new statementKeyword(keywordType::continue_ , "continue")));
+      keywords.add(*(new statementKeyword(keywordType::return_   , "return")));
+      keywords.add(*(new statementKeyword(keywordType::goto_     , "goto")));
       // Misc
-      addKeyword(keywords, new statementKeyword(keywordType::namespace_, "namespace"));
+      keywords.add(*(new statementKeyword(keywordType::namespace_, "namespace")));
       // Class access statements
-      addKeyword(keywords, new statementKeyword(keywordType::public_   , "public"));
-      addKeyword(keywords, new statementKeyword(keywordType::protected_, "protected"));
-      addKeyword(keywords, new statementKeyword(keywordType::private_  , "private"));
-    }
-
-    void freeKeywords(keywordMap &keywords,
-                      const bool deleteSource) {
-      keywordMapIterator it = keywords.begin();
-      while (it != keywords.end()) {
-        keyword_t &keyword = *(it->second);
-        if (deleteSource) {
-          keyword.deleteSource();
-        }
-        delete &keyword;
-        ++it;
-      }
-      keywords.clear();
-    }
-
-    void replaceKeyword(keywordMap &keywords,
-                        keyword_t *keyword,
-                        const bool deleteSource) {
-      if (!keyword) {
-        return;
-      }
-      // Ignore keywords without names
-      const std::string &name = keyword->name();
-      if (!name.size()) {
-        delete keyword;
-        return;
-      }
-      keywordMap::iterator it = keywords.find(name);
-      if (it != keywords.end()) {
-        // Make sure we aren't overriding ourselves
-        if (it->second == keyword) {
-          return;
-        }
-        // Free last keyword
-        if (deleteSource) {
-          it->second->deleteSource();
-        }
-        delete it->second;
-      }
-      keywords[name] = keyword;
+      keywords.add(*(new statementKeyword(keywordType::public_   , "public")));
+      keywords.add(*(new statementKeyword(keywordType::protected_, "protected")));
+      keywords.add(*(new statementKeyword(keywordType::private_  , "private")));
     }
   }
 }

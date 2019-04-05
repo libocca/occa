@@ -99,6 +99,13 @@ namespace occa {
               : tokenType::none);
     }
 
+    opType_t token_t::safeOperatorType(token_t *token) {
+      if (!(token_t::safeType(token) & tokenType::op)) {
+        return operatorType::none;
+      }
+      return token->to<operatorToken>().getOpType();
+    }
+
     token_t* token_t::clone(const token_t *token) {
       if (token) {
         return token->clone();

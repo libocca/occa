@@ -1,0 +1,33 @@
+#ifndef OCCA_LANG_PARSER_STRUCTLOADER_HEADER
+#define OCCA_LANG_PARSER_STRUCTLOADER_HEADER
+
+#include <occa/lang/tokenContext.hpp>
+#include <occa/lang/statementContext.hpp>
+
+namespace occa {
+  namespace lang {
+    class struct_t;
+    class parser_t;
+
+    class structLoader_t {
+    private:
+      tokenContext_t &tokenContext;
+      statementContext_t &smntContext;
+      parser_t &parser;
+
+    public:
+      structLoader_t(tokenContext_t &tokenContext_,
+                     statementContext_t &smntContext_,
+                     parser_t &parser_);
+
+      bool loadStruct(struct_t *&type);
+    };
+
+    bool loadStruct(tokenContext_t &tokenContext,
+                    statementContext_t &smntContext,
+                    parser_t &parser,
+                    struct_t *&type);
+  }
+}
+
+#endif

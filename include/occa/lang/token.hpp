@@ -99,6 +99,7 @@ namespace occa {
       }
 
       static int safeType(token_t *token);
+      static opType_t safeOperatorType(token_t *token);
 
       virtual int type() const = 0;
 

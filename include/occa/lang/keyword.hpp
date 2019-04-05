@@ -11,12 +11,15 @@ namespace occa {
   namespace lang {
     class keyword_t;
     class qualifier_t;
+    class statementContext_t;
     class type_t;
+    class token_t;
     class variable_t;
     class function_t;
 
     typedef std::map<std::string, keyword_t*> keywordMap;
     typedef keywordMap::iterator              keywordMapIterator;
+    typedef keywordMap::const_iterator        cKeywordMapIterator;
 
     namespace keywordType {
       extern const int none;
@@ -92,6 +95,33 @@ namespace occa {
 
       static int safeType(keyword_t *keyword);
     };
+
+    //---[ Keywords ]-------------------
+    class keywords_t {
+    public:
+      keywordMap keywords;
+
+      keywords_t();
+
+      void free(const bool deleteSource = false);
+
+      keywordMapIterator begin();
+      keywordMapIterator end();
+
+      template <class keywordType>
+      void add(keywordType &keyword) {
+        keywords[keyword.name()] = &keyword;
+      }
+
+      keyword_t& get(statementContext_t &smntContext,
+                     token_t *token) const;
+      keyword_t& get(statementContext_t &smntContext,
+                     const std::string &name) const;
+    };
+
+    void freeKeywords(keywordMap &keywords,
+                      const bool deleteSource = false);
+    //==================================
 
     //---[ Qualifier ]------------------
     class qualifierKeyword : public keyword_t {
@@ -177,19 +207,7 @@ namespace occa {
     };
     //==================================
 
-    void getKeywords(keywordMap &keywords);
-    void freeKeywords(keywordMap &keywords,
-                      const bool deleteSource = false);
-
-    template <class keywordType>
-    void addKeyword(keywordMap &keywords,
-                    keywordType *keyword) {
-      keywords[keyword->name()] = keyword;
-    }
-
-    void replaceKeyword(keywordMap &keywords,
-                        keyword_t *keyword,
-                        const bool deleteSource = false);
+    void getKeywords(keywords_t &keywords);
   }
 }
 #endif
