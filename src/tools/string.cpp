@@ -6,6 +6,7 @@
 #  include <windows.h>
 #endif
 
+#include <occa/tools/env.hpp>
 #include <occa/tools/lex.hpp>
 #include <occa/tools/string.hpp>
 #include <occa/tools/sys.hpp>
@@ -368,6 +369,9 @@ namespace occa {
 
     std::string string(const std::string &s,
                        color_t fg) {
+      if (!env::OCCA_COLOR_ENABLED) {
+        return s;
+      }
       std::string ret = fgMap[fg];
       ret += s;
       ret += fgMap[normal];
@@ -377,6 +381,9 @@ namespace occa {
     std::string string(const std::string &s,
                        color_t fg,
                        color_t bg) {
+      if (!env::OCCA_COLOR_ENABLED) {
+        return s;
+      }
       std::string ret = fgMap[fg];
       ret += bgMap[bg];
       ret += s;

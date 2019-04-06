@@ -21,8 +21,9 @@ namespace occa {
     std::string PATH, LD_LIBRARY_PATH;
 
     std::string OCCA_DIR, OCCA_CACHE_DIR;
-    size_t OCCA_MEM_BYTE_ALIGN;
-    strVector OCCA_PATH;
+    size_t      OCCA_MEM_BYTE_ALIGN;
+    strVector   OCCA_PATH;
+    bool        OCCA_COLOR_ENABLED;
 
     properties& baseSettings() {
       static properties settings_;
@@ -55,7 +56,7 @@ namespace occa {
       settings_["version"]     = OCCA_VERSION_STR;
       settings_["okl-version"] = OKL_VERSION_STR;
 
-      const bool isVerbose = env::get("OCCA_VERBOSE", false);
+      const bool isVerbose = env::get<bool>("OCCA_VERBOSE", false);
       if (isVerbose) {
         settings_["device/verbose"] = true;
         settings_["kernel/verbose"] = true;
@@ -66,10 +67,11 @@ namespace occa {
     void envInitializer_t::initEnvironment() {
       // Standard environment variables
 #if (OCCA_OS & (OCCA_LINUX_OS | OCCA_MACOS_OS))
-      HOME            = env::var("HOME");
-      PWD             = env::var("PWD");
-      PATH            = env::var("PATH");
-      LD_LIBRARY_PATH = env::var("LD_LIBRARY_PATH");
+      HOME               = env::var("HOME");
+      PWD                = env::var("PWD");
+      PATH               = env::var("PATH");
+      LD_LIBRARY_PATH    = env::var("LD_LIBRARY_PATH");
+      OCCA_COLOR_ENABLED = env::get<bool>("OCCA_COLOR_ENABLED", true);
 
       io::endWithSlash(HOME);
       io::endWithSlash(PWD);

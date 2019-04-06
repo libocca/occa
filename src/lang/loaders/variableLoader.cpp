@@ -222,7 +222,6 @@ namespace occa {
       }
 
       func.setSource(tokenContext[0]->to<identifierToken>());
-      func.printWarning("hi");
       ++tokenContext;
 
       tokenContext.pushPairRange();

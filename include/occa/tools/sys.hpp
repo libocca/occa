@@ -125,25 +125,22 @@ namespace occa {
              const int line,
              const std::string &message);
 
-  void printNote(io::output &out,
-                 const std::string &message);
-
-  inline void printNote(const std::string &message) {
-    printNote(io::stderr, message);
-  }
-
   void printWarning(io::output &out,
-                    const std::string &message);
+                    const std::string &message,
+                    const std::string &code = "");
 
-  inline void printWarning(const std::string &message) {
-    printWarning(io::stderr, message);
+  inline void printWarning(const std::string &message,
+                           const std::string &code = "") {
+    printWarning(io::stderr, message, code);
   }
 
   void printError(io::output &out,
-                  const std::string &message);
+                  const std::string &message,
+                  const std::string &code = "");
 
-  inline void printError(const std::string &message) {
-    printError(io::stderr, message);
+  inline void printError(const std::string &message,
+                         const std::string &code = "") {
+    printError(io::stderr, message, code);
   }
 
   class mutex {

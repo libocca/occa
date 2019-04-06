@@ -16,6 +16,7 @@ namespace occa {
     extern std::string OCCA_DIR, OCCA_CACHE_DIR;
     extern size_t      OCCA_MEM_BYTE_ALIGN;
     extern strVector   OCCA_PATH;
+    extern bool        OCCA_COLOR_ENABLED;
 
     properties& baseSettings();
 
@@ -23,11 +24,11 @@ namespace occa {
 
     template <class TM>
     TM get(const std::string &var, const TM &defaultsTo = TM()) {
-      const std::string v = env::var(var);
-      if (v.size() == 0) {
+      const std::string value = env::var(var);
+      if (value.size() == 0) {
         return defaultsTo;
       }
-      return fromString<TM>(var);
+      return fromString<TM>(value);
     }
 
     class envInitializer_t {

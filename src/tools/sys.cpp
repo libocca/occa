@@ -964,19 +964,26 @@ namespace occa {
              filename, function, line, message);
   }
 
-  void printNote(io::output &out,
-                 const std::string &message) {
-    out << blue("Note") << ": " << message << '\n';
-  }
-
   void printWarning(io::output &out,
-                    const std::string &message) {
-    out << yellow("Warning") << ": " << message << '\n';
+                    const std::string &message,
+                    const std::string &code) {
+    if (code.size()) {
+      out << yellow("Warning " + code);
+    } else {
+      out << yellow("Warning");
+    }
+    out << ": " << message << '\n';
   }
 
   void printError(io::output &out,
-                  const std::string &message) {
-    out << red("Error") << ": " << message << '\n';
+                  const std::string &message,
+                  const std::string &code) {
+    if (code.size()) {
+      out << red("Error " + code);
+    } else {
+      out << red("Error");
+    }
+    out << ": " << message << '\n';
   }
 
   mutex::mutex() {
