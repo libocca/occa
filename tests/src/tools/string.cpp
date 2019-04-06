@@ -78,11 +78,15 @@ void testString() {
   strVector vec = split("a|b|c", '|');
 
   // toString
+  ASSERT_EQ(toString(true), "true");
+  ASSERT_EQ(toString(false), "false");
   ASSERT_EQ(toString(1), "1");
   ASSERT_EQ(toString("1"), "1");
   ASSERT_EQ(toString(vec), "[a,b,c]");
 
-  // fromString
+  // fromString;
+  ASSERT_TRUE(fromString<bool>("true"));
+  ASSERT_FALSE(fromString<bool>("false"));
   ASSERT_EQ(fromString<int>("1"), 1);
   ASSERT_TRUE(listFromString<std::string>(toString(vec)) == vec);
 }
@@ -158,12 +162,24 @@ void testJoin() {
 }
 
 void testColors() {
-  std::cout << black("black") << '\n'
-            << red("red") << '\n'
-            << green("green") << '\n'
-            << yellow("yellow") << '\n'
-            << blue("blue") << '\n'
-            << magenta("magenta") << '\n'
-            << cyan("cyan") << '\n'
-            << white("white") << '\n';
+  std::cout << "With colors:\n"
+            << "  " << black("black") << '\n'
+            << "  " << red("red") << '\n'
+            << "  " << green("green") << '\n'
+            << "  " << yellow("yellow") << '\n'
+            << "  " << blue("blue") << '\n'
+            << "  " << magenta("magenta") << '\n'
+            << "  " << cyan("cyan") << '\n'
+            << "  " << white("white") << '\n';
+
+  occa::env::OCCA_COLOR_ENABLED = false;
+  std::cout << "Without colors:\n"
+            << "  " << black("black") << '\n'
+            << "  " << red("red") << '\n'
+            << "  " << green("green") << '\n'
+            << "  " << yellow("yellow") << '\n'
+            << "  " << blue("blue") << '\n'
+            << "  " << magenta("magenta") << '\n'
+            << "  " << cyan("cyan") << '\n'
+            << "  " << white("white") << '\n';
 }

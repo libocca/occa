@@ -106,6 +106,11 @@ namespace occa {
   }
 
   template <>
+  std::string toString<bool>(const bool &t) {
+    return t ? "true" : "false";
+  }
+
+  template <>
   std::string toString<float>(const float &t) {
     std::stringstream ss;
     ss << std::scientific << std::setprecision(8) << t << 'f';

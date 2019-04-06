@@ -81,6 +81,9 @@ namespace occa {
   std::string toString<std::string>(const std::string &t);
 
   template <>
+  std::string toString<bool>(const bool &t);
+
+  template <>
   std::string toString<float>(const float &t);
 
   template <>
