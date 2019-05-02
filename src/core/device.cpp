@@ -352,7 +352,7 @@ namespace occa {
   //  |---[ Stream ]--------------------
   stream device::createStream(const occa::properties &props) {
     assertInitialized();
-    return modeDevice->createStream(props + streamProperties());
+    return modeDevice->createStream(streamProperties() + props);
   }
 
   stream device::getStream() {
@@ -388,7 +388,7 @@ namespace occa {
                                hash_t &kernelHash) const {
     assertInitialized();
 
-    kernelProps = props + kernelProperties();
+    kernelProps = kernelProperties() + props;
     kernelProps["mode"] = mode();
 
     kernelHash = (hash()
@@ -537,7 +537,7 @@ namespace occa {
                << "negative bytes (" << bytes << ")",
                bytes >= 0);
 
-    occa::properties memProps = props + memoryProperties();
+    occa::properties memProps = memoryProperties() + props;
 
     memory mem(modeDevice->malloc(bytes, src, memProps));
     mem.setDtype(dtype);
@@ -605,7 +605,7 @@ namespace occa {
       return NULL;
     }
 
-    occa::properties memProps = props + memoryProperties();
+    occa::properties memProps = memoryProperties() + props;
 
     memory mem = malloc(entries, dtype, src, memProps);
     mem.setDtype(dtype);
