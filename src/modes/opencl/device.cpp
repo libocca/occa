@@ -81,10 +81,7 @@ namespace occa {
     }
 
     hash_t device::kernelHash(const occa::properties &props) const {
-      return (
-        occa::hash(props["compiler"])
-        ^ props["compiler_flags"]
-      );
+      return occa::hash(props["compiler_flags"]);
     }
 
     lang::okl::withLauncher* device::createParser(const occa::properties &props) const {
