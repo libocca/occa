@@ -14,6 +14,7 @@ namespace occa {
 
     class memory : public occa::modeMemory_t {
       friend class hip::device;
+
       friend occa::memory wrapMemory(occa::device device,
                                      void *ptr,
                                      const udim_t bytes,
@@ -29,6 +30,8 @@ namespace occa {
              udim_t size_,
              const occa::properties &properties_ = occa::properties());
       ~memory();
+
+      hipStream_t& getHipStream() const;
 
       kernelArg makeKernelArg() const;
 

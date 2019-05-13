@@ -72,21 +72,13 @@ namespace occa {
                   const dim_t bytes,
                   occa::device device);
 
-    hipCtx_t getContext(occa::device device);
-
-    void* getMappedPtr(occa::memory mem);
-
     occa::device wrapDevice(hipDevice_t device,
-                            hipCtx_t context,
                             const occa::properties &props = occa::properties());
 
     occa::memory wrapMemory(occa::device device,
                             void *ptr,
                             const udim_t bytes,
                             const occa::properties &props = occa::properties());
-
-    hipEvent_t& event(streamTag &tag);
-    const hipEvent_t& event(const streamTag &tag);
 
     void warn(hipError_t errorCode,
               const std::string &filename,

@@ -4,7 +4,7 @@
 #  ifndef OCCA_MODES_HIP_DEVICE_HEADER
 #  define OCCA_MODES_HIP_DEVICE_HEADER
 
-#include <occa/core/device.hpp>
+#include <occa/core/launchedDevice.hpp>
 
 #include <hip/hip_runtime_api.h>
 
@@ -12,7 +12,7 @@ namespace occa {
   namespace hip {
     class kernel;
 
-    class device : public occa::modeDevice_t {
+    class device : public occa::launchedModeDevice_t {
       friend class kernel;
 
     private:
@@ -23,7 +23,7 @@ namespace occa {
       bool p2pEnabled;
 
       hipDevice_t hipDevice;
-      hipCtx_t hipContext;
+      int deviceID;
 
       device(const occa::properties &properties_);
       virtual ~device();
@@ -41,10 +41,12 @@ namespace occa {
       //---[ Stream ]-------------------
       virtual modeStream_t* createStream(const occa::properties &props);
 
-      virtual streamTag tagStream() const;
-      virtual void waitFor(streamTag tag) const;
+      virtual streamTag tagStream();
+      virtual void waitFor(streamTag tag);
       virtual double timeBetween(const streamTag &startTag,
-                                 const streamTag &endTag) const;
+                                 const streamTag &endTag);
+
+      hipStream_t& getHipStream() const;
       //================================
 
       //---[ Kernel ]-------------------
@@ -63,7 +65,7 @@ namespace occa {
 
       void compileKernel(const std::string &hashDir,
                          const std::string &kernelName,
-                         occa::properties &kernelProps,
+                         const occa::properties &kernelProps,
                          io::lock_t &lock);
 
       modeKernel_t* buildOKLKernelFromBinary(const hash_t kernelHash,

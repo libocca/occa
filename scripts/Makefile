@@ -304,6 +304,7 @@ ifdef OCCA_HIP_ENABLED
     ifeq ($(usingLinux),1)
       linkerFlags += -lhip_hcc
     endif
+    compilerFlags += -std=c++11
   endif
 else
   hipIncFlags = $(call includeFlagsFor,hip/hip_runtime_api.h)
@@ -324,6 +325,7 @@ else
       paths += $(hipconfig)
       paths += $(hipIncFlags)
       linkerFlags += $(hipLibFlags)
+      compilerFlags += -std=c++11
     endif
   endif
 endif

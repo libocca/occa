@@ -16,7 +16,7 @@ namespace occa {
     bool init() {
       static bool isInitialized = false;
       if (!isInitialized) {
-        isInitialized = hipInit(0);
+        isInitialized = !hipInit(0);
       }
       return isInitialized;
     }
@@ -54,8 +54,8 @@ namespace occa {
 
     void enablePeerToPeer(hipCtx_t context) {
 
-      OCCA_HIP_ERROR("Enabling Peer-to-Peer",
-                     hipCtxEnablePeerAccess(context, 0) );
+      // OCCA_HIP_ERROR("Enabling Peer-to-Peer",
+      //                hipCtxEnablePeerAccess(context, 0) );
     }
 
     void checkPeerToPeer(hipDevice_t destDevice,
@@ -151,31 +151,21 @@ namespace occa {
                        << "] does not support unified memory prefetching");
     }
 
-    hipCtx_t getContext(occa::device device) {
-      return ((hip::device*) device.getModeDevice())->hipContext;
-    }
-
-    void* getMappedPtr(occa::memory mem) {
-      hip::memory *handle = (hip::memory*) mem.getMHandle();
-      return handle ? handle->mappedPtr : NULL;
-    }
-
     occa::device wrapDevice(hipDevice_t device,
-                            hipCtx_t context,
                             const occa::properties &props) {
 
-      occa::properties allProps = props;
+      occa::properties allProps;
       allProps["mode"]     = "HIP";
-      allProps["device_id"] = -1;
+      allProps["deviceID"] = -1;
       allProps["wrapped"]  = true;
+      allProps += props;
 
       hip::device &dev = *(new hip::device(allProps));
       dev.dontUseRefs();
 
       dev.hipDevice  = device;
-      dev.hipContext = context;
 
-      dev.currentStream = dev.createStream();
+      dev.currentStream = dev.createStream(allProps["stream"]);
 
       return occa::device(&dev);
     }
@@ -185,23 +175,15 @@ namespace occa {
                             const udim_t bytes,
                             const occa::properties &props) {
 
-      hip::memory &mem = *(new hip::memory(props));
+      hip::memory &mem = *(new hip::memory(device.getModeDevice(),
+                                           bytes,
+                                           props));
       mem.dontUseRefs();
 
-      mem.modeDevice = device.getModeDevice();
       mem.ptr = (char*) ptr;
-      mem.size = bytes;
       mem.mappedPtr = NULL;
 
       return occa::memory(&mem);
-    }
-
-    hipEvent_t& event(streamTag &tag) {
-      return (hipEvent_t&) tag.modeTag;
-    }
-
-    const hipEvent_t& event(const streamTag &tag) {
-      return (const hipEvent_t&) tag.modeTag;
     }
 
     void warn(hipError_t errorCode,

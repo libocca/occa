@@ -10,6 +10,8 @@
 #include <occa/modes/hip/device.hpp>
 #include <occa/modes/hip/kernel.hpp>
 #include <occa/modes/hip/memory.hpp>
+#include <occa/modes/hip/stream.hpp>
+#include <occa/modes/hip/streamTag.hpp>
 #include <occa/modes/hip/utils.hpp>
 #include <occa/modes/serial/device.hpp>
 #include <occa/modes/serial/kernel.hpp>
@@ -28,13 +30,13 @@ namespace occa {
                    properties.has("device_id") &&
                    properties["device_id"].isNumber());
 
-        const int deviceID = properties.get<int>("device_id");
+        deviceID = properties.get<int>("device_id");
 
         OCCA_HIP_ERROR("Device: Creating Device",
                        hipDeviceGet(&hipDevice, deviceID));
 
-        OCCA_HIP_ERROR("Device: Creating Context",
-                       hipCtxCreate(&hipContext, 0, hipDevice));
+        OCCA_HIP_ERROR("Device: Setting Device",
+                       hipSetDevice(deviceID));
 
         OCCA_HIP_ERROR("Getting device properties",
                        hipGetDeviceProperties(&props, deviceID));
@@ -42,19 +44,20 @@ namespace occa {
 
       p2pEnabled = false;
 
-      std::string compiler = properties["kernel/compiler"];
-      std::string compilerFlags = properties["kernel/compilerFlags"];
+      std::string compiler, compilerFlags;
 
-      if (!compiler.size()) {
-        if (env::var("OCCA_HIP_COMPILER").size()) {
-          compiler = env::var("OCCA_HIP_COMPILER");
-        } else {
-          compiler = "hipcc";
-        }
+      if (properties.get<std::string>("kernel/compiler").size()) {
+        compiler = (std::string) properties["kernel/compiler"];
+      } else if (env::var("OCCA_HIP_COMPILER").size()) {
+        compiler = env::var("OCCA_HIP_COMPILER");
+      } else {
+        compiler = "hipcc";
       }
 
-      if (!compilerFlags.size()) {
-        compilerFlags = env::var("OCCA_HIP_COMPILER_FLAGS");
+      if (properties.get<std::string>("kernel/compiler_flags").size()) {
+        compilerFlags = (std::string) properties["kernel/compiler_flags"];
+      } else {
+        compilerFlags = "-O3";
       }
 
       properties["kernel/compiler"]      = compiler;
@@ -71,18 +74,11 @@ namespace occa {
       properties["kernel/target"] = toString(props.gcnArch);
     }
 
-    device::~device() {
-      if (hipContext) {
-        OCCA_HIP_ERROR("Device: Freeing Context",
-                       hipCtxDestroy(hipContext) );
-        hipContext = NULL;
-      }
-    }
+    device::~device() { }
 
     void device::finish() const {
       OCCA_HIP_ERROR("Device: Finish",
-                     hipStreamSynchronize(*((hipStream_t*) currentStream)) );
-      hipDeviceSynchronize();
+                     hipStreamSynchronize(getHipStream()));
     }
 
     bool device::hasSeparateMemorySpace() const {
@@ -112,51 +108,61 @@ namespace occa {
     }
 
     //---[ Stream ]---------------------
-    stream_t device::createStream(const occa::properties &props) {
-      hipStream_t *retStream = new hipStream_t;
+    modeStream_t* device::createStream(const occa::properties &props) {
+      hipStream_t hipStream;
 
-      OCCA_HIP_ERROR("Device: Setting Context",
-                     hipCtxSetCurrent(hipContext));
+      OCCA_HIP_ERROR("Device: Setting Device",
+                     hipSetDevice(deviceID));
       OCCA_HIP_ERROR("Device: createStream",
-                     hipStreamCreate(retStream));
+                     hipStreamCreate(&hipStream));
 
-      return retStream;
+      return new stream(this, props, hipStream);
     }
 
-    void device::freeStream(stream_t s) const {
-      OCCA_HIP_ERROR("Device: freeStream",
-                     hipStreamDestroy( *((hipStream_t*) s) ));
-      delete (hipStream_t*) s;
-    }
+    occa::streamTag device::tagStream() {
+      hipEvent_t hipEvent;
 
-    streamTag device::tagStream() const {
-      streamTag ret;
-
-      OCCA_HIP_ERROR("Device: Setting Context",
-                     hipCtxSetCurrent(hipContext));
+      OCCA_HIP_ERROR("Device: Setting Device",
+                     hipSetDevice(deviceID));
       OCCA_HIP_ERROR("Device: Tagging Stream (Creating Tag)",
-                     hipEventCreate(&hip::event(ret)));
+                     hipEventCreate(&hipEvent));
       OCCA_HIP_ERROR("Device: Tagging Stream",
-                     hipEventRecord(hip::event(ret), 0));
+                     hipEventRecord(hipEvent, getHipStream()));
 
-      return ret;
+      return new occa::hip::streamTag(this, hipEvent);
     }
 
-    void device::waitFor(streamTag tag) const {
+    void device::waitFor(occa::streamTag tag) {
+      occa::hip::streamTag *hipTag = (
+        dynamic_cast<occa::hip::streamTag*>(tag.getModeStreamTag())
+      );
       OCCA_HIP_ERROR("Device: Waiting For Tag",
-                     hipEventSynchronize(hip::event(tag)));
+                     hipEventSynchronize(hipTag->hipEvent));
     }
 
-    double device::timeBetween(const streamTag &startTag,
-                               const streamTag &endTag) const {
-      OCCA_HIP_ERROR("Device: Waiting for endTag",
-                     hipEventSynchronize(hip::event(endTag)));
+    double device::timeBetween(const occa::streamTag &startTag,
+                               const occa::streamTag &endTag) {
+      occa::hip::streamTag *hipStartTag = (
+        dynamic_cast<occa::hip::streamTag*>(startTag.getModeStreamTag())
+      );
+      occa::hip::streamTag *hipEndTag = (
+        dynamic_cast<occa::hip::streamTag*>(endTag.getModeStreamTag())
+      );
+
+      waitFor(endTag);
 
       float msTimeTaken;
       OCCA_HIP_ERROR("Device: Timing Between Tags",
-                     hipEventElapsedTime(&msTimeTaken, hip::event(startTag), hip::event(endTag)));
+                     hipEventElapsedTime(&msTimeTaken,
+                                         hipStartTag->hipEvent,
+                                         hipEndTag->hipEvent));
 
       return (double) (1.0e-3 * (double) msTimeTaken);
+    }
+
+    hipStream_t& device::getHipStream() const {
+      occa::hip::stream *stream = (occa::hip::stream*) currentStream.getModeStream();
+      return stream->hipStream;
     }
     //==================================
 
@@ -229,30 +235,33 @@ namespace occa {
 
     void device::compileKernel(const std::string &hashDir,
                                const std::string &kernelName,
-                               occa::properties &kernelProps,
+                               const occa::properties &kernelProps,
                                io::lock_t &lock) {
 
-      const bool verbose = kernelProps.get("verbose", false);
+      occa::properties allProps = kernelProps;
+      const bool verbose = allProps.get("verbose", false);
 
       std::string sourceFilename = hashDir + kc::sourceFile;
       std::string binaryFilename = hashDir + kc::binaryFile;
-      const std::string ptxBinaryFilename = hashDir + "ptx_binary.o";
 
-      setArchCompilerFlags(kernelProps);
+      setArchCompilerFlags(allProps);
 
       std::stringstream command;
+      if (allProps.has("compiler_env_script")) {
+        command << allProps["compiler_env_script"] << " && ";
+      }
 
       //---[ Compiling Command ]--------
-      command.str("");
-      command << kernelProps["compiler"]
+      command << allProps["compiler"]
               << " --genco "
+              << ' ' << allProps["compiler_flags"]
+// #if (OCCA_OS == OCCA_WINDOWS_OS)
+//               << " -D OCCA_OS=OCCA_WINDOWS_OS -D _MSC_VER=1800"
+// #endif
+              // << " -I"        << env::OCCA_DIR << "include"
+              // << " -L"        << env::OCCA_DIR << "lib -locca"
               << " "       << sourceFilename
-              << " -o "    << binaryFilename
-              << ' ' << kernelProps["compiler_flags"]
-#if (OCCA_OS == OCCA_WINDOWS_OS)
-              << " -D OCCA_OS=OCCA_WINDOWS_OS -D _MSC_VER=1800"
-#endif
-        ;
+              << " -o "    << binaryFilename;
 
       if (!verbose) {
         command << " > /dev/null 2>&1";
@@ -299,11 +308,12 @@ namespace occa {
                                sourceFilename,
                                kernelProps));
 
-      k.launcherKernel = buildLauncherKernel(hashDir,
+      k.launcherKernel = buildLauncherKernel(kernelHash,
+                                             hashDir,
                                              kernelName,
                                              launcherMetadata[kernelName]);
 
-      // Find clKernels
+      // Find hip kernels
       typedef std::map<int, lang::kernelMetadata> kernelOrderMap;
       kernelOrderMap hipKernelMetadata;
 
@@ -349,6 +359,7 @@ namespace occa {
                                        hipFunction,
                                        kernelProps);
         hipKernel->dontUseRefs();
+        hipKernel->metadata = metadata;
         k.deviceKernels.push_back(hipKernel);
 
         ++oit;
@@ -390,8 +401,8 @@ namespace occa {
 
       hip::memory &mem = *(new hip::memory(this, bytes, props));
 
-      OCCA_HIP_ERROR("Device: Setting Context",
-                     hipCtxSetCurrent(hipContext));
+      OCCA_HIP_ERROR("Device: Setting Device",
+                     hipSetDevice(deviceID));
 
       OCCA_HIP_ERROR("Device: malloc",
                      hipMalloc(&(mem.hipPtr), bytes));
@@ -408,8 +419,8 @@ namespace occa {
 
       hip::memory &mem = *(new hip::memory(this, bytes, props));
 
-      OCCA_HIP_ERROR("Device: Setting Context",
-                     hipCtxSetCurrent(hipContext));
+      OCCA_HIP_ERROR("Device: Setting Device",
+                     hipSetDevice(deviceID));
       OCCA_HIP_ERROR("Device: malloc host",
                      hipHostMalloc((void**) &(mem.mappedPtr), bytes));
       OCCA_HIP_ERROR("Device: get device pointer from host",

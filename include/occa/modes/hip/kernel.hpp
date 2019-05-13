@@ -6,21 +6,19 @@
 
 #include <hip/hip_runtime_api.h>
 
-#include <occa/core/kernel.hpp>
+#include <occa/core/launchedKernel.hpp>
 
 namespace occa {
   namespace hip {
     class device;
 
-    class kernel : public occa::modeKernel_t {
+    class kernel : public occa::launchedModeKernel_t {
       friend class device;
 
     private:
       hipModule_t hipModule;
       hipFunction_t hipFunction;
 
-      occa::modeKernel_t *launcherKernel;
-      std::vector<kernel*> hipKernels;
       mutable std::vector<void*> vArgs;
 
     public:
@@ -37,6 +35,8 @@ namespace occa {
              const occa::properties &properties_);
 
       ~kernel();
+
+      hipStream_t& getHipStream() const;
 
       int maxDims() const;
       dim maxOuterDims() const;
