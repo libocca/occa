@@ -28,10 +28,14 @@ namespace occa {
                        hipHostFree(mappedPtr));
         mappedPtr = NULL;
       } else if (hipPtr) {
-        hipHostFree(hipPtr);
+        hipFree(hipPtr);
         hipPtr = 0;
       }
       size = 0;
+    }
+
+    hipStream_t& memory::getHipStream() const {
+      return ((device*) modeDevice)->getHipStream();
     }
 
     kernelArg memory::makeKernelArg() const {
@@ -60,7 +64,6 @@ namespace occa {
                           const udim_t bytes,
                           const udim_t offset,
                           const occa::properties &props) {
-      const hipStream_t &stream = *((hipStream_t*) modeDevice->currentStream);
       const bool async = props.get("async", false);
 
       if (!async) {
@@ -73,7 +76,7 @@ namespace occa {
                        hipMemcpyHtoDAsync((char*) hipPtr + offset,
                                           const_cast<void*>(src),
                                           bytes,
-                                          stream) );
+                                          getHipStream()) );
       }
     }
 
@@ -82,7 +85,6 @@ namespace occa {
                           const udim_t destOffset,
                           const udim_t srcOffset,
                           const occa::properties &props) {
-      const hipStream_t &stream = *((hipStream_t*) modeDevice->currentStream);
       const bool async = props.get("async", false);
 
       if (!async) {
@@ -95,7 +97,7 @@ namespace occa {
                        hipMemcpyDtoDAsync((char*) hipPtr + destOffset,
                                           (char*) ((memory*) src)->hipPtr + srcOffset,
                                           bytes,
-                                          stream) );
+                                          getHipStream()) );
       }
     }
 
@@ -110,7 +112,6 @@ namespace occa {
                         const udim_t bytes,
                         const udim_t offset,
                         const occa::properties &props) const {
-      const hipStream_t &stream = *((hipStream_t*) modeDevice->currentStream);
       const bool async = props.get("async", false);
 
       if (!async) {
@@ -123,7 +124,7 @@ namespace occa {
                        hipMemcpyDtoHAsync(dest,
                                           (char*) hipPtr + offset,
                                           bytes,
-                                          stream) );
+                                          getHipStream()) );
       }
     }
 

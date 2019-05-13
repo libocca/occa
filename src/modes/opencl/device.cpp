@@ -91,10 +91,19 @@ namespace occa {
     //---[ Stream ]---------------------
     modeStream_t* device::createStream(const occa::properties &props) {
       cl_int error;
+#ifdef CL_VERSION_2_0
+      cl_queue_properties clProps[] = {CL_QUEUE_PROPERTIES,
+                                       CL_QUEUE_PROFILING_ENABLE, 0};
+      cl_command_queue commandQueue = clCreateCommandQueueWithProperties(clContext,
+                                                           clDevice,
+                                                           clProps,
+                                                           &error);
+#else
       cl_command_queue commandQueue = clCreateCommandQueue(clContext,
                                                            clDevice,
                                                            CL_QUEUE_PROFILING_ENABLE,
                                                            &error);
+#endif
       OCCA_OPENCL_ERROR("Device: createStream", error);
 
       return new stream(this, props, commandQueue);

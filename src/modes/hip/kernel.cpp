@@ -37,6 +37,10 @@ namespace occa {
       }
     }
 
+    hipStream_t& kernel::getHipStream() const {
+      return ((device*) modeDevice)->getHipStream();
+    }
+
     int kernel::maxDims() const {
       return 3;
     }
@@ -71,7 +75,7 @@ namespace occa {
       // HIP expects kernel arguments to be byte-aligned so we add padding to arguments
       char *dataPtr = (char*) &(vArgs[0]);
       int padding = 0;
-      for (int i = 0; i < kArgCount; ++i) {
+      for (int i = 0; i < args; ++i) {
         const kernelArgData &arg = arguments[i];
 
         size_t bytes;
@@ -101,7 +105,7 @@ namespace occa {
                      hipModuleLaunchKernel(hipFunction,
                                            outerDims.x, outerDims.y, outerDims.z,
                                            innerDims.x, innerDims.y, innerDims.z,
-                                           0, *((hipStream_t*) modeDevice->currentStream),
+                                           0, getHipStream(),
                                            NULL, (void**) &config));
     }
   }
