@@ -156,7 +156,7 @@ namespace occa {
 
       occa::properties allProps;
       allProps["mode"]     = "HIP";
-      allProps["deviceID"] = -1;
+      allProps["device_id"] = -1;
       allProps["wrapped"]  = true;
       allProps += props;
 
