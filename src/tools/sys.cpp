@@ -647,33 +647,40 @@ namespace occa {
       const std::string outFilename      = hashDir + "output";
       const std::string buildLogFilename = hashDir + "build.log";
 
-      io::lock_t lock(hash, "compiler");
-      if (lock.isMine()
-          && !io::isFile(outFilename)) {
-        ss << compiler
-           << ' '    << srcFilename
-           << " -o " << binaryFilename
-           << " > " << buildLogFilename << " 2>&1";
-        const std::string compileLine = ss.str();
+      bool foundOutput = (
+        io::cachedFileIsComplete(hashDir, "output")
+        && io::isFile(outFilename)
+      );
 
-        ignoreResult( system(compileLine.c_str()) );
+      // Avoid creating lockfile if possible
+      if (!foundOutput) {
+        io::lock_t lock(hash, "compiler");
+        if (lock.isMine()) {
+          ss << compiler
+             << ' '    << srcFilename
+             << " -o " << binaryFilename
+             << " > " << buildLogFilename << " 2>&1";
+          const std::string compileLine = ss.str();
 
-        OCCA_ERROR("Could not compile compilerVendorTest.cpp with following command:\n" << compileLine,
-                   io::isFile(binaryFilename));
+          ignoreResult( system(compileLine.c_str()) );
 
-        int exitStatus = system(binaryFilename.c_str());
-        int vendorBit  = WEXITSTATUS(exitStatus);
+          OCCA_ERROR("Could not compile compilerVendorTest.cpp with following command:\n" << compileLine,
+                     io::isFile(binaryFilename));
 
-        if (vendorBit < sys::vendor::b_max) {
-          vendor_ = (1 << vendorBit);
+          int exitStatus = system(binaryFilename.c_str());
+          int vendorBit  = WEXITSTATUS(exitStatus);
+
+          if (vendorBit < sys::vendor::b_max) {
+            vendor_ = (1 << vendorBit);
+          }
+
+          ss.str("");
+          ss << vendor_;
+
+          io::write(outFilename, ss.str());
+
+          return vendor_;
         }
-
-        ss.str("");
-        ss << vendor_;
-
-        io::write(outFilename, ss.str());
-
-        return vendor_;
       }
 
       ss << io::read(outFilename);
