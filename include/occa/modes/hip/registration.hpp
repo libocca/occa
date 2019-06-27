@@ -1,8 +1,5 @@
-#include <occa/defines.hpp>
-
-#if OCCA_HIP_ENABLED
-#  ifndef OCCA_MODES_HIP_REGISTRATION_HEADER
-#  define OCCA_MODES_HIP_REGISTRATION_HEADER
+#ifndef OCCA_MODES_HIP_REGISTRATION_HEADER
+#define OCCA_MODES_HIP_REGISTRATION_HEADER
 
 #include <occa/modes.hpp>
 #include <occa/modes/hip/device.hpp>
@@ -26,5 +23,4 @@ namespace occa {
   }
 }
 
-#  endif
 #endif

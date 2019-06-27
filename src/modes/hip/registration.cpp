@@ -1,7 +1,3 @@
-#include <occa/defines.hpp>
-
-#if OCCA_HIP_ENABLED
-
 #include <occa/modes/hip/registration.hpp>
 #include <occa/modes/hip/utils.hpp>
 
@@ -16,7 +12,6 @@ namespace occa {
     styling::section& modeInfo::getDescription() {
       static styling::section section("HIP");
       if (section.size() == 0) {
-        hipDevice_t device;
         char deviceName[256];
         int deviceCount = hip::getDeviceCount();
         for (int i = 0; i < deviceCount; ++i) {
@@ -45,5 +40,3 @@ namespace occa {
                hip::device> mode("HIP");
   }
 }
-
-#endif

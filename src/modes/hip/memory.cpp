@@ -1,7 +1,3 @@
-#include <occa/defines.hpp>
-
-#if OCCA_HIP_ENABLED
-
 #include <occa/modes/hip/memory.hpp>
 #include <occa/modes/hip/device.hpp>
 #include <occa/modes/hip/utils.hpp>
@@ -134,5 +130,3 @@ namespace occa {
     }
   }
 }
-
-#endif

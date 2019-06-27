@@ -1,12 +1,8 @@
-#include <occa/defines.hpp>
-
-#if OCCA_HIP_ENABLED
-#  ifndef OCCA_MODES_HIP_STREAMTAG_HEADER
-#  define OCCA_MODES_HIP_STREAMTAG_HEADER
-
-#include <hip/hip_runtime.h>
+#ifndef OCCA_MODES_HIP_STREAMTAG_HEADER
+#define OCCA_MODES_HIP_STREAMTAG_HEADER
 
 #include <occa/core/streamTag.hpp>
+#include <occa/modes/hip/polyfill.hpp>
 
 namespace occa {
   namespace hip {
@@ -22,5 +18,4 @@ namespace occa {
   }
 }
 
-#  endif
 #endif

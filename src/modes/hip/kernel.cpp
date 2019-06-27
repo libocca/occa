@@ -1,7 +1,3 @@
-#include <occa/defines.hpp>
-
-#if OCCA_HIP_ENABLED
-
 #include <occa/modes/hip/kernel.hpp>
 #include <occa/modes/hip/device.hpp>
 #include <occa/modes/hip/utils.hpp>
@@ -56,7 +52,7 @@ namespace occa {
         int deviceID = properties["device_id"];
         hipDeviceProp_t props;
         OCCA_HIP_ERROR("Getting device properties",
-                       hipGetDeviceProperties(&props, deviceID ));
+                       hipGetDeviceProperties(&props, deviceID));
         maxSize = props.maxThreadsPerBlock;
 
         innerDims.x = maxSize;
@@ -110,5 +106,3 @@ namespace occa {
     }
   }
 }
-
-#endif

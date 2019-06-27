@@ -1,7 +1,3 @@
-#include <occa/defines.hpp>
-
-#if OCCA_HIP_ENABLED
-
 #include <occa/core/device.hpp>
 #include <occa/core/memory.hpp>
 #include <occa/tools/string.hpp>
@@ -127,7 +123,6 @@ namespace occa {
     }
 
     void advise(occa::memory mem, advice_t advice, const dim_t bytes, occa::device device) {
-
       OCCA_FORCE_ERROR("HIP version ["
                        << hip::getVersion()
                        << "] does not support unified memory advising");
@@ -216,10 +211,10 @@ namespace occa {
       occa::error(filename, function, line, ss.str());
     }
 
-#define OCCA_HIP_ERROR_CASE(MACRO)              \
-    case MACRO: return #MACRO
-
     std::string getErrorMessage(const hipError_t errorCode) {
+#define OCCA_HIP_ERROR_CASE(MACRO)              \
+      case MACRO: return #MACRO
+
       switch(errorCode) {
         OCCA_HIP_ERROR_CASE(hipSuccess);
         OCCA_HIP_ERROR_CASE(hipErrorInvalidValue);
@@ -262,12 +257,10 @@ namespace occa {
         OCCA_HIP_ERROR_CASE(hipErrorPeerAccessNotEnabled);
         OCCA_HIP_ERROR_CASE(hipErrorHostMemoryAlreadyRegistered);
         OCCA_HIP_ERROR_CASE(hipErrorHostMemoryNotRegistered);
-
       default:
         return "UNKNOWN ERROR";
       };
+#undef OCCA_HIP_ERROR_CASE
     }
   }
 }
-
-#endif

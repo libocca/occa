@@ -1,7 +1,3 @@
-#include <occa/defines.hpp>
-
-#if OCCA_HIP_ENABLED
-
 #include <occa/core/base.hpp>
 #include <occa/io/output.hpp>
 #include <occa/tools/env.hpp>
@@ -440,5 +436,3 @@ namespace occa {
     //==================================
   }
 }
-
-#endif

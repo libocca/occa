@@ -1,12 +1,8 @@
-#include <occa/defines.hpp>
-
-#if OCCA_HIP_ENABLED
-#  ifndef OCCA_MODES_HIP_MEMORY_HEADER
-#  define OCCA_MODES_HIP_MEMORY_HEADER
-
-#include <hip/hip_runtime_api.h>
+#ifndef OCCA_MODES_HIP_MEMORY_HEADER
+#define OCCA_MODES_HIP_MEMORY_HEADER
 
 #include <occa/core/memory.hpp>
+#include <occa/modes/hip/polyfill.hpp>
 
 namespace occa {
   namespace hip {
@@ -59,5 +55,4 @@ namespace occa {
   }
 }
 
-#  endif
 #endif

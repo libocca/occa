@@ -1,7 +1,3 @@
-#include <occa/defines.hpp>
-
-#if OCCA_HIP_ENABLED
-
 #include <occa/modes/hip/stream.hpp>
 #include <occa/modes/hip/utils.hpp>
 
@@ -19,5 +15,3 @@ namespace occa {
     }
   }
 }
-
-#endif
