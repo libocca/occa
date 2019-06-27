@@ -34,27 +34,6 @@
 //======================================
 
 
-//---[ OpenCL ]-------------------------
-#define OCCA_OPENCL_TEMPLATE_CHECK(checkFunction, expr, filename, function, line, message) \
-  do {                                                                  \
-    cl_int _clErrorCode = expr;                                         \
-    if (_clErrorCode) {                                                 \
-      std::stringstream _check_ss;                                      \
-      _check_ss << message;                                             \
-      checkFunction(_clErrorCode, filename, function, line, _check_ss.str()); \
-    }                                                                   \
-  } while (false)
-
-#define OCCA_OPENCL_ERROR3(expr, filename, function, line, message) OCCA_OPENCL_TEMPLATE_CHECK(occa::opencl::error, expr, filename, function, line, message)
-#define OCCA_OPENCL_ERROR2(expr, filename, function, line, message) OCCA_OPENCL_ERROR3(expr, filename, function, line, message)
-#define OCCA_OPENCL_ERROR(message, expr) OCCA_OPENCL_ERROR2(expr, __FILE__, __PRETTY_FUNCTION__, __LINE__, message)
-
-#define OCCA_OPENCL_WARNING3(expr, filename, function, line, message) OCCA_OPENCL_TEMPLATE_CHECK(occa::opencl::warn, expr, filename, function, line, message)
-#define OCCA_OPENCL_WARNING2(expr, filename, function, line, message) OCCA_OPENCL_WARNING3(expr, filename, function, line, message)
-#define OCCA_OPENCL_WARNING(message, expr) OCCA_OPENCL_WARNING2(expr, __FILE__, __PRETTY_FUNCTION__, __LINE__, message)
-//======================================
-
-
 //---[ CUDA ]---------------------------
 #define OCCA_CUDA_TEMPLATE_CHECK(checkFunction, expr, filename, function, line, message) \
   do {                                                                  \
@@ -94,6 +73,48 @@
 #define OCCA_HIP_WARNING3(expr, filename, function, line, message) OCCA_HIP_TEMPLATE_CHECK(occa::hip::warn, expr, filename, function, line, message)
 #define OCCA_HIP_WARNING2(expr, filename, function, line, message) OCCA_HIP_WARNING3(expr, filename, function, line, message)
 #define OCCA_HIP_WARNING(message, expr) OCCA_HIP_WARNING2(expr, __FILE__, __PRETTY_FUNCTION__, __LINE__, message)
+//======================================
+
+
+//---[ OpenCL ]-------------------------
+#define OCCA_OPENCL_TEMPLATE_CHECK(checkFunction, expr, filename, function, line, message) \
+  do {                                                                  \
+    cl_int _clErrorCode = expr;                                         \
+    if (_clErrorCode) {                                                 \
+      std::stringstream _check_ss;                                      \
+      _check_ss << message;                                             \
+      checkFunction(_clErrorCode, filename, function, line, _check_ss.str()); \
+    }                                                                   \
+  } while (false)
+
+#define OCCA_OPENCL_ERROR3(expr, filename, function, line, message) OCCA_OPENCL_TEMPLATE_CHECK(occa::opencl::error, expr, filename, function, line, message)
+#define OCCA_OPENCL_ERROR2(expr, filename, function, line, message) OCCA_OPENCL_ERROR3(expr, filename, function, line, message)
+#define OCCA_OPENCL_ERROR(message, expr) OCCA_OPENCL_ERROR2(expr, __FILE__, __PRETTY_FUNCTION__, __LINE__, message)
+
+#define OCCA_OPENCL_WARNING3(expr, filename, function, line, message) OCCA_OPENCL_TEMPLATE_CHECK(occa::opencl::warn, expr, filename, function, line, message)
+#define OCCA_OPENCL_WARNING2(expr, filename, function, line, message) OCCA_OPENCL_WARNING3(expr, filename, function, line, message)
+#define OCCA_OPENCL_WARNING(message, expr) OCCA_OPENCL_WARNING2(expr, __FILE__, __PRETTY_FUNCTION__, __LINE__, message)
+//======================================
+
+
+//---[ Metal ]-------------------------
+#define OCCA_METAL_TEMPLATE_CHECK(checkFunction, expr, filename, function, line, message) \
+  do {                                                                  \
+    cl_int _clErrorCode = expr;                                         \
+    if (_clErrorCode) {                                                 \
+      std::stringstream _check_ss;                                      \
+      _check_ss << message;                                             \
+      checkFunction(_clErrorCode, filename, function, line, _check_ss.str()); \
+    }                                                                   \
+  } while(0)
+
+#define OCCA_METAL_ERROR3(expr, filename, function, line, message) OCCA_METAL_TEMPLATE_CHECK(occa::metal::error, expr, filename, function, line, message)
+#define OCCA_METAL_ERROR2(expr, filename, function, line, message) OCCA_METAL_ERROR3(expr, filename, function, line, message)
+#define OCCA_METAL_ERROR(message, expr) OCCA_METAL_ERROR2(expr, __FILE__, __PRETTY_FUNCTION__, __LINE__, message)
+
+#define OCCA_METAL_WARNING3(expr, filename, function, line, message) OCCA_METAL_TEMPLATE_CHECK(occa::metal::warn, expr, filename, function, line, message)
+#define OCCA_METAL_WARNING2(expr, filename, function, line, message) OCCA_METAL_WARNING3(expr, filename, function, line, message)
+#define OCCA_METAL_WARNING(message, expr) OCCA_METAL_WARNING2(expr, __FILE__, __PRETTY_FUNCTION__, __LINE__, message)
 //======================================
 
 #endif

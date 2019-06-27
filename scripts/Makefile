@@ -206,9 +206,10 @@ endif
 #---[ Variable Dependencies ]---------------------
 mpiEnabled    = 0
 openmpEnabled = 0
-openclEnabled = 0
 cudaEnabled   = 0
 hipEnabled    = 0
+openclEnabled = 0
+metalEnabled  = 0
 
 ifdef OCCA_MPI_ENABLED
   mpiEnabled = $(OCCA_MPI_ENABLED)
@@ -224,39 +225,6 @@ else
 
   ifeq ($(openmpEnabled),1)
     flags += $(call compilerOpenMPFlag)
-  endif
-endif
-
-ifdef OCCA_OPENCL_ENABLED
-  openclEnabled = $(OCCA_OPENCL_ENABLED)
-
-  ifeq ($(openclEnabled),1)
-    ifeq ($(usingLinux),1)
-      linkerFlags += -lOpenCL
-    else ifeq ($(usingMacOS),1)
-      linkerFlags += -framework OpenCL
-    endif
-  endif
-else
-  ifeq ($(usingLinux),1)
-    openclLibFlags = $(call libraryFlagsFor,OpenCL)
-    ifneq (,$(openclLibFlags))
-
-      openclIncFlags = $(call includeFlagsFor,CL/cl.h)
-      ifneq (,$(openclIncFlags))
-        openclEnabled = 1
-        paths += $(openclIncFlags)
-        linkerFlags += $(openclLibFlags)
-      endif
-    endif
-  else ifeq ($(usingMacOS),1)
-    # OpenCL includes are embedded in the framework
-    openclLibFlags = $(call libraryFlagsFor,OpenCL)
-
-    ifneq (,$(openclLibFlags))
-      openclEnabled = 1
-      linkerFlags += $(openclLibFlags)
-    endif
   endif
 endif
 
@@ -322,6 +290,56 @@ else
   endif
 endif
 
+ifdef OCCA_OPENCL_ENABLED
+  openclEnabled = $(OCCA_OPENCL_ENABLED)
+
+  ifeq ($(openclEnabled),1)
+    ifeq ($(usingLinux),1)
+      linkerFlags += -lOpenCL
+    else ifeq ($(usingMacOS),1)
+      linkerFlags += -framework OpenCL
+    endif
+  endif
+else
+  ifeq ($(usingLinux),1)
+    openclLibFlags = $(call libraryFlagsFor,OpenCL)
+    ifneq (,$(openclLibFlags))
+
+      openclIncFlags = $(call includeFlagsFor,CL/cl.h)
+      ifneq (,$(openclIncFlags))
+        openclEnabled = 1
+        paths += $(openclIncFlags)
+        linkerFlags += $(openclLibFlags)
+      endif
+    endif
+  else ifeq ($(usingMacOS),1)
+    # OpenCL includes are embedded in the framework
+    openclLibFlags = $(call libraryFlagsFor,OpenCL)
+
+    ifneq (,$(openclLibFlags))
+      openclEnabled = 1
+      linkerFlags += $(openclLibFlags)
+    endif
+  endif
+endif
+
+# Metal is only supported for MacOS with clang++
+ifdef OCCA_METAL_ENABLED
+  ifneq ($(metalEnabled),1)
+    metalEnabled := $(OCCA_METAL_ENABLED)
+  endif
+else
+  ifeq ($(usingMacOS),1)
+    # Check for Metal Framework
+    metalLibFlags = $(call libraryFlagsFor,Metal)
+
+    ifneq (,$(metalLibFlags))
+      metalEnabled = 1
+      linkerFlags += $(metalLibFlags)
+    endif
+  endif
+endif
+
 ifeq ($(cudaEnabled),1)
   compilerFlags += -Wno-c++11-long-long
 endif
@@ -334,7 +352,8 @@ endif
 
 OCCA_MPI_ENABLED    := $(mpiEnabled)
 OCCA_OPENMP_ENABLED := $(openmpEnabled)
-OCCA_OPENCL_ENABLED := $(openclEnabled)
 OCCA_CUDA_ENABLED   := $(cudaEnabled)
 OCCA_HIP_ENABLED    := $(hipEnabled)
+OCCA_OPENCL_ENABLED := $(openclEnabled)
+OCCA_METAL_ENABLED  := $(metalEnabled)
 #=================================================

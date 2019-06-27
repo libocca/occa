@@ -16,6 +16,7 @@ int main(int argc, const char **argv) {
   //   occaSetDeviceFromString("mode: 'OpenMP'");
   //   occaSetDeviceFromString("mode: 'CUDA'  , device_id: 0");
   //   occaSetDeviceFromString("mode: 'OpenCL', platform_id: 0, device_id: 0");
+  //   occaSetDeviceFromString("mode: 'Metal', device_id: 0");
   //
   // The default device uses "mode: 'Serial'"
   occaSetDeviceFromString(

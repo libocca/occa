@@ -40,17 +40,19 @@ pthreadFlag := $(pthreadFlag)
 
 
 #---[ variables ]---------------------------------
-srcToObject  = $(subst $(PROJ_DIR)/src,$(PROJ_DIR)/obj,$(1:.cpp=.o))
+srcToObject     = $(subst $(PROJ_DIR)/src,$(PROJ_DIR)/obj,$(1:.cpp=.o))
+objcSrcToObject = $(subst $(PROJ_DIR)/src,$(PROJ_DIR)/obj,$(1:.mm=.o))
 
 dontCompile = $(OCCA_DIR)/src/core/kernelOperators.cpp $(OCCA_DIR)/src/tools/runFunction.cpp
 
 sources     = $(realpath $(shell find $(PROJ_DIR)/src -type f -name '*.cpp'))
 sources    := $(filter-out $(dontCompile),$(sources))
-headers     = $(realpath $(shell find $(PROJ_DIR)/include -type f -name '*.hpp'))
+objcSources = $(realpath $(shell find $(PROJ_DIR)/src -type f -name '*.mm'))
+headers     = $(realpath $(shell find $(PROJ_DIR)/include -type f -name '*.hpp' -o -name "*.h"))
 testSources = $(realpath $(shell find $(PROJ_DIR)/tests/src -type f -name '*.cpp'))
 tests       = $(subst $(testPath)/src,$(testPath)/bin,$(testSources:.cpp=))
 
-objects = $(call srcToObject,$(sources))
+objects = $(call srcToObject,$(sources)) $(call objcSrcToObject,$(objcSources))
 
 outputs = $(libPath)/libocca.so $(binPath)/occa
 
@@ -73,9 +75,11 @@ MAKE_COMPILED_DEFINES := $(shell cat "$(OCCA_DIR)/scripts/compiledDefinesTemplat
                                       s,@@OCCA_UNSAFE@@,$(OCCA_UNSAFE),g;\
                                       s,@@OCCA_MPI_ENABLED@@,$(OCCA_MPI_ENABLED),g; \
                                       s,@@OCCA_OPENMP_ENABLED@@,$(OCCA_OPENMP_ENABLED),g;\
-                                      s,@@OCCA_OPENCL_ENABLED@@,$(OCCA_OPENCL_ENABLED),g;\
                                       s,@@OCCA_CUDA_ENABLED@@,$(OCCA_CUDA_ENABLED),g;\
-                                      s,@@OCCA_HIP_ENABLED@@,$(OCCA_HIP_ENABLED),g;" > "$(NEW_COMPILED_DEFINES)")
+                                      s,@@OCCA_HIP_ENABLED@@,$(OCCA_HIP_ENABLED),g;\
+                                      s,@@OCCA_OPENCL_ENABLED@@,$(OCCA_OPENCL_ENABLED),g;\
+                                      s,@@OCCA_METAL_ENABLED@@,$(OCCA_METAL_ENABLED),g;"\
+																	> "$(NEW_COMPILED_DEFINES)")
 
 MAKE_COMPILED_DEFINES := $(shell \
  [ ! -f "$(COMPILED_DEFINES)" -o -n "$(shell diff -q $(COMPILED_DEFINES) $(NEW_COMPILED_DEFINES))" ] \
@@ -103,18 +107,27 @@ $(binPath)/occa:$(OCCA_DIR)/bin/occa.cpp $(libPath)/libocca.so $(COMPILED_DEFINE
 	$(compiler) $(compilerFlags) -o $(binPath)/occa -Wl,-rpath,$(libPath) $(flags) $(OCCA_DIR)/bin/occa.cpp $(paths) $(linkerFlags) -L$(OCCA_DIR)/lib -locca
 #  ===========================
 
+# Sources with C++ headers and template headers
 $(OCCA_DIR)/obj/%.o:$(OCCA_DIR)/src/%.cpp $(OCCA_DIR)/include/occa/%.hpp $(OCCA_DIR)/include/occa/%.tpp $(COMPILED_DEFINES_CHANGED)
 	@mkdir -p $(abspath $(dir $@))
 	$(compiler) $(compilerFlags) -o $@ $(flags) -c $(paths) $<
 
+# Sources with C++ headers
 $(OCCA_DIR)/obj/%.o:$(OCCA_DIR)/src/%.cpp $(OCCA_DIR)/include/occa/%.hpp $(COMPILED_DEFINES_CHANGED)
 	@mkdir -p $(abspath $(dir $@))
 	$(compiler) $(compilerFlags) -o $@ $(flags) -c $(paths) $<
 
+# Sources with C headers
 $(OCCA_DIR)/obj/%.o:$(OCCA_DIR)/src/%.cpp $(OCCA_DIR)/include/occa/%.h $(COMPILED_DEFINES_CHANGED)
 	@mkdir -p $(abspath $(dir $@))
 	$(compiler) $(compilerFlags) -o $@ $(flags) -c $(paths) $<
 
+# Objective-C++ sources
+$(OCCA_DIR)/obj/%.o:$(OCCA_DIR)/src/%.mm $(OCCA_DIR)/include/occa/%.hpp $(COMPILED_DEFINES_CHANGED)
+	@mkdir -p $(abspath $(dir $@))
+	clang++ -x objective-c++ -o $@ $(flags) -c $(paths) $<
+
+# Header-less sources
 $(OCCA_DIR)/obj/%.o:$(OCCA_DIR)/src/%.cpp $(COMPILED_DEFINES_CHANGED)
 	@mkdir -p $(abspath $(dir $@))
 	$(compiler) $(compilerFlags) -o $@ $(flags) -c $(paths) $<
@@ -166,7 +179,6 @@ info:
 	$(info pthreadFlag    = $(pthreadFlag))
 	$(info linkerFlags    = $(linkerFlags))
 	$(info --------------------------------)
-#	$(info OCCA_DEVELOPER = $(OCCA_DEVELOPER))
 	$(info debugEnabled   = $(debugEnabled))
 	$(info checkEnabled   = $(checkEnabled))
 	$(info debugFlags     = $(debugFlags))
@@ -176,6 +188,7 @@ info:
 	$(info mpiEnabled     = $(mpiEnabled))
 	$(info openmpEnabled  = $(openmpEnabled))
 	$(info openclEnabled  = $(openclEnabled))
+	$(info metalEnabled   = $(metalEnabled))
 	$(info cudaEnabled    = $(cudaEnabled))
 	$(info hipEnabled     = $(hipEnabled))
 	$(info --------------------------------)

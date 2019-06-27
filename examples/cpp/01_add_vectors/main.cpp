@@ -28,16 +28,19 @@ int main(int argc, const char **argv) {
 
   // device.setup("mode: 'Serial'");
 
-  // device.setup("mode     : 'OpenMP', "
-  //              "schedule : 'compact', "
+  // device.setup("mode     : 'OpenMP',"
+  //              "schedule : 'compact',"
   //              "chunk    : 10");
 
-  // device.setup("mode        : 'OpenCL', "
-  //              "platform_id : 0, "
+  // device.setup("mode      : 'CUDA',"
+  //              "device_id : 0");
+
+  // device.setup("mode        : 'OpenCL',"
+  //              "platform_id : 0,"
   //              "device_id   : 1");
 
-  // device.setup("mode      : 'CUDA', "
-  //              "device_id : 0");
+  // device.setup("mode        : 'Metal',"
+  //              "device_id   : 1");
   //========================================================
 
   // Allocate memory on the device

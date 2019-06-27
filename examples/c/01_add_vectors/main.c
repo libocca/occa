@@ -39,20 +39,25 @@ int main(int argc, const char **argv) {
   // );
 
   // device = occaCreateDeviceFromString(
-  //   "mode     : 'OpenMP', "
-  //   "schedule : 'compact', "
+  //   "mode     : 'OpenMP',"
+  //   "schedule : 'compact',"
   //   "chunk    : 10"
   // );
 
   // device = occaCreateDeviceFromString(
-  //   "mode        : 'OpenCL', "
-  //   "platform_id : 0, "
+  //   "mode      : 'CUDA',"
+  //   "device_id : 0"
+  // );
+
+  // device = occaCreateDeviceFromString(
+  //   "mode        : 'OpenCL',"
+  //   "platform_id : 0,"
   //   "device_id   : 1"
   // );
 
   // device = occaCreateDeviceFromString(
-  //   "mode      : 'CUDA', "
-  //   "device_id : 0"
+  //   "mode        : 'Metal', "
+  //   "device_id   : 1"
   // );
   //========================================================
 
