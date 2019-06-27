@@ -6,6 +6,7 @@
 #include <occa/lang/modes/cuda.hpp>
 #include <occa/lang/modes/hip.hpp>
 #include <occa/lang/modes/opencl.hpp>
+#include <occa/lang/modes/metal.hpp>
 
 using namespace occa;
 
@@ -160,6 +161,8 @@ bool runTranslate(const json &args) {
     parser = new lang::okl::hipParser(kernelProps);
   } else if (mode == "OpenCL") {
     parser = new lang::okl::openclParser(kernelProps);
+  } else if (mode == "Metal") {
+    parser = new lang::okl::metalParser(kernelProps);
   }
 
   if (!parser) {
@@ -194,10 +197,10 @@ bool runTranslate(const json &args) {
       << "*/\n";
   }
 
-  if (printLauncher && (
-        (mode == "CUDA")
-        || (mode == "HIP")
-        || (mode == "OpenCL"))) {
+  if (printLauncher && ((mode == "CUDA")
+                        || (mode == "HIP")
+                        || (mode == "OpenCL")
+                        || (mode == "Metal"))) {
     launcherParser = &(((occa::lang::okl::withLauncher*) parser)->launcherParser);
     std::cout << launcherParser->toString();
   } else {
@@ -254,6 +257,7 @@ bool runEnv(const json &args) {
             << "    - OCCA_OPENMP_ENABLED        : " << envEcho("OCCA_OPENMP_ENABLED", OCCA_OPENMP_ENABLED) << "\n"
             << "    - OCCA_CUDA_ENABLED          : " << envEcho("OCCA_CUDA_ENABLED", OCCA_CUDA_ENABLED) << "\n"
             << "    - OCCA_OPENCL_ENABLED        : " << envEcho("OCCA_OPENCL_ENABLED", OCCA_OPENCL_ENABLED) << "\n"
+            << "    - OCCA_METAL_ENABLED         : " << envEcho("OCCA_METAL_ENABLED", OCCA_METAL_ENABLED) << "\n"
 
             << "  Run-Time Options:\n"
             << "    - OCCA_CXX                   : " << envEcho("OCCA_CXX") << "\n"

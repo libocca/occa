@@ -10,7 +10,6 @@
 #include <occa/modes/cuda/utils.hpp>
 #include <occa/modes/serial/device.hpp>
 #include <occa/modes/serial/kernel.hpp>
-#include <occa/lang/kernelMetadata.hpp>
 #include <occa/lang/primitive.hpp>
 #include <occa/lang/modes/cuda.hpp>
 
@@ -337,34 +336,15 @@ namespace occa {
                                              kernelName,
                                              launcherMetadata[kernelName]);
 
-      // Find cuda kernels
-      typedef std::map<int, lang::kernelMetadata> kernelOrderMap;
-      kernelOrderMap cuKernelMetadata;
+      // Find device kernels
+      orderedKernelMetadata launchedKernelsMetadata = getLaunchedKernelsMetadata(
+        kernelName,
+        deviceMetadata
+      );
 
-      const std::string prefix = "_occa_" + kernelName + "_";
-
-      lang::kernelMetadataMap::iterator it = deviceMetadata.begin();
-      while (it != deviceMetadata.end()) {
-        const std::string &name = it->first;
-        lang::kernelMetadata &metadata = it->second;
-        ++it;
-        if (!startsWith(name, prefix)) {
-          continue;
-        }
-        std::string suffix = name.substr(prefix.size());
-        const char *c = suffix.c_str();
-        primitive number = primitive::load(c, false);
-        // Make sure we reached the end ['\0']
-        //   and have a number
-        if (*c || number.isNaN()) {
-          continue;
-        }
-        cuKernelMetadata[number] = metadata;
-      }
-
-      kernelOrderMap::iterator oit = cuKernelMetadata.begin();
-      while (oit != cuKernelMetadata.end()) {
-        lang::kernelMetadata &metadata = oit->second;
+      const int launchedKernelsCount = (int) launchedKernelsMetadata.size();
+      for (int i = 0; i < launchedKernelsCount; ++i) {
+        lang::kernelMetadata &metadata = launchedKernelsMetadata[i];
 
         CUfunction cuFunction;
         error = cuModuleGetFunction(&cuFunction,
@@ -385,8 +365,6 @@ namespace occa {
         cuKernel->dontUseRefs();
         cuKernel->metadata = metadata;
         k.deviceKernels.push_back(cuKernel);
-
-        ++oit;
       }
 
       return &k;

@@ -1,11 +1,16 @@
 #ifndef OCCA_CORE_LAUNCHEDDEVICE_HEADER
 #define OCCA_CORE_LAUNCHEDDEVICE_HEADER
 
+#include <vector>
+
 #include <occa/core/device.hpp>
+#include <occa/lang/kernelMetadata.hpp>
 #include <occa/lang/modes/withLauncher.hpp>
 #include <occa/tools/properties.hpp>
 
 namespace occa {
+  typedef std::vector<lang::kernelMetadata> orderedKernelMetadata;
+
   class launchedModeDevice_t : public modeDevice_t {
   public:
     launchedModeDevice_t(const occa::properties &properties_);
@@ -32,6 +37,11 @@ namespace occa {
                                       const std::string &hashDir,
                                       const std::string &kernelName,
                                       lang::kernelMetadata &launcherMetadata);
+
+    orderedKernelMetadata getLaunchedKernelsMetadata(
+      const std::string &kernelName,
+      lang::kernelMetadataMap &deviceMetadata
+    );
 
     //---[ Virtual Methods ]------------
     virtual lang::okl::withLauncher* createParser(const occa::properties &props) const = 0;

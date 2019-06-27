@@ -261,33 +261,14 @@ namespace occa {
       }
 
       // Find device kernels
-      typedef std::map<int, lang::kernelMetadata> kernelOrderMap;
-      kernelOrderMap clKernelMetadata;
+      orderedKernelMetadata launchedKernelsMetadata = getLaunchedKernelsMetadata(
+        kernelName,
+        deviceMetadata
+      );
 
-      const std::string prefix = "_occa_" + kernelName + "_";
-
-      lang::kernelMetadataMap::iterator it = deviceMetadata.begin();
-      while (it != deviceMetadata.end()) {
-        const std::string &name = it->first;
-        lang::kernelMetadata &metadata = it->second;
-        ++it;
-        if (!startsWith(name, prefix)) {
-          continue;
-        }
-        std::string suffix = name.substr(prefix.size());
-        const char *c = suffix.c_str();
-        primitive number = primitive::load(c, false);
-        // Make sure we reached the end ['\0']
-        //   and have a number
-        if (*c || number.isNaN()) {
-          continue;
-        }
-        clKernelMetadata[number] = metadata;
-      }
-
-      kernelOrderMap::iterator oit = clKernelMetadata.begin();
-      while (oit != clKernelMetadata.end()) {
-        lang::kernelMetadata &metadata = oit->second;
+      const int launchedKernelsCount = (int) launchedKernelsMetadata.size();
+      for (int i = 0; i < launchedKernelsCount; ++i) {
+        lang::kernelMetadata &metadata = launchedKernelsMetadata[i];
         opencl::buildKernelFromProgram(clInfo,
                                        metadata.name,
                                        lock);
@@ -299,9 +280,8 @@ namespace occa {
                                       clInfo.clKernel,
                                       kernelProps);
         clKernel->dontUseRefs();
+        clKernel->metadata = metadata;
         k.deviceKernels.push_back(clKernel);
-
-        ++oit;
       }
 
       return &k;

@@ -4,7 +4,7 @@
 #  ifndef OCCA_MODES_METAL_HEADER
 #  define OCCA_MODES_METAL_HEADER
 
-#include <occa/modes/metal/utils.hpp>
+// No utility methods yet
 
 #  endif
 #endif

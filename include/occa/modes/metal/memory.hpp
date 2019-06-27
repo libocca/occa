@@ -1,39 +1,27 @@
 #include <occa/defines.hpp>
 
-#if OCCA_OPENCL_ENABLED
-#  ifndef OCCA_MODES_OPENCL_MEMORY_HEADER
-#  define OCCA_MODES_OPENCL_MEMORY_HEADER
+#if OCCA_METAL_ENABLED
+#  ifndef OCCA_MODES_METAL_MEMORY_HEADER
+#  define OCCA_MODES_METAL_MEMORY_HEADER
 
 #include <occa/core/memory.hpp>
-#include <occa/modes/opencl/headers.hpp>
+#include <occa/modes/metal/headers.hpp>
 
 namespace occa {
-  namespace opencl {
+  namespace metal {
     class device;
 
     class memory : public occa::modeMemory_t {
-      friend class opencl::device;
-
-      friend cl_mem getCLMemory(occa::memory memory);
-
-      friend void* getMappedPtr(occa::memory memory);
-
-      friend occa::memory wrapMemory(occa::device device,
-                                     cl_mem clMem,
-                                     const udim_t bytes,
-                                     const occa::properties &props);
+      friend class metal::device;
 
     private:
-      cl_mem clMem;
-      void *mappedPtr;
+      metalBuffer_t metalBuffer;
 
     public:
       memory(modeDevice_t *modeDevice_,
              udim_t size_,
              const occa::properties &properties_ = occa::properties());
       ~memory();
-
-      cl_command_queue& getCommandQueue() const;
 
       kernelArg makeKernelArg() const;
 

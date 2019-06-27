@@ -1,6 +1,9 @@
+#include <map>
+
 #include <occa/core/base.hpp>
 #include <occa/core/launchedDevice.hpp>
 #include <occa/core/launchedKernel.hpp>
+#include <occa/lang/primitive.hpp>
 #include <occa/modes/serial/device.hpp>
 #include <occa/modes/serial/kernel.hpp>
 
@@ -217,5 +220,42 @@ namespace occa {
     launcherKernel->metadata = launcherMetadata;
 
     return launcherKernel;
+  }
+
+  orderedKernelMetadata launchedModeDevice_t::getLaunchedKernelsMetadata(
+    const std::string &kernelName,
+    lang::kernelMetadataMap &deviceMetadata
+  ) {      // Find device kernels
+    typedef std::map<int, lang::kernelMetadata> kernelOrderMap;
+    kernelOrderMap kernelMetadataMap;
+
+    const std::string prefix = "_occa_" + kernelName + "_";
+
+    lang::kernelMetadataMap::iterator it = deviceMetadata.begin();
+    while (it != deviceMetadata.end()) {
+      const std::string &name = it->first;
+      lang::kernelMetadata &metadata = it->second;
+      ++it;
+      if (!startsWith(name, prefix)) {
+        continue;
+      }
+      std::string suffix = name.substr(prefix.size());
+      const char *c = suffix.c_str();
+      primitive number = primitive::load(c, false);
+      // Make sure we reached the end ['\0']
+      //   and have a number
+      if (*c || number.isNaN()) {
+        continue;
+      }
+      kernelMetadataMap[number] = metadata;
+    }
+
+    // Setup vector from ordered metadata
+    orderedKernelMetadata kernelMetadata;
+    kernelOrderMap::iterator kIt;
+    for (kIt = kernelMetadataMap.begin(); kIt != kernelMetadataMap.end(); ++kIt) {
+      kernelMetadata.push_back(kIt->second);
+    }
+    return kernelMetadata;
   }
 }

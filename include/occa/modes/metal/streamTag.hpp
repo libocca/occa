@@ -1,21 +1,21 @@
 #include <occa/defines.hpp>
 
-#if OCCA_OPENCL_ENABLED
-#  ifndef OCCA_MODES_OPENCL_STREAMTAG_HEADER
-#  define OCCA_MODES_OPENCL_STREAMTAG_HEADER
+#if OCCA_METAL_ENABLED
+#  ifndef OCCA_MODES_METAL_STREAMTAG_HEADER
+#  define OCCA_MODES_METAL_STREAMTAG_HEADER
 
 #include <occa/core/streamTag.hpp>
-#include <occa/modes/opencl/headers.hpp>
+#include <occa/modes/metal/headers.hpp>
 
 namespace occa {
-  namespace opencl {
+  namespace metal {
     class streamTag : public occa::modeStreamTag_t {
     public:
-      cl_event clEvent;
+      metalEvent_t metalEvent;
       double time;
 
       streamTag(modeDevice_t *modeDevice_,
-                cl_event clEvent_);
+                metalEvent_t metalEvent_);
 
       virtual ~streamTag();
 

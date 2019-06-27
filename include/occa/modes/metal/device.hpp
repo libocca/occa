@@ -1,27 +1,26 @@
 #include <occa/defines.hpp>
 
-#if OCCA_OPENCL_ENABLED
-#  ifndef OCCA_MODES_OPENCL_DEVICE_HEADER
-#  define OCCA_MODES_OPENCL_DEVICE_HEADER
+#if OCCA_METAL_ENABLED
+#  ifndef OCCA_MODES_METAL_DEVICE_HEADER
+#  define OCCA_MODES_METAL_DEVICE_HEADER
 
 #include <occa/core/launchedDevice.hpp>
-#include <occa/modes/opencl/headers.hpp>
+#include <occa/modes/metal/headers.hpp>
 
 namespace occa {
-  namespace opencl {
+  namespace metal {
     class info_t;
 
     class device : public occa::launchedModeDevice_t {
-      friend cl_context getContext(occa::device device);
 
     private:
       mutable hash_t hash_;
 
     public:
-      int platformID, deviceID;
+      int deviceID;
 
-      cl_device_id clDevice;
-      cl_context clContext;
+      metalDevice_t metalDevice;
+      metalCommandQueue_t metalCommandQueue;
 
       device(const occa::properties &properties_);
       virtual ~device();
@@ -43,8 +42,6 @@ namespace occa {
       virtual void waitFor(streamTag tag);
       virtual double timeBetween(const streamTag &startTag,
                                  const streamTag &endTag);
-
-      cl_command_queue& getCommandQueue() const;
       //================================
 
       //---[ Kernel ]-------------------

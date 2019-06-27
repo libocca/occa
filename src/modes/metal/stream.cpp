@@ -1,21 +1,19 @@
 #include <occa/defines.hpp>
 
-#if OCCA_OPENCL_ENABLED
+#if OCCA_METAL_ENABLED
 
-#include <occa/modes/opencl/stream.hpp>
-#include <occa/modes/opencl/utils.hpp>
+#include <occa/modes/metal/stream.hpp>
 
 namespace occa {
-  namespace opencl {
+  namespace metal {
     stream::stream(modeDevice_t *modeDevice_,
                    const occa::properties &properties_,
-                   cl_command_queue commandQueue_) :
+                   metalCommandQueue_t metalCommandQueue_) :
       modeStream_t(modeDevice_, properties_),
-      commandQueue(commandQueue_) {}
+      metalCommandQueue(metalCommandQueue_) {}
 
     stream::~stream() {
-      OCCA_OPENCL_ERROR("Device: Freeing cl_command_queue",
-                        clReleaseCommandQueue(commandQueue));
+      // TODO
     }
   }
 }

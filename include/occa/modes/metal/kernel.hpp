@@ -1,24 +1,22 @@
 #include <occa/defines.hpp>
 
-#if OCCA_OPENCL_ENABLED
-#  ifndef OCCA_MODES_OPENCL_KERNEL_HEADER
-#  define OCCA_MODES_OPENCL_KERNEL_HEADER
+#if OCCA_METAL_ENABLED
+#  ifndef OCCA_MODES_METAL_KERNEL_HEADER
+#  define OCCA_MODES_METAL_KERNEL_HEADER
 
 #include <occa/core/launchedKernel.hpp>
-#include <occa/modes/opencl/headers.hpp>
-#include <occa/modes/opencl/utils.hpp>
+#include <occa/modes/metal/headers.hpp>
 
 namespace occa {
-  namespace opencl {
+  namespace metal {
     class device;
 
     class kernel : public occa::launchedModeKernel_t {
       friend class device;
-      friend cl_kernel getCLKernel(occa::kernel kernel);
 
     private:
-      cl_device_id clDevice;
-      cl_kernel clKernel;
+      metalDevice_t metalDevice;
+      metalKernel_t metalKernel;
 
     public:
       kernel(modeDevice_t *modeDevice_,
@@ -26,16 +24,7 @@ namespace occa {
              const std::string &sourceFilename_,
              const occa::properties &properties_);
 
-      kernel(modeDevice_t *modeDevice_,
-             const std::string &name_,
-             const std::string &sourceFilename_,
-             cl_device_id clDevice_,
-             cl_kernel clKernel_,
-             const occa::properties &properties_);
-
       ~kernel();
-
-      cl_command_queue& getCommandQueue() const;
 
       int maxDims() const;
       dim maxOuterDims() const;

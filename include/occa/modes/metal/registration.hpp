@@ -1,18 +1,18 @@
 #include <occa/defines.hpp>
 
-#if OCCA_OPENCL_ENABLED
-#  ifndef OCCA_MODES_OPENCL_REGISTRATION_HEADER
-#  define OCCA_MODES_OPENCL_REGISTRATION_HEADER
+#if OCCA_METAL_ENABLED
+#  ifndef OCCA_MODES_METAL_REGISTRATION_HEADER
+#  define OCCA_MODES_METAL_REGISTRATION_HEADER
 
 #include <occa/modes.hpp>
-#include <occa/modes/opencl/device.hpp>
-#include <occa/modes/opencl/kernel.hpp>
-#include <occa/modes/opencl/memory.hpp>
+#include <occa/modes/metal/device.hpp>
+#include <occa/modes/metal/kernel.hpp>
+#include <occa/modes/metal/memory.hpp>
 #include <occa/tools/styling.hpp>
 #include <occa/core/base.hpp>
 
 namespace occa {
-  namespace opencl {
+  namespace metal {
     class modeInfo : public modeInfo_v {
     public:
       modeInfo();
@@ -21,8 +21,8 @@ namespace occa {
       styling::section& getDescription();
     };
 
-    extern occa::mode<opencl::modeInfo,
-                      opencl::device> mode;
+    extern occa::mode<metal::modeInfo,
+                      metal::device> mode;
   }
 }
 

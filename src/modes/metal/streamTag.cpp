@@ -1,32 +1,25 @@
 #include <occa/defines.hpp>
 
-#if OCCA_OPENCL_ENABLED
+#if OCCA_METAL_ENABLED
 
-#include <occa/modes/opencl/streamTag.hpp>
-#include <occa/modes/opencl/utils.hpp>
+#include <occa/modes/metal/streamTag.hpp>
+#include <occa/modes/metal/headers.hpp>
 
 namespace occa {
-  namespace opencl {
+  namespace metal {
     streamTag::streamTag(modeDevice_t *modeDevice_,
-                         cl_event clEvent_) :
+                         metalEvent_t metalEvent_) :
       modeStreamTag_t(modeDevice_),
-      clEvent(clEvent_),
+      metalEvent(metalEvent_),
       time(-1) {}
 
     streamTag::~streamTag() {
-      OCCA_OPENCL_ERROR("streamTag: Freeing cl_event",
-                        clReleaseEvent(clEvent));
+      // TODO
     }
 
     double streamTag::getTime() {
       if (time < 0) {
-        cl_ulong clTime;
-        OCCA_OPENCL_ERROR("streamTag: Getting event profiling info",
-                          clGetEventProfilingInfo(clEvent,
-                                                  CL_PROFILING_COMMAND_END,
-                                                  sizeof(cl_ulong),
-                                                  &clTime, NULL));
-        time = 1.0e-9 * clTime;
+        // TODO
       }
       return time;
     }
