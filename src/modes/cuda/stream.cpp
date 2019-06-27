@@ -1,7 +1,3 @@
-#include <occa/defines.hpp>
-
-#if OCCA_CUDA_ENABLED
-
 #include <occa/modes/cuda/stream.hpp>
 #include <occa/modes/cuda/utils.hpp>
 
@@ -19,5 +15,3 @@ namespace occa {
     }
   }
 }
-
-#endif

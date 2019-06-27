@@ -1,12 +1,10 @@
 #include <occa/defines.hpp>
 
-#if OCCA_CUDA_ENABLED
-#  ifndef OCCA_MODES_CUDA_STREAM_HEADER
-#  define OCCA_MODES_CUDA_STREAM_HEADER
-
-#include <cuda.h>
+#ifndef OCCA_MODES_CUDA_STREAM_HEADER
+#define OCCA_MODES_CUDA_STREAM_HEADER
 
 #include <occa/core/stream.hpp>
+#include <occa/modes/cuda/polyfill.hpp>
 
 namespace occa {
   namespace cuda {
@@ -23,5 +21,4 @@ namespace occa {
   }
 }
 
-#  endif
 #endif

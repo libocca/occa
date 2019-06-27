@@ -1,7 +1,3 @@
-#include <occa/defines.hpp>
-
-#if OCCA_CUDA_ENABLED
-
 #include <occa/core/base.hpp>
 #include <occa/tools/env.hpp>
 #include <occa/tools/misc.hpp>
@@ -498,5 +494,3 @@ namespace occa {
     //==================================
   }
 }
-
-#endif

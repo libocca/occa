@@ -1,7 +1,5 @@
 #include <occa/defines.hpp>
 
-#if OCCA_CUDA_ENABLED
-
 #include <occa/core/device.hpp>
 #include <occa/core/memory.hpp>
 #include <occa/tools/string.hpp>
@@ -269,10 +267,10 @@ namespace occa {
       occa::error(filename, function, line, ss.str());
     }
 
-#define OCCA_CUDA_ERROR_CASE(MACRO)             \
-    case MACRO: return #MACRO
-
     std::string getErrorMessage(const CUresult errorCode) {
+#define OCCA_CUDA_ERROR_CASE(MACRO)             \
+      case MACRO: return #MACRO
+
       switch(errorCode) {
         OCCA_CUDA_ERROR_CASE(CUDA_SUCCESS);
         OCCA_CUDA_ERROR_CASE(CUDA_ERROR_INVALID_VALUE);
@@ -338,8 +336,8 @@ namespace occa {
       default:
         return "UNKNOWN ERROR";
       };
+
+#undef OCCA_CUDA_ERROR_CASE
     }
   }
 }
-
-#endif

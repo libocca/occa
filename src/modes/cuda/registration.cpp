@@ -1,7 +1,3 @@
-#include <occa/defines.hpp>
-
-#if OCCA_CUDA_ENABLED
-
 #include <occa/modes/cuda/registration.hpp>
 #include <occa/modes/cuda/utils.hpp>
 
@@ -41,5 +37,3 @@ namespace occa {
                cuda::device> mode("CUDA");
   }
 }
-
-#endif

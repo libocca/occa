@@ -1,12 +1,8 @@
-#include <occa/defines.hpp>
-
-#if OCCA_CUDA_ENABLED
-#  ifndef OCCA_MODES_CUDA_UTILS_HEADER
-#  define OCCA_MODES_CUDA_UTILS_HEADER
-
-#include <cuda.h>
+#ifndef OCCA_MODES_CUDA_UTILS_HEADER
+#define OCCA_MODES_CUDA_UTILS_HEADER
 
 #include <occa/core/device.hpp>
+#include <occa/modes/cuda/polyfill.hpp>
 
 namespace occa {
   namespace cuda {
@@ -103,5 +99,4 @@ namespace occa {
   }
 }
 
-#  endif
 #endif

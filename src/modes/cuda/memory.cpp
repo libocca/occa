@@ -1,7 +1,3 @@
-#include <occa/defines.hpp>
-
-#if OCCA_CUDA_ENABLED
-
 #include <occa/modes/cuda/memory.hpp>
 #include <occa/modes/cuda/device.hpp>
 #include <occa/modes/cuda/utils.hpp>
@@ -136,5 +132,3 @@ namespace occa {
     }
   }
 }
-
-#endif
