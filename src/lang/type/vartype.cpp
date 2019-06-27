@@ -73,6 +73,9 @@ namespace occa {
 
       bitfield = other.bitfield;
 
+      customPrefix = other.customPrefix;
+      customSuffix = other.customSuffix;
+
       return *this;
     }
 
@@ -81,6 +84,8 @@ namespace occa {
       pointers.clear();
       arrays.clear();
       bitfield = -1;
+      customPrefix = "";
+      customSuffix = "";
 
       delete typeToken;
       typeToken = NULL;
@@ -319,6 +324,10 @@ namespace occa {
         return;
       }
 
+      if (customPrefix.size()) {
+        pout << customPrefix << ' ';
+      }
+
       bool spaceAfterName = false;
       if (printType) {
         if (qualifiers.size()) {
@@ -360,6 +369,10 @@ namespace occa {
       const int arrayCount = (int) arrays.size();
       for (int i = 0; i < arrayCount; ++i) {
         pout << arrays[i];
+      }
+
+      if (customSuffix.size()) {
+        pout << ' ' << customSuffix;
       }
 
       if (bitfield >= 0) {

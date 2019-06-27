@@ -18,6 +18,8 @@ namespace occa {
 
       int bitfield;
 
+      std::string customPrefix, customSuffix;
+
       vartype_t();
 
       vartype_t(const type_t &type_);

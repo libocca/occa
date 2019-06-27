@@ -106,9 +106,6 @@ namespace occa {
       }
 
       void metalParser::setupKernels() {
-        // Need to add the following args at the end:
-        //   _occa_group_position [[threadgroup_position_in_grid]]
-        //   _occa_thread_position [[thread_position_in_threadgroup]]
         statementPtrVector kernelSmnts;
         findStatementsByAttr((statementType::functionDecl |
                               statementType::function),
@@ -164,6 +161,19 @@ namespace occa {
             arg.add(0, device_q);
           }
         }
+
+        variable_t occaGroupPositionArg(uint3, "_occa_group_position");
+        variable_t occaThreadPositionArg(uint3, "_occa_thread_position");
+
+        occaGroupPositionArg.vartype.customSuffix = (
+          "[[threadgroup_position_in_grid]]"
+        );
+        occaThreadPositionArg.vartype.customSuffix = (
+          "[[thread_position_in_threadgroup]]"
+        );
+
+        function += occaGroupPositionArg;
+        function += occaThreadPositionArg;
       }
     }
   }

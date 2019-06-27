@@ -18,6 +18,9 @@ namespace occa {
       variable_t();
 
       variable_t(const vartype_t &vartype_,
+                 const std::string &name_);
+
+      variable_t(const vartype_t &vartype_,
                  identifierToken *source_ = NULL);
 
       variable_t(const variable_t &other);

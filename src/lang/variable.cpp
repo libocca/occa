@@ -11,6 +11,11 @@ namespace occa {
       source(new identifierToken(filePosition(), "")) {}
 
     variable_t::variable_t(const vartype_t &vartype_,
+                           const std::string &name_) :
+        vartype(vartype_),
+        source(new identifierToken(fileOrigin(), name_)) {}
+
+    variable_t::variable_t(const vartype_t &vartype_,
                            identifierToken *source_) :
       vartype(vartype_),
       source((identifierToken*) token_t::clone(source_)) {}
