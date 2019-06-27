@@ -54,7 +54,7 @@ objects = $(call srcToObject,$(sources))
 
 outputs = $(libPath)/libocca.so $(binPath)/occa
 
-ifndef VALGRIND_ENABLED
+ifdef SANITIZER_ENABLED
   testFlags = $(compilerFlags) -fsanitize=address -fno-omit-frame-pointer
 else
   testFlags = $(compilerFlags)

@@ -24,16 +24,15 @@ ignore:
   - src/tools/runFunction.cpp
   # Exception is not tracked properly
   - src/tools/exception.cpp
-  # Disabled modes
-  - include/occa/mode/threads
-  - src/mode/threads
   # Modes that can't be tested with Travis
-  - include/occa/mode/opencl
-  - include/occa/mode/cuda
-  - include/occa/mode/hip
-  - src/mode/opencl
-  - src/mode/cuda
-  - src/mode/hip
+  - include/occa/modes/cuda
+  - include/occa/modes/hip
+  - include/occa/modes/opencl
+  - include/occa/modes/metal
+  - src/modes/cuda
+  - src/modes/hip
+  - src/modes/opencl
+  - src/modes/metal
 
 comment:
   layout: 'reach, diff, files'
