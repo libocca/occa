@@ -1,11 +1,8 @@
-#include <occa/defines.hpp>
-
-#if OCCA_METAL_ENABLED
-#  ifndef OCCA_MODES_METAL_MEMORY_HEADER
-#  define OCCA_MODES_METAL_MEMORY_HEADER
+#ifndef OCCA_MODES_METAL_MEMORY_HEADER
+#define OCCA_MODES_METAL_MEMORY_HEADER
 
 #include <occa/core/memory.hpp>
-#include <occa/modes/metal/headers.hpp>
+#include <occa/modes/metal/bridge.hpp>
 
 namespace occa {
   namespace metal {
@@ -16,6 +13,7 @@ namespace occa {
 
     private:
       metalBuffer_t metalBuffer;
+      udim_t bufferOffset;
 
     public:
       memory(modeDevice_t *modeDevice_,
@@ -49,5 +47,4 @@ namespace occa {
   }
 }
 
-#  endif
 #endif

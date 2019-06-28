@@ -11,9 +11,7 @@ namespace occa {
   class modeDevice_t; class device;
   class kernelArgData;
 
-  typedef std::vector<kernelArgData>          kArgVector;
-  typedef kArgVector::iterator                kArgVectorIterator;
-  typedef kArgVector::const_iterator          cKArgVectorIterator;
+  typedef std::vector<kernelArgData> kArgVector;
 
   //---[ KernelArg ]--------------------
   namespace kArgInfo {

@@ -1,11 +1,8 @@
-#include <occa/defines.hpp>
-
-#if OCCA_METAL_ENABLED
-#  ifndef OCCA_MODES_METAL_STREAMTAG_HEADER
-#  define OCCA_MODES_METAL_STREAMTAG_HEADER
+#ifndef OCCA_MODES_METAL_STREAMTAG_HEADER
+#define OCCA_MODES_METAL_STREAMTAG_HEADER
 
 #include <occa/core/streamTag.hpp>
-#include <occa/modes/metal/headers.hpp>
+#include <occa/modes/metal/bridge.hpp>
 
 namespace occa {
   namespace metal {
@@ -24,5 +21,4 @@ namespace occa {
   }
 }
 
-#  endif
 #endif

@@ -1,11 +1,8 @@
-#include <occa/defines.hpp>
-
-#if OCCA_METAL_ENABLED
-#  ifndef OCCA_MODES_METAL_KERNEL_HEADER
-#  define OCCA_MODES_METAL_KERNEL_HEADER
+#ifndef OCCA_MODES_METAL_KERNEL_HEADER
+#define OCCA_MODES_METAL_KERNEL_HEADER
 
 #include <occa/core/launchedKernel.hpp>
-#include <occa/modes/metal/headers.hpp>
+#include <occa/modes/metal/bridge.hpp>
 
 namespace occa {
   namespace metal {
@@ -16,12 +13,19 @@ namespace occa {
 
     private:
       metalDevice_t metalDevice;
-      metalKernel_t metalKernel;
+      mutable metalKernel_t metalKernel;
 
     public:
       kernel(modeDevice_t *modeDevice_,
              const std::string &name_,
              const std::string &sourceFilename_,
+             const occa::properties &properties_);
+
+      kernel(modeDevice_t *modeDevice_,
+             const std::string &name_,
+             const std::string &sourceFilename_,
+             metalDevice_t metalDevice_,
+             metalKernel_t metalKernel_,
              const occa::properties &properties_);
 
       ~kernel();
@@ -35,5 +39,4 @@ namespace occa {
   }
 }
 
-#  endif
 #endif

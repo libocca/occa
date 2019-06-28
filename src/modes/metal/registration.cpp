@@ -1,7 +1,3 @@
-#include <occa/defines.hpp>
-
-#if OCCA_METAL_ENABLED
-
 #include <occa/modes/metal/registration.hpp>
 
 namespace occa {
@@ -15,15 +11,17 @@ namespace occa {
     styling::section& modeInfo::getDescription() {
       static styling::section section("Metal");
       if (section.size() == 0) {
-        int deviceCount = 1; // getDeviceCount();
-        for (int dID = 0; dID < deviceCount; ++dID) {
-          udim_t bytes         = 0; //getDeviceMemorySize(pID, dID);
-          std::string bytesStr = "0"; // stringifyBytes(bytes);
+        int deviceCount = metalDevice_t::getCount();
+        for (int deviceId = 0; deviceId < deviceCount; ++deviceId) {
+          metalDevice_t device = metalDevice_t::fromId(deviceId);
+
+          udim_t bytes = device.getMemorySize();
+          std::string bytesStr = stringifyBytes(bytes);
 
           section
-              .add("Device Name"  , "N/A")
-              .add("Device ID"    , toString(dID))
-              .add("Memory"       , bytesStr)
+              .add("Device Name", device.getName())
+              .add("Device ID"  , toString(deviceId))
+              .add("Memory"     , bytesStr)
               .addDivider();
         }
         // Remove last divider
@@ -36,5 +34,3 @@ namespace occa {
                metal::device> mode("Metal");
   }
 }
-
-#endif

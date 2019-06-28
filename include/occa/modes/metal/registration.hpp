@@ -1,8 +1,5 @@
-#include <occa/defines.hpp>
-
-#if OCCA_METAL_ENABLED
-#  ifndef OCCA_MODES_METAL_REGISTRATION_HEADER
-#  define OCCA_MODES_METAL_REGISTRATION_HEADER
+#ifndef OCCA_MODES_METAL_REGISTRATION_HEADER
+#define OCCA_MODES_METAL_REGISTRATION_HEADER
 
 #include <occa/modes.hpp>
 #include <occa/modes/metal/device.hpp>
@@ -26,5 +23,4 @@ namespace occa {
   }
 }
 
-#  endif
 #endif

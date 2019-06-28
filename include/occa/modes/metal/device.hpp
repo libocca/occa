@@ -1,11 +1,8 @@
-#include <occa/defines.hpp>
-
-#if OCCA_METAL_ENABLED
-#  ifndef OCCA_MODES_METAL_DEVICE_HEADER
-#  define OCCA_MODES_METAL_DEVICE_HEADER
+#ifndef OCCA_MODES_METAL_DEVICE_HEADER
+#define OCCA_MODES_METAL_DEVICE_HEADER
 
 #include <occa/core/launchedDevice.hpp>
-#include <occa/modes/metal/headers.hpp>
+#include <occa/modes/metal/bridge.hpp>
 
 namespace occa {
   namespace metal {
@@ -64,7 +61,6 @@ namespace occa {
                                              const occa::properties &kernelProps,
                                              io::lock_t lock);
 
-
       modeKernel_t* buildOKLKernelFromBinary(info_t &clInfo,
                                              const hash_t kernelHash,
                                              const std::string &hashDir,
@@ -84,15 +80,10 @@ namespace occa {
                                    const void *src,
                                    const occa::properties &props);
 
-      virtual modeMemory_t* mappedAlloc(const udim_t bytes,
-                                        const void *src,
-                                        const occa::properties &props);
-
       virtual udim_t memorySize() const;
       //================================
     };
   }
 }
 
-#  endif
 #endif

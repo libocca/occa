@@ -1,7 +1,3 @@
-#include <occa/defines.hpp>
-
-#if OCCA_METAL_ENABLED
-
 #include <occa/core/base.hpp>
 #include <occa/tools/env.hpp>
 #include <occa/tools/sys.hpp>
@@ -25,15 +21,16 @@ namespace occa {
 
       deviceID = properties.get<int>("device_id");
 
-      // Get device handle
+      metalDevice = metalDevice_t::fromId(deviceID);
+      metalCommandQueue = metalDevice.createCommandQueue();
     }
 
     device::~device() {
-      // Free device
+      metalDevice.free();
     }
 
     void device::finish() const {
-      // Synchronize with host
+      metalDevice.finish();
     }
 
     bool device::hasSeparateMemorySpace() const {
@@ -59,21 +56,32 @@ namespace occa {
 
     //---[ Stream ]---------------------
     modeStream_t* device::createStream(const occa::properties &props) {
-      return new stream(this, props, NULL);
+      return new stream(this, props, metalCommandQueue);
     }
 
     occa::streamTag device::tagStream() {
-      return new occa::metal::streamTag(this, NULL);
+      return new occa::metal::streamTag(this, metalDevice.createEvent());
     }
 
     void device::waitFor(occa::streamTag tag) {
-      // Wait for event
+      occa::metal::streamTag *metalTag = (
+        dynamic_cast<occa::metal::streamTag*>(tag.getModeStreamTag())
+      );
+      metalDevice.waitFor(metalTag->metalEvent);
     }
 
     double device::timeBetween(const occa::streamTag &startTag,
                                const occa::streamTag &endTag) {
-      // ¯\_(ツ)_/¯
-      return 0;
+      occa::metal::streamTag *metalStartTag = (
+        dynamic_cast<occa::metal::streamTag*>(startTag.getModeStreamTag())
+      );
+      occa::metal::streamTag *metalEndTag = (
+        dynamic_cast<occa::metal::streamTag*>(endTag.getModeStreamTag())
+      );
+
+      waitFor(endTag);
+
+      return (metalEndTag->getTime() - metalStartTag->getTime());
     }
     //==================================
 
@@ -90,56 +98,20 @@ namespace occa {
       const occa::properties &kernelProps,
       io::lock_t lock
     ) {
-      // Build Metal program
+      OCCA_ERROR("Metal kernels need to use OKL for now",
+                 usingOkl);
+
       std::string source = io::read(sourceFilename, true);
 
-      // metal::buildProgramFromSource
-      // metal::saveProgramBinary
-      if (usingOkl) {
-        // return buildOKLKernelFromBinary
-      }
-
-      // Regular Metal Kernel
-      // metal::buildKernelFromProgram
-
-      return NULL;
-    }
-
-    modeKernel_t* device::buildOKLKernelFromBinary(const hash_t kernelHash,
-                                                   const std::string &hashDir,
-                                                   const std::string &kernelName,
-                                                   lang::kernelMetadataMap &launcherMetadata,
-                                                   lang::kernelMetadataMap &deviceMetadata,
-                                                   const occa::properties &kernelProps,
-                                                   io::lock_t lock) {
-      // return buildOKLKernelFromBinary
-      return NULL;
-    }
-
-    modeKernel_t* device::buildOKLKernelFromBinary(info_t &clInfo,
-                                                   const hash_t kernelHash,
-                                                   const std::string &hashDir,
-                                                   const std::string &kernelName,
-                                                   lang::kernelMetadataMap &launcherMetadata,
-                                                   lang::kernelMetadataMap &deviceMetadata,
-                                                   const occa::properties &kernelProps,
-                                                   io::lock_t lock) {
-      const std::string sourceFilename = hashDir + kc::sourceFile;
-      const std::string binaryFilename = hashDir + kc::binaryFile;
-
-      // Create wrapper kernel and set launcherKernel
       kernel &k = *(new kernel(this,
                                kernelName,
                                sourceFilename,
                                kernelProps));
 
-      /*
       k.launcherKernel = buildLauncherKernel(kernelHash,
                                              hashDir,
                                              kernelName,
                                              launcherMetadata[kernelName]);
-      */
-
       if (!k.launcherKernel) {
         delete &k;
         return NULL;
@@ -154,29 +126,51 @@ namespace occa {
       const int launchedKernelsCount = (int) launchedKernelsMetadata.size();
       for (int i = 0; i < launchedKernelsCount; ++i) {
         lang::kernelMetadata &metadata = launchedKernelsMetadata[i];
-        /*
-        metal::buildKernelFromProgram(clInfo,
-                                      metadata.name,
-                                      lock);
 
-        kernel *metalKernel = new kernel(this,
-                                         metadata.name,
-                                         sourceFilename,
-                                         clDevice,
-                                         clInfo.clKernel,
-                                         kernelProps);
-        metalKernel->dontUseRefs();
-        metalKernel->metadata = metadata;
-        k.deviceKernels.push_back(meetalKernel);
-        */
+        metalKernel_t metalKernel = metalDevice.buildKernel(source,
+                                                            metadata.name,
+                                                            lock);
+        kernel *deviceKernel = new kernel(this,
+                                          metadata.name,
+                                          sourceFilename,
+                                          metalDevice,
+                                          metalKernel,
+                                          kernelProps);
+        deviceKernel->dontUseRefs();
+        deviceKernel->metadata = metadata;
+        k.deviceKernels.push_back(deviceKernel);
       }
 
       return &k;
     }
 
+    modeKernel_t* device::buildOKLKernelFromBinary(const hash_t kernelHash,
+                                                   const std::string &hashDir,
+                                                   const std::string &kernelName,
+                                                   lang::kernelMetadataMap &launcherMetadata,
+                                                   lang::kernelMetadataMap &deviceMetadata,
+                                                   const occa::properties &kernelProps,
+                                                   io::lock_t lock) {
+      OCCA_FORCE_ERROR("Metal does not support building from binary");
+      return NULL;
+    }
+
+    modeKernel_t* device::buildOKLKernelFromBinary(info_t &clInfo,
+                                                   const hash_t kernelHash,
+                                                   const std::string &hashDir,
+                                                   const std::string &kernelName,
+                                                   lang::kernelMetadataMap &launcherMetadata,
+                                                   lang::kernelMetadataMap &deviceMetadata,
+                                                   const occa::properties &kernelProps,
+                                                   io::lock_t lock) {
+      OCCA_FORCE_ERROR("Metal does not support building from binary");
+      return NULL;
+    }
+
     modeKernel_t* device::buildKernelFromBinary(const std::string &filename,
                                                 const std::string &kernelName,
                                                 const occa::properties &kernelProps) {
+      OCCA_FORCE_ERROR("Metal does not support building from binary");
       return NULL;
     }
     //==================================
@@ -185,20 +179,16 @@ namespace occa {
     modeMemory_t* device::malloc(const udim_t bytes,
                                  const void *src,
                                  const occa::properties &props) {
-      return NULL;
-    }
+      metal::memory *mem = new metal::memory(this, bytes, props);
 
-    modeMemory_t* device::mappedAlloc(const udim_t bytes,
-                                      const void *src,
-                                      const occa::properties &props) {
-      return NULL;
+      mem->metalBuffer = metalDevice.malloc(bytes, src);
+
+      return mem;
     }
 
     udim_t device::memorySize() const {
-      return 0;
+      return metalDevice.getMemorySize();
     }
     //==================================
   }
 }
-
-#endif

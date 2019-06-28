@@ -19,17 +19,17 @@ namespace occa {
       if (section.size() == 0) {
         char deviceName[1024];
         int deviceCount = cuda::getDeviceCount();
-        for (int i = 0; i < deviceCount; ++i) {
-          const udim_t bytes         = getDeviceMemorySize(getDevice(i));
+        for (int deviceId = 0; deviceId < deviceCount; ++deviceId) {
+          const udim_t bytes         = getDeviceMemorySize(getDevice(deviceId));
           const std::string bytesStr = stringifyBytes(bytes);
 
           OCCA_CUDA_ERROR("Getting Device Name",
-                          cuDeviceGetName(deviceName, 1024, i));
+                          cuDeviceGetName(deviceName, 1024, deviceId));
 
           section
-            .add("Device ID"  ,  toString(i))
-            .add("Device Name",  deviceName)
-            .add("Memory"     ,  bytesStr)
+            .add("Device Name", deviceName)
+            .add("Device ID"  , toString(deviceId))
+            .add("Memory"     , bytesStr)
             .addDivider();
         }
         // Remove last divider

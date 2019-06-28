@@ -16,8 +16,8 @@ namespace occa {
   class dtypeStruct_t;
 
   typedef std::map<std::string, const dtype_t*> dtypeGlobalMap_t;
-  typedef std::map<std::string, dtype_t> dtypeNameMap_t;
-  typedef std::vector<const dtype_t*> dtypeVector_t;
+  typedef std::map<std::string, dtype_t>        dtypeNameMap_t;
+  typedef std::vector<const dtype_t*>           dtypeVector_t;
 
   class dtype_t {
   private:

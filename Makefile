@@ -5,11 +5,13 @@ PROJ_DIR := $(OCCA_DIR)
 
 # Clear the list of suffixes
 .SUFFIXES:
-.SUFFIXES: .hpp .h .tpp .cpp .o .so
+.SUFFIXES: .hpp .h .tpp .cpp .mm .o .so
+
 # Cancel some implicit rules
 %:   %.o
 %.o: %.cpp
 %:   %.cpp
+%:   %.mm
 
 include $(OCCA_DIR)/scripts/Makefile
 
@@ -47,12 +49,17 @@ dontCompile = $(OCCA_DIR)/src/core/kernelOperators.cpp $(OCCA_DIR)/src/tools/run
 
 sources     = $(realpath $(shell find $(PROJ_DIR)/src -type f -name '*.cpp'))
 sources    := $(filter-out $(dontCompile),$(sources))
-objcSources = $(realpath $(shell find $(PROJ_DIR)/src -type f -name '*.mm'))
 headers     = $(realpath $(shell find $(PROJ_DIR)/include -type f -name '*.hpp' -o -name "*.h"))
 testSources = $(realpath $(shell find $(PROJ_DIR)/tests/src -type f -name '*.cpp'))
 tests       = $(subst $(testPath)/src,$(testPath)/bin,$(testSources:.cpp=))
 
-objects = $(call srcToObject,$(sources)) $(call objcSrcToObject,$(objcSources))
+objects = $(call srcToObject,$(sources))
+
+# Only compile Objective-C++ if Metal is enabled
+ifeq ($(metalEnabled),1)
+	objcSources = $(realpath $(shell find $(PROJ_DIR)/src -type f -name '*.mm'))
+	objects += $(call objcSrcToObject,$(objcSources))
+endif
 
 outputs = $(libPath)/libocca.so $(binPath)/occa
 

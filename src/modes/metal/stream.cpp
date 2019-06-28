@@ -1,7 +1,3 @@
-#include <occa/defines.hpp>
-
-#if OCCA_METAL_ENABLED
-
 #include <occa/modes/metal/stream.hpp>
 
 namespace occa {
@@ -13,9 +9,7 @@ namespace occa {
       metalCommandQueue(metalCommandQueue_) {}
 
     stream::~stream() {
-      // TODO
+      metalCommandQueue.free();
     }
   }
 }
-
-#endif

@@ -18,17 +18,17 @@ namespace occa {
       static styling::section section("OpenCL");
       if (section.size() == 0) {
         int platformCount = getPlatformCount();
-        for (int pID = 0; pID < platformCount; ++pID) {
-          int deviceCount = getDeviceCountInPlatform(pID);
-          for (int dID = 0; dID < deviceCount; ++dID) {
-            udim_t bytes         = getDeviceMemorySize(pID, dID);
+        for (int platformId = 0; platformId < platformCount; ++platformId) {
+          int deviceCount = getDeviceCountInPlatform(platformId);
+          for (int deviceId = 0; deviceId < deviceCount; ++deviceId) {
+            udim_t bytes = getDeviceMemorySize(platformId, deviceId);
             std::string bytesStr = stringifyBytes(bytes);
 
             section
-              .add("Device Name"  , deviceName(pID, dID))
-              .add("Driver Vendor", info::vendor(deviceVendor(pID,dID)))
-              .add("Platform ID"  , toString(pID))
-              .add("Device ID"    , toString(dID))
+              .add("Device Name"  , deviceName(platformId, deviceId))
+              .add("Driver Vendor", info::vendor(deviceVendor(platformId, deviceId)))
+              .add("Platform ID"  , toString(platformId))
+              .add("Device ID"    , toString(deviceId))
               .add("Memory"       , bytesStr)
               .addDivider();
           }

@@ -58,6 +58,13 @@ namespace occa {
       return m;
     }
 
+    void* memory::getPtr(const occa::properties &props) {
+      if (props.get("mapped", false)) {
+        return mappedPtr;
+      }
+      return ptr;
+    }
+
     void memory::copyFrom(const void *src,
                           const udim_t bytes,
                           const udim_t offset,
@@ -97,13 +104,6 @@ namespace occa {
                                           bytes,
                                           getCuStream()));
       }
-    }
-
-    void* memory::getPtr(const occa::properties &props) {
-      if (props.get("mapped", false)) {
-        return mappedPtr;
-      }
-      return ptr;
     }
 
     void memory::copyTo(void *dest,
