@@ -43,7 +43,6 @@ pthreadFlag := $(pthreadFlag)
 
 #---[ variables ]---------------------------------
 srcToObject     = $(subst $(PROJ_DIR)/src,$(PROJ_DIR)/obj,$(1:.cpp=.o))
-objcSrcToObject = $(subst $(PROJ_DIR)/src,$(PROJ_DIR)/obj,$(1:.mm=.o))
 
 dontCompile = $(OCCA_DIR)/src/core/kernelOperators.cpp $(OCCA_DIR)/src/tools/runFunction.cpp
 
@@ -57,6 +56,7 @@ objects = $(call srcToObject,$(sources))
 
 # Only compile Objective-C++ if Metal is enabled
 ifeq ($(metalEnabled),1)
+  objcSrcToObject = $(subst $(PROJ_DIR)/src,$(PROJ_DIR)/obj,$(1:.mm=.o))
 	objcSources = $(realpath $(shell find $(PROJ_DIR)/src -type f -name '*.mm'))
 	objects += $(call objcSrcToObject,$(objcSources))
 endif

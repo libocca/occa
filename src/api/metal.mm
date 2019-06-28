@@ -1,6 +1,6 @@
 #include <occa/defines.hpp>
 
-#if !OCCA_METAL_ENABLED
+#if OCCA_METAL_ENABLED
 
 #include <occa/api/metal.hpp>
 

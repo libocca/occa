@@ -1,13 +1,14 @@
 #include <occa/defines.hpp>
 
-#if !OCCA_METAL_ENABLED
+#if OCCA_METAL_ENABLED
 
 #include <occa/api/metal/kernel.hpp>
 
 namespace occa {
   namespace api {
     namespace metal {
-      kernel_t::kernel_t() {}
+      kernel_t::kernel_t() :
+      obj(NULL) {}
 
       kernel_t::kernel_t(const kernel_t &other) {}
 

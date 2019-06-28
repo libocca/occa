@@ -3,6 +3,7 @@
 
 #include <occa/defines.hpp>
 #include <cmath>
+#include <iostream>
 
 #if OCCA_MMX
 #  include <mmintrin.h>
@@ -82,14 +83,14 @@ namespace occa {
   }
 
   template <class TM>
-  inline type2<TM>& operator += ( type2<TM> &a, const type2<TM> &b) {
+  inline type2<TM>& operator += (type2<TM> &a, const type2<TM> &b) {
     a.x += b.x;
     a.y += b.y;
     return a;
   }
 
   template <class TM>
-  inline type2<TM>& operator += ( type2<TM> &a, const TM b) {
+  inline type2<TM>& operator += (type2<TM> &a, const TM b) {
     a.x += b;
     a.y += b;
     return a;
@@ -114,14 +115,14 @@ namespace occa {
   }
 
   template <class TM>
-  inline type2<TM>& operator -= ( type2<TM> &a, const type2<TM> &b) {
+  inline type2<TM>& operator -= (type2<TM> &a, const type2<TM> &b) {
     a.x -= b.x;
     a.y -= b.y;
     return a;
   }
 
   template <class TM>
-  inline type2<TM>& operator -= ( type2<TM> &a, const TM b) {
+  inline type2<TM>& operator -= (type2<TM> &a, const TM b) {
     a.x -= b;
     a.y -= b;
     return a;
@@ -146,14 +147,14 @@ namespace occa {
   }
 
   template <class TM>
-  inline type2<TM>& operator *= ( type2<TM> &a, const type2<TM> &b) {
+  inline type2<TM>& operator *= (type2<TM> &a, const type2<TM> &b) {
     a.x *= b.x;
     a.y *= b.y;
     return a;
   }
 
   template <class TM>
-  inline type2<TM>& operator *= ( type2<TM> &a, const TM b) {
+  inline type2<TM>& operator *= (type2<TM> &a, const TM b) {
     a.x *= b;
     a.y *= b;
     return a;
@@ -178,14 +179,14 @@ namespace occa {
   }
 
   template <class TM>
-  inline type2<TM>& operator /= ( type2<TM> &a, const type2<TM> &b) {
+  inline type2<TM>& operator /= (type2<TM> &a, const type2<TM> &b) {
     a.x /= b.x;
     a.y /= b.y;
     return a;
   }
 
   template <class TM>
-  inline type2<TM>& operator /= ( type2<TM> &a, const TM b) {
+  inline type2<TM>& operator /= (type2<TM> &a, const TM b) {
     a.x /= b;
     a.y /= b;
     return a;
@@ -193,7 +194,7 @@ namespace occa {
 
   template <class TM>
   inline std::ostream& operator << (std::ostream &out,
-                                  const type2<TM>& a) {
+                                    const type2<TM>& a) {
     out << "[" << a.x << ", " << a.y << "]\n";
     return out;
   }
@@ -275,7 +276,7 @@ namespace occa {
   }
 
   template <class TM>
-  inline type4<TM>& operator += ( type4<TM> &a, const type4<TM> &b) {
+  inline type4<TM>& operator += (type4<TM> &a, const type4<TM> &b) {
     a.x += b.x;
     a.y += b.y;
     a.z += b.z;
@@ -284,7 +285,7 @@ namespace occa {
   }
 
   template <class TM, class TM2>
-  inline type4<TM>& operator += ( type4<TM> &a, const TM2 b) {
+  inline type4<TM>& operator += (type4<TM> &a, const TM2 b) {
     a.x += b;
     a.y += b;
     a.z += b;
@@ -317,7 +318,7 @@ namespace occa {
   }
 
   template <class TM>
-  inline type4<TM>& operator -= ( type4<TM> &a, const type4<TM> &b) {
+  inline type4<TM>& operator -= (type4<TM> &a, const type4<TM> &b) {
     a.x -= b.x;
     a.y -= b.y;
     a.z -= b.z;
@@ -326,7 +327,7 @@ namespace occa {
   }
 
   template <class TM, class TM2>
-  inline type4<TM>& operator -= ( type4<TM> &a, const TM2 b) {
+  inline type4<TM>& operator -= (type4<TM> &a, const TM2 b) {
     a.x -= b;
     a.y -= b;
     a.z -= b;
@@ -359,7 +360,7 @@ namespace occa {
   }
 
   template <class TM>
-  inline type4<TM>& operator *= ( type4<TM> &a, const type4<TM> &b) {
+  inline type4<TM>& operator *= (type4<TM> &a, const type4<TM> &b) {
     a.x *= b.x;
     a.y *= b.y;
     a.z *= b.z;
@@ -368,7 +369,7 @@ namespace occa {
   }
 
   template <class TM, class TM2>
-  inline type4<TM>& operator *= ( type4<TM> &a, const TM2 b) {
+  inline type4<TM>& operator *= (type4<TM> &a, const TM2 b) {
     a.x *= b;
     a.y *= b;
     a.z *= b;
@@ -401,7 +402,7 @@ namespace occa {
   }
 
   template <class TM>
-  inline type4<TM>& operator /= ( type4<TM> &a, const type4<TM> &b) {
+  inline type4<TM>& operator /= (type4<TM> &a, const type4<TM> &b) {
     a.x /= b.x;
     a.y /= b.y;
     a.z /= b.z;
@@ -410,7 +411,7 @@ namespace occa {
   }
 
   template <class TM, class TM2>
-  inline type4<TM>& operator /= ( type4<TM> &a, const TM2 b) {
+  inline type4<TM>& operator /= (type4<TM> &a, const TM2 b) {
     a.x /= b;
     a.y /= b;
     a.z /= b;
