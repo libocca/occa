@@ -16,8 +16,8 @@ namespace occa {
     kernel::kernel(modeDevice_t *modeDevice_,
                    const std::string &name_,
                    const std::string &sourceFilename_,
-                   metalDevice_t metalDevice_,
-                   metalKernel_t metalKernel_,
+                   api::metal::device_t metalDevice_,
+                   api::metal::kernel_t metalKernel_,
                    const occa::properties &properties_) :
       occa::launchedModeKernel_t(modeDevice_, name_, sourceFilename_, properties_),
       metalDevice(metalDevice_),

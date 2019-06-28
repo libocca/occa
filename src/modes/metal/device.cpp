@@ -21,7 +21,7 @@ namespace occa {
 
       deviceID = properties.get<int>("device_id");
 
-      metalDevice = metalDevice_t::fromId(deviceID);
+      metalDevice = api::metal::getDevice(deviceID);
       metalCommandQueue = metalDevice.createCommandQueue();
     }
 
@@ -127,9 +127,9 @@ namespace occa {
       for (int i = 0; i < launchedKernelsCount; ++i) {
         lang::kernelMetadata &metadata = launchedKernelsMetadata[i];
 
-        metalKernel_t metalKernel = metalDevice.buildKernel(source,
-                                                            metadata.name,
-                                                            lock);
+        api::metal::kernel_t metalKernel = metalDevice.buildKernel(source,
+                                                                   metadata.name,
+                                                                   lock);
         kernel *deviceKernel = new kernel(this,
                                           metadata.name,
                                           sourceFilename,

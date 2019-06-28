@@ -2,7 +2,7 @@
 #define OCCA_MODES_METAL_DEVICE_HEADER
 
 #include <occa/core/launchedDevice.hpp>
-#include <occa/modes/metal/bridge.hpp>
+#include <occa/api/metal.hpp>
 
 namespace occa {
   namespace metal {
@@ -16,8 +16,8 @@ namespace occa {
     public:
       int deviceID;
 
-      metalDevice_t metalDevice;
-      metalCommandQueue_t metalCommandQueue;
+      api::metal::device_t metalDevice;
+      api::metal::commandQueue_t metalCommandQueue;
 
       device(const occa::properties &properties_);
       virtual ~device();

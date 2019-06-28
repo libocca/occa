@@ -2,7 +2,7 @@
 #define OCCA_MODES_METAL_MEMORY_HEADER
 
 #include <occa/core/memory.hpp>
-#include <occa/modes/metal/bridge.hpp>
+#include <occa/api/metal.hpp>
 
 namespace occa {
   namespace metal {
@@ -12,7 +12,7 @@ namespace occa {
       friend class metal::device;
 
     private:
-      metalBuffer_t metalBuffer;
+      api::metal::buffer_t metalBuffer;
       udim_t bufferOffset;
 
     public:

@@ -2,17 +2,17 @@
 #define OCCA_MODES_METAL_STREAM_HEADER
 
 #include <occa/core/stream.hpp>
-#include <occa/modes/metal/bridge.hpp>
+#include <occa/api/metal.hpp>
 
 namespace occa {
   namespace metal {
     class stream : public occa::modeStream_t {
     public:
-      metalCommandQueue_t metalCommandQueue;
+      api::metal::commandQueue_t metalCommandQueue;
 
       stream(modeDevice_t *modeDevice_,
              const occa::properties &properties_,
-             metalCommandQueue_t metalCommandQueue_);
+             api::metal::commandQueue_t metalCommandQueue_);
 
       virtual ~stream();
     };

@@ -47,7 +47,7 @@ namespace occa {
                           const occa::properties &props) {
       const bool async = props.get("async", false);
 
-      metalDevice_t &metalDevice = ((metal::device*) modeDevice)->metalDevice;
+      api::metal::device_t &metalDevice = ((metal::device*) modeDevice)->metalDevice;
       metalDevice.memcpy(metalBuffer,
                     offset,
                     src,
@@ -62,7 +62,7 @@ namespace occa {
                           const occa::properties &props) {
       const bool async = props.get("async", false);
 
-      metalDevice_t &metalDevice = ((metal::device*) modeDevice)->metalDevice;
+      api::metal::device_t &metalDevice = ((metal::device*) modeDevice)->metalDevice;
       metalDevice.memcpy(metalBuffer,
                     destOffset,
                     ((const metal::memory*) src)->metalBuffer,
@@ -78,7 +78,7 @@ namespace occa {
 
       const bool async = props.get("async", false);
 
-      metalDevice_t &metalDevice = ((metal::device*) modeDevice)->metalDevice;
+      api::metal::device_t &metalDevice = ((metal::device*) modeDevice)->metalDevice;
       metalDevice.memcpy(dest,
                     metalBuffer,
                     offset,

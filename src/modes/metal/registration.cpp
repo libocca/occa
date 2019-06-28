@@ -11,9 +11,9 @@ namespace occa {
     styling::section& modeInfo::getDescription() {
       static styling::section section("Metal");
       if (section.size() == 0) {
-        int deviceCount = metalDevice_t::getCount();
+        int deviceCount = api::metal::getDeviceCount();
         for (int deviceId = 0; deviceId < deviceCount; ++deviceId) {
-          metalDevice_t device = metalDevice_t::fromId(deviceId);
+          api::metal::device_t device = api::metal::getDevice(deviceId);
 
           udim_t bytes = device.getMemorySize();
           std::string bytesStr = stringifyBytes(bytes);

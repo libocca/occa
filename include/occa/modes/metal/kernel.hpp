@@ -2,7 +2,7 @@
 #define OCCA_MODES_METAL_KERNEL_HEADER
 
 #include <occa/core/launchedKernel.hpp>
-#include <occa/modes/metal/bridge.hpp>
+#include <occa/api/metal.hpp>
 
 namespace occa {
   namespace metal {
@@ -12,8 +12,8 @@ namespace occa {
       friend class device;
 
     private:
-      metalDevice_t metalDevice;
-      mutable metalKernel_t metalKernel;
+      api::metal::device_t metalDevice;
+      mutable api::metal::kernel_t metalKernel;
 
     public:
       kernel(modeDevice_t *modeDevice_,
@@ -24,8 +24,8 @@ namespace occa {
       kernel(modeDevice_t *modeDevice_,
              const std::string &name_,
              const std::string &sourceFilename_,
-             metalDevice_t metalDevice_,
-             metalKernel_t metalKernel_,
+             api::metal::device_t metalDevice_,
+             api::metal::kernel_t metalKernel_,
              const occa::properties &properties_);
 
       ~kernel();

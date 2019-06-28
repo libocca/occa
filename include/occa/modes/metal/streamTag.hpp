@@ -2,17 +2,17 @@
 #define OCCA_MODES_METAL_STREAMTAG_HEADER
 
 #include <occa/core/streamTag.hpp>
-#include <occa/modes/metal/bridge.hpp>
+#include <occa/api/metal.hpp>
 
 namespace occa {
   namespace metal {
     class streamTag : public occa::modeStreamTag_t {
     public:
-      metalEvent_t metalEvent;
+      api::metal::event_t metalEvent;
       double time;
 
       streamTag(modeDevice_t *modeDevice_,
-                metalEvent_t metalEvent_);
+                api::metal::event_t metalEvent_);
 
       virtual ~streamTag();
 
