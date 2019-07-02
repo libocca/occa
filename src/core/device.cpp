@@ -627,23 +627,6 @@ namespace occa {
                         const occa::properties &props) {
     return umalloc(entries, dtype, NULL, props);
   }
-
-  void* device::umalloc(const dim_t bytes,
-                        const void *src,
-                        const occa::properties &props) {
-    return umalloc(bytes, dtype::byte, src, props);
-  }
-
-  void* device::umalloc(const dim_t bytes,
-                        const occa::memory src,
-                        const occa::properties &props) {
-    return umalloc(bytes, dtype::byte, src, props);
-  }
-
-  void* device::umalloc(const dim_t bytes,
-                        const occa::properties &props) {
-    return umalloc(bytes, dtype::byte, NULL, props);
-  }
   //  |=================================
 
   template <>

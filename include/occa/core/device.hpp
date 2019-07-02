@@ -4,9 +4,10 @@
 #include <iostream>
 #include <sstream>
 
-#include <occa/defines.hpp>
 #include <occa/core/kernel.hpp>
+#include <occa/core/memory.hpp>
 #include <occa/core/stream.hpp>
+#include <occa/defines.hpp>
 #include <occa/dtype.hpp>
 #include <occa/io/output.hpp>
 #include <occa/tools/gc.hpp>
@@ -14,7 +15,6 @@
 
 namespace occa {
   class modeKernel_t; class kernel;
-  class modeMemory_t; class memory;
   class modeDevice_t; class device;
   class modeStreamTag_t; class streamTag;
   class deviceInfo;
@@ -270,16 +270,25 @@ namespace occa {
                   const dtype_t &dtype,
                   const occa::properties &props);
 
-    void* umalloc(const dim_t bytes,
-                  const void *src = NULL,
-                  const occa::properties &props = occa::properties());
+    template <class TM>
+    TM* umalloc(const dim_t entries,
+                const void *src = NULL,
+                const occa::properties &props = occa::properties()) {
+      return (TM*) umalloc(entries, dtype::get<TM>(), src, props);
+    }
 
-    void* umalloc(const dim_t bytes,
-                  const occa::memory src,
-                  const occa::properties &props = occa::properties());
+    template <class TM>
+    TM* umalloc(const dim_t entries,
+                const occa::memory src,
+                const occa::properties &props = occa::properties()) {
+      return (TM*) umalloc(entries, dtype::get<TM>(), src, props);
+    }
 
-    void* umalloc(const dim_t bytes,
-                  const occa::properties &props);
+    template <class TM>
+    TM* umalloc(const dim_t entries,
+                const occa::properties &props) {
+      return (TM*) umalloc(entries, dtype::get<TM>(), props);
+    }
     //  |===============================
   };
 

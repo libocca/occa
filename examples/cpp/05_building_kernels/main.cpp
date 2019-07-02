@@ -88,9 +88,9 @@ int main(int argc, const char **argv) {
 
   o_vec2.copyTo(vec2);
 
-  for (int i = 0; i < 5; ++i)
+  for (int i = 0; i < entries; ++i) {
     std::cout << vec[i] << "^2 = " << vec2[i] << '\n';
-
+  }
   for (int i = 0; i < entries; ++i) {
     if (vec2[i] != (vec[i] * vec[i]))
       throw 1;

@@ -41,7 +41,7 @@ int main(int argc, const char **argv) {
   //   making it safe to use them again
   occa::finish();
 
-  for (int i = 0; i < 5; ++i) {
+  for (int i = 0; i < entries; ++i) {
     std::cout << i << ": " << ab[i] << '\n';
   }
   for (int i = 0; i < entries; ++i) {

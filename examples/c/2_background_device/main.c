@@ -57,9 +57,9 @@ int main(int argc, const char **argv) {
   //   making it safe to use them again
   occaFinish();
 
-  for (i = 0; i < 5; ++i)
+  for (i = 0; i < entries; ++i) {
     printf("%d = %f\n", i, ab[i]);
-
+  }
   for (i = 0; i < entries; ++i) {
     if (ab[i] != (a[i] + b[i])) {
       exit(1);

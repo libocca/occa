@@ -64,7 +64,7 @@ int main(int argc, const char **argv) {
   o_ab.copyTo(ab);
 
   // Assert values
-  for (int i = 0; i < 5; ++i) {
+  for (int i = 0; i < entries; ++i) {
     std::cout << i << ": " << ab[i] << '\n';
   }
   for (int i = 0; i < entries; ++i) {

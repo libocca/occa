@@ -21,9 +21,9 @@ int main(int argc, const char **argv) {
 
   int entries = 5;
 
-  float *a  = (float*) occa::umalloc(entries, occa::dtype::float_);
-  float *b  = (float*) occa::umalloc(entries, occa::dtype::float_);
-  float *ab = (float*) occa::umalloc(entries, occa::dtype::float_);
+  float *a  = occa::umalloc<float>(entries);
+  float *b  = occa::umalloc<float>(entries);
+  float *ab = occa::umalloc<float>(entries);
 
   for (int i = 0; i < entries; ++i) {
     a[i]  = i;
@@ -47,9 +47,9 @@ int main(int argc, const char **argv) {
   //   making it safe to use them again
   occa::finish();
 
-  for (int i = 0; i < 5; ++i)
+  for (int i = 0; i < entries; ++i) {
     std::cout << i << ": " << ab[i] << '\n';
-
+  }
   for (int i = 0; i < entries; ++i) {
     if (ab[i] != (a[i] + b[i]))
       throw 1;

@@ -86,7 +86,7 @@ int main(int argc, const char **argv) {
   occaCopyMemToPtr(ab, o_ab, occaAllBytes, 0, occaDefault);
 
   // Assert values
-  for (i = 0; i < 5; ++i) {
+  for (i = 0; i < entries; ++i) {
     printf("%d = %f\n", i, ab[i]);
   }
   for (i = 0; i < entries; ++i) {

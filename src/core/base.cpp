@@ -115,12 +115,6 @@ namespace occa {
     return getDevice().umalloc(entries, dtype, src, props);
   }
 
-  void* umalloc(const dim_t bytes,
-                const void *src,
-                const occa::properties &props) {
-    return getDevice().umalloc(bytes, src, props);
-  }
-
   void memcpy(void *dest, const void *src,
               const dim_t bytes,
               const occa::properties &props) {

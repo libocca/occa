@@ -74,9 +74,12 @@ namespace occa {
                 const void *src = NULL,
                 const occa::properties &props = occa::properties());
 
-  void* umalloc(const dim_t bytes,
-                const void *src = NULL,
-                const occa::properties &props = occa::properties());
+  template <class TM>
+  TM* umalloc(const dim_t bytes,
+              const void *src = NULL,
+              const occa::properties &props = occa::properties()) {
+    return (TM*) umalloc(bytes, dtype::get<TM>(), src, props);
+  }
 
   void memcpy(void *dest, const void *src,
               const dim_t bytes,

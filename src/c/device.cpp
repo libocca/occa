@@ -226,13 +226,12 @@ void* OCCA_RFUNC occaDeviceUMalloc(occaDevice device,
   occa::device device_ = occa::c::device(device);
 
   if (occa::c::isDefault(props)) {
-    return device_.umalloc(bytes, src);
+    return device_.umalloc<void>(bytes, src);
   }
-  return device_.umalloc(bytes,
-                         src,
-                         occa::c::properties(props));
+  return device_.umalloc<void>(bytes,
+                               src,
+                               occa::c::properties(props));
 }
-
 
 void* OCCA_RFUNC occaDeviceTypedUMalloc(occaDevice device,
                                         const occaUDim_t entries,

@@ -11,19 +11,15 @@ int main(int argc, const char **argv) {
 
   int entries = 5;
 
-  float *a  = new float[entries];
-  float *b  = new float[entries];
-  float *ab = new float[entries];
+  float *a  = occa::umalloc<float>(entries);
+  float *b  = occa::umalloc<float>(entries);
+  float *ab = occa::umalloc<float>(entries);
 
   for (int i = 0; i < entries; ++i) {
     a[i]  = i;
     b[i]  = 1 - i;
     ab[i] = 0;
   }
-
-  occa::memory o_a  = occa::malloc(entries, occa::dtype::float_, a);
-  occa::memory o_b  = occa::malloc(entries, occa::dtype::float_, b);
-  occa::memory o_ab = occa::malloc(entries, occa::dtype::float_);
 
   // Props are
   occa::properties props;
@@ -49,35 +45,32 @@ int main(int argc, const char **argv) {
   //       - Resolved once 'auto' is supported. Function arguments of
   //         type 'auto' will act as templated typed variables
   //
-  //   - Cannot use unified memory from occa::umalloc
-  //       - dtype::get<> needs to check a pointer type
-  //
   //   ~ Cannot use external functions
   //       - Potentially can happen with another macro OCCA_INLINED_FUNCTION
   OCCA_INLINED_KERNEL(
-    (entries, o_a, o_b, o_ab),
+    (entries, a, b, ab),
     props,
     (
       for (int i = 0; i < entries; ++i; @tile(TILE_SIZE, @outer, @inner)) {
-        o_ab[i] = o_a[i] + o_b[i];
+        ab[i] = a[i] + b[i];
       }
     )
   );
 
   // Copy result to the host
-  o_ab.copyTo(ab);
+  occa::finish();
 
-  for (int i = 0; i < 5; ++i)
+  for (int i = 0; i < entries; ++i) {
     std::cout << i << ": " << ab[i] << '\n';
-
+  }
   for (int i = 0; i < entries; ++i) {
     if (ab[i] != (a[i] + b[i]))
       throw 1;
   }
 
-  delete [] a;
-  delete [] b;
-  delete [] ab;
+  occa::free(a);
+  occa::free(b);
+  occa::free(ab);
 
   return 0;
 }
