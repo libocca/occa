@@ -6,6 +6,8 @@
 #include <occa/types/tuples.hpp>
 
 namespace occa {
+  class memory;
+
   namespace dtype {
     extern const dtype_t none;
 
@@ -70,12 +72,16 @@ namespace occa {
     extern const dtype_t double3;
     extern const dtype_t double4;
 
+    // OCCA Types
+    extern const dtype_t memory;
+
     // Templated types
     template <class TM>
     dtype_t get() {
       return none;
     }
 
+    // Primitive types
     template <> dtype_t get<char>();
     template <> dtype_t get<signed char>();
     template <> dtype_t get<unsigned char>();
@@ -107,6 +113,9 @@ namespace occa {
     template <> dtype_t get<occa::float4>();
     template <> dtype_t get<occa::double2>();
     template <> dtype_t get<occa::double4>();
+
+    // OCCA Types
+    template <> dtype_t get<occa::memory>();
   }
 }
 

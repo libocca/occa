@@ -184,10 +184,45 @@ namespace occa {
   //====================================
 
 
-  //---[ Kernel Properties ]------------
+  //---[ Kernel Helper Methods ]--------
+  // Properties:
+  //   defines       : Object
+  //   includes      : Array
+  //   header        : Array
+  //   include_paths : Array
   hash_t kernelHeaderHash(const occa::properties &props);
 
   std::string assembleKernelHeader(const occa::properties &props);
+
+  template <class TM>
+  dtype_t getMemoryDtype(const TM &arg) {
+    return dtype::none;
+  }
+
+  template <>
+  dtype_t getMemoryDtype(const occa::memory &arg);
+
+  template <class ARG1, class ARG2, class ARG3, class ARG4>
+  std::vector<dtype_t> getInlinedKernelArgTypes(
+    ARG1 arg1, ARG2 arg2, ARG3 arg3, ARG4 arg4
+  ) {
+    std::vector<dtype_t> types;
+    types.reserve(8);
+    types.push_back(dtype::get<ARG1>());
+    types.push_back(getMemoryDtype(arg1));
+    types.push_back(dtype::get<ARG2>());
+    types.push_back(getMemoryDtype(arg2));
+    types.push_back(dtype::get<ARG3>());
+    types.push_back(getMemoryDtype(arg3));
+    types.push_back(dtype::get<ARG4>());
+    types.push_back(getMemoryDtype(arg4));
+    return types;
+  }
+
+  std::string formatInlinedKernel(std::vector<dtype_t> arguments,
+                                  const std::string &macroArgs,
+                                  const std::string &macroKernel,
+                                  const std::string &kernelName);
   //====================================
 }
 

@@ -152,7 +152,7 @@ namespace occa {
     const std::string& mode() const;
     const occa::properties& properties() const;
 
-    const dtype_t& dtype();
+    const dtype_t& dtype() const;
 
     udim_t size() const;
     udim_t length() const;

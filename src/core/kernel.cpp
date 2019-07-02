@@ -1,12 +1,14 @@
-#include <occa/core/kernel.hpp>
 #include <occa/core/device.hpp>
+#include <occa/core/kernel.hpp>
 #include <occa/core/memory.hpp>
-#include <occa/tools/uva.hpp>
 #include <occa/io.hpp>
-#include <occa/tools/sys.hpp>
-#include <occa/lang/parser.hpp>
 #include <occa/lang/builtins/types.hpp>
+#include <occa/lang/parser.hpp>
 #include <occa/lang/transforms/builtins/finders.hpp>
+#include <occa/tools/lex.hpp>
+#include <occa/tools/string.hpp>
+#include <occa/tools/sys.hpp>
+#include <occa/tools/uva.hpp>
 
 namespace occa {
   //---[ modeKernel_t ]-----------------
@@ -404,11 +406,12 @@ namespace occa {
   //====================================
 
 
-  //---[ Kernel Properties ]------------
-  // defines       : Object
-  // includes      : Array
-  // header        : Array
-  // include_paths : Array
+  //---[ Kernel Helper Methods ]--------
+  // Properties:
+  //   defines       : Object
+  //   includes      : Array
+  //   header        : Array
+  //   include_paths : Array
 
   hash_t kernelHeaderHash(const occa::properties &props) {
     return (
@@ -456,6 +459,81 @@ namespace occa {
     }
 
     return header;
+  }
+
+  template <>
+  dtype_t getMemoryDtype(const occa::memory &arg) {
+    return arg.dtype();
+  }
+
+  strVector getInlinedKernelArgNames(const int argumentCount,
+                                     const std::string &macroArgs) {
+    // Remove first and last () characters
+    std::string source = strip(macroArgs);
+    source = source.substr(1, source.size() - 2);
+
+    strVector names;
+    names.reserve(argumentCount);
+
+    const char *cStart = source.c_str();
+    const char *c = cStart;
+    for (int i = 0; i < argumentCount; ++i) {
+      lex::skipTo(c, ',');
+      names.push_back(std::string(cStart, c - cStart));
+      if (*c == '\0') {
+        break;
+      }
+      cStart = ++c;
+    }
+
+    OCCA_ERROR("Incorrect argument count ["
+               << names.size() << "] (Expected "
+               << argumentCount << ")",
+               argumentCount == (int) names.size());
+
+    return names;
+  }
+
+  std::string formatInlinedArg(const dtype_t &argType,
+                               const dtype_t &argMemoryType,
+                               const std::string &argName) {
+    std::stringstream ss;
+
+    if (argType == dtype::memory) {
+      ss << argMemoryType << " *";
+    } else {
+      ss << argType << ' ';
+    }
+    ss << argName;
+
+    return ss.str();
+  }
+
+  std::string formatInlinedKernel(std::vector<dtype_t> arguments,
+                                  const std::string &macroArgs,
+                                  const std::string &macroKernel,
+                                  const std::string &kernelName) {
+    const int argumentCount = (int) (arguments.size() / 2);
+
+    // Remove first and last () characters
+    std::string source = strip(macroKernel);
+    source = source.substr(1, source.size() - 2);
+
+    strVector argNames = getInlinedKernelArgNames(argumentCount, macroArgs);
+
+    std::stringstream ss;
+    ss << "@kernel void " << kernelName << "(";
+    for (int i = 0; i < argumentCount; ++i) {
+      if (i) {
+        ss << ", ";
+      }
+      ss << formatInlinedArg(arguments[2*i + 0],
+                             arguments[2*i + 1],
+                             argNames[i]);
+    }
+    ss << ") {" << source << "}";
+
+    return ss.str();
   }
   //====================================
 }

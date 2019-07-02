@@ -65,7 +65,12 @@ namespace occa {
     const dtype_t double3("double3", dtype_t::tuple(double_, 3), true);
     const dtype_t double4("double4", dtype_t::tuple(double_, 4), true);
 
+    // OCCA Types
+    const dtype_t memory("occa::memory", 0, true);
+
     // Templated types
+
+    // Primitive types
     template <> dtype_t get<char>() {
       return char_;
     }
@@ -188,6 +193,11 @@ namespace occa {
 
     template <> dtype_t get<occa::double4>() {
       return double4;
+    }
+
+    // OCCA Types
+    template <> dtype_t get<occa::memory>() {
+      return memory;
     }
   }
 }

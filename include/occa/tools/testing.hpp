@@ -22,7 +22,7 @@
         throw exc;                                      \
       }                                                 \
     }                                                   \
-  } while(0)
+  } while (false)
 
 #define ASSERT_LE(a, b)                                       \
   OCCA_ASSERT_ERROR("Assertion Failed: Value is >",           \
@@ -82,7 +82,7 @@
     }                                                         \
     OCCA_ERROR("Assertion Failed: No occa::exception thrown", \
                threw);                                        \
-  } while(0)
+  } while (false)
 
 namespace occa {
   namespace test {

@@ -37,27 +37,27 @@
 #define OCCA_UNKNOWN_COMPILER   (1 << 9)
 
 #ifndef OCCA_COMPILED_WITH
-#if defined(__clang__)
-#  define OCCA_COMPILED_WITH OCCA_LLVM_COMPILER
-#elif defined(__ICC) || defined(__INTEL_COMPILER)
-#  define OCCA_COMPILED_WITH OCCA_INTEL_COMPILER
-#elif defined(__GNUC__) || defined(__GNUG__)
-#  define OCCA_COMPILED_WITH OCCA_GNU_COMPILER
-#elif defined(__HP_cc) || defined(__HP_aCC)
-#  define OCCA_COMPILED_WITH OCCA_HP_COMPILER
-#elif defined(__IBMC__) || defined(__IBMCPP__)
-#  define OCCA_COMPILED_WITH OCCA_IBM_COMPILER
-#elif defined(__PGI)
-#  define OCCA_COMPILED_WITH OCCA_PGI_COMPILER
-#elif defined(_CRAYC)
-#  define OCCA_COMPILED_WITH OCCA_CRAY_COMPILER
-#elif defined(__PATHSCALE__) || defined(__PATHCC__)
-#  define OCCA_COMPILED_WITH OCCA_PATHSCALE_COMPILER
-#elif defined(_MSC_VER)
-#  define OCCA_COMPILED_WITH OCCA_VS_COMPILER
-#else
-#  define OCCA_COMPILED_WITH OCCA_UNKNOWN_COMPILER
-#endif
+#  if defined(__clang__)
+#    define OCCA_COMPILED_WITH OCCA_LLVM_COMPILER
+#  elif defined(__ICC) || defined(__INTEL_COMPILER)
+#    define OCCA_COMPILED_WITH OCCA_INTEL_COMPILER
+#  elif defined(__GNUC__) || defined(__GNUG__)
+#    define OCCA_COMPILED_WITH OCCA_GNU_COMPILER
+#  elif defined(__HP_cc) || defined(__HP_aCC)
+#    define OCCA_COMPILED_WITH OCCA_HP_COMPILER
+#  elif defined(__IBMC__) || defined(__IBMCPP__)
+#    define OCCA_COMPILED_WITH OCCA_IBM_COMPILER
+#  elif defined(__PGI)
+#    define OCCA_COMPILED_WITH OCCA_PGI_COMPILER
+#  elif defined(_CRAYC)
+#    define OCCA_COMPILED_WITH OCCA_CRAY_COMPILER
+#  elif defined(__PATHSCALE__) || defined(__PATHCC__)
+#    define OCCA_COMPILED_WITH OCCA_PATHSCALE_COMPILER
+#  elif defined(_MSC_VER)
+#    define OCCA_COMPILED_WITH OCCA_VS_COMPILER
+#  else
+#    define OCCA_COMPILED_WITH OCCA_UNKNOWN_COMPILER
+#  endif
 #endif
 //======================================
 

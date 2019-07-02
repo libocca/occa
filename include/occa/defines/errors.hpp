@@ -13,7 +13,7 @@
       _check_ss << message;                                             \
       checkFunction(filename, function, line, _check_ss.str());         \
     }                                                                   \
-  } while(0)
+  } while (false)
 
 #if !OCCA_UNSAFE
 #  define OCCA_TEMPLATE_CHECK(a,b,c,d,e,f) OCCA_TEMPLATE_CHECK_(a,b,c,d,e,f)
@@ -43,7 +43,7 @@
       _check_ss << message;                                             \
       checkFunction(_clErrorCode, filename, function, line, _check_ss.str()); \
     }                                                                   \
-  } while(0)
+  } while (false)
 
 #define OCCA_OPENCL_ERROR3(expr, filename, function, line, message) OCCA_OPENCL_TEMPLATE_CHECK(occa::opencl::error, expr, filename, function, line, message)
 #define OCCA_OPENCL_ERROR2(expr, filename, function, line, message) OCCA_OPENCL_ERROR3(expr, filename, function, line, message)
@@ -64,7 +64,7 @@
       _check_ss << message;                                             \
       checkFunction(_cudaErrorCode, filename, function, line, _check_ss.str()); \
     }                                                                   \
-  } while(0)
+  } while (false)
 
 #define OCCA_CUDA_ERROR3(expr, filename, function, line, message) OCCA_CUDA_TEMPLATE_CHECK(occa::cuda::error, expr, filename, function, line, message)
 #define OCCA_CUDA_ERROR2(expr, filename, function, line, message) OCCA_CUDA_ERROR3(expr, filename, function, line, message)
@@ -79,13 +79,13 @@
 //---[ HIP ]---------------------------
 #define OCCA_HIP_TEMPLATE_CHECK(checkFunction, expr, filename, function, line, message) \
   do {                                                                  \
-    hipError_t _hipErrorCode = expr;                                     \
-    if (_hipErrorCode) {                                               \
+    hipError_t _hipErrorCode = expr;                                    \
+    if (_hipErrorCode) {                                                \
       std::stringstream _check_ss;                                      \
       _check_ss << message;                                             \
       checkFunction(_hipErrorCode, filename, function, line, _check_ss.str()); \
     }                                                                   \
-  } while(0)
+  } while (false)
 
 #define OCCA_HIP_ERROR3(expr, filename, function, line, message) OCCA_HIP_TEMPLATE_CHECK(occa::hip::error, expr, filename, function, line, message)
 #define OCCA_HIP_ERROR2(expr, filename, function, line, message) OCCA_HIP_ERROR3(expr, filename, function, line, message)

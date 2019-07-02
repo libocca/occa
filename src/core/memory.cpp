@@ -209,7 +209,7 @@ namespace occa {
     modeMemory->dtype_ = &(dtype__.self());
   }
 
-  const dtype_t& memory::dtype() {
+  const dtype_t& memory::dtype() const {
     if (modeMemory) {
       return *modeMemory->dtype_;
     }
