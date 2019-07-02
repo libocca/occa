@@ -25,13 +25,35 @@ int main(int argc, const char **argv) {
   occa::memory o_b  = occa::malloc(entries, occa::dtype::float_, b);
   occa::memory o_ab = occa::malloc(entries, occa::dtype::float_);
 
+  // Props are
   occa::properties props;
   props["defines/TILE_SIZE"] = 16;
 
-  // Restrictions on using inlined kernels:
+  // OCCA_INLINED_KERNEL Argument Format:
+  //   - First argument:
+  //       - Variables used in the kernel wrapped in ()'s
+  //
+  //   - Second argument:
+  //       - Props for the kernel
+  //       - Pass occa::properties() if no props are needed
+  //
+  //   - Third argument:
+  //       - Kernel body wrapped in ()'s
+  //
+  // Restrictions
   //   - Memory allocations must include a dtype
-  // Temporary restrictions for using inlined kernels:
+  //       - To build the kernel at runtime, the types have to be known
+  //
+  // Temporary Restrictions:
+  //   - Memory objects must always be of the same dtype
+  //       - Resolved once 'auto' is supported. Function arguments of
+  //         type 'auto' will act as templated typed variables
+  //
   //   - Cannot use unified memory from occa::umalloc
+  //       - dtype::get<> needs to check a pointer type
+  //
+  //   ~ Cannot use external functions
+  //       - Potentially can happen with another macro OCCA_INLINED_FUNCTION
   OCCA_INLINED_KERNEL(
     (entries, o_a, o_b, o_ab),
     props,
