@@ -3,6 +3,7 @@
 
 #include <occa/dtype/dtype.hpp>
 #include <occa/types/typedefs.hpp>
+#include <occa/types/typeinfo.hpp>
 #include <occa/types/tuples.hpp>
 
 namespace occa {
@@ -78,7 +79,10 @@ namespace occa {
     // Templated types
     template <class TM>
     dtype_t get() {
-      return none;
+      if (!typeMetadata<TM>::isPointer) {
+        return none;
+      }
+      return get<typename typeMetadata<TM>::baseType>();
     }
 
     // Primitive types

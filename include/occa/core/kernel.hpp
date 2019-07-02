@@ -196,6 +196,9 @@ namespace occa {
 
   template <class TM>
   dtype_t getMemoryDtype(const TM &arg) {
+    if (typeMetadata<TM>::isPointer) {
+      return dtype::get<TM>();
+    }
     return dtype::none;
   }
 

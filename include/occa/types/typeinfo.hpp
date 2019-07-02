@@ -6,6 +6,18 @@
 
 namespace occa {
   template <class TM>
+  struct typeMetadata {
+    typedef TM baseType;
+    static const bool isPointer = false;
+  };
+
+  template <class TM>
+  struct typeMetadata<TM*> {
+    typedef TM baseType;
+    static const bool isPointer = true;
+  };
+
+  template <class TM>
   class primitiveinfo {
   public:
     static const std::string id;

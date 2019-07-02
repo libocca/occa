@@ -499,7 +499,7 @@ namespace occa {
                                const std::string &argName) {
     std::stringstream ss;
 
-    if (argType == dtype::memory) {
+    if (argMemoryType != dtype::none) {
       ss << argMemoryType << " *";
     } else {
       ss << argType << ' ';
