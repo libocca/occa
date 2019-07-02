@@ -82,7 +82,7 @@ occa::json parseArgs(int argc, const char **argv) {
   occa::cli::parser parser;
   parser
     .withDescription(
-      "Example showing how to use background devices, allowing passing of the device implicitly"
+      "Example showing inlined kernels"
     )
     .addOption(
       occa::cli::option('d', "device",
