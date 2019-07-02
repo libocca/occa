@@ -50,35 +50,77 @@ namespace occa {
 
 
   //---[ Inlined Kernel ]---------------
-  template <class TM>
-  dtype_t getMemoryDtype(const TM &arg) {
-    if (typeMetadata<TM>::isPointer) {
-      return dtype::get<TM>();
+  namespace inlinedKernel {
+    class arg_t {
+     public:
+      dtype_t dtype;
+      bool isPointer;
+
+      inline arg_t(const dtype_t &dtype_,
+                   const bool isPointer_) :
+          dtype(dtype_),
+          isPointer(isPointer_) {}
+    };
+
+    template <class TM>
+    struct isMemory {
+      static const bool value = false;
+    };
+
+    template <>
+    struct isMemory<occa::memory> {
+      static const bool value = true;
+    };
+
+    template <class TM>
+    struct argIsPointer {
+      static const bool value = typeMetadata<TM>::isPointer || isMemory<TM>::value;
+    };
+
+    template <class TM>
+    inline dtype_t getPointerType(const TM &arg) {
+      if (typeMetadata<TM>::isPointer) {
+        return dtype::get<TM>();
+      }
+      return dtype::none;
     }
-    return dtype::none;
+
+    template <>
+    inline dtype_t getPointerType<occa::memory>(const occa::memory &arg) {
+      return arg.dtype();
+    }
+
+    template <class TM>
+    void addArg(std::vector<arg_t> &types,
+                TM arg) {
+      if (argIsPointer<TM>::value) {
+        types.push_back(
+          arg_t(getPointerType<TM>(arg), true)
+        );
+      } else {
+        types.push_back(
+          arg_t(dtype::get<TM>(), false)
+        );
+      }
+    }
   }
 
-  template <>
-  dtype_t getMemoryDtype(const occa::memory &arg);
-
   template <class ARG1, class ARG2, class ARG3, class ARG4>
-  std::vector<dtype_t> getInlinedKernelArgTypes(
+  std::vector<inlinedKernel::arg_t> getInlinedKernelArgTypes(
     ARG1 arg1, ARG2 arg2, ARG3 arg3, ARG4 arg4
   ) {
-    std::vector<dtype_t> types;
-    types.reserve(8);
-    types.push_back(dtype::get<ARG1>());
-    types.push_back(getMemoryDtype(arg1));
-    types.push_back(dtype::get<ARG2>());
-    types.push_back(getMemoryDtype(arg2));
-    types.push_back(dtype::get<ARG3>());
-    types.push_back(getMemoryDtype(arg3));
-    types.push_back(dtype::get<ARG4>());
-    types.push_back(getMemoryDtype(arg4));
+    std::vector<inlinedKernel::arg_t> types;
+    types.reserve(4);
+
+    inlinedKernel::addArg(types, arg1);
+    inlinedKernel::addArg(types, arg2);
+    inlinedKernel::addArg(types, arg3);
+    inlinedKernel::addArg(types, arg4);
+
     return types;
   }
 
-  std::string formatInlinedKernel(std::vector<dtype_t> arguments,
+  std::string formatInlinedKernel(std::vector<inlinedKernel::arg_t> arguments,
                                   const std::string &macroArgs,
                                   const std::string &macroKernel,
                                   const std::string &kernelName);

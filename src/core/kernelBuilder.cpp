@@ -97,11 +97,6 @@ namespace occa {
 
 
   //---[ Inlined Kernel ]---------------
-  template <>
-  dtype_t getMemoryDtype(const occa::memory &arg) {
-    return arg.dtype();
-  }
-
   strVector getInlinedKernelArgNames(const int argumentCount,
                                      const std::string &macroArgs) {
     // Remove first and last () characters
@@ -130,26 +125,24 @@ namespace occa {
     return names;
   }
 
-  std::string formatInlinedArg(const dtype_t &argType,
-                               const dtype_t &argMemoryType,
+  std::string formatInlinedArg(const inlinedKernel::arg_t &arg,
                                const std::string &argName) {
     std::stringstream ss;
 
-    if (argMemoryType != dtype::none) {
-      ss << argMemoryType << " *";
-    } else {
-      ss << argType << ' ';
+    ss << arg.dtype << ' ';
+    if (arg.isPointer) {
+      ss << '*';
     }
     ss << argName;
 
     return ss.str();
   }
 
-  std::string formatInlinedKernel(std::vector<dtype_t> arguments,
+  std::string formatInlinedKernel(std::vector<inlinedKernel::arg_t> arguments,
                                   const std::string &macroArgs,
                                   const std::string &macroKernel,
                                   const std::string &kernelName) {
-    const int argumentCount = (int) (arguments.size() / 2);
+    const int argumentCount = (int) arguments.size();
 
     // Remove first and last () characters
     std::string source = strip(macroKernel);
@@ -163,8 +156,7 @@ namespace occa {
       if (i) {
         ss << ", ";
       }
-      ss << formatInlinedArg(arguments[2*i + 0],
-                             arguments[2*i + 1],
+      ss << formatInlinedArg(arguments[i],
                              argNames[i]);
     }
     ss << ") {" << source << "}";
