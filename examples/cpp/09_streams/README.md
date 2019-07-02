@@ -1,4 +1,4 @@
-### Example 7: Streams
+### Example: Streams
 
 GPU devices introduce `streams`, which potentially allow parallel queueing of instructions
 

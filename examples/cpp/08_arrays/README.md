@@ -1,6 +1,6 @@
-### Example 4: Building Kernels from Strings
+### Example: Arrays
 
-A simple example to show the flexibility of JIT compilation by producing the kernel source on the fly
+We show the use of `occa::array<>` to simplifiy array operations along with auto syncs between host and device data
 
 ### Compiling the Example
 
@@ -15,7 +15,8 @@ make
 
 Usage: ./main [OPTIONS]
 
-Example which shows run-time kernel source code generation
+Example using occa::array objects for easy allocation and host <-> device
+syncing
 
 Options:
   -d, --device     Device properties (default: "mode: 'Serial'")

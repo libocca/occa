@@ -1,4 +1,4 @@
-### Example 3: Reduction
+### Example: Reduction
 
 We show a more complex kernel which computes a reduction on a vector (adds all the entries up)
 

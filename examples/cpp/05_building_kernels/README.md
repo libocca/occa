@@ -1,10 +1,6 @@
-### Example 1: Add Vectors
+### Example: Building Kernels from Strings
 
-A 'Hello World' example showing the basics
-
-- Creating an OCCA device
-- Allocating and setting memory
-- Building a kernel (function that runs on the device)
+A simple example to show the flexibility of JIT compilation by producing the kernel source on the fly
 
 ### Compiling the Example
 
@@ -19,7 +15,7 @@ make
 
 Usage: ./main [OPTIONS]
 
-Example adding two vectors
+Example which shows run-time kernel source code generation
 
 Options:
   -d, --device     Device properties (default: "mode: 'Serial'")

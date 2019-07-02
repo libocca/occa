@@ -1,4 +1,4 @@
-### Example 5: Unified Memory
+### Example: Unified Memory
 
 We show unified memory which automatically syncs data between host and device
 

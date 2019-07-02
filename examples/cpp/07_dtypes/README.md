@@ -1,4 +1,4 @@
-### Example 6:
+### Example: Runtime Type Checking
 
 Example with custom dtypes, showcasing runtime type checking
 

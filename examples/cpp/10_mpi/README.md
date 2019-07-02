@@ -1,4 +1,4 @@
-### Example 8: MPI
+### Example: MPI
 
 We showcase an MPI wrapper for facilitating memory transfers between devices
 

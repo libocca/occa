@@ -1,6 +1,10 @@
-### Example 6: Arrays
+### Example: Add Vectors
 
-We show the use of `occa::array<>` to simplifiy array operations along with auto syncs between host and device data
+A 'Hello World' example showing the basics
+
+- Creating an OCCA device
+- Allocating and setting memory
+- Building a kernel (function that runs on the device)
 
 ### Compiling the Example
 
@@ -15,8 +19,7 @@ make
 
 Usage: ./main [OPTIONS]
 
-Example using occa::array objects for easy allocation and host <-> device
-syncing
+Example adding two vectors
 
 Options:
   -d, --device     Device properties (default: "mode: 'Serial'")

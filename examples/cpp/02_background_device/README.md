@@ -1,4 +1,4 @@
-### Example 2: Using the Background Device
+### Example: Using the Background Device
 
 Example 1 showed the basics
 
