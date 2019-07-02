@@ -56,6 +56,10 @@ namespace occa {
       }
     }
 
+    //---[ Printable ]------------------
+    printable::~printable() {}
+    //==================================
+
     //---[ Option ]---------------------
     option::option() :
       shortname('\0'),
@@ -89,6 +93,8 @@ namespace occa {
       name = name_;
       description = description_;
     }
+
+    option::~option() {}
 
     option option::isRequired() {
       option opt = *this;
@@ -282,6 +288,8 @@ namespace occa {
                        const std::string &description_) :
       option(name_, description_) {}
 
+    argument::~argument() {}
+
     std::string argument::getPrintName() const {
       return name;
     }
@@ -293,6 +301,8 @@ namespace occa {
 
     //---[ Parser ]---------------------
     parser::parser() {}
+
+    parser::~parser() {}
 
     std::string parser::getPrintName() const {
       return name;
@@ -671,6 +681,8 @@ namespace occa {
       commandIsRequired(false),
       callback(NULL),
       runParent(NULL) {}
+
+    command::~command() {}
 
     command& command::withName(const std::string &name_) {
       name = name_;

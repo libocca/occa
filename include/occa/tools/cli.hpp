@@ -34,6 +34,8 @@ namespace occa {
       std::string name;
       std::string description;
 
+      virtual ~printable() = 0;
+
       virtual std::string getPrintName() const = 0;
     };
     //==================================
@@ -65,6 +67,8 @@ namespace occa {
 
       option(const std::string &name_,
              const std::string &description_);
+
+      ~option();
 
       option isRequired();
       option reusable();
@@ -99,6 +103,8 @@ namespace occa {
       argument(const std::string &name_,
                const std::string &description_);
 
+      ~argument();
+
       virtual std::string getPrintName() const;
       virtual std::string toString() const;
     };
@@ -112,6 +118,7 @@ namespace occa {
       bool hasRepetitiveArg;
 
       parser();
+      ~parser();
 
       virtual std::string getPrintName() const;
 
@@ -175,6 +182,7 @@ namespace occa {
       strVector runArgs;
 
       command();
+      ~command();
 
       command& withName(const std::string &name_);
       command& withDescription(const std::string &description_);
