@@ -90,14 +90,11 @@ endif
 
 ifndef CXXFLAGS
   ifeq ($(debugEnabled),1)
-    OCCA_DEBUG_ENABLED := 1
     compilerFlags = $(debugFlags)
   else
-    OCCA_DEBUG_ENABLED := 0
     compilerFlags = $(releaseFlags)
   endif
 else
-  OCCA_DEBUG_ENABLED := 0
   compilerFlags = $(CXXFLAGS)
 endif
 
@@ -105,14 +102,11 @@ CC ?= gcc
 
 ifndef CFLAGS
   ifeq ($(debugEnabled),1)
-    OCCA_DEBUG_ENABLED := 1
     cCompilerFlags = $(debugFlags)
   else
-    OCCA_DEBUG_ENABLED := 0
     cCompilerFlags = $(releaseFlags)
   endif
 else
-  OCCA_DEBUG_ENABLED := 0
   cCompilerFlags = $(CFLAGS)
 endif
 
