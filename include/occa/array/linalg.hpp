@@ -5,6 +5,7 @@
 
 #include <occa/defines.hpp>
 #include <occa/core/base.hpp>
+#include <occa/core/kernelBuilder.hpp>
 #include <occa/tools/env.hpp>
 
 namespace occa {
