@@ -1,6 +1,6 @@
-### Example: Inlined kernels
+### Example: Inlined Kernels
 
-We give an example with inlined kernels using the existing background device
+We give an example with inlined kernels using the current background device
 
 ### Compiling the Example
 
