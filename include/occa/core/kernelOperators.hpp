@@ -1,8 +1,8 @@
-
 // -------------[ DO NOT EDIT ]-------------
 //  THIS IS AN AUTOMATICALLY GENERATED FILE
 //  EDIT: scripts/setup_kernel_operators.py
 // =========================================
+
 void operator () () const;
 
 void operator () (const kernelArg &arg1) const;

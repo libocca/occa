@@ -11,7 +11,7 @@ EDIT_WARNING = '''
 //  THIS IS AN AUTOMATICALLY GENERATED FILE
 //  EDIT: scripts/setup_kernel_operators.py
 // =========================================
-'''
+'''.strip()
 
 MAX_ARGS = 50
 
@@ -22,17 +22,25 @@ def to_file(filename):
         def cached_func(*args, **kwargs):
             with open(OCCA_DIR + '/' + filename, 'w') as f:
                 content = func(*args, **kwargs)
-                f.write(EDIT_WARNING);
+                f.write(EDIT_WARNING + '\n\n');
                 f.write(content + '\n')
         return cached_func
     return inner_to_file
 
 
-def operator_args(N, indent, argtype):
+def operator_args(N, indent, argtype, argname=None):
     content = ''
     for n in range(1, N + 1):
-        content += '{argtype}arg{n}'.format(argtype=argtype,
-                                            n=n)
+        if callable(argtype):
+            argtype_n = argtype(n)
+        else:
+            argtype_n = argtype
+
+        if callable(argname):
+            argname_n = argname(n)
+        else:
+            argname_n = argname or 'arg{}'.format(n)
+        content += argtype_n + argname_n
         if n < N:
             if n % 5:
                 content += ', '
@@ -56,16 +64,16 @@ def array_args(N, indent):
 
 
 @to_file('src/tools/runFunction.cpp')
-def runFunctionFromArguments(N):
+def run_function_from_arguments(N):
     content = '\nswitch (argc) {\n'
     for n in range(N + 1):
-        content += runFunctionFromArgument(n)
+        content += run_function_from_argument(n)
     content += '}\n';
 
     return content
 
 
-def runFunctionFromArgument(N):
+def run_function_from_argument(N):
     content  = '  case {N}:\n'.format(N=N)
     content += '    f('
     indent = ' ' * 6  # '    f('
@@ -83,13 +91,13 @@ def runFunctionFromArgument(N):
 
 
 @to_file('include/occa/core/kernelOperators.hpp')
-def operatorDeclarations(N):
+def operator_declarations(N):
     return '\n\n'.join(
-        operatorDeclaration(n) for n in range(N + 1)
+        operator_declaration(n) for n in range(N + 1)
     )
 
 
-def operatorDeclaration(N):
+def operator_declaration(N):
     content = 'void operator () ('
     indent = ' ' * len(content)
     content += operator_args(N, indent, 'const kernelArg &')
@@ -99,13 +107,13 @@ def operatorDeclaration(N):
 
 
 @to_file('src/core/kernelOperators.cpp')
-def operatorDefinitions(N):
+def operator_definitions(N):
     return '\n'.join(
-        operatorDefinition(n) for n in range(N + 1)
+        operator_definition(n) for n in range(N + 1)
     )
 
 
-def operatorDefinition(N):
+def operator_definition(N):
     content = 'void kernel::operator() ('
     indent = ' ' * len(content)
     content += operator_args(N, indent, 'const kernelArg &')
@@ -128,7 +136,53 @@ def operatorDefinition(N):
     return content
 
 
+@to_file('include/occa/core/inlinedKernelArgTypes.hpp')
+def inlined_kernel_arg_types_definitions(N):
+    return '\n\n'.join(
+        inlined_kernel_arg_types_definition(n) for n in range(1, N + 1)
+    )
+
+
+def inlined_kernel_arg_types_definition(N):
+    template = "template <"
+    indent = ' ' * len(template)
+    template += operator_args(N, indent,
+                              argtype=lambda n: 'class ARG{}'.format(n),
+                              argname=lambda n: "")
+    template += '>'
+
+    header = """
+    std::vector<inlinedKernel::arg_t> getInlinedKernelArgTypes(
+    """.strip()
+    indent = ' ' * len(header)
+    header += operator_args(N, indent,
+                            argtype=lambda n: 'ARG{} '.format(n))
+
+    add_args = '\n  '.join(
+        'inlinedKernel::addArg(types, arg{n});'.format(n=n)
+        for n in range(1, N + 1)
+    )
+
+    return """
+{template}
+{header}) {{
+  std::vector<inlinedKernel::arg_t> types;
+  types.reserve({N});
+
+  {add_args}
+
+  return types;
+}}
+    """.format(
+        N=N,
+        template=template,
+        header=header,
+        add_args=add_args,
+    ).strip()
+
+
 if __name__ == '__main__':
-    runFunctionFromArguments(MAX_ARGS)
-    operatorDeclarations(MAX_ARGS)
-    operatorDefinitions(MAX_ARGS)
+    run_function_from_arguments(MAX_ARGS)
+    operator_declarations(MAX_ARGS)
+    operator_definitions(MAX_ARGS)
+    inlined_kernel_arg_types_definitions(MAX_ARGS)

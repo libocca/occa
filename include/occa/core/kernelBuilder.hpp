@@ -105,20 +105,7 @@ namespace occa {
     }
   }
 
-  template <class ARG1, class ARG2, class ARG3, class ARG4>
-  std::vector<inlinedKernel::arg_t> getInlinedKernelArgTypes(
-    ARG1 arg1, ARG2 arg2, ARG3 arg3, ARG4 arg4
-  ) {
-    std::vector<inlinedKernel::arg_t> types;
-    types.reserve(4);
-
-    inlinedKernel::addArg(types, arg1);
-    inlinedKernel::addArg(types, arg2);
-    inlinedKernel::addArg(types, arg3);
-    inlinedKernel::addArg(types, arg4);
-
-    return types;
-  }
+#include "inlinedKernelArgTypes.hpp"
 
   std::string formatInlinedKernel(std::vector<inlinedKernel::arg_t> arguments,
                                   const std::string &macroArgs,
