@@ -65,8 +65,7 @@ void testPtrRange() {
 }
 
 void testUva() {
-  size_t bytes = 10 * sizeof(int);
-  int *ptr = (int*) occa::umalloc(bytes);
+  int *ptr = occa::umalloc<int>(10);
 
   occa::modeMemory_t *modeMemory = occa::uvaToMemory(ptr);
 

@@ -152,7 +152,7 @@ void testRun() {
   occa::memory mem = occa::malloc(1 * sizeof(int), &value);
 
   value = 1;
-  int *uvaPtr = (int*) occa::umalloc(1 * sizeof(int), &value);
+  int *uvaPtr = occa::umalloc<int>(1, &value);
 
   int xy[2] = {12, 13};
   std::string str = "fourteen";
