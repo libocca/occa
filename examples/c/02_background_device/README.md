@@ -1,6 +1,4 @@
-### Example 2: Using the Background Device
-
-Example 1 showed the basics
+### Example: Using the Background Device
 
 This example shows how to avoid passing an `occa::device` object around by using the _background device_.
 

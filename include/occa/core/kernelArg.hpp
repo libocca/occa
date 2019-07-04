@@ -19,7 +19,6 @@ namespace occa {
   namespace kArgInfo {
     static const char none       = 0;
     static const char usePointer = (1 << 0);
-    static const char hasTexture = (1 << 1);
   }
 
   union kernelArgData_t {

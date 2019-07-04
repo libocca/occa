@@ -11,15 +11,18 @@ namespace occa {
 
     argumentInfo::argumentInfo(const bool isConst_,
                                const bool isPtr_,
-                               const dtype_t &dtype_) :
+                               const dtype_t &dtype_
+                               const std::string &name_) :
       isConst(isConst_),
       isPtr(isPtr_),
-      dtype(dtype_) {}
+      dtype(dtype_),
+      name(name_) {}
 
     argumentInfo argumentInfo::fromJson(const json &j) {
       return argumentInfo((bool) j["const"],
                           (bool) j["ptr"],
-                          dtype_t::fromJson(j["dtype"]));
+                          dtype_t::fromJson(j["dtype"]),
+                          (std::string) j["name"]);
     }
 
     json argumentInfo::toJson() const {
@@ -27,6 +30,7 @@ namespace occa {
       j["const"] = isConst;
       j["ptr"]   = isPtr;
       j["dtype"] = dtype.toJson();
+      j["name"]  = name;
       return j;
     }
 

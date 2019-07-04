@@ -122,7 +122,8 @@ namespace occa {
           metadata += argumentInfo(
             arg.has(const_),
             arg.vartype.isPointerType(),
-            arg.dtype()
+            arg.dtype(),
+            arg.name()
           );
         }
       }

@@ -46,6 +46,7 @@ typedef occaType occaStream;
 typedef occaType occaStreamTag;
 
 typedef occaType occaDtype;
+typedef occaType occaScope;
 typedef occaType occaJson;
 typedef occaType occaProperties;
 
@@ -77,6 +78,7 @@ extern const int OCCA_STREAM;
 extern const int OCCA_STREAMTAG;
 
 extern const int OCCA_DTYPE;
+extern const int OCCA_SCOPE;
 extern const int OCCA_JSON;
 extern const int OCCA_PROPERTIES;
 //======================================

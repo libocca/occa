@@ -71,20 +71,38 @@ namespace occa {
   occa::kernel kernelBuilder::build(occa::device device,
                                     const hash_t &hash,
                                     const occa::properties &props) {
-    occa::kernel &k = kernelMap[hash];
-    if (!k.isInitialized()) {
+    occa::kernel &kernel = kernelMap[hash];
+    if (!kernel.isInitialized()) {
       if (buildingFromFile) {
-        k = device.buildKernel(source_, function_, props);
+        kernel = device.buildKernel(source_, function_, props);
       } else {
-        k = device.buildKernelFromString(source_, function_, props);
+        kernel = device.buildKernelFromString(source_, function_, props);
       }
     }
-    return k;
+    return kernel;
   }
 
   occa::kernel kernelBuilder::operator [] (occa::device device) {
-    return build(device,
-                 hash(device));
+    return build(device, hash(device));
+  }
+
+  void kernelBuilder::run(occa::device device,
+                          occa::scope scope) {
+    occa::kernel &kernel = build(device, scope.props);
+    kernel.clearArgs();
+
+    // Get argument metadata
+    lang::kernelMetadata &metadata = kernel.getModeKernel()->metadata;
+    std::vector<lang::argumentInfo> arguments = metadata.arguments;
+
+    // Insert arguments in the proper order
+    const int argCount = (int) arguments.size();
+    for (int i = 0; i < argCount; ++i) {
+      lang::argumentInfo &arg = arguments[i];
+      kernel.pushArg(scope.getArg(arg.name));
+    }
+
+    kernel.run();
   }
 
   void kernelBuilder::free() {

@@ -23,38 +23,30 @@ int main(int argc, const char **argv) {
 
   occa::properties props;
   props["defines/TILE_SIZE"] = 16;
-  OCCA_INLINED_KERNEL(
-    //   1. First argument:
-    //       - Props for the kernel
-    //       - Pass occa::properties() if no props are needed
-    props,
-    //   2. Second argument wrapped in ()'s
-    //       - Arguments used in the kernel
-    (entries, a, b, ab),
-    //   3. Third argument wrapped in ()'s
-    //       - Variable names for the given inputs
-    ("entries", "input1", "input2", "output"),
-    //   4. Fourth argument wrapped in ()'s
-    //       - Kernel body
+
+  occa::scope scope(props);
+
+  // Build the variable scope used inside the inlined OKL code
+  scope.addConst("entries", entries);
+  scope.addConst("a", a);
+  scope.addConst("b", b);
+  // We can name our scoped variales anything
+  scope.add("output", ab);
+  // We can also add unused variables to the scope which could be
+  // useful while debugging
+  scope.add("debugValue", 42);
+
+  OCCA_INLINED_OKL(
+    scope,
     (
+      // TILE_SIZE is passed as a compile-time define as opposed to a runtime variable
+      // through props
       for (int i = 0; i < entries; ++i; @tile(TILE_SIZE, @outer, @inner)) {
-        output[i] = input1[i] + input2[i];
+        // Note it's using the scope name 'output' and not its original value name 'ab'
+        output[i] = a[i] + b[i];
       }
     )
   );
-
-  // Notes on on OCCA_INLINED_KERNEL
-  //   Restrictions
-  //     - Memory allocations must include a dtype
-  //         - To build the kernel at runtime, the types have to be known
-  //
-  //   Temporary Restrictions:
-  //     - Memory objects must always be of the same dtype
-  //         - Resolved once 'auto' is supported. Function arguments of
-  //           type 'auto' will act as templated typed variables
-  //
-  //     ~ Cannot use external functions
-  //         - Potentially can happen with another macro OCCA_INLINED_FUNCTION
 
   occa::finish();
 
@@ -80,7 +72,7 @@ occa::json parseArgs(int argc, const char **argv) {
   occa::cli::parser parser;
   parser
     .withDescription(
-      "Example showing inlined kernels"
+      "Example showing inlined OKL"
     )
     .addOption(
       occa::cli::option('d', "device",

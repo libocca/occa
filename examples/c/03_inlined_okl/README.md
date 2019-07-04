@@ -1,6 +1,6 @@
-### Example: Inlined Kernels
+### Example: Using the Background Device
 
-We give an example with inlined kernels using the current background device
+This example shows how to avoid passing an `occa::device` object around by using the _background device_.
 
 ### Compiling the Example
 
@@ -15,7 +15,8 @@ make
 
 Usage: ./main [OPTIONS]
 
-Example showing inlined kernels
+Example showing how to use background devices, allowing passing of the device
+implicitly
 
 Options:
   -d, --device     Device properties (default: "mode: 'Serial'")

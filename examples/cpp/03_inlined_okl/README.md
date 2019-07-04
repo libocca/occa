@@ -1,10 +1,6 @@
-### Example: Add Vectors
+### Example: Inlined Kernels
 
-A 'Hello World' example showing the basics
-
-- Creating an OCCA device
-- Allocating and setting memory
-- Building a kernel (function that runs on the device)
+We give an example with inlined OKL
 
 ### Compiling the Example
 
@@ -19,7 +15,7 @@ make
 
 Usage: ./main [OPTIONS]
 
-Example adding two vectors
+Example showing inlined OKL
 
 Options:
   -d, --device     Device properties (default: "mode: 'Serial'")

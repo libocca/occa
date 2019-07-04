@@ -34,8 +34,9 @@ namespace occa {
       static const int streamTag  = 20;
 
       static const int dtype      = 21;
-      static const int json       = 22;
-      static const int properties = 23;
+      static const int scope      = 22;
+      static const int json       = 23;
+      static const int properties = 24;
     }
 
     occaType defaultOccaType();
@@ -92,7 +93,8 @@ namespace occa {
     occaType newOccaType(occa::stream stream);
     occaType newOccaType(occa::streamTag streamTag);
 
-    occaType newOccaType(const dtype_t &dtype);
+    occaType newOccaType(const occa::dtype_t &dtype);
+    occaType newOccaType(const occa::scope &scope);
 
     occaType newOccaType(const json &json,
                          const bool needsFree);
@@ -115,6 +117,7 @@ namespace occa {
                               const int type);
 
     occa::dtype_t& dtype(occaType value);
+    occa::scope& scope(occaType value);
 
     occa::json& json(occaType value);
     occa::json inferJson(occaType value);

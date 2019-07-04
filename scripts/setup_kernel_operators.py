@@ -136,53 +136,7 @@ def operator_definition(N):
     return content
 
 
-@to_file('include/occa/core/inlinedKernelArgTypes.hpp')
-def inlined_kernel_arg_types_definitions(N):
-    return '\n\n'.join(
-        inlined_kernel_arg_types_definition(n) for n in range(1, N + 1)
-    )
-
-
-def inlined_kernel_arg_types_definition(N):
-    template = "template <"
-    indent = ' ' * len(template)
-    template += operator_args(N, indent,
-                              argtype=lambda n: 'class ARG{}'.format(n),
-                              argname=lambda n: "")
-    template += '>'
-
-    header = """
-    std::vector<inlinedKernel::arg_t> getInlinedKernelArgTypes(
-    """.strip()
-    indent = ' ' * len(header)
-    header += operator_args(N, indent,
-                            argtype=lambda n: 'ARG{} '.format(n))
-
-    add_args = '\n  '.join(
-        'inlinedKernel::addArg(types, arg{n});'.format(n=n)
-        for n in range(1, N + 1)
-    )
-
-    return """
-{template}
-{header}) {{
-  std::vector<inlinedKernel::arg_t> types;
-  types.reserve({N});
-
-  {add_args}
-
-  return types;
-}}
-    """.format(
-        N=N,
-        template=template,
-        header=header,
-        add_args=add_args,
-    ).strip()
-
-
 if __name__ == '__main__':
     run_function_from_arguments(MAX_ARGS)
     operator_declarations(MAX_ARGS)
     operator_definitions(MAX_ARGS)
-    inlined_kernel_arg_types_definitions(MAX_ARGS)

@@ -44,6 +44,9 @@ namespace occa {
 
     occa::kernel operator [] (occa::device device);
 
+    void run(occa::device device,
+             occa::scope scope);
+
     void free();
   };
   //====================================
@@ -105,11 +108,8 @@ namespace occa {
     }
   }
 
-#include "inlinedKernelArgTypes.hpp"
-
-  std::string formatInlinedKernel(std::vector<inlinedKernel::arg_t> arguments,
-                                  const std::string &macroArgNames,
-                                  const std::string &macroKernel,
+  std::string formatInlinedKernel(occa::scope scope,
+                                  const std::string &kernelSource,
                                   const std::string &kernelName);
   //====================================
 }

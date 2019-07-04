@@ -15,12 +15,14 @@ namespace occa {
       bool isConst;
       bool isPtr;
       dtype_t dtype;
+      std::string name;
 
       argumentInfo();
 
       argumentInfo(const bool isConst_,
                    const bool isPtr_,
-                   const dtype_t &dtype_);
+                   const dtype_t &dtype_,
+                   const std::string &name_);
 
       static argumentInfo fromJson(const json &j);
       json toJson() const;
