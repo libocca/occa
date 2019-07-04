@@ -15,7 +15,7 @@ make
 
 Usage: ./main [OPTIONS]
 
-Example adding two vectors
+Example showing inlined kernels
 
 Options:
   -d, --device     Device properties (default: "mode: 'Serial'")

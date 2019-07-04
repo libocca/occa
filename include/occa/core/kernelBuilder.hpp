@@ -108,7 +108,7 @@ namespace occa {
 #include "inlinedKernelArgTypes.hpp"
 
   std::string formatInlinedKernel(std::vector<inlinedKernel::arg_t> arguments,
-                                  const std::string &macroArgs,
+                                  const std::string &macroArgNames,
                                   const std::string &macroKernel,
                                   const std::string &kernelName);
   //====================================

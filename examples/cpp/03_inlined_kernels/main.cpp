@@ -21,43 +21,41 @@ int main(int argc, const char **argv) {
     ab[i] = 0;
   }
 
-  // Props are
   occa::properties props;
   props["defines/TILE_SIZE"] = 16;
-
-  // OCCA_INLINED_KERNEL Argument Format:
-  //   - First argument:
-  //       - Variables used in the kernel wrapped in ()'s
-  //
-  //   - Second argument:
-  //       - Props for the kernel
-  //       - Pass occa::properties() if no props are needed
-  //
-  //   - Third argument:
-  //       - Kernel body wrapped in ()'s
-  //
-  // Restrictions
-  //   - Memory allocations must include a dtype
-  //       - To build the kernel at runtime, the types have to be known
-  //
-  // Temporary Restrictions:
-  //   - Memory objects must always be of the same dtype
-  //       - Resolved once 'auto' is supported. Function arguments of
-  //         type 'auto' will act as templated typed variables
-  //
-  //   ~ Cannot use external functions
-  //       - Potentially can happen with another macro OCCA_INLINED_FUNCTION
   OCCA_INLINED_KERNEL(
-    (entries, a, b, ab),
+    //   1. First argument:
+    //       - Props for the kernel
+    //       - Pass occa::properties() if no props are needed
     props,
+    //   2. Second argument wrapped in ()'s
+    //       - Arguments used in the kernel
+    (entries, a, b, ab),
+    //   3. Third argument wrapped in ()'s
+    //       - Variable names for the given inputs
+    ("entries", "input1", "input2", "output"),
+    //   4. Fourth argument wrapped in ()'s
+    //       - Kernel body
     (
       for (int i = 0; i < entries; ++i; @tile(TILE_SIZE, @outer, @inner)) {
-        ab[i] = a[i] + b[i];
+        output[i] = input1[i] + input2[i];
       }
     )
   );
 
-  // Copy result to the host
+  // Notes on on OCCA_INLINED_KERNEL
+  //   Restrictions
+  //     - Memory allocations must include a dtype
+  //         - To build the kernel at runtime, the types have to be known
+  //
+  //   Temporary Restrictions:
+  //     - Memory objects must always be of the same dtype
+  //         - Resolved once 'auto' is supported. Function arguments of
+  //           type 'auto' will act as templated typed variables
+  //
+  //     ~ Cannot use external functions
+  //         - Potentially can happen with another macro OCCA_INLINED_FUNCTION
+
   occa::finish();
 
   for (int i = 0; i < entries; ++i) {

@@ -1,5 +1,6 @@
 #include <occa/core/device.hpp>
 #include <occa/core/kernelBuilder.hpp>
+#include <occa/tools/json.hpp>
 #include <occa/tools/lex.hpp>
 #include <occa/tools/string.hpp>
 
@@ -98,24 +99,15 @@ namespace occa {
 
   //---[ Inlined Kernel ]---------------
   strVector getInlinedKernelArgNames(const int argumentCount,
-                                     const std::string &macroArgs) {
+                                     const std::string &macroArgNames) {
     // Remove first and last () characters
-    std::string source = strip(macroArgs);
+    std::string source = strip(macroArgNames);
     source = source.substr(1, source.size() - 2);
 
-    strVector names;
-    names.reserve(argumentCount);
-
-    const char *cStart = source.c_str();
-    const char *c = cStart;
-    for (int i = 0; i < argumentCount; ++i) {
-      lex::skipTo(c, ',');
-      names.push_back(std::string(cStart, c - cStart));
-      if (*c == '\0') {
-        break;
-      }
-      cStart = ++c;
-    }
+    strVector names = (
+      json::parse("[" + source + "]")
+      .getArray<std::string>()
+    );
 
     OCCA_ERROR("Incorrect argument count ["
                << names.size() << "] (Expected "
@@ -139,7 +131,7 @@ namespace occa {
   }
 
   std::string formatInlinedKernel(std::vector<inlinedKernel::arg_t> arguments,
-                                  const std::string &macroArgs,
+                                  const std::string &macroArgNames,
                                   const std::string &macroKernel,
                                   const std::string &kernelName) {
     const int argumentCount = (int) arguments.size();
@@ -148,7 +140,7 @@ namespace occa {
     std::string source = strip(macroKernel);
     source = source.substr(1, source.size() - 2);
 
-    strVector argNames = getInlinedKernelArgNames(argumentCount, macroArgs);
+    strVector argNames = getInlinedKernelArgNames(argumentCount, macroArgNames);
 
     std::stringstream ss;
     ss << "@kernel void " << kernelName << "(";

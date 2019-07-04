@@ -4,12 +4,12 @@
 
 #define OCCA_INLINED_KERNEL_NAME "_occaInlinedKernel"
 
-#define OCCA_INLINED_KERNEL(KERNEL_ARGS, KERNEL_PROPS, KERNEL_SOURCE)   \
+#define OCCA_INLINED_KERNEL(KERNEL_PROPS, KERNEL_ARGS, KERNEL_ARG_NAMES, KERNEL_SOURCE) \
   do {                                                                  \
     static occa::kernelBuilder _inlinedKernelBuilder = (                \
       occa::kernelBuilder::fromString(                                  \
         occa::formatInlinedKernel(occa::getInlinedKernelArgTypes KERNEL_ARGS, \
-                                  #KERNEL_ARGS,                         \
+                                  #KERNEL_ARG_NAMES,                    \
                                   #KERNEL_SOURCE,                       \
                                   OCCA_INLINED_KERNEL_NAME),            \
         OCCA_INLINED_KERNEL_NAME                                        \
