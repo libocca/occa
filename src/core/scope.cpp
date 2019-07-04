@@ -1,13 +1,6 @@
 #include <occa/core/scope.hpp>
 
 namespace occa {
-  scopeVariable::scopeVariable(const std::string &name_,
-                               const kernelArg &value_,
-                               const bool isConst_) :
-      name(name_),
-      value(value_),
-      isConst(isConst_) {}
-
   scope::scope() {}
 
   scope::scope(const occa::properties &props_) :
@@ -28,7 +21,6 @@ namespace occa {
     }
 
     OCCA_FORCE_ERROR("Missing argument [" << name << "]");
+    return kernelArg();
   }
 }
-
-#endif

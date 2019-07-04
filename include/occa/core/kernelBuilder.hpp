@@ -4,6 +4,8 @@
 #include <occa/core/kernel.hpp>
 
 namespace occa {
+  class scope;
+
   class kernelBuilder {
   protected:
     std::string source_;
@@ -45,7 +47,7 @@ namespace occa {
     occa::kernel operator [] (occa::device device);
 
     void run(occa::device device,
-             occa::scope scope);
+             occa::scope &scope);
 
     void free();
   };
@@ -53,63 +55,8 @@ namespace occa {
 
 
   //---[ Inlined Kernel ]---------------
-  namespace inlinedKernel {
-    class arg_t {
-     public:
-      dtype_t dtype;
-      bool isPointer;
-
-      inline arg_t(const dtype_t &dtype_,
-                   const bool isPointer_) :
-          dtype(dtype_),
-          isPointer(isPointer_) {}
-    };
-
-    template <class TM>
-    struct isMemory {
-      static const bool value = false;
-    };
-
-    template <>
-    struct isMemory<occa::memory> {
-      static const bool value = true;
-    };
-
-    template <class TM>
-    struct argIsPointer {
-      static const bool value = typeMetadata<TM>::isPointer || isMemory<TM>::value;
-    };
-
-    template <class TM>
-    inline dtype_t getPointerType(const TM &arg) {
-      if (typeMetadata<TM>::isPointer) {
-        return dtype::get<TM>();
-      }
-      return dtype::none;
-    }
-
-    template <>
-    inline dtype_t getPointerType<occa::memory>(const occa::memory &arg) {
-      return arg.dtype();
-    }
-
-    template <class TM>
-    void addArg(std::vector<arg_t> &types,
-                TM arg) {
-      if (argIsPointer<TM>::value) {
-        types.push_back(
-          arg_t(getPointerType<TM>(arg), true)
-        );
-      } else {
-        types.push_back(
-          arg_t(dtype::get<TM>(), false)
-        );
-      }
-    }
-  }
-
-  std::string formatInlinedKernel(occa::scope scope,
-                                  const std::string &kernelSource,
+  std::string formatInlinedKernel(occa::scope &scope,
+                                  const std::string &oklSource,
                                   const std::string &kernelName);
   //====================================
 }

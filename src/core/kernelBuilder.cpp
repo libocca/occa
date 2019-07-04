@@ -1,5 +1,6 @@
 #include <occa/core/device.hpp>
 #include <occa/core/kernelBuilder.hpp>
+#include <occa/core/scope.hpp>
 #include <occa/tools/json.hpp>
 #include <occa/tools/lex.hpp>
 #include <occa/tools/string.hpp>
@@ -87,8 +88,8 @@ namespace occa {
   }
 
   void kernelBuilder::run(occa::device device,
-                          occa::scope scope) {
-    occa::kernel &kernel = build(device, scope.props);
+                          occa::scope &scope) {
+    occa::kernel kernel = build(device, scope.props);
     kernel.clearArgs();
 
     // Get argument metadata
@@ -116,58 +117,39 @@ namespace occa {
 
 
   //---[ Inlined Kernel ]---------------
-  strVector getInlinedKernelArgNames(const int argumentCount,
-                                     const std::string &macroArgNames) {
-    // Remove first and last () characters
-    std::string source = strip(macroArgNames);
-    source = source.substr(1, source.size() - 2);
-
-    strVector names = (
-      json::parse("[" + source + "]")
-      .getArray<std::string>()
-    );
-
-    OCCA_ERROR("Incorrect argument count ["
-               << names.size() << "] (Expected "
-               << argumentCount << ")",
-               argumentCount == (int) names.size());
-
-    return names;
-  }
-
-  std::string formatInlinedArg(const inlinedKernel::arg_t &arg,
-                               const std::string &argName) {
+  std::string formatInlinedArg(const scopeVariable &arg) {
     std::stringstream ss;
 
     ss << arg.dtype << ' ';
     if (arg.isPointer) {
       ss << '*';
     }
-    ss << argName;
+    ss << arg.name;
 
     return ss.str();
   }
 
-  std::string formatInlinedKernel(std::vector<inlinedKernel::arg_t> arguments,
-                                  const std::string &macroArgNames,
-                                  const std::string &macroKernel,
+  std::string formatInlinedKernel(occa::scope &scope,
+                                  const std::string &oklSource,
                                   const std::string &kernelName) {
-    const int argumentCount = (int) arguments.size();
+    std::string source = strip(oklSource);
+    const int charCount = (int) source.size();
 
     // Remove first and last () characters
-    std::string source = strip(macroKernel);
-    source = source.substr(1, source.size() - 2);
+    if ((source[0] == '(') && (source[charCount - 1] == '(')) {
+      source = source.substr(1, charCount - 2);
+    }
 
-    strVector argNames = getInlinedKernelArgNames(argumentCount, macroArgNames);
+    scopeVariableVector &args = scope.args;
+    const int argCount = (int) args.size();
 
     std::stringstream ss;
     ss << "@kernel void " << kernelName << "(";
-    for (int i = 0; i < argumentCount; ++i) {
+    for (int i = 0; i < argCount; ++i) {
       if (i) {
         ss << ", ";
       }
-      ss << formatInlinedArg(arguments[i],
-                             argNames[i]);
+      ss << formatInlinedArg(args[i]);
     }
     ss << ") {" << source << "}";
 

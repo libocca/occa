@@ -1,4 +1,4 @@
-#include <occa/core/base.hpp>
+#include <occa/core.hpp>
 #include <occa/tools/sys.hpp>
 
 #include <occa/c/types.h>

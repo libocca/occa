@@ -11,7 +11,7 @@ namespace occa {
 
     argumentInfo::argumentInfo(const bool isConst_,
                                const bool isPtr_,
-                               const dtype_t &dtype_
+                               const dtype_t &dtype_,
                                const std::string &name_) :
       isConst(isConst_),
       isPtr(isPtr_),
