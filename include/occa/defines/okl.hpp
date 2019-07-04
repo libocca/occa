@@ -20,21 +20,5 @@
   } while (false)
 
 
-#define OCCA_C_INLINED_OKL(OKL_SCOPE, OKL_SOURCE)           \
-  do {                                                      \
-    static occaKernelBuilder _inlinedKernelBuilder = (      \
-      occaKernelBuilderFromString(                          \
-        occaFormatInlinedKernel(OKL_SCOPE,                  \
-                                #OKL_SOURCE,                \
-                                OCCA_INLINED_KERNEL_NAME),  \
-        OCCA_INLINED_KERNEL_NAME                            \
-      )                                                     \
-    );                                                      \
-    occaKernelBuilderRun(_inlinedKernelBuilder,             \
-                         occaScopeGetDevice(OKL_SCOPE),     \
-                         OKL_SCOPE);                        \
-  } while (false)
-
-
 #  endif
 #endif

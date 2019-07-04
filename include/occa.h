@@ -10,6 +10,7 @@
 #include <occa/c/kernel.h>
 #include <occa/c/memory.h>
 #include <occa/c/properties.h>
+#include <occa/c/scope.h>
 #include <occa/c/uva.h>
 
 // Just in case someone wants to run with an older format than C99
@@ -38,5 +39,25 @@
 #define occaKernelRun(...) OCCA_C_RUN_KERNEL1(OCCA_ARG_COUNT(__VA_ARGS__), __VA_ARGS__)
 
 #endif // OCCA_DISABLE_VARIADIC_MACROS
+
+#ifdef OCCA_INLINED_OKL
+#  undef OCCA_INLINED_OKL
+#endif
+
+#define OCCA_INLINED_OKL(OKL_SCOPE, OKL_SOURCE)             \
+  do {                                                      \
+    static occaKernelBuilder _inlinedKernelBuilder = (      \
+      occaKernelBuilderFromString(                          \
+        occaFormatInlinedKernel(OKL_SCOPE,                  \
+                                #OKL_SOURCE,                \
+                                OCCA_INLINED_KERNEL_NAME),  \
+        OCCA_INLINED_KERNEL_NAME                            \
+      )                                                     \
+    );                                                      \
+    occaKernelBuilderRun(_inlinedKernelBuilder,             \
+                         occaScopeGetDevice(OKL_SCOPE),     \
+                         OKL_SCOPE);                        \
+  } while (0)
+
 
 #endif

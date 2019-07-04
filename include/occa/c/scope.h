@@ -6,7 +6,7 @@
 
 OCCA_START_EXTERN_C
 
-OCCA_LFUNC occaScope OCCA_RFUNC occaCreateScope();
+OCCA_LFUNC occaScope OCCA_RFUNC occaCreateScope(occaProperties props);
 
 OCCA_LFUNC void OCCA_RFUNC occaScopeAddConst(occaScope scope,
                                              const char *key,

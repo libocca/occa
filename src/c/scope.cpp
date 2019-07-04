@@ -3,8 +3,14 @@
 
 OCCA_START_EXTERN_C
 
-occaScope OCCA_RFUNC occaCreateScope() {
-  return occa::c::newOccaType(*(new occa::scope()));
+occaScope OCCA_RFUNC occaCreateScope(occaProperties props) {
+  occa::scope *scope;
+  if (occa::c::isDefault(props)) {
+    scope = new occa::scope();
+  } else {
+    scope = new occa::scope(occa::c::properties(props));
+  }
+  return occa::c::newOccaType(*scope);
 }
 
 void OCCA_RFUNC occaScopeAddConst(occaScope scope,

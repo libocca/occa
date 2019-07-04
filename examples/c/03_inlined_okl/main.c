@@ -37,16 +37,16 @@ int main(int argc, const char **argv) {
   occaScope scope = occaCreateScope(props);
 
   // Build the variable scope used inside the inlined OKL code
-  occaScopeAddConst(scope, "entries", entries);
-  occaScopeAddConst(scope, "a", a);
-  occaScopeAddConst(scope, "b", b);
+  occaScopeAddConst(scope, "entries", occaInt(entries));
+  occaScopeAddConst(scope, "a", occaPtr(a));
+  occaScopeAddConst(scope, "b", occaPtr(b));
   // We can name our scoped variales anything
-  occaScopeAdd(scope, "output", ab);
+  occaScopeAdd(scope, "output", occaPtr(ab));
   // We can also add unused variables to the scope which could be
   // useful while debugging
-  occaScopeAdd(scope, "debugValue", 42);
+  occaScopeAdd(scope, "debugValue", occaInt(42));
 
-  OCCA_C_INLINED_OKL(
+  OCCA_INLINED_OKL(
     scope,
     (
       // TILE_SIZE is passed as a compile-time define as opposed to a runtime variable
