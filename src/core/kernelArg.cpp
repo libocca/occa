@@ -73,6 +73,19 @@ namespace occa {
     return (int) args.size();
   }
 
+  device kernelArg::getDevice() const {
+    const int argCount = (int) args.size();
+
+    for (int i = 0; i < argCount; ++i) {
+      const kernelArgData &arg = args[i];
+      if (arg.modeMemory) {
+        return device(arg.modeMemory->modeDevice);
+      }
+    }
+
+    return device();
+  }
+
   const kernelArgData& kernelArg::operator [] (const int index) const {
     return args[index];
   }

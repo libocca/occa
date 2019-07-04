@@ -136,7 +136,7 @@ namespace occa {
     const int charCount = (int) source.size();
 
     // Remove first and last () characters
-    if ((source[0] == '(') && (source[charCount - 1] == '(')) {
+    if ((source[0] == '(') && (source[charCount - 1] == ')')) {
       source = source.substr(1, charCount - 2);
     }
 

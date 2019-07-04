@@ -62,14 +62,14 @@ namespace occa {
 
     template <class TM>
     static scopeVariable fromValue(const std::string &name_,
-                                   const kernelArg &value_,
+                                   const TM &value_,
                                    const bool isConst_) {
       const bool isPointer = scopeVariableMethods::argIsPointer<TM>::value;
       dtype_t dtype;
       if (isPointer) {
         dtype = scopeVariableMethods::getPointerType<TM>(value_);
       } else {
-        dtype = scopeVariableMethods::getPointerType<TM>(dtype::get<TM>());
+        dtype = dtype::get<TM>();
       }
 
       return scopeVariable(dtype, isPointer, isConst_, name_, value_);
@@ -85,20 +85,23 @@ namespace occa {
     scope();
     scope(const occa::properties &props_);
 
+    inline void add(scopeVariable arg) {
+      args.push_back(arg);
+      if (!device.isInitialized()) {
+        device = arg.value.getDevice();
+      }
+    }
+
     template <class TM>
     void addConst(const std::string &name,
                   const TM &value) {
-      args.push_back(
-        scopeVariable::fromValue<TM>(name, value, true)
-      );
+      add(scopeVariable::fromValue<TM>(name, value, true));
     }
 
     template <class TM>
     void add(const std::string &name,
              const TM &value) {
-      args.push_back(
-        scopeVariable::fromValue<TM>(name, value, false)
-      );
+      add(scopeVariable::fromValue<TM>(name, value, true));
     }
 
     occa::device getDevice();

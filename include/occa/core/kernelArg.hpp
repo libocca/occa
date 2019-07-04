@@ -104,6 +104,8 @@ namespace occa {
 
     int size() const;
 
+    device getDevice() const;
+
     const kernelArgData& operator [] (const int index) const;
 
     void add(const kernelArg &arg);
