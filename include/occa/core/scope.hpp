@@ -74,6 +74,8 @@ namespace occa {
 
       return scopeVariable(dtype, isPointer, isConst_, name_, value_);
     }
+
+    std::string getDeclaration() const;
   };
 
   class scope {
@@ -101,7 +103,7 @@ namespace occa {
     template <class TM>
     void add(const std::string &name,
              const TM &value) {
-      add(scopeVariable::fromValue<TM>(name, value, true));
+      add(scopeVariable::fromValue<TM>(name, value, false));
     }
 
     occa::device getDevice();

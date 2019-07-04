@@ -30,8 +30,10 @@ int main(int argc, const char **argv) {
   scope.addConst("entries", entries);
   scope.addConst("a", a);
   scope.addConst("b", b);
+
   // We can name our scoped variales anything
   scope.add("output", ab);
+
   // We can also add unused variables to the scope which could be
   // useful while debugging
   scope.add("debugValue", 42);

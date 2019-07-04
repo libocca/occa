@@ -117,18 +117,6 @@ namespace occa {
 
 
   //---[ Inlined Kernel ]---------------
-  std::string formatInlinedArg(const scopeVariable &arg) {
-    std::stringstream ss;
-
-    ss << arg.dtype << ' ';
-    if (arg.isPointer) {
-      ss << '*';
-    }
-    ss << arg.name;
-
-    return ss.str();
-  }
-
   std::string formatInlinedKernel(occa::scope &scope,
                                   const std::string &oklSource,
                                   const std::string &kernelName) {
@@ -149,7 +137,7 @@ namespace occa {
       if (i) {
         ss << ", ";
       }
-      ss << formatInlinedArg(args[i]);
+      ss << args[i].getDeclaration();
     }
     ss << ") {" << source << "}";
 

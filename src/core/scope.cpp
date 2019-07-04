@@ -1,6 +1,23 @@
+#include <sstream>
+
 #include <occa/core/scope.hpp>
 
 namespace occa {
+  std::string scopeVariable::getDeclaration() const {
+    std::stringstream ss;
+
+    if (isConst) {
+      ss << "const ";
+    }
+    ss << dtype << ' ';
+    if (isPointer) {
+      ss << '*';
+    }
+    ss <<  name;
+
+    return ss.str();
+  }
+
   scope::scope() {}
 
   scope::scope(const occa::properties &props_) :
