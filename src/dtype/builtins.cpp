@@ -69,6 +69,9 @@ namespace occa {
     const dtype_t memory("occa::memory", 0, true);
 
     // Templated types
+    template <> dtype_t get<void>() {
+      return void_;
+    }
 
     // Primitive types
     template <> dtype_t get<char>() {

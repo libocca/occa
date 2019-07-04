@@ -86,6 +86,7 @@ namespace occa {
     }
 
     // Primitive types
+    template <> dtype_t get<void>();
     template <> dtype_t get<char>();
     template <> dtype_t get<signed char>();
     template <> dtype_t get<unsigned char>();

@@ -182,11 +182,14 @@ void* OCCA_RFUNC occaUMalloc(const occaUDim_t bytes,
                              occaProperties props) {
 
   if (occa::c::isDefault(props)) {
-    return occa::umalloc<void>(bytes, src);
+    return occa::umalloc(bytes,
+                         occa::dtype::byte,
+                         src);
   }
-  return occa::umalloc<void>(bytes,
-                             src,
-                             occa::c::properties(props));
+  return occa::umalloc(bytes,
+                       occa::dtype::byte,
+                       src,
+                       occa::c::properties(props));
 }
 
 void* OCCA_RFUNC occaTypedUMalloc(const occaUDim_t entries,
