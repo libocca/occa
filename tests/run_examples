@@ -11,17 +11,18 @@ ASAN_OPTIONS+=':detect_container_overflow=0'
 HEADER_CHARS=80
 
 declare -a examples=(
-    cpp/1_add_vectors
-    cpp/2_background_device
-    cpp/3_reduction
-    cpp/4_building_kernels
-    cpp/5_unified_memory
-    cpp/6_dtypes
-    cpp/7_arrays
-    cpp/8_streams
-    c/1_add_vectors
-    c/2_background_device
-    c/3_reduction
+  cpp/01_add_vectors
+  cpp/02_background_device
+  cpp/03_inlined_kernels
+  cpp/04_reduction
+  cpp/05_building_kernels
+  cpp/06_unified_memory
+  cpp/07_dtypes
+  cpp/08_arrays
+  cpp/09_streams
+  c/01_add_vectors
+  c/02_background_device
+  c/03_reduction
 )
 
 for mode in $("${OCCA_DIR}/bin/occa" modes); do
@@ -41,8 +42,9 @@ for mode in $("${OCCA_DIR}/bin/occa" modes); do
         # OpenCL + Shared memory is finicky
         if [ "${mode}" == OpenCL ]; then
             case "${example_dir}" in
-                */3_reduction) continue;;
-                */6_arrays) continue;;
+                cpp/04_reduction) continue;;
+                cpp/06_arrays) continue;;
+                c/03_reduction) continue;;
             esac
         fi
 
