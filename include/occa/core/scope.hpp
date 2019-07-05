@@ -43,22 +43,31 @@ namespace occa {
 
   class scopeVariable {
    public:
-    const dtype_t dtype;
-    const bool isPointer;
-    const bool isConst;
-    const std::string name;
-    const kernelArg value;
+    dtype_t dtype;
+    bool isPointer;
+    bool isConst;
+    std::string name;
+    kernelArg value;
 
-    scopeVariable(const dtype_t &dtype_,
-                  const bool &isPointer_,
-                  const bool &isConst_,
-                  const std::string &name_,
-                  const kernelArg &value_) :
+    inline scopeVariable() {}
+
+    inline scopeVariable(const dtype_t &dtype_,
+                         const bool &isPointer_,
+                         const bool &isConst_,
+                         const std::string &name_,
+                         const kernelArg &value_) :
         dtype(dtype_),
         isPointer(isPointer_),
         isConst(isConst_),
         name(name_),
         value(value_) {}
+
+    inline scopeVariable(const scopeVariable &other) :
+        dtype(other.dtype),
+        isPointer(other.isPointer),
+        isConst(other.isConst),
+        name(other.name),
+        value(other.value) {}
 
     template <class TM>
     static scopeVariable fromValue(const std::string &name_,
