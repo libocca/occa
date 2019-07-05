@@ -261,6 +261,16 @@ namespace occa {
       return oType;
     }
 
+    occaType newOccaType(const occa::kernelBuilder &kernelBuilder) {
+      occaType oType;
+      oType.magicHeader = OCCA_C_TYPE_MAGIC_HEADER;
+      oType.type  = typeType::kernelBuilder;
+      oType.bytes = sizeof(void*);
+      oType.value.ptr = (char*) &kernelBuilder;
+      oType.needsFree = false;
+      return oType;
+    }
+
     occaType newOccaType(const occa::dtype_t &dtype) {
       occaType oType;
       oType.magicHeader = OCCA_C_TYPE_MAGIC_HEADER;
@@ -326,6 +336,12 @@ namespace occa {
       OCCA_ERROR("Input is not an occaKernel",
                  value.type == typeType::kernel);
       return occa::kernel((occa::modeKernel_t*) value.value.ptr);
+    }
+
+    occa::kernelBuilder kernelBuilder(occaType value) {
+      OCCA_ERROR("Input is not an occaKernelBuilder",
+                 value.type == typeType::kernelBuilder);
+      return *((occa::kernelBuilder*) value.value.ptr);
     }
 
     occa::memory memory(occaType value) {
@@ -531,43 +547,82 @@ namespace occa {
                  value.type == typeType::properties);
       return *((const occa::properties*) value.value.ptr);
     }
+
+    occa::dtype_t getDtype(occaType value) {
+      switch (value.type) {
+        case occa::c::typeType::bool_:
+          return dtype::bool_;
+        case occa::c::typeType::int8_:
+          return dtype::int8;
+        case occa::c::typeType::uint8_:
+          return dtype::uint8;
+        case occa::c::typeType::int16_:
+          return dtype::int16;
+        case occa::c::typeType::uint16_:
+          return dtype::uint16;
+        case occa::c::typeType::int32_:
+          return dtype::int32;
+        case occa::c::typeType::uint32_:
+          return dtype::uint32;
+        case occa::c::typeType::int64_:
+          return dtype::int64;
+        case occa::c::typeType::uint64_:
+          return dtype::uint64;
+        case occa::c::typeType::float_:
+          return dtype::float_;
+        case occa::c::typeType::double_:
+          return dtype::double_;
+        case occa::c::typeType::memory:
+          return occa::c::memory(value).dtype();
+        case occa::c::typeType::ptr: {
+          occa::modeMemory_t* mem = uvaToMemory(value.value.ptr);
+          if (mem) {
+            return *(mem->dtype_);
+          }
+        }
+        default:
+          OCCA_FORCE_ERROR("Invalid value type");
+          return dtype::none;
+      }
+    }
   }
 }
 
 OCCA_START_EXTERN_C
 
 //---[ Type Flags ]---------------------
-const int OCCA_UNDEFINED  = occa::c::typeType::undefined;
-const int OCCA_DEFAULT    = occa::c::typeType::default_;
+const int OCCA_UNDEFINED     = occa::c::typeType::undefined;
+const int OCCA_DEFAULT       = occa::c::typeType::default_;
 
-const int OCCA_PTR        = occa::c::typeType::ptr;
+const int OCCA_PTR           = occa::c::typeType::ptr;
 
-const int OCCA_BOOL       = occa::c::typeType::bool_;
+const int OCCA_BOOL          = occa::c::typeType::bool_;
 
-const int OCCA_INT8       = occa::c::typeType::int8_;
-const int OCCA_UINT8      = occa::c::typeType::uint8_;
-const int OCCA_INT16      = occa::c::typeType::int16_;
-const int OCCA_UINT16     = occa::c::typeType::uint16_;
-const int OCCA_INT32      = occa::c::typeType::int32_;
-const int OCCA_UINT32     = occa::c::typeType::uint32_;
-const int OCCA_INT64      = occa::c::typeType::int64_;
-const int OCCA_UINT64     = occa::c::typeType::uint64_;
-const int OCCA_FLOAT      = occa::c::typeType::float_;
-const int OCCA_DOUBLE     = occa::c::typeType::double_;
+const int OCCA_INT8          = occa::c::typeType::int8_;
+const int OCCA_UINT8         = occa::c::typeType::uint8_;
+const int OCCA_INT16         = occa::c::typeType::int16_;
+const int OCCA_UINT16        = occa::c::typeType::uint16_;
+const int OCCA_INT32         = occa::c::typeType::int32_;
+const int OCCA_UINT32        = occa::c::typeType::uint32_;
+const int OCCA_INT64         = occa::c::typeType::int64_;
+const int OCCA_UINT64        = occa::c::typeType::uint64_;
+const int OCCA_FLOAT         = occa::c::typeType::float_;
+const int OCCA_DOUBLE        = occa::c::typeType::double_;
 
-const int OCCA_STRUCT     = occa::c::typeType::struct_;
-const int OCCA_STRING     = occa::c::typeType::string;
+const int OCCA_STRUCT        = occa::c::typeType::struct_;
+const int OCCA_STRING        = occa::c::typeType::string;
 
-const int OCCA_DEVICE     = occa::c::typeType::device;
-const int OCCA_KERNEL     = occa::c::typeType::kernel;
-const int OCCA_MEMORY     = occa::c::typeType::memory;
-const int OCCA_STREAM     = occa::c::typeType::stream;
-const int OCCA_STREAMTAG  = occa::c::typeType::streamTag;
+const int OCCA_DEVICE        = occa::c::typeType::device;
+const int OCCA_KERNEL        = occa::c::typeType::kernel;
+const int OCCA_KERNELBUILDER = occa::c::typeType::kernelBuilder;
+const int OCCA_MEMORY        = occa::c::typeType::memory;
+const int OCCA_STREAM        = occa::c::typeType::stream;
+const int OCCA_STREAMTAG     = occa::c::typeType::streamTag;
 
-const int OCCA_DTYPE      = occa::c::typeType::dtype;
-const int OCCA_SCOPE      = occa::c::typeType::scope;
-const int OCCA_JSON       = occa::c::typeType::json;
-const int OCCA_PROPERTIES = occa::c::typeType::properties;
+const int OCCA_DTYPE         = occa::c::typeType::dtype;
+const int OCCA_SCOPE         = occa::c::typeType::scope;
+const int OCCA_JSON          = occa::c::typeType::json;
+const int OCCA_PROPERTIES    = occa::c::typeType::properties;
 //======================================
 
 //---[ Globals & Flags ]----------------
@@ -702,6 +757,10 @@ OCCA_LFUNC void OCCA_RFUNC occaFree(occaType value) {
   }
   case occa::c::typeType::kernel: {
     occa::c::kernel(value).free();
+    break;
+  }
+  case occa::c::typeType::kernelBuilder: {
+    occa::c::kernelBuilder(value).free();
     break;
   }
   case occa::c::typeType::memory: {

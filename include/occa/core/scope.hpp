@@ -95,15 +95,15 @@ namespace occa {
     }
 
     template <class TM>
-    void addConst(const std::string &name,
-                  const TM &value) {
-      add(scopeVariable::fromValue<TM>(name, value, true));
-    }
-
-    template <class TM>
     void add(const std::string &name,
              const TM &value) {
       add(scopeVariable::fromValue<TM>(name, value, false));
+    }
+
+    template <class TM>
+    void addConst(const std::string &name,
+                  const TM &value) {
+      add(scopeVariable::fromValue<TM>(name, value, true));
     }
 
     occa::device getDevice();

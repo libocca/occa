@@ -8,6 +8,7 @@
 #include <occa/c/io.h>
 #include <occa/c/json.h>
 #include <occa/c/kernel.h>
+#include <occa/c/kernelBuilder.h>
 #include <occa/c/memory.h>
 #include <occa/c/properties.h>
 #include <occa/c/scope.h>
@@ -44,19 +45,22 @@
 #  undef OCCA_INLINED_OKL
 #endif
 
-#define OCCA_INLINED_OKL(OKL_SCOPE, OKL_SOURCE)             \
-  do {                                                      \
-    static occaKernelBuilder _inlinedKernelBuilder = (      \
-      occaKernelBuilderFromString(                          \
-        occaFormatInlinedKernel(OKL_SCOPE,                  \
-                                #OKL_SOURCE,                \
-                                OCCA_INLINED_KERNEL_NAME),  \
-        OCCA_INLINED_KERNEL_NAME                            \
-      )                                                     \
-    );                                                      \
-    occaKernelBuilderRun(_inlinedKernelBuilder,             \
-                         occaScopeGetDevice(OKL_SCOPE),     \
-                         OKL_SCOPE);                        \
+#define OCCA_INLINED_OKL(OKL_SCOPE, OKL_SOURCE)                     \
+  do {                                                              \
+    static occaKernelBuilder _inlinedKernelBuilder;                 \
+    static int _inlinedKernelIsDefined = 0;                         \
+    if (!_inlinedKernelIsDefined) {                                 \
+      _inlinedKernelBuilder = (                                     \
+        occaKernelBuilderFromInlinedOkl(                            \
+          OKL_SCOPE,                                                \
+          #OKL_SOURCE,                                              \
+          OCCA_INLINED_KERNEL_NAME                                  \
+        )                                                           \
+      );                                                            \
+      _inlinedKernelIsDefined = 1;                                  \
+    }                                                               \
+    occaKernelBuilderRun(_inlinedKernelBuilder,                     \
+                         OKL_SCOPE);                                \
   } while (0)
 
 

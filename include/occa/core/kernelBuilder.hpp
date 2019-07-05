@@ -46,8 +46,7 @@ namespace occa {
 
     occa::kernel operator [] (occa::device device);
 
-    void run(occa::device device,
-             occa::scope &scope);
+    void run(occa::scope &scope);
 
     void free();
   };

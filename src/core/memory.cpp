@@ -211,7 +211,7 @@ namespace occa {
 
   const dtype_t& memory::dtype() const {
     if (modeMemory) {
-      return *modeMemory->dtype_;
+      return *(modeMemory->dtype_);
     }
     return dtype::none;
   }

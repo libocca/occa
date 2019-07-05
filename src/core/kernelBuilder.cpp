@@ -87,9 +87,9 @@ namespace occa {
     return build(device, hash(device));
   }
 
-  void kernelBuilder::run(occa::device device,
-                          occa::scope &scope) {
-    occa::kernel kernel = build(device, scope.props);
+  void kernelBuilder::run(occa::scope &scope) {
+    occa::kernel kernel = build(scope.getDevice(),
+                                scope.props);
     kernel.clearArgs();
 
     // Get argument metadata

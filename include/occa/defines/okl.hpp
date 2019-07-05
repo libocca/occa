@@ -16,7 +16,7 @@
         OCCA_INLINED_KERNEL_NAME                              \
       )                                                       \
     );                                                        \
-    _inlinedKernelBuilder.run(scope.getDevice(), OKL_SCOPE);  \
+    _inlinedKernelBuilder.run(OKL_SCOPE);                     \
   } while (false)
 
 

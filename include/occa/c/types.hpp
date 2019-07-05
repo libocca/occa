@@ -6,37 +6,38 @@
 namespace occa {
   namespace c {
     namespace typeType {
-      static const int undefined  = 0;
-      static const int default_   = 1;
+      static const int undefined     = 0;
+      static const int default_      = 1;
 
-      static const int ptr        = 2;
+      static const int ptr           = 2;
 
-      static const int bool_      = 3;
+      static const int bool_         = 3;
 
-      static const int int8_      = 4;
-      static const int uint8_     = 5;
-      static const int int16_     = 6;
-      static const int uint16_    = 7;
-      static const int int32_     = 8;
-      static const int uint32_    = 9;
-      static const int int64_     = 10;
-      static const int uint64_    = 11;
-      static const int float_     = 12;
-      static const int double_    = 13;
+      static const int int8_         = 4;
+      static const int uint8_        = 5;
+      static const int int16_        = 6;
+      static const int uint16_       = 7;
+      static const int int32_        = 8;
+      static const int uint32_       = 9;
+      static const int int64_        = 10;
+      static const int uint64_       = 11;
+      static const int float_        = 12;
+      static const int double_       = 13;
 
-      static const int struct_    = 14;
-      static const int string     = 15;
+      static const int struct_       = 14;
+      static const int string        = 15;
 
-      static const int device     = 16;
-      static const int kernel     = 17;
-      static const int memory     = 18;
-      static const int stream     = 19;
-      static const int streamTag  = 20;
+      static const int device        = 16;
+      static const int kernel        = 17;
+      static const int kernelBuilder = 18;
+      static const int memory        = 19;
+      static const int stream        = 20;
+      static const int streamTag     = 21;
 
-      static const int dtype      = 21;
-      static const int scope      = 22;
-      static const int json       = 23;
-      static const int properties = 24;
+      static const int dtype         = 22;
+      static const int scope         = 23;
+      static const int json          = 24;
+      static const int properties    = 25;
     }
 
     occaType defaultOccaType();
@@ -93,6 +94,7 @@ namespace occa {
     occaType newOccaType(occa::stream stream);
     occaType newOccaType(occa::streamTag streamTag);
 
+    occaType newOccaType(const occa::kernelBuilder &kernelBuilder);
     occaType newOccaType(const occa::dtype_t &dtype);
     occaType newOccaType(const occa::scope &scope);
 
@@ -106,6 +108,7 @@ namespace occa {
 
     occa::device device(occaType value);
     occa::kernel kernel(occaType value);
+    occa::kernelBuilder kernelBuilder(occaType value);
     occa::memory memory(occaType value);
     occa::stream stream(occaType value);
     occa::streamTag streamTag(occaType value);
@@ -124,5 +127,7 @@ namespace occa {
 
     occa::properties& properties(occaType value);
     const occa::properties& constProperties(occaType value);
+
+    occa::dtype_t getDtype(occaType value);
   }
 }
