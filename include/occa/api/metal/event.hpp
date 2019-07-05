@@ -8,7 +8,7 @@ namespace occa {
        public:
         void *obj;
 
-        event_t();
+        event_t(void *obj_ = NULL);
         event_t(const event_t &other);
 
         void free();

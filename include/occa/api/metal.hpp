@@ -12,7 +12,7 @@ namespace occa {
     namespace metal {
       int getDeviceCount();
 
-      device_t getDevice(const int id);
+      device_t getDevice(const int deviceId);
     }
   }
 }

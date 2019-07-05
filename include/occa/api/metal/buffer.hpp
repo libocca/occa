@@ -7,8 +7,9 @@ namespace occa {
       class buffer_t {
        public:
         void *obj;
+        mutable void *ptr;
 
-        buffer_t();
+        buffer_t(void *obj_ = NULL);
         buffer_t(const buffer_t &other);
 
         void free();

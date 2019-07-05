@@ -12,8 +12,10 @@ namespace occa {
        public:
         void *obj;
 
-        kernel_t();
+        kernel_t(void *obj_ = NULL);
         kernel_t(const kernel_t &other);
+
+        void free();
 
         void clearArguments();
 
@@ -22,8 +24,6 @@ namespace occa {
 
         void run(occa::dim outerDims,
                  occa::dim innerDims);
-
-        void free();
       };
     }
   }

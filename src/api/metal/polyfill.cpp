@@ -11,12 +11,12 @@ namespace occa {
         return 0;
       }
 
-      device_t getDevice(const int id) {
+      device_t getDevice(const int deviceId) {
         return device_t();
       }
 
       //---[ Event ]--------------------
-      event_t::event_t() {}
+      event_t::event_t(void *obj_) {}
 
       event_t::event_t(const event_t &other) {}
 
@@ -27,7 +27,7 @@ namespace occa {
       }
 
       //---[ Buffer ]-------------------
-      buffer_t::buffer_t() {}
+      buffer_t::buffer_t(void *obj_) {}
 
       buffer_t::buffer_t(const buffer_t &other) {}
 
@@ -38,14 +38,14 @@ namespace occa {
       }
 
       //---[ Command Queue ]------------
-      commandQueue_t::commandQueue_t() {}
+      commandQueue_t::commandQueue_t(void *obj_) {}
 
       commandQueue_t::commandQueue_t(const commandQueue_t &other) {}
 
       void commandQueue_t::free() {}
 
       //---[ Kernel ]-------------------
-      kernel_t::kernel_t() {}
+      kernel_t::kernel_t(void *obj_) {}
 
       kernel_t::kernel_t(const kernel_t &other) {}
 
@@ -60,7 +60,7 @@ namespace occa {
       void kernel_t::free() {}
 
       //---[ Device ]-------------------
-      device_t::device_t() {}
+      device_t::device_t(void *deviceObj_) {}
 
       device_t::device_t(const device_t &other) {}
 

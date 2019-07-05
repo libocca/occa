@@ -19,13 +19,14 @@ namespace occa {
         void *deviceObj;
         void *libraryObj;
 
-        device_t();
+        device_t(void *deviceObj_ = NULL);
         device_t(const device_t &other);
 
         void free();
 
         std::string getName() const;
         udim_t getMemorySize() const;
+
         dim getMaxOuterDims() const;
         dim getMaxInnerDims() const;
 

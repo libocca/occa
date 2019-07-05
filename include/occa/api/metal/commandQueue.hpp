@@ -8,7 +8,7 @@ namespace occa {
        public:
         void *obj;
 
-        commandQueue_t();
+        commandQueue_t(void *obj_ = NULL);
         commandQueue_t(const commandQueue_t &other);
 
         void free();

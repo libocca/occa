@@ -1,3 +1,4 @@
+#include <occa/defines.hpp>
 #include <occa/modes/metal/registration.hpp>
 
 namespace occa {
@@ -5,7 +6,7 @@ namespace occa {
     modeInfo::modeInfo() {}
 
     bool modeInfo::init() {
-      return true;
+      return OCCA_METAL_ENABLED;
     }
 
     styling::section& modeInfo::getDescription() {
