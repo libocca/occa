@@ -3,9 +3,9 @@
 #include <occa.hpp>
 #include <occa/lang/modes/serial.hpp>
 #include <occa/lang/modes/openmp.hpp>
-#include <occa/lang/modes/opencl.hpp>
 #include <occa/lang/modes/cuda.hpp>
 #include <occa/lang/modes/hip.hpp>
+#include <occa/lang/modes/opencl.hpp>
 
 using namespace occa;
 
@@ -148,16 +148,17 @@ bool runTranslate(const json &args) {
   kernelProps["defines"].asObject() += getOptionDefines(options["define"]);
 
   lang::parser_t *parser = NULL;
+  lang::parser_t *launcherParser = NULL;
   if (mode == "Serial") {
     parser = new lang::okl::serialParser(kernelProps);
   } else if (mode == "OpenMP") {
     parser = new lang::okl::openmpParser(kernelProps);
-  } else if (mode == "OpenCL") {
-    parser = new lang::okl::openclParser(kernelProps);
   } else if (mode == "CUDA") {
     parser = new lang::okl::cudaParser(kernelProps);
   } else if (mode == "HIP") {
     parser = new lang::okl::hipParser(kernelProps);
+  } else if (mode == "OpenCL") {
+    parser = new lang::okl::openclParser(kernelProps);
   }
 
   if (!parser) {
@@ -191,7 +192,22 @@ bool runTranslate(const json &args) {
       << translationInfo
       << "*/\n";
   }
-  std::cout << parser->toString();
+
+  if ((mode == "CUDA")
+      || (mode == "HIP")
+      || (mode == "OpenCL")) {
+    launcherParser = &(((occa::lang::okl::withLauncher*) parser)->launcherParser);
+
+    std::cout << "---[ Laucher ]--------------------------\n"
+              << launcherParser->toString()
+              << "========================================\n\n"
+              << "---[ Kernel ]---------------------------\n"
+              << parser->toString()
+              << "========================================\n";
+  } else {
+    std::cout << parser->toString();
+  }
+
   delete parser;
   if (!success) {
     ::exit(1);
@@ -240,8 +256,8 @@ bool runEnv(const json &args) {
 
             << "  Backend Support:\n"
             << "    - OCCA_OPENMP_ENABLED        : " << envEcho("OCCA_OPENMP_ENABLED", OCCA_OPENMP_ENABLED) << "\n"
-            << "    - OCCA_OPENCL_ENABLED        : " << envEcho("OCCA_OPENCL_ENABLED", OCCA_OPENCL_ENABLED) << "\n"
             << "    - OCCA_CUDA_ENABLED          : " << envEcho("OCCA_CUDA_ENABLED", OCCA_CUDA_ENABLED) << "\n"
+            << "    - OCCA_OPENCL_ENABLED        : " << envEcho("OCCA_OPENCL_ENABLED", OCCA_OPENCL_ENABLED) << "\n"
 
             << "  Run-Time Options:\n"
             << "    - OCCA_CXX                   : " << envEcho("OCCA_CXX") << "\n"
