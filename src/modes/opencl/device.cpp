@@ -1,7 +1,3 @@
-#include <occa/defines.hpp>
-
-#if OCCA_OPENCL_ENABLED
-
 #include <occa/core/base.hpp>
 #include <occa/tools/env.hpp>
 #include <occa/tools/sys.hpp>
@@ -409,5 +405,3 @@ namespace occa {
     //==================================
   }
 }
-
-#endif

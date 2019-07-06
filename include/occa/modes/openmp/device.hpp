@@ -1,8 +1,5 @@
-#include <occa/defines.hpp>
-
-#if OCCA_OPENMP_ENABLED
-#  ifndef OCCA_MODES_OPENMP_DEVICE_HEADER
-#  define OCCA_MODES_OPENMP_DEVICE_HEADER
+#ifndef OCCA_MODES_OPENMP_DEVICE_HEADER
+#define OCCA_MODES_OPENMP_DEVICE_HEADER
 
 #include <occa/modes/serial/device.hpp>
 
@@ -33,5 +30,4 @@ namespace occa {
   }
 }
 
-#  endif
 #endif

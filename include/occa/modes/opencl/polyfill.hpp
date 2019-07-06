@@ -22,23 +22,23 @@
 // are indistinguisable inside the occa namespace
 namespace occa {
   //---[ Types ]------------------------
-  typedef struct int           cl_int;
-  typedef struct unsigned int  cl_uint;
-  typedef struct unsigned long cl_ulong;
+  typedef int           cl_int;
+  typedef unsigned int  cl_uint;
+  typedef unsigned long cl_ulong;
 
-  typedef struct _cl_buffer_region*     cl_buffer_region;
-  typedef struct _cl_command_queue*     cl_command_queue;
-  typedef struct _cl_context*           cl_context;
-  typedef struct cl_context_properties* cl_context_properties;
-  typedef struct _cl_device_id*         cl_device_id;
-  typedef struct _cl_device_info*       cl_device_info;
-  typedef struct _cl_device_type*       cl_device_type;
-  typedef struct _cl_event*             cl_event;
-  typedef struct _cl_kernel*            cl_kernel;
-  typedef struct _cl_mem*               cl_mem;
-  typedef struct _cl_platform_id*       cl_platform_id;
-  typedef struct _cl_program*           cl_program;
-  typedef struct _cl_queue_properties*  cl_queue_properties;
+  typedef struct _cl_buffer_region*      cl_buffer_region;
+  typedef struct _cl_command_queue*      cl_command_queue;
+  typedef struct _cl_context*            cl_context;
+  typedef struct _cl_context_properties* cl_context_properties;
+  typedef struct _cl_device_id*          cl_device_id;
+  typedef struct _cl_device_info*        cl_device_info;
+  typedef struct _cl_device_type*        cl_device_type;
+  typedef struct _cl_event*              cl_event;
+  typedef struct _cl_kernel*             cl_kernel;
+  typedef struct _cl_mem*                cl_mem;
+  typedef struct _cl_platform_id*        cl_platform_id;
+  typedef struct _cl_program*            cl_program;
+  typedef struct _cl_queue_properties*   cl_queue_properties;
 
   //---[ Enums ]------------------------
   enum cl_result_enum {

@@ -1,7 +1,3 @@
-#include <occa/defines.hpp>
-
-#if OCCA_OPENCL_ENABLED
-
 #include <occa/modes/opencl/memory.hpp>
 #include <occa/modes/opencl/device.hpp>
 #include <occa/modes/opencl/utils.hpp>
@@ -123,5 +119,3 @@ namespace occa {
     }
   }
 }
-
-#endif

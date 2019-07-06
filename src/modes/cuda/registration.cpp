@@ -1,3 +1,4 @@
+#include <occa/defines.hpp>
 #include <occa/modes/cuda/registration.hpp>
 #include <occa/modes/cuda/utils.hpp>
 
@@ -6,7 +7,11 @@ namespace occa {
     modeInfo::modeInfo() {}
 
     bool modeInfo::init() {
+#if OCCA_CUDA_ENABLED
       return cuda::init();
+#else
+      return false;
+#endif
     }
 
     styling::section& modeInfo::getDescription() {

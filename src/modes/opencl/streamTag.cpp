@@ -1,7 +1,3 @@
-#include <occa/defines.hpp>
-
-#if OCCA_OPENCL_ENABLED
-
 #include <occa/modes/opencl/streamTag.hpp>
 #include <occa/modes/opencl/utils.hpp>
 
@@ -32,5 +28,3 @@ namespace occa {
     }
   }
 }
-
-#endif

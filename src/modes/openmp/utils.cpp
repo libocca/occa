@@ -1,7 +1,3 @@
-#include <occa/defines.hpp>
-
-#if OCCA_OPENMP_ENABLED
-
 #include <iostream>
 
 #include <occa/tools/env.hpp>
@@ -83,5 +79,3 @@ namespace occa {
     }
   }
 }
-
-#endif

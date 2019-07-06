@@ -1,7 +1,3 @@
-#include <occa/defines.hpp>
-
-#if OCCA_OPENMP_ENABLED
-
 #include <occa/io/output.hpp>
 #include <occa/lang/modes/openmp.hpp>
 #include <occa/modes/serial/device.hpp>
@@ -94,5 +90,3 @@ namespace occa {
     }
   }
 }
-
-#endif

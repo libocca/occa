@@ -1,7 +1,3 @@
-#include <occa/defines.hpp>
-
-#if OCCA_OPENCL_ENABLED
-
 #include <stdio.h>
 
 #include <occa/modes/opencl/utils.hpp>
@@ -587,5 +583,3 @@ namespace occa {
     }
   }
 }
-
-#endif

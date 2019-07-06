@@ -1,7 +1,4 @@
 #include <occa/defines.hpp>
-
-#if OCCA_OPENCL_ENABLED
-
 #include <occa/modes/opencl/utils.hpp>
 #include <occa/modes/opencl/registration.hpp>
 
@@ -10,7 +7,11 @@ namespace occa {
     modeInfo::modeInfo() {}
 
     bool modeInfo::init() {
+#if OCCA_OPENCL_ENABLED
       return occa::opencl::isEnabled();
+#else
+      return false;
+#endif
     }
 
     styling::section& modeInfo::getDescription() {
@@ -42,5 +43,3 @@ namespace occa {
                opencl::device> mode("OpenCL");
   }
 }
-
-#endif
