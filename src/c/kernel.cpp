@@ -34,6 +34,21 @@ const char* OCCA_RFUNC occaKernelBinaryFilename(occaKernel kernel) {
   return occa::c::kernel(kernel).binaryFilename().c_str();
 }
 
+const char* OCCA_RFUNC occaKernelHash(occaKernel kernel) {
+  occa::hash_t hash = occa::c::kernel(kernel).hash();
+  if (!hash.isInitialized()) {
+    return (const char*) NULL;
+  }
+
+  std::string hashStr = hash.toFullString();
+
+  const int charCount = (int) hashStr.size();
+  char *c_str = (char*) ::malloc(charCount);
+  ::memcpy(c_str, hashStr.c_str(), charCount);
+
+  return c_str;
+}
+
 int OCCA_RFUNC occaKernelMaxDims(occaKernel kernel) {
   return occa::c::kernel(kernel).maxDims();
 }

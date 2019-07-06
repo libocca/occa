@@ -422,7 +422,9 @@ namespace occa {
                                                   kernelHash,
                                                   allProps);
 
-    if (!cachedKernel.isInitialized()) {
+    if (cachedKernel.isInitialized()) {
+      cachedKernel.modeKernel->hash = kernelHash;
+    } else {
       sys::rmrf(hashDir);
     }
 

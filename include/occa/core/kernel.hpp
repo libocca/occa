@@ -34,18 +34,20 @@ namespace occa {
   //---[ modeKernel_t ]---------------------
   class modeKernel_t : public gc::ringEntry_t {
   public:
+    // Information about the kernel
     occa::modeDevice_t *modeDevice;
-
     std::string name;
     std::string sourceFilename, binaryFilename;
     occa::properties properties;
+    hash_t hash;
 
-    gc::ring_t<kernel> kernelRing;
-
+    // Requirements to launch kernel
     dim outerDims, innerDims;
-
     std::vector<kernelArgData> arguments;
     lang::kernelMetadata metadata;
+
+    // References
+    gc::ring_t<kernel> kernelRing;
 
     modeKernel_t(modeDevice_t *modeDevice_,
                  const std::string &name_,
@@ -120,6 +122,7 @@ namespace occa {
     const std::string& name();
     const std::string& sourceFilename();
     const std::string& binaryFilename();
+    hash_t hash();
 
     int maxDims();
     dim maxOuterDims();

@@ -41,6 +41,9 @@ void testInfo() {
   ASSERT_EQ(addVectors2.mode(),
             "No Mode");
 
+  ASSERT_TRUE(addVectors.hash().isInitialized());
+  ASSERT_FALSE(addVectors2.hash().isInitialized());
+
   addVectors2 = addVectors;
 
   ASSERT_EQ(addVectors.mode(),

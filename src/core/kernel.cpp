@@ -260,6 +260,12 @@ namespace occa {
             : noBinaryFilename);
   }
 
+  hash_t kernel::hash() {
+    return (modeKernel
+            ? modeKernel->hash
+            : hash_t());
+  }
+
   void kernel::setRunDims(occa::dim outerDims, occa::dim innerDims) {
     if (modeKernel) {
       modeKernel->innerDims = innerDims;
