@@ -2,18 +2,22 @@
 
 set -e
 
-OCCA=$(dirname "$0")/../bin/occa
+OCCA_DIR=$(dirname $(cd $(dirname "${BASH_SOURCE[0]}") && pwd))
+BIN_OCCA="${OCCA_DIR}/bin/occa"
 
 function verbose_run {
     echo "$@"
     "$@"
 }
 
-verbose_run "${OCCA}" autocomplete
-verbose_run "${OCCA}" clear
-verbose_run "${OCCA}" compile --help
-verbose_run "${OCCA}" env
-verbose_run "${OCCA}" info
-verbose_run "${OCCA}" modes
-verbose_run "${OCCA}" translate --help
-verbose_run "${OCCA}" version
+verbose_run "${BIN_OCCA}" autocomplete
+verbose_run "${BIN_OCCA}" clear
+verbose_run "${BIN_OCCA}" compile --help
+verbose_run "${BIN_OCCA}" env
+verbose_run "${BIN_OCCA}" info
+verbose_run "${BIN_OCCA}" modes
+verbose_run "${BIN_OCCA}" translate --help
+verbose_run "${BIN_OCCA}" translate --mode Serial examples/cpp/01_add_vectors/addVectors.okl
+verbose_run "${BIN_OCCA}" translate --mode CUDA examples/cpp/01_add_vectors/addVectors.okl
+verbose_run "${BIN_OCCA}" translate --mode CUDA --launcher examples/cpp/01_add_vectors/addVectors.okl
+verbose_run "${BIN_OCCA}" version

@@ -136,6 +136,7 @@ bool runTranslate(const json &args) {
   const json &arguments = args["arguments"];
 
   const std::string mode = options["mode"];
+  const bool printLauncher = options["launcher"];
   const std::string filename = arguments[0];
 
   if (!io::exists(filename)) {
@@ -193,17 +194,12 @@ bool runTranslate(const json &args) {
       << "*/\n";
   }
 
-  if ((mode == "CUDA")
-      || (mode == "HIP")
-      || (mode == "OpenCL")) {
+  if (printLauncher && (
+        (mode == "CUDA")
+        || (mode == "HIP")
+        || (mode == "OpenCL"))) {
     launcherParser = &(((occa::lang::okl::withLauncher*) parser)->launcherParser);
-
-    std::cout << "---[ Laucher ]--------------------------\n"
-              << launcherParser->toString()
-              << "========================================\n\n"
-              << "---[ Kernel ]---------------------------\n"
-              << parser->toString()
-              << "========================================\n";
+    std::cout << launcherParser->toString();
   } else {
     std::cout << parser->toString();
   }
@@ -331,6 +327,8 @@ int main(const int argc, const char **argv) {
                .isRequired()
                .withArg()
                .expandsFunction("occa modes"))
+    .addOption(cli::option('l', "launcher",
+                           "Output the launcher source instead"))
     .addOption(cli::option('k', "kernel-props",
                            "Kernel properties")
                .reusable()
@@ -343,7 +341,7 @@ int main(const int argc, const char **argv) {
                            "Add additional define")
                .reusable()
                .withArg())
-    .addOption(cli::option('v',"verbose",
+    .addOption(cli::option('v', "verbose",
                            "Verbose output"))
     .addArgument("FILE",
                  "An .okl file",
