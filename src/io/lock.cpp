@@ -30,7 +30,7 @@ namespace occa {
 
       lockDir = env::OCCA_CACHE_DIR;
       lockDir += "locks/";
-      lockDir += hash.toString();
+      lockDir += hash.getString();
       lockDir += '_';
       lockDir += tag;
 

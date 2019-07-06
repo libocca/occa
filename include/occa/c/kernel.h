@@ -22,6 +22,8 @@ OCCA_LFUNC const char* OCCA_RFUNC occaKernelBinaryFilename(occaKernel kernel);
 
 OCCA_LFUNC const char* OCCA_RFUNC occaKernelHash(occaKernel kernel);
 
+OCCA_LFUNC const char* OCCA_RFUNC occaKernelFullHash(occaKernel kernel);
+
 OCCA_LFUNC int OCCA_RFUNC occaKernelMaxDims(occaKernel kernel);
 
 OCCA_LFUNC occaDim OCCA_RFUNC occaKernelMaxOuterDims(occaKernel kernel);

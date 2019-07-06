@@ -35,8 +35,8 @@ namespace occa {
     template <class TM>
     hash_t operator ^ (const TM &t) const;
 
-    std::string toFullString() const;
-    std::string toString() const;
+    std::string getFullString() const;
+    std::string getString() const;
     operator std::string () const;
 
     static hash_t fromString(const std::string &s);

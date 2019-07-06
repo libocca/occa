@@ -42,7 +42,7 @@ void testAutoRelease() {
   ASSERT_EQ(lock1.dir(),
             occa::env::OCCA_CACHE_DIR
             + "locks/"
-            + hash.toString()
+            + hash.getString()
             + "_tag");
   ASSERT_TRUE(lock1.isMine());
 

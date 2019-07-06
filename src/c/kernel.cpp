@@ -40,7 +40,22 @@ const char* OCCA_RFUNC occaKernelHash(occaKernel kernel) {
     return (const char*) NULL;
   }
 
-  std::string hashStr = hash.toFullString();
+  std::string hashStr = hash.getString();
+
+  const int charCount = (int) hashStr.size();
+  char *c_str = (char*) ::malloc(charCount);
+  ::memcpy(c_str, hashStr.c_str(), charCount);
+
+  return c_str;
+}
+
+const char* OCCA_RFUNC occaKernelFullHash(occaKernel kernel) {
+  occa::hash_t hash = occa::c::kernel(kernel).hash();
+  if (!hash.isInitialized()) {
+    return (const char*) NULL;
+  }
+
+  std::string hashStr = hash.getFullString();
 
   const int charCount = (int) hashStr.size();
   char *c_str = (char*) ::malloc(charCount);

@@ -40,7 +40,7 @@ void testCacheInfoMethods() {
 void testHashDir() {
   occa::hash_t hash = occa::hash(occa::toString(rand()));
   const std::string cacheDir = (
-    occa::io::cachePath() + hash.toString() + "/"
+    occa::io::cachePath() + hash.getString() + "/"
   );
   const std::string manualCacheDir = (
     occa::io::cachePath() + "1234/"

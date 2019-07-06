@@ -71,6 +71,10 @@ void testInfo() {
   ASSERT_TRUE(hash != NULL);
   ::free((void*) hash);
 
+  hash = occaKernelFullHash(addVectors);
+  ASSERT_TRUE(hash != NULL);
+  ::free((void*) hash);
+
   occaKernelMaxDims(addVectors);
   occaKernelMaxOuterDims(addVectors);
   occaKernelMaxInnerDims(addVectors);

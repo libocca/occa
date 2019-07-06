@@ -38,7 +38,7 @@ namespace occa {
       // Regular file, use hash
       if (useHash) {
         if (hash.initialized) {
-          return (cacheDir + hash.toString() + "/");
+          return (cacheDir + hash.getString() + "/");
         }
         return cacheDir;
       }

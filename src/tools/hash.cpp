@@ -91,7 +91,7 @@ namespace occa {
     return *this;
   }
 
-  std::string hash_t::toFullString() const {
+  std::string hash_t::getFullString() const {
     std::string ret;
     for (int i = 0; i < 8; ++i) {
       ret += toHex(h[i]);
@@ -99,9 +99,9 @@ namespace occa {
     return ret;
   }
 
-  std::string hash_t::toString() const {
+  std::string hash_t::getString() const {
     if (*this != hash_t(sh)) {
-      h_string = toFullString();
+      h_string = getFullString();
       h_string = (h_string.size() < 16) ? h_string : h_string.substr(0, 16);
       for (int i = 0; i < 8; ++i) {
         sh[i] = h[i];
@@ -111,7 +111,7 @@ namespace occa {
   }
 
   hash_t::operator std::string () const {
-    return toString();
+    return getString();
   }
 
   hash_t hash_t::fromString(const std::string &s) {
@@ -122,7 +122,7 @@ namespace occa {
   }
 
   std::ostream& operator << (std::ostream &out, const hash_t &hash) {
-    out << hash.toString();
+    out << hash.getString();
     return out;
   }
 

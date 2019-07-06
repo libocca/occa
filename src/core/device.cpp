@@ -90,9 +90,9 @@ namespace occa {
     occa::properties infoProps;
 
     infoProps["device"]       = properties;
-    infoProps["device/hash"]  = versionedHash().toFullString();
+    infoProps["device/hash"]  = versionedHash().getFullString();
     infoProps["kernel/props"] = kernelProps;
-    infoProps["kernel/hash"]  = kernelHash.toFullString();
+    infoProps["kernel/hash"]  = kernelHash.getFullString();
 
     json &metadataJson = infoProps["kernel/metadata"].asArray();
     lang::kernelMetadataMap::const_iterator kIt = metadataMap.begin();
@@ -111,7 +111,7 @@ namespace occa {
 
   std::string modeDevice_t::getKernelHash(const hash_t &kernelHash,
                                           const std::string &kernelName) {
-    return getKernelHash(kernelHash.toFullString(),
+    return getKernelHash(kernelHash.getFullString(),
                          kernelName);
   }
 
@@ -415,7 +415,7 @@ namespace occa {
 
     const std::string realFilename = io::filename(filename);
     const std::string hashDir = io::hashDir(realFilename, kernelHash);
-    allProps["hash"] = kernelHash.toFullString();
+    allProps["hash"] = kernelHash.getFullString();
 
     kernel cachedKernel = modeDevice->buildKernel(realFilename,
                                                   kernelName,
@@ -470,7 +470,7 @@ namespace occa {
 #if 0
     assertInitialized();
 
-    std::string devHash = hash().toFullString();
+    std::string devHash = hash().getFullString();
     strVector dirs = io::directories("occa://" + library);
     const int dirCount = (int) dirs.size();
     int kernelsLoaded = 0;
