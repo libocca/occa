@@ -9,18 +9,18 @@
 namespace occa {
   namespace api {
     namespace metal {
-      event_t::event_t(void *obj_) :
-        obj(obj_) {}
+      event_t::event_t(void *eventObj_) :
+        eventObj(eventObj_) {}
 
       event_t::event_t(const event_t &other) :
-        obj(other.obj) {}
+        eventObj(other.eventObj) {}
 
       void event_t::free() {
-        if (obj) {
+        if (eventObj) {
           // Remove reference count
-          id<MTLEvent> event = (__bridge id<MTLEvent>) obj;
-          event = nil;
-          obj = NULL;
+          id<MTLEvent> metalEvent = (__bridge id<MTLEvent>) eventObj;
+          metalEvent = nil;
+          eventObj = NULL;
         }
       }
 

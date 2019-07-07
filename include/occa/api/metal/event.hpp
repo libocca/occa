@@ -6,9 +6,9 @@ namespace occa {
     namespace metal {
       class event_t {
        public:
-        void *obj;
+        void *eventObj;
 
-        event_t(void *obj_ = NULL);
+        event_t(void *eventObj_ = NULL);
         event_t(const event_t &other);
 
         void free();
