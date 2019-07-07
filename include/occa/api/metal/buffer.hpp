@@ -6,7 +6,7 @@ namespace occa {
     namespace metal {
       class buffer_t {
        public:
-        void *obj;
+        void *bufferObj;
         mutable void *ptr;
 
         buffer_t(void *obj_ = NULL);

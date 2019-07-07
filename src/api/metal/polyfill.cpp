@@ -27,7 +27,7 @@ namespace occa {
       }
 
       //---[ Buffer ]-------------------
-      buffer_t::buffer_t(void *obj_) {}
+      buffer_t::buffer_t(void *bufferObj_) {}
 
       buffer_t::buffer_t(const buffer_t &other) {}
 
@@ -45,17 +45,17 @@ namespace occa {
       void commandQueue_t::free() {}
 
       //---[ Kernel ]-------------------
-      kernel_t::kernel_t(void *obj_) {}
+      kernel_t::kernel_t() {}
+
+      kernel_t::kernel_t(device_t *device_,
+                         void *functionObj_) {}
 
       kernel_t::kernel_t(const kernel_t &other) {}
 
-      void kernel_t::clearArguments() {}
-
-      void kernel_t::addArgument(const int index,
-                                 const kernelArgData &arg) {}
-
-      void kernel_t::run(occa::dim outerDims,
-                         occa::dim innerDims) {}
+      void kernel_t::run(commandQueue_t &commandQueue,
+                         occa::dim outerDims,
+                         occa::dim innerDims,
+                         const std::vector<kernelArgData> &arguments) {}
 
       void kernel_t::free() {}
 

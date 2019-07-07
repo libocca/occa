@@ -4,6 +4,7 @@
 #include <occa/tools/sys.hpp>
 #include <occa/modes/metal/kernel.hpp>
 #include <occa/modes/metal/device.hpp>
+#include <occa/modes/metal/stream.hpp>
 
 namespace occa {
   namespace metal {
@@ -40,15 +41,15 @@ namespace occa {
     }
 
     void kernel::deviceRun() const {
-      metalKernel.clearArguments();
-
-      // Set arguments
-      const int args = (int) arguments.size();
-      for (int i = 0; i < args; ++i) {
-        metalKernel.addArgument(i, arguments[i]);
-      }
-
-      metalKernel.run(outerDims, innerDims);
+      metal::device &device = *((metal::device*) modeDevice);
+      metal::stream &stream = (
+        *((metal::stream*) (device.currentStream.getModeStream()))
+      );
+      api::metal::commandQueue_t &commandQueue = stream.metalCommandQueue;
+      metalKernel.run(commandQueue,
+                      outerDims,
+                      innerDims,
+                      arguments);
     }
   }
 }

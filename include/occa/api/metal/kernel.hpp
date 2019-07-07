@@ -8,22 +8,28 @@ namespace occa {
 
   namespace api {
     namespace metal {
+      class commandQueue_t;
+      class device_t;
+
       class kernel_t {
        public:
-        void *obj;
+        device_t *device;
+        void *functionObj;
+        void *pipelineStateObj;
 
-        kernel_t(void *obj_ = NULL);
+        kernel_t();
+
+        kernel_t(device_t *device_,
+                 void *functionObj_);
+
         kernel_t(const kernel_t &other);
 
         void free();
 
-        void clearArguments();
-
-        void addArgument(const int index,
-                         const kernelArgData &arg);
-
-        void run(occa::dim outerDims,
-                 occa::dim innerDims);
+        void run(commandQueue_t &commandQueue,
+                 occa::dim outerDims,
+                 occa::dim innerDims,
+                 const std::vector<kernelArgData> &arguments);
       };
     }
   }

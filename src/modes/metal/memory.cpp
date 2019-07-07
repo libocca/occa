@@ -34,6 +34,10 @@ namespace occa {
       return m;
     }
 
+    const api::metal::buffer_t& memory::getMetalBuffer() {
+      return metalBuffer;
+    }
+
     void* memory::getPtr(const occa::properties &props) {
       if (!ptr) {
         ptr = (char*) metalBuffer.getPtr();

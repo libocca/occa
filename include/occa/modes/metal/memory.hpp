@@ -25,6 +25,8 @@ namespace occa {
 
       modeMemory_t* addOffset(const dim_t offset);
 
+      const api::metal::buffer_t& getMetalBuffer();
+
       void* getPtr(const occa::properties &props);
 
       void copyTo(void *dest,

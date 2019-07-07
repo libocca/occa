@@ -9,28 +9,28 @@
 namespace occa {
   namespace api {
     namespace metal {
-      buffer_t::buffer_t(void *obj_) :
-        obj(obj_),
+      buffer_t::buffer_t(void *bufferObj_) :
+        bufferObj(bufferObj_),
         ptr(NULL) {}
 
       buffer_t::buffer_t(const buffer_t &other) :
-        obj(other.obj),
+        bufferObj(other.bufferObj),
         ptr(other.ptr) {}
 
       void buffer_t::free() {
-        if (obj) {
-          // Remove reference count
-          id<MTLBuffer> buffer = (__bridge id<MTLBuffer>) obj;
-          buffer = nil;
-          obj = NULL;
+        // Remove reference count
+        if (bufferObj) {
+          id<MTLBuffer> metalBuffer = (__bridge id<MTLBuffer>) bufferObj;
+          metalBuffer = nil;
+          bufferObj = NULL;
           ptr = NULL;
         }
       }
 
       void* buffer_t::getPtr() const {
         if (!ptr) {
-          id<MTLBuffer> buffer = (__bridge id<MTLBuffer>) obj;
-          ptr = (__bridge void*) buffer.contents;
+          id<MTLBuffer> metalBuffer = (__bridge id<MTLBuffer>) bufferObj;
+          ptr = (__bridge void*) metalBuffer.contents;
         }
         return ptr;
       }

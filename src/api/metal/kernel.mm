@@ -4,33 +4,116 @@
 
 #import <Metal/Metal.h>
 
+#include <occa/api/metal/device.hpp>
 #include <occa/api/metal/kernel.hpp>
+#include <occa/api/metal/buffer.hpp>
+#include <occa/core/kernelArg.hpp>
+#include <occa/modes/metal/memory.hpp>
 
 namespace occa {
   namespace api {
     namespace metal {
-      kernel_t::kernel_t(void *obj_) :
-      obj(obj_) {}
+      kernel_t::kernel_t() :
+        device(NULL),
+        functionObj(NULL),
+        pipelineStateObj(NULL) {}
 
-      kernel_t::kernel_t(const kernel_t &other) :
-      obj(other.obj) {}
+      kernel_t::kernel_t(device_t *device_,
+                         void *functionObj_) :
+        device(device_),
+        functionObj(functionObj_),
+        pipelineStateObj(NULL) {
 
-      void kernel_t::free() {
-        if (obj) {
-          // Remove reference count
-          id<MTLFunction> kernel = (__bridge id<MTLFunction>) obj;
-          kernel = nil;
-          obj = NULL;
+        id<MTLFunction> metalFunction = (__bridge id<MTLFunction>) functionObj;
+        id<MTLDevice> metalDevice = (__bridge id<MTLDevice>) device->deviceObj;
+
+        NSError* error = nil;
+        id<MTLComputePipelineState> metalPipelineState = [
+          metalDevice newComputePipelineStateWithFunction: metalFunction error:&error
+        ];
+        if (metalPipelineState != nil) {
+          pipelineStateObj = (__bridge void*) metalPipelineState;
+        } else {
+          if (error != nil) {
+            std::string errorStr = [error.localizedDescription UTF8String];
+            OCCA_FORCE_ERROR("Kernel: Unable to create compute pipeline."
+                             << " Error: " << errorStr);
+          } else {
+            OCCA_FORCE_ERROR("Kernel: Unable to create compute pipeline");
+          }
         }
       }
 
-      void kernel_t::clearArguments() {}
+      kernel_t::kernel_t(const kernel_t &other) :
+        device(other.device),
+        functionObj(other.functionObj),
+        pipelineStateObj(other.pipelineStateObj) {}
 
-      void kernel_t::addArgument(const int index,
-                                 const kernelArgData &arg) {}
+      void kernel_t::free() {
+        // Remove reference counts
+        if (functionObj) {
+          id<MTLFunction> metalFunction = (__bridge id<MTLFunction>) functionObj;
+          metalFunction = nil;
+          functionObj = NULL;
+        }
+        if (pipelineStateObj) {
+          id<MTLComputePipelineState> metalPipelineState = (
+            (__bridge id<MTLComputePipelineState>) pipelineStateObj
+          );
+          metalPipelineState = nil;
+          pipelineStateObj = NULL;
+        }
+      }
 
-      void kernel_t::run(occa::dim outerDims,
-                         occa::dim innerDims) {}
+      void kernel_t::run(commandQueue_t &commandQueue,
+                         occa::dim outerDims,
+                         occa::dim innerDims,
+                         const std::vector<kernelArgData> &arguments) {
+        id<MTLCommandQueue> metalCommandQueue = (
+          (__bridge id<MTLCommandQueue>) commandQueue.commandQueueObj
+        );
+        id<MTLComputePipelineState> metalPipelineState = (
+          (__bridge id<MTLComputePipelineState>) pipelineStateObj
+        );
+
+        // Initialize Metal command
+        id<MTLCommandBuffer> commandBuffer = [metalCommandQueue commandBuffer];
+        OCCA_ERROR("Kernel: Create command buffer",
+                   commandBuffer != nil);
+
+        id<MTLComputeCommandEncoder> computeEncoder = [commandBuffer computeCommandEncoder];
+        OCCA_ERROR("Kernel: Create compute command encoder",
+                   computeEncoder != nil);
+
+        // Start encoding the kernel
+        [computeEncoder setComputePipelineState:metalPipelineState];
+
+        const int argCount = (int) arguments.size();
+        for (int index = 0; index < argCount; ++index) {
+          const kernelArgData &arg = arguments[index];
+          if (arg.modeMemory) {
+            occa::metal::memory &memory = (
+              *(dynamic_cast<occa::metal::memory*>(arg.getModeMemory()))
+            );
+            id<MTLBuffer> metalBuffer = (
+              (__bridge id<MTLBuffer>) memory.getMetalBuffer().bufferObj
+            );
+            [computeEncoder setBuffer:metalBuffer offset:0 atIndex:index];
+          } else {
+            [computeEncoder setBytes:arg.ptr() length:arg.size atIndex:index];
+          }
+        }
+
+        MTLSize outerSize = MTLSizeMake(outerDims.x, outerDims.y, outerDims.z);
+        MTLSize innerSize = MTLSizeMake(innerDims.x, innerDims.y, innerDims.z);
+
+        // Set the loop dimensions
+        [computeEncoder dispatchThreads:outerSize threadsPerThreadgroup:innerSize];
+
+        // Finish encoding and start executing the kernel
+        [computeEncoder endEncoding];
+        [commandBuffer commit];
+      }
     }
   }
 }

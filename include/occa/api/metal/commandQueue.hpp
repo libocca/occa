@@ -6,9 +6,9 @@ namespace occa {
     namespace metal {
       class commandQueue_t {
        public:
-        void *obj;
+        void *commandQueueObj;
 
-        commandQueue_t(void *obj_ = NULL);
+        commandQueue_t(void *commandQueueObj_ = NULL);
         commandQueue_t(const commandQueue_t &other);
 
         void free();

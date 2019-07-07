@@ -9,18 +9,18 @@
 namespace occa {
   namespace api {
     namespace metal {
-      commandQueue_t::commandQueue_t(void *obj_) :
-      obj(obj_) {}
+      commandQueue_t::commandQueue_t(void *commandQueueObj_) :
+      commandQueueObj(commandQueueObj_) {}
 
       commandQueue_t::commandQueue_t(const commandQueue_t &other) :
-      obj(other.obj) {}
+      commandQueueObj(other.commandQueueObj) {}
 
       void commandQueue_t::free() {
-        if (obj) {
           // Remove reference count
-          id<MTLCommandQueue> commandQueue = (__bridge id<MTLCommandQueue>) obj;
-          commandQueue = nil;
-          obj = NULL;
+        if (commandQueueObj) {
+          id<MTLCommandQueue> metalCommandQueue = (__bridge id<MTLCommandQueue>) commandQueueObj;
+          metalCommandQueue = nil;
+          commandQueueObj = NULL;
         }
       }
     }
