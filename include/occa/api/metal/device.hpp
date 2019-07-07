@@ -61,7 +61,7 @@ namespace occa {
 
         void waitFor(event_t &event) const;
 
-        void finish() const;
+        void finish(commandQueue_t &commandQueue) const;
       };
     }
   }

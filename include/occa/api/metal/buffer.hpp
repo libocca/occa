@@ -1,6 +1,8 @@
 #ifndef OCCA_API_METAL_BUFFER_HEADER
 #define OCCA_API_METAL_BUFFER_HEADER
 
+#include <cstddef>
+
 namespace occa {
   namespace api {
     namespace metal {

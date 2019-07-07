@@ -88,6 +88,7 @@ namespace occa {
         // Start encoding the kernel
         [computeEncoder setComputePipelineState:metalPipelineState];
 
+        // Add arguments
         const int argCount = (int) arguments.size();
         for (int index = 0; index < argCount; ++index) {
           const kernelArgData &arg = arguments[index];
@@ -104,15 +105,15 @@ namespace occa {
           }
         }
 
+        // Set the loop dimensions
         MTLSize outerSize = MTLSizeMake(outerDims.x, outerDims.y, outerDims.z);
         MTLSize innerSize = MTLSizeMake(innerDims.x, innerDims.y, innerDims.z);
-
-        // Set the loop dimensions
         [computeEncoder dispatchThreads:outerSize threadsPerThreadgroup:innerSize];
 
         // Finish encoding and start executing the kernel
         [computeEncoder endEncoding];
         [commandBuffer commit];
+        commandQueue.setLastCommandBuffer((__bridge void*) commandBuffer);
       }
     }
   }

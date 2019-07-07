@@ -30,7 +30,10 @@ namespace occa {
     }
 
     void device::finish() const {
-      metalDevice.finish();
+      metal::stream &stream = (
+        *((metal::stream*) (currentStream.getModeStream()))
+      );
+      metalDevice.finish(stream.metalCommandQueue);
     }
 
     bool device::hasSeparateMemorySpace() const {

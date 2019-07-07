@@ -25,6 +25,7 @@ namespace occa {
       }
 
       double event_t::getTime() const {
+        // TODO
         return 0;
       }
     }

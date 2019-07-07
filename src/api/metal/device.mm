@@ -11,62 +11,59 @@ namespace occa {
   namespace api {
     namespace metal {
       device_t::device_t(void *deviceObj_) :
-      deviceObj(deviceObj_) {}
+        deviceObj(deviceObj_) {}
 
       device_t::device_t(const device_t &other) :
-      deviceObj(other.deviceObj),
-      libraryObj(other.libraryObj) {}
+        deviceObj(other.deviceObj),
+        libraryObj(other.libraryObj) {}
 
       void device_t::free() {
+        // Remove reference counts
         if (deviceObj) {
-          // Remove reference count
-          id<MTLDevice> dev = (__bridge id<MTLDevice>) deviceObj;
-          dev = nil;
+          id<MTLDevice> metalDevice = (__bridge id<MTLDevice>) deviceObj;
+          metalDevice = nil;
           deviceObj = NULL;
         }
-
         if (libraryObj) {
-          // Remove reference count
-          id<MTLLibrary> dev = (__bridge id<MTLLibrary>) libraryObj;
-          dev = nil;
+          id<MTLLibrary> metalLibrary = (__bridge id<MTLLibrary>) libraryObj;
+          metalLibrary = nil;
           libraryObj = NULL;
         }
       }
 
       std::string device_t::getName() const {
-        id<MTLDevice> dev = (__bridge id<MTLDevice>) deviceObj;
-        return [dev.name UTF8String];
+        id<MTLDevice> metalDevice = (__bridge id<MTLDevice>) deviceObj;
+        return [metalDevice.name UTF8String];
       }
 
       udim_t device_t::getMemorySize() const {
-        id<MTLDevice> dev = (__bridge id<MTLDevice>) deviceObj;
-        return [dev recommendedMaxWorkingSetSize];
+        id<MTLDevice> metalDevice = (__bridge id<MTLDevice>) deviceObj;
+        return [metalDevice recommendedMaxWorkingSetSize];
       }
 
       dim device_t::getMaxOuterDims() const {
-        id<MTLDevice> dev = (__bridge id<MTLDevice>) deviceObj;
         return dim(-1, -1, -1);
       }
 
       dim device_t::getMaxInnerDims() const {
-        id<MTLDevice> dev = (__bridge id<MTLDevice>) deviceObj;
-        MTLSize size = dev.maxThreadsPerThreadgroup;
+        id<MTLDevice> metalDevice = (__bridge id<MTLDevice>) deviceObj;
+        MTLSize size = metalDevice.maxThreadsPerThreadgroup;
         return dim(size.width, size.height, size.depth);
       }
 
       commandQueue_t device_t::createCommandQueue() const {
-        id<MTLDevice> dev = (__bridge id<MTLDevice>) deviceObj;
+        id<MTLDevice> metalDevice = (__bridge id<MTLDevice>) deviceObj;
 
-        id<MTLCommandQueue> commandQueue = [dev newCommandQueue];
+        id<MTLCommandQueue> commandQueue = [metalDevice newCommandQueue];
         void *commandQueueObj = (__bridge void*) commandQueue;
 
         return commandQueue_t(commandQueueObj);
       }
 
       event_t device_t::createEvent() const {
-        id<MTLDevice> dev = (__bridge id<MTLDevice>) deviceObj;
+        id<MTLDevice> metalDevice = (__bridge id<MTLDevice>) deviceObj;
 
-        id<MTLEvent> event = [dev newEvent];
+        id<MTLEvent> event = [metalDevice newEvent];
         void *eventObj = (__bridge void*) event;
 
         return event_t(eventObj);
@@ -75,19 +72,22 @@ namespace occa {
       kernel_t device_t::buildKernel(const std::string &source,
                                      const std::string &kernelName,
                                      io::lock_t &lock) const {
-        id<MTLDevice> dev = (__bridge id<MTLDevice>) deviceObj;
+        id<MTLDevice> metalDevice = (__bridge id<MTLDevice>) deviceObj;
+
+        // TODO
+
         return kernel_t();
       }
 
       buffer_t device_t::malloc(const udim_t bytes,
                                 const void *src) const {
-        id<MTLDevice> dev = (__bridge id<MTLDevice>) deviceObj;
+        id<MTLDevice> metalDevice = (__bridge id<MTLDevice>) deviceObj;
 
         id<MTLBuffer> buffer = (
-          [dev newBufferWithLength:bytes options:MTLResourceStorageModeShared]
+          [metalDevice newBufferWithLength:bytes options:MTLResourceStorageModeShared]
         );
 
-        return buffer_t();
+        return buffer_t((__bridge void*) buffer);
       }
 
       void device_t::memcpy(buffer_t &dest,
@@ -96,7 +96,8 @@ namespace occa {
                             const udim_t srcOffset,
                             const udim_t bytes,
                             const bool async) const {
-        id<MTLDevice> dev = (__bridge id<MTLDevice>) deviceObj;
+        id<MTLDevice> metalDevice = (__bridge id<MTLDevice>) deviceObj;
+        // TODO
       }
 
       void device_t::memcpy(void *dest,
@@ -104,7 +105,8 @@ namespace occa {
                             const udim_t srcOffset,
                             const udim_t bytes,
                             const bool async) const {
-        id<MTLDevice> dev = (__bridge id<MTLDevice>) deviceObj;
+        id<MTLDevice> metalDevice = (__bridge id<MTLDevice>) deviceObj;
+        // TODO
       }
 
       void device_t::memcpy(buffer_t &dest,
@@ -112,15 +114,22 @@ namespace occa {
                             const void *src,
                             const udim_t bytes,
                             const bool async) const {
-        id<MTLDevice> dev = (__bridge id<MTLDevice>) deviceObj;
+        id<MTLDevice> metalDevice = (__bridge id<MTLDevice>) deviceObj;
+        // TODO
       }
 
       void device_t::waitFor(event_t &event) const {
-        id<MTLDevice> dev = (__bridge id<MTLDevice>) deviceObj;
+        // TODO
       }
 
-      void device_t::device_t::finish() const {
-        id<MTLDevice> dev = (__bridge id<MTLDevice>) deviceObj;
+      void device_t::device_t::finish(commandQueue_t &commandQueue) const {
+        if (commandQueue.lastCommandBufferObj) {
+          id<MTLDevice> metalDevice = (__bridge id<MTLDevice>) deviceObj;
+          id<MTLCommandBuffer> metalCommandBuffer = (
+            (__bridge id<MTLCommandBuffer>) commandQueue.lastCommandBufferObj
+          );
+          [metalCommandBuffer waitUntilCompleted];
+        }
       }
     }
   }
