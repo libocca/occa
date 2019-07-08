@@ -34,6 +34,8 @@ namespace occa {
         void setLastCommandBuffer(void *commandBufferObj);
 
         void processEvents(const int eventId);
+
+        void finish();
       };
     }
   }

@@ -61,6 +61,11 @@ namespace occa {
         }
       }
 
+      void event_t::setTime(const double eventTime_) {
+        freeCommandBuffer();
+        eventTime = eventTime_;
+      }
+
       double event_t::getTime() const {
         return eventTime;
       }

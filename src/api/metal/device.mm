@@ -109,16 +109,6 @@ namespace occa {
         id<MTLDevice> metalDevice = (__bridge id<MTLDevice>) deviceObj;
         // TODO
       }
-
-      void device_t::device_t::finish(commandQueue_t &commandQueue) const {
-        if (commandQueue.lastCommandBufferObj) {
-          id<MTLDevice> metalDevice = (__bridge id<MTLDevice>) deviceObj;
-          id<MTLCommandBuffer> metalCommandBuffer = (
-            (__bridge id<MTLCommandBuffer>) commandQueue.lastCommandBufferObj
-          );
-          [metalCommandBuffer waitUntilCompleted];
-        }
-      }
     }
   }
 }

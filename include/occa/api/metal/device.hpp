@@ -57,8 +57,6 @@ namespace occa {
                     const void *src,
                     const udim_t bytes,
                     const bool async) const;
-
-        void finish(commandQueue_t &commandQueue) const;
       };
     }
   }

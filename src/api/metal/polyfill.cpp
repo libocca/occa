@@ -29,6 +29,8 @@ namespace occa {
 
       void event_t::waitUntilCompleted() {}
 
+      void event_t::setTime(const double eventTime_) {}
+
       double event_t::getTime() const {
         return 0;
       }
@@ -47,7 +49,7 @@ namespace occa {
       //---[ Command Queue ]------------
       commandQueue_t::commandQueue_t() {}
 
-      commandQueue_t::commandQueue_t(device_t &device_,
+      commandQueue_t::commandQueue_t(device_t *device_,
                                      void *commandQueueObj_) {}
 
       commandQueue_t::commandQueue_t(const commandQueue_t &other) {}
@@ -62,6 +64,8 @@ namespace occa {
       void commandQueue_t::setLastCommandBuffer(void *commandBufferObj) {}
 
       void commandQueue_t::processEvents(const int eventId) {}
+
+      void commandQueue_t::finish() {}
 
       //---[ Kernel ]-------------------
       kernel_t::kernel_t() {}
@@ -134,8 +138,6 @@ namespace occa {
                             const void *src,
                             const udim_t bytes,
                             const bool async) const {}
-
-      void device_t::device_t::finish() const {}
     }
   }
 }

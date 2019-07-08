@@ -23,6 +23,8 @@ namespace occa {
         void freeCommandBuffer();
 
         void waitUntilCompleted();
+
+        void setTime(const double eventTime_);
         double getTime() const;
       };
     }

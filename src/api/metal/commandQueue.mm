@@ -124,6 +124,16 @@ namespace occa {
         }
         events.swap(newEvents);
       }
+
+      void commandQueue_t::finish() {
+        if (lastCommandBufferObj) {
+          id<MTLDevice> metalDevice = (__bridge id<MTLDevice>) device->deviceObj;
+          id<MTLCommandBuffer> metalCommandBuffer = (
+            (__bridge id<MTLCommandBuffer>) lastCommandBufferObj
+          );
+          [metalCommandBuffer waitUntilCompleted];
+        }
+      }
     }
   }
 }
