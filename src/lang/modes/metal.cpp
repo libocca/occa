@@ -126,7 +126,7 @@ namespace occa {
           } else {
             function = &(((functionStatement&) kernelSmnt).function);
           }
-          setKernelQualifiers(kernelSmnt, *function);
+          setKernelQualifiers(*function);
           if (!success) return;
         }
       }
@@ -152,11 +152,8 @@ namespace occa {
         }
       }
 
-      void metalParser::setKernelQualifiers(statement_t &kernelSmnt,
-                                            function_t &function) {
+      void metalParser::setKernelQualifiers(function_t &function) {
         function.returnType.add(0, kernel_q);
-
-        const std::string &functionName = function.name();
 
         int argCount = (int) function.args.size();
         variablePtrVector constantArgs;
@@ -166,36 +163,15 @@ namespace occa {
           if (arg.vartype.isPointerType()) {
             arg.add(0, device_q);
           } else {
-            function.removeArgument(i--);
-            --argCount;
-            constantArgs.push_back(&arg);
-          }
-        }
-
-        if (kernelSmnt.type() & statementType::functionDecl) {
-          functionDeclStatement &kernelDeclSmnt = (
-            (functionDeclStatement&) kernelSmnt
-          );
-          blockStatement &rootSmnt = *(kernelDeclSmnt.up);
-          const int constantArgCount = (int) constantArgs.size();
-          for (int i = constantArgCount - 1; i >= 0; --i) {
-            variable_t &arg = *(constantArgs[i]);
-
-            // Remove from scope before we update the name
-            kernelDeclSmnt.removeFromScope(arg.name(), false);
-
-            arg.setName(functionName + "_" + arg.name());
+            // - Set constant (replacing const)
+            // - Pass the variable as a reference
             arg.add(0, constant_q);
-            arg.vartype.customSuffix = "[[function_constant(";
-            arg.vartype.customSuffix += occa::toString(i);
-            arg.vartype.customSuffix += ")]]";
-
-            declarationStatement &declSmnt = *(
-              new declarationStatement(&rootSmnt, NULL)
-            );
-            declSmnt.addDeclaration(arg);
-            rootSmnt.addBefore(kernelDeclSmnt, declSmnt);
+            arg -= const_;
+            arg.vartype.setReferenceToken(arg.source);
           }
+          arg.vartype.customSuffix = "[[buffer(";
+          arg.vartype.customSuffix += occa::toString(i);
+          arg.vartype.customSuffix += ")]]";
         }
 
         variable_t occaGroupPositionArg(uint3, "_occa_group_position");
