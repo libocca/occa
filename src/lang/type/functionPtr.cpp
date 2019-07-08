@@ -38,17 +38,15 @@ namespace occa {
       return true;
     }
 
-    functionPtr_t& functionPtr_t::operator += (const variable_t &arg) {
+    void functionPtr_t::addArgument(const variable_t &arg) {
       args.push_back(arg);
-      return *this;
     }
 
-    functionPtr_t& functionPtr_t::operator += (const variableVector &args_) {
+    void functionPtr_t::addArguments(const variableVector &args_) {
       const int count = (int) args_.size();
       for (int i = 0; i < count; ++i) {
         args.push_back(args_[i]);
       }
-      return *this;
     }
 
     dtype_t functionPtr_t::dtype() const {

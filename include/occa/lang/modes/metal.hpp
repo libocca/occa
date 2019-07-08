@@ -36,7 +36,8 @@ namespace occa {
 
         void migrateLocalDecls(functionDeclStatement &kernelSmnt);
 
-        void setKernelQualifiers(function_t &function);
+        void setKernelQualifiers(statement_t &kernelSmnt,
+                                 function_t &function);
       };
     }
   }

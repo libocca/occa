@@ -117,15 +117,16 @@ namespace occa {
         const int kernelCount = (int) kernelSmnts.size();
         for (int i = 0; i < kernelCount; ++i) {
           function_t *function;
-          if (kernelSmnts[i]->type() & statementType::functionDecl) {
-            function = &(((functionDeclStatement*) kernelSmnts[i])->function);
+          statement_t &kernelSmnt = *(kernelSmnts[i]);
 
-            migrateLocalDecls(*((functionDeclStatement*) kernelSmnts[i]));
+          if (kernelSmnt.type() & statementType::functionDecl) {
+            function = &(((functionDeclStatement&) kernelSmnt).function);
+            migrateLocalDecls((functionDeclStatement&) kernelSmnt);
             if (!success) return;
           } else {
-            function = &(((functionStatement*) kernelSmnts[i])->function);
+            function = &(((functionStatement&) kernelSmnt).function);
           }
-          setKernelQualifiers(*function);
+          setKernelQualifiers(kernelSmnt, *function);
           if (!success) return;
         }
       }
@@ -151,24 +152,49 @@ namespace occa {
         }
       }
 
-      void metalParser::setKernelQualifiers(function_t &function) {
+      void metalParser::setKernelQualifiers(statement_t &kernelSmnt,
+                                            function_t &function) {
         function.returnType.add(0, kernel_q);
 
         const std::string &functionName = function.name();
 
-        const int argCount = (int) function.args.size();
-        int constantIndex = 0;
-        for (int ai = 0; ai < argCount; ++ai) {
-          variable_t &arg = *(function.args[ai]);
+        int argCount = (int) function.args.size();
+        variablePtrVector constantArgs;
+        for (int i = 0; i < argCount; ++i) {
+          variable_t &arg = *(function.args[i]);
           arg.vartype = arg.vartype.flatten();
           if (arg.vartype.isPointerType()) {
             arg.add(0, device_q);
           } else {
+            function.removeArgument(i--);
+            --argCount;
+            constantArgs.push_back(&arg);
+          }
+        }
+
+        if (kernelSmnt.type() & statementType::functionDecl) {
+          functionDeclStatement &kernelDeclSmnt = (
+            (functionDeclStatement&) kernelSmnt
+          );
+          blockStatement &rootSmnt = *(kernelDeclSmnt.up);
+          const int constantArgCount = (int) constantArgs.size();
+          for (int i = constantArgCount - 1; i >= 0; --i) {
+            variable_t &arg = *(constantArgs[i]);
+
+            // Remove from scope before we update the name
+            kernelDeclSmnt.removeFromScope(arg.name(), false);
+
             arg.setName(functionName + "_" + arg.name());
             arg.add(0, constant_q);
             arg.vartype.customSuffix = "[[function_constant(";
-            arg.vartype.customSuffix += occa::toString(constantIndex++);
+            arg.vartype.customSuffix += occa::toString(i);
             arg.vartype.customSuffix += ")]]";
+
+            declarationStatement &declSmnt = *(
+              new declarationStatement(&rootSmnt, NULL)
+            );
+            declSmnt.addDeclaration(arg);
+            rootSmnt.addBefore(kernelDeclSmnt, declSmnt);
           }
         }
 
@@ -182,8 +208,8 @@ namespace occa {
           "[[thread_position_in_threadgroup]]"
         );
 
-        function += occaGroupPositionArg;
-        function += occaThreadPositionArg;
+        function.addArgument(occaGroupPositionArg);
+        function.addArgument(occaThreadPositionArg);
       }
     }
   }

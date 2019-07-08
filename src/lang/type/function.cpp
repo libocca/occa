@@ -49,17 +49,25 @@ namespace occa {
       return dtype::byte;
     }
 
-    function_t& function_t::operator += (const variable_t &arg) {
+    void function_t::addArgument(const variable_t &arg) {
       args.push_back(&(arg.clone()));
-      return *this;
     }
 
-    function_t& function_t::operator += (const variableVector &args_) {
+    void function_t::addArguments(const variableVector &args_) {
       const int count = (int) args_.size();
       for (int i = 0; i < count; ++i) {
         args.push_back(&(args_[i].clone()));
       }
-      return *this;
+    }
+
+    variable_t* function_t::removeArgument(const int index) {
+      const int argCount = (int) args.size();
+      if (index < 0 || argCount <= index ) {
+        return NULL;
+      }
+      variable_t *arg = args[index];
+      args.erase(args.begin() + index);
+      return arg;
     }
 
     bool function_t::equals(const type_t &other) const {

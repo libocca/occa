@@ -81,8 +81,9 @@ namespace occa {
         delete &var;
         return false;
       }
-      // Variable
+
       if (!var.vartype.has(typedef_)) {
+        // Variable
         success = up->addToScope(var, force);
       } else {
         // Typedef

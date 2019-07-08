@@ -24,8 +24,8 @@ namespace occa {
 
       functionPtr_t(const functionPtr_t &other);
 
-      functionPtr_t& operator += (const variable_t &arg);
-      functionPtr_t& operator += (const variableVector &args_);
+      void addArgument(const variable_t &arg);
+      void addArguments(const variableVector &args_);
 
       virtual int type() const;
       virtual type_t& clone() const;

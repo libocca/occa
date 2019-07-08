@@ -22,7 +22,7 @@ namespace occa {
           return;
         }
 
-        func += arg;
+        func.addArgument(arg);
         tokenContext.set(argRanges[i].end + 1);
       }
     }

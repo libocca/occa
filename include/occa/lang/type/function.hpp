@@ -28,8 +28,10 @@ namespace occa {
 
       virtual dtype_t dtype() const;
 
-      function_t& operator += (const variable_t &arg);
-      function_t& operator += (const variableVector &args_);
+      void addArgument(const variable_t &arg);
+      void addArguments(const variableVector &args_);
+
+      variable_t* removeArgument(const int index);
 
       virtual bool equals(const type_t &other) const;
 
