@@ -114,7 +114,7 @@ namespace occa {
 
         id<MTLBuffer> buffer = (
           [metalDevice newBufferWithLength:bytes
-                                   options:MTLResourceStorageModeShared]
+                                   options:MTLResourceStorageModeManaged]
         );
 
         return buffer_t((__bridge void*) buffer);

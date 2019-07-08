@@ -153,6 +153,8 @@ namespace occa {
                                   const udim_t bytes,
                                   const bool async) {
         id<MTLCommandQueue> metalCommandQueue = (__bridge id<MTLCommandQueue>) commandQueueObj;
+        id<MTLBuffer> srcMetalBuffer = (__bridge id<MTLBuffer>) src.bufferObj;
+        id<MTLBuffer> destMetalBuffer = (__bridge id<MTLBuffer>) dest.bufferObj;
 
         // Initialize Metal command
         id<MTLCommandBuffer> commandBuffer = [metalCommandQueue commandBuffer];
@@ -166,9 +168,6 @@ namespace occa {
         OCCA_ERROR("Command Queue: Create Blit encoder",
                    commandBuffer != nil);
 
-        id<MTLBuffer> srcMetalBuffer = (__bridge id<MTLBuffer>) src.bufferObj;
-        id<MTLBuffer> destMetalBuffer = (__bridge id<MTLBuffer>) dest.bufferObj;
-
         [blitEncoder copyFromBuffer:srcMetalBuffer
                        sourceOffset:srcOffset
                            toBuffer:destMetalBuffer
@@ -178,6 +177,10 @@ namespace occa {
         // Finish encoding and start the data transfer
         [blitEncoder endEncoding];
         [commandBuffer commit];
+
+        if (!async) {
+          finish();
+        }
       }
 
       void commandQueue_t::memcpy(void *dest,
@@ -185,7 +188,33 @@ namespace occa {
                                   const udim_t srcOffset,
                                   const udim_t bytes,
                                   const bool async) {
-        // TODO
+        id<MTLCommandQueue> metalCommandQueue = (__bridge id<MTLCommandQueue>) commandQueueObj;
+        id<MTLBuffer> srcMetalBuffer = (__bridge id<MTLBuffer>) src.bufferObj;
+
+        // Initialize Metal command
+        id<MTLCommandBuffer> commandBuffer = [metalCommandQueue commandBuffer];
+        OCCA_ERROR("Command Queue: Create command buffer",
+                   commandBuffer != nil);
+
+        // The commandBuffer callback has to be set before commit is called on it
+        setLastCommandBuffer((__bridge void*) commandBuffer);
+
+        id<MTLBlitCommandEncoder> blitEncoder = [commandBuffer blitCommandEncoder];
+        OCCA_ERROR("Command Queue: Create Blit encoder",
+                   commandBuffer != nil);
+
+        [blitEncoder synchronizeResource:srcMetalBuffer];
+
+        // Finish encoding and start the data transfer to the CPU
+        [blitEncoder endEncoding];
+        [commandBuffer commit];
+
+        // Make sure all edits in the GPU finish before using its data
+        finish();
+
+        ::memcpy(dest,
+                 (void*) (((char*) src.getPtr()) + srcOffset),
+                 bytes);
       }
 
       void commandQueue_t::memcpy(buffer_t &dest,
@@ -193,7 +222,16 @@ namespace occa {
                                   const void *src,
                                   const udim_t bytes,
                                   const bool async) {
-        // TODO
+        id<MTLBuffer> destMetalBuffer = (__bridge id<MTLBuffer>) dest.bufferObj;
+
+        // Make sure all uses of the GPU finish before updating its data
+        finish();
+
+        ::memcpy((void*) (((char*) dest.getPtr()) + destOffset),
+                 src,
+                 bytes);
+
+        [destMetalBuffer didModifyRange:NSMakeRange(destOffset, bytes)];
       }
     }
   }
