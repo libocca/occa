@@ -146,7 +146,7 @@ namespace occa {
       //---[ Compile Air Binary ]-------
       std::stringstream command;
 
-      command << "xcrun -sdk macosx metal"
+      command << "xcrun -sdk macosx metal -x metal"
               << ' ' << allProps["compiler_flags"]
               << ' ' << sourceFilename
               << " -c -o " << airBinaryFilename;
@@ -160,9 +160,12 @@ namespace occa {
       }
 
       int compileError = system(airCommand.c_str());
-      OCCA_ERROR("Error compiling [" << kernelName << "],"
-                 " Command: [" << airCommand << ']',
-                 compileError);
+      if (compileError) {
+        lock.release();
+        OCCA_FORCE_ERROR("Error compiling [" << kernelName << "],"
+                         " Command: [" << airCommand << ']');
+        return;
+      }
       //================================
 
       //---[ Compile Metallib Command ]---
@@ -184,7 +187,7 @@ namespace occa {
       lock.release();
       OCCA_ERROR("Error compiling [" << kernelName << "],"
                  " Command: [" << metallibCommand << ']',
-                 compileError);
+                 !compileError);
       //================================
     }
 
