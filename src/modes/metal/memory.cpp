@@ -45,6 +45,10 @@ namespace occa {
       return ptr;
     }
 
+    udim_t memory::getOffset() const {
+      return bufferOffset;
+    }
+
     void memory::copyFrom(const void *src,
                           const udim_t bytes,
                           const udim_t offset,

@@ -29,6 +29,8 @@ namespace occa {
 
       void* getPtr(const occa::properties &props);
 
+      udim_t getOffset() const;
+
       void copyTo(void *dest,
                   const udim_t bytes,
                   const udim_t destOffset = 0,

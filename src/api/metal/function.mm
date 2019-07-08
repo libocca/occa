@@ -113,7 +113,7 @@ namespace occa {
               (__bridge id<MTLBuffer>) memory.getMetalBuffer().bufferObj
             );
             [computeEncoder setBuffer:metalBuffer
-                               offset:0
+                               offset:memory.getOffset()
                               atIndex:index];
           } else {
             [computeEncoder setBytes:arg.ptr()
