@@ -61,14 +61,14 @@ namespace occa {
                               commandQueueObj);
       }
 
-      kernel_t device_t::buildKernel(const std::string &source,
-                                     const std::string &kernelName,
-                                     io::lock_t &lock) const {
+      function_t device_t::buildKernel(const std::string &source,
+                                       const std::string &kernelName,
+                                       io::lock_t &lock) const {
         id<MTLDevice> metalDevice = (__bridge id<MTLDevice>) deviceObj;
 
         // TODO
 
-        return kernel_t();
+        return function_t();
       }
 
       buffer_t device_t::malloc(const udim_t bytes,

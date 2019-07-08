@@ -13,7 +13,7 @@ namespace occa {
 
     private:
       api::metal::device_t metalDevice;
-      mutable api::metal::kernel_t metalKernel;
+      mutable api::metal::function_t metalFunction;
 
     public:
       kernel(modeDevice_t *modeDevice_,
@@ -25,7 +25,7 @@ namespace occa {
              const std::string &name_,
              const std::string &sourceFilename_,
              api::metal::device_t metalDevice_,
-             api::metal::kernel_t metalKernel_,
+             api::metal::function_t metalFunction_,
              const occa::properties &properties_);
 
       ~kernel();

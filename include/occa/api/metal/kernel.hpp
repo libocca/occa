@@ -11,18 +11,18 @@ namespace occa {
       class commandQueue_t;
       class device_t;
 
-      class kernel_t {
+      class function_t {
        public:
         device_t *device;
         void *functionObj;
         void *pipelineStateObj;
 
-        kernel_t();
+        function_t();
 
-        kernel_t(device_t *device_,
+        function_t(device_t *device_,
                  void *functionObj_);
 
-        kernel_t(const kernel_t &other);
+        function_t(const function_t &other);
 
         void free();
 

@@ -18,14 +18,14 @@ namespace occa {
                    const std::string &name_,
                    const std::string &sourceFilename_,
                    api::metal::device_t metalDevice_,
-                   api::metal::kernel_t metalKernel_,
+                   api::metal::function_t metalFunction_,
                    const occa::properties &properties_) :
       occa::launchedModeKernel_t(modeDevice_, name_, sourceFilename_, properties_),
       metalDevice(metalDevice_),
-      metalKernel(metalKernel_) {}
+      metalFunction(metalFunction_) {}
 
     kernel::~kernel() {
-      metalKernel.free();
+      metalFunction.free();
     }
 
     int kernel::maxDims() const {
@@ -46,10 +46,10 @@ namespace occa {
         *((metal::stream*) (device.currentStream.getModeStream()))
       );
       api::metal::commandQueue_t &commandQueue = stream.metalCommandQueue;
-      metalKernel.run(commandQueue,
-                      outerDims,
-                      innerDims,
-                      arguments);
+      metalFunction.run(commandQueue,
+                        outerDims,
+                        innerDims,
+                        arguments);
     }
   }
 }

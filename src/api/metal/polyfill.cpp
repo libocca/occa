@@ -70,19 +70,19 @@ namespace occa {
       void commandQueue_t::finish() {}
 
       //---[ Kernel ]-------------------
-      kernel_t::kernel_t() {}
+      function_t::function_t() {}
 
-      kernel_t::kernel_t(device_t *device_,
-                         void *functionObj_) {}
+      function_t::function_t(device_t *device_,
+                             void *functionObj_) {}
 
-      kernel_t::kernel_t(const kernel_t &other) {}
+      function_t::function_t(const function_t &other) {}
 
-      void kernel_t::run(commandQueue_t &commandQueue,
-                         occa::dim outerDims,
-                         occa::dim innerDims,
-                         const std::vector<kernelArgData> &arguments) {}
+      void function_t::run(commandQueue_t &commandQueue,
+                           occa::dim outerDims,
+                           occa::dim innerDims,
+                           const std::vector<kernelArgData> &arguments) {}
 
-      void kernel_t::free() {}
+      void function_t::free() {}
 
       //---[ Device ]-------------------
       device_t::device_t(void *deviceObj_) {}
@@ -111,10 +111,10 @@ namespace occa {
         return commandQueue_t();
       }
 
-      kernel_t device_t::buildKernel(const std::string &source,
-                                     const std::string &kernelName,
-                                     io::lock_t &lock) const {
-        return kernel_t();
+      function_t device_t::buildKernel(const std::string &source,
+                                       const std::string &kernelName,
+                                       io::lock_t &lock) const {
+        return function_t();
       }
 
       buffer_t device_t::malloc(const udim_t bytes,

@@ -32,9 +32,9 @@ namespace occa {
 
         commandQueue_t createCommandQueue() const;
 
-        kernel_t buildKernel(const std::string &source,
-                             const std::string &kernelName,
-                             io::lock_t &lock) const;
+        function_t buildKernel(const std::string &source,
+                               const std::string &kernelName,
+                               io::lock_t &lock) const;
 
         buffer_t malloc(const udim_t bytes,
                         const void *src) const;

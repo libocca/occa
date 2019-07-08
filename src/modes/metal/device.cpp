@@ -133,14 +133,16 @@ namespace occa {
       for (int i = 0; i < launchedKernelsCount; ++i) {
         lang::kernelMetadata &metadata = launchedKernelsMetadata[i];
 
-        api::metal::kernel_t metalKernel = metalDevice.buildKernel(source,
-                                                                   metadata.name,
-                                                                   lock);
+        api::metal::function_t metalFunction = (
+          metalDevice.buildKernel(source,
+                                  metadata.name,
+                                  lock)
+        );
         kernel *deviceKernel = new kernel(this,
                                           metadata.name,
                                           sourceFilename,
                                           metalDevice,
-                                          metalKernel,
+                                          metalFunction,
                                           kernelProps);
         deviceKernel->dontUseRefs();
         deviceKernel->metadata = metadata;

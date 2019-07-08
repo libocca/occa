@@ -13,13 +13,13 @@
 namespace occa {
   namespace api {
     namespace metal {
-      kernel_t::kernel_t() :
+      function_t::function_t() :
         device(NULL),
         functionObj(NULL),
         pipelineStateObj(NULL) {}
 
-      kernel_t::kernel_t(device_t *device_,
-                         void *functionObj_) :
+      function_t::function_t(device_t *device_,
+                             void *functionObj_) :
         device(device_),
         functionObj(functionObj_),
         pipelineStateObj(NULL) {
@@ -44,12 +44,12 @@ namespace occa {
         }
       }
 
-      kernel_t::kernel_t(const kernel_t &other) :
+      function_t::function_t(const function_t &other) :
         device(other.device),
         functionObj(other.functionObj),
         pipelineStateObj(other.pipelineStateObj) {}
 
-      void kernel_t::free() {
+      void function_t::free() {
         // Remove reference counts
         if (functionObj) {
           id<MTLFunction> metalFunction = (__bridge id<MTLFunction>) functionObj;
@@ -65,10 +65,10 @@ namespace occa {
         }
       }
 
-      void kernel_t::run(commandQueue_t &commandQueue,
-                         occa::dim outerDims,
-                         occa::dim innerDims,
-                         const std::vector<kernelArgData> &arguments) {
+      void function_t::run(commandQueue_t &commandQueue,
+                           occa::dim outerDims,
+                           occa::dim innerDims,
+                           const std::vector<kernelArgData> &arguments) {
         id<MTLCommandQueue> metalCommandQueue = (
           (__bridge id<MTLCommandQueue>) commandQueue.commandQueueObj
         );
