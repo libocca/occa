@@ -5,10 +5,12 @@
 #include <vector>
 
 #include <occa/api/metal/event.hpp>
+#include <occa/types.hpp>
 
 namespace occa {
   namespace api {
     namespace metal {
+      class buffer_t;
       class device_t;
 
       class commandQueue_t {
@@ -37,6 +39,25 @@ namespace occa {
         void processEvents(const int eventId);
 
         void finish();
+
+        void memcpy(buffer_t &dest,
+                    const udim_t destOffset,
+                    const buffer_t &src,
+                    const udim_t srcOffset,
+                    const udim_t bytes,
+                    const bool async);
+
+        void memcpy(void *dest,
+                    const buffer_t &src,
+                    const udim_t srcOffset,
+                    const udim_t bytes,
+                    const bool async);
+
+        void memcpy(buffer_t &dest,
+                    const udim_t destOffset,
+                    const void *src,
+                    const udim_t bytes,
+                    const bool async);
       };
     }
   }

@@ -51,12 +51,14 @@ namespace occa {
                           const occa::properties &props) {
       const bool async = props.get("async", false);
 
-      api::metal::device_t &metalDevice = ((metal::device*) modeDevice)->metalDevice;
-      metalDevice.memcpy(metalBuffer,
-                         offset,
-                         src,
-                         bytes,
-                         async);
+      api::metal::commandQueue_t &metalCommandQueue = (
+        ((metal::device*) modeDevice)->metalCommandQueue
+      );
+      metalCommandQueue.memcpy(metalBuffer,
+                               offset,
+                               src,
+                               bytes,
+                               async);
     }
 
     void memory::copyFrom(const modeMemory_t *src,
@@ -66,13 +68,15 @@ namespace occa {
                           const occa::properties &props) {
       const bool async = props.get("async", false);
 
-      api::metal::device_t &metalDevice = ((metal::device*) modeDevice)->metalDevice;
-      metalDevice.memcpy(metalBuffer,
-                         destOffset,
-                         ((const metal::memory*) src)->metalBuffer,
-                         srcOffset,
-                         bytes,
-                         async);
+      api::metal::commandQueue_t &metalCommandQueue = (
+        ((metal::device*) modeDevice)->metalCommandQueue
+      );
+      metalCommandQueue.memcpy(metalBuffer,
+                               destOffset,
+                               ((const metal::memory*) src)->metalBuffer,
+                               srcOffset,
+                               bytes,
+                               async);
     }
 
     void memory::copyTo(void *dest,
@@ -82,12 +86,14 @@ namespace occa {
 
       const bool async = props.get("async", false);
 
-      api::metal::device_t &metalDevice = ((metal::device*) modeDevice)->metalDevice;
-      metalDevice.memcpy(dest,
-                         metalBuffer,
-                         offset,
-                         bytes,
-                         async);
+      api::metal::commandQueue_t &metalCommandQueue = (
+        ((metal::device*) modeDevice)->metalCommandQueue
+      );
+      metalCommandQueue.memcpy(dest,
+                               metalBuffer,
+                               offset,
+                               bytes,
+                               async);
     }
 
     void memory::detach() {

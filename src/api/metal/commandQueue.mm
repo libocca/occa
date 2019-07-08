@@ -4,6 +4,7 @@
 
 #import <Metal/Metal.h>
 
+#include <occa/api/metal/buffer.hpp>
 #include <occa/api/metal/commandQueue.hpp>
 #include <occa/api/metal/device.hpp>
 #include <occa/api/metal/event.hpp>
@@ -143,6 +144,56 @@ namespace occa {
           [metalCommandBuffer waitUntilCompleted];
           freeLastCommandBuffer();
         }
+      }
+
+      void commandQueue_t::memcpy(buffer_t &dest,
+                                  const udim_t destOffset,
+                                  const buffer_t &src,
+                                  const udim_t srcOffset,
+                                  const udim_t bytes,
+                                  const bool async) {
+        id<MTLCommandQueue> metalCommandQueue = (__bridge id<MTLCommandQueue>) commandQueueObj;
+
+        // Initialize Metal command
+        id<MTLCommandBuffer> commandBuffer = [metalCommandQueue commandBuffer];
+        OCCA_ERROR("Command Queue: Create command buffer",
+                   commandBuffer != nil);
+
+        // The commandBuffer callback has to be set before commit is called on it
+        setLastCommandBuffer((__bridge void*) commandBuffer);
+
+        id<MTLBlitCommandEncoder> blitEncoder = [commandBuffer blitCommandEncoder];
+        OCCA_ERROR("Command Queue: Create Blit encoder",
+                   commandBuffer != nil);
+
+        id<MTLBuffer> srcMetalBuffer = (__bridge id<MTLBuffer>) src.bufferObj;
+        id<MTLBuffer> destMetalBuffer = (__bridge id<MTLBuffer>) dest.bufferObj;
+
+        [blitEncoder copyFromBuffer:srcMetalBuffer
+                       sourceOffset:srcOffset
+                           toBuffer:destMetalBuffer
+                  destinationOffset:destOffset
+                               size:bytes];
+
+        // Finish encoding and start the data transfer
+        [blitEncoder endEncoding];
+        [commandBuffer commit];
+      }
+
+      void commandQueue_t::memcpy(void *dest,
+                                  const buffer_t &src,
+                                  const udim_t srcOffset,
+                                  const udim_t bytes,
+                                  const bool async) {
+        // TODO
+      }
+
+      void commandQueue_t::memcpy(buffer_t &dest,
+                                  const udim_t destOffset,
+                                  const void *src,
+                                  const udim_t bytes,
+                                  const bool async) {
+        // TODO
       }
     }
   }

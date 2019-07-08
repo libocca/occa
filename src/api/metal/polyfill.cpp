@@ -69,6 +69,25 @@ namespace occa {
 
       void commandQueue_t::finish() {}
 
+      void commandQueue_t::memcpy(buffer_t &dest,
+                                  const udim_t destOffset,
+                                  const buffer_t &src,
+                                  const udim_t srcOffset,
+                                  const udim_t bytes,
+                                  const bool async) {}
+
+      void commandQueue_t::memcpy(void *dest,
+                                  const buffer_t &src,
+                                  const udim_t srcOffset,
+                                  const udim_t bytes,
+                                  const bool async) {}
+
+      void commandQueue_t::memcpy(buffer_t &dest,
+                                  const udim_t destOffset,
+                                  const void *src,
+                                  const udim_t bytes,
+                                  const bool async) {}
+
       //---[ Kernel ]-------------------
       function_t::function_t() {}
 
@@ -122,25 +141,6 @@ namespace occa {
                                 const void *src) const {
         return buffer_t();
       }
-
-      void device_t::memcpy(buffer_t &dest,
-                            const udim_t destOffset,
-                            const buffer_t &src,
-                            const udim_t srcOffset,
-                            const udim_t bytes,
-                            const bool async) const {}
-
-      void device_t::memcpy(void *dest,
-                            const buffer_t &src,
-                            const udim_t srcOffset,
-                            const udim_t bytes,
-                            const bool async) const {}
-
-      void device_t::memcpy(buffer_t &dest,
-                            const udim_t destOffset,
-                            const void *src,
-                            const udim_t bytes,
-                            const bool async) const {}
     }
   }
 }

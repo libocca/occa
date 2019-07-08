@@ -32,7 +32,8 @@ namespace occa {
 
         NSError* error = nil;
         id<MTLComputePipelineState> metalPipelineState = [
-          metalDevice newComputePipelineStateWithFunction: metalFunction error:&error
+          metalDevice newComputePipelineStateWithFunction:metalFunction
+                      error:&error
         ];
         if (metalPipelineState) {
           pipelineStateObj = (__bridge void*) metalPipelineState;
@@ -111,16 +112,21 @@ namespace occa {
             id<MTLBuffer> metalBuffer = (
               (__bridge id<MTLBuffer>) memory.getMetalBuffer().bufferObj
             );
-            [computeEncoder setBuffer:metalBuffer offset:0 atIndex:index];
+            [computeEncoder setBuffer:metalBuffer
+                               offset:0
+                              atIndex:index];
           } else {
-            [computeEncoder setBytes:arg.ptr() length:arg.size atIndex:index];
+            [computeEncoder setBytes:arg.ptr()
+                              length:arg.size
+                             atIndex:index];
           }
         }
 
         // Set the loop dimensions
         MTLSize outerSize = MTLSizeMake(outerDims.x, outerDims.y, outerDims.z);
         MTLSize innerSize = MTLSizeMake(innerDims.x, innerDims.y, innerDims.z);
-        [computeEncoder dispatchThreads:outerSize threadsPerThreadgroup:innerSize];
+        [computeEncoder dispatchThreads:outerSize
+                  threadsPerThreadgroup:innerSize];
 
         // Finish encoding and start executing the kernel
         [computeEncoder endEncoding];

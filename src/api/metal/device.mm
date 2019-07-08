@@ -73,7 +73,8 @@ namespace occa {
 
         NSError* error = nil;
         id<MTLLibrary> metalLibrary = [
-          metalDevice newLibraryWithFile:metallibFilenameObj error:&error
+          metalDevice newLibraryWithFile:metallibFilenameObj
+                      error:&error
         ];
 
         if (!metalLibrary) {
@@ -112,38 +113,11 @@ namespace occa {
         id<MTLDevice> metalDevice = (__bridge id<MTLDevice>) deviceObj;
 
         id<MTLBuffer> buffer = (
-          [metalDevice newBufferWithLength:bytes options:MTLResourceStorageModeShared]
+          [metalDevice newBufferWithLength:bytes
+                                   options:MTLResourceStorageModeShared]
         );
 
         return buffer_t((__bridge void*) buffer);
-      }
-
-      void device_t::memcpy(buffer_t &dest,
-                            const udim_t destOffset,
-                            const buffer_t &src,
-                            const udim_t srcOffset,
-                            const udim_t bytes,
-                            const bool async) const {
-        id<MTLDevice> metalDevice = (__bridge id<MTLDevice>) deviceObj;
-        // TODO
-      }
-
-      void device_t::memcpy(void *dest,
-                            const buffer_t &src,
-                            const udim_t srcOffset,
-                            const udim_t bytes,
-                            const bool async) const {
-        id<MTLDevice> metalDevice = (__bridge id<MTLDevice>) deviceObj;
-        // TODO
-      }
-
-      void device_t::memcpy(buffer_t &dest,
-                            const udim_t destOffset,
-                            const void *src,
-                            const udim_t bytes,
-                            const bool async) const {
-        id<MTLDevice> metalDevice = (__bridge id<MTLDevice>) deviceObj;
-        // TODO
       }
     }
   }
