@@ -53,16 +53,12 @@ namespace occa {
                                                    const occa::properties &kernelProps,
                                                    io::lock_t lock);
 
-      modeKernel_t* buildOKLKernelFromBinary(const hash_t kernelHash,
-                                             const std::string &hashDir,
-                                             const std::string &kernelName,
-                                             lang::kernelMetadataMap &launcherMetadata,
-                                             lang::kernelMetadataMap &deviceMetadata,
-                                             const occa::properties &kernelProps,
-                                             io::lock_t lock);
+      void compileKernel(const std::string &hashDir,
+                         const std::string &kernelName,
+                         const occa::properties &kernelProps,
+                         io::lock_t &lock);
 
-      modeKernel_t* buildOKLKernelFromBinary(info_t &clInfo,
-                                             const hash_t kernelHash,
+      modeKernel_t* buildOKLKernelFromBinary(const hash_t kernelHash,
                                              const std::string &hashDir,
                                              const std::string &kernelName,
                                              lang::kernelMetadataMap &launcherMetadata,

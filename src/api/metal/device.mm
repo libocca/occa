@@ -6,6 +6,8 @@
 #import <Metal/Metal.h>
 
 #include <occa/api/metal/device.hpp>
+#include <occa/io/lock.hpp>
+#include <occa/tools/sys.hpp>
 
 namespace occa {
   namespace api {
@@ -14,8 +16,7 @@ namespace occa {
         deviceObj(deviceObj_) {}
 
       device_t::device_t(const device_t &other) :
-        deviceObj(other.deviceObj),
-        libraryObj(other.libraryObj) {}
+        deviceObj(other.deviceObj) {}
 
       void device_t::free() {
         // Remove reference counts
@@ -23,11 +24,6 @@ namespace occa {
           id<MTLDevice> metalDevice = (__bridge id<MTLDevice>) deviceObj;
           metalDevice = nil;
           deviceObj = NULL;
-        }
-        if (libraryObj) {
-          id<MTLLibrary> metalLibrary = (__bridge id<MTLLibrary>) libraryObj;
-          metalLibrary = nil;
-          libraryObj = NULL;
         }
       }
 
@@ -61,14 +57,45 @@ namespace occa {
                               commandQueueObj);
       }
 
-      function_t device_t::buildKernel(const std::string &source,
+      function_t device_t::buildKernel(const std::string &metallibFilename,
                                        const std::string &kernelName,
                                        io::lock_t &lock) const {
         id<MTLDevice> metalDevice = (__bridge id<MTLDevice>) deviceObj;
 
-        // TODO
+        NSString *metallibFilenameObj = [
+          NSString stringWithCString:metallibFilename.c_str()
+                   encoding:[NSString defaultCStringEncoding]
+        ];
+        NSString *kernelNameObj = [
+          NSString stringWithCString:kernelName.c_str()
+                   encoding:[NSString defaultCStringEncoding]
+        ];
 
-        return function_t();
+        NSError* error = nil;
+        id<MTLLibrary> metalLibrary = [
+          metalDevice newLibraryWithFile:metallibFilenameObj error:&error
+        ];
+
+        if (!metalLibrary) {
+          // An error occured building the library
+          lock.release();
+          if (error) {
+            std::string errorStr = [error.localizedDescription UTF8String];
+            OCCA_FORCE_ERROR("Device: Unable to create library from ["
+                             << metallibFilename << "]."
+                             << " Error: " << errorStr);
+          } else {
+            OCCA_FORCE_ERROR("Device: Unable to create library from ["
+                             << metallibFilename << "].");
+          }
+          return function_t();
+        }
+
+        id<MTLFunction> metalFunction = [metalLibrary newFunctionWithName:kernelNameObj];
+
+        return function_t(const_cast<device_t*>(this),
+                          (__bridge void*) metalLibrary,
+                          (__bridge void*) metalFunction);
       }
 
       buffer_t device_t::malloc(const udim_t bytes,

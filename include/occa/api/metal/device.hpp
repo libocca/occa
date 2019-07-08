@@ -17,7 +17,6 @@ namespace occa {
       class device_t {
        public:
         void *deviceObj;
-        void *libraryObj;
 
         device_t(void *deviceObj_ = NULL);
         device_t(const device_t &other);
@@ -32,7 +31,7 @@ namespace occa {
 
         commandQueue_t createCommandQueue() const;
 
-        function_t buildKernel(const std::string &source,
+        function_t buildKernel(const std::string &metallibFilename,
                                const std::string &kernelName,
                                io::lock_t &lock) const;
 

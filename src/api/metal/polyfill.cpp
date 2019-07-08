@@ -73,6 +73,7 @@ namespace occa {
       function_t::function_t() {}
 
       function_t::function_t(device_t *device_,
+                             void *libraryObj_,
                              void *functionObj_) {}
 
       function_t::function_t(const function_t &other) {}
@@ -111,7 +112,7 @@ namespace occa {
         return commandQueue_t();
       }
 
-      function_t device_t::buildKernel(const std::string &source,
+      function_t device_t::buildKernel(const std::string &metallibFilename,
                                        const std::string &kernelName,
                                        io::lock_t &lock) const {
         return function_t();

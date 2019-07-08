@@ -335,7 +335,7 @@ else
 
     ifneq (,$(metalLibFlags))
       metalEnabled = 1
-      linkerFlags += $(metalLibFlags) -lobjc
+      linkerFlags += $(metalLibFlags) -framework Foundation -lobjc
     endif
   endif
 endif

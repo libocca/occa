@@ -14,13 +14,15 @@ namespace occa {
       class function_t {
        public:
         device_t *device;
+        void *libraryObj;
         void *functionObj;
         void *pipelineStateObj;
 
         function_t();
 
         function_t(device_t *device_,
-                 void *functionObj_);
+                   void *libraryObj_,
+                   void *functionObj_);
 
         function_t(const function_t &other);
 

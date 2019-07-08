@@ -15,12 +15,15 @@ namespace occa {
     namespace metal {
       function_t::function_t() :
         device(NULL),
+        libraryObj(NULL),
         functionObj(NULL),
         pipelineStateObj(NULL) {}
 
       function_t::function_t(device_t *device_,
+                             void *libraryObj_,
                              void *functionObj_) :
         device(device_),
+        libraryObj(libraryObj_),
         functionObj(functionObj_),
         pipelineStateObj(NULL) {
 
@@ -31,10 +34,10 @@ namespace occa {
         id<MTLComputePipelineState> metalPipelineState = [
           metalDevice newComputePipelineStateWithFunction: metalFunction error:&error
         ];
-        if (metalPipelineState != nil) {
+        if (metalPipelineState) {
           pipelineStateObj = (__bridge void*) metalPipelineState;
         } else {
-          if (error != nil) {
+          if (error) {
             std::string errorStr = [error.localizedDescription UTF8String];
             OCCA_FORCE_ERROR("Kernel: Unable to create compute pipeline."
                              << " Error: " << errorStr);
@@ -46,11 +49,17 @@ namespace occa {
 
       function_t::function_t(const function_t &other) :
         device(other.device),
+        libraryObj(other.libraryObj),
         functionObj(other.functionObj),
         pipelineStateObj(other.pipelineStateObj) {}
 
       void function_t::free() {
         // Remove reference counts
+        if (libraryObj) {
+          id<MTLLibrary> metalLibrary = (__bridge id<MTLLibrary>) libraryObj;
+          metalLibrary = nil;
+          libraryObj = NULL;
+        }
         if (functionObj) {
           id<MTLFunction> metalFunction = (__bridge id<MTLFunction>) functionObj;
           metalFunction = nil;

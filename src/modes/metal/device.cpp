@@ -19,6 +19,16 @@ namespace occa {
                  properties.has("device_id") &&
                  properties["device_id"].isNumber());
 
+      std::string compilerFlags;
+
+      if (properties.get<std::string>("kernel/compiler_flags").size()) {
+        compilerFlags = (std::string) properties["kernel/compiler_flags"];
+      } else {
+        compilerFlags = "-O3";
+      }
+
+      properties["kernel/compiler_flags"] = compilerFlags;
+
       deviceID = properties.get<int>("device_id");
 
       metalDevice = api::metal::getDevice(deviceID);
@@ -50,7 +60,7 @@ namespace occa {
     }
 
     hash_t device::kernelHash(const occa::properties &props) const {
-      return occa::hash("metal");
+      return occa::hash(props["compiler_flags"]);
     }
 
     lang::okl::withLauncher* device::createParser(const occa::properties &props) const {
@@ -107,8 +117,89 @@ namespace occa {
       OCCA_ERROR("Metal kernels need to use OKL for now",
                  usingOkl);
 
-      std::string source = io::read(sourceFilename, true);
+      compileKernel(hashDir,
+                    kernelName,
+                    kernelProps,
+                    lock);
 
+      return buildOKLKernelFromBinary(kernelHash,
+                                      hashDir,
+                                      kernelName,
+                                      launcherMetadata,
+                                      deviceMetadata,
+                                      kernelProps,
+                                      lock);
+    }
+
+    void device::compileKernel(const std::string &hashDir,
+                               const std::string &kernelName,
+                               const occa::properties &kernelProps,
+                               io::lock_t &lock) {
+
+      occa::properties allProps = kernelProps;
+      const bool verbose = allProps.get("verbose", false);
+
+      const std::string sourceFilename = hashDir + kc::sourceFile;
+      const std::string metallibBinaryFilename = hashDir + "binary.metallib";
+      const std::string airBinaryFilename = hashDir + "binary.air";
+
+      //---[ Compile Air Binary ]-------
+      std::stringstream command;
+
+      command << "xcrun -sdk macosx metal"
+              << ' ' << allProps["compiler_flags"]
+              << ' ' << sourceFilename
+              << " -c -o " << airBinaryFilename;
+
+      if (!verbose) {
+        command << " > /dev/null 2>&1";
+      }
+      const std::string &airCommand = command.str();
+      if (verbose) {
+        io::stdout << "Compiling [" << kernelName << "]\n" << airCommand << "\n";
+      }
+
+      int compileError = system(airCommand.c_str());
+      OCCA_ERROR("Error compiling [" << kernelName << "],"
+                 " Command: [" << airCommand << ']',
+                 compileError);
+      //================================
+
+      //---[ Compile Metallib Command ]---
+      command.str("");
+      command << "xcrun -sdk macosx metallib"
+              << ' ' << airBinaryFilename
+              << " -o " << metallibBinaryFilename;
+
+      if (!verbose) {
+        command << " > /dev/null 2>&1";
+      }
+      const std::string &metallibCommand = command.str();
+      if (verbose) {
+        io::stdout << metallibCommand << '\n';
+      }
+
+      compileError = system(metallibCommand.c_str());
+
+      lock.release();
+      OCCA_ERROR("Error compiling [" << kernelName << "],"
+                 " Command: [" << metallibCommand << ']',
+                 compileError);
+      //================================
+    }
+
+    modeKernel_t* device::buildOKLKernelFromBinary(const hash_t kernelHash,
+                                                   const std::string &hashDir,
+                                                   const std::string &kernelName,
+                                                   lang::kernelMetadataMap &launcherMetadata,
+                                                   lang::kernelMetadataMap &deviceMetadata,
+                                                   const occa::properties &kernelProps,
+                                                   io::lock_t lock) {
+
+      const std::string sourceFilename = hashDir + kc::sourceFile;
+      const std::string metallibFilename = hashDir + "binary.metallib";
+
+      // Create wrapper kernel and set launcherKernel
       kernel &k = *(new kernel(this,
                                kernelName,
                                sourceFilename,
@@ -118,10 +209,6 @@ namespace occa {
                                              hashDir,
                                              kernelName,
                                              launcherMetadata[kernelName]);
-      if (!k.launcherKernel) {
-        delete &k;
-        return NULL;
-      }
 
       // Find device kernels
       orderedKernelMetadata launchedKernelsMetadata = getLaunchedKernelsMetadata(
@@ -134,10 +221,11 @@ namespace occa {
         lang::kernelMetadata &metadata = launchedKernelsMetadata[i];
 
         api::metal::function_t metalFunction = (
-          metalDevice.buildKernel(source,
+          metalDevice.buildKernel(metallibFilename,
                                   metadata.name,
                                   lock)
         );
+
         kernel *deviceKernel = new kernel(this,
                                           metadata.name,
                                           sourceFilename,
@@ -152,33 +240,10 @@ namespace occa {
       return &k;
     }
 
-    modeKernel_t* device::buildOKLKernelFromBinary(const hash_t kernelHash,
-                                                   const std::string &hashDir,
-                                                   const std::string &kernelName,
-                                                   lang::kernelMetadataMap &launcherMetadata,
-                                                   lang::kernelMetadataMap &deviceMetadata,
-                                                   const occa::properties &kernelProps,
-                                                   io::lock_t lock) {
-      OCCA_FORCE_ERROR("Metal does not support building from binary");
-      return NULL;
-    }
-
-    modeKernel_t* device::buildOKLKernelFromBinary(info_t &clInfo,
-                                                   const hash_t kernelHash,
-                                                   const std::string &hashDir,
-                                                   const std::string &kernelName,
-                                                   lang::kernelMetadataMap &launcherMetadata,
-                                                   lang::kernelMetadataMap &deviceMetadata,
-                                                   const occa::properties &kernelProps,
-                                                   io::lock_t lock) {
-      OCCA_FORCE_ERROR("Metal does not support building from binary");
-      return NULL;
-    }
-
     modeKernel_t* device::buildKernelFromBinary(const std::string &filename,
                                                 const std::string &kernelName,
                                                 const occa::properties &kernelProps) {
-      OCCA_FORCE_ERROR("Metal does not support building from binary");
+      OCCA_FORCE_ERROR("Unable to build Metal kernels from binary");
       return NULL;
     }
     //==================================
