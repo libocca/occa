@@ -11,9 +11,9 @@
 
 #define OKL_MAJOR_VERSION 1
 #define OKL_MINOR_VERSION 0
-#define OKL_PATCH_VERSION 9
-#define OKL_VERSION       10010
-#define OKL_VERSION_STR   "1.0.10"
+#define OKL_PATCH_VERSION 11
+#define OKL_VERSION       10011
+#define OKL_VERSION_STR   "1.0.11"
 
 #define OCCA_MAX_ARGS 50
 

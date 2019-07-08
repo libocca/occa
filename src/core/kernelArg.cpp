@@ -12,16 +12,18 @@ namespace occa {
     ::memset(&data, 0, sizeof(data));
   }
 
-  kernelArgData::kernelArgData(const kernelArgData &k) {
-    *this = k;
-  }
+  kernelArgData::kernelArgData(const kernelArgData &other) :
+      modeMemory(other.modeMemory),
+      data(other.data),
+      size(other.size),
+      info(other.info) {}
 
-  kernelArgData& kernelArgData::operator = (const kernelArgData &k) {
-    modeMemory = k.modeMemory;
+  kernelArgData& kernelArgData::operator = (const kernelArgData &other) {
+    modeMemory = other.modeMemory;
 
-    data = k.data;
-    size = k.size;
-    info = k.info;
+    data = other.data;
+    size = other.size;
+    info = other.info;
 
     return *this;
   }
@@ -66,8 +68,23 @@ namespace occa {
     args.push_back(arg);
   }
 
-  kernelArg::kernelArg(const kernelArg &k) :
-    args(k.args) {}
+  kernelArg::kernelArg(const kernelArg &other) :
+      args(other.args) {}
+
+  kernelArg& kernelArg::operator = (const kernelArg &other) {
+    args = other.args;
+    return *this;
+  }
+
+  template <>
+  kernelArg::kernelArg(modeMemory_t *arg) {
+    add(arg->makeKernelArg());
+  }
+
+  template <>
+  kernelArg::kernelArg(const modeMemory_t *arg) {
+    add(arg->makeKernelArg());
+  }
 
   int kernelArg::size() const {
     return (int) args.size();
@@ -88,11 +105,6 @@ namespace occa {
 
   const kernelArgData& kernelArg::operator [] (const int index) const {
     return args[index];
-  }
-
-  kernelArg& kernelArg::operator = (const kernelArg &k) {
-    args = k.args;
-    return *this;
   }
 
   kernelArg::kernelArg(const uint8_t arg) {
@@ -179,7 +191,6 @@ namespace occa {
 
   void kernelArg::add(void *arg, size_t bytes,
                       bool lookAtUva, bool argIsUva) {
-
     modeMemory_t *modeMemory = NULL;
 
     if (argIsUva) {

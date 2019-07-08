@@ -45,8 +45,8 @@ namespace occa {
     char info;
 
     kernelArgData();
-    kernelArgData(const kernelArgData &k);
-    kernelArgData& operator = (const kernelArgData &k);
+    kernelArgData(const kernelArgData &other);
+    kernelArgData& operator = (const kernelArgData &other);
     ~kernelArgData();
 
     occa::modeDevice_t* getModeDevice() const;
@@ -64,8 +64,8 @@ namespace occa {
     kernelArg();
     ~kernelArg();
     kernelArg(const kernelArgData &arg);
-    kernelArg(const kernelArg &k);
-    kernelArg& operator = (const kernelArg &k);
+    kernelArg(const kernelArg &other);
+    kernelArg& operator = (const kernelArg &other);
 
     kernelArg(const uint8_t arg);
     kernelArg(const uint16_t arg);
@@ -99,6 +99,12 @@ namespace occa {
     kernelArg(const TM *arg) {
       add((void*) const_cast<TM*>(arg), true, false);
     }
+
+    template <>
+    kernelArg(modeMemory_t *arg);
+
+    template <>
+    kernelArg(const modeMemory_t *arg);
 
     int size() const;
 

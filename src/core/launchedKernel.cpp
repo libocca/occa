@@ -1,4 +1,5 @@
 #include <occa/core/launchedKernel.hpp>
+#include <occa/core/memory.hpp>
 
 namespace occa {
   launchedModeKernel_t::launchedModeKernel_t(modeDevice_t *modeDevice_,
@@ -32,13 +33,20 @@ namespace occa {
   }
 
   void launchedModeKernel_t::launcherRun() const {
-    kernelArg arg(&(deviceKernels[0]));
+    // Add the kernel array as the first argument
+    kernelArg launcherArgs(&(deviceKernels[0]));
 
-    launcherKernel->arguments = arguments;
-    launcherKernel->arguments.insert(
-      launcherKernel->arguments.begin(),
-      arg[0]
-    );
+    const int argCount = (int) arguments.size();
+    for (int i = 0; i < argCount; ++i) {
+      const kernelArgData &arg = arguments[i];
+      if (arg.modeMemory) {
+        launcherArgs.add((void*) arg.modeMemory);
+      } else {
+        launcherArgs.add(arg);
+      }
+    }
+    launcherKernel->arguments = launcherArgs.args;
+
 
     int kernelCount = (int) deviceKernels.size();
     for (int i = 0; i < kernelCount; ++i) {

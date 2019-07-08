@@ -277,22 +277,42 @@ namespace occa {
       }
 
       void withLauncher::setupLauncherKernelArgs(functionDeclStatement &kernelSmnt) {
-        // Add kernel argument
+        function_t &func = kernelSmnt.function;
+
+        // Create new types
         identifierToken kernelTypeSource(kernelSmnt.source->origin,
                                          "occa::modeKernel_t");
         type_t &kernelType = *(new typedef_t(vartype_t(),
                                              kernelTypeSource));
+
+        identifierToken memoryTypeSource(kernelSmnt.source->origin,
+                                         "occa::modeMemory_t");
+        type_t &memoryType = *(new typedef_t(vartype_t(),
+                                             memoryTypeSource));
+
+        // Convert pointer arguments to modeMemory_t
+        int argCount = (int) func.args.size();
+        for (int i = 0; i < argCount; ++i) {
+          variable_t &arg = *(func.args[i]);
+          arg.vartype = arg.vartype.flatten();
+          if (arg.vartype.isPointerType()) {
+            arg.vartype = memoryType;
+            arg += pointer_t();
+          }
+        }
+
+        // Add kernel array as the first argument
         identifierToken kernelVarSource(kernelSmnt.source->origin,
                                         "*deviceKernel");
         variable_t &kernelVar = *(new variable_t(kernelType,
                                                  &kernelVarSource));
         kernelVar += pointer_t();
 
-        function_t &func = kernelSmnt.function;
         func.args.insert(func.args.begin(),
                          &kernelVar);
 
         kernelSmnt.addToScope(kernelType);
+        kernelSmnt.addToScope(memoryType);
         kernelSmnt.addToScope(kernelVar);
       }
 
