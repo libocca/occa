@@ -93,6 +93,15 @@ namespace occa {
 
         id<MTLFunction> metalFunction = [metalLibrary newFunctionWithName:kernelNameObj];
 
+        if (!metalFunction) {
+          // An error occured fetching the function from the library
+          lock.release();
+          OCCA_FORCE_ERROR("Device: Unable to get kernel ["
+                           << kernelName << "] from library ["
+                           << metallibFilename << "]");
+          return function_t();
+        }
+
         return function_t(const_cast<device_t*>(this),
                           (__bridge void*) metalLibrary,
                           (__bridge void*) metalFunction);
