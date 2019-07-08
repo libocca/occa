@@ -140,7 +140,7 @@ namespace occa {
       const bool verbose = allProps.get("verbose", false);
 
       const std::string sourceFilename = hashDir + kc::sourceFile;
-      const std::string metallibBinaryFilename = hashDir + "binary.metallib";
+      const std::string binaryFilename = hashDir + kc::binaryFile;
       const std::string airBinaryFilename = hashDir + "binary.air";
 
       //---[ Compile Air Binary ]-------
@@ -172,7 +172,7 @@ namespace occa {
       command.str("");
       command << "xcrun -sdk macosx metallib"
               << ' ' << airBinaryFilename
-              << " -o " << metallibBinaryFilename;
+              << " -o " << binaryFilename;
 
       if (!verbose) {
         command << " > /dev/null 2>&1";
@@ -200,7 +200,7 @@ namespace occa {
                                                    io::lock_t lock) {
 
       const std::string sourceFilename = hashDir + kc::sourceFile;
-      const std::string metallibFilename = hashDir + "binary.metallib";
+      const std::string binaryFilename = hashDir + kc::binaryFile;
 
       // Create wrapper kernel and set launcherKernel
       kernel &k = *(new kernel(this,
@@ -224,7 +224,7 @@ namespace occa {
         lang::kernelMetadata &metadata = launchedKernelsMetadata[i];
 
         api::metal::function_t metalFunction = (
-          metalDevice.buildKernel(metallibFilename,
+          metalDevice.buildKernel(binaryFilename,
                                   metadata.name,
                                   lock)
         );
