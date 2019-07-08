@@ -9,24 +9,60 @@
 namespace occa {
   namespace api {
     namespace metal {
-      event_t::event_t(void *eventObj_) :
-        eventObj(eventObj_) {}
+      event_t::event_t() :
+        eventObj(NULL),
+        eventId(-1),
+        commandBufferObj(NULL),
+        eventTime(0) {}
+
+        event_t::event_t(void *eventObj_,
+                         const int eventId_,
+                         void *commandBufferObj_) :
+        eventObj(eventObj_),
+        eventId(eventId_),
+        commandBufferObj(commandBufferObj_),
+        eventTime(0) {}
 
       event_t::event_t(const event_t &other) :
-        eventObj(other.eventObj) {}
+        eventId(other.eventId),
+        eventObj(other.eventObj),
+        commandBufferObj(other.commandBufferObj),
+        eventTime(other.eventTime) {}
 
       void event_t::free() {
+        // Remove reference count
+        eventTime = 0;
+        eventId = -1;
         if (eventObj) {
-          // Remove reference count
           id<MTLEvent> metalEvent = (__bridge id<MTLEvent>) eventObj;
           metalEvent = nil;
           eventObj = NULL;
         }
+        freeCommandBuffer();
+      }
+
+      void event_t::freeCommandBuffer() {
+        if (commandBufferObj) {
+          id<MTLCommandBuffer> metalCommandBuffer = (
+            (__bridge id<MTLCommandBuffer>) commandBufferObj
+          );
+          metalCommandBuffer = nil;
+          commandBufferObj = NULL;
+        }
+      }
+
+      void event_t::waitUntilCompleted() {
+        if (commandBufferObj) {
+          id<MTLCommandBuffer> metalCommandBuffer = (
+            (__bridge id<MTLCommandBuffer>) commandBufferObj
+          );
+          [metalCommandBuffer waitUntilCompleted];
+          freeCommandBuffer();
+        }
       }
 
       double event_t::getTime() const {
-        // TODO
-        return 0;
+        return eventTime;
       }
     }
   }

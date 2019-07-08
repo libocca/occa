@@ -57,16 +57,8 @@ namespace occa {
         id<MTLCommandQueue> commandQueue = [metalDevice newCommandQueue];
         void *commandQueueObj = (__bridge void*) commandQueue;
 
-        return commandQueue_t(commandQueueObj);
-      }
-
-      event_t device_t::createEvent() const {
-        id<MTLDevice> metalDevice = (__bridge id<MTLDevice>) deviceObj;
-
-        id<MTLEvent> event = [metalDevice newEvent];
-        void *eventObj = (__bridge void*) event;
-
-        return event_t(eventObj);
+        return commandQueue_t(const_cast<device_t*>(this),
+                              commandQueueObj);
       }
 
       kernel_t device_t::buildKernel(const std::string &source,
@@ -115,10 +107,6 @@ namespace occa {
                             const udim_t bytes,
                             const bool async) const {
         id<MTLDevice> metalDevice = (__bridge id<MTLDevice>) deviceObj;
-        // TODO
-      }
-
-      void device_t::waitFor(event_t &event) const {
         // TODO
       }
 

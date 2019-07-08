@@ -53,6 +53,7 @@ namespace occa {
   namespace sys {
     //---[ System Info ]----------------
     double currentTime() {
+      // Returns the current time in seconds
 #if (OCCA_OS & OCCA_LINUX_OS)
       timespec ct;
       clock_gettime(CLOCK_MONOTONIC, &ct);

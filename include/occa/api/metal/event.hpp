@@ -7,12 +7,22 @@ namespace occa {
       class event_t {
        public:
         void *eventObj;
+        int eventId;
+        void *commandBufferObj;
+        double eventTime;
 
-        event_t(void *eventObj_ = NULL);
+        event_t();
+
+        event_t(void *eventObj_,
+                const int eventId_,
+                void *commandBufferObj_);
+
         event_t(const event_t &other);
 
         void free();
+        void freeCommandBuffer();
 
+        void waitUntilCompleted();
         double getTime() const;
       };
     }

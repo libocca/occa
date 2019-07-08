@@ -81,6 +81,9 @@ namespace occa {
         OCCA_ERROR("Kernel: Create command buffer",
                    commandBuffer != nil);
 
+        // The commandBuffer callback has to be set before commit is called on it
+        commandQueue.setLastCommandBuffer((__bridge void*) commandBuffer);
+
         id<MTLComputeCommandEncoder> computeEncoder = [commandBuffer computeCommandEncoder];
         OCCA_ERROR("Kernel: Create compute command encoder",
                    computeEncoder != nil);
@@ -113,7 +116,6 @@ namespace occa {
         // Finish encoding and start executing the kernel
         [computeEncoder endEncoding];
         [commandBuffer commit];
-        commandQueue.setLastCommandBuffer((__bridge void*) commandBuffer);
       }
     }
   }

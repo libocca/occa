@@ -31,7 +31,6 @@ namespace occa {
         dim getMaxInnerDims() const;
 
         commandQueue_t createCommandQueue() const;
-        event_t createEvent() const;
 
         kernel_t buildKernel(const std::string &source,
                              const std::string &kernelName,
@@ -58,8 +57,6 @@ namespace occa {
                     const void *src,
                     const udim_t bytes,
                     const bool async) const;
-
-        void waitFor(event_t &event) const;
 
         void finish(commandQueue_t &commandQueue) const;
       };

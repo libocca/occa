@@ -16,11 +16,18 @@ namespace occa {
       }
 
       //---[ Event ]--------------------
-      event_t::event_t(void *obj_) {}
+      event_t::event_t() {}
+
+      event_t::event_t(void *eventObj_,
+                       const int eventId_,
+                       void *commandBufferObj_) {}
 
       event_t::event_t(const event_t &other) {}
 
       void event_t::free() {}
+      void event_t::freeCommandBuffer() {}
+
+      void event_t::waitUntilCompleted() {}
 
       double event_t::getTime() const {
         return 0;
@@ -38,11 +45,23 @@ namespace occa {
       }
 
       //---[ Command Queue ]------------
-      commandQueue_t::commandQueue_t(void *obj_) {}
+      commandQueue_t::commandQueue_t() {}
+
+      commandQueue_t::commandQueue_t(device_t &device_,
+                                     void *commandQueueObj_) {}
 
       commandQueue_t::commandQueue_t(const commandQueue_t &other) {}
 
       void commandQueue_t::free() {}
+      void commandQueue_t::freeLastCommandBuffer() {}
+
+      event_t commandQueue_t::createEvent() const {
+        return event_t();
+      }
+
+      void commandQueue_t::setLastCommandBuffer(void *commandBufferObj) {}
+
+      void commandQueue_t::processEvents(const int eventId) {}
 
       //---[ Kernel ]-------------------
       kernel_t::kernel_t() {}
@@ -86,10 +105,6 @@ namespace occa {
         return commandQueue_t();
       }
 
-      event_t device_t::createEvent() const {
-        return event_t();
-      }
-
       kernel_t device_t::buildKernel(const std::string &source,
                                      const std::string &kernelName,
                                      io::lock_t &lock) const {
@@ -119,8 +134,6 @@ namespace occa {
                             const void *src,
                             const udim_t bytes,
                             const bool async) const {}
-
-      void device_t::waitFor(event_t &event) const {}
 
       void device_t::device_t::finish() const {}
     }
