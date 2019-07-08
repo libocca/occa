@@ -10,7 +10,8 @@ namespace occa {
       public:
         qualifier_t kernel_q;
         qualifier_t device_q;
-        qualifier_t shared_q;
+        qualifier_t groupshared_q;
+        qualifier_t constant_q;
 
         metalParser(const occa::properties &settings_ = occa::properties());
 

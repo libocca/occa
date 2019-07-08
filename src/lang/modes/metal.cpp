@@ -12,7 +12,8 @@ namespace occa {
           withLauncher(settings_),
           kernel_q("kernel", qualifierType::custom),
           device_q("device", qualifierType::custom),
-          shared_q("groupshared", qualifierType::custom) {
+          groupshared_q("groupshared", qualifierType::custom),
+          constant_q("constant", qualifierType::custom) {
         okl::addAttributes(*this);
       }
 
@@ -67,7 +68,7 @@ namespace occa {
             if (!var.hasAttribute("shared")) {
               continue;
             }
-            var.add(0, shared_q);
+            var.add(0, groupshared_q);
           }
           ++it;
         }
@@ -153,12 +154,21 @@ namespace occa {
       void metalParser::setKernelQualifiers(function_t &function) {
         function.returnType.add(0, kernel_q);
 
+        const std::string &functionName = function.name();
+
         const int argCount = (int) function.args.size();
+        int constantIndex = 0;
         for (int ai = 0; ai < argCount; ++ai) {
           variable_t &arg = *(function.args[ai]);
           arg.vartype = arg.vartype.flatten();
           if (arg.vartype.isPointerType()) {
             arg.add(0, device_q);
+          } else {
+            arg.setName(functionName + "_" + arg.name());
+            arg.add(0, constant_q);
+            arg.vartype.customSuffix = "[[function_constant(";
+            arg.vartype.customSuffix += occa::toString(constantIndex++);
+            arg.vartype.customSuffix += ")]]";
           }
         }
 

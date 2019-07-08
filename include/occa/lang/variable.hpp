@@ -14,6 +14,7 @@ namespace occa {
       vartype_t vartype;
       identifierToken *source;
       attributeTokenMap attributes;
+      std::string nameOverride;
 
       variable_t();
 
@@ -29,8 +30,11 @@ namespace occa {
       ~variable_t();
 
       bool isNamed() const;
+
       std::string& name();
       const std::string& name() const;
+
+      void setName(const std::string &name_);
 
       variable_t& clone() const;
 

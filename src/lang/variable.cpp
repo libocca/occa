@@ -50,19 +50,21 @@ namespace occa {
     }
 
     std::string& variable_t::name() {
-      static std::string noName;
-      if (source) {
+      if (!nameOverride.size() && source) {
         return source->value;
       }
-      return noName;
+      return nameOverride;
     }
 
     const std::string& variable_t::name() const {
-      static std::string noName;
-      if (source) {
+      if (!nameOverride.size() && source) {
         return source->value;
       }
-      return noName;
+      return nameOverride;
+    }
+
+    void variable_t::setName(const std::string &name_) {
+      nameOverride = name_;
     }
 
     variable_t& variable_t::clone() const {
