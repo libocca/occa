@@ -61,7 +61,16 @@ namespace occa {
         id<MTLEvent> event = [metalDevice newEvent];
         void *eventObj = (__bridge void*) event;
 
-        return event_t(eventObj, lastCommandId, lastCommandBufferObj);
+        return event_t(const_cast<commandQueue_t*>(this),
+                       eventObj,
+                       lastCommandId,
+                       lastCommandBufferObj);
+      }
+
+      void commandQueue_t::clearCommandBuffer(void *commandBufferObj) {
+        if (commandBufferObj == lastCommandBufferObj) {
+          freeLastCommandBuffer();
+        }
       }
 
       void commandQueue_t::setLastCommandBuffer(void *commandBufferObj) {
@@ -132,6 +141,7 @@ namespace occa {
             (__bridge id<MTLCommandBuffer>) lastCommandBufferObj
           );
           [metalCommandBuffer waitUntilCompleted];
+          freeLastCommandBuffer();
         }
       }
     }

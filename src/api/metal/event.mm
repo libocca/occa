@@ -4,7 +4,9 @@
 
 #import <Metal/Metal.h>
 
+#include <occa/api/metal/commandQueue.hpp>
 #include <occa/api/metal/event.hpp>
+#include <occa/tools/sys.hpp>
 
 namespace occa {
   namespace api {
@@ -15,15 +17,23 @@ namespace occa {
         commandBufferObj(NULL),
         eventTime(0) {}
 
-        event_t::event_t(void *eventObj_,
+        event_t::event_t(commandQueue_t *commandQueue_,
+                         void *eventObj_,
                          const int eventId_,
                          void *commandBufferObj_) :
+        commandQueue(commandQueue_),
         eventObj(eventObj_),
         eventId(eventId_),
         commandBufferObj(commandBufferObj_),
-        eventTime(0) {}
+        eventTime(0) {
+          // If there are no active command buffers, use the current time
+          if (!commandBufferObj) {
+            eventTime = occa::sys::currentTime();
+          }
+        }
 
       event_t::event_t(const event_t &other) :
+        commandQueue(other.commandQueue),
         eventId(other.eventId),
         eventObj(other.eventObj),
         commandBufferObj(other.commandBufferObj),
@@ -53,6 +63,7 @@ namespace occa {
 
       void event_t::waitUntilCompleted() {
         if (commandBufferObj) {
+          commandQueue->clearCommandBuffer(commandBufferObj);
           id<MTLCommandBuffer> metalCommandBuffer = (
             (__bridge id<MTLCommandBuffer>) commandBufferObj
           );

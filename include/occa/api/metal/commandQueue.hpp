@@ -31,6 +31,7 @@ namespace occa {
 
         event_t createEvent() const;
 
+        void clearCommandBuffer(void *commandBufferObj);
         void setLastCommandBuffer(void *commandBufferObj);
 
         void processEvents(const int eventId);

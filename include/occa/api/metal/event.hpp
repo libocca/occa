@@ -4,8 +4,11 @@
 namespace occa {
   namespace api {
     namespace metal {
+      class commandQueue_t;
+
       class event_t {
        public:
+        commandQueue_t *commandQueue;
         void *eventObj;
         int eventId;
         void *commandBufferObj;
@@ -13,7 +16,8 @@ namespace occa {
 
         event_t();
 
-        event_t(void *eventObj_,
+        event_t(commandQueue_t *commandQueue,
+                void *eventObj_,
                 const int eventId_,
                 void *commandBufferObj_);
 

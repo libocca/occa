@@ -18,7 +18,8 @@ namespace occa {
       //---[ Event ]--------------------
       event_t::event_t() {}
 
-      event_t::event_t(void *eventObj_,
+      event_t::event_t(commandQueue_t *commandQueue_,
+                       void *eventObj_,
                        const int eventId_,
                        void *commandBufferObj_) {}
 
@@ -61,6 +62,7 @@ namespace occa {
         return event_t();
       }
 
+      void commandQueue_t::clearCommandBuffer(void *commandBufferObj) {}
       void commandQueue_t::setLastCommandBuffer(void *commandBufferObj) {}
 
       void commandQueue_t::processEvents(const int eventId) {}
