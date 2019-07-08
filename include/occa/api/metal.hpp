@@ -5,7 +5,7 @@
 #include <occa/api/metal/commandQueue.hpp>
 #include <occa/api/metal/device.hpp>
 #include <occa/api/metal/event.hpp>
-#include <occa/api/metal/kernel.hpp>
+#include <occa/api/metal/function.hpp>
 
 namespace occa {
   namespace api {

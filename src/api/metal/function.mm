@@ -4,9 +4,9 @@
 
 #import <Metal/Metal.h>
 
-#include <occa/api/metal/device.hpp>
-#include <occa/api/metal/kernel.hpp>
 #include <occa/api/metal/buffer.hpp>
+#include <occa/api/metal/device.hpp>
+#include <occa/api/metal/function.hpp>
 #include <occa/core/kernelArg.hpp>
 #include <occa/modes/metal/memory.hpp>
 

@@ -2,8 +2,8 @@
 #include <occa/tools/env.hpp>
 #include <occa/io.hpp>
 #include <occa/tools/sys.hpp>
-#include <occa/modes/metal/kernel.hpp>
 #include <occa/modes/metal/device.hpp>
+#include <occa/modes/metal/kernel.hpp>
 #include <occa/modes/metal/stream.hpp>
 
 namespace occa {
