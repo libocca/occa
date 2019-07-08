@@ -12,7 +12,7 @@ namespace occa {
                    const std::string &name_,
                    const std::string &sourceFilename_,
                    const occa::properties &properties_) :
-      occa::launchedModeKernel_t(modeDevice_, name_, sourceFilename_, properties_) {}
+        occa::launchedModeKernel_t(modeDevice_, name_, sourceFilename_, properties_) {}
 
     kernel::kernel(modeDevice_t *modeDevice_,
                    const std::string &name_,
@@ -20,9 +20,9 @@ namespace occa {
                    api::metal::device_t metalDevice_,
                    api::metal::function_t metalFunction_,
                    const occa::properties &properties_) :
-      occa::launchedModeKernel_t(modeDevice_, name_, sourceFilename_, properties_),
-      metalDevice(metalDevice_),
-      metalFunction(metalFunction_) {}
+        occa::launchedModeKernel_t(modeDevice_, name_, sourceFilename_, properties_),
+        metalDevice(metalDevice_),
+        metalFunction(metalFunction_) {}
 
     kernel::~kernel() {
       metalFunction.free();

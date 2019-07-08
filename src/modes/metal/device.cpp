@@ -13,7 +13,7 @@
 namespace occa {
   namespace metal {
     device::device(const occa::properties &properties_) :
-      occa::launchedModeDevice_t(properties_) {
+        occa::launchedModeDevice_t(properties_) {
 
       OCCA_ERROR("[Metal] device not given a [device_id] integer",
                  properties.has("device_id") &&
