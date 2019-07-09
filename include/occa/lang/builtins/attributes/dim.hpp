@@ -11,7 +11,7 @@ namespace occa {
       public:
         dim();
 
-        virtual std::string name() const;
+        virtual const std::string& name() const;
 
         virtual bool forVariable() const;
         virtual bool forStatement(const int sType) const;
@@ -25,7 +25,7 @@ namespace occa {
       public:
         dimOrder();
 
-        virtual std::string name() const;
+        virtual const std::string& name() const;
 
         virtual bool forVariable() const;
         virtual bool forStatement(const int sType) const;

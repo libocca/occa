@@ -77,6 +77,8 @@ namespace occa {
     virtual dim maxOuterDims() const = 0;
     virtual dim maxInnerDims() const = 0;
 
+    virtual const lang::kernelMetadata& getMetadata() const = 0;
+
     virtual void run() const = 0;
     //==================================
   };

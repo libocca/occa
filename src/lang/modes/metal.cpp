@@ -207,6 +207,13 @@ namespace occa {
           "[[thread_position_in_threadgroup]]"
         );
 
+        attribute_t &implicitArgAttr = *(getAttribute("implicitArg"));
+        attributeToken_t groupAttr(implicitArgAttr, *(occaGroupPositionArg.source));
+        attributeToken_t threadAttr(implicitArgAttr, *(occaThreadPositionArg.source));
+
+        occaGroupPositionArg.addAttribute(groupAttr);
+        occaThreadPositionArg.addAttribute(threadAttr);
+
         function.addArgument(occaGroupPositionArg);
         function.addArgument(occaThreadPositionArg);
       }

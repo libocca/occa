@@ -85,6 +85,13 @@ namespace occa {
       return (attributes.find(attr) != attributes.end());
     }
 
+    void variable_t::addAttribute(attributeToken_t &attr) {
+      const std::string attributeName = attr.name();
+      if (!hasAttribute(attributeName)) {
+        attributes[attributeName] = attr;
+      }
+    }
+
     // Qualifiers
     bool variable_t::has(const qualifier_t &qualifier) const {
       return vartype.has(qualifier);

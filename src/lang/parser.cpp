@@ -60,6 +60,7 @@ namespace occa {
       addAttribute<attributes::dimOrder>();
       addAttribute<attributes::tile>();
       addAttribute<attributes::restrict>();
+      addAttribute<attributes::implicitArg>();
     }
 
     parser_t::~parser_t() {
@@ -119,6 +120,10 @@ namespace occa {
         int args = (int) func.args.size();
         for (int ai = 0; ai < args; ++ai) {
           variable_t &arg = *(func.args[ai]);
+          // Ignore implicit arguments that come from the device
+          if (arg.hasAttribute("implicitArg")) {
+            continue;
+          }
           metadata += argumentInfo(
             arg.has(const_),
             arg.vartype.isPointerType(),

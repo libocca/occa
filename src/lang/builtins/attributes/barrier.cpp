@@ -9,8 +9,9 @@ namespace occa {
     namespace attributes {
       barrier::barrier() {}
 
-      std::string barrier::name() const {
-        return "barrier";
+      const std::string& barrier::name() const {
+        static std::string name_ = "barrier";
+        return name_;
       }
 
       bool barrier::forStatement(const int sType) const {

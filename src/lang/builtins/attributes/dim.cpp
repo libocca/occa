@@ -8,8 +8,9 @@ namespace occa {
       //---[ @dim ]-----------------------
       dim::dim() {}
 
-      std::string dim::name() const {
-        return "dim";
+      const std::string& dim::name() const {
+        static std::string name_ = "dim";
+        return name_;
       }
 
       bool dim::forVariable() const {
@@ -36,8 +37,9 @@ namespace occa {
       //---[ @dimOrder ]------------------
       dimOrder::dimOrder() {}
 
-      std::string dimOrder::name() const {
-        return "dimOrder";
+      const std::string& dimOrder::name() const {
+        static std::string name_ = "dimOrder";
+        return name_;
       }
 
       bool dimOrder::forVariable() const {

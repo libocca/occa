@@ -10,7 +10,7 @@ namespace occa {
       public:
         tile();
 
-        virtual std::string name() const;
+        virtual const std::string& name() const;
 
         virtual bool forStatement(const int sType) const;
 

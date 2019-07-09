@@ -131,7 +131,7 @@ namespace occa {
     }
 
     const std::string& attributeToken_t::name() const {
-      return source->value;
+      return attrType->name();
     }
 
     bool attributeToken_t::forVariable() const {

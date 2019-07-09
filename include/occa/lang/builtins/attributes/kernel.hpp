@@ -10,7 +10,7 @@ namespace occa {
       public:
         kernel();
 
-        virtual std::string name() const;
+        virtual const std::string& name() const;
 
         virtual bool forFunction() const;
         virtual bool forStatement(const int sType) const;

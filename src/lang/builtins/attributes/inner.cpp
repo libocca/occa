@@ -9,8 +9,9 @@ namespace occa {
     namespace attributes {
       inner::inner() {}
 
-      std::string inner::name() const {
-        return "inner";
+      const std::string& inner::name() const {
+        static std::string name_ = "inner";
+        return name_;
       }
 
       bool inner::forStatement(const int sType) const {

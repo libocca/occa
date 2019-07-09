@@ -42,6 +42,8 @@ namespace occa {
 
       bool hasAttribute(const std::string &attr) const;
 
+      void addAttribute(attributeToken_t &attr);
+
       // Qualifiers
       bool has(const qualifier_t &qualifier) const;
 

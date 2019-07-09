@@ -9,8 +9,9 @@ namespace occa {
     namespace attributes {
       kernel::kernel() {}
 
-      std::string kernel::name() const {
-        return "kernel";
+      const std::string& kernel::name() const {
+        static std::string name_ = "kernel";
+        return name_;
       }
 
       bool kernel::forFunction() const {

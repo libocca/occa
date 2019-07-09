@@ -24,6 +24,10 @@ namespace occa {
     deviceKernels.clear();
   }
 
+  const lang::kernelMetadata& launchedModeKernel_t::getMetadata() const {
+    return deviceKernels[0]->metadata;
+  }
+
   void launchedModeKernel_t::run() const {
     if (launcherKernel) {
       launcherRun();

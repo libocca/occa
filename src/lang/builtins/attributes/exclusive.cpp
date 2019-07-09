@@ -9,8 +9,9 @@ namespace occa {
     namespace attributes {
       exclusive::exclusive() {}
 
-      std::string exclusive::name() const {
-        return "exclusive";
+      const std::string& exclusive::name() const {
+        static std::string name_ = "exclusive";
+        return name_;
       }
 
       bool exclusive::forVariable() const {

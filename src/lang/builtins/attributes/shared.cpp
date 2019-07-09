@@ -6,8 +6,9 @@ namespace occa {
     namespace attributes {
       shared::shared() {}
 
-      std::string shared::name() const {
-        return "shared";
+      const std::string& shared::name() const {
+        static std::string name_ = "shared";
+        return name_;
       }
 
       bool shared::forVariable() const {

@@ -9,8 +9,9 @@ namespace occa {
     namespace attributes {
       tile::tile() {}
 
-      std::string tile::name() const {
-        return "tile";
+      const std::string& tile::name() const {
+        static std::string name_ = "tile";
+        return name_;
       }
 
       bool tile::forStatement(const int sType) const {

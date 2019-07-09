@@ -6,8 +6,9 @@ namespace occa {
     namespace attributes {
       restrict::restrict() {}
 
-      std::string restrict::name() const {
-        return "restrict";
+      const std::string& restrict::name() const {
+        static std::string name_ = "restrict";
+        return name_;
       }
 
       bool restrict::forVariable() const {

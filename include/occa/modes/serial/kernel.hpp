@@ -30,6 +30,8 @@ namespace occa {
       dim maxOuterDims() const;
       dim maxInnerDims() const;
 
+      const lang::kernelMetadata& getMetadata() const;
+
       void run() const;
 
       friend class device;

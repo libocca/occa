@@ -34,6 +34,10 @@ namespace occa {
       return dim(-1,-1,-1);
     }
 
+    const lang::kernelMetadata& kernel::getMetadata() const {
+      return metadata;
+    }
+
     void kernel::run() const {
       const int args = (int) arguments.size();
       if (!args) {

@@ -9,8 +9,9 @@ namespace occa {
     namespace attributes {
       outer::outer() {}
 
-      std::string outer::name() const {
-        return "outer";
+      const std::string& outer::name() const {
+        static std::string name_ = "outer";
+        return name_;
       }
 
       bool outer::forStatement(const int sType) const {
