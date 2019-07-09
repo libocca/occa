@@ -100,12 +100,6 @@ namespace occa {
       add((void*) const_cast<TM*>(arg), true, false);
     }
 
-    template <>
-    kernelArg(modeMemory_t *arg);
-
-    template <>
-    kernelArg(const modeMemory_t *arg);
-
     int size() const;
 
     device getDevice() const;
@@ -122,6 +116,12 @@ namespace occa {
 
     static int argumentCount(const std::vector<kernelArg> &arguments);
   };
+
+  template <>
+  kernelArg::kernelArg(modeMemory_t *arg);
+
+  template <>
+  kernelArg::kernelArg(const modeMemory_t *arg);
   //====================================
 }
 

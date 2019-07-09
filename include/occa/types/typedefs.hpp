@@ -2,6 +2,7 @@
 #define OCCA_TYPES_TYPEDEFS_HEADER
 
 #include <map>
+#include <string>
 #include <vector>
 
 #include <stdint.h>
