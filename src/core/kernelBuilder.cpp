@@ -117,14 +117,68 @@ namespace occa {
 
 
   //---[ Inlined Kernel ]---------------
-  std::string formatInlinedKernel(occa::scope &scope,
-                                  const std::string &oklSource,
-                                  const std::string &kernelName) {
+  strVector getInlinedKernelArgNames(const int argumentCount,
+                                     const std::string &oklArgs) {
+    // Remove first and last () characters
+    std::string source = strip(oklArgs);
+    const int charCount = (int) source.size();
+
+    // Remove first and last () or {} characters
+    if (
+      ((source[0] == '(') && (source[charCount - 1] == ')'))
+      || ((source[0] == '{') && (source[charCount - 1] == '}'))
+    ) {
+      source = source.substr(1, source.size() - 2);
+    }
+
+    strVector names;
+    names.reserve(argumentCount);
+
+    const char *cStart = source.c_str();
+    const char *c = cStart;
+    for (int i = 0; i < argumentCount; ++i) {
+      lex::skipTo(c, ',');
+      names.push_back(std::string(cStart, c - cStart));
+      if (*c == '\0') {
+        break;
+      }
+      cStart = ++c;
+    }
+
+    OCCA_ERROR("Incorrect argument count ["
+               << names.size() << "] (Expected "
+               << argumentCount << ")",
+               argumentCount == (int) names.size());
+
+    return names;
+  }
+
+  std::string formatInlinedKernelFromArgs(occa::scope scope,
+                                          const std::string &oklArgs,
+                                          const std::string &oklSource,
+                                          const std::string &kernelName) {
+    // Set scope variable names
+    scopeVariableVector &args = scope.args;
+    const int argCount = (int) args.size();
+    strVector argNames = getInlinedKernelArgNames(argCount,
+                                                  oklArgs);
+    for (int i = 0; i < argCount; ++i) {
+      args[i].name = argNames[i];
+    }
+    return formatInlinedKernelFromScope(scope, oklSource, kernelName);
+  }
+
+  std::string formatInlinedKernelFromScope(occa::scope &scope,
+                                           const std::string &oklSource,
+                                           const std::string &kernelName) {
     std::string source = strip(oklSource);
     const int charCount = (int) source.size();
 
-    // Remove first and last () characters
-    if ((source[0] == '(') && (source[charCount - 1] == ')')) {
+    // Remove first and last () or {} characters
+    if (
+      ((source[0] == '(') && (source[charCount - 1] == ')'))
+      || ((source[0] == '{') && (source[charCount - 1] == '}'))
+    ) {
       source = source.substr(1, charCount - 2);
     }
 

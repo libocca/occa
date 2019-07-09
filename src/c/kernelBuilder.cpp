@@ -10,9 +10,9 @@ occaKernelBuilder OCCA_RFUNC occaKernelBuilderFromInlinedOkl(
   const char *kernelName
 ) {
   occa::kernelBuilder kb = occa::kernelBuilder::fromString(
-    occa::formatInlinedKernel(occa::c::scope(scope),
-                              kernelSource,
-                              kernelName),
+    occa::formatInlinedKernelFromScope(occa::c::scope(scope),
+                                       kernelSource,
+                                       kernelName),
     kernelName
   );
 

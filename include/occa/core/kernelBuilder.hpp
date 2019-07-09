@@ -2,10 +2,9 @@
 #define OCCA_CORE_KERNELBUILDER_HEADER
 
 #include <occa/core/kernel.hpp>
+#include <occa/core/scope.hpp>
 
 namespace occa {
-  class scope;
-
   class kernelBuilder {
   protected:
     std::string source_;
@@ -54,9 +53,16 @@ namespace occa {
 
 
   //---[ Inlined Kernel ]---------------
-  std::string formatInlinedKernel(occa::scope &scope,
-                                  const std::string &oklSource,
-                                  const std::string &kernelName);
+#include "inlinedKernelScope.hpp"
+
+  std::string formatInlinedKernelFromArgs(occa::scope scope,
+                                          const std::string &oklArgs,
+                                          const std::string &oklSource,
+                                          const std::string &kernelName);
+
+  std::string formatInlinedKernelFromScope(occa::scope &scope,
+                                           const std::string &oklSource,
+                                           const std::string &kernelName);
   //====================================
 }
 

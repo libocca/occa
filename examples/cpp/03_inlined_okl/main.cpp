@@ -24,6 +24,23 @@ int main(int argc, const char **argv) {
   occa::properties props;
   props["defines/TILE_SIZE"] = 16;
 
+  // Arguments:
+  // 1. Runtime occa::properties (pass occa::properties() to ignore this argument)
+  // 2. Captured variables
+  // 3. Inlined OKL source
+  INLINE_OKL(
+    props,
+    (entries, a, b, ab),
+    (
+      // TILE_SIZE is passed as a compile-time define as opposed to a runtime variable
+      // through props
+      for (int i = 0; i < entries; ++i; @tile(TILE_SIZE, @outer, @inner)) {
+        ab[i] = 100 * (a[i] + b[i]);
+      }
+    )
+  );
+
+  // Alternatively, occa::scope can be used to more finely capture variables
   occa::scope scope(props);
 
   // Build the variable scope used inside the inlined OKL code
@@ -38,11 +55,9 @@ int main(int argc, const char **argv) {
   // useful while debugging
   scope.add("debugValue", 42);
 
-  OCCA_INLINED_OKL(
+  INLINE_OKL_WITH_SCOPE(
     scope,
     (
-      // TILE_SIZE is passed as a compile-time define as opposed to a runtime variable
-      // through props
       for (int i = 0; i < entries; ++i; @tile(TILE_SIZE, @outer, @inner)) {
         // Note it's using the scope name 'output' and not its original value name 'ab'
         output[i] = a[i] + b[i];

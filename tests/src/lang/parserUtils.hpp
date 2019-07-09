@@ -69,8 +69,9 @@ class dummy : public attribute_t {
 public:
   dummy() {}
 
-  virtual std::string name() const {
-    return "dummy";
+  virtual const std::string& name() const {
+    static std::string name_ = "dummy";
+    return name_;
   }
 
   virtual bool forVariable() const {

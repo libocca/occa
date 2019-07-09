@@ -41,11 +41,11 @@
 
 #endif // OCCA_DISABLE_VARIADIC_MACROS
 
-#ifdef OCCA_INLINED_OKL
-#  undef OCCA_INLINED_OKL
+#ifdef INLINE_OKL
+#  undef INLINE_OKL
 #endif
 
-#define OCCA_INLINED_OKL(OKL_SCOPE, OKL_SOURCE)                     \
+#define INLINE_OKL(OKL_SCOPE, OKL_SOURCE)                           \
   do {                                                              \
     static occaKernelBuilder _inlinedKernelBuilder;                 \
     static int _inlinedKernelIsDefined = 0;                         \
