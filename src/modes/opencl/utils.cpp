@@ -40,7 +40,15 @@ namespace occa {
     bool isEnabled() {
       cl_uint platformCount;
       cl_int error = clGetPlatformIDs(0, NULL, &platformCount);
-      return !error;
+      // Only count as enabled if there is a device available
+      if (!error) {
+        for (cl_uint platformId = 0; platformId < platformCount; ++platformId) {
+          if (getDeviceCountInPlatform(platformId)) {
+            return true;
+          }
+        }
+      }
+      return false;
     }
 
     cl_device_type deviceType(int type) {

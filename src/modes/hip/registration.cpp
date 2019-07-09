@@ -6,7 +6,12 @@ namespace occa {
     modeInfo::modeInfo() {}
 
     bool modeInfo::init() {
-      return hip::init();
+#if OCCA_HIP_ENABLED
+      // Only consider hip enabled if there is an available device
+      return (hip::init() && hip::getDeviceCount());
+#else
+      return false;
+#endif
     }
 
     styling::section& modeInfo::getDescription() {

@@ -8,7 +8,8 @@ namespace occa {
 
     bool modeInfo::init() {
 #if OCCA_CUDA_ENABLED
-      return cuda::init();
+      // Only consider cuda enabled if there is an available device
+      return (cuda::init() && cuda::getDeviceCount());
 #else
       return false;
 #endif
