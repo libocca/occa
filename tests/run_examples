@@ -13,7 +13,7 @@ HEADER_CHARS=80
 declare -a examples=(
   cpp/01_add_vectors
   cpp/02_background_device
-  cpp/03_inlined_okl
+  cpp/03_inline_okl
   cpp/04_reduction
   cpp/05_building_kernels
   cpp/06_unified_memory
@@ -22,7 +22,7 @@ declare -a examples=(
   cpp/09_streams
   c/01_add_vectors
   c/02_background_device
-  c/03_inlined_okl
+  c/03_inline_okl
   c/04_reduction
 )
 

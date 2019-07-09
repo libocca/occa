@@ -1,6 +1,6 @@
 ### Example: Inlined Kernels
 
-We give an example with inlined OKL
+We give an example with inline OKL code
 
 ### Compiling the Example
 
@@ -15,7 +15,7 @@ make
 
 Usage: ./main [OPTIONS]
 
-Example showing inlined OKL
+Example showing inline OKL code
 
 Options:
   -d, --device     Device properties (default: "mode: 'Serial'")

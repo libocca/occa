@@ -89,7 +89,7 @@ occa::json parseArgs(int argc, const char **argv) {
   occa::cli::parser parser;
   parser
     .withDescription(
-      "Example showing inlined OKL"
+      "Example showing inline OKL code"
     )
     .addOption(
       occa::cli::option('d', "device",

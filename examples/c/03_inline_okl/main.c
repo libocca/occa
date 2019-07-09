@@ -83,7 +83,7 @@ occaJson parseArgs(int argc, const char **argv) {
   occaJson args = occaCliParseArgs(
     argc, argv,
     "{"
-    "  description: 'Example showing inlined OKL',"
+    "  description: 'Example showing inline OKL code',"
     "  options: ["
     "    {"
     "      name: 'device',"
