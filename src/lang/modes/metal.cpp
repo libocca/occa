@@ -12,7 +12,7 @@ namespace occa {
           withLauncher(settings_),
           kernel_q("kernel", qualifierType::custom),
           device_q("device", qualifierType::custom),
-          groupshared_q("groupshared", qualifierType::custom),
+          threadgroup_q("threadgroup", qualifierType::custom),
           constant_q("constant", qualifierType::custom) {
         okl::addAttributes(*this);
       }
@@ -68,7 +68,7 @@ namespace occa {
             if (!var.hasAttribute("shared")) {
               continue;
             }
-            var.add(0, groupshared_q);
+            var.add(0, threadgroup_q);
           }
           ++it;
         }
@@ -94,7 +94,7 @@ namespace occa {
             *(new expressionStatement(
                 smnt.up,
                 *(new identifierNode(smnt.source,
-                                     "threadgroup_barrier(mem_threadgroup)"))
+                                     "threadgroup_barrier(mem_flags::mem_threadgroup)"))
               ))
           );
 
@@ -106,7 +106,30 @@ namespace occa {
         }
       }
 
+      void metalParser::setupHeaders() {
+        strVector headers;
+        headers.push_back("include <metal_stdlib>\n");
+        headers.push_back("include <metal_compute>\n");
+
+        const int headerCount = (int) headers.size();
+        for (int i = 0; i < headerCount; ++i) {
+          std::string header = headers[i];
+          // TODO 1.1: Remove hack after methods are properly added
+          if (i == 0) {
+            header += "\nusing namespace metal;";
+          }
+          directiveToken token(root.source->origin,
+                               header);
+          root.addFirst(
+            *(new directiveStatement(&root, token))
+          );
+        }
+      }
+
       void metalParser::setupKernels() {
+        setupHeaders();
+        if (!success) return;
+
         statementPtrVector kernelSmnts;
         findStatementsByAttr((statementType::functionDecl |
                               statementType::function),
