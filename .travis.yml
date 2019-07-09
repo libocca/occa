@@ -112,7 +112,7 @@ matrix:
             - clang-6.0
     - name: "clang"
       os: osx
-      osx_image: xcode8
+      osx_image: xcode10.2
       compiler: clang
       env:
         - CC=clang

@@ -323,19 +323,24 @@ else
   endif
 endif
 
-# Metal is only supported for MacOS with clang++
-ifdef OCCA_METAL_ENABLED
-  ifneq ($(metalEnabled),1)
+# Metal is only supported with
+# - MacOS
+# - clang++ compiler
+# - XCode version >= 10.2.1
+ifeq ($(usingMacOS),1)
+  ifdef OCCA_METAL_ENABLED
     metalEnabled := $(OCCA_METAL_ENABLED)
-  endif
-else
-  ifeq ($(usingMacOS),1)
-    # Check for Metal Framework
-    metalLibFlags = $(call libraryFlagsFor,Metal)
+  else
+    xcodeVersion := $(shell xcodebuild -version | head -n 1 | sed 's/Xcode //g')
+    minXcodeVersion := $(shell echo -e "$(xcodeVersion)\n10.2.1" | sort -V | head -n 1)
+    ifeq ($(minXcodeVersion),$(xcodeVersion))
+      # Check for Metal Framework
+      metalLibFlags = $(call libraryFlagsFor,Metal)
 
-    ifneq (,$(metalLibFlags))
-      metalEnabled = 1
-      linkerFlags += $(metalLibFlags) -framework Foundation -lobjc
+      ifneq (,$(metalLibFlags))
+        metalEnabled = 1
+        linkerFlags += $(metalLibFlags) -framework Foundation -lobjc
+      endif
     endif
   endif
 endif
