@@ -6,7 +6,12 @@ namespace occa {
     modeInfo::modeInfo() {}
 
     bool modeInfo::init() {
-      return OCCA_METAL_ENABLED;
+#if OCCA_METAL_ENABLED
+      // Only consider metal enabled if there is a device
+      return api::metal::getDeviceCount();
+#else
+      return false;
+#endif
     }
 
     styling::section& modeInfo::getDescription() {
