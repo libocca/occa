@@ -425,7 +425,7 @@ namespace occa {
       error = clGetProgramInfo(testProgram,
                                CL_PROGRAM_BINARY_SIZES,
                                sizeof(size_t), &testBinaryBytes, NULL);
-      if (!error || !testBinaryBytes) {
+      if (error || !testBinaryBytes) {
         delete [] binary;
         return false;
       }

@@ -194,7 +194,7 @@ namespace occa {
 
       // Check if binary exists and is finished
       bool foundBinary = (
-        io::cachedFileIsComplete(hashDir, kc::binaryFile)
+        io::cachedFileIsComplete(hashDir, kcBinaryFile)
         && io::isFile(binaryFilename)
       );
 
