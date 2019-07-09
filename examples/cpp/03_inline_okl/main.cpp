@@ -24,18 +24,22 @@ int main(int argc, const char **argv) {
   occa::properties props;
   props["defines/TILE_SIZE"] = 16;
 
+  // Const-ness of variables is passed through which can be useful for the compiler
+  const float *c_a = a;
+  const float *c_b = b;
+
   // Arguments:
   // 1. Runtime occa::properties (pass occa::properties() to ignore this argument)
   // 2. Captured variables
   // 3. Inlined OKL source
   INLINE_OKL(
     props,
-    (entries, a, b, ab),
+    (entries, c_a, c_b, ab),
     (
       // TILE_SIZE is passed as a compile-time define as opposed to a runtime variable
       // through props
       for (int i = 0; i < entries; ++i; @tile(TILE_SIZE, @outer, @inner)) {
-        ab[i] = 100 * (a[i] + b[i]);
+        ab[i] = 100 * (c_a[i] + c_b[i]);
       }
     )
   );

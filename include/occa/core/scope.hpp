@@ -105,6 +105,19 @@ namespace occa {
 
     template <class TM>
     void add(const std::string &name,
+             TM *value) {
+      add(scopeVariable::fromValue<TM*>(name, value, false));
+    }
+
+    template <class TM>
+    void add(const std::string &name,
+             const TM *value) {
+      // dtype -> name doesn't support const types yet
+      addConst(name, const_cast<TM*>(value));
+    }
+
+    template <class TM>
+    void add(const std::string &name,
              TM &value) {
       add(scopeVariable::fromValue<TM>(name, value, false));
     }
