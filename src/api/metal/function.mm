@@ -123,9 +123,11 @@ namespace occa {
         }
 
         // Set the loop dimensions
-        MTLSize outerSize = MTLSizeMake(outerDims.x, outerDims.y, outerDims.z);
+        dim fullDims = outerDims * innerDims;
+        MTLSize fullSize = MTLSizeMake(fullDims.x, fullDims.y, fullDims.z);
         MTLSize innerSize = MTLSizeMake(innerDims.x, innerDims.y, innerDims.z);
-        [computeEncoder dispatchThreads:outerSize
+
+        [computeEncoder dispatchThreads:fullSize
                   threadsPerThreadgroup:innerSize];
 
         // Finish encoding and start executing the kernel
