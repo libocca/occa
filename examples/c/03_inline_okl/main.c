@@ -46,7 +46,7 @@ int main(int argc, const char **argv) {
   // useful while debugging
   occaScopeAdd(scope, "debugValue", occaInt(42));
 
-  INLINE_OKL(
+  OCCA_JIT(
     scope,
     (
       // TILE_SIZE is passed as a compile-time define as opposed to a runtime variable

@@ -5,7 +5,7 @@
 
 #define OCCA_INLINED_KERNEL_NAME "_occa_inlinedKernel"
 
-#define INLINE_OKL(OKL_PROPS, OKL_ARGS, OKL_SOURCE)       \
+#define OCCA_JIT(OCCA_PROPS, OKL_ARGS, OKL_SOURCE)        \
   do {                                                    \
     static occa::kernelBuilder _inlinedKernelBuilder = (  \
       occa::kernelBuilder::fromString(                    \
@@ -20,13 +20,13 @@
     );                                                    \
     occa::kernel _inlinedKernel = (                       \
       _inlinedKernelBuilder.build(occa::getDevice(),      \
-                                  OKL_PROPS)              \
+                                  OCCA_PROPS)             \
     );                                                    \
     _inlinedKernel OKL_ARGS;                              \
   } while (false)
 
 
-#define INLINE_OKL_WITH_SCOPE(OKL_SCOPE, OKL_SOURCE)                  \
+#define OCCA_JIT_WITH_SCOPE(OKL_SCOPE, OKL_SOURCE)                    \
   do {                                                                \
     static occa::kernelBuilder _inlinedKernelBuilder = (              \
       occa::kernelBuilder::fromString(                                \

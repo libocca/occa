@@ -32,7 +32,7 @@ int main(int argc, const char **argv) {
   // 1. Runtime occa::properties (pass occa::properties() to ignore this argument)
   // 2. Captured variables
   // 3. Inlined OKL source
-  INLINE_OKL(
+  OCCA_JIT(
     props,
     (entries, c_a, c_b, ab),
     (
@@ -59,7 +59,7 @@ int main(int argc, const char **argv) {
   // useful while debugging
   scope.add("debugValue", 42);
 
-  INLINE_OKL_WITH_SCOPE(
+  OCCA_JIT_WITH_SCOPE(
     scope,
     (
       for (int i = 0; i < entries; ++i; @tile(TILE_SIZE, @outer, @inner)) {

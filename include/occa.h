@@ -41,26 +41,26 @@
 
 #endif // OCCA_DISABLE_VARIADIC_MACROS
 
-#ifdef INLINE_OKL
-#  undef INLINE_OKL
+#ifdef OCCA_JIT
+#  undef OCCA_JIT
 #endif
 
-#define INLINE_OKL(OKL_SCOPE, OKL_SOURCE)                           \
-  do {                                                              \
-    static occaKernelBuilder _inlinedKernelBuilder;                 \
-    static int _inlinedKernelIsDefined = 0;                         \
-    if (!_inlinedKernelIsDefined) {                                 \
-      _inlinedKernelBuilder = (                                     \
-        occaKernelBuilderFromInlinedOkl(                            \
-          OKL_SCOPE,                                                \
-          #OKL_SOURCE,                                              \
-          OCCA_INLINED_KERNEL_NAME                                  \
-        )                                                           \
-      );                                                            \
-      _inlinedKernelIsDefined = 1;                                  \
-    }                                                               \
-    occaKernelBuilderRun(_inlinedKernelBuilder,                     \
-                         OKL_SCOPE);                                \
+#define OCCA_JIT(OCCA_SCOPE, OKL_SOURCE)            \
+  do {                                              \
+    static occaKernelBuilder _inlinedKernelBuilder; \
+    static int _inlinedKernelIsDefined = 0;         \
+    if (!_inlinedKernelIsDefined) {                 \
+      _inlinedKernelBuilder = (                     \
+        occaKernelBuilderFromInlinedOkl(            \
+          OCCA_SCOPE,                               \
+          #OKL_SOURCE,                              \
+          OCCA_INLINED_KERNEL_NAME                  \
+        )                                           \
+      );                                            \
+      _inlinedKernelIsDefined = 1;                  \
+    }                                               \
+    occaKernelBuilderRun(_inlinedKernelBuilder,     \
+                         OCCA_SCOPE);               \
   } while (0)
 
 
