@@ -13,6 +13,11 @@ namespace occa {
         parser_t(settings_),
         launcherParser(settings["launcher"]) {
         launcherParser.settings["okl/validate"] = false;
+
+        identifierToken memoryTypeSource(originSource::builtin,
+                                         "occa::modeMemory_t");
+        memoryType = new typedef_t(vartype_t(),
+                                   memoryTypeSource);
       }
 
       //---[ Public ]-------------------
@@ -34,6 +39,8 @@ namespace occa {
         if (settings.get("okl/validate", true)) {
           success = checkKernels(root);
         }
+
+        root.addToScope(*memoryType);
 
         if (!success) return;
         setOKLLoopIndices();
@@ -285,18 +292,13 @@ namespace occa {
         type_t &kernelType = *(new typedef_t(vartype_t(),
                                              kernelTypeSource));
 
-        identifierToken memoryTypeSource(kernelSmnt.source->origin,
-                                         "occa::modeMemory_t");
-        type_t &memoryType = *(new typedef_t(vartype_t(),
-                                             memoryTypeSource));
-
         // Convert pointer arguments to modeMemory_t
         int argCount = (int) func.args.size();
         for (int i = 0; i < argCount; ++i) {
           variable_t &arg = *(func.args[i]);
           arg.vartype = arg.vartype.flatten();
           if (arg.vartype.isPointerType()) {
-            arg.vartype = memoryType;
+            arg.vartype = *memoryType;
             arg += pointer_t();
           }
         }
@@ -312,7 +314,6 @@ namespace occa {
                          &kernelVar);
 
         kernelSmnt.addToScope(kernelType);
-        kernelSmnt.addToScope(memoryType);
         kernelSmnt.addToScope(kernelVar);
       }
 
