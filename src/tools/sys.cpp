@@ -679,6 +679,7 @@ namespace occa {
           ss << vendor_;
 
           io::write(outFilename, ss.str());
+          io::markCachedFileComplete(hashDir, "output");
 
           return vendor_;
         }

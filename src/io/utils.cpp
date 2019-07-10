@@ -8,7 +8,8 @@
 #include <occa/defines.hpp>
 
 #if (OCCA_OS & (OCCA_LINUX_OS | OCCA_MACOS_OS))
-#    include <dirent.h>
+#  include <dirent.h>
+#  include <unistd.h>
 #else
 #  include <windows.h>
 #  include <string>
@@ -336,7 +337,8 @@ namespace occa {
       return contents;
     }
 
-    void write(const std::string &filename, const std::string &content) {
+    void write(const std::string &filename,
+               const std::string &content) {
       std::string expFilename = io::filename(filename);
       sys::mkpath(dirname(expFilename));
 
@@ -346,6 +348,7 @@ namespace occa {
 
       fputs(content.c_str(), fp);
 
+      fsync(fileno(fp));
       fclose(fp);
     }
   }
