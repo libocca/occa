@@ -10,21 +10,21 @@ namespace occa {
 
     typedef std::map<std::string, kernelMetadata> kernelMetadataMap;
 
-    class argumentInfo {
+    class argMetadata_t {
     public:
       bool isConst;
       bool isPtr;
       dtype_t dtype;
       std::string name;
 
-      argumentInfo();
+      argMetadata_t();
 
-      argumentInfo(const bool isConst_,
+      argMetadata_t(const bool isConst_,
                    const bool isPtr_,
                    const dtype_t &dtype_,
                    const std::string &name_);
 
-      static argumentInfo fromJson(const json &j);
+      static argMetadata_t fromJson(const json &j);
       json toJson() const;
     };
 
@@ -32,13 +32,13 @@ namespace occa {
     public:
       bool initialized;
       std::string name;
-      std::vector<argumentInfo> arguments;
+      std::vector<argMetadata_t> arguments;
 
       kernelMetadata();
 
       bool isInitialized() const;
 
-      kernelMetadata& operator += (const argumentInfo &argInfo);
+      kernelMetadata& operator += (const argMetadata_t &argInfo);
 
       static kernelMetadata fromJson(const json &j);
       json toJson() const;

@@ -4,28 +4,28 @@
 
 namespace occa {
   namespace lang {
-    argumentInfo::argumentInfo() :
-      isConst(false),
-      isPtr(false),
-      dtype(dtype::byte) {}
+    argMetadata_t::argMetadata_t() :
+        isConst(false),
+        isPtr(false),
+        dtype(dtype::byte) {}
 
-    argumentInfo::argumentInfo(const bool isConst_,
-                               const bool isPtr_,
-                               const dtype_t &dtype_,
-                               const std::string &name_) :
-      isConst(isConst_),
-      isPtr(isPtr_),
-      dtype(dtype_),
-      name(name_) {}
+    argMetadata_t::argMetadata_t(const bool isConst_,
+                                 const bool isPtr_,
+                                 const dtype_t &dtype_,
+                                 const std::string &name_) :
+        isConst(isConst_),
+        isPtr(isPtr_),
+        dtype(dtype_),
+        name(name_) {}
 
-    argumentInfo argumentInfo::fromJson(const json &j) {
-      return argumentInfo((bool) j["const"],
-                          (bool) j["ptr"],
-                          dtype_t::fromJson(j["dtype"]),
-                          (std::string) j["name"]);
+    argMetadata_t argMetadata_t::fromJson(const json &j) {
+      return argMetadata_t((bool) j["const"],
+                           (bool) j["ptr"],
+                           dtype_t::fromJson(j["dtype"]),
+                           (std::string) j["name"]);
     }
 
-    json argumentInfo::toJson() const {
+    json argMetadata_t::toJson() const {
       json j;
       j["const"] = isConst;
       j["ptr"]   = isPtr;
@@ -35,13 +35,13 @@ namespace occa {
     }
 
     kernelMetadata::kernelMetadata() :
-      initialized(false) {}
+        initialized(false) {}
 
     bool kernelMetadata::isInitialized() const {
       return initialized;
     }
 
-    kernelMetadata& kernelMetadata::operator += (const argumentInfo &argInfo) {
+    kernelMetadata& kernelMetadata::operator += (const argMetadata_t &argInfo) {
       initialized = true;
       arguments.push_back(argInfo);
       return *this;
@@ -56,7 +56,7 @@ namespace occa {
       const jsonArray &argInfos = j["arguments"].array();
       const int argumentCount = (int) argInfos.size();
       for (int i = 0; i < argumentCount; ++i) {
-        meta.arguments.push_back(argumentInfo::fromJson(argInfos[i]));
+        meta.arguments.push_back(argMetadata_t::fromJson(argInfos[i]));
       }
 
       return meta;

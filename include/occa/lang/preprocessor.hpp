@@ -114,6 +114,8 @@ namespace occa {
                            const std::string &value);
 
       void removeSourceDefine(const std::string &name);
+
+      strVector getDependencyFilenames() const;
       //================================
 
       void expandMacro(identifierToken &source,

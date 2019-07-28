@@ -313,6 +313,20 @@ namespace occa {
         sourceMacros.erase(mIt);
       }
     }
+
+    strVector preprocessor_t::getDependencyFilenames() const {
+      const int dependencyCount = dependencies.size();
+      strVector deps;
+      deps.reserve(dependencyCount);
+
+      strToBoolMap::const_iterator it = dependencies.begin();
+      while (it != dependencies.end()) {
+        deps.push_back(it->first);
+        ++it;
+      }
+
+      return deps;
+    }
     //==================================
 
     void preprocessor_t::expandMacro(identifierToken &source,

@@ -124,7 +124,7 @@ namespace occa {
           if (arg.hasAttribute("implicitArg")) {
             continue;
           }
-          metadata += argumentInfo(
+          metadata += argMetadata_t(
             arg.has(const_),
             arg.vartype.isPointerType(),
             arg.dtype(),
