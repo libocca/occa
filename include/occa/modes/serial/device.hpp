@@ -34,7 +34,7 @@ namespace occa {
       virtual bool parseFile(const std::string &filename,
                              const std::string &outputFile,
                              const occa::properties &kernelProps,
-                             lang::kernelMetadataMap &metadata);
+                             lang::sourceMetadata_t &metadata);
 
       virtual modeKernel_t* buildKernel(const std::string &filename,
                                         const std::string &kernelName,
@@ -58,7 +58,7 @@ namespace occa {
       virtual modeKernel_t* buildKernelFromBinary(const std::string &filename,
                                                   const std::string &kernelName,
                                                   const occa::properties &kernelProps,
-                                                  lang::kernelMetadata &metadata);
+                                                  lang::kernelMetadata_t &metadata);
       //================================
 
       //---[ Memory ]-------------------

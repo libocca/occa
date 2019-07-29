@@ -157,8 +157,8 @@ namespace occa {
       const std::string &sourceFilename,
       const std::string &binaryFilename,
       const bool usingOkl,
-      lang::kernelMetadataMap &launcherMetadata,
-      lang::kernelMetadataMap &deviceMetadata,
+      lang::sourceMetadata_t &launcherMetadata,
+      lang::sourceMetadata_t &deviceMetadata,
       const occa::properties &kernelProps,
       io::lock_t lock
     ) {
@@ -207,8 +207,8 @@ namespace occa {
     modeKernel_t* device::buildOKLKernelFromBinary(const hash_t kernelHash,
                                                    const std::string &hashDir,
                                                    const std::string &kernelName,
-                                                   lang::kernelMetadataMap &launcherMetadata,
-                                                   lang::kernelMetadataMap &deviceMetadata,
+                                                   lang::sourceMetadata_t &launcherMetadata,
+                                                   lang::sourceMetadata_t &deviceMetadata,
                                                    const occa::properties &kernelProps,
                                                    io::lock_t lock) {
       info_t clInfo;
@@ -229,8 +229,8 @@ namespace occa {
                                                    const hash_t kernelHash,
                                                    const std::string &hashDir,
                                                    const std::string &kernelName,
-                                                   lang::kernelMetadataMap &launcherMetadata,
-                                                   lang::kernelMetadataMap &deviceMetadata,
+                                                   lang::sourceMetadata_t &launcherMetadata,
+                                                   lang::sourceMetadata_t &deviceMetadata,
                                                    const occa::properties &kernelProps,
                                                    io::lock_t lock) {
 
@@ -254,7 +254,7 @@ namespace occa {
       k.launcherKernel = buildLauncherKernel(kernelHash,
                                              hashDir,
                                              kernelName,
-                                             launcherMetadata[kernelName]);
+                                             launcherMetadata);
       if (!k.launcherKernel) {
         delete &k;
         return NULL;
@@ -268,7 +268,7 @@ namespace occa {
 
       const int launchedKernelsCount = (int) launchedKernelsMetadata.size();
       for (int i = 0; i < launchedKernelsCount; ++i) {
-        lang::kernelMetadata &metadata = launchedKernelsMetadata[i];
+        lang::kernelMetadata_t &metadata = launchedKernelsMetadata[i];
         opencl::buildKernelFromProgram(clInfo,
                                        metadata.name,
                                        lock);

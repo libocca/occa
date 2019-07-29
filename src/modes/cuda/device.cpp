@@ -169,8 +169,8 @@ namespace occa {
       const std::string &sourceFilename,
       const std::string &binaryFilename,
       const bool usingOkl,
-      lang::kernelMetadataMap &launcherMetadata,
-      lang::kernelMetadataMap &deviceMetadata,
+      lang::sourceMetadata_t &launcherMetadata,
+      lang::sourceMetadata_t &deviceMetadata,
       const occa::properties &kernelProps,
       io::lock_t lock
     ) {
@@ -307,8 +307,8 @@ namespace occa {
     modeKernel_t* device::buildOKLKernelFromBinary(const hash_t kernelHash,
                                                    const std::string &hashDir,
                                                    const std::string &kernelName,
-                                                   lang::kernelMetadataMap &launcherMetadata,
-                                                   lang::kernelMetadataMap &deviceMetadata,
+                                                   lang::sourceMetadata_t &launcherMetadata,
+                                                   lang::sourceMetadata_t &deviceMetadata,
                                                    const occa::properties &kernelProps,
                                                    io::lock_t lock) {
 
@@ -334,7 +334,7 @@ namespace occa {
       k.launcherKernel = buildLauncherKernel(kernelHash,
                                              hashDir,
                                              kernelName,
-                                             launcherMetadata[kernelName]);
+                                             launcherMetadata);
 
       // Find device kernels
       orderedKernelMetadata launchedKernelsMetadata = getLaunchedKernelsMetadata(
@@ -344,7 +344,7 @@ namespace occa {
 
       const int launchedKernelsCount = (int) launchedKernelsMetadata.size();
       for (int i = 0; i < launchedKernelsCount; ++i) {
-        lang::kernelMetadata &metadata = launchedKernelsMetadata[i];
+        lang::kernelMetadata_t &metadata = launchedKernelsMetadata[i];
 
         CUfunction cuFunction;
         error = cuModuleGetFunction(&cuFunction,

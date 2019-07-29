@@ -139,7 +139,7 @@ namespace occa {
     bool device::parseFile(const std::string &filename,
                            const std::string &outputFile,
                            const occa::properties &kernelProps,
-                           lang::kernelMetadataMap &metadata) {
+                           lang::sourceMetadata_t &metadata) {
       lang::okl::serialParser parser(kernelProps);
       parser.parseFile(filename);
 
@@ -158,7 +158,7 @@ namespace occa {
         }
       }
 
-      parser.setMetadata(metadata);
+      parser.setSourceMetadata(metadata);
 
       return true;
     }
@@ -230,7 +230,7 @@ namespace occa {
                       assembleKernelHeader(kernelProps))
       );
 
-      lang::kernelMetadataMap metadata;
+      lang::sourceMetadata_t metadata;
       if (kernelProps.get("okl", true)) {
         const std::string outputFile = hashDir + kc::sourceFile;
         bool valid = parseFile(sourceFilename,
@@ -297,7 +297,7 @@ namespace occa {
       modeKernel_t *k = buildKernelFromBinary(binaryFilename,
                                               kernelName,
                                               kernelProps,
-                                              metadata[kernelName]);
+                                              metadata.kernelsMetadata[kernelName]);
       if (k) {
         io::markCachedFileComplete(hashDir, kcBinaryFile);
         k->sourceFilename = filename;
@@ -311,10 +311,10 @@ namespace occa {
       std::string buildFile = io::dirname(filename);
       buildFile += kc::buildFile;
 
-      lang::kernelMetadata metadata;
+      lang::kernelMetadata_t metadata;
       if (io::isFile(buildFile)) {
-        lang::kernelMetadataMap metadataMap = lang::getBuildFileMetadata(buildFile);
-        metadata = metadataMap[kernelName];
+        lang::sourceMetadata_t sourceMetadata = lang::sourceMetadata_t::fromBuildFile(buildFile);
+        metadata = sourceMetadata.kernelsMetadata[kernelName];
       }
 
       return buildKernelFromBinary(filename,
@@ -326,7 +326,7 @@ namespace occa {
     modeKernel_t* device::buildKernelFromBinary(const std::string &filename,
                                                 const std::string &kernelName,
                                                 const occa::properties &kernelProps,
-                                                lang::kernelMetadata &metadata) {
+                                                lang::kernelMetadata_t &metadata) {
       kernel &k = *(new kernel(this,
                                kernelName,
                                filename,

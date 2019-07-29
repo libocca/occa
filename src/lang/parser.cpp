@@ -6,6 +6,7 @@
 #include <occa/lang/builtins/attributes.hpp>
 #include <occa/lang/transforms/builtins.hpp>
 #include <occa/lang/builtins/types.hpp>
+#include <occa/tools/hash.hpp>
 
 namespace occa {
   namespace lang {
@@ -102,7 +103,11 @@ namespace occa {
                 root.toString());
     }
 
-    void parser_t::setMetadata(kernelMetadataMap &metadataMap) const {
+    void parser_t::setSourceMetadata(sourceMetadata_t &sourceMetadata) const {
+      kernelMetadataMap &metadataMap = sourceMetadata.kernelsMetadata;
+      strHashMap &dependencyHashes = sourceMetadata.dependencyHashes;
+
+      // Set metadata for all @kernels
       statementPtrVector kernelSmnts;
       findStatementsByAttr(statementType::functionDecl,
                            "kernel",
@@ -114,7 +119,7 @@ namespace occa {
         functionDeclStatement &declSmnt = *((functionDeclStatement*) kernelSmnts[i]);
         function_t &func = declSmnt.function;
 
-        kernelMetadata &metadata = metadataMap[func.name()];
+        kernelMetadata_t &metadata = metadataMap[func.name()];
         metadata.name = func.name();
 
         int args = (int) func.args.size();
@@ -124,13 +129,21 @@ namespace occa {
           if (arg.hasAttribute("implicitArg")) {
             continue;
           }
-          metadata += argumentInfo(
+          metadata += argMetadata_t(
             arg.has(const_),
             arg.vartype.isPointerType(),
             arg.dtype(),
             arg.name()
           );
         }
+      }
+
+      // Set dependencies and their hashes
+      strVector dependencies = preprocessor.getDependencyFilenames();
+      const int dependencyCount = (int) dependencies.size();
+      for (int i = 0; i < dependencyCount; ++i) {
+        const std::string &dependency = dependencies[i];
+        dependencyHashes[dependency] = hashFile(dependency);
       }
     }
     //==================================

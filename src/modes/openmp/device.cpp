@@ -21,7 +21,7 @@ namespace occa {
     bool device::parseFile(const std::string &filename,
                            const std::string &outputFile,
                            const occa::properties &kernelProps,
-                           lang::kernelMetadataMap &metadata) {
+                           lang::sourceMetadata_t &metadata) {
       lang::okl::openmpParser parser(kernelProps);
       parser.parseFile(filename);
 
@@ -41,7 +41,7 @@ namespace occa {
         }
       }
 
-      parser.setMetadata(metadata);
+      parser.setSourceMetadata(metadata);
 
       return true;
     }

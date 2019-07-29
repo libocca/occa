@@ -93,13 +93,13 @@ namespace occa {
     kernel.clearArgs();
 
     // Get argument metadata
-    const lang::kernelMetadata &metadata = kernel.getModeKernel()->getMetadata();
-    const std::vector<lang::argumentInfo> &arguments = metadata.arguments;
+    const lang::kernelMetadata_t &metadata = kernel.getModeKernel()->getMetadata();
+    const std::vector<lang::argMetadata_t> &arguments = metadata.arguments;
 
     // Insert arguments in the proper order
     const int argCount = (int) arguments.size();
     for (int i = 0; i < argCount; ++i) {
-      const lang::argumentInfo &arg = arguments[i];
+      const lang::argMetadata_t &arg = arguments[i];
       kernel.pushArg(scope.getArg(arg.name));
     }
 

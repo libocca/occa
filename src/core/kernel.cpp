@@ -104,7 +104,7 @@ namespace occa {
       // TODO: Get original arg #
       for (int i = 0; i < argc; ++i) {
         kernelArgData &arg = arguments[i];
-        lang::argumentInfo &argInfo = metadata.arguments[i];
+        lang::argMetadata_t &argInfo = metadata.arguments[i];
 
         modeMemory_t *mem = arg.getModeMemory();
         bool isPtr = (bool) mem;

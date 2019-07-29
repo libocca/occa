@@ -48,8 +48,8 @@ namespace occa {
                                                    const std::string &sourceFilename,
                                                    const std::string &binaryFilename,
                                                    const bool usingOkl,
-                                                   lang::kernelMetadataMap &launcherMetadata,
-                                                   lang::kernelMetadataMap &deviceMetadata,
+                                                   lang::sourceMetadata_t &launcherMetadata,
+                                                   lang::sourceMetadata_t &deviceMetadata,
                                                    const occa::properties &kernelProps,
                                                    io::lock_t lock);
 
@@ -61,8 +61,8 @@ namespace occa {
       modeKernel_t* buildOKLKernelFromBinary(const hash_t kernelHash,
                                              const std::string &hashDir,
                                              const std::string &kernelName,
-                                             lang::kernelMetadataMap &launcherMetadata,
-                                             lang::kernelMetadataMap &deviceMetadata,
+                                             lang::sourceMetadata_t &launcherMetadata,
+                                             lang::sourceMetadata_t &deviceMetadata,
                                              const occa::properties &kernelProps,
                                              io::lock_t lock);
 

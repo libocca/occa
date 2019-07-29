@@ -4,28 +4,28 @@
 
 namespace occa {
   namespace lang {
-    argumentInfo::argumentInfo() :
-      isConst(false),
-      isPtr(false),
-      dtype(dtype::byte) {}
+    argMetadata_t::argMetadata_t() :
+        isConst(false),
+        isPtr(false),
+        dtype(dtype::byte) {}
 
-    argumentInfo::argumentInfo(const bool isConst_,
-                               const bool isPtr_,
-                               const dtype_t &dtype_,
-                               const std::string &name_) :
-      isConst(isConst_),
-      isPtr(isPtr_),
-      dtype(dtype_),
-      name(name_) {}
+    argMetadata_t::argMetadata_t(const bool isConst_,
+                                 const bool isPtr_,
+                                 const dtype_t &dtype_,
+                                 const std::string &name_) :
+        isConst(isConst_),
+        isPtr(isPtr_),
+        dtype(dtype_),
+        name(name_) {}
 
-    argumentInfo argumentInfo::fromJson(const json &j) {
-      return argumentInfo((bool) j["const"],
-                          (bool) j["ptr"],
-                          dtype_t::fromJson(j["dtype"]),
-                          (std::string) j["name"]);
+    argMetadata_t argMetadata_t::fromJson(const json &j) {
+      return argMetadata_t((bool) j["const"],
+                           (bool) j["ptr"],
+                           dtype_t::fromJson(j["dtype"]),
+                           (std::string) j["name"]);
     }
 
-    json argumentInfo::toJson() const {
+    json argMetadata_t::toJson() const {
       json j;
       j["const"] = isConst;
       j["ptr"]   = isPtr;
@@ -34,21 +34,21 @@ namespace occa {
       return j;
     }
 
-    kernelMetadata::kernelMetadata() :
-      initialized(false) {}
+    kernelMetadata_t::kernelMetadata_t() :
+        initialized(false) {}
 
-    bool kernelMetadata::isInitialized() const {
+    bool kernelMetadata_t::isInitialized() const {
       return initialized;
     }
 
-    kernelMetadata& kernelMetadata::operator += (const argumentInfo &argInfo) {
+    kernelMetadata_t& kernelMetadata_t::operator += (const argMetadata_t &argInfo) {
       initialized = true;
       arguments.push_back(argInfo);
       return *this;
     }
 
-    kernelMetadata kernelMetadata::fromJson(const json &j) {
-      kernelMetadata meta;
+    kernelMetadata_t kernelMetadata_t::fromJson(const json &j) {
+      kernelMetadata_t meta;
       meta.initialized = true;
 
       meta.name = (std::string) j["name"];
@@ -56,13 +56,13 @@ namespace occa {
       const jsonArray &argInfos = j["arguments"].array();
       const int argumentCount = (int) argInfos.size();
       for (int i = 0; i < argumentCount; ++i) {
-        meta.arguments.push_back(argumentInfo::fromJson(argInfos[i]));
+        meta.arguments.push_back(argMetadata_t::fromJson(argInfos[i]));
       }
 
       return meta;
     }
 
-    json kernelMetadata::toJson() const {
+    json kernelMetadata_t::toJson() const {
       json j;
       j["name"] = name;
 
@@ -75,22 +75,57 @@ namespace occa {
       return j;
     }
 
-    kernelMetadataMap getBuildFileMetadata(const std::string &filename) {
-      kernelMetadataMap metadataMap;
+    sourceMetadata_t::sourceMetadata_t() {}
+
+    json sourceMetadata_t::getKernelMetadataJson() const {
+      json metadataJson(json::array_);
+
+      lang::kernelMetadataMap::const_iterator it = kernelsMetadata.begin();
+      while (it != kernelsMetadata.end()) {
+        metadataJson += (it->second).toJson();
+        ++it;
+      }
+
+      return metadataJson;
+    }
+
+    json sourceMetadata_t::getDependencyJson() const {
+      json metadataJson;
+
+      strHashMap::const_iterator it = dependencyHashes.begin();
+      while (it != dependencyHashes.end()) {
+        metadataJson[it->first] = it->second.getFullString();
+        ++it;
+      }
+
+      return metadataJson;
+    }
+
+    sourceMetadata_t sourceMetadata_t::fromBuildFile(const std::string &filename) {
+      sourceMetadata_t metadata;
+
       if (!io::exists(filename)) {
-        return metadataMap;
+        return metadata;
       }
 
       properties props = properties::read(filename);
-      jsonArray &metadata = props["kernel/metadata"].array();
+      jsonArray &kernelMetadata = props["kernel/metadata"].array();
+      jsonObject &dependencyHashes = props["kernel/dependencies"].object();
 
-      const int kernelCount = (int) metadata.size();
+      kernelMetadataMap &metadataMap = metadata.kernelsMetadata;
+      const int kernelCount = (int) kernelMetadata.size();
       for (int i = 0; i < kernelCount; ++i) {
-        kernelMetadata kernel = kernelMetadata::fromJson(metadata[i]);
+        kernelMetadata_t kernel = kernelMetadata_t::fromJson(kernelMetadata[i]);
         metadataMap[kernel.name] = kernel;
       }
 
-      return metadataMap;
+      jsonObject::iterator it = dependencyHashes.begin();
+      while (it != dependencyHashes.end()) {
+        metadata.dependencyHashes[it->first] = hash_t::fromString(it->second);
+        ++it;
+      }
+
+      return metadata;
     }
   }
 }

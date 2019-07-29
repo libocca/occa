@@ -9,7 +9,7 @@
 #include <occa/tools/properties.hpp>
 
 namespace occa {
-  typedef std::vector<lang::kernelMetadata> orderedKernelMetadata;
+  typedef std::vector<lang::kernelMetadata_t> orderedKernelMetadata;
 
   class launchedModeDevice_t : public modeDevice_t {
   public:
@@ -19,8 +19,8 @@ namespace occa {
                    const std::string &outputFile,
                    const std::string &launcherOutputFile,
                    const occa::properties &kernelProps,
-                   lang::kernelMetadataMap &launcherMetadata,
-                   lang::kernelMetadataMap &deviceMetadata);
+                   lang::sourceMetadata_t &launcherMetadata,
+                   lang::sourceMetadata_t &deviceMetadata);
 
     virtual modeKernel_t* buildKernel(const std::string &filename,
                                       const std::string &kernelName,
@@ -36,11 +36,11 @@ namespace occa {
     modeKernel_t* buildLauncherKernel(const hash_t kernelHash,
                                       const std::string &hashDir,
                                       const std::string &kernelName,
-                                      lang::kernelMetadata &launcherMetadata);
+                                      lang::sourceMetadata_t sourceMetadata);
 
     orderedKernelMetadata getLaunchedKernelsMetadata(
       const std::string &kernelName,
-      lang::kernelMetadataMap &deviceMetadata
+      lang::sourceMetadata_t &deviceMetadata
     );
 
     //---[ Virtual Methods ]------------
@@ -53,8 +53,8 @@ namespace occa {
       const std::string &sourceFilename,
       const std::string &binaryFilename,
       const bool usingOkl,
-      lang::kernelMetadataMap &launcherMetadata,
-      lang::kernelMetadataMap &deviceMetadata,
+      lang::sourceMetadata_t &launcherMetadata,
+      lang::sourceMetadata_t &deviceMetadata,
       const occa::properties &kernelProps,
       io::lock_t lock
     ) = 0;
@@ -63,8 +63,8 @@ namespace occa {
       const hash_t kernelHash,
       const std::string &hashDir,
       const std::string &kernelName,
-      lang::kernelMetadataMap &launcherMetadata,
-      lang::kernelMetadataMap &deviceMetadata,
+      lang::sourceMetadata_t &launcherMetadata,
+      lang::sourceMetadata_t &deviceMetadata,
       const occa::properties &kernelProps,
       io::lock_t lock
     ) = 0;

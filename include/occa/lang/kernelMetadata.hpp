@@ -1,50 +1,63 @@
 #ifndef OCCA_LANG_KERNELMETADATA_HEADER
 #define OCCA_LANG_KERNELMETADATA_HEADER
 
+#include <occa/tools/hash.hpp>
 #include <occa/tools/json.hpp>
 #include <occa/dtype.hpp>
 
 namespace occa {
   namespace lang {
-    class kernelMetadata;
+    class kernelMetadata_t;
 
-    typedef std::map<std::string, kernelMetadata> kernelMetadataMap;
+    typedef std::map<std::string, kernelMetadata_t> kernelMetadataMap;
+    typedef std::map<std::string, hash_t> strHashMap;
 
-    class argumentInfo {
+    class argMetadata_t {
     public:
       bool isConst;
       bool isPtr;
       dtype_t dtype;
       std::string name;
 
-      argumentInfo();
+      argMetadata_t();
 
-      argumentInfo(const bool isConst_,
+      argMetadata_t(const bool isConst_,
                    const bool isPtr_,
                    const dtype_t &dtype_,
                    const std::string &name_);
 
-      static argumentInfo fromJson(const json &j);
+      static argMetadata_t fromJson(const json &j);
       json toJson() const;
     };
 
-    class kernelMetadata {
+    class kernelMetadata_t {
     public:
       bool initialized;
       std::string name;
-      std::vector<argumentInfo> arguments;
+      std::vector<argMetadata_t> arguments;
 
-      kernelMetadata();
+      kernelMetadata_t();
 
       bool isInitialized() const;
 
-      kernelMetadata& operator += (const argumentInfo &argInfo);
+      kernelMetadata_t& operator += (const argMetadata_t &argInfo);
 
-      static kernelMetadata fromJson(const json &j);
+      static kernelMetadata_t fromJson(const json &j);
       json toJson() const;
     };
 
-    kernelMetadataMap getBuildFileMetadata(const std::string &filename);
+    class sourceMetadata_t {
+     public:
+      kernelMetadataMap kernelsMetadata;
+      strHashMap dependencyHashes;
+
+      sourceMetadata_t();
+
+      json getKernelMetadataJson() const;
+      json getDependencyJson() const;
+
+      static sourceMetadata_t fromBuildFile(const std::string &filename);
+    };
   }
 }
 
