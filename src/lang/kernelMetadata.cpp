@@ -80,10 +80,10 @@ namespace occa {
     json sourceMetadata_t::getKernelMetadataJson() const {
       json metadataJson(json::array_);
 
-      lang::kernelMetadataMap::const_iterator kIt = kernelsMetadata.begin();
-      while (kIt != kernelsMetadata.end()) {
-        metadataJson += (kIt->second).toJson();
-        ++kIt;
+      lang::kernelMetadataMap::const_iterator it = kernelsMetadata.begin();
+      while (it != kernelsMetadata.end()) {
+        metadataJson += (it->second).toJson();
+        ++it;
       }
 
       return metadataJson;
@@ -91,6 +91,12 @@ namespace occa {
 
     json sourceMetadata_t::getDependencyJson() const {
       json metadataJson;
+
+      strHashMap::const_iterator it = dependencyHashes.begin();
+      while (it != dependencyHashes.end()) {
+        metadataJson[it->first] = it->second.getFullString();
+        ++it;
+      }
 
       return metadataJson;
     }
@@ -104,12 +110,19 @@ namespace occa {
 
       properties props = properties::read(filename);
       jsonArray &kernelMetadata = props["kernel/metadata"].array();
+      jsonObject &dependencyHashes = props["kernel/dependencies"].object();
 
       kernelMetadataMap &metadataMap = metadata.kernelsMetadata;
       const int kernelCount = (int) kernelMetadata.size();
       for (int i = 0; i < kernelCount; ++i) {
         kernelMetadata_t kernel = kernelMetadata_t::fromJson(kernelMetadata[i]);
         metadataMap[kernel.name] = kernel;
+      }
+
+      jsonObject::iterator it = dependencyHashes.begin();
+      while (it != dependencyHashes.end()) {
+        metadata.dependencyHashes[it->first] = hash_t::fromString(it->second);
+        ++it;
       }
 
       return metadata;
