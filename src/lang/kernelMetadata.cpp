@@ -77,6 +77,24 @@ namespace occa {
 
     sourceMetadata_t::sourceMetadata_t() {}
 
+    json sourceMetadata_t::getKernelMetadataJson() const {
+      json metadataJson(json::array_);
+
+      lang::kernelMetadataMap::const_iterator kIt = kernelsMetadata.begin();
+      while (kIt != kernelsMetadata.end()) {
+        metadataJson += (kIt->second).toJson();
+        ++kIt;
+      }
+
+      return metadataJson;
+    }
+
+    json sourceMetadata_t::getDependencyJson() const {
+      json metadataJson;
+
+      return metadataJson;
+    }
+
     sourceMetadata_t sourceMetadata_t::fromBuildFile(const std::string &filename) {
       sourceMetadata_t metadata;
 

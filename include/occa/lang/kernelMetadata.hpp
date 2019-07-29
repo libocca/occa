@@ -53,6 +53,9 @@ namespace occa {
 
       sourceMetadata_t();
 
+      json getKernelMetadataJson() const;
+      json getDependencyJson() const;
+
       static sourceMetadata_t fromBuildFile(const std::string &filename);
     };
   }

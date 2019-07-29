@@ -93,15 +93,8 @@ namespace occa {
     infoProps["device/hash"]  = versionedHash().getFullString();
     infoProps["kernel/props"] = kernelProps;
     infoProps["kernel/hash"]  = kernelHash.getFullString();
-
-    const lang::kernelMetadataMap &kernelsMetadata = sourceMetadata.kernelsMetadata;
-
-    json &metadataJson = infoProps["kernel/metadata"].asArray();
-    lang::kernelMetadataMap::const_iterator kIt = kernelsMetadata.begin();
-    while (kIt != kernelsMetadata.end()) {
-      metadataJson += (kIt->second).toJson();
-      ++kIt;
-    }
+    infoProps["kernel/metadata"] = sourceMetadata.getKernelMetadataJson();
+    infoProps["kernel/dependencies"] = sourceMetadata.getDependencyJson();
 
     io::writeBuildFile(filename, kernelHash, infoProps);
   }
