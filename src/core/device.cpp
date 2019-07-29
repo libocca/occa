@@ -386,10 +386,56 @@ namespace occa {
     kernelProps = kernelProperties() + props;
     kernelProps["mode"] = mode();
 
-    kernelHash = (hash()
-                  ^ modeDevice->kernelHash(kernelProps)
-                  ^ kernelHeaderHash(kernelProps)
-                  ^ sourceHash);
+    kernelHash = (
+      hash()
+      ^ modeDevice->kernelHash(kernelProps)
+      ^ kernelHeaderHash(kernelProps)
+      ^ sourceHash
+    );
+
+    // Check if the build.json exists to compare dependencies
+    const std::string buildFile = io::hashDir(kernelHash) + kc::buildFile;
+    if (!io::exists(buildFile)) {
+      return;
+    }
+
+    json buildJson = json::read(buildFile);
+    json dependenciesJson = buildJson["kernel/dependencies"];
+    if (!dependenciesJson.isInitialized()) {
+      return;
+    }
+
+    bool foundDependencyChanges = false;
+    // If all dependencies are somehow gone, the original hash will stay the same
+    // Add an additional hash to prevent reusing the original hash in case something changed
+    hash_t dependenciesHash = occa::hash("Something in the dependencies changed");
+
+    jsonObject dependencyHashes = dependenciesJson.object();
+    jsonObject::iterator it = dependencyHashes.begin();
+    while (it != dependencyHashes.end()) {
+      const std::string &dependency = it->first;
+      const hash_t dependencyHash = hash_t::fromString(it->second);
+
+      if (io::exists(dependency)) {
+        // Check whether the dependency changed
+        hash_t newDependencyHash = hashFile(dependency);
+        dependenciesHash ^= newDependencyHash;
+
+        if (dependencyHash != newDependencyHash) {
+          foundDependencyChanges = true;
+        }
+      } else {
+        // Dependency is missing so something changed
+        dependenciesHash ^= dependencyHash;
+        foundDependencyChanges = true;
+      }
+
+      ++it;
+    }
+
+    if (foundDependencyChanges) {
+      kernelHash ^= dependenciesHash;
+    }
   }
 
   kernel device::buildKernel(const std::string &filename,
