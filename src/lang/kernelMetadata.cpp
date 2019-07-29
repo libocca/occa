@@ -34,21 +34,21 @@ namespace occa {
       return j;
     }
 
-    kernelMetadata::kernelMetadata() :
+    kernelMetadata_t::kernelMetadata_t() :
         initialized(false) {}
 
-    bool kernelMetadata::isInitialized() const {
+    bool kernelMetadata_t::isInitialized() const {
       return initialized;
     }
 
-    kernelMetadata& kernelMetadata::operator += (const argMetadata_t &argInfo) {
+    kernelMetadata_t& kernelMetadata_t::operator += (const argMetadata_t &argInfo) {
       initialized = true;
       arguments.push_back(argInfo);
       return *this;
     }
 
-    kernelMetadata kernelMetadata::fromJson(const json &j) {
-      kernelMetadata meta;
+    kernelMetadata_t kernelMetadata_t::fromJson(const json &j) {
+      kernelMetadata_t meta;
       meta.initialized = true;
 
       meta.name = (std::string) j["name"];
@@ -62,7 +62,7 @@ namespace occa {
       return meta;
     }
 
-    json kernelMetadata::toJson() const {
+    json kernelMetadata_t::toJson() const {
       json j;
       j["name"] = name;
 
@@ -86,7 +86,7 @@ namespace occa {
 
       const int kernelCount = (int) metadata.size();
       for (int i = 0; i < kernelCount; ++i) {
-        kernelMetadata kernel = kernelMetadata::fromJson(metadata[i]);
+        kernelMetadata_t kernel = kernelMetadata_t::fromJson(metadata[i]);
         metadataMap[kernel.name] = kernel;
       }
 

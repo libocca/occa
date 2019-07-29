@@ -311,7 +311,7 @@ namespace occa {
       std::string buildFile = io::dirname(filename);
       buildFile += kc::buildFile;
 
-      lang::kernelMetadata metadata;
+      lang::kernelMetadata_t metadata;
       if (io::isFile(buildFile)) {
         lang::kernelMetadataMap metadataMap = lang::getBuildFileMetadata(buildFile);
         metadata = metadataMap[kernelName];
@@ -326,7 +326,7 @@ namespace occa {
     modeKernel_t* device::buildKernelFromBinary(const std::string &filename,
                                                 const std::string &kernelName,
                                                 const occa::properties &kernelProps,
-                                                lang::kernelMetadata &metadata) {
+                                                lang::kernelMetadata_t &metadata) {
       kernel &k = *(new kernel(this,
                                kernelName,
                                filename,

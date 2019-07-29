@@ -93,7 +93,7 @@ namespace occa {
     kernel.clearArgs();
 
     // Get argument metadata
-    const lang::kernelMetadata &metadata = kernel.getModeKernel()->getMetadata();
+    const lang::kernelMetadata_t &metadata = kernel.getModeKernel()->getMetadata();
     const std::vector<lang::argMetadata_t> &arguments = metadata.arguments;
 
     // Insert arguments in the proper order

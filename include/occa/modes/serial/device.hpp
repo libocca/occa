@@ -58,7 +58,7 @@ namespace occa {
       virtual modeKernel_t* buildKernelFromBinary(const std::string &filename,
                                                   const std::string &kernelName,
                                                   const occa::properties &kernelProps,
-                                                  lang::kernelMetadata &metadata);
+                                                  lang::kernelMetadata_t &metadata);
       //================================
 
       //---[ Memory ]-------------------

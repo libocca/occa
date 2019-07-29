@@ -21,7 +21,7 @@ namespace occa {
 
     ~launchedModeKernel_t();
 
-    const lang::kernelMetadata& getMetadata() const;
+    const lang::kernelMetadata_t& getMetadata() const;
 
     void run() const;
     void launcherRun() const;

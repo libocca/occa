@@ -44,7 +44,7 @@ namespace occa {
     // Requirements to launch kernel
     dim outerDims, innerDims;
     std::vector<kernelArgData> arguments;
-    lang::kernelMetadata metadata;
+    lang::kernelMetadata_t metadata;
 
     // References
     gc::ring_t<kernel> kernelRing;
@@ -77,7 +77,7 @@ namespace occa {
     virtual dim maxOuterDims() const = 0;
     virtual dim maxInnerDims() const = 0;
 
-    virtual const lang::kernelMetadata& getMetadata() const = 0;
+    virtual const lang::kernelMetadata_t& getMetadata() const = 0;
 
     virtual void run() const = 0;
     //==================================

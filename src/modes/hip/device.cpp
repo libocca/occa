@@ -317,7 +317,7 @@ namespace occa {
 
       const int launchedKernelsCount = (int) launchedKernelsMetadata.size();
       for (int i = 0; i < launchedKernelsCount; ++i) {
-        lang::kernelMetadata &metadata = launchedKernelsMetadata[i];
+        lang::kernelMetadata_t &metadata = launchedKernelsMetadata[i];
 
         hipFunction_t hipFunction;
         error = hipModuleGetFunction(&hipFunction,

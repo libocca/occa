@@ -9,7 +9,7 @@
 #include <occa/tools/properties.hpp>
 
 namespace occa {
-  typedef std::vector<lang::kernelMetadata> orderedKernelMetadata;
+  typedef std::vector<lang::kernelMetadata_t> orderedKernelMetadata;
 
   class launchedModeDevice_t : public modeDevice_t {
   public:
@@ -36,7 +36,7 @@ namespace occa {
     modeKernel_t* buildLauncherKernel(const hash_t kernelHash,
                                       const std::string &hashDir,
                                       const std::string &kernelName,
-                                      lang::kernelMetadata &launcherMetadata);
+                                      lang::kernelMetadata_t &launcherMetadata);
 
     orderedKernelMetadata getLaunchedKernelsMetadata(
       const std::string &kernelName,

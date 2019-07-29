@@ -202,7 +202,7 @@ namespace occa {
     const hash_t kernelHash,
     const std::string &hashDir,
     const std::string &kernelName,
-    lang::kernelMetadata &launcherMetadata
+    lang::kernelMetadata_t &launcherMetadata
   ) {
     const std::string launcherOutputFile = hashDir + kc::launcherSourceFile;
 
@@ -226,7 +226,7 @@ namespace occa {
     const std::string &kernelName,
     lang::kernelMetadataMap &deviceMetadata
   ) {      // Find device kernels
-    typedef std::map<int, lang::kernelMetadata> kernelOrderMap;
+    typedef std::map<int, lang::kernelMetadata_t> kernelOrderMap;
     kernelOrderMap kernelMetadataMap;
 
     const std::string prefix = "_occa_" + kernelName + "_";
@@ -234,7 +234,7 @@ namespace occa {
     lang::kernelMetadataMap::iterator it = deviceMetadata.begin();
     while (it != deviceMetadata.end()) {
       const std::string &name = it->first;
-      lang::kernelMetadata &metadata = it->second;
+      lang::kernelMetadata_t &metadata = it->second;
       ++it;
       if (!startsWith(name, prefix)) {
         continue;

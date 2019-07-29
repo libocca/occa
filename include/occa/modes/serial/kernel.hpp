@@ -30,7 +30,7 @@ namespace occa {
       dim maxOuterDims() const;
       dim maxInnerDims() const;
 
-      const lang::kernelMetadata& getMetadata() const;
+      const lang::kernelMetadata_t& getMetadata() const;
 
       void run() const;
 

@@ -114,7 +114,7 @@ namespace occa {
         functionDeclStatement &declSmnt = *((functionDeclStatement*) kernelSmnts[i]);
         function_t &func = declSmnt.function;
 
-        kernelMetadata &metadata = metadataMap[func.name()];
+        kernelMetadata_t &metadata = metadataMap[func.name()];
         metadata.name = func.name();
 
         int args = (int) func.args.size();

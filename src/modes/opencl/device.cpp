@@ -268,7 +268,7 @@ namespace occa {
 
       const int launchedKernelsCount = (int) launchedKernelsMetadata.size();
       for (int i = 0; i < launchedKernelsCount; ++i) {
-        lang::kernelMetadata &metadata = launchedKernelsMetadata[i];
+        lang::kernelMetadata_t &metadata = launchedKernelsMetadata[i];
         opencl::buildKernelFromProgram(clInfo,
                                        metadata.name,
                                        lock);

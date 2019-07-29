@@ -503,7 +503,7 @@ namespace occa {
         buildKernel(sourceFilename,
                     hash,
                     kernelProps,
-                    lang::kernelMetadata::fromJson(metadataArray[k]));
+                    lang::kernelMetadata_t::fromJson(metadataArray[k]));
       }
     }
 

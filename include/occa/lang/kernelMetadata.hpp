@@ -6,9 +6,9 @@
 
 namespace occa {
   namespace lang {
-    class kernelMetadata;
+    class kernelMetadata_t;
 
-    typedef std::map<std::string, kernelMetadata> kernelMetadataMap;
+    typedef std::map<std::string, kernelMetadata_t> kernelMetadataMap;
 
     class argMetadata_t {
     public:
@@ -28,19 +28,19 @@ namespace occa {
       json toJson() const;
     };
 
-    class kernelMetadata {
+    class kernelMetadata_t {
     public:
       bool initialized;
       std::string name;
       std::vector<argMetadata_t> arguments;
 
-      kernelMetadata();
+      kernelMetadata_t();
 
       bool isInitialized() const;
 
-      kernelMetadata& operator += (const argMetadata_t &argInfo);
+      kernelMetadata_t& operator += (const argMetadata_t &argInfo);
 
-      static kernelMetadata fromJson(const json &j);
+      static kernelMetadata_t fromJson(const json &j);
       json toJson() const;
     };
 
