@@ -6,6 +6,7 @@
 #include <occa/lang/builtins/attributes.hpp>
 #include <occa/lang/transforms/builtins.hpp>
 #include <occa/lang/builtins/types.hpp>
+#include <occa/tools/hash.hpp>
 
 namespace occa {
   namespace lang {
@@ -104,7 +105,9 @@ namespace occa {
 
     void parser_t::setSourceMetadata(sourceMetadata_t &sourceMetadata) const {
       kernelMetadataMap &metadataMap = sourceMetadata.kernelsMetadata;
+      strHashMap &dependencyHashes = sourceMetadata.dependencyHashes;
 
+      // Set metadata for all @kernels
       statementPtrVector kernelSmnts;
       findStatementsByAttr(statementType::functionDecl,
                            "kernel",
@@ -133,6 +136,14 @@ namespace occa {
             arg.name()
           );
         }
+      }
+
+      // Set dependencies and their hashes
+      strVector dependencies = preprocessor.getDependencyFilenames();
+      const int dependencyCount = (int) dependencies.size();
+      for (int i = 0; i < dependencyCount; ++i) {
+        const std::string &dependency = dependencies[i];
+        dependencyHashes[dependency] = hashFile(dependency);
       }
     }
     //==================================
