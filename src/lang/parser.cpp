@@ -102,7 +102,9 @@ namespace occa {
                 root.toString());
     }
 
-    void parser_t::setMetadata(kernelMetadataMap &metadataMap) const {
+    void parser_t::setSourceMetadata(sourceMetadata_t &sourceMetadata) const {
+      kernelMetadataMap &metadataMap = sourceMetadata.kernelsMetadata;
+
       statementPtrVector kernelSmnts;
       findStatementsByAttr(statementType::functionDecl,
                            "kernel",

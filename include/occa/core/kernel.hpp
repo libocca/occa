@@ -66,7 +66,7 @@ namespace occa {
                       const int count);
     void pushArgument(const kernelArg &arg);
 
-    void setMetadata(lang::parser_t &parser);
+    void setSourceMetadata(lang::parser_t &parser);
 
     void setupRun();
 

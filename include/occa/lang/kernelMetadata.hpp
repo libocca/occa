@@ -1,6 +1,7 @@
 #ifndef OCCA_LANG_KERNELMETADATA_HEADER
 #define OCCA_LANG_KERNELMETADATA_HEADER
 
+#include <occa/tools/hash.hpp>
 #include <occa/tools/json.hpp>
 #include <occa/dtype.hpp>
 
@@ -9,6 +10,7 @@ namespace occa {
     class kernelMetadata_t;
 
     typedef std::map<std::string, kernelMetadata_t> kernelMetadataMap;
+    typedef std::map<std::string, hash_t> strHashMap;
 
     class argMetadata_t {
     public:
@@ -44,7 +46,15 @@ namespace occa {
       json toJson() const;
     };
 
-    kernelMetadataMap getBuildFileMetadata(const std::string &filename);
+    class sourceMetadata_t {
+     public:
+      kernelMetadataMap kernelsMetadata;
+      strHashMap dependencyHashes;
+
+      sourceMetadata_t();
+
+      static sourceMetadata_t fromBuildFile(const std::string &filename);
+    };
   }
 }
 

@@ -101,7 +101,7 @@ namespace occa {
     void writeKernelBuildFile(const std::string &filename,
                               const hash_t &kernelHash,
                               const occa::properties &kernelProps,
-                              const lang::kernelMetadataMap &metadataMap) const;
+                              const lang::sourceMetadata_t &metadataMap) const;
 
     std::string getKernelHash(const std::string &fullHash,
                               const std::string &kernelName);

@@ -75,22 +75,26 @@ namespace occa {
       return j;
     }
 
-    kernelMetadataMap getBuildFileMetadata(const std::string &filename) {
-      kernelMetadataMap metadataMap;
+    sourceMetadata_t::sourceMetadata_t() {}
+
+    sourceMetadata_t sourceMetadata_t::fromBuildFile(const std::string &filename) {
+      sourceMetadata_t metadata;
+
       if (!io::exists(filename)) {
-        return metadataMap;
+        return metadata;
       }
 
       properties props = properties::read(filename);
-      jsonArray &metadata = props["kernel/metadata"].array();
+      jsonArray &kernelMetadata = props["kernel/metadata"].array();
 
-      const int kernelCount = (int) metadata.size();
+      kernelMetadataMap &metadataMap = metadata.kernelsMetadata;
+      const int kernelCount = (int) kernelMetadata.size();
       for (int i = 0; i < kernelCount; ++i) {
-        kernelMetadata_t kernel = kernelMetadata_t::fromJson(metadata[i]);
+        kernelMetadata_t kernel = kernelMetadata_t::fromJson(kernelMetadata[i]);
         metadataMap[kernel.name] = kernel;
       }
 
-      return metadataMap;
+      return metadata;
     }
   }
 }

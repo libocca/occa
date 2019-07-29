@@ -86,7 +86,7 @@ namespace occa {
   void modeDevice_t::writeKernelBuildFile(const std::string &filename,
                                           const hash_t &kernelHash,
                                           const occa::properties &kernelProps,
-                                          const lang::kernelMetadataMap &metadataMap) const {
+                                          const lang::sourceMetadata_t &sourceMetadata) const {
     occa::properties infoProps;
 
     infoProps["device"]       = properties;
@@ -94,9 +94,11 @@ namespace occa {
     infoProps["kernel/props"] = kernelProps;
     infoProps["kernel/hash"]  = kernelHash.getFullString();
 
+    const lang::kernelMetadataMap &kernelsMetadata = sourceMetadata.kernelsMetadata;
+
     json &metadataJson = infoProps["kernel/metadata"].asArray();
-    lang::kernelMetadataMap::const_iterator kIt = metadataMap.begin();
-    while (kIt != metadataMap.end()) {
+    lang::kernelMetadataMap::const_iterator kIt = kernelsMetadata.begin();
+    while (kIt != kernelsMetadata.end()) {
       metadataJson += (kIt->second).toJson();
       ++kIt;
     }

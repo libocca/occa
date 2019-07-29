@@ -85,7 +85,7 @@ namespace occa {
 
       void writeToFile(const std::string &filename) const;
 
-      void setMetadata(kernelMetadataMap &metadataMap) const;
+      void setSourceMetadata(sourceMetadata_t &sourceMetadata) const;
       //================================
 
       //---[ Setup ]--------------------

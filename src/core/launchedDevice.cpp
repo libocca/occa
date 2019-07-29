@@ -17,8 +17,8 @@ namespace occa {
                                        const std::string &outputFile,
                                        const std::string &launcherOutputFile,
                                        const occa::properties &kernelProps,
-                                       lang::kernelMetadataMap &launcherMetadata,
-                                       lang::kernelMetadataMap &deviceMetadata) {
+                                       lang::sourceMetadata_t &launcherMetadata,
+                                       lang::sourceMetadata_t &deviceMetadata) {
     lang::okl::withLauncher &parser = *(createParser(kernelProps));
     parser.parseFile(filename);
 
@@ -47,8 +47,8 @@ namespace occa {
       }
     }
 
-    parser.launcherParser.setMetadata(launcherMetadata);
-    parser.setMetadata(deviceMetadata);
+    parser.launcherParser.setSourceMetadata(launcherMetadata);
+    parser.setSourceMetadata(deviceMetadata);
 
     delete &parser;
     return true;
@@ -109,11 +109,11 @@ namespace occa {
                    << "] in [" << io::shortname(binaryFilename) << "]\n";
       }
       if (usingOkl) {
-        lang::kernelMetadataMap launcherMetadata = (
-          lang::getBuildFileMetadata(hashDir + kc::launcherBuildFile)
+        lang::sourceMetadata_t launcherMetadata = (
+          lang::sourceMetadata_t::fromBuildFile(hashDir + kc::launcherBuildFile)
         );
-        lang::kernelMetadataMap deviceMetadata = (
-          lang::getBuildFileMetadata(hashDir + kc::buildFile)
+        lang::sourceMetadata_t deviceMetadata = (
+          lang::sourceMetadata_t::fromBuildFile(hashDir + kc::buildFile)
         );
         return buildOKLKernelFromBinary(kernelHash,
                                         hashDir,
@@ -129,7 +129,7 @@ namespace occa {
       }
     }
 
-    lang::kernelMetadataMap launcherMetadata, deviceMetadata;
+    lang::sourceMetadata_t launcherMetadata, deviceMetadata;
     std::string sourceFilename;
     if (usingOkl) {
       // Cache raw origin
@@ -156,7 +156,7 @@ namespace occa {
       buildLauncherKernel(kernelHash,
                           hashDir,
                           kernelName,
-                          launcherMetadata[kernelName]);
+                          launcherMetadata);
 
       // No OKL means no build file is generated,
       //   so we need to build it
@@ -202,7 +202,7 @@ namespace occa {
     const hash_t kernelHash,
     const std::string &hashDir,
     const std::string &kernelName,
-    lang::kernelMetadata_t &launcherMetadata
+    lang::sourceMetadata_t sourceMetadata
   ) {
     const std::string launcherOutputFile = hashDir + kc::launcherSourceFile;
 
@@ -217,22 +217,25 @@ namespace occa {
 
     // Launcher and device kernels use the same refs as the wrapper kernel
     launcherKernel->dontUseRefs();
-    launcherKernel->metadata = launcherMetadata;
+    launcherKernel->metadata = sourceMetadata.kernelsMetadata[kernelName];
 
     return launcherKernel;
   }
 
   orderedKernelMetadata launchedModeDevice_t::getLaunchedKernelsMetadata(
     const std::string &kernelName,
-    lang::kernelMetadataMap &deviceMetadata
+    lang::sourceMetadata_t &deviceMetadata
   ) {      // Find device kernels
     typedef std::map<int, lang::kernelMetadata_t> kernelOrderMap;
     kernelOrderMap kernelMetadataMap;
 
     const std::string prefix = "_occa_" + kernelName + "_";
 
-    lang::kernelMetadataMap::iterator it = deviceMetadata.begin();
-    while (it != deviceMetadata.end()) {
+
+    lang::kernelMetadataMap &kernelsMetadata = deviceMetadata.kernelsMetadata;
+
+    lang::kernelMetadataMap::iterator it = kernelsMetadata.begin();
+    while (it != kernelsMetadata.end()) {
       const std::string &name = it->first;
       lang::kernelMetadata_t &metadata = it->second;
       ++it;
