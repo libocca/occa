@@ -94,7 +94,7 @@ namespace occa {
 
       strHashMap::const_iterator it = dependencyHashes.begin();
       while (it != dependencyHashes.end()) {
-        metadataJson[it->first] = it->second.getFullString();
+        metadataJson.set(it->first, it->second.getFullString());
         ++it;
       }
 
