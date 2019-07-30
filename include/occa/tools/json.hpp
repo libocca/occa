@@ -393,11 +393,19 @@ namespace occa {
     int size() const;
 
     template <class TM>
-    TM get(const char *c,
+    json& set(const char *key,
+              const TM &value);
+
+    template <class TM>
+    json& set(const std::string &key,
+              const TM &value);
+
+    template <class TM>
+    TM get(const char *key,
            const TM &default_ = TM()) const;
 
     template <class TM>
-    TM get(const std::string &s,
+    TM get(const std::string &key,
            const TM &default_ = TM()) const;
 
     template <class TM>

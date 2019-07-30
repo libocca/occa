@@ -1,8 +1,23 @@
 namespace occa {
   template <class TM>
-  TM json::get(const char *c,
+  json& json::set(const char *key,
+                  const TM &value) {
+    type = object_;
+    value_.object[key] = value;
+    return *this;
+  }
+
+  template <class TM>
+  json& json::set(const std::string &key,
+                  const TM &value) {
+    return set(key.c_str(), value);
+  }
+
+  template <class TM>
+  TM json::get(const char *key,
                const TM &default_) const {
     const json *j = this;
+    const char *c = key;
     while (*c != '\0') {
       if (j->type != object_) {
         return default_;
@@ -10,12 +25,12 @@ namespace occa {
 
       const char *cStart = c;
       lex::skipTo(c, '/');
-      std::string key(cStart, c - cStart);
+      std::string nextKey(cStart, c - cStart);
       if (*c == '/') {
         ++c;
       }
 
-      jsonObject::const_iterator it = j->value_.object.find(key);
+      jsonObject::const_iterator it = j->value_.object.find(nextKey);
       if (it == j->value_.object.end()) {
         return default_;
       }
@@ -25,9 +40,9 @@ namespace occa {
   }
 
   template <class TM>
-  TM json::get(const std::string &s,
+  TM json::get(const std::string &key,
                const TM &default_) const {
-    return get<TM>(s.c_str(), default_);
+    return get<TM>(key.c_str(), default_);
   }
 
   template <class TM>
