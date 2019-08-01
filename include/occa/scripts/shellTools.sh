@@ -542,8 +542,8 @@ function installOcca {
         return
     fi
     mkdir -p "${PREFIX}"
-    cp -r bin     "${PREFIX}/bin"
-    cp -r include "${PREFIX}/include"
-    cp -r lib     "${PREFIX}/lib"
+    cp -r bin     "${PREFIX}"
+    cp -r include "${PREFIX}"
+    cp -r lib     "${PREFIX}"
 }
 #=======================================
