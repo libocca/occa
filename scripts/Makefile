@@ -171,6 +171,8 @@ pthreadFlag  = $(call compilerPthreadFlag)
 #---[ Flags and Libraries ]-----------------------
 OCCA_USING_VS := 0
 OCCA_UNSAFE   ?= 0
+soNameFlag=
+soExt=
 
 ifeq ($(usingLinux),1)
 
@@ -181,12 +183,16 @@ ifeq ($(usingLinux),1)
   endif
 
   linkerFlags += -lm -lrt -ldl
+  soNameFlag = -Wl,-soname,libocca.so
+  soExt = so
 
 else ifeq ($(usingMacOS),1)
 
 	OCCA_OS := OCCA_MACOS_OS
   flags += -Wno-deprecated-declarations
   linkerFlags += -framework accelerate -framework CoreServices
+  soNameFlag = -Wl,-install_name,@rpath/libocca.dylib
+  soExt = dylib
 
 else ifeq ($(usingWindows),1)
 
@@ -198,6 +204,7 @@ else ifeq ($(usingWindows),1)
   endif
 
   linkerFlags +=
+  soExt = so
 
 endif
 #=================================================
