@@ -541,9 +541,13 @@ function installOcca {
     if [ -z "${PREFIX}" ]; then
         return
     fi
-    mkdir -p "${PREFIX}"
-    cp -r bin     "${PREFIX}/bin"
-    cp -r include "${PREFIX}/include"
-    cp -r lib     "${PREFIX}/lib"
+    if [ -d "${PREFIX}" ]; then
+      echo "Warning: Install PREFIX=${PREFIX} already exists."
+    else
+      mkdir -p "${PREFIX}"
+    fi
+    cp -r bin     "${PREFIX}"
+    cp -r include "${PREFIX}"
+    cp -r lib     "${PREFIX}"
 }
 #=======================================
