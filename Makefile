@@ -5,7 +5,7 @@ PROJ_DIR := $(OCCA_DIR)
 
 # Clear the list of suffixes
 .SUFFIXES:
-.SUFFIXES: .hpp .h .tpp .cpp .mm .o .so
+.SUFFIXES: .hpp .h .tpp .cpp .mm .o .so .dylib
 
 # Cancel some implicit rules
 %:   %.o
@@ -61,7 +61,7 @@ ifeq ($(metalEnabled),1)
 	objects += $(call objcSrcToObject,$(objcSources))
 endif
 
-outputs = $(libPath)/libocca.so $(binPath)/occa
+outputs = $(libPath)/libocca.$(soExt) $(binPath)/occa
 
 ifdef SANITIZER_ENABLED
   testFlags = $(compilerFlags) -fsanitize=address -fno-omit-frame-pointer
@@ -105,11 +105,11 @@ $(COMPILED_DEFINES_CHANGED):
 
 #---[ Builds ]------------------------------------
 #  ---[ libocca ]-------------
-$(libPath)/libocca.so:$(objects) $(headers) $(COMPILED_DEFINES)
+$(libPath)/libocca.$(soExt):$(objects) $(headers) $(COMPILED_DEFINES)
 	mkdir -p $(libPath)
-	$(compiler) $(compilerFlags) $(sharedFlag) $(pthreadFlag) -o $(libPath)/libocca.so $(flags) $(objects) $(paths) $(filter-out -locca, $(linkerFlags))
+	$(compiler) $(compilerFlags) $(sharedFlag) $(pthreadFlag) $(soNameFlag) -o $(libPath)/libocca.$(soExt) $(flags) $(objects) $(paths) $(filter-out -locca, $(linkerFlags))
 
-$(binPath)/occa:$(OCCA_DIR)/bin/occa.cpp $(libPath)/libocca.so $(COMPILED_DEFINES_CHANGED)
+$(binPath)/occa:$(OCCA_DIR)/bin/occa.cpp $(libPath)/libocca.$(soExt) $(COMPILED_DEFINES_CHANGED)
 	@mkdir -p $(binPath)
 	$(compiler) $(compilerFlags) -o $(binPath)/occa -Wl,-rpath,$(libPath) $(flags) $(OCCA_DIR)/bin/occa.cpp $(paths) $(linkerFlags) -L$(OCCA_DIR)/lib -locca
 #  ===========================
@@ -167,7 +167,7 @@ clean:
 	rm -rf $(binPath)/occa
 	rm -rf $(testPath)/bin
 	rm -rf $(testPath)/src/io/locks
-	rm  -f $(libPath)/libocca.so
+	rm  -f $(libPath)/libocca.$(soExt)
 #=================================================
 
 
