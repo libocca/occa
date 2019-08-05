@@ -25,8 +25,10 @@ namespace occa {
     void elseStatement::print(printer &pout) const {
       pout.printStartIndentation();
       pout << "else";
+      pout.pushInlined(true);
 
       blockStatement::print(pout);
+      pout.popInlined();
     }
   }
 }
