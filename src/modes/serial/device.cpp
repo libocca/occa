@@ -173,9 +173,7 @@ namespace occa {
     modeKernel_t* device::buildLauncherKernel(const std::string &filename,
                                               const std::string &kernelName,
                                               const hash_t kernelHash) {
-      occa::properties kernelProps = properties["kernel"];
-      kernelProps["okl"] = false;
-      return buildKernel(filename, kernelName, kernelHash, kernelProps, true);
+      return buildKernel(filename, kernelName, kernelHash, properties["kernel"], true);
     }
 
     modeKernel_t* device::buildKernel(const std::string &filename,
@@ -222,30 +220,35 @@ namespace occa {
         return k;
       }
 
-      // Cache raw origin
-      std::string sourceFilename = (
-        io::cacheFile(filename,
-                      kc::rawSourceFile,
-                      kernelHash,
-                      assembleKernelHeader(kernelProps))
-      );
-
+      std::string sourceFilename;
       lang::sourceMetadata_t metadata;
-      if (kernelProps.get("okl", true)) {
-        const std::string outputFile = hashDir + kc::sourceFile;
-        bool valid = parseFile(sourceFilename,
-                               outputFile,
+      if (isLauncherKernel) {
+        sourceFilename = filename;
+      } else {
+        // Cache raw origin
+        sourceFilename = (
+          io::cacheFile(filename,
+                        kc::rawSourceFile,
+                        kernelHash,
+                        assembleKernelHeader(kernelProps))
+        );
+
+        if (kernelProps.get("okl", true)) {
+          const std::string outputFile = hashDir + kc::sourceFile;
+          bool valid = parseFile(sourceFilename,
+                                 outputFile,
+                                 kernelProps,
+                                 metadata);
+          if (!valid) {
+            return NULL;
+          }
+          sourceFilename = outputFile;
+
+          writeKernelBuildFile(hashDir + kc::buildFile,
+                               kernelHash,
                                kernelProps,
                                metadata);
-        if (!valid) {
-          return NULL;
         }
-        sourceFilename = outputFile;
-
-        writeKernelBuildFile(hashDir + kc::buildFile,
-                             kernelHash,
-                             kernelProps,
-                             metadata);
       }
 
       std::stringstream command;
