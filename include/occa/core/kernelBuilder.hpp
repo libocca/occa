@@ -9,7 +9,7 @@ namespace occa {
   protected:
     std::string source_;
     std::string function_;
-    occa::properties props_;
+    occa::properties defaultProps;
 
     hashedKernelMap kernelMap;
 
@@ -23,11 +23,11 @@ namespace occa {
 
     static kernelBuilder fromFile(const std::string &filename,
                                   const std::string &function,
-                                  const occa::properties &props = occa::properties());
+                                  const occa::properties &defaultProps_ = occa::properties());
 
     static kernelBuilder fromString(const std::string &content,
                                     const std::string &function,
-                                    const occa::properties &props = occa::properties());
+                                    const occa::properties &defaultProps_ = occa::properties());
 
     bool isInitialized();
 

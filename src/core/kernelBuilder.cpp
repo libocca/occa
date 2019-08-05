@@ -12,37 +12,37 @@ namespace occa {
   kernelBuilder::kernelBuilder(const kernelBuilder &k) :
     source_(k.source_),
     function_(k.function_),
-    props_(k.props_),
+    defaultProps(k.defaultProps),
     kernelMap(k.kernelMap),
     buildingFromFile(k.buildingFromFile) {}
 
   kernelBuilder& kernelBuilder::operator = (const kernelBuilder &k) {
-    source_   = k.source_;
-    function_ = k.function_;
-    props_    = k.props_;
-    kernelMap = k.kernelMap;
+    source_      = k.source_;
+    function_    = k.function_;
+    defaultProps = k.defaultProps;
+    kernelMap    = k.kernelMap;
     buildingFromFile = k.buildingFromFile;
     return *this;
   }
 
   kernelBuilder kernelBuilder::fromFile(const std::string &filename,
                                         const std::string &function,
-                                        const occa::properties &props) {
+                                        const occa::properties &defaultProps_) {
     kernelBuilder builder;
-    builder.source_   = filename;
-    builder.function_ = function;
-    builder.props_    = props;
+    builder.source_      = filename;
+    builder.function_    = function;
+    builder.defaultProps = defaultProps_;
     builder.buildingFromFile = true;
     return builder;
   }
 
   kernelBuilder kernelBuilder::fromString(const std::string &content,
                                           const std::string &function,
-                                          const occa::properties &props) {
+                                          const occa::properties &defaultProps_) {
     kernelBuilder builder;
-    builder.source_   = content;
-    builder.function_ = function;
-    builder.props_    = props;
+    builder.source_      = content;
+    builder.function_    = function;
+    builder.defaultProps = defaultProps_;
     builder.buildingFromFile = false;
     return builder;
   }
@@ -52,12 +52,12 @@ namespace occa {
   }
 
   occa::kernel kernelBuilder::build(occa::device device) {
-    return build(device, hash(device), props_);
+    return build(device, hash(device), defaultProps);
   }
 
   occa::kernel kernelBuilder::build(occa::device device,
                                     const occa::properties &props) {
-    occa::properties kernelProps = props_;
+    occa::properties kernelProps = defaultProps;
     kernelProps += props;
     return build(device,
                  hash(device) ^ hash(kernelProps),
@@ -66,7 +66,7 @@ namespace occa {
 
   occa::kernel kernelBuilder::build(occa::device device,
                                     const hash_t &hash) {
-    return build(device, hash, props_);
+    return build(device, hash, defaultProps);
   }
 
   occa::kernel kernelBuilder::build(occa::device device,

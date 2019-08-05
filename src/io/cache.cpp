@@ -65,15 +65,15 @@ namespace occa {
                           const std::string &cachedName,
                           const hash_t &hash,
                           const std::string &header) {
-      // File is already cached
-      if (isCached(filename)) {
-        return filename;
-      }
-
       const std::string expFilename = io::filename(filename);
       const std::string hashDir     = io::hashDir(expFilename, hash);
       const std::string buildFile   = hashDir + kc::buildFile;
       const std::string sourceFile  = hashDir + cachedName;
+
+      // File is already cached
+      if (filename == sourceFile) {
+        return filename;
+      }
 
       if (!io::isFile(sourceFile)) {
         std::stringstream ss;
