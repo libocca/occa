@@ -108,7 +108,7 @@ namespace occa {
           const int declCount = declSmnt.declarations.size();
           for (int di = 0; di < declCount; ++di) {
             variable_t &var = *(declSmnt.declarations[di].variable);
-            if (var.has(const_)) {
+            if (var.has(const_) && !var.has(typedef_)) {
               var -= const_;
               var.add(0, constant);
             }
