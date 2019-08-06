@@ -80,8 +80,6 @@ namespace occa {
       }
 
       properties["kernel/vendor"] = vendor;
-      sys::addSharedBinaryFlagsTo(vendor, compilerFlags);
-
       properties["kernel/compiler"] = compiler;
       properties["kernel/compiler_flags"] = compilerFlags;
       properties["kernel/compiler_env_script"] = compilerEnvScript;
@@ -257,9 +255,13 @@ namespace occa {
         command << compilerEnvScript << " && ";
       }
 
+      std::string compilerFlags = kernelProps["compiler_flags"];
+      sys::addSharedBinaryFlagsTo((int) kernelProps["vendor"],
+                                  compilerFlags);
+
 #if (OCCA_OS & (OCCA_LINUX_OS | OCCA_MACOS_OS))
       command << (std::string) kernelProps["compiler"]
-              << ' '    << (std::string) kernelProps["compiler_flags"]
+              << ' '    << compilerFlags
               << ' '    << sourceFilename
               << " -o " << binaryFilename
               << " -I"  << env::OCCA_DIR << "include"

@@ -712,9 +712,9 @@ namespace occa {
                      sys::vendor::PGI   |
                      sys::vendor::Cray  |
                      sys::vendor::Pathscale)) {
-        return "-x c++ -fPIC -shared";
+        return "-fPIC -shared";
       } else if (vendor_ & sys::vendor::IBM) {
-        return "-x c++ -qpic -shared";
+        return "-qpic -shared";
       } else if (vendor_ & sys::vendor::HP) {
         return "+z -b";
       } else if (vendor_ & sys::vendor::VisualStudio) {
@@ -724,18 +724,36 @@ namespace occa {
       return "";
     }
 
-    void addSharedBinaryFlagsTo(const std::string &compiler, std::string &flags) {
-      addSharedBinaryFlagsTo(sys::compilerVendor(compiler), flags);
+    void addSharedBinaryFlagsTo(const std::string &compiler, std::string &compilerFlags) {
+      addSharedBinaryFlagsTo(sys::compilerVendor(compiler), compilerFlags);
     }
 
-    void addSharedBinaryFlagsTo(const int vendor_, std::string &flags) {
-      std::string sFlags = sys::compilerSharedBinaryFlags(vendor_);
+    void addSharedBinaryFlagsTo(const int vendor_, std::string &compilerFlags) {
+      strVector flags = split(compilerFlags, ' ');
+      const int flagCount = (int) flags.size();
 
-      if (flags.size() == 0) {
-        flags = sFlags;
+      strVector sharedFlags = split(sys::compilerSharedBinaryFlags(vendor_), ' ');
+      const int sharedFlagCount = (int) sharedFlags.size();
+
+      for (int sfi = 0; sfi < sharedFlagCount; ++sfi) {
+        const std::string &sharedFlag = sharedFlags[sfi];
+        // Check existing flags, avoid counting the new shared flags
+        for (int fi = 0; fi < flagCount; ++fi) {
+          const std::string &flag = flags[fi];
+          if (sharedFlag == flag) {
+            break;
+          }
+          // Flag not found since this is the last flag
+          if (fi == (flagCount - 1)) {
+            flags.push_back(sharedFlag);
+          }
+        }
       }
-      if (flags.find(sFlags) == std::string::npos) {
-        flags = (sFlags + " " + flags);
+
+      // Add new flags
+      for (int i = flagCount; i < (int) flags.size(); ++i) {
+        compilerFlags += ' ';
+        compilerFlags += flags[i];
       }
     }
 
