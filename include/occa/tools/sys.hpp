@@ -82,8 +82,8 @@ namespace occa {
     std::string compilerSharedBinaryFlags(const std::string &compiler);
     std::string compilerSharedBinaryFlags(const int vendor_);
 
-    void addSharedBinaryFlagsTo(const std::string &compiler, std::string &flags);
-    void addSharedBinaryFlagsTo(const int vendor_, std::string &flags);
+    void addSharedBinaryFlagsTo(const std::string &compiler, std::string &compilerFlags);
+    void addSharedBinaryFlagsTo(const int vendor_, std::string &compilerFlags);
     //==================================
 
     //---[ Dynamic Methods ]------------
