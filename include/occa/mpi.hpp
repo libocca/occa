@@ -107,7 +107,7 @@ namespace occa {
       if (!data
           .getDevice()
           .hasSeparateMemorySpace()) {
-        MPI_Isend(data.ptr(),
+        MPI_Isend((void*) data.ptr(),
                   entries,
                   type<TM>(),
                   receiverID,

@@ -1,0 +1,31 @@
+#ifndef OCCA_DEFINES_COMPILEDDEFINES_HEADER
+#define OCCA_DEFINES_COMPILEDDEFINES_HEADER
+
+#ifndef OCCA_LINUX_OS
+#  define OCCA_LINUX_OS 1
+#endif
+
+#ifndef OCCA_MACOS_OS
+#  define OCCA_MACOS_OS 2
+#endif
+
+#ifndef OCCA_WINDOWS_OS
+#  define OCCA_WINDOWS_OS 4
+#endif
+
+#ifndef OCCA_WINUX_OS
+#  define OCCA_WINUX_OS (OCCA_LINUX_OS | OCCA_WINDOWS_OS)
+#endif
+
+// Values are hardcoded for now
+#define OCCA_OS             OCCA_LINUX_OS
+#define OCCA_USING_VS       0
+#define OCCA_UNSAFE         0
+
+#cmakedefine01 OCCA_MPI_ENABLED
+#cmakedefine01 OCCA_OPENMP_ENABLED
+#cmakedefine01 OCCA_OPENCL_ENABLED
+#cmakedefine01 OCCA_CUDA_ENABLED
+#cmakedefine01 OCCA_HIP_ENABLED
+
+#endif
