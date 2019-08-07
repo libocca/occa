@@ -21,6 +21,8 @@ namespace occa {
     kernelBuilder(const kernelBuilder &k);
     kernelBuilder& operator = (const kernelBuilder &k);
 
+    const occa::properties& defaultProperties() const;
+
     static kernelBuilder fromFile(const std::string &filename,
                                   const std::string &function,
                                   const occa::properties &defaultProps_ = occa::properties());

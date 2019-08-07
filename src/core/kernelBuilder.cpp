@@ -25,6 +25,10 @@ namespace occa {
     return *this;
   }
 
+  const occa::properties& kernelBuilder::defaultProperties() const {
+    return defaultProps;
+  }
+
   kernelBuilder kernelBuilder::fromFile(const std::string &filename,
                                         const std::string &function,
                                         const occa::properties &defaultProps_) {
