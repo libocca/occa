@@ -1,1 +1,1 @@
-COMPILE_C_EXAMPLE(4_reduction main.c)
+COMPILE_C_EXAMPLE(04_reduction main.c)

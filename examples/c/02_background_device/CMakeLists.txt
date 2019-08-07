@@ -1,1 +1,1 @@
-COMPILE_C_EXAMPLE(2_background_device main.c)
+COMPILE_C_EXAMPLE(02_background_device main.c)
