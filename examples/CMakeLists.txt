@@ -1,0 +1,16 @@
+MACRO(COMPILE_C_EXAMPLE target file)
+    add_executable(examples_c_${target} ${file})
+    set_target_properties(examples_c_${target} PROPERTIES OUTPUT_NAME main)
+    target_link_libraries(examples_c_${target} libocca ${CMAKE_THREAD_LIBS_INIT} ${CMAKE_DL_LIBS})
+    include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
+ENDMACRO()
+
+MACRO(COMPILE_CPP_EXAMPLE target file)
+    add_executable(examples_cpp_${target} ${file})
+    set_target_properties(examples_cpp_${target} PROPERTIES OUTPUT_NAME main)
+    target_link_libraries(examples_cpp_${target} libocca ${CMAKE_THREAD_LIBS_INIT} ${CMAKE_DL_LIBS})
+    include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
+ENDMACRO()
+
+add_subdirectory(c)
+add_subdirectory(cpp)
