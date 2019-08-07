@@ -1,16 +1,24 @@
+# Git
 .gitattributes
 
-bin/
-!bin/occa.cpp
+# Build artifacts
+*.obj
+*.pyc
 lib/
 obj/
+main
+
+# CMake
+build/
+
+# Bin
+bin/
+!bin/occa.cpp
+
+# Auto-generated code
 .compiledDefines
 include/occa/defines/compiledDefines.hpp
 include/occa/scripts
-
-*.obj
-*.pyc
-main
 
 # Debug
 .DS_Store

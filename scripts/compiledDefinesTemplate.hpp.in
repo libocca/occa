@@ -28,6 +28,6 @@
 #cmakedefine01 OCCA_CUDA_ENABLED
 #cmakedefine01 OCCA_HIP_ENABLED
 
-#cmakedefine OCCA_BUILD_DIR "@OCCA_BUILD_DIR@"
+#cmakedefine OCCA_BINARY_DIR
 
 #endif
