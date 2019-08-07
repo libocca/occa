@@ -19,6 +19,7 @@ namespace occa {
   namespace env {
     std::string HOME, PWD;
     std::string PATH, LD_LIBRARY_PATH;
+    std::string OCCA_BINARY_DIR;
 
     std::string OCCA_DIR, OCCA_CACHE_DIR;
     size_t      OCCA_MEM_BYTE_ALIGN;
@@ -71,6 +72,7 @@ namespace occa {
       PWD                = env::var("PWD");
       PATH               = env::var("PATH");
       LD_LIBRARY_PATH    = env::var("LD_LIBRARY_PATH");
+      OCCA_BINARY_DIR    = env::var("OCCA_BINARY_DIR");
       OCCA_COLOR_ENABLED = env::get<bool>("OCCA_COLOR_ENABLED", true);
 
       io::endWithSlash(HOME);
