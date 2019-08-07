@@ -28,6 +28,12 @@ endif
 paths += -I$(srcPath)
 paths := $(filter-out -L$(OCCA_DIR)/lib,$(paths))
 linkerFlags := $(filter-out -locca,$(linkerFlags))
+
+ifeq (${PREFIX},)
+	OCCA_BINARY_DIR := $(OCCA_DIR)
+else
+	OCCA_BINARY_DIR := ${PREFIX}
+endif
 #=================================================
 
 
@@ -41,7 +47,7 @@ pthreadFlag := $(pthreadFlag)
 #=================================================
 
 
-#---[ variables ]---------------------------------
+#---[ Compilation Variables ]---------------------
 srcToObject     = $(subst $(PROJ_DIR)/src,$(PROJ_DIR)/obj,$(1:.cpp=.o))
 
 dontCompile = $(OCCA_DIR)/src/core/kernelOperators.cpp $(OCCA_DIR)/src/tools/runFunction.cpp
@@ -85,7 +91,8 @@ MAKE_COMPILED_DEFINES := $(shell cat "$(OCCA_DIR)/scripts/compiledDefinesTemplat
                                       s,@@OCCA_CUDA_ENABLED@@,$(OCCA_CUDA_ENABLED),g;\
                                       s,@@OCCA_HIP_ENABLED@@,$(OCCA_HIP_ENABLED),g;\
                                       s,@@OCCA_OPENCL_ENABLED@@,$(OCCA_OPENCL_ENABLED),g;\
-                                      s,@@OCCA_METAL_ENABLED@@,$(OCCA_METAL_ENABLED),g;"\
+                                      s,@@OCCA_METAL_ENABLED@@,$(OCCA_METAL_ENABLED),g;\
+                                      s,@@OCCA_BINARY_DIR@@,$(OCCA_BINARY_DIR),g;"\
 																	> "$(NEW_COMPILED_DEFINES)")
 
 MAKE_COMPILED_DEFINES := $(shell \

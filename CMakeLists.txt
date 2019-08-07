@@ -58,7 +58,7 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}")
 set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${OpenMP_EXE_LINKER_FLAGS}")
 
 include_directories(${PROJECT_BINARY_DIR})
-SET(OCCA_BUILD_DIR ${PROJECT_BINARY_DIR} )
+SET(OCCA_BINARY_DIR ${PROJECT_BINARY_DIR} )
 # TODO:
 CONFIGURE_FILE( scripts/compiledDefinesTemplate.hpp.in ${PROJECT_BINARY_DIR}/occa/defines/compiledDefines.hpp )
 # will not work because build directory unknown to runtime compiler
