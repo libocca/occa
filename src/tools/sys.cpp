@@ -778,8 +778,8 @@ namespace occa {
                  const io::lock_t &lock) {
 
 #if (OCCA_OS & (OCCA_LINUX_OS | OCCA_MACOS_OS))
-      void *dlHandle = ::dlopen(filename.c_str(), RTLD_NOW);
-
+      void *dlHandle = ::dlopen(filename.c_str(),
+                                RTLD_NOW | RTLD_LOCAL);
       if (dlHandle == NULL) {
         lock.release();
         char *error = dlerror();
