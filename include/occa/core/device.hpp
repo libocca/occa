@@ -215,6 +215,8 @@ namespace occa {
                          occa::properties &kernelProps,
                          hash_t &kernelHash) const;
 
+    hash_t applyDependencyHash(const hash_t &kernelHash) const;
+
     occa::kernel buildKernel(const std::string &filename,
                              const std::string &kernelName,
                              const occa::properties &props = occa::properties()) const;
