@@ -130,7 +130,13 @@ namespace occa {
 
       void processToken(token_t *token);
       void processIdentifier(identifierToken &token);
-      void processOperator(operatorToken &token);
+
+      void processOperator(operatorToken &opToken);
+      void processHashOperator(operatorToken &opToken);
+      void processAttributeOperator(operatorToken &opToken);
+      void freeAttributeOperatorTokens(token_t &opToken,
+                                       token_t &directiveToken,
+                                       std::list<token_t*> &prevOutputCache);
 
       bool lineIsTrue(identifierToken &directive,
                       bool &isTrue);

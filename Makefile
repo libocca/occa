@@ -157,7 +157,7 @@ bin-tests: unit-tests
 
 $(testPath)/bin/%:$(testPath)/src/%.cpp $(outputs)
 	@mkdir -p $(abspath $(dir $@))
-	$(compiler) $(testFlags) $(pthreadFlag) -o $@ $(flags) $< $(paths) $(linkerFlags) -L$(OCCA_DIR)/lib -locca
+	$(compiler) $(testFlags) $(pthreadFlag) -o $@ -Wl,-rpath,$(libPath) $(flags) $< $(paths) $(linkerFlags) -L$(OCCA_DIR)/lib -locca
 #=================================================
 
 

@@ -531,14 +531,21 @@ namespace occa {
       }
     }
 
-    void preprocessor_t::processOperator(operatorToken &token) {
-      if ((token.opType() != operatorType::hash) ||
-          !passedNewline) {
-        pushOutput(&token);
-        return;
+    void preprocessor_t::processOperator(operatorToken &opToken) {
+      const opType_t &op = opToken.opType();
+      // Make sure the line starts with #
+      if ((op == operatorType::hash) && passedNewline) {
+        return processHashOperator(opToken);
       }
-      delete &token;
+      // Test for @directive("...")
+      if (op == operatorType::attribute) {
+        return processAttributeOperator(opToken);
+      }
+      pushOutput(&opToken);
+    }
 
+    void preprocessor_t::processHashOperator(operatorToken &opToken) {
+      delete &opToken;
       if (inputIsEmpty()) {
         return;
       }
@@ -590,6 +597,142 @@ namespace occa {
       delete directive;
     }
 
+    void preprocessor_t::processAttributeOperator(operatorToken &opToken) {
+      // Check for @[directive]
+      token_t *directiveToken = getSourceToken();
+      const bool isDirective = (
+        (token_t::safeType(directiveToken) & tokenType::identifier) &&
+        (directiveToken->to<identifierToken>().value == "directive")
+      );
+      if (!isDirective) {
+        // Push the [@] token directly
+        pushOutput(&opToken);
+        // The next token still needs to be processed
+        if (directiveToken) {
+          pushInput(directiveToken);
+        }
+        return;
+      }
+
+      // Freeze our outputs and expand the rest of our symbols
+      std::list<token_t*> prevOutputCache = outputCache;
+      outputCache.clear();
+
+      // Make sure we have a tokenizer
+      tokenizer_t *tokenizer = (tokenizer_t*) getInput("tokenizer_t");
+      if (!tokenizer) {
+        warningOn(directiveToken,
+                  "Unable to apply @directive due to the lack of a tokenizer");
+        return freeAttributeOperatorTokens(opToken,
+                                           *directiveToken,
+                                           prevOutputCache);
+      }
+
+      // Try and get the 3 @directive[(]["..."][)] tokens
+      while (!inputIsEmpty() && outputCache.size() < 3) {
+        fetchNext();
+      }
+      if (outputCache.size() < 3) {
+        errorOn(directiveToken,
+                "@directive expects a string argument");
+        return freeAttributeOperatorTokens(opToken,
+                                           *directiveToken,
+                                           prevOutputCache);
+      }
+
+      // Check for the proper 3 @directive[(]["..."][)] tokens
+      token_t *parenStartToken = outputCache.front();
+      outputCache.pop_front();
+      token_t *contentToken = outputCache.front();
+      outputCache.pop_front();
+      token_t *parenEndToken = outputCache.front();
+      outputCache.pop_front();
+
+      if (
+        !(token_t::safeOperatorType(parenStartToken) & operatorType::parenthesesStart)
+        || !(token_t::safeType(contentToken) & tokenType::string)
+        || !(token_t::safeOperatorType(parenEndToken) & operatorType::parenthesesEnd)
+      ) {
+        errorOn(directiveToken,
+                "@directive expects a string argument");
+        delete parenStartToken;
+        delete contentToken;
+        delete parenEndToken;
+        skipToNewline();
+        return freeAttributeOperatorTokens(opToken,
+                                           *directiveToken,
+                                           prevOutputCache);
+      }
+
+      stringToken &sourceToken = contentToken->to<stringToken>();
+      const std::string source = strip(sourceToken.value);
+      const int sourceLength = (int) source.size();
+
+      // Make sure @directive content starts with a #
+      bool missingStartHash = (!sourceLength || source[0] != '#');
+      // Make sure there are no newlines inserted
+      bool hasNewlines = false;
+      if (!missingStartHash) {
+        for (int i = 1; i < sourceLength; ++i) {
+          hasNewlines = (source[i] == '\n');
+          if (hasNewlines) {
+            break;
+          }
+        }
+      }
+
+      // Print error message if needed
+      if (missingStartHash || hasNewlines) {
+        if (missingStartHash) {
+          errorOn(contentToken,
+                  "@directive expects a string argument which starts with #");
+        } else {
+          errorOn(contentToken,
+                  "@directive expects a string argument cannot contain newlines");
+        }
+        delete parenStartToken;
+        delete contentToken;
+        delete parenEndToken;
+        return freeAttributeOperatorTokens(opToken,
+                                           *directiveToken,
+                                           prevOutputCache);
+      }
+
+      tokenVector newTokens;
+      tokenizer->tokenize(newTokens,
+                          sourceToken.origin,
+                          source);
+
+      incrementNewline();
+      pushInput(new newlineToken(sourceToken.origin));
+      const int newTokenCount = (int) newTokens.size();
+      for (int i = (newTokenCount - 1); i >= 0; --i) {
+        pushInput(newTokens[i]);
+      }
+
+      delete &opToken;
+      delete directiveToken;
+
+      // Bring back the original output cache
+      outputCache = prevOutputCache;
+    }
+
+    void preprocessor_t::freeAttributeOperatorTokens(token_t &opToken,
+                                                     token_t &directiveToken,
+                                                     std::list<token_t*> &prevOutputCache) {
+      delete &opToken;
+      delete &directiveToken;
+
+      // Delete output tokens
+      while (!outputCache.empty()) {
+        delete outputCache.front();
+        outputCache.pop_front();
+      }
+      while (!prevOutputCache.empty()) {
+        delete prevOutputCache.front();
+        prevOutputCache.pop_front();
+      }
+    }
 
     bool preprocessor_t::lineIsTrue(identifierToken &directive,
                                     bool &isTrue) {
