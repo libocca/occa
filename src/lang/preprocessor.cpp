@@ -629,8 +629,16 @@ namespace occa {
       }
 
       // Try and get the 3 @directive[(]["..."][)] tokens
+      const int currentTokenizerErrors = tokenizer->errors;
+      const int currentErrors = errors;
       while (!inputIsEmpty() && outputCache.size() < 3) {
         fetchNext();
+        if ((errors > currentErrors) ||
+            (tokenizer->errors > currentTokenizerErrors)) {
+          return freeAttributeOperatorTokens(opToken,
+                                             *directiveToken,
+                                             prevOutputCache);
+        }
       }
       if (outputCache.size() < 3) {
         errorOn(directiveToken,
@@ -671,15 +679,10 @@ namespace occa {
       // Make sure @directive content starts with a #
       bool missingStartHash = (!sourceLength || source[0] != '#');
       // Make sure there are no newlines inserted
-      bool hasNewlines = false;
-      if (!missingStartHash) {
-        for (int i = 1; i < sourceLength; ++i) {
-          hasNewlines = (source[i] == '\n');
-          if (hasNewlines) {
-            break;
-          }
-        }
-      }
+      bool hasNewlines = (
+        !missingStartHash
+        && source.find("\\n") != std::string::npos
+      );
 
       // Print error message if needed
       if (missingStartHash || hasNewlines) {

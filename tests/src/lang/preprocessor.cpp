@@ -677,14 +677,17 @@ void testOccaDirective() {
   preprocessor_t *pp;
   occa::lang::tokenVector tokens;
 
-#define loadDirectiveTokens(directive, content)                 \
-  setStream("@directive(\"" directive "\")\n"                   \
-            content);                                           \
+#define loadDirectiveContent(content)                           \
+  setStream(content);                                           \
   tokens.clear();                                               \
   while (!tokenStream.isEmpty()) {                              \
     tokens.push_back(getToken());                               \
   }                                                             \
   pp = (preprocessor_t*) tokenStream.getInput("preprocessor_t")
+
+#define loadDirectiveTokens(directive, content)           \
+  loadDirectiveContent("@directive(\"" directive "\")\n"  \
+                       content)
 
 #define checkTokenType(index, token_type)             \
   ASSERT_EQ_BINARY(token_type, tokens[index]->type())
@@ -713,12 +716,12 @@ void testOccaDirective() {
   ASSERT_EQ(1, (int) tokens.size());
   checkPragma(0, "");
 
-  loadDirectiveTokens("#pragma foo",
+  loadDirectiveTokens("  #pragma foo",
                       "");
   ASSERT_EQ(1, (int) tokens.size());
   checkPragma(0, "foo");
 
-  loadDirectiveTokens("#pragma foo a b c",
+  loadDirectiveTokens("#pragma foo a b c  ",
                       "");
   ASSERT_EQ(1, (int) tokens.size());
   checkPragma(0, "foo a b c");
@@ -726,6 +729,33 @@ void testOccaDirective() {
   // OCCA Pragma
   loadDirectiveTokens("#pragma occa attributes @tile(16, @outer, @inner)",
                       "");
+  ASSERT_EQ(11, (int) tokens.size());
+
+  // No # start
+  loadDirectiveTokens("foo a b c",
+                      "");
+  ASSERT_EQ(1, pp->errors);
+
+  // Has newlines
+  loadDirectiveTokens("#pragma foo \\n a b c",
+                      "");
+  ASSERT_EQ(1, pp->errors);
+
+  // Missing ()
+  loadDirectiveContent("@directive");
+  ASSERT_EQ(1, pp->errors);
+
+  // Missing ""
+  loadDirectiveContent("@directive()");
+  ASSERT_EQ(1, pp->errors);
+
+  // Not a string
+  loadDirectiveContent("@directive(2)");
+  ASSERT_EQ(1, pp->errors);
+
+  // Doesn't only have a string
+  loadDirectiveContent("@directive(\"a\" 2)");
+  ASSERT_EQ(1, pp->errors);
 
 #undef loadDirectiveTokens
 #undef checkPrimitive
