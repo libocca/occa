@@ -96,7 +96,7 @@ namespace occa {
       int peekForOperator();
 
       void getIdentifier(std::string &value);
-      void getString(std::string &value,
+      bool getString(std::string &value,
                      const int encoding = 0);
       void getRawString(std::string &value);
 
