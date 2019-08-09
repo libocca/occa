@@ -17,6 +17,7 @@ void testSpecialMacros();
 void testInclude();
 void testPragma();
 void testOccaPragma();
+void testOccaDirective();
 
 using namespace occa::lang;
 
@@ -40,10 +41,11 @@ void setStream(const std::string &s) {
   preprocessor.clear();
 }
 
-void getToken() {
+token_t* getToken() {
   delete token;
   token = NULL;
   tokenStream >> token;
+  return token;
 }
 
 void setToken(const std::string &s) {
@@ -82,6 +84,7 @@ int main(const int argc, const char **argv) {
   testInclude();
   testPragma();
   testOccaPragma();
+  testOccaDirective();
 
   delete token;
 
@@ -667,6 +670,94 @@ void testOccaPragma() {
 
 #undef checkOp
 #undef checkIdentifier
+#undef checkPrimitive
+}
+
+void testOccaDirective() {
+  preprocessor_t *pp;
+  occa::lang::tokenVector tokens;
+
+#define loadDirectiveContent(content)                           \
+  setStream(content);                                           \
+  tokens.clear();                                               \
+  while (!tokenStream.isEmpty()) {                              \
+    tokens.push_back(getToken());                               \
+  }                                                             \
+  pp = (preprocessor_t*) tokenStream.getInput("preprocessor_t")
+
+#define loadDirectiveTokens(directive, content)           \
+  loadDirectiveContent("@directive(\"" directive "\")\n"  \
+                       content)
+
+#define checkTokenType(index, token_type)             \
+  ASSERT_EQ_BINARY(token_type, tokens[index]->type())
+
+
+#define checkPrimitive(index, ptype, primitive_)              \
+  checkTokenType(index, tokenType::primitive);                \
+  ASSERT_EQ(primitive_,                                       \
+            (ptype) ((primitiveToken*) tokens[index])->value)
+
+#define checkPragma(index, expectedValue)           \
+  checkTokenType(0, tokenType::pragma);             \
+  ASSERT_EQ(expectedValue,                          \
+            tokens[index]->to<pragmaToken>().value)
+
+
+  // Define
+  loadDirectiveTokens("#define A 1",
+                      "A");
+  ASSERT_EQ(1, (int) tokens.size());
+  checkPrimitive(0, int, 1);
+
+  // Pragma
+  loadDirectiveTokens("#pragma",
+                      "");
+  ASSERT_EQ(1, (int) tokens.size());
+  checkPragma(0, "");
+
+  loadDirectiveTokens("  #pragma foo",
+                      "");
+  ASSERT_EQ(1, (int) tokens.size());
+  checkPragma(0, "foo");
+
+  loadDirectiveTokens("#pragma foo a b c  ",
+                      "");
+  ASSERT_EQ(1, (int) tokens.size());
+  checkPragma(0, "foo a b c");
+
+  // OCCA Pragma
+  loadDirectiveTokens("#pragma occa attributes @tile(16, @outer, @inner)",
+                      "");
+  ASSERT_EQ(11, (int) tokens.size());
+
+  // No # start
+  loadDirectiveTokens("foo a b c",
+                      "");
+  ASSERT_EQ(1, pp->errors);
+
+  // Has newlines
+  loadDirectiveTokens("#pragma foo \\n a b c",
+                      "");
+  ASSERT_EQ(1, pp->errors);
+
+  // Missing ()
+  loadDirectiveContent("@directive");
+  ASSERT_EQ(1, pp->errors);
+
+  // Missing ""
+  loadDirectiveContent("@directive()");
+  ASSERT_EQ(1, pp->errors);
+
+  // Not a string
+  loadDirectiveContent("@directive(2)");
+  ASSERT_EQ(1, pp->errors);
+
+  // Doesn't only have a string
+  loadDirectiveContent("@directive(\"a\" 2)");
+  ASSERT_EQ(1, pp->errors);
+
+#undef loadDirectiveTokens
 #undef checkPrimitive
 }
 //======================================

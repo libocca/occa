@@ -168,6 +168,7 @@ namespace occa {
 
     void tokenizer_t::printError(const std::string &message) {
       origin.printError(message);
+      ++errors;
     }
 
     void tokenizer_t::setLine(const int line) {
@@ -473,28 +474,33 @@ namespace occa {
       pop();
     }
 
-    void tokenizer_t::getString(std::string &value,
+    bool tokenizer_t::getString(std::string &value,
                                 const int encoding) {
       if (encoding & encodingType::R) {
         getRawString(value);
-        return;
+        return true;
       }
       if (*fp.start != '"') {
-        return;
+        return false;
       }
-      push();
+      // Skip ["]
       ++fp.start;
+
       push();
       skipTo("\"\n");
+
+      // Handle error outside of here
       if (*fp.start == '\n') {
+        printError("Not able to find a closing \"");
         pop();
-        popAndRewind();
-        return;
+        return false;
       }
+
       value = unescape(str(), '"');
       pop();
-      pop();
       ++fp.start;
+
+      return true;
     }
 
     void tokenizer_t::getRawString(std::string &value) {
@@ -679,12 +685,8 @@ namespace occa {
         return NULL;
       }
 
-      const char *start = fp.start;
       std::string value, udf;
-      getString(value, encoding);
-      if (fp.start == start) {
-        printError("Not able to find closing \"");
-        pop();
+      if (!getString(value, encoding)) {
         return NULL;
       }
 
@@ -713,7 +715,7 @@ namespace occa {
       push();
       skipTo("'\n");
       if (*fp.start == '\n') {
-        printError("Not able to find closing '");
+        printError("Not able to find a closing '");
         popAndRewind();
         pop();
         return NULL;
@@ -758,7 +760,7 @@ namespace occa {
         push();
         skipTo(">\n");
         if (*fp.start == '\n') {
-          printError("Not able to find closing >");
+          printError("Not able to find a closing >");
           pop();
           pop();
           return NULL;

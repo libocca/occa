@@ -624,7 +624,7 @@ namespace occa {
 
         if (!token) {
           errorOn(&source,
-                  "Not able to find closing )");
+                  "Not able to find a closing )");
           break;
         }
 
