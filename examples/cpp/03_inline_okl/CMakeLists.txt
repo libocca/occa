@@ -1,1 +1,1 @@
-COMPILE_C_EXAMPLE(03_inline_okl main.cpp)
+COMPILE_CPP_EXAMPLE(03_inline_okl main.cpp)
