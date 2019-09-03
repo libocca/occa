@@ -1,1 +1,1 @@
-COMPILE_C_EXAMPLE(04_reduction main.cpp)
+COMPILE_CPP_EXAMPLE(04_reduction main.cpp)

@@ -1,1 +1,1 @@
-COMPILE_C_EXAMPLE(07_dtypes main.cpp)
+COMPILE_CPP_EXAMPLE(07_dtypes main.cpp)

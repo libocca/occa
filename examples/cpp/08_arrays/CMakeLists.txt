@@ -1,1 +1,1 @@
-COMPILE_C_EXAMPLE(08_arrays main.cpp)
+COMPILE_CPP_EXAMPLE(08_arrays main.cpp)
