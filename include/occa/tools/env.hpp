@@ -17,6 +17,7 @@ namespace occa {
     extern size_t      OCCA_MEM_BYTE_ALIGN;
     extern strVector   OCCA_PATH;
     extern bool        OCCA_COLOR_ENABLED;
+    extern std::string OCCA_BINARY_DIR;
 
     properties& baseSettings();
 
