@@ -27,7 +27,6 @@
 #cmakedefine01 OCCA_OPENCL_ENABLED
 #cmakedefine01 OCCA_CUDA_ENABLED
 #cmakedefine01 OCCA_HIP_ENABLED
-
-#cmakedefine OCCA_BINARY_DIR
+#cmakedefine01 OCCA_METAL_ENABLED
 
 #endif

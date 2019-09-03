@@ -78,7 +78,7 @@ namespace occa {
 #endif
 
       // OCCA environment variables
-      OCCA_DIR = env::get<std::string>("OCCA_DIR", OCCA_BINARY_DIR);
+      OCCA_DIR = env::var("OCCA_DIR");
       OCCA_COLOR_ENABLED = env::get<bool>("OCCA_COLOR_ENABLED", true);
 
       initCachePath();
