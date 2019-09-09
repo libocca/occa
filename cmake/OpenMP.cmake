@@ -1,0 +1,9 @@
+find_package(OpenMP)
+
+if (OPENMP_CXX_FOUND)
+    SET(WITH_OPENMP 1)
+    SET(OCCA_OPENMP_ENABLED 1)
+
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${OpenMP_C_FLAGS}")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}")
+endif()
