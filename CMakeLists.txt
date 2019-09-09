@@ -19,15 +19,19 @@ project (occa)
 
 OPTION(ALLOW_CUDA "Allow CUDA" ON)
 OPTION(ALLOW_MPI  "Allow MPI" OFF)
+OPTION(ALLOW_OPENMP "Allow OpenMP" ON)
 
 set(PROJ_DIR ${CMAKE_CURRENT_SOURCE_DIR})
 
 link_directories(${PROJ_DIR}/lib)
 
 find_package(Threads REQUIRED)
-find_package(OpenMP REQUIRED)
 SET(CUDA_USE_STATIC_CUDA_RUNTIME OFF)
 find_package(OpenCL)
+
+IF (ALLOW_OPENMP)
+    INCLUDE(OpenMP)
+ENDIF()
 
 # searches for CUDA if allowed
 IF (ALLOW_CUDA)
@@ -52,9 +56,6 @@ set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wno-c++11-long-long")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-c++11-long-long")
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${OpenMP_C_FLAGS}")
-
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}")
 set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${OpenMP_EXE_LINKER_FLAGS}")
 
 include_directories(${PROJECT_BINARY_DIR})
