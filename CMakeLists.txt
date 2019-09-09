@@ -20,6 +20,7 @@ project (occa)
 OPTION(ALLOW_CUDA "Allow CUDA" ON)
 OPTION(ALLOW_MPI  "Allow MPI" OFF)
 OPTION(ALLOW_OPENMP "Allow OpenMP" ON)
+OPTION(ALLOW_OPENCL "Allow OpenCL" ON)
 
 set(PROJ_DIR ${CMAKE_CURRENT_SOURCE_DIR})
 
@@ -27,20 +28,18 @@ link_directories(${PROJ_DIR}/lib)
 
 find_package(Threads REQUIRED)
 SET(CUDA_USE_STATIC_CUDA_RUNTIME OFF)
-find_package(OpenCL)
 
 IF (ALLOW_OPENMP)
     INCLUDE(OpenMP)
 ENDIF()
 
+IF (ALLOW_OPENCL)
+    INCLUDE(OpenCL)
+ENDIF()
+
 # searches for CUDA if allowed
 IF (ALLOW_CUDA)
     include(CUDA)
-ENDIF()
-
-IF (OpenCL_FOUND)
-  SET(WITH_OPENCL 1)
-  include_directories( ${OpenCL_INCLUDE_DIRS} )
 ENDIF()
 
 # searches for MPI if allowed
