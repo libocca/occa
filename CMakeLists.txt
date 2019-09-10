@@ -63,8 +63,11 @@ SET(OCCA_BINARY_DIR ${PROJECT_BINARY_DIR} )
 CONFIGURE_FILE( scripts/compiledDefinesTemplate.hpp.in ${PROJECT_BINARY_DIR}/occa/defines/compiledDefines.hpp )
 # will not work because build directory unknown to runtime compiler
 # CONFIGURE_FILE( scripts/compiledDefinesTemplate.hpp.in ${PROJECT_SOURCE_DIR}/include/occa/defines/compiledDefines.hpp )
+install(FILES ${PROJECT_BINARY_DIR}/occa/defines/compiledDefines.hpp DESTINATION include/occa/defines)
 
 add_subdirectory(src)
 add_subdirectory(bin)
 # add_subdirectory(tests)
 add_subdirectory(examples)
+
+install(DIRECTORY include/ DESTINATION include)

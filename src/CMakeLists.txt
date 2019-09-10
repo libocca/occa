@@ -23,3 +23,5 @@ IF (WITH_MPI)
 ENDIF()
 
 target_link_libraries(libocca ${LIBOCCA_LIBRARIES} )
+
+install(TARGETS libocca DESTINATION lib )
