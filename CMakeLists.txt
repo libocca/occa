@@ -17,10 +17,13 @@ ENDIF()
 # Set project
 project (occa)
 
+include(OS)
+
 OPTION(ALLOW_CUDA "Allow CUDA" ON)
 OPTION(ALLOW_MPI  "Allow MPI" OFF)
 OPTION(ALLOW_OPENMP "Allow OpenMP" ON)
 OPTION(ALLOW_OPENCL "Allow OpenCL" ON)
+OPTION(ALLOW_METAL "Allow Metal" ON)
 
 set(PROJ_DIR ${CMAKE_CURRENT_SOURCE_DIR})
 
@@ -45,6 +48,10 @@ ENDIF()
 # searches for MPI if allowed
 IF (ALLOW_MPI)
     include(MPI)
+ENDIF()
+
+IF (ALLOW_METAL)
+	include(Metal)
 ENDIF()
 
 add_definitions(-DUSE_CMAKE)
