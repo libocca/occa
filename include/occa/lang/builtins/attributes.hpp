@@ -4,6 +4,7 @@
 #include <occa/lang/builtins/attributes/barrier.hpp>
 #include <occa/lang/builtins/attributes/dim.hpp>
 #include <occa/lang/builtins/attributes/exclusive.hpp>
+#include <occa/lang/builtins/attributes/globalPtr.hpp>
 #include <occa/lang/builtins/attributes/implicitArg.hpp>
 #include <occa/lang/builtins/attributes/inner.hpp>
 #include <occa/lang/builtins/attributes/kernel.hpp>

@@ -10,8 +10,9 @@ namespace occa {
       public:
         qualifier_t constant;
         qualifier_t kernel;
-        qualifier_t global;
         qualifier_t local;
+        // Hack until code-transformation API is done
+        static qualifier_t global;
 
         openclParser(const occa::properties &settings_ = occa::properties());
 
@@ -31,8 +32,14 @@ namespace occa {
         void updateConstToConstant();
 
         void setLocalQualifiers();
-
         static bool sharedVariableMatcher(exprNode &expr);
+
+        void setGlobalQualifiers();
+        static bool updateGlobalVariables(statement_t &smnt);
+        static void addGlobalToFunctionArgs(function_t &func);
+        static void addGlobalToStruct(struct_t &struct_);
+        static void addGlobalToVariable(variable_t &var);
+
         static bool updateScopeStructVariables(statement_t &smnt);
         static void addStructToVariable(variable_t &var);
         static void addStructToFunctionArgs(function_t &func);
