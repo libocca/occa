@@ -30,9 +30,9 @@ paths := $(filter-out -L$(OCCA_DIR)/lib,$(paths))
 linkerFlags := $(filter-out -locca,$(linkerFlags))
 
 ifeq (${PREFIX},)
-	OCCA_BINARY_DIR := $(OCCA_DIR)
+	OCCA_BUILD_DIR := $(OCCA_DIR)
 else
-	OCCA_BINARY_DIR := ${PREFIX}
+	OCCA_BUILD_DIR := ${PREFIX}
 endif
 #=================================================
 
@@ -92,7 +92,7 @@ MAKE_COMPILED_DEFINES := $(shell cat "$(OCCA_DIR)/scripts/compiledDefinesTemplat
                                       s,@@OCCA_HIP_ENABLED@@,$(OCCA_HIP_ENABLED),g;\
                                       s,@@OCCA_OPENCL_ENABLED@@,$(OCCA_OPENCL_ENABLED),g;\
                                       s,@@OCCA_METAL_ENABLED@@,$(OCCA_METAL_ENABLED),g;\
-                                      s,@@OCCA_BINARY_DIR@@,$(OCCA_BINARY_DIR),g;"\
+                                      s,@@OCCA_BUILD_DIR@@,$(OCCA_BUILD_DIR),g;"\
 																	> "$(NEW_COMPILED_DEFINES)")
 
 MAKE_COMPILED_DEFINES := $(shell \

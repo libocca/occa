@@ -73,6 +73,24 @@ matrix:
             - ubuntu-toolchain-r-test
           packages:
             - g++-7
+    - name: "gcc-7 (CMake)"
+      env:
+        - CC=gcc-7
+        - CXX=g++-7
+        - OCCA_COVERAGE=1
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+            - cmake
+          packages:
+            - g++-7
+      script:
+        - cd ${TRAVIS_BUILD_DIR}
+        - mkdir build
+        - cd build
+        - cmake ..
+        - make -j 4
     - name: "clang-4.0"
       env:
         - CC=clang-4.0

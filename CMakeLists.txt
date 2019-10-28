@@ -25,7 +25,7 @@ OPTION(ALLOW_OPENMP "Allow OpenMP" ON)
 OPTION(ALLOW_OPENCL "Allow OpenCL" ON)
 OPTION(ALLOW_METAL "Allow Metal" ON)
 
-set(PROJ_DIR ${CMAKE_CURRENT_SOURCE_DIR})
+SET(PROJ_DIR ${CMAKE_CURRENT_SOURCE_DIR})
 
 link_directories(${PROJ_DIR}/lib)
 
@@ -58,14 +58,14 @@ add_definitions(-DUSE_CMAKE)
 
 include_directories(${PROJ_DIR}/include)
 
-set(CMAKE_POSITION_INDEPENDENT_CODE ON)
+SET(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wno-c++11-long-long")
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-c++11-long-long")
-set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${OpenMP_EXE_LINKER_FLAGS}")
+SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wno-c++11-long-long")
+SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-c++11-long-long")
+SET(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${OpenMP_EXE_LINKER_FLAGS}")
 
 include_directories(${PROJECT_BINARY_DIR})
-SET(OCCA_BINARY_DIR ${PROJECT_BINARY_DIR} )
+SET(OCCA_BUILD_DIR ${PROJECT_BINARY_DIR})
 # TODO:
 CONFIGURE_FILE( scripts/compiledDefinesTemplate.hpp.in ${PROJECT_BINARY_DIR}/occa/defines/compiledDefines.hpp )
 # will not work because build directory unknown to runtime compiler

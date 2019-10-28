@@ -265,14 +265,8 @@ namespace occa {
               << ' '    << sourceFilename
               << " -o " << binaryFilename
               << " -I"  << env::OCCA_DIR << "include"
-              << " -I"  << env::OCCA_DIR << "include";
-      if (! env::OCCA_BINARY_DIR.empty() ) {
-        command << " -I " << env::OCCA_BINARY_DIR
-                << " -L " << env::OCCA_BINARY_DIR << "/src";
-      }
-
-      command << " -L"  << env::OCCA_DIR << "lib -locca";
-      command << std::endl;
+              << " -L"  << env::OCCA_DIR << "lib -locca"
+              << std::endl;
 #else
       command << kernelProps["compiler"]
               << " /D MC_CL_EXE"
