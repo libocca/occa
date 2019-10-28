@@ -71,7 +71,6 @@ namespace occa {
       PWD                = env::var("PWD");
       PATH               = env::var("PATH");
       LD_LIBRARY_PATH    = env::var("LD_LIBRARY_PATH");
-      OCCA_COLOR_ENABLED = env::get<bool>("OCCA_COLOR_ENABLED", true);
 
       io::endWithSlash(HOME);
       io::endWithSlash(PWD);
@@ -81,8 +80,9 @@ namespace occa {
       // OCCA environment variables
       OCCA_DIR = env::var("OCCA_DIR");
       if (OCCA_DIR.size() == 0) {
-        OCCA_DIR = io::filename(io::dirname(__FILE__) + "/../..");
+        OCCA_DIR = OCCA_BUILD_DIR;
       }
+      OCCA_COLOR_ENABLED = env::get<bool>("OCCA_COLOR_ENABLED", true);
 
       initCachePath();
       initIncludePath();

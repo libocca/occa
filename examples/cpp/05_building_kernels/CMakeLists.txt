@@ -1,0 +1,1 @@
+COMPILE_CPP_EXAMPLE(05_building_kernels main.cpp)

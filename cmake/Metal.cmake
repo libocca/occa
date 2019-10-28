@@ -1,0 +1,10 @@
+IF (APPLE)
+	find_library(METAL_LIBRARY Metal)
+	find_library(CORE_SERVICES CoreServices)
+	find_library(APP_KIT AppKit)
+ENDIF()
+
+IF (METAL_LIBRARY AND CORE_SERVICES AND APP_KIT)
+	SET(WITH_METAL 1)
+	SET(OCCA_METAL_ENABLED 1)
+ENDIF()
