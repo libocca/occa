@@ -62,6 +62,7 @@ namespace occa {
       addAttribute<attributes::tile>();
       addAttribute<attributes::restrict>();
       addAttribute<attributes::implicitArg>();
+      addAttribute<attributes::globalPtr>();
     }
 
     parser_t::~parser_t() {

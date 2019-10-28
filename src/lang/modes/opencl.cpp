@@ -8,11 +8,12 @@
 namespace occa {
   namespace lang {
     namespace okl {
+      qualifier_t openclParser::global("__global", qualifierType::custom);
+
       openclParser::openclParser(const occa::properties &settings_) :
         withLauncher(settings_),
         constant("__constant", qualifierType::custom),
         kernel("__kernel", qualifierType::custom),
-        global("__global", qualifierType::custom),
         local("__local", qualifierType::custom) {
 
         okl::addAttributes(*this);
@@ -40,6 +41,9 @@ namespace occa {
 
         if (!success) return;
         setLocalQualifiers();
+
+        if (!success) return;
+        setGlobalQualifiers();
       }
 
       void openclParser::afterKernelSplit() {
@@ -141,6 +145,68 @@ namespace occa {
 
       bool openclParser::sharedVariableMatcher(exprNode &expr) {
         return expr.hasAttribute("shared");
+      }
+
+      void openclParser::setGlobalQualifiers() {
+        statementPtrVector statements;
+        findStatements((statementType::declaration |
+                        statementType::struct_ |
+                        statementType::functionDecl |
+                        statementType::function),
+                       root,
+                       updateGlobalVariables,
+                       statements);
+      }
+
+      bool openclParser::updateGlobalVariables(statement_t &smnt) {
+        if (smnt.type() & statementType::function) {
+          addGlobalToFunctionArgs(
+            smnt.to<functionStatement>().function
+          );
+        }
+        else if (smnt.type() & statementType::functionDecl) {
+          addGlobalToFunctionArgs(
+            smnt.to<functionDeclStatement>().function
+          );
+        }
+        else if (smnt.type() & statementType::struct_) {
+          addGlobalToStruct(
+            smnt.to<structStatement>().struct_
+          );
+        }
+        else {
+          declarationStatement &declSmnt = smnt.to<declarationStatement>();
+          const int declCount = declSmnt.declarations.size();
+          for (int i = 0; i < declCount; ++i) {
+            addGlobalToVariable(
+              *(declSmnt.declarations[i].variable)
+            );
+          }
+        }
+        return false;
+      }
+
+      void openclParser::addGlobalToFunctionArgs(function_t &func) {
+        const int argc = (int) func.args.size();
+        for (int i = 0; i < argc; ++i) {
+          variable_t *arg = func.args[i];
+          if (arg) {
+            addGlobalToVariable(*arg);
+          }
+        }
+      }
+
+      void openclParser::addGlobalToStruct(struct_t &struct_) {
+        const int fieldCount = (int) struct_.fields.size();
+        for (int i = 0; i < fieldCount; ++i) {
+          addGlobalToVariable(struct_.fields[i]);
+        }
+      }
+
+      void openclParser::addGlobalToVariable(variable_t &var) {
+        if (var.hasAttribute("globalPtr")) {
+          var.add(0, global);
+        }
       }
 
       bool openclParser::updateScopeStructVariables(statement_t &smnt) {
