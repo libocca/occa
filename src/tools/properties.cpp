@@ -11,7 +11,9 @@ namespace occa {
   properties::properties(const properties &other) {
     type = object_;
     value_ = other.value_;
-    initialized = other.initialized;
+
+    // Note: "other" might be a json object
+    initialized = other.isInitialized();
   }
 
   properties::properties(const json &j) {
@@ -20,17 +22,19 @@ namespace occa {
     initialized = true;
   }
 
-  properties::properties(const char *c) {
+  properties::properties(const char *c) :
+      initialized(false) {
     properties::load(c);
   }
 
-  properties::properties(const std::string &s) {
+  properties::properties(const std::string &s) :
+      initialized(false) {
     properties::load(s);
   }
 
   properties::~properties() {}
 
-  bool properties::isInitialized() {
+  bool properties::isInitialized() const {
     if (!initialized) {
       initialized = value_.object.size();
     }

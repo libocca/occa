@@ -231,7 +231,7 @@ namespace occa {
       return *this;
     }
 
-    virtual bool isInitialized();
+    virtual bool isInitialized() const;
 
     json& load(const char *&c);
     json& load(const std::string &s);
