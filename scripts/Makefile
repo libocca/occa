@@ -149,6 +149,7 @@ includeFlagsFor = $(shell . $(OCCA_DIR)/include/occa/scripts/shellTools.sh; head
 
 compilerReleaseFlags = $(shell . $(OCCA_DIR)/include/occa/scripts/shellTools.sh; compilerReleaseFlags "$(compiler)")
 compilerDebugFlags   = $(shell . $(OCCA_DIR)/include/occa/scripts/shellTools.sh; compilerDebugFlags   "$(compiler)")
+compilerCpp11Flags   = $(shell . $(OCCA_DIR)/include/occa/scripts/shellTools.sh; compilerCpp11Flags   "$(compiler)")
 compilerPicFlag      = $(shell . $(OCCA_DIR)/include/occa/scripts/shellTools.sh; compilerPicFlag      "$(compiler)")
 compilerSharedFlag   = $(shell . $(OCCA_DIR)/include/occa/scripts/shellTools.sh; compilerSharedFlag   "$(compiler)")
 compilerPthreadFlag  = $(shell . $(OCCA_DIR)/include/occa/scripts/shellTools.sh; compilerPthreadFlag  "$(compiler)")
@@ -162,6 +163,7 @@ compilerOpenMPFlag     = $(shell . $(OCCA_DIR)/include/occa/scripts/shellTools.s
 #---[ Compiler Info ]-----------------------------
 debugFlags   = $(call compilerDebugFlags)
 releaseFlags = $(call compilerReleaseFlags)
+cpp11Flags   = $(call compilerCpp11Flags)
 picFlag      = $(call compilerPicFlag)
 sharedFlag   = $(call compilerSharedFlag)
 pthreadFlag  = $(call compilerPthreadFlag)
@@ -271,7 +273,6 @@ ifdef OCCA_HIP_ENABLED
     ifeq ($(usingLinux),1)
       linkerFlags += -lhip_hcc
     endif
-    compilerFlags += -std=c++11
   endif
 else
   hipIncFlags = $(call includeFlagsFor,hip/hip_runtime_api.h)
@@ -292,7 +293,6 @@ else
       paths += $(hipconfig)
       paths += $(hipIncFlags)
       linkerFlags += $(hipLibFlags)
-      compilerFlags += -std=c++11
     endif
   endif
 endif
@@ -355,6 +355,7 @@ endif
 ifeq ($(cudaEnabled),1)
   compilerFlags += -Wno-c++11-long-long
 endif
+compilerFlags += $(cpp11Flags)
 
 ifeq ($(checkEnabled),1)
   OCCA_CHECK_ENABLED := 1

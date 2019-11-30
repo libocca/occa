@@ -13,7 +13,7 @@ compiler: gcc
 env:
   global:
     - LD_LIBRARY_PATH="${TRAVIS_BUILD_DIR}/lib:${LD_LIBRARY_PATH}"
-    - CXXFLAGS="-g -O0 -fno-inline"
+    - DEBUG=1
 
 before_install:
   - |

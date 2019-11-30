@@ -361,18 +361,32 @@ function compilerVendor {
     esac
 }
 
+function compilerCpp11Flags {
+    case "$vendor" in
+        GCC|LLVM|INTEL|PGI)
+            echo "-std=c++11";;
+        CRAY)      echo "-hstd=c++11"          ;;
+        IBM)       echo "-qlanglvl=extended0x" ;;
+        # Unknown
+        PATHSCALE) echo "-std=c++11"           ;;
+        # Unknown
+        HP)        echo "-std=c++11"           ;;
+        *) ;;
+    esac
+}
+
 function compilerReleaseFlags {
     local vendor=$(compilerVendor "$1")
 
     case "$vendor" in
-        GCC|LLVM)   echo "-O3 -D __extern_always_inline=inline"     ;;
-        INTEL)      echo "-O3 -xHost"                               ;;
-        CRAY)       echo "-O3 -h intrinsics -fast"                  ;;
-        IBM)        echo "-O3 -qhot=simd"                           ;;
-        PGI)        echo "-O3 -fast -Mipa=fast,inline -Msmartalloc" ;;
-        PATHSCALE)  echo "-O3 -march=auto"                          ;;
-        HP)         echo "+O3"                                      ;;
-        *)          echo ""                                         ;;
+        GCC|LLVM)   echo " -O3 -D __extern_always_inline=inline"     ;;
+        INTEL)      echo " -O3 -xHost"                               ;;
+        CRAY)       echo " -O3 -h intrinsics -fast"                  ;;
+        IBM)        echo " -O3 -qhot=simd"                           ;;
+        PGI)        echo " -O3 -fast -Mipa=fast,inline -Msmartalloc" ;;
+        PATHSCALE)  echo " -O3 -march=auto"                          ;;
+        HP)         echo " +O3"                                      ;;
+        *)          ;;
     esac
 }
 
@@ -380,8 +394,8 @@ function compilerDebugFlags {
     local vendor=$(compilerVendor "$1")
 
     case "$vendor" in
-        N/A)                   ;;
-        *)   echo "-g" ;;
+        N/A) ;;
+        *)   echo " -g";;
     esac
 }
 
@@ -404,8 +418,8 @@ function compilerSharedFlag {
         GCC|LLVM|INTEL|PATHSCALE|CRAY|PGI)
             echo "-shared";;
         IBM) echo "-qmkshrobj";;
-        HP)  echo "-b"     ;;
-        *)   echo ""       ;;
+        HP)  echo "-b";;
+        *)   echo "";;
     esac
 }
 
