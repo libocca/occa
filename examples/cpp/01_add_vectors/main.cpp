@@ -44,9 +44,9 @@ int main(int argc, const char **argv) {
   //========================================================
 
   // Allocate memory on the device
-  o_a  = device.malloc(entries, occa::dtype::float_);
+  o_a = device.malloc(entries, occa::dtype::float_);
   // Primitive types are available by template
-  o_b  = device.malloc(entries, occa::dtype::get<float>());
+  o_b = device.malloc<float>(entries);
 
   // We can also allocate memory without a dtype
   // WARNING: This will disable runtime type checking
