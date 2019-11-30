@@ -25,7 +25,7 @@ namespace occa {
     return *this;
   }
 
-  bool json::isInitialized() {
+  bool json::isInitialized() const {
     return (type != none_);
   }
 

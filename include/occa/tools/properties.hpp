@@ -6,7 +6,9 @@
 namespace occa {
   class properties: public json {
   public:
-    bool initialized;
+    // Note: Do not use directly since we're casting between
+    //       occa::json& <--> occa::properties&
+    mutable bool initialized;
 
     properties();
     properties(const properties &other);
@@ -15,19 +17,19 @@ namespace occa {
     properties(const std::string &s);
     ~properties();
 
-    bool isInitialized();
+    bool isInitialized() const;
 
     void load(const char *&c);
     void load(const std::string &s);
 
     static properties read(const std::string &filename);
-
-    inline properties operator + (const properties &p) const {
-      properties ret = *this;
-      ret.mergeWithObject(p.value_.object);
-      return ret;
-    }
   };
+
+  inline properties operator + (const properties &left, const properties &right) {
+    properties sum = left;
+    sum.mergeWithObject(right.value_.object);
+    return sum;
+  }
 
   template <>
   hash_t hash(const properties &props);
