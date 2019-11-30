@@ -207,6 +207,14 @@ namespace occa {
               const occa::properties &props) {
     memcpy(dest, src, -1, 0, 0, props);
   }
+
+  namespace cpu {
+    occa::memory wrapMemory(void *ptr,
+                            const udim_t bytes,
+                            const occa::properties &props) {
+      return occa::cpu::wrapMemory(getDevice(), ptr, bytes, props);
+    }
+  }
   //====================================
 
   //---[ Free Functions ]---------------

@@ -362,6 +362,8 @@ function compilerVendor {
 }
 
 function compilerCpp11Flags {
+    local vendor=$(compilerVendor "$1")
+
     case "$vendor" in
         GCC|LLVM|INTEL|PGI)
             echo "-std=c++11";;

@@ -353,9 +353,14 @@ namespace occa {
                                  const occa::properties &props) {
       memory *mem = new memory(this, bytes, props);
 
-      mem->ptr = (char*) sys::malloc(bytes);
-      if (src) {
-        ::memcpy(mem->ptr, src, bytes);
+      if (props.get("use_host_pointer", false)) {
+        mem->ptr = (char*) const_cast<void*>(src);
+        mem->isOrigin = false;
+      } else {
+        mem->ptr = (char*) sys::malloc(bytes);
+        if (src) {
+          ::memcpy(mem->ptr, src, bytes);
+        }
       }
 
       return mem;

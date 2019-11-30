@@ -136,11 +136,17 @@ namespace occa {
 
     memory& swap(memory &m);
 
-    void* ptr();
-    const void* ptr() const;
+    template <class TM = void>
+    TM* ptr();
 
-    void* ptr(const occa::properties &props);
-    const void* ptr(const occa::properties &props) const;
+    template <class TM = void>
+    const TM* ptr() const;
+
+    template <class TM = void>
+    TM* ptr(const occa::properties &props);
+
+    template <class TM = void>
+    const TM* ptr(const occa::properties &props) const;
 
     modeMemory_t* getModeMemory() const;
     modeDevice_t* getModeDevice() const;
@@ -243,6 +249,20 @@ namespace occa {
                             const udim_t bytes,
                             const occa::properties &props = occa::properties());
   }
+
+  template <>
+  void* memory::ptr<void>();
+
+  template <>
+  const void* memory::ptr<void>() const;
+
+  template <>
+  void* memory::ptr<void>(const occa::properties &props);
+
+  template <>
+  const void* memory::ptr<void>(const occa::properties &props) const;
 }
+
+#include "memory.tpp"
 
 #endif
