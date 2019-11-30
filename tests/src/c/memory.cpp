@@ -256,13 +256,25 @@ void testInteropMethods() {
                            bytes,
                            occaDefault);
 
+  mem2 = occaWrapCpuMemory(occaDefault,
+                           ptr,
+                           bytes,
+                           occaDefault);
+
   occaProperties props = (
     occaCreatePropertiesFromString("foo: 'bar'")
   );
+
   mem2 = occaWrapCpuMemory(occaHost(),
                            ptr,
                            bytes,
                            props);
+
+  mem2 = occaWrapCpuMemory(occaDefault,
+                           ptr,
+                           bytes,
+                           props);
+
   occaFree(mem1);
   occaFree(mem2);
   occaFree(props);

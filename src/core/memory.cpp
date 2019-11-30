@@ -143,25 +143,29 @@ namespace occa {
     return *this;
   }
 
-  void* memory::ptr() {
+  template <>
+  void* memory::ptr<void>() {
     return (modeMemory
             ? modeMemory->ptr
             : NULL);
   }
 
-  const void* memory::ptr() const {
+  template <>
+  const void* memory::ptr<void>() const {
     return (modeMemory
             ? modeMemory->ptr
             : NULL);
   }
 
-  void* memory::ptr(const occa::properties &props) {
+  template <>
+  void* memory::ptr<void>(const occa::properties &props) {
     return (modeMemory
             ? modeMemory->getPtr(props)
             : NULL);
   }
 
-  const void* memory::ptr(const occa::properties &props) const {
+  template <>
+  const void* memory::ptr<void>(const occa::properties &props) const {
     return (modeMemory
             ? modeMemory->getPtr(props)
             : NULL);
@@ -594,15 +598,10 @@ namespace occa {
                             void *ptr,
                             const udim_t bytes,
                             const occa::properties &props) {
-      serial::memory &mem = *(new serial::memory(device.getModeDevice(),
-                                                 bytes,
-                                                 props));
+      occa::properties memProps = props;
+      memProps["use_host_pointer"] = true;
 
-      mem.dontUseRefs();
-      mem.ptr = (char*) ptr;
-      mem.isOrigin = false;
-
-      return occa::memory(&mem);
+      return device.malloc(bytes, ptr, memProps);
     }
   }
 }

@@ -26,15 +26,13 @@ before_install:
     if [ -n "${MATRIX_INIT}" ]; then
       eval "${MATRIX_INIT}"
     fi
-    export BUILD_CXXFLAGS="${CXXFLAGS}"
-    export TEST_CXXFLAGS="${CXXFLAGS}"
 
 script:
   - cd ${TRAVIS_BUILD_DIR}
-  - CXXFLAGS="${BUILD_CXXFLAGS}" make -j 4
+  - make -j 4
 
   - cd ${TRAVIS_BUILD_DIR}
-  - CXXFLAGS="${TEST_CXXFLAGS}" make -j 4 test
+  - make -j 4 test
   - bash <(curl --no-buffer -s https://codecov.io/bash) > codecov_output
   - head -n 100 codecov_output
 
