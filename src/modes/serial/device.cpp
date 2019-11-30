@@ -355,7 +355,7 @@ namespace occa {
 
       if (props.get("use_host_pointer", false)) {
         mem->ptr = (char*) const_cast<void*>(src);
-        mem->isOrigin = false;
+        mem->isOrigin = props.get("own_host_pointer", false);
       } else {
         mem->ptr = (char*) sys::malloc(bytes);
         if (src) {
