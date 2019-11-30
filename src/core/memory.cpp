@@ -598,10 +598,12 @@ namespace occa {
                             void *ptr,
                             const udim_t bytes,
                             const occa::properties &props) {
-      occa::properties memProps = props;
-      memProps["use_host_pointer"] = true;
+      static occa::properties defaultProps(
+        "use_host_pointer: true,"
+        "own_host_pointer: false"
+      );
 
-      return device.malloc(bytes, ptr, memProps);
+      return device.malloc(bytes, ptr, defaultProps + props);
     }
   }
 }
