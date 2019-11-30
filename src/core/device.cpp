@@ -610,21 +610,24 @@ namespace occa {
     return malloc(entries, dtype, NULL, props);
   }
 
-  memory device::malloc(const dim_t bytes,
-                        const void *src,
-                        const occa::properties &props) {
-    return malloc(bytes, dtype::byte, src, props);
+  template <>
+  memory device::malloc<void>(const dim_t entries,
+                              const void *src,
+                              const occa::properties &props) {
+    return malloc(entries, dtype::byte, src, props);
   }
 
-  memory device::malloc(const dim_t bytes,
-                        const occa::memory src,
-                        const occa::properties &props) {
-    return malloc(bytes, dtype::byte, src, props);
+  template <>
+  memory device::malloc<void>(const dim_t entries,
+                              const occa::memory src,
+                              const occa::properties &props) {
+    return malloc(entries, dtype::byte, src, props);
   }
 
-  memory device::malloc(const dim_t bytes,
-                        const occa::properties &props) {
-    return malloc(bytes, dtype::byte, NULL, props);
+  template <>
+  memory device::malloc<void>(const dim_t entries,
+                              const occa::properties &props) {
+    return malloc(entries, dtype::byte, NULL, props);
   }
 
   void* device::umalloc(const dim_t entries,

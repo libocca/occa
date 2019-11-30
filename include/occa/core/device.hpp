@@ -247,14 +247,17 @@ namespace occa {
                         const dtype_t &dtype,
                         const occa::properties &props);
 
+    template <class TM = void>
     occa::memory malloc(const dim_t bytes,
                         const void *src = NULL,
                         const occa::properties &props = occa::properties());
 
+    template <class TM = void>
     occa::memory malloc(const dim_t bytes,
                         const occa::memory src,
                         const occa::properties &props = occa::properties());
 
+    template <class TM = void>
     occa::memory malloc(const dim_t bytes,
                         const occa::properties &props);
 
@@ -272,25 +275,19 @@ namespace occa {
                   const dtype_t &dtype,
                   const occa::properties &props);
 
-    template <class TM>
+    template <class TM = void>
     TM* umalloc(const dim_t entries,
                 const void *src = NULL,
-                const occa::properties &props = occa::properties()) {
-      return (TM*) umalloc(entries, dtype::get<TM>(), src, props);
-    }
+                const occa::properties &props = occa::properties());
 
-    template <class TM>
+    template <class TM = void>
     TM* umalloc(const dim_t entries,
                 const occa::memory src,
-                const occa::properties &props = occa::properties()) {
-      return (TM*) umalloc(entries, dtype::get<TM>(), src, props);
-    }
+                const occa::properties &props = occa::properties());
 
-    template <class TM>
+    template <class TM = void>
     TM* umalloc(const dim_t entries,
-                const occa::properties &props) {
-      return (TM*) umalloc(entries, dtype::get<TM>(), props);
-    }
+                const occa::properties &props);
     //  |===============================
   };
 
@@ -299,7 +296,23 @@ namespace occa {
 
   std::ostream& operator << (std::ostream &out,
                            const occa::device &device);
+
+  template <>
+  occa::memory device::malloc<void>(const dim_t entries,
+                                    const void *src,
+                                    const occa::properties &props);
+
+  template <>
+  occa::memory device::malloc<void>(const dim_t entries,
+                                    const occa::memory src,
+                                    const occa::properties &props);
+
+  template <>
+  occa::memory device::malloc<void>(const dim_t entries,
+                                    const occa::properties &props);
   //====================================
 }
+
+#include "device.tpp"
 
 #endif
