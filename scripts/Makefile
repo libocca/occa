@@ -22,19 +22,17 @@ testPath = $(PROJ_DIR)/tests
 debugEnabled = 0
 checkEnabled = 1
 
-ifdef OCCA_DEVELOPER
- ifeq ($(OCCA_DEVELOPER),1)
-  ifeq ($(DEBUG),0)
-     debugEnabled = 0
-  else
-     debugEnabled = 1
-  endif
+ifeq ($(OCCA_DEVELOPER),1)
+ ifeq ($(DEBUG),0)
+    debugEnabled = 0
  else
-  ifeq ($(DEBUG),1)
-     debugEnabled = 1
-  else
-     debugEnabled = 0
-  endif
+    debugEnabled = 1
+ endif
+else
+ ifeq ($(DEBUG),1)
+    debugEnabled = 1
+ else
+    debugEnabled = 0
  endif
 endif
 
