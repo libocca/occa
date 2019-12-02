@@ -68,21 +68,27 @@ namespace occa {
   template <class TM = void>
   occa::memory malloc(const dim_t entries,
                       const void *src = NULL,
-                      const occa::properties &props = occa::properties()) {
-    return malloc(entries, dtype::get<TM>(), src, props);
-  }
+                      const occa::properties &props = occa::properties());
+
+  template <>
+  occa::memory malloc<void>(const dim_t entries,
+                            const void *src,
+                            const occa::properties &props);
 
   void* umalloc(const dim_t entries,
                 const dtype_t &dtype,
                 const void *src = NULL,
                 const occa::properties &props = occa::properties());
 
-  template <class TM>
-  TM* umalloc(const dim_t bytes,
+  template <class TM = void>
+  TM* umalloc(const dim_t entries,
               const void *src = NULL,
-              const occa::properties &props = occa::properties()) {
-    return (TM*) umalloc(bytes, dtype::get<TM>(), src, props);
-  }
+              const occa::properties &props = occa::properties());
+
+  template <>
+  void* umalloc<void>(const dim_t entries,
+                      const void *src,
+                      const occa::properties &props);
 
   void memcpy(void *dest, const void *src,
               const dim_t bytes,
@@ -132,5 +138,7 @@ namespace occa {
 
   void printModeInfo();
 }
+
+#include "base.tpp"
 
 #endif
