@@ -102,11 +102,25 @@ namespace occa {
     return getDevice().malloc(entries, dtype, src, props);
   }
 
+  template <>
+  occa::memory malloc<void>(const dim_t entries,
+                            const void *src,
+                            const occa::properties &props) {
+    return getDevice().malloc(entries, dtype::byte, src, props);
+  }
+
   void* umalloc(const dim_t entries,
                 const dtype_t &dtype,
                 const void *src,
                 const occa::properties &props) {
     return getDevice().umalloc(entries, dtype, src, props);
+  }
+
+  template <>
+  void* umalloc<void>(const dim_t entries,
+                      const void *src,
+                      const occa::properties &props) {
+    return getDevice().umalloc(entries, dtype::byte, src, props);
   }
 
   void memcpy(void *dest, const void *src,
