@@ -48,6 +48,7 @@
 #include <occa/tools/misc.hpp>
 #include <occa/tools/string.hpp>
 #include <occa/tools/sys.hpp>
+#include <occa/tools/vector.hpp>
 
 namespace occa {
   namespace sys {
@@ -701,6 +702,40 @@ namespace occa {
 #endif
     }
 
+    std::string compilerCpp11Flags(const std::string &compiler) {
+      return compilerCpp11Flags( sys::compilerVendor(compiler) );
+    }
+
+    std::string compilerCpp11Flags(const int vendor_) {
+      if (vendor_ & (sys::vendor::GNU   |
+                     sys::vendor::LLVM  |
+                     sys::vendor::Intel |
+                     sys::vendor::HP    |
+                     sys::vendor::PGI   |
+                     sys::vendor::Pathscale)) {
+        return "-std=c++11";
+      } else if (vendor_ & sys::vendor::Cray) {
+        return "-hstd=c++11";
+      } else if (vendor_ & sys::vendor::IBM) {
+        return "-qlanglvl=extended0x";
+      } else if (vendor_ & sys::vendor::VisualStudio) {
+        return ""; // Defaults to C++14
+      }
+      OCCA_FORCE_ERROR("Could not find C++11 compiler flags");
+      return "";
+    }
+
+    void addCpp11Flags(const std::string &compiler, std::string &compilerFlags) {
+      addCpp11Flags(sys::compilerVendor(compiler), compilerFlags);
+    }
+
+    void addCpp11Flags(const int vendor_, std::string &compilerFlags) {
+      addCompilerFlags(
+        compilerFlags,
+        sys::compilerCpp11Flags(vendor_)
+      );
+    }
+
     std::string compilerSharedBinaryFlags(const std::string &compiler) {
       return compilerSharedBinaryFlags( sys::compilerVendor(compiler) );
     }
@@ -724,37 +759,29 @@ namespace occa {
       return "";
     }
 
-    void addSharedBinaryFlagsTo(const std::string &compiler, std::string &compilerFlags) {
-      addSharedBinaryFlagsTo(sys::compilerVendor(compiler), compilerFlags);
+    void addSharedBinaryFlags(const std::string &compiler, std::string &compilerFlags) {
+      addSharedBinaryFlags(sys::compilerVendor(compiler), compilerFlags);
     }
 
-    void addSharedBinaryFlagsTo(const int vendor_, std::string &compilerFlags) {
-      strVector flags = split(compilerFlags, ' ');
-      const int flagCount = (int) flags.size();
+    void addSharedBinaryFlags(const int vendor_, std::string &compilerFlags) {
+      addCompilerFlags(
+        compilerFlags,
+        sys::compilerSharedBinaryFlags(vendor_)
+      );
+    }
 
-      strVector sharedFlags = split(sys::compilerSharedBinaryFlags(vendor_), ' ');
-      const int sharedFlagCount = (int) sharedFlags.size();
+    void addCompilerFlags(std::string &compilerFlags, const std::string &flags) {
+      strVector compilerFlagsVec = split(compilerFlags, ' ');
+      const strVector flagsVec = split(flags, ' ');
 
-      for (int sfi = 0; sfi < sharedFlagCount; ++sfi) {
-        const std::string &sharedFlag = sharedFlags[sfi];
-        // Check existing flags, avoid counting the new shared flags
-        for (int fi = 0; fi < flagCount; ++fi) {
-          const std::string &flag = flags[fi];
-          if (sharedFlag == flag) {
-            break;
-          }
-          // Flag not found since this is the last flag
-          if (fi == (flagCount - 1)) {
-            flags.push_back(sharedFlag);
-          }
+      for (int i = 0; i < (int) flagsVec.size(); ++i) {
+        const std::string &flag = flagsVec[i];
+        if (indexOf(compilerFlagsVec, flag) < 0) {
+          compilerFlagsVec.push_back(flag);
         }
       }
 
-      // Add new flags
-      for (int i = flagCount; i < (int) flags.size(); ++i) {
-        compilerFlags += ' ';
-        compilerFlags += flags[i];
-      }
+      compilerFlags = join(compilerFlagsVec, " ");
     }
 
     //---[ Dynamic Methods ]------------

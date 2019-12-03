@@ -238,13 +238,9 @@ namespace occa {
   }
 
   std::string stringifyBytes(udim_t bytes);
+
   void stringifyBytesFraction(std::stringstream &ss,
                               uint64_t fraction);
-
-  //---[ Vector Methods ]---------------
-  std::string join(const strVector &vec,
-                   const std::string &seq);
-  //====================================
 
   //---[ Color Strings ]----------------
   namespace color {

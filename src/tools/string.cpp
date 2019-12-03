@@ -342,22 +342,6 @@ namespace occa {
     }
   }
 
-  //---[ Vector Methods ]---------------
-  std::string join(const strVector &vec,
-                   const std::string &seq) {
-    const int entries = (int) vec.size();
-    if (entries == 0) {
-      return "";
-    }
-    std::string ret = vec[0];
-    for (int i = 1; i < entries; ++i) {
-      ret += seq;
-      ret += vec[i];
-    }
-    return ret;
-  }
-  //====================================
-
   //---[ Color Strings ]----------------
   namespace color {
     const char fgMap[9][7] = {
