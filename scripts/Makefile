@@ -218,12 +218,16 @@ hipEnabled    = 0
 openclEnabled = 0
 metalEnabled  = 0
 
+
+#---[ MPI ]-----------------------------
 ifdef OCCA_MPI_ENABLED
   mpiEnabled = $(OCCA_MPI_ENABLED)
 else
   mpiEnabled = $(call compilerSupportsMPI)
 endif
 
+
+#---[ OpenMP ]--------------------------
 ifdef OCCA_OPENMP_ENABLED
   openmpEnabled  = $(OCCA_OPENMP_ENABLED)
   fOpenmpEnabled = $(OCCA_OPENMP_ENABLED)
@@ -235,6 +239,8 @@ else
   endif
 endif
 
+
+#---[ CUDA ]----------------------------
 ifdef OCCA_CUDA_ENABLED
   cudaEnabled = $(OCCA_CUDA_ENABLED)
 
@@ -264,37 +270,43 @@ else
   endif
 endif
 
-ifdef OCCA_HIP_ENABLED
-  hipEnabled = $(OCCA_HIP_ENABLED)
 
-  ifeq ($(hipEnabled),1)
-    ifeq ($(usingLinux),1)
-      linkerFlags += -lhip_hcc
-    endif
-  endif
-else
-  hipIncFlags = $(call includeFlagsFor,hip/hip_runtime_api.h)
+#---[ HIP ]-----------------------------
+hipEnabled = 0
+ifneq ($(OCCA_HIP_ENABLED),0)
+  ifeq ($(usingLinux),1)
+    hipIncFlags = $(call includeFlagsFor,hip/hip_runtime_api.h)
 
-  ifneq (,$(hipIncFlags))
-    ifndef HIP_PATH
-      HIP_PATH = ${hipIncFlags:-I%=%}/../..
-    endif
-
-    hipconfig = $(shell $(HIP_PATH)/bin/hipconfig --cpp_config)
-
-    ifeq ($(usingLinux),1)
-      hipLibFlags = $(call libraryFlagsFor,hip_hcc)
-    endif
-
-    ifneq (,$(hipLibFlags))
-      hipEnabled = 1
-      paths += $(hipconfig)
-      paths += $(hipIncFlags)
-      linkerFlags += $(hipLibFlags)
+    ifneq (,$(hipIncFlags))
+      hipEnabled := 1
     endif
   endif
 endif
 
+ifeq ($(hipEnabled),1)
+  ifndef HIP_PATH
+    HIP_PATH = ${hipIncFlags:-I%=%}/../..
+  endif
+
+  hipPlatform = $(shell $(HIP_PATH)/bin/hipconfig --platform)
+  hipConfig = $(shell $(HIP_PATH)/bin/hipconfig --cpp_config)
+
+  ifeq ($(hipPlatform),nvcc)
+    linkerFlags += -lcuda -lcudart
+    hipLibFlags  = $(call libraryFlagsFor,cuda)
+    hipLibFlags += $(call libraryFlagsFor,cudart)
+  else ifeq ($(hipPlatform),hcc)
+    linkerFlags += -lhip_hcc
+    hipLibFlags = $(call libraryFlagsFor,hip_hcc)
+  endif
+
+  paths += $(hipConfig)
+  paths += $(hipIncFlags)
+  linkerFlags += $(hipLibFlags)
+endif
+
+
+#---[ OpenCL ]--------------------------
 ifdef OCCA_OPENCL_ENABLED
   openclEnabled = $(OCCA_OPENCL_ENABLED)
 
@@ -328,6 +340,8 @@ else
   endif
 endif
 
+
+#---[ Metal ]---------------------------
 # Metal is only supported with
 # - MacOS
 # - clang++ compiler

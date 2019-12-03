@@ -57,7 +57,7 @@ namespace occa {
         compilerFlags = "-O3";
       }
 
-      kernelProps["compiler"]      = compiler;
+      kernelProps["compiler"]       = compiler;
       kernelProps["compiler_flags"] = compilerFlags;
 
       archMajorVersion = kernelProps.get<int>("arch/major", hipProps.major);
@@ -229,6 +229,7 @@ namespace occa {
 
       if (compiler_flags.find("-t gfx") == std::string::npos
           && compiler_flags.find("-arch=sm") == std::string::npos) {
+        kernelProps["compiler_flags"] += ' ';
         kernelProps["compiler_flags"] += kernelProps["compiler_flag_arch"];
       }
     }
@@ -246,6 +247,9 @@ namespace occa {
 
       setArchCompilerFlags(allProps);
 
+      const std::string compilerFlags = allProps["compiler_flags"];
+      const std::string hipccCompilerFlags = allProps["hipcc_compiler_flags"];
+
       std::stringstream command;
       if (allProps.has("compiler_env_script")) {
         command << allProps["compiler_env_script"] << " && ";
@@ -253,15 +257,17 @@ namespace occa {
 
       //---[ Compiling Command ]--------
       command << allProps["compiler"]
-              << " --genco "
-              << ' ' << allProps["compiler_flags"]
-// #if (OCCA_OS == OCCA_WINDOWS_OS)
-//               << " -D OCCA_OS=OCCA_WINDOWS_OS -D _MSC_VER=1800"
-// #endif
-              // << " -I"        << env::OCCA_DIR << "include"
-              // << " -L"        << env::OCCA_DIR << "lib -locca"
-              << " "       << sourceFilename
-              << " -o "    << binaryFilename;
+              << " --genco";
+
+      if (compilerFlags.size()) {
+        command << " -f=\\\"" << compilerFlags << "\\\"";
+      }
+      if (hipccCompilerFlags.size()) {
+        command << ' ' << hipccCompilerFlags;
+      }
+
+      command << ' '    << sourceFilename
+              << " -o " << binaryFilename;
 
       if (!verbose) {
         command << " > /dev/null 2>&1";
