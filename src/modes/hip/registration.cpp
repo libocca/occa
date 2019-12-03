@@ -29,11 +29,11 @@ namespace occa {
           const std::string bytesStr = stringifyBytes(bytes);
 
           section
-            .add("Device Name", deviceName)
-            .add("Device ID"  , toString(deviceId))
-            .add("Arch"       , "gfx" + toString(props.gcnArch))
-            .add("Memory"     , bytesStr)
-            .addDivider();
+              .add("Device Name", deviceName)
+              .add("Device ID"  , toString(deviceId))
+              .add("Arch"       , getDeviceArch(deviceId))
+              .add("Memory"     , bytesStr)
+              .addDivider();
         }
         // Remove last divider
         section.groups.pop_back();

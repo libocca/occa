@@ -15,7 +15,7 @@ namespace occa {
   //---[ Types ]------------------------
   typedef struct _hipCtx_t*               hipCtx_t;
   typedef int                             hipDevice_t;
-  typedef char*                           hipDeviceptr_t;
+  typedef void*                           hipDeviceptr_t;
   typedef struct _hipEvent_t*             hipEvent_t;
   typedef struct _hipFunction_t*          hipFunction_t;
   typedef struct _hipFunctionAttribute_t* hipFunctionAttribute_t;
@@ -32,6 +32,8 @@ namespace occa {
     size_t totalGlobalMem;
     int maxThreadsPerBlock;
     int gcnArch;
+    int major;
+    int minor;
   };
 
   enum hipError_t {
@@ -200,7 +202,7 @@ namespace occa {
     return OCCA_HIP_IS_NOT_ENABLED;
   }
 
-  inline hipError_t hipMemPrefetchAsync(hipDeviceptr_t *devPtr, size_t count, hipDevice_t dstDevice, hipStream_t hStream) {
+  inline hipError_t hipMemPrefetchAsync(hipDeviceptr_t *dptr, size_t count, hipDevice_t dstDevice, hipStream_t hStream) {
     return OCCA_HIP_IS_NOT_ENABLED;
   }
 

@@ -48,6 +48,33 @@ namespace occa {
       return ss.str();
     }
 
+    std::string getDeviceArch(
+      const int deviceId,
+      const int majorVersion,
+      const int minorVersion
+    ) {
+      hipDeviceProp_t hipProps;
+
+      OCCA_HIP_ERROR("Getting HIP device properties",
+                     hipGetDeviceProperties(&hipProps, deviceId));
+
+      if (hipProps.gcnArch) {
+        return "gfx" + toString(hipProps.gcnArch);
+      }
+      std::string sm = "sm_";
+      sm += toString(
+        majorVersion >= 0
+        ? majorVersion
+        : hipProps.major
+      );
+      sm += toString(
+        minorVersion >= 0
+        ? minorVersion
+        : hipProps.minor
+      );
+      return sm;
+    }
+
     void enablePeerToPeer(hipCtx_t context) {
 
       // OCCA_HIP_ERROR("Enabling Peer-to-Peer",

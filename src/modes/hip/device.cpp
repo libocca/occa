@@ -20,7 +20,7 @@ namespace occa {
     device::device(const occa::properties &properties_) :
       occa::launchedModeDevice_t(properties_) {
 
-      hipDeviceProp_t props;
+      hipDeviceProp_t hipProps;
       if (!properties.has("wrapped")) {
         OCCA_ERROR("[HIP] device not given a [device_id] integer",
                    properties.has("device_id") &&
@@ -35,7 +35,7 @@ namespace occa {
                        hipSetDevice(deviceID));
 
         OCCA_HIP_ERROR("Getting device properties",
-                       hipGetDeviceProperties(&props, deviceID));
+                       hipGetDeviceProperties(&hipProps, deviceID));
       }
 
       p2pEnabled = false;
@@ -58,17 +58,22 @@ namespace occa {
       }
 
       kernelProps["compiler"]      = compiler;
-      kernelProps["compilerFlags"] = compilerFlags;
+      kernelProps["compiler_flags"] = compilerFlags;
 
-      OCCA_HIP_ERROR("Device: Getting HIP Device Arch",
-                     hipDeviceComputeCapability(&archMajorVersion,
-                                                &archMinorVersion,
-                                                hipDevice) );
+      archMajorVersion = kernelProps.get<int>("arch/major", hipProps.major);
+      archMinorVersion = kernelProps.get<int>("arch/minor", hipProps.minor);
 
-      archMajorVersion = kernelProps.get("arch/major", archMajorVersion);
-      archMinorVersion = kernelProps.get("arch/minor", archMinorVersion);
+      std::string arch = getDeviceArch(deviceID, archMajorVersion, archMinorVersion);
+      std::string archFlag;
+      if (startsWith(arch, "sm_")) {
+        archFlag = "-arch=" + arch;
+      } else if (startsWith(arch, "gfx")) {
+        archFlag = "-t " + arch;
+      } else {
+        OCCA_FORCE_ERROR("Unknown HIP arch");
+      }
 
-      kernelProps["target"] = toString(props.gcnArch);
+      kernelProps["compiler_flag_arch"] = archFlag;
     }
 
     device::~device() { }
@@ -220,13 +225,11 @@ namespace occa {
     }
 
     void device::setArchCompilerFlags(occa::properties &kernelProps) {
-      if (kernelProps.get<std::string>("compiler_flags").find("-t gfx") == std::string::npos) {
-        std::stringstream ss;
-        std::string arch = kernelProps["target"];
-        if (arch.size()) {
-          ss << " -t gfx" << arch << ' ';
-          kernelProps["compiler_flags"] += ss.str();
-        }
+      const std::string compiler_flags = kernelProps.get<std::string>("compiler_flags");
+
+      if (compiler_flags.find("-t gfx") == std::string::npos
+          && compiler_flags.find("-arch=sm") == std::string::npos) {
+        kernelProps["compiler_flags"] += kernelProps["compiler_flag_arch"];
       }
     }
 
@@ -381,7 +384,7 @@ namespace occa {
                      hipSetDevice(deviceID));
 
       OCCA_HIP_ERROR("Device: malloc",
-                     hipMalloc(&(mem.hipPtr), bytes));
+                     hipMalloc((void**) &(mem.hipPtr), bytes));
 
       if (src != NULL) {
         mem.copyFrom(src, bytes, 0);
@@ -400,7 +403,7 @@ namespace occa {
       OCCA_HIP_ERROR("Device: malloc host",
                      hipHostMalloc((void**) &(mem.mappedPtr), bytes));
       OCCA_HIP_ERROR("Device: get device pointer from host",
-                     hipHostGetDevicePointer(&(mem.hipPtr),
+                     hipHostGetDevicePointer((void**) &(mem.hipPtr),
                                              mem.mappedPtr,
                                              0));
 

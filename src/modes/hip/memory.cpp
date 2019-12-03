@@ -8,7 +8,11 @@ namespace occa {
                    udim_t size_,
                    const occa::properties &properties_) :
       occa::modeMemory_t(modeDevice_, size_, properties_),
+#ifdef __HIP_PLATFORM_HCC__
+      hipPtr(ptr),
+#else
       hipPtr((hipDeviceptr_t&) ptr),
+#endif
       mappedPtr(NULL) {}
 
     memory::~memory() {
@@ -24,7 +28,7 @@ namespace occa {
                        hipHostFree(mappedPtr));
         mappedPtr = NULL;
       } else if (hipPtr) {
-        hipFree(hipPtr);
+        hipFree((void*) hipPtr);
         hipPtr = 0;
       }
       size = 0;
@@ -49,7 +53,7 @@ namespace occa {
       memory *m = new memory(modeDevice,
                              size - offset,
                              properties);
-      m->hipPtr = (char*) hipPtr + offset;
+      m->hipPtr = ((char*) hipPtr) + offset;
       if (mappedPtr) {
         m->mappedPtr = mappedPtr + offset;
       }
@@ -71,12 +75,16 @@ namespace occa {
 
       if (!async) {
         OCCA_HIP_ERROR("Memory: Copy From",
-                       hipMemcpyHtoD((char*) hipPtr + offset,
+                       hipMemcpyHtoD((hipDeviceptr_t) (
+                                       (char*) hipPtr + offset
+                                     ),
                                      const_cast<void*>(src),
                                      bytes) );
       } else {
         OCCA_HIP_ERROR("Memory: Async Copy From",
-                       hipMemcpyHtoDAsync((char*) hipPtr + offset,
+                       hipMemcpyHtoDAsync((hipDeviceptr_t) (
+                                            (char*) hipPtr + offset
+                                          ),
                                           const_cast<void*>(src),
                                           bytes,
                                           getHipStream()) );
@@ -92,13 +100,19 @@ namespace occa {
 
       if (!async) {
         OCCA_HIP_ERROR("Memory: Copy From",
-                       hipMemcpyDtoD((char*) hipPtr + destOffset,
-                                     (char*) ((memory*) src)->hipPtr + srcOffset,
+                       hipMemcpyDtoD((hipDeviceptr_t) (
+                                       (char*) hipPtr + destOffset
+                                     ),
+                                     (hipDeviceptr_t) (
+                                       (char*) ((memory*) src)->hipPtr + srcOffset
+                                     ),
                                      bytes) );
       } else {
         OCCA_HIP_ERROR("Memory: Async Copy From",
-                       hipMemcpyDtoDAsync((char*) hipPtr + destOffset,
-                                          (char*) ((memory*) src)->hipPtr + srcOffset,
+                       hipMemcpyDtoDAsync((hipDeviceptr_t) ((char*) hipPtr + destOffset),
+                                          (hipDeviceptr_t) (
+                                            (char*) ((memory*) src)->hipPtr + srcOffset
+                                          ),
                                           bytes,
                                           getHipStream()) );
       }
@@ -113,12 +127,16 @@ namespace occa {
       if (!async) {
         OCCA_HIP_ERROR("Memory: Copy From",
                        hipMemcpyDtoH(dest,
-                                     (char*) hipPtr + offset,
+                                     (hipDeviceptr_t) (
+                                       (char*) hipPtr + offset
+                                     ),
                                      bytes) );
       } else {
         OCCA_HIP_ERROR("Memory: Async Copy From",
                        hipMemcpyDtoHAsync(dest,
-                                          (char*) hipPtr + offset,
+                                          (hipDeviceptr_t) (
+                                            (char*) hipPtr + offset
+                                          ),
                                           bytes,
                                           getHipStream()) );
       }
