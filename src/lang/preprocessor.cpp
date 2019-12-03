@@ -27,10 +27,10 @@ namespace occa {
     preprocessor_t::preprocessor_t(const occa::properties &settings_) {
       init();
       initDirectives();
-      if (!settings_.has("include_paths")) {
+      if (!settings_.has("okl/include_paths")) {
         return;
       }
-      json paths = settings_["include_paths"];
+      json paths = settings_["okl/include_paths"];
       if (!paths.isArray()) {
         return;
       }
@@ -214,7 +214,7 @@ namespace occa {
     }
 
     void* preprocessor_t::passMessageToInput(const occa::properties &props) {
-      const std::string inputName = props.get<std::string>("inputName");
+      const std::string inputName = props.get<std::string>("input_name");
       if (inputName == "preprocessor_t") {
         return (void*) this;
       }

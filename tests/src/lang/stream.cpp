@@ -27,7 +27,7 @@ public:
   }
 
   virtual void* passMessageToInput(const occa::properties &props) {
-    const std::string inputName = props.get<std::string>("inputName");
+    const std::string inputName = props.get<std::string>("input_name");
     if (inputName == "vectorStream") {
       return (void*) this;
     }
@@ -132,11 +132,11 @@ int main(const int argc, const char **argv) {
 
   // Test passMessage
   ASSERT_EQ((void*) NULL,
-            sDouble.passMessageToInput("inputName: 'test'"));
+            sDouble.passMessageToInput("input_name: 'test'"));
   ASSERT_EQ((void*) NULL,
             sDouble.getInput("test"));
 
-  vectorStream<int> *vs = (vectorStream<int>*) sDouble.passMessageToInput("inputName: 'vectorStream'");
+  vectorStream<int> *vs = (vectorStream<int>*) sDouble.passMessageToInput("input_name: 'vectorStream'");
   ASSERT_NEQ((void*) NULL,
              (void*) vs);
   ASSERT_EQ(4, (int) vs->values.size());

@@ -19,6 +19,8 @@ OCCA_LFUNC occaProperties OCCA_RFUNC occaDeviceGetKernelProperties(occaDevice de
 
 OCCA_LFUNC occaProperties OCCA_RFUNC occaDeviceGetMemoryProperties(occaDevice device);
 
+OCCA_LFUNC occaProperties OCCA_RFUNC occaDeviceGetStreamProperties(occaDevice device);
+
 OCCA_LFUNC occaUDim_t OCCA_RFUNC occaDeviceMemorySize(occaDevice device);
 
 OCCA_LFUNC occaUDim_t OCCA_RFUNC occaDeviceMemoryAllocated(occaDevice device);

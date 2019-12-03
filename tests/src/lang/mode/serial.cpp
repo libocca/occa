@@ -8,7 +8,7 @@ void testKernel();
 void testExclusives();
 
 int main(const int argc, const char **argv) {
-  parser.settings["serial/include-std"] = false;
+  parser.settings["serial/include_std"] = false;
 
   // parser.settings["okl/validate"] = false;
   // testPreprocessor();

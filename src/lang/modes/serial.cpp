@@ -30,7 +30,7 @@ namespace occa {
 
       void serialParser::setupHeaders() {
         strVector headers;
-        const bool includingStd = settings.get("serial/include-std", true);
+        const bool includingStd = settings.get("serial/include_std", true);
         headers.push_back("include <occa.hpp>\n");
         if (includingStd) {
           headers.push_back("include <stdint.h>");

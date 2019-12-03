@@ -41,8 +41,10 @@ namespace occa {
 
       void initSettings();
       void initEnvironment();
-      void initCachePath();
-      void initIncludePath();
+      void loadConfig();
+
+      void setupCachePath();
+      void setupIncludePath();
       void registerFileOpeners();
 
       void cleanFileOpeners();

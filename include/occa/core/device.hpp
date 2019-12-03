@@ -176,17 +176,16 @@ namespace occa {
 
     const std::string& mode() const;
 
-    occa::properties& properties();
     const occa::properties& properties() const;
 
-    occa::properties& kernelProperties();
     const occa::properties& kernelProperties() const;
+    occa::properties kernelProperties(const occa::properties &additionalProps) const;
 
-    occa::properties& memoryProperties();
     const occa::properties& memoryProperties() const;
+    occa::properties memoryProperties(const occa::properties &additionalProps) const;
 
-    occa::properties& streamProperties();
     const occa::properties& streamProperties() const;
+    occa::properties streamProperties(const occa::properties &additionalProps) const;
 
     hash_t hash() const;
 
@@ -310,6 +309,19 @@ namespace occa {
   template <>
   occa::memory device::malloc<void>(const dim_t entries,
                                     const occa::properties &props);
+  //====================================
+
+  //---[ Utils ]------------------------
+  occa::properties getModeSpecificProps(const std::string &mode,
+                                        const occa::properties &props);
+
+  occa::properties getObjectSpecificProps(const std::string &mode,
+                                          const std::string &object,
+                                          const occa::properties &props);
+
+  occa::properties initialObjectProps(const std::string &mode,
+                                      const std::string &object,
+                                      const occa::properties &props);
   //====================================
 }
 

@@ -7,7 +7,7 @@ void testPragma();
 
 int main(const int argc, const char **argv) {
   parser.settings["okl/validate"] = false;
-  parser.settings["serial/include-std"] = false;
+  parser.settings["serial/include_std"] = false;
 
   // testPragma();
 

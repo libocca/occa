@@ -19,15 +19,16 @@ namespace occa {
                  properties.has("device_id") &&
                  properties["device_id"].isNumber());
 
+      occa::json &kernelProps = properties["kernel"];
       std::string compilerFlags;
 
-      if (properties.get<std::string>("kernel/compiler_flags").size()) {
-        compilerFlags = (std::string) properties["kernel/compiler_flags"];
+      if (kernelProps.get<std::string>("compiler_flags").size()) {
+        compilerFlags = (std::string) kernelProps["compiler_flags"];
       } else {
         compilerFlags = "-O3";
       }
 
-      properties["kernel/compiler_flags"] = compilerFlags;
+      kernelProps["compiler_flags"] = compilerFlags;
 
       deviceID = properties.get<int>("device_id");
 

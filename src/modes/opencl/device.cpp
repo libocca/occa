@@ -37,16 +37,17 @@ namespace occa {
         OCCA_OPENCL_ERROR("Device: Creating Context", error);
       }
 
+      occa::json &kernelProps = properties["kernel"];
       std::string compilerFlags;
 
       // Use "-cl-opt-disable" for debug-mode
-      if (properties.has("kernel/compiler_flags")) {
-        compilerFlags = (std::string) properties["kernel/compiler_flags"];
+      if (kernelProps.has("compiler_flags")) {
+        compilerFlags = (std::string) kernelProps["compiler_flags"];
       } else if (env::var("OCCA_OPENCL_COMPILER_FLAGS").size()) {
         compilerFlags = env::var("OCCA_OPENCL_COMPILER_FLAGS");
       }
 
-      properties["kernel/compiler_flags"] = compilerFlags;
+      kernelProps["compiler_flags"] = compilerFlags;
     }
 
     device::~device() {

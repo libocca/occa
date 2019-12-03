@@ -40,34 +40,35 @@ namespace occa {
 
       p2pEnabled = false;
 
+      occa::json &kernelProps = properties["kernel"];
       std::string compiler, compilerFlags;
 
-      if (properties.get<std::string>("kernel/compiler").size()) {
-        compiler = (std::string) properties["kernel/compiler"];
+      if (kernelProps.get<std::string>("compiler").size()) {
+        compiler = (std::string) kernelProps["compiler"];
       } else if (env::var("OCCA_HIP_COMPILER").size()) {
         compiler = env::var("OCCA_HIP_COMPILER");
       } else {
         compiler = "hipcc";
       }
 
-      if (properties.get<std::string>("kernel/compiler_flags").size()) {
-        compilerFlags = (std::string) properties["kernel/compiler_flags"];
+      if (kernelProps.get<std::string>("compiler_flags").size()) {
+        compilerFlags = (std::string) kernelProps["compiler_flags"];
       } else {
         compilerFlags = "-O3";
       }
 
-      properties["kernel/compiler"]      = compiler;
-      properties["kernel/compilerFlags"] = compilerFlags;
+      kernelProps["compiler"]      = compiler;
+      kernelProps["compilerFlags"] = compilerFlags;
 
       OCCA_HIP_ERROR("Device: Getting HIP Device Arch",
                      hipDeviceComputeCapability(&archMajorVersion,
                                                 &archMinorVersion,
                                                 hipDevice) );
 
-      archMajorVersion = properties.get("hip/arch/major", archMajorVersion);
-      archMinorVersion = properties.get("hip/arch/minor", archMinorVersion);
+      archMajorVersion = kernelProps.get("arch/major", archMajorVersion);
+      archMinorVersion = kernelProps.get("arch/minor", archMinorVersion);
 
-      properties["kernel/target"] = toString(props.gcnArch);
+      kernelProps["target"] = toString(props.gcnArch);
     }
 
     device::~device() { }

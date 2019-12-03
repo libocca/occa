@@ -5,7 +5,13 @@
 
 #define OCCA_INLINED_KERNEL_NAME "_occa_inlinedKernel"
 
-#define OCCA_JIT(OCCA_PROPS, OKL_ARGS, OKL_SOURCE)        \
+#define OCCA_JIT(...) \
+  OCCA_JIT_ ## OCCA_ARG_COUNT(__VA_ARGS__) (__VA_ARGS__)
+
+#define OCCA_JIT_2(OKL_ARGS, OKL_SOURCE)        \
+  OCCA_JIT_3(occa::properties(), OKL_ARGS, OKL_SOURCE)
+
+#define OCCA_JIT_3(OCCA_PROPS, OKL_ARGS, OKL_SOURCE)      \
   do {                                                    \
     static occa::kernelBuilder _inlinedKernelBuilder = (  \
       occa::kernelBuilder::fromString(                    \

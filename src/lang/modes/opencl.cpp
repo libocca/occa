@@ -18,10 +18,10 @@ namespace occa {
 
         okl::addAttributes(*this);
 
-        if (!settings.has("options/restrict")) {
-          settings["options/restrict"] = "restrict";
+        if (!settings.has("okl/restrict")) {
+          settings["okl/restrict"] = "restrict";
         }
-        settings["opencl/extensions/cl_khr_fp64"] = true;
+        settings["extensions/cl_khr_fp64"] = true;
       }
 
       void openclParser::onClear() {
@@ -74,11 +74,11 @@ namespace occa {
       }
 
       void openclParser::addExtensions() {
-        if (!settings.has("opencl/extensions")) {
+        if (!settings.has("extensions")) {
           return;
         }
 
-        occa::json &extensions = settings["opencl/extensions"];
+        occa::json &extensions = settings["extensions"];
         if (!extensions.isObject()) {
           return;
         }
