@@ -58,7 +58,7 @@
     },
     stream: {},
     // Mode-specific settings
-    mode: {
+    modes: {
       Serial: {
         kernel: {
           compiler: "g++",

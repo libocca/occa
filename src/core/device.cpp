@@ -208,17 +208,17 @@ namespace occa {
   }
 
   void device::setup(const occa::properties &props) {
-    occa::properties deviceProps = props;
+    free();
+
     const std::string mode_ = props["mode"];
 
-    // Apply mode-specific properties
-    deviceProps += (
+    occa::properties deviceProps = (
       getObjectSpecificProps(mode_, "device", settings())
-      + getModeSpecificProps(mode_, deviceProps)
+      + getModeSpecificProps(mode_, props)
     );
-    deviceProps["kernel"] = initialObjectProps(mode_, "kernel", deviceProps);
-    deviceProps["memory"] = initialObjectProps(mode_, "memory", deviceProps);
-    deviceProps["stream"] = initialObjectProps(mode_, "stream", deviceProps);
+    deviceProps["kernel"] = initialObjectProps(mode_, "kernel", props);
+    deviceProps["memory"] = initialObjectProps(mode_, "memory", props);
+    deviceProps["stream"] = initialObjectProps(mode_, "stream", props);
 
     setModeDevice(occa::newModeDevice(deviceProps));
 
@@ -680,18 +680,29 @@ namespace occa {
   //---[ Utils ]------------------------
   occa::properties getModeSpecificProps(const std::string &mode,
                                         const occa::properties &props) {
-    return props + props[mode];
+    occa::properties allProps = (
+      props
+      + props["modes/" + mode]
+    );
+
+    allProps.remove("modes");
+
+    return allProps;
   }
 
   occa::properties getObjectSpecificProps(const std::string &mode,
                                           const std::string &object,
                                           const occa::properties &props) {
-    return (
-      props
-      + props[object]
-      + props[object + "/" + mode]
-      + props[mode + "/" + object]
+    occa::properties allProps = (
+      props[object]
+      + props[object + "/modes/" + mode]
+      + props["modes/" + mode + "/" + object]
     );
+
+    allProps.remove(object + "/modes");
+    allProps.remove("modes");
+
+    return allProps;
   }
 
   occa::properties initialObjectProps(const std::string &mode,
@@ -701,6 +712,7 @@ namespace occa {
       getObjectSpecificProps(mode, object, settings())
       + getObjectSpecificProps(mode, object, props)
     );
+    objectProps["mode"] = mode;
     return objectProps;
   }
   //====================================
