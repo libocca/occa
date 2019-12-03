@@ -7,9 +7,6 @@
 #  define __PRETTY_FUNCTION__ __FUNCTION__
 #endif
 
-#define OCCA_STRINGIFY2(macro) #macro
-#define OCCA_STRINGIFY(macro) OCCA_STRINGIFY2(macro)
-
 #ifdef __cplusplus
 #  define OCCA_START_EXTERN_C extern "C" {
 #  define OCCA_END_EXTERN_C   }
@@ -37,7 +34,6 @@
     0)
 
 #  define OCCA_ARG_COUNT2(                          \
-  KERNEL,                                           \
   _1, _2, _3, _4, _5, _6, _7, _8, _9, _10,          \
   _11, _12, _13, _14, _15, _16, _17, _18, _19, _20, \
   _21, _22, _23, _24, _25, _26, _27, _28, _29, _30, \
