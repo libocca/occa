@@ -31,6 +31,22 @@ namespace occa {
     return sum;
   }
 
+  inline properties operator + (const properties &left, const json &right) {
+    properties sum = left;
+    sum.mergeWithObject(right.value_.object);
+    return sum;
+  }
+
+  inline properties& operator += (properties &left, const properties &right) {
+    left.mergeWithObject(right.value_.object);
+    return left;
+  }
+
+  inline properties& operator += (properties &left, const json &right) {
+    left.mergeWithObject(right.value_.object);
+    return left;
+  }
+
   template <>
   hash_t hash(const properties &props);
 }

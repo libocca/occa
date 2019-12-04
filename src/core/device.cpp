@@ -208,32 +208,19 @@ namespace occa {
   }
 
   void device::setup(const occa::properties &props) {
-    occa::properties settings_ = settings();
-    occa::properties defaults;
+    free();
 
-    std::string paths[2] = {"", ""};
-    paths[1] = "mode/";
-    paths[1] += (std::string) props["mode"];
-    paths[1] += '/';
+    const std::string mode_ = props["mode"];
 
-    for (int i = 0; i < 2; ++i) {
-      const std::string &path = paths[i];
+    occa::properties deviceProps = (
+      getObjectSpecificProps(mode_, "device", settings())
+      + getModeSpecificProps(mode_, props)
+    );
+    deviceProps["kernel"] = initialObjectProps(mode_, "kernel", props);
+    deviceProps["memory"] = initialObjectProps(mode_, "memory", props);
+    deviceProps["stream"] = initialObjectProps(mode_, "stream", props);
 
-      if (settings_.has(path + "device")) {
-        defaults += settings_[path + "device"];
-      }
-      if (settings_.has(path + "kernel")) {
-        defaults["kernel"] += settings_[path + "kernel"];
-      }
-      if (settings_.has(path + "memory")) {
-        defaults["memory"] += settings_[path + "memory"];
-      }
-      if (settings_.has(path + "stream")) {
-        defaults["stream"] += settings_[path + "stream"];
-      }
-    }
-
-    setModeDevice(occa::newModeDevice(defaults + props));
+    setModeDevice(occa::newModeDevice(deviceProps));
 
     // Create an initial stream
     setStream(createStream());
@@ -256,19 +243,9 @@ namespace occa {
             : noMode);
   }
 
-  occa::properties& device::properties() {
-    assertInitialized();
-    return modeDevice->properties;
-  }
-
   const occa::properties& device::properties() const {
     assertInitialized();
     return modeDevice->properties;
-  }
-
-  occa::properties& device::kernelProperties() {
-    assertInitialized();
-    return (occa::properties&) modeDevice->properties["kernel"];
   }
 
   const occa::properties& device::kernelProperties() const {
@@ -276,9 +253,11 @@ namespace occa {
     return (const occa::properties&) modeDevice->properties["kernel"];
   }
 
-  occa::properties& device::memoryProperties() {
-    assertInitialized();
-    return (occa::properties&) modeDevice->properties["memory"];
+  occa::properties device::kernelProperties(const occa::properties &additionalProps) const {
+    return (
+      kernelProperties()
+      + getModeSpecificProps(mode(), additionalProps)
+    );
   }
 
   const occa::properties& device::memoryProperties() const {
@@ -286,14 +265,23 @@ namespace occa {
     return (const occa::properties&) modeDevice->properties["memory"];
   }
 
-  occa::properties& device::streamProperties() {
-    assertInitialized();
-    return (occa::properties&) modeDevice->properties["stream"];
+  occa::properties device::memoryProperties(const occa::properties &additionalProps) const {
+    return (
+      memoryProperties()
+      + getModeSpecificProps(mode(), additionalProps)
+    );
   }
 
   const occa::properties& device::streamProperties() const {
     assertInitialized();
     return (const occa::properties&) modeDevice->properties["stream"];
+  }
+
+  occa::properties device::streamProperties(const occa::properties &additionalProps) const {
+    return (
+      streamProperties()
+      + getModeSpecificProps(mode(), additionalProps)
+    );
   }
 
   hash_t device::hash() const {
@@ -347,7 +335,7 @@ namespace occa {
   //  |---[ Stream ]--------------------
   stream device::createStream(const occa::properties &props) {
     assertInitialized();
-    return modeDevice->createStream(streamProperties() + props);
+    return modeDevice->createStream(streamProperties(props));
   }
 
   stream device::getStream() {
@@ -383,8 +371,7 @@ namespace occa {
                                hash_t &kernelHash) const {
     assertInitialized();
 
-    kernelProps = kernelProperties() + props;
-    kernelProps["mode"] = mode();
+    kernelProps = kernelProperties(props);
 
     kernelHash = (
       hash()
@@ -583,7 +570,7 @@ namespace occa {
                << "negative bytes (" << bytes << ")",
                bytes >= 0);
 
-    occa::properties memProps = memoryProperties() + props;
+    occa::properties memProps = memoryProperties(props);
 
     memory mem(modeDevice->malloc(bytes, src, memProps));
     mem.setDtype(dtype);
@@ -654,7 +641,7 @@ namespace occa {
       return NULL;
     }
 
-    occa::properties memProps = memoryProperties() + props;
+    occa::properties memProps = memoryProperties(props);
 
     memory mem = malloc(entries, dtype, src, memProps);
     mem.setDtype(dtype);
@@ -687,6 +674,46 @@ namespace occa {
                              const occa::device &device) {
     out << device.properties();
     return out;
+  }
+  //====================================
+
+  //---[ Utils ]------------------------
+  occa::properties getModeSpecificProps(const std::string &mode,
+                                        const occa::properties &props) {
+    occa::properties allProps = (
+      props
+      + props["modes/" + mode]
+    );
+
+    allProps.remove("modes");
+
+    return allProps;
+  }
+
+  occa::properties getObjectSpecificProps(const std::string &mode,
+                                          const std::string &object,
+                                          const occa::properties &props) {
+    occa::properties allProps = (
+      props[object]
+      + props[object + "/modes/" + mode]
+      + props["modes/" + mode + "/" + object]
+    );
+
+    allProps.remove(object + "/modes");
+    allProps.remove("modes");
+
+    return allProps;
+  }
+
+  occa::properties initialObjectProps(const std::string &mode,
+                                      const std::string &object,
+                                      const occa::properties &props) {
+    occa::properties objectProps = (
+      getObjectSpecificProps(mode, object, settings())
+      + getObjectSpecificProps(mode, object, props)
+    );
+    objectProps["mode"] = mode;
+    return objectProps;
   }
   //====================================
 }

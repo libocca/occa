@@ -12,7 +12,7 @@ namespace occa {
     template <class output_t>
     void* baseStream<output_t>::getInput(const std::string &name) {
       occa::properties props;
-      props["inputName"] = name;
+      props["input_name"] = name;
       return passMessageToInput(props);
     }
 

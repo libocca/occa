@@ -1,0 +1,176 @@
+// By default, should be placed in ~/.occa/config.json
+// Note it uses most of JSON5 format
+{
+  env: {
+    OCCA_COLOR_ENABLED: true,
+    OCCA_DIR: "~/occa",
+    OCCA_CACHE_DIR: "~/.occa",
+    OCCA_MEM_BYTE_ALIGN: 64,
+    OCCA_PATH: [
+      "/path/to/places/with/kernels",
+    ],
+    OCCA_CONFIG: "<path to this file>", // (defaults to "${OCCA_CACHE_DIR}/config.json")
+  },
+  settings: {
+    // Automaticly added settings, don't override!
+    // version: "<Major>.<Minor>.<Patch>", (e.g. "1.0.0")
+    // okl_version: "<Major>.<Minor>.<Patch>", (e.g. "1.0.0")
+
+    // General core object settings
+    device: {
+      mode: "<mode-of-the-device>",
+      verbose: false,
+    },
+    kernel: {
+      mode: "<mode-of-the-kernel>",
+      verbose: false,
+
+      // Silently run even with failed compilations
+      // kernel::isInitialized() will return false on failed compilations
+      allow_failed_kernels: false,
+
+      // Map of key -> value pairs to `#define key value`
+      defines: {},
+
+      // List of files to `#include "file"`
+      include: [],
+
+      // List of source-code snippets to include at the top of the source code
+      header: [],
+
+      // OKL Options
+      okl: {
+        // Validate for proper OKL kernels
+        // This checks if OKL attributes are used properly. For example:
+        //   @outer, @inner, @shared, @exclusive
+        validate: true,
+
+        // Additional places to search for headers
+        include_paths: [],
+
+        // Macro to expand @restrict variables since it is compiler-dependent in C++
+        restrict: "__restrict__",
+      },
+    },
+    memory: {
+      mode: "<mode-of-the-memory>"
+      verbose: false,
+    },
+    stream: {},
+    // Mode-specific settings
+    modes: {
+      Serial: {
+        kernel: {
+          compiler: "g++",
+          compiler_flags: "-O3",
+          compiler_env_script: "",
+
+          // Include certain standard headers such as:
+          //   #include <stdint.h>
+          //   #include <cstdlib>
+          //   #include <cstdio>
+          //   #include <cmath>
+          include_std: true,
+        },
+      },
+      OpenMP: {
+        kernel: {
+          compiler: "g++",
+          compiler_flags: "-O3",
+          compiler_env_script: "",
+        },
+      },
+      CUDA: {
+        device: {
+          // Required props when creating a CUDA device:
+          device_id: 0,
+        }
+        kernel: {
+          compiler: "nvcc",
+          compiler_flags: "-O3",
+          compiler_env_script: "",
+        },
+        memory: {
+          // Uses unified memory
+          unified: false,
+
+          // Uses host-mapped memory
+          mapped: false,
+
+          // If true, use CU_MEM_ATTACH_HOST instead of CU_MEM_ATTACH_GLOBAL
+          // with unified memory allocations
+          attached_host: false,
+        },
+      },
+      HIP: {
+        device: {
+          // Required props when creating a HIP device:
+          device_id: 0,
+        }
+        kernel: {
+          compiler: "hipcc",
+          compiler_flags: "-O3",
+          compiler_env_script: "",
+
+          // Auto-detected
+          arch: {
+            major: "<HIP-major-version>",
+            minor: "<HIP-minor-version>",
+          },
+
+          // Used with flags "-t gfx <target>"
+          target: "<HIP-target>",
+        },
+        memory: {
+          // Uses host-mapped memory
+          mapped: false,
+        },
+      },
+      OpenCL: {
+        device: {
+          // Required props when creating a OpenCL device:
+          platform_id: 0,
+          device_id: 0,
+        },
+        kernel: {
+          compiler_flags: "",
+
+          // Additional extensions to use when compiling kernels
+          extensions: {
+            "cl_khr_fp64": true,
+          },
+        },
+        memory: {
+          // Uses host-mapped memory
+          mapped: false,
+        },
+      },
+      Metal: {
+        device: {
+          // Required props when creating a Metal device:
+          device_id: 0,
+        },
+        kernel: {
+          compiler_flags: "",
+        },
+      },
+    },
+    // System settings
+    sys: {
+      // Cannot delete any directory less than 2 directories from /
+      // For example:
+      //   Safe:   /home/occa/foo
+      //   Unsafe: /home/foo
+      safe_rmrf: true,
+    },
+    // Caching lock settings
+    locks: {
+      stale_warning: 10.0,
+      stale_age: 20.0,
+    },
+    // OKL settings
+    okl: {
+      validate: true,
+    },
+  },
+}

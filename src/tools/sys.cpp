@@ -262,9 +262,9 @@ namespace occa {
       }
 
       // Make sure we're not deleting /
-      if (settings().get("options/safe-rmrf", true)) {
+      if (settings().get("sys/safe_rmrf", true)) {
         OCCA_ERROR("For safety, not deleting [" << filename << "]."
-                   " To disable this error, set 'options/safe-rmrf' settings to false",
+                   " To disable this error, set 'sys/safe_rmrf' settings to false",
                    isSafeToRmrf(filename));
       }
       rmdir(filename, true);

@@ -21,15 +21,28 @@ int main(int argc, const char **argv) {
     ab[i] = 0;
   }
 
-  occa::properties props;
-  props["defines/TILE_SIZE"] = 16;
-
   // Const-ness of variables is passed through which can be useful for the compiler
   const float *c_a = a;
   const float *c_b = b;
 
   // Arguments:
-  // 1. Runtime occa::properties (pass occa::properties() to ignore this argument)
+  // 1. Captured variables
+  // 2. Inlined OKL source
+  OCCA_JIT(
+    (entries, c_a, c_b, ab),
+    (
+      for (int i = 0; i < entries; ++i; @tile(16, @outer, @inner)) {
+        ab[i] = 100 * (c_a[i] + c_b[i]);
+      }
+    )
+  );
+
+  // Runtime occa::properties can also be passed in the first argument
+  occa::properties props;
+  props["defines/TILE_SIZE"] = 16;
+
+  // Arguments:
+  // 1. Properties (optional)
   // 2. Captured variables
   // 3. Inlined OKL source
   OCCA_JIT(
@@ -39,7 +52,7 @@ int main(int argc, const char **argv) {
       // TILE_SIZE is passed as a compile-time define as opposed to a runtime variable
       // through props
       for (int i = 0; i < entries; ++i; @tile(TILE_SIZE, @outer, @inner)) {
-        ab[i] = 100 * (c_a[i] + c_b[i]);
+        ab[i] = 200 * (c_a[i] + c_b[i]);
       }
     )
   );

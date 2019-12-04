@@ -35,10 +35,10 @@ namespace occa {
       lockDir += tag;
 
       occa::json &lockSettings = settings()["locks"];
-      staleWarning = lockSettings.get("stale-warning",
+      staleWarning = lockSettings.get("stale_warning",
                                       (float) 10.0);
       if (staleAge <= 0) {
-        staleAge = lockSettings.get("stale-age",
+        staleAge = lockSettings.get("stale_age",
                                     (float) 20.0);
       }
     }

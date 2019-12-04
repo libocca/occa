@@ -256,6 +256,7 @@ namespace occa {
     void loadTrue(const char *&c);
     void loadFalse(const char *&c);
     void loadNull(const char *&c);
+    void loadComment(const char *&c);
 
     json operator + (const json &j) const;
     json& operator += (const json &j);

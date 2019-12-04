@@ -46,6 +46,10 @@ namespace occa {
 
       initSettings();
       initEnvironment();
+      loadConfig();
+
+      setupCachePath();
+      setupIncludePath();
       registerFileOpeners();
 
       isInitialized = true;
@@ -54,7 +58,7 @@ namespace occa {
     void envInitializer_t::initSettings() {
       properties &settings_ = baseSettings();
       settings_["version"]     = OCCA_VERSION_STR;
-      settings_["okl-version"] = OKL_VERSION_STR;
+      settings_["okl_version"] = OKL_VERSION_STR;
 
       const bool isVerbose = env::get<bool>("OCCA_VERBOSE", false);
       if (isVerbose) {
@@ -72,6 +76,9 @@ namespace occa {
       PATH               = env::var("PATH");
       LD_LIBRARY_PATH    = env::var("LD_LIBRARY_PATH");
 
+      OCCA_CACHE_DIR     = env::var("OCCA_CACHE_DIR");
+      OCCA_COLOR_ENABLED = env::get<bool>("OCCA_COLOR_ENABLED", true);
+
       io::endWithSlash(HOME);
       io::endWithSlash(PWD);
       io::endWithSlash(PATH);
@@ -83,9 +90,6 @@ namespace occa {
         OCCA_DIR = OCCA_BUILD_DIR;
       }
       OCCA_COLOR_ENABLED = env::get<bool>("OCCA_COLOR_ENABLED", true);
-
-      initCachePath();
-      initIncludePath();
 
       io::endWithSlash(OCCA_DIR);
       io::endWithSlash(OCCA_CACHE_DIR);
@@ -104,9 +108,22 @@ namespace occa {
       }
     }
 
-    void envInitializer_t::initCachePath() {
-      env::OCCA_CACHE_DIR = env::var("OCCA_CACHE_DIR");
+    void envInitializer_t::loadConfig() {
+      const std::string configFile = (
+        env::get("OCCA_CONFIG",
+                 OCCA_CACHE_DIR + "config.json")
+      );
 
+      if (!io::exists(configFile)) {
+        return;
+      }
+
+      properties &settings_ = baseSettings();
+
+      settings_ += json::read(configFile);
+    }
+
+    void envInitializer_t::setupCachePath() {
       if (env::OCCA_CACHE_DIR.size() == 0) {
         std::stringstream ss;
 
@@ -130,14 +147,17 @@ namespace occa {
       }
     }
 
-    void envInitializer_t::initIncludePath() {
-      strVector &oipVec = env::OCCA_PATH;
-      oipVec.clear();
-      std::string oip = env::var("OCCA_PATH");
+    void envInitializer_t::setupIncludePath() {
+      std::string envPath = env::var("OCCA_PATH");
+      if (!envPath.size()) {
+        return;
+      }
 
-      const char *cStart = oip.c_str();
+      // Override OCCA_PATH with environment variable
+      env::OCCA_PATH.clear();
+
+      const char *cStart = envPath.c_str();
       const char *cEnd;
-
       while(cStart[0] != '\0') {
         cEnd = cStart;
 #if (OCCA_OS & (OCCA_LINUX_OS | OCCA_MACOS_OS))
@@ -151,7 +171,7 @@ namespace occa {
           newPath = io::filename(newPath);
           io::endWithSlash(newPath);
 
-          oipVec.push_back(newPath);
+          env::OCCA_PATH.push_back(newPath);
         }
 
         cStart = (cEnd + (cEnd[0] != '\0'));

@@ -34,32 +34,33 @@ namespace occa {
 
       p2pEnabled = false;
 
+      occa::json &kernelProps = properties["kernel"];
       std::string compiler, compilerFlags;
 
-      if (properties.get<std::string>("kernel/compiler").size()) {
-        compiler = (std::string) properties["kernel/compiler"];
+      if (kernelProps.get<std::string>("compiler").size()) {
+        compiler = (std::string) kernelProps["compiler"];
       } else if (env::var("OCCA_CUDA_COMPILER").size()) {
         compiler = env::var("OCCA_CUDA_COMPILER");
       } else {
         compiler = "nvcc";
       }
 
-      if (properties.get<std::string>("kernel/compiler_flags").size()) {
-        compilerFlags = (std::string) properties["kernel/compiler_flags"];
+      if (kernelProps.get<std::string>("compiler_flags").size()) {
+        compilerFlags = (std::string) kernelProps["compiler_flags"];
       } else {
         compilerFlags = "-O3";
       }
 
-      properties["kernel/compiler"] = compiler;
-      properties["kernel/compiler_flags"] = compilerFlags;
+      kernelProps["compiler"] = compiler;
+      kernelProps["compiler_flags"] = compilerFlags;
 
       OCCA_CUDA_ERROR("Device: Getting CUDA Device Arch",
                       cuDeviceComputeCapability(&archMajorVersion,
                                                 &archMinorVersion,
                                                 cuDevice) );
 
-      archMajorVersion = properties.get("cuda/arch/major", archMajorVersion);
-      archMinorVersion = properties.get("cuda/arch/minor", archMinorVersion);
+      archMajorVersion = kernelProps.get("arch/major", archMajorVersion);
+      archMinorVersion = kernelProps.get("arch/minor", archMinorVersion);
     }
 
     device::~device() {
@@ -445,7 +446,7 @@ namespace occa {
 #if CUDA_VERSION >= 8000
       mem.isUnified = true;
 
-      const unsigned int flags = (props.get("cuda/attachedHost", false) ?
+      const unsigned int flags = (props.get("attached_host", false) ?
                                   CU_MEM_ATTACH_HOST : CU_MEM_ATTACH_GLOBAL);
 
       OCCA_CUDA_ERROR("Device: Setting Context",

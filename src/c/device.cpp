@@ -37,17 +37,22 @@ const char* OCCA_RFUNC occaDeviceMode(occaDevice device) {
 }
 
 occaProperties OCCA_RFUNC occaDeviceGetProperties(occaDevice device) {
-  occa::properties &props = occa::c::device(device).properties();
+  const occa::properties &props = occa::c::device(device).properties();
   return occa::c::newOccaType(props, false);
 }
 
 occaProperties OCCA_RFUNC occaDeviceGetKernelProperties(occaDevice device) {
-  occa::properties &props = occa::c::device(device).kernelProperties();
+  const occa::properties &props = occa::c::device(device).kernelProperties();
   return occa::c::newOccaType(props, false);
 }
 
 occaProperties OCCA_RFUNC occaDeviceGetMemoryProperties(occaDevice device) {
-  occa::properties &props = occa::c::device(device).memoryProperties();
+  const occa::properties &props = occa::c::device(device).memoryProperties();
+  return occa::c::newOccaType(props, false);
+}
+
+occaProperties OCCA_RFUNC occaDeviceGetStreamProperties(occaDevice device) {
+  const occa::properties &props = occa::c::device(device).streamProperties();
   return occa::c::newOccaType(props, false);
 }
 

@@ -244,7 +244,7 @@ namespace occa {
 
       // Setup @restrict
       const std::string restrictStr = (
-        settings.get<std::string>("options/restrict",
+        settings.get<std::string>("okl/restrict",
                                   "__restrict__")
       );
 

@@ -14,11 +14,12 @@ namespace occa {
     device::device(const occa::properties &properties_) :
       occa::modeDevice_t(properties_) {
 
-      int vendor;
+      occa::json &kernelProps = properties["kernel"];
       std::string compiler, compilerFlags, compilerEnvScript;
+      int vendor;
 
-      if (properties.get<std::string>("kernel/compiler").size()) {
-        compiler = (std::string) properties["kernel/compiler"];
+      if (kernelProps.get<std::string>("compiler").size()) {
+        compiler = (std::string) kernelProps["compiler"];
       } else if (env::var("OCCA_CXX").size()) {
         compiler = env::var("OCCA_CXX");
       } else if (env::var("CXX").size()) {
@@ -33,8 +34,8 @@ namespace occa {
 
       vendor = sys::compilerVendor(compiler);
 
-      if (properties.get<std::string>("kernel/compiler_flags").size()) {
-        compilerFlags = (std::string) properties["kernel/compiler_flags"];
+      if (kernelProps.get<std::string>("compiler_flags").size()) {
+        compilerFlags = (std::string) kernelProps["compiler_flags"];
       } else if (env::var("OCCA_CXXFLAGS").size()) {
         compilerFlags = env::var("OCCA_CXXFLAGS");
       } else if (env::var("CXXFLAGS").size()) {
@@ -47,8 +48,8 @@ namespace occa {
 #endif
       }
 
-      if (properties.get<std::string>("kernel/compiler_env_script").size()) {
-        compilerEnvScript = (std::string) properties["kernel/compiler_env_script"];
+      if (kernelProps.get<std::string>("compiler_env_script").size()) {
+        compilerEnvScript = (std::string) kernelProps["compiler_env_script"];
       } else {
 #if (OCCA_OS == OCCA_WINDOWS_OS)
         std::string byteness;
@@ -79,10 +80,10 @@ namespace occa {
 #endif
       }
 
-      properties["kernel/vendor"] = vendor;
-      properties["kernel/compiler"] = compiler;
-      properties["kernel/compiler_flags"] = compilerFlags;
-      properties["kernel/compiler_env_script"] = compilerEnvScript;
+      kernelProps["vendor"] = vendor;
+      kernelProps["compiler"] = compiler;
+      kernelProps["compiler_flags"] = compilerFlags;
+      kernelProps["compiler_env_script"] = compilerEnvScript;
     }
 
     device::~device() {}

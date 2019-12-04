@@ -33,19 +33,20 @@ namespace occa {
     clear();
     lex::skipWhitespace(c);
     switch (*c) {
-    case '0': case '1': case '2': case '3': case '4':
-    case '5': case '6': case '7': case '8': case '9':
-    case '-': loadNumber(c); break;
-    case '{': loadObject(c); break;
-    case '[': loadArray(c);  break;
-    case '\'':
-    case '"': loadString(c); break;
-    case 't': loadTrue(c);   break;
-    case 'f': loadFalse(c);  break;
-    case 'n': loadNull(c);   break;
-    default: {
-      OCCA_FORCE_ERROR("Cannot load JSON: " << c);
-    }}
+      case '0': case '1': case '2': case '3': case '4':
+      case '5': case '6': case '7': case '8': case '9':
+      case '-': loadNumber(c);  break;
+      case '{': loadObject(c);  break;
+      case '[': loadArray(c);   break;
+      case '\'':
+      case '"': loadString(c);  break;
+      case 't': loadTrue(c);    break;
+      case 'f': loadFalse(c);   break;
+      case 'n': loadNull(c);    break;
+      case '/': loadComment(c); break;
+      default: {
+        OCCA_FORCE_ERROR("Cannot load JSON: " << c);
+      }}
     return *this;
   }
 
@@ -369,6 +370,12 @@ namespace occa {
     type = null_;
   }
 
+  void json::loadComment(const char *&c) {
+    OCCA_ERROR("Cannot read value: " << c,
+               !strncmp(c, "//", 2));
+    lex::skipTo(c, '\n', '\\');
+  }
+
   json json::operator + (const json &j) const {
     json sum = *this;
     sum += j;
@@ -376,6 +383,11 @@ namespace occa {
   }
 
   json& json::operator += (const json &j) {
+    // Nothing to add
+    if (j.type == none_) {
+      return *this;
+    }
+
     // We're not defined, treat this as an = operator
     if (type == none_) {
       type = j.type;

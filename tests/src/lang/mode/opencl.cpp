@@ -56,13 +56,13 @@ void testPragma() {
             ->to<pragmaStatement>()
             .value());
 
-  parser.settings["opencl/extensions/cl_khr_fp64"] = false;
+  parser.settings["extensions/cl_khr_fp64"] = false;
   parseSource("");
   ASSERT_EQ(0,
             parser.root.size());
 
 
-  parser.settings["opencl/extensions/foobar"] = true;
+  parser.settings["extensions/foobar"] = true;
   parseSource("");
   ASSERT_EQ(1,
             parser.root.size());
@@ -72,8 +72,8 @@ void testPragma() {
             ->to<pragmaStatement>()
             .value());
 
-  parser.settings["opencl/extensions/foobar"] = false;
-  parser.settings["opencl/extensions/cl_khr_fp64"] = true;
+  parser.settings["extensions/foobar"] = false;
+  parser.settings["extensions/cl_khr_fp64"] = true;
 }
 //======================================
 

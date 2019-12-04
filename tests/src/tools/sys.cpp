@@ -53,6 +53,6 @@ void testRmrf() {
     occa::sys::rmrf(filename);
   );
 
-  occa::settings()["options/safe-rmrf"] = false;
+  occa::settings()["sys/safe_rmrf"] = false;
   occa::sys::rmrf(filename);
 }
