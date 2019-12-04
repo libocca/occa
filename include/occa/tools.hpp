@@ -15,5 +15,6 @@
 #include <occa/tools/sys.hpp>
 #include <occa/tools/tls.hpp>
 #include <occa/tools/uva.hpp>
+#include <occa/tools/vector.hpp>
 
 #endif

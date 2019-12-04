@@ -256,8 +256,10 @@ namespace occa {
       }
 
       std::string compilerFlags = kernelProps["compiler_flags"];
-      sys::addSharedBinaryFlagsTo((int) kernelProps["vendor"],
-                                  compilerFlags);
+      const int vendor = (int) kernelProps["vendor"];
+
+      sys::addSharedBinaryFlags(vendor, compilerFlags);
+      sys::addCpp11Flags(vendor, compilerFlags);
 
 #if (OCCA_OS & (OCCA_LINUX_OS | OCCA_MACOS_OS))
       command << (std::string) kernelProps["compiler"]
@@ -281,7 +283,7 @@ namespace occa {
               << std::endl;
 #endif
 
-      const std::string &sCommand = command.str();
+      const std::string &sCommand = strip(command.str());
 
       if (verbose) {
         io::stdout << "Compiling [" << kernelName << "]\n" << sCommand << "\n";
