@@ -20,7 +20,7 @@ namespace occa {
     device::device(const occa::properties &properties_) :
       occa::launchedModeDevice_t(properties_) {
 
-      hipDeviceProp_t props;
+      hipDeviceProp_t hipProps;
       if (!properties.has("wrapped")) {
         OCCA_ERROR("[HIP] device not given a [device_id] integer",
                    properties.has("device_id") &&
@@ -35,7 +35,7 @@ namespace occa {
                        hipSetDevice(deviceID));
 
         OCCA_HIP_ERROR("Getting device properties",
-                       hipGetDeviceProperties(&props, deviceID));
+                       hipGetDeviceProperties(&hipProps, deviceID));
       }
 
       p2pEnabled = false;
@@ -57,18 +57,23 @@ namespace occa {
         compilerFlags = "-O3";
       }
 
-      kernelProps["compiler"]      = compiler;
-      kernelProps["compilerFlags"] = compilerFlags;
+      kernelProps["compiler"]       = compiler;
+      kernelProps["compiler_flags"] = compilerFlags;
 
-      OCCA_HIP_ERROR("Device: Getting HIP Device Arch",
-                     hipDeviceComputeCapability(&archMajorVersion,
-                                                &archMinorVersion,
-                                                hipDevice) );
+      archMajorVersion = kernelProps.get<int>("arch/major", hipProps.major);
+      archMinorVersion = kernelProps.get<int>("arch/minor", hipProps.minor);
 
-      archMajorVersion = kernelProps.get("arch/major", archMajorVersion);
-      archMinorVersion = kernelProps.get("arch/minor", archMinorVersion);
+      std::string arch = getDeviceArch(deviceID, archMajorVersion, archMinorVersion);
+      std::string archFlag;
+      if (startsWith(arch, "sm_")) {
+        archFlag = "-arch=" + arch;
+      } else if (startsWith(arch, "gfx")) {
+        archFlag = "-t " + arch;
+      } else {
+        OCCA_FORCE_ERROR("Unknown HIP arch");
+      }
 
-      kernelProps["target"] = toString(props.gcnArch);
+      kernelProps["compiler_flag_arch"] = archFlag;
     }
 
     device::~device() { }
@@ -220,13 +225,14 @@ namespace occa {
     }
 
     void device::setArchCompilerFlags(occa::properties &kernelProps) {
-      if (kernelProps.get<std::string>("compiler_flags").find("-t gfx") == std::string::npos) {
-        std::stringstream ss;
-        std::string arch = kernelProps["target"];
-        if (arch.size()) {
-          ss << " -t gfx" << arch << ' ';
-          kernelProps["compiler_flags"] += ss.str();
-        }
+      const std::string hipccCompilerFlags = (
+        kernelProps.get<std::string>("hipcc_compiler_flags")
+      );
+
+      if (hipccCompilerFlags.find("-t gfx") == std::string::npos
+          && hipccCompilerFlags.find("-arch=sm") == std::string::npos) {
+        kernelProps["hipcc_compiler_flags"] += " ";
+        kernelProps["hipcc_compiler_flags"] += kernelProps["compiler_flag_arch"];
       }
     }
 
@@ -243,6 +249,9 @@ namespace occa {
 
       setArchCompilerFlags(allProps);
 
+      const std::string compilerFlags = allProps["compiler_flags"];
+      const std::string hipccCompilerFlags = allProps["hipcc_compiler_flags"];
+
       std::stringstream command;
       if (allProps.has("compiler_env_script")) {
         command << allProps["compiler_env_script"] << " && ";
@@ -250,15 +259,21 @@ namespace occa {
 
       //---[ Compiling Command ]--------
       command << allProps["compiler"]
-              << " --genco "
-              << ' ' << allProps["compiler_flags"]
-// #if (OCCA_OS == OCCA_WINDOWS_OS)
-//               << " -D OCCA_OS=OCCA_WINDOWS_OS -D _MSC_VER=1800"
-// #endif
-              // << " -I"        << env::OCCA_DIR << "include"
-              // << " -L"        << env::OCCA_DIR << "lib -locca"
-              << " "       << sourceFilename
-              << " -o "    << binaryFilename;
+              << " --genco";
+
+      if (compilerFlags.size()) {
+#ifdef __HIP_PLATFORM_NVCC__
+        command << ' ' << compilerFlags;
+#else
+        command << " -f=\\\"" << compilerFlags << "\\\"";
+#endif
+      }
+      if (hipccCompilerFlags.size()) {
+        command << ' ' << hipccCompilerFlags;
+      }
+
+      command << ' '    << sourceFilename
+              << " -o " << binaryFilename;
 
       if (!verbose) {
         command << " > /dev/null 2>&1";
@@ -381,7 +396,7 @@ namespace occa {
                      hipSetDevice(deviceID));
 
       OCCA_HIP_ERROR("Device: malloc",
-                     hipMalloc(&(mem.hipPtr), bytes));
+                     hipMalloc((void**) &(mem.hipPtr), bytes));
 
       if (src != NULL) {
         mem.copyFrom(src, bytes, 0);
@@ -400,7 +415,7 @@ namespace occa {
       OCCA_HIP_ERROR("Device: malloc host",
                      hipHostMalloc((void**) &(mem.mappedPtr), bytes));
       OCCA_HIP_ERROR("Device: get device pointer from host",
-                     hipHostGetDevicePointer(&(mem.hipPtr),
+                     hipHostGetDevicePointer((void**) &(mem.hipPtr),
                                              mem.mappedPtr,
                                              0));
 

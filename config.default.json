@@ -112,6 +112,9 @@
           compiler_flags: "-O3",
           compiler_env_script: "",
 
+          // Flags passed to hipcc and not the underlying compiler
+          hipcc_compiler_flags: "",
+
           // Auto-detected
           arch: {
             major: "<HIP-major-version>",
