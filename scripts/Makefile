@@ -284,6 +284,8 @@ ifneq ($(OCCA_HIP_ENABLED),0)
 endif
 
 ifeq ($(hipEnabled),1)
+	hipIncFlags = $(call includeFlagsFor,hip/hip_runtime_api.h)
+
   ifndef HIP_PATH
     HIP_PATH = ${hipIncFlags:-I%=%}/../..
   endif

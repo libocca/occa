@@ -225,12 +225,14 @@ namespace occa {
     }
 
     void device::setArchCompilerFlags(occa::properties &kernelProps) {
-      const std::string compiler_flags = kernelProps.get<std::string>("compiler_flags");
+      const std::string hipccCompilerFlags = (
+        kernelProps.get<std::string>("hipcc_compiler_flags")
+      );
 
-      if (compiler_flags.find("-t gfx") == std::string::npos
-          && compiler_flags.find("-arch=sm") == std::string::npos) {
-        kernelProps["compiler_flags"] += ' ';
-        kernelProps["compiler_flags"] += kernelProps["compiler_flag_arch"];
+      if (hipccCompilerFlags.find("-t gfx") == std::string::npos
+          && hipccCompilerFlags.find("-arch=sm") == std::string::npos) {
+        kernelProps["hipcc_compiler_flags"] += " ";
+        kernelProps["hipcc_compiler_flags"] += kernelProps["compiler_flag_arch"];
       }
     }
 
@@ -260,7 +262,11 @@ namespace occa {
               << " --genco";
 
       if (compilerFlags.size()) {
+#ifdef __HIP_PLATFORM_NVCC__
+        command << ' ' << compilerFlags;
+#else
         command << " -f=\\\"" << compilerFlags << "\\\"";
+#endif
       }
       if (hipccCompilerFlags.size()) {
         command << ' ' << hipccCompilerFlags;
