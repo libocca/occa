@@ -19,6 +19,17 @@
          "float2"  "float3"  "float4"
          "double2" "double3" "double4")))
 
+;; Required defines for extending C++ mode
+(c-lang-defconst c-opt-friend-key
+  okl (c-lang-const c-opt-friend-key c++))
+
+(c-lang-defconst c-opt-inexpr-brace-list-key
+  okl (c-lang-const c-opt-inexpr-brace-list-key c++))
+
+(c-lang-defconst c-opt-postfix-decl-spec-key
+  okl (c-lang-const c-opt-postfix-decl-spec-key c++))
+
+;; Syntax highlighting
 (defcustom okl-font-lock-extra-types nil
   "*List of extra types (aside from the type keywords) to recognize in OKL mode.
 Each list item should be a regexp matching a single identifier.")
