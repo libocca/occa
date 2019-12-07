@@ -17,6 +17,7 @@ void testMalloc() {
   int *hostPtr = &value;
 
   occa::memory mem = occa::malloc(bytes);
+  ASSERT_NEQ(mem.ptr(), (void*) NULL);
 
   mem = occa::malloc(bytes, hostPtr);
   ASSERT_EQ(((int*) mem.ptr())[0], value);
