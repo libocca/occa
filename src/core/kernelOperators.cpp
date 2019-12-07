@@ -9,6 +9,7 @@ void kernel::operator() () const {
 }
 
 void kernel::operator() (const kernelArg &arg1) const {
+  assertInitialized();
   kernelArg args[] = {
     arg1
   };
@@ -17,6 +18,7 @@ void kernel::operator() (const kernelArg &arg1) const {
 }
 
 void kernel::operator() (const kernelArg &arg1, const kernelArg &arg2) const {
+  assertInitialized();
   kernelArg args[] = {
     arg1, arg2
   };
@@ -25,6 +27,7 @@ void kernel::operator() (const kernelArg &arg1, const kernelArg &arg2) const {
 }
 
 void kernel::operator() (const kernelArg &arg1, const kernelArg &arg2, const kernelArg &arg3) const {
+  assertInitialized();
   kernelArg args[] = {
     arg1, arg2, arg3
   };
@@ -33,6 +36,7 @@ void kernel::operator() (const kernelArg &arg1, const kernelArg &arg2, const ker
 }
 
 void kernel::operator() (const kernelArg &arg1, const kernelArg &arg2, const kernelArg &arg3, const kernelArg &arg4) const {
+  assertInitialized();
   kernelArg args[] = {
     arg1, arg2, arg3, arg4
   };
@@ -41,6 +45,7 @@ void kernel::operator() (const kernelArg &arg1, const kernelArg &arg2, const ker
 }
 
 void kernel::operator() (const kernelArg &arg1, const kernelArg &arg2, const kernelArg &arg3, const kernelArg &arg4, const kernelArg &arg5) const {
+  assertInitialized();
   kernelArg args[] = {
     arg1, arg2, arg3, arg4, arg5
   };
@@ -50,6 +55,7 @@ void kernel::operator() (const kernelArg &arg1, const kernelArg &arg2, const ker
 
 void kernel::operator() (const kernelArg &arg1, const kernelArg &arg2, const kernelArg &arg3, const kernelArg &arg4, const kernelArg &arg5,
                          const kernelArg &arg6) const {
+  assertInitialized();
   kernelArg args[] = {
     arg1, arg2, arg3, arg4, arg5, arg6
   };
@@ -59,6 +65,7 @@ void kernel::operator() (const kernelArg &arg1, const kernelArg &arg2, const ker
 
 void kernel::operator() (const kernelArg &arg1, const kernelArg &arg2, const kernelArg &arg3, const kernelArg &arg4, const kernelArg &arg5,
                          const kernelArg &arg6, const kernelArg &arg7) const {
+  assertInitialized();
   kernelArg args[] = {
     arg1, arg2, arg3, arg4, arg5, arg6, arg7
   };
@@ -68,6 +75,7 @@ void kernel::operator() (const kernelArg &arg1, const kernelArg &arg2, const ker
 
 void kernel::operator() (const kernelArg &arg1, const kernelArg &arg2, const kernelArg &arg3, const kernelArg &arg4, const kernelArg &arg5,
                          const kernelArg &arg6, const kernelArg &arg7, const kernelArg &arg8) const {
+  assertInitialized();
   kernelArg args[] = {
     arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8
   };
@@ -77,6 +85,7 @@ void kernel::operator() (const kernelArg &arg1, const kernelArg &arg2, const ker
 
 void kernel::operator() (const kernelArg &arg1, const kernelArg &arg2, const kernelArg &arg3, const kernelArg &arg4, const kernelArg &arg5,
                          const kernelArg &arg6, const kernelArg &arg7, const kernelArg &arg8, const kernelArg &arg9) const {
+  assertInitialized();
   kernelArg args[] = {
     arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9
   };
@@ -86,6 +95,7 @@ void kernel::operator() (const kernelArg &arg1, const kernelArg &arg2, const ker
 
 void kernel::operator() (const kernelArg &arg1, const kernelArg &arg2, const kernelArg &arg3, const kernelArg &arg4, const kernelArg &arg5,
                          const kernelArg &arg6, const kernelArg &arg7, const kernelArg &arg8, const kernelArg &arg9, const kernelArg &arg10) const {
+  assertInitialized();
   kernelArg args[] = {
     arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10
   };
@@ -96,6 +106,7 @@ void kernel::operator() (const kernelArg &arg1, const kernelArg &arg2, const ker
 void kernel::operator() (const kernelArg &arg1, const kernelArg &arg2, const kernelArg &arg3, const kernelArg &arg4, const kernelArg &arg5,
                          const kernelArg &arg6, const kernelArg &arg7, const kernelArg &arg8, const kernelArg &arg9, const kernelArg &arg10,
                          const kernelArg &arg11) const {
+  assertInitialized();
   kernelArg args[] = {
     arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10,
     arg11
@@ -107,6 +118,7 @@ void kernel::operator() (const kernelArg &arg1, const kernelArg &arg2, const ker
 void kernel::operator() (const kernelArg &arg1, const kernelArg &arg2, const kernelArg &arg3, const kernelArg &arg4, const kernelArg &arg5,
                          const kernelArg &arg6, const kernelArg &arg7, const kernelArg &arg8, const kernelArg &arg9, const kernelArg &arg10,
                          const kernelArg &arg11, const kernelArg &arg12) const {
+  assertInitialized();
   kernelArg args[] = {
     arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10,
     arg11, arg12
@@ -118,6 +130,7 @@ void kernel::operator() (const kernelArg &arg1, const kernelArg &arg2, const ker
 void kernel::operator() (const kernelArg &arg1, const kernelArg &arg2, const kernelArg &arg3, const kernelArg &arg4, const kernelArg &arg5,
                          const kernelArg &arg6, const kernelArg &arg7, const kernelArg &arg8, const kernelArg &arg9, const kernelArg &arg10,
                          const kernelArg &arg11, const kernelArg &arg12, const kernelArg &arg13) const {
+  assertInitialized();
   kernelArg args[] = {
     arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10,
     arg11, arg12, arg13
@@ -129,6 +142,7 @@ void kernel::operator() (const kernelArg &arg1, const kernelArg &arg2, const ker
 void kernel::operator() (const kernelArg &arg1, const kernelArg &arg2, const kernelArg &arg3, const kernelArg &arg4, const kernelArg &arg5,
                          const kernelArg &arg6, const kernelArg &arg7, const kernelArg &arg8, const kernelArg &arg9, const kernelArg &arg10,
                          const kernelArg &arg11, const kernelArg &arg12, const kernelArg &arg13, const kernelArg &arg14) const {
+  assertInitialized();
   kernelArg args[] = {
     arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10,
     arg11, arg12, arg13, arg14
@@ -140,6 +154,7 @@ void kernel::operator() (const kernelArg &arg1, const kernelArg &arg2, const ker
 void kernel::operator() (const kernelArg &arg1, const kernelArg &arg2, const kernelArg &arg3, const kernelArg &arg4, const kernelArg &arg5,
                          const kernelArg &arg6, const kernelArg &arg7, const kernelArg &arg8, const kernelArg &arg9, const kernelArg &arg10,
                          const kernelArg &arg11, const kernelArg &arg12, const kernelArg &arg13, const kernelArg &arg14, const kernelArg &arg15) const {
+  assertInitialized();
   kernelArg args[] = {
     arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10,
     arg11, arg12, arg13, arg14, arg15
@@ -152,6 +167,7 @@ void kernel::operator() (const kernelArg &arg1, const kernelArg &arg2, const ker
                          const kernelArg &arg6, const kernelArg &arg7, const kernelArg &arg8, const kernelArg &arg9, const kernelArg &arg10,
                          const kernelArg &arg11, const kernelArg &arg12, const kernelArg &arg13, const kernelArg &arg14, const kernelArg &arg15,
                          const kernelArg &arg16) const {
+  assertInitialized();
   kernelArg args[] = {
     arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10,
     arg11, arg12, arg13, arg14, arg15, arg16
@@ -164,6 +180,7 @@ void kernel::operator() (const kernelArg &arg1, const kernelArg &arg2, const ker
                          const kernelArg &arg6, const kernelArg &arg7, const kernelArg &arg8, const kernelArg &arg9, const kernelArg &arg10,
                          const kernelArg &arg11, const kernelArg &arg12, const kernelArg &arg13, const kernelArg &arg14, const kernelArg &arg15,
                          const kernelArg &arg16, const kernelArg &arg17) const {
+  assertInitialized();
   kernelArg args[] = {
     arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10,
     arg11, arg12, arg13, arg14, arg15, arg16, arg17
@@ -176,6 +193,7 @@ void kernel::operator() (const kernelArg &arg1, const kernelArg &arg2, const ker
                          const kernelArg &arg6, const kernelArg &arg7, const kernelArg &arg8, const kernelArg &arg9, const kernelArg &arg10,
                          const kernelArg &arg11, const kernelArg &arg12, const kernelArg &arg13, const kernelArg &arg14, const kernelArg &arg15,
                          const kernelArg &arg16, const kernelArg &arg17, const kernelArg &arg18) const {
+  assertInitialized();
   kernelArg args[] = {
     arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10,
     arg11, arg12, arg13, arg14, arg15, arg16, arg17, arg18
@@ -188,6 +206,7 @@ void kernel::operator() (const kernelArg &arg1, const kernelArg &arg2, const ker
                          const kernelArg &arg6, const kernelArg &arg7, const kernelArg &arg8, const kernelArg &arg9, const kernelArg &arg10,
                          const kernelArg &arg11, const kernelArg &arg12, const kernelArg &arg13, const kernelArg &arg14, const kernelArg &arg15,
                          const kernelArg &arg16, const kernelArg &arg17, const kernelArg &arg18, const kernelArg &arg19) const {
+  assertInitialized();
   kernelArg args[] = {
     arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10,
     arg11, arg12, arg13, arg14, arg15, arg16, arg17, arg18, arg19
@@ -200,6 +219,7 @@ void kernel::operator() (const kernelArg &arg1, const kernelArg &arg2, const ker
                          const kernelArg &arg6, const kernelArg &arg7, const kernelArg &arg8, const kernelArg &arg9, const kernelArg &arg10,
                          const kernelArg &arg11, const kernelArg &arg12, const kernelArg &arg13, const kernelArg &arg14, const kernelArg &arg15,
                          const kernelArg &arg16, const kernelArg &arg17, const kernelArg &arg18, const kernelArg &arg19, const kernelArg &arg20) const {
+  assertInitialized();
   kernelArg args[] = {
     arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10,
     arg11, arg12, arg13, arg14, arg15, arg16, arg17, arg18, arg19, arg20
@@ -213,6 +233,7 @@ void kernel::operator() (const kernelArg &arg1, const kernelArg &arg2, const ker
                          const kernelArg &arg11, const kernelArg &arg12, const kernelArg &arg13, const kernelArg &arg14, const kernelArg &arg15,
                          const kernelArg &arg16, const kernelArg &arg17, const kernelArg &arg18, const kernelArg &arg19, const kernelArg &arg20,
                          const kernelArg &arg21) const {
+  assertInitialized();
   kernelArg args[] = {
     arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10,
     arg11, arg12, arg13, arg14, arg15, arg16, arg17, arg18, arg19, arg20,
@@ -227,6 +248,7 @@ void kernel::operator() (const kernelArg &arg1, const kernelArg &arg2, const ker
                          const kernelArg &arg11, const kernelArg &arg12, const kernelArg &arg13, const kernelArg &arg14, const kernelArg &arg15,
                          const kernelArg &arg16, const kernelArg &arg17, const kernelArg &arg18, const kernelArg &arg19, const kernelArg &arg20,
                          const kernelArg &arg21, const kernelArg &arg22) const {
+  assertInitialized();
   kernelArg args[] = {
     arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10,
     arg11, arg12, arg13, arg14, arg15, arg16, arg17, arg18, arg19, arg20,
@@ -241,6 +263,7 @@ void kernel::operator() (const kernelArg &arg1, const kernelArg &arg2, const ker
                          const kernelArg &arg11, const kernelArg &arg12, const kernelArg &arg13, const kernelArg &arg14, const kernelArg &arg15,
                          const kernelArg &arg16, const kernelArg &arg17, const kernelArg &arg18, const kernelArg &arg19, const kernelArg &arg20,
                          const kernelArg &arg21, const kernelArg &arg22, const kernelArg &arg23) const {
+  assertInitialized();
   kernelArg args[] = {
     arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10,
     arg11, arg12, arg13, arg14, arg15, arg16, arg17, arg18, arg19, arg20,
@@ -255,6 +278,7 @@ void kernel::operator() (const kernelArg &arg1, const kernelArg &arg2, const ker
                          const kernelArg &arg11, const kernelArg &arg12, const kernelArg &arg13, const kernelArg &arg14, const kernelArg &arg15,
                          const kernelArg &arg16, const kernelArg &arg17, const kernelArg &arg18, const kernelArg &arg19, const kernelArg &arg20,
                          const kernelArg &arg21, const kernelArg &arg22, const kernelArg &arg23, const kernelArg &arg24) const {
+  assertInitialized();
   kernelArg args[] = {
     arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10,
     arg11, arg12, arg13, arg14, arg15, arg16, arg17, arg18, arg19, arg20,
@@ -269,6 +293,7 @@ void kernel::operator() (const kernelArg &arg1, const kernelArg &arg2, const ker
                          const kernelArg &arg11, const kernelArg &arg12, const kernelArg &arg13, const kernelArg &arg14, const kernelArg &arg15,
                          const kernelArg &arg16, const kernelArg &arg17, const kernelArg &arg18, const kernelArg &arg19, const kernelArg &arg20,
                          const kernelArg &arg21, const kernelArg &arg22, const kernelArg &arg23, const kernelArg &arg24, const kernelArg &arg25) const {
+  assertInitialized();
   kernelArg args[] = {
     arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10,
     arg11, arg12, arg13, arg14, arg15, arg16, arg17, arg18, arg19, arg20,
@@ -284,6 +309,7 @@ void kernel::operator() (const kernelArg &arg1, const kernelArg &arg2, const ker
                          const kernelArg &arg16, const kernelArg &arg17, const kernelArg &arg18, const kernelArg &arg19, const kernelArg &arg20,
                          const kernelArg &arg21, const kernelArg &arg22, const kernelArg &arg23, const kernelArg &arg24, const kernelArg &arg25,
                          const kernelArg &arg26) const {
+  assertInitialized();
   kernelArg args[] = {
     arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10,
     arg11, arg12, arg13, arg14, arg15, arg16, arg17, arg18, arg19, arg20,
@@ -299,6 +325,7 @@ void kernel::operator() (const kernelArg &arg1, const kernelArg &arg2, const ker
                          const kernelArg &arg16, const kernelArg &arg17, const kernelArg &arg18, const kernelArg &arg19, const kernelArg &arg20,
                          const kernelArg &arg21, const kernelArg &arg22, const kernelArg &arg23, const kernelArg &arg24, const kernelArg &arg25,
                          const kernelArg &arg26, const kernelArg &arg27) const {
+  assertInitialized();
   kernelArg args[] = {
     arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10,
     arg11, arg12, arg13, arg14, arg15, arg16, arg17, arg18, arg19, arg20,
@@ -314,6 +341,7 @@ void kernel::operator() (const kernelArg &arg1, const kernelArg &arg2, const ker
                          const kernelArg &arg16, const kernelArg &arg17, const kernelArg &arg18, const kernelArg &arg19, const kernelArg &arg20,
                          const kernelArg &arg21, const kernelArg &arg22, const kernelArg &arg23, const kernelArg &arg24, const kernelArg &arg25,
                          const kernelArg &arg26, const kernelArg &arg27, const kernelArg &arg28) const {
+  assertInitialized();
   kernelArg args[] = {
     arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10,
     arg11, arg12, arg13, arg14, arg15, arg16, arg17, arg18, arg19, arg20,
@@ -329,6 +357,7 @@ void kernel::operator() (const kernelArg &arg1, const kernelArg &arg2, const ker
                          const kernelArg &arg16, const kernelArg &arg17, const kernelArg &arg18, const kernelArg &arg19, const kernelArg &arg20,
                          const kernelArg &arg21, const kernelArg &arg22, const kernelArg &arg23, const kernelArg &arg24, const kernelArg &arg25,
                          const kernelArg &arg26, const kernelArg &arg27, const kernelArg &arg28, const kernelArg &arg29) const {
+  assertInitialized();
   kernelArg args[] = {
     arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10,
     arg11, arg12, arg13, arg14, arg15, arg16, arg17, arg18, arg19, arg20,
@@ -344,6 +373,7 @@ void kernel::operator() (const kernelArg &arg1, const kernelArg &arg2, const ker
                          const kernelArg &arg16, const kernelArg &arg17, const kernelArg &arg18, const kernelArg &arg19, const kernelArg &arg20,
                          const kernelArg &arg21, const kernelArg &arg22, const kernelArg &arg23, const kernelArg &arg24, const kernelArg &arg25,
                          const kernelArg &arg26, const kernelArg &arg27, const kernelArg &arg28, const kernelArg &arg29, const kernelArg &arg30) const {
+  assertInitialized();
   kernelArg args[] = {
     arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10,
     arg11, arg12, arg13, arg14, arg15, arg16, arg17, arg18, arg19, arg20,
@@ -360,6 +390,7 @@ void kernel::operator() (const kernelArg &arg1, const kernelArg &arg2, const ker
                          const kernelArg &arg21, const kernelArg &arg22, const kernelArg &arg23, const kernelArg &arg24, const kernelArg &arg25,
                          const kernelArg &arg26, const kernelArg &arg27, const kernelArg &arg28, const kernelArg &arg29, const kernelArg &arg30,
                          const kernelArg &arg31) const {
+  assertInitialized();
   kernelArg args[] = {
     arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10,
     arg11, arg12, arg13, arg14, arg15, arg16, arg17, arg18, arg19, arg20,
@@ -377,6 +408,7 @@ void kernel::operator() (const kernelArg &arg1, const kernelArg &arg2, const ker
                          const kernelArg &arg21, const kernelArg &arg22, const kernelArg &arg23, const kernelArg &arg24, const kernelArg &arg25,
                          const kernelArg &arg26, const kernelArg &arg27, const kernelArg &arg28, const kernelArg &arg29, const kernelArg &arg30,
                          const kernelArg &arg31, const kernelArg &arg32) const {
+  assertInitialized();
   kernelArg args[] = {
     arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10,
     arg11, arg12, arg13, arg14, arg15, arg16, arg17, arg18, arg19, arg20,
@@ -394,6 +426,7 @@ void kernel::operator() (const kernelArg &arg1, const kernelArg &arg2, const ker
                          const kernelArg &arg21, const kernelArg &arg22, const kernelArg &arg23, const kernelArg &arg24, const kernelArg &arg25,
                          const kernelArg &arg26, const kernelArg &arg27, const kernelArg &arg28, const kernelArg &arg29, const kernelArg &arg30,
                          const kernelArg &arg31, const kernelArg &arg32, const kernelArg &arg33) const {
+  assertInitialized();
   kernelArg args[] = {
     arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10,
     arg11, arg12, arg13, arg14, arg15, arg16, arg17, arg18, arg19, arg20,
@@ -411,6 +444,7 @@ void kernel::operator() (const kernelArg &arg1, const kernelArg &arg2, const ker
                          const kernelArg &arg21, const kernelArg &arg22, const kernelArg &arg23, const kernelArg &arg24, const kernelArg &arg25,
                          const kernelArg &arg26, const kernelArg &arg27, const kernelArg &arg28, const kernelArg &arg29, const kernelArg &arg30,
                          const kernelArg &arg31, const kernelArg &arg32, const kernelArg &arg33, const kernelArg &arg34) const {
+  assertInitialized();
   kernelArg args[] = {
     arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10,
     arg11, arg12, arg13, arg14, arg15, arg16, arg17, arg18, arg19, arg20,
@@ -428,6 +462,7 @@ void kernel::operator() (const kernelArg &arg1, const kernelArg &arg2, const ker
                          const kernelArg &arg21, const kernelArg &arg22, const kernelArg &arg23, const kernelArg &arg24, const kernelArg &arg25,
                          const kernelArg &arg26, const kernelArg &arg27, const kernelArg &arg28, const kernelArg &arg29, const kernelArg &arg30,
                          const kernelArg &arg31, const kernelArg &arg32, const kernelArg &arg33, const kernelArg &arg34, const kernelArg &arg35) const {
+  assertInitialized();
   kernelArg args[] = {
     arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10,
     arg11, arg12, arg13, arg14, arg15, arg16, arg17, arg18, arg19, arg20,
@@ -446,6 +481,7 @@ void kernel::operator() (const kernelArg &arg1, const kernelArg &arg2, const ker
                          const kernelArg &arg26, const kernelArg &arg27, const kernelArg &arg28, const kernelArg &arg29, const kernelArg &arg30,
                          const kernelArg &arg31, const kernelArg &arg32, const kernelArg &arg33, const kernelArg &arg34, const kernelArg &arg35,
                          const kernelArg &arg36) const {
+  assertInitialized();
   kernelArg args[] = {
     arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10,
     arg11, arg12, arg13, arg14, arg15, arg16, arg17, arg18, arg19, arg20,
@@ -464,6 +500,7 @@ void kernel::operator() (const kernelArg &arg1, const kernelArg &arg2, const ker
                          const kernelArg &arg26, const kernelArg &arg27, const kernelArg &arg28, const kernelArg &arg29, const kernelArg &arg30,
                          const kernelArg &arg31, const kernelArg &arg32, const kernelArg &arg33, const kernelArg &arg34, const kernelArg &arg35,
                          const kernelArg &arg36, const kernelArg &arg37) const {
+  assertInitialized();
   kernelArg args[] = {
     arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10,
     arg11, arg12, arg13, arg14, arg15, arg16, arg17, arg18, arg19, arg20,
@@ -482,6 +519,7 @@ void kernel::operator() (const kernelArg &arg1, const kernelArg &arg2, const ker
                          const kernelArg &arg26, const kernelArg &arg27, const kernelArg &arg28, const kernelArg &arg29, const kernelArg &arg30,
                          const kernelArg &arg31, const kernelArg &arg32, const kernelArg &arg33, const kernelArg &arg34, const kernelArg &arg35,
                          const kernelArg &arg36, const kernelArg &arg37, const kernelArg &arg38) const {
+  assertInitialized();
   kernelArg args[] = {
     arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10,
     arg11, arg12, arg13, arg14, arg15, arg16, arg17, arg18, arg19, arg20,
@@ -500,6 +538,7 @@ void kernel::operator() (const kernelArg &arg1, const kernelArg &arg2, const ker
                          const kernelArg &arg26, const kernelArg &arg27, const kernelArg &arg28, const kernelArg &arg29, const kernelArg &arg30,
                          const kernelArg &arg31, const kernelArg &arg32, const kernelArg &arg33, const kernelArg &arg34, const kernelArg &arg35,
                          const kernelArg &arg36, const kernelArg &arg37, const kernelArg &arg38, const kernelArg &arg39) const {
+  assertInitialized();
   kernelArg args[] = {
     arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10,
     arg11, arg12, arg13, arg14, arg15, arg16, arg17, arg18, arg19, arg20,
@@ -518,6 +557,7 @@ void kernel::operator() (const kernelArg &arg1, const kernelArg &arg2, const ker
                          const kernelArg &arg26, const kernelArg &arg27, const kernelArg &arg28, const kernelArg &arg29, const kernelArg &arg30,
                          const kernelArg &arg31, const kernelArg &arg32, const kernelArg &arg33, const kernelArg &arg34, const kernelArg &arg35,
                          const kernelArg &arg36, const kernelArg &arg37, const kernelArg &arg38, const kernelArg &arg39, const kernelArg &arg40) const {
+  assertInitialized();
   kernelArg args[] = {
     arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10,
     arg11, arg12, arg13, arg14, arg15, arg16, arg17, arg18, arg19, arg20,
@@ -537,6 +577,7 @@ void kernel::operator() (const kernelArg &arg1, const kernelArg &arg2, const ker
                          const kernelArg &arg31, const kernelArg &arg32, const kernelArg &arg33, const kernelArg &arg34, const kernelArg &arg35,
                          const kernelArg &arg36, const kernelArg &arg37, const kernelArg &arg38, const kernelArg &arg39, const kernelArg &arg40,
                          const kernelArg &arg41) const {
+  assertInitialized();
   kernelArg args[] = {
     arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10,
     arg11, arg12, arg13, arg14, arg15, arg16, arg17, arg18, arg19, arg20,
@@ -557,6 +598,7 @@ void kernel::operator() (const kernelArg &arg1, const kernelArg &arg2, const ker
                          const kernelArg &arg31, const kernelArg &arg32, const kernelArg &arg33, const kernelArg &arg34, const kernelArg &arg35,
                          const kernelArg &arg36, const kernelArg &arg37, const kernelArg &arg38, const kernelArg &arg39, const kernelArg &arg40,
                          const kernelArg &arg41, const kernelArg &arg42) const {
+  assertInitialized();
   kernelArg args[] = {
     arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10,
     arg11, arg12, arg13, arg14, arg15, arg16, arg17, arg18, arg19, arg20,
@@ -577,6 +619,7 @@ void kernel::operator() (const kernelArg &arg1, const kernelArg &arg2, const ker
                          const kernelArg &arg31, const kernelArg &arg32, const kernelArg &arg33, const kernelArg &arg34, const kernelArg &arg35,
                          const kernelArg &arg36, const kernelArg &arg37, const kernelArg &arg38, const kernelArg &arg39, const kernelArg &arg40,
                          const kernelArg &arg41, const kernelArg &arg42, const kernelArg &arg43) const {
+  assertInitialized();
   kernelArg args[] = {
     arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10,
     arg11, arg12, arg13, arg14, arg15, arg16, arg17, arg18, arg19, arg20,
@@ -597,6 +640,7 @@ void kernel::operator() (const kernelArg &arg1, const kernelArg &arg2, const ker
                          const kernelArg &arg31, const kernelArg &arg32, const kernelArg &arg33, const kernelArg &arg34, const kernelArg &arg35,
                          const kernelArg &arg36, const kernelArg &arg37, const kernelArg &arg38, const kernelArg &arg39, const kernelArg &arg40,
                          const kernelArg &arg41, const kernelArg &arg42, const kernelArg &arg43, const kernelArg &arg44) const {
+  assertInitialized();
   kernelArg args[] = {
     arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10,
     arg11, arg12, arg13, arg14, arg15, arg16, arg17, arg18, arg19, arg20,
@@ -617,6 +661,7 @@ void kernel::operator() (const kernelArg &arg1, const kernelArg &arg2, const ker
                          const kernelArg &arg31, const kernelArg &arg32, const kernelArg &arg33, const kernelArg &arg34, const kernelArg &arg35,
                          const kernelArg &arg36, const kernelArg &arg37, const kernelArg &arg38, const kernelArg &arg39, const kernelArg &arg40,
                          const kernelArg &arg41, const kernelArg &arg42, const kernelArg &arg43, const kernelArg &arg44, const kernelArg &arg45) const {
+  assertInitialized();
   kernelArg args[] = {
     arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10,
     arg11, arg12, arg13, arg14, arg15, arg16, arg17, arg18, arg19, arg20,
@@ -638,6 +683,7 @@ void kernel::operator() (const kernelArg &arg1, const kernelArg &arg2, const ker
                          const kernelArg &arg36, const kernelArg &arg37, const kernelArg &arg38, const kernelArg &arg39, const kernelArg &arg40,
                          const kernelArg &arg41, const kernelArg &arg42, const kernelArg &arg43, const kernelArg &arg44, const kernelArg &arg45,
                          const kernelArg &arg46) const {
+  assertInitialized();
   kernelArg args[] = {
     arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10,
     arg11, arg12, arg13, arg14, arg15, arg16, arg17, arg18, arg19, arg20,
@@ -659,6 +705,7 @@ void kernel::operator() (const kernelArg &arg1, const kernelArg &arg2, const ker
                          const kernelArg &arg36, const kernelArg &arg37, const kernelArg &arg38, const kernelArg &arg39, const kernelArg &arg40,
                          const kernelArg &arg41, const kernelArg &arg42, const kernelArg &arg43, const kernelArg &arg44, const kernelArg &arg45,
                          const kernelArg &arg46, const kernelArg &arg47) const {
+  assertInitialized();
   kernelArg args[] = {
     arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10,
     arg11, arg12, arg13, arg14, arg15, arg16, arg17, arg18, arg19, arg20,
@@ -680,6 +727,7 @@ void kernel::operator() (const kernelArg &arg1, const kernelArg &arg2, const ker
                          const kernelArg &arg36, const kernelArg &arg37, const kernelArg &arg38, const kernelArg &arg39, const kernelArg &arg40,
                          const kernelArg &arg41, const kernelArg &arg42, const kernelArg &arg43, const kernelArg &arg44, const kernelArg &arg45,
                          const kernelArg &arg46, const kernelArg &arg47, const kernelArg &arg48) const {
+  assertInitialized();
   kernelArg args[] = {
     arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10,
     arg11, arg12, arg13, arg14, arg15, arg16, arg17, arg18, arg19, arg20,
@@ -701,6 +749,7 @@ void kernel::operator() (const kernelArg &arg1, const kernelArg &arg2, const ker
                          const kernelArg &arg36, const kernelArg &arg37, const kernelArg &arg38, const kernelArg &arg39, const kernelArg &arg40,
                          const kernelArg &arg41, const kernelArg &arg42, const kernelArg &arg43, const kernelArg &arg44, const kernelArg &arg45,
                          const kernelArg &arg46, const kernelArg &arg47, const kernelArg &arg48, const kernelArg &arg49) const {
+  assertInitialized();
   kernelArg args[] = {
     arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10,
     arg11, arg12, arg13, arg14, arg15, arg16, arg17, arg18, arg19, arg20,
@@ -722,6 +771,7 @@ void kernel::operator() (const kernelArg &arg1, const kernelArg &arg2, const ker
                          const kernelArg &arg36, const kernelArg &arg37, const kernelArg &arg38, const kernelArg &arg39, const kernelArg &arg40,
                          const kernelArg &arg41, const kernelArg &arg42, const kernelArg &arg43, const kernelArg &arg44, const kernelArg &arg45,
                          const kernelArg &arg46, const kernelArg &arg47, const kernelArg &arg48, const kernelArg &arg49, const kernelArg &arg50) const {
+  assertInitialized();
   kernelArg args[] = {
     arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10,
     arg11, arg12, arg13, arg14, arg15, arg16, arg17, arg18, arg19, arg20,
