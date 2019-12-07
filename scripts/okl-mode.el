@@ -29,8 +29,11 @@ Each list item should be a regexp matching a single identifier.")
 (defconst okl-font-lock-keywords-2 (c-lang-const c-matchers-2 objc)
   "Fast normal highlighting for OKL mode.")
 
-;; Set @annotation coloring from java-mode
-(defconst okl-font-lock-keywords-3 (c-lang-const c-matchers-3 java)
+;; Set @annotation coloring
+(defconst okl-font-lock-keywords-3
+  (append
+   (c-lang-const c-matchers-3 objc)
+   `((eval . (list "\\<\\(@[a-zA-Z0-9]+\\)\\>" 1 c-annotation-face))))
   "Accurate normal highlighting for OKL mode.")
 
 (defvar okl-font-lock-keywords okl-font-lock-keywords-3
