@@ -356,7 +356,7 @@ namespace occa {
                                  const occa::properties &props) {
       memory *mem = new memory(this, bytes, props);
 
-      if (props.get("use_host_pointer", false)) {
+      if (src && props.get("use_host_pointer", false)) {
         mem->ptr = (char*) const_cast<void*>(src);
         mem->isOrigin = props.get("own_host_pointer", false);
       } else {
