@@ -119,6 +119,7 @@ def operator_definition(N):
     content += operator_args(N, indent, 'const kernelArg &')
     if N > 0:
         content += ''') const {{
+  assertInitialized();
   kernelArg args[] = {{
     {array_args}
   }};
