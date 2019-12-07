@@ -23,16 +23,16 @@
   "*List of extra types (aside from the type keywords) to recognize in OKL mode.
 Each list item should be a regexp matching a single identifier.")
 
-(defconst okl-font-lock-keywords-1 (c-lang-const c-matchers-1 objc)
+(defconst okl-font-lock-keywords-1 (c-lang-const c-matchers-1 c++)
   "Minimal highlighting for OKL mode.")
 
-(defconst okl-font-lock-keywords-2 (c-lang-const c-matchers-2 objc)
+(defconst okl-font-lock-keywords-2 (c-lang-const c-matchers-2 c++)
   "Fast normal highlighting for OKL mode.")
 
 ;; Set @annotation coloring
 (defconst okl-font-lock-keywords-3
   (append
-   (c-lang-const c-matchers-3 objc)
+   (c-lang-const c-matchers-3 c++)
    `((eval . (list "\\<\\(@[a-zA-Z0-9]+\\)\\>" 1 c-annotation-face))))
   "Accurate normal highlighting for OKL mode.")
 
@@ -51,7 +51,7 @@ Each list item should be a regexp matching a single identifier.")
   "Syntax table used in okl-mode buffers.")
 (or okl-mode-syntax-table
     (setq okl-mode-syntax-table
-          (funcall (c-lang-const c-make-mode-syntax-table objc))))
+          (funcall (c-lang-const c-make-mode-syntax-table c++))))
 
 (defvar okl-mode-abbrev-table nil
   "Abbreviation table used in okl-mode buffers.")
@@ -68,7 +68,7 @@ Each list item should be a regexp matching a single identifier.")
         mode-name "OKL"
         local-abbrev-table okl-mode-abbrev-table
         abbrev-mode t)
-  (use-local-map objc-mode-map)
+  (use-local-map c++-mode-map)
   (c-init-language-vars okl-mode)
   (c-common-init 'okl-mode)
   (easy-menu-add okl-menu)
