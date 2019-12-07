@@ -17,7 +17,15 @@ namespace occa {
   namespace kArgInfo {
     static const char none       = 0;
     static const char usePointer = (1 << 0);
+    static const char isNull     = (1 << 1);
   }
+
+  class null_t {
+   public:
+    inline null_t() {}
+  };
+
+  extern const null_t null;
 
   union kernelArgData_t {
     uint8_t  uint8_;
@@ -54,6 +62,8 @@ namespace occa {
 
     void* ptr() const;
 
+    bool isNull() const;
+
     void setupForKernelCall(const bool isConst) const;
   };
 
@@ -66,6 +76,8 @@ namespace occa {
     kernelArg(const kernelArgData &arg);
     kernelArg(const kernelArg &other);
     kernelArg& operator = (const kernelArg &other);
+
+    kernelArg(const null_t arg);
 
     kernelArg(const uint8_t arg);
     kernelArg(const uint16_t arg);

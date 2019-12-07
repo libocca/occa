@@ -1,5 +1,6 @@
 @kernel void argKernel(char *mem,
                        char *uvaPtr,
+                       void *null,
                        int i8,
                        int u8,
                        int i16,
@@ -16,6 +17,7 @@
     printf(
       "mem: %d\n"
       "uvaPtr: %d\n"
+      "null: %p\n"
       "i8: %d\n"
       "u8: %d\n"
       "i16: %d\n"
@@ -30,6 +32,7 @@
       "str: %s\n",
       mem[0],
       uvaPtr[0],
+      null,
       (int) i8,
       (int) u8,
       (int) i16,
@@ -43,5 +46,8 @@
       xy[0], xy[1],
       str
     );
+    if (null != NULL) {
+      throw 1;
+    }
   }
 }

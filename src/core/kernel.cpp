@@ -107,7 +107,8 @@ namespace occa {
         lang::argMetadata_t &argInfo = metadata.arguments[i];
 
         modeMemory_t *mem = arg.getModeMemory();
-        bool isPtr = (bool) mem;
+        const bool isNull = arg.isNull();
+        const bool isPtr = mem || isNull;
         if (isPtr != argInfo.isPtr) {
           if (argInfo.isPtr) {
             OCCA_FORCE_ERROR("(" << name << ") Kernel expects an occa::memory for argument ["
@@ -118,7 +119,7 @@ namespace occa {
           }
         }
 
-        if (!isPtr) {
+        if (!isPtr || isNull) {
           continue;
         }
 
