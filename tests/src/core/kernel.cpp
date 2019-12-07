@@ -163,6 +163,7 @@ void testRun() {
   argKernel(
     mem,
     uvaPtr,
+    occa::null,
     (int8_t) 2,
     (uint8_t) 3,
     (int16_t) 4,

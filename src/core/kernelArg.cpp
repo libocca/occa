@@ -5,6 +5,8 @@
 
 namespace occa {
   //---[ KernelArg ]--------------------
+  const null_t null;
+
   kernelArgData::kernelArgData() :
     modeMemory(NULL),
     size(0),
@@ -43,6 +45,10 @@ namespace occa {
 
   void* kernelArgData::ptr() const {
     return ((info & kArgInfo::usePointer) ? data.void_ : (void*) &data);
+  }
+
+  bool kernelArgData::isNull() const {
+    return (info & kArgInfo::isNull);
   }
 
   void kernelArgData::setupForKernelCall(const bool isConst) const {
@@ -105,6 +111,17 @@ namespace occa {
 
   const kernelArgData& kernelArg::operator [] (const int index) const {
     return args[index];
+  }
+
+  kernelArg::kernelArg(const null_t arg) {
+    kernelArgData kArg;
+    kArg.data.void_ = NULL;
+    kArg.size       = sizeof(void*);
+    kArg.info       = (
+      kArgInfo::usePointer
+      | kArgInfo::isNull
+    );
+    args.push_back(kArg);
   }
 
   kernelArg::kernelArg(const uint8_t arg) {
