@@ -141,7 +141,7 @@ namespace occa {
 
       finish();
 
-      return (clStartTag->getTime() - clEndTag->getTime());
+      return (clEndTag->getTime() - clStartTag->getTime());
     }
 
     cl_command_queue& device::getCommandQueue() const {
