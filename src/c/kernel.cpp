@@ -118,6 +118,7 @@ void OCCA_RFUNC occaKernelRunN(occaKernel kernel,
   va_list args;
   va_start(args, argc);
   occaKernelVaRun(kernel, argc, args);
+  va_end(args);
 }
 
 void OCCA_RFUNC occaKernelVaRun(occaKernel kernel,
@@ -131,12 +132,15 @@ void OCCA_RFUNC occaKernelVaRun(occaKernel kernel,
   modeKernel.arguments.clear();
   modeKernel.arguments.reserve(argc);
 
+  va_list runArgs;
+  va_copy(runArgs, args);
   for (int i = 0; i < argc; ++i) {
-    occaType arg = va_arg(args, occaType);
+    occaType arg = va_arg(runArgs, occaType);
     modeKernel.pushArgument(
       occa::c::kernelArg(arg)
     );
   }
+  va_end(runArgs);
 
   kernel_.run();
 }
