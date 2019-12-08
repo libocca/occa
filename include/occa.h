@@ -17,11 +17,17 @@
 // Just in case someone wants to run with an older format than C99
 #ifndef OCCA_DISABLE_VARIADIC_MACROS
 
-#define OCCA_C_RUN_KERNEL3(N, kernel, ...) occaKernelRunN(kernel, N, __VA_ARGS__)
-#define OCCA_C_RUN_KERNEL2(...) OCCA_C_RUN_KERNEL3(__VA_ARGS__)
-#define OCCA_C_RUN_KERNEL1(...) OCCA_C_RUN_KERNEL2(__VA_ARGS__)
+#define OCCA_C_RUN_KERNEL3(kernel, N, ...)      \
+  occaKernelRunN(kernel, N, __VA_ARGS__)
 
-#define occaKernelRun(...) OCCA_C_RUN_KERNEL1(OCCA_ARG_COUNT(__VA_ARGS__), __VA_ARGS__)
+#define OCCA_C_RUN_KERNEL2(kernel, N, ...)      \
+  OCCA_C_RUN_KERNEL3(kernel, N, __VA_ARGS__)
+
+#define OCCA_C_RUN_KERNEL1(kernel, N, ...)      \
+  OCCA_C_RUN_KERNEL2(kernel, N, __VA_ARGS__)
+
+#define occaKernelRun(kernel, ...)                                      \
+  OCCA_C_RUN_KERNEL1(kernel, OCCA_ARG_COUNT(__VA_ARGS__), __VA_ARGS__)
 
 #endif // OCCA_DISABLE_VARIADIC_MACROS
 
