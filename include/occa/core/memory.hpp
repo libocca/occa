@@ -104,6 +104,7 @@ namespace occa {
   };
   //====================================
 
+
   //---[ memory ]-----------------------
   class memory : public gc::ringEntry_t {
     friend class occa::modeMemory_t;
@@ -238,6 +239,8 @@ namespace occa {
     void detach();
     void deleteRefs(const bool freeMemory = false);
   };
+
+  extern memory null;
   //====================================
 
   std::ostream& operator << (std::ostream &out,

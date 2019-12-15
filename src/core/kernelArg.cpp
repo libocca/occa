@@ -5,7 +5,7 @@
 
 namespace occa {
   //---[ KernelArg ]--------------------
-  const null_t null;
+  const nullKernelArg_t nullKernelArg;
 
   kernelArgData::kernelArgData() :
     modeMemory(NULL),
@@ -113,7 +113,7 @@ namespace occa {
     return args[index];
   }
 
-  kernelArg::kernelArg(const null_t arg) {
+  kernelArg::kernelArg(const nullKernelArg_t arg) {
     kernelArgData kArg;
     kArg.data.void_ = NULL;
     kArg.size       = sizeof(void*);
@@ -221,7 +221,7 @@ namespace occa {
 
     if (modeMemory) {
       add(modeMemory->makeKernelArg());
-    } else {
+    } else if (arg != NULL) {
       kernelArgData kArg;
       kArg.data.void_ = arg;
       kArg.size       = bytes;

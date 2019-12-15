@@ -20,12 +20,12 @@ namespace occa {
     static const char isNull     = (1 << 1);
   }
 
-  class null_t {
+  class nullKernelArg_t {
    public:
-    inline null_t() {}
+    inline nullKernelArg_t() {}
   };
 
-  extern const null_t null;
+  extern const nullKernelArg_t nullKernelArg;
 
   union kernelArgData_t {
     uint8_t  uint8_;
@@ -77,7 +77,7 @@ namespace occa {
     kernelArg(const kernelArg &other);
     kernelArg& operator = (const kernelArg &other);
 
-    kernelArg(const null_t arg);
+    kernelArg(const nullKernelArg_t arg);
 
     kernelArg(const uint8_t arg);
     kernelArg(const uint16_t arg);

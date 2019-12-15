@@ -67,13 +67,15 @@ namespace occa {
   bool modeMemory_t::isStale() const {
     return (memInfo & uvaFlag::isStale);
   }
+  //====================================
+
 
   //---[ memory ]-----------------------
   memory::memory() :
-    modeMemory(NULL) {}
+      modeMemory(NULL) {}
 
   memory::memory(void *uvaPtr) :
-    modeMemory(NULL) {
+      modeMemory(NULL) {
     ptrRangeMap::iterator it = uvaMap.find(uvaPtr);
     if (it != uvaMap.end()) {
       setModeMemory(it->second);
@@ -83,7 +85,7 @@ namespace occa {
   }
 
   memory::memory(modeMemory_t *modeMemory_) :
-    modeMemory(NULL) {
+      modeMemory(NULL) {
     setModeMemory(modeMemory_);
   }
 
@@ -187,9 +189,9 @@ namespace occa {
 
   memory::operator kernelArg() const {
     if (modeMemory) {
-      return modeMemory->makeKernelArg();
+        return modeMemory->makeKernelArg();
     }
-    return kernelArg((void*) NULL);
+    return nullKernelArg;
   }
 
   const std::string& memory::mode() const {
@@ -586,6 +588,9 @@ namespace occa {
     delete modeMemory;
     modeMemory = NULL;
   }
+
+  memory null;
+  //====================================
 
   std::ostream& operator << (std::ostream &out,
                              const occa::memory &memory) {
