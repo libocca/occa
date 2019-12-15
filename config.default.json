@@ -171,9 +171,5 @@
       stale_warning: 10.0,
       stale_age: 20.0,
     },
-    // OKL settings
-    okl: {
-      validate: true,
-    },
   },
 }

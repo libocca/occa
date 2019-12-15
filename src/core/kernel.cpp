@@ -95,10 +95,10 @@ namespace occa {
       const int metaArgc = (int) metadata.arguments.size();
 
       OCCA_ERROR("(" << name << ") Kernel expects ["
-                 << argc << "] argument"
-                 << (argc != 1 ? "s," : ",")
+                 << metaArgc << "] argument"
+                 << (metaArgc != 1 ? "s," : ",")
                  << " received ["
-                 << metaArgc << ']',
+                 << argc << ']',
                  argc == metaArgc);
 
       // TODO: Get original arg #
