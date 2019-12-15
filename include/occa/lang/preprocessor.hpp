@@ -129,6 +129,11 @@ namespace occa {
       void removeNewline(tokenVector &lineTokens);
 
       void processToken(token_t *token);
+
+      bool canProcessWhileIgnoring(token_t *token);
+      bool processingDirectiveAttribute(operatorToken &opToken,
+                                        token_t *&directiveToken);
+
       void processIdentifier(identifierToken &token);
 
       void processOperator(operatorToken &opToken);
