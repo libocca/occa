@@ -27,12 +27,12 @@ int main(int argc, const char **argv) {
   streamA = occa::getStream();
   streamB = occa::createStream();
 
-  o_a  = occa::malloc(entries, occa::dtype::float_);
-  o_b  = occa::malloc(entries, occa::dtype::float_);
-  o_ab = occa::malloc(entries, occa::dtype::float_);
+  o_a  = occa::malloc<float>(entries);
+  o_b  = occa::malloc<float>(entries);
+  o_ab = occa::malloc<float>(entries);
 
   addVectors = occa::buildKernel("addVectors.okl",
-                                  "addVectors");
+                                 "addVectors");
 
   o_a.copyFrom(a);
   o_b.copyFrom(b);

@@ -36,9 +36,9 @@ int main(int argc, char **argv) {
   occa::kernel addVectors;
   occa::memory o_a, o_b, o_ab;
 
-  o_a  = occa::malloc(entries, occa::dtype::float_);
-  o_b  = occa::malloc(entries, occa::dtype::float_);
-  o_ab = occa::malloc(entries, occa::dtype::float_);
+  o_a  = occa::malloc<float>(entries);
+  o_b  = occa::malloc<float>(entries);
+  o_ab = occa::malloc<float>(entries);
 
   addVectors = occa::buildKernel("addVectors.okl",
                                  "addVectors");
