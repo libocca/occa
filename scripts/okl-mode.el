@@ -44,7 +44,7 @@ Each list item should be a regexp matching a single identifier.")
 (defconst okl-font-lock-keywords-3
   (append
    (c-lang-const c-matchers-3 c++)
-   `((eval . (list "\\<\\(@[a-zA-Z0-9]+\\)\\>" 1 c-annotation-face))))
+   `((eval . (list "\\<\\(@[a-zA-Z][a-zA-Z0-9_]*\\)\\>" 1 c-annotation-face))))
   "Accurate normal highlighting for OKL mode.")
 
 (defvar okl-font-lock-keywords okl-font-lock-keywords-3
