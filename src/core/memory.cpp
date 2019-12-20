@@ -379,31 +379,34 @@ namespace occa {
   }
 
   occa::memory memory::slice(const dim_t offset,
-                             const dim_t bytes) const {
+                             const dim_t count) const {
     assertInitialized();
 
-    udim_t bytes_ = ((bytes == -1)
-                     ? (modeMemory->size - offset)
-                     : bytes);
+    const int dtypeSize = modeMemory->dtype_->bytes();
+    const dim_t offset_ = dtypeSize * offset;
+    const udim_t bytes  = dtypeSize * ((count == -1)
+                                       ? (length() - offset)
+                                       : count);
 
     OCCA_ERROR("Trying to allocate negative bytes (" << bytes << ")",
-               bytes >= -1);
+               bytes >= 0);
 
-    OCCA_ERROR("Cannot have a negative offset (" << offset << ")",
-               offset >= 0);
+    OCCA_ERROR("Cannot have a negative offset (" << offset_ << ")",
+               offset_ >= 0);
 
     OCCA_ERROR("Cannot have offset and bytes greater than the memory size ("
-               << offset << " + " << bytes_ << " > " << size() << ")",
-               (offset + (dim_t) bytes_) <= (dim_t) size());
+               << offset_ << " + " << bytes << " > " << size() << ")",
+               (offset_ + (dim_t) bytes) <= (dim_t) size());
 
-    occa::memory m(modeMemory->addOffset(offset));
+    occa::memory m(modeMemory->addOffset(offset_));
+    m.setDtype(dtype());
 
     modeMemory_t &mm = *(m.modeMemory);
     mm.modeDevice = modeMemory->modeDevice;
-    mm.size = bytes_;
+    mm.size = bytes;
     mm.isOrigin = false;
     if (modeMemory->uvaPtr) {
-      mm.uvaPtr = (modeMemory->uvaPtr + offset);
+      mm.uvaPtr = (modeMemory->uvaPtr + offset_);
     }
 
     return m;
