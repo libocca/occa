@@ -165,7 +165,7 @@ namespace occa {
     udim_t length() const;
 
     template <class TM>
-    udim_t size() const {
+    udim_t length() const {
       return (modeMemory
               ? (modeMemory->size / sizeof(TM))
               : 0);
@@ -195,7 +195,7 @@ namespace occa {
     occa::memory& operator += (const dim_t offset);
 
     occa::memory slice(const dim_t offset,
-                       const dim_t bytes = -1) const;
+                       const dim_t count = -1) const;
 
     void copyFrom(const void *src,
                   const dim_t bytes = -1,
