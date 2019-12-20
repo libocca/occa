@@ -21,6 +21,9 @@ namespace occa {
                                      const occa::properties &props);
 
     private:
+      cl_mem rootClMem;
+      dim_t rootOffset;
+
       cl_mem clMem;
       void *mappedPtr;
 

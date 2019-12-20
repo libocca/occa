@@ -8,8 +8,9 @@ namespace occa {
     memory::memory(modeDevice_t *modeDevice_,
                    udim_t size_,
                    const occa::properties &properties_) :
-      occa::modeMemory_t(modeDevice_, size_, properties_),
-      mappedPtr(NULL) {}
+        occa::modeMemory_t(modeDevice_, size_, properties_),
+        rootOffset(0),
+        mappedPtr(NULL) {}
 
     memory::~memory() {
       if (isOrigin) {
@@ -26,6 +27,10 @@ namespace occa {
                             clReleaseMemObject(clMem));
         }
       }
+
+      rootClMem = NULL;
+      rootOffset = 0;
+
       clMem = NULL;
       mappedPtr = NULL;
       size = 0;
@@ -51,12 +56,15 @@ namespace occa {
                                              size - offset,
                                              properties);
 
+      m->rootClMem = rootClMem;
+      m->rootOffset = rootOffset + offset;
+
       cl_buffer_region info;
-      info.origin = offset;
+      info.origin = m->rootOffset;
       info.size   = m->size;
 
       cl_int error;
-      m->clMem = clCreateSubBuffer(clMem,
+      m->clMem = clCreateSubBuffer(rootClMem,
                                    CL_MEM_READ_WRITE,
                                    CL_BUFFER_CREATE_TYPE_REGION,
                                    &info,

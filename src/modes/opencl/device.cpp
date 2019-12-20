@@ -339,6 +339,8 @@ namespace occa {
         finish();
       }
 
+      mem->rootClMem = mem->clMem;
+
       return mem;
     }
 
@@ -355,6 +357,7 @@ namespace occa {
                                   CL_MEM_READ_WRITE | CL_MEM_ALLOC_HOST_PTR,
                                   bytes,
                                   NULL, &error);
+      mem->rootClMem = mem->clMem;
 
       OCCA_OPENCL_ERROR("Device: clCreateBuffer", error);
 
