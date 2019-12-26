@@ -36,7 +36,7 @@
       include: [],
 
       // List of source-code snippets to include at the top of the source code
-      header: [],
+      headers: [],
 
       // OKL Options
       okl: {
