@@ -324,14 +324,14 @@ namespace occa {
   // Properties:
   //   defines       : Object
   //   includes      : Array
-  //   header        : Array
+  //   headers       : Array
   //   include_paths : Array
 
   hash_t kernelHeaderHash(const occa::properties &props) {
     return (
       occa::hash(props["defines"])
       ^ props["includes"]
-      ^ props["header"]
+      ^ props["headers"]
     );
   }
 
@@ -363,10 +363,10 @@ namespace occa {
     }
 
     // Add header
-    const jsonArray &lines = props["header"].array();
+    const jsonArray &lines = props["headers"].array();
     const int lineCount = (int) lines.size();
     for (int i = 0; i < lineCount; ++i) {
-      if (includes[i].isString()) {
+      if (lines[i].isString()) {
         header += (std::string) lines[i];
         header += "\n";
       }
