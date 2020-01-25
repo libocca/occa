@@ -234,9 +234,12 @@ void testStreamMethods() {
   ASSERT_EQ(stream.getModeStream(),
             occa::c::stream(occaDeviceGetStream(device)).getModeStream());
 
+  occaStreamTag startTag = occaDeviceCreateStreamTag(device);
+  occaStreamTag endTag = occaDeviceCreateStreamTag(device);
+
   // Start tagging
   double outerStart = occa::sys::currentTime();
-  occaStreamTag startTag = occaDeviceTagStream(device);
+  occaDeviceTagStream(device, startTag);
   double innerStart = occa::sys::currentTime();
 
   // Wait 0.3 - 0.5 seconds
@@ -244,7 +247,7 @@ void testStreamMethods() {
 
   // End tagging
   double innerEnd = occa::sys::currentTime();
-  occaStreamTag endTag = occaDeviceTagStream(device);
+  occaDeviceTagStream(device, endTag);
   occaDeviceWaitForTag(device, endTag);
   double outerEnd = occa::sys::currentTime();
 

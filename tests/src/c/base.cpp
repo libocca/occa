@@ -156,8 +156,11 @@ void testStreamMethods() {
             occa::c::stream(occaGetStream()).getModeStream());
 
   // Start tagging
+  occaStreamTag startTag = occaCreateStreamTag();
+  occaStreamTag endTag = occaCreateStreamTag();
+
   double outerStart = occa::sys::currentTime();
-  occaStreamTag startTag = occaTagStream();
+  occaTagStream(startTag);
   double innerStart = occa::sys::currentTime();
 
   // Wait 0.3 - 0.5 seconds
@@ -165,7 +168,7 @@ void testStreamMethods() {
 
   // End tagging
   double innerEnd = occa::sys::currentTime();
-  occaStreamTag endTag = occaTagStream();
+  occaTagStream(endTag);
   occaWaitForTag(endTag);
   double outerEnd = occa::sys::currentTime();
 
