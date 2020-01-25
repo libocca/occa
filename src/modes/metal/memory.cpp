@@ -11,7 +11,10 @@ namespace occa {
         bufferOffset(0) {}
 
     memory::~memory() {
-      metalBuffer.free();
+      if (isOrigin) {
+        metalBuffer.free();
+      }
+      size = 0;
     }
 
     kernelArg memory::makeKernelArg() const {

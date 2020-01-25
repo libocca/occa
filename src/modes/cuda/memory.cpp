@@ -13,21 +13,16 @@ namespace occa {
       isUnified(false) {}
 
     memory::~memory() {
-      if (!isOrigin) {
-        cuPtr = 0;
-        mappedPtr = NULL;
-        size = 0;
-        return;
+      if (isOrigin) {
+        if (mappedPtr) {
+          OCCA_CUDA_ERROR("Device: mappedFree()",
+                          cuMemFreeHost(mappedPtr));
+        } else if (cuPtr) {
+          cuMemFree(cuPtr);
+        }
       }
-
-      if (mappedPtr) {
-        OCCA_CUDA_ERROR("Device: mappedFree()",
-                        cuMemFreeHost(mappedPtr));
-        mappedPtr = NULL;
-      } else if (cuPtr) {
-        cuMemFree(cuPtr);
-        cuPtr = 0;
-      }
+      cuPtr = 0;
+      mappedPtr = NULL;
       size = 0;
     }
 

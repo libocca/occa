@@ -10,13 +10,11 @@ namespace occa {
       occa::modeMemory_t(modeDevice_, size_, properties_) {}
 
     memory::~memory() {
-      if (ptr) {
-        if (isOrigin) {
-          sys::free(ptr);
-        }
-        ptr = NULL;
-        size = 0;
+      if (ptr && isOrigin) {
+        sys::free(ptr);
       }
+      ptr = NULL;
+      size = 0;
     }
 
     kernelArg memory::makeKernelArg() const {

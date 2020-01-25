@@ -12,19 +12,23 @@ namespace occa {
       mappedPtr(NULL) {}
 
     memory::~memory() {
-      if (mappedPtr) {
-        OCCA_OPENCL_ERROR("Mapped Free: clEnqueueUnmapMemObject",
-                          clEnqueueUnmapMemObject(getCommandQueue(),
-                                                  clMem,
-                                                  mappedPtr,
-                                                  0, NULL, NULL));
+      if (isOrigin) {
+        if (mappedPtr) {
+          OCCA_OPENCL_ERROR("Mapped Free: clEnqueueUnmapMemObject",
+                            clEnqueueUnmapMemObject(getCommandQueue(),
+                                                    clMem,
+                                                    mappedPtr,
+                                                    0, NULL, NULL));
+        }
+        if (size) {
+          // Free mapped-host pointer
+          OCCA_OPENCL_ERROR("Mapped Free: clReleaseMemObject",
+                            clReleaseMemObject(clMem));
+        }
       }
-      if (size) {
-        // Free mapped-host pointer
-        OCCA_OPENCL_ERROR("Mapped Free: clReleaseMemObject",
-                          clReleaseMemObject(clMem));
-        size = 0;
-      }
+      clMem = NULL;
+      mappedPtr = NULL;
+      size = 0;
     }
 
     cl_command_queue& memory::getCommandQueue() const {

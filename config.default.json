@@ -36,7 +36,7 @@
       include: [],
 
       // List of source-code snippets to include at the top of the source code
-      header: [],
+      headers: [],
 
       // OKL Options
       okl: {
@@ -170,10 +170,6 @@
     locks: {
       stale_warning: 10.0,
       stale_age: 20.0,
-    },
-    // OKL settings
-    okl: {
-      validate: true,
     },
   },
 }

@@ -464,8 +464,7 @@ namespace occa {
       // Only process operators when ignoring
       //   for potential #
       if (status & ppStatus::ignoring) {
-        if (!(tokenType & tokenType::op) ||
-            !(token->getOpType() & operatorType::preprocessor)) {
+        if (!canProcessWhileIgnoring(token)) {
           clearExpandedMacros(token);
           delete token;
           return;
@@ -484,6 +483,41 @@ namespace occa {
 
       clearExpandedMacros(token);
     }
+
+    bool preprocessor_t::canProcessWhileIgnoring(token_t *token) {
+      opType_t opType = token->getOpType();
+      // Can process # directive to stop an #if/#else/#elif
+      if (opType & operatorType::hash) {
+        return true;
+      }
+      // Can process @directive directives
+      if (opType & operatorType::attribute) {
+        token_t *directiveToken;
+        const bool isDirective = (
+          processingDirectiveAttribute(token->to<operatorToken>(),
+                                       directiveToken)
+        );
+        // Push the directive token as well
+        if (directiveToken) {
+          pushInput(directiveToken);
+        }
+
+        return isDirective;
+      }
+
+      return false;
+    }
+
+    bool preprocessor_t::processingDirectiveAttribute(operatorToken &opToken,
+                                                      token_t *&directiveToken) {
+      // Check for @[directive]
+      directiveToken = getSourceToken();
+      return (
+        (token_t::safeType(directiveToken) & tokenType::identifier) &&
+        (directiveToken->to<identifierToken>().value == "directive")
+      );
+    }
+
 
     void preprocessor_t::processIdentifier(identifierToken &token) {
       // Ignore tokens inside disabled #if/#elif/#else regions
@@ -598,13 +632,8 @@ namespace occa {
     }
 
     void preprocessor_t::processAttributeOperator(operatorToken &opToken) {
-      // Check for @[directive]
-      token_t *directiveToken = getSourceToken();
-      const bool isDirective = (
-        (token_t::safeType(directiveToken) & tokenType::identifier) &&
-        (directiveToken->to<identifierToken>().value == "directive")
-      );
-      if (!isDirective) {
+      token_t *directiveToken;
+      if (!processingDirectiveAttribute(opToken, directiveToken)) {
         // Push the [@] token directly
         pushOutput(&opToken);
         // The next token still needs to be processed
@@ -616,6 +645,7 @@ namespace occa {
 
       // Freeze our outputs and expand the rest of our symbols
       std::list<token_t*> prevOutputCache = outputCache;
+      pushStatus(ppStatus::reading);
       outputCache.clear();
 
       // Make sure we have a tokenizer
@@ -623,6 +653,7 @@ namespace occa {
       if (!tokenizer) {
         warningOn(directiveToken,
                   "Unable to apply @directive due to the lack of a tokenizer");
+        popStatus();
         return freeAttributeOperatorTokens(opToken,
                                            *directiveToken,
                                            prevOutputCache);
@@ -635,14 +666,17 @@ namespace occa {
         fetchNext();
         if ((errors > currentErrors) ||
             (tokenizer->errors > currentTokenizerErrors)) {
+          popStatus();
           return freeAttributeOperatorTokens(opToken,
                                              *directiveToken,
                                              prevOutputCache);
         }
       }
+
       if (outputCache.size() < 3) {
         errorOn(directiveToken,
-                "@directive expects a string argument");
+                "[1] @directive expects a string argument");
+        popStatus();
         return freeAttributeOperatorTokens(opToken,
                                            *directiveToken,
                                            prevOutputCache);
@@ -662,11 +696,12 @@ namespace occa {
         || !(token_t::safeOperatorType(parenEndToken) & operatorType::parenthesesEnd)
       ) {
         errorOn(directiveToken,
-                "@directive expects a string argument");
+                "[2] @directive expects a string argument");
         delete parenStartToken;
         delete contentToken;
         delete parenEndToken;
         skipToNewline();
+        popStatus();
         return freeAttributeOperatorTokens(opToken,
                                            *directiveToken,
                                            prevOutputCache);
@@ -696,6 +731,7 @@ namespace occa {
         delete parenStartToken;
         delete contentToken;
         delete parenEndToken;
+        popStatus();
         return freeAttributeOperatorTokens(opToken,
                                            *directiveToken,
                                            prevOutputCache);
@@ -718,6 +754,7 @@ namespace occa {
 
       // Bring back the original output cache
       outputCache = prevOutputCache;
+      popStatus();
     }
 
     void preprocessor_t::freeAttributeOperatorTokens(token_t &opToken,

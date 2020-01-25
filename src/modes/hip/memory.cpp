@@ -20,21 +20,16 @@ namespace occa {
       mappedPtr(NULL) {}
 
     memory::~memory() {
-      if (!isOrigin) {
-        hipPtr = 0;
-        mappedPtr = NULL;
-        size = 0;
-        return;
+      if (isOrigin) {
+        if (mappedPtr) {
+          OCCA_HIP_ERROR("Device: mappedFree()",
+                         hipHostFree(mappedPtr));
+        } else if (hipPtr) {
+          hipFree((void*) hipPtr);
+        }
       }
-
-      if (mappedPtr) {
-        OCCA_HIP_ERROR("Device: mappedFree()",
-                       hipHostFree(mappedPtr));
-        mappedPtr = NULL;
-      } else if (hipPtr) {
-        hipFree((void*) hipPtr);
-        hipPtr = 0;
-      }
+      hipPtr = 0;
+      mappedPtr = NULL;
       size = 0;
     }
 
