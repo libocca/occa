@@ -73,11 +73,23 @@ namespace occa {
       return new stream(this, props, metalCommandQueue);
     }
 
-    occa::streamTag device::tagStream() {
+    occa::streamTag device::createStreamTag() {
       metal::stream &stream = (
         *((metal::stream*) (currentStream.getModeStream()))
       );
       return new occa::metal::streamTag(this, stream.metalCommandQueue.createEvent());
+    }
+
+    void device::tagStream(const occa::streamTag &tag) {
+      occa::metal::streamTag *metalTag = (
+        dynamic_cast<occa::metal::streamTag*>(tag.getModeStreamTag())
+      );
+
+      metal::stream &stream = (
+        *((metal::stream*) (currentStream.getModeStream()))
+      );
+      occa::metal::streamTag newTag(this, stream.metalCommandQueue.createEvent());
+      metalTag->time = newTag.getTime();
     }
 
     void device::waitFor(occa::streamTag tag) {

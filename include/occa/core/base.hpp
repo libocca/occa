@@ -33,6 +33,9 @@ namespace occa {
 
   void finish();
 
+  streamTag createStreamTag();
+  void tagStream(const streamTag &tag);
+
   void waitFor(streamTag tag);
 
   double timeBetween(const streamTag &startTag,
@@ -41,8 +44,6 @@ namespace occa {
   stream createStream(const occa::properties &props = occa::properties());
   stream getStream();
   void setStream(stream s);
-
-  streamTag tagStream();
   //====================================
 
   //---[ Kernel Functions ]-------------

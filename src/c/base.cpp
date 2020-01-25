@@ -65,11 +65,15 @@ void OCCA_RFUNC occaSetStream(occaStream stream) {
   occa::setStream(occa::c::stream(stream));
 }
 
-occaStreamTag OCCA_RFUNC occaTagStream() {
-  occa::streamTag tag = occa::tagStream();
+occaStreamTag OCCA_RFUNC occaCreateStreamTag() {
+  occa::streamTag tag = occa::createStreamTag();
   tag.dontUseRefs();
 
   return occa::c::newOccaType(tag);
+}
+
+void OCCA_RFUNC occaTagStream(occaStreamTag tag) {
+  occa::tagStream(occa::c::streamTag(tag));
 }
 
 void OCCA_RFUNC occaWaitForTag(occaStreamTag tag) {

@@ -121,17 +121,24 @@ namespace occa {
       return new stream(this, props, hipStream);
     }
 
-    occa::streamTag device::tagStream() {
+    occa::streamTag device::createStreamTag() {
       hipEvent_t hipEvent;
 
       OCCA_HIP_ERROR("Device: Setting Device",
                      hipSetDevice(deviceID));
       OCCA_HIP_ERROR("Device: Tagging Stream (Creating Tag)",
                      hipEventCreate(&hipEvent));
-      OCCA_HIP_ERROR("Device: Tagging Stream",
-                     hipEventRecord(hipEvent, getHipStream()));
 
       return new occa::hip::streamTag(this, hipEvent);
+    }
+
+    void device::tagStream(const occa::streamTag &tag) {
+      occa::hip::streamTag *hipTag = (
+        dynamic_cast<occa::hip::streamTag*>(tag.getModeStreamTag())
+      );
+
+      OCCA_HIP_ERROR("Device: Tagging Stream",
+                     hipEventRecord(hipTag->hipEvent, getHipStream()));
     }
 
     void device::waitFor(occa::streamTag tag) {

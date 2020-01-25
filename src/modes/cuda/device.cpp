@@ -114,7 +114,7 @@ namespace occa {
       return new stream(this, props, cuStream);
     }
 
-    occa::streamTag device::tagStream() {
+    occa::streamTag device::createStreamTag() {
       CUevent cuEvent;
 
       OCCA_CUDA_ERROR("Device: Setting Context",
@@ -122,10 +122,17 @@ namespace occa {
       OCCA_CUDA_ERROR("Device: Tagging Stream (Creating Tag)",
                       cuEventCreate(&cuEvent,
                                     CU_EVENT_DEFAULT));
-      OCCA_CUDA_ERROR("Device: Tagging Stream",
-                      cuEventRecord(cuEvent, 0));
 
       return new occa::cuda::streamTag(this, cuEvent);
+    }
+
+    void device::tagStream(const occa::streamTag &tag) {
+      occa::cuda::streamTag *cuTag = (
+        dynamic_cast<occa::cuda::streamTag*>(tag.getModeStreamTag())
+      );
+
+      OCCA_CUDA_ERROR("Device: Tagging Stream",
+                      cuEventRecord(cuTag->cuEvent, getCuStream()));
     }
 
     void device::waitFor(occa::streamTag tag) {

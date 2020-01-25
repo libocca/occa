@@ -66,8 +66,12 @@ namespace occa {
     getDevice().setStream(s);
   }
 
-  streamTag tagStream() {
-    return getDevice().tagStream();
+  streamTag createStreamTag() {
+    return getDevice().createStreamTag();
+  }
+
+  void tagStream(const streamTag &tag) {
+    getDevice().tagStream(tag);
   }
 
   //---[ Kernel Functions ]-------------

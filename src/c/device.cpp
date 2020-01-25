@@ -98,12 +98,18 @@ void OCCA_RFUNC occaDeviceSetStream(occaDevice device,
   device_.setStream(occa::c::stream(stream));
 }
 
-occaStreamTag OCCA_RFUNC occaDeviceTagStream(occaDevice device) {
+occaStreamTag OCCA_RFUNC occaDeviceCreateStreamTag(occaDevice device) {
   occa::device device_ = occa::c::device(device);
-  occa::streamTag tag = device_.tagStream();
+  occa::streamTag tag = device_.createStreamTag();
   tag.dontUseRefs();
 
   return occa::c::newOccaType(tag);
+}
+
+void OCCA_RFUNC occaDeviceTagStream(occaDevice device,
+                                    occaStreamTag tag) {
+  occa::device device_ = occa::c::device(device);
+  device_.tagStream(occa::c::streamTag(tag));
 }
 
 void OCCA_RFUNC occaDeviceWaitForTag(occaDevice device,

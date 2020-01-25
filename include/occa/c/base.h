@@ -33,7 +33,9 @@ OCCA_LFUNC occaStream OCCA_RFUNC occaGetStream();
 
 OCCA_LFUNC void OCCA_RFUNC occaSetStream(occaStream stream);
 
-OCCA_LFUNC occaStreamTag OCCA_RFUNC occaTagStream();
+OCCA_LFUNC occaStreamTag OCCA_RFUNC occaCreateStreamTag();
+
+OCCA_LFUNC void OCCA_RFUNC occaTagStream(occaStreamTag tag);
 
 OCCA_LFUNC void OCCA_RFUNC occaWaitForTag(occaStreamTag tag);
 

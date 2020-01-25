@@ -106,20 +106,25 @@ namespace occa {
       return new stream(this, props, commandQueue);
     }
 
-    occa::streamTag device::tagStream() {
+    occa::streamTag device::createStreamTag() {
       cl_event clEvent;
+      return new occa::opencl::streamTag(this, clEvent);
+    }
+
+    void device::tagStream(const occa::streamTag &tag) {
+      occa::opencl::streamTag *clTag = (
+        dynamic_cast<occa::opencl::streamTag*>(tag.getModeStreamTag())
+      );
 
 #ifdef CL_VERSION_1_2
       OCCA_OPENCL_ERROR("Device: Tagging Stream",
                         clEnqueueMarkerWithWaitList(getCommandQueue(),
-                                                    0, NULL, &clEvent));
+                                                    0, NULL, &(clTag->clEvent)));
 #else
       OCCA_OPENCL_ERROR("Device: Tagging Stream",
                         clEnqueueMarker(getCommandQueue(),
-                                        &clEvent));
+                                        &(clTag->clEvent)));
 #endif
-
-      return new occa::opencl::streamTag(this, clEvent);
     }
 
     void device::waitFor(occa::streamTag tag) {

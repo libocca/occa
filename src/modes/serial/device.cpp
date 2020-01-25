@@ -115,8 +115,16 @@ namespace occa {
       return new stream(this, props);
     }
 
-    occa::streamTag device::tagStream() {
-      return new occa::serial::streamTag(this, sys::currentTime());
+    occa::streamTag device::createStreamTag() {
+      return new occa::serial::streamTag(this, 0.0);
+    }
+
+    void device::tagStream(const occa::streamTag &tag) {
+      occa::serial::streamTag *srTag = (
+        dynamic_cast<occa::serial::streamTag*>(tag.getModeStreamTag())
+      );
+
+      srTag->time = sys::currentTime();
     }
 
     void device::waitFor(occa::streamTag tag) {}

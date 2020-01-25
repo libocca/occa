@@ -348,9 +348,14 @@ namespace occa {
     modeDevice->currentStream = s;
   }
 
-  streamTag device::tagStream() {
+  streamTag device::createStreamTag() {
     assertInitialized();
-    return modeDevice->tagStream();
+    return modeDevice->createStreamTag();
+  }
+
+  void device::tagStream(const streamTag &tag) {
+    assertInitialized();
+    modeDevice->tagStream(tag);
   }
 
   void device::waitFor(streamTag tag) {
