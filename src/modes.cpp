@@ -18,15 +18,10 @@ namespace occa {
 
   mode_v* getMode(const occa::properties &props) {
     std::string mode = props["mode"];
-    const bool noMode = !mode.size();
-    if (noMode || !modeIsEnabled(mode)) {
-      if (noMode) {
-        io::stderr << "No OCCA mode given, defaulting to [Serial] mode\n";
-      } else {
-        io::stderr << "[" << mode << "] mode is not enabled, defaulting to [Serial] mode\n";
-      }
-      mode = "Serial";
-    }
+
+    OCCA_ERROR("No OCCA mode given", mode.size() > 0);
+    OCCA_ERROR("[" << mode << "] mode is not enabled", modeIsEnabled(mode));
+
     return modeMap()[mode];
   }
 
