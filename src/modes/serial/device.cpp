@@ -16,7 +16,7 @@ namespace occa {
 
       occa::json &kernelProps = properties["kernel"];
       std::string compiler, compilerFlags, compilerEnvScript;
-      std::string linkingFlags;
+      std::string linkerFlags;
       int vendor;
 
       if (kernelProps.get<std::string>("compiler").size()) {
@@ -49,10 +49,10 @@ namespace occa {
 #endif
       }
 
-      if (kernelProps.get<std::string>("linking_flags").size()) {
-        linkingFlags = (std::string) kernelProps["linking_flags"];
+      if (kernelProps.get<std::string>("linker_flags").size()) {
+        linkerFlags = (std::string) kernelProps["linker_flags"];
       } else if (env::var("OCCA_LDFLAGS").size()) {
-        linkingFlags = env::var("OCCA_LDFLAGS");
+        linkerFlags = env::var("OCCA_LDFLAGS");
       }
 
       if (kernelProps.get<std::string>("compiler_env_script").size()) {
@@ -91,7 +91,7 @@ namespace occa {
       kernelProps["compiler"] = compiler;
       kernelProps["compiler_flags"] = compilerFlags;
       kernelProps["compiler_env_script"] = compilerEnvScript;
-      kernelProps["linking_flags"] = linkingFlags;
+      kernelProps["linker_flags"] = linkerFlags;
     }
 
     device::~device() {}
@@ -267,7 +267,7 @@ namespace occa {
       std::string compilerFlags = kernelProps["compiler_flags"];
       const int vendor = (int) kernelProps["vendor"];
 
-      std::string linkingFlags = kernelProps["linking_flags"];
+      std::string linkerFlags = kernelProps["linker_flags"];
 
       sys::addSharedBinaryFlags(vendor, compilerFlags);
       sys::addCpp11Flags(vendor, compilerFlags);
@@ -279,7 +279,7 @@ namespace occa {
               << " -o " << binaryFilename
               << " -I"  << env::OCCA_DIR << "include"
               << " -L"  << env::OCCA_DIR << "lib -locca"
-              << ' '    << linkingFlags
+              << ' '    << linkerFlags
               << std::endl;
 #else
       command << kernelProps["compiler"]
@@ -291,7 +291,7 @@ namespace occa {
               << " /I"     << env::OCCA_DIR << "include"
               << ' '       << sourceFilename
               << " /link " << env::OCCA_DIR << "lib/libocca.lib",
-              << ' '       << linkingFlags
+              << ' '       << linkerFlags
               << " /OUT:"  << binaryFilename
               << std::endl;
 #endif
