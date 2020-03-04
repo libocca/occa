@@ -12,6 +12,7 @@ namespace occa {
     hash_t device::kernelHash(const occa::properties &props) const {
       return (
         occa::hash(props["vendor"])
+        ^ occa::hash("openmp")
         ^ props["compiler"]
         ^ props["compiler_flags"]
         ^ props["compiler_env_script"]
