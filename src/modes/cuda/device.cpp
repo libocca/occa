@@ -54,10 +54,21 @@ namespace occa {
       kernelProps["compiler"] = compiler;
       kernelProps["compiler_flags"] = compilerFlags;
 
-      OCCA_CUDA_ERROR("Device: Getting CUDA Device Arch",
+#if CUDA_VERSION < 5000
+      OCCA_CUDA_ERROR("Device: Getting CUDA device arch",
                       cuDeviceComputeCapability(&archMajorVersion,
                                                 &archMinorVersion,
-                                                cuDevice) );
+                                                cuDevice));
+#else
+      OCCA_CUDA_ERROR("Device: Getting CUDA device major version",
+                      cuDeviceGetAttribute(&archMajorVersion,
+                                           CU_DEVICE_ATTRIBUTE_COMPUTE_CAPABILITY_MAJOR,
+                                           cuDevice));
+      OCCA_CUDA_ERROR("Device: Getting CUDA device minor version",
+                      cuDeviceGetAttribute(&archMinorVersion,
+                                           CU_DEVICE_ATTRIBUTE_COMPUTE_CAPABILITY_MINOR,
+                                           cuDevice));
+#endif
 
       archMajorVersion = kernelProps.get("arch/major", archMajorVersion);
       archMinorVersion = kernelProps.get("arch/minor", archMinorVersion);

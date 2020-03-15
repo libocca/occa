@@ -384,9 +384,9 @@ namespace occa {
 
     const int dtypeSize = modeMemory->dtype_->bytes();
     const dim_t offset_ = dtypeSize * offset;
-    const udim_t bytes  = dtypeSize * ((count == -1)
-                                       ? (length() - offset)
-                                       : count);
+    const dim_t bytes  = dtypeSize * ((count == -1)
+                                      ? (length() - offset)
+                                      : count);
 
     OCCA_ERROR("Trying to allocate negative bytes (" << bytes << ")",
                bytes >= 0);
@@ -567,16 +567,16 @@ namespace occa {
       modeDevice->bytesAllocated -= (modeMemory->size);
 
       if (modeMemory->uvaPtr) {
-        void *ptr = modeMemory->ptr;
+        void *memPtr = modeMemory->ptr;
         void *uvaPtr = modeMemory->uvaPtr;
 
         uvaMap.erase(uvaPtr);
         modeDevice->uvaMap.erase(uvaPtr);
 
         // CPU case where memory is shared
-        if (uvaPtr != ptr) {
-          uvaMap.erase(ptr);
-          modeDevice->uvaMap.erase(ptr);
+        if (uvaPtr != memPtr) {
+          uvaMap.erase(memPtr);
+          modeDevice->uvaMap.erase(memPtr);
 
           sys::free(uvaPtr);
         }

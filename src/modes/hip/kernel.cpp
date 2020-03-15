@@ -46,8 +46,8 @@ namespace occa {
     }
 
     dim kernel::maxInnerDims() const {
-      static dim innerDims(0);
-      if (innerDims.x == 0) {
+      static dim _maxInnerDims(0);
+      if (_maxInnerDims.x == 0) {
         int maxSize;
         int deviceID = properties["device_id"];
         hipDeviceProp_t props;
@@ -55,9 +55,9 @@ namespace occa {
                        hipGetDeviceProperties(&props, deviceID));
         maxSize = props.maxThreadsPerBlock;
 
-        innerDims.x = maxSize;
+        _maxInnerDims.x = maxSize;
       }
-      return innerDims;
+      return _maxInnerDims;
     }
 
     void kernel::deviceRun() const {
@@ -92,9 +92,9 @@ namespace occa {
 
       size_t size = vArgs.size() * sizeof(vArgs[0]);
       void* config[] = {
-        HIP_LAUNCH_PARAM_BUFFER_POINTER, &(vArgs[0]),
-        HIP_LAUNCH_PARAM_BUFFER_SIZE, &size,
-        HIP_LAUNCH_PARAM_END
+        (void*) HIP_LAUNCH_PARAM_BUFFER_POINTER, &(vArgs[0]),
+        (void*) HIP_LAUNCH_PARAM_BUFFER_SIZE, &size,
+        (void*) HIP_LAUNCH_PARAM_END
       };
 
       OCCA_HIP_ERROR("Launching Kernel",
