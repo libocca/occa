@@ -32,6 +32,8 @@ namespace occa {
   static const int CU_MEM_ATTACH_GLOBAL = 0;
   static const int CU_MEM_ATTACH_HOST = 0;
   static const int CU_STREAM_DEFAULT = 0;
+  static const int CU_DEVICE_ATTRIBUTE_COMPUTE_CAPABILITY_MAJOR = 0;
+  static const int CU_DEVICE_ATTRIBUTE_COMPUTE_CAPABILITY_MINOR = 0;
 
   static const CUfunction_attribute CU_FUNC_ATTRIBUTE_MAX_THREADS_PER_BLOCK = NULL;
 

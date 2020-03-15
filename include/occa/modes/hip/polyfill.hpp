@@ -23,9 +23,9 @@ namespace occa {
   typedef struct _hipStream_t*            hipStream_t;
 
   //---[ Enums ]------------------------
-  static void *HIP_LAUNCH_PARAM_BUFFER_POINTER = NULL;
-  static void *HIP_LAUNCH_PARAM_BUFFER_SIZE = NULL;
-  static void *HIP_LAUNCH_PARAM_END = NULL;
+  static const int HIP_LAUNCH_PARAM_BUFFER_POINTER = 0;
+  static const int HIP_LAUNCH_PARAM_BUFFER_SIZE = 0;
+  static const int HIP_LAUNCH_PARAM_END = 0;
 
   struct hipDeviceProp_t {
     char *name;
