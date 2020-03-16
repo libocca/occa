@@ -51,6 +51,8 @@ namespace occa {
       void removeRef(entry_t *entry);
 
       bool needsFree() const;
+
+      int length() const;
     };
 
     template <class entry_t>

@@ -351,7 +351,6 @@ namespace occa {
                                        hipModule,
                                        hipFunction,
                                        kernelProps);
-        hipKernel->dontUseRefs();
         hipKernel->metadata = metadata;
         k.deviceKernels.push_back(hipKernel);
       }

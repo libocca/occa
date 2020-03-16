@@ -236,7 +236,6 @@ namespace occa {
                                           metalDevice,
                                           metalFunction,
                                           kernelProps);
-        deviceKernel->dontUseRefs();
         deviceKernel->metadata = metadata;
         k.deviceKernels.push_back(deviceKernel);
       }
