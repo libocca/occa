@@ -116,6 +116,7 @@ namespace occa {
       it->second.free();
       ++it;
     }
+    kernelMap.clear();
   }
   //====================================
 

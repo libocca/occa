@@ -280,7 +280,6 @@ namespace occa {
                                       clDevice,
                                       clInfo.clKernel,
                                       kernelProps);
-        clKernel->dontUseRefs();
         clKernel->metadata = metadata;
         k.deviceKernels.push_back(clKernel);
       }

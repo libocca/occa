@@ -17,7 +17,7 @@ namespace occa {
     delete launcherKernel;
     launcherKernel = NULL;
 
-    int kernelCount = (int) deviceKernels.size();
+    const int kernelCount = (int) deviceKernels.size();
     for (int i = 0; i < kernelCount; ++i) {
       delete deviceKernels[i];
     }

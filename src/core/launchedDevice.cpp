@@ -72,7 +72,14 @@ namespace occa {
       std::vector<modeKernel_t*> &deviceKernels = kernel->deviceKernels;
       const int kernelCount = (int) deviceKernels.size();
       for (int i = 0; i < kernelCount; ++i) {
-        deviceKernels[i]->properties["type_validation"] = false;
+        modeKernel_t *deviceKernel = deviceKernels[i];
+
+        // The launchedKernel handles deleting the launcher + device kernels
+        removeKernelRef(deviceKernel);
+        deviceKernel->dontUseRefs();
+
+        // Some backends inject additional arguments
+        deviceKernel->properties["type_validation"] = false;
       }
     }
 

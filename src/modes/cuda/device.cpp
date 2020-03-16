@@ -374,7 +374,6 @@ namespace occa {
                                       cuModule,
                                       cuFunction,
                                       kernelProps);
-        cuKernel->dontUseRefs();
         cuKernel->metadata = metadata;
         k.deviceKernels.push_back(cuKernel);
       }

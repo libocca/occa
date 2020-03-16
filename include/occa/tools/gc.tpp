@@ -20,7 +20,7 @@ namespace occa {
 
     template <class entry_t>
     void ring_t<entry_t>::addRef(entry_t *entry) {
-      if (!entry) {
+      if (!entry || head == entry) {
         return;
       }
       entry->removeRef();
@@ -37,12 +37,15 @@ namespace occa {
 
     template <class entry_t>
     void ring_t<entry_t>::removeRef(entry_t *entry) {
+      // Check if the ring is empty
       if (!entry || !head) {
         return;
       }
       ringEntry_t *tail = head->leftRingEntry;
+      // Remove the entry ref from its ring
       entry->removeRef();
       if (head == entry) {
+        // Change the head to the tail if entry happened to be the old head
         head = ((tail != entry)
                 ? tail
                 : NULL);
@@ -51,7 +54,23 @@ namespace occa {
 
     template <class entry_t>
     bool ring_t<entry_t>::needsFree() const {
+      // Object has no more references, safe to free now
       return useRefs && (head == NULL);
+    }
+
+    template <class entry_t>
+    int ring_t<entry_t>::length() const {
+      if (!head) {
+        return 0;
+      }
+
+      ringEntry_t *ptr = head->rightRingEntry;
+      int count = 1;
+      while (ptr != head) {
+        ++count;
+        ptr = ptr->rightRingEntry;
+      }
+      return count;
     }
 
     //---[ multiRing_t ]----------------
