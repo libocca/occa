@@ -1,0 +1,1 @@
+COMPILE_CPP_EXAMPLE(11_native_cpp_kernels main.cpp)

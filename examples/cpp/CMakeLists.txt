@@ -8,3 +8,19 @@ add_subdirectory(07_dtypes)
 add_subdirectory(08_arrays)
 add_subdirectory(09_streams)
 add_subdirectory(10_mpi)
+add_subdirectory(11_native_cpp_kernels)
+
+# Don't force-compile CUDA kernels
+#  add_subdirectory(12_native_cuda_kernels)
+#  add_subdirectory(15_cuda_interop)
+#
+# Don't force-compile OpenCL kernels
+#  add_subdirectory(13_native_opencl_kernels)
+#  add_subdirectory(16_opencl_interop)
+#
+# Don't force-compile OpenMP examples
+#  add_subdirectory(14_openmp_interop)
+#
+# Don't force-compile OpenGL examples
+#  add_subdirectory(17_finite_difference)
+#  add_subdirectory(18_mandelbulb)

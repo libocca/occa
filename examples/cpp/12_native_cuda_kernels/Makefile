@@ -9,11 +9,7 @@ endif
 headers = $(wildcard $(incPath)/*.hpp) $(wildcard $(incPath)/*.tpp)
 sources = $(wildcard $(srcPath)/*.cpp)
 
-objects  = $(subst $(srcPath)/,$(objPath)/,$(sources:.cpp=.o))
-
-executables = ${PROJ_DIR}/main
-
-all: $(executables)
+objects = $(subst $(srcPath)/,$(objPath)/,$(sources:.cpp=.o))
 
 ${PROJ_DIR}/main: $(objects) $(headers) ${PROJ_DIR}/main.cpp
 	$(compiler) $(compilerFlags) -o ${PROJ_DIR}/main $(flags) $(objects) ${PROJ_DIR}/main.cpp $(paths) -L${OCCA_DIR}/lib $(linkerFlags)
@@ -23,5 +19,5 @@ $(objPath)/%.o:$(srcPath)/%.cpp $(wildcard $(subst $(srcPath)/,$(incPath)/,$(<:.
 
 clean:
 	rm -f $(objPath)/*;
-	rm -f ${PROJ_DIR}/main;
+	rm -f $(PROJ_DIR)/main
 #=================================================
