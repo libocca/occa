@@ -60,8 +60,10 @@ include_directories(${PROJ_DIR}/include)
 
 SET(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
-SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wno-c++11-long-long")
-SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-c++11-long-long")
+IF (NOT USE_INTEL)
+    SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wno-c++11-long-long")
+    SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-c++11-long-long")
+ENDIF()
 SET(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${OpenMP_EXE_LINKER_FLAGS}")
 
 include_directories(${PROJECT_BINARY_DIR})
