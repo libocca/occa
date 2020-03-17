@@ -15,7 +15,10 @@ IF (USE_INTEL)
 ENDIF()
 
 # Set project
-project (occa)
+project (occa
+  DESCRIPTION "JIT Compilation for Multiple Architectures: C++, OpenMP, CUDA, HIP, OpenCL, Metal"
+  HOMEPAGE_URL "https://github.com/libocca/occa/"
+  LANGUAGES C CXX)
 
 include(OS)
 
