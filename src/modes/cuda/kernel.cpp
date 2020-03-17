@@ -70,6 +70,10 @@ namespace occa {
       // Set arguments
       for (int i = 0; i < args; ++i) {
         vArgs[i] = arguments[i].ptr();
+        // Set a proper NULL pointer
+        if (!vArgs[i]) {
+          vArgs[i] = ((device*) modeDevice)->getNullPtr();
+        }
       }
 
       OCCA_CUDA_ERROR("Launching Kernel",
