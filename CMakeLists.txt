@@ -1,4 +1,4 @@
-cmake_minimum_required (VERSION 3.0 FATAL_ERROR)
+cmake_minimum_required (VERSION 3.12 FATAL_ERROR)
 
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 set (CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
@@ -47,13 +47,9 @@ ENDIF()
 
 # searches for CUDA if allowed
 IF (ALLOW_CUDA)
-    IF(${CMAKE_VERSION} VERSION_LESS "3.8.0")
-        include(CUDA)
-      ELSE()
-        set(OCCA_CUDA_ENABLED 1)
-        set(WITH_CUDA 1)
-        enable_language(CUDA)
-    ENDIF()
+    set(OCCA_CUDA_ENABLED 1)
+    set(WITH_CUDA 1)
+    enable_language(CUDA)
 ENDIF()
 
 # searches for MPI if allowed
