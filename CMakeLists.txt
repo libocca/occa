@@ -7,13 +7,6 @@ message(STATUS "Using CMake version ${CMAKE_VERSION}")
 cmake_policy(SET CMP0054 NEW)
 cmake_policy(SET CMP0056 NEW)
 
-OPTION(USE_INTEL "Use Intel compilers" OFF)
-
-IF (USE_INTEL)
-    message("Using Intel compilers")
-    include(IntelCompilers)
-ENDIF()
-
 # Set project
 project (occa
   DESCRIPTION "JIT Compilation for Multiple Architectures: C++, OpenMP, CUDA, HIP, OpenCL, Metal"
