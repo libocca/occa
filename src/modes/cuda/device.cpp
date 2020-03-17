@@ -16,7 +16,8 @@
 namespace occa {
   namespace cuda {
     device::device(const occa::properties &properties_) :
-      occa::launchedModeDevice_t(properties_) {
+        occa::launchedModeDevice_t(properties_),
+        nullPtr(NULL) {
 
       if (!properties.has("wrapped")) {
         OCCA_ERROR("[CUDA] device not given a [device_id] integer",
@@ -111,6 +112,14 @@ namespace occa {
 
     lang::okl::withLauncher* device::createParser(const occa::properties &props) const {
       return new lang::okl::cudaParser(props);
+    }
+
+    void* device::getNullPtr() {
+      if (!nullPtr) {
+        // Auto freed through ring garbage collection
+        nullPtr = (cuda::memory*) malloc(1, NULL, occa::properties());
+      }
+      return (void*) &(nullPtr->cuPtr);
     }
 
     //---[ Stream ]---------------------
@@ -406,7 +415,6 @@ namespace occa {
     modeMemory_t* device::malloc(const udim_t bytes,
                                  const void *src,
                                  const occa::properties &props) {
-
       if (props.get("mapped", false)) {
         return mappedAlloc(bytes, src, props);
       }

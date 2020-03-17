@@ -44,7 +44,14 @@ namespace occa {
   }
 
   void* kernelArgData::ptr() const {
-    return ((info & kArgInfo::usePointer) ? data.void_ : (void*) &data);
+    if (!isNull()) {
+      if (info & kArgInfo::usePointer) {
+        return data.void_;
+      } else {
+        return (void*) &data;
+      }
+    }
+    return NULL;
   }
 
   bool kernelArgData::isNull() const {
@@ -84,7 +91,11 @@ namespace occa {
 
   template <>
   kernelArg::kernelArg(modeMemory_t *arg) {
-    add(arg->makeKernelArg());
+    if (arg) {
+      add(arg->makeKernelArg());
+    } else {
+      add(kernelArg(nullKernelArg));
+    }
   }
 
   template <>
