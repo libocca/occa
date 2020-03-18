@@ -74,7 +74,8 @@ namespace occa {
 #  elif (OCCA_VS_VERSION == 1700)
         // MSVC++ 11.0 - Visual Studio 2012
         char *visualStudioTools = getenv("VS110COMNTOOLS");
-#  else (OCCA_VS_VERSION < 1700)
+#  else
+        //(OCCA_VS_VERSION < 1700)
         // MSVC++ 10.0 - Visual Studio 2010
         char *visualStudioTools = getenv("VS100COMNTOOLS");
 #  endif

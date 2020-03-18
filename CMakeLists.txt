@@ -19,11 +19,13 @@ project (occa)
 
 include(OS)
 
-OPTION(ALLOW_CUDA "Allow CUDA" ON)
+OPTION(ALLOW_CUDA "Allow CUDA" OFF)
 OPTION(ALLOW_MPI  "Allow MPI" OFF)
-OPTION(ALLOW_OPENMP "Allow OpenMP" ON)
-OPTION(ALLOW_OPENCL "Allow OpenCL" ON)
-OPTION(ALLOW_METAL "Allow Metal" ON)
+OPTION(ALLOW_OPENMP "Allow OpenMP" OFF)
+OPTION(ALLOW_OPENCL "Allow OpenCL" OFF)
+OPTION(ALLOW_METAL "Allow Metal" OFF)
+OPTION(ALLOW_HIP "Allow HIP" OFF)
+#OPTION(ALLOW_ONEAPI "Allow OneAPI" OFF)
 
 SET(PROJ_DIR ${CMAKE_CURRENT_SOURCE_DIR})
 
@@ -42,7 +44,13 @@ ENDIF()
 
 # searches for CUDA if allowed
 IF (ALLOW_CUDA)
-    include(CUDA)
+    IF(${CMAKE_VERSION} VERSION_LESS "3.8.0")
+        include(CUDA)
+      ELSE()
+        set(OCCA_CUDA_ENABLED 1)
+        set(WITH_CUDA 1)
+        enable_language(CUDA)
+    ENDIF()
 ENDIF()
 
 # searches for MPI if allowed
@@ -51,7 +59,13 @@ IF (ALLOW_MPI)
 ENDIF()
 
 IF (ALLOW_METAL)
-	include(Metal)
+    include(Metal)
+ENDIF()
+
+IF (ALLOW_HIP)
+#    set(OCCA_HIP_ENABLED 1)
+#    set(WITH_HIP 1)
+#    INCLUDE(ROCm) ... not available, TODO occa/cmake/FindROCm.cmake
 ENDIF()
 
 add_definitions(-DUSE_CMAKE)
