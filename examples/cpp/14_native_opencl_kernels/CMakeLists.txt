@@ -1,1 +1,1 @@
-COMPILE_CPP_EXAMPLE(14_native_opencl_kernels main.cpp)
+compile_cpp_example(14_native_opencl_kernels main.cpp)

@@ -1,1 +1,1 @@
-COMPILE_CPP_EXAMPLE(12_native_cpp_kernels main.cpp)
+compile_cpp_example(12_native_c_kernels main.cpp)

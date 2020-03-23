@@ -1,1 +1,1 @@
-COMPILE_CPP_EXAMPLE(13_native_cuda_kernels main.cpp)
+compile_cpp_example(13_native_cuda_kernels main.cpp)

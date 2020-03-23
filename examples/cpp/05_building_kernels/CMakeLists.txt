@@ -1,1 +1,1 @@
-COMPILE_CPP_EXAMPLE(05_building_kernels main.cpp)
+compile_cpp_example(05_building_kernels main.cpp)

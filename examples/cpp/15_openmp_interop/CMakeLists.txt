@@ -1,1 +1,1 @@
-COMPILE_CPP_EXAMPLE(15_openmp_interop main.cpp)
+compile_cpp_example(15_openmp_interop main.cpp)

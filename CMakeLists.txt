@@ -15,67 +15,67 @@ project (occa
 
 include(OS)
 
-OPTION(ALLOW_CUDA "Allow CUDA" OFF)
-OPTION(ALLOW_MPI  "Allow MPI" OFF)
-OPTION(ALLOW_OPENMP "Allow OpenMP" OFF)
-OPTION(ALLOW_OPENCL "Allow OpenCL" OFF)
-OPTION(ALLOW_METAL "Allow Metal" OFF)
-OPTION(ALLOW_HIP "Allow HIP" OFF)
-#OPTION(ALLOW_ONEAPI "Allow OneAPI" OFF)
+option(ALLOW_CUDA "Allow CUDA" OFF)
+option(ALLOW_MPI  "Allow MPI" OFF)
+option(ALLOW_OPENMP "Allow OpenMP" OFF)
+option(ALLOW_OPENCL "Allow OpenCL" OFF)
+option(ALLOW_METAL "Allow Metal" OFF)
+option(ALLOW_HIP "Allow HIP" OFF)
+#option(ALLOW_ONEAPI "Allow OneAPI" OFF)
 
-SET(PROJ_DIR ${CMAKE_CURRENT_SOURCE_DIR})
+set(PROJ_DIR ${CMAKE_CURRENT_SOURCE_DIR})
 
 link_directories(${PROJ_DIR}/lib)
 
 find_package(Threads REQUIRED)
-SET(CUDA_USE_STATIC_CUDA_RUNTIME OFF)
+set(CUDA_USE_STATIC_CUDA_RUNTIME OFF)
 
-IF (ALLOW_OPENMP)
-    INCLUDE(OpenMP)
-ENDIF()
+if (ALLOW_OPENMP)
+  include(OpenMP)
+endif()
 
-IF (ALLOW_OPENCL)
-    INCLUDE(OpenCL)
-ENDIF()
+if (ALLOW_OPENCL)
+  include(OpenCL)
+endif()
 
 # searches for CUDA if allowed
-IF (ALLOW_CUDA)
-    set(OCCA_CUDA_ENABLED 1)
-    set(WITH_CUDA 1)
-    enable_language(CUDA)
-ENDIF()
+if (ALLOW_CUDA)
+  set(OCCA_CUDA_ENABLED 1)
+  set(WITH_CUDA 1)
+  enable_language(CUDA)
+endif()
 
 # searches for MPI if allowed
-IF (ALLOW_MPI)
-    include(MPI)
-ENDIF()
+if (ALLOW_MPI)
+  include(MPI)
+endif()
 
-IF (ALLOW_METAL)
-    include(Metal)
-ENDIF()
+if (ALLOW_METAL)
+  include(Metal)
+endif()
 
-IF (ALLOW_HIP)
+if (ALLOW_HIP)
 #    set(OCCA_HIP_ENABLED 1)
 #    set(WITH_HIP 1)
-#    INCLUDE(ROCm) ... not available, TODO occa/cmake/FindROCm.cmake
-ENDIF()
+#    include(ROCm) ... not available, TODO occa/cmake/FindROCm.cmake
+endif()
 
 add_definitions(-DUSE_CMAKE)
 
 include_directories(${PROJ_DIR}/include)
 
-SET(CMAKE_POSITION_INDEPENDENT_CODE ON)
+set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
-IF (CMAKE_C_COMPILER_ID STREQUAL "GNU" OR CMAKE_C_COMPILER_ID STREQUAL "Clang")
-    SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wno-c++11-long-long")
-    SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-c++11-long-long")
-ENDIF()
-SET(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${OpenMP_EXE_LINKER_FLAGS}")
+if (CMAKE_C_COMPILER_ID STREQUAL "GNU" OR CMAKE_C_COMPILER_ID STREQUAL "Clang")
+  set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wno-c++11-long-long")
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-c++11-long-long")
+endif()
+set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${OpenMP_EXE_LINKER_FLAGS}")
 
 include_directories(${PROJECT_BINARY_DIR})
-SET(OCCA_BUILD_DIR ${PROJECT_BINARY_DIR})
+set(OCCA_BUILD_DIR ${PROJECT_BINARY_DIR})
 # TODO:
-CONFIGURE_FILE( scripts/compiledDefinesTemplate.hpp.in ${PROJECT_BINARY_DIR}/occa/defines/compiledDefines.hpp )
+configure_file( scripts/compiledDefinesTemplate.hpp.in ${PROJECT_BINARY_DIR}/occa/defines/compiledDefines.hpp )
 # will not work because build directory unknown to runtime compiler
 # CONFIGURE_FILE( scripts/compiledDefinesTemplate.hpp.in ${PROJECT_SOURCE_DIR}/include/occa/defines/compiledDefines.hpp )
 install(FILES ${PROJECT_BINARY_DIR}/occa/defines/compiledDefines.hpp DESTINATION include/occa/defines)
