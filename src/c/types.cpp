@@ -32,6 +32,15 @@ namespace occa {
       return oType;
     }
 
+    occaType nullOccaType() {
+      occaType oType;
+      oType.magicHeader = OCCA_C_TYPE_MAGIC_HEADER;
+      oType.type = occa::c::typeType::null_;
+      oType.value.ptr = NULL;
+      oType.needsFree = false;
+      return oType;
+    }
+
     occaType newOccaType(void *value) {
       occaType oType;
       oType.magicHeader = OCCA_C_TYPE_MAGIC_HEADER;
@@ -429,6 +438,9 @@ namespace occa {
       case occa::c::typeType::memory: {
         return occa::kernelArg(occa::c::memory(value));
       }
+      case occa::c::typeType::null_: {
+        return occa::kernelArg(occa::null);
+      }
       default:
         OCCA_FORCE_ERROR("An invalid occaType or non-occaType argument was passed");
       }
@@ -593,6 +605,7 @@ OCCA_START_EXTERN_C
 //---[ Type Flags ]---------------------
 const int OCCA_UNDEFINED     = occa::c::typeType::undefined;
 const int OCCA_DEFAULT       = occa::c::typeType::default_;
+const int OCCA_NULL          = occa::c::typeType::null_;
 
 const int OCCA_PTR           = occa::c::typeType::ptr;
 
@@ -626,9 +639,9 @@ const int OCCA_PROPERTIES    = occa::c::typeType::properties;
 //======================================
 
 //---[ Globals & Flags ]----------------
-const occaType occaNull       = occa::c::newOccaType((void*) NULL);
 const occaType occaUndefined  = occa::c::undefinedOccaType();
 const occaType occaDefault    = occa::c::defaultOccaType();
+const occaType occaNull       = occa::c::nullOccaType();
 const occaUDim_t occaAllBytes = -1;
 //======================================
 
@@ -636,6 +649,10 @@ const occaUDim_t occaAllBytes = -1;
 OCCA_LFUNC int OCCA_RFUNC occaIsUndefined(occaType value) {
   return ((value.magicHeader == OCCA_C_TYPE_UNDEFINED_HEADER) ||
           (value.magicHeader != OCCA_C_TYPE_MAGIC_HEADER));
+}
+
+OCCA_LFUNC int OCCA_RFUNC occaIsNull(occaType value) {
+  return (value.type == occa::c::typeType::null_);
 }
 
 OCCA_LFUNC int OCCA_RFUNC occaIsDefault(occaType value) {

@@ -114,7 +114,8 @@ void testRun() {
 
   // Good argument types
   occaKernelRunN(
-    argKernel, 14,
+    argKernel, 15,
+    occaNull,
     mem,
     occaPtr(uvaPtr),
     occaInt8(2),
@@ -133,6 +134,7 @@ void testRun() {
 
   // Manual argument insertion
   occaKernelClearArgs(argKernel);
+  occaKernelPushArg(argKernel, occaNull);
   occaKernelPushArg(argKernel, mem);
   occaKernelPushArg(argKernel, occaPtr(uvaPtr));
   occaKernelPushArg(argKernel, occaInt8(2));

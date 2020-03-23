@@ -1,6 +1,6 @@
-@kernel void argKernel(char *mem,
+@kernel void argKernel(void *null,
+                       char *mem,
                        char *uvaPtr,
-                       void *null,
                        int i8,
                        int u8,
                        int i16,
@@ -16,9 +16,9 @@
   for (int i = 0; i < 1; ++i; @tile(1, @outer, @inner)) {
     // Note: NULL is not 0 because some backends don't handle NULL arguments properly
     printf(
+      "null: %p\n"
       "mem: %d\n"
       "uvaPtr: %d\n"
-      "null: %p\n"
       "i8: %d\n"
       "u8: %d\n"
       "i16: %d\n"
@@ -31,9 +31,9 @@
       "d: %f\n"
       "xy: [%d, %d]\n"
       "str: %s\n",
-      mem[0],
-      uvaPtr[0],
       null,
+      (int) mem[0],
+      (int) uvaPtr[0],
       (int) i8,
       (int) u8,
       (int) i16,
@@ -47,5 +47,8 @@
       xy[0], xy[1],
       str
     );
+    if (i8 != 2) {
+      throw 1;
+    }
   }
 }
