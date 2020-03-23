@@ -14,6 +14,7 @@
                        int *xy,
                        const char *str) {
   for (int i = 0; i < 1; ++i; @tile(1, @outer, @inner)) {
+    // Note: NULL is not 0 because some backends don't handle NULL arguments properly
     printf(
       "mem: %d\n"
       "uvaPtr: %d\n"
@@ -46,8 +47,5 @@
       xy[0], xy[1],
       str
     );
-    if (null != NULL) {
-      throw 1;
-    }
   }
 }
