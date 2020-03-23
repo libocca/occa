@@ -1,5 +1,6 @@
 #include <occa/defines.hpp>
 
+#include <algorithm>
 #include <fstream>
 
 #if (OCCA_OS & (OCCA_LINUX_OS | OCCA_MACOS_OS))
@@ -702,6 +703,52 @@ namespace occa {
 #endif
     }
 
+    int compilerLanguage(const std::string &compilerin) {
+        std::string compiler(compilerin);
+        compiler.erase(std::remove_if(compiler.begin(), compiler.end(), isspace), compiler.end());
+
+      const int vendor_ = compilerVendor(compiler);
+      int language_ = sys::language::notFound;
+
+      if(vendor_ == sys::vendor::GNU) {
+          language_ = compiler.compare("gcc") == 0 ? sys::language::C :
+              compiler.compare("g++") == 0 ? sys::language::CPP :
+              sys::language::notFound;
+      } else if(vendor_ == sys::vendor::LLVM) {
+          language_ = compiler.compare("clang") == 0 ? sys::language::C :
+              compiler.compare("clang++") == 0 ? sys::language::CPP :
+              sys::language::notFound;
+      } else if(vendor_ == sys::vendor::Intel) {
+          language_ = compiler.compare("icc") == 0 ? sys::language::C :
+              compiler.compare("icpc") == 0 ? sys::language::CPP :
+              sys::language::notFound;
+      } else if(vendor_ == sys::vendor::Pathscale) {
+          language_ = compiler.compare("pathcc") == 0 ? sys::language::C :
+              compiler.compare("pathCC") == 0 ? sys::language::CPP :
+              sys::language::notFound;
+      } else if(vendor_ == sys::vendor::IBM) {
+          language_ = compiler.compare("xlc") == 0 ? sys::language::C :
+              compiler.compare("xlc++") == 0 ? sys::language::CPP :
+              sys::language::notFound;
+      } else if(vendor_ == sys::vendor::PGI) {
+          language_ = compiler.compare("pgcc") == 0 ? sys::language::C :
+              compiler.compare("pgc++") == 0 ? sys::language::CPP :
+              sys::language::notFound;
+      } else if(vendor_ == sys::vendor::HP) {
+          language_ = compiler.compare("cc") == 0 ? sys::language::C :
+              compiler.compare("aCC") == 0 ? sys::language::CPP :
+              sys::language::notFound;
+      } else if(vendor_ == sys::vendor::VisualStudio) {
+          language_ = compiler.compare("cl.exe") == 0 ? sys::language::Ambiguous :
+              sys::language::notFound;
+      } else if(vendor_ == sys::vendor::Cray) {
+          language_ = compiler.compare("cc") == 0 ? sys::language::C :
+              compiler.compare("CC") == 0 ? sys::language::CPP :
+              sys::language::notFound;
+      }
+      return language_;
+    }
+
     std::string compilerCpp11Flags(const std::string &compiler) {
       return compilerCpp11Flags( sys::compilerVendor(compiler) );
     }
@@ -733,6 +780,39 @@ namespace occa {
       addCompilerFlags(
         compilerFlags,
         sys::compilerCpp11Flags(vendor_)
+      );
+    }
+    std::string compilerC99Flags(const std::string &compiler) {
+      return compilerC99Flags( sys::compilerVendor(compiler) );
+    }
+
+    std::string compilerC99Flags(const int vendor_) {
+      if (vendor_ & (sys::vendor::GNU   |
+                     sys::vendor::LLVM  |
+                     sys::vendor::Intel |
+                     sys::vendor::HP    |
+                     sys::vendor::PGI   |
+                     sys::vendor::Pathscale)) {
+        return "-std=c99";
+      } else if (vendor_ & sys::vendor::Cray) {
+        return "-hstd=c99";
+      } else if (vendor_ & sys::vendor::IBM) {
+        return "-qlanglvl=stdc99";
+      } else if (vendor_ & sys::vendor::VisualStudio) {
+        return ""; // Defaults to C++14
+      }
+      OCCA_FORCE_ERROR("Could not find C99 compiler flags");
+      return "";
+    }
+
+    void addC99Flags(const std::string &compiler, std::string &compilerFlags) {
+      addC99Flags(sys::compilerVendor(compiler), compilerFlags);
+    }
+
+    void addC99Flags(const int vendor_, std::string &compilerFlags) {
+      addCompilerFlags(
+        compilerFlags,
+        sys::compilerC99Flags(vendor_)
       );
     }
 

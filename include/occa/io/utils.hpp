@@ -9,6 +9,7 @@ namespace occa {
   // Kernel Caching
   namespace kc {
     extern const std::string rawSourceFile;
+    extern const std::string rawSourceFileC;
     extern const std::string sourceFile;
     extern const std::string binaryFile;
     extern const std::string buildFile;

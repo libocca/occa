@@ -230,13 +230,21 @@ namespace occa {
 
       std::string sourceFilename;
       lang::sourceMetadata_t metadata;
+      std::string compiler = kernelProps["compiler"];
+      const int language = sys::compilerLanguage(compiler);
+
+      // We could add a kernel property to force the language ...
+      if (language == sys::language::Ambiguous)
+        OCCA_FORCE_ERROR("Compiler could be either c or c++");
+
       if (isLauncherKernel) {
         sourceFilename = filename;
       } else {
         // Cache raw origin
         sourceFilename = (
           io::cacheFile(filename,
-                        kc::rawSourceFile,
+                        (language == sys::language::CPP) ?
+                        kc::rawSourceFile : kc::rawSourceFileC,
                         kernelHash,
                         assembleKernelHeader(kernelProps))
         );
@@ -271,7 +279,10 @@ namespace occa {
       std::string linkerFlags = kernelProps["linker_flags"];
 
       sys::addSharedBinaryFlags(vendor, compilerFlags);
-      sys::addCpp11Flags(vendor, compilerFlags);
+
+      language == sys::language::CPP ?
+          sys::addCpp11Flags(vendor, compilerFlags) :
+          sys::addC99Flags(vendor, compilerFlags);
 
 #if (OCCA_OS & (OCCA_LINUX_OS | OCCA_MACOS_OS))
       command << (std::string) kernelProps["compiler"]
