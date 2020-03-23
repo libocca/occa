@@ -31,12 +31,27 @@ namespace occa {
       static const int GNU          = (1 << b_GNU);          // gcc    , g++
       static const int LLVM         = (1 << b_LLVM);         // clang  , clang++
       static const int Intel        = (1 << b_Intel);        // icc    , icpc
-      static const int Pathscale    = (1 << b_Pathscale);    // pathCC
+      static const int Pathscale    = (1 << b_Pathscale);    // pathcc , pathCC
       static const int IBM          = (1 << b_IBM);          // xlc    , xlc++
       static const int PGI          = (1 << b_PGI);          // pgcc   , pgc++
       static const int HP           = (1 << b_HP);           // aCC
       static const int VisualStudio = (1 << b_VisualStudio); // cl.exe
       static const int Cray         = (1 << b_Cray);         // cc     , CC
+    }
+
+    namespace language {
+        static const int notFound = 0;
+
+        static const int b_CPP       = 0; // Default
+        static const int b_C         = 1;
+        static const int b_F         = 2;
+        static const int b_Ambiguous = 3;
+        static const int b_max       = 4;
+
+        static const int CPP       = (1 << b_CPP);
+        static const int C         = (1 << b_C);
+        static const int F         = (1 << b_F);
+        static const int Ambiguous = (1 << b_Ambiguous); // Could be more than one language.
     }
 
     //---[ System Info ]----------------
@@ -78,12 +93,19 @@ namespace occa {
     udim_t availableRAM();
 
     int compilerVendor(const std::string &compiler);
+    int compilerLanguage(const std::string &compiler);
 
     std::string compilerCpp11Flags(const std::string &compiler);
     std::string compilerCpp11Flags(const int vendor_);
 
     void addCpp11Flags(const std::string &compiler, std::string &compilerFlags);
     void addCpp11Flags(const int vendor_, std::string &compilerFlags);
+
+    std::string compilerC99Flags(const std::string &compiler);
+    std::string compilerC99Flags(const int vendor_);
+
+    void addC99Flags(const std::string &compiler, std::string &compilerFlags);
+    void addC99Flags(const int vendor_, std::string &compilerFlags);
 
     std::string compilerSharedBinaryFlags(const std::string &compiler);
     std::string compilerSharedBinaryFlags(const int vendor_);
