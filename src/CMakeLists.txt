@@ -1,4 +1,5 @@
 file(GLOB_RECURSE sources RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} "*.cpp")
+
 list(REMOVE_ITEM sources core/kernelOperators.cpp tools/runFunction.cpp)
 
 if (WITH_METAL)
@@ -6,21 +7,19 @@ if (WITH_METAL)
   set(sources ${sources} ${sources_metal})
 endif()
 
-# dontCompile = $(OCCA_DIR)/src/core/kernelOperators.cpp $(OCCA_DIR)/src/tools/runFunction.cpp
-
 add_library(libocca SHARED ${sources})
 
-# without this, CMake will create liblibocca.so
-set_target_properties(libocca PROPERTIES OUTPUT_NAME occa)
+# Without this, CMake will create liblibocca.so
+set_target_properties(libocca PROPERTIES OUTPUT_NAME occa LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 
 set(LIBOCCA_LIBRARIES ${CMAKE_THREAD_LIBS_INIT} ${CMAKE_DL_LIBS})
 
 if (WITH_CUDA)
-  set(LIBOCCA_LIBRARIES cuda ${LIBOCCA_LIBRARIES})
+  set(LIBOCCA_LIBRARIES cuda cudart ${LIBOCCA_LIBRARIES})
 endif()
 
 if (WITH_OPENCL)
-  set(LIBOCCA_LIBRARIES ${LIBOCCA_LIBRARIES} ${OpenCL_LIBRARIES} ${LIBOCCA_LIBRARIES} )
+  set(LIBOCCA_LIBRARIES ${LIBOCCA_LIBRARIES} ${OpenCL_LIBRARIES} ${LIBOCCA_LIBRARIES})
 endif()
 
 if (WITH_MPI)
@@ -31,6 +30,6 @@ if (WITH_METAL)
   set(LIBOCCA_LIBRARIES ${METAL_LIBRARY} ${CORE_SERVICES} ${APP_KIT} ${LIBOCCA_LIBRARIES})
 endif()
 
-target_link_libraries(libocca ${LIBOCCA_LIBRARIES} )
+target_link_libraries(libocca ${LIBOCCA_LIBRARIES})
 
-install(TARGETS libocca DESTINATION lib )
+install(TARGETS libocca DESTINATION lib)

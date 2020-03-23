@@ -22,10 +22,7 @@ option(ALLOW_OPENCL "Allow OpenCL" OFF)
 option(ALLOW_METAL "Allow Metal" OFF)
 option(ALLOW_HIP "Allow HIP" OFF)
 #option(ALLOW_ONEAPI "Allow OneAPI" OFF)
-
-set(PROJ_DIR ${CMAKE_CURRENT_SOURCE_DIR})
-
-link_directories(${PROJ_DIR}/lib)
+option(ENABLE_TESTS "Enable tests" OFF)
 
 find_package(Threads REQUIRED)
 set(CUDA_USE_STATIC_CUDA_RUNTIME OFF)
@@ -62,7 +59,7 @@ endif()
 
 add_definitions(-DUSE_CMAKE)
 
-include_directories(${PROJ_DIR}/include)
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
 
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
@@ -72,17 +69,21 @@ if (CMAKE_C_COMPILER_ID STREQUAL "GNU" OR CMAKE_C_COMPILER_ID STREQUAL "Clang")
 endif()
 set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${OpenMP_EXE_LINKER_FLAGS}")
 
-include_directories(${PROJECT_BINARY_DIR})
+include_directories(${PROJECT_BINARY_DIR}/include)
 set(OCCA_BUILD_DIR ${PROJECT_BINARY_DIR})
-# TODO:
-configure_file( scripts/compiledDefinesTemplate.hpp.in ${PROJECT_BINARY_DIR}/occa/defines/compiledDefines.hpp )
-# will not work because build directory unknown to runtime compiler
-# CONFIGURE_FILE( scripts/compiledDefinesTemplate.hpp.in ${PROJECT_SOURCE_DIR}/include/occa/defines/compiledDefines.hpp )
-install(FILES ${PROJECT_BINARY_DIR}/occa/defines/compiledDefines.hpp DESTINATION include/occa/defines)
+configure_file(scripts/compiledDefinesTemplate.hpp.in ${PROJECT_BINARY_DIR}/include/occa/defines/compiledDefines.hpp)
+install(FILES ${PROJECT_BINARY_DIR}/include/occa/defines/compiledDefines.hpp DESTINATION include/occa/defines)
+
+if (ENABLE_TESTS)
+  include(CTest)
+endif()
 
 add_subdirectory(src)
 add_subdirectory(bin)
-# add_subdirectory(tests)
 add_subdirectory(examples)
+
+if (ENABLE_TESTS)
+  add_subdirectory(tests)
+endif()
 
 install(DIRECTORY include/ DESTINATION include)
