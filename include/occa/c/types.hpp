@@ -8,36 +8,37 @@ namespace occa {
     namespace typeType {
       static const int undefined     = 0;
       static const int default_      = 1;
+      static const int null_         = 2;
 
-      static const int ptr           = 2;
+      static const int ptr           = 3;
 
-      static const int bool_         = 3;
+      static const int bool_         = 4;
 
-      static const int int8_         = 4;
-      static const int uint8_        = 5;
-      static const int int16_        = 6;
-      static const int uint16_       = 7;
-      static const int int32_        = 8;
-      static const int uint32_       = 9;
-      static const int int64_        = 10;
-      static const int uint64_       = 11;
-      static const int float_        = 12;
-      static const int double_       = 13;
+      static const int int8_         = 5;
+      static const int uint8_        = 6;
+      static const int int16_        = 7;
+      static const int uint16_       = 8;
+      static const int int32_        = 9;
+      static const int uint32_       = 10;
+      static const int int64_        = 11;
+      static const int uint64_       = 12;
+      static const int float_        = 13;
+      static const int double_       = 14;
 
-      static const int struct_       = 14;
-      static const int string        = 15;
+      static const int struct_       = 15;
+      static const int string        = 16;
 
-      static const int device        = 16;
-      static const int kernel        = 17;
-      static const int kernelBuilder = 18;
-      static const int memory        = 19;
-      static const int stream        = 20;
-      static const int streamTag     = 21;
+      static const int device        = 17;
+      static const int kernel        = 18;
+      static const int kernelBuilder = 19;
+      static const int memory        = 20;
+      static const int stream        = 21;
+      static const int streamTag     = 22;
 
-      static const int dtype         = 22;
-      static const int scope         = 23;
-      static const int json          = 24;
-      static const int properties    = 25;
+      static const int dtype         = 23;
+      static const int scope         = 24;
+      static const int json          = 25;
+      static const int properties    = 26;
     }
 
     occaType defaultOccaType();

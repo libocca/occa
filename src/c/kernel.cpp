@@ -97,9 +97,13 @@ void OCCA_RFUNC occaKernelSetRunDims(occaKernel kernel,
 
 OCCA_LFUNC void OCCA_RFUNC occaKernelPushArg(occaKernel kernel,
                                              occaType arg) {
-  occa::c::kernel(kernel).pushArg(
-    occa::c::kernelArg(arg)
-  );
+  if (&arg != &occaNull) {
+    occa::c::kernel(kernel).pushArg(
+      occa::c::kernelArg(arg)
+    );
+  } else {
+    occa::c::kernel(kernel).pushArg(occa::null);
+  }
 }
 
 OCCA_LFUNC void OCCA_RFUNC occaKernelClearArgs(occaKernel kernel) {
