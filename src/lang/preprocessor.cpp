@@ -91,6 +91,9 @@ namespace occa {
 
       warnings = 0;
       errors   = 0;
+
+      tokenizer = NULL;
+      hasLoadedTokenizer = false;
     }
 
     void preprocessor_t::clear() {
@@ -101,6 +104,9 @@ namespace occa {
     void preprocessor_t::clear_() {
       errors   = 0;
       warnings = 0;
+
+      tokenizer = NULL;
+      hasLoadedTokenizer = false;
 
       while (inputCache.size()) {
         delete inputCache.front();
@@ -329,10 +335,50 @@ namespace occa {
     }
     //==================================
 
+    void preprocessor_t::loadTokenizer() {
+      if (!hasLoadedTokenizer) {
+        tokenizer = (tokenizer_t*) getInput("tokenizer_t");
+        hasLoadedTokenizer = true;
+      }
+    }
+
+
+    bool preprocessor_t::expandDefinedToken(token_t *token, tokenVector &tokens) {
+      if (!(token_t::safeType(token) & tokenType::identifier)) {
+        return false;
+      }
+
+      identifierToken &idToken = token->to<identifierToken>();
+      macro_t *macro = getMacro(idToken.value);
+      if (!macro) {
+        return false;
+      }
+
+      macro->expand(tokens, idToken);
+      return true;
+    }
+
+    void preprocessor_t::expandDefinedTokens(tokenVector &inputTokens,
+                                             tokenVector &outputTokens) {
+      const int inputTokenCount = (int) inputTokens.size();
+      for (int i = 0; i < inputTokenCount; ++i) {
+        token_t *token = inputTokens[i];
+        tokenVector expandedTokens;
+
+        if (expandDefinedToken(token, expandedTokens)) {
+          const int expandedTokenCount = (int) expandedTokens.size();
+          for (int j = 0; j < expandedTokenCount; ++j) {
+            outputTokens.push_back(expandedTokens[j]);
+          }
+        } else {
+          outputTokens.push_back(token->clone());
+        }
+      }
+    }
+
     void preprocessor_t::expandMacro(identifierToken &source,
                                      macro_t &macro) {
       tokenVector tokens;
-
       macro.expand(tokens, source);
 
       const int tokenCount = (int) tokens.size();
@@ -518,7 +564,6 @@ namespace occa {
       );
     }
 
-
     void preprocessor_t::processIdentifier(identifierToken &token) {
       // Ignore tokens inside disabled #if/#elif/#else regions
       if (status & ppStatus::ignoring) {
@@ -649,7 +694,7 @@ namespace occa {
       outputCache.clear();
 
       // Make sure we have a tokenizer
-      tokenizer_t *tokenizer = (tokenizer_t*) getInput("tokenizer_t");
+      loadTokenizer();
       if (!tokenizer) {
         warningOn(directiveToken,
                   "Unable to apply @directive due to the lack of a tokenizer");
@@ -1103,7 +1148,7 @@ namespace occa {
 
     void preprocessor_t::processInclude(identifierToken &directive) {
       // Don't cache since the input might change
-      tokenizer_t *tokenizer = (tokenizer_t*) getInput("tokenizer_t");
+      loadTokenizer();
       if (!tokenizer) {
         warningOn(&directive,
                   "Unable to apply #include due to the lack of a tokenizer");
@@ -1213,10 +1258,7 @@ namespace occa {
       getExpandedLineTokens(lineTokens);
 
       // Don't cache since the input might change
-      tokenizer_t *tokenizer = (tokenizer_t*) getInput("tokenizer_t");
-      if (!tokenizer) {
-        tokenizer = (tokenizer_t*) getInput("tokenizer_t");
-      }
+      loadTokenizer();
       if (!tokenizer) {
         warningOn(&directive,
                   "Unable to apply #line due to the lack of a tokenizer");
