@@ -144,7 +144,8 @@ void testMacroDefines() {
             pp.errors);
 
   // Make sure we can handle recursive macros
-#define identifier (token->to<identifierToken>().value)
+#define identifier  (token->to<identifierToken>().value)
+#define stringValue (token->to<stringToken>().value)
   setStream(
     "#define foo foo\n"
     "foo"
@@ -166,6 +167,17 @@ void testMacroDefines() {
             identifier);
   getToken();
   ASSERT_EQ("foo2",
+            identifier);
+
+  // Test concat with defines
+  setStream(
+    "#define ONE 1\n"
+    "#define TWO 2\n"
+    "#define ONE_TWO_FUNC(FUNC) FUNC ## _ ## ONE ## _ ## TWO\n"
+    "ONE_TWO_FUNC(hi)\n"
+  );
+  getToken();
+  ASSERT_EQ("hi_1_2",
             identifier);
 
 #undef identifier

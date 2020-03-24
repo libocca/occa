@@ -65,6 +65,9 @@ namespace occa {
       //================================
 
       //---[ Misc ]---------------------
+      tokenizer_t *tokenizer;
+      bool hasLoadedTokenizer;
+
       strVector includePaths;
       //================================
 
@@ -117,6 +120,14 @@ namespace occa {
 
       strVector getDependencyFilenames() const;
       //================================
+
+      void loadTokenizer();
+
+      bool expandDefinedToken(token_t *token,
+                              tokenVector &outputTokens);
+
+      void expandDefinedTokens(tokenVector &inputTokens,
+                               tokenVector &outputTokens);
 
       void expandMacro(identifierToken &source,
                        macro_t &macro);

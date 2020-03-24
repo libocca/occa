@@ -60,6 +60,17 @@ namespace occa {
       return newToken;
     }
 
+    void macroToken::expandDefinedTokens(tokenVector &tokens) {
+      tokenVector expandedTokens;
+      pp.expandDefinedTokens(tokens, expandedTokens);
+
+      // Update tokens with expanded tokens
+      tokens.swap(expandedTokens);
+
+      // Free old tokens
+      freeTokenVector(expandedTokens);
+    }
+
     macroRawToken::macroRawToken(preprocessor_t &pp_,
                                  token_t *thisToken_) :
       macroToken(pp_, thisToken_) {}
@@ -144,6 +155,9 @@ namespace occa {
         return false;
       }
 
+      // Make sure to expand defined variables
+      expandDefinedTokens(stringTokens);
+
       const std::string rawValue = stringifyTokens(stringTokens, true);
 
       // Escape double quotes
@@ -199,6 +213,9 @@ namespace occa {
           return false;
         }
       }
+
+      // Make sure to expand defined variables
+      expandDefinedTokens(concatTokens);
 
       // Combine tokens to create one token identifier
       const std::string concatValue = stringifyTokens(concatTokens, false);
