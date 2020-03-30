@@ -682,14 +682,12 @@ namespace occa {
 
           io::write(outFilename, ss.str());
           io::markCachedFileComplete(hashDir, "output");
-
           return vendor_;
         }
       }
 
       ss << io::read(outFilename);
       ss >> vendor_;
-
       return vendor_;
 
 #elif (OCCA_OS == OCCA_WINDOWS_OS)

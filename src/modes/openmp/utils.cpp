@@ -12,8 +12,9 @@ namespace occa {
       if (vendor_ & (sys::vendor::GNU |
                      sys::vendor::LLVM)) {
         return "-fopenmp";
-      } else if (vendor_ & (sys::vendor::Intel |
-                            sys::vendor::Pathscale)) {
+      } else if (vendor_ & sys::vendor::Intel) {
+        return "-qopenmp";
+      } else if (vendor_ & sys::vendor::Pathscale) {
         return "-openmp";
       } else if (vendor_ & sys::vendor::IBM) {
         return "-qsmp";
@@ -45,11 +46,14 @@ namespace occa {
       const std::string srcFilename = io::cacheFile(openmpTest, "openmpTest.cpp", hash);
       const std::string binaryFilename = io::dirname(srcFilename) + "binary";
       const std::string outFilename = io::dirname(srcFilename) + "output";
+      std::string flag = baseCompilerFlag(vendor_);
 
       io::lock_t lock(hash, "openmp-compiler");
       if (lock.isMine()
           && !io::isFile(outFilename)) {
-        std::string flag = baseCompilerFlag(vendor_);
+          // std::string
+            flag = baseCompilerFlag(vendor_);
+
         ss << compiler
            << ' '    << flag
            << ' '    << srcFilename
@@ -64,13 +68,7 @@ namespace occa {
         }
 
         io::write(outFilename, flag);
-
-        return flag;
       }
-
-      std::string flag = openmp::notSupported;
-      ss << io::read(outFilename);
-      ss >> flag;
 
       return flag;
 #elif (OCCA_OS == OCCA_WINDOWS_OS)
