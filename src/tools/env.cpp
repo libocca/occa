@@ -17,7 +17,7 @@ namespace occa {
   }
 
   namespace env {
-    std::string HOME, PWD;
+    std::string HOME, CWD;
     std::string PATH, LD_LIBRARY_PATH;
 
     std::string OCCA_DIR, OCCA_CACHE_DIR;
@@ -72,7 +72,7 @@ namespace occa {
       // Standard environment variables
 #if (OCCA_OS & (OCCA_LINUX_OS | OCCA_MACOS_OS))
       HOME               = env::var("HOME");
-      PWD                = env::var("PWD");
+      CWD                = occa::io::currentWorkingDirectory();
       PATH               = env::var("PATH");
       LD_LIBRARY_PATH    = env::var("LD_LIBRARY_PATH");
 
@@ -80,7 +80,7 @@ namespace occa {
       OCCA_COLOR_ENABLED = env::get<bool>("OCCA_COLOR_ENABLED", true);
 
       io::endWithSlash(HOME);
-      io::endWithSlash(PWD);
+      io::endWithSlash(CWD);
       io::endWithSlash(PATH);
 #endif
 

@@ -87,7 +87,7 @@ void testPathMethods() {
             "b");
 
   ASSERT_EQ(occa::io::dirname("b.okl"),
-            occa::env::PWD);
+            occa::env::CWD);
   ASSERT_EQ(occa::io::dirname("/a/b.okl"),
             "/a/");
   ASSERT_EQ(occa::io::dirname("/a"),
@@ -143,7 +143,7 @@ void testDirMethods() {
 }
 
 void testIOMethods() {
-  const std::string test_foo = occa::env::PWD + "test_foo";
+  const std::string test_foo = occa::env::CWD + "test_foo";
 
   std::string content = "start";
   for (int i = 0; i < 100; ++i) {
