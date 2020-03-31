@@ -18,6 +18,14 @@ OCCA_LFUNC void OCCA_RFUNC occaPropertiesSet(occaProperties props,
                                              const char *key,
                                              occaType value);
 
+OCCA_LFUNC void OCCA_RFUNC occaPropertiesAdd(occaProperties props,
+                                             const char *key,
+                                             occaType value);
+
+OCCA_LFUNC void OCCA_RFUNC occaPropertiesSetArray(occaProperties props,
+                                                  const char *key,
+                                                  const char *value);
+
 OCCA_LFUNC int OCCA_RFUNC occaPropertiesHas(occaProperties props,
                                             const char *key);
 

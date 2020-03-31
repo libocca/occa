@@ -30,6 +30,22 @@ void OCCA_RFUNC occaPropertiesSet(occaProperties props,
   props_[key] = occa::c::inferJson(value);
 }
 
+void OCCA_RFUNC occaPropertiesAdd(occaProperties props,
+                                  const char *key,
+                                  occaType value) {
+  occa::properties& props_ = occa::c::properties(props);
+  props_[key] += occa::c::inferJson(value);
+}
+
+void OCCA_RFUNC occaPropertiesSetArray(occaProperties props,
+                                       const char *key,
+                                       const char *value) {
+  occa::properties& props_ = occa::c::properties(props);
+  props_[key].loadArray(value);
+  std::cout << "WHAT?\n";
+}
+
+
 int OCCA_RFUNC occaPropertiesHas(occaProperties props,
                                   const char *key) {
   occa::properties& props_ = occa::c::properties(props);
