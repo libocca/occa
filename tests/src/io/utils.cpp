@@ -115,7 +115,7 @@ void testDirMethods() {
   // Find files
   occa::strVector files = occa::io::files(ioDir);
   ASSERT_EQ((int) files.size(),
-            4);
+            5);
   ASSERT_IN(ioDir + "cache.cpp", files);
   ASSERT_IN(ioDir + "fileOpener.cpp", files);
   ASSERT_IN(ioDir + "lock.cpp", files);
