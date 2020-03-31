@@ -6,7 +6,9 @@ void testDefaultFileOpener();
 void testOccaFileOpener();
 
 int main(const int argc, const char **argv) {
+#ifndef USE_CMAKE
   occa::env::OCCA_CACHE_DIR = occa::io::dirname(__FILE__);
+#endif
 
   testDefaultFileOpener();
   testOccaFileOpener();

@@ -12,7 +12,9 @@ void testDirMethods();
 void testIOMethods();
 
 int main(const int argc, const char **argv) {
+#ifndef USE_CMAKE
   occa::env::OCCA_CACHE_DIR = "/occa/cache/dir/";
+#endif
   srand(time(NULL));
 
   testPathMethods();

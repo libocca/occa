@@ -14,6 +14,11 @@ if (WITH_CUDA)
 endif()
 add_test(NAME occa-version                 COMMAND occa version)
 
+set_property(TEST occa-autocomplete occa-clear occa-compile-help occa-env occa-info occa-modes occa-translate-help occa-translate-serial occa-version APPEND PROPERTY ENVIRONMENT OCCA_CACHE_DIR=${CMAKE_BINARY_DIR}/cache)
+if (WITH_CUDA)
+  set_property(TEST occa-translate-cuda occa-translate-cuda-launcher APPEND PROPERTY ENVIRONMENT OCCA_CACHE_DIR=${CMAKE_BINARY_DIR}/cache)
+endif()
+
 add_custom_target(testinput ALL)
 add_custom_command(TARGET testinput POST_BUILD
   COMMAND ${CMAKE_COMMAND} -E copy_directory
