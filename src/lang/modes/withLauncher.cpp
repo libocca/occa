@@ -11,13 +11,9 @@ namespace occa {
     namespace okl {
       withLauncher::withLauncher(const occa::properties &settings_) :
         parser_t(settings_),
-        launcherParser(settings["launcher"]) {
+        launcherParser(settings["launcher"]),
+        memoryType(NULL) {
         launcherParser.settings["okl/validate"] = false;
-
-        identifierToken memoryTypeSource(originSource::builtin,
-                                         "occa::modeMemory_t");
-        memoryType = new typedef_t(vartype_t(),
-                                   memoryTypeSource);
       }
 
       //---[ Public ]-------------------
@@ -32,12 +28,22 @@ namespace occa {
 
       void withLauncher::launcherClear() {
         launcherParser.onClear();
+
+        // Will get deleted by the parser
+        memoryType = NULL;
       }
 
       void withLauncher::afterParsing() {
         if (!success) return;
         if (settings.get("okl/validate", true)) {
           success = checkKernels(root);
+        }
+
+        if (!memoryType) {
+          identifierToken memoryTypeSource(originSource::builtin,
+                                           "occa::modeMemory_t");
+          memoryType = new typedef_t(vartype_t(),
+                                     memoryTypeSource);
         }
 
         root.addToScope(*memoryType);

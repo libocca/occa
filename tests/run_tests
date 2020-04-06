@@ -1,7 +1,5 @@
 #!/bin/bash
 
-# set -e
-
 TEST_DIR=$(dirname "$0")
 TEST_SRC_DIR=$(dirname "$0")/src
 TEST_BIN_DIR=$(dirname "$0")/bin
@@ -21,24 +19,27 @@ for test_cpp in ${tests_cpp}; do
 
     # Test output header
     test_name="${test_cpp/${TEST_SRC_DIR}\//}"
-    chars=$(echo "${test_name}" | wc -c);
-    linechars=$((${HEADER_CHARS} - ${chars} - 6));
-	  line=$(printf '%*s' ${linechars} | tr ' ' '-');
-	  echo -e "\n---[ ${test_name} ]${line}";
+    chars=$(echo "${test_name}" | wc -c)
+    linechars=$((${HEADER_CHARS} - ${chars} - 6))
+	  line=$(printf '%*s' ${linechars} | tr ' ' '-')
+	  echo -e "\n---[ ${test_name} ]${line}"
 
-    # Make sure not to go over the log size
-    if [ -n "${TRAVIS}" ]; then
-	      "${test}" 2>&1 | head -n 100;
-    else
-        "${test}"
-    fi
+    output=$("${test}")
 
+    # Check for test failures
     if [ $? -ne 0 ]; then
         failed_tests+="  - ${test}\n"
     fi
 
+    # Make sure not to go over the log size
+    if [ -n "${TRAVIS}" ]; then
+	      echo -e "${output}" | head -n 100
+    else
+        echo -e "${output}"
+    fi
+
     # Test output footer
-	  printf '%*s\n' ${HEADER_CHARS} | tr ' ' '=';
+	  printf '%*s\n' ${HEADER_CHARS} | tr ' ' '='
 done
 
 if [[ "${failed_tests}" != "" ]]; then

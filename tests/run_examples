@@ -1,5 +1,4 @@
 #!/bin/bash
-set -e
 
 OCCA_DIR=$(cd $(dirname "$0")/.. && pwd)
 EXAMPLE_DIR="${OCCA_DIR}/examples"
@@ -20,12 +19,15 @@ declare -a examples=(
   cpp/07_dtypes
   cpp/08_arrays
   cpp/09_streams
+  cpp/11_native_cpp_kernels
+  cpp/12_native_c_kernels
   c/01_add_vectors
   c/02_background_device
   c/03_inline_okl
   c/04_reduction
 )
 
+failed_examples=""
 for mode in $("${OCCA_DIR}/bin/occa" modes); do
     case "${mode}" in
         Serial) device="mode: 'Serial'";;
@@ -41,33 +43,62 @@ for mode in $("${OCCA_DIR}/bin/occa" modes); do
             continue
         fi
 
-        # OpenCL + Shared memory is finicky
-        if [ "${mode}" == OpenCL ]; then
-            case "${example_dir}" in
-                cpp/04_reduction) continue;;
-                cpp/06_arrays) continue;;
-                c/03_reduction) continue;;
-            esac
-        fi
+        # Filters
+        case "${example_dir}" in
+            # OpenCL + Shared memory is finicky
+            cpp/04_reduction)
+                if [[ "${mode}" == OpenCL ]]; then
+                    continue
+                fi;;
+            cpp/06_arrays)
+                if [[ "${mode}" == OpenCL ]]; then
+                    continue
+                fi;;
+            c/03_reduction)
+                if [[ "${mode}" == OpenCL ]]; then
+                    continue
+                fi;;
+            cpp/11_native_cpp_kernels)
+                if [[ "${mode}" != Serial ]]; then
+                    continue
+                fi;;
+            cpp/12_native_c_kernels)
+                if [[ "${mode}" != Serial ]]; then
+                    continue
+                fi;;
+        esac
 
         banner="(${mode}) ${example_dir}"
-        chars=$(echo "${banner}" | wc -c);
-        linechars=$((${HEADER_CHARS} - ${chars} - 6));
-	      line=$(printf '%*s' ${linechars} | tr ' ' '-');
-	      echo -e "\n---[ ${banner} ]${line}";
+        chars=$(echo "${banner}" | wc -c)
+        linechars=$((${HEADER_CHARS} - ${chars} - 6))
+	      line=$(printf '%*s' ${linechars} | tr ' ' '-')
+	      echo -e "\n---[ ${banner} ]${line}"
 
         cd "${EXAMPLE_DIR}/${example_dir}"
         rm -rf main
         make
 
+        output=$(OCCA_VERBOSE=1 ./main --verbose --device "${device}" 2>&1)
+
+        # Check for example failures
+        if [ $? -ne 0 ]; then
+            failed_examples+="  - ${mode}: ${example_dir}\n"
+        fi
+
         # Make sure not to go over the log size
         if [ -n "${TRAVIS}" ]; then
-            OCCA_VERBOSE=1 ./main --verbose --device "${device}" 2>&1 | head -n 100;
+            echo -e "${output}" | head -n 100
         else
-            OCCA_VERBOSE=1 ./main --verbose --device "${device}" 2>&1
+            echo -e "${output}"
         fi
 
         # Test output footer
-	      printf '%*s\n' ${HEADER_CHARS} | tr ' ' '=';
+	      printf '%*s\n' ${HEADER_CHARS} | tr ' ' '='
     done
 done
+
+if [[ "${failed_examples}" != "" ]]; then
+    echo -e "\n\nFailed examples:"
+    echo -e "${failed_examples}"
+    exit 1
+fi
