@@ -13,6 +13,8 @@ ASAN_OPTIONS+=':detect_container_overflow=0'
 HEADER_CHARS=80
 
 tests_cpp=$(find "${TEST_SRC_DIR}" -type f -name '*.cpp')
+failed_tests=""
+
 for test_cpp in ${tests_cpp}; do
     test="${test_cpp/${TEST_SRC_DIR}/${TEST_BIN_DIR}}"
     test="${test/\.cpp/}"
@@ -31,6 +33,16 @@ for test_cpp in ${tests_cpp}; do
         "${test}"
     fi
 
+    if [ $? -ne 0 ]; then
+        failed_tests+="  - ${test}\n"
+    fi
+
     # Test output footer
 	  printf '%*s\n' ${HEADER_CHARS} | tr ' ' '=';
 done
+
+if [[ "${failed_tests}" != "" ]]; then
+    echo -e "\n\nFailed tests:"
+    echo -e "${failed_tests}"
+    exit 1
+fi

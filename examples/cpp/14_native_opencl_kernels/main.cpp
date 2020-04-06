@@ -20,11 +20,11 @@ int main(int argc, const char **argv) {
   }
 
   // Setup the platform and device IDs
-  occa::properties props;
-  props["mode"] = "OpenCL";
-  props["platform_id"] = (int) args["options/platform-id"];
-  props["device_id"] = (int) args["options/device-id"];
-  occa::device device(props);
+  occa::properties deviceProps;
+  deviceProps["mode"] = "OpenCL";
+  deviceProps["platform_id"] = (int) args["options/platform-id"];
+  deviceProps["device_id"] = (int) args["options/device-id"];
+  occa::device device(deviceProps);
 
   // Allocate memory on the device
   occa::memory o_a = device.malloc<float>(entries);
@@ -32,9 +32,11 @@ int main(int argc, const char **argv) {
   occa::memory o_ab = device.malloc<float>(entries);
 
   // Compile a regular OpenCL kernel at run-time
+  occa::properties kernelProps;
+  kernelProps["okl/enabled"] = false;
   occa::kernel addVectors = device.buildKernel("addVectors.cl",
                                                "addVectors",
-                                               "okl: false");
+                                               kernelProps);
 
   // Copy memory to the device
   o_a.copyFrom(a);

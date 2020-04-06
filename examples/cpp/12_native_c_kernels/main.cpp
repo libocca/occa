@@ -33,9 +33,11 @@ int main(int argc, const char **argv) {
   occa::memory o_ab = device.malloc<float>(entries);
 
   // Compile a regular C++ function at run-time
+  occa::properties kernelProps;
+  kernelProps["okl/enabled"] = false;
   occa::kernel addVectors = device.buildKernel("addVectors.c",
                                                "addVectors",
-                                               "okl: false");
+                                               kernelProps);
 
   // Copy memory to the device
   o_a.copyFrom(a);

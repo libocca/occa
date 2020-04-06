@@ -286,7 +286,7 @@ namespace occa {
                         assembleKernelHeader(kernelProps))
         );
 
-        if (kernelProps.get("okl", true)) {
+        if (kernelProps.get("okl/enabled", true)) {
           const std::string outputFile = hashDir + kc::sourceFile;
           bool valid = parseFile(sourceFilename,
                                  outputFile,
