@@ -142,7 +142,7 @@ namespace occa {
       // Cache raw origin
       sourceFilename = (
         io::cacheFile(filename,
-                      kc::rawSourceFile,
+                      kc::cppRawSourceFile,
                       kernelHash,
                       assembleKernelHeader(kernelProps))
       );

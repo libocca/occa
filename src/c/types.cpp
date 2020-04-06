@@ -741,7 +741,7 @@ OCCA_LFUNC occaType OCCA_RFUNC occaDouble(double value) {
   return occa::c::newOccaType(value);
 }
 
-OCCA_LFUNC occaType OCCA_RFUNC occaStruct(void *value,
+OCCA_LFUNC occaType OCCA_RFUNC occaStruct(const void *value,
                                           occaUDim_t bytes) {
   occaType oType;
   oType.magicHeader = OCCA_C_TYPE_MAGIC_HEADER;
