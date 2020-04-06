@@ -38,6 +38,8 @@ for mode in $("${OCCA_DIR}/bin/occa" modes); do
     esac
 
     for example_dir in "${examples[@]}"; do
+        flags=(--verbose --device "${device}")
+
         # OpenCL throws CL_DEVICE_MAX_WORK_GROUP_SIZE
         if [ -n "${TRAVIS}" ] && [ "${mode}" == "OpenCL" ]; then
             continue
@@ -61,11 +63,15 @@ for mode in $("${OCCA_DIR}/bin/occa" modes); do
             cpp/11_native_cpp_kernels)
                 if [[ "${mode}" != Serial ]]; then
                     continue
-                fi;;
+                fi
+                flags=(--verbose)
+                ;;
             cpp/12_native_c_kernels)
                 if [[ "${mode}" != Serial ]]; then
                     continue
-                fi;;
+                fi
+                flags=(--verbose)
+                ;;
         esac
 
         banner="(${mode}) ${example_dir}"
@@ -75,10 +81,9 @@ for mode in $("${OCCA_DIR}/bin/occa" modes); do
 	      echo -e "\n---[ ${banner} ]${line}"
 
         cd "${EXAMPLE_DIR}/${example_dir}"
-        rm -rf main
-        make
+        make clean; make
 
-        output=$(OCCA_VERBOSE=1 ./main --verbose --device "${device}" 2>&1)
+        output=$(./main "${flags[@]}" 2>&1)
 
         # Check for example failures
         if [ $? -ne 0 ]; then

@@ -1011,8 +1011,7 @@ namespace occa {
   template <class TM, const int idxType>
   inline array<TM,idxType> array<TM,idxType>::operator + (const udim_t offset) {
     array<TM,idxType> ret = *this;
-    udim_t byteOffset = offset * sizeof(TM);
-    ret.memory_ += byteOffset;
+    ret.memory_ += offset;
     ret.ptr_   += offset;
     ret.reshape(size() - offset);
     return ret;

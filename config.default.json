@@ -40,6 +40,9 @@
 
       // OKL Options
       okl: {
+        // Enable/disable okl transformations
+        enabled: true,
+
         // Validate for proper OKL kernels
         // This checks if OKL attributes are used properly. For example:
         //   @outer, @inner, @shared, @exclusive
