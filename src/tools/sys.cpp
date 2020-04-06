@@ -676,10 +676,7 @@ namespace occa {
             vendor_ = (1 << vendorBit);
           }
 
-          ss.str("");
-          ss << vendor_;
-
-          io::write(outFilename, ss.str());
+          io::write(outFilename, std::to_string(vendor_));
           io::markCachedFileComplete(hashDir, "output");
 
           return vendor_;
@@ -725,15 +722,27 @@ namespace occa {
       return "";
     }
 
-    void addCpp11Flags(const std::string &compiler, std::string &compilerFlags) {
-      addCpp11Flags(sys::compilerVendor(compiler), compilerFlags);
+    std::string compilerC99Flags(const std::string &compiler) {
+      return compilerC99Flags( sys::compilerVendor(compiler) );
     }
 
-    void addCpp11Flags(const int vendor_, std::string &compilerFlags) {
-      addCompilerFlags(
-        compilerFlags,
-        sys::compilerCpp11Flags(vendor_)
-      );
+    std::string compilerC99Flags(const int vendor_) {
+      if (vendor_ & (sys::vendor::GNU   |
+                     sys::vendor::LLVM  |
+                     sys::vendor::Intel |
+                     sys::vendor::HP    |
+                     sys::vendor::PGI   |
+                     sys::vendor::Pathscale)) {
+        return "-std=c99";
+      } else if (vendor_ & sys::vendor::Cray) {
+        return "-hstd=c99";
+      } else if (vendor_ & sys::vendor::IBM) {
+        return "-qlanglvl=stdc99";
+      } else if (vendor_ & sys::vendor::VisualStudio) {
+        return ""; // Defaults to C++14
+      }
+      OCCA_FORCE_ERROR("Could not find C99 compiler flags");
+      return "";
     }
 
     std::string compilerSharedBinaryFlags(const std::string &compiler) {
@@ -757,17 +766,6 @@ namespace occa {
       }
       OCCA_FORCE_ERROR("Could not find compiler flags for creating a shared object");
       return "";
-    }
-
-    void addSharedBinaryFlags(const std::string &compiler, std::string &compilerFlags) {
-      addSharedBinaryFlags(sys::compilerVendor(compiler), compilerFlags);
-    }
-
-    void addSharedBinaryFlags(const int vendor_, std::string &compilerFlags) {
-      addCompilerFlags(
-        compilerFlags,
-        sys::compilerSharedBinaryFlags(vendor_)
-      );
     }
 
     void addCompilerFlags(std::string &compilerFlags, const std::string &flags) {

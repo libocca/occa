@@ -72,6 +72,29 @@ int OCCA_RFUNC occaJsonIsObject(occaJson j) {
 //======================================
 
 
+//---[ Casters ]------------------------
+void OCCA_RFUNC occaJsonCastToBoolean(occaJson j) {
+  occa::c::json(j).asBoolean();
+}
+
+void OCCA_RFUNC occaJsonCastToNumber(occaJson j) {
+  occa::c::json(j).asNumber();
+}
+
+void OCCA_RFUNC occaJsonCastToString(occaJson j) {
+  occa::c::json(j).asString();
+}
+
+void OCCA_RFUNC occaJsonCastToArray(occaJson j) {
+  occa::c::json(j).asArray();
+}
+
+void OCCA_RFUNC occaJsonCastToObject(occaJson j) {
+  occa::c::json(j).asObject();
+}
+//======================================
+
+
 //---[ Getters ]------------------------
 int OCCA_RFUNC occaJsonGetBoolean(occaJson j) {
   occa::json &j_ = occa::c::json(j);

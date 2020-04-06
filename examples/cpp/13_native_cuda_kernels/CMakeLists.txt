@@ -1,0 +1,1 @@
+COMPILE_CPP_EXAMPLE(13_native_cuda_kernels main.cpp)

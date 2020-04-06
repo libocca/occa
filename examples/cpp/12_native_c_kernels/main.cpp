@@ -19,32 +19,29 @@ int main(int argc, const char **argv) {
     ab[i] = 0;
   }
 
-  // Setup the platform and device IDs
-  occa::properties props;
-  props["mode"] = "CUDA";
-  props["device_id"] = (int) args["options/device-id"];
-  occa::device device(props);
+  occa::properties deviceProps;
+  deviceProps["mode"] = "Serial";
+  deviceProps["kernel/compiler"] = "gcc";
+  // Defaults to 'C++' (not case-sensitive)
+  deviceProps["kernel/compiler_language"] = "C";
+
+  occa::device device(deviceProps);
 
   // Allocate memory on the device
   occa::memory o_a = device.malloc<float>(entries);
   occa::memory o_b = device.malloc<float>(entries);
   occa::memory o_ab = device.malloc<float>(entries);
 
-  // Compile a regular CUDA kernel at run-time
-  occa::kernel addVectors = device.buildKernel("addVectors.cu",
+  // Compile a regular C++ function at run-time
+  occa::properties kernelProps;
+  kernelProps["okl/enabled"] = false;
+  occa::kernel addVectors = device.buildKernel("addVectors.c",
                                                "addVectors",
-                                               "okl: false");
+                                               kernelProps);
 
   // Copy memory to the device
   o_a.copyFrom(a);
   o_b.copyFrom(b);
-
-  // Set the kernel dimensions
-  //   setRunDims(
-  //     occa::dim(blocksX, blocksY = 1, blocksZ = 1),   <- @outer dims in OKL
-  //     occa::dim(threadsX, threadsY = 1, threadsZ = 1) <- @inner dims in OKL
-  //   )
-  addVectors.setRunDims((entries + 15) / 16, 16);
 
   // Launch device kernel
   addVectors(entries, o_a, o_b, o_ab);
@@ -77,13 +74,7 @@ occa::json parseArgs(int argc, const char **argv) {
   occa::cli::parser parser;
   parser
     .withDescription(
-      "Example of using a regular CUDA kernel instead of an OCCA kernel"
-    )
-    .addOption(
-      occa::cli::option('d', "device-id",
-                        "OpenCL device ID (default: 0)")
-      .withArg()
-      .withDefaultValue(0)
+      "Example of using a regular C function instead of an OCCA kernel"
     )
     .addOption(
       occa::cli::option('v', "verbose",

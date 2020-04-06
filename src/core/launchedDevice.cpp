@@ -58,7 +58,7 @@ namespace occa {
                                                   const std::string &kernelName,
                                                   const hash_t kernelHash,
                                                   const occa::properties &kernelProps) {
-    bool usingOkl = kernelProps.get("okl", true);
+    bool usingOkl = kernelProps.get("okl/enabled", true);
 
     launchedModeKernel_t *kernel = (launchedModeKernel_t*) (
       buildKernel(filename,
@@ -142,7 +142,7 @@ namespace occa {
       // Cache raw origin
       sourceFilename = (
         io::cacheFile(filename,
-                      kc::rawSourceFile,
+                      kc::cppRawSourceFile,
                       kernelHash,
                       assembleKernelHeader(kernelProps))
       );

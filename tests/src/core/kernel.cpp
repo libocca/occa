@@ -151,29 +151,29 @@ void testRun() {
   argKernel.setRunDims(occa::dim(1, 1, 1),
                        occa::dim(1, 1, 1));
 
-  int value = 0;
-  occa::memory mem = occa::malloc(1 * sizeof(int), &value);
+  int value = 1;
+  occa::memory mem = occa::malloc<int>(1, &value);
 
-  value = 1;
+  value = 2;
   int *uvaPtr = occa::umalloc<int>(1, &value);
 
-  int xy[2] = {12, 13};
-  std::string str = "fourteen";
+  int xy[2] = {13, 14};
+  std::string str = "fifteen";
 
   argKernel(
+    occa::null,
     mem,
     uvaPtr,
-    occa::null,
-    (int8_t) 2,
-    (uint8_t) 3,
-    (int16_t) 4,
-    (uint16_t) 5,
-    (int32_t) 6,
-    (uint32_t) 7,
-    (int64_t) 8,
-    (uint64_t) 9,
-    (float) 10.0,
-    (double) 11.0,
+    (int8_t) 3,
+    (uint8_t) 4,
+    (int16_t) 5,
+    (uint16_t) 6,
+    (int32_t) 7,
+    (uint32_t) 8,
+    (int64_t) 9,
+    (uint64_t) 10,
+    (float) 11.0,
+    (double) 12.0,
     xy,
     str.c_str()
   );

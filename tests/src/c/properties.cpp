@@ -13,6 +13,7 @@ void testTypes();
 void testBadType();
 void testKeyMiss();
 void testSerialization();
+void testCasting();
 
 occaProperties cProps;
 
@@ -114,7 +115,7 @@ void testTypes() {
   // NULL
   occaPropertiesSet(cProps, "null", occaNull);
   occaType nullValue = occaPropertiesGet(cProps, "null", occaUndefined);
-  ASSERT_EQ(nullValue.type, OCCA_PTR);
+  ASSERT_EQ(nullValue.type, OCCA_NULL);
   ASSERT_EQ(nullValue.value.ptr, (void*) NULL);
 
   // Nested props
@@ -173,6 +174,27 @@ void testSerialization() {
 
   ASSERT_EQ(props,
             props2);
+
+  occaFree(cProps2);
+}
+
+void testCasting() {
+  occaProperties cProps2 = occaCreateJson();
+
+  occaJsonCastToBoolean(cProps2);
+  ASSERT_TRUE(occaJsonIsBoolean(cProps2));
+
+  occaJsonCastToNumber(cProps2);
+  ASSERT_TRUE(occaJsonIsNumber(cProps2));
+
+  occaJsonCastToString(cProps2);
+  ASSERT_TRUE(occaJsonIsString(cProps2));
+
+  occaJsonCastToArray(cProps2);
+  ASSERT_TRUE(occaJsonIsArray(cProps2));
+
+  occaJsonCastToObject(cProps2);
+  ASSERT_TRUE(occaJsonIsObject(cProps2));
 
   occaFree(cProps2);
 }

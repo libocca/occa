@@ -155,12 +155,21 @@ test: unit-tests e2e-tests bin-tests
 
 unit-tests: $(tests)
 	@$(testPath)/run_tests
+	@if [ $$? -ne 0 ]; then \
+	  @exit 1;              \
+	fi
 
 e2e-tests: unit-tests
 	@$(testPath)/run_examples
+	@if [ $$? -ne 0 ]; then \
+	  @exit 1;              \
+	fi
 
-bin-tests: unit-tests
+bin-tests: e2e-tests
 	@$(testPath)/run_bin_tests
+	@if [ $$? -ne 0 ]; then \
+	  @exit 1;              \
+	fi
 
 $(testPath)/bin/%:$(testPath)/src/%.cpp $(outputs)
 	@mkdir -p $(abspath $(dir $@))

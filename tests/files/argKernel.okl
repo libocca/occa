@@ -1,6 +1,6 @@
 @kernel void argKernel(void *null,
-                       char *mem,
-                       char *uvaPtr,
+                       int *mem,
+                       int *uvaPtr,
                        int i8,
                        int u8,
                        int i16,
@@ -47,7 +47,7 @@
       xy[0], xy[1],
       str
     );
-    if (i8 != 2) {
+    if (i8 != 3) {
       throw 1;
     }
   }

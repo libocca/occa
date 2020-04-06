@@ -146,7 +146,7 @@ bool runTranslate(const json &args) {
   }
 
   properties kernelProps = getOptionProperties(options["kernel-props"]);
-  kernelProps["include_paths"].asArray() += options["include-path"];
+  kernelProps["okl/include_paths"] = options["include-path"];
   kernelProps["defines"].asObject() += getOptionDefines(options["define"]);
 
   lang::parser_t *parser = NULL;
@@ -230,7 +230,7 @@ bool runCompile(const json &args) {
 
   properties kernelProps = getOptionProperties(options["kernel-props"]);
   kernelProps["verbose"] = kernelProps.get("verbose", true);
-  kernelProps["include_paths"].asArray() += options["include-path"];
+  kernelProps["okl/include_paths"] = options["include-path"];
   kernelProps["defines"].asObject() += getOptionDefines(options["define"]);
 
   device device(deviceProps);
@@ -263,6 +263,7 @@ bool runEnv(const json &args) {
             << "    - OCCA_CXX                   : " << envEcho("OCCA_CXX") << "\n"
             << "    - OCCA_CXXFLAGS              : " << envEcho("OCCA_CXXFLAGS") << "\n"
             << "    - OCCA_LDFLAGS               : " << envEcho("OCCA_LDFLAGS") << "\n"
+            << "    - OCCA_COMPILER_SHARED_FLAGS : " << envEcho("OCCA_COMPILER_SHARED_FLAGS") << "\n"
             << "    - OCCA_INCLUDE_PATH          : " << envEcho("OCCA_INCLUDE_PATH") << "\n"
             << "    - OCCA_LIBRARY_PATH          : " << envEcho("OCCA_LIBRARY_PATH") << "\n"
             << "    - OCCA_OPENCL_COMPILER_FLAGS : " << envEcho("OCCA_OPENCL_COMPILER_FLAGS") << "\n"

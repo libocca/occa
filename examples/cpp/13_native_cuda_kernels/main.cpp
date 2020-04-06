@@ -20,21 +20,22 @@ int main(int argc, const char **argv) {
   }
 
   // Setup the platform and device IDs
-  occa::properties props;
-  props["mode"] = "OpenCL";
-  props["platform_id"] = (int) args["options/platform-id"];
-  props["device_id"] = (int) args["options/device-id"];
-  occa::device device(props);
+  occa::properties kernelProps;
+  kernelProps["mode"] = "CUDA";
+  kernelProps["device_id"] = (int) args["options/device-id"];
+  occa::device device(kernelProps);
 
   // Allocate memory on the device
   occa::memory o_a = device.malloc<float>(entries);
   occa::memory o_b = device.malloc<float>(entries);
   occa::memory o_ab = device.malloc<float>(entries);
 
-  // Compile a regular OpenCL kernel at run-time
-  occa::kernel addVectors = device.buildKernel("addVectors.cl",
+  // Compile a regular CUDA kernel at run-time
+  occa::properties kernelProps;
+  kernelProps["okl/enabled"] = false;
+  occa::kernel addVectors = device.buildKernel("addVectors.cu",
                                                "addVectors",
-                                               "okl: false");
+                                               kernelProps);
 
   // Copy memory to the device
   o_a.copyFrom(a);
@@ -42,8 +43,8 @@ int main(int argc, const char **argv) {
 
   // Set the kernel dimensions
   //   setRunDims(
-  //     occa::dim(groupsX, groupsY = 1, groupsZ = 1), <- @outer dims in OKL
-  //     occa::dim(itemsX, itemsY = 1, itemsZ = 1)     <- @inner dims in OKL
+  //     occa::dim(blocksX, blocksY = 1, blocksZ = 1),   <- @outer dims in OKL
+  //     occa::dim(threadsX, threadsY = 1, threadsZ = 1) <- @inner dims in OKL
   //   )
   addVectors.setRunDims((entries + 15) / 16, 16);
 
@@ -78,13 +79,7 @@ occa::json parseArgs(int argc, const char **argv) {
   occa::cli::parser parser;
   parser
     .withDescription(
-      "Example of using a regular OpenCL kernel instead of an OCCA kernel"
-    )
-    .addOption(
-      occa::cli::option('p', "platform-id",
-                        "OpenCL platform ID (default: 0)")
-      .withArg()
-      .withDefaultValue(0)
+      "Example of using a regular CUDA kernel instead of an OCCA kernel"
     )
     .addOption(
       occa::cli::option('d', "device-id",

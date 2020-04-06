@@ -23,11 +23,13 @@ int main(const int argc, const char **argv) {
 //---[ Preprocessor ]-------------------
 void testPreprocessor() {
   // @restrict -> __restrict__
-  statement_t *statement;
+  statement_t *statement = NULL;
 
   parseAndPrintSource("@kernel void foo(@restrict const int * a) {}");
   setStatement("@kernel void foo(@restrict const int * a) {}",
                statementType::functionDecl);
+
+  delete statement;
 }
 //======================================
 

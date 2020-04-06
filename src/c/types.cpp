@@ -538,6 +538,8 @@ namespace occa {
         return occa::c::json(value);
       case occa::c::typeType::properties:
         return occa::c::properties(value);
+      case occa::c::typeType::null_:
+        return occa::json(occa::json::null_);
       case occa::c::typeType::ptr:
         if (value.value.ptr == NULL) {
           return occa::json(occa::json::null_);
@@ -586,6 +588,8 @@ namespace occa {
           return dtype::double_;
         case occa::c::typeType::memory:
           return occa::c::memory(value).dtype();
+        case occa::c::typeType::null_:
+          return dtype::void_;
         case occa::c::typeType::ptr: {
           occa::modeMemory_t* mem = uvaToMemory(value.value.ptr);
           if (mem) {
@@ -741,7 +745,7 @@ OCCA_LFUNC occaType OCCA_RFUNC occaDouble(double value) {
   return occa::c::newOccaType(value);
 }
 
-OCCA_LFUNC occaType OCCA_RFUNC occaStruct(void *value,
+OCCA_LFUNC occaType OCCA_RFUNC occaStruct(const void *value,
                                           occaUDim_t bytes) {
   occaType oType;
   oType.magicHeader = OCCA_C_TYPE_MAGIC_HEADER;

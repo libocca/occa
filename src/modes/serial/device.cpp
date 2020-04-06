@@ -15,9 +15,12 @@ namespace occa {
       occa::modeDevice_t(properties_) {
 
       occa::json &kernelProps = properties["kernel"];
-      std::string compiler, compilerFlags, compilerEnvScript;
-      std::string linkerFlags;
-      int vendor;
+      std::string compiler;
+      std::string compilerFlags;
+      std::string compilerLanguage;
+      std::string compilerEnvScript;
+      std::string compilerLinkerFlags;
+      std::string compilerSharedFlags;
 
       if (kernelProps.get<std::string>("compiler").size()) {
         compiler = (std::string) kernelProps["compiler"];
@@ -33,8 +36,6 @@ namespace occa {
 #endif
       }
 
-      vendor = sys::compilerVendor(compiler);
-
       if (kernelProps.get<std::string>("compiler_flags").size()) {
         compilerFlags = (std::string) kernelProps["compiler_flags"];
       } else if (env::var("OCCA_CXXFLAGS").size()) {
@@ -49,10 +50,39 @@ namespace occa {
 #endif
       }
 
-      if (kernelProps.get<std::string>("linker_flags").size()) {
-        linkerFlags = (std::string) kernelProps["linker_flags"];
+      const int compilerVendor = sys::compilerVendor(compiler);
+
+      if (kernelProps.get<std::string>("compiler_language").size()) {
+        compilerLanguage = (std::string) kernelProps["compiler_language"];
+      } else if (env::var("OCCA_COMPILER_LANGUAGE").size()) {
+        compilerLanguage = env::var("OCCA_COMPILER_LANGUAGE");
+      }
+
+      // Default to C++
+      const bool compilingCpp = lowercase(compilerLanguage) != "c";
+      const int compilerLanguageFlag = (
+        compilingCpp
+        ? sys::language::CPP
+        : sys::language::C
+      );
+      if (compilingCpp) {
+        sys::addCompilerFlags(compilerFlags, sys::compilerCpp11Flags(compilerVendor));
+      } else {
+        sys::addCompilerFlags(compilerFlags, sys::compilerC99Flags(compilerVendor));
+      }
+
+      if (kernelProps.get<std::string>("compiler_shared_flags").size()) {
+        compilerSharedFlags = (std::string) kernelProps["compiler_shared_flags"];
+      } else if (env::var("OCCA_COMPILER_SHARED_FLAGS").size()) {
+        compilerSharedFlags = env::var("OCCA_COMPILER_SHARED_FLAGS");
+      } else {
+        compilerSharedFlags = sys::compilerSharedBinaryFlags(compilerVendor);
+      }
+
+      if (kernelProps.get<std::string>("compiler_linker_flags").size()) {
+        compilerLinkerFlags = (std::string) kernelProps["compiler_linker_flags"];
       } else if (env::var("OCCA_LDFLAGS").size()) {
-        linkerFlags = env::var("OCCA_LDFLAGS");
+        compilerLinkerFlags = env::var("OCCA_LDFLAGS");
       }
 
       if (kernelProps.get<std::string>("compiler_env_script").size()) {
@@ -88,11 +118,13 @@ namespace occa {
 #endif
       }
 
-      kernelProps["vendor"] = vendor;
       kernelProps["compiler"] = compiler;
       kernelProps["compiler_flags"] = compilerFlags;
       kernelProps["compiler_env_script"] = compilerEnvScript;
-      kernelProps["linker_flags"] = linkerFlags;
+      kernelProps["compiler_vendor"] = compilerVendor;
+      kernelProps["compiler_language"] = compilerLanguageFlag;
+      kernelProps["compiler_linker_flags"] = compilerLinkerFlags;
+      kernelProps["compiler_shared_flags"] = compilerSharedFlags;
     }
 
     device::~device() {}
@@ -112,10 +144,13 @@ namespace occa {
 
     hash_t device::kernelHash(const occa::properties &props) const {
       return (
-        occa::hash(props["vendor"])
-        ^ props["compiler"]
+        occa::hash(props["compiler"])
         ^ props["compiler_flags"]
         ^ props["compiler_env_script"]
+        ^ props["compiler_vendor"]
+        ^ props["compiler_language"]
+        ^ props["compiler_linker_flags"]
+        ^ props["compiler_shared_flags"]
       );
     }
 
@@ -230,18 +265,28 @@ namespace occa {
 
       std::string sourceFilename;
       lang::sourceMetadata_t metadata;
+      const bool compilingCpp = (
+        ((int) kernelProps["compiler_language"]) == sys::language::CPP
+      );
+
       if (isLauncherKernel) {
         sourceFilename = filename;
       } else {
+        const std::string &rawSourceFile = (
+          compilingCpp
+          ? kc::cppRawSourceFile
+          : kc::cRawSourceFile
+        );
+
         // Cache raw origin
         sourceFilename = (
           io::cacheFile(filename,
-                        kc::rawSourceFile,
+                        rawSourceFile,
                         kernelHash,
                         assembleKernelHeader(kernelProps))
         );
 
-        if (kernelProps.get("okl", true)) {
+        if (kernelProps.get("okl/enabled", true)) {
           const std::string outputFile = hashDir + kc::sourceFile;
           bool valid = parseFile(sourceFilename,
                                  outputFile,
@@ -265,22 +310,21 @@ namespace occa {
         command << compilerEnvScript << " && ";
       }
 
+      const std::string compiler = kernelProps["compiler"];
       std::string compilerFlags = kernelProps["compiler_flags"];
-      const int vendor = (int) kernelProps["vendor"];
+      std::string compilerLinkerFlags = kernelProps["compiler_linker_flags"];
+      std::string compilerSharedFlags = kernelProps["compiler_shared_flags"];
 
-      std::string linkerFlags = kernelProps["linker_flags"];
-
-      sys::addSharedBinaryFlags(vendor, compilerFlags);
-      sys::addCpp11Flags(vendor, compilerFlags);
+      sys::addCompilerFlags(compilerFlags, compilerSharedFlags);
 
 #if (OCCA_OS & (OCCA_LINUX_OS | OCCA_MACOS_OS))
-      command << (std::string) kernelProps["compiler"]
+      command << compiler
               << ' '    << compilerFlags
               << ' '    << sourceFilename
               << " -o " << binaryFilename
               << " -I"  << env::OCCA_DIR << "include"
               << " -L"  << env::OCCA_DIR << "lib -locca"
-              << ' '    << linkerFlags
+              << ' '    << compilerLinkerFlags
               << std::endl;
 #else
       command << kernelProps["compiler"]
@@ -288,11 +332,11 @@ namespace occa {
               << " /D OCCA_OS=OCCA_WINDOWS_OS"
               << " /EHsc"
               << " /wd4244 /wd4800 /wd4804 /wd4018"
-              << ' '       << kernelProps["compiler_flags"]
+              << ' '       << compilerFlags
               << " /I"     << env::OCCA_DIR << "include"
               << ' '       << sourceFilename
               << " /link " << env::OCCA_DIR << "lib/libocca.lib",
-              << ' '       << linkerFlags
+              << ' '       << compilerLinkerFlags
               << " /OUT:"  << binaryFilename
               << std::endl;
 #endif

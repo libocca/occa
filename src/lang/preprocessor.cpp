@@ -27,13 +27,16 @@ namespace occa {
     preprocessor_t::preprocessor_t(const occa::properties &settings_) {
       init();
       initDirectives();
+
       if (!settings_.has("okl/include_paths")) {
         return;
       }
+
       json paths = settings_["okl/include_paths"];
       if (!paths.isArray()) {
         return;
       }
+
       jsonArray pathArray = paths.array();
       const int pathCount = (int) pathArray.size();
       for (int i = 0; i < pathCount; ++i) {
