@@ -54,6 +54,7 @@ typedef occaType occaProperties;
 //---[ Type Flags ]---------------------
 extern const int OCCA_UNDEFINED;
 extern const int OCCA_DEFAULT;
+extern const int OCCA_NULL;
 
 extern const int OCCA_PTR;
 

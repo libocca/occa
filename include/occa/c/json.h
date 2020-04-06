@@ -31,6 +31,15 @@ OCCA_LFUNC int OCCA_RFUNC occaJsonIsObject(occaJson j);
 //======================================
 
 
+//---[ Casters ]------------------------
+OCCA_LFUNC void OCCA_RFUNC occaJsonCastToBoolean(occaJson j);
+OCCA_LFUNC void OCCA_RFUNC occaJsonCastToNumber(occaJson j);
+OCCA_LFUNC void OCCA_RFUNC occaJsonCastToString(occaJson j);
+OCCA_LFUNC void OCCA_RFUNC occaJsonCastToArray(occaJson j);
+OCCA_LFUNC void OCCA_RFUNC occaJsonCastToObject(occaJson j);
+//======================================
+
+
 //---[ Getters ]------------------------
 OCCA_LFUNC int OCCA_RFUNC occaJsonGetBoolean(occaJson j);
 OCCA_LFUNC occaType OCCA_RFUNC occaJsonGetNumber(occaJson j,
