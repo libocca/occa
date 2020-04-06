@@ -146,7 +146,7 @@ bool runTranslate(const json &args) {
   }
 
   properties kernelProps = getOptionProperties(options["kernel-props"]);
-  kernelProps["include_paths"].asArray() += options["include-path"];
+  kernelProps["okl/include_paths"].asArray() += options["include-path"];
   kernelProps["defines"].asObject() += getOptionDefines(options["define"]);
 
   lang::parser_t *parser = NULL;
@@ -230,7 +230,7 @@ bool runCompile(const json &args) {
 
   properties kernelProps = getOptionProperties(options["kernel-props"]);
   kernelProps["verbose"] = kernelProps.get("verbose", true);
-  kernelProps["include_paths"].asArray() += options["include-path"];
+  kernelProps["okl/include_paths"].asArray() += options["include-path"];
   kernelProps["defines"].asObject() += getOptionDefines(options["define"]);
 
   device device(deviceProps);
