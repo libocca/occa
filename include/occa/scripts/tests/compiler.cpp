@@ -19,9 +19,6 @@ int main(int argc, char **argv) {
 #elif defined(__ICC) || defined(__INTEL_COMPILER)
   return OCCA_INTEL_VENDOR;
 
-#elif defined(__GNUC__) || defined(__GNUG__)
-  return OCCA_GNU_VENDOR;
-
 #elif defined(__HP_cc) || defined(__HP_aCC)
   return OCCA_HP_VENDOR;
 
@@ -39,6 +36,10 @@ int main(int argc, char **argv) {
 
 #elif defined(__clang__)
   return OCCA_LLVM_VENDOR;
+
+// Clang also defines __GNUC__, so check for it after __clang__
+#elif defined(__GNUC__) || defined(__GNUG__)
+  return OCCA_GNU_VENDOR;
 
 #else
   return OCCA_NOT_FOUND
