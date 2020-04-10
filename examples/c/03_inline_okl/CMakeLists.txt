@@ -1,1 +1,1 @@
-COMPILE_C_EXAMPLE(03_inline_okl main.c)
+compile_c_example(03_inline_okl main.c)

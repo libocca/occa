@@ -12,7 +12,9 @@ void testDirMethods();
 void testIOMethods();
 
 int main(const int argc, const char **argv) {
+#ifndef USE_CMAKE
   occa::env::OCCA_CACHE_DIR = "/occa/cache/dir/";
+#endif
   srand(time(NULL));
 
   testPathMethods();
@@ -87,7 +89,7 @@ void testPathMethods() {
             "b");
 
   ASSERT_EQ(occa::io::dirname("b.okl"),
-            occa::env::PWD);
+            occa::env::CWD);
   ASSERT_EQ(occa::io::dirname("/a/b.okl"),
             "/a/");
   ASSERT_EQ(occa::io::dirname("/a"),
@@ -115,7 +117,7 @@ void testDirMethods() {
   // Find files
   occa::strVector files = occa::io::files(ioDir);
   ASSERT_EQ((int) files.size(),
-            4);
+            5);
   ASSERT_IN(ioDir + "cache.cpp", files);
   ASSERT_IN(ioDir + "fileOpener.cpp", files);
   ASSERT_IN(ioDir + "lock.cpp", files);
@@ -143,7 +145,7 @@ void testDirMethods() {
 }
 
 void testIOMethods() {
-  const std::string test_foo = occa::env::PWD + "test_foo";
+  const std::string test_foo = occa::env::CWD + "test_foo";
 
   std::string content = "start";
   for (int i = 0; i < 100; ++i) {

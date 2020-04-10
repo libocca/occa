@@ -65,6 +65,16 @@ namespace occa {
       return path;
     }
 
+    std::string currentWorkingDirectory() {
+      char cwdBuff[FILENAME_MAX];
+#if (OCCA_OS == OCCA_WINDOWS_OS)
+      _getcwd(cwdBuff, sizeof(cwdBuff));
+#else
+      getcwd(cwdBuff, sizeof(cwdBuff));
+#endif
+      return endWithSlash(std::string(cwdBuff));
+    }
+
     void endWithSlash(std::string &dir) {
       const int chars = (int) dir.size();
       if ((0 < chars) &&
@@ -167,7 +177,7 @@ namespace occa {
       expFilename = fo.expand(expFilename);
 
       if (makeAbsolute && !isAbsolutePath(expFilename)) {
-        expFilename = env::PWD + expFilename;
+        expFilename = env::CWD + expFilename;
       }
       return expFilename;
     }

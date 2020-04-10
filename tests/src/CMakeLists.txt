@@ -1,0 +1,16 @@
+macro(add_cpp_test exe_name source)
+  add_executable(${exe_name} ${source})
+  target_link_libraries(${exe_name} libocca ${CMAKE_THREAD_LIBS_INIT} ${CMAKE_DL_LIBS})
+  add_test(NAME test-${exe_name} COMMAND ${exe_name})
+  set_property(TEST test-${exe_name} APPEND PROPERTY ENVIRONMENT OCCA_CACHE_DIR=${CMAKE_BINARY_DIR}/cache)
+endmacro()
+
+add_cpp_test(dtype dtype.cpp)
+add_cpp_test(modes modes.cpp)
+
+add_subdirectory(c)
+add_subdirectory(core)
+add_subdirectory(io)
+add_subdirectory(lang)
+add_subdirectory(tools)
+add_subdirectory(types)

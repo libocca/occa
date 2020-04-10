@@ -12,7 +12,9 @@ void testStaleRelease();
 void clearLocks();
 
 int main(const int argc, const char **argv) {
+#ifndef USE_CMAKE
   occa::env::OCCA_CACHE_DIR = occa::io::dirname(__FILE__);
+#endif
   occa::settings()["locks/stale-warning"] = 0;
   occa::settings()["locks/stale-age"] = 0.2;
 

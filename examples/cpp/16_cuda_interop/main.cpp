@@ -1,7 +1,7 @@
 #include <iostream>
 
 #include <occa.hpp>
-#include <occa/mode/cuda/utils.hpp>
+#include <occa/modes/cuda/utils.hpp>
 
 #include <cuda_runtime_api.h>
 

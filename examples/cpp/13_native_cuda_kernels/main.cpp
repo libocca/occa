@@ -20,10 +20,10 @@ int main(int argc, const char **argv) {
   }
 
   // Setup the platform and device IDs
-  occa::properties kernelProps;
-  kernelProps["mode"] = "CUDA";
-  kernelProps["device_id"] = (int) args["options/device-id"];
-  occa::device device(kernelProps);
+  occa::properties deviceProps;
+  deviceProps["mode"] = "CUDA";
+  deviceProps["device_id"] = (int) args["options/device-id"];
+  occa::device device(deviceProps);
 
   // Allocate memory on the device
   occa::memory o_a = device.malloc<float>(entries);

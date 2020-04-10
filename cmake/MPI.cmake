@@ -1,6 +1,6 @@
 find_package(MPI)
 
-IF (MPI_FOUND)
-    SET(OCCA_MPI_ENABLED 1)
-    SET(WITH_MPI 1)
-ENDIF()
+if (MPI_FOUND)
+    set(OCCA_MPI_ENABLED 1)
+    set(WITH_MPI 1)
+endif()

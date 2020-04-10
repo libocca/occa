@@ -10,7 +10,7 @@ namespace occa {
   properties& settings();
 
   namespace env {
-    extern std::string HOME, PWD;
+    extern std::string HOME, CWD;
     extern std::string PATH, LD_LIBRARY_PATH;
 
     extern std::string OCCA_DIR, OCCA_CACHE_DIR;

@@ -1171,7 +1171,7 @@ namespace occa {
             header = path + header;
             break;
           } else if (i == (pathCount - 1)) {
-            header = env::PWD + header;
+            header = env::CWD + header;
           }
         }
       }

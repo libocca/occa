@@ -1,0 +1,13 @@
+add_cpp_test(lang-expr expr.cpp)
+add_cpp_test(lang-file file.cpp)
+add_cpp_test(lang-keyword keyword.cpp)
+add_cpp_test(lang-preprocessor preprocessor.cpp)
+add_cpp_test(lang-primitive primitive.cpp)
+add_cpp_test(lang-stream stream.cpp)
+add_cpp_test(lang-tokenContext tokenContext.cpp)
+add_cpp_test(lang-type type.cpp)
+
+add_subdirectory(builtins)
+add_subdirectory(mode)
+add_subdirectory(parser)
+add_subdirectory(tokenizer)
