@@ -367,7 +367,7 @@ namespace occa {
 
     int getTID() {
 #if (OCCA_OS & (OCCA_LINUX_OS | OCCA_MACOS_OS))
-      #if OCCA_MACOS_OS & MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_12
+      #if OCCA_OS == OCCA_MACOS_OS & (MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_12)
       uint64_t tid64;
       pthread_threadid_np(NULL, &tid64);
       pid_t tid = (pid_t)tid64;
