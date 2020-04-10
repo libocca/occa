@@ -246,6 +246,9 @@ namespace occa {
                         const dtype_t &dtype,
                         const occa::properties &props);
 
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wc++11-extensions"
+
     template <class TM = void>
     occa::memory malloc(const dim_t bytes,
                         const void *src = NULL,
@@ -287,6 +290,9 @@ namespace occa {
     template <class TM = void>
     TM* umalloc(const dim_t entries,
                 const occa::properties &props);
+
+#pragma clang diagnostic pop
+
     //  |===============================
   };
 
