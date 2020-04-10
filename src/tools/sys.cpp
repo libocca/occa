@@ -65,9 +65,10 @@ namespace occa {
       uint64_t ct;
       ct = mach_absolute_time();
 
-      const Nanoseconds ct2 = AbsoluteToNanoseconds(*(AbsoluteTime *) &ct);
+      static mach_timebase_info_data_t _time_info;
+      uint64_t nanoseconds = ct * _time_info.numer / _time_info.denom;
 
-      return ((double) 1.0e-9) * ((double) ( *((uint64_t*) &ct2) ));
+      return 1.0e-9 * nanoseconds;
 #  else
       clock_serv_t cclock;
       host_get_clock_service(mach_host_self(), CALENDAR_CLOCK, &cclock);
@@ -366,7 +367,14 @@ namespace occa {
 
     int getTID() {
 #if (OCCA_OS & (OCCA_LINUX_OS | OCCA_MACOS_OS))
-      return syscall(SYS_gettid);
+      #if OCCA_MACOS_OS & MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_12
+      uint64_t tid64;
+      pthread_threadid_np(NULL, &tid64);
+      pid_t tid = (pid_t)tid64;
+      #else
+      pid_t tid = syscall(SYS_gettid);
+      #endif
+      return tid;
 #else
       return GetCurrentThreadId();
 #endif
