@@ -137,9 +137,6 @@ namespace occa {
 
     memory& swap(memory &m);
 
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wc++11-extensions"
-
     template <class TM = void>
     TM* ptr();
 
@@ -151,8 +148,6 @@ namespace occa {
 
     template <class TM = void>
     const TM* ptr(const occa::properties &props) const;
-
-#pragma clang diagnostic pop
 
     modeMemory_t* getModeMemory() const;
     modeDevice_t* getModeDevice() const;
