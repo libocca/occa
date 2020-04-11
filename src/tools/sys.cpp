@@ -62,11 +62,7 @@ namespace occa {
       return (double) (ct.tv_sec + (1.0e-9 * ct.tv_nsec));
 #elif (OCCA_OS == OCCA_MACOS_OS)
 #  ifdef __clang__
-      uint64_t ct;
-      ct = mach_absolute_time();
-
-      static mach_timebase_info_data_t _time_info;
-      uint64_t nanoseconds = ct * _time_info.numer / _time_info.denom;
+      uint64_t nanoseconds = clock_gettime_nsec_np(CLOCK_UPTIME_RAW);
 
       return 1.0e-9 * nanoseconds;
 #  else
