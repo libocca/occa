@@ -2,7 +2,7 @@
 
 #include <occa.hpp>
 // Has OpenCL includes
-#include <occa/mode/opencl/utils.hpp>
+#include <occa/modes/opencl/utils.hpp>
 
 int main(int argc, char **argv) {
   int entries = 5;
