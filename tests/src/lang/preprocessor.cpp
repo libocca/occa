@@ -125,14 +125,20 @@ void testMacroDefines() {
     "#define I(...) 5 ##__VA_ARGS__\n"
     "I(11,)\n"
     "I()\n"
-    // Errors:
+    // Test nested parentheses
+    "#define J2(A1, A2, A3) A1 A2 A3\n"
+    "#define J1(A1) J2(A1, (1, 2), ((3), (4)))\n"
+    "J1(0)\n"
+    // Test Errors:
     // - Argument missing
-    "C()\n"
+    "#define Error_A(a) 1\n"
+    "Error_A()\n"
     // - Too many arguments
-    "D(4, 5, 6)\n"
+    "#define Error_B(a) 1\n"
+    "Error_B(4, 5, 6)\n"
     // - Test stringify with concat fail
-    "#define J(A1, A2) # A1 ## A2\n"
-    "J(1, 3)\n"
+    "#define Error_C(C1, C2) # C1 ## C2\n"
+    "Error_C(1, 3)\n"
   );
   while (!tokenStream.isEmpty()) {
     getToken();

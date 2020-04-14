@@ -629,12 +629,12 @@ namespace occa {
         return true;
       }
 
-      const int argc = argCount();
-      int argIndex = 0;
+      tokenVector argTokens;
 
       // Count the initial [(] token
       int parenthesesCount = 1;
 
+      // Pull all of the argument tokens first
       while (true) {
         token_t *token = NULL;
         pp >> token;
@@ -656,13 +656,29 @@ namespace occa {
               --parenthesesCount;
               if (!parenthesesCount) {
                 delete token;
-                return true;
+                break;
               }
             }
           }
         }
 
-        // Make sure we don't go out of bounds
+        // Push tokens between the [(] and [)] tokens
+        argTokens.push_back(token);
+      }
+
+      const int argc = argCount();
+      int argIndex = 0;
+      parenthesesCount = 0;
+
+      const int tokenCount = (int) argTokens.size();
+      for (int i = 0; i < tokenCount; ++i) {
+        token_t *token = argTokens[i];
+        // Make it easy to free the vector if something goes wrong
+        argTokens[i] = NULL;
+
+        const opType_t opType = token_t::safeOperatorType(token);
+
+        // Check if we're adding a new argument and that we don't go out of bounds
         if (argIndex >= (int) args.size()) {
           args.push_back(tokenVector());
 
@@ -679,30 +695,28 @@ namespace occa {
               errorOn(token,
                       "Macro does not take arguments");
             }
-            delete token;
-            break;
+            freeTokenVector(argTokens);
+            return false;
           }
         }
 
-        if (token->type() != tokenType::op) {
-          // Add token to current arg
-          args[argIndex].push_back(token);
+        if ((opType == operatorType::comma) && !parenthesesCount) {
+          // Starting next argument
+          ++argIndex;
+          delete token;
           continue;
         }
 
-        // Check for comma
-        if (token->to<operatorToken>().opType() != operatorType::comma) {
-          // Add token to current arg
-          args[argIndex].push_back(token);
-          continue;
+        if (opType == operatorType::parenthesesStart) {
+          ++parenthesesCount;
+        } else if (opType == operatorType::parenthesesEnd) {
+          --parenthesesCount;
         }
 
-        // Starting next argument
-        ++argIndex;
-        delete token;
+        args[argIndex].push_back(token);
       }
 
-      return false;
+      return true;
     }
 
     bool macro_t::checkArgs(identifierToken &source,
