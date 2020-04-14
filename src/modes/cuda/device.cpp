@@ -238,13 +238,12 @@ namespace occa {
                         kernelProps);
     }
 
-    void device::setArchCompilerFlags(occa::properties &kernelProps) {
-      if (kernelProps.get<std::string>("compiler_flags").find("-arch=sm_") == std::string::npos) {
-        const int major = archMajorVersion;
-        const int minor = archMinorVersion;
-        std::stringstream ss;
-        ss << " -arch=sm_" << major << minor << ' ';
-        kernelProps["compiler_flags"] += ss.str();
+    void device::setArchCompilerFlags(const occa::properties &kernelProps,
+                                      std::string &compilerFlags) {
+      if (compilerFlags.find("-arch=sm_") == std::string::npos) {
+        compilerFlags += " -arch=sm_";
+        compilerFlags += std::to_string(archMajorVersion);
+        compilerFlags += std::to_string(archMinorVersion);
       }
     }
 
@@ -260,7 +259,16 @@ namespace occa {
       std::string binaryFilename = hashDir + kc::binaryFile;
       const std::string ptxBinaryFilename = hashDir + "ptx_binary.o";
 
-      setArchCompilerFlags(allProps);
+      const std::string compiler = allProps["compiler"];
+      std::string compilerFlags = allProps["compiler_flags"];
+      const bool compilingOkl = allProps.get("okl/enabled", true);
+
+      setArchCompilerFlags(allProps, compilerFlags);
+
+      if (!compilingOkl) {
+        sys::addCompilerIncludeFlags(compilerFlags);
+        sys::addCompilerLibraryFlags(compilerFlags);
+      }
 
       //---[ PTX Check Command ]--------
       std::stringstream command;
@@ -268,8 +276,8 @@ namespace occa {
         command << allProps["compiler_env_script"] << " && ";
       }
 
-      command << allProps["compiler"]
-              << ' ' << allProps["compiler_flags"]
+      command << compiler
+              << ' ' << compilerFlags
               << " -Xptxas -v,-dlcm=cg"
 #if (OCCA_OS == OCCA_WINDOWS_OS)
               << " -D OCCA_OS=OCCA_WINDOWS_OS -D _MSC_VER=1800"

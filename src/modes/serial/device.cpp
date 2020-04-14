@@ -265,6 +265,7 @@ namespace occa {
 
       std::string sourceFilename;
       lang::sourceMetadata_t metadata;
+      const bool compilingOkl = kernelProps.get("okl/enabled", true);
       const bool compilingCpp = (
         ((int) kernelProps["compiler_language"]) == sys::language::CPP
       );
@@ -286,7 +287,7 @@ namespace occa {
                         assembleKernelHeader(kernelProps))
         );
 
-        if (kernelProps.get("okl/enabled", true)) {
+        if (compilingOkl) {
           const std::string outputFile = hashDir + kc::sourceFile;
           bool valid = parseFile(sourceFilename,
                                  outputFile,
@@ -316,6 +317,11 @@ namespace occa {
       std::string compilerSharedFlags = kernelProps["compiler_shared_flags"];
 
       sys::addCompilerFlags(compilerFlags, compilerSharedFlags);
+
+      if (!compilingOkl) {
+        sys::addCompilerIncludeFlags(compilerFlags);
+        sys::addCompilerLibraryFlags(compilerFlags);
+      }
 
 #if (OCCA_OS & (OCCA_LINUX_OS | OCCA_MACOS_OS))
       command << compiler

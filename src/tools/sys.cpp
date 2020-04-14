@@ -772,12 +772,39 @@ namespace occa {
       return "";
     }
 
-    void addCompilerFlags(std::string &compilerFlags, const std::string &flags) {
-      strVector compilerFlagsVec = split(compilerFlags, ' ');
-      const strVector flagsVec = split(flags, ' ');
+    void addCompilerIncludeFlags(std::string &compilerFlags) {
+      strVector includeDirs = env::OCCA_INCLUDE_PATH;
 
-      for (int i = 0; i < (int) flagsVec.size(); ++i) {
-        const std::string &flag = flagsVec[i];
+      const int count = (int) includeDirs.size();
+      for (int i = 0; i < count; ++i) {
+        includeDirs[i] = "-I" + includeDirs[i];
+      }
+
+      addCompilerFlags(compilerFlags, includeDirs);
+    }
+
+    void addCompilerLibraryFlags(std::string &compilerFlags) {
+      strVector libraryDirs = env::OCCA_LIBRARY_PATH;
+
+      const int count = (int) libraryDirs.size();
+      for (int i = 0; i < count; ++i) {
+        libraryDirs[i] = "-L" + libraryDirs[i];
+      }
+
+      addCompilerFlags(compilerFlags, libraryDirs);
+    }
+
+    void addCompilerFlags(std::string &compilerFlags, const std::string &flags) {
+      const strVector flagsVec = split(flags, ' ');
+      addCompilerFlags(compilerFlags, flagsVec);
+    }
+
+    void addCompilerFlags(std::string &compilerFlags, const strVector &flags) {
+      strVector compilerFlagsVec = split(compilerFlags, ' ');
+
+      const int flagCount = (int) flags.size();
+      for (int i = 0; i < flagCount; ++i) {
+        const std::string &flag = flags[i];
         if (indexOf(compilerFlagsVec, flag) < 0) {
           compilerFlagsVec.push_back(flag);
         }

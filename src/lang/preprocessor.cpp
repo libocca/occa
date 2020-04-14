@@ -28,24 +28,23 @@ namespace occa {
       init();
       initDirectives();
 
-      if (!settings_.has("okl/include_paths")) {
-        return;
-      }
+      includePaths = env::OCCA_INCLUDE_PATH;
 
-      json paths = settings_["okl/include_paths"];
-      if (!paths.isArray()) {
-        return;
-      }
-
-      jsonArray pathArray = paths.array();
-      const int pathCount = (int) pathArray.size();
-      for (int i = 0; i < pathCount; ++i) {
-        json path = pathArray[i];
-        if (path.isString()) {
-          std::string pathStr = path;
-          io::endWithSlash(pathStr);
-          includePaths.push_back(pathStr);
+      json oklIncludePaths = settings_["okl/include_paths"];
+      if (oklIncludePaths.isArray()) {
+        jsonArray pathArray = oklIncludePaths.array();
+        const int pathCount = (int) pathArray.size();
+        for (int i = 0; i < pathCount; ++i) {
+          json path = pathArray[i];
+          if (path.isString()) {
+            includePaths.push_back(path);
+          }
         }
+      }
+
+      const int includePathCount = (int) includePaths.size();
+      for (int i = 0; i < includePathCount; ++i) {
+        io::endWithSlash(includePaths[i]);
       }
     }
 
