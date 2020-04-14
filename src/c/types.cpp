@@ -667,8 +667,8 @@ OCCA_LFUNC occaType OCCA_RFUNC occaPtr(void *value) {
   return occa::c::newOccaType(value);
 }
 
-OCCA_LFUNC occaType OCCA_RFUNC occaBool(int value) {
-  return occa::c::newOccaType((bool) value);
+OCCA_LFUNC occaType OCCA_RFUNC occaBool(bool value) {
+  return occa::c::newOccaType(value);
 }
 
 OCCA_LFUNC occaType OCCA_RFUNC occaInt8(int8_t value) {

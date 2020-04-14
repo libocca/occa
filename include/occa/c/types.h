@@ -2,6 +2,7 @@
 #define OCCA_C_TYPES_HEADER
 
 #include <stdint.h>
+#include <stdbool.h>
 #include <stdlib.h>
 
 #include <occa/c/defines.h>
@@ -19,7 +20,7 @@ typedef struct {
   int magicHeader;
   int type;
   occaUDim_t bytes;
-  char needsFree;
+  bool needsFree;
 
   union {
     uint8_t  uint8_;
@@ -99,7 +100,7 @@ OCCA_LFUNC int OCCA_RFUNC occaIsDefault(occaType value);
 
 OCCA_LFUNC occaType OCCA_RFUNC occaPtr(void *value);
 
-OCCA_LFUNC occaType OCCA_RFUNC occaBool(int value);
+OCCA_LFUNC occaType OCCA_RFUNC occaBool(bool value);
 
 OCCA_LFUNC occaType OCCA_RFUNC occaInt8(int8_t value);
 OCCA_LFUNC occaType OCCA_RFUNC occaUInt8(uint8_t value);
