@@ -83,6 +83,10 @@ for mode in $("${OCCA_DIR}/bin/occa" modes); do
         cd "${EXAMPLE_DIR}/${example_dir}"
         make clean; make
 
+        if [[ $(uname -s) == "Darwin" || "${TRAVIS_OS_NAME}" == "osx" ]]; then
+            install_name_tool -change "@rpath/libocca.dyld" "${OCCA_DIR}/lib/libocca.dylib" main
+        fi
+
         output=$(./main "${flags[@]}" 2>&1)
 
         # Check for example failures
