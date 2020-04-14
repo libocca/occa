@@ -22,7 +22,8 @@ namespace occa {
 
     std::string OCCA_DIR, OCCA_CACHE_DIR;
     size_t      OCCA_MEM_BYTE_ALIGN;
-    strVector   OCCA_PATH;
+    strVector   OCCA_INCLUDE_PATH;
+    strVector   OCCA_LIBRARY_PATH;
     bool        OCCA_COLOR_ENABLED;
 
     properties& baseSettings() {
@@ -49,7 +50,6 @@ namespace occa {
       loadConfig();
 
       setupCachePath();
-      setupIncludePath();
       registerFileOpeners();
 
       isInitialized = true;
@@ -78,6 +78,9 @@ namespace occa {
 
       OCCA_CACHE_DIR     = env::var("OCCA_CACHE_DIR");
       OCCA_COLOR_ENABLED = env::get<bool>("OCCA_COLOR_ENABLED", true);
+
+      OCCA_INCLUDE_PATH = split(env::var("OCCA_INCLUDE_PATH"), ':', '\\');
+      OCCA_LIBRARY_PATH = split(env::var("OCCA_LIBRARY_PATH"), ':', '\\');
 
       io::endWithSlash(HOME);
       io::endWithSlash(CWD);
@@ -145,37 +148,6 @@ namespace occa {
 
       if (!io::isDir(env::OCCA_CACHE_DIR)) {
         sys::mkpath(env::OCCA_CACHE_DIR);
-      }
-    }
-
-    void envInitializer_t::setupIncludePath() {
-      std::string envPath = env::var("OCCA_PATH");
-      if (!envPath.size()) {
-        return;
-      }
-
-      // Override OCCA_PATH with environment variable
-      env::OCCA_PATH.clear();
-
-      const char *cStart = envPath.c_str();
-      const char *cEnd;
-      while(cStart[0] != '\0') {
-        cEnd = cStart;
-#if (OCCA_OS & (OCCA_LINUX_OS | OCCA_MACOS_OS))
-        lex::skipTo(cEnd, ':');
-#else
-        lex::skipTo(cEnd, ';');
-#endif
-
-        if (0 < (cEnd - cStart)) {
-          std::string newPath(cStart, cEnd - cStart);
-          newPath = io::filename(newPath);
-          io::endWithSlash(newPath);
-
-          env::OCCA_PATH.push_back(newPath);
-        }
-
-        cStart = (cEnd + (cEnd[0] != '\0'));
       }
     }
 

@@ -65,7 +65,8 @@ namespace occa {
                                                    const occa::properties &kernelProps,
                                                    io::lock_t lock);
 
-      void setArchCompilerFlags(occa::properties &kernelProps);
+      void setArchCompilerFlags(const occa::properties &kernelProps,
+                                std::string &compilerFlags);
 
       void compileKernel(const std::string &hashDir,
                          const std::string &kernelName,
