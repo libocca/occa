@@ -32,7 +32,4 @@ endif()
 
 target_link_libraries(libocca ${LIBOCCA_LIBRARIES})
 
-target_compile_features(libocca PUBLIC cxx_std_11)
-target_compile_options(libocca PRIVATE -Wall -Wextra -Wno-c++11-extensions -Wno-unused-parameter)
-
 install(TARGETS libocca DESTINATION lib)

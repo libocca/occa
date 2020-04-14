@@ -13,6 +13,12 @@ project (occa
   HOMEPAGE_URL "https://github.com/libocca/occa/"
   LANGUAGES C CXX)
 
+set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS OFF)
+
+set(CMAKE_POSITION_INDEPENDENT_CODE ON)
+
 include(OS)
 
 option(ALLOW_CUDA "Allow CUDA" OFF)
@@ -25,7 +31,6 @@ option(ALLOW_HIP "Allow HIP" OFF)
 option(ENABLE_TESTS "Enable tests" OFF)
 
 find_package(Threads REQUIRED)
-set(CUDA_USE_STATIC_CUDA_RUNTIME OFF)
 
 if (ALLOW_OPENMP)
   include(OpenMP)
@@ -40,6 +45,7 @@ if (ALLOW_CUDA)
   set(OCCA_CUDA_ENABLED 1)
   set(WITH_CUDA 1)
   enable_language(CUDA)
+  set(CUDA_USE_STATIC_CUDA_RUNTIME OFF)
 endif()
 
 # searches for MPI if allowed
@@ -59,15 +65,13 @@ endif()
 
 add_definitions(-DUSE_CMAKE)
 
+include(SetCompilerFlags)
+
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
 
-set(CMAKE_POSITION_INDEPENDENT_CODE ON)
-
-if (CMAKE_C_COMPILER_ID STREQUAL "GNU" OR CMAKE_C_COMPILER_ID STREQUAL "Clang")
-  set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wno-c++11-long-long")
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-c++11-long-long")
+if (ALLOW_OPENMP)
+  set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${OpenMP_EXE_LINKER_FLAGS}")
 endif()
-set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${OpenMP_EXE_LINKER_FLAGS}")
 
 include_directories(${PROJECT_BINARY_DIR}/include)
 set(OCCA_BUILD_DIR ${PROJECT_BINARY_DIR})
