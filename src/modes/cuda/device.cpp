@@ -305,7 +305,7 @@ namespace occa {
       //---[ Compiling Command ]--------
       command.str("");
       command << allProps["compiler"]
-              << ' ' << allProps["compiler_flags"]
+              << ' ' << compilerFlags
               << " -ptx"
 #if (OCCA_OS == OCCA_WINDOWS_OS)
               << " -D OCCA_OS=OCCA_WINDOWS_OS -D _MSC_VER=1800"
