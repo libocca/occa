@@ -8,11 +8,14 @@ namespace occa {
     memory::memory(modeDevice_t *modeDevice_,
                    udim_t size_,
                    const occa::properties &properties_) :
-      occa::modeMemory_t(modeDevice_, size_, properties_),
-      mappedPtr(NULL) {}
+        occa::modeMemory_t(modeDevice_, size_, properties_),
+        rootClMem(&clMem),
+        rootOffset(0),
+        mappedPtr(NULL) {}
 
     memory::~memory() {
       if (isOrigin) {
+        // Free mapped-host pointer
         if (mappedPtr) {
           OCCA_OPENCL_ERROR("Mapped Free: clEnqueueUnmapMemObject",
                             clEnqueueUnmapMemObject(getCommandQueue(),
@@ -20,12 +23,17 @@ namespace occa {
                                                     mappedPtr,
                                                     0, NULL, NULL));
         }
-        if (size) {
-          // Free mapped-host pointer
-          OCCA_OPENCL_ERROR("Mapped Free: clReleaseMemObject",
-                            clReleaseMemObject(clMem));
-        }
       }
+
+      // Is the root cl_mem or the root cl_mem hasn't been freed yet
+      if (size && (isOrigin || *rootClMem)) {
+        OCCA_OPENCL_ERROR("Mapped Free: clReleaseMemObject",
+                          clReleaseMemObject(clMem));
+      }
+
+      rootClMem = NULL;
+      rootOffset = 0;
+
       clMem = NULL;
       mappedPtr = NULL;
       size = 0;
@@ -51,12 +59,15 @@ namespace occa {
                                              size - offset,
                                              properties);
 
+      m->rootClMem = rootClMem;
+      m->rootOffset = rootOffset + offset;
+
       cl_buffer_region info;
-      info.origin = offset;
+      info.origin = m->rootOffset;
       info.size   = m->size;
 
       cl_int error;
-      m->clMem = clCreateSubBuffer(clMem,
+      m->clMem = clCreateSubBuffer(*rootClMem,
                                    CL_MEM_READ_WRITE,
                                    CL_BUFFER_CREATE_TYPE_REGION,
                                    &info,
