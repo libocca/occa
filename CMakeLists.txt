@@ -58,9 +58,7 @@ if (ALLOW_METAL)
 endif()
 
 if (ALLOW_HIP)
-#    set(OCCA_HIP_ENABLED 1)
-#    set(WITH_HIP 1)
-#    include(ROCm) ... not available, TODO occa/cmake/FindROCm.cmake
+  include(HIP)
 endif()
 
 add_definitions(-DUSE_CMAKE)
