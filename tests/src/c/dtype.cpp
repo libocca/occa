@@ -92,12 +92,12 @@ void testDtype() {
     occaDtypesMatch(foo3, foo4)
   );
 
-  occaFree(fakeFloat);
-  occaFree(fakeDouble);
-  occaFree(foo1);
-  occaFree(foo2);
-  occaFree(foo3);
-  occaFree(foo4);
+  occaFree(&fakeFloat);
+  occaFree(&fakeDouble);
+  occaFree(&foo1);
+  occaFree(&foo2);
+  occaFree(&foo3);
+  occaFree(&foo4);
 }
 
 void testJsonMethods() {
@@ -162,11 +162,11 @@ void testJsonMethods() {
   ::free((void*) fooJsonStr);
   ::free((void*) rawFooJsonStr);
 
-  occaFree(doubleJson);
-  occaFree(rawDoubleJson);
-  occaFree(foo);
-  occaFree(fooJson);
-  occaFree(rawFooJson);
-  occaFree(foo2);
-  occaFree(foo3);
+  occaFree(&doubleJson);
+  occaFree(&rawDoubleJson);
+  occaFree(&foo);
+  occaFree(&fooJson);
+  occaFree(&rawFooJson);
+  occaFree(&foo2);
+  occaFree(&foo3);
 }

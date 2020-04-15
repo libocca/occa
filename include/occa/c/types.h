@@ -137,7 +137,7 @@ OCCA_LFUNC occaType OCCA_RFUNC occaStruct(const void *value,
 OCCA_LFUNC occaType OCCA_RFUNC occaString(const char *str);
 //======================================
 
-OCCA_LFUNC void OCCA_RFUNC occaFree(occaType value);
+OCCA_LFUNC void OCCA_RFUNC occaFree(occaType *value);
 
 OCCA_END_EXTERN_C
 

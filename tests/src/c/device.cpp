@@ -39,7 +39,7 @@ int main(const int argc, const char **argv) {
   testKernelMethods();
   testStreamMethods();
 
-  occaFree(props);
+  occaFree(&props);
 
   return 0;
 }
@@ -55,7 +55,7 @@ void testInit() {
   ASSERT_EQ(device.type,
             OCCA_DEVICE);
 
-  occaFree(device);
+  occaFree(&device);
 
   device = occaCreateDevice(
     occaString(deviceStr.c_str())
@@ -69,7 +69,7 @@ void testInit() {
 
   occaDeviceFinish(device);
 
-  occaFree(device);
+  occaFree(&device);
 }
 void testProperties() {
   occaDevice device = occaUndefined;
@@ -91,7 +91,7 @@ void testProperties() {
   occaProperties memoryProps = occaDeviceGetMemoryProperties(device);
   ASSERT_TRUE(occaPropertiesHas(memoryProps, "mkey"));
 
-  occaFree(device);
+  occaFree(&device);
 }
 
 void testMemoryMethods() {
@@ -134,13 +134,13 @@ void testMemoryMethods() {
             allocatedBytes);
 
   // Free
-  occaFree(mem1);
+  occaFree(&mem1);
   allocatedBytes -= memBytes;
 
   ASSERT_EQ((size_t) occaDeviceMemoryAllocated(device),
             allocatedBytes);
 
-  occaFree(mem2);
+  occaFree(&mem2);
   allocatedBytes -= memBytes;
 
   ASSERT_EQ((size_t) occaDeviceMemoryAllocated(device),
@@ -159,7 +159,7 @@ void testMemoryMethods() {
   ASSERT_EQ((size_t) occaDeviceMemoryAllocated(device),
             allocatedBytes);
 
-  occaFree(device);
+  occaFree(&device);
 }
 
 void testKernelMethods() {
@@ -182,41 +182,41 @@ void testKernelMethods() {
     occa::c::kernel(addVectors).binaryFilename()
   );
 
-  occaFree(addVectors);
+  occaFree(&addVectors);
 
   addVectors = occaDeviceBuildKernel(device,
                                      addVectorsFile.c_str(),
                                      "addVectors",
                                      props);
-  occaFree(addVectors);
+  occaFree(&addVectors);
 
   // occaBuildFromString
   addVectors = occaDeviceBuildKernelFromString(device,
                                                addVectorsSource.c_str(),
                                                "addVectors",
                                                occaDefault);
-  occaFree(addVectors);
+  occaFree(&addVectors);
 
   addVectors = occaDeviceBuildKernelFromString(device,
                                                addVectorsSource.c_str(),
                                                "addVectors",
                                                props);
-  occaFree(addVectors);
+  occaFree(&addVectors);
 
   // occaBuildFromBinary
   addVectors = occaDeviceBuildKernelFromBinary(device,
                                                addVectorsBinaryFile.c_str(),
                                                "addVectors",
                                                occaDefault);
-  occaFree(addVectors);
+  occaFree(&addVectors);
 
   addVectors = occaDeviceBuildKernelFromBinary(device,
                                                addVectorsBinaryFile.c_str(),
                                                "addVectors",
                                                props);
-  occaFree(addVectors);
+  occaFree(&addVectors);
 
-  occaFree(device);
+  occaFree(&device);
 }
 
 void testStreamMethods() {
@@ -255,6 +255,6 @@ void testStreamMethods() {
   ASSERT_LE(innerEnd - innerStart,
             tagTime);
 
-  occaFree(cStream);
-  occaFree(device);
+  occaFree(&cStream);
+  occaFree(&device);
 }

@@ -72,9 +72,9 @@ void testInit() {
   ASSERT_EQ(ptr[0], 1);
   ASSERT_EQ(ptr[1], 2);
 
-  occaFree(props);
-  occaFree(subMem);
-  occaFree(mem);
+  occaFree(&props);
+  occaFree(&subMem);
+  occaFree(&mem);
 
   delete [] data;
 }
@@ -117,7 +117,7 @@ void testUvaMethods() {
   occaMemorySyncToDevice(mem, occaAllBytes, 0);
   occaMemorySyncToHost(mem, occaAllBytes, 0);
 
-  occaFree(mem);
+  occaFree(&mem);
 }
 
 void testCopyMethods() {
@@ -190,8 +190,8 @@ void testCopyMethods() {
                    props);
   ASSERT_EQ(ptr2[1], 1);
 
-  occaFree(mem2);
-  occaFree(mem4);
+  occaFree(&mem2);
+  occaFree(&mem4);
 
   // UVA memory copy
   int *o_data2 = (int*) occaUMalloc(bytes2, data2, occaDefault);
@@ -228,7 +228,7 @@ void testCopyMethods() {
   delete [] data4;
   occaFreeUvaPtr(o_data2);
   occaFreeUvaPtr(o_data4);
-  occaFree(props);
+  occaFree(&props);
 }
 
 void testInteropMethods() {
@@ -275,7 +275,7 @@ void testInteropMethods() {
                            bytes,
                            props);
 
-  occaFree(mem1);
-  occaFree(mem2);
-  occaFree(props);
+  occaFree(&mem1);
+  occaFree(&mem2);
+  occaFree(&props);
 }

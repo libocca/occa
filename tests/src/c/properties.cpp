@@ -27,7 +27,7 @@ int main(const int argc, const char **argv) {
   testKeyMiss();
   testSerialization();
 
-  occaFree(cProps);
+  occaFree(&cProps);
 
   return 0;
 }
@@ -127,7 +127,7 @@ void testTypes() {
   ASSERT_TRUE(occaJsonIsObject(propValue));
   ASSERT_TRUE(occaJsonObjectHas(propValue, "value"));
 
-  occaFree(cProps2);
+  occaFree(&cProps2);
 }
 
 void testBadType() {
@@ -175,7 +175,7 @@ void testSerialization() {
   ASSERT_EQ(props,
             props2);
 
-  occaFree(cProps2);
+  occaFree(&cProps2);
 }
 
 void testCasting() {
@@ -196,5 +196,5 @@ void testCasting() {
   occaJsonCastToObject(cProps2);
   ASSERT_TRUE(occaJsonIsObject(cProps2));
 
-  occaFree(cProps2);
+  occaFree(&cProps2);
 }

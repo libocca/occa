@@ -23,7 +23,7 @@ int main(const int argc, const char **argv) {
   testInfo();
   testRun();
 
-  occaFree(addVectors);
+  occaFree(&addVectors);
 
   return 0;
 }
@@ -92,7 +92,7 @@ void testRun() {
                     "argKernel",
                     kernelProps)
   );
-  occaFree(kernelProps);
+  occaFree(&kernelProps);
 
   // Dummy dims
   occaDim outerDims, innerDims;
