@@ -9,6 +9,10 @@ ASAN_OPTIONS+=':detect_container_overflow=0'
 
 HEADER_CHARS=80
 
+if [[ $(uname -s) == "Darwin" || "${TRAVIS_OS_NAME}" == "osx" ]]; then
+    export DYLD_LIBRARY_PATH="${OCCA_DIR}/lib:${DYLD_LIBRARY_PATH}"
+fi
+
 declare -a examples=(
   cpp/01_add_vectors
   cpp/02_background_device
@@ -82,10 +86,6 @@ for mode in $("${OCCA_DIR}/bin/occa" modes); do
 
         cd "${EXAMPLE_DIR}/${example_dir}"
         make clean; make
-
-        if [[ $(uname -s) == "Darwin" || "${TRAVIS_OS_NAME}" == "osx" ]]; then
-            install_name_tool -change "@rpath/libocca.dyld" "${OCCA_DIR}/lib/libocca.dylib" main
-        fi
 
         output=$(./main "${flags[@]}" 2>&1)
 
