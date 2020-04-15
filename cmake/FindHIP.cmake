@@ -103,10 +103,21 @@ if(UNIX AND NOT APPLE AND NOT CYGWIN)
     set(HIP_LIBRARIES "${HIP_ROOT_DIR}/lib/libhip_hcc.so")
     set(HIP_RUNTIME_DEFINE "__HIP_PLATFORM_HCC__")
   elseif(${HIP_PLATFORM} STREQUAL "nvcc")
-    enable_language(CUDA)
-    set(CUDA_USE_STATIC_CUDA_RUNTIME OFF)
+    find_package(CUDA)
+
+    #find the shared library, rather than the static that find_package returns
+    find_library(
+      CUDART_LIB
+      NAMES cudart
+      PATHS
+      ${CUDA_TOOLKIT_ROOT_DIR}
+      PATH_SUFFIXES lib64 lib
+      DOC "CUDA RT lib location"
+      )
+
+    set(HIP_INCLUDE_DIRS "${HIP_ROOT_DIR}/include;${CUDA_INCLUDE_DIRS}")
+    set(HIP_LIBRARIES "${CUDART_LIB};cuda")
     set(HIP_RUNTIME_DEFINE "__HIP_PLATFORM_NVCC__")
-    set(HIP_LIBRARIES "cudart;cuda")
   endif()
   mark_as_advanced(HIP_INCLUDE_DIRS)
   mark_as_advanced(HIP_LIBRARIES)
