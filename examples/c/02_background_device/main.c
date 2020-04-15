@@ -67,8 +67,8 @@ int main(int argc, const char **argv) {
     }
   }
 
-  occaFree(args);
-  occaFree(addVectors);
+  occaFree(&args);
+  occaFree(&addVectors);
   occaFreeUvaPtr(a);
   occaFreeUvaPtr(b);
   occaFreeUvaPtr(ab);

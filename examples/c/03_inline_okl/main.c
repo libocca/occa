@@ -69,9 +69,9 @@ int main(int argc, const char **argv) {
     }
   }
 
-  occaFree(args);
-  occaFree(props);
-  occaFree(scope);
+  occaFree(&args);
+  occaFree(&props);
+  occaFree(&scope);
   occaFreeUvaPtr(a);
   occaFreeUvaPtr(b);
   occaFreeUvaPtr(ab);

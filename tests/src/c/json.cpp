@@ -32,7 +32,7 @@ int main(const int argc, const char **argv) {
   testSerialization();
   testCasting();
 
-  occaFree(cJson);
+  occaFree(&cJson);
 
   return 0;
 }
@@ -81,7 +81,7 @@ void testTypeChecking() {
   ASSERT_TRUE(occaJsonObjectHas(cJson2, "string"));
   ASSERT_TRUE(occaJsonObjectHas(cJson2, "array"));
 
-  occaFree(cJson2);
+  occaFree(&cJson2);
 }
 
 void testTypes() {
@@ -179,7 +179,7 @@ void testTypes() {
   ASSERT_TRUE(occaJsonIsObject(propValue));
   ASSERT_TRUE(occaJsonObjectHas(propValue, "value"));
 
-  occaFree(cJson2);
+  occaFree(&cJson2);
 }
 
 void testArray() {
@@ -238,7 +238,7 @@ void testArray() {
   occaJsonArrayClear(array);
   ASSERT_EQ(occaJsonArraySize(array), 0);
 
-  occaFree(array);
+  occaFree(&array);
 }
 
 void testBadType() {
@@ -286,7 +286,7 @@ void testSerialization() {
   ASSERT_EQ(props,
             props2);
 
-  occaFree(cJson2);
+  occaFree(&cJson2);
 }
 
 void testCasting() {
@@ -307,5 +307,5 @@ void testCasting() {
   occaJsonCastToObject(cJson2);
   ASSERT_TRUE(occaJsonIsObject(cJson2));
 
-  occaFree(cJson2);
+  occaFree(&cJson2);
 }

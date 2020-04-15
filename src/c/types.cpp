@@ -767,56 +767,58 @@ OCCA_LFUNC occaType OCCA_RFUNC occaString(const char *str) {
 }
 //======================================
 
-OCCA_LFUNC void OCCA_RFUNC occaFree(occaType value) {
-  if (occaIsUndefined(value)) {
+OCCA_LFUNC void OCCA_RFUNC occaFree(occaType *value) {
+  occaType &valueRef = *value;
+
+  if (occaIsUndefined(valueRef)) {
     return;
   }
-  switch (value.type) {
+  switch (valueRef.type) {
   case occa::c::typeType::device: {
-    occa::c::device(value).free();
+    occa::c::device(valueRef).free();
     break;
   }
   case occa::c::typeType::kernel: {
-    occa::c::kernel(value).free();
+    occa::c::kernel(valueRef).free();
     break;
   }
   case occa::c::typeType::kernelBuilder: {
-    occa::c::kernelBuilder(value).free();
+    occa::c::kernelBuilder(valueRef).free();
     break;
   }
   case occa::c::typeType::memory: {
-    occa::c::memory(value).free();
+    occa::c::memory(valueRef).free();
     break;
   }
   case occa::c::typeType::stream: {
-    occa::c::stream(value).free();
+    occa::c::stream(valueRef).free();
     break;
   }
   case occa::c::typeType::streamTag: {
-    occa::c::streamTag(value).free();
+    occa::c::streamTag(valueRef).free();
     break;
   }
   case occa::c::typeType::dtype: {
-    delete &occa::c::dtype(value);
+    delete &occa::c::dtype(valueRef);
     break;
   }
   case occa::c::typeType::scope: {
-    delete &occa::c::scope(value);
+    delete &occa::c::scope(valueRef);
     break;
   }
   case occa::c::typeType::json: {
-    if (value.needsFree) {
-      delete &occa::c::json(value);
+    if (valueRef.needsFree) {
+      delete &occa::c::json(valueRef);
     }
     break;
   }
   case occa::c::typeType::properties: {
-    if (value.needsFree) {
-      delete &occa::c::properties(value);
+    if (valueRef.needsFree) {
+      delete &occa::c::properties(valueRef);
     }
     break;
   }}
-  value.magicHeader = occaUndefined.magicHeader;
+  valueRef.magicHeader = occaUndefined.magicHeader;
 }
 
 OCCA_END_EXTERN_C

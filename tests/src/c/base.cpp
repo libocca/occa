@@ -68,14 +68,14 @@ void testMemoryMethods() {
                               occaDefault);
   ASSERT_EQ(occaMemorySize(mem),
             bytes);
-  occaFree(mem);
+  occaFree(&mem);
 
   mem = occaMalloc(bytes,
                    NULL,
                    props);
   ASSERT_EQ(occaMemorySize(mem),
             bytes);
-  occaFree(mem);
+  occaFree(&mem);
 
   // umalloc
   void *ptr = occaUMalloc(bytes,
@@ -88,7 +88,7 @@ void testMemoryMethods() {
                     props);
   occaFreeUvaPtr(ptr);
 
-  occaFree(props);
+  occaFree(&props);
 }
 
 void testKernelMethods() {
@@ -111,36 +111,36 @@ void testKernelMethods() {
     occa::c::kernel(addVectors).binaryFilename()
   );
 
-  occaFree(addVectors);
+  occaFree(&addVectors);
 
   addVectors = occaBuildKernel(addVectorsFile.c_str(),
                                "addVectors",
                                props);
-  occaFree(addVectors);
+  occaFree(&addVectors);
 
   // occaBuildFromString
   addVectors = occaBuildKernelFromString(addVectorsSource.c_str(),
                                          "addVectors",
                                          occaDefault);
-  occaFree(addVectors);
+  occaFree(&addVectors);
 
   addVectors = occaBuildKernelFromString(addVectorsSource.c_str(),
                                          "addVectors",
                                          props);
-  occaFree(addVectors);
+  occaFree(&addVectors);
 
   // occaBuildFromBinary
   addVectors = occaBuildKernelFromBinary(addVectorsBinaryFile.c_str(),
                                          "addVectors",
                                          occaDefault);
-  occaFree(addVectors);
+  occaFree(&addVectors);
 
   addVectors = occaBuildKernelFromBinary(addVectorsBinaryFile.c_str(),
                                          "addVectors",
                                          props);
-  occaFree(addVectors);
+  occaFree(&addVectors);
 
-  occaFree(props);
+  occaFree(&props);
 }
 
 void testStreamMethods() {
@@ -176,5 +176,5 @@ void testStreamMethods() {
   ASSERT_LE(innerEnd - innerStart,
             tagTime);
 
-  occaFree(cStream);
+  occaFree(&cStream);
 }

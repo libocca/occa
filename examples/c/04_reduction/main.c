@@ -87,11 +87,11 @@ int main(int argc, const char **argv) {
   free(vec);
   free(blockSum);
 
-  occaFree(args);
-  occaFree(reductionProps);
-  occaFree(reduction);
-  occaFree(o_vec);
-  occaFree(o_blockSum);
+  occaFree(&args);
+  occaFree(&reductionProps);
+  occaFree(&reduction);
+  occaFree(&o_vec);
+  occaFree(&o_blockSum);
 
   return 0;
 }

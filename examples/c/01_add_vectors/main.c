@@ -105,13 +105,13 @@ int main(int argc, const char **argv) {
   free(ab);
 
   // Free device memory and occa objects
-  occaFree(args);
-  occaFree(props);
-  occaFree(addVectors);
-  occaFree(o_a);
-  occaFree(o_b);
-  occaFree(o_ab);
-  occaFree(device);
+  occaFree(&args);
+  occaFree(&props);
+  occaFree(&addVectors);
+  occaFree(&o_a);
+  occaFree(&o_b);
+  occaFree(&o_ab);
+  occaFree(&device);
 }
 
 occaJson parseArgs(int argc, const char **argv) {

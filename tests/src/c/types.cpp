@@ -18,7 +18,7 @@ void testNewOccaTypes() {
   do {                                          \
     occaType v = occa::c::newOccaType(VALUE);   \
     ASSERT_EQ(v.type, OCCA_TYPE);               \
-    occaFree(v);                                \
+    occaFree(&v);                                \
   } while (0)
 
   occaType value = occaUndefined;
@@ -46,13 +46,13 @@ void testNewOccaTypes() {
   {
     occaType v = occa::c::newOccaType(*(new occa::properties()), true);
     ASSERT_EQ(v.type, OCCA_PROPERTIES);
-    occaFree(v);
+    occaFree(&v);
   }
   {
     occa::properties props;
     occaType v = occa::c::newOccaType(props, false);
     ASSERT_EQ(v.type, OCCA_PROPERTIES);
-    occaFree(v);
+    occaFree(&v);
   }
 
   occaProperties cProps = (
@@ -63,7 +63,7 @@ void testNewOccaTypes() {
             1);
   ASSERT_EQ((int) props["b"],
             2);
-  occaFree(cProps);
+  occaFree(&cProps);
 
 #undef TEST_OCCA_TYPE
 }
