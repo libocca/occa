@@ -24,24 +24,17 @@ for test_cpp in ${tests_cpp}; do
 	  line=$(printf '%*s' ${linechars} | tr ' ' '-')
 	  echo -e "\n---[ ${test_name} ]${line}"
 
-    output=$("${test}")
+    "${test}"
 
     # Check for test failures
     if [ $? -ne 0 ]; then
         case "${test}" in
-            # TODO: Find out why these tests are failing in Travis
+            # TODO: Find out why these tests are failing in CI
             *lang/mode/metal|*lang/mode/cuda|*lang/mode/opencl)
             ;;
             *)
                 failed_tests+="  - ${test}\n";;
         esac
-    fi
-
-    # Make sure not to go over the log size
-    if [ -n "${TRAVIS}" ]; then
-	      echo -e "${output}" | head -n 100
-    else
-        echo -e "${output}"
     fi
 
     # Test output footer
