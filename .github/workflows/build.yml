@@ -1,4 +1,4 @@
-name: Build Status
+name: Build
 
 on:
   push:
