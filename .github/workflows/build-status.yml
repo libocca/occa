@@ -1,0 +1,74 @@
+name: Build Status
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  run:
+    strategy:
+      matrix:
+        include:
+          - name: (Ubuntu) gcc-8
+            os: ubuntu-18.04
+            CC: gcc-8
+            CXX: g++-8
+            OCCA_COVERAGE: 1
+
+          - name: (Ubuntu) gcc-9
+            os: ubuntu-18.04
+            CC: gcc-9
+            CXX: g++-9
+            OCCA_COVERAGE: 1
+
+          - name: (Ubuntu) clang-6
+            os: ubuntu-18.04
+            CC: clang-6.0
+            CXX: clang++-6.0
+            OCCA_COVERAGE: 0
+
+          - name: (Ubuntu) clang-9
+            os: ubuntu-18.04
+            CC: clang-9
+            CXX: clang++-9
+            OCCA_COVERAGE: 0
+
+          - name: (MacOS) gcc
+            os: macos-10.15
+            CC: gcc
+            CXX: g++
+            OCCA_COVERAGE: 1
+
+          - name: (MacOS) clang
+            os: macos-10.15
+            CC: clang
+            CXX: clang++
+            OCCA_COVERAGE: 0
+
+    runs-on: ${{ matrix.os }}
+    name: ${{ matrix.name }}
+
+    env:
+      CC: ${{ matrix.CC }}
+      CXX: ${{ matrix.CXX }}
+      OCCA_COVERAGE: ${{ matrix.OCCA_COVERAGE }}
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Compile library
+      run: make -j
+
+    - name: Compile tests
+      run: make -j tests
+
+    - name: Run unit tests
+      run: ./tests/run_tests
+
+    - name: Run examples
+      run: ./tests/run_examples
+
+    - name: Upload code coverage
+      uses: codecov/codecov-action@v1

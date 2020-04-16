@@ -9,9 +9,8 @@ ASAN_OPTIONS+=':detect_container_overflow=0'
 
 HEADER_CHARS=80
 
-if [[ $(uname -s) == "Darwin" || "${TRAVIS_OS_NAME}" == "osx" ]]; then
-    export DYLD_LIBRARY_PATH="${OCCA_DIR}/lib:${DYLD_LIBRARY_PATH}"
-fi
+export LD_LIBRARY_PATH="${OCCA_DIR}/lib:${LD_LIBRARY_PATH}"
+export DYLD_LIBRARY_PATH="${OCCA_DIR}/lib:${DYLD_LIBRARY_PATH}"
 
 declare -a examples=(
   cpp/01_add_vectors
@@ -44,23 +43,19 @@ for mode in $("${OCCA_DIR}/bin/occa" modes); do
     for example_dir in "${examples[@]}"; do
         flags=(--verbose --device "${device}")
 
-        # OpenCL throws CL_DEVICE_MAX_WORK_GROUP_SIZE
-        if [ -n "${TRAVIS}" ] && [ "${mode}" == "OpenCL" ]; then
-            continue
-        fi
-
         # Filters
         case "${example_dir}" in
             # OpenCL + Shared memory is finicky
+            # OpenCL throws CL_DEVICE_MAX_WORK_GROUP_SIZE
             cpp/04_reduction)
                 if [[ "${mode}" == OpenCL ]]; then
                     continue
                 fi;;
-            cpp/06_arrays)
+            cpp/08_arrays)
                 if [[ "${mode}" == OpenCL ]]; then
                     continue
                 fi;;
-            c/03_reduction)
+            c/04_reduction)
                 if [[ "${mode}" == OpenCL ]]; then
                     continue
                 fi;;
@@ -87,18 +82,11 @@ for mode in $("${OCCA_DIR}/bin/occa" modes); do
         cd "${EXAMPLE_DIR}/${example_dir}"
         make clean; make
 
-        output=$(./main "${flags[@]}" 2>&1)
+        ./main "${flags[@]}"
 
         # Check for example failures
         if [ $? -ne 0 ]; then
             failed_examples+="  - ${mode}: ${example_dir}\n"
-        fi
-
-        # Make sure not to go over the log size
-        if [ -n "${TRAVIS}" ]; then
-            echo -e "${output}" | head -n 100
-        else
-            echo -e "${output}"
         fi
 
         # Test output footer

@@ -24,7 +24,7 @@ ignore:
   - src/tools/runFunction.cpp
   # Exception is not tracked properly
   - src/tools/exception.cpp
-  # Modes that can't be tested with Travis
+  # Modes that can't be tested with CI
   - include/occa/modes/cuda
   - include/occa/modes/hip
   - include/occa/modes/opencl
