@@ -42,10 +42,11 @@ endif()
 
 # searches for CUDA if allowed
 if (ALLOW_CUDA)
-  set(OCCA_CUDA_ENABLED 1)
-  set(WITH_CUDA 1)
-  enable_language(CUDA)
-  set(CUDA_USE_STATIC_CUDA_RUNTIME OFF)
+  include(CUDA)
+endif()
+
+if (ALLOW_HIP)
+  include(HIP)
 endif()
 
 # searches for MPI if allowed
@@ -57,11 +58,6 @@ if (ALLOW_METAL)
   include(Metal)
 endif()
 
-if (ALLOW_HIP)
-#    set(OCCA_HIP_ENABLED 1)
-#    set(WITH_HIP 1)
-#    include(ROCm) ... not available, TODO occa/cmake/FindROCm.cmake
-endif()
 
 add_definitions(-DUSE_CMAKE)
 
