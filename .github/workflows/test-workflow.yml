@@ -1,0 +1,57 @@
+name: Test Workflow
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  run:
+    strategy:
+      matrix:
+        include:
+          - os: ubuntu-18.04
+            CC: gcc-8
+            CXX: g++-8
+            
+          - os: ubuntu-18.04
+            CC: gcc-9
+            CXX: g++-9
+            
+          - os: ubuntu-18.04
+            CC: clang-6
+            CXX: clang++-6
+            
+          - os: ubuntu-18.04
+            CC: clang-9
+            CXX: clang++-9
+            
+          - os: macos-10.15
+            CC: gcc-9
+            CXX: g++-9
+            
+          - os: macos-10.15
+            CC: clang-9
+            CXX: clang++-9
+
+    runs-on: ${{ matrix.os }}
+    
+    env:
+      CC: ${{ matrix.CC }}
+      CXX: ${{ matrix.CXX }}
+
+    steps:
+    - uses: actions/checkout@v2
+      
+    - name: Compile
+      run: make -j
+      
+    - name: Run unit tests
+      run: ./tests/run_tests
+      
+    - name: Run examples
+      run: ./tests/run_examples
+      
+    - name: Upload code coverage
+      uses: codecov/codecov-action@v1
