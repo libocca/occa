@@ -19,6 +19,15 @@ namespace occa {
     return -1;
   }
 
+  template <>
+  dim_t indexOf(const std::vector<float> &vec, const float &value);
+
+  template <>
+  dim_t indexOf(const std::vector<double> &vec, const double &value);
+
+  template <>
+  dim_t indexOf(const std::vector<long double> &vec, const long double &value);
+
   std::string join(const std::vector<std::string> &vec,
                    const std::string &delimiter);
 }

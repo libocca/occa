@@ -282,8 +282,11 @@ namespace occa {
       case primitiveType::int16_  : return (TM) value.int16_;
       case primitiveType::int32_  : return (TM) value.int32_;
       case primitiveType::int64_  : return (TM) value.int64_;
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wfloat-equal"
       case primitiveType::float_  : return (TM) value.float_;
       case primitiveType::double_ : return (TM) value.double_;
+#pragma GCC diagnostic pop
       default: OCCA_FORCE_ERROR("Type not set");
       }
       return TM();

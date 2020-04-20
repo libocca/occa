@@ -1,6 +1,7 @@
 #include <iostream>
 
 #include <occa.hpp>
+#include <occa/types/fp.hpp>
 
 class map {
 public:
@@ -92,8 +93,9 @@ int main(int argc, const char **argv) {
     std::cout << vec[i] << "^2 = " << vec2[i] << '\n';
   }
   for (int i = 0; i < entries; ++i) {
-    if (vec2[i] != (vec[i] * vec[i]))
+    if (!occa::areBitwiseEqual(vec2[i], vec[i] * vec[i])) {
       throw 1;
+    }
   }
 
   delete [] vec;

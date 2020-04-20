@@ -2,6 +2,7 @@
 
 #include <occa/lang/primitive.hpp>
 #include <occa/tools/lex.hpp>
+#include <occa/types/fp.hpp>
 
 namespace occa {
   primitive::primitive(const char *c) {
@@ -248,8 +249,8 @@ namespace occa {
     case primitiveType::uint32_ : return primitive(!p.value.uint32_);
     case primitiveType::int64_  : return primitive(!p.value.int64_);
     case primitiveType::uint64_ : return primitive(!p.value.uint64_);
-    case primitiveType::float_  : return primitive(!p.value.float_);
-    case primitiveType::double_ : return primitive(!p.value.double_);
+    case primitiveType::float_  : OCCA_FORCE_ERROR("Cannot apply operator ! to float type");   break;
+    case primitiveType::double_ : OCCA_FORCE_ERROR("Cannot apply operator ! to double type");   break;
     default: ;
     }
     return primitive();
@@ -436,8 +437,8 @@ namespace occa {
     case primitiveType::uint32_ : return primitive(a.to<uint32_t>() == b.to<uint32_t>());
     case primitiveType::int64_  : return primitive(a.to<int64_t>()  == b.to<int64_t>());
     case primitiveType::uint64_ : return primitive(a.to<uint64_t>() == b.to<uint64_t>());
-    case primitiveType::float_  : return primitive(a.to<float>()    == b.to<float>());
-    case primitiveType::double_ : return primitive(a.to<double>()   == b.to<double>());
+    case primitiveType::float_  : return primitive(areBitwiseEqual(a.value.float_, b.value.float_));
+    case primitiveType::double_ : return primitive(areBitwiseEqual(a.value.double_, b.value.double_));
     default: ;
     }
     return primitive();
@@ -462,8 +463,8 @@ namespace occa {
     case primitiveType::uint32_ : return primitive(a.to<uint32_t>() != b.to<uint32_t>());
     case primitiveType::int64_  : return primitive(a.to<int64_t>()  != b.to<int64_t>());
     case primitiveType::uint64_ : return primitive(a.to<uint64_t>() != b.to<uint64_t>());
-    case primitiveType::float_  : return primitive(a.to<float>()    != b.to<float>());
-    case primitiveType::double_ : return primitive(a.to<double>()   != b.to<double>());
+    case primitiveType::float_  : return primitive(!areBitwiseEqual(a.value.float_, b.value.float_));
+    case primitiveType::double_ : return primitive(!areBitwiseEqual(a.value.double_, b.value.double_));
     default: ;
     }
     return primitive();
@@ -519,8 +520,8 @@ namespace occa {
     case primitiveType::uint32_ : return primitive(a.to<uint32_t>() && b.to<uint32_t>());
     case primitiveType::int64_  : return primitive(a.to<int64_t>()  && b.to<int64_t>());
     case primitiveType::uint64_ : return primitive(a.to<uint64_t>() && b.to<uint64_t>());
-    case primitiveType::float_  : return primitive(a.to<float>()    && b.to<float>());
-    case primitiveType::double_ : return primitive(a.to<double>()   && b.to<double>());
+    case primitiveType::float_  : OCCA_FORCE_ERROR("Cannot apply operator && to float type");   break;
+    case primitiveType::double_ : OCCA_FORCE_ERROR("Cannot apply operator && to double type");   break;
     default: ;
     }
     return primitive();
@@ -538,8 +539,8 @@ namespace occa {
     case primitiveType::uint32_ : return primitive(a.to<uint32_t>() || b.to<uint32_t>());
     case primitiveType::int64_  : return primitive(a.to<int64_t>()  || b.to<int64_t>());
     case primitiveType::uint64_ : return primitive(a.to<uint64_t>() || b.to<uint64_t>());
-    case primitiveType::float_  : return primitive(a.to<float>()    || b.to<float>());
-    case primitiveType::double_ : return primitive(a.to<double>()   || b.to<double>());
+    case primitiveType::float_  : OCCA_FORCE_ERROR("Cannot apply operator || to float type");   break;
+    case primitiveType::double_ : OCCA_FORCE_ERROR("Cannot apply operator || to double type");   break;
     default: ;
     }
     return primitive();

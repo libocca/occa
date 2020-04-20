@@ -1,6 +1,7 @@
 #include <iostream>
 
 #include <occa.hpp>
+#include <occa/types/fp.hpp>
 
 occa::json parseArgs(int argc, const char **argv);
 
@@ -96,7 +97,7 @@ int main(int argc, const char **argv) {
     float a_i  = a[i].value;
     float b_i  = (i % 2) ? b[i / 2].y : b[i / 2].x;
     float ab_i = ab[i / 4].values[i % 4];
-    if (ab_i != (a_i + b_i)) {
+    if (!occa::areBitwiseEqual(ab_i, a_i + b_i)) {
       throw 1;
     }
   }

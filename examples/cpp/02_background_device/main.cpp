@@ -1,6 +1,7 @@
 #include <iostream>
 
 #include <occa.hpp>
+#include <occa/types/fp.hpp>
 
 occa::json parseArgs(int argc, const char **argv);
 
@@ -52,8 +53,9 @@ int main(int argc, const char **argv) {
     std::cout << i << ": " << ab[i] << '\n';
   }
   for (int i = 0; i < entries; ++i) {
-    if (ab[i] != (a[i] + b[i]))
+    if (!occa::areBitwiseEqual(ab[i], a[i] + b[i])) {
       throw 1;
+    }
   }
 
   occa::free(a);
