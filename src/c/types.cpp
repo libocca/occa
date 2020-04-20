@@ -546,6 +546,7 @@ namespace occa {
         if (value.value.ptr == NULL) {
           return occa::json(occa::json::null_);
         }
+        /* FALLTHRU */
       default:
         OCCA_FORCE_ERROR("Invalid value type");
         return occa::json();
@@ -597,6 +598,8 @@ namespace occa {
           if (mem) {
             return *(mem->dtype_);
           }
+          OCCA_FORCE_ERROR("Invalid pointer type");
+          return dtype::none;
         }
         default:
           OCCA_FORCE_ERROR("Invalid value type");
