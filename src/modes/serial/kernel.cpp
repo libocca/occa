@@ -27,11 +27,11 @@ namespace occa {
     }
 
     dim kernel::maxOuterDims() const {
-      return dim(-1,-1,-1);
+      return dim(occa::UDIM_DEFAULT, occa::UDIM_DEFAULT, occa::UDIM_DEFAULT);
     }
 
     dim kernel::maxInnerDims() const {
-      return dim(-1,-1,-1);
+      return dim(occa::UDIM_DEFAULT, occa::UDIM_DEFAULT, occa::UDIM_DEFAULT);
     }
 
     const lang::kernelMetadata_t& kernel::getMetadata() const {

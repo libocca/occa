@@ -648,7 +648,7 @@ const occaType occaDefault    = occa::c::defaultOccaType();
 const occaType occaNull       = occa::c::nullOccaType();
 const occaType occaTrue       = occa::c::newOccaType(true);
 const occaType occaFalse      = occa::c::newOccaType(false);
-const occaUDim_t occaAllBytes = -1;
+const occaUDim_t occaAllBytes = occa::UDIM_DEFAULT;
 //======================================
 
 //-----[ Known Types ]------------------

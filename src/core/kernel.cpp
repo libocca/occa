@@ -283,13 +283,13 @@ namespace occa {
   dim kernel::maxOuterDims() {
     return (modeKernel
             ? modeKernel->maxOuterDims()
-            : dim(-1, -1, -1));
+            : dim(occa::UDIM_DEFAULT, occa::UDIM_DEFAULT, occa::UDIM_DEFAULT));
   }
 
   dim kernel::maxInnerDims() {
     return (modeKernel
             ? modeKernel->maxInnerDims()
-            : dim(-1, -1, -1));
+            : dim(occa::UDIM_DEFAULT, occa::UDIM_DEFAULT, occa::UDIM_DEFAULT));
   }
 
   void kernel::pushArg(const kernelArg &arg) {
