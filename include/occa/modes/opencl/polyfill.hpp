@@ -54,6 +54,9 @@ namespace occa {
     size_t size;
   } cl_buffer_region;
 
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wunused-variable"
+
   static cl_bool CL_FALSE = false;
   static cl_bool CL_TRUE = true;
 
@@ -88,6 +91,8 @@ namespace occa {
 
   static cl_program_info CL_PROGRAM_BINARIES = 0;
   static cl_program_info CL_PROGRAM_BINARY_SIZES = 1;
+
+#pragma GCC diagnostic pop
 
   //---[ Enums ]------------------------
   enum cl_result_enum {
