@@ -76,6 +76,7 @@ int getOccaType(bool isUnsigned) {
   case 4: return isUnsigned ? OCCA_UINT32 : OCCA_INT32;
   case 8: return isUnsigned ? OCCA_UINT64 : OCCA_INT64;
   }
+  return OCCA_UNDEFINED;
 }
 
 void testCTypeWrappers() {

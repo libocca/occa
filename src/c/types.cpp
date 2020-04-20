@@ -2,17 +2,6 @@
 
 namespace occa {
   namespace c {
-    template <class TM>
-    inline occaType newOccaIntType(bool isUnsigned,
-                                   TM value) {
-      switch (sizeof(value)) {
-      case 1: return isUnsigned ? occaUInt8(value) : occaInt8(value);
-      case 2: return isUnsigned ? occaUInt16(value) : occaInt16(value);
-      case 4: return isUnsigned ? occaUInt32(value) : occaInt32(value);
-      case 8: return isUnsigned ? occaUInt64(value) : occaInt64(value);
-      }
-      OCCA_FORCE_ERROR("Unknown int type");
-    }
 
     occaType undefinedOccaType() {
       occaType oType;
@@ -323,6 +312,19 @@ namespace occa {
       oType.value.ptr = (char*) &properties;
       oType.needsFree = needsFree;
       return oType;
+    }
+
+    template <class TM>
+    inline occaType newOccaIntType(bool isUnsigned,
+                                   TM value) {
+      switch (sizeof(value)) {
+      case 1: return isUnsigned ? occaUInt8(value) : occaInt8(value);
+      case 2: return isUnsigned ? occaUInt16(value) : occaInt16(value);
+      case 4: return isUnsigned ? occaUInt32(value) : occaInt32(value);
+      case 8: return isUnsigned ? occaUInt64(value) : occaInt64(value);
+      }
+      OCCA_FORCE_ERROR("Unknown int type");
+      return nullOccaType();
     }
 
     bool isDefault(occaType value) {
