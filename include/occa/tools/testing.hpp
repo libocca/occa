@@ -189,10 +189,26 @@ namespace occa {
     bool areEqual<float, double>(const float &a, const double &b);
 
     template <>
+    bool areEqual<long double, float>(const long double &a, const float &b);
+
+    template <>
+    bool areEqual<float, long double>(const float &a, const long double &b);
+
+    template <>
     bool areEqual<double, double>(const double &a, const double &b);
+
+    template <>
+    bool areEqual<long double, double>(const long double &a, const double &b);
+
+    template <>
+    bool areEqual<double, long double>(const double &a, const long double &b);
+
+    template <>
+    bool areEqual<long double, long double>(const long double &a, const long double &b);
 
     template <>
     bool areEqual<const char*, const char*>(const char * const &a,
                                             const char * const &b);
+
   }
 }

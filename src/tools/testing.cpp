@@ -22,9 +22,39 @@ namespace occa {
     }
 
     template <>
+    bool areEqual<long double, float>(const long double &a, const float &b) {
+      const double diff = (a - b)/(std::abs(a) + std::abs(b) + 1e-50);
+      return (std::abs(diff) < 1e-8);
+    }
+
+    template <>
+    bool areEqual<float, long double>(const float &a, const long double &b) {
+      const double diff = (a - b)/(std::abs(a) + std::abs(b) + 1e-50);
+      return (std::abs(diff) < 1e-8);
+    }
+
+    template <>
     bool areEqual<double, double>(const double &a, const double &b) {
       const double diff = (a - b)/(fabs(a) + fabs(b) + 1e-50);
       return (fabs(diff) < 1e-14);
+    }
+
+    template <>
+    bool areEqual<long double, double>(const long double &a, const double &b) {
+      const double diff = (a - b)/(std::abs(a) + std::abs(b) + 1e-50);
+      return (std::abs(diff) < 1e-14);
+    }
+
+    template <>
+    bool areEqual<double, long double>(const double &a, const long double &b) {
+      const double diff = (a - b)/(std::abs(a) + std::abs(b) + 1e-50);
+      return (std::abs(diff) < 1e-14);
+    }
+
+    template <>
+    bool areEqual<long double, long double>(const long double &a, const long double &b) {
+      const double diff = (a - b)/(std::abs(a) + std::abs(b) + 1e-50);
+      return (std::abs(diff) < 1e-14);
     }
 
     template <>
