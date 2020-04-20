@@ -17,12 +17,13 @@ int main(const int argc, const char **argv) {
 }
 
 void testRmrf() {
-  ASSERT_TRUE(occa::sys::isSafeToRmrf("/a/b/c"));
-  ASSERT_TRUE(occa::sys::isSafeToRmrf("/a/b/../b/c"));
-  ASSERT_TRUE(occa::sys::isSafeToRmrf("/../../../../../a/b/c"));
-  ASSERT_TRUE(occa::sys::isSafeToRmrf("~/c"));
+  ASSERT_TRUE(occa::sys::isSafeToRmrf("/a/occa/b"));
+  ASSERT_TRUE(occa::sys::isSafeToRmrf("/a/b/../b/.occa"));
+  ASSERT_TRUE(occa::sys::isSafeToRmrf("/../../../../../occa/a/b"));
+  ASSERT_TRUE(occa::sys::isSafeToRmrf("~/c/.cache/occa"));
   ASSERT_TRUE(occa::sys::isSafeToRmrf("occa://lib"));
 
+  ASSERT_FALSE(occa::sys::isSafeToRmrf("/occa/a/.."));
   ASSERT_FALSE(occa::sys::isSafeToRmrf("/a/b/c/.."));
   ASSERT_FALSE(occa::sys::isSafeToRmrf("/a/b/c/../"));
   ASSERT_FALSE(occa::sys::isSafeToRmrf("/../../../../../a/b"));
