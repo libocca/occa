@@ -110,7 +110,7 @@ namespace occa {
 
       properties props = properties::read(filename);
       jsonArray &kernelMetadata = props["kernel/metadata"].array();
-      jsonObject &dependencyHashes = props["kernel/dependencies"].object();
+      jsonObject &dependencyHashes_ = props["kernel/dependencies"].object();
 
       kernelMetadataMap &metadataMap = metadata.kernelsMetadata;
       const int kernelCount = (int) kernelMetadata.size();
@@ -119,8 +119,8 @@ namespace occa {
         metadataMap[kernel.name] = kernel;
       }
 
-      jsonObject::iterator it = dependencyHashes.begin();
-      while (it != dependencyHashes.end()) {
+      jsonObject::iterator it = dependencyHashes_.begin();
+      while (it != dependencyHashes_.end()) {
         metadata.dependencyHashes[it->first] = hash_t::fromString(it->second);
         ++it;
       }

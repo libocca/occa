@@ -196,10 +196,10 @@ namespace occa {
         }
       }
 
-      void openclParser::addGlobalToStruct(struct_t &struct_) {
-        const int fieldCount = (int) struct_.fields.size();
+      void openclParser::addGlobalToStruct(struct_t &struct__) {
+        const int fieldCount = (int) struct__.fields.size();
         for (int i = 0; i < fieldCount; ++i) {
-          addGlobalToVariable(struct_.fields[i]);
+          addGlobalToVariable(struct__.fields[i]);
         }
       }
 
