@@ -12,7 +12,7 @@
       const bool assertIsOk = (bool) (expr);            \
       exprThrewException = false;                       \
       OCCA_ERROR(message, assertIsOk);                  \
-    } catch (occa::exception exc) {                     \
+    } catch (occa::exception& exc) {                    \
       if (exprThrewException) {                         \
         /* Print expr exception and assert exception*/  \
         std::cerr << exc << '\n';                       \
@@ -77,7 +77,7 @@
     bool threw = false;                                       \
     try {                                                     \
       source;                                                 \
-    } catch (occa::exception exc) {                           \
+    } catch (occa::exception&) {                              \
       threw = true;                                           \
     }                                                         \
     OCCA_ERROR("Assertion Failed: No occa::exception thrown", \
