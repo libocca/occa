@@ -272,9 +272,13 @@ namespace occa {
       int depth = 0;
 
       strVector path = split(expFilename, '/', '\0');
+      bool foundOcca = false;
       const int pathSize = (int) path.size();
       for (int i = 0; i < pathSize; ++i) {
         const std::string &dir = path[i];
+
+        foundOcca |= dir == "occa" || dir == ".occa";
+
         if (!dir.size() ||
             (dir == ".")) {
           continue;
@@ -286,7 +290,7 @@ namespace occa {
         }
       }
 
-      return depth > 2;
+      return depth > 1 && foundOcca;
     }
 
     int mkdir(const std::string &dir) {
