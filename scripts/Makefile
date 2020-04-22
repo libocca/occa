@@ -273,38 +273,31 @@ endif
 
 #---[ HIP ]-----------------------------
 hipEnabled = 0
-ifneq ($(OCCA_HIP_ENABLED),0)
-  ifeq ($(usingLinux),1)
-    hipIncFlags = $(call includeFlagsFor,hip/hip_runtime_api.h)
-
-    ifneq (,$(hipIncFlags))
-      hipEnabled := 1
-    endif
-  endif
+hipIncFlags = $(call includeFlagsFor,hip/hip_runtime_api.h)
+ifneq (,$(hipIncFlags))
+  HIP_PATH = ${hipIncFlags:-I%=%}/..
+  hipEnabled = 1
+endif
+ifdef OCCA_HIP_ENABLED
+  hipEnabled = $(OCCA_HIP_ENABLED)
 endif
 
 ifeq ($(hipEnabled),1)
-	hipIncFlags = $(call includeFlagsFor,hip/hip_runtime_api.h)
-
-  ifndef HIP_PATH
-    HIP_PATH = ${hipIncFlags:-I%=%}/../..
+  ifneq (,$(HIP_PATH))
+    hipPlatform = $(shell $(HIP_PATH)/bin/hipconfig --platform)
+    hipConfig = $(shell $(HIP_PATH)/bin/hipconfig --cpp_config)
+    ifeq ($(hipPlatform),nvcc)
+      linkerFlags += -lcuda -lcudart
+      hipLibFlags  = $(call libraryFlagsFor,cuda)
+      hipLibFlags += $(call libraryFlagsFor,cudart)
+    else ifeq ($(hipPlatform),hcc)
+      linkerFlags += -lhip_hcc
+      hipLibFlags = $(call libraryFlagsFor,hip_hcc)
+    endif
+    paths += $(hipConfig)
+    paths += $(hipIncFlags)
+    linkerFlags += $(hipLibFlags)
   endif
-
-  hipPlatform = $(shell $(HIP_PATH)/bin/hipconfig --platform)
-  hipConfig = $(shell $(HIP_PATH)/bin/hipconfig --cpp_config)
-
-  ifeq ($(hipPlatform),nvcc)
-    linkerFlags += -lcuda -lcudart
-    hipLibFlags  = $(call libraryFlagsFor,cuda)
-    hipLibFlags += $(call libraryFlagsFor,cudart)
-  else ifeq ($(hipPlatform),hcc)
-    linkerFlags += -lhip_hcc
-    hipLibFlags = $(call libraryFlagsFor,hip_hcc)
-  endif
-
-  paths += $(hipConfig)
-  paths += $(hipIncFlags)
-  linkerFlags += $(hipLibFlags)
 endif
 
 
