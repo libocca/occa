@@ -23,11 +23,11 @@ OCCA_LFUNC const char* OCCA_RFUNC occaJsonDump(occaJson j,
 
 
 //---[ Type checks ]--------------------
-OCCA_LFUNC int OCCA_RFUNC occaJsonIsBoolean(occaJson j);
-OCCA_LFUNC int OCCA_RFUNC occaJsonIsNumber(occaJson j);
-OCCA_LFUNC int OCCA_RFUNC occaJsonIsString(occaJson j);
-OCCA_LFUNC int OCCA_RFUNC occaJsonIsArray(occaJson j);
-OCCA_LFUNC int OCCA_RFUNC occaJsonIsObject(occaJson j);
+OCCA_LFUNC bool OCCA_RFUNC occaJsonIsBoolean(occaJson j);
+OCCA_LFUNC bool OCCA_RFUNC occaJsonIsNumber(occaJson j);
+OCCA_LFUNC bool OCCA_RFUNC occaJsonIsString(occaJson j);
+OCCA_LFUNC bool OCCA_RFUNC occaJsonIsArray(occaJson j);
+OCCA_LFUNC bool OCCA_RFUNC occaJsonIsObject(occaJson j);
 //======================================
 
 
@@ -41,7 +41,7 @@ OCCA_LFUNC void OCCA_RFUNC occaJsonCastToObject(occaJson j);
 
 
 //---[ Getters ]------------------------
-OCCA_LFUNC int OCCA_RFUNC occaJsonGetBoolean(occaJson j);
+OCCA_LFUNC bool OCCA_RFUNC occaJsonGetBoolean(occaJson j);
 OCCA_LFUNC occaType OCCA_RFUNC occaJsonGetNumber(occaJson j,
                                                  const int type);
 OCCA_LFUNC const char* OCCA_RFUNC occaJsonGetString(occaJson j);
@@ -57,8 +57,8 @@ OCCA_LFUNC void OCCA_RFUNC occaJsonObjectSet(occaJson j,
                                              const char *key,
                                              occaType value);
 
-OCCA_LFUNC int OCCA_RFUNC occaJsonObjectHas(occaJson j,
-                                            const char *key);
+OCCA_LFUNC bool OCCA_RFUNC occaJsonObjectHas(occaJson j,
+                                             const char *key);
 //======================================
 
 
