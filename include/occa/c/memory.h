@@ -6,7 +6,7 @@
 
 OCCA_START_EXTERN_C
 
-OCCA_LFUNC int OCCA_RFUNC occaMemoryIsInitialized(occaMemory memory);
+OCCA_LFUNC bool OCCA_RFUNC occaMemoryIsInitialized(occaMemory memory);
 
 OCCA_LFUNC void* OCCA_RFUNC occaMemoryPtr(occaMemory memory,
                                           occaProperties props);
@@ -22,11 +22,11 @@ OCCA_LFUNC occaMemory OCCA_RFUNC occaMemorySlice(occaMemory memory,
                                                  const occaDim_t bytes);
 
 //---[ UVA ]----------------------------
-OCCA_LFUNC int OCCA_RFUNC occaMemoryIsManaged(occaMemory memory);
+OCCA_LFUNC bool OCCA_RFUNC occaMemoryIsManaged(occaMemory memory);
 
-OCCA_LFUNC int OCCA_RFUNC occaMemoryInDevice(occaMemory memory);
+OCCA_LFUNC bool OCCA_RFUNC occaMemoryInDevice(occaMemory memory);
 
-OCCA_LFUNC int OCCA_RFUNC occaMemoryIsStale(occaMemory memory);
+OCCA_LFUNC bool OCCA_RFUNC occaMemoryIsStale(occaMemory memory);
 
 OCCA_LFUNC void OCCA_RFUNC occaMemoryStartManaging(occaMemory memory);
 

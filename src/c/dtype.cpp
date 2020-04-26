@@ -32,7 +32,7 @@ OCCA_LFUNC void OCCA_RFUNC occaDtypeRegisterType(occaDtype dtype) {
   occa::c::dtype(dtype).registerType();
 }
 
-OCCA_LFUNC int OCCA_RFUNC occaDtypeIsRegistered(occaDtype dtype) {
+OCCA_LFUNC bool OCCA_RFUNC occaDtypeIsRegistered(occaDtype dtype) {
   return occa::c::dtype(dtype).isRegistered();
 }
 
@@ -44,13 +44,13 @@ OCCA_LFUNC void OCCA_RFUNC occaDtypeAddField(occaDtype dtype,
                   occa::c::dtype(fieldType));
 }
 
-OCCA_LFUNC int OCCA_RFUNC occaDtypesAreEqual(occaDtype a,
-                                             occaDtype b) {
+OCCA_LFUNC bool OCCA_RFUNC occaDtypesAreEqual(occaDtype a,
+                                              occaDtype b) {
   return (occa::c::dtype(a) == occa::c::dtype(b));
 }
 
-OCCA_LFUNC int OCCA_RFUNC occaDtypesMatch(occaDtype a,
-                                          occaDtype b) {
+OCCA_LFUNC bool OCCA_RFUNC occaDtypesMatch(occaDtype a,
+                                           occaDtype b) {
   return occa::c::dtype(a).matches(occa::c::dtype(b));
 }
 

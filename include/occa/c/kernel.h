@@ -8,7 +8,7 @@
 
 OCCA_START_EXTERN_C
 
-OCCA_LFUNC int OCCA_RFUNC occaKernelIsInitialized(occaKernel kernel);
+OCCA_LFUNC bool OCCA_RFUNC occaKernelIsInitialized(occaKernel kernel);
 
 OCCA_LFUNC occaProperties OCCA_RFUNC occaKernelGetProperties(occaKernel kernel);
 

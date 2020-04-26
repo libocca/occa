@@ -5,7 +5,7 @@
 
 OCCA_START_EXTERN_C
 
-int OCCA_RFUNC occaKernelIsInitialized(occaKernel kernel) {
+bool OCCA_RFUNC occaKernelIsInitialized(occaKernel kernel) {
   return (int) occa::c::kernel(kernel).isInitialized();
 }
 

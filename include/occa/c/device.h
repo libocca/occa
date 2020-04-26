@@ -9,7 +9,7 @@ OCCA_START_EXTERN_C
 OCCA_LFUNC occaDevice OCCA_RFUNC occaCreateDevice(occaType info);
 OCCA_LFUNC occaDevice OCCA_RFUNC occaCreateDeviceFromString(const char *info);
 
-OCCA_LFUNC int OCCA_RFUNC occaDeviceIsInitialized(occaDevice device);
+OCCA_LFUNC bool OCCA_RFUNC occaDeviceIsInitialized(occaDevice device);
 
 OCCA_LFUNC const char* OCCA_RFUNC occaDeviceMode(occaDevice device);
 
@@ -27,7 +27,7 @@ OCCA_LFUNC occaUDim_t OCCA_RFUNC occaDeviceMemoryAllocated(occaDevice device);
 
 OCCA_LFUNC void OCCA_RFUNC occaDeviceFinish(occaDevice device);
 
-OCCA_LFUNC int OCCA_RFUNC occaDeviceHasSeparateMemorySpace(occaDevice device);
+OCCA_LFUNC bool OCCA_RFUNC occaDeviceHasSeparateMemorySpace(occaDevice device);
 
 //---[ Stream ]-------------------------
 OCCA_LFUNC occaStream OCCA_RFUNC occaDeviceCreateStream(occaDevice device,
