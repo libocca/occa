@@ -28,7 +28,7 @@ occaDevice OCCA_RFUNC occaCreateDeviceFromString(const char *info) {
   return occa::c::newOccaType(device);
 }
 
-int OCCA_RFUNC occaDeviceIsInitialized(occaDevice device) {
+bool OCCA_RFUNC occaDeviceIsInitialized(occaDevice device) {
   return (int) occa::c::device(device).isInitialized();
 }
 
@@ -68,7 +68,7 @@ void OCCA_RFUNC occaDeviceFinish(occaDevice device) {
   occa::c::device(device).finish();
 }
 
-OCCA_LFUNC int OCCA_RFUNC occaDeviceHasSeparateMemorySpace(occaDevice device) {
+OCCA_LFUNC bool OCCA_RFUNC occaDeviceHasSeparateMemorySpace(occaDevice device) {
   return (int) occa::c::device(device).hasSeparateMemorySpace();
 }
 

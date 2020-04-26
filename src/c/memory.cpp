@@ -3,7 +3,7 @@
 
 OCCA_START_EXTERN_C
 
-int OCCA_RFUNC occaMemoryIsInitialized(occaMemory memory) {
+bool OCCA_RFUNC occaMemoryIsInitialized(occaMemory memory) {
   return occa::c::memory(memory).isInitialized();
 }
 
@@ -42,15 +42,15 @@ occaMemory OCCA_RFUNC occaMemorySlice(occaMemory memory,
 }
 
 //---[ UVA ]----------------------------
-int OCCA_RFUNC occaMemoryIsManaged(occaMemory memory) {
+bool OCCA_RFUNC occaMemoryIsManaged(occaMemory memory) {
   return (int) occa::c::memory(memory).isManaged();
 }
 
-int OCCA_RFUNC occaMemoryInDevice(occaMemory memory) {
+bool OCCA_RFUNC occaMemoryInDevice(occaMemory memory) {
   return (int) occa::c::memory(memory).inDevice();
 }
 
-int OCCA_RFUNC occaMemoryIsStale(occaMemory memory) {
+bool OCCA_RFUNC occaMemoryIsStale(occaMemory memory) {
   return (int) occa::c::memory(memory).isStale();
 }
 

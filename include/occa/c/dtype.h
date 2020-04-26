@@ -20,17 +20,17 @@ OCCA_LFUNC int OCCA_RFUNC occaDtypeBytes(occaDtype dtype);
 
 OCCA_LFUNC void OCCA_RFUNC occaDtypeRegisterType(occaDtype dtype);
 
-OCCA_LFUNC int OCCA_RFUNC occaDtypeIsRegistered(occaDtype dtype);
+OCCA_LFUNC bool OCCA_RFUNC occaDtypeIsRegistered(occaDtype dtype);
 
 OCCA_LFUNC void OCCA_RFUNC occaDtypeAddField(occaDtype dtype,
                                              const char *field,
                                              occaDtype fieldType);
 
-OCCA_LFUNC int OCCA_RFUNC occaDtypesAreEqual(occaDtype a,
-                                             occaDtype b);
+OCCA_LFUNC bool OCCA_RFUNC occaDtypesAreEqual(occaDtype a,
+                                              occaDtype b);
 
-OCCA_LFUNC int OCCA_RFUNC occaDtypesMatch(occaDtype a,
-                                          occaDtype b);
+OCCA_LFUNC bool OCCA_RFUNC occaDtypesMatch(occaDtype a,
+                                           occaDtype b);
 
 OCCA_LFUNC occaDtype OCCA_RFUNC occaDtypeFromJson(occaJson json);
 OCCA_LFUNC occaDtype OCCA_RFUNC occaDtypeFromJsonString(const char *str);

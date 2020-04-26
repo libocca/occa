@@ -650,16 +650,16 @@ const occaUDim_t occaAllBytes = -1;
 //======================================
 
 //-----[ Known Types ]------------------
-OCCA_LFUNC int OCCA_RFUNC occaIsUndefined(occaType value) {
+OCCA_LFUNC bool OCCA_RFUNC occaIsUndefined(occaType value) {
   return ((value.magicHeader == OCCA_C_TYPE_UNDEFINED_HEADER) ||
           (value.magicHeader != OCCA_C_TYPE_MAGIC_HEADER));
 }
 
-OCCA_LFUNC int OCCA_RFUNC occaIsNull(occaType value) {
+OCCA_LFUNC bool OCCA_RFUNC occaIsNull(occaType value) {
   return (value.type == occa::c::typeType::null_);
 }
 
-OCCA_LFUNC int OCCA_RFUNC occaIsDefault(occaType value) {
+OCCA_LFUNC bool OCCA_RFUNC occaIsDefault(occaType value) {
   return (value.type == occa::c::typeType::default_);
 }
 

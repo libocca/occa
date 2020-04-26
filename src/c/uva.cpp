@@ -4,7 +4,7 @@
 
 OCCA_START_EXTERN_C
 
-OCCA_LFUNC int OCCA_RFUNC occaIsManaged(void *ptr) {
+OCCA_LFUNC bool OCCA_RFUNC occaIsManaged(void *ptr) {
   return occa::isManaged(ptr);
 }
 
@@ -26,7 +26,7 @@ OCCA_LFUNC void OCCA_RFUNC occaSyncToHost(void *ptr,
   occa::syncToHost(ptr, bytes);
 }
 
-OCCA_LFUNC int OCCA_RFUNC occaNeedsSync(void *ptr) {
+OCCA_LFUNC bool OCCA_RFUNC occaNeedsSync(void *ptr) {
   return occa::needsSync(ptr);
 }
 
