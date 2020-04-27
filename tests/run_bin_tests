@@ -10,7 +10,7 @@ function verbose_run {
     "$@"
 }
 
-verbose_run "${BIN_OCCA}" autocomplete
+verbose_run "${BIN_OCCA}" autocomplete bash
 verbose_run "${BIN_OCCA}" clear
 verbose_run "${BIN_OCCA}" compile --help
 verbose_run "${BIN_OCCA}" env
