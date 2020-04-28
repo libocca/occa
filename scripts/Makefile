@@ -230,13 +230,11 @@ endif
 #---[ OpenMP ]--------------------------
 ifdef OCCA_OPENMP_ENABLED
   openmpEnabled  = $(OCCA_OPENMP_ENABLED)
-  fOpenmpEnabled = $(OCCA_OPENMP_ENABLED)
 else
   openmpEnabled  = $(call compilerSupportsOpenMP)
-
-  ifeq ($(openmpEnabled),1)
-    flags += $(call compilerOpenMPFlag)
-  endif
+endif
+ifeq ($(openmpEnabled),1)
+  flags += $(call compilerOpenMPFlag)
 endif
 
 
