@@ -114,7 +114,7 @@ $(COMPILED_DEFINES_CHANGED):
 #  ---[ libocca ]-------------
 $(libPath)/libocca.$(soExt):$(objects) $(headers) $(COMPILED_DEFINES)
 	mkdir -p $(libPath)
-	$(compiler) $(compilerFlags) $(sharedFlag) $(pthreadFlag) $(soNameFlag) -o $(libPath)/libocca.$(soExt) $(flags) $(objects) $(paths) $(filter-out -locca, $(linkerFlags))
+	$(compiler) $(compilerFlags) $(sharedFlag) $(pthreadFlag) $(soNameFlag) -o $(libPath)/libocca.$(soExt) $(flags) $(objects) $(paths) $(linkerFlags)
 
 $(binPath)/occa:$(OCCA_DIR)/bin/occa.cpp $(libPath)/libocca.$(soExt) $(COMPILED_DEFINES_CHANGED)
 	@mkdir -p $(binPath)
