@@ -122,12 +122,17 @@ linkerFlags = $(LDFLAGS)
 
 
 #---[ Paths/Flags ]-------------------------------
-paths = -I$(OCCA_DIR)/include
+# OCCA (global) include and library paths
+paths  = -I$(OCCA_DIR)/include
+paths += -L$(OCCA_DIR)/lib
+
+# Extra (user-supplied) include and library paths
 paths += $(foreach path, $(subst :, ,$(OCCA_INCLUDE_PATH)), -I$(path))
 paths += $(foreach path, $(subst :, ,$(OCCA_LIBRARY_PATH)), -L$(path))
 
-ifneq (,$(wildcard ./$(incPath)/*))
-  paths += -I./$(incPath)
+# Project (local) include path
+ifneq (,$(strip $(wildcard $(incPath)/*)))
+  paths += -I$(incPath)
 endif
 
 linkerFlags += -locca
