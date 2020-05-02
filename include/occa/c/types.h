@@ -91,6 +91,8 @@ extern const int OCCA_PROPERTIES;
 extern const occaType occaNull;
 extern const occaType occaUndefined;
 extern const occaType occaDefault;
+extern const occaType occaTrue;
+extern const occaType occaFalse;
 extern const occaUDim_t occaAllBytes;
 //======================================
 

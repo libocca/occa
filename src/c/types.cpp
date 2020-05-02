@@ -646,6 +646,8 @@ const int OCCA_PROPERTIES    = occa::c::typeType::properties;
 const occaType occaUndefined  = occa::c::undefinedOccaType();
 const occaType occaDefault    = occa::c::defaultOccaType();
 const occaType occaNull       = occa::c::nullOccaType();
+const occaType occaTrue       = occa::c::newOccaType(true);
+const occaType occaFalse      = occa::c::newOccaType(false);
 const occaUDim_t occaAllBytes = -1;
 //======================================
 
