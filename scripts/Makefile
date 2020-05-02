@@ -23,17 +23,17 @@ debugEnabled = 0
 checkEnabled = 1
 
 ifeq ($(OCCA_DEVELOPER),1)
- ifeq ($(DEBUG),0)
+  ifeq ($(DEBUG),0)
     debugEnabled = 0
- else
+  else
     debugEnabled = 1
- endif
+  endif
 else
- ifeq ($(DEBUG),1)
+  ifeq ($(DEBUG),1)
     debugEnabled = 1
- else
+  else
     debugEnabled = 0
- endif
+  endif
 endif
 
 flags =
@@ -193,7 +193,7 @@ ifeq ($(usingLinux),1)
 
 else ifeq ($(usingMacOS),1)
 
-	OCCA_OS := OCCA_MACOS_OS
+  OCCA_OS := OCCA_MACOS_OS
   flags += -Wno-deprecated-declarations
   linkerFlags += -framework accelerate -framework CoreServices
   soNameFlag = -Wl,-install_name,@rpath/libocca.dylib
@@ -203,7 +203,7 @@ else ifeq ($(usingWindows),1)
 
   ifeq ($(usingWinux),0)
     OCCA_OS := OCCA_WINDOWS_OS
-	  OCCA_USING_VS := 1
+    OCCA_USING_VS := 1
   else
     OCCA_OS := OCCA_WINDOWS_OS
   endif

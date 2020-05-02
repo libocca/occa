@@ -30,9 +30,9 @@ paths := $(filter-out -L$(OCCA_DIR)/lib,$(paths))
 linkerFlags := $(filter-out -locca,$(linkerFlags))
 
 ifeq (${PREFIX},)
-	OCCA_BUILD_DIR := $(OCCA_DIR)
+  OCCA_BUILD_DIR := $(OCCA_DIR)
 else
-	OCCA_BUILD_DIR := ${PREFIX}
+  OCCA_BUILD_DIR := ${PREFIX}
 endif
 #=================================================
 
@@ -63,8 +63,8 @@ objects = $(call srcToObject,$(sources))
 # Only compile Objective-C++ if Metal is enabled
 ifeq ($(metalEnabled),1)
   objcSrcToObject = $(subst $(PROJ_DIR)/src,$(PROJ_DIR)/obj,$(1:.mm=.o))
-	objcSources = $(realpath $(shell find $(PROJ_DIR)/src -type f -name '*.mm'))
-	objects += $(call objcSrcToObject,$(objcSources))
+  objcSources = $(realpath $(shell find $(PROJ_DIR)/src -type f -name '*.mm'))
+  objects += $(call objcSrcToObject,$(objcSources))
 endif
 
 outputs = $(libPath)/libocca.$(soExt) $(binPath)/occa
@@ -93,7 +93,7 @@ MAKE_COMPILED_DEFINES := $(shell cat "$(OCCA_DIR)/scripts/compiledDefinesTemplat
                                       s,@@OCCA_OPENCL_ENABLED@@,$(OCCA_OPENCL_ENABLED),g;\
                                       s,@@OCCA_METAL_ENABLED@@,$(OCCA_METAL_ENABLED),g;\
                                       s,@@OCCA_BUILD_DIR@@,$(OCCA_BUILD_DIR),g;"\
-																	> "$(NEW_COMPILED_DEFINES)")
+                                      > "$(NEW_COMPILED_DEFINES)")
 
 MAKE_COMPILED_DEFINES := $(shell \
  [ ! -f "$(COMPILED_DEFINES)" -o -n "$(shell diff -q $(COMPILED_DEFINES) $(NEW_COMPILED_DEFINES))" ] \
