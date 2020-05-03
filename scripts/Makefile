@@ -170,6 +170,16 @@ cpp11Flags   = $(call compilerCpp11Flags)
 picFlag      = $(call compilerPicFlag)
 sharedFlag   = $(call compilerSharedFlag)
 pthreadFlag  = $(call compilerPthreadFlag)
+
+# Workaround for Continuous Integration tests on Ubuntu using GCC 8 and 9.
+ifdef CI
+  ifneq (,$(findstring $(GITHUB_WORKFLOW),'(Ubuntu) gcc-8'-'(Ubuntu) gcc-9'))
+    releaseFlags := $(filter-out -march=native,$(releaseFlags))
+  endif
+  # DEBUG
+  $(info 'GCC w/o -march=native: ' $(shell g++               -Q --help=target | egrep -- '-march=|-mtune'))
+  $(info 'GCC w/  -march=native: ' $(shell g++ -march=native -Q --help=target | egrep -- '-march=|-mtune'))
+endif
 #=================================================
 
 
