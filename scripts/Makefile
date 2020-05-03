@@ -173,17 +173,10 @@ pthreadFlag  = $(call compilerPthreadFlag)
 
 # Workaround for GitHub Actions CI tests on Ubuntu using GCC 8 and 9.
 # https://help.github.com/en/actions/configuring-and-managing-workflows/using-environment-variables
-$(info GITHUB_ACTIONS  = $(GITHUB_ACTIONS))
-$(info GITHUB_ACTION   = $(GITHUB_ACTION))
-$(info GITHUB_WORKFLOW = $(GITHUB_WORKFLOW))
-$(info GITHUB_RUN_ID   = $(GITHUB_RUN_ID))
 ifdef GITHUB_ACTIONS
-  ifneq (,$(findstring $(GITHUB_WORKFLOW),'(Ubuntu) gcc-8'-'(Ubuntu) gcc-9'))
+  ifeq ($(OCCA_CI_FIX_GCC_FLAGS),1)
     releaseFlags := $(filter-out -march=native,$(releaseFlags))
   endif
-  # DEBUG
-  $(info 'GCC w/o -march=native: ' $(shell g++               -Q --help=target | egrep -- '-march=|-mtune'))
-  $(info 'GCC w/  -march=native: ' $(shell g++ -march=native -Q --help=target | egrep -- '-march=|-mtune'))
 endif
 #=================================================
 
