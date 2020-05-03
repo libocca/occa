@@ -150,6 +150,7 @@ endif
 libraryFlagsFor = $(shell . $(OCCA_DIR)/include/occa/scripts/shellTools.sh; libraryFlags "$1")
 includeFlagsFor = $(shell . $(OCCA_DIR)/include/occa/scripts/shellTools.sh; headerFlags  "$1")
 
+compilerVendor       = $(shell . $(OCCA_DIR)/include/occa/scripts/shellTools.sh; compilerVendor       "$(compiler)")
 compilerReleaseFlags = $(shell . $(OCCA_DIR)/include/occa/scripts/shellTools.sh; compilerReleaseFlags "$(compiler)")
 compilerDebugFlags   = $(shell . $(OCCA_DIR)/include/occa/scripts/shellTools.sh; compilerDebugFlags   "$(compiler)")
 compilerCpp11Flags   = $(shell . $(OCCA_DIR)/include/occa/scripts/shellTools.sh; compilerCpp11Flags   "$(compiler)")
@@ -164,6 +165,7 @@ compilerOpenMPFlag     = $(shell . $(OCCA_DIR)/include/occa/scripts/shellTools.s
 
 
 #---[ Compiler Info ]-----------------------------
+vendor       = $(call compilerVendor)
 debugFlags   = $(call compilerDebugFlags)
 releaseFlags = $(call compilerReleaseFlags)
 cpp11Flags   = $(call compilerCpp11Flags)
