@@ -171,8 +171,13 @@ picFlag      = $(call compilerPicFlag)
 sharedFlag   = $(call compilerSharedFlag)
 pthreadFlag  = $(call compilerPthreadFlag)
 
-# Workaround for Continuous Integration tests on Ubuntu using GCC 8 and 9.
-ifdef CI
+# Workaround for GitHub Actions CI tests on Ubuntu using GCC 8 and 9.
+# https://help.github.com/en/actions/configuring-and-managing-workflows/using-environment-variables
+$(info GITHUB_ACTIONS  = $(GITHUB_ACTIONS))
+$(info GITHUB_ACTION   = $(GITHUB_ACTION))
+$(info GITHUB_WORKFLOW = $(GITHUB_WORKFLOW))
+$(info GITHUB_RUN_ID   = $(GITHUB_RUN_ID))
+ifdef GITHUB_ACTIONS
   ifneq (,$(findstring $(GITHUB_WORKFLOW),'(Ubuntu) gcc-8'-'(Ubuntu) gcc-9'))
     releaseFlags := $(filter-out -march=native,$(releaseFlags))
   endif
