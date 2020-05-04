@@ -35,10 +35,10 @@ jobs:
             CXX: clang++-9
             OCCA_COVERAGE: 0
 
-          - name: (MacOS) gcc
+          - name: (MacOS) gcc-9
             os: macos-10.15
-            CC: gcc
-            CXX: g++
+            CC: gcc-9
+            CXX: g++-9
             OCCA_COVERAGE: 1
 
           - name: (MacOS) clang
@@ -57,6 +57,9 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
+
+    - name: Compiler info
+      run: make -j info
 
     - name: Compile library
       run: make -j
