@@ -172,6 +172,15 @@ cpp11Flags   = $(call compilerCpp11Flags)
 picFlag      = $(call compilerPicFlag)
 sharedFlag   = $(call compilerSharedFlag)
 pthreadFlag  = $(call compilerPthreadFlag)
+
+# Workaround for GitHub Actions CI tests on Ubuntu using GCC.
+ifdef GITHUB_ACTIONS
+  ifeq ($(usingLinux),1)
+    ifeq ($(vendor),GCC)
+      releaseFlags := $(filter-out -march=native,$(releaseFlags))
+    endif
+  endif
+endif
 #=================================================
 
 
