@@ -195,6 +195,7 @@ info:
 	$(info LDFLAGS        = $(or $(LDFLAGS),(empty)))
 	$(info --------------------------------)
 	$(info compiler       = $(value compiler))
+	$(info vendor         = $(vendor))
 	$(info compilerFlags  = $(compilerFlags))
 	$(info flags          = $(flags))
 	$(info paths          = $(paths))

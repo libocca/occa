@@ -58,6 +58,9 @@ jobs:
     steps:
     - uses: actions/checkout@v2
 
+    - name: Compiler info
+      run: make -j info
+
     - name: Compile library
       run: make -j
 
