@@ -18,23 +18,37 @@ fSoNameFlag = $(subst libocca,libocca_fortran,$(soNameFlag))
 
 #---[ Source/Object files ]-----------------------
 #  ---[ libocca_fortran ]-------------
-#  Fortran source files (ordered to account for inter-module dependencies)
-fSources = $(srcPath)/fortran/fc_string_m.f90 \
-           $(srcPath)/fortran/occa_typedefs_m.f90 \
-           $(srcPath)/fortran/occa_types_m.f90 \
-           $(srcPath)/fortran/occa_base_m.f90 \
-           $(srcPath)/fortran/occa_dtype_m.f90 \
-           $(srcPath)/fortran/occa_properties_m.f90 \
-           $(srcPath)/fortran/occa_device_m.f90 \
-           $(srcPath)/fortran/occa_memory_m.f90 \
-           $(srcPath)/fortran/occa_kernel_m.f90 \
-           $(srcPath)/fortran/occa_kernelBuilder_m.f90 \
-           $(srcPath)/fortran/occa_uva_m.f90 \
-           $(srcPath)/fortran/occa_scope_m.f90 \
-           $(srcPath)/fortran/occa_json_m.f90 \
-           $(srcPath)/fortran/occa_m.f90
+#  Fortran source files
+fSources = $(realpath $(shell find $(srcPath)/fortran -type f -name '*.f90'))
 fSrcToObject = $(subst $(srcPath),$(objPath),$(1:.f90=.o))
 fObjects = $(call fSrcToObject,$(fSources))
+
+#  Fortran module dependencies
+fObjPath = $(objPath)/fortran
+$(fObjPath)/occa_types_m.o:         $(fObjPath)/occa_typedefs_m.o
+$(fObjPath)/occa_base_m.o:          $(fObjPath)/occa_types_m.o
+$(fObjPath)/occa_dtype_m.o:         $(fObjPath)/occa_types_m.o
+$(fObjPath)/occa_properties_m.o:    $(fObjPath)/occa_types_m.o
+$(fObjPath)/occa_device_m.o:        $(fObjPath)/occa_types_m.o
+$(fObjPath)/occa_memory_m.o:        $(fObjPath)/occa_types_m.o
+$(fObjPath)/occa_kernel_m.o:        $(fObjPath)/occa_types_m.o
+$(fObjPath)/occa_kernelBuilder_m.o: $(fObjPath)/occa_types_m.o
+$(fObjPath)/occa_uva_m.o:           $(fObjPath)/occa_types_m.o
+$(fObjPath)/occa_scope_m.o:         $(fObjPath)/occa_types_m.o
+$(fObjPath)/occa_json_m.o:          $(fObjPath)/occa_types_m.o
+$(fObjPath)/occa_m.o:               $(fObjPath)/fc_string_m.o \
+                                    $(fObjPath)/occa_typedefs_m.o \
+                                    $(fObjPath)/occa_types_m.o \
+                                    $(fObjPath)/occa_base_m.o \
+                                    $(fObjPath)/occa_dtype_m.o \
+                                    $(fObjPath)/occa_properties_m.o \
+                                    $(fObjPath)/occa_device_m.o \
+                                    $(fObjPath)/occa_memory_m.o \
+                                    $(fObjPath)/occa_kernel_m.o \
+                                    $(fObjPath)/occa_kernelBuilder_m.o \
+                                    $(fObjPath)/occa_uva_m.o \
+                                    $(fObjPath)/occa_scope_m.o \
+                                    $(fObjPath)/occa_json_m.o
 #  ===================================
 
 #  ---[ Fortran tests ]---------------
