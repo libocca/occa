@@ -20,7 +20,7 @@ module occa_typedefs_m
     integer(occaUDim_t) :: x, y, z
   end type occaDim
 
-  type, private, bind(C) :: occaUnion
+  type, bind(C) :: occaUnion
     private
     ! Use the largest data member in the C `union`.
     integer(C_int64_t) :: data
