@@ -57,6 +57,7 @@ jobs:
     env:
       CC: ${{ matrix.CC }}
       CXX: ${{ matrix.CXX }}
+      FC: ${{ matrix.FC }}
       OCCA_COVERAGE: ${{ matrix.OCCA_COVERAGE }}
       OCCA_FORTRAN_ENABLED: ${{ matrix.OCCA_FORTRAN_ENABLED }}
 
