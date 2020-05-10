@@ -1,8 +1,7 @@
 #!/bin/bash
 
 TEST_DIR=$(dirname "$0")
-TEST_SRC_DIR=$(dirname "$0")/src
-TEST_BIN_DIR=$(dirname "$0")/bin
+TEST_BIN_DIR=${TEST_DIR}/bin
 
 export ASAN_OPTIONS
 ASAN_OPTIONS+=':protect_shadow_gap=0'
@@ -10,19 +9,16 @@ ASAN_OPTIONS+=':detect_container_overflow=0'
 
 HEADER_CHARS=80
 
-tests_cpp=$(find "${TEST_SRC_DIR}" -type f -name '*.cpp')
+tests=$(find "${TEST_BIN_DIR}" -type f -executable)
 failed_tests=""
 
-for test_cpp in ${tests_cpp}; do
-    test="${test_cpp/${TEST_SRC_DIR}/${TEST_BIN_DIR}}"
-    test="${test/\.cpp/}"
-
+for test in ${tests[@]}; do
     # Test output header
-    test_name="${test_cpp/${TEST_SRC_DIR}\//}"
+    test_name="${test/${TEST_BIN_DIR}\//}"
     chars=$(echo "${test_name}" | wc -c)
     linechars=$((${HEADER_CHARS} - ${chars} - 6))
-	  line=$(printf '%*s' ${linechars} | tr ' ' '-')
-	  echo -e "\n---[ ${test_name} ]${line}"
+    line=$(printf '%*s' ${linechars} | tr ' ' '-')
+    echo -e "\n---[ ${test_name} ]${line}"
 
     "${test}"
 
@@ -38,7 +34,7 @@ for test_cpp in ${tests_cpp}; do
     fi
 
     # Test output footer
-	  printf '%*s\n' ${HEADER_CHARS} | tr ' ' '='
+    printf '%*s\n' ${HEADER_CHARS} | tr ' ' '='
 done
 
 if [[ "${failed_tests}" != "" ]]; then

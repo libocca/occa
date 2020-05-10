@@ -1,0 +1,44 @@
+#---[ Paths/Flags ]-------------------------------
+# OCCA (global) library path￼
+fPaths = -L$(OCCA_DIR)/lib
+
+# Extra (user-supplied) include and library paths
+fPaths += $(foreach path, $(subst :, ,$(OCCA_INCLUDE_PATH)), -I$(path))
+fPaths += $(foreach path, $(subst :, ,$(OCCA_LIBRARY_PATH)), -L$(path))
+
+# OCCA (global) Fortran module path - add as include path to allow for
+#   specifying a local project module path)
+fPaths += -I$(subst $(PROJ_DIR),$(OCCA_DIR),$(modPath))
+
+fLinkerFlags += $(fCppFlag) -locca -locca_fortran
+
+fSoNameFlag = $(subst libocca,libocca_fortran,$(soNameFlag))
+#=================================================
+
+
+#---[ Source/Object files ]-----------------------
+#  ---[ libocca_fortran ]-------------
+#  Fortran source files (ordered to account for inter-module dependencies)
+fSources = $(srcPath)/fortran/fc_string_m.f90 \
+           $(srcPath)/fortran/occa_typedefs_m.f90 \
+           $(srcPath)/fortran/occa_types_m.f90 \
+           $(srcPath)/fortran/occa_base_m.f90 \
+           $(srcPath)/fortran/occa_dtype_m.f90 \
+           $(srcPath)/fortran/occa_properties_m.f90 \
+           $(srcPath)/fortran/occa_device_m.f90 \
+           $(srcPath)/fortran/occa_memory_m.f90 \
+           $(srcPath)/fortran/occa_kernel_m.f90 \
+           $(srcPath)/fortran/occa_kernelBuilder_m.f90 \
+           $(srcPath)/fortran/occa_uva_m.f90 \
+           $(srcPath)/fortran/occa_scope_m.f90 \
+           $(srcPath)/fortran/occa_json_m.f90 \
+           $(srcPath)/fortran/occa_m.f90
+fSrcToObject = $(subst $(srcPath),$(objPath),$(1:.f90=.o))
+fObjects = $(call fSrcToObject,$(fSources))
+#  ===================================
+
+#  ---[ Fortran tests ]---------------
+fTestSources = $(realpath $(shell find $(PROJ_DIR)/tests/src -type f -name '*.f90'))
+fTests       = $(subst $(testPath)/src,$(testPath)/bin,$(fTestSources:.f90=))
+#  ===================================
+#=================================================

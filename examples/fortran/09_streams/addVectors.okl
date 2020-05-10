@@ -1,0 +1,8 @@
+@kernel void addVectors(const int entries,
+                        const float *a,
+                        const float *b,
+                        float *ab) {
+  for (int i = 0; i < entries; ++i; @tile(16, @outer, @inner)) {
+    ab[i] = a[i] + b[i];
+  }
+}

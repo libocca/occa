@@ -12,23 +12,44 @@ HEADER_CHARS=80
 export LD_LIBRARY_PATH="${OCCA_DIR}/lib:${LD_LIBRARY_PATH}"
 export DYLD_LIBRARY_PATH="${OCCA_DIR}/lib:${DYLD_LIBRARY_PATH}"
 
-declare -a examples=(
-  cpp/01_add_vectors
-  cpp/02_background_device
-  cpp/03_inline_okl
-  cpp/04_reduction
-  cpp/05_building_kernels
-  cpp/06_unified_memory
-  cpp/07_dtypes
-  cpp/08_arrays
-  cpp/09_streams
-  cpp/11_native_cpp_kernels
-  cpp/12_native_c_kernels
-  c/01_add_vectors
-  c/02_background_device
-  c/03_inline_okl
-  c/04_reduction
-)
+# Set default to running the C++ and C examples only
+CPP_EXAMPLES=${CPP_EXAMPLES:-1}
+C_EXAMPLES=${C_EXAMPLES:-1}
+FORTRAN_EXAMPLES=${FORTRAN_EXAMPLES:-0}
+
+declare -a examples=()
+if [[ $CPP_EXAMPLES -eq 1 ]]; then
+  examples+=(
+    cpp/01_add_vectors
+    cpp/02_background_device
+    cpp/03_inline_okl
+    cpp/04_reduction
+    cpp/05_building_kernels
+    cpp/06_unified_memory
+    cpp/07_dtypes
+    cpp/08_arrays
+    cpp/09_streams
+    cpp/11_native_cpp_kernels
+    cpp/12_native_c_kernels
+    )
+fi
+if [[ $C_EXAMPLES -eq 1 ]]; then
+  examples+=(
+    c/01_add_vectors
+    c/02_background_device
+    c/03_inline_okl
+    c/04_reduction
+  )
+fi
+if [[ $FORTRAN_EXAMPLES -eq 1 ]]; then
+  examples+=(
+    fortran/01_add_vectors
+    fortran/02_background_device
+    fortran/03_static_compilation
+    fortran/04_reduction
+    fortran/09_streams
+  )
+fi
 
 failed_examples=""
 for mode in $("${OCCA_DIR}/bin/occa" modes); do
@@ -37,7 +58,7 @@ for mode in $("${OCCA_DIR}/bin/occa" modes); do
         OpenMP) device="mode: 'OpenMP'";;
         CUDA)   device="mode: 'CUDA', device_id: 0";;
         OpenCL) device="mode: 'OpenCL', platform_id: 0, device_id: 0";;
-        Metal) device="mode: 'Metal', device_id: 0";;
+        Metal)  device="mode: 'Metal', device_id: 0";;
     esac
 
     for example_dir in "${examples[@]}"; do
@@ -71,13 +92,19 @@ for mode in $("${OCCA_DIR}/bin/occa" modes); do
                 fi
                 flags=(--verbose)
                 ;;
+            fortran/09_streams)
+                if [[ "${mode}" != Serial ]]; then
+                    continue
+                fi
+                flags=(--verbose)
+                ;;
         esac
 
         banner="(${mode}) ${example_dir}"
         chars=$(echo "${banner}" | wc -c)
         linechars=$((${HEADER_CHARS} - ${chars} - 6))
-	      line=$(printf '%*s' ${linechars} | tr ' ' '-')
-	      echo -e "\n---[ ${banner} ]${line}"
+        line=$(printf '%*s' ${linechars} | tr ' ' '-')
+        echo -e "\n---[ ${banner} ]${line}"
 
         cd "${EXAMPLE_DIR}/${example_dir}"
         make clean; make
@@ -90,7 +117,7 @@ for mode in $("${OCCA_DIR}/bin/occa" modes); do
         fi
 
         # Test output footer
-	      printf '%*s\n' ${HEADER_CHARS} | tr ' ' '='
+        printf '%*s\n' ${HEADER_CHARS} | tr ' ' '='
     done
 done
 
