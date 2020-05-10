@@ -212,122 +212,8 @@ function headerFlags {
 
 
 #---[ Compiler Information ]------------
-function getPath {
-    echo "${1%/*}"
-}
-
-function stripPath {
-    echo "${1##*/}"
-}
-
-function resolveRelativePath {
-    local from="$1"
-    local to="$2"
-
-    if [[ "$to" == /* ]]; then
-        echo "$to"
-    else
-        echo $(getPath "$from")/"$to"
-    fi
-}
-
-function manualReadlink {
-    if [[ $(command -v readlink) == "" ]]; then
-        pushd `dirname "$1"` > /dev/null
-        SCRIPTPATH=`pwd -P`
-        popd > /dev/null
-    else
-        case "$(uname)" in
-            Darwin) readlink    "$1";;
-            *)      readlink -f "$1";;
-        esac
-    fi
-}
-
-function manualWhich {
-    local input="$1"
-
-    local typeOutput=$(type "$input" 2> /dev/null)
-
-    if [[ $typeOutput == *" is hashed "* ]]; then
-        local mWhich=$(type "$input" 2> /dev/null | sed "s/.*(\(.*\)).*/\1/g")
-    else
-        local mWhich=$(type "$input" 2> /dev/null | sed "s/.* is \(.*\)/\1/g")
-    fi
-
-    if [ ! -z "$mWhich" ]; then
-        echo "$mWhich"
-    else
-        echo "$input"
-    fi
-}
-
-function realCommand {
-    local a=$(manualWhich "$1")
-    local b
-
-    case "$(uname)" in
-        Darwin) b="$(manualReadlink $a)";;
-        *)      b="$(manualReadlink $a)";;
-    esac
-
-    if [ -z "$b" ]; then
-        echo "$a"
-        return
-    fi
-
-    while [ "$a" != "$b" ]; do
-        b=$(resolveRelativePath "$a" "$b")
-        a=$(manualWhich "$b")
-
-        case "$(uname)" in
-            Darwin) b="$(manualReadlink $a)";;
-            *)      b="$(manualReadlink $a)";;
-        esac
-
-        if [ -z "$b" ]; then
-            echo "$a"
-            return
-        fi
-    done
-
-    echo "$a"
-}
-
-function unaliasCommand {
-    typeOutput=$(type "$1" 2> /dev/null)
-
-    aliasedTo=$(echo "$typeOutput" | grep -m 1 "$1 is aliased to" | sed "s/[^\`]*\`\([^ \t']*\)[ \t']/\1/g")
-
-    if [ ! -z "$aliasedTo" ]; then
-        echo "$aliasedTo"
-        return
-    fi
-
-    echo "$1"
-}
-
-function compilerName {
-    local chosenCompiler="$1"
-    local realCompiler=$(realCommand "$chosenCompiler")
-    local unaliasedCompiler=$(unaliasCommand "$realCompiler")
-    local strippedCompiler=$(stripPath "$unaliasedCompiler")
-    echo "$strippedCompiler"
-}
-
 function compilerVendor {
-    local chosenCompiler="$1"
-    local compiler=$(compilerName "$1")
-
-    # Fortran Compilers
-    case "$compiler" in
-        gfortran*)  echo GCC      ; return;;
-        ifort*)     echo INTEL    ; return;;
-        ftn*)       echo CRAY     ; return;;
-        xlf*)       echo IBM      ; return;;
-        pgfortran*) echo PGI      ; return;;
-        pathf9*)    echo PATHSCALE; return;;
-    esac
+    local compiler="$1"
 
     local b_GNU=0
     local b_LLVM=1
@@ -342,7 +228,7 @@ function compilerVendor {
     local testFilename="${SCRIPTS_DIR}/tests/compiler.cpp"
     local binaryFilename="${SCRIPTS_DIR}/tests/compiler"
 
-    eval "${chosenCompiler}" "${testFilename}" -o "${binaryFilename}" > /dev/null 2>&1
+    eval "${compiler}" "${testFilename}" -o "${binaryFilename}" > /dev/null 2>&1
     eval "${binaryFilename}"
     bit="$?"
 
@@ -381,13 +267,13 @@ function compilerReleaseFlags {
     local vendor=$(compilerVendor "$1")
 
     case "$vendor" in
-        GCC|LLVM)   echo " -O3 -march=native -D __extern_always_inline=inline" ;;
-        INTEL)      echo " -O3 -xHost"                                         ;;
-        CRAY)       echo " -O3 -h intrinsics -fast"                            ;;
-        IBM)        echo " -O3 -qhot=simd"                                     ;;
-        PGI)        echo " -O3 -fast -Mipa=fast,inline -Msmartalloc"           ;;
-        PATHSCALE)  echo " -O3 -march=auto"                                    ;;
-        HP)         echo " +O3"                                                ;;
+        GCC|LLVM)   echo " -O3 -D __extern_always_inline=inline"     ;;
+        INTEL)      echo " -O3 -xHost"                               ;;
+        CRAY)       echo " -O3 -h intrinsics -fast"                  ;;
+        IBM)        echo " -O3 -qhot=simd"                           ;;
+        PGI)        echo " -O3 -fast -Mipa=fast,inline -Msmartalloc" ;;
+        PATHSCALE)  echo " -O3 -march=auto"                          ;;
+        HP)         echo " +O3"                                      ;;
         *)          ;;
     esac
 }
@@ -430,7 +316,7 @@ function compilerPthreadFlag {
 }
 
 function compilerOpenMPFlag {
-    local vendor=$(compilerVendor $1)
+    local vendor=$(compilerVendor "$1")
 
     case "$vendor" in
         GCC|LLVM)        echo "-fopenmp" ;;
@@ -443,20 +329,8 @@ function compilerOpenMPFlag {
     esac
 }
 
-function fCompilerModuleDirFlag {
-    local vendor=$(compilerVendor "$1")
-
-    case "$vendor" in
-        GCC|CRAY)            echo "-J"       ;;
-        INTEL|PGI|PATHSCALE) echo "-module"  ;;
-        IBM)                 echo "-qmoddir" ;;
-        *)                   echo ""         ;;
-    esac
-}
-
 function compilerSupportsOpenMP {
     local compiler="$1"
-    local vendor=$(compilerVendor "${compiler}")
     local ompFlag=$(compilerOpenMPFlag "${compiler}")
 
     local filename="${SCRIPTS_DIR}/tests/openmp.cpp"
@@ -507,6 +381,70 @@ function compilerSupportsMPI {
     fi
 
     rm -f "${binary}"
+    echo 1
+}
+#=======================================
+
+
+#---[ Fortran Compiler Information ]----
+function fCompilerVendor {
+    local compiler="$1"
+
+    local filename="${SCRIPTS_DIR}/tests/compiler.F90"
+    local binary="${SCRIPTS_DIR}/tests/compiler_fortran"
+
+    rm -f "$binary"
+    "$compiler" "$filename" -o "$binary" > /dev/null 2>&1
+    if [[ ! -a "$binary" ]]; then
+        echo "N/A"
+        return
+    fi
+
+    vendor=$("$binary" 2>&1)
+    vendor=${vendor// /}
+    echo $vendor
+}
+
+function fCompilerModuleDirFlag {
+    local vendor=$(fCompilerVendor "$1")
+
+    case "$vendor" in
+        GCC|CRAY)            echo "-J"       ;;
+        INTEL|PGI|PATHSCALE) echo "-module"  ;;
+        IBM)                 echo "-qmoddir" ;;
+        *)                   echo ""         ;;
+    esac
+}
+
+function fCompilerCppFlag {
+    local vendor=$(fCompilerVendor "$1")
+
+    case "$vendor" in
+        GCC)   echo "-lstdc++"   ;;
+        CRAY)  echo ""           ;;
+        INTEL) echo "-cxxlib"    ;;
+        PGI)   echo "-pgc++libs" ;;
+        *)     echo ""           ;;
+    esac
+}
+
+function fCompilerSupportsMPI {
+    local compiler="$1"
+
+    local filename="${SCRIPTS_DIR}/tests/mpi.f90"
+    local binary="${SCRIPTS_DIR}/tests/mpi_fortran"
+
+    rm -f "$binary"
+
+    # Test compilation
+    "$compiler" "$filename" -o "$binary" > /dev/null 2>&1
+
+    if [[ ! -a "$binary" ]]; then
+        echo 0
+        return
+    fi
+
+    rm -f "$binary"
     echo 1
 }
 #=======================================
