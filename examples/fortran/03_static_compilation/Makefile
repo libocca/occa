@@ -9,8 +9,10 @@ include $(OCCA_DIR)/scripts/Makefile
 libSrcPath = $(OCCA_DIR)/src
 
 # Here we want to statically compile the example, thus remove libocca_fortran
-# from the linker flags and set the module path to the local object directory
+# from the linker flags, the global include path from fPaths and set the module
+# path to the local object directory
 fLinkerFlags := $(filter-out -locca_fortran, $(fLinkerFlags))
+fPaths := $(filter-out -I$(subst $(PROJ_DIR),$(OCCA_DIR),$(modPath)), $(fPaths))
 fPaths += $(fModuleDirFlag)$(objPath)/fortran
 
 
@@ -18,6 +20,8 @@ fPaths += $(fModuleDirFlag)$(objPath)/fortran
 all: main
 
 main: $(fObjects)
+
+include $(OCCA_DIR)/scripts/Make.fortran_rules
 
 %: %.f90
 	@mkdir -p $(abspath $(dir $@))

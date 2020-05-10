@@ -160,6 +160,7 @@ $(OCCA_DIR)/obj/%.o:$(OCCA_DIR)/src/%.cpp $(COMPILED_DEFINES_CHANGED)
 	$(compiler) $(compilerFlags) -o $@ $(flags) -c $(paths) $<
 
 # Fortran sources
+include $(OCCA_DIR)/scripts/Make.fortran_rules
 $(OCCA_DIR)/obj/%.o:$(OCCA_DIR)/src/%.f90
 	@mkdir -p $(modPath)
 	@mkdir -p $(abspath $(dir $@))
