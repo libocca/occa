@@ -16,6 +16,14 @@ jobs:
             CC: gcc-8
             CXX: g++-8
             OCCA_COVERAGE: 1
+            useCMake: false
+
+          - name: (Ubuntu) CMake + gcc-8
+            os: ubuntu-18.04
+            CC: gcc-8
+            CXX: g++-8
+            OCCA_COVERAGE: 1
+            useCMake: true
 
           - name: (Ubuntu) gcc-9
             os: ubuntu-18.04
@@ -63,9 +71,26 @@ jobs:
 
     - name: Compile library
       run: make -j
+      if: ${{ !matrix.useCMake }}
 
     - name: Compile tests
       run: make -j tests
+      if: ${{ !matrix.useCMake }}
+
+    - name: Compile library (CMake)
+      run: |
+        cmake -E make_directory ${{runner.workspace}}/build
+        cd build
+        cmake $GITHUB_WORKSPACE
+        make -j
+      if: ${{ matrix.useCMake }}
+
+    - name: Compile tests (CMake)
+      run: |
+        cmake $GITHUB_WORKSPACE -DENABLE_TESTS:BOOL=ON
+        make -j
+        ctest
+      if: ${{ matrix.useCMake }}
 
     - name: Run unit tests
       run: ./tests/run_tests
