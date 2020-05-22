@@ -89,13 +89,13 @@ jobs:
       run: |
         cmake -E make_directory ${{runner.workspace}}/build
         cd ${{runner.workspace}}/build
-        cmake $GITHUB_WORKSPACE
+        cmake $GITHUB_WORKSPACE -DALLOW_OPENMP:BOOL=ON
         make -j
       if: ${{ matrix.useCMake }}
 
     - name: Compile tests (CMake)
       run: |
-        cmake $GITHUB_WORKSPACE -DENABLE_TESTS:BOOL=ON
+        cmake $GITHUB_WORKSPACE -DENABLE_TESTS:BOOL=ON -DALLOW_OPENMP:BOOL=ON
         make -j
         ctest
       if: ${{ matrix.useCMake }}
