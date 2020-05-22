@@ -15,13 +15,17 @@ jobs:
             os: ubuntu-18.04
             CC: gcc-8
             CXX: g++-8
+            FC: gfortran-8
             OCCA_COVERAGE: 1
+            OCCA_FORTRAN_ENABLED: 1
 
           - name: (Ubuntu) gcc-9
             os: ubuntu-18.04
             CC: gcc-9
             CXX: g++-9
+            FC: gfortran-9
             OCCA_COVERAGE: 1
+            OCCA_FORTRAN_ENABLED: 1
 
           - name: (Ubuntu) clang-6
             os: ubuntu-18.04
@@ -53,7 +57,10 @@ jobs:
     env:
       CC: ${{ matrix.CC }}
       CXX: ${{ matrix.CXX }}
+      FC: ${{ matrix.FC }}
       OCCA_COVERAGE: ${{ matrix.OCCA_COVERAGE }}
+      OCCA_FORTRAN_ENABLED: ${{ matrix.OCCA_FORTRAN_ENABLED }}
+      FORTRAN_EXAMPLES: ${{ matrix.OCCA_FORTRAN_ENABLED }}
 
     steps:
     - uses: actions/checkout@v2

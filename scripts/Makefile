@@ -12,6 +12,7 @@ endif
 
 binPath  = $(PROJ_DIR)/bin
 libPath  = $(PROJ_DIR)/lib
+modPath  = $(PROJ_DIR)/lib/occa/fortran/modules
 objPath  = $(PROJ_DIR)/obj
 srcPath  = $(PROJ_DIR)/src
 incPath  = $(PROJ_DIR)/include
@@ -108,16 +109,31 @@ else
   cCompilerFlags = $(CFLAGS)
 endif
 
+FC ?= gfortran
+
+ifndef FFLAGS
+  ifeq ($(debugEnabled),1)
+    fCompilerFlags = $(debugFlags)
+  else
+    fCompilerFlags = $(releaseFlags)
+  endif
+else
+  fCompilerFlags = $(FFLAGS)
+endif
+
 ifeq ($(OCCA_COVERAGE),1)
   coverageFlags = --coverage -fno-inline -fno-inline-small-functions -fno-default-inline -Wno-ignored-optimization-argument
   compilerFlags += $(coverageFlags)
   cCompilerFlags += $(coverageFlags)
+  fCompilerFlags += $(coverageFlags)
 endif
 
 compiler  = $(CXX)
 cCompiler = $(CC)
+fCompiler = $(FC)
 
 linkerFlags = $(LDFLAGS)
+fLinkerFlags = $(LDFLAGS)
 #=================================================
 
 
@@ -158,6 +174,9 @@ compilerPicFlag      = $(shell . $(OCCA_DIR)/include/occa/scripts/shellTools.sh;
 compilerSharedFlag   = $(shell . $(OCCA_DIR)/include/occa/scripts/shellTools.sh; compilerSharedFlag   "$(compiler)")
 compilerPthreadFlag  = $(shell . $(OCCA_DIR)/include/occa/scripts/shellTools.sh; compilerPthreadFlag  "$(compiler)")
 
+fCompilerModuleDirFlag = $(shell . $(OCCA_DIR)/include/occa/scripts/shellTools.sh; fCompilerModuleDirFlag "$(fCompiler)")
+fCompilerCppFlag       = $(shell . $(OCCA_DIR)/include/occa/scripts/shellTools.sh; fCompilerCppFlag       "$(fCompiler)")
+
 compilerSupportsMPI    = $(shell . $(OCCA_DIR)/include/occa/scripts/shellTools.sh; compilerSupportsMPI    "$(compiler)")
 compilerSupportsOpenMP = $(shell . $(OCCA_DIR)/include/occa/scripts/shellTools.sh; compilerSupportsOpenMP "$(compiler)")
 compilerOpenMPFlag     = $(shell . $(OCCA_DIR)/include/occa/scripts/shellTools.sh; compilerOpenMPFlag     "$(compiler)")
@@ -172,6 +191,9 @@ cpp11Flags   = $(call compilerCpp11Flags)
 picFlag      = $(call compilerPicFlag)
 sharedFlag   = $(call compilerSharedFlag)
 pthreadFlag  = $(call compilerPthreadFlag)
+
+fModuleDirFlag = $(call fCompilerModuleDirFlag)
+fCppFlag       = $(call fCompilerCppFlag)
 
 # Workaround for GitHub Actions CI tests on Ubuntu using GCC.
 ifdef GITHUB_ACTIONS
@@ -227,12 +249,20 @@ endif
 
 
 #---[ Variable Dependencies ]---------------------
-mpiEnabled    = 0
-openmpEnabled = 0
-cudaEnabled   = 0
-hipEnabled    = 0
-openclEnabled = 0
-metalEnabled  = 0
+fortranEnabled = 0
+mpiEnabled     = 0
+openmpEnabled  = 0
+cudaEnabled    = 0
+hipEnabled     = 0
+openclEnabled  = 0
+metalEnabled   = 0
+
+
+#---[ Fortran ]-------------------------
+ifdef OCCA_FORTRAN_ENABLED
+  fortranEnabled = $(OCCA_FORTRAN_ENABLED)
+endif
+include $(OCCA_DIR)/scripts/Make.fortran
 
 
 #---[ MPI ]-----------------------------
@@ -384,10 +414,11 @@ else
   OCCA_CHECK_ENABLED := 0
 endif
 
-OCCA_MPI_ENABLED    := $(mpiEnabled)
-OCCA_OPENMP_ENABLED := $(openmpEnabled)
-OCCA_CUDA_ENABLED   := $(cudaEnabled)
-OCCA_HIP_ENABLED    := $(hipEnabled)
-OCCA_OPENCL_ENABLED := $(openclEnabled)
-OCCA_METAL_ENABLED  := $(metalEnabled)
+OCCA_FORTRAN_ENABLED := $(fortranEnabled)
+OCCA_MPI_ENABLED     := $(mpiEnabled)
+OCCA_OPENMP_ENABLED  := $(openmpEnabled)
+OCCA_CUDA_ENABLED    := $(cudaEnabled)
+OCCA_HIP_ENABLED     := $(hipEnabled)
+OCCA_OPENCL_ENABLED  := $(openclEnabled)
+OCCA_METAL_ENABLED   := $(metalEnabled)
 #=================================================
