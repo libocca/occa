@@ -18,14 +18,12 @@ jobs:
             FC: gfortran-8
             OCCA_COVERAGE: 1
             OCCA_FORTRAN_ENABLED: 1
-            useCMake: false
 
           - name: (Ubuntu) CMake + gcc-8
             os: ubuntu-18.04
             CC: gcc-8
             CXX: g++-8
             OCCA_COVERAGE: 1
-            OCCA_FORTRAN_ENABLED: 1
             useCMake: true
 
           - name: (Ubuntu) gcc-9
@@ -76,6 +74,7 @@ jobs:
 
     - name: Compiler info
       run: make -j info
+      if: ${{ !matrix.useCMake }}
 
     - name: Compile library
       run: make -j
