@@ -47,7 +47,6 @@ namespace occa {
         token->origin
           .from(false, thisToken.origin)
           .printError("Expected a token name identifier");
-        throw;
 
         freeTokenVector(args);
         return;
