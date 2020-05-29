@@ -60,7 +60,7 @@ namespace occa {
       addAttribute<attributes::dim>();
       addAttribute<attributes::dimOrder>();
       addAttribute<attributes::tile>();
-      addAttribute<attributes::restrict>();
+      addAttribute<attributes::occaRestrict>();
       addAttribute<attributes::implicitArg>();
       addAttribute<attributes::globalPtr>();
     }
