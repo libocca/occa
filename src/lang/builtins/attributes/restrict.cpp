@@ -4,22 +4,22 @@
 namespace occa {
   namespace lang {
     namespace attributes {
-      restrict::restrict() {}
+      occaRestrict::occaRestrict() {}
 
-      const std::string& restrict::name() const {
+      const std::string& occaRestrict::name() const {
         static std::string name_ = "restrict";
         return name_;
       }
 
-      bool restrict::forVariable() const {
+      bool occaRestrict::forVariable() const {
         return true;
       }
 
-      bool restrict::forStatement(const int sType) const {
+      bool occaRestrict::forStatement(const int sType) const {
         return (sType & statementType::declaration);
       }
 
-      bool restrict::isValid(const attributeToken_t &attr) const {
+      bool occaRestrict::isValid(const attributeToken_t &attr) const {
         if (attr.kwargs.size() ||
             attr.args.size()) {
           attr.printError("[@restrict] does not take arguments");
