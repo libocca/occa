@@ -87,3 +87,5 @@ if (ENABLE_TESTS)
 endif()
 
 install(DIRECTORY include/ DESTINATION include)
+
+include(Summary)
