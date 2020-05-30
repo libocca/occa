@@ -8,11 +8,11 @@ namespace occa {
     class qualifier_t;
 
     namespace transforms {
-      class restrict : public statementTransform {
+      class occaRestrict : public statementTransform {
       public:
         const qualifier_t &restrictQualifier;
 
-        restrict(const qualifier_t &restrictQualifier_);
+        occaRestrict(const qualifier_t &restrictQualifier_);
 
         virtual statement_t* transformStatement(statement_t &smnt);
       };
