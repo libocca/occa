@@ -7,13 +7,13 @@
 namespace occa {
   namespace lang {
     namespace transforms {
-      restrict::restrict(const qualifier_t &restrictQualifier_) :
+      occaRestrict::occaRestrict(const qualifier_t &restrictQualifier_) :
         restrictQualifier(restrictQualifier_) {
         validStatementTypes = (statementType::functionDecl |
                                statementType::function);
       }
 
-      statement_t* restrict::transformStatement(statement_t &smnt) {
+      statement_t* occaRestrict::transformStatement(statement_t &smnt) {
         function_t &func = (
           (smnt.type() & statementType::function)
           ? smnt.to<functionStatement>().function
@@ -46,7 +46,7 @@ namespace occa {
 
       bool applyRestrictTransforms(statement_t &smnt,
                                    const qualifier_t &restrictQualifier) {
-        restrict restrictTransform(restrictQualifier);
+        occaRestrict restrictTransform(restrictQualifier);
         return restrictTransform.statementTransform::apply(smnt);
       }
     }

@@ -6,9 +6,9 @@
 namespace occa {
   namespace lang {
     namespace attributes {
-      class restrict : public attribute_t {
+      class occaRestrict : public attribute_t {
       public:
-        restrict();
+        occaRestrict();
 
         virtual const std::string& name() const;
 
