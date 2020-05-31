@@ -51,6 +51,7 @@ namespace occa {
       statementContext_t smntContext;
       statementPeeker_t smntPeeker;
 
+      bool ignoringComments;
       bool checkSemicolon;
 
       unknownToken defaultRootToken;
@@ -165,6 +166,7 @@ namespace occa {
       void loadAllStatements();
 
       statement_t* getNextStatement();
+      statement_t* getNextNonCommentStatement();
 
       statement_t* loadBlockStatement(attributeTokenMap &smntAttributes);
 
@@ -202,6 +204,8 @@ namespace occa {
       statement_t* loadReturnStatement(attributeTokenMap &smntAttributes);
 
       statement_t* loadClassAccessStatement(attributeTokenMap &smntAttributes);
+
+      statement_t* loadCommentStatement(attributeTokenMap &smntAttributes);
 
       statement_t* loadPragmaStatement(attributeTokenMap &smntAttributes);
 

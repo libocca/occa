@@ -1,65 +1,15 @@
 #include "utils.hpp"
 
-void testCommentSkipping();
 void testExternMerging();
 void testPrimitiveMethods();
 void testErrors();
 
 int main(const int argc, const char **argv) {
-  testCommentSkipping();
   testExternMerging();
   testPrimitiveMethods();
   testErrors();
 
   return 0;
-}
-
-void testCommentSkipping() {
-  // [1.0]
-  setStream("// test    \n"
-            "1.0");
-  ASSERT_EQ_BINARY(
-    tokenType::newline,
-    tokenizer.peek()
-  );
-  getToken();
-  ASSERT_EQ_BINARY(
-    tokenType::primitive,
-    tokenizer.peek()
-  );
-
-  // [ foo]
-  setStream("/* 2.0 */ foo");
-  ASSERT_EQ_BINARY(
-    tokenType::identifier,
-    tokenizer.peek()
-  );
-
-  // [ foo]
-  setStream("/*         \n"
-            "2.0        \n"
-            "*/ foo");
-  ASSERT_EQ_BINARY(
-    tokenType::identifier,
-    tokenizer.peek()
-  );
-
-  // [*/b]
-  setStream("/*a*/*/b/*c*/");
-  ASSERT_EQ_BINARY(
-    tokenType::op,
-    tokenizer.peek()
-  );
-  getToken();
-  ASSERT_EQ_BINARY(
-    tokenType::op,
-    tokenizer.peek()
-  );
-  getToken();
-  ASSERT_EQ_BINARY(
-    tokenType::identifier,
-    tokenizer.peek()
-  );
 }
 
 void testExternMerging() {

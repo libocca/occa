@@ -46,6 +46,7 @@ namespace occa {
 
       extern const int directive;
       extern const int pragma;
+      extern const int comment;
 
       extern const int identifier;
 
@@ -178,6 +179,24 @@ namespace occa {
                   const std::string &value_);
 
       virtual ~pragmaToken();
+
+      virtual int type() const;
+
+      virtual token_t* clone() const;
+
+      virtual void print(io::output &out) const;
+    };
+    //==================================
+
+    //---[ Comment ]-----------------
+    class commentToken : public token_t {
+    public:
+      std::string value;
+
+      commentToken(const fileOrigin &origin_,
+                   const std::string &value_);
+
+      virtual ~commentToken();
 
       virtual int type() const;
 

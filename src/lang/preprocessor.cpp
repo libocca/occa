@@ -609,7 +609,8 @@ namespace occa {
       getLineTokens(lineTokens);
       if (lineTokens.size()) {
         // Don't account for the newline token
-        if (lineTokens[0]->type() != tokenType::newline) {
+        if (!(lineTokens[0]->type() & (tokenType::newline |
+                                       tokenType::comment))) {
           warningOn(lineTokens[0],
                     message);
         }

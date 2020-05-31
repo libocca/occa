@@ -72,6 +72,15 @@ void testPeekMethods() {
     tokenizer.peek()
   );
 
+  testCommentPeek("// hi");
+  testCommentPeek("  // hi");
+  testCommentPeek("// hi\n bye");
+
+  testCommentPeek("/* hi */");
+  testCommentPeek("    /* hi */   ");
+  testCommentPeek("/*\n hi \n*/");
+  testCommentPeek("/* hi */\nbye");
+
   testStringPeek("\"\""                , 0);
   testStringPeek("\"string\\\"string\"", 0);
   testStringPeek("R\"(string)\""       , encodingType::R);
@@ -169,6 +178,15 @@ void testTokenMethods() {
     tokenType::op,
     getTokenType()
   );
+
+  testCommentValue("// hi", "// hi");
+  testCommentValue("  // hi", "// hi");
+  testCommentValue("// hi\n bye", "// hi");
+
+  testCommentValue("/* hi */", "/* hi */");
+  testCommentValue("    /* hi */   ", "/* hi */");
+  testCommentValue("/*\n hi \n*/", "/*\n hi \n*/");
+  testCommentValue("/* hi */\nbye", "/* hi */");
 
   testStringToken("\"\""                , 0);
   testStringToken("\"string\\\"string\"", 0);

@@ -1,8 +1,17 @@
+// Comment 1
+/*
+ * Comment 2.1
+ * Comment 2.2
+ * Comment 2.3
+ */
 @kernel void addVectors(const int entries,
+                        // Comment 3.1
                         const float *a,
+                        // Comment 3.2
                         const float *b,
+                        // Comment 3.3
                         float *ab) {
-  for (int i = 0; i < entries; ++i; @tile(16, @outer, @inner)) {
+  for (int i = 0; i < /*Comment 4.1*/ entries; ++i; /*Comment 4.2*/ @tile(16, @outer, @inner)) {
     ab[i] = a[i] + b[i];
   }
 }

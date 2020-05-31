@@ -100,13 +100,12 @@ namespace occa {
                      const int encoding = 0);
       void getRawString(std::string &value);
 
-      int skipLineCommentAndPeek();
-      int skipBlockCommentAndPeek();
-
       token_t* getToken();
       token_t* getIdentifierToken();
       token_t* getPrimitiveToken();
       token_t* getOperatorToken();
+      token_t* getLineCommentToken();
+      token_t* getBlockCommentToken();
       token_t* getStringToken(const int encoding);
       token_t* getCharToken(const int encoding);
 

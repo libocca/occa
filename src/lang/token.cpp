@@ -54,24 +54,25 @@ namespace occa {
 
       const int directive     = (1 << 5);
       const int pragma        = (1 << 6);
+      const int comment       = (1 << 7);
 
-      const int identifier    = (1 << 7);
+      const int identifier    = (1 << 8);
 
-      const int qualifier     = (1 << 8);
-      const int type          = (1 << 9);
-      const int vartype       = (1 << 10);
-      const int variable      = (1 << 11);
-      const int function      = (1 << 12);
+      const int qualifier     = (1 << 9);
+      const int type          = (1 << 10);
+      const int vartype       = (1 << 11);
+      const int variable      = (1 << 12);
+      const int function      = (1 << 13);
 
-      const int primitive     = (1 << 13);
-      const int op            = (1 << 14);
+      const int primitive     = (1 << 14);
+      const int op            = (1 << 15);
 
-      const int char_         = (1 << 15);
-      const int string        = (1 << 16);
-      const int withUDF       = (1 << 17);
+      const int char_         = (1 << 16);
+      const int string        = (1 << 17);
+      const int withUDF       = (1 << 18);
       const int withEncoding  = ((encodingType::ux |
-                                  encodingType::R) << 18);
-      const int encodingShift = 18;
+                                  encodingType::R) << 19);
+      const int encodingShift = 19;
 
       int getEncoding(const int tokenType) {
         return ((tokenType & withEncoding) >> encodingShift);
@@ -224,6 +225,27 @@ namespace occa {
 
     void pragmaToken::print(io::output &out) const {
       out << "#pragma " << value << '\n';
+    }
+    //==================================
+
+    //---[ Comment ]-----------------
+    commentToken::commentToken(const fileOrigin &origin_,
+                               const std::string &value_) :
+        token_t(origin_),
+        value(value_) {}
+
+    commentToken::~commentToken() {}
+
+    int commentToken::type() const {
+      return tokenType::comment;
+    }
+
+    token_t* commentToken::clone() const {
+      return new commentToken(origin, value);
+    }
+
+    void commentToken::print(io::output &out) const {
+      out << value;
     }
     //==================================
 
