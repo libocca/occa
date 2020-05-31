@@ -799,16 +799,16 @@ namespace occa {
 
     tokenVector tokenizer_t::tokenize(const std::string &source) {
       tokenVector tokens;
-      fileOrigin origin = originSource::string;
-      tokenize(tokens, origin, source);
+      fileOrigin origin_ = originSource::string;
+      tokenize(tokens, origin_, source);
       return tokens;
     }
 
     void tokenizer_t::tokenize(tokenVector &tokens,
-                               fileOrigin origin,
+                               fileOrigin origin_,
                                const std::string &source) {
       // TODO: Make a string file_t
-      fileOrigin fakeOrigin(*origin.file,
+      fileOrigin fakeOrigin(*origin_.file,
                             source.c_str());
 
       tokenizer_t tstream(fakeOrigin);

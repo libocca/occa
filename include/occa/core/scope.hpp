@@ -73,15 +73,15 @@ namespace occa {
     static scopeVariable fromValue(const std::string &name_,
                                    const TM &value_,
                                    const bool isConst_) {
-      const bool isPointer = scopeVariableMethods::argIsPointer<TM>::value;
-      dtype_t dtype;
-      if (isPointer) {
-        dtype = scopeVariableMethods::getPointerType<TM>(value_);
+      const bool isPointer_ = scopeVariableMethods::argIsPointer<TM>::value;
+      dtype_t dtype_;
+      if (isPointer_) {
+        dtype_ = scopeVariableMethods::getPointerType<TM>(value_);
       } else {
-        dtype = dtype::get<TM>();
+        dtype_ = dtype::get<TM>();
       }
 
-      return scopeVariable(dtype, isPointer, isConst_, name_, value_);
+      return scopeVariable(dtype_, isPointer_, isConst_, name_, value_);
     }
 
     std::string getDeclaration() const;

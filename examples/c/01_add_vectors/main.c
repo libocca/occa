@@ -1,5 +1,6 @@
 #include <stdlib.h>
 #include <stdio.h>
+#include <math.h>
 
 #include <occa.h>
 
@@ -95,7 +96,7 @@ int main(int argc, const char **argv) {
     printf("%d = %f\n", i, ab[i]);
   }
   for (i = 0; i < entries; ++i) {
-    if (ab[i] != (a[i] + b[i]))
+    if (fabs(ab[i] -(a[i] + b[i])) > 1.0e-8)
       exit(1);
   }
 

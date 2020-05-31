@@ -1,5 +1,6 @@
 #include <stdlib.h>
 #include <stdio.h>
+#include <math.h>
 
 #include <occa.h>
 
@@ -73,7 +74,7 @@ int main(int argc, const char **argv) {
   }
 
   // Validate
-  if (blockSum[0] != sum) {
+  if (fabs(blockSum[0] - sum) > 1.0e-8) {
     printf("sum      = %f\n", sum);
     printf("blockSum = %f\n", blockSum[0]);
     printf("Reduction failed\n");

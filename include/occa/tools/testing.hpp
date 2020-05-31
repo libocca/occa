@@ -12,7 +12,7 @@
       const bool assertIsOk = (bool) (expr);            \
       exprThrewException = false;                       \
       OCCA_ERROR(message, assertIsOk);                  \
-    } catch (occa::exception exc) {                     \
+    } catch (occa::exception& exc) {                    \
       if (exprThrewException) {                         \
         /* Print expr exception and assert exception*/  \
         std::cerr << exc << '\n';                       \
@@ -77,7 +77,7 @@
     bool threw = false;                                       \
     try {                                                     \
       source;                                                 \
-    } catch (occa::exception exc) {                           \
+    } catch (occa::exception&) {                              \
       threw = true;                                           \
     }                                                         \
     OCCA_ERROR("Assertion Failed: No occa::exception thrown", \
@@ -189,10 +189,26 @@ namespace occa {
     bool areEqual<float, double>(const float &a, const double &b);
 
     template <>
+    bool areEqual<long double, float>(const long double &a, const float &b);
+
+    template <>
+    bool areEqual<float, long double>(const float &a, const long double &b);
+
+    template <>
     bool areEqual<double, double>(const double &a, const double &b);
+
+    template <>
+    bool areEqual<long double, double>(const long double &a, const double &b);
+
+    template <>
+    bool areEqual<double, long double>(const double &a, const long double &b);
+
+    template <>
+    bool areEqual<long double, long double>(const long double &a, const long double &b);
 
     template <>
     bool areEqual<const char*, const char*>(const char * const &a,
                                             const char * const &b);
+
   }
 }

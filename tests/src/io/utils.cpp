@@ -170,7 +170,7 @@ void testIOMethods() {
             content);
 
   // C Read
-  size_t charCount = -1;
+  size_t charCount = occa::UDIM_DEFAULT;
   char *c = occa::io::c_read(test_foo, &charCount);
   ASSERT_EQ(charCount,
             content.size());

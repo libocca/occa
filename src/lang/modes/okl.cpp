@@ -209,7 +209,8 @@ namespace occa {
           return true;
         }
 
-        int lastOuterCount, lastInnerCount;
+        int lastOuterCount = 0;
+        int lastInnerCount = 0;
         for (int i = 0; i < children; ++i) {
           forStatement &forSmnt = *((forStatement*) node[i]->smnt);
           const bool isOuter = forSmnt.hasAttribute("outer");
