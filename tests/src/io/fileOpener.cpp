@@ -42,23 +42,23 @@ void testOccaFileOpener() {
   ASSERT_EQ(occaOpener.expand("occa://foo.okl"),
             "");
 
-  ASSERT_EQ(occaOpener.expand("occa://a/"),
+  ASSERT_EQ(occaOpener.expand("occa://my_library/"),
             "");
-  ASSERT_EQ(occaOpener.expand("occa://a/foo.okl"),
+  ASSERT_EQ(occaOpener.expand("occa://my_library/foo.okl"),
             "");
 
-  occa::io::addLibraryPath("a", "foo");
+  occa::io::addLibraryPath("my_library", "foo");
 
-  ASSERT_EQ(occaOpener.expand("occa://a/"),
+  ASSERT_EQ(occaOpener.expand("occa://my_library/"),
             "foo/");
-  ASSERT_EQ(occaOpener.expand("occa://a/foo.okl"),
+  ASSERT_EQ(occaOpener.expand("occa://my_library/foo.okl"),
             "foo/foo.okl");
 
-  occa::io::addLibraryPath("a", "foo/");
+  occa::io::addLibraryPath("my_library", "foo/");
 
-  ASSERT_EQ(occaOpener.expand("occa://a/"),
+  ASSERT_EQ(occaOpener.expand("occa://my_library/"),
             "foo/");
-  ASSERT_EQ(occaOpener.expand("occa://a/foo.okl"),
+  ASSERT_EQ(occaOpener.expand("occa://my_library/foo.okl"),
             "foo/foo.okl");
 
   ASSERT_THROW(
