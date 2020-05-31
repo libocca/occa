@@ -16,6 +16,7 @@ jobs:
             CC: gcc-8
             CXX: g++-8
             FC: gfortran-8
+            GCOV: gcov-8
             OCCA_COVERAGE: 1
             OCCA_FORTRAN_ENABLED: 1
 
@@ -24,6 +25,7 @@ jobs:
             CC: gcc-9
             CXX: g++-9
             FC: gfortran-9
+            GCOV: gcov-9
             OCCA_COVERAGE: 1
             OCCA_FORTRAN_ENABLED: 1
 
@@ -43,6 +45,7 @@ jobs:
             os: macos-10.15
             CC: gcc-9
             CXX: g++-9
+            GCOV: gcov-9
             OCCA_COVERAGE: 1
 
           - name: (MacOS) clang
@@ -58,6 +61,7 @@ jobs:
       CC: ${{ matrix.CC }}
       CXX: ${{ matrix.CXX }}
       FC: ${{ matrix.FC }}
+      GCOV: ${{ matrix.GCOV }}
       OCCA_COVERAGE: ${{ matrix.OCCA_COVERAGE }}
       OCCA_FORTRAN_ENABLED: ${{ matrix.OCCA_FORTRAN_ENABLED }}
       FORTRAN_EXAMPLES: ${{ matrix.OCCA_FORTRAN_ENABLED }}
@@ -66,13 +70,13 @@ jobs:
     - uses: actions/checkout@v2
 
     - name: Compiler info
-      run: make -j info
+      run: make -j 16 info
 
     - name: Compile library
-      run: make -j
+      run: make -j 16
 
     - name: Compile tests
-      run: make -j tests
+      run: make -j 16 tests
 
     - name: Run unit tests
       run: ./tests/run_tests
@@ -81,4 +85,5 @@ jobs:
       run: ./tests/run_examples
 
     - name: Upload code coverage
-      uses: codecov/codecov-action@v1
+      run: bash <(curl --no-buffer -s https://codecov.io/bash) -x "${GCOV}"
+      if: ${{ matrix.OCCA_COVERAGE }}
