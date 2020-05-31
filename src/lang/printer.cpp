@@ -2,17 +2,6 @@
 
 namespace occa {
   namespace lang {
-    int charsFromNewline(const std::string &s) {
-      const char *c = s.c_str();
-      const int chars = (int) s.size();
-      for (int pos = (chars - 1); pos >= 0; --pos) {
-        if (*c == '\n') {
-          return (chars - pos - 1);
-        }
-      }
-      return chars;
-    }
-
     printer::printer() :
       ss(),
       out(NULL) {
@@ -67,6 +56,10 @@ namespace occa {
       }
     }
 
+    int printer::indentationSize() {
+      (int) indent.size();
+    }
+
     void printer::addIndentation() {
       indent += "  ";
     }
@@ -95,6 +88,10 @@ namespace occa {
 
     void printer::forceNextInlined() {
       lastChar = '\0';
+    }
+
+    int printer::cursorPosition() {
+      return charsFromNewline;
     }
 
     std::string printer::indentFromNewline() {
