@@ -48,14 +48,50 @@ namespace occa {
     }
 
     void tupleNode::print(printer &pout) const {
-      pout << '{';
+      bool useNewlineDelimiters = false;
+      strVector printedArgs;
+      // For the initial {
+      int lineWidth = pout.cursorPosition() + 1;
+
       const int argCount = (int) args.size();
       for (int i = 0; i < argCount; ++i) {
+        const std::string argStr = args[i]->toString();
+        const int argSize = (int) argStr.size();
+        lineWidth += argSize;
+
+        useNewlineDelimiters |= (
+          argSize > PRETTIER_MAX_VAR_WIDTH
+          || lineWidth > PRETTIER_MAX_LINE_WIDTH
+        );
+      }
+
+      pout << '{';
+
+      if (useNewlineDelimiters) {
+        pout.addIndentation();
+        pout.printNewline();
+        pout.printIndentation();
+      }
+
+      for (int i = 0; i < argCount; ++i) {
         if (i) {
-          pout << ", ";
+          if (useNewlineDelimiters) {
+            pout << ',';
+            pout.printNewline();
+            pout.printIndentation();
+          } else {
+            pout << ", ";
+          }
         }
         pout << *(args[i]);
       }
+
+      if (useNewlineDelimiters) {
+        pout.removeIndentation();
+        pout.printNewline();
+        pout.printIndentation();
+      }
+
       pout << '}';
     }
 

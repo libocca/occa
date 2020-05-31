@@ -411,7 +411,7 @@ namespace occa {
         // Only consider () as a function call if preceeded by:
         //   - identifier
         //   - pairEnd
-        const int prevTokenType = state.beforePairToken->type();
+        const int prevTokenType = token_t::safeType(state.beforePairToken);
         if (!(prevTokenType & (outputTokenType |
                                tokenType::op))) {
           transformLastPair(opToken, state);

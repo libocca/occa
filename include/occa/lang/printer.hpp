@@ -9,8 +9,6 @@
 
 namespace occa {
   namespace lang {
-    int charsFromNewline(const std::string &s);
-
     class printer {
     private:
       std::stringstream ss;
@@ -38,6 +36,7 @@ namespace occa {
       void pushInlined(const bool inlined);
       void popInlined();
 
+      int indentationSize();
       void addIndentation();
       void removeIndentation();
 
@@ -45,6 +44,7 @@ namespace occa {
       bool lastCharNeedsWhitespace();
       void forceNextInlined();
 
+      int cursorPosition();
       std::string indentFromNewline();
 
       void printIndentation();
