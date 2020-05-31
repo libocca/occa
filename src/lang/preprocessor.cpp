@@ -27,6 +27,7 @@ namespace occa {
     preprocessor_t::preprocessor_t(const occa::properties &settings_) {
       init();
       initDirectives();
+      initStandardHeaders();
 
       includePaths = env::OCCA_INCLUDE_PATH;
 
@@ -203,6 +204,128 @@ namespace occa {
       directives["include"] = &preprocessor_t::processInclude;
       directives["pragma"]  = &preprocessor_t::processPragma;
       directives["line"]    = &preprocessor_t::processLine;
+    }
+
+    void preprocessor_t::initStandardHeaders() {
+      standardHeaders["algorithm"] = true;
+      standardHeaders["any"] = true;
+      standardHeaders["array"] = true;
+      standardHeaders["assert.h"] = true;
+      standardHeaders["atomic"] = true;
+      standardHeaders["bitset"] = true;
+      standardHeaders["cassert"] = true;
+      standardHeaders["ccomplex"] = true;
+      standardHeaders["cctype"] = true;
+      standardHeaders["cerrno"] = true;
+      standardHeaders["cfenv"] = true;
+      standardHeaders["cfloat"] = true;
+      standardHeaders["charconv"] = true;
+      standardHeaders["chrono"] = true;
+      standardHeaders["cinttypes"] = true;
+      standardHeaders["ciso646"] = true;
+      standardHeaders["climits"] = true;
+      standardHeaders["clocale"] = true;
+      standardHeaders["cmath"] = true;
+      standardHeaders["codecvt"] = true;
+      standardHeaders["compare"] = true;
+      standardHeaders["complex.h"] = true;
+      standardHeaders["complex"] = true;
+      standardHeaders["condition_variable"] = true;
+      standardHeaders["csetjmp"] = true;
+      standardHeaders["csignal"] = true;
+      standardHeaders["cstdalign"] = true;
+      standardHeaders["cstdarg"] = true;
+      standardHeaders["cstdbool"] = true;
+      standardHeaders["cstddef"] = true;
+      standardHeaders["cstdint"] = true;
+      standardHeaders["cstdio"] = true;
+      standardHeaders["cstdlib"] = true;
+      standardHeaders["cstring"] = true;
+      standardHeaders["ctgmath"] = true;
+      standardHeaders["ctime"] = true;
+      standardHeaders["ctype.h"] = true;
+      standardHeaders["cuchar"] = true;
+      standardHeaders["cwchar"] = true;
+      standardHeaders["cwctype"] = true;
+      standardHeaders["deque"] = true;
+      standardHeaders["errno.h"] = true;
+      standardHeaders["exception"] = true;
+      standardHeaders["execution"] = true;
+      standardHeaders["fenv.h"] = true;
+      standardHeaders["filesystem"] = true;
+      standardHeaders["float.h"] = true;
+      standardHeaders["forward_list"] = true;
+      standardHeaders["fstream"] = true;
+      standardHeaders["functional"] = true;
+      standardHeaders["future"] = true;
+      standardHeaders["initializer_list"] = true;
+      standardHeaders["inttypes.h"] = true;
+      standardHeaders["iomanip"] = true;
+      standardHeaders["ios"] = true;
+      standardHeaders["iosfwd"] = true;
+      standardHeaders["iostream"] = true;
+      standardHeaders["iso646.h"] = true;
+      standardHeaders["istream"] = true;
+      standardHeaders["iterator"] = true;
+      standardHeaders["limits.h"] = true;
+      standardHeaders["limits"] = true;
+      standardHeaders["list"] = true;
+      standardHeaders["locale.h"] = true;
+      standardHeaders["locale"] = true;
+      standardHeaders["map"] = true;
+      standardHeaders["math.h"] = true;
+      standardHeaders["memory"] = true;
+      standardHeaders["memory_resource"] = true;
+      standardHeaders["mutex"] = true;
+      standardHeaders["new"] = true;
+      standardHeaders["numeric"] = true;
+      standardHeaders["optional"] = true;
+      standardHeaders["ostream"] = true;
+      standardHeaders["queue"] = true;
+      standardHeaders["random"] = true;
+      standardHeaders["ratio"] = true;
+      standardHeaders["regex"] = true;
+      standardHeaders["scoped_allocator"] = true;
+      standardHeaders["set"] = true;
+      standardHeaders["setjmp.h"] = true;
+      standardHeaders["shared_mutex"] = true;
+      standardHeaders["signal.h"] = true;
+      standardHeaders["sstream"] = true;
+      standardHeaders["stack"] = true;
+      standardHeaders["stdalign.h"] = true;
+      standardHeaders["stdarg.h"] = true;
+      standardHeaders["stdatomic.h"] = true;
+      standardHeaders["stdbool.h"] = true;
+      standardHeaders["stddef.h"] = true;
+      standardHeaders["stdexcept"] = true;
+      standardHeaders["stdint.h"] = true;
+      standardHeaders["stdio.h"] = true;
+      standardHeaders["stdlib.h"] = true;
+      standardHeaders["stdnoreturn.h"] = true;
+      standardHeaders["streambuf"] = true;
+      standardHeaders["string.h"] = true;
+      standardHeaders["string"] = true;
+      standardHeaders["string_view"] = true;
+      standardHeaders["strstream"] = true;
+      standardHeaders["syncstream"] = true;
+      standardHeaders["system_error"] = true;
+      standardHeaders["tgmath.h"] = true;
+      standardHeaders["thread"] = true;
+      standardHeaders["threads.h"] = true;
+      standardHeaders["time.h"] = true;
+      standardHeaders["tuple"] = true;
+      standardHeaders["type_traits"] = true;
+      standardHeaders["typeindex"] = true;
+      standardHeaders["typeinfo"] = true;
+      standardHeaders["uchar.h"] = true;
+      standardHeaders["unordered_map"] = true;
+      standardHeaders["unordered_set"] = true;
+      standardHeaders["utility"] = true;
+      standardHeaders["valarray"] = true;
+      standardHeaders["variant"] = true;
+      standardHeaders["vector"] = true;
+      standardHeaders["wchar.h"] = true;
+      standardHeaders["wctype.h"] = true;
     }
 
     void preprocessor_t::warningOn(token_t *token,
@@ -1174,7 +1297,17 @@ namespace occa {
           }
         }
       }
+
       if (!io::exists(header)) {
+        // Default to standard headers if they exist
+        if (standardHeaders.find(header) != standardHeaders.end()) {
+          warningOn(&directive,
+                    "Including standard headers may not be portable for all modes");
+          pushOutput(new directiveToken(directive.origin,
+                                        "include <" + header + ">"));
+          return;
+        }
+
         errorOn(&directive,
                 "File does not exist");
         skipToNewline();

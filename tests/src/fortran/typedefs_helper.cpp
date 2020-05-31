@@ -69,7 +69,7 @@ void printOccaType(const occaType *value, const bool verbose) {
     printf("    ===============================================\n");
     printf("    Dump OCCA type data:\n");
     printf("    -----------------------------------------------\n");
-    printf("      Memory address: %p\n", value);
+    printf("      Memory address: %p\n", (void*) value);
     printf("\n");
     printf("      magicHeader:    %d\n", value->magicHeader);
     printf("      type:           %d\n", value->type);
