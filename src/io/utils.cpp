@@ -21,6 +21,7 @@
 #include <occa/io/utils.hpp>
 #include <occa/tools/env.hpp>
 #include <occa/tools/lex.hpp>
+#include <occa/tools/misc.hpp>
 
 namespace occa {
   // Kernel Caching
@@ -68,9 +69,9 @@ namespace occa {
     std::string currentWorkingDirectory() {
       char cwdBuff[FILENAME_MAX];
 #if (OCCA_OS == OCCA_WINDOWS_OS)
-      _getcwd(cwdBuff, sizeof(cwdBuff));
+      ignoreResult(_getcwd(cwdBuff, sizeof(cwdBuff)));
 #else
-      getcwd(cwdBuff, sizeof(cwdBuff));
+      ignoreResult(getcwd(cwdBuff, sizeof(cwdBuff)));
 #endif
       return endWithSlash(std::string(cwdBuff));
     }
