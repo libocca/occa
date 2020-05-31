@@ -277,7 +277,12 @@ namespace occa {
       for (int i = 0; i < pathSize; ++i) {
         const std::string &dir = path[i];
 
-        foundOcca |= dir == "occa" || dir == ".occa";
+        foundOcca |= (
+          dir == "occa"
+          || dir == ".occa"
+          || startsWith(dir, "occa_")
+          || startsWith(dir, ".occa_")
+        );
 
         if (!dir.size() ||
             (dir == ".")) {

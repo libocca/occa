@@ -69,9 +69,13 @@ namespace occa {
     std::string currentWorkingDirectory() {
       char cwdBuff[FILENAME_MAX];
 #if (OCCA_OS == OCCA_WINDOWS_OS)
-      ignoreResult(_getcwd(cwdBuff, sizeof(cwdBuff)));
+      ignoreResult(
+        _getcwd(cwdBuff, sizeof(cwdBuff))
+      );
 #else
-      ignoreResult(getcwd(cwdBuff, sizeof(cwdBuff)));
+      ignoreResult(
+        getcwd(cwdBuff, sizeof(cwdBuff))
+      );
 #endif
       return endWithSlash(std::string(cwdBuff));
     }
@@ -151,6 +155,13 @@ namespace occa {
 #endif
     }
 
+    std::string getRelativePath(const std::string &filename) {
+      if (startsWith(filename, "./")) {
+        return filename.substr(2);
+      }
+      return filename;
+    }
+
     std::string expandEnvVariables(const std::string &filename) {
       const int chars = (int) filename.size();
       if (!chars) {
@@ -178,7 +189,7 @@ namespace occa {
       expFilename = fo.expand(expFilename);
 
       if (makeAbsolute && !isAbsolutePath(expFilename)) {
-        expFilename = env::CWD + expFilename;
+        return env::CWD + getRelativePath(expFilename);
       }
       return expFilename;
     }
