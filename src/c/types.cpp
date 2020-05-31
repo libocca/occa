@@ -2,17 +2,6 @@
 
 namespace occa {
   namespace c {
-    template <class TM>
-    inline occaType newOccaIntType(bool isUnsigned,
-                                   TM value) {
-      switch (sizeof(value)) {
-      case 1: return isUnsigned ? occaUInt8(value) : occaInt8(value);
-      case 2: return isUnsigned ? occaUInt16(value) : occaInt16(value);
-      case 4: return isUnsigned ? occaUInt32(value) : occaInt32(value);
-      case 8: return isUnsigned ? occaUInt64(value) : occaInt64(value);
-      }
-      OCCA_FORCE_ERROR("Unknown int type");
-    }
 
     occaType undefinedOccaType() {
       occaType oType;
@@ -325,6 +314,19 @@ namespace occa {
       return oType;
     }
 
+    template <class TM>
+    inline occaType newOccaIntType(bool isUnsigned,
+                                   TM value) {
+      switch (sizeof(value)) {
+      case 1: return isUnsigned ? occaUInt8(value) : occaInt8(value);
+      case 2: return isUnsigned ? occaUInt16(value) : occaInt16(value);
+      case 4: return isUnsigned ? occaUInt32(value) : occaInt32(value);
+      case 8: return isUnsigned ? occaUInt64(value) : occaInt64(value);
+      }
+      OCCA_FORCE_ERROR("Unknown int type");
+      return nullOccaType();
+    }
+
     bool isDefault(occaType value) {
       return (value.type == typeType::default_);
     }
@@ -544,6 +546,7 @@ namespace occa {
         if (value.value.ptr == NULL) {
           return occa::json(occa::json::null_);
         }
+        /* FALLTHRU */
       default:
         OCCA_FORCE_ERROR("Invalid value type");
         return occa::json();
@@ -595,6 +598,8 @@ namespace occa {
           if (mem) {
             return *(mem->dtype_);
           }
+          OCCA_FORCE_ERROR("Invalid pointer type");
+          return dtype::none;
         }
         default:
           OCCA_FORCE_ERROR("Invalid value type");
@@ -648,7 +653,7 @@ const occaType occaDefault    = occa::c::defaultOccaType();
 const occaType occaNull       = occa::c::nullOccaType();
 const occaType occaTrue       = occa::c::newOccaType(true);
 const occaType occaFalse      = occa::c::newOccaType(false);
-const occaUDim_t occaAllBytes = -1;
+const occaUDim_t occaAllBytes = occa::UDIM_DEFAULT;
 //======================================
 
 //-----[ Known Types ]------------------

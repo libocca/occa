@@ -2,6 +2,7 @@
 
 #include <occa/lang/primitive.hpp>
 #include <occa/tools/lex.hpp>
+#include <occa/types/fp.hpp>
 
 namespace occa {
   primitive::primitive(const char *c) {
@@ -110,18 +111,18 @@ namespace occa {
         p = (double) occa::atod(std::string(c0, c - c0));
       }
     } else {
-      uint64_t value = occa::atoi(std::string(c0, c - c0));
+      uint64_t value_ = occa::atoi(std::string(c0, c - c0));
       if (longs == 0) {
         if (unsigned_) {
-          p = (uint32_t) value;
+          p = (uint32_t) value_;
         } else {
-          p = (int32_t) value;
+          p = (int32_t) value_;
         }
       } else if (longs >= 1) {
         if (unsigned_) {
-          p = (uint64_t) value;
+          p = (uint64_t) value_;
         } else {
-          p = (int64_t) value;
+          p = (int64_t) value_;
         }
       }
     }
@@ -137,9 +138,9 @@ namespace occa {
 
   primitive primitive::loadBinary(const char *&c, const bool isNegative) {
     const char *c0 = c;
-    uint64_t value = 0;
+    uint64_t value_ = 0;
     while (*c == '0' || *c == '1') {
-      value = (value << 1) | (*c - '0');
+      value_ = (value_ << 1) | (*c - '0');
       ++c;
     }
     if (c == c0) {
@@ -148,24 +149,24 @@ namespace occa {
 
     const int bits = c - c0 + isNegative;
     if (bits < 8) {
-      return isNegative ? primitive((int8_t) -value) : primitive((uint8_t) value);
+      return isNegative ? primitive((int8_t) -value_) : primitive((uint8_t) value_);
     } else if (bits < 16) {
-      return isNegative ? primitive((int16_t) -value) : primitive((uint16_t) value);
+      return isNegative ? primitive((int16_t) -value_) : primitive((uint16_t) value_);
     } else if (bits < 32) {
-      return isNegative ? primitive((int32_t) -value) : primitive((uint32_t) value);
+      return isNegative ? primitive((int32_t) -value_) : primitive((uint32_t) value_);
     }
-    return isNegative ? primitive((int64_t) -value) : primitive((uint64_t) value);
+    return isNegative ? primitive((int64_t) -value_) : primitive((uint64_t) value_);
   }
 
   primitive primitive::loadHex(const char *&c, const bool isNegative) {
     const char *c0 = c;
-    uint64_t value = 0;
+    uint64_t value_ = 0;
     while (true) {
       const char C = uppercase(*c);
       if (('0' <= C) && (C <= '9')) {
-        value = (value << 4) | (C - '0');
+        value_ = (value_ << 4) | (C - '0');
       } else if (('A' <= C) && (C <= 'F')) {
-        value = (value << 4) | (10 + C - 'A');
+        value_ = (value_ << 4) | (10 + C - 'A');
       } else {
         break;
       }
@@ -177,13 +178,13 @@ namespace occa {
 
     const int bits = 4*(c - c0) + isNegative;
     if (bits < 8) {
-      return isNegative ? primitive((int8_t) -value) : primitive((uint8_t) value);
+      return isNegative ? primitive((int8_t) -value_) : primitive((uint8_t) value_);
     } else if (bits < 16) {
-      return isNegative ? primitive((int16_t) -value) : primitive((uint16_t) value);
+      return isNegative ? primitive((int16_t) -value_) : primitive((uint16_t) value_);
     } else if (bits < 32) {
-      return isNegative ? primitive((int32_t) -value) : primitive((uint32_t) value);
+      return isNegative ? primitive((int32_t) -value_) : primitive((uint32_t) value_);
     }
-    return isNegative ? primitive((int64_t) -value) : primitive((uint64_t) value);
+    return isNegative ? primitive((int64_t) -value_) : primitive((uint64_t) value_);
   }
 
   std::string primitive::toString() const {
@@ -248,8 +249,8 @@ namespace occa {
     case primitiveType::uint32_ : return primitive(!p.value.uint32_);
     case primitiveType::int64_  : return primitive(!p.value.int64_);
     case primitiveType::uint64_ : return primitive(!p.value.uint64_);
-    case primitiveType::float_  : return primitive(!p.value.float_);
-    case primitiveType::double_ : return primitive(!p.value.double_);
+    case primitiveType::float_  : OCCA_FORCE_ERROR("Cannot apply operator ! to float type");   break;
+    case primitiveType::double_ : OCCA_FORCE_ERROR("Cannot apply operator ! to double type");   break;
     default: ;
     }
     return primitive();
@@ -436,8 +437,8 @@ namespace occa {
     case primitiveType::uint32_ : return primitive(a.to<uint32_t>() == b.to<uint32_t>());
     case primitiveType::int64_  : return primitive(a.to<int64_t>()  == b.to<int64_t>());
     case primitiveType::uint64_ : return primitive(a.to<uint64_t>() == b.to<uint64_t>());
-    case primitiveType::float_  : return primitive(a.to<float>()    == b.to<float>());
-    case primitiveType::double_ : return primitive(a.to<double>()   == b.to<double>());
+    case primitiveType::float_  : return primitive(areBitwiseEqual(a.value.float_, b.value.float_));
+    case primitiveType::double_ : return primitive(areBitwiseEqual(a.value.double_, b.value.double_));
     default: ;
     }
     return primitive();
@@ -462,8 +463,8 @@ namespace occa {
     case primitiveType::uint32_ : return primitive(a.to<uint32_t>() != b.to<uint32_t>());
     case primitiveType::int64_  : return primitive(a.to<int64_t>()  != b.to<int64_t>());
     case primitiveType::uint64_ : return primitive(a.to<uint64_t>() != b.to<uint64_t>());
-    case primitiveType::float_  : return primitive(a.to<float>()    != b.to<float>());
-    case primitiveType::double_ : return primitive(a.to<double>()   != b.to<double>());
+    case primitiveType::float_  : return primitive(!areBitwiseEqual(a.value.float_, b.value.float_));
+    case primitiveType::double_ : return primitive(!areBitwiseEqual(a.value.double_, b.value.double_));
     default: ;
     }
     return primitive();
@@ -519,8 +520,8 @@ namespace occa {
     case primitiveType::uint32_ : return primitive(a.to<uint32_t>() && b.to<uint32_t>());
     case primitiveType::int64_  : return primitive(a.to<int64_t>()  && b.to<int64_t>());
     case primitiveType::uint64_ : return primitive(a.to<uint64_t>() && b.to<uint64_t>());
-    case primitiveType::float_  : return primitive(a.to<float>()    && b.to<float>());
-    case primitiveType::double_ : return primitive(a.to<double>()   && b.to<double>());
+    case primitiveType::float_  : OCCA_FORCE_ERROR("Cannot apply operator && to float type");   break;
+    case primitiveType::double_ : OCCA_FORCE_ERROR("Cannot apply operator && to double type");   break;
     default: ;
     }
     return primitive();
@@ -538,8 +539,8 @@ namespace occa {
     case primitiveType::uint32_ : return primitive(a.to<uint32_t>() || b.to<uint32_t>());
     case primitiveType::int64_  : return primitive(a.to<int64_t>()  || b.to<int64_t>());
     case primitiveType::uint64_ : return primitive(a.to<uint64_t>() || b.to<uint64_t>());
-    case primitiveType::float_  : return primitive(a.to<float>()    || b.to<float>());
-    case primitiveType::double_ : return primitive(a.to<double>()   || b.to<double>());
+    case primitiveType::float_  : OCCA_FORCE_ERROR("Cannot apply operator || to float type");   break;
+    case primitiveType::double_ : OCCA_FORCE_ERROR("Cannot apply operator || to double type");   break;
     default: ;
     }
     return primitive();

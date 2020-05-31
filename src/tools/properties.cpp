@@ -8,7 +8,7 @@ namespace occa {
     initialized = false;
   }
 
-  properties::properties(const properties &other) {
+  properties::properties(const properties &other) : json() {
     type = object_;
     value_ = other.value_;
 
