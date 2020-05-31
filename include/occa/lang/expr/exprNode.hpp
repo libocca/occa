@@ -21,6 +21,10 @@ namespace occa {
     typedef std::stack<exprNode*>   exprNodeStack;
     typedef std::vector<token_t*>   tokenVector;
 
+    // Variables to help make output prettier
+    static const int PRETTIER_MAX_VAR_WIDTH  = 30;
+    static const int PRETTIER_MAX_LINE_WIDTH = 80;
+
     namespace exprNodeType {
       extern const udim_t empty;
       extern const udim_t primitive;

@@ -52,15 +52,53 @@ namespace occa {
     }
 
     void callNode::print(printer &pout) const {
-      pout << *value
-           << '(';
+      bool useNewlineDelimiters = false;
+      std::string functionName = value->toString();
+      int lineWidth = (
+        pout.cursorPosition()
+        + (int) functionName.size()
+      );
+
       const int argCount = (int) args.size();
       for (int i = 0; i < argCount; ++i) {
+        const std::string argStr = args[i]->toString();
+        const int argSize = (int) argStr.size();
+        lineWidth += argSize;
+
+        useNewlineDelimiters |= (
+          argSize > PRETTIER_MAX_VAR_WIDTH
+          || lineWidth > PRETTIER_MAX_LINE_WIDTH
+        );
+      }
+
+      pout << functionName
+           << '(';
+
+      if (useNewlineDelimiters) {
+        pout.addIndentation();
+        pout.printNewline();
+        pout.printIndentation();
+      }
+
+      for (int i = 0; i < argCount; ++i) {
         if (i) {
-          pout << ", ";
+          if (useNewlineDelimiters) {
+            pout << ',';
+            pout.printNewline();
+            pout.printIndentation();
+          } else {
+            pout << ", ";
+          }
         }
         pout << *(args[i]);
       }
+
+      if (useNewlineDelimiters) {
+        pout.removeIndentation();
+        pout.printNewline();
+        pout.printIndentation();
+      }
+
       pout << ')';
     }
 

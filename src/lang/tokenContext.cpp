@@ -393,10 +393,19 @@ namespace occa {
                                         (identifierToken&) *token));
         }
       }
+
       while (size()) {
         token_t *token = (*this)[0];
-        if (!(token->type() & (tokenType::qualifier |
-                               tokenType::type))) {
+        int tokenType = token->type();
+
+        // Ignore comments
+        if (tokenType & tokenType::comment) {
+          set(1);
+          continue;
+        }
+
+        if (!(tokenType & (tokenType::qualifier |
+                           tokenType::type))) {
           set(1);
           exprTokens.push_back(token->clone());
           continue;

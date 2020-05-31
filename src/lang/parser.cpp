@@ -51,6 +51,7 @@ namespace occa {
       statementLoaders[statementType::break_]      = &parser_t::loadBreakStatement;
       statementLoaders[statementType::return_]     = &parser_t::loadReturnStatement;
       statementLoaders[statementType::classAccess] = &parser_t::loadClassAccessStatement;
+      statementLoaders[statementType::comment]     = &parser_t::loadCommentStatement;
       statementLoaders[statementType::pragma]      = &parser_t::loadPragmaStatement;
       statementLoaders[statementType::goto_]       = &parser_t::loadGotoStatement;
       statementLoaders[statementType::gotoLabel]   = &parser_t::loadGotoLabelStatement;
@@ -653,6 +654,35 @@ namespace occa {
       return NULL;
     }
 
+    statement_t* parser_t::getNextNonCommentStatement() {
+      statement_t *smnt = getNextStatement();
+      if (!smnt || smnt->type() != statementType::comment) {
+        return smnt;
+      }
+
+      // We need to create a block statement to hold these statements
+      blockStatement *blockSmnt = new blockStatement(smnt->up,
+                                                     smnt->source);
+      statementPtrVector &statements = smntContext.up->children;
+
+      smntContext.pushUp(*blockSmnt);
+
+      // Update new parent statement
+      smnt->up = blockSmnt;
+
+      while (smnt) {
+        statements.push_back(smnt);
+        smnt = getNextStatement();
+        if (!smnt || smnt->type() != statementType::comment) {
+          break;
+        }
+      }
+
+      smntContext.popUp();
+
+      return blockSmnt;
+    }
+
     statement_t* parser_t::loadBlockStatement(attributeTokenMap &smntAttributes) {
       blockStatement *smnt = new blockStatement(smntContext.up,
                                                 tokenContext[0]);
@@ -895,7 +925,7 @@ namespace occa {
       addAttributesTo(smntAttributes, &funcSmnt);
 
       smntContext.pushUp(funcSmnt);
-      statement_t *content = getNextStatement();
+      statement_t *content = getNextNonCommentStatement();
       smntContext.popUp();
       if (success) {
         funcSmnt.set(*content);
@@ -940,10 +970,15 @@ namespace occa {
           error = true;
           break;
         }
-        if (success &&
-            (sType & statementType::none)) {
+        if (sType & statementType::none) {
           error = false;
           break;
+        }
+
+        if (sType & statementType::comment) {
+          // Ignore the comment
+          ++tokenContext;
+          continue;
         }
 
         if (count &&
@@ -971,7 +1006,7 @@ namespace occa {
         }
 
         checkSemicolon = (count < expectedCount);
-        statement_t *smnt = getNextStatement();
+        statement_t *smnt = getNextNonCommentStatement();
         statements.push_back(smnt);
         if (!success) {
           error = true;
@@ -1049,7 +1084,7 @@ namespace occa {
 
       ifSmnt.setCondition(condition);
 
-      statement_t *content = getNextStatement();
+      statement_t *content = getNextNonCommentStatement();
       if (!content) {
         if (success) {
           tokenContext.printError("Missing content for [if] statement");
@@ -1065,7 +1100,7 @@ namespace occa {
       while ((sType = peek()) & (statementType::elif_ |
                                  statementType::else_)) {
         smntContext.pushUp(ifSmnt);
-        statement_t *elSmnt = getNextStatement();
+        statement_t *elSmnt = getNextNonCommentStatement();
         smntContext.popUp();
         if (!elSmnt) {
           if (success) {
@@ -1122,7 +1157,7 @@ namespace occa {
 
       elifSmnt.setCondition(condition);
 
-      statement_t *content = getNextStatement();
+      statement_t *content = getNextNonCommentStatement();
       smntContext.popUp();
       if (!content) {
         tokenContext.printError("Missing content for [else if] statement");
@@ -1144,7 +1179,7 @@ namespace occa {
       smntContext.pushUp(elseSmnt);
       addAttributesTo(smntAttributes, &elseSmnt);
 
-      statement_t *content = getNextStatement();
+      statement_t *content = getNextNonCommentStatement();
       smntContext.popUp();
       if (!content) {
         tokenContext.printError("Missing content for [else] statement");
@@ -1218,7 +1253,7 @@ namespace occa {
       // If the last statement had attributes, we need to pass them now
       addAttributesTo(attributes, &forSmnt);
 
-      statement_t *content = getNextStatement();
+      statement_t *content = getNextNonCommentStatement();
       smntContext.popUp();
       if (!content) {
         if (success) {
@@ -1262,7 +1297,7 @@ namespace occa {
 
       whileSmnt.setCondition(condition);
 
-      statement_t *content = getNextStatement();
+      statement_t *content = getNextNonCommentStatement();
       smntContext.popUp();
       if (!content) {
         tokenContext.printError("Missing content for [while] statement");
@@ -1285,7 +1320,7 @@ namespace occa {
       smntContext.pushUp(whileSmnt);
       addAttributesTo(smntAttributes, &whileSmnt);
 
-      statement_t *content = getNextStatement();
+      statement_t *content = getNextNonCommentStatement();
       if (!content) {
         if (success) {
           tokenContext.printError("Missing content for [do-while] statement");
@@ -1362,7 +1397,7 @@ namespace occa {
 
       switchSmnt.setCondition(condition);
 
-      statement_t *content = getNextStatement();
+      statement_t *content = getNextNonCommentStatement();
       smntContext.popUp();
       if (!content) {
         parenEnd->printError("Missing content for [switch] statement");
@@ -1377,7 +1412,7 @@ namespace occa {
       } else {
         switchSmnt.add(*content);
 
-        content = getNextStatement();
+        content = getNextNonCommentStatement();
         if (!content) {
           parenEnd->printError("Missing statement for switch's [case]");
           success = false;
@@ -1521,6 +1556,15 @@ namespace occa {
                                                             accessToken,
                                                             access);
       addAttributesTo(smntAttributes, smnt);
+      return smnt;
+    }
+
+    statement_t* parser_t::loadCommentStatement(attributeTokenMap &smntAttributes) {
+      commentStatement *smnt = new commentStatement(smntContext.up,
+                                                    *((commentToken*) tokenContext[0]));
+
+      ++tokenContext;
+
       return smnt;
     }
 

@@ -48,6 +48,10 @@ namespace occa {
       for (tokenPos = 0; tokenPos < tokenCount; ++tokenPos) {
         token_t *token = tokenContext[tokenPos];
 
+        if (token->type() & tokenType::comment) {
+          continue;
+        }
+
         keyword_t &keyword = keywords.get(smntContext, token);
         const int kType    = keyword.type();
         if (kType & keywordType::none) {

@@ -88,6 +88,10 @@ namespace occa {
           return statementType::expression;
         }
 
+        if (tokenType & tokenType::comment) {
+          return statementType::comment;
+        }
+
         if (tokenType & tokenType::pragma) {
           return statementType::pragma;
         }

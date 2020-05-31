@@ -92,6 +92,9 @@ namespace occa {
       fileOrigin from(const bool fromInclude_,
                       const fileOrigin &origin);
 
+      int emptyLinesBefore(const char *pos);
+      int emptyLinesAfter(const char *pos);
+
       dim_t distanceTo(const fileOrigin &origin);
 
       void preprint(io::output &out) const;
