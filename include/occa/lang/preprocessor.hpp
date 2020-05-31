@@ -16,6 +16,8 @@ namespace occa {
   namespace lang {
     class tokenizer_t;
 
+    typedef std::map<std::string, bool> stringSet;
+
     typedef std::vector<token_t*> tokenVector;
     typedef std::stack<token_t*>  tokenStack;
     typedef std::list<token_t*>   tokenList;
@@ -57,6 +59,7 @@ namespace occa {
 
       macroMap compilerMacros;
       macroMap sourceMacros;
+      stringSet standardHeaders;
       //================================
 
       //---[ Metadata ]-----------------
@@ -82,6 +85,7 @@ namespace occa {
       preprocessor_t& operator = (const preprocessor_t &pp);
 
       void initDirectives();
+      void initStandardHeaders();
 
       void warningOn(token_t *token,
                      const std::string &message);
@@ -173,6 +177,7 @@ namespace occa {
       void processWarning(identifierToken &directive);
 
       void processInclude(identifierToken &directive);
+      bool isStandardHeader(const std::string &header);
       void processPragma(identifierToken &directive);
       void processOccaPragma(identifierToken &directive,
                              tokenVector &lineTokens);

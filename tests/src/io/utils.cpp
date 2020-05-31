@@ -59,6 +59,15 @@ void testPathMethods() {
   ASSERT_EQ(occa::io::convertSlashes("/a/b"),
             "/a/b");
 
+  ASSERT_EQ(occa::io::getRelativePath("./a"),
+            "a");
+  ASSERT_EQ(occa::io::getRelativePath("./a/b"),
+            "a/b");
+  ASSERT_EQ(occa::io::getRelativePath(".a/b"),
+            ".a/b");
+  ASSERT_EQ(occa::io::getRelativePath("../a/b"),
+            "../a/b");
+
   ASSERT_EQ(occa::io::expandEnvVariables("~"),
             occa::env::HOME);
   ASSERT_EQ(occa::io::expandEnvVariables("~/a"),
