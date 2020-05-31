@@ -57,7 +57,7 @@ namespace occa {
     }
 
     int printer::indentationSize() {
-      (int) indent.size();
+      return (int) indent.size();
     }
 
     void printer::addIndentation() {
