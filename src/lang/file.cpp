@@ -197,6 +197,46 @@ namespace occa {
       return fo;
     }
 
+    int fileOrigin::emptyLinesBefore(const char *pos) {
+      const char *start = file->content.c_str();
+      const char *end   = start + file->content.size();
+
+      if (pos < start || end < pos) {
+        return 0;
+      }
+
+      int count = 0;
+      for (const char *c = pos; c >= start; --c) {
+        if (!lex::isWhitespace(*c)) {
+          break;
+        }
+        if (*c == '\n') {
+          ++count;
+        }
+      }
+      return count;
+    }
+
+    int fileOrigin::emptyLinesAfter(const char *pos) {
+      const char *start = file->content.c_str();
+      const char *end   = start + file->content.size();
+
+      if (pos < start || end < pos) {
+        return 0;
+      }
+
+      int count = 0;
+      for (const char *c = pos; c <= end; --c) {
+        if (!lex::isWhitespace(*c)) {
+          break;
+        }
+        if (*c == '\n') {
+          ++count;
+        }
+      }
+      return count;
+    }
+
     dim_t fileOrigin::distanceTo(const fileOrigin &origin) {
       if (file != origin.file) {
         return -1;

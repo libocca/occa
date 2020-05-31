@@ -35,6 +35,8 @@ namespace occa {
       operatorTrie operators;
       std::string operatorCharcodes;
 
+      int lastTokenType;
+      int lastNonNewlineTokenType;
       int errors, warnings;
 
       tokenizer_t();

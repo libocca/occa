@@ -32,10 +32,19 @@ namespace occa {
       const int lineCount = lines.size();
 
       pout.printEndNewline();
+
+      if (token.spacingType & spacingType_t::left) {
+        pout << '\n';
+      }
+
       for (int i = 0; i < lineCount; ++i) {
         pout.printIndentation();
         pout << strip(lines[i]);
         pout.printNewline();
+      }
+
+      if (token.spacingType & spacingType_t::right) {
+        pout << '\n';
       }
     }
   }

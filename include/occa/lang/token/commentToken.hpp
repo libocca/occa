@@ -5,12 +5,20 @@
 
 namespace occa {
   namespace lang {
+    namespace spacingType_t {
+      static const int none  = 0;
+      static const int left  = (1 << 0);
+      static const int right = (1 << 1);
+    };
+
     class commentToken : public token_t {
     public:
       std::string value;
+      int spacingType;
 
       commentToken(const fileOrigin &origin_,
-                   const std::string &value_);
+                   const std::string &value_,
+                   const int spacingType_);
 
       virtual ~commentToken();
 

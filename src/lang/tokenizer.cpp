@@ -152,6 +152,9 @@ namespace occa {
     }
 
     void tokenizer_t::clear() {
+      lastTokenType = tokenType::none;
+      lastNonNewlineTokenType = tokenType::none;
+
       errors   = 0;
       warnings = 0;
 
@@ -184,7 +187,12 @@ namespace occa {
       while (!reachedTheEnd() &&
              outputCache.empty()) {
         token_t *token = getToken();
+
+        lastTokenType = token_t::safeType(token);
         if (token) {
+          if (lastTokenType != tokenType::newline) {
+            lastNonNewlineTokenType = lastTokenType;
+          }
           outputCache.push_back(token);
         }
       }
@@ -652,19 +660,45 @@ namespace occa {
     }
 
     token_t* tokenizer_t::getLineCommentToken() {
+      int spacingType = spacingType_t::none;
+
+      if (
+        // Don't double the newlines
+        (lastNonNewlineTokenType != tokenType::comment)
+        // Shift by 1 to undo the '/' operator peek
+        && (1 < origin.emptyLinesBefore(fp.start - 1))
+      ) {
+        spacingType |= spacingType_t::left;
+      }
+
       push();
       skipTo('\n');
 
-      // Remove newline
-      const std::string comment = stripRight(str());
+      const std::string comment = str();
 
       pop();
 
+      if (1 < origin.emptyLinesAfter(fp.start + 1)) {
+            spacingType |= spacingType_t::right;
+      }
+
       return new commentToken(popTokenOrigin(),
-                              comment);
+                              comment,
+                              spacingType);
     }
 
     token_t* tokenizer_t::getBlockCommentToken() {
+      int spacingType = spacingType_t::none;
+
+      if (
+        // Don't double the newlines
+        (lastNonNewlineTokenType != tokenType::comment)
+        // Shift by 2 to undo the '/*' operator peek
+        && (1 < origin.emptyLinesBefore(fp.start - 2))
+      ) {
+        spacingType |= spacingType_t::left;
+      }
+
       push();
 
       bool finishedComment = false;
@@ -682,8 +716,13 @@ namespace occa {
       const std::string comment = str();
       pop();
 
+      if (1 <= origin.emptyLinesAfter(fp.start)) {
+        spacingType |= spacingType_t::right;
+      }
+
       return new commentToken(popTokenOrigin(),
-                              comment);
+                              comment,
+                              spacingType);
     }
 
     token_t* tokenizer_t::getStringToken(const int encoding) {
