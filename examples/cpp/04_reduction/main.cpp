@@ -1,6 +1,7 @@
 #include <iostream>
 
 #include <occa.hpp>
+#include <occa/types/fp.hpp>
 
 occa::json parseArgs(int argc, const char **argv);
 
@@ -60,7 +61,7 @@ int main(int argc, const char **argv) {
   }
 
   // Validate
-  if (blockSum[0] != sum) {
+  if (!occa::areBitwiseEqual(blockSum[0], sum)) {
     std::cout << "sum      = " << sum << '\n'
               << "blockSum = " << blockSum[0] << '\n';
 

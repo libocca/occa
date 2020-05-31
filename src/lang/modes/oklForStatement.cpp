@@ -341,17 +341,17 @@ namespace occa {
         return oklLoopIndex(forSmnt);
       }
 
-      int oklForStatement::oklLoopIndex(forStatement &forSmnt) {
+      int oklForStatement::oklLoopIndex(forStatement &forSmnt_) {
         std::string attr;
-        if (forSmnt.hasAttribute("inner")) {
+        if (forSmnt_.hasAttribute("inner")) {
           attr = "inner";
-        } else if (forSmnt.hasAttribute("outer")) {
+        } else if (forSmnt_.hasAttribute("outer")) {
           attr = "outer";
         } else {
           return -1;
         }
 
-        attributeToken_t &oklAttr = forSmnt.attributes[attr];
+        attributeToken_t &oklAttr = forSmnt_.attributes[attr];
         if (oklAttr.args.size()) {
           return (int) oklAttr.args[0].expr->evaluate();
         }
@@ -359,19 +359,19 @@ namespace occa {
         statementPtrVector smnts;
         findStatementsByAttr(statementType::for_,
                              attr,
-                             forSmnt,
+                             forSmnt_,
                              smnts);
         int smntCount = (int) smnts.size();
         int maxIndex = 0;
         for (int i = 0; i < smntCount; ++i) {
           forStatement &iSmnt = *((forStatement*) smnts[i]);
-          if (&iSmnt == &forSmnt) {
+          if (&iSmnt == &forSmnt_) {
             continue;
           }
 
           int index = 1;
           statement_t *up = iSmnt.up;
-          while (up != &forSmnt) {
+          while (up != &forSmnt_) {
             index += up->hasAttribute(attr);
             up = up->up;
           }
@@ -386,10 +386,10 @@ namespace occa {
         getOKLLoopPath(forSmnt, path);
       }
 
-      void oklForStatement::getOKLLoopPath(forStatement &forSmnt,
+      void oklForStatement::getOKLLoopPath(forStatement &forSmnt_,
                                            statementPtrVector &path) {
         // Fill in path
-        statement_t *smnt = &forSmnt;
+        statement_t *smnt = &forSmnt_;
         while (smnt) {
           if ((smnt->type() & statementType::for_)
               && (smnt->hasAttribute("inner")

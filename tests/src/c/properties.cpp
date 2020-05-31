@@ -23,9 +23,9 @@ int main(const int argc, const char **argv) {
   cProps = occaCreateProperties();
 
   testTypes();
-  testBadType();
   testKeyMiss();
   testSerialization();
+  testBadType();
 
   occaFree(&cProps);
 

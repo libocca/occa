@@ -86,12 +86,12 @@ void testSlice() {
 
       half2.copyTo(data);
       for (int i = 0; i < 5; ++i) {
-        ASSERT_EQ(data[i], 5 + i);
+        ASSERT_EQ(static_cast<int>(data[i]), 5 + i);
       }
 
       half1.copyTo(data);
       for (int i = 0; i < 5; ++i) {
-        ASSERT_EQ(data[i], i);
+        ASSERT_EQ(static_cast<int>(data[i]), i);
       }
     }
 
@@ -103,12 +103,12 @@ void testSlice() {
 
       half2.copyTo(data);
       for (int i = 0; i < 5; ++i) {
-        ASSERT_EQ(data[i], 5 + i);
+        ASSERT_EQ(static_cast<int>(data[i]), 5 + i);
       }
 
       half1.copyTo(data);
       for (int i = 0; i < 5; ++i) {
-        ASSERT_EQ(data[i], i);
+        ASSERT_EQ(static_cast<int>(data[i]), i);
       }
     }
 
