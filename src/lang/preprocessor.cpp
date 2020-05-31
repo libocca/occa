@@ -78,6 +78,15 @@ namespace occa {
         compilerMacros[specialMacros[i]->name()] = specialMacros[i];
       }
 
+      // OCCA-specific macros
+      addCompilerDefine("OCCA_MAJOR_VERSION", toString(OCCA_MAJOR_VERSION));
+      addCompilerDefine("OCCA_MINOR_VERSION", toString(OCCA_MINOR_VERSION));
+      addCompilerDefine("OCCA_PATCH_VERSION", toString(OCCA_PATCH_VERSION));
+      addCompilerDefine("OCCA_VERSION", toString(OCCA_VERSION));
+      addCompilerDefine("OKL_VERSION" , toString(OKL_VERSION));
+      addCompilerDefine("__OKL__" , "1");
+      addCompilerDefine("__OCCA__" , "1");
+
       // Alternative representations
       addCompilerDefine("and"   , "&&");
       addCompilerDefine("and_eq", "&=");

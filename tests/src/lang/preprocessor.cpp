@@ -13,6 +13,7 @@ void testIfElse();
 void testIfElseDefines();
 void testIfWithUndefines();
 void testErrorDefines();
+void testOccaMacros();
 void testSpecialMacros();
 void testInclude();
 void testPragma();
@@ -80,6 +81,7 @@ int main(const int argc, const char **argv) {
   testIfElseDefines();
   testIfWithUndefines();
   testErrorDefines();
+  testOccaMacros();
   testSpecialMacros();
   testInclude();
   testPragma();
@@ -508,6 +510,35 @@ void testErrorDefines() {
   while (!tokenStream.isEmpty()) {
     getToken();
   }
+}
+
+void testOccaMacros() {
+  setStream(
+    "OCCA_MAJOR_VERSION\n"
+    "OCCA_MINOR_VERSION\n"
+    "OCCA_PATCH_VERSION\n"
+    "OCCA_VERSION\n"
+    "OKL_VERSION\n"
+    "__OKL__\n"
+    "__OCCA__\n"
+  );
+
+  ASSERT_EQ(OCCA_MAJOR_VERSION,
+            (int) nextTokenPrimitiveValue());
+  ASSERT_EQ(OCCA_MINOR_VERSION,
+            (int) nextTokenPrimitiveValue());
+  ASSERT_EQ(OCCA_PATCH_VERSION,
+            (int) nextTokenPrimitiveValue());
+  ASSERT_EQ(OCCA_VERSION,
+            (int) nextTokenPrimitiveValue());
+  ASSERT_EQ(OKL_VERSION,
+            (int) nextTokenPrimitiveValue());
+  // __OKL__
+  ASSERT_EQ(1,
+            (int) nextTokenPrimitiveValue());
+  // __OCCA__
+  ASSERT_EQ(1,
+            (int) nextTokenPrimitiveValue());
 }
 
 void testSpecialMacros() {
