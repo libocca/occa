@@ -151,7 +151,7 @@ bool runTranslate(const json &args) {
 
   lang::parser_t *parser = NULL;
   lang::parser_t *launcherParser = NULL;
-  if (mode == "Serial") {
+  if (mode == "" || mode == "Serial") {
     parser = new lang::okl::serialParser(kernelProps);
   } else if (mode == "OpenMP") {
     parser = new lang::okl::openmpParser(kernelProps);
@@ -329,8 +329,7 @@ int main(const int argc, const char **argv) {
     .withCallback(runTranslate)
     .withDescription("Translate kernels")
     .addOption(cli::option('m', "mode",
-                           "Output mode")
-               .isRequired()
+                           "Output mode (Default: Serial)")
                .withArg()
                .expandsFunction("occa modes"))
     .addOption(cli::option('l', "launcher",

@@ -5,6 +5,7 @@
 #include <occa/lang/statement/blockStatement.hpp>
 
 #include <occa/lang/statement/classAccessStatement.hpp>
+#include <occa/lang/statement/commentStatement.hpp>
 #include <occa/lang/statement/defaultStatement.hpp>
 #include <occa/lang/statement/elseStatement.hpp>
 #include <occa/lang/statement/forStatement.hpp>

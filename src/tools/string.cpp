@@ -13,19 +13,51 @@
 
 namespace occa {
   std::string strip(const std::string &str) {
+    std::string output;
+    strip(str, true, true, output);
+    return output;
+  }
+
+  std::string stripLeft(const std::string &str) {
+    std::string output;
+    strip(str, true, false, output);
+    return output;
+  }
+
+  std::string stripRight(const std::string &str) {
+    std::string output;
+    strip(str, false, true, output);
+    return output;
+  }
+
+  void strip(const std::string &str,
+             const bool stripLeft,
+             const bool stripRight,
+             std::string &output) {
     const char *start = str.c_str();
     const char *end = start + str.size() - 1;
 
-    while ((*start != '\0') &&
-           lex::isWhitespace(*start)) {
-      ++start;
+    if (start >= end) {
+      output = str;
+      return;
     }
-    while ((start < end) &&
-           lex::isWhitespace(*end)) {
-      --end;
+
+    if (stripLeft) {
+      while ((*start != '\0') &&
+             lex::isWhitespace(*start)) {
+        ++start;
+      }
     }
-    ++end;
-    return std::string(start, end - start);
+
+    if (stripRight) {
+      while ((start < end) &&
+             lex::isWhitespace(*end)) {
+        --end;
+      }
+      ++end;
+    }
+
+    output = std::string(start, end - start);
   }
 
   std::string escape(const std::string &str,

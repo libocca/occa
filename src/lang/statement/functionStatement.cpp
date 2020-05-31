@@ -31,11 +31,10 @@ namespace occa {
     }
 
     void functionStatement::print(printer &pout) const {
-      // Double newlines to make it look cleaner
-      pout << '\n';
       pout.printStartIndentation();
       function.printDeclaration(pout);
-      pout << ";\n";
+      // Double newlines to make it look cleaner
+      pout << ";\n\n";
     }
   }
 }

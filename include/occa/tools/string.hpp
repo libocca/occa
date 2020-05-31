@@ -14,6 +14,15 @@
 namespace occa {
   std::string strip(const std::string &str);
 
+  std::string stripLeft(const std::string &str);
+
+  std::string stripRight(const std::string &str);
+
+  void strip(const std::string &str,
+             const bool stripLeft,
+             const bool stripRight,
+             std::string &output);
+
   std::string escape(const std::string &str,
                      const char c,
                      const char excapeChar = '\\');

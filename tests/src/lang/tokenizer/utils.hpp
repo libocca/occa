@@ -56,6 +56,11 @@ int getTokenType() {
 //======================================
 
 //---[ Macro Util Methods ]-------------
+#define testCommentPeek(s)                      \
+  setStream(s);                                 \
+  ASSERT_EQ_BINARY(tokenType::op,               \
+                   tokenizer.peek())
+
 #define testStringPeek(s, encoding_)            \
   setStream(s);                                 \
   ASSERT_EQ_BINARY(                             \
@@ -69,6 +74,11 @@ int getTokenType() {
     (encoding_ << tokenType::encodingShift) |   \
     tokenType::char_,                           \
     tokenizer.peek())
+
+#define testCommentToken(s)                     \
+  setToken(s);                                  \
+  ASSERT_EQ_BINARY(tokenType::comment,          \
+                   getTokenType());             \
 
 #define testStringToken(s, encoding_)                 \
   setToken(s);                                        \
@@ -91,6 +101,21 @@ int getTokenType() {
                    getTokenType());                 \
   ASSERT_EQ_BINARY(encoding_,                       \
                    token->to<charToken>().encoding)
+
+#define testCommentValue(s, value_)             \
+  setStream(s);                                 \
+  getToken();                                   \
+  testNextCommentValue(value_)
+
+#define testNextCommentValue(value_)            \
+  ASSERT_EQ_BINARY(                             \
+    tokenType::comment,                         \
+    getTokenType()                              \
+  );                                            \
+  ASSERT_EQ(                                    \
+    value_,                                     \
+    token->to<commentToken>().value             \
+  )
 
 #define testStringValue(s, value_)              \
   setStream(s);                                 \
