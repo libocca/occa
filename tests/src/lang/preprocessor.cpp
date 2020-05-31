@@ -15,6 +15,7 @@ void testIfWithUndefines();
 void testErrorDefines();
 void testSpecialMacros();
 void testInclude();
+void testIncludeStandardHeader();
 void testPragma();
 void testOccaPragma();
 void testOccaDirective();
@@ -82,6 +83,7 @@ int main(const int argc, const char **argv) {
   testErrorDefines();
   testSpecialMacros();
   testInclude();
+  testIncludeStandardHeader();
   testPragma();
   testOccaPragma();
   testOccaDirective();
@@ -598,6 +600,35 @@ void testInclude() {
   preprocessor_t &pp = *((preprocessor_t*) tokenStream.getInput("preprocessor_t"));
   ASSERT_EQ(1,
             (int) pp.dependencies.size());
+}
+
+void testIncludeStandardHeader() {
+#define checkInclude(header)                    \
+  getToken();                                   \
+  ASSERT_EQ_BINARY(tokenType::directive,        \
+                   token->type());              \
+  ASSERT_EQ("include <" header ">",             \
+            token->to<directiveToken>().value)
+
+  setStream(
+     "#include \"math.h\"\n"
+      "#include <math.h>\n"
+      "#include \"cmath\"\n"
+      "#include <cmath>\n"
+      "#include \"iostream\"\n"
+      "#include <iostream>\n"
+  );
+
+  preprocessor_t *pp = (preprocessor_t*) tokenStream.getInput("preprocessor_t");
+
+  checkInclude("math.h");
+  checkInclude("math.h");
+  checkInclude("cmath");
+  checkInclude("cmath");
+  checkInclude("iostream");
+  checkInclude("iostream");
+
+  ASSERT_EQ(6, pp->warnings);
 }
 
 void testPragma() {

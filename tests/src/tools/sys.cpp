@@ -17,11 +17,17 @@ int main(const int argc, const char **argv) {
 }
 
 void testRmrf() {
+  // Need to make sure "occa" is in the filepath
+  occa::io::addLibraryPath("my_library", "/path/to/my_library/occa");
+
   ASSERT_TRUE(occa::sys::isSafeToRmrf("/a/occa/b"));
   ASSERT_TRUE(occa::sys::isSafeToRmrf("/a/b/../b/.occa"));
+  ASSERT_TRUE(occa::sys::isSafeToRmrf("/a/occa_dir/b"));
+  ASSERT_TRUE(occa::sys::isSafeToRmrf("/a/b/../b/.occa_dir"));
   ASSERT_TRUE(occa::sys::isSafeToRmrf("/../../../../../occa/a/b"));
   ASSERT_TRUE(occa::sys::isSafeToRmrf("~/c/.cache/occa"));
-  ASSERT_TRUE(occa::sys::isSafeToRmrf("occa://lib"));
+  ASSERT_TRUE(occa::sys::isSafeToRmrf("occa://my_library/"));
+  ASSERT_TRUE(occa::sys::isSafeToRmrf("occa://my_library/file"));
 
   ASSERT_FALSE(occa::sys::isSafeToRmrf("/occa/a/.."));
   ASSERT_FALSE(occa::sys::isSafeToRmrf("/a/b/c/.."));
@@ -29,12 +35,13 @@ void testRmrf() {
   ASSERT_FALSE(occa::sys::isSafeToRmrf("/../../../../../a/b"));
   ASSERT_FALSE(occa::sys::isSafeToRmrf("~/c/.."));
 
+  // Needs to have occa in the name
   const std::string dummyDir = "occa_foo_bar_test";
 
   occa::sys::rmrf(dummyDir);
   ASSERT_FALSE(occa::io::isDir(dummyDir));
 
-  occa::sys::mkdir(dummyDir);
+  occa::sys::mkpath(dummyDir);
   ASSERT_TRUE(occa::io::isDir(dummyDir));
 
   occa::sys::rmrf(dummyDir);
