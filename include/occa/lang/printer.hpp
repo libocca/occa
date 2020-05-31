@@ -56,23 +56,35 @@ namespace occa {
       void print(const TM &t) {
         ss << t;
         const std::string str = ss.str();
-        const char *c_str = str.c_str();
         const int chars = (int) str.size();
-        if (chars) {
+        if (!chars) {
+          return;
+        }
+
+        int scanStart;
+        if (out) {
+          // Clear buffer
           ss.str("");
-          lastChar = c_str[chars - 1];
-          for (int i = 0; i < chars; ++i) {
-            if (c_str[i] != '\n') {
-              ++charsFromNewline;
-            } else {
-              charsFromNewline = 0;
-            }
-          }
-          if (out) {
-            *out << str;
+          scanStart = 0;
+        } else {
+          // We don't clear the buffer so no need to re-read past characters
+          scanStart = charsFromNewline;
+        }
+
+        const char *c_str = str.c_str();
+        for (int i = scanStart; i < chars; ++i) {
+          if (c_str[i] != '\n') {
+            ++charsFromNewline;
           } else {
-            ss << str;
+            charsFromNewline = 0;
           }
+        }
+
+        lastChar = c_str[chars - 1];
+
+        if (out) {
+          // Print to buffer
+          *out << str;
         }
       }
     };
