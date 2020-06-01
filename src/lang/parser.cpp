@@ -663,7 +663,7 @@ namespace occa {
       // We need to create a block statement to hold these statements
       blockStatement *blockSmnt = new blockStatement(smnt->up,
                                                      smnt->source);
-      statementPtrVector &statements = smntContext.up->children;
+      statementPtrVector &statements = blockSmnt->children;
 
       smntContext.pushUp(*blockSmnt);
 
@@ -676,6 +676,11 @@ namespace occa {
         if (!smnt || smnt->type() != statementType::comment) {
           break;
         }
+      }
+
+      // Add the last non-comment statement
+      if (smnt) {
+        statements.push_back(smnt);
       }
 
       smntContext.popUp();
