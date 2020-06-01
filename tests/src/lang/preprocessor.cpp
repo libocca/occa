@@ -515,6 +515,13 @@ void testErrorDefines() {
 }
 
 void testOccaMacros() {
+  occa::hash_t hash = occa::hash_t::fromString("df15688e1bde01ebb5b3750031d017b2312d028acd9753b27dd4ba0aef0a4d41");
+
+  occa::properties preprocessorSettings;
+  preprocessorSettings["hash"] = hash.getFullString();
+
+  preprocessor.setSettings(preprocessorSettings);
+
   setStream(
     "OCCA_MAJOR_VERSION\n"
     "OCCA_MINOR_VERSION\n"
@@ -523,6 +530,7 @@ void testOccaMacros() {
     "OKL_VERSION\n"
     "__OKL__\n"
     "__OCCA__\n"
+    "OKL_KERNEL_HASH\n"
   );
 
   ASSERT_EQ(OCCA_MAJOR_VERSION,
@@ -541,6 +549,18 @@ void testOccaMacros() {
   // __OCCA__
   ASSERT_EQ(1,
             (int) nextTokenPrimitiveValue());
+  // OKL_KERNEL_HASH
+  ASSERT_EQ(hash.getString(),
+            nextTokenStringValue());
+
+  // Test default OKL_KERNEL_HASH
+  preprocessor.setSettings("");
+
+  setStream("OKL_KERNEL_HASH");
+
+  // OKL_KERNEL_HASH
+  ASSERT_EQ("unknown",
+            nextTokenStringValue());
 }
 
 void testSpecialMacros() {

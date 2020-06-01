@@ -63,6 +63,8 @@ namespace occa {
       //================================
 
       //---[ Metadata ]-----------------
+      occa::properties settings;
+
       strToBoolMap dependencies;
       int warnings, errors;
       //================================
@@ -83,6 +85,8 @@ namespace occa {
       void clear_();
 
       preprocessor_t& operator = (const preprocessor_t &pp);
+
+      void setSettings(occa::properties settings_);
 
       void initDirectives();
       void initStandardHeaders();
