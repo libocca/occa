@@ -29,9 +29,11 @@ namespace occa {
       initDirectives();
       initStandardHeaders();
 
+      setSettings(settings_);
+
       includePaths = env::OCCA_INCLUDE_PATH;
 
-      json oklIncludePaths = settings_["okl/include_paths"];
+      json oklIncludePaths = settings["okl/include_paths"];
       if (oklIncludePaths.isArray()) {
         jsonArray pathArray = oklIncludePaths.array();
         const int pathCount = (int) pathArray.size();
@@ -87,6 +89,16 @@ namespace occa {
       addCompilerDefine("OKL_VERSION" , toString(OKL_VERSION));
       addCompilerDefine("__OKL__" , "1");
       addCompilerDefine("__OCCA__" , "1");
+
+      // Add kernel hash as a define
+      std::string hashValue = settings.get<std::string>("hash", "");
+      if (hashValue.size()) {
+        hash_t hash = hash_t::fromString(hashValue);
+        hashValue = hash.getString();
+      } else {
+        hashValue = "unknown";
+      }
+      addCompilerDefine("OKL_KERNEL_HASH", "\"" + hashValue + "\"");
 
       // Alternative representations
       addCompilerDefine("and"   , "&&");
@@ -194,6 +206,10 @@ namespace occa {
         ++it;
       }
       return *this;
+    }
+
+    void preprocessor_t::setSettings(occa::properties settings_) {
+      settings = settings_;
     }
 
     void preprocessor_t::initDirectives() {
