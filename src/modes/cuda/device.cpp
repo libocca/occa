@@ -283,7 +283,7 @@ namespace occa {
               << " -D OCCA_OS=OCCA_WINDOWS_OS -D _MSC_VER=1800"
 #endif
               << " -I"        << env::OCCA_DIR << "include"
-              << " -L"        << env::OCCA_DIR << "lib -locca"
+              << " -L"        << OCCA_BUILD_DIR << "/lib -locca"
               << " -x cu -c " << sourceFilename
               << " -o "       << ptxBinaryFilename;
 
@@ -311,7 +311,7 @@ namespace occa {
               << " -D OCCA_OS=OCCA_WINDOWS_OS -D _MSC_VER=1800"
 #endif
               << " -I"        << env::OCCA_DIR << "include"
-              << " -L"        << env::OCCA_DIR << "lib -locca"
+              << " -L"        << OCCA_BUILD_DIR << "/lib -locca"
               << " -x cu " << sourceFilename
               << " -o "    << binaryFilename;
 

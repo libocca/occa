@@ -329,7 +329,7 @@ namespace occa {
               << ' '    << sourceFilename
               << " -o " << binaryFilename
               << " -I"  << env::OCCA_DIR << "include"
-              << " -L"  << env::OCCA_DIR << "lib -locca"
+              << " -L"  << OCCA_BUILD_DIR << "/lib -locca"
               << ' '    << compilerLinkerFlags
               << std::endl;
 #else
@@ -341,7 +341,7 @@ namespace occa {
               << ' '       << compilerFlags
               << " /I"     << env::OCCA_DIR << "include"
               << ' '       << sourceFilename
-              << " /link " << env::OCCA_DIR << "lib/libocca.lib",
+              << " /link " << OCCA_BUILD_DIR << "/lib/libocca.lib",
               << ' '       << compilerLinkerFlags
               << " /OUT:"  << binaryFilename
               << std::endl;

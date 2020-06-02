@@ -1,6 +1,7 @@
 if (MPI_FOUND)
   add_executable(examples_cpp_10_mpi main.cpp)
-  target_link_libraries(examples_cpp_10_mpi libocca)
+  target_include_directories(examples_cpp_10_mpi PRIVATE ${MPI_CXX_INCLUDE_DIRS})
+  target_link_libraries(examples_cpp_10_mpi PRIVATE libocca ${MPI_CXX_LIBRARIES})
 
   add_custom_target(cpp_example_10_addVectors_okl ALL COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/addVectors.okl addVectors.okl)
   add_dependencies(examples_cpp_10_mpi cpp_example_10_addVectors_okl)
