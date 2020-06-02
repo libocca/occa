@@ -1,7 +1,7 @@
 cmake_minimum_required (VERSION 3.12 FATAL_ERROR)
 
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
-set (CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
+set (CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 
 message(STATUS "Using CMake version ${CMAKE_VERSION}")
 cmake_policy(SET CMP0054 NEW)
@@ -49,8 +49,8 @@ message("-- System: ${CMAKE_SYSTEM}")
 message("-- C FLAGS:   ${CMAKE_C_FLAGS}")
 message("-- CXX FLAGS: ${CMAKE_CXX_FLAGS}")
 
-set(OCCA_SOURCE_DIR ${CMAKE_SOURCE_DIR})
-set(OCCA_BUILD_DIR ${PROJECT_BINARY_DIR})
+set(OCCA_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR})
+set(OCCA_BUILD_DIR ${CMAKE_BINARY_DIR})
 
 
 ##############################
@@ -58,14 +58,14 @@ set(OCCA_BUILD_DIR ${PROJECT_BINARY_DIR})
 ##############################
 add_library(libocca SHARED)
 # Without this, CMake will create liblibocca.so
-set_target_properties(libocca PROPERTIES OUTPUT_NAME occa LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
+set_target_properties(libocca PROPERTIES OUTPUT_NAME occa LIBRARY_OUTPUT_DIRECTORY ${OCCA_BUILD_DIR}/lib)
 
 #Find needed and requested packages
 find_package(Threads REQUIRED)
 target_link_libraries(libocca PRIVATE ${CMAKE_THREAD_LIBS_INIT})
 
 target_include_directories(libocca PUBLIC
-                          $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/include>)
+                          $<BUILD_INTERFACE:${OCCA_SOURCE_DIR}/include>)
 
 target_compile_definitions(libocca PRIVATE -DUSE_CMAKE)
 
@@ -221,14 +221,14 @@ if (ENABLE_MPI)
 endif(ENABLE_MPI)
 
 #Generate CompiledDefines from libraries we found
-configure_file(scripts/compiledDefinesTemplate.hpp.in ${CMAKE_SOURCE_DIR}/include/occa/defines/compiledDefines.hpp)
+configure_file(scripts/compiledDefinesTemplate.hpp.in ${OCCA_SOURCE_DIR}/include/occa/defines/compiledDefines.hpp)
 
 #Find source files
-file(GLOB_RECURSE OCCA_SRC RELATIVE ${CMAKE_SOURCE_DIR} "src/*.cpp")
+file(GLOB_RECURSE OCCA_SRC RELATIVE ${OCCA_SOURCE_DIR} "src/*.cpp")
 list(REMOVE_ITEM OCCA_SRC src/core/kernelOperators.cpp src/tools/runFunction.cpp)
 
 if (OCCA_METAL_ENABLED)
-  file(GLOB_RECURSE OCCA_SRC_metal RELATIVE ${CMAKE_SOURCE_DIR} "src/*.mm")
+  file(GLOB_RECURSE OCCA_SRC_metal RELATIVE ${OCCA_SOURCE_DIR} "src/*.mm")
   set(OCCA_SRC ${OCCA_SRC} ${OCCA_SRC_metal})
 endif()
 
