@@ -36,4 +36,10 @@ endif()
 
 target_link_libraries(libocca ${LIBOCCA_LIBRARIES})
 
+target_include_directories(libocca PUBLIC
+                          $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/../include>
+                          $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/include>)
+
+target_compile_definitions(libocca PRIVATE -DUSE_CMAKE)
+
 install(TARGETS libocca DESTINATION lib)

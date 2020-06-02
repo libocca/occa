@@ -28,12 +28,16 @@ option(ALLOW_OPENCL "Allow OpenCL" OFF)
 option(ALLOW_METAL "Allow Metal" OFF)
 option(ALLOW_HIP "Allow HIP" OFF)
 #option(ALLOW_ONEAPI "Allow OneAPI" OFF)
+
 option(ENABLE_TESTS "Enable tests" OFF)
+option(ENABLE_EXAMPLES "Build simple examples" OFF)
+option(BUILD_UTILITY "Build occa utility binary" OFF)
 
 find_package(Threads REQUIRED)
 
 if (ALLOW_OPENMP)
   include(OpenMP)
+  set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${OpenMP_EXE_LINKER_FLAGS}")
 endif()
 
 if (ALLOW_OPENCL)
@@ -58,19 +62,10 @@ if (ALLOW_METAL)
   include(Metal)
 endif()
 
-
-add_definitions(-DUSE_CMAKE)
-
 include(SetCompilerFlags)
 
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
-
-if (ALLOW_OPENMP)
-  set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${OpenMP_EXE_LINKER_FLAGS}")
-endif()
-
-include_directories(${PROJECT_BINARY_DIR}/include)
 set(OCCA_BUILD_DIR ${PROJECT_BINARY_DIR})
+
 configure_file(scripts/compiledDefinesTemplate.hpp.in ${PROJECT_BINARY_DIR}/include/occa/defines/compiledDefines.hpp)
 install(FILES ${PROJECT_BINARY_DIR}/include/occa/defines/compiledDefines.hpp DESTINATION include/occa/defines)
 
@@ -79,8 +74,14 @@ if (ENABLE_TESTS)
 endif()
 
 add_subdirectory(src)
-add_subdirectory(bin)
-add_subdirectory(examples)
+
+if (BUILD_UTILITY)
+  add_subdirectory(bin)
+endif()
+
+if (ENABLE_EXAMPLES)
+  add_subdirectory(examples)
+endif()
 
 if (ENABLE_TESTS)
   add_subdirectory(tests)
