@@ -1,11 +1,11 @@
 macro(add_test_with_mode exe mode device)
   add_test(NAME ${exe}-${mode} COMMAND ${exe} --verbose --device ${device})
-  set_property(TEST ${exe}-${mode} APPEND PROPERTY ENVIRONMENT OCCA_CACHE_DIR=${CMAKE_BINARY_DIR}/cache)
+  set_property(TEST ${exe}-${mode} APPEND PROPERTY ENVIRONMENT OCCA_CACHE_DIR=${CMAKE_BINARY_DIR}/occa)
 endmacro()
 
 macro(add_test_without_mode exe)
   add_test(NAME ${exe} COMMAND ${exe} --verbose)
-  set_property(TEST ${exe} APPEND PROPERTY ENVIRONMENT OCCA_CACHE_DIR=${CMAKE_BINARY_DIR}/cache)
+  set_property(TEST ${exe} APPEND PROPERTY ENVIRONMENT OCCA_CACHE_DIR=${CMAKE_BINARY_DIR}/occa)
 endmacro()
 
 macro(add_test_with_modes exe)
