@@ -10,7 +10,7 @@ cmake_policy(SET CMP0056 NEW)
 # Set project
 project (occa
   DESCRIPTION "JIT Compilation for Multiple Architectures: C++, OpenMP, CUDA, HIP, OpenCL, Metal"
-  HOMEPAGE_URL "https://github.com/libocca/occa/"
+  HOMEPAGE_URL "https://github.com/libocca/occa"
   LANGUAGES C CXX)
 
 set(CMAKE_CXX_STANDARD 11)
@@ -31,7 +31,7 @@ option(ALLOW_HIP "Allow HIP" OFF)
 
 option(ENABLE_TESTS "Enable tests" OFF)
 option(ENABLE_EXAMPLES "Build simple examples" OFF)
-option(BUILD_UTILITY "Build occa utility binary" OFF)
+option(BUILD_UTILITY "Build occa utility binary" ON)
 
 find_package(Threads REQUIRED)
 
@@ -66,8 +66,7 @@ include(SetCompilerFlags)
 
 set(OCCA_BUILD_DIR ${PROJECT_BINARY_DIR})
 
-configure_file(scripts/compiledDefinesTemplate.hpp.in ${PROJECT_BINARY_DIR}/include/occa/defines/compiledDefines.hpp)
-install(FILES ${PROJECT_BINARY_DIR}/include/occa/defines/compiledDefines.hpp DESTINATION include/occa/defines)
+configure_file(scripts/compiledDefinesTemplate.hpp.in ${CMAKE_SOURCE_DIR}/include/occa/defines/compiledDefines.hpp)
 
 if (ENABLE_TESTS)
   include(CTest)
@@ -86,7 +85,5 @@ endif()
 if (ENABLE_TESTS)
   add_subdirectory(tests)
 endif()
-
-install(DIRECTORY include/ DESTINATION include)
 
 include(Summary)
