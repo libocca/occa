@@ -14,7 +14,7 @@ int main(int argc, char **argv) {
   occa::json config = occa::json::parse(
     "["
     "  { mode: 'OpenMP' },"
-    "  { mode: 'CUDA', device_id: 0 },"
+    "  { mode: 'Serial' },"
     "]"
   );
 
@@ -50,15 +50,14 @@ int main(int argc, char **argv) {
 
   const int otherID     = (mpiID + 1) % 2;
   const int halfEntries = entries / 2;
-  const int offsetBytes = halfEntries * sizeof(float);
 
   occa::mpi::tags tags;
   tags += occa::mpi::send<float>(otherID,
-                                 o_ab + (mpiID * offsetBytes),
+                                 o_ab + (mpiID * halfEntries),
                                  halfEntries);
 
   tags += occa::mpi::get<float>(otherID,
-                                o_ab + (otherID * offsetBytes),
+                                o_ab + (otherID * halfEntries),
                                 halfEntries);
   tags.wait();
 
@@ -76,4 +75,6 @@ int main(int argc, char **argv) {
   delete [] a;
   delete [] b;
   delete [] ab;
+
+  MPI_Finalize();
 }
