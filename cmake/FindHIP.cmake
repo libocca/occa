@@ -34,14 +34,6 @@ if(UNIX AND NOT APPLE AND NOT CYGWIN)
       # And push it back to the cache
       set(HIP_ROOT_DIR ${HIP_ROOT_DIR} CACHE PATH "HIP installed location" FORCE)
     endif()
-
-    if(NOT EXISTS ${HIP_ROOT_DIR})
-      if(HIP_FIND_REQUIRED)
-        message(FATAL_ERROR "Specify HIP_ROOT_DIR")
-      elseif(NOT HIP_FIND_QUIETLY)
-        message("HIP_ROOT_DIR not found or specified")
-      endif()
-    endif()
   endif()
 
   # Find HIPCONFIG executable
@@ -98,26 +90,28 @@ if(UNIX AND NOT APPLE AND NOT CYGWIN)
     mark_as_advanced(HIP_PLATFORM)
   endif()
 
-  if(${HIP_PLATFORM} STREQUAL "hcc")
-    set(HIP_INCLUDE_DIRS "${HIP_ROOT_DIR}/include;${HIP_ROOT_DIR}/hcc/include")
-    set(HIP_LIBRARIES "${HIP_ROOT_DIR}/lib/libhip_hcc.so")
-    set(HIP_RUNTIME_DEFINE "__HIP_PLATFORM_HCC__")
-  elseif(${HIP_PLATFORM} STREQUAL "nvcc")
-    find_package(CUDA)
+  if(HIP_PLATFORM)
+    if(${HIP_PLATFORM} STREQUAL "hcc")
+      set(HIP_INCLUDE_DIRS "${HIP_ROOT_DIR}/include;${HIP_ROOT_DIR}/hcc/include")
+      set(HIP_LIBRARIES "${HIP_ROOT_DIR}/lib/libhip_hcc.so")
+      set(HIP_RUNTIME_DEFINE "__HIP_PLATFORM_HCC__")
+    elseif(${HIP_PLATFORM} STREQUAL "nvcc")
+      find_package(CUDA)
 
-    #find the shared library, rather than the static that find_package returns
-    find_library(
-      CUDART_LIB
-      NAMES cudart
-      PATHS
-      ${CUDA_TOOLKIT_ROOT_DIR}
-      PATH_SUFFIXES lib64 lib
-      DOC "CUDA RT lib location"
-      )
+      #find the shared library, rather than the static that find_package returns
+      find_library(
+        CUDART_LIB
+        NAMES cudart
+        PATHS
+        ${CUDA_TOOLKIT_ROOT_DIR}
+        PATH_SUFFIXES lib64 lib
+        DOC "CUDA RT lib location"
+        )
 
-    set(HIP_INCLUDE_DIRS "${HIP_ROOT_DIR}/include;${CUDA_INCLUDE_DIRS}")
-    set(HIP_LIBRARIES "${CUDART_LIB};cuda")
-    set(HIP_RUNTIME_DEFINE "__HIP_PLATFORM_NVCC__")
+      set(HIP_INCLUDE_DIRS "${HIP_ROOT_DIR}/include;${CUDA_INCLUDE_DIRS}")
+      set(HIP_LIBRARIES "${CUDART_LIB};cuda")
+      set(HIP_RUNTIME_DEFINE "__HIP_PLATFORM_NVCC__")
+    endif()
   endif()
   mark_as_advanced(HIP_INCLUDE_DIRS)
   mark_as_advanced(HIP_LIBRARIES)
