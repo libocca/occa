@@ -22,7 +22,6 @@ if(UNIX AND NOT APPLE AND NOT CYGWIN)
       NAMES hipconfig
       PATHS
       /opt/rocm
-      /opt/rocm/hip
       PATH_SUFFIXES bin
       DOC "HIP installed location"
       )
@@ -45,7 +44,6 @@ if(UNIX AND NOT APPLE AND NOT CYGWIN)
     ENV ROCM_PATH
     ENV HIP_PATH
     /opt/rocm
-    /opt/rocm/hip
     PATH_SUFFIXES bin
     NO_DEFAULT_PATH
     )

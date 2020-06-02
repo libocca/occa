@@ -139,8 +139,8 @@ if (ENABLE_OPENCL)
     NAMES include/CL/cl.h
     PATHS
     /usr/
-    /opt/rocm*/opencl
-    /usr/local/cuda*
+    /opt/rocm/opencl
+    /usr/local/cuda
     DOC "OPENCL root location"
     )
 
