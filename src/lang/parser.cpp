@@ -52,6 +52,7 @@ namespace occa {
       statementLoaders[statementType::return_]     = &parser_t::loadReturnStatement;
       statementLoaders[statementType::classAccess] = &parser_t::loadClassAccessStatement;
       statementLoaders[statementType::comment]     = &parser_t::loadCommentStatement;
+      statementLoaders[statementType::directive]   = &parser_t::loadDirectiveStatement;
       statementLoaders[statementType::pragma]      = &parser_t::loadPragmaStatement;
       statementLoaders[statementType::goto_]       = &parser_t::loadGotoStatement;
       statementLoaders[statementType::gotoLabel]   = &parser_t::loadGotoLabelStatement;
@@ -1567,6 +1568,16 @@ namespace occa {
     statement_t* parser_t::loadCommentStatement(attributeTokenMap &smntAttributes) {
       commentStatement *smnt = new commentStatement(smntContext.up,
                                                     *((commentToken*) tokenContext[0]));
+
+      ++tokenContext;
+
+      return smnt;
+    }
+
+    statement_t* parser_t::loadDirectiveStatement(attributeTokenMap &smntAttributes) {
+      directiveStatement *smnt = new directiveStatement(smntContext.up,
+                                                        *((directiveToken*) tokenContext[0]));
+      addAttributesTo(smntAttributes, smnt);
 
       ++tokenContext;
 

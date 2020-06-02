@@ -207,6 +207,7 @@ namespace occa {
 
       statement_t* loadCommentStatement(attributeTokenMap &smntAttributes);
 
+      statement_t* loadDirectiveStatement(attributeTokenMap &smntAttributes);
       statement_t* loadPragmaStatement(attributeTokenMap &smntAttributes);
 
       statement_t* loadGotoStatement(attributeTokenMap &smntAttributes);
