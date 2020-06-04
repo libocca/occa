@@ -92,6 +92,10 @@ namespace occa {
           return statementType::comment;
         }
 
+        if (tokenType & tokenType::directive) {
+          return statementType::directive;
+        }
+
         if (tokenType & tokenType::pragma) {
           return statementType::pragma;
         }
