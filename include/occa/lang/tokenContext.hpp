@@ -36,6 +36,9 @@ namespace occa {
     class tokenContext_t {
     public:
       tokenVector tokens;
+      // Keep track of used tokens (e.g. not commnents)
+      intVector tokenIndices;
+
       intIntMap pairs;
       intVector semicolons;
       bool hasError;
@@ -48,7 +51,8 @@ namespace occa {
       ~tokenContext_t();
 
       void clear();
-      void setup();
+      void setup(const tokenVector &tokens_);
+      void setupTokenIndices();
 
       void findPairs();
       void findSemicolons();
@@ -72,15 +76,18 @@ namespace occa {
       void popAndSkip();
 
       int position() const;
+
       int size() const;
+
+      token_t* getToken(const int index);
+
+      void setToken(const int index,
+                    token_t *value);
 
       token_t* operator [] (const int index);
       tokenContext_t& operator ++ ();
       tokenContext_t& operator ++ (int);
       tokenContext_t& operator += (const int offset);
-
-      void setToken(const int index,
-                    token_t *value);
 
       token_t* end();
 

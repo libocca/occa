@@ -17,9 +17,9 @@ std::string source;
 void setupContext(tokenContext_t &tokenContext,
                   const std::string &source_) {
   source = source_;
-  tokenContext.clear();
-  tokenContext.tokens = tokenizer_t::tokenize(source);
-  tokenContext.setup();
+  tokenContext.setup(
+    tokenizer_t::tokenize(source)
+  );
 }
 
 int main(const int argc, const char **argv) {
@@ -40,14 +40,15 @@ void testMethods() {
   primitiveToken  *primitive  = new primitiveToken(originSource::string,
                                                    1, "1");
 
-  tokenContext.tokens.push_back(newline);
-  tokenContext.tokens.push_back(identifier);
-  tokenContext.tokens.push_back(primitive);
+  tokenVector tokens;
+  tokens.push_back(newline);
+  tokens.push_back(identifier);
+  tokens.push_back(primitive);
 
   ASSERT_EQ(0, tokenContext.tp.start);
   ASSERT_EQ(0, tokenContext.tp.end);
 
-  tokenContext.setup();
+  tokenContext.setup(tokens);
   ASSERT_EQ(0, tokenContext.tp.start);
   ASSERT_EQ(3, tokenContext.tp.end);
 

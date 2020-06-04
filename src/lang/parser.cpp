@@ -258,10 +258,11 @@ namespace occa {
     }
 
     void parser_t::loadTokens() {
+      tokenVector tokens;
       token_t *token;
       while (!stream.isEmpty()) {
         stream >> token;
-        tokenContext.tokens.push_back(token);
+        tokens.push_back(token);
       }
 
       if (tokenizer.errors ||
@@ -270,7 +271,7 @@ namespace occa {
         return;
       }
 
-      tokenContext.setup();
+      tokenContext.setup(tokens);
       success &= !tokenContext.hasError;
     }
 
