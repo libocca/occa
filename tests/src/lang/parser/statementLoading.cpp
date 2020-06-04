@@ -1,4 +1,5 @@
 #include "utils.hpp"
+#include <occa/tools/misc.hpp>
 
 void testExpressionLoading();
 void testDeclarationLoading();
@@ -482,6 +483,7 @@ void testWhileLoading() {
 
   setStatement("do {} while (int i = 0);",
                statementType::while_);
+  occa::ignoreResult(statement);
 }
 
 void testSwitchLoading() {
@@ -627,6 +629,8 @@ void testGotoLoading() {
                statementType::gotoLabel);
   setStatement("goto label;",
                statementType::goto_);
+
+  occa::ignoreResult(statement);
 }
 
 void testBlockLoading() {
