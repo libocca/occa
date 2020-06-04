@@ -79,7 +79,12 @@ namespace occa {
 
       int size() const;
 
+      void getSkippedTokens(tokenVector &skippedTokens,
+                            const int start,
+                            const int end);
+
       token_t* getToken(const int index);
+      token_t* getNativeToken(const int index);
 
       void setToken(const int index,
                     token_t *value);

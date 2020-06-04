@@ -237,6 +237,32 @@ namespace occa {
       return (tp.end - tp.start);
     }
 
+    void tokenContext_t::getSkippedTokens(tokenVector &skippedTokens,
+                                          const int start,
+                                          const int end) {
+      if (start >= tokenIndices.size()) {
+        return;
+      }
+
+      const int startNativeIndex = (
+        start
+        ? tokenIndices[start - 1]
+        : 0
+      );
+      const int endNativeIndex = (
+        end < (int) tokenIndices.size()
+        ? tokenIndices[end]
+        : tp.end
+      );
+
+      for (int i = startNativeIndex; i < endNativeIndex; ++i) {
+        token_t *token = tokens[i];
+        if (token->type() & skippableTokenTypes) {
+          skippedTokens.push_back(token);
+        }
+      }
+    }
+
     token_t* tokenContext_t::getToken(const int index) {
       return tokens[tokenIndices[index]];
     }

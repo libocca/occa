@@ -51,7 +51,6 @@ namespace occa {
       statementLoaders[statementType::break_]      = &parser_t::loadBreakStatement;
       statementLoaders[statementType::return_]     = &parser_t::loadReturnStatement;
       statementLoaders[statementType::classAccess] = &parser_t::loadClassAccessStatement;
-      statementLoaders[statementType::comment]     = &parser_t::loadCommentStatement;
       statementLoaders[statementType::directive]   = &parser_t::loadDirectiveStatement;
       statementLoaders[statementType::pragma]      = &parser_t::loadPragmaStatement;
       statementLoaders[statementType::goto_]       = &parser_t::loadGotoStatement;
@@ -168,6 +167,7 @@ namespace occa {
 
       checkSemicolon = true;
 
+      comments.clear();
       clearAttributes();
 
       onClear();
@@ -323,6 +323,49 @@ namespace occa {
       return expr;
     }
 
+    void parser_t::loadComments() {
+      const int start = tokenContext.position();
+      loadComments(start, start);
+    }
+
+    void parser_t::loadComments(const int start,
+                                const int end) {
+      tokenVector skippedTokens;
+      tokenContext.getSkippedTokens(skippedTokens, start, end);
+
+      const int skippedTokenCount = (int) skippedTokens.size();
+      if (!skippedTokenCount) {
+        return;
+      }
+
+      for (int i = 0; i < skippedTokenCount; ++i) {
+        token_t *token = skippedTokens[i];
+        if (!(token->type() & tokenType::comment)) {
+          continue;
+        }
+
+        comments.push_back(
+          new commentStatement(smntContext.up,
+                               *((commentToken*) token))
+        );
+      }
+
+      // Push comments if we're in the root statement
+      if (smntContext.up == &root) {
+        pushComments();
+      }
+    }
+
+    void parser_t::pushComments() {
+      const int commentsCount = (int) comments.size();
+      for (int i = 0; i < commentsCount; ++i) {
+        statement_t *smnt = comments[i];
+        smnt->up = smntContext.up;
+        smntContext.up->children.push_back(smnt);
+      }
+      comments.clear();
+    }
+
     void parser_t::loadAttributes(attributeTokenMap &attrs) {
       success &= lang::loadAttributes(tokenContext,
                                       smntContext,
@@ -456,9 +499,20 @@ namespace occa {
     }
 
     int parser_t::peek() {
+      const int tokenContextStart = tokenContext.position();
+
+      // Peek skips tokens when loading attributes
       int sType;
       success &= smntPeeker.peek(attributes,
                                  sType);
+
+      const int tokenContextEnd = tokenContext.position();
+
+      // Load comments between skipped tokens
+      if (tokenContextStart != tokenContextEnd) {
+        loadComments(tokenContextStart, tokenContextEnd);
+      }
+
       return sType;
     }
     //==================================
@@ -610,17 +664,27 @@ namespace occa {
         statements.push_back(smnt);
         smnt = getNextStatement();
       }
+
+      // Load comments at the end of the block
+      loadComments();
+      pushComments();
     }
 
-    statement_t* parser_t::getNextStatement() {
+    statement_t* parser_t::loadNextStatement() {
       if (isEmpty()) {
         checkSemicolon = true;
         return NULL;
       }
 
+      loadComments();
+
       const int sType = peek();
       if (!success) {
         return NULL;
+      }
+
+      if (sType & statementType::blockStatements) {
+        pushComments();
       }
 
       statementLoaderMap::iterator it = statementLoaders.find(sType);
@@ -656,36 +720,26 @@ namespace occa {
       return NULL;
     }
 
-    statement_t* parser_t::getNextNonCommentStatement() {
-      statement_t *smnt = getNextStatement();
-      if (!smnt || smnt->type() != statementType::comment) {
+    statement_t* parser_t::getNextStatement() {
+      statement_t *smnt = loadNextStatement();
+      if (!smnt || !comments.size()) {
         return smnt;
       }
 
       // We need to create a block statement to hold these statements
       blockStatement *blockSmnt = new blockStatement(smnt->up,
                                                      smnt->source);
-      statementPtrVector &statements = blockSmnt->children;
+      statementPtrVector &childStatements = blockSmnt->children;
 
-      smntContext.pushUp(*blockSmnt);
+      // Set the new block statement to load up comments
+      childStatements.swap(comments);
+      childStatements.push_back(smnt);
 
-      // Update new parent statement
-      smnt->up = blockSmnt;
-
-      while (smnt) {
-        statements.push_back(smnt);
-        smnt = getNextStatement();
-        if (!smnt || smnt->type() != statementType::comment) {
-          break;
-        }
+      const int childStatementCount = (int) childStatements.size();
+      for (int i = 0; i < childStatementCount; ++i) {
+        // Update new parent statement
+        childStatements[i]->up = blockSmnt;
       }
-
-      // Add the last non-comment statement
-      if (smnt) {
-        statements.push_back(smnt);
-      }
-
-      smntContext.popUp();
 
       return blockSmnt;
     }
@@ -932,7 +986,7 @@ namespace occa {
       addAttributesTo(smntAttributes, &funcSmnt);
 
       smntContext.pushUp(funcSmnt);
-      statement_t *content = getNextNonCommentStatement();
+      statement_t *content = getNextStatement();
       smntContext.popUp();
       if (success) {
         funcSmnt.set(*content);
@@ -1013,7 +1067,7 @@ namespace occa {
         }
 
         checkSemicolon = (count < expectedCount);
-        statement_t *smnt = getNextNonCommentStatement();
+        statement_t *smnt = getNextStatement();
         statements.push_back(smnt);
         if (!success) {
           error = true;
@@ -1091,7 +1145,7 @@ namespace occa {
 
       ifSmnt.setCondition(condition);
 
-      statement_t *content = getNextNonCommentStatement();
+      statement_t *content = getNextStatement();
       if (!content) {
         if (success) {
           tokenContext.printError("Missing content for [if] statement");
@@ -1107,7 +1161,7 @@ namespace occa {
       while ((sType = peek()) & (statementType::elif_ |
                                  statementType::else_)) {
         smntContext.pushUp(ifSmnt);
-        statement_t *elSmnt = getNextNonCommentStatement();
+        statement_t *elSmnt = getNextStatement();
         smntContext.popUp();
         if (!elSmnt) {
           if (success) {
@@ -1164,7 +1218,7 @@ namespace occa {
 
       elifSmnt.setCondition(condition);
 
-      statement_t *content = getNextNonCommentStatement();
+      statement_t *content = getNextStatement();
       smntContext.popUp();
       if (!content) {
         tokenContext.printError("Missing content for [else if] statement");
@@ -1186,7 +1240,7 @@ namespace occa {
       smntContext.pushUp(elseSmnt);
       addAttributesTo(smntAttributes, &elseSmnt);
 
-      statement_t *content = getNextNonCommentStatement();
+      statement_t *content = getNextStatement();
       smntContext.popUp();
       if (!content) {
         tokenContext.printError("Missing content for [else] statement");
@@ -1260,7 +1314,7 @@ namespace occa {
       // If the last statement had attributes, we need to pass them now
       addAttributesTo(attributes, &forSmnt);
 
-      statement_t *content = getNextNonCommentStatement();
+      statement_t *content = getNextStatement();
       smntContext.popUp();
       if (!content) {
         if (success) {
@@ -1304,7 +1358,7 @@ namespace occa {
 
       whileSmnt.setCondition(condition);
 
-      statement_t *content = getNextNonCommentStatement();
+      statement_t *content = getNextStatement();
       smntContext.popUp();
       if (!content) {
         tokenContext.printError("Missing content for [while] statement");
@@ -1327,7 +1381,7 @@ namespace occa {
       smntContext.pushUp(whileSmnt);
       addAttributesTo(smntAttributes, &whileSmnt);
 
-      statement_t *content = getNextNonCommentStatement();
+      statement_t *content = getNextStatement();
       if (!content) {
         if (success) {
           tokenContext.printError("Missing content for [do-while] statement");
@@ -1404,7 +1458,7 @@ namespace occa {
 
       switchSmnt.setCondition(condition);
 
-      statement_t *content = getNextNonCommentStatement();
+      statement_t *content = getNextStatement();
       smntContext.popUp();
       if (!content) {
         parenEnd->printError("Missing content for [switch] statement");
@@ -1419,7 +1473,7 @@ namespace occa {
       } else {
         switchSmnt.add(*content);
 
-        content = getNextNonCommentStatement();
+        content = getNextStatement();
         if (!content) {
           parenEnd->printError("Missing statement for switch's [case]");
           success = false;
@@ -1563,15 +1617,6 @@ namespace occa {
                                                             accessToken,
                                                             access);
       addAttributesTo(smntAttributes, smnt);
-      return smnt;
-    }
-
-    statement_t* parser_t::loadCommentStatement(attributeTokenMap &smntAttributes) {
-      commentStatement *smnt = new commentStatement(smntContext.up,
-                                                    *((commentToken*) tokenContext[0]));
-
-      ++tokenContext;
-
       return smnt;
     }
 
