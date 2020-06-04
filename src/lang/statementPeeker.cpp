@@ -68,9 +68,7 @@ namespace occa {
 
       int tokenIndex = 0;
 
-      while (success &&
-             (tokenIndex < tokens)) {
-
+      while (success && (tokenIndex < tokens)) {
         token_t *token = tokenContext[tokenIndex];
         const int tokenType = token->type();
 
@@ -86,10 +84,6 @@ namespace occa {
                          tokenType::string    |
                          tokenType::char_)) {
           return statementType::expression;
-        }
-
-        if (tokenType & tokenType::comment) {
-          return statementType::comment;
         }
 
         if (tokenType & tokenType::directive) {

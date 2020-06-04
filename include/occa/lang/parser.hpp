@@ -51,10 +51,10 @@ namespace occa {
       statementContext_t smntContext;
       statementPeeker_t smntPeeker;
 
-      bool ignoringComments;
       bool checkSemicolon;
 
       unknownToken defaultRootToken;
+      statementPtrVector comments;
       attributeTokenMap attributes;
 
       bool success;
@@ -114,6 +114,11 @@ namespace occa {
       exprNode* getExpression(const int start,
                               const int end);
 
+      void loadComments();
+      void loadComments(const int start,
+                        const int end);
+      void pushComments();
+
       void loadAttributes(attributeTokenMap &attrs);
 
       attribute_t* getAttribute(const std::string &name);
@@ -165,8 +170,8 @@ namespace occa {
 
       void loadAllStatements();
 
+      statement_t* loadNextStatement();
       statement_t* getNextStatement();
-      statement_t* getNextNonCommentStatement();
 
       statement_t* loadBlockStatement(attributeTokenMap &smntAttributes);
 
@@ -204,8 +209,6 @@ namespace occa {
       statement_t* loadReturnStatement(attributeTokenMap &smntAttributes);
 
       statement_t* loadClassAccessStatement(attributeTokenMap &smntAttributes);
-
-      statement_t* loadCommentStatement(attributeTokenMap &smntAttributes);
 
       statement_t* loadDirectiveStatement(attributeTokenMap &smntAttributes);
       statement_t* loadPragmaStatement(attributeTokenMap &smntAttributes);

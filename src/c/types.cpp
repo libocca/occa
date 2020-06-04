@@ -31,6 +31,10 @@ namespace occa {
     }
 
     occaType newOccaType(void *value) {
+      return newOccaType((const void*) value);
+    }
+
+    occaType newOccaType(const void *value) {
       occaType oType;
       oType.magicHeader = OCCA_C_TYPE_MAGIC_HEADER;
       oType.type  = typeType::ptr;
@@ -670,7 +674,7 @@ OCCA_LFUNC bool OCCA_RFUNC occaIsDefault(occaType value) {
   return (value.type == occa::c::typeType::default_);
 }
 
-OCCA_LFUNC occaType OCCA_RFUNC occaPtr(void *value) {
+OCCA_LFUNC occaType OCCA_RFUNC occaPtr(const void *value) {
   return occa::c::newOccaType(value);
 }
 
