@@ -22,10 +22,10 @@ namespace occa {
       std::string compilerLinkerFlags;
       std::string compilerSharedFlags;
 
-      if (kernelProps.get<std::string>("compiler").size()) {
-        compiler = (std::string) kernelProps["compiler"];
-      } else if (env::var("OCCA_CXX").size()) {
+      if (env::var("OCCA_CXX").size()) {
         compiler = env::var("OCCA_CXX");
+      } else if (kernelProps.get<std::string>("compiler").size()) {
+        compiler = (std::string) kernelProps["compiler"];
       } else if (env::var("CXX").size()) {
         compiler = env::var("CXX");
       } else {
@@ -36,10 +36,10 @@ namespace occa {
 #endif
       }
 
-      if (kernelProps.get<std::string>("compiler_flags").size()) {
-        compilerFlags = (std::string) kernelProps["compiler_flags"];
-      } else if (env::var("OCCA_CXXFLAGS").size()) {
+      if (env::var("OCCA_CXXFLAGS").size()) {
         compilerFlags = env::var("OCCA_CXXFLAGS");
+      } else if (kernelProps.get<std::string>("compiler_flags").size()) {
+        compilerFlags = (std::string) kernelProps["compiler_flags"];
       } else if (env::var("CXXFLAGS").size()) {
         compilerFlags = env::var("CXXFLAGS");
       } else {
@@ -52,10 +52,10 @@ namespace occa {
 
       const int compilerVendor = sys::compilerVendor(compiler);
 
-      if (kernelProps.get<std::string>("compiler_language").size()) {
-        compilerLanguage = (std::string) kernelProps["compiler_language"];
-      } else if (env::var("OCCA_COMPILER_LANGUAGE").size()) {
+      if (env::var("OCCA_COMPILER_LANGUAGE").size()) {
         compilerLanguage = env::var("OCCA_COMPILER_LANGUAGE");
+      } else if (kernelProps.get<std::string>("compiler_language").size()) {
+        compilerLanguage = (std::string) kernelProps["compiler_language"];
       }
 
       // Default to C++
@@ -71,18 +71,18 @@ namespace occa {
         sys::addCompilerFlags(compilerFlags, sys::compilerC99Flags(compilerVendor));
       }
 
-      if (kernelProps.get<std::string>("compiler_shared_flags").size()) {
-        compilerSharedFlags = (std::string) kernelProps["compiler_shared_flags"];
-      } else if (env::var("OCCA_COMPILER_SHARED_FLAGS").size()) {
+      if (env::var("OCCA_COMPILER_SHARED_FLAGS").size()) {
         compilerSharedFlags = env::var("OCCA_COMPILER_SHARED_FLAGS");
+      } else if (kernelProps.get<std::string>("compiler_shared_flags").size()) {
+        compilerSharedFlags = (std::string) kernelProps["compiler_shared_flags"];
       } else {
         compilerSharedFlags = sys::compilerSharedBinaryFlags(compilerVendor);
       }
 
-      if (kernelProps.get<std::string>("compiler_linker_flags").size()) {
-        compilerLinkerFlags = (std::string) kernelProps["compiler_linker_flags"];
-      } else if (env::var("OCCA_LDFLAGS").size()) {
+      if (env::var("OCCA_LDFLAGS").size()) {
         compilerLinkerFlags = env::var("OCCA_LDFLAGS");
+      } else if (kernelProps.get<std::string>("compiler_linker_flags").size()) {
+        compilerLinkerFlags = (std::string) kernelProps["compiler_linker_flags"];
       }
 
       if (kernelProps.get<std::string>("compiler_env_script").size()) {
