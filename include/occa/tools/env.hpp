@@ -13,7 +13,7 @@ namespace occa {
     extern std::string HOME, CWD;
     extern std::string PATH, LD_LIBRARY_PATH;
 
-    extern std::string OCCA_DIR, OCCA_CACHE_DIR;
+    extern std::string OCCA_DIR, OCCA_INSTALL_DIR, OCCA_CACHE_DIR;
     extern size_t      OCCA_MEM_BYTE_ALIGN;
     extern strVector   OCCA_INCLUDE_PATH;
     extern strVector   OCCA_LIBRARY_PATH;

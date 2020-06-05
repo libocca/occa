@@ -18,8 +18,8 @@
 #endif
 
 #cmakedefine OCCA_OS        @OCCA_OS@
-#define OCCA_USING_VS       0
-#define OCCA_UNSAFE         0
+#cmakedefine01 OCCA_USING_VS
+#cmakedefine01 OCCA_UNSAFE
 
 #cmakedefine01 OCCA_MPI_ENABLED
 #cmakedefine01 OCCA_OPENMP_ENABLED
@@ -28,6 +28,7 @@
 #cmakedefine01 OCCA_HIP_ENABLED
 #cmakedefine01 OCCA_METAL_ENABLED
 
+#cmakedefine OCCA_SOURCE_DIR "@OCCA_SOURCE_DIR@"
 #cmakedefine OCCA_BUILD_DIR "@OCCA_BUILD_DIR@"
 
 #endif

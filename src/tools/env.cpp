@@ -20,7 +20,7 @@ namespace occa {
     std::string HOME, CWD;
     std::string PATH, LD_LIBRARY_PATH;
 
-    std::string OCCA_DIR, OCCA_CACHE_DIR;
+    std::string OCCA_DIR, OCCA_INSTALL_DIR, OCCA_CACHE_DIR;
     size_t      OCCA_MEM_BYTE_ALIGN;
     strVector   OCCA_INCLUDE_PATH;
     strVector   OCCA_LIBRARY_PATH;
@@ -88,13 +88,22 @@ namespace occa {
 #endif
 
       // OCCA environment variables
-      OCCA_DIR = env::var("OCCA_DIR");
+       OCCA_DIR = env::var("OCCA_DIR");
       if (OCCA_DIR.size() == 0) {
+#ifdef OCCA_SOURCE_DIR
+        OCCA_DIR = OCCA_SOURCE_DIR;
+#else
         OCCA_DIR = OCCA_BUILD_DIR;
+#endif
+      }
+      OCCA_INSTALL_DIR = env::var("OCCA_INSTALL_DIR");
+      if (OCCA_INSTALL_DIR.size() == 0) {
+        OCCA_INSTALL_DIR = OCCA_BUILD_DIR;
       }
       OCCA_COLOR_ENABLED = env::get<bool>("OCCA_COLOR_ENABLED", true);
 
       io::endWithSlash(OCCA_DIR);
+      io::endWithSlash(OCCA_INSTALL_DIR);
       io::endWithSlash(OCCA_CACHE_DIR);
 
       OCCA_MEM_BYTE_ALIGN = OCCA_DEFAULT_MEM_BYTE_ALIGN;
