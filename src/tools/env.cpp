@@ -90,7 +90,7 @@ namespace occa {
       // OCCA environment variables
        OCCA_DIR = env::var("OCCA_DIR");
       if (OCCA_DIR.size() == 0) {
-#ifdef USE_CMAKE
+#ifdef OCCA_SOURCE_DIR
         OCCA_DIR = OCCA_SOURCE_DIR;
 #else
         OCCA_DIR = OCCA_BUILD_DIR;
