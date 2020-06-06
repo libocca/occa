@@ -223,6 +223,7 @@ namespace occa {
     void parser_t::setSource(const std::string &source,
                              const bool isFile) {
       clear();
+      stream.clearCache();
 
       if (isFile) {
         tokenizer.set(new file_t(source));

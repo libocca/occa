@@ -28,6 +28,7 @@ namespace occa {
 
       virtual void setNext(output_t &out) = 0;
 
+      virtual void clearCache();
       virtual void* passMessageToInput(const occa::properties &props);
       void* getInput(const std::string &name);
 
@@ -62,6 +63,7 @@ namespace occa {
 
       stream& clone() const;
 
+      void clearCache();
       void* passMessageToInput(const occa::properties &props);
       void* getInput(const std::string &name);
 
@@ -93,6 +95,7 @@ namespace occa {
       virtual streamMap& clone() const;
       virtual streamMap& clone_() const = 0;
 
+      virtual void clearCache();
       virtual void* passMessageToInput(const occa::properties &props);
     };
 
@@ -125,6 +128,8 @@ namespace occa {
 
       virtual void setNext(input_t &out);
       virtual bool isValid(const input_t &value) = 0;
+
+      virtual void clearCache();
     };
 
     template <class input_t>
@@ -155,6 +160,8 @@ namespace occa {
       void pushInput(const input_t &value);
 
       void getNextInput(input_t &value);
+
+      virtual void clearCache();
     };
 
     template <class input_t, class output_t>
@@ -172,6 +179,18 @@ namespace occa {
       void pushOutput(const output_t &value);
 
       virtual void fetchNext() = 0;
+
+      virtual void clearCache();
+    };
+
+    template <class input_t, class output_t>
+    class withCache : public withInputCache<input_t, input_t>,
+                      public withOutputCache<output_t, output_t> {
+    public:
+      withCache();
+      withCache(const withCache<input_t, output_t> &other);
+
+      virtual void clearCache();
     };
     //====================================
   }
