@@ -20,6 +20,8 @@ namespace occa {
         device_t(void *deviceObj_ = NULL);
         device_t(const device_t &other);
 
+        device_t& operator = (const device_t &other);
+
         void free();
 
         std::string getName() const;

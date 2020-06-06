@@ -26,6 +26,8 @@ namespace occa {
 
         function_t(const function_t &other);
 
+        function_t& operator = (const function_t &other);
+
         void free();
 
         void run(commandQueue_t &commandQueue,

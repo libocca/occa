@@ -33,6 +33,15 @@ namespace occa {
         events(other.events),
         lastCommandId(other.lastCommandId) {}
 
+      commandQueue_t& commandQueue_t::operator = (const commandQueue_t &other) {
+        device = other.device;
+        commandQueueObj = other.commandQueueObj;
+        lastCommandBufferObj = other.lastCommandBufferObj;
+        events = other.events;
+        lastCommandId = other.lastCommandId;
+        return *this;
+      }
+
       void commandQueue_t::free() {
         device = NULL;
         // Remove reference count

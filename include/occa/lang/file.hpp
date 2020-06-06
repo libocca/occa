@@ -47,6 +47,8 @@ namespace occa {
 
       filePosition(const filePosition &other);
 
+      filePosition& operator = (const filePosition &other);
+
       size_t size() const;
       std::string str() const;
     };

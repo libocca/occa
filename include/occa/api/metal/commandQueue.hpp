@@ -28,6 +28,8 @@ namespace occa {
 
         commandQueue_t(const commandQueue_t &other);
 
+        commandQueue_t& operator = (const commandQueue_t &other);
+
         void free();
         void freeLastCommandBuffer();
 

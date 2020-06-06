@@ -18,6 +18,11 @@ namespace occa {
       device_t::device_t(const device_t &other) :
         deviceObj(other.deviceObj) {}
 
+      device_t& device_t::operator = (const device_t &other) {
+        deviceObj = other.deviceObj;
+        return *this;
+      }
+
       void device_t::free() {
         // Remove reference counts
         if (deviceObj) {

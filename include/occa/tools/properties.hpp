@@ -17,6 +17,8 @@ namespace occa {
     properties(const std::string &s);
     ~properties();
 
+    properties& operator = (const properties &other);
+
     bool isInitialized() const;
 
     void load(const char *&c);

@@ -15,6 +15,7 @@ jobs:
             os: ubuntu-18.04
             CC: gcc-8
             CXX: g++-8
+            CXXFLAGS: -Wno-maybe-uninitialized
             FC: gfortran-8
             GCOV: gcov-8
             OCCA_COVERAGE: 1
@@ -24,6 +25,7 @@ jobs:
             os: ubuntu-18.04
             CC: gcc-9
             CXX: g++-9
+            CXXFLAGS: -Wno-maybe-uninitialized
             FC: gfortran-9
             GCOV: gcov-9
             OCCA_COVERAGE: 1
@@ -33,18 +35,21 @@ jobs:
             os: ubuntu-18.04
             CC: clang-6.0
             CXX: clang++-6.0
+            CXXFLAGS: -Wno-uninitialized
             OCCA_COVERAGE: 0
 
           - name: (Ubuntu) clang-9
             os: ubuntu-18.04
             CC: clang-9
             CXX: clang++-9
+            CXXFLAGS: -Wno-uninitialized
             OCCA_COVERAGE: 0
 
           - name: (MacOS) gcc-9
             os: macos-10.15
             CC: gcc-9
             CXX: g++-9
+            CXXFLAGS: -Wno-maybe-uninitialized
             GCOV: gcov-9
             OCCA_COVERAGE: 1
 
@@ -52,6 +57,7 @@ jobs:
             os: macos-10.15
             CC: clang
             CXX: clang++
+            CXXFLAGS: -Wno-uninitialized
             OCCA_COVERAGE: 0
 
     runs-on: ${{ matrix.os }}
@@ -60,10 +66,12 @@ jobs:
     env:
       CC: ${{ matrix.CC }}
       CXX: ${{ matrix.CXX }}
+      CXXFLAGS: -O3 -Wall -pedantic -Wshadow -Wsign-compare -Wuninitialized -Wtype-limits -Wignored-qualifiers -Wempty-body -Wextra -Wno-unused-parameter -Werror -Wno-strict-aliasing ${{ matrix.CXXFLAGS }}
       FC: ${{ matrix.FC }}
       GCOV: ${{ matrix.GCOV }}
       OCCA_COVERAGE: ${{ matrix.OCCA_COVERAGE }}
       OCCA_FORTRAN_ENABLED: ${{ matrix.OCCA_FORTRAN_ENABLED }}
+      OCCA_CXXFLAGS: -O3
       FORTRAN_EXAMPLES: ${{ matrix.OCCA_FORTRAN_ENABLED }}
 
     steps:

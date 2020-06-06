@@ -54,7 +54,7 @@ namespace occa {
                                            CU_FUNC_ATTRIBUTE_MAX_THREADS_PER_BLOCK,
                                            cuFunction));
 
-        maxInnerDims_.x = maxSize;
+        maxInnerDims_.x = (udim_t) maxSize;
       }
       return maxInnerDims_;
     }

@@ -1059,12 +1059,14 @@ namespace occa {
   void printWarning(io::output &out,
                     const std::string &message,
                     const std::string &code) {
-    if (code.size()) {
-      out << yellow("Warning " + code);
-    } else {
-      out << yellow("Warning");
+    if (env::OCCA_VERBOSE) {
+      if (code.size()) {
+        out << yellow("Warning " + code);
+      } else {
+        out << yellow("Warning");
+      }
+      out << ": " << message << '\n';
     }
-    out << ": " << message << '\n';
   }
 
   void printError(io::output &out,

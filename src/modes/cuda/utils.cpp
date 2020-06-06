@@ -20,21 +20,21 @@ namespace occa {
     }
 
     int getDeviceCount() {
-      int deviceCount;
+      int deviceCount = 0;
       OCCA_CUDA_ERROR("Finding Number of Devices",
                       cuDeviceGetCount(&deviceCount));
       return deviceCount;
     }
 
     CUdevice getDevice(const int id) {
-      CUdevice device;
+      CUdevice device = -1;
       OCCA_CUDA_ERROR("Getting CUdevice",
                       cuDeviceGet(&device, id));
       return device;
     }
 
     udim_t getDeviceMemorySize(CUdevice device) {
-      size_t bytes;
+      size_t bytes = -1;
       OCCA_CUDA_ERROR("Finding available memory on device",
                       cuDeviceTotalMem(&bytes, device));
       return bytes;

@@ -83,6 +83,12 @@ namespace occa {
       value.ptr = p.value.ptr;
     }
 
+    inline primitive& operator = (const primitive &p) {
+      type = p.type;
+      value.ptr = p.value.ptr;
+      return *this;
+    }
+
     primitive(const char *c);
     primitive(const std::string &s);
 
