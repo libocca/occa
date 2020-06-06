@@ -5,6 +5,9 @@ namespace occa {
     baseStream<output_t>::~baseStream() {}
 
     template <class output_t>
+    void baseStream<output_t>::clearCache() {}
+
+    template <class output_t>
     void* baseStream<output_t>::passMessageToInput(const occa::properties &props) {
       return NULL;
     }
@@ -62,6 +65,11 @@ namespace occa {
         return *(new stream());
       }
       return *(new stream(&(head->clone())));
+    }
+
+    template <class output_t>
+    void stream<output_t>::clearCache() {
+      head->clearCache();
     }
 
     template <class output_t>
@@ -138,6 +146,13 @@ namespace occa {
     }
 
     template <class input_t, class output_t>
+    void streamMap<input_t, output_t>::clearCache() {
+      if (input) {
+        input->clearCache();
+      }
+    }
+
+    template <class input_t, class output_t>
     void* streamMap<input_t, output_t>::passMessageToInput(const occa::properties &props) {
       if (input) {
         return input->passMessageToInput(props);
@@ -199,6 +214,13 @@ namespace occa {
     }
 
     template <class input_t>
+    void streamFilter<input_t>::clearCache() {
+      streamMap<input_t, input_t>::clearCache();
+      usedLastValue = true;
+      isEmpty_ = true;
+    }
+
+    template <class input_t>
     streamFilterFunc<input_t>::streamFilterFunc(bool (*func_)(const input_t &value)) :
       func(func_) {}
 
@@ -249,6 +271,12 @@ namespace occa {
     }
 
     template <class input_t, class output_t>
+    void withInputCache<input_t, output_t>::clearCache() {
+      streamMap<input_t, output_t>::clearCache();
+      inputCache.clear();
+    }
+
+    template <class input_t, class output_t>
     withOutputCache<input_t, output_t>::withOutputCache() :
       outputCache() {}
 
@@ -278,6 +306,28 @@ namespace occa {
     template <class input_t, class output_t>
     void withOutputCache<input_t, output_t>::pushOutput(const output_t &value) {
       outputCache.push_back(value);
+    }
+
+    template <class input_t, class output_t>
+    void withOutputCache<input_t, output_t>::clearCache() {
+      streamMap<input_t, output_t>::clearCache();
+      outputCache.clear();
+    }
+
+    template <class input_t, class output_t>
+    withCache<input_t, output_t>::withCache() {}
+
+    template <class input_t, class output_t>
+    withCache<input_t, output_t>::withCache(
+      const withCache<input_t, output_t> &other
+    ) :
+        withInputCache<input_t, input_t>(other),
+        withOutputCache<output_t, output_t>(other) {}
+
+    template <class input_t, class output_t>
+    void withCache<input_t, output_t>::clearCache() {
+      withInputCache<input_t, input_t>::clearCache();
+      withOutputCache<output_t, output_t>::clearCache();
     }
   //====================================
   }

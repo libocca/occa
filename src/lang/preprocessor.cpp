@@ -52,8 +52,7 @@ namespace occa {
     }
 
     preprocessor_t::preprocessor_t(const preprocessor_t &pp) :
-      withInputCache(pp),
-      withOutputCache(pp) {
+      withCache(pp) {
       *this = pp;
     }
 
@@ -117,7 +116,6 @@ namespace occa {
       errors   = 0;
 
       tokenizer = NULL;
-      hasLoadedTokenizer = false;
     }
 
     void preprocessor_t::clear() {
@@ -130,7 +128,6 @@ namespace occa {
       warnings = 0;
 
       tokenizer = NULL;
-      hasLoadedTokenizer = false;
 
       while (inputCache.size()) {
         delete inputCache.front();
@@ -486,9 +483,8 @@ namespace occa {
     //==================================
 
     void preprocessor_t::loadTokenizer() {
-      if (!hasLoadedTokenizer) {
+      if (!tokenizer) {
         tokenizer = (tokenizer_t*) getInput("tokenizer_t");
-        hasLoadedTokenizer = true;
       }
     }
 
@@ -1371,6 +1367,7 @@ namespace occa {
       }
 
       // Push source after updating origin to the [\n] token
+      input->clearCache();
       tokenizer->pushSource(header);
     }
 

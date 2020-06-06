@@ -37,8 +37,7 @@ namespace occa {
       extern const int finishedIf;
     }
 
-    class preprocessor_t : public withInputCache<token_t*, token_t*>,
-                           public withOutputCache<token_t*, token_t*> {
+    class preprocessor_t : public withCache<token_t*, token_t*> {
     public:
       typedef void (preprocessor_t::*processDirective_t)(identifierToken &directive);
       typedef std::map<std::string, processDirective_t> directiveMap;
@@ -71,7 +70,6 @@ namespace occa {
 
       //---[ Misc ]---------------------
       tokenizer_t *tokenizer;
-      bool hasLoadedTokenizer;
 
       strVector includePaths;
       //================================
