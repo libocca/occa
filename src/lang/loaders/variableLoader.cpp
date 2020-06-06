@@ -1,21 +1,21 @@
-#include <occa/lang/keyword.hpp>
 #include <occa/lang/loaders/attributeLoader.hpp>
 #include <occa/lang/loaders/typeLoader.hpp>
 #include <occa/lang/loaders/variableLoader.hpp>
-#include <occa/lang/tokenContext.hpp>
+#include <occa/lang/parser.hpp>
 #include <occa/lang/statementContext.hpp>
 #include <occa/lang/token.hpp>
+#include <occa/lang/tokenContext.hpp>
 #include <occa/lang/variable.hpp>
 
 namespace occa {
   namespace lang {
     variableLoader_t::variableLoader_t(tokenContext_t &tokenContext_,
                                        statementContext_t &smntContext_,
-                                       const keywords_t &keywords_,
+                                       parser_t &parser_,
                                        nameToAttributeMap &attributeMap_) :
       tokenContext(tokenContext_),
       smntContext(smntContext_),
-      keywords(keywords_),
+      parser(parser_),
       attributeMap(attributeMap_),
       success(true) {}
 
@@ -29,14 +29,14 @@ namespace occa {
       attributeTokenMap attrs;
       success = loadAttributes(tokenContext,
                                smntContext,
-                               keywords,
+                               parser,
                                attributeMap,
                                attrs);
       if (!success) {
         return false;
       }
 
-      success = loadType(tokenContext, smntContext, keywords, vartype);
+      success = loadType(tokenContext, smntContext, parser, vartype);
       if (!success) {
         return false;
       }
@@ -52,7 +52,7 @@ namespace occa {
 
       success = loadAttributes(tokenContext,
                                smntContext,
-                               keywords,
+                               parser,
                                attributeMap,
                                attrs);
       if (!success) {
@@ -94,7 +94,7 @@ namespace occa {
 
       tokenContext.supressErrors = true;
       vartype_t vartype;
-      success = loadType(tokenContext, smntContext, keywords, vartype);
+      success = loadType(tokenContext, smntContext, parser, vartype);
       tokenContext.supressErrors = false;
 
       if (!success) {
@@ -206,7 +206,7 @@ namespace occa {
     bool variableLoader_t::loadFunction(function_t &func) {
       success = loadType(tokenContext,
                          smntContext,
-                         keywords,
+                         parser,
                          func.returnType);
       if (!success) {
         return false;
@@ -251,7 +251,7 @@ namespace occa {
 
         exprNode *value = NULL;
         if (tokenContext.size()) {
-          value = tokenContext.getExpression(smntContext, keywords);
+          value = tokenContext.getExpression(smntContext, parser);
           success &= !!value;
           if (!success) {
             return;
@@ -301,53 +301,53 @@ namespace occa {
 
     bool loadVariable(tokenContext_t &tokenContext,
                       statementContext_t &smntContext,
-                      const keywords_t &keywords,
+                      parser_t &parser,
                       nameToAttributeMap &attributeMap,
                       variable_t &var) {
-      variableLoader_t loader(tokenContext, smntContext, keywords, attributeMap);
+      variableLoader_t loader(tokenContext, smntContext, parser, attributeMap);
       return loader.loadVariable(var);
     }
 
     bool loadVariable(tokenContext_t &tokenContext,
                       statementContext_t &smntContext,
-                      const keywords_t &keywords,
+                      parser_t &parser,
                       nameToAttributeMap &attributeMap,
                       vartype_t &vartype,
                       variable_t &var) {
-      variableLoader_t loader(tokenContext, smntContext, keywords, attributeMap);
+      variableLoader_t loader(tokenContext, smntContext, parser, attributeMap);
       return loader.loadVariable(vartype, var);
     }
 
     bool loadFunction(tokenContext_t &tokenContext,
                       statementContext_t &smntContext,
-                      const keywords_t &keywords,
+                      parser_t &parser,
                       nameToAttributeMap &attributeMap,
                       function_t &func) {
-      variableLoader_t loader(tokenContext, smntContext, keywords, attributeMap);
+      variableLoader_t loader(tokenContext, smntContext, parser, attributeMap);
       return loader.loadFunction(func);
     }
 
     bool isLoadingVariable(tokenContext_t &tokenContext,
                            statementContext_t &smntContext,
-                           const keywords_t &keywords,
+                           parser_t &parser,
                            nameToAttributeMap &attributeMap) {
-      variableLoader_t loader(tokenContext, smntContext, keywords, attributeMap);
+      variableLoader_t loader(tokenContext, smntContext, parser, attributeMap);
       return loader.isLoadingVariable();
     }
 
     bool isLoadingFunction(tokenContext_t &tokenContext,
                            statementContext_t &smntContext,
-                           const keywords_t &keywords,
+                           parser_t &parser,
                            nameToAttributeMap &attributeMap) {
-      variableLoader_t loader(tokenContext, smntContext, keywords, attributeMap);
+      variableLoader_t loader(tokenContext, smntContext, parser, attributeMap);
       return loader.isLoadingFunction();
     }
 
     bool isLoadingFunctionPointer(tokenContext_t &tokenContext,
                                   statementContext_t &smntContext,
-                                  const keywords_t &keywords,
+                                  parser_t &parser,
                                   nameToAttributeMap &attributeMap) {
-      variableLoader_t loader(tokenContext, smntContext, keywords, attributeMap);
+      variableLoader_t loader(tokenContext, smntContext, parser, attributeMap);
       return loader.isLoadingFunctionPointer();
     }
   }

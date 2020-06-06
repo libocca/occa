@@ -17,7 +17,7 @@ namespace occa {
       smntContext(root),
       smntPeeker(tokenContext,
                  smntContext,
-                 keywords,
+                 *this,
                  attributeMap),
       checkSemicolon(true),
       defaultRootToken(originSource::builtin),
@@ -308,8 +308,7 @@ namespace occa {
     }
 
     exprNode* parser_t::getExpression() {
-      exprNode *expr = tokenContext.getExpression(smntContext,
-                                                  keywords);
+      exprNode *expr = tokenContext.getExpression(smntContext, *this);
       success &= !!expr;
       return expr;
     }
@@ -317,7 +316,7 @@ namespace occa {
     exprNode* parser_t::getExpression(const int start,
                                       const int end) {
       exprNode *expr = tokenContext.getExpression(smntContext,
-                                                  keywords,
+                                                  *this,
                                                   start, end);
       success &= !!expr;
       return expr;
@@ -369,7 +368,7 @@ namespace occa {
     void parser_t::loadAttributes(attributeTokenMap &attrs) {
       success &= lang::loadAttributes(tokenContext,
                                       smntContext,
-                                      keywords,
+                                      *this,
                                       attributeMap,
                                       attrs);
     }
@@ -410,14 +409,14 @@ namespace occa {
     void parser_t::loadBaseType(vartype_t &vartype) {
       success &= lang::loadBaseType(tokenContext,
                                     smntContext,
-                                    keywords,
+                                    *this,
                                     vartype);
     }
 
     void parser_t::loadType(vartype_t &vartype) {
       success &= lang::loadType(tokenContext,
                                 smntContext,
-                                keywords,
+                                *this,
                                 vartype);
     }
 
@@ -425,51 +424,36 @@ namespace occa {
       vartype_t vartype;
       success &= lang::loadType(tokenContext,
                                 smntContext,
-                                keywords,
+                                *this,
                                 vartype);
       return vartype;
-    }
-
-    bool parser_t::isLoadingStruct() {
-      return lang::isLoadingStruct(tokenContext,
-                                   smntContext,
-                                   keywords);
-    }
-
-    struct_t* parser_t::loadStruct() {
-      struct_t *type;
-      success &= lang::loadStruct(tokenContext,
-                                  smntContext,
-                                  *this,
-                                  type);
-      return type;
     }
 
     bool parser_t::isLoadingVariable() {
       return lang::isLoadingVariable(tokenContext,
                                      smntContext,
-                                     keywords,
+                                     *this,
                                      attributeMap);
     }
 
     bool parser_t::isLoadingFunction() {
       return lang::isLoadingFunction(tokenContext,
                                      smntContext,
-                                     keywords,
+                                     *this,
                                      attributeMap);
     }
 
     bool parser_t::isLoadingFunctionPointer() {
       return lang::isLoadingFunctionPointer(tokenContext,
                                             smntContext,
-                                            keywords,
+                                            *this,
                                             attributeMap);
     }
 
     void parser_t::loadVariable(variable_t &var) {
       success &= lang::loadVariable(tokenContext,
                                     smntContext,
-                                    keywords,
+                                    *this,
                                     attributeMap,
                                     var);
     }
@@ -484,7 +468,7 @@ namespace occa {
                                 variable_t &var) {
       success &= lang::loadVariable(tokenContext,
                                     smntContext,
-                                    keywords,
+                                    *this,
                                     attributeMap,
                                     vartype,
                                     var);
@@ -493,7 +477,7 @@ namespace occa {
     void parser_t::loadFunction(function_t &func) {
       success &= lang::loadFunction(tokenContext,
                                     smntContext,
-                                    keywords,
+                                    *this,
                                     attributeMap,
                                     func);
     }
@@ -538,6 +522,7 @@ namespace occa {
       if (!decl.value) {
         loadDeclarationBraceInitializer(decl);
       }
+
       return decl;
     }
 
@@ -801,9 +786,6 @@ namespace occa {
       if (isLoadingFunction()) {
         return loadFunctionStatement(smntAttributes);
       }
-      if (success && isLoadingStruct()) {
-        return loadStructStatement(smntAttributes);
-      }
       if (!success) {
         return NULL;
       }
@@ -845,27 +827,6 @@ namespace occa {
         return NULL;
       }
       return &smnt;
-    }
-
-    statement_t* parser_t::loadStructStatement(attributeTokenMap &smntAttributes) {
-      struct_t *type = loadStruct();
-      if (!success || !type) {
-        return NULL;
-      }
-
-      structStatement *smnt = new structStatement(smntContext.up,
-                                                  *type);
-      success &= smnt->addStructToParentScope();
-      if (!success) {
-        delete &smnt;
-        // Struct wasn't added to scope, free it manually
-        delete type;
-        return NULL;
-      }
-
-      addAttributesTo(smntAttributes, smnt);
-
-      return smnt;
     }
 
     statement_t* parser_t::loadNamespaceStatement(attributeTokenMap &smntAttributes) {

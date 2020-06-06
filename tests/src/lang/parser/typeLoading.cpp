@@ -7,6 +7,7 @@ void testArrayTypeLoading();
 void testVariableLoading();
 void testArgumentLoading();
 void testFunctionPointerLoading();
+void testStructLoading();
 
 void testBaseTypeErrors();
 void testPointerTypeErrors();
@@ -23,6 +24,7 @@ int main(const int argc, const char **argv) {
   testVariableLoading();
   testArgumentLoading();
   testFunctionPointerLoading();
+  testStructLoading();
 
   std::cerr << "\n---[ Testing type errors ]----------------------\n\n";
   testBaseTypeErrors();
@@ -306,6 +308,30 @@ void testFunctionPointerLoading() {
             varFunc.args[1].vartype.type);
 
 #undef varFunc
+}
+
+void testStructLoading() {
+  vartype_t type;
+
+  type = loadType("struct foo1 {}");
+  ASSERT_EQ("foo1", type.name());
+  ASSERT_TRUE(type.has(struct_));
+
+  type = loadType("struct foo2 {} bar2");
+  ASSERT_EQ("foo2", type.name());
+  ASSERT_TRUE(type.has(struct_));
+
+  type = loadType("struct {} bar3");
+  ASSERT_EQ(0, (int) type.name().size());
+  ASSERT_TRUE(type.has(struct_));
+
+  type = loadType("typedef struct foo4 {} bar4");
+  ASSERT_EQ("bar4", type.name());
+  ASSERT_TRUE(type.has(typedef_));
+
+  vartype_t foo4 = ((typedef_t*) type.type)->baseType;
+  ASSERT_EQ("foo4", foo4.name());
+  ASSERT_TRUE(foo4.has(struct_));
 }
 
 void testBaseTypeErrors() {

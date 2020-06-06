@@ -2,6 +2,7 @@
 #include <occa/lang/keyword.hpp>
 #include <occa/lang/loaders/typeLoader.hpp>
 #include <occa/lang/statementContext.hpp>
+#include <occa/lang/parser.hpp>
 #include <occa/lang/token.hpp>
 #include <occa/lang/tokenContext.hpp>
 
@@ -432,12 +433,12 @@ namespace occa {
     }
 
     exprNode* tokenContext_t::getExpression(statementContext_t &smntContext,
-                                            const keywords_t &keywords) {
-      return getExpression(smntContext, keywords, 0, size());
+                                            parser_t &parser) {
+      return getExpression(smntContext, parser, 0, size());
     }
 
     exprNode* tokenContext_t::getExpression(statementContext_t &smntContext,
-                                            const keywords_t &keywords,
+                                            parser_t &parser,
                                             const int start,
                                             const int end) {
       push(start, end);
@@ -450,7 +451,7 @@ namespace occa {
         token_t *token = (*this)[i];
         if (token->type() & tokenType::identifier) {
           setToken(i, replaceIdentifier(smntContext,
-                                        keywords,
+                                        parser.keywords,
                                         (identifierToken&) *token));
         }
       }
@@ -473,7 +474,7 @@ namespace occa {
         }
 
         vartype_t vartype;
-        if (!loadType(*this, smntContext, keywords, vartype)) {
+        if (!loadType(*this, smntContext, parser, vartype)) {
           pop();
           freeTokenVector(exprTokens);
           return NULL;

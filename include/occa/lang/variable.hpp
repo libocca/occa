@@ -72,7 +72,8 @@ namespace occa {
 
       dtype_t dtype() const;
 
-      void printDeclaration(printer &pout) const;
+      void printDeclaration(printer &pout,
+                            const vartypePrintType_t printType = vartypePrintType_t::type) const;
       void printExtraDeclaration(printer &pout) const;
 
       void printWarning(const std::string &message) const;
@@ -109,7 +110,8 @@ namespace occa {
 
       bool hasValue() const;
 
-      void print(printer &pout) const;
+      void print(printer &pout,
+                 const bool typeDeclared) const;
       void printAsExtra(printer &pout) const;
 
       void printWarning(const std::string &message) const;

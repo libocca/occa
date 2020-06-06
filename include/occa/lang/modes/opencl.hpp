@@ -37,7 +37,6 @@ namespace occa {
         void setGlobalQualifiers();
         static bool updateGlobalVariables(statement_t &smnt);
         static void addGlobalToFunctionArgs(function_t &func);
-        static void addGlobalToStruct(struct_t &struct_);
         static void addGlobalToVariable(variable_t &var);
 
         static bool updateScopeStructVariables(statement_t &smnt);

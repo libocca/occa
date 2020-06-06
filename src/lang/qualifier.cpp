@@ -280,6 +280,10 @@ namespace occa {
       return *this;
     }
 
+    void qualifiers_t::swap(qualifiers_t &other) {
+      qualifiers.swap(other.qualifiers);
+    }
+
     printer& operator << (printer &pout,
                           const qualifiers_t &qualifiers) {
       const qualifierVector_t &quals = qualifiers.qualifiers;

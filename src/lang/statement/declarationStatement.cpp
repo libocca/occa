@@ -7,11 +7,13 @@ namespace occa {
   namespace lang {
     declarationStatement::declarationStatement(blockStatement *up_,
                                                token_t *source_) :
-      statement_t(up_, source_) {}
+        statement_t(up_, source_),
+        declaredType(false) {}
 
     declarationStatement::declarationStatement(blockStatement *up_,
                                                const declarationStatement &other) :
-      statement_t(up_, other) {
+      statement_t(up_, other),
+      declaredType(other.declaredType) {
       const int count = (int) other.declarations.size();
       if (!count) {
         return;
@@ -33,13 +35,6 @@ namespace occa {
     void declarationStatement::clearDeclarations() {
       const int count = (int) declarations.size();
       for (int i = 0; i < count; ++i) {
-        variableDeclaration &decl = declarations[i];
-        variable_t &var = *(decl.variable);
-        // The scope has its own typedef copy
-        // We have to delete the variable-typedef
-        if (var.vartype.has(typedef_)) {
-          delete &var;
-        }
         declarations[i].clear();
       }
       declarations.clear();
@@ -82,27 +77,61 @@ namespace occa {
         return false;
       }
 
-      if (!var.vartype.has(typedef_)) {
-        // Variable
-        success = up->addToScope(var, force);
-      } else {
+      if (var.vartype.has(typedef_)) {
         // Typedef
-        typedef_t &type = *(new typedef_t(var.vartype));
-        if (var.source) {
-          type.setSource(*var.source);
+        declaredType = true;
+
+        const typedef_t *originalTypedef = dynamic_cast<const typedef_t*>(var.vartype.type);
+
+        const bool typedefingStruct = (
+          originalTypedef != NULL
+          && originalTypedef->baseType.has(struct_)
+          && originalTypedef->declaredBaseType
+        );
+
+        typedef_t *type = NULL;
+
+        if (typedefingStruct) {
+          // Struct typedefs already allocate a new type
+          type = (typedef_t*) originalTypedef;
+        } else {
+          type = new typedef_t(var.vartype);
+          if (var.source) {
+            type->setSource(*var.source);
+          }
         }
 
         if (var.vartype.type) {
-          type.attributes = var.vartype.type->attributes;
+          type->attributes = var.vartype.type->attributes;
         }
-        type.attributes.insert(var.attributes.begin(),
-                               var.attributes.end());
 
-        success = up->addToScope(type, force);
-        if (!success) {
-          delete &type;
+        type->attributes.insert(var.attributes.begin(),
+                                var.attributes.end());
+
+        success = up->addToScope(*type, force);
+
+        // This type typedef's a struct so we need to add that
+        // type to the current scope
+        if (success && typedefingStruct) {
+          struct_t &structType = *((struct_t*) type->baseType.type);
+          success = up->addToScope(structType,
+                                   force);
         }
+
+        if (!success) {
+          delete type;
+        }
+      } else if (var.vartype.has(struct_)) {
+        // Struct
+        declaredType = true;
+
+        success = up->addToScope(var.vartype.type->clone(),
+                                 force);
+      } else {
+        // Variable
+        success = up->addToScope(var, force);
       }
+
       if (success) {
         declarations.push_back(decl);
       } else {
@@ -116,14 +145,33 @@ namespace occa {
       if (!count) {
         return;
       }
+
+      const variableDeclaration &firstDecl = declarations[0];
+
+      // Pretty print newlines around the struct definition
+      const bool printNewlines = (
+        declaredType
+        && firstDecl.variable->vartype.definesStruct()
+      );
+
+      if (printNewlines) {
+        pout.printNewlines(2);
+      }
+
       pout.printStartIndentation();
-      declarations[0].print(pout);
+
+      firstDecl.print(pout, declaredType);
       for (int i = 1; i < count; ++i) {
         pout << ", ";
         declarations[i].printAsExtra(pout);
       }
       pout << ';';
-      pout.printEndNewline();
+
+      if (printNewlines) {
+        pout.printNewlines(2);
+      } else {
+        pout.printEndNewline();
+      }
     }
   }
 }

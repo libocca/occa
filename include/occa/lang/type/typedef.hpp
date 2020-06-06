@@ -9,6 +9,7 @@ namespace occa {
     class typedef_t : public type_t {
     public:
       vartype_t baseType;
+      bool declaredBaseType;
 
       typedef_t(const vartype_t &baseType_);
 
@@ -16,6 +17,8 @@ namespace occa {
                 identifierToken &source_);
 
       typedef_t(const typedef_t &other);
+
+      ~typedef_t();
 
       virtual int type() const;
       virtual type_t& clone() const;

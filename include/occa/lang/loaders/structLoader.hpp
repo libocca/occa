@@ -10,7 +10,7 @@ namespace occa {
     class parser_t;
 
     class structLoader_t {
-    private:
+     public:
       tokenContext_t &tokenContext;
       statementContext_t &smntContext;
       parser_t &parser;

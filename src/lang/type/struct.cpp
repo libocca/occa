@@ -54,19 +54,18 @@ namespace occa {
     }
 
     void struct_t::printDeclaration(printer &pout) const {
-      pout << "struct";
       const std::string name_ = name();
       if (name_.size()) {
-        pout << ' ' << name_;
+        pout << name_ << ' ';
       }
 
       const int fieldCount = (int) fields.size();
       if (!fieldCount) {
-        pout << " {};";
+        pout << "{}";
       } else {
         vartype_t prevVartype;
 
-        pout << " {\n";
+        pout << "{\n";
         pout.addIndentation();
         pout.printIndentation();
 
@@ -88,7 +87,7 @@ namespace occa {
 
         pout.removeIndentation();
         pout.printIndentation();
-        pout << "};";
+        pout << "}";
       }
     }
   }
