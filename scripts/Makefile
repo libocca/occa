@@ -122,7 +122,7 @@ else
 endif
 
 ifeq ($(OCCA_COVERAGE),1)
-  coverageFlags = --coverage -fno-inline -fno-inline-small-functions -fno-default-inline -Wno-ignored-optimization-argument
+  coverageFlags = --coverage -fno-inline -fno-inline-small-functions -fno-default-inline
   compilerFlags += $(coverageFlags)
   cCompilerFlags += $(coverageFlags)
   fCompilerFlags += $(coverageFlags)

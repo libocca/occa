@@ -54,6 +54,14 @@ namespace occa {
         functionObj(other.functionObj),
         pipelineStateObj(other.pipelineStateObj) {}
 
+      function_t& function_t::operator = (const function_t &other) {
+        device = other.device;
+        libraryObj = other.libraryObj;
+        functionObj = other.functionObj;
+        pipelineStateObj = other.pipelineStateObj;
+        return *this;
+      }
+
       void function_t::free() {
         // Remove reference counts
         if (libraryObj) {

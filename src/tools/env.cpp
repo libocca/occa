@@ -24,6 +24,7 @@ namespace occa {
     size_t      OCCA_MEM_BYTE_ALIGN;
     strVector   OCCA_INCLUDE_PATH;
     strVector   OCCA_LIBRARY_PATH;
+    bool        OCCA_VERBOSE;
     bool        OCCA_COLOR_ENABLED;
 
     properties& baseSettings() {
@@ -60,8 +61,8 @@ namespace occa {
       settings_["version"]     = OCCA_VERSION_STR;
       settings_["okl_version"] = OKL_VERSION_STR;
 
-      const bool isVerbose = env::get<bool>("OCCA_VERBOSE", false);
-      if (isVerbose) {
+      OCCA_VERBOSE = env::get<bool>("OCCA_VERBOSE", false);
+      if (OCCA_VERBOSE) {
         settings_["device/verbose"] = true;
         settings_["kernel/verbose"] = true;
         settings_["memory/verbose"] = true;

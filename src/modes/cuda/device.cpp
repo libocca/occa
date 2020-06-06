@@ -124,7 +124,7 @@ namespace occa {
 
     //---[ Stream ]---------------------
     modeStream_t* device::createStream(const occa::properties &props) {
-      CUstream cuStream;
+      CUstream cuStream = NULL;
 
       OCCA_CUDA_ERROR("Device: Setting Context",
                       cuCtxSetCurrent(cuContext));
@@ -135,7 +135,7 @@ namespace occa {
     }
 
     occa::streamTag device::tagStream() {
-      CUevent cuEvent;
+      CUevent cuEvent = NULL;
 
       OCCA_CUDA_ERROR("Device: Setting Context",
                       cuCtxSetCurrent(cuContext));
@@ -401,8 +401,8 @@ namespace occa {
     modeKernel_t* device::buildKernelFromBinary(const std::string &filename,
                                                 const std::string &kernelName,
                                                 const occa::properties &kernelProps) {
-      CUmodule cuModule;
-      CUfunction cuFunction;
+      CUmodule cuModule = NULL;
+      CUfunction cuFunction = NULL;
 
       OCCA_CUDA_ERROR("Kernel [" + kernelName + "]: Loading Module",
                       cuModuleLoad(&cuModule, filename.c_str()));

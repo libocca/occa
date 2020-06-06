@@ -7,10 +7,10 @@ namespace occa {
     memory::memory(modeDevice_t *modeDevice_,
                    udim_t size_,
                    const occa::properties &properties_) :
-      occa::modeMemory_t(modeDevice_, size_, properties_),
-      cuPtr((CUdeviceptr&) ptr),
-      mappedPtr(NULL),
-      isUnified(false) {}
+        occa::modeMemory_t(modeDevice_, size_, properties_),
+        cuPtr((CUdeviceptr&) ptr),
+        mappedPtr(NULL),
+        isUnified(false) {}
 
     memory::~memory() {
       if (isOrigin) {

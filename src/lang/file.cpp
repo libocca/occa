@@ -1,6 +1,7 @@
 #include <occa/io.hpp>
-#include <occa/tools/string.hpp>
+#include <occa/tools/env.hpp>
 #include <occa/tools/lex.hpp>
+#include <occa/tools/string.hpp>
 
 #include <occa/lang/file.hpp>
 #include <occa/lang/tokenizer.hpp>
@@ -58,6 +59,15 @@ namespace occa {
       lineStart(other.lineStart),
       start(other.start),
       end(other.end) {}
+
+
+    filePosition& filePosition::operator = (const filePosition &other) {
+      line = other.line;
+      lineStart = other.lineStart;
+      start = other.start;
+      end = other.end;
+      return *this;
+    }
 
     size_t filePosition::size() const {
       return (end - start);
@@ -284,9 +294,11 @@ namespace occa {
     }
 
     void fileOrigin::printWarning(const std::string &message) const {
-      preprint(io::stderr);
-      occa::printWarning(io::stderr, message);
-      postprint(io::stderr);
+      if (env::OCCA_VERBOSE) {
+        preprint(io::stderr);
+        occa::printWarning(io::stderr, message);
+        postprint(io::stderr);
+      }
     }
 
     void fileOrigin::printError(const std::string &message) const {

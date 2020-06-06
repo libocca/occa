@@ -240,7 +240,7 @@ namespace occa {
     void tokenContext_t::getSkippedTokens(tokenVector &skippedTokens,
                                           const int start,
                                           const int end) {
-      if (start >= tokenIndices.size()) {
+      if (start >= (int) tokenIndices.size()) {
         return;
       }
 
