@@ -7,7 +7,7 @@
 <p align="center">
   <a href="https://github.com/libocca/occa/workflows/Build/badge.svg"><img alt="Build" src="https://github.com/libocca/occa/workflows/Build/badge.svg"></a>
   <a href="https://codecov.io/github/libocca/occa"><img alt="codecov.io" src="https://codecov.io/github/libocca/occa/coverage.svg"></a>
-  <a href="https://gitter.im/libocca/occa?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge"><img alt="Gitter" src="https://badges.gitter.im/libocca/occa.svg"></a>
+  <a href="https://join.slack.com/t/libocca/shared_invite/zt-4jcnu451-qPpPWUzhm7YQKY_HMhIsIw"><img alt="Slack" src="https://img.shields.io/badge/Chat-on%20Slack-%23522653?logo=slack"></a>
 </p>
 
 &nbsp;
