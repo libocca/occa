@@ -99,6 +99,8 @@ namespace occa {
 
       dim_t distanceTo(const fileOrigin &origin);
 
+      bool operator == (const fileOrigin &origin);
+
       void preprint(io::output &out) const;
       void postprint(io::output &out) const;
 

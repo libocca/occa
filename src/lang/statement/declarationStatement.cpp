@@ -121,7 +121,7 @@ namespace occa {
         if (!success) {
           delete type;
         }
-      } else if (var.vartype.has(struct_)) {
+      } else if (var.vartype.definesStruct()) {
         // Struct
         declaredType = true;
 

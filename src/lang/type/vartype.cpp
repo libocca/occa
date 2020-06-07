@@ -310,8 +310,14 @@ namespace occa {
 
     vartype_t vartype_t::declarationType() const {
       vartype_t other;
-      other.type = type;
+
+      if (typeToken && type) {
+        other.setType(*typeToken, *type);
+      } else if (type) {
+        other.setType(*type);
+      }
       other.qualifiers = qualifiers;
+
       return other;
     }
 
@@ -341,8 +347,8 @@ namespace occa {
     }
 
     bool vartype_t::definesStruct() const {
-      if (has(struct_)) {
-        return true;
+      if (typeToken && type && (type->type() & typeType::struct_)) {
+        return (typeToken->origin == type->source->origin);
       }
       if (!has(typedef_)) {
         return false;

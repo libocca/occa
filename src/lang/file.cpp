@@ -254,6 +254,16 @@ namespace occa {
       return (origin.position.start - position.end);
     }
 
+    bool fileOrigin::operator == (const fileOrigin &origin) {
+      if (file != origin.file) {
+        return false;
+      }
+      return (
+        position.start == origin.position.start
+        && position.end == origin.position.end
+      );
+    }
+
     void fileOrigin::preprint(io::output &out) const {
       print(out, true);
     }

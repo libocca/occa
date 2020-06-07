@@ -47,12 +47,16 @@ namespace occa {
     }
 
     void functionDeclStatement::print(printer &pout) const {
+      // Double newlines to make it look cleaner
+      pout.printNewlines(2);
+
       pout.printStartIndentation();
       function.printDeclaration(pout);
       pout << ' ';
       blockStatement::print(pout);
+
       // Double newlines to make it look cleaner
-      pout << '\n';
+      pout.printNewlines(2);
     }
   }
 }
