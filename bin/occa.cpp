@@ -269,7 +269,7 @@ bool runEnv(const json &args) {
             << "    - OCCA_LIBRARY_PATH          : " << envEcho("OCCA_LIBRARY_PATH") << "\n"
             << "    - OCCA_OPENCL_COMPILER_FLAGS : " << envEcho("OCCA_OPENCL_COMPILER_FLAGS") << "\n"
             << "    - OCCA_CUDA_COMPILER         : " << envEcho("OCCA_CUDA_COMPILER") << "\n"
-            << "    - OCCA_CUDA_COMPILER_FLAGS   : " << envEcho("OCCA_CUDA_COMPILER_FLAGS") << "\n";
+            << "    - OCCA_CUDA_COMPILER_FLAGS   : " << envEcho("OCCA_CUDA_COMPILER_FLAGS") << "\n"
             << "    - OCCA_HIP_COMPILER          : " << envEcho("OCCA_HIP_COMPILER") << "\n"
             << "    - OCCA_HIP_COMPILER_FLAGS    : " << envEcho("OCCA_HIP_COMPILER_FLAGS") << "\n";
   return true;
