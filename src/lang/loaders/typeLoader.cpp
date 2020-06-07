@@ -1,18 +1,21 @@
 #include <occa/lang/builtins/types.hpp>
+#include <occa/lang/loaders/structLoader.hpp>
 #include <occa/lang/loaders/typeLoader.hpp>
+#include <occa/lang/parser.hpp>
 #include <occa/lang/statementContext.hpp>
 #include <occa/lang/token.hpp>
 #include <occa/lang/tokenContext.hpp>
+#include <occa/lang/type/struct.hpp>
 #include <occa/lang/variable.hpp>
 
 namespace occa {
   namespace lang {
     typeLoader_t::typeLoader_t(tokenContext_t &tokenContext_,
                                statementContext_t &smntContext_,
-                               const keywords_t &keywords_) :
+                               parser_t &parser_) :
       tokenContext(tokenContext_),
       smntContext(smntContext_),
-      keywords(keywords_),
+      parser(parser_),
       success(true) {}
 
     bool typeLoader_t::loadType(vartype_t &vartype) {
@@ -44,7 +47,6 @@ namespace occa {
       const int tokenCount = tokenContext.size();
       int tokenPos;
 
-      bool typedefing = false;
       for (tokenPos = 0; tokenPos < tokenCount; ++tokenPos) {
         token_t *token = tokenContext[tokenPos];
 
@@ -52,7 +54,7 @@ namespace occa {
           continue;
         }
 
-        keyword_t &keyword = keywords.get(smntContext, token);
+        keyword_t &keyword = parser.keywords.get(smntContext, token);
         const int kType    = keyword.type();
         if (kType & keywordType::none) {
           break;
@@ -61,14 +63,7 @@ namespace occa {
         if (kType & keywordType::qualifier) {
           const qualifier_t &qualifier = keyword.to<qualifierKeyword>().qualifier;
           type_t *type = NULL;
-          if (qualifier == typedef_) {
-            typedefing = true;
-          } else if (qualifier == struct_) {
-            if (typedefing) {
-              token->printError("Typedef'd structs are not supported yet");
-              success = false;
-            }
-          } else if (qualifier == enum_) {
+          if (qualifier == enum_) {
             // TODO: type = loadEnum();
             token->printError("Enums are not supported yet");
             success = false;
@@ -119,6 +114,11 @@ namespace occa {
           vartype.has(longlong_)) {
         vartype.type = &int_;
         return true;
+      }
+
+      if (vartype.has(struct_)) {
+        loadStruct(vartype);
+        return success;
       }
 
       tokenContext.printError("Expected a type");
@@ -172,7 +172,7 @@ namespace occa {
       int tokenPos;
       for (tokenPos = 0; tokenPos < tokens; ++tokenPos) {
         token_t *token     = tokenContext[tokenPos];
-        keyword_t &keyword = keywords.get(smntContext, token);
+        keyword_t &keyword = parser.keywords.get(smntContext, token);
         if (!(keyword.type() & keywordType::qualifier)) {
           break;
         }
@@ -205,30 +205,69 @@ namespace occa {
       ++tokenContext;
     }
 
+    void typeLoader_t::loadStruct(vartype_t &vartype) {
+      structLoader_t structLoader(tokenContext, smntContext, parser);
+
+      // Load struct
+      struct_t *structType = NULL;
+      success &= structLoader.loadStruct(structType);
+      if (!success) {
+        return;
+      }
+
+      if (!vartype.has(typedef_)) {
+        vartype.setType(*((identifierToken*) structType->source),
+                        *structType);
+        return;
+      }
+
+      // Load typedef name
+      if (!(token_t::safeType(tokenContext[0]) & tokenType::identifier)) {
+        tokenContext.printError("Expected typedef name");
+        success = false;
+        return;
+      }
+
+      identifierToken *nameToken = (identifierToken*) tokenContext[0];
+      ++tokenContext;
+
+      // Move the struct qualifier over
+      vartype_t structVartype(*((identifierToken*) structType->source),
+                              *structType);
+      structVartype += struct_;
+      vartype -= struct_;
+
+      typedef_t *typedefType = new typedef_t(structVartype, *nameToken);
+      typedefType->declaredBaseType = true;
+
+      vartype.setType(*nameToken,
+                      *typedefType);
+    }
+
     bool loadType(tokenContext_t &tokenContext,
                   statementContext_t &smntContext,
-                  const keywords_t &keywords,
+                  parser_t &parser,
                   vartype_t &vartype) {
-      typeLoader_t loader(tokenContext, smntContext, keywords);
+      typeLoader_t loader(tokenContext, smntContext, parser);
       return loader.loadType(vartype);
     }
 
     bool loadBaseType(tokenContext_t &tokenContext,
                       statementContext_t &smntContext,
-                      const keywords_t &keywords,
+                      parser_t &parser,
                       vartype_t &vartype) {
-      typeLoader_t loader(tokenContext, smntContext, keywords);
+      typeLoader_t loader(tokenContext, smntContext, parser);
       return loader.loadBaseType(vartype);
     }
 
     bool isLoadingStruct(tokenContext_t &tokenContext,
                          statementContext_t &smntContext,
-                         const keywords_t &keywords) {
+                         parser_t &parser) {
       tokenContext.push();
       tokenContext.supressErrors = true;
 
       vartype_t vartype;
-      loadType(tokenContext, smntContext, keywords, vartype);
+      loadType(tokenContext, smntContext, parser, vartype);
 
       tokenContext.supressErrors = false;
       tokenContext.pop();

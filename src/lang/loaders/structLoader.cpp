@@ -2,8 +2,8 @@
 #include <occa/lang/loaders/structLoader.hpp>
 #include <occa/lang/parser.hpp>
 #include <occa/lang/statement/declarationStatement.hpp>
-#include <occa/lang/type/struct.hpp>
 #include <occa/lang/token.hpp>
+#include <occa/lang/type/struct.hpp>
 #include <occa/lang/variable.hpp>
 
 namespace occa {
@@ -23,19 +23,13 @@ namespace occa {
                                                      tokenContext[0]);
       smntContext.pushUp(*blockSmnt);
 
-      // Skip 'struct' token
-      ++tokenContext;
-
-      token_t *nameToken = tokenContext[0];
-      if (!nameToken ||
-          (!(nameToken->type() & tokenType::identifier))) {
-        tokenContext.printError("Expected struct name");
-        delete blockSmnt;
-        smntContext.popUp();
-        return false;
+      identifierToken *nameToken = NULL;
+      const bool hasName = token_t::safeType(tokenContext[0]) & tokenType::identifier;
+      if (hasName) {
+        nameToken = (identifierToken*) tokenContext[0];
+        ++tokenContext;
       }
 
-      ++tokenContext;
       opType_t opType = token_t::safeOperatorType(tokenContext[0]);
       if (!(opType & (operatorType::braceStart |
                       operatorType::scope))) {
@@ -89,15 +83,9 @@ namespace occa {
 
       tokenContext.popAndSkip();
 
-      opType = token_t::safeOperatorType(tokenContext[0]);
-      if (!(opType & operatorType::semicolon)) {
-        tokenContext.printError("Expected [;] after struct definition");
-        return false;
-      }
-      ++tokenContext;
-
-      type = new struct_t(*((identifierToken*) nameToken));
+      type = nameToken ? new struct_t(*nameToken) : new struct_t();
       type->addFields(fields);
+
       return true;
     }
 

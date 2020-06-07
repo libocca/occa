@@ -1,19 +1,31 @@
+#include <occa/lang/builtins/types.hpp>
 #include <occa/lang/type/typedef.hpp>
 
 namespace occa {
   namespace lang {
     typedef_t::typedef_t(const vartype_t &baseType_) :
       type_t(),
-      baseType(baseType_) {}
+      baseType(baseType_),
+      declaredBaseType(false) {}
 
     typedef_t::typedef_t(const vartype_t &baseType_,
                          identifierToken &source_) :
       type_t(source_),
-      baseType(baseType_) {}
+      baseType(baseType_),
+      declaredBaseType(false) {}
 
     typedef_t::typedef_t(const typedef_t &other) :
       type_t(other),
-      baseType(other.baseType) {}
+      baseType(other.baseType),
+      declaredBaseType(other.declaredBaseType) {}
+
+    typedef_t::~typedef_t() {
+      if (baseType.isNamed() || !baseType.has(struct_)) {
+        return;
+      }
+      // The typedef owns the nameless struct
+      delete baseType.type;
+    }
 
     int typedef_t::type() const {
       return typeType::typedef_;
@@ -36,8 +48,12 @@ namespace occa {
     }
 
     void typedef_t::printDeclaration(printer &pout) const {
-      pout << "typedef ";
-      baseType.printDeclaration(pout, name());
+      const vartypePrintType_t printType = (
+        declaredBaseType
+        ? vartypePrintType_t::typeDeclaration
+        : vartypePrintType_t::type
+      );
+      baseType.printDeclaration(pout, name(), printType);
     }
   }
 }

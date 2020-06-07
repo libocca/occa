@@ -21,32 +21,31 @@ namespace occa {
       const int functionDecl = (1 << 8);
 
       const int class_       = (1 << 9);
-      const int struct_      = (1 << 10);
-      const int classAccess  = (1 << 11);
+      const int classAccess  = (1 << 10);
 
-      const int enum_        = (1 << 12);
-      const int union_       = (1 << 13);
+      const int enum_        = (1 << 11);
+      const int union_       = (1 << 12);
 
-      const int expression   = (1 << 14);
-      const int declaration  = (1 << 15);
+      const int expression   = (1 << 13);
+      const int declaration  = (1 << 14);
 
-      const int goto_        = (1 << 16);
-      const int gotoLabel    = (1 << 17);
+      const int goto_        = (1 << 15);
+      const int gotoLabel    = (1 << 16);
 
-      const int if_          = (1 << 18);
-      const int elif_        = (1 << 19);
-      const int else_        = (1 << 20);
-      const int for_         = (1 << 21);
-      const int while_       = (1 << 22);
-      const int switch_      = (1 << 23);
-      const int case_        = (1 << 24);
-      const int default_     = (1 << 25);
-      const int continue_    = (1 << 26);
-      const int break_       = (1 << 27);
+      const int if_          = (1 << 17);
+      const int elif_        = (1 << 18);
+      const int else_        = (1 << 19);
+      const int for_         = (1 << 20);
+      const int while_       = (1 << 21);
+      const int switch_      = (1 << 22);
+      const int case_        = (1 << 23);
+      const int default_     = (1 << 24);
+      const int continue_    = (1 << 25);
+      const int break_       = (1 << 26);
 
-      const int return_      = (1 << 28);
+      const int return_      = (1 << 27);
 
-      const int attribute    = (1 << 29);
+      const int attribute    = (1 << 28);
 
       const int blockStatements = (
         block        |

@@ -10,6 +10,7 @@ namespace occa {
   namespace lang {
     class statementContext_t;
     class tokenContext_t;
+    class parser_t;
 
     class statementPeeker_t {
       typedef std::map<int, int> keywordToStatementMap;
@@ -17,7 +18,7 @@ namespace occa {
     private:
       tokenContext_t &tokenContext;
       statementContext_t &smntContext;
-      const keywords_t &keywords;
+      parser_t &parser;
       nameToAttributeMap &attributeMap;
       bool success;
 
@@ -28,7 +29,7 @@ namespace occa {
     public:
       statementPeeker_t(tokenContext_t &tokenContext_,
                         statementContext_t &smntContext_,
-                        const keywords_t &keywords_,
+                        parser_t &parser_,
                         nameToAttributeMap &attributeMap_);
 
       void clear();

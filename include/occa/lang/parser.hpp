@@ -130,10 +130,6 @@ namespace occa {
       void loadType(vartype_t &vartype);
       vartype_t loadType();
 
-      bool isLoadingStruct();
-
-      struct_t* loadStruct();
-
       bool isLoadingVariable();
       bool isLoadingFunction();
       bool isLoadingFunctionPointer();
@@ -180,8 +176,6 @@ namespace occa {
       statement_t* loadExpressionStatement(attributeTokenMap &smntAttributes);
 
       statement_t* loadDeclarationStatement(attributeTokenMap &smntAttributes);
-
-      statement_t* loadStructStatement(attributeTokenMap &smntAttributes);
 
       statement_t* loadNamespaceStatement(attributeTokenMap &smntAttributes);
 

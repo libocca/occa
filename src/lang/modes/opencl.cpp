@@ -150,7 +150,6 @@ namespace occa {
       void openclParser::setGlobalQualifiers() {
         statementPtrVector statements;
         findStatements((statementType::declaration |
-                        statementType::struct_ |
                         statementType::functionDecl |
                         statementType::function),
                        root,
@@ -167,11 +166,6 @@ namespace occa {
         else if (smnt.type() & statementType::functionDecl) {
           addGlobalToFunctionArgs(
             smnt.to<functionDeclStatement>().function
-          );
-        }
-        else if (smnt.type() & statementType::struct_) {
-          addGlobalToStruct(
-            smnt.to<structStatement>().struct_
           );
         }
         else {
@@ -193,13 +187,6 @@ namespace occa {
           if (arg) {
             addGlobalToVariable(*arg);
           }
-        }
-      }
-
-      void openclParser::addGlobalToStruct(struct_t &struct__) {
-        const int fieldCount = (int) struct__.fields.size();
-        for (int i = 0; i < fieldCount; ++i) {
-          addGlobalToVariable(struct__.fields[i]);
         }
       }
 

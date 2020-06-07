@@ -18,7 +18,9 @@ namespace occa {
       std::vector<int> inlinedStack;
 
       // Metadata
-      char lastChar;
+      static const int lastCharsBufferSize = 10;
+      // Keeps the last character in the [0] position
+      char lastChars[lastCharsBufferSize];
       int charsFromNewline;
 
     public:
@@ -49,7 +51,9 @@ namespace occa {
 
       void printIndentation();
       void printStartIndentation();
+      void printSpace();
       void printNewline();
+      void printNewlines(const int count);
       void printEndNewline();
 
       template <class TM>
@@ -80,7 +84,20 @@ namespace occa {
           }
         }
 
-        lastChar = c_str[chars - 1];
+        const int replacedLastChars = (
+          chars > lastCharsBufferSize
+          ? lastCharsBufferSize
+          : chars
+        );
+
+        // Slide remaining characters
+        for (int i = replacedLastChars; i < lastCharsBufferSize; ++i) {
+          lastChars[i] = lastChars[i - replacedLastChars];
+        }
+        // Replace with new last characters
+        for (int i = 0; i < replacedLastChars; ++i) {
+          lastChars[i] = c_str[chars - 1 - i];
+        }
 
         if (out) {
           // Print to buffer

@@ -12,6 +12,7 @@ namespace occa {
     class exprNode;
     class identifierToken;
     class keywords_t;
+    class parser_t;
     class statementContext_t;
     class tokenRange;
     class token_t;
@@ -113,9 +114,9 @@ namespace occa {
       int getNextOperator(const opType_t &opType);
 
       exprNode* getExpression(statementContext_t &smntContext,
-                              const keywords_t &keywords);
+                              parser_t &parser);
       exprNode* getExpression(statementContext_t &smntContext,
-                              const keywords_t &keywords,
+                              parser_t &parser,
                               const int start,
                               const int end);
 

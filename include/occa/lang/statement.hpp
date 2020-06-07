@@ -18,7 +18,6 @@
 #include <occa/lang/statement/functionDeclStatement.hpp>
 #include <occa/lang/statement/gotoStatement.hpp>
 #include <occa/lang/statement/pragmaStatement.hpp>
-#include <occa/lang/statement/structStatement.hpp>
 #include <occa/lang/statement/switchStatement.hpp>
 #include <occa/lang/statement/caseStatement.hpp>
 #include <occa/lang/statement/declarationStatement.hpp>

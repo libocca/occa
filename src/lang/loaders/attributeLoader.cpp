@@ -1,9 +1,9 @@
 #include <occa/lang/expr/binaryOpNode.hpp>
 #include <occa/lang/expr/emptyNode.hpp>
 #include <occa/lang/expr/identifierNode.hpp>
-#include <occa/lang/keyword.hpp>
 #include <occa/lang/loaders/attributeLoader.hpp>
 #include <occa/lang/loaders/variableLoader.hpp>
+#include <occa/lang/parser.hpp>
 #include <occa/lang/statementContext.hpp>
 #include <occa/lang/token.hpp>
 
@@ -11,11 +11,11 @@ namespace occa {
   namespace lang {
     attributeLoader_t::attributeLoader_t(tokenContext_t &tokenContext_,
                                          statementContext_t &smntContext_,
-                                         const keywords_t &keywords_,
+                                         parser_t &parser_,
                                          nameToAttributeMap &attributeMap_) :
       tokenContext(tokenContext_),
       smntContext(smntContext_),
-      keywords(keywords_),
+      parser(parser_),
       attributeMap(attributeMap_),
       success(true) {}
 
@@ -104,7 +104,7 @@ namespace occa {
 
         // Get argument
         arg.expr = tokenContext.getExpression(smntContext,
-                                              keywords);
+                                              parser);
         if (!success) {
           tokenContext.pop();
           arg.clear();
@@ -149,10 +149,10 @@ namespace occa {
 
     bool loadAttributes(tokenContext_t &tokenContext,
                         statementContext_t &smntContext,
-                        const keywords_t &keywords,
+                        parser_t &parser,
                         nameToAttributeMap &attributeMap,
                         attributeTokenMap &attrs) {
-      attributeLoader_t loader(tokenContext, smntContext, keywords, attributeMap);
+      attributeLoader_t loader(tokenContext, smntContext, parser, attributeMap);
       return loader.loadAttributes(attrs);
     }
 

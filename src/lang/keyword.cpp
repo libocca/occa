@@ -200,9 +200,7 @@ namespace occa {
     }
 
     void typeKeyword::deleteSource() {
-      if (type_.type() & typeType::typedef_) {
-        delete &type_;
-      }
+      // TODO: Make sure the typedef type is being deleted
     }
 
     void typeKeyword::printError(const std::string &message) {

@@ -157,8 +157,9 @@ namespace occa {
       return vartype.dtype();
     }
 
-    void variable_t::printDeclaration(printer &pout) const {
-      vartype.printDeclaration(pout, name());
+    void variable_t::printDeclaration(printer &pout,
+                                      const vartypePrintType_t printType) const {
+      vartype.printDeclaration(pout, name(), printType);
     }
 
     void variable_t::printExtraDeclaration(printer &pout) const {
@@ -223,8 +224,14 @@ namespace occa {
       return value;
     }
 
-    void variableDeclaration::print(printer &pout) const {
-      variable->printDeclaration(pout);
+    void variableDeclaration::print(printer &pout,
+                                    const bool typeDeclared) const {
+      const vartypePrintType_t printType = (
+        typeDeclared
+        ? vartypePrintType_t::typeDeclaration
+        : vartypePrintType_t::type
+      );
+      variable->printDeclaration(pout, printType);
       if (value) {
         pout << " = " << *value;
       }

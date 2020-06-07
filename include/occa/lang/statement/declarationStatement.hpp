@@ -8,6 +8,7 @@ namespace occa {
     class declarationStatement : public statement_t {
     public:
       variableDeclarationVector declarations;
+      bool declaredType;
 
       declarationStatement(blockStatement *up_,
                            token_t *source_);
