@@ -51,6 +51,7 @@ namespace occa {
       statementContext_t smntContext;
       statementPeeker_t smntPeeker;
 
+      int loadingStatementType;
       bool checkSemicolon;
 
       unknownToken defaultRootToken;

@@ -19,6 +19,7 @@ namespace occa {
                  smntContext,
                  *this,
                  attributeMap),
+      loadingStatementType(0),
       checkSemicolon(true),
       defaultRootToken(originSource::builtin),
       success(true),
@@ -165,6 +166,7 @@ namespace occa {
       preprocessor.clear();
       addSettingDefines();
 
+      loadingStatementType = 0;
       checkSemicolon = true;
 
       comments.clear();
@@ -680,6 +682,8 @@ namespace occa {
         attributeTokenMap smntAttributes = attributes;
         attributes.clear();
 
+        loadingStatementType = sType;
+
         statementLoader_t loader = it->second;
         statement_t *smnt = (this->*loader)(smntAttributes);
         if (!smnt) {
@@ -708,7 +712,15 @@ namespace occa {
 
     statement_t* parser_t::getNextStatement() {
       statement_t *smnt = loadNextStatement();
+
+      // It's the end or we don't have comments
       if (!smnt || !comments.size()) {
+        return smnt;
+      }
+
+      // We're about to load a block statement type, add the comments to it
+      if (!(loadingStatementType & statementType::blockStatements)) {
+        pushComments();
         return smnt;
       }
 
