@@ -316,31 +316,86 @@ endif
 
 
 #---[ HIP ]-----------------------------
-hipEnabled = 0
-hipIncFlags = $(call includeFlagsFor,hip/hip_runtime_api.h)
-ifneq (,$(hipIncFlags))
-  HIP_PATH = ${hipIncFlags:-I%=%}/..
-  hipEnabled = 1
-endif
 ifdef OCCA_HIP_ENABLED
   hipEnabled = $(OCCA_HIP_ENABLED)
-endif
 
-ifeq ($(hipEnabled),1)
-  ifneq (,$(HIP_PATH))
-    hipPlatform = $(shell $(HIP_PATH)/bin/hipconfig --platform)
-    hipConfig = $(shell $(HIP_PATH)/bin/hipconfig --cpp_config)
+  ifeq ($(hipEnabled),1)
+    #set HIP_PATH if not supplied by user
+    ifeq (,$(HIP_PATH))
+      hipIncFlags = $(call includeFlagsFor,hip/hip_runtime_api.h)
+      ifneq (,$(hipIncFlags))
+        HIP_PATH = ${hipIncFlags:-I%=%}/..
+      endif
+    endif
+
+    #set HIP_PLATFORM if not supplied by user
+    ifeq (,$(HIP_PLATFORM))
+      hipPlatform = $(shell $(HIP_PATH)/bin/hipconfig --platform)
+    else
+      hipPlatform = $(HIP_PLATFORM)
+    endif
+
     ifeq ($(hipPlatform),nvcc)
-      linkerFlags += -lcuda -lcudart
+      linkerFlags += -lcuda
+      linkerFlags += -lcudart
+    else ifeq ($(hipPlatform),hcc)
+      #set HIP_COMPILER if not supplied by user
+      ifeq (,$(HIP_COMPILER))
+        hipCompiler = $(shell $(HIP_PATH)/bin/hipconfig --compiler)
+      else
+        hipCompiler = $(HIP_COMPILER)
+      endif
+
+      #Select HCC or HIP Runtime
+      ifeq ($(hipCompiler),hcc)
+        linkerFlags += -lhip_hcc
+      else ifeq ($(hipCompiler),clang)
+        linkerFlags += -lamdhip64
+      endif
+    endif
+  endif
+else
+  #find HIP_PATH if not supplied by user
+  ifeq (,$(HIP_PATH))
+    hipIncFlags = $(call includeFlagsFor,hip/hip_runtime_api.h)
+    ifneq (,$(hipIncFlags))
+      HIP_PATH = ${hipIncFlags:-I%=%}/..
+    endif
+  endif
+
+  ifneq (,$(HIP_PATH))
+    #set HIP_PLATFORM if not supplied by user
+    ifeq (,$(HIP_PLATFORM))
+      hipPlatform = $(shell $(HIP_PATH)/bin/hipconfig --platform)
+    else
+      hipPlatform = $(HIP_PLATFORM)
+    endif
+
+    ifeq ($(hipPlatform),nvcc)
       hipLibFlags  = $(call libraryFlagsFor,cuda)
       hipLibFlags += $(call libraryFlagsFor,cudart)
     else ifeq ($(hipPlatform),hcc)
-      linkerFlags += -lhip_hcc
-      hipLibFlags = $(call libraryFlagsFor,hip_hcc)
+      #set HIP_COMPILER if not supplied by user
+      ifeq (,$(HIP_COMPILER))
+        hipCompiler = $(shell $(HIP_PATH)/bin/hipconfig --compiler)
+      else
+        hipCompiler = $(HIP_COMPILER)
+      endif
+
+      #Select HCC or HIP Runtime
+      ifeq ($(hipCompiler),hcc)
+        hipLibFlags = $(call libraryFlagsFor,hip_hcc)
+      else ifeq ($(hipCompiler),clang)
+        hipLibFlags = $(call libraryFlagsFor,amdhip64)
+      endif
     endif
-    paths += $(hipConfig)
-    paths += $(hipIncFlags)
-    linkerFlags += $(hipLibFlags)
+
+    ifneq (,$(hipLibFlags))
+      hipEnabled = 1
+      paths += $(shell $(HIP_PATH)/bin/hipconfig --cpp_config)
+      paths += $(call includeFlagsFor,hip/hip_runtime_api.h)
+      linkerFlags += $(hipLibFlags)
+    endif
   endif
 endif
 

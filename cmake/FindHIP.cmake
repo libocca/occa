@@ -88,11 +88,29 @@ if(UNIX AND NOT APPLE AND NOT CYGWIN)
     mark_as_advanced(HIP_PLATFORM)
   endif()
 
+  if(HIP_HIPCONFIG_EXECUTABLE AND NOT HIP_COMPILER)
+    # Find the compiler
+    execute_process(
+      COMMAND ${HIP_HIPCONFIG_EXECUTABLE} --compiler
+      OUTPUT_VARIABLE _hip_compiler
+      OUTPUT_STRIP_TRAILING_WHITESPACE
+      )
+    set(HIP_COMPILER ${_hip_compiler} CACHE STRING "HIP compiler as computed by hipconfig")
+    mark_as_advanced(HIP_COMPILER)
+  endif()
+
   if(HIP_PLATFORM)
     if(${HIP_PLATFORM} STREQUAL "hcc")
-      set(HIP_INCLUDE_DIRS "${HIP_ROOT_DIR}/include;${HIP_ROOT_DIR}/hcc/include")
-      set(HIP_LIBRARIES "${HIP_ROOT_DIR}/lib/libhip_hcc.so")
-      set(HIP_RUNTIME_DEFINE "__HIP_PLATFORM_HCC__")
+      if(${HIP_COMPILER} STREQUAL "hcc")
+        set(HIP_INCLUDE_DIRS "${HIP_ROOT_DIR}/include;${HIP_ROOT_DIR}/hcc/include")
+        set(HIP_LIBRARIES "${HIP_ROOT_DIR}/lib/libhip_hcc.so")
+        set(HIP_RUNTIME_DEFINE "__HIP_PLATFORM_HCC__")
+      elseif(${HIP_COMPILER} STREQUAL "clang")
+        set(HIP_INCLUDE_DIRS "${HIP_ROOT_DIR}/include")
+        set(HIP_LIBRARIES "${HIP_ROOT_DIR}/lib/libamdhip64.so")
+        set(HIP_RUNTIME_DEFINE "__HIP_PLATFORM_HCC__;__HIP_ROCclr__")
+        set(HIP_PLATFORM "hip-clang")
+      endif()
     elseif(${HIP_PLATFORM} STREQUAL "nvcc")
       find_package(CUDA)
 
@@ -127,5 +145,6 @@ find_package_handle_standard_args(
     HIP_RUNTIME_DEFINE
     HIP_HIPCONFIG_EXECUTABLE
     HIP_PLATFORM
+    HIP_COMPILER
     VERSION_VAR HIP_VERSION
     )
