@@ -15,9 +15,11 @@ int main(const int argc, const char **argv) {
 }
 
 const std::string scopeTestSource = (
+  // root[0]
   "int x;\n"
+  // root[1]
   "typedef int myInt;\n"
-  "\n"
+  // root[2]
   "void foo() {\n"
   "  int x;\n"
   "  {\n"
@@ -25,7 +27,7 @@ const std::string scopeTestSource = (
   "  }\n"
   "  typedef int myInt;\n"
   "}\n"
-  "\n"
+  // root[3]
   "int main(const int argc, const char **argv) {\n"
   "  int x = argc;\n"
   "  int a;\n"
@@ -42,6 +44,26 @@ const std::string scopeTestSource = (
   "    }\n"
   "  }\n"
   "}\n"
+  // root[4]
+  "struct struct1_t {\n"
+  "  int x1;\n"
+  "};\n"
+  // root[5]
+  "typedef struct {\n"
+  "  int x2;\n"
+  "} struct2_t;\n"
+  // root[6]
+  "typedef struct struct3_t {\n"
+  "  int x3, x4;\n"
+  "} struct4_t;\n"
+  // root[7]
+  "struct struct1_t struct1;\n"
+  // root[8]
+  "struct struct2_t struct2;\n"
+  // root[9]
+  "struct struct3_t struct3;\n"
+  // root[10]
+  "struct struct4_t struct4;\n"
 );
 
 void testScopeUp() {
@@ -70,6 +92,10 @@ void testScopeKeywords() {
   blockStatement &root     = parser.root;
   blockStatement &foo      = root[2]->to<blockStatement>();
   blockStatement &fooBlock = foo[1]->to<blockStatement>();
+  ASSERT_TRUE(root[7]->is<declarationStatement>());
+  ASSERT_TRUE(root[8]->is<declarationStatement>());
+  ASSERT_TRUE(root[9]->is<declarationStatement>());
+  ASSERT_TRUE(root[10]->is<declarationStatement>());
 
   // Make sure we can find variables 'x'
   ASSERT_TRUE(root.hasInScope("x"));
@@ -105,6 +131,16 @@ void testScopeKeywords() {
                    root.getScopeKeyword("myInt").type());
   ASSERT_EQ_BINARY(keywordType::type,
                    foo.getScopeKeyword("myInt").type());
+
+  // Test structs
+  ASSERT_EQ_BINARY(keywordType::type,
+                   root.getScopeKeyword("struct1_t").type());
+  ASSERT_EQ_BINARY(keywordType::type,
+                   root.getScopeKeyword("struct2_t").type());
+  ASSERT_EQ_BINARY(keywordType::type,
+                   root.getScopeKeyword("struct3_t").type());
+  ASSERT_EQ_BINARY(keywordType::type,
+                   root.getScopeKeyword("struct4_t").type());
 }
 
 void testScopeErrors() {
