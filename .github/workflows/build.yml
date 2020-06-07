@@ -86,8 +86,8 @@ jobs:
 
     - name: Compile library (CMake)
       run: |
-        cmake -E make_directory ${{runner.workspace}}/build
-        cd ${{runner.workspace}}/build
+        # cmake -E make_directory ${{runner.workspace}}/build
+        # cd ${{runner.workspace}}/build
         cmake $GITHUB_WORKSPACE -DALLOW_OPENMP:BOOL=ON
         make -j
       if: ${{ matrix.useCMake }}
