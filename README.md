@@ -17,7 +17,7 @@
 In a nutshell, OCCA (like *oca*-rina) is an open-source library which aims to
 
 - Make it easy to program different types of devices (e.g. _CPU_, _GPU_, _FPGA_)
-- Provide a [unified API](https://libocca.org/#/guide/occa/introduction) for interacting with backend device APIs (e.g. _OpenMP_, _CUDA_, _OpenCL_, _Metal_)
+- Provide a [unified API](https://libocca.org/#/guide/occa/introduction) for interacting with backend device APIs (e.g. _OpenMP_, _CUDA_, _HIP_, _OpenCL_, _Metal_)
 - Use just-in-time compilation to build backend kernels
 - Provide a [kernel language](https://libocca.org/#/guide/okl/introduction), a minor extension to C, to abstract programming for each backend
 
