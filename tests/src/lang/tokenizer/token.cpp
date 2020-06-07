@@ -29,6 +29,11 @@ void testPeekMethods() {
     tokenType::identifier,
     tokenizer.peek()
   );
+  setStream("true_case");
+  ASSERT_EQ_BINARY(
+    tokenType::identifier,
+    tokenizer.peek()
+  );
 
   setStream("1");
   ASSERT_EQ_BINARY(
@@ -121,6 +126,11 @@ void testTokenMethods() {
     getTokenType()
   );
   setToken("_abcd020230");
+  ASSERT_EQ_BINARY(
+    tokenType::identifier,
+    getTokenType()
+  );
+  setToken("true_case");
   ASSERT_EQ_BINARY(
     tokenType::identifier,
     getTokenType()

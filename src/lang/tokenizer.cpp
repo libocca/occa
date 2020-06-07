@@ -392,12 +392,19 @@ namespace occa {
       if (c == '\0') {
         return tokenType::none;
       }
-      // Primitive must be checked before identifiers
-      //   and operators since:
+
+      const char *pos = fp.start;
+      const bool isPrimitive = (
+        primitive::load(pos, false).type != occa::primitiveType::none
+      );
+
+      // Primitive must be checked before identifiers and operators since:
       //   - true/false
       //   - Operators can start with a . (for example, .01)
-      const char *pos = fp.start;
-      if (primitive::load(pos, false).type != occa::primitiveType::none) {
+      // However, make sure we aren't parsing an identifier:
+      //   - true_var
+      //   - false_case
+      if (isPrimitive && !lex::inCharset(*pos, charcodes::identifierStart)) {
         return tokenType::primitive;
       }
       if (lex::inCharset(c, charcodes::identifierStart)) {
@@ -420,9 +427,13 @@ namespace occa {
 
     int tokenizer_t::peekForIdentifier() {
       push();
+
+      // Go through the identifier keys
       ++fp.start;
       skipFrom(charcodes::identifier);
+
       const std::string identifier = str();
+
       int type = shallowPeek();
       popAndRewind();
 
