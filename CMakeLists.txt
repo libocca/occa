@@ -62,7 +62,7 @@ set_target_properties(libocca PROPERTIES OUTPUT_NAME occa LIBRARY_OUTPUT_DIRECTO
 
 #Find needed and requested packages
 find_package(Threads REQUIRED)
-target_link_libraries(libocca PRIVATE ${CMAKE_THREAD_LIBS_INIT})
+target_link_libraries(libocca PRIVATE ${CMAKE_THREAD_LIBS_INIT} ${CMAKE_DL_LIBS})
 
 target_include_directories(libocca PUBLIC
                           $<BUILD_INTERFACE:${OCCA_SOURCE_DIR}/include>
