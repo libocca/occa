@@ -1,5 +1,6 @@
 program main
   use occa
+  use iso_c_binding
 
   implicit none
 
@@ -7,6 +8,8 @@ program main
   integer(occaUDim_t) :: iu
   integer(occaUDim_t) :: entries = 5
   character(len=1024) :: arg, info
+
+  type(C_ptr) :: cptr
 
   real(C_float), allocatable, target :: a(:), b(:), ab(:)
 
@@ -61,7 +64,9 @@ program main
   device = occaCreateDeviceFromString(F_C_str(info))
 
   ! Print device mode
-  write(*,'(a,a)') "occaDeviceMode: ", C_F_str(occaDeviceMode(device))
+  ! Use an intermediate variable to avoid an ICE with the 2019 Intel compilers
+  cptr = occaDeviceMode(device)
+  write(*,'(a,a)') "occaDeviceMode: ", C_F_str(cptr)
 
   ! Allocate memory on the device
   o_a  = occaDeviceTypedMalloc(device, entries, occaDtypeFloat, C_NULL_ptr, occaDefault)
