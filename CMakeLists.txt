@@ -65,7 +65,8 @@ find_package(Threads REQUIRED)
 target_link_libraries(libocca PRIVATE ${CMAKE_THREAD_LIBS_INIT})
 
 target_include_directories(libocca PUBLIC
-                          $<BUILD_INTERFACE:${OCCA_SOURCE_DIR}/include>)
+                          $<BUILD_INTERFACE:${OCCA_SOURCE_DIR}/include>
+                          $<BUILD_INTERFACE:${OCCA_BUILD_DIR}/include>)
 
 target_compile_definitions(libocca PRIVATE -DUSE_CMAKE)
 
@@ -221,7 +222,7 @@ if (ENABLE_MPI)
 endif(ENABLE_MPI)
 
 #Generate CompiledDefines from libraries we found
-configure_file(scripts/compiledDefinesTemplate.hpp.in ${OCCA_SOURCE_DIR}/include/occa/defines/compiledDefines.hpp)
+configure_file(scripts/compiledDefinesTemplate.hpp.in ${OCCA_BUILD_DIR}/include/occa/defines/compiledDefines.hpp)
 
 #Find source files
 file(GLOB_RECURSE OCCA_SRC RELATIVE ${OCCA_SOURCE_DIR} "src/*.cpp")
