@@ -284,6 +284,7 @@ namespace occa {
               << ' ' << hipccCompilerFlags
 #if defined(__HIP_PLATFORM_NVCC___) || defined(__HIP_ROCclr__)
               << " -I"        << env::OCCA_DIR << "include"
+              << " -I"        << env::OCCA_INSTALL_DIR << "include"
 #endif
               /* NC: hipcc doesn't seem to like linking a library in */
               //<< " -L"        << env::OCCA_INSTALL_DIR << "lib -locca"
