@@ -229,6 +229,8 @@ if (ENABLE_MPI)
     message("-- MPI include dirs: ${MPI_CXX_INCLUDE_DIRS}")
     message("-- MPI libraries:    ${MPI_CXX_LIBRARIES}")
     message("-- MPI link flags:   ${MPI_CXX_LINK_FLAGS}")
+    message("-- MPI executable:   ${MPIEXEC_EXECUTABLE}")
+    message("-- MPI numproc flag: ${MPIEXEC_NUMPROC_FLAG}")
 
     target_include_directories(libocca PUBLIC ${MPI_CXX_INCLUDE_DIRS})
     target_link_libraries(libocca PUBLIC ${MPI_CXX_LIBRARIES})
