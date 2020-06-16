@@ -54,9 +54,14 @@ endif()
 
 include(SetCompilerFlags)
 
+string(TOUPPER ${CMAKE_BUILD_TYPE} CMAKE_BUILD_TYPE_UPPER)
 message("-- System: ${CMAKE_SYSTEM}")
-message("-- C FLAGS:   ${CMAKE_C_FLAGS}")
-message("-- CXX FLAGS: ${CMAKE_CXX_FLAGS}")
+message("-- Build type: ${CMAKE_BUILD_TYPE}")
+message("-- C flags: ${CMAKE_C_FLAGS} ${CMAKE_C_FLAGS_${CMAKE_BUILD_TYPE_UPPER}}")
+message("-- CXX flags: ${CMAKE_CXX_FLAGS} ${CMAKE_CXX_FLAGS_${CMAKE_BUILD_TYPE_UPPER}}")
+if (ENABLE_FORTRAN)
+  message("-- Fortran flags: ${CMAKE_Fortran_FLAGS} ${CMAKE_Fortran_FLAGS_${CMAKE_BUILD_TYPE_UPPER}}")
+endif()
 
 set(OCCA_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR})
 set(OCCA_BUILD_DIR ${CMAKE_BINARY_DIR})
