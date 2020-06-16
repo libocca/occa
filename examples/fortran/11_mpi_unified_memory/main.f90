@@ -15,6 +15,7 @@ program main
   integer(occaUDim_t) :: entries = 8
   character(len=1024), dimension(0:1) :: info
   real(C_float), dimension(0:1) :: ab_sum
+  real(C_float) :: ab_gather
 
   ! OCCA kernel, memory and property objects
   type(occaKernel)     :: addVectors
@@ -124,8 +125,8 @@ program main
   ! Assert values
   call flush(stdout)
   ab_sum = myid
-  ab_sum(myid) = sum(ab_ptr)
-  call MPI_Gather(ab_sum(myid), 1, MPI_FLOAT, ab_sum, 1, MPI_FLOAT, 0, gcomm, ierr)
+  ab_gather = sum(ab_ptr)
+  call MPI_Gather(ab_gather, 1, MPI_FLOAT, ab_sum, 1, MPI_FLOAT, 0, gcomm, ierr)
   if (myid == 0) then
     if (abs(ab_sum(myid) - ab_sum(otherID)) > 1.0e-8) stop "*** Wrong result ***"
   end if
