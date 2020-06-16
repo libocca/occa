@@ -85,6 +85,8 @@ program main
   end if
   if (C_associated(occaMemoryPtr(o_ab, occaDefault))) then
     call C_F_pointer(occaMemoryPtr(o_ab, occaDefault),ab_ptr,[entries])
+  else
+    ab_ptr => null()
   end if
 
   ! Send/receive the result array

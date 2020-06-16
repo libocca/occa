@@ -58,12 +58,18 @@ program main
   ! Assign Fortran pointers to the (host) memory
   if (C_associated(a)) then
     call C_F_pointer(a,a_ptr,[entries])
+  else
+    a_ptr => null()
   end if
   if (C_associated(b)) then
     call C_F_pointer(b,b_ptr,[entries])
+  else
+    b_ptr => null()
   end if
   if (C_associated(ab)) then
     call C_F_pointer(ab,ab_ptr,[entries])
+  else
+    ab_ptr => null()
   end if
 
   ! Initialise host arrays
