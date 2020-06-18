@@ -329,6 +329,7 @@ namespace occa {
               << ' '    << sourceFilename
               << " -o " << binaryFilename
               << " -I"  << env::OCCA_DIR << "include"
+              << " -I"  << env::OCCA_INSTALL_DIR << "include"
               << " -L"  << env::OCCA_INSTALL_DIR << "lib -locca"
               << ' '    << compilerLinkerFlags
               << std::endl;
@@ -340,6 +341,7 @@ namespace occa {
               << " /wd4244 /wd4800 /wd4804 /wd4018"
               << ' '       << compilerFlags
               << " /I"     << env::OCCA_DIR << "include"
+              << " /I"     << env::OCCA_INSTALL_DIR << "include"
               << ' '       << sourceFilename
               << " /link " << env::OCCA_INSTALL_DIR << "lib/libocca.lib",
               << ' '       << compilerLinkerFlags
