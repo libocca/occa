@@ -82,7 +82,7 @@ program main
   blockSum(1) = sum(blockSum)
 
   ! Validate
-  if (blockSum(1) /= sig) then
+  if (abs(blockSum(1) - sig) > 1.0e-8) then
     write(*,*) "sum      = ", sig
     write(*,*) "blockSum = ", blockSum(1)
     stop "*** Reduction failed ***"

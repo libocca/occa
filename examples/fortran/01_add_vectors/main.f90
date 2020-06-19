@@ -4,6 +4,7 @@ program main
   implicit none
 
   integer :: alloc_err, i
+  integer(occaUDim_t) :: iu
   integer(occaUDim_t) :: entries = 5
   character(len=1024) :: arg, info
 
@@ -47,9 +48,9 @@ program main
   if (alloc_err /= 0) stop "*** Not enough memory ***"
 
   ! Initialise host arrays
-  do i=1,entries
-    a(i) = real(i)-1
-    b(i) = 2-real(i)
+  do iu=1,entries
+    a(iu) = real(iu)-1
+    b(iu) = 2-real(iu)
   end do
   ab = 0
 
@@ -91,11 +92,11 @@ program main
   call occaCopyMemToPtr(C_loc(ab), o_ab, occaAllBytes, 0_occaUDim_t, occaDefault)
 
   ! Assert values
-  do i=1,entries
-    write(*,'(a,i2,a,f3.1)') "ab(", i, ") = ", ab(i)
+  do iu=1,entries
+    write(*,'(a,i2,a,f3.1)') "ab(", iu, ") = ", ab(iu)
   end do
-  do i=1,entries
-    if (ab(i) .ne. (a(i) + b(i))) stop "*** Wrong result ***"
+  do iu=1,entries
+    if (abs(ab(iu) - (a(iu) + b(iu))) > 1.0e-8) stop "*** Wrong result ***"
   end do
 
   ! Free host memory

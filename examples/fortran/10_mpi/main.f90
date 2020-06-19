@@ -6,11 +6,12 @@ program main
 
   implicit none
 
-  integer :: ierr, i, id
+  integer :: ierr, id
   integer :: myid, npes, gcomm, tag ! MPI variables
   integer, dimension(2) :: request
   integer, dimension(MPI_STATUS_SIZE) :: status
   integer :: otherID, offset
+  integer(occaUDim_t) :: iu
   integer(occaUDim_t) :: entries = 8
   character(len=1024), dimension(0:1) :: info
   real(C_float), dimension(0:1) :: ab_sum
@@ -48,9 +49,9 @@ program main
   if (ierr /= 0) call stop_mpi("*** Not enough memory ***", myid)
 
   ! Initialise host arrays
-  do i=1,entries
-    a(i) = real(i)-1
-    b(i) = myid-real(i)
+  do iu=1,entries
+    a(iu) = real(iu)-1
+    b(iu) = myid-real(iu)
   end do
   ab = 0.0
 
@@ -88,7 +89,7 @@ program main
 
   ! Send/receive the result array
   otherID = mod(myid + 1, 2)
-  offset  = entries/2
+  offset  = int(entries/2)
   tag     = 123
   request = MPI_REQUEST_NULL
   call MPI_IRecv(ab_ptr(otherID*offset+1), &
@@ -119,7 +120,7 @@ program main
   ab_sum(myid) = sum(ab_ptr)
   call MPI_Gather(ab_sum(myid), 1, MPI_FLOAT, ab_sum, 1, MPI_FLOAT, 0, gcomm, ierr)
   if (myid == 0) then
-    if (ab_sum(myid) /= ab_sum(otherID)) stop "*** Wrong result ***"
+    if (abs(ab_sum(myid) - ab_sum(otherID)) > 1.0e-8) stop "*** Wrong result ***"
   end if
 
   ! Print values
@@ -128,8 +129,8 @@ program main
   do id=0,npes-1
     if (id == myid) then
       call flush(stdout)
-      do i=1,entries
-      write(stdout,'(a,i1,a,i2,a,f5.1)') "#", id, ": ab(", i, ") = ", ab_ptr(i)
+      do iu=1,entries
+      write(stdout,'(a,i1,a,i2,a,f5.1)') "#", id, ": ab(", iu, ") = ", ab_ptr(iu)
       call flush(stdout)
       end do
     end if
