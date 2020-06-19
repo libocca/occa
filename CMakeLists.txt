@@ -223,6 +223,7 @@ endif(ENABLE_MPI)
 
 #Generate CompiledDefines from libraries we found
 configure_file(scripts/compiledDefinesTemplate.hpp.in ${OCCA_BUILD_DIR}/include/occa/defines/compiledDefines.hpp)
+install(FILES ${OCCA_BUILD_DIR}/include/occa/defines/compiledDefines.hpp DESTINATION include/occa/defines)
 
 #Find source files
 file(GLOB_RECURSE OCCA_SRC RELATIVE ${OCCA_SOURCE_DIR} "src/*.cpp")
@@ -236,6 +237,7 @@ endif()
 target_sources(libocca PRIVATE ${OCCA_SRC})
 
 install(TARGETS libocca DESTINATION lib)
+install(DIRECTORY include/ DESTINATION include)
 
 if (ENABLE_TESTS)
   include(CTest)
