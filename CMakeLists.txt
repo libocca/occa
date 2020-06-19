@@ -34,6 +34,11 @@ option(ENABLE_MPI    "Build with MPI if available" ON)
 option(ENABLE_TESTS    "Build tests" OFF)
 option(ENABLE_EXAMPLES "Build simple examples" OFF)
 option(ENABLE_UTILITY  "Build occa utility binary" ON)
+option(ENABLE_FORTRAN  "Enable Fortran interface" OFF)
+
+if (ENABLE_FORTRAN)
+  enable_language(Fortran)
+endif()
 
 set(OCCA_USING_VS OFF)
 set(OCCA_UNSAFE OFF)
@@ -56,6 +61,9 @@ message("-- CXX FLAGS: ${CMAKE_CXX_FLAGS}")
 set(OCCA_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR})
 set(OCCA_BUILD_DIR ${CMAKE_BINARY_DIR})
 
+if (ENABLE_FORTRAN)
+  set (CMAKE_Fortran_MODULE_DIRECTORY ${OCCA_BUILD_DIR}/mod)
+endif()
 
 ##############################
 # LibOCCA Target
@@ -86,7 +94,6 @@ if (ENABLE_OPENMP)
     message("-- OpenMP include dirs: ${OpenMP_CXX_INCLUDE_DIRS}")
     message("-- OpenMP libraries:    ${OpenMP_CXX_LIBRARIES}")
 
-    target_compile_options(libocca PRIVATE ${OpenMP_CXX_FLAGS})
     target_include_directories(libocca PRIVATE ${OpenMP_CXX_INCLUDE_DIRS})
     target_link_libraries(libocca PRIVATE ${OpenMP_CXX_LIBRARIES})
   else(OPENMP_CXX_FOUND)
@@ -218,8 +225,8 @@ if (ENABLE_MPI)
     message("-- MPI libraries:    ${MPI_CXX_LIBRARIES}")
     message("-- MPI link flags:   ${MPI_CXX_LINK_FLAGS}")
 
-    target_include_directories(libocca PRIVATE ${MPI_CXX_INCLUDE_DIRS})
-    target_link_libraries(libocca PRIVATE ${MPI_CXX_LIBRARIES})
+    target_include_directories(libocca PUBLIC ${MPI_CXX_INCLUDE_DIRS})
+    target_link_libraries(libocca PUBLIC ${MPI_CXX_LIBRARIES})
   else(MPI_FOUND)
     set(OCCA_MPI_ENABLED 0)
   endif(MPI_FOUND)
@@ -230,13 +237,28 @@ configure_file(scripts/compiledDefinesTemplate.hpp.in ${OCCA_BUILD_DIR}/include/
 install(FILES ${OCCA_BUILD_DIR}/include/occa/defines/compiledDefines.hpp DESTINATION include/occa/defines)
 
 #Find source files
-file(GLOB_RECURSE OCCA_SRC RELATIVE ${OCCA_SOURCE_DIR} "src/*.cpp")
-list(REMOVE_ITEM OCCA_SRC src/core/kernelOperators.cpp src/tools/runFunction.cpp)
+file(GLOB_RECURSE OCCA_SRC_cpp RELATIVE ${OCCA_SOURCE_DIR} "src/*.cpp")
+list(REMOVE_ITEM OCCA_SRC_cpp src/core/kernelOperators.cpp src/tools/runFunction.cpp)
+
+if (OCCA_OPENMP_ENABLED)
+  set_source_files_properties(${OCCA_SRC_cpp} PROPERTIES COMPILE_FLAGS ${OpenMP_CXX_FLAGS})
+endif()
+
+if (ENABLE_FORTRAN)
+  file(GLOB_RECURSE OCCA_SRC_Fortran RELATIVE ${OCCA_SOURCE_DIR} "src/*.f90")
+  if (OCCA_OPENMP_ENABLED)
+    set_source_files_properties(${OCCA_SRC_Fortran} PROPERTIES COMPILE_FLAGS ${OpenMP_Fortran_FLAGS})
+  endif()
+  install (CODE "file(GLOB public-modules ${CMAKE_Fortran_MODULE_DIRECTORY}/*.mod)\n
+                 file(INSTALL DESTINATION ${CMAKE_INSTALL_PREFIX}/include TYPE FILE FILES \${public-modules})")
+  set_target_properties(libocca PROPERTIES LINKER_LANGUAGE C)
+endif()
 
 if (OCCA_METAL_ENABLED)
   file(GLOB_RECURSE OCCA_SRC_metal RELATIVE ${OCCA_SOURCE_DIR} "src/*.mm")
-  set(OCCA_SRC ${OCCA_SRC} ${OCCA_SRC_metal})
 endif()
+
+set(OCCA_SRC ${OCCA_SRC_cpp} ${OCCA_SRC_Fortran} ${OCCA_SRC_metal})
 
 target_sources(libocca PRIVATE ${OCCA_SRC})
 

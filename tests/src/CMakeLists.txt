@@ -14,3 +14,7 @@ add_subdirectory(io)
 add_subdirectory(lang)
 add_subdirectory(tools)
 add_subdirectory(types)
+
+if (ENABLE_FORTRAN)
+  add_subdirectory(fortran)
+endif()

@@ -51,3 +51,26 @@ set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${SUPPORTED_WARN_C_FLAGS}")
 
 set_optional_c_flag(SUPPORTED_WERROR_C_FLAGS "-Werror")
 set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} ${SUPPORTED_WERROR_C_FLAGS}")
+
+if (ENABLE_FORTRAN)
+  include(CheckFortranCompilerFlag)
+
+  function(set_optional_fortran_flag var)
+    foreach(flag ${ARGN})
+      string(MAKE_C_IDENTIFIER "Allowed_Fortran_Flag${flag}" check_var)
+      check_fortran_compiler_flag("${flag}" ${check_var})
+      if (${${check_var}})
+        set(${var} "${${var}} ${flag}")
+      endif()
+    endforeach()
+    set(${var} "${${var}}" PARENT_SCOPE)
+  endfunction(set_optional_fortran_flag)
+
+  # Enable warnings
+  set_optional_fortran_flag(SUPPORTED_WARN_Fortran_FLAGS "-Wall -Wextra")
+  set(CMAKE_Fortran_FLAGS "${CMAKE_Fortran_FLAGS} ${SUPPORTED_WARN_Fortran_FLAGS}")
+
+  set_optional_fortran_flag(SUPPORTED_WERROR_Fortran_FLAGS "-Werror")
+  set(CMAKE_Fortran_FLAGS_DEBUG "${CMAKE_Fortran_FLAGS_DEBUG} ${SUPPORTED_WERROR_Fortran_FLAGS}")
+
+endif()
