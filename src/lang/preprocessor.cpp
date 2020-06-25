@@ -1304,21 +1304,7 @@ namespace occa {
       }
 
       // Expand non-absolute path
-      std::string header = io::filename(tokenizer->getHeader(), false);
-      // Test includePaths until one exists
-      // Default to a relative path if none are found
-      if (!io::isAbsolutePath(header)) {
-        const int pathCount = (int) includePaths.size();
-        for (int i = 0; i < pathCount; ++i) {
-          const std::string path = includePaths[i];
-          if (io::exists(path + header)) {
-            header = path + header;
-            break;
-          } else if (i == (pathCount - 1)) {
-            header = env::CWD + header;
-          }
-        }
-      }
+      std::string header = io::findInPaths(io::filename(tokenizer->getHeader(), false), includePaths);
 
       if (!io::exists(header)) {
         // Default to standard headers if they exist

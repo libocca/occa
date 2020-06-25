@@ -433,7 +433,8 @@ namespace occa {
                              const occa::properties &props) const {
     occa::properties allProps;
     hash_t kernelHash;
-    setupKernelInfo(props, hashFile(filename),
+    const std::string realFilename = io::findInPaths(filename, env::OCCA_KERNEL_PATH);
+    setupKernelInfo(props, hashFile(realFilename),
                     allProps, kernelHash);
 
     // TODO: [#185] Fix kernel cache frees
@@ -444,7 +445,6 @@ namespace occa {
     //   return cachedKernel;
     // }
 
-    const std::string realFilename = io::filename(filename);
     const std::string hashDir = io::hashDir(realFilename, kernelHash);
     allProps["hash"] = kernelHash.getFullString();
 
