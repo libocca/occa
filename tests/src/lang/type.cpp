@@ -129,16 +129,18 @@ void testCasting() {
 
 void testComparision() {
   // Test primitives
-  const primitive_t* types[9] = {
+  const int nTypes = 11;
+  const primitive_t* types[nTypes] = {
     &bool_,
     &char_, &char16_t_, &char32_t_, &wchar_t_,
     &short_,
     &int_,
-    &float_, &double_
+    &float_, &double_,
+    &size_t_, &ptrdiff_t_,
   };
-  for (int j = 0; j < 9; ++j) {
+  for (int j = 0; j < nTypes; ++j) {
     vartype_t jVar(*types[j]);
-    for (int i = 0; i < 9; ++i) {
+    for (int i = 0; i < nTypes; ++i) {
       vartype_t iVar(*types[i]);
       ASSERT_EQ(i == j,
                 iVar == jVar);
