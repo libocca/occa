@@ -11,7 +11,7 @@ int main(const int argc, const char **argv) {
 }
 
 void testMode() {
-  occa::mode_v *serialMode = occa::getMode("mode: 'Serial'");
+  occa::mode_t *serialMode = occa::getMode("mode: 'Serial'");
   ASSERT_NEQ((void*) serialMode,
              (void*) NULL);
 

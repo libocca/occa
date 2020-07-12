@@ -4,9 +4,10 @@
 
 namespace occa {
   namespace opencl {
-    modeInfo::modeInfo() {}
+    openclMode::openclMode() :
+        mode_t("OpenCL") {}
 
-    bool modeInfo::init() {
+    bool openclMode::init() {
 #if OCCA_OPENCL_ENABLED
       return occa::opencl::isEnabled();
 #else
@@ -14,7 +15,7 @@ namespace occa {
 #endif
     }
 
-    styling::section& modeInfo::getDescription() {
+    styling::section& openclMode::getDescription() {
       static styling::section section("OpenCL");
       if (section.size() == 0) {
         int platformCount = getPlatformCount();
@@ -39,7 +40,10 @@ namespace occa {
       return section;
     }
 
-    occa::mode<opencl::modeInfo,
-               opencl::device> mode("OpenCL");
+    modeDevice_t* openclMode::newDevice(const occa::properties &props) {
+      return new device(setModeProp(props));
+    }
+
+    openclMode mode;
   }
 }
