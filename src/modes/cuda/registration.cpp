@@ -4,9 +4,10 @@
 
 namespace occa {
   namespace cuda {
-    modeInfo::modeInfo() {}
+    cudaMode::cudaMode() :
+        mode_t("CUDA") {}
 
-    bool modeInfo::init() {
+    bool cudaMode::init() {
 #if OCCA_CUDA_ENABLED
       // Only consider cuda enabled if there is an available device
       return (cuda::init() && cuda::getDeviceCount());
@@ -15,7 +16,7 @@ namespace occa {
 #endif
     }
 
-    styling::section& modeInfo::getDescription() {
+    styling::section& cudaMode::getDescription() {
       static styling::section section("CUDA");
       if (section.size() == 0) {
         char deviceName[1024];
@@ -39,7 +40,10 @@ namespace occa {
       return section;
     }
 
-    occa::mode<cuda::modeInfo,
-               cuda::device> mode("CUDA");
+    modeDevice_t* cudaMode::newDevice(const occa::properties &props) {
+      return new device(setModeProp(props));
+    }
+
+    cudaMode mode;
   }
 }

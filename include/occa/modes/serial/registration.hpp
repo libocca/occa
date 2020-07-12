@@ -11,16 +11,18 @@
 
 namespace occa {
   namespace serial {
-    class modeInfo : public modeInfo_v {
+    class serialMode : public mode_t {
     public:
-      modeInfo();
+      serialMode();
 
       bool init();
+
       styling::section& getDescription();
+
+      modeDevice_t* newDevice(const occa::properties &props);
     };
 
-    extern occa::mode<serial::modeInfo,
-                      serial::device> mode;
+    extern serialMode mode;
   }
 }
 

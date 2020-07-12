@@ -10,16 +10,18 @@
 
 namespace occa {
   namespace metal {
-    class modeInfo : public modeInfo_v {
+    class metalMode : public mode_t {
     public:
-      modeInfo();
+      metalMode();
 
       bool init();
+
       styling::section& getDescription();
+
+      modeDevice_t* newDevice(const occa::properties &props);
     };
 
-    extern occa::mode<metal::modeInfo,
-                      metal::device> mode;
+    extern metalMode mode;
   }
 }
 

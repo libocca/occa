@@ -2,13 +2,14 @@
 
 namespace occa {
   namespace serial {
-    modeInfo::modeInfo() {}
+    serialMode::serialMode() :
+        mode_t("Serial") {}
 
-    bool modeInfo::init() {
+    bool serialMode::init() {
       return true;
     }
 
-    styling::section& modeInfo::getDescription() {
+    styling::section& serialMode::getDescription() {
       static styling::section section("CPU(s)");
       if (section.size() != 0) {
         return section;
@@ -76,7 +77,10 @@ namespace occa {
       return section;
     }
 
-    occa::mode<serial::modeInfo,
-               serial::device> mode("Serial");
+    modeDevice_t* serialMode::newDevice(const occa::properties &props) {
+      return new device(setModeProp(props));
+    }
+
+    serialMode mode;
   }
 }

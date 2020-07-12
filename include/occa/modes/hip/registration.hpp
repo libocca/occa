@@ -10,16 +10,18 @@
 
 namespace occa {
   namespace hip {
-    class modeInfo : public modeInfo_v {
+    class hipMode : public mode_t {
     public:
-      modeInfo();
+      hipMode();
 
       bool init();
+
       styling::section& getDescription();
+
+      modeDevice_t* newDevice(const occa::properties &props);
     };
 
-    extern occa::mode<hip::modeInfo,
-                      hip::device> mode;
+    extern hipMode mode;
   }
 }
 

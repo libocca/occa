@@ -12,16 +12,18 @@
 
 namespace occa {
   namespace cuda {
-    class modeInfo : public modeInfo_v {
+    class cudaMode : public mode_t {
     public:
-      modeInfo();
+      cudaMode();
 
       bool init();
+
       styling::section& getDescription();
+
+      modeDevice_t* newDevice(const occa::properties &props);
     };
 
-    extern occa::mode<cuda::modeInfo,
-                      cuda::device> mode;
+    extern cudaMode mode;
   }
 }
 

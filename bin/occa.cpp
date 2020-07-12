@@ -281,9 +281,9 @@ bool runInfo(const json &args) {
 }
 
 bool runModes(const json &args) {
-  strToModeMap &modes = modeMap();
-  strToModeMap::iterator it = modes.begin();
-  while (it != modes.end()) {
+  strToModeMap &modeMap = getModeMap();
+  strToModeMap::iterator it = modeMap.begin();
+  while (it != modeMap.end()) {
     std::cout << it->first << '\n';
     ++it;
   }
