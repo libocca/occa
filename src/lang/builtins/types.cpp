@@ -45,6 +45,10 @@ namespace occa {
     const primitive_t void_         ("void");
     const primitive_t auto_         ("auto");
 
+    // TODO: Auto-generate type aliases for common C types
+    const primitive_t size_t_       ("size_t");
+    const primitive_t ptrdiff_t_    ("ptrdiff_t");
+
     // OKL Primitives
     const primitive_t uchar2        ("uchar2");
     const primitive_t uchar3        ("uchar3");

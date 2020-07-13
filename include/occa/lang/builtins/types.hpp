@@ -48,6 +48,10 @@ namespace occa {
     extern const primitive_t void_;
     extern const primitive_t auto_;
 
+    // TODO: Auto-generate type aliases for common C types
+    extern const primitive_t size_t_;
+    extern const primitive_t ptrdiff_t_;
+
     // OKL Primitives
     extern const primitive_t uchar2;
     extern const primitive_t uchar3;
