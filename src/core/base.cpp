@@ -252,7 +252,7 @@ namespace occa {
     int index = 0;
 
     for (; it != modeMap.end(); ++it) {
-      if (it->first == "Serial") {
+      if (it->second->name() == "Serial") {
         serialIndex = index;
       }
       table.add(it->second->getDescription());
@@ -260,9 +260,11 @@ namespace occa {
     }
 
     // Set so Serial mode is first to show up
-    styling::section serialSection = table.sections[serialIndex];
-    table.sections[serialIndex] = table.sections[0];
-    table.sections[0] = serialSection;
+    if (serialIndex != 0) {
+      styling::section serialSection = table.sections[serialIndex];
+      table.sections[serialIndex] = table.sections[0];
+      table.sections[0] = serialSection;
+    }
 
     io::stdout << table;
   }

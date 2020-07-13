@@ -1,6 +1,7 @@
 #include <occa/core/device.hpp>
 #include <occa/io/output.hpp>
 #include <occa/modes.hpp>
+#include <occa/tools/string.hpp>
 
 namespace occa {
   //---[ mode_t ]-----------------------
@@ -36,7 +37,8 @@ namespace occa {
   }
 
   void registerMode(mode_t* mode) {
-    getUnsafeModeMap()[mode->name()] = mode;
+    const std::string caseInsensitiveMode = lowercase(mode->name());
+    getUnsafeModeMap()[caseInsensitiveMode] = mode;
   }
 
   void initializeModes() {
@@ -65,25 +67,38 @@ namespace occa {
   }
 
   bool modeIsEnabled(const std::string &mode) {
-    strToModeMap &modeMap = getModeMap();
-    return (modeMap.find(mode) != modeMap.end());
+    return getMode(mode);
   }
 
-  mode_t* getMode(const occa::properties &props) {
-    std::string mode = props["mode"];
-    const bool noMode = !mode.size();
-    if (noMode || !modeIsEnabled(mode)) {
-      if (noMode) {
-        io::stderr << "No OCCA mode given, defaulting to [Serial] mode\n";
-      } else {
-        io::stderr << "[" << mode << "] mode is not enabled, defaulting to [Serial] mode\n";
-      }
-      mode = "Serial";
+  mode_t* getMode(const std::string &mode) {
+    const std::string caseInsensitiveMode = lowercase(mode);
+    strToModeMap &modeMap = getModeMap();
+
+    strToModeMap::iterator it = modeMap.find(caseInsensitiveMode);
+    if (it != modeMap.end()) {
+      return it->second;
     }
-    return getModeMap()[mode];
+
+    return NULL;
+  }
+
+  mode_t* getModeFromProps(const occa::properties &props) {
+    std::string modeName = props["mode"];
+    mode_t *mode = getMode(modeName);
+
+    if (mode) {
+      return mode;
+    }
+
+    if (modeName.size()) {
+      io::stderr << "[" << modeName << "] mode is not enabled, defaulting to [Serial] mode\n";
+    } else {
+      io::stderr << "No OCCA mode given, defaulting to [Serial] mode\n";
+    }
+    return getMode("Serial");
   }
 
   modeDevice_t* newModeDevice(const occa::properties &props) {
-    return getMode(props)->newDevice(props);
+    return getModeFromProps(props)->newDevice(props);
   }
 }
