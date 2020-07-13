@@ -43,15 +43,17 @@ namespace occa {
       occa::json &kernelProps = properties["kernel"];
       std::string compiler, compilerFlags;
 
-      if (kernelProps.get<std::string>("compiler").size()) {
-        compiler = (std::string) kernelProps["compiler"];
-      } else if (env::var("OCCA_HIP_COMPILER").size()) {
+      if (env::var("OCCA_HIP_COMPILER").size()) {
         compiler = env::var("OCCA_HIP_COMPILER");
+      } else if (kernelProps.get<std::string>("compiler").size()) {
+        compiler = (std::string) kernelProps["compiler"];
       } else {
         compiler = "hipcc";
       }
 
-      if (kernelProps.get<std::string>("compiler_flags").size()) {
+      if (env::var("OCCA_HIP_COMPILER_FLAGS").size()) {
+        compilerFlags = env::var("OCCA_HIP_COMPILER_FLAGS");
+      } else if (kernelProps.get<std::string>("compiler_flags").size()) {
         compilerFlags = (std::string) kernelProps["compiler_flags"];
       } else {
         compilerFlags = "-O3";
