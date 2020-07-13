@@ -24,6 +24,7 @@ namespace occa {
     size_t      OCCA_MEM_BYTE_ALIGN;
     strVector   OCCA_INCLUDE_PATH;
     strVector   OCCA_LIBRARY_PATH;
+    strVector   OCCA_KERNEL_PATH;
     bool        OCCA_VERBOSE;
     bool        OCCA_COLOR_ENABLED;
 
@@ -82,6 +83,7 @@ namespace occa {
 
       OCCA_INCLUDE_PATH = split(env::var("OCCA_INCLUDE_PATH"), ':', '\\');
       OCCA_LIBRARY_PATH = split(env::var("OCCA_LIBRARY_PATH"), ':', '\\');
+      OCCA_KERNEL_PATH  = split(env::var("OCCA_KERNEL_PATH"), ':', '\\');
 
       io::endWithSlash(HOME);
       io::endWithSlash(CWD);

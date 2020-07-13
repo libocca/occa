@@ -53,6 +53,8 @@ namespace occa {
 
     std::string shortname(const std::string &filename);
 
+    std::string findInPaths(const std::string &filename, const strVector &paths);
+
     bool isDir(const std::string &filename);
     bool isFile(const std::string &filename);
 
