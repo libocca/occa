@@ -34,7 +34,7 @@ namespace occa {
     }
 
     udim_t getDeviceMemorySize(CUdevice device) {
-      size_t bytes = -1;
+      size_t bytes = 0;
       OCCA_CUDA_ERROR("Finding available memory on device",
                       cuDeviceTotalMem(&bytes, device));
       return bytes;
