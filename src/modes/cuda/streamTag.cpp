@@ -9,8 +9,10 @@ namespace occa {
       cuEvent(cuEvent_) {}
 
     streamTag::~streamTag() {
-      OCCA_CUDA_ERROR("streamTag: Freeing CUevent",
-                      cuEventDestroy(cuEvent));
+      OCCA_CUDA_DESTRUCTOR_ERROR(
+        "streamTag: Freeing CUevent",
+        cuEventDestroy(cuEvent)
+      );
     }
   }
 }
