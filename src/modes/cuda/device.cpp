@@ -79,8 +79,10 @@ namespace occa {
 
     device::~device() {
       if (cuContext) {
-        OCCA_CUDA_ERROR("Device: Freeing Context",
-                        cuCtxDestroy(cuContext) );
+        OCCA_CUDA_DESTRUCTOR_ERROR(
+          "Device: Freeing Context",
+          cuCtxDestroy(cuContext)
+        );
         cuContext = NULL;
       }
     }

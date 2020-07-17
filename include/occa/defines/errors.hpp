@@ -49,6 +49,10 @@
 #define OCCA_CUDA_ERROR2(expr, filename, function, line, message) OCCA_CUDA_ERROR3(expr, filename, function, line, message)
 #define OCCA_CUDA_ERROR(message, expr) OCCA_CUDA_ERROR2(expr, __FILE__, __PRETTY_FUNCTION__, __LINE__, message)
 
+#define OCCA_CUDA_DESTRUCTOR_ERROR3(expr, filename, function, line, message) OCCA_CUDA_TEMPLATE_CHECK(occa::cuda::destructorError, expr, filename, function, line, message)
+#define OCCA_CUDA_DESTRUCTOR_ERROR2(expr, filename, function, line, message) OCCA_CUDA_DESTRUCTOR_ERROR3(expr, filename, function, line, message)
+#define OCCA_CUDA_DESTRUCTOR_ERROR(message, expr) OCCA_CUDA_DESTRUCTOR_ERROR2(expr, __FILE__, __PRETTY_FUNCTION__, __LINE__, message)
+
 #define OCCA_CUDA_WARNING3(expr, filename, function, line, message) OCCA_CUDA_TEMPLATE_CHECK(occa::cuda::warn, expr, filename, function, line, message)
 #define OCCA_CUDA_WARNING2(expr, filename, function, line, message) OCCA_CUDA_WARNING3(expr, filename, function, line, message)
 #define OCCA_CUDA_WARNING(message, expr) OCCA_CUDA_WARNING2(expr, __FILE__, __PRETTY_FUNCTION__, __LINE__, message)

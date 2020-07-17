@@ -27,8 +27,10 @@ namespace occa {
 
     kernel::~kernel() {
       if (cuModule) {
-        OCCA_CUDA_ERROR("Kernel (" + name + ") : Unloading Module",
-                        cuModuleUnload(cuModule));
+        OCCA_CUDA_DESTRUCTOR_ERROR(
+          "Kernel (" + name + ") : Unloading Module",
+          cuModuleUnload(cuModule)
+        );
         cuModule = NULL;
       }
     }

@@ -15,8 +15,10 @@ namespace occa {
     memory::~memory() {
       if (isOrigin) {
         if (mappedPtr) {
-          OCCA_CUDA_ERROR("Device: mappedFree()",
-                          cuMemFreeHost(mappedPtr));
+          OCCA_CUDA_DESTRUCTOR_ERROR(
+            "Device: mappedFree()",
+            cuMemFreeHost(mappedPtr)
+          );
         } else if (cuPtr) {
           cuMemFree(cuPtr);
         }
