@@ -147,7 +147,7 @@ namespace occa {
                       cuEventCreate(&cuEvent,
                                     CU_EVENT_DEFAULT));
       OCCA_CUDA_ERROR("Device: Tagging Stream",
-                      cuEventRecord(cuEvent, 0));
+                      cuEventRecord(cuEvent, getCuStream()));
 
       return new occa::cuda::streamTag(this, cuEvent);
     }
