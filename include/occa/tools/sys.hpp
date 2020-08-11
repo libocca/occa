@@ -26,7 +26,8 @@ namespace occa {
       static const int b_HP           = 6;
       static const int b_VisualStudio = 7;
       static const int b_Cray         = 8;
-      static const int b_max          = 9;
+      static const int b_PPC          = 9;
+      static const int b_max          = 10;
 
       static const int GNU          = (1 << b_GNU);          // gcc    , g++
       static const int LLVM         = (1 << b_LLVM);         // clang  , clang++
@@ -37,6 +38,7 @@ namespace occa {
       static const int HP           = (1 << b_HP);           // aCC
       static const int VisualStudio = (1 << b_VisualStudio); // cl.exe
       static const int Cray         = (1 << b_Cray);         // cc     , CC
+      static const int PPC          = (1 << b_PPC);          // cc     , CC
     }
 
     namespace language {
