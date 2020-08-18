@@ -1,26 +1,22 @@
-#ifndef OCCA_MODES_OPENCL_UTILS_HEADER
-#define OCCA_MODES_OPENCL_UTILS_HEADER
+#ifndef OCCA_MODES_ONEAPI_UTILS_HEADER
+#define OCCA_MODES_ONEAPI_UTILS_HEADER
 
 #include <iostream>
 
-#include <occa/modes/opencl/polyfill.hpp>
+#include <occa/modes/oneapi/polyfill.hpp>
 #include <occa/core/device.hpp>
 #include <occa/io/lock.hpp>
 
 namespace occa {
   class streamTag;
 
-  namespace opencl {
+  namespace oneapi {
     class info_t {
     public:
-  //    cl_device_id clDevice;
-  //    cl_context clContext;
-  //    cl_program clProgram;
-  //    cl_kernel clKernel;
-	sycl::device dpDevice;
-	sycl::context dpContext;
-	sycl::program dpProgram;
-	sycl::kernel dpKernel;  
+  	sycl::device *dpDevice;
+	sycl::context *dpContext;
+	sycl::program *dpProgram;
+	sycl::kernel *dpKernel;  
       info_t();
     };
 
@@ -45,19 +41,22 @@ namespace occa {
 
     bool isEnabled();
 
-    cl_device_type deviceType(int type);
+    //cl_device_type deviceType(int type);
+    sycl::info::device_type deviceType(int type);
 
     int getPlatformCount();
 
-    cl_platform_id platformID(int pID);
+    sycl::platform* getPlatformByID(int pID);
 
-    int getDeviceCount(int type = info::any);
-    int getDeviceCountInPlatform(int pID, int type = info::any);
 
-    cl_device_id deviceID(int pID, int dID, int type = info::any);
+    int getDeviceCount(int type = info::anyType);
+    int getDeviceCountInPlatform(int pID, int type = info::anyType);
 
-    std::string deviceStrInfo(cl_device_id clDID,
-                              cl_device_info clInfo);
+    //cl_device_id deviceID(int pID, int dID, int type = info::any);
+    sycl::device* deviceID(int pID, int dID, int type = info::anyType);
+
+   /* std::string deviceStrInfo(cl_device_id clDID,
+                              cl_device_info clInfo);*/
 
     std::string deviceName(int pID, int dID);
 
@@ -67,7 +66,7 @@ namespace occa {
 
     int deviceCoreCount(int pID, int dID);
 
-    udim_t getDeviceMemorySize(cl_device_id dID);
+    udim_t getDeviceMemorySize(sycl::device *devPtr);
     udim_t getDeviceMemorySize(int pID, int dID);
 
     void buildProgramFromSource(info_t &info,

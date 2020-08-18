@@ -2,7 +2,7 @@
 #define OCCA_MODES_ONEAPI_DEVICE_HEADER
 
 #include <occa/core/launchedDevice.hpp>
-#include <occa/modes/opencl/polyfill.hpp>
+#include <occa/modes/oneapi/polyfill.hpp>
 
 namespace occa {
   namespace oneapi {
