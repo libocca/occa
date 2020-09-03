@@ -1,16 +1,16 @@
-#ifndef OCCA_MODES_OPENCL_MEMORY_HEADER
-#define OCCA_MODES_OPENCL_MEMORY_HEADER
+#ifndef OCCA_MODES_DPCPP_MEMORY_HEADER
+#define OCCA_MODES_DPCPP_MEMORY_HEADER
 
 #include <occa/core/memory.hpp>
-#include <occa/modes/opencl/polyfill.hpp>
+#include <occa/modes/dpcpp/polyfill.hpp>
 
 namespace occa {
-  namespace opencl {
+  namespace sycl {
     class device;
 
     class memory : public occa::modeMemory_t {
-      friend class opencl::device;
-
+      friend class dpcpp::device;
+/* check these friend functions*/
       friend cl_mem getCLMemory(occa::memory memory);
 
       friend void* getMappedPtr(occa::memory memory);
