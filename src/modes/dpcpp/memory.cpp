@@ -1,53 +1,56 @@
-#include <occa/modes/opencl/memory.hpp>
-#include <occa/modes/opencl/device.hpp>
-#include <occa/modes/opencl/utils.hpp>
+#include <occa/modes/dpcpp/memory.hpp>
+#include <occa/modes/dpcpp/device.hpp>
+#include <occa/modes/dpcpp/utils.hpp>
 #include <occa/tools/sys.hpp>
 
 namespace occa {
-  namespace opencl {
+  namespace sycl {
     memory::memory(modeDevice_t *modeDevice_,
                    udim_t size_,
                    const occa::properties &properties_) :
         occa::modeMemory_t(modeDevice_, size_, properties_),
-        rootClMem(&clMem),
+        rootDpcppMem(&dpcppMem),
         rootOffset(0),
         mappedPtr(NULL) {}
 
     memory::~memory() {
       if (isOrigin) {
         // Free mapped-host pointer
+	
+	//TODO: Cedric check if there are cases where we can have mapped pointer
         if (mappedPtr) {
-          OCCA_OPENCL_ERROR("Mapped Free: clEnqueueUnmapMemObject",
+/*          OCCA_DPCPP_ERROR("Mapped Free: clEnqueueUnmapMemObject",
                             clEnqueueUnmapMemObject(getCommandQueue(),
-                                                    clMem,
+                                                    dpcppMem,
                                                     mappedPtr,
-                                                    0, NULL, NULL));
+                                                    0, NULL, NULL));*/
         }
       }
 
       // Is the root cl_mem or the root cl_mem hasn't been freed yet
-      if (size && (isOrigin || *rootClMem)) {
-        OCCA_OPENCL_ERROR("Mapped Free: clReleaseMemObject",
-                          clReleaseMemObject(clMem));
+      if (size && (isOrigin || (rootDpcppMem != NULL))) {
+//        OCCA_OPENCL_ERROR("Mapped Free: free()",
+//                        free(dpcppMem));
+          free(rootDpcppMem);
       }
 
-      rootClMem = NULL;
+      rootDpcppMem = NULL;
       rootOffset = 0;
 
-      clMem = NULL;
+      dpcppMem = NULL;
       mappedPtr = NULL;
       size = 0;
     }
 
-    cl_command_queue& memory::getCommandQueue() const {
-      return ((device*) modeDevice)->getCommandQueue();
+    ::sycl::queue* memory::getCommandQueue() const {
+	return ((::occa::dpcpp::device*) modeDevice)->getCommandQueue();
     }
 
     kernelArg memory::makeKernelArg() const {
       kernelArgData arg;
 
       arg.modeMemory = const_cast<memory*>(this);
-      arg.data.void_ = (void*) &clMem;
+      arg.data.void_ = (void*) &dpcppMem;
       arg.size       = sizeof(void*);
       arg.info       = kArgInfo::usePointer;
 
@@ -55,25 +58,15 @@ namespace occa {
     }
 
     modeMemory_t* memory::addOffset(const dim_t offset) {
-      opencl::memory *m = new opencl::memory(modeDevice,
+      memory *m = new memory(modeDevice,
                                              size - offset,
                                              properties);
 
-      m->rootClMem = rootClMem;
+      m->rootDpcppMem = rootDpcppMem;
       m->rootOffset = rootOffset + offset;
 
-      cl_buffer_region info;
-      info.origin = m->rootOffset;
-      info.size   = m->size;
-
-      cl_int error;
-      m->clMem = clCreateSubBuffer(*rootClMem,
-                                   CL_MEM_READ_WRITE,
-                                   CL_BUFFER_CREATE_TYPE_REGION,
-                                   &info,
-                                   &error);
-
-      OCCA_OPENCL_ERROR("Device: clCreateSubBuffer", error);
+      /* Need to check this */
+      m->dpcppMem = (void*)(((char*)rootDpcppMem) + offset);	
       return m;
     }
 
@@ -89,13 +82,14 @@ namespace occa {
                           const udim_t offset,
                           const occa::properties &props) {
       const bool async = props.get("async", false);
+      ::sycl::queue *q = getCommandQueue();
+      if(async){
+            q->memcpy(&((char*) dpcppMem)[offset], &((char*) src)[offset], bytes);
+      }else{
+            q->memcpy(&((char*) dpcppMem)[offset], &((char*) src)[offset], bytes);
+            q->wait();
 
-      OCCA_OPENCL_ERROR("Memory: " << (async ? "Async " : "") << "Copy From",
-                        clEnqueueWriteBuffer(getCommandQueue(),
-                                             clMem,
-                                             async ? CL_FALSE : CL_TRUE,
-                                             offset, bytes, src,
-                                             0, NULL, NULL));
+      }
     }
 
     void memory::copyFrom(const modeMemory_t *src,
@@ -104,14 +98,14 @@ namespace occa {
                           const udim_t srcOffset,
                           const occa::properties &props) {
       const bool async = props.get("async", false);
-
-      OCCA_OPENCL_ERROR("Memory: " << (async ? "Async " : "") << "Copy From",
-                        clEnqueueCopyBuffer(getCommandQueue(),
-                                            ((memory*) src)->clMem,
-                                            clMem,
-                                            srcOffset, destOffset,
-                                            bytes,
-                                            0, NULL, NULL));
+      ::sycl::queue *q = getCommandQueue();
+      if(async){
+            q->memcpy(&((char*) dpcppMem)[destOffset], &((char*) src)[srcOffset], bytes);
+      }else{
+            q->memcpy(&((char*) dpcppMem)[destOffset], &((char*) src)[srcOffset], bytes);
+            q->wait();
+      
+      }
     }
 
     void memory::copyTo(void *dest,
@@ -120,13 +114,15 @@ namespace occa {
                         const occa::properties &props) const {
 
       const bool async = props.get("async", false);
+      ::sycl::queue *q = getCommandQueue();
+      if(async){
+            q->memcpy(&((char*) dest)[offset],&((const char*) dpcppMem)[offset], bytes);
+      }else{
+            q->memcpy(&((char*) dest)[offset], &((const char*) dpcppMem)[offset], bytes);
+            q->wait();
 
-      OCCA_OPENCL_ERROR("Memory: " << (async ? "Async " : "") << "Copy To",
-                        clEnqueueReadBuffer(getCommandQueue(),
-                                            clMem,
-                                            async ? CL_FALSE : CL_TRUE,
-                                            offset, bytes, dest,
-                                            0, NULL, NULL));
+      }
+
     }
 
     void memory::detach() {

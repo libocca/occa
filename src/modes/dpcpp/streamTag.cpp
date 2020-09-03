@@ -1,8 +1,8 @@
-#include <occa/modes/opencl/streamTag.hpp>
-#include <occa/modes/opencl/utils.hpp>
+#include <occa/modes/dpcpp/streamTag.hpp>
+#include <occa/modes/dpcpp/utils.hpp>
 
 namespace occa {
-  namespace opencl {
+  namespace dpcpp {
     streamTag::streamTag(modeDevice_t *modeDevice_,
                          cl_event clEvent_) :
       modeStreamTag_t(modeDevice_),

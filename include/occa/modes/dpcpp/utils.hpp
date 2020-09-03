@@ -1,22 +1,24 @@
-#ifndef OCCA_MODES_ONEAPI_UTILS_HEADER
-#define OCCA_MODES_ONEAPI_UTILS_HEADER
+#ifndef OCCA_MODES_DPCPP_UTILS_HEADER
+#define OCCA_MODES_DPCPP_UTILS_HEADER
 
 #include <iostream>
 
-#include <occa/modes/oneapi/polyfill.hpp>
+#include <occa/modes/dpcpp/polyfill.hpp>
 #include <occa/core/device.hpp>
 #include <occa/io/lock.hpp>
+#include <CL/sycl.hpp>
 
 namespace occa {
   class streamTag;
 
-  namespace oneapi {
+  namespace dpcpp {
     class info_t {
     public:
-  	sycl::device *dpDevice;
-	sycl::context *dpContext;
-	sycl::program *dpProgram;
-	sycl::kernel *dpKernel;  
+  	::sycl::device *dpDevice;
+	//sycl::context *dpContext; doesn't compile, did you mean queue ?
+	::sycl::queue *dpcppQueue;
+	::sycl::program *dpProgram;
+	::sycl::kernel *dpKernel;  
       info_t();
     };
 
@@ -42,18 +44,18 @@ namespace occa {
     bool isEnabled();
 
     //cl_device_type deviceType(int type);
-    sycl::info::device_type deviceType(int type);
+    ::sycl::info::device_type deviceType(int type);
 
     int getPlatformCount();
 
-    sycl::platform* getPlatformByID(int pID);
+    ::sycl::platform* getPlatformByID(int pID);
 
 
     int getDeviceCount(int type = info::anyType);
     int getDeviceCountInPlatform(int pID, int type = info::anyType);
 
     //cl_device_id deviceID(int pID, int dID, int type = info::any);
-    sycl::device* deviceID(int pID, int dID, int type = info::anyType);
+    ::sycl::device* deviceID(int pID, int dID, int type = info::anyType);
 
    /* std::string deviceStrInfo(cl_device_id clDID,
                               cl_device_info clInfo);*/
@@ -66,7 +68,7 @@ namespace occa {
 
     int deviceCoreCount(int pID, int dID);
 
-    udim_t getDeviceMemorySize(sycl::device *devPtr);
+    udim_t getDeviceMemorySize(::sycl::device *devPtr);
     udim_t getDeviceMemorySize(int pID, int dID);
 
     void buildProgramFromSource(info_t &info,
@@ -107,7 +109,7 @@ namespace occa {
                             const occa::properties &props = occa::properties());
 
     occa::memory wrapMemory(occa::device device,
-                            cl_mem clMem,
+                            void* dpcppMem,
                             const udim_t bytes,
                             const occa::properties &props = occa::properties());
 

@@ -2,12 +2,12 @@
 #include <occa/tools/env.hpp>
 #include <occa/io.hpp>
 #include <occa/tools/sys.hpp>
-#include <occa/modes/opencl/kernel.hpp>
-#include <occa/modes/opencl/device.hpp>
-#include <occa/modes/opencl/utils.hpp>
+#include <occa/modes/dpcpp/kernel.hpp>
+#include <occa/modes/dpcpp/device.hpp>
+#include <occa/modes/dpcpp/utils.hpp>
 
 namespace occa {
-  namespace opencl {
+  namespace dpcpp {
     kernel::kernel(modeDevice_t *modeDevice_,
                    const std::string &name_,
                    const std::string &sourceFilename_,

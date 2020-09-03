@@ -3,11 +3,10 @@
 
 #include <occa/core/memory.hpp>
 #include <occa/modes/dpcpp/polyfill.hpp>
+#include <occa/modes/dpcpp/device.hpp>
 
 namespace occa {
   namespace sycl {
-    class device;
-
     class memory : public occa::modeMemory_t {
       friend class dpcpp::device;
 /* check these friend functions*/
@@ -16,27 +15,24 @@ namespace occa {
       friend void* getMappedPtr(occa::memory memory);
 
       friend occa::memory wrapMemory(occa::device device,
-                                     cl_mem clMem,
+                                     void *dpcppMem,
                                      const udim_t bytes,
                                      const occa::properties &props);
 
     private:
-      cl_mem *rootClMem;
+      void *rootDpcppMem;
       dim_t rootOffset;
 
-      cl_mem clMem;
+      void *dpcppMem;
       void *mappedPtr;
-
     public:
       memory(modeDevice_t *modeDevice_,
              udim_t size_,
              const occa::properties &properties_ = occa::properties());
       ~memory();
 
-      cl_command_queue& getCommandQueue() const;
-
       kernelArg makeKernelArg() const;
-
+      ::sycl::queue *getCommandQueue() const;
       modeMemory_t* addOffset(const dim_t offset);
 
       void* getPtr(const occa::properties &props);

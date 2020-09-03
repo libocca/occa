@@ -1,11 +1,11 @@
-#ifndef OCCA_MODES_OPENCL_STREAMTAG_HEADER
-#define OCCA_MODES_OPENCL_STREAMTAG_HEADER
+#ifndef OCCA_MODES_DPCPP_STREAMTAG_HEADER
+#define OCCA_MODES_DPCPP_STREAMTAG_HEADER
 
 #include <occa/core/streamTag.hpp>
-#include <occa/modes/opencl/polyfill.hpp>
+#include <occa/modes/dpcpp/polyfill.hpp>
 
 namespace occa {
-  namespace opencl {
+  namespace dpcpp {
     class streamTag : public occa::modeStreamTag_t {
     public:
       cl_event clEvent;

@@ -1,20 +1,20 @@
 #include <occa/core/base.hpp>
 #include <occa/tools/env.hpp>
 #include <occa/tools/sys.hpp>
-#include <occa/modes/oneapi/device.hpp>
-#include <occa/modes/oneapi/kernel.hpp>
-#include <occa/modes/oneapi/memory.hpp>
-#include <occa/modes/oneapi/stream.hpp>
-#include <occa/modes/oneapi/streamTag.hpp>
-#include <occa/modes/oneapi/utils.hpp>
+#include <occa/modes/dpcpp/device.hpp>
+#include <occa/modes/dpcpp/kernel.hpp>
+#include <occa/modes/dpcpp/memory.hpp>
+#include <occa/modes/dpcpp/stream.hpp>
+#include <occa/modes/dpcpp/streamTag.hpp>
+#include <occa/modes/dpcpp/utils.hpp>
 #include <occa/modes/serial/device.hpp>
 #include <occa/modes/serial/kernel.hpp>
 #include <occa/lang/kernelMetadata.hpp>
 #include <occa/lang/primitive.hpp>
-#include <occa/lang/modes/oneapi.hpp>
+#include <occa/lang/modes/dpcpp.hpp>
 
 namespace occa {
-  namespace oneapi {
+  namespace dpcpp {
     device::device(const occa::properties &properties_) :
       occa::launchedModeDevice_t(properties_) {
 
@@ -144,8 +144,8 @@ namespace occa {
       return (clEndTag->getTime() - clStartTag->getTime());
     }
 
-    cl_command_queue& device::getCommandQueue() const {
-      occa::opencl::stream *stream = (occa::opencl::stream*) currentStream.getModeStream();
+    ::sycl::queue *device::getCommandQueue() const {
+      occa::dpcpp::stream *stream = (occa::dpcpp::stream*) currentStream.getModeStream();
       return stream->commandQueue;
     }
     //==================================

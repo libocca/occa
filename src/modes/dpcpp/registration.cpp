@@ -1,21 +1,21 @@
 #include <occa/defines.hpp>
-#include <occa/modes/oneapi/utils.hpp>
-#include <occa/modes/oneapi/registration.hpp>
+#include <occa/modes/dpcpp/utils.hpp>
+#include <occa/modes/dpcpp/registration.hpp>
 
 namespace occa {
-  namespace oneapi {
-    oneapiMode::oneapiMode() :
+  namespace dpcpp {
+    dpcppMode::dpcppMode() :
         mode_t("oneAPI") {}
 
-    bool oneapiMode::init() {
+    bool dpcppMode::init() {
 #if OCCA_ONEAPI_ENABLED
-      return occa::oneapi::isEnabled();
+      return occa::dpcpp::isEnabled();
 #else
       return false;
 #endif
     }
 
-    styling::section& oneapiMode::getDescription() {
+    styling::section& dpcppMode::getDescription() {
       static styling::section section("oneAPI");
       if (section.size() == 0) {
         int platformCount = getPlatformCount();
@@ -40,10 +40,10 @@ namespace occa {
       return section;
     }
 
-    modeDevice_t* oneapiMode::newDevice(const occa::properties &props) {
+    modeDevice_t* dpcppMode::newDevice(const occa::properties &props) {
       return new device(setModeProp(props));
     }
 
-    oneapiMode mode;
+    dpcppMode mode;
   }
 }

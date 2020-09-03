@@ -1,11 +1,12 @@
-#ifndef OCCA_MODES_ONEAPI_DEVICE_HEADER
-#define OCCA_MODES_ONEAPI_DEVICE_HEADER
+#ifndef OCCA_MODES_DPCPP_DEVICE_HEADER
+#define OCCA_MODES_DPCPP_DEVICE_HEADER
 
+#include <CL/sycl.hpp>
 #include <occa/core/launchedDevice.hpp>
-#include <occa/modes/oneapi/polyfill.hpp>
+#include <occa/modes/dpcpp/polyfill.hpp>
 
 namespace occa {
-  namespace oneapi {
+  namespace dpcpp {
     class info_t;
 
     class device : public occa::launchedModeDevice_t {
@@ -43,7 +44,7 @@ namespace occa {
       virtual double timeBetween(const streamTag &startTag,
                                  const streamTag &endTag);
 
-      cl_command_queue& getCommandQueue() const;
+      ::sycl::queue* getCommandQueue() const;
       //================================
 
       //---[ Kernel ]-------------------

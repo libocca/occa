@@ -1,18 +1,19 @@
-#ifndef OCCA_MODES_OPENCL_STREAM_HEADER
-#define OCCA_MODES_OPENCL_STREAM_HEADER
+#ifndef OCCA_MODES_DPCPP_STREAM_HEADER
+#define OCCA_MODES_DPCPP_STREAM_HEADER
 
 #include <occa/core/stream.hpp>
 #include <occa/modes/opencl/polyfill.hpp>
+#include <CL/sycl.hpp>
 
 namespace occa {
-  namespace opencl {
+  namespace dpcpp {
     class stream : public occa::modeStream_t {
     public:
-      cl_command_queue commandQueue;
+	    ::sycl::queue* commandQueue;
 
       stream(modeDevice_t *modeDevice_,
              const occa::properties &properties_,
-             cl_command_queue commandQueue_);
+             ::sycl::queue* commandQueue_);
 
       virtual ~stream();
     };

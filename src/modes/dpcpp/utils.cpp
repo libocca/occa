@@ -1,16 +1,16 @@
 #include <stdio.h>
 
-#include <occa/modes/oneapi/utils.hpp>
-#include <occa/modes/oneapi/device.hpp>
-#include <occa/modes/oneapi/memory.hpp>
-#include <occa/modes/oneapi/kernel.hpp>
-#include <occa/modes/oneapi/streamTag.hpp>
+#include <occa/modes/dpcpp/utils.hpp>
+#include <occa/modes/dpcpp/device.hpp>
+#include <occa/modes/dpcpp/memory.hpp>
+#include <occa/modes/dpcpp/kernel.hpp>
+#include <occa/modes/dpcpp/streamTag.hpp>
 #include <occa/io.hpp>
 #include <occa/tools/sys.hpp>
 #include <occa/core/base.hpp>
 
 namespace occa {
-  namespace oneapi {
+  namespace dpcpp {
     info_t::info_t(){}
       dpDevice(NULL),
       dpContext(NULL),
@@ -341,16 +341,16 @@ namespace occa {
     }
 
     occa::memory wrapMemory(occa::device device,
-                            cl_mem clMem,
+                            void* dpcppMem,
                             const udim_t bytes,
                             const occa::properties &props) {
 
-      opencl::memory &mem = *(new opencl::memory(device.getModeDevice(),
+      dpcpp::memory &mem = *(new dpcpp::memory(device.getModeDevice(),
                                                  bytes,
                                                  props));
       mem.dontUseRefs();
 
-      mem.clMem = clMem;
+      mem.dpcppMem = dpcppMem;
 
       return occa::memory(&mem);
     }

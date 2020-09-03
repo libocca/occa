@@ -1,17 +1,17 @@
-#include <occa/modes/opencl/stream.hpp>
-#include <occa/modes/opencl/utils.hpp>
+#include <occa/modes/dpcpp/stream.hpp>
+#include <occa/modes/dpcpp/utils.hpp>
 
 namespace occa {
-  namespace opencl {
+  namespace dpcpp {
     stream::stream(modeDevice_t *modeDevice_,
                    const occa::properties &properties_,
-                   cl_command_queue commandQueue_) :
+                   ::sycl::queue* commandQueue_) :
       modeStream_t(modeDevice_, properties_),
       commandQueue(commandQueue_) {}
 
     stream::~stream() {
-      OCCA_OPENCL_ERROR("Device: Freeing cl_command_queue",
-                        clReleaseCommandQueue(commandQueue));
+      OCCA_DPCPP_ERROR("Device: Freeing dpcpp queue",
+                        free(commandQueue));
     }
   }
 }

@@ -1,12 +1,12 @@
-#ifndef OCCA_MODES_OPENCL_KERNEL_HEADER
-#define OCCA_MODES_OPENCL_KERNEL_HEADER
+#ifndef OCCA_MODES_DPCPP_KERNEL_HEADER
+#define OCCA_MODES_DPCPP_KERNEL_HEADER
 
 #include <occa/core/launchedKernel.hpp>
-#include <occa/modes/opencl/polyfill.hpp>
-#include <occa/modes/opencl/utils.hpp>
+#include <occa/modes/dpcpp/polyfill.hpp>
+#include <occa/modes/dpcpp/utils.hpp>
 
 namespace occa {
-  namespace opencl {
+  namespace dpcpp {
     class device;
 
     class kernel : public occa::launchedModeKernel_t {
