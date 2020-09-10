@@ -62,6 +62,8 @@ namespace occa {
     }
 
     void kernel::deviceRun() const {
+      device *devicePtr = (device*) modeDevice;
+
       const int args = (int) arguments.size();
       if (!args) {
         vArgs.resize(1);
@@ -74,9 +76,11 @@ namespace occa {
         vArgs[i] = arguments[i].ptr();
         // Set a proper NULL pointer
         if (!vArgs[i]) {
-          vArgs[i] = ((device*) modeDevice)->getNullPtr();
+          vArgs[i] = devicePtr->getNullPtr();
         }
       }
+
+      devicePtr->setCudaContext();
 
       OCCA_CUDA_ERROR("Launching Kernel",
                       cuLaunchKernel(cuFunction,
