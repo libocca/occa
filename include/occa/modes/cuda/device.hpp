@@ -42,6 +42,8 @@ namespace occa {
 
       void* getNullPtr();
 
+      void setCudaContext();
+
       //---[ Stream ]-------------------
       virtual modeStream_t* createStream(const occa::properties &props);
 

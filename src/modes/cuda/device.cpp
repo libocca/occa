@@ -126,12 +126,17 @@ namespace occa {
       return (void*) &(nullPtr->cuPtr);
     }
 
+    void device::setCudaContext() {
+      OCCA_CUDA_ERROR("Device: Setting Context",
+                      cuCtxSetCurrent(cuContext));
+    }
+
     //---[ Stream ]---------------------
     modeStream_t* device::createStream(const occa::properties &props) {
       CUstream cuStream = NULL;
 
-      OCCA_CUDA_ERROR("Device: Setting Context",
-                      cuCtxSetCurrent(cuContext));
+      setCudaContext();
+
       OCCA_CUDA_ERROR("Device: createStream",
                       cuStreamCreate(&cuStream, CU_STREAM_DEFAULT));
 
@@ -141,8 +146,8 @@ namespace occa {
     occa::streamTag device::tagStream() {
       CUevent cuEvent = NULL;
 
-      OCCA_CUDA_ERROR("Device: Setting Context",
-                      cuCtxSetCurrent(cuContext));
+      setCudaContext();
+
       OCCA_CUDA_ERROR("Device: Tagging Stream (Creating Tag)",
                       cuEventCreate(&cuEvent,
                                     CU_EVENT_DEFAULT));
@@ -218,6 +223,8 @@ namespace occa {
       CUmodule cuModule;
       CUfunction cuFunction;
       CUresult error;
+
+      setCudaContext();
 
       error = cuModuleLoad(&cuModule, binaryFilename.c_str());
       if (error) {
@@ -353,6 +360,8 @@ namespace occa {
       CUmodule cuModule;
       CUresult error;
 
+      setCudaContext();
+
       error = cuModuleLoad(&cuModule, binaryFilename.c_str());
       if (error) {
         lock.release();
@@ -410,6 +419,8 @@ namespace occa {
       CUmodule cuModule = NULL;
       CUfunction cuFunction = NULL;
 
+      setCudaContext();
+
       OCCA_CUDA_ERROR("Kernel [" + kernelName + "]: Loading Module",
                       cuModuleLoad(&cuModule, filename.c_str()));
 
@@ -438,8 +449,7 @@ namespace occa {
 
       cuda::memory &mem = *(new cuda::memory(this, bytes, props));
 
-      OCCA_CUDA_ERROR("Device: Setting Context",
-                      cuCtxSetCurrent(cuContext));
+      setCudaContext();
 
       OCCA_CUDA_ERROR("Device: malloc",
                       cuMemAlloc(&(mem.cuPtr), bytes));
@@ -456,8 +466,8 @@ namespace occa {
 
       cuda::memory &mem = *(new cuda::memory(this, bytes, props));
 
-      OCCA_CUDA_ERROR("Device: Setting Context",
-                      cuCtxSetCurrent(cuContext));
+      setCudaContext();
+
       OCCA_CUDA_ERROR("Device: malloc host",
                       cuMemAllocHost((void**) &(mem.mappedPtr), bytes));
       OCCA_CUDA_ERROR("Device: get device pointer from host",
@@ -481,8 +491,8 @@ namespace occa {
       const unsigned int flags = (props.get("attached_host", false) ?
                                   CU_MEM_ATTACH_HOST : CU_MEM_ATTACH_GLOBAL);
 
-      OCCA_CUDA_ERROR("Device: Setting Context",
-                      cuCtxSetCurrent(cuContext));
+      setCudaContext();
+
       OCCA_CUDA_ERROR("Device: Unified alloc",
                       cuMemAllocManaged(&(mem.cuPtr),
                                         bytes,
