@@ -4,6 +4,7 @@
 #include <occa/core/launchedKernel.hpp>
 #include <occa/modes/dpcpp/polyfill.hpp>
 #include <occa/modes/dpcpp/utils.hpp>
+#include <CL/sycl.hpp>
 
 namespace occa {
   namespace dpcpp {
@@ -14,8 +15,9 @@ namespace occa {
       friend cl_kernel getCLKernel(occa::kernel kernel);
 
     private:
-      cl_device_id clDevice;
-      cl_kernel clKernel;
+      ::sycl::device dpcppDevice;
+      ::sycl::kernel dpcppKernel;
+     
 
     public:
       kernel(modeDevice_t *modeDevice_,
@@ -26,13 +28,13 @@ namespace occa {
       kernel(modeDevice_t *modeDevice_,
              const std::string &name_,
              const std::string &sourceFilename_,
-             cl_device_id clDevice_,
-             cl_kernel clKernel_,
+             ::sycl::device dpcppDevice_,
+             ::sycl::kernel dpcppKernel_,
              const occa::properties &properties_);
 
       ~kernel();
 
-      cl_command_queue& getCommandQueue() const;
+      queue& getCommandQueue() const;
 
       int maxDims() const;
       dim maxOuterDims() const;
