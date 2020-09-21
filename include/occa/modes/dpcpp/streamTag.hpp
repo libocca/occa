@@ -8,15 +8,8 @@ namespace occa {
   namespace dpcpp {
     class streamTag : public occa::modeStreamTag_t {
     public:
-      cl_event clEvent;
-      double time;
-
-      streamTag(modeDevice_t *modeDevice_,
-                cl_event clEvent_);
-
+    streamTag(modeDevice_t *modeDevice_);
       virtual ~streamTag();
-
-      double getTime();
     };
   }
 }

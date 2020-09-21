@@ -4,9 +4,10 @@
 #include <occa/core/memory.hpp>
 #include <occa/modes/dpcpp/polyfill.hpp>
 #include <occa/modes/dpcpp/device.hpp>
+#include <CL/sycl.hpp>
 
 namespace occa {
-  namespace sycl {
+  namespace dpcpp {
     class memory : public occa::modeMemory_t {
       friend class dpcpp::device;
 /* check these friend functions*/

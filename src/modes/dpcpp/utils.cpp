@@ -109,8 +109,8 @@ namespace occa {
 	return sycl::platform.get_platforms()[pID].get_devices(deviceType(type))[dID].get_info<info::device::max_compute_units>();
     }
 /* Returns the DPC++ global memory size given the DPC++ device */
-    udim_t getDeviceMemorySize(sycl::device *devPtr) {
-	    return *(devPtr).get_info<info::device::global_mem_size>();
+    udim_t getDeviceMemorySize(const sycl::device &devPtr) {
+	    return devPtr.get_info<info::device::global_mem_size>();
     }
 /* Returns the DPC++ global memory size given the platform and device IDs */
     udim_t getDeviceMemorySize(int pID, int dID) {

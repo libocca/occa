@@ -2,7 +2,7 @@
 #define OCCA_MODES_DPCPP_STREAM_HEADER
 
 #include <occa/core/stream.hpp>
-#include <occa/modes/opencl/polyfill.hpp>
+#include <occa/modes/dpcpp/polyfill.hpp>
 #include <CL/sycl.hpp>
 
 namespace occa {

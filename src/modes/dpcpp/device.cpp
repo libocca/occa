@@ -19,30 +19,30 @@ namespace occa {
       occa::launchedModeDevice_t(properties_) {
 
       if (!properties.has("wrapped")) {
-        cl_int error;
-        OCCA_ERROR("[OpenCL] device not given a [platform_id] integer",
+        int error;
+        OCCA_ERROR("[DPCPP] device not given a [platform_id] integer",
                    properties.has("platform_id") &&
                    properties["platform_id"].isNumber());
 
-        OCCA_ERROR("[OpenCL] device not given a [device_id] integer",
+        OCCA_ERROR("[DPCPP] device not given a [device_id] integer",
                    properties.has("device_id") &&
                    properties["device_id"].isNumber());
 
-        platformID = properties.get<int>("platform_id");
-        deviceID   = properties.get<int>("device_id");
+      /*  platformID = properties.get<int>("platform_id");
+        deviceID   = properties.get<int>("device_selector");
+*/
+        dpcppDevice = ::sycl::device();
 
-        clDevice = opencl::deviceID(platformID, deviceID);
-
-        clContext = clCreateContext(NULL, 1, &clDevice, NULL, NULL, &error);
-        OCCA_OPENCL_ERROR("Device: Creating Context", error);
+//        dpcppContext = clCreateContext(NULL, 1, &clDevice, NULL, NULL, &error);
+//        OCCA_DPCPP_ERROR("Device: Creating Context", error);
       }
 
       occa::json &kernelProps = properties["kernel"];
       std::string compilerFlags;
 
       // Use "-cl-opt-disable" for debug-mode
-      if (env::var("OCCA_OPENCL_COMPILER_FLAGS").size()) {
-        compilerFlags = env::var("OCCA_OPENCL_COMPILER_FLAGS");
+      if (env::var("OCCA_DPCPP_COMPILER_FLAGS").size()) {
+        compilerFlags = env::var("OCCA_DPCPP_COMPILER_FLAGS");
       } else if (kernelProps.has("compiler_flags")) {
         compilerFlags = (std::string) kernelProps["compiler_flags"];
       }
@@ -51,16 +51,10 @@ namespace occa {
     }
 
     device::~device() {
-      if (clContext) {
-        OCCA_OPENCL_ERROR("Device: Freeing Context",
-                          clReleaseContext(clContext) );
-        clContext = NULL;
-      }
     }
 
     void device::finish() const {
-      OCCA_OPENCL_ERROR("Device: Finish",
-                        clFinish(getCommandQueue()));
+      getCommandQueue()->wait();
     }
 
     bool device::hasSeparateMemorySpace() const {
@@ -82,55 +76,28 @@ namespace occa {
     }
 
     lang::okl::withLauncher* device::createParser(const occa::properties &props) const {
-      return new lang::okl::openclParser(props);
+      return new lang::okl::dpcppParser(props);
     }
 
     //---[ Stream ]---------------------
     modeStream_t* device::createStream(const occa::properties &props) {
-      cl_int error;
-#ifdef CL_VERSION_2_0
-      cl_queue_properties clProps[] = {CL_QUEUE_PROPERTIES,
-                                       CL_QUEUE_PROFILING_ENABLE, 0};
-      cl_command_queue commandQueue = clCreateCommandQueueWithProperties(clContext,
-                                                           clDevice,
-                                                           clProps,
-                                                           &error);
-#else
-      cl_command_queue commandQueue = clCreateCommandQueue(clContext,
-                                                           clDevice,
-                                                           CL_QUEUE_PROFILING_ENABLE,
-                                                           &error);
-#endif
-      OCCA_OPENCL_ERROR("Device: createStream", error);
-
-      return new stream(this, props, commandQueue);
+      ::sycl::queue* q = new ::sycl::queue();
+      return new stream(this, props, q);
     }
 
     occa::streamTag device::tagStream() {
-      cl_event clEvent;
-
-#ifdef CL_VERSION_1_2
-      OCCA_OPENCL_ERROR("Device: Tagging Stream",
-                        clEnqueueMarkerWithWaitList(getCommandQueue(),
-                                                    0, NULL, &clEvent));
-#else
-      OCCA_OPENCL_ERROR("Device: Tagging Stream",
-                        clEnqueueMarker(getCommandQueue(),
-                                        &clEvent));
-#endif
-
-      return new occa::opencl::streamTag(this, clEvent);
+      return new occa::dpcpp::streamTag(this);
     }
 
     void device::waitFor(occa::streamTag tag) {
-      occa::opencl::streamTag *clTag = (
+/*      occa::opencl::streamTag *clTag = (
         dynamic_cast<occa::opencl::streamTag*>(tag.getModeStreamTag())
       );
       OCCA_OPENCL_ERROR("Device: Waiting For Tag",
-                        clWaitForEvents(1, &(clTag->clEvent)));
+                        clWaitForEvents(1, &(clTag->clEvent)));*/
     }
 
-    double device::timeBetween(const occa::streamTag &startTag,
+ /*   double device::timeBetween(const occa::streamTag &startTag,
                                const occa::streamTag &endTag) {
       occa::opencl::streamTag *clStartTag = (
         dynamic_cast<occa::opencl::streamTag*>(startTag.getModeStreamTag())
@@ -143,14 +110,14 @@ namespace occa {
 
       return (clEndTag->getTime() - clStartTag->getTime());
     }
-
+*/
     ::sycl::queue *device::getCommandQueue() const {
       occa::dpcpp::stream *stream = (occa::dpcpp::stream*) currentStream.getModeStream();
       return stream->commandQueue;
     }
     //==================================
 
-    //---[ Kernel ]---------------------
+/*    //---[ Kernel ]---------------------
     modeKernel_t* device::buildKernelFromProcessedSource(
       const hash_t kernelHash,
       const std::string &hashDir,
@@ -224,7 +191,58 @@ namespace occa {
                                       deviceMetadata,
                                       kernelProps,
                                       lock);
-    }
+
+      const std::string sourceFilename = hashDir + kc::sourceFile;
+      const std::string binaryFilename = hashDir + kc::binaryFile;
+
+     if (!clInfo.clProgram) {
+        opencl::buildProgramFromBinary(clInfo,
+                                       binaryFilename,
+                                       kernelName,
+                                       properties["compiler_flags"],
+                                       lock);
+      }
+
+      // Create wrapper kernel and set launcherKernel
+      kernel &k = *(new kernel(this,
+                               kernelName,
+                               sourceFilename,
+                               kernelProps));
+
+      k.launcherKernel = buildLauncherKernel(kernelHash,
+                                             hashDir,
+                                             kernelName,
+                                             launcherMetadata);
+      if (!k.launcherKernel) {
+        delete &k;
+        return NULL;
+      }
+
+      // Find device kernels
+      orderedKernelMetadata launchedKernelsMetadata = getLaunchedKernelsMetadata(
+        kernelName,
+        deviceMetadata
+      );
+
+      const int launchedKernelsCount = (int) launchedKernelsMetadata.size();
+      for (int i = 0; i < launchedKernelsCount; ++i) {
+        lang::kernelMetadata_t &metadata = launchedKernelsMetadata[i];
+        opencl::buildKernelFromProgram(clInfo,
+                                       metadata.name,
+                                       lock);
+
+        kernel *clKernel = new kernel(this,
+                                      metadata.name,
+                                      sourceFilename,
+                                      clDevice,
+                                      clInfo.clKernel,
+                                      kernelProps);
+        clKernel->metadata = metadata;
+        k.deviceKernels.push_back(clKernel);
+      }
+
+      return &k;
+   }
 
     modeKernel_t* device::buildOKLKernelFromBinary(info_t &clInfo,
                                                    const hash_t kernelHash,
@@ -311,44 +329,38 @@ namespace occa {
                         kernelProps);
     }
     //==================================
-
+*/
     //---[ Memory ]---------------------
     modeMemory_t* device::malloc(const udim_t bytes,
                                  const void *src,
                                  const occa::properties &props) {
 
-      if (props.get("mapped", false)) {
+      ::sycl::queue* q = getCommandQueue();
+/*      if (props.get("mapped", false)) {
         return mappedAlloc(bytes, src, props);
       }
+*/
 
-      cl_int error;
-
-      opencl::memory *mem = new opencl::memory(this, bytes, props);
+      memory *mem = new memory(this, bytes, props);
 
       if (src == NULL) {
-        mem->clMem = clCreateBuffer(clContext,
-                                    CL_MEM_READ_WRITE,
-                                    bytes, NULL, &error);
-        OCCA_OPENCL_ERROR("Device: clCreateBuffer", error);
+        mem->dpcppMem = malloc_device(bytes, *q);
       } else {
-        mem->clMem = clCreateBuffer(clContext,
-                                    CL_MEM_READ_WRITE | CL_MEM_COPY_HOST_PTR,
-                                    bytes, const_cast<void*>(src), &error);
-        OCCA_OPENCL_ERROR("Device: clCreateBuffer", error);
+	mem->dpcppMem = malloc_device(bytes, *q);
+	q->memcpy(mem->dpcppMem, src, bytes);
 
         finish();
       }
 
-      mem->rootClMem = &mem->clMem;
+      mem->rootDpcppMem = &mem->dpcppMem;
 
       return mem;
     }
-
+/*
     modeMemory_t* device::mappedAlloc(const udim_t bytes,
                                       const void *src,
                                       const occa::properties &props) {
 
-      cl_int error;
 
       opencl::memory *mem = new opencl::memory(this, bytes, props);
 
@@ -381,9 +393,9 @@ namespace occa {
 
       return mem;
     }
-
+*/
     udim_t device::memorySize() const {
-      return opencl::getDeviceMemorySize(clDevice);
+      return dpcpp::getDeviceMemorySize(dpcppDevice);
     }
     //==================================
   }

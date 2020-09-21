@@ -68,7 +68,7 @@ namespace occa {
 
     int deviceCoreCount(int pID, int dID);
 
-    udim_t getDeviceMemorySize(::sycl::device *devPtr);
+    udim_t getDeviceMemorySize(const ::sycl::device &devPtr);
     udim_t getDeviceMemorySize(int pID, int dID);
 
     void buildProgramFromSource(info_t &info,

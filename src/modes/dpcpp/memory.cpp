@@ -4,7 +4,7 @@
 #include <occa/tools/sys.hpp>
 
 namespace occa {
-  namespace sycl {
+  namespace dpcpp {
     memory::memory(modeDevice_t *modeDevice_,
                    udim_t size_,
                    const occa::properties &properties_) :
