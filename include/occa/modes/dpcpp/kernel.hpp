@@ -6,35 +6,34 @@
 #include <occa/modes/dpcpp/utils.hpp>
 #include <CL/sycl.hpp>
 
+
+
 namespace occa {
   namespace dpcpp {
-    class device;
+class device;
 
     class kernel : public occa::launchedModeKernel_t {
       friend class device;
       friend cl_kernel getCLKernel(occa::kernel kernel);
 
     private:
-      ::sycl::device dpcppDevice;
-      ::sycl::kernel dpcppKernel;
-     
+      ::sycl::device *dpcppDevice;
+      DPCPPFunctor* dpcppKernel; 
 
     public:
-      kernel(modeDevice_t *modeDevice_,
+
+     kernel(modeDevice_t *modeDevice_,
              const std::string &name_,
-             const std::string &sourceFilename_,
+             ::sycl::device* dpcppDevice_,
+             DPCPPFunctor* lambda_,
              const occa::properties &properties_);
 
       kernel(modeDevice_t *modeDevice_,
-             const std::string &name_,
-             const std::string &sourceFilename_,
-             ::sycl::device dpcppDevice_,
-             ::sycl::kernel dpcppKernel_,
-             const occa::properties &properties_);
+	     const std::string &name_, const occa::properties &properties_, DPCPPFunctor* lambda_);
 
       ~kernel();
 
-      queue& getCommandQueue() const;
+      ::sycl::queue *getCommandQueue() const;
 
       int maxDims() const;
       dim maxOuterDims() const;
