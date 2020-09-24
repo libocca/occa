@@ -12,24 +12,24 @@ namespace occa {
   namespace dpcpp {
 class device;
 
-    class kernel : public occa::launchedModeKernel_t {
+    template <class T> class kernel : public occa::launchedModeKernel_t {
       friend class device;
       friend cl_kernel getCLKernel(occa::kernel kernel);
 
     private:
       ::sycl::device *dpcppDevice;
-      DPCPPFunctor* dpcppKernel; 
+      T* dpcppKernel; 
 
     public:
 
      kernel(modeDevice_t *modeDevice_,
              const std::string &name_,
              ::sycl::device* dpcppDevice_,
-             DPCPPFunctor* lambda_,
+             T* lambda_,
              const occa::properties &properties_);
 
       kernel(modeDevice_t *modeDevice_,
-	     const std::string &name_, const occa::properties &properties_, DPCPPFunctor* lambda_);
+	     const std::string &name_, const occa::properties &properties_, T* lambda_);
 
       ~kernel();
 

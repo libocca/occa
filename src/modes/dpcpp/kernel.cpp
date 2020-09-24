@@ -8,39 +8,39 @@
 
 namespace occa {
   namespace dpcpp {
-    kernel::kernel(modeDevice_t *modeDevice_,
-             const std::string &name_, const occa::properties &properties_, DPCPPFunctor* lambda_):
+    template <class T> kernel<T>::kernel(modeDevice_t *modeDevice_,
+             const std::string &name_, const occa::properties &properties_, T* lambda_):
       occa::launchedModeKernel_t(modeDevice_, name_, "", properties_),
       dpcppDevice(NULL),
       dpcppKernel(lambda_){}
 
 
-    kernel::kernel(modeDevice_t *modeDevice_,
+    template <class T> kernel<T>::kernel(modeDevice_t *modeDevice_,
                    const std::string &name_,
                    ::sycl::device* dpcppDevice_,
-                   DPCPPFunctor* lambda_,
+                   T* lambda_,
                    const occa::properties &properties_) :
       occa::launchedModeKernel_t(modeDevice_, name_, "", properties_),
       dpcppDevice(dpcppDevice_),
       dpcppKernel(lambda_) {}
 
-    kernel::~kernel() {
+    template <class T> kernel<T>::~kernel() {
       if (dpcppKernel) {
         dpcppKernel = NULL;
       }
     }
 
-    ::sycl::queue* kernel::getCommandQueue() const {
+    template <class T> ::sycl::queue* kernel<T>::getCommandQueue() const {
       return ((device*) modeDevice)->getCommandQueue();
     }
 
-    int kernel::maxDims() const {
+    template <class T> int kernel<T>::maxDims() const {
       static cl_uint dims_ = 0;
       dims_ = dpcppDevice->get_info<sycl::info::device::max_work_item_dimensions>();
       return (int) dims_;
     }
 
-    dim kernel::maxOuterDims() const {
+    template <class T> dim kernel<T>::maxOuterDims() const {
       // TODO 1.1: This should be in the device, not the kernel
       static occa::dim maxOuterDims_(0);
       if (maxOuterDims_.x == 0) {
@@ -53,7 +53,7 @@ namespace occa {
       return maxOuterDims_;
     }
 
-    dim kernel::maxInnerDims() const {
+    template <class T> dim kernel<T>::maxInnerDims() const {
       // TODO 1.1: This should be in the device, not the kernel
       static occa::dim maxInnerDims_(0);
       static cl_uint dims_ = 0;
@@ -66,7 +66,7 @@ namespace occa {
       return maxInnerDims_;
     }
 
-    void kernel::deviceRun() const {
+    template <class T> void kernel<T>::deviceRun() const {
       // Setup kernel dimensions
       occa::dim fullDims = (outerDims * innerDims);
       ::sycl::queue *q = getCommandQueue();

@@ -48,7 +48,7 @@ namespace occa {
       //================================
 
       //---[ Kernel ]-------------------
-/*      modeKernel_t* buildKernelFromProcessedSource(const hash_t kernelHash,
+      modeKernel_t* buildKernelFromProcessedSource(const hash_t kernelHash,
                                                    const std::string &hashDir,
                                                    const std::string &kernelName,
                                                    const std::string &sourceFilename,
@@ -80,7 +80,7 @@ namespace occa {
       virtual modeKernel_t* buildKernelFromBinary(const std::string &filename,
                                                   const std::string &kernelName,
                                                   const occa::properties &kernelProps);
-*/
+
       //================================
 
       //---[ Memory ]-------------------

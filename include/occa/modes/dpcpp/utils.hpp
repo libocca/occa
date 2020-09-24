@@ -20,11 +20,8 @@ namespace occa {
 
     class info_t {
     public:
-  	::sycl::device *dpDevice;
-	//sycl::context *dpContext; doesn't compile, did you mean queue ?
+  	::sycl::device *dpcppDevice;
 	::sycl::queue *dpcppQueue;
-	::sycl::program *dpProgram;
-	::sycl::kernel *dpKernel;  
       info_t();
     };
 
@@ -54,7 +51,7 @@ namespace occa {
 
     int getPlatformCount();
 
-    ::sycl::platform* getPlatformByID(int pID);
+    ::sycl::platform getPlatformByID(int pID);
 
 
     int getDeviceCount(int type = info::anyType);
@@ -110,7 +107,7 @@ namespace occa {
 
 //    cl_kernel getCLKernel(occa::kernel kernel);
 
-    occa::device wrapDevice(cl_device_id clDevice,
+/*    occa::device wrapDevice(cl_device_id clDevice,
                             cl_context context,
                             const occa::properties &props = occa::properties());
 
@@ -118,7 +115,7 @@ namespace occa {
                             void* dpcppMem,
                             const udim_t bytes,
                             const occa::properties &props = occa::properties());
-
+*/
     void warn(cl_int errorCode,
               const std::string &filename,
               const std::string &function,
