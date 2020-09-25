@@ -8,41 +8,56 @@
 
 namespace occa {
   namespace dpcpp {
+<<<<<<< HEAD
     kernel::kernel(modeDevice_t *modeDevice_,
                    const std::string &name_,
                    const std::string &sourceFilename_,
                    const occa::properties &properties_) :
       occa::launchedModeKernel_t(modeDevice_, name_, sourceFilename_, properties_),
+=======
+    template <class T> kernel<T>::kernel(modeDevice_t *modeDevice_,
+             const std::string &name_, const occa::properties &properties_, T* lambda_):
+      occa::launchedModeKernel_t(modeDevice_, name_, "", properties_),
+>>>>>>> parent of 8e2aacde... Revert "It compiles now :) but won't work before we find a way to enqueue arguments"
       dpcppDevice(NULL),
       dpcppKernel(NULL) {}
 
-    kernel::kernel(modeDevice_t *modeDevice_,
+    template <class T> kernel<T>::kernel(modeDevice_t *modeDevice_,
                    const std::string &name_,
+<<<<<<< HEAD
                    const std::string &sourceFilename_,
                    ::sycl::device dpcppDevice_,
                    ::sycl::kernel dpcppKernel_,
+=======
+                   ::sycl::device* dpcppDevice_,
+                   T* lambda_,
+>>>>>>> parent of 8e2aacde... Revert "It compiles now :) but won't work before we find a way to enqueue arguments"
                    const occa::properties &properties_) :
       occa::launchedModeKernel_t(modeDevice_, name_, sourceFilename_, properties_),
       dpcppDevice(dpcppDevice_),
       dpcppKernel(dpcppKernel_) {}
 
-    kernel::~kernel() {
+    template <class T> kernel<T>::~kernel() {
       if (dpcppKernel) {
         clKernel = NULL;
       }
     }
 
+<<<<<<< HEAD
     ::sycl::queue& kernel::getCommandQueue() const {
+=======
+    template <class T> ::sycl::queue* kernel<T>::getCommandQueue() const {
+>>>>>>> parent of 8e2aacde... Revert "It compiles now :) but won't work before we find a way to enqueue arguments"
       return ((device*) modeDevice)->getCommandQueue();
     }
 
-    int kernel::maxDims() const {
+    template <class T> int kernel<T>::maxDims() const {
       static cl_uint dims_ = 0;
       dims_ = dpcppDevice.get_info<sycl::info::device::max_work_item_dimensions>();
       return (int) dims_;
     }
 
-    dim kernel::maxOuterDims() const {
+    template <class T> dim kernel<T>::maxOuterDims() const {
       // TODO 1.1: This should be in the device, not the kernel
       static occa::dim maxOuterDims_(0);
       if (maxOuterDims_.x == 0) {
@@ -55,7 +70,7 @@ namespace occa {
       return maxOuterDims_;
     }
 
-    dim kernel::maxInnerDims() const {
+    template <class T> dim kernel<T>::maxInnerDims() const {
       // TODO 1.1: This should be in the device, not the kernel
       static occa::dim maxInnerDims_(0);
       if (maxInnerDims_.x == 0) {
@@ -67,7 +82,7 @@ namespace occa {
       return maxInnerDims_;
     }
 
-    void kernel::deviceRun() const {
+    template <class T> void kernel<T>::deviceRun() const {
       // Setup kernel dimensions
       occa::dim fullDims = (outerDims * innerDims);
 

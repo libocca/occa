@@ -10,8 +10,8 @@ namespace occa {
       commandQueue(commandQueue_) {}
 
     stream::~stream() {
-      OCCA_DPCPP_ERROR("Device: Freeing dpcpp queue",
-                        free(commandQueue));
+//      OCCA_DPCPP_ERROR("Device: Freeing dpcpp queue",
+                        free(commandQueue);
     }
   }
 }
