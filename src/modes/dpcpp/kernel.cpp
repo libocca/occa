@@ -72,10 +72,15 @@ namespace occa {
       ::sycl::queue *q = getCommandQueue();
       auto global_range = ::sycl::range<3>(outerDims.x, outerDims.y, outerDims.z);
       auto local_range  = ::sycl::range<3>(innerDims.x, innerDims.y, innerDims.z);
+      T func;
+      for(int i=0; i<arguments.size(); i++){
+	void ** a = func.get_member_adress(i);
+	*a = arguments[i].ptr();
+      }
       q->submit([&](::sycl::handler &h){
 
 	h.parallel_for(::sycl::nd_range<3>{global_range, local_range},
-					  *dpcppKernel);
+					  func);
       });
 /*      size_t fullDims_[3] = {
         fullDims.x, fullDims.y, fullDims.z
