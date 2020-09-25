@@ -16,7 +16,7 @@ namespace occa {
     }
 
     styling::section& dpcppMode::getDescription() {
-      static styling::section section("dpcpp");
+      static styling::section section("oneAPI");
       if (section.size() == 0) {
         int platformCount = getPlatformCount();
         for (int platformId = 0; platformId < platformCount; ++platformId) {

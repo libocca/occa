@@ -26,11 +26,11 @@ namespace occa {
              const occa::properties &properties_);
 
       kernel(modeDevice_t *modeDevice_,
-	     const std::string &name_, const occa::properties &properties_, T* lambda_);
+	     const std::string &name_, const occa::properties &properties_, T t);
 
       ~kernel();
 
-      ::sycl::queue& getCommandQueue() const;
+      ::sycl::queue* getCommandQueue() const;
 
       int maxDims() const;
       dim maxOuterDims() const;

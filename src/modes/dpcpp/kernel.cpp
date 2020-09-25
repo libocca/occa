@@ -9,7 +9,7 @@
 namespace occa {
   namespace dpcpp {
     template <class T> kernel<T>::kernel(modeDevice_t *modeDevice_,
-             const std::string &name_, const occa::properties &properties_, T* lambda_):
+             const std::string &name_, const occa::properties &properties_, T t):
       occa::launchedModeKernel_t(modeDevice_, name_, "", properties_),
       dpcppDevice(NULL),
       dpcppKernel(NULL) {}
@@ -22,9 +22,6 @@ namespace occa {
       dpcppDevice(dpcppDevice){}
 
     template <class T> kernel<T>::~kernel() {
-      if (dpcppKernel) {
-        clKernel = NULL;
-      }
     }
 
     template <class T> ::sycl::queue* kernel<T>::getCommandQueue() const {
@@ -33,7 +30,7 @@ namespace occa {
 
     template <class T> int kernel<T>::maxDims() const {
       static cl_uint dims_ = 0;
-      dims_ = dpcppDevice.get_info<sycl::info::device::max_work_item_dimensions>();
+      dims_ = getCommandQueue()->get_info<sycl::info::device::max_work_item_dimensions>();
       return (int) dims_;
     }
 
