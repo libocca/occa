@@ -9,17 +9,20 @@
 namespace occa {
   namespace dpcpp {
     template <class T> kernel<T>::kernel(modeDevice_t *modeDevice_,
-             const std::string &name_, const occa::properties &properties_, T *t):
+             const std::string &name_, const occa::properties &properties_, T* lambda_):
       occa::launchedModeKernel_t(modeDevice_, name_, "", properties_),
-      dpcppDevice(NULL){}
+      dpcppDevice(NULL),
+      dpcppKernel(lambda_){}
 
 
     template <class T> kernel<T>::kernel(modeDevice_t *modeDevice_,
                    const std::string &name_,
                    ::sycl::device* dpcppDevice_,
+                   T* lambda_,
                    const occa::properties &properties_) :
       occa::launchedModeKernel_t(modeDevice_, name_, "", properties_),
-      dpcppDevice(dpcppDevice_){}
+      dpcppDevice(dpcppDevice_),
+      dpcppKernel(lambda_) {}
 
     template <class T> kernel<T>::~kernel() {
       if (dpcppKernel) {
@@ -69,21 +72,11 @@ namespace occa {
       ::sycl::queue *q = getCommandQueue();
       auto global_range = ::sycl::range<3>(outerDims.x, outerDims.y, outerDims.z);
       auto local_range  = ::sycl::range<3>(innerDims.x, innerDims.y, innerDims.z);
-
-      const int args = (int) arguments.size();
-      T* func = new T();
-      for (int i = 0; i < args; ++i) {
-        const kernelArgData &arg = arguments[i];
-	void **add = (void**) func->get_member_adress(i);
-	*add = arg.ptr();
-      }
-
       q->submit([&](::sycl::handler &h){
 
 	h.parallel_for(::sycl::nd_range<3>{global_range, local_range},
-					  *func);
+					  *dpcppKernel);
       });
-      free(func);
 /*      size_t fullDims_[3] = {
         fullDims.x, fullDims.y, fullDims.z
       };
