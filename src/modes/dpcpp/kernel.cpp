@@ -8,34 +8,18 @@
 
 namespace occa {
   namespace dpcpp {
-<<<<<<< HEAD
-    kernel::kernel(modeDevice_t *modeDevice_,
-                   const std::string &name_,
-                   const std::string &sourceFilename_,
-                   const occa::properties &properties_) :
-      occa::launchedModeKernel_t(modeDevice_, name_, sourceFilename_, properties_),
-=======
     template <class T> kernel<T>::kernel(modeDevice_t *modeDevice_,
              const std::string &name_, const occa::properties &properties_, T* lambda_):
       occa::launchedModeKernel_t(modeDevice_, name_, "", properties_),
->>>>>>> parent of 8e2aacde... Revert "It compiles now :) but won't work before we find a way to enqueue arguments"
       dpcppDevice(NULL),
       dpcppKernel(NULL) {}
 
     template <class T> kernel<T>::kernel(modeDevice_t *modeDevice_,
                    const std::string &name_,
-<<<<<<< HEAD
-                   const std::string &sourceFilename_,
-                   ::sycl::device dpcppDevice_,
-                   ::sycl::kernel dpcppKernel_,
-=======
                    ::sycl::device* dpcppDevice_,
                    T* lambda_,
->>>>>>> parent of 8e2aacde... Revert "It compiles now :) but won't work before we find a way to enqueue arguments"
                    const occa::properties &properties_) :
-      occa::launchedModeKernel_t(modeDevice_, name_, sourceFilename_, properties_),
-      dpcppDevice(dpcppDevice_),
-      dpcppKernel(dpcppKernel_) {}
+      dpcppDevice(dpcppDevice){}
 
     template <class T> kernel<T>::~kernel() {
       if (dpcppKernel) {
@@ -43,11 +27,7 @@ namespace occa {
       }
     }
 
-<<<<<<< HEAD
-    ::sycl::queue& kernel::getCommandQueue() const {
-=======
     template <class T> ::sycl::queue* kernel<T>::getCommandQueue() const {
->>>>>>> parent of 8e2aacde... Revert "It compiles now :) but won't work before we find a way to enqueue arguments"
       return ((device*) modeDevice)->getCommandQueue();
     }
 
@@ -92,7 +72,7 @@ namespace occa {
       size_t innerDims_[3] = {
         innerDims.x, innerDims.y, innerDims.z
       };
-
+/*
       // Set arguments
       const int args = :(int) arguments.size();
       for (int i = 0; i < args; ++i) {
@@ -111,6 +91,7 @@ namespace occa {
                                                (size_t*) &fullDims_,
                                                (size_t*) &innerDims_,
                                                0, NULL, NULL));
+  */
     }
   }
 }
