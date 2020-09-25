@@ -15,7 +15,9 @@ namespace occa {
 
     class DPCPPFunctor{
 	public:
-		virtual void operator()(::sycl::nd_item<3> i){};
+		virtual void operator()(::sycl::nd_item<3> i)=0;
+	        virtual void** get_member_adress(int i)=0;
+
     };
 
     class info_t {

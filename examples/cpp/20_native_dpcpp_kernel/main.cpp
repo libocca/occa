@@ -7,14 +7,24 @@
 occa::json parseArgs(int argc, const char **argv);
 class MyFunc{
         private:
-                occa::memory _oa;
-                occa::memory _ob;
-                occa::memory _oc;
+                int* _oa;
+                int* _ob;
+                int* _oc;
         public:
-        MyFunc(occa::memory oa, occa::memory ob, occa::memory oc):_oa(oa), _ob(ob), _oc(oc){}
+        MyFunc(){}
         virtual void operator()(sycl::nd_item<3> i){
                 _oc[i.get_global_id(0)] = _oa[i.get_global_id(0)] + _ob[i.get_global_id(0)];
         }
+	virtual void** get_member_adress(int i){
+                if(i==0)
+                        return (void**)&_oa;
+                if(i==1)
+                        return (void**)&_ob;
+                if(i==2)
+                        return (void**)&_oc;
+                return NULL;
+        }
+
 };
 
 int main(int argc, const char **argv) {
@@ -48,13 +58,13 @@ int main(int argc, const char **argv) {
   // Compile a regular OpenCL kernel at run-time
   occa::properties kernelProps;
   kernelProps["okl/enabled"] = false;
-  MyFunc f(oa, ob, oc);
-  occa::kernel<Functor> addVectors(device.getCommandQueue(), "vectorAdd", kernelProps, f);
+  MyFunc f;
+  occa::kernel<MyFunc> addVectors(device.getCommandQueue(), "vectorAdd", kernelProps, f);
 
   // Copy memory to the device
   o_a.copyFrom(a);
   o_b.copyFrom(b);
-
+/*
   // Set the kernel dimensions
   //   setRunDims(
   //     occa::dim(groupsX, groupsY = 1, groupsZ = 1), <- @outer dims in OKL
@@ -64,7 +74,7 @@ int main(int argc, const char **argv) {
 
   // Launch device kernel
   addVectors(entries, o_a, o_b, o_ab);
-
+*/
   // Copy result to the host
   o_ab.copyTo(ab);
 

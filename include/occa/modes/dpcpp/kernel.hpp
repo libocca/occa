@@ -25,11 +25,10 @@ class device;
      kernel(modeDevice_t *modeDevice_,
              const std::string &name_,
              ::sycl::device* dpcppDevice_,
-             T* lambda_,
              const occa::properties &properties_);
 
       kernel(modeDevice_t *modeDevice_,
-	     const std::string &name_, const occa::properties &properties_, T* lambda_);
+	     const std::string &name_, const occa::properties &properties_, T t);
 
       ~kernel();
 
