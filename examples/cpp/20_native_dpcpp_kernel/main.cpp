@@ -3,7 +3,6 @@
 #include <occa.hpp>
 #include <occa/types/fp.hpp>
 #include <CL/sycl.hpp>
-
 occa::json parseArgs(int argc, const char **argv);
 class MyFunc{
         private:
@@ -12,10 +11,10 @@ class MyFunc{
                 int* _oc;
         public:
         MyFunc(){}
-        virtual void operator()(sycl::nd_item<3> i){
+        void operator()(sycl::nd_item<3> i){
                 _oc[i.get_global_id(0)] = _oa[i.get_global_id(0)] + _ob[i.get_global_id(0)];
         }
-	virtual void** get_member_adress(int i){
+	void** get_member_adress(int i){
                 if(i==0)
                         return (void**)&_oa;
                 if(i==1)
@@ -59,7 +58,7 @@ int main(int argc, const char **argv) {
   occa::properties kernelProps;
   kernelProps["okl/enabled"] = false;
   MyFunc f;
-  occa::kernel<MyFunc> addVectors(device.getCommandQueue(), "vectorAdd", kernelProps, f);
+  occa::kernel<MyFunc> addVectors(device.getCommandQueue(), "vectorAdd", kernelProps, &f);
 
   // Copy memory to the device
   o_a.copyFrom(a);

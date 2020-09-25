@@ -9,7 +9,7 @@
 namespace occa {
   namespace dpcpp {
     template <class T> kernel<T>::kernel(modeDevice_t *modeDevice_,
-             const std::string &name_, const occa::properties &properties_, T t):
+             const std::string &name_, const occa::properties &properties_, T *t):
       occa::launchedModeKernel_t(modeDevice_, name_, "", properties_),
       dpcppDevice(NULL){}
 
