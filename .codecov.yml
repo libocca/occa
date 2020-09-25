@@ -28,7 +28,6 @@ ignore:
   - include/occa/modes/cuda
   - include/occa/modes/hip
   - include/occa/modes/opencl
-  - include/occa/modes/dpcpp
   - include/occa/modes/metal
   - src/modes/cuda
   - src/modes/hip

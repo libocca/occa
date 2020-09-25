@@ -1,5 +1,5 @@
 #include <occa/tools/string.hpp>
-#include <occa/lang/modes/dpcpp.hpp>
+#include <occa/lang/modes/opencl.hpp>
 #include <occa/lang/modes/okl.hpp>
 #include <occa/lang/modes/oklForStatement.hpp>
 #include <occa/lang/builtins/attributes.hpp>
@@ -8,9 +8,9 @@
 namespace occa {
   namespace lang {
     namespace okl {
-      qualifier_t dpcppParser::global("__global", qualifierType::custom);
+      qualifier_t openclParser::global("__global", qualifierType::custom);
 
-      dpcppParser::dpcppParser(const occa::properties &settings_) :
+      openclParser::openclParser(const occa::properties &settings_) :
         withLauncher(settings_),
         constant("__constant", qualifierType::custom),
         kernel("__kernel", qualifierType::custom),

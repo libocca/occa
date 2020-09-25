@@ -10,7 +10,6 @@ namespace occa {
     public:
     streamTag(modeDevice_t *modeDevice_);
       virtual ~streamTag();
-      double getTime();
     };
   }
 }

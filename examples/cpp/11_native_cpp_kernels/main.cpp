@@ -16,7 +16,7 @@ int main(int argc, const char **argv) {
 
   for (int i = 0; i < entries; ++i) {
     a[i]  = i;
-    b[i]  = i;
+    b[i]  = 1 - i;
     ab[i] = 0;
   }
 

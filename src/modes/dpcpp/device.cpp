@@ -97,27 +97,27 @@ namespace occa {
                         clWaitForEvents(1, &(clTag->clEvent)));*/
     }
 
-    double device::timeBetween(const occa::streamTag &startTag,
+ /*   double device::timeBetween(const occa::streamTag &startTag,
                                const occa::streamTag &endTag) {
-      occa::dpcpp::streamTag *dpcppStartTag = (
-        dynamic_cast<occa::dpcpp::streamTag*>(startTag.getModeStreamTag())
+      occa::opencl::streamTag *clStartTag = (
+        dynamic_cast<occa::opencl::streamTag*>(startTag.getModeStreamTag())
       );
-      occa::dpcpp::streamTag *dpcppEndTag = (
-        dynamic_cast<occa::dpcpp::streamTag*>(endTag.getModeStreamTag())
+      occa::opencl::streamTag *clEndTag = (
+        dynamic_cast<occa::opencl::streamTag*>(endTag.getModeStreamTag())
       );
 
       finish();
 
-      return (dpcppEndTag->getTime() - dpcppStartTag->getTime());
+      return (clEndTag->getTime() - clStartTag->getTime());
     }
-
+*/
     ::sycl::queue *device::getCommandQueue() const {
       occa::dpcpp::stream *stream = (occa::dpcpp::stream*) currentStream.getModeStream();
       return stream->commandQueue;
     }
     //==================================
 
-    //---[ Kernel ]---------------------
+/*    //---[ Kernel ]---------------------
     modeKernel_t* device::buildKernelFromProcessedSource(
       const hash_t kernelHash,
       const std::string &hashDir,
@@ -130,7 +130,7 @@ namespace occa {
       const occa::properties &kernelProps,
       io::lock_t lock
     ) {
-/*      info_t clInfo;
+      info_t clInfo;
       clInfo.clDevice  = clDevice;
       clInfo.clContext = clContext;
 
@@ -170,9 +170,7 @@ namespace occa {
                         clDevice,
                         clInfo.clKernel,
                         kernelProps);
-*/
-	return NULL;    
-  }
+    }
 
     modeKernel_t* device::buildOKLKernelFromBinary(const hash_t kernelHash,
                                                    const std::string &hashDir,
@@ -181,7 +179,7 @@ namespace occa {
                                                    lang::sourceMetadata_t &deviceMetadata,
                                                    const occa::properties &kernelProps,
                                                    io::lock_t lock) {
-/*      info_t clInfo;
+      info_t clInfo;
       clInfo.clDevice  = clDevice;
       clInfo.clContext = clContext;
 
@@ -244,9 +242,7 @@ namespace occa {
       }
 
       return &k;
-*/
- 	return NULL;
-    }
+   }
 
     modeKernel_t* device::buildOKLKernelFromBinary(info_t &clInfo,
                                                    const hash_t kernelHash,
@@ -257,7 +253,7 @@ namespace occa {
                                                    const occa::properties &kernelProps,
                                                    io::lock_t lock) {
 
-/*      const std::string sourceFilename = hashDir + kc::sourceFile;
+      const std::string sourceFilename = hashDir + kc::sourceFile;
       const std::string binaryFilename = hashDir + kc::binaryFile;
 
       if (!clInfo.clProgram) {
@@ -307,15 +303,13 @@ namespace occa {
       }
 
       return &k;
-      */
-	    return NULL;
     }
 
     modeKernel_t* device::buildKernelFromBinary(const std::string &filename,
                                                 const std::string &kernelName,
                                                 const occa::properties &kernelProps) {
 
-/*      info_t clInfo;
+      info_t clInfo;
       clInfo.clDevice  = clDevice;
       clInfo.clContext = clContext;
 
@@ -333,12 +327,9 @@ namespace occa {
                         clDevice,
                         clInfo.clKernel,
                         kernelProps);
-*/
-	    return NULL;
-		    
-	}
+    }
     //==================================
-
+*/
     //---[ Memory ]---------------------
     modeMemory_t* device::malloc(const udim_t bytes,
                                  const void *src,
@@ -365,12 +356,12 @@ namespace occa {
 
       return mem;
     }
-
+/*
     modeMemory_t* device::mappedAlloc(const udim_t bytes,
                                       const void *src,
                                       const occa::properties &props) {
 
-/*
+
       opencl::memory *mem = new opencl::memory(this, bytes, props);
 
       // Alloc pinned host buffer
@@ -401,10 +392,8 @@ namespace occa {
       finish();
 
       return mem;
+    }
 */
-	    return NULL;
-      }
-
     udim_t device::memorySize() const {
       return dpcpp::getDeviceMemorySize(dpcppDevice);
     }

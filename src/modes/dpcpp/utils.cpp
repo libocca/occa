@@ -11,9 +11,11 @@
 
 namespace occa {
   namespace dpcpp {
-    info_t::info_t():
-      dpcppDevice(NULL),
-      dpcppQueue(NULL){}
+    info_t::info_t(){}
+      dpDevice(NULL),
+      dpContext(NULL),
+      dpProgram(NULL),
+      dpKernel(NULL) {}
 
     namespace info {
       std::string deviceType(int type) {
@@ -40,7 +42,7 @@ namespace occa {
       auto platformlist = sycl::platform::get_platforms();
       for(auto p : platformlist)
       {
-	      auto devicelist = p.get_devices(::sycl::info::device_type::all);
+	      auto devicelist = p.get_devices(info::device_type::all);
 	      if(devicelist.size() > 0)
 		      return true;
       }
@@ -54,19 +56,19 @@ namespace occa {
       if (type & info::GPU)     return sycl::info::device_type::gpu;
       if (type & info::FPGA)    return sycl::info::device_type::accelerator;
 
-      return sycl::info::device_type::cpu;
+      return ret;
     }
 /* Returns the number of DPC++ platforms*/
     int getPlatformCount() {
-	    return sycl::platform::get_platforms().size();
+	    return sycl::platform.get_platforms().size();
     }
 /* Returns the DPC++ platform of interest */
-    sycl::platform getPlatformByID(int pID) {
-	    return (sycl::platform::get_platforms()[pID]);
+    sycl::platform* getPlatformByID(int pID) {
+	    return &(sycl::platform.get_platforms()[pID]);
     }
 /* Returns the number of DPC++ devices of a certain device type*/
     int getDeviceCount(int type) {
-	    auto platformlist = sycl::platform::get_platforms();
+	    auto platformlist = sycl::platform.get_platforms();
 	    int count = 0;
 	    for(auto p : platformlist){
 		    count += p.get_devices(deviceType(type)).size();
@@ -75,24 +77,24 @@ namespace occa {
     }
 /* Return the number of DPC++ devices under a given platform */
     int getDeviceCountInPlatform(int pID, int type) {
-      return sycl::platform::get_platforms()[pID].get_devices(deviceType(type)).size();
+      return sycl::platform.get_platforms()[pID].get_devices(deviceType(type).size());
     }
 /* Return the DPC++ device given the platform ID and Device ID */
-    sycl::device getDeviceByID(int pID, int dID, int type) {
-	    return (sycl::platform::get_platforms()[pID].get_devices(deviceType(type))[dID]);
+    sycl::device* getDeviceByID(int pID, int dID, int type) {
+	    return &(sycl::platform.get_platforms()[pID].get_devices(deviceType(type))[dID]);
     }
 /* Return the DPC++ device name */
     std::string deviceName(int pID, int dID) {
-	    return sycl::platform::get_platforms()[pID].get_devices()[dID].get_info<::sycl::info::device::name>();
+	    return sycl::platform.get_platforms()[pID].get_devices(deviceType(type))[dID].get_info<info::device::name>();
     }
 /* Return the DPC++ device type */
-    int deviceType(int pID, int dID) {
-	    return (int)sycl::platform::get_platforms()[pID].get_devices()[dID].get_info<::sycl::info::device::device_type>();
+    info::device_type deviceType(int pID, int dID) {
+	    return sycl::platform.get_platforms()[pID].get_devices(deviceType(type))[dID].get_info<info::device::device_type>();
     }
 
 /* Return the DPC++ device vendor */    
     int deviceVendor(int pID, int dID) {
-	    std::string devVendor = sycl::platform::get_platforms()[pID].get_devices()[dID].get_info<::sycl::info::device::vendor>();
+	    std::string devVendor = sycl::platform.get_platforms()[pID].get_devices(deviceType(type))[dID].get_info<info::device::vendors>();
 	    if(devVendor.find("Intel") != std::string::npos)
 		    return info::Intel;
 	    else if(devVendor.find("NVIDIA") != std::string::npos)
@@ -100,20 +102,19 @@ namespace occa {
 	    else if(devVendor.find("Altera") != std::string::npos)
 		    return info::Altera;
 	    else if(devVendor.find("AMD") != std::string::npos)
-		   return info::AMD;
-	   return 0;//TODO check this 
+		   return info::AMD; 
     }
 /* Returns the DPC++ Core count */
     int deviceCoreCount(int pID, int dID) {
-	return sycl::platform::get_platforms()[pID].get_devices()[dID].get_info<::sycl::info::device::max_compute_units>();
+	return sycl::platform.get_platforms()[pID].get_devices(deviceType(type))[dID].get_info<info::device::max_compute_units>();
     }
 /* Returns the DPC++ global memory size given the DPC++ device */
     udim_t getDeviceMemorySize(const sycl::device &devPtr) {
-	    return devPtr.get_info<::sycl::info::device::global_mem_size>();
+	    return devPtr.get_info<info::device::global_mem_size>();
     }
 /* Returns the DPC++ global memory size given the platform and device IDs */
     udim_t getDeviceMemorySize(int pID, int dID) {
-	    return sycl::platform::get_platforms()[pID].get_devices()[dID].get_info<::sycl::info::device::global_mem_size>();
+	    return sycl::platform.get_platforms()[pID].get_devices(deviceType(type))[dID].get_info<info::device::global_mem_size>();
     }
 
     void buildProgramFromSource(info_t &info,
@@ -123,7 +124,7 @@ namespace occa {
                                 const std::string &sourceFile,
                                 const occa::properties &properties,
                                 const io::lock_t &lock) {
-/*      cl_int error = 1;
+      cl_int error = 1;
 
       const bool verbose = properties.get("verbose", false);
 
@@ -136,8 +137,8 @@ namespace occa {
 
       if (error) {
         lock.release();
-//        OCCA_OPENCL_ERROR("Kernel [" + kernelName + "]: Creating Program",
-//                          error);
+        OCCA_OPENCL_ERROR("Kernel [" + kernelName + "]: Creating Program",
+                          error);
       }
       if (verbose) {
         if (lock.isInitialized()) {
@@ -157,14 +158,14 @@ namespace occa {
                    kernelName,
                    compilerFlags,
                    lock);
-*/    }
+    }
 
     void buildProgramFromBinary(info_t &info,
                                 const std::string &binaryFilename,
                                 const std::string &kernelName,
                                 const std::string &compilerFlags,
                                 const io::lock_t &lock) {
-  /*    cl_int error = 1;
+      cl_int error = 1;
       cl_int binaryError = 1;
 
       size_t binaryBytes;
@@ -179,22 +180,22 @@ namespace occa {
       if (binaryError || error) {
         lock.release();
       }
-//      OCCA_OPENCL_ERROR("Kernel [" + kernelName + "]: Creating Program",
-//                        binaryError);
-//      OCCA_OPENCL_ERROR("Kernel [" + kernelName + "]: Creating Program",
-//                        error);
+      OCCA_OPENCL_ERROR("Kernel [" + kernelName + "]: Creating Program",
+                        binaryError);
+      OCCA_OPENCL_ERROR("Kernel [" + kernelName + "]: Creating Program",
+                        error);
 
       buildProgram(info,
                    kernelName,
                    compilerFlags,
                    lock);
-*/    }
+    }
 
     void buildProgram(info_t &info,
                       const std::string &kernelName,
                       const std::string &compilerFlags,
                       const io::lock_t &lock) {
-/*      cl_int error = 1;
+      cl_int error = 1;
 
       error = clBuildProgram(info.clProgram,
                              1, &info.clDevice,
@@ -218,8 +219,8 @@ namespace occa {
                                            info.clDevice,
                                            CL_PROGRAM_BUILD_LOG,
                                            logSize, log, NULL);
- //         OCCA_OPENCL_ERROR("Kernel [" + kernelName + "]: Building Program",
- //                           logError);
+          OCCA_OPENCL_ERROR("Kernel [" + kernelName + "]: Building Program",
+                            logError);
           log[logSize] = '\0';
 
           io::stderr << "Kernel ["
@@ -230,15 +231,15 @@ namespace occa {
           delete [] log;
         }
         lock.release();
-//        OCCA_OPENCL_ERROR("Kernel [" + kernelName + "]: Building Program",
-//                          error);
+        OCCA_OPENCL_ERROR("Kernel [" + kernelName + "]: Building Program",
+                          error);
       }
-*/    }
+    }
 
     void buildKernelFromProgram(info_t &info,
                                 const std::string &kernelName,
                                 const io::lock_t &lock) {
-/*      cl_int error = 1;
+      cl_int error = 1;
 
       info.clKernel = clCreateKernel(info.clProgram,
                                      kernelName.c_str(),
@@ -247,14 +248,14 @@ namespace occa {
       if (error) {
         lock.release();
       }
-//      OCCA_OPENCL_ERROR("Kernel [" + kernelName + "]: Creating Kernel",
-//                        error);
-*/    }
+      OCCA_OPENCL_ERROR("Kernel [" + kernelName + "]: Creating Kernel",
+                        error);
+    }
 
     bool saveProgramBinary(info_t &info,
                            const std::string &binaryFile,
                            const io::lock_t &lock) {
-/*      cl_int error = 1;
+      cl_int error = 1;
       cl_int binaryError = 1;
 
       size_t binaryBytes;
@@ -264,8 +265,8 @@ namespace occa {
       if (error) {
         lock.release();
       }
-//      OCCA_OPENCL_ERROR("saveProgramBinary: Getting Binary Sizes",
-//                        error);
+      OCCA_OPENCL_ERROR("saveProgramBinary: Getting Binary Sizes",
+                        error);
 
       char *binary = new char[binaryBytes + 1];
       error = clGetProgramInfo(info.clProgram,
@@ -274,8 +275,8 @@ namespace occa {
       if (error) {
         lock.release();
       }
-//      OCCA_OPENCL_ERROR("saveProgramBinary: Getting Binary",
-//                        error);
+      OCCA_OPENCL_ERROR("saveProgramBinary: Getting Binary",
+                        error);
 
       // Test to see if device supports reading from its own binary
       cl_program testProgram = clCreateProgramWithBinary(info.clContext,
@@ -298,11 +299,11 @@ namespace occa {
       fclose(fp);
 
       delete [] binary;
-*/
+
       return true;
     }
 
-/*    cl_context getCLContext(occa::device device) {
+    cl_context getCLContext(occa::device device) {
       return ((opencl::device*) device.getModeDevice())->clContext;
     }
 
@@ -313,8 +314,8 @@ namespace occa {
     cl_kernel getCLKernel(occa::kernel kernel) {
       return ((opencl::kernel*) kernel.getModeKernel())->clKernel;
     }
-*/
-/*    occa::device wrapDevice(cl_device_id clDevice,
+
+    occa::device wrapDevice(cl_device_id clDevice,
                             cl_context context,
                             const occa::properties &props) {
 
@@ -353,6 +354,6 @@ namespace occa {
 
       return occa::memory(&mem);
     }
-*/
+
   }
 }

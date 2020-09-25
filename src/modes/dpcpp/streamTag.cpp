@@ -3,13 +3,10 @@
 
 namespace occa {
   namespace dpcpp {
-    streamTag::streamTag(modeDevice_t *modeDevice_) : modeStreamTag_t(modeDevice_){}
+    streamTag::streamTag(modeDevice_t *modeDevice_) : modeStreamTag_t(modeDevice_),
+      time(-1) {}
 
     streamTag::~streamTag() {
-    }
-
-    double streamTag::getTime() {
-	return 0.0;
     }
   }
 }
