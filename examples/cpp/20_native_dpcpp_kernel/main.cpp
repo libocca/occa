@@ -6,11 +6,11 @@
 occa::json parseArgs(int argc, const char **argv);
 class MyFunc{
         private:
-                occa::memory _oa;
-                occa::memory _ob;
-                occa::memory _oc;
+                int* _oa;
+                int* _ob;
+                int* _oc;
         public:
-       MyFunc(occa::memory oa, occa::memory ob, occa::memory oc):_oa(oa), _ob(ob), _oc(oc){}
+       MyFunc(){}
         virtual void operator()(sycl::nd_item<3> i){
                 _oc[i.get_global_id(0)] = _oa[i.get_global_id(0)] + _ob[i.get_global_id(0)];
         }
@@ -47,7 +47,7 @@ int main(int argc, const char **argv) {
   // Compile a regular OpenCL kernel at run-time
   occa::properties kernelProps;
   kernelProps["okl/enabled"] = false;
-  MyFunc f(oa, ob, oc);
+  MyFunc f;
   occa::kernel<Functor> addVectors(device.getCommandQueue(), "vectorAdd", kernelProps, f);
 
   // Copy memory to the device
