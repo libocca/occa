@@ -46,7 +46,8 @@ int main(int argc, const char **argv) {
   occa::properties kernelProps;
   kernelProps["okl/enabled"] = false;
   
-  occa::kernel addVectors(&device, "addvector", kernelProps, addVector_it);
+  //occa::kernel addVectors(&device, "addvector", kernelProps, addVector_it);
+  occa::kernel addVectors;//only for testing dpcpp is found by occa
 
   // Copy memory to the device
   o_a.copyFrom(a);
