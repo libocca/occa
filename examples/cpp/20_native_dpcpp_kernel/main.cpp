@@ -45,6 +45,8 @@ int main(int argc, const char **argv) {
   // Compile a regular OpenCL kernel at run-time
   occa::properties kernelProps;
   kernelProps["okl/enabled"] = false;
+  kernelProps["compiler"] = "dpcpp -v";
+  kernelProps["compiler_linker_flags"] = "-fsycl";
  
   occa::kernel addVectors = device.buildKernel("addVectors.cpp",
                                                "addVectors",
@@ -65,7 +67,7 @@ int main(int argc, const char **argv) {
   addVectors.setRunDims((entries + 15) / 16, 16);
 
   // Launch device kernel
-  addVectors(entries, o_a, o_b, o_ab);
+  addVectors(o_a, o_b, o_ab);
 
   // Copy result to the host
   o_ab.copyTo(ab);
