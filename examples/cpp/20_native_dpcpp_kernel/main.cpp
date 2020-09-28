@@ -6,13 +6,6 @@
 
 occa::json parseArgs(int argc, const char **argv);
 
-void addVector_it(::sycl::queue* q, ::sycl::nd_range<3> *ndrange, int* oa, int* ob, int* oc){
-	q->submit([&](::sycl::handler &h){
-		h.parallel_for(*ndrange, [=] (::sycl::nd_item<3> i){
-			oc[i.get_global_id(0)] = oa[i.get_global_id(0)] + ob[i.get_global_id(0)];
-		});
-	});
-}
 
 int main(int argc, const char **argv) {
   occa::json args = parseArgs(argc, argv);
@@ -45,11 +38,11 @@ int main(int argc, const char **argv) {
   // Compile a regular OpenCL kernel at run-time
   occa::properties kernelProps;
   kernelProps["okl/enabled"] = false;
-  kernelProps["compiler"] = "dpcpp -v";
-  kernelProps["compiler_linker_flags"] = "-fsycl";
+  kernelProps["compiler"] = "dpcpp -g";
+  kernelProps["compiler_linker_flags"] = "-shared -fPIC";
  
   occa::kernel addVectors = device.buildKernel("addVectors.cpp",
-                                               "addVectors",
+                                               "addVectors_it",
                                                kernelProps);
  
  // occa::kernel addVectors(&device, "addvector", kernelProps, addVector_it);
