@@ -1,14 +1,14 @@
 #include <occa/defines.hpp>
 #include <occa/modes/dpcpp/utils.hpp>
 #include <occa/modes/dpcpp/registration.hpp>
-
+#include <iostream>
 namespace occa {
   namespace dpcpp {
     dpcppMode::dpcppMode() :
-        mode_t("oneAPI") {}
+        mode_t("dpcpp") {}
 
     bool dpcppMode::init() {
-#if OCCA_ONEAPI_ENABLED
+#if OCCA_DPCPP_ENABLED
       return occa::dpcpp::isEnabled();
 #else
       return false;
