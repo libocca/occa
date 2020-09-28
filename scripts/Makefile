@@ -476,4 +476,5 @@ OCCA_CUDA_ENABLED    := $(cudaEnabled)
 OCCA_HIP_ENABLED     := $(hipEnabled)
 OCCA_OPENCL_ENABLED  := $(openclEnabled)
 OCCA_METAL_ENABLED   := $(metalEnabled)
+OCCA_ONEAPI_ENABLED  := 1
 #=================================================

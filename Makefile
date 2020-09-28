@@ -101,6 +101,7 @@ MAKE_COMPILED_DEFINES := $(shell cat "$(OCCA_DIR)/scripts/compiledDefinesTemplat
                                       s,@@OCCA_HIP_ENABLED@@,$(OCCA_HIP_ENABLED),g;\
                                       s,@@OCCA_OPENCL_ENABLED@@,$(OCCA_OPENCL_ENABLED),g;\
                                       s,@@OCCA_METAL_ENABLED@@,$(OCCA_METAL_ENABLED),g;\
+				      s,@@OCCA_ONEAPI_ENABLED@@,$(OCCA_ONEAPI_ENABLED),g;\
                                       s,@@OCCA_BUILD_DIR@@,$(OCCA_BUILD_DIR),g;"\
                                       > "$(NEW_COMPILED_DEFINES)")
 
