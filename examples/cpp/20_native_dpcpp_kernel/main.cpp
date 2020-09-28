@@ -5,27 +5,14 @@
 #include <CL/sycl.hpp>
 
 occa::json parseArgs(int argc, const char **argv);
-class MyFunc{
-        private:
-                int* _oa;
-                int* _ob;
-                int* _oc;
-        public:
-        MyFunc(){}
-        virtual void operator()(sycl::nd_item<3> i){
-                _oc[i.get_global_id(0)] = _oa[i.get_global_id(0)] + _ob[i.get_global_id(0)];
-        }
-	virtual void** get_member_adress(int i){
-                if(i==0)
-                        return (void**)&_oa;
-                if(i==1)
-                        return (void**)&_ob;
-                if(i==2)
-                        return (void**)&_oc;
-                return NULL;
-        }
 
-};
+void addVector_it(::sycl::queue* q, ::sycl::nd_range<3> *ndrange, int* oa, int* ob, int* oc){
+	q->submit([&](::sycl::handler &h){
+		h.parallel_for(*ndrange, [=] (::sycl::nd_item<3> i){
+			oc[i.get_global_id(0)] = oa[i.get_global_id(0)] + ob[i.get_global_id(0)];
+		});
+	});
+}
 
 int main(int argc, const char **argv) {
   occa::json args = parseArgs(argc, argv);
@@ -58,8 +45,9 @@ int main(int argc, const char **argv) {
   // Compile a regular OpenCL kernel at run-time
   occa::properties kernelProps;
   kernelProps["okl/enabled"] = false;
-  MyFunc f;
-  occa::kernel<MyFunc> addVectors(device.getCommandQueue(), "vectorAdd", kernelProps, f);
+  
+  //occa::kernel addVectors(&device, "addvector", kernelProps, addVector_it);
+  occa::kernel addVectors;//only for testing dpcpp is found by occa
 
   // Copy memory to the device
   o_a.copyFrom(a);
