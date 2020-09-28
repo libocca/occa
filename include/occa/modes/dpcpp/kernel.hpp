@@ -10,32 +10,33 @@ namespace occa {
   namespace dpcpp {
     class device;
 
-    class kernel : public occa::launchedModeKernel_t {
+    class kernel : public occa::modeKernel_t {
       friend class device;
       friend cl_kernel getCLKernel(occa::kernel kernel);
 
     private:
       ::sycl::device *dpcppDevice;
       functionPtr_t function;
+      void *dlHandle;
+
     public:
-      kernel(modeDevice_t *modeDevice_,
-             const std::string &name_,
-             ::sycl::device* dpcppDevice_,
-              functionPtr_t lambda_,
-             const occa::properties &properties_);
+	      bool isLauncherKernel;
 
       kernel(modeDevice_t *modeDevice_,
-	     const std::string &name_, const occa::properties &properties_, functionPtr_t lambda_);
+             const std::string &name_,
+             const std::string &sourceFilename_,
+             const occa::properties &properties_);
 
       ~kernel();
 
       ::sycl::queue* getCommandQueue() const;
+      const lang::kernelMetadata_t& getMetadata() const;
 
       int maxDims() const;
       dim maxOuterDims() const;
       dim maxInnerDims() const;
 
-      void deviceRun() const;
+      void run() const;
     };
   }
 }

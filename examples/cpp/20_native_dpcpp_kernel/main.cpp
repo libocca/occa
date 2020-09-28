@@ -31,7 +31,7 @@ int main(int argc, const char **argv) {
 
   // Setup the platform and device IDs
   occa::properties deviceProps;
-  deviceProps["mode"] = "dpcpp";
+  deviceProps["mode"] = "oneAPI";
   deviceProps["platform_id"] = (int) args["options/platform-id"];
   deviceProps["device_id"] = (int) args["options/device-id"];
 //  occa::device device(deviceProps);
@@ -45,9 +45,13 @@ int main(int argc, const char **argv) {
   // Compile a regular OpenCL kernel at run-time
   occa::properties kernelProps;
   kernelProps["okl/enabled"] = false;
-  
-  //occa::kernel addVectors(&device, "addvector", kernelProps, addVector_it);
-  occa::kernel addVectors;//only for testing dpcpp is found by occa
+ 
+  occa::kernel addVectors = device.buildKernel("addVectors.cpp",
+                                               "addVectors",
+                                               kernelProps);
+ 
+ // occa::kernel addVectors(&device, "addvector", kernelProps, addVector_it);
+  //occa::kernel addVectors;//only for testing dpcpp is found by occa
 
   // Copy memory to the device
   o_a.copyFrom(a);

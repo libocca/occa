@@ -9,7 +9,7 @@ namespace occa {
   namespace dpcpp {
     class info_t;
 
-    class device : public occa::launchedModeDevice_t {
+    class device : public occa::modeDevice_t {
       friend sycl::context getContext(occa::device device);
 
     private:
@@ -48,38 +48,37 @@ namespace occa {
       //================================
 
       //---[ Kernel ]-------------------
-      modeKernel_t* buildKernelFromProcessedSource(const hash_t kernelHash,
-                                                   const std::string &hashDir,
-                                                   const std::string &kernelName,
-                                                   const std::string &sourceFilename,
-                                                   const std::string &binaryFilename,
-                                                   const bool usingOkl,
-                                                   lang::sourceMetadata_t &launcherMetadata,
-                                                   lang::sourceMetadata_t &deviceMetadata,
-                                                   const occa::properties &kernelProps,
-                                                   io::lock_t lock);
+      virtual bool parseFile(const std::string &filename,
+                             const std::string &outputFile,
+                             const occa::properties &kernelProps,
+                             lang::sourceMetadata_t &metadata);
 
-      modeKernel_t* buildOKLKernelFromBinary(const hash_t kernelHash,
-                                             const std::string &hashDir,
-                                             const std::string &kernelName,
-                                             lang::sourceMetadata_t &launcherMetadata,
-                                             lang::sourceMetadata_t &deviceMetadata,
-                                             const occa::properties &kernelProps,
-                                             io::lock_t lock);
+      virtual modeKernel_t* buildKernel(const std::string &filename,
+                                        const std::string &kernelName,
+                                        const hash_t kernelHash,
+                                        const occa::properties &kernelProps);
 
+      modeKernel_t* buildLauncherKernel(const std::string &filename,
+                                        const std::string &kernelName,
+                                        const hash_t kernelHash);
 
-      modeKernel_t* buildOKLKernelFromBinary(info_t &clInfo,
-                                             const hash_t kernelHash,
-                                             const std::string &hashDir,
-                                             const std::string &kernelName,
-                                             lang::sourceMetadata_t &launcherMetadata,
-                                             lang::sourceMetadata_t &deviceMetadata,
-                                             const occa::properties &kernelProps,
-                                             io::lock_t lock);
+      modeKernel_t* buildKernel(const std::string &filename,
+                                const std::string &kernelName,
+                                const hash_t kernelHash,
+                                const occa::properties &kernelProps,
+                                const bool isLauncerKernel);
 
       virtual modeKernel_t* buildKernelFromBinary(const std::string &filename,
                                                   const std::string &kernelName,
                                                   const occa::properties &kernelProps);
+
+      virtual modeKernel_t* buildKernelFromBinary(const std::string &filename,
+                                                  const std::string &kernelName,
+                                                  const occa::properties &kernelProps,
+                                                  lang::kernelMetadata_t &metadata);
+
+
+
 
       //================================
 

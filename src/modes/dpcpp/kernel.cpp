@@ -8,23 +8,16 @@
 
 namespace occa {
   namespace dpcpp {
-    kernel::kernel(modeDevice_t *modeDevice_,
-             const std::string &name_, const occa::properties &properties_, functionPtr_t lambda_):
-      occa::launchedModeKernel_t(modeDevice_, name_, "", properties_),
-      dpcppDevice(NULL),
-      function(lambda_){
-      *dpcppDevice = getCommandQueue()->get_device();
-      }
-
-
-    kernel::kernel(modeDevice_t *modeDevice_,
+      kernel::kernel(modeDevice_t *modeDevice_,
                    const std::string &name_,
-                   ::sycl::device* dpcppDevice_,
-                   functionPtr_t lambda_,
+                   const std::string &sourceFilename_,
                    const occa::properties &properties_) :
-      occa::launchedModeKernel_t(modeDevice_, name_, "", properties_),
-      dpcppDevice(dpcppDevice_),
-      function(lambda_) {}
+      occa::modeKernel_t(modeDevice_, name_, sourceFilename_, properties_),
+      dlHandle(NULL),
+      function(NULL),
+      isLauncherKernel(false) {}
+
+
 
     kernel::~kernel() {
     }
@@ -37,6 +30,10 @@ namespace occa {
       static cl_uint dims_ = 0;
       dims_ = getCommandQueue()->get_device().get_info<::sycl::info::device::max_work_item_dimensions>();
       return (int) dims_;
+    }
+
+    const lang::kernelMetadata_t& kernel::getMetadata() const {
+      return metadata;
     }
 
     dim kernel::maxOuterDims() const {
@@ -65,7 +62,7 @@ namespace occa {
       return maxInnerDims_;
     }
 
-    void kernel::deviceRun() const {
+    void kernel::run() const {
       // Setup kernel dimensions
       occa::dim fullDims = (outerDims * innerDims);
       ::sycl::queue *q = getCommandQueue();
