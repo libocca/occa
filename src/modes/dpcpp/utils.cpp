@@ -37,36 +37,38 @@ namespace occa {
     }
 /* Returns true if any DPC++ device is enabled on the machine */
     bool isEnabled() {
-      auto platformlist = sycl::platform::get_platforms();
+      bool isenabled = false;
+      auto platformlist = ::sycl::platform::get_platforms();
       for(auto p : platformlist)
       {
 	      auto devicelist = p.get_devices(::sycl::info::device_type::all);
 	      if(devicelist.size() > 0)
-		      return true;
+		      isenabled = true;
       }
-      return false;
+      return isenabled;
     }
 
 /* Returns the DPC++ device type*/
-    sycl::info::device_type deviceType(int type) {
+    ::sycl::info::device_type deviceType(int type) {
+      
+      if (type & info::anyType) return ::sycl::info::device_type::all;
+      if (type & info::CPU)     return ::sycl::info::device_type::cpu;
+      if (type & info::GPU)     return ::sycl::info::device_type::gpu;
+      if (type & info::FPGA)    return ::sycl::info::device_type::accelerator;
 
-      if (type & info::CPU)     return sycl::info::device_type::cpu;
-      if (type & info::GPU)     return sycl::info::device_type::gpu;
-      if (type & info::FPGA)    return sycl::info::device_type::accelerator;
-
-      return sycl::info::device_type::cpu;
+      return ::sycl::info::device_type::all;
     }
 /* Returns the number of DPC++ platforms*/
     int getPlatformCount() {
-	    return sycl::platform::get_platforms().size();
+	    return ::sycl::platform::get_platforms().size();
     }
 /* Returns the DPC++ platform of interest */
-    sycl::platform getPlatformByID(int pID) {
-	    return (sycl::platform::get_platforms()[pID]);
+    ::sycl::platform getPlatformByID(int pID) {
+	    return (::sycl::platform::get_platforms()[pID]);
     }
 /* Returns the number of DPC++ devices of a certain device type*/
     int getDeviceCount(int type) {
-	    auto platformlist = sycl::platform::get_platforms();
+	    auto platformlist = ::sycl::platform::get_platforms();
 	    int count = 0;
 	    for(auto p : platformlist){
 		    count += p.get_devices(deviceType(type)).size();
@@ -75,24 +77,24 @@ namespace occa {
     }
 /* Return the number of DPC++ devices under a given platform */
     int getDeviceCountInPlatform(int pID, int type) {
-      return sycl::platform::get_platforms()[pID].get_devices(deviceType(type)).size();
+	    return ::sycl::platform::get_platforms()[pID].get_devices(deviceType(type)).size();
     }
 /* Return the DPC++ device given the platform ID and Device ID */
-    sycl::device getDeviceByID(int pID, int dID, int type) {
-	    return (sycl::platform::get_platforms()[pID].get_devices(deviceType(type))[dID]);
+    ::sycl::device getDeviceByID(int pID, int dID, int type) {
+	    return (::sycl::platform::get_platforms()[pID].get_devices(deviceType(type))[dID]);
     }
 /* Return the DPC++ device name */
     std::string deviceName(int pID, int dID) {
-	    return sycl::platform::get_platforms()[pID].get_devices()[dID].get_info<::sycl::info::device::name>();
+	    return ::sycl::platform::get_platforms()[pID].get_devices()[dID].get_info<::sycl::info::device::name>();
     }
 /* Return the DPC++ device type */
     int deviceType(int pID, int dID) {
-	    return (int)sycl::platform::get_platforms()[pID].get_devices()[dID].get_info<::sycl::info::device::device_type>();
+	    return (int)::sycl::platform::get_platforms()[pID].get_devices()[dID].get_info<::sycl::info::device::device_type>();
     }
 
 /* Return the DPC++ device vendor */    
     int deviceVendor(int pID, int dID) {
-	    std::string devVendor = sycl::platform::get_platforms()[pID].get_devices()[dID].get_info<::sycl::info::device::vendor>();
+	    std::string devVendor = ::sycl::platform::get_platforms()[pID].get_devices()[dID].get_info<::sycl::info::device::vendor>();
 	    if(devVendor.find("Intel") != std::string::npos)
 		    return info::Intel;
 	    else if(devVendor.find("NVIDIA") != std::string::npos)
@@ -105,15 +107,15 @@ namespace occa {
     }
 /* Returns the DPC++ Core count */
     int deviceCoreCount(int pID, int dID) {
-	return sycl::platform::get_platforms()[pID].get_devices()[dID].get_info<::sycl::info::device::max_compute_units>();
+	    return ::sycl::platform::get_platforms()[pID].get_devices()[dID].get_info<::sycl::info::device::max_compute_units>();
     }
 /* Returns the DPC++ global memory size given the DPC++ device */
-    udim_t getDeviceMemorySize(const sycl::device &devPtr) {
+    udim_t getDeviceMemorySize(const ::sycl::device &devPtr) {
 	    return devPtr.get_info<::sycl::info::device::global_mem_size>();
     }
 /* Returns the DPC++ global memory size given the platform and device IDs */
     udim_t getDeviceMemorySize(int pID, int dID) {
-	    return sycl::platform::get_platforms()[pID].get_devices()[dID].get_info<::sycl::info::device::global_mem_size>();
+	    return ::sycl::platform::get_platforms()[pID].get_devices()[dID].get_info<::sycl::info::device::global_mem_size>();
     }
 
     void buildProgramFromSource(info_t &info,
