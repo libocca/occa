@@ -68,14 +68,18 @@ namespace occa {
       ::sycl::queue *q = getCommandQueue();
       auto global_range = ::sycl::range<3>(outerDims.x, outerDims.y, outerDims.z);
       auto local_range  = ::sycl::range<3>(innerDims.x, innerDims.y, innerDims.z);
-      void** args = new void*[arguments.size()+2];
-      ::sycl::nd_range<3> ndrange = {global_range, local_range};
-      args[0] = q;
-      args[1] = &ndrange;
+      std::cout<<"global range : "<<outerDims.x<<" "<<outerDims.y<<" "<<outerDims.z<<std::endl;
+      std::cout<<"local range : "<<innerDims.x<<" "<<innerDims.y<<" "<<innerDims.z<<std::endl;
+      std::vector<void*> args;
+      ::sycl::nd_range<3> ndrange = ::sycl::nd_range<3>(global_range, local_range);
+      args.push_back(q);
+      args.push_back(&ndrange);
+      std::cout<<"Pushing pointer as parameter: "<<(void*)q<<" "<<(void*)&ndrange<<std::endl;
       for(int i=2; i<arguments.size()+2; i++){
-	args[i] = arguments[i].ptr();
+	std::cout<<" "<<arguments[i].ptr()<<std::endl;
+	args.push_back(arguments[i].ptr());
       }
-      sys::runFunction(function, arguments.size(), args);
+      sys::runFunction(function, args.size(), &(args[0]));
     }
   }
 }

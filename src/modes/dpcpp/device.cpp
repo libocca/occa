@@ -361,7 +361,7 @@ namespace occa {
     modeMemory_t* device::malloc(const udim_t bytes,
                                  const void *src,
                                  const occa::properties &props) {
-
+	std::cout<<" Calling malloc" <<std::endl;
       ::sycl::queue* q = getCommandQueue();
 /*      if (props.get("mapped", false)) {
         return mappedAlloc(bytes, src, props);
@@ -371,9 +371,9 @@ namespace occa {
       memory *mem = new memory(this, bytes, props);
 
       if (src == NULL) {
-        mem->dpcppMem = malloc_device(bytes, *q);
+        mem->dpcppMem = malloc_shared(bytes, *q);
       } else {
-	mem->dpcppMem = malloc_device(bytes, *q);
+	mem->dpcppMem = malloc_shared(bytes, *q);
 	q->memcpy(mem->dpcppMem, src, bytes);
 
         finish();

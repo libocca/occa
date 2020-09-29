@@ -18,13 +18,13 @@ int main(int argc, const char **argv) {
 
   for (int i = 0; i < entries; ++i) {
     a[i]  = i;
-    b[i]  = 1 - i;
+    b[i]  = i;
     ab[i] = 0;
   }
 
   // Setup the platform and device IDs
   occa::properties deviceProps;
-  deviceProps["mode"] = "oneAPI";
+  deviceProps["mode"] = "dpcpp";
   deviceProps["platform_id"] = (int) args["options/platform-id"];
   deviceProps["device_id"] = (int) args["options/device-id"];
 //  occa::device device(deviceProps);
@@ -38,7 +38,7 @@ int main(int argc, const char **argv) {
   // Compile a regular OpenCL kernel at run-time
   occa::properties kernelProps;
   kernelProps["okl/enabled"] = false;
-  kernelProps["compiler"] = "dpcpp -g";
+  kernelProps["compiler"] = "dpcpp";
   kernelProps["compiler_linker_flags"] = "-shared -fPIC";
  
   occa::kernel addVectors = device.buildKernel("addVectors.cpp",
@@ -51,14 +51,16 @@ int main(int argc, const char **argv) {
   // Copy memory to the device
   o_a.copyFrom(a);
   o_b.copyFrom(b);
+  o_ab.copyFrom(ab);
 
   // Set the kernel dimensions
   //   setRunDims(
   //     occa::dim(groupsX, groupsY = 1, groupsZ = 1), <- @outer dims in OKL
   //     occa::dim(itemsX, itemsY = 1, itemsZ = 1)     <- @inner dims in OKL
   //   )
-  addVectors.setRunDims((entries + 15) / 16, 16);
-
+  addVectors.setRunDims(16, 16);
+  void* pp = o_a.ptr();
+  std::cout<<"Printing a address: "<<pp<<std::endl;
   // Launch device kernel
   addVectors(o_a, o_b, o_ab);
 
