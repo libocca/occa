@@ -16,6 +16,8 @@ namespace occa {
     memory::~memory() {
       if (isOrigin) {
         // Free mapped-host pointer
+	::sycl::queue *q = getCommandQueue();
+	free(rootDpcppMem, *q);
 	
 	//TODO: Cedric check if there are cases where we can have mapped pointer
         if (mappedPtr) {
