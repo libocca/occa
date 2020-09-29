@@ -266,6 +266,7 @@ bool runEnv(const json &args) {
             << "    - OCCA_HIP_ENABLED           : " << envEcho("OCCA_HIP_ENABLED", OCCA_HIP_ENABLED) << "\n"
             << "    - OCCA_OPENCL_ENABLED        : " << envEcho("OCCA_OPENCL_ENABLED", OCCA_OPENCL_ENABLED) << "\n"
             << "    - OCCA_METAL_ENABLED         : " << envEcho("OCCA_METAL_ENABLED", OCCA_METAL_ENABLED) << "\n"
+	    << "    - OCCA_DPCPP_ENABLED	 : " << envEcho("OCCA_DPCPP_ENABLED", OCCA_DPCPP_ENABLED) << "\n"
 
             << "  Run-Time Options:\n"
             << "    - OCCA_CXX                   : " << envEcho("OCCA_CXX") << "\n"
